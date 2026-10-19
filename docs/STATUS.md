@@ -2,11 +2,11 @@
 
 - 更新日期：2026-10-19（中国标准时间）
 - 当前阶段：架构定义、研究方案整理与初期资料接入
-- 当前任务：[Issue #1：初始化项目并导入初期资料](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/1)，[PR #2](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/2) 待审查
+- 当前任务：[Issue #1：初始化项目并导入初期资料](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/1)；资料已进入 `main`，[PR #2](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/2) 已合并
 - 当前资料：项目说明 v1.0、专题研究文档、来源笔记，以及四个参考项目六个案例的轻量布线分析包
 - 已确认边界：研究对象和主要问题已写入项目说明；具体工艺、Block 资源、定制层集合和工具链未冻结
 - 关键限制：现有布线结果包不含其源代码、完整物理数据库、工具环境和日志，不能单靠本仓库复跑物理实现
-- 下一步：审查并合并初期资料 PR；确定第一个可执行的研究问题、输入集合和验收口径
+- 下一步：审查管理中心登记 PR、核验项目看板；确定第一个可执行的研究问题、输入集合和验收口径
 - 任务入口：[本仓库 Issues](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues)
 - 项目登记：[管理中心 PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) 待审查；合并前状态为 pending
 - Projects 入口：待核验和配置；不能把尚未接入的看板写成已同步
