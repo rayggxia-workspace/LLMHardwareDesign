@@ -13,7 +13,7 @@
 | `README.md`、`研究资料导读.md`、`预制计算底座项目说明_v1.0.md` | 项目入口、阅读导引与初版研究定义 |
 | `docs/` | 当前项目简介、架构、状态，以及专题研究文档和重要决策 |
 | `sources/` | 手写笔记、讨论澄清和原始研究资料 |
-| `ref-project/llm-routing/` | 四个参考项目、六个案例的轻量布线分析结果；保留其内部相对路径 |
+| `ref-project/llm-routing/` | 固定只读的参考布线结果；不属于任何日常维护范围 |
 | `progress/<github-handle>/`、`work/<github-handle>/<issue-number>/` | 个人进度和任务辅助资料，不作为正式研究成果的默认目录 |
 | `.github/`、`config/`、`scripts/` | 协作模板、状态配置和管理结构检查 |
 
@@ -23,7 +23,7 @@
 
 - 阅读：从仓库根目录打开 `ref-project/llm-routing/index.html`；其图片和下载链接使用包内相对路径。
 - 管理结构检查：`python scripts/check_project.py`（Python 3.9+，无第三方包）。
-- 资料完整性：对照 `docs/DATA_PROVENANCE.md` 和 `ref-project/llm-routing/package_manifest.json` 的 SHA-256；该检查只确认文件完整性。
+- 初次接入的来源记录见 `docs/DATA_PROVENANCE.md`；后续例行检查不覆盖 `ref-project/`。
 - 本项目业务构建、仿真、物理实现和复现实验命令：**尚未配置**。结果包不含上述运行所需的全部输入与工具，不能以结构检查代替业务验证。
 
 ## 数据与外部依赖

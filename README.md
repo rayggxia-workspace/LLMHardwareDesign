@@ -5,12 +5,12 @@
 ## 从哪里开始
 
 1. [项目说明 v1.0](预制计算底座项目说明_v1.0.md)：研究问题、已确认边界、候选方案和待决策清单。
-2. [研究资料导读](研究资料导读.md)：原 README 的完整内容，保留初期阅读顺序、架构和 EDA 工作思路。
+2. [研究资料导读](研究资料导读.md)：依据原 README 完整要点整理的阅读顺序、架构问题和 EDA 研究路线。
 3. [项目简介](docs/PROJECT_BRIEF.md)、[架构与目录](docs/ARCHITECTURE.md)、[当前状态](docs/STATUS.md)：持续更新的项目入口。
 4. [不同 LLM 架构下的 Block 研究](docs/面向不同%20LLM%20架构的预制计算底座.md)、[Gemmini 学习笔记](docs/Gemmini学习笔记.md)、[工艺互连资料](docs/常见开源工艺金属互连线.md)：研究背景与候选方向。
 5. [布线分析图文报告](ref-project/llm-routing/index.html)与[结果包阅读说明](ref-project/llm-routing/阅读说明.txt)：四个参考项目、六个案例的已有分析及其证据边界。
 
-`sources/` 保存手写笔记和讨论资料；`ref-project/llm-routing/` 保存参考项目的轻量结果包。布线结果包包含报告、图表和统计表，**不包含**源代码、完整物理数据库、工具环境或运行日志，不能单靠仓库内容重新运行物理实现。详情见[来源与复现边界](docs/DATA_PROVENANCE.md)。
+`sources/` 保存手写笔记和讨论资料；`ref-project/llm-routing/` 保存固定的参考项目结果包，**不属于本项目的日常维护范围**。该包不包含源代码、完整物理数据库、工具环境或运行日志，不能单靠仓库内容重新运行物理实现。详情见[来源与复现边界](docs/DATA_PROVENANCE.md)。
 
 ## 当前工作方式
 
