@@ -1,0 +1,16 @@
+﻿轻量结果包阅读说明
+
+1. 首先打开 index.html：图文报告、各案例版图、逐层功能图和分布分析。
+2. report.md：详细文字报告，包含前期实验记录和验收边界；运行状态为记录时的历史状态。
+3. 布线统计.xlsx：便于筛选的统计表。原始分类和第一轮 UNKNOWN 解析保留在表中，不应与后续连接解析口径混用。
+4. raw_tables/：各案例直接提取的 layer_categories.csv、vias.csv、module_pairs.csv 及 extraction_manifest.json。
+5. 各案例文件夹：报告配图及对应 CSV/来源记录。Gemmini、openTPU 最新解析后主图及数据为 layer_function_lengths_resolved_v2_log.png / layer_function_lengths_resolved_v2.csv。较早版本保留作对照。
+6. unknown_analysis/：UNKNOWN 定性分析、逐网连接证据及后续常量线核验。openTPU 的最新常量解析在 remaining-unknown-20261019/ 中。
+7. completed_layer_ranges.json：按原始逐网逐层记录计算均值、最小值、最大值的汇总及来源哈希。
+8. package_manifest.json：本次打包的文件哈希及链接检查结果。
+
+范围：已完成的 4 个项目、6 个案例。未纳入 llaccel 的新结果。
+不包含：ODB、DEF、GDS、全量网表/几何、源代码、工具环境和运行日志。
+用途：阅读、重新汇总统计与绘图、核对提取来源；不能单靠此包重跑物理实现或重新验证布线几何。
+请整体复制此目录，保留子目录结构；HTML 图片和下载链接使用相对路径。
+JSON 中部分绝对路径和文字报告中的历史路径仅用于追溯原环境，不是本包依赖。

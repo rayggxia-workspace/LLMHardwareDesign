@@ -1,0 +1,67 @@
+{
+  "type": "header",
+  "schema": 1,
+  "block": "matvec_engine",
+  "dbu_per_um": 2000,
+  "die_area_dbu": [
+    0,
+    0,
+    3357360,
+    3357360
+  ],
+  "odb_input": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/fable5-matvec-v1-final01/6_final.odb",
+  "odb_input_sha256": "72d2965352c6ddfcc47f99581f26126706d18cde3ceb3eaeab2ad167e75af173",
+  "exporter_sha256": "b94aaaf51882ba3de20bca5ace9f62eba609efb2f463bf42ed1b554e4b557eb6",
+  "config": {
+    "odb": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/fable5-matvec-v1-final01/6_final.odb",
+    "bridge": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/fable5-matvec-v1-final01/route_decoded_v1.jsonl",
+    "output": "/public/home/yuzelu/project-circuit/llm_routing_analysis/stats/fable5-matvec-v1/dedicated_v2",
+    "design_id": "fable5-matvec-v1 with connectivity-verified dedicated nets",
+    "mapping": "/public/home/yuzelu/project-circuit/llm_routing_analysis/stats/fable5-matvec-v1/mapping_dedicated_v2.json",
+    "provenance": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/fable5-matvec-v1-final01/archive_manifest.json",
+    "physical_um_per_database_um": 1,
+    "physical_units_evidence": "Required final-ODB dimension and SHA256 verification: /public/home/yuzelu/project-circuit/llm_routing_analysis/raw/fable5-matvec-v1-final01/analysis/physical_units.json. run_nangate_extract.sh must create and pass this verification before extraction.",
+    "unary_library_json": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/validation/nangate-library-units-v1/unary/library.json",
+    "final_verilog": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/fable5-matvec-v1-final01/6_final.v",
+    "mapped_verilog": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/fable5-matvec-v1-final01/1_2_yosys.v",
+    "library_verilog": [],
+    "top": "matvec_engine",
+    "audit_dir": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/fable5-matvec-v1-final01/analysis"
+  },
+  "odb_sha256": "72d2965352c6ddfcc47f99581f26126706d18cde3ceb3eaeab2ad167e75af173",
+  "bridge_sha256": "b5892f4c2f10056d16ea47771ea945b92252a8744af3b0f3a8cbff9b87d238bf",
+  "script_sha256": "f1b26f65fe4a279647c30a45b7d9f960758c212bced517a1c2ab212b311ea1f1",
+  "helper_sha256": "b004b219f81de0da5590ed3dad4bb28be9cb6a24dbdd2b8ee3e02c7c7810f6ee",
+  "tcl_exporter_sha256": "b94aaaf51882ba3de20bca5ace9f62eba609efb2f463bf42ed1b554e4b557eb6",
+  "mapping_sha256": "b3e9d052c4711b65f4657f60ecb7edaa57bd4aa8e41cf8d0a75a4f2d5b8dfc9a",
+  "provenance_sha256": "c8acc7610b4e760ab06ee179b59425e7b4c688332055fa7401b2129cfe1a49c2",
+  "counts": {
+    "all_nets": 513833,
+    "nets_with_dbwire": 403161,
+    "patch_rectangles": 0,
+    "virtual_connections": 0,
+    "nets_without_dbwire": 110672,
+    "nets_with_unknown_endpoints": 2,
+    "nets_with_special_wire_boxes": 2
+  },
+  "totals": {
+    "dbwire_centerline_length_dbu": 15248611690,
+    "dbwire_raw_centerline_length_dbu": 15248611690
+  },
+  "detailed_route_completion": "MUST_VERIFY_AGAINST_PINNED_FLOW_LOGS_AND_DRC",
+  "method": "Actual Tcl dbWireDecoder points; same-net same-layer collinear union. See scripts/EXTRACT_ODB.md.",
+  "limitations": [
+    "Patch metal retained as rectangles, not fictitious centerline length",
+    "Special-wire boxes retained but centerline/via stats unavailable",
+    "Module-pair length is a whole-net total only for exactly two known modules, not branch attribution",
+    "Macro internal wires unavailable",
+    "Dedicated networks occupy exclusive summary categories",
+    "macro_interfaces.csv overlaps main category totals: each net with actual BLOCK* and CORE* endpoints contributes once per layer/category; never add this view to the main total"
+  ],
+  "dbu_per_database_um": 2000,
+  "physical_um_per_database_um": 1.0,
+  "effective_dbu_per_physical_um": 2000.0,
+  "physical_units_evidence": "Required final-ODB dimension and SHA256 verification: /public/home/yuzelu/project-circuit/llm_routing_analysis/raw/fable5-matvec-v1-final01/analysis/physical_units.json. run_nangate_extract.sh must create and pass this verification before extraction.",
+  "physical_units_status": "EVIDENCE_PROVIDED",
+  "length_um_meaning": "physical um = original DBU / dbu_per_database_um * physical_um_per_database_um; database_length_um retained separately"
+}
