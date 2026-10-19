@@ -13,7 +13,7 @@
 | `README.md`、`研究资料导读.md`、`预制计算底座项目说明_v1.0.md` | 项目入口、阅读导引与初版研究定义 |
 | `docs/` | 当前项目简介、架构、状态，以及专题研究文档和重要决策 |
 | `sources/` | 手写笔记、讨论澄清和原始研究资料 |
-| `ref-project/llm-routing/` | 固定只读的参考布线结果；不属于任何日常维护范围 |
+| `ref-project/llm-routing/` | 固定只读的参考布线结果；不在本项目任何维护范围内 |
 | `progress/<github-handle>/`、`work/<github-handle>/<issue-number>/` | 个人进度和任务辅助资料，不作为正式研究成果的默认目录 |
 | `.github/`、`config/`、`scripts/` | 协作模板、状态配置和管理结构检查 |
 

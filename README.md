@@ -10,7 +10,7 @@
 4. [不同 LLM 架构下的 Block 研究](docs/面向不同%20LLM%20架构的预制计算底座.md)、[Gemmini 学习笔记](docs/Gemmini学习笔记.md)、[工艺互连资料](docs/常见开源工艺金属互连线.md)：研究背景与候选方向。
 5. [布线分析图文报告](ref-project/llm-routing/index.html)与[结果包阅读说明](ref-project/llm-routing/阅读说明.txt)：四个参考项目、六个案例的已有分析及其证据边界。
 
-`sources/` 保存手写笔记和讨论资料；`ref-project/llm-routing/` 保存固定的参考项目结果包，**不属于本项目的日常维护范围**。该包不包含源代码、完整物理数据库、工具环境或运行日志，不能单靠仓库内容重新运行物理实现。详情见[来源与复现边界](docs/DATA_PROVENANCE.md)。
+`sources/` 保存手写笔记和讨论资料；`ref-project/llm-routing/` 保存固定的参考项目结果包，**不在本项目任何维护范围内**。该包不包含源代码、完整物理数据库、工具环境或运行日志，不能单靠仓库内容重新运行物理实现。详情见[来源与复现边界](docs/DATA_PROVENANCE.md)。
 
 ## 当前工作方式
 

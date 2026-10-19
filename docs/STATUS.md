@@ -8,6 +8,7 @@
 - 关键限制：现有布线结果包不含其源代码、完整物理数据库、工具环境和日志，不能单靠本仓库复跑物理实现
 - 下一步：审查并合并初期资料 PR；确定第一个可执行的研究问题、输入集合和验收口径
 - 任务入口：[本仓库 Issues](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues)
+- 项目登记：[管理中心 PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) 待审查；合并前状态为 pending
 - Projects 入口：待核验和配置；不能把尚未接入的看板写成已同步
 
 本页只记录全项目阶段和关键限制；具体任务进度以 Issue 和 PR 为准。
