@@ -1,0 +1,334 @@
+{
+  "source_rtl": "/public/home/yuzelu/opt/eda/cache/bazel-repacked/0472cb7817e9c4d6e974e10cde266a63/execroot/_main/bazel-out/k8-fastbuild/bin/gemmini_4x4/MeshWithDelays.sv",
+  "sha256": "4e998977f30e76a566ef7a950b5eaa5ee9650238b4f6a4da98ac7033b602499d",
+  "connection_source_families": {
+    "MESH_PIPELINE + SHIFT_DELAY": [
+      [
+        "driver: SRAMShifted_shifter_2.mem.mem_0_ext.Memory[][]",
+        48
+      ],
+      [
+        "driver: SRAMShifted_shifter_8.mem.mem_0_ext.Memory[][]",
+        48
+      ],
+      [
+        "driver: SRAMShifted_shifter_5.mem.mem_0_ext.Memory[][]",
+        34
+      ],
+      [
+        "driver: mesh.io_out_c_2_0[]",
+        32
+      ],
+      [
+        "driver: mesh.io_out_b_2_0[]",
+        32
+      ],
+      [
+        "driver: SRAMShifted_shifter_1.mem.mem_0_ext.Memory[][]",
+        32
+      ],
+      [
+        "driver: SRAMShifted_shifter_4.mem.mem_0_ext.Memory[][]",
+        32
+      ],
+      [
+        "driver: SRAMShifted_shifter_7.mem.mem_0_ext.Memory[][]",
+        32
+      ],
+      [
+        "driver: mesh.io_out_c_1_0[]",
+        32
+      ]
+    ],
+    "MESH_PIPELINE + TAG_QUEUE": [
+      [
+        "load: mesh.r_64_0[]",
+        3
+      ]
+    ],
+    "PE + MESH_PIPELINE": [
+      [
+        "driver: mesh.mesh_i_j.tile_0_0.c2[]",
+        505
+      ],
+      [
+        "driver: mesh.mesh_i_j.tile_0_0.c1[]",
+        436
+      ],
+      [
+        "driver: mesh.pipe_pipe_b_22_0[]",
+        32
+      ],
+      [
+        "driver: mesh.pipe_pipe_b_23_0[]",
+        32
+      ],
+      [
+        "driver: mesh.pipe_pipe_b_27_0[]",
+        32
+      ],
+      [
+        "driver: mesh.pipe_pipe_b_30_0[]",
+        32
+      ],
+      [
+        "driver: mesh.pipe_pipe_b_17_0[]",
+        32
+      ],
+      [
+        "driver: mesh.pipe_pipe_b_26_0[]",
+        31
+      ],
+      [
+        "driver: mesh.pipe_pipe_b_29_0[]",
+        31
+      ]
+    ],
+    "MESH_PIPELINE + SHIFT_DELAY + TRANSPOSE": [
+      [
+        "driver: transposer.pes_0_0.io_outL[]",
+        8
+      ]
+    ],
+    "SHIFT_DELAY + TRANSPOSE": [
+      [
+        "driver: transposer.pes_1_0.io_outL[]",
+        8
+      ],
+      [
+        "driver: transposer.pes_2_0.io_outL[]",
+        8
+      ],
+      [
+        "driver: transposer.pes_0_1.io_outL[]",
+        7
+      ]
+    ]
+  },
+  "examples": {
+    "MESH_PIPELINE + SHIFT_DELAY": [
+      {
+        "net_id": 2,
+        "name": "SRAMShifted_shifter_1._waddr_T_16\\[0\\]",
+        "known_source_endpoints": [
+          {
+            "instance": "SRAMShifted_shifter_1.waddr\\[0\\]$_DFF_P_",
+            "pin": "QN",
+            "role": "driver",
+            "module": "SHIFT_DELAY"
+          },
+          {
+            "instance": "SRAMShifted_shifter_1.waddr\\[0\\]$_DFF_P_",
+            "pin": "D",
+            "role": "load",
+            "module": "SHIFT_DELAY"
+          }
+        ]
+      },
+      {
+        "net_id": 6,
+        "name": "SRAMShifted_shifter_10._waddr_T_16\\[0\\]",
+        "known_source_endpoints": [
+          {
+            "instance": "SRAMShifted_shifter_10.waddr\\[0\\]$_DFF_P_",
+            "pin": "QN",
+            "role": "driver",
+            "module": "SHIFT_DELAY"
+          },
+          {
+            "instance": "SRAMShifted_shifter_10.waddr\\[0\\]$_DFF_P_",
+            "pin": "D",
+            "role": "load",
+            "module": "SHIFT_DELAY"
+          }
+        ]
+      }
+    ],
+    "MESH_PIPELINE + TAG_QUEUE": [
+      {
+        "net_id": 20,
+        "name": "SRAMShifted_shifter_12.io_in_0_0\\[1\\]",
+        "known_source_endpoints": [
+          {
+            "instance": "mesh.r_64_0\\[1\\]$_DFF_P_",
+            "pin": "D",
+            "role": "load",
+            "module": "MESH_PIPELINE"
+          }
+        ]
+      },
+      {
+        "net_id": 21,
+        "name": "SRAMShifted_shifter_12.io_in_0_0\\[2\\]",
+        "known_source_endpoints": [
+          {
+            "instance": "mesh.r_64_0\\[2\\]$_DFF_P_",
+            "pin": "D",
+            "role": "load",
+            "module": "MESH_PIPELINE"
+          }
+        ]
+      }
+    ],
+    "PE + MESH_PIPELINE": [
+      {
+        "net_id": 198,
+        "name": "_00133_",
+        "known_source_endpoints": [
+          {
+            "instance": "mesh.mesh_0_0.tile_0_0.c1\\[30\\]$_DFFE_PP_",
+            "pin": "QN",
+            "role": "driver",
+            "module": "COMPUTE_PE:mesh_0_0"
+          }
+        ]
+      },
+      {
+        "net_id": 199,
+        "name": "_00134_",
+        "known_source_endpoints": [
+          {
+            "instance": "mesh.mesh_0_0.tile_0_0.c2\\[30\\]$_DFFE_PP_",
+            "pin": "QN",
+            "role": "driver",
+            "module": "COMPUTE_PE:mesh_0_0"
+          }
+        ]
+      }
+    ],
+    "MESH_PIPELINE + SHIFT_DELAY + TRANSPOSE": [
+      {
+        "net_id": 2086,
+        "name": "_02021_",
+        "known_source_endpoints": [
+          {
+            "instance": "transposer.pes_0_0.io_outL\\[7\\]$_DFFE_PP_",
+            "pin": "QN",
+            "role": "driver",
+            "module": "TRANSPOSE"
+          }
+        ]
+      },
+      {
+        "net_id": 3010,
+        "name": "_02945_",
+        "known_source_endpoints": [
+          {
+            "instance": "transposer.pes_0_0.io_outL\\[0\\]$_DFFE_PP_",
+            "pin": "QN",
+            "role": "driver",
+            "module": "TRANSPOSE"
+          }
+        ]
+      }
+    ],
+    "SHIFT_DELAY + TRANSPOSE": [
+      {
+        "net_id": 2090,
+        "name": "_02025_",
+        "known_source_endpoints": [
+          {
+            "instance": "transposer.pes_1_0.io_outL\\[7\\]$_DFFE_PP_",
+            "pin": "QN",
+            "role": "driver",
+            "module": "TRANSPOSE"
+          }
+        ]
+      },
+      {
+        "net_id": 2094,
+        "name": "_02029_",
+        "known_source_endpoints": [
+          {
+            "instance": "transposer.pes_2_0.io_outL\\[7\\]$_DFFE_PP_",
+            "pin": "QN",
+            "role": "driver",
+            "module": "TRANSPOSE"
+          }
+        ]
+      }
+    ],
+    "MESH_PIPELINE + TRANSPOSE": [
+      {
+        "net_id": 2111,
+        "name": "_02046_",
+        "known_source_endpoints": []
+      },
+      {
+        "net_id": 2115,
+        "name": "_02050_",
+        "known_source_endpoints": []
+      }
+    ],
+    "TAG_QUEUE + TOTAL_ROWS_QUEUE": [
+      {
+        "net_id": 15893,
+        "name": "_15828_",
+        "known_source_endpoints": []
+      },
+      {
+        "net_id": 15894,
+        "name": "_15829_",
+        "known_source_endpoints": []
+      }
+    ]
+  },
+  "rtl_evidence": [
+    {
+      "line": 1861,
+      "text": "  wire        a_is_from_transposer = req_bits_pe_control_dataflow ^ ~req_bits_a_transpose;\n  wire        b_is_from_transposer =\n    ~req_bits_pe_control_dataflow & req_bits_bd_transpose;"
+    },
+    {
+      "line": 1862,
+      "text": "  wire        b_is_from_transposer =\n    ~req_bits_pe_control_dataflow & req_bits_bd_transpose;\n  wire        d_is_from_transposer = req_bits_pe_control_dataflow & req_bits_bd_transpose;"
+    },
+    {
+      "line": 1864,
+      "text": "  wire        d_is_from_transposer = req_bits_pe_control_dataflow & req_bits_bd_transpose;\n  reg         mesh_io_in_control_1_0_dataflow_r;\n  reg         mesh_io_in_control_1_0_dataflow_r_1;"
+    },
+    {
+      "line": 1905,
+      "text": "  wire        _tagq_io_deq_ready_T_1 =\n    _out_matmul_id_SRAMShifted_shifter_io_out_0_0 == _tagq_io_deq_bits_id;\n  wire        _total_rows_q_io_deq_ready_T ="
+    },
+    {
+      "line": 1906,
+      "text": "    _out_matmul_id_SRAMShifted_shifter_io_out_0_0 == _tagq_io_deq_bits_id;\n  wire        _total_rows_q_io_deq_ready_T =\n    _io_resp_valid_SRAMShifted_shifter_io_out_0_0"
+    },
+    {
+      "line": 1907,
+      "text": "  wire        _total_rows_q_io_deq_ready_T =\n    _io_resp_valid_SRAMShifted_shifter_io_out_0_0\n    & _out_last_SRAMShifted_shifter_io_out_0_0;"
+    },
+    {
+      "line": 1910,
+      "text": "  wire        _total_rows_q_io_deq_ready_T_1 =\n    _out_matmul_id_SRAMShifted_shifter_io_out_0_0 == _total_rows_q_io_deq_bits_id;\n  assign io_req_ready_0 ="
+    },
+    {
+      "line": 1911,
+      "text": "    _out_matmul_id_SRAMShifted_shifter_io_out_0_0 == _total_rows_q_io_deq_bits_id;\n  assign io_req_ready_0 =\n    (~req_valid | last_fire) & _tagq_io_enq_ready & _total_rows_q_io_enq_ready;"
+    },
+    {
+      "line": 2035,
+      "text": "    .io_in_a_1_0                 (_SRAMShifted_shifter_io_out_0_0),\n    .io_in_a_2_0                 (_SRAMShifted_shifter_1_io_out_0_0),\n    .io_in_a_3_0                 (_SRAMShifted_shifter_2_io_out_0_0),"
+    },
+    {
+      "line": 2040,
+      "text": "    .io_in_b_1_0                 (_SRAMShifted_shifter_3_io_out_0_0),\n    .io_in_b_2_0                 (_SRAMShifted_shifter_4_io_out_0_0),\n    .io_in_b_3_0                 (_SRAMShifted_shifter_5_io_out_0_0),"
+    },
+    {
+      "line": 2045,
+      "text": "    .io_in_d_1_0                 (_SRAMShifted_shifter_6_io_out_0_0),\n    .io_in_d_2_0                 (_SRAMShifted_shifter_7_io_out_0_0),\n    .io_in_d_3_0                 (_SRAMShifted_shifter_8_io_out_0_0),"
+    },
+    {
+      "line": 2061,
+      "text": "    .io_in_id_1_0                (_SRAMShifted_shifter_12_io_out_0_0),\n    .io_in_id_2_0                (_SRAMShifted_shifter_13_io_out_0_0),\n    .io_in_id_3_0                (_SRAMShifted_shifter_14_io_out_0_0),"
+    },
+    {
+      "line": 2065,
+      "text": "    .io_in_last_1_0              (_SRAMShifted_shifter_15_io_out_0_0),\n    .io_in_last_2_0              (_SRAMShifted_shifter_16_io_out_0_0),\n    .io_in_last_3_0              (_SRAMShifted_shifter_17_io_out_0_0),"
+    },
+    {
+      "line": 2077,
+      "text": "    .io_in_valid_1_0             (_SRAMShifted_shifter_9_io_out_0_0),\n    .io_in_valid_2_0             (_SRAMShifted_shifter_10_io_out_0_0),\n    .io_in_valid_3_0             (_SRAMShifted_shifter_11_io_out_0_0),"
+    }
+  ]
+}
