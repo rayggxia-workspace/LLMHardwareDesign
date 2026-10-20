@@ -3,7 +3,7 @@
 - 关联 Issue：[本仓库 Issue #5](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/5)
 - 负责人：Liangruizhi
 - 资料更新时间：2026-10-20（中国标准时间，UTC+08:00）
-- 用途：保存本任务的核验摘要；正式规则位于根目录 [AGENTS.md](../../../AGENTS.md)，进度位于 [STATUS.md](../../../progress/Liangruizhi/STATUS.md)。PR 待创建。
+- 用途：保存本任务的核验摘要；正式规则位于根目录 [AGENTS.md](../../../AGENTS.md)，进度位于 [STATUS.md](../../../progress/Liangruizhi/STATUS.md)；已通过 [PR #6](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/6) 上传，规则成果 commit `4647153e8c5c39b70dae989692a9d217c93d49a0`。
 
 ## 核验与范围
 
