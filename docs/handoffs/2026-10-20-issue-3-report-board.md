@@ -2,7 +2,7 @@
 
 - 仓库：https://github.com/rayggxia-workspace/LLMHardwareDesign
 - 任务：https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/3
-- 分支：`task/3-update-routing-reports`；起点 commit `19c9004`；本次成果 commit 和 PR 以 Issue #3 关联 PR 的提交回执为准。
+- 分支：`task/3-update-routing-reports`；起点 commit `19c9004`；报告成果 commit `b041d53`；[PR #4](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/4) 已上传，待审查，未合并。
 - 成果：`ref-project/llm-routing/总报告.html`、`线长报告.html` 及引用资源；检查入口 `work/YUZE-LU/3/sync_reports.py`。
 - 实际核验：2026-10-20 用当前 GitHub 身份 YUZE-LU 查询默认分支 registry、登记 PR 和 portfolio 配置；登记 PR [#5](https://github.com/rayggxia-workspace/management-hub/pull/5) 仍 OPEN，默认分支尚无 llm-hardware-design 登记，状态 pending。不重复登记。
 - 看板配置线索：管理中心 `config/portfolio.json` 指向[组织 Projects #1](https://github.com/orgs/rayggxia-workspace/projects/1)；本仓库没有 `config/board.json`。GraphQL 读取实际看板字段时返回 `INSUFFICIENT_SCOPES`，缺 `read:project`；未改动凭据或权限。
