@@ -23,6 +23,7 @@
 
 - 阅读：从仓库根目录直接打开 `ref-project/llm-routing/总报告.html` 或 `ref-project/llm-routing/线长报告.html`；其图片和下载链接使用包内相对路径。
 - 管理结构检查：`python scripts/check_project.py`（Python 3.9+，无第三方包）。
+- 本次用户授权的报告更新检查：`python work/YUZE-LU/3/sync_reports.py`（Python 3.9+，需要 `beautifulsoup4`）；只读核验两份报告的资源、锚点、清单及图片展示状态。该任务脚本不是例行维护入口；再次同步需用户明确要求，并传入 `--sync --source <源报告目录>`。
 - 初次接入的来源记录见 `docs/DATA_PROVENANCE.md`；后续例行检查不覆盖 `ref-project/`。
 - 本项目业务构建、仿真、物理实现和复现实验命令：**尚未配置**。结果包不含上述运行所需的全部输入与工具，不能以结构检查代替业务验证。
 
