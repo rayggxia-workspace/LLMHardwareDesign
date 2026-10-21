@@ -3,7 +3,7 @@
 - 更新时间：2026-10-21（中国标准时间，UTC+08:00）。
 - 仓库：<https://github.com/rayggxia-workspace/LLMHardwareDesign>。
 - 任务：<https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7>；负责人 YUZE-LU。
-- 工作分支：`task/7-block-routing`；从 `origin/main` 的 `19c900462c60bc55f534ceabc7eedc64dad4a0a6` 创建独立工作树。成果 commit 与 PR 以 Issue 最终回执为准。
+- 工作分支：`task/7-block-routing`；从 `origin/main` 的 `19c900462c60bc55f534ceabc7eedc64dad4a0a6` 创建独立工作树。初始脚本 commit `7e9bde5b763b19591dcbe4f49ade7b08ef093843`；[PR #8](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/8)，后续成果 commit 以最终回执为准。
 
 ## 本轮实际核验
 

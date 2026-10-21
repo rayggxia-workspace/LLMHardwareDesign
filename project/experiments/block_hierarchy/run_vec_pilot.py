@@ -18,6 +18,7 @@ REMOTE_ROOT = "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7"
 SOURCE = "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/llaccel-v1"
 COMMIT = "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5"
 IMAGE = "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif"
+IMAGE_SHA256 = "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a"
 
 
 def ssh(command: str) -> str:
@@ -31,9 +32,10 @@ def ssh(command: str) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--attempt", required=True)
-    parser.add_argument("--mode", choices=["screening", "pilot", "integration"], required=True)
+    parser.add_argument("--mode", choices=["screening", "pilot", "integration", "resume"], required=True)
     parser.add_argument("--block-attempt", help="Issue #7 attempt containing the completed VECTOR hardening")
-    parser.add_argument("--depends-on", type=int, help="Slurm job which must succeed before this job starts")
+    parser.add_argument("--depends-on", type=int, help="Slurm afterok dependency, or afterany for a resume job")
+    parser.add_argument("--resume-from", help="Terminal Issue #7 VECTOR attempt whose completed ORFS stages should be copied")
     parser.add_argument("--partition", choices=["c64", "c96"], default="c64")
     parser.add_argument("--cpus", type=int, default=8)
     parser.add_argument("--minutes", type=int, default=10)
@@ -46,6 +48,10 @@ def main() -> None:
         parser.error("integration requires --block-attempt")
     if args.block_attempt and not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,63}", args.block_attempt):
         parser.error("block-attempt must be a simple lowercase identifier")
+    if args.mode == "resume" and not args.resume_from:
+        parser.error("resume requires --resume-from")
+    if args.resume_from and not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,63}", args.resume_from):
+        parser.error("resume-from must be a simple lowercase identifier")
     remote = f"{REMOTE_ROOT}/{args.attempt}"
     quote = shlex.quote
     ssh(
@@ -62,19 +68,23 @@ def main() -> None:
         "job.sh", "inside_screening.sh", "inside_pilot.sh", "prepare_vec.py",
         "inside_integration.sh", "prepare_top.py", "inspect_top.tcl", "validate_ports.py", "report_top_timing.tcl",
         "validate_physical_interfaces.py",
+        "inside_resume.sh",
+        "validate_resume.py",
     ]
     subprocess.run(
         ["scp", "-q", *[str(HERE / name) for name in files], HOST + ":" + remote + "/"],
         check=True,
     )
-    dependency = f"--dependency=afterok:{args.depends_on} --kill-on-invalid-dep=yes " if args.depends_on else ""
+    condition = "afterany" if args.mode == "resume" else "afterok"
+    dependency = f"--dependency={condition}:{args.depends_on} --kill-on-invalid-dep=yes " if args.depends_on else ""
     block = f"{REMOTE_ROOT}/{args.block_attempt}" if args.block_attempt else ""
+    resume = f"{REMOTE_ROOT}/{args.resume_from}" if args.resume_from else ""
     command = (
         f"sbatch --parsable --partition={args.partition} --cpus-per-task={args.cpus} "
         f"--time={args.minutes // 60:02d}:{args.minutes % 60:02d}:00 --job-name=llhd-vec-{args.mode} "
         + dependency +
         f"--output={quote(remote + '/slurm-%j.log')} "
-        f"--export=ALL,LLHD_ATTEMPT={remote},LLHD_MODE={args.mode},LLHD_IMAGE={IMAGE},LLHD_BLOCK={block} "
+        f"--export=ALL,LLHD_ATTEMPT={remote},LLHD_MODE={args.mode},LLHD_IMAGE={IMAGE},LLHD_IMAGE_SHA256={IMAGE_SHA256},LLHD_BLOCK={block},LLHD_RESUME_FROM={resume} "
         f"{quote(remote + '/job.sh')}"
     )
     job = ssh(command)
@@ -87,9 +97,11 @@ def main() -> None:
         "minutes": args.minutes,
         "source_commit": COMMIT,
         "image": IMAGE,
+        "expected_image_sha256": IMAGE_SHA256,
         "host": HOST,
         "block_attempt": block or None,
         "depends_on": args.depends_on,
+        "resume_from": resume or None,
     }
     print(json.dumps(receipt, ensure_ascii=False, indent=2))
     ssh(f"printf '%s\\n' {quote(json.dumps(receipt, indent=2))} > {quote(remote + '/submission.json')}")

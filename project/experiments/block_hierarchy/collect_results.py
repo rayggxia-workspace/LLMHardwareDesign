@@ -41,11 +41,12 @@ for name, job in attempts.items():
     path = root / name
     item = {'attempt': name, 'remote_path': str(path), 'job_id': job, 'sacct': states.get(job, {})}
     for filename in (
-        'submission.json', 'port-validation.json', 'harness-contract.json', 'physical-interface-validation.json',
+        'submission.json', 'port-validation.json', 'harness-contract.json', 'physical-interface-validation.json', 'resume-validation.json',
         'exit-code.txt', 'host.txt', 'started-utc.txt', 'finished-utc.txt',
         'image.sha256', 'tools.sha256', 'openroad-version.txt', 'yosys-version.txt',
         'orfs-commit.txt', 'runner-inputs.sha256', 'config-inputs.sha256',
         'abstract-source.txt', 'block-abstract-inputs.sha256', 'top-physical-inspection.txt',
+        'resume-parent.txt', 'resume-parent-state.txt', 'resume-parent-inputs.sha256',
     ):
         target = path / filename
         if target.is_file():
@@ -54,7 +55,7 @@ for name, job in attempts.items():
     metrics = {}
     for nickname in ('llhd_vec_original', 'llhd_vec_harness'):
         base = path / 'flow/logs/nangate45' / nickname / 'base'
-        for filename in ('1_1_yosys.json', '3_3_place_gp.json', '5_2_route.json', '6_report.json'):
+        for filename in ('1_synth.json', '2_1_floorplan.json', '3_3_place_gp.json', '4_1_cts.json', '5_1_grt.json', '5_2_route.json', '6_report.json'):
             target = base / filename
             if target.is_file():
                 metrics[str(target)] = json.loads(target.read_text())
@@ -63,6 +64,7 @@ for name, job in attempts.items():
         'slurm': str(path / f'slurm-{job}.log'),
         'elaboration': str(path / 'vec-elab.log'),
         'flow': str(path / 'flow.log'),
+        'resume_dry_run': str(path / 'resume-dry-run.txt') if (path / 'resume-dry-run.txt').exists() else None,
     }
     item['output_hash_index'] = str(path / 'result-files.sha256') if (path / 'result-files.sha256').exists() else None
     products = {}
@@ -129,7 +131,7 @@ def main() -> None:
             "prefabricated_base": False,
             "restricted_metal_customization": False,
             "system_sta_signoff": False,
-            "formal_equivalence_performed": False,
+            "source_rtl_to_physical_formal_equivalence_performed": False,
         },
         "timing_assumption": "3 ns single-clock Nangate45 typical corner; 0.6 ns top IO budget. Block and top budgets are not added to claim a system period.",
         "remaining": remaining,
