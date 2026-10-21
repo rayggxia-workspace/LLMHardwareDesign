@@ -12,7 +12,7 @@ Path("regression-command.json").write_text(json.dumps(command, indent=2) + "\n")
 with Path("regression.log").open("w") as log:
     code = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT).returncode
 text = Path("regression.log").read_text(errors="replace")
-rows = re.findall(r"tb_gemm\[EPILOGUE_FUSION=([01])\]:\s*(\d+) cases,\s*(\d+) failures\s*->\s*(PASS|FAIL)", text)
+rows = re.findall(r"tb_gemm\[EPILOGUE_FUSION=([01])\]:\s*(\d+) passed,\s*(\d+) failed\s*->\s*(PASS|FAIL)", text)
 passed = code == 0 and len(rows) == 2 and {r[0] for r in rows} == {"0", "1"} and all(r[1:] == ("500", "0", "PASS") for r in rows)
 Path("validation.json").write_text(json.dumps({"kind": "original_gemm_rtl_regression", "passed": passed,
     "make_exit_code": code, "summary_rows": rows, "seed": 1, "expected_cases_per_fusion": 500,
