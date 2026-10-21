@@ -71,7 +71,8 @@ for name in ('act-cap00', 'act-cap10', 'act-cap20'):
 eligible = [n for n in ('act-cap00', 'act-cap10', 'act-cap20') if rows[n]['observed_strict_tool_gates_pass']]
 preferred = min(eligible, key=lambda n:rows[n]['quality']['instance_area_um2']) if eligible else None
 Path('validation.json').write_text(json.dumps(dict(passed=hashes_pass, kind='Artifact audit with strict physical budget observations',
-    source_attempt=str(root), results=rows, preferred_act_for_further_view_qualification=preferred,
+    source_attempt=str(root), results=rows, source_scheduler_observation=record['scheduler'],
+    preferred_act_for_further_view_qualification=preferred,
     physical_or_system_signoff=False,
     scope='Pass means manifests verified; per-case strict physical gates remain separate. Candidate selection does not qualify timing arcs, driver/load models, source-to-physical equivalence or manufacturing.'),indent=2)+'\n')
 raise SystemExit(int(not hashes_pass))

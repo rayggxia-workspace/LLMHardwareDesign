@@ -18,7 +18,10 @@ def tail(path):
         f.seek(max(0,path.stat().st_size-4000))
         return '\n'.join(f.read().decode(errors='replace').splitlines()[-12:])
 def command(args):
-    p=subprocess.run(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,universal_newlines=True)
+    try:
+        p=subprocess.run(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,universal_newlines=True)
+    except FileNotFoundError:
+        return dict(exit_code=127,stdout='',stderr='Executable unavailable in this environment: '+args[0])
     return dict(exit_code=p.returncode,stdout=p.stdout.strip(),stderr=p.stderr.strip())
 jobs=[str(s['job_id']) for s in submission['plan'].values() if 'job_id' in s]
 if 'audit_job_id' in submission:jobs.append(str(submission['audit_job_id']))
