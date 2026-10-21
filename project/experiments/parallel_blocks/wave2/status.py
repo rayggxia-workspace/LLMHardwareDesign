@@ -42,6 +42,12 @@ for label, stream in submission['plan'].items():
             logs=base/'flow/logs/nangate45'/nickname/'base'
             results=base/'flow/results/nangate45'/nickname/'base'
             metrics={}
+            logfiles=sorted(logs.glob('*.log'),key=lambda p:p.stat().st_mtime)
+            if logfiles:
+                recent=logfiles[-1]
+                item['latest_flow_log']=dict(file=recent.name,bytes=recent.stat().st_size,
+                    modified_utc=datetime.datetime.fromtimestamp(recent.stat().st_mtime,datetime.timezone.utc).isoformat(),
+                    tail=tail(recent))
             for p in sorted(logs.glob('*.json')):
                 raw=small(p)
                 if raw:

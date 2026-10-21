@@ -16,7 +16,7 @@ assert not destination.exists()
 probe = json.loads((base / 'parallel-blocks-wave2-05-latest.json').read_text())
 assert probe['tasks']['abc-probe-short']['validation']['passed']
 assert probe['tasks']['abc-probe-short']['exit_code'].strip() == '0'
-host = ['ssh','-o','BatchMode=yes','yuzelu@10.129.166.172']
+host = ['ssh','-n','-o','BatchMode=yes','yuzelu@10.129.166.172']
 jobs = {89480: 'parallel-blocks-wave2-01', 89481: 'parallel-blocks-wave2-01', 89491: 'parallel-blocks-wave2-04'}
 record = dict(observed_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
     reason='Completed ABC output exists, persistent ABC processes wait at select; minimal long-TMPDIR reproduction and successful tool-default TMPDIR check. Not an elapsed-time deadline.',

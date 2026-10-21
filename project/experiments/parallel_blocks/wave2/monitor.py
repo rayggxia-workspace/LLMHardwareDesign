@@ -26,6 +26,7 @@ if record['completion_exists'] and record['completion_sha256']:
 print(record['scheduler']['stdout'])
 for name,item in record['tasks'].items():
     print(name,'exit=',str(item['exit_code']).strip(),'stages=',item.get('stages'),
+          'log=',item.get('latest_flow_log',{}).get('file'),
           'quality=',item.get('quality'),'validation=',item.get('validation',{}).get('passed'),
           'RAM cases=',item.get('ram_cases_finished'),'views=',item.get('views_finished'))
     if item['exit_code'] and item['exit_code'].strip()!='0':print(item['log_tail'])

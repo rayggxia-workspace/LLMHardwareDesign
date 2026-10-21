@@ -20,7 +20,7 @@ remote = "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/" + args
 
 
 def ssh(command):
-    return subprocess.check_output(["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=15", HOST, command], text=True).strip()
+    return subprocess.check_output(["ssh", "-n", "-o", "BatchMode=yes", "-o", "ConnectTimeout=15", HOST, command], text=True).strip()
 
 
 def task(name, kind, cores, case="opentpu-act", margin=0):
