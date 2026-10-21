@@ -1,0 +1,2191 @@
+{
+  "observed_utc": "2026-10-21T09:11:03.363907+00:00",
+  "submission": {
+    "attempt": "parallel-blocks-01",
+    "job_id": 89458,
+    "host": "yuzelu@10.129.166.172",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01",
+    "submitted_utc": "2026-10-21T09:01:52.546162+00:00",
+    "node_requested": "node7",
+    "cpu_allocation": "4 tasks x 16 CPUs = 64, one c64 node",
+    "time_limit_requested": "UNLIMITED",
+    "scheduler_readback": "JobId=89458 JobName=lyz-par4 UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586601 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T17:01:53 EligibleTime=2026-10-21T17:01:53 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T17:01:53 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:161736 ReqNodeList=node7 ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=64 NumTasks=4 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=64,mem=1M,node=1,billing=64 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/runner/batch.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/batch.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/batch.log Power= TresPerTask=cpu:16",
+    "branch": "task/7-parallel-blocks",
+    "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
+    "runner_commit": "2568623f91f871e139c4b7544d00d0181ce4cb01",
+    "cases": [
+      "llaccel-gemm",
+      "opentpu-act",
+      "opentpu-mxu",
+      "opentpu-act-mxu"
+    ],
+    "mainline_scope": "VECTOR, parent top/PDN and existing attempts untouched"
+  },
+  "scheduler": {
+    "exit_code": 0,
+    "stdout": "89458|lyz-par4|RUNNING|0:0|00:09:10|64|node7\n89458.batch|batch|RUNNING|0:0|00:09:10|64|node7\n89458.extern|extern|RUNNING|0:0|00:09:10|64|node7\n89458.0|lyz-opentpu-mxu|RUNNING|0:0|00:09:07|16|node7\n89458.1|lyz-opentpu-act|COMPLETED|0:0|00:05:59|16|node7\n89458.2|lyz-llaccel-gemm|RUNNING|0:0|00:09:07|16|node7\n89458.3|lyz-opentpu-act-mxu|RUNNING|0:0|00:09:07|16|node7",
+    "stderr": ""
+  },
+  "allocation": {
+    "exit_code": 0,
+    "stdout": "JobId=89458 JobName=lyz-par4 UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586601 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:09:10 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T17:01:53 EligibleTime=2026-10-21T17:01:53 AccrueTime=2026-10-21T17:01:53 StartTime=2026-10-21T17:01:53 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-21T17:01:53 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T17:01:53 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:161736 ReqNodeList=node7 ExcNodeList=(null) NodeList=node7 BatchHost=node7 NumNodes=1 NumCPUs=64 NumTasks=4 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=64,mem=1M,node=1,billing=64 AllocTRES=cpu=64,node=1,billing=64 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/runner/batch.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/batch.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/batch.log Power= TresPerTask=cpu:16",
+    "stderr": ""
+  },
+  "steps": {
+    "exit_code": 0,
+    "stdout": "StepId=89458.extern UserId=10011 StartTime=2026-10-21T17:01:53 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node7 Nodes=1 CPUs=0 Tasks=1 Name=extern Network=(null) TRES=(null) ResvPorts=(null) CPUFreqReq=Default SrunHost:Pid=(null):0\nStepId=89458.batch UserId=10011 StartTime=2026-10-21T17:01:53 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node7 Nodes=1 CPUs=0 Tasks=1 Name=batch Network=(null) TRES=(null) ResvPorts=(null) CPUFreqReq=Default SrunHost:Pid=(null):0\nStepId=89458.0 UserId=10011 StartTime=2026-10-21T17:01:56 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node7 Nodes=1 CPUs=16 Tasks=1 Name=lyz-opentpu-mxu Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node7:1480223 TresPerTask=cpu:16\nStepId=89458.2 UserId=10011 StartTime=2026-10-21T17:01:56 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node7 Nodes=1 CPUs=16 Tasks=1 Name=lyz-llaccel-gemm Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node7:1480221 TresPerTask=cpu:16\nStepId=89458.3 UserId=10011 StartTime=2026-10-21T17:01:56 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node7 Nodes=1 CPUs=16 Tasks=1 Name=lyz-opentpu-act-mxu Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node7:1480224 TresPerTask=cpu:16",
+    "stderr": ""
+  },
+  "cases": {
+    "llaccel-gemm": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/llaccel-gemm",
+      "step": "89458.2\n",
+      "started_utc": "2026-10-21T09:01:56Z\n",
+      "finished_utc": null,
+      "pipeline_exit_code": null,
+      "output_hash_index": {
+        "exists": false,
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/llaccel-gemm/output-files.sha256"
+      },
+      "step_log_tail": "    27500 |     -0.1% |     421 |      127 |    247901\n    55000 |     -0.2% |     574 |      174 |    220401\n    82500 |     -0.2% |     683 |      241 |    192901\n   110000 |     -0.2% |    1034 |      633 |    165401\n   137500 |     -0.2% |    1542 |     1204 |    137901\n   165000 |     -0.2% |    1723 |     1365 |    110401\n   192500 |     -0.3% |    2186 |     1815 |     82901\n   220000 |     -0.3% |    2567 |     2202 |     55401\n   247500 |     -0.3% |    3118 |     2912 |     27901\n   275000 |     -0.4% |    5062 |     5165 |       401\n    final |     -0.4% |    5062 |     5165 |         0\n-------------------------------------------------------",
+      "metrics": {
+        "1_synth.json": {
+          "synth__design__io": 3753,
+          "synth__design__nets": 292762,
+          "synth__design__die__area": 0,
+          "synth__design__core__area": 0,
+          "synth__design__instance__count": 221057,
+          "synth__design__instance__area": 467167,
+          "synth__design__instance__count__stdcell": 221057,
+          "synth__design__instance__area__stdcell": 467167,
+          "synth__design__instance__count__macros": 0,
+          "synth__design__instance__area__macros": 0,
+          "synth__design__instance__count__padcells": 0,
+          "synth__design__instance__area__padcells": 0,
+          "synth__design__instance__count__cover": 0,
+          "synth__design__instance__area__cover": 0,
+          "synth__design__rows": 0,
+          "synth__design__sites": 0,
+          "synth__flow__warnings__count": 1,
+          "synth__flow__errors__count": 0,
+          "synth__flow__warnings__count:STA-0441": 1,
+          "synth__flow__warnings__type_count": 1
+        },
+        "2_1_floorplan.json": {
+          "floorplan__design__instance__count__setup_buffer": 0,
+          "run__flow__platform__time_units": "1ns",
+          "run__flow__platform__capacitance_units": "1fF",
+          "run__flow__platform__resistance_units": "1kohm",
+          "run__flow__platform__voltage_units": "1v",
+          "run__flow__platform__current_units": "1mA",
+          "run__flow__platform__power_units": "1nW",
+          "run__flow__platform__distance_units": "1um",
+          "floorplan__timing__setup__tns": 0,
+          "floorplan__timing__hold__tns": 0,
+          "floorplan__timing__setup__ws": 0.99156,
+          "floorplan__timing__hold__ws": 0.0822057,
+          "floorplan__timing__fmax__clock:clk": 497899000.0,
+          "floorplan__timing__fmax": 497899000.0,
+          "floorplan__power__internal__total": 0.726508,
+          "floorplan__power__switching__total": 0.424954,
+          "floorplan__power__leakage__total": 0.00811314,
+          "floorplan__power__total": 1.15958,
+          "floorplan__design__io": 3753,
+          "floorplan__design__nets": 293068,
+          "floorplan__design__die__area": 1339390.0,
+          "floorplan__design__core__area": 1332420.0,
+          "floorplan__design__instance__count": 221363,
+          "floorplan__design__instance__area": 467330,
+          "floorplan__design__instance__count__stdcell": 221363,
+          "floorplan__design__instance__area__stdcell": 467330,
+          "floorplan__design__instance__count__macros": 0,
+          "floorplan__design__instance__area__macros": 0,
+          "floorplan__design__instance__count__padcells": 0,
+          "floorplan__design__instance__area__padcells": 0,
+          "floorplan__design__instance__count__cover": 0,
+          "floorplan__design__instance__area__cover": 0,
+          "floorplan__design__instance__utilization": 0.350738,
+          "floorplan__design__instance__utilization__stdcell": 0.350738,
+          "floorplan__design__rows": 824,
+          "floorplan__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 824,
+          "floorplan__design__sites": 5009096,
+          "floorplan__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 5009096,
+          "floorplan__flow__warnings__count": 2,
+          "floorplan__flow__errors__count": 0,
+          "floorplan__flow__warnings__count:EST-0027": 1,
+          "floorplan__flow__warnings__count:IFP-0028": 1,
+          "floorplan__flow__warnings__type_count": 2
+        },
+        "2_2_floorplan_macro.json": {
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "2_3_floorplan_tapcell.json": {
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "2_4_floorplan_pdn.json": {
+          "flow__warnings__count": 2,
+          "flow__errors__count": 0,
+          "flow__warnings__count:PDN-1051": 2,
+          "flow__warnings__type_count": 1
+        },
+        "3_1_place_gp_skip_io.json": {
+          "gpl__convergence__iteration": 536,
+          "gpl__area__final": 493418,
+          "gpl__area__final__percent": 0,
+          "route__wirelength__estimated": 4064230.0,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "3_2_place_iop.json": {
+          "floorplan__design__io": 3753,
+          "design__io__hpwl": 1686264966,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        }
+      },
+      "artifacts": [
+        {
+          "name": "1_1_yosys_canonicalize.rtlil",
+          "size": 3658545
+        },
+        {
+          "name": "1_2_yosys.sdc",
+          "size": 246
+        },
+        {
+          "name": "1_2_yosys.v",
+          "size": 48396014
+        },
+        {
+          "name": "1_synth.odb",
+          "size": 117820883
+        },
+        {
+          "name": "1_synth.sdc",
+          "size": 343838
+        },
+        {
+          "name": "2_1_floorplan.odb",
+          "size": 117987270
+        },
+        {
+          "name": "2_1_floorplan.sdc",
+          "size": 343838
+        },
+        {
+          "name": "2_2_floorplan_macro.odb",
+          "size": 117987270
+        },
+        {
+          "name": "2_2_floorplan_macro.tcl",
+          "size": 1
+        },
+        {
+          "name": "2_3_floorplan_tapcell.odb",
+          "size": 119285250
+        },
+        {
+          "name": "2_4_floorplan_pdn.odb",
+          "size": 121672115
+        },
+        {
+          "name": "2_floorplan.odb",
+          "size": 121672115
+        },
+        {
+          "name": "2_floorplan.sdc",
+          "size": 343838
+        },
+        {
+          "name": "3_1_place_gp_skip_io.odb",
+          "size": 121672177
+        },
+        {
+          "name": "3_2_place_iop.odb",
+          "size": 121922593
+        },
+        {
+          "name": "3_2_place_iop.tcl",
+          "size": 382800
+        },
+        {
+          "name": "mem.json",
+          "size": 5564303
+        }
+      ],
+      "route_drc_report": {
+        "exists": false,
+        "bytes": null
+      },
+      "stages": {
+        "synthesis": true,
+        "placement": false,
+        "cts": false,
+        "global_route": false,
+        "detailed_route": false,
+        "final_report": false
+      },
+      "acceptance": "Requires separate per-stage metric, signal/PG, timing, electrical and model review; no signoff inferred",
+      "quality_summary": {
+        "route_drc_errors": null,
+        "setup_ws_ns": null,
+        "setup_tns_ns": null,
+        "hold_ws_ns": null,
+        "hold_tns_ns": null,
+        "max_cap_violations": null,
+        "max_slew_violations": null,
+        "max_fanout_violations": null,
+        "die_area_um2": null,
+        "nonfiller_instance_area_um2": null,
+        "stdcell_area_um2": null,
+        "macro_area_um2": null,
+        "scope": "Tool single-corner budget checks, no complete boundary load/activity or signoff"
+      },
+      "final_log_markers": null,
+      "experiment.json": {
+        "case": "llaccel-gemm",
+        "top": "gemm_engine",
+        "parameters": {
+          "EPILOGUE_FUSION": 0,
+          "GEMM_TN": 16,
+          "GEMM_TK": 16,
+          "GEMM_TM": 16
+        },
+        "clock_ns": 3.0,
+        "io_delay_ns": 0.6,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Original llaccel fixed v1 EPILOGUE_FUSION=0, no SRAM bank storage; original RTL inferred memories.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "independent block implementation; not top integration, H2, source-to-netlist equivalence or signoff"
+      },
+      "elaboration-summary.json": {
+        "top": "gemm_engine",
+        "ports": {
+          "clk": {
+            "direction": "input",
+            "bits": 1
+          },
+          "rst_n": {
+            "direction": "input",
+            "bits": 1
+          },
+          "instr_valid": {
+            "direction": "input",
+            "bits": 1
+          },
+          "instr": {
+            "direction": "input",
+            "bits": 512
+          },
+          "instr_ready": {
+            "direction": "output",
+            "bits": 1
+          },
+          "busy": {
+            "direction": "output",
+            "bits": 1
+          },
+          "done_pulse": {
+            "direction": "output",
+            "bits": 1
+          },
+          "done_sig_sem": {
+            "direction": "output",
+            "bits": 8
+          },
+          "gemm_w_valid": {
+            "direction": "output",
+            "bits": 1
+          },
+          "gemm_w_req": {
+            "direction": "output",
+            "bits": 26
+          },
+          "gemm_w_grant": {
+            "direction": "input",
+            "bits": 1
+          },
+          "gemm_w_rvalid": {
+            "direction": "input",
+            "bits": 1
+          },
+          "gemm_w_rdata": {
+            "direction": "input",
+            "bits": 2048
+          },
+          "gemm_a_valid": {
+            "direction": "output",
+            "bits": 1
+          },
+          "gemm_a_req": {
+            "direction": "output",
+            "bits": 26
+          },
+          "gemm_a_grant": {
+            "direction": "input",
+            "bits": 1
+          },
+          "gemm_a_rvalid": {
+            "direction": "input",
+            "bits": 1
+          },
+          "gemm_a_rdata": {
+            "direction": "input",
+            "bits": 512
+          },
+          "gemm_wr_valid": {
+            "direction": "output",
+            "bits": 1
+          },
+          "gemm_wr_req": {
+            "direction": "output",
+            "bits": 26
+          },
+          "gemm_wr_wdata": {
+            "direction": "output",
+            "bits": 512
+          },
+          "gemm_wr_wstrb": {
+            "direction": "output",
+            "bits": 64
+          },
+          "gemm_wr_grant": {
+            "direction": "input",
+            "bits": 1
+          },
+          "perf_busy": {
+            "direction": "output",
+            "bits": 1
+          },
+          "perf_mac_cycle": {
+            "direction": "output",
+            "bits": 1
+          },
+          "perf_epilogue_cycle": {
+            "direction": "output",
+            "bits": 1
+          },
+          "perf_sram_stall": {
+            "direction": "output",
+            "bits": 2
+          }
+        },
+        "port_count": 27,
+        "signal_bits": 3753,
+        "blackbox_cells": {},
+        "check": "Yosys hierarchy -check and check -assert completed; not functional equivalence"
+      },
+      "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif\n",
+      "tools.sha256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53  /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad\nc2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b  /OpenROAD-flow-scripts/tools/install/yosys/bin/yosys\n",
+      "config-inputs.sha256": "5f390345d1956c502f13c8ed366d7b7f57288b0850f06b97fb93b06a158b0212  config.mk\na171fe89d20e213ab21fd1c47847ce5df285c1ff5139f97329b6120c12817022  boundary.sdc\nc8d7009c056aedb8bd73974897c3f3c0220a0a97e994eb6dbe21bbcfa5c31be0  elab.ys\ncbd2b4cfdad0fbfe2ec73b336279ae762cf9d1cb3f124c10025fcb3bc606719d  experiment.json\n"
+    },
+    "opentpu-act": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/opentpu-act",
+      "step": "89458.1\n",
+      "started_utc": "2026-10-21T09:01:56Z\n",
+      "finished_utc": "2026-10-21T09:07:55Z\n",
+      "pipeline_exit_code": "0\n",
+      "output_hash_index": {
+        "exists": true,
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/opentpu-act/output-files.sha256"
+      },
+      "step_log_tail": "3_5_place_dp           .odb          2        3     1.48      266 f54dd6ab22\n4_1_cts                .odb          1        4     2.33      279 4ee76915eb\n5_1_grt                .odb          7       40     5.32      380 8ff1d0eb6a\n5_1_grt                .sdc                                       ed90b4e013\n5_2_route              .odb        233      581     2.49      941 fb0525d5a3\n5_3_fillcell           .odb          0        0     0.98      146 60cbe198c4\n6_1_fill               .odb          0        0     0.97      118 60cbe198c4\n6_1_fill               .sdc                                       ed90b4e013\n6_1_merge                            2        3     0.95      442 N/A\n6_report                             5        7     1.29      281 N/A\nTotal                              338      772     2.22      941\nmake: Leaving directory '/OpenROAD-flow-scripts/flow'",
+      "metrics": {
+        "1_synth.json": {
+          "synth__design__io": 860,
+          "synth__design__nets": 4654,
+          "synth__design__die__area": 0,
+          "synth__design__core__area": 0,
+          "synth__design__instance__count": 3167,
+          "synth__design__instance__area": 34994.4,
+          "synth__design__instance__count__stdcell": 3161,
+          "synth__design__instance__area__stdcell": 5847.21,
+          "synth__design__instance__count__macros": 6,
+          "synth__design__instance__area__macros": 29147.2,
+          "synth__design__instance__count__padcells": 0,
+          "synth__design__instance__area__padcells": 0,
+          "synth__design__instance__count__cover": 0,
+          "synth__design__instance__area__cover": 0,
+          "synth__design__rows": 0,
+          "synth__design__sites": 0,
+          "synth__flow__warnings__count": 1,
+          "synth__flow__errors__count": 0,
+          "synth__flow__warnings__count:STA-0441": 1,
+          "synth__flow__warnings__type_count": 1
+        },
+        "2_1_floorplan.json": {
+          "floorplan__design__instance__count__setup_buffer": 0,
+          "run__flow__platform__time_units": "1ns",
+          "run__flow__platform__capacitance_units": "1fF",
+          "run__flow__platform__resistance_units": "1kohm",
+          "run__flow__platform__voltage_units": "1v",
+          "run__flow__platform__current_units": "1mA",
+          "run__flow__platform__power_units": "1nW",
+          "run__flow__platform__distance_units": "1um",
+          "floorplan__timing__setup__tns": 0,
+          "floorplan__timing__hold__tns": 0,
+          "floorplan__timing__setup__ws": 1.40783,
+          "floorplan__timing__hold__ws": 0.0343654,
+          "floorplan__timing__fmax__clock:clk": 915606000.0,
+          "floorplan__timing__fmax": 915606000.0,
+          "floorplan__power__internal__total": 0.0159426,
+          "floorplan__power__switching__total": 0.000444136,
+          "floorplan__power__leakage__total": 0.000121695,
+          "floorplan__power__total": 0.0165084,
+          "floorplan__design__io": 860,
+          "floorplan__design__nets": 4781,
+          "floorplan__design__die__area": 106410,
+          "floorplan__design__core__area": 99530.6,
+          "floorplan__design__instance__count": 3294,
+          "floorplan__design__instance__area": 35062,
+          "floorplan__design__instance__count__stdcell": 3288,
+          "floorplan__design__instance__area__stdcell": 5914.78,
+          "floorplan__design__instance__count__macros": 6,
+          "floorplan__design__instance__area__macros": 29147.2,
+          "floorplan__design__instance__count__padcells": 0,
+          "floorplan__design__instance__area__padcells": 0,
+          "floorplan__design__instance__count__cover": 0,
+          "floorplan__design__instance__area__cover": 0,
+          "floorplan__design__instance__utilization": 0.352274,
+          "floorplan__design__instance__utilization__stdcell": 0.0840366,
+          "floorplan__design__rows": 225,
+          "floorplan__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 225,
+          "floorplan__design__sites": 374175,
+          "floorplan__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 374175,
+          "floorplan__flow__warnings__count": 2,
+          "floorplan__flow__errors__count": 0,
+          "floorplan__flow__warnings__count:EST-0027": 1,
+          "floorplan__flow__warnings__count:IFP-0028": 1,
+          "floorplan__flow__warnings__type_count": 2
+        },
+        "2_2_floorplan_macro.json": {
+          "macro_place__wirelength": 158682,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "2_3_floorplan_tapcell.json": {
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "2_4_floorplan_pdn.json": {
+          "flow__warnings__count": 1,
+          "flow__errors__count": 0,
+          "flow__warnings__count:PDN-1051": 1,
+          "flow__warnings__type_count": 1
+        },
+        "3_1_place_gp_skip_io.json": {
+          "gpl__convergence__iteration": 369,
+          "gpl__area__final": 6508.21,
+          "gpl__area__final__percent": 0,
+          "route__wirelength__estimated": 118696,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "3_2_place_iop.json": {
+          "floorplan__design__io": 860,
+          "design__io__hpwl": 82220547,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "3_3_place_gp.json": {
+          "globalplace__gpl__convergence__iteration": 1326,
+          "globalplace__gpl__routability__iteration": 966,
+          "globalplace__gpl__routability__congestion": 1.75263,
+          "globalplace__gpl__area__original": 6882.18,
+          "globalplace__gpl__area__routability_inflation": 474.283,
+          "globalplace__gpl__area__routability_inflation__percent": 6.89146,
+          "globalplace__gpl__area__timing_delta": 52.8371,
+          "globalplace__gpl__area__timing_delta__percent": 0.767737,
+          "globalplace__gpl__area__final": 7409.3,
+          "globalplace__gpl__area__final__percent": 7.65919,
+          "globalplace__route__wirelength__estimated": 202689,
+          "globalplace__timing__setup__tns": 0,
+          "globalplace__timing__hold__tns": 0,
+          "globalplace__timing__setup__ws": 1.25591,
+          "globalplace__timing__hold__ws": 0.0380359,
+          "globalplace__timing__fmax__clock:clk": 803800000.0,
+          "globalplace__timing__fmax": 803800000.0,
+          "globalplace__power__internal__total": 0.0159373,
+          "globalplace__power__switching__total": 0.000689131,
+          "globalplace__power__leakage__total": 0.000134784,
+          "globalplace__power__total": 0.0167612,
+          "globalplace__design__io": 862,
+          "globalplace__design__nets": 5336,
+          "globalplace__design__die__area": 106410,
+          "globalplace__design__core__area": 99530.6,
+          "globalplace__design__instance__count": 4432,
+          "globalplace__design__instance__area": 35652,
+          "globalplace__design__instance__count__stdcell": 4426,
+          "globalplace__design__instance__area__stdcell": 6504.76,
+          "globalplace__design__instance__count__macros": 6,
+          "globalplace__design__instance__area__macros": 29147.2,
+          "globalplace__design__instance__count__padcells": 0,
+          "globalplace__design__instance__area__padcells": 0,
+          "globalplace__design__instance__count__cover": 0,
+          "globalplace__design__instance__area__cover": 0,
+          "globalplace__design__instance__utilization": 0.358201,
+          "globalplace__design__instance__utilization__stdcell": 0.0924191,
+          "globalplace__design__rows": 225,
+          "globalplace__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 225,
+          "globalplace__design__sites": 228929,
+          "globalplace__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 228929,
+          "globalplace__flow__warnings__count": 0,
+          "globalplace__flow__errors__count": 0,
+          "globalplace__flow__warnings__type_count": 0
+        },
+        "3_4_place_resized.json": {
+          "placeopt__timing__drv__floating__nets": 0,
+          "placeopt__timing__drv__floating__pins": 0,
+          "placeopt__timing__setup__tns": 0,
+          "placeopt__timing__hold__tns": 0,
+          "placeopt__timing__setup__ws": 1.25591,
+          "placeopt__timing__hold__ws": 0.0380359,
+          "placeopt__timing__fmax__clock:clk": 803800000.0,
+          "placeopt__timing__fmax": 803800000.0,
+          "placeopt__timing__drv__max_slew_limit": 0.287203,
+          "placeopt__timing__drv__max_slew": 0,
+          "placeopt__timing__drv__max_cap_limit": 0.0315626,
+          "placeopt__timing__drv__max_cap": 0,
+          "placeopt__timing__drv__max_fanout_limit": 0,
+          "placeopt__timing__drv__max_fanout": 0,
+          "placeopt__timing__drv__setup_violation_count": 0,
+          "placeopt__timing__drv__hold_violation_count": 0,
+          "placeopt__power__internal__total": 0.015939,
+          "placeopt__power__switching__total": 0.000689601,
+          "placeopt__power__leakage__total": 0.000135276,
+          "placeopt__power__total": 0.0167639,
+          "placeopt__design__io": 862,
+          "placeopt__design__nets": 5347,
+          "placeopt__design__die__area": 106410,
+          "placeopt__design__core__area": 99530.6,
+          "placeopt__design__instance__count": 4443,
+          "placeopt__design__instance__area": 35665.3,
+          "placeopt__design__instance__count__stdcell": 4437,
+          "placeopt__design__instance__area__stdcell": 6518.06,
+          "placeopt__design__instance__count__macros": 6,
+          "placeopt__design__instance__area__macros": 29147.2,
+          "placeopt__design__instance__count__padcells": 0,
+          "placeopt__design__instance__area__padcells": 0,
+          "placeopt__design__instance__count__cover": 0,
+          "placeopt__design__instance__area__cover": 0,
+          "placeopt__design__instance__utilization": 0.358335,
+          "placeopt__design__instance__utilization__stdcell": 0.0926081,
+          "placeopt__design__rows": 225,
+          "placeopt__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 225,
+          "placeopt__design__sites": 228929,
+          "placeopt__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 228929,
+          "placeopt__flow__warnings__count": 0,
+          "placeopt__flow__errors__count": 0,
+          "placeopt__flow__warnings__type_count": 0
+        },
+        "3_5_place_dp.json": {
+          "detailedplace__utilization__before__dpl": 35.8335,
+          "detailedplace__dpl__legalizer__type": "negotiation",
+          "detailedplace__dpl__total__moves": 3845,
+          "detailedplace__dpl__negotiation__iterations__total": 3,
+          "detailedplace__dpl__negotiation__converge__phase": 1,
+          "detailedplace__dpl__negotiation__diamond__recovery__count": 0,
+          "detailedplace__dpl__instance__displacement__total": 21472.5,
+          "detailedplace__dpl__instance__displacement__mean": 4.839,
+          "detailedplace__dpl__instance__displacement__max": 133.726,
+          "detailedplace__dpl__route__wirelength__estimated": 237405,
+          "detailedplace__dpl__hpwl__delta": 34632.7,
+          "detailedplace__dpl__hpwl__delta__percent": 17,
+          "detailedplace__dpo__total__attempts": 231120,
+          "detailedplace__dpo__relocated__cells": 3053,
+          "detailedplace__dpo__instance__displacement__total": 9634.97,
+          "detailedplace__dpo__instance__displacement__mean": 3.1559,
+          "detailedplace__dpo__instance__displacement__max": 8.24,
+          "detailedplace__dpo__hpwl__delta": -6392.1,
+          "detailedplace__dpo__hpwl__delta__percent": -3,
+          "detailedplace__design__violations": 0,
+          "detailedplace__timing__setup__tns": 0,
+          "detailedplace__timing__hold__tns": 0,
+          "detailedplace__timing__setup__ws": 1.24774,
+          "detailedplace__timing__hold__ws": 0.0391675,
+          "detailedplace__timing__fmax__clock:clk": 798556000.0,
+          "detailedplace__timing__fmax": 798556000.0,
+          "detailedplace__timing__drv__max_slew_limit": 0.300403,
+          "detailedplace__timing__drv__max_slew": 0,
+          "detailedplace__timing__drv__max_cap_limit": 0.00936767,
+          "detailedplace__timing__drv__max_cap": 0,
+          "detailedplace__timing__drv__max_fanout_limit": 0,
+          "detailedplace__timing__drv__max_fanout": 0,
+          "detailedplace__timing__drv__setup_violation_count": 0,
+          "detailedplace__timing__drv__hold_violation_count": 0,
+          "detailedplace__power__internal__total": 0.0159388,
+          "detailedplace__power__switching__total": 0.000685455,
+          "detailedplace__power__leakage__total": 0.000135276,
+          "detailedplace__power__total": 0.0167596,
+          "detailedplace__design__io": 862,
+          "detailedplace__design__nets": 5347,
+          "detailedplace__design__die__area": 106410,
+          "detailedplace__design__core__area": 99530.6,
+          "detailedplace__design__instance__count": 4443,
+          "detailedplace__design__instance__area": 35665.3,
+          "detailedplace__design__instance__count__stdcell": 4437,
+          "detailedplace__design__instance__area__stdcell": 6518.06,
+          "detailedplace__design__instance__count__macros": 6,
+          "detailedplace__design__instance__area__macros": 29147.2,
+          "detailedplace__design__instance__count__padcells": 0,
+          "detailedplace__design__instance__area__padcells": 0,
+          "detailedplace__design__instance__count__cover": 0,
+          "detailedplace__design__instance__area__cover": 0,
+          "detailedplace__design__instance__utilization": 0.358335,
+          "detailedplace__design__instance__utilization__stdcell": 0.0926081,
+          "detailedplace__design__rows": 225,
+          "detailedplace__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 225,
+          "detailedplace__design__sites": 228929,
+          "detailedplace__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 228929,
+          "detailedplace__flow__warnings__count": 0,
+          "detailedplace__flow__errors__count": 0,
+          "detailedplace__flow__warnings__type_count": 0
+        },
+        "4_1_cts.json": {
+          "cts__utilization__before__dpl": 36.0361,
+          "cts__dpl__legalizer__type": "negotiation",
+          "cts__dpl__total__moves": 0,
+          "cts__dpl__negotiation__iterations__total": 0,
+          "cts__dpl__negotiation__converge__phase": 0,
+          "cts__dpl__negotiation__diamond__recovery__count": 0,
+          "cts__dpl__instance__displacement__total": 0,
+          "cts__dpl__instance__displacement__mean": 0,
+          "cts__dpl__instance__displacement__max": 0,
+          "cts__dpl__route__wirelength__estimated": 234779,
+          "cts__dpl__hpwl__delta": 0,
+          "cts__dpl__hpwl__delta__percent": 0,
+          "cts__design__instance__count__setup_buffer": 0,
+          "cts__design__instance__count__hold_buffer": 0,
+          "cts__design__violations": 0,
+          "cts__timing__setup__tns": 0,
+          "cts__timing__hold__tns": 0,
+          "cts__timing__setup__ws": 1.25338,
+          "cts__timing__hold__ws": 0.0300483,
+          "cts__timing__fmax__clock:clk": 802167000.0,
+          "cts__timing__fmax": 802167000.0,
+          "cts__clock__skew__setup": 0.0193307,
+          "cts__clock__skew__hold": 0.0193307,
+          "cts__timing__drv__max_slew_limit": 0.301114,
+          "cts__timing__drv__max_slew": 0,
+          "cts__timing__drv__max_cap_limit": 0.00803346,
+          "cts__timing__drv__max_cap": 0,
+          "cts__timing__drv__max_fanout_limit": 0,
+          "cts__timing__drv__max_fanout": 0,
+          "cts__timing__drv__setup_violation_count": 0,
+          "cts__timing__drv__hold_violation_count": 0,
+          "cts__power__internal__total": 0.0164766,
+          "cts__power__switching__total": 0.00140446,
+          "cts__power__leakage__total": 0.000140106,
+          "cts__power__total": 0.0180212,
+          "cts__design__io": 862,
+          "cts__design__nets": 5452,
+          "cts__design__die__area": 106410,
+          "cts__design__core__area": 99530.6,
+          "cts__design__instance__count": 4626,
+          "cts__design__instance__area": 35866.9,
+          "cts__design__instance__count__stdcell": 4620,
+          "cts__design__instance__area__stdcell": 6719.69,
+          "cts__design__instance__count__macros": 6,
+          "cts__design__instance__area__macros": 29147.2,
+          "cts__design__instance__count__padcells": 0,
+          "cts__design__instance__area__padcells": 0,
+          "cts__design__instance__count__cover": 0,
+          "cts__design__instance__area__cover": 0,
+          "cts__design__instance__utilization": 0.360361,
+          "cts__design__instance__utilization__stdcell": 0.0954728,
+          "cts__design__rows": 225,
+          "cts__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 225,
+          "cts__design__sites": 228929,
+          "cts__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 228929,
+          "cts__flow__warnings__count": 0,
+          "cts__flow__errors__count": 0,
+          "cts__flow__warnings__type_count": 0
+        },
+        "5_1_grt.json": {
+          "globalroute__route__net": 5450,
+          "globalroute__route__net__special": 2,
+          "globalroute__global_route__fastroute__run_s": 0,
+          "globalroute__global_route__fastroute__initial_rsmt_s": 8.915e-06,
+          "globalroute__global_route__fastroute__route_l_s": 2.061e-05,
+          "globalroute__global_route__fastroute__congestion_rsmt_s": 1.3794e-05,
+          "globalroute__global_route__fastroute__new_route_l_s": 8.704e-06,
+          "globalroute__global_route__fastroute__spiral_s": 1.0924e-05,
+          "globalroute__global_route__fastroute__route_z_s": 2.884e-06,
+          "globalroute__global_route__fastroute__monotonic_s": 0.00250125,
+          "globalroute__global_route__fastroute__overflow_iterations_s": 2.83e-07,
+          "globalroute__global_route__fastroute__finalization_s": 4.7852e-05,
+          "globalroute__global_route__fastroute__snapshot_batch_route_s": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_apply_s": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_sync_s": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_count": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_nets": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_wave_count": 0,
+          "globalroute__global_route__vias": 14,
+          "globalroute__global_route__wirelength": 311510,
+          "globalroute__utilization__before__dpl": 36.0393,
+          "globalroute__dpl__legalizer__type": "negotiation",
+          "globalroute__dpl__total__moves": 0,
+          "globalroute__dpl__negotiation__iterations__total": 0,
+          "globalroute__dpl__negotiation__converge__phase": 0,
+          "globalroute__dpl__negotiation__diamond__recovery__count": 0,
+          "globalroute__dpl__instance__displacement__total": 0,
+          "globalroute__dpl__instance__displacement__mean": 0,
+          "globalroute__dpl__instance__displacement__max": 0,
+          "globalroute__dpl__route__wirelength__estimated": 234791,
+          "globalroute__dpl__hpwl__delta": 0,
+          "globalroute__dpl__hpwl__delta__percent": 0,
+          "globalroute__design__instance__count__setup_buffer": 0,
+          "globalroute__design__instance__count__hold_buffer": 0,
+          "globalroute__design__violations": 0,
+          "globalroute__antenna_diodes_count": 0,
+          "globalroute__antenna__violating__nets": 0,
+          "globalroute__antenna__violating__pins": 0,
+          "globalroute__timing__setup__tns": 0,
+          "globalroute__timing__hold__tns": 0,
+          "globalroute__timing__setup__ws": 1.2372,
+          "globalroute__timing__hold__ws": 0.0320698,
+          "globalroute__timing__fmax__clock:clk": 791890000.0,
+          "globalroute__timing__fmax": 791890000.0,
+          "globalroute__clock__skew__setup": 0.016209,
+          "globalroute__clock__skew__hold": 0.016209,
+          "globalroute__timing__drv__max_slew_limit": 0.293084,
+          "globalroute__timing__drv__max_slew": 0,
+          "globalroute__timing__drv__max_cap_limit": -0.0117753,
+          "globalroute__timing__drv__max_cap": 0,
+          "globalroute__timing__drv__max_fanout_limit": 0,
+          "globalroute__timing__drv__max_fanout": 0,
+          "globalroute__timing__drv__setup_violation_count": 0,
+          "globalroute__timing__drv__hold_violation_count": 0,
+          "globalroute__power__internal__total": 0.0164786,
+          "globalroute__power__switching__total": 0.00144832,
+          "globalroute__power__leakage__total": 0.000140292,
+          "globalroute__power__total": 0.0180672,
+          "globalroute__design__io": 862,
+          "globalroute__design__nets": 5453,
+          "globalroute__design__die__area": 106410,
+          "globalroute__design__core__area": 99530.6,
+          "globalroute__design__instance__count": 4627,
+          "globalroute__design__instance__area": 35870.1,
+          "globalroute__design__instance__count__stdcell": 4621,
+          "globalroute__design__instance__area__stdcell": 6722.88,
+          "globalroute__design__instance__count__macros": 6,
+          "globalroute__design__instance__area__macros": 29147.2,
+          "globalroute__design__instance__count__padcells": 0,
+          "globalroute__design__instance__area__padcells": 0,
+          "globalroute__design__instance__count__cover": 0,
+          "globalroute__design__instance__area__cover": 0,
+          "globalroute__design__instance__utilization": 0.360393,
+          "globalroute__design__instance__utilization__stdcell": 0.0955181,
+          "globalroute__design__rows": 225,
+          "globalroute__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 225,
+          "globalroute__design__sites": 228929,
+          "globalroute__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 228929,
+          "globalroute__flow__warnings__count": 701,
+          "globalroute__flow__errors__count": 0,
+          "globalroute__flow__warnings__count:GRT-0246": 1,
+          "globalroute__flow__warnings__count:RSZ-0104": 700,
+          "globalroute__flow__warnings__type_count": 2
+        },
+        "5_2_route.json": {
+          "detailedroute__route__net": 5451,
+          "detailedroute__route__net__special": 2,
+          "detailedroute__route__drc_errors__iter:0": 2924,
+          "detailedroute__route__wirelength__iter:0": 273065,
+          "detailedroute__route__drc_errors__iter:1": 848,
+          "detailedroute__route__wirelength__iter:1": 272139,
+          "detailedroute__route__drc_errors__iter:2": 679,
+          "detailedroute__route__wirelength__iter:2": 271899,
+          "detailedroute__route__drc_errors__iter:3": 275,
+          "detailedroute__route__wirelength__iter:3": 272007,
+          "detailedroute__route__drc_errors__iter:4": 250,
+          "detailedroute__route__wirelength__iter:4": 272069,
+          "detailedroute__route__drc_errors__iter:5": 209,
+          "detailedroute__route__wirelength__iter:5": 272136,
+          "detailedroute__route__drc_errors__iter:6": 189,
+          "detailedroute__route__wirelength__iter:6": 272207,
+          "detailedroute__route__drc_errors__iter:7": 173,
+          "detailedroute__route__wirelength__iter:7": 272206,
+          "detailedroute__route__drc_errors__iter:8": 165,
+          "detailedroute__route__wirelength__iter:8": 272201,
+          "detailedroute__route__drc_errors__iter:9": 143,
+          "detailedroute__route__wirelength__iter:9": 272258,
+          "detailedroute__route__drc_errors__iter:10": 75,
+          "detailedroute__route__wirelength__iter:10": 272259,
+          "detailedroute__route__drc_errors__iter:11": 19,
+          "detailedroute__route__wirelength__iter:11": 272265,
+          "detailedroute__route__drc_errors__iter:12": 5,
+          "detailedroute__route__wirelength__iter:12": 272265,
+          "detailedroute__route__drc_errors__iter:13": 5,
+          "detailedroute__route__wirelength__iter:13": 272265,
+          "detailedroute__route__drc_errors__iter:14": 0,
+          "detailedroute__route__wirelength__iter:14": 272294,
+          "detailedroute__route__drc_errors": 0,
+          "detailedroute__route__wirelength": 272294,
+          "detailedroute__route__vias": 37191,
+          "detailedroute__route__vias__singlecut": 37191,
+          "detailedroute__route__vias__multicut": 0,
+          "detailedroute__antenna_diodes_count": 0,
+          "detailedroute__antenna__violating__nets": 0,
+          "detailedroute__antenna__violating__pins": 0,
+          "detailedroute__flow__warnings__count": 1,
+          "detailedroute__flow__errors__count": 0,
+          "detailedroute__flow__warnings__count:GRT-0246": 1,
+          "detailedroute__flow__warnings__type_count": 1
+        },
+        "5_3_fillcell.json": {
+          "design__violations": 0,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "6_1_fill.json": {
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "6_report.json": {
+          "finish__design_powergrid__voltage__worst__net:VDD__corner:default": 1.09778,
+          "finish__design_powergrid__voltage__average__net:VDD__corner:default": 1.09942,
+          "finish__design_powergrid__drop__average__net:VDD__corner:default": 0.000575415,
+          "finish__design_powergrid__drop__worst__net:VDD__corner:default": 0.00221873,
+          "finish__design_powergrid__voltage__worst__net:VSS__corner:default": 0.00180497,
+          "finish__design_powergrid__voltage__average__net:VSS__corner:default": 0.000567135,
+          "finish__design_powergrid__drop__average__net:VSS__corner:default": 0.000567135,
+          "finish__design_powergrid__drop__worst__net:VSS__corner:default": 0.00180497,
+          "finish__design__instance__count__class:macro": 6,
+          "finish__design__instance__area__class:macro": 29147.2,
+          "finish__design__instance__count__class:fill_cell": 11355,
+          "finish__design__instance__area__class:fill_cell": 54172.2,
+          "finish__design__instance__count__class:tap_cell": 585,
+          "finish__design__instance__area__class:tap_cell": 155.61,
+          "finish__design__instance__count__class:clock_buffer": 140,
+          "finish__design__instance__area__class:clock_buffer": 167.048,
+          "finish__design__instance__count__class:timing_repair_buffer": 810,
+          "finish__design__instance__area__class:timing_repair_buffer": 653.03,
+          "finish__design__instance__count__class:inverter": 73,
+          "finish__design__instance__area__class:inverter": 39.368,
+          "finish__design__instance__count__class:clock_inverter": 43,
+          "finish__design__instance__area__class:clock_inverter": 34.58,
+          "finish__design__instance__count__class:sequential_cell": 606,
+          "finish__design__instance__area__class:sequential_cell": 2758.42,
+          "finish__design__instance__count__class:multi_input_combinational_cell": 2364,
+          "finish__design__instance__area__class:multi_input_combinational_cell": 2914.83,
+          "finish__design__instance__count": 15982,
+          "finish__design__instance__area": 35870.1,
+          "finish__timing__setup__tns": 0,
+          "finish__timing__hold__tns": 0,
+          "finish__timing__setup__ws": 1.22599,
+          "finish__timing__hold__ws": 0.0322719,
+          "finish__timing__fmax__clock:clk": 784923000.0,
+          "finish__timing__fmax": 784923000.0,
+          "finish__clock__skew__setup": 0.0178534,
+          "finish__clock__skew__hold": 0.0178534,
+          "finish__timing__drv__max_slew_limit": 0.254416,
+          "finish__timing__drv__max_slew": 0,
+          "finish__timing__drv__max_cap_limit": -0.0438616,
+          "finish__timing__drv__max_cap": 2,
+          "finish__timing__drv__max_fanout_limit": 0,
+          "finish__timing__drv__max_fanout": 0,
+          "finish__timing__drv__setup_violation_count": 0,
+          "finish__timing__drv__hold_violation_count": 0,
+          "finish__power__internal__total": 0.0164753,
+          "finish__power__switching__total": 0.00142181,
+          "finish__power__leakage__total": 0.000140292,
+          "finish__power__total": 0.0180374,
+          "finish__design__io": 862,
+          "finish__design__nets": 5453,
+          "finish__design__die__area": 106410,
+          "finish__design__core__area": 99530.6,
+          "finish__design__instance__count__stdcell": 4621,
+          "finish__design__instance__area__stdcell": 6722.88,
+          "finish__design__instance__count__macros": 6,
+          "finish__design__instance__area__macros": 29147.2,
+          "finish__design__instance__count__padcells": 0,
+          "finish__design__instance__area__padcells": 0,
+          "finish__design__instance__count__cover": 0,
+          "finish__design__instance__area__cover": 0,
+          "finish__design__instance__utilization": 0.360393,
+          "finish__design__instance__utilization__stdcell": 0.0955181,
+          "finish__design__rows": 225,
+          "finish__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 225,
+          "finish__design__sites": 228929,
+          "finish__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 228929,
+          "finish__flow__warnings__count": 0,
+          "finish__flow__errors__count": 0,
+          "finish__flow__warnings__type_count": 0
+        }
+      },
+      "artifacts": [
+        {
+          "name": "1_1_yosys_canonicalize.rtlil",
+          "size": 707849
+        },
+        {
+          "name": "1_2_yosys.sdc",
+          "size": 248
+        },
+        {
+          "name": "1_2_yosys.v",
+          "size": 701218
+        },
+        {
+          "name": "1_synth.odb",
+          "size": 2425536
+        },
+        {
+          "name": "1_synth.sdc",
+          "size": 74762
+        },
+        {
+          "name": "2_1_floorplan.odb",
+          "size": 2498045
+        },
+        {
+          "name": "2_1_floorplan.sdc",
+          "size": 74762
+        },
+        {
+          "name": "2_2_floorplan_macro.odb",
+          "size": 2499413
+        },
+        {
+          "name": "2_2_floorplan_macro.tcl",
+          "size": 842
+        },
+        {
+          "name": "2_3_floorplan_tapcell.odb",
+          "size": 2635977
+        },
+        {
+          "name": "2_4_floorplan_pdn.odb",
+          "size": 2859908
+        },
+        {
+          "name": "2_floorplan.odb",
+          "size": 2859908
+        },
+        {
+          "name": "2_floorplan.sdc",
+          "size": 74762
+        },
+        {
+          "name": "3_1_place_gp_skip_io.odb",
+          "size": 2859970
+        },
+        {
+          "name": "3_2_place_iop.odb",
+          "size": 2917378
+        },
+        {
+          "name": "3_2_place_iop.tcl",
+          "size": 82052
+        },
+        {
+          "name": "3_3_place_gp.odb",
+          "size": 3147388
+        },
+        {
+          "name": "3_4_place_resized.odb",
+          "size": 3151243
+        },
+        {
+          "name": "3_5_place_dp.odb",
+          "size": 3151243
+        },
+        {
+          "name": "3_place.odb",
+          "size": 3151243
+        },
+        {
+          "name": "3_place.sdc",
+          "size": 74762
+        },
+        {
+          "name": "4_1_cts.odb",
+          "size": 3224316
+        },
+        {
+          "name": "4_cts.odb",
+          "size": 3224316
+        },
+        {
+          "name": "4_cts.sdc",
+          "size": 74802
+        },
+        {
+          "name": "5_1_grt.odb",
+          "size": 6428970
+        },
+        {
+          "name": "5_1_grt.sdc",
+          "size": 74802
+        },
+        {
+          "name": "5_2_route.odb",
+          "size": 8455355
+        },
+        {
+          "name": "5_3_fillcell.odb",
+          "size": 11087956
+        },
+        {
+          "name": "5_route.odb",
+          "size": 11087956
+        },
+        {
+          "name": "5_route.sdc",
+          "size": 74802
+        },
+        {
+          "name": "6_1_fill.odb",
+          "size": 11087956
+        },
+        {
+          "name": "6_1_fill.sdc",
+          "size": 74802
+        },
+        {
+          "name": "6_1_merged.gds",
+          "size": 6031620
+        },
+        {
+          "name": "6_final.def",
+          "size": 5813066
+        },
+        {
+          "name": "6_final.gds",
+          "size": 6031620
+        },
+        {
+          "name": "6_final.odb",
+          "size": 11087956
+        },
+        {
+          "name": "6_final.sdc",
+          "size": 74802
+        },
+        {
+          "name": "6_final.spef",
+          "size": 6397412
+        },
+        {
+          "name": "6_final.v",
+          "size": 540266
+        },
+        {
+          "name": "mem.json",
+          "size": 692774
+        },
+        {
+          "name": "route.guide",
+          "size": 1639342
+        },
+        {
+          "name": "updated_clks.sdc",
+          "size": 74762
+        }
+      ],
+      "route_drc_report": {
+        "exists": true,
+        "bytes": 0
+      },
+      "stages": {
+        "synthesis": true,
+        "placement": true,
+        "cts": true,
+        "global_route": true,
+        "detailed_route": true,
+        "final_report": true
+      },
+      "acceptance": "Requires separate per-stage metric, signal/PG, timing, electrical and model review; no signoff inferred",
+      "quality_summary": {
+        "route_drc_errors": 0,
+        "setup_ws_ns": 1.22599,
+        "setup_tns_ns": 0,
+        "hold_ws_ns": 0.0322719,
+        "hold_tns_ns": 0,
+        "max_cap_violations": 2,
+        "max_slew_violations": 0,
+        "max_fanout_violations": 0,
+        "die_area_um2": 106410,
+        "nonfiller_instance_area_um2": 35870.1,
+        "stdcell_area_um2": 6722.88,
+        "macro_area_um2": 29147.2,
+        "scope": "Tool single-corner budget checks, no complete boundary load/activity or signoff"
+      },
+      "final_log_markers": [
+        "[INFO PSM-0040] All shapes on net VDD are connected.",
+        "Average IR drop  : 5.75e-04 V",
+        "Worstcase IR drop: 2.22e-03 V",
+        "[INFO PSM-0040] All shapes on net VSS are connected.",
+        "Average IR drop  : 5.67e-04 V",
+        "Worstcase IR drop: 1.80e-03 V"
+      ],
+      "experiment.json": {
+        "case": "opentpu-act",
+        "top": "otpu_asic_top",
+        "parameters": {
+          "D": 32,
+          "MCOLS": 2,
+          "ROWS": 2,
+          "BLOCKS": 32,
+          "LANES": 4,
+          "DEPTH": 64,
+          "IMPL": 2,
+          "CL": 16,
+          "E": 0,
+          "SID": 0
+        },
+        "clock_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Upstream openTPU synthetic fakeram LEF/Liberty models, not fabricated SRAM or SRAM GDS. Same unmodified generator and small configuration for split/merged cases; no full system claim.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "independent block implementation; not top integration, H2, source-to-netlist equivalence or signoff"
+      },
+      "elaboration-summary.json": {
+        "top": "otpu_asic_top",
+        "ports": {
+          "clk": {
+            "direction": "input",
+            "bits": 1
+          },
+          "we": {
+            "direction": "input",
+            "bits": 4
+          },
+          "w_row": {
+            "direction": "input",
+            "bits": 8
+          },
+          "w_idx": {
+            "direction": "input",
+            "bits": 32
+          },
+          "w_data": {
+            "direction": "input",
+            "bits": 32
+          },
+          "w_dup": {
+            "direction": "input",
+            "bits": 1
+          },
+          "w_off": {
+            "direction": "input",
+            "bits": 8
+          },
+          "swe": {
+            "direction": "input",
+            "bits": 1
+          },
+          "s_row": {
+            "direction": "input",
+            "bits": 8
+          },
+          "s_blk": {
+            "direction": "input",
+            "bits": 16
+          },
+          "s_data": {
+            "direction": "input",
+            "bits": 64
+          },
+          "ren": {
+            "direction": "input",
+            "bits": 2
+          },
+          "r_use": {
+            "direction": "input",
+            "bits": 1
+          },
+          "r_blk": {
+            "direction": "input",
+            "bits": 16
+          },
+          "r_blk2": {
+            "direction": "input",
+            "bits": 16
+          },
+          "r_hi": {
+            "direction": "input",
+            "bits": 2
+          },
+          "r_grp": {
+            "direction": "input",
+            "bits": 8
+          },
+          "r_data": {
+            "direction": "output",
+            "bits": 512
+          },
+          "r_scale": {
+            "direction": "output",
+            "bits": 128
+          }
+        },
+        "port_count": 19,
+        "signal_bits": 860,
+        "blackbox_cells": {
+          "fakeram45_1r1w_32x128": 4,
+          "fakeram45_1r1w_32x64": 2
+        },
+        "check": "Yosys hierarchy -check and check -assert completed; not functional equivalence"
+      },
+      "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif\n",
+      "tools.sha256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53  /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad\nc2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b  /OpenROAD-flow-scripts/tools/install/yosys/bin/yosys\n",
+      "config-inputs.sha256": "e279b1d89d9de75e88ce340e45cf866b2375642b0fa0de407f3b90a436de51f4  config.mk\n93e575af458e283bd067de99437465e3986326e9de292deb25ebd5c1b75d5e8b  boundary.sdc\nce8c61f9945e2772ad2e708d4bf3a530071fc278541f419a0ee6002bb47331c0  elab.ys\n0e3c75564f217b505b544b9dacb80720c86bda1eb5500ff7c3822eb1ff1cfbcd  experiment.json\n0ab4b283301ea22529b254d2cf3f842cbe7169ac25e98127b38128b38699d267  boundary.sv\n"
+    },
+    "opentpu-mxu": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/opentpu-mxu",
+      "step": "89458.0\n",
+      "started_utc": "2026-10-21T09:01:56Z\n",
+      "finished_utc": null,
+      "pipeline_exit_code": null,
+      "output_hash_index": {
+        "exists": false,
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/opentpu-mxu/output-files.sha256"
+      },
+      "step_log_tail": "[INFO DPL-0306] Pass   2 of global swaps; hpwl is 4.334088e+09.\n[INFO DPL-0307] End of global swaps; objective is 4.334088e+09, improvement is 2.19 percent.\n[INFO DPL-0303] Running algorithm for vertical swaps.\n[INFO DPL-0308] Pass   1 of vertical swaps; hpwl is 4.318517e+09.\n[INFO DPL-0309] End of vertical swaps; objective is 4.318517e+09, improvement is 0.36 percent.\n[INFO DPL-0303] Running algorithm for reordering.\n[INFO DPL-0304] Pass   1 of reordering; objective is 4.311526e+09.\n[INFO DPL-0305] End of reordering; objective is 4.311526e+09, improvement is 0.16 percent.\n[INFO DPL-0303] Running algorithm for random improvement.\n[INFO DPL-0324] Random improver is using random generator.\n[INFO DPL-0325] Random improver is using hpwl objective.\n[INFO DPL-0326] Random improver cost string is (a).",
+      "metrics": {
+        "1_synth.json": {
+          "synth__design__io": 2172,
+          "synth__design__nets": 222659,
+          "synth__design__die__area": 0,
+          "synth__design__core__area": 0,
+          "synth__design__instance__count": 165942,
+          "synth__design__instance__area": 416183,
+          "synth__design__instance__count__stdcell": 165936,
+          "synth__design__instance__area__stdcell": 382635,
+          "synth__design__instance__count__macros": 6,
+          "synth__design__instance__area__macros": 33548.2,
+          "synth__design__instance__count__padcells": 0,
+          "synth__design__instance__area__padcells": 0,
+          "synth__design__instance__count__cover": 0,
+          "synth__design__instance__area__cover": 0,
+          "synth__design__rows": 0,
+          "synth__design__sites": 0,
+          "synth__flow__warnings__count": 1,
+          "synth__flow__errors__count": 0,
+          "synth__flow__warnings__count:STA-0441": 1,
+          "synth__flow__warnings__type_count": 1
+        },
+        "2_1_floorplan.json": {
+          "floorplan__design__instance__count__setup_buffer": 0,
+          "run__flow__platform__time_units": "1ns",
+          "run__flow__platform__capacitance_units": "1fF",
+          "run__flow__platform__resistance_units": "1kohm",
+          "run__flow__platform__voltage_units": "1v",
+          "run__flow__platform__current_units": "1mA",
+          "run__flow__platform__power_units": "1nW",
+          "run__flow__platform__distance_units": "1um",
+          "floorplan__timing__setup__tns": 0,
+          "floorplan__timing__hold__tns": 0,
+          "floorplan__timing__setup__ws": 0.504955,
+          "floorplan__timing__hold__ws": 0.0375348,
+          "floorplan__timing__fmax__clock:clk": 501242000.0,
+          "floorplan__timing__fmax": 501242000.0,
+          "floorplan__power__internal__total": 0.154772,
+          "floorplan__power__switching__total": 0.0281694,
+          "floorplan__power__leakage__total": 0.00659771,
+          "floorplan__power__total": 0.189539,
+          "floorplan__design__io": 2172,
+          "floorplan__design__nets": 223149,
+          "floorplan__design__die__area": 1211000.0,
+          "floorplan__design__core__area": 1187470.0,
+          "floorplan__design__instance__count": 166432,
+          "floorplan__design__instance__area": 416443,
+          "floorplan__design__instance__count__stdcell": 166426,
+          "floorplan__design__instance__area__stdcell": 382895,
+          "floorplan__design__instance__count__macros": 6,
+          "floorplan__design__instance__area__macros": 33548.2,
+          "floorplan__design__instance__count__padcells": 0,
+          "floorplan__design__instance__area__padcells": 0,
+          "floorplan__design__instance__count__cover": 0,
+          "floorplan__design__instance__area__cover": 0,
+          "floorplan__design__instance__utilization": 0.350699,
+          "floorplan__design__instance__utilization__stdcell": 0.331822,
+          "floorplan__design__rows": 778,
+          "floorplan__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 778,
+          "floorplan__design__sites": 4464164,
+          "floorplan__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4464164,
+          "floorplan__flow__warnings__count": 2,
+          "floorplan__flow__errors__count": 0,
+          "floorplan__flow__warnings__count:EST-0027": 1,
+          "floorplan__flow__warnings__count:IFP-0028": 1,
+          "floorplan__flow__warnings__type_count": 2
+        },
+        "2_2_floorplan_macro.json": {
+          "macro_place__wirelength": 1258330.0,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "2_3_floorplan_tapcell.json": {
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "2_4_floorplan_pdn.json": {
+          "flow__warnings__count": 1,
+          "flow__errors__count": 0,
+          "flow__warnings__count:PDN-1051": 1,
+          "flow__warnings__type_count": 1
+        },
+        "3_1_place_gp_skip_io.json": {
+          "gpl__convergence__iteration": 492,
+          "gpl__area__final": 409173,
+          "gpl__area__final__percent": 0,
+          "route__wirelength__estimated": 2521270.0,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "3_2_place_iop.json": {
+          "floorplan__design__io": 2172,
+          "design__io__hpwl": 825913980,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "3_3_place_gp.json": {
+          "globalplace__gpl__convergence__iteration": 1029,
+          "globalplace__gpl__routability__iteration": 664,
+          "globalplace__gpl__routability__congestion": 0.760782,
+          "globalplace__gpl__area__original": 401447,
+          "globalplace__gpl__area__routability_inflation": 7868.88,
+          "globalplace__gpl__area__routability_inflation__percent": 1.96013,
+          "globalplace__gpl__area__timing_delta": 3983.74,
+          "globalplace__gpl__area__timing_delta__percent": 0.992345,
+          "globalplace__gpl__area__final": 413300,
+          "globalplace__gpl__area__final__percent": 2.95248,
+          "globalplace__route__wirelength__estimated": 2166560.0,
+          "globalplace__timing__setup__tns": 0,
+          "globalplace__timing__hold__tns": 0,
+          "globalplace__timing__setup__ws": 0.305189,
+          "globalplace__timing__hold__ws": 0.0380474,
+          "globalplace__timing__fmax__clock:clk": 455620000.0,
+          "globalplace__timing__fmax": 455620000.0,
+          "globalplace__power__internal__total": 0.153359,
+          "globalplace__power__switching__total": 0.0436348,
+          "globalplace__power__leakage__total": 0.00652211,
+          "globalplace__power__total": 0.203516,
+          "globalplace__design__io": 2174,
+          "globalplace__design__nets": 214682,
+          "globalplace__design__die__area": 1211000.0,
+          "globalplace__design__core__area": 1187470.0,
+          "globalplace__design__instance__count": 162866,
+          "globalplace__design__instance__area": 412290,
+          "globalplace__design__instance__count__stdcell": 162860,
+          "globalplace__design__instance__area__stdcell": 378742,
+          "globalplace__design__instance__count__macros": 6,
+          "globalplace__design__instance__area__macros": 33548.2,
+          "globalplace__design__instance__count__padcells": 0,
+          "globalplace__design__instance__area__padcells": 0,
+          "globalplace__design__instance__count__cover": 0,
+          "globalplace__design__instance__area__cover": 0,
+          "globalplace__design__instance__utilization": 0.347201,
+          "globalplace__design__instance__utilization__stdcell": 0.328222,
+          "globalplace__design__rows": 778,
+          "globalplace__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 778,
+          "globalplace__design__sites": 4306026,
+          "globalplace__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4306026,
+          "globalplace__flow__warnings__count": 1,
+          "globalplace__flow__errors__count": 0,
+          "globalplace__flow__warnings__count:GRT-0281": 1,
+          "globalplace__flow__warnings__type_count": 1
+        },
+        "3_4_place_resized.json": {
+          "placeopt__timing__drv__floating__nets": 0,
+          "placeopt__timing__drv__floating__pins": 0,
+          "placeopt__timing__setup__tns": 0,
+          "placeopt__timing__hold__tns": 0,
+          "placeopt__timing__setup__ws": 0.305189,
+          "placeopt__timing__hold__ws": 0.0380474,
+          "placeopt__timing__fmax__clock:clk": 455620000.0,
+          "placeopt__timing__fmax": 455620000.0,
+          "placeopt__timing__drv__max_slew_limit": 0.320499,
+          "placeopt__timing__drv__max_slew": 0,
+          "placeopt__timing__drv__max_cap_limit": 8.51382e-05,
+          "placeopt__timing__drv__max_cap": 0,
+          "placeopt__timing__drv__max_fanout_limit": 0,
+          "placeopt__timing__drv__max_fanout": 0,
+          "placeopt__timing__drv__setup_violation_count": 0,
+          "placeopt__timing__drv__hold_violation_count": 0,
+          "placeopt__power__internal__total": 0.153488,
+          "placeopt__power__switching__total": 0.0436661,
+          "placeopt__power__leakage__total": 0.00653295,
+          "placeopt__power__total": 0.203687,
+          "placeopt__design__io": 2174,
+          "placeopt__design__nets": 214833,
+          "placeopt__design__die__area": 1211000.0,
+          "placeopt__design__core__area": 1187470.0,
+          "placeopt__design__instance__count": 163017,
+          "placeopt__design__instance__area": 412539,
+          "placeopt__design__instance__count__stdcell": 163011,
+          "placeopt__design__instance__area__stdcell": 378991,
+          "placeopt__design__instance__count__macros": 6,
+          "placeopt__design__instance__area__macros": 33548.2,
+          "placeopt__design__instance__count__padcells": 0,
+          "placeopt__design__instance__area__padcells": 0,
+          "placeopt__design__instance__count__cover": 0,
+          "placeopt__design__instance__area__cover": 0,
+          "placeopt__design__instance__utilization": 0.347411,
+          "placeopt__design__instance__utilization__stdcell": 0.328438,
+          "placeopt__design__rows": 778,
+          "placeopt__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 778,
+          "placeopt__design__sites": 4306026,
+          "placeopt__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4306026,
+          "placeopt__flow__warnings__count": 0,
+          "placeopt__flow__errors__count": 0,
+          "placeopt__flow__warnings__type_count": 0
+        }
+      },
+      "artifacts": [
+        {
+          "name": "1_1_yosys_canonicalize.rtlil",
+          "size": 5293000
+        },
+        {
+          "name": "1_2_yosys.sdc",
+          "size": 248
+        },
+        {
+          "name": "1_2_yosys.v",
+          "size": 35206106
+        },
+        {
+          "name": "1_synth.odb",
+          "size": 89999113
+        },
+        {
+          "name": "1_synth.sdc",
+          "size": 188417
+        },
+        {
+          "name": "2_1_floorplan.odb",
+          "size": 90237096
+        },
+        {
+          "name": "2_1_floorplan.sdc",
+          "size": 188417
+        },
+        {
+          "name": "2_2_floorplan_macro.odb",
+          "size": 90238464
+        },
+        {
+          "name": "2_2_floorplan_macro.tcl",
+          "size": 779
+        },
+        {
+          "name": "2_3_floorplan_tapcell.odb",
+          "size": 91430279
+        },
+        {
+          "name": "2_4_floorplan_pdn.odb",
+          "size": 93551458
+        },
+        {
+          "name": "2_floorplan.odb",
+          "size": 93551458
+        },
+        {
+          "name": "2_floorplan.sdc",
+          "size": 188417
+        },
+        {
+          "name": "3_1_place_gp_skip_io.odb",
+          "size": 93551520
+        },
+        {
+          "name": "3_2_place_iop.odb",
+          "size": 93692640
+        },
+        {
+          "name": "3_2_place_iop.tcl",
+          "size": 209257
+        },
+        {
+          "name": "3_3_place_gp.odb",
+          "size": 90802062
+        },
+        {
+          "name": "3_4_place_resized.odb",
+          "size": 90854121
+        },
+        {
+          "name": "mem.json",
+          "size": 5661243
+        }
+      ],
+      "route_drc_report": {
+        "exists": false,
+        "bytes": null
+      },
+      "stages": {
+        "synthesis": true,
+        "placement": false,
+        "cts": false,
+        "global_route": false,
+        "detailed_route": false,
+        "final_report": false
+      },
+      "acceptance": "Requires separate per-stage metric, signal/PG, timing, electrical and model review; no signoff inferred",
+      "quality_summary": {
+        "route_drc_errors": null,
+        "setup_ws_ns": null,
+        "setup_tns_ns": null,
+        "hold_ws_ns": null,
+        "hold_tns_ns": null,
+        "max_cap_violations": null,
+        "max_slew_violations": null,
+        "max_fanout_violations": null,
+        "die_area_um2": null,
+        "nonfiller_instance_area_um2": null,
+        "stdcell_area_um2": null,
+        "macro_area_um2": null,
+        "scope": "Tool single-corner budget checks, no complete boundary load/activity or signoff"
+      },
+      "final_log_markers": null,
+      "experiment.json": {
+        "case": "opentpu-mxu",
+        "top": "otpu_asic_top",
+        "parameters": {
+          "D": 32,
+          "MCOLS": 2,
+          "ROWS": 2,
+          "BLOCKS": 32,
+          "LANES": 4,
+          "DEPTH": 64,
+          "IMPL": 2,
+          "CL": 16,
+          "E": 0,
+          "SID": 0
+        },
+        "clock_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Upstream openTPU synthetic fakeram LEF/Liberty models, not fabricated SRAM or SRAM GDS. Same unmodified generator and small configuration for split/merged cases; no full system claim.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "independent block implementation; not top integration, H2, source-to-netlist equivalence or signoff"
+      },
+      "elaboration-summary.json": {
+        "top": "otpu_asic_top",
+        "ports": {
+          "clk": {
+            "direction": "input",
+            "bits": 1
+          },
+          "rst": {
+            "direction": "input",
+            "bits": 1
+          },
+          "start": {
+            "direction": "input",
+            "bits": 1
+          },
+          "go": {
+            "direction": "input",
+            "bits": 1
+          },
+          "cmd": {
+            "direction": "input",
+            "bits": 240
+          },
+          "rdy": {
+            "direction": "output",
+            "bits": 1
+          },
+          "done": {
+            "direction": "output",
+            "bits": 1
+          },
+          "computing": {
+            "direction": "output",
+            "bits": 1
+          },
+          "pf_level": {
+            "direction": "output",
+            "bits": 7
+          },
+          "pf_starve": {
+            "direction": "output",
+            "bits": 1
+          },
+          "pf_block": {
+            "direction": "output",
+            "bits": 1
+          },
+          "pf_u": {
+            "direction": "output",
+            "bits": 1
+          },
+          "pf_uv": {
+            "direction": "output",
+            "bits": 128
+          },
+          "a_req": {
+            "direction": "output",
+            "bits": 1
+          },
+          "a_addr": {
+            "direction": "output",
+            "bits": 32
+          },
+          "a_gnt": {
+            "direction": "input",
+            "bits": 1
+          },
+          "a_rvalid": {
+            "direction": "input",
+            "bits": 1
+          },
+          "a_rdata": {
+            "direction": "input",
+            "bits": 256
+          },
+          "b_req": {
+            "direction": "output",
+            "bits": 1
+          },
+          "b_addr": {
+            "direction": "output",
+            "bits": 32
+          },
+          "b_gnt": {
+            "direction": "input",
+            "bits": 1
+          },
+          "b_rvalid": {
+            "direction": "input",
+            "bits": 1
+          },
+          "b_rdata": {
+            "direction": "input",
+            "bits": 256
+          },
+          "t_ren": {
+            "direction": "output",
+            "bits": 4
+          },
+          "t_raddr": {
+            "direction": "output",
+            "bits": 128
+          },
+          "t_rdata": {
+            "direction": "input",
+            "bits": 128
+          },
+          "t_wen": {
+            "direction": "output",
+            "bits": 4
+          },
+          "t_waddr": {
+            "direction": "output",
+            "bits": 128
+          },
+          "t_wdata": {
+            "direction": "output",
+            "bits": 128
+          },
+          "t_gnt": {
+            "direction": "input",
+            "bits": 1
+          },
+          "act_blk": {
+            "direction": "output",
+            "bits": 16
+          },
+          "act_blk2": {
+            "direction": "output",
+            "bits": 16
+          },
+          "act_hi": {
+            "direction": "output",
+            "bits": 2
+          },
+          "act_grp": {
+            "direction": "output",
+            "bits": 8
+          },
+          "act_ren": {
+            "direction": "output",
+            "bits": 2
+          },
+          "act_data": {
+            "direction": "input",
+            "bits": 512
+          },
+          "act_scale": {
+            "direction": "input",
+            "bits": 128
+          }
+        },
+        "port_count": 37,
+        "signal_bits": 2172,
+        "blackbox_cells": {
+          "fakeram45_1r1w_64x72": 3,
+          "fakeram45_1r1w_64x40": 1,
+          "fakeram45_1r1w_64x96": 1,
+          "fakeram45_1r1w_64x64": 1
+        },
+        "check": "Yosys hierarchy -check and check -assert completed; not functional equivalence"
+      },
+      "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif\n",
+      "tools.sha256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53  /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad\nc2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b  /OpenROAD-flow-scripts/tools/install/yosys/bin/yosys\n",
+      "config-inputs.sha256": "178a36cec34619864d0662538f041ce561448232e72405700946752668a6c019  config.mk\n93e575af458e283bd067de99437465e3986326e9de292deb25ebd5c1b75d5e8b  boundary.sdc\nc5e82a687112db08b8e24d200534921f9dc26558450528303e189393fff0b156  elab.ys\nc5c0fdbbef3e738215b30cfccac9e54e04c13c84fa2871325a8fff3ff2a926e2  experiment.json\n19346b2636f1f62842bcc4beda078390493da685d8c509128f3c15f9762dad69  boundary.sv\n"
+    },
+    "opentpu-act-mxu": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/opentpu-act-mxu",
+      "step": "89458.3\n",
+      "started_utc": "2026-10-21T09:01:56Z\n",
+      "finished_utc": null,
+      "pipeline_exit_code": null,
+      "output_hash_index": {
+        "exists": false,
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/opentpu-act-mxu/output-files.sha256"
+      },
+      "step_log_tail": "[INFO RSZ-0034] Found 72 slew violations.\n[INFO RSZ-0036] Found 693 capacitance violations.\n[INFO RSZ-0037] Found 166 long wires.\n[INFO RSZ-0039] Resized 29 instances.\n[INFO RSZ-0038] Inserted 834 buffers in 842 nets.\n   Iter   |    Area   | Removed | Inserted |   Pins\n          |           | Buffers | Buffers  | Remaining\n-------------------------------------------------------\n        0 |     +0.0% |       0 |        0 |    212070\n    21200 |     -0.1% |     296 |      182 |    190870\n    42400 |     -0.1% |     469 |      329 |    169670\n    63600 |     -0.1% |     851 |      560 |    148470",
+      "metrics": {
+        "1_synth.json": {
+          "synth__design__io": 1662,
+          "synth__design__nets": 225811,
+          "synth__design__die__area": 0,
+          "synth__design__core__area": 0,
+          "synth__design__instance__count": 168309,
+          "synth__design__instance__area": 449792,
+          "synth__design__instance__count__stdcell": 168297,
+          "synth__design__instance__area__stdcell": 387096,
+          "synth__design__instance__count__macros": 12,
+          "synth__design__instance__area__macros": 62695.4,
+          "synth__design__instance__count__padcells": 0,
+          "synth__design__instance__area__padcells": 0,
+          "synth__design__instance__count__cover": 0,
+          "synth__design__instance__area__cover": 0,
+          "synth__design__rows": 0,
+          "synth__design__sites": 0,
+          "synth__flow__warnings__count": 1,
+          "synth__flow__errors__count": 0,
+          "synth__flow__warnings__count:STA-0441": 1,
+          "synth__flow__warnings__type_count": 1
+        },
+        "2_1_floorplan.json": {
+          "floorplan__design__instance__count__setup_buffer": 0,
+          "run__flow__platform__time_units": "1ns",
+          "run__flow__platform__capacitance_units": "1fF",
+          "run__flow__platform__resistance_units": "1kohm",
+          "run__flow__platform__voltage_units": "1v",
+          "run__flow__platform__current_units": "1mA",
+          "run__flow__platform__power_units": "1nW",
+          "run__flow__platform__distance_units": "1um",
+          "floorplan__timing__setup__tns": 0,
+          "floorplan__timing__hold__tns": 0,
+          "floorplan__timing__setup__ws": 0.219324,
+          "floorplan__timing__hold__ws": 0.0343654,
+          "floorplan__timing__fmax__clock:clk": 438467000.0,
+          "floorplan__timing__fmax": 438467000.0,
+          "floorplan__power__internal__total": 0.145955,
+          "floorplan__power__switching__total": 0.0144165,
+          "floorplan__power__leakage__total": 0.00662187,
+          "floorplan__power__total": 0.166993,
+          "floorplan__design__io": 1662,
+          "floorplan__design__nets": 226429,
+          "floorplan__design__die__area": 1307890.0,
+          "floorplan__design__core__area": 1283630.0,
+          "floorplan__design__instance__count": 168927,
+          "floorplan__design__instance__area": 450120,
+          "floorplan__design__instance__count__stdcell": 168915,
+          "floorplan__design__instance__area__stdcell": 387425,
+          "floorplan__design__instance__count__macros": 12,
+          "floorplan__design__instance__area__macros": 62695.4,
+          "floorplan__design__instance__count__padcells": 0,
+          "floorplan__design__instance__area__padcells": 0,
+          "floorplan__design__instance__count__cover": 0,
+          "floorplan__design__instance__area__cover": 0,
+          "floorplan__design__instance__utilization": 0.350662,
+          "floorplan__design__instance__utilization__stdcell": 0.317318,
+          "floorplan__design__rows": 809,
+          "floorplan__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 809,
+          "floorplan__design__sites": 4825685,
+          "floorplan__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4825685,
+          "floorplan__flow__warnings__count": 2,
+          "floorplan__flow__errors__count": 0,
+          "floorplan__flow__warnings__count:EST-0027": 1,
+          "floorplan__flow__warnings__count:IFP-0028": 1,
+          "floorplan__flow__warnings__type_count": 2
+        },
+        "2_2_floorplan_macro.json": {
+          "macro_place__wirelength": 3025770.0,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "2_3_floorplan_tapcell.json": {
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "2_4_floorplan_pdn.json": {
+          "flow__warnings__count": 1,
+          "flow__errors__count": 0,
+          "flow__warnings__count:PDN-1051": 1,
+          "flow__warnings__type_count": 1
+        },
+        "3_1_place_gp_skip_io.json": {
+          "gpl__convergence__iteration": 461,
+          "gpl__area__final": 413716,
+          "gpl__area__final__percent": 0,
+          "route__wirelength__estimated": 3124890.0,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "3_2_place_iop.json": {
+          "floorplan__design__io": 1662,
+          "design__io__hpwl": 642005918,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        }
+      },
+      "artifacts": [
+        {
+          "name": "1_1_yosys_canonicalize.rtlil",
+          "size": 5890927
+        },
+        {
+          "name": "1_2_yosys.sdc",
+          "size": 248
+        },
+        {
+          "name": "1_2_yosys.v",
+          "size": 36177971
+        },
+        {
+          "name": "1_synth.odb",
+          "size": 91443272
+        },
+        {
+          "name": "1_synth.sdc",
+          "size": 143001
+        },
+        {
+          "name": "2_1_floorplan.odb",
+          "size": 91739831
+        },
+        {
+          "name": "2_1_floorplan.sdc",
+          "size": 143001
+        },
+        {
+          "name": "2_2_floorplan_macro.odb",
+          "size": 91741415
+        },
+        {
+          "name": "2_2_floorplan_macro.tcl",
+          "size": 1628
+        },
+        {
+          "name": "2_3_floorplan_tapcell.odb",
+          "size": 92973696
+        },
+        {
+          "name": "2_4_floorplan_pdn.odb",
+          "size": 95295663
+        },
+        {
+          "name": "2_floorplan.odb",
+          "size": 95295663
+        },
+        {
+          "name": "2_floorplan.sdc",
+          "size": 143001
+        },
+        {
+          "name": "3_1_place_gp_skip_io.odb",
+          "size": 95295725
+        },
+        {
+          "name": "3_2_place_iop.odb",
+          "size": 95399693
+        },
+        {
+          "name": "3_2_place_iop.tcl",
+          "size": 157676
+        },
+        {
+          "name": "mem.json",
+          "size": 6432426
+        }
+      ],
+      "route_drc_report": {
+        "exists": false,
+        "bytes": null
+      },
+      "stages": {
+        "synthesis": true,
+        "placement": false,
+        "cts": false,
+        "global_route": false,
+        "detailed_route": false,
+        "final_report": false
+      },
+      "acceptance": "Requires separate per-stage metric, signal/PG, timing, electrical and model review; no signoff inferred",
+      "quality_summary": {
+        "route_drc_errors": null,
+        "setup_ws_ns": null,
+        "setup_tns_ns": null,
+        "hold_ws_ns": null,
+        "hold_tns_ns": null,
+        "max_cap_violations": null,
+        "max_slew_violations": null,
+        "max_fanout_violations": null,
+        "die_area_um2": null,
+        "nonfiller_instance_area_um2": null,
+        "stdcell_area_um2": null,
+        "macro_area_um2": null,
+        "scope": "Tool single-corner budget checks, no complete boundary load/activity or signoff"
+      },
+      "final_log_markers": null,
+      "experiment.json": {
+        "case": "opentpu-act-mxu",
+        "top": "otpu_asic_top",
+        "parameters": {
+          "D": 32,
+          "MCOLS": 2,
+          "ROWS": 2,
+          "BLOCKS": 32,
+          "LANES": 4,
+          "DEPTH": 64,
+          "IMPL": 2,
+          "CL": 16,
+          "E": 0,
+          "SID": 0
+        },
+        "clock_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Upstream openTPU synthetic fakeram LEF/Liberty models, not fabricated SRAM or SRAM GDS. Same unmodified generator and small configuration for split/merged cases; no full system claim.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "independent block implementation; not top integration, H2, source-to-netlist equivalence or signoff"
+      },
+      "elaboration-summary.json": {
+        "top": "otpu_asic_top",
+        "ports": {
+          "clk": {
+            "direction": "input",
+            "bits": 1
+          },
+          "we": {
+            "direction": "input",
+            "bits": 4
+          },
+          "w_row": {
+            "direction": "input",
+            "bits": 8
+          },
+          "w_idx": {
+            "direction": "input",
+            "bits": 32
+          },
+          "w_data": {
+            "direction": "input",
+            "bits": 32
+          },
+          "w_dup": {
+            "direction": "input",
+            "bits": 1
+          },
+          "w_off": {
+            "direction": "input",
+            "bits": 8
+          },
+          "swe": {
+            "direction": "input",
+            "bits": 1
+          },
+          "s_row": {
+            "direction": "input",
+            "bits": 8
+          },
+          "s_blk": {
+            "direction": "input",
+            "bits": 16
+          },
+          "s_data": {
+            "direction": "input",
+            "bits": 64
+          },
+          "rst": {
+            "direction": "input",
+            "bits": 1
+          },
+          "start": {
+            "direction": "input",
+            "bits": 1
+          },
+          "go": {
+            "direction": "input",
+            "bits": 1
+          },
+          "cmd": {
+            "direction": "input",
+            "bits": 240
+          },
+          "rdy": {
+            "direction": "output",
+            "bits": 1
+          },
+          "done": {
+            "direction": "output",
+            "bits": 1
+          },
+          "computing": {
+            "direction": "output",
+            "bits": 1
+          },
+          "pf_level": {
+            "direction": "output",
+            "bits": 7
+          },
+          "pf_starve": {
+            "direction": "output",
+            "bits": 1
+          },
+          "pf_block": {
+            "direction": "output",
+            "bits": 1
+          },
+          "pf_u": {
+            "direction": "output",
+            "bits": 1
+          },
+          "pf_uv": {
+            "direction": "output",
+            "bits": 128
+          },
+          "a_req": {
+            "direction": "output",
+            "bits": 1
+          },
+          "a_addr": {
+            "direction": "output",
+            "bits": 32
+          },
+          "a_gnt": {
+            "direction": "input",
+            "bits": 1
+          },
+          "a_rvalid": {
+            "direction": "input",
+            "bits": 1
+          },
+          "a_rdata": {
+            "direction": "input",
+            "bits": 256
+          },
+          "b_req": {
+            "direction": "output",
+            "bits": 1
+          },
+          "b_addr": {
+            "direction": "output",
+            "bits": 32
+          },
+          "b_gnt": {
+            "direction": "input",
+            "bits": 1
+          },
+          "b_rvalid": {
+            "direction": "input",
+            "bits": 1
+          },
+          "b_rdata": {
+            "direction": "input",
+            "bits": 256
+          },
+          "t_ren": {
+            "direction": "output",
+            "bits": 4
+          },
+          "t_raddr": {
+            "direction": "output",
+            "bits": 128
+          },
+          "t_rdata": {
+            "direction": "input",
+            "bits": 128
+          },
+          "t_wen": {
+            "direction": "output",
+            "bits": 4
+          },
+          "t_waddr": {
+            "direction": "output",
+            "bits": 128
+          },
+          "t_wdata": {
+            "direction": "output",
+            "bits": 128
+          },
+          "t_gnt": {
+            "direction": "input",
+            "bits": 1
+          }
+        },
+        "port_count": 40,
+        "signal_bits": 1662,
+        "blackbox_cells": {
+          "fakeram45_1r1w_32x128": 4,
+          "fakeram45_1r1w_32x64": 2,
+          "fakeram45_1r1w_64x72": 3,
+          "fakeram45_1r1w_64x40": 1,
+          "fakeram45_1r1w_64x96": 1,
+          "fakeram45_1r1w_64x64": 1
+        },
+        "check": "Yosys hierarchy -check and check -assert completed; not functional equivalence"
+      },
+      "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif\n",
+      "tools.sha256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53  /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad\nc2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b  /OpenROAD-flow-scripts/tools/install/yosys/bin/yosys\n",
+      "config-inputs.sha256": "24001b204924602927d1b1cabc0d24cf7289d6351fb5e117f63cbdc6768eaff9  config.mk\n93e575af458e283bd067de99437465e3986326e9de292deb25ebd5c1b75d5e8b  boundary.sdc\n78a4dd8e76c4100c623660fa0a4f9a51e1ac5ff78f76973c61d02c6613706c33  elab.ys\n8f40294fee34818f87d17471265e9b0a626e5cc7c64e5648d8b32b152149df16  experiment.json\n23dc0948af8f38793e84a7d2f1135e6a320b4e5b5843c298dcf5cbf79469fa02  boundary.sv\n"
+    }
+  },
+  "memory_resource_comparison": {
+    "split": {
+      "fakeram45_1r1w_32x128": 4,
+      "fakeram45_1r1w_32x64": 2,
+      "fakeram45_1r1w_64x72": 3,
+      "fakeram45_1r1w_64x40": 1,
+      "fakeram45_1r1w_64x96": 1,
+      "fakeram45_1r1w_64x64": 1
+    },
+    "merged": {
+      "fakeram45_1r1w_32x128": 4,
+      "fakeram45_1r1w_32x64": 2,
+      "fakeram45_1r1w_64x72": 3,
+      "fakeram45_1r1w_64x40": 1,
+      "fakeram45_1r1w_64x96": 1,
+      "fakeram45_1r1w_64x64": 1
+    },
+    "identical_instances_by_model": true,
+    "scope": "Actual elaborated blackbox type/count, not physical endpoint/clock/PDN cost or functional equivalence"
+  }
+}
