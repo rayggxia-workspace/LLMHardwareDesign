@@ -50,6 +50,8 @@
 
 修复后setup余量约减少3.55ps，仍为正；面积仅约增加0.5µm²。冻结证据：[12终态](../../project/experiments/parallel_blocks/results/parallel-blocks-wave2-12-completion.json)。ACT／20继续保留为余量较充足的候选，修复后的ACT／10是面积更小的备选，两者均待完整宏资格检查；未追溯修改原ACT／10的未通过结论。
 
+另对修复前后的最终Verilog按原manifest分别核对SHA，再比较540,904字节的全文：将原网表唯一的 `MUX2_X1 _5406_` 单元类型改成MUX2_X2后，**全文与修复后的最终网表完全相同**。[逐字比较回执](../../project/experiments/parallel_blocks/results/parallel-blocks-wave2-12-netlist-diff.json)保留两份来源、SHA、字节数和唯一替换计数；结合根16的Liberty逻辑签名相同，可确认该次最终门级网表没有额外接口／连线／状态变更。这仍不替代源RTL到原始物理网表的完整证明。
+
 未来作业的 `audit.py` 已增加最差电容余量和归一化余量非负、setup／hold TNS、天线及slew／fanout余量检查。基于七路冻结数据的回归验证只接受ACT20／GEMM20／MXU20，明确拒绝计数0但余量负的ACT10；缺失及非有限余量也拒绝。已提交06／11／12的runner和终态都保持原样。
 
 ## 合并块接续及保留的失败
@@ -59,9 +61,22 @@
 - 根12／89512.1：原最终报告实例名在CTS的OpenDB名称空间中未直接匹配，校验立即退出1，12秒。A批次因该路失败仍为FAILED1，不能用ACT路通过或89514产物审计通过覆盖它。
 - 根13／89515：改为输出网定位后，未转义的总线名仍未匹配，12秒退出1；89516仅对失败产物校验通过。
 - 根14／89517：Python百分号格式化误解释Tcl `format %c`，7秒退出1；89518只封存失败产物。该生成器错误由本次修复脚本引入，未进入EDA修改。
-- 根15／89519／node8／16CPU：实际runner `bb0994d`。生成器改用明确占位替换，增加Tcl解释器回归；输出网按去除OpenDB转义后的完整名称唯一匹配，实际找到带 `\[1\]` 的寄存器驱动，4项单元替换日志均已写出，正在重新布线。89520为一次性afterany审计，均UNLIMITED。
+- 根15／89519／node8／16CPU：实际runner `bb0994d`。生成器改用明确占位替换，增加Tcl解释器回归；输出网按去除OpenDB转义后的完整名称唯一匹配，实际找到带 `\[1\]` 的寄存器驱动，4项单元替换日志均已写出。批次20:13、物理step20:11完成COMPLETED0:0；89520一次性afterany审计10秒完成，均UNLIMITED。流程完成，但严格电容门槛仍未通过，不能接收为合格候选。
 
 三个失败尝试及其非零退出、输入和产物均保留：[12](../../project/experiments/parallel_blocks/results/parallel-blocks-wave2-12-completion.json)、[13](../../project/experiments/parallel_blocks/results/parallel-blocks-wave2-13-completion.json)、[14](../../project/experiments/parallel_blocks/results/parallel-blocks-wave2-14-completion.json)。Tcl解释器回归执行了普通名、带总线转义的网／实例名、缺目标和错误单元类型四种情况；后两种在修改前拒绝。这只检查生成器，不冒充OpenROAD物理验收。
+
+根15最终DRC／天线／slew／fanout均0、setup／hold TNS0、setup WS +0.498073ns、hold WS +0.0112005ns、面积461,457µm²；最差电容余量由原−6.343030改善到−5.886479fF，但max-cap计数仍4、归一化余量−9.69287%，严格门槛false。89520核对825项源与104项输出全部通过；产物审计通过不覆盖电气未通过。三种宏视图存在，最终日志报告VDD／VSS连通。[15冻结终态](../../project/experiments/parallel_blocks/results/parallel-blocks-wave2-15-completion.json)原字节SHA为 `568c4780d78112f437e64f9040f223bfc5757a19c2df5aa473f0742d233ef0bc`，已核对。
+
+残留报告已变为下列4个引脚，与原定向名单不同；buffer名称变化不单独作为逻辑网身份不变的证明。该结果说明只按上一轮名单升级少数驱动不足以保证整个合并块收敛。[残留索引](../../project/experiments/parallel_blocks/results/parallel-blocks-wave2-15-cap-residuals.json)绑定最终报告SHA并先核对原输出manifest；下表为报告四舍五入值。
+
+| 剩余驱动引脚 | 限制 fF | 负载 fF | 余量 fF |
+| --- | ---: | ---: | ---: |
+| `u_mxu.g_ask[1].g_p[1].u_a.g_regs.r[1][0]$_DFF_P_/Q` | 60.73 | 66.62 | −5.89 |
+| `place15550/Z` | 60.65 | 62.47 | −1.82 |
+| `place15455/Z` | 60.65 | 61.92 | −1.27 |
+| `place15484/Z` | 60.65 | 61.73 | −1.07 |
+
+下一轮建议从同一已核对CTS检查点，对全块路由阶段电容裕量30／40做两个各16核的同节点对照，并重新提取后逐路检查全部余量、setup／hold及面积；这只是待执行方案，本次未提交，也不声称已收敛。已通过ACT20／修复ACT10、GEMM20和MXU20不因该失败重复运行；GEMM10保留8处违例，使用通过的20作为后续候选。
 
 ## 宏视图与后续
 
@@ -78,4 +93,4 @@ python project/experiments/parallel_blocks/wave2/check_quality_gates.py
 python project/experiments/parallel_blocks/wave2/check_repair_hook.py
 ```
 
-先核对15和16的实际终态、严格门槛与SHA，再选择宏和同die顶层对照。暂未新启动正式顶层PNR，不宣称H2固定底座或制造签核。所有新作业无墙钟截止，未按耗时终止任务；临时侧聊不具备定时助手唤醒，已提交的只是一次性Slurm后处理。
+截至2026-10-21 20:52（UTC+08:00），本并行工作线全部新作业和一次性审计均已结束，15／16终态及SHA已取回；同一时点只读查看队列，主线89448仍RUNNING（16CPU、已运行5:25:47），未修改或取消。下一步可推进已通过候选的宏资格，合并块需另行验证上述裕量对照。暂未新启动正式顶层PNR，不宣称H2固定底座或制造签核。所有新作业无墙钟截止，未按耗时终止任务；临时侧聊不具备定时助手唤醒，已执行的只是一次性Slurm后处理。
