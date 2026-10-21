@@ -5,7 +5,10 @@ import re
 
 def report_cap_slack(report):
     match = re.search(r'finish max_capacitance_check_slack\s*\n-+\s*\n([^\n]+)', report)
-    return float(match[1]) if match else None
+    try:
+        return float(match[1]) if match else None
+    except ValueError:
+        return None
 
 
 def nonnegative(value):

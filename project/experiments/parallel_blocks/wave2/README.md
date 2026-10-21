@@ -1,5 +1,7 @@
 # 三节点并行工作线
 
+最新：第二轮七路均已完成，严格工具门槛接受ACT20／GEMM20／MXU20。ACT10零计数但负余量的原因及新CTS检查点定向修复见[修复记录](../../../../docs/experiments/issue-7-parallel-blocks-repair.md)。ACT修复已通过，合并块接续根15仍运行；新审计默认同时检查电容计数与最差余量。原冻结runner和历史失败不改写。
+
 Refs [Issue #7](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7)，延续同一草稿 PR #10。用户已明确同意三节点方案；与主线 VECTOR／PG 作业隔离。
 
 - A／node7／64 CPU：ACT 电容裕量0、10、20，各16 CPU；原 RAM 行为与包装连接审计8 CPU，原 GEMM 回归8 CPU，总64。

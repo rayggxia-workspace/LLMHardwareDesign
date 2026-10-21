@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-21T11:26:00.548022+00:00",
+  "observed_utc": "2026-10-21T12:11:55.079202+00:00",
   "submission": {
     "attempt": "parallel-blocks-wave2-11",
     "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-11",
@@ -33,12 +33,12 @@
   },
   "scheduler": {
     "exit_code": 0,
-    "stdout": "89510|lyz-wave2-c|PENDING|0:0|00:00:00|0|None assigned\n89511|lyz-wave2-audit|PENDING|0:0|00:00:00|0|None assigned",
+    "stdout": "89510|lyz-wave2-c|COMPLETED|0:0|00:01:54|1|node9\n89510.batch|batch|COMPLETED|0:0|00:01:54|1|node9\n89510.extern|extern|COMPLETED|0:0|00:01:54|1|node9\n89510.0|lyz-full-physical-audit|COMPLETED|0:0|00:01:52|1|node9\n89511|lyz-wave2-audit|COMPLETED|0:0|00:00:05|1|node3\n89511.batch|batch|COMPLETED|0:0|00:00:05|1|node3\n89511.extern|extern|COMPLETED|0:0|00:00:05|1|node3",
     "stderr": ""
   },
   "resources": {
     "exit_code": 0,
-    "stdout": "89510|00:00:00|0|0|00:00:00|\n89511|00:00:00|0|0|00:00:00|",
+    "stdout": "89510|00:01:54|1|114|01:38.793|\n89510.batch|00:01:54|1|114|00:01.311|9336K\n89510.extern|00:01:54|1|114|00:00:00|84K\n89510.0|00:01:52|1|112|01:37.481|14244K\n89511|00:00:05|1|5|00:00.273|\n89511.batch|00:00:05|1|5|00:00.273|0\n89511.extern|00:00:05|1|5|00:00:00|0",
     "stderr": ""
   },
   "tasks": {
@@ -51,13 +51,409 @@
         "cap_margin": 0
       },
       "stream": "C",
-      "started": null,
-      "finished": null,
-      "exit_code": null,
-      "hash_exit_code": null,
-      "log_tail": null
+      "started": "2026-10-21T11:57:16Z\n",
+      "finished": "2026-10-21T11:59:07Z\n",
+      "exit_code": "0\n",
+      "hash_exit_code": "0\n",
+      "log_tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+      "validation": {
+        "passed": true,
+        "kind": "Artifact audit with strict physical budget observations",
+        "source_attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06",
+        "results": {
+          "act-cap00": {
+            "quality": {
+              "drc": 0,
+              "setup_ws_ns": 1.22599,
+              "hold_ws_ns": 0.0322719,
+              "max_cap": 2,
+              "cap_slack_over_limit_metric": -0.0438616,
+              "max_slew": 0,
+              "max_fanout": 0,
+              "instance_area_um2": 35870.1,
+              "worst_cap_slack_report_value": -2.653672933578491,
+              "setup_tns": 0,
+              "hold_tns": 0,
+              "antenna_nets": 0,
+              "antenna_pins": 0
+            },
+            "checksums": {
+              "source-inputs.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 825
+              },
+              "output-files.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 154
+              }
+            },
+            "observed_strict_tool_gates": {
+              "pipeline_exit_zero": true,
+              "output_hash_exit_zero": true,
+              "manifests_verified": true,
+              "final_report": true,
+              "drc_zero": true,
+              "antenna_zero": true,
+              "setup_nonnegative": true,
+              "hold_nonnegative": true,
+              "max_cap_count_zero": false,
+              "worst_cap_slack_nonnegative": false,
+              "cap_slack_ratio_nonnegative": false,
+              "slew_count_zero": true,
+              "slew_slack_ratio_nonnegative": true,
+              "fanout_count_zero": true,
+              "fanout_slack_ratio_nonnegative": true,
+              "abstracts_present": true,
+              "vdd_reported_connected": true,
+              "vss_reported_connected": true,
+              "no_final_errors": true
+            },
+            "observed_strict_tool_gates_pass": false,
+            "qualified_hard_macro": false,
+            "manufacturing_or_system_signoff": false,
+            "cap_slack_units": "Raw report value; section does not declare unit",
+            "area_change_vs_cap00_percent": 0.0
+          },
+          "act-cap10": {
+            "quality": {
+              "drc": 0,
+              "setup_ws_ns": 1.21024,
+              "hold_ws_ns": 0.0300581,
+              "max_cap": 0,
+              "cap_slack_over_limit_metric": -0.0128295,
+              "max_slew": 0,
+              "max_fanout": 0,
+              "instance_area_um2": 35899.1,
+              "worst_cap_slack_report_value": -0.7762006521224976,
+              "setup_tns": 0,
+              "hold_tns": 0,
+              "antenna_nets": 0,
+              "antenna_pins": 0
+            },
+            "checksums": {
+              "source-inputs.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 825
+              },
+              "output-files.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 154
+              }
+            },
+            "observed_strict_tool_gates": {
+              "pipeline_exit_zero": true,
+              "output_hash_exit_zero": true,
+              "manifests_verified": true,
+              "final_report": true,
+              "drc_zero": true,
+              "antenna_zero": true,
+              "setup_nonnegative": true,
+              "hold_nonnegative": true,
+              "max_cap_count_zero": true,
+              "worst_cap_slack_nonnegative": false,
+              "cap_slack_ratio_nonnegative": false,
+              "slew_count_zero": true,
+              "slew_slack_ratio_nonnegative": true,
+              "fanout_count_zero": true,
+              "fanout_slack_ratio_nonnegative": true,
+              "abstracts_present": true,
+              "vdd_reported_connected": true,
+              "vss_reported_connected": true,
+              "no_final_errors": true
+            },
+            "observed_strict_tool_gates_pass": false,
+            "qualified_hard_macro": false,
+            "manufacturing_or_system_signoff": false,
+            "cap_slack_units": "Raw report value; section does not declare unit",
+            "area_change_vs_cap00_percent": 0.0808472794890452
+          },
+          "act-cap20": {
+            "quality": {
+              "drc": 0,
+              "setup_ws_ns": 1.26007,
+              "hold_ws_ns": 0.0322258,
+              "max_cap": 0,
+              "cap_slack_over_limit_metric": 0.152397,
+              "max_slew": 0,
+              "max_fanout": 0,
+              "instance_area_um2": 35985.5,
+              "worst_cap_slack_report_value": 2.4416589736938477,
+              "setup_tns": 0,
+              "hold_tns": 0,
+              "antenna_nets": 0,
+              "antenna_pins": 0
+            },
+            "checksums": {
+              "source-inputs.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 825
+              },
+              "output-files.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 154
+              }
+            },
+            "observed_strict_tool_gates": {
+              "pipeline_exit_zero": true,
+              "output_hash_exit_zero": true,
+              "manifests_verified": true,
+              "final_report": true,
+              "drc_zero": true,
+              "antenna_zero": true,
+              "setup_nonnegative": true,
+              "hold_nonnegative": true,
+              "max_cap_count_zero": true,
+              "worst_cap_slack_nonnegative": true,
+              "cap_slack_ratio_nonnegative": true,
+              "slew_count_zero": true,
+              "slew_slack_ratio_nonnegative": true,
+              "fanout_count_zero": true,
+              "fanout_slack_ratio_nonnegative": true,
+              "abstracts_present": true,
+              "vdd_reported_connected": true,
+              "vss_reported_connected": true,
+              "no_final_errors": true
+            },
+            "observed_strict_tool_gates_pass": true,
+            "qualified_hard_macro": false,
+            "manufacturing_or_system_signoff": false,
+            "cap_slack_units": "Raw report value; section does not declare unit",
+            "area_change_vs_cap00_percent": 0.32171641562192876
+          },
+          "gemm-cap10": {
+            "quality": {
+              "drc": 0,
+              "setup_ws_ns": 0.786571,
+              "hold_ws_ns": 0.037556,
+              "max_cap": 8,
+              "cap_slack_over_limit_metric": -0.221772,
+              "max_slew": 0,
+              "max_fanout": 0,
+              "instance_area_um2": 472359,
+              "worst_cap_slack_report_value": -5.769668102264404,
+              "setup_tns": 0,
+              "hold_tns": 0,
+              "antenna_nets": 0,
+              "antenna_pins": 0
+            },
+            "checksums": {
+              "source-inputs.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 251
+              },
+              "output-files.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 140
+              }
+            },
+            "observed_strict_tool_gates": {
+              "pipeline_exit_zero": true,
+              "output_hash_exit_zero": true,
+              "manifests_verified": true,
+              "final_report": true,
+              "drc_zero": true,
+              "antenna_zero": true,
+              "setup_nonnegative": true,
+              "hold_nonnegative": true,
+              "max_cap_count_zero": false,
+              "worst_cap_slack_nonnegative": false,
+              "cap_slack_ratio_nonnegative": false,
+              "slew_count_zero": true,
+              "slew_slack_ratio_nonnegative": true,
+              "fanout_count_zero": true,
+              "fanout_slack_ratio_nonnegative": true,
+              "abstracts_present": true,
+              "vdd_reported_connected": true,
+              "vss_reported_connected": true,
+              "no_final_errors": true
+            },
+            "observed_strict_tool_gates_pass": false,
+            "qualified_hard_macro": false,
+            "manufacturing_or_system_signoff": false,
+            "cap_slack_units": "Raw report value; section does not declare unit"
+          },
+          "gemm-cap20": {
+            "quality": {
+              "drc": 0,
+              "setup_ws_ns": 0.775024,
+              "hold_ws_ns": 0.0518109,
+              "max_cap": 0,
+              "cap_slack_over_limit_metric": 0.00851057,
+              "max_slew": 0,
+              "max_fanout": 0,
+              "instance_area_um2": 473321,
+              "worst_cap_slack_report_value": 0.22141271829605103,
+              "setup_tns": 0,
+              "hold_tns": 0,
+              "antenna_nets": 0,
+              "antenna_pins": 0
+            },
+            "checksums": {
+              "source-inputs.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 251
+              },
+              "output-files.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 140
+              }
+            },
+            "observed_strict_tool_gates": {
+              "pipeline_exit_zero": true,
+              "output_hash_exit_zero": true,
+              "manifests_verified": true,
+              "final_report": true,
+              "drc_zero": true,
+              "antenna_zero": true,
+              "setup_nonnegative": true,
+              "hold_nonnegative": true,
+              "max_cap_count_zero": true,
+              "worst_cap_slack_nonnegative": true,
+              "cap_slack_ratio_nonnegative": true,
+              "slew_count_zero": true,
+              "slew_slack_ratio_nonnegative": true,
+              "fanout_count_zero": true,
+              "fanout_slack_ratio_nonnegative": true,
+              "abstracts_present": true,
+              "vdd_reported_connected": true,
+              "vss_reported_connected": true,
+              "no_final_errors": true
+            },
+            "observed_strict_tool_gates_pass": true,
+            "qualified_hard_macro": false,
+            "manufacturing_or_system_signoff": false,
+            "cap_slack_units": "Raw report value; section does not declare unit"
+          },
+          "mxu-cap20": {
+            "quality": {
+              "drc": 0,
+              "setup_ws_ns": 0.242689,
+              "hold_ws_ns": 0.0513802,
+              "max_cap": 0,
+              "cap_slack_over_limit_metric": 0.0342392,
+              "max_slew": 0,
+              "max_fanout": 0,
+              "instance_area_um2": 429634,
+              "worst_cap_slack_report_value": 0.8424488306045532,
+              "setup_tns": 0,
+              "hold_tns": 0,
+              "antenna_nets": 0,
+              "antenna_pins": 0
+            },
+            "checksums": {
+              "source-inputs.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 825
+              },
+              "output-files.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 161
+              }
+            },
+            "observed_strict_tool_gates": {
+              "pipeline_exit_zero": true,
+              "output_hash_exit_zero": true,
+              "manifests_verified": true,
+              "final_report": true,
+              "drc_zero": true,
+              "antenna_zero": true,
+              "setup_nonnegative": true,
+              "hold_nonnegative": true,
+              "max_cap_count_zero": true,
+              "worst_cap_slack_nonnegative": true,
+              "cap_slack_ratio_nonnegative": true,
+              "slew_count_zero": true,
+              "slew_slack_ratio_nonnegative": true,
+              "fanout_count_zero": true,
+              "fanout_slack_ratio_nonnegative": true,
+              "abstracts_present": true,
+              "vdd_reported_connected": true,
+              "vss_reported_connected": true,
+              "no_final_errors": true
+            },
+            "observed_strict_tool_gates_pass": true,
+            "qualified_hard_macro": false,
+            "manufacturing_or_system_signoff": false,
+            "cap_slack_units": "Raw report value; section does not declare unit"
+          },
+          "merged-cap20": {
+            "quality": {
+              "drc": 0,
+              "setup_ws_ns": 0.488026,
+              "hold_ws_ns": 0.0415729,
+              "max_cap": 4,
+              "cap_slack_over_limit_metric": -0.104446,
+              "max_slew": 0,
+              "max_fanout": 0,
+              "instance_area_um2": 461456,
+              "worst_cap_slack_report_value": -6.343029975891113,
+              "setup_tns": 0,
+              "hold_tns": 0,
+              "antenna_nets": 0,
+              "antenna_pins": 0
+            },
+            "checksums": {
+              "source-inputs.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 825
+              },
+              "output-files.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 169
+              }
+            },
+            "observed_strict_tool_gates": {
+              "pipeline_exit_zero": true,
+              "output_hash_exit_zero": true,
+              "manifests_verified": true,
+              "final_report": true,
+              "drc_zero": true,
+              "antenna_zero": true,
+              "setup_nonnegative": true,
+              "hold_nonnegative": true,
+              "max_cap_count_zero": false,
+              "worst_cap_slack_nonnegative": false,
+              "cap_slack_ratio_nonnegative": false,
+              "slew_count_zero": true,
+              "slew_slack_ratio_nonnegative": true,
+              "fanout_count_zero": true,
+              "fanout_slack_ratio_nonnegative": true,
+              "abstracts_present": true,
+              "vdd_reported_connected": true,
+              "vss_reported_connected": true,
+              "no_final_errors": true
+            },
+            "observed_strict_tool_gates_pass": false,
+            "qualified_hard_macro": false,
+            "manufacturing_or_system_signoff": false,
+            "cap_slack_units": "Raw report value; section does not declare unit"
+          }
+        },
+        "source_scheduler_observation": {
+          "exit_code": 127,
+          "stdout": "",
+          "stderr": "Executable unavailable in this environment: sacct"
+        },
+        "preferred_act_for_further_view_qualification": "act-cap20",
+        "physical_or_system_signoff": false,
+        "scope": "Pass means manifests verified; per-case strict physical gates remain separate. Candidate selection does not qualify timing arcs, driver/load models, source-to-physical equivalence or manufacturing."
+      }
     }
   },
-  "completion_exists": false,
-  "completion_sha256": null
+  "completion_exists": true,
+  "completion_sha256": "dee7da1da7035c4d6dbf25bc7da41313f34c2989b1ccdda50d898190943b0091  completion.json\n"
 }

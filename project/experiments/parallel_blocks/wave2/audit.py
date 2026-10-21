@@ -40,6 +40,7 @@ for name,item in record['tasks'].items():
             'no_final_error':bool(markers) and not any('[ERROR' in l for l in markers)}
         gates.update(electrical_gates(q, item['metrics'].get('6_report.json',{}),
             item['metrics'].get('5_2_route.json',{}), report_text))
+        gates['manifests_verified']=all(a.get('status')=='pass' for a in audits.values())
         item['observed_tool_gates']=gates
         item['observed_tool_gates_pass']=all(gates.values())
     else:

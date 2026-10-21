@@ -1,5 +1,28 @@
 # Issue #7 并发实验恢复与主线协调
 
+## 最新恢复入口：定向修复（2026-10-21 20:31，UTC+08:00）
+
+第二轮七路及89510／89511严格审计已全部完成；以[修复与完整终态记录](../experiments/issue-7-parallel-blocks-repair.md)为准。ACT20／GEMM20／MXU20通过本次工具门槛；合并20有4处电容违例。ACT10零计数却负余量的原因已用实际二进制／Liberty／SPEF查实，为约1fF的零值容差。
+
+用户已授权修复和跟进。**根12／89512.0的ACT10检查点定向修复已完成并通过89514审计**：MUX2_X1→MUX2_X2，最差电容余量+1.218952fF，DRC／天线／电气计数0，setup／hold正，面积35,899.6µm²；825源＋89输出校验通过。原ACT10失败不改写，修复仍不是完整宏资格或签核。
+
+当前需优先跟进：**根15／89519／node8／16CPU**合并块CTS检查点修复及89520后处理，runner `bb0994d`；原DFF_X1→DFF_X2，三个BUF_X1→BUF_X2，实际ODB替换日志已确认，正在布线。**根16／89521／node9／1CPU**核对替换单元Liberty逻辑方程及宏视图缺口，89522封存。都UNLIMITED，无墙钟时限。
+
+根12.1、13的实例／输出网名称校验退出及根14的本次Python/Tcl格式化错误均已保存为失败；OpenDB方括号实际带转义，当前唯一匹配完整输出网再查驱动。生成器已用Tcl解释器检查普通／转义名及缺目标／错类型拒绝，避免继续按最终报告名猜检查点名。根12 A批次仍FAILED1，89514通过仅代表产物校验及ACT自己的门槛，不覆盖合并路失败。
+
+恢复第一步：
+
+```powershell
+python project/experiments/parallel_blocks/wave2/monitor.py --attempt parallel-blocks-wave2-15
+python project/experiments/parallel_blocks/wave2/monitor.py --attempt parallel-blocks-wave2-16
+python project/experiments/parallel_blocks/wave2/check_quality_gates.py
+python project/experiments/parallel_blocks/wave2/check_repair_hook.py
+```
+
+不要重复提交已完成七路；不要修改冻结runner、失败终态或主线作业89448。大文件和原始反汇编留远程，轻量诊断和completion保留原字节／SHA。新默认审计同时看电容计数、最差余量、归一化余量、TNS／天线及slew／fanout，旧06计数门槛不再是接受条件。已通过三个宏仍缺minimum_period，arc／边界／PG／形式等价待完成，正式顶层未新启动。当前分支head以PR／git为准，不能倒填为既有作业runner。
+
+仅维护本工作树及草稿PR10／固定Issue回执；整体Issue仍status:in_review由主线协调。登记PR5 pending，看板unverified／同步pending、管理员／审查人／优先级待指定。临时侧聊没有后台助手唤醒；已经提交一次性Slurm后处理。
+
 ## 最新恢复入口：第二轮（2026-10-21 19:25，UTC+08:00）
 
 仓库、Issue／PR及工作树沿用下文；当前物理接续根为 **`parallel-blocks-wave2-06`**，实际runner **`05074e2`**。**89497／node7／48CPU** 的ACT裕量0/10/20均已COMPLETED0:0、批次6:00；**89498／node8／64CPU** 的GEMM10/20、MXU20、合并20继续运行，均每step16核、UNLIMITED。**89499** 一次性afterany审计已提交。仅ACT20通过后补的严格工具门槛，尚不是完整宏资格或签核。

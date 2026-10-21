@@ -20,6 +20,7 @@ for name, item in physical.items():
         assert not gates['worst_cap_slack_nonnegative']
 assert accepted == {'act-cap20', 'gemm-cap20', 'mxu-cap20'}, accepted
 assert report_cap_slack('missing') is None
+assert report_cap_slack('finish max_capacitance_check_slack\n-----\nnot a number\n') is None
 assert not nonnegative(None) and not nonnegative(float('nan')) and not nonnegative(float('inf'))
 assert nonnegative(0) and not nonnegative(-1e-10)
 print('PASS: frozen seven-case electrical gates; ACT10 rejected despite zero count; missing/nonfinite margins rejected')
