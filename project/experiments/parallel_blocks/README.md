@@ -18,7 +18,7 @@ python project/experiments/parallel_blocks/submit_audit.py --attempt parallel-bl
 
 `submit_audit.py` 为同批次另建 `observer-v1/` 并提交一次性 `afterany` 审计；没有周期轮询。它在计算节点核对新产物哈希，保存每路执行及质量门槛（包括失败）到 `completion.json`。不重跑物理分析，不修改已提交 runner 或各 case 输入。监视器发现最终汇总与其计算节点 SHA 后，核对下载内容并保存在本地结果目录；摘要与原始 SHA 明确区分。
 
-监视器将产物校验与物理预算门槛分别打印，四路旧终态的失败项为 `max_cap_zero`，不能只凭 `COMPLETED` 接受。最新快照新增各阶段电容违例数量、最终报告逐行电气违例、Slurm CPU／内存账单；`--verbose` 显示详细内容。冻结的 `completion.json` 保留原字节。本批四路均已结束，438 个产物条目校验通过，但仍有电容违例 49／2／12／41；详见正式记录的诊断与下一轮候选参数。候选参数尚未执行。
+监视器将产物校验与物理预算门槛分别打印，四路旧终态的失败项为 `max_cap_zero`，不能只凭 `COMPLETED` 接受。最新快照新增各阶段电容违例数量、最终报告逐行电气违例、Slurm CPU／内存账单；`--verbose` 显示详细内容。冻结的 `completion.json` 保留原字节，`.gitattributes` 禁止这类文件被 Windows 自动转换换行，Git blob 的 SHA 也已核对。本批四路均已结束，438 个产物条目校验通过，但仍有电容违例 49／2／12／41；详见正式记录的诊断与下一轮候选参数。候选参数尚未执行。
 
 Nangate45：GEMM 3 ns／IO 0.6 ns，openTPU 2.5 ns／IO 0.5 ns；这是各自工程预算，不比较两个项目的绝对 PPA。35% 利用率、0.55 放置密度、原始数值及 lane 数保持固定。未提供完整外部驱动／负载或应用活动；本路线显式 `LEC_CHECK=0`，只推进物理工程，与主线仍运行的默认 LEC 分开。结构检查不代替回归或源 RTL 到物理网表等价。原始宽接口、完整控制和存储容量保留，未实施 128 bit 串行缓存方案。
 
