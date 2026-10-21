@@ -38,6 +38,8 @@ record = {"observed_utc": datetime.datetime.now(datetime.timezone.utc).isoformat
           "submission": submission,
           "scheduler": command(["sacct", "-n", "-P", "-j", job,
                                 "--format=JobIDRaw,JobName%40,State,ExitCode,Elapsed,AllocCPUS,NodeList"]),
+          "resource_accounting": command(["sacct", "-n", "-P", "-j", job,
+                                          "--format=JobIDRaw,Elapsed,AllocCPUS,CPUTimeRAW,TotalCPU,MaxRSS,MaxVMSize"]),
           "allocation": command(["scontrol", "-o", "show", "job", job]),
           "steps": command(["scontrol", "-d", "-o", "show", "step", job]),
           "cases": {}}
@@ -98,6 +100,24 @@ for case in submission["cases"]:
         "stdcell_area_um2": final_metrics.get("finish__design__instance__area__stdcell"),
         "macro_area_um2": final_metrics.get("finish__design__instance__area__macros"),
         "scope": "Tool single-corner budget checks, no complete boundary load/activity or signoff"}
+    case_record["max_cap_violations_by_stage"] = {
+        name: {key: value for key, value in values.items() if key.endswith("__drv__max_cap")}
+        for name, values in metrics.items()
+        if any(key.endswith("__drv__max_cap") for key in values)}
+    final_report = small(reports / "6_finish.rpt")
+    if isinstance(final_report, str):
+        # Preserve report values as strings: the table does not declare its units.
+        rows = []
+        in_electrical = False
+        for line in final_report.splitlines():
+            if "report_check_types -max_slew -max_cap -max_fanout -violators" in line:
+                in_electrical = True
+            elif in_electrical and line.startswith("finish "):
+                break
+            if in_electrical and "(VIOLATED)" in line:
+                rows.append(line.strip())
+        case_record["final_electrical_violation_rows"] = rows
+        case_record["final_electrical_report"] = str(reports / "6_finish.rpt")
     final_log = small(logs / "6_report.log")
     if isinstance(final_log, str):
         case_record["final_log_markers"] = [line for line in final_log.splitlines()

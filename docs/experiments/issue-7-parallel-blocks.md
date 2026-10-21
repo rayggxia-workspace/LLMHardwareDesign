@@ -30,12 +30,16 @@
 
 17:01（UTC+08:00）提交 **89458 `lyz-par4`**，实际在 node7 同时运行四个 step，每个 16 CPU，allocation 为 64 CPU，开始时再次确认 `UNLIMITED`。runner commit `2568623f91f871e139c4b7544d00d0181ce4cb01`，精确执行文件由计算节点 `runner-inputs.sha256` 标识。代码后续加入的监视器不冒称为该次提交前已运行代码。
 
-| Case／step | 实际状态与证据 |
-| --- | --- |
-| `llaccel-gemm`／89458.2 | 已通过 elaboration、综合／布局／CTS，正在后续实现；27 个声明端口、3,753 signal bit |
-| `opentpu-act`／89458.1 | `COMPLETED 0:0`，5:59；全流程最终 ODB／SPEF／报告已产生，路由 DRC 0、天线 net／pin 违例均为 0；2.5 ns 预算下 setup WS +1.22599 ns／TNS 0，hold WS +0.0322719 ns／TNS 0，**最大电容违例 2 个，未通过完整电气验收**。19 个声明端口、860 signal bit |
-| `opentpu-mxu`／89458.0 | 已通过 elaboration、综合／布局／CTS／GRT，详细布线尚未收尾；37 个声明端口、2,172 signal bit |
-| `opentpu-act-mxu`／89458.3 | 已通过 elaboration、综合／布局／CTS，正在后续实现；40 个声明端口、1,662 signal bit |
+18:04:57（UTC+08:00）快照确认：**四路均 `COMPLETED 0:0`，批次总耗时 41:33，89460 审计也 `COMPLETED 0:0`／21 秒**。四路最终 ODB／SPEF／报告均存在，路由 DRC、天线 net／pin 违例均为 0，setup／hold TNS 均为 0，max-slew／fanout 违例均为 0。以下 WS 是当前单角、当前边界预算下的工具结果。
+
+| Case／step | 耗时 | Setup WS（ns） | Hold WS（ns） | Max-cap 违例 | 非 filler 实例面积（µm²） | 声明端口／signal bit |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| `llaccel-gemm`／89458.2 | 41:30 | +0.781452 | +0.0250618 | **49** | 471,803 | 27／3,753 |
+| `opentpu-act`／89458.1 | 5:59 | +1.22599 | +0.0322719 | **2** | 35,870.1 | 19／860 |
+| `opentpu-mxu`／89458.0 | 30:09 | +0.267694 | +0.0524039 | **12** | 428,669 | 37／2,172 |
+| `opentpu-act-mxu`／89458.3 | 33:59 | +0.478511 | +0.0342305 | **41** | 460,394 | 40／1,662 |
+
+**四路执行完成，但四路均未通过完整电气验收。** 终态审计列出的工具预算门槛中，四路唯一 false 项均为 `max_cap_zero`；产物校验成功不能覆盖电容违例或未执行的功能／系统验收。GEMM 的实例面积全部来自标准单元；openTPU 数字含 synthetic SRAM 宏，不能跨项目直接比较绝对 PPA。
 
 ACT 最终工具报告非 filler 实例面积 35,870.1 µm²，其中标准单元 6,722.88 µm²、synthetic SRAM 宏 29,147.2 µm²；die 106,410 µm²，不混为一个面积口径。最终日志分别报告 VDD/VSS 的所有 shape 连通；未额外重跑独立 PG／STA 签核。默认活动与 synthetic 宏模型的功耗／IR-drop 不当作真实应用结果。
 
@@ -45,8 +49,39 @@ ACT 最终工具报告非 filler 实例面积 35,870.1 µm²，其中标准单�
 
 为保证批次结束后自动落盘终态，另提交 **89460 `lyz-par-audit`**：c64、1 CPU、`afterany:89458`、实际 `TimeLimit=UNLIMITED`。它是一次性依赖审计，不做周期轮询或物理重跑。独立 `observer-v1/` 绑定脚本哈希；四路均结束后在计算节点核对各 `output-files.sha256`，保存 `completion.json`、其 SHA、逐 case 校验日志和门槛结果。电容／时序等不通过会保留为 false，不因采集成功而标为通过。
 
+实际核对 438 个产物条目全部通过（GEMM 108、ACT 111、MXU 109、合并 110）。已取回[冻结终态](../../project/experiments/parallel_blocks/results/parallel-blocks-01-completion.json)，下载字节 SHA-256 与计算节点记录一致：`4e6d7c24518f8ef55d45b57eb5325d0e7329dfc773273f8c339c4496fd885903`。后续监视器不会改写冻结终态；新增采集字段只写 `latest.json`。
+
+## 本轮诊断与改进顺序
+
+电容违例数量的演变如下，来源为各阶段原生 metrics；阶段寄生模型不同，不能将数量差直接当作修复器效果的严格对照。
+
+| Case | 放置优化 | 详细放置 | CTS | GRT | 最终提取报告 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| GEMM | 0 | 1 | 0 | 5 | 49 |
+| ACT | 0 | 0 | 0 | 0 | 2 |
+| MXU | 0 | 3 | 3 | 9 | 12 |
+| ACT＋MXU | 0 | 0 | 0 | 1 | 41 |
+
+`3_4_place_resized.log` 和 `5_1_grt.log` 实际调用均为 `repair_design -verbose`，没有显式电容修复裕量。18:01 提交一次性 **89478 `lyz-cap-read`**（node7、1 CPU、UNLIMITED，已 COMPLETED 0:0），只在计算节点读取当前同一镜像的流程源码；确认 ORFS `util.tcl` 将 `CAP_MARGIN` 传入 `repair_design -cap_margin`，`variables.yaml` 将其定义为允许提前多修复的裕量。原始源码包留在 `parallel-blocks-cap-diagnostic-01/flow-sources.json`，SHA 为 `57647db58c2b952ff320ea8c0502aee057dc764be482cf7da5f86e13916d906e`；[本地摘录与回执](../../project/experiments/parallel_blocks/results/parallel-blocks-cap-diagnostic-01.json)下载核对了该 SHA。
+
+这支持“路由后负载变化且前期修复裕量不足”的**候选解释**，尚未证明唯一根因。最差报告行分别是 GEMM `_331213_/ZN`（limit 60.73／cap 72.71），ACT `_5280_/Z`（60.50／63.15），MXU `_215362_/ZN`（26.02／33.13），合并 `u_mxu.f_tl[6]$_SDFFE_PP0P_/Q`（60.73／71.81）。表格未声明单位，因此本地逐行保留原报告文本，不擅自标单位；这些是具体驱动 pin，不能笼统归因于 ACT–MXU 接口。
+
+本轮已经改进监视器：明确打印产物校验与失败的工具预算门槛；在最新索引保存逐阶段 max-cap 数量、最终电气违例原文和资源账单。实际再次采集确认四路保存的违例行数 49／2／12／41 与最终 metrics 一致。未修改旧 runner、SDC、原始数据或主线作业，**本轮未发起第二轮 PNR**。
+
+下一轮建议按以下顺序推进，不扩散无依据的参数扫描：
+
+1. **先用最小 ACT 试验电容裕量。** 固定现有 RTL、时钟／IO 预算和 16 线程，对比 `CAP_MARGIN=10`、`20` 与原始 0 基线；新目录保留全部输入。以最终提取后的电容、setup／hold、DRC、面积变化共同判断，再决定是否用于另外三块。参数尚未执行，不能称已修复。
+2. **补齐功能与边界模型后再复用硬块。** 独立包装连接／数值回归和源到网表等价尚未完成；还需确定来自相邻块的驱动、负载及输出预算，不通过放宽时钟、false-path 或删除电容检查取得通过。
+3. **把 ACT 与 MXU 分开的硬块实际重连到顶层。** 沿用主线供电／层次接口经验，记录顶层连线、时钟／PG、通道和边界时序，再与同配置合并块比较。当前 684 bit 的 ACT–MXU 数据／控制连接在拆分实现中尚无真实跨块布线；独立面积、线长或违例数量相加不能替代顶层结果。
+
+## 并发资源是否需要调整
+
+Slurm 账单记录批次 `TotalCPU=09:46:40`，分配的 `CPUTimeRAW=159552` 秒，即约 **22.1% 的已分配 CPU 时间被记为实际 CPU 使用**。这是本次账单口径，不是四路没有同时运行。各 step 的实际 CPU 时间／墙钟时间平均为：ACT 约 2.17 核，GEMM 5.37 核，MXU 5.58 核，合并 5.38 核；物理流程含低并行阶段，不能据平均数认定任意阶段只需这些核。
+
+ACT 在约 6 分钟结束，另外三路需 30–42 分钟；四个固定 16 CPU 槽位中有一槽长期空闲。下一轮有足够独立变体时，值得比较小块 4／8 核与大块 8／16 核，并以受分配核数约束的任务队列及时补位；还没有线程数对照，不能宣称 8 核不增加耗时。电容裕量对照和线程数对照应分开，避免同时改两个因素。任何后续作业仍使用非 debug 节点、实际 UNLIMITED、独立目录，不取消主线。
+
 ## 接入与交付
 
 复用 Issue #7，不接管其整体状态。登记沿用管理中心 PR #5，本轮再次读回仍 OPEN／未合并，状态 pending；本项目无 `config/board.json`，已知 Projects 查询缺 `read:project`，实际看板 unverified／同步 pending，不扩权限或另建看板。并发成果在 PR #10 独立审查，供主线决定合入顺序；不覆盖 PR #8 回执或擅自合并。
 
-实际检查：管理结构、Python 编译、远程 Bash 语法和 `git diff --check` 通过；代码快照 `017a0a7e16c40e47a837e75101789c57b34625e6` 的 [Project structure CI](https://github.com/rayggxia-workspace/LLMHardwareDesign/actions/runs/39576321826) success。该 CI 只验证项目结构，不代表物理、功能或签核验收。
+实际检查：管理结构、Python 编译、远程 Bash 语法和 `git diff --check` 通过；前一交付 `790820880bcdc07fabecddbb8bd8ff7c94e00dae` 的 [Project structure CI](https://github.com/rayggxia-workspace/LLMHardwareDesign/actions/runs/39576683446) success。本轮实际执行增强后的监视器、SHA 核对和四路最终报告行数比对，均通过；当前提交 CI 以 PR 最新回执为准。管理 CI 只验证项目结构，不代表物理、功能或签核验收。
