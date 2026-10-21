@@ -19,8 +19,25 @@ printf '%s\n' "$LLHD_RESUME_FROM" > resume-parent.txt
 sha256sum "$LLHD_RESUME_FROM/vec-config.mk" "$LLHD_RESUME_FROM/vec.sdc" \
   "$LLHD_RESUME_FROM/vec-elab.v" > resume-parent-inputs.sha256
 sha256sum vec-config.mk vec.sdc vec-elab.ys > config-inputs.sha256
+# Dry-run only the first missing stage. A dry-run of the whole future flow
+# cannot create stage side effects such as 5_1_grt.sdc and reports false missing
+# prerequisites. The real finish command below still executes all later stages.
+results="$LLHD_ATTEMPT/flow/results/nangate45/llhd_vec_original/base"
+dry_target=finish
+for checkpoint in 2_floorplan.odb 2_floorplan.sdc 3_place.odb 3_place.sdc \
+  4_1_cts.odb 4_cts.odb 5_1_grt.odb 5_2_route.odb 5_3_fillcell.odb \
+  5_route.odb 5_route.sdc 6_1_fill.odb 6_1_fill.sdc; do
+  if [ ! -f "$results/$checkpoint" ]; then
+    dry_target="$results/$checkpoint"
+    break
+  fi
+done
+if [ "$dry_target" = finish ] && [ ! -f "$LLHD_ATTEMPT/flow/logs/nangate45/llhd_vec_original/base/6_report.log" ]; then
+  dry_target="$LLHD_ATTEMPT/flow/logs/nangate45/llhd_vec_original/base/6_report.log"
+fi
+printf '%s\n' "$dry_target" > resume-dry-run-target.txt
 make -n -C /OpenROAD-flow-scripts/flow DESIGN_CONFIG="$LLHD_ATTEMPT/vec-config.mk" \
-  WORK_HOME="$LLHD_ATTEMPT/flow" NUM_CORES="$NUM_CORES" finish > resume-dry-run.txt 2>&1
+  WORK_HOME="$LLHD_ATTEMPT/flow" NUM_CORES="$NUM_CORES" "$dry_target" > resume-dry-run.txt 2>&1
 if grep -E 'yosys.*(-s|-c)|synth\.tcl|do-yosys|synth_canonicalize' resume-dry-run.txt; then
   printf 'Refusing unexpected synthesis rerun; inspect dependency timestamps.\n' >&2
   exit 3

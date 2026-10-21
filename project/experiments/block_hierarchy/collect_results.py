@@ -24,18 +24,18 @@ HOST = "yuzelu@10.129.166.172"
 REMOTE = "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7"
 COLLECTOR = r'''
 from pathlib import Path
-import json, subprocess
+import json, subprocess, re
 root = Path(__ROOT__)
 attempts = __ATTEMPTS__
 sacct = subprocess.check_output([
     'sacct', '-j', ','.join(str(v) for v in attempts.values()),
-    '--format=JobIDRaw,State,ExitCode,Elapsed,AllocCPUS,NodeList', '--parsable2', '--noheader'
+    '--format=JobIDRaw,State,ExitCode,Elapsed,AllocCPUS,NodeList,Timelimit', '--parsable2', '--noheader'
 ], universal_newlines=True)
 states = {}
 for line in sacct.splitlines():
     values = line.split('|')
-    if len(values) >= 6 and values[0].isdigit():
-        states[int(values[0])] = dict(zip(('job_id','state','exit_code','elapsed','allocated_cpus','node'), values[:6]))
+    if len(values) >= 7 and values[0].isdigit():
+        states[int(values[0])] = dict(zip(('job_id','state','exit_code','elapsed','allocated_cpus','node','effective_time_limit'), values[:7]))
 out = []
 for name, job in attempts.items():
     path = root / name
@@ -46,7 +46,7 @@ for name, job in attempts.items():
         'image.sha256', 'tools.sha256', 'openroad-version.txt', 'yosys-version.txt',
         'orfs-commit.txt', 'runner-inputs.sha256', 'config-inputs.sha256',
         'abstract-source.txt', 'block-abstract-inputs.sha256', 'top-physical-inspection.txt',
-        'resume-parent.txt', 'resume-parent-state.txt', 'resume-parent-inputs.sha256',
+        'resume-parent.txt', 'resume-parent-state.txt', 'resume-parent-inputs.sha256', 'resume-dry-run-target.txt',
     ):
         target = path / filename
         if target.is_file():
@@ -60,6 +60,25 @@ for name, job in attempts.items():
             if target.is_file():
                 metrics[str(target)] = json.loads(target.read_text())
     item['flow_metrics'] = metrics
+    equivalence = {}
+    for nickname in ('llhd_vec_original', 'llhd_vec_harness'):
+        base = path / 'flow/logs/nangate45' / nickname / 'base'
+        for stem in ('4_rsz_lec', '6_final_lec'):
+            logs = [base / (stem + suffix) for suffix in ('_check.log', '.log')]
+            present = [target for target in logs if target.is_file()]
+            if present:
+                content = '\n'.join(target.read_text(errors='replace') for target in present).lower()
+                status = 'identical' if 'circuits are identical' in content else 'different' if 'circuits are different' in content else 'started_no_result'
+                equivalence[nickname + '/' + stem] = {'status': status, 'logs': [str(target) for target in present], 'scope': 'stage gate-level comparison, not original RTL to physical equivalence'}
+    item['stage_equivalence_checks'] = equivalence
+    io_models = {}
+    for nickname in ('llhd_vec_original', 'llhd_vec_harness'):
+        for stem in ('1_synth', '2_floorplan', '6_final'):
+            target = path / 'flow/results/nangate45' / nickname / 'base' / (stem + '.sdc')
+            if target.is_file():
+                lines = [line for line in target.read_text(errors='replace').splitlines() if re.search(r'\b(set_load|set_driving_cell|set_input_transition)\b', line)]
+                io_models[str(target)] = {'explicit_model_line_count': len(lines), 'first_lines': lines[:20]}
+    item['exported_sdc_external_io_models'] = io_models
     item['logs'] = {
         'slurm': str(path / f'slurm-{job}.log'),
         'elaboration': str(path / 'vec-elab.log'),
@@ -101,6 +120,12 @@ def main() -> None:
     output = HERE / "results/issue-7.json"
     previous = json.loads(output.read_text(encoding="utf-8")) if output.exists() else {}
     runner_commit = args.runner_commit or previous.get("runner_commit")
+    for item in previous.get("attempts", []):
+        name, job = item.get("attempt"), item.get("job_id")
+        if isinstance(name, str) and re.fullmatch(r"[a-z0-9][a-z0-9-]{0,63}", name) and str(job).isdigit() and int(job) > 0:
+            if name in attempts and attempts[name] != int(job):
+                parser.error("previous index conflicts with the immutable attempt/job mapping: " + name)
+            attempts[name] = int(job)
     for value in args.attempt:
         match = re.fullmatch(r"([a-z0-9][a-z0-9-]{0,63}):([0-9]+)", value)
         if not match:
@@ -134,6 +159,7 @@ def main() -> None:
             "source_rtl_to_physical_formal_equivalence_performed": False,
         },
         "timing_assumption": "3 ns single-clock Nangate45 typical corner; 0.6 ns top IO budget. Block and top budgets are not added to claim a system period.",
+        "scheduler_policy": "Current runner requests --time=0 and verifies scontrol TimeLimit=UNLIMITED. User removed artificial runtime limits; historical timed attempts retain their actual sacct limits and terminal states.",
         "remaining": remaining,
         **collected,
     }

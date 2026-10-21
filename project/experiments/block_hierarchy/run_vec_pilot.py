@@ -6,6 +6,7 @@ historical flow outputs and installed tools are read-only inputs.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -38,12 +39,11 @@ def main() -> None:
     parser.add_argument("--resume-from", help="Terminal Issue #7 VECTOR attempt whose completed ORFS stages should be copied")
     parser.add_argument("--partition", choices=["c64", "c96"], default="c64")
     parser.add_argument("--cpus", type=int, default=8)
-    parser.add_argument("--minutes", type=int, default=10)
     args = parser.parse_args()
     if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,63}", args.attempt):
         parser.error("attempt must be a simple lowercase identifier")
-    if not 1 <= args.cpus <= 16 or not 1 <= args.minutes <= 60:
-        parser.error("this pilot permits 1-16 CPUs and 1-60 minutes")
+    if not 1 <= args.cpus <= 16:
+        parser.error("this pilot permits 1-16 CPUs")
     if args.mode == "integration" and not args.block_attempt:
         parser.error("integration requires --block-attempt")
     if args.block_attempt and not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,63}", args.block_attempt):
@@ -81,20 +81,26 @@ def main() -> None:
     resume = f"{REMOTE_ROOT}/{args.resume_from}" if args.resume_from else ""
     command = (
         f"sbatch --parsable --partition={args.partition} --cpus-per-task={args.cpus} "
-        f"--time={args.minutes // 60:02d}:{args.minutes % 60:02d}:00 --job-name=llhd-vec-{args.mode} "
+        f"--time=0 --job-name=llhd-vec-{args.mode} "
         + dependency +
         f"--output={quote(remote + '/slurm-%j.log')} "
         f"--export=ALL,LLHD_ATTEMPT={remote},LLHD_MODE={args.mode},LLHD_IMAGE={IMAGE},LLHD_IMAGE_SHA256={IMAGE_SHA256},LLHD_BLOCK={block},LLHD_RESUME_FROM={resume} "
         f"{quote(remote + '/job.sh')}"
     )
     job = ssh(command)
+    job_number = job.split(";", 1)[0]
+    if not job_number.isdigit():
+        raise RuntimeError(f"Unexpected Slurm job receipt: {job!r}")
     receipt = {
         "job_id": job,
         "attempt": remote,
         "mode": args.mode,
         "partition": args.partition,
         "cpus": args.cpus,
-        "minutes": args.minutes,
+        "requested_time_limit": "UNLIMITED (--time=0)",
+        "effective_time_limit": None,
+        "scheduler_job_snapshot": None,
+        "launcher_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "source_commit": COMMIT,
         "image": IMAGE,
         "expected_image_sha256": IMAGE_SHA256,
@@ -103,8 +109,19 @@ def main() -> None:
         "depends_on": args.depends_on,
         "resume_from": resume or None,
     }
+    # Preserve the known job identity even if the scheduler readback fails.
+    ssh(f"printf '%s\\n' {quote(json.dumps(receipt, indent=2))} > {quote(remote + '/submission.json')}")
+    scheduler = ssh(f"scontrol -o show job {job_number}")
+    effective_limit = re.search(r"(?:^| )TimeLimit=(\S+)", scheduler)
+    receipt.update(
+        effective_time_limit=effective_limit.group(1) if effective_limit else None,
+        scheduler_job_snapshot=scheduler,
+    )
     print(json.dumps(receipt, ensure_ascii=False, indent=2))
     ssh(f"printf '%s\\n' {quote(json.dumps(receipt, indent=2))} > {quote(remote + '/submission.json')}")
+    if receipt["effective_time_limit"] != "UNLIMITED":
+        ssh(f"scancel {job_number}")
+        raise RuntimeError("Slurm did not grant UNLIMITED; cancelled the new job, preserving its receipt")
 
 
 if __name__ == "__main__":

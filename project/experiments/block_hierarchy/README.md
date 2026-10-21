@@ -10,16 +10,16 @@
 - 工具：`/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif`；该路径是可变文件名。当前 runner 在计算节点开始物理工具前断言已确认的 SHA-256 `49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a`；如要改变镜像必须显式修改受审查配置。本轮已提交的早期版本只记录镜像哈希，各已运行 attempt 的实际值相同，不冒称当时已有断言。实际工具二进制、Nangate45 输入、源码、生成配置与提交 runner 的 SHA-256 也在计算节点记录。OpenROAD 版本字符串为 `unknown`；不能由该字符串推断版本。
 - 输出全部位于 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/<attempt>/`。同名 attempt 禁止覆盖，失败记录保留。大数据库留在此处，仓库仅保留脚本和轻量索引。
 - 代码快照 commit 见结果索引与 Issue/PR 回执；如在作业提交后生成，只能称为事后记录的代码快照。每次实际提交脚本的精确身份由 `runner-inputs.sha256` 表示，历史版本差异仍以这些哈希为准，不能将基线 `main` commit 充当 runner 版本。
-- Slurm 仅使用 c64/c96 分区，每作业最多 16 CPU、最多 60 分钟。综合、编译、物理工具和大输出哈希均在计算节点运行。
+- Slurm 仅使用 c64/c96 分区，每作业最多 16 CPU。按用户要求，当前 runner 使用 `--time=0` 请求无限时，不设置人为运行时限；2026-10-21 实读两分区均 `DefaultTime=NONE`、`MaxTime=UNLIMITED`，安装的 sbatch 手册明确零表示无时间限制。提交回执记录 `scontrol` 读回的实际 `TimeLimit`，若不是 `UNLIMITED` 就取消新作业并保留回执。综合、编译、物理工具和大输出哈希均在计算节点运行。历史 89443 的 45 分钟 TIMEOUT 和 89447 的 60 分钟配置仍按当时事实保留，后续已撤销此类人工上限。
 
 ## 流程与复跑
 
 在有相同 SSH 权限的本地环境运行，使用全新 attempt 名称：
 
 ```powershell
-python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-screen-next --mode screening --cpus 8 --minutes 10
-python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-harden-next --mode pilot --cpus 16 --minutes 45
-python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-top-next --mode integration --block-attempt vec-harden-next --depends-on <hardening-job-id> --cpus 16 --minutes 30
+python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-screen-next --mode screening --cpus 8
+python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-harden-next --mode pilot --cpus 16
+python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-top-next --mode integration --block-attempt vec-harden-next --depends-on <hardening-job-id> --cpus 16
 python project/experiments/block_hierarchy/collect_results.py --attempt vec-screen-next:<screen-job-id> --attempt vec-harden-next:<hardening-job-id> --attempt vec-top-next:<integration-job-id>
 ```
 
@@ -27,7 +27,7 @@ python project/experiments/block_hierarchy/collect_results.py --attempt vec-scre
 
 `pilot` 从原始 RTL生成完整 VECTOR 网表，再按原 v1 的 35% 利用率、0.55 放置密度、`-noshare` 和 16384-bit memory 上限执行 Nangate45 ORFS `finish`。此时 VECTOR 内部允许 flatten；它在父级以完整宏出现。
 
-如果某次作业在完成综合后超时，可在它到达终态后使用 `--mode resume --resume-from <旧attempt>` 和全新 `--attempt`。该入口在计算节点复制完整 ORFS 阶段目录，保持文件时间、配置和3 ns/0.6 ns约束不变；旧路径仅保留为只读网表/SDC输入。实际执行前保存 `make -n`，发现需要重新综合就停止并保留诊断。此恢复入口已准备，是否执行及实测结果以索引为准；不声称已经证明可跳过综合。既有旧 attempt、失败日志和部分阶段均保留。
+如果某次作业在完成综合后中断，可在它到达终态后使用 `--mode resume --resume-from <旧attempt>` 和全新 `--attempt`。该入口在计算节点复制完整 ORFS 阶段目录，保持文件时间、配置和3 ns/0.6 ns约束不变；旧路径仅保留为只读网表/SDC输入。实际执行前对首个缺失阶段保存 `make -n`，发现需要重新综合就停止并保留诊断，再正常执行全流程 `finish`。首轮恢复 89447 通过身份校验，但全流程 dry-run 因尚未生成的后续 SDC 副产物失败；修正为首个缺失阶段的 dry-run 后新建 attempt，不掩盖该失败。恢复逻辑以本轮阶段实测为限，不声称通用 checkpoint 恢复能力；实际恢复是否成功以索引为准。既有旧 attempt、失败日志和部分阶段均保留。
 
 `integration` 依赖硬化成功，调用实际 ORFS `generate_abstract`。默认 `ABSTRACT_SOURCE=6_final`：记录最终 ODB/SDC/网表、SPEF 是否存在和 SHA；只有生成日志确认读入最终 SPEF 才称为使用路由后提取寄生。该脚本传播时钟，并将 source latency 归零后导出 Liberty；LEF 使用 `-bloat_occupied_layers` 输出占用层阻塞。
 

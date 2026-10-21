@@ -1,21 +1,22 @@
 {
   "schema_version": 1,
   "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
-  "updated_at": "2026-10-21T14:48:53.880673+08:00",
+  "updated_at": "2026-10-21T15:26:41.266676+08:00",
   "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
   "source_scope": "Original full-width llaccel v1 vec_engine and a direct one-macro integration harness",
-  "runner_commit": "7e9bde5b763b19591dcbe4f49ade7b08ef093843",
+  "runner_commit": "086449bf0525bf981509328cdf1521dfbc7ac263",
   "runner_commit_note": "This is a repository code snapshot recorded after job submission, not a claim that the jobs started from a committed checkout. Exact submitted versions and historical differences are bound by each remote runner-inputs.sha256; the base repository commit is not the experiment runner version.",
   "claims": {
     "complete_llaccel_core": false,
     "prefabricated_base": false,
     "restricted_metal_customization": false,
     "system_sta_signoff": false,
-    "formal_equivalence_performed": false
+    "source_rtl_to_physical_formal_equivalence_performed": false
   },
   "timing_assumption": "3 ns single-clock Nangate45 typical corner; 0.6 ns top IO budget. Block and top budgets are not added to claim a system period.",
+  "scheduler_policy": "Current runner requests --time=0 and verifies scontrol TimeLimit=UNLIMITED. User removed artificial runtime limits; historical timed attempts retain their actual sacct limits and terminal states.",
   "remaining": [
-    "Await terminal job state: vec-harden-01, vec-top-02",
+    "Await terminal job state: vec-harden-resume-02, vec-top-03",
     "Inspect exported Liberty timing coverage and final route electrical/timing violations before accepting the pilot.",
     "Scale integration harness to useful multiple-Block connectivity and then fixed/restricted layers."
   ],
@@ -30,7 +31,8 @@
         "exit_code": "127:0",
         "elapsed": "00:00:04",
         "allocated_cpus": "8",
-        "node": "node3"
+        "node": "node3",
+        "effective_time_limit": "00:10:00"
       },
       "submission.json": {
         "job_id": "89441",
@@ -49,10 +51,13 @@
       "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
       "runner-inputs.sha256": "eeaeaa5e47a27b1c3e8d51309616a2ea5e8bdd2debc6f9c541e1bb23e5b1ef97  job.sh\n34e0fad87c831e3ccffde2a70847ba1679e68003f32159feaa7df9231296bebc  inside_screening.sh\n26f463d6ba642715af5cc47e88fe7c953b9d1bab7795a2759051f0ac5680759b  inside_pilot.sh\n7cddf96874abc75f16a8e8b4f5016b3ea1983fec553ddd4d4600fa6049c31ec1  prepare_vec.py",
       "flow_metrics": {},
+      "stage_equivalence_checks": {},
+      "exported_sdc_external_io_models": {},
       "logs": {
         "slurm": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-screen-01/slurm-89441.log",
         "elaboration": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-screen-01/vec-elab.log",
-        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-screen-01/flow.log"
+        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-screen-01/flow.log",
+        "resume_dry_run": null
       },
       "output_hash_index": null,
       "existing_products_not_standalone_validation": {
@@ -86,7 +91,8 @@
         "exit_code": "0:0",
         "elapsed": "00:00:15",
         "allocated_cpus": "8",
-        "node": "node3"
+        "node": "node3",
+        "effective_time_limit": "00:10:00"
       },
       "submission.json": {
         "job_id": "89442",
@@ -110,10 +116,13 @@
       "orfs-commit.txt": "unavailable",
       "runner-inputs.sha256": "efa5a838a3b975f57a80937c1a5a7a1195202df5fb958438f8623b6d47cf63fa  job.sh\n740d7165b80ca618ce56190359bfc8b6322aa3874d3c6bb5decd91d0c43092c0  inside_screening.sh\n36eb20214adc861b15a4feda6bb93e33edd77343b70e62086c66705abe088032  inside_pilot.sh\n7cddf96874abc75f16a8e8b4f5016b3ea1983fec553ddd4d4600fa6049c31ec1  prepare_vec.py",
       "flow_metrics": {},
+      "stage_equivalence_checks": {},
+      "exported_sdc_external_io_models": {},
       "logs": {
         "slurm": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-screen-02/slurm-89442.log",
         "elaboration": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-screen-02/vec-elab.log",
-        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-screen-02/flow.log"
+        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-screen-02/flow.log",
+        "resume_dry_run": null
       },
       "output_hash_index": null,
       "existing_products_not_standalone_validation": {
@@ -143,11 +152,12 @@
       "job_id": 89443,
       "sacct": {
         "job_id": "89443",
-        "state": "RUNNING",
+        "state": "TIMEOUT",
         "exit_code": "0:0",
-        "elapsed": "00:18:09",
+        "elapsed": "00:45:00",
         "allocated_cpus": "16",
-        "node": "node3"
+        "node": "node3",
+        "effective_time_limit": "00:45:00"
       },
       "submission.json": {
         "job_id": "89443",
@@ -160,6 +170,7 @@
         "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
         "host": "yuzelu@10.129.166.172"
       },
+      "exit-code.txt": "0",
       "host.txt": "node3",
       "started-utc.txt": "2026-10-21T06:30:46Z",
       "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
@@ -237,12 +248,80 @@
           "floorplan__flow__warnings__count:IFP-0028": 1,
           "floorplan__flow__warnings__count:RSZ-0062": 1,
           "floorplan__flow__warnings__type_count": 3
+        },
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/flow/logs/nangate45/llhd_vec_original/base/3_3_place_gp.json": {
+          "globalplace__gpl__convergence__iteration": 1920,
+          "globalplace__gpl__routability__iteration": 1433,
+          "globalplace__gpl__routability__congestion": 0.988856,
+          "globalplace__gpl__area__original": 480866,
+          "globalplace__gpl__area__routability_inflation": 50427,
+          "globalplace__gpl__area__routability_inflation__percent": 10.4867,
+          "globalplace__gpl__area__timing_delta": 65573,
+          "globalplace__gpl__area__timing_delta__percent": 13.6364,
+          "globalplace__gpl__area__final": 596866,
+          "globalplace__gpl__area__final__percent": 24.1231,
+          "globalplace__route__wirelength__estimated": 6098570.0,
+          "globalplace__timing__setup__tns": -1117.26,
+          "globalplace__timing__hold__tns": 0,
+          "globalplace__timing__setup__ws": -4.56354,
+          "globalplace__timing__hold__ws": 0.0889727,
+          "globalplace__timing__fmax__clock:clk": 132213000.0,
+          "globalplace__timing__fmax": 132213000.0,
+          "globalplace__power__internal__total": 11.2364,
+          "globalplace__power__switching__total": 10.8932,
+          "globalplace__power__leakage__total": 0.0109288,
+          "globalplace__power__total": 22.1405,
+          "globalplace__design__io": 2248,
+          "globalplace__design__nets": 379199,
+          "globalplace__design__die__area": 1319100.0,
+          "globalplace__design__core__area": 1312710.0,
+          "globalplace__design__instance__count": 319934,
+          "globalplace__design__instance__area": 521669,
+          "globalplace__design__instance__count__stdcell": 319934,
+          "globalplace__design__instance__area__stdcell": 521669,
+          "globalplace__design__instance__count__macros": 0,
+          "globalplace__design__instance__area__macros": 0,
+          "globalplace__design__instance__count__padcells": 0,
+          "globalplace__design__instance__area__padcells": 0,
+          "globalplace__design__instance__count__cover": 0,
+          "globalplace__design__instance__area__cover": 0,
+          "globalplace__design__instance__utilization": 0.397399,
+          "globalplace__design__instance__utilization__stdcell": 0.397399,
+          "globalplace__design__rows": 818,
+          "globalplace__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 818,
+          "globalplace__design__sites": 4934994,
+          "globalplace__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4934994,
+          "globalplace__flow__warnings__count": 1,
+          "globalplace__flow__errors__count": 0,
+          "globalplace__flow__warnings__count:GRT-0281": 1,
+          "globalplace__flow__warnings__type_count": 1
+        }
+      },
+      "stage_equivalence_checks": {
+        "llhd_vec_original/4_rsz_lec": {
+          "status": "started_no_result",
+          "logs": [
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/flow/logs/nangate45/llhd_vec_original/base/4_rsz_lec_check.log",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/flow/logs/nangate45/llhd_vec_original/base/4_rsz_lec.log"
+          ],
+          "scope": "stage gate-level comparison, not original RTL to physical equivalence"
+        }
+      },
+      "exported_sdc_external_io_models": {
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/flow/results/nangate45/llhd_vec_original/base/1_synth.sdc": {
+          "explicit_model_line_count": 0,
+          "first_lines": []
+        },
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/flow/results/nangate45/llhd_vec_original/base/2_floorplan.sdc": {
+          "explicit_model_line_count": 0,
+          "first_lines": []
         }
       },
       "logs": {
         "slurm": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/slurm-89443.log",
         "elaboration": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/vec-elab.log",
-        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/flow.log"
+        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/flow.log",
+        "resume_dry_run": null
       },
       "output_hash_index": null,
       "existing_products_not_standalone_validation": {
@@ -276,7 +355,8 @@
         "exit_code": "0:0",
         "elapsed": "00:00:00",
         "allocated_cpus": "0",
-        "node": "None assigned"
+        "node": "None assigned",
+        "effective_time_limit": "00:30:00"
       },
       "submission.json": {
         "job_id": "89444",
@@ -292,10 +372,13 @@
         "depends_on": 89443
       },
       "flow_metrics": {},
+      "stage_equivalence_checks": {},
+      "exported_sdc_external_io_models": {},
       "logs": {
         "slurm": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-01/slurm-89444.log",
         "elaboration": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-01/vec-elab.log",
-        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-01/flow.log"
+        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-01/flow.log",
+        "resume_dry_run": null
       },
       "output_hash_index": null,
       "existing_products_not_standalone_validation": {
@@ -325,11 +408,12 @@
       "job_id": 89445,
       "sacct": {
         "job_id": "89445",
-        "state": "PENDING",
+        "state": "CANCELLED",
         "exit_code": "0:0",
         "elapsed": "00:00:00",
         "allocated_cpus": "0",
-        "node": "None assigned"
+        "node": "None assigned",
+        "effective_time_limit": "00:30:00"
       },
       "submission.json": {
         "job_id": "89445",
@@ -345,10 +429,550 @@
         "depends_on": 89443
       },
       "flow_metrics": {},
+      "stage_equivalence_checks": {},
+      "exported_sdc_external_io_models": {},
       "logs": {
         "slurm": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-02/slurm-89445.log",
         "elaboration": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-02/vec-elab.log",
-        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-02/flow.log"
+        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-02/flow.log",
+        "resume_dry_run": null
+      },
+      "output_hash_index": null,
+      "existing_products_not_standalone_validation": {
+        "llhd_vec_original": {},
+        "llhd_vec_harness": {}
+      },
+      "validation_summary": {
+        "sacct_completed_is_only_execution_status": false,
+        "abstract_signal_names_and_directions_pass": null,
+        "physical_signal_interface_pass": null,
+        "extra_physical_signal_pins_require_review": {
+          "top": null,
+          "macro": null
+        },
+        "timing_reports_present": {
+          "top-check-setup.rpt": false,
+          "top-clocks.rpt": false,
+          "top-paths.rpt": false,
+          "top-electrical.rpt": false
+        },
+        "acceptance_note": "COMPLETED never overrides failed/missing interface checks, electrical violations or missing timing coverage. No formal/system signoff."
+      }
+    },
+    {
+      "attempt": "vec-harden-resume-01",
+      "remote_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-01",
+      "job_id": 89447,
+      "sacct": {
+        "job_id": "89447",
+        "state": "FAILED",
+        "exit_code": "2:0",
+        "elapsed": "00:00:10",
+        "allocated_cpus": "16",
+        "node": "node3",
+        "effective_time_limit": "01:00:00"
+      },
+      "submission.json": {
+        "job_id": "89447",
+        "attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-01",
+        "mode": "resume",
+        "partition": "c64",
+        "cpus": 16,
+        "minutes": 60,
+        "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+        "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "expected_image_sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+        "host": "yuzelu@10.129.166.172",
+        "block_attempt": null,
+        "depends_on": 89443,
+        "resume_from": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01"
+      },
+      "resume-validation.json": {
+        "pass": true,
+        "parent": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01",
+        "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+        "design": "original full-width vec_engine",
+        "identical_image_tools_source_hash_manifests": true,
+        "identical_3ns_0p6ns_sdc_and_config": true,
+        "checkpoints_inherited": [
+          {
+            "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/flow/results/nangate45/llhd_vec_original/base/1_synth.odb",
+            "size_bytes": 134970449,
+            "mtime_ns": 1792565039000000000,
+            "sha256": "1ca800a20729e34e485ad23c80c602ca6f46252abedfafc760da5682799439f0"
+          },
+          {
+            "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/flow/results/nangate45/llhd_vec_original/base/2_floorplan.odb",
+            "size_bytes": 138724608,
+            "mtime_ns": 1792565340000000000,
+            "sha256": "94d0c2e7c2d0a1e856cbbe92fe6b8a3857ece564527f8f1688900121a98ce84b"
+          },
+          {
+            "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/flow/results/nangate45/llhd_vec_original/base/3_place.odb",
+            "size_bytes": 161789585,
+            "mtime_ns": 1792566054000000000,
+            "sha256": "5c8701241426cc45bed48ae6e2c2732148dae8d6dfa155933c32fbaee1148b82"
+          }
+        ],
+        "inherited_completion": false,
+        "note": "Inherited completion is not a new routing run; make dry-run and actual command log determine resumed stages."
+      },
+      "exit-code.txt": "2",
+      "host.txt": "node3",
+      "started-utc.txt": "2026-10-21T07:16:21Z",
+      "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+      "tools.sha256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53  /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad\nc2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b  /OpenROAD-flow-scripts/tools/install/yosys/bin/yosys",
+      "openroad-version.txt": "unknown",
+      "yosys-version.txt": "Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)",
+      "orfs-commit.txt": "unavailable",
+      "runner-inputs.sha256": "602a5e4fbe6344a66183364a9b403ffaa334ba8dcaf5c6f0d5ac45bbb2fce31d  job.sh\n740d7165b80ca618ce56190359bfc8b6322aa3874d3c6bb5decd91d0c43092c0  inside_screening.sh\n96c8915f23b3b7579602a90552ecd65380a16a4636a62d40b6b3045abe4528f4  inside_pilot.sh\n4f5bd6cf8e015b00f56a5cad1607d68985a02ea64ea0254bee0988e17a63a371  inside_integration.sh\nfc913ad53b055c39c4d510686f9c476a95882e1ff0b01f90fd904bd8bbb0a2ba  inside_resume.sh\nfd3e3dcd89594bd8e78e180fc13a4183a2f3bc3b135bc4ded5d0c53f7d39fa60  prepare_vec.py\n11b6795acccbf999f114e7c60ed53de947c4afc7b1c6bad0f219c7db1a096fcc  prepare_top.py\n9468e63d7b203c7033d4b1fd6a10c466f3518b6a9397b8f10aed55aee9ec5cd8  inspect_top.tcl\n8b1a94d8b2a1033fd3b90ebc4540a706d06692c55e672097141f77ad93b65778  validate_ports.py\n31ba80dfc914cedca2c6e94a774bebafecc09c682a1a87399721e5c1651f160f  report_top_timing.tcl\n22a7275a1de87e610b5eb94b3dd01ae45591db78027791153ebd5159d83ceaae  validate_physical_interfaces.py\n3c61dc70f904d134daf39908da1c4ebdd25b8873d65fe18ea0b69ee0ca16d98d  validate_resume.py",
+      "config-inputs.sha256": "7badf9a0ecc7a1ca733a43944b367cd6a95437568c735f02dfea5f98a52d6cde  vec-config.mk\n76c8c24d4efbfc34ed17f82fe0bb6ebaf20937d05d8ab9371ea53f0e25ce95c3  vec.sdc\n797dd1c21dcf0ffb582a2b9d7ec4eb4598967a48c86c2bf7832b161f0613f79e  vec-elab.ys",
+      "resume-parent.txt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01",
+      "resume-parent-state.txt": "TIMEOUT",
+      "resume-parent-inputs.sha256": "7badf9a0ecc7a1ca733a43944b367cd6a95437568c735f02dfea5f98a52d6cde  /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/vec-config.mk\n76c8c24d4efbfc34ed17f82fe0bb6ebaf20937d05d8ab9371ea53f0e25ce95c3  /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/vec.sdc\n266f652912e9aa2bd6114fb20f4cbac12222e43eafd7fea5c749bb9d1f9bff54  /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/vec-elab.v",
+      "flow_metrics": {
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-01/flow/logs/nangate45/llhd_vec_original/base/1_synth.json": {
+          "synth__design__io": 2246,
+          "synth__design__nets": 323938,
+          "synth__design__die__area": 0,
+          "synth__design__core__area": 0,
+          "synth__design__instance__count": 259349,
+          "synth__design__instance__area": 460078,
+          "synth__design__instance__count__stdcell": 259349,
+          "synth__design__instance__area__stdcell": 460078,
+          "synth__design__instance__count__macros": 0,
+          "synth__design__instance__area__macros": 0,
+          "synth__design__instance__count__padcells": 0,
+          "synth__design__instance__area__padcells": 0,
+          "synth__design__instance__count__cover": 0,
+          "synth__design__instance__area__cover": 0,
+          "synth__design__rows": 0,
+          "synth__design__sites": 0,
+          "synth__flow__warnings__count": 1,
+          "synth__flow__errors__count": 0,
+          "synth__flow__warnings__count:STA-0441": 1,
+          "synth__flow__warnings__type_count": 1
+        },
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-01/flow/logs/nangate45/llhd_vec_original/base/2_1_floorplan.json": {
+          "floorplan__design__instance__count__setup_buffer": 0,
+          "run__flow__platform__time_units": "1ns",
+          "run__flow__platform__capacitance_units": "1fF",
+          "run__flow__platform__resistance_units": "1kohm",
+          "run__flow__platform__voltage_units": "1v",
+          "run__flow__platform__current_units": "1mA",
+          "run__flow__platform__power_units": "1nW",
+          "run__flow__platform__distance_units": "1um",
+          "floorplan__timing__setup__tns": -1077.23,
+          "floorplan__timing__hold__tns": 0,
+          "floorplan__timing__setup__ws": -4.25033,
+          "floorplan__timing__hold__ws": 0.0844231,
+          "floorplan__timing__fmax__clock:clk": 137925000.0,
+          "floorplan__timing__fmax": 137925000.0,
+          "floorplan__power__internal__total": 8.41456,
+          "floorplan__power__switching__total": 6.91254,
+          "floorplan__power__leakage__total": 0.00891951,
+          "floorplan__power__total": 15.336,
+          "floorplan__design__io": 2246,
+          "floorplan__design__nets": 324243,
+          "floorplan__design__die__area": 1319100.0,
+          "floorplan__design__core__area": 1312710.0,
+          "floorplan__design__instance__count": 259654,
+          "floorplan__design__instance__area": 463107,
+          "floorplan__design__instance__count__stdcell": 259654,
+          "floorplan__design__instance__area__stdcell": 463107,
+          "floorplan__design__instance__count__macros": 0,
+          "floorplan__design__instance__area__macros": 0,
+          "floorplan__design__instance__count__padcells": 0,
+          "floorplan__design__instance__area__padcells": 0,
+          "floorplan__design__instance__count__cover": 0,
+          "floorplan__design__instance__area__cover": 0,
+          "floorplan__design__instance__utilization": 0.352787,
+          "floorplan__design__instance__utilization__stdcell": 0.352787,
+          "floorplan__design__rows": 818,
+          "floorplan__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 818,
+          "floorplan__design__sites": 4934994,
+          "floorplan__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4934994,
+          "floorplan__flow__warnings__count": 3,
+          "floorplan__flow__errors__count": 0,
+          "floorplan__flow__warnings__count:EST-0027": 1,
+          "floorplan__flow__warnings__count:IFP-0028": 1,
+          "floorplan__flow__warnings__count:RSZ-0062": 1,
+          "floorplan__flow__warnings__type_count": 3
+        },
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-01/flow/logs/nangate45/llhd_vec_original/base/3_3_place_gp.json": {
+          "globalplace__gpl__convergence__iteration": 1920,
+          "globalplace__gpl__routability__iteration": 1433,
+          "globalplace__gpl__routability__congestion": 0.988856,
+          "globalplace__gpl__area__original": 480866,
+          "globalplace__gpl__area__routability_inflation": 50427,
+          "globalplace__gpl__area__routability_inflation__percent": 10.4867,
+          "globalplace__gpl__area__timing_delta": 65573,
+          "globalplace__gpl__area__timing_delta__percent": 13.6364,
+          "globalplace__gpl__area__final": 596866,
+          "globalplace__gpl__area__final__percent": 24.1231,
+          "globalplace__route__wirelength__estimated": 6098570.0,
+          "globalplace__timing__setup__tns": -1117.26,
+          "globalplace__timing__hold__tns": 0,
+          "globalplace__timing__setup__ws": -4.56354,
+          "globalplace__timing__hold__ws": 0.0889727,
+          "globalplace__timing__fmax__clock:clk": 132213000.0,
+          "globalplace__timing__fmax": 132213000.0,
+          "globalplace__power__internal__total": 11.2364,
+          "globalplace__power__switching__total": 10.8932,
+          "globalplace__power__leakage__total": 0.0109288,
+          "globalplace__power__total": 22.1405,
+          "globalplace__design__io": 2248,
+          "globalplace__design__nets": 379199,
+          "globalplace__design__die__area": 1319100.0,
+          "globalplace__design__core__area": 1312710.0,
+          "globalplace__design__instance__count": 319934,
+          "globalplace__design__instance__area": 521669,
+          "globalplace__design__instance__count__stdcell": 319934,
+          "globalplace__design__instance__area__stdcell": 521669,
+          "globalplace__design__instance__count__macros": 0,
+          "globalplace__design__instance__area__macros": 0,
+          "globalplace__design__instance__count__padcells": 0,
+          "globalplace__design__instance__area__padcells": 0,
+          "globalplace__design__instance__count__cover": 0,
+          "globalplace__design__instance__area__cover": 0,
+          "globalplace__design__instance__utilization": 0.397399,
+          "globalplace__design__instance__utilization__stdcell": 0.397399,
+          "globalplace__design__rows": 818,
+          "globalplace__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 818,
+          "globalplace__design__sites": 4934994,
+          "globalplace__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4934994,
+          "globalplace__flow__warnings__count": 1,
+          "globalplace__flow__errors__count": 0,
+          "globalplace__flow__warnings__count:GRT-0281": 1,
+          "globalplace__flow__warnings__type_count": 1
+        }
+      },
+      "stage_equivalence_checks": {
+        "llhd_vec_original/4_rsz_lec": {
+          "status": "started_no_result",
+          "logs": [
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-01/flow/logs/nangate45/llhd_vec_original/base/4_rsz_lec_check.log",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-01/flow/logs/nangate45/llhd_vec_original/base/4_rsz_lec.log"
+          ],
+          "scope": "stage gate-level comparison, not original RTL to physical equivalence"
+        }
+      },
+      "exported_sdc_external_io_models": {
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-01/flow/results/nangate45/llhd_vec_original/base/1_synth.sdc": {
+          "explicit_model_line_count": 0,
+          "first_lines": []
+        },
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-01/flow/results/nangate45/llhd_vec_original/base/2_floorplan.sdc": {
+          "explicit_model_line_count": 0,
+          "first_lines": []
+        }
+      },
+      "logs": {
+        "slurm": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-01/slurm-89447.log",
+        "elaboration": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-01/vec-elab.log",
+        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-01/flow.log",
+        "resume_dry_run": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-01/resume-dry-run.txt"
+      },
+      "output_hash_index": null,
+      "existing_products_not_standalone_validation": {
+        "llhd_vec_original": {},
+        "llhd_vec_harness": {}
+      },
+      "validation_summary": {
+        "sacct_completed_is_only_execution_status": false,
+        "abstract_signal_names_and_directions_pass": null,
+        "physical_signal_interface_pass": null,
+        "extra_physical_signal_pins_require_review": {
+          "top": null,
+          "macro": null
+        },
+        "timing_reports_present": {
+          "top-check-setup.rpt": false,
+          "top-clocks.rpt": false,
+          "top-paths.rpt": false,
+          "top-electrical.rpt": false
+        },
+        "acceptance_note": "COMPLETED never overrides failed/missing interface checks, electrical violations or missing timing coverage. No formal/system signoff."
+      }
+    },
+    {
+      "attempt": "vec-harden-resume-02",
+      "remote_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02",
+      "job_id": 89448,
+      "sacct": {
+        "job_id": "89448",
+        "state": "RUNNING",
+        "exit_code": "0:0",
+        "elapsed": "00:01:01",
+        "allocated_cpus": "16",
+        "node": "node3",
+        "effective_time_limit": "UNLIMITED"
+      },
+      "submission.json": {
+        "job_id": "89448",
+        "attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02",
+        "mode": "resume",
+        "partition": "c64",
+        "cpus": 16,
+        "requested_time_limit": "UNLIMITED (--time=0)",
+        "effective_time_limit": "UNLIMITED",
+        "scheduler_job_snapshot": "JobId=89448 JobName=llhd-vec-resume UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586611 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T15:25:38 EligibleTime=2026-10-21T15:25:38 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T15:25:38 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3424504 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1 NumCPUs=16 NumTasks=1 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=16,mem=1M,node=1,billing=16 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02/job.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02/slurm-89448.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02/slurm-89448.log Power= TresPerTask=cpu:16",
+        "launcher_sha256": "bbda48d18104247a3151c5cf757b1734c83b18d8b3eeb2a5438dd6d1400249d5",
+        "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+        "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "expected_image_sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+        "host": "yuzelu@10.129.166.172",
+        "block_attempt": null,
+        "depends_on": null,
+        "resume_from": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01"
+      },
+      "resume-validation.json": {
+        "pass": true,
+        "parent": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01",
+        "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+        "design": "original full-width vec_engine",
+        "identical_image_tools_source_hash_manifests": true,
+        "identical_3ns_0p6ns_sdc_and_config": true,
+        "checkpoints_inherited": [
+          {
+            "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/flow/results/nangate45/llhd_vec_original/base/1_synth.odb",
+            "size_bytes": 134970449,
+            "mtime_ns": 1792565039000000000,
+            "sha256": "1ca800a20729e34e485ad23c80c602ca6f46252abedfafc760da5682799439f0"
+          },
+          {
+            "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/flow/results/nangate45/llhd_vec_original/base/2_floorplan.odb",
+            "size_bytes": 138724608,
+            "mtime_ns": 1792565340000000000,
+            "sha256": "94d0c2e7c2d0a1e856cbbe92fe6b8a3857ece564527f8f1688900121a98ce84b"
+          },
+          {
+            "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/flow/results/nangate45/llhd_vec_original/base/3_place.odb",
+            "size_bytes": 161789585,
+            "mtime_ns": 1792566054000000000,
+            "sha256": "5c8701241426cc45bed48ae6e2c2732148dae8d6dfa155933c32fbaee1148b82"
+          }
+        ],
+        "inherited_completion": false,
+        "note": "Inherited completion is not a new routing run; make dry-run and actual command log determine resumed stages."
+      },
+      "host.txt": "node3",
+      "started-utc.txt": "2026-10-21T07:25:41Z",
+      "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+      "tools.sha256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53  /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad\nc2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b  /OpenROAD-flow-scripts/tools/install/yosys/bin/yosys",
+      "openroad-version.txt": "unknown",
+      "yosys-version.txt": "Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)",
+      "orfs-commit.txt": "unavailable",
+      "runner-inputs.sha256": "602a5e4fbe6344a66183364a9b403ffaa334ba8dcaf5c6f0d5ac45bbb2fce31d  job.sh\n740d7165b80ca618ce56190359bfc8b6322aa3874d3c6bb5decd91d0c43092c0  inside_screening.sh\n96c8915f23b3b7579602a90552ecd65380a16a4636a62d40b6b3045abe4528f4  inside_pilot.sh\n4f5bd6cf8e015b00f56a5cad1607d68985a02ea64ea0254bee0988e17a63a371  inside_integration.sh\n4156e541e93d528bde35cc9bba43b06e05210b056bfafa4f636191f8df1b9435  inside_resume.sh\nfd3e3dcd89594bd8e78e180fc13a4183a2f3bc3b135bc4ded5d0c53f7d39fa60  prepare_vec.py\n11b6795acccbf999f114e7c60ed53de947c4afc7b1c6bad0f219c7db1a096fcc  prepare_top.py\n9468e63d7b203c7033d4b1fd6a10c466f3518b6a9397b8f10aed55aee9ec5cd8  inspect_top.tcl\n8b1a94d8b2a1033fd3b90ebc4540a706d06692c55e672097141f77ad93b65778  validate_ports.py\n31ba80dfc914cedca2c6e94a774bebafecc09c682a1a87399721e5c1651f160f  report_top_timing.tcl\n22a7275a1de87e610b5eb94b3dd01ae45591db78027791153ebd5159d83ceaae  validate_physical_interfaces.py\n3c61dc70f904d134daf39908da1c4ebdd25b8873d65fe18ea0b69ee0ca16d98d  validate_resume.py",
+      "config-inputs.sha256": "7badf9a0ecc7a1ca733a43944b367cd6a95437568c735f02dfea5f98a52d6cde  vec-config.mk\n76c8c24d4efbfc34ed17f82fe0bb6ebaf20937d05d8ab9371ea53f0e25ce95c3  vec.sdc\n797dd1c21dcf0ffb582a2b9d7ec4eb4598967a48c86c2bf7832b161f0613f79e  vec-elab.ys",
+      "resume-parent.txt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01",
+      "resume-parent-state.txt": "TIMEOUT",
+      "resume-parent-inputs.sha256": "7badf9a0ecc7a1ca733a43944b367cd6a95437568c735f02dfea5f98a52d6cde  /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/vec-config.mk\n76c8c24d4efbfc34ed17f82fe0bb6ebaf20937d05d8ab9371ea53f0e25ce95c3  /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/vec.sdc\n266f652912e9aa2bd6114fb20f4cbac12222e43eafd7fea5c749bb9d1f9bff54  /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/vec-elab.v",
+      "resume-dry-run-target.txt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02/flow/results/nangate45/llhd_vec_original/base/4_1_cts.odb",
+      "flow_metrics": {
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02/flow/logs/nangate45/llhd_vec_original/base/1_synth.json": {
+          "synth__design__io": 2246,
+          "synth__design__nets": 323938,
+          "synth__design__die__area": 0,
+          "synth__design__core__area": 0,
+          "synth__design__instance__count": 259349,
+          "synth__design__instance__area": 460078,
+          "synth__design__instance__count__stdcell": 259349,
+          "synth__design__instance__area__stdcell": 460078,
+          "synth__design__instance__count__macros": 0,
+          "synth__design__instance__area__macros": 0,
+          "synth__design__instance__count__padcells": 0,
+          "synth__design__instance__area__padcells": 0,
+          "synth__design__instance__count__cover": 0,
+          "synth__design__instance__area__cover": 0,
+          "synth__design__rows": 0,
+          "synth__design__sites": 0,
+          "synth__flow__warnings__count": 1,
+          "synth__flow__errors__count": 0,
+          "synth__flow__warnings__count:STA-0441": 1,
+          "synth__flow__warnings__type_count": 1
+        },
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02/flow/logs/nangate45/llhd_vec_original/base/2_1_floorplan.json": {
+          "floorplan__design__instance__count__setup_buffer": 0,
+          "run__flow__platform__time_units": "1ns",
+          "run__flow__platform__capacitance_units": "1fF",
+          "run__flow__platform__resistance_units": "1kohm",
+          "run__flow__platform__voltage_units": "1v",
+          "run__flow__platform__current_units": "1mA",
+          "run__flow__platform__power_units": "1nW",
+          "run__flow__platform__distance_units": "1um",
+          "floorplan__timing__setup__tns": -1077.23,
+          "floorplan__timing__hold__tns": 0,
+          "floorplan__timing__setup__ws": -4.25033,
+          "floorplan__timing__hold__ws": 0.0844231,
+          "floorplan__timing__fmax__clock:clk": 137925000.0,
+          "floorplan__timing__fmax": 137925000.0,
+          "floorplan__power__internal__total": 8.41456,
+          "floorplan__power__switching__total": 6.91254,
+          "floorplan__power__leakage__total": 0.00891951,
+          "floorplan__power__total": 15.336,
+          "floorplan__design__io": 2246,
+          "floorplan__design__nets": 324243,
+          "floorplan__design__die__area": 1319100.0,
+          "floorplan__design__core__area": 1312710.0,
+          "floorplan__design__instance__count": 259654,
+          "floorplan__design__instance__area": 463107,
+          "floorplan__design__instance__count__stdcell": 259654,
+          "floorplan__design__instance__area__stdcell": 463107,
+          "floorplan__design__instance__count__macros": 0,
+          "floorplan__design__instance__area__macros": 0,
+          "floorplan__design__instance__count__padcells": 0,
+          "floorplan__design__instance__area__padcells": 0,
+          "floorplan__design__instance__count__cover": 0,
+          "floorplan__design__instance__area__cover": 0,
+          "floorplan__design__instance__utilization": 0.352787,
+          "floorplan__design__instance__utilization__stdcell": 0.352787,
+          "floorplan__design__rows": 818,
+          "floorplan__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 818,
+          "floorplan__design__sites": 4934994,
+          "floorplan__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4934994,
+          "floorplan__flow__warnings__count": 3,
+          "floorplan__flow__errors__count": 0,
+          "floorplan__flow__warnings__count:EST-0027": 1,
+          "floorplan__flow__warnings__count:IFP-0028": 1,
+          "floorplan__flow__warnings__count:RSZ-0062": 1,
+          "floorplan__flow__warnings__type_count": 3
+        },
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02/flow/logs/nangate45/llhd_vec_original/base/3_3_place_gp.json": {
+          "globalplace__gpl__convergence__iteration": 1920,
+          "globalplace__gpl__routability__iteration": 1433,
+          "globalplace__gpl__routability__congestion": 0.988856,
+          "globalplace__gpl__area__original": 480866,
+          "globalplace__gpl__area__routability_inflation": 50427,
+          "globalplace__gpl__area__routability_inflation__percent": 10.4867,
+          "globalplace__gpl__area__timing_delta": 65573,
+          "globalplace__gpl__area__timing_delta__percent": 13.6364,
+          "globalplace__gpl__area__final": 596866,
+          "globalplace__gpl__area__final__percent": 24.1231,
+          "globalplace__route__wirelength__estimated": 6098570.0,
+          "globalplace__timing__setup__tns": -1117.26,
+          "globalplace__timing__hold__tns": 0,
+          "globalplace__timing__setup__ws": -4.56354,
+          "globalplace__timing__hold__ws": 0.0889727,
+          "globalplace__timing__fmax__clock:clk": 132213000.0,
+          "globalplace__timing__fmax": 132213000.0,
+          "globalplace__power__internal__total": 11.2364,
+          "globalplace__power__switching__total": 10.8932,
+          "globalplace__power__leakage__total": 0.0109288,
+          "globalplace__power__total": 22.1405,
+          "globalplace__design__io": 2248,
+          "globalplace__design__nets": 379199,
+          "globalplace__design__die__area": 1319100.0,
+          "globalplace__design__core__area": 1312710.0,
+          "globalplace__design__instance__count": 319934,
+          "globalplace__design__instance__area": 521669,
+          "globalplace__design__instance__count__stdcell": 319934,
+          "globalplace__design__instance__area__stdcell": 521669,
+          "globalplace__design__instance__count__macros": 0,
+          "globalplace__design__instance__area__macros": 0,
+          "globalplace__design__instance__count__padcells": 0,
+          "globalplace__design__instance__area__padcells": 0,
+          "globalplace__design__instance__count__cover": 0,
+          "globalplace__design__instance__area__cover": 0,
+          "globalplace__design__instance__utilization": 0.397399,
+          "globalplace__design__instance__utilization__stdcell": 0.397399,
+          "globalplace__design__rows": 818,
+          "globalplace__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 818,
+          "globalplace__design__sites": 4934994,
+          "globalplace__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4934994,
+          "globalplace__flow__warnings__count": 1,
+          "globalplace__flow__errors__count": 0,
+          "globalplace__flow__warnings__count:GRT-0281": 1,
+          "globalplace__flow__warnings__type_count": 1
+        }
+      },
+      "stage_equivalence_checks": {
+        "llhd_vec_original/4_rsz_lec": {
+          "status": "started_no_result",
+          "logs": [
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02/flow/logs/nangate45/llhd_vec_original/base/4_rsz_lec_check.log",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02/flow/logs/nangate45/llhd_vec_original/base/4_rsz_lec.log"
+          ],
+          "scope": "stage gate-level comparison, not original RTL to physical equivalence"
+        }
+      },
+      "exported_sdc_external_io_models": {
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02/flow/results/nangate45/llhd_vec_original/base/1_synth.sdc": {
+          "explicit_model_line_count": 0,
+          "first_lines": []
+        },
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02/flow/results/nangate45/llhd_vec_original/base/2_floorplan.sdc": {
+          "explicit_model_line_count": 0,
+          "first_lines": []
+        }
+      },
+      "logs": {
+        "slurm": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02/slurm-89448.log",
+        "elaboration": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02/vec-elab.log",
+        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02/flow.log",
+        "resume_dry_run": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02/resume-dry-run.txt"
+      },
+      "output_hash_index": null,
+      "existing_products_not_standalone_validation": {
+        "llhd_vec_original": {},
+        "llhd_vec_harness": {}
+      },
+      "validation_summary": {
+        "sacct_completed_is_only_execution_status": false,
+        "abstract_signal_names_and_directions_pass": null,
+        "physical_signal_interface_pass": null,
+        "extra_physical_signal_pins_require_review": {
+          "top": null,
+          "macro": null
+        },
+        "timing_reports_present": {
+          "top-check-setup.rpt": false,
+          "top-clocks.rpt": false,
+          "top-paths.rpt": false,
+          "top-electrical.rpt": false
+        },
+        "acceptance_note": "COMPLETED never overrides failed/missing interface checks, electrical violations or missing timing coverage. No formal/system signoff."
+      }
+    },
+    {
+      "attempt": "vec-top-03",
+      "remote_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-03",
+      "job_id": 89449,
+      "sacct": {
+        "job_id": "89449",
+        "state": "PENDING",
+        "exit_code": "0:0",
+        "elapsed": "00:00:00",
+        "allocated_cpus": "0",
+        "node": "None assigned",
+        "effective_time_limit": "UNLIMITED"
+      },
+      "submission.json": {
+        "job_id": "89449",
+        "attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-03",
+        "mode": "integration",
+        "partition": "c64",
+        "cpus": 16,
+        "requested_time_limit": "UNLIMITED (--time=0)",
+        "effective_time_limit": "UNLIMITED",
+        "scheduler_job_snapshot": "JobId=89449 JobName=llhd-vec-integration UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586610 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=Dependency Dependency=afterok:89448(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T15:26:17 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T15:26:17 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3434022 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1 NumCPUs=16 NumTasks=1 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=16,mem=1M,node=1,billing=16 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-03/job.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-03/slurm-89449.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-03/slurm-89449.log Power= KillOInInvalidDependent=Yes TresPerTask=cpu:16",
+        "launcher_sha256": "bbda48d18104247a3151c5cf757b1734c83b18d8b3eeb2a5438dd6d1400249d5",
+        "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+        "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "expected_image_sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+        "host": "yuzelu@10.129.166.172",
+        "block_attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02",
+        "depends_on": 89448,
+        "resume_from": null
+      },
+      "flow_metrics": {},
+      "stage_equivalence_checks": {},
+      "exported_sdc_external_io_models": {},
+      "logs": {
+        "slurm": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-03/slurm-89449.log",
+        "elaboration": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-03/vec-elab.log",
+        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-03/flow.log",
+        "resume_dry_run": null
       },
       "output_hash_index": null,
       "existing_products_not_standalone_validation": {
@@ -373,5 +997,5 @@
       }
     }
   ],
-  "sacct_raw": "89441|FAILED|127:0|00:00:04|8|node3\n89441.batch|FAILED|127:0|00:00:04|8|node3\n89441.extern|COMPLETED|0:0|00:00:04|8|node3\n89442|COMPLETED|0:0|00:00:15|8|node3\n89442.batch|COMPLETED|0:0|00:00:15|8|node3\n89442.extern|COMPLETED|0:0|00:00:15|8|node3\n89443|RUNNING|0:0|00:18:09|16|node3\n89443.batch|RUNNING|0:0|00:18:09|16|node3\n89443.extern|RUNNING|0:0|00:18:09|16|node3\n89444|CANCELLED by 10011|0:0|00:00:00|0|None assigned\n89445|PENDING|0:0|00:00:00|0|None assigned\n"
+  "sacct_raw": "89441|FAILED|127:0|00:00:04|8|node3|00:10:00\n89441.batch|FAILED|127:0|00:00:04|8|node3|\n89441.extern|COMPLETED|0:0|00:00:04|8|node3|\n89442|COMPLETED|0:0|00:00:15|8|node3|00:10:00\n89442.batch|COMPLETED|0:0|00:00:15|8|node3|\n89442.extern|COMPLETED|0:0|00:00:15|8|node3|\n89443|TIMEOUT|0:0|00:45:00|16|node3|00:45:00\n89443.batch|CANCELLED|0:15|00:45:01|16|node3|\n89443.extern|COMPLETED|0:0|00:45:00|16|node3|\n89444|CANCELLED by 10011|0:0|00:00:00|0|None assigned|00:30:00\n89445|CANCELLED|0:0|00:00:00|0|None assigned|00:30:00\n89447|FAILED|2:0|00:00:10|16|node3|01:00:00\n89447.batch|FAILED|2:0|00:00:10|16|node3|\n89447.extern|COMPLETED|0:0|00:00:10|16|node3|\n89448|RUNNING|0:0|00:01:01|16|node3|UNLIMITED\n89448.batch|RUNNING|0:0|00:01:01|16|node3|\n89448.extern|RUNNING|0:0|00:01:01|16|node3|\n89449|PENDING|0:0|00:00:00|0|None assigned|UNLIMITED\n"
 }
