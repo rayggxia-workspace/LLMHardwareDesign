@@ -23,6 +23,16 @@ if record['completion_exists'] and record['completion_sha256']:
     if destination.exists():assert destination.read_bytes()==raw
     else:destination.write_bytes(raw)
     print('Frozen completion SHA verified')
+    sealed=record.get('tasks',{}).get('retired-evidence',{}).get('validation',{}).get('retired_audits',{})
+    for attempt,entry in sealed.items():
+        assert re.fullmatch(r'parallel-blocks-wave2-[0-9]+',attempt)
+        name=attempt+'-completion.json'
+        raw=subprocess.check_output(command[:1]+['-n']+command[1:]+['cat '+remote+'/retired-evidence/retired/'+name])
+        assert hashlib.sha256(raw).hexdigest()==entry['sha256']
+        destination=out/name
+        if destination.exists():assert destination.read_bytes()==raw
+        else:destination.write_bytes(raw)
+        print('Retired failed audit bytes verified:',attempt,'original failures=',entry['original_artifact_audit_failures'])
 print(record['scheduler']['stdout'])
 for name,item in record['tasks'].items():
     print(name,'exit=',str(item['exit_code']).strip(),'stages=',item.get('stages'),
@@ -30,3 +40,6 @@ for name,item in record['tasks'].items():
           'quality=',item.get('quality'),'validation=',item.get('validation',{}).get('passed'),
           'RAM cases=',item.get('ram_cases_finished'),'views=',item.get('views_finished'))
     if item['exit_code'] and item['exit_code'].strip()!='0':print(item['log_tail'])
+    for name,physical in item.get('validation',{}).get('results',{}).items():
+        print('strict audit',name,'gates=',physical['observed_strict_tool_gates_pass'],
+              'quality=',physical['quality'])

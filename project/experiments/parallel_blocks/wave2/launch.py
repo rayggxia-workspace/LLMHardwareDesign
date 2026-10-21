@@ -13,9 +13,12 @@ HOST = "yuzelu@10.129.166.172"
 IMAGE = "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif"
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--attempt", required=True)
-parser.add_argument("--profile", choices=("full", "physical", "gemm-receipt", "top-contract", "abc-probe", "abc-probe-short", "retired-evidence"), default="full")
+parser.add_argument("--profile", choices=("full", "physical", "gemm-receipt", "top-contract", "abc-probe", "abc-probe-short", "retired-evidence", "act-audit", "full-physical-audit"), default="full")
+parser.add_argument('--dependency', help='Explicit one-shot Slurm dependency, e.g. afterany:89499')
 args = parser.parse_args()
 assert re.fullmatch(r"parallel-blocks-wave2-[0-9]+", args.attempt)
+if args.dependency:
+    assert re.fullmatch(r'afterany:\d+(?::\d+)*',args.dependency)
 remote = "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/" + args.attempt
 
 
@@ -51,10 +54,14 @@ if args.profile == 'physical':
     plan['A']['cores']=sum(t['cores'] for t in plan['A']['tasks'])
 if args.profile == 'retired-evidence':
     plan={'C': {'node':'node9','cores':1,'tasks':[task('retired-evidence','retired-evidence',1)]}}
+if args.profile in ('act-audit','full-physical-audit'):
+    name='act-sweep-audit' if args.profile=='act-audit' else 'full-physical-audit'
+    plan={'C': {'node':'node9','cores':1,'tasks':[task(name,'physical-audit',1)]}}
 for stream in plan.values():
     assert sum(t["cores"] for t in stream["tasks"]) <= stream["cores"]
 receipt = dict(attempt=args.attempt, remote=remote, host=HOST, image=IMAGE, plan=plan,
                profile=args.profile,
+               dependency=args.dependency,
                runner_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=BASE, text=True).strip(),
                issue="https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
                submitted_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -65,7 +72,9 @@ receipt = dict(attempt=args.attempt, remote=remote, host=HOST, image=IMAGE, plan
                    'top-contract':'Checked black-box wiring and common-die proposal only; no top PNR',
                    'abc-probe':'Minimal TMPDIR completion-protocol comparison; no block acceptance',
                    'abc-probe-short':'Corrected minimal short-default TMPDIR probe with standard-cell declarations',
-                   'retired-evidence':'Seal already-written failed audit bytes; retain all failures'}[args.profile])
+                   'retired-evidence':'Seal already-written failed audit bytes; retain all failures',
+                   'act-audit':'Independent ACT sweep hashes and strict worst-margin budget audit',
+                   'full-physical-audit':'Independent seven-case hashes and strict worst-margin budget audit'}[args.profile])
 ssh("test ! -e " + shlex.quote(remote) + " && mkdir -p " + shlex.quote(remote + "/runner/wave2"))
 for directory, paths in ((remote + "/runner", list(BASE.glob("*.py")) + list(BASE.glob("*.sh"))),
                          (remote + "/runner/wave2", list(HERE.glob("*.py")) + list(HERE.glob("*.sh")))):
@@ -81,6 +90,8 @@ for label, stream in plan.items():
                "-o", remote + "/stream-" + label + ".log", "--export",
                "ALL,LLHD_BATCH=" + remote + ",LLHD_IMAGE=" + IMAGE + ",LLHD_STREAM=" + label,
                remote + "/runner/wave2/stream.sh"]
+    if args.dependency:
+        command.insert(1,'--dependency='+args.dependency)
     job = ssh(" ".join(map(shlex.quote, command)))
     assert re.fullmatch(r"\d+", job)
     stream["job_id"] = int(job)

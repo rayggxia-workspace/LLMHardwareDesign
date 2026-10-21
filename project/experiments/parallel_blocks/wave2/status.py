@@ -60,6 +60,7 @@ for label, stream in submission['plan'].items():
                 'setup_ws_ns':final.get('finish__timing__setup__ws'),
                 'hold_ws_ns':final.get('finish__timing__hold__ws'),
                 'max_cap':final.get('finish__timing__drv__max_cap'),
+                'cap_slack_over_limit_metric':final.get('finish__timing__drv__max_cap_limit'),
                 'max_slew':final.get('finish__timing__drv__max_slew'),
                 'max_fanout':final.get('finish__timing__drv__max_fanout'),
                 'instance_area_um2':final.get('finish__design__instance__area')}

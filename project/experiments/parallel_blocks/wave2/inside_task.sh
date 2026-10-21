@@ -25,5 +25,6 @@ case "$kind" in
   top-contract) python3 "$LLHD_BATCH/runner/wave2/prepare_top_contract.py" ;;
   abc-probe) python3 "$LLHD_BATCH/runner/wave2/abc_probe.py" ;;
   retired-evidence) python3 "$LLHD_BATCH/runner/wave2/retired_evidence.py" ;;
+  physical-audit) python3 "$LLHD_BATCH/runner/wave2/strict_physical_audit.py" ;;
   *) exit 2 ;;
 esac
