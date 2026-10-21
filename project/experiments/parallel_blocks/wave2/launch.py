@@ -13,7 +13,7 @@ HOST = "yuzelu@10.129.166.172"
 IMAGE = "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif"
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--attempt", required=True)
-parser.add_argument("--profile", choices=("full", "gemm-receipt", "top-contract"), default="full")
+parser.add_argument("--profile", choices=("full", "gemm-receipt", "top-contract", "abc-probe"), default="full")
 args = parser.parse_args()
 assert re.fullmatch(r"parallel-blocks-wave2-[0-9]+", args.attempt)
 remote = "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/" + args.attempt
@@ -41,6 +41,8 @@ if args.profile == 'gemm-receipt':
     plan={'C': {'node':'node9','cores':1,'tasks':[task('gemm-receipt','gemm-receipt',1,case='llaccel-gemm')]}}
 if args.profile == 'top-contract':
     plan={'C': {'node':'node9','cores':1,'tasks':[task('top-contract','top-contract',1)]}}
+if args.profile == 'abc-probe':
+    plan={'C': {'node':'node9','cores':2,'tasks':[task('abc-probe-short','abc-probe',1),task('abc-probe-long','abc-probe',1)]}}
 for stream in plan.values():
     assert sum(t["cores"] for t in stream["tasks"]) <= stream["cores"]
 receipt = dict(attempt=args.attempt, remote=remote, host=HOST, image=IMAGE, plan=plan,
