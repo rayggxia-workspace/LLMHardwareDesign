@@ -9,10 +9,15 @@
 ```powershell
 python project/experiments/parallel_blocks/submit.py --attempt parallel-blocks-01 --node node7
 python project/experiments/parallel_blocks/monitor.py --attempt parallel-blocks-01
+python project/experiments/parallel_blocks/submit_audit.py --attempt parallel-blocks-01
 ```
 
 每次新 attempt 禁止覆盖，输出仅写入 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/<attempt>/`。一个 c64 Slurm allocation 申请 4 task × 16 CPU，四个 `srun --exclusive --cpu-bind=cores` step 各占 16 CPU，合计不超过分配的 64 核。任务名 `lyz-par4` 使用卢雨泽姓名缩写；不碰主线节点。所有作业 `--time=0`，提交后和计算开始时均核实 `TimeLimit=UNLIMITED`。
 
 四路分别保存源与工具哈希、配置、stage 数据库／指标、日志、端口／RAM 清单和退出码；一路失败不取消其他路。批作业失败可能只有个别 step 失败，必须逐 case 判断。新产物哈希由计算节点生成，监视器仅采集轻量报告和已生成索引，不在登录节点运行物理工具或对大数据库重算哈希。
 
+`submit_audit.py` 为同批次另建 `observer-v1/` 并提交一次性 `afterany` 审计；没有周期轮询。它在计算节点核对新产物哈希，保存每路执行及质量门槛（包括失败）到 `completion.json`。不重跑物理分析，不修改已提交 runner 或各 case 输入。监视器发现最终汇总与其计算节点 SHA 后，核对下载内容并保存在本地结果目录；摘要与原始 SHA 明确区分。
+
 Nangate45：GEMM 3 ns／IO 0.6 ns，openTPU 2.5 ns／IO 0.5 ns；这是各自工程预算，不比较两个项目的绝对 PPA。35% 利用率、0.55 放置密度、原始数值及 lane 数保持固定。未提供完整外部驱动／负载或应用活动；本路线显式 `LEC_CHECK=0`，只推进物理工程，与主线仍运行的默认 LEC 分开。结构检查不代替回归或源 RTL 到物理网表等价。原始宽接口、完整控制和存储容量保留，未实施 128 bit 串行缓存方案。
+
+本批 openTPU 将 IO delay 加到实际 clk，保留端口 hold 检查；历史完整 small 工程使用 virtual clock、端口 hold false-path 和 CTS latency hook。本批不复现该历史边界约束，因此不能直接用其已有 PPA 数字做前后收益比较。

@@ -41,6 +41,16 @@ record = {"observed_utc": datetime.datetime.now(datetime.timezone.utc).isoformat
           "allocation": command(["scontrol", "-o", "show", "job", job]),
           "steps": command(["scontrol", "-d", "-o", "show", "step", job]),
           "cases": {}}
+audit_submission = small(root / "completion-submission.json")
+if isinstance(audit_submission, str):
+    audit_meta = json.loads(audit_submission)
+    record["completion_audit"] = {
+        "submission": audit_meta,
+        "scheduler": command(["sacct", "-n", "-P", "-j", str(audit_meta["audit_job_id"]),
+                              "--format=JobIDRaw,JobName%40,State,ExitCode,Elapsed,AllocCPUS,NodeList"]),
+        "completion_exists": (root / "completion.json").is_file(),
+        "completion_sha256": small(root / "completion.sha256"),
+        "exit_code": small(root / "completion-audit-exit-code.txt")}
 for case in submission["cases"]:
     base = root / case
     nickname = "parallel_" + case.replace("-", "_")

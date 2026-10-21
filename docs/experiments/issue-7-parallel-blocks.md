@@ -22,6 +22,7 @@
 - 主线原回归／形式结果不自动授予新包装或网表；每路执行自身 elaboration、`hierarchy -check`、`check -assert`，记录真实端口及 RAM 实例清单。
 - 源 RTL 不改，包装不加寄存器；openTPU 合并连接对照原 `otpu_slice` 的 `u_act`／`u_mxu`。物理流程显式关闭阶段 LEC，因此不声称门级等价；主线默认 LEC 不取消。
 - openTPU 使用原 revision 的 synthetic fakeram LEF／Liberty 研究模型，不是实际 SRAM、GDS 或签核；分开与合并使用同一模型规则和资源参数。工具 DRC／STA 均按实际报告分别记录。
+- 本批 openTPU 的 IO delay 作用于实际 clk，端口 hold 仍检查；历史完整 small 的 virtual clock、端口 hold 例外和 CTS latency hook 未沿用。两者边界预算不同，不做历史 PPA 的直接收益比较。
 - 四路产物不能直接相加后宣称已完成 O0-W 顶层；还需分开宏的实际顶层布线、同边界时序覆盖、面积／时钟／PDN／通道成本。H2 固定资源、多计算图及受限定制尚未执行。
 
 ## 执行回执
@@ -40,6 +41,8 @@ ACT 最终工具报告非 filler 实例面积 35,870.1 µm²，其中标准单�
 实际 elaboration 确认分开两块的 SRAM 实例之和与合并块一致：ACT 为 4×32×128＋2×32×64 bit 的 1R1W 模型；MXU 为 3×64×72、1×64×40、1×64×96、1×64×64 bit 的 1R1W 模型；合并后同类型／同数量。声明端口数与 bit 数是接口记录，不是最终物理 pin、带宽或制造接点统计。
 
 机器记录保存于 `project/experiments/parallel_blocks/results/`，远程大文件保留在独立 `parallel-blocks-01/`，监视器只读远程轻量报告并写本分支快照。Issue #7 使用[同一条并发回执](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7#issuecomment-6312241685)持续更新，避免覆盖主线正文。后台 heartbeat 工具明确不支持临时侧聊，因此未成功创建定时唤醒；本轮主动跟踪，不声称结束对话后仍有后台监视。
+
+为保证批次结束后自动落盘终态，另提交 **89460 `lyz-par-audit`**：c64、1 CPU、`afterany:89458`、实际 `TimeLimit=UNLIMITED`。它是一次性依赖审计，不做周期轮询或物理重跑。独立 `observer-v1/` 绑定脚本哈希；四路均结束后在计算节点核对各 `output-files.sha256`，保存 `completion.json`、其 SHA、逐 case 校验日志和门槛结果。电容／时序等不通过会保留为 false，不因采集成功而标为通过。
 
 ## 接入与交付
 
