@@ -1,0 +1,308 @@
+{
+  "schema_version": 1,
+  "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
+  "updated_at": "2026-10-21T14:42:40.445202+08:00",
+  "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+  "source_scope": "Original full-width llaccel v1 vec_engine and a direct one-macro integration harness",
+  "runner_commit": null,
+  "runner_commit_note": "Pending first experiment-code commit; submitted files are bound by per-attempt runner-inputs.sha256, not the base repository commit.",
+  "claims": {
+    "complete_llaccel_core": false,
+    "prefabricated_base": false,
+    "restricted_metal_customization": false,
+    "system_sta_signoff": false,
+    "formal_equivalence_performed": false
+  },
+  "timing_assumption": "3 ns single-clock Nangate45 typical corner; 0.6 ns top IO budget. Block and top budgets are not added to claim a system period.",
+  "remaining": [
+    "Await terminal job state: vec-harden-01, vec-top-02",
+    "Inspect exported Liberty timing coverage and final route electrical/timing violations before accepting the pilot.",
+    "Scale integration harness to useful multiple-Block connectivity and then fixed/restricted layers."
+  ],
+  "attempts": [
+    {
+      "attempt": "vec-screen-01",
+      "remote_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-screen-01",
+      "job_id": 89441,
+      "sacct": {
+        "job_id": "89441",
+        "state": "FAILED",
+        "exit_code": "127:0",
+        "elapsed": "00:00:04",
+        "allocated_cpus": "8",
+        "node": "node3"
+      },
+      "submission.json": {
+        "job_id": "89441",
+        "attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-screen-01",
+        "mode": "screening",
+        "partition": "c64",
+        "cpus": 8,
+        "minutes": 10,
+        "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+        "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "host": "yuzelu@10.129.166.172"
+      },
+      "exit-code.txt": "127",
+      "host.txt": "node3",
+      "started-utc.txt": "2026-10-21T06:29:04Z",
+      "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+      "runner-inputs.sha256": "eeaeaa5e47a27b1c3e8d51309616a2ea5e8bdd2debc6f9c541e1bb23e5b1ef97  job.sh\n34e0fad87c831e3ccffde2a70847ba1679e68003f32159feaa7df9231296bebc  inside_screening.sh\n26f463d6ba642715af5cc47e88fe7c953b9d1bab7795a2759051f0ac5680759b  inside_pilot.sh\n7cddf96874abc75f16a8e8b4f5016b3ea1983fec553ddd4d4600fa6049c31ec1  prepare_vec.py",
+      "flow_metrics": {},
+      "logs": {
+        "slurm": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-screen-01/slurm-89441.log",
+        "elaboration": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-screen-01/vec-elab.log",
+        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-screen-01/flow.log"
+      },
+      "output_hash_index": null,
+      "existing_products_not_standalone_validation": {
+        "llhd_vec_original": {},
+        "llhd_vec_harness": {}
+      },
+      "validation_summary": {
+        "sacct_completed_is_only_execution_status": false,
+        "abstract_signal_names_and_directions_pass": null,
+        "physical_signal_interface_pass": null,
+        "extra_physical_signal_pins_require_review": {
+          "top": null,
+          "macro": null
+        },
+        "timing_reports_present": {
+          "top-check-setup.rpt": false,
+          "top-clocks.rpt": false,
+          "top-paths.rpt": false,
+          "top-electrical.rpt": false
+        },
+        "acceptance_note": "COMPLETED never overrides failed/missing interface checks, electrical violations or missing timing coverage. No formal/system signoff."
+      }
+    },
+    {
+      "attempt": "vec-screen-02",
+      "remote_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-screen-02",
+      "job_id": 89442,
+      "sacct": {
+        "job_id": "89442",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "00:00:15",
+        "allocated_cpus": "8",
+        "node": "node3"
+      },
+      "submission.json": {
+        "job_id": "89442",
+        "attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-screen-02",
+        "mode": "screening",
+        "partition": "c64",
+        "cpus": 8,
+        "minutes": 10,
+        "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+        "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "host": "yuzelu@10.129.166.172"
+      },
+      "exit-code.txt": "0",
+      "host.txt": "node3",
+      "started-utc.txt": "2026-10-21T06:29:38Z",
+      "finished-utc.txt": "2026-10-21T06:29:51Z",
+      "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+      "tools.sha256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53  /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad\nc2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b  /OpenROAD-flow-scripts/tools/install/yosys/bin/yosys",
+      "openroad-version.txt": "unknown",
+      "yosys-version.txt": "Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)",
+      "orfs-commit.txt": "unavailable",
+      "runner-inputs.sha256": "efa5a838a3b975f57a80937c1a5a7a1195202df5fb958438f8623b6d47cf63fa  job.sh\n740d7165b80ca618ce56190359bfc8b6322aa3874d3c6bb5decd91d0c43092c0  inside_screening.sh\n36eb20214adc861b15a4feda6bb93e33edd77343b70e62086c66705abe088032  inside_pilot.sh\n7cddf96874abc75f16a8e8b4f5016b3ea1983fec553ddd4d4600fa6049c31ec1  prepare_vec.py",
+      "flow_metrics": {},
+      "logs": {
+        "slurm": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-screen-02/slurm-89442.log",
+        "elaboration": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-screen-02/vec-elab.log",
+        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-screen-02/flow.log"
+      },
+      "output_hash_index": null,
+      "existing_products_not_standalone_validation": {
+        "llhd_vec_original": {},
+        "llhd_vec_harness": {}
+      },
+      "validation_summary": {
+        "sacct_completed_is_only_execution_status": true,
+        "abstract_signal_names_and_directions_pass": null,
+        "physical_signal_interface_pass": null,
+        "extra_physical_signal_pins_require_review": {
+          "top": null,
+          "macro": null
+        },
+        "timing_reports_present": {
+          "top-check-setup.rpt": false,
+          "top-clocks.rpt": false,
+          "top-paths.rpt": false,
+          "top-electrical.rpt": false
+        },
+        "acceptance_note": "COMPLETED never overrides failed/missing interface checks, electrical violations or missing timing coverage. No formal/system signoff."
+      }
+    },
+    {
+      "attempt": "vec-harden-01",
+      "remote_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01",
+      "job_id": 89443,
+      "sacct": {
+        "job_id": "89443",
+        "state": "RUNNING",
+        "exit_code": "0:0",
+        "elapsed": "00:11:56",
+        "allocated_cpus": "16",
+        "node": "node3"
+      },
+      "submission.json": {
+        "job_id": "89443",
+        "attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01",
+        "mode": "pilot",
+        "partition": "c64",
+        "cpus": 16,
+        "minutes": 45,
+        "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+        "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "host": "yuzelu@10.129.166.172"
+      },
+      "host.txt": "node3",
+      "started-utc.txt": "2026-10-21T06:30:46Z",
+      "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+      "tools.sha256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53  /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad\nc2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b  /OpenROAD-flow-scripts/tools/install/yosys/bin/yosys",
+      "openroad-version.txt": "unknown",
+      "yosys-version.txt": "Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)",
+      "orfs-commit.txt": "unavailable",
+      "runner-inputs.sha256": "efa5a838a3b975f57a80937c1a5a7a1195202df5fb958438f8623b6d47cf63fa  job.sh\n740d7165b80ca618ce56190359bfc8b6322aa3874d3c6bb5decd91d0c43092c0  inside_screening.sh\n96c8915f23b3b7579602a90552ecd65380a16a4636a62d40b6b3045abe4528f4  inside_pilot.sh\nfd3e3dcd89594bd8e78e180fc13a4183a2f3bc3b135bc4ded5d0c53f7d39fa60  prepare_vec.py",
+      "config-inputs.sha256": "7badf9a0ecc7a1ca733a43944b367cd6a95437568c735f02dfea5f98a52d6cde  vec-config.mk\n76c8c24d4efbfc34ed17f82fe0bb6ebaf20937d05d8ab9371ea53f0e25ce95c3  vec.sdc\n797dd1c21dcf0ffb582a2b9d7ec4eb4598967a48c86c2bf7832b161f0613f79e  vec-elab.ys",
+      "flow_metrics": {},
+      "logs": {
+        "slurm": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/slurm-89443.log",
+        "elaboration": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/vec-elab.log",
+        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01/flow.log"
+      },
+      "output_hash_index": null,
+      "existing_products_not_standalone_validation": {
+        "llhd_vec_original": {},
+        "llhd_vec_harness": {}
+      },
+      "validation_summary": {
+        "sacct_completed_is_only_execution_status": false,
+        "abstract_signal_names_and_directions_pass": null,
+        "physical_signal_interface_pass": null,
+        "extra_physical_signal_pins_require_review": {
+          "top": null,
+          "macro": null
+        },
+        "timing_reports_present": {
+          "top-check-setup.rpt": false,
+          "top-clocks.rpt": false,
+          "top-paths.rpt": false,
+          "top-electrical.rpt": false
+        },
+        "acceptance_note": "COMPLETED never overrides failed/missing interface checks, electrical violations or missing timing coverage. No formal/system signoff."
+      }
+    },
+    {
+      "attempt": "vec-top-01",
+      "remote_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-01",
+      "job_id": 89444,
+      "sacct": {
+        "job_id": "89444",
+        "state": "CANCELLED by 10011",
+        "exit_code": "0:0",
+        "elapsed": "00:00:00",
+        "allocated_cpus": "0",
+        "node": "None assigned"
+      },
+      "submission.json": {
+        "job_id": "89444",
+        "attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-01",
+        "mode": "integration",
+        "partition": "c64",
+        "cpus": 16,
+        "minutes": 30,
+        "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+        "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "host": "yuzelu@10.129.166.172",
+        "block_attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01",
+        "depends_on": 89443
+      },
+      "flow_metrics": {},
+      "logs": {
+        "slurm": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-01/slurm-89444.log",
+        "elaboration": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-01/vec-elab.log",
+        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-01/flow.log"
+      },
+      "output_hash_index": null,
+      "existing_products_not_standalone_validation": {
+        "llhd_vec_original": {},
+        "llhd_vec_harness": {}
+      },
+      "validation_summary": {
+        "sacct_completed_is_only_execution_status": false,
+        "abstract_signal_names_and_directions_pass": null,
+        "physical_signal_interface_pass": null,
+        "extra_physical_signal_pins_require_review": {
+          "top": null,
+          "macro": null
+        },
+        "timing_reports_present": {
+          "top-check-setup.rpt": false,
+          "top-clocks.rpt": false,
+          "top-paths.rpt": false,
+          "top-electrical.rpt": false
+        },
+        "acceptance_note": "COMPLETED never overrides failed/missing interface checks, electrical violations or missing timing coverage. No formal/system signoff."
+      }
+    },
+    {
+      "attempt": "vec-top-02",
+      "remote_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-02",
+      "job_id": 89445,
+      "sacct": {
+        "job_id": "89445",
+        "state": "PENDING",
+        "exit_code": "0:0",
+        "elapsed": "00:00:00",
+        "allocated_cpus": "0",
+        "node": "None assigned"
+      },
+      "submission.json": {
+        "job_id": "89445",
+        "attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-02",
+        "mode": "integration",
+        "partition": "c64",
+        "cpus": 16,
+        "minutes": 30,
+        "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+        "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "host": "yuzelu@10.129.166.172",
+        "block_attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-01",
+        "depends_on": 89443
+      },
+      "flow_metrics": {},
+      "logs": {
+        "slurm": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-02/slurm-89445.log",
+        "elaboration": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-02/vec-elab.log",
+        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-top-02/flow.log"
+      },
+      "output_hash_index": null,
+      "existing_products_not_standalone_validation": {
+        "llhd_vec_original": {},
+        "llhd_vec_harness": {}
+      },
+      "validation_summary": {
+        "sacct_completed_is_only_execution_status": false,
+        "abstract_signal_names_and_directions_pass": null,
+        "physical_signal_interface_pass": null,
+        "extra_physical_signal_pins_require_review": {
+          "top": null,
+          "macro": null
+        },
+        "timing_reports_present": {
+          "top-check-setup.rpt": false,
+          "top-clocks.rpt": false,
+          "top-paths.rpt": false,
+          "top-electrical.rpt": false
+        },
+        "acceptance_note": "COMPLETED never overrides failed/missing interface checks, electrical violations or missing timing coverage. No formal/system signoff."
+      }
+    }
+  ],
+  "sacct_raw": "89441|FAILED|127:0|00:00:04|8|node3\n89441.batch|FAILED|127:0|00:00:04|8|node3\n89441.extern|COMPLETED|0:0|00:00:04|8|node3\n89442|COMPLETED|0:0|00:00:15|8|node3\n89442.batch|COMPLETED|0:0|00:00:15|8|node3\n89442.extern|COMPLETED|0:0|00:00:15|8|node3\n89443|RUNNING|0:0|00:11:56|16|node3\n89443.batch|RUNNING|0:0|00:11:56|16|node3\n89443.extern|RUNNING|0:0|00:11:56|16|node3\n89444|CANCELLED by 10011|0:0|00:00:00|0|None assigned\n89445|PENDING|0:0|00:00:00|0|None assigned\n"
+}
