@@ -9,7 +9,8 @@ short = spec['name'].endswith('short')
 Path('toy.v').write_text('module toy(input [15:0] a,b, output [15:0] c); assign c=a+b; endmodule\n')
 lib = '/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib'
 Path('probe.ys').write_text('read_verilog toy.v\nsynth -top toy -noabc\nabc -liberty ' + lib +
-    ' -script /OpenROAD-flow-scripts/flow/scripts/abc_speed.script\ncheck -assert\nwrite_json mapped.json\n')
+    ' -script /OpenROAD-flow-scripts/flow/scripts/abc_speed.script\nread_liberty -lib ' + lib +
+    '\ncheck -assert\nwrite_json mapped.json\n')
 env = dict(os.environ)
 if short:
     env.pop('TMPDIR', None)
