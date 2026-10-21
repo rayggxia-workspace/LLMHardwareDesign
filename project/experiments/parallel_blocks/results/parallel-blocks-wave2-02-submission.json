@@ -1,0 +1,30 @@
+{
+  "attempt": "parallel-blocks-wave2-02",
+  "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-02",
+  "host": "yuzelu@10.129.166.172",
+  "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+  "plan": {
+    "C": {
+      "node": "node9",
+      "cores": 1,
+      "tasks": [
+        {
+          "name": "gemm-receipt",
+          "kind": "gemm-receipt",
+          "cores": 1,
+          "case": "llaccel-gemm",
+          "cap_margin": 0
+        }
+      ],
+      "job_id": 89484,
+      "scheduler_readback": "JobId=89484 JobName=lyz-wave2-c UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586575 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:01 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T18:53:06 EligibleTime=2026-10-21T18:53:06 AccrueTime=2026-10-21T18:53:06 StartTime=2026-10-21T18:53:06 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-21T18:53:06 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T18:53:06 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:917108 ReqNodeList=node9 ExcNodeList=(null) NodeList=node9 BatchHost=node9 NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=cpu=1,node=1,billing=1 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-02/runner/wave2/stream.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-02/stream-C.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-02/stream-C.log Power= TresPerTask=cpu:1"
+    }
+  },
+  "profile": "gemm-receipt",
+  "runner_commit": "91d30dcb7452beb5dd465305e21fd7cb9a0824ca",
+  "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
+  "submitted_utc": "2026-10-21T10:53:03.028510+00:00",
+  "scope": "A/B new physical cases, C baseline-only view preparation; no accepted hard macro assumed",
+  "audit_job_id": 89485,
+  "audit_scheduler_readback": "JobId=89485 JobName=lyz-wave2-audit UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586574 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=Dependency Dependency=afterany:89484(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T18:53:07 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T18:53:07 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:917649 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-02/runner/wave2/audit.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-02/audit.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-02/audit.log Power= TresPerTask=cpu:1"
+}

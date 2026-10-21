@@ -1,0 +1,290 @@
+{
+  "observed_utc": "2026-10-21T11:13:00.238356+00:00",
+  "submission": {
+    "attempt": "parallel-blocks-wave2-07",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-07",
+    "host": "yuzelu@10.129.166.172",
+    "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "plan": {
+      "C": {
+        "node": "node9",
+        "cores": 1,
+        "tasks": [
+          {
+            "name": "retired-evidence",
+            "kind": "retired-evidence",
+            "cores": 1,
+            "case": "opentpu-act",
+            "cap_margin": 0
+          }
+        ],
+        "job_id": 89501,
+        "scheduler_readback": "JobId=89501 JobName=lyz-wave2-c UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586558 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T19:12:49 EligibleTime=2026-10-21T19:12:49 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T19:12:49 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:1219252 ReqNodeList=node9 ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-07/runner/wave2/stream.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-07/stream-C.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-07/stream-C.log Power= TresPerTask=cpu:1"
+      }
+    },
+    "profile": "retired-evidence",
+    "runner_commit": "91deb968d4e1f94bca289cf375ab410e8c47aa49",
+    "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
+    "submitted_utc": "2026-10-21T11:12:45.262740+00:00",
+    "scope": "Seal already-written failed audit bytes; retain all failures",
+    "audit_job_id": 89502,
+    "audit_scheduler_readback": "JobId=89502 JobName=lyz-wave2-audit UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586557 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=Dependency Dependency=afterany:89501(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T19:12:50 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T19:12:50 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:1219757 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-07/runner/wave2/audit.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-07/audit.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-07/audit.log Power= TresPerTask=cpu:1"
+  },
+  "scheduler": {
+    "exit_code": 0,
+    "stdout": "89501|lyz-wave2-c|COMPLETED|0:0|00:00:09|1|node9\n89501.batch|batch|COMPLETED|0:0|00:00:09|1|node9\n89501.extern|extern|COMPLETED|0:0|00:00:09|1|node9\n89501.0|lyz-retired-evidence|COMPLETED|0:0|00:00:06|1|node9\n89502|lyz-wave2-audit|RUNNING|0:0|00:00:02|1|node7\n89502.batch|batch|RUNNING|0:0|00:00:02|1|node7\n89502.extern|extern|RUNNING|0:0|00:00:02|1|node7",
+    "stderr": ""
+  },
+  "resources": {
+    "exit_code": 0,
+    "stdout": "89501|00:00:09|1|9|00:04.460|\n89501.batch|00:00:09|1|9|00:01.309|0\n89501.extern|00:00:09|1|9|00:00:00|0\n89501.0|00:00:06|1|6|00:03.151|0\n89502|00:00:02|1|2|00:00:00|\n89502.batch|00:00:02|1|2|00:00:00|\n89502.extern|00:00:02|1|2|00:00:00|",
+    "stderr": ""
+  },
+  "tasks": {
+    "retired-evidence": {
+      "spec": {
+        "name": "retired-evidence",
+        "kind": "retired-evidence",
+        "cores": 1,
+        "case": "opentpu-act",
+        "cap_margin": 0
+      },
+      "stream": "C",
+      "started": "2026-10-21T11:12:52Z\n",
+      "finished": "2026-10-21T11:12:58Z\n",
+      "exit_code": "0\n",
+      "hash_exit_code": "0\n",
+      "log_tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+      "validation": {
+        "passed": true,
+        "kind": "Failed audit byte preservation only",
+        "retired_audits": {
+          "parallel-blocks-wave2-01": {
+            "original": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/completion.json",
+            "copied_to": "retired/parallel-blocks-wave2-01-completion.json",
+            "sha256": "ee9d8deb705b4bffd910bba3290bff70215c6d9ac2beffbfb7ef663c3d7542cb",
+            "original_artifact_audit_failures": 7,
+            "tasks": {
+              "act-cap00": {
+                "exit_code": null,
+                "checksum_audits": {
+                  "source-inputs.sha256": {
+                    "status": "pass",
+                    "exit_code": 0,
+                    "entries": 825
+                  },
+                  "output-files.sha256": {
+                    "status": "missing"
+                  }
+                },
+                "observed_tool_gates_pass": false,
+                "declared_validation_pass": null
+              },
+              "act-cap10": {
+                "exit_code": null,
+                "checksum_audits": {
+                  "source-inputs.sha256": {
+                    "status": "pass",
+                    "exit_code": 0,
+                    "entries": 825
+                  },
+                  "output-files.sha256": {
+                    "status": "missing"
+                  }
+                },
+                "observed_tool_gates_pass": false,
+                "declared_validation_pass": null
+              },
+              "act-cap20": {
+                "exit_code": null,
+                "checksum_audits": {
+                  "source-inputs.sha256": {
+                    "status": "pass",
+                    "exit_code": 0,
+                    "entries": 825
+                  },
+                  "output-files.sha256": {
+                    "status": "missing"
+                  }
+                },
+                "observed_tool_gates_pass": false,
+                "declared_validation_pass": null
+              },
+              "opentpu-validation": {
+                "exit_code": "0\n",
+                "checksum_audits": {
+                  "source-inputs.sha256": {
+                    "status": "pass",
+                    "exit_code": 0,
+                    "entries": 825
+                  },
+                  "output-files.sha256": {
+                    "status": "pass",
+                    "exit_code": 0,
+                    "entries": 816
+                  }
+                },
+                "observed_tool_gates_pass": null,
+                "declared_validation_pass": true
+              },
+              "gemm-regression": {
+                "exit_code": "1\n",
+                "checksum_audits": {
+                  "source-inputs.sha256": {
+                    "status": "pass",
+                    "exit_code": 0,
+                    "entries": 251
+                  },
+                  "output-files.sha256": {
+                    "status": "pass",
+                    "exit_code": 0,
+                    "entries": 129
+                  }
+                },
+                "observed_tool_gates_pass": null,
+                "declared_validation_pass": false
+              },
+              "gemm-cap10": {
+                "exit_code": null,
+                "checksum_audits": {
+                  "source-inputs.sha256": {
+                    "status": "pass",
+                    "exit_code": 0,
+                    "entries": 251
+                  },
+                  "output-files.sha256": {
+                    "status": "missing"
+                  }
+                },
+                "observed_tool_gates_pass": false,
+                "declared_validation_pass": null
+              },
+              "gemm-cap20": {
+                "exit_code": null,
+                "checksum_audits": {
+                  "source-inputs.sha256": {
+                    "status": "pass",
+                    "exit_code": 0,
+                    "entries": 251
+                  },
+                  "output-files.sha256": {
+                    "status": "missing"
+                  }
+                },
+                "observed_tool_gates_pass": false,
+                "declared_validation_pass": null
+              },
+              "mxu-cap20": {
+                "exit_code": null,
+                "checksum_audits": {
+                  "source-inputs.sha256": {
+                    "status": "pass",
+                    "exit_code": 0,
+                    "entries": 825
+                  },
+                  "output-files.sha256": {
+                    "status": "missing"
+                  }
+                },
+                "observed_tool_gates_pass": false,
+                "declared_validation_pass": null
+              },
+              "merged-cap20": {
+                "exit_code": null,
+                "checksum_audits": {
+                  "source-inputs.sha256": {
+                    "status": "pass",
+                    "exit_code": 0,
+                    "entries": 825
+                  },
+                  "output-files.sha256": {
+                    "status": "missing"
+                  }
+                },
+                "observed_tool_gates_pass": false,
+                "declared_validation_pass": null
+              },
+              "baseline-views": {
+                "exit_code": "0\n",
+                "checksum_audits": {
+                  "source-inputs.sha256": {
+                    "status": "pass",
+                    "exit_code": 0,
+                    "entries": 825
+                  },
+                  "output-files.sha256": {
+                    "status": "pass",
+                    "exit_code": 0,
+                    "entries": 28
+                  }
+                },
+                "observed_tool_gates_pass": null,
+                "declared_validation_pass": true
+              }
+            }
+          },
+          "parallel-blocks-wave2-04": {
+            "original": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-04/completion.json",
+            "copied_to": "retired/parallel-blocks-wave2-04-completion.json",
+            "sha256": "07ff7e66350eba84792bef032c16e3679b4e437735487911d434364b4447a5f6",
+            "original_artifact_audit_failures": 1,
+            "tasks": {
+              "abc-probe-short": {
+                "exit_code": "1\n",
+                "checksum_audits": {
+                  "source-inputs.sha256": {
+                    "status": "pass",
+                    "exit_code": 0,
+                    "entries": 825
+                  },
+                  "output-files.sha256": {
+                    "status": "pass",
+                    "exit_code": 0,
+                    "entries": 16
+                  }
+                },
+                "observed_tool_gates_pass": null,
+                "declared_validation_pass": false
+              },
+              "abc-probe-long": {
+                "exit_code": null,
+                "checksum_audits": {
+                  "source-inputs.sha256": {
+                    "status": "pass",
+                    "exit_code": 0,
+                    "entries": 825
+                  },
+                  "output-files.sha256": {
+                    "status": "missing"
+                  }
+                },
+                "observed_tool_gates_pass": null,
+                "declared_validation_pass": false
+              }
+            }
+          }
+        },
+        "physical_results_accepted": false,
+        "scope": "Cancelled tasks lack output manifests; original audits remain FAILED. This only seals their already-written records in a fresh directory."
+      },
+      "checksum_audits": {
+        "source-inputs.sha256": {
+          "status": "pass",
+          "exit_code": 0,
+          "entries": 825
+        },
+        "output-files.sha256": {
+          "status": "pass",
+          "exit_code": 0,
+          "entries": 14
+        }
+      },
+      "declared_validation_pass": true,
+      "manufacturing_or_system_signoff": false
+    }
+  },
+  "completion_exists": false,
+  "completion_sha256": null,
+  "artifact_audit_failures": 0,
+  "scope": "One-shot new artifact verification; individual validations and tool budgets retain separate scope and failures"
+}

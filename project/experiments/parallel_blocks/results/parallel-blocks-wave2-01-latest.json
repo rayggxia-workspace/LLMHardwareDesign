@@ -1,0 +1,1191 @@
+{
+  "observed_utc": "2026-10-21T11:11:29.242299+00:00",
+  "submission": {
+    "attempt": "parallel-blocks-wave2-01",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01",
+    "host": "yuzelu@10.129.166.172",
+    "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "plan": {
+      "A": {
+        "node": "node7",
+        "cores": 64,
+        "tasks": [
+          {
+            "name": "act-cap00",
+            "kind": "physical",
+            "cores": 16,
+            "case": "opentpu-act",
+            "cap_margin": 0
+          },
+          {
+            "name": "act-cap10",
+            "kind": "physical",
+            "cores": 16,
+            "case": "opentpu-act",
+            "cap_margin": 10
+          },
+          {
+            "name": "act-cap20",
+            "kind": "physical",
+            "cores": 16,
+            "case": "opentpu-act",
+            "cap_margin": 20
+          },
+          {
+            "name": "opentpu-validation",
+            "kind": "opentpu-validation",
+            "cores": 8,
+            "case": "opentpu-act",
+            "cap_margin": 0
+          },
+          {
+            "name": "gemm-regression",
+            "kind": "gemm-regression",
+            "cores": 8,
+            "case": "llaccel-gemm",
+            "cap_margin": 0
+          }
+        ],
+        "job_id": 89480,
+        "scheduler_readback": "JobId=89480 JobName=lyz-wave2-a UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586579 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T18:50:40 EligibleTime=2026-10-21T18:50:40 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T18:50:40 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:863057 ReqNodeList=node7 ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=64 NumTasks=1 CPUs/Task=64 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=64,mem=1M,node=1,billing=64 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=64 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/runner/wave2/stream.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/stream-A.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/stream-A.log Power= TresPerTask=cpu:64"
+      },
+      "B": {
+        "node": "node8",
+        "cores": 64,
+        "tasks": [
+          {
+            "name": "gemm-cap10",
+            "kind": "physical",
+            "cores": 16,
+            "case": "llaccel-gemm",
+            "cap_margin": 10
+          },
+          {
+            "name": "gemm-cap20",
+            "kind": "physical",
+            "cores": 16,
+            "case": "llaccel-gemm",
+            "cap_margin": 20
+          },
+          {
+            "name": "mxu-cap20",
+            "kind": "physical",
+            "cores": 16,
+            "case": "opentpu-mxu",
+            "cap_margin": 20
+          },
+          {
+            "name": "merged-cap20",
+            "kind": "physical",
+            "cores": 16,
+            "case": "opentpu-act-mxu",
+            "cap_margin": 20
+          }
+        ],
+        "job_id": 89481,
+        "scheduler_readback": "JobId=89481 JobName=lyz-wave2-b UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586578 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T18:50:41 EligibleTime=2026-10-21T18:50:41 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T18:50:41 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:863571 ReqNodeList=node8 ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=64 NumTasks=1 CPUs/Task=64 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=64,mem=1M,node=1,billing=64 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=64 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/runner/wave2/stream.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/stream-B.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/stream-B.log Power= TresPerTask=cpu:64"
+      },
+      "C": {
+        "node": "node9",
+        "cores": 8,
+        "tasks": [
+          {
+            "name": "baseline-views",
+            "kind": "baseline-views",
+            "cores": 8,
+            "case": "opentpu-act",
+            "cap_margin": 0
+          }
+        ],
+        "job_id": 89482,
+        "scheduler_readback": "JobId=89482 JobName=lyz-wave2-c UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586577 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T18:50:42 EligibleTime=2026-10-21T18:50:42 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T18:50:42 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:864067 ReqNodeList=node9 ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=1M,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/runner/wave2/stream.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/stream-C.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/stream-C.log Power= TresPerTask=cpu:8"
+      }
+    },
+    "runner_commit": "f6269e061870b4ce61216d0f4de1c5f75fe549a0",
+    "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
+    "submitted_utc": "2026-10-21T10:50:35.950204+00:00",
+    "scope": "A/B new physical cases, C baseline-only view preparation; no accepted hard macro assumed",
+    "audit_job_id": 89483,
+    "audit_scheduler_readback": "JobId=89483 JobName=lyz-wave2-audit UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586576 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=Dependency Dependency=afterany:89480(unfulfilled),afterany:89481(unfulfilled),afterany:89482(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T18:50:43 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T18:50:43 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:864590 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/runner/wave2/audit.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/audit.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/audit.log Power= TresPerTask=cpu:1"
+  },
+  "scheduler": {
+    "exit_code": 0,
+    "stdout": "89480|lyz-wave2-a|FAILED|1:0|00:20:09|64|node7\n89480.batch|batch|FAILED|1:0|00:20:09|64|node7\n89480.extern|extern|COMPLETED|0:0|00:20:09|64|node7\n89480.0|lyz-act-cap00|CANCELLED by 10011|0:9|00:20:06|16|node7\n89480.1|lyz-act-cap10|CANCELLED by 10011|0:9|00:20:06|16|node7\n89480.2|lyz-act-cap20|CANCELLED by 10011|0:9|00:20:06|16|node7\n89480.3|lyz-opentpu-validation|COMPLETED|0:0|00:01:26|8|node7\n89480.4|lyz-gemm-regression|FAILED|1:0|00:00:26|8|node7\n89480.5|lyz-wave2-read|COMPLETED|0:0|00:00:00|1|node7\n89480.6|lyz-abc-read|COMPLETED|0:0|00:00:00|1|node7\n89480.7|lyz-abc-args|COMPLETED|0:0|00:00:01|1|node7\n89480.8|lyz-abc-read|COMPLETED|0:0|00:00:00|1|node7\n89480.9|lyz-abc-source|FAILED|2:0|00:00:00|1|node7\n89480.10|lyz-abc-save|COMPLETED|0:0|00:00:00|1|node7\n89481|lyz-wave2-b|FAILED|1:0|00:20:06|64|node8\n89481.batch|batch|FAILED|1:0|00:20:06|64|node8\n89481.extern|extern|COMPLETED|0:0|00:20:06|64|node8\n89481.0|lyz-gemm-cap10|CANCELLED by 10011|0:9|00:20:04|16|node8\n89481.1|lyz-gemm-cap20|CANCELLED by 10011|0:9|00:20:04|16|node8\n89481.2|lyz-mxu-cap20|CANCELLED by 10011|0:9|00:20:04|16|node8\n89481.3|lyz-merged-cap20|CANCELLED by 10011|0:9|00:20:04|16|node8\n89482|lyz-wave2-c|COMPLETED|0:0|00:02:16|8|node9\n89482.batch|batch|COMPLETED|0:0|00:02:16|8|node9\n89482.extern|extern|COMPLETED|0:0|00:02:16|8|node9\n89482.0|lyz-baseline-views|COMPLETED|0:0|00:02:14|8|node9\n89483|lyz-wave2-audit|FAILED|1:0|00:00:24|1|node3\n89483.batch|batch|FAILED|1:0|00:00:24|1|node3\n89483.extern|extern|COMPLETED|0:0|00:00:24|1|node3",
+    "stderr": ""
+  },
+  "resources": {
+    "exit_code": 0,
+    "stdout": "89480|00:20:09|64|77376|07:24.105|\n89480.batch|00:20:09|64|77376|00:01.485|20176K\n89480.extern|00:20:09|64|77376|00:00:00|0\n89480.0|00:20:06|16|19296|01:21.568|142568K\n89480.1|00:20:06|16|19296|01:20.569|143276K\n89480.2|00:20:06|16|19296|01:20.542|141772K\n89480.3|00:01:26|8|688|02:27.515|299280K\n89480.4|00:00:26|8|208|00:52.133|0\n89480.5|00:00:00|1|0|00:00.013|0\n89480.6|00:00:00|1|0|00:00.057|0\n89480.7|00:00:01|1|1|00:00.016|0\n89480.8|00:00:00|1|0|00:00.062|0\n89480.9|00:00:00|1|0|00:00.082|0\n89480.10|00:00:00|1|0|00:00.057|0\n89481|00:20:06|64|77184|17:50.973|\n89481.batch|00:20:06|64|77184|00:01.594|20344K\n89481.extern|00:20:06|64|77184|00:00:00|0\n89481.0|00:20:04|16|19264|04:55.164|2355060K\n89481.1|00:20:04|16|19264|04:54.163|2254.50M\n89481.2|00:20:04|16|19264|03:15.523|1419144K\n89481.3|00:20:04|16|19264|04:44.527|1457512K\n89482|00:02:16|8|1088|02:43.777|\n89482.batch|00:02:16|8|1088|00:01.382|9356K\n89482.extern|00:02:16|8|1088|00:00:00|0\n89482.0|00:02:14|8|1072|02:42.393|1941672K\n89483|00:00:24|1|24|00:03.461|\n89483.batch|00:00:24|1|24|00:03.461|0\n89483.extern|00:00:24|1|24|00:00:00|0",
+    "stderr": ""
+  },
+  "tasks": {
+    "act-cap00": {
+      "spec": {
+        "name": "act-cap00",
+        "kind": "physical",
+        "cores": 16,
+        "case": "opentpu-act",
+        "cap_margin": 0
+      },
+      "stream": "A",
+      "started": "2026-10-21T10:50:43Z\n",
+      "finished": null,
+      "exit_code": null,
+      "hash_exit_code": null,
+      "log_tail": "13.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).\n13.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).\n13.12. Executing OPT_MERGE pass (detect identical cells).\n13.13. Executing OPT_DFF pass (perform DFF optimizations).\n13.14. Executing OPT_CLEAN pass (remove unused cells and wires).\n13.15. Executing OPT_EXPR pass (perform const folding).\n13.16. Finished fast OPT passes. (There is nothing left to do.)\n14. Executing SETUNDEF pass (replace undef values with defined constants).\nabc -script /OpenROAD-flow-scripts/flow/scripts/abc_speed.script -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/act-cap00/memory-model/macros/fakeram45_1r1w_32x64.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/act-cap00/memory-model/macros/fakeram45_1r1w_32x128.lib -dont_use TAPCELL_X1 -dont_use FILLCELL_X1 -dont_use AOI211_X1 -dont_use OAI211_X1 -constr /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/act-cap00/flow/objects/nangate45/parallel_opentpu_act/base/abc.constr\n15. Executing ABC pass (technology mapping using ABC).\n15.1. Extracting gate netlist of module `\\llhd_opentpu_act' to `<abc-temp-dir>/input.blif'..\nslurmstepd: error: *** STEP 89480.0 ON node7 CANCELLED AT 2026-10-21T19:10:48 ***",
+      "latest_flow_log": {
+        "file": "1_2_yosys.log",
+        "bytes": 11741,
+        "modified_utc": "2026-10-21T10:51:59+00:00",
+        "tail": "13.9. Rerunning OPT passes. (Maybe there is more to do..)\n13.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).\n13.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).\n13.12. Executing OPT_MERGE pass (detect identical cells).\n13.13. Executing OPT_DFF pass (perform DFF optimizations).\n13.14. Executing OPT_CLEAN pass (remove unused cells and wires).\n13.15. Executing OPT_EXPR pass (perform const folding).\n13.16. Finished fast OPT passes. (There is nothing left to do.)\n14. Executing SETUNDEF pass (replace undef values with defined constants).\nabc -script /OpenROAD-flow-scripts/flow/scripts/abc_speed.script -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/act-cap00/memory-model/macros/fakeram45_1r1w_32x64.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/act-cap00/memory-model/macros/fakeram45_1r1w_32x128.lib -dont_use TAPCELL_X1 -dont_use FILLCELL_X1 -dont_use AOI211_X1 -dont_use OAI211_X1 -constr /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/act-cap00/flow/objects/nangate45/parallel_opentpu_act/base/abc.constr\n15. Executing ABC pass (technology mapping using ABC).\n15.1. Extracting gate netlist of module `\\llhd_opentpu_act' to `<abc-temp-dir>/input.blif'.."
+      },
+      "metrics": {},
+      "quality": {
+        "drc": null,
+        "setup_ws_ns": null,
+        "hold_ws_ns": null,
+        "max_cap": null,
+        "max_slew": null,
+        "max_fanout": null,
+        "instance_area_um2": null
+      },
+      "stages": [],
+      "experiment": {
+        "case": "opentpu-act",
+        "top": "llhd_opentpu_act",
+        "parameters": {
+          "D": 32,
+          "MCOLS": 2,
+          "ROWS": 2,
+          "BLOCKS": 32,
+          "LANES": 4,
+          "DEPTH": 64,
+          "IMPL": 2,
+          "CL": 16,
+          "E": 0,
+          "SID": 0
+        },
+        "clock_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "cap_margin": 0,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Upstream openTPU synthetic fakeram LEF/Liberty models, not fabricated SRAM or SRAM GDS. Same unmodified generator and small configuration for split/merged cases; no full system claim.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "independent block implementation; not top integration, H2, source-to-netlist equivalence or signoff"
+      },
+      "abstracts_present": {
+        ".lef": false,
+        "_typ.lib": false,
+        ".detailed.lef": false
+      },
+      "final_markers": []
+    },
+    "act-cap10": {
+      "spec": {
+        "name": "act-cap10",
+        "kind": "physical",
+        "cores": 16,
+        "case": "opentpu-act",
+        "cap_margin": 10
+      },
+      "stream": "A",
+      "started": "2026-10-21T10:50:43Z\n",
+      "finished": null,
+      "exit_code": null,
+      "hash_exit_code": null,
+      "log_tail": "13.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).\n13.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).\n13.12. Executing OPT_MERGE pass (detect identical cells).\n13.13. Executing OPT_DFF pass (perform DFF optimizations).\n13.14. Executing OPT_CLEAN pass (remove unused cells and wires).\n13.15. Executing OPT_EXPR pass (perform const folding).\n13.16. Finished fast OPT passes. (There is nothing left to do.)\n14. Executing SETUNDEF pass (replace undef values with defined constants).\nabc -script /OpenROAD-flow-scripts/flow/scripts/abc_speed.script -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/act-cap10/memory-model/macros/fakeram45_1r1w_32x64.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/act-cap10/memory-model/macros/fakeram45_1r1w_32x128.lib -dont_use TAPCELL_X1 -dont_use FILLCELL_X1 -dont_use AOI211_X1 -dont_use OAI211_X1 -constr /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/act-cap10/flow/objects/nangate45/parallel_opentpu_act/base/abc.constr\n15. Executing ABC pass (technology mapping using ABC).\n15.1. Extracting gate netlist of module `\\llhd_opentpu_act' to `<abc-temp-dir>/input.blif'..\nslurmstepd: error: *** STEP 89480.1 ON node7 CANCELLED AT 2026-10-21T19:10:48 ***",
+      "latest_flow_log": {
+        "file": "1_2_yosys.log",
+        "bytes": 11741,
+        "modified_utc": "2026-10-21T10:51:59+00:00",
+        "tail": "13.9. Rerunning OPT passes. (Maybe there is more to do..)\n13.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).\n13.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).\n13.12. Executing OPT_MERGE pass (detect identical cells).\n13.13. Executing OPT_DFF pass (perform DFF optimizations).\n13.14. Executing OPT_CLEAN pass (remove unused cells and wires).\n13.15. Executing OPT_EXPR pass (perform const folding).\n13.16. Finished fast OPT passes. (There is nothing left to do.)\n14. Executing SETUNDEF pass (replace undef values with defined constants).\nabc -script /OpenROAD-flow-scripts/flow/scripts/abc_speed.script -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/act-cap10/memory-model/macros/fakeram45_1r1w_32x64.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/act-cap10/memory-model/macros/fakeram45_1r1w_32x128.lib -dont_use TAPCELL_X1 -dont_use FILLCELL_X1 -dont_use AOI211_X1 -dont_use OAI211_X1 -constr /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/act-cap10/flow/objects/nangate45/parallel_opentpu_act/base/abc.constr\n15. Executing ABC pass (technology mapping using ABC).\n15.1. Extracting gate netlist of module `\\llhd_opentpu_act' to `<abc-temp-dir>/input.blif'.."
+      },
+      "metrics": {},
+      "quality": {
+        "drc": null,
+        "setup_ws_ns": null,
+        "hold_ws_ns": null,
+        "max_cap": null,
+        "max_slew": null,
+        "max_fanout": null,
+        "instance_area_um2": null
+      },
+      "stages": [],
+      "experiment": {
+        "case": "opentpu-act",
+        "top": "llhd_opentpu_act",
+        "parameters": {
+          "D": 32,
+          "MCOLS": 2,
+          "ROWS": 2,
+          "BLOCKS": 32,
+          "LANES": 4,
+          "DEPTH": 64,
+          "IMPL": 2,
+          "CL": 16,
+          "E": 0,
+          "SID": 0
+        },
+        "clock_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "cap_margin": 10,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Upstream openTPU synthetic fakeram LEF/Liberty models, not fabricated SRAM or SRAM GDS. Same unmodified generator and small configuration for split/merged cases; no full system claim.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "independent block implementation; not top integration, H2, source-to-netlist equivalence or signoff"
+      },
+      "abstracts_present": {
+        ".lef": false,
+        "_typ.lib": false,
+        ".detailed.lef": false
+      },
+      "final_markers": []
+    },
+    "act-cap20": {
+      "spec": {
+        "name": "act-cap20",
+        "kind": "physical",
+        "cores": 16,
+        "case": "opentpu-act",
+        "cap_margin": 20
+      },
+      "stream": "A",
+      "started": "2026-10-21T10:50:43Z\n",
+      "finished": null,
+      "exit_code": null,
+      "hash_exit_code": null,
+      "log_tail": "13.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).\n13.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).\n13.12. Executing OPT_MERGE pass (detect identical cells).\n13.13. Executing OPT_DFF pass (perform DFF optimizations).\n13.14. Executing OPT_CLEAN pass (remove unused cells and wires).\n13.15. Executing OPT_EXPR pass (perform const folding).\n13.16. Finished fast OPT passes. (There is nothing left to do.)\n14. Executing SETUNDEF pass (replace undef values with defined constants).\nabc -script /OpenROAD-flow-scripts/flow/scripts/abc_speed.script -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/act-cap20/memory-model/macros/fakeram45_1r1w_32x64.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/act-cap20/memory-model/macros/fakeram45_1r1w_32x128.lib -dont_use TAPCELL_X1 -dont_use FILLCELL_X1 -dont_use AOI211_X1 -dont_use OAI211_X1 -constr /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/act-cap20/flow/objects/nangate45/parallel_opentpu_act/base/abc.constr\n15. Executing ABC pass (technology mapping using ABC).\n15.1. Extracting gate netlist of module `\\llhd_opentpu_act' to `<abc-temp-dir>/input.blif'..\nslurmstepd: error: *** STEP 89480.2 ON node7 CANCELLED AT 2026-10-21T19:10:48 ***",
+      "latest_flow_log": {
+        "file": "1_2_yosys.log",
+        "bytes": 11741,
+        "modified_utc": "2026-10-21T10:51:59+00:00",
+        "tail": "13.9. Rerunning OPT passes. (Maybe there is more to do..)\n13.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).\n13.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).\n13.12. Executing OPT_MERGE pass (detect identical cells).\n13.13. Executing OPT_DFF pass (perform DFF optimizations).\n13.14. Executing OPT_CLEAN pass (remove unused cells and wires).\n13.15. Executing OPT_EXPR pass (perform const folding).\n13.16. Finished fast OPT passes. (There is nothing left to do.)\n14. Executing SETUNDEF pass (replace undef values with defined constants).\nabc -script /OpenROAD-flow-scripts/flow/scripts/abc_speed.script -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/act-cap20/memory-model/macros/fakeram45_1r1w_32x64.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/act-cap20/memory-model/macros/fakeram45_1r1w_32x128.lib -dont_use TAPCELL_X1 -dont_use FILLCELL_X1 -dont_use AOI211_X1 -dont_use OAI211_X1 -constr /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/act-cap20/flow/objects/nangate45/parallel_opentpu_act/base/abc.constr\n15. Executing ABC pass (technology mapping using ABC).\n15.1. Extracting gate netlist of module `\\llhd_opentpu_act' to `<abc-temp-dir>/input.blif'.."
+      },
+      "metrics": {},
+      "quality": {
+        "drc": null,
+        "setup_ws_ns": null,
+        "hold_ws_ns": null,
+        "max_cap": null,
+        "max_slew": null,
+        "max_fanout": null,
+        "instance_area_um2": null
+      },
+      "stages": [],
+      "experiment": {
+        "case": "opentpu-act",
+        "top": "llhd_opentpu_act",
+        "parameters": {
+          "D": 32,
+          "MCOLS": 2,
+          "ROWS": 2,
+          "BLOCKS": 32,
+          "LANES": 4,
+          "DEPTH": 64,
+          "IMPL": 2,
+          "CL": 16,
+          "E": 0,
+          "SID": 0
+        },
+        "clock_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "cap_margin": 20,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Upstream openTPU synthetic fakeram LEF/Liberty models, not fabricated SRAM or SRAM GDS. Same unmodified generator and small configuration for split/merged cases; no full system claim.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "independent block implementation; not top integration, H2, source-to-netlist equivalence or signoff"
+      },
+      "abstracts_present": {
+        ".lef": false,
+        "_typ.lib": false,
+        ".detailed.lef": false
+      },
+      "final_markers": []
+    },
+    "opentpu-validation": {
+      "spec": {
+        "name": "opentpu-validation",
+        "kind": "opentpu-validation",
+        "cores": 8,
+        "case": "opentpu-act",
+        "cap_margin": 0
+      },
+      "stream": "A",
+      "started": "2026-10-21T10:50:43Z\n",
+      "finished": "2026-10-21T10:52:08Z\n",
+      "exit_code": "0\n",
+      "hash_exit_code": "0\n",
+      "log_tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+      "validation": {
+        "passed": true,
+        "kind": "RAM behavioral and wrapper connection audit",
+        "ram_cases": [
+          {
+            "width": 40,
+            "depth": 8192,
+            "kind": 0,
+            "compared_cycles": 20000,
+            "identical": true
+          },
+          {
+            "width": 200,
+            "depth": 64,
+            "kind": 0,
+            "compared_cycles": 19999,
+            "identical": true
+          },
+          {
+            "width": 64,
+            "depth": 256,
+            "kind": 1,
+            "compared_cycles": 20000,
+            "identical": true
+          },
+          {
+            "width": 130,
+            "depth": 8192,
+            "kind": 2,
+            "compared_cycles": 20000,
+            "identical": true
+          },
+          {
+            "width": 40,
+            "depth": 8192,
+            "kind": 3,
+            "compared_cycles": 20000,
+            "identical": true
+          },
+          {
+            "width": 200,
+            "depth": 64,
+            "kind": 3,
+            "compared_cycles": 20000,
+            "identical": true
+          },
+          {
+            "width": 128,
+            "depth": 32,
+            "kind": 0,
+            "compared_cycles": 20000,
+            "identical": true
+          },
+          {
+            "width": 64,
+            "depth": 32,
+            "kind": 0,
+            "compared_cycles": 20000,
+            "identical": true
+          },
+          {
+            "width": 72,
+            "depth": 64,
+            "kind": 0,
+            "compared_cycles": 20000,
+            "identical": true
+          },
+          {
+            "width": 40,
+            "depth": 64,
+            "kind": 0,
+            "compared_cycles": 20000,
+            "identical": true
+          },
+          {
+            "width": 96,
+            "depth": 64,
+            "kind": 0,
+            "compared_cycles": 20000,
+            "identical": true
+          },
+          {
+            "width": 64,
+            "depth": 64,
+            "kind": 0,
+            "compared_cycles": 20000,
+            "identical": true
+          }
+        ],
+        "actual_connections": {
+          "ren": {
+            "merged_net": "act_ren",
+            "width": 2,
+            "exact_bit_identity": true
+          },
+          "r_use": {
+            "merged_net": "computing",
+            "width": 1,
+            "exact_bit_identity": true
+          },
+          "r_blk": {
+            "merged_net": "act_blk",
+            "width": 16,
+            "exact_bit_identity": true
+          },
+          "r_blk2": {
+            "merged_net": "act_blk2",
+            "width": 16,
+            "exact_bit_identity": true
+          },
+          "r_hi": {
+            "merged_net": "act_hi",
+            "width": 2,
+            "exact_bit_identity": true
+          },
+          "r_grp": {
+            "merged_net": "act_grp",
+            "width": 8,
+            "exact_bit_identity": true
+          },
+          "r_data": {
+            "merged_net": "act_data",
+            "width": 512,
+            "exact_bit_identity": true
+          },
+          "r_scale": {
+            "merged_net": "act_scale",
+            "width": 128,
+            "exact_bit_identity": true
+          }
+        },
+        "external_ports_identical": true,
+        "split_merged_memory_instances_equal": true,
+        "scope": "Original RAM testbench cycle comparison plus elaborated wrapper bit identity; not complete MXU numerical regression or source-to-physical equivalence"
+      },
+      "ram_cases_finished": 12
+    },
+    "gemm-regression": {
+      "spec": {
+        "name": "gemm-regression",
+        "kind": "gemm-regression",
+        "cores": 8,
+        "case": "llaccel-gemm",
+        "cap_margin": 0
+      },
+      "stream": "A",
+      "started": "2026-10-21T10:50:43Z\n",
+      "finished": "2026-10-21T10:51:09Z\n",
+      "exit_code": "1\n",
+      "hash_exit_code": "0\n",
+      "log_tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+      "validation": {
+        "kind": "original_gemm_rtl_regression",
+        "passed": false,
+        "make_exit_code": 0,
+        "summary_rows": [],
+        "seed": 1,
+        "expected_cases_per_fusion": 500,
+        "physical_case_fusion": 0,
+        "coverage": "Original reference, full SRAM image, 0/30 percent denial; no netlist equivalence or system signoff"
+      }
+    },
+    "gemm-cap10": {
+      "spec": {
+        "name": "gemm-cap10",
+        "kind": "physical",
+        "cores": 16,
+        "case": "llaccel-gemm",
+        "cap_margin": 10
+      },
+      "stream": "B",
+      "started": "2026-10-21T10:50:45Z\n",
+      "finished": null,
+      "exit_code": null,
+      "hash_exit_code": null,
+      "log_tail": "13.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).\n13.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).\n13.12. Executing OPT_MERGE pass (detect identical cells).\n13.13. Executing OPT_DFF pass (perform DFF optimizations).\n13.14. Executing OPT_CLEAN pass (remove unused cells and wires).\n13.15. Executing OPT_EXPR pass (perform const folding).\n13.16. Finished fast OPT passes. (There is nothing left to do.)\n14. Executing SETUNDEF pass (replace undef values with defined constants).\nabc -script /OpenROAD-flow-scripts/flow/scripts/abc_speed.script -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib -dont_use TAPCELL_X1 -dont_use FILLCELL_X1 -dont_use AOI211_X1 -dont_use OAI211_X1 -constr /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/gemm-cap10/flow/objects/nangate45/parallel_llaccel_gemm/base/abc.constr\n15. Executing ABC pass (technology mapping using ABC).\n15.1. Extracting gate netlist of module `\\gemm_engine' to `<abc-temp-dir>/input.blif'..\nslurmstepd: error: *** STEP 89481.0 ON node8 CANCELLED AT 2026-10-21T19:10:48 ***",
+      "latest_flow_log": {
+        "file": "1_2_yosys.log",
+        "bytes": 13794,
+        "modified_utc": "2026-10-21T10:53:23+00:00",
+        "tail": "13.9. Rerunning OPT passes. (Maybe there is more to do..)\n13.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).\n13.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).\n13.12. Executing OPT_MERGE pass (detect identical cells).\n13.13. Executing OPT_DFF pass (perform DFF optimizations).\n13.14. Executing OPT_CLEAN pass (remove unused cells and wires).\n13.15. Executing OPT_EXPR pass (perform const folding).\n13.16. Finished fast OPT passes. (There is nothing left to do.)\n14. Executing SETUNDEF pass (replace undef values with defined constants).\nabc -script /OpenROAD-flow-scripts/flow/scripts/abc_speed.script -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib -dont_use TAPCELL_X1 -dont_use FILLCELL_X1 -dont_use AOI211_X1 -dont_use OAI211_X1 -constr /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/gemm-cap10/flow/objects/nangate45/parallel_llaccel_gemm/base/abc.constr\n15. Executing ABC pass (technology mapping using ABC).\n15.1. Extracting gate netlist of module `\\gemm_engine' to `<abc-temp-dir>/input.blif'.."
+      },
+      "metrics": {},
+      "quality": {
+        "drc": null,
+        "setup_ws_ns": null,
+        "hold_ws_ns": null,
+        "max_cap": null,
+        "max_slew": null,
+        "max_fanout": null,
+        "instance_area_um2": null
+      },
+      "stages": [],
+      "experiment": {
+        "case": "llaccel-gemm",
+        "top": "gemm_engine",
+        "parameters": {
+          "EPILOGUE_FUSION": 0,
+          "GEMM_TN": 16,
+          "GEMM_TK": 16,
+          "GEMM_TM": 16
+        },
+        "clock_ns": 3.0,
+        "io_delay_ns": 0.6,
+        "cap_margin": 10,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Original llaccel fixed v1 EPILOGUE_FUSION=0, no SRAM bank storage; original RTL inferred memories.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "independent block implementation; not top integration, H2, source-to-netlist equivalence or signoff"
+      },
+      "abstracts_present": {
+        ".lef": false,
+        "_typ.lib": false,
+        ".detailed.lef": false
+      },
+      "final_markers": []
+    },
+    "gemm-cap20": {
+      "spec": {
+        "name": "gemm-cap20",
+        "kind": "physical",
+        "cores": 16,
+        "case": "llaccel-gemm",
+        "cap_margin": 20
+      },
+      "stream": "B",
+      "started": "2026-10-21T10:50:45Z\n",
+      "finished": null,
+      "exit_code": null,
+      "hash_exit_code": null,
+      "log_tail": "13.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).\n13.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).\n13.12. Executing OPT_MERGE pass (detect identical cells).\n13.13. Executing OPT_DFF pass (perform DFF optimizations).\n13.14. Executing OPT_CLEAN pass (remove unused cells and wires).\n13.15. Executing OPT_EXPR pass (perform const folding).\n13.16. Finished fast OPT passes. (There is nothing left to do.)\n14. Executing SETUNDEF pass (replace undef values with defined constants).\nabc -script /OpenROAD-flow-scripts/flow/scripts/abc_speed.script -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib -dont_use TAPCELL_X1 -dont_use FILLCELL_X1 -dont_use AOI211_X1 -dont_use OAI211_X1 -constr /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/gemm-cap20/flow/objects/nangate45/parallel_llaccel_gemm/base/abc.constr\n15. Executing ABC pass (technology mapping using ABC).\n15.1. Extracting gate netlist of module `\\gemm_engine' to `<abc-temp-dir>/input.blif'..\nslurmstepd: error: *** STEP 89481.1 ON node8 CANCELLED AT 2026-10-21T19:10:48 ***",
+      "latest_flow_log": {
+        "file": "1_2_yosys.log",
+        "bytes": 13794,
+        "modified_utc": "2026-10-21T10:53:22+00:00",
+        "tail": "13.9. Rerunning OPT passes. (Maybe there is more to do..)\n13.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).\n13.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).\n13.12. Executing OPT_MERGE pass (detect identical cells).\n13.13. Executing OPT_DFF pass (perform DFF optimizations).\n13.14. Executing OPT_CLEAN pass (remove unused cells and wires).\n13.15. Executing OPT_EXPR pass (perform const folding).\n13.16. Finished fast OPT passes. (There is nothing left to do.)\n14. Executing SETUNDEF pass (replace undef values with defined constants).\nabc -script /OpenROAD-flow-scripts/flow/scripts/abc_speed.script -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib -dont_use TAPCELL_X1 -dont_use FILLCELL_X1 -dont_use AOI211_X1 -dont_use OAI211_X1 -constr /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/gemm-cap20/flow/objects/nangate45/parallel_llaccel_gemm/base/abc.constr\n15. Executing ABC pass (technology mapping using ABC).\n15.1. Extracting gate netlist of module `\\gemm_engine' to `<abc-temp-dir>/input.blif'.."
+      },
+      "metrics": {},
+      "quality": {
+        "drc": null,
+        "setup_ws_ns": null,
+        "hold_ws_ns": null,
+        "max_cap": null,
+        "max_slew": null,
+        "max_fanout": null,
+        "instance_area_um2": null
+      },
+      "stages": [],
+      "experiment": {
+        "case": "llaccel-gemm",
+        "top": "gemm_engine",
+        "parameters": {
+          "EPILOGUE_FUSION": 0,
+          "GEMM_TN": 16,
+          "GEMM_TK": 16,
+          "GEMM_TM": 16
+        },
+        "clock_ns": 3.0,
+        "io_delay_ns": 0.6,
+        "cap_margin": 20,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Original llaccel fixed v1 EPILOGUE_FUSION=0, no SRAM bank storage; original RTL inferred memories.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "independent block implementation; not top integration, H2, source-to-netlist equivalence or signoff"
+      },
+      "abstracts_present": {
+        ".lef": false,
+        "_typ.lib": false,
+        ".detailed.lef": false
+      },
+      "final_markers": []
+    },
+    "mxu-cap20": {
+      "spec": {
+        "name": "mxu-cap20",
+        "kind": "physical",
+        "cores": 16,
+        "case": "opentpu-mxu",
+        "cap_margin": 20
+      },
+      "stream": "B",
+      "started": "2026-10-21T10:50:45Z\n",
+      "finished": null,
+      "exit_code": null,
+      "hash_exit_code": null,
+      "log_tail": "13.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).\n13.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).\n13.12. Executing OPT_MERGE pass (detect identical cells).\n13.13. Executing OPT_DFF pass (perform DFF optimizations).\n13.14. Executing OPT_CLEAN pass (remove unused cells and wires).\n13.15. Executing OPT_EXPR pass (perform const folding).\n13.16. Finished fast OPT passes. (There is nothing left to do.)\n14. Executing SETUNDEF pass (replace undef values with defined constants).\nabc -script /OpenROAD-flow-scripts/flow/scripts/abc_speed.script -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x40.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x64.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x72.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x96.lib -dont_use TAPCELL_X1 -dont_use FILLCELL_X1 -dont_use AOI211_X1 -dont_use OAI211_X1 -constr /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/mxu-cap20/flow/objects/nangate45/parallel_opentpu_mxu/base/abc.constr\n15. Executing ABC pass (technology mapping using ABC).\n15.1. Extracting gate netlist of module `\\llhd_opentpu_mxu' to `<abc-temp-dir>/input.blif'..\nslurmstepd: error: *** STEP 89481.2 ON node8 CANCELLED AT 2026-10-21T19:10:48 ***",
+      "latest_flow_log": {
+        "file": "1_2_yosys.log",
+        "bytes": 30667,
+        "modified_utc": "2026-10-21T10:52:08+00:00",
+        "tail": "13.9. Rerunning OPT passes. (Maybe there is more to do..)\n13.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).\n13.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).\n13.12. Executing OPT_MERGE pass (detect identical cells).\n13.13. Executing OPT_DFF pass (perform DFF optimizations).\n13.14. Executing OPT_CLEAN pass (remove unused cells and wires).\n13.15. Executing OPT_EXPR pass (perform const folding).\n13.16. Finished fast OPT passes. (There is nothing left to do.)\n14. Executing SETUNDEF pass (replace undef values with defined constants).\nabc -script /OpenROAD-flow-scripts/flow/scripts/abc_speed.script -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x40.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x64.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x72.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x96.lib -dont_use TAPCELL_X1 -dont_use FILLCELL_X1 -dont_use AOI211_X1 -dont_use OAI211_X1 -constr /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/mxu-cap20/flow/objects/nangate45/parallel_opentpu_mxu/base/abc.constr\n15. Executing ABC pass (technology mapping using ABC).\n15.1. Extracting gate netlist of module `\\llhd_opentpu_mxu' to `<abc-temp-dir>/input.blif'.."
+      },
+      "metrics": {},
+      "quality": {
+        "drc": null,
+        "setup_ws_ns": null,
+        "hold_ws_ns": null,
+        "max_cap": null,
+        "max_slew": null,
+        "max_fanout": null,
+        "instance_area_um2": null
+      },
+      "stages": [],
+      "experiment": {
+        "case": "opentpu-mxu",
+        "top": "llhd_opentpu_mxu",
+        "parameters": {
+          "D": 32,
+          "MCOLS": 2,
+          "ROWS": 2,
+          "BLOCKS": 32,
+          "LANES": 4,
+          "DEPTH": 64,
+          "IMPL": 2,
+          "CL": 16,
+          "E": 0,
+          "SID": 0
+        },
+        "clock_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "cap_margin": 20,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Upstream openTPU synthetic fakeram LEF/Liberty models, not fabricated SRAM or SRAM GDS. Same unmodified generator and small configuration for split/merged cases; no full system claim.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "independent block implementation; not top integration, H2, source-to-netlist equivalence or signoff"
+      },
+      "abstracts_present": {
+        ".lef": false,
+        "_typ.lib": false,
+        ".detailed.lef": false
+      },
+      "final_markers": []
+    },
+    "merged-cap20": {
+      "spec": {
+        "name": "merged-cap20",
+        "kind": "physical",
+        "cores": 16,
+        "case": "opentpu-act-mxu",
+        "cap_margin": 20
+      },
+      "stream": "B",
+      "started": "2026-10-21T10:50:45Z\n",
+      "finished": null,
+      "exit_code": null,
+      "hash_exit_code": null,
+      "log_tail": "13.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).\n13.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).\n13.12. Executing OPT_MERGE pass (detect identical cells).\n13.13. Executing OPT_DFF pass (perform DFF optimizations).\n13.14. Executing OPT_CLEAN pass (remove unused cells and wires).\n13.15. Executing OPT_EXPR pass (perform const folding).\n13.16. Finished fast OPT passes. (There is nothing left to do.)\n14. Executing SETUNDEF pass (replace undef values with defined constants).\nabc -script /OpenROAD-flow-scripts/flow/scripts/abc_speed.script -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/merged-cap20/memory-model/macros/fakeram45_1r1w_32x64.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/merged-cap20/memory-model/macros/fakeram45_1r1w_32x128.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/merged-cap20/memory-model/macros/fakeram45_1r1w_64x40.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/merged-cap20/memory-model/macros/fakeram45_1r1w_64x64.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/merged-cap20/memory-model/macros/fakeram45_1r1w_64x72.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/merged-cap20/memory-model/macros/fakeram45_1r1w_64x96.lib -dont_use TAPCELL_X1 -dont_use FILLCELL_X1 -dont_use AOI211_X1 -dont_use OAI211_X1 -constr /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/merged-cap20/flow/objects/nangate45/parallel_opentpu_act_mxu/base/abc.constr\n15. Executing ABC pass (technology mapping using ABC).\n15.1. Extracting gate netlist of module `\\llhd_opentpu_act_mxu' to `<abc-temp-dir>/input.blif'..\nslurmstepd: error: *** STEP 89481.3 ON node8 CANCELLED AT 2026-10-21T19:10:48 ***",
+      "latest_flow_log": {
+        "file": "1_2_yosys.log",
+        "bytes": 31511,
+        "modified_utc": "2026-10-21T10:53:27+00:00",
+        "tail": "13.9. Rerunning OPT passes. (Maybe there is more to do..)\n13.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).\n13.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).\n13.12. Executing OPT_MERGE pass (detect identical cells).\n13.13. Executing OPT_DFF pass (perform DFF optimizations).\n13.14. Executing OPT_CLEAN pass (remove unused cells and wires).\n13.15. Executing OPT_EXPR pass (perform const folding).\n13.16. Finished fast OPT passes. (There is nothing left to do.)\n14. Executing SETUNDEF pass (replace undef values with defined constants).\nabc -script /OpenROAD-flow-scripts/flow/scripts/abc_speed.script -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/merged-cap20/memory-model/macros/fakeram45_1r1w_32x64.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/merged-cap20/memory-model/macros/fakeram45_1r1w_32x128.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/merged-cap20/memory-model/macros/fakeram45_1r1w_64x40.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/merged-cap20/memory-model/macros/fakeram45_1r1w_64x64.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/merged-cap20/memory-model/macros/fakeram45_1r1w_64x72.lib -liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/merged-cap20/memory-model/macros/fakeram45_1r1w_64x96.lib -dont_use TAPCELL_X1 -dont_use FILLCELL_X1 -dont_use AOI211_X1 -dont_use OAI211_X1 -constr /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/merged-cap20/flow/objects/nangate45/parallel_opentpu_act_mxu/base/abc.constr\n15. Executing ABC pass (technology mapping using ABC).\n15.1. Extracting gate netlist of module `\\llhd_opentpu_act_mxu' to `<abc-temp-dir>/input.blif'.."
+      },
+      "metrics": {},
+      "quality": {
+        "drc": null,
+        "setup_ws_ns": null,
+        "hold_ws_ns": null,
+        "max_cap": null,
+        "max_slew": null,
+        "max_fanout": null,
+        "instance_area_um2": null
+      },
+      "stages": [],
+      "experiment": {
+        "case": "opentpu-act-mxu",
+        "top": "llhd_opentpu_act_mxu",
+        "parameters": {
+          "D": 32,
+          "MCOLS": 2,
+          "ROWS": 2,
+          "BLOCKS": 32,
+          "LANES": 4,
+          "DEPTH": 64,
+          "IMPL": 2,
+          "CL": 16,
+          "E": 0,
+          "SID": 0
+        },
+        "clock_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "cap_margin": 20,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Upstream openTPU synthetic fakeram LEF/Liberty models, not fabricated SRAM or SRAM GDS. Same unmodified generator and small configuration for split/merged cases; no full system claim.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "independent block implementation; not top integration, H2, source-to-netlist equivalence or signoff"
+      },
+      "abstracts_present": {
+        ".lef": false,
+        "_typ.lib": false,
+        ".detailed.lef": false
+      },
+      "final_markers": []
+    },
+    "baseline-views": {
+      "spec": {
+        "name": "baseline-views",
+        "kind": "baseline-views",
+        "cores": 8,
+        "case": "opentpu-act",
+        "cap_margin": 0
+      },
+      "stream": "C",
+      "started": "2026-10-21T10:50:45Z\n",
+      "finished": "2026-10-21T10:52:57Z\n",
+      "exit_code": "0\n",
+      "hash_exit_code": "0\n",
+      "log_tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+      "validation": {
+        "passed": true,
+        "kind": "baseline view and pin preparation only",
+        "views": {
+          "opentpu-act": {
+            "alias": "llhd_baseline_opentpu_act",
+            "directory": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/baseline-views/views/opentpu-act",
+            "ports": {
+              "clk": {
+                "direction": "input",
+                "width": 1
+              },
+              "we": {
+                "direction": "input",
+                "width": 4
+              },
+              "w_row": {
+                "direction": "input",
+                "width": 8
+              },
+              "w_idx": {
+                "direction": "input",
+                "width": 32
+              },
+              "w_data": {
+                "direction": "input",
+                "width": 32
+              },
+              "w_dup": {
+                "direction": "input",
+                "width": 1
+              },
+              "w_off": {
+                "direction": "input",
+                "width": 8
+              },
+              "swe": {
+                "direction": "input",
+                "width": 1
+              },
+              "s_row": {
+                "direction": "input",
+                "width": 8
+              },
+              "s_blk": {
+                "direction": "input",
+                "width": 16
+              },
+              "s_data": {
+                "direction": "input",
+                "width": 64
+              },
+              "ren": {
+                "direction": "input",
+                "width": 2
+              },
+              "r_use": {
+                "direction": "input",
+                "width": 1
+              },
+              "r_blk": {
+                "direction": "input",
+                "width": 16
+              },
+              "r_blk2": {
+                "direction": "input",
+                "width": 16
+              },
+              "r_hi": {
+                "direction": "input",
+                "width": 2
+              },
+              "r_grp": {
+                "direction": "input",
+                "width": 8
+              },
+              "r_data": {
+                "direction": "output",
+                "width": 512
+              },
+              "r_scale": {
+                "direction": "output",
+                "width": 128
+              }
+            },
+            "signal_pins": 860,
+            "size_um": [
+              326.205,
+              326.205
+            ],
+            "minimum_period_present": false,
+            "original_name": "otpu_asic_top",
+            "identity_change": "Alias only in derived LEF/Lib; original ODB/SDC/SPEF untouched",
+            "qualified_hard_macro": false,
+            "prior_max_cap_violations": 2
+          },
+          "opentpu-mxu": {
+            "alias": "llhd_baseline_opentpu_mxu",
+            "directory": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/baseline-views/views/opentpu-mxu",
+            "ports": {
+              "clk": {
+                "direction": "input",
+                "width": 1
+              },
+              "rst": {
+                "direction": "input",
+                "width": 1
+              },
+              "start": {
+                "direction": "input",
+                "width": 1
+              },
+              "go": {
+                "direction": "input",
+                "width": 1
+              },
+              "cmd": {
+                "direction": "input",
+                "width": 240
+              },
+              "rdy": {
+                "direction": "output",
+                "width": 1
+              },
+              "done": {
+                "direction": "output",
+                "width": 1
+              },
+              "computing": {
+                "direction": "output",
+                "width": 1
+              },
+              "pf_level": {
+                "direction": "output",
+                "width": 7
+              },
+              "pf_starve": {
+                "direction": "output",
+                "width": 1
+              },
+              "pf_block": {
+                "direction": "output",
+                "width": 1
+              },
+              "pf_u": {
+                "direction": "output",
+                "width": 1
+              },
+              "pf_uv": {
+                "direction": "output",
+                "width": 128
+              },
+              "a_req": {
+                "direction": "output",
+                "width": 1
+              },
+              "a_addr": {
+                "direction": "output",
+                "width": 32
+              },
+              "a_gnt": {
+                "direction": "input",
+                "width": 1
+              },
+              "a_rvalid": {
+                "direction": "input",
+                "width": 1
+              },
+              "a_rdata": {
+                "direction": "input",
+                "width": 256
+              },
+              "b_req": {
+                "direction": "output",
+                "width": 1
+              },
+              "b_addr": {
+                "direction": "output",
+                "width": 32
+              },
+              "b_gnt": {
+                "direction": "input",
+                "width": 1
+              },
+              "b_rvalid": {
+                "direction": "input",
+                "width": 1
+              },
+              "b_rdata": {
+                "direction": "input",
+                "width": 256
+              },
+              "t_ren": {
+                "direction": "output",
+                "width": 4
+              },
+              "t_raddr": {
+                "direction": "output",
+                "width": 128
+              },
+              "t_rdata": {
+                "direction": "input",
+                "width": 128
+              },
+              "t_wen": {
+                "direction": "output",
+                "width": 4
+              },
+              "t_waddr": {
+                "direction": "output",
+                "width": 128
+              },
+              "t_wdata": {
+                "direction": "output",
+                "width": 128
+              },
+              "t_gnt": {
+                "direction": "input",
+                "width": 1
+              },
+              "act_blk": {
+                "direction": "output",
+                "width": 16
+              },
+              "act_blk2": {
+                "direction": "output",
+                "width": 16
+              },
+              "act_hi": {
+                "direction": "output",
+                "width": 2
+              },
+              "act_grp": {
+                "direction": "output",
+                "width": 8
+              },
+              "act_ren": {
+                "direction": "output",
+                "width": 2
+              },
+              "act_data": {
+                "direction": "input",
+                "width": 512
+              },
+              "act_scale": {
+                "direction": "input",
+                "width": 128
+              }
+            },
+            "signal_pins": 2172,
+            "size_um": [
+              1100.455,
+              1100.455
+            ],
+            "minimum_period_present": false,
+            "original_name": "otpu_asic_top",
+            "identity_change": "Alias only in derived LEF/Lib; original ODB/SDC/SPEF untouched",
+            "qualified_hard_macro": false,
+            "prior_max_cap_violations": 12
+          },
+          "opentpu-act-mxu": {
+            "alias": "llhd_baseline_opentpu_act_mxu",
+            "directory": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-01/baseline-views/views/opentpu-act-mxu",
+            "ports": {
+              "clk": {
+                "direction": "input",
+                "width": 1
+              },
+              "we": {
+                "direction": "input",
+                "width": 4
+              },
+              "w_row": {
+                "direction": "input",
+                "width": 8
+              },
+              "w_idx": {
+                "direction": "input",
+                "width": 32
+              },
+              "w_data": {
+                "direction": "input",
+                "width": 32
+              },
+              "w_dup": {
+                "direction": "input",
+                "width": 1
+              },
+              "w_off": {
+                "direction": "input",
+                "width": 8
+              },
+              "swe": {
+                "direction": "input",
+                "width": 1
+              },
+              "s_row": {
+                "direction": "input",
+                "width": 8
+              },
+              "s_blk": {
+                "direction": "input",
+                "width": 16
+              },
+              "s_data": {
+                "direction": "input",
+                "width": 64
+              },
+              "rst": {
+                "direction": "input",
+                "width": 1
+              },
+              "start": {
+                "direction": "input",
+                "width": 1
+              },
+              "go": {
+                "direction": "input",
+                "width": 1
+              },
+              "cmd": {
+                "direction": "input",
+                "width": 240
+              },
+              "rdy": {
+                "direction": "output",
+                "width": 1
+              },
+              "done": {
+                "direction": "output",
+                "width": 1
+              },
+              "computing": {
+                "direction": "output",
+                "width": 1
+              },
+              "pf_level": {
+                "direction": "output",
+                "width": 7
+              },
+              "pf_starve": {
+                "direction": "output",
+                "width": 1
+              },
+              "pf_block": {
+                "direction": "output",
+                "width": 1
+              },
+              "pf_u": {
+                "direction": "output",
+                "width": 1
+              },
+              "pf_uv": {
+                "direction": "output",
+                "width": 128
+              },
+              "a_req": {
+                "direction": "output",
+                "width": 1
+              },
+              "a_addr": {
+                "direction": "output",
+                "width": 32
+              },
+              "a_gnt": {
+                "direction": "input",
+                "width": 1
+              },
+              "a_rvalid": {
+                "direction": "input",
+                "width": 1
+              },
+              "a_rdata": {
+                "direction": "input",
+                "width": 256
+              },
+              "b_req": {
+                "direction": "output",
+                "width": 1
+              },
+              "b_addr": {
+                "direction": "output",
+                "width": 32
+              },
+              "b_gnt": {
+                "direction": "input",
+                "width": 1
+              },
+              "b_rvalid": {
+                "direction": "input",
+                "width": 1
+              },
+              "b_rdata": {
+                "direction": "input",
+                "width": 256
+              },
+              "t_ren": {
+                "direction": "output",
+                "width": 4
+              },
+              "t_raddr": {
+                "direction": "output",
+                "width": 128
+              },
+              "t_rdata": {
+                "direction": "input",
+                "width": 128
+              },
+              "t_wen": {
+                "direction": "output",
+                "width": 4
+              },
+              "t_waddr": {
+                "direction": "output",
+                "width": 128
+              },
+              "t_wdata": {
+                "direction": "output",
+                "width": 128
+              },
+              "t_gnt": {
+                "direction": "input",
+                "width": 1
+              }
+            },
+            "signal_pins": 1662,
+            "size_um": [
+              1143.63,
+              1143.63
+            ],
+            "minimum_period_present": false,
+            "original_name": "otpu_asic_top",
+            "identity_change": "Alias only in derived LEF/Lib; original ODB/SDC/SPEF untouched",
+            "qualified_hard_macro": false,
+            "prior_max_cap_violations": 41
+          }
+        },
+        "top_pnr_executed": false,
+        "full_timing_arc_audit_complete": false,
+        "scope": "Engineering preparation with explicitly unqualified baseline blocks; no hierarchical PPA or signoff conclusion"
+      },
+      "views_finished": [
+        "opentpu-act",
+        "opentpu-mxu",
+        "opentpu-act-mxu"
+      ]
+    }
+  },
+  "completion_exists": true,
+  "completion_sha256": null
+}

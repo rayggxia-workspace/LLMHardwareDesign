@@ -1,5 +1,28 @@
 # Issue #7 并发实验恢复与主线协调
 
+## 最新恢复入口：第二轮（2026-10-21 19:25，UTC+08:00）
+
+仓库、Issue／PR及工作树沿用下文；当前物理接续根为 **`parallel-blocks-wave2-06`**，实际runner **`05074e2`**。**89497／node7／48CPU** 的ACT裕量0/10/20均已COMPLETED0:0、批次6:00；**89498／node8／64CPU** 的GEMM10/20、MXU20、合并20继续运行，均每step16核、UNLIMITED。**89499** 一次性afterany审计已提交。仅ACT20通过后补的严格工具门槛，尚不是完整宏资格或签核。
+
+**优先采用新根11的严格审计**：89510／node9／1CPU／afterany89499，后接89511；实际runner `f46deb0`。新根10的89508已对三路ACT各825源＋154输出条目校验全过，并发现10虽cap计数0、最差余量仍负，故0／10严格门槛false、20true。20面积比0增加0.321716%，选作后续视图检查候选。不要用06旧审计的计数条件覆盖该结果。根08首次容器缺sacct失败、根09未启动的89506／89507行政取消均保留回执，由10／11接替。
+
+恢复第一步，在本专有工作树核对分支／最新规则后：
+
+```powershell
+python project/experiments/parallel_blocks/wave2/monitor.py --attempt parallel-blocks-wave2-06
+python project/experiments/parallel_blocks/wave2/monitor.py --attempt parallel-blocks-wave2-11
+```
+
+然后读[第二轮实验记录](../experiments/issue-7-parallel-blocks-wave2.md)、[06提交回执](../../project/experiments/parallel_blocks/results/parallel-blocks-wave2-06-submission.json)及latest中的最近flow日志／修改时刻，不只看RUNNING。监视器取得计算节点SHA后才取回不可改写的completion。大文件留远程，不在登录节点重算哈希或运行EDA。
+
+已完成：原openTPU RAM12组周期对照、包装逐bit连接／存储资源核对；原GEMM两种fusion各500例实际通过，首次采集器失败另存，89484在新根02核对原日志SHA／summary通过且未重跑模拟；C的89482导出旧结果基线视图，89487完成两个宏40端口／1662bit的接线与1670µm共同外边界准备。C初次8CPU，其余辅助任务1CPU，均已释放。**正式顶层PNR未执行**；旧宏仍电容失败，minimum_period缺失，arc／外部驱动负载／PG／功能及物理等价缺口显式保留。
+
+故障及保存：首试01的7个ABC输出早已完成，却卡在持久ABC回执；长TMPDIR最小复现，默认临时目录的校正探针89493及真实ACT接续确认可继续。仅按[回执](../../project/experiments/parallel_blocks/results/parallel-blocks-wave2-stall-retirement.json)终止8个明确停滞step，非人工时限；不碰主线。原89480／89481／89491失败，89483／89492审计分别保留7／1项缺manifest失败。新根07的89501／89502封存原失败completion字节及SHA，监视器已验证取回；不要重写这些历史或将封存成功当成原实验通过。
+
+本次代码已推送，文档与快照head以本PR／`git rev-parse HEAD`为准，后续commit不倒填到既有作业。恢复后检查89499及89510／89511终态、逐case计数与最差余量／时序及SHA，再决定合格宏和正式顶层；功能／物理验收不能由结构CI代替。草稿PR10／固定Issue回执继续更新；整体Issue本轮实际标签为status:in_review，由主线维护，不改回，本并发实验仍运行，审查人／优先级待指定。登记PR5仍OPEN、pending；无board.json／缺read:project，看板unverified、同步pending，管理员待指定。需要定时助手通知须从主线或普通聊天建立，本侧聊没有后台唤醒。
+
+## 以下为首轮历史回执与18:05恢复说明
+
 - 仓库：`rayggxia-workspace/LLMHardwareDesign`；project_id `llm-hardware-design`；操作者 YUZE-LU。
 - Issue：[任务 #7](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7)。本批[草稿 PR #10](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/10)是主线 PR #8 的独立补充，不重复接管 VECTOR／供电修复。
 - 分支／本地路径：`task/7-parallel-blocks`；`D:\Data\电路实验\LLMHardwareDesign-worktrees\issue-7-parallel-blocks`。

@@ -1,0 +1,350 @@
+{
+  "observed_utc": "2026-10-21T11:01:02.982528+00:00",
+  "submission": {
+    "attempt": "parallel-blocks-wave2-03",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-03",
+    "host": "yuzelu@10.129.166.172",
+    "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "plan": {
+      "C": {
+        "node": "node9",
+        "cores": 1,
+        "tasks": [
+          {
+            "name": "top-contract",
+            "kind": "top-contract",
+            "cores": 1,
+            "case": "opentpu-act",
+            "cap_margin": 0
+          }
+        ],
+        "job_id": 89487,
+        "scheduler_readback": "JobId=89487 JobName=lyz-wave2-c UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586572 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T19:00:43 EligibleTime=2026-10-21T19:00:43 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T19:00:43 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:1036054 ReqNodeList=node9 ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-03/runner/wave2/stream.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-03/stream-C.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-03/stream-C.log Power= TresPerTask=cpu:1"
+      }
+    },
+    "profile": "top-contract",
+    "runner_commit": "1b9e63103fe4421761b0e16f2a8c97703919c6aa",
+    "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
+    "submitted_utc": "2026-10-21T11:00:38.781514+00:00",
+    "scope": "A/B new physical cases, C baseline-only view preparation; no accepted hard macro assumed",
+    "audit_job_id": 89488,
+    "audit_scheduler_readback": "JobId=89488 JobName=lyz-wave2-audit UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586571 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=Dependency Dependency=afterany:89487(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T19:00:44 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T19:00:44 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:1036653 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-03/runner/wave2/audit.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-03/audit.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-03/audit.log Power= TresPerTask=cpu:1"
+  },
+  "scheduler": {
+    "exit_code": 0,
+    "stdout": "89487|lyz-wave2-c|COMPLETED|0:0|00:00:09|1|node9\n89487.batch|batch|COMPLETED|0:0|00:00:09|1|node9\n89487.extern|extern|COMPLETED|0:0|00:00:09|1|node9\n89487.0|lyz-top-contract|COMPLETED|0:0|00:00:06|1|node9\n89488|lyz-wave2-audit|COMPLETED|0:0|00:00:06|1|node3\n89488.batch|batch|COMPLETED|0:0|00:00:06|1|node3\n89488.extern|extern|COMPLETED|0:0|00:00:06|1|node3",
+    "stderr": ""
+  },
+  "resources": {
+    "exit_code": 0,
+    "stdout": "89487|00:00:09|1|9|00:04.467|\n89487.batch|00:00:09|1|9|00:01.306|0\n89487.extern|00:00:09|1|9|00:00:00|0\n89487.0|00:00:06|1|6|00:03.160|0\n89488|00:00:06|1|6|00:00.260|\n89488.batch|00:00:06|1|6|00:00.260|0\n89488.extern|00:00:06|1|6|00:00:00|0",
+    "stderr": ""
+  },
+  "tasks": {
+    "top-contract": {
+      "spec": {
+        "name": "top-contract",
+        "kind": "top-contract",
+        "cores": 1,
+        "case": "opentpu-act",
+        "cap_margin": 0
+      },
+      "stream": "C",
+      "started": "2026-10-21T11:00:46Z\n",
+      "finished": "2026-10-21T11:00:52Z\n",
+      "exit_code": "0\n",
+      "hash_exit_code": "0\n",
+      "log_tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+      "validation": {
+        "passed": true,
+        "kind": "Generated two-hard-block wiring and floorplan preparation",
+        "macro_instances": 2,
+        "external_ports": 40,
+        "external_signal_bits": 1662,
+        "internal_data_address_bits": 684,
+        "computing_feedback_bits": 1,
+        "exact_bit_identity": true,
+        "shared_clock": true,
+        "added_registers": 0,
+        "top_pnr_executed": false,
+        "qualified_hard_macros": false,
+        "top_contract": {
+          "top": "llhd_opentpu_hierarchy_preparation",
+          "external_ports": {
+            "clk": {
+              "direction": "input",
+              "width": 1
+            },
+            "we": {
+              "direction": "input",
+              "width": 4
+            },
+            "w_row": {
+              "direction": "input",
+              "width": 8
+            },
+            "w_idx": {
+              "direction": "input",
+              "width": 32
+            },
+            "w_data": {
+              "direction": "input",
+              "width": 32
+            },
+            "w_dup": {
+              "direction": "input",
+              "width": 1
+            },
+            "w_off": {
+              "direction": "input",
+              "width": 8
+            },
+            "swe": {
+              "direction": "input",
+              "width": 1
+            },
+            "s_row": {
+              "direction": "input",
+              "width": 8
+            },
+            "s_blk": {
+              "direction": "input",
+              "width": 16
+            },
+            "s_data": {
+              "direction": "input",
+              "width": 64
+            },
+            "rst": {
+              "direction": "input",
+              "width": 1
+            },
+            "start": {
+              "direction": "input",
+              "width": 1
+            },
+            "go": {
+              "direction": "input",
+              "width": 1
+            },
+            "cmd": {
+              "direction": "input",
+              "width": 240
+            },
+            "rdy": {
+              "direction": "output",
+              "width": 1
+            },
+            "done": {
+              "direction": "output",
+              "width": 1
+            },
+            "computing": {
+              "direction": "output",
+              "width": 1
+            },
+            "pf_level": {
+              "direction": "output",
+              "width": 7
+            },
+            "pf_starve": {
+              "direction": "output",
+              "width": 1
+            },
+            "pf_block": {
+              "direction": "output",
+              "width": 1
+            },
+            "pf_u": {
+              "direction": "output",
+              "width": 1
+            },
+            "pf_uv": {
+              "direction": "output",
+              "width": 128
+            },
+            "a_req": {
+              "direction": "output",
+              "width": 1
+            },
+            "a_addr": {
+              "direction": "output",
+              "width": 32
+            },
+            "a_gnt": {
+              "direction": "input",
+              "width": 1
+            },
+            "a_rvalid": {
+              "direction": "input",
+              "width": 1
+            },
+            "a_rdata": {
+              "direction": "input",
+              "width": 256
+            },
+            "b_req": {
+              "direction": "output",
+              "width": 1
+            },
+            "b_addr": {
+              "direction": "output",
+              "width": 32
+            },
+            "b_gnt": {
+              "direction": "input",
+              "width": 1
+            },
+            "b_rvalid": {
+              "direction": "input",
+              "width": 1
+            },
+            "b_rdata": {
+              "direction": "input",
+              "width": 256
+            },
+            "t_ren": {
+              "direction": "output",
+              "width": 4
+            },
+            "t_raddr": {
+              "direction": "output",
+              "width": 128
+            },
+            "t_rdata": {
+              "direction": "input",
+              "width": 128
+            },
+            "t_wen": {
+              "direction": "output",
+              "width": 4
+            },
+            "t_waddr": {
+              "direction": "output",
+              "width": 128
+            },
+            "t_wdata": {
+              "direction": "output",
+              "width": 128
+            },
+            "t_gnt": {
+              "direction": "input",
+              "width": 1
+            }
+          },
+          "external_signal_bits": 1662,
+          "connections": [
+            {
+              "act_port": "ren",
+              "mxu_port": "act_ren",
+              "width": 2,
+              "exact_bit_identity": true
+            },
+            {
+              "act_port": "r_use",
+              "mxu_port": "computing",
+              "width": 1,
+              "exact_bit_identity": true
+            },
+            {
+              "act_port": "r_blk",
+              "mxu_port": "act_blk",
+              "width": 16,
+              "exact_bit_identity": true
+            },
+            {
+              "act_port": "r_blk2",
+              "mxu_port": "act_blk2",
+              "width": 16,
+              "exact_bit_identity": true
+            },
+            {
+              "act_port": "r_hi",
+              "mxu_port": "act_hi",
+              "width": 2,
+              "exact_bit_identity": true
+            },
+            {
+              "act_port": "r_grp",
+              "mxu_port": "act_grp",
+              "width": 8,
+              "exact_bit_identity": true
+            },
+            {
+              "act_port": "r_data",
+              "mxu_port": "act_data",
+              "width": 512,
+              "exact_bit_identity": true
+            },
+            {
+              "act_port": "r_scale",
+              "mxu_port": "act_scale",
+              "width": 128,
+              "exact_bit_identity": true
+            }
+          ],
+          "address_and_data_bits": 684,
+          "computing_feedback_bits": 1,
+          "shared_clock": "clk",
+          "added_registers": 0,
+          "clock_ns": 2.5,
+          "io_delay_ns": 0.5,
+          "channel_um": 80.0,
+          "die_um": [
+            0,
+            0,
+            1670.0,
+            1670.0
+          ],
+          "placements": {
+            "horizontal": {
+              "u_act": [
+                80.0,
+                80.0
+              ],
+              "u_mxu": [
+                486.205,
+                80.0
+              ]
+            },
+            "vertical": {
+              "u_act": [
+                80.0,
+                80.0
+              ],
+              "u_mxu": [
+                80.0,
+                486.205
+              ]
+            }
+          },
+          "rotations": "R0 only",
+          "baseline_view_names": [
+            "llhd_baseline_opentpu_act",
+            "llhd_baseline_opentpu_mxu"
+          ],
+          "baseline_prior_max_cap": {
+            "opentpu-act": 2,
+            "opentpu-mxu": 12,
+            "opentpu-act-mxu": 41
+          },
+          "formal_top_pnr_executed": false,
+          "formal_top_ready": false,
+          "required_before_formal_comparison": [
+            "New ACT/MXU/merged final extraction reports: DRC/antenna, setup/hold, all electrical rules and PG pass",
+            "Selected input hashes; LEF/Liberty/netlist port identity and timing arc coverage audit",
+            "Internal block clock checks retained separately: current timing models lack minimum_period",
+            "Explicit adjacent-block driver/load and timing budget policy; no unmodeled interface claim",
+            "Power pin/OBS inspection and strict VDD/VSS connectivity with geometric via audit",
+            "Flat merged implementation rerun at identical outer die, clock, IO budget and model revision",
+            "Report actual top wires/CTS/PG/channel area plus block resource cost; no sum-of-block proxy",
+            "Functional/physical equivalence gaps remain explicit; this contract does not close them"
+          ]
+        },
+        "scope": "Black-box wiring check and proposed common die only; baseline views still fail capacitance and full timing arc/PG/functional qualification remain pending"
+      }
+    }
+  },
+  "completion_exists": true,
+  "completion_sha256": "b1c0ec308e63bd7f20e211c78776f8517a9d01540d899c475dc3217daf73e444  completion.json\n"
+}

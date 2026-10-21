@@ -1,5 +1,18 @@
 # Issue #7 并发实验进度补充
 
+## 最新：2026-10-21 19:25（UTC+08:00）
+
+- 用户同意三个节点方案，已实际执行。物理接续 **89497／node7／48 CPU（三路ACT 0/10/20，各16）已COMPLETED0:0／6:00**；**89498／node8／64 CPU（GEMM10/20、MXU20、合并20，各16）仍运行**，根 `parallel-blocks-wave2-06`、实际runner `05074e2`，均实读UNLIMITED；89499为一次性afterany审计。
+- ACT严格审计89508／node9／1CPU完成，三路各825项源和154项输出校验通过。电容计数为2／0／0，但最差余量为−2.65367／−0.77620／+2.44166，因此**仅20通过本次严格工具门槛**，面积比0增加0.321716%；只是进一步视图检查候选。根10冻结SHA已核对；根11的89510 afterany89499及89511将对七路同样核对最差余量，不能只信06原计数门槛。根08的容器缺Slurm采集失败和未开始的09取消另存，不掩盖为成功。
+- C／node9最初8 CPU的89482已完成三个基线宏的详细LEF／时序模型导出与pin核对；仍保留电容失败。89487／1 CPU完成两个黑盒宏逐bit接线检查：40外部端口、1662 signal bit、684 bit地址／数据＋1 bit computing反馈，共享clk，无新增状态；横排／竖排提出同一1670×1670µm边界，**正式顶层PNR未执行**。时序模型缺minimum_period，arc／边界模型／PG审计待完成。
+- 功能：原openTPU RAM generic／ASIC12组周期对照、实际包装连接与RAM资源核对通过（89480.3）。原GEMM fusion0／1各500例实际通过，但首试摘要采集格式有误，89480.4保留FAILED1；89484在新目录核对原日志SHA与1000例summary通过，没有重跑模拟。不是完整MXU数值回归或物理网表等价。
+- 故障：首试7路ABC映射输出已生成，持久进程仍等待回执；长TMPDIR最小复现，恢复首轮默认临时目录后校正探针89493通过，真实ACT已继续。仅终止明确的7个停滞物理step和长路径探针，非耗时限额；原89480／89481及89491保留失败／取消。89483／89492审计因取消缺输出manifest分别失败7／1项；89501／89502只封存失败记录原字节，未将失败改成通过。
+- 同步成果：[第二轮实验记录](../../docs/experiments/issue-7-parallel-blocks-wave2.md)、[07封存回执](../../project/experiments/parallel_blocks/results/parallel-blocks-wave2-07-completion.json)、[06最新阶段](../../project/experiments/parallel_blocks/results/parallel-blocks-wave2-06-latest.json)。仍用[草稿PR10](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/10)和[固定Issue回执](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7#issuecomment-6312241685)，主线PR8文件／作业不改。
+- 下一步：运行wave2监视器读06与11；分别核对最终电容计数和最差余量、时序、电气、DRC／天线及PG，ACT结果不自动授予其它块。选择合格新块后补齐视图／边界及PG检查，再做同die两宏顶层／flat。无H2／签核结论。临时侧聊无定时助手监视，afterany审计会独立落盘。
+- 检查：结构、Python／Bash语法、Git whitespace、实际RAM／GEMM回执／顶层接线／ACT严格审计及冻结SHA核对通过；本次结构CI见PR最新head。登记PR5再次读回OPEN未合并、pending；无board.json／缺read:project，看板unverified／同步pending，管理员、审查人和优先级待指定。整体Issue本轮读回 **status:in_review**，由主线维护，不改回；本并发实验仍运行，不自行合并。
+
+## 首轮历史（18:05诊断时点）
+
 - 更新时间：2026-10-21（中国标准时间，UTC+08:00）。
 - 任务：[Issue #7](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7)，负责人 YUZE-LU；本补充由用户新授权的并行会话维护。主线的 `STATUS.md` 由原会话维护，此处使用独立文件避免冲突。
 - 已完成：独立工作树及 branch `task/7-parallel-blocks`；作业 89458 在 node7 同时跑四个 16 CPU step，总计 64 CPU，实际 `UNLIMITED`；GEMM 与 openTPU ACT／MXU／合并版均通过 elaboration，后三路 SRAM 模型类型与实例数一致。

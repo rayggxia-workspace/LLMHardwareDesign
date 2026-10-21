@@ -7,6 +7,8 @@
 - 代码：[parallel_blocks](../../project/experiments/parallel_blocks/README.md)。主线 `task/7-block-routing`／[PR #8](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/8) 继续负责 VECTOR 和 PG 修复。本会话不修改其文件、输入、时限或作业。
 - 并发交付：[草稿 PR #10](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/10)，只包含本批新目录／专有记录，与主线 PR #8 分开审查；个人补充见 [进度](../../progress/YUZE-LU/parallel-blocks-7.md)，恢复见[交接](../handoffs/2026-10-21-issue-7-parallel-blocks.md)。
 
+**后续已启动第二轮三节点工作线：** 见[第二轮记录](issue-7-parallel-blocks-wave2.md)。本文下半部“未执行第二轮／下一轮建议”是18:05首轮诊断时点的历史记录；当前物理接续为89497／89498，独立功能检查和顶层接线准备已结束，最终物理结论仍以第二轮实际回执为准。
+
 ## 实验与资源
 
 | Case | 对象与目的 |

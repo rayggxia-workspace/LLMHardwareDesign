@@ -1,0 +1,118 @@
+{
+  "observed_utc": "2026-10-21T11:10:50.951947+00:00",
+  "submission": {
+    "attempt": "parallel-blocks-wave2-04",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-04",
+    "host": "yuzelu@10.129.166.172",
+    "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "plan": {
+      "C": {
+        "node": "node9",
+        "cores": 2,
+        "tasks": [
+          {
+            "name": "abc-probe-short",
+            "kind": "abc-probe",
+            "cores": 1,
+            "case": "opentpu-act",
+            "cap_margin": 0
+          },
+          {
+            "name": "abc-probe-long",
+            "kind": "abc-probe",
+            "cores": 1,
+            "case": "opentpu-act",
+            "cap_margin": 0
+          }
+        ],
+        "job_id": 89491,
+        "scheduler_readback": "JobId=89491 JobName=lyz-wave2-c UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586568 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T19:06:17 EligibleTime=2026-10-21T19:06:17 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T19:06:17 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:1130298 ReqNodeList=node9 ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=2,mem=1M,node=1,billing=2 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-04/runner/wave2/stream.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-04/stream-C.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-04/stream-C.log Power= TresPerTask=cpu:2"
+      }
+    },
+    "profile": "abc-probe",
+    "runner_commit": "37e946fd42f8bc6aa8f20a19dbcf2ec058a8968d",
+    "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
+    "submitted_utc": "2026-10-21T11:06:13.650612+00:00",
+    "scope": "A/B new physical cases, C baseline-only view preparation; no accepted hard macro assumed",
+    "audit_job_id": 89492,
+    "audit_scheduler_readback": "JobId=89492 JobName=lyz-wave2-audit UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586567 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=Dependency Dependency=afterany:89491(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T19:06:18 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T19:06:18 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:1130798 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-04/runner/wave2/audit.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-04/audit.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-04/audit.log Power= TresPerTask=cpu:1"
+  },
+  "scheduler": {
+    "exit_code": 0,
+    "stdout": "89491|lyz-wave2-c|FAILED|1:0|00:04:32|2|node9\n89491.batch|batch|FAILED|1:0|00:04:32|2|node9\n89491.extern|extern|COMPLETED|0:0|00:04:32|2|node9\n89491.0|lyz-abc-probe-short|FAILED|1:0|00:00:05|1|node9\n89491.1|lyz-abc-probe-long|CANCELLED by 10011|0:9|00:04:29|1|node9\n89492|lyz-wave2-audit|RUNNING|0:0|00:00:01|1|node3\n89492.batch|batch|RUNNING|0:0|00:00:01|1|node3\n89492.extern|extern|RUNNING|0:0|00:00:01|1|node3",
+    "stderr": ""
+  },
+  "resources": {
+    "exit_code": 0,
+    "stdout": "89491|00:04:32|2|544|00:07.060|\n89491.batch|00:04:32|2|544|00:01.312|9480K\n89491.extern|00:04:32|2|544|00:00:00|0\n89491.0|00:00:05|1|5|00:03.258|0\n89491.1|00:04:29|1|269|00:02.489|42880K\n89492|00:00:02|1|2|00:00:00|\n89492.batch|00:00:02|1|2|00:00:00|\n89492.extern|00:00:02|1|2|00:00:00|",
+    "stderr": ""
+  },
+  "tasks": {
+    "abc-probe-short": {
+      "spec": {
+        "name": "abc-probe-short",
+        "kind": "abc-probe",
+        "cores": 1,
+        "case": "opentpu-act",
+        "cap_margin": 0
+      },
+      "stream": "C",
+      "started": "2026-10-21T11:06:20Z\n",
+      "finished": "2026-10-21T11:06:25Z\n",
+      "exit_code": "1\n",
+      "hash_exit_code": "0\n",
+      "log_tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+      "validation": {
+        "passed": false,
+        "kind": "Minimal ABC protocol probe",
+        "short_default_temporary_directory": true,
+        "exit_code": 1
+      },
+      "checksum_audits": {
+        "source-inputs.sha256": {
+          "status": "pass",
+          "exit_code": 0,
+          "entries": 825
+        },
+        "output-files.sha256": {
+          "status": "pass",
+          "exit_code": 0,
+          "entries": 16
+        }
+      },
+      "declared_validation_pass": false,
+      "manufacturing_or_system_signoff": false
+    },
+    "abc-probe-long": {
+      "spec": {
+        "name": "abc-probe-long",
+        "kind": "abc-probe",
+        "cores": 1,
+        "case": "opentpu-act",
+        "cap_margin": 0
+      },
+      "stream": "C",
+      "started": "2026-10-21T11:06:20Z\n",
+      "finished": null,
+      "exit_code": null,
+      "hash_exit_code": null,
+      "log_tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\nslurmstepd: error: *** STEP 89491.1 ON node9 CANCELLED AT 2026-10-21T19:10:48 ***",
+      "checksum_audits": {
+        "source-inputs.sha256": {
+          "status": "pass",
+          "exit_code": 0,
+          "entries": 825
+        },
+        "output-files.sha256": {
+          "status": "missing"
+        }
+      },
+      "declared_validation_pass": false,
+      "manufacturing_or_system_signoff": false
+    }
+  },
+  "completion_exists": false,
+  "completion_sha256": null,
+  "artifact_audit_failures": 1,
+  "scope": "One-shot new artifact verification; individual validations and tool budgets retain separate scope and failures"
+}

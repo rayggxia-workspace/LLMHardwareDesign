@@ -13,6 +13,15 @@ python project/experiments/parallel_blocks/wave2/launch.py --attempt parallel-bl
 python project/experiments/parallel_blocks/wave2/monitor.py --attempt parallel-blocks-wave2-01
 ```
 
+实际执行已推进到 `parallel-blocks-wave2-06`：89497／node7／48 CPU（三路ACT各16），89498／node8／64 CPU（四路大块各16），89499一次性afterany审计。功能验证及C准备已完成，不重新占用空槽等待。首试长TMPDIR触发ABC完成回执停滞，已保存证据并仅终止明确列出的停滞step；接续恢复首轮工具默认临时目录，不改RTL／SDC／ABC脚本或验收。完整故障、纠正采集和接线结果见[第二轮记录](../../../../docs/experiments/issue-7-parallel-blocks-wave2.md)。
+
+```powershell
+python project/experiments/parallel_blocks/wave2/monitor.py --attempt parallel-blocks-wave2-06
+python project/experiments/parallel_blocks/wave2/monitor.py --attempt parallel-blocks-wave2-11
+```
+
+ACT三路已完成：0／10／20的电容计数2／0／0，但最差余量−2.65367／−0.77620／+2.44166，不能只以计数0判断通过。新根10的89508逐路核对825源＋154输出条目，严格工具门槛只有20通过，面积比0增加0.321716%，仍待宏资格检查。根11／89510 afterany89499及89511会对七路做相同独立审计，runner f46deb0已在ACT验证。06冻结runner不修改，06原计数门槛不替代11的严格结果。08容器内缺sacct的采集失败和未开始的09审计取消另存，所有物理输出原地保留。
+
 新openTPU设计先按原probe所需的 `otpu_asic_top` 探测存储，随后只将新包装顶层改名为各自 `llhd_opentpu_*`，保证LEF／Liberty／网表身份一致。原RTL、参数、宽读接口、时钟与IO预算不改；电容裕量明确写入配置和实验记录。初轮runner和冻结结果不修改。
 
 GEMM执行原 `tb/Makefile gemm`，固定seed1，EPILOGUE_FUSION0／1各500例，原物理对象只对应0；不是网表等价。openTPU执行原tech-RAM testbench的12种generic／ASIC逐周期对照（原6种加实际块所用6种维度），另核对实际elaboration的ACT–MXU逐bit连接、外部端口和存储资源；不是完整MXU数值回归或源到物理等价。
