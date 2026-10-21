@@ -3,7 +3,6 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import re
 import shutil
 import subprocess
 
@@ -57,18 +56,32 @@ copy_verified('experiment.json')
 script = '''set llhd_block [ord::get_db_block]
 set llhd_changes [open [file join $::env(WORK_HOME) .. applied-replacements.txt] w]
 '''
-for name, before, after in spec['replacements']:
+for replacement in spec['replacements']:
+    name, before, after = replacement[:3]
     assert all(not any(c in value for c in '{}\n\r') for value in (name,before,after))
-    script += '''set llhd_inst [$llhd_block findInst {%s}]
+    if len(replacement) == 4:
+        net = replacement[3]
+        assert not any(c in net for c in '{}\n\r')
+        script += '''set llhd_net [$llhd_block findNet {%s}]
+if {$llhd_net eq "NULL"} {error {Missing repair output net: %s}}
+set llhd_drivers {}
+foreach llhd_iterm [$llhd_net getITerms] {
+  if {[$llhd_iterm getIoType] eq "OUTPUT"} {lappend llhd_drivers [$llhd_iterm getInst]}
+}
+if {[llength $llhd_drivers] != 1} {error {Repair net must have exactly one instance driver}}
+set llhd_inst [lindex $llhd_drivers 0]
+''' % (net,net)
+    else:
+        script += '''set llhd_inst [$llhd_block findInst {%s}]
 if {$llhd_inst eq "NULL"} {error {Missing repair instance: %s}}
+''' % (name,name)
+    script += '''set llhd_name [$llhd_inst getName]
 set llhd_before [[$llhd_inst getMaster] getName]
 if {$llhd_before ne {%s}} {error "Repair instance master mismatch: $llhd_before"}
-if {![replace_cell {%s} {%s}]} {error {Equivalent port replacement rejected}}
-set llhd_cells [get_cells -regexp {^%s$}]
-if {[llength $llhd_cells] != 1} {error {Repair instance selection is not unique}}
-set_dont_touch $llhd_cells
-puts $llhd_changes {%s %s -> %s}
-''' % (name,name,before,name,after,re.escape(name),name,before,after)
+if {![replace_cell $llhd_name {%s}]} {error {Equivalent port replacement rejected}}
+set_dont_touch [list [sta::find_instance $llhd_name]]
+puts $llhd_changes "$llhd_name $llhd_before -> %s"
+''' % (before,after,after)
 script += '''close $llhd_changes
 detailed_placement_helper
 check_placement -verbose

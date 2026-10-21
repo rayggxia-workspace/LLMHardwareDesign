@@ -13,7 +13,7 @@ HOST = "yuzelu@10.129.166.172"
 IMAGE = "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif"
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--attempt", required=True)
-parser.add_argument("--profile", choices=("full", "physical", "gemm-receipt", "top-contract", "abc-probe", "abc-probe-short", "retired-evidence", "act-audit", "full-physical-audit", "targeted-repair"), default="full")
+parser.add_argument("--profile", choices=("full", "physical", "gemm-receipt", "top-contract", "abc-probe", "abc-probe-short", "retired-evidence", "act-audit", "full-physical-audit", "targeted-repair", "merged-repair"), default="full")
 parser.add_argument('--dependency', help='Explicit one-shot Slurm dependency, e.g. afterany:89499')
 args = parser.parse_args()
 assert re.fullmatch(r"parallel-blocks-wave2-[0-9]+", args.attempt)
@@ -57,16 +57,19 @@ if args.profile == 'retired-evidence':
 if args.profile in ('act-audit','full-physical-audit'):
     name='act-sweep-audit' if args.profile=='act-audit' else 'full-physical-audit'
     plan={'C': {'node':'node9','cores':1,'tasks':[task(name,'physical-audit',1)]}}
-if args.profile == 'targeted-repair':
+if args.profile in ('targeted-repair', 'merged-repair'):
     act = task('act-cap10-repair', 'route-repair', 16, margin=10)
     act.update(source_task='act-cap10', replacements=[['_5406_', 'MUX2_X1', 'MUX2_X2']])
     merged = task('merged-cap20-repair', 'route-repair', 16, case='opentpu-act-mxu', margin=20)
     merged.update(source_task='merged-cap20', replacements=[
-        ['u_mxu.g_ask[1].g_p[1].u_a.g_regs.r[1][3]$_DFF_P_', 'DFF_X1', 'DFF_X2'],
+        ['u_mxu.g_ask[1].g_p[1].u_a.g_regs.r[1][3]$_DFF_P_', 'DFF_X1', 'DFF_X2',
+         'u_mxu.g_ask[1].g_p[1].u_a.g_regs.r[1][3]'],
         ['place15504', 'BUF_X1', 'BUF_X2'], ['place15492', 'BUF_X1', 'BUF_X2'],
         ['place15563', 'BUF_X1', 'BUF_X2']])
     plan={'A': {'node':'node7','cores':32,'tasks':[act, merged]},
           'C': {'node':'node9','cores':1,'tasks':[task('cap-diagnostic','cap-diagnostic',1)]}}
+    if args.profile == 'merged-repair':
+        plan={'B': {'node':'node8','cores':16,'tasks':[merged]}}
 for stream in plan.values():
     assert sum(t["cores"] for t in stream["tasks"]) <= stream["cores"]
 receipt = dict(attempt=args.attempt, remote=remote, host=HOST, image=IMAGE, plan=plan,
@@ -85,7 +88,8 @@ receipt = dict(attempt=args.attempt, remote=remote, host=HOST, image=IMAGE, plan
                    'retired-evidence':'Seal already-written failed audit bytes; retain all failures',
                    'act-audit':'Independent ACT sweep hashes and strict worst-margin budget audit',
                    'full-physical-audit':'Independent seven-case hashes and strict worst-margin budget audit',
-                   'targeted-repair':'Read-only verified wave2-06 CTS checkpoints, explicit equivalent-cell drive upgrades, new route/extraction and strict gates; no source or historical output changes'}[args.profile])
+                   'targeted-repair':'Read-only verified wave2-06 CTS checkpoints, explicit equivalent-cell drive upgrades, new route/extraction and strict gates; no source or historical output changes',
+                   'merged-repair':'Only merged-block CTS replay with its register driver resolved by output net; preserve the first guarded failure and other running tasks'}[args.profile])
 ssh("test ! -e " + shlex.quote(remote) + " && mkdir -p " + shlex.quote(remote + "/runner/wave2"))
 for directory, paths in ((remote + "/runner", list(BASE.glob("*.py")) + list(BASE.glob("*.sh"))),
                          (remote + "/runner/wave2", list(HERE.glob("*.py")) + list(HERE.glob("*.sh")))):
