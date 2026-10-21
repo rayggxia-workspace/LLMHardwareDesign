@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
-  "updated_at": "2026-10-21T17:30:00.048631+08:00",
+  "updated_at": "2026-10-21T17:40:21.255022+08:00",
   "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
   "source_scope": "Original full-width llaccel v1 vec_engine and its full math/vector regression with one recorded test-only unsigned-literal compatibility fix; direct one-macro integration harness",
-  "runner_commit": "6762beeba46e494d309b7738f8a25b7a9c50da4a",
+  "runner_commit": "04a40734a51078b832552c490cd167eb5c5510af",
   "runner_commit_note": "Repository code snapshot for review. A per-attempt launch-code-snapshot.json, when present, records a verified clean committed launch; historical jobs submitted before their snapshot remain bound by remote runner-inputs.sha256/launcher_sha256 and are not retrospectively claimed to have launched from that commit.",
   "claims": {
     "complete_llaccel_core": false,
@@ -19,6 +19,8 @@
     "pdn_disconnected_api_probe": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-api-diagnostic-01/",
     "pdn_via_landing_geometry_probe": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-geometry-diagnostic-01/",
     "actual_fixed_image_spacing_tables": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-spacing-evidence-01/",
+    "mock_proc_source_scope_regression": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-hook-scope-diagnostic-01/",
+    "mock_proc_source_old_filter_negative_control": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-hook-scope-negative-01/",
     "active_jobs_name_update": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/slurm-name-update-20261021/",
     "scope": "Post-submission compute-node read-only/in-memory probes. No original database rewrite or PI rerun. First geometry probe failed on an API name; probe-02.log is the successful via-shape observation. Metadata rename does not alter inputs or time limits."
   },
@@ -986,12 +988,12 @@
         "job_id": "89448",
         "state": "RUNNING",
         "exit_code": "0:0",
-        "elapsed": "02:04:19",
+        "elapsed": "02:14:41",
         "allocated_cpus": "16",
         "node": "node3",
         "effective_time_limit": "UNLIMITED"
       },
-      "live_resource_snapshot": "89448.batch|02:12:53|5098688K",
+      "live_resource_snapshot": "89448.batch|02:23:12|5098688K",
       "submission.json": {
         "job_id": "89448",
         "attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-harden-resume-02",
@@ -4103,7 +4105,435 @@
         },
         "acceptance_note": "COMPLETED never overrides failed/missing interface checks, electrical violations or missing timing coverage. No formal/system signoff."
       }
+    },
+    {
+      "attempt": "vec-physical-top-04",
+      "remote_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04",
+      "job_id": 89462,
+      "sacct": {
+        "job_id": "89462",
+        "state": "FAILED",
+        "exit_code": "2:0",
+        "elapsed": "00:02:34",
+        "allocated_cpus": "16",
+        "node": "node3",
+        "effective_time_limit": "UNLIMITED"
+      },
+      "submission.json": {
+        "job_id": "89462",
+        "attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04",
+        "mode": "integration",
+        "partition": "c64",
+        "cpus": 16,
+        "requested_time_limit": "UNLIMITED (--time=0)",
+        "effective_time_limit": "UNLIMITED",
+        "scheduler_job_snapshot": "JobId=89462 JobName=yzl-vec-integration UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586597 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T17:32:57 EligibleTime=2026-10-21T17:32:57 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T17:32:57 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:205199 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1 NumCPUs=16 NumTasks=1 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=16,mem=1M,node=1,billing=16 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/job.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/slurm-89462.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/slurm-89462.log Power= TresPerTask=cpu:16",
+        "launcher_sha256": "c6aae5f9cadb6711a98892039f78e9a29162519c52c13df07178cc4d72af20e7",
+        "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+        "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "expected_image_sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+        "host": "yuzelu@10.129.166.172",
+        "block_attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01",
+        "depends_on": null,
+        "resume_from": null,
+        "skip_phase_lec": false,
+        "macro_pdn": "legal-m10",
+        "verification_scope": "Configured checks only; no original RTL-to-physical equivalence or system signoff claim"
+      },
+      "port-validation.json": {
+        "pass": true,
+        "rtl_port_count": 26,
+        "rtl_signal_bits": 2246,
+        "lef_pin_count": 2248,
+        "liberty_pin_count": 2248,
+        "extra_lef_pins": [
+          "VDD",
+          "VSS"
+        ],
+        "extra_liberty_pins": [
+          "VDD",
+          "VSS"
+        ],
+        "lef_obstructions_present": true,
+        "wrapper_is_direct": true,
+        "lef_and_liberty_signal_directions_match_rtl": true
+      },
+      "harness-contract.json": {
+        "kind": "direct engineering harness, not llaccel_core",
+        "latency_added_cycles": 0,
+        "block": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01",
+        "macro_master": "vec_engine",
+        "macro_instance": "u_vec",
+        "macro_view": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/macro-view",
+        "macro_pdn": "legal-m10",
+        "experiment_class": "H1 additional M10 power resource/detailed or guarded view; not H2 frozen base",
+        "macro_origin_um": [
+          80.0,
+          80.0
+        ],
+        "orientation": "R0",
+        "dimensions_um": [
+          1148.52,
+          1148.52
+        ],
+        "ports": {
+          "clk": {
+            "direction": "input",
+            "width": 1
+          },
+          "rst_n": {
+            "direction": "input",
+            "width": 1
+          },
+          "instr_valid": {
+            "direction": "input",
+            "width": 1
+          },
+          "instr": {
+            "direction": "input",
+            "width": 512
+          },
+          "instr_ready": {
+            "direction": "output",
+            "width": 1
+          },
+          "pos": {
+            "direction": "input",
+            "width": 32
+          },
+          "busy": {
+            "direction": "output",
+            "width": 1
+          },
+          "done_pulse": {
+            "direction": "output",
+            "width": 1
+          },
+          "done_sig_sem": {
+            "direction": "output",
+            "width": 8
+          },
+          "vec_rd0_valid": {
+            "direction": "output",
+            "width": 1
+          },
+          "vec_rd0_req": {
+            "direction": "output",
+            "width": 26
+          },
+          "vec_rd0_grant": {
+            "direction": "input",
+            "width": 1
+          },
+          "vec_rd0_rvalid": {
+            "direction": "input",
+            "width": 1
+          },
+          "vec_rd0_rdata": {
+            "direction": "input",
+            "width": 512
+          },
+          "vec_rd1_valid": {
+            "direction": "output",
+            "width": 1
+          },
+          "vec_rd1_req": {
+            "direction": "output",
+            "width": 26
+          },
+          "vec_rd1_grant": {
+            "direction": "input",
+            "width": 1
+          },
+          "vec_rd1_rvalid": {
+            "direction": "input",
+            "width": 1
+          },
+          "vec_rd1_rdata": {
+            "direction": "input",
+            "width": 512
+          },
+          "vec_wr_valid": {
+            "direction": "output",
+            "width": 1
+          },
+          "vec_wr_req": {
+            "direction": "output",
+            "width": 26
+          },
+          "vec_wr_wdata": {
+            "direction": "output",
+            "width": 512
+          },
+          "vec_wr_wstrb": {
+            "direction": "output",
+            "width": 64
+          },
+          "vec_wr_grant": {
+            "direction": "input",
+            "width": 1
+          },
+          "perf_busy": {
+            "direction": "output",
+            "width": 1
+          },
+          "perf_sram_stall": {
+            "direction": "output",
+            "width": 1
+          }
+        },
+        "timing_assumption": "3 ns clock and 0.6 ns top IO budget; no system signoff claim"
+      },
+      "macro-view-validation.json": {
+        "pass": true,
+        "kind": "H1 new detailed view and M10 power access, not H2 frozen base",
+        "profile": "legal-m10",
+        "bloat_factor": 0,
+        "source_odb": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/results/nangate45/llhd_vec_original/base/6_final.odb",
+        "original_lef": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/results/nangate45/llhd_vec_original/base/vec_engine.lef",
+        "detailed_lef": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/macro-view/vec_engine.lef",
+        "original_lef_sha256": "76ccb5072474910f4c377576603fa4c3f495a9080ada3c3f3c493b954019f692",
+        "detailed_lef_sha256": "94cc0dead71389a7ad43065091df788f3ecaf8c99cc22244735b24f9ab7726bc",
+        "size_statement": "SIZE 1148.52 BY 1148.52 ;",
+        "unchanged_pin_count": 2248,
+        "all_pin_geometry_direction_use_identical": true,
+        "original_obstruction_rectangles_per_layer": {
+          "metal1": 1,
+          "metal2": 1,
+          "metal3": 1,
+          "metal4": 1,
+          "metal5": 1,
+          "metal6": 1,
+          "metal7": 1,
+          "metal8": 1,
+          "metal9": 1
+        },
+        "detailed_obstruction_rectangles_per_layer": {
+          "metal1": 7174396,
+          "metal2": 1776889,
+          "metal3": 626730,
+          "metal4": 83024,
+          "metal5": 30993,
+          "metal6": 9055,
+          "metal7": 579,
+          "metal8": 96,
+          "metal9": 40
+        },
+        "liberty_copied_byte_identical": true,
+        "acceptance_note": "Detailed OBS retained on every occupied layer. Legal PG via access and route DRC require the new top flow; this view check alone does not prove connectivity."
+      },
+      "launch-code-snapshot.json": {
+        "launch_repository_commit": "04a40734a51078b832552c490cd167eb5c5510af",
+        "working_tree_clean_before_launch": true,
+        "launcher_sha256": "c6aae5f9cadb6711a98892039f78e9a29162519c52c13df07178cc4d72af20e7",
+        "note": "Verified clean committed code before submission. Saved into new attempt after submission."
+      },
+      "exit-code.txt": "2",
+      "host.txt": "node3",
+      "started-utc.txt": "2026-10-21T09:32:59Z",
+      "output-hash-exit-code.txt": "0",
+      "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+      "tools.sha256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53  /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad\nc2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b  /OpenROAD-flow-scripts/tools/install/yosys/bin/yosys",
+      "openroad-version.txt": "unknown",
+      "yosys-version.txt": "Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)",
+      "orfs-commit.txt": "unavailable",
+      "runner-inputs.sha256": "f1eee816d1c9218e92c7c571d576ddc7b17dfe4239ba786c729c4be414f55efb  job.sh\n740d7165b80ca618ce56190359bfc8b6322aa3874d3c6bb5decd91d0c43092c0  inside_screening.sh\n96c8915f23b3b7579602a90552ecd65380a16a4636a62d40b6b3045abe4528f4  inside_pilot.sh\n87a87be78286513ffca9042af60ebf647700087401b8991f0f9fa6514a52c7a0  inside_integration.sh\n668f115d339204cdab5a9814e64c04d3bda7765a89e18a84d262b0038df9aa6b  inside_resume.sh\nb96f01735a1620b9447a74391d9e07fbf570e52339676f55018ee0913151ccfb  inside_regression.sh\nb5906d562068f0035d4545b81b44f494d91538fe14231252c30c6a7736559c85  inside_pdn-audit.sh\n805874aa33df6b2eb2afd4cab26de0c4b984c41dab6f66c17cfdfefbb4979c36  inside_pdn-filter-audit.sh\ne021cff1984de0f05bc8450ff5775355339a158d489555c784621c0217cb10ef  inside_pdn-site-audit.sh\nb79d6acdca9f6a4061185568e91fa7555beb144861ee5611a2f94565ce24fb56  audit_pdn.tcl\n818ea1678e56be6bf15822b19a6a262423f0165b3d47a2dcbb2b23903a00f80e  check_pdn_connectivity.tcl\ne484cba90e0685613deda88359cd1d39db45583e5c894408b1901efbfc801a90  post_pdn_check.tcl\n039737698973334ebac9bcf1a29f063efef637cbdb23b3cfebbf91c9462d2530  collect_attempt_outputs.sh\n43c803a33d96db81843c57db21f2a511f9b0b9bd3a29ab9d5b8ecd414be3a429  filter_pg_access.tcl\nfd3e3dcd89594bd8e78e180fc13a4183a2f3bc3b135bc4ded5d0c53f7d39fa60  prepare_vec.py\n5baf9a8e6e1523c396f79ee824cf61303218fde4d2b3984aedccefe0dea24db4  prepare_top.py\n9468e63d7b203c7033d4b1fd6a10c466f3518b6a9397b8f10aed55aee9ec5cd8  inspect_top.tcl\nfa6aaeb637fdabd64763d6f1095907d19c0eda860cb5d59e1199652c3576172c  validate_ports.py\n31ba80dfc914cedca2c6e94a774bebafecc09c682a1a87399721e5c1651f160f  report_top_timing.tcl\n22a7275a1de87e610b5eb94b3dd01ae45591db78027791153ebd5159d83ceaae  validate_physical_interfaces.py\neac3fa5d1d02a8f3284104b772e015dba857ac57915a3a52049196270f365ed4  validate_resume.py\n7066f793f403a3259f23d62e430d02e550d7d24bb18b5e59685ec6a7605af01a  export_macro_view.tcl\nbfb2b7e5707e41b4e99a54a2a35101d33b8a058c581322725f605717ab35ec12  validate_macro_view.py\n3499515f9f92d1e6f545823c27c386086b583a11be01f65d4a33cc4446de064d  pdn_vec_m10.tcl",
+      "config-inputs.sha256": "5bcb1fe260d0d8d2c35dab444e6f0e959e4aab76e6e7011302fea9c28f6f1bb1  top-config.mk\n5b6f5bd2894c295343381e5f89048cf00739437af5fa1a9b40f666106054154c  top.sdc\n8a89eeebe9dbc7b940e41d7463be42425c7c337f1cb61865b9f3d8b49fdd5f23  top.v\n348a12008fa7402168afc37cdbd132c5f432d834d7a30489ec0aba9662abd92e  macro_place.tcl\n31ba80dfc914cedca2c6e94a774bebafecc09c682a1a87399721e5c1651f160f  report_top_timing.tcl\n3499515f9f92d1e6f545823c27c386086b583a11be01f65d4a33cc4446de064d  pdn_vec_m10.tcl\ne484cba90e0685613deda88359cd1d39db45583e5c894408b1901efbfc801a90  post_pdn_check.tcl\n818ea1678e56be6bf15822b19a6a262423f0165b3d47a2dcbb2b23903a00f80e  check_pdn_connectivity.tcl\n43c803a33d96db81843c57db21f2a511f9b0b9bd3a29ab9d5b8ecd414be3a429  filter_pg_access.tcl",
+      "abstract-source.txt": "ABSTRACT_SOURCE=6_final\nstage=6\nLEF=new macro-view; bloat factor in macro-view-validation.json and abstract.log\nLiberty=reused existing model; source provenance requires separate review\nH1=new M10 power-access and detailed/guarded view; not H2 frozen base\nparasitics=reused Liberty; this job does not read SPEF or regenerate timing. Review original model generation log and source hash separately.\nc81d00267b17778d48e6b8827331c41090174122e957f126f5aba295f811bd3c  /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/results/nangate45/llhd_vec_original/base/6_final.spef",
+      "block-abstract-inputs.sha256": "90a7815415c077581f37107e689507594a1ebaaccb7e4a930b1091d54d17b10a  /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/results/nangate45/llhd_vec_original/base/6_final.odb\n730c2c4c0eec6fcea953488c5553d26db1e57f2e13deb006689347f0267712f7  /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/results/nangate45/llhd_vec_original/base/6_final.v\nf3c983ea390db85166eb5e823900bd9508fc987558d952cc99784ce79d71f72b  /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/results/nangate45/llhd_vec_original/base/6_final.sdc\n76ccb5072474910f4c377576603fa4c3f495a9080ada3c3f3c493b954019f692  /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/results/nangate45/llhd_vec_original/base/vec_engine.lef\n9b6f42b0160aed2ea3b9d807c46eecb36a3d2560943bd08dc8afdcf617307abb  /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/results/nangate45/llhd_vec_original/base/vec_engine_typ.lib\n94cc0dead71389a7ad43065091df788f3ecaf8c99cc22244735b24f9ab7726bc  /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/macro-view/vec_engine.lef\n9b6f42b0160aed2ea3b9d807c46eecb36a3d2560943bd08dc8afdcf617307abb  /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/macro-view/vec_engine_typ.lib",
+      "pg-access-obstructions.tsv": "layer\txmin_dbu\tymin_dbu\txmax_dbu\tymax_dbu\tguard_dbu\nmetal7\t285790\t1511740\t294990\t1512540\t4000\nmetal7\t268990\t1298940\t320190\t1299740\t4000\nmetal7\t316590\t1137340\t326350\t1138140\t4000\nmetal7\t289710\t1503740\t329150\t1504540\t4000\nmetal7\t329390\t1482940\t330270\t1483740\t4000\nmetal7\t267870\t1521340\t340910\t1522140\t4000\nmetal7\t340110\t921340\t341390\t922140\t4000\nmetal7\t275150\t1522940\t342190\t1523740\t4000\nmetal7\t342190\t1521340\t342990\t1523740\t4000\nmetal7\t302030\t1530940\t357710\t1531740\t4000\nmetal7\t301470\t1236540\t364990\t1237340\t4000\nmetal7\t259470\t1258940\t366110\t1259740\t4000\nmetal7\t369230\t612540\t370190\t613340\t4000\nmetal7\t369230\t810940\t370190\t811740\t4000\nmetal7\t369230\t1783740\t370190\t1784540\t4000\nmetal7\t294190\t1135740\t384590\t1136540\t4000\nmetal7\t340590\t1370940\t396910\t1371740\t4000\nmetal7\t358030\t1497340\t399150\t1498140\t4000\nmetal7\t342990\t1521340\t400270\t1522140\t4000\nmetal7\t309870\t1230140\t412590\t1230940\t4000\nmetal7\t299230\t1255740\t421550\t1256540\t4000\nmetal7\t367550\t1839740\t439470\t1840540\t4000\nmetal7\t444270\t1362940\t445390\t1363740\t4000\nmetal7\t384350\t2241340\t462990\t2242140\t4000\nmetal7\t266190\t1524540\t464110\t1525340\t4000\nmetal7\t421310\t1100540\t470990\t1101340\t4000\nmetal7\t332270\t1511740\t474190\t1512540\t4000\nmetal7\t209630\t1281340\t476430\t1282140\t4000\nmetal7\t452670\t1593340\t490200\t1594140\t4000\nmetal7\t490200\t1593340\t491000\t1595740\t4000\nmetal7\t302030\t1150140\t491550\t1150940\t4000\nmetal7\t279630\t1502140\t492110\t1502940\t4000\nmetal7\t482350\t1692540\t492670\t1693340\t4000\nmetal7\t470190\t1151740\t494350\t1152540\t4000\nmetal7\t392190\t1566140\t502750\t1566940\t4000\nmetal7\t482350\t1562940\t508350\t1563740\t4000\nmetal7\t504190\t1460540\t519550\t1461340\t4000\nmetal7\t421310\t1473340\t522190\t1474140\t4000\nmetal7\t476190\t1596540\t523470\t1597340\t4000\nmetal7\t419070\t1450940\t526830\t1451740\t4000\nmetal7\t425790\t1474940\t539150\t1475740\t4000\nmetal7\t529950\t1471740\t540830\t1472540\t4000\nmetal7\t540590\t1513340\t541390\t1514140\t4000\nmetal7\t322750\t1121340\t545870\t1122140\t4000\nmetal7\t227550\t1481340\t548110\t1482140\t4000\nmetal7\t551790\t1481340\t552590\t1483740\t4000\nmetal7\t431950\t1538940\t554270\t1539740\t4000\nmetal7\t355790\t1591740\t555390\t1592540\t4000\nmetal7\t282990\t1494140\t555950\t1494940\t4000\nmetal7\t491000\t1594940\t559870\t1595740\t4000\nmetal7\t307630\t1292540\t565470\t1293340\t4000\nmetal7\t506990\t1502140\t569390\t1502940\t4000\nmetal7\t395550\t1503740\t570510\t1504540\t4000\nmetal7\t501950\t1511740\t571070\t1512540\t4000\nmetal7\t552910\t1593340\t574430\t1594140\t4000\nmetal7\t379310\t1438140\t578350\t1438940\t4000\nmetal7\t250510\t1391740\t580590\t1392540\t4000\nmetal7\t472830\t1498940\t585070\t1499740\t4000\nmetal7\t602750\t1462140\t603790\t1462940\t4000\nmetal7\t438670\t1836540\t606190\t1837340\t4000\nmetal7\t606190\t1834940\t606990\t1837340\t4000\nmetal7\t393310\t1838140\t607790\t1838940\t4000\nmetal7\t607790\t1836540\t608590\t1838940\t4000\nmetal7\t546750\t1473340\t609710\t1474140\t4000\nmetal7\t531070\t1700540\t610830\t1701340\t4000\nmetal7\t608590\t1836540\t610830\t1837340\t4000\nmetal7\t606990\t1834940\t612590\t1835740\t4000\nmetal7\t612590\t1834940\t613390\t1837340\t4000\nmetal7\t578670\t1330940\t619230\t1331740\t4000\nmetal7\t596590\t1503740\t619790\t1504540\t4000\nmetal7\t628510\t1482940\t629390\t1483740\t4000\nmetal7\t602990\t1350140\t643870\t1350940\t4000\nmetal7\t404510\t1553340\t659550\t1554140\t4000\nmetal7\t523790\t1404540\t660110\t1405340\t4000\nmetal7\t447790\t1255740\t664590\t1256540\t4000\nmetal7\t496350\t1521340\t667950\t1522140\t4000\nmetal7\t455470\t1572540\t669070\t1573340\t4000\nmetal7\t668270\t1670140\t669390\t1670940\t4000\nmetal7\t611710\t1511740\t674110\t1512540\t4000\nmetal7\t613390\t1836540\t684750\t1837340\t4000\nmetal7\t689390\t1359740\t690350\t1360540\t4000\nmetal7\t694030\t1932540\t694990\t1933340\t4000\nmetal7\t624590\t1566140\t699870\t1566940\t4000\nmetal7\t512590\t1422140\t711630\t1422940\t4000\nmetal7\t537790\t1377340\t713310\t1378140\t4000\nmetal7\t541710\t1564540\t716670\t1565340\t4000\nmetal7\t500830\t1497340\t719470\t1498140\t4000\nmetal7\t659310\t1625340\t731230\t1626140\t4000\nmetal7\t724270\t1537340\t758110\t1538140\t4000\nmetal7\t768510\t1902140\t775470\t1902940\t4000\nmetal7\t682830\t1868540\t781070\t1869340\t4000\nmetal7\t619550\t1550140\t783310\t1550940\t4000\nmetal7\t733790\t1526140\t784990\t1526940\t4000\nmetal7\t522670\t1460540\t786110\t1461340\t4000\nmetal7\t385470\t1644540\t787230\t1645340\t4000\nmetal7\t788590\t1849340\t789470\t1850140\t4000\nmetal7\t788590\t1511740\t790590\t1512540\t4000\nmetal7\t760670\t1534140\t794510\t1534940\t4000\nmetal7\t758430\t1782140\t797390\t1782940\t4000\nmetal7\t741070\t2137340\t805710\t2138140\t4000\nmetal7\t724830\t1350140\t807390\t1350940\t4000\nmetal7\t807150\t1642940\t808590\t1643740\t4000\nmetal7\t809390\t569340\t810190\t570140\t4000\nmetal7\t512030\t1542140\t812430\t1542940\t4000\nmetal7\t667150\t1881340\t814110\t1882140\t4000\nmetal7\t796590\t1790140\t816910\t1790940\t4000\nmetal7\t771310\t1530940\t821950\t1531740\t4000\nmetal7\t640830\t1775740\t821950\t1776540\t4000\nmetal7\t718670\t1540540\t827550\t1541340\t4000\nmetal7\t352990\t1612540\t829790\t1613340\t4000\nmetal7\t812750\t1870140\t833150\t1870940\t4000\nmetal7\t676110\t1871740\t833150\t1872540\t4000\nmetal7\t570270\t1372540\t833710\t1373340\t4000\nmetal7\t609470\t1551740\t838190\t1552540\t4000\nmetal7\t836590\t1670140\t838750\t1670940\t4000\nmetal7\t535550\t1374140\t839870\t1374940\t4000\nmetal7\t805470\t1348540\t849950\t1349340\t4000\nmetal7\t709150\t1610940\t861710\t1611740\t4000\nmetal7\t790350\t1882940\t863390\t1883740\t4000\nmetal7\t610030\t1838140\t884670\t1838940\t4000\nmetal7\t849150\t1564540\t895870\t1565340\t4000\nmetal7\t552590\t1481340\t898990\t1482140\t4000\nmetal7\t898990\t1481340\t899790\t1483740\t4000\nmetal7\t307630\t1761340\t904270\t1762140\t4000\nmetal7\t443150\t1361340\t905390\t1362140\t4000\nmetal7\t916590\t562940\t917710\t563740\t4000\nmetal7\t786430\t1359740\t918830\t1360540\t4000\nmetal7\t746670\t1532540\t932270\t1533340\t4000\nmetal7\t774110\t1774140\t947950\t1774940\t4000\nmetal7\t951630\t1220540\t952590\t1221340\t4000\nmetal7\t889470\t1782140\t957390\t1782940\t4000\nmetal7\t956590\t1790140\t958590\t1790940\t4000\nmetal7\t700750\t1326140\t961390\t1326940\t4000\nmetal7\t518190\t1386940\t970350\t1387740\t4000\nmetal7\t609470\t1831740\t1015710\t1832540\t4000\nmetal7\t954990\t1490940\t1021870\t1491740\t4000\nmetal7\t774110\t1572540\t1036990\t1573340\t4000\nmetal7\t747230\t1721340\t1047070\t1722140\t4000\nmetal7\t998670\t2231740\t1053230\t2232540\t4000\nmetal7\t865390\t1692540\t1073950\t1693340\t4000\nmetal7\t1049070\t1092540\t1089630\t1093340\t4000\nmetal7\t689550\t1356540\t1110190\t1357340\t4000\nmetal7\t1110190\t1356540\t1110990\t1358940\t4000\nmetal7\t780830\t1342140\t1117630\t1342940\t4000\nmetal7\t1119790\t1359740\t1121550\t1360540\t4000\nmetal7\t1122430\t1361340\t1123230\t1363740\t4000\nmetal7\t575310\t1370940\t1123230\t1371740\t4000\nmetal7\t957790\t732540\t1123790\t733340\t4000\nmetal7\t700750\t1343740\t1127710\t1344540\t4000\nmetal7\t1110990\t1358140\t1128600\t1358940\t4000\nmetal7\t1128600\t1358140\t1129400\t1360540\t4000\nmetal7\t289710\t1662140\t1129950\t1662940\t4000\nmetal7\t1132510\t1849340\t1133390\t1850140\t4000\nmetal7\t974590\t1372540\t1171390\t1373340\t4000\nmetal7\t884430\t572540\t1175310\t573340\t4000\nmetal7\t518190\t1375740\t1175310\t1376540\t4000\nmetal7\t425230\t1406140\t1180910\t1406940\t4000\nmetal7\t289710\t1657340\t1186510\t1658140\t4000\nmetal7\t1129400\t1359740\t1192110\t1360540\t4000\nmetal7\t289710\t1646140\t1192110\t1646940\t4000\nmetal7\t866510\t2001340\t1198270\t2002140\t4000\nmetal7\t1201390\t1199740\t1202750\t1200540\t4000\nmetal7\t1123230\t1361340\t1208400\t1362140\t4000\nmetal7\t1208400\t1361340\t1209200\t1363740\t4000\nmetal7\t1209200\t1362940\t1209470\t1363740\t4000\nmetal7\t994750\t1226940\t1220670\t1227740\t4000\nmetal7\t1213150\t1151740\t1243630\t1152540\t4000\nmetal7\t1208670\t1580540\t1249230\t1581340\t4000\nmetal7\t1129390\t1841340\t1250910\t1842140\t4000\nmetal7\t1252350\t1281340\t1253390\t1282140\t4000\nmetal7\t1252590\t1010940\t1255950\t1011740\t4000\nmetal7\t1242270\t1972540\t1269390\t1973340\t4000\nmetal7\t946030\t670140\t1272190\t670940\t4000\nmetal7\t1220990\t572540\t1288200\t573340\t4000\nmetal7\t1288200\t570940\t1289000\t573340\t4000\nmetal7\t1265230\t1340540\t1289550\t1341340\t4000\nmetal7\t1324590\t1580540\t1325390\t1581340\t4000\nmetal7\t1214270\t1582140\t1328100\t1582940\t4000\nmetal7\t1328100\t1582140\t1328900\t1584540\t4000\nmetal7\t1280910\t890940\t1334910\t891740\t4000\nmetal7\t1159390\t990140\t1335470\t990940\t4000\nmetal7\t1337390\t162940\t1338270\t163740\t4000\nmetal7\t948830\t566140\t1338830\t566940\t4000\nmetal7\t403390\t1433340\t1340510\t1434140\t4000\nmetal7\t1289000\t570940\t1346110\t571740\t4000\nmetal7\t1296590\t1092540\t1346110\t1093340\t4000\nmetal7\t1307230\t1502140\t1355070\t1502940\t4000\nmetal7\t911870\t546940\t1360670\t547740\t4000\nmetal7\t1034510\t1332540\t1369070\t1333340\t4000\nmetal7\t876030\t574140\t1383790\t574940\t4000\nmetal7\t1383790\t574140\t1384590\t576540\t4000\nmetal7\t1385390\t574140\t1386430\t574940\t4000\nmetal7\t1279230\t1594940\t1388110\t1595740\t4000\nmetal7\t1384590\t575740\t1388590\t576540\t4000\nmetal7\t1388590\t574140\t1389390\t576540\t4000\nmetal7\t1389390\t574140\t1403790\t574940\t4000\nmetal7\t1163310\t578940\t1403790\t579740\t4000\nmetal7\t1376110\t1540540\t1414430\t1541340\t4000\nmetal7\t1425390\t574140\t1426190\t574940\t4000\nmetal7\t1433790\t1177340\t1435790\t1178140\t4000\nmetal7\t1253470\t623740\t1439630\t624540\t4000\nmetal7\t1053550\t1615740\t1445790\t1616540\t4000\nmetal7\t1447790\t1670140\t1448590\t1670940\t4000\nmetal7\t897870\t702140\t1454750\t702940\t4000\nmetal7\t1368270\t1340540\t1455870\t1341340\t4000\nmetal7\t1446110\t1594940\t1460910\t1595740\t4000\nmetal7\t1462190\t1439740\t1463150\t1440540\t4000\nmetal7\t1200270\t1550140\t1471550\t1550940\t4000\nmetal7\t1471790\t574140\t1472670\t574940\t4000\nmetal7\t1424830\t1692540\t1472670\t1693340\t4000\nmetal7\t1208670\t551740\t1477150\t552540\t4000\nmetal7\t1332430\t1593340\t1483870\t1594140\t4000\nmetal7\t1481390\t1044540\t1486990\t1045340\t4000\nmetal7\t1486190\t1202940\t1487790\t1203740\t4000\nmetal7\t1345310\t572540\t1492830\t573340\t4000\nmetal7\t1225470\t1220540\t1494510\t1221340\t4000\nmetal7\t1251790\t1881340\t1500110\t1882140\t4000\nmetal7\t1384510\t161340\t1501790\t162140\t4000\nmetal7\t1503790\t1692540\t1504590\t1693340\t4000\nmetal7\t1505390\t1332540\t1506270\t1333340\t4000\nmetal7\t1509950\t1222140\t1510990\t1222940\t4000\nmetal7\t1472990\t1591740\t1514110\t1592540\t4000\nmetal7\t1411950\t1708540\t1515230\t1709340\t4000\nmetal7\t1521150\t1242940\t1522190\t1243740\t4000\nmetal7\t1488110\t1644540\t1527600\t1645340\t4000\nmetal7\t1527600\t1642940\t1528400\t1645340\t4000\nmetal7\t1277550\t1166140\t1533710\t1166940\t4000\nmetal7\t1334670\t172540\t1534270\t173340\t4000\nmetal7\t1533470\t590140\t1534990\t590940\t4000\nmetal7\t968430\t1121340\t1539870\t1122140\t4000\nmetal7\t1498190\t702140\t1543230\t702940\t4000\nmetal7\t1196910\t1566140\t1546030\t1566940\t4000\nmetal7\t886670\t561340\t1558350\t562140\t4000\nmetal7\t1567630\t162940\t1568590\t163740\t4000\nmetal7\t946030\t1353340\t1574030\t1354140\t4000\nmetal7\t1111790\t1324540\t1574590\t1325340\t4000\nmetal7\t1576030\t1644540\t1578190\t1645340\t4000\nmetal7\t1373870\t177340\t1580190\t178140\t4000\nmetal7\t1582190\t162940\t1582990\t163740\t4000\nmetal7\t1528400\t1642940\t1584600\t1643740\t4000\nmetal7\t1584600\t1642940\t1585400\t1645340\t4000\nmetal7\t1352030\t186940\t1585790\t187740\t4000\nmetal7\t1247310\t562940\t1586350\t563740\t4000\nmetal7\t1590030\t1242940\t1590190\t1243740\t4000\nmetal7\t1590190\t1241340\t1590990\t1243740\t4000\nmetal7\t1279790\t1302140\t1595310\t1302940\t4000\nmetal7\t1121870\t580540\t1598110\t581340\t4000\nmetal7\t1025550\t604540\t1599230\t605340\t4000\nmetal7\t1070910\t540540\t1602030\t541340\t4000\nmetal7\t1328900\t1583740\t1602030\t1584540\t4000\nmetal7\t854750\t500540\t1602590\t501340\t4000\nmetal7\t1604590\t562940\t1605390\t563740\t4000\nmetal7\t1037870\t601340\t1605390\t602140\t4000\nmetal7\t888350\t569340\t1605950\t570140\t4000\nmetal7\t1605710\t572540\t1606990\t573340\t4000\nmetal7\t1545790\t1340540\t1608750\t1341340\t4000\nmetal7\t1156590\t1681340\t1608750\t1682140\t4000\nmetal7\t1492590\t1177340\t1609310\t1178140\t4000\nmetal7\t1343070\t1582140\t1613790\t1582940\t4000\nmetal7\t1368270\t175740\t1614350\t176540\t4000\nmetal7\t1216510\t1175740\t1614350\t1176540\t4000\nmetal7\t790350\t622140\t1621630\t622940\t4000\nmetal7\t1383390\t1628540\t1623870\t1629340\t4000\nmetal7\t1350350\t1646140\t1628350\t1646940\t4000\nmetal7\t1031150\t1138940\t1631150\t1139740\t4000\nmetal7\t1516110\t161340\t1631710\t162140\t4000\nmetal7\t1325710\t1542140\t1633390\t1542940\t4000\nmetal7\t980750\t689340\t1636750\t690140\t4000\nmetal7\t1462350\t1164540\t1637310\t1165340\t4000\nmetal7\t1601230\t1180540\t1640110\t1181340\t4000\nmetal7\t1072030\t697340\t1642910\t698140\t4000\nmetal7\t1614110\t1177340\t1643790\t1178140\t4000\nmetal7\t1194110\t1706940\t1648510\t1707740\t4000\nmetal7\t1584430\t2162940\t1654110\t2163740\t4000\nmetal7\t1372190\t1614140\t1655230\t1614940\t4000\nmetal7\t1538510\t1631740\t1659790\t1632540\t4000\nmetal7\t1480830\t860540\t1661390\t861340\t4000\nmetal7\t1239470\t1228540\t1661950\t1229340\t4000\nmetal7\t1662830\t1228540\t1664590\t1229340\t4000\nmetal7\t946030\t550140\t1665310\t550940\t4000\nmetal7\t1592830\t1172540\t1670910\t1173340\t4000\nmetal7\t1190750\t1553340\t1670910\t1554140\t4000\nmetal7\t1255150\t1230140\t1672590\t1230940\t4000\nmetal7\t950510\t538940\t1685470\t539740\t4000\nmetal7\t1403550\t570940\t1687200\t571740\t4000\nmetal7\t1662830\t1226940\t1687200\t1227740\t4000\nmetal7\t1585400\t1644540\t1687200\t1645340\t4000\nmetal7\t1687200\t570940\t1688000\t573340\t4000\nmetal7\t1687200\t1226940\t1688000\t1229340\t4000\nmetal7\t1687200\t1642940\t1688000\t1645340\t4000\nmetal7\t1452830\t1198140\t1692590\t1198940\t4000\nmetal7\t1692590\t1196540\t1693390\t1198940\t4000\nmetal7\t1613550\t1166140\t1696670\t1166940\t4000\nmetal7\t1694190\t1198140\t1697790\t1198940\t4000\nmetal7\t1697390\t703740\t1698350\t704540\t4000\nmetal7\t1555870\t1148540\t1698910\t1149340\t4000\nmetal7\t1693390\t1196540\t1698990\t1197340\t4000\nmetal7\t1698990\t1196540\t1699790\t1198940\t4000\nmetal7\t1698990\t162940\t1700030\t163740\t4000\nmetal7\t1008190\t1146940\t1705630\t1147740\t4000\nmetal7\t1134190\t1137340\t1711230\t1138140\t4000\nmetal7\t1710190\t1580540\t1711230\t1581340\t4000\nmetal7\t1418110\t1466940\t1722430\t1467740\t4000\nmetal7\t1724430\t1614140\t1725390\t1614940\t4000\nmetal7\t1688000\t572540\t1726350\t573340\t4000\nmetal7\t1590990\t1241340\t1728030\t1242140\t4000\nmetal7\t1647710\t1340540\t1733630\t1341340\t4000\nmetal7\t1732590\t572540\t1739230\t573340\t4000\nmetal7\t1656670\t1615740\t1739790\t1616540\t4000\nmetal7\t1408590\t564540\t1742030\t565340\t4000\nmetal7\t1000350\t530940\t1745950\t531740\t4000\nmetal7\t1419230\t1662140\t1747070\t1662940\t4000\nmetal7\t1746270\t572540\t1747790\t573340\t4000\nmetal7\t1436590\t1599740\t1750990\t1600540\t4000\nmetal7\t1553630\t1660540\t1750990\t1661340\t4000\nmetal7\t1609070\t1178940\t1753230\t1179740\t4000\nmetal7\t1320110\t1598140\t1753790\t1598940\t4000\nmetal7\t786430\t1850940\t1753790\t1851740\t4000\nmetal7\t1441630\t1679740\t1756030\t1680540\t4000\nmetal7\t1617470\t1182140\t1762190\t1182940\t4000\nmetal7\t1539630\t1684540\t1767000\t1685340\t4000\nmetal7\t1718830\t566140\t1767230\t566940\t4000\nmetal7\t1767000\t1684540\t1767800\t1686940\t4000\nmetal7\t1208670\t671740\t1769470\t672540\t4000\nmetal7\t1393470\t1654140\t1769470\t1654940\t4000\nmetal7\t1567070\t1142140\t1770590\t1142940\t4000\nmetal7\t1652190\t1628540\t1774510\t1629340\t4000\nmetal7\t1778750\t1849340\t1779790\t1850140\t4000\nmetal7\t1732270\t1625340\t1780110\t1626140\t4000\nmetal7\t1537950\t1330940\t1781790\t1331740\t4000\nmetal7\t1783790\t1644540\t1784590\t1645340\t4000\nmetal7\t1316190\t1620540\t1792430\t1621340\t4000\nmetal7\t1793310\t1647740\t1794190\t1648540\t4000\nmetal7\t1794990\t1684540\t1795790\t1685340\t4000\nmetal7\t1065870\t598140\t1796910\t598940\t4000\nmetal7\t1035070\t687740\t1798590\t688540\t4000\nmetal7\t785310\t681340\t1802510\t682140\t4000\nmetal7\t1202510\t722940\t1802510\t723740\t4000\nmetal7\t1706510\t1146940\t1802510\t1147740\t4000\nmetal7\t1444990\t1657340\t1804750\t1658140\t4000\nmetal7\t1767800\t1686140\t1806430\t1686940\t4000\nmetal7\t1390670\t567740\t1808110\t568540\t4000\nmetal7\t1630350\t702140\t1809790\t702940\t4000\nmetal7\t1809550\t1644540\t1811790\t1645340\t4000\nmetal7\t780830\t1070140\t1813710\t1070940\t4000\nmetal7\t1162750\t714940\t1816510\t715740\t4000\nmetal7\t1616910\t1430140\t1817070\t1430940\t4000\nmetal7\t1679630\t1706940\t1820430\t1707740\t4000\nmetal7\t1699790\t1198140\t1820590\t1198940\t4000\nmetal7\t1820590\t1196540\t1821390\t1198940\t4000\nmetal7\t1822190\t1198140\t1824350\t1198940\t4000\nmetal7\t1718270\t1177340\t1824910\t1178140\t4000\nmetal7\t1821390\t1196540\t1825390\t1197340\t4000\nmetal7\t1825390\t1196540\t1826190\t1198940\t4000\nmetal7\t1259630\t1564540\t1827710\t1565340\t4000\nmetal7\t928110\t650940\t1833870\t651740\t4000\nmetal7\t1688000\t1642940\t1847870\t1643740\t4000\nmetal7\t1748590\t1662140\t1847870\t1662940\t4000\nmetal7\t1844590\t1690940\t1848430\t1691740\t4000\nmetal7\t1807310\t1692540\t1848590\t1693340\t4000\nmetal7\t1744590\t1658940\t1853470\t1659740\t4000\nmetal7\t974030\t633340\t1854030\t634140\t4000\nmetal7\t1077630\t630140\t1859630\t630940\t4000\nmetal7\t1752990\t1678140\t1860190\t1678940\t4000\nmetal7\t1744590\t569340\t1863550\t570140\t4000\nmetal7\t1377790\t1554940\t1873070\t1555740\t4000\nmetal7\t1715470\t551740\t1882030\t552540\t4000\nmetal7\t1768110\t1646140\t1887630\t1646940\t4000\nmetal7\t1716590\t570940\t1893230\t571740\t4000\nmetal7\t1736190\t574140\t1894350\t574940\t4000\nmetal7\t1898990\t572540\t1901070\t573340\t4000\nmetal7\t1903630\t1700540\t1904590\t1701340\t4000\nmetal7\t1704830\t1622140\t1910590\t1622940\t4000\nmetal7\t1344190\t1610940\t1917310\t1611740\t4000\nmetal7\t1932590\t1692540\t1934110\t1693340\t4000\nmetal7\t1934430\t1657340\t1936590\t1658140\t4000\nmetal7\t1631470\t1199740\t1939150\t1200540\t4000\nmetal7\t1940590\t1692540\t1941390\t1693340\t4000\nmetal7\t1792750\t1705340\t1941950\t1706140\t4000\nmetal7\t1693070\t1386940\t1947550\t1387740\t4000\nmetal7\t1875630\t1678140\t1949230\t1678940\t4000\nmetal7\t1767550\t1655740\t1955950\t1656540\t4000\nmetal7\t1955710\t1710140\t1957390\t1710940\t4000\nmetal7\t1373310\t713340\t1959870\t714140\t4000\nmetal7\t1328510\t599740\t1963790\t600540\t4000\nmetal7\t1950110\t1562940\t1964910\t1563740\t4000\nmetal7\t1601790\t1713340\t1966500\t1714140\t4000\nmetal7\t1965790\t1610940\t1966990\t1611740\t4000\nmetal7\t1966500\t1713340\t1967300\t1715740\t4000\nmetal7\t1958190\t1767740\t1968830\t1768540\t4000\nmetal7\t1880670\t1679740\t1972190\t1680540\t4000\nmetal7\t1257950\t591740\t1978910\t592540\t4000\nmetal7\t1167790\t1511740\t1983390\t1512540\t4000\nmetal7\t1985390\t703740\t1986190\t704540\t4000\nmetal7\t1936110\t1658940\t1988590\t1659740\t4000\nmetal7\t1988590\t1657340\t1989390\t1659740\t4000\nmetal7\t1567070\t1406140\t1996270\t1406940\t4000\nmetal7\t1999390\t1692540\t2000590\t1693340\t4000\nmetal7\t1773710\t1383740\t2001870\t1384540\t4000\nmetal7\t1618590\t1404540\t2001870\t1405340\t4000\nmetal7\t1471870\t1689340\t2006910\t1690140\t4000\nmetal7\t1556990\t698940\t2007470\t699740\t4000\nmetal7\t1498750\t1220540\t2007470\t1221340\t4000\nmetal7\t1823550\t1684540\t2011390\t1685340\t4000\nmetal7\t1031150\t1674940\t2015870\t1675740\t4000\nmetal7\t1932190\t1721340\t2018990\t1722140\t4000\nmetal7\t2018990\t1220540\t2019790\t1221340\t4000\nmetal7\t2018990\t1721340\t2019790\t1723740\t4000\nmetal7\t1955150\t1642940\t2021470\t1643740\t4000\nmetal7\t786430\t1310140\t2026510\t1310940\t4000\nmetal7\t1963550\t1678140\t2031550\t1678940\t4000\nmetal7\t1526190\t1359740\t2032110\t1360540\t4000\nmetal7\t1994350\t1662140\t2033790\t1662940\t4000\nmetal7\t1054670\t542140\t2036030\t542940\t4000\nmetal7\t997550\t862140\t2041070\t862940\t4000\nmetal7\t1933310\t1706940\t2042750\t1707740\t4000\nmetal7\t2043630\t702140\t2045390\t702940\t4000\nmetal7\t2045310\t719740\t2046990\t720540\t4000\nmetal7\t1327390\t1673340\t2050030\t1674140\t4000\nmetal7\t1642990\t1194940\t2053390\t1195740\t4000\nmetal7\t1601790\t1193340\t2053950\t1194140\t4000\nmetal7\t1826190\t1198140\t2058990\t1198940\t4000\nmetal7\t1453950\t1210940\t2065150\t1211740\t4000\nmetal7\t1238910\t1652540\t2065710\t1653340\t4000\nmetal7\t1470190\t1204540\t2072430\t1205340\t4000\nmetal7\t1573230\t1209340\t2072430\t1210140\t4000\nmetal7\t1861630\t1690940\t2072990\t1691740\t4000\nmetal7\t1481950\t1617340\t2074670\t1618140\t4000\nmetal7\t2011710\t1670140\t2075790\t1670940\t4000\nmetal7\t2028510\t1241340\t2076350\t1242140\t4000\nmetal7\t2034990\t1658940\t2076350\t1659740\t4000\nmetal7\t1967300\t1714940\t2079150\t1715740\t4000\nmetal7\t1961310\t1598140\t2080830\t1598940\t4000\nmetal7\t1948990\t1660540\t2083630\t1661340\t4000\nmetal7\t2086190\t1722940\t2086990\t1723740\t4000\nmetal7\t1750190\t1649340\t2092590\t1650140\t4000\nmetal7\t2046990\t722940\t2110510\t723740\t4000\nmetal7\t2047550\t702140\t2111630\t702940\t4000\nmetal7\t1989390\t1657340\t2115550\t1658140\t4000\nmetal7\t2091230\t1660540\t2121710\t1661340\t4000\nmetal7\t1785470\t1295740\t2136270\t1296540\t4000\nmetal7\t1966910\t1671740\t2140190\t1672540\t4000\nmetal7\t2072750\t698940\t2140750\t699740\t4000\nmetal7\t2067150\t714940\t2142990\t715740\t4000\nmetal7\t1616350\t732540\t2150830\t733340\t4000\nmetal7\t2153390\t919740\t2154190\t920540\t4000\nmetal7\t2092350\t1658940\t2159230\t1659740\t4000\nmetal7\t2010030\t697340\t2165950\t698140\t4000\nmetal7\t2045870\t1674940\t2167070\t1675740\t4000\nmetal7\t2057630\t1706940\t2172670\t1707740\t4000\nmetal7\t2172590\t702140\t2173790\t702940\t4000\nmetal7\t2109150\t1644540\t2174910\t1645340\t4000\nmetal7\t1660590\t1631740\t2178270\t1632540\t4000\nmetal7\t2080030\t1690940\t2178270\t1691740\t4000\nmetal7\t2178990\t1644540\t2179950\t1645340\t4000\nmetal7\t2078910\t1646140\t2185550\t1646940\t4000\nmetal7\t2178990\t1676540\t2188910\t1677340\t4000\nmetal7\t2029630\t716540\t2189470\t717340\t4000\nmetal7\t2005550\t721340\t2190030\t722140\t4000\nmetal7\t1969710\t1654140\t2190030\t1654940\t4000\nmetal7\t2071070\t700540\t2199550\t701340\t4000\nmetal7\t2012830\t1703740\t2224190\t1704540\t4000\nmetal7\t2043070\t1681340\t2229790\t1682140\t4000\nmetal7\t1904750\t1292540\t2231470\t1293340\t4000\nmetal7\t2044750\t1686140\t2247150\t1686940\t4000\nmetal7\t2178030\t1692540\t2248830\t1693340\t4000\nmetal7\t2166270\t1700540\t2252750\t1701340\t4000\nmetal7\t2073870\t1713340\t2258350\t1714140\t4000\nmetal7\t2143310\t1662140\t2263950\t1662940\t4000\nmetal7\t1584430\t1167740\t2286350\t1168540\t4000\nmetal7\t1956590\t1250940\t2303710\t1251740\t4000\nmetal7\t974590\t1114940\t2314350\t1115740\t4000\nmetal7\t1378350\t1140540\t2320510\t1141340\t4000\nmetal7\t1570990\t1420540\t2394990\t1421340\t4000\nmetal7\t1738430\t1353340\t2397230\t1354140\t4000\nmetal7\t1567070\t1412540\t2413470\t1413340\t4000\nmetal7\t1679070\t1324540\t2414590\t1325340\t4000\nmetal7\t1624190\t1294140\t2434750\t1294940\t4000\nmetal7\t1533470\t1322940\t2434750\t1323740\t4000\nmetal7\t1515550\t1356540\t2434750\t1357340\t4000\nmetal7\t2401390\t1359740\t2435870\t1360540\t4000\nmetal7\t1785390\t1230140\t2437550\t1230940\t4000\nmetal7\t1645470\t1313340\t2438110\t1314140\t4000\nmetal7\t1688000\t1228540\t2439790\t1229340\t4000\nmetal7\t2058190\t1271740\t2440910\t1272540\t4000\nmetal7\t1738430\t1332540\t2440910\t1333340\t4000\nmetal7\t1775950\t1378940\t2440910\t1379740\t4000\nmetal7\t1738990\t1388540\t2440910\t1389340\t4000\nmetal7\t1508830\t1407740\t2440910\t1408540\t4000\nmetal7\t1744030\t1481340\t2440910\t1482140\t4000\nmetal7\t1752430\t1495740\t2440910\t1496540\t4000\nmetal7\t1607390\t1263740\t2441470\t1264540\t4000\nmetal7\t1592830\t1343740\t2441470\t1344540\t4000\nmetal7\t1955150\t1255740\t2442030\t1256540\t4000\nmetal7\t1676270\t1222140\t2443150\t1222940\t4000\nmetal7\t1889630\t1361340\t2445390\t1362140\t4000\nmetal7\t1761390\t1418940\t2446510\t1419740\t4000\nmetal7\t1747950\t1391740\t2447070\t1392540\t4000\nmetal7\t1567630\t1434940\t2447070\t1435740\t4000\nmetal7\t1618590\t1281340\t2448190\t1282140\t4000\nmetal7\t1752990\t1433340\t2448190\t1434140\t4000\nmetal7\t1498190\t1225340\t2448750\t1226140\t4000\nmetal7\t162280\t165400\t2454820\t168200\t4000\nmetal7\t162280\t195400\t2454820\t198200\t4000\nmetal7\t162280\t225400\t2454820\t228200\t4000\nmetal7\t162280\t255400\t2454820\t258200\t4000\nmetal7\t162280\t285400\t2454820\t288200\t4000\nmetal7\t162280\t315400\t2454820\t318200\t4000\nmetal7\t162280\t345400\t2454820\t348200\t4000\nmetal7\t162280\t375400\t2454820\t378200\t4000\nmetal7\t162280\t405400\t2454820\t408200\t4000\nmetal7\t162280\t435400\t2454820\t438200\t4000\nmetal7\t162280\t465400\t2454820\t468200\t4000\nmetal7\t162280\t495400\t2454820\t498200\t4000\nmetal7\t162280\t525400\t2454820\t528200\t4000\nmetal7\t162280\t555400\t2454820\t558200\t4000\nmetal7\t162280\t585400\t2454820\t588200\t4000\nmetal7\t162280\t615400\t2454820\t618200\t4000\nmetal7\t162280\t645400\t2454820\t648200\t4000\nmetal7\t162280\t675400\t2454820\t678200\t4000\nmetal7\t162280\t705400\t2454820\t708200\t4000\nmetal7\t162280\t735400\t2454820\t738200\t4000\nmetal7\t162280\t765400\t2454820\t768200\t4000\nmetal7\t162280\t795400\t2454820\t798200\t4000\nmetal7\t162280\t825400\t2454820\t828200\t4000\nmetal7\t162280\t855400\t2454820\t858200\t4000\nmetal7\t162280\t885400\t2454820\t888200\t4000\nmetal7\t162280\t915400\t2454820\t918200\t4000\nmetal7\t162280\t945400\t2454820\t948200\t4000\nmetal7\t162280\t975400\t2454820\t978200\t4000\nmetal7\t162280\t1005400\t2454820\t1008200\t4000\nmetal7\t162280\t1035400\t2454820\t1038200\t4000\nmetal7\t162280\t1065400\t2454820\t1068200\t4000\nmetal7\t162280\t1095400\t2454820\t1098200\t4000\nmetal7\t162280\t1125400\t2454820\t1128200\t4000\nmetal7\t162280\t1155400\t2454820\t1158200\t4000\nmetal7\t162280\t1185400\t2454820\t1188200\t4000\nmetal7\t162280\t1215400\t2454820\t1218200\t4000\nmetal7\t162280\t1245400\t2454820\t1248200\t4000\nmetal7\t162280\t1275400\t2454820\t1278200\t4000\nmetal7\t162280\t1305400\t2454820\t1308200\t4000\nmetal7\t162280\t1335400\t2454820\t1338200\t4000\nmetal7\t162280\t1365400\t2454820\t1368200\t4000\nmetal7\t162280\t1395400\t2454820\t1398200\t4000\nmetal7\t162280\t1425400\t2454820\t1428200\t4000\nmetal7\t162280\t1455400\t2454820\t1458200\t4000\nmetal7\t162280\t1485400\t2454820\t1488200\t4000\nmetal7\t162280\t1515400\t2454820\t1518200\t4000\nmetal7\t162280\t1545400\t2454820\t1548200\t4000\nmetal7\t162280\t1575400\t2454820\t1578200\t4000\nmetal7\t162280\t1605400\t2454820\t1608200\t4000\nmetal7\t162280\t1635400\t2454820\t1638200\t4000\nmetal7\t162280\t1665400\t2454820\t1668200\t4000\nmetal7\t162280\t1695400\t2454820\t1698200\t4000\nmetal7\t162280\t1725400\t2454820\t1728200\t4000\nmetal7\t162280\t1755400\t2454820\t1758200\t4000\nmetal7\t162280\t1785400\t2454820\t1788200\t4000\nmetal7\t162280\t1815400\t2454820\t1818200\t4000\nmetal7\t162280\t1845400\t2454820\t1848200\t4000\nmetal7\t162280\t1875400\t2454820\t1878200\t4000\nmetal7\t162280\t1905400\t2454820\t1908200\t4000\nmetal7\t162280\t1935400\t2454820\t1938200\t4000\nmetal7\t162280\t1965400\t2454820\t1968200\t4000\nmetal7\t162280\t1995400\t2454820\t1998200\t4000\nmetal7\t162280\t2025400\t2454820\t2028200\t4000\nmetal7\t162280\t2055400\t2454820\t2058200\t4000\nmetal7\t162280\t2085400\t2454820\t2088200\t4000\nmetal7\t162280\t2115400\t2454820\t2118200\t4000\nmetal7\t162280\t2145400\t2454820\t2148200\t4000\nmetal7\t162280\t2175400\t2454820\t2178200\t4000\nmetal7\t162280\t2205400\t2454820\t2208200\t4000\nmetal7\t162280\t2235400\t2454820\t2238200\t4000\nmetal7\t162280\t2265400\t2454820\t2268200\t4000\nmetal7\t162280\t2295400\t2454820\t2298200\t4000\nmetal7\t162280\t2325400\t2454820\t2328200\t4000\nmetal7\t162280\t2355400\t2454820\t2358200\t4000\nmetal7\t162280\t2385400\t2454820\t2388200\t4000\nmetal7\t162280\t2415400\t2454820\t2418200\t4000\nmetal7\t162280\t2445400\t2454820\t2448200\t4000\nmetal8\t1337390\t162940\t1338190\t163740\t4000\nmetal8\t1567790\t162940\t1568590\t163740\t4000\nmetal8\t1582190\t162940\t1582990\t163740\t4000\nmetal8\t1698990\t162940\t1699790\t163740\t4000\nmetal8\t916590\t562940\t917390\t563740\t4000\nmetal8\t1604590\t562940\t1605390\t563740\t4000\nmetal8\t809390\t569340\t810190\t573340\t4000\nmetal8\t1606190\t572540\t1606990\t573340\t4000\nmetal8\t1732590\t572540\t1733390\t573340\t4000\nmetal8\t1746990\t572540\t1747790\t573340\t4000\nmetal8\t1898990\t572540\t1899790\t573340\t4000\nmetal8\t1385390\t572540\t1386190\t574940\t4000\nmetal8\t1425390\t572540\t1426190\t574940\t4000\nmetal8\t1471790\t572540\t1472590\t574940\t4000\nmetal8\t1534190\t590140\t1534990\t592540\t4000\nmetal8\t1697390\t703740\t1698190\t704540\t4000\nmetal8\t1985390\t703740\t1986190\t704540\t4000\nmetal8\t2044590\t702140\t2045390\t704540\t4000\nmetal8\t2172590\t702140\t2173390\t704540\t4000\nmetal8\t2046190\t719740\t2046990\t723740\t4000\nmetal8\t1660590\t703740\t1661390\t861340\t4000\nmetal8\t2153390\t722940\t2154190\t920540\t4000\nmetal8\t470190\t1100540\t470990\t1152540\t4000\nmetal8\t1434990\t1177340\t1435790\t1178140\t4000\nmetal8\t1642990\t1177340\t1643790\t1178140\t4000\nmetal8\t1639790\t1177340\t1640590\t1180540\t4000\nmetal8\t1639790\t1180540\t1643790\t1181340\t4000\nmetal8\t1642990\t1181340\t1643790\t1195740\t4000\nmetal8\t1822190\t1177340\t1822990\t1198940\t4000\nmetal8\t1201390\t1199740\t1202190\t1200540\t4000\nmetal8\t1694190\t1198140\t1694990\t1200540\t4000\nmetal8\t1486190\t1044540\t1486990\t1203740\t4000\nmetal8\t951790\t1215740\t952590\t1221340\t4000\nmetal8\t2018990\t1218940\t2019790\t1221340\t4000\nmetal8\t1510190\t1218940\t1510990\t1222940\t4000\nmetal8\t1663790\t1228540\t1664590\t1229340\t4000\nmetal8\t1785390\t1218940\t1786190\t1230940\t4000\nmetal8\t1521390\t1242940\t1522190\t1248540\t4000\nmetal8\t1956590\t1247740\t1957390\t1251740\t4000\nmetal8\t1252590\t1010940\t1253390\t1282140\t4000\nmetal8\t1279790\t1215740\t1280590\t1302940\t4000\nmetal8\t447790\t1255740\t448590\t1328100\t4000\nmetal8\t446190\t1328100\t448590\t1328900\t4000\nmetal8\t1505390\t591740\t1506190\t1333340\t4000\nmetal8\t689390\t1359740\t690190\t1360540\t4000\nmetal8\t1119790\t1359740\t1120590\t1360540\t4000\nmetal8\t2401390\t1228540\t2402190\t1360540\t4000\nmetal8\t446190\t1328900\t446990\t1362940\t4000\nmetal8\t444590\t1362940\t446990\t1363740\t4000\nmetal8\t340590\t921340\t341390\t1371740\t4000\nmetal8\t602990\t1350140\t603790\t1462940\t4000\nmetal8\t329390\t1482940\t330190\t1485340\t4000\nmetal8\t628590\t1482940\t629390\t1485340\t4000\nmetal8\t1462190\t1439740\t1462990\t1485340\t4000\nmetal8\t540590\t1513340\t541390\t1514140\t4000\nmetal8\t788590\t1511740\t789390\t1514140\t4000\nmetal8\t521390\t1473340\t522190\t1565340\t4000\nmetal8\t1324590\t1577340\t1325390\t1581340\t4000\nmetal8\t1710190\t1577340\t1710990\t1581340\t4000\nmetal8\t1966190\t1218940\t1966990\t1611740\t4000\nmetal8\t1724590\t1614140\t1725390\t1616540\t4000\nmetal8\t807790\t1564540\t808590\t1643740\t4000\nmetal8\t1577390\t1644540\t1578190\t1645340\t4000\nmetal8\t1783790\t1644540\t1784590\t1645340\t4000\nmetal8\t1810990\t1644540\t1811790\t1645340\t4000\nmetal8\t2178990\t1644540\t2179790\t1645340\t4000\nmetal8\t1793390\t1615740\t1794190\t1648540\t4000\nmetal8\t1658990\t1631740\t1659790\t1654940\t4000\nmetal8\t1935790\t1657340\t1936590\t1658140\t4000\nmetal8\t2034990\t1657340\t2035790\t1659740\t4000\nmetal8\t1748590\t1662140\t1749390\t1667740\t4000\nmetal8\t668590\t1666940\t669390\t1670940\t4000\nmetal8\t836590\t1666940\t837390\t1670940\t4000\nmetal8\t1447790\t1666940\t1448590\t1670940\t4000\nmetal8\t1794990\t1654140\t1795790\t1685340\t4000\nmetal8\t1503790\t1692540\t1504590\t1696540\t4000\nmetal8\t1844590\t1690940\t1845390\t1696540\t4000\nmetal8\t1847790\t1692540\t1848590\t1696540\t4000\nmetal8\t1932590\t1692540\t1933390\t1696540\t4000\nmetal8\t1940590\t1692540\t1941390\t1696540\t4000\nmetal8\t1999790\t1692540\t2000590\t1696540\t4000\nmetal8\t2178990\t1676540\t2179790\t1696540\t4000\nmetal8\t1903790\t1700540\t1904590\t1706140\t4000\nmetal8\t1956590\t1705340\t1957390\t1710940\t4000\nmetal8\t2086190\t1695740\t2086990\t1723740\t4000\nmetal8\t1958190\t1695740\t1958990\t1768540\t4000\nmetal8\t369390\t612540\t370190\t1784540\t4000\nmetal8\t796590\t1782140\t797390\t1790940\t4000\nmetal8\t956590\t1782140\t957390\t1790940\t4000\nmetal8\t788590\t1849340\t789390\t1850140\t4000\nmetal8\t1129390\t1841340\t1130190\t1850140\t4000\nmetal8\t1132590\t1849340\t1133390\t1850140\t4000\nmetal8\t1778990\t1849340\t1779790\t1850140\t4000\nmetal8\t954990\t1490940\t955790\t1907740\t4000\nmetal8\t694190\t1906940\t694990\t1933340\t4000\nmetal8\t1268590\t1484540\t1269390\t1973340\t4000\nmetal9\t328990\t1484140\t629790\t1485740\t4000\nmetal9\t540190\t1512940\t789790\t1514540\t4000\nmetal9\t520990\t1564140\t808990\t1565740\t4000\nmetal9\t668190\t1666540\t837790\t1668140\t4000\nmetal9\t693790\t1906540\t956190\t1908140\t4000\nmetal9\t688990\t1359340\t1120990\t1360940\t4000\nmetal9\t788190\t1848940\t1130590\t1850540\t4000\nmetal9\t951390\t1215340\t1280990\t1216940\t4000\nmetal9\t808990\t572140\t1386590\t573740\t4000\nmetal9\t1268190\t1484140\t1463390\t1485740\t4000\nmetal9\t1424990\t572140\t1472990\t573740\t4000\nmetal9\t1504990\t591340\t1535390\t592940\t4000\nmetal9\t1336990\t162540\t1568990\t164140\t4000\nmetal9\t916190\t562540\t1605790\t564140\t4000\nmetal9\t1434590\t1176940\t1640990\t1178540\t4000\nmetal9\t1200990\t1199340\t1695390\t1200940\t4000\nmetal9\t1581790\t162540\t1700190\t164140\t4000\nmetal9\t1324190\t1576940\t1711390\t1578540\t4000\nmetal9\t1605790\t572140\t1733790\t573740\t4000\nmetal9\t1447390\t1666540\t1749790\t1668140\t4000\nmetal9\t1132190\t1848940\t1780190\t1850540\t4000\nmetal9\t1576990\t1644140\t1784990\t1645740\t4000\nmetal9\t1509790\t1218540\t1786590\t1220140\t4000\nmetal9\t1724190\t1615340\t1794590\t1616940\t4000\nmetal9\t1658590\t1653740\t1796190\t1655340\t4000\nmetal9\t1642590\t1176940\t1823390\t1178540\t4000\nmetal9\t1503390\t1695340\t1845790\t1696940\t4000\nmetal9\t1746590\t572140\t1900190\t573740\t4000\nmetal9\t1847390\t1695340\t1933790\t1696940\t4000\nmetal9\t1520990\t1247340\t1957790\t1248940\t4000\nmetal9\t1903390\t1704940\t1957790\t1706540\t4000\nmetal9\t1940190\t1695340\t1959390\t1696940\t4000\nmetal9\t1660190\t703340\t1986590\t704940\t4000\nmetal9\t1965790\t1218540\t2020190\t1220140\t4000\nmetal9\t1935390\t1656940\t2036190\t1658540\t4000\nmetal9\t2045790\t722540\t2154590\t724140\t4000\nmetal9\t2044190\t703340\t2173790\t704940\t4000\nmetal9\t1810590\t1644140\t2180190\t1645740\t4000\nmetal9\t1999390\t1695340\t2180190\t1696940\t4000\nmetal9\t1663390\t1228140\t2402590\t1229740\t4000",
+      "pg-access-pins.tsv": "net\txmin_dbu\tymin_dbu\txmax_dbu\tymax_dbu\nVDD\t162280\t2415400\t2454820\t2418200\nVDD\t162280\t2355400\t2454820\t2358200\nVDD\t162280\t2295400\t2454820\t2298200\nVDD\t162280\t2235400\t2454820\t2238200\nVDD\t162280\t2175400\t2454820\t2178200\nVDD\t162280\t2115400\t2454820\t2118200\nVDD\t162280\t2055400\t2454820\t2058200\nVDD\t162280\t1995400\t2454820\t1998200\nVDD\t162280\t1935400\t2454820\t1938200\nVDD\t162280\t1875400\t2454820\t1878200\nVDD\t162280\t1815400\t2454820\t1818200\nVDD\t162280\t1755400\t2454820\t1758200\nVDD\t162280\t1695400\t2454820\t1698200\nVDD\t162280\t1635400\t2454820\t1638200\nVDD\t162280\t1575400\t2454820\t1578200\nVDD\t162280\t1515400\t2454820\t1518200\nVDD\t162280\t1455400\t2454820\t1458200\nVDD\t162280\t1395400\t2454820\t1398200\nVDD\t162280\t1335400\t2454820\t1338200\nVDD\t162280\t1275400\t2454820\t1278200\nVDD\t162280\t1215400\t2454820\t1218200\nVDD\t162280\t1155400\t2454820\t1158200\nVDD\t162280\t1095400\t2454820\t1098200\nVDD\t162280\t1035400\t2454820\t1038200\nVDD\t162280\t975400\t2454820\t978200\nVDD\t162280\t915400\t2454820\t918200\nVDD\t162280\t855400\t2454820\t858200\nVDD\t162280\t795400\t2454820\t798200\nVDD\t162280\t735400\t2454820\t738200\nVDD\t162280\t675400\t2454820\t678200\nVDD\t162280\t615400\t2454820\t618200\nVDD\t162280\t555400\t2454820\t558200\nVDD\t162280\t495400\t2454820\t498200\nVDD\t162280\t435400\t2454820\t438200\nVDD\t162280\t375400\t2454820\t378200\nVDD\t162280\t315400\t2454820\t318200\nVDD\t162280\t255400\t2454820\t258200\nVDD\t162280\t195400\t2454820\t198200\nVSS\t162280\t2445400\t2454820\t2448200\nVSS\t162280\t2385400\t2454820\t2388200\nVSS\t162280\t2325400\t2454820\t2328200\nVSS\t162280\t2265400\t2454820\t2268200\nVSS\t162280\t2205400\t2454820\t2208200\nVSS\t162280\t2145400\t2454820\t2148200\nVSS\t162280\t2085400\t2454820\t2088200\nVSS\t162280\t2025400\t2454820\t2028200\nVSS\t162280\t1965400\t2454820\t1968200\nVSS\t162280\t1905400\t2454820\t1908200\nVSS\t162280\t1845400\t2454820\t1848200\nVSS\t162280\t1785400\t2454820\t1788200\nVSS\t162280\t1725400\t2454820\t1728200\nVSS\t162280\t1665400\t2454820\t1668200\nVSS\t162280\t1605400\t2454820\t1608200\nVSS\t162280\t1545400\t2454820\t1548200\nVSS\t162280\t1485400\t2454820\t1488200\nVSS\t162280\t1425400\t2454820\t1428200\nVSS\t162280\t1365400\t2454820\t1368200\nVSS\t162280\t1305400\t2454820\t1308200\nVSS\t162280\t1245400\t2454820\t1248200\nVSS\t162280\t1185400\t2454820\t1188200\nVSS\t162280\t1125400\t2454820\t1128200\nVSS\t162280\t1065400\t2454820\t1068200\nVSS\t162280\t1005400\t2454820\t1008200\nVSS\t162280\t945400\t2454820\t948200\nVSS\t162280\t885400\t2454820\t888200\nVSS\t162280\t825400\t2454820\t828200\nVSS\t162280\t765400\t2454820\t768200\nVSS\t162280\t705400\t2454820\t708200\nVSS\t162280\t645400\t2454820\t648200\nVSS\t162280\t585400\t2454820\t588200\nVSS\t162280\t525400\t2454820\t528200\nVSS\t162280\t465400\t2454820\t468200\nVSS\t162280\t405400\t2454820\t408200\nVSS\t162280\t345400\t2454820\t348200\nVSS\t162280\t285400\t2454820\t288200\nVSS\t162280\t225400\t2454820\t228200\nVSS\t162280\t165400\t2454820\t168200",
+      "pg-removed-sites.tsv": "net\tx_dbu\ty_dbu\tvia_master\tlayer\tlanding_xmin\tlanding_ymin\tlanding_xmax\tlanding_ymax\tobs_xmin\tobs_ymin\tobs_xmax\tobs_ymax\tguard_dbu",
+      "verification_policy": {
+        "skip_phase_lec": false,
+        "proof_inheritance_claimed": false,
+        "block_implementation_skip_phase_lec": true
+      },
+      "flow_metrics": {
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/flow/logs/nangate45/llhd_vec_harness/base/1_synth.json": {
+          "synth__design__io": 2246,
+          "synth__design__nets": 2246,
+          "synth__design__die__area": 0,
+          "synth__design__core__area": 0,
+          "synth__design__instance__count": 1,
+          "synth__design__instance__area": 1319100.0,
+          "synth__design__instance__count__stdcell": 0,
+          "synth__design__instance__area__stdcell": 0,
+          "synth__design__instance__count__macros": 1,
+          "synth__design__instance__area__macros": 1319100.0,
+          "synth__design__instance__count__padcells": 0,
+          "synth__design__instance__area__padcells": 0,
+          "synth__design__instance__count__cover": 0,
+          "synth__design__instance__area__cover": 0,
+          "synth__design__rows": 0,
+          "synth__design__sites": 0,
+          "synth__flow__warnings__count": 1,
+          "synth__flow__errors__count": 0,
+          "synth__flow__warnings__count:STA-0441": 1,
+          "synth__flow__warnings__type_count": 1
+        },
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/flow/logs/nangate45/llhd_vec_harness/base/2_1_floorplan.json": {
+          "floorplan__design__instance__count__setup_buffer": 0,
+          "run__flow__platform__time_units": "1ns",
+          "run__flow__platform__capacitance_units": "1fF",
+          "run__flow__platform__resistance_units": "1kohm",
+          "run__flow__platform__voltage_units": "1v",
+          "run__flow__platform__current_units": "1mA",
+          "run__flow__platform__power_units": "1nW",
+          "run__flow__platform__distance_units": "1um",
+          "floorplan__timing__setup__tns": 0,
+          "floorplan__timing__hold__tns": 0,
+          "floorplan__timing__setup__ws": 0.517046,
+          "floorplan__timing__hold__ws": 0.5447,
+          "floorplan__timing__fmax__clock:clk": 402746000.0,
+          "floorplan__timing__fmax": 402746000.0,
+          "floorplan__power__internal__total": 0,
+          "floorplan__power__switching__total": 0,
+          "floorplan__power__leakage__total": 0,
+          "floorplan__power__total": 0,
+          "floorplan__design__io": 2246,
+          "floorplan__design__nets": 2246,
+          "floorplan__design__die__area": 1712220.0,
+          "floorplan__design__core__area": 1657640.0,
+          "floorplan__design__instance__count": 1,
+          "floorplan__design__instance__area": 1319100.0,
+          "floorplan__design__instance__count__stdcell": 0,
+          "floorplan__design__instance__area__stdcell": 0,
+          "floorplan__design__instance__count__macros": 1,
+          "floorplan__design__instance__area__macros": 1319100.0,
+          "floorplan__design__instance__count__padcells": 0,
+          "floorplan__design__instance__area__padcells": 0,
+          "floorplan__design__instance__count__cover": 0,
+          "floorplan__design__instance__area__cover": 0,
+          "floorplan__design__instance__utilization": 0.795768,
+          "floorplan__design__instance__utilization__stdcell": 0,
+          "floorplan__design__rows": 919,
+          "floorplan__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 919,
+          "floorplan__design__sites": 6231739,
+          "floorplan__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 6231739,
+          "floorplan__flow__warnings__count": 2,
+          "floorplan__flow__errors__count": 0,
+          "floorplan__flow__warnings__count:EST-0027": 1,
+          "floorplan__flow__warnings__count:IFP-0028": 1,
+          "floorplan__flow__warnings__type_count": 2
+        }
+      },
+      "physical_stage_artifacts": {
+        "llhd_vec_harness": {
+          "stages": {
+            "cts": {
+              "checkpoint": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/flow/results/nangate45/llhd_vec_harness/base/4_cts.odb",
+              "metrics": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/flow/logs/nangate45/llhd_vec_harness/base/4_1_cts.json",
+              "checkpoint_and_metrics_present": false,
+              "checkpoint_provenance": {
+                "origin": "unknown",
+                "reason": "absent"
+              },
+              "metrics_provenance": {
+                "origin": "unknown",
+                "reason": "absent"
+              },
+              "origin": "unknown",
+              "current_attempt_completion_artifacts": false
+            },
+            "global_route": {
+              "checkpoint": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/flow/results/nangate45/llhd_vec_harness/base/5_1_grt.odb",
+              "metrics": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/flow/logs/nangate45/llhd_vec_harness/base/5_1_grt.json",
+              "checkpoint_and_metrics_present": false,
+              "checkpoint_provenance": {
+                "origin": "unknown",
+                "reason": "absent"
+              },
+              "metrics_provenance": {
+                "origin": "unknown",
+                "reason": "absent"
+              },
+              "origin": "unknown",
+              "current_attempt_completion_artifacts": false
+            },
+            "detailed_route": {
+              "checkpoint": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/flow/results/nangate45/llhd_vec_harness/base/5_2_route.odb",
+              "metrics": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/flow/logs/nangate45/llhd_vec_harness/base/5_2_route.json",
+              "checkpoint_and_metrics_present": false,
+              "checkpoint_provenance": {
+                "origin": "unknown",
+                "reason": "absent"
+              },
+              "metrics_provenance": {
+                "origin": "unknown",
+                "reason": "absent"
+              },
+              "origin": "unknown",
+              "current_attempt_completion_artifacts": false
+            },
+            "final_report": {
+              "checkpoint": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/flow/results/nangate45/llhd_vec_harness/base/6_final.odb",
+              "metrics": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/flow/logs/nangate45/llhd_vec_harness/base/6_report.json",
+              "checkpoint_and_metrics_present": false,
+              "checkpoint_provenance": {
+                "origin": "unknown",
+                "reason": "absent"
+              },
+              "metrics_provenance": {
+                "origin": "unknown",
+                "reason": "absent"
+              },
+              "origin": "unknown",
+              "current_attempt_completion_artifacts": false
+            }
+          },
+          "temporary_logs_present": [],
+          "note": "Stage completion requires its output checkpoint and closing metrics, not a DRT/RSZ progress message. Resume may inherit completed stages; see resume-validation.json. Existence does not imply timing/DRC acceptance."
+        }
+      },
+      "stage_equivalence_checks": {},
+      "exported_sdc_external_io_models": {
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/flow/results/nangate45/llhd_vec_harness/base/1_synth.sdc": {
+          "explicit_model_line_count": 0,
+          "first_lines": []
+        }
+      },
+      "logs": {
+        "slurm": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/slurm-89462.log",
+        "elaboration": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/vec-elab.log",
+        "flow": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/flow.log",
+        "regression": null,
+        "resume_dry_run": null,
+        "post_submission_read_only_grt_policy_observation": null,
+        "post_submission_read_only_repair_timing_help": null,
+        "post_submission_read_only_psm_policy_observation": null,
+        "abstract": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/abstract.log",
+        "pdn_audit": null
+      },
+      "output_hash_index": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/result-files.sha256",
+      "existing_products_not_standalone_validation": {
+        "llhd_vec_original": {},
+        "llhd_vec_harness": {}
+      },
+      "new_macro_view_products": {
+        "vec_engine.lef": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/macro-view/vec_engine.lef",
+        "vec_engine_typ.lib": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/macro-view/vec_engine_typ.lib"
+      },
+      "validation_summary": {
+        "sacct_completed_is_only_execution_status": false,
+        "abstract_signal_names_and_directions_pass": true,
+        "physical_signal_interface_pass": null,
+        "explicit_pdn_connectivity": null,
+        "pg_access_site_selection_or_check": null,
+        "early_guarded_pdn_connectivity": null,
+        "extra_physical_signal_pins_require_review": {
+          "top": null,
+          "macro": null
+        },
+        "timing_reports_present": {
+          "top-check-setup.rpt": false,
+          "top-clocks.rpt": false,
+          "top-paths.rpt": false,
+          "top-electrical.rpt": false
+        },
+        "acceptance_note": "COMPLETED never overrides failed/missing interface checks, electrical violations or missing timing coverage. No formal/system signoff."
+      }
     }
   ],
-  "sacct_raw": "89441|FAILED|127:0|00:00:04|8|node3|00:10:00\n89441.batch|FAILED|127:0|00:00:04|8|node3|\n89441.extern|COMPLETED|0:0|00:00:04|8|node3|\n89442|COMPLETED|0:0|00:00:15|8|node3|00:10:00\n89442.batch|COMPLETED|0:0|00:00:15|8|node3|\n89442.extern|COMPLETED|0:0|00:00:15|8|node3|\n89443|TIMEOUT|0:0|00:45:00|16|node3|00:45:00\n89443.batch|CANCELLED|0:15|00:45:01|16|node3|\n89443.extern|COMPLETED|0:0|00:45:00|16|node3|\n89444|CANCELLED by 10011|0:0|00:00:00|0|None assigned|00:30:00\n89445|CANCELLED|0:0|00:00:00|0|None assigned|00:30:00\n89447|FAILED|2:0|00:00:10|16|node3|01:00:00\n89447.batch|FAILED|2:0|00:00:10|16|node3|\n89447.extern|COMPLETED|0:0|00:00:10|16|node3|\n89448|RUNNING|0:0|02:04:19|16|node3|UNLIMITED\n89448.batch|RUNNING|0:0|02:04:19|16|node3|\n89448.extern|RUNNING|0:0|02:04:19|16|node3|\n89448.0|COMPLETED|0:0|00:00:01|1|node3|\n89448.1|COMPLETED|0:0|00:00:01|1|node3|\n89448.2|FAILED|1:0|00:00:00|1|node3|\n89448.3|COMPLETED|0:0|00:00:00|1|node3|\n89448.4|FAILED|2:0|00:00:00|1|node3|\n89448.5|FAILED|1:0|00:00:01|1|node3|\n89448.6|FAILED|1:0|00:00:00|1|node3|\n89448.7|COMPLETED|0:0|00:00:00|1|node3|\n89448.8|COMPLETED|0:0|00:00:00|1|node3|\n89448.9|COMPLETED|0:0|00:00:00|1|node3|\n89448.10|COMPLETED|0:0|00:00:01|1|node3|\n89448.11|COMPLETED|0:0|00:00:02|1|node3|\n89448.12|COMPLETED|0:0|00:00:01|1|node3|\n89448.13|COMPLETED|0:0|00:00:01|1|node3|\n89448.14|COMPLETED|0:0|00:00:01|1|node3|\n89448.15|COMPLETED|0:0|00:00:03|1|node3|\n89448.16|COMPLETED|0:0|00:00:00|1|node3|\n89448.17|COMPLETED|0:0|00:00:01|1|node3|\n89448.18|COMPLETED|0:0|00:00:01|1|node3|\n89448.19|COMPLETED|0:0|00:00:00|1|node3|\n89449|PENDING|0:0|00:00:00|0|None assigned|UNLIMITED\n89452|FAILED|1:0|00:00:13|8|node3|UNLIMITED\n89452.batch|FAILED|1:0|00:00:13|8|node3|\n89452.extern|COMPLETED|0:0|00:00:13|8|node3|\n89453|COMPLETED|0:0|00:33:03|16|node3|UNLIMITED\n89453.batch|COMPLETED|0:0|00:33:03|16|node3|\n89453.extern|COMPLETED|0:0|00:33:03|16|node3|\n89453.0|COMPLETED|0:0|00:00:01|1|node3|\n89453.1|COMPLETED|0:0|00:00:00|1|node3|\n89454|FAILED|2:0|00:01:08|16|node3|UNLIMITED\n89454.batch|FAILED|2:0|00:01:08|16|node3|\n89454.extern|COMPLETED|0:0|00:01:08|16|node3|\n89455|COMPLETED|0:0|00:00:17|8|node3|UNLIMITED\n89455.batch|COMPLETED|0:0|00:00:17|8|node3|\n89455.extern|COMPLETED|0:0|00:00:17|8|node3|\n89456|FAILED|2:0|00:08:09|16|node3|UNLIMITED\n89456.batch|FAILED|2:0|00:08:09|16|node3|\n89456.extern|COMPLETED|0:0|00:08:09|16|node3|\n89457|FAILED|2:0|00:03:27|16|node3|UNLIMITED\n89457.batch|FAILED|2:0|00:03:27|16|node3|\n89457.extern|COMPLETED|0:0|00:03:27|16|node3|\n89459|FAILED|1:0|00:04:16|1|node3|UNLIMITED\n89459.batch|FAILED|1:0|00:04:16|1|node3|\n89459.extern|COMPLETED|0:0|00:04:16|1|node3|\n89461|COMPLETED|0:0|00:04:35|1|node3|UNLIMITED\n89461.batch|COMPLETED|0:0|00:04:35|1|node3|\n89461.extern|COMPLETED|0:0|00:04:35|1|node3|\n"
+  "sacct_raw": "89441|FAILED|127:0|00:00:04|8|node3|00:10:00\n89441.batch|FAILED|127:0|00:00:04|8|node3|\n89441.extern|COMPLETED|0:0|00:00:04|8|node3|\n89442|COMPLETED|0:0|00:00:15|8|node3|00:10:00\n89442.batch|COMPLETED|0:0|00:00:15|8|node3|\n89442.extern|COMPLETED|0:0|00:00:15|8|node3|\n89443|TIMEOUT|0:0|00:45:00|16|node3|00:45:00\n89443.batch|CANCELLED|0:15|00:45:01|16|node3|\n89443.extern|COMPLETED|0:0|00:45:00|16|node3|\n89444|CANCELLED by 10011|0:0|00:00:00|0|None assigned|00:30:00\n89445|CANCELLED|0:0|00:00:00|0|None assigned|00:30:00\n89447|FAILED|2:0|00:00:10|16|node3|01:00:00\n89447.batch|FAILED|2:0|00:00:10|16|node3|\n89447.extern|COMPLETED|0:0|00:00:10|16|node3|\n89448|RUNNING|0:0|02:14:41|16|node3|UNLIMITED\n89448.batch|RUNNING|0:0|02:14:41|16|node3|\n89448.extern|RUNNING|0:0|02:14:41|16|node3|\n89448.0|COMPLETED|0:0|00:00:01|1|node3|\n89448.1|COMPLETED|0:0|00:00:01|1|node3|\n89448.2|FAILED|1:0|00:00:00|1|node3|\n89448.3|COMPLETED|0:0|00:00:00|1|node3|\n89448.4|FAILED|2:0|00:00:00|1|node3|\n89448.5|FAILED|1:0|00:00:01|1|node3|\n89448.6|FAILED|1:0|00:00:00|1|node3|\n89448.7|COMPLETED|0:0|00:00:00|1|node3|\n89448.8|COMPLETED|0:0|00:00:00|1|node3|\n89448.9|COMPLETED|0:0|00:00:00|1|node3|\n89448.10|COMPLETED|0:0|00:00:01|1|node3|\n89448.11|COMPLETED|0:0|00:00:02|1|node3|\n89448.12|COMPLETED|0:0|00:00:01|1|node3|\n89448.13|COMPLETED|0:0|00:00:01|1|node3|\n89448.14|COMPLETED|0:0|00:00:01|1|node3|\n89448.15|COMPLETED|0:0|00:00:03|1|node3|\n89448.16|COMPLETED|0:0|00:00:00|1|node3|\n89448.17|COMPLETED|0:0|00:00:01|1|node3|\n89448.18|COMPLETED|0:0|00:00:01|1|node3|\n89448.19|COMPLETED|0:0|00:00:00|1|node3|\n89449|PENDING|0:0|00:00:00|0|None assigned|UNLIMITED\n89452|FAILED|1:0|00:00:13|8|node3|UNLIMITED\n89452.batch|FAILED|1:0|00:00:13|8|node3|\n89452.extern|COMPLETED|0:0|00:00:13|8|node3|\n89453|COMPLETED|0:0|00:33:03|16|node3|UNLIMITED\n89453.batch|COMPLETED|0:0|00:33:03|16|node3|\n89453.extern|COMPLETED|0:0|00:33:03|16|node3|\n89453.0|COMPLETED|0:0|00:00:01|1|node3|\n89453.1|COMPLETED|0:0|00:00:00|1|node3|\n89454|FAILED|2:0|00:01:08|16|node3|UNLIMITED\n89454.batch|FAILED|2:0|00:01:08|16|node3|\n89454.extern|COMPLETED|0:0|00:01:08|16|node3|\n89455|COMPLETED|0:0|00:00:17|8|node3|UNLIMITED\n89455.batch|COMPLETED|0:0|00:00:17|8|node3|\n89455.extern|COMPLETED|0:0|00:00:17|8|node3|\n89456|FAILED|2:0|00:08:09|16|node3|UNLIMITED\n89456.batch|FAILED|2:0|00:08:09|16|node3|\n89456.extern|COMPLETED|0:0|00:08:09|16|node3|\n89457|FAILED|2:0|00:03:27|16|node3|UNLIMITED\n89457.batch|FAILED|2:0|00:03:27|16|node3|\n89457.extern|COMPLETED|0:0|00:03:27|16|node3|\n89459|FAILED|1:0|00:04:16|1|node3|UNLIMITED\n89459.batch|FAILED|1:0|00:04:16|1|node3|\n89459.extern|COMPLETED|0:0|00:04:16|1|node3|\n89461|COMPLETED|0:0|00:04:35|1|node3|UNLIMITED\n89461.batch|COMPLETED|0:0|00:04:35|1|node3|\n89461.extern|COMPLETED|0:0|00:04:35|1|node3|\n89462|FAILED|2:0|00:02:34|16|node3|UNLIMITED\n89462.batch|FAILED|2:0|00:02:34|16|node3|\n89462.extern|COMPLETED|0:0|00:02:34|16|node3|\n"
 }

@@ -74,8 +74,7 @@ proc llhd_via_rows {box} {
   }
   return $rows
 }
-proc llhd_pg_collisions {supply rows} {
-  global llhd_obs llhd_pg_pins llhd_guard
+proc llhd_pg_collisions {supply rows llhd_obs llhd_pg_pins llhd_guard} {
   set hits {}
   foreach row $rows {
     lassign $row via layer lx ly ux uy
@@ -142,7 +141,7 @@ dict for {key boxes} $llhd_groups {
   if { [dict exists $llhd_edges $key] && [lsort [dict get $llhd_edges $key]] ne {7-8 8-9 9-10} } {
     error "Unexpected incomplete/nonadjacent PG stack at $key"
   }
-  set hits [llhd_pg_collisions $supply [dict get $llhd_rows $key]]
+  set hits [llhd_pg_collisions $supply [dict get $llhd_rows $key] $llhd_obs $llhd_pg_pins $llhd_guard]
   if { [llength $hits] == 0 } { continue }
   foreach hit $hits { puts $file "$supply\t$x\t$y\t[join $hit \t]\t$llhd_guard" }
   incr llhd_unsafe_sites
@@ -164,7 +163,7 @@ foreach supply {VDD VSS} {
       incr llhd_vias_after
       lassign [$box getViaXY] x y
       set rows [llhd_via_rows $box]
-      incr llhd_remaining_hits [llength [llhd_pg_collisions $supply $rows]]
+      incr llhd_remaining_hits [llength [llhd_pg_collisions $supply $rows $llhd_obs $llhd_pg_pins $llhd_guard]]
       foreach row $rows { puts $file "$supply\t$x\t$y\t[join $row \t]" }
     }
   }

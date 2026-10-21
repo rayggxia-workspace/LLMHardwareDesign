@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
-  "updated_at": "2026-10-21T17:31:59+08:00",
+  "updated_at": "2026-10-21T17:42:09+08:00",
   "kind": "independent_read_only_review_of_existing_physical_reports_and_abstract",
   "reviewer_scope": "Read completed reports, Liberty/LEF and final netlist using lightweight text parsing. No new STA, physical implementation, or source-RTL-to-physical formal equivalence run.",
   "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
@@ -770,5 +770,89 @@
     "writes_only_own_filtered_odb": true,
     "preserved_failures": "The original top-02/89456 and guarded top-03/89457 remain failed and unaccepted; this diagnostic does not rewrite or retroactively accept them.",
     "next": "A clean committed full legal-m10 top attempt may proceed within this task, then independently review early/final PG, actual final ODB/interfaces, POST reports, STA/electrical/DRC and final check-only site audit. Block internal 3ns timing failure and missing macro current model remain separate limitations."
+  },
+  "legal_top_hook_failure_review": {
+    "attempt": "vec-physical-top-04",
+    "job_id": 89462,
+    "profile": "legal-m10",
+    "status": "FAILED",
+    "exit_code": "2:0",
+    "elapsed": "00:02:34",
+    "time_limit": "UNLIMITED",
+    "launch_repository_commit": "04a40734a51078b832552c490cd167eb5c5510af",
+    "working_tree_clean_before_launch": true,
+    "launch_snapshot": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/launch-code-snapshot.json",
+    "failure_stage": "POST_PDN Tcl source of filter_pg_access.tcl, before the pdn.tcl database write",
+    "actual_error": "can't read \"llhd_obs\": no such variable",
+    "root_cause": "ORFS sources the hook within a procedure frame. The collision helper declared llhd_obs/llhd_pg_pins/llhd_guard global although the sourced script initialized them in that local frame; the independent 89461 global-source diagnostic did not exercise this frame.",
+    "classification": "Hook integration scope error, not a geometry-policy rejection or failed native PG check.",
+    "raw_log": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/flow.log",
+    "raw_log_sha256": "0ce780e65d19094ce7291a09e6a0b48d5a1431c2a05b36b707cd1c7c1c7dafb9",
+    "result_manifest": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/result-files.sha256",
+    "macro_lef_sha256": "94cc0dead71389a7ad43065091df788f3ecaf8c99cc22244735b24f9ab7726bc",
+    "macro_liberty_sha256": "9b6f42b0160aed2ea3b9d807c46eecb36a3d2560943bd08dc8afdcf617307abb",
+    "exported_actual_obs_sha256": "8c94ac73ccb84a9e91acc767fcf3e9ce657e295ef3383db8b818f6dccd608c20",
+    "exported_actual_pg_pin_sha256": "d11282115a0944c3c9a3730a1dfd168e7a9bad4066b51a6a998c3720c6b07836",
+    "exported_macro_geometry_matches_89461": true,
+    "pg_selection_completed": false,
+    "native_vdd_check_executed": false,
+    "native_vss_check_executed": false,
+    "post_pdn_connectivity_json_exists": false,
+    "post_pdn_odb_written": false,
+    "final_route_executed": false,
+    "post_final_report_executed": false,
+    "final_interface_inspection_executed": false,
+    "integration_acceptance": false,
+    "proposed_correction": "Pass OBS, PG pin and guard values explicitly to the collision helper at both the selection and fresh-enumeration calls, and exercise procedure-frame sourcing before a new isolated full-top attempt.",
+    "review_limit": "The earlier static review and global-source diagnostic did not verify the actual ORFS procedure sourcing context. No result is inherited from 89461 to this failed full-top attempt.",
+    "scope_fix_review": {
+      "change": "llhd_pg_collisions receives OBS, same-net PG pin rectangles and guard as explicit arguments. Both selection and fresh-enumeration calls pass values from the sourcing frame; no helper global-variable capture remains.",
+      "geometry_policy_changed": false,
+      "static_blocking_findings": [],
+      "fixed_filter_script_sha256": "bc54f2695d607e0e6f4d347ae423df1dc760af19da0ad3535288f15a1fe5016c",
+      "saved_proc_source_mock_regression": {
+        "directory": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-hook-scope-diagnostic-01/",
+        "inputs_manifest": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-hook-scope-diagnostic-01/inputs.sha256",
+        "log": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-hook-scope-diagnostic-01/scope-test.log",
+        "exit_code_file": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-hook-scope-diagnostic-01/exit-code.txt",
+        "exit_code": 0,
+        "test_script_sha256": "fe3a2584b6ec09d1ceb9d3576b4e656e5ce944dd638e2c7124bb37baf8c854b3",
+        "review": "Independently read the complete test source, input hashes, closed log and generated output inventory. It sources the actual filter/posthook/audit/checker files inside a procedure with mocked OpenDB/native calls.",
+        "cases": [
+          "whole-stack in-memory mutation with both native calls",
+          "safe check-only: no deletion or DB write",
+          "unsafe check-only: no deletion/write and failure before native calls",
+          "native normal false return: strict failure"
+        ],
+        "all_cases_passed": true,
+        "is_real_eda_or_physical_evidence": false
+      },
+      "independent_pure_tcl_regression": {
+        "method": "Local no-GUI Tcl interpreter via Python tkinter.Tcl; extracted actual committed HEAD helper and patched helper and invoked them from a procedure with local data. All in memory, no database or files generated.",
+        "baseline_reproduced": "Committed helper reports can't read llhd_obs: no such variable in a procedure frame.",
+        "patched_cases_passed": [
+          "M8 overlap",
+          "M8 within guard",
+          "M8 exactly at guard remains clear",
+          "M7 same-net fully contained contact",
+          "M7 wrong-net contact rejected"
+        ],
+        "passed": true,
+        "execution_evidence": "Current tool execution transcript; no separate result file was generated."
+      },
+      "actual_orfs_hook_with_fix_verified": false,
+      "next": "Commit the reviewed fix and launch a new isolated full-top attempt from that clean SHA; require actual hook/PG/final/POST/interface checks. 89462 remains failed.",
+      "saved_original_full_source_negative_control": {
+        "directory": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-hook-scope-negative-01",
+        "baseline_commit": "04a40734a51078b832552c490cd167eb5c5510af",
+        "baseline_filter_sha256": "43c803a33d96db81843c57db21f2a511f9b0b9bd3a29ab9d5b8ecd414be3a429",
+        "other_script_and_test_hashes_match_positive_control": true,
+        "exit_code": 1,
+        "actual_error": "can't read \"llhd_pg_pins\": no such variable",
+        "interpretation": "Independently read inputs.sha256, scope-test.log and exit-code.txt. The same full-source procedure-frame mock rejects the old helper; the mock reaches the M7 PG-pin read first while production 89462 reached the OBS read first. Both expose the same global/local scope defect.",
+        "old_attempt_modified": false,
+        "is_real_eda_evidence": false
+      }
+    }
   }
 }

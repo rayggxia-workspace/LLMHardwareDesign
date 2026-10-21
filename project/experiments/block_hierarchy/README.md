@@ -68,6 +68,12 @@ python project/experiments/block_hierarchy/collect_results.py --attempt vec-pdn-
 
 ## 验证口径和结果
 
+`test_pdn_hook_scope.tcl` 用 mock OpenDB／原生 PG API 检查实际 hook 脚本的 Tcl 过程加载上下文，覆盖整站删除、只读安全／不安全及原生返回 false 四条路径；它不产生 EDA 结论。已有 `pdn-hook-scope-diagnostic-01/` 保存输入哈希、日志及 exit=0；独立 `pdn-hook-scope-negative-01/` 仅换回旧 filter，实际 exit=1、复现变量不可读，证明该测试能捕获原缺陷。在已有 Tcl 环境中可用以下命令复跑，输出目录必须全新：
+
+```bash
+tclsh project/experiments/block_hierarchy/test_pdn_hook_scope.tcl <new-output-directory>
+```
+
 实时轻量索引为 [results/issue-7.json](results/issue-7.json)，包含每次 attempt 的实际 `sacct` 状态、退出码、资源、输入身份、输出与日志路径。`collect_results.py` 默认采集本轮历史；新增 attempt 使用可重复的 `--attempt NAME:JOB_ID`。它只读取报告和计算节点已产生的哈希，不在登录节点运行物理工具。Slurm `COMPLETED` 仅表示命令执行结束；最终接口报告的布尔结果、额外信号 pin、未连接 pin和时序覆盖需要分别检查，不能以作业完成状态覆盖失败或缺失的验收证据。
 
 阶段状态要求对应 ODB 与收尾 metrics 同时存在。索引按父拷贝的大小/mtime（小日志另比内容）及本作业开始时间区分 `current`、`inherited`、`mixed`、`unknown`，时间同秒或证据不足保守记未知。LEC 按每个日志的来源分别判定，只用本轮日志形成本轮结论；复制的旧 `identical` 不算新检查，本轮相互冲突的结论也不判通过。这些来源标签不替代计算节点保存的输入/输出哈希或功能验收。
