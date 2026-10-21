@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+from repair_hook import build_hook
 
 root = Path.cwd()
 spec = json.loads(Path('task.json').read_text())
@@ -53,55 +54,7 @@ for path in sorted((source/'memory-model').rglob('*')):
 copy_verified('config.mk')
 copy_verified('experiment.json')
 
-script = '''set llhd_block [ord::get_db_block]
-set llhd_changes [open [file join $::env(WORK_HOME) .. applied-replacements.txt] w]
-proc llhd_find_net {block name} {
-  set net [$block findNet $name]
-  if {$net ne "NULL"} {return $net}
-  set matches {}
-  foreach candidate [$block getNets] {
-    set normalized [string map [list [format %c 92] {}] [$candidate getName]]
-    if {$normalized eq $name} {lappend matches $candidate}
-  }
-  if {[llength $matches] != 1} {error "Output net has no unique escaped-name match: $name"}
-  return [lindex $matches 0]
-}
-'''
-for replacement in spec['replacements']:
-    name, before, after = replacement[:3]
-    assert all(not any(c in value for c in '{}\n\r') for value in (name,before,after))
-    if len(replacement) == 4:
-        net = replacement[3]
-        assert not any(c in net for c in '{}\n\r')
-        script += '''set llhd_net [llhd_find_net $llhd_block {%s}]
-set llhd_drivers {}
-foreach llhd_iterm [$llhd_net getITerms] {
-  if {[$llhd_iterm getIoType] eq "OUTPUT"} {lappend llhd_drivers [$llhd_iterm getInst]}
-}
-if {[llength $llhd_drivers] != 1} {error {Repair net must have exactly one instance driver}}
-set llhd_inst [lindex $llhd_drivers 0]
-''' % net
-    else:
-        script += '''set llhd_inst [$llhd_block findInst {%s}]
-if {$llhd_inst eq "NULL"} {error {Missing repair instance: %s}}
-''' % (name,name)
-    script += '''set llhd_name [$llhd_inst getName]
-set llhd_sta_inst [sta::find_instance $llhd_name]
-if {$llhd_sta_inst eq "NULL"} {
-  set llhd_name [string map [list [format %c 92] {}] $llhd_name]
-  set llhd_sta_inst [sta::find_instance $llhd_name]
-}
-if {$llhd_sta_inst eq "NULL"} {error "Resolved ODB driver has no STA instance: $llhd_name"}
-set llhd_before [[$llhd_inst getMaster] getName]
-if {$llhd_before ne {%s}} {error "Repair instance master mismatch: $llhd_before"}
-if {![replace_cell $llhd_name {%s}]} {error {Equivalent port replacement rejected}}
-set_dont_touch [list $llhd_sta_inst]
-puts $llhd_changes "$llhd_name $llhd_before -> %s"
-''' % (before,after,after)
-script += '''close $llhd_changes
-detailed_placement_helper
-check_placement -verbose
-'''
+script = build_hook(spec['replacements'])
 hook = root/'targeted-repair.tcl'
 hook.write_text(script)
 config = (root/'config.mk').read_text().replace(str(source), str(root))
