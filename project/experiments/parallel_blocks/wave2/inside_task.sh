@@ -24,5 +24,6 @@ case "$kind" in
   gemm-receipt) python3 "$LLHD_BATCH/runner/wave2/gemm_receipt.py" ;;
   top-contract) python3 "$LLHD_BATCH/runner/wave2/prepare_top_contract.py" ;;
   abc-probe) python3 "$LLHD_BATCH/runner/wave2/abc_probe.py" ;;
+  retired-evidence) python3 "$LLHD_BATCH/runner/wave2/retired_evidence.py" ;;
   *) exit 2 ;;
 esac

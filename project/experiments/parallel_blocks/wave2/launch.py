@@ -13,7 +13,7 @@ HOST = "yuzelu@10.129.166.172"
 IMAGE = "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif"
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--attempt", required=True)
-parser.add_argument("--profile", choices=("full", "physical", "gemm-receipt", "top-contract", "abc-probe", "abc-probe-short"), default="full")
+parser.add_argument("--profile", choices=("full", "physical", "gemm-receipt", "top-contract", "abc-probe", "abc-probe-short", "retired-evidence"), default="full")
 args = parser.parse_args()
 assert re.fullmatch(r"parallel-blocks-wave2-[0-9]+", args.attempt)
 remote = "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/" + args.attempt
@@ -49,6 +49,8 @@ if args.profile == 'physical':
     plan={label: stream for label, stream in plan.items() if label in ('A','B')}
     plan['A']['tasks']=[t for t in plan['A']['tasks'] if t['kind']=='physical']
     plan['A']['cores']=sum(t['cores'] for t in plan['A']['tasks'])
+if args.profile == 'retired-evidence':
+    plan={'C': {'node':'node9','cores':1,'tasks':[task('retired-evidence','retired-evidence',1)]}}
 for stream in plan.values():
     assert sum(t["cores"] for t in stream["tasks"]) <= stream["cores"]
 receipt = dict(attempt=args.attempt, remote=remote, host=HOST, image=IMAGE, plan=plan,
@@ -56,7 +58,14 @@ receipt = dict(attempt=args.attempt, remote=remote, host=HOST, image=IMAGE, plan
                runner_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=BASE, text=True).strip(),
                issue="https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
                submitted_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-               scope="A/B new physical cases, C baseline-only view preparation; no accepted hard macro assumed")
+               scope={
+                   'full':'A/B physical cases, C baseline-only view preparation; no accepted hard macro assumed',
+                   'physical':'Seven physical retries with tool-default scratch; no repeated functional or baseline-view job',
+                   'gemm-receipt':'Verify existing original simulation summary and hash; no new simulation',
+                   'top-contract':'Checked black-box wiring and common-die proposal only; no top PNR',
+                   'abc-probe':'Minimal TMPDIR completion-protocol comparison; no block acceptance',
+                   'abc-probe-short':'Corrected minimal short-default TMPDIR probe with standard-cell declarations',
+                   'retired-evidence':'Seal already-written failed audit bytes; retain all failures'}[args.profile])
 ssh("test ! -e " + shlex.quote(remote) + " && mkdir -p " + shlex.quote(remote + "/runner/wave2"))
 for directory, paths in ((remote + "/runner", list(BASE.glob("*.py")) + list(BASE.glob("*.sh"))),
                          (remote + "/runner/wave2", list(HERE.glob("*.py")) + list(HERE.glob("*.sh")))):
