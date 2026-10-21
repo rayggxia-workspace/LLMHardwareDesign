@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
-  "updated_at": "2026-10-21T17:23:57+08:00",
+  "updated_at": "2026-10-21T17:31:59+08:00",
   "kind": "independent_read_only_review_of_existing_physical_reports_and_abstract",
   "reviewer_scope": "Read completed reports, Liberty/LEF and final netlist using lightweight text parsing. No new STA, physical implementation, or source-RTL-to-physical formal equivalence run.",
   "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
@@ -633,7 +633,7 @@
   },
   "pg_access_policy_static_review": {
     "profile": "legal-m10",
-    "status": "Static review only; no successful integration or runtime filtering result reviewed yet",
+    "status": "Static policy plus one isolated in-memory diagnostic reviewed; full legal-m10 top integration remains unverified.",
     "reviewed_script": "project/experiments/block_hierarchy/filter_pg_access.tcl",
     "reviewed_script_local_sha256": "43c803a33d96db81843c57db21f2a511f9b0b9bd3a29ab9d5b8ecd414be3a429",
     "macro_view_bloat_factor": 0,
@@ -659,5 +659,116 @@
     },
     "blocking_static_findings": [],
     "integration_acceptance": false
+  },
+  "filtered_pdn_diagnostic_review": {
+    "attempt": "vec-pdn-filter-01",
+    "job_id": 89461,
+    "mode": "pdn-filter-audit",
+    "status": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:04:35",
+    "time_limit": "UNLIMITED",
+    "launch_code_snapshot": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-pdn-filter-01/launch-code-snapshot.json",
+    "launch_repository_commit": "6762beeba46e494d309b7738f8a25b7a9c50da4a",
+    "working_tree_clean_before_launch": true,
+    "source_attempt": "vec-physical-top-02",
+    "source_odb_sha256": "f829851549017f417b1010318c746a022d8de5d8d48b8fd40046d79c4729dcbe",
+    "input_manifest": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-pdn-filter-01/pdn-audit-inputs.sha256",
+    "executed_filter_script_sha256": "43c803a33d96db81843c57db21f2a511f9b0b9bd3a29ab9d5b8ecd414be3a429",
+    "executed_strict_pg_script_sha256": "818ea1678e56be6bf15822b19a6a262423f0165b3d47a2dcbb2b23903a00f80e",
+    "output_manifest": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-pdn-filter-01/result-files.sha256",
+    "output_sha256": {
+      "pdn-filtered.odb": "cf0f55b19689239e285c6c963bdc29541f037a56b304809b61b2d614e5bf1a74",
+      "pdn-connectivity.json": "e6b0d275b96c75cb915899f824dac7f3ecd1cd2510ece23c9e4a11d6963d5727",
+      "pg-access-selection.json": "e703e41b1f6a0dd317506221820f20e948e0e638d17e7abdd42e7e6b6c527af0",
+      "pg-access-obstructions.tsv": "8c94ac73ccb84a9e91acc767fcf3e9ce657e295ef3383db8b818f6dccd608c20",
+      "pg-access-pins.tsv": "d11282115a0944c3c9a3730a1dfd168e7a9bad4066b51a6a998c3720c6b07836",
+      "pg-removed-sites.tsv": "f748213c130163f01732eb6218fc3cd61dadb40d5cfa2b506504c8e3e272040d",
+      "pg-retained-landings.tsv": "a63e6b86878f73446371a801f7f48eb2de3e92121c8ab31dc19ab3bdea6cbf7a",
+      "pdn-audit.log": "0883ba3f8f0f60ef0773a9c80e1a7978c26ba5f965111be22fa99a5e1883c0c3"
+    },
+    "actual_native_pg_results": {
+      "VDD": {
+        "pass": true,
+        "catch_code": 0,
+        "returned_value": "1",
+        "log_message": "PSM-0040 All shapes on net VDD are connected."
+      },
+      "VSS": {
+        "pass": true,
+        "catch_code": 0,
+        "returned_value": "1",
+        "log_message": "PSM-0040 All shapes on net VSS are connected."
+      },
+      "macro_pg_iterm_count": 2,
+      "macro_pg_iterms_on_expected_supply_nets": true,
+      "method": "Independently read closed JSON and raw native log lines after terminal sacct completion; not inferred from job state or PG names."
+    },
+    "independent_tsv_geometry_recomputation": {
+      "method": "Separate Python CSV reader rechecked every retained landing row, expanded rectangle intersections and same-net M7 containment against actual exported master OBS/pins; rebuilt via-layer sets and same-net/XY station membership. No database load/mutation, STA or PI run.",
+      "actual_master_obstruction_count": 9701802,
+      "exported_obs_counts": {
+        "metal7": 579,
+        "metal8": 96,
+        "metal9": 40
+      },
+      "pg_pin_rect_counts": {
+        "VDD": 38,
+        "VSS": 39
+      },
+      "dbu_per_um": 2000,
+      "orientation": "R0",
+      "master_origin_dbu": [
+        0,
+        0
+      ],
+      "instance_location_dbu": [
+        160000,
+        160000
+      ],
+      "instance_bbox_dbu": [
+        160000,
+        160000,
+        2457040,
+        2457040
+      ],
+      "guard_um": 2.0,
+      "parent_pg_vias_before": 31872,
+      "removed_vias": 366,
+      "removed_same_net_xy_sites": 122,
+      "retained_vias": 31506,
+      "retained_landing_rows": 63012,
+      "retained_landing_rows_by_layer": {
+        "metal1": 4289,
+        "metal2": 8578,
+        "metal3": 8578,
+        "metal4": 4860,
+        "metal5": 1142,
+        "metal6": 1142,
+        "metal7": 6213,
+        "metal8": 11284,
+        "metal9": 11284,
+        "metal10": 5642
+      },
+      "m7_fully_contained_same_net_contact_exemptions": 2847,
+      "remaining_m7_to_m9_guard_intersections": 0,
+      "retained_complete_7_to_10_stack_sites": 5642,
+      "retained_incomplete_7_to_10_stack_sites": 0,
+      "removed_reason_rows_checked": 259,
+      "invalid_removed_reason_rows": 0,
+      "removed_groups_have_no_retained_members": true,
+      "both_previously_diagnosed_sample_sites_removed": true,
+      "standalone_m8_m9_pg_patch_runtime_assert_passed": true,
+      "lower_layer_boundary": "M1-M6 landings were exported/count-checked, but no full actual-OBS guard recomputation was performed for those layers. A coarse macro-bbox test finds M4=172, M5=344, M6=344 positive-overlap landing rows; that alone does not establish a violation. Native PG pass does not extend this review to all-layer spacing signoff."
+    },
+    "isolated_engineering_diagnostic_pass": true,
+    "new_top_flow_completed": false,
+    "new_sta_replay": false,
+    "new_current_or_ir_drop_analysis": false,
+    "complete_integration_acceptance": false,
+    "source_odb_read_only_by_reviewed_script": true,
+    "writes_only_own_filtered_odb": true,
+    "preserved_failures": "The original top-02/89456 and guarded top-03/89457 remain failed and unaccepted; this diagnostic does not rewrite or retroactively accept them.",
+    "next": "A clean committed full legal-m10 top attempt may proceed within this task, then independently review early/final PG, actual final ODB/interfaces, POST reports, STA/electrical/DRC and final check-only site audit. Block internal 3ns timing failure and missing macro current model remain separate limitations."
   }
 }

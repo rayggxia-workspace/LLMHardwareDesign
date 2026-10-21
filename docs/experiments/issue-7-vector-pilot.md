@@ -24,7 +24,7 @@
 | `vec-top-01`／89444 | 运行前取消，原提交与状态保留；没有产生顶层结果 |
 | `vec-top-02`／89445 | 依赖 89443，因依赖失效自动取消；未执行顶层实现 |
 | `vec-harden-resume-01`／89447 | `FAILED`，约 10 秒，`2:0`；父作业及输入身份检查通过，但 `make -n finish` 因尚未执行阶段应生成的 SDC 副产物缺失而失败；没有继续物理流程。保留日志，恢复检查需改为核对首个待执行阶段 |
-| `vec-harden-resume-02`／89448 | c64、16 CPU；实读 `TimeLimit=UNLIMITED`，保存调度快照；身份与首个待执行阶段的 dry-run 通过，实测直接接续 CTS、没有重跑综合；终态待回填 |
+| `vec-harden-resume-02`／89448 | c64、16 CPU；实读 `TimeLimit=UNLIMITED`，保存调度快照；身份与首个待执行阶段的 dry-run 通过，实测直接进入 stage4、没有重跑综合；当前仍在该阶段 Kepler LEC，尚无完成的 CTS 产物；终态待回填 |
 | `vec-top-03`／89449 | c64、16 CPU；实读 `TimeLimit=UNLIMITED`；`afterok:89448` 等待 Block 完成，尚无顶层物理结果 |
 | `vec-regression-01`／89452 | `FAILED`；c64、8 CPU、实读 `TimeLimit=UNLIMITED`；GCC 11.4 编译 `tb_math.cpp` 的 `uint32_t edge32[]` 时拒绝 `1 << 31` 的 narrowing，未执行运行期案例；日志与 fail JSON 保留 |
 | `vec-physical-01`／89453 | `COMPLETED 0:0`，33:03，c64、16 CPU、`UNLIMITED`；同源 89443 checkpoint、身份与 dry-run 通过，接续 CTS，完成 ORFS `finish`。显式 `LEC_CHECK=0`，不继承其他作业的等价结论；路由几何检查通过，3 ns setup 预算未满足 |
@@ -33,6 +33,7 @@
 | `vec-physical-top-02`／89456 | `FAILED 2:0`，8:09，c64、16 CPU、`UNLIMITED`；新详细 OBS／M10 配置通过 PDN 生成与 DRT（错误 0），但最终 PSM 报 M8／M9 短接及 `PSM-0069` 连通失败；POST 最终检查未执行，不构成顶层验收 |
 | `vec-physical-top-03`／89457 | `FAILED 2:0`，3:27，c64、16 CPU、`UNLIMITED`；从已提交快照 `da059f906a74d344547c9faa6cb59571638fd126` 启动，显式 `guarded-m10`；早期 VDD／VSS 均返回 `PSM-0069`，分别报告 43／22 处短接；未推进 CTS／布线，bloat1 未解决原短接 |
 | `vec-pdn-audit-01`／89459 | `FAILED 1:0`，4:16，c64、1 CPU、`UNLIMITED`；在新目录只读 89456 的终态 ODB，VDD／VSS 均正确报 `PSM-0069`，分别 43／22 处短接，错误报告 hash 与89457相同；是成功识别坏网格的负向复核，目标顶层仍为失败 |
+| `vec-pdn-filter-01`／89461 | `COMPLETED 0:0`，4:35，c64、1 CPU、`UNLIMITED`；精确代码快照 `6762beeba46e494d309b7738f8a25b7a9c50da4a`，对失败56只读输入做内存选站；移除122站／366个新父级via，保留31,506个。VDD／VSS 均原生返回真，残余几何独立复算通过；这验收隔离修复候选，不替代完整top验收 |
 
 综合阶段记录了 259,349 个标准单元，标准单元面积为 460,078 µm²；这是 `1_synth.json` 的阶段指标，不是最终宏面积或制造占地。后续修复、时钟和布线还会改变资源。
 
@@ -87,7 +88,11 @@ Liberty 不包含 `minimum_period` 检查，只含时钟树路径信息，因此
 
 新 `legal-m10` 候选回到同一 ODB 的 bloat0 详细视图，显式筛选父级新生成的 PG via 站：读取实际导入 master 的 OBS／PG pin、完整 via master 落点和 DBU 坐标；M8／M9 用 2 µm 保守间隙，M7 仅豁免完全包含于同网既有 PG pin 的接点，否则同样避障。固定镜像三层间距表的最大值已实读为 1.5 µm；2 µm 检查不等于覆盖所有工艺规则。M10 无宏 OBS 的假设由实际数据断言。
 
-任一落点不合格即移除同 net／同 XY 整组新父级 PG via，包含可能受 M7 检查影响的低层父级组；不改宏 master、信号、引脚、原 PG 或原视图。含 M8／M9 的站必须具备完整 7→8→9→10 层级，独立 M8／M9 金属 patch 或不完整站会拒绝继续。删后重新枚举全部残余落点，保存 TSV／筛选 JSON，并仍要求两网连通。先用独立 `pdn-filter-audit` 在旧失败数据库的内存副本验证，结果通过且独立复算后再提交完整顶层；最终 `pdn-site-audit` 只检查、不删除、不回写。实际效果仍待运行，不能将筛除脚本的自报零交叠当作完整验收。
+独立几何复算的 OBS／间距范围为 M7–M9，尽管 TSV 也导出 M1–M6 落点，不能据此宣称低层已通过同样的 2 µm 检查。其他层仍依赖原生供电检查和后续流程检查，整体也不是全工艺签核。
+
+任一落点不合格即移除同 net／同 XY 整组新父级 PG via，包含可能受 M7 检查影响的低层父级组；不改宏 master、信号、引脚、原 PG 或原视图。含 M8／M9 的站必须具备完整 7→8→9→10 层级，独立 M8／M9 金属 patch 或不完整站会拒绝继续。删后重新枚举全部残余落点，保存 TSV／筛选 JSON，并仍要求两网连通。先用独立 `pdn-filter-audit` 在旧失败数据库的内存副本验证，结果通过且独立复算后再提交完整顶层；最终 `pdn-site-audit` 只检查、不删除、不回写。完整顶层效果仍待验证，不能将筛除脚本的自报零交叠当作完整验收。
+
+89461 已完成隔离验证：31,506 个保留 via 对应 63,012 个金属落点；独立 Python 复算确认 M7–M9 按上述政策无剩余 guard 交叠、5,642 个保留中间层站完整，122 个剔除站没有残余成员，259 条剔除理由均成立。VDD／VSS 均打印 `PSM-0040 All shapes connected`，Tcl catch=0、实际返回值为1，两个宏 PG ITerm 归属正确。新 `pdn-filtered.odb` 仅写入此审计目录，旧56数据库不改；后续仍须重新完成顶层物理流程及最终只读审计。
 
 镜像默认 PDN 脚本注释了 `check_power_grid`；新增 `pdn-audit` 模式用于在独立计算作业读取顶层 ODB，显式检查 VDD／VSS 连通和宏 PG ITerm 的网络，记录报告存在性。实际镜像的失败反例已在独立诊断中验证抛 Tcl error，失败没有被成功退出掩盖；审计同时检查命令返回值，不能把 `pdngen` 完成当作连通通过。
 
