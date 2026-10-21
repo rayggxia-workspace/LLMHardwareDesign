@@ -1,0 +1,81 @@
+"""Submit three bounded, isolated work streams; no job or test wall-clock deadline."""
+import argparse
+import datetime
+import json
+from pathlib import Path
+import re
+import shlex
+import subprocess
+
+HERE = Path(__file__).resolve().parent
+BASE = HERE.parent
+HOST = "yuzelu@10.129.166.172"
+IMAGE = "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif"
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--attempt", required=True)
+args = parser.parse_args()
+assert re.fullmatch(r"parallel-blocks-wave2-[0-9]+", args.attempt)
+remote = "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/" + args.attempt
+
+
+def ssh(command):
+    return subprocess.check_output(["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=15", HOST, command], text=True).strip()
+
+
+def task(name, kind, cores, case="opentpu-act", margin=0):
+    return dict(name=name, kind=kind, cores=cores, case=case, cap_margin=margin)
+
+
+plan = {"A": {"node": "node7", "cores": 64, "tasks": [
+    task("act-cap00", "physical", 16), task("act-cap10", "physical", 16, margin=10),
+    task("act-cap20", "physical", 16, margin=20), task("opentpu-validation", "opentpu-validation", 8),
+    task("gemm-regression", "gemm-regression", 8, case="llaccel-gemm")]},
+    "B": {"node": "node8", "cores": 64, "tasks": [
+        task("gemm-cap10", "physical", 16, case="llaccel-gemm", margin=10),
+        task("gemm-cap20", "physical", 16, case="llaccel-gemm", margin=20),
+        task("mxu-cap20", "physical", 16, case="opentpu-mxu", margin=20),
+        task("merged-cap20", "physical", 16, case="opentpu-act-mxu", margin=20)]},
+    "C": {"node": "node9", "cores": 8, "tasks": [task("baseline-views", "baseline-views", 8)]}}
+for stream in plan.values():
+    assert sum(t["cores"] for t in stream["tasks"]) <= stream["cores"]
+receipt = dict(attempt=args.attempt, remote=remote, host=HOST, image=IMAGE, plan=plan,
+               runner_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=BASE, text=True).strip(),
+               issue="https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
+               submitted_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+               scope="A/B new physical cases, C baseline-only view preparation; no accepted hard macro assumed")
+ssh("test ! -e " + shlex.quote(remote) + " && mkdir -p " + shlex.quote(remote + "/runner/wave2"))
+for directory, paths in ((remote + "/runner", list(BASE.glob("*.py")) + list(BASE.glob("*.sh"))),
+                         (remote + "/runner/wave2", list(HERE.glob("*.py")) + list(HERE.glob("*.sh")))):
+    subprocess.run(["scp", "-q", *map(str, paths), HOST + ":" + directory + "/"], check=True)
+ssh("find " + shlex.quote(remote + "/runner") + " -name '*.sh' -exec bash -n '{}' ';'")
+payload = json.dumps(receipt, indent=2)
+ssh("printf '%s\\n' " + shlex.quote(payload) + " > " + shlex.quote(remote + "/submission.json"))
+out = BASE / "results" / (args.attempt + "-submission.json")
+out.write_text(payload + "\n")
+for label, stream in plan.items():
+    command = ["sbatch", "--parsable", "-p", "c64", "-N", "1", "-n", "1", "-c", str(stream["cores"]),
+               "-w", stream["node"], "--time=0", "-J", "lyz-wave2-" + label.lower(),
+               "-o", remote + "/stream-" + label + ".log", "--export",
+               "ALL,LLHD_BATCH=" + remote + ",LLHD_IMAGE=" + IMAGE + ",LLHD_STREAM=" + label,
+               remote + "/runner/wave2/stream.sh"]
+    job = ssh(" ".join(map(shlex.quote, command)))
+    assert re.fullmatch(r"\d+", job)
+    stream["job_id"] = int(job)
+    stream["scheduler_readback"] = ssh("scontrol -o show job " + job)
+    assert "TimeLimit=UNLIMITED" in stream["scheduler_readback"], "Incorrect limit; inspect this newly submitted job"
+    payload = json.dumps(receipt, indent=2)
+    ssh("printf '%s\\n' " + shlex.quote(payload) + " > " + shlex.quote(remote + "/submission.json"))
+    out.write_text(payload + "\n")
+    print(label, job, stream["node"], stream["cores"], flush=True)
+dependencies=":".join(str(s["job_id"]) for s in plan.values())
+audit=ssh(" ".join(map(shlex.quote,["sbatch","--parsable","-p","c64","-N","1","-n","1","-c","1",
+    "--time=0","--dependency=afterany:"+dependencies,"-J","lyz-wave2-audit","-o",remote+"/audit.log",
+    "--export","ALL,LLHD_BATCH="+remote,remote+"/runner/wave2/audit.sh"])))
+assert re.fullmatch(r"\d+",audit)
+receipt['audit_job_id']=int(audit)
+receipt['audit_scheduler_readback']=ssh('scontrol -o show job '+audit)
+assert 'TimeLimit=UNLIMITED' in receipt['audit_scheduler_readback']
+payload=json.dumps(receipt,indent=2)
+ssh("printf '%s\\n' " + shlex.quote(payload) + " > " + shlex.quote(remote + "/submission.json"))
+out.write_text(payload+'\n')
+print('audit',audit,'afterany:'+dependencies,flush=True)

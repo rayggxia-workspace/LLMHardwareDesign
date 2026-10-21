@@ -12,4 +12,9 @@ if test -f boundary.sv; then sha256sum boundary.sv >> config-inputs.sha256; fi
 yosys -Q -T -l elab.log -s elab.ys
 python3 "$LLHD_BATCH/runner/summarize_elab.py"
 make -C /OpenROAD-flow-scripts/flow DESIGN_CONFIG="$PWD/config.mk" \
-  WORK_HOME="$PWD/flow" NUM_CORES=16 finish 2>&1 | tee flow.log
+  WORK_HOME="$PWD/flow" NUM_CORES="${NUM_CORES:-16}" finish 2>&1 | tee flow.log
+if test "${LLHD_EXPORT_ABSTRACT:-0}" = 1; then
+  make -C /OpenROAD-flow-scripts/flow DESIGN_CONFIG="$PWD/config.mk" \
+    WORK_HOME="$PWD/flow" NUM_CORES="$NUM_CORES" generate_abstract 2>&1 | tee abstract.log
+  python3 "$LLHD_BATCH/runner/wave2/export_detail.py"
+fi

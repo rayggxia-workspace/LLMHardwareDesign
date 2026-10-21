@@ -8,6 +8,9 @@ import sys
 root = Path.cwd()
 source = root / "source"
 case = os.environ["LLHD_CASE"]
+cap_margin = os.environ.get("LLHD_CAP_MARGIN")
+if cap_margin is not None:
+    assert cap_margin in ("0", "10", "20"), cap_margin
 
 ACT_WRITE = """input logic [3:0] we,
   input logic [7:0] w_row,
@@ -136,6 +139,11 @@ else:
         F.fakeram.write(macro, model_dir / "macros")
     mapped = model_dir / "src" / "otpu_sram_map.sv"
     mapped.write_text(F.sram_map(macros))
+    if os.environ.get("LLHD_UNIQUE_TOP") == "1":
+        top = "llhd_" + case.replace("-", "_")
+        original = wrapper.read_text()
+        assert original.count("module otpu_asic_top ") == 1
+        wrapper.write_text(original.replace("module otpu_asic_top ", "module " + top + " ", 1))
     files += [mapped] + [model_dir / "macros" / (m.name + "_bb.v") for m in macros]
     lefs = " ".join(str(model_dir / "macros" / (m.name + ".lef")) for m in macros)
     libs = " ".join(str(model_dir / "macros" / (m.name + ".lib")) for m in macros)
@@ -165,9 +173,11 @@ commands = [frontend + " " + " ".join(map(str, files)),
     "export CORE_UTILIZATION = 35\nexport PLACE_DENSITY = 0.55\n"
     "export TNS_END_PERCENT = 100\nexport SYNTH_HIERARCHICAL = 0\nexport ABC_AREA = 0\n"
     "export SKIP_GATE_CLONING = 0\nexport SYNTH_ARGS = -noshare\n"
-    "export SYNTH_MEMORY_MAX_BITS = 16384\nexport LEC_CHECK = 0\n" + extra_config)
+    "export SYNTH_MEMORY_MAX_BITS = 16384\nexport LEC_CHECK = 0\n" + extra_config
+    + ("export CAP_MARGIN = " + cap_margin + "\n" if cap_margin is not None else ""))
 (root / "experiment.json").write_text(json.dumps({
     "case": case, "top": top, "parameters": params, "clock_ns": period, "io_delay_ns": delay,
+    "cap_margin": int(cap_margin) if cap_margin is not None else None,
     "source_rtl_modified": False, "added_registers": 0, "phase_lec": "explicitly disabled physical-only route",
     "memory_model": memory_note, "external_driver_load_model": "not specified; boundary timing budget only",
     "scope": "independent block implementation; not top integration, H2, source-to-netlist equivalence or signoff"
