@@ -1,0 +1,637 @@
+{
+  "labels": {
+    "GEMM_WEIGHT": "GEMM：bank 读数据 → 权重缓冲 D",
+    "GEMM_AUX": "GEMM：bank 读数据 → 乘法首级／参数状态 D",
+    "VECTOR_A": "VECTOR：bank 读数据 → 读口 0 缓冲 D",
+    "VECTOR_B": "VECTOR：bank 读数据 → 读口 1 缓冲 D",
+    "GEMM_WRITE": "GEMM：输出 FIFO 数据 Q → bank 写数据",
+    "VECTOR_WRITE": "VECTOR：结果寄存器 Q → bank 写数据"
+  },
+  "source": {
+    "type": "header",
+    "created_utc": "2026-10-20T10:02:23.947298+00:00",
+    "files": [
+      {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/runs/llaccel-v1-attempt03/flow/results/nangate45/llaccel_core_v1/base/6_final.odb",
+        "sha256": "8651474a2a9acd52f97a8eaff6bc52f69eb19b19326f1af36e56d8edf4a57eac",
+        "snapshot_equal": true
+      },
+      {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/runs/llaccel-v1-attempt03/flow/results/nangate45/llaccel_core_v1/base/6_final.v",
+        "sha256": "7929c818b01513f46a8a5d6df659d69fbc44a3b07af1237f893c1d372472394d",
+        "snapshot_equal": true
+      },
+      {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/runs/llaccel-v1-attempt03/flow/results/nangate45/llaccel_core_v1/base/6_final.sdc",
+        "sha256": "68f6720fe4266510f4432a66c24477596dd8964556f398580ad780f302f8c428",
+        "snapshot_equal": true
+      },
+      {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/runs/llaccel-v1-attempt03/flow/results/nangate45/llaccel_core_v1/base/1_2_yosys.v",
+        "sha256": "d9ec9dafcc3b849232a4f7bf3bb8f39020df8ca5d81658fb70cb3e89f684462e",
+        "snapshot_equal": true
+      }
+    ],
+    "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+    "extraction": {
+      "type": "header",
+      "schema": 1,
+      "block": "llaccel_core",
+      "dbu_per_um": 2000,
+      "die_area_dbu": [
+        0,
+        0,
+        4469820,
+        4469820
+      ],
+      "odb_input": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/llaccel-html-20261019/6_final.odb",
+      "odb_input_sha256": "8651474a2a9acd52f97a8eaff6bc52f69eb19b19326f1af36e56d8edf4a57eac",
+      "exporter_sha256": "b94aaaf51882ba3de20bca5ace9f62eba609efb2f463bf42ed1b554e4b557eb6",
+      "config": {
+        "odb": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/llaccel-html-20261019/6_final.odb",
+        "bridge": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/llaccel-html-20261019/bridge.jsonl",
+        "output": "/public/home/yuzelu/project-circuit/llm_routing_analysis/stats/llaccel-html-20261019/dedicated_v2",
+        "design_id": "llaccel-html-20261019 with connectivity-verified dedicated nets",
+        "mapping": "/public/home/yuzelu/project-circuit/llm_routing_analysis/stats/llaccel-html-20261019/mapping_dedicated_v2.json",
+        "provenance": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/llaccel-html-20261019/snapshot_manifest.json",
+        "physical_um_per_database_um": 1,
+        "physical_units_evidence": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/llaccel-html-20261019/analysis/physical_units.json",
+        "unary_library_json": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/validation/nangate-library-units-v1/unary/library.json",
+        "final_verilog": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/llaccel-html-20261019/6_final.v",
+        "mapped_verilog": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/llaccel-html-20261019/1_2_yosys.v",
+        "library_verilog": [],
+        "top": "llaccel_core",
+        "audit_dir": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/llaccel-html-20261019/analysis"
+      },
+      "odb_sha256": "8651474a2a9acd52f97a8eaff6bc52f69eb19b19326f1af36e56d8edf4a57eac",
+      "bridge_sha256": "4f1ac6eff5b9cbbd03d003e48d9a7e2f93d7ce06c7f3daa2526951f8ff2d6a9d",
+      "script_sha256": "f1b26f65fe4a279647c30a45b7d9f960758c212bced517a1c2ab212b311ea1f1",
+      "helper_sha256": "b004b219f81de0da5590ed3dad4bb28be9cb6a24dbdd2b8ee3e02c7c7810f6ee",
+      "tcl_exporter_sha256": "b94aaaf51882ba3de20bca5ace9f62eba609efb2f463bf42ed1b554e4b557eb6",
+      "mapping_sha256": "3c901765e000659400c1b94b9224e1bf9c09098b8a0ffbdbb45674b570f5cac4",
+      "provenance_sha256": "fae100d8dfe5f6c2751ebb80d8373b1e8f705503ede5748cbd74453626d9a25d",
+      "counts": {
+        "all_nets": 1216339,
+        "unknown_category_nets": 1112637,
+        "nets_with_unknown_endpoints": 1132198,
+        "nets_with_dbwire": 1131217,
+        "patch_rectangles": 0,
+        "virtual_connections": 0,
+        "nets_without_dbwire": 85122,
+        "nets_with_special_wire_boxes": 2
+      },
+      "totals": {
+        "dbwire_centerline_length_dbu": 54204832400,
+        "dbwire_raw_centerline_length_dbu": 54204832400,
+        "length_dbu_touching_unknown_endpoint": 54204832400,
+        "unknown_category_length_dbu": 52159229710,
+        "multi_module_shared_length_dbu": 83479120
+      },
+      "detailed_route_completion": "MUST_VERIFY_AGAINST_PINNED_FLOW_LOGS_AND_DRC",
+      "method": "Actual Tcl dbWireDecoder points; same-net same-layer collinear union. See scripts/EXTRACT_ODB.md.",
+      "limitations": [
+        "Patch metal retained as rectangles, not fictitious centerline length",
+        "Special-wire boxes retained but centerline/via stats unavailable",
+        "Module-pair length is a whole-net total only for exactly two known modules, not branch attribution",
+        "Macro internal wires unavailable",
+        "Dedicated networks occupy exclusive summary categories",
+        "macro_interfaces.csv overlaps main category totals: each net with actual BLOCK* and CORE* endpoints contributes once per layer/category; never add this view to the main total"
+      ],
+      "dbu_per_database_um": 2000,
+      "physical_um_per_database_um": 1.0,
+      "effective_dbu_per_physical_um": 2000.0,
+      "physical_units_evidence": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/llaccel-html-20261019/analysis/physical_units.json",
+      "physical_units_status": "EVIDENCE_PROVIDED",
+      "length_um_meaning": "physical um = original DBU / dbu_per_database_um * physical_um_per_database_um; database_length_um retained separately"
+    },
+    "scope": "Read-only derivative of existing final ODB extraction; no physical rerun."
+  },
+  "input_sha256": "3b7e9c36c9834aeac98e0606d53bc5bdd728e56e673e64701eaeb511792eb81d",
+  "liberty_sha256": "1187ee2833064c9e6d8ebda26e3b2eaa999c88440c11e54b72749882ba218246",
+  "results": {
+    "GEMM_WEIGHT": {
+      "nets": 29321,
+      "length_um": 2216853.335,
+      "layers_um": {
+        "metal10": 1480.0,
+        "metal2": 254282.42,
+        "metal3": 424903.21,
+        "metal4": 559327.75,
+        "metal5": 489486.835,
+        "metal6": 385322.9,
+        "metal7": 67315.02,
+        "metal8": 20964.8,
+        "metal9": 13770.4
+      },
+      "M4plus_pct": 69.36262677927677,
+      "M2M3_pct": 30.637373220723237
+    },
+    "GEMM_WEIGHT_STATE_DIRECT": {
+      "nets": 4096,
+      "length_um": 10323.185,
+      "layers_um": {
+        "metal2": 2899.705,
+        "metal3": 7421.8,
+        "metal4": 1.68
+      },
+      "M4plus_pct": 0.016274047205392522,
+      "M2M3_pct": 99.98372595279461
+    },
+    "GEMM_WEIGHT_STATE_LEG": {
+      "nets": 4438,
+      "length_um": 10852.235,
+      "layers_um": {
+        "metal2": 3189.595,
+        "metal3": 7660.96,
+        "metal4": 1.68
+      },
+      "M4plus_pct": 0.015480682089910512,
+      "M2M3_pct": 99.98451931791008
+    },
+    "GEMM_WEIGHT_BANK_LEG": {
+      "nets": 12288,
+      "length_um": 1825598.34,
+      "layers_um": {
+        "metal10": 1480.0,
+        "metal2": 180655.77,
+        "metal3": 304255.825,
+        "metal4": 471116.655,
+        "metal5": 427348.25,
+        "metal6": 345078.02,
+        "metal7": 62312.62,
+        "metal8": 20412.8,
+        "metal9": 12938.4
+      },
+      "M4plus_pct": 73.43821012676862,
+      "M2M3_pct": 26.56178987323137
+    },
+    "GEMM_AUX": {
+      "nets": 105220,
+      "length_um": 2723756.35,
+      "layers_um": {
+        "metal10": 1696.0,
+        "metal2": 463965.56,
+        "metal3": 643919.16,
+        "metal4": 595260.135,
+        "metal5": 483940.12,
+        "metal6": 431688.955,
+        "metal7": 64794.42,
+        "metal8": 25400.0,
+        "metal9": 13092.0
+      },
+      "M4plus_pct": 59.32511658026974,
+      "M2M3_pct": 40.67488341973026
+    },
+    "GEMM_AUX_STATE_DIRECT": {
+      "nets": 5216,
+      "length_um": 15661.17,
+      "layers_um": {
+        "metal2": 3942.39,
+        "metal3": 8536.08,
+        "metal4": 1076.18,
+        "metal5": 1574.44,
+        "metal6": 334.4,
+        "metal7": 197.68
+      },
+      "M4plus_pct": 20.32223646126056,
+      "M2M3_pct": 79.67776353873944
+    },
+    "GEMM_AUX_STATE_LEG": {
+      "nets": 5643,
+      "length_um": 16432.63,
+      "layers_um": {
+        "metal2": 4291.96,
+        "metal3": 8840.37,
+        "metal4": 1193.78,
+        "metal5": 1574.44,
+        "metal6": 334.4,
+        "metal7": 197.68
+      },
+      "M4plus_pct": 20.083821031691215,
+      "M2M3_pct": 79.91617896830878
+    },
+    "GEMM_AUX_BANK_LEG": {
+      "nets": 11237,
+      "length_um": 1708126.55,
+      "layers_um": {
+        "metal10": 1396.8,
+        "metal2": 179209.575,
+        "metal3": 285173.63,
+        "metal4": 434230.535,
+        "metal5": 402430.53,
+        "metal6": 312628.86,
+        "metal7": 59472.62,
+        "metal8": 21007.2,
+        "metal9": 12576.8
+      },
+      "M4plus_pct": 72.81330209403981,
+      "M2M3_pct": 27.186697905960187
+    },
+    "VECTOR_A": {
+      "nets": 16292,
+      "length_um": 1973586.9,
+      "layers_um": {
+        "metal10": 720.0,
+        "metal2": 184503.615,
+        "metal3": 331716.67,
+        "metal4": 459819.005,
+        "metal5": 593326.61,
+        "metal6": 289834.06,
+        "metal7": 81616.54,
+        "metal8": 15780.0,
+        "metal9": 16270.4
+      },
+      "M4plus_pct": 73.84354927568683,
+      "M2M3_pct": 26.156450724313178
+    },
+    "VECTOR_A_STATE_DIRECT": {
+      "nets": 1152,
+      "length_um": 2270.75,
+      "layers_um": {
+        "metal2": 870.12,
+        "metal3": 1400.63
+      },
+      "M4plus_pct": 0.0,
+      "M2M3_pct": 100.0
+    },
+    "VECTOR_A_STATE_LEG": {
+      "nets": 1152,
+      "length_um": 2270.75,
+      "layers_um": {
+        "metal2": 870.12,
+        "metal3": 1400.63
+      },
+      "M4plus_pct": 0.0,
+      "M2M3_pct": 100.0
+    },
+    "VECTOR_A_BANK_LEG": {
+      "nets": 10593,
+      "length_um": 1652838.31,
+      "layers_um": {
+        "metal10": 720.0,
+        "metal2": 171480.575,
+        "metal3": 280743.96,
+        "metal4": 421380.045,
+        "metal5": 405852.17,
+        "metal6": 284399.74,
+        "metal7": 59996.22,
+        "metal8": 15707.2,
+        "metal9": 12558.4
+      },
+      "M4plus_pct": 72.63951759443427,
+      "M2M3_pct": 27.360482405565733
+    },
+    "VECTOR_B": {
+      "nets": 15710,
+      "length_um": 1797900.24,
+      "layers_um": {
+        "metal10": 483.2,
+        "metal2": 177653.18,
+        "metal3": 316181.765,
+        "metal4": 421051.045,
+        "metal5": 521677.93,
+        "metal6": 258989.22,
+        "metal7": 72276.7,
+        "metal8": 14427.2,
+        "metal9": 15160.0
+      },
+      "M4plus_pct": 72.53268373778069,
+      "M2M3_pct": 27.46731626221931
+    },
+    "VECTOR_B_STATE_DIRECT": {
+      "nets": 1152,
+      "length_um": 2173.66,
+      "layers_um": {
+        "metal2": 956.31,
+        "metal3": 1217.35
+      },
+      "M4plus_pct": 0.0,
+      "M2M3_pct": 100.0
+    },
+    "VECTOR_B_STATE_LEG": {
+      "nets": 1155,
+      "length_um": 2176.76,
+      "layers_um": {
+        "metal2": 959.41,
+        "metal3": 1217.35
+      },
+      "M4plus_pct": 0.0,
+      "M2M3_pct": 100.0
+    },
+    "VECTOR_B_BANK_LEG": {
+      "nets": 10070,
+      "length_um": 1562927.88,
+      "layers_um": {
+        "metal10": 483.2,
+        "metal2": 160969.8,
+        "metal3": 272834.225,
+        "metal4": 386093.045,
+        "metal5": 400391.85,
+        "metal6": 255772.66,
+        "metal7": 59376.7,
+        "metal8": 14420.0,
+        "metal9": 12586.4
+      },
+      "M4plus_pct": 72.24414315265781,
+      "M2M3_pct": 27.755856847342184
+    },
+    "GEMM_WRITE": {
+      "nets": 10351,
+      "length_um": 1148014.335,
+      "layers_um": {
+        "metal2": 75795.21,
+        "metal3": 201289.075,
+        "metal4": 227767.26,
+        "metal5": 353614.52,
+        "metal6": 219628.67,
+        "metal7": 53645.2,
+        "metal8": 4455.2,
+        "metal9": 11819.2
+      },
+      "M4plus_pct": 75.86403962455748,
+      "M2M3_pct": 24.135960375442526
+    },
+    "GEMM_WRITE_STATE_DIRECT": {
+      "nets": 512,
+      "length_um": 2428.51,
+      "layers_um": {
+        "metal2": 1065.05,
+        "metal3": 1363.46
+      },
+      "M4plus_pct": 0.0,
+      "M2M3_pct": 100.0
+    },
+    "GEMM_WRITE_STATE_LEG": {
+      "nets": 512,
+      "length_um": 2428.51,
+      "layers_um": {
+        "metal2": 1065.05,
+        "metal3": 1363.46
+      },
+      "M4plus_pct": 0.0,
+      "M2M3_pct": 100.0
+    },
+    "GEMM_WRITE_BANK_LEG": {
+      "nets": 6075,
+      "length_um": 970417.08,
+      "layers_um": {
+        "metal2": 52443.985,
+        "metal3": 179505.905,
+        "metal4": 180510.68,
+        "metal5": 341744.48,
+        "metal6": 149195.63,
+        "metal7": 52764.4,
+        "metal8": 3151.2,
+        "metal9": 11100.8
+      },
+      "M4plus_pct": 76.09791760878734,
+      "M2M3_pct": 23.90208239121265
+    },
+    "VECTOR_WRITE": {
+      "nets": 8341,
+      "length_um": 1458309.06,
+      "layers_um": {
+        "metal2": 72636.455,
+        "metal3": 237179.765,
+        "metal4": 390322.97,
+        "metal5": 427460.88,
+        "metal6": 258489.91,
+        "metal7": 56483.88,
+        "metal8": 4354.4,
+        "metal9": 11380.8
+      },
+      "M4plus_pct": 78.75510558783746,
+      "M2M3_pct": 21.244894412162537
+    },
+    "VECTOR_WRITE_STATE_DIRECT": {
+      "nets": 256,
+      "length_um": 135528.885,
+      "layers_um": {
+        "metal2": 1186.41,
+        "metal3": 13209.215,
+        "metal4": 66113.46,
+        "metal5": 28207.2,
+        "metal6": 26468.48,
+        "metal7": 344.12
+      },
+      "M4plus_pct": 89.37818679759668,
+      "M2M3_pct": 10.621813202403311
+    },
+    "VECTOR_WRITE_STATE_LEG": {
+      "nets": 1050,
+      "length_um": 434383.515,
+      "layers_um": {
+        "metal2": 7288.94,
+        "metal3": 44570.405,
+        "metal4": 195354.77,
+        "metal5": 81282.04,
+        "metal6": 101130.36,
+        "metal7": 3623.4,
+        "metal8": 853.6,
+        "metal9": 280.0
+      },
+      "M4plus_pct": 88.06139201668368,
+      "M2M3_pct": 11.93860798331631
+    },
+    "VECTOR_WRITE_BANK_LEG": {
+      "nets": 6075,
+      "length_um": 970417.08,
+      "layers_um": {
+        "metal2": 52443.985,
+        "metal3": 179505.905,
+        "metal4": 180510.68,
+        "metal5": 341744.48,
+        "metal6": 149195.63,
+        "metal7": 52764.4,
+        "metal8": 3151.2,
+        "metal9": 11100.8
+      },
+      "M4plus_pct": 76.09791760878734,
+      "M2M3_pct": 23.90208239121265
+    },
+    "bank_wdata": {
+      "nets": 2048,
+      "length_um": 363311.32,
+      "layers_um": {
+        "metal2": 9002.11,
+        "metal3": 64072.44,
+        "metal4": 53533.9,
+        "metal5": 162265.6,
+        "metal6": 48278.15,
+        "metal7": 19239.92,
+        "metal8": 704.0,
+        "metal9": 6215.2
+      },
+      "M4plus_pct": 79.88651991355513,
+      "M2M3_pct": 20.11348008644487
+    },
+    "bank_rdata": {
+      "nets": 2048,
+      "length_um": 543858.31,
+      "layers_um": {
+        "metal2": 19620.7,
+        "metal3": 61161.88,
+        "metal4": 99049.16,
+        "metal5": 232008.0,
+        "metal6": 75196.97,
+        "metal7": 44632.8,
+        "metal8": 1724.0,
+        "metal9": 10464.8
+      },
+      "M4plus_pct": 85.14639226529424,
+      "M2M3_pct": 14.853607734705754
+    },
+    "bank_we": {
+      "nets": 256,
+      "length_um": 600.98,
+      "layers_um": {
+        "metal2": 26.61,
+        "metal3": 247.05,
+        "metal4": 221.76,
+        "metal5": 56.56,
+        "metal6": 49.0
+      },
+      "M4plus_pct": 54.464374854404475,
+      "M2M3_pct": 45.535625145595525
+    },
+    "bank_en": {
+      "nets": 16,
+      "length_um": 137.72,
+      "layers_um": {
+        "metal2": 3.36,
+        "metal3": 51.2,
+        "metal4": 17.92,
+        "metal5": 65.24
+      },
+      "M4plus_pct": 60.38338658146965,
+      "M2M3_pct": 39.61661341853035
+    },
+    "bank_addr": {
+      "nets": 256,
+      "length_um": 4409.69,
+      "layers_um": {
+        "metal2": 749.02,
+        "metal3": 780.03,
+        "metal4": 2019.08,
+        "metal5": 861.56
+      },
+      "M4plus_pct": 65.32522694339058,
+      "M2M3_pct": 34.674773056609425
+    }
+  },
+  "coverage": {
+    "GEMM_WEIGHT": {
+      "start_nets": 2048,
+      "starts_reaching_end": 2048,
+      "end_nets": 4096,
+      "ends_reached": 4096,
+      "state_pins": 4096,
+      "state_pins_on_path": 4096,
+      "state_cells": 4096,
+      "state_cells_on_path": 4096
+    },
+    "GEMM_AUX": {
+      "start_nets": 2048,
+      "starts_reaching_end": 2048,
+      "end_nets": 5216,
+      "ends_reached": 5216,
+      "state_pins": 5216,
+      "state_pins_on_path": 5216,
+      "state_cells": 5216,
+      "state_cells_on_path": 5216
+    },
+    "VECTOR_A": {
+      "start_nets": 2048,
+      "starts_reaching_end": 2048,
+      "end_nets": 1152,
+      "ends_reached": 1152,
+      "state_pins": 1152,
+      "state_pins_on_path": 1152,
+      "state_cells": 1152,
+      "state_cells_on_path": 1152
+    },
+    "VECTOR_B": {
+      "start_nets": 2048,
+      "starts_reaching_end": 2048,
+      "end_nets": 1152,
+      "ends_reached": 1152,
+      "state_pins": 1152,
+      "state_pins_on_path": 1152,
+      "state_cells": 1152,
+      "state_cells_on_path": 1152
+    },
+    "GEMM_WRITE": {
+      "start_nets": 1024,
+      "starts_reaching_end": 512,
+      "end_nets": 2048,
+      "ends_reached": 2048,
+      "state_pins": 1024,
+      "state_pins_on_path": 512,
+      "state_cells": 512,
+      "state_cells_on_path": 512
+    },
+    "VECTOR_WRITE": {
+      "start_nets": 512,
+      "starts_reaching_end": 256,
+      "end_nets": 2048,
+      "ends_reached": 2048,
+      "state_pins": 512,
+      "state_pins_on_path": 256,
+      "state_cells": 256,
+      "state_cells_on_path": 256
+    }
+  },
+  "overlap": {
+    "GEMM_WEIGHT & VECTOR_A": {
+      "nets": 10191,
+      "length_um": 1616343.69
+    },
+    "GEMM_WEIGHT & VECTOR_B": {
+      "nets": 9657,
+      "length_um": 1526912.535
+    },
+    "GEMM_AUX & GEMM_WEIGHT": {
+      "nets": 10399,
+      "length_um": 1647454.74
+    },
+    "GEMM_AUX & VECTOR_A": {
+      "nets": 10182,
+      "length_um": 1604292.145
+    },
+    "GEMM_AUX & VECTOR_B": {
+      "nets": 9662,
+      "length_um": 1519243.505
+    },
+    "VECTOR_A & VECTOR_B": {
+      "nets": 9870,
+      "length_um": 1546028.105
+    },
+    "GEMM_WRITE & VECTOR_WRITE": {
+      "nets": 6589,
+      "length_um": 974015.3
+    }
+  },
+  "method": "Combinational function dependencies; MUX A/B only; no sequential crossings. Named register data D/Q to actual SRAM bank top pins. Whole net length including off-path branches; not recovered RTL port nets, not timing-sensitized paths. Read destinations include GEMM multiplier first-stage D. Register-local view follows BUF/INV only within full path.",
+  "validation": {
+    "unsupported_masters": {},
+    "rejected_non_single_driver_arcs": 0,
+    "cells": 998787,
+    "arcs": 2258123,
+    "global_length_um": 27102416.2,
+    "bank_port_net_counts": {
+      "bank_wdata": 2048,
+      "bank_rdata": 2048,
+      "bank_we": 256,
+      "bank_en": 16,
+      "bank_addr": 256
+    },
+    "state_pins_unreached": {
+      "GEMM_WEIGHT": 0,
+      "GEMM_AUX": 0,
+      "VECTOR_A": 0,
+      "VECTOR_B": 0,
+      "GEMM_WRITE": 512,
+      "VECTOR_WRITE": 256
+    }
+  }
+}

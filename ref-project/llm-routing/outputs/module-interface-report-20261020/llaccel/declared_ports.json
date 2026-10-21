@@ -1,0 +1,271 @@
+{
+  "gemm_engine": [
+    {
+      "direction": "input",
+      "name": "clk",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "rst_n",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "instr_valid",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "instr",
+      "width": 512
+    },
+    {
+      "direction": "output",
+      "name": "instr_ready",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "busy",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "done_pulse",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "done_sig_sem",
+      "width": 8
+    },
+    {
+      "direction": "output",
+      "name": "gemm_w_valid",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "gemm_w_req",
+      "width": 26
+    },
+    {
+      "direction": "input",
+      "name": "gemm_w_grant",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "gemm_w_rvalid",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "gemm_w_rdata",
+      "width": 2048
+    },
+    {
+      "direction": "output",
+      "name": "gemm_a_valid",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "gemm_a_req",
+      "width": 26
+    },
+    {
+      "direction": "input",
+      "name": "gemm_a_grant",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "gemm_a_rvalid",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "gemm_a_rdata",
+      "width": 512
+    },
+    {
+      "direction": "output",
+      "name": "gemm_wr_valid",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "gemm_wr_req",
+      "width": 26
+    },
+    {
+      "direction": "output",
+      "name": "gemm_wr_wdata",
+      "width": 512
+    },
+    {
+      "direction": "output",
+      "name": "gemm_wr_wstrb",
+      "width": 64
+    },
+    {
+      "direction": "input",
+      "name": "gemm_wr_grant",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "perf_busy",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "perf_mac_cycle",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "perf_epilogue_cycle",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "perf_sram_stall",
+      "width": 2
+    }
+  ],
+  "vec_engine": [
+    {
+      "direction": "input",
+      "name": "clk",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "rst_n",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "instr_valid",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "instr",
+      "width": 512
+    },
+    {
+      "direction": "output",
+      "name": "instr_ready",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "pos",
+      "width": 32
+    },
+    {
+      "direction": "output",
+      "name": "busy",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "done_pulse",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "done_sig_sem",
+      "width": 8
+    },
+    {
+      "direction": "output",
+      "name": "vec_rd0_valid",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "vec_rd0_req",
+      "width": 26
+    },
+    {
+      "direction": "input",
+      "name": "vec_rd0_grant",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "vec_rd0_rvalid",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "vec_rd0_rdata",
+      "width": 512
+    },
+    {
+      "direction": "output",
+      "name": "vec_rd1_valid",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "vec_rd1_req",
+      "width": 26
+    },
+    {
+      "direction": "input",
+      "name": "vec_rd1_grant",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "vec_rd1_rvalid",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "vec_rd1_rdata",
+      "width": 512
+    },
+    {
+      "direction": "output",
+      "name": "vec_wr_valid",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "vec_wr_req",
+      "width": 26
+    },
+    {
+      "direction": "output",
+      "name": "vec_wr_wdata",
+      "width": 512
+    },
+    {
+      "direction": "output",
+      "name": "vec_wr_wstrb",
+      "width": 64
+    },
+    {
+      "direction": "input",
+      "name": "vec_wr_grant",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "perf_busy",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "perf_sram_stall",
+      "width": 1
+    }
+  ]
+}
