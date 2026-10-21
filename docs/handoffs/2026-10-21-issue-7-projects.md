@@ -3,7 +3,7 @@
 - 更新时间：2026-10-21（中国标准时间，UTC+08:00）。
 - 仓库：<https://github.com/rayggxia-workspace/LLMHardwareDesign>。
 - 任务：<https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7>；负责人 YUZE-LU。
-- 工作分支：`task/7-block-routing`；从 `origin/main` 的 `19c900462c60bc55f534ceabc7eedc64dad4a0a6` 创建独立工作树。初始脚本 commit `7e9bde5b763b19591dcbe4f49ade7b08ef093843`；[PR #8](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/8)，后续成果 commit 以最终回执为准。
+- 工作分支：`task/7-block-routing`；从 `origin/main` 的 `19c900462c60bc55f534ceabc7eedc64dad4a0a6` 创建独立工作树，已同步PR #4合入后的主干。最终物理运行代码 commit `357dd98a7a07f370a1cc2c67b066c7ecccf3bf9a`；[PR #8](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/8)保存收尾采集修复、结果及当前HEAD回执。
 
 ## 本轮实际核验
 
@@ -31,6 +31,8 @@
 
 实际作业与终态以[轻量索引](../../project/experiments/block_hierarchy/results/issue-7.json)和[现场记录](../experiments/issue-7-vector-pilot.md)为准；原始输出在获授权集群 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/<attempt>/`。运行器提交后必须读回 `TimeLimit=UNLIMITED`，不能为缩短等待再设置人工时限。新试验一律新目录，不覆盖失败记录。
 
-89448 是原默认阶段 LEC 路线，仍未得证明结论；其后若完成物理实现，必须先从它自己的最终 ODB／SDC／SPEF 生成匹配 LEF／Liberty，再使用新 PG 配置提交新顶层，不能给该路线套用89453的模型。89449 是等待48的旧默认 PDN 配置，其配置在独立物理路线已证实不兼容；替换或取消必须保存调度回执与配置原因，不能以求解耗时作为取消48的理由。
+89448 是原默认阶段 LEC 路线，仍未得证明结论、保持UNLIMITED；其后若完成物理实现，必须先从它自己的最终 ODB／SDC／SPEF 生成匹配 LEF／Liberty，再使用新 PG 配置提交新顶层，不能给该路线套用89453的模型。89449是等待48的旧默认PDN配置，确认PENDING后因配置已知不兼容而取消，receipt／reason在 `slurm-obsolete-89449-20261021/`，不是按求解耗时终止48。
 
-独立物理路线89453显式 `LEC_CHECK=0`。89461仅通过隔离内存修复，89462在真实POST_PDN调用上下文失败；后续完整顶层须继续通过早期双网检查、最终PSM、实际宏实例／位置及信号接口审读，再在新1 CPU作业运行只读 `pdn-site-audit`。几何与连接通过后，块内部3 ns时序／电容失败、默认活动供电模型和缺少宏功耗模型的限制仍须保留。下一位操作者先读当前索引与PR回执，不从历史“运行中”文字推断现状。
+独立物理路线89453显式 `LEC_CHECK=0`。89461通过隔离内存修复，89462在真实POST_PDN调用上下文失败；修复后89472完整顶层 `COMPLETED 0:0`，89475最终只读审计 `COMPLETED 0:0`，两者实际UNLIMITED。DRT错误0、最终PSM、唯一固定宏／2246位接口与逐位映射通过；最终源ODB精确哈希和31,506个via的M7–M9独立几何复算闭合。块内部3 ns时序／电容、父级3条setup违例、无父级多宏时钟树、默认活动供电模型和缺少宏功耗模型的限制仍保留。下一位操作者先读当前索引与PR回执，不从历史“运行中”文字推断现状。
+
+本轮成果进入审查，后续研究从同资源F0/H1对照开始；修改模型或约束必须另立可比较实验，不为清除违例直接改预算。H2仍需冻结全部有源单元、时钟／PG和预制端点，限制定制层／通孔，并验证真正不同的计算图。审查人、后续实施负责人和看板管理员均待指定；未审查合并，不标done。

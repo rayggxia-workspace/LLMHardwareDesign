@@ -115,8 +115,22 @@ for name, job in attempts.items():
     ):
         target = path / filename
         if target.is_file():
-            text = target.read_text(errors='replace')
-            item[filename] = json.loads(text) if filename.endswith('.json') else text.strip()
+            if target.suffix == '.tsv':
+                manifest = path / 'result-files.sha256'
+                digest = None
+                if manifest.is_file():
+                    for line in manifest.read_text().splitlines():
+                        parts = line.split(None, 1)
+                        if len(parts) == 2 and parts[1].lstrip('*') == str(target):
+                            digest = parts[0]
+                            break
+                item[filename] = {'path': str(target), 'size_bytes': target.stat().st_size,
+                                  'sha256_from_compute_manifest': digest,
+                                  'hash_status': 'recorded' if digest else 'missing_or_not_yet_recorded',
+                                  'hash_manifest': str(manifest), 'content_included': False}
+            else:
+                text = target.read_text(errors='replace')
+                item[filename] = json.loads(text) if filename.endswith('.json') else text.strip()
     submitted = item.get('submission.json', {})
     parent = Path(submitted['resume_from']) if submitted.get('mode') == 'resume' and submitted.get('resume_from') else None
     if parent is not None and parent.parent != root:
@@ -269,7 +283,7 @@ def main() -> None:
         text=True, encoding="utf-8",
     ))
     remaining = [
-        "Block Liberty audited with finite arcs; block 3ns setup and max-cap fail. Top PDN remains failed; legal parent via-site selection and final independent check-only acceptance are pending.",
+        "Close recorded block and parent 3ns setup violations and block max-cap violations; physical/PG/interface checks do not constitute timing or system signoff.",
         "Scale integration harness to useful multiple-Block connectivity and then fixed/restricted layers.",
     ]
     active = [a['attempt'] for a in collected['attempts'] if a['sacct'].get('state') in ('RUNNING', 'PENDING', 'COMPLETING')]
@@ -297,6 +311,7 @@ def main() -> None:
             "pdn_via_landing_geometry_probe": REMOTE + "/pdn-geometry-diagnostic-01/",
             "actual_fixed_image_spacing_tables": REMOTE + "/pdn-spacing-evidence-01/",
             "mock_proc_source_scope_regression": REMOTE + "/pdn-hook-scope-diagnostic-01/",
+            "obsolete_pending_top_cancellation": REMOTE + "/slurm-obsolete-89449-20261021/",
             "mock_proc_source_old_filter_negative_control": REMOTE + "/pdn-hook-scope-negative-01/",
             "active_jobs_name_update": REMOTE + "/slurm-name-update-20261021/",
             "scope": "Selected compute-node read-only/in-memory geometry and PG probes, plus a lightweight mocked Tcl scope regression. No original database rewrite or PI rerun. First geometry probe failed on an API name; probe-02.log is the successful via-shape observation. Mock scope checks are not EDA evidence. Metadata rename does not alter inputs or time limits.",

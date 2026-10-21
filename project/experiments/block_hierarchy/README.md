@@ -31,7 +31,7 @@ python project/experiments/block_hierarchy/collect_results.py --attempt vec-scre
 
 `regression` 固定 `SEED=1` 运行原 `tb/vec` Makefile 的 math/vector benches，保持 RTL、数值、用例和比较断言。89452 在编译原 `tb_math.cpp` 时因 uint32_t 初始化中的 `1 << 31` narrowing 失败，未完成运行测试；失败日志保留。当前 runner 在全新 attempt 中复制出独立 `regression-source`，仅将这一处改为 `1u << 31`，仍为 uint32_t 的 `0x80000000`。脚本断言唯一替换、比较全文件集合与内容，强制其它文件（含 RTL/reference头）逐字节不变，原 archive 不改；`compat-patch.diff` 和前后哈希记录兼容修改，未增加全局 warning 抑制。编译、缓存和临时文件分别位于该 attempt 的独立目录。使用镜像内 GCC 11.4 与绑定目录中的 Verilator 5.042，记录工具/源文件哈希、日志与 `regression-result.json`。它验证原 RTL 的数值/协议回归，不能代替物理网表等价性或 STA。
 
-恢复模式可显式指定 `--skip-phase-lec`，启动另一条独立物理工程路线。它仅在 `make` 命令中附加 `LEC_CHECK=0`，保留同一终态 checkpoint、原 RTL、3 ns/0.6 ns约束、放置和优化配置。receipt、容器环境、runner哈希及 `phase-lec-policy.txt` 均记录这一选择；此路线只检验物理流程、抽象和接口，不主张门级等价。89448 的默认完整检查和89449的依赖保持运行；不得将它的未完成或后续证明套用到另一份网表，除非另行核验实际网表身份及证明范围。复制父目录留下的旧 LEC 日志在索引中标为继承，不能算新作业执行的检查。
+恢复模式可显式指定 `--skip-phase-lec`，启动另一条独立物理工程路线。它仅在 `make` 命令中附加 `LEC_CHECK=0`，保留同一终态 checkpoint、原 RTL、3 ns/0.6 ns约束、放置和优化配置。receipt、容器环境、runner哈希及 `phase-lec-policy.txt` 均记录这一选择；此路线只检验物理流程、抽象和接口，不主张门级等价。89448 的默认完整检查继续无限时运行；89449 的旧默认 PDN 等待作业在 89472 与最终审计 89475 完成后作为过时配置取消，回执见 `slurm-obsolete-89449-20261021/`；不得将它的未完成或后续证明套用到另一份网表，除非另行核验实际网表身份及证明范围。复制父目录留下的旧 LEC 日志在索引中标为继承，不能算新作业执行的检查。
 
 如果某次作业在完成综合后中断，可在它到达终态后使用 `--mode resume --resume-from <旧attempt>` 和全新 `--attempt`。该入口在计算节点复制完整 ORFS 阶段目录，保持文件时间、配置和3 ns/0.6 ns约束不变；旧路径仅保留为只读网表/SDC输入。实际执行前对首个缺失阶段保存 `make -n`，发现需要重新综合就停止并保留诊断，再正常执行全流程 `finish`。首轮恢复 89447 通过身份校验，但全流程 dry-run 因尚未生成的后续 SDC 副产物失败；修正为首个缺失阶段的 dry-run 后新建 attempt，不掩盖该失败。恢复逻辑以本轮阶段实测为限，不声称通用 checkpoint 恢复能力；实际恢复是否成功以索引为准。既有旧 attempt、失败日志和部分阶段均保留。
 
@@ -41,7 +41,7 @@ python project/experiments/block_hierarchy/collect_results.py --attempt vec-scre
 
 89457 用 `guarded-m10` 请求 `-bloat_factor 1` 并在真实 `POST_PDN_TCL` hook（写出 2_4 ODB 之前）执行严格双网检查。实测关键 M8/M9 routed OBS 外边界没有扩大，不能将 API 参数视为普遍 padding；VDD/VSS 均 catch=1 / PSM-0069，提前终止。89459 对 89456 最终 ODB 的独立只读负向审计也复现双网失败，PG ITerm net 归属本身正确。失败输入、几何、日志和输出哈希均保留。除 M8 landing 切入外，另一处 M9 via 中心本身位于 OBS 内；不能将全部短路归为 enclosure 扩张。
 
-下一候选为 `--macro-pdn legal-m10`，尚待实际验收。它从同一最终 ODB 在新 `macro-view/` 导出 bloat factor 0 的详细 OBS、复制字节一致的原 Liberty 并引用原 GDS；原块输出只读。验证宏尺寸和全部 2248 pin 的方向/use/几何不变、全部占用 OBS 层留存。父级新增 M10 供电竖条，不在宏上新铺 M5/M6。`POST_PDN_TCL` 从实际导入的 macro master 读取 OBS、原 PG pin 和 R0@(80,80) 坐标，从真实 via master 取全套 landing。对所有父级 PG via（也可能包含 lower-parent via）按同网/同 XY 整组选择，不修改 master 几何。M8/M9 landing 与实际 OBS 保持 L∞ 2 µm guard；实际固定镜像 M7–M9 spacing table 最大值为 1.5 µm。M7 landing 只有完全包含在同网原 PG pin 内才豁免，否则同样检查 OBS；M10 已检查无宏 OBS。原文与 SHA 在 `pdn-spacing-evidence-01/`。这不覆盖完整工艺 spacing 签核。
+本轮完整物理工程路线使用 `--macro-pdn legal-m10`：89472 已完成流程，89475 最终只读审计通过；时序仍有违例，不能称完整签核。它从同一最终 ODB 在新 `macro-view/` 导出 bloat factor 0 的详细 OBS、复制字节一致的原 Liberty 并引用原 GDS；原块输出只读。验证宏尺寸和全部 2248 pin 的方向/use/几何不变、全部占用 OBS 层留存。父级新增 M10 供电竖条，不在宏上新铺 M5/M6。`POST_PDN_TCL` 从实际导入的 macro master 读取 OBS、原 PG pin 和 R0@(80,80) 坐标，从真实 via master 取全套 landing。对所有父级 PG via（也可能包含 lower-parent via）按同网/同 XY 整组选择，不修改 master 几何。M8/M9 landing 与实际 OBS 保持 L∞ 2 µm guard；实际固定镜像 M7–M9 spacing table 最大值为 1.5 µm。M7 landing 只有完全包含在同网原 PG pin 内才豁免，否则同样检查 OBS；M10 已检查无宏 OBS。原文与 SHA 在 `pdn-spacing-evidence-01/`。这不覆盖完整工艺 spacing 签核。
 
 发现任一 landing 不满足 guard 时删除整个父级同站 via 组；遇到非完整 7–8/8–9/9–10 栈或独立 M8/M9 PG patch 则 fail closed。随后重新枚举所有剩余 landing，输出实际 OBS/PG pin/删除原因/残余形状 TSV 和 `pg-access-selection.json`，并执行严格 VDD/VSS native 连通检查。要求 Tcl catch=0 且原生返回严格 true；失连即失败，最终 PSM 也保留。该方案属于 H1 新增供电资源与接入选择，不能称为 H2 冻结底座。
 
@@ -53,7 +53,7 @@ python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-physic
 python project/experiments/block_hierarchy/collect_results.py --attempt vec-pdn-filter-next:<audit-job-id> --attempt vec-physical-top-next:<integration-job-id>
 ```
 
-自定义视图要求源 Block 已有同一最终实现生成的 LEF/Lib/SPEF；不能借用另一条物理路线的模型。89448 的最终匹配视图需在其自身流程完成后另行生成；当前 89449 的旧默认 PDN 配置尚未替代。
+自定义视图要求源 Block 已有同一最终实现生成的 LEF/Lib/SPEF；不能借用另一条物理路线的模型。89448 的最终匹配视图需在其自身流程完成后另行生成；89449 的旧默认 PDN 配置已取消；89448 完成后必须先生成自身匹配模型，再新建 legal 顶层，不能复用 89453 的模型冒充同一实现。
 
 镜像默认 `pdn.tcl` 注释了 `check_power_grid`。`pdn-audit` 对终态顶层 ODB 只读检查 VDD/VSS、宏 PG ITerm 实际 net 归属，并单列原 failed-via 清单和 PDN 警告。最终 legal 顶层另用 `pdn-site-audit`：同样读取终态 ODB，同时以 check-only 模式重新枚举实际 PG landing，禁止删除 via、禁止写 DB，发现 unsafe 站即失败；不能在验收中默默修复。审计保存工具、ODB、脚本哈希、每网 catch code/原生返回值及日志。
 
@@ -61,6 +61,12 @@ python project/experiments/block_hierarchy/collect_results.py --attempt vec-pdn-
 python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-pdn-final-next --mode pdn-site-audit --block-attempt vec-physical-top-next --depends-on <completed-top-job-id> --cpus 1
 python project/experiments/block_hierarchy/collect_results.py --attempt vec-pdn-final-next:<audit-job-id>
 ```
+
+89461 的隔离选站试验已完成：删除 122 个同网 XY 站／366 个父级 via、保留 31506 个 via；严格 VDD/VSS 均 catch=0／原生返回 1。89462 首个完整 legal 顶层在 ORFS 过程内 source hook 时因 helper 读取 global 变量失败，未执行 native PG，失败保留；修正为显式参数传递并完成上述作用域正负回归后，89472 以同一几何和预算完成全流程（16:05、无限时）。真实 hook 删除数与 89461 一致，详细路由 DRC／天线均 0，唯一 `u_vec` 维持 FIRM／R0／(80,80) µm，顶层与宏的 2246 个信号位全部连接且方向正确。
+
+89475 从 89472 最终 ODB 重新只读检查（4:34、无限时），check-only 删除 0、unsafe 0、保留 31506 个 via；双网原生检查通过。独立复算核对全部 63012 个 landing、M7 同网 PG pin 完全包含豁免 2847、5642 个完整 7→10 栈，M7–M9 2 µm guard 剩余交集 0。M1–M6 landing 仅导出，未进行该 guard 全量检查；所有层 spacing／制造规则签核仍未完成。最终 ODB/hash 与审计输入匹配，未通过审计修改最终实现。
+
+89472 父级 setup WS −0.0429892 ns／TNS −0.0611355 ns，3 个 request 输出违例；hold WS +0.0455689 ns／TNS 0，max-cap／slew／fanout 违例 0。报告的 307 个 unconstrained 输出恰为块中 tie 常量且 Liberty 无弧的输出，未新增活跃输出缺失覆盖。stage4 为单时钟 sink 而跳过建树，CTS buffer 0；不能称多端点 CTS 验证。顶层有 2245 个 IO buffer（2242 个 X1、3 个 X2），原块内部未重新综合。父级边界时序结果不改变块内部 setup −4.16659 ns 的失败。
 
 零 failed-via 与 PG 全连通需要分别成立。导出的宏 Liberty 没有 internal_power/leakage/活动电流模型，因此即便顶层工具能报告功耗/压降，也不能代表包含原宏真实电流的 PI 验收。
 
