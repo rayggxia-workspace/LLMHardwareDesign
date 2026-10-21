@@ -13,7 +13,7 @@ HOST = "yuzelu@10.129.166.172"
 IMAGE = "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif"
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--attempt", required=True)
-parser.add_argument("--profile", choices=("full", "physical", "gemm-receipt", "top-contract", "abc-probe", "abc-probe-short", "retired-evidence", "act-audit", "full-physical-audit", "targeted-repair", "merged-repair"), default="full")
+parser.add_argument("--profile", choices=("full", "physical", "gemm-receipt", "top-contract", "abc-probe", "abc-probe-short", "retired-evidence", "act-audit", "full-physical-audit", "targeted-repair", "merged-repair", "model-audit"), default="full")
 parser.add_argument('--dependency', help='Explicit one-shot Slurm dependency, e.g. afterany:89499')
 args = parser.parse_args()
 assert re.fullmatch(r"parallel-blocks-wave2-[0-9]+", args.attempt)
@@ -57,6 +57,8 @@ if args.profile == 'retired-evidence':
 if args.profile in ('act-audit','full-physical-audit'):
     name='act-sweep-audit' if args.profile=='act-audit' else 'full-physical-audit'
     plan={'C': {'node':'node9','cores':1,'tasks':[task(name,'physical-audit',1)]}}
+if args.profile == 'model-audit':
+    plan={'C': {'node':'node9','cores':1,'tasks':[task('cap-diagnostic','cap-diagnostic',1)]}}
 if args.profile in ('targeted-repair', 'merged-repair'):
     act = task('act-cap10-repair', 'route-repair', 16, margin=10)
     act.update(source_task='act-cap10', replacements=[['_5406_', 'MUX2_X1', 'MUX2_X2']])
@@ -89,7 +91,8 @@ receipt = dict(attempt=args.attempt, remote=remote, host=HOST, image=IMAGE, plan
                    'act-audit':'Independent ACT sweep hashes and strict worst-margin budget audit',
                    'full-physical-audit':'Independent seven-case hashes and strict worst-margin budget audit',
                    'targeted-repair':'Read-only verified wave2-06 CTS checkpoints, explicit equivalent-cell drive upgrades, new route/extraction and strict gates; no source or historical output changes',
-                   'merged-repair':'Only merged-block CTS replay with its register driver resolved by output net; preserve the first guarded failure and other running tasks'}[args.profile])
+                   'merged-repair':'Only merged-block CTS replay with its register driver resolved by output net; preserve the first guarded failure and other running tasks',
+                   'model-audit':'Read-only actual executable, source views and replacement-cell Liberty logical signature checks; no new PNR'}[args.profile])
 ssh("test ! -e " + shlex.quote(remote) + " && mkdir -p " + shlex.quote(remote + "/runner/wave2"))
 for directory, paths in ((remote + "/runner", list(BASE.glob("*.py")) + list(BASE.glob("*.sh"))),
                          (remote + "/runner/wave2", list(HERE.glob("*.py")) + list(HERE.glob("*.sh")))):

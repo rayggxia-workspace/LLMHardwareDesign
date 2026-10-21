@@ -31,6 +31,44 @@ tolerance = struct.unpack('<f',bytes.fromhex(hexbytes))[0]
 assert abs(tolerance/1e-15-1)<1e-6
 unit = re.search(r'capacitive_load_unit\s*\(([^)]+)\)',standard.read_text())[1]
 assert unit.replace(' ','').lower() == '1,ff'
+
+
+def group(text, match):
+    start = text.index('{', match.start())
+    depth = 0
+    for token in re.finditer(r'"(?:\\.|[^"\\])*"|/\*.*?\*/|[{}]',text[start:],re.S):
+        if token[0] == '{': depth += 1
+        elif token[0] == '}':
+            depth -= 1
+            if depth == 0: return text[start+1:start+token.start()]
+    raise AssertionError('Unbalanced Liberty group')
+
+
+def logical_signature(name):
+    liberty = standard.read_text()
+    cell = re.search(r'\bcell\s*\(\s*'+re.escape(name)+r'\s*\)\s*{',liberty)
+    assert cell is not None, name
+    body = group(liberty,cell)
+    pins = {}
+    for match in re.finditer(r'\bpin\s*\(\s*([^)]*)\)\s*{',body):
+        pin = group(body,match)
+        pins[match[1].strip()] = {key:re.sub(r'\s+','',m[1]) for key in ('direction','function','clock','three_state')
+            for m in [re.search(r'\b'+key+r'\s*:\s*([^;]+);',pin)] if m}
+    sequential = []
+    for match in re.finditer(r'\b(ff|latch)\s*\(\s*([^)]*)\)\s*{',body):
+        ff = group(body,match)
+        sequential.append(dict(kind=match[1],state_variables=re.sub(r'\s+','',match[2]),
+            attributes={key:re.sub(r'\s+','',m[1]) for key in ('clocked_on','next_state','enable','data_in','clear','preset','clear_preset_var1','clear_preset_var2')
+                for m in [re.search(r'\b'+key+r'\s*:\s*([^;]+);',ff)] if m}))
+    return dict(pins=pins,sequential=sequential)
+
+
+cell_checks = {}
+for before, after in [('MUX2_X1','MUX2_X2'),('BUF_X1','BUF_X2'),('DFF_X1','DFF_X2')]:
+    sig = logical_signature(before)
+    assert sig == logical_signature(after), (before,after)
+    cell_checks[before+'->'+after] = dict(logical_signatures_equal=True,signature=sig,
+        scope='Liberty port functions and sequential state equations match; not whole-netlist formal equivalence')
 address_rows = {}
 target = 'u_act.g_row[1].g_pc[0].u_act.ra[4]'
 for case in ('act-cap00','act-cap10','act-cap20'):
@@ -85,7 +123,7 @@ for case, nickname, top in [('act-cap20','opentpu_act','llhd_opentpu_act'),
         scope='Existence, counts and model-gap inventory only; not exhaustive arc, timing or PG qualification')
 Path('diagnostic.json').write_text(json.dumps(dict(capacitance_unit=unit,
     binary_zero_tolerance_SI=tolerance,binary_zero_tolerance_fF=tolerance*1e15,
-    address_net=target,act_rows=address_rows,selected_views=views,
+    address_net=target,act_rows=address_rows,selected_views=views,replacement_cell_checks=cell_checks,
     count_zero_is_not_nonnegative_slack=True,
     scope='Static final-netlist/SPEF/library reconstruction and actual executable constant; no new STA run'),indent=2)+'\n')
 Path('diagnostic-inputs.sha256').write_text(''.join(digest(p)+'  '+str(p)+'\n' for p in sorted(inputs)))
