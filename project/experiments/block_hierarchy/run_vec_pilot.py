@@ -33,10 +33,11 @@ def ssh(command: str) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--attempt", required=True)
-    parser.add_argument("--mode", choices=["screening", "pilot", "integration", "resume"], required=True)
+    parser.add_argument("--mode", choices=["screening", "pilot", "integration", "resume", "regression"], required=True)
     parser.add_argument("--block-attempt", help="Issue #7 attempt containing the completed VECTOR hardening")
     parser.add_argument("--depends-on", type=int, help="Slurm afterok dependency, or afterany for a resume job")
     parser.add_argument("--resume-from", help="Terminal Issue #7 VECTOR attempt whose completed ORFS stages should be copied")
+    parser.add_argument("--skip-phase-lec", action="store_true", help="Independent physical resume route with LEC_CHECK=0; never a formal-equivalence claim")
     parser.add_argument("--partition", choices=["c64", "c96"], default="c64")
     parser.add_argument("--cpus", type=int, default=8)
     args = parser.parse_args()
@@ -50,6 +51,8 @@ def main() -> None:
         parser.error("block-attempt must be a simple lowercase identifier")
     if args.mode == "resume" and not args.resume_from:
         parser.error("resume requires --resume-from")
+    if args.skip_phase_lec and args.mode != "resume":
+        parser.error("--skip-phase-lec is allowed only with --mode resume")
     if args.resume_from and not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,63}", args.resume_from):
         parser.error("resume-from must be a simple lowercase identifier")
     remote = f"{REMOTE_ROOT}/{args.attempt}"
@@ -70,6 +73,7 @@ def main() -> None:
         "validate_physical_interfaces.py",
         "inside_resume.sh",
         "validate_resume.py",
+        "inside_regression.sh",
     ]
     subprocess.run(
         ["scp", "-q", *[str(HERE / name) for name in files], HOST + ":" + remote + "/"],
@@ -84,7 +88,7 @@ def main() -> None:
         f"--time=0 --job-name=llhd-vec-{args.mode} "
         + dependency +
         f"--output={quote(remote + '/slurm-%j.log')} "
-        f"--export=ALL,LLHD_ATTEMPT={remote},LLHD_MODE={args.mode},LLHD_IMAGE={IMAGE},LLHD_IMAGE_SHA256={IMAGE_SHA256},LLHD_BLOCK={block},LLHD_RESUME_FROM={resume} "
+        f"--export=ALL,LLHD_ATTEMPT={remote},LLHD_MODE={args.mode},LLHD_IMAGE={IMAGE},LLHD_IMAGE_SHA256={IMAGE_SHA256},LLHD_BLOCK={block},LLHD_RESUME_FROM={resume},LLHD_SKIP_PHASE_LEC={int(args.skip_phase_lec)} "
         f"{quote(remote + '/job.sh')}"
     )
     job = ssh(command)
@@ -108,6 +112,8 @@ def main() -> None:
         "block_attempt": block or None,
         "depends_on": args.depends_on,
         "resume_from": resume or None,
+        "skip_phase_lec": args.skip_phase_lec,
+        "verification_scope": "Physical flow, abstract and interface checks only; phase LEC deliberately disabled in this independent attempt" if args.skip_phase_lec else "Configured checks only; no original RTL-to-physical equivalence or system signoff claim",
     }
     # Preserve the known job identity even if the scheduler readback fails.
     ssh(f"printf '%s\\n' {quote(json.dumps(receipt, indent=2))} > {quote(remote + '/submission.json')}")

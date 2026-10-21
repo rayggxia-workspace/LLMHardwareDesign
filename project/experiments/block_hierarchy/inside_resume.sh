@@ -19,6 +19,15 @@ printf '%s\n' "$LLHD_RESUME_FROM" > resume-parent.txt
 sha256sum "$LLHD_RESUME_FROM/vec-config.mk" "$LLHD_RESUME_FROM/vec.sdc" \
   "$LLHD_RESUME_FROM/vec-elab.v" > resume-parent-inputs.sha256
 sha256sum vec-config.mk vec.sdc vec-elab.ys > config-inputs.sha256
+phase_lec_args=()
+case "${LLHD_SKIP_PHASE_LEC:-0}" in
+  0) printf 'phase_lec=configured default; no inherited proof claim\n' > phase-lec-policy.txt ;;
+  1)
+    phase_lec_args=(LEC_CHECK=0)
+    printf 'phase_lec=disabled explicitly by LEC_CHECK=0\nscope=independent physical engineering route; no formal equivalence claim\n' > phase-lec-policy.txt
+    ;;
+  *) printf 'Invalid LLHD_SKIP_PHASE_LEC\n' >&2; exit 3 ;;
+esac
 # Dry-run only the first missing stage. A dry-run of the whole future flow
 # cannot create stage side effects such as 5_1_grt.sdc and reports false missing
 # prerequisites. The real finish command below still executes all later stages.
@@ -37,11 +46,11 @@ if [ "$dry_target" = finish ] && [ ! -f "$LLHD_ATTEMPT/flow/logs/nangate45/llhd_
 fi
 printf '%s\n' "$dry_target" > resume-dry-run-target.txt
 make -n -C /OpenROAD-flow-scripts/flow DESIGN_CONFIG="$LLHD_ATTEMPT/vec-config.mk" \
-  WORK_HOME="$LLHD_ATTEMPT/flow" NUM_CORES="$NUM_CORES" "$dry_target" > resume-dry-run.txt 2>&1
+  WORK_HOME="$LLHD_ATTEMPT/flow" NUM_CORES="$NUM_CORES" "${phase_lec_args[@]}" "$dry_target" > resume-dry-run.txt 2>&1
 if grep -E 'yosys.*(-s|-c)|synth\.tcl|do-yosys|synth_canonicalize' resume-dry-run.txt; then
   printf 'Refusing unexpected synthesis rerun; inspect dependency timestamps.\n' >&2
   exit 3
 fi
 make -C /OpenROAD-flow-scripts/flow DESIGN_CONFIG="$LLHD_ATTEMPT/vec-config.mk" \
-  WORK_HOME="$LLHD_ATTEMPT/flow" NUM_CORES="$NUM_CORES" finish 2>&1 | tee flow.log
+  WORK_HOME="$LLHD_ATTEMPT/flow" NUM_CORES="$NUM_CORES" "${phase_lec_args[@]}" finish 2>&1 | tee flow.log
 find "$LLHD_ATTEMPT/flow/results" -type f -print0 | sort -z | xargs -0 sha256sum > result-files.sha256

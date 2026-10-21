@@ -61,6 +61,8 @@ for filename in ("1_synth.odb", "2_floorplan.odb", "3_place.odb", "4_cts.odb", "
 report = {
     "pass": True,
     "parent": str(parent),
+    "parent_skip_phase_lec": bool(receipt.get("skip_phase_lec", False)),
+    "this_attempt_skip_phase_lec": os.environ.get("LLHD_SKIP_PHASE_LEC", "0") == "1",
     "source_commit": receipt["source_commit"],
     "design": "original full-width vec_engine",
     "identical_image_tools_source_hash_manifests": True,

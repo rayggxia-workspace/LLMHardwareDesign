@@ -40,18 +40,40 @@ out = []
 for name, job in attempts.items():
     path = root / name
     item = {'attempt': name, 'remote_path': str(path), 'job_id': job, 'sacct': states.get(job, {})}
+    if item['sacct'].get('state') == 'RUNNING':
+        try:
+            item['live_resource_snapshot'] = subprocess.check_output([
+                'sstat', '-j', str(job) + '.batch', '--noheader', '--parsable2',
+                '--format=JobID,AveCPU,MaxRSS'
+            ], universal_newlines=True).strip()
+        except (OSError, subprocess.CalledProcessError) as error:
+            item['live_resource_snapshot_error'] = str(error)
     for filename in (
-        'submission.json', 'port-validation.json', 'harness-contract.json', 'physical-interface-validation.json', 'resume-validation.json',
+        'submission.json', 'port-validation.json', 'harness-contract.json', 'physical-interface-validation.json', 'resume-validation.json', 'regression-result.json',
         'exit-code.txt', 'host.txt', 'started-utc.txt', 'finished-utc.txt',
         'image.sha256', 'tools.sha256', 'openroad-version.txt', 'yosys-version.txt',
         'orfs-commit.txt', 'runner-inputs.sha256', 'config-inputs.sha256',
         'abstract-source.txt', 'block-abstract-inputs.sha256', 'top-physical-inspection.txt',
         'resume-parent.txt', 'resume-parent-state.txt', 'resume-parent-inputs.sha256', 'resume-dry-run-target.txt',
+        'verilator-version.txt', 'regression-tools.sha256', 'regression-cxx-version.txt', 'regression-source.sha256',
+        'phase-lec-policy.txt',
+        'compat-patch.diff', 'compat-inputs.sha256',
     ):
         target = path / filename
         if target.is_file():
             text = target.read_text(errors='replace')
             item[filename] = json.loads(text) if filename.endswith('.json') else text.strip()
+    submitted = item.get('submission.json', {})
+    item['verification_policy'] = {
+        'skip_phase_lec': submitted.get('skip_phase_lec', False),
+        'proof_inheritance_claimed': False,
+    }
+    if submitted.get('block_attempt'):
+        block_path = Path(submitted['block_attempt'])
+        block_receipt = block_path / 'submission.json'
+        if block_path.parent == root and block_receipt.is_file():
+            block_submission = json.loads(block_receipt.read_text())
+            item['verification_policy']['block_implementation_skip_phase_lec'] = block_submission.get('skip_phase_lec', False)
     metrics = {}
     for nickname in ('llhd_vec_original', 'llhd_vec_harness'):
         base = path / 'flow/logs/nangate45' / nickname / 'base'
@@ -69,7 +91,8 @@ for name, job in attempts.items():
             if present:
                 content = '\n'.join(target.read_text(errors='replace') for target in present).lower()
                 status = 'identical' if 'circuits are identical' in content else 'different' if 'circuits are different' in content else 'started_no_result'
-                equivalence[nickname + '/' + stem] = {'status': status, 'logs': [str(target) for target in present], 'scope': 'stage gate-level comparison, not original RTL to physical equivalence'}
+                skipped = item.get('submission.json', {}).get('skip_phase_lec', False)
+                equivalence[nickname + '/' + stem] = {'status': 'inherited_log_only_not_executed' if skipped else status, 'inherited_parent_status': status if skipped else None, 'logs': [str(target) for target in present], 'scope': 'inherited parent log, not executed by this skip-phase-lec attempt' if skipped else 'stage gate-level comparison, not original RTL to physical equivalence'}
     item['stage_equivalence_checks'] = equivalence
     io_models = {}
     for nickname in ('llhd_vec_original', 'llhd_vec_harness'):
@@ -83,6 +106,7 @@ for name, job in attempts.items():
         'slurm': str(path / f'slurm-{job}.log'),
         'elaboration': str(path / 'vec-elab.log'),
         'flow': str(path / 'flow.log'),
+        'regression': str(path / 'regression.log') if (path / 'regression.log').exists() else None,
         'resume_dry_run': str(path / 'resume-dry-run.txt') if (path / 'resume-dry-run.txt').exists() else None,
     }
     item['output_hash_index'] = str(path / 'result-files.sha256') if (path / 'result-files.sha256').exists() else None
@@ -130,7 +154,10 @@ def main() -> None:
         match = re.fullmatch(r"([a-z0-9][a-z0-9-]{0,63}):([0-9]+)", value)
         if not match:
             parser.error("--attempt must use NAME:JOB_ID with a safe lowercase attempt name")
-        attempts[match.group(1)] = int(match.group(2))
+        name, job = match.group(1), int(match.group(2))
+        if job <= 0 or (name in attempts and attempts[name] != job):
+            parser.error("attempt/job mapping must be positive and immutable: " + name)
+        attempts[name] = job
     source = COLLECTOR.replace("__ROOT__", repr(REMOTE)).replace("__ATTEMPTS__", repr(attempts))
     collected = json.loads(subprocess.check_output(
         ["ssh", "-o", "BatchMode=yes", HOST, "python3 -c " + shlex.quote(source)],
@@ -148,7 +175,7 @@ def main() -> None:
         "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
         "updated_at": datetime.now(timezone(timedelta(hours=8))).isoformat(),
         "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
-        "source_scope": "Original full-width llaccel v1 vec_engine and a direct one-macro integration harness",
+        "source_scope": "Original full-width llaccel v1 vec_engine and its full math/vector regression with one recorded test-only unsigned-literal compatibility fix; direct one-macro integration harness",
         "runner_commit": runner_commit,
         "runner_commit_note": "This is a repository code snapshot recorded after job submission, not a claim that the jobs started from a committed checkout. Exact submitted versions and historical differences are bound by each remote runner-inputs.sha256; the base repository commit is not the experiment runner version.",
         "claims": {

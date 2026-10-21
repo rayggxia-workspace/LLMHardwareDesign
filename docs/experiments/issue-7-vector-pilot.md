@@ -26,12 +26,18 @@
 | `vec-harden-resume-01`／89447 | `FAILED`，约 10 秒，`2:0`；父作业及输入身份检查通过，但 `make -n finish` 因尚未执行阶段应生成的 SDC 副产物缺失而失败；没有继续物理流程。保留日志，恢复检查需改为核对首个待执行阶段 |
 | `vec-harden-resume-02`／89448 | c64、16 CPU；实读 `TimeLimit=UNLIMITED`，保存调度快照；身份与首个待执行阶段的 dry-run 通过，实测直接接续 CTS、没有重跑综合；终态待回填 |
 | `vec-top-03`／89449 | c64、16 CPU；实读 `TimeLimit=UNLIMITED`；`afterok:89448` 等待 Block 完成，尚无顶层物理结果 |
+| `vec-regression-01`／89452 | `FAILED`；c64、8 CPU、实读 `TimeLimit=UNLIMITED`；GCC 11.4 编译 `tb_math.cpp` 的 `uint32_t edge32[]` 时拒绝 `1 << 31` 的 narrowing，未执行运行期案例；日志与 fail JSON 保留 |
+| `vec-physical-01`／89453 | c64、16 CPU、实读 `TimeLimit=UNLIMITED`；同源 89443 checkpoint、身份与 dry-run 通过，接续 CTS。显式 `LEC_CHECK=0`，仅验证物理工程流程，不继承其他作业的等价结论 |
+| `vec-physical-top-01`／89454 | c64、16 CPU、实读 `TimeLimit=UNLIMITED`；`afterok:89453`，以独立物理路线的宏为输入，顶层结果待回填 |
+| `vec-regression-02`／89455 | `COMPLETED 0:0`，17 秒，c64、8 CPU、`UNLIMITED`；独立测试副本仅做无符号位常量兼容修正。JSON `status=pass`：VECTOR 1,203／零失败、12 组全过、数学 12,000 组／零失败、16,384 组舍入检查通过 |
 
 综合阶段记录了 259,349 个标准单元，标准单元面积为 460,078 µm²；这是 `1_synth.json` 的阶段指标，不是最终宏面积或制造占地。后续修复、时钟和布线还会改变资源。
 
 本轮代码初次运行时尚未提交。运行器、配置和源输入的 SHA-256 用于绑定实际执行快照；事后保存的项目代码 commit 见页首与 PR 回执。各 attempt 之间确有版本差异，实际身份以各自的 `runner-inputs.sha256` 为准，不把基线仓库 commit 或某一后续快照冒称为所有作业的精确执行版本。[轻量结果索引](../../project/experiments/block_hierarchy/results/issue-7.json)收录各作业、工具与输入身份、阶段指标及远程日志路径。镜像已记录 SHA-256，OpenROAD 版本字符串为 `unknown`；实际二进制哈希可核对，未推断其版本号。
 
 按用户后续明确指示，撤销早期试跑的人工运行时限。集群实读 c64、c96 的 `DefaultTime=NONE`、`MaxTime=UNLIMITED`；后续提交不设有限时长，并读回作业实际 `TimeLimit`。上述 45 分钟超时与已终止恢复作业仍属于真实历史，不删除或改写。
+
+默认完整检查路线 89448 的阶段门级 LEC 为单个 KISSAT miter 求解，无分区进度输出，进程仍在计算；尚无通过结论。为并行验证后续物理流程，89453 从同一个终态父作业另开目录，仅为 make 显式加入 `LEC_CHECK=0`，不改变 RTL、SDC、放置或修复参数。89448／89449 原输入不改、继续无限时运行。物理路线复制得到的历史 LEC 日志标为继承日志，不能当作本 attempt 已执行或通过的检查；即使另一路随后通过，也须先证明被比较网表身份相同，才能讨论证据复用。
 
 ## 原实现的时序背景
 
@@ -42,6 +48,8 @@
 ## 验证及证据边界
 
 筛查的 `hierarchy -check`、`check -assert` 等检查属于 elaboration／结构检查，不证明 RTL 与软件参考等价，也不证明新网表或路由后功能正确。原功能仿真、形式比较及独立全系统 STA 没有因本次选择了相同源码而自动完成。
+
+本轮独立 `tb/vec` 回归 89455 已通过，随机种子为 1、未减例数：六种 VEC 操作在 0%／30% 拒绝授权下各 100 例及三个定向例，共 1,203 例零失败；原数学测试的 12,000 组输入和 16,384 组舍入检查均通过。测试比较 `numerics.h` 参考和完整 1 MiB 行为 SRAM，并检查请求保持、写载荷、busy/done/tag 及原地操作。使用 Verilator 5.042、容器 GCC 11.4；工具及测试源哈希、完整日志和机器可读结果保存在独立 attempt。首试 89452 编译失败，不能计为运行期通过；89455 仅在独立测试副本将上述位常量明确为 `1u << 31`（仍是 `uint32_t 0x80000000`），记录兼容修改前后哈希和 diff，原始 archive、RTL 与数值参考头文件不改。此项只覆盖原 RTL、单指令及行为存储，不代替综合／物理网表等价、真实 SRAM、完整 core 或路由后验证。
 
 后续按实际生成阶段记录 Block 产物、顶层的真实宏实例及位置、LEF／Liberty 是否来自最终路由、是否读入 SPEF、实际未布通与 DRC、setup/hold 报告、约束覆盖和失败项。工具退出为零、DRC 数字、某项 WNS 和整体签核是不同证据，不互相替代。
 

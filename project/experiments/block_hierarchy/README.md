@@ -20,12 +20,17 @@
 python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-screen-next --mode screening --cpus 8
 python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-harden-next --mode pilot --cpus 16
 python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-top-next --mode integration --block-attempt vec-harden-next --depends-on <hardening-job-id> --cpus 16
+python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-regression-next --mode regression --cpus 8
 python project/experiments/block_hierarchy/collect_results.py --attempt vec-screen-next:<screen-job-id> --attempt vec-harden-next:<hardening-job-id> --attempt vec-top-next:<integration-job-id>
 ```
 
 `screening` 从容器实际脚本确认支持哪些流程选项，并完成原 VECTOR RTL elaboration。该容器支持 `SYNTH_HIERARCHICAL`、`SYNTH_KEEP_MODULES` 和 `BLOCKS`，未发现 `SYNTH_HIERARCHICAL_KEEP`。`SYNTH_KEEP_MODULES` 只保留综合层次，`BLOCKS` 才调用各块配置、生成宏抽象并向父级添加 LEF/Lib/GDS；不能仅设置层次保留就声称完成物理分块。原 llaccel elab 模板显式 `flatten`，需要从原 RTL 重新建立要保留的边界。
 
 `pilot` 从原始 RTL生成完整 VECTOR 网表，再按原 v1 的 35% 利用率、0.55 放置密度、`-noshare` 和 16384-bit memory 上限执行 Nangate45 ORFS `finish`。此时 VECTOR 内部允许 flatten；它在父级以完整宏出现。
+
+`regression` 固定 `SEED=1` 运行原 `tb/vec` Makefile 的 math/vector benches，保持 RTL、数值、用例和比较断言。89452 在编译原 `tb_math.cpp` 时因 uint32_t 初始化中的 `1 << 31` narrowing 失败，未完成运行测试；失败日志保留。当前 runner 在全新 attempt 中复制出独立 `regression-source`，仅将这一处改为 `1u << 31`，仍为 uint32_t 的 `0x80000000`。脚本断言唯一替换、比较全文件集合与内容，强制其它文件（含 RTL/reference头）逐字节不变，原 archive 不改；`compat-patch.diff` 和前后哈希记录兼容修改，未增加全局 warning 抑制。编译、缓存和临时文件分别位于该 attempt 的独立目录。使用镜像内 GCC 11.4 与绑定目录中的 Verilator 5.042，记录工具/源文件哈希、日志与 `regression-result.json`。它验证原 RTL 的数值/协议回归，不能代替物理网表等价性或 STA。
+
+恢复模式可显式指定 `--skip-phase-lec`，启动另一条独立物理工程路线。它仅在 `make` 命令中附加 `LEC_CHECK=0`，保留同一终态 checkpoint、原 RTL、3 ns/0.6 ns约束、放置和优化配置。receipt、容器环境、runner哈希及 `phase-lec-policy.txt` 均记录这一选择；此路线只检验物理流程、抽象和接口，不主张门级等价。89448 的默认完整检查和89449的依赖保持运行；不得将它的未完成或后续证明套用到另一份网表，除非另行核验实际网表身份及证明范围。复制父目录留下的旧 LEC 日志在索引中标为继承，不能算新作业执行的检查。
 
 如果某次作业在完成综合后中断，可在它到达终态后使用 `--mode resume --resume-from <旧attempt>` 和全新 `--attempt`。该入口在计算节点复制完整 ORFS 阶段目录，保持文件时间、配置和3 ns/0.6 ns约束不变；旧路径仅保留为只读网表/SDC输入。实际执行前对首个缺失阶段保存 `make -n`，发现需要重新综合就停止并保留诊断，再正常执行全流程 `finish`。首轮恢复 89447 通过身份校验，但全流程 dry-run 因尚未生成的后续 SDC 副产物失败；修正为首个缺失阶段的 dry-run 后新建 attempt，不掩盖该失败。恢复逻辑以本轮阶段实测为限，不声称通用 checkpoint 恢复能力；实际恢复是否成功以索引为准。既有旧 attempt、失败日志和部分阶段均保留。
 
