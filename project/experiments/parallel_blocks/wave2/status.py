@@ -40,7 +40,7 @@ for label, stream in submission['plan'].items():
         if progress:item['ram_cases_finished']=len(json.loads(progress))
         progress=small(base/'view-progress.json')
         if progress:item['views_finished']=list(json.loads(progress))
-        if spec['kind']=='physical':
+        if spec['kind'] in ('physical', 'route-repair'):
             nickname='parallel_'+spec['case'].replace('-','_')
             logs=base/'flow/logs/nangate45'/nickname/'base'
             results=base/'flow/results/nangate45'/nickname/'base'

@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+from quality_gates import electrical_gates, report_cap_slack
 
 root=Path(os.environ['LLHD_BATCH'])
 assert not (root/'completion.json').exists()
@@ -21,8 +22,12 @@ for name,item in record['tasks'].items():
         audits[filename]=dict(status='pass' if code==0 else 'fail',exit_code=code,entries=len(manifest.read_text().splitlines()))
         failures+=int(code!=0)
     item['checksum_audits']=audits
-    if item['spec']['kind']=='physical':
+    if item['spec']['kind'] in ('physical', 'route-repair'):
         q=item['quality'];markers=item['final_markers']
+        nickname='parallel_'+item['spec']['case'].replace('-','_')
+        report=base/'flow/reports/nangate45'/nickname/'base/6_finish.rpt'
+        report_text=report.read_text() if report.is_file() else ''
+        q['worst_cap_slack_report_value']=report_cap_slack(report_text)
         gates={'pipeline_exit_zero':(item['exit_code'] or '').strip()=='0',
             'hash_exit_zero':(item['hash_exit_code'] or '').strip()=='0',
             'final_report':'finish' in item['stages'],'drc_zero':q['drc']==0,
@@ -33,6 +38,8 @@ for name,item in record['tasks'].items():
             'vdd_connected_reported':any('All shapes on net VDD are connected' in l for l in markers),
             'vss_connected_reported':any('All shapes on net VSS are connected' in l for l in markers),
             'no_final_error':bool(markers) and not any('[ERROR' in l for l in markers)}
+        gates.update(electrical_gates(q, item['metrics'].get('6_report.json',{}),
+            item['metrics'].get('5_2_route.json',{}), report_text))
         item['observed_tool_gates']=gates
         item['observed_tool_gates_pass']=all(gates.values())
     else:

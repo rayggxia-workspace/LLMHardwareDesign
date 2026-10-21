@@ -26,5 +26,9 @@ case "$kind" in
   abc-probe) python3 "$LLHD_BATCH/runner/wave2/abc_probe.py" ;;
   retired-evidence) python3 "$LLHD_BATCH/runner/wave2/retired_evidence.py" ;;
   physical-audit) python3 "$LLHD_BATCH/runner/wave2/strict_physical_audit.py" ;;
+  route-repair)
+    unset TMPDIR
+    python3 "$LLHD_BATCH/runner/wave2/resume_repair.py" ;;
+  cap-diagnostic) python3 "$LLHD_BATCH/runner/wave2/cap_diagnostic.py" ;;
   *) exit 2 ;;
 esac
