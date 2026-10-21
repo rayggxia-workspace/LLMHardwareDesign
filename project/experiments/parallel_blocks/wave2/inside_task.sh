@@ -17,5 +17,6 @@ case "$kind" in
   opentpu-validation) python3 "$LLHD_BATCH/runner/wave2/opentpu_validation.py" ;;
   baseline-views) python3 "$LLHD_BATCH/runner/wave2/baseline_views.py" ;;
   gemm-receipt) python3 "$LLHD_BATCH/runner/wave2/gemm_receipt.py" ;;
+  top-contract) python3 "$LLHD_BATCH/runner/wave2/prepare_top_contract.py" ;;
   *) exit 2 ;;
 esac
