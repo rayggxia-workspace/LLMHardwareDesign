@@ -17,7 +17,7 @@
 
 ## 2. 资料入口与证据层次
 
-当前任务工作树由 `main` 建立。尚未合并的 [PR #4](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/4) 中的模块与接口报告及其新附件，不能写成此工作树 `main` 已有文件。以下保存阅读入口，不复制大资料。
+当前任务工作树最初由 `main` 的 `19c9004` 建立，当时 [PR #4](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/4) 尚未合并，因此初次定向阅读使用外部源目录。该报告 PR 后续已于本日合入主干（`1d80491`）；本任务同步其后续主干提交，保留实际阅读来源，不复制或重算大资料。
 
 | 材料 | 可追溯入口 | 使用边界 |
 | --- | --- | --- |

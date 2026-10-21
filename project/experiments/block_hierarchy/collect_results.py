@@ -24,7 +24,58 @@ HOST = "yuzelu@10.129.166.172"
 REMOTE = "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7"
 COLLECTOR = r'''
 from pathlib import Path
-import json, subprocess, re
+import calendar, json, subprocess, re, time
+
+def file_origin(target, attempt, parent, started_epoch):
+    if not target.is_file():
+        return {'origin': 'unknown', 'reason': 'absent'}
+    info = target.stat()
+    result = {'origin': 'unknown', 'size_bytes': info.st_size, 'mtime_ns': info.st_mtime_ns}
+    if parent is not None:
+        inherited = parent / target.relative_to(attempt)
+        if inherited.is_file():
+            old = inherited.stat()
+            if (old.st_size, old.st_mtime_ns) == (info.st_size, info.st_mtime_ns):
+                if info.st_size <= 1024 * 1024 and inherited.read_bytes() != target.read_bytes():
+                    result['reason'] = 'copy_metadata_matches_but_small_file_content_differs'
+                    return result
+                result.update(origin='inherited', reason='parent_copy_size_mtime_match' + ('_and_content_match' if info.st_size <= 1024 * 1024 else ''), parent_path=str(inherited))
+                return result
+    if started_epoch is not None and info.st_mtime >= started_epoch + 1:
+        result.update(origin='current', reason='modified_after_job_start_second')
+    else:
+        result['reason'] = 'missing_start_time_or_preexisting_or_same_second_ambiguous'
+    return result
+
+def combined_lec_status(statuses):
+    statuses = set(statuses)
+    if 'conflicting_results' in statuses or {'identical', 'different'} <= statuses:
+        return 'conflicting_results'
+    if 'different' in statuses:
+        return 'different'
+    if 'identical' in statuses:
+        return 'identical'
+    return 'started_no_result' if statuses else None
+
+def summarize_lec(entries, skipped):
+    current = combined_lec_status(e['result'] for e in entries if e['provenance']['origin'] == 'current')
+    inherited = combined_lec_status(e['result'] for e in entries if e['provenance']['origin'] == 'inherited')
+    unknown = combined_lec_status(e['result'] for e in entries if e['provenance']['origin'] == 'unknown')
+    status = current or ('inherited_log_only_not_executed' if inherited else 'unknown_origin')
+    if skipped and current is not None:
+        status = 'unexpected_current_logs_despite_skip_policy'
+    elif skipped:
+        status = 'inherited_log_only_not_executed' if inherited else 'not_executed_no_current_evidence'
+    elif current == 'identical' and unknown in ('different', 'conflicting_results'):
+        status = 'conflicting_or_ambiguous_results'
+    return {
+        'status': status, 'current_attempt_status': current,
+        'inherited_parent_status': inherited, 'unknown_origin_status': unknown,
+        'cross_generation_results_disagree': bool(current in ('identical', 'different') and inherited in ('identical', 'different') and current != inherited),
+        'logs': entries,
+        'scope': 'Per-log lineage; only current-attempt logs describe this attempt. Gate-level phase comparison, not original RTL-to-physical equivalence.',
+    }
+
 root = Path(__ROOT__)
 attempts = __ATTEMPTS__
 sacct = subprocess.check_output([
@@ -49,8 +100,9 @@ for name, job in attempts.items():
         except (OSError, subprocess.CalledProcessError) as error:
             item['live_resource_snapshot_error'] = str(error)
     for filename in (
-        'submission.json', 'port-validation.json', 'harness-contract.json', 'physical-interface-validation.json', 'resume-validation.json', 'regression-result.json',
+        'submission.json', 'port-validation.json', 'harness-contract.json', 'physical-interface-validation.json', 'resume-validation.json', 'regression-result.json', 'macro-view-validation.json', 'pdn-connectivity.json', 'post-pdn-connectivity.json', 'pdn-source-via-reports.json',
         'exit-code.txt', 'host.txt', 'started-utc.txt', 'finished-utc.txt',
+        'output-hash-exit-code.txt',
         'image.sha256', 'tools.sha256', 'openroad-version.txt', 'yosys-version.txt',
         'orfs-commit.txt', 'runner-inputs.sha256', 'config-inputs.sha256',
         'abstract-source.txt', 'block-abstract-inputs.sha256', 'top-physical-inspection.txt',
@@ -58,12 +110,20 @@ for name, job in attempts.items():
         'verilator-version.txt', 'regression-tools.sha256', 'regression-cxx-version.txt', 'regression-source.sha256',
         'phase-lec-policy.txt',
         'compat-patch.diff', 'compat-inputs.sha256',
+        'pdn-audit-inputs.sha256', 'pdn-macro-pg-iterms.tsv', 'post-pdn-macro-pg-iterms.tsv',
     ):
         target = path / filename
         if target.is_file():
             text = target.read_text(errors='replace')
             item[filename] = json.loads(text) if filename.endswith('.json') else text.strip()
     submitted = item.get('submission.json', {})
+    parent = Path(submitted['resume_from']) if submitted.get('mode') == 'resume' and submitted.get('resume_from') else None
+    if parent is not None and parent.parent != root:
+        parent = None
+    try:
+        started_epoch = calendar.timegm(time.strptime(item.get('started-utc.txt', ''), '%Y-%m-%dT%H:%M:%SZ'))
+    except ValueError:
+        started_epoch = None
     item['verification_policy'] = {
         'skip_phase_lec': submitted.get('skip_phase_lec', False),
         'proof_inheritance_claimed': False,
@@ -82,6 +142,38 @@ for name, job in attempts.items():
             if target.is_file():
                 metrics[str(target)] = json.loads(target.read_text())
     item['flow_metrics'] = metrics
+    stage_artifacts = {}
+    for nickname in ('llhd_vec_original', 'llhd_vec_harness'):
+        logs = path / 'flow/logs/nangate45' / nickname / 'base'
+        results = path / 'flow/results/nangate45' / nickname / 'base'
+        if logs.is_dir() or results.is_dir():
+            entries = {}
+            for label, checkpoint, metric in (
+                ('cts', '4_cts.odb', '4_1_cts.json'),
+                ('global_route', '5_1_grt.odb', '5_1_grt.json'),
+                ('detailed_route', '5_2_route.odb', '5_2_route.json'),
+                ('final_report', '6_final.odb', '6_report.json'),
+            ):
+                checkpoint_origin = file_origin(results / checkpoint, path, parent, started_epoch)
+                metrics_origin = file_origin(logs / metric, path, parent, started_epoch)
+                origins = {checkpoint_origin['origin'], metrics_origin['origin']}
+                aggregate_origin = next(iter(origins)) if len(origins) == 1 else 'mixed' if origins == {'current', 'inherited'} else 'unknown'
+                present = (results / checkpoint).is_file() and (logs / metric).is_file()
+                entries[label] = {
+                    'checkpoint': str(results / checkpoint),
+                    'metrics': str(logs / metric),
+                    'checkpoint_and_metrics_present': present,
+                    'checkpoint_provenance': checkpoint_origin,
+                    'metrics_provenance': metrics_origin,
+                    'origin': aggregate_origin,
+                    'current_attempt_completion_artifacts': present and aggregate_origin == 'current',
+                }
+            stage_artifacts[nickname] = {
+                'stages': entries,
+                'temporary_logs_present': [str(t) for t in sorted(logs.glob('*.tmp.log'))],
+                'note': 'Stage completion requires its output checkpoint and closing metrics, not a DRT/RSZ progress message. Resume may inherit completed stages; see resume-validation.json. Existence does not imply timing/DRC acceptance.',
+            }
+    item['physical_stage_artifacts'] = stage_artifacts
     equivalence = {}
     for nickname in ('llhd_vec_original', 'llhd_vec_harness'):
         base = path / 'flow/logs/nangate45' / nickname / 'base'
@@ -89,10 +181,13 @@ for name, job in attempts.items():
             logs = [base / (stem + suffix) for suffix in ('_check.log', '.log')]
             present = [target for target in logs if target.is_file()]
             if present:
-                content = '\n'.join(target.read_text(errors='replace') for target in present).lower()
-                status = 'identical' if 'circuits are identical' in content else 'different' if 'circuits are different' in content else 'started_no_result'
+                entries = []
+                for target in present:
+                    content = target.read_text(errors='replace').lower()
+                    flags = [status for status, marker in (('identical', 'circuits are identical'), ('different', 'circuits are different')) if marker in content]
+                    entries.append({'path': str(target), 'result': combined_lec_status(flags) or 'started_no_result', 'provenance': file_origin(target, path, parent, started_epoch)})
                 skipped = item.get('submission.json', {}).get('skip_phase_lec', False)
-                equivalence[nickname + '/' + stem] = {'status': 'inherited_log_only_not_executed' if skipped else status, 'inherited_parent_status': status if skipped else None, 'logs': [str(target) for target in present], 'scope': 'inherited parent log, not executed by this skip-phase-lec attempt' if skipped else 'stage gate-level comparison, not original RTL to physical equivalence'}
+                equivalence[nickname + '/' + stem] = summarize_lec(entries, skipped)
     item['stage_equivalence_checks'] = equivalence
     io_models = {}
     for nickname in ('llhd_vec_original', 'llhd_vec_harness'):
@@ -108,6 +203,11 @@ for name, job in attempts.items():
         'flow': str(path / 'flow.log'),
         'regression': str(path / 'regression.log') if (path / 'regression.log').exists() else None,
         'resume_dry_run': str(path / 'resume-dry-run.txt') if (path / 'resume-dry-run.txt').exists() else None,
+        'post_submission_read_only_grt_policy_observation': str(path / 'grt-repair-policy-observation.txt') if (path / 'grt-repair-policy-observation.txt').exists() else None,
+        'post_submission_read_only_repair_timing_help': str(path / 'repair-timing-help.txt') if (path / 'repair-timing-help.txt').exists() else None,
+        'post_submission_read_only_psm_policy_observation': str(path / 'psm-policy-observation.txt') if (path / 'psm-policy-observation.txt').exists() else None,
+        'abstract': str(path / 'abstract.log') if (path / 'abstract.log').exists() else None,
+        'pdn_audit': str(path / 'pdn-audit.log') if (path / 'pdn-audit.log').exists() else None,
     }
     item['output_hash_index'] = str(path / 'result-files.sha256') if (path / 'result-files.sha256').exists() else None
     products = {}
@@ -118,12 +218,15 @@ for name, job in attempts.items():
             'vec_engine.lef', 'vec_engine_typ.lib',
         ) if (base / name).is_file()}
     item['existing_products_not_standalone_validation'] = products
+    item['new_macro_view_products'] = {name: str(path / 'macro-view' / name) for name in ('vec_engine.lef', 'vec_engine_typ.lib') if (path / 'macro-view' / name).is_file()}
     interface = item.get('physical-interface-validation.json', {})
     pin_check = item.get('port-validation.json', {})
     item['validation_summary'] = {
         'sacct_completed_is_only_execution_status': item['sacct'].get('state') == 'COMPLETED',
         'abstract_signal_names_and_directions_pass': pin_check.get('pass'),
         'physical_signal_interface_pass': interface.get('all_expected_signal_pins_present_connected_and_direction_correct'),
+        'explicit_pdn_connectivity': item.get('pdn-connectivity.json'),
+        'early_guarded_pdn_connectivity': item.get('post-pdn-connectivity.json'),
         'extra_physical_signal_pins_require_review': {scope: interface.get(scope, {}).get('extra_signal_pins') for scope in ('top', 'macro')},
         'timing_reports_present': {name: (path / name).is_file() for name in ('top-check-setup.rpt', 'top-clocks.rpt', 'top-paths.rpt', 'top-electrical.rpt')},
         'acceptance_note': 'COMPLETED never overrides failed/missing interface checks, electrical violations or missing timing coverage. No formal/system signoff.',
@@ -187,6 +290,12 @@ def main() -> None:
         },
         "timing_assumption": "3 ns single-clock Nangate45 typical corner; 0.6 ns top IO budget. Block and top budgets are not added to claim a system period.",
         "scheduler_policy": "Current runner requests --time=0 and verifies scontrol TimeLimit=UNLIMITED. User removed artificial runtime limits; historical timed attempts retain their actual sacct limits and terminal states.",
+        "diagnostic_evidence": {
+            "pdn_disconnected_api_probe": REMOTE + "/pdn-api-diagnostic-01/",
+            "pdn_via_landing_geometry_probe": REMOTE + "/pdn-geometry-diagnostic-01/",
+            "active_jobs_name_update": REMOTE + "/slurm-name-update-20261021/",
+            "scope": "Post-submission compute-node read-only/in-memory probes. No original database rewrite or PI rerun. First geometry probe failed on an API name; probe-02.log is the successful via-shape observation. Metadata rename does not alter inputs or time limits.",
+        },
         "remaining": remaining,
         **collected,
     }

@@ -27,8 +27,10 @@ connections = [f"    .{name}({name})" for name in ports]
     "module llhd_vec_harness (\n" + ",\n".join(declarations) + ");\n"
     "  vec_engine u_vec (\n" + ",\n".join(connections) + ");\nendmodule\n"
 )
-lef = result / "vec_engine.lef"
-lib = result / "vec_engine_typ.lib"
+view = Path(os.environ.get("LLHD_MACRO_VIEW", str(result)))
+lef = view / "vec_engine.lef"
+lib = view / "vec_engine_typ.lib"
+pdn_profile = os.environ.get("LLHD_MACRO_PDN", "platform-default")
 text = lef.read_text()
 match = re.search(r"\bSIZE\s+([0-9.eE+-]+)\s+BY\s+([0-9.eE+-]+)\s*;", text)
 assert match, "hardened LEF lacks macro SIZE"
@@ -59,6 +61,9 @@ die_w, die_h = width + 160, height + 160
     f"export DIE_AREA = 0 0 {die_w:.6f} {die_h:.6f}\n"
     f"export CORE_AREA = 10 10 {die_w-10:.6f} {die_h-10:.6f}\n"
     f"export MACRO_PLACEMENT_TCL = {root / 'macro_place.tcl'}\n"
+    + (f"export PDN_TCL = {root / 'pdn_vec_m10.tcl'}\n" if pdn_profile != "platform-default" else "")
+    + (f"export POST_PDN_TCL = {root / 'post_pdn_check.tcl'}\n" if pdn_profile == "guarded-m10" else "")
+    +
     "export PLACE_DENSITY = 0.30\nexport TNS_END_PERCENT = 100\n"
     "export SYNTH_HIERARCHICAL = 0\nexport LEC_CHECK = 0\n"
     f"export POST_FINAL_REPORT_TCL = {root / 'report_top_timing.tcl'}\n"
@@ -69,6 +74,9 @@ die_w, die_h = width + 160, height + 160
     "block": str(block),
     "macro_master": "vec_engine",
     "macro_instance": "u_vec",
+    "macro_view": str(view),
+    "macro_pdn": pdn_profile,
+    "experiment_class": "H1 additional M10 power resource/detailed or guarded view; not H2 frozen base" if pdn_profile != "platform-default" else "platform default",
     "macro_origin_um": [macro_x, macro_y],
     "orientation": "R0",
     "dimensions_um": [width, height],

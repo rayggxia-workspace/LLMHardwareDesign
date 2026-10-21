@@ -27,17 +27,59 @@
 | `vec-harden-resume-02`／89448 | c64、16 CPU；实读 `TimeLimit=UNLIMITED`，保存调度快照；身份与首个待执行阶段的 dry-run 通过，实测直接接续 CTS、没有重跑综合；终态待回填 |
 | `vec-top-03`／89449 | c64、16 CPU；实读 `TimeLimit=UNLIMITED`；`afterok:89448` 等待 Block 完成，尚无顶层物理结果 |
 | `vec-regression-01`／89452 | `FAILED`；c64、8 CPU、实读 `TimeLimit=UNLIMITED`；GCC 11.4 编译 `tb_math.cpp` 的 `uint32_t edge32[]` 时拒绝 `1 << 31` 的 narrowing，未执行运行期案例；日志与 fail JSON 保留 |
-| `vec-physical-01`／89453 | c64、16 CPU、实读 `TimeLimit=UNLIMITED`；同源 89443 checkpoint、身份与 dry-run 通过，接续 CTS。显式 `LEC_CHECK=0`，仅验证物理工程流程，不继承其他作业的等价结论 |
-| `vec-physical-top-01`／89454 | c64、16 CPU、实读 `TimeLimit=UNLIMITED`；`afterok:89453`，以独立物理路线的宏为输入，顶层结果待回填 |
+| `vec-physical-01`／89453 | `COMPLETED 0:0`，33:03，c64、16 CPU、`UNLIMITED`；同源 89443 checkpoint、身份与 dry-run 通过，接续 CTS，完成 ORFS `finish`。显式 `LEC_CHECK=0`，不继承其他作业的等价结论；路由几何检查通过，3 ns setup 预算未满足 |
+| `vec-physical-top-01`／89454 | `FAILED 2:0`，1:08，c64、16 CPU、`UNLIMITED`；成功导出最终宏抽象并通过端口检查，顶层综合后在 PDN 阶段报 `PDN-0006`：metal7 的 VDD 接入被宏在 metal8／metal9 的 OBS 阻断；未完成顶层布线 |
 | `vec-regression-02`／89455 | `COMPLETED 0:0`，17 秒，c64、8 CPU、`UNLIMITED`；独立测试副本仅做无符号位常量兼容修正。JSON `status=pass`：VECTOR 1,203／零失败、12 组全过、数学 12,000 组／零失败、16,384 组舍入检查通过 |
+| `vec-physical-top-02`／89456 | `FAILED 2:0`，8:09，c64、16 CPU、`UNLIMITED`；新详细 OBS／M10 配置通过 PDN 生成与 DRT（错误 0），但最终 PSM 报 M8／M9 短接及 `PSM-0069` 连通失败；POST 最终检查未执行，不构成顶层验收 |
 
 综合阶段记录了 259,349 个标准单元，标准单元面积为 460,078 µm²；这是 `1_synth.json` 的阶段指标，不是最终宏面积或制造占地。后续修复、时钟和布线还会改变资源。
+
+同一 attempt 的 `flow/reports/nangate45/llhd_vec_original/base/synth_stat.txt` 给出更具体的资源证据：顺序单元共 4,117 个、面积 20,268.136 µm²，占该阶段总面积 4.41%；另有 43,094 个 `FA_X1` 全加器与 15,802 个 `HA_X1` 半加器。因此不能将该完整 VECTOR 的规模主要归因于宽 FIFO。源码的两只 256 bit × 4 深度读响应 FIFO 合计只有 2,048 bit，映射网表中的 2,048 个 `DFF_X1` 恰保留在这两只 FIFO 的存储命名下；其余顺序资源另含控制和流水。算术单元映射后已大量匿名化，不能据这些门的数量再把面积精确分摊给某个 RTL 算子。该观察只用于解释当前配置的综合资源，不证明换粒度、缩减 lane 或复用算术单元能保持同一吞吐及接口行为。
 
 本轮代码初次运行时尚未提交。运行器、配置和源输入的 SHA-256 用于绑定实际执行快照；事后保存的项目代码 commit 见页首与 PR 回执。各 attempt 之间确有版本差异，实际身份以各自的 `runner-inputs.sha256` 为准，不把基线仓库 commit 或某一后续快照冒称为所有作业的精确执行版本。[轻量结果索引](../../project/experiments/block_hierarchy/results/issue-7.json)收录各作业、工具与输入身份、阶段指标及远程日志路径。镜像已记录 SHA-256，OpenROAD 版本字符串为 `unknown`；实际二进制哈希可核对，未推断其版本号。
 
 按用户后续明确指示，撤销早期试跑的人工运行时限。集群实读 c64、c96 的 `DefaultTime=NONE`、`MaxTime=UNLIMITED`；后续提交不设有限时长，并读回作业实际 `TimeLimit`。上述 45 分钟超时与已终止恢复作业仍属于真实历史，不删除或改写。
 
 默认完整检查路线 89448 的阶段门级 LEC 为单个 KISSAT miter 求解，无分区进度输出，进程仍在计算；尚无通过结论。为并行验证后续物理流程，89453 从同一个终态父作业另开目录，仅为 make 显式加入 `LEC_CHECK=0`，不改变 RTL、SDC、放置或修复参数。89448／89449 原输入不改、继续无限时运行。物理路线复制得到的历史 LEC 日志标为继承日志，不能当作本 attempt 已执行或通过的检查；即使另一路随后通过，也须先证明被比较网表身份相同，才能讨论证据复用。
+
+## 实际 Block 路由结果
+
+89453 已生成最终 `6_final.odb/v/sdc/spef/gds` 和计算节点输出哈希索引。以下来自该作业的实际 ORFS 报告；属于单角研究平台检查，没有额外重放独立 STA，也不等于 foundry 签核。
+
+| 项目 | 实际值与判断 |
+| --- | --- |
+| 详细布线 | `5_2_route.odb` 与收尾指标均产生；DRT 错误从初始 57,736 经迭代降至 0，`5_route_drc.rpt` 为空；天线 net／pin 违例均为 0。该计数只覆盖本次工具及平台规则 |
+| 块内线长／过孔 | DRT 阶段工具统计线长 6,798,427 µm、过孔 2,193,396；不是顶层跨 Block 布线量 |
+| 最终 setup | 最差 slack −4.16659 ns、TNS −1056.05 ns、287 个 setup 违例，**未满足 3 ns 预算** |
+| 最终 hold | 最差 slack +0.0253833 ns、TNS 0；仍须结合覆盖及电气检查判断，不据此宣称系统签核 |
+| 电气 | 最终报告 max-capacitance 违例 59 个，max-slew／max-fanout 违例均为 0；**电气验收未通过** |
+| 最终资源 | 报告非 filler 面积 524,749 µm²；非 filler 实例 321,725，含 tap／时钟／修复等。另有 411,821 个 filler，因此总实例 733,546 不能当作活跃计算单元数；最终宏 footprint 按实际导出 LEF 另列 |
+
+最终 `flow/reports/nangate45/llhd_vec_original/base/6_finish.rpt` 的最差路径仍为 `u_f0.rp[0]$_DFFE_PN0P_ → wr_data_r[187]$_DFFE_PN0P_`，是同一时钟上升沿寄存器间的 library setup 检查，arrival 约 7.62 ns、required 约 3.45 ns、slack 约 −4.17 ns。GRT 同一路径约 −4.19 ns。该证据说明块内部已有预算瓶颈，不能仅凭端点名称把全部延迟分摊给某个算子或跨块接口；也不能与原完整 core 的最坏 recovery 路径直接比较来归因分块代价。报告按该角计算的 `period_min` 约 7.17 ns／139.54 MHz 是工具时序摘要，尚不代表完整系统可用工作频率。
+
+同一工具报告给出 VDD worst voltage drop 0.688493 V、VSS rise 0.629844 V，两者最坏位置并不配对，不能相加。最终 `6_report.log` 明确打印 `Total power : 2.27e+01 W`；这是 22.7 W 的工具模型结果，不是把 Liberty 的 nW 单位误当 W。只读核对实际镜像配置后，确认其使用 VDD 1.1 V／VSS 0 V，未指定外部 `vsrc` 或覆写 source 类型，因此沿用 Tcl 的 `BUMPS` 默认；未追溯该二进制的 C++ 默认 bump 尺寸／间距／外部电阻。该流程也未载入 VCD／SAIF 或显式活动，工具帮助给出的输入默认活动为每最小时钟周期 0.1 次转换、占空比 0.5，再结合库模型传播。核对记录保存在远程 `psm-policy-observation.txt`，没有另跑电源分析。当前结果是严重的默认模型供电警示，不能当作真实应用功耗或供电实测，也没有将电源完整性标为通过。几何 DRC 为零不能覆盖这些时序、电气与电源问题。
+
+## 宏抽象与首轮顶层结果
+
+89454 的生成日志确认载入 89453 的最终 ODB／SDC／SPEF，抽象输入哈希与 Block 输出索引相符。LEF 尺寸为 1148.52 × 1148.52 µm，footprint 约 1.31910 mm²，区别于标准单元面积。原 26 个端口、2,246 个信号 bit 及方向全部保留，另有 VDD／VSS；实际宏模型与原声明端口检查通过。
+
+独立审读最终网表与 Liberty 得到 765 组 setup／765 组 hold 弧、363 组 clk→output 弧及 7 组组合弧，相关表格非空且数值有限。最终网表有 766 个与 cell 相连的输入（含 clk）；其余 810 个输入在固定参数优化后未连接 cell，也没有模型弧。307 个无弧输出均由 tiecell 直接给常量，363 个动态输出均有时钟弧。这里依据最终产物分类，没有用原 RTL 的候选统计代替物理证明。
+
+Liberty 不包含 `minimum_period` 检查，只含时钟树路径信息，因此父级时序报告不能自动覆盖块内部寄存器间的失败。端口齐全、时序弧存在与“该宏能按 3 ns 使用”是不同结论。[独立审读记录](../../project/experiments/block_hierarchy/results/issue-7-abstract-audit.json)保存输入哈希、交叉计数、限制与顶层实际验收状态；它不代表额外重跑 STA 或完成源 RTL 到物理网表的形式比较。
+
+该 Liberty 也没有有效的 `internal_power`／漏电／宏电流或活动模型；仅有单位与标称电压元数据。因此父级 PDN 的几何连通检查可以独立验收，父级 IR-drop 结果则不能替代包含完整宏电流的电源完整性分析，更不能覆盖上述 Block 内部的 PSM 警示。
+
+首轮顶层在供电网生成时失败。默认父级 PDN 的跨层连接与宏的实际 PG 引脚／整层阻挡发生冲突，不能用跳过 PDN 或删掉实际阻挡来制造成功。该 attempt 的输入和失败日志保留；后续在全新 attempt 中核对真实供电接入方式，暂不宣称顶层冻结、信号布线或接口最终验收已通过。
+
+89456 在独立 `macro-view/` 中读取同一最终 ODB，执行实际镜像支持的 `write_abstract_lef -bloat_factor 0` 导出详细 OBS；这保留真实几何，区别于原视图的整层 cover。该选项的含义可对照 [OpenROAD 官方 API 文档](https://openroad.readthedocs.io/en/latest/main/src/README.html#abstract-lef-support)，运行行为仍以本次镜像日志为准。新 LEF 约 397 MB，2,248 个 pin（含 PG）、全部引脚几何和宏尺寸与原视图匹配；Liberty 为原已审模型的逐字节副本，来源仍指向 89454 的最终 SPEF 抽象日志，未冒称本作业重做时序提取。
+
+父级新配置保持外围供电层，并增加 M10 条带；宏 grid 尝试对既有 M7 PG 引脚建立到 M10 的 via stack，不在宏上新铺 M5／M6。M8／M9 的真实阻挡保留。这是 H1 的新供电资源和抽象视图对照，尚非 H2。89456 的 PDN 日志仍有 VDD 1.5%／VSS 1.3% 局部阻挡告警，三处各移除 4 个 via；没有独立 failed-via 报告不等于零失败。
+
+89456 虽完成顶层 DRT、计数为 0，但最终 PSM 明确报 `PSM-0043`：`u_vec` 的 M8／M9 与 VDD shape 短接，随后 `PSM-0069 Check connectivity failed on VDD` 使作业失败。`VDD.rpt` 保存短接坐标。因此路由器的几何计数不足以证明跨层供电接入安全，最终宏位置／信号接口的 POST 检查也尚未执行。后续修复须审查 via stack 的中间层 landing 与宏内真实金属，不能关闭 PSM 或删除阻挡来通过。
+
+独立坐标审读发现 43 处短接（M8 21 处、M9 22 处）均与同层真实 OBS 有正面积交叠。计算节点的只读 ODB 诊断进一步定位到首例：via 中心 `(477.07, 758.40)` µm 在 OBS 外，但 2×2 via7 array 的 M8 landing 为中心 ±0.62 µm，右边达到 477.69 µm；实际宏 OBS 从 x=477.495 µm 开始，两者交叠与 PSM 报告完全匹配。故候选接入点的中心避障不足以保证整块 landing 安全。下一轮会保守扩大 OBS 访问保护，并在 PDN 后立即做显式连通检查；是否修复以新作业结果判断。
+
+镜像默认 PDN 脚本注释了 `check_power_grid`；新增 `pdn-audit` 模式用于在独立计算作业读取顶层 ODB，显式检查 VDD／VSS 连通和宏 PG ITerm 的网络，记录报告存在性。实际镜像的失败反例已在独立诊断中验证抛 Tcl error，失败没有被成功退出掩盖；审计同时检查命令返回值，不能把 `pdngen` 完成当作连通通过。
 
 ## 原实现的时序背景
 

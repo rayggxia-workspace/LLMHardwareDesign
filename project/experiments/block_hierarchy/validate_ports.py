@@ -6,7 +6,7 @@ import re
 
 root = Path.cwd()
 block = Path(os.environ["LLHD_BLOCK"])
-result = block / "flow/results/nangate45/llhd_vec_original/base"
+result = Path(os.environ.get("LLHD_MACRO_VIEW", str(block / "flow/results/nangate45/llhd_vec_original/base")))
 ports = json.loads((block / "vec-elab.json").read_text())["modules"]["vec_engine"]["ports"]
 expected = set()
 expected_directions = {}

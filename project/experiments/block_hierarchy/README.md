@@ -11,6 +11,7 @@
 - 输出全部位于 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/<attempt>/`。同名 attempt 禁止覆盖，失败记录保留。大数据库留在此处，仓库仅保留脚本和轻量索引。
 - 代码快照 commit 见结果索引与 Issue/PR 回执；如在作业提交后生成，只能称为事后记录的代码快照。每次实际提交脚本的精确身份由 `runner-inputs.sha256` 表示，历史版本差异仍以这些哈希为准，不能将基线 `main` commit 充当 runner 版本。
 - Slurm 仅使用 c64/c96 分区，每作业最多 16 CPU。按用户要求，当前 runner 使用 `--time=0` 请求无限时，不设置人为运行时限；2026-10-21 实读两分区均 `DefaultTime=NONE`、`MaxTime=UNLIMITED`，安装的 sbatch 手册明确零表示无时间限制。提交回执记录 `scontrol` 读回的实际 `TimeLimit`，若不是 `UNLIMITED` 就取消新作业并保留回执。综合、编译、物理工具和大输出哈希均在计算节点运行。历史 89443 的 45 分钟 TIMEOUT 和 89447 的 60 分钟配置仍按当时事实保留，后续已撤销此类人工上限。
+- 新提交遵守新主干远程规则，以本人缩写 `yzl-vec-<mode>` 命名。89448/89449 只更新任务名，前后调度回执见 `slurm-name-update-20261021/`；时间上限和作业输入均不改，历史 submission 保留原名。
 
 ## 流程与复跑
 
@@ -36,14 +37,38 @@ python project/experiments/block_hierarchy/collect_results.py --attempt vec-scre
 
 `integration` 依赖硬化成功，调用实际 ORFS `generate_abstract`。默认 `ABSTRACT_SOURCE=6_final`：记录最终 ODB/SDC/网表、SPEF 是否存在和 SHA；只有生成日志确认读入最终 SPEF 才称为使用路由后提取寄生。该脚本传播时钟，并将 source latency 归零后导出 Liberty；LEF 使用 `-bloat_occupied_layers` 输出占用层阻塞。
 
+89454 的默认顶层在 PDN 阶段失败：既有宏的 PG pin 只在 M7、未伸至边界，原抽象将 M1–M9 整层阻塞；Nangate45 默认宏供电网无法跨越这些阻塞。失败视图和日志保留。89456 使用独立的 `detailed-m10` 视图（bloat factor 0）完成了顶层详细路由、路由 DRC 为 0，但最终 PSM 检出 43 处 VDD 与宏 M8/M9 OBS 的实际重叠，报 PSM-0069，作业 FAILED；它未通过供电/最终顶层验收。一个实读 via 中心在 OBS 外，M8 landing 为中心 ±0.62 µm，仍切入 OBS；证据位于 `pdn-geometry-diagnostic-01/probe-02.log` 及失败 top 的 `VDD.rpt`，不能忽略。
+
+下一受控候选为 `--macro-pdn guarded-m10`，尚待实际验收。在新 attempt 的 `macro-view/` 从同一最终 ODB 运行 `write_abstract_lef -bloat_factor 1`，按各层 pitch 保守扩大真实 OBS，复制字节一致的原 Liberty，引用原 GDS；不改原块输出。验证宏尺寸、全部 2248 pin 的方向/use/几何一致，全部占用 OBS 层仍在，保存两视图哈希和矩形计数。父级在原外围 M1/M4/M7 网之外新增 M10 竖条，仅尝试由既有 M7 PG pin 经合法间隙接入；不在宏上新铺 M5/M6，也不删除 OBS 或忽略 PDN 错误。guarded profile 在镜像已核实的 `POST_PDN_TCL` 入口立即检查 VDD/VSS，要求 Tcl catch code 为 0 且原生返回值严格为 true，保存 JSON 后如失败即停止；最终 PSM 也保留。它属于 H1 的抽象视图与新增供电资源试验，不是 H2 冻结底座。视图检查通过仍需实际 PG 连通、路由 DRC 和最终接口检查。
+
+```powershell
+python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-physical-top-next --mode integration --block-attempt vec-physical-01 --macro-pdn guarded-m10 --cpus 16
+python project/experiments/block_hierarchy/collect_results.py --attempt vec-physical-top-next:<integration-job-id>
+```
+
+镜像默认 `pdn.tcl` 注释了 `check_power_grid`，因此除 guarded 早期检查外，另以新的 `pdn-audit` attempt 对完成后的顶层 ODB 显式只读检查 VDD/VSS 连通、宏全部 PG ITerm 的实际 net 归属，并单列原 failed-via 报告清单和 PDN 警告。该审计保存工具、ODB 和脚本哈希、每网 catch code/原生返回值及日志；不回写顶层输入。示例：
+
+```powershell
+python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-pdn-audit-next --mode pdn-audit --block-attempt vec-physical-top-next --depends-on <completed-top-job-id> --cpus 1
+python project/experiments/block_hierarchy/collect_results.py --attempt vec-pdn-audit-next:<audit-job-id>
+```
+
+零 failed-via 与 PG 全连通需要分别成立。导出的宏 Liberty 没有 internal_power/leakage/活动电流模型，因此即便顶层工具能报告功耗/压降，也不能代表包含原宏真实电流的 PI 验收。
+
 顶层输入只含生成的端口直通 wrapper 和宏 LEF/Lib/GDS，不再导入 VECTOR 实现 RTL。程序核验原始 26 个端口、2246 个信号 bit 与 LEF/Lib/wrapper一致；`u_vec` 固定在 `(80, 80) µm`、R0、FIRM。最终 ODB再检查宏 master、数量、位置、方向和无 `u_vec/` 内部标准单元。LEF含阻塞几何。顶层使用实际宏时钟 pin，CTS与顶层布线均由 ORFS执行；保存 check_setup、路径和电气检查，避免因缺少 timing arc产生表面良好时序。
 
 ## 验证口径和结果
 
 实时轻量索引为 [results/issue-7.json](results/issue-7.json)，包含每次 attempt 的实际 `sacct` 状态、退出码、资源、输入身份、输出与日志路径。`collect_results.py` 默认采集本轮历史；新增 attempt 使用可重复的 `--attempt NAME:JOB_ID`。它只读取报告和计算节点已产生的哈希，不在登录节点运行物理工具。Slurm `COMPLETED` 仅表示命令执行结束；最终接口报告的布尔结果、额外信号 pin、未连接 pin和时序覆盖需要分别检查，不能以作业完成状态覆盖失败或缺失的验收证据。
 
+阶段状态要求对应 ODB 与收尾 metrics 同时存在。索引按父拷贝的大小/mtime（小日志另比内容）及本作业开始时间区分 `current`、`inherited`、`mixed`、`unknown`，时间同秒或证据不足保守记未知。LEC 按每个日志的来源分别判定，只用本轮日志形成本轮结论；复制的旧 `identical` 不算新检查，本轮相互冲突的结论也不判通过。这些来源标签不替代计算节点保存的输入/输出哈希或功能验收。
+
 时间约束为单时钟 3 ns、输入/输出 0.6 ns；数值沿用原 v1，只作为此次边界预算假设。导出块模型后只在父级端口施加父级约束，不将两个 0.6 ns简单相加推断系统频率。单角 WNS、DRC或 STA完成均不等于系统签核。
 
 手写边界 SDC 未显式设置外部 driving cell/input transition 或输出 load，因此这些预算不能充当完整系统边界电气模型。综合 ABC 的技术映射负载假设与顶层 STA 的外部负载需要区别；若 ORFS导出约束含工具默认模型，应在实际结果中记录其值及来源。
 
-未执行原始 RTL 到物理网表的完整形式比较；Block 会按镜像默认配置调用 Kepler 的阶段前后门级 LEC，是否实际执行、结果及范围以各阶段日志为准，不能与源 RTL 算术验证混同。顶层明确 `LEC_CHECK=0`。端口直通与结构检查不能代替 VECTOR 算术正确性或全 llaccel 软件回归。原项目已有独立功能结果是参考证据，本次未冒称重新完成这些回归。尚未验证多 Block 联通、统一底座、固定预埋轨道、允许定制层/通孔或制造成本优势。
+89453 已完成全 VECTOR 物理流程（33:03，无限时；本路线显式跳过阶段 LEC）。详细路由 DRC 为 0、天线 net/pin 为 0；最终单角 setup WS −4.16659 ns、TNS −1056.05 ns，287 条 setup 违例，max-cap 59，hold WS +0.0253833 ns/TNS 0。最差路径是 `u_f0.rp[0]` 到 `wr_data_r[187]` 的 FF→FF 数据 setup，不是 reset recovery；3 ns 未闭合。宏 footprint 为 1148.52×1148.52 µm；最终非 filler 标准单元面积约 524749 µm²（含时钟、repair、tap），另有 411821 个 filler/约 787959 µm²，不能将含 filler 的 733546 总实例当作活跃逻辑数。
+
+同次 ORFS 自动 PSM 报 VDD worst drop 0.688493 V、VSS worst rise 0.629844 V，未通过 PI 验收。来源是 Nangate45 默认 1.1/0 V、电源入口 `BUMPS` 和 Liberty 静态活动传播；未提供应用 VCD/SAIF、显式 bump 布局或外部供电模型。工具默认输入 activity 为每最短时钟周期 0.1 次转换、duty 0.5，日志总功耗约 22.7 W。两个最差位置未配对，不能直接相加，也不能当作真实应用的供电结果。只读策略/帮助证据在 `vec-physical-01/psm-policy-observation.txt`，未重跑或更改该分析。
+
+未执行原始 RTL 到物理网表的完整形式比较；Block 会按镜像默认配置调用 Kepler 的阶段前后门级 LEC，是否实际执行、结果及范围以各阶段日志为准，不能与源 RTL 算术验证混同。顶层明确 `LEC_CHECK=0`。89455 已通过上述原 VECTOR 源 RTL 的 1203 例和 math/rounding 回归；端口直通与结构检查仍不能代替物理网表等价性或全 llaccel 软件回归。尚未验证多 Block 联通、统一底座、固定预埋轨道、允许定制层/通孔或制造成本优势。
