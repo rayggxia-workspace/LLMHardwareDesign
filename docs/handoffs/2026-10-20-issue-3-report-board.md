@@ -1,5 +1,7 @@
 # Issue #3：报告提交与看板待办
 
+> 2026-10-21 更新：用户明确要求合入 main，PR #4 已合并，合并提交为 `1d80491`；下述“待审查、未合并”为历史记录。登记和看板待办仍有效。
+
 - 仓库：https://github.com/rayggxia-workspace/LLMHardwareDesign
 - 任务：https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/3
 - 分支：`task/3-update-routing-reports`；起点 commit `19c9004`；报告成果 commit `b041d53`；[PR #4](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/4) 已上传，待审查，未合并。
