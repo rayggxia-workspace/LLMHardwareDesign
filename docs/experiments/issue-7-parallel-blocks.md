@@ -5,6 +5,7 @@
 - Issue：[候选 Block 与分层实现 #7](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7)，负责人 YUZE-LU，状态沿用 `in_progress`；审查人、优先级待指定。
 - 独立分支：`task/7-parallel-blocks`；本地工作树 `D:\Data\电路实验\LLMHardwareDesign-worktrees\issue-7-parallel-blocks`。
 - 代码：[parallel_blocks](../../project/experiments/parallel_blocks/README.md)。主线 `task/7-block-routing`／[PR #8](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/8) 继续负责 VECTOR 和 PG 修复。本会话不修改其文件、输入、时限或作业。
+- 并发交付：[草稿 PR #10](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/10)，只包含本批新目录／专有记录，与主线 PR #8 分开审查；个人补充见 [进度](../../progress/YUZE-LU/parallel-blocks-7.md)，恢复见[交接](../handoffs/2026-10-21-issue-7-parallel-blocks.md)。
 
 ## 实验与资源
 
@@ -31,10 +32,10 @@
 
 | Case／step | 实际状态与证据 |
 | --- | --- |
-| `llaccel-gemm`／89458.2 | 已通过 elaboration、综合，正在布局；27 个声明端口、3,753 signal bit |
+| `llaccel-gemm`／89458.2 | 已通过 elaboration、综合／布局／CTS，正在后续实现；27 个声明端口、3,753 signal bit |
 | `opentpu-act`／89458.1 | `COMPLETED 0:0`，5:59；全流程最终 ODB／SPEF／报告已产生，路由 DRC 0、天线 net／pin 违例均为 0；2.5 ns 预算下 setup WS +1.22599 ns／TNS 0，hold WS +0.0322719 ns／TNS 0，**最大电容违例 2 个，未通过完整电气验收**。19 个声明端口、860 signal bit |
-| `opentpu-mxu`／89458.0 | 已通过 elaboration、综合，正在布局；37 个声明端口、2,172 signal bit |
-| `opentpu-act-mxu`／89458.3 | 已通过 elaboration、综合，正在布局；40 个声明端口、1,662 signal bit |
+| `opentpu-mxu`／89458.0 | 已通过 elaboration、综合／布局／CTS／GRT，详细布线尚未收尾；37 个声明端口、2,172 signal bit |
+| `opentpu-act-mxu`／89458.3 | 已通过 elaboration、综合／布局／CTS，正在后续实现；40 个声明端口、1,662 signal bit |
 
 ACT 最终工具报告非 filler 实例面积 35,870.1 µm²，其中标准单元 6,722.88 µm²、synthetic SRAM 宏 29,147.2 µm²；die 106,410 µm²，不混为一个面积口径。最终日志分别报告 VDD/VSS 的所有 shape 连通；未额外重跑独立 PG／STA 签核。默认活动与 synthetic 宏模型的功耗／IR-drop 不当作真实应用结果。
 
@@ -46,4 +47,6 @@ ACT 最终工具报告非 filler 实例面积 35,870.1 µm²，其中标准单�
 
 ## 接入与交付
 
-复用 Issue #7，不接管其整体状态。登记沿用管理中心 PR #5 的 pending 记录；本项目无 `config/board.json`，已知 Projects 查询缺 `read:project`，实际看板 unverified／同步 pending，不扩权限或另建看板。并发成果将保存独立 branch commit 和同 Issue 回执，供主线合入现有 PR；不覆盖主线回执。最终状态仍以远端核验为准。
+复用 Issue #7，不接管其整体状态。登记沿用管理中心 PR #5，本轮再次读回仍 OPEN／未合并，状态 pending；本项目无 `config/board.json`，已知 Projects 查询缺 `read:project`，实际看板 unverified／同步 pending，不扩权限或另建看板。并发成果在 PR #10 独立审查，供主线决定合入顺序；不覆盖 PR #8 回执或擅自合并。
+
+实际检查：管理结构、Python 编译、远程 Bash 语法和 `git diff --check` 通过；代码快照 `017a0a7e16c40e47a837e75101789c57b34625e6` 的 [Project structure CI](https://github.com/rayggxia-workspace/LLMHardwareDesign/actions/runs/39576321826) success。该 CI 只验证项目结构，不代表物理、功能或签核验收。
