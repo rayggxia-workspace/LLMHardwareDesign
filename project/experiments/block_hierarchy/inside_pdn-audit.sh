@@ -6,7 +6,7 @@ openroad -version > openroad-version.txt 2>&1
 sha256sum "$(command -v openroad)" > tools.sha256
 export LLHD_AUDIT_DB="$LLHD_BLOCK/flow/results/nangate45/llhd_vec_harness/base/6_final.odb"
 test -f "$LLHD_AUDIT_DB"
-sha256sum "$LLHD_AUDIT_DB" audit_pdn.tcl check_pdn_connectivity.tcl > pdn-audit-inputs.sha256
+sha256sum "$LLHD_AUDIT_DB" audit_pdn.tcl check_pdn_connectivity.tcl filter_pg_access.tcl > pdn-audit-inputs.sha256
 # This audit reads the completed top and never writes back into its directory.
 python3 - <<'PY'
 import hashlib, json, os

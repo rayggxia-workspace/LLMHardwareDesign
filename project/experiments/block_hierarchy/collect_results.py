@@ -100,7 +100,8 @@ for name, job in attempts.items():
         except (OSError, subprocess.CalledProcessError) as error:
             item['live_resource_snapshot_error'] = str(error)
     for filename in (
-        'submission.json', 'port-validation.json', 'harness-contract.json', 'physical-interface-validation.json', 'resume-validation.json', 'regression-result.json', 'macro-view-validation.json', 'pdn-connectivity.json', 'post-pdn-connectivity.json', 'pdn-source-via-reports.json',
+        'submission.json', 'port-validation.json', 'harness-contract.json', 'physical-interface-validation.json', 'resume-validation.json', 'regression-result.json', 'macro-view-validation.json', 'pdn-connectivity.json', 'post-pdn-connectivity.json', 'pdn-source-via-reports.json', 'pg-access-selection.json',
+        'launch-code-snapshot.json',
         'exit-code.txt', 'host.txt', 'started-utc.txt', 'finished-utc.txt',
         'output-hash-exit-code.txt',
         'image.sha256', 'tools.sha256', 'openroad-version.txt', 'yosys-version.txt',
@@ -110,7 +111,7 @@ for name, job in attempts.items():
         'verilator-version.txt', 'regression-tools.sha256', 'regression-cxx-version.txt', 'regression-source.sha256',
         'phase-lec-policy.txt',
         'compat-patch.diff', 'compat-inputs.sha256',
-        'pdn-audit-inputs.sha256', 'pdn-macro-pg-iterms.tsv', 'post-pdn-macro-pg-iterms.tsv',
+        'pdn-audit-inputs.sha256', 'pg-access-obstructions.tsv', 'pg-access-pins.tsv', 'pg-removed-sites.tsv', 'pg-retained-landings.tsv', 'pdn-macro-pg-iterms.tsv', 'post-pdn-macro-pg-iterms.tsv',
     ):
         target = path / filename
         if target.is_file():
@@ -226,6 +227,7 @@ for name, job in attempts.items():
         'abstract_signal_names_and_directions_pass': pin_check.get('pass'),
         'physical_signal_interface_pass': interface.get('all_expected_signal_pins_present_connected_and_direction_correct'),
         'explicit_pdn_connectivity': item.get('pdn-connectivity.json'),
+        'pg_access_site_selection_or_check': item.get('pg-access-selection.json'),
         'early_guarded_pdn_connectivity': item.get('post-pdn-connectivity.json'),
         'extra_physical_signal_pins_require_review': {scope: interface.get(scope, {}).get('extra_signal_pins') for scope in ('top', 'macro')},
         'timing_reports_present': {name: (path / name).is_file() for name in ('top-check-setup.rpt', 'top-clocks.rpt', 'top-paths.rpt', 'top-electrical.rpt')},
@@ -267,7 +269,7 @@ def main() -> None:
         text=True, encoding="utf-8",
     ))
     remaining = [
-        "Inspect exported Liberty timing coverage and final route electrical/timing violations before accepting the pilot.",
+        "Block Liberty audited with finite arcs; block 3ns setup and max-cap fail. Top PDN remains failed; legal parent via-site selection and final independent check-only acceptance are pending.",
         "Scale integration harness to useful multiple-Block connectivity and then fixed/restricted layers.",
     ]
     active = [a['attempt'] for a in collected['attempts'] if a['sacct'].get('state') in ('RUNNING', 'PENDING', 'COMPLETING')]
@@ -280,7 +282,7 @@ def main() -> None:
         "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
         "source_scope": "Original full-width llaccel v1 vec_engine and its full math/vector regression with one recorded test-only unsigned-literal compatibility fix; direct one-macro integration harness",
         "runner_commit": runner_commit,
-        "runner_commit_note": "This is a repository code snapshot recorded after job submission, not a claim that the jobs started from a committed checkout. Exact submitted versions and historical differences are bound by each remote runner-inputs.sha256; the base repository commit is not the experiment runner version.",
+        "runner_commit_note": "Repository code snapshot for review. A per-attempt launch-code-snapshot.json, when present, records a verified clean committed launch; historical jobs submitted before their snapshot remain bound by remote runner-inputs.sha256/launcher_sha256 and are not retrospectively claimed to have launched from that commit.",
         "claims": {
             "complete_llaccel_core": False,
             "prefabricated_base": False,
@@ -293,6 +295,7 @@ def main() -> None:
         "diagnostic_evidence": {
             "pdn_disconnected_api_probe": REMOTE + "/pdn-api-diagnostic-01/",
             "pdn_via_landing_geometry_probe": REMOTE + "/pdn-geometry-diagnostic-01/",
+            "actual_fixed_image_spacing_tables": REMOTE + "/pdn-spacing-evidence-01/",
             "active_jobs_name_update": REMOTE + "/slurm-name-update-20261021/",
             "scope": "Post-submission compute-node read-only/in-memory probes. No original database rewrite or PI rerun. First geometry probe failed on an API name; probe-02.log is the successful via-shape observation. Metadata rename does not alter inputs or time limits.",
         },

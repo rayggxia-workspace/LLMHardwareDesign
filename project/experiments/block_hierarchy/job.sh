@@ -21,7 +21,7 @@ sha256sum "$LLHD_IMAGE" > image.sha256
 read -r image_sha256_observed _ < image.sha256
 test "$image_sha256_observed" = "$LLHD_IMAGE_SHA256"
 find source -type f -print0 | sort -z | xargs -0 sha256sum > source-inputs.sha256
-sha256sum job.sh inside_screening.sh inside_pilot.sh inside_integration.sh inside_resume.sh inside_regression.sh inside_pdn-audit.sh audit_pdn.tcl check_pdn_connectivity.tcl post_pdn_check.tcl collect_attempt_outputs.sh prepare_vec.py prepare_top.py inspect_top.tcl validate_ports.py report_top_timing.tcl validate_physical_interfaces.py validate_resume.py export_macro_view.tcl validate_macro_view.py pdn_vec_m10.tcl > runner-inputs.sha256
+sha256sum job.sh inside_screening.sh inside_pilot.sh inside_integration.sh inside_resume.sh inside_regression.sh inside_pdn-audit.sh inside_pdn-filter-audit.sh inside_pdn-site-audit.sh audit_pdn.tcl check_pdn_connectivity.tcl post_pdn_check.tcl collect_attempt_outputs.sh filter_pg_access.tcl prepare_vec.py prepare_top.py inspect_top.tcl validate_ports.py report_top_timing.tcl validate_physical_interfaces.py validate_resume.py export_macro_view.tcl validate_macro_view.py pdn_vec_m10.tcl > runner-inputs.sha256
 singularity exec --cleanenv --bind /public/home/yuzelu \
   --env LLHD_ATTEMPT="$LLHD_ATTEMPT" --env NUM_CORES="$SLURM_CPUS_PER_TASK" \
   --env LLHD_BLOCK="${LLHD_BLOCK:-}" \

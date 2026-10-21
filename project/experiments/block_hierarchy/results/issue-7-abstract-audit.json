@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
-  "updated_at": "2026-10-21T17:09:30+08:00",
+  "updated_at": "2026-10-21T17:23:57+08:00",
   "kind": "independent_read_only_review_of_existing_physical_reports_and_abstract",
   "reviewer_scope": "Read completed reports, Liberty/LEF and final netlist using lightweight text parsing. No new STA, physical implementation, or source-RTL-to-physical formal equivalence run.",
   "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
@@ -629,6 +629,35 @@
     "absence_of_failed_via_file_means_zero_failures": false,
     "comparison_with_guarded_early_check": "Both supply error reports are byte-identical by compute-generated SHA256 to the guarded top-03 early reports; this is a negative validation of the checker on the known failed stable ODB, not evidence of a repaired integration.",
     "scope": "New explicitly identified read-only native PG audit job, not STA or power-current/IR-drop replay. The observed two error paths throw PSM-0069 (catch=1); do not infer all native failure modes from this one negative target.",
+    "integration_acceptance": false
+  },
+  "pg_access_policy_static_review": {
+    "profile": "legal-m10",
+    "status": "Static review only; no successful integration or runtime filtering result reviewed yet",
+    "reviewed_script": "project/experiments/block_hierarchy/filter_pg_access.tcl",
+    "reviewed_script_local_sha256": "43c803a33d96db81843c57db21f2a511f9b0b9bd3a29ab9d5b8ecd414be3a429",
+    "macro_view_bloat_factor": 0,
+    "source_scope": "Actual imported vec_engine master OBS/PG pins at asserted R0 location (80,80) um; no source block/master changes. Select only new parent VDD/VSS special-wire vias.",
+    "landing_scope": "Actual via-master routing-layer boxes translated by actual XY, including 2x2 array/enclosure. M8/M9 have no exemption; M7 landing fully contained in an original same-net PG pin is a deliberate contact; M10 has no macro OBS by assertion.",
+    "stack_completeness": "Every same-net/XY group with M8 or M9 must have exactly adjacent 7-8,8-9,9-10 edges before removal. Offset/incomplete stacks and any standalone nonvia M8/M9 PG patch fail closed. Removal deletes the complete same-net/XY group, including coincident lower-parent vias.",
+    "post_filter_reenumeration": "Fresh database enumeration exports all retained routing-layer landings and requires count consistency plus zero remaining guarded intersections. Independent TSV-based recomputation remains pending runtime outputs.",
+    "check_only_mode": "LLHD_PG_FILTER_AUDIT=2 skips every destroy call and never writes a database; an unsafe site fails before later native PG checks. LLHD_PG_FILTER_AUDIT=1 is an explicitly mutating in-memory engineering diagnostic and writes only its own pdn-filtered.odb after strict PG passes.",
+    "native_checks": "Strict per-net catch-code/native-boolean PG checks and final automatic PSM remain enabled. Correct PG names are insufficient. If site review fails before native checks, the latter are unexecuted, not passed.",
+    "tech_guard": {
+      "guard_um": 2.0,
+      "reviewed_spacing_table_maximum_um": 1.5,
+      "layers": [
+        "metal7",
+        "metal8",
+        "metal9"
+      ],
+      "actual_image_tech_lef": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+      "tech_lef_sha256": "834a79295054cd4209178d1bade67c353863c47bb4b3c22ee38b862b7cec37f2",
+      "evidence_directory": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-spacing-evidence-01",
+      "spacing_layers_sha256": "7febd9416d1b4890d7142e4152f16d6e1a226d7f592de7acd2c45d576a4d9345",
+      "method": "Independent actual-image text read and saved compute-generated layer segments/manifests agree. The 2um rectangle guard conservatively exceeds these spacing-table entries; it is not full technology-rule or foundry signoff."
+    },
+    "blocking_static_findings": [],
     "integration_acceptance": false
   }
 }

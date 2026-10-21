@@ -39,18 +39,27 @@ python project/experiments/block_hierarchy/collect_results.py --attempt vec-scre
 
 89454 的默认顶层在 PDN 阶段失败：既有宏的 PG pin 只在 M7、未伸至边界，原抽象将 M1–M9 整层阻塞；Nangate45 默认宏供电网无法跨越这些阻塞。失败视图和日志保留。89456 使用独立的 `detailed-m10` 视图（bloat factor 0）完成了顶层详细路由、路由 DRC 为 0，但最终 PSM 检出 43 处 VDD 与宏 M8/M9 OBS 的实际重叠，报 PSM-0069，作业 FAILED；它未通过供电/最终顶层验收。一个实读 via 中心在 OBS 外，M8 landing 为中心 ±0.62 µm，仍切入 OBS；证据位于 `pdn-geometry-diagnostic-01/probe-02.log` 及失败 top 的 `VDD.rpt`，不能忽略。
 
-下一受控候选为 `--macro-pdn guarded-m10`，尚待实际验收。在新 attempt 的 `macro-view/` 从同一最终 ODB 运行 `write_abstract_lef -bloat_factor 1`，按各层 pitch 保守扩大真实 OBS，复制字节一致的原 Liberty，引用原 GDS；不改原块输出。验证宏尺寸、全部 2248 pin 的方向/use/几何一致，全部占用 OBS 层仍在，保存两视图哈希和矩形计数。父级在原外围 M1/M4/M7 网之外新增 M10 竖条，仅尝试由既有 M7 PG pin 经合法间隙接入；不在宏上新铺 M5/M6，也不删除 OBS 或忽略 PDN 错误。guarded profile 在镜像已核实的 `POST_PDN_TCL` 入口立即检查 VDD/VSS，要求 Tcl catch code 为 0 且原生返回值严格为 true，保存 JSON 后如失败即停止；最终 PSM 也保留。它属于 H1 的抽象视图与新增供电资源试验，不是 H2 冻结底座。视图检查通过仍需实际 PG 连通、路由 DRC 和最终接口检查。
+89457 用 `guarded-m10` 请求 `-bloat_factor 1` 并在真实 `POST_PDN_TCL` hook（写出 2_4 ODB 之前）执行严格双网检查。实测关键 M8/M9 routed OBS 外边界没有扩大，不能将 API 参数视为普遍 padding；VDD/VSS 均 catch=1 / PSM-0069，提前终止。89459 对 89456 最终 ODB 的独立只读负向审计也复现双网失败，PG ITerm net 归属本身正确。失败输入、几何、日志和输出哈希均保留。除 M8 landing 切入外，另一处 M9 via 中心本身位于 OBS 内；不能将全部短路归为 enclosure 扩张。
+
+下一候选为 `--macro-pdn legal-m10`，尚待实际验收。它从同一最终 ODB 在新 `macro-view/` 导出 bloat factor 0 的详细 OBS、复制字节一致的原 Liberty 并引用原 GDS；原块输出只读。验证宏尺寸和全部 2248 pin 的方向/use/几何不变、全部占用 OBS 层留存。父级新增 M10 供电竖条，不在宏上新铺 M5/M6。`POST_PDN_TCL` 从实际导入的 macro master 读取 OBS、原 PG pin 和 R0@(80,80) 坐标，从真实 via master 取全套 landing。对所有父级 PG via（也可能包含 lower-parent via）按同网/同 XY 整组选择，不修改 master 几何。M8/M9 landing 与实际 OBS 保持 L∞ 2 µm guard；实际固定镜像 M7–M9 spacing table 最大值为 1.5 µm。M7 landing 只有完全包含在同网原 PG pin 内才豁免，否则同样检查 OBS；M10 已检查无宏 OBS。原文与 SHA 在 `pdn-spacing-evidence-01/`。这不覆盖完整工艺 spacing 签核。
+
+发现任一 landing 不满足 guard 时删除整个父级同站 via 组；遇到非完整 7–8/8–9/9–10 栈或独立 M8/M9 PG patch 则 fail closed。随后重新枚举所有剩余 landing，输出实际 OBS/PG pin/删除原因/残余形状 TSV 和 `pg-access-selection.json`，并执行严格 VDD/VSS native 连通检查。要求 Tcl catch=0 且原生返回严格 true；失连即失败，最终 PSM 也保留。该方案属于 H1 新增供电资源与接入选择，不能称为 H2 冻结底座。
+
+先运行独立 `pdn-filter-audit`：只读终态 89456 ODB，在内存选择父级 via，只把通过检查的数据库写到自身新目录。独立审查者再根据导出的实际 OBS/landing 复算残余站。它是工程修复试验，不是对原失败 ODB 的验收。经实际复核后才运行完整 legal 顶层：
 
 ```powershell
-python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-physical-top-next --mode integration --block-attempt vec-physical-01 --macro-pdn guarded-m10 --cpus 16
-python project/experiments/block_hierarchy/collect_results.py --attempt vec-physical-top-next:<integration-job-id>
+python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-pdn-filter-next --mode pdn-filter-audit --block-attempt vec-physical-top-02 --cpus 1
+python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-physical-top-next --mode integration --block-attempt vec-physical-01 --macro-pdn legal-m10 --cpus 16
+python project/experiments/block_hierarchy/collect_results.py --attempt vec-pdn-filter-next:<audit-job-id> --attempt vec-physical-top-next:<integration-job-id>
 ```
 
-镜像默认 `pdn.tcl` 注释了 `check_power_grid`，因此除 guarded 早期检查外，另以新的 `pdn-audit` attempt 对完成后的顶层 ODB 显式只读检查 VDD/VSS 连通、宏全部 PG ITerm 的实际 net 归属，并单列原 failed-via 报告清单和 PDN 警告。该审计保存工具、ODB 和脚本哈希、每网 catch code/原生返回值及日志；不回写顶层输入。示例：
+自定义视图要求源 Block 已有同一最终实现生成的 LEF/Lib/SPEF；不能借用另一条物理路线的模型。89448 的最终匹配视图需在其自身流程完成后另行生成；当前 89449 的旧默认 PDN 配置尚未替代。
+
+镜像默认 `pdn.tcl` 注释了 `check_power_grid`。`pdn-audit` 对终态顶层 ODB 只读检查 VDD/VSS、宏 PG ITerm 实际 net 归属，并单列原 failed-via 清单和 PDN 警告。最终 legal 顶层另用 `pdn-site-audit`：同样读取终态 ODB，同时以 check-only 模式重新枚举实际 PG landing，禁止删除 via、禁止写 DB，发现 unsafe 站即失败；不能在验收中默默修复。审计保存工具、ODB、脚本哈希、每网 catch code/原生返回值及日志。
 
 ```powershell
-python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-pdn-audit-next --mode pdn-audit --block-attempt vec-physical-top-next --depends-on <completed-top-job-id> --cpus 1
-python project/experiments/block_hierarchy/collect_results.py --attempt vec-pdn-audit-next:<audit-job-id>
+python project/experiments/block_hierarchy/run_vec_pilot.py --attempt vec-pdn-final-next --mode pdn-site-audit --block-attempt vec-physical-top-next --depends-on <completed-top-job-id> --cpus 1
+python project/experiments/block_hierarchy/collect_results.py --attempt vec-pdn-final-next:<audit-job-id>
 ```
 
 零 failed-via 与 PG 全连通需要分别成立。导出的宏 Liberty 没有 internal_power/leakage/活动电流模型，因此即便顶层工具能报告功耗/压降，也不能代表包含原宏真实电流的 PI 验收。

@@ -41,7 +41,7 @@ if test -n "${LLHD_MACRO_VIEW:-}"; then
   sha256sum "$LLHD_MACRO_VIEW/vec_engine.lef" "$LLHD_MACRO_VIEW/vec_engine_typ.lib" >> block-abstract-inputs.sha256
 fi
 python3 prepare_top.py
-sha256sum top-config.mk top.sdc top.v macro_place.tcl report_top_timing.tcl pdn_vec_m10.tcl post_pdn_check.tcl check_pdn_connectivity.tcl > config-inputs.sha256
+sha256sum top-config.mk top.sdc top.v macro_place.tcl report_top_timing.tcl pdn_vec_m10.tcl post_pdn_check.tcl check_pdn_connectivity.tcl filter_pg_access.tcl > config-inputs.sha256
 python3 validate_ports.py
 make -C /OpenROAD-flow-scripts/flow DESIGN_CONFIG="$LLHD_ATTEMPT/top-config.mk" \
   WORK_HOME="$LLHD_ATTEMPT/flow" NUM_CORES="$NUM_CORES" finish 2>&1 | tee flow.log

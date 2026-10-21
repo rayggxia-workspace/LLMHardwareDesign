@@ -62,7 +62,7 @@ die_w, die_h = width + 160, height + 160
     f"export CORE_AREA = 10 10 {die_w-10:.6f} {die_h-10:.6f}\n"
     f"export MACRO_PLACEMENT_TCL = {root / 'macro_place.tcl'}\n"
     + (f"export PDN_TCL = {root / 'pdn_vec_m10.tcl'}\n" if pdn_profile != "platform-default" else "")
-    + (f"export POST_PDN_TCL = {root / 'post_pdn_check.tcl'}\n" if pdn_profile == "guarded-m10" else "")
+    + (f"export POST_PDN_TCL = {root / 'post_pdn_check.tcl'}\n" if pdn_profile in ("guarded-m10", "legal-m10") else "")
     +
     "export PLACE_DENSITY = 0.30\nexport TNS_END_PERCENT = 100\n"
     "export SYNTH_HIERARCHICAL = 0\nexport LEC_CHECK = 0\n"
