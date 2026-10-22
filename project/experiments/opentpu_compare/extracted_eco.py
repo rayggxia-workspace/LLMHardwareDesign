@@ -73,10 +73,16 @@ def execute(spec):
     paths=re.findall(r'Startpoint:.*?slack \((?:MET|VIOLATED)\)',report.read_text(),re.S)
     inputs=sorted({re.search(r'^Startpoint:\s+(\S+)',p)[1] for p in paths if p.endswith('(VIOLATED)') and '(input port' in p.split('Endpoint:')[0]})
     (ROOT/'extracted-eco-plan.json').write_text(json.dumps(dict(source=str(source),hold_input_guards=inputs,
+        drive_guardband=bool(spec.get('extracted_drive_guardband')),
         repeaters=spec.get('extracted_repeaters',[]),replacements=spec.get('extracted_replacements',[])),indent=2)+'\n')
     if spec.get('extracted_inspect_only'):return
     body='remove_fillers\nset llhd_drive_root {'+str(ROOT)+'}\nset llhd_drive_phase extracted\n'
     body+='set llhd_drive_rounds 1\nset llhd_drive_use_extracted_rc 1\nset llhd_drive_checkpoint_only 1\nset llhd_enable_macro_guards 1\n'
+    if spec.get('extracted_drive_guardband'):
+        # Select from the actual extracted report, including MET pins with
+        # little reserve. The existing 35% cap / 20% slew optimization reserve
+        # changes physical drivers only; all final acceptance limits are fixed.
+        body+='set llhd_drive_guardband 1\n'
     body+='source {'+str(track(ROOT/'runner/macro_guard.tcl'))+'}\nsource {'+str(track(ROOT/'runner/targeted_drive.tcl'))+'}\n'
     body+='source {'+str(track(ROOT/'runner/extracted_eco.tcl'))+'}\n'
     body+='set audit [open {'+str(ROOT/'extracted-eco-actions.tsv')+'} w]\n'
