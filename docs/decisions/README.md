@@ -7,3 +7,4 @@
 - [0001：初期资料进入项目目录](0001-initial-research-layout.md)，已接受。
 - [0002：冻结连接模型pilot](0002-frozen-routing-pilot.md)，Issue #11随PR提议，待审查。
 - [0003：最大库存与端点约束overlay](0003-endpoint-constraint-overlays.md)，Issue #13随PR提议，待审查。
+- [0004：普通LEF几何与合法访问证据分层](0004-ordinary-lef-geometry-evidence.md)，Issue #16随PR提议，待审查。
