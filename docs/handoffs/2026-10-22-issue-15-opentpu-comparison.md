@@ -4,7 +4,7 @@
 
 - 仓库：`rayggxia-workspace/LLMHardwareDesign`，project_id `llm-hardware-design`。
 - [Issue #15](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15)，负责人YUZE-LU，实际身份已读回；[草稿PR #17](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/17)，base `task/7-parallel-blocks`，依赖PR10，不自合并。
-- 当前分支 `task/15-opentpu-compare`；最近物理修复runner `e4e3b9a6ff91fb1b60efe4a85217a99a174477d8`。实际已执行runner分别绑定每条submission回执，不能用更新后的HEAD替换旧运行身份。
+- 当前分支 `task/15-opentpu-compare`；12轮物理修复runner `5729f68a32d7d3e1c27ee99e447f9799975be36f`。实际已执行runner分别绑定每条submission回执，不能用更新后的HEAD替换旧运行身份。
 - 本地独立工作树 `D:\Data\电路实验\LLMHardwareDesign-worktrees\issue-15-opentpu-compare`；原始输出 `yuzelu@10.129.166.172:/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/`。不修改已有PR8／PR10工作树和封存结果；89448不属于本轮。
 - 正式代码 `project/experiments/opentpu_compare/`，轻量回执 `results/`，[实验定义与实测](../experiments/issue-15-opentpu-comparison.md)，个人进度 `progress/YUZE-LU/STATUS.md`。
 
@@ -24,3 +24,5 @@
 - 审查人、优先级待指定；任务仍in_progress，实验完成也须独立审查及合并才能按规则标done。没有期限要求，不填写杜撰日期。
 
 19:12补充：合并06完成DRC／PG但真实分层时序和电容失败，拆分07仍在DRT；08／09的EST-0104错误保留。后续joint_repair.py采用独立OpenROAD进程、真实ODB检查点交替修复并每次重路由／估算RC。89750核对40846个未标注驱动均无连接负载。新轮以submission绑定runner，不将当前HEAD倒填旧轮。
+
+2026-10-22 19:29 CST：06／07均完成DRT／PG但时序和电容失败，完整分层setup −0.053027／−0.002414ns。当前作业12轮89764／89765，原生插入辅助接口SIGFPE改为显式ODB接线（探针89763通过），每步真实连接断言、合法化、重布线和最终功能证明仍要求通过。继续入口先collect，再查看joint-repair.json和joint-final-quality.rpt；未通过不得生成最终PPA。
