@@ -30,7 +30,7 @@ for p in sorted(base.iterdir()):
  for f in (p/'flow/reports').rglob('6_finish.rpt') if (p/'flow/reports').exists() else []:
   row['final_report']=f.read_text()
  for f in p.glob('*-resource.json'): row[f.name]=json.load(open(f))
- for name in ['repair-input-audit.json','full-hierarchy-sta.log']:
+ for name in ['repair-input-audit.json','structural-equivalence.json','full-hierarchy-sta.log']:
   f=p/name
   if f.exists():
    if f.suffix=='.json': row[name]=json.load(open(f))

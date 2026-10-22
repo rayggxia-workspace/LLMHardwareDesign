@@ -186,6 +186,20 @@ def matched(spec):
     run_tcl('detail','read_db {'+str(dest/'6_final.odb')+'}\nwrite_abstract_lef -bloat_factor 0 {'+str(dest/(top+'.detailed.lef'))+'}\n')
 
 def view_probe(spec):
+    if spec.get('structural_sources'):
+        from equivalence import certify
+        libraries=[track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib')]
+        libraries+=list({p.name:track(p) for n in ('act','mxu') for p in (SOURCES[n]/'memory-model/macros').glob('*.lib')}.values())
+        certificates={}
+        for name,path in spec['structural_sources'].items():
+            source=Path(path)
+            assert (source/'exit-code.txt').read_text().strip()=='0'
+            meta=json.loads(track(source/'experiment.json').read_text())
+            certificates[name]=certify(track(source/'mapped.v'),track(result(source)/'6_final.v'),meta['top'],libraries,
+                ROOT/('equivalence-'+name),negative_control=name=='act')
+        (ROOT/'structural-equivalence.json').write_text(json.dumps(certificates,indent=2)+'\n')
+        assert all(c['passed'] for c in certificates.values()), 'Logical cone certificate did not pass; inspect differences'
+        return
     flow=Path('/OpenROAD-flow-scripts/flow')
     names=['scripts/io_placement.tcl','scripts/io_placement_util.tcl','scripts/synth_odb.tcl',
            'platforms/nangate45/config.mk','scripts/variables.yaml','scripts/cts.tcl','scripts/generate_abstract.tcl']
