@@ -24,7 +24,10 @@ proc llhd_repeat_driver {pin master_name serial} {
   set x [expr {int(round(($dx+$lx)/2.0))}]
   set y [expr {int(round(($dy+$ly)/2.0))}]
   set name llhd_extracted_repeater_${serial}
-  if {[$block findInst $name] ne "NULL" || [$block findNet ${name}_net] ne "NULL"} {error "ECO name collision"}
+  while {[$block findInst $name] ne "NULL" || [$block findNet ${name}_net] ne "NULL"} {
+    incr serial
+    set name llhd_extracted_repeater_${serial}
+  }
   set master [[ord::get_db] findMaster $master_name]
   if {$master eq "NULL"} {error "Missing buffer master $master_name"}
   if {![regexp {^BUF_X(1|2|4|8|16|32)$} $master_name]} {error "Repeater must be a non-inverting buffer"}
@@ -75,7 +78,10 @@ proc llhd_delay_input {port_name serial} {
   set x [expr {int(max([$core xMin]+2*$dbu,min([$core xMax]-2*$dbu,$x)))}]
   set y [expr {int(max([$core yMin]+2*$dbu,min([$core yMax]-2*$dbu,$y)))}]
   set name llhd_extracted_input_${serial}
-  if {[$block findInst $name] ne "NULL" || [$block findNet ${name}_net] ne "NULL"} {error "ECO name collision"}
+  while {[$block findInst $name] ne "NULL" || [$block findNet ${name}_net] ne "NULL"} {
+    incr serial
+    set name llhd_extracted_input_${serial}
+  }
   set after [odb::dbNet_create $block ${name}_net]
   set added [odb::dbInst_create $block [[ord::get_db] findMaster BUF_X2] $name]
   $after setSigType SIGNAL
