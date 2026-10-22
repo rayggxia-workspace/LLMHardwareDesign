@@ -5,6 +5,14 @@ import re
 def nonnegative(x):
     return isinstance(x,(int,float)) and math.isfinite(x) and x>=0
 
+def require_sealed_input(consumer,producer,relative):
+    """Bind what a proof/STA actually read to the producer's sealed output."""
+    relative=relative.replace('\\','/')
+    path=producer['spec']['remote'].rstrip('/')+'/'+relative
+    expected=producer.get('sealed_artifact_sha256',{}).get(relative)
+    actual=consumer.get('input-sha256.json',{}).get(path)
+    assert expected and actual==expected, 'Proof/STA input does not match sealed artifact: '+path
+
 def evaluate(row):
     f=row.get('metrics',{}).get('6_report.json',{})
     d=row.get('metrics',{}).get('5_2_route.json',{})

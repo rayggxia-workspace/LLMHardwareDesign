@@ -5,7 +5,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
-from quality import evaluate
+from quality import evaluate, require_sealed_input
 
 HERE=Path(__file__).resolve().parent
 p=argparse.ArgumentParser()
@@ -35,16 +35,35 @@ for name in list(selection.values())+[definition[k] for k in evidence_keys]:
     integrity=row.get('collected_file_integrity',{})
     assert integrity and all(integrity.values()), 'Collected evidence differs from sealed output manifest: '+name
     assert '|COMPLETED|' in row.get('scheduler',''), 'Wait for sealed scheduler terminal state: '+name
+    terminal=json.loads((HERE/'results'/(name+'-terminal.json')).read_text())
+    assert terminal['output_manifest_sha256']==row['output_manifest_sha256'], 'Source manifest changed since its first terminal receipt: '+name
 proof=data[definition['functional_proof']]
 assert proof.get('exit_code')=='0'
 for name in ['act','mxu','merged']:
     assert proof['structural-equivalence.json'][name]['passed'], 'Missing logical cone certificate'
     assert Path(proof['spec']['structural_sources'][name]).name==selection[name], 'Proof belongs to another block'
+    source=data[selection[name]]
+    require_sealed_input(proof,source,'mapped.v')
+    require_sealed_input(proof,source,source['experiment.json']['result_relative']+'/6_final.v')
+    for stage in ['mapped','physical']:
+        require_sealed_input(inventory,proof,'equivalence-'+name+'/'+stage+'.json')
 parent_proof=data[definition['parent_functional_proof']]
 assert parent_proof.get('exit_code')=='0'
 for name in ['top_split','top_merged']:
     assert parent_proof['structural-equivalence.json'][name]['passed'], 'Parent wiring function changed'
     assert Path(parent_proof['spec']['structural_sources'][name]).name==selection[name]
+    source=data[selection[name]]
+    require_sealed_input(parent_proof,source,'top.v')
+    require_sealed_input(parent_proof,source,source['experiment.json']['result_relative']+'/6_final.v')
+    for relative in [source['experiment.json']['result_relative']+'/6_final.'+ext for ext in ['v','spef']]+['boundary.sdc']:
+        require_sealed_input(source,source,relative)
+        require_sealed_input(annotation,source,relative)
+    for child in (['act','mxu'] if name=='top_split' else ['merged']):
+        block=data[selection[child]]
+        for ext in ['v','spef']:
+            relative=block['experiment.json']['result_relative']+'/6_final.'+ext
+            require_sealed_input(source,block,relative)
+            require_sealed_input(annotation,block,relative)
 rows={}
 for kind,name in selection.items():
     row=data.get(name,{})
