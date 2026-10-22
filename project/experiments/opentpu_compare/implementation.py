@@ -273,6 +273,7 @@ def view_probe(spec):
             final_all_cells=actual,qualification='Memory and state elements retained; drive variants normalized, combinational and physical repair costs separate'),indent=2)+'\n')
 
 def top(spec):
+    if spec.get('resume_parent'):return resume_parent(spec)
     import math
     from quality import evaluate
     sources={k:Path(v) for k,v in spec['sources'].items()}
@@ -345,7 +346,9 @@ def top(spec):
     (ROOT/'post-pdn.tcl').write_text(setup)
     # The external 1662 bit pins must have identical coordinates in both
     # parents. Apply after automatic placement, then explicitly save its ODB.
-    pinlines=[];pin_contract={}
+    pinlines=['if {[llength [info commands odb::dbBPin_destroy]] != 1} {error {Missing BPin reset API}}',
+              'foreach term [[ord::get_db_block] getBTerms] {if {[$term getSigType] in {POWER GROUND}} {continue}; foreach pin [$term getBPins] {odb::dbBPin_destroy $pin}}']
+    pin_contract={}
     names=[n if len(p['bits'])==1 else n+'['+str(i)+']' for n,p in ext.items() for i in range(len(p['bits']))]
     per_side=math.ceil(len(names)/4)
     for index,name in enumerate(names):
@@ -394,6 +397,75 @@ def top(spec):
     # These synthetic RAM experiments have no SRAM GDS. Complete actual PNR
     # and extraction in ODB/DEF/SPEF; do not manufacture a GDS-completion claim.
     make_stages(ROOT/'config.mk',spec,['synth','do-floorplan','do-place','do-cts'])
+    validate_parent_pins(ROOT/relative/'4_cts.odb')
+    if spec.get('stop_after_cts'):return
+    route_parent(spec)
+
+def validate_parent_pins(checkpoint):
+    run_tcl('stage-pin-audit','read_db {'+str(track(checkpoint))+'}\n'
+        'set f [open {'+str(ROOT/'stage-pins.tsv')+'} w]\n'
+        'puts $f "#dbu [expr {round(1.0/[ord::dbu_to_microns 1])}]"\n'
+        'foreach term [[ord::get_db_block] getBTerms] {foreach pin [$term getBPins] {foreach box [$pin getBoxes] {'
+        'puts $f "[$term getName]\\t[[$box getTechLayer] getName]\\t[$box xMin]\\t[$box yMin]\\t[$box xMax]\\t[$box yMax]"}}}\nclose $f\n')
+    contract=json.loads((ROOT/'external-pin-contract.json').read_text())
+    lines=(ROOT/'stage-pins.tsv').read_text().splitlines();scale=int(lines[0].split()[1])
+    selected=[line for line in lines[1:] if line.split()[0] in contract]
+    names=Counter(line.split()[0] for line in selected)
+    errors=[]
+    for line in selected:
+        name,layer,*box=line.split();box=list(map(int,box));expect=contract[name]
+        xy=[(box[0]+box[2])/(2*scale),(box[1]+box[3])/(2*scale)]
+        if layer!=expect['layer'] or max(abs(a-b) for a,b in zip(xy,expect['xy']))>.21:errors.append(line)
+    passed=set(names)==set(contract) and all(n==1 for n in names.values()) and not errors
+    import hashlib
+    quality=dict(passed=passed,count=len(selected),actual_layer_counts=Counter(line.split()[1] for line in selected),
+        canonical_sha256=hashlib.sha256(('\n'.join(sorted(selected))+'\n').encode()).hexdigest(),
+        errors=errors[:20],scope='Actual CTS ODB BPin layer and full box; all 1662 signal bits exactly once, requested location within track snapping tolerance. Pair must match exact canonical geometry before route.')
+    (ROOT/'pin-placement-quality.json').write_text(json.dumps(quality,indent=2)+'\n')
+    assert passed, 'Actual IO geometry does not satisfy the common pin contract'
+
+def resume_parent(spec):
+    source,peer=Path(spec['resume_parent']),Path(spec['pin_reference'])
+    receipts={}
+    for path in [source,peer]:
+        assert (path/'exit-code.txt').read_text().strip()=='0'
+        manifest={line[2:]:h for h,line in (r.split(None,1) for r in (path/'output.sha256').read_text().splitlines())}
+        for relative in ['pin-placement-quality.json','external-pin-contract.json','experiment.json','strict-pg.json']:
+            assert digest(path/relative)==manifest[relative]
+            track(path/relative)
+        receipts[path]=json.loads((path/'pin-placement-quality.json').read_text())
+        assert receipts[path]['passed'] and json.loads((path/'strict-pg.json').read_text())['passed']
+    assert receipts[source]['canonical_sha256']==receipts[peer]['canonical_sha256'], 'Pair actual IO geometry differs'
+    meta=json.loads((source/'experiment.json').read_text());suffix=Path(meta['result_relative'])
+    manifest={line[2:]:h for h,line in (r.split(None,1) for r in (source/'output.sha256').read_text().splitlines())}
+    paths=[suffix/'4_cts.odb',suffix/'4_cts.sdc']+[Path(n) for n in ['config.mk','top.v','boundary.sdc',
+        'external-pin-contract.json','resource-qualification.json','strict-pg.json','stage-pins.tsv','pin-placement-quality.json',
+        'placement.tcl','pdn.tcl','post-pdn.tcl','fixed-pins.tcl']]
+    if (source/'post-grt-repair.tcl').exists():paths.append(Path('post-grt-repair.tcl'))
+    for relative in paths:
+        original=source/relative;assert digest(original)==manifest[relative.as_posix()]
+        destination=ROOT/relative;destination.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(original,destination);track(original)
+        if destination.suffix=='.tcl':destination.write_text(destination.read_text().replace(str(source),str(ROOT)))
+    # Views remain explicit sealed upstream inputs; no duplicate multi-GB LEF.
+    config=(ROOT/'config.mk').read_text().replace(str(source),str(ROOT)).replace(str(ROOT/'views'),str(source/'views'))
+    (ROOT/'config.mk').write_text(config)
+    for view in meta['views'].values():
+        for suffix2 in ['.lef','.lib']:
+            path=Path(view['view'])/(view['name']+suffix2)
+            assert digest(path)==manifest[path.relative_to(source).as_posix()];track(path)
+    meta['parent_resume']=dict(source=str(source),pin_reference=str(peer),
+        common_pin_sha256=receipts[source]['canonical_sha256'],initial_pg_receipt_source=str(source/'strict-pg.json'))
+    (ROOT/'experiment.json').write_text(json.dumps(meta,indent=2)+'\n')
+    validate_parent_pins(ROOT/Path(meta['result_relative'])/'4_cts.odb')
+    assert json.loads((ROOT/'pin-placement-quality.json').read_text())['canonical_sha256']==receipts[source]['canonical_sha256']
+    (ROOT/'input-sha256.json').write_text(json.dumps(INPUTS,indent=2)+'\n')
+    route_parent(spec)
+
+def route_parent(spec):
+    meta=json.loads((ROOT/'experiment.json').read_text())
+    kind,nickname,relative=meta['kind'],meta['case'],meta['result_relative']
+    instances=list(meta['locations']);sources={k:Path(v['source']) for k,v in meta['views'].items()}
+    rounds=int(spec.get('post_grt_repair_rounds',0))
     if rounds:
         make_stages(ROOT/'config.mk',spec,['do-5_1_grt'])
         log=(ROOT/'flow/logs/nangate45'/nickname/'base/5_1_grt.log').read_text()
