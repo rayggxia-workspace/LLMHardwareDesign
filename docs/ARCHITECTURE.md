@@ -28,7 +28,7 @@ Issue #11将本轮Python研究工具正式放入 `project/experiments/frozen_rou
 - 管理结构检查：`python scripts/check_project.py`（Python 3.9+，无第三方包）。
 - 本次用户授权的报告更新检查：`python work/YUZE-LU/3/sync_reports.py`（Python 3.9+，需要 `beautifulsoup4`）；只读核验两份报告的资源、锚点、清单及图片展示状态。该任务脚本不是例行维护入口；再次同步需用户明确要求，并传入 `--sync --source <源报告目录>`。
 - 初次接入的来源记录见 `docs/DATA_PROVENANCE.md`；后续例行检查不覆盖 `ref-project/`。
-- 本机业务检查：`.\.venv\Scripts\python.exe scripts/check_research.py`，运行frozen_routing、endpoint_ablation和macro_endpoints三套检查。
+- 本机业务检查：`.\.venv\Scripts\python.exe scripts/check_research.py`，运行frozen_routing、endpoint_ablation、macro_endpoints和interface_contract四套检查。
 - 冻结源码后的本机实验：`.\.venv\Scripts\python.exe project/experiments/frozen_routing/run.py --out project/experiments/frozen_routing/local_runs/<新尝试名>`。默认拒绝dirty source和已存在输出目录。
 - 证据核对及确定性重放：`.\.venv\Scripts\python.exe project/experiments/frozen_routing/verify.py <运行目录> --replay`；图表：`.\.venv\Scripts\python.exe project/experiments/frozen_routing/report.py <运行目录> --out <新图表目录>`。
 - 现有D盘Python创建项目内venv，复用已安装包的环境事实写manifest；需要NumPy，绘图需要Matplotlib。核心连接算法只用标准库。
@@ -40,3 +40,7 @@ Issue #11将本轮Python研究工具正式放入 `project/experiments/frozen_rou
 ## 数据与外部依赖
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引；具体共享位置和访问权限尚待确定。不得将凭据写入仓库。
+
+## Issue19 三视图接口与既有合同
+
+`project/experiments/interface_contract/` 以固定Yosys/Liberty/LEF名字、位宽、方向关联ACT/MXU逐bit边界，复用已有合同。运行 `python project/experiments/interface_contract/verify.py <解压的证据根目录>` 检查源码、哈希及重放；捕获、运行、归档参数见[工具说明](../project/experiments/interface_contract/README.md)。不替代RTL等价、时序、PG或合法接入验证。

@@ -1,0 +1,217 @@
+{
+  "schema": 1,
+  "status": "SIGNAL_INTERFACE_CHECKED_WITH_RECORDED_INPUT_DIAGNOSTICS",
+  "input_version": "act-mxu-three-view-wave206-v1",
+  "capture_sha256": "73338bf67196bc075cd363ef947df5fa5b43abe97685f5a7a17e55750d00eb19",
+  "producer_hash_comparisons": 10,
+  "macros": {
+    "ACT20": {
+      "macro": "llhd_opentpu_act",
+      "ports": 19,
+      "signal_bits": 860,
+      "producer_experiment_declaration": {
+        "case": "opentpu-act",
+        "top": "llhd_opentpu_act",
+        "parameters": {
+          "D": 32,
+          "MCOLS": 2,
+          "ROWS": 2,
+          "BLOCKS": 32,
+          "LANES": 4,
+          "DEPTH": 64,
+          "IMPL": 2,
+          "CL": 16,
+          "E": 0,
+          "SID": 0
+        },
+        "clock_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "cap_margin": 20,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Upstream openTPU synthetic fakeram LEF/Liberty models, not fabricated SRAM or SRAM GDS. Same unmodified generator and small configuration for split/merged cases; no full system claim.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "independent block implementation; not top integration, H2, source-to-netlist equivalence or signoff"
+      },
+      "input_bits": 220,
+      "output_bits": 640,
+      "pg_pins": 2,
+      "aliases": [],
+      "constants": [],
+      "pg_direction_mismatches": [
+        {
+          "bit_name": "VDD",
+          "liberty_direction": "input",
+          "lef_direction": "INOUT"
+        },
+        {
+          "bit_name": "VSS",
+          "liberty_direction": "input",
+          "lef_direction": "INOUT"
+        }
+      ],
+      "yosys_creator": "Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)",
+      "source_hashes": {
+        "elab.json": "8a7576130366ec349bc52d9c90ad76018a265faf1a5cfa9a7f42fbb173cfe151",
+        "boundary.sv": "3dab28ee2bd09c824360357209579de1bdf5a62c2d3f007a6a6f918f14d6f2ad",
+        "liberty": "a716dcb559f973e02bfaf8dfa3fa60a78eb1cff2db190f04ddb0d48db7490c89",
+        "lef": "f74ca8e0ff35b5900979aa0d5d6b4356da943fdf1f3d8af92c7ab4647d5c955a"
+      },
+      "three_view_names_widths_directions": "PASS",
+      "liberty_profile": "liberty-single-cell-interface-area-semicolon-compat-v1",
+      "liberty_syntax_strict": false,
+      "liberty_syntax_recovery_count": 1,
+      "liberty_diagnostics": [
+        {
+          "kind": "missing_cell_area_semicolon_compatibility",
+          "profile": "liberty-single-cell-interface-area-semicolon-compat-v1",
+          "scope": "cell",
+          "field": "area",
+          "line": 139,
+          "value_line": 139,
+          "raw_value": "89646.023",
+          "next_field": "is_macro_cell",
+          "next_field_line": 140,
+          "source_fragment": "area : 89646.023 \n    ",
+          "recovery": "capture the numeric area as unterminated; retain original bytes and start the following statement at its original token"
+        }
+      ],
+      "named_type_widths": {}
+    },
+    "MXU20": {
+      "macro": "llhd_opentpu_mxu",
+      "ports": 37,
+      "signal_bits": 2172,
+      "producer_experiment_declaration": {
+        "case": "opentpu-mxu",
+        "top": "llhd_opentpu_mxu",
+        "parameters": {
+          "D": 32,
+          "MCOLS": 2,
+          "ROWS": 2,
+          "BLOCKS": 32,
+          "LANES": 4,
+          "DEPTH": 64,
+          "IMPL": 2,
+          "CL": 16,
+          "E": 0,
+          "SID": 0
+        },
+        "clock_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "cap_margin": 20,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Upstream openTPU synthetic fakeram LEF/Liberty models, not fabricated SRAM or SRAM GDS. Same unmodified generator and small configuration for split/merged cases; no full system claim.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "independent block implementation; not top integration, H2, source-to-netlist equivalence or signoff"
+      },
+      "input_bits": 1529,
+      "output_bits": 643,
+      "pg_pins": 2,
+      "aliases": [
+        {
+          "yosys_bit": 247,
+          "bit_names": [
+            "done",
+            "pf_u"
+          ]
+        }
+      ],
+      "constants": [
+        {
+          "bit_name": "a_addr[30]",
+          "value": "0"
+        },
+        {
+          "bit_name": "a_addr[31]",
+          "value": "0"
+        },
+        {
+          "bit_name": "b_addr[30]",
+          "value": "0"
+        },
+        {
+          "bit_name": "b_addr[31]",
+          "value": "0"
+        }
+      ],
+      "pg_direction_mismatches": [
+        {
+          "bit_name": "VDD",
+          "liberty_direction": "input",
+          "lef_direction": "INOUT"
+        },
+        {
+          "bit_name": "VSS",
+          "liberty_direction": "input",
+          "lef_direction": "INOUT"
+        }
+      ],
+      "yosys_creator": "Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)",
+      "source_hashes": {
+        "elab.json": "2464a112bd16d02df7a43c4d414c525ff367e3c7b89943934bda7fe8b9dfa24a",
+        "boundary.sv": "87161949c160f1921b1ce4305fd7ce18ec22692e98329da1cc5ff8d7ca4bc479",
+        "liberty": "227cc442aad70f8222d637736079258d48f787480df3f1c58ea6a804407113cf",
+        "lef": "774ff58156636631d2764bbb7ed72c525180110b8f1fd56bdbe12869e9e42bd3"
+      },
+      "three_view_names_widths_directions": "PASS",
+      "liberty_profile": "liberty-single-cell-interface-area-semicolon-compat-v1",
+      "liberty_syntax_strict": false,
+      "liberty_syntax_recovery_count": 1,
+      "liberty_diagnostics": [
+        {
+          "kind": "missing_cell_area_semicolon_compatibility",
+          "profile": "liberty-single-cell-interface-area-semicolon-compat-v1",
+          "scope": "cell",
+          "field": "area",
+          "line": 174,
+          "value_line": 174,
+          "raw_value": "1163746.625",
+          "next_field": "is_macro_cell",
+          "next_field_line": 175,
+          "source_fragment": "area : 1163746.625 \n    ",
+          "recovery": "capture the numeric area as unterminated; retain original bytes and start the following statement at its original token"
+        }
+      ],
+      "named_type_widths": {
+        "cmd": "Yosys elaboration; cmd_t definition not captured"
+      }
+    }
+  },
+  "graph": {
+    "connection_groups": 8,
+    "connection_bits": 685,
+    "address_and_data_bits": 684,
+    "computing_feedback_bits": 1,
+    "external_ports": 40,
+    "external_signal_bits": 1662,
+    "external_input_bits": 1063,
+    "external_output_bits": 599,
+    "nets": 2346,
+    "private_interface_nets": 684,
+    "interface_nets": 685,
+    "macro_endpoints": 3032,
+    "top_endpoints": 1662,
+    "endpoint_incidence": 4694,
+    "drivers": 2346,
+    "sinks": 2348,
+    "shared_clock": "external:clk",
+    "computing_feedback_net": "external:computing",
+    "boundary_wiring_only": true,
+    "logical_aliases_merged": false,
+    "constant_ports_merged": false,
+    "scope": "Fixed boundary-port wiring and declared-direction roles only; physical pins remain distinct despite RTL aliases/constants. No internal independence, RTL equivalence, timing or legal-access proof."
+  },
+  "scope": "Selected frozen wave2-06 boundary consistency; reuses existing Issue7 wiring evidence",
+  "limitations": {
+    "rtl_equivalence_verified": false,
+    "timing_arc_coverage_verified": false,
+    "legal_signal_access_verified": false,
+    "pg_connectivity_verified": false,
+    "new_matched_macro_views_verified": false,
+    "physical_PPA_or_H2_verified": false
+  }
+}
