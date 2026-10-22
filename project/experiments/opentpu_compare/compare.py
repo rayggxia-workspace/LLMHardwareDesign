@@ -37,6 +37,11 @@ for name in list(selection.values())+[definition[k] for k in evidence_keys]:
     assert '|COMPLETED|' in row.get('scheduler',''), 'Wait for sealed scheduler terminal state: '+name
     terminal=json.loads((HERE/'results'/(name+'-terminal.json')).read_text())
     assert terminal['output_manifest_sha256']==row['output_manifest_sha256'], 'Source manifest changed since its first terminal receipt: '+name
+shared_inputs={}
+for name in list(selection.values())+[definition[k] for k in evidence_keys]:
+    for path,digest in data[name].get('input-sha256.json',{}).items():
+        assert path not in shared_inputs or shared_inputs[path]==digest, 'Shared model/input changed between implementations or proofs: '+path
+        shared_inputs[path]=digest
 proof=data[definition['functional_proof']]
 assert proof.get('exit_code')=='0'
 for name in ['act','mxu','merged']:
