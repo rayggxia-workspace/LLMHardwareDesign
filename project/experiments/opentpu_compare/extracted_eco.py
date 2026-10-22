@@ -72,6 +72,31 @@ def execute(spec):
     (ROOT/'extracted-source-validation.json').write_text(json.dumps(dict(passed=reproduced,
         observed_macro_wns_ns=observed,expected_macro_wns_ns=expected,tolerance_ns=1e-6),indent=2)+'\n')
     assert reproduced, 'Reloaded extracted RC does not reproduce source timing'
+    if spec.get('extracted_size_probes'):
+        # Compare real cell models on the sealed source's existing RC only.
+        # Each probe reloads the same ODB/SPEF in a fresh process. These are
+        # sizing estimates, never legalized/routed/qualified physical results.
+        probes=spec['extracted_size_probes']
+        assert isinstance(probes,list) and 0<len(probes)<=8
+        for index,changes in enumerate(probes):
+            assert changes and len(changes)<=8
+            body=''
+            for name,before,after in changes:
+                assert re.fullmatch(r'[A-Za-z0-9_]+',name)
+                assert re.fullmatch(r'(?:CLKBUF|BUF)_X[0-9]+',before)
+                assert re.fullmatch(r'BUF_X(?:1|2|4|8|16|32)',after)
+                body+='set inst [[ord::get_db_block] findInst {'+name+'}]\n'
+                body+='if {$inst eq "NULL" || [[$inst getMaster] getName] ne {'+before+'}} {error {Sizing probe source master differs}}\n'
+                body+='if {![replace_cell {'+name+'} {'+after+'}]} {error {Sizing probe replacement failed}}\n'
+            output=ROOT/('sizing-probe-'+str(index)+'.rpt')
+            body+='report_worst_slack -max -digits 9 > {'+str(output)+'}\n'
+            body+='report_worst_slack -min -digits 9 >> {'+str(output)+'}\n'
+            body+='report_checks -path_delay min -group_path_count 1 -digits 9 >> {'+str(output)+'}\n'
+            body+='report_check_types -max_capacitance -max_slew -violators -digits 9 -no_line_splits >> {'+str(output)+'}\n'
+            run('sizing-probe-'+str(index),body)
+        (ROOT/'sizing-probes.json').write_text(json.dumps(dict(changes=probes,
+            source=str(source),scope='Sizing estimates on sealed source RC; fresh process per candidate. No legalization, rerouting or physical acceptance.'),indent=2)+'\n')
+        return
     paths=re.findall(r'Startpoint:.*?slack \((?:MET|VIOLATED)\)',report.read_text(),re.S)
     hold_guardband=float(spec.get('extracted_hold_guardband_ns',0))
     assert 0<=hold_guardband<=.1, 'Unexpected input hold optimization reserve'
