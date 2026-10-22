@@ -1,0 +1,1009 @@
+{
+  "schema": "deepseek-reduced-inference-algebra-v1",
+  "status": "PASS",
+  "observed_utc": "2026-10-22T10:52:42.866032+00:00",
+  "python": "3.13.14",
+  "numpy": "2.5.0",
+  "dtype": "float64",
+  "atol": 1e-10,
+  "source_script_sha256": "c2da49a86881275a76fa8972791ba0d4ccae593c933b8547e9593afce6df48e0",
+  "upstream_reference": {
+    "url": "https://github.com/deepseek-ai/DeepSeek-V3/blob/9b4e9788e4a3a731f7567338ed15d3ec549ce03b/inference/model.py",
+    "commit": "9b4e9788e4a3a731f7567338ed15d3ec549ce03b",
+    "mla_lines": [
+      396,
+      497
+    ],
+    "gate_lines": [
+      535,
+      598
+    ]
+  },
+  "mla_cases": [
+    {
+      "seed": 19,
+      "batch": 1,
+      "length": 1,
+      "dimensions": {
+        "d": 16,
+        "heads": 4,
+        "q_rank": 7,
+        "kv_rank": 5,
+        "non_rope": 4,
+        "rope": 2,
+        "value": 3
+      },
+      "checks": [
+        {
+          "name": "naive_absorb_probability",
+          "shape": [
+            1,
+            1,
+            4,
+            1
+          ],
+          "max_absolute_error": 0.0,
+          "pass": true
+        },
+        {
+          "name": "naive_absorb_prefill",
+          "shape": [
+            1,
+            1,
+            16
+          ],
+          "max_absolute_error": 0.0,
+          "pass": true
+        },
+        {
+          "name": "prefill_incremental_decode",
+          "shape": [
+            1,
+            1,
+            16
+          ],
+          "max_absolute_error": 0.0,
+          "pass": true
+        },
+        {
+          "name": "materialized_online_softmax",
+          "shape": [
+            1,
+            1,
+            16
+          ],
+          "max_absolute_error": 0.0,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "seed": 19,
+      "batch": 1,
+      "length": 7,
+      "dimensions": {
+        "d": 16,
+        "heads": 4,
+        "q_rank": 7,
+        "kv_rank": 5,
+        "non_rope": 4,
+        "rope": 2,
+        "value": 3
+      },
+      "checks": [
+        {
+          "name": "naive_absorb_probability",
+          "shape": [
+            1,
+            7,
+            4,
+            7
+          ],
+          "max_absolute_error": 1.1102230246251565e-16,
+          "pass": true
+        },
+        {
+          "name": "naive_absorb_prefill",
+          "shape": [
+            1,
+            7,
+            16
+          ],
+          "max_absolute_error": 4.440892098500626e-16,
+          "pass": true
+        },
+        {
+          "name": "prefill_incremental_decode",
+          "shape": [
+            1,
+            7,
+            16
+          ],
+          "max_absolute_error": 8.881784197001252e-16,
+          "pass": true
+        },
+        {
+          "name": "materialized_online_softmax",
+          "shape": [
+            1,
+            7,
+            16
+          ],
+          "max_absolute_error": 8.881784197001252e-16,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "seed": 19,
+      "batch": 2,
+      "length": 19,
+      "dimensions": {
+        "d": 16,
+        "heads": 4,
+        "q_rank": 7,
+        "kv_rank": 5,
+        "non_rope": 4,
+        "rope": 2,
+        "value": 3
+      },
+      "checks": [
+        {
+          "name": "naive_absorb_probability",
+          "shape": [
+            2,
+            19,
+            4,
+            19
+          ],
+          "max_absolute_error": 2.220446049250313e-16,
+          "pass": true
+        },
+        {
+          "name": "naive_absorb_prefill",
+          "shape": [
+            2,
+            19,
+            16
+          ],
+          "max_absolute_error": 5.551115123125783e-16,
+          "pass": true
+        },
+        {
+          "name": "prefill_incremental_decode",
+          "shape": [
+            2,
+            19,
+            16
+          ],
+          "max_absolute_error": 5.551115123125783e-16,
+          "pass": true
+        },
+        {
+          "name": "materialized_online_softmax",
+          "shape": [
+            2,
+            19,
+            16
+          ],
+          "max_absolute_error": 6.661338147750939e-16,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "seed": 20261022,
+      "batch": 1,
+      "length": 1,
+      "dimensions": {
+        "d": 16,
+        "heads": 4,
+        "q_rank": 7,
+        "kv_rank": 5,
+        "non_rope": 4,
+        "rope": 2,
+        "value": 3
+      },
+      "checks": [
+        {
+          "name": "naive_absorb_probability",
+          "shape": [
+            1,
+            1,
+            4,
+            1
+          ],
+          "max_absolute_error": 0.0,
+          "pass": true
+        },
+        {
+          "name": "naive_absorb_prefill",
+          "shape": [
+            1,
+            1,
+            16
+          ],
+          "max_absolute_error": 0.0,
+          "pass": true
+        },
+        {
+          "name": "prefill_incremental_decode",
+          "shape": [
+            1,
+            1,
+            16
+          ],
+          "max_absolute_error": 0.0,
+          "pass": true
+        },
+        {
+          "name": "materialized_online_softmax",
+          "shape": [
+            1,
+            1,
+            16
+          ],
+          "max_absolute_error": 0.0,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "seed": 20261022,
+      "batch": 1,
+      "length": 7,
+      "dimensions": {
+        "d": 16,
+        "heads": 4,
+        "q_rank": 7,
+        "kv_rank": 5,
+        "non_rope": 4,
+        "rope": 2,
+        "value": 3
+      },
+      "checks": [
+        {
+          "name": "naive_absorb_probability",
+          "shape": [
+            1,
+            7,
+            4,
+            7
+          ],
+          "max_absolute_error": 3.3306690738754696e-16,
+          "pass": true
+        },
+        {
+          "name": "naive_absorb_prefill",
+          "shape": [
+            1,
+            7,
+            16
+          ],
+          "max_absolute_error": 4.440892098500626e-16,
+          "pass": true
+        },
+        {
+          "name": "prefill_incremental_decode",
+          "shape": [
+            1,
+            7,
+            16
+          ],
+          "max_absolute_error": 6.661338147750939e-16,
+          "pass": true
+        },
+        {
+          "name": "materialized_online_softmax",
+          "shape": [
+            1,
+            7,
+            16
+          ],
+          "max_absolute_error": 4.440892098500626e-16,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "seed": 20261022,
+      "batch": 2,
+      "length": 19,
+      "dimensions": {
+        "d": 16,
+        "heads": 4,
+        "q_rank": 7,
+        "kv_rank": 5,
+        "non_rope": 4,
+        "rope": 2,
+        "value": 3
+      },
+      "checks": [
+        {
+          "name": "naive_absorb_probability",
+          "shape": [
+            2,
+            19,
+            4,
+            19
+          ],
+          "max_absolute_error": 3.3306690738754696e-16,
+          "pass": true
+        },
+        {
+          "name": "naive_absorb_prefill",
+          "shape": [
+            2,
+            19,
+            16
+          ],
+          "max_absolute_error": 6.661338147750939e-16,
+          "pass": true
+        },
+        {
+          "name": "prefill_incremental_decode",
+          "shape": [
+            2,
+            19,
+            16
+          ],
+          "max_absolute_error": 7.216449660063518e-16,
+          "pass": true
+        },
+        {
+          "name": "materialized_online_softmax",
+          "shape": [
+            2,
+            19,
+            16
+          ],
+          "max_absolute_error": 8.881784197001252e-16,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "seed": 314159,
+      "batch": 1,
+      "length": 1,
+      "dimensions": {
+        "d": 16,
+        "heads": 4,
+        "q_rank": 7,
+        "kv_rank": 5,
+        "non_rope": 4,
+        "rope": 2,
+        "value": 3
+      },
+      "checks": [
+        {
+          "name": "naive_absorb_probability",
+          "shape": [
+            1,
+            1,
+            4,
+            1
+          ],
+          "max_absolute_error": 0.0,
+          "pass": true
+        },
+        {
+          "name": "naive_absorb_prefill",
+          "shape": [
+            1,
+            1,
+            16
+          ],
+          "max_absolute_error": 0.0,
+          "pass": true
+        },
+        {
+          "name": "prefill_incremental_decode",
+          "shape": [
+            1,
+            1,
+            16
+          ],
+          "max_absolute_error": 0.0,
+          "pass": true
+        },
+        {
+          "name": "materialized_online_softmax",
+          "shape": [
+            1,
+            1,
+            16
+          ],
+          "max_absolute_error": 0.0,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "seed": 314159,
+      "batch": 1,
+      "length": 7,
+      "dimensions": {
+        "d": 16,
+        "heads": 4,
+        "q_rank": 7,
+        "kv_rank": 5,
+        "non_rope": 4,
+        "rope": 2,
+        "value": 3
+      },
+      "checks": [
+        {
+          "name": "naive_absorb_probability",
+          "shape": [
+            1,
+            7,
+            4,
+            7
+          ],
+          "max_absolute_error": 2.220446049250313e-16,
+          "pass": true
+        },
+        {
+          "name": "naive_absorb_prefill",
+          "shape": [
+            1,
+            7,
+            16
+          ],
+          "max_absolute_error": 7.771561172376096e-16,
+          "pass": true
+        },
+        {
+          "name": "prefill_incremental_decode",
+          "shape": [
+            1,
+            7,
+            16
+          ],
+          "max_absolute_error": 6.661338147750939e-16,
+          "pass": true
+        },
+        {
+          "name": "materialized_online_softmax",
+          "shape": [
+            1,
+            7,
+            16
+          ],
+          "max_absolute_error": 6.661338147750939e-16,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "seed": 314159,
+      "batch": 2,
+      "length": 19,
+      "dimensions": {
+        "d": 16,
+        "heads": 4,
+        "q_rank": 7,
+        "kv_rank": 5,
+        "non_rope": 4,
+        "rope": 2,
+        "value": 3
+      },
+      "checks": [
+        {
+          "name": "naive_absorb_probability",
+          "shape": [
+            2,
+            19,
+            4,
+            19
+          ],
+          "max_absolute_error": 3.3306690738754696e-16,
+          "pass": true
+        },
+        {
+          "name": "naive_absorb_prefill",
+          "shape": [
+            2,
+            19,
+            16
+          ],
+          "max_absolute_error": 6.661338147750939e-16,
+          "pass": true
+        },
+        {
+          "name": "prefill_incremental_decode",
+          "shape": [
+            2,
+            19,
+            16
+          ],
+          "max_absolute_error": 6.661338147750939e-16,
+          "pass": true
+        },
+        {
+          "name": "materialized_online_softmax",
+          "shape": [
+            2,
+            19,
+            16
+          ],
+          "max_absolute_error": 6.661338147750939e-16,
+          "pass": true
+        }
+      ]
+    }
+  ],
+  "routing_cases": [
+    {
+      "seed": 19,
+      "tokens": 1,
+      "experts": 16,
+      "groups": 4,
+      "topk_groups": 2,
+      "topk_experts": 3,
+      "route_scale": 2.5,
+      "selected_experts_match_scalar_oracle": true,
+      "checks": [
+        {
+          "name": "unbiased_combination_weights",
+          "shape": [
+            1,
+            3
+          ],
+          "max_absolute_error": 0.0,
+          "pass": true
+        },
+        {
+          "name": "routing_weight_sum",
+          "shape": [
+            1
+          ],
+          "max_absolute_error": 0.0,
+          "pass": true
+        }
+      ],
+      "negative_control_biased_combination_max_delta": 0.042772847656759594,
+      "negative_control_detected": true,
+      "expert_occupancy": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "seed": 19,
+      "tokens": 7,
+      "experts": 16,
+      "groups": 4,
+      "topk_groups": 2,
+      "topk_experts": 3,
+      "route_scale": 2.5,
+      "selected_experts_match_scalar_oracle": true,
+      "checks": [
+        {
+          "name": "unbiased_combination_weights",
+          "shape": [
+            7,
+            3
+          ],
+          "max_absolute_error": 2.220446049250313e-16,
+          "pass": true
+        },
+        {
+          "name": "routing_weight_sum",
+          "shape": [
+            7
+          ],
+          "max_absolute_error": 4.440892098500626e-16,
+          "pass": true
+        }
+      ],
+      "negative_control_biased_combination_max_delta": 0.20181451272516315,
+      "negative_control_detected": true,
+      "expert_occupancy": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        5,
+        1,
+        0,
+        3,
+        0,
+        1,
+        5,
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "seed": 19,
+      "tokens": 19,
+      "experts": 16,
+      "groups": 4,
+      "topk_groups": 2,
+      "topk_experts": 3,
+      "route_scale": 2.5,
+      "selected_experts_match_scalar_oracle": true,
+      "checks": [
+        {
+          "name": "unbiased_combination_weights",
+          "shape": [
+            19,
+            3
+          ],
+          "max_absolute_error": 2.220446049250313e-16,
+          "pass": true
+        },
+        {
+          "name": "routing_weight_sum",
+          "shape": [
+            19
+          ],
+          "max_absolute_error": 4.440892098500626e-16,
+          "pass": true
+        }
+      ],
+      "negative_control_biased_combination_max_delta": 0.14837125393442174,
+      "negative_control_detected": true,
+      "expert_occupancy": [
+        7,
+        3,
+        2,
+        4,
+        10,
+        2,
+        0,
+        8,
+        5,
+        4,
+        2,
+        2,
+        1,
+        3,
+        1,
+        3
+      ]
+    },
+    {
+      "seed": 20261022,
+      "tokens": 1,
+      "experts": 16,
+      "groups": 4,
+      "topk_groups": 2,
+      "topk_experts": 3,
+      "route_scale": 2.5,
+      "selected_experts_match_scalar_oracle": true,
+      "checks": [
+        {
+          "name": "unbiased_combination_weights",
+          "shape": [
+            1,
+            3
+          ],
+          "max_absolute_error": 2.220446049250313e-16,
+          "pass": true
+        },
+        {
+          "name": "routing_weight_sum",
+          "shape": [
+            1
+          ],
+          "max_absolute_error": 0.0,
+          "pass": true
+        }
+      ],
+      "negative_control_biased_combination_max_delta": 0.12724922730345767,
+      "negative_control_detected": true,
+      "expert_occupancy": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "seed": 20261022,
+      "tokens": 7,
+      "experts": 16,
+      "groups": 4,
+      "topk_groups": 2,
+      "topk_experts": 3,
+      "route_scale": 2.5,
+      "selected_experts_match_scalar_oracle": true,
+      "checks": [
+        {
+          "name": "unbiased_combination_weights",
+          "shape": [
+            7,
+            3
+          ],
+          "max_absolute_error": 2.220446049250313e-16,
+          "pass": true
+        },
+        {
+          "name": "routing_weight_sum",
+          "shape": [
+            7
+          ],
+          "max_absolute_error": 0.0,
+          "pass": true
+        }
+      ],
+      "negative_control_biased_combination_max_delta": 0.08778141620308522,
+      "negative_control_detected": true,
+      "expert_occupancy": [
+        1,
+        2,
+        0,
+        1,
+        0,
+        4,
+        2,
+        0,
+        1,
+        2,
+        0,
+        2,
+        1,
+        2,
+        1,
+        2
+      ]
+    },
+    {
+      "seed": 20261022,
+      "tokens": 19,
+      "experts": 16,
+      "groups": 4,
+      "topk_groups": 2,
+      "topk_experts": 3,
+      "route_scale": 2.5,
+      "selected_experts_match_scalar_oracle": true,
+      "checks": [
+        {
+          "name": "unbiased_combination_weights",
+          "shape": [
+            19,
+            3
+          ],
+          "max_absolute_error": 2.220446049250313e-16,
+          "pass": true
+        },
+        {
+          "name": "routing_weight_sum",
+          "shape": [
+            19
+          ],
+          "max_absolute_error": 4.440892098500626e-16,
+          "pass": true
+        }
+      ],
+      "negative_control_biased_combination_max_delta": 0.1624871403372864,
+      "negative_control_detected": true,
+      "expert_occupancy": [
+        2,
+        10,
+        5,
+        2,
+        1,
+        10,
+        8,
+        3,
+        0,
+        7,
+        0,
+        5,
+        0,
+        3,
+        1,
+        0
+      ]
+    },
+    {
+      "seed": 314159,
+      "tokens": 1,
+      "experts": 16,
+      "groups": 4,
+      "topk_groups": 2,
+      "topk_experts": 3,
+      "route_scale": 2.5,
+      "selected_experts_match_scalar_oracle": true,
+      "checks": [
+        {
+          "name": "unbiased_combination_weights",
+          "shape": [
+            1,
+            3
+          ],
+          "max_absolute_error": 1.1102230246251565e-16,
+          "pass": true
+        },
+        {
+          "name": "routing_weight_sum",
+          "shape": [
+            1
+          ],
+          "max_absolute_error": 4.440892098500626e-16,
+          "pass": true
+        }
+      ],
+      "negative_control_biased_combination_max_delta": 0.11790066153646261,
+      "negative_control_detected": true,
+      "expert_occupancy": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "seed": 314159,
+      "tokens": 7,
+      "experts": 16,
+      "groups": 4,
+      "topk_groups": 2,
+      "topk_experts": 3,
+      "route_scale": 2.5,
+      "selected_experts_match_scalar_oracle": true,
+      "checks": [
+        {
+          "name": "unbiased_combination_weights",
+          "shape": [
+            7,
+            3
+          ],
+          "max_absolute_error": 1.1102230246251565e-16,
+          "pass": true
+        },
+        {
+          "name": "routing_weight_sum",
+          "shape": [
+            7
+          ],
+          "max_absolute_error": 4.440892098500626e-16,
+          "pass": true
+        }
+      ],
+      "negative_control_biased_combination_max_delta": 0.14054768610998325,
+      "negative_control_detected": true,
+      "expert_occupancy": [
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        4,
+        0,
+        1,
+        1,
+        3,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "seed": 314159,
+      "tokens": 19,
+      "experts": 16,
+      "groups": 4,
+      "topk_groups": 2,
+      "topk_experts": 3,
+      "route_scale": 2.5,
+      "selected_experts_match_scalar_oracle": true,
+      "checks": [
+        {
+          "name": "unbiased_combination_weights",
+          "shape": [
+            19,
+            3
+          ],
+          "max_absolute_error": 1.1102230246251565e-16,
+          "pass": true
+        },
+        {
+          "name": "routing_weight_sum",
+          "shape": [
+            19
+          ],
+          "max_absolute_error": 4.440892098500626e-16,
+          "pass": true
+        }
+      ],
+      "negative_control_biased_combination_max_delta": 0.17724855043473597,
+      "negative_control_detected": true,
+      "expert_occupancy": [
+        7,
+        2,
+        3,
+        1,
+        3,
+        5,
+        2,
+        2,
+        4,
+        3,
+        6,
+        5,
+        2,
+        6,
+        2,
+        4
+      ]
+    }
+  ],
+  "check_counts": {
+    "mla_numeric_comparisons": 36,
+    "routing_numeric_comparisons": 18,
+    "routing_index_exact_checks": 9,
+    "bias_negative_controls": 9
+  },
+  "analytic_v3_cache": {
+    "heads": 128,
+    "non_rope_dim": 128,
+    "rope_dim": 64,
+    "value_dim": 128,
+    "kv_rank": 512,
+    "layers": 61,
+    "bytes_per_element_assumed": 2,
+    "compressed_elements_per_token_layer": 576,
+    "naive_expanded_elements_per_token_layer": 40960,
+    "compressed_bytes_per_token_all_layers": 70272,
+    "compressed_bytes_b1_t8192_all_layers": 575668224,
+    "includes_metadata_scaling_allocator": false
+  },
+  "scope_limits": [
+    "No weight checkpoint or real model accuracy",
+    "Independent equations, not an execution of upstream PyTorch/Triton",
+    "Float64 only; no BF16/FP8/FP4 validation",
+    "Ordinary 2D RoPE; YaRN scaling not implemented",
+    "No sparse attention, KV paging, tensor parallelism or all-to-all execution",
+    "No hardware area, frequency, energy, latency or throughput measurements",
+    "Training execution excluded"
+  ]
+}

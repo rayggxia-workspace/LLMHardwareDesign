@@ -72,3 +72,7 @@ VPNA作者稿已有面向1D CNN的单VIA、多任务底座、规则端口、映�
 [Issue19/PR20](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/20)补齐旧wave206 ACT/MXU逻辑端口—Liberty—普通LEF关联：3032信号位、原合同685连接、2346边界网；10项生产SHA对照、148项业务检查、205390项独立比较、6个篡改负例及离线重放通过。与Issue16当时未知状态相比，本轮补齐选定两宏的上游生产索引对照；并未补齐全部工具版本或功能等价。
 
 真实发现两份Liberty cell.area缺分号及4处VDD/VSS方向差异。显式窄兼容profile仅用于接口审计，严格模式仍拒绝，原始输入未改；PG与时序/宏资格仍未闭合。详情与版本见[实验记录](experiments/issue-19-interface-contract.md)。PR17已推进新M9物理视图，本结果只绑定旧数据，不能代替新视图验收。下一步须刷新协作状态、重新绑定新版本并核对DEF/工艺访问，固定预算mapping对照的前置条件仍保留。
+
+## 用户明确的首要研究问题（2026-10-22）
+
+以[共同问题](RESEARCH_QUESTION.md)和[划分方法v0](OPERATOR_BLOCK_PARTITION.md)为当前主线。允许少量有结构差异的代表模型，首轮推理prefill/decode，训练作为结构约束。Issue21给出630个调度账本及数值核，证明调度省存储不能直接推出物理合并收益；仍欠真实权重trace、具体bank/端口模板、布线/时序校准与端到端收益。此前宏资格与互联实验作为前置证据，不能替代模型驱动划分。

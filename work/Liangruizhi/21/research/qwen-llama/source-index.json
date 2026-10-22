@@ -1,0 +1,217 @@
+{
+  "captured_utc": "2026-10-22T10:51:23.224Z",
+  "github_identity": "Liangruizhi / 182389313 / 2663955430@qq.com",
+  "source_commits": {
+    "transformers": "17c6736cb2d3163be317550474b9d9c5081822ae",
+    "meta_llama_models": "0e0b8c519242d5833d8c11bffc1232b77ad7f301"
+  },
+  "code": [
+    {
+      "repo": "huggingface/transformers",
+      "commit": "17c6736cb2d3163be317550474b9d9c5081822ae",
+      "path": "src/transformers/models/qwen2/modeling_qwen2.py",
+      "git_blob_sha": "08c21c089b7aaffc3aea4c0fdd0c506f616d0a7e",
+      "url": "https://github.com/huggingface/transformers/blob/17c6736cb2d3163be317550474b9d9c5081822ae/src/transformers/models/qwen2/modeling_qwen2.py",
+      "evidence": [
+        {
+          "lines": [
+            175,
+            206
+          ],
+          "supports": "Qwen2.5 Q/K/V bias and GQA projections/cache; head_dim can be explicit."
+        },
+        {
+          "lines": [
+            35,
+            47
+          ],
+          "supports": "SwiGLU gate/up/multiply/down."
+        }
+      ]
+    },
+    {
+      "repo": "huggingface/transformers",
+      "commit": "17c6736cb2d3163be317550474b9d9c5081822ae",
+      "path": "src/transformers/models/qwen3/modeling_qwen3.py",
+      "git_blob_sha": "2a90f7c7495e6106f17c2347de3dfea73c62a509",
+      "url": "https://github.com/huggingface/transformers/blob/17c6736cb2d3163be317550474b9d9c5081822ae/src/transformers/models/qwen3/modeling_qwen3.py",
+      "evidence": [
+        {
+          "lines": [
+            211,
+            250
+          ],
+          "supports": "Explicit head_dim, configurable projection bias, per-head QK RMSNorm then RoPE."
+        }
+      ]
+    },
+    {
+      "repo": "huggingface/transformers",
+      "commit": "17c6736cb2d3163be317550474b9d9c5081822ae",
+      "path": "src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+      "git_blob_sha": "d91bff57251b922b28e591839cf4690b585fb3aa",
+      "url": "https://github.com/huggingface/transformers/blob/17c6736cb2d3163be317550474b9d9c5081822ae/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+      "evidence": [
+        {
+          "lines": [
+            209,
+            281
+          ],
+          "supports": "Fine-grained experts, top-k router, normalized probabilities and weighted index_add aggregation."
+        }
+      ]
+    },
+    {
+      "repo": "huggingface/transformers",
+      "commit": "17c6736cb2d3163be317550474b9d9c5081822ae",
+      "path": "src/transformers/models/qwen3_5/modeling_qwen3_5.py",
+      "git_blob_sha": "52422881a568c9e3d599b54d1ffbbc958c76ae50",
+      "url": "https://github.com/huggingface/transformers/blob/17c6736cb2d3163be317550474b9d9c5081822ae/src/transformers/models/qwen3_5/modeling_qwen3_5.py",
+      "evidence": [
+        {
+          "lines": [
+            287,
+            420
+          ],
+          "supports": "Chunked Gated Delta Rule prefill has persistent matrix state."
+        },
+        {
+          "lines": [
+            424,
+            483
+          ],
+          "supports": "FP32 recurrent per-token state update and readout."
+        },
+        {
+          "lines": [
+            490,
+            649
+          ],
+          "supports": "QKV depthwise causal convolution, decay/beta gates, gated normalization, recurrent/conv caches."
+        },
+        {
+          "lines": [
+            736,
+            807
+          ],
+          "supports": "Full GQA doubles q_proj output to carry sigmoid output gate, plus QK normalization."
+        }
+      ]
+    },
+    {
+      "repo": "huggingface/transformers",
+      "commit": "17c6736cb2d3163be317550474b9d9c5081822ae",
+      "path": "src/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py",
+      "git_blob_sha": "58e74c05267d070befb76db08f3cbe581115cdf3",
+      "url": "https://github.com/huggingface/transformers/blob/17c6736cb2d3163be317550474b9d9c5081822ae/src/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py",
+      "evidence": [
+        {
+          "lines": [
+            891,
+            909
+          ],
+          "supports": "Always-computed shared expert, sigmoid shared gate and routed expert sum."
+        }
+      ]
+    },
+    {
+      "repo": "meta-llama/llama-models",
+      "commit": "0e0b8c519242d5833d8c11bffc1232b77ad7f301",
+      "path": "models/llama3/model.py",
+      "git_blob_sha": "57bb33799d6cbb2b38112294e7994b1198822c81",
+      "url": "https://github.com/meta-llama/llama-models/blob/0e0b8c519242d5833d8c11bffc1232b77ad7f301/models/llama3/model.py",
+      "evidence": [
+        {
+          "lines": [
+            110,
+            201
+          ],
+          "supports": "No-bias GQA projections, native KV head cache, repeat for attention reference."
+        },
+        {
+          "lines": [
+            208,
+            225
+          ],
+          "supports": "SwiGLU feedforward expansion rounding."
+        }
+      ]
+    },
+    {
+      "repo": "meta-llama/llama-models",
+      "commit": "0e0b8c519242d5833d8c11bffc1232b77ad7f301",
+      "path": "models/sku_list.py",
+      "git_blob_sha": "fab8d75f1cc401e9702ad5786d4dcbd4e9a8ed3e",
+      "url": "https://github.com/meta-llama/llama-models/blob/0e0b8c519242d5833d8c11bffc1232b77ad7f301/models/sku_list.py",
+      "evidence": [
+        {
+          "lines": [
+            229,
+            247
+          ],
+          "supports": "Llama3.1-8B official D/L/Hq/Hkv/FFN expansion and RoPE args."
+        },
+        {
+          "lines": [
+            330,
+            345
+          ],
+          "supports": "Llama3.2-1B official small dense GQA configuration."
+        }
+      ]
+    },
+    {
+      "repo": "meta-llama/llama-models",
+      "commit": "0e0b8c519242d5833d8c11bffc1232b77ad7f301",
+      "path": "models/llama3/args.py",
+      "git_blob_sha": "4a8caf2922c63ac167cae06f1b29a8f9c40f3550",
+      "url": "https://github.com/meta-llama/llama-models/blob/0e0b8c519242d5833d8c11bffc1232b77ad7f301/models/llama3/args.py",
+      "evidence": [
+        {
+          "lines": [
+            40,
+            77
+          ],
+          "supports": "n_kv_heads fallback and divisibility constraints."
+        }
+      ]
+    }
+  ],
+  "papers": [
+    {
+      "id": "Qwen2.5",
+      "url": "https://arxiv.org/abs/2412.15115"
+    },
+    {
+      "id": "Qwen3",
+      "url": "https://arxiv.org/html/2505.09388v1#S2"
+    },
+    {
+      "id": "Llama3",
+      "url": "https://arxiv.org/html/2407.21783v3#S3.SS2"
+    },
+    {
+      "id": "GatedDeltaNet",
+      "url": "https://arxiv.org/abs/2412.06464"
+    }
+  ],
+  "official_model_cards": [
+    {
+      "id": "Qwen3.5-0.8B",
+      "url": "https://huggingface.co/Qwen/Qwen3.5-0.8B"
+    },
+    {
+      "id": "Qwen3.5-35B-A3B",
+      "url": "https://huggingface.co/Qwen/Qwen3.5-35B-A3B"
+    },
+    {
+      "id": "Llama4ScopeOnly",
+      "url": "https://huggingface.co/meta-llama/Llama-4-Scout-17B-16E"
+    }
+  ],
+  "access_limits": [
+    "Meta Hugging Face config endpoints return HTTP401 (manual gated); no token borrowed or access bypassed. Use Meta official public sku_list.py and model.py instead.",
+    "No weight, dataset or tokenizer downloaded.",
+    "Current source implementation commit is pinned separately from each model config revision; config.transformers_version is producer metadata and is not the inspected source version."
+  ]
+}

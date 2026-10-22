@@ -1,0 +1,310 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-22T11:22:46.114317+00:00",
+  "status": "cpu_candidate_feasible_after_environment_setup_not_executed",
+  "scope": {
+    "installed": false,
+    "weights_downloaded": false,
+    "weight_header_read": false,
+    "model_loaded": false,
+    "gpu_runtime_probed": false,
+    "issue_created": false,
+    "server_accessed": false
+  },
+  "python": {
+    "executable": "D:\\APP\\Python\\python.exe",
+    "version": "3.13.14 (tags/v3.13.14:fd17997, Jun 10 2026, 13:03:48) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "packages": {
+    "torch": {
+      "available": false,
+      "version": null,
+      "origin": null
+    },
+    "transformers": {
+      "available": false,
+      "version": null,
+      "origin": null
+    },
+    "safetensors": {
+      "available": false,
+      "version": null,
+      "origin": null
+    },
+    "accelerate": {
+      "available": false,
+      "version": null,
+      "origin": null
+    },
+    "tokenizers": {
+      "available": false,
+      "version": null,
+      "origin": null
+    },
+    "huggingface_hub": {
+      "available": false,
+      "version": null,
+      "origin": null
+    },
+    "numpy": {
+      "available": true,
+      "version": "2.5.0",
+      "origin": "D:\\APP\\Python\\Lib\\site-packages\\numpy\\__init__.py"
+    }
+  },
+  "commands": {
+    "python": "D:\\APP\\Python\\python.EXE",
+    "py": "C:\\Users\\23123\\AppData\\Local\\Programs\\Python\\Launcher\\py.EXE",
+    "nvidia-smi": null,
+    "xpu-smi": null,
+    "sycl-ls": null
+  },
+  "target_project_venv_exists": false,
+  "hardware_observation": {
+    "observed_utc": "2026-10-22T11:20:14.5896917Z",
+    "computer_model": "XIAOMI REDMI Book Pro 16 2026",
+    "cpu": "Intel(R) Core(TM) Ultra X7 358H",
+    "cpu_cores": 16,
+    "logical_processors": 16,
+    "physical_memory_bytes": 33873752064,
+    "visible_memory_kib": 33079836,
+    "free_memory_kib": 15470888,
+    "disk_D_used_bytes": 325406494720,
+    "disk_D_free_bytes": 375197458432,
+    "gpu_name": "Intel(R) Arc(TM) B390 GPU",
+    "gpu_driver": "32.0.101.8509",
+    "gpu_wmi_adapter_ram_bytes": 2147479552,
+    "gpu_capacity_caveat": "WMI AdapterRAM is not verified usable/shared GPU memory; no backend validation."
+  },
+  "candidate": {
+    "model_id": "Qwen/Qwen3-0.6B",
+    "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+    "gated": false,
+    "private": false,
+    "license": "apache-2.0",
+    "weight_file_count": 1,
+    "weight_files": [
+      {
+        "name": "model.safetensors",
+        "size": 1503300328,
+        "blobId": "a0458bbfda764d86cf930900d5f0f933933da9a3",
+        "lfs": {
+          "sha256": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b",
+          "size": 1503300328,
+          "pointerSize": 135
+        }
+      }
+    ],
+    "total_weight_bytes": 1503300328,
+    "metadata_tensor_elements": 751632384,
+    "config": {
+      "architectures": [
+        "Qwen3ForCausalLM"
+      ],
+      "attention_bias": false,
+      "attention_dropout": 0.0,
+      "bos_token_id": 151643,
+      "eos_token_id": 151645,
+      "head_dim": 128,
+      "hidden_act": "silu",
+      "hidden_size": 1024,
+      "initializer_range": 0.02,
+      "intermediate_size": 3072,
+      "max_position_embeddings": 40960,
+      "max_window_layers": 28,
+      "model_type": "qwen3",
+      "num_attention_heads": 16,
+      "num_hidden_layers": 28,
+      "num_key_value_heads": 8,
+      "rms_norm_eps": 1e-06,
+      "rope_scaling": null,
+      "rope_theta": 1000000,
+      "sliding_window": null,
+      "tie_word_embeddings": true,
+      "torch_dtype": "bfloat16",
+      "transformers_version": "4.51.0",
+      "use_cache": true,
+      "use_sliding_window": false,
+      "vocab_size": 151936
+    },
+    "config_local_sha256": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+    "license_original_text_verified": {
+      "title": "Apache License, Version 2.0, January 2004",
+      "copyright": "Copyright 2024 Alibaba Cloud",
+      "legal_advice": false
+    }
+  },
+  "estimates_not_measurements": {
+    "unique_tied_parameter_count_from_config": 596049920,
+    "serialized_tensor_elements_fp32_bytes": 3006529536,
+    "kv_fp32_bytes_formula": "2*B*T*L*Hkv*head_dim*4",
+    "kv_fp32_bytes_B1_T128": 29360128,
+    "logits_fp32_bytes_B1_T128": 77791232,
+    "recommended_process_ram_budget_bytes": 8589934592,
+    "recommended_free_disk_D_budget_bytes": 10737418240,
+    "cpu_tokens_per_second": null,
+    "note": "No measured load/RSS/runtime; serialized tensor element count is not independently verified tied parameter count."
+  },
+  "dependency_metadata_compatibility": {
+    "full_solver_run": false,
+    "installed_runtime_validation": false,
+    "candidate_versions": [
+      {
+        "package": "torch",
+        "version": "2.10.0"
+      },
+      {
+        "package": "transformers",
+        "version": "4.57.6"
+      },
+      {
+        "package": "safetensors",
+        "version": "0.7.0"
+      },
+      {
+        "package": "tokenizers",
+        "version": "0.22.2"
+      },
+      {
+        "package": "huggingface-hub",
+        "version": "0.36.2"
+      },
+      {
+        "package": "accelerate",
+        "version": "1.12.0"
+      }
+    ],
+    "official_cpu_wheel": {
+      "url": "https://download-r2.pytorch.org/whl/cpu/torch-2.10.0%2Bcpu-cp313-cp313-win_amd64.whl",
+      "sha256": "b719da5af01b59126ac13eefd6ba3dd12d002dc0e8e79b8b365e55267a8189d3",
+      "index_url": "https://download.pytorch.org/whl/cpu/torch/",
+      "requires_python": [
+        ">=3.10"
+      ],
+      "requires_dist": [
+        "filelock",
+        "typing-extensions>=4.10.0",
+        "sympy>=1.13.3",
+        "networkx>=2.5.1",
+        "jinja2",
+        "fsspec>=0.8.5",
+        "setuptools; python_version >= \"3.12\"",
+        "opt-einsum>=3.3; extra == \"opt-einsum\"",
+        "optree>=0.13.0; extra == \"optree\"",
+        "pyyaml; extra == \"pyyaml\""
+      ]
+    },
+    "matched_wheels": [
+      {
+        "package": "torch",
+        "version": "2.10.0",
+        "requires_python": ">=3.10",
+        "compatible_wheels": [
+          {
+            "filename": "torch-2.10.0-cp313-cp313-win_amd64.whl",
+            "bytes": 113757050,
+            "sha256": "c2ee399c644dc92ef7bc0d4f7e74b5360c37cdbe7c5ba11318dda49ffac2bc57",
+            "compatible_with_this_interpreter": true
+          }
+        ]
+      },
+      {
+        "package": "transformers",
+        "version": "4.57.6",
+        "requires_python": ">=3.9.0",
+        "compatible_wheels": [
+          {
+            "filename": "transformers-4.57.6-py3-none-any.whl",
+            "bytes": 11993498,
+            "sha256": "4c9e9de11333ddfe5114bc872c9f370509198acf0b87a832a0ab9458e2bd0550",
+            "compatible_with_this_interpreter": true
+          }
+        ]
+      },
+      {
+        "package": "safetensors",
+        "version": "0.7.0",
+        "requires_python": ">=3.9",
+        "compatible_wheels": [
+          {
+            "filename": "safetensors-0.7.0-cp38-abi3-win_amd64.whl",
+            "bytes": 341380,
+            "sha256": "d1239932053f56f3456f32eb9625590cc7582e905021f94636202a864d470755",
+            "compatible_with_this_interpreter": true
+          }
+        ]
+      },
+      {
+        "package": "tokenizers",
+        "version": "0.22.2",
+        "requires_python": ">=3.9",
+        "compatible_wheels": [
+          {
+            "filename": "tokenizers-0.22.2-cp39-abi3-win_amd64.whl",
+            "bytes": 2747786,
+            "sha256": "c9ea31edff2968b44a88f97d784c2f16dc0729b8b143ed004699ebca91f05c48",
+            "compatible_with_this_interpreter": true
+          }
+        ]
+      },
+      {
+        "package": "huggingface-hub",
+        "version": "0.36.2",
+        "requires_python": ">=3.8.0",
+        "compatible_wheels": [
+          {
+            "filename": "huggingface_hub-0.36.2-py3-none-any.whl",
+            "bytes": 566395,
+            "sha256": "48f0c8eac16145dfce371e9d2d7772854a4f591bcb56c9cf548accf531d54270",
+            "compatible_with_this_interpreter": true
+          }
+        ]
+      },
+      {
+        "package": "accelerate",
+        "version": "1.12.0",
+        "requires_python": ">=3.10.0",
+        "compatible_wheels": [
+          {
+            "filename": "accelerate-1.12.0-py3-none-any.whl",
+            "bytes": 380935,
+            "sha256": "3e2091cd341423207e2f084a6654b1efcd250dc326f2a37d6dde446e07cabb11",
+            "compatible_with_this_interpreter": true
+          }
+        ]
+      }
+    ]
+  },
+  "proposed_initial_cases": {
+    "backend": "cpu",
+    "dtype": "float32",
+    "attention_implementation": "eager",
+    "batch": 1,
+    "prompt_lengths": [
+      16,
+      64,
+      128
+    ],
+    "decode_tokens": 8,
+    "threads_initial": 4,
+    "compare": "same fixed tokens: full prefix last logits vs cached token decode; measure errors, shapes, KV bytes, RSS and timing"
+  },
+  "references": {
+    "model_fixed_tree": "https://huggingface.co/Qwen/Qwen3-0.6B/tree/c1899de289a04d12100db370d81485cdf75e47ca",
+    "model_metadata_api": "https://huggingface.co/api/models/Qwen/Qwen3-0.6B/revision/c1899de289a04d12100db370d81485cdf75e47ca?blobs=true",
+    "qwen_transformers": "https://qwen.readthedocs.io/en/stable/inference/transformers.html",
+    "pytorch_cpu_index": "https://download.pytorch.org/whl/cpu/torch/",
+    "pytorch_xpu_current_document_not_candidate_runtime_proof": "https://docs.pytorch.org/docs/2.14/notes/get_start_xpu.html",
+    "fixed_license": "https://huggingface.co/Qwen/Qwen3-0.6B/raw/c1899de289a04d12100db370d81485cdf75e47ca/LICENSE"
+  },
+  "unresolved": [
+    "Dependency installation and import/DLL compatibility",
+    "Actual complete dependency lock and wheel provenance",
+    "Actual weight bytes/hash after future download",
+    "Tokenizer and native Qwen3 instantiation",
+    "Full prefill/decode correctness and measured resource use",
+    "GPU/XPU backend and usable memory",
+    "No final benchmark choice or target-hardware PPA evidence"
+  ]
+}

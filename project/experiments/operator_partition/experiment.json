@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "experiment": "issue-21-boundary-pilot-v1",
+  "purpose": "Separate schedule, block boundary and capacity effects; no calibrated PPA claim",
+  "scalar_bytes": 4,
+  "precision": "homogeneous FP32 byte accounting; numerical FP32/FP64 microchecks separate; no BF16/FP8 qualification",
+  "tokens": [1, 128, 2048],
+  "context_lengths": [128, 2048, 8192],
+  "ffn_tiles": [32, 128, 512],
+  "ffn_token_tiles": [1, 16, 128],
+  "attention_tiles": [[16, 32], [32, 64], [64, 128]],
+  "bank_capacity_pairs_bytes": [[1048576, 262144], [4194304, 1048576], [16777216, 4194304]],
+  "reserves_percent": [0, 10, 20],
+  "partitions": ["split", "joined"],
+  "schedules": ["materialized", "streaming"],
+  "resource_contract": {
+    "matrix_engines": 1,
+    "vector_engines": 1,
+    "banks": 2,
+    "pooling_when_joined": false,
+    "overlap": false,
+    "double_buffer": false,
+    "weights": "stream every weight once per token tile; independent token tiles reload weights",
+    "kv": "external persistent cache; same query-group and key tiling in paired schedules",
+    "compute_time": "not modeled; no throughput or pin-count claims",
+    "bank_access": "logical tensor read/write accounting, not calibrated SRAM transactions or register tiling"
+  },
+  "limitations": ["No actual model weights or token-quality evaluation", "No RTL/cycle/physical implementation", "Attention core excludes projections, RoPE, normalization and FFN", "Dense causal work includes masked positions", "No energy/area/wire/clock/reset/DFT calibration", "Capacity failure concerns the selected schedule, not all schedules", "Model structure survey is broader than numerical execution coverage"]
+}
