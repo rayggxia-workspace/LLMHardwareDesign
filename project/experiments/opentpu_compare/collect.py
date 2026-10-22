@@ -9,9 +9,12 @@ HERE=Path(__file__).resolve().parent
 receipts=sorted((HERE/'results').glob('*-submission.json'))
 REMOTE_SCRIPT=r'''
 from pathlib import Path
-import hashlib,json,subprocess
+import hashlib,json,re,subprocess
 base=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15')
 out={}
+def read_json(path):
+ try: return json.load(open(path))
+ except (ValueError,FileNotFoundError) as error: return {'collection_pending_or_invalid':str(error)}
 for p in sorted(base.iterdir()):
  if not (p/'spec.json').exists(): continue
  spec=json.load(open(p/'spec.json'))
@@ -19,23 +22,29 @@ for p in sorted(base.iterdir()):
  for name in ['started.txt','finished.txt','allocation.txt','resource-audit.json','experiment.json','input-sha256.json','strict-pg.json','final-pg/strict-pg.json','layer-reservation.json','transparent-sta-validation.json','resource-qualification.json','full-hierarchy-quality.json']:
   f=p/name
   if f.exists():
-   row[name]=json.load(open(f)) if f.suffix=='.json' else f.read_text()
+   row[name]=read_json(f) if f.suffix=='.json' else f.read_text()
  files=sorted((p/'flow/logs').rglob('*.log'),key=lambda f:f.stat().st_mtime) if (p/'flow/logs').exists() else []
  if files: row['last_flow_log']={'path':str(files[-1]),'tail':files[-1].read_text(errors='replace').splitlines()[-8:]}
  row['job_log_tail']=(p/'job.log').read_text(errors='replace').splitlines()[-14:] if (p/'job.log').exists() else []
  row['metrics']={}
  for f in (p/'flow/logs').rglob('*.json') if (p/'flow/logs').exists() else []:
   if f.name in ('6_report.json','5_2_route.json'):
-   d=json.load(open(f));row['metrics'][f.name]={k:v for k,v in d.items() if any(s in k for s in ['timing','area','wirelength','vias','antenna','drc','instance','violations','power','clock','net__count'])}
+   d=read_json(f);row['metrics'][f.name]={k:v for k,v in d.items() if any(s in k for s in ['timing','area','wirelength','vias','antenna','drc','instance','violations','power','clock','net__count'])}
  for f in (p/'flow/reports').rglob('6_finish.rpt') if (p/'flow/reports').exists() else []:
   row['final_report']=f.read_text()
- for f in p.glob('*-resource.json'): row[f.name]=json.load(open(f))
- row['pg_access']={str(f.relative_to(p)):json.load(open(f)) for directory in [p,p/'final-pg']
+ for f in (p/'flow/logs').rglob('5_2_route.log') if (p/'flow/logs').exists() else []:
+  tables=re.findall(r'Total wire length = ([\d.]+) um\.(.*?)Total number of vias = (\d+)\.',f.read_text(),re.S)
+  if tables:
+   total,body,vias=tables[-1]
+   row['route_layer_wire_um']={layer:float(length) for layer,length in re.findall(r'Total wire length on LAYER (\w+) = ([\d.]+) um\.',body)}
+   row['route_layer_report']={'total_um':float(total),'vias':int(vias),'scope':'Final DRT signal-route table; per-layer lengths rounded to integer um; excludes special PG'}
+ for f in p.glob('*-resource.json'): row[f.name]=read_json(f)
+ row['pg_access']={str(f.relative_to(p)):read_json(f) for directory in [p,p/'final-pg']
                    for f in directory.glob('*-pg-access-selection.json')}
  for name in ['repair-input-audit.json','structural-equivalence.json','full-hierarchy-sta.log']:
   f=p/name
   if f.exists():
-   if f.suffix=='.json': row[name]=json.load(open(f))
+   if f.suffix=='.json': row[name]=read_json(f)
    else:
     text=f.read_text(errors='replace');start=text.find('worst slack max')
     row[name]=text[start:] if start>=0 else text[-12000:]
@@ -57,7 +66,8 @@ for p in sorted(base.iterdir()):
 print(json.dumps(out))
 '''
 result=subprocess.run(['ssh','-o','BatchMode=yes','yuzelu@10.129.166.172','python3','-'],input=REMOTE_SCRIPT,
-                      text=True,capture_output=True,check=True)
+                      text=True,capture_output=True)
+if result.returncode: raise SystemExit(result.stderr)
 data=json.loads(result.stdout)
 ids={json.loads(p.read_text())['job_id']:p.stem.removesuffix('-submission') for p in receipts}
 acct=subprocess.check_output(['ssh','-o','BatchMode=yes','yuzelu@10.129.166.172','sacct -n -P -j '+','.join(ids)+' --format=JobIDRaw,State,ExitCode,Elapsed,Timelimit,AllocCPUS,NodeList'],text=True)

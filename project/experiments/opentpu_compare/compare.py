@@ -50,6 +50,10 @@ for kind,blocks in [('split',['act','mxu']),('merged',['merged'])]:
     max_ws=re.search(r'worst slack max\s+(-?[\d.]+)',log)
     min_ws=re.search(r'worst slack min\s+(-?[\d.]+)',log)
     assert max_ws and min_ws, 'Missing actual hierarchical STA'
+    component_rows=[rows[b]['record']['metrics']['6_report.json'] for b in blocks]+[final]
+    classes={c:{quantity:sum(r.get('finish__design__instance__'+quantity+'__class:'+c,0) for r in component_rows)
+                for quantity in ['count','area']} for c in ['clock_buffer','clock_inverter','timing_repair_buffer','inverter']}
+    layer_wire=top['record']['route_layer_wire_um']
     costs[kind]=dict(
         implemented_leaf_area_um2=leaf+parent_cells,
         private_leaf_area_um2=leaf,parent_stdcell_area_um2=parent_cells,
@@ -63,7 +67,9 @@ for kind,blocks in [('split',['act','mxu']),('merged',['merged'])]:
         parent_signal_vias=top['quality']['signal_vias'],
         total_signal_vias=sum(rows[b]['quality']['signal_vias'] for b in blocks)+top['quality']['signal_vias'],
         complete_setup_ws_ns=float(max_ws[1]),complete_hold_ws_ns=float(min_ws[1]),
-        parent_macro_only_setup_ws_ns=top['quality']['setup_ns'])
+        parent_macro_only_setup_ws_ns=top['quality']['setup_ns'],
+        physical_cell_classification=classes,parent_signal_wire_by_layer_um=layer_wire,
+        parent_signal_wire_below_m10_percent=100*sum(v for k,v in layer_wire.items() if k!='metal10')/sum(layer_wire.values()))
 assert costs['split']['common_die_area_um2']==costs['merged']['common_die_area_um2']
 assert rows['top_split']['record']['external_pin_contract']==rows['top_merged']['record']['external_pin_contract']
 split_pins=rows['top_split']['record']['actual_signal_pin_geometry']
