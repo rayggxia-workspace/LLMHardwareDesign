@@ -25,7 +25,7 @@ def execute(root,spec,meta):
         script+='set_placement_padding -global -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)\n'
         # Reconstruct genuine global routes and RC after every reload. Do not
         # reuse estimates from the previous, mutated in-memory design.
-        script+='pin_access\nglobal_route -congestion_iterations 30\nestimate_parasitics -global_routing\n'
+        script+='set_global_routing_random -seed 0\npin_access\nglobal_route -congestion_iterations 30\nestimate_parasitics -global_routing\n'
         script+=body
         script+='orfs_write_db $::env(RESULTS_DIR)/'+name+'.odb\n'
         script+='orfs_write_sdc $::env(RESULTS_DIR)/'+name+'.sdc\n'
@@ -39,14 +39,19 @@ def execute(root,spec,meta):
     for phase in range(int(spec['joint_repair_rounds'])):
         name='joint-'+str(phase)+'-timing'
         body='repair_timing -setup -setup_margin '+str(spec['setup_target_ns'])+' -repair_tns 100'+skip
-        body+='estimate_parasitics -global_routing\nrepair_timing -hold -hold_margin 0.02'+skip
+        body+='estimate_parasitics -global_routing\nrepair_timing -hold -hold_margin '+str(spec.get('hold_target_ns',0.02))+skip
         body+='global_route -start_incremental\ndetailed_placement_helper\ncheck_placement -verbose\nglobal_route -end_incremental\n'
         run(name,body);previous=name
         name='joint-'+str(phase)+'-electrical'
-        # insert_buffer only calls initBlock in this binary. Initialize the
-        # complete resizer/placement state explicitly after a fresh reload.
+        # Initialize native resizer state after a fresh reload. Buffer
+        # insertion itself uses checked ODB edits, not the crashing helper.
         body='if {[llength [info commands rsz::resize_slack_preamble]]!=1} {error {Missing native resizer preamble}}\nrsz::resize_slack_preamble\n'
+        if spec.get('joint_native_electrical_repair'):
+            body+='repair_design -cap_margin 35 -slew_margin 20 -reroute -verbose\n'
+            body+='global_route -start_incremental\ndetailed_placement_helper\ncheck_placement -verbose\nglobal_route -end_incremental\n'
+            body+='global_route -congestion_iterations 30\nestimate_parasitics -global_routing\n'
         body+='set llhd_drive_root {'+str(root)+'}\nset llhd_drive_rounds '+str(spec['targeted_drive_rounds'])+'\n'
+        if spec.get('full_route_each_drive_round'):body+='set llhd_drive_full_route 1\n'
         body+='set llhd_drive_phase joint'+str(phase)+'\nset llhd_drive_guardband 1\nset llhd_enable_macro_guards 1\n'
         body+='source {'+str(guard_state)+'}\nsource {'+str(root/'runner/macro_guard.tcl')+'}\n'
         body+='source {'+str(root/'runner/targeted_drive.tcl')+'}\n'
@@ -68,7 +73,7 @@ def execute(root,spec,meta):
         (root/'joint-repair.json').write_text(json.dumps(audit,indent=2)+'\n')
         (root/'joint-repair.tsv').write_text('phase\tsetup_ns\thold_ns\telectrical_passed\n'+
             ''.join('%s\t%s\t%s\t%s\n'%(r['phase'],r['setup_ns'],r['hold_ns'],r['electrical_passed']) for r in audit))
-        if setup>=float(spec['setup_accept_ns']) and hold>=0 and electrical:
+        if setup>=float(spec['setup_accept_ns']) and hold>=float(spec.get('hold_accept_ns',0)) and electrical:
             for ext in ['odb','sdc']:
                 shutil.copy2(results/(previous+'.'+ext),results/('5_1_grt.'+ext))
             shutil.copy2(results/(previous+'.guide'),results/'route.guide')

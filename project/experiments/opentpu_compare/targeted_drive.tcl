@@ -81,6 +81,9 @@ for {set iteration 0} {$iteration < $llhd_drive_rounds} {incr iteration} {
   detailed_placement_helper
   check_placement -verbose
   global_route -end_incremental
+  if {[info exists llhd_drive_full_route] && $llhd_drive_full_route} {
+    global_route -congestion_iterations 30
+  }
 }
 close $llhd_drive_audit
 close $llhd_guard_audit
