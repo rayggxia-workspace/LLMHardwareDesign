@@ -5,6 +5,23 @@ import re
 def nonnegative(x):
     return isinstance(x,(int,float)) and math.isfinite(x) and x>=0
 
+def require_toolchain(row):
+    """Use sealed, compute-node observations rather than a tool version guess."""
+    expected={
+        'orfs-current-repacked.sif':'49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a',
+        'openroad':'0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53',
+        'yosys':'c2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b'}
+    observed={}
+    for key in ['image.sha256','tools.sha256']:
+        assert row.get('collected_file_integrity',{}).get(key), 'Unsealed tool identity: '+key
+        for line in row.get(key,'').splitlines():
+            digest,path=line.split(None,1)
+            name=path.rsplit('/',1)[-1]
+            assert name not in observed, 'Duplicate tool identity'
+            observed[name]=digest
+    assert observed==expected, 'Actual compute-node tool/image differs from the fixed experiment'
+    return observed
+
 def require_sealed_input(consumer,producer,relative):
     """Bind what a proof/STA actually read to the producer's sealed output."""
     relative=relative.replace('\\','/')

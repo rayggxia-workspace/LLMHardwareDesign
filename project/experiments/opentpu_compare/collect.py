@@ -19,7 +19,7 @@ for p in sorted(base.iterdir()):
  if not (p/'spec.json').exists(): continue
  spec=json.load(open(p/'spec.json'))
  row={'spec':spec,'exit_code':(p/'exit-code.txt').read_text().strip() if (p/'exit-code.txt').exists() else None}
- for name in ['started.txt','finished.txt','allocation.txt','resource-audit.json','experiment.json','input-sha256.json','input-trace-status.json','strict-pg.json','final-pg/strict-pg.json','layer-reservation.json','transparent-sta-validation.json','resource-qualification.json','full-hierarchy-quality.json','pre-drt-electrical-quality.json','pin-placement-quality.json']:
+ for name in ['started.txt','finished.txt','allocation.txt','image.sha256','tools.sha256','resource-audit.json','experiment.json','input-sha256.json','input-trace-status.json','strict-pg.json','final-pg/strict-pg.json','layer-reservation.json','transparent-sta-validation.json','resource-qualification.json','full-hierarchy-quality.json','pre-drt-electrical-quality.json','pin-placement-quality.json']:
   f=p/name
   if f.exists():
    row[name]=read_json(f) if f.suffix=='.json' else f.read_text()
@@ -84,7 +84,7 @@ for p in sorted(base.iterdir()):
   if relative: artifacts.update(str(Path(relative)/('6_final.'+ext)) for ext in ['v','spef'])
   artifacts.update(name for name in manifest if name.startswith('equivalence-') and name.endswith(('/mapped.json','/physical.json')))
   row['sealed_artifact_sha256']={name:manifest[name] for name in sorted(artifacts) if name in manifest}
-  selected=[p/name for name in ['spec.json','experiment.json','input-sha256.json','input-trace-status.json','boundary.sdc','external-pin-contract.json','pin-placement-quality.json','pre-drt-electrical-quality.json',
+  selected=[p/name for name in ['spec.json','experiment.json','image.sha256','tools.sha256','input-sha256.json','input-trace-status.json','boundary.sdc','external-pin-contract.json','pin-placement-quality.json','pre-drt-electrical-quality.json',
       'resource-qualification.json','layer-reservation.json','strict-pg.json','final-pg/strict-pg.json',
       'full-hierarchy-quality.json','full-hierarchy-sta.log','structural-equivalence.json','logical-resource-inventory.json','stitch-validation.json','annotation-validation.json','joint-repair.json','grt-consistency.json','binary-observation.json','extracted-source-validation.json','extracted-eco-plan.json','extracted-eco-actions.tsv','extracted-before.rpt','extracted-setup-before.rpt','extracted-eco-grt-estimates.rpt','final-pins.tsv'] if (p/name).exists()]
   selected+=[q for directory in [p,p/'final-pg'] for q in directory.glob('*-pg-access-selection.json')]

@@ -5,7 +5,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
-from quality import evaluate, require_sealed_input
+from quality import evaluate, require_sealed_input, require_toolchain
 
 HERE=Path(__file__).resolve().parent
 p=argparse.ArgumentParser()
@@ -36,6 +36,8 @@ for name in list(selection.values())+[definition[k] for k in evidence_keys]:
     integrity=row.get('collected_file_integrity',{})
     assert integrity and all(integrity.values()), 'Collected evidence differs from sealed output manifest: '+name
     assert '|COMPLETED|' in row.get('scheduler',''), 'Wait for sealed scheduler terminal state: '+name
+    assert row['scheduler'].split('|')[4]=='UNLIMITED' and 'TimeLimit=UNLIMITED' in row.get('allocation.txt',''), 'Execution limit differs from the authorized unlimited experiment: '+name
+    require_toolchain(row)
     terminal=json.loads((HERE/'results'/(name+'-terminal.json')).read_text())
     assert terminal['output_manifest_sha256']==row['output_manifest_sha256'], 'Source manifest changed since its first terminal receipt: '+name
 shared_inputs={}
@@ -148,6 +150,7 @@ input_path.write_text(json.dumps(inputs,indent=2)+'\n')
 output=dict(selection=selection,functional_proof=definition['functional_proof'],parent_functional_proof=definition['parent_functional_proof'],
     stitch_proof=definition['stitch_proof'],inventory_proof=definition['inventory_proof'],annotation_proof=definition['annotation_proof'],
     input_snapshot_sha256=hashlib.sha256(input_path.read_bytes()).hexdigest(),costs=costs,
+    toolchain_sha256=require_toolchain(rows['act']['record']),
     split_change_vs_merged_percent={k:100*(costs['split'][k]/costs['merged'][k]-1) for k in
         ['implemented_leaf_area_um2','occupied_footprint_plus_parent_cells_um2','total_signal_wire_um','total_signal_vias']},
     scope='H1 same compute/storage/state resources; physical buffer and CTS costs included. Footprint is not added to its own leaf-cell area. Signal route excludes special PG, which requires separate geometry audit. Complete STA never sums separate-block slack values.')
