@@ -238,7 +238,8 @@ def view_probe(spec):
         return
     if spec.get('stitch_selftest'):
         from stitch_probe import execute
-        execute(ROOT,run_tcl,timing_technology(),track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib'))
+        execute(ROOT,run_tcl,timing_technology(),track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib'),
+                two_child=spec['stitch_selftest']=='two_child')
         return
     if spec.get('repair_api'):
         if spec.get('route_api_only'):
