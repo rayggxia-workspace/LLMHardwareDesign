@@ -1,0 +1,201 @@
+{
+  "status": "PASS",
+  "scope": "Self-contained exact toy transition systems only; no model weights, hardware timing, physical SRAM, or calibrated accelerator claim.",
+  "tests": 7,
+  "results": {
+    "resource_and_path_bounds_not_sufficient": {
+      "resource_bound": 2,
+      "critical_path_bound": 2,
+      "exact": {
+        "slots": 3,
+        "witness": [
+          [
+            "p0"
+          ],
+          [
+            "c0",
+            "p1"
+          ],
+          [
+            "c1"
+          ]
+        ],
+        "states": 9
+      },
+      "interpretation": "Two 2-stage jobs require startup/drain even though both scalar lower bounds are 2."
+    },
+    "boundary_label_zero_effect": {
+      "split_slots": 3,
+      "joined_slots": 3,
+      "interpretation": "A resource-preserving bijection of ownership/unit labels cannot change feasible schedules."
+    },
+    "bank_conflict": {
+      "word_addresses": [
+        0,
+        2
+      ],
+      "banks": 2,
+      "read_ports_per_bank": 1,
+      "aggregate_read_bound": 1,
+      "low_address_bit_cycles": 2,
+      "next_address_bit_cycles": 1,
+      "interpretation": "Same words and nominal capacity; map choice changes port conflicts. Moving existing data is not free."
+    },
+    "port_mode": {
+      "reads": 2,
+      "writes": 0,
+      "one_read_one_write_cycles": 2,
+      "two_read_or_write_cycles": 1,
+      "interpretation": "Two named ports do not imply equal direction-specific service capacity."
+    },
+    "burst_depth_2": {
+      "producer_order": "AAABBB",
+      "consumer": "atomic A+B",
+      "depth_per_edge": 2,
+      "slots": null,
+      "reachable_states": 3,
+      "deadlocked": true,
+      "terminal_states": [
+        [
+          2,
+          0,
+          2,
+          0
+        ]
+      ]
+    },
+    "burst_depth_3": {
+      "producer_order": "AAABBB",
+      "consumer": "atomic A+B",
+      "depth_per_edge": 3,
+      "slots": 7,
+      "witness": [
+        {
+          "emit": "A",
+          "consume_pair": false,
+          "occupancy_after": [
+            1,
+            0
+          ]
+        },
+        {
+          "emit": "A",
+          "consume_pair": false,
+          "occupancy_after": [
+            2,
+            0
+          ]
+        },
+        {
+          "emit": "A",
+          "consume_pair": false,
+          "occupancy_after": [
+            3,
+            0
+          ]
+        },
+        {
+          "emit": "B",
+          "consume_pair": false,
+          "occupancy_after": [
+            3,
+            1
+          ]
+        },
+        {
+          "emit": "B",
+          "consume_pair": true,
+          "occupancy_after": [
+            2,
+            1
+          ]
+        },
+        {
+          "emit": "B",
+          "consume_pair": true,
+          "occupancy_after": [
+            1,
+            1
+          ]
+        },
+        {
+          "emit": null,
+          "consume_pair": true,
+          "occupancy_after": [
+            0,
+            0
+          ]
+        }
+      ],
+      "reachable_states": 13,
+      "deadlocked": false
+    },
+    "alternating_depth_1": {
+      "producer_order": "ABABAB",
+      "consumer": "atomic A+B",
+      "depth_per_edge": 1,
+      "slots": 7,
+      "witness": [
+        {
+          "emit": "A",
+          "consume_pair": false,
+          "occupancy_after": [
+            1,
+            0
+          ]
+        },
+        {
+          "emit": "B",
+          "consume_pair": false,
+          "occupancy_after": [
+            1,
+            1
+          ]
+        },
+        {
+          "emit": "A",
+          "consume_pair": true,
+          "occupancy_after": [
+            1,
+            0
+          ]
+        },
+        {
+          "emit": "B",
+          "consume_pair": false,
+          "occupancy_after": [
+            1,
+            1
+          ]
+        },
+        {
+          "emit": "A",
+          "consume_pair": true,
+          "occupancy_after": [
+            1,
+            0
+          ]
+        },
+        {
+          "emit": "B",
+          "consume_pair": false,
+          "occupancy_after": [
+            1,
+            1
+          ]
+        },
+        {
+          "emit": null,
+          "consume_pair": true,
+          "occupancy_after": [
+            0,
+            0
+          ]
+        }
+      ],
+      "reachable_states": 10,
+      "deadlocked": false
+    }
+  },
+  "cycle_convention": "Jobs read pre-slot tokens; completions/writes become visible next slot; no bypass."
+}

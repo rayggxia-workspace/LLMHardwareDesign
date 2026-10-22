@@ -1,0 +1,156 @@
+{
+  "colocated": {
+    "event": {
+      "status": "ok",
+      "makespan": 14,
+      "events": [
+        {
+          "task": "loadA",
+          "start": 0,
+          "end": 4
+        },
+        {
+          "task": "loadB",
+          "start": 4,
+          "end": 8
+        },
+        {
+          "task": "mat",
+          "start": 4,
+          "end": 10
+        },
+        {
+          "task": "vec",
+          "start": 8,
+          "end": 14
+        }
+      ],
+      "peak_bytes": {}
+    },
+    "exact_minimum_cycles": 14
+  },
+  "separated": {
+    "event": {
+      "status": "ok",
+      "makespan": 10,
+      "events": [
+        {
+          "task": "loadA",
+          "start": 0,
+          "end": 4
+        },
+        {
+          "task": "loadB",
+          "start": 0,
+          "end": 4
+        },
+        {
+          "task": "mat",
+          "start": 4,
+          "end": 10
+        },
+        {
+          "task": "vec",
+          "start": 4,
+          "end": 10
+        }
+      ],
+      "peak_bytes": {}
+    },
+    "exact_minimum_cycles": 10
+  },
+  "greedy_counterexample": {
+    "event": {
+      "status": "ok",
+      "makespan": 16,
+      "events": [
+        {
+          "task": "a_long",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "task": "b_release",
+          "start": 0,
+          "end": 1
+        },
+        {
+          "task": "c_critical",
+          "start": 5,
+          "end": 6
+        },
+        {
+          "task": "d_tail",
+          "start": 6,
+          "end": 16
+        }
+      ],
+      "peak_bytes": {}
+    },
+    "exact_minimum_cycles": 12
+  },
+  "dma_two_ends": {
+    "event": {
+      "status": "ok",
+      "makespan": 6,
+      "events": [
+        {
+          "task": "copy",
+          "start": 0,
+          "end": 3
+        },
+        {
+          "task": "other",
+          "start": 3,
+          "end": 6
+        }
+      ],
+      "peak_bytes": {}
+    },
+    "exact_minimum_cycles": 6
+  },
+  "capacity_exact_fit": {
+    "event": {
+      "status": "ok",
+      "makespan": 2,
+      "events": [
+        {
+          "task": "a_make",
+          "start": 0,
+          "end": 1
+        },
+        {
+          "task": "b_make",
+          "start": 0,
+          "end": 1
+        },
+        {
+          "task": "c_consume",
+          "start": 1,
+          "end": 2
+        }
+      ],
+      "peak_bytes": {
+        "SRAM": 8
+      }
+    },
+    "exact_minimum_cycles": 2
+  },
+  "capacity_impossible": {
+    "event": {
+      "status": "scheduler_deadlock",
+      "makespan": null,
+      "events": [
+        {
+          "task": "a_make",
+          "start": 0,
+          "end": 1
+        }
+      ],
+      "peak_bytes": {
+        "SRAM": 4
+      }
+    },
+    "exact_minimum_cycles": null
+  }
+}
