@@ -100,6 +100,11 @@ def boundary_sdc(top):
 def make_stages(config,spec,stages):
     command=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(config),
              'WORK_HOME='+str(ROOT/'flow'),'NUM_CORES='+str(spec['cores'])]
+    if spec.get('reserve_m10'):
+        # Nangate45 config uses unconditional '=' after the design config.
+        # Command-line values take precedence; config text alone did not.
+        command+=['MAX_ROUTING_LAYER=metal9','MAX_CLK_ROUTING_LAYER=metal9']
+    (ROOT/'make-command.json').write_text(json.dumps(command,indent=2)+'\n')
     for stage in stages:
         with (ROOT/(stage+'.log')).open('w') as f:
             subprocess.run(command+[stage],stdout=f,stderr=subprocess.STDOUT,check=True)
@@ -351,10 +356,11 @@ def full_sta(parent,sources,kind):
     meta=json.loads((parent/'experiment.json').read_text())
     r=result(parent)
     libs={p.name:p for n in ('act','mxu') for p in (SOURCES[n]/'memory-model/macros').glob('*.lib')}
-    text='read_liberty {'+str(track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib'))+'}\n'
+    text=timing_technology()
+    text+='read_liberty {'+str(track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib'))+'}\n'
     for path in libs.values(): text+='read_liberty {'+str(track(path))+'}\n'
     for n in selected: text+='read_verilog {'+str(track(result(sources[n])/'6_final.v'))+'}\n'
-    text+='read_verilog {'+str(track(r/'6_final.v'))+'}\nlink_design '+meta['top']+'\n'
+    text+='read_verilog {'+str(track(r/'6_final.v'))+'}\nlink_design -hier '+meta['top']+'\n'
     text+='read_sdc {'+str(track(parent/'boundary.sdc'))+'}\n'
     text+='read_spef {'+str(track(r/'6_final.spef'))+'}\n'
     for n in selected:
@@ -401,6 +407,21 @@ def resume(spec):
     make_stages(ROOT/'config.mk',spec,['do-route','do-finish','do-generate_abstract'])
     dest=ROOT/suffix
     run_tcl('detail','read_db {'+str(dest/'6_final.odb')+'}\nwrite_abstract_lef -bloat_factor 0 {'+str(dest/(meta['top']+'.detailed.lef'))+'}\n')
+    if spec.get('reserve_m10'):
+        log=ROOT/'flow/logs/nangate45'/suffix.parts[-2]/'base/5_1_grt.log'
+        assert 'Max routing layer: metal9' in log.read_text(), 'Requested layer ceiling not actually used'
+        text=(dest/(meta['top']+'.detailed.lef')).read_text()
+        m=re.search(r'LAYER metal10\s*;(.*?)(?=\bLAYER\b|\bEND\b)',text,re.S)
+        assert not m or not re.search(r'\bRECT\b|\bPOLYGON\b',m[1]), 'M10 geometry remains in reserved block'
+        (ROOT/'layer-reservation.json').write_text(json.dumps(dict(passed=True,actual_grt_top='metal9',
+            final_m10_geometry_absent=True,scope='Actual GRT log plus final detailed LEF; same source cell resources and clock/IO constraints'),indent=2)+'\n')
+
+def timing_technology():
+    tech=list((PLATFORM/'lef').glob('*.tech.lef'))
+    cells=list((PLATFORM/'lef').glob('*.macro.mod.lef'))
+    assert len(tech)==len(cells)==1
+    lefs={p.name:p for n in ('act','mxu') for p in (SOURCES[n]/'memory-model/macros').glob('*.lef')}
+    return ''.join('read_lef {'+str(track(p))+'}\n' for p in tech+cells+list(lefs.values()))
 
 def sta_wrapper_test(source):
     """A transparent zero-wire wrapper must reproduce extracted ACT timing."""
@@ -410,10 +431,11 @@ def sta_wrapper_test(source):
     text+=meta['top']+' u_act('+','.join('.'+k+'('+k+')' for k in ps)+');\nendmodule\n'
     (ROOT/'transparent.v').write_text(text)
     (ROOT/'transparent.sdc').write_text(boundary_sdc(topname))
-    script='read_liberty {'+str(track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib'))+'}\n'
+    script=timing_technology()
+    script+='read_liberty {'+str(track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib'))+'}\n'
     for lib in (SOURCES['act']/'memory-model/macros').glob('*.lib'):
         script+='read_liberty {'+str(track(lib))+'}\n'
-    script+='read_verilog {'+str(track(r/'6_final.v'))+'}\nread_verilog {'+str(ROOT/'transparent.v')+'}\nlink_design '+topname+'\n'
+    script+='read_verilog {'+str(track(r/'6_final.v'))+'}\nread_verilog {'+str(ROOT/'transparent.v')+'}\nlink_design -hier '+topname+'\n'
     script+='read_sdc {'+str(ROOT/'transparent.sdc')+'}\nread_spef -path u_act {'+str(track(r/'6_final.spef'))+'}\n'
     script+='set_propagated_clock [all_clocks]\nreport_parasitic_annotation -report_unannotated\n'
     script+='report_worst_slack -max -digits 6\nreport_worst_slack -min -digits 6\nreport_tns -digits 6\n'
