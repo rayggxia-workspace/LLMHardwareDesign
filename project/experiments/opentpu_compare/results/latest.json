@@ -1,6 +1,174 @@
 {
-  "observed_utc": "2026-10-22T08:44:07.722473+00:00",
+  "observed_utc": "2026-10-22T08:47:06.552880+00:00",
   "attempts": {
+    "m9-act-01": {
+      "spec": {
+        "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-act-02",
+        "cap_margin": 30,
+        "reserve_m10": true,
+        "mode": "resume",
+        "cores": 16,
+        "runner_commit": "8022d8545fec11d4e5ce7cb4d9ef2083a378e256",
+        "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01"
+      },
+      "exit_code": null,
+      "started.txt": "2026-10-22T08:46:46Z\n",
+      "allocation.txt": "JobId=89658 JobName=yzl-ot-resume UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586401 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:02 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T16:46:44 EligibleTime=2026-10-22T16:46:44 AccrueTime=2026-10-22T16:46:44 StartTime=2026-10-22T16:46:44 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T16:46:44 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T16:46:44 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3095869 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=16 NumTasks=1 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=16,mem=1M,node=1,billing=16 AllocTRES=cpu=16,node=1,billing=16 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01/job.log Power= TresPerTask=cpu:16 \n",
+      "resource-audit.json": {
+        "passed": true,
+        "kind": "act",
+        "starting_cells": {
+          "BUF_X2": 51,
+          "INV_X1": 71,
+          "BUF_X1": 143,
+          "AND4_X1": 23,
+          "NOR2_X1": 411,
+          "NAND2_X1": 314,
+          "OR2_X1": 66,
+          "NOR3_X1": 84,
+          "XOR2_X1": 2,
+          "NOR4_X1": 22,
+          "AND3_X1": 22,
+          "AOI22_X1": 65,
+          "XNOR2_X1": 16,
+          "NAND3_X1": 134,
+          "AOI21_X1": 120,
+          "OR4_X1": 9,
+          "BUF_X4": 8,
+          "XOR2_X2": 4,
+          "BUF_X8": 2,
+          "AND2_X1": 73,
+          "XNOR2_X2": 11,
+          "NAND4_X1": 40,
+          "AOI211_X2": 9,
+          "OAI22_X1": 84,
+          "INV_X2": 2,
+          "OAI21_X1": 78,
+          "NAND3_X2": 2,
+          "NOR3_X4": 3,
+          "NAND2_X2": 1,
+          "AND3_X2": 1,
+          "MUX2_X1": 311,
+          "OR3_X1": 38,
+          "AOI211_X4": 2,
+          "NAND4_X2": 3,
+          "NOR2_X2": 19,
+          "AOI21_X4": 1,
+          "AOI21_X2": 5,
+          "NOR4_X2": 9,
+          "NOR2_X4": 1,
+          "OAI21_X2": 6,
+          "OAI211_X2": 11,
+          "OAI221_X1": 65,
+          "CLKBUF_X1": 40,
+          "NAND4_X4": 1,
+          "AOI221_X1": 27,
+          "OAI221_X2": 1,
+          "AOI221_X2": 1,
+          "NOR3_X2": 5,
+          "OAI222_X1": 50,
+          "OR3_X2": 4,
+          "CLKBUF_X2": 1,
+          "OAI33_X1": 38,
+          "OR4_X4": 1,
+          "OR2_X2": 7,
+          "OAI22_X2": 5,
+          "NOR4_X4": 3,
+          "NAND3_X4": 1,
+          "HA_X1": 27,
+          "LOGIC1_X1": 1,
+          "fakeram45_1r1w_32x128": 4,
+          "DFF_X1": 606,
+          "fakeram45_1r1w_32x64": 2
+        },
+        "cells": 3167,
+        "no_logic_optimization": true,
+        "no_added_state": true,
+        "qualification": "Exact common mapped-cell inventory; subsequent CTS/repair costs recorded separately"
+      },
+      "experiment.json": {
+        "case": "matched-act",
+        "top": "llhd_opentpu_act",
+        "result_relative": "flow/results/nangate45/matched_opentpu_act/base",
+        "kind": "act",
+        "clock_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "input_driver": "BUF_X4/Z",
+        "output_load_fF": 5.0,
+        "clock_transition_ns": 0.05,
+        "memory_model": "Unchanged upstream synthetic fakeram; no SRAM GDS",
+        "source_commit": "f237dab2f196855a59a083b1454786df8f01291f",
+        "phase_lec": false,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "resume": {
+          "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-act-02",
+          "checkpoint": "4_cts.odb",
+          "route_cap_margin": 30,
+          "clock_io_load_unchanged": true,
+          "logic_resources_unchanged": true,
+          "reserve_m10_for_parent": true
+        },
+        "cap_margin": 30
+      },
+      "input-sha256.json": {
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-act-02/flow/results/nangate45/matched_opentpu_act/base/4_cts.odb": "6e43d82f674b2592b02758a6e0ba7a812d6a9bf58bbdbd33215964d891e9dca8",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-act-02/flow/results/nangate45/matched_opentpu_act/base/4_cts.sdc": "c6865406a7336d600fff27fd00f020c4605e97466bfb25adce6f6aa098bccf2c",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-act-02/config.mk": "98dea8137b594531b5a21d0212f4ad67e89872eba9806ea58feb4bfb6476fb66",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-act-02/boundary.sdc": "83fbb17d15777ba99d9a256da6a085cc689bde0113d7e12dcc06559966e20219",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-act-02/elab.json": "879a17dc21b9a6877056333a9efe53f8d42f9b69a533d2bc0a3548a6bec2391a",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-act-02/resource-audit.json": "0764af43a49169c5f7ae80dcdf4af33b437f2efb643453c40399a3b06b42ae86",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-act-02/mapped.v": "12bc8af7862bd0d64ae46c36e3bb989eff462aeac414032751a4bffe76b18a4a"
+      },
+      "last_flow_log": {
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01/flow/logs/nangate45/matched_opentpu_act/base/5_2_route.tmp.log",
+        "tail": [
+          "[INFO DRT-0187] Start routing data preparation.",
+          "[INFO DRT-0267] cpu time = 00:00:00, elapsed time = 00:00:00, memory = 413.48 (MB), peak = 413.48 (MB)",
+          "[INFO DRT-0194] Start detail routing.",
+          "[INFO DRT-0195] Start 0th optimization iteration.",
+          "    Completing 10% with 0 violations.",
+          "    elapsed time = 00:00:00, memory = 559.75 (MB).",
+          "    Completing 20% with 0 violations.",
+          "    elapsed time = 00:00:00, memory = 636.21 (MB)."
+        ]
+      },
+      "job_log_tail": [
+        "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+      ],
+      "metrics": {},
+      "scheduler": "89658|RUNNING|0:0|00:00:24|UNLIMITED|16|node3"
+    },
+    "m9-merged-01": {
+      "spec": {
+        "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-merged-04",
+        "cap_margin": 30,
+        "reserve_m10": true,
+        "mode": "resume",
+        "cores": 16,
+        "runner_commit": "8022d8545fec11d4e5ce7cb4d9ef2083a378e256",
+        "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-merged-01"
+      },
+      "exit_code": null,
+      "job_log_tail": [],
+      "metrics": {},
+      "scheduler": "89660|PENDING|0:0|00:00:00|UNLIMITED|0|None assigned"
+    },
+    "m9-mxu-01": {
+      "spec": {
+        "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-mxu-02",
+        "cap_margin": 30,
+        "reserve_m10": true,
+        "mode": "resume",
+        "cores": 16,
+        "runner_commit": "8022d8545fec11d4e5ce7cb4d9ef2083a378e256",
+        "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-01"
+      },
+      "exit_code": null,
+      "job_log_tail": [],
+      "metrics": {},
+      "scheduler": "89659|PENDING|0:0|00:00:00|UNLIMITED|0|None assigned"
+    },
     "matched-act-01": {
       "spec": {
         "kind": "act",
@@ -469,21 +637,21 @@
       "last_flow_log": {
         "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-merged-03/flow/logs/nangate45/matched_opentpu_merged/base/5_2_route.tmp.log",
         "tail": [
-          "[INFO DRT-0036] metal9 guide region query size = 80.",
-          "[INFO DRT-0036] via9 guide region query size = 0.",
-          "[INFO DRT-0036] metal10 guide region query size = 9.",
-          "[INFO DRT-0179] Init gr pin query.",
-          "[INFO DRT-0267] cpu time = 00:00:04, elapsed time = 00:00:02, memory = 2088.96 (MB), peak = 2094.96 (MB)",
-          "[INFO DRT-0245] skipped writing guide updates to database.",
-          "[INFO DRT-0181] Start track assignment.",
-          "[INFO DRT-0184] Done with 458378 vertical wires in 9 frboxes and 739984 horizontal wires in 9 frboxes."
+          "    Completing 20% with 29403 violations.",
+          "    elapsed time = 00:00:17, memory = 5963.28 (MB).",
+          "    Completing 30% with 23532 violations.",
+          "    elapsed time = 00:00:30, memory = 6445.32 (MB).",
+          "    Completing 40% with 23532 violations.",
+          "    elapsed time = 00:00:39, memory = 6453.37 (MB).",
+          "    Completing 50% with 23532 violations.",
+          "    elapsed time = 00:00:51, memory = 6935.37 (MB)."
         ]
       },
       "job_log_tail": [
         "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
       ],
       "metrics": {},
-      "scheduler": "89640|RUNNING|0:0|00:20:29|UNLIMITED|16|node3"
+      "scheduler": "89640|RUNNING|0:0|00:23:27|UNLIMITED|16|node3"
     },
     "matched-merged-04": {
       "spec": {
@@ -702,23 +870,23 @@
         "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/mxu-cap20/flow/results/nangate45/parallel_opentpu_mxu/base/1_2_yosys.v": "e3906363b35b2d3c9bd1ea08de99bc348e080b997b00ad0050629a5d5e76a8c8"
       },
       "last_flow_log": {
-        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-merged-04/flow/logs/nangate45/matched_opentpu_merged/base/5_1_grt.tmp.log",
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-merged-04/flow/logs/nangate45/matched_opentpu_merged/base/5_2_route.tmp.log",
         "tail": [
-          "   193000 |     +0.0% |       0 |     104 |           141 |     40925",
-          "   194000 |     +0.0% |       0 |     104 |           141 |     39925",
-          "   195000 |     +0.0% |       0 |     104 |           141 |     38925",
-          "   196000 |     +0.0% |       0 |     104 |           142 |     37925",
-          "   197000 |     +0.0% |       0 |     104 |           143 |     36925",
-          "   198000 |     +0.0% |       0 |     104 |           143 |     35925",
-          "   199000 |     +0.0% |       0 |     104 |           143 |     34925",
-          "   200000 |     +0.0% |       0 |     104 |           143 |     33925"
+          "[INFO DRT-0033] metal10 shape region query size = 0.",
+          "[INFO DRT-0165] Start pin access.",
+          "[INFO DRT-0076]   Complete 1000 pins.",
+          "[INFO DRT-0076]   Complete 2000 pins.",
+          "[INFO DRT-0076]   Complete 3000 pins.",
+          "[INFO DRT-0078]   Complete 3596 pins.",
+          "[INFO DRT-0079]   Complete 100 unique inst patterns.",
+          "[INFO DRT-0081]   Complete 146 unique inst patterns."
         ]
       },
       "job_log_tail": [
         "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
       ],
       "metrics": {},
-      "scheduler": "89647|RUNNING|0:0|00:15:29|UNLIMITED|16|node5"
+      "scheduler": "89647|RUNNING|0:0|00:18:27|UNLIMITED|16|node5"
     },
     "matched-mxu-01": {
       "spec": {
@@ -880,21 +1048,21 @@
       "last_flow_log": {
         "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-mxu-02/flow/logs/nangate45/matched_opentpu_mxu/base/5_2_route.tmp.log",
         "tail": [
-          "[INFO DRT-0194] Start detail routing.",
-          "[INFO DRT-0195] Start 0th optimization iteration.",
-          "    Completing 10% with 0 violations.",
-          "    elapsed time = 00:00:10, memory = 3964.05 (MB).",
-          "    Completing 20% with 0 violations.",
-          "    elapsed time = 00:00:20, memory = 5332.86 (MB).",
-          "    Completing 30% with 3695 violations.",
-          "    elapsed time = 00:00:34, memory = 5345.82 (MB)."
+          "    Completing 50% with 20857 violations.",
+          "    elapsed time = 00:00:53, memory = 6795.34 (MB).",
+          "    Completing 60% with 15108 violations.",
+          "    elapsed time = 00:01:04, memory = 6395.35 (MB).",
+          "    Completing 70% with 15108 violations.",
+          "    elapsed time = 00:01:14, memory = 6403.36 (MB).",
+          "    Completing 80% with 10039 violations.",
+          "    elapsed time = 00:01:26, memory = 6565.37 (MB)."
         ]
       },
       "job_log_tail": [
         "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
       ],
       "metrics": {},
-      "scheduler": "89642|RUNNING|0:0|00:20:23|UNLIMITED|16|node5"
+      "scheduler": "89642|RUNNING|0:0|00:23:21|UNLIMITED|16|node5"
     },
     "probe-01": {
       "spec": {
@@ -1998,7 +2166,7 @@
       "exit_code": null,
       "job_log_tail": [],
       "metrics": {},
-      "scheduler": "89653|PENDING|0:0|00:00:00|UNLIMITED|0|None assigned"
+      "scheduler": "89653|CANCELLED by 10011|0:0|00:00:00|UNLIMITED|0|None assigned"
     },
     "top-split-01": {
       "spec": {
@@ -2016,7 +2184,7 @@
       "exit_code": null,
       "job_log_tail": [],
       "metrics": {},
-      "scheduler": "89652|PENDING|0:0|00:00:00|UNLIMITED|0|None assigned"
+      "scheduler": "89652|CANCELLED by 10011|0:0|00:00:00|UNLIMITED|0|None assigned"
     },
     "view-probe-01": {
       "spec": {

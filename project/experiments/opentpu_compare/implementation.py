@@ -186,6 +186,7 @@ def view_probe(spec):
            'platforms/nangate45/config.mk','scripts/variables.yaml','scripts/cts.tcl','scripts/generate_abstract.tcl']
     (ROOT/'extra-flow-sources.json').write_text(json.dumps({n:(flow/n).read_text() for n in names if (flow/n).is_file()},indent=2)+'\n')
     run_tcl('help','help place_pin\nhelp read_spef\nhelp report_check_types\nhelp report_clock_min_period\n')
+    if spec.get('sta_wrapper_source'): sta_wrapper_test(Path(spec['sta_wrapper_source']))
     for name,path in spec.get('audit_sources',{}).items():
         source=Path(path);r=result(source)
         run_tcl(name+'-resource','read_db {'+str(track(r/'1_synth.odb'))+'}\nset f [open {'+str(ROOT/(name+'-synth.tsv'))+'} w]\n'
@@ -260,6 +261,7 @@ def top(spec):
         size=re.search(r'\bSIZE\s+([\d.]+)\s+BY\s+([\d.]+)',text)
         assert size
         views[kind]=dict(name=name,size=list(map(float,size.groups())),view=str(view),source=str(source))
+        assert 'LAYER metal10' not in text, 'Parent M10 policy requires M10 reserved in every block view'
     aw,ah=views['act']['size'];mw,mh=views['mxu']['size'];cw,ch=views['merged']['size']
     side=math.ceil(max(aw+mw+240,ah+160,mh+160,cw+160,ch+160)/10)*10
     kind=spec['kind'];assert kind in ('split','merged')
@@ -393,3 +395,29 @@ def resume(spec):
     make_stages(ROOT/'config.mk',spec,['do-route','do-finish','do-generate_abstract'])
     dest=ROOT/suffix
     run_tcl('detail','read_db {'+str(dest/'6_final.odb')+'}\nwrite_abstract_lef -bloat_factor 0 {'+str(dest/(meta['top']+'.detailed.lef'))+'}\n')
+
+def sta_wrapper_test(source):
+    """A transparent zero-wire wrapper must reproduce extracted ACT timing."""
+    r=result(source);meta=json.loads((source/'experiment.json').read_text());ps=ports(source)
+    topname='llhd_sta_transparent'
+    text='module '+topname+'('+','.join(declaration(k,p) for k,p in ps.items())+');\n'
+    text+=meta['top']+' u_act('+','.join('.'+k+'('+k+')' for k in ps)+');\nendmodule\n'
+    (ROOT/'transparent.v').write_text(text)
+    (ROOT/'transparent.sdc').write_text(boundary_sdc(topname))
+    script='read_liberty {'+str(track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib'))+'}\n'
+    for lib in (SOURCES['act']/'memory-model/macros').glob('*.lib'):
+        script+='read_liberty {'+str(track(lib))+'}\n'
+    script+='read_verilog {'+str(track(r/'6_final.v'))+'}\nread_verilog {'+str(ROOT/'transparent.v')+'}\nlink_design '+topname+'\n'
+    script+='read_sdc {'+str(ROOT/'transparent.sdc')+'}\nread_spef -path u_act {'+str(track(r/'6_final.spef'))+'}\n'
+    script+='set_propagated_clock [all_clocks]\nreport_parasitic_annotation -report_unannotated\n'
+    script+='report_worst_slack -max -digits 6\nreport_worst_slack -min -digits 6\nreport_tns -digits 6\n'
+    script+='report_check_types -max_capacitance -max_count 10 -digits 6 -no_line_splits\n'
+    run_tcl('transparent-sta',script)
+    text=(ROOT/'transparent-sta.log').read_text()
+    values=[float(v) for v in re.findall(r'worst slack\s+(-?[\d.]+)',text)]
+    nick=Path(meta['result_relative']).parts[-2]
+    f=json.loads(track(source/'flow/logs/nangate45'/nick/'base/6_report.json').read_text())
+    expected=[f['finish__timing__setup__ws'],f['finish__timing__hold__ws']]
+    assert len(values)==2 and all(abs(a-b)<.001 for a,b in zip(values,expected)), (values,expected)
+    (ROOT/'transparent-sta-validation.json').write_text(json.dumps(dict(passed=True,measured_ns=values,
+        reference_ns=expected,tolerance_ns=.001,scope='Transparent hierarchical SPEF stitch reproduces single-block extracted timing; not full top qualification'),indent=2)+'\n')
