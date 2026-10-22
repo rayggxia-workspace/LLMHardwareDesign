@@ -476,6 +476,14 @@ def resume_parent(spec):
     # Views remain explicit sealed upstream inputs; no duplicate multi-GB LEF.
     config=(ROOT/'config.mk').read_text().replace(str(source),str(ROOT)).replace(str(ROOT/'views'),str(source/'views'))
     (ROOT/'config.mk').write_text(config)
+    if spec.get('targeted_drive_rounds'):
+        rounds=int(spec['targeted_drive_rounds']);assert 0<rounds<=20
+        hook=ROOT/'post-grt-repair.tcl';text=hook.read_text()
+        marker='estimate_parasitics -global_routing\nputs {POST_GRT_FINAL_ELECTRICAL_CHECK}'
+        assert text.count(marker)==1
+        injection='set llhd_drive_rounds '+str(rounds)+'\nset llhd_drive_root {'+str(ROOT)+'}\nsource {'+str(track(ROOT/'runner/targeted_drive.tcl'))+'}\n'
+        hook.write_text(text.replace(marker,injection+marker))
+        meta['targeted_drive_repair']=dict(rounds=rounds,scope='Only actual negative-margin standard BUF/INV drivers; smallest doubled drive with estimated 35% cap / 20% slew reserve, max X32; no macro or sequential change')
     for view in meta['views'].values():
         for suffix2 in ['.lef','.lib']:
             path=Path(view['view'])/(view['name']+suffix2)
