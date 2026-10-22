@@ -8,3 +8,4 @@
 - 用户新全局规则到达后，TEMP/TMP/TMPDIR/PYTHONPYCACHEPREFIX/MPLCONFIGDIR均按进程设置到D:/Projects/Codex/issue-13-endpoint-ablation对应子目录，不改系统环境变量。完成后清理无用缓存，保留项目结果与必要开发尝试。
 - 方法合同和配置在正式结果之前建立；已有图已被观察，不称新盲测。开发试运行local_runs/development-01显式allow-dirty，保留为开发记录，不提升正式证据。开发后只补合同断言与来源/验收，无结果导向库存或参数调优。
 - 开始时管理中心PR5仍OPEN，默认registry仅有team-workspace；登记pending。当前插件无Projects工具，本项目无board.json，条目/本人权限unverified，同步pending，管理员待指定；不可套用其他会话缺read:project的结论。
+- 独立审查回执audit.json／脚本recompute.py／SHA256SUMS为运行后的原字节记录，不属于正式运行输入。脚本固定本机两轮raw路径并在脚本自身目录写回执；复查时先复制脚本到D:/Projects/Codex/issue-13-endpoint-ablation/<新审查子目录>，确认输入路径，使用Python -B运行，保留旧回执。不要直接在本work目录执行后覆盖历史记录或在项目内生成临时缓存。

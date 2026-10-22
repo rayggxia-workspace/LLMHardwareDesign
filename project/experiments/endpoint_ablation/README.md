@@ -30,8 +30,8 @@ python scripts/check_project.py
 python scripts/check_research.py
 python project/experiments/endpoint_ablation/run_ablation.py --out project/experiments/endpoint_ablation/local_runs/<新目录>
 python project/experiments/endpoint_ablation/verify_ablation.py <运行目录> --replay
-python project/experiments/endpoint_ablation/report_ablation.py <运行目录> --out <新图表目录>
-python project/experiments/frozen_routing/package.py --run <运行目录> --figures <图表目录> --out <新归档目录>
+python project/experiments/endpoint_ablation/report_ablation.py <运行目录> --out D:/Projects/Codex/issue-13-endpoint-ablation/<新图表子目录>
+python project/experiments/frozen_routing/package.py --run <运行目录> --figures D:/Projects/Codex/issue-13-endpoint-ablation/<图表子目录> --out <新归档目录>
 ```
 
 正式运行拒绝dirty源码与已有输出目录。开发例必须显式allow-dirty，不能提升为正式证据。只在清洁真实commit上跑正式实验，输出与输入逐字节hash；verify还从声明的Git commit读回每个源码文件。
