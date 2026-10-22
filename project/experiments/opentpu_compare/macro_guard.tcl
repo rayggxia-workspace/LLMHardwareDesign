@@ -40,16 +40,32 @@ proc llhd_guard_macro_output {pin serial} {
     top {set y [expr {$ymax+$gap}]}
   }
   set name llhd_macro_guard_${serial}
-  if {[$block findInst $name] ne "NULL"} {error "Duplicate guard instance $name"}
+  while {[$block findInst $name] ne "NULL" || [$block findNet ${name}_net] ne "NULL"} {
+    incr serial
+    set name llhd_macro_guard_${serial}
+  }
   set net [$term getNet]
   if {$net eq "NULL"} {error "Unconnected macro output: $pin"}
   set location [list [expr {$x/$dbu}] [expr {$y/$dbu}]]
   puts "GUARD_REQUEST $pin net=[$net getName] location=$location"
-  set result [insert_buffer -buffer_cell BUF_X2 -net [$net getName] -location $location -buffer_name $name -net_name ${name}_net]
-  set name [get_full_name $result]
-  puts "GUARD_INSERT_RESULT $name"
-  set added [$block findInst $name]
+  # Explicit native ODB edit avoids the crashing Resizer insertion helper
+  # after a fresh GRT reload. Keep every original load on its original net;
+  # only the macro driver moves to the new short macro->BUF input net.
+  if {[$net getSigType] in {POWER GROUND}} {error "Non-signal macro output: $pin"}
+  set short [odb::dbNet_create $block ${name}_net]
+  set added [odb::dbInst_create $block $buffer $name]
   if {$added eq "NULL"} {error "Buffer insertion failed: $pin"}
+  if {$short eq "NULL"} {error "Buffer short net creation failed: $pin"}
+  $short setSigType [$net getSigType]
+  set input [$added findITerm A]
+  set output [$added findITerm Z]
+  if {$input eq "NULL" || $output eq "NULL"} {error "Unexpected BUF_X2 pin contract"}
+  odb::dbITerm_disconnect $term
+  odb::dbITerm_connect $term $short
+  odb::dbITerm_connect $input $short
+  odb::dbITerm_connect $output $net
+  if {[$term getNet] ne $short || [$input getNet] ne $short || [$output getNet] ne $net} {error "Guard wiring contract failed: $pin"}
+  $added setOrient R0
   $added setLocation [expr {int(round($x))}] [expr {int(round($y))}]
   $added setPlacementStatus PLACED
   puts "MACRO_OUTPUT_GUARD $pin $name side=$side location_um=$location pin_depth_um=[expr {$distance/$dbu}]"
