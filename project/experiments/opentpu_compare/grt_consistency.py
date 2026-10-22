@@ -4,18 +4,22 @@ from pathlib import Path
 import re
 
 
-def execute(root,source,run_tcl,track,digest,platform):
+def execute(root,source,run_tcl,track,digest,platform,checkpoint,clear):
+    assert re.fullmatch(r'[a-zA-Z0-9_-]+',checkpoint)
     manifest={n[2:]:h for h,n in (line.split(None,1) for line in (source/'output.sha256').read_text().splitlines())}
     meta=json.loads((source/'experiment.json').read_text())
     text='read_liberty {'+str(track(platform/'lib/NangateOpenCellLibrary_typical.lib'))+'}\n'
     for k in (['act','mxu'] if meta['kind']=='split' else ['merged']):
         view=meta['views'][k];text+='read_liberty {'+str(track(Path(view['view'])/(view['name']+'.lib')))+'}\n'
     for ext,cmd in [('odb','read_db'),('sdc','read_sdc')]:
-        p=source/meta['result_relative']/('joint-0-timing.'+ext)
+        p=source/meta['result_relative']/(checkpoint+'.'+ext)
         assert digest(p)==manifest[p.relative_to(source).as_posix()]
         text+=cmd+' {'+str(track(p))+'}\n'
     text+='source {'+str(track(platform/'setRC.tcl'))+'}\n'
     text+='set_propagated_clock [all_clocks]\nset_routing_layers -signal metal2-metal10 -clock metal4-metal10\n'
+    text+='set signal_wires {}\nforeach net [[ord::get_db_block] getNets] {if {[$net getSigType] ni {POWER GROUND} && [$net getWire] ne "NULL"} {lappend signal_wires [$net getWire]}}\n'
+    text+='puts "LOADED_REGULAR_SIGNAL_WIRES [llength $signal_wires]"\n'
+    if clear:text+='foreach wire $signal_wires {odb::dbWire_destroy $wire}\n'
     text+='pin_access\nglobal_route -congestion_iterations 30\nestimate_parasitics -global_routing\n'
     stages=['before_timing','after_timing','after_preamble','after_repeat_route']
     for stage in stages:

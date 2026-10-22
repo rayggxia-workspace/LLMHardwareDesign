@@ -188,7 +188,8 @@ def matched(spec):
 def view_probe(spec):
     if spec.get('grt_consistency_source'):
         from grt_consistency import execute
-        execute(ROOT,Path(spec['grt_consistency_source']),run_tcl,track,digest,PLATFORM)
+        execute(ROOT,Path(spec['grt_consistency_source']),run_tcl,track,digest,PLATFORM,
+                spec.get('grt_checkpoint','joint-0-timing'),bool(spec.get('clear_signal_wires')))
         return
     if spec.get('symbolize_addresses'):
         actual=Path(shutil.which('openroad'))
