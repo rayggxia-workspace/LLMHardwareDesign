@@ -186,6 +186,10 @@ def matched(spec):
     run_tcl('detail','read_db {'+str(dest/'6_final.odb')+'}\nwrite_abstract_lef -bloat_factor 0 {'+str(dest/(top+'.detailed.lef'))+'}\n')
 
 def view_probe(spec):
+    if spec.get('annotation_sources'):
+        from annotation_audit import execute
+        execute(ROOT,spec['annotation_sources'],run_tcl,track)
+        return
     if spec.get('inventory_proof_source'):
         source=Path(spec['inventory_proof_source'])
         assert (source/'exit-code.txt').read_text().strip()=='0'
