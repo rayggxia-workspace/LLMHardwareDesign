@@ -149,6 +149,17 @@ def matched(spec):
         'export CORE_UTILIZATION = 35\nexport PLACE_DENSITY = 0.55\nexport TNS_END_PERCENT = 100\nexport LEC_CHECK = 0\n'
         'export MACRO_PLACE_HALO = 10 10\nexport RTLMP_MIN_CHANNEL_SIZE = 60 60\nexport CORE_MARGIN = 5\nexport CAP_MARGIN = 20\n'
         'export TAPCELL_TCL = '+str(SOURCES['act']/'source/asic/nangate45/tapcell.tcl')+'\n')
+    # The merged unused-output cone otherwise loses 9 DFF and 126 logic
+    # cells at the ODB import, unlike either split block. This is an
+    # optimization, not a correctness check: disable it to hold resources.
+    preserve=('if {[llength [info commands eliminate_dead_logic]] != 1} {error {Missing expected optimization command}}\n'
+        'rename eliminate_dead_logic llhd_original_eliminate_dead_logic\n'
+        'proc eliminate_dead_logic {} {puts {FIXED_RESOURCE: disabled dead-logic optimization; retain original mapped resources}}\n')
+    (ROOT/'preserve-resources.tcl').write_text(preserve)
+    config+='export PRE_SYNTH_TCL = '+str(ROOT/'preserve-resources.tcl')+'\n'
+    (ROOT/'audit-synth.tcl').write_text('set f [open {'+str(ROOT/'synth-resources.tsv')+'} w]\n'
+        'foreach i [[ord::get_db_block] getInsts] {puts $f "[$i getName]\\t[[$i getMaster] getName]"}\nclose $f\n')
+    config+='export POST_SYNTH_TCL = '+str(ROOT/'audit-synth.tcl')+'\n'
     (ROOT/'config.mk').write_text(config)
     # Keep the common source port map in this attempt for later macro assembly.
     meta=dict(case='matched-'+kind,top=top,result_relative=relative,kind=kind,
@@ -159,7 +170,13 @@ def matched(spec):
     (ROOT/'experiment.json').write_text(json.dumps(meta,indent=2)+'\n')
     (ROOT/'elab.json').write_text(json.dumps({'modules':{top:after}})+'\n')
     (ROOT/'input-sha256.json').write_text(json.dumps(INPUTS,indent=2)+'\n')
-    make_stages(ROOT/'config.mk',spec,['do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish','do-generate_abstract'])
+    make_stages(ROOT/'config.mk',spec,['do-1_synth'])
+    actual=Counter(line.split()[-1] for line in (ROOT/'synth-resources.tsv').read_text().splitlines())
+    assert actual==expected, 'Physical import changed fixed mapped resources'
+    audit=json.loads((ROOT/'resource-audit.json').read_text())
+    audit.update(actual_synth_cells=actual,physical_import_exact=True,dead_logic_optimization_disabled=True)
+    (ROOT/'resource-audit.json').write_text(json.dumps(audit,indent=2)+'\n')
+    make_stages(ROOT/'config.mk',spec,['do-floorplan','do-place','do-cts','do-route','do-finish','do-generate_abstract'])
     run_tcl('detail','read_db {'+str(dest/'6_final.odb')+'}\nwrite_abstract_lef -bloat_factor 0 {'+str(dest/(top+'.detailed.lef'))+'}\n')
 
 def view_probe(spec):
