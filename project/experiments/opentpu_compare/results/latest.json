@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-22T10:09:32.362860+00:00",
+  "observed_utc": "2026-10-22T10:20:06.474772+00:00",
   "attempts": {
     "grt-diagnostic-01": {
       "spec": {
@@ -1893,6 +1893,108 @@
       "output_manifest_entries": 85,
       "scheduler": "89677|COMPLETED|0:0|00:20:12|UNLIMITED|16|node3"
     },
+    "macro-guard-probe-01": {
+      "spec": {
+        "repair_api": true,
+        "repair_api_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-06",
+        "macro_guard_probe": true,
+        "mode": "views",
+        "cores": 1,
+        "runner_commit": "0953cc3ffb9d3024208839181ac6eb029f03d6d2",
+        "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01"
+      },
+      "exit_code": "1",
+      "started.txt": "2026-10-22T10:17:25Z\n",
+      "finished.txt": "2026-10-22T10:17:30Z\n",
+      "allocation.txt": "JobId=89719 JobName=yzl-ot-views UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586341 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:01 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T18:17:23 EligibleTime=2026-10-22T18:17:23 AccrueTime=2026-10-22T18:17:23 StartTime=2026-10-22T18:17:24 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T18:17:24 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T18:17:24 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3553652 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=cpu=1,node=1,billing=1 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01/job.log Power= TresPerTask=cpu:1 \n",
+      "job_log_tail": [
+        "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+        "Traceback (most recent call last):",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01/runner/run.py\", line 69, in <module>",
+        "    execute(SPEC)",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01/runner/implementation.py\", line 63, in execute",
+        "    elif spec['mode']=='views': view_probe(spec)",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01/runner/implementation.py\", line 205, in view_probe",
+        "    run_tcl('repair-api',script)",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01/runner/run.py\", line 44, in run_tcl",
+        "    subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(path)],stdout=f,stderr=subprocess.STDOUT,check=True)",
+        "  File \"/usr/lib/python3.10/subprocess.py\", line 526, in run",
+        "    raise CalledProcessError(retcode, process.args,",
+        "subprocess.CalledProcessError: Command '['openroad', '-threads', '1', '-exit', '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01/repair-api.tcl']' returned non-zero exit status 1."
+      ],
+      "metrics": {},
+      "pg_access": {},
+      "output_manifest_sha256": "8715e9b21917e45dbe5298d850aa3241ac2cb733fc42247b52f4986ccda8b07f",
+      "output_manifest_entries": 24,
+      "scheduler": "89719|FAILED|1:0|00:00:06|UNLIMITED|1|node3"
+    },
+    "macro-guard-probe-02": {
+      "spec": {
+        "repair_api": true,
+        "repair_api_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-06",
+        "macro_guard_probe": true,
+        "mode": "views",
+        "cores": 1,
+        "runner_commit": "8eaa6820adc2e82dac091dbe4dfbc1e0ebaa6cc7",
+        "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-02"
+      },
+      "exit_code": "1",
+      "started.txt": "2026-10-22T10:17:57Z\n",
+      "finished.txt": "2026-10-22T10:18:02Z\n",
+      "allocation.txt": "JobId=89720 JobName=yzl-ot-views UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586340 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:02 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T18:17:55 EligibleTime=2026-10-22T18:17:55 AccrueTime=2026-10-22T18:17:55 StartTime=2026-10-22T18:17:55 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T18:17:55 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T18:17:55 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3555037 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=cpu=1,node=1,billing=1 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-02/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-02 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-02/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-02/job.log Power= TresPerTask=cpu:1 \n",
+      "job_log_tail": [
+        "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+        "Traceback (most recent call last):",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-02/runner/run.py\", line 69, in <module>",
+        "    execute(SPEC)",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-02/runner/implementation.py\", line 63, in execute",
+        "    elif spec['mode']=='views': view_probe(spec)",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-02/runner/implementation.py\", line 206, in view_probe",
+        "    run_tcl('repair-api',script)",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-02/runner/run.py\", line 44, in run_tcl",
+        "    subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(path)],stdout=f,stderr=subprocess.STDOUT,check=True)",
+        "  File \"/usr/lib/python3.10/subprocess.py\", line 526, in run",
+        "    raise CalledProcessError(retcode, process.args,",
+        "subprocess.CalledProcessError: Command '['openroad', '-threads', '1', '-exit', '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-02/repair-api.tcl']' returned non-zero exit status 1."
+      ],
+      "metrics": {},
+      "pg_access": {},
+      "output_manifest_sha256": "6f6ac1a2fdf628bbc887f12f9009203996a489a9a963d2ed8fa981c2238f13c6",
+      "output_manifest_entries": 24,
+      "scheduler": "89720|FAILED|1:0|00:00:07|UNLIMITED|1|node3"
+    },
+    "macro-guard-probe-03": {
+      "spec": {
+        "repair_api": true,
+        "repair_api_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-06",
+        "macro_guard_probe": true,
+        "mode": "views",
+        "cores": 1,
+        "runner_commit": "210fad26b4778d65182ec0b3b836bf17e4dbb654",
+        "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-03"
+      },
+      "exit_code": "0",
+      "started.txt": "2026-10-22T10:18:20Z\n",
+      "finished.txt": "2026-10-22T10:18:25Z\n",
+      "allocation.txt": "JobId=89721 JobName=yzl-ot-views UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586339 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:02 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T18:18:18 EligibleTime=2026-10-22T18:18:18 AccrueTime=2026-10-22T18:18:18 StartTime=2026-10-22T18:18:18 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T18:18:18 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T18:18:18 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3556055 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=cpu=1,node=1,billing=1 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-03/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-03 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-03/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-03/job.log Power= TresPerTask=cpu:1 \n",
+      "input-sha256.json": {
+        "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act/llhd_opentpu_act.lib": "931b8d514f43ace7e74f72f43f06f752c5bcdc1017eed72c49d17bac722b1e3a",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu/llhd_opentpu_mxu.lib": "a15ef72106dd24a148e6fef5f8a16365bc7f87a7e152184327243584d28277f4",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-06/flow/results/nangate45/opentpu_top_split/base/5_1_grt.odb": "7b01c6720f00dc73e0e799bf651f2535fad28351a5229de67d6647039365a210",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-06/flow/results/nangate45/opentpu_top_split/base/5_1_grt.sdc": "e25c902e65c0462a5100c6ed8f1a13f06b65b9a474da3f174ea98e166944fd1d",
+        "/OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl": "521df813bf4da9d7400df33e3f680c9a328cc720830dbfca1188083741503fa5",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-03/runner/macro_guard.tcl": "c7ad26fb6a267df2375f5d947eb3b885f0ef50c161558fb1c188a96cec9360d1"
+      },
+      "job_log_tail": [
+        "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+      ],
+      "metrics": {},
+      "pg_access": {},
+      "output_manifest_sha256": "5baa88a1b28671101b775e1e22ae9a9b4ed7e10f0ad033df2f04a2c796a325ba",
+      "output_manifest_entries": 26,
+      "scheduler": "89721|COMPLETED|0:0|00:00:08|UNLIMITED|1|node3"
+    },
     "matched-act-01": {
       "spec": {
         "kind": "act",
@@ -3770,6 +3872,36 @@
       "output_manifest_sha256": "2927d8005d680643980c4fbc121f94202e9d0105d04230e9afceaf6f61067ca5",
       "output_manifest_entries": 23,
       "scheduler": "89708|COMPLETED|0:0|00:00:07|UNLIMITED|1|node3"
+    },
+    "repair-api-03": {
+      "spec": {
+        "repair_api": true,
+        "repair_api_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-05",
+        "mode": "views",
+        "cores": 1,
+        "runner_commit": "e0eea457882daeacd19420fb067a62e0dbed45da",
+        "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/repair-api-03"
+      },
+      "exit_code": "0",
+      "started.txt": "2026-10-22T10:12:24Z\n",
+      "finished.txt": "2026-10-22T10:12:29Z\n",
+      "allocation.txt": "JobId=89718 JobName=yzl-ot-views UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586342 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:02 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T18:12:22 EligibleTime=2026-10-22T18:12:22 AccrueTime=2026-10-22T18:12:22 StartTime=2026-10-22T18:12:22 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T18:12:22 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T18:12:22 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3547582 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=cpu=1,node=1,billing=1 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/repair-api-03/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/repair-api-03 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/repair-api-03/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/repair-api-03/job.log Power= TresPerTask=cpu:1 \n",
+      "input-sha256.json": {
+        "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act/llhd_opentpu_act.lib": "931b8d514f43ace7e74f72f43f06f752c5bcdc1017eed72c49d17bac722b1e3a",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu/llhd_opentpu_mxu.lib": "a15ef72106dd24a148e6fef5f8a16365bc7f87a7e152184327243584d28277f4",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-05/flow/results/nangate45/opentpu_top_split/base/5_1_grt.odb": "76d4b873958c761939de6019e542d22d5543aaa946709d2a175df7da88e08c85",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-05/flow/results/nangate45/opentpu_top_split/base/5_1_grt.sdc": "e25c902e65c0462a5100c6ed8f1a13f06b65b9a474da3f174ea98e166944fd1d",
+        "/OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl": "521df813bf4da9d7400df33e3f680c9a328cc720830dbfca1188083741503fa5"
+      },
+      "job_log_tail": [
+        "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+      ],
+      "metrics": {},
+      "pg_access": {},
+      "output_manifest_sha256": "7c4f62ca91bf37b61b6c1a348998eeee91f7851a8523951f7f900c789d5c786b",
+      "output_manifest_entries": 24,
+      "scheduler": "89718|COMPLETED|0:0|00:00:07|UNLIMITED|1|node3"
     },
     "repair-audit-01": {
       "spec": {
@@ -5876,14 +6008,14 @@
       "last_flow_log": {
         "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-06/flow/logs/nangate45/opentpu_top_merged/base/5_2_route.tmp.log",
         "tail": [
-          "[INFO DRT-0184] Done with 31315 vertical wires in 12 frboxes and 39149 horizontal wires in 12 frboxes.",
-          "[INFO DRT-0186] Done with 5498 vertical wires in 12 frboxes and 3748 horizontal wires in 12 frboxes.",
-          "[INFO DRT-0182] Complete track assignment.",
-          "[INFO DRT-0267] cpu time = 00:00:34, elapsed time = 00:00:06, memory = 3718.57 (MB), peak = 3978.57 (MB)",
-          "[INFO DRT-0187] Start routing data preparation.",
-          "[INFO DRT-0267] cpu time = 00:00:00, elapsed time = 00:00:00, memory = 3718.57 (MB), peak = 3978.57 (MB)",
-          "[INFO DRT-0194] Start detail routing.",
-          "[INFO DRT-0195] Start 0th optimization iteration."
+          "    Completing 20% with 702 violations.",
+          "    elapsed time = 00:04:17, memory = 4030.54 (MB).",
+          "    Completing 30% with 761 violations.",
+          "    elapsed time = 00:05:38, memory = 3866.30 (MB).",
+          "    Completing 40% with 1221 violations.",
+          "    elapsed time = 00:08:54, memory = 4235.85 (MB).",
+          "    Completing 50% with 1221 violations.",
+          "    elapsed time = 00:09:19, memory = 4234.09 (MB)."
         ]
       },
       "job_log_tail": [
@@ -5944,7 +6076,7 @@
         "count": 1662,
         "canonical_sha256": "f098a67a387ac43e41383f3df5d960806327637958075aa348ab4f6fc16134e9"
       },
-      "scheduler": "89711|RUNNING|0:0|00:03:53|UNLIMITED|16|node3"
+      "scheduler": "89711|RUNNING|0:0|00:14:27|UNLIMITED|16|node3"
     },
     "top-merged-place-05": {
       "spec": {
@@ -7304,6 +7436,222 @@
       "output_manifest_sha256": "a1471cf600168aa53c6fcd7601a0fec754afb987deb7400bc076caeb6a4731a1",
       "output_manifest_entries": 56,
       "scheduler": "89710|FAILED|1:0|00:03:07|UNLIMITED|16|node3"
+    },
+    "top-split-07": {
+      "spec": {
+        "resume_parent": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05",
+        "pin_reference": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05",
+        "post_grt_repair_rounds": 3,
+        "targeted_drive_rounds": 8,
+        "macro_output_guards": true,
+        "mode": "top",
+        "cores": 16,
+        "runner_commit": "e4e3b9a6ff91fb1b60efe4a85217a99a174477d8",
+        "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-07"
+      },
+      "exit_code": null,
+      "started.txt": "2026-10-22T10:19:01Z\n",
+      "allocation.txt": "JobId=89722 JobName=yzl-ot-top UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586338 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:02 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T18:18:59 EligibleTime=2026-10-22T18:18:59 AccrueTime=2026-10-22T18:18:59 StartTime=2026-10-22T18:18:59 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T18:18:59 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T18:18:59 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3558607 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=16 NumTasks=1 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=16,mem=1M,node=1,billing=16 AllocTRES=cpu=16,node=1,billing=16 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-07/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-07 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-07/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-07/job.log Power= TresPerTask=cpu:16 \n",
+      "experiment.json": {
+        "top": "llhd_top_split",
+        "case": "opentpu_top_split",
+        "kind": "split",
+        "result_relative": "flow/results/nangate45/opentpu_top_split/base",
+        "views": {
+          "act": {
+            "name": "llhd_opentpu_act",
+            "size": [
+              326.205,
+              326.205
+            ],
+            "view": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act",
+            "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03"
+          },
+          "mxu": {
+            "name": "llhd_opentpu_mxu",
+            "size": [
+              1100.455,
+              1100.455
+            ],
+            "view": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu",
+            "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03"
+          },
+          "merged": {
+            "name": "llhd_match_merged",
+            "size": [
+              1145.375,
+              1145.375
+            ],
+            "view": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/merged",
+            "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-merged-03"
+          }
+        },
+        "locations": {
+          "u_act": [
+            80,
+            80
+          ],
+          "u_mxu": [
+            486.205,
+            80
+          ]
+        },
+        "die_um": [
+          0,
+          0,
+          1670,
+          1670
+        ],
+        "external_bits": 1662,
+        "extra_state": 0,
+        "clock_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "input_driver": "BUF_X4/Z",
+        "output_load_fF": 5,
+        "pdn": "H1 additional parent M10; original detailed macro geometry retained",
+        "full_hierarchical_sta": "Required after routing; macro libraries alone do not qualify internal period",
+        "targeted_drive_repair": {
+          "rounds": 8,
+          "scope": "Only actual negative-margin standard BUF/INV drivers; smallest doubled drive with estimated 35% cap / 20% slew reserve, max X32; no macro or sequential change",
+          "macro_output_guards": true
+        },
+        "parent_resume": {
+          "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05",
+          "pin_reference": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05",
+          "common_pin_sha256": "8c1e5da591ece5cefdd142408f1431bc5c82cb1fb91ebd075d1f3f4dfb19cdb7",
+          "initial_pg_receipt_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/strict-pg.json"
+        }
+      },
+      "input-sha256.json": {
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/pin-placement-quality.json": "fc1d1426ba039dd0fc89ce0aa40dc939b929aea268ce67bfd182eba51c8f967a",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/external-pin-contract.json": "30d2358ac2771f50b36c82d300a942f784c99c99de526330761ef0007231f3c0",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/experiment.json": "c29a5ef01ced5d96844da2f45e6553be746fabdecb4728bcd5b39eafb64a4ccb",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/strict-pg.json": "7eaaef09b82d5343e94ee1f7e6977e0756726454e0929d6af5ead1d2e9158040",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05/pin-placement-quality.json": "fc1d1426ba039dd0fc89ce0aa40dc939b929aea268ce67bfd182eba51c8f967a",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05/external-pin-contract.json": "30d2358ac2771f50b36c82d300a942f784c99c99de526330761ef0007231f3c0",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05/experiment.json": "f4c17359c2e1bbce6036c88a4e32338444b885b429a4e68fc19b47348a8968ee",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05/strict-pg.json": "47938407dac4f5e42c53e2041307e370cc3cb0a7545422b14036a4ae69c1c32c",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/flow/results/nangate45/opentpu_top_split/base/4_cts.odb": "cc830d0a79e059a963ec97f1a84fdffbc93ea94044ffd76b3105945e391b00a7",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/flow/results/nangate45/opentpu_top_split/base/4_cts.sdc": "e25c902e65c0462a5100c6ed8f1a13f06b65b9a474da3f174ea98e166944fd1d",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/config.mk": "8eaff4c51787a243d6ed444668a896bf3438b2e7edf6bcfb428aadcf4514de78",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/top.v": "1b3b75cea7bf67bf13dbfc333a9cba61eb37f74227241caf3c9ca00fa3641d49",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/boundary.sdc": "13cd9576c207b3ffa0ca086b4d668dd40bdeb24bf2e568effbd183b8afbd7e6b",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/resource-qualification.json": "714e1d04b96f2a82410d84f2975fa36cab93b45c967a2182a83e57cf62978169",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/stage-pins.tsv": "a2b140d743fe6604e4327e0037966c65569d257eb4151b82969d506882741008",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/placement.tcl": "73dad061581f2de6761c56e922d41161f65dd7488a0ee85452b111979805b4c9",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/pdn.tcl": "64fcf6047db77a4c849bf1ddff1356989c738d119f3d3c53f67abad6ed7410f5",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/post-pdn.tcl": "2bd8d0ca3d77f49f206781c4388877bb8f5e261ddadf85cf433501cbd243f212",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/fixed-pins.tcl": "ea9c7c799a4df0da4336d58d303b01642f273c4f9d426afc62d4eae92bd232e2",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/post-grt-repair.tcl": "50f3f3fe20565b72079bf1579d042f18cebb7ac67bba3c1244a66eeef8f66b37",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-07/runner/targeted_drive.tcl": "5487300406d1b5d8896050d82384677b3b2ddc575c21d538577537c4733af062",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-07/runner/macro_guard.tcl": "c7ad26fb6a267df2375f5d947eb3b885f0ef50c161558fb1c188a96cec9360d1",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act/llhd_opentpu_act.lef": "99871cd5cf868ef1b3053563d99fec303f605a23345ad5efaa81d16b81527455",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act/llhd_opentpu_act.lib": "931b8d514f43ace7e74f72f43f06f752c5bcdc1017eed72c49d17bac722b1e3a",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu/llhd_opentpu_mxu.lef": "ce7d99e802f2211d190d30fdc220481fedd00e16e223e05da3eb4633974403c4",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu/llhd_opentpu_mxu.lib": "a15ef72106dd24a148e6fef5f8a16365bc7f87a7e152184327243584d28277f4",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/merged/llhd_match_merged.lef": "eaa110806cd8da5f2949f2b7745a2ceb9c9b5075c5d45374ff9d7256ef8c21ec",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/merged/llhd_match_merged.lib": "a12c5993f49e1457b6540933c4d4157cedcb021be2766b1ca4594b08b34cb05a",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-07/flow/results/nangate45/opentpu_top_split/base/4_cts.odb": "cc830d0a79e059a963ec97f1a84fdffbc93ea94044ffd76b3105945e391b00a7"
+      },
+      "strict-pg.json": {
+        "macro_pg_iterm_count": 4,
+        "VDD_pass": true,
+        "VSS_pass": true,
+        "passed": true
+      },
+      "resource-qualification.json": {
+        "act": {
+          "passed": true,
+          "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03",
+          "expected": {
+            "fakeram45_1r1w_32x128": 4,
+            "DFF": 606,
+            "fakeram45_1r1w_32x64": 2
+          },
+          "actual": {
+            "fakeram45_1r1w_32x128": 4,
+            "DFF": 606,
+            "fakeram45_1r1w_32x64": 2
+          },
+          "qualification": "Exact storage/state inventory, drive variants normalized; physical buffer costs separate"
+        },
+        "mxu": {
+          "passed": true,
+          "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03",
+          "expected": {
+            "DFF": 36417,
+            "fakeram45_1r1w_64x72": 3,
+            "fakeram45_1r1w_64x40": 1,
+            "fakeram45_1r1w_64x96": 1,
+            "fakeram45_1r1w_64x64": 1
+          },
+          "actual": {
+            "DFF": 36417,
+            "fakeram45_1r1w_64x72": 3,
+            "fakeram45_1r1w_64x40": 1,
+            "fakeram45_1r1w_64x96": 1,
+            "fakeram45_1r1w_64x64": 1
+          },
+          "qualification": "Exact storage/state inventory, drive variants normalized; physical buffer costs separate"
+        },
+        "merged": {
+          "passed": true,
+          "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-merged-03",
+          "expected": {
+            "fakeram45_1r1w_32x128": 4,
+            "DFF": 37023,
+            "fakeram45_1r1w_32x64": 2,
+            "fakeram45_1r1w_64x72": 3,
+            "fakeram45_1r1w_64x40": 1,
+            "fakeram45_1r1w_64x96": 1,
+            "fakeram45_1r1w_64x64": 1
+          },
+          "actual": {
+            "fakeram45_1r1w_32x128": 4,
+            "DFF": 37023,
+            "fakeram45_1r1w_32x64": 2,
+            "fakeram45_1r1w_64x72": 3,
+            "fakeram45_1r1w_64x40": 1,
+            "fakeram45_1r1w_64x96": 1,
+            "fakeram45_1r1w_64x64": 1
+          },
+          "qualification": "Exact storage/state inventory, drive variants normalized; physical buffer costs separate"
+        }
+      },
+      "pin-placement-quality.json": {
+        "passed": true,
+        "count": 1662,
+        "actual_layer_counts": {
+          "metal3": 832,
+          "metal2": 830
+        },
+        "canonical_sha256": "8c1e5da591ece5cefdd142408f1431bc5c82cb1fb91ebd075d1f3f4dfb19cdb7",
+        "errors": [],
+        "scope": "Actual CTS ODB BPin layer and full box; all 1662 signal bits exactly once, requested location within track snapping tolerance. Pair must match exact canonical geometry before route."
+      },
+      "last_flow_log": {
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-07/flow/logs/nangate45/opentpu_top_split/base/5_1_grt.tmp.log",
+        "tail": [
+          "---------------------------------------------------------------------------------------",
+          "Total         11740460       1173223            9.99%             0 /  0 /  0",
+          "",
+          "[INFO GRT-0018] Total wirelength: 3446011 um",
+          "[INFO GRT-0014] Routed nets: 9740",
+          "[INFO GRT-0303] Global routing runtime = 00:00:38",
+          "Took 38 seconds: global_route -congestion_report_file /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-07/flow/reports/nangate45/opentpu_top_split/base/congestion.rpt -congestion_iterations 30 -congestion_report_iter_step 5 -verbose",
+          "estimate_parasitics -global_routing"
+        ]
+      },
+      "job_log_tail": [
+        "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+      ],
+      "metrics": {},
+      "pg_access": {},
+      "external_pin_contract": {
+        "count": 1662,
+        "canonical_sha256": "f098a67a387ac43e41383f3df5d960806327637958075aa348ab4f6fc16134e9"
+      },
+      "scheduler": "89722|RUNNING|0:0|00:01:09|UNLIMITED|16|node3"
     },
     "top-split-place-05": {
       "spec": {

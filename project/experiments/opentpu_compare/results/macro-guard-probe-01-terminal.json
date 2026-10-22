@@ -1,0 +1,35 @@
+{
+  "spec": {
+    "repair_api": true,
+    "repair_api_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-06",
+    "macro_guard_probe": true,
+    "mode": "views",
+    "cores": 1,
+    "runner_commit": "0953cc3ffb9d3024208839181ac6eb029f03d6d2",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01"
+  },
+  "exit_code": "1",
+  "started.txt": "2026-10-22T10:17:25Z\n",
+  "finished.txt": "2026-10-22T10:17:30Z\n",
+  "allocation.txt": "JobId=89719 JobName=yzl-ot-views UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586341 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:01 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T18:17:23 EligibleTime=2026-10-22T18:17:23 AccrueTime=2026-10-22T18:17:23 StartTime=2026-10-22T18:17:24 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T18:17:24 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T18:17:24 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3553652 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=cpu=1,node=1,billing=1 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01/job.log Power= TresPerTask=cpu:1 \n",
+  "job_log_tail": [
+    "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+    "Traceback (most recent call last):",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01/runner/run.py\", line 69, in <module>",
+    "    execute(SPEC)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01/runner/implementation.py\", line 63, in execute",
+    "    elif spec['mode']=='views': view_probe(spec)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01/runner/implementation.py\", line 205, in view_probe",
+    "    run_tcl('repair-api',script)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01/runner/run.py\", line 44, in run_tcl",
+    "    subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(path)],stdout=f,stderr=subprocess.STDOUT,check=True)",
+    "  File \"/usr/lib/python3.10/subprocess.py\", line 526, in run",
+    "    raise CalledProcessError(retcode, process.args,",
+    "subprocess.CalledProcessError: Command '['openroad', '-threads', '1', '-exit', '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/macro-guard-probe-01/repair-api.tcl']' returned non-zero exit status 1."
+  ],
+  "metrics": {},
+  "pg_access": {},
+  "output_manifest_sha256": "8715e9b21917e45dbe5298d850aa3241ac2cb733fc42247b52f4986ccda8b07f",
+  "output_manifest_entries": 24,
+  "scheduler": "89719|FAILED|1:0|00:00:06|UNLIMITED|1|node3"
+}

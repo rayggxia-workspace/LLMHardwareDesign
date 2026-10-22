@@ -2,10 +2,11 @@
 
 ## 2026-10-22 ACT/MXU 同资源物理对照
 
-- 更新时间：2026-10-22 17:21，中国标准时间UTC+08:00；负责人／账号YUZE-LU。
+- 更新时间：2026-10-22 18:20，中国标准时间UTC+08:00；负责人／账号YUZE-LU。
 - [Issue #15](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15)，分支 `task/15-opentpu-compare`，依赖PR10基线2b76f69，独立工作树，未修改已有PR8/PR10工作树与89448作业。
 - 已完成：共同169109映射单元逐型号核对；关闭合并导入额外剪去9DFF等135单元的优化，实际ODB库存一致。89631旧修复严格通过，独立89650核对34个输入。ACT／MXU／合并原候选块均通过电气与物理检查，但含M10信号，须为父层M10 PG策略重新布线。第三轮显式GRT路由上限M9，最终LEF复核；ACT89671、MXU89677已严格通过，MXU最差cap余量提高至+3.090818fF。透明分层STA自检89672通过；ACT映射到物理网表的612状态／存储实例、3210逻辑锥核对89685通过，状态输入突变负例成功检出。
-- 正在执行：89678固定资源M9合并块最终提取；89682／89683两组正式父层依赖其终态，89687三块功能核对。全部实读UNLIMITED，任何输入不通过会停止验收。已建[草稿PR #17](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/17)，base为PR10分支；原失败与被否定的层范围尝试保留。
+- 已补齐：89678合并块最终提取、89687三块功能锥核对均严格通过。89700／89701封存CTS、PG连通性通过，实际1662bit引脚几何哈希相同；旧03／04因缓存导出误判提前停止，更正证据已保留，旧ODB实际引脚也正确。
+- 正在执行：合并父层06／89711经定向增驱通过GRT电气门槛，正在DRT；拆分06／89710完成25次增驱后仍有宏输出电容违例，保留失败，07／89722以近端BUF隔离冻结宏与长父层连线。插入API和真实几何探针89721通过，未改变宏内资源。全部实读UNLIMITED。已建[草稿PR #17](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/17)，base为PR10分支；最终父层功能证明和完整PPA尚未完成。
 - 下一步：完成共同die和逐bit引脚的两宏／一宏父层实际布线，检查PG落点及严格原生连通性；拼接真实网表与分层SPEF检查完整路径，按真实违例继续调整。汇总面积／时序／线长／通孔／CTS与缓冲开销，区分叶面积和宏占地避免重复计数。
 - 接入：登记PR5沿用pending证据；本仓库无board.json、已知read:project权限缺项，看板unverified／同步pending，处理管理员待指定。审查人／优先级待指定，不自合并或标done。
 - 代码与实际作业runner各自按回执绑定；[实验记录](../../docs/experiments/issue-15-opentpu-comparison.md)与 `project/experiments/opentpu_compare/results/` 保留失败和通过证据。
