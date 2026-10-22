@@ -44,7 +44,9 @@ proc llhd_guard_macro_output {pin serial} {
   set net [$term getNet]
   if {$net eq "NULL"} {error "Unconnected macro output: $pin"}
   set location [list [expr {$x/$dbu}] [expr {$y/$dbu}]]
-  insert_buffer -buffer_cell BUF_X2 -net [$net getName] -location $location -buffer_name $name -net_name ${name}_net
+  puts "GUARD_REQUEST $pin net=[$net getName] location=$location"
+  set result [insert_buffer -buffer_cell BUF_X2 -net [$net getName] -location $location -buffer_name $name -net_name ${name}_net]
+  puts "GUARD_INSERT_RESULT $result"
   set added [$block findInst $name]
   if {$added eq "NULL"} {error "Buffer insertion failed: $pin"}
   $added setLocation [expr {int(round($x))}] [expr {int(round($y))}]

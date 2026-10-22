@@ -199,6 +199,7 @@ def view_probe(spec):
             script+='report_check_types -max_capacitance -max_count 5 -digits 6 -no_line_splits > {'+str(ROOT/'captured-cap.rpt')+'}\n'
             script+='puts "CAPTURED: [read [open {'+str(ROOT/'captured-cap.rpt')+'} r]]"\n'
             if spec.get('macro_guard_probe'):
+                script+='foreach name {insert_buffer sta::insert_buffer} {if {[llength [info procs $name]]} {puts "INSERT_PROC $name: [info body $name]"}}\n'
                 script+='source {'+str(track(ROOT/'runner/macro_guard.tcl'))+'}\n'
                 script+='puts [llhd_guard_macro_output {u_act/r_data[274]} 0]\n'
                 script+='write_db {'+str(ROOT/'macro-guard-probe.odb')+'}\n'
