@@ -10,6 +10,8 @@ from quality import evaluate, require_sealed_input, require_toolchain
 HERE=Path(__file__).resolve().parent
 p=argparse.ArgumentParser()
 p.add_argument('selection',type=Path)
+p.add_argument('--output-dir',type=Path,default=HERE/'results',
+    help='Store a qualified alternate separately; default is the primary report snapshot directory')
 a=p.parse_args()
 definition=json.loads(a.selection.read_text())
 selection=definition['implementations']
@@ -164,7 +166,8 @@ for kind,pins in [('top_split',split_pins),('top_merged',merged_pins)]:
     assert stage['passed'] and pins['canonical_sha256']==stage['canonical_sha256'], 'Routing moved common external pins'
 assert split_pins['canonical_sha256']==merged_pins['canonical_sha256'], 'Actual pin geometry differs'
 inputs=dict(observed_utc=snapshot['observed_utc'],attempts={n:data[n] for n in list(selection.values())+[definition[k] for k in evidence_keys]})
-input_path=HERE/'results/comparison-inputs.json'
+a.output_dir.mkdir(parents=True,exist_ok=True)
+input_path=a.output_dir/'comparison-inputs.json'
 input_path.write_text(json.dumps(inputs,indent=2)+'\n')
 output=dict(selection=selection,functional_proof=definition['functional_proof'],parent_functional_proof=definition['parent_functional_proof'],
     stitch_proof=definition['stitch_proof'],inventory_proof=definition['inventory_proof'],annotation_proof=definition['annotation_proof'],
@@ -175,5 +178,5 @@ output=dict(selection=selection,functional_proof=definition['functional_proof'],
     scope='H1 same compute/storage/state resources; physical buffer and CTS costs included. Footprint is not added to its own leaf-cell area. Signal route excludes special PG, which requires separate geometry audit. Complete STA never sums separate-block slack values.')
 if definition.get('wire_audit_proof'):
     output['wire_audit_proof']=definition['wire_audit_proof']
-(HERE/'results/comparison.json').write_text(json.dumps(output,indent=2)+'\n')
+(a.output_dir/'comparison.json').write_text(json.dumps(output,indent=2)+'\n')
 print(json.dumps(output,indent=2))
