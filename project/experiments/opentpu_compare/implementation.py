@@ -186,6 +186,19 @@ def matched(spec):
     run_tcl('detail','read_db {'+str(dest/'6_final.odb')+'}\nwrite_abstract_lef -bloat_factor 0 {'+str(dest/(top+'.detailed.lef'))+'}\n')
 
 def view_probe(spec):
+    if spec.get('pin_checkpoint_diagnostics'):
+        receipts={}
+        for name,path in spec['pin_checkpoint_diagnostics'].items():
+            source=Path(path)
+            shutil.copy2(track(source/'external-pin-contract.json'),ROOT/'external-pin-contract.json')
+            try:validate_parent_pins(result(source)/'4_cts.odb')
+            except AssertionError:pass  # Expected forensic rejection; retain actual ODB evidence.
+            receipts[name]=json.loads((ROOT/'pin-placement-quality.json').read_text())
+            receipts[name]['source']=str(source)
+            for filename in ['stage-pins.tsv','pin-placement-quality.json','stage-pin-audit.tcl','stage-pin-audit.log']:
+                (ROOT/filename).rename(ROOT/(name+'-'+filename))
+        (ROOT/'pin-checkpoint-diagnostics.json').write_text(json.dumps(receipts,indent=2)+'\n')
+        return
     if spec.get('parent_grt_diagnostics'):
         flow=Path('/OpenROAD-flow-scripts/flow')
         names=['scripts/resize.tcl','scripts/resize_placement.tcl','scripts/global_place.tcl','scripts/util.tcl']
