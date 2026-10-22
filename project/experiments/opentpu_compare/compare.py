@@ -9,8 +9,19 @@ HERE=Path(__file__).resolve().parent
 p=argparse.ArgumentParser()
 p.add_argument('selection',type=Path)
 a=p.parse_args()
-selection=json.loads(a.selection.read_text())
+definition=json.loads(a.selection.read_text())
+selection=definition['implementations']
 data=json.loads((HERE/'results/latest.json').read_text())['attempts']
+proof=data[definition['functional_proof']]
+assert proof.get('exit_code')=='0'
+for name in ['act','mxu','merged']:
+    assert proof['structural-equivalence.json'][name]['passed'], 'Missing logical cone certificate'
+    assert Path(proof['spec']['structural_sources'][name]).name==selection[name], 'Proof belongs to another block'
+parent_proof=data[definition['parent_functional_proof']]
+assert parent_proof.get('exit_code')=='0'
+for name in ['top_split','top_merged']:
+    assert parent_proof['structural-equivalence.json'][name]['passed'], 'Parent wiring function changed'
+    assert Path(parent_proof['spec']['structural_sources'][name]).name==selection[name]
 rows={}
 for kind,name in selection.items():
     row=data.get(name,{})
@@ -22,6 +33,7 @@ for kind,name in selection.items():
         assert row.get('full-hierarchy-quality.json',{}).get('passed'), 'Full extracted hierarchy did not qualify: '+name
         assert row.get('strict-pg.json',{}).get('passed') and row.get('final-pg/strict-pg.json',{}).get('passed'), 'Native PG did not qualify: '+name
         assert all(v['passed'] for v in row['resource-qualification.json'].values()), 'Architecture inventory differs'
+        assert row['pg_access'] and all(v['remaining_guard_intersections']==0 for v in row['pg_access'].values()), 'PG landing geometry failed'
     else:
         assert row.get('layer-reservation.json',{}).get('passed'), 'M10 reservation not qualified: '+name
     rows[kind]=dict(attempt=name,quality=q,record=row)
@@ -58,7 +70,7 @@ split_pins=rows['top_split']['record']['actual_signal_pin_geometry']
 merged_pins=rows['top_merged']['record']['actual_signal_pin_geometry']
 assert split_pins['all_contract_names_present'] and merged_pins['all_contract_names_present']
 assert split_pins['canonical_sha256']==merged_pins['canonical_sha256'], 'Actual pin geometry differs'
-output=dict(selection=selection,costs=costs,
+output=dict(selection=selection,functional_proof=definition['functional_proof'],parent_functional_proof=definition['parent_functional_proof'],costs=costs,
     split_change_vs_merged_percent={k:100*(costs['split'][k]/costs['merged'][k]-1) for k in
         ['implemented_leaf_area_um2','occupied_footprint_plus_parent_cells_um2','total_signal_wire_um','total_signal_vias']},
     scope='H1 same compute/storage/state resources; physical buffer and CTS costs included. Footprint is not added to its own leaf-cell area. Signal route excludes special PG, which requires separate geometry audit. Complete STA never sums separate-block slack values.')

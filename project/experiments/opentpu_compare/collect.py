@@ -30,6 +30,8 @@ for p in sorted(base.iterdir()):
  for f in (p/'flow/reports').rglob('6_finish.rpt') if (p/'flow/reports').exists() else []:
   row['final_report']=f.read_text()
  for f in p.glob('*-resource.json'): row[f.name]=json.load(open(f))
+ row['pg_access']={str(f.relative_to(p)):json.load(open(f)) for directory in [p,p/'final-pg']
+                   for f in directory.glob('*-pg-access-selection.json')}
  for name in ['repair-input-audit.json','structural-equivalence.json','full-hierarchy-sta.log']:
   f=p/name
   if f.exists():

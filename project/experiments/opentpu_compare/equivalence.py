@@ -17,7 +17,7 @@ def family(master):
 
 
 def state(master):
-    return master.startswith(('fakeram', 'DFF', 'SDFF', 'DLH', 'DLL', 'LATCH'))
+    return master.startswith(('fakeram', 'DFF', 'SDFF', 'DLH', 'DLL', 'LATCH', 'llhd_opentpu_', 'llhd_match_'))
 
 
 def signature(value):
@@ -113,6 +113,7 @@ def certify(mapped, final, top, libraries, directory, negative_control=False):
         result['negative_control_detected'] = not compare(modules[0], physical)['passed']
         target['connections']['D'] = old
         assert result['negative_control_detected'], 'Logical auditor failed its state-input mutation control'
-    result['scope'] = ('Exact same named state machines and identical logical cones after drive/buffer/inverter normalization; '
-                       'SRAM models unchanged. Does not prove upstream RTL or physical manufacturing correctness.')
+    result['scope'] = ('Exact same named state machines or child-macro instances and identical logical cones after drive/buffer/inverter normalization; '
+                       'SRAM/child models unchanged. Parent certificates require the separate child certificates. '
+                       'Does not prove upstream RTL or physical manufacturing correctness.')
     return result

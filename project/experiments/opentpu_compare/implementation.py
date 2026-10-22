@@ -195,7 +195,10 @@ def view_probe(spec):
             source=Path(path)
             assert (source/'exit-code.txt').read_text().strip()=='0'
             meta=json.loads(track(source/'experiment.json').read_text())
-            certificates[name]=certify(track(source/'mapped.v'),track(result(source)/'6_final.v'),meta['top'],libraries,
+            parent='views' in meta
+            extra=[track(Path(v['view'])/(v['name']+'.lib')) for k,v in meta.get('views',{}).items()
+                   if k in (['act','mxu'] if meta.get('kind')=='split' else ['merged'])]
+            certificates[name]=certify(track(source/('top.v' if parent else 'mapped.v')),track(result(source)/'6_final.v'),meta['top'],libraries+extra,
                 ROOT/('equivalence-'+name),negative_control=name=='act')
         (ROOT/'structural-equivalence.json').write_text(json.dumps(certificates,indent=2)+'\n')
         assert all(c['passed'] for c in certificates.values()), 'Logical cone certificate did not pass; inspect differences'
