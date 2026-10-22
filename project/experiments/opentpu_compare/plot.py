@@ -1,4 +1,5 @@
 """Render a scientific comparison only from a strictly qualified comparison."""
+import hashlib
 import json
 from pathlib import Path
 import matplotlib
@@ -9,7 +10,9 @@ from matplotlib.patches import Rectangle
 HERE=Path(__file__).resolve().parent
 REPO=HERE.parents[2]
 data=json.loads((HERE/'results/comparison.json').read_text())
-inputs=json.loads((HERE/'results/comparison-inputs.json').read_text())['attempts']
+frozen_inputs=(HERE/'results/comparison-inputs.json').read_bytes()
+assert hashlib.sha256(frozen_inputs).hexdigest()==data['input_snapshot_sha256'], 'Plot input snapshot differs from its qualified comparison'
+inputs=json.loads(frozen_inputs)['attempts']
 out=REPO/'docs/experiments/assets'
 out.mkdir(exist_ok=True)
 plt.rcParams.update({'font.size':10,'axes.spines.top':False,'axes.spines.right':False})

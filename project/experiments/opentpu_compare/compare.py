@@ -95,7 +95,9 @@ for kind,blocks in [('split',['act','mxu']),('merged',['merged'])]:
         physical_cell_classification=classes,parent_signal_wire_by_layer_um=layer_wire,
         parent_signal_wire_below_m10_percent=100*sum(v for k,v in layer_wire.items() if k!='metal10')/sum(layer_wire.values()))
 assert costs['split']['common_die_area_um2']==costs['merged']['common_die_area_um2']
-assert len({rows[k]['record']['boundary_constraint_contract_sha256'] for k in rows})==1, 'Clock/IO budget contract differs'
+assert {rows[k]['record']['boundary_constraint_contract_sha256'] for k in rows}=={
+    'b08d83cc225c1753aee3027d6c97e296bc25d4cf9d5cdd7ffd0b4efc6694f044'
+}, 'Clock/IO contract differs from the frozen 2.5 ns / 0.5 ns / BUF_X4 / 5 fF definition'
 assert rows['top_split']['record']['external_pin_contract']==rows['top_merged']['record']['external_pin_contract']
 split_pins=rows['top_split']['record']['actual_signal_pin_geometry']
 merged_pins=rows['top_merged']['record']['actual_signal_pin_geometry']
