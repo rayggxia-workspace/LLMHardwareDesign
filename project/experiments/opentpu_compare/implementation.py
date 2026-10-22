@@ -186,6 +186,10 @@ def matched(spec):
     run_tcl('detail','read_db {'+str(dest/'6_final.odb')+'}\nwrite_abstract_lef -bloat_factor 0 {'+str(dest/(top+'.detailed.lef'))+'}\n')
 
 def view_probe(spec):
+    if spec.get('grt_consistency_source'):
+        from grt_consistency import execute
+        execute(ROOT,Path(spec['grt_consistency_source']),run_tcl,track,digest,PLATFORM)
+        return
     if spec.get('symbolize_addresses'):
         actual=Path(shutil.which('openroad'))
         executable=str(actual)
