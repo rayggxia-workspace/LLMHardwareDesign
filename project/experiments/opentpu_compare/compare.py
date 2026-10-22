@@ -1,5 +1,6 @@
 """Generate additive physical costs with explicit footprint/leaf-area separation."""
 import argparse
+from collections import Counter
 import hashlib
 import json
 from pathlib import Path
@@ -19,6 +20,8 @@ assert stitch_proof.get('exit_code')=='0' and stitch_proof.get('stitch-validatio
 inventory=data[definition['inventory_proof']]
 assert inventory.get('exit_code')=='0' and Path(inventory['spec']['inventory_proof_source']).name==definition['functional_proof']
 assert all(inventory.get('logical-resource-inventory.json',{}).get(k,{}).get('equal') for k in ['act','mxu','merged']), 'Logic/state/SRAM resources changed'
+stock=inventory['logical-resource-inventory.json']
+assert Counter(stock['act']['physical'])+Counter(stock['mxu']['physical'])==Counter(stock['merged']['physical']), 'Split/merged non-support resource stock differs'
 for name in list(selection.values())+[definition[k] for k in ['functional_proof','parent_functional_proof','stitch_proof','inventory_proof']]:
     row=data[name]
     integrity=row.get('collected_file_integrity',{})
