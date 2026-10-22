@@ -39,7 +39,11 @@ for {set iteration 0} {$iteration < $llhd_drive_rounds} {incr iteration} {
       if {$net eq "NULL"} {continue}
       set driver "NULL"
       foreach candidate [$net getITerms] {
-        if {[$candidate getIoType] eq "OUTPUT"} {set driver [$candidate getInst];break}
+        if {[$candidate getIoType] eq "OUTPUT"} {
+          set driver [$candidate getInst];set term $candidate
+          set pin "[$driver getName]/[[$candidate getMTerm] getName]"
+          break
+        }
       }
       if {$driver eq "NULL"} {continue}
       set inst $driver;set name [$inst getName]

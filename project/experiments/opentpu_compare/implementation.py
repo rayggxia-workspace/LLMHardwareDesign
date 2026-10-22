@@ -524,11 +524,13 @@ def resume_parent(spec):
         if spec.get('joint_repair_rounds'):
             joint=int(spec['joint_repair_rounds']);assert 0<joint<=10
             target=float(spec['setup_target_ns']);accept=float(spec['setup_accept_ns']);assert 0<=accept<target<=.5
-            injection+='set llhd_drive_guardband 1\nset llhd_joint_rounds '+str(joint)+'\n'
-            injection+='set llhd_setup_target '+str(target)+'\nset llhd_setup_accept '+str(accept)+'\n'
-            injection+='set llhd_joint_runner {'+str(ROOT/'runner')+'}\nsource {'+str(track(ROOT/'runner/joint_repair.tcl'))+'}\n'
+            # Manual ECO callbacks can leave an invalid-net queue in this
+            # binary. A full estimate does not flush that incremental queue.
+            # Reload real ODB checkpoints in fresh processes instead of
+            # clearing estimator state or suppressing EST-0104.
+            track(ROOT/'runner/joint_repair.py')
             meta['joint_timing_electrical_repair']=dict(rounds=joint,setup_target_ns=target,grt_accept_setup_ns=accept,
-                strategy='Alternating setup optimization and electrical guardbands; no gate cloning/pin swaps, no clock/IO relaxation')
+                strategy='Fresh-process ODB checkpoint alternation of native timing repair and electrical guardbands; reroute/re-estimate every reload; no gate cloning/pin swaps or clock/IO relaxation')
         hook.write_text(text.replace(marker,injection+marker))
         meta['targeted_drive_repair']=dict(rounds=rounds,scope='Only actual negative-margin standard BUF/INV drivers; smallest doubled drive with estimated 35% cap / 20% slew reserve, max X32; no macro or sequential change')
         meta['targeted_drive_repair']['macro_output_guards']=bool(spec.get('macro_output_guards'))
@@ -551,7 +553,12 @@ def route_parent(spec):
     rounds=int(spec.get('post_grt_repair_rounds',0))
     if rounds:
         make_stages(ROOT/'config.mk',spec,['do-5_1_grt'])
+        if spec.get('joint_repair_rounds'):
+            from joint_repair import execute
+            execute(ROOT,spec,meta)
         log=(ROOT/'flow/logs/nangate45'/nickname/'base/5_1_grt.log').read_text()
+        if spec.get('joint_repair_rounds'):
+            log=(ROOT/'joint-final-quality.rpt').read_text()
         checks=log.split('POST_GRT_FINAL_ELECTRICAL_CHECK')[-1]
         number=r'([-+]?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?)'
         margins=re.findall(r'^\s*\S+\s+'+number+r'\s+'+number+r'\s+'+number+r'\s+\((?:MET|VIOLATED)\)',checks,re.M)

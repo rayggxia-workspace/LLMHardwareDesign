@@ -61,3 +61,11 @@ python project/experiments/opentpu_compare/launch.py <全新尝试名> matched -
 `stitch-selftest.json`运行共享边界RC的独立自检；比较还要求该证书通过。采集器对轻量指标、资格、STA及功能证据逐个验证其SHA属于封存输出清单；最终1662bit的实际BPin盒形还必须与共同CTS起点完全相同。五份外部SDC除设计名称外的规范文本SHA均为 `b08d83cc225c1753aee3027d6c97e296bc25d4cf9d5cdd7ffd0b4efc6694f044`。
 
 提交脚本先要求代码已提交，上传每次独立runner，记录实际commit和逐文件SHA；计算节点核对容器SHA、输入和实际资源。`collect.py`只读远端，终态首次归档后不覆盖。不得修改旧尝试或把后续commit倒填成已执行runner。原VECTOR／89448不属于本次实验，继续保留。
+
+## 19:20 后的收敛诊断（仍在执行）
+
+合并父层06／89711已完成真实DRT，迭代违例4796→263→168→16→5→5→0，最终DRC／天线为0，父层信号线2660913µm、通孔62185。原生PG终态通过；提取后宏模型setup −0.0784699ns，真实分层STA setup −0.053027ns、hold +0.013229ns、TNS −0.063750ns，且电容余量仍负，故严格失败，不能纳入合格PPA。最差输出t_waddr[25]的末级BUF_X4驱动较长父层连线，需继续改善驱动／缓冲。拆分07／89722仍在DRT，未按耗时停止。
+
+89750对合并06完整分层STA的40846个未标注驱动逐一用本机原生get_fanout（flat、all arcs、pin depth 2）核对：全部可解析且无连接负载，部分未标注驱动0；连接时钟正控制通过。说明这批未标注提示属于空载端，不能抵消实际时序／电容失败。正式选择的新父层仍须重新审计。
+
+08／09两组尝试均在新增联合修复时出现EST-0104，不进入正式DRT；保留全部失败。依据[官方估算器实现](https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/src/est/src/EstimateParasitics.cpp)推断手工ECO回调留下待更新队列，完整estimate本身不清队列；官方master不是当前未知版本二进制的精确来源，故以实际下一轮验证为准。新的joint_repair.py改为真实ODB检查点和独立进程交替：重新全局布线／估算RC，原生setup／hold修复，再独立进程电气增驱和宏输出近端隔离，最后新进程独立审计。保留全部中间检查点，不清空错误队列，不跳过真实检查，外部SDC不变。流程尚待计算节点验证，不能预称收敛。

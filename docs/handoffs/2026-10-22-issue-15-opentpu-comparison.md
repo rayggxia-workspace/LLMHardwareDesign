@@ -22,3 +22,5 @@
 - 看板：本仓库仍无 `config/board.json`；既有凭据缺少 `read:project`，当前Projects工具也未提供任务条目核验能力。实际条目／字段状态unverified，加入／同步动作pending。
 - 待具备权限的管理员（待指定）核对组织总览Projects1是否适合本项目，查找并复用Issue15条目，按 `config/status-mapping.json` 写入真实Project ID和Status后读回，记录条目ID／链接／时间；不能猜测条目或字段ID，也不能自行扩充凭据权限。
 - 审查人、优先级待指定；任务仍in_progress，实验完成也须独立审查及合并才能按规则标done。没有期限要求，不填写杜撰日期。
+
+19:20补充：合并06完成DRC／PG但真实分层时序和电容失败，拆分07仍在DRT；08／09的EST-0104错误保留。后续joint_repair.py采用独立OpenROAD进程、真实ODB检查点交替修复并每次重路由／估算RC。89750核对40846个未标注驱动均无连接负载。新轮以submission绑定runner，不将当前HEAD倒填旧轮。
