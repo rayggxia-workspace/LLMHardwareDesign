@@ -2,12 +2,12 @@
 
 - 更新日期：2026-10-22（中国标准时间）
 - 当前阶段：参考资料已接入，开始同资源分块物理对照；预制底座和定制层尚未冻结
-- 当前工程：[Issue #15](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15) 开展openTPU ACT/MXU同资源拆分／合并物理对照。正式三块M9及功能／资源证书通过；合并13完整合格备用。拆分16／合并17虽DRC0、最终PG和完整真实分层STA通过，宏接口setup／slew仍失败，未入主表；已启动拆分17／89802和合并18／89803按实际提取违例继续修复，全部UNLIMITED。最终对照尚待合格拆分与匹配的新成对证据。详见[实验记录](experiments/issue-15-opentpu-comparison.md)。PR8的VECTOR/PG和89448不在本轮范围。
+- 当前工程：[Issue #15](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15) 开展openTPU ACT/MXU同资源拆分／合并物理对照。正式三块M9及功能／资源证书通过；合并13完整合格，作为主对照候选。拆分17／89802继续真实布线与违例清理，配套合并13的功能89809／RC覆盖89810排队。低面积合并18已自然失败（真实setup −0.000681ns），完整保留诊断。全部UNLIMITED，最终PPA仍待合格拆分和来源匹配证明。详见[实验记录](experiments/issue-15-opentpu-comparison.md)。PR8／PR10及VECTOR／89448不在本轮范围。
 - 资料接入：[Issue #1：初始化项目并导入初期资料](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/1)；资料已进入 `main`，[PR #2](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/2) 已合并
 - 当前资料：项目说明 v1.0、专题研究文档、来源笔记，以及五个参考项目七个案例的布线分析包；三份 HTML 报告、llaccel 引擎内部分析及远程服务器规则已通过 [PR #4](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/4) 合入 `main`；工艺互连资料的逐层资源评估补充已一并提交
 - 已确认边界：研究对象和主要问题已写入项目说明；具体工艺、Block 资源、定制层集合和工具链未冻结
 - 关键限制：现有布线结果包含少量 RTL 片段，不含完整源工程、物理数据库、工具环境和日志，不能单靠本仓库复跑物理实现
-- 最新工程续记（22:55 CST）：双子块边界RC自检89798通过，漏父层RC负例检出；候选16／17父层功能89799及原生覆盖89800通过，但不抵消物理资格失败。拆分17对长线、输入slew和近临界hold定向修复；合并18修复3条输入slew，均已实际启动。
+- 最新工程续记（23:39 CST）：合并18完成DRC0／最终PG但真实setup及宏模型cap／slew未过，已封存。双子块RC89798、封存工具身份及真实失败对拒绝测试通过；中文HTML与三类科研图仍待最终合格选择后生成。
 - 下一步：完成同资源块内和父层实际对照及违例收敛；项目登记／看板的既有管理员待办继续保留
 - 任务入口：[本仓库 Issues](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues)
 - 项目登记：[管理中心 PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) 待审查；合并前状态为 pending
