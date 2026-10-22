@@ -177,6 +177,16 @@ python project/experiments/opentpu_compare/launch.py <全新尝试名> matched -
 
 继续入口：collect.py→quality.py；20全部通过后按selection-split20-merged13.json执行compare.py→plot.py→report.py并目视核验三图及HTML。若失败，从新封存的实际违例继续修复并重建匹配证明。没有设置运行期限或取消原生作业。
 
+### 2026-10-23 03:36 CST：拆分20仅剩一条接收端slew，21轮单驱动修复
+
+拆分20／89821自然COMPLETED0（1:02:26，UNLIMITED），DRC4771→211→106→12→2→2→0、天线0及最终PG通过。完整真实setup／hold +0.102314／+0.036146ns及电气通过；宏模型setup／hold +0.0754514／+0.0747274ns、最差cap +3.396215916fF，但act_data[145]的slew 209.263235ps超过199.000001ps上限10.263235ps，严格不合格。功能89822／RC覆盖89823均通过，不能抵消该接口失败。只读89824及规格比较89825定位place13151 BUF_X4；X8／X16旧RC均无电气违例且最差setup／hold相同。拆分21／89826于03:33:56 CST启动，runner6de7b3773398f15ef36362568977c541a01143e2，实际仅place13151 X4→X8，无新增缓冲／guardband；源时序复现、接线／合法化通过，已重新完整DRT。匹配21／13功能89827、RC覆盖89828依赖排队，runner46e6fdc57332467bd107b98b38b13a5200415c90，三项实际UNLIMITED。合并13继续作完整合格主对照；最终PPA仍待合格拆分和匹配证据。
+
+20轮父层标准单元15633.4µm²、信号线3361750µm、通孔73951，仅作未合格诊断。20／13功能2348／1662锥差异0；RC覆盖40831／40846空载未标注驱动、部分未标注0、连接时钟正控制通过。89824／11秒、runner89757cc7b240fa77103d0de42103b8565c996a55，同一源SPEF复现通过，逐pin原生9位报告SHA为8f9d3036ed84d7d811bb7c215ff93be81a3c5bbf509c987f659affbd7562750a。该报告给出唯一act_data[145]超限10.263235ps；汇总metrics的max_slew_limit=-0.051574不能直接解释成ns，前期口头将其误写成时间已经更正，严格验收仍按真实有符号报告和计数。
+
+源20物理功能JSON显示接收端驱动place13151为BUF_X4，上游wire17143为BUF_X8。89825／18秒、1CPU、UNLIMITED、runner316573e3ad5f82c3ce5635a95cdf90269c62a914，两个全新进程仅试place13151 X4→X8及X4→X16，旧RC均无电气违例，setup／hold同为+0.075451426／+0.074727394ns。选择较小X8，减少面积和额外输入电容；实际计划与探针封存摘要见results/top-split-extracted-21-drive-plan.json。21轮原生违例定向流程只选择该一处升级，无新增输入guard／宏输出guard／中继，没有重新修改时钟或SDC。旧RC规格估计不能替代新路由资格。
+
+一次只读SSH报告查询连接未返回，已核对本地进程身份，仅关闭该本地查询连接并重连；未中断原生89821或任何Slurm作业。所有实际终态自然封存，未按耗时取消。继续入口collect.py→quality.py；21与匹配证书全部通过后，selection-split21-merged13.json→compare.py→plot.py→report.py，再核验实际三图和HTML。若失败，继续从新封存实际违例修复。
+
 ## 结果适用范围与工具提示
 
 本轮是small参数、单一Nangate45 typical角点、固定父层die／引脚／宏位置下的工程对照。两组经历实际违例修复，最终合格候选的物理BUF／INV／CTS及支持单元可以不同，全部计入成本；没有完成多种宏摆放、引脚规划、种子或工艺角点的系统搜索，不能将观察到的差值推广为最优或普遍的分块结论。
