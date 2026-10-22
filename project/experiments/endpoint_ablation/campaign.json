@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "input_version": "endpoint-overlay-ablation-v1",
+  "tracks": [1, 2],
+  "spans": [1, 2],
+  "original_access": [2, 4],
+  "access_multiplier": 2,
+  "wire_capacity": 3,
+  "seeds": [17, 43, 101],
+  "workloads": ["ffn", "gated_ffn", "residual_ffn", "fork_add"],
+  "arms": ["restricted", "access", "capacity", "joint"],
+  "method": "multi_order",
+  "random_order_trials": 12,
+  "note": "384 paired cases. Maximum synthetic inventory frozen per group; overlays are counterfactual restrictions, not calibrated physical configurations. Prior topology split labels are retained, not a new blind test."
+}
