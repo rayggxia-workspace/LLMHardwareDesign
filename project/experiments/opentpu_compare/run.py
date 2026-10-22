@@ -63,8 +63,17 @@ def probe():
 
 if __name__ == '__main__':
     sys.modules['run'] = sys.modules[__name__]
-    if SPEC['mode']=='probe': probe()
-    else:
-        from implementation import execute
-        execute(SPEC)
-    (ROOT/'input-sha256.json').write_text(json.dumps(INPUTS,indent=2)+'\n')
+    completed=False
+    try:
+        if SPEC['mode']=='probe': probe()
+        else:
+            from implementation import execute
+            execute(SPEC)
+        completed=True
+    finally:
+        # Preserve every input actually reached, even when a real quality
+        # gate or native tool fails. This never rewrites sealed older runs.
+        (ROOT/'input-sha256.json').write_text(json.dumps(INPUTS,indent=2)+'\n')
+        (ROOT/'input-trace-status.json').write_text(json.dumps(dict(
+            execution_completed=completed,tracked_input_count=len(INPUTS),
+            scope='Inputs reached by this execution, including failure paths'),indent=2)+'\n')

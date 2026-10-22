@@ -19,7 +19,7 @@ for p in sorted(base.iterdir()):
  if not (p/'spec.json').exists(): continue
  spec=json.load(open(p/'spec.json'))
  row={'spec':spec,'exit_code':(p/'exit-code.txt').read_text().strip() if (p/'exit-code.txt').exists() else None}
- for name in ['started.txt','finished.txt','allocation.txt','resource-audit.json','experiment.json','input-sha256.json','strict-pg.json','final-pg/strict-pg.json','layer-reservation.json','transparent-sta-validation.json','resource-qualification.json','full-hierarchy-quality.json','pre-drt-electrical-quality.json','pin-placement-quality.json']:
+ for name in ['started.txt','finished.txt','allocation.txt','resource-audit.json','experiment.json','input-sha256.json','input-trace-status.json','strict-pg.json','final-pg/strict-pg.json','layer-reservation.json','transparent-sta-validation.json','resource-qualification.json','full-hierarchy-quality.json','pre-drt-electrical-quality.json','pin-placement-quality.json']:
   f=p/name
   if f.exists():
    row[name]=read_json(f) if f.suffix=='.json' else f.read_text()
