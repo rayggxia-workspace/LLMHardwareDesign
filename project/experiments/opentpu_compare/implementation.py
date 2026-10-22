@@ -255,6 +255,9 @@ def top(spec):
         for relative in ['experiment.json','elab.json','resource-audit.json']:
             path=source/relative
             assert digest(path)==expected[relative]
+    architecture={k:verify_architecture(source,k) for k,source in sources.items()}
+    (ROOT/'resource-qualification.json').write_text(json.dumps(architecture,indent=2)+'\n')
+    assert all(v['passed'] for v in architecture.values()), 'Memory or state resource changed'
     views={}
     (ROOT/'views').mkdir()
     for kind,source in sources.items():
@@ -339,7 +342,9 @@ def top(spec):
         pdn='H1 additional parent M10; original detailed macro geometry retained',
         full_hierarchical_sta='Required after routing; macro libraries alone do not qualify internal period'),indent=2)+'\n')
     (ROOT/'input-sha256.json').write_text(json.dumps(INPUTS,indent=2)+'\n')
-    make_stages(ROOT/'config.mk',spec,['finish'])
+    # These synthetic RAM experiments have no SRAM GDS. Complete actual PNR
+    # and extraction in ODB/DEF/SPEF; do not manufacture a GDS-completion claim.
+    make_stages(ROOT/'config.mk',spec,['synth','do-floorplan','do-place','do-cts','do-route','do-finish'])
     (ROOT/'final-pg').mkdir()
     run_tcl('final-pg','read_db {'+str(ROOT/relative/'6_final.odb')+'}\n'+
         'set llhd_macro_instances {'+' '.join(instances)+'}\nset ::env(LLHD_ATTEMPT) {'+str(ROOT/'final-pg')+'}\n'
@@ -371,9 +376,40 @@ def full_sta(parent,sources,kind):
     text+='report_checks -path_delay max -group_path_count 10 -digits 6 -format full_clock_expanded\n'
     text+='report_checks -path_delay min -group_path_count 10 -digits 6 -format full_clock_expanded\n'
     text+='report_check_types -max_capacitance -max_count 20 -digits 6 -no_line_splits\n'
+    text+='report_check_types -max_slew -max_count 10 -digits 6 -no_line_splits\n'
     text+='report_check_types -violators -max_slew -max_capacitance -max_fanout -max_delay -min_delay -recovery -removal -min_period -digits 6 -no_line_splits\n'
     text+='check_setup -verbose\n'
     run_tcl('full-hierarchy-sta',text)
+    log=(ROOT/'full-hierarchy-sta.log').read_text()
+    setup=re.search(r'worst slack max\s+(-?[\d.]+)',log)
+    hold=re.search(r'worst slack min\s+(-?[\d.]+)',log)
+    tns=re.search(r'tns max\s+(-?[\d.]+)',log)
+    number=r'([-+]?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?)'
+    electrical=re.findall(r'^\s*\S+\s+'+number+r'\s+'+number+r'\s+'+number+r'\s+\((?:MET|VIOLATED)\)',log,re.M)
+    checks=dict(setup_nonnegative=bool(setup) and float(setup[1])>=0,
+        hold_nonnegative=bool(hold) and float(hold[1])>=0,
+        setup_tns_zero=bool(tns) and float(tns[1])==0,
+        reported_electrical_margins_nonnegative=bool(electrical) and all(float(row[2])>=0 for row in electrical),
+        no_reported_violations='(VIOLATED)' not in log)
+    (ROOT/'full-hierarchy-quality.json').write_text(json.dumps(dict(passed=all(checks.values()),checks=checks,
+        setup_ws_ns=float(setup[1]) if setup else None,hold_ws_ns=float(hold[1]) if hold else None,
+        scope='Real netlists and hierarchical SPEF, original external clock/IO budget only, no internal boundary delays'),indent=2)+'\n')
+    assert all(checks.values()), 'Full hierarchical extracted timing/electrical violation; preserve and repair next attempt'
+
+def verify_architecture(source,label):
+    run_tcl('architecture-'+label,'read_db {'+str(track(result(source)/'6_final.odb'))+'}\n'
+        'set f [open {'+str(ROOT/(label+'-leaf-inventory.tsv'))+'} w]\n'
+        'foreach i [[ord::get_db_block] getInsts] {puts $f "[$i getName]\\t[[$i getMaster] getName]"}\nclose $f\n')
+    expected=json.loads(track(source/'resource-audit.json').read_text())['starting_cells']
+    actual=Counter(line.split()[-1] for line in (ROOT/(label+'-leaf-inventory.tsv')).read_text().splitlines())
+    def architecture(counts):
+        out=Counter()
+        for name,count in counts.items():
+            if name.startswith(('fakeram','DFF','SDFF','DLH','DLL','LATCH')):out[re.sub(r'_X\d+$','',name)]+=count
+        return out
+    before,after=architecture(expected),architecture(actual)
+    return dict(passed=before==after,source=str(source),expected=before,actual=after,
+                qualification='Exact storage/state inventory, drive variants normalized; physical buffer costs separate')
 
 def resume(spec):
     """New extracted-budget iteration from a sealed common-resource CTS DB."""

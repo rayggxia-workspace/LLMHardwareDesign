@@ -16,7 +16,7 @@ for p in sorted(base.iterdir()):
  if not (p/'spec.json').exists(): continue
  spec=json.load(open(p/'spec.json'))
  row={'spec':spec,'exit_code':(p/'exit-code.txt').read_text().strip() if (p/'exit-code.txt').exists() else None}
- for name in ['started.txt','finished.txt','allocation.txt','resource-audit.json','experiment.json','input-sha256.json','strict-pg.json','final-pg/strict-pg.json']:
+ for name in ['started.txt','finished.txt','allocation.txt','resource-audit.json','experiment.json','input-sha256.json','strict-pg.json','final-pg/strict-pg.json','layer-reservation.json','transparent-sta-validation.json','resource-qualification.json','full-hierarchy-quality.json']:
   f=p/name
   if f.exists():
    row[name]=json.load(open(f)) if f.suffix=='.json' else f.read_text()
@@ -30,13 +30,25 @@ for p in sorted(base.iterdir()):
  for f in (p/'flow/reports').rglob('6_finish.rpt') if (p/'flow/reports').exists() else []:
   row['final_report']=f.read_text()
  for f in p.glob('*-resource.json'): row[f.name]=json.load(open(f))
- for name in ['repair-input-audit.json','full-hierarchy-sta.log','external-pin-contract.json','final-pins.tsv']:
+ for name in ['repair-input-audit.json','full-hierarchy-sta.log']:
   f=p/name
   if f.exists():
    if f.suffix=='.json': row[name]=json.load(open(f))
-   elif name=='full-hierarchy-sta.log':
-    text=f.read_text(errors='replace');row[name]=text
-   else: row[name+'_sha256']=hashlib.sha256(f.read_bytes()).hexdigest()
+   else:
+    text=f.read_text(errors='replace');start=text.find('worst slack max')
+    row[name]=text[start:] if start>=0 else text[-12000:]
+    row[name+'_sha256']=hashlib.sha256(f.read_bytes()).hexdigest()
+    row['hierarchy_annotation_summary']=[line for line in text.splitlines() if any(s in line.lower() for s in ['annotated','warning','error','unconstrained','no clock'])][:60]
+ contract=p/'external-pin-contract.json';pins=p/'final-pins.tsv'
+ if contract.exists():
+  d=json.load(open(contract))
+  row['external_pin_contract']={'count':len(d),'canonical_sha256':hashlib.sha256(json.dumps(d,sort_keys=True,separators=(',',':')).encode()).hexdigest()}
+  if pins.exists():
+   lines=[line for line in pins.read_text().splitlines() if line.split('\t')[0] in d]
+   names={line.split('\t')[0] for line in lines}
+   row['actual_signal_pin_geometry']={'all_contract_names_present':names==set(d),'rows':len(lines),
+       'canonical_sha256':hashlib.sha256(('\n'.join(sorted(lines))+'\n').encode()).hexdigest(),
+       'raw_all_bterms_sha256':hashlib.sha256(pins.read_bytes()).hexdigest()}
  f=p/'output.sha256'
  if f.exists(): row['output_manifest_sha256']=hashlib.sha256(f.read_bytes()).hexdigest();row['output_manifest_entries']=len(f.read_text().splitlines())
  out[p.name]=row
