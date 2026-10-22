@@ -61,6 +61,7 @@ def execute(spec):
     elif spec['mode']=='matched': matched(spec)
     elif spec['mode']=='top': top(spec)
     elif spec['mode']=='views': view_probe(spec)
+    elif spec['mode']=='resume': resume(spec)
     else: raise ValueError('Not implemented: '+spec['mode'])
 
 LINKS={'ren':'act_ren','r_use':'computing','r_blk':'act_blk','r_blk2':'act_blk2',
@@ -359,3 +360,31 @@ def full_sta(parent,sources,kind):
     text+='report_check_types -violators -max_slew -max_capacitance -max_fanout -max_delay -min_delay -recovery -removal -min_period -digits 6 -no_line_splits\n'
     text+='check_setup -verbose\n'
     run_tcl('full-hierarchy-sta',text)
+
+def resume(spec):
+    """New extracted-budget iteration from a sealed common-resource CTS DB."""
+    source=Path(spec['source'])
+    assert (source/'exit-code.txt').read_text().strip()=='0'
+    manifest={line[2:]:h for h,line in (r.split(None,1) for r in (source/'output.sha256').read_text().splitlines())}
+    meta=json.loads((source/'experiment.json').read_text());suffix=Path(meta['result_relative'])
+    paths=[suffix/'4_cts.odb',suffix/'4_cts.sdc']+[Path(n) for n in
+        ['config.mk','boundary.sdc','elab.json','resource-audit.json','mapped.v']]
+    copies=[]
+    for relative in paths:
+        path=source/relative
+        assert digest(path)==manifest[relative.as_posix()]
+        dest=ROOT/relative;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(path,dest)
+        track(path);copies.append(dict(source=str(path),copy=str(dest),sha256=digest(path)))
+    margin=int(spec['cap_margin']);assert 0<=margin<100
+    config=(ROOT/'config.mk').read_text().replace(str(source),str(ROOT))
+    config,n=re.subn(r'^export CAP_MARGIN = \d+$','export CAP_MARGIN = '+str(margin),config,flags=re.M)
+    assert n==1
+    (ROOT/'config.mk').write_text(config)
+    meta.update(resume=dict(source=str(source),checkpoint='4_cts.odb',route_cap_margin=margin,
+        clock_io_load_unchanged=True,logic_resources_unchanged=True),cap_margin=margin)
+    (ROOT/'experiment.json').write_text(json.dumps(meta,indent=2)+'\n')
+    (ROOT/'checkpoint-copies.json').write_text(json.dumps(copies,indent=2)+'\n')
+    (ROOT/'input-sha256.json').write_text(json.dumps(INPUTS,indent=2)+'\n')
+    make_stages(ROOT/'config.mk',spec,['do-route','do-finish','do-generate_abstract'])
+    dest=ROOT/suffix
+    run_tcl('detail','read_db {'+str(dest/'6_final.odb')+'}\nwrite_abstract_lef -bloat_factor 0 {'+str(dest/(meta['top']+'.detailed.lef'))+'}\n')
