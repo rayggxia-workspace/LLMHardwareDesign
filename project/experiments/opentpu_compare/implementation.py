@@ -121,7 +121,8 @@ def matched(spec):
         text,ext=wrapper(top,ap,mp)
         (ROOT/'wrapper.v').write_text(text)
         commands+=['read_verilog wrapper.v']
-    commands+=['hierarchy -check -top '+top,'flatten','check -assert','write_json mapped-after.json',
+    # flatten adds two $scopeinfo metadata records, not physical cells.
+    commands+=['hierarchy -check -top '+top,'flatten','delete t:$scopeinfo','check -assert','write_json mapped-after.json',
                'write_verilog -noattr mapped.v']
     (ROOT/'assemble.ys').write_text('\n'.join(commands)+'\n')
     with (ROOT/'assemble.log').open('w') as f:
