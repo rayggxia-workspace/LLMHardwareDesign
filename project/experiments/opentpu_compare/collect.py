@@ -37,7 +37,7 @@ for p in sorted(base.iterdir()):
   if tables:
    total,body,vias=tables[-1]
    row['route_layer_wire_um']={layer:float(length) for layer,length in re.findall(r'Total wire length on LAYER (\w+) = ([\d.]+) um\.',body)}
-   row['route_layer_report']={'total_um':float(total),'vias':int(vias),'scope':'Final DRT signal-route table; per-layer lengths rounded to integer um; excludes special PG'}
+   row['route_layer_report']={'path':str(f.relative_to(p)),'total_um':float(total),'vias':int(vias),'scope':'Final DRT signal-route table; per-layer lengths rounded to integer um; excludes special PG'}
   row['drc_convergence']=[
       {'iteration':int(i),'kind':kind,'violations':int(v)} for i,kind,body,v in re.findall(r'Start (\d+)\w+ ([^\n]+?) iteration\.(.*?)Number of violations = (\d+)\.',f.read_text(),re.S)]
  for f in p.glob('*-resource.json'): row[f.name]=read_json(f)
@@ -84,7 +84,8 @@ for p in sorted(base.iterdir()):
       'full-hierarchy-quality.json','full-hierarchy-sta.log','structural-equivalence.json','logical-resource-inventory.json','stitch-validation.json','annotation-validation.json','joint-repair.json','grt-consistency.json','binary-observation.json','extracted-source-validation.json','extracted-eco-plan.json','extracted-eco-actions.tsv','extracted-before.rpt','extracted-eco-grt-estimates.rpt','final-pins.tsv'] if (p/name).exists()]
   selected+=[q for directory in [p,p/'final-pg'] for q in directory.glob('*-pg-access-selection.json')]
   selected+=list(p.glob('*-unannotated-connectivity.tsv'))
-  selected+=list((p/'flow/logs').rglob('6_report.json'))+list((p/'flow/logs').rglob('5_2_route.json'))+list((p/'flow/reports').rglob('6_finish.rpt'))
+  selected+=list((p/'flow/logs').rglob('6_report.json'))+list((p/'flow/logs').rglob('5_2_route.json'))+list((p/'flow/logs').rglob('5_2_route.log'))+list((p/'flow/reports').rglob('6_finish.rpt'))
+  selected+=sorted(set(p.glob('targeted-drive*.tsv'))|set(p.glob('macro-output-guards*.tsv'))|set(p.glob('joint-repair.tsv'))|set(p.glob('extracted-eco-actions.tsv')))
   row['collected_file_integrity']={str(q.relative_to(p)):manifest.get(str(q.relative_to(p)))==hashlib.sha256(q.read_bytes()).hexdigest() for q in selected}
  out[p.name]=row
 print(json.dumps(out))

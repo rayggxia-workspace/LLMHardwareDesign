@@ -52,6 +52,10 @@ for kind,name in selection.items():
         raise SystemExit('Incomplete extracted result: '+name)
     q=evaluate(row)
     if not q['passed']: raise SystemExit('Strict budget failed: '+name)
+    route=row['route_layer_report']
+    assert row['collected_file_integrity'].get(route['path']), 'Layer costs lack a sealed native route log: '+name
+    assert route['total_um']==q['signal_wire_um'] and route['vias']==q['signal_vias'], 'Native route table and metrics differ: '+name
+    assert abs(sum(row['route_layer_wire_um'].values())-route['total_um'])<=len(row['route_layer_wire_um']), 'Rounded layer lengths do not sum to the native total: '+name
     if kind.startswith('top_'):
         assert row.get('full-hierarchy-quality.json',{}).get('passed'), 'Full extracted hierarchy did not qualify: '+name
         assert row.get('strict-pg.json',{}).get('passed') and row.get('final-pg/strict-pg.json',{}).get('passed'), 'Native PG did not qualify: '+name
@@ -78,6 +82,7 @@ for kind,blocks in [('split',['act','mxu']),('merged',['merged'])]:
     classes={c:{quantity:sum(r.get('finish__design__instance__'+quantity+'__class:'+c,0) for r in component_rows)
                 for quantity in ['count','area']} for c in ['clock_buffer','clock_inverter','timing_repair_buffer','inverter']}
     layer_wire=top['record']['route_layer_wire_um']
+    private_layer_wire=dict(sum((Counter(rows[b]['record']['route_layer_wire_um']) for b in blocks),Counter()))
     costs[kind]=dict(
         implemented_leaf_area_um2=leaf+parent_cells,
         private_leaf_area_um2=leaf,parent_stdcell_area_um2=parent_cells,
@@ -93,6 +98,8 @@ for kind,blocks in [('split',['act','mxu']),('merged',['merged'])]:
         complete_setup_ws_ns=float(max_ws[1]),complete_hold_ws_ns=float(min_ws[1]),
         parent_macro_only_setup_ws_ns=top['quality']['setup_ns'],
         physical_cell_classification=classes,parent_signal_wire_by_layer_um=layer_wire,
+        private_signal_wire_by_layer_um=private_layer_wire,
+        total_signal_wire_by_layer_um=dict(Counter(private_layer_wire)+Counter(layer_wire)),
         parent_signal_wire_below_m10_percent=100*sum(v for k,v in layer_wire.items() if k!='metal10')/sum(layer_wire.values()))
 assert costs['split']['common_die_area_um2']==costs['merged']['common_die_area_um2']
 assert {rows[k]['record']['boundary_constraint_contract_sha256'] for k in rows}=={
