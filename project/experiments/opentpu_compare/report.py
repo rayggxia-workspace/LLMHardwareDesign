@@ -79,6 +79,22 @@ def main():
     roles = dict(selection)
     roles.update({key: data[key] for key in ['functional_proof', 'parent_functional_proof',
                                             'stitch_proof', 'inventory_proof', 'annotation_proof']})
+    wire_audit_table=''
+    if data.get('wire_audit_proof'):
+        roles['wire_audit_proof']=data['wire_audit_proof']
+        audit=records[data['wire_audit_proof']]['wire-audit-sources.json']
+        wire_audit_table=table(['实现','DRT 主表 µm','完整 ODB 复核 µm','DRT − ODB µm','实际有线路信号网'],[
+            [kind,f"{audit[kind]['native_drt_wire_um']:,.0f}",f"{audit[kind]['odb_signal_wire_um']:,.2f}",
+             f"{audit[kind]['drt_minus_odb_wire_um']:+,.2f}",f"{audit[kind]['final_signal_wired_net_count']:,}"]
+            for kind in selection])
+        wire_audit_table='<details><summary>完整最终 ODB 的独立线长复核</summary>'+wire_audit_table+(
+            '<p class="note">独立原生 report_wire_length 读取完整最终 ODB，核对保留线路也被计入。两种原生统计的实际差异均保留，1% 阈值只拦截明显成本漏计；主表始终使用统一 DRT 口径。该成本复核不改变零违例的物理、电气或时序门槛。</p></details>')
+    reuse=records[selection['top_split']].get('route-reuse.json')
+    reuse_note=(
+        f'<p>最终拆分候选从封存源做驱动规格修复；原生合法化后实际有 {reuse["changed_instances"]} 个单元改变规格或位置，'
+        f'清除其关联的 {reuse["cleared_regular_wires"]} 条普通信号线路，向详细路由器保留 {reuse["retained_incoming_regular_wires"]} 条既有线路。'
+        '这是详细路由的初始条件，路由器仍可修复任何网络；不宣称最终线路完全冻结。随后重新提取并执行同一套完整验收。</p>'
+        if reuse else '')
     for role, name in roles.items():
         record = records[name]
         evidence.append([role, name, record['scheduler'].split('|')[0],
@@ -119,6 +135,7 @@ td:not(:first-child){{font-variant-numeric:tabular-nums}}.scroll{{overflow:auto}
 <p>同一 openTPU 源 f237dab2f196855a59a083b1454786df8f01291f，small 参数 D32、MCOLS2、ROWS2、ACT_BLOCKS32、LANES4、DEPTH64、IMPL2、CL16、E0、SID0。合并直接连接并展开同一对已映射网表，关闭额外逻辑优化。初始 169109 个映射单元、37023 个 DFF、12 个 synthetic SRAM；非支持逻辑、状态及 SRAM 库存与功能锥证书通过。</p>
 <p>40 个外部端口、1662bit，2.5ns 时钟、0.5ns 输入输出预算、BUF_X4/Z 输入驱动、5fF 输出负载、50ps 时钟转换。拆分暴露 684bit 地址数据与 1bit computing 反馈，无新增流水、缓存或串行化。两组父层同为 1670×1670µm，实际外部引脚逐 bit 几何一致；ACT 位于 (80,80)、MXU 位于 (486.205,80)，合并位于 (80,80)，方向 R0。</p>
 <p>块内保留 M1–M9，详细 LEF 无 M10；父层信号可用 M2–M10，PG 使用 M1/M4/M7/M10，保留详细宏障碍并核对最终 VDD/VSS 连通。物理缓冲、驱动升级、时钟树等允许变化，全部计入面积与布线成本。</p>
+{reuse_note}
 <h2>完整系统结果</h2>{totals}
 <p class="note">叶单元面积含同一批 SRAM 和非填充支持单元。硬宏占地、父层 die 单独列示，不再叠加到宏内叶面积。信号线与通孔排除 special PG；父层包含外部 IO、时钟及块间连接，不能全算作 685bit ACT/MXU 边界互连。WNS 来自真实父层与子块网表、分层 SPEF 的完整路径分析，不能相加各块 WNS。</p>
 <p>拆分相对合并，块内信号线变化 {costs['split']['private_signal_wire_um']-costs['merged']['private_signal_wire_um']:+,.0f}µm，父层变化 {costs['split']['parent_signal_wire_um']-costs['merged']['parent_signal_wire_um']:+,.0f}µm，两部分合计变化 {costs['split']['total_signal_wire_um']-costs['merged']['total_signal_wire_um']:+,.0f}µm。划分收益须连同父层接入和修复开销一起判断。</p>
@@ -137,6 +154,7 @@ td:not(:first-child){{font-variant-numeric:tabular-nums}}.scroll{{overflow:auto}
 <details><summary>选定作业、实际 runner 与封存清单</summary>{evidence_table}</details>
 <details><summary>实际计算节点镜像与工具身份</summary>{tools}<p class="note">工具 ELF 以 SHA256 确定；OpenROAD 版本字符串为 unknown，不将官方 master 当作本机精确源码。Yosys 报告 0.68+post，git 版本未知；STA 为嵌入式。所有新 Slurm 作业实际 UNLIMITED，不设完成期限或耗时取消策略。</p></details>
 <p>证明和 STA 实际读取的网表、SPEF、SDC 摘要与对应源封存输出绑定；首次终态清单摘要保持不变，共享输入摘要一致。原始物理数据库与日志保存在获授权集群 <code>/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/</code>，仓库保留轻量回执、脚本和索引。</p>
+{wire_audit_table}
 <h2>适用范围</h2>
 <p>这是一个 small 参数、单 typical 角点、固定宏位置和外部引脚的工程对照，未做多布局、多种子或多工艺角点搜索，差值不能推广为普遍最优结论。synthetic SRAM 没有真实 GDS；上游 RTL 通用形式等价、生产签核与制造版 GDS 未完成。层次 STA 工具仍提示实验功能；共同 SDC 对 clk 的 input delay 被原生忽略，数据预算与时钟约束一致，未为消除提示修改某组约束。</p>
 <footer>冻结观测：{escape(snapshot['observed_utc'])}<br>输入快照 SHA256：<code>{data['input_snapshot_sha256']}</code><br>

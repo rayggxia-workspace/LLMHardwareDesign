@@ -7,7 +7,7 @@
 - 当前资料：项目说明 v1.0、专题研究文档、来源笔记，以及五个参考项目七个案例的布线分析包；三份 HTML 报告、llaccel 引擎内部分析及远程服务器规则已通过 [PR #4](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/4) 合入 `main`；工艺互连资料的逐层资源评估补充已一并提交
 - 已确认边界：研究对象和主要问题已写入项目说明；具体工艺、Block 资源、定制层集合和工具链未冻结
 - 关键限制：现有布线结果包含少量 RTL 片段，不含完整源工程、物理数据库、工具环境和日志，不能单靠本仓库复跑物理实现
-- 最新工程续记（2026-10-23 03:36 CST）：旧RC原生规格比较仅作选择依据；第21轮必须重新布线／提取，再检查全部setup／hold、电气与PG，不放宽验收。
+- 最新工程续记（2026-10-23 03:53 CST）：21继续全量DRT；另加复用候选89829，仅清除改变单元关联的2条线路，11952条既有线路保留到原生DRT输入，实际约30%中间违例0，仍待完整终态。功能89831／RC89832／完整ODB成本复核89833依赖排队，全部UNLIMITED。新增独立ODB复核防止漏计保留线路；尚未产生合格整机PPA。
 - 下一步：完成同资源块内和父层实际对照及违例收敛；项目登记／看板的既有管理员待办继续保留
 - 任务入口：[本仓库 Issues](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues)
 - 项目登记：[管理中心 PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) 待审查；合并前状态为 pending

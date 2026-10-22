@@ -18,6 +18,8 @@
 
 最新入口（2026-10-23 03:36 CST）：拆分20／89821自然COMPLETED0（1:02:26，UNLIMITED），DRC4771→211→106→12→2→2→0、天线0及最终PG通过。完整真实setup／hold +0.102314／+0.036146ns及电气通过；宏模型setup／hold +0.0754514／+0.0747274ns、最差cap +3.396215916fF，但act_data[145]的slew 209.263235ps超过199.000001ps上限10.263235ps，严格不合格。功能89822／RC覆盖89823均通过，不能抵消该接口失败。只读89824及规格比较89825定位place13151 BUF_X4；X8／X16旧RC均无电气违例且最差setup／hold相同。拆分21／89826于03:33:56 CST启动，runner6de7b3773398f15ef36362568977c541a01143e2，实际仅place13151 X4→X8，无新增缓冲／guardband；源时序复现、接线／合法化通过，已重新完整DRT。匹配21／13功能89827、RC覆盖89828依赖排队，runner46e6fdc57332467bd107b98b38b13a5200415c90，三项实际UNLIMITED。合并13继续作完整合格主对照；最终PPA仍待合格拆分和匹配证据。 恢复先collect／quality，来源匹配选择selection-split21-merged13.json；全部门槛通过后才compare／plot／report并做三图和HTML实际目视核验。失败则保留新终态、继续实际违例修复，不按耗时停止。当前工程commit 46e6fdc57332467bd107b98b38b13a5200415c90，实际作业runner按submission回执。以下续记是历史过程，不替代本条最新入口。
 
+最新补充（2026-10-23 03:53 CST）：增加独立线路复用候选top-split-reuse-20-01／89829，03:42:18 CST提交，16CPU、UNLIMITED，runneredc6479bbf993669aba7eae405ede1610baa538a。与21同从源20只改place13151 BUF_X4→X8；合法化后实际1个单元改变、2条关联普通线路清除，11952条既有普通线路保留到DRT输入，信号接线不变。原生DRT已推进至约30%，中间违例0，尚无终态资格；不宣称最终线路冻结，路由器仍可修复任何网络。现有21／89826继续自然运行。匹配复用候选／合并13的功能89831、RC覆盖89832、五个完整最终ODB线长复核89833依赖排队，runner401ce9bdd927d7483b24ede0803689f1ab447eae，均1CPU、UNLIMITED。 当前代码401ce9bdd927d7483b24ede0803689f1ab447eae，初始线路复用实际runner edc6479。恢复先collect／quality检查两条路线；复用候选必须带native-wire-reuse20-13-01完整ODB成本证明，再selection-reuse20-merged13.json→compare→plot→report，十一份来源／证明全部满足UNLIMITED、工具身份、封存与匹配来源。现有21继续自然运行；若某条路线合格不取消另一条有效作业。完整ODB成本API89830已通过，原生两种统计实际差异保留，1%只防成本漏计，不放宽电气／时序／物理验收。尚未生成最终对照／三图／HTML或做最终视觉QA。
+
 ## 管理员与审查待办
 
 - 登记：沿用[管理中心PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5)的pending证据，未声称registered。
