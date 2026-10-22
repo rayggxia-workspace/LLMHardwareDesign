@@ -11,3 +11,5 @@
 Issue15物理收敛不重复：最新观察PR17 head6b3fe103，split07/merged06仍full-hierarchy失败，12轮仅提交回执。实际终态继续由负责人处理。登记management-hub PR5 pending；本地无board.json及Projects工具，在线状态unverified/同步pending，管理员待指定。恢复先查实际远端状态，不将本文件视为看板同步。
 
 运行前进展：环境25个runtime wheel已逐源SHA核对、离线require-hashes安装成功，pip check/CPU原生Qwen3导入通过；6个数值协议测试及随机小模型196事件/异常恢复集成通过。源码/API独立审查已关闭8文件绑定和status schema问题，无阻塞项；官方真实权重尚未运行，先冻结干净源码。依赖安装曾遇D盘pycache长路径预编译警告（安装exit0），保留日志；后续统一-B，不更改系统配置。
+
+正式进展：源d63bc2d37a5f1457a4a170b17afba343fb54998d已上传，run-01/run-02均PASS且源/8模型文件前后不变。54数值正例、4状态负例、13720事件、1365边界比较、两次科学payload逐字节重放通过；全量独立审计通过。正式ZIP路径project/experiments/qwen3_trace/results/issue-23-run01/evidence.zip，350398bytes/SHA d9f6701fcea9553e557a63a718787ade5da908b44f43f2dae7e2701da7d5de76。上文“未执行”为准备阶段历史，当前真实模型已跑通；结果交付PR待创建/读回，整体目标仍active。恢复先核远端、读实际实验记录和归档索引，下一任务研究固定容量/端口/带宽下真实trace的公平调度/状态划分，不把本轮张量字节当硬件收益。

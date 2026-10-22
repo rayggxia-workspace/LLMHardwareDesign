@@ -20,3 +20,5 @@
 
 - 当前主线（用户2026-10-22明确）：[共同问题](RESEARCH_QUESTION.md)，模型驱动算子/Block划分及块内预连线/接口裕量，耦合块间物理约束。[Issue21/PR22](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/22)已提交待审查，形成官方架构证据、630调度账本、独立数值核与可解释反例；仍无最终划分或端到端硬件收益。正式benchmark允许少量有差异代表，首轮推理。
 - 接续优先级：可运行代表模型prefill/decode实际trace→具体bank/端口/状态模板→与Issue15物理证据校准→同资源端到端比较。细节以[划分方法](OPERATOR_BLOCK_PARTITION.md)和Issue为准。
+
+- 真实模型接续：[Issue23](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/23)已用固定Qwen3-0.6B权重跑通CPU FP32 prefill/decode；54数值对照、4状态错误负例、13720真实边界事件与两次重放通过。chunking缩小临时张量而同prefix持久KV不变，见[实际记录](experiments/issue-23-qwen3-real-trace.md)。尚无端到端硬件收益，下一步同trace约束bank/端口/带宽并扩差异架构。

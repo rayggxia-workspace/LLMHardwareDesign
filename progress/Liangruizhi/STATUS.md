@@ -14,4 +14,4 @@
 - 当前成果与后续：[实验记录](../../docs/experiments/issue-21-operator-partition.md)／[交接](../../docs/handoffs/2026-10-22-issue-21-operator-partition.md)。研究重点转为代表模型实际trace、存储/端口/状态契约和受控划分；当前微实验不证明端到端/PPA。继续核对Issue15最新结果而不接管。
 - 用户授权：常规方案自主决定并记录理由/失败，重要结果汇报；原则性或不能解除的关键阻塞才提问。用户清除旧目标后，新算子/Block划分研究目标已成功登记并核验active；持续推进，阶段交付不虚标整体目标完成。
 
-- 当前任务：[Issue23](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/23)，task/23-qwen3-trace，独立D:/Projects/LLMHardwareDesign-inference，base PR22 adf077d04a5f0a3cc2ae13b77f16371bb637591d。固定Qwen3-0.6B权重/CPU FP32/输入/阈值合同已写；依赖安装与下载、数值和轨迹程序准备中，尚未实际运行模型。新任务远端分支已建，代码上传/正式运行/PR待后续真实回执；看板未核验/同步pending。
+- 当前任务：[Issue23](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/23)，task/23-qwen3-trace，独立D:/Projects/LLMHardwareDesign-inference，base PR22 adf077d04a5f0a3cc2ae13b77f16371bb637591d。源码d63bc2d37a5f1457a4a170b17afba343fb54998d已上传且实际运行两次；54数值正例/4状态负例、35调用13720事件与1365选定边界比较通过，科学payload逐字节重放一致。真实完整Qwen3权重CPU FP32推理已跑通，尚非硬件PPA/模型质量benchmark。成果归档350398bytes、SHA d9f6701fcea9553e557a63a718787ade5da908b44f43f2dae7e2701da7d5de76；结果交付PR待后续实际回执，看板未核验/同步pending。

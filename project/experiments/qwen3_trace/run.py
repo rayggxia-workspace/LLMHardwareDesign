@@ -183,7 +183,8 @@ def main():
         manifest["artifacts"] = {p.name: sha256(p) for p in sorted(args.out.iterdir())
                                   if p.is_file() and p.name != "manifest.json"}
         save(args.out / "manifest.json", manifest)
+    return status
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(0 if main() == "PASS" else 1)
