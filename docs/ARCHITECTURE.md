@@ -18,6 +18,7 @@
 | `.github/`、`config/`、`scripts/` | 协作模板、状态配置和管理结构检查 |
 | `project/experiments/frozen_routing/` | 本项目抽象冻结连接模型、路由基线、独立验证、配置和轻量结果 |
 | `project/experiments/endpoint_ablation/` | Issue13固定最大库存、端点约束overlay、配对消融与独立证据分类 |
+| `project/experiments/macro_endpoints/` | Issue16真实普通LEF只读捕获、保留PORT/PG/OBS的原始几何、哈希索引和离线重放 |
 
 Issue #11将本轮Python研究工具正式放入 `project/experiments/frozen_routing/`。未来硬件／映射与物理实现目录仍由相关Issue明确，不将全部业务代码放个人 `work/`。
 
@@ -27,11 +28,12 @@ Issue #11将本轮Python研究工具正式放入 `project/experiments/frozen_rou
 - 管理结构检查：`python scripts/check_project.py`（Python 3.9+，无第三方包）。
 - 本次用户授权的报告更新检查：`python work/YUZE-LU/3/sync_reports.py`（Python 3.9+，需要 `beautifulsoup4`）；只读核验两份报告的资源、锚点、清单及图片展示状态。该任务脚本不是例行维护入口；再次同步需用户明确要求，并传入 `--sync --source <源报告目录>`。
 - 初次接入的来源记录见 `docs/DATA_PROVENANCE.md`；后续例行检查不覆盖 `ref-project/`。
-- 本机业务检查：`.\.venv\Scripts\python.exe scripts/check_research.py`，运行frozen_routing和endpoint_ablation两套检查。
+- 本机业务检查：`.\.venv\Scripts\python.exe scripts/check_research.py`，运行frozen_routing、endpoint_ablation和macro_endpoints三套检查。
 - 冻结源码后的本机实验：`.\.venv\Scripts\python.exe project/experiments/frozen_routing/run.py --out project/experiments/frozen_routing/local_runs/<新尝试名>`。默认拒绝dirty source和已存在输出目录。
 - 证据核对及确定性重放：`.\.venv\Scripts\python.exe project/experiments/frozen_routing/verify.py <运行目录> --replay`；图表：`.\.venv\Scripts\python.exe project/experiments/frozen_routing/report.py <运行目录> --out <新图表目录>`。
 - 现有D盘Python创建项目内venv，复用已安装包的环境事实写manifest；需要NumPy，绘图需要Matplotlib。核心连接算法只用标准库。
 - Issue13配对消融：`python project/experiments/endpoint_ablation/run_ablation.py --out project/experiments/endpoint_ablation/local_runs/<新尝试名>`；读回：`python project/experiments/endpoint_ablation/verify_ablation.py <运行目录> --replay`。方法和归档命令见该目录README。
+- Issue16真实LEF捕获及端点导出：先提交清洁源码，运行`macro_endpoints/capture.py`、`export.py`、`verify.py --replay`、`report.py`及`archive.py`；完整参数、D盘缓存和离线恢复命令见[工具说明](../project/experiments/macro_endpoints/README.md)。数据保存原始微米与精确DBU，PORT、PG、OBS均不省略；并不代表已验证合法接入点。
 - 本用户任务的临时文件与可指定缓存，按进程将TEMP/TMP/TMPDIR/PYTHONPYCACHEPREFIX/MPLCONFIGDIR设至`D:/Projects/Codex/issue-13-endpoint-ablation/`对应子目录；正式成果保留项目目录，不改系统变量。其他平台按实际用户规则选择目录。
 - 本实验没有RTL／周期仿真或物理PPA校准。本机尚无经验证可用的EDA工具链；Issue7的集群实验与限制以对应PR/记录为准，不能由当前结构或软件测试代替验收。
 
