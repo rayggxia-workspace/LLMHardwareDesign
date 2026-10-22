@@ -21,7 +21,7 @@ def execute(root,spec,meta):
         script='source $::env(SCRIPTS_DIR)/load.tcl\n'
         script+='load_design '+previous+'.odb '+previous+'.sdc\n'
         script+='set_propagated_clock [all_clocks]\n'
-        script+='set_routing_layers -signal metal2-metal10 -clock metal2-metal10\n'
+        script+='set_routing_layers -signal metal2-metal10 -clock metal4-metal10\n'
         script+='set_placement_padding -global -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)\n'
         # Reconstruct genuine global routes and RC after every reload. Do not
         # reuse estimates from the previous, mutated in-memory design.
@@ -43,7 +43,10 @@ def execute(root,spec,meta):
         body+='global_route -start_incremental\ndetailed_placement_helper\ncheck_placement -verbose\nglobal_route -end_incremental\n'
         run(name,body);previous=name
         name='joint-'+str(phase)+'-electrical'
-        body='set llhd_drive_root {'+str(root)+'}\nset llhd_drive_rounds '+str(spec['targeted_drive_rounds'])+'\n'
+        # insert_buffer only calls initBlock in this binary. Initialize the
+        # complete resizer/placement state explicitly after a fresh reload.
+        body='if {[llength [info commands rsz::resize_slack_preamble]]!=1} {error {Missing native resizer preamble}}\nrsz::resize_slack_preamble\n'
+        body+='set llhd_drive_root {'+str(root)+'}\nset llhd_drive_rounds '+str(spec['targeted_drive_rounds'])+'\n'
         body+='set llhd_drive_phase joint'+str(phase)+'\nset llhd_drive_guardband 1\nset llhd_enable_macro_guards 1\n'
         body+='source {'+str(guard_state)+'}\nsource {'+str(root/'runner/macro_guard.tcl')+'}\n'
         body+='source {'+str(root/'runner/targeted_drive.tcl')+'}\n'
