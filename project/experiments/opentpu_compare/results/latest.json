@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-22T13:15:06.400233+00:00",
+  "observed_utc": "2026-10-22T13:33:19.460047+00:00",
   "attempts": {
     "annotation-api-01": {
       "spec": {
@@ -16524,6 +16524,11 @@
           "qualification": "Exact storage/state inventory, drive variants normalized; physical buffer costs separate"
         }
       },
+      "pre-drt-electrical-quality.json": {
+        "passed": true,
+        "repair_rounds": 3,
+        "scope": "Extra route-aware repair after standard GRT timing optimization; same external budgets"
+      },
       "pin-placement-quality.json": {
         "passed": true,
         "count": 1662,
@@ -16536,16 +16541,16 @@
         "scope": "Actual CTS ODB BPin layer and full box; all 1662 signal bits exactly once, requested location within track snapping tolerance. Pair must match exact canonical geometry before route."
       },
       "last_flow_log": {
-        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-14/flow/logs/nangate45/opentpu_top_merged/base/joint-3-drive-2.log",
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-14/flow/logs/nangate45/opentpu_top_merged/base/5_2_route.tmp.log",
         "tail": [
-          "max displacement            0.2 u",
-          "original HPWL         2557766.0 u",
-          "legalized HPWL        2557766.2 u",
-          "delta HPWL                    0 %",
-          "",
-          "write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-14/flow/results/nangate45/opentpu_top_merged/base/joint-3-drive-2.odb",
-          "write_sdc -no_timestamp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-14/flow/results/nangate45/opentpu_top_merged/base/joint-3-drive-2.sdc",
-          "Elapsed time: 0:56.05[h:]min:sec. CPU time: user 81.43 sys 1.55 (148%). Peak memory: 3534852KB."
+          "[INFO DRT-0182] Complete track assignment.",
+          "[INFO DRT-0267] cpu time = 00:00:39, elapsed time = 00:00:07, memory = 3675.22 (MB), peak = 3989.22 (MB)",
+          "[INFO DRT-0187] Start routing data preparation.",
+          "[INFO DRT-0267] cpu time = 00:00:00, elapsed time = 00:00:00, memory = 3675.22 (MB), peak = 3989.22 (MB)",
+          "[INFO DRT-0194] Start detail routing.",
+          "[INFO DRT-0195] Start 0th optimization iteration.",
+          "    Completing 10% with 0 violations.",
+          "    elapsed time = 00:03:21, memory = 4314.77 (MB)."
         ]
       },
       "job_log_tail": [
@@ -16623,6 +16628,20 @@
           "hold_ns": 0.053005103,
           "electrical_passed": false,
           "drive_checkpoints": 20
+        },
+        {
+          "phase": 3,
+          "setup_ns": 0.0497129,
+          "hold_ns": 0.057406969,
+          "electrical_passed": false,
+          "drive_checkpoints": 4
+        },
+        {
+          "phase": 4,
+          "setup_ns": 0.109343871,
+          "hold_ns": 0.056568198,
+          "electrical_passed": true,
+          "drive_checkpoints": 10
         }
       ],
       "physical_repair_actions": {
@@ -16631,7 +16650,9 @@
           "rows": [
             "0\t0.055283334\t0.064556748\tFalse",
             "1\t0.066318288\t0.060369156\tFalse",
-            "2\t0.12488544\t0.053005103\tFalse"
+            "2\t0.12488544\t0.053005103\tFalse",
+            "3\t0.0497129\t0.057406969\tFalse",
+            "4\t0.109343871\t0.056568198\tTrue"
           ]
         },
         "macro-output-guards-initial.tsv": {
@@ -16981,6 +17002,55 @@
           "rows": []
         },
         "macro-output-guards-joint3_drive2.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
+        },
+        "macro-output-guards-joint3_drive3.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
+        },
+        "macro-output-guards-joint4_drive0.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
+        },
+        "macro-output-guards-joint4_drive1.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
+        },
+        "macro-output-guards-joint4_drive2.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": [
+            "0\tu_merged/t_raddr[60]\tllhd_macro_guard_67\tBUF_X2\tleft\t77.24\t810.17"
+          ]
+        },
+        "macro-output-guards-joint4_drive3.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
+        },
+        "macro-output-guards-joint4_drive4.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": [
+            "0\tu_merged/t_waddr[92]\tllhd_macro_guard_68\tBUF_X2\tleft\t77.24\t935.05",
+            "0\tu_merged/t_waddr[30]\tllhd_macro_guard_69\tBUF_X2\tleft\t77.24\t896.97"
+          ]
+        },
+        "macro-output-guards-joint4_drive5.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
+        },
+        "macro-output-guards-joint4_drive6.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
+        },
+        "macro-output-guards-joint4_drive7.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
+        },
+        "macro-output-guards-joint4_drive8.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
+        },
+        "macro-output-guards-joint4_drive9.tsv": {
           "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
           "rows": []
         },
@@ -17934,6 +18004,83 @@
             "0\tplace11090\tBUF_X1\tBUF_X2",
             "0\tplace11743\tBUF_X1\tBUF_X2"
           ]
+        },
+        "targeted-drive-joint3_drive3.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": []
+        },
+        "targeted-drive-joint4_drive0.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\twire9397\tBUF_X16\tBUF_X32",
+            "0\twire9395\tBUF_X8\tBUF_X16"
+          ]
+        },
+        "targeted-drive-joint4_drive1.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\twire13852\tBUF_X8\tBUF_X32",
+            "0\twire15511\tBUF_X4\tBUF_X8",
+            "0\twire13857\tBUF_X8\tBUF_X16",
+            "0\tplace10148\tBUF_X1\tBUF_X2"
+          ]
+        },
+        "targeted-drive-joint4_drive2.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\twire15512\tBUF_X4\tBUF_X16",
+            "0\tplace12343\tBUF_X2\tBUF_X4"
+          ]
+        },
+        "targeted-drive-joint4_drive3.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\twire13115\tBUF_X4\tBUF_X8",
+            "0\tplace11070\tBUF_X1\tBUF_X2"
+          ]
+        },
+        "targeted-drive-joint4_drive4.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\twire3723\tBUF_X4\tBUF_X16",
+            "0\twire13814\tBUF_X4\tBUF_X16",
+            "0\twire13316\tBUF_X4\tBUF_X8",
+            "0\twire15491\tBUF_X4\tBUF_X8",
+            "0\twire15312\tBUF_X8\tBUF_X16",
+            "0\twire13321\tBUF_X4\tBUF_X8"
+          ]
+        },
+        "targeted-drive-joint4_drive5.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\twire12957\tBUF_X4\tBUF_X8",
+            "0\twire12972\tBUF_X4\tBUF_X8",
+            "0\tplace11545\tBUF_X2\tBUF_X4"
+          ]
+        },
+        "targeted-drive-joint4_drive6.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\twire13284\tBUF_X4\tBUF_X8",
+            "0\twire15341\tBUF_X4\tBUF_X8"
+          ]
+        },
+        "targeted-drive-joint4_drive7.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\twire14694\tBUF_X8\tBUF_X16",
+            "0\twire15475\tBUF_X4\tBUF_X8"
+          ]
+        },
+        "targeted-drive-joint4_drive8.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\twire14694\tBUF_X16\tBUF_X32"
+          ]
+        },
+        "targeted-drive-joint4_drive9.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": []
         }
       },
       "boundary_constraint_contract_sha256": "b08d83cc225c1753aee3027d6c97e296bc25d4cf9d5cdd7ffd0b4efc6694f044",
@@ -17941,7 +18088,7 @@
         "count": 1662,
         "canonical_sha256": "f098a67a387ac43e41383f3df5d960806327637958075aa348ab4f6fc16134e9"
       },
-      "scheduler": "89776|RUNNING|0:0|01:11:01|UNLIMITED|16|node3"
+      "scheduler": "89776|RUNNING|0:0|01:29:15|UNLIMITED|16|node3"
     },
     "top-merged-extracted-15": {
       "spec": {
@@ -18662,14 +18809,14 @@
       "last_flow_log": {
         "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-extracted-16/flow/logs/nangate45/opentpu_top_merged/base/5_2_route.tmp.log",
         "tail": [
-          "[INFO DRT-0184] Done with 26726 vertical wires in 12 frboxes and 34564 horizontal wires in 12 frboxes.",
-          "[INFO DRT-0186] Done with 3926 vertical wires in 12 frboxes and 2571 horizontal wires in 12 frboxes.",
-          "[INFO DRT-0182] Complete track assignment.",
-          "[INFO DRT-0267] cpu time = 00:00:34, elapsed time = 00:00:06, memory = 3760.41 (MB), peak = 4024.41 (MB)",
-          "[INFO DRT-0187] Start routing data preparation.",
-          "[INFO DRT-0267] cpu time = 00:00:00, elapsed time = 00:00:00, memory = 3760.41 (MB), peak = 4024.41 (MB)",
-          "[INFO DRT-0194] Start detail routing.",
-          "[INFO DRT-0195] Start 0th optimization iteration."
+          " metal7     1438",
+          " metal8      780",
+          " metal9      254",
+          "----------------",
+          "       54227",
+          "",
+          "",
+          "[INFO DRT-0195] Start 1st optimization iteration."
         ]
       },
       "job_log_tail": [
@@ -18742,7 +18889,7 @@
         "count": 1662,
         "canonical_sha256": "f098a67a387ac43e41383f3df5d960806327637958075aa348ab4f6fc16134e9"
       },
-      "scheduler": "89786|RUNNING|0:0|00:03:14|UNLIMITED|16|node3"
+      "scheduler": "89786|RUNNING|0:0|00:21:28|UNLIMITED|16|node3"
     },
     "top-merged-place-05": {
       "spec": {
@@ -24570,15 +24717,16 @@
         "scope": "Actual CTS ODB BPin layer and full box; all 1662 signal bits exactly once, requested location within track snapping tolerance. Pair must match exact canonical geometry before route."
       },
       "last_flow_log": {
-        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/flow/logs/nangate45/opentpu_top_split/base/joint-3-drive-3.log",
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/flow/logs/nangate45/opentpu_top_split/base/joint-5-native-electrical.log",
         "tail": [
-          "read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
-          "read_liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act/llhd_opentpu_act.lib",
-          "read_liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu/llhd_opentpu_mxu.lib",
-          "read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/flow/results/nangate45/opentpu_top_split/base/joint-3-drive-2.odb",
-          "read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/flow/results/nangate45/opentpu_top_split/base/joint-3-drive-2.sdc",
-          "source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl",
-          "[INFO DRT-0149] Reading tech and libs."
+          "#stdCellPinCnt         = 20239",
+          "#instTermValidViaApCnt = 0",
+          "#macroGenAp            = 6064",
+          "#macroValidPlanarAp    = 5347",
+          "#macroValidViaAp       = 1794",
+          "#macroNoAp             = 0",
+          "[INFO DRT-0166] Complete pin access.",
+          "[INFO DRT-0267] cpu time = 00:00:20, elapsed time = 00:00:07, memory = 2379.22 (MB), peak = 2379.22 (MB)"
         ]
       },
       "job_log_tail": [
@@ -24656,6 +24804,20 @@
           "hold_ns": 0.044147409,
           "electrical_passed": false,
           "drive_checkpoints": 15
+        },
+        {
+          "phase": 3,
+          "setup_ns": -0.072843067,
+          "hold_ns": 0.031619873,
+          "electrical_passed": true,
+          "drive_checkpoints": 6
+        },
+        {
+          "phase": 4,
+          "setup_ns": -0.108481668,
+          "hold_ns": 0.044253215,
+          "electrical_passed": true,
+          "drive_checkpoints": 10
         }
       ],
       "physical_repair_actions": {
@@ -24664,7 +24826,9 @@
           "rows": [
             "0\t-0.103588693\t0.006776746\tFalse",
             "1\t-0.111765042\t0.006693868\tFalse",
-            "2\t-0.046742834\t0.044147409\tFalse"
+            "2\t-0.046742834\t0.044147409\tFalse",
+            "3\t-0.072843067\t0.031619873\tTrue",
+            "4\t-0.108481668\t0.044253215\tTrue"
           ]
         },
         "macro-output-guards-initial.tsv": {
@@ -25143,6 +25307,65 @@
           "rows": [
             "0\tu_mxu/t_waddr[62]\tllhd_macro_guard_211\tBUF_X2\tleft\t483.445\t551.45"
           ]
+        },
+        "macro-output-guards-joint3_drive3.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
+        },
+        "macro-output-guards-joint3_drive4.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
+        },
+        "macro-output-guards-joint3_drive5.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
+        },
+        "macro-output-guards-joint4_drive0.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": [
+            "0\tu_mxu/t_waddr[4]\tllhd_macro_guard_212\tBUF_X2\tleft\t483.445\t595.69",
+            "0\tu_mxu/act_grp[1]\tllhd_macro_guard_213\tBUF_X2\tleft\t483.445\t420.97"
+          ]
+        },
+        "macro-output-guards-joint4_drive1.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
+        },
+        "macro-output-guards-joint4_drive2.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": [
+            "0\tu_mxu/t_waddr[28]\tllhd_macro_guard_214\tBUF_X2\tleft\t483.445\t610.81"
+          ]
+        },
+        "macro-output-guards-joint4_drive3.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
+        },
+        "macro-output-guards-joint4_drive4.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
+        },
+        "macro-output-guards-joint4_drive5.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": [
+            "0\tu_act/r_data[387]\tllhd_macro_guard_215\tBUF_X2\tbottom\t210.195\t76.6"
+          ]
+        },
+        "macro-output-guards-joint4_drive6.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
+        },
+        "macro-output-guards-joint4_drive7.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
+        },
+        "macro-output-guards-joint4_drive8.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
+        },
+        "macro-output-guards-joint4_drive9.tsv": {
+          "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+          "rows": []
         },
         "targeted-drive-initial.tsv": {
           "header": "round\tinstance\tbefore\tafter",
@@ -26049,6 +26272,103 @@
           "rows": [
             "0\twire16614\tBUF_X4\tBUF_X8"
           ]
+        },
+        "targeted-drive-joint3_drive3.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\twire4932\tBUF_X4\tBUF_X16",
+            "0\twire15637\tBUF_X4\tBUF_X8"
+          ]
+        },
+        "targeted-drive-joint3_drive4.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\tplace13836\tBUF_X1\tBUF_X2",
+            "0\twire18676\tBUF_X4\tBUF_X8",
+            "0\tplace14155\tBUF_X1\tBUF_X2",
+            "0\tinput31\tBUF_X1\tBUF_X2",
+            "0\twire15423\tBUF_X4\tBUF_X8"
+          ]
+        },
+        "targeted-drive-joint3_drive5.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": []
+        },
+        "targeted-drive-joint4_drive0.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\tplace13497\tBUF_X1\tBUF_X8",
+            "0\twire15858\tBUF_X4\tBUF_X8"
+          ]
+        },
+        "targeted-drive-joint4_drive1.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\tplace13441\tBUF_X1\tBUF_X8",
+            "0\twire15707\tBUF_X4\tBUF_X8",
+            "0\twire16850\tBUF_X4\tBUF_X8",
+            "0\twire16693\tBUF_X4\tBUF_X8",
+            "0\tplace13463\tBUF_X1\tBUF_X2",
+            "0\twire4822\tBUF_X4\tBUF_X8"
+          ]
+        },
+        "targeted-drive-joint4_drive2.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\twire16518\tBUF_X4\tBUF_X16",
+            "0\tplace13372\tBUF_X2\tBUF_X8",
+            "0\twire18675\tBUF_X4\tBUF_X16"
+          ]
+        },
+        "targeted-drive-joint4_drive3.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\twire18131\tBUF_X4\tBUF_X8",
+            "0\twire16021\tBUF_X4\tBUF_X8"
+          ]
+        },
+        "targeted-drive-joint4_drive4.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\twire15511\tBUF_X4\tBUF_X16",
+            "0\tplace10790\tBUF_X1\tBUF_X2"
+          ]
+        },
+        "targeted-drive-joint4_drive5.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\tplace13521\tBUF_X1\tBUF_X8",
+            "0\twire18656\tBUF_X4\tBUF_X16"
+          ]
+        },
+        "targeted-drive-joint4_drive6.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\tllhd_macro_guard_211\tBUF_X2\tBUF_X8",
+            "0\twire4910\tBUF_X8\tBUF_X16",
+            "0\twire18421\tBUF_X4\tBUF_X8"
+          ]
+        },
+        "targeted-drive-joint4_drive7.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\twire4960\tBUF_X4\tBUF_X16",
+            "0\twire16249\tBUF_X8\tBUF_X16",
+            "0\twire18135\tBUF_X4\tBUF_X8",
+            "0\toutput1179\tBUF_X1\tBUF_X2"
+          ]
+        },
+        "targeted-drive-joint4_drive8.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": [
+            "0\tplace11394\tBUF_X2\tBUF_X8",
+            "0\twire15400\tBUF_X4\tBUF_X8",
+            "0\twire18611\tBUF_X4\tBUF_X8"
+          ]
+        },
+        "targeted-drive-joint4_drive9.tsv": {
+          "header": "round\tinstance\tbefore\tafter",
+          "rows": []
         }
       },
       "boundary_constraint_contract_sha256": "b08d83cc225c1753aee3027d6c97e296bc25d4cf9d5cdd7ffd0b4efc6694f044",
@@ -26056,7 +26376,7 @@
         "count": 1662,
         "canonical_sha256": "f098a67a387ac43e41383f3df5d960806327637958075aa348ab4f6fc16134e9"
       },
-      "scheduler": "89777|RUNNING|0:0|01:10:57|UNLIMITED|16|node4"
+      "scheduler": "89777|RUNNING|0:0|01:29:11|UNLIMITED|16|node4"
     },
     "top-split-extracted-15": {
       "spec": {
@@ -26245,14 +26565,14 @@
       "last_flow_log": {
         "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-15/flow/logs/nangate45/opentpu_top_split/base/5_2_route.tmp.log",
         "tail": [
-          "    Completing 50% with 2737 violations.",
-          "    elapsed time = 00:13:03, memory = 4606.07 (MB).",
-          "    Completing 60% with 2440 violations.",
-          "    elapsed time = 00:14:13, memory = 4388.07 (MB).",
-          "    Completing 70% with 1456 violations.",
-          "    elapsed time = 00:17:46, memory = 4468.07 (MB).",
-          "    Completing 80% with 1385 violations.",
-          "    elapsed time = 00:19:45, memory = 4382.07 (MB)."
+          "    Completing 50% with 15 violations.",
+          "    elapsed time = 00:00:05, memory = 4582.38 (MB).",
+          "    Completing 60% with 15 violations.",
+          "    elapsed time = 00:03:14, memory = 4582.38 (MB).",
+          "    Completing 70% with 15 violations.",
+          "    elapsed time = 00:03:14, memory = 4582.38 (MB).",
+          "    Completing 80% with 15 violations.",
+          "    elapsed time = 00:03:15, memory = 4582.38 (MB)."
         ]
       },
       "job_log_tail": [
@@ -26337,7 +26657,7 @@
         "count": 1662,
         "canonical_sha256": "f098a67a387ac43e41383f3df5d960806327637958075aa348ab4f6fc16134e9"
       },
-      "scheduler": "89782|RUNNING|0:0|00:47:47|UNLIMITED|16|node4"
+      "scheduler": "89782|RUNNING|0:0|01:06:01|UNLIMITED|16|node4"
     },
     "top-split-place-05": {
       "spec": {
