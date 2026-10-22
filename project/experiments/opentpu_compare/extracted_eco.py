@@ -59,10 +59,12 @@ def execute(spec):
             subprocess.run(command+['RUN_SCRIPT='+str(path),'RUN_LOG_NAME_STEM='+name,'run'],stdout=f,stderr=subprocess.STDOUT,check=True)
 
     report=ROOT/'extracted-before.rpt'
+    setup_report=ROOT/'extracted-setup-before.rpt'
     run('extracted-inspect','report_worst_slack -max -digits 9 > {'+str(report)+'}\n'
         'report_worst_slack -min -digits 9 >> {'+str(report)+'}\n'
         'report_check_types -max_capacitance -max_slew -max_count 1000 -digits 9 -no_line_splits >> {'+str(report)+'}\n'
-        'report_checks -path_delay min -group_path_count 100 -endpoint_path_count 1 -digits 9 -format full_clock_expanded >> {'+str(report)+'}\n')
+        'report_checks -path_delay min -group_path_count 100 -endpoint_path_count 1 -digits 9 -format full_clock_expanded >> {'+str(report)+'}\n'
+        'report_checks -path_delay max -group_path_count 100 -endpoint_path_count 1 -digits 9 -format full_clock_expanded > {'+str(setup_report)+'}\n')
     metrics=json.loads(sealed(Path(str(relative).replace('/results/','/logs/'))/'6_report.json').read_text())
     observed=[float(re.search(r'worst slack '+delay+r'\s+([-+0-9.eE]+)',report.read_text())[1]) for delay in ['max','min']]
     expected=[metrics['finish__timing__'+kind+'__ws'] for kind in ['setup','hold']]
@@ -71,8 +73,13 @@ def execute(spec):
         observed_macro_wns_ns=observed,expected_macro_wns_ns=expected,tolerance_ns=1e-6),indent=2)+'\n')
     assert reproduced, 'Reloaded extracted RC does not reproduce source timing'
     paths=re.findall(r'Startpoint:.*?slack \((?:MET|VIOLATED)\)',report.read_text(),re.S)
-    inputs=sorted({re.search(r'^Startpoint:\s+(\S+)',p)[1] for p in paths if p.endswith('(VIOLATED)') and '(input port' in p.split('Endpoint:')[0]})
+    hold_guardband=float(spec.get('extracted_hold_guardband_ns',0))
+    assert 0<=hold_guardband<=.1, 'Unexpected input hold optimization reserve'
+    inputs=sorted({re.search(r'^Startpoint:\s+(\S+)',p)[1] for p in paths
+        if '(input port' in p.split('Endpoint:')[0] and
+        (p.endswith('(VIOLATED)') or float(re.search(r'([-+0-9.eE]+)\s+slack \((?:MET|VIOLATED)\)$',p)[1])<hold_guardband)})
     (ROOT/'extracted-eco-plan.json').write_text(json.dumps(dict(source=str(source),hold_input_guards=inputs,
+        hold_guardband_ns=hold_guardband,
         drive_guardband=bool(spec.get('extracted_drive_guardband')),
         repeaters=spec.get('extracted_repeaters',[]),replacements=spec.get('extracted_replacements',[])),indent=2)+'\n')
     if spec.get('extracted_inspect_only'):return

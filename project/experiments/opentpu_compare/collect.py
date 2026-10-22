@@ -86,7 +86,7 @@ for p in sorted(base.iterdir()):
   row['sealed_artifact_sha256']={name:manifest[name] for name in sorted(artifacts) if name in manifest}
   selected=[p/name for name in ['spec.json','experiment.json','input-sha256.json','input-trace-status.json','boundary.sdc','external-pin-contract.json','pin-placement-quality.json','pre-drt-electrical-quality.json',
       'resource-qualification.json','layer-reservation.json','strict-pg.json','final-pg/strict-pg.json',
-      'full-hierarchy-quality.json','full-hierarchy-sta.log','structural-equivalence.json','logical-resource-inventory.json','stitch-validation.json','annotation-validation.json','joint-repair.json','grt-consistency.json','binary-observation.json','extracted-source-validation.json','extracted-eco-plan.json','extracted-eco-actions.tsv','extracted-before.rpt','extracted-eco-grt-estimates.rpt','final-pins.tsv'] if (p/name).exists()]
+      'full-hierarchy-quality.json','full-hierarchy-sta.log','structural-equivalence.json','logical-resource-inventory.json','stitch-validation.json','annotation-validation.json','joint-repair.json','grt-consistency.json','binary-observation.json','extracted-source-validation.json','extracted-eco-plan.json','extracted-eco-actions.tsv','extracted-before.rpt','extracted-setup-before.rpt','extracted-eco-grt-estimates.rpt','final-pins.tsv'] if (p/name).exists()]
   selected+=[q for directory in [p,p/'final-pg'] for q in directory.glob('*-pg-access-selection.json')]
   selected+=list(p.glob('*-unannotated-connectivity.tsv'))
   selected+=list((p/'flow/logs').rglob('6_report.json'))+list((p/'flow/logs').rglob('5_2_route.json'))+list((p/'flow/logs').rglob('5_2_route.log'))+list((p/'flow/reports').rglob('6_finish.rpt'))
