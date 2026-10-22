@@ -22,7 +22,15 @@ assert inventory.get('exit_code')=='0' and Path(inventory['spec']['inventory_pro
 assert all(inventory.get('logical-resource-inventory.json',{}).get(k,{}).get('equal') for k in ['act','mxu','merged']), 'Logic/state/SRAM resources changed'
 stock=inventory['logical-resource-inventory.json']
 assert Counter(stock['act']['physical'])+Counter(stock['mxu']['physical'])==Counter(stock['merged']['physical']), 'Split/merged non-support resource stock differs'
-for name in list(selection.values())+[definition[k] for k in ['functional_proof','parent_functional_proof','stitch_proof','inventory_proof']]:
+evidence_keys=['functional_proof','parent_functional_proof','stitch_proof','inventory_proof','annotation_proof']
+annotation=data[definition['annotation_proof']]
+assert annotation.get('exit_code')=='0', 'Native annotation audit did not complete'
+for kind in ['top_split','top_merged']:
+    receipt=annotation.get('annotation-validation.json',{}).get(kind,{})
+    assert receipt.get('passed') and all(receipt.get('checks',{}).values()), 'Unresolved or connected unannotated driver: '+kind
+    assert Path(receipt['source']).name==selection[kind], 'Annotation audit belongs to another parent'
+    assert Path(annotation['spec']['annotation_sources'][kind]).name==selection[kind]
+for name in list(selection.values())+[definition[k] for k in evidence_keys]:
     row=data[name]
     integrity=row.get('collected_file_integrity',{})
     assert integrity and all(integrity.values()), 'Collected evidence differs from sealed output manifest: '+name
@@ -97,11 +105,11 @@ for kind,pins in [('top_split',split_pins),('top_merged',merged_pins)]:
     stage=rows[kind]['record']['pin-placement-quality.json']
     assert stage['passed'] and pins['canonical_sha256']==stage['canonical_sha256'], 'Routing moved common external pins'
 assert split_pins['canonical_sha256']==merged_pins['canonical_sha256'], 'Actual pin geometry differs'
-inputs=dict(observed_utc=snapshot['observed_utc'],attempts={n:data[n] for n in list(selection.values())+[definition[k] for k in ['functional_proof','parent_functional_proof','stitch_proof','inventory_proof']]})
+inputs=dict(observed_utc=snapshot['observed_utc'],attempts={n:data[n] for n in list(selection.values())+[definition[k] for k in evidence_keys]})
 input_path=HERE/'results/comparison-inputs.json'
 input_path.write_text(json.dumps(inputs,indent=2)+'\n')
 output=dict(selection=selection,functional_proof=definition['functional_proof'],parent_functional_proof=definition['parent_functional_proof'],
-    stitch_proof=definition['stitch_proof'],inventory_proof=definition['inventory_proof'],
+    stitch_proof=definition['stitch_proof'],inventory_proof=definition['inventory_proof'],annotation_proof=definition['annotation_proof'],
     input_snapshot_sha256=hashlib.sha256(input_path.read_bytes()).hexdigest(),costs=costs,
     split_change_vs_merged_percent={k:100*(costs['split'][k]/costs['merged'][k]-1) for k in
         ['implemented_leaf_area_um2','occupied_footprint_plus_parent_cells_um2','total_signal_wire_um','total_signal_vias']},

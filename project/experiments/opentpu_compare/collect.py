@@ -80,6 +80,7 @@ for p in sorted(base.iterdir()):
       'resource-qualification.json','layer-reservation.json','strict-pg.json','final-pg/strict-pg.json',
       'full-hierarchy-quality.json','full-hierarchy-sta.log','structural-equivalence.json','logical-resource-inventory.json','stitch-validation.json','annotation-validation.json','joint-repair.json','final-pins.tsv'] if (p/name).exists()]
   selected+=[q for directory in [p,p/'final-pg'] for q in directory.glob('*-pg-access-selection.json')]
+  selected+=list(p.glob('*-unannotated-connectivity.tsv'))
   selected+=list((p/'flow/logs').rglob('6_report.json'))+list((p/'flow/logs').rglob('5_2_route.json'))+list((p/'flow/reports').rglob('6_finish.rpt'))
   row['collected_file_integrity']={str(q.relative_to(p)):manifest.get(str(q.relative_to(p)))==hashlib.sha256(q.read_bytes()).hexdigest() for q in selected}
  out[p.name]=row
