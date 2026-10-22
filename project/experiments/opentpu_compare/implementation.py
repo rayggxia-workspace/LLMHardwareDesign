@@ -215,12 +215,12 @@ def view_probe(spec):
         execute(ROOT,run_tcl,timing_technology(),track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib'))
         return
     if spec.get('repair_api'):
-        script='help insert_buffer\nhelp place_cell\nputs "STA_REDIRECT_COMMANDS [info commands sta::*redirect*]"\n'
+        script='help insert_buffer\nhelp place_cell\nhelp repair_timing\nputs "STA_REDIRECT_COMMANDS [info commands sta::*redirect*]"\n'
         script+='foreach name {sta::report_capacitance_checks sta::report_check_types sta::parse_redirect_args} {if {[llength [info procs $name]]} {puts "PROC $name: [info body $name]"}}\n'
         if spec.get('repair_api_source'):
             source=Path(spec['repair_api_source']);meta=json.loads((source/'experiment.json').read_text())
             script+='read_liberty {'+str(track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib'))+'}\n'
-            for k in ['act','mxu']:
+            for k in (['act','mxu'] if meta['kind']=='split' else ['merged']):
                 v=meta['views'][k];script+='read_liberty {'+str(track(Path(v['view'])/(v['name']+'.lib')))+'}\n'
             script+='read_db {'+str(track(result(source)/'5_1_grt.odb'))+'}\nread_sdc {'+str(track(result(source)/'5_1_grt.sdc'))+'}\n'
             script+='source {'+str(track(PLATFORM/'setRC.tcl'))+'}\nestimate_parasitics -placement\n'

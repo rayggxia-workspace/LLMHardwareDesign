@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-22T10:39:07.188874+00:00",
+  "observed_utc": "2026-10-22T10:51:13.171778+00:00",
   "attempts": {
     "grt-diagnostic-01": {
       "spec": {
@@ -7552,16 +7552,16 @@
         "scope": "Actual CTS ODB BPin layer and full box; all 1662 signal bits exactly once, requested location within track snapping tolerance. Pair must match exact canonical geometry before route."
       },
       "last_flow_log": {
-        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-06/flow/logs/nangate45/opentpu_top_merged/base/5_2_route.tmp.log",
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-06/flow/logs/nangate45/opentpu_top_merged/base/6_report.log",
         "tail": [
-          "    Completing 20% with 3904 violations.",
-          "    elapsed time = 00:04:08, memory = 4209.89 (MB).",
-          "    Completing 30% with 3860 violations.",
-          "    elapsed time = 00:05:29, memory = 4009.90 (MB).",
-          "    Completing 40% with 2587 violations.",
-          "    elapsed time = 00:08:43, memory = 4235.91 (MB).",
-          "    Completing 50% with 2587 violations.",
-          "    elapsed time = 00:09:10, memory = 4235.91 (MB)."
+          "==========================================================================",
+          "finish report_design_area",
+          "--------------------------------------------------------------------------",
+          "Design area 1324238 um^2 49% utilization.",
+          "Elapsed time: 3:04.88[h:]min:sec. CPU time: user 180.14 sys 5.79 (100%). Peak memory: 8336756KB.",
+          "Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum",
+          "                                     s        s  Elapsed       MB [0:10)",
+          "6_report                           184      186     1.01     8141 N/A"
         ]
       },
       "job_log_tail": [
@@ -7615,8 +7615,139 @@
           "globalroute__design__instance__area__cover": 0,
           "globalroute__design__instance__utilization": 0.486669,
           "globalroute__design__instance__utilization__stdcell": 0.00790715
+        },
+        "5_2_route.json": {
+          "detailedroute__route__drc_errors__iter:0": 4796,
+          "detailedroute__route__wirelength__iter:0": 2662080,
+          "detailedroute__route__drc_errors__iter:1": 263,
+          "detailedroute__route__wirelength__iter:1": 2661088,
+          "detailedroute__route__drc_errors__iter:2": 168,
+          "detailedroute__route__wirelength__iter:2": 2660890,
+          "detailedroute__route__drc_errors__iter:3": 16,
+          "detailedroute__route__wirelength__iter:3": 2660932,
+          "detailedroute__route__drc_errors__iter:4": 5,
+          "detailedroute__route__wirelength__iter:4": 2660914,
+          "detailedroute__route__drc_errors__iter:5": 5,
+          "detailedroute__route__wirelength__iter:5": 2660914,
+          "detailedroute__route__drc_errors__iter:6": 0,
+          "detailedroute__route__wirelength__iter:6": 2660913,
+          "detailedroute__route__drc_errors": 0,
+          "detailedroute__route__wirelength": 2660913,
+          "detailedroute__route__vias": 62185,
+          "detailedroute__route__vias__singlecut": 62185,
+          "detailedroute__route__vias__multicut": 0,
+          "detailedroute__antenna_diodes_count": 0,
+          "detailedroute__antenna__violating__nets": 0,
+          "detailedroute__antenna__violating__pins": 0
+        },
+        "6_report.json": {
+          "finish__design_powergrid__voltage__worst__net:VDD__corner:default": 1.09779,
+          "finish__design_powergrid__voltage__average__net:VDD__corner:default": 1.09993,
+          "finish__design_powergrid__drop__average__net:VDD__corner:default": 6.65728e-05,
+          "finish__design_powergrid__drop__worst__net:VDD__corner:default": 0.002208,
+          "finish__design_powergrid__voltage__worst__net:VSS__corner:default": 0.00129223,
+          "finish__design_powergrid__voltage__average__net:VSS__corner:default": 4.48527e-05,
+          "finish__design_powergrid__drop__average__net:VSS__corner:default": 4.48527e-05,
+          "finish__design_powergrid__drop__worst__net:VSS__corner:default": 0.00129223,
+          "finish__design__instance__count__class:macro": 1,
+          "finish__design__instance__area__class:macro": 1311880.0,
+          "finish__design__instance__count__class:fill_cell": 185916,
+          "finish__design__instance__area__class:fill_cell": 1383290.0,
+          "finish__design__instance__count__class:tap_cell": 7564,
+          "finish__design__instance__area__class:tap_cell": 2012.02,
+          "finish__design__instance__count__class:timing_repair_buffer": 7417,
+          "finish__design__instance__area__class:timing_repair_buffer": 10342.6,
+          "finish__design__instance__count": 200898,
+          "finish__design__instance__area": 1324240.0,
+          "finish__timing__setup__tns": -0.117546,
+          "finish__timing__hold__tns": 0,
+          "finish__timing__setup__ws": -0.0784699,
+          "finish__timing__hold__ws": 0.0836324,
+          "finish__timing__fmax__clock:clk": 387827000.0,
+          "finish__timing__fmax": 387827000.0,
+          "finish__clock__skew__setup": 0,
+          "finish__clock__skew__hold": 0,
+          "finish__timing__drv__max_slew_limit": -0.177984,
+          "finish__timing__drv__max_slew": 1,
+          "finish__timing__drv__max_cap_limit": -0.0155278,
+          "finish__timing__drv__max_cap": 1,
+          "finish__timing__drv__max_fanout_limit": 0,
+          "finish__timing__drv__max_fanout": 0,
+          "finish__timing__drv__setup_violation_count": 2,
+          "finish__timing__drv__hold_violation_count": 0,
+          "finish__power__internal__total": 0.00123605,
+          "finish__power__switching__total": 0.00406172,
+          "finish__power__leakage__total": 0.000445674,
+          "finish__power__total": 0.00574344,
+          "finish__design__die__area": 2788900.0,
+          "finish__design__core__area": 2718490.0,
+          "finish__design__instance__count__stdcell": 14981,
+          "finish__design__instance__area__stdcell": 12354.6,
+          "finish__design__instance__count__macros": 1,
+          "finish__design__instance__area__macros": 1311880.0,
+          "finish__design__instance__count__padcells": 0,
+          "finish__design__instance__area__padcells": 0,
+          "finish__design__instance__count__cover": 0,
+          "finish__design__instance__area__cover": 0,
+          "finish__design__instance__utilization": 0.487123,
+          "finish__design__instance__utilization__stdcell": 0.00878329
         }
       },
+      "final_report": "\n==========================================================================\nfinish report_tns\n--------------------------------------------------------------------------\ntns max -0.12\n\n==========================================================================\nfinish report_wns\n--------------------------------------------------------------------------\nwns max -0.08\n\n==========================================================================\nfinish report_worst_slack\n--------------------------------------------------------------------------\nworst slack max -0.08\n\n==========================================================================\nfinish report_clock_min_period\n--------------------------------------------------------------------------\nclk period_min = 2.58 fmax = 387.83\n\n==========================================================================\nfinish report_clock_skew\n--------------------------------------------------------------------------\nClock clk\nNo launch/capture paths found.\n\n\n==========================================================================\nfinish report_checks -path_delay min\n--------------------------------------------------------------------------\nStartpoint: b_rdata[243] (input port clocked by clk)\nEndpoint: u_merged (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: min\n\nFanout     Cap    Slew   Delay    Time   Description\n-----------------------------------------------------------------------------\n                          0.00    0.00   clock clk (rise edge)\n                          0.00    0.00   clock network delay (propagated)\n                          0.50    0.50 v input external delay\n     1    6.83    0.01    0.00    0.50 v b_rdata[243] (in)\n                                         b_rdata[243] (net)\n                  0.01    0.00    0.50 v input419/A (BUF_X1)\n     1   21.83    0.02    0.05    0.55 v input419/Z (BUF_X1)\n                                         net419 (net)\n                  0.03    0.01    0.56 v u_merged/b_rdata[243] (llhd_match_merged)\n                                  0.56   data arrival time\n\n                          0.00    0.00   clock clk (rise edge)\n                          0.00    0.00   clock source latency\n     1   79.92    0.04    0.06    0.06 ^ clk (in)\n                                         clk (net)\n                  0.05    0.00    0.06 ^ u_merged/clk (llhd_match_merged)\n                          0.00    0.06   clock reconvergence pessimism\n                          0.42    0.48   library hold time\n                                  0.48   data required time\n-----------------------------------------------------------------------------\n                                  0.48   data required time\n                                 -0.56   data arrival time\n-----------------------------------------------------------------------------\n                                  0.08   slack (MET)\n\n\n\n==========================================================================\nfinish report_checks -path_delay max\n--------------------------------------------------------------------------\nStartpoint: u_merged (rising edge-triggered flip-flop clocked by clk)\nEndpoint: t_waddr[25] (output port clocked by clk)\nPath Group: clk\nPath Type: max\n\nFanout     Cap    Slew   Delay    Time   Description\n-----------------------------------------------------------------------------\n                          0.00    0.00   clock clk (rise edge)\n                          0.00    0.00   clock source latency\n     1   79.92    0.04    0.06    0.06 ^ clk (in)\n                                         clk (net)\n                  0.05    0.00    0.06 ^ u_merged/clk (llhd_match_merged)\n     1   24.12    0.06    1.15    1.21 ^ u_merged/t_waddr[25] (llhd_match_merged)\n                                         net1447 (net)\n                  0.06    0.00    1.21 ^ place9936/A (BUF_X1)\n     1    4.33    0.01    0.04    1.25 ^ place9936/Z (BUF_X1)\n                                         net9936 (net)\n                  0.01    0.00    1.25 ^ place9935/A (BUF_X1)\n     1   35.96    0.08    0.10    1.35 ^ place9935/Z (BUF_X1)\n                                         net9935 (net)\n                  0.08    0.01    1.36 ^ wire12983/A (BUF_X4)\n     1   74.70    0.02    0.04    1.41 ^ wire12983/Z (BUF_X4)\n                                         net12983 (net)\n                  0.07    0.05    1.45 ^ place9934/A (BUF_X2)\n     1    7.50    0.01    0.04    1.49 ^ place9934/Z (BUF_X2)\n                                         net9934 (net)\n                  0.01    0.00    1.49 ^ place9933/A (BUF_X1)\n     1   10.31    0.03    0.04    1.53 ^ place9933/Z (BUF_X1)\n                                         net9933 (net)\n                  0.03    0.00    1.53 ^ wire7250/A (BUF_X4)\n     1  178.60    0.02    0.04    1.57 ^ wire7250/Z (BUF_X4)\n                                         t_waddr[25] (net)\n                  0.62    0.51    2.08 ^ t_waddr[25] (out)\n                                  2.08   data arrival time\n\n                          2.50    2.50   clock clk (rise edge)\n                          0.00    2.50   clock network delay (propagated)\n                          0.00    2.50   clock reconvergence pessimism\n                         -0.50    2.00   output external delay\n                                  2.00   data required time\n-----------------------------------------------------------------------------\n                                  2.00   data required time\n                                 -2.08   data arrival time\n-----------------------------------------------------------------------------\n                                 -0.08   slack (VIOLATED)\n\n\n\n==========================================================================\nfinish report_checks -unconstrained\n--------------------------------------------------------------------------\nStartpoint: u_merged (rising edge-triggered flip-flop clocked by clk)\nEndpoint: t_waddr[25] (output port clocked by clk)\nPath Group: clk\nPath Type: max\n\nFanout     Cap    Slew   Delay    Time   Description\n-----------------------------------------------------------------------------\n                          0.00    0.00   clock clk (rise edge)\n                          0.00    0.00   clock source latency\n     1   79.92    0.04    0.06    0.06 ^ clk (in)\n                                         clk (net)\n                  0.05    0.00    0.06 ^ u_merged/clk (llhd_match_merged)\n     1   24.12    0.06    1.15    1.21 ^ u_merged/t_waddr[25] (llhd_match_merged)\n                                         net1447 (net)\n                  0.06    0.00    1.21 ^ place9936/A (BUF_X1)\n     1    4.33    0.01    0.04    1.25 ^ place9936/Z (BUF_X1)\n                                         net9936 (net)\n                  0.01    0.00    1.25 ^ place9935/A (BUF_X1)\n     1   35.96    0.08    0.10    1.35 ^ place9935/Z (BUF_X1)\n                                         net9935 (net)\n                  0.08    0.01    1.36 ^ wire12983/A (BUF_X4)\n     1   74.70    0.02    0.04    1.41 ^ wire12983/Z (BUF_X4)\n                                         net12983 (net)\n                  0.07    0.05    1.45 ^ place9934/A (BUF_X2)\n     1    7.50    0.01    0.04    1.49 ^ place9934/Z (BUF_X2)\n                                         net9934 (net)\n                  0.01    0.00    1.49 ^ place9933/A (BUF_X1)\n     1   10.31    0.03    0.04    1.53 ^ place9933/Z (BUF_X1)\n                                         net9933 (net)\n                  0.03    0.00    1.53 ^ wire7250/A (BUF_X4)\n     1  178.60    0.02    0.04    1.57 ^ wire7250/Z (BUF_X4)\n                                         t_waddr[25] (net)\n                  0.62    0.51    2.08 ^ t_waddr[25] (out)\n                                  2.08   data arrival time\n\n                          2.50    2.50   clock clk (rise edge)\n                          0.00    2.50   clock network delay (propagated)\n                          0.00    2.50   clock reconvergence pessimism\n                         -0.50    2.00   output external delay\n                                  2.00   data required time\n-----------------------------------------------------------------------------\n                                  2.00   data required time\n                                 -2.08   data arrival time\n-----------------------------------------------------------------------------\n                                 -0.08   slack (VIOLATED)\n\n\n\n==========================================================================\nfinish report_check_types -max_slew -max_cap -max_fanout -violators\n--------------------------------------------------------------------------\nmax slew\n\nPin                                    Limit    Slew   Slack\n------------------------------------------------------------\nu_merged/b_rdata[208]                   0.20    0.23   -0.04 (VIOLATED)\n\nmax capacitance\n\nPin                                    Limit     Cap   Slack\n------------------------------------------------------------\nwire15194/Z                           242.31  246.07   -3.76 (VIOLATED)\n\n\n==========================================================================\nfinish max_slew_check_slack\n--------------------------------------------------------------------------\n-0.035418737679719925\n\n==========================================================================\nfinish max_slew_check_limit\n--------------------------------------------------------------------------\n0.19900000095367432\n\n==========================================================================\nfinish max_slew_check_slack_limit\n--------------------------------------------------------------------------\n-0.1780\n\n==========================================================================\nfinish max_fanout_check_slack\n--------------------------------------------------------------------------\n1.0000000150474662e+30\n\n==========================================================================\nfinish max_fanout_check_limit\n--------------------------------------------------------------------------\n1.0000000150474662e+30\n\n==========================================================================\nfinish max_capacitance_check_slack\n--------------------------------------------------------------------------\n-3.7625339031219482\n\n==========================================================================\nfinish max_capacitance_check_limit\n--------------------------------------------------------------------------\n242.30999755859375\n\n==========================================================================\nfinish max_capacitance_check_slack_limit\n--------------------------------------------------------------------------\n-0.0155\n\n==========================================================================\nfinish max_slew_violation_count\n--------------------------------------------------------------------------\nmax slew violation count 1\n\n==========================================================================\nfinish max_fanout_violation_count\n--------------------------------------------------------------------------\nmax fanout violation count 0\n\n==========================================================================\nfinish max_cap_violation_count\n--------------------------------------------------------------------------\nmax cap violation count 1\n\n==========================================================================\nfinish setup_violation_count\n--------------------------------------------------------------------------\nsetup violation count 2\n\n==========================================================================\nfinish hold_violation_count\n--------------------------------------------------------------------------\nhold violation count 0\n\n==========================================================================\nfinish report_checks -path_delay max reg to reg\n--------------------------------------------------------------------------\nNo paths found.\n\n==========================================================================\nfinish report_checks -path_delay min reg to reg\n--------------------------------------------------------------------------\nNo paths found.\n\n==========================================================================\nfinish critical path target clock latency max path\n--------------------------------------------------------------------------\n0.0554\n\n==========================================================================\nfinish critical path target clock latency min path\n--------------------------------------------------------------------------\n0.0554\n\n==========================================================================\nfinish critical path source clock latency min path\n--------------------------------------------------------------------------\n0.0000\n\n==========================================================================\nfinish critical path delay\n--------------------------------------------------------------------------\n2.0785\n\n==========================================================================\nfinish critical path slack\n--------------------------------------------------------------------------\n-0.0785\n\n==========================================================================\nfinish slack div critical path delay\n--------------------------------------------------------------------------\n-3.776762\n\n==========================================================================\nfinish report_power\n--------------------------------------------------------------------------\nGroup                  Internal  Switching    Leakage      Total\n                          Power      Power      Power      Power (Watts)\n----------------------------------------------------------------\nSequential             0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%\nCombinational          1.24e-03   4.06e-03   4.46e-04   5.74e-03 100.0%\nClock                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%\nMacro                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%\nPad                    0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%\n----------------------------------------------------------------\nTotal                  1.24e-03   4.06e-03   4.46e-04   5.74e-03 100.0%\n                          21.5%      70.7%       7.8%\n",
+      "route_layer_wire_um": {
+        "metal1": 0.0,
+        "metal2": 524744.0,
+        "metal3": 844331.0,
+        "metal4": 248787.0,
+        "metal5": 366928.0,
+        "metal6": 249984.0,
+        "metal7": 129628.0,
+        "metal8": 151803.0,
+        "metal9": 102853.0,
+        "metal10": 41850.0
+      },
+      "route_layer_report": {
+        "total_um": 2660913.0,
+        "vias": 62185,
+        "scope": "Final DRT signal-route table; per-layer lengths rounded to integer um; excludes special PG"
+      },
+      "drc_convergence": [
+        {
+          "iteration": 0,
+          "kind": "optimization",
+          "violations": 4796
+        },
+        {
+          "iteration": 1,
+          "kind": "optimization",
+          "violations": 263
+        },
+        {
+          "iteration": 2,
+          "kind": "optimization",
+          "violations": 168
+        },
+        {
+          "iteration": 3,
+          "kind": "optimization",
+          "violations": 16
+        },
+        {
+          "iteration": 4,
+          "kind": "guides tiles",
+          "violations": 5
+        },
+        {
+          "iteration": 5,
+          "kind": "guides tiles",
+          "violations": 5
+        },
+        {
+          "iteration": 6,
+          "kind": "stubborn tiles",
+          "violations": 0
+        }
+      ],
       "pg_access": {},
       "physical_repair_actions": {
         "targeted-drive.tsv": {
@@ -7640,7 +7771,7 @@
         "count": 1662,
         "canonical_sha256": "f098a67a387ac43e41383f3df5d960806327637958075aa348ab4f6fc16134e9"
       },
-      "scheduler": "89711|RUNNING|0:0|00:33:28|UNLIMITED|16|node3"
+      "scheduler": "89711|RUNNING|0:0|00:45:34|UNLIMITED|16|node3"
     },
     "top-merged-place-05": {
       "spec": {
@@ -9294,14 +9425,14 @@
       "last_flow_log": {
         "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-07/flow/logs/nangate45/opentpu_top_split/base/5_2_route.tmp.log",
         "tail": [
-          "    Completing 30% with 1086 violations.",
-          "    elapsed time = 00:06:40, memory = 4464.03 (MB).",
-          "    Completing 40% with 1506 violations.",
-          "    elapsed time = 00:10:06, memory = 4297.00 (MB).",
-          "    Completing 50% with 1506 violations.",
-          "    elapsed time = 00:13:14, memory = 4623.20 (MB).",
-          "    Completing 60% with 1560 violations.",
-          "    elapsed time = 00:14:27, memory = 4285.29 (MB)."
+          " metal9     2338",
+          "----------------",
+          "       90491",
+          "",
+          "",
+          "[INFO DRT-0195] Start 1st optimization iteration.",
+          "    Completing 10% with 5684 violations.",
+          "    elapsed time = 00:00:58, memory = 4175.54 (MB)."
         ]
       },
       "job_log_tail": [
@@ -9416,7 +9547,7 @@
         "count": 1662,
         "canonical_sha256": "f098a67a387ac43e41383f3df5d960806327637958075aa348ab4f6fc16134e9"
       },
-      "scheduler": "89722|RUNNING|0:0|00:20:10|UNLIMITED|16|node3"
+      "scheduler": "89722|RUNNING|0:0|00:32:16|UNLIMITED|16|node3"
     },
     "top-split-place-05": {
       "spec": {
