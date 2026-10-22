@@ -7,6 +7,9 @@ import subprocess
 
 
 def execute(root,spec,meta):
+    if spec.get('fresh_process_each_electrical_eco'):
+        from fresh_repair import execute
+        return execute(root,spec,meta)
     results=root/meta['result_relative']
     command=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(root/'config.mk'),
              'WORK_HOME='+str(root/'flow'),'NUM_CORES='+str(spec['cores'])]

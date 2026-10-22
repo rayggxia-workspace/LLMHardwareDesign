@@ -63,8 +63,10 @@ for {set iteration 0} {$iteration < $llhd_drive_rounds} {incr iteration} {
     }
   }
   puts "TARGETED_DRIVE_ROUND $iteration upgrades [dict size $plans] macro_output_guards [dict size $guards]"
+  set llhd_drive_change_count [expr {[dict size $plans]+[dict size $guards]}]
   if {![dict size $plans] && ![dict size $guards]} {break}
-  global_route -start_incremental
+  set checkpoint_only [expr {[info exists llhd_drive_checkpoint_only] && $llhd_drive_checkpoint_only}]
+  if {!$checkpoint_only} {global_route -start_incremental}
   dict for {pin unused} $guards {
     set record [llhd_guard_macro_output $pin [dict size $llhd_guarded]]
     dict set llhd_guarded $pin $record
@@ -80,6 +82,9 @@ for {set iteration 0} {$iteration < $llhd_drive_rounds} {incr iteration} {
   global_connect
   detailed_placement_helper
   check_placement -verbose
+  # A checkpoint-only pass never estimates the mutated, in-memory routes.
+  # The next process rebuilds routes/RC from the legalized ODB instead.
+  if {$checkpoint_only} {break}
   global_route -end_incremental
   if {[info exists llhd_drive_full_route] && $llhd_drive_full_route} {
     global_route -congestion_iterations 30
@@ -87,4 +92,4 @@ for {set iteration 0} {$iteration < $llhd_drive_rounds} {incr iteration} {
 }
 close $llhd_drive_audit
 close $llhd_guard_audit
-estimate_parasitics -global_routing
+if {![info exists llhd_drive_checkpoint_only] || !$llhd_drive_checkpoint_only} {estimate_parasitics -global_routing}

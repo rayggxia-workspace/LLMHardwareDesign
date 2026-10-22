@@ -547,6 +547,7 @@ def resume_parent(spec):
             # Reload real ODB checkpoints in fresh processes instead of
             # clearing estimator state or suppressing EST-0104.
             track(ROOT/'runner/joint_repair.py')
+            if spec.get('fresh_process_each_electrical_eco'):track(ROOT/'runner/fresh_repair.py')
             meta['joint_timing_electrical_repair']=dict(rounds=joint,setup_target_ns=target,grt_accept_setup_ns=accept,
                 strategy='Fresh-process ODB checkpoint alternation of native timing repair and electrical guardbands; reroute/re-estimate every reload; no gate cloning/pin swaps or clock/IO relaxation')
         hook.write_text(text.replace(marker,injection+marker))
