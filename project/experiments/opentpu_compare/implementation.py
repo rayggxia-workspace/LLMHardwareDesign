@@ -193,17 +193,22 @@ def view_probe(spec):
         from equivalence import family
         audit={}
         for name in ['act','mxu','merged']:
-            counts={}
+            counts={};support={}
             for stage in ['mapped','physical']:
                 path=source/('equivalence-'+name)/(stage+'.json')
                 assert digest(path)==manifest[path.relative_to(source).as_posix()];track(path)
                 modules=json.loads(path.read_text())['modules']
                 module=next(m for m in modules.values() if not m.get('attributes',{}).get('blackbox') and m.get('cells'))
                 all_cells=Counter(family(c['type']) for c in module['cells'].values())
-                counts[stage]=Counter({k:v for k,v in all_cells.items() if k not in ['BUF','INV','CLKBUF'] and not k.startswith(('FILLCELL','TAPCELL'))})
+                def physical_support(k):
+                    return k in ['BUF','INV','CLKBUF','LOGIC0','LOGIC1'] or k.startswith(('FILLCELL','TAPCELL'))
+                support[stage]={k:v for k,v in all_cells.items() if physical_support(k)}
+                counts[stage]=Counter({k:v for k,v in all_cells.items() if not physical_support(k)})
             before,after=counts['mapped'],counts['physical']
-            audit[name]=dict(equal=before==after,mapped=before,physical=after,added=after-before,removed=before-after)
+            audit[name]=dict(equal=before==after,mapped=before,physical=after,added=after-before,removed=before-after,
+                physical_support=support,scope='Drive family normalized; BUF/INV/CLKBUF, physical constant tie cells and filler/tap cells reported separately; all other logic/state/SRAM quantities must match')
         (ROOT/'logical-resource-inventory.json').write_text(json.dumps(audit,indent=2)+'\n')
+        assert all(row['equal'] for row in audit.values()), 'Non-support logic/state/SRAM resources changed'
         return
     if spec.get('stitch_selftest'):
         from stitch_probe import execute

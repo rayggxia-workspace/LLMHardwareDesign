@@ -43,7 +43,7 @@ for p in sorted(base.iterdir()):
  for f in p.glob('*-resource.json'): row[f.name]=read_json(f)
  row['pg_access']={str(f.relative_to(p)):read_json(f) for directory in [p,p/'final-pg']
                    for f in directory.glob('*-pg-access-selection.json')}
- for name in ['repair-input-audit.json','structural-equivalence.json','pin-checkpoint-diagnostics.json','stitch-validation.json','full-hierarchy-sta.log']:
+ for name in ['repair-input-audit.json','structural-equivalence.json','logical-resource-inventory.json','pin-checkpoint-diagnostics.json','stitch-validation.json','full-hierarchy-sta.log']:
   f=p/name
   if f.exists():
    if f.suffix=='.json': row[name]=read_json(f)
@@ -78,7 +78,7 @@ for p in sorted(base.iterdir()):
   manifest={name[2:] if name.startswith('./') else name:h for h,name in (line.split(None,1) for line in f.read_text().splitlines() if len(line.split(None,1))==2)}
   selected=[p/name for name in ['spec.json','experiment.json','boundary.sdc','external-pin-contract.json','pin-placement-quality.json','pre-drt-electrical-quality.json',
       'resource-qualification.json','layer-reservation.json','strict-pg.json','final-pg/strict-pg.json',
-      'full-hierarchy-quality.json','full-hierarchy-sta.log','structural-equivalence.json','stitch-validation.json','final-pins.tsv'] if (p/name).exists()]
+      'full-hierarchy-quality.json','full-hierarchy-sta.log','structural-equivalence.json','logical-resource-inventory.json','stitch-validation.json','final-pins.tsv'] if (p/name).exists()]
   selected+=[q for directory in [p,p/'final-pg'] for q in directory.glob('*-pg-access-selection.json')]
   selected+=list((p/'flow/logs').rglob('6_report.json'))+list((p/'flow/logs').rglob('5_2_route.json'))+list((p/'flow/reports').rglob('6_finish.rpt'))
   row['collected_file_integrity']={str(q.relative_to(p)):manifest.get(str(q.relative_to(p)))==hashlib.sha256(q.read_bytes()).hexdigest() for q in selected}
