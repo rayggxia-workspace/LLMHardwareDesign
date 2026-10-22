@@ -4,7 +4,7 @@
 
 - 仓库：`rayggxia-workspace/LLMHardwareDesign`，project_id `llm-hardware-design`。
 - [Issue #15](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15)，负责人YUZE-LU，实际身份已读回；[草稿PR #17](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/17)，base `task/7-parallel-blocks`，依赖PR10，不自合并。
-- 当前分支 `task/15-opentpu-compare`；14轮runner `7139190aa944dd3c88b44eb3234b869e6c3c46e8`，提取后15轮runner `03f8b20904eb2dc7f7dcb81309041a32c60550fe`。实际已执行runner分别绑定每条submission回执，不能用更新后的HEAD替换旧运行身份。
+- 当前分支 `task/15-opentpu-compare`；14轮runner `7139190aa944dd3c88b44eb3234b869e6c3c46e8`，提取后15轮 `03f8b20904eb2dc7f7dcb81309041a32c60550fe`，16轮 `46e4ee97727f53e76269087d57ac8ef5389d4dc9`。实际已执行runner分别绑定每条submission回执，不能用更新后的HEAD替换旧运行身份。
 - 本地独立工作树 `D:\Data\电路实验\LLMHardwareDesign-worktrees\issue-15-opentpu-compare`；原始输出 `yuzelu@10.129.166.172:/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/`。不修改已有PR8／PR10工作树和封存结果；89448不属于本轮。
 - 正式代码 `project/experiments/opentpu_compare/`，轻量回执 `results/`，[实验定义与实测](../experiments/issue-15-opentpu-comparison.md)，个人进度 `progress/YUZE-LU/STATUS.md`。
 
@@ -32,3 +32,5 @@
 2026-10-22 20:12 CST：拆分13／89773因重复GRT的GRT-0229失败；合并13／89772仍正常运行，不因新方案而取消。当前14轮89776／89777每个电气ECO使用新的OpenROAD进程：真实ODB／SDC检查点、下一进程重建路由／RC、最终不修改网表的独立审计通过才写DRT guides。runner7139190。先collect，查最新joint-*-drive-*-changes.txt与joint-*-audit.rpt及joint-repair.json。所有作业UNLIMITED，不设置耗时取消；最终实际DRT／PG／完整分层STA、父层功能及RC覆盖证书和PPA尚未完成。
 
 2026-10-22 20:31 CST：合并13／89772独立GRT审计通过并进入DRT；14轮仍在修复。提取后定向15轮合并89781／拆分89782，runner03f8b20，已从06／07封存终态恢复、核对SPEF复现原时序、按实际报告修改并通过接线／合法化，进入新DRT。源失败结果仍保留；15轮GRT估算为诊断，最终所有真实DRT／PG／电气／完整层次STA门槛不变。优先检查这三路DRT及随后真实提取；通过后选择同资源父层对，补最终父层功能和原生RC覆盖审计，再compare.py和plot.py。不得把预估余量或插入成功当作合格PPA。
+
+2026-10-22 21:15 CST：合并13／89772已COMPLETED，quality.py和真实分层STA均通过，setup +0.065642ns、hold +0.013027ns；最终PG通过，是当前合格物理父层候选。低面积合并15／89781严格失败，真实分层setup +0.031373ns但3条真实电容负余量；已封存，16轮89786从其恢复继续定向ECO并进入新DRT。拆分15／89782继续DRT，14轮亦仍迭代。先collect，再quality.py，待选定两组最终终态后新建父层功能与RC覆盖审计spec（旧03和旧合并06证明不能替代新来源），通过后运行compare／plot。未形成最终对照，不提前标in_review／done。
