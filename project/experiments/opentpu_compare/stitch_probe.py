@@ -67,6 +67,8 @@ endmodule
         text+='link_design '+('-hier ' if name!='flat' else '')+'fixture_top\n'
         text+='create_clock -period 2.5 [get_ports CK]\nset_input_delay .1 [get_ports A]\n'
         text+='set_output_delay .1 [get_ports Q]\nset_input_transition .05 [get_ports A]\nset_load 5 [get_ports Q]\n'
+        text+='puts {BEFORE_SPEF}\nreport_clock_properties [all_clocks]\nreport_worst_slack -max -digits 9\n'
+        text+='report_net -connections [get_nets CK]\nreport_net -connections [get_nets u/CK]\n'
         if name=='flat':text+='read_spef {'+str(root/'flat.spef')+'}\n'
         else:
             if name=='hierarchical':text+='read_spef {'+str(root/'parent.spef')+'}\n'
@@ -76,7 +78,9 @@ endmodule
         text+='report_checks -path_delay max -format full_clock_expanded -digits 9\ncheck_setup -verbose\n'
         run_tcl('stitch-'+name,text)
         log=(root/('stitch-'+name+'.log')).read_text()
-        results[name]={k:float(re.search('worst slack '+k+r'\s+([-\d.]+)',log)[1]) for k in ['max','min']}
+        results[name]={k:([float(m[1]) for m in re.finditer('worst slack '+k+r'\s+([-\d.]+)',log)] or [None])[-1] for k in ['max','min']}
+    (root/'stitch-diagnostic.json').write_text(json.dumps(results,indent=2)+'\n')
+    assert all(value is not None for row in results.values() for value in row.values()), 'Missing constrained fixture timing'
     errors={k:abs(results['hierarchical'][k]-results['flat'][k]) for k in ['max','min']}
     negative=max(abs(results['hierarchical'][k]-results['missing_parent_negative_control'][k]) for k in ['max','min'])
     passed=max(errors.values())<.000001 and negative>.001
