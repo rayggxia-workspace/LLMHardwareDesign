@@ -1,6 +1,6 @@
 # openTPU ACT/MXU 同资源物理对照
 
-关联 [Issue #15](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15)、[草稿 PR #17](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/17)，依赖 [PR #10](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/10)。2026-10-22 起，所有新作业均 `--time=0` 且提交后读回 `UNLIMITED`。未设置完成截止或基于耗时的取消条件。
+关联 [Issue #15](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15)、[PR #17](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/17)，依赖 [PR #10](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/10)。2026-10-22 起，所有新作业均 `--time=0` 且提交后读回 `UNLIMITED`。未设置完成截止或基于耗时的取消条件。
 
 ## 已验收的正式物理对照（2026-10-23 04:21 CST）
 
@@ -34,7 +34,21 @@
 
 独立只读终态检查top-split-inspect-reuse20／89834自然COMPLETED0（12秒，1CPU、UNLIMITED，runner1570e08960e4ede90adba2f7b321f5b6e6709a6c），重新读取最终ODB／SPEF并复现宏模型setup／hold +0.075443432／+0.074719347ns。实际九位报告最小宏接口slew余量为act_data[136]：上限199.000001ps、实际197.450966ps、余量+1.549039ps；b_rdata[39]余量+3.271133ps。它确认单typical角点资格，余量仍薄，不能外推多角点稳定性；没有继续改变已合格物理结果。报告SHA和来源绑定见results/final-interface-margin-inspection.json，未将归一化汇总指标当作时间。
 
-全量清线重布的独立21／89826及其匹配证明89827／89828仍自然运行，暂不纳入这份主表；不因已取得合格主对照停止该有效作业。其结果随后单独记录，主对照快照不随实时采集改变。
+### 04:37 CST：独立全量重布线也通过全部检查
+
+21／89826自然COMPLETED0（1:02:26，16CPU、UNLIMITED），runner6de7b3773398f15ef36362568977c541a01143e2。与复用候选相同，仍只从源20将place13151 BUF_X4升级为X8；区别是清除全部普通信号线后重新完整布线。DRC4771→211→106→12→2→2→0，天线0、最终VDD／VSS、宏模型及完整真实电气／STA均通过，最差cap +3.396215916fF。实际输出清单5640aae2cb79df48e14b525e559e58e356b325ed3570e9994eb8e1a7f2c9e33d，首次终态未改变。
+
+匹配功能89827／7秒和覆盖89828／50秒（runner46e6fdc57332467bd107b98b38b13a5200415c90），完整五ODB成本89835／13秒（runner76516bc9385b766fd3f194b9caabbf5edcdd6d46）全部自然COMPLETED0，1CPU、UNLIMITED。selection-split21-merged13-audited.json同样以五个物理来源加六类证明完整通过compare，独立快照SHA为`72b9829d0df7ac7d30c5b7a6f8e602f11e317c2070cbacab4f55e466299cce0f`，保存于results/alternates/full-clear21/。
+
+| 拆分最终布线初始条件 | 复用既有线路（主表） | 全量清线重布21（补充） |
+| --- | ---: | ---: |
+| 总叶面积／µm² | 484240.4 | 484240.4 |
+| 总信号线／µm | 6647739 | 6647781 |
+| 总信号通孔 | 1322289 | 1322287 |
+| 完整setup WNS／ns | +0.102306 | +0.102314 |
+| 完整hold WNS／ns | +0.036146 | +0.036146 |
+
+两次结果相近：全量清线总线长多42µm、通孔少2个、完整setup余量多0.000008ns，不能当作显著物理改善或一般性的路由算法优势。主表选择首个取得完整匹配证明的合格终态，不用后续数据改写主快照或图表；补充全量结果相对合并的总线长仍为+7.143%、通孔+2.973%。compare新增--output-dir，使补充合格快照独立保存；非法补充候选在创建输出前即被拒绝，主报告9个文件SHA再次核验全部不变。两套对照合计15份唯一封存来源，全部自然完成，没有设置期限或以耗时取消。实验交付已齐备，转交PR独立审查，不自行合并或标done。
 
 ## 对照定义
 

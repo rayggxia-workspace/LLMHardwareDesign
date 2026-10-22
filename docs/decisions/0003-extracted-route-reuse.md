@@ -22,4 +22,4 @@
 
 89829从源20将place13151 BUF_X4升至X8，实际只有1个实例改变、2条关联普通线路清除、11952条保留到DRT输入；34:01自然完成，DRC0、完整PG／STA／电气及匹配功能／标注证明通过，UNLIMITED。89833读取其完整最终ODB实际11954条有线路信号网，ODB线长3361438.35µm，DRT主口径3361707µm，差268.65µm，约0.008%；其余四个实现同样核验通过。最终选择共五个物理来源及六种证明，全部通过compare后冻结快照和图表。
 
-已有线路行为以实际二进制观测为准。官方master源码只用于形成假设，不当作本机unknown版本的精确实现。独立全量清线方案21继续自然运行，不因为复用方案合格而取消；两者的单次结果不能推广为普遍的算法优势。详见[实验记录](../experiments/issue-15-opentpu-comparison.md)、`results/delivery-validation.json`和各submission／terminal回执。
+已有线路行为以实际二进制观测为准。官方master源码只用于形成假设，不当作本机unknown版本的精确实现。独立全量清线方案21也自然完成并通过完整十一来源对照，未因复用方案合格取消；叶面积相同、总线长差42µm、通孔差2、setup差0.000008ns，两者的单次结果不能推广为普遍的算法优势。详见[实验记录](../experiments/issue-15-opentpu-comparison.md)、`results/delivery-validation.json`和各submission／terminal回执。
