@@ -22,7 +22,7 @@
 6. OpenROAD内部STA需要技术LEF和 `link_design -hier`。透明ACT包装的实测SPEF拼接自检已通过：setup 1.257897ns、hold 0.031897ns，相对源结果误差均小于1ps。不能将各块WNS相加当作完整路径时序。
 7. 原父层03／04轮因导出的引脚命令显示M5／M6差异，被操作者误判为实际几何不一致而停止。随后 `pin-checkpoint-old-01`／89705直接读取旧CTS ODB，证明两组原本均为M2／M3、实际完整几何完全一致；`write_pin_placement`使用了旧IO放置器缓存，不能作为实际数据库证据。该停止是分析误判，与耗时无关；原始取消回执不改写，更正在 `correct-cached-pin-export-diagnosis.json`。新05轮从同样的实际引脚几何继续，改为完成CTS后直接导出ODB盒形、层号，并强制两组1662bit的几何哈希相同后才进入布线；BPin重建已执行但未改变最终几何。
 
-## 当前实际进度
+## 阶段记录：块内实现与早期父层
 
 截至2026-10-22 18:20（Asia/Shanghai）：
 
@@ -144,6 +144,16 @@ python project/experiments/opentpu_compare/launch.py <全新尝试名> matched -
 89810提交前的一次本地SSH连接卡在目录预检查；确认没有创建目标目录、spec或调度作业后只关闭该本地ssh进程，再在仍不存在的路径首次成功创建并提交。未取消或中断任何原生作业，诊断见results/annotation-top-17-13-01-client-recovery.json。
 
 最终比较增加实际镜像／工具ELF身份和scheduler／allocation两处UNLIMITED门槛；13份封存记录通过，内存工具摘要突变负例被拒绝。真实失败对16／17已完整走过功能／库存／RC／输入绑定后被compare.py以Strict budget failed拒绝，未生成或改写对照产物。中文HTML报告生成器已编译通过，仍须合格拆分和匹配证明全部通过后才运行／目视核验。
+
+### 2026-10-23 00:05 CST：拆分17电气收敛，继续覆盖近临界长线
+
+拆分17／89802自然COMPLETED0（1:03:18，UNLIMITED），DRC4551→268→129→13→6→6→0、天线0，最终PG通过。完整真实分层setup +0.008518ns、hold +0.036309ns、TNS及电气通过；宏模型cap／slew／fanout计数0、有符号余量均非负，最差cap +2.033807516fF、hold +0.00340822ns，但setup −0.0201057ns／TNS失败，严格不合格。父层标准单元15612.1µm²、信号线3357937µm、通孔73730。此前pf_block长段已改善，新的唯一负setup端点为t_wdata[20]。
+
+来源匹配的17／13父层功能89809通过（2348／1662锥、差异0）；原生覆盖89810通过（40831／40846空载未标注驱动、部分未标注0、连接时钟正控制）。旧17／18功能89804因合并18源退出1而自然失败；其原生RC审计89805通过，只证明标注覆盖，不抵消时序失败。所有终态保留，未取消有效作业。
+
+只读检查89811完成（12秒，UNLIMITED，runner64ac0d4），同一SPEF复现源宏时序误差<1e-6ns，并记录带实际fanout／cap／slew／input pin字段的100条max路径。t_wdata[20]中place10609/Z→place10608/A的实际线延迟178.223774ps，驱动为数据网络上的CLKBUF_X3，单负载102.878899fF。新规划器从封存报告选择路径余量<120ps且单负载标准单元间线延迟>90ps的17段，报告SHA为3b7761b85faa51e4be53ebca69acfd304c5d20d867ede3808b72475f8e0ec0d5。首次本地规划因正则转义未保留而无候选，被断言拒绝且未生成spec／提交作业；4158b65修正后在真实报告上选出17段，完整依据入results/top-split-extracted-18-wire-plan.json。
+
+拆分18／89812已于00:00:49提交，runner75bcd9b942c7e0ef2bdd1162c00edca4cd1b2f7e，实际UNLIMITED。17段长线加入BUF_X8中继，另为原生min报告中不足40ps余量的27个输入加BUF_X2；不升级冻结宏输出的输入负载，不增状态，不改原SDC／子块。源时序复现、实际接线、布局检查通过，已开始新的完整DRT。新的18／13父层功能89813与原生覆盖89814已afterany排队，runner2d7649f；选择文件为selection-split18-merged13.json，必须全部严格通过后才能生成总PPA、三图和中文HTML。
 
 ## 结果适用范围与工具提示
 
