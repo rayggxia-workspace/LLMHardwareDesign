@@ -2,15 +2,15 @@
 
 ## 2026-10-22 ACT/MXU 同资源物理对照
 
-- 更新时间：2026-10-23 03:53 CST，中国标准时间UTC+08:00；负责人／账号YUZE-LU。
-- [Issue #15](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15)，分支 `task/15-opentpu-compare`，依赖PR10基线2b76f69，独立工作树，未修改已有PR8/PR10工作树与89448作业。
-- 已完成：共同169109映射单元逐型号核对；关闭合并导入额外剪去9DFF等135单元的优化，实际ODB库存一致。89631旧修复严格通过，独立89650核对34个输入。ACT／MXU／合并原候选块均通过电气与物理检查，但含M10信号，须为父层M10 PG策略重新布线。第三轮显式GRT路由上限M9，最终LEF复核；ACT89671、MXU89677已严格通过，MXU最差cap余量提高至+3.090818fF。透明分层STA自检89672通过；ACT映射到物理网表的612状态／存储实例、3210逻辑锥核对89685通过，状态输入突变负例成功检出。
-- 已补齐：89678合并块最终提取、89687三块功能锥核对均严格通过。89700／89701封存CTS、PG连通性通过，实际1662bit引脚几何哈希相同；旧03／04因缓存导出误判提前停止，更正证据已保留，旧ODB实际引脚也正确。
-- 正在执行：拆分20／89821自然COMPLETED0（1:02:26，UNLIMITED），DRC4771→211→106→12→2→2→0、天线0及最终PG通过。完整真实setup／hold +0.102314／+0.036146ns及电气通过；宏模型setup／hold +0.0754514／+0.0747274ns、最差cap +3.396215916fF，但act_data[145]的slew 209.263235ps超过199.000001ps上限10.263235ps，严格不合格。功能89822／RC覆盖89823均通过，不能抵消该接口失败。只读89824及规格比较89825定位place13151 BUF_X4；X8／X16旧RC均无电气违例且最差setup／hold相同。拆分21／89826于03:33:56 CST启动，runner6de7b3773398f15ef36362568977c541a01143e2，实际仅place13151 X4→X8，无新增缓冲／guardband；源时序复现、接线／合法化通过，已重新完整DRT。匹配21／13功能89827、RC覆盖89828依赖排队，runner46e6fdc57332467bd107b98b38b13a5200415c90，三项实际UNLIMITED。合并13继续作完整合格主对照；最终PPA仍待合格拆分和匹配证据。 Issue in_progress、草稿PR17。
-- 并行物理候选：增加独立线路复用候选top-split-reuse-20-01／89829，03:42:18 CST提交，16CPU、UNLIMITED，runneredc6479bbf993669aba7eae405ede1610baa538a。与21同从源20只改place13151 BUF_X4→X8；合法化后实际1个单元改变、2条关联普通线路清除，11952条既有普通线路保留到DRT输入，信号接线不变。原生DRT已推进至约30%，中间违例0，尚无终态资格；不宣称最终线路冻结，路由器仍可修复任何网络。现有21／89826继续自然运行。匹配复用候选／合并13的功能89831、RC覆盖89832、五个完整最终ODB线长复核89833依赖排队，runner401ce9bdd927d7483b24ede0803689f1ab447eae，均1CPU、UNLIMITED。 原生完整ODB线长API89830通过，1%差异检查仅防成本漏计，不改变零违例验收。
-- 下一步：collect／quality核对21和复用候选真实终态。若选择复用候选，必须使用selection-reuse20-merged13.json的十一份来源与证明；全部通过后compare／plot／report，再核验三图和HTML。若失败，继续封存违例修复；不按耗时取消。面积区分叶单元、宏占地和共同die，所有支持成本计入。
-- 接入：登记PR5沿用pending证据；本仓库无board.json、已知read:project权限缺项，看板unverified／同步pending，处理管理员待指定。审查人／优先级待指定，不自合并或标done。
-- 代码与实际作业runner各自按回执绑定；[实验记录](../../docs/experiments/issue-15-opentpu-comparison.md)与 `project/experiments/opentpu_compare/results/` 保留失败和通过证据。
+- 更新时间：2026-10-23 04:22 CST，中国标准时间UTC+08:00；负责人／实际GitHub账号YUZE-LU。
+- [Issue #15](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15)，分支`task/15-opentpu-compare`，[PR #17](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/17)，依赖PR10基线2b76f69；独立工作树，未修改PR8／PR10工作树、VECTOR或89448。
+- 已完成：三种块内实现与拆分两宏／合并一宏父层实际布局布线。保持169109初始映射单元、37023DFF、12个SRAM及相同计算／状态逻辑；统一1662bit外部引脚、die、2.5ns时钟及0.5ns IO预算，全部物理支持成本计入。拆分89829／34:01自然COMPLETED0，五个物理来源和六类证明共十一份记录全部通过compare；功能89831、覆盖89832、完整ODB89833通过。旧20的act_data[145] slew违例经单一驱动X4→X8并重新DRT／提取消除，没有放宽门槛。
+- 实测：拆分／合并总叶面积484240.4／482252.4µm²，总信号线6647739／6204600µm，通孔1322289／1284106，完整setup WNS +0.102306／+0.065642ns、hold +0.036146／+0.013027ns。拆分块内线长−249953µm，被父层+693092µm抵消；总线长+7.142%，不能将父层IO／时钟全归为685bit边界成本。
+- 成果：[中文HTML和三类图表](../../docs/experiments/issue-15-opentpu-results.html)，[过程及失败证据](../../docs/experiments/issue-15-opentpu-comparison.md)。生成代码8a646d8，冻结输入SHA f65688a957f13ef70216e923891ef6ff539adfc6f81c3e29a74ba5d10332720d；report-manifest绑定9个产物。实际查看三PNG、浏览器核验页面／表格／三图／路径和完整ODB展开，临时页面服务已关闭。delivery-validation记录实际检查和两个成本证明负例，均拒绝且未改变合格输出。
+- 仍在执行：全量清线重布的独立21／89826及匹配功能89827、RC覆盖89828，自然运行、UNLIMITED；不因主对照合格或耗时取消。当前Issue in_progress、草稿PR17，待其终态及最终交付核验再转in_review。
+- 限制：H1允许新增有源缓冲和全父层路由，M10以下父层线长占比约99.39%／99.26%，不代表H2少量定制层冻结底座；单small／typical／固定布局与引脚，synthetic SRAM无GDS、上游RTL通用等价和制造签核未完成。
+- 下一步：记录21自然结果、更新在线回执、PR提交独立审查。不自合并或标done；审查人／优先级待指定。H2预算及限定制层是后续独立实验。
+- 接入：登记管理中心PR5刚核验仍OPEN未合并、pending；本仓库无board.json，Projects核验工具／既有read:project缺项，看板unverified、同步pending，管理员待指定。
 
 - 更新时间：2026-10-21（中国标准时间，UTC+08:00）
 - 当前任务：[Issue #3：同步两份布线报告并补入 llaccel 引擎分析](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/3)。负责人 YUZE-LU，优先级待指定。
