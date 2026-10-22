@@ -187,9 +187,18 @@ def matched(spec):
 
 def view_probe(spec):
     if spec.get('repair_api'):
-        run_tcl('repair-api','help redirect\nputs "REDIRECT_COMMANDS [info commands *redirect*]"\n'
-            'puts "STA_CAP_COMMANDS [info commands sta::*capacitance*]"\n'
-            'puts "CAP_HELP [info body sta::max_capacitance_check_slack]"\n')
+        script='puts "STA_REDIRECT_COMMANDS [info commands sta::*redirect*]"\n'
+        script+='foreach name {sta::report_capacitance_checks sta::report_check_types sta::parse_redirect_args} {if {[llength [info procs $name]]} {puts "PROC $name: [info body $name]"}}\n'
+        if spec.get('repair_api_source'):
+            source=Path(spec['repair_api_source']);meta=json.loads((source/'experiment.json').read_text())
+            script+='read_liberty {'+str(track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib'))+'}\n'
+            for k in ['act','mxu']:
+                v=meta['views'][k];script+='read_liberty {'+str(track(Path(v['view'])/(v['name']+'.lib')))+'}\n'
+            script+='read_db {'+str(track(result(source)/'5_1_grt.odb'))+'}\nread_sdc {'+str(track(result(source)/'5_1_grt.sdc'))+'}\n'
+            script+='source {'+str(track(PLATFORM/'setRC.tcl'))+'}\nestimate_parasitics -placement\n'
+            script+='report_check_types -max_capacitance -max_count 5 -digits 6 -no_line_splits > {'+str(ROOT/'captured-cap.rpt')+'}\n'
+            script+='puts "CAPTURED: [read [open {'+str(ROOT/'captured-cap.rpt')+'} r]]"\n'
+        run_tcl('repair-api',script)
         return
     if spec.get('pin_checkpoint_diagnostics'):
         receipts={}
