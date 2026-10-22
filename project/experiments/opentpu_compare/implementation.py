@@ -487,8 +487,11 @@ def resume_parent(spec):
         marker='estimate_parasitics -global_routing\nputs {POST_GRT_FINAL_ELECTRICAL_CHECK}'
         assert text.count(marker)==1
         injection='set llhd_drive_rounds '+str(rounds)+'\nset llhd_drive_root {'+str(ROOT)+'}\nsource {'+str(track(ROOT/'runner/targeted_drive.tcl'))+'}\n'
+        if spec.get('macro_output_guards'):
+            injection='set llhd_enable_macro_guards 1\nsource {'+str(track(ROOT/'runner/macro_guard.tcl'))+'}\n'+injection
         hook.write_text(text.replace(marker,injection+marker))
         meta['targeted_drive_repair']=dict(rounds=rounds,scope='Only actual negative-margin standard BUF/INV drivers; smallest doubled drive with estimated 35% cap / 20% slew reserve, max X32; no macro or sequential change')
+        meta['targeted_drive_repair']['macro_output_guards']=bool(spec.get('macro_output_guards'))
     for view in meta['views'].values():
         for suffix2 in ['.lef','.lib']:
             path=Path(view['view'])/(view['name']+suffix2)
