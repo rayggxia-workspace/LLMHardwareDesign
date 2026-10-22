@@ -86,3 +86,5 @@ python project/experiments/opentpu_compare/launch.py <全新尝试名> matched -
 为直接检验少数真实提取违例，而非仅追逐全局布线估算，新增独立 `top-merged-extracted-15`／89781与 `top-split-extracted-15`／89782，runner03f8b20904eb2dc7f7dcb81309041a32c60550fe。从已封存06／07实际终态恢复，核对源输出清单、宏视图、固定引脚及初末PG，通过相同SPEF复现源宏模型setup／hold（误差小于1e-6ns）后再修改。合并最差输出末段线延迟约0.508ns，插入中点BUF_X4，并升级另一条临界路径弱BUF；拆分的两段实际临界长线加中继，原生报告中确有负hold的b_rdata[58]、t_rdata[32]、t_rdata[8]加BUF_X2。真实电容／slew违例另按原提取报告升级标准BUF或隔离宏输出。接线断言、原生布局检查均通过，已开始新布线。
 
 该分支完整清除的是普通信号dbWire并重新布线，全部special PG几何保留；不复用失效的寄生提取。GRT估算仍保存供诊断，此分支允许其为负时继续获取实际DRT／提取证据，最终所有DRC、天线、电气有符号余量、时序、PG及真实分层门槛不变。这样可以区分估算保守性与实际残留违例；不能预称估算一定错误。14轮原严格预DRT流程和已在DRT的13轮继续运行，未因追加新方案而取消。
+
+`route-api-01`／89784用同一实际二进制查询本机帮助，6秒自然完成、UNLIMITED：GRT有start/end_incremental，detailed_route帮助没有增量开关，未据此推断未文档化的行为。原帮助日志及其封存SHA核对结果留在results/route-api-01-help.log，后续仍按完整实际重布线验收。恢复分支为重复ECO生成不冲突的新单元／网络名，避免后续再次修复已有ECO终态时覆盖旧插入实例。
