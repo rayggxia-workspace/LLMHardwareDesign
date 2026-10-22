@@ -59,6 +59,8 @@ def repair(spec):
 def execute(spec):
     if spec['mode']=='repair': repair(spec)
     elif spec['mode']=='matched': matched(spec)
+    elif spec['mode']=='top': top(spec)
+    elif spec['mode']=='views': view_probe()
     else: raise ValueError('Not implemented: '+spec['mode'])
 
 LINKS={'ren':'act_ren','r_use':'computing','r_blk':'act_blk','r_blk2':'act_blk2',
@@ -159,3 +161,87 @@ def matched(spec):
     (ROOT/'input-sha256.json').write_text(json.dumps(INPUTS,indent=2)+'\n')
     make_stages(ROOT/'config.mk',spec,['do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish','do-generate_abstract'])
     run_tcl('detail','read_db {'+str(dest/'6_final.odb')+'}\nwrite_abstract_lef -bloat_factor 0 {'+str(dest/(top+'.detailed.lef'))+'}\n')
+
+def view_probe():
+    flow=Path('/OpenROAD-flow-scripts/flow')
+    names=['scripts/io_placement.tcl','scripts/io_placement_util.tcl','scripts/synth_odb.tcl',
+           'platforms/nangate45/config.mk','scripts/variables.yaml','scripts/cts.tcl','scripts/generate_abstract.tcl']
+    (ROOT/'extra-flow-sources.json').write_text(json.dumps({n:(flow/n).read_text() for n in names if (flow/n).is_file()},indent=2)+'\n')
+    run_tcl('help','help place_pin\nhelp read_spef\nhelp report_check_types\nhelp report_clock_min_period\n')
+
+def top(spec):
+    import math
+    sources={k:Path(v) for k,v in spec['sources'].items()}
+    assert set(sources)=={'act','mxu','merged'}
+    for source in sources.values():
+        assert (source/'exit-code.txt').read_text().strip()=='0', 'Input flow not completed'
+        # Freeze and verify only selected new experiment artifacts on this compute node.
+        expected={line[2:]:h for h,line in (r.split(None,1) for r in (source/'output.sha256').read_text().splitlines())}
+        for relative in ['experiment.json','elab.json','resource-audit.json']:
+            path=source/relative
+            assert digest(path)==expected[relative]
+    views={}
+    (ROOT/'views').mkdir()
+    for kind,source in sources.items():
+        meta=json.loads(track(source/'experiment.json').read_text());name=meta['top'];r=result(source)
+        view=ROOT/'views'/kind;view.mkdir()
+        for suffix,old in [('.lef',r/(name+'.detailed.lef')),('.lib',r/(name+'_typ.lib'))]:
+            track(old);shutil.copy2(old,view/(name+suffix))
+        text=(view/(name+'.lef')).read_text()
+        size=re.search(r'\bSIZE\s+([\d.]+)\s+BY\s+([\d.]+)',text)
+        assert size
+        views[kind]=dict(name=name,size=list(map(float,size.groups())),view=str(view),source=str(source))
+    aw,ah=views['act']['size'];mw,mh=views['mxu']['size'];cw,ch=views['merged']['size']
+    side=math.ceil(max(aw+mw+240,ah+160,mh+160,cw+160,ch+160)/10)*10
+    kind=spec['kind'];assert kind in ('split','merged')
+    topname='llhd_top_'+kind
+    ap,mp=ports(sources['act']),ports(sources['mxu'])
+    text,ext=wrapper(topname,ap,mp,split=kind=='split')
+    (ROOT/'top.v').write_text(text)
+    selected=['act','mxu'] if kind=='split' else ['merged']
+    locations={'u_act':[80,80],'u_mxu':[80+aw+80,80]} if kind=='split' else {'u_merged':[80,80]}
+    instances=list(locations)
+    (ROOT/'placement.tcl').write_text(''.join('place_macro -macro_name '+n+' -location {'+' '.join(map(str,xy))+'} -orientation R0 -exact\n' for n,xy in locations.items())+
+        'set b [ord::get_db_block]\n'+''.join('[$b findInst '+n+'] setPlacementStatus FIRM\n' for n in instances))
+    (ROOT/'boundary.sdc').write_text(boundary_sdc(topname))
+    pdn=('add_global_connection -net VDD -inst_pattern {.*} -pin_pattern {^VDD$} -power\n'
+         'add_global_connection -net VSS -inst_pattern {.*} -pin_pattern {^VSS$} -ground\nglobal_connect\n'
+         'set_voltage_domain -name CORE -power VDD -ground VSS\n'
+         'define_pdn_grid -name parent_grid -voltage_domains CORE -pins metal10\n'
+         'add_pdn_stripe -grid parent_grid -layer metal1 -width 0.17 -pitch 2.4 -offset 0 -followpins\n'
+         'add_pdn_stripe -grid parent_grid -layer metal4 -width 0.48 -pitch 56 -offset 2\n'
+         'add_pdn_stripe -grid parent_grid -layer metal7 -width 1.40 -pitch 30 -offset 2\n'
+         'add_pdn_stripe -grid parent_grid -layer metal10 -width 1.40 -pitch 30 -offset 2\n'
+         'add_pdn_connect -grid parent_grid -layers {metal1 metal4}\n'
+         'add_pdn_connect -grid parent_grid -layers {metal4 metal7}\n'
+         'add_pdn_connect -grid parent_grid -layers {metal7 metal10}\n')
+    for n in instances:
+        pdn+='define_pdn_grid -name pg_'+n+' -voltage_domains CORE -macro -instances '+n+' -grid_over_pg_pins -halo {2 2 2 2}\n'
+        pdn+='add_pdn_connect -grid pg_'+n+' -layers {metal7 metal10}\n'
+    (ROOT/'pdn.tcl').write_text(pdn)
+    setup='set llhd_macro_instances {'+' '.join(instances)+'}\nset ::env(LLHD_ATTEMPT) {'+str(ROOT)+'}\n'
+    setup+='source {'+str(ROOT/'runner/filter_pg.tcl')+'}\nsource {'+str(ROOT/'runner/check_pg.tcl')+'}\n'
+    (ROOT/'post-pdn.tcl').write_text(setup)
+    lefpaths=[str(Path(views[k]['view'])/(views[k]['name']+'.lef')) for k in selected]
+    libpaths=[str(Path(views[k]['view'])/(views[k]['name']+'.lib')) for k in selected]
+    nickname='opentpu_top_'+kind
+    relative='flow/results/nangate45/'+nickname+'/base'
+    config=('export DESIGN_NICKNAME = '+nickname+'\nexport DESIGN_NAME = '+topname+'\nexport PLATFORM = nangate45\n'
+        'export VERILOG_FILES = '+str(ROOT/'top.v')+'\nexport SDC_FILE = '+str(ROOT/'boundary.sdc')+'\n'
+        'export ADDITIONAL_LEFS = '+' '.join(lefpaths)+'\nexport ADDITIONAL_LIBS = '+' '.join(libpaths)+'\n'
+        'export DIE_AREA = 0 0 '+str(side)+' '+str(side)+'\nexport CORE_AREA = 10 10 '+str(side-10)+' '+str(side-10)+'\n'
+        'export MACRO_PLACEMENT_TCL = '+str(ROOT/'placement.tcl')+'\nexport PDN_TCL = '+str(ROOT/'pdn.tcl')+'\n'
+        'export POST_PDN_TCL = '+str(ROOT/'post-pdn.tcl')+'\nexport PLACE_DENSITY = 0.30\nexport TNS_END_PERCENT = 100\n'
+        'export CAP_MARGIN = 20\nexport LEC_CHECK = 0\nexport SYNTH_HIERARCHICAL = 0\n')
+    (ROOT/'config.mk').write_text(config)
+    (ROOT/'experiment.json').write_text(json.dumps(dict(top=topname,case=nickname,kind=kind,result_relative=relative,
+        views=views,locations=locations,die_um=[0,0,side,side],external_bits=1662,extra_state=0,
+        clock_ns=2.5,io_delay_ns=.5,input_driver='BUF_X4/Z',output_load_fF=5,
+        pdn='H1 additional parent M10; original detailed macro geometry retained',
+        full_hierarchical_sta='Required after routing; macro libraries alone do not qualify internal period'),indent=2)+'\n')
+    (ROOT/'input-sha256.json').write_text(json.dumps(INPUTS,indent=2)+'\n')
+    make_stages(ROOT/'config.mk',spec,['finish'])
+    (ROOT/'final-pg').mkdir()
+    run_tcl('final-pg','read_db {'+str(ROOT/relative/'6_final.odb')+'}\n'+
+        'set llhd_macro_instances {'+' '.join(instances)+'}\nset ::env(LLHD_ATTEMPT) {'+str(ROOT/'final-pg')+'}\n'
+        'set ::env(LLHD_PG_FILTER_AUDIT) 2\nsource {'+str(ROOT/'runner/filter_pg.tcl')+'}\nsource {'+str(ROOT/'runner/check_pg.tcl')+'}\n')
