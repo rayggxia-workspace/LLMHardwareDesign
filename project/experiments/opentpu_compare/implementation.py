@@ -187,11 +187,12 @@ def matched(spec):
 
 def view_probe(spec):
     if spec.get('symbolize_addresses'):
-        executable='/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad'
-        wrapper=Path(shutil.which('openroad'))
-        (ROOT/'openroad-launcher.txt').write_text(wrapper.read_text())
-        (ROOT/'binary-observation.json').write_text(json.dumps(dict(launcher=str(wrapper),launcher_sha256=digest(wrapper),
-            installed_binary=executable,installed_binary_sha256=digest(Path(executable))),indent=2)+'\n')
+        actual=Path(shutil.which('openroad'))
+        executable=str(actual)
+        installed=Path('/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad')
+        (ROOT/'binary-observation.json').write_text(json.dumps(dict(actual=str(actual),resolved=str(actual.resolve()),
+            actual_sha256=digest(actual),magic_hex=actual.read_bytes()[:4].hex(),
+            installed_binary=str(installed),installed_binary_sha256=digest(installed)),indent=2)+'\n')
         addresses=spec['symbolize_addresses']
         assert all(re.fullmatch(r'0x[0-9a-fA-F]+',address) for address in addresses)
         with (ROOT/'symbolized-stack.txt').open('w') as f:
