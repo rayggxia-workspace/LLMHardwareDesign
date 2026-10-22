@@ -57,6 +57,10 @@ def repair(spec):
     run_tcl('detail','read_db {'+str(dest/'6_final.odb')+'}\nwrite_abstract_lef -bloat_factor 0 {'+str(dest/'llhd_opentpu_act_mxu.detailed.lef')+'}\n')
 
 def execute(spec):
+    if spec.get('wire_audit_sources'):
+        from wire_audit import execute as audit_wires
+        audit_wires(spec['wire_audit_sources'])
+        return
     if spec.get('extracted_eco_source'):
         from extracted_eco import execute
         execute(spec)
