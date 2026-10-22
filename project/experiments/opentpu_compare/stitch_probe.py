@@ -71,10 +71,10 @@ endmodule
     for name in ['hierarchical','flat','missing_parent_negative_control']:
         text=technology+'read_liberty {'+str(liberty)+'}\nread_verilog {'+str(root/'fixture.v')+'}\n'
         text+='link_design '+('-hier ' if name!='flat' else '')+'fixture_top\n'
-        text+='create_clock -period 2.5 [get_ports CK]\nset_input_delay .1 [get_ports A]\n'
-        text+='set_output_delay .1 [get_ports Q]\nset_input_transition .05 [get_ports A]\nset_load 5 [get_ports Q]\n'
+        text+='create_clock -period 2.5 [get_ports CK]\nset_input_delay .1 -clock CK [get_ports A]\n'
+        text+='set_output_delay .1 -clock CK [get_ports Q]\nset_input_transition .05 [get_ports A]\nset_load 5 [get_ports Q]\n'
         text+='puts {BEFORE_SPEF}\nreport_clock_properties [all_clocks]\nreport_worst_slack -max -digits 9\n'
-        text+='report_net [get_nets CK]\ncatch {report_net [get_nets u/CK]}\ncatch {report_cell [get_cells u/f]}\n'
+        text+='report_net CK\ncatch {report_net u/CK}\ncatch {report_cell u/f}\n'
         if name=='flat':text+='read_spef {'+str(root/'flat.spef')+'}\n'
         else:
             if name=='hierarchical':text+='read_spef {'+str(root/'parent.spef')+'}\n'
