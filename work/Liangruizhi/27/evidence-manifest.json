@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "scope": "Read-only methodology review; independent toy oracle only; no repository/GitHub mutation, model execution, package installation, or hardware execution.",
+  "primary_sources": [
+    {
+      "title": "AMD UG573: Block RAM and UltraRAM Differences",
+      "version": "1.14, release 2025-11-18",
+      "url": "https://docs.amd.com/r/en-US/ug573-ultrascale-memory-resources/Block-RAM-and-UltraRAM-Differences",
+      "evidence": "Official search result exposes section text; parent UG573 page opened. Per-port read-or-write operation and non-equivalence to ordinary SDP/TDP mode labels.",
+      "boundary": "Used to motivate explicit abstract port semantics, not to assert the target project uses UltraRAM."
+    },
+    {
+      "title": "Intel oneAPI FPGA Handbook: Memory Attributes",
+      "version": "2024.2, document ID 785441, 2024-06-24",
+      "url": "https://www.intel.com/content/www/us/en/docs/oneapi-fpga-add-on/developer-guide/2024-2/memory-attributes.html",
+      "evidence": "Official page opened; bank_bits uses word addressing; bankwidth, replication and doublepump explicitly distinguish resources.",
+      "boundary": "No FPGA frequency/resource figure transferred into the abstract accelerator."
+    },
+    {
+      "title": "AMD XD099: Deadlock Detection and Analysis",
+      "version": "2023.2, 2023-11-13",
+      "url": "https://docs.amd.com/r/2023.2-English/Vitis-Tutorials-Hardware-Acceleration/Deadlock-Detection-and-Analysis",
+      "evidence": "Official indexed section shows FIFO capacity and production/consumption order affect deadlock.",
+      "boundary": "Independent toy consumer uses atomic A+B, so its exact depth threshold is not attributed to the vendor example."
+    },
+    {
+      "title": "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness",
+      "version": "arXiv:2205.14135v2, 2022-06-23",
+      "url": "https://arxiv.org/abs/2205.14135v2",
+      "evidence": "Official arXiv abstract and version history opened.",
+      "boundary": "Algorithmic IO-awareness motivates separating schedule from topology; no GPU speedup or IO bound transplanted as hardware proof."
+    },
+    {
+      "title": "Lee and Messerschmitt: Synchronous Data Flow",
+      "version": "Proceedings of the IEEE, 75(9):1235-1245, September 1987",
+      "url": "https://ptolemy.berkeley.edu/publications/papers/87/synchdataflow/",
+      "evidence": "Authors' Berkeley publication page opened; fixed production/consumption rates and static scheduling.",
+      "boundary": "Dataflow formulation is established method, not claimed novelty."
+    }
+  ],
+  "local_sources": [
+    {
+      "path": "D:/Projects/LLMHardwareDesign-partition/project/experiments/operator_partition/ledger.py",
+      "sha256": "37658c6aca44d7909ce52c1a0f1b559a5249e6304716a5329aac0f617ccb6026"
+    },
+    {
+      "path": "D:/Projects/LLMHardwareDesign-partition/project/experiments/operator_partition/experiment.json",
+      "sha256": "9ee538005ad6062dfaa64f30d102e4a660b7f45889688b7c90673f86403ea13f"
+    }
+  ],
+  "artifacts": {
+    "port-model-contract-draft.md": "86ae6f8dfd78c272bd279a839ddb0e327bae742a47660dbccf9dfef4ad24c796",
+    "minimal_counterexamples.py": "6c8507a6342d6693080fb419d988596e82cf36b29ea683d7671d030ee53ae157",
+    "minimal-counterexamples-results.json": "9e324ee25344ce5447e154cdaef068e67e7a65ee9c471495324cc97018b148fb"
+  },
+  "executed": {
+    "command": "D:/APP/Python/python.exe -B D:/Projects/Codex/state-port-study-20261022/interface-audit/minimal_counterexamples.py",
+    "status": "PASS",
+    "toy_tests": 7
+  }
+}

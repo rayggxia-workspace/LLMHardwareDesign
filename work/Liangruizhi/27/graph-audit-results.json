@@ -1,0 +1,1784 @@
+{
+  "status": "PASS",
+  "source_sha256": "bafb9f56df9e17f9bbf69591d75eaea535048fa76c9067c416032f4b87accef0",
+  "scope": "Independent dependency closure/bytes/scratch checks and production-checker rejection probes; no scheduler optimization or model arithmetic.",
+  "normal_cases": 96,
+  "assertions": 27073,
+  "dependency_relations": {
+    "RAW": 2208,
+    "WAR": 1248,
+    "WAW": 1248
+  },
+  "invalid_config_probes": [
+    {
+      "case": "key_tile=0",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "key_tile=-1",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "key_tile=1.5",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "key_tile=nan",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "key_tile=True",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "max_query_tile=0",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "max_query_tile=-1",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "max_query_tile=1.5",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "max_query_tile=nan",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "max_query_tile=True",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "bank_port_bytes_per_cycle=0",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "bank_port_bytes_per_cycle=-1",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "bank_port_bytes_per_cycle=1.5",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "bank_port_bytes_per_cycle=nan",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "bank_port_bytes_per_cycle=True",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "link_bytes_per_cycle=0",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "link_bytes_per_cycle=-1",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "link_bytes_per_cycle=1.5",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "link_bytes_per_cycle=nan",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "link_bytes_per_cycle=True",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "external_bytes_per_cycle=0",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "external_bytes_per_cycle=-1",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "external_bytes_per_cycle=1.5",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "external_bytes_per_cycle=nan",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "external_bytes_per_cycle=True",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "matrix_macs_per_cycle=0",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "matrix_macs_per_cycle=-1",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "matrix_macs_per_cycle=1.5",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "matrix_macs_per_cycle=nan",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "matrix_macs_per_cycle=True",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "vector_elements_per_cycle=0",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "vector_elements_per_cycle=-1",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "vector_elements_per_cycle=1.5",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "vector_elements_per_cycle=nan",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "vector_elements_per_cycle=True",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "endpoint_staging_bytes=0",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "endpoint_staging_bytes=-1",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "endpoint_staging_bytes=1.5",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "endpoint_staging_bytes=nan",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "endpoint_staging_bytes=True",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "setup=-1",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "bank_capacity=-1",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "scratch_capacity=-1",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "setup=1.5",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "bank_capacity=1.5",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "scratch_capacity=1.5",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "setup=nan",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "bank_capacity=nan",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "scratch_capacity=nan",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "setup=True",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "bank_capacity=True",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "scratch_capacity=True",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "workload.queries=0",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "workload.queries=-1",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "workload.queries=1.5",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "workload.queries=nan",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "workload.queries=True",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "workload.keys=0",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "workload.keys=-1",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "workload.keys=1.5",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "workload.keys=nan",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "workload.keys=True",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "workload.head_dim=0",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "workload.head_dim=-1",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "workload.head_dim=1.5",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "workload.head_dim=nan",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "workload.head_dim=True",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "placement.O=True",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "placement.O=2",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "placement.O=0.5",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "unknown_disabled",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "duplicate_disabled",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "staging_smaller_than_link_beat",
+      "rejected": true,
+      "exception": "ValueError"
+    }
+  ],
+  "checker_probes": [
+    {
+      "case": "wrong_access_bank",
+      "rejected": true,
+      "errors": [
+        "invalid address/extent entry.Q"
+      ]
+    },
+    {
+      "case": "wrong_access_offset",
+      "rejected": true,
+      "errors": [
+        "invalid address/extent entry.Q"
+      ]
+    },
+    {
+      "case": "read_beyond_slot",
+      "rejected": true,
+      "errors": [
+        "invalid address/extent t1.qk.rK",
+        "read exceeds initialized version t1.qk.rK"
+      ]
+    },
+    {
+      "case": "read_unwritten_tail_within_slot",
+      "rejected": true,
+      "errors": [
+        "read exceeds initialized version t1.qk.rK"
+      ]
+    },
+    {
+      "case": "shortened_latest_write",
+      "rejected": true,
+      "errors": [
+        "read exceeds initialized version t1.qk.rK"
+      ]
+    },
+    {
+      "case": "slot_and_access_unknown_bank",
+      "rejected": true,
+      "errors": [
+        "invalid slot Q",
+        "invalid address/extent entry.Q",
+        "invalid address/extent t0.qk.rQ",
+        "invalid address/extent t1.qk.rQ"
+      ]
+    },
+    {
+      "case": "invalid_direction_treated_as_write",
+      "rejected": true,
+      "errors": [
+        "invalid direction entry.Q",
+        "uninitialized t0.qk.rQ",
+        "read exceeds initialized version t0.qk.rQ",
+        "uninitialized t1.qk.rQ",
+        "read exceeds initialized version t1.qk.rQ"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1RW",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "1R1W",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 0,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 0,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 0
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 1,
+        "m": 0,
+        "l": 1
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 0
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 1,
+        "head_dim": 3
+      },
+      "tasks": 33
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 1,
+        "keys": 7,
+        "head_dim": 4
+      },
+      "tasks": 56
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 2,
+        "keys": 8,
+        "head_dim": 3
+      },
+      "tasks": 56
+    },
+    {
+      "port": "2RW",
+      "placement": {
+        "O": 1,
+        "m": 1,
+        "l": 1
+      },
+      "workload": {
+        "queries": 4,
+        "keys": 9,
+        "head_dim": 4
+      },
+      "tasks": 79
+    }
+  ]
+}

@@ -1,0 +1,261 @@
+{
+  "tasks": [
+    {
+      "id": "A",
+      "duration": 5,
+      "deps": [],
+      "resources": {
+        "x": 1
+      }
+    },
+    {
+      "id": "B",
+      "duration": 1,
+      "deps": [],
+      "resources": {
+        "y": 1
+      }
+    },
+    {
+      "id": "C",
+      "duration": 1,
+      "deps": [
+        "B"
+      ],
+      "resources": {
+        "x": 1
+      }
+    },
+    {
+      "id": "D",
+      "duration": 5,
+      "deps": [
+        "C"
+      ],
+      "resources": {
+        "y": 1
+      }
+    }
+  ],
+  "capacities": {
+    "x": 1,
+    "y": 1
+  },
+  "heuristics": {
+    "critical": {
+      "policy": "critical",
+      "makespan": 11,
+      "events": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "id": "B",
+          "start": 0,
+          "end": 1
+        },
+        {
+          "id": "C",
+          "start": 5,
+          "end": 6
+        },
+        {
+          "id": "D",
+          "start": 6,
+          "end": 11
+        }
+      ],
+      "proven_optimal": false,
+      "bounds": {
+        "critical_path": 7,
+        "resource_workload": 6,
+        "lower_bound": 7
+      }
+    },
+    "fifo": {
+      "policy": "fifo",
+      "makespan": 11,
+      "events": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "id": "B",
+          "start": 0,
+          "end": 1
+        },
+        {
+          "id": "C",
+          "start": 5,
+          "end": 6
+        },
+        {
+          "id": "D",
+          "start": 6,
+          "end": 11
+        }
+      ],
+      "proven_optimal": false,
+      "bounds": {
+        "critical_path": 7,
+        "resource_workload": 6,
+        "lower_bound": 7
+      }
+    },
+    "shortest": {
+      "policy": "shortest",
+      "makespan": 11,
+      "events": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "id": "B",
+          "start": 0,
+          "end": 1
+        },
+        {
+          "id": "C",
+          "start": 5,
+          "end": 6
+        },
+        {
+          "id": "D",
+          "start": 6,
+          "end": 11
+        }
+      ],
+      "proven_optimal": false,
+      "bounds": {
+        "critical_path": 7,
+        "resource_workload": 6,
+        "lower_bound": 7
+      }
+    },
+    "longest": {
+      "policy": "longest",
+      "makespan": 11,
+      "events": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "id": "B",
+          "start": 0,
+          "end": 1
+        },
+        {
+          "id": "C",
+          "start": 5,
+          "end": 6
+        },
+        {
+          "id": "D",
+          "start": 6,
+          "end": 11
+        }
+      ],
+      "proven_optimal": false,
+      "bounds": {
+        "critical_path": 7,
+        "resource_workload": 6,
+        "lower_bound": 7
+      }
+    }
+  },
+  "exact": {
+    "policy": "exact_event_dp",
+    "makespan": 7,
+    "events": [
+      {
+        "id": "B",
+        "start": 0,
+        "end": 1
+      },
+      {
+        "id": "C",
+        "start": 1,
+        "end": 2
+      },
+      {
+        "id": "A",
+        "start": 2,
+        "end": 7
+      },
+      {
+        "id": "D",
+        "start": 2,
+        "end": 7
+      }
+    ],
+    "proven_optimal": true,
+    "bounds": {
+      "critical_path": 7,
+      "resource_workload": 6,
+      "lower_bound": 7
+    },
+    "search": {
+      "states": 9,
+      "transitions": 13,
+      "deliberate_idle_transitions": 1
+    },
+    "max_tasks": 9,
+    "max_states": 250000
+  },
+  "validation": {
+    "critical": {
+      "valid": true,
+      "errors": [],
+      "makespan": 11,
+      "resource_peaks": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "fifo": {
+      "valid": true,
+      "errors": [],
+      "makespan": 11,
+      "resource_peaks": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "shortest": {
+      "valid": true,
+      "errors": [],
+      "makespan": 11,
+      "resource_peaks": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "longest": {
+      "valid": true,
+      "errors": [],
+      "makespan": 11,
+      "resource_peaks": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "exact": {
+      "valid": true,
+      "errors": [],
+      "makespan": 7,
+      "resource_peaks": {
+        "x": 1,
+        "y": 1
+      }
+    }
+  },
+  "optimality_witness": "B-C-D precedence path duration7; explicit feasible schedule duration7 matches lower bound; all non-delay policies11."
+}

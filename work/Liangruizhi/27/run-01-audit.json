@@ -1,0 +1,424 @@
+{
+  "status": "PASS",
+  "errors": [],
+  "notes": [
+    "JSON serialization sorts placement keys as O,l,m; audited with explicit O,m,l extraction. run.py groups before serialization, so its present insertion order is correct but fragile if read-back is added.",
+    "The mask model rejects required direct edges; there is no alternate routing. Retained same-placement graphs have identical service cost; disabled static options must be a subset.",
+    "Failure reason is the first capacity/scratch/link blocker, not a proof of a unique failure cause.",
+    "All durations, rates, capacities, scratch and FP32 operand bytes are model assumptions. No real port/RTL/cycle/PPA calibration or INT8 result.",
+    "Changing placement also moves a together with m; the actual compared state placement is O,m,l with a tied to m.",
+    "The objective is an equal-count sum of one observed prefill query-head tile and one observed decode query-head tile, not prompt/model end-to-end latency.",
+    "Each phase may choose its best policy from the same four-policy budget; the placement is shared. Optimality of those large-graph schedules is not established.",
+    "Only 24 schedules are archived as witnesses; the other feasible rows archive cycles and event SHA, not full events. This audit validates all case metadata and all archived witnesses, not all 4896 original full schedules."
+  ],
+  "run_directory": "D:\\Projects\\Codex\\state-port-study-20261022\\run-01",
+  "development_run": false,
+  "source_commit": "6ffb9417f0f01f614b733ce6c3ca9837906b3203",
+  "source_is_not_frozen_for_formal_claims": false,
+  "source_read_mode": "frozen local Git objects at manifest source_commit",
+  "source_snapshot_sha256": {
+    "run.py": "d7a3ddfe2cc0b6083b5309d3ca8ef4ce305bc737b2655d9d354e26b763c87697",
+    "graph.py": "bafb9f56df9e17f9bbf69591d75eaea535048fa76c9067c416032f4b87accef0",
+    "scheduler.py": "f84fc57ba77326d4f91778f2ba0d1dbd413026f6f431bddbd7e1f5b751dd07c3",
+    "experiment.json": "361921e9c7ca07ac5eb1b9ff10af5f9a5a835736259ec36621ae7fa71f123891"
+  },
+  "audit_script_sha256": "4238e1057127946891b314eefb77f2b83f04ed292e303debd1224b5a08295c83",
+  "manifest_checks": {
+    "cases.json": {
+      "bytes": true,
+      "sha256": true
+    },
+    "static-choices.json": {
+      "bytes": true,
+      "sha256": true
+    },
+    "summary.json": {
+      "bytes": true,
+      "sha256": true
+    },
+    "trace-binding.json": {
+      "bytes": true,
+      "sha256": true
+    },
+    "witnesses.json.gz": {
+      "bytes": true,
+      "sha256": true
+    }
+  },
+  "independent_trace_binding_checks": {
+    "archive_sha256": true,
+    "binding_archive_sha256": true,
+    "0:attention.query_post_rope": true,
+    "0:attention.key_cached_post_rope": true,
+    "16:attention.query_post_rope": true,
+    "16:attention.key_cached_post_rope": true,
+    "exact_observation_records": true
+  },
+  "expected_cartesian_cases": 3456,
+  "actual_cases": 3456,
+  "statuses": {
+    "feasible": 1224,
+    "infeasible": 2232
+  },
+  "first_blocker_counts": {
+    "missing static link V0": 648,
+    "missing static link D1": 288,
+    "capacity B1": 864,
+    "capacity B0": 432
+  },
+  "static_groups_rebuilt": 108,
+  "mask_case_pairs": {
+    "lost_feasible": 936,
+    "retained_feasible": 504,
+    "already_infeasible": 864
+  },
+  "static_mask_groups": {
+    "same_best": 42,
+    "worse_best": 12,
+    "no_common_feasible_placement": 18
+  },
+  "witnesses_independently_validated": 24,
+  "same_inventory_witness_pairs": 12,
+  "representative_placements_explicit_order_O_m_l": [
+    {
+      "ports": "1RW",
+      "all_full_options": [
+        {
+          "phases": {
+            "observed-decode48": 2522,
+            "observed-prefill32": 6774
+          },
+          "placement": {
+            "O": 1,
+            "l": 1,
+            "m": 1
+          },
+          "sum_query_tile_cycles": 9296
+        },
+        {
+          "phases": {
+            "observed-decode48": 2559,
+            "observed-prefill32": 6820
+          },
+          "placement": {
+            "O": 1,
+            "l": 0,
+            "m": 1
+          },
+          "sum_query_tile_cycles": 9379
+        },
+        {
+          "phases": {
+            "observed-decode48": 2568,
+            "observed-prefill32": 6824
+          },
+          "placement": {
+            "O": 1,
+            "l": 1,
+            "m": 0
+          },
+          "sum_query_tile_cycles": 9392
+        },
+        {
+          "phases": {
+            "observed-decode48": 2580,
+            "observed-prefill32": 6836
+          },
+          "placement": {
+            "O": 1,
+            "l": 0,
+            "m": 0
+          },
+          "sum_query_tile_cycles": 9416
+        },
+        {
+          "phases": {
+            "observed-decode48": 2567,
+            "observed-prefill32": 7032
+          },
+          "placement": {
+            "O": 0,
+            "l": 1,
+            "m": 1
+          },
+          "sum_query_tile_cycles": 9599
+        },
+        {
+          "phases": {
+            "observed-decode48": 2604,
+            "observed-prefill32": 7078
+          },
+          "placement": {
+            "O": 0,
+            "l": 0,
+            "m": 1
+          },
+          "sum_query_tile_cycles": 9682
+        },
+        {
+          "phases": {
+            "observed-decode48": 2613,
+            "observed-prefill32": 7082
+          },
+          "placement": {
+            "O": 0,
+            "l": 1,
+            "m": 0
+          },
+          "sum_query_tile_cycles": 9695
+        },
+        {
+          "phases": {
+            "observed-decode48": 2625,
+            "observed-prefill32": 7094
+          },
+          "placement": {
+            "O": 0,
+            "l": 0,
+            "m": 0
+          },
+          "sum_query_tile_cycles": 9719
+        }
+      ],
+      "best": {
+        "phases": {
+          "observed-decode48": 2522,
+          "observed-prefill32": 6774
+        },
+        "placement": {
+          "O": 1,
+          "l": 1,
+          "m": 1
+        },
+        "sum_query_tile_cycles": 9296
+      }
+    },
+    {
+      "ports": "1R1W",
+      "all_full_options": [
+        {
+          "phases": {
+            "observed-decode48": 1809,
+            "observed-prefill32": 6680
+          },
+          "placement": {
+            "O": 1,
+            "l": 1,
+            "m": 1
+          },
+          "sum_query_tile_cycles": 8489
+        },
+        {
+          "phases": {
+            "observed-decode48": 1821,
+            "observed-prefill32": 6680
+          },
+          "placement": {
+            "O": 1,
+            "l": 0,
+            "m": 1
+          },
+          "sum_query_tile_cycles": 8501
+        },
+        {
+          "phases": {
+            "observed-decode48": 1830,
+            "observed-prefill32": 6680
+          },
+          "placement": {
+            "O": 1,
+            "l": 1,
+            "m": 0
+          },
+          "sum_query_tile_cycles": 8510
+        },
+        {
+          "phases": {
+            "observed-decode48": 1839,
+            "observed-prefill32": 6680
+          },
+          "placement": {
+            "O": 0,
+            "l": 1,
+            "m": 1
+          },
+          "sum_query_tile_cycles": 8519
+        },
+        {
+          "phases": {
+            "observed-decode48": 1842,
+            "observed-prefill32": 6680
+          },
+          "placement": {
+            "O": 1,
+            "l": 0,
+            "m": 0
+          },
+          "sum_query_tile_cycles": 8522
+        },
+        {
+          "phases": {
+            "observed-decode48": 1851,
+            "observed-prefill32": 6686
+          },
+          "placement": {
+            "O": 0,
+            "l": 0,
+            "m": 1
+          },
+          "sum_query_tile_cycles": 8537
+        },
+        {
+          "phases": {
+            "observed-decode48": 1860,
+            "observed-prefill32": 6690
+          },
+          "placement": {
+            "O": 0,
+            "l": 1,
+            "m": 0
+          },
+          "sum_query_tile_cycles": 8550
+        },
+        {
+          "phases": {
+            "observed-decode48": 1872,
+            "observed-prefill32": 6698
+          },
+          "placement": {
+            "O": 0,
+            "l": 0,
+            "m": 0
+          },
+          "sum_query_tile_cycles": 8570
+        }
+      ],
+      "best": {
+        "phases": {
+          "observed-decode48": 1809,
+          "observed-prefill32": 6680
+        },
+        "placement": {
+          "O": 1,
+          "l": 1,
+          "m": 1
+        },
+        "sum_query_tile_cycles": 8489
+      }
+    },
+    {
+      "ports": "2RW",
+      "all_full_options": [
+        {
+          "phases": {
+            "observed-decode48": 1809,
+            "observed-prefill32": 6680
+          },
+          "placement": {
+            "O": 0,
+            "l": 0,
+            "m": 0
+          },
+          "sum_query_tile_cycles": 8489
+        },
+        {
+          "phases": {
+            "observed-decode48": 1809,
+            "observed-prefill32": 6680
+          },
+          "placement": {
+            "O": 0,
+            "l": 1,
+            "m": 0
+          },
+          "sum_query_tile_cycles": 8489
+        },
+        {
+          "phases": {
+            "observed-decode48": 1809,
+            "observed-prefill32": 6680
+          },
+          "placement": {
+            "O": 0,
+            "l": 0,
+            "m": 1
+          },
+          "sum_query_tile_cycles": 8489
+        },
+        {
+          "phases": {
+            "observed-decode48": 1809,
+            "observed-prefill32": 6680
+          },
+          "placement": {
+            "O": 0,
+            "l": 1,
+            "m": 1
+          },
+          "sum_query_tile_cycles": 8489
+        },
+        {
+          "phases": {
+            "observed-decode48": 1809,
+            "observed-prefill32": 6680
+          },
+          "placement": {
+            "O": 1,
+            "l": 0,
+            "m": 0
+          },
+          "sum_query_tile_cycles": 8489
+        },
+        {
+          "phases": {
+            "observed-decode48": 1809,
+            "observed-prefill32": 6680
+          },
+          "placement": {
+            "O": 1,
+            "l": 1,
+            "m": 0
+          },
+          "sum_query_tile_cycles": 8489
+        },
+        {
+          "phases": {
+            "observed-decode48": 1809,
+            "observed-prefill32": 6680
+          },
+          "placement": {
+            "O": 1,
+            "l": 0,
+            "m": 1
+          },
+          "sum_query_tile_cycles": 8489
+        },
+        {
+          "phases": {
+            "observed-decode48": 1809,
+            "observed-prefill32": 6680
+          },
+          "placement": {
+            "O": 1,
+            "l": 1,
+            "m": 1
+          },
+          "sum_query_tile_cycles": 8489
+        }
+      ],
+      "best": {
+        "phases": {
+          "observed-decode48": 1809,
+          "observed-prefill32": 6680
+        },
+        "placement": {
+          "O": 0,
+          "l": 0,
+          "m": 0
+        },
+        "sum_query_tile_cycles": 8489
+      }
+    }
+  ],
+  "elapsed_seconds": 0.42616724967956543
+}

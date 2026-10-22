@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "source_model": "Qwen/Qwen3-0.6B@c1899de289a04d12100db370d81485cdf75e47ca",
+  "trace_archive_sha256": "d9f6701fcea9553e557a63a718787ade5da908b44f43f2dae7e2701da7d5de76",
+  "precision": "FP32 all modeled operands; not INT8 attention",
+  "calibration": "all service/capacity values assumed, not measured physical hardware",
+  "base": {
+    "max_query_tile": 32,
+    "key_tile": 16,
+    "bank_bytes": [
+      65536,
+      65536
+    ],
+    "scratch_bytes": {
+      "M": 65536,
+      "V": 65536
+    },
+    "bank_ports": "1R1W",
+    "bank_port_bytes_per_cycle": 64,
+    "link_bytes_per_cycle": 64,
+    "external_bytes_per_cycle": 32,
+    "burst_setup_cycles": 2,
+    "matrix_macs_per_cycle": 1024,
+    "vector_elements_per_cycle": 16,
+    "endpoint_staging_bytes": 64
+  },
+  "sweep": {
+    "key_tiles": [
+      8,
+      16,
+      32
+    ],
+    "port_types": [
+      "1RW",
+      "1R1W",
+      "2RW"
+    ],
+    "bank_profiles": [
+      [
+        65536,
+        65536
+      ],
+      [
+        65536,
+        32768
+      ]
+    ],
+    "bandwidth_profiles": [
+      {
+        "bank_port_bytes_per_cycle": 64,
+        "link_bytes_per_cycle": 64,
+        "external_bytes_per_cycle": 32
+      },
+      {
+        "bank_port_bytes_per_cycle": 32,
+        "link_bytes_per_cycle": 32,
+        "external_bytes_per_cycle": 16
+      }
+    ],
+    "disabled_links": [
+      [],
+      [
+        "V0"
+      ],
+      [
+        "D1"
+      ]
+    ],
+    "policies": [
+      "critical",
+      "fifo",
+      "shortest",
+      "longest"
+    ]
+  },
+  "workloads": [
+    {
+      "id": "observed-prefill32",
+      "queries": 32,
+      "keys": 32,
+      "head_dim": 128,
+      "source": "actual trace primary prefill shape, one query head"
+    },
+    {
+      "id": "observed-decode48",
+      "queries": 1,
+      "keys": 48,
+      "head_dim": 128,
+      "source": "actual trace primary final decode shape, one query head"
+    },
+    {
+      "id": "extrapolated-prefill-last32-of256",
+      "queries": 32,
+      "keys": 256,
+      "head_dim": 128,
+      "source": "unmeasured length extrapolation; last query tile only"
+    },
+    {
+      "id": "extrapolated-decode256",
+      "queries": 1,
+      "keys": 256,
+      "head_dim": 128,
+      "source": "unmeasured length extrapolation"
+    }
+  ],
+  "selection": {
+    "static": "one O/m/l placement and one link mask across both phases",
+    "phases": "equal count of one prefill query tile and one decode query tile; not throughput or full end-to-end",
+    "heuristic": "same four policy search per design per workload, feasible upper bounds only"
+  }
+}
