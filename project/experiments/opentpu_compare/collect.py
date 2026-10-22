@@ -53,8 +53,8 @@ for p in sorted(base.iterdir()):
     row[name+'_sha256']=hashlib.sha256(f.read_bytes()).hexdigest()
     row['hierarchy_annotation_summary']=[line for line in text.splitlines() if any(s in line.lower() for s in ['annotated','warning','error','unconstrained','no clock'])][:60]
  row['physical_repair_actions']={}
- for name in ['targeted-drive.tsv','macro-output-guards.tsv']:
-  f=p/name
+ for f in sorted(set(p.glob('targeted-drive*.tsv'))|set(p.glob('macro-output-guards*.tsv'))|set(p.glob('joint-repair.tsv'))):
+  name=f.name
   if f.exists():
    lines=f.read_text().splitlines()
    row['physical_repair_actions'][name]={'header':lines[0] if lines else '', 'rows':lines[1:]}

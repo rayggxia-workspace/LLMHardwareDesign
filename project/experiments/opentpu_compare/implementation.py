@@ -517,6 +517,14 @@ def resume_parent(spec):
         injection='set llhd_drive_rounds '+str(rounds)+'\nset llhd_drive_root {'+str(ROOT)+'}\nsource {'+str(track(ROOT/'runner/targeted_drive.tcl'))+'}\n'
         if spec.get('macro_output_guards'):
             injection='set llhd_enable_macro_guards 1\nsource {'+str(track(ROOT/'runner/macro_guard.tcl'))+'}\n'+injection
+        if spec.get('joint_repair_rounds'):
+            joint=int(spec['joint_repair_rounds']);assert 0<joint<=10
+            target=float(spec['setup_target_ns']);accept=float(spec['setup_accept_ns']);assert 0<=accept<target<=.5
+            injection+='set llhd_drive_guardband 1\nset llhd_joint_rounds '+str(joint)+'\n'
+            injection+='set llhd_setup_target '+str(target)+'\nset llhd_setup_accept '+str(accept)+'\n'
+            injection+='set llhd_joint_runner {'+str(ROOT/'runner')+'}\nsource {'+str(track(ROOT/'runner/joint_repair.tcl'))+'}\n'
+            meta['joint_timing_electrical_repair']=dict(rounds=joint,setup_target_ns=target,grt_accept_setup_ns=accept,
+                strategy='Alternating setup optimization and electrical guardbands; no gate cloning/pin swaps, no clock/IO relaxation')
         hook.write_text(text.replace(marker,injection+marker))
         meta['targeted_drive_repair']=dict(rounds=rounds,scope='Only actual negative-margin standard BUF/INV drivers; smallest doubled drive with estimated 35% cap / 20% slew reserve, max X32; no macro or sequential change')
         meta['targeted_drive_repair']['macro_output_guards']=bool(spec.get('macro_output_guards'))
