@@ -1,6 +1,8 @@
 # 三节点并行工作线
 
-最新：第二轮七路均已完成，严格工具门槛接受ACT20／GEMM20／MXU20。ACT10零计数但负余量的原因及新CTS检查点定向修复见[修复记录](../../../../docs/experiments/issue-7-parallel-blocks-repair.md)。ACT修复已通过，合并块根15／89519及89520审计均结束，但仍4处电容违例（最差−5.886479fF），未接收。本并行线无运行作业；新审计默认同时检查电容计数与最差余量。原冻结runner和历史失败不改写。
+2026-10-22：原批次可进行阶段性实验总结；补交根17／89558／node8／32CPU，合并块路由裕量30／40各16CPU，89559一次性审计，均UNLIMITED。见[阶段验收矩阵](../../../../docs/experiments/issue-7-parallel-blocks-acceptance.md)。仅路由阶段改变裕量，原放置／CTS仍来自20；实际runner `7ffd04d`，终态未出不预判。
+
+21日终态：第二轮七路均已完成，严格工具门槛接受ACT20／GEMM20／MXU20。ACT10零计数但负余量的原因及新CTS检查点定向修复见[修复记录](../../../../docs/experiments/issue-7-parallel-blocks-repair.md)。ACT修复已通过，合并块根15／89519及89520审计均结束，但仍4处电容违例（最差−5.886479fF），未接收。本并行线无运行作业；新审计默认同时检查电容计数与最差余量。原冻结runner和历史失败不改写。
 
 Refs [Issue #7](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7)，延续同一草稿 PR #10。用户已明确同意三节点方案；与主线 VECTOR／PG 作业隔离。
 

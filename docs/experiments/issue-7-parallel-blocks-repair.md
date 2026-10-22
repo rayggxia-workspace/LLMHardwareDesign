@@ -4,6 +4,8 @@
 - 本页只记录并行工作树自己的实验；主线 PR #8 的 VECTOR／PG、状态页、工作树和作业均未改动。
 - 原始物理根为 `yuzelu@10.129.166.172:/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/`。本轮在新根12–16保存修复、失败和诊断；原始输入与冻结runner不改写。
 
+> 2026-10-22更新：原批次已具备阶段性总结送审条件；合并块路由裕量30／40对照已在新根17、89558／node8／32CPU（2×16）并发启动，89559终态审计已提交。见[阶段验收矩阵](issue-7-parallel-blocks-acceptance.md)。下文保留21日原终态，未覆盖历史。
+
 ## 第二轮完整终态
 
 89497／node7／48 CPU已完成6:00；89498／node8／64 CPU已完成45:14，四路大块各16 CPU。89499产物审计完成45秒，89510／node9／1 CPU严格审计完成1:54，89511封存完成5秒；均COMPLETED0:0、UNLIMITED。已取回并验证[06冻结终态](../../project/experiments/parallel_blocks/results/parallel-blocks-wave2-06-completion.json)和[11严格审计终态](../../project/experiments/parallel_blocks/results/parallel-blocks-wave2-11-completion.json)，不再描述为仍运行。

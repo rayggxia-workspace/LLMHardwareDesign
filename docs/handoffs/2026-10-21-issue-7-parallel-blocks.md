@@ -1,5 +1,13 @@
 # Issue #7 并发实验恢复与主线协调
 
+## 最新恢复入口：2026-10-22阶段总结与补充
+
+用户授权总结验收并自行提交必要补充。原七路基线＋两次完成布线的接续均结束，严格工具门槛4份通过、5份未过；可阶段总结送审，不能完整宏／H2验收。入口为[阶段验收矩阵](../experiments/issue-7-parallel-blocks-acceptance.md)及[派生索引](../../project/experiments/parallel_blocks/results/parallel-blocks-acceptance-20261022.json)。
+
+**新根17／89558／node8／32CPU运行中**：两个exclusive step各16，合并块仅路由CAP_MARGIN30／40，同一06 CTS检查点和根15四项升级，放置／CTS仍原20；runner `7ffd04d1f5b076f3826067fa17644327fe7abccd`。89559为一次性afterany审计，均UNLIMITED。不要重复提交，不因耗时取消；新审计要求配置和实际repair_design调用与请求margin一致，再审全部严格门槛。恢复第一步运行 `python project/experiments/parallel_blocks/wave2/monitor.py --attempt parallel-blocks-wave2-17`，核对冻结completion SHA后更新验收矩阵，不能以COMPLETED或哈希通过判电气通过。
+
+本次仅读主线PR8／工作树和89448，形式验证仍运行，不干预。原候选可继续补arc／内部period／驱动负载／PG／等价资格，正式openTPU双宏顶层尚未执行；失败合并块不作为合格宏。使用同一草稿PR10和固定Issue回执，管理中心PR5 pending，看板unverified／同步pending，管理员／审查人／优先级待指定；临时侧聊无定时助手唤醒。
+
 ## 最新恢复入口：定向修复终态（2026-10-21 20:52，UTC+08:00）
 
 第二轮七路及89510／89511严格审计已全部完成；以[修复与完整终态记录](../experiments/issue-7-parallel-blocks-repair.md)为准。ACT20／GEMM20／MXU20通过本次工具门槛；合并20有4处电容违例。ACT10零计数却负余量的原因已用实际二进制／Liberty／SPEF查实，为约1fF的零值容差。

@@ -1,5 +1,13 @@
 # Issue #7 并发实验进度补充
 
+## 最新：2026-10-22（UTC+08:00）
+
+- 用户授权检查完成度、总结验收并自行补充必要实验。已再次核对账号、Issue7、PR10／PR8、管理中心PR5及实际队列。原七路基线和两次完成布线的定向接续均结束，严格工具预算通过4份（3种块），失败5份；3次名称／生成器失败另存，未合格宏或H2。见[阶段验收矩阵](../../docs/experiments/issue-7-parallel-blocks-acceptance.md)。
+- 阶段实验交付可总结送审；ACT20／修复ACT10、GEMM20、MXU20为后续宏资格候选。完整时序模型、边界负载、PG、源到物理等价和正式openTPU两宏顶层仍待完成，不把局部工具通过当作系统验收。
+- 新增根17／89558／node8／32CPU（两路各16、exclusive），同一原CTS检查点、相同四项驱动升级，仅路由CAP_MARGIN30／40；89559一次性afterany审计，UNLIMITED，实际runner `7ffd04d1f5b076f3826067fa17644327fe7abccd`。已观察两个step运行，尚无终态。配置／实际工具调用与严格电气门槛都须核对。
+- 原电气和Tcl回归、新配置覆盖／拒绝回归、结构／Python／上传Bash语法通过。17运行结果由后处理封存；恢复先运行monitor.py --attempt parallel-blocks-wave2-17并核对completion SHA。无定时助手通知。
+- 主线PR8和89448仅读未改，当前形式验证仍运行；草稿PR10／固定Issue回执继续同步。登记PR5仍pending，看板unverified／同步pending，管理员／审查人／优先级待指定，Issue保持主线in_review，不自标done。
+
 ## 最新：2026-10-21 20:52（UTC+08:00）
 
 - 用户授权修复ACT10并跟进其余并发工作。第二轮七路、89499产物审计和89510／89511严格审计均已完成；冻结终态与SHA已取回。严格工具门槛通过ACT20／GEMM20／MXU20；GEMM10仍8处电容违例，合并20仍4处。完整数字见[修复与完整终态记录](../../docs/experiments/issue-7-parallel-blocks-repair.md)。
