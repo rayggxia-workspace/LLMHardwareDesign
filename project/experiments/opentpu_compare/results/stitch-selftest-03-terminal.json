@@ -1,0 +1,38 @@
+{
+  "spec": {
+    "stitch_selftest": true,
+    "mode": "views",
+    "cores": 1,
+    "runner_commit": "b292d3f3b2e9a676921fdd5e4862866924ae47c6",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-03"
+  },
+  "exit_code": "1",
+  "started.txt": "2026-10-22T10:25:44Z\n",
+  "finished.txt": "2026-10-22T10:25:48Z\n",
+  "allocation.txt": "JobId=89729 JobName=yzl-ot-views UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586331 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:02 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T18:25:42 EligibleTime=2026-10-22T18:25:42 AccrueTime=2026-10-22T18:25:42 StartTime=2026-10-22T18:25:42 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T18:25:42 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T18:25:42 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3571364 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=cpu=1,node=1,billing=1 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-03/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-03 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-03/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-03/job.log Power= TresPerTask=cpu:1 \n",
+  "job_log_tail": [
+    "Traceback (most recent call last):",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-03/runner/run.py\", line 69, in <module>",
+    "    execute(SPEC)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-03/runner/implementation.py\", line 63, in execute",
+    "    elif spec['mode']=='views': view_probe(spec)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-03/runner/implementation.py\", line 191, in view_probe",
+    "    execute(ROOT,run_tcl,timing_technology(),track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib'))",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-03/runner/stitch_probe.py\", line 85, in execute",
+    "    run_tcl('stitch-'+name,text)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-03/runner/run.py\", line 44, in run_tcl",
+    "    subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(path)],stdout=f,stderr=subprocess.STDOUT,check=True)",
+    "  File \"/usr/lib/python3.10/subprocess.py\", line 526, in run",
+    "    raise CalledProcessError(retcode, process.args,",
+    "subprocess.CalledProcessError: Command '['openroad', '-threads', '1', '-exit', '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-03/stitch-hierarchical.tcl']' returned non-zero exit status 1."
+  ],
+  "metrics": {},
+  "pg_access": {},
+  "physical_repair_actions": {},
+  "output_manifest_sha256": "dfa9943e0b5ab7f4a7a9841a19055a85fe452ec3844c5f14ee5ecabd39a5861c",
+  "output_manifest_entries": 29,
+  "collected_file_integrity": {
+    "spec.json": true
+  },
+  "scheduler": "89729|FAILED|1:0|00:00:06|UNLIMITED|1|node3"
+}

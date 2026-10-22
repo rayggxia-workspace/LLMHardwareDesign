@@ -38,6 +38,8 @@ for p in sorted(base.iterdir()):
    total,body,vias=tables[-1]
    row['route_layer_wire_um']={layer:float(length) for layer,length in re.findall(r'Total wire length on LAYER (\w+) = ([\d.]+) um\.',body)}
    row['route_layer_report']={'total_um':float(total),'vias':int(vias),'scope':'Final DRT signal-route table; per-layer lengths rounded to integer um; excludes special PG'}
+  row['drc_convergence']=[
+      {'iteration':int(i),'kind':kind,'violations':int(v)} for i,kind,body,v in re.findall(r'Start (\d+)\w+ ([^\n]+?) iteration\.(.*?)Number of violations = (\d+)\.',f.read_text(),re.S)]
  for f in p.glob('*-resource.json'): row[f.name]=read_json(f)
  row['pg_access']={str(f.relative_to(p)):read_json(f) for directory in [p,p/'final-pg']
                    for f in directory.glob('*-pg-access-selection.json')}
@@ -57,6 +59,10 @@ for p in sorted(base.iterdir()):
    lines=f.read_text().splitlines()
    row['physical_repair_actions'][name]={'header':lines[0] if lines else '', 'rows':lines[1:]}
  contract=p/'external-pin-contract.json';pins=p/'final-pins.tsv'
+ boundary=p/'boundary.sdc'
+ if boundary.exists():
+  normalized='\n'.join(line for line in boundary.read_text().splitlines() if not line.startswith('current_design '))+'\n'
+  row['boundary_constraint_contract_sha256']=hashlib.sha256(normalized.encode()).hexdigest()
  if contract.exists():
   d=json.load(open(contract))
   row['external_pin_contract']={'count':len(d),'canonical_sha256':hashlib.sha256(json.dumps(d,sort_keys=True,separators=(',',':')).encode()).hexdigest()}
@@ -67,7 +73,15 @@ for p in sorted(base.iterdir()):
        'canonical_sha256':hashlib.sha256(('\n'.join(sorted(lines))+'\n').encode()).hexdigest(),
        'raw_all_bterms_sha256':hashlib.sha256(pins.read_bytes()).hexdigest()}
  f=p/'output.sha256'
- if f.exists(): row['output_manifest_sha256']=hashlib.sha256(f.read_bytes()).hexdigest();row['output_manifest_entries']=len(f.read_text().splitlines())
+ if f.exists():
+  row['output_manifest_sha256']=hashlib.sha256(f.read_bytes()).hexdigest();row['output_manifest_entries']=len(f.read_text().splitlines())
+  manifest={name[2:] if name.startswith('./') else name:h for h,name in (line.split(None,1) for line in f.read_text().splitlines() if len(line.split(None,1))==2)}
+  selected=[p/name for name in ['spec.json','experiment.json','boundary.sdc','external-pin-contract.json','pin-placement-quality.json','pre-drt-electrical-quality.json',
+      'resource-qualification.json','layer-reservation.json','strict-pg.json','final-pg/strict-pg.json',
+      'full-hierarchy-quality.json','full-hierarchy-sta.log','structural-equivalence.json','stitch-validation.json','final-pins.tsv'] if (p/name).exists()]
+  selected+=[q for directory in [p,p/'final-pg'] for q in directory.glob('*-pg-access-selection.json')]
+  selected+=list((p/'flow/logs').rglob('6_report.json'))+list((p/'flow/logs').rglob('5_2_route.json'))+list((p/'flow/reports').rglob('6_finish.rpt'))
+  row['collected_file_integrity']={str(q.relative_to(p)):manifest.get(str(q.relative_to(p)))==hashlib.sha256(q.read_bytes()).hexdigest() for q in selected}
  out[p.name]=row
 print(json.dumps(out))
 '''

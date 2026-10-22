@@ -16,6 +16,11 @@ snapshot=json.loads((HERE/'results/latest.json').read_text())
 data=snapshot['attempts']
 stitch_proof=data[definition['stitch_proof']]
 assert stitch_proof.get('exit_code')=='0' and stitch_proof.get('stitch-validation.json',{}).get('passed'), 'Unvalidated hierarchical boundary RC stitching'
+for name in list(selection.values())+[definition[k] for k in ['functional_proof','parent_functional_proof','stitch_proof']]:
+    row=data[name]
+    integrity=row.get('collected_file_integrity',{})
+    assert integrity and all(integrity.values()), 'Collected evidence differs from sealed output manifest: '+name
+    assert '|COMPLETED|' in row.get('scheduler',''), 'Wait for sealed scheduler terminal state: '+name
 proof=data[definition['functional_proof']]
 assert proof.get('exit_code')=='0'
 for name in ['act','mxu','merged']:
@@ -47,6 +52,7 @@ for kind,blocks in [('split',['act','mxu']),('merged',['merged'])]:
     top=rows['top_'+kind]
     final=top['record']['metrics']['6_report.json']
     meta=top['record']['experiment.json']
+    assert all(Path(meta['views'][b]['source']).name==selection[b] for b in blocks), 'Parent uses another block implementation'
     leaf=sum(rows[b]['quality']['area_um2'] for b in blocks)
     parent_cells=final['finish__design__instance__area__stdcell']
     footprint=sum(meta['views'][b]['size'][0]*meta['views'][b]['size'][1] for b in blocks)
@@ -75,6 +81,7 @@ for kind,blocks in [('split',['act','mxu']),('merged',['merged'])]:
         physical_cell_classification=classes,parent_signal_wire_by_layer_um=layer_wire,
         parent_signal_wire_below_m10_percent=100*sum(v for k,v in layer_wire.items() if k!='metal10')/sum(layer_wire.values()))
 assert costs['split']['common_die_area_um2']==costs['merged']['common_die_area_um2']
+assert len({rows[k]['record']['boundary_constraint_contract_sha256'] for k in rows})==1, 'Clock/IO budget contract differs'
 assert rows['top_split']['record']['external_pin_contract']==rows['top_merged']['record']['external_pin_contract']
 split_pins=rows['top_split']['record']['actual_signal_pin_geometry']
 merged_pins=rows['top_merged']['record']['actual_signal_pin_geometry']
