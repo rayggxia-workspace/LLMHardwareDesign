@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 
 ROOT = Path.cwd()
 SPEC = json.loads((ROOT/'spec.json').read_text())
@@ -25,6 +26,7 @@ def track(path):
 
 def result(source):
     meta=json.loads((source/'experiment.json').read_text())
+    if 'result_relative' in meta: return source/meta['result_relative']
     return source/'flow/results/nangate45'/('parallel_'+meta['case'].replace('-','_'))/'base'
 
 def tcl_read(source):
@@ -60,6 +62,7 @@ def probe():
     (ROOT/'flow-source-snippets.json').write_text(json.dumps(snippets,indent=2)+'\n')
 
 if __name__ == '__main__':
+    sys.modules['run'] = sys.modules[__name__]
     if SPEC['mode']=='probe': probe()
     else:
         from implementation import execute
