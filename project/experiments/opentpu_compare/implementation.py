@@ -186,6 +186,14 @@ def matched(spec):
     run_tcl('detail','read_db {'+str(dest/'6_final.odb')+'}\nwrite_abstract_lef -bloat_factor 0 {'+str(dest/(top+'.detailed.lef'))+'}\n')
 
 def view_probe(spec):
+    if spec.get('symbolize_addresses'):
+        executable='/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad'
+        addresses=spec['symbolize_addresses']
+        assert all(re.fullmatch(r'0x[0-9a-fA-F]+',address) for address in addresses)
+        with (ROOT/'symbolized-stack.txt').open('w') as f:
+            subprocess.run(['addr2line','-C','-f','-i','-p','-e',executable]+addresses,stdout=f,stderr=subprocess.STDOUT,check=True)
+        run_tcl('preamble-api','puts "PREAMBLE_API [info commands rsz::*preamble*]"\n')
+        return
     if spec.get('annotation_sources'):
         from annotation_audit import execute
         execute(ROOT,spec['annotation_sources'],run_tcl,track)
