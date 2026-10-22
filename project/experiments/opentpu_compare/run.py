@@ -59,8 +59,9 @@ def probe():
         if path.exists(): snippets[relative]=path.read_text()
     (ROOT/'flow-source-snippets.json').write_text(json.dumps(snippets,indent=2)+'\n')
 
-if SPEC['mode']=='probe': probe()
-else:
-    from implementation import execute
-    execute(SPEC)
-(ROOT/'input-sha256.json').write_text(json.dumps(INPUTS,indent=2)+'\n')
+if __name__ == '__main__':
+    if SPEC['mode']=='probe': probe()
+    else:
+        from implementation import execute
+        execute(SPEC)
+    (ROOT/'input-sha256.json').write_text(json.dumps(INPUTS,indent=2)+'\n')
