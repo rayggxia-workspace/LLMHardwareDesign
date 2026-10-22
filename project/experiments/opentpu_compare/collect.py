@@ -43,7 +43,7 @@ for p in sorted(base.iterdir()):
  for f in p.glob('*-resource.json'): row[f.name]=read_json(f)
  row['pg_access']={str(f.relative_to(p)):read_json(f) for directory in [p,p/'final-pg']
                    for f in directory.glob('*-pg-access-selection.json')}
- for name in ['repair-input-audit.json','structural-equivalence.json','logical-resource-inventory.json','pin-checkpoint-diagnostics.json','stitch-validation.json','annotation-validation.json','joint-repair.json','grt-consistency.json','binary-observation.json','full-hierarchy-sta.log']:
+ for name in ['repair-input-audit.json','structural-equivalence.json','logical-resource-inventory.json','pin-checkpoint-diagnostics.json','stitch-validation.json','annotation-validation.json','joint-repair.json','grt-consistency.json','binary-observation.json','extracted-source-validation.json','extracted-eco-plan.json','full-hierarchy-sta.log']:
   f=p/name
   if f.exists():
    if f.suffix=='.json': row[name]=read_json(f)
@@ -53,7 +53,7 @@ for p in sorted(base.iterdir()):
     row[name+'_sha256']=hashlib.sha256(f.read_bytes()).hexdigest()
     row['hierarchy_annotation_summary']=[line for line in text.splitlines() if any(s in line.lower() for s in ['annotated','warning','error','unconstrained','no clock'])][:60]
  row['physical_repair_actions']={}
- for f in sorted(set(p.glob('targeted-drive*.tsv'))|set(p.glob('macro-output-guards*.tsv'))|set(p.glob('joint-repair.tsv'))):
+ for f in sorted(set(p.glob('targeted-drive*.tsv'))|set(p.glob('macro-output-guards*.tsv'))|set(p.glob('joint-repair.tsv'))|set(p.glob('extracted-eco-actions.tsv'))):
   name=f.name
   if f.exists():
    lines=f.read_text().splitlines()
@@ -78,7 +78,7 @@ for p in sorted(base.iterdir()):
   manifest={name[2:] if name.startswith('./') else name:h for h,name in (line.split(None,1) for line in f.read_text().splitlines() if len(line.split(None,1))==2)}
   selected=[p/name for name in ['spec.json','experiment.json','boundary.sdc','external-pin-contract.json','pin-placement-quality.json','pre-drt-electrical-quality.json',
       'resource-qualification.json','layer-reservation.json','strict-pg.json','final-pg/strict-pg.json',
-      'full-hierarchy-quality.json','full-hierarchy-sta.log','structural-equivalence.json','logical-resource-inventory.json','stitch-validation.json','annotation-validation.json','joint-repair.json','grt-consistency.json','binary-observation.json','final-pins.tsv'] if (p/name).exists()]
+      'full-hierarchy-quality.json','full-hierarchy-sta.log','structural-equivalence.json','logical-resource-inventory.json','stitch-validation.json','annotation-validation.json','joint-repair.json','grt-consistency.json','binary-observation.json','extracted-source-validation.json','extracted-eco-plan.json','extracted-eco-actions.tsv','extracted-before.rpt','extracted-eco-grt-estimates.rpt','final-pins.tsv'] if (p/name).exists()]
   selected+=[q for directory in [p,p/'final-pg'] for q in directory.glob('*-pg-access-selection.json')]
   selected+=list(p.glob('*-unannotated-connectivity.tsv'))
   selected+=list((p/'flow/logs').rglob('6_report.json'))+list((p/'flow/logs').rglob('5_2_route.json'))+list((p/'flow/reports').rglob('6_finish.rpt'))

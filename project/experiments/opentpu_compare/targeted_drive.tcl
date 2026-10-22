@@ -7,7 +7,7 @@ set llhd_guard_audit [open [file join $llhd_drive_root macro-output-guards-${llh
 puts $llhd_guard_audit "round\tpin\tinstance\tmaster\tside\tx_um\ty_um"
 if {![info exists llhd_guarded]} {set llhd_guarded [dict create]}
 for {set iteration 0} {$iteration < $llhd_drive_rounds} {incr iteration} {
-  estimate_parasitics -global_routing
+  if {![info exists llhd_drive_use_extracted_rc] || !$llhd_drive_use_extracted_rc} {estimate_parasitics -global_routing}
   set report [file join $llhd_drive_root drive-before-${llhd_drive_phase}-${iteration}.rpt]
   report_check_types -max_capacitance -max_slew -max_count 1000 -digits 9 -no_line_splits > $report
   set f [open $report r]

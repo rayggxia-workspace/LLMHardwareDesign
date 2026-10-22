@@ -57,6 +57,10 @@ def repair(spec):
     run_tcl('detail','read_db {'+str(dest/'6_final.odb')+'}\nwrite_abstract_lef -bloat_factor 0 {'+str(dest/'llhd_opentpu_act_mxu.detailed.lef')+'}\n')
 
 def execute(spec):
+    if spec.get('extracted_eco_source'):
+        from extracted_eco import execute
+        execute(spec)
+        return
     if spec['mode']=='repair': repair(spec)
     elif spec['mode']=='matched': matched(spec)
     elif spec['mode']=='top': top(spec)
@@ -587,6 +591,13 @@ def route_parent(spec):
         assert passed, 'Residual GRT electrical violation: preserve diagnostic, adjust before detailed routing'
         make_stages(ROOT/'config.mk',spec,['do-5_2_route','do-5_3_fillcell','do-5_route','do-5_route.sdc','do-finish'])
     else:make_stages(ROOT/'config.mk',spec,['do-route','do-finish'])
+    qualify_parent_final()
+
+
+def qualify_parent_final():
+    meta=json.loads((ROOT/'experiment.json').read_text())
+    relative,kind=meta['result_relative'],meta['kind']
+    instances=list(meta['locations']);sources={k:Path(v['source']) for k,v in meta['views'].items()}
     (ROOT/'final-pg').mkdir()
     run_tcl('final-pg','read_db {'+str(ROOT/relative/'6_final.odb')+'}\n'+
         'set llhd_macro_instances {'+' '.join(instances)+'}\nset ::env(LLHD_ATTEMPT) {'+str(ROOT/'final-pg')+'}\n'
