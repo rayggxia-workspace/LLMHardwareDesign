@@ -60,7 +60,7 @@ def execute(spec):
     if spec['mode']=='repair': repair(spec)
     elif spec['mode']=='matched': matched(spec)
     elif spec['mode']=='top': top(spec)
-    elif spec['mode']=='views': view_probe()
+    elif spec['mode']=='views': view_probe(spec)
     else: raise ValueError('Not implemented: '+spec['mode'])
 
 LINKS={'ren':'act_ren','r_use':'computing','r_blk':'act_blk','r_blk2':'act_blk2',
@@ -162,12 +162,23 @@ def matched(spec):
     make_stages(ROOT/'config.mk',spec,['do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish','do-generate_abstract'])
     run_tcl('detail','read_db {'+str(dest/'6_final.odb')+'}\nwrite_abstract_lef -bloat_factor 0 {'+str(dest/(top+'.detailed.lef'))+'}\n')
 
-def view_probe():
+def view_probe(spec):
     flow=Path('/OpenROAD-flow-scripts/flow')
     names=['scripts/io_placement.tcl','scripts/io_placement_util.tcl','scripts/synth_odb.tcl',
            'platforms/nangate45/config.mk','scripts/variables.yaml','scripts/cts.tcl','scripts/generate_abstract.tcl']
     (ROOT/'extra-flow-sources.json').write_text(json.dumps({n:(flow/n).read_text() for n in names if (flow/n).is_file()},indent=2)+'\n')
     run_tcl('help','help place_pin\nhelp read_spef\nhelp report_check_types\nhelp report_clock_min_period\n')
+    for name,path in spec.get('audit_sources',{}).items():
+        source=Path(path);r=result(source)
+        run_tcl(name+'-resource','read_db {'+str(track(r/'1_synth.odb'))+'}\nset f [open {'+str(ROOT/(name+'-synth.tsv'))+'} w]\n'
+            'foreach i [[ord::get_db_block] getInsts] {puts $f "[$i getName]\\t[[$i getMaster] getName]"}\nclose $f\n')
+        meta=json.loads((source/'experiment.json').read_text())
+        before=json.loads((source/'mapped-after.json').read_text())['modules'][meta['top']]['cells']
+        old=Counter(c['type'] for c in before.values())
+        rows=[line.split() for line in (ROOT/(name+'-synth.tsv')).read_text().splitlines()]
+        actual=Counter(row[-1] for row in rows)
+        (ROOT/(name+'-resource.json')).write_text(json.dumps(dict(before=old,after=actual,
+            removed=old-actual,added=actual-old),indent=2)+'\n')
 
 def top(spec):
     import math
