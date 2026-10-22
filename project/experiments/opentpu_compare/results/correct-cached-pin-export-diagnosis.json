@@ -1,0 +1,35 @@
+{
+  "observed_utc": "2026-10-22T09:57:27.324687Z",
+  "corrects": "retire-mismatched-actual-pin-layers.json",
+  "finding": "Original cancellation diagnosis was wrong: write_pin_placement used stale IO-placer cached layers. Direct ODB BPin inspection proves original split and merged actual signal pin geometry already identical metal2/metal3. The cancellation was an analysis error, not a time limit.",
+  "forensic_job_id": "89705",
+  "forensic_attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/pin-checkpoint-old-01",
+  "actual_odb_audit": {
+    "split": {
+      "passed": true,
+      "count": 1662,
+      "actual_layer_counts": {
+        "metal3": 832,
+        "metal2": 830
+      },
+      "canonical_sha256": "8c1e5da591ece5cefdd142408f1431bc5c82cb1fb91ebd075d1f3f4dfb19cdb7",
+      "errors": [],
+      "scope": "Actual CTS ODB BPin layer and full box; all 1662 signal bits exactly once, requested location within track snapping tolerance. Pair must match exact canonical geometry before route.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-03"
+    },
+    "merged": {
+      "passed": true,
+      "count": 1662,
+      "actual_layer_counts": {
+        "metal3": 832,
+        "metal2": 830
+      },
+      "canonical_sha256": "8c1e5da591ece5cefdd142408f1431bc5c82cb1fb91ebd075d1f3f4dfb19cdb7",
+      "errors": [],
+      "scope": "Actual CTS ODB BPin layer and full box; all 1662 signal bits exactly once, requested location within track snapping tolerance. Pair must match exact canonical geometry before route.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-03"
+    }
+  },
+  "forensic_output_manifest_sha256": "bf3da2080c5c24c7e9c21b3b356dbae064b2c48882a4ff0c0aa5f41c5b20f721",
+  "replacement": "Staged top-*-place-05 has identical actual canonical pin hash; top-*-05 resumes its CTS with paired ODB geometry gating and additional route-aware electrical repair."
+}

@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-22T09:55:18.408248+00:00",
+  "observed_utc": "2026-10-22T09:58:14.002640+00:00",
   "attempts": {
     "grt-diagnostic-01": {
       "spec": {
@@ -3337,6 +3337,66 @@
       "output_manifest_entries": 130,
       "scheduler": "89642|COMPLETED|0:0|00:30:41|UNLIMITED|16|node5"
     },
+    "pin-checkpoint-old-01": {
+      "spec": {
+        "pin_checkpoint_diagnostics": {
+          "split": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-03",
+          "merged": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-03"
+        },
+        "mode": "views",
+        "cores": 2,
+        "runner_commit": "4638e76f380ef68bb23dcec96e31624f64f6890c",
+        "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/pin-checkpoint-old-01"
+      },
+      "exit_code": "0",
+      "started.txt": "2026-10-22T09:56:06Z\n",
+      "finished.txt": "2026-10-22T09:56:11Z\n",
+      "allocation.txt": "JobId=89705 JobName=yzl-ot-views UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586355 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:02 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T17:56:04 EligibleTime=2026-10-22T17:56:04 AccrueTime=2026-10-22T17:56:04 StartTime=2026-10-22T17:56:04 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T17:56:04 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T17:56:04 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3465578 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=2,mem=1M,node=1,billing=2 AllocTRES=cpu=2,node=1,billing=2 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/pin-checkpoint-old-01/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/pin-checkpoint-old-01 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/pin-checkpoint-old-01/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/pin-checkpoint-old-01/job.log Power= TresPerTask=cpu:2 \n",
+      "input-sha256.json": {
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-03/external-pin-contract.json": "30d2358ac2771f50b36c82d300a942f784c99c99de526330761ef0007231f3c0",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-03/flow/results/nangate45/opentpu_top_split/base/4_cts.odb": "3406d18858c8f8f51d4ad0c4e1c634ebabfd8ad0f36e0e9378239a54af390e7c",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-03/external-pin-contract.json": "30d2358ac2771f50b36c82d300a942f784c99c99de526330761ef0007231f3c0",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-03/flow/results/nangate45/opentpu_top_merged/base/4_cts.odb": "4c8a1c9f857cb21780211372bcd81e3717fc747706901e3172477ec495b1f0c2"
+      },
+      "job_log_tail": [
+        "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+      ],
+      "metrics": {},
+      "pg_access": {},
+      "pin-checkpoint-diagnostics.json": {
+        "split": {
+          "passed": true,
+          "count": 1662,
+          "actual_layer_counts": {
+            "metal3": 832,
+            "metal2": 830
+          },
+          "canonical_sha256": "8c1e5da591ece5cefdd142408f1431bc5c82cb1fb91ebd075d1f3f4dfb19cdb7",
+          "errors": [],
+          "scope": "Actual CTS ODB BPin layer and full box; all 1662 signal bits exactly once, requested location within track snapping tolerance. Pair must match exact canonical geometry before route.",
+          "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-03"
+        },
+        "merged": {
+          "passed": true,
+          "count": 1662,
+          "actual_layer_counts": {
+            "metal3": 832,
+            "metal2": 830
+          },
+          "canonical_sha256": "8c1e5da591ece5cefdd142408f1431bc5c82cb1fb91ebd075d1f3f4dfb19cdb7",
+          "errors": [],
+          "scope": "Actual CTS ODB BPin layer and full box; all 1662 signal bits exactly once, requested location within track snapping tolerance. Pair must match exact canonical geometry before route.",
+          "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-03"
+        }
+      },
+      "external_pin_contract": {
+        "count": 1662,
+        "canonical_sha256": "f098a67a387ac43e41383f3df5d960806327637958075aa348ab4f6fc16134e9"
+      },
+      "output_manifest_sha256": "bf3da2080c5c24c7e9c21b3b356dbae064b2c48882a4ff0c0aa5f41c5b20f721",
+      "output_manifest_entries": 30,
+      "scheduler": "89705|COMPLETED|0:0|00:00:07|UNLIMITED|2|node3"
+    },
     "probe-01": {
       "spec": {
         "mode": "probe",
@@ -5298,8 +5358,9 @@
         "runner_commit": "c61fc6a5b0e6ebc8d8026d2d7df1d3370c2db051",
         "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-05"
       },
-      "exit_code": null,
+      "exit_code": "1",
       "started.txt": "2026-10-22T09:54:45Z\n",
+      "finished.txt": "2026-10-22T09:57:25Z\n",
       "allocation.txt": "JobId=89703 JobName=yzl-ot-top UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586357 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:01 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T17:50:21 EligibleTime=2026-10-22T17:54:44 AccrueTime=Unknown StartTime=2026-10-22T17:54:44 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T17:54:44 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T17:54:44 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3382094 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=16 NumTasks=1 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=16,mem=1M,node=1,billing=16 AllocTRES=cpu=16,node=1,billing=16 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-05/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-05 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-05/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-05/job.log Power= TresPerTask=cpu:16 \n",
       "experiment.json": {
         "top": "llhd_top_merged",
@@ -5456,6 +5517,11 @@
           "qualification": "Exact storage/state inventory, drive variants normalized; physical buffer costs separate"
         }
       },
+      "pre-drt-electrical-quality.json": {
+        "passed": false,
+        "repair_rounds": 3,
+        "scope": "Extra route-aware repair after standard GRT timing optimization; same external budgets"
+      },
       "pin-placement-quality.json": {
         "passed": true,
         "count": 1662,
@@ -5468,28 +5534,91 @@
         "scope": "Actual CTS ODB BPin layer and full box; all 1662 signal bits exactly once, requested location within track snapping tolerance. Pair must match exact canonical geometry before route."
       },
       "last_flow_log": {
-        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-05/flow/logs/nangate45/opentpu_top_merged/base/5_1_grt.tmp.log",
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-05/flow/logs/nangate45/opentpu_top_merged/base/5_1_grt.log",
         "tail": [
-          "metal5     Horizontal    2786939       1962587          29.58%",
-          "metal6     Vertical      3195768       2253254          29.49%",
-          "metal7     Horizontal     902759        633289          29.85%",
-          "metal8     Vertical      1184579        849796          28.26%",
-          "metal9     Horizontal     593692        335853          43.43%",
-          "metal10    Vertical       508641        318218          37.44%",
-          "---------------------------------------------------------------",
-          ""
+          "Took 88 seconds: source /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-05/post-grt-repair.tcl",
+          "write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-05/flow/results/nangate45/opentpu_top_merged/base/5_1_grt.odb",
+          "write_sdc -no_timestamp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-05/flow/results/nangate45/opentpu_top_merged/base/5_1_grt.sdc",
+          "Elapsed time: 2:32.91[h:]min:sec. CPU time: user 178.71 sys 2.94 (118%). Peak memory: 3593788KB.",
+          "Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum",
+          "                                     s        s  Elapsed       MB [0:10)",
+          "5_1_grt                .odb        152      182     1.19     3509 b089449821",
+          "5_1_grt                .sdc                                       7cd74f1082"
         ]
       },
       "job_log_tail": [
-        "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+        "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+        "Traceback (most recent call last):",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-05/runner/run.py\", line 69, in <module>",
+        "    execute(SPEC)",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-05/runner/implementation.py\", line 62, in execute",
+        "    elif spec['mode']=='top': top(spec)",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-05/runner/implementation.py\", line 276, in top",
+        "    if spec.get('resume_parent'):return resume_parent(spec)",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-05/runner/implementation.py\", line 462, in resume_parent",
+        "    route_parent(spec)",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-05/runner/implementation.py\", line 478, in route_parent",
+        "    assert passed, 'Residual GRT electrical violation: preserve diagnostic, adjust before detailed routing'",
+        "AssertionError: Residual GRT electrical violation: preserve diagnostic, adjust before detailed routing"
       ],
-      "metrics": {},
+      "metrics": {
+        "5_1_grt.json": {
+          "globalroute__global_route__vias": 1531,
+          "globalroute__global_route__wirelength": 2751062,
+          "globalroute__dpl__instance__displacement__total": 277.91,
+          "globalroute__dpl__instance__displacement__mean": 0.0185,
+          "globalroute__dpl__instance__displacement__max": 7.67,
+          "globalroute__dpl__route__wirelength__estimated": 2549730.0,
+          "globalroute__design__instance__count__setup_buffer": 0,
+          "globalroute__design__instance__count__hold_buffer": 0,
+          "globalroute__design__violations": 0,
+          "globalroute__antenna_diodes_count": 0,
+          "globalroute__antenna__violating__nets": 0,
+          "globalroute__antenna__violating__pins": 0,
+          "globalroute__timing__setup__tns": 0,
+          "globalroute__timing__hold__tns": 0,
+          "globalroute__timing__setup__ws": 0.0139107,
+          "globalroute__timing__hold__ws": 0.0843996,
+          "globalroute__timing__fmax__clock:clk": 402238000.0,
+          "globalroute__timing__fmax": 402238000.0,
+          "globalroute__clock__skew__setup": 0,
+          "globalroute__clock__skew__hold": 0,
+          "globalroute__timing__drv__max_slew_limit": -0.762791,
+          "globalroute__timing__drv__max_slew": 5,
+          "globalroute__timing__drv__max_cap_limit": -2.0038,
+          "globalroute__timing__drv__max_cap": 12,
+          "globalroute__timing__drv__max_fanout_limit": 0,
+          "globalroute__timing__drv__max_fanout": 0,
+          "globalroute__timing__drv__setup_violation_count": 0,
+          "globalroute__timing__drv__hold_violation_count": 0,
+          "globalroute__power__internal__total": 0.0010484,
+          "globalroute__power__switching__total": 0.0041836,
+          "globalroute__power__leakage__total": 0.000386106,
+          "globalroute__power__total": 0.0056181,
+          "globalroute__design__die__area": 2788900.0,
+          "globalroute__design__core__area": 2718490.0,
+          "globalroute__design__instance__count": 14395,
+          "globalroute__design__instance__area": 1323010.0,
+          "globalroute__design__instance__count__stdcell": 14394,
+          "globalroute__design__instance__area__stdcell": 11122.3,
+          "globalroute__design__instance__count__macros": 1,
+          "globalroute__design__instance__area__macros": 1311880.0,
+          "globalroute__design__instance__count__padcells": 0,
+          "globalroute__design__instance__area__padcells": 0,
+          "globalroute__design__instance__count__cover": 0,
+          "globalroute__design__instance__area__cover": 0,
+          "globalroute__design__instance__utilization": 0.486669,
+          "globalroute__design__instance__utilization__stdcell": 0.00790715
+        }
+      },
       "pg_access": {},
       "external_pin_contract": {
         "count": 1662,
         "canonical_sha256": "f098a67a387ac43e41383f3df5d960806327637958075aa348ab4f6fc16134e9"
       },
-      "scheduler": "89703|RUNNING|0:0|00:00:36|UNLIMITED|16|node3"
+      "output_manifest_sha256": "8c7417768b5a3b1c5cee2f4cfdf0a5c8cb8883475a5a2cdaefa5c9e5c64b52f8",
+      "output_manifest_entries": 52,
+      "scheduler": "89703|FAILED|1:0|00:02:41|UNLIMITED|16|node3"
     },
     "top-merged-place-05": {
       "spec": {
@@ -6302,8 +6431,9 @@
         "runner_commit": "c61fc6a5b0e6ebc8d8026d2d7df1d3370c2db051",
         "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-05"
       },
-      "exit_code": null,
+      "exit_code": "1",
       "started.txt": "2026-10-22T09:54:45Z\n",
+      "finished.txt": "2026-10-22T09:57:44Z\n",
       "allocation.txt": "JobId=89702 JobName=yzl-ot-top UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586358 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:01 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T17:50:18 EligibleTime=2026-10-22T17:54:44 AccrueTime=Unknown StartTime=2026-10-22T17:54:44 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T17:54:44 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T17:54:44 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3380559 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=16 NumTasks=1 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=16,mem=1M,node=1,billing=16 AllocTRES=cpu=16,node=1,billing=16 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-05/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-05 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-05/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-05/job.log Power= TresPerTask=cpu:16 \n",
       "experiment.json": {
         "top": "llhd_top_split",
@@ -6464,6 +6594,11 @@
           "qualification": "Exact storage/state inventory, drive variants normalized; physical buffer costs separate"
         }
       },
+      "pre-drt-electrical-quality.json": {
+        "passed": false,
+        "repair_rounds": 3,
+        "scope": "Extra route-aware repair after standard GRT timing optimization; same external budgets"
+      },
       "pin-placement-quality.json": {
         "passed": true,
         "count": 1662,
@@ -6476,28 +6611,91 @@
         "scope": "Actual CTS ODB BPin layer and full box; all 1662 signal bits exactly once, requested location within track snapping tolerance. Pair must match exact canonical geometry before route."
       },
       "last_flow_log": {
-        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-05/flow/logs/nangate45/opentpu_top_split/base/5_1_grt.tmp.log",
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-05/flow/logs/nangate45/opentpu_top_split/base/5_1_grt.log",
         "tail": [
-          "metal5     Horizontal    2883406       2030544          29.58%",
-          "metal6     Vertical      3170717       2237164          29.44%",
-          "metal7     Horizontal     921199        647495          29.71%",
-          "metal8     Vertical      1189596        853548          28.25%",
-          "metal9     Horizontal     598484        338682          43.41%",
-          "metal10    Vertical       510041        319130          37.43%",
-          "---------------------------------------------------------------",
-          ""
+          "Took 90 seconds: source /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-05/post-grt-repair.tcl",
+          "write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-05/flow/results/nangate45/opentpu_top_split/base/5_1_grt.odb",
+          "write_sdc -no_timestamp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-05/flow/results/nangate45/opentpu_top_split/base/5_1_grt.sdc",
+          "Elapsed time: 2:52.43[h:]min:sec. CPU time: user 206.07 sys 5.51 (122%). Peak memory: 3678728KB.",
+          "Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum",
+          "                                     s        s  Elapsed       MB [0:10)",
+          "5_1_grt                .odb        172      212     1.23     3592 8e0cc07279",
+          "5_1_grt                .sdc                                       26c7cbffc9"
         ]
       },
       "job_log_tail": [
-        "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+        "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+        "Traceback (most recent call last):",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-05/runner/run.py\", line 69, in <module>",
+        "    execute(SPEC)",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-05/runner/implementation.py\", line 62, in execute",
+        "    elif spec['mode']=='top': top(spec)",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-05/runner/implementation.py\", line 276, in top",
+        "    if spec.get('resume_parent'):return resume_parent(spec)",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-05/runner/implementation.py\", line 462, in resume_parent",
+        "    route_parent(spec)",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-05/runner/implementation.py\", line 478, in route_parent",
+        "    assert passed, 'Residual GRT electrical violation: preserve diagnostic, adjust before detailed routing'",
+        "AssertionError: Residual GRT electrical violation: preserve diagnostic, adjust before detailed routing"
       ],
-      "metrics": {},
+      "metrics": {
+        "5_1_grt.json": {
+          "globalroute__global_route__vias": 4726,
+          "globalroute__global_route__wirelength": 3492589,
+          "globalroute__dpl__instance__displacement__total": 331.11,
+          "globalroute__dpl__instance__displacement__mean": 0.019,
+          "globalroute__dpl__instance__displacement__max": 7,
+          "globalroute__dpl__route__wirelength__estimated": 3189350.0,
+          "globalroute__design__instance__count__setup_buffer": 0,
+          "globalroute__design__instance__count__hold_buffer": 33,
+          "globalroute__design__violations": 0,
+          "globalroute__antenna_diodes_count": 0,
+          "globalroute__antenna__violating__nets": 0,
+          "globalroute__antenna__violating__pins": 0,
+          "globalroute__timing__setup__tns": -0.0461511,
+          "globalroute__timing__hold__tns": 0,
+          "globalroute__timing__setup__ws": -0.0461511,
+          "globalroute__timing__hold__ws": 0.000395406,
+          "globalroute__timing__fmax__clock:clk": 392750000.0,
+          "globalroute__timing__fmax": 392750000.0,
+          "globalroute__clock__skew__setup": 0.00484558,
+          "globalroute__clock__skew__hold": 0.00484558,
+          "globalroute__timing__drv__max_slew_limit": -1.99027,
+          "globalroute__timing__drv__max_slew": 10,
+          "globalroute__timing__drv__max_cap_limit": -2.03538,
+          "globalroute__timing__drv__max_cap": 66,
+          "globalroute__timing__drv__max_fanout_limit": 0,
+          "globalroute__timing__drv__max_fanout": 0,
+          "globalroute__timing__drv__setup_violation_count": 1,
+          "globalroute__timing__drv__hold_violation_count": 0,
+          "globalroute__power__internal__total": 0.000851922,
+          "globalroute__power__switching__total": 0.00360651,
+          "globalroute__power__leakage__total": 0.000456844,
+          "globalroute__power__total": 0.00491527,
+          "globalroute__design__die__area": 2788900.0,
+          "globalroute__design__core__area": 2718490.0,
+          "globalroute__design__instance__count": 15940,
+          "globalroute__design__instance__area": 1330190.0,
+          "globalroute__design__instance__count__stdcell": 15938,
+          "globalroute__design__instance__area__stdcell": 12779.2,
+          "globalroute__design__instance__count__macros": 2,
+          "globalroute__design__instance__area__macros": 1317410.0,
+          "globalroute__design__instance__count__padcells": 0,
+          "globalroute__design__instance__area__padcells": 0,
+          "globalroute__design__instance__count__cover": 0,
+          "globalroute__design__instance__area__cover": 0,
+          "globalroute__design__instance__utilization": 0.489312,
+          "globalroute__design__instance__utilization__stdcell": 0.00912094
+        }
+      },
       "pg_access": {},
       "external_pin_contract": {
         "count": 1662,
         "canonical_sha256": "f098a67a387ac43e41383f3df5d960806327637958075aa348ab4f6fc16134e9"
       },
-      "scheduler": "89702|RUNNING|0:0|00:00:36|UNLIMITED|16|node3"
+      "output_manifest_sha256": "35bf0013f0f454c2b7ac195ddcef8bcb6e6b8e4b1b923629c68e35de85a26dac",
+      "output_manifest_entries": 52,
+      "scheduler": "89702|FAILED|1:0|00:03:01|UNLIMITED|16|node3"
     },
     "top-split-place-05": {
       "spec": {

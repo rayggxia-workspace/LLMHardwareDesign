@@ -186,6 +186,11 @@ def matched(spec):
     run_tcl('detail','read_db {'+str(dest/'6_final.odb')+'}\nwrite_abstract_lef -bloat_factor 0 {'+str(dest/(top+'.detailed.lef'))+'}\n')
 
 def view_probe(spec):
+    if spec.get('repair_api'):
+        run_tcl('repair-api','help redirect\nputs "REDIRECT_COMMANDS [info commands *redirect*]"\n'
+            'puts "STA_CAP_COMMANDS [info commands sta::*capacitance*]"\n'
+            'puts "CAP_HELP [info body sta::max_capacitance_check_slack]"\n')
+        return
     if spec.get('pin_checkpoint_diagnostics'):
         receipts={}
         for name,path in spec['pin_checkpoint_diagnostics'].items():

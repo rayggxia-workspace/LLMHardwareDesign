@@ -41,7 +41,7 @@ for p in sorted(base.iterdir()):
  for f in p.glob('*-resource.json'): row[f.name]=read_json(f)
  row['pg_access']={str(f.relative_to(p)):read_json(f) for directory in [p,p/'final-pg']
                    for f in directory.glob('*-pg-access-selection.json')}
- for name in ['repair-input-audit.json','structural-equivalence.json','full-hierarchy-sta.log']:
+ for name in ['repair-input-audit.json','structural-equivalence.json','pin-checkpoint-diagnostics.json','full-hierarchy-sta.log']:
   f=p/name
   if f.exists():
    if f.suffix=='.json': row[name]=read_json(f)
