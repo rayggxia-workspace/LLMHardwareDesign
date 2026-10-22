@@ -16,6 +16,8 @@
 
 面向DAC的研究主张、相关工作和分阶段验收见[研究推进计划](docs/DAC_RESEARCH_PLAN.md)。本分支新增[冻结连接资源实验](project/experiments/frozen_routing/README.md)，提供可运行的抽象路由、全局电气合法性和软件图检查；其通过不代表物理H2或PPA收益。其他成员已提交的Block物理工程见Issue #7关联PR，尚待审查及质量验收。
 
+[Issue13端点限制消融](project/experiments/endpoint_ablation/README.md)进一步固定库存、映射和搜索预算，区分限制松紧与搜索失败；[真实宏端点接入合同](docs/MACRO_ENDPOINT_CONTRACT.md)说明已有视图与尚未补齐的资格。
+
 远程计算资源与目录权限见[远程服务器使用规则](docs/REMOTE_RULES.md)，使用服务器前请先阅读。
 
 任务、负责人和验收条件以本仓库 [Issues](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues) 为准。每项任务使用独立分支和 PR；开始工作前阅读 [AGENTS.md](AGENTS.md) 与[协作说明](docs/COLLABORATION.md)。管理结构检查命令为：
