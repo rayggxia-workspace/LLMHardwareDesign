@@ -23,3 +23,7 @@ experiment.json是预声明资源/维度/裕量合同，model-cases.json的派�
 - 对外KV状态单独计容量；attention核不含QKV投影、RoPE、norm、FFN，Qwen3.5仅全注意力核而非全部混合层；DeepSeek-V3 FFN是单个dense层/单专家，不代表完整MoE。
 - Pareto只比较已枚举调度的资源向量，不声称制造前Block最优；容量失败只否定具体调度和容量点。
 - 正式数值核378个配置对照和3个错误负例，支持FP64/FP32；无模型权重、数据集、输出质量或硬件速度结论。独立DeepSeek/Qwen/Llama辅助证据和来源限制另列。
+
+归档读回：`python project/experiments/operator_partition/verify.py project/experiments/operator_partition/results/issue-21-run01/evidence.zip --sha256 f85b1f120065f91d13df95cdf343d35eb48640d9a56d2755b46da5c6ed82306d`。正式运行源码为680dbbe；verify.py在交付阶段加入，不属于原运行源码清单。
+
+验证边界：verify.py要求调用者提供可信归档SHA，只验证归档/成员完整性并重放事件与闭式账本；不重算capacity/pareto语义、不重跑numerical数值核，也不离线验证manifest声明的源码commit/输入文件。任意重新封装并更换外部SHA不是原归档认证。独立负例已验证错误外部SHA、成员与manifest不一致、更新哈希后的事件计数不一致均被拒绝。

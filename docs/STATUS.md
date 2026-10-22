@@ -1,7 +1,7 @@
 # 当前状态
 
 - 更新日期：2026-10-22（中国标准时间）
-- 当前阶段：架构定义、Block物理工程尝试、抽象冻结连接实验、真实普通LEF几何输入冻结与选定接口关联；DAC为研究目标，具体届次未指定
+- 前阶段记录：架构定义、Block物理工程尝试、抽象冻结连接实验、真实普通LEF几何输入冻结与选定接口关联；DAC为研究目标，具体届次未指定
 - 资料接入：[Issue #1：初始化项目并导入初期资料](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/1)；资料已进入 `main`，[PR #2](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/2) 已合并，登记／看板缺项继续保留
 - 当前资料：项目说明 v1.0、专题研究文档、来源笔记，以及五个参考项目七个案例的布线分析包；三份 HTML 报告、llaccel 引擎内部分析及远程服务器规则已通过 [PR #4](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/4) 合入 `main`；工艺互连资料的逐层资源评估补充已一并提交
 - 已确认边界：研究对象和主要问题已写入项目说明；具体工艺、Block 资源、定制层集合和工具链未冻结
@@ -17,3 +17,6 @@
 - Projects 入口：[组织总览看板](https://github.com/orgs/rayggxia-workspace/projects/1) 为管理中心配置的候选入口；本仓库无 `config/board.json`，本次Liangruizhi会话无Projects工具，账号在线权限及Issue11/13/16/19条目未核验／同步pending；Issue #3关于缺少 `read:project` 的旧交接属于其他会话，不能据此推断本账号权限。具备工具与权限的管理员待指定
 
 本页只记录全项目阶段和关键限制；具体任务进度以 Issue 和 PR 为准。
+
+- 当前主线（用户2026-10-22明确）：[共同问题](RESEARCH_QUESTION.md)，模型驱动算子/Block划分及块内预连线/接口裕量，耦合块间物理约束。Issue21形成官方架构证据、630调度账本、独立数值核与可解释反例；仍无最终划分或端到端硬件收益。正式benchmark允许少量有差异代表，首轮推理。
+- 接续优先级：可运行代表模型prefill/decode实际trace→具体bank/端口/状态模板→与Issue15物理证据校准→同资源端到端比较。细节以[划分方法](OPERATOR_BLOCK_PARTITION.md)和Issue为准。

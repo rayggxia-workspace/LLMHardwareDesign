@@ -1,0 +1,44 @@
+{
+  "status": "PASS",
+  "observed_utc": "2026-10-22T11:24:33.949152+00:00",
+  "trusted_original_sha256": "f85b1f120065f91d13df95cdf343d35eb48640d9a56d2755b46da5c6ed82306d",
+  "original_archive_unchanged": true,
+  "checks": [
+    {
+      "case": "archive_sha_mismatch",
+      "status": "REJECTED_AS_EXPECTED",
+      "path": "D:\\Projects\\LLMHardwareDesign-partition\\project\\experiments\\operator_partition\\results\\issue-21-run01\\evidence.zip",
+      "supplied_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "actual_sha256": "f85b1f120065f91d13df95cdf343d35eb48640d9a56d2755b46da5c6ed82306d",
+      "manifest_rehashed": false,
+      "mutation": "Archive unchanged; deliberately supply a wrong external expected SHA",
+      "exception_type": "ValueError",
+      "reason": "archive SHA mismatch"
+    },
+    {
+      "case": "member_manifest_mismatch",
+      "status": "REJECTED_AS_EXPECTED",
+      "path": "D:\\Projects\\Codex\\operator-partition-20261022\\deepseek\\archive-audit\\negative-member-index.zip",
+      "supplied_sha256": "651d25bf1add8ad8600cae08d511c47de8ece6bb13e0f1a948227c08717c5b00",
+      "actual_sha256": "651d25bf1add8ad8600cae08d511c47de8ece6bb13e0f1a948227c08717c5b00",
+      "manifest_rehashed": false,
+      "mutation": "Append newline to rows.json; leave manifest digest unchanged; recompute outer ZIP SHA",
+      "exception_type": "ValueError",
+      "reason": "member SHA mismatch"
+    },
+    {
+      "case": "event_accounting_mismatch",
+      "status": "REJECTED_AS_EXPECTED",
+      "path": "D:\\Projects\\Codex\\operator-partition-20261022\\deepseek\\archive-audit\\negative-event-ledger.zip",
+      "supplied_sha256": "a49c71192e046f404d72415b2e9f413a023c6f6d3bebd0bd0371d0e4f1b3a85b",
+      "actual_sha256": "a49c71192e046f404d72415b2e9f413a023c6f6d3bebd0bd0371d0e4f1b3a85b",
+      "manifest_rehashed": true,
+      "mutation": "First compute.read 118272 -> 118276; rows unchanged; rehash events member in manifest and outer ZIP SHA",
+      "exception_type": "AssertionError",
+      "reason": "counter mismatch"
+    }
+  ],
+  "source_snapshot": "source-snapshot.json",
+  "script_sha256": "9bf73e92bda94afa4078cbb7f577e095b0977a3c6d13e43bb855c878da071044",
+  "scope": "Three specified rejection controls, not exhaustive hostile archive validation or fresh numerical/physical qualification"
+}

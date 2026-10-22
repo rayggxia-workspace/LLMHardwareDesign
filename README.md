@@ -33,3 +33,7 @@ python scripts/check_project.py
 上面的命令只验证项目管理文件结构，不验证芯片架构或布线分析结论。
 
 业务检查和实际实验命令见[架构与运行](docs/ARCHITECTURE.md)及对应实验README。
+
+## 当前研究主线
+
+以[共同研究问题](docs/RESEARCH_QUESTION.md)为判据，优先研究算子/Block划分及内部预连线/接口裕量。首轮[方法](docs/OPERATOR_BLOCK_PARTITION.md)与[实际结果](docs/experiments/issue-21-operator-partition.md)区分调度、状态归属和物理边界；630调度案例与缩小数值核已完成，不等同完整模型或端到端硬件收益。

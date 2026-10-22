@@ -44,3 +44,7 @@ Issue #11将本轮Python研究工具正式放入 `project/experiments/frozen_rou
 ## Issue19 三视图接口与既有合同
 
 `project/experiments/interface_contract/` 以固定Yosys/Liberty/LEF名字、位宽、方向关联ACT/MXU逐bit边界，复用已有合同。运行 `python project/experiments/interface_contract/verify.py <解压的证据根目录>` 检查源码、哈希及重放；捕获、运行、归档参数见[工具说明](../project/experiments/interface_contract/README.md)。不替代RTL等价、时序、PG或合法接入验证。
+
+## Issue21 模型驱动划分
+
+正式目录project/experiments/operator_partition/。运行python scripts/check_research.py覆盖五套业务测试；新实验命令与D盘缓存规则见该目录README。归档核验：`python project/experiments/operator_partition/verify.py project/experiments/operator_partition/results/issue-21-run01/evidence.zip --sha256 f85b1f120065f91d13df95cdf343d35eb48640d9a56d2755b46da5c6ed82306d`。本工具是逻辑张量资源账本和合成数值核，不提供cycle/物理/质量测量。

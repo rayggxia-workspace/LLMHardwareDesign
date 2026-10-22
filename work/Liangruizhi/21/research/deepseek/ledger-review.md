@@ -6,15 +6,17 @@
 
 ## 当前实质反馈
 
-### P2：将手填模型维度与固定输入配置绑定校验
+本审查发现的三项问题均已解决并经只读复核。下文保留初审发现与修复经过；最终复核版本和实际负例结果见文末。当前没有遗留的 P2 待处理项。
 
-所审 `run.py` 102–104 行仅校验 `input_file` 的 SHA，随后用 `model-cases.json` 中手填的 `hidden/intermediate/query_heads/kv_heads/head_dim` 建账。输入文件可以保持正确 SHA，而派生维度填错；事件重放、闭式公式与 clean Git 都不会发现这一层的错误，因为这些检查使用相同的手填参数。
+### 已解决 P2：将手填模型维度与固定输入配置绑定校验
+
+初审 `run.py` 102–104 行仅校验 `input_file` 的 SHA，随后用 `model-cases.json` 中手填的 `hidden/intermediate/query_heads/kv_heads/head_dim` 建账。该版本中输入文件可以保持正确 SHA，而派生维度填错；事件重放、闭式公式与 clean Git 都不会发现这一层的错误，因为这些检查使用相同的手填参数。
 
 实际反例已执行：仅在内存把 Qwen2.5-0.5B 的 hidden 从 896 改成 897，原输入 SHA 检查仍成立；独立读取 frozen config 的字段检查会拒绝。这个负例没有修改仓库文件，也没有生成正式 run 的假证据。
 
-建议正式运行前逐字段检查：JSON 先选 `text_config`（若存在）；dense 用 `intermediate_size`，routed expert 用 `moe_intermediate_size`；head_dim 优先取显式 `head_dim`，缺失才用 hidden/heads；Llama SKU 把提取值与已声明 FFN 推导表达式分别校验。不能统一以 hidden/query_heads 代替显式 head_dim，Qwen3/Qwen3.5 正好提供反例。
+已落实的修复逐字段检查：JSON 先选 `text_config`（若存在）；dense 用 `intermediate_size`，routed expert 用 `moe_intermediate_size`；head_dim 优先取显式 `head_dim`，缺失才用 hidden/heads；Llama SKU 通过 AST 只读取常量并按已声明 FFN 表达式推导，不执行上游代码。不能统一以 hidden/query_heads 代替显式 head_dim，Qwen3/Qwen3.5 正好提供反例。
 
-当前 9 个 model-case 的 39 个派生字段已经独立核对，**全部正确**。因此这里是防止正式数据绑定失效的校验缺项，不是指认本次模型数值错误。反例和实际字段值在 `ledger-audit/audit-math-results.json`。
+初审时 9 个 model-case 的 39 个派生字段已经独立核对，**全部正确**。当时指出的是数据绑定校验缺项，不是本次模型数值错误；该缺项现已修复。初审反例和实际字段值在 `ledger-audit/audit-math-results.json`。
 
 ## 审查中发现、已确认修复的两个问题
 
@@ -31,7 +33,7 @@
 - 160 个 FFN 调度案例：480 项独立 matrix/vector/同时活跃峰值比较全部通过。
 - 另对 320 份结果调用生产 `audit_events` 重放通过；这部分明确不冒充独立实现。
 - 9 个模型配置案例、39 个派生字段与 8 份唯一输入文件的本地来源 SHA 核对通过。
-- 1 个错误派生维度的负例由独立检查拒绝，生产现有输入 SHA 检查不能拒绝。
+- 初审时 1 个错误派生维度的负例由独立检查拒绝，初审版本输入 SHA 检查不能拒绝；此缺项现已关闭，见文末 39 个实际拒绝结果。
 
 这说明以下关系在所审代码和已声明资源模型下成立：
 
@@ -85,3 +87,19 @@ DeepSeek 只建 initial dense / 单个 routed expert 的 FFN 账本，没有计 
 ```
 
 依赖：Python 3.13.14；导入生产 run 会加载当前 NumPy，但审查的期望值推导只使用整数算术。结果含脚本 SHA，`snapshot.json` 记录所有冻结输入文件字节/SHA 和观察时间。本审查不替代 method_review 的数值核审查，也不替代根任务的正式运行、提交与远端回执。
+
+## 2026-10-22 修复后复核：全部发现已解决
+
+复核观察到代码 commit `680dbbeed9a9189c06b047918ab4ae2ea6eedc28`。`run.py` SHA-256 为 `9c67cf02568b19f89cea27033b1a6cdf25509a13bf6949afde664faff76462bc`；`ledger.py` 仍为上表 SHA，因此前述 320 案例的账本计数验证继续适用。工作区存在主任务正在更新的文档/结果，不把此观察写成整个工作区 clean。
+
+`run.py` 现新增 `validate_model`，正式 `run()` 在创建输出目录及建立所有实验行之前逐模型调用。已确认 JSON/text_config、显式 head_dim、MoE intermediate 与 Llama AST 常量路径均实际进入校验。
+
+独立执行 `ledger-audit/recheck_bindings.py`，调用当前生产 `validate_model`：
+
+- 9 个实际模型全部接受。
+- 将每个已存在的 hidden/intermediate/query_heads/kv_heads/head_dim 分别加 1，39 个单字段负例全部以派生字段不匹配拒绝。
+- 执行前后 run.py、ledger.py、model-cases.json、experiment.json、test_ledger.py 的 SHA 全部保持一致。
+
+结果记录：`ledger-audit/binding-recheck-results.json`，SHA-256 `d274f8ab4fac6004891eba544bd5dfdd354b63cbfde19aa708f2673bbee3003f`。复核脚本 SHA-256 `b5f13593014ea8c5bed794d21cddc2cbd68871d37bb6243f8cff02d036cf0dba`。
+
+主任务报告首轮完成 630 个调度案例、11340 个容量组合，并同源重放得到逐字节相同 ZIP。本次补充复核只验证配置绑定，没有重新执行或独立认定该正式运行及 ZIP 对比；这两项由主任务的正式 manifest / replay 回执提供证据。
