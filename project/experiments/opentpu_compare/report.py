@@ -3,6 +3,7 @@ import hashlib
 from html import escape
 import json
 from pathlib import Path
+import re
 import subprocess
 
 from quality import evaluate, require_toolchain
@@ -52,6 +53,20 @@ def main():
         ('完整提取 hold WNS / ns', 'complete_hold_ws_ns', 6)]:
         rows.append([label] + [f'{costs[k][key]:,.{digits}f}' for k in ['split', 'merged']])
     totals = table(['指标', '拆分 ACT + MXU', '合并 ACT/MXU'], rows)
+    critical_paths=[]
+    for kind,label in [('split','拆分'),('merged','合并')]:
+        text=records[selection['top_'+kind]]['full-hierarchy-sta.log']
+        paths=re.split(r'(?=^Startpoint:)',text,flags=re.M)
+        for path_type in ['max','min']:
+            path=next(part for part in paths if re.search(r'^Path Type: '+path_type+r'\s*$',part,re.M))
+            start=re.search(r'^Startpoint: (.+)$',path,re.M)
+            end=re.search(r'^Endpoint: (.+)$',path,re.M)
+            slack=re.search(r'^\s*(-?[\d.]+)\s+slack \(MET\)',path,re.M)
+            assert start and end and slack, 'Missing native complete critical-path report'
+            expected=costs[kind]['complete_'+('setup' if path_type=='max' else 'hold')+'_ws_ns']
+            assert abs(float(slack[1])-expected)<=1e-6, 'Reported critical path differs from complete WNS'
+            critical_paths.append([label,'setup' if path_type=='max' else 'hold',start[1],end[1],f'{float(slack[1]):+.6f}'])
+    critical_table=table(['实现','分析','真实起点','真实终点','余量 ns'],critical_paths)
     blocks = []
     for kind, label in [('act', 'ACT'), ('mxu', 'MXU'), ('merged', '合并')]:
         q = evaluate(records[selection[kind]])
@@ -141,6 +156,7 @@ td:not(:first-child){{font-variant-numeric:tabular-nums}}.scroll{{overflow:auto}
 <p>拆分相对合并，块内信号线变化 {costs['split']['private_signal_wire_um']-costs['merged']['private_signal_wire_um']:+,.0f}µm，父层变化 {costs['split']['parent_signal_wire_um']-costs['merged']['parent_signal_wire_um']:+,.0f}µm，两部分合计变化 {costs['split']['total_signal_wire_um']-costs['merged']['total_signal_wire_um']:+,.0f}µm。划分收益须连同父层接入和修复开销一起判断。</p>
 <figure><img src="assets/issue-15-ppa.png" alt="拆分与合并的面积、信号线、通孔和完整时序对比"><figcaption>块内与父层成本分开计量；完整 setup 与 hold 均为实际提取结果。</figcaption></figure>
 <figure><img src="assets/issue-15-floorplans.png" alt="相同父层边界中的实际最终宏盒形"><figcaption>从最终数据库 PG 几何审计读取宏盒形；外框和 1662bit 外部引脚相同。</figcaption></figure>
+<details><summary>完整真实路径的最差起点与终点</summary>{critical_table}<p class="note">直接读取每组完整分层 STA 的第一条 max／min 路径，并与同一份 WNS 核对。时序还受块内逻辑、时钟插入延迟和外部 IO 预算影响，不能把两组 WNS 差值单独归因于 ACT/MXU 边界，也不由此推算实际最高工作频率。</p></details>
 <h2>块内结果与接口代价</h2>{block_table}
 <p>块内单独的面积或线长不能代表整机成本：拆分后还需为跨块接口、外部 IO 与时钟完成父层布线及驱动修复。冻结 ACT 输出的内部既有负载会占用电容预算，例如 r_data[471] 内部负载 26.4487fF、驱动上限 60.654fF，留给外部线与接收端约 34.2053fF。父层长线可能使冻结块内部驱动真实过载；本轮通过边界缓冲隔离并重新完整提取验收。</p>
 <details><summary>物理支持单元分类与面积</summary>{support_table}<p class="note">使用原生工具分类。buffer 类可能包含 CTS 等缓冲；缺少独立 clock_buffer 类不代表没有时钟树。所有非填充支持单元均计入总面积，不能将这些类别再与总面积相加。</p></details>
