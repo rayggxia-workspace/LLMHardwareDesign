@@ -23,7 +23,6 @@ for {set iteration 0} {$iteration < $llhd_drive_rounds} {incr iteration} {
     if {$limit <= 0} {continue}
     set reserve [expr {$category eq "cap" ? 0.65 : 0.80}]
     set guarded [expr {[info exists llhd_drive_guardband] && $llhd_drive_guardband}]
-    if {$slack >= 0 && (!$guarded || $actual <= $limit*$reserve)} {continue}
     set slash [string last / $pin]
     if {$slash < 0} {continue}
     set name [string range $pin 0 [expr {$slash-1}]]
@@ -32,6 +31,13 @@ for {set iteration 0} {$iteration < $llhd_drive_rounds} {incr iteration} {
     set port [string range $pin [expr {$slash+1}] end]
     set term [$inst findITerm $port]
     if {$term eq "NULL"} {continue}
+    # Reserve slew only at receiving hard-macro pins when requested. This
+    # avoids selecting every MET macro output for another series guard.
+    if {[info exists llhd_drive_receiver_guardband] && $llhd_drive_receiver_guardband &&
+        [string match llhd_* [[$inst getMaster] getName]] && [$term getIoType] eq "INPUT"} {
+      set guarded 1
+    }
+    if {$slack >= 0 && (!$guarded || $actual <= $limit*$reserve)} {continue}
     # Slew is reported at the receiving macro pin too. Resize its actual
     # standard driver, never change the immutable macro's liberty model.
     if {[$term getIoType] eq "INPUT"} {

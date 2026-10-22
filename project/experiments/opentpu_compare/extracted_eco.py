@@ -106,6 +106,7 @@ def execute(spec):
     (ROOT/'extracted-eco-plan.json').write_text(json.dumps(dict(source=str(source),hold_input_guards=inputs,
         hold_guardband_ns=hold_guardband,
         drive_guardband=bool(spec.get('extracted_drive_guardband')),
+        receiver_guardband=bool(spec.get('extracted_receiver_guardband')),
         repeaters=spec.get('extracted_repeaters',[]),replacements=spec.get('extracted_replacements',[])),indent=2)+'\n')
     if spec.get('extracted_inspect_only'):return
     body='remove_fillers\nset llhd_drive_root {'+str(ROOT)+'}\nset llhd_drive_phase extracted\n'
@@ -115,6 +116,8 @@ def execute(spec):
         # little reserve. The existing 35% cap / 20% slew optimization reserve
         # changes physical drivers only; all final acceptance limits are fixed.
         body+='set llhd_drive_guardband 1\n'
+    if spec.get('extracted_receiver_guardband'):
+        body+='set llhd_drive_receiver_guardband 1\n'
     body+='source {'+str(track(ROOT/'runner/macro_guard.tcl'))+'}\nsource {'+str(track(ROOT/'runner/targeted_drive.tcl'))+'}\n'
     body+='source {'+str(track(ROOT/'runner/extracted_eco.tcl'))+'}\n'
     body+='set audit [open {'+str(ROOT/'extracted-eco-actions.tsv')+'} w]\n'
