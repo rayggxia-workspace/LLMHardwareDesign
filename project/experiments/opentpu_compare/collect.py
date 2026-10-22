@@ -81,9 +81,11 @@ for p in sorted(base.iterdir()):
  if f.exists():
   row['output_manifest_sha256']=hashlib.sha256(f.read_bytes()).hexdigest();row['output_manifest_entries']=len(f.read_text().splitlines())
   manifest={name[2:] if name.startswith('./') else name:h for h,name in (line.split(None,1) for line in f.read_text().splitlines() if len(line.split(None,1))==2)}
-  artifacts={'mapped.v','top.v','boundary.sdc'}
+  artifacts={'mapped.v','top.v','boundary.sdc','route-reuse.json'}
   relative=row.get('experiment.json',{}).get('result_relative')
-  if relative: artifacts.update(str(Path(relative)/('6_final.'+ext)) for ext in ['v','spef'])
+  if relative:
+   artifacts.update(str(Path(relative)/('6_final.'+ext)) for ext in ['v','spef','odb'])
+   artifacts.add(str(Path(relative.replace('/results/','/logs/'))/'5_2_route.json'))
   artifacts.update(name for name in manifest if name.startswith('equivalence-') and name.endswith(('/mapped.json','/physical.json')))
   row['sealed_artifact_sha256']={name:manifest[name] for name in sorted(artifacts) if name in manifest}
   selected=[p/name for name in ['spec.json','experiment.json','image.sha256','tools.sha256','input-sha256.json','input-trace-status.json','boundary.sdc','external-pin-contract.json','pin-placement-quality.json','pre-drt-electrical-quality.json',

@@ -24,6 +24,25 @@ assert all(inventory.get('logical-resource-inventory.json',{}).get(k,{}).get('eq
 stock=inventory['logical-resource-inventory.json']
 assert Counter(stock['act']['physical'])+Counter(stock['mxu']['physical'])==Counter(stock['merged']['physical']), 'Split/merged non-support resource stock differs'
 evidence_keys=['functional_proof','parent_functional_proof','stitch_proof','inventory_proof','annotation_proof']
+if definition.get('wire_audit_proof'):
+    evidence_keys.append('wire_audit_proof')
+    wire_proof=data[definition['wire_audit_proof']]
+    assert wire_proof.get('exit_code')=='0', 'Complete final ODB wire audit did not finish'
+    for kind,name in selection.items():
+        source=data[name]
+        receipt=wire_proof.get('wire-audit-sources.json',{}).get(kind,{})
+        assert receipt.get('passed') and all(receipt.get('checks',{}).values()), 'Final ODB wirelength crosscheck failed: '+kind
+        assert Path(receipt['source']).name==name, 'Final ODB wire audit belongs to another implementation'
+        assert Path(wire_proof['spec']['wire_audit_sources'][kind]).name==name
+        assert receipt['source_manifest_sha256']==source['output_manifest_sha256']
+        relative=source['experiment.json']['result_relative']
+        require_sealed_input(wire_proof,source,relative+'/6_final.odb')
+        require_sealed_input(wire_proof,source,relative.replace('/results/','/logs/')+'/5_2_route.json')
+        assert receipt['native_drt_wire_um']==source['metrics']['5_2_route.json']['detailedroute__route__wirelength']
+        if source['spec'].get('extracted_preserve_unchanged_routes'):
+            require_sealed_input(wire_proof,source,'route-reuse.json')
+else:
+    assert not any(data[name]['spec'].get('extracted_preserve_unchanged_routes') for name in selection.values()), 'Route reuse requires an independent complete final ODB cost audit'
 annotation=data[definition['annotation_proof']]
 assert annotation.get('exit_code')=='0', 'Native annotation audit did not complete'
 for kind in ['top_split','top_merged']:
@@ -154,5 +173,7 @@ output=dict(selection=selection,functional_proof=definition['functional_proof'],
     split_change_vs_merged_percent={k:100*(costs['split'][k]/costs['merged'][k]-1) for k in
         ['implemented_leaf_area_um2','occupied_footprint_plus_parent_cells_um2','total_signal_wire_um','total_signal_vias']},
     scope='H1 same compute/storage/state resources; physical buffer and CTS costs included. Footprint is not added to its own leaf-cell area. Signal route excludes special PG, which requires separate geometry audit. Complete STA never sums separate-block slack values.')
+if definition.get('wire_audit_proof'):
+    output['wire_audit_proof']=definition['wire_audit_proof']
 (HERE/'results/comparison.json').write_text(json.dumps(output,indent=2)+'\n')
 print(json.dumps(output,indent=2))
