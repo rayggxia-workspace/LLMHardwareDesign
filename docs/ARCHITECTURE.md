@@ -48,3 +48,7 @@ Issue #11将本轮Python研究工具正式放入 `project/experiments/frozen_rou
 ## Issue21 模型驱动划分
 
 正式目录project/experiments/operator_partition/。运行python scripts/check_research.py覆盖五套业务测试；新实验命令与D盘缓存规则见该目录README。归档核验：`python project/experiments/operator_partition/verify.py project/experiments/operator_partition/results/issue-21-run01/evidence.zip --sha256 f85b1f120065f91d13df95cdf343d35eb48640d9a56d2755b46da5c6ed82306d`。本工具是逻辑张量资源账本和合成数值核，不提供cycle/物理/质量测量。
+
+## Issue23 固定真实权重轨迹
+
+project/experiments/qwen3_trace/使用独立D盘环境（torch2.10.0+cpu、transformers4.57.6），正式命令与输入/误差合同见该目录README与experiment.json。先运行该目录test_numeric.py协议检查和work/Liangruizhi/23/check_observer.py集成，再从清洁commit调用run.py，输出到D盘独立新目录。原有check_research五套测试仍用其指定环境；新模型依赖不强加给全局Python。

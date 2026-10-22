@@ -1,0 +1,75 @@
+{
+  "source_commit": "d63bc2d37a5f1457a4a170b17afba343fb54998d",
+  "positive_calls": 54,
+  "negative_controls": [
+    {
+      "name": "wrong_decode_position_zero",
+      "passed": true,
+      "detected": true
+    },
+    {
+      "name": "swap_one_layer_kv_heads",
+      "passed": true,
+      "detected": true
+    },
+    {
+      "name": "wrong_decode_position_zero",
+      "passed": true,
+      "detected": true
+    },
+    {
+      "name": "swap_one_layer_kv_heads",
+      "passed": true,
+      "detected": true
+    }
+  ],
+  "top1_agree": 54,
+  "max_logit_abs": 2.6464462280273438e-05,
+  "max_logit_relative_l2": 1.5432396999274712e-06,
+  "max_kv_abs": 0.00040435791015625,
+  "trace_calls": 35,
+  "trace_events": 13720,
+  "selected_boundary_comparisons": 1365,
+  "comparisons": [
+    {
+      "stage": "attention.probabilities",
+      "single_prefill": {
+        "calls": 1,
+        "max_single_tensor_bytes": 65536,
+        "cumulative_tensor_bytes": 65536
+      },
+      "chunked_prefill": {
+        "calls": 2,
+        "max_single_tensor_bytes": 32768,
+        "cumulative_tensor_bytes": 49152
+      }
+    },
+    {
+      "stage": "swiglu_product_before_down_proj",
+      "single_prefill": {
+        "calls": 1,
+        "max_single_tensor_bytes": 393216,
+        "cumulative_tensor_bytes": 393216
+      },
+      "chunked_prefill": {
+        "calls": 2,
+        "max_single_tensor_bytes": 196608,
+        "cumulative_tensor_bytes": 393216
+      }
+    },
+    {
+      "stage": "q_projection_pre_norm_rope",
+      "single_prefill": {
+        "calls": 1,
+        "max_single_tensor_bytes": 262144,
+        "cumulative_tensor_bytes": 262144
+      },
+      "chunked_prefill": {
+        "calls": 2,
+        "max_single_tensor_bytes": 131072,
+        "cumulative_tensor_bytes": 262144
+      }
+    }
+  ],
+  "scope": "Observed tensor logical bytes for matched 32-token prefix, layer0 representative; not total live peak or physical traffic."
+}
