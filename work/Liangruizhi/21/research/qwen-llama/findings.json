@@ -1,0 +1,160 @@
+{
+  "schema": 1,
+  "scope": "Inference-first operator/Block partition evidence; text prefill and autoregressive decode. Training constraints analytical only.",
+  "families": [
+    {
+      "id": "Qwen2.5_open_dense",
+      "attention": "full causal GQA",
+      "qkv_bias": true,
+      "qk_norm": false,
+      "ffn": "SwiGLU",
+      "state": "growing native-Hkv KV cache",
+      "source": [
+        "Qwen/Qwen2.5-7B config",
+        "transformers qwen2/modeling_qwen2.py"
+      ]
+    },
+    {
+      "id": "Qwen3_dense",
+      "attention": "full causal GQA",
+      "qkv_bias": false,
+      "qk_norm": "per-head RMSNorm",
+      "ffn": "SwiGLU",
+      "state": "growing native-Hkv KV cache",
+      "warning": "Explicit head_dim may make Hq*head_dim different from hidden_size; reasoning thinking/nonthinking modes do not mean hybrid linear/full attention."
+    },
+    {
+      "id": "Qwen3_MoE",
+      "attention": "full causal GQA",
+      "ffn": "128 routed experts/top8; no shared expert in original Qwen3-30B-A3B",
+      "state": "KV cache plus routed token/expert queues",
+      "warning": "Do not reuse Qwen3.5 shared-expert topology."
+    },
+    {
+      "id": "Qwen3.5_dense",
+      "attention": "3 Gated DeltaNet layers / 1 gated full-GQA layer",
+      "ffn": "dense SwiGLU",
+      "state": "linear layers: recurrent matrix + causal depthwise conv history; full layers: growing KV",
+      "warning": "Whole hybrid model state still grows with context via full attention; not MLA; full q_proj includes output gate."
+    },
+    {
+      "id": "Qwen3.5_MoE",
+      "attention": "same 3:1 hybrid",
+      "ffn": "256 routed/top8 plus sigmoid-gated shared expert for 35B-A3B",
+      "state": "hybrid state plus routed queues",
+      "warning": "text-only benchmark excludes vision tower and MTP."
+    },
+    {
+      "id": "Llama3.1_dense",
+      "attention": "full causal GQA, no QK norm in official reference",
+      "ffn": "SwiGLU",
+      "state": "native-Hkv KV cache",
+      "warning": "Use versioned Llama3.1 baseline; Llama4 exists as a separate MoE family and is not interchangeable."
+    }
+  ],
+  "symbols": {
+    "B": "batch",
+    "T": "new-token/prefill length",
+    "P": "cached context including new token",
+    "M": "B*T",
+    "D": "hidden width",
+    "Hq": "query heads",
+    "Hkv": "KV heads",
+    "h": "full-attention head_dim",
+    "F": "dense FFN intermediate width",
+    "E": "experts",
+    "k": "selected experts per token",
+    "Fe": "per-expert intermediate width",
+    "Hvk": "linear value heads",
+    "dk": "linear key head dimension",
+    "dv": "linear value head dimension",
+    "s": "bytes per stored scalar"
+  },
+  "shape_formulas": {
+    "q": "[M,Hq*h]",
+    "k_or_v": "[M,Hkv*h]",
+    "attention_score_if_materialized": "[B,Hq,T,P]",
+    "attention_output_before_o_proj": "[M,Hq*h]",
+    "dense_ffn_intermediate": "two [M,F] producer branches -> elementwise -> [M,F]",
+    "kv_cache_elements_per_full_layer": "2*B*P*Hkv*h",
+    "linear_recurrent_state_elements_per_layer": "B*Hv*dk*dv",
+    "linear_conv_channels": "2*Hk*dk+Hv*dv",
+    "linear_logical_history_elements": "B*(2*Hk*dk+Hv*dv)*(conv_kernel-1), while physical runtime cache convention must be measured",
+    "naive_moe_dispatch_payload_elements": "M*k*D each direction before local aggregation; topology/broadcast placement may lower traffic",
+    "expert_weight_elements": "3*E*D*Fe, plus any shared expert",
+    "qwen35_full_q_gate_projection_width": "2*Hq*h"
+  },
+  "partition_hypotheses": [
+    {
+      "id": "P1_projection_epilogues",
+      "candidate": "Keep Q/K per-head norm and RoPE with projection or adjacent vector epilogue, while retaining native KV-head cache.",
+      "why": "Normalization reductions are head-local; avoids exporting pre/post Q/K twice. Extra side ports for normalized Q/K, positional data and output gate must be priced.",
+      "must_measure": [
+        "norm scratch capacity",
+        "GQA head multicast fanout",
+        "explicit projection width",
+        "epilogue pipeline rate and precision"
+      ]
+    },
+    {
+      "id": "P2_attention_state_locality",
+      "candidate": "Keep score/online-softmax/value reduction and KV access within a head-group attention macro or tightly coupled local scratch.",
+      "why": "Cutting a materialized T*P score matrix is workload-dependent and can be quadratic; decode is a short query reading a long persistent KV prefix.",
+      "must_measure": [
+        "P and B sweep",
+        "native-Hkv cache banks",
+        "full vs tiled-softmax liveness",
+        "read bandwidth per token and tail latency"
+      ]
+    },
+    {
+      "id": "P3_ffn_channel_tile",
+      "candidate": "Fuse gate/up pointwise SiLU multiply at a shared intermediate channel tile; stream down-projection partial sums.",
+      "why": "The two M*F branches meet elementwise. Whole-FFN fusion may exceed storage; F-tiled grouping offers a tunable local interface.",
+      "must_measure": [
+        "tileF capacity",
+        "X fanout",
+        "D-output accumulation precision",
+        "extra weight/input rereads",
+        "partial-sum interconnect"
+      ]
+    },
+    {
+      "id": "P4_moe_expert_macro",
+      "candidate": "Reuse expert FFN tile; isolate top-k dispatch/weighted scatter and shared-expert path as explicit communication blocks.",
+      "why": "Irregular expert occupancy and k-fold dispatch change service rate and queue/storage headroom, independent of identical arithmetic kernels.",
+      "must_measure": [
+        "n_e histogram and max",
+        "all-to-one hot experts",
+        "top-k score metadata",
+        "shared path synchronization",
+        "weight residency and external fetch"
+      ]
+    },
+    {
+      "id": "P5_gdn_state_macro",
+      "candidate": "Keep recurrent matrix update/readout near per-value-head state SRAM; separately assess QKV conv and scalar decay/beta epilogues.",
+      "why": "S_t read/modify/write is O(dk*dv) per head per token with recurrence. Splitting key dimension requires reduction/broadcast; head partition can keep state independent.",
+      "must_measure": [
+        "FP32 matrix state",
+        "conv boundary history",
+        "chunk-prefill scratch",
+        "key/value head ratio",
+        "sigmoid/softplus/exp/vector services"
+      ]
+    }
+  ],
+  "precision_and_scope": [
+    "Numerical equivalence, traffic accounting and physical PPA are different claims.",
+    "Model config producer transformers_version != inspected source commit; both fixed separately.",
+    "Do not infer latest variants from family names; pin exact model/revision.",
+    "No MLA in the inspected Qwen2.5/Qwen3/Llama3.1 full-attention configs. Qwen3.5 GDN is recurrent linear attention, not MLA."
+  ],
+  "training_constraints_only": {
+    "gemm_backward": "Forward Y=XW; dX=dYW^T and dW=X^TdY change transpose and reduction destinations, weight update/write ownership and activation retention.",
+    "attention_backward": "Softmax/RMS/RoPE backward and activation checkpoint/recompute affect storage; inference KV cache is not a training-backward buffer substitute.",
+    "moe_backward": "Dispatch/scatter reverse paths, per-expert gradients and routing auxiliary losses require additional reductions; cannot assume inference-only fixed direction interconnect generalizes.",
+    "gdn_backward": "Reverse-through-time/chunk recomputation requires state/activation reconstruction rather than only final recurrent state.",
+    "optimizer": "Llama3 paper explicitly reports AdamW. Two FP32 moments alone cost 8 bytes/parameter; gradient, weight and optional master-weight precision are separate policy fields. No training execution in this round."
+  }
+}

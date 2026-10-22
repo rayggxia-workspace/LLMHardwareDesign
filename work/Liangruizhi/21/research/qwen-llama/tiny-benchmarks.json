@@ -1,0 +1,166 @@
+{
+  "schema": 1,
+  "purpose": "Synthetic arithmetic correctness and shape/dataflow tests; inference prefill/decode only; not pretrained accuracy, software speed or silicon PPA.",
+  "common": {
+    "batch_sizes": [
+      1,
+      2
+    ],
+    "prefill_lengths": [
+      1,
+      7,
+      17,
+      32
+    ],
+    "decode_context_lengths": [
+      1,
+      7,
+      17,
+      32,
+      128
+    ],
+    "dtype_reference": "float64",
+    "dtype_implementation_target": "float32 with explicit accumulator policy",
+    "seed": 20261022,
+    "weights": "synthetic random, never downloaded",
+    "text_only": true
+  },
+  "cases": [
+    {
+      "id": "llama31_dense_gqa",
+      "parent_model": "meta-llama/Llama-3.1-8B",
+      "D": 128,
+      "F": 448,
+      "Hq": 32,
+      "Hkv": 8,
+      "dh": 4,
+      "layers": 1,
+      "qkv_bias": false,
+      "qk_norm": false,
+      "mlp": "SwiGLU",
+      "shrink": "All channel dimensions divided by32; heads and FFN ratio retained; depth reduced."
+    },
+    {
+      "id": "qwen25_dense_gqa",
+      "parent_model": "Qwen/Qwen2.5-7B",
+      "D": 112,
+      "F": 592,
+      "Hq": 28,
+      "Hkv": 4,
+      "dh": 4,
+      "layers": 1,
+      "qkv_bias": true,
+      "qk_norm": false,
+      "mlp": "SwiGLU",
+      "shrink": "D/F/dh divided by32; 7:1 grouped query ratio retained."
+    },
+    {
+      "id": "qwen3_dense_expanded_q",
+      "parent_model": "Qwen/Qwen3-0.6B",
+      "D": 32,
+      "F": 96,
+      "Hq": 16,
+      "Hkv": 8,
+      "dh": 4,
+      "layers": 1,
+      "qkv_bias": false,
+      "qk_norm": true,
+      "mlp": "SwiGLU",
+      "shrink": "D/F/dh divided by32; Q total width64 != D32 deliberately retained."
+    },
+    {
+      "id": "qwen3_routed_moe",
+      "parent_model": "Qwen/Qwen3-30B-A3B",
+      "D": 64,
+      "Fe": 24,
+      "Hq": 32,
+      "Hkv": 4,
+      "dh": 4,
+      "layers": 1,
+      "E": 128,
+      "top_k": 8,
+      "norm_topk_prob": true,
+      "shared_expert": false,
+      "qk_norm": true,
+      "shrink": "D/Fe/dh divided by32; actual 128 experts and top8 retained."
+    },
+    {
+      "id": "qwen35_dense_hybrid",
+      "parent_model": "Qwen/Qwen3.5-0.8B",
+      "D": 32,
+      "F": 112,
+      "Hq": 8,
+      "Hkv": 2,
+      "dh": 8,
+      "linear_Hk": 16,
+      "linear_Hv": 16,
+      "linear_dk": 4,
+      "linear_dv": 4,
+      "conv_kernel": 4,
+      "layer_types": [
+        "linear_attention",
+        "linear_attention",
+        "linear_attention",
+        "full_attention"
+      ],
+      "full_attention_output_gate": true,
+      "qk_norm": true,
+      "shrink": "D/F/full dh/linear dk,dv divided by32; head counts and convolution length retained; minimum 3:1 quartet depth."
+    },
+    {
+      "id": "qwen35_moe_hybrid",
+      "parent_model": "Qwen/Qwen3.5-35B-A3B",
+      "D": 64,
+      "Fe": 16,
+      "shared_Fe": 16,
+      "Hq": 16,
+      "Hkv": 2,
+      "dh": 8,
+      "linear_Hk": 16,
+      "linear_Hv": 32,
+      "linear_dk": 4,
+      "linear_dv": 4,
+      "conv_kernel": 4,
+      "layer_types": [
+        "linear_attention",
+        "linear_attention",
+        "linear_attention",
+        "full_attention"
+      ],
+      "E": 256,
+      "top_k": 8,
+      "shared_expert": true,
+      "shared_expert_gate": "sigmoid",
+      "full_attention_output_gate": true,
+      "shrink": "Channel dimensions divided by32; 2:1 linear value/key heads, 256 experts/top8/shared expert and 3:1 quartet retained."
+    }
+  ],
+  "experiments": [
+    {
+      "id": "attention_cache",
+      "oracle": "Causal full-prefix GQA vs token-at-a-time native Hkv cache; compare every token and state contents; Q/K supplied after normalization and RoPE."
+    },
+    {
+      "id": "attention_tile",
+      "oracle": "Explicit repeated-KV softmax vs native grouped-head tiled online softmax; compare several chunk lengths, causal edges and nonmultiple tiles."
+    },
+    {
+      "id": "ffn_partition",
+      "oracle": "Whole SwiGLU vs intermediate-channel streaming gate/up/elementwise/down accumulation; verify exact parent input/output shape and numerical tolerance."
+    },
+    {
+      "id": "moe_dispatch",
+      "oracle": "All-experts reference with topk mask vs token dispatch/weighted scatter; include all routes concentrated, no dropped tokens, normalized scores and always-on shared expert."
+    },
+    {
+      "id": "gdn_state",
+      "oracle": "Direct recurrent delta update vs affine-prefix formulation and segmented continuation; compare outputs and final matrix state; depthwise causal convolution continuation separate."
+    }
+  ],
+  "boundary": [
+    "Tiny dims preserve operator types and declared ratios, not accuracy or hardware utilization of a trained full checkpoint.",
+    "Whole-model RoPE variants, vision encoder, MTP/speculative decoding and end-to-end logits excluded initially.",
+    "Synthetic router loads do not establish learned dispatch distributions or MoE communication tails.",
+    "Training/backward/optimizer noted analytically only; no training execution."
+  ]
+}
