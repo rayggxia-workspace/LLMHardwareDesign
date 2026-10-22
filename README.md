@@ -18,6 +18,8 @@
 
 [Issue13端点限制消融](project/experiments/endpoint_ablation/README.md)进一步固定库存、映射和搜索预算，区分限制松紧与搜索失败；[真实宏端点接入合同](docs/MACRO_ENDPOINT_CONTRACT.md)说明已有视图与尚未补齐的资格。
 
+[Issue16真实LEF几何库存](docs/experiments/issue-16-macro-endpoints.md)冻结ACT20/MXU20/GEMM20三份普通LEF及SHA，完整导出6791个PIN、6956个PIN矩形和30个OBS矩形，并保存无损原字节及离线重放工具；PR18待审查。几何可读仍不代表工艺访问或硬宏资格已合格。
+
 远程计算资源与目录权限见[远程服务器使用规则](docs/REMOTE_RULES.md)，使用服务器前请先阅读。
 
 任务、负责人和验收条件以本仓库 [Issues](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues) 为准。每项任务使用独立分支和 PR；开始工作前阅读 [AGENTS.md](AGENTS.md) 与[协作说明](docs/COLLABORATION.md)。管理结构检查命令为：

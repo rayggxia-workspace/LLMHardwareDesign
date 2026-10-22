@@ -1,6 +1,6 @@
 # 从候选宏视图接入真实端点的合同
 
-2026-10-22（UTC+08:00），Issue13／Liangruizhi。本轮只读核对Issue7材料及指定视图，没有运行EDA或干预作业。端点反事实消融仍使用独立合成库存，没有将以下视图作为实验输入。
+2026-10-22（UTC+08:00），Issue13/16／Liangruizhi。Issue13只读核对Issue7材料及指定视图；Issue16随后冻结三份普通LEF并导出原始几何，见[实测记录](experiments/issue-16-macro-endpoints.md)。两任务均没有运行EDA或干预作业；Issue13消融仍使用独立合成库存，没有以真实视图校准其结果。
 
 ## 已核实的输入位置与资格
 
@@ -14,7 +14,7 @@
 | MXU20 | mxu-cap20/flow/results/nangate45/parallel_opentpu_mxu/base/llhd_opentpu_mxu | 1100.455×1100.455 | 1529／643 | M5=1111，M6=1061 |
 | GEMM20 | gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/gemm_engine | 1157.32×1157.32 | 3080／673 | M5=1166，M6=2587 |
 
-普通LEF版本5.8、DATABASE MICRONS 2000，每个signal pin有一个RECT；普通LEF分别132447、338311、623710字节。上述为只读观察摘要，尚未在本任务冻结原字节／SHA-256，文件版本是否在下轮变化须重新核对。详细OBS文件仅查可读与大小，未读取大体积内容或计算哈希，不因本合同扩大例行检查范围。
+普通LEF版本5.8、DATABASE MICRONS 2000，每个signal pin有一个RECT；普通LEF分别132447、338311、623710字节。Issue16已于08:40UTC冻结这三份普通LEF的原字节／SHA-256及6791PIN、6956PIN RECT和30OBS RECT，原始PG/PORT结构保留；版本若在下轮变化须另建输入版本。详细OBS文件仍仅查过可读与大小，未读取大体积内容或计算哈希，不因本合同扩大例行检查范围。
 
 三组Liberty声明time_unit=1ns、capacitive_load_unit=(1,fF)，但缺minimum_period/min_period，完整arc、外部driver/load、PG与等价尚未闭合。MXU输出max_capacitance仅575/643、GEMM366/673有字段；零cap不能视为免费端点。synthetic SRAM、LEC_CHECK=0仍是来源边界。
 
@@ -32,6 +32,6 @@
 
 ## 与实验衔接
 
-先在独立Issue中冻结普通LEF输入并导出原始几何，再核对真实ACT—MXU逐bit连接合同、宏安装位置、朝向与各端允许层。接入前保持两套证据尺度：几何端点存在可用于访问研究，时序/功耗有效性仍需资格与边界模型。
+Issue16已建立可重放的普通LEF输入与原始几何库存，PR18待审查。下一步核对真实ACT—MXU逐bit连接合同、宏安装位置、朝向与各端允许层。接入前保持两套证据尺度：几何端点存在可用于访问研究，时序/功耗有效性仍需资格与边界模型。
 
 若接入层、OBS、driver/load或宏资格仍缺失，可以研究明确标注的几何必要条件，不能宣称工艺合法、物理H2或PPA优势。下一轮端点感知映射须固定每例K个mapping与路由预算，另列预处理成本；不要在本次已观察图上声称新盲测。

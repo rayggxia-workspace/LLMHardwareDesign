@@ -42,7 +42,7 @@
 
 384例将master库存和constraint overlay分开，固定每例mapping与14次路由预算：restricted44/96，access71/96，capacity44/96，joint71/96；230成功解及248份cut均读回验证。仅9个固定映射具备原白名单无路径、access条件合法解的因果证据，不把所有成功变化归因于原配置全局不可行。容量放宽未观察到额外成功，但微例证明容量约束实现有效；不概括为容量无关。真实记录见[Issue13实验](experiments/issue-13-endpoint-ablation.md)。
 
-这轮复用了已经观察过的四图；restricted96例与Issue11对应方法逐项相同，不称新盲测。下一任务按[宏端点合同](MACRO_ENDPOINT_CONTRACT.md)冻结可读的普通LEF原字节／SHA并导出pin方向/位置/层及缺项，再做固定K个mapping、总预算相同的端点感知对照。端点矩形可读不代表工艺访问、时序、PG或等价已合格。
+这轮复用了已经观察过的四图；restricted96例与Issue11对应方法逐项相同，不称新盲测。接续[Issue16/PR18](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/18)按[宏端点合同](MACRO_ENDPOINT_CONTRACT.md)冻结三份普通LEF原字节/SHA，完整导出6791PIN/6956PIN RECT/30OBS RECT并逐字节重放；见[实际记录](experiments/issue-16-macro-endpoints.md)。上游逐文件预期SHA、RTL/tool/image精确版本仍未知，不能将新捕获哈希当上游认证。下一步先补逐bit接口匹配与DEF/技术访问规则，再做固定K个mapping、总预算相同的端点感知对照。端点矩形可读不代表工艺访问、时序、PG或等价已合格。YUZE-LU的Issue15推进同资源ACT/MXU分离/融合物理对照，避免重复认领。
 
 ## 进入下一阶段的门槛
 
