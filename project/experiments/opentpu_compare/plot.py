@@ -69,4 +69,23 @@ fig.suptitle('Actual final macro boxes | identical die and 1662 external signal 
 fig.savefig(out/'issue-15-floorplans.png',dpi=180)
 fig.savefig(out/'issue-15-floorplans.svg')
 plt.close(fig)
+
+fig,axes=plt.subplots(1,2,figsize=(11,4.5),layout='constrained')
+layers=['metal'+str(i) for i in range(2,11)]
+for ax,key,title in zip(axes,
+        ['total_signal_wire_by_layer_um','parent_signal_wire_by_layer_um'],
+        ['Blocks + parent signal routes','Parent signal routes']):
+    for offset,kind,label,color in zip([-.2,.2],['split','merged'],labels,colors):
+        values=[data['costs'][kind][key].get(layer,0)/1e6 for layer in layers]
+        ax.bar([i+offset for i in range(len(layers))],values,width=.38,label=label,color=color)
+    ax.set_xticks(range(len(layers)),['M'+str(i) for i in range(2,11)])
+    ax.set_ylabel(r'$10^6\,\mu m$')
+    ax.set_title(title,loc='left',fontsize=11)
+    ax.grid(axis='y',alpha=.15)
+    ax.legend(frameon=False,fontsize=8)
+fig.suptitle('Actual signal wire by metal layer | H1 unrestricted parent routing',fontsize=12)
+fig.supxlabel('Special PG excluded; native layer lengths rounded to integer micrometres',fontsize=9)
+fig.savefig(out/'issue-15-routing-layers.png',dpi=180)
+fig.savefig(out/'issue-15-routing-layers.svg')
+plt.close(fig)
 print(out)
