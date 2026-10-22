@@ -397,6 +397,10 @@ def resume(spec):
         for variable in ['MAX_ROUTING_LAYER','MAX_CLK_ROUTING_LAYER']:
             assert not re.search(r'^export '+variable+r'\s*=',config,re.M)
             config+='export '+variable+' = metal9\n'
+        assert 'export PRE_GLOBAL_ROUTE_TCL' not in config
+        (ROOT/'routing-ceiling.tcl').write_text('set_routing_layers -signal metal2-metal9 -clock metal4-metal9\n'
+            'puts {EXPLICIT_ROUTING_RANGE metal2-metal9 clock metal4-metal9}\n')
+        config+='export PRE_GLOBAL_ROUTE_TCL = '+str(ROOT/'routing-ceiling.tcl')+'\n'
     (ROOT/'config.mk').write_text(config)
     meta.update(resume=dict(source=str(source),checkpoint='4_cts.odb',route_cap_margin=margin,
         clock_io_load_unchanged=True,logic_resources_unchanged=True,
@@ -404,7 +408,11 @@ def resume(spec):
     (ROOT/'experiment.json').write_text(json.dumps(meta,indent=2)+'\n')
     (ROOT/'checkpoint-copies.json').write_text(json.dumps(copies,indent=2)+'\n')
     (ROOT/'input-sha256.json').write_text(json.dumps(INPUTS,indent=2)+'\n')
-    make_stages(ROOT/'config.mk',spec,['do-route','do-finish','do-generate_abstract'])
+    make_stages(ROOT/'config.mk',spec,['do-5_1_grt'])
+    if spec.get('reserve_m10'):
+        log=ROOT/'flow/logs/nangate45'/suffix.parts[-2]/'base/5_1_grt.log'
+        assert 'Max routing layer: metal9' in log.read_text(), 'Reject ineffective reservation before detail route'
+    make_stages(ROOT/'config.mk',spec,['do-5_2_route','do-5_3_fillcell','do-5_route','do-5_route.sdc','do-finish','do-generate_abstract'])
     dest=ROOT/suffix
     run_tcl('detail','read_db {'+str(dest/'6_final.odb')+'}\nwrite_abstract_lef -bloat_factor 0 {'+str(dest/(meta['top']+'.detailed.lef'))+'}\n')
     if spec.get('reserve_m10'):
@@ -442,7 +450,7 @@ def sta_wrapper_test(source):
     script+='report_check_types -max_capacitance -max_count 10 -digits 6 -no_line_splits\n'
     run_tcl('transparent-sta',script)
     text=(ROOT/'transparent-sta.log').read_text()
-    values=[float(v) for v in re.findall(r'worst slack\s+(-?[\d.]+)',text)]
+    values=[float(v) for v in re.findall(r'worst slack(?: max| min)?\s+(-?[\d.]+)',text)]
     nick=Path(meta['result_relative']).parts[-2]
     f=json.loads(track(source/'flow/logs/nangate45'/nick/'base/6_report.json').read_text())
     expected=[f['finish__timing__setup__ws'],f['finish__timing__hold__ws']]
