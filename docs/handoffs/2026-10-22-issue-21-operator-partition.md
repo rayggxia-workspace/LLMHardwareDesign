@@ -1,6 +1,6 @@
 # Issue21 划分研究交接
 
-仓库rayggxia-workspace/LLMHardwareDesign；project_id=llm-hardware-design；负责人Liangruizhi（2663955430@qq.com，ID182389313）。Issue21，分支task/21-operator-partition，目录D:/Projects/LLMHardwareDesign-partition；base task/19-interface-contract，保留PR20/18/14/12依赖。正式运行源码680dbbeed9a9189c06b047918ab4ae2ea6eedc28；交付head以PR实际读回为准。
+仓库rayggxia-workspace/LLMHardwareDesign；project_id=llm-hardware-design；负责人Liangruizhi（2663955430@qq.com，ID182389313）。[Issue21](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/21)／[PR22](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/22)，分支task/21-operator-partition，目录D:/Projects/LLMHardwareDesign-partition；base task/19-interface-contract，保留PR20/18/14/12依赖。正式运行源码680dbbeed9a9189c06b047918ab4ae2ea6eedc28；实验和归档交付ddcc2b0032ff8340d94c9a1b7844302cb669ade7已上传，PR22待审查；当前head以PR实际读回为准。
 
 用户共同问题、推理范围、代表模型选择与自主执行授权已写docs/RESEARCH_QUESTION.md及AGENTS。首轮方法docs/OPERATOR_BLOCK_PARTITION.md，实际结果docs/experiments/issue-21-operator-partition.md。完整解决算子/Block划分仍是持续研究目标，不能因本阶段微实验通过标为整体完成。
 
