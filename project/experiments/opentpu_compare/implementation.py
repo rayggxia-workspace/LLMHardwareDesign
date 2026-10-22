@@ -107,14 +107,14 @@ def matched(spec):
     libs={p.name:p for src in (SOURCES['act'],SOURCES['mxu']) for p in (src/'memory-model/macros').glob('*.lib')}
     lefs={p.name:p for src in (SOURCES['act'],SOURCES['mxu']) for p in (src/'memory-model/macros').glob('*.lef')}
     for path in list(libs.values())+list(lefs.values()): track(path)
-    commands=['read_liberty -lib {'+str(track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib'))+'}']
-    commands+=['read_liberty -lib {'+str(path)+'}' for path in libs.values()]
+    commands=['read_liberty -lib '+json.dumps(str(track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib')))]
+    commands+=['read_liberty -lib '+json.dumps(str(path)) for path in libs.values()]
     for name in ('act','mxu'):
         path=result(SOURCES[name])/'1_2_yosys.v'
         track(path)
         entries={line[66:]:line[:64] for line in (SOURCES[name]/'output-files.sha256').read_text().splitlines()}
         assert digest(path)==entries[path.relative_to(SOURCES[name]).as_posix()]
-        commands+=['read_verilog {'+str(path)+'}']
+        commands+=['read_verilog '+json.dumps(str(path))]
     commands+=['write_json mapped-before.json']
     top='llhd_match_merged' if kind=='merged' else 'llhd_opentpu_'+kind
     if kind=='merged':
