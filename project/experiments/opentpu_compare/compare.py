@@ -99,7 +99,9 @@ for kind,blocks in [('split',['act','mxu']),('merged',['merged'])]:
     assert max_ws and min_ws, 'Missing actual hierarchical STA'
     component_rows=[rows[b]['record']['metrics']['6_report.json'] for b in blocks]+[final]
     classes={c:{quantity:sum(r.get('finish__design__instance__'+quantity+'__class:'+c,0) for r in component_rows)
-                for quantity in ['count','area']} for c in ['clock_buffer','clock_inverter','timing_repair_buffer','inverter']}
+                for quantity in ['count','area']} for c in
+                ['buffer','clock_buffer','clock_inverter','timing_repair_buffer','inverter','tie_cell','tap_cell','diode']
+                if any('finish__design__instance__count__class:'+c in r for r in component_rows)}
     layer_wire=top['record']['route_layer_wire_um']
     private_layer_wire=dict(sum((Counter(rows[b]['record']['route_layer_wire_um']) for b in blocks),Counter()))
     costs[kind]=dict(
@@ -117,6 +119,7 @@ for kind,blocks in [('split',['act','mxu']),('merged',['merged'])]:
         complete_setup_ws_ns=float(max_ws[1]),complete_hold_ws_ns=float(min_ws[1]),
         parent_macro_only_setup_ws_ns=top['quality']['setup_ns'],
         physical_cell_classification=classes,parent_signal_wire_by_layer_um=layer_wire,
+        physical_cell_classification_scope='Native support-cell metric categories. The buffer category includes tool-classified CTS/other buffers; absent clock-only categories do not imply zero physical clock buffers. Total cell area includes every non-filler support cell.',
         private_signal_wire_by_layer_um=private_layer_wire,
         total_signal_wire_by_layer_um=dict(Counter(private_layer_wire)+Counter(layer_wire)),
         parent_signal_wire_below_m10_percent=100*sum(v for k,v in layer_wire.items() if k!='metal10')/sum(layer_wire.values()))
