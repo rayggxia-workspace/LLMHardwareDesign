@@ -9,3 +9,4 @@
 - 方法合同和配置在正式结果之前建立；已有图已被观察，不称新盲测。开发试运行local_runs/development-01显式allow-dirty，保留为开发记录，不提升正式证据。开发后只补合同断言与来源/验收，无结果导向库存或参数调优。
 - 开始时管理中心PR5仍OPEN，默认registry仅有team-workspace；登记pending。当前插件无Projects工具，本项目无board.json，条目/本人权限unverified，同步pending，管理员待指定；不可套用其他会话缺read:project的结论。
 - 独立审查回执audit.json／脚本recompute.py／SHA256SUMS为运行后的原字节记录，不属于正式运行输入。脚本固定本机两轮raw路径并在脚本自身目录写回执；复查时先复制脚本到D:/Projects/Codex/issue-13-endpoint-ablation/<新审查子目录>，确认输入路径，使用Python -B运行，保留旧回执。不要直接在本work目录执行后覆盖历史记录或在项目内生成临时缓存。
+- 临时清理pending：已核验副本后，自动审批仍拒绝递归删除本任务D盘缓存（blocked by policy，无更具体理由），没有改用其他工具绕过。保留任务缓存与两份图表中间副本，待处理人见交接；审查worktree保留供当前PR复查，正式结果不受影响。

@@ -18,3 +18,9 @@
 5. 登记沿用management-hub PR5，当前OPEN/pending，默认registry未含本项目。待有权限审查者处理，不重复开登记PR。
 6. Projects事实unverified、同步pending：没有工具/board.json，未核验本人权限或Issue13条目。管理员待指定，需核对组织看板1及受众、查/复用或加入Issue13，按status-mapping读回Project ID=llm-hardware-design和Status=In review、条目链接/ID/核验时间；未确定Priority或日期不猜填。
 7. 临时/缓存仅D:/Projects/Codex/issue-13-endpoint-ablation内本任务子目录，进程级TEMP/TMP/TMPDIR/PYTHONPYCACHEPREFIX/MPLCONFIGDIR，不改系统变量。保留项目成果与仍有用途的开发记录，清理仅本任务无用缓存；不删除其他任务数据。
+
+## 临时清理待办
+
+归档字节及审查脚本/回执副本均已核对一致。自动审批两次拒绝本任务缓存目录的递归删除（一次批量脚本、一次核验后的明确LiteralPath），仅返回blocked by policy，未给更具体理由；未绕过该限制，目录保留。待具备可用操作方式的本机用户／处理人（待指定）清理D:/Projects/Codex/issue-13-endpoint-ablation，以及项目local_runs下development-figures-01、issue-13-figures01这两个已逐字节归档的图表中间副本。正式results、原始issue-13-run01和dirty开发记录保留。
+
+独立微例审查worktree D:/Projects/LLMHardwareDesign-endpoint-review仍保留供PR待审查阶段复查；不是并发修改主任务目录的入口。后续不再需要时先核对未提交文件与正式副本，再用Git感知方式处理该worktree，不盲删其他工作树。
