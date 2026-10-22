@@ -64,7 +64,7 @@ def execute(spec):
         'report_worst_slack -min -digits 9 >> {'+str(report)+'}\n'
         'report_check_types -max_capacitance -max_slew -max_count 1000 -digits 9 -no_line_splits >> {'+str(report)+'}\n'
         'report_checks -path_delay min -group_path_count 100 -endpoint_path_count 1 -digits 9 -format full_clock_expanded >> {'+str(report)+'}\n'
-        'report_checks -path_delay max -group_path_count 100 -endpoint_path_count 1 -digits 9 -format full_clock_expanded > {'+str(setup_report)+'}\n')
+        'report_checks -path_delay max -group_path_count 100 -endpoint_path_count 1 -digits 9 -format full_clock_expanded -fields {slew cap input_pin net fanout} > {'+str(setup_report)+'}\n')
     metrics=json.loads(sealed(Path(str(relative).replace('/results/','/logs/'))/'6_report.json').read_text())
     observed=[float(re.search(r'worst slack '+delay+r'\s+([-+0-9.eE]+)',report.read_text())[1]) for delay in ['max','min']]
     expected=[metrics['finish__timing__'+kind+'__ws'] for kind in ['setup','hold']]
