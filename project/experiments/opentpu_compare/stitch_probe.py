@@ -76,16 +76,16 @@ endmodule
         # junction nodes. Every part contributes its capacitance and resistance.
         flat=[chain('u/n','u/b:Z','u/f:D',.010,100),
               ('A',[('*P','A','I'),('*I','tx/p:A','I')],
-               [('A',.001),('A:boundary',.002),('tx/p:A',.001)],
-               [('A','A:boundary',20),('A:boundary','tx/p:A',20)])]
+               [('A',.001),('A:1',.002),('tx/p:A',.001)],
+               [('A','A:1',20),('A:1','tx/p:A',20)])]
     for name,driver,junction,load,c1,c2,r1,r2,dp,lp in [
         ('boundary','p:Z','boundary:1','u/b:A',.010,.010,100,100,False,False),
         ('CK','CK','CK:1','u/f:CK',.002,.001,20,20,True,False),
         ('Q','u/f:Q','Q:1','Q',.002,.002,20,20,False,True)]:
         if two_child and name=='boundary':
             flat.append((name,[('*I','tx/p:Z','O'),('*I','u/b:A','I')],
-                [('tx/p:Z',.005),('boundary:tx',.010),('boundary:rx',.010),('u/b:A',.005)],
-                [('tx/p:Z','boundary:tx',100),('boundary:tx','boundary:rx',100),('boundary:rx','u/b:A',100)]))
+                [('tx/p:Z',.005),('boundary:1',.010),('boundary:2',.010),('u/b:A',.005)],
+                [('tx/p:Z','boundary:1',100),('boundary:1','boundary:2',100),('boundary:2','u/b:A',100)]))
             continue
         flat.append((name,[('*P' if dp else '*I',driver,'I' if dp else 'O'),
                            ('*P' if lp else '*I',load,'O' if lp else 'I')],
@@ -111,6 +111,7 @@ endmodule
         run_tcl('stitch-'+name,text)
         log=(root/('stitch-'+name+'.log')).read_text()
         assert '[ERROR ' not in log, 'Unexpected fixture STA error'
+        assert '[WARNING STA-1654]' not in log, 'Invalid SPEF node in the controlled reference'
         if name!='missing_parent_negative_control':
             assert 'Found 0 partially unannotated drivers.' in log, 'Incomplete controlled RC annotation'
         if two_child and name in ['hierarchical','flat']:
