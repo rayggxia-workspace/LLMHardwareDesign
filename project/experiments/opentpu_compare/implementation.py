@@ -185,7 +185,9 @@ def view_probe(spec):
     names=['scripts/io_placement.tcl','scripts/io_placement_util.tcl','scripts/synth_odb.tcl',
            'platforms/nangate45/config.mk','scripts/variables.yaml','scripts/cts.tcl','scripts/generate_abstract.tcl']
     (ROOT/'extra-flow-sources.json').write_text(json.dumps({n:(flow/n).read_text() for n in names if (flow/n).is_file()},indent=2)+'\n')
-    run_tcl('help','help place_pin\nhelp read_spef\nhelp report_check_types\nhelp report_clock_min_period\n')
+    run_tcl('help','help place_pin\nhelp read_spef\nhelp report_check_types\nhelp report_clock_min_period\n'
+        'puts "STA_LINK_COMMANDS: [info commands sta::link_design]"\nputs "GLOBAL_LINK_BODY: [info body link_design]"\n')
+    (ROOT/'sta-binary.txt').write_text(str(shutil.which('sta'))+'\n')
     if spec.get('sta_wrapper_source'): sta_wrapper_test(Path(spec['sta_wrapper_source']))
     for name,path in spec.get('audit_sources',{}).items():
         source=Path(path);r=result(source)
@@ -261,7 +263,11 @@ def top(spec):
         size=re.search(r'\bSIZE\s+([\d.]+)\s+BY\s+([\d.]+)',text)
         assert size
         views[kind]=dict(name=name,size=list(map(float,size.groups())),view=str(view),source=str(source))
-        assert 'LAYER metal10' not in text, 'Parent M10 policy requires M10 reserved in every block view'
+        layer=None
+        for line in text.splitlines():
+            match=re.match(r'\s*LAYER\s+(\w+)\s*;',line)
+            if match: layer=match[1]
+            assert not (layer=='metal10' and re.match(r'\s*(RECT|POLYGON)\b',line)), 'Parent M10 policy requires no block M10 geometry'
     aw,ah=views['act']['size'];mw,mh=views['mxu']['size'];cw,ch=views['merged']['size']
     side=math.ceil(max(aw+mw+240,ah+160,mh+160,cw+160,ch+160)/10)*10
     kind=spec['kind'];assert kind in ('split','merged')

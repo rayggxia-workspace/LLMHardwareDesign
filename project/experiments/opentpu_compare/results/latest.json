@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-22T08:47:06.552880+00:00",
+  "observed_utc": "2026-10-22T08:50:53.951718+00:00",
   "attempts": {
     "m9-act-01": {
       "spec": {
@@ -11,8 +11,9 @@
         "runner_commit": "8022d8545fec11d4e5ce7cb4d9ef2083a378e256",
         "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01"
       },
-      "exit_code": null,
+      "exit_code": "0",
       "started.txt": "2026-10-22T08:46:46Z\n",
+      "finished.txt": "2026-10-22T08:50:41Z\n",
       "allocation.txt": "JobId=89658 JobName=yzl-ot-resume UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586401 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:02 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T16:46:44 EligibleTime=2026-10-22T16:46:44 AccrueTime=2026-10-22T16:46:44 StartTime=2026-10-22T16:46:44 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T16:46:44 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T16:46:44 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3095869 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=16 NumTasks=1 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=16,mem=1M,node=1,billing=16 AllocTRES=cpu=16,node=1,billing=16 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01/job.log Power= TresPerTask=cpu:16 \n",
       "resource-audit.json": {
         "passed": true,
@@ -121,23 +122,123 @@
         "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-act-02/mapped.v": "12bc8af7862bd0d64ae46c36e3bb989eff462aeac414032751a4bffe76b18a4a"
       },
       "last_flow_log": {
-        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01/flow/logs/nangate45/matched_opentpu_act/base/5_2_route.tmp.log",
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01/flow/logs/nangate45/matched_opentpu_act/base/generate_abstract.log",
         "tail": [
-          "[INFO DRT-0187] Start routing data preparation.",
-          "[INFO DRT-0267] cpu time = 00:00:00, elapsed time = 00:00:00, memory = 413.48 (MB), peak = 413.48 (MB)",
-          "[INFO DRT-0194] Start detail routing.",
-          "[INFO DRT-0195] Start 0th optimization iteration.",
-          "    Completing 10% with 0 violations.",
-          "    elapsed time = 00:00:00, memory = 559.75 (MB).",
-          "    Completing 20% with 0 violations.",
-          "    elapsed time = 00:00:00, memory = 636.21 (MB)."
+          "read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01/flow/results/nangate45/matched_opentpu_act/base/6_final.odb",
+          "read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01/flow/results/nangate45/matched_opentpu_act/base/6_final.sdc",
+          "source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl",
+          "read_spef /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01/flow/results/nangate45/matched_opentpu_act/base/6_final.spef",
+          "Generating abstract views",
+          "write_timing_model /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01/flow/results/nangate45/matched_opentpu_act/base/llhd_opentpu_act_typ.lib",
+          "write_abstract_lef -bloat_occupied_layers /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01/flow/results/nangate45/matched_opentpu_act/base/llhd_opentpu_act.lef",
+          "Elapsed time: 0:01.25[h:]min:sec. CPU time: user 1.47 sys 0.24 (137%). Peak memory: 181396KB."
         ]
       },
       "job_log_tail": [
         "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
       ],
-      "metrics": {},
-      "scheduler": "89658|RUNNING|0:0|00:00:24|UNLIMITED|16|node3"
+      "metrics": {
+        "5_2_route.json": {
+          "detailedroute__route__drc_errors__iter:0": 2915,
+          "detailedroute__route__wirelength__iter:0": 273559,
+          "detailedroute__route__drc_errors__iter:1": 908,
+          "detailedroute__route__wirelength__iter:1": 272621,
+          "detailedroute__route__drc_errors__iter:2": 675,
+          "detailedroute__route__wirelength__iter:2": 272432,
+          "detailedroute__route__drc_errors__iter:3": 306,
+          "detailedroute__route__wirelength__iter:3": 272611,
+          "detailedroute__route__drc_errors__iter:4": 277,
+          "detailedroute__route__wirelength__iter:4": 272697,
+          "detailedroute__route__drc_errors__iter:5": 267,
+          "detailedroute__route__wirelength__iter:5": 272705,
+          "detailedroute__route__drc_errors__iter:6": 235,
+          "detailedroute__route__wirelength__iter:6": 272689,
+          "detailedroute__route__drc_errors__iter:7": 232,
+          "detailedroute__route__wirelength__iter:7": 272700,
+          "detailedroute__route__drc_errors__iter:8": 192,
+          "detailedroute__route__wirelength__iter:8": 272743,
+          "detailedroute__route__drc_errors__iter:9": 150,
+          "detailedroute__route__wirelength__iter:9": 272746,
+          "detailedroute__route__drc_errors__iter:10": 10,
+          "detailedroute__route__wirelength__iter:10": 272667,
+          "detailedroute__route__drc_errors__iter:11": 0,
+          "detailedroute__route__wirelength__iter:11": 272662,
+          "detailedroute__route__drc_errors": 0,
+          "detailedroute__route__wirelength": 272662,
+          "detailedroute__route__vias": 37582,
+          "detailedroute__route__vias__singlecut": 37582,
+          "detailedroute__route__vias__multicut": 0,
+          "detailedroute__antenna_diodes_count": 0,
+          "detailedroute__antenna__violating__nets": 0,
+          "detailedroute__antenna__violating__pins": 0
+        },
+        "6_report.json": {
+          "finish__design_powergrid__voltage__worst__net:VDD__corner:default": 1.09798,
+          "finish__design_powergrid__voltage__average__net:VDD__corner:default": 1.0994,
+          "finish__design_powergrid__drop__average__net:VDD__corner:default": 0.000595676,
+          "finish__design_powergrid__drop__worst__net:VDD__corner:default": 0.00202297,
+          "finish__design_powergrid__voltage__worst__net:VSS__corner:default": 0.00177191,
+          "finish__design_powergrid__voltage__average__net:VSS__corner:default": 0.000581347,
+          "finish__design_powergrid__drop__average__net:VSS__corner:default": 0.000581347,
+          "finish__design_powergrid__drop__worst__net:VSS__corner:default": 0.00177191,
+          "finish__design__instance__count__class:macro": 6,
+          "finish__design__instance__area__class:macro": 29147.2,
+          "finish__design__instance__count__class:fill_cell": 11433,
+          "finish__design__instance__area__class:fill_cell": 53935,
+          "finish__design__instance__count__class:tap_cell": 585,
+          "finish__design__instance__area__class:tap_cell": 155.61,
+          "finish__design__instance__count__class:clock_buffer": 124,
+          "finish__design__instance__area__class:clock_buffer": 152.684,
+          "finish__design__instance__count__class:timing_repair_buffer": 953,
+          "finish__design__instance__area__class:timing_repair_buffer": 893.76,
+          "finish__design__instance__count__class:inverter": 73,
+          "finish__design__instance__area__class:inverter": 39.368,
+          "finish__design__instance__count__class:clock_inverter": 57,
+          "finish__design__instance__area__class:clock_inverter": 45.486,
+          "finish__design__instance__count__class:sequential_cell": 606,
+          "finish__design__instance__area__class:sequential_cell": 2758.42,
+          "finish__design__instance__count__class:multi_input_combinational_cell": 2364,
+          "finish__design__instance__area__class:multi_input_combinational_cell": 2914.83,
+          "finish__design__instance__count": 16201,
+          "finish__design__instance__area": 36107.4,
+          "finish__timing__setup__tns": 0,
+          "finish__timing__hold__tns": 0,
+          "finish__timing__setup__ws": 1.27211,
+          "finish__timing__hold__ws": 0.0330896,
+          "finish__timing__fmax__clock:clk": 814405000.0,
+          "finish__timing__fmax": 814405000.0,
+          "finish__clock__skew__setup": 0.0195526,
+          "finish__clock__skew__hold": 0.0195526,
+          "finish__timing__drv__max_slew_limit": 0.302215,
+          "finish__timing__drv__max_slew": 0,
+          "finish__timing__drv__max_cap_limit": 0.274325,
+          "finish__timing__drv__max_cap": 0,
+          "finish__timing__drv__max_fanout_limit": 0,
+          "finish__timing__drv__max_fanout": 0,
+          "finish__timing__drv__setup_violation_count": 0,
+          "finish__timing__drv__hold_violation_count": 0,
+          "finish__power__internal__total": 0.0165044,
+          "finish__power__switching__total": 0.00144589,
+          "finish__power__leakage__total": 0.000151359,
+          "finish__power__total": 0.0181017,
+          "finish__design__die__area": 106410,
+          "finish__design__core__area": 99530.6,
+          "finish__design__instance__count__stdcell": 4762,
+          "finish__design__instance__area__stdcell": 6960.16,
+          "finish__design__instance__count__macros": 6,
+          "finish__design__instance__area__macros": 29147.2,
+          "finish__design__instance__count__padcells": 0,
+          "finish__design__instance__area__padcells": 0,
+          "finish__design__instance__count__cover": 0,
+          "finish__design__instance__area__cover": 0,
+          "finish__design__instance__utilization": 0.362777,
+          "finish__design__instance__utilization__stdcell": 0.0988893
+        }
+      },
+      "final_report": "\n==========================================================================\nfinish report_tns\n--------------------------------------------------------------------------\ntns max 0.00\n\n==========================================================================\nfinish report_wns\n--------------------------------------------------------------------------\nwns max 0.00\n\n==========================================================================\nfinish report_worst_slack\n--------------------------------------------------------------------------\nworst slack max 1.27\n\n==========================================================================\nfinish report_clock_min_period\n--------------------------------------------------------------------------\nclk period_min = 1.23 fmax = 814.40\n\n==========================================================================\nfinish report_clock_skew\n--------------------------------------------------------------------------\nClock clk\n   0.21 source latency u_act.w_data_h[27]$_DFF_P_/CK ^\n  -0.23 target latency u_act.wd[59]$_DFF_P_/CK ^\n   0.00 CRPR\n--------------\n  -0.02 setup skew\n\n\n==========================================================================\nfinish report_checks -path_delay min\n--------------------------------------------------------------------------\nStartpoint: u_act.ssel[0]$_DFF_P_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: u_act.g_row[0].u_asc.u_t.g_d[0].g_c[0].g_2p.u_m.g_32x64.u_m\n          (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: min\n\nFanout     Cap    Slew   Delay    Time   Description\n-----------------------------------------------------------------------------\n                          0.00    0.00   clock clk (rise edge)\n                          0.00    0.00   clock source latency\n     2   17.38    0.01    0.01    0.01 ^ clk (in)\n                                         clk (net)\n                  0.01    0.00    0.01 ^ clkbuf_regs_0_clk/A (CLKBUF_X3)\n     1    1.61    0.01    0.03    0.04 ^ clkbuf_regs_0_clk/Z (CLKBUF_X3)\n                                         clk_regs (net)\n                  0.01    0.00    0.04 ^ clkbuf_0_clk_regs/A (CLKBUF_X3)\n     8   50.66    0.04    0.07    0.11 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)\n                                         clknet_0_clk_regs (net)\n                  0.04    0.00    0.11 ^ clkbuf_3_1__f_clk_regs/A (CLKBUF_X3)\n    10   26.46    0.02    0.06    0.17 ^ clkbuf_3_1__f_clk_regs/Z (CLKBUF_X3)\n                                         clknet_3_1__leaf_clk_regs (net)\n                  0.02    0.00    0.17 ^ clkbuf_leaf_13_clk_regs/A (CLKBUF_X3)\n     9   10.52    0.01    0.04    0.21 ^ clkbuf_leaf_13_clk_regs/Z (CLKBUF_X3)\n                                         clknet_leaf_13_clk_regs (net)\n                  0.01    0.00    0.21 ^ u_act.ssel[0]$_DFF_P_/CK (DFF_X1)\n     1    7.26    0.01    0.09    0.31 v u_act.ssel[0]$_DFF_P_/Q (DFF_X1)\n                                         u_act.g_row[0].u_asc.u_t.g_d[0].g_c[0].g_2p.u_m.we (net)\n                  0.02    0.00    0.31 v u_act.g_row[0].u_asc.u_t.g_d[0].g_c[0].g_2p.u_m.g_32x64.u_m/we_in (fakeram45_1r1w_32x64)\n                                  0.31   data arrival time\n\n                          0.00    0.00   clock clk (rise edge)\n                          0.00    0.00   clock source latency\n     2   17.38    0.01    0.01    0.01 ^ clk (in)\n                                         clk (net)\n                  0.01    0.00    0.01 ^ delaybuf_0_clk/A (CLKBUF_X1)\n     1   11.71    0.03    0.05    0.07 ^ delaybuf_0_clk/Z (CLKBUF_X1)\n                                         delaynet_0_clk (net)\n                  0.03    0.00    0.07 ^ clkbuf_0_clk/A (CLKBUF_X3)\n     2   11.54    0.01    0.04    0.11 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n                                         clknet_0_clk (net)\n                  0.01    0.00    0.11 ^ clkbuf_1_0__f_clk/A (CLKBUF_X3)\n     3   95.04    0.07    0.09    0.20 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n                                         clknet_1_0__leaf_clk (net)\n                  0.11    0.02    0.22 ^ u_act.g_row[0].u_asc.u_t.g_d[0].g_c[0].g_2p.u_m.g_32x64.u_m/clk (fakeram45_1r1w_32x64)\n                          0.00    0.22   clock reconvergence pessimism\n                          0.05    0.27   library hold time\n                                  0.27   data required time\n-----------------------------------------------------------------------------\n                                  0.27   data required time\n                                 -0.31   data arrival time\n-----------------------------------------------------------------------------\n                                  0.03   slack (MET)\n\n\n\n==========================================================================\nfinish report_checks -path_delay max\n--------------------------------------------------------------------------\nStartpoint: u_act.w_idx_h[0]$_DFF_P_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: u_act.wd[70]$_DFF_P_ (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: max\n\nFanout     Cap    Slew   Delay    Time   Description\n-----------------------------------------------------------------------------\n                          0.00    0.00   clock clk (rise edge)\n                          0.00    0.00   clock source latency\n     2   17.38    0.01    0.01    0.01 ^ clk (in)\n                                         clk (net)\n                  0.01    0.00    0.01 ^ clkbuf_regs_0_clk/A (CLKBUF_X3)\n     1    1.61    0.01    0.03    0.04 ^ clkbuf_regs_0_clk/Z (CLKBUF_X3)\n                                         clk_regs (net)\n                  0.01    0.00    0.04 ^ clkbuf_0_clk_regs/A (CLKBUF_X3)\n     8   50.66    0.04    0.07    0.11 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)\n                                         clknet_0_clk_regs (net)\n                  0.04    0.00    0.11 ^ clkbuf_3_7__f_clk_regs/A (CLKBUF_X3)\n    14   41.94    0.03    0.07    0.18 ^ clkbuf_3_7__f_clk_regs/Z (CLKBUF_X3)\n                                         clknet_3_7__leaf_clk_regs (net)\n                  0.03    0.00    0.19 ^ clkbuf_leaf_42_clk_regs/A (CLKBUF_X3)\n     7   10.99    0.01    0.05    0.23 ^ clkbuf_leaf_42_clk_regs/Z (CLKBUF_X3)\n                                         clknet_leaf_42_clk_regs (net)\n                  0.01    0.00    0.23 ^ u_act.w_idx_h[0]$_DFF_P_/CK (DFF_X1)\n    12   34.10    0.08    0.16    0.40 ^ u_act.w_idx_h[0]$_DFF_P_/Q (DFF_X1)\n                                         _023_[3] (net)\n                  0.08    0.00    0.40 ^ place987/A (BUF_X2)\n    29   70.91    0.08    0.11    0.50 ^ place987/Z (BUF_X2)\n                                         net986 (net)\n                  0.08    0.00    0.50 ^ _5438_/A (HA_X1)\n     6   15.64    0.04    0.08    0.58 ^ _5438_/CO (HA_X1)\n                                         _0052_ (net)\n                  0.04    0.00    0.59 ^ _3210_/A2 (NAND2_X1)\n     5    8.77    0.02    0.04    0.62 v _3210_/ZN (NAND2_X1)\n                                         _2026_ (net)\n                  0.02    0.00    0.62 v _3348_/B2 (AOI21_X1)\n     3    9.01    0.05    0.07    0.69 ^ _3348_/ZN (AOI21_X1)\n                                         _2156_ (net)\n                  0.05    0.00    0.70 ^ _3630_/A2 (NOR2_X2)\n     9   20.90    0.03    0.03    0.73 v _3630_/ZN (NOR2_X2)\n                                         _0198_ (net)\n                  0.03    0.00    0.73 v _3631_/A (AOI21_X1)\n     2    4.98    0.04    0.06    0.79 ^ _3631_/ZN (AOI21_X1)\n                                         _0199_ (net)\n                  0.04    0.00    0.79 ^ _5316_/A4 (NOR4_X1)\n     1    3.48    0.02    0.02    0.81 v _5316_/ZN (NOR4_X1)\n                                         _0021_ (net)\n                  0.02    0.00    0.81 v _5417_/B (HA_X1)\n     5    8.54    0.02    0.07    0.89 v _5417_/S (HA_X1)\n                                         _033_[8] (net)\n                  0.02    0.00    0.89 v _2955_/A (INV_X1)\n     7   15.30    0.04    0.05    0.94 ^ _2955_/ZN (INV_X1)\n                                         _1778_ (net)\n                  0.04    0.00    0.94 ^ _3637_/A1 (NAND3_X1)\n     2    3.40    0.02    0.03    0.97 v _3637_/ZN (NAND3_X1)\n                                         _0204_ (net)\n                  0.02    0.00    0.97 v _3638_/B3 (OAI33_X1)\n     5    7.65    0.10    0.13    1.10 ^ _3638_/ZN (OAI33_X1)\n                                         _0205_ (net)\n                  0.10    0.00    1.10 ^ place965/A (BUF_X1)\n    23   43.98    0.10    0.13    1.23 ^ place965/Z (BUF_X1)\n                                         net964 (net)\n                  0.10    0.00    1.23 ^ _4687_/A1 (AND4_X1)\n     8   15.71    0.04    0.12    1.35 ^ _4687_/ZN (AND4_X1)\n                                         _1110_ (net)\n                  0.04    0.00    1.35 ^ _4693_/B1 (AOI21_X1)\n     1    2.18    0.02    0.02    1.37 v _4693_/ZN (AOI21_X1)\n                                         _1115_ (net)\n                  0.02    0.00    1.37 v _4695_/B1 (OAI221_X1)\n     1    1.29    0.03    0.05    1.42 ^ _4695_/ZN (OAI221_X1)\n                                         _007_[70] (net)\n                  0.03    0.00    1.42 ^ u_act.wd[70]$_DFF_P_/D (DFF_X1)\n                                  1.42   data arrival time\n\n                          2.50    2.50   clock clk (rise edge)\n                          0.00    2.50   clock source latency\n     2   17.38    0.01    0.01    2.51 ^ clk (in)\n                                         clk (net)\n                  0.01    0.00    2.51 ^ clkbuf_regs_0_clk/A (CLKBUF_X3)\n     1    1.61    0.01    0.03    2.54 ^ clkbuf_regs_0_clk/Z (CLKBUF_X3)\n                                         clk_regs (net)\n                  0.01    0.00    2.54 ^ clkbuf_0_clk_regs/A (CLKBUF_X3)\n     8   50.66    0.04    0.07    2.61 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)\n                                         clknet_0_clk_regs (net)\n                  0.04    0.00    2.61 ^ clkbuf_3_7__f_clk_regs/A (CLKBUF_X3)\n    14   41.94    0.03    0.07    2.68 ^ clkbuf_3_7__f_clk_regs/Z (CLKBUF_X3)\n                                         clknet_3_7__leaf_clk_regs (net)\n                  0.03    0.00    2.68 ^ clkbuf_leaf_41_clk_regs/A (CLKBUF_X3)\n     5    8.01    0.01    0.04    2.73 ^ clkbuf_leaf_41_clk_regs/Z (CLKBUF_X3)\n                                         clknet_leaf_41_clk_regs (net)\n                  0.01    0.00    2.73 ^ u_act.wd[70]$_DFF_P_/CK (DFF_X1)\n                          0.00    2.73   clock reconvergence pessimism\n                         -0.04    2.69   library setup time\n                                  2.69   data required time\n-----------------------------------------------------------------------------\n                                  2.69   data required time\n                                 -1.42   data arrival time\n-----------------------------------------------------------------------------\n                                  1.27   slack (MET)\n\n\n\n==========================================================================\nfinish report_checks -unconstrained\n--------------------------------------------------------------------------\nStartpoint: u_act.w_idx_h[0]$_DFF_P_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: u_act.wd[70]$_DFF_P_ (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: max\n\nFanout     Cap    Slew   Delay    Time   Description\n-----------------------------------------------------------------------------\n                          0.00    0.00   clock clk (rise edge)\n                          0.00    0.00   clock source latency\n     2   17.38    0.01    0.01    0.01 ^ clk (in)\n                                         clk (net)\n                  0.01    0.00    0.01 ^ clkbuf_regs_0_clk/A (CLKBUF_X3)\n     1    1.61    0.01    0.03    0.04 ^ clkbuf_regs_0_clk/Z (CLKBUF_X3)\n                                         clk_regs (net)\n                  0.01    0.00    0.04 ^ clkbuf_0_clk_regs/A (CLKBUF_X3)\n     8   50.66    0.04    0.07    0.11 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)\n                                         clknet_0_clk_regs (net)\n                  0.04    0.00    0.11 ^ clkbuf_3_7__f_clk_regs/A (CLKBUF_X3)\n    14   41.94    0.03    0.07    0.18 ^ clkbuf_3_7__f_clk_regs/Z (CLKBUF_X3)\n                                         clknet_3_7__leaf_clk_regs (net)\n                  0.03    0.00    0.19 ^ clkbuf_leaf_42_clk_regs/A (CLKBUF_X3)\n     7   10.99    0.01    0.05    0.23 ^ clkbuf_leaf_42_clk_regs/Z (CLKBUF_X3)\n                                         clknet_leaf_42_clk_regs (net)\n                  0.01    0.00    0.23 ^ u_act.w_idx_h[0]$_DFF_P_/CK (DFF_X1)\n    12   34.10    0.08    0.16    0.40 ^ u_act.w_idx_h[0]$_DFF_P_/Q (DFF_X1)\n                                         _023_[3] (net)\n                  0.08    0.00    0.40 ^ place987/A (BUF_X2)\n    29   70.91    0.08    0.11    0.50 ^ place987/Z (BUF_X2)\n                                         net986 (net)\n                  0.08    0.00    0.50 ^ _5438_/A (HA_X1)\n     6   15.64    0.04    0.08    0.58 ^ _5438_/CO (HA_X1)\n                                         _0052_ (net)\n                  0.04    0.00    0.59 ^ _3210_/A2 (NAND2_X1)\n     5    8.77    0.02    0.04    0.62 v _3210_/ZN (NAND2_X1)\n                                         _2026_ (net)\n                  0.02    0.00    0.62 v _3348_/B2 (AOI21_X1)\n     3    9.01    0.05    0.07    0.69 ^ _3348_/ZN (AOI21_X1)\n                                         _2156_ (net)\n                  0.05    0.00    0.70 ^ _3630_/A2 (NOR2_X2)\n     9   20.90    0.03    0.03    0.73 v _3630_/ZN (NOR2_X2)\n                                         _0198_ (net)\n                  0.03    0.00    0.73 v _3631_/A (AOI21_X1)\n     2    4.98    0.04    0.06    0.79 ^ _3631_/ZN (AOI21_X1)\n                                         _0199_ (net)\n                  0.04    0.00    0.79 ^ _5316_/A4 (NOR4_X1)\n     1    3.48    0.02    0.02    0.81 v _5316_/ZN (NOR4_X1)\n                                         _0021_ (net)\n                  0.02    0.00    0.81 v _5417_/B (HA_X1)\n     5    8.54    0.02    0.07    0.89 v _5417_/S (HA_X1)\n                                         _033_[8] (net)\n                  0.02    0.00    0.89 v _2955_/A (INV_X1)\n     7   15.30    0.04    0.05    0.94 ^ _2955_/ZN (INV_X1)\n                                         _1778_ (net)\n                  0.04    0.00    0.94 ^ _3637_/A1 (NAND3_X1)\n     2    3.40    0.02    0.03    0.97 v _3637_/ZN (NAND3_X1)\n                                         _0204_ (net)\n                  0.02    0.00    0.97 v _3638_/B3 (OAI33_X1)\n     5    7.65    0.10    0.13    1.10 ^ _3638_/ZN (OAI33_X1)\n                                         _0205_ (net)\n                  0.10    0.00    1.10 ^ place965/A (BUF_X1)\n    23   43.98    0.10    0.13    1.23 ^ place965/Z (BUF_X1)\n                                         net964 (net)\n                  0.10    0.00    1.23 ^ _4687_/A1 (AND4_X1)\n     8   15.71    0.04    0.12    1.35 ^ _4687_/ZN (AND4_X1)\n                                         _1110_ (net)\n                  0.04    0.00    1.35 ^ _4693_/B1 (AOI21_X1)\n     1    2.18    0.02    0.02    1.37 v _4693_/ZN (AOI21_X1)\n                                         _1115_ (net)\n                  0.02    0.00    1.37 v _4695_/B1 (OAI221_X1)\n     1    1.29    0.03    0.05    1.42 ^ _4695_/ZN (OAI221_X1)\n                                         _007_[70] (net)\n                  0.03    0.00    1.42 ^ u_act.wd[70]$_DFF_P_/D (DFF_X1)\n                                  1.42   data arrival time\n\n                          2.50    2.50   clock clk (rise edge)\n                          0.00    2.50   clock source latency\n     2   17.38    0.01    0.01    2.51 ^ clk (in)\n                                         clk (net)\n                  0.01    0.00    2.51 ^ clkbuf_regs_0_clk/A (CLKBUF_X3)\n     1    1.61    0.01    0.03    2.54 ^ clkbuf_regs_0_clk/Z (CLKBUF_X3)\n                                         clk_regs (net)\n                  0.01    0.00    2.54 ^ clkbuf_0_clk_regs/A (CLKBUF_X3)\n     8   50.66    0.04    0.07    2.61 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)\n                                         clknet_0_clk_regs (net)\n                  0.04    0.00    2.61 ^ clkbuf_3_7__f_clk_regs/A (CLKBUF_X3)\n    14   41.94    0.03    0.07    2.68 ^ clkbuf_3_7__f_clk_regs/Z (CLKBUF_X3)\n                                         clknet_3_7__leaf_clk_regs (net)\n                  0.03    0.00    2.68 ^ clkbuf_leaf_41_clk_regs/A (CLKBUF_X3)\n     5    8.01    0.01    0.04    2.73 ^ clkbuf_leaf_41_clk_regs/Z (CLKBUF_X3)\n                                         clknet_leaf_41_clk_regs (net)\n                  0.01    0.00    2.73 ^ u_act.wd[70]$_DFF_P_/CK (DFF_X1)\n                          0.00    2.73   clock reconvergence pessimism\n                         -0.04    2.69   library setup time\n                                  2.69   data required time\n-----------------------------------------------------------------------------\n                                  2.69   data required time\n                                 -1.42   data arrival time\n-----------------------------------------------------------------------------\n                                  1.27   slack (MET)\n\n\n\n==========================================================================\nfinish report_check_types -max_slew -max_cap -max_fanout -violators\n--------------------------------------------------------------------------\n\n==========================================================================\nfinish max_slew_check_slack\n--------------------------------------------------------------------------\n0.06000032648444176\n\n==========================================================================\nfinish max_slew_check_limit\n--------------------------------------------------------------------------\n0.1985349953174591\n\n==========================================================================\nfinish max_slew_check_slack_limit\n--------------------------------------------------------------------------\n0.3022\n\n==========================================================================\nfinish max_fanout_check_slack\n--------------------------------------------------------------------------\n1.0000000150474662e+30\n\n==========================================================================\nfinish max_fanout_check_limit\n--------------------------------------------------------------------------\n1.0000000150474662e+30\n\n==========================================================================\nfinish max_capacitance_check_slack\n--------------------------------------------------------------------------\n3.788215160369873\n\n==========================================================================\nfinish max_capacitance_check_limit\n--------------------------------------------------------------------------\n13.809200286865234\n\n==========================================================================\nfinish max_capacitance_check_slack_limit\n--------------------------------------------------------------------------\n0.2743\n\n==========================================================================\nfinish max_slew_violation_count\n--------------------------------------------------------------------------\nmax slew violation count 0\n\n==========================================================================\nfinish max_fanout_violation_count\n--------------------------------------------------------------------------\nmax fanout violation count 0\n\n==========================================================================\nfinish max_cap_violation_count\n--------------------------------------------------------------------------\nmax cap violation count 0\n\n==========================================================================\nfinish setup_violation_count\n--------------------------------------------------------------------------\nsetup violation count 0\n\n==========================================================================\nfinish hold_violation_count\n--------------------------------------------------------------------------\nhold violation count 0\n\n==========================================================================\nfinish report_checks -path_delay max reg to reg\n--------------------------------------------------------------------------\nStartpoint: u_act.w_idx_h[0]$_DFF_P_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: u_act.wd[70]$_DFF_P_ (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: max\n\n  Delay    Time   Description\n---------------------------------------------------------\n   0.00    0.00   clock clk (rise edge)\n   0.00    0.00   clock source latency\n   0.01    0.01 ^ clk (in)\n   0.03    0.04 ^ clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.07    0.11 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.08    0.18 ^ clkbuf_3_7__f_clk_regs/Z (CLKBUF_X3)\n   0.05    0.23 ^ clkbuf_leaf_42_clk_regs/Z (CLKBUF_X3)\n   0.00    0.23 ^ u_act.w_idx_h[0]$_DFF_P_/CK (DFF_X1)\n   0.16    0.40 ^ u_act.w_idx_h[0]$_DFF_P_/Q (DFF_X1)\n   0.11    0.50 ^ place987/Z (BUF_X2)\n   0.08    0.58 ^ _5438_/CO (HA_X1)\n   0.04    0.62 v _3210_/ZN (NAND2_X1)\n   0.07    0.69 ^ _3348_/ZN (AOI21_X1)\n   0.03    0.73 v _3630_/ZN (NOR2_X2)\n   0.06    0.79 ^ _3631_/ZN (AOI21_X1)\n   0.02    0.81 v _5316_/ZN (NOR4_X1)\n   0.07    0.89 v _5417_/S (HA_X1)\n   0.05    0.94 ^ _2955_/ZN (INV_X1)\n   0.03    0.97 v _3637_/ZN (NAND3_X1)\n   0.13    1.10 ^ _3638_/ZN (OAI33_X1)\n   0.13    1.23 ^ place965/Z (BUF_X1)\n   0.12    1.35 ^ _4687_/ZN (AND4_X1)\n   0.02    1.37 v _4693_/ZN (AOI21_X1)\n   0.05    1.42 ^ _4695_/ZN (OAI221_X1)\n   0.00    1.42 ^ u_act.wd[70]$_DFF_P_/D (DFF_X1)\n           1.42   data arrival time\n\n   2.50    2.50   clock clk (rise edge)\n   0.00    2.50   clock source latency\n   0.01    2.51 ^ clk (in)\n   0.03    2.54 ^ clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.07    2.61 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.08    2.68 ^ clkbuf_3_7__f_clk_regs/Z (CLKBUF_X3)\n   0.04    2.73 ^ clkbuf_leaf_41_clk_regs/Z (CLKBUF_X3)\n   0.00    2.73 ^ u_act.wd[70]$_DFF_P_/CK (DFF_X1)\n   0.00    2.73   clock reconvergence pessimism\n  -0.04    2.69   library setup time\n           2.69   data required time\n---------------------------------------------------------\n           2.69   data required time\n          -1.42   data arrival time\n---------------------------------------------------------\n           1.27   slack (MET)\n\n\n\n==========================================================================\nfinish report_checks -path_delay min reg to reg\n--------------------------------------------------------------------------\nStartpoint: u_act.ssel[0]$_DFF_P_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: u_act.g_row[0].u_asc.u_t.g_d[0].g_c[0].g_2p.u_m.g_32x64.u_m\n          (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: min\n\n  Delay    Time   Description\n---------------------------------------------------------\n   0.00    0.00   clock clk (rise edge)\n   0.00    0.00   clock source latency\n   0.01    0.01 ^ clk (in)\n   0.03    0.04 ^ clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.07    0.11 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.06    0.17 ^ clkbuf_3_1__f_clk_regs/Z (CLKBUF_X3)\n   0.04    0.21 ^ clkbuf_leaf_13_clk_regs/Z (CLKBUF_X3)\n   0.00    0.21 ^ u_act.ssel[0]$_DFF_P_/CK (DFF_X1)\n   0.09    0.31 v u_act.ssel[0]$_DFF_P_/Q (DFF_X1)\n   0.00    0.31 v u_act.g_row[0].u_asc.u_t.g_d[0].g_c[0].g_2p.u_m.g_32x64.u_m/we_in (fakeram45_1r1w_32x64)\n           0.31   data arrival time\n\n   0.00    0.00   clock clk (rise edge)\n   0.00    0.00   clock source latency\n   0.01    0.01 ^ clk (in)\n   0.05    0.07 ^ delaybuf_0_clk/Z (CLKBUF_X1)\n   0.05    0.11 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.09    0.20 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.02    0.22 ^ u_act.g_row[0].u_asc.u_t.g_d[0].g_c[0].g_2p.u_m.g_32x64.u_m/clk (fakeram45_1r1w_32x64)\n   0.00    0.22   clock reconvergence pessimism\n   0.05    0.27   library hold time\n           0.27   data required time\n---------------------------------------------------------\n           0.27   data required time\n          -0.31   data arrival time\n---------------------------------------------------------\n           0.03   slack (MET)\n\n\n\n==========================================================================\nfinish critical path target clock latency max path\n--------------------------------------------------------------------------\n0.2166\n\n==========================================================================\nfinish critical path target clock latency min path\n--------------------------------------------------------------------------\n0.2245\n\n==========================================================================\nfinish critical path source clock latency min path\n--------------------------------------------------------------------------\n0.0000\n\n==========================================================================\nfinish critical path delay\n--------------------------------------------------------------------------\n1.4189\n\n==========================================================================\nfinish critical path slack\n--------------------------------------------------------------------------\n1.2721\n\n==========================================================================\nfinish slack div critical path delay\n--------------------------------------------------------------------------\n89.653957\n\n==========================================================================\nfinish report_power\n--------------------------------------------------------------------------\nGroup                  Internal  Switching    Leakage      Total\n                          Power      Power      Power      Power (Watts)\n----------------------------------------------------------------\nSequential             1.40e-03   1.60e-04   4.83e-05   1.61e-03   8.9%\nCombinational          2.33e-04   5.73e-04   9.81e-05   9.04e-04   5.0%\nClock                  5.37e-04   7.13e-04   4.98e-06   1.26e-03   6.9%\nMacro                  1.43e-02   0.00e+00   0.00e+00   1.43e-02  79.2%\nPad                    0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%\n----------------------------------------------------------------\nTotal                  1.65e-02   1.45e-03   1.51e-04   1.81e-02 100.0%\n                          91.2%       8.0%       0.8%\n",
+      "output_manifest_sha256": "1128c88cce0256965065b44451c4ed55340d99946e1ab5987146a0f36a303503",
+      "output_manifest_entries": 79,
+      "scheduler": "89658|COMPLETED|0:0|00:03:58|UNLIMITED|16|node3"
     },
     "m9-merged-01": {
       "spec": {
@@ -637,21 +738,21 @@
       "last_flow_log": {
         "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-merged-03/flow/logs/nangate45/matched_opentpu_merged/base/5_2_route.tmp.log",
         "tail": [
-          "    Completing 20% with 29403 violations.",
-          "    elapsed time = 00:00:17, memory = 5963.28 (MB).",
-          "    Completing 30% with 23532 violations.",
-          "    elapsed time = 00:00:30, memory = 6445.32 (MB).",
-          "    Completing 40% with 23532 violations.",
-          "    elapsed time = 00:00:39, memory = 6453.37 (MB).",
-          "    Completing 50% with 23532 violations.",
-          "    elapsed time = 00:00:51, memory = 6935.37 (MB)."
+          "    Completing 20% with 14 violations.",
+          "    elapsed time = 00:00:01, memory = 5769.80 (MB).",
+          "    Completing 30% with 14 violations.",
+          "    elapsed time = 00:00:02, memory = 5771.80 (MB).",
+          "    Completing 40% with 14 violations.",
+          "    elapsed time = 00:00:04, memory = 5771.80 (MB).",
+          "    Completing 50% with 14 violations.",
+          "    elapsed time = 00:00:05, memory = 5771.80 (MB)."
         ]
       },
       "job_log_tail": [
         "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
       ],
       "metrics": {},
-      "scheduler": "89640|RUNNING|0:0|00:23:27|UNLIMITED|16|node3"
+      "scheduler": "89640|RUNNING|0:0|00:27:15|UNLIMITED|16|node3"
     },
     "matched-merged-04": {
       "spec": {
@@ -872,21 +973,21 @@
       "last_flow_log": {
         "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-merged-04/flow/logs/nangate45/matched_opentpu_merged/base/5_2_route.tmp.log",
         "tail": [
-          "[INFO DRT-0033] metal10 shape region query size = 0.",
-          "[INFO DRT-0165] Start pin access.",
-          "[INFO DRT-0076]   Complete 1000 pins.",
-          "[INFO DRT-0076]   Complete 2000 pins.",
-          "[INFO DRT-0076]   Complete 3000 pins.",
-          "[INFO DRT-0078]   Complete 3596 pins.",
-          "[INFO DRT-0079]   Complete 100 unique inst patterns.",
-          "[INFO DRT-0081]   Complete 146 unique inst patterns."
+          "    Completing 50% with 3787 violations.",
+          "    elapsed time = 00:00:55, memory = 6638.83 (MB).",
+          "    Completing 60% with 8205 violations.",
+          "    elapsed time = 00:01:05, memory = 5934.91 (MB).",
+          "    Completing 70% with 8205 violations.",
+          "    elapsed time = 00:01:15, memory = 5936.95 (MB).",
+          "    Completing 80% with 12083 violations.",
+          "    elapsed time = 00:01:27, memory = 6170.97 (MB)."
         ]
       },
       "job_log_tail": [
         "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
       ],
       "metrics": {},
-      "scheduler": "89647|RUNNING|0:0|00:18:27|UNLIMITED|16|node5"
+      "scheduler": "89647|RUNNING|0:0|00:22:15|UNLIMITED|16|node5"
     },
     "matched-mxu-01": {
       "spec": {
@@ -1046,23 +1147,48 @@
         "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/mxu-cap20/flow/results/nangate45/parallel_opentpu_mxu/base/1_2_yosys.v": "e3906363b35b2d3c9bd1ea08de99bc348e080b997b00ad0050629a5d5e76a8c8"
       },
       "last_flow_log": {
-        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-mxu-02/flow/logs/nangate45/matched_opentpu_mxu/base/5_2_route.tmp.log",
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-mxu-02/flow/logs/nangate45/matched_opentpu_mxu/base/6_report.tmp.log",
         "tail": [
-          "    Completing 50% with 20857 violations.",
-          "    elapsed time = 00:00:53, memory = 6795.34 (MB).",
-          "    Completing 60% with 15108 violations.",
-          "    elapsed time = 00:01:04, memory = 6395.35 (MB).",
-          "    Completing 70% with 15108 violations.",
-          "    elapsed time = 00:01:14, memory = 6403.36 (MB).",
-          "    Completing 80% with 10039 violations.",
-          "    elapsed time = 00:01:26, memory = 6565.37 (MB)."
+          "[INFO RCX-0442] 78% of 1115031 wires extracted",
+          "[INFO RCX-0442] 84% of 1115031 wires extracted",
+          "[INFO RCX-0442] 92% of 1115031 wires extracted",
+          "[INFO RCX-0442] 100% of 1115031 wires extracted",
+          "[INFO RCX-0045] Extract 229227 nets, 899850 rsegs, 899850 caps, 1719840 ccs",
+          "[INFO RCX-0042] 100000 nets finished",
+          "[INFO RCX-0042] 200000 nets finished",
+          "[INFO RCX-0443] 229227 nets finished"
         ]
       },
       "job_log_tail": [
         "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
       ],
-      "metrics": {},
-      "scheduler": "89642|RUNNING|0:0|00:23:21|UNLIMITED|16|node5"
+      "metrics": {
+        "5_2_route.json": {
+          "detailedroute__route__drc_errors__iter:0": 26302,
+          "detailedroute__route__wirelength__iter:0": 3031659,
+          "detailedroute__route__drc_errors__iter:1": 4910,
+          "detailedroute__route__wirelength__iter:1": 3015794,
+          "detailedroute__route__drc_errors__iter:2": 3379,
+          "detailedroute__route__wirelength__iter:2": 3013663,
+          "detailedroute__route__drc_errors__iter:3": 109,
+          "detailedroute__route__wirelength__iter:3": 3013765,
+          "detailedroute__route__drc_errors__iter:4": 4,
+          "detailedroute__route__wirelength__iter:4": 3013785,
+          "detailedroute__route__drc_errors__iter:5": 4,
+          "detailedroute__route__wirelength__iter:5": 3013785,
+          "detailedroute__route__drc_errors__iter:6": 0,
+          "detailedroute__route__wirelength__iter:6": 3013778,
+          "detailedroute__route__drc_errors": 0,
+          "detailedroute__route__wirelength": 3013778,
+          "detailedroute__route__vias": 1208763,
+          "detailedroute__route__vias__singlecut": 1208763,
+          "detailedroute__route__vias__multicut": 0,
+          "detailedroute__antenna_diodes_count": 0,
+          "detailedroute__antenna__violating__nets": 0,
+          "detailedroute__antenna__violating__pins": 0
+        }
+      },
+      "scheduler": "89642|RUNNING|0:0|00:27:09|UNLIMITED|16|node5"
     },
     "probe-01": {
       "spec": {
@@ -2150,6 +2276,39 @@
       "output_manifest_entries": 30,
       "scheduler": "89644|COMPLETED|0:0|00:00:12|UNLIMITED|1|node3"
     },
+    "sta-wrapper-01": {
+      "spec": {
+        "sta_wrapper_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-act-02",
+        "mode": "views",
+        "cores": 4,
+        "runner_commit": "848ac037042cedf30e3195abdc5bc04313038fca",
+        "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01"
+      },
+      "exit_code": "1",
+      "started.txt": "2026-10-22T08:50:15Z\n",
+      "finished.txt": "2026-10-22T08:50:19Z\n",
+      "allocation.txt": "JobId=89662 JobName=yzl-ot-views UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586397 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:02 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T16:50:13 EligibleTime=2026-10-22T16:50:13 AccrueTime=2026-10-22T16:50:13 StartTime=2026-10-22T16:50:13 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T16:50:13 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T16:50:13 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3101987 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=4 NumTasks=1 CPUs/Task=4 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=4,mem=1M,node=1,billing=4 AllocTRES=cpu=4,node=1,billing=4 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=4 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01/job.log Power= TresPerTask=cpu:4 \n",
+      "job_log_tail": [
+        "Traceback (most recent call last):",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01/runner/run.py\", line 69, in <module>",
+        "    execute(SPEC)",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01/runner/implementation.py\", line 63, in execute",
+        "    elif spec['mode']=='views': view_probe(spec)",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01/runner/implementation.py\", line 189, in view_probe",
+        "    if spec.get('sta_wrapper_source'): sta_wrapper_test(Path(spec['sta_wrapper_source']))",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01/runner/implementation.py\", line 415, in sta_wrapper_test",
+        "    run_tcl('transparent-sta',script)",
+        "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01/runner/run.py\", line 44, in run_tcl",
+        "    subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(path)],stdout=f,stderr=subprocess.STDOUT,check=True)",
+        "  File \"/usr/lib/python3.10/subprocess.py\", line 526, in run",
+        "    raise CalledProcessError(retcode, process.args,",
+        "subprocess.CalledProcessError: Command '['openroad', '-threads', '4', '-exit', '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01/transparent-sta.tcl']' returned non-zero exit status 1."
+      ],
+      "metrics": {},
+      "output_manifest_sha256": "ce5b64e3c12ed5aeafeed3270dad3e1e6e340944751888b12ce20d633cb0985a",
+      "output_manifest_entries": 23,
+      "scheduler": "89662|FAILED|1:0|00:00:06|UNLIMITED|4|node3"
+    },
     "top-merged-01": {
       "spec": {
         "kind": "merged",
@@ -2168,6 +2327,24 @@
       "metrics": {},
       "scheduler": "89653|CANCELLED by 10011|0:0|00:00:00|UNLIMITED|0|None assigned"
     },
+    "top-merged-02": {
+      "spec": {
+        "kind": "merged",
+        "sources": {
+          "act": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01",
+          "mxu": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-01",
+          "merged": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-merged-01"
+        },
+        "mode": "top",
+        "cores": 16,
+        "runner_commit": "e9e23d7287e19830f3c4b53e0eb83a22f5267214",
+        "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-02"
+      },
+      "exit_code": null,
+      "job_log_tail": [],
+      "metrics": {},
+      "scheduler": "89664|PENDING|0:0|00:00:00|UNLIMITED|0|None assigned"
+    },
     "top-split-01": {
       "spec": {
         "kind": "split",
@@ -2185,6 +2362,24 @@
       "job_log_tail": [],
       "metrics": {},
       "scheduler": "89652|CANCELLED by 10011|0:0|00:00:00|UNLIMITED|0|None assigned"
+    },
+    "top-split-02": {
+      "spec": {
+        "kind": "split",
+        "sources": {
+          "act": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-01",
+          "mxu": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-01",
+          "merged": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-merged-01"
+        },
+        "mode": "top",
+        "cores": 16,
+        "runner_commit": "e9e23d7287e19830f3c4b53e0eb83a22f5267214",
+        "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-02"
+      },
+      "exit_code": null,
+      "job_log_tail": [],
+      "metrics": {},
+      "scheduler": "89663|PENDING|0:0|00:00:00|UNLIMITED|0|None assigned"
     },
     "view-probe-01": {
       "spec": {
