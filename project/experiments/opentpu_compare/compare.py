@@ -17,6 +17,7 @@ snapshot=json.loads((HERE/'results/latest.json').read_text())
 data=snapshot['attempts']
 stitch_proof=data[definition['stitch_proof']]
 assert stitch_proof.get('exit_code')=='0' and stitch_proof.get('stitch-validation.json',{}).get('passed'), 'Unvalidated hierarchical boundary RC stitching'
+assert stitch_proof['spec'].get('stitch_selftest')=='two_child', 'Final split comparison requires a source-to-receiver cross-child RC fixture'
 inventory=data[definition['inventory_proof']]
 assert inventory.get('exit_code')=='0' and Path(inventory['spec']['inventory_proof_source']).name==definition['functional_proof']
 assert all(inventory.get('logical-resource-inventory.json',{}).get(k,{}).get('equal') for k in ['act','mxu','merged']), 'Logic/state/SRAM resources changed'
