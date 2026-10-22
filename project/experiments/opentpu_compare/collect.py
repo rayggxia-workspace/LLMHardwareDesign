@@ -41,7 +41,7 @@ for p in sorted(base.iterdir()):
  for f in p.glob('*-resource.json'): row[f.name]=read_json(f)
  row['pg_access']={str(f.relative_to(p)):read_json(f) for directory in [p,p/'final-pg']
                    for f in directory.glob('*-pg-access-selection.json')}
- for name in ['repair-input-audit.json','structural-equivalence.json','pin-checkpoint-diagnostics.json','full-hierarchy-sta.log']:
+ for name in ['repair-input-audit.json','structural-equivalence.json','pin-checkpoint-diagnostics.json','stitch-validation.json','full-hierarchy-sta.log']:
   f=p/name
   if f.exists():
    if f.suffix=='.json': row[name]=read_json(f)
@@ -50,6 +50,12 @@ for p in sorted(base.iterdir()):
     row[name]=text[start:] if start>=0 else text[-12000:]
     row[name+'_sha256']=hashlib.sha256(f.read_bytes()).hexdigest()
     row['hierarchy_annotation_summary']=[line for line in text.splitlines() if any(s in line.lower() for s in ['annotated','warning','error','unconstrained','no clock'])][:60]
+ row['physical_repair_actions']={}
+ for name in ['targeted-drive.tsv','macro-output-guards.tsv']:
+  f=p/name
+  if f.exists():
+   lines=f.read_text().splitlines()
+   row['physical_repair_actions'][name]={'header':lines[0] if lines else '', 'rows':lines[1:]}
  contract=p/'external-pin-contract.json';pins=p/'final-pins.tsv'
  if contract.exists():
   d=json.load(open(contract))

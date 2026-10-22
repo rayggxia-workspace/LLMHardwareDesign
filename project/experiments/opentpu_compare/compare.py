@@ -14,6 +14,8 @@ definition=json.loads(a.selection.read_text())
 selection=definition['implementations']
 snapshot=json.loads((HERE/'results/latest.json').read_text())
 data=snapshot['attempts']
+stitch_proof=data[definition['stitch_proof']]
+assert stitch_proof.get('exit_code')=='0' and stitch_proof.get('stitch-validation.json',{}).get('passed'), 'Unvalidated hierarchical boundary RC stitching'
 proof=data[definition['functional_proof']]
 assert proof.get('exit_code')=='0'
 for name in ['act','mxu','merged']:
@@ -82,10 +84,11 @@ for kind,pins in [('top_split',split_pins),('top_merged',merged_pins)]:
     stage=rows[kind]['record']['pin-placement-quality.json']
     assert stage['passed'] and pins['canonical_sha256']==stage['canonical_sha256'], 'Routing moved common external pins'
 assert split_pins['canonical_sha256']==merged_pins['canonical_sha256'], 'Actual pin geometry differs'
-inputs=dict(observed_utc=snapshot['observed_utc'],attempts={n:data[n] for n in list(selection.values())+[definition['functional_proof'],definition['parent_functional_proof']]})
+inputs=dict(observed_utc=snapshot['observed_utc'],attempts={n:data[n] for n in list(selection.values())+[definition['functional_proof'],definition['parent_functional_proof'],definition['stitch_proof']]})
 input_path=HERE/'results/comparison-inputs.json'
 input_path.write_text(json.dumps(inputs,indent=2)+'\n')
 output=dict(selection=selection,functional_proof=definition['functional_proof'],parent_functional_proof=definition['parent_functional_proof'],
+    stitch_proof=definition['stitch_proof'],
     input_snapshot_sha256=hashlib.sha256(input_path.read_bytes()).hexdigest(),costs=costs,
     split_change_vs_merged_percent={k:100*(costs['split'][k]/costs['merged'][k]-1) for k in
         ['implemented_leaf_area_um2','occupied_footprint_plus_parent_cells_um2','total_signal_wire_um','total_signal_vias']},

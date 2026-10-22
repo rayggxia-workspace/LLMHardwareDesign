@@ -74,7 +74,6 @@ endmodule
         text+='create_clock -period 2.5 [get_ports CK]\nset_input_delay .1 -clock CK [get_ports A]\n'
         text+='set_output_delay .1 -clock CK [get_ports Q]\nset_input_transition .05 [get_ports A]\nset_load 5 [get_ports Q]\n'
         text+='puts {BEFORE_SPEF}\nreport_clock_properties [all_clocks]\nreport_worst_slack -max -digits 9\n'
-        text+='report_net CK\ncatch {report_net u/CK}\ncatch {report_cell u/f}\n'
         if name=='flat':text+='read_spef {'+str(root/'flat.spef')+'}\n'
         else:
             if name=='hierarchical':text+='read_spef {'+str(root/'parent.spef')+'}\n'
@@ -84,6 +83,9 @@ endmodule
         text+='report_checks -path_delay max -format full_clock_expanded -digits 9\ncheck_setup -verbose\n'
         run_tcl('stitch-'+name,text)
         log=(root/('stitch-'+name+'.log')).read_text()
+        assert '[ERROR ' not in log, 'Unexpected fixture STA error'
+        if name!='missing_parent_negative_control':
+            assert 'Found 0 partially unannotated drivers.' in log, 'Incomplete controlled RC annotation'
         results[name]={k:([float(m[1]) for m in re.finditer('worst slack '+k+r'\s+([-\d.]+)',log)] or [None])[-1] for k in ['max','min']}
     (root/'stitch-diagnostic.json').write_text(json.dumps(results,indent=2)+'\n')
     assert all(value is not None for row in results.values() for value in row.values()), 'Missing constrained fixture timing'
