@@ -22,7 +22,7 @@ for p in sorted(base.iterdir()):
    row[name]=json.load(open(f)) if f.suffix=='.json' else f.read_text()
  files=sorted((p/'flow/logs').rglob('*.log'),key=lambda f:f.stat().st_mtime) if (p/'flow/logs').exists() else []
  if files: row['last_flow_log']={'path':str(files[-1]),'tail':files[-1].read_text(errors='replace').splitlines()[-8:]}
- row['job_log_tail']=(p/'job.log').read_text(errors='replace').splitlines()[-14:]
+ row['job_log_tail']=(p/'job.log').read_text(errors='replace').splitlines()[-14:] if (p/'job.log').exists() else []
  row['metrics']={}
  for f in (p/'flow/logs').rglob('*.json') if (p/'flow/logs').exists() else []:
   if f.name in ('6_report.json','5_2_route.json'):
@@ -30,6 +30,13 @@ for p in sorted(base.iterdir()):
  for f in (p/'flow/reports').rglob('6_finish.rpt') if (p/'flow/reports').exists() else []:
   row['final_report']=f.read_text()
  for f in p.glob('*-resource.json'): row[f.name]=json.load(open(f))
+ for name in ['repair-input-audit.json','full-hierarchy-sta.log','external-pin-contract.json','final-pins.tsv']:
+  f=p/name
+  if f.exists():
+   if f.suffix=='.json': row[name]=json.load(open(f))
+   elif name=='full-hierarchy-sta.log':
+    text=f.read_text(errors='replace');row[name]=text
+   else: row[name+'_sha256']=hashlib.sha256(f.read_bytes()).hexdigest()
  f=p/'output.sha256'
  if f.exists(): row['output_manifest_sha256']=hashlib.sha256(f.read_bytes()).hexdigest();row['output_manifest_entries']=len(f.read_text().splitlines())
  out[p.name]=row

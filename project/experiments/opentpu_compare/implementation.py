@@ -379,9 +379,14 @@ def resume(spec):
     config=(ROOT/'config.mk').read_text().replace(str(source),str(ROOT))
     config,n=re.subn(r'^export CAP_MARGIN = \d+$','export CAP_MARGIN = '+str(margin),config,flags=re.M)
     assert n==1
+    if spec.get('reserve_m10'):
+        for variable in ['MAX_ROUTING_LAYER','MAX_CLK_ROUTING_LAYER']:
+            assert not re.search(r'^export '+variable+r'\s*=',config,re.M)
+            config+='export '+variable+' = metal9\n'
     (ROOT/'config.mk').write_text(config)
     meta.update(resume=dict(source=str(source),checkpoint='4_cts.odb',route_cap_margin=margin,
-        clock_io_load_unchanged=True,logic_resources_unchanged=True),cap_margin=margin)
+        clock_io_load_unchanged=True,logic_resources_unchanged=True,
+        reserve_m10_for_parent=bool(spec.get('reserve_m10'))),cap_margin=margin)
     (ROOT/'experiment.json').write_text(json.dumps(meta,indent=2)+'\n')
     (ROOT/'checkpoint-copies.json').write_text(json.dumps(copies,indent=2)+'\n')
     (ROOT/'input-sha256.json').write_text(json.dumps(INPUTS,indent=2)+'\n')
