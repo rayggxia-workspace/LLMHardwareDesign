@@ -24,7 +24,8 @@ def ssh(command):
     return subprocess.check_output(['ssh', '-o', 'BatchMode=yes', HOST, command], text=True)
 
 commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=REPO, text=True).strip()
-assert not subprocess.check_output(['git', 'status', '--porcelain'], cwd=REPO, text=True).strip(), 'Commit runner before execution'
+changes=subprocess.check_output(['git', 'status', '--porcelain'], cwd=REPO, text=True).splitlines()
+assert all('project/experiments/opentpu_compare/results/' in line for line in changes), 'Commit runner before execution'
 spec = json.loads(a.spec.read_text()) if a.spec else {}
 spec.update(mode=a.mode, cores=a.cores, runner_commit=commit, remote=remote)
 ssh('test ! -e ' + shlex.quote(remote) + ' && mkdir -p ' + shlex.quote(remote + '/runner'))
