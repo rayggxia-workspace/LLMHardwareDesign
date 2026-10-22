@@ -1,0 +1,214 @@
+{
+  "created_utc": "2026-10-22T11:45:51.601996+00:00",
+  "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/23",
+  "root_branch": "task/23-qwen3-trace",
+  "status": "environment_and_fixed_inputs_ready",
+  "exclusive_environment_directory": "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment",
+  "python_executable": "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\.venv\\Scripts\\python.exe",
+  "weights_directory": "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\weights",
+  "model_id": "Qwen/Qwen3-0.6B",
+  "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+  "model_file_count": 8,
+  "runtime_wheels": 25,
+  "installed_distributions_including_seeded_pip": 26,
+  "versions": {
+    "torch": "2.10.0+cpu",
+    "transformers": "4.57.6",
+    "safetensors": "0.7.0",
+    "tokenizers": "0.22.2",
+    "huggingface-hub": "0.36.2",
+    "numpy": "2.5.4",
+    "pip": "26.1.2"
+  },
+  "actual_commands": {
+    "01-download-torch-cpu": {
+      "command": [
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "pip",
+        "download",
+        "--only-binary=:all:",
+        "--no-deps",
+        "--index-url",
+        "https://download.pytorch.org/whl/cpu",
+        "--dest",
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\wheelhouse",
+        "--log",
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\logs\\01-pip-details.log",
+        "torch==2.10.0+cpu"
+      ],
+      "started_unix": 1792669094.1053946
+    },
+    "02-download-resolved-wheels": {
+      "command": [
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "pip",
+        "download",
+        "--only-binary=:all:",
+        "--index-url",
+        "https://pypi.org/simple",
+        "--find-links",
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\wheelhouse",
+        "--dest",
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\wheelhouse",
+        "--log",
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\logs\\02-pip-details.log",
+        "torch==2.10.0+cpu",
+        "transformers==4.57.6",
+        "safetensors==0.7.0",
+        "tokenizers==0.22.2",
+        "huggingface-hub==0.36.2"
+      ],
+      "started_unix": 1792669099.238531
+    },
+    "03-install-locked-wheels": {
+      "command": [
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "pip",
+        "install",
+        "--no-index",
+        "--only-binary=:all:",
+        "--find-links",
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\wheelhouse",
+        "--require-hashes",
+        "--report",
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\receipts\\pip-install-report.json",
+        "-r",
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\receipts\\requirements-lock.txt",
+        "--log",
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\logs\\03-pip-details.log"
+      ],
+      "started_unix": 1792669155.9637744
+    },
+    "04-pip-check": {
+      "command": [
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "started_unix": 1792669377.8404474
+    },
+    "05-pip-freeze": {
+      "command": [
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "pip",
+        "freeze",
+        "--all"
+      ],
+      "started_unix": 1792669380.155895
+    }
+  },
+  "actual_validation": {
+    "pip_install_exit_code": 0,
+    "pip_check_exit_code": 0,
+    "pip_check": "No broken requirements found.",
+    "native_qwen3_class_import": "Qwen3ForCausalLM",
+    "cpu_fp32_matrix": {
+      "device": "cpu",
+      "dtype": "torch.float32",
+      "shape": [
+        2,
+        2
+      ],
+      "result": [
+        [
+          2.0,
+          2.0
+        ],
+        [
+          2.0,
+          2.0
+        ]
+      ],
+      "passed": true
+    },
+    "all_8_downloaded_file_sizes_and_sha256_recorded": true,
+    "all_25_runtime_wheels_match_published_sha256": true,
+    "seeded_pip_matches_pypi_sha256": true
+  },
+  "this_installation_subtask_scope": {
+    "model_instantiated": false,
+    "model_weights_loaded": false,
+    "formal_model_inference_executed": false,
+    "global_packages_installed": false,
+    "github_written": false,
+    "server_accessed": false,
+    "cleanup_performed": false
+  },
+  "retained_resources": [
+    ".venv",
+    "wheelhouse",
+    "weights",
+    "cache",
+    "tmp",
+    "logs",
+    "receipts"
+  ],
+  "observed_and_resolved_notes": [
+    {
+      "stage": "metadata manifest attempt01",
+      "outcome": "failed before installation",
+      "reason": "setuptools wheel contains nested vendor dist-info; metadata identity selection corrected to top-level dist-info only",
+      "record": "receipts/bootstrap-failure-attempt01.json"
+    },
+    {
+      "stage": "successful installation attempt02",
+      "outcome": "pip installation exit0 and imports/check pass",
+      "note": "pip automatic bytecode compilation emitted Windows path-length FileNotFoundError warnings under the long D pycache prefix. Sources/DLLs installed and native import/CPU check passed. Subsequent helper updated to --no-compile/PYTHONDONTWRITEBYTECODE=1; no system registry changes or global installation.",
+      "source_provenance_note": "bootstrap_packages.py is current future reentry helper including preventive no-compile adjustment; actual successful installation command is preserved verbatim in logs/03-install-locked-wheels.txt and this JSON."
+    }
+  ],
+  "limitations": [
+    "No GPU/XPU validation",
+    "This subtask did not instantiate or run a model; downstream runner provides inference evidence",
+    "Virtual environment depends on existing D:/APP/Python base installation; do not relocate blindly",
+    "Runtime weight tying still for downstream model instantiation to verify; serialized embedding payload equality checked without model loading"
+  ],
+  "key_receipts": {
+    "bootstrap-provenance.json": {
+      "path": "receipts/bootstrap-provenance.json",
+      "sha256": "3600f6779ad153613a0fef7f4c9498ffcb99fd69845c25374eeb43a82148e40c"
+    },
+    "requirements-lock.txt": {
+      "path": "receipts/requirements-lock.txt",
+      "sha256": "f235bb2499e82ec756737f9e974219f2b8f6981c30538d0fe4eccb5980aa5105"
+    },
+    "installed-versions.txt": {
+      "path": "receipts/installed-versions.txt",
+      "sha256": "1e74f8ec1e60cffc081cde91a3519d649d489c25a657990d73e941c7f5ce03f2"
+    },
+    "wheel-manifest.json": {
+      "path": "receipts/wheel-manifest.json",
+      "sha256": "d9096e5ddc552a2446fc4bcabd749624429f78376d93144ab9222ddb4f4070f8"
+    },
+    "pip-install-report.json": {
+      "path": "receipts/pip-install-report.json",
+      "sha256": "f99d12105b9011e9112f7446f8fd5615986aa53ebdf4c720fcf264a20986b3c2"
+    },
+    "model-download-manifest.json": {
+      "path": "receipts/model-download-manifest.json",
+      "sha256": "2400d7044ae958e65e9874d1645583b958616dbd44ed814928d7eaea389c48f3"
+    },
+    "pinned-model-metadata.json": {
+      "path": "receipts/pinned-model-metadata.json",
+      "sha256": "6b39f117fae90f59f9e12a193fe65ff4b1c8c47bc5cf74320fc479a7fcc2ff85"
+    },
+    "safetensors-header-summary.json": {
+      "path": "receipts/safetensors-header-summary.json",
+      "sha256": "c4745ae79c92eb8350e22358ce5facbe89e09eb21d0dadaf0e3385904d13409c"
+    },
+    "environment-probe.json": {
+      "path": "receipts/environment-probe.json",
+      "sha256": "0ad14acfefc0722a996470623862f761e99f847369c4079b98427e4925523117"
+    }
+  }
+}
