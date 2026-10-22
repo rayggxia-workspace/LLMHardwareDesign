@@ -1,5 +1,6 @@
 """Generate additive physical costs with explicit footprint/leaf-area separation."""
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -11,7 +12,8 @@ p.add_argument('selection',type=Path)
 a=p.parse_args()
 definition=json.loads(a.selection.read_text())
 selection=definition['implementations']
-data=json.loads((HERE/'results/latest.json').read_text())['attempts']
+snapshot=json.loads((HERE/'results/latest.json').read_text())
+data=snapshot['attempts']
 proof=data[definition['functional_proof']]
 assert proof.get('exit_code')=='0'
 for name in ['act','mxu','merged']:
@@ -76,7 +78,11 @@ split_pins=rows['top_split']['record']['actual_signal_pin_geometry']
 merged_pins=rows['top_merged']['record']['actual_signal_pin_geometry']
 assert split_pins['all_contract_names_present'] and merged_pins['all_contract_names_present']
 assert split_pins['canonical_sha256']==merged_pins['canonical_sha256'], 'Actual pin geometry differs'
-output=dict(selection=selection,functional_proof=definition['functional_proof'],parent_functional_proof=definition['parent_functional_proof'],costs=costs,
+inputs=dict(observed_utc=snapshot['observed_utc'],attempts={n:data[n] for n in list(selection.values())+[definition['functional_proof'],definition['parent_functional_proof']]})
+input_path=HERE/'results/comparison-inputs.json'
+input_path.write_text(json.dumps(inputs,indent=2)+'\n')
+output=dict(selection=selection,functional_proof=definition['functional_proof'],parent_functional_proof=definition['parent_functional_proof'],
+    input_snapshot_sha256=hashlib.sha256(input_path.read_bytes()).hexdigest(),costs=costs,
     split_change_vs_merged_percent={k:100*(costs['split'][k]/costs['merged'][k]-1) for k in
         ['implemented_leaf_area_um2','occupied_footprint_plus_parent_cells_um2','total_signal_wire_um','total_signal_vias']},
     scope='H1 same compute/storage/state resources; physical buffer and CTS costs included. Footprint is not added to its own leaf-cell area. Signal route excludes special PG, which requires separate geometry audit. Complete STA never sums separate-block slack values.')

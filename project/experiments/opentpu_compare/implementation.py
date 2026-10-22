@@ -186,6 +186,25 @@ def matched(spec):
     run_tcl('detail','read_db {'+str(dest/'6_final.odb')+'}\nwrite_abstract_lef -bloat_factor 0 {'+str(dest/(top+'.detailed.lef'))+'}\n')
 
 def view_probe(spec):
+    if spec.get('parent_grt_diagnostics'):
+        flow=Path('/OpenROAD-flow-scripts/flow')
+        names=['scripts/resize.tcl','scripts/resize_placement.tcl','scripts/global_place.tcl','scripts/util.tcl']
+        (ROOT/'repair-flow-sources.json').write_text(json.dumps({n:(flow/n).read_text() for n in names if (flow/n).is_file()},indent=2)+'\n')
+        for name,path in spec['parent_grt_diagnostics'].items():
+            source=Path(path);meta=json.loads(track(source/'experiment.json').read_text());r=result(source)
+            selected=['act','mxu'] if meta['kind']=='split' else ['merged']
+            script='read_liberty {'+str(track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib'))+'}\n'
+            for k in selected:
+                v=meta['views'][k]
+                script+='read_liberty {'+str(track(Path(v['view'])/(v['name']+'.lib')))+'}\n'
+            script+='read_db {'+str(track(r/'5_1_grt.odb'))+'}\nread_sdc {'+str(track(r/'5_1_grt.sdc'))+'}\n'
+            script+='source {'+str(track(PLATFORM/'setRC.tcl'))+'}\nestimate_parasitics -placement\n'
+            script+='puts {DIAGNOSTIC: placement RC at frozen GRT checkpoint; not final extracted qualification}\n'
+            script+='report_check_types -max_capacitance -max_count 30 -digits 6 -no_line_splits\n'
+            script+='report_check_types -max_slew -max_count 15 -digits 6 -no_line_splits\n'
+            script+='help buffer_ports\nhelp repair_design\nhelp estimate_parasitics\n'
+            run_tcl('grt-diagnostic-'+name,script)
+        return
     if spec.get('structural_sources'):
         from equivalence import certify
         libraries=[track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib')]
