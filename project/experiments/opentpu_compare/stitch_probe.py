@@ -30,12 +30,18 @@ def spef(design, ports, nets):
 
 
 def execute(root,run_tcl,technology,liberty):
-    (root/'fixture.v').write_text('''module fixture_child(input A, CK, output Q);
+    (root/'fixture.v').write_text('''module fixture_child(A, CK, Q);
+input A;
+input CK;
+output Q;
 wire n;
 BUF_X1 b(.A(A),.Z(n));
 DFF_X1 f(.D(n),.CK(CK),.Q(Q));
 endmodule
-module fixture_top(input A, CK, output Q);
+module fixture_top(A, CK, Q);
+input A;
+input CK;
+output Q;
 wire boundary;
 BUF_X2 p(.A(A),.Z(boundary));
 fixture_child u(.A(boundary),.CK(CK),.Q(Q));
@@ -68,7 +74,7 @@ endmodule
         text+='create_clock -period 2.5 [get_ports CK]\nset_input_delay .1 [get_ports A]\n'
         text+='set_output_delay .1 [get_ports Q]\nset_input_transition .05 [get_ports A]\nset_load 5 [get_ports Q]\n'
         text+='puts {BEFORE_SPEF}\nreport_clock_properties [all_clocks]\nreport_worst_slack -max -digits 9\n'
-        text+='report_net -connections [get_nets CK]\nreport_net -connections [get_nets u/CK]\n'
+        text+='report_net [get_nets CK]\ncatch {report_net [get_nets u/CK]}\ncatch {report_cell [get_cells u/f]}\n'
         if name=='flat':text+='read_spef {'+str(root/'flat.spef')+'}\n'
         else:
             if name=='hierarchical':text+='read_spef {'+str(root/'parent.spef')+'}\n'
