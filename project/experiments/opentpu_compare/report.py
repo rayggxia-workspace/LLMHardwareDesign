@@ -89,10 +89,12 @@ def main():
         record = records[name]
         q = evaluate(record)
         full = record.get('full-hierarchy-quality.json', {})
-        quality.append([kind, '通过：全部严格门槛', f"{q['worst_cap_margin_fF']:+.6f}",
+        quality.append([kind, '通过：全部严格门槛', f"{q['setup_ns']:+.6f}",
+                        f"{q['hold_ns']:+.6f}", f"{q['worst_cap_margin_fF']:+.6f}",
                         '通过' if full.get('passed') else '块内独立 STA',
                         '通过' if record.get('final-pg/strict-pg.json', {}).get('passed') else '块内实现'])
-    quality_table = table(['实现', 'DRC / 天线 / setup / hold / 电气', '最差 cap 余量 fF', '完整层次 STA', '最终父层 PG'], quality)
+    quality_table = table(['实现', '严格门槛', '独立 / 宏模型 setup ns', '独立 / 宏模型 hold ns',
+                           '最差 cap 余量 fF', '完整层次 STA', '最终父层 PG'], quality)
     tools = table(['实际镜像 / ELF', 'SHA256'], sorted(data['toolchain_sha256'].items()))
     summary = (f"在本次固定版图和统一预算下，拆分相对合并的合计叶单元面积变化为 "
                f"{delta['implemented_leaf_area_um2']:+.2f}%，总信号线长变化为 "
@@ -119,6 +121,7 @@ td:not(:first-child){{font-variant-numeric:tabular-nums}}.scroll{{overflow:auto}
 <p>块内保留 M1–M9，详细 LEF 无 M10；父层信号可用 M2–M10，PG 使用 M1/M4/M7/M10，保留详细宏障碍并核对最终 VDD/VSS 连通。物理缓冲、驱动升级、时钟树等允许变化，全部计入面积与布线成本。</p>
 <h2>完整系统结果</h2>{totals}
 <p class="note">叶单元面积含同一批 SRAM 和非填充支持单元。硬宏占地、父层 die 单独列示，不再叠加到宏内叶面积。信号线与通孔排除 special PG；父层包含外部 IO、时钟及块间连接，不能全算作 685bit ACT/MXU 边界互连。WNS 来自真实父层与子块网表、分层 SPEF 的完整路径分析，不能相加各块 WNS。</p>
+<p>拆分相对合并，块内信号线变化 {costs['split']['private_signal_wire_um']-costs['merged']['private_signal_wire_um']:+,.0f}µm，父层变化 {costs['split']['parent_signal_wire_um']-costs['merged']['parent_signal_wire_um']:+,.0f}µm，两部分合计变化 {costs['split']['total_signal_wire_um']-costs['merged']['total_signal_wire_um']:+,.0f}µm。划分收益须连同父层接入和修复开销一起判断。</p>
 <figure><img src="assets/issue-15-ppa.png" alt="拆分与合并的面积、信号线、通孔和完整时序对比"><figcaption>块内与父层成本分开计量；完整 setup 与 hold 均为实际提取结果。</figcaption></figure>
 <figure><img src="assets/issue-15-floorplans.png" alt="相同父层边界中的实际最终宏盒形"><figcaption>从最终数据库 PG 几何审计读取宏盒形；外框和 1662bit 外部引脚相同。</figcaption></figure>
 <h2>块内结果与接口代价</h2>{block_table}
@@ -127,7 +130,7 @@ td:not(:first-child){{font-variant-numeric:tabular-nums}}.scroll{{overflow:auto}
 <h2>金属层使用与预制底座含义</h2>
 <figure><img src="assets/issue-15-routing-layers.png" alt="块内加父层以及父层单独的逐层信号线长"><figcaption>原生详细布线逐层表；四舍五入到整数 µm，总长与 JSON 指标交叉核对。</figcaption></figure>
 <p>本次父层 M10 以下的信号线占比：拆分 {costs['split']['parent_signal_wire_below_m10_percent']:.2f}%，合并 {costs['merged']['parent_signal_wire_below_m10_percent']:.2f}%。这是本次允许全父层路由的实际资源使用，不能据此证明其他受限定制层方案可行或不可行。</p>
-<p>面向少量掩模定制，下一步须在底座冻结前同时定义边界驱动能力、块内既有负载、允许的外部电容和转换时间、预制缓冲及轨道资源，并在指定定制层集合内重新实现。当前 H1 仍依赖新增有源单元，尚未实现 H2 的冻结资源和少量定制层约束。</p>
+<p>面向少量掩模定制，下一步须在底座冻结前同时定义边界驱动能力、块内既有负载、允许的外部电容和转换时间、预制缓冲、接入层与预制垂直通孔及轨道资源，并在指定定制层集合内重新实现。当前 H1 仍依赖新增有源单元，尚未实现 H2 的冻结资源和少量定制层约束。</p>
 <details><summary>逐层线长明细</summary>{layer_table}</details>
 <h2>验收与证据</h2>{quality_table}
 <p>全部选定来源同时通过 DRC、天线、setup/hold 及 TNS、电容/转换/fanout 计数和有符号余量门槛。父层另通过最终原生 PG、实际引脚一致性、完整真实分层 STA。三块及两父层功能证书、精确非支持资源库存、双子块边界 RC 自检、实际原生标注覆盖审计齐备；双子块自检另以漏父层 RC 负例确认检查敏感性。</p>
