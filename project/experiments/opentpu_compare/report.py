@@ -130,7 +130,7 @@ td:not(:first-child){{font-variant-numeric:tabular-nums}}.scroll{{overflow:auto}
 <h2>金属层使用与预制底座含义</h2>
 <figure><img src="assets/issue-15-routing-layers.png" alt="块内加父层以及父层单独的逐层信号线长"><figcaption>原生详细布线逐层表；四舍五入到整数 µm，总长与 JSON 指标交叉核对。</figcaption></figure>
 <p>本次父层 M10 以下的信号线占比：拆分 {costs['split']['parent_signal_wire_below_m10_percent']:.2f}%，合并 {costs['merged']['parent_signal_wire_below_m10_percent']:.2f}%。这是本次允许全父层路由的实际资源使用，不能据此证明其他受限定制层方案可行或不可行。</p>
-<p>面向少量掩模定制，下一步须在底座冻结前同时定义边界驱动能力、块内既有负载、允许的外部电容和转换时间、预制缓冲、接入层与预制垂直通孔及轨道资源，并在指定定制层集合内重新实现。当前 H1 仍依赖新增有源单元，尚未实现 H2 的冻结资源和少量定制层约束。</p>
+<p>面向少量掩模定制，下一步须在底座冻结前同时定义边界驱动能力、块内既有负载、允许的外部电容和转换时间、预制缓冲、时钟分配及插入延迟／偏斜预算、接入层与预制垂直通孔及轨道资源，并在指定定制层集合内重新实现。当前 H1 仍依赖新增有源单元，尚未实现 H2 的冻结资源和少量定制层约束。</p>
 <details><summary>逐层线长明细</summary>{layer_table}</details>
 <h2>验收与证据</h2>{quality_table}
 <p>全部选定来源同时通过 DRC、天线、setup/hold 及 TNS、电容/转换/fanout 计数和有符号余量门槛。父层另通过最终原生 PG、实际引脚一致性、完整真实分层 STA。三块及两父层功能证书、精确非支持资源库存、双子块边界 RC 自检、实际原生标注覆盖审计齐备；双子块自检另以漏父层 RC 负例确认检查敏感性。</p>
@@ -138,7 +138,7 @@ td:not(:first-child){{font-variant-numeric:tabular-nums}}.scroll{{overflow:auto}
 <details><summary>实际计算节点镜像与工具身份</summary>{tools}<p class="note">工具 ELF 以 SHA256 确定；OpenROAD 版本字符串为 unknown，不将官方 master 当作本机精确源码。Yosys 报告 0.68+post，git 版本未知；STA 为嵌入式。所有新 Slurm 作业实际 UNLIMITED，不设完成期限或耗时取消策略。</p></details>
 <p>证明和 STA 实际读取的网表、SPEF、SDC 摘要与对应源封存输出绑定；首次终态清单摘要保持不变，共享输入摘要一致。原始物理数据库与日志保存在获授权集群 <code>/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/</code>，仓库保留轻量回执、脚本和索引。</p>
 <h2>适用范围</h2>
-<p>这是一个 small 参数、单 typical 角点、固定宏位置、外部引脚和随机种子的工程对照，未做多布局、多种子或多工艺角点搜索，差值不能推广为普遍最优结论。synthetic SRAM 没有真实 GDS；上游 RTL 通用形式等价、生产签核与制造版 GDS 未完成。层次 STA 工具仍提示实验功能；共同 SDC 对 clk 的 input delay 被原生忽略，数据预算与时钟约束一致，未为消除提示修改某组约束。</p>
+<p>这是一个 small 参数、单 typical 角点、固定宏位置和外部引脚的工程对照，未做多布局、多种子或多工艺角点搜索，差值不能推广为普遍最优结论。synthetic SRAM 没有真实 GDS；上游 RTL 通用形式等价、生产签核与制造版 GDS 未完成。层次 STA 工具仍提示实验功能；共同 SDC 对 clk 的 input delay 被原生忽略，数据预算与时钟约束一致，未为消除提示修改某组约束。</p>
 <footer>冻结观测：{escape(snapshot['observed_utc'])}<br>输入快照 SHA256：<code>{data['input_snapshot_sha256']}</code><br>
 <a href="https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15">Issue #15</a> · <a href="https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/17">PR #17</a> · <a href="issue-15-opentpu-comparison.md">实验过程与失败证据</a></footer>
 </main></html>'''
