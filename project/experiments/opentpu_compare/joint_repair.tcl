@@ -5,8 +5,12 @@ puts $llhd_joint_audit "phase\tsetup_ns\thold_ns"
 for {set phase 0} {$phase < $llhd_joint_rounds} {incr phase} {
   set llhd_drive_phase joint${phase}
   estimate_parasitics -global_routing
-  global_route -start_incremental
   repair_timing -setup -setup_margin $llhd_setup_target -repair_tns 100 -skip_gate_cloning -skip_pin_swap -skip_size_down -skip_buffer_removal -skip_buffer_to_inverters -verbose
+  estimate_parasitics -global_routing
+  repair_timing -hold -hold_margin 0.02 -skip_gate_cloning -skip_pin_swap -skip_size_down -skip_buffer_removal -skip_buffer_to_inverters -verbose
+  # Resizer manages routing/parasitic updates during repair_timing. Follow
+  # ORFS ordering: start an incremental session only for subsequent DPL.
+  global_route -start_incremental
   detailed_placement_helper
   check_placement -verbose
   global_route -end_incremental
