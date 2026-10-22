@@ -28,17 +28,17 @@ def sealed(name):
 assert json.loads(sealed('extracted-source-validation.json'))['passed']
 plan=json.loads(sealed('extracted-eco-plan.json'))
 text=sealed('extracted-setup-before.rpt');candidates=[]
-for path in re.findall(r'Startpoint:.*?slack ((?:MET|VIOLATED))',text,re.S):
- slack=float(re.search(r'([-+0-9.eE]+)s+slack ((?:MET|VIOLATED))$',path)[1])
+for path in re.findall(r'Startpoint:.*?slack \((?:MET|VIOLATED)\)',text,re.S):
+ slack=float(re.search(r'([-+0-9.eE]+)\s+slack \((?:MET|VIOLATED)\)$',path)[1])
  if slack>=reserve:continue
- endpoint=re.search(r'^Endpoint: (S+)',path,re.M)[1]
+ endpoint=re.search(r'^Endpoint: (\S+)',path,re.M)[1]
  assert '(output port' in path.split('Path Group:')[0], 'Planner is restricted to data output paths'
  previous=None
  for line in path.splitlines():
-  match=re.search(r'[^v] (S+) ((S+))$',line)
+  match=re.search(r'[\^v] (\S+) \((\S+)\)$',line)
   if not match:continue
   pin,master=match.groups()
-  numbers=re.findall(r'[-+]?(?:d*.)?d+(?:[eE][-+]?d+)?',line[:match.start()])
+  numbers=re.findall(r'[-+]?(?:\d*\.)?\d+(?:[eE][-+]?\d+)?',line[:match.start()])
   if len(numbers)<2:continue
   delay=float(numbers[-2])
   if pin.endswith('/A') and previous and not previous['pin'].startswith(('u_','clk')) and delay>wire:
