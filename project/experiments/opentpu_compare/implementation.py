@@ -359,6 +359,18 @@ def top(spec):
                'write_pin_placement $::env(RESULTS_DIR)/3_2_place_iop.tcl']
     (ROOT/'fixed-pins.tcl').write_text('\n'.join(pinlines)+'\n')
     (ROOT/'external-pin-contract.json').write_text(json.dumps(pin_contract,indent=2)+'\n')
+    rounds=int(spec.get('post_grt_repair_rounds',0));assert 0<=rounds<=10
+    if rounds:
+        hook=''
+        for iteration in range(rounds):
+            hook+='puts {ADDITIONAL_ROUTE_AWARE_REPAIR '+str(iteration+1)+'}\n'
+            hook+='estimate_parasitics -global_routing\nrepair_design -cap_margin 35 -slew_margin 20 -reroute -verbose\n'
+            hook+='global_route -start_incremental\ndetailed_placement_helper\ncheck_placement -verbose\nglobal_route -end_incremental\n'
+        hook+='estimate_parasitics -global_routing\nputs {POST_GRT_FINAL_ELECTRICAL_CHECK}\n'
+        hook+='report_check_types -max_capacitance -max_count 20 -digits 6 -no_line_splits\n'
+        hook+='report_check_types -max_slew -max_count 20 -digits 6 -no_line_splits\n'
+        hook+='write_guides $::env(RESULTS_DIR)/route.guide\n'
+        (ROOT/'post-grt-repair.tcl').write_text(hook)
     lefpaths=[str(Path(views[k]['view'])/(views[k]['name']+'.lef')) for k in selected]
     libpaths=[str(Path(views[k]['view'])/(views[k]['name']+'.lib')) for k in selected]
     nickname='opentpu_top_'+kind
@@ -371,6 +383,7 @@ def top(spec):
         'export POST_PDN_TCL = '+str(ROOT/'post-pdn.tcl')+'\nexport PLACE_DENSITY = 0.30\nexport TNS_END_PERCENT = 100\n'
         'export POST_IO_PLACEMENT_TCL = '+str(ROOT/'fixed-pins.tcl')+'\n'
         'export CAP_MARGIN = 20\nexport LEC_CHECK = 0\nexport SYNTH_HIERARCHICAL = 0\n')
+    if rounds:config+='export POST_GLOBAL_ROUTE_TCL = '+str(ROOT/'post-grt-repair.tcl')+'\n'
     (ROOT/'config.mk').write_text(config)
     (ROOT/'experiment.json').write_text(json.dumps(dict(top=topname,case=nickname,kind=kind,result_relative=relative,
         views=views,locations=locations,die_um=[0,0,side,side],external_bits=1662,extra_state=0,
@@ -380,7 +393,19 @@ def top(spec):
     (ROOT/'input-sha256.json').write_text(json.dumps(INPUTS,indent=2)+'\n')
     # These synthetic RAM experiments have no SRAM GDS. Complete actual PNR
     # and extraction in ODB/DEF/SPEF; do not manufacture a GDS-completion claim.
-    make_stages(ROOT/'config.mk',spec,['synth','do-floorplan','do-place','do-cts','do-route','do-finish'])
+    make_stages(ROOT/'config.mk',spec,['synth','do-floorplan','do-place','do-cts'])
+    if rounds:
+        make_stages(ROOT/'config.mk',spec,['do-5_1_grt'])
+        log=(ROOT/'flow/logs/nangate45'/nickname/'base/5_1_grt.log').read_text()
+        checks=log.split('POST_GRT_FINAL_ELECTRICAL_CHECK')[-1]
+        number=r'([-+]?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?)'
+        margins=re.findall(r'^\s*\S+\s+'+number+r'\s+'+number+r'\s+'+number+r'\s+\((?:MET|VIOLATED)\)',checks,re.M)
+        passed=bool(margins) and all(float(row[2])>=0 for row in margins) and '(VIOLATED)' not in checks
+        (ROOT/'pre-drt-electrical-quality.json').write_text(json.dumps(dict(passed=passed,
+            repair_rounds=rounds,scope='Extra route-aware repair after standard GRT timing optimization; same external budgets'),indent=2)+'\n')
+        assert passed, 'Residual GRT electrical violation: preserve diagnostic, adjust before detailed routing'
+        make_stages(ROOT/'config.mk',spec,['do-5_2_route','do-5_3_fillcell','do-5_route','do-5_route.sdc','do-finish'])
+    else:make_stages(ROOT/'config.mk',spec,['do-route','do-finish'])
     (ROOT/'final-pg').mkdir()
     run_tcl('final-pg','read_db {'+str(ROOT/relative/'6_final.odb')+'}\n'+
         'set llhd_macro_instances {'+' '.join(instances)+'}\nset ::env(LLHD_ATTEMPT) {'+str(ROOT/'final-pg')+'}\n'
