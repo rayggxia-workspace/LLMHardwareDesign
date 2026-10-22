@@ -4,7 +4,7 @@
 
 - 仓库：`rayggxia-workspace/LLMHardwareDesign`，project_id `llm-hardware-design`。
 - [Issue #15](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15)，负责人YUZE-LU，实际身份已读回；[草稿PR #17](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/17)，base `task/7-parallel-blocks`，依赖PR10，不自合并。
-- 当前分支 `task/15-opentpu-compare`；14轮物理修复runner `7139190aa944dd3c88b44eb3234b869e6c3c46e8`。实际已执行runner分别绑定每条submission回执，不能用更新后的HEAD替换旧运行身份。
+- 当前分支 `task/15-opentpu-compare`；14轮runner `7139190aa944dd3c88b44eb3234b869e6c3c46e8`，提取后15轮runner `03f8b20904eb2dc7f7dcb81309041a32c60550fe`。实际已执行runner分别绑定每条submission回执，不能用更新后的HEAD替换旧运行身份。
 - 本地独立工作树 `D:\Data\电路实验\LLMHardwareDesign-worktrees\issue-15-opentpu-compare`；原始输出 `yuzelu@10.129.166.172:/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/`。不修改已有PR8／PR10工作树和封存结果；89448不属于本轮。
 - 正式代码 `project/experiments/opentpu_compare/`，轻量回执 `results/`，[实验定义与实测](../experiments/issue-15-opentpu-comparison.md)，个人进度 `progress/YUZE-LU/STATUS.md`。
 
@@ -30,3 +30,5 @@
 2026-10-22 19:52 CST：当前作业13轮89772／89773，runner182898cca91c3b403985b6d2278b143ef2dd9852。12轮已保留4阶段严格失败；13轮追加原生长线分段，每轮ECO后完整GRT再估算RC。SDC一致性、preamble／时序缓存和既存普通信号线的排查结果在89768／89770／89771及实验记录；不得把最新runner倒填旧作业。
 
 2026-10-22 20:12 CST：拆分13／89773因重复GRT的GRT-0229失败；合并13／89772仍正常运行，不因新方案而取消。当前14轮89776／89777每个电气ECO使用新的OpenROAD进程：真实ODB／SDC检查点、下一进程重建路由／RC、最终不修改网表的独立审计通过才写DRT guides。runner7139190。先collect，查最新joint-*-drive-*-changes.txt与joint-*-audit.rpt及joint-repair.json。所有作业UNLIMITED，不设置耗时取消；最终实际DRT／PG／完整分层STA、父层功能及RC覆盖证书和PPA尚未完成。
+
+2026-10-22 20:31 CST：合并13／89772独立GRT审计通过并进入DRT；14轮仍在修复。提取后定向15轮合并89781／拆分89782，runner03f8b20，已从06／07封存终态恢复、核对SPEF复现原时序、按实际报告修改并通过接线／合法化，进入新DRT。源失败结果仍保留；15轮GRT估算为诊断，最终所有真实DRT／PG／电气／完整层次STA门槛不变。优先检查这三路DRT及随后真实提取；通过后选择同资源父层对，补最终父层功能和原生RC覆盖审计，再compare.py和plot.py。不得把预估余量或插入成功当作合格PPA。

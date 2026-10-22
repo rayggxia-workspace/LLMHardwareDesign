@@ -57,7 +57,10 @@ for p in sorted(base.iterdir()):
   name=f.name
   if f.exists():
    lines=f.read_text().splitlines()
-   row['physical_repair_actions'][name]={'header':lines[0] if lines else '', 'rows':lines[1:]}
+   if name=='extracted-eco-actions.tsv':
+    row['physical_repair_actions'][name]={'format':'Native Tcl lists: input/repeater has target, instance, master, x_dbu, y_dbu; replacement has instance, before, after','rows':lines}
+   else:
+    row['physical_repair_actions'][name]={'header':lines[0] if lines else '', 'rows':lines[1:]}
  contract=p/'external-pin-contract.json';pins=p/'final-pins.tsv'
  boundary=p/'boundary.sdc'
  if boundary.exists():
