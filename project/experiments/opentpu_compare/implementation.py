@@ -186,6 +186,25 @@ def matched(spec):
     run_tcl('detail','read_db {'+str(dest/'6_final.odb')+'}\nwrite_abstract_lef -bloat_factor 0 {'+str(dest/(top+'.detailed.lef'))+'}\n')
 
 def view_probe(spec):
+    if spec.get('inventory_proof_source'):
+        source=Path(spec['inventory_proof_source'])
+        assert (source/'exit-code.txt').read_text().strip()=='0'
+        manifest={line[2:]:h for h,line in (r.split(None,1) for r in (source/'output.sha256').read_text().splitlines())}
+        from equivalence import family
+        audit={}
+        for name in ['act','mxu','merged']:
+            counts={}
+            for stage in ['mapped','physical']:
+                path=source/('equivalence-'+name)/(stage+'.json')
+                assert digest(path)==manifest[path.relative_to(source).as_posix()];track(path)
+                modules=json.loads(path.read_text())['modules']
+                module=next(m for m in modules.values() if not m.get('attributes',{}).get('blackbox') and m.get('cells'))
+                all_cells=Counter(family(c['type']) for c in module['cells'].values())
+                counts[stage]=Counter({k:v for k,v in all_cells.items() if k not in ['BUF','INV','CLKBUF'] and not k.startswith(('FILLCELL','TAPCELL'))})
+            before,after=counts['mapped'],counts['physical']
+            audit[name]=dict(equal=before==after,mapped=before,physical=after,added=after-before,removed=before-after)
+        (ROOT/'logical-resource-inventory.json').write_text(json.dumps(audit,indent=2)+'\n')
+        return
     if spec.get('stitch_selftest'):
         from stitch_probe import execute
         execute(ROOT,run_tcl,timing_technology(),track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib'))
