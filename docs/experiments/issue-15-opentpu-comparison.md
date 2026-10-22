@@ -69,3 +69,7 @@ python project/experiments/opentpu_compare/launch.py <全新尝试名> matched -
 89750对合并06完整分层STA的40846个未标注驱动逐一用本机原生get_fanout（flat、all arcs、pin depth 2）核对：全部可解析且无连接负载，部分未标注驱动0；连接时钟正控制通过。说明这批未标注提示属于空载端，不能抵消实际时序／电容失败。正式选择的新父层仍须重新审计。
 
 08／09两组尝试均在新增联合修复时出现EST-0104，不进入正式DRT；保留全部失败。依据[官方估算器实现](https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/src/est/src/EstimateParasitics.cpp)推断手工ECO回调留下待更新队列，完整estimate本身不清队列；官方master不是当前未知版本二进制的精确来源，故以实际下一轮验证为准。新的joint_repair.py改为真实ODB检查点和独立进程交替：重新全局布线／估算RC，原生setup／hold修复，再独立进程电气增驱和宏输出近端隔离，最后新进程独立审计。保留全部中间检查点，不清空错误队列，不跳过真实检查，外部SDC不变。流程尚待计算节点验证，不能预称收敛。
+
+- 19:27续记：拆分07／89722完成DRT、提取与最终原生PG，真实分层setup −0.002414ns、hold +0.033352ns，仍有3个ACT内部输出驱动的电容违例（最差−13.990626fF），严格失败。宏模型setup／hold −0.0375866／−0.00245082ns，最差电容−14.02309799194336fF。该轮完整执行，没有按耗时取消。
+- 10／11轮独立进程时序优化已成功（合并首轮约+0.151ns），但原生insert_buffer辅助接口在新GRT进程中SIGFPE；增加resizer preamble也未解决。符号化输出不能可靠对应调用栈，不用其推断源码位置。实际二进制再次确认SHA为0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53。
+- 改用原生ODB显式创建BUF_X2和短网，逐项断言原宏输出及BUF A/Z的连接，原有全部负载保留原网，后续合法化和真实路由／电气检查照常执行。独立插入探针89763通过；12轮89764／89765以runner5729f68a32d7d3e1c27ee99e447f9799975be36f验证完整流程，仍UNLIMITED。当前尚不能报告父层合格。
