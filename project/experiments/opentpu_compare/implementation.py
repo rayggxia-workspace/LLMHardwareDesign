@@ -196,13 +196,51 @@ def view_probe(spec):
         actual=Counter(row[-1] for row in rows)
         (ROOT/(name+'-resource.json')).write_text(json.dumps(dict(before=old,after=actual,
             removed=old-actual,added=actual-old),indent=2)+'\n')
+    if spec.get('audit_repair'):
+        source=SOURCES['merged'];repair_source=Path(spec['audit_repair'])
+        manifest={line[66:]:line[:64] for line in (source/'output-files.sha256').read_text().splitlines()}
+        paths=[(result(source)/n).relative_to(source) for n in ('4_cts.odb','4_cts.sdc')]
+        paths += [Path(n) for n in ('boundary.sdc','boundary.sv','elab.v','elab.json')]
+        paths += [p.relative_to(source) for p in (source/'memory-model').rglob('*') if p.is_file()]
+        pairs=[]
+        for relative in paths:
+            a,b=source/relative,repair_source/relative
+            actual=digest(a)
+            assert actual==manifest[relative.as_posix()]==digest(b)
+            track(a);track(b)
+            pairs.append(dict(original=str(a),copy=str(b),sha256=actual))
+        (ROOT/'repair-input-audit.json').write_text(json.dumps(dict(passed=True,files=pairs,
+            note='Post-run independent audit; original repair receipt had empty aggregate input JSON due to Python module aliasing. Original verified-copy checks executed; no old artifact is rewritten.'),indent=2)+'\n')
+    for name,path in spec.get('final_resource_sources',{}).items():
+        source=Path(path);r=result(source)
+        run_tcl(name+'-final','read_db {'+str(track(r/'6_final.odb'))+'}\nset f [open {'+str(ROOT/(name+'-final.tsv'))+'} w]\n'
+            'foreach i [[ord::get_db_block] getInsts] {puts $f "[$i getName]\\t[[$i getMaster] getName]"}\nclose $f\n')
+        expected=json.loads((source/'resource-audit.json').read_text())['starting_cells']
+        actual=Counter(line.split()[-1] for line in (ROOT/(name+'-final.tsv')).read_text().splitlines())
+        def architectural(counts):
+            out=Counter()
+            for cell,count in counts.items():
+                if cell.startswith(('fakeram','DFF','SDFF','DLH','DLL','LATCH')): out[re.sub(r'_X\d+$','',cell)]+=count
+            return out
+        before,after=architectural(expected),architectural(actual)
+        (ROOT/(name+'-final-resource.json')).write_text(json.dumps(dict(passed=before==after,
+            original_architectural_cells=before,final_architectural_cells=after,
+            final_all_cells=actual,qualification='Memory and state elements retained; drive variants normalized, combinational and physical repair costs separate'),indent=2)+'\n')
 
 def top(spec):
     import math
+    from quality import evaluate
     sources={k:Path(v) for k,v in spec['sources'].items()}
     assert set(sources)=={'act','mxu','merged'}
     for source in sources.values():
         assert (source/'exit-code.txt').read_text().strip()=='0', 'Input flow not completed'
+        meta=json.loads((source/'experiment.json').read_text())
+        nick=Path(meta['result_relative']).parts[-2]
+        logs=source/'flow/logs/nangate45'/nick/'base'
+        reports=source/'flow/reports/nangate45'/nick/'base'
+        row=dict(exit_code='0',metrics={n:json.loads((logs/n).read_text()) for n in ['6_report.json','5_2_route.json']},
+                 final_report=(reports/'6_finish.rpt').read_text())
+        assert evaluate(row)['passed'], 'Input block fails strict extracted budget: '+str(source)
         # Freeze and verify only selected new experiment artifacts on this compute node.
         expected={line[2:]:h for h,line in (r.split(None,1) for r in (source/'output.sha256').read_text().splitlines())}
         for relative in ['experiment.json','elab.json','resource-audit.json']:
@@ -214,6 +252,8 @@ def top(spec):
         meta=json.loads(track(source/'experiment.json').read_text());name=meta['top'];r=result(source)
         view=ROOT/'views'/kind;view.mkdir()
         for suffix,old in [('.lef',r/(name+'.detailed.lef')),('.lib',r/(name+'_typ.lib'))]:
+            expected={line[2:]:h for h,line in (r.split(None,1) for r in (source/'output.sha256').read_text().splitlines())}
+            assert digest(old)==expected[old.relative_to(source).as_posix()]
             track(old);shutil.copy2(old,view/(name+suffix))
         text=(view/(name+'.lef')).read_text()
         size=re.search(r'\bSIZE\s+([\d.]+)\s+BY\s+([\d.]+)',text)
@@ -250,6 +290,22 @@ def top(spec):
     setup='set llhd_macro_instances {'+' '.join(instances)+'}\nset ::env(LLHD_ATTEMPT) {'+str(ROOT)+'}\n'
     setup+='source {'+str(ROOT/'runner/filter_pg.tcl')+'}\nsource {'+str(ROOT/'runner/check_pg.tcl')+'}\n'
     (ROOT/'post-pdn.tcl').write_text(setup)
+    # The external 1662 bit pins must have identical coordinates in both
+    # parents. Apply after automatic placement, then explicitly save its ODB.
+    pinlines=[];pin_contract={}
+    names=[n if len(p['bits'])==1 else n+'['+str(i)+']' for n,p in ext.items() for i in range(len(p['bits']))]
+    per_side=math.ceil(len(names)/4)
+    for index,name in enumerate(names):
+        edge=index%4;slot=index//4
+        position=round((10+(side-20)*(slot+1)/(per_side+1))/0.14)*0.14
+        x,y=[(0,position),(side,position),(position,0),(position,side)][edge]
+        layer='metal3' if edge<2 else 'metal2'
+        pinlines.append('place_pin -pin_name {'+name+'} -layer '+layer+' -location {'+str(x)+' '+str(y)+'} -force_to_die_boundary')
+        pin_contract[name]=dict(layer=layer,xy=[x,y])
+    pinlines+=['orfs_write_db $::env(RESULTS_DIR)/3_2_place_iop.odb',
+               'write_pin_placement $::env(RESULTS_DIR)/3_2_place_iop.tcl']
+    (ROOT/'fixed-pins.tcl').write_text('\n'.join(pinlines)+'\n')
+    (ROOT/'external-pin-contract.json').write_text(json.dumps(pin_contract,indent=2)+'\n')
     lefpaths=[str(Path(views[k]['view'])/(views[k]['name']+'.lef')) for k in selected]
     libpaths=[str(Path(views[k]['view'])/(views[k]['name']+'.lib')) for k in selected]
     nickname='opentpu_top_'+kind
@@ -260,6 +316,7 @@ def top(spec):
         'export DIE_AREA = 0 0 '+str(side)+' '+str(side)+'\nexport CORE_AREA = 10 10 '+str(side-10)+' '+str(side-10)+'\n'
         'export MACRO_PLACEMENT_TCL = '+str(ROOT/'placement.tcl')+'\nexport PDN_TCL = '+str(ROOT/'pdn.tcl')+'\n'
         'export POST_PDN_TCL = '+str(ROOT/'post-pdn.tcl')+'\nexport PLACE_DENSITY = 0.30\nexport TNS_END_PERCENT = 100\n'
+        'export POST_IO_PLACEMENT_TCL = '+str(ROOT/'fixed-pins.tcl')+'\n'
         'export CAP_MARGIN = 20\nexport LEC_CHECK = 0\nexport SYNTH_HIERARCHICAL = 0\n')
     (ROOT/'config.mk').write_text(config)
     (ROOT/'experiment.json').write_text(json.dumps(dict(top=topname,case=nickname,kind=kind,result_relative=relative,
@@ -273,3 +330,32 @@ def top(spec):
     run_tcl('final-pg','read_db {'+str(ROOT/relative/'6_final.odb')+'}\n'+
         'set llhd_macro_instances {'+' '.join(instances)+'}\nset ::env(LLHD_ATTEMPT) {'+str(ROOT/'final-pg')+'}\n'
         'set ::env(LLHD_PG_FILTER_AUDIT) 2\nsource {'+str(ROOT/'runner/filter_pg.tcl')+'}\nsource {'+str(ROOT/'runner/check_pg.tcl')+'}\n')
+    run_tcl('final-inventory','read_db {'+str(ROOT/relative/'6_final.odb')+'}\n'
+        'set f [open {'+str(ROOT/'final-pins.tsv')+'} w]\n'
+        'foreach term [[ord::get_db_block] getBTerms] {foreach pin [$term getBPins] {foreach box [$pin getBoxes] {'
+        'puts $f "[$term getName]\\t[[$box getTechLayer] getName]\\t[$box xMin]\\t[$box yMin]\\t[$box xMax]\\t[$box yMax]"}}}\nclose $f\n')
+    full_sta(ROOT,sources,kind)
+
+def full_sta(parent,sources,kind):
+    """Stitch real block SPEF at hierarchical pins, without boundary IO delays."""
+    selected=['act','mxu'] if kind=='split' else ['merged']
+    meta=json.loads((parent/'experiment.json').read_text())
+    r=result(parent)
+    libs={p.name:p for n in ('act','mxu') for p in (SOURCES[n]/'memory-model/macros').glob('*.lib')}
+    text='read_liberty {'+str(track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib'))+'}\n'
+    for path in libs.values(): text+='read_liberty {'+str(track(path))+'}\n'
+    for n in selected: text+='read_verilog {'+str(track(result(sources[n])/'6_final.v'))+'}\n'
+    text+='read_verilog {'+str(track(r/'6_final.v'))+'}\nlink_design '+meta['top']+'\n'
+    text+='read_sdc {'+str(track(parent/'boundary.sdc'))+'}\n'
+    text+='read_spef {'+str(track(r/'6_final.spef'))+'}\n'
+    for n in selected:
+        text+='read_spef -path u_'+n+' {'+str(track(result(sources[n])/'6_final.spef'))+'}\n'
+    text+='set_propagated_clock [all_clocks]\nreport_parasitic_annotation -report_unannotated\n'
+    text+='report_worst_slack -max -digits 6\nreport_worst_slack -min -digits 6\nreport_tns -digits 6\n'
+    text+='report_clock_min_period -include_port_paths\n'
+    text+='report_checks -path_delay max -group_path_count 10 -digits 6 -format full_clock_expanded\n'
+    text+='report_checks -path_delay min -group_path_count 10 -digits 6 -format full_clock_expanded\n'
+    text+='report_check_types -max_capacitance -max_count 20 -digits 6 -no_line_splits\n'
+    text+='report_check_types -violators -max_slew -max_capacitance -max_fanout -max_delay -min_delay -recovery -removal -min_period -digits 6 -no_line_splits\n'
+    text+='check_setup -verbose\n'
+    run_tcl('full-hierarchy-sta',text)

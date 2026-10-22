@@ -1,5 +1,15 @@
 # YUZE-LU 的进度
 
+## 2026-10-22 ACT/MXU 同资源物理对照
+
+- 更新时间：2026-10-22，中国标准时间UTC+08:00；负责人／账号YUZE-LU。
+- [Issue #15](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15)，分支 `task/15-opentpu-compare`，依赖PR10基线2b76f69，独立工作树，未修改已有PR8/PR10工作树与89448作业。
+- 已完成：查实旧margin30/40由dont_touch冲突失败；新修复已继续路由。共同169109映射单元逐型号核对；发现合并导入又剪去9DFF等135单元，关闭优化后实际库存一致。新ACT块已严格通过，面积35985.5µm²、setup+1.25790ns、hold+0.0326128ns、最差电容余量+2.540645fF、DRC/天线0。
+- 正在执行：89642 MXU，89647固定资源合并块，89631旧合并定向修复；89640仅保留剪枝诊断。均实读UNLIMITED。两组正式顶层布线尚待块内合格及视图准备，PR待创建。
+- 下一步：读取冻结终态，按真实违例迭代，运行共同die和逐bit引脚的两宏／一宏父层布线；拼接真实网表与分层SPEF检查完整路径，汇总面积／时序／线长／通孔／CTS与缓冲开销。
+- 接入：登记PR5沿用pending证据；本仓库无board.json、已知read:project权限缺项，看板unverified／同步pending，处理管理员待指定。审查人／优先级待指定，不自合并或标done。
+- 代码与实际作业runner各自按回执绑定；[实验记录](../../docs/experiments/issue-15-opentpu-comparison.md)与 `project/experiments/opentpu_compare/results/` 保留失败和通过证据。
+
 - 更新时间：2026-10-21（中国标准时间，UTC+08:00）
 - 当前任务：[Issue #3：同步两份布线报告并补入 llaccel 引擎分析](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/3)。负责人 YUZE-LU，优先级待指定。
 - 已完成：同步最新总报告、线长报告及其引用资源；总报告增加 llaccel 三个引擎的中文分析与 9 张图。保持图片直接展示、长表可展开；不创建备份或多余首页。更新来源边界和包说明。

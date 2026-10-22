@@ -41,7 +41,7 @@ def tcl_read(source):
 def run_tcl(name,text):
     path=ROOT/(name+'.tcl'); path.write_text(text)
     with (ROOT/(name+'.log')).open('w') as f:
-        subprocess.run(['openroad','-exit',str(path)],stdout=f,stderr=subprocess.STDOUT,check=True)
+        subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(path)],stdout=f,stderr=subprocess.STDOUT,check=True)
 
 def probe():
     for name,source in SOURCES.items():

@@ -1,6 +1,6 @@
 # 架构与运行
 
-本仓库目前是研究资料和参考结果仓库，尚未建立本项目的业务代码、运行脚本或确定实现工具链。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md)中标注的候选架构不能当作已实现硬件。
+本仓库含研究资料、参考结果和实验性分层物理实现代码。正式预制底座和制造工具链尚未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md)中标注的候选架构不能当作已实现硬件。
 
 ## 研究系统边界
 
@@ -17,7 +17,7 @@
 | `progress/<github-handle>/`、`work/<github-handle>/<issue-number>/` | 个人进度和任务辅助资料，不作为正式研究成果的默认目录 |
 | `.github/`、`config/`、`scripts/` | 协作模板、状态配置和管理结构检查 |
 
-未来的正式代码目录待技术栈确定后在关联 Issue 中定义。不要为了填充目录创建空实现，也不要把全部业务代码放进个人 `work/`。
+实验代码位于 `project/experiments/`；Issue #15 的 `opentpu_compare/` 使用原集群冻结源、现有ORFS容器和Slurm，不安装新工具。原始物理数据库留在授权集群，仓库保留脚本、提交身份、轻量终态及SHA索引。它是研究工程流程，不是冻结底座实现。
 
 ## 本地阅读与验证
 
@@ -25,7 +25,7 @@
 - 管理结构检查：`python scripts/check_project.py`（Python 3.9+，无第三方包）。
 - 本次用户授权的报告更新检查：`python work/YUZE-LU/3/sync_reports.py`（Python 3.9+，需要 `beautifulsoup4`）；只读核验两份报告的资源、锚点、清单及图片展示状态。该任务脚本不是例行维护入口；再次同步需用户明确要求，并传入 `--sync --source <源报告目录>`。
 - 初次接入的来源记录见 `docs/DATA_PROVENANCE.md`；后续例行检查不覆盖 `ref-project/`。
-- 本项目业务构建、仿真、物理实现和复现实验命令：**尚未配置**。结果包不含上述运行所需的全部输入与工具，不能以结构检查代替业务验证。
+- openTPU实际对照：先阅读[实验定义](experiments/issue-15-opentpu-comparison.md)，运行 `python project/experiments/opentpu_compare/collect.py` 获取已有作业状态，`python project/experiments/opentpu_compare/quality.py` 核对严格终态门槛。启动新实验用 `launch.py`，必须使用全新尝试名，先提交runner。所有新作业 `--time=0`，并实际核对UNLIMITED。完整命令见实验定义；仅本地仓库不足以重跑，仍依赖授权集群的冻结输入与容器。
 
 ## 数据与外部依赖
 

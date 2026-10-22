@@ -1,0 +1,38 @@
+"""Strict extracted-result gates; Slurm completion alone is never acceptance."""
+import math
+import re
+
+def nonnegative(x):
+    return isinstance(x,(int,float)) and math.isfinite(x) and x>=0
+
+def evaluate(row):
+    f=row.get('metrics',{}).get('6_report.json',{})
+    d=row.get('metrics',{}).get('5_2_route.json',{})
+    report=row.get('final_report','')
+    match=re.search(r'finish max_capacitance_check_slack\s*\n-+\s*\n([^\n]+)',report)
+    cap=float(match[1]) if match else None
+    gates={'pipeline_zero':row.get('exit_code')=='0',
+        'drc_zero':d.get('detailedroute__route__drc_errors')==0,
+        'antenna_nets_zero':d.get('detailedroute__antenna__violating__nets')==0,
+        'antenna_pins_zero':d.get('detailedroute__antenna__violating__pins')==0,
+        'worst_cap_margin_nonnegative':nonnegative(cap)}
+    for typ in ['setup','hold']:
+        gates[typ+'_slack_nonnegative']=nonnegative(f.get('finish__timing__'+typ+'__ws'))
+        gates[typ+'_tns_zero']=f.get('finish__timing__'+typ+'__tns')==0
+    for typ in ['cap','slew','fanout']:
+        gates[typ+'_count_zero']=f.get('finish__timing__drv__max_'+typ)==0
+        gates[typ+'_margin_nonnegative']=nonnegative(f.get('finish__timing__drv__max_'+typ+'_limit'))
+    return dict(passed=all(gates.values()),gates=gates,worst_cap_margin_fF=cap,
+        area_um2=f.get('finish__design__instance__area'),
+        die_area_um2=f.get('finish__design__die__area'),
+        setup_ns=f.get('finish__timing__setup__ws'),hold_ns=f.get('finish__timing__hold__ws'),
+        signal_wire_um=d.get('detailedroute__route__wirelength'),signal_vias=d.get('detailedroute__route__vias'))
+
+if __name__=='__main__':
+    import json
+    from pathlib import Path
+    root=Path(__file__).resolve().parent/'results'
+    data=json.loads((root/'latest.json').read_text())
+    output={k:evaluate(v) for k,v in data['attempts'].items() if v.get('metrics',{}).get('6_report.json')}
+    (root/'quality-latest.json').write_text(json.dumps(output,indent=2)+'\n')
+    for k,v in output.items(): print(k,json.dumps(v))
