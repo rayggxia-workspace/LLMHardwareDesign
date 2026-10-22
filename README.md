@@ -20,6 +20,8 @@
 
 [Issue16真实LEF几何库存](docs/experiments/issue-16-macro-endpoints.md)冻结ACT20/MXU20/GEMM20三份普通LEF及SHA，完整导出6791个PIN、6956个PIN矩形和30个OBS矩形，并保存无损原字节及离线重放工具；PR18待审查。几何可读仍不代表工艺访问或硬宏资格已合格。
 
+[Issue19三视图接口记录](docs/experiments/issue-19-interface-contract.md)进一步把3032个信号位与原有685bit连接合同关联，保留两处Liberty语法缺项和四处PG方向差异；原始输入、逐bit表、独立审计及离线重放随[PR20](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/20)交付待审查。旧wave206证据不推广到新M9宏。
+
 远程计算资源与目录权限见[远程服务器使用规则](docs/REMOTE_RULES.md)，使用服务器前请先阅读。
 
 任务、负责人和验收条件以本仓库 [Issues](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues) 为准。每项任务使用独立分支和 PR；开始工作前阅读 [AGENTS.md](AGENTS.md) 与[协作说明](docs/COLLABORATION.md)。管理结构检查命令为：
