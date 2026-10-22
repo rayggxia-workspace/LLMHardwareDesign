@@ -77,6 +77,10 @@ assert rows['top_split']['record']['external_pin_contract']==rows['top_merged'][
 split_pins=rows['top_split']['record']['actual_signal_pin_geometry']
 merged_pins=rows['top_merged']['record']['actual_signal_pin_geometry']
 assert split_pins['all_contract_names_present'] and merged_pins['all_contract_names_present']
+for kind,pins in [('top_split',split_pins),('top_merged',merged_pins)]:
+    assert pins['rows']==1662, 'Expected one actual physical box for each of 1662 external bits'
+    stage=rows[kind]['record']['pin-placement-quality.json']
+    assert stage['passed'] and pins['canonical_sha256']==stage['canonical_sha256'], 'Routing moved common external pins'
 assert split_pins['canonical_sha256']==merged_pins['canonical_sha256'], 'Actual pin geometry differs'
 inputs=dict(observed_utc=snapshot['observed_utc'],attempts={n:data[n] for n in list(selection.values())+[definition['functional_proof'],definition['parent_functional_proof']]})
 input_path=HERE/'results/comparison-inputs.json'
