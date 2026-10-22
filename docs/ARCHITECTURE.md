@@ -1,6 +1,6 @@
 # 架构与运行
 
-本仓库目前是研究资料和参考结果仓库，尚未建立本项目的业务代码、运行脚本或确定实现工具链。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md)中标注的候选架构不能当作已实现硬件。
+本仓库保存研究资料、参考结果和本项目的初步实验工具。本分支的冻结连接模型位于 `project/experiments/frozen_routing/`；其他成员的物理Block工程见Issue #7关联PR #8/#10，未合并文件须从对应任务分支读取。最终工艺、硬件库与系统实现工具链仍未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md)中的候选架构不等于已实现硬件。
 
 ## 研究系统边界
 
@@ -16,8 +16,9 @@
 | `ref-project/llm-routing/` | 参考布线结果；Agent 不主动或例行维护，用户更新可按要求提交 |
 | `progress/<github-handle>/`、`work/<github-handle>/<issue-number>/` | 个人进度和任务辅助资料，不作为正式研究成果的默认目录 |
 | `.github/`、`config/`、`scripts/` | 协作模板、状态配置和管理结构检查 |
+| `project/experiments/frozen_routing/` | 本项目抽象冻结连接模型、路由基线、独立验证、配置和轻量结果 |
 
-未来的正式代码目录待技术栈确定后在关联 Issue 中定义。不要为了填充目录创建空实现，也不要把全部业务代码放进个人 `work/`。
+Issue #11将本轮Python研究工具正式放入 `project/experiments/frozen_routing/`。未来硬件／映射与物理实现目录仍由相关Issue明确，不将全部业务代码放个人 `work/`。
 
 ## 本地阅读与验证
 
@@ -25,7 +26,11 @@
 - 管理结构检查：`python scripts/check_project.py`（Python 3.9+，无第三方包）。
 - 本次用户授权的报告更新检查：`python work/YUZE-LU/3/sync_reports.py`（Python 3.9+，需要 `beautifulsoup4`）；只读核验两份报告的资源、锚点、清单及图片展示状态。该任务脚本不是例行维护入口；再次同步需用户明确要求，并传入 `--sync --source <源报告目录>`。
 - 初次接入的来源记录见 `docs/DATA_PROVENANCE.md`；后续例行检查不覆盖 `ref-project/`。
-- 本项目业务构建、仿真、物理实现和复现实验命令：**尚未配置**。结果包不含上述运行所需的全部输入与工具，不能以结构检查代替业务验证。
+- 本机业务检查：`.\.venv\Scripts\python.exe -m unittest discover -s project/experiments/frozen_routing -p "test_*.py" -v`。
+- 冻结源码后的本机实验：`.\.venv\Scripts\python.exe project/experiments/frozen_routing/run.py --out project/experiments/frozen_routing/local_runs/<新尝试名>`。默认拒绝dirty source和已存在输出目录。
+- 证据核对及确定性重放：`.\.venv\Scripts\python.exe project/experiments/frozen_routing/verify.py <运行目录> --replay`；图表：`.\.venv\Scripts\python.exe project/experiments/frozen_routing/report.py <运行目录> --out <新图表目录>`。
+- 现有D盘Python创建项目内venv，复用已安装包的环境事实写manifest；需要NumPy，绘图需要Matplotlib。核心连接算法只用标准库。
+- 本实验没有RTL／周期仿真或物理PPA校准。本机尚无经验证可用的EDA工具链；Issue7的集群实验与限制以对应PR/记录为准，不能由当前结构或软件测试代替验收。
 
 ## 数据与外部依赖
 
