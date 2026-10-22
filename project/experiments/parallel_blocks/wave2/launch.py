@@ -13,7 +13,7 @@ HOST = "yuzelu@10.129.166.172"
 IMAGE = "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif"
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--attempt", required=True)
-parser.add_argument("--profile", choices=("full", "physical", "gemm-receipt", "top-contract", "abc-probe", "abc-probe-short", "retired-evidence", "act-audit", "full-physical-audit", "targeted-repair", "merged-repair", "model-audit"), default="full")
+parser.add_argument("--profile", choices=("full", "physical", "gemm-receipt", "top-contract", "abc-probe", "abc-probe-short", "retired-evidence", "act-audit", "full-physical-audit", "targeted-repair", "merged-repair", "merged-margin-sweep", "model-audit"), default="full")
 parser.add_argument('--dependency', help='Explicit one-shot Slurm dependency, e.g. afterany:89499')
 args = parser.parse_args()
 assert re.fullmatch(r"parallel-blocks-wave2-[0-9]+", args.attempt)
@@ -59,7 +59,7 @@ if args.profile in ('act-audit','full-physical-audit'):
     plan={'C': {'node':'node9','cores':1,'tasks':[task(name,'physical-audit',1)]}}
 if args.profile == 'model-audit':
     plan={'C': {'node':'node9','cores':1,'tasks':[task('cap-diagnostic','cap-diagnostic',1)]}}
-if args.profile in ('targeted-repair', 'merged-repair'):
+if args.profile in ('targeted-repair', 'merged-repair', 'merged-margin-sweep'):
     act = task('act-cap10-repair', 'route-repair', 16, margin=10)
     act.update(source_task='act-cap10', replacements=[['_5406_', 'MUX2_X1', 'MUX2_X2']])
     merged = task('merged-cap20-repair', 'route-repair', 16, case='opentpu-act-mxu', margin=20)
@@ -72,6 +72,12 @@ if args.profile in ('targeted-repair', 'merged-repair'):
           'C': {'node':'node9','cores':1,'tasks':[task('cap-diagnostic','cap-diagnostic',1)]}}
     if args.profile == 'merged-repair':
         plan={'B': {'node':'node8','cores':16,'tasks':[merged]}}
+    if args.profile == 'merged-margin-sweep':
+        variants = []
+        for margin in (30, 40):
+            variant = dict(merged, name='merged-cap'+str(margin)+'-repair', cap_margin=margin)
+            variants.append(variant)
+        plan={'B': {'node':'node8','cores':32,'tasks':variants}}
 for stream in plan.values():
     assert sum(t["cores"] for t in stream["tasks"]) <= stream["cores"]
 receipt = dict(attempt=args.attempt, remote=remote, host=HOST, image=IMAGE, plan=plan,
@@ -92,6 +98,7 @@ receipt = dict(attempt=args.attempt, remote=remote, host=HOST, image=IMAGE, plan
                    'full-physical-audit':'Independent seven-case hashes and strict worst-margin budget audit',
                    'targeted-repair':'Read-only verified wave2-06 CTS checkpoints, explicit equivalent-cell drive upgrades, new route/extraction and strict gates; no source or historical output changes',
                    'merged-repair':'Only merged-block CTS replay with its register driver resolved by output net; preserve the first guarded failure and other running tasks',
+                   'merged-margin-sweep':'Matched merged-block CTS replay at route CAP_MARGIN 30/40 with the same four drive upgrades as attempt15; two exclusive 16-core steps on one 32-core allocation; unchanged source RTL/clock/IO budget',
                    'model-audit':'Read-only actual executable, source views and replacement-cell Liberty logical signature checks; no new PNR'}[args.profile])
 ssh("test ! -e " + shlex.quote(remote) + " && mkdir -p " + shlex.quote(remote + "/runner/wave2"))
 for directory, paths in ((remote + "/runner", list(BASE.glob("*.py")) + list(BASE.glob("*.sh"))),

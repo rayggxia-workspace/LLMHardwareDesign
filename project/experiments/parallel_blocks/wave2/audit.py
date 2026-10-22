@@ -1,6 +1,7 @@
 """One-shot audit after all three streams, preserving negative quality results."""
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -41,6 +42,15 @@ for name,item in record['tasks'].items():
         gates.update(electrical_gates(q, item['metrics'].get('6_report.json',{}),
             item['metrics'].get('5_2_route.json',{}), report_text))
         gates['manifests_verified']=all(a.get('status')=='pass' for a in audits.values())
+        if item['spec']['kind'] == 'route-repair':
+            margin=item['spec']['cap_margin']
+            log=base/'flow/logs/nangate45'/nickname/'base/5_1_grt.log'
+            log_text=log.read_text() if log.is_file() else ''
+            gates['requested_route_cap_margin_observed']=bool(re.search(
+                r'^repair_design -verbose -cap_margin '+str(margin)+r'\s*$',log_text,re.M))
+            config=base/'config.mk'
+            gates['requested_config_cap_margin_observed']=config.is_file() and bool(re.search(
+                r'^export CAP_MARGIN\s*=\s*'+str(margin)+r'\s*$',config.read_text(),re.M))
         item['observed_tool_gates']=gates
         item['observed_tool_gates_pass']=all(gates.values())
     else:

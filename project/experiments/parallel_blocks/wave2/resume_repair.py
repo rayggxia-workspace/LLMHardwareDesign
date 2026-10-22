@@ -6,6 +6,7 @@ from pathlib import Path
 import shutil
 import subprocess
 from repair_hook import build_hook
+from resume_config import configure_resume
 
 root = Path.cwd()
 spec = json.loads(Path('task.json').read_text())
@@ -57,11 +58,13 @@ copy_verified('experiment.json')
 script = build_hook(spec['replacements'])
 hook = root/'targeted-repair.tcl'
 hook.write_text(script)
-config = (root/'config.mk').read_text().replace(str(source), str(root))
+config, source_margin = configure_resume((root/'config.mk').read_text(), source, root, spec['cap_margin'])
 config += 'export PRE_GLOBAL_ROUTE_TCL = '+str(hook)+'\n'
 (root/'config.mk').write_text(config)
 meta = json.loads((root/'experiment.json').read_text())
-meta.update(repair=dict(source_attempt=str(source), checkpoint='4_cts.odb', replacements=spec['replacements'],
+assert meta['cap_margin'] == source_margin
+meta.update(cap_margin=spec['cap_margin'], repair=dict(source_attempt=str(source), checkpoint='4_cts.odb', replacements=spec['replacements'],
+    source_cap_margin=source_margin, requested_route_cap_margin=spec['cap_margin'],
     placement_and_cts_reused=True, synthesis_repeated=False, changes='Equivalent port-list cell drive variants; no RTL, IO budget, register or cycle changes'),
     scope='Targeted CTS-checkpoint physical reroute; no full formal equivalence, hard macro qualification or signoff')
 (root/'experiment.json').write_text(json.dumps(meta,indent=2)+'\n')
