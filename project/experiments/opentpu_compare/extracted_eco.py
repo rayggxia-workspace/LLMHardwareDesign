@@ -109,7 +109,16 @@ def execute(spec):
         receiver_guardband=bool(spec.get('extracted_receiver_guardband')),
         repeaters=spec.get('extracted_repeaters',[]),replacements=spec.get('extracted_replacements',[])),indent=2)+'\n')
     if spec.get('extracted_inspect_only'):return
-    body='remove_fillers\nset llhd_drive_root {'+str(ROOT)+'}\nset llhd_drive_phase extracted\n'
+    reuse=bool(spec.get('extracted_preserve_unchanged_routes'))
+    if reuse:
+        assert not inputs and not spec.get('extracted_repeaters'), 'Route reuse pilot supports drive-only changes'
+        meta['extracted_eco']['approach']='Drive-only ECO; clear nets incident to changed/moved instances, retain other incoming regular wires for native DRT; re-extract and require every original final gate'
+        meta['extracted_eco']['preserve_unchanged_routes_initially']=True
+        (ROOT/'experiment.json').write_text(json.dumps(meta,indent=2)+'\n')
+    body='remove_fillers\n'
+    if reuse:
+        body+='source {'+str(track(ROOT/'runner/route_reuse.tcl'))+'}\nset llhd_initial_physical [llhd_route_reuse_snapshot]\n'
+    body+='set llhd_drive_root {'+str(ROOT)+'}\nset llhd_drive_phase extracted\n'
     body+='set llhd_drive_rounds 1\nset llhd_drive_use_extracted_rc 1\nset llhd_drive_checkpoint_only 1\nset llhd_enable_macro_guards 1\n'
     if spec.get('extracted_drive_guardband'):
         # Select from the actual extracted report, including MET pins with
@@ -131,18 +140,34 @@ def execute(spec):
         body+='if {![replace_cell {'+name+'} {'+after+'}]} {error {Extracted driver replacement failed}}\n'
         body+='puts $audit {'+name+' '+before+' '+after+'}\n'
     body+='close $audit\nglobal_connect\ndetailed_placement_helper\ncheck_placement -verbose\n'
-    # Clear only regular signal dbWire, keeping every special PG shape. No
-    # stale extracted RC is analyzed or accepted after this mutation.
-    body+='set cleared 0\nforeach net [[ord::get_db_block] getNets] {if {[$net getSigType] in {POWER GROUND}} {continue};set wire [$net getWire];if {$wire ne "NULL"} {odb::dbWire_destroy $wire;incr cleared}}\n'
-    body+='puts "CLEARED_SIGNAL_WIRES $cleared"\nwrite_db {'+str(results/'eco-modified.odb')+'}\nwrite_sdc -no_timestamp {'+str(results/'eco-modified.sdc')+'}\n'
+    # Keep every special PG shape. The optional pilot retains regular wires
+    # away from changed endpoints; default behavior clears all regular signals.
+    # No stale extracted RC is analyzed or accepted after this mutation.
+    if reuse:
+        body+='llhd_route_reuse_clear_changed $llhd_initial_physical {'+str(ROOT)+'}\n'
+    else:
+        body+='set cleared 0\nforeach net [[ord::get_db_block] getNets] {if {[$net getSigType] in {POWER GROUND}} {continue};set wire [$net getWire];if {$wire ne "NULL"} {odb::dbWire_destroy $wire;incr cleared}}\n'
+        body+='puts "CLEARED_SIGNAL_WIRES $cleared"\n'
+    body+='write_db {'+str(results/'eco-modified.odb')+'}\nwrite_sdc -no_timestamp {'+str(results/'eco-modified.sdc')+'}\n'
     run('extracted-modify',body)
     script='source $::env(SCRIPTS_DIR)/load.tcl\nload_design eco-modified.odb eco-modified.sdc\n'
     script+='set_propagated_clock [all_clocks]\nset_routing_layers -signal metal2-metal10 -clock metal4-metal10\n'
     script+='set_global_routing_random -seed 0\npin_access\nglobal_route -congestion_iterations 30\nestimate_parasitics -global_routing\n'
     script+='report_check_types -max_capacitance -max_slew -max_count 1000 -digits 9 -no_line_splits > {'+str(ROOT/'extracted-eco-grt-estimates.rpt')+'}\n'
+    if reuse:
+        script+='set retained 0\nforeach net [[ord::get_db_block] getNets] {if {[$net getSigType] ni {POWER GROUND} && [$net getWire] ne "NULL"} {incr retained}}\n'
+        script+='set f [open {'+str(ROOT/'route-reuse-drt-input.txt')+'} w]\nputs $f $retained\nclose $f\n'
     script+='write_guides $::env(RESULTS_DIR)/route.guide\nwrite_db $::env(RESULTS_DIR)/5_1_grt.odb\nwrite_sdc -no_timestamp $::env(RESULTS_DIR)/5_1_grt.sdc\n'
     path=ROOT/'extracted-reroute.tcl';path.write_text(script)
     with (ROOT/'extracted-reroute.log').open('w') as f:
         subprocess.run(command+['RUN_SCRIPT='+str(path),'RUN_LOG_NAME_STEM=extracted-reroute','run'],stdout=f,stderr=subprocess.STDOUT,check=True)
+    if reuse:
+        header,values=(ROOT/'route-reuse-summary.tsv').read_text().splitlines()
+        audit=dict(zip(header.split('\t'),map(int,values.split('\t'))))
+        audit['drt_input_regular_wire_count']=int((ROOT/'route-reuse-drt-input.txt').read_text())
+        assert audit['drt_input_regular_wire_count']==audit['retained_incoming_regular_wires']>0
+        audit['source']=str(source)
+        audit['scope']='Drive-only ECO with unchanged signal connectivity. Clear every regular net incident to a changed/moved instance; retain other incoming wires. Native DRT can repair any net. Final wire preservation is not assumed; all original qualification gates still apply.'
+        (ROOT/'route-reuse.json').write_text(json.dumps(audit,indent=2)+'\n')
     make_stages(ROOT/'config.mk',spec,['do-5_2_route','do-5_3_fillcell','do-5_route','do-5_route.sdc','do-finish'])
     qualify_parent_final()

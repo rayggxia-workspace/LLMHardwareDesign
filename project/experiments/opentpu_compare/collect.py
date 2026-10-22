@@ -43,7 +43,7 @@ for p in sorted(base.iterdir()):
  for f in p.glob('*-resource.json'): row[f.name]=read_json(f)
  row['pg_access']={str(f.relative_to(p)):read_json(f) for directory in [p,p/'final-pg']
                    for f in directory.glob('*-pg-access-selection.json')}
- for name in ['repair-input-audit.json','structural-equivalence.json','logical-resource-inventory.json','pin-checkpoint-diagnostics.json','stitch-validation.json','annotation-validation.json','joint-repair.json','grt-consistency.json','binary-observation.json','extracted-source-validation.json','extracted-eco-plan.json','sizing-probes.json','full-hierarchy-sta.log']:
+ for name in ['repair-input-audit.json','structural-equivalence.json','logical-resource-inventory.json','pin-checkpoint-diagnostics.json','stitch-validation.json','annotation-validation.json','joint-repair.json','grt-consistency.json','binary-observation.json','extracted-source-validation.json','extracted-eco-plan.json','sizing-probes.json','route-reuse.json','full-hierarchy-sta.log']:
   f=p/name
   if f.exists():
    if f.suffix=='.json': row[name]=read_json(f)
@@ -54,7 +54,7 @@ for p in sorted(base.iterdir()):
     row['hierarchy_annotation_summary']=[line for line in text.splitlines() if any(s in line.lower() for s in ['annotated','warning','error','unconstrained','no clock'])][:60]
  row['sizing_probe_reports']={f.name:f.read_text() for f in p.glob('sizing-probe-*.rpt')}
  row['physical_repair_actions']={}
- for f in sorted(set(p.glob('targeted-drive*.tsv'))|set(p.glob('macro-output-guards*.tsv'))|set(p.glob('joint-repair.tsv'))|set(p.glob('extracted-eco-actions.tsv'))):
+ for f in sorted(set(p.glob('targeted-drive*.tsv'))|set(p.glob('macro-output-guards*.tsv'))|set(p.glob('joint-repair.tsv'))|set(p.glob('extracted-eco-actions.tsv'))|set(p.glob('route-reuse-*.tsv'))):
   name=f.name
   if f.exists():
    lines=f.read_text().splitlines()
@@ -91,9 +91,11 @@ for p in sorted(base.iterdir()):
   selected+=[q for directory in [p,p/'final-pg'] for q in directory.glob('*-pg-access-selection.json')]
   selected+=list(p.glob('*-unannotated-connectivity.tsv'))
   selected+=[p/'sizing-probes.json'] if (p/'sizing-probes.json').exists() else []
+  selected+=[p/'route-reuse.json'] if (p/'route-reuse.json').exists() else []
+  selected+=[p/'route-reuse-drt-input.txt'] if (p/'route-reuse-drt-input.txt').exists() else []
   selected+=list(p.glob('sizing-probe-*.rpt'))
   selected+=list((p/'flow/logs').rglob('6_report.json'))+list((p/'flow/logs').rglob('5_2_route.json'))+list((p/'flow/logs').rglob('5_2_route.log'))+list((p/'flow/reports').rglob('6_finish.rpt'))
-  selected+=sorted(set(p.glob('targeted-drive*.tsv'))|set(p.glob('macro-output-guards*.tsv'))|set(p.glob('joint-repair.tsv'))|set(p.glob('extracted-eco-actions.tsv')))
+  selected+=sorted(set(p.glob('targeted-drive*.tsv'))|set(p.glob('macro-output-guards*.tsv'))|set(p.glob('joint-repair.tsv'))|set(p.glob('extracted-eco-actions.tsv'))|set(p.glob('route-reuse-*.tsv')))
   row['collected_file_integrity']={str(q.relative_to(p)):manifest.get(str(q.relative_to(p)))==hashlib.sha256(q.read_bytes()).hexdigest() for q in selected}
  out[p.name]=row
 print(json.dumps(out))
