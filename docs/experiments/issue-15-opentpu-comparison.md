@@ -20,16 +20,18 @@
 4. `matched-merged-03` 的物理导入 `eliminate_dead_logic` 又删除135个单元，包括9个DFF；ACT/MXU各删除0。该结果仅为优化诊断，不进入严格同资源主表。新 `matched-merged-04` 在导入时关闭该优化，并实际核对ODB库存169109一致。关闭的是资源优化，保留网表检查和所有物理质量门槛。
 5. 原块有M10信号金属，与父层M10供电策略冲突。仅写配置、甚至传make参数均不足以清除CTS数据库保存的旧路由范围；`m9-*-01/02`因此不具备层资源资格。第三轮在实际GRT前显式执行 `set_routing_layers`，先确认日志 `Max routing layer: metal9` 再进入详细布线，终态再审查详细LEF无M10几何。取消的是已证实无效的尝试及尚未运行的依赖父层，原因不是耗时。
 6. OpenROAD内部STA需要技术LEF和 `link_design -hier`。透明ACT包装的实测SPEF拼接自检已通过：setup 1.257897ns、hold 0.031897ns，相对源结果误差均小于1ps。不能将各块WNS相加当作完整路径时序。
+7. 原父层03／04轮的 `place_pin` 保留了自动IO放置的旧金属层，实际仍为M5／M6，两组逐bit层号并不相同，不能用于共同引脚对照。已保存实际引脚命令、SHA和调度身份，取消原轮及其待执行证明，原因是实证对照失效，不是耗时。新05轮先销毁旧信号BPin形状再重建为M2／M3，完成CTS后导出实际盒形和层号；只有两组1662bit的完整几何哈希逐一相同，才从冻结CTS检查点进入布线。
 
 ## 当前实际进度
 
-截至2026-10-22 17:30（Asia/Shanghai）：
+截至2026-10-22 17:52（Asia/Shanghai）：
 
 - 未预留M10的对照起点 `matched-act-02`／89641、`matched-mxu-02`／89642、固定资源 `matched-merged-04`／89647 均通过严格电气、setup／hold、DRC和天线检查。`matched-merged-03`库存改变且真实电容余量为负，只保留诊断。
 - `repair-01`／89631 已严格通过，独立 `repair-audit-01`／89650 核对34个复制输入与原冻结清单一致；旧修复回执中的聚合输入JSON为空，未重写旧目录，也未把独立审计冒充原运行回执。
 - 正式候选ACT `m9-act-03`／89671通过：面积36109.5µm²，setup +1.27562ns，hold +0.0361168ns，最差电容余量+3.025779486fF，信号线272215µm、通孔37627，DRC／天线0；实际GRT上限M9，最终详细LEF没有M10几何。
 - 正式候选 `m9-mxu-03`／89677、`m9-merged-03`／89678已严格通过；同源CTS、时钟、IO预算不变，电容修复margin30。三块终态均DRC／天线／cap／slew／fanout计数0，setup／hold TNS0，真实最差电容余量为正，实际路由M9上限且LEF无M10几何。
-- 正式父层 `top-split-03`／89682、`top-merged-03`／89683已启动详细布线，实读UNLIMITED；runner为 `6e5552b2140f69ea378cb33b305dffb24d349041`。宏存储／状态库存核对及初始VDD／VSS原生连通性均通过；顶层提取后的严格门槛和完整STA尚待验证。
+- 原父层03及追加电气修复04轮因上述实际引脚层号不一致失去对照资格，保留诊断证据。此前GRT约-46ps setup和残余电气违例只是旧轮估计，不能当作新正式对照结论。
+- 当前 `top-split-place-05`／89700、`top-merged-place-05`／89701正在完成布局与CTS；后续 `top-split-05`／89702、`top-merged-05`／89703已提交，依赖两组终态。实际runner均为 `c61fc6a5b0e6ebc8d8026d2d7df1d3370c2db051`，全部UNLIMITED。启动布线前先核对两组真实CTS ODB引脚几何，原生PG和源SHA；继而在GRT时序修复后追加相同的路由拓扑电气修复，真实余量通过才详细布线。完整提取、PG终态和分层STA仍未完成。
 - 映射网表到物理修复网表的精确逻辑锥核对 `structural-m9-01`／89687 已通过：ACT612状态／存储实例、3210逻辑锥；MXU36423实例、74399锥；合并37035实例、76925锥，差异均0。归一化缓冲、反相器抵消和同功能驱动规格，逐个核对状态输入和外部输出；ACT状态输入突变负例检出。合并锥数较拆分合计少684，是内部化读数据／地址边界输出，所有状态输入仍检查。该证书只证明本轮共同映射网表到物理修复网表；上游RTL等价、真实SRAM和制造签核仍未完成。
 
 | 正式M9候选 | 叶面积µm² | setup WNS/ns | hold WNS/ns | 最差cap余量/fF | 块内信号线/µm | 信号通孔 |
@@ -49,5 +51,7 @@ python scripts/check_project.py
 python project/experiments/opentpu_compare/collect.py
 python project/experiments/opentpu_compare/launch.py <全新尝试名> matched --cores 16 --spec project/experiments/opentpu_compare/matched-merged.json
 ```
+
+父层现采用两阶段：`top-*-place-m9-05.json`只运行到CTS并核验实际引脚；`top-*-route-m9-05.json`指定本组检查点与另一组参考，验证封存SHA和共同几何后继续GRT／DRT。后续电气调整可从同一封存CTS开始，使用全新尝试目录，避免重做或改写已核对的布局。`compare.py`仅接受五份严格物理终态以及三块、两父层的功能证书；未全部通过不会输出完整PPA对照。
 
 提交脚本先要求代码已提交，上传每次独立runner，记录实际commit和逐文件SHA；计算节点核对容器SHA、输入和实际资源。`collect.py`只读远端，终态首次归档后不覆盖。不得修改旧尝试或把后续commit倒填成已执行runner。原VECTOR／89448不属于本次实验，继续保留。
