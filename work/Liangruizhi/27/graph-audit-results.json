@@ -1,9 +1,9 @@
 {
   "status": "PASS",
-  "source_sha256": "47e4569bc2a781583396bca50f359df90f9f924863e9fcf733070ae244dfa492",
+  "source_sha256": "bafb9f56df9e17f9bbf69591d75eaea535048fa76c9067c416032f4b87accef0",
   "scope": "Independent dependency closure/bytes/scratch checks and production-checker rejection probes; no scheduler optimization or model arithmetic.",
   "normal_cases": 96,
-  "assertions": 26977,
+  "assertions": 27073,
   "dependency_relations": {
     "RAW": 2208,
     "WAR": 1248,
@@ -186,6 +186,31 @@
       "exception": "ValueError"
     },
     {
+      "case": "endpoint_staging_bytes=0",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "endpoint_staging_bytes=-1",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "endpoint_staging_bytes=1.5",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "endpoint_staging_bytes=nan",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "endpoint_staging_bytes=True",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
       "case": "setup=-1",
       "rejected": true,
       "exception": "ValueError"
@@ -342,6 +367,11 @@
     },
     {
       "case": "duplicate_disabled",
+      "rejected": true,
+      "exception": "ValueError"
+    },
+    {
+      "case": "staging_smaller_than_link_beat",
       "rejected": true,
       "exception": "ValueError"
     }

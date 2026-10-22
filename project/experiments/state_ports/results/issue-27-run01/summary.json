@@ -1,0 +1,35 @@
+{
+  "resource": {
+    "calibration": "all service/capacity values assumed, not measured physical hardware",
+    "counts": {
+      "feasible": 1224,
+      "infeasible": 2232,
+      "validated_schedules": 4896,
+      "zero_effect_pairs": 1224
+    },
+    "scope": {
+      "heuristic": "same four policy search per design per workload, feasible upper bounds only",
+      "phases": "equal count of one prefill query tile and one decode query tile; not throughput or full end-to-end",
+      "static": "one O/m/l placement and one link mask across both phases"
+    },
+    "static_groups": 108,
+    "status": "PASS",
+    "witness_count": 24
+  },
+  "capture": {
+    "profile": "qwen3-single-head-real-input-online-attention-v1",
+    "status": "PASS",
+    "scope": "Actual layer0 query-head0 only, two shapes; Q/K/V/mask/reference are eager observations; tile m/l/O/alpha are independent NumPy-computed states. Not all heads/layers/models; no calibrated hardware cycles/PPA.",
+    "tolerances": {
+      "atol": 0.0001,
+      "rtol": 0.0001
+    },
+    "positive_checks": 6,
+    "positive_passed": 6,
+    "negative_applicable": 10,
+    "negative_detected": 10,
+    "negative_not_applicable": 2
+  },
+  "source_commit": "6ffb9417f0f01f614b733ce6c3ca9837906b3203",
+  "archive_sha256": "f760dec66344c11fe9c7f04f55d91f610157d7ad624f6d66faa6a9bbdb1f1588"
+}

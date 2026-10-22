@@ -22,3 +22,5 @@
 - 接续优先级：可运行代表模型prefill/decode实际trace→具体bank/端口/状态模板→与Issue15物理证据校准→同资源端到端比较。细节以[划分方法](OPERATOR_BLOCK_PARTITION.md)和Issue为准。
 
 - 真实模型接续：[Issue23/PR24](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/24)已提交待审查，已用固定Qwen3-0.6B权重跑通CPU FP32 prefill/decode；54数值对照、4状态错误负例、13720真实边界事件与两次重放通过。chunking缩小临时张量而同prefix持久KV不变，见[实际记录](experiments/issue-23-qwen3-real-trace.md)。尚无端到端硬件收益，下一步同trace约束bank/端口/带宽并扩差异架构。
+- 状态/端口阶段：[Issue27](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/27)正式源码6ffb9417完成3456条件（1224可行/2232拒绝）、4896策略调度及两次重放；真实Qwen单头6在线核正例/10适用错误负例通过。相同流量的placement收益依赖端口与调度，本阶段未物理校准，不能称芯片加速，见[实际报告](experiments/issue-27-state-port-model.md)。下一步可执行微架构端口验证、独立精度合同与差异/完整工作负载耦合。
+- 并行更新（核对固定版本）：[PR26@2cd9ca15](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/26)负责benchmark调研，W8A8/INT32矩阵与未冻结KV/非线性格式分开；[PR17@0f58e74](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/17)首个合并父层通过物理/完整分层STA门槛，合格拆分对及父层功能/RC覆盖/总PPA仍未完成，H1不等于H2。

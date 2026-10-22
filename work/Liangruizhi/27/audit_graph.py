@@ -1,4 +1,5 @@
 """Read-only graph review, independent reachability/bytes checks and negative probes."""
+import argparse
 import copy
 import hashlib
 import importlib.util
@@ -11,7 +12,11 @@ OUT = Path(__file__).resolve().parent
 
 
 def main():
-    raw = ROOT.read_bytes()
+    parser=argparse.ArgumentParser()
+    parser.add_argument("--source",type=Path,default=ROOT)
+    parser.add_argument("--result",type=Path,default=OUT/"graph-audit-results.json")
+    args=parser.parse_args()
+    raw = args.source.read_bytes()
     source_hash = hashlib.sha256(raw).hexdigest()
     snapshot = OUT / ("graph-snapshot-"+source_hash[:12]+".py")
     snapshot.write_bytes(raw)
@@ -21,7 +26,7 @@ def main():
     config = dict(key_tile=4,max_query_tile=4,bank_ports="1R1W",bank_bytes=[4096,4096],
         scratch_bytes={"M":4096,"V":4096},bank_port_bytes_per_cycle=16,
         link_bytes_per_cycle=16,external_bytes_per_cycle=16,burst_setup_cycles=1,
-        matrix_macs_per_cycle=4,vector_elements_per_cycle=4)
+        matrix_macs_per_cycle=4,vector_elements_per_cycle=4,endpoint_staging_bytes=64)
     workload = dict(queries=2,keys=5,head_dim=4)
     placement = dict(O=0,m=1,l=1)
     assertions = 0
@@ -43,6 +48,7 @@ def main():
         return {"events":events}
 
     def inspect(graph,w):
+        verify(graph["endpoint_staging_bytes"]=={"M":64,"V":64,"D":64},"fixed endpoint staging inventory")
         task_by_id = {t["id"]:t for t in graph["tasks"]}
         verify(len(task_by_id)==len(graph["tasks"]),"duplicate task")
         ancestors={}
@@ -119,7 +125,8 @@ def main():
             invalid.append({"case":label,"rejected":True,"exception":type(error).__name__})
     bad_values=(0,-1,1.5,float("nan"),True)
     for name in ("key_tile","max_query_tile","bank_port_bytes_per_cycle","link_bytes_per_cycle",
-                 "external_bytes_per_cycle","matrix_macs_per_cycle","vector_elements_per_cycle"):
+                 "external_bytes_per_cycle","matrix_macs_per_cycle","vector_elements_per_cycle",
+                 "endpoint_staging_bytes"):
         for value in bad_values:
             reject(name+"="+repr(value),cfg={**config,name:value})
     for value in (-1,1.5,float("nan"),True):
@@ -133,6 +140,7 @@ def main():
         reject("placement.O="+repr(value),p={**placement,"O":value})
     reject("unknown_disabled",disabled=("TYPO",))
     reject("duplicate_disabled",disabled=("M0","M0"))
+    reject("staging_smaller_than_link_beat",cfg={**config,"endpoint_staging_bytes":15})
     verify(all(v["rejected"] for v in invalid),"invalid config accepted")
 
     base=module.make_graph(config,workload,placement)
@@ -160,7 +168,7 @@ def main():
         "source_sha256":source_hash,"scope":"Independent dependency closure/bytes/scratch checks and production-checker rejection probes; no scheduler optimization or model arithmetic.",
         "normal_cases":len(normal_cases),"assertions":assertions,"dependency_relations":relation_counts,
         "invalid_config_probes":invalid,"checker_probes":probes,"cases":normal_cases}
-    path=OUT/"graph-audit-results.json"
+    path=args.result
     path.write_text(json.dumps(output,indent=2)+"\n",encoding="utf-8")
     print(json.dumps({k:output[k] for k in ("status","source_sha256","normal_cases","assertions","dependency_relations","checker_probes")},indent=2))
     print("invalid_config_rejected="+str(len(invalid)))

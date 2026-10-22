@@ -1,0 +1,3958 @@
+{
+  "audit": "independent-materialized-softmax-and-capture-provenance-v1",
+  "status": "PASS",
+  "script": {
+    "bytes": 19217,
+    "sha256": "5cc7313dd30d97bde0942a522aa9e58c38cadce5bd6c205e03ed9cceb2c0a229"
+  },
+  "command": [
+    "audit_capture.py",
+    "--output",
+    "D:/Projects/Codex/state-port-study-20261022/method-review/formal-capture-audit01.json"
+  ],
+  "scope": "Read-only hashes and full-softmax recomputation of saved single-head tensors; no model execution, no proof of all-head/model or hardware-cycle/PPA validity.",
+  "checks": [
+    {
+      "name": "Issue23.archive.sha256",
+      "pass": true
+    },
+    {
+      "name": "Issue23.archived_inputs.sha256",
+      "pass": true
+    },
+    {
+      "name": "capture-01.formal_status_scope",
+      "pass": true
+    },
+    {
+      "name": "capture-01.source_runtime_flags",
+      "pass": true
+    },
+    {
+      "name": "capture-01.complete_artifact_inventory",
+      "pass": true
+    },
+    {
+      "name": "capture-01.artifact.attention-stages.npz",
+      "pass": true
+    },
+    {
+      "name": "capture-01.artifact.inputs.json",
+      "pass": true
+    },
+    {
+      "name": "capture-01.artifact.manifest-start.json",
+      "pass": true
+    },
+    {
+      "name": "capture-01.artifact.numeric-results.json",
+      "pass": true
+    },
+    {
+      "name": "capture-01.start_end.profile",
+      "pass": true
+    },
+    {
+      "name": "capture-01.start_end.development",
+      "pass": true
+    },
+    {
+      "name": "capture-01.start_end.source_commit",
+      "pass": true
+    },
+    {
+      "name": "capture-01.start_end.source_root",
+      "pass": true
+    },
+    {
+      "name": "capture-01.start_end.source_files",
+      "pass": true
+    },
+    {
+      "name": "capture-01.start_end.source_commit_bindings",
+      "pass": true
+    },
+    {
+      "name": "capture-01.start_end.model_id",
+      "pass": true
+    },
+    {
+      "name": "capture-01.start_end.revision",
+      "pass": true
+    },
+    {
+      "name": "capture-01.start_end.model_files",
+      "pass": true
+    },
+    {
+      "name": "capture-01.committed_source.project/experiments/state_ports/capture.py",
+      "pass": true,
+      "sha256": "57f8c08c07d0b9ab679e26643f8ce86ccbaeebe9fcdf65686acf9aec7bf419a4"
+    },
+    {
+      "name": "capture-01.committed_source.project/experiments/qwen3_trace/experiment.json",
+      "pass": true,
+      "sha256": "6aa8da27a8d85374c84a592365df2597acf6b20d3d979fac1bed000559913482"
+    },
+    {
+      "name": "capture-01.committed_source.project/experiments/qwen3_trace/run.py",
+      "pass": true,
+      "sha256": "bb7548c8e488ee4d9f995c4731af87e0e8b32a944fc38ff458c581f093825359"
+    },
+    {
+      "name": "capture-01.committed_source.project/experiments/qwen3_trace/trace.py",
+      "pass": true,
+      "sha256": "73bcd9d3adefa72ce96f2b4dcc0eceada63569840a736d64bc8d1894abe6b88d"
+    },
+    {
+      "name": "capture-01.frozen_capture_and_config",
+      "pass": true
+    },
+    {
+      "name": "capture-01.model_identity",
+      "pass": true
+    },
+    {
+      "name": "capture-01.actual_model_file.config.json",
+      "pass": true
+    },
+    {
+      "name": "capture-01.actual_model_file.generation_config.json",
+      "pass": true
+    },
+    {
+      "name": "capture-01.actual_model_file.tokenizer.json",
+      "pass": true
+    },
+    {
+      "name": "capture-01.actual_model_file.tokenizer_config.json",
+      "pass": true
+    },
+    {
+      "name": "capture-01.actual_model_file.merges.txt",
+      "pass": true
+    },
+    {
+      "name": "capture-01.actual_model_file.vocab.json",
+      "pass": true
+    },
+    {
+      "name": "capture-01.actual_model_file.LICENSE",
+      "pass": true
+    },
+    {
+      "name": "capture-01.actual_model_file.model.safetensors",
+      "pass": true
+    },
+    {
+      "name": "capture-01.installed_implementation.qwen3",
+      "pass": true
+    },
+    {
+      "name": "capture-01.installed_implementation.cache",
+      "pass": true
+    },
+    {
+      "name": "capture-01.runtime",
+      "pass": true
+    },
+    {
+      "name": "capture-01.installed_package.torch",
+      "pass": true
+    },
+    {
+      "name": "capture-01.installed_package.transformers",
+      "pass": true
+    },
+    {
+      "name": "capture-01.installed_package.numpy",
+      "pass": true
+    },
+    {
+      "name": "capture-01.installed_package.safetensors",
+      "pass": true
+    },
+    {
+      "name": "capture-01.installed_package.tokenizers",
+      "pass": true
+    },
+    {
+      "name": "capture-01.installed_package.huggingface-hub",
+      "pass": true
+    },
+    {
+      "name": "capture-01.single_head_scope",
+      "pass": true
+    },
+    {
+      "name": "capture-01.teacher_forced_original_tokens",
+      "pass": true
+    },
+    {
+      "name": "capture-01.npz_unique_members",
+      "pass": true
+    },
+    {
+      "name": "capture-01.npz_complete_stage_inventory",
+      "pass": true,
+      "members": 46
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.query",
+      "pass": true,
+      "shape": [
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 16384,
+      "sha256": "eb3ea002059de645434a98b86eaf338e5a047cd57e096d94fbfb9edb2760c9ff"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.key",
+      "pass": true,
+      "shape": [
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 16384,
+      "sha256": "e2f42944ca89d3a3b0d03a41d044f22c3a89433c1c11d3a666984d1e751b7e9f"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.value",
+      "pass": true,
+      "shape": [
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 16384,
+      "sha256": "9972f465ea028a89f156fa8d0a45f308d49b7fe4953f35972f1c8599b33cb741"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.additive_mask",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 4096,
+      "sha256": "32bd28d6a55fd57f9cc8aa12a6e387cc5f40803376d092e6c915b28433e386fb"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.scaling",
+      "pass": true,
+      "shape": [],
+      "dtype": "float32",
+      "bytes": 4,
+      "sha256": "08334c86b963804acd3bea683d9a8f57e81da5594d278ced1d8644a7a85198ab"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.mask_present",
+      "pass": true,
+      "shape": [],
+      "dtype": "bool",
+      "bytes": 1,
+      "sha256": "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.query_positions",
+      "pass": true,
+      "shape": [
+        32
+      ],
+      "dtype": "int64",
+      "bytes": 256,
+      "sha256": "bcc9bcfc670935c6018dc26a74956a373b655f8930dd55ab074d816d7d233780"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.reference",
+      "pass": true,
+      "shape": [
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 16384,
+      "sha256": "7655589d309dbc3d08197dcd1200e1eed7cfe5048a1bdd225a9bbcd6a8fb9f8c"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.tile8.output",
+      "pass": true,
+      "shape": [
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 16384,
+      "sha256": "ad3ce03da57be985fd277017ca89eab712ca2ac900b1421524f9e175b2c6bb12"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.tile8.O",
+      "pass": true,
+      "shape": [
+        4,
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 65536,
+      "sha256": "8bb3c279952dc2d2aec36333ed2459cb5f961f504310d159803c572efbe65102"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.tile8.m",
+      "pass": true,
+      "shape": [
+        4,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 512,
+      "sha256": "be5583d71734ca6cf6702ab852bc4713c770f2cd152126024e4eac9bc93c331e"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.tile8.l",
+      "pass": true,
+      "shape": [
+        4,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 512,
+      "sha256": "cf78b37566fb31af2a937f2e8d75b0b6e516771b5cdef7cb36462ec343f06434"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.tile8.alpha",
+      "pass": true,
+      "shape": [
+        4,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 512,
+      "sha256": "caa35a2744a08c01901149a49e854ffbbe0544f321cdd1fbe2734f42e86c3adf"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.tile16.output",
+      "pass": true,
+      "shape": [
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 16384,
+      "sha256": "890041c7ab2a4bc453fe5f4c38254f39231af037ff7a1a4f3edd773747e0af7f"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.tile16.O",
+      "pass": true,
+      "shape": [
+        2,
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 32768,
+      "sha256": "cb9fd1028cfa538e6f088fb5167bd005e601177ded39d6567518084759d4bd9b"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.tile16.m",
+      "pass": true,
+      "shape": [
+        2,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 256,
+      "sha256": "5b66e3518a52e62949afaffae3053a4ae0941bf1be57dce43c19529d9e368ea5"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.tile16.l",
+      "pass": true,
+      "shape": [
+        2,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 256,
+      "sha256": "59114830784ffd218110f1f2490c0758508deff0511702235414337e0f9b17d3"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.tile16.alpha",
+      "pass": true,
+      "shape": [
+        2,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 256,
+      "sha256": "36267a27042b2f2cd842d15b4974aeb7922592462c535e5ec52bb4cce438a75b"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.tile32.output",
+      "pass": true,
+      "shape": [
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 16384,
+      "sha256": "01f5a56189e8c39d2c498d1fbf206e5be72549e6119900233707992ca4076903"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.tile32.O",
+      "pass": true,
+      "shape": [
+        1,
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 16384,
+      "sha256": "35d126fd449504721a6c8a9f5e2464c4b2d13de0e9b7c8f7bc8a711e9744b968"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.tile32.m",
+      "pass": true,
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 128,
+      "sha256": "47f1492e992cdcb1cc76c9b45e52fc92e5c69ee4b77e40bef65f18b76a139eb7"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.tile32.l",
+      "pass": true,
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 128,
+      "sha256": "5cdd9a2c81c87ddc3366a504c5d93bd5be08e793051846f5379cb0688c58c3c8"
+    },
+    {
+      "name": "capture-01.npz_member.prefill32.tile32.alpha",
+      "pass": true,
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 128,
+      "sha256": "38723a2e5e8a17aa7950dc008209944e898f69a7bd10a23c839d341e935fd5ca"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.query",
+      "pass": true,
+      "shape": [
+        1,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 512,
+      "sha256": "2468f4e15817394202cf413b2a7697ebd917404b6c903c9855e01a8f1b8a1a6b"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.key",
+      "pass": true,
+      "shape": [
+        48,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 24576,
+      "sha256": "f006c040caf99599b0b3d3bd8ff0b6ca43149a7d3d6b95bebc878aab77715a5a"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.value",
+      "pass": true,
+      "shape": [
+        48,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 24576,
+      "sha256": "b72fd10c2c7c92701ecd7375761705f421f41cf3eda0ab9e18057d49b1c38339"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.additive_mask",
+      "pass": true,
+      "shape": [
+        1,
+        48
+      ],
+      "dtype": "float32",
+      "bytes": 192,
+      "sha256": "5d89f056865052bcb89c910d2d62872e029fb273c3db03f8968a52a41593c1b5"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.scaling",
+      "pass": true,
+      "shape": [],
+      "dtype": "float32",
+      "bytes": 4,
+      "sha256": "08334c86b963804acd3bea683d9a8f57e81da5594d278ced1d8644a7a85198ab"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.mask_present",
+      "pass": true,
+      "shape": [],
+      "dtype": "bool",
+      "bytes": 1,
+      "sha256": "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.query_positions",
+      "pass": true,
+      "shape": [
+        1
+      ],
+      "dtype": "int64",
+      "bytes": 8,
+      "sha256": "8e9bcd43f7a4b257953cbc2b531c31f6361278e8a9bdb19f9da72658ead1ec25"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.reference",
+      "pass": true,
+      "shape": [
+        1,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 512,
+      "sha256": "d33f5ca4e30fd4bab76ba081a8ca90a6682af3c76e0a4b927a1719db50039818"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.tile8.output",
+      "pass": true,
+      "shape": [
+        1,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 512,
+      "sha256": "d9ed99b650b8dbb4a46610abd544938400a5a1407061e8994b379edb2a814fe3"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.tile8.O",
+      "pass": true,
+      "shape": [
+        6,
+        1,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 3072,
+      "sha256": "54bdb481822ce5112b944d16f56a320b35de1b5a172034196130b265acd476d0"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.tile8.m",
+      "pass": true,
+      "shape": [
+        6,
+        1
+      ],
+      "dtype": "float32",
+      "bytes": 24,
+      "sha256": "63a350ca139441a078987bdcfc3b7623b189928d3f7aabde540d32ef5750d8b6"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.tile8.l",
+      "pass": true,
+      "shape": [
+        6,
+        1
+      ],
+      "dtype": "float32",
+      "bytes": 24,
+      "sha256": "13aa34fc8f4a8bdc90acffdedfd8e12ea9e81f465463f2ca151aa6befd0158c3"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.tile8.alpha",
+      "pass": true,
+      "shape": [
+        6,
+        1
+      ],
+      "dtype": "float32",
+      "bytes": 24,
+      "sha256": "f5679c68ba5745f6fdccc0a053317c9da362ce134edeaeb354e7cf9385439a8b"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.tile16.output",
+      "pass": true,
+      "shape": [
+        1,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 512,
+      "sha256": "2d1280a346dad0f0bb9eeb1ed62fa0bcbef048d31803a88c1d1441e8a23370a4"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.tile16.O",
+      "pass": true,
+      "shape": [
+        3,
+        1,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 1536,
+      "sha256": "7f395312f36ccb3082a5eb96d9b914da69c97ac6feb5b742baa06b09b3e5f878"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.tile16.m",
+      "pass": true,
+      "shape": [
+        3,
+        1
+      ],
+      "dtype": "float32",
+      "bytes": 12,
+      "sha256": "52b2f5891e2748f66cd19b3f23a33f4eb5b41fc9b5e217f46de02b8ebb8e451c"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.tile16.l",
+      "pass": true,
+      "shape": [
+        3,
+        1
+      ],
+      "dtype": "float32",
+      "bytes": 12,
+      "sha256": "8a6bc0429ed843002c4935f2a800c717a20d9b34a24979061f06a82d30bf38db"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.tile16.alpha",
+      "pass": true,
+      "shape": [
+        3,
+        1
+      ],
+      "dtype": "float32",
+      "bytes": 12,
+      "sha256": "277fc3062d4aded3764a02082f825793a59a5ff354331b4917d0901279ee2e13"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.tile32.output",
+      "pass": true,
+      "shape": [
+        1,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 512,
+      "sha256": "bd194a559b79f9f43112cef4c17b84cff2b57a21aa2f2afb0e3c9fe3deb52ceb"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.tile32.O",
+      "pass": true,
+      "shape": [
+        2,
+        1,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 1024,
+      "sha256": "516a9b368705f10475d5f4c5d1083d8434cfbb0351240f7b0062f3788f63e005"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.tile32.m",
+      "pass": true,
+      "shape": [
+        2,
+        1
+      ],
+      "dtype": "float32",
+      "bytes": 8,
+      "sha256": "169cba42ad2cb33f8fe7199f8391cac8e014603c35b81d66f8cc3c80baceb323"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.tile32.l",
+      "pass": true,
+      "shape": [
+        2,
+        1
+      ],
+      "dtype": "float32",
+      "bytes": 8,
+      "sha256": "564a643a47ed162bb9a075ab3f1e7639f8d3fd002860f1c5a3359eef1d08b732"
+    },
+    {
+      "name": "capture-01.npz_member.decode48.tile32.alpha",
+      "pass": true,
+      "shape": [
+        2,
+        1
+      ],
+      "dtype": "float32",
+      "bytes": 8,
+      "sha256": "22b6f43bd8d27738d3213f29e96b62d01d9d6c0ab4f9732aaae803186f51eab7"
+    },
+    {
+      "name": "capture-01.persistent_cache_prefix_bitwise",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.causal_mask_positions_scale",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.independent_full_softmax",
+      "pass": true,
+      "allfinite": true,
+      "max_abs": 3.124469243496672e-07,
+      "relative_l2": 5.261480742904734e-07
+    },
+    {
+      "name": "capture-01.prefill32.tile8.positive_record",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.prefix8.m",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.prefix8.l",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.prefix8.O",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.prefix8.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.prefix16.m",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.prefix16.l",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.prefix16.O",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.prefix16.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.prefix24.m",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.prefix24.l",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.prefix24.O",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.prefix24.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.prefix32.m",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.prefix32.l",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.prefix32.O",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.prefix32.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.wrong_O_alpha_half.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.wrong_O_alpha_half.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.reset_O_each_tile.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile8.reset_O_each_tile.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile16.positive_record",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile16.prefix16.m",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile16.prefix16.l",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile16.prefix16.O",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile16.prefix16.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile16.prefix32.m",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile16.prefix32.l",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile16.prefix32.O",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile16.prefix32.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile16.wrong_O_alpha_half.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile16.wrong_O_alpha_half.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile16.reset_O_each_tile.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile16.reset_O_each_tile.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile32.positive_record",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile32.prefix32.m",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile32.prefix32.l",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile32.prefix32.O",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile32.prefix32.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile32.wrong_O_alpha_half.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile32.wrong_O_alpha_half.not_claimed_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile32.reset_O_each_tile.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-01.prefill32.tile32.reset_O_each_tile.not_claimed_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.causal_mask_positions_scale",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.independent_full_softmax",
+      "pass": true,
+      "allfinite": true,
+      "max_abs": 2.1685099105273054e-08,
+      "relative_l2": 1.1279472757608123e-07
+    },
+    {
+      "name": "capture-01.decode48.tile8.positive_record",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix8.m",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix8.l",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix8.O",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix8.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix16.m",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix16.l",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix16.O",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix16.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix24.m",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix24.l",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix24.O",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix24.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix32.m",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix32.l",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix32.O",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix32.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix40.m",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix40.l",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix40.O",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix40.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix48.m",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix48.l",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix48.O",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.prefix48.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.wrong_O_alpha_half.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.wrong_O_alpha_half.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.reset_O_each_tile.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile8.reset_O_each_tile.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile16.positive_record",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile16.prefix16.m",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile16.prefix16.l",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile16.prefix16.O",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile16.prefix16.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile16.prefix32.m",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile16.prefix32.l",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile16.prefix32.O",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile16.prefix32.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile16.prefix48.m",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile16.prefix48.l",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile16.prefix48.O",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile16.prefix48.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile16.wrong_O_alpha_half.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile16.wrong_O_alpha_half.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile16.reset_O_each_tile.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile16.reset_O_each_tile.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile32.positive_record",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile32.prefix32.m",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile32.prefix32.l",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile32.prefix32.O",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile32.prefix32.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile32.prefix48.m",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile32.prefix48.l",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile32.prefix48.O",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile32.prefix48.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile32.wrong_O_alpha_half.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile32.wrong_O_alpha_half.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile32.reset_O_each_tile.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-01.decode48.tile32.reset_O_each_tile.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-01.exact_summary_counts",
+      "pass": true
+    },
+    {
+      "name": "capture-02.formal_status_scope",
+      "pass": true
+    },
+    {
+      "name": "capture-02.source_runtime_flags",
+      "pass": true
+    },
+    {
+      "name": "capture-02.complete_artifact_inventory",
+      "pass": true
+    },
+    {
+      "name": "capture-02.artifact.attention-stages.npz",
+      "pass": true
+    },
+    {
+      "name": "capture-02.artifact.inputs.json",
+      "pass": true
+    },
+    {
+      "name": "capture-02.artifact.manifest-start.json",
+      "pass": true
+    },
+    {
+      "name": "capture-02.artifact.numeric-results.json",
+      "pass": true
+    },
+    {
+      "name": "capture-02.start_end.profile",
+      "pass": true
+    },
+    {
+      "name": "capture-02.start_end.development",
+      "pass": true
+    },
+    {
+      "name": "capture-02.start_end.source_commit",
+      "pass": true
+    },
+    {
+      "name": "capture-02.start_end.source_root",
+      "pass": true
+    },
+    {
+      "name": "capture-02.start_end.source_files",
+      "pass": true
+    },
+    {
+      "name": "capture-02.start_end.source_commit_bindings",
+      "pass": true
+    },
+    {
+      "name": "capture-02.start_end.model_id",
+      "pass": true
+    },
+    {
+      "name": "capture-02.start_end.revision",
+      "pass": true
+    },
+    {
+      "name": "capture-02.start_end.model_files",
+      "pass": true
+    },
+    {
+      "name": "capture-02.committed_source.project/experiments/state_ports/capture.py",
+      "pass": true,
+      "sha256": "57f8c08c07d0b9ab679e26643f8ce86ccbaeebe9fcdf65686acf9aec7bf419a4"
+    },
+    {
+      "name": "capture-02.committed_source.project/experiments/qwen3_trace/experiment.json",
+      "pass": true,
+      "sha256": "6aa8da27a8d85374c84a592365df2597acf6b20d3d979fac1bed000559913482"
+    },
+    {
+      "name": "capture-02.committed_source.project/experiments/qwen3_trace/run.py",
+      "pass": true,
+      "sha256": "bb7548c8e488ee4d9f995c4731af87e0e8b32a944fc38ff458c581f093825359"
+    },
+    {
+      "name": "capture-02.committed_source.project/experiments/qwen3_trace/trace.py",
+      "pass": true,
+      "sha256": "73bcd9d3adefa72ce96f2b4dcc0eceada63569840a736d64bc8d1894abe6b88d"
+    },
+    {
+      "name": "capture-02.frozen_capture_and_config",
+      "pass": true
+    },
+    {
+      "name": "capture-02.model_identity",
+      "pass": true
+    },
+    {
+      "name": "capture-02.actual_model_file.config.json",
+      "pass": true
+    },
+    {
+      "name": "capture-02.actual_model_file.generation_config.json",
+      "pass": true
+    },
+    {
+      "name": "capture-02.actual_model_file.tokenizer.json",
+      "pass": true
+    },
+    {
+      "name": "capture-02.actual_model_file.tokenizer_config.json",
+      "pass": true
+    },
+    {
+      "name": "capture-02.actual_model_file.merges.txt",
+      "pass": true
+    },
+    {
+      "name": "capture-02.actual_model_file.vocab.json",
+      "pass": true
+    },
+    {
+      "name": "capture-02.actual_model_file.LICENSE",
+      "pass": true
+    },
+    {
+      "name": "capture-02.actual_model_file.model.safetensors",
+      "pass": true
+    },
+    {
+      "name": "capture-02.installed_implementation.qwen3",
+      "pass": true
+    },
+    {
+      "name": "capture-02.installed_implementation.cache",
+      "pass": true
+    },
+    {
+      "name": "capture-02.runtime",
+      "pass": true
+    },
+    {
+      "name": "capture-02.installed_package.torch",
+      "pass": true
+    },
+    {
+      "name": "capture-02.installed_package.transformers",
+      "pass": true
+    },
+    {
+      "name": "capture-02.installed_package.numpy",
+      "pass": true
+    },
+    {
+      "name": "capture-02.installed_package.safetensors",
+      "pass": true
+    },
+    {
+      "name": "capture-02.installed_package.tokenizers",
+      "pass": true
+    },
+    {
+      "name": "capture-02.installed_package.huggingface-hub",
+      "pass": true
+    },
+    {
+      "name": "capture-02.single_head_scope",
+      "pass": true
+    },
+    {
+      "name": "capture-02.teacher_forced_original_tokens",
+      "pass": true
+    },
+    {
+      "name": "capture-02.npz_unique_members",
+      "pass": true
+    },
+    {
+      "name": "capture-02.npz_complete_stage_inventory",
+      "pass": true,
+      "members": 46
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.query",
+      "pass": true,
+      "shape": [
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 16384,
+      "sha256": "eb3ea002059de645434a98b86eaf338e5a047cd57e096d94fbfb9edb2760c9ff"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.key",
+      "pass": true,
+      "shape": [
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 16384,
+      "sha256": "e2f42944ca89d3a3b0d03a41d044f22c3a89433c1c11d3a666984d1e751b7e9f"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.value",
+      "pass": true,
+      "shape": [
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 16384,
+      "sha256": "9972f465ea028a89f156fa8d0a45f308d49b7fe4953f35972f1c8599b33cb741"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.additive_mask",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 4096,
+      "sha256": "32bd28d6a55fd57f9cc8aa12a6e387cc5f40803376d092e6c915b28433e386fb"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.scaling",
+      "pass": true,
+      "shape": [],
+      "dtype": "float32",
+      "bytes": 4,
+      "sha256": "08334c86b963804acd3bea683d9a8f57e81da5594d278ced1d8644a7a85198ab"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.mask_present",
+      "pass": true,
+      "shape": [],
+      "dtype": "bool",
+      "bytes": 1,
+      "sha256": "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.query_positions",
+      "pass": true,
+      "shape": [
+        32
+      ],
+      "dtype": "int64",
+      "bytes": 256,
+      "sha256": "bcc9bcfc670935c6018dc26a74956a373b655f8930dd55ab074d816d7d233780"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.reference",
+      "pass": true,
+      "shape": [
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 16384,
+      "sha256": "7655589d309dbc3d08197dcd1200e1eed7cfe5048a1bdd225a9bbcd6a8fb9f8c"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.tile8.output",
+      "pass": true,
+      "shape": [
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 16384,
+      "sha256": "ad3ce03da57be985fd277017ca89eab712ca2ac900b1421524f9e175b2c6bb12"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.tile8.O",
+      "pass": true,
+      "shape": [
+        4,
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 65536,
+      "sha256": "8bb3c279952dc2d2aec36333ed2459cb5f961f504310d159803c572efbe65102"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.tile8.m",
+      "pass": true,
+      "shape": [
+        4,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 512,
+      "sha256": "be5583d71734ca6cf6702ab852bc4713c770f2cd152126024e4eac9bc93c331e"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.tile8.l",
+      "pass": true,
+      "shape": [
+        4,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 512,
+      "sha256": "cf78b37566fb31af2a937f2e8d75b0b6e516771b5cdef7cb36462ec343f06434"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.tile8.alpha",
+      "pass": true,
+      "shape": [
+        4,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 512,
+      "sha256": "caa35a2744a08c01901149a49e854ffbbe0544f321cdd1fbe2734f42e86c3adf"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.tile16.output",
+      "pass": true,
+      "shape": [
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 16384,
+      "sha256": "890041c7ab2a4bc453fe5f4c38254f39231af037ff7a1a4f3edd773747e0af7f"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.tile16.O",
+      "pass": true,
+      "shape": [
+        2,
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 32768,
+      "sha256": "cb9fd1028cfa538e6f088fb5167bd005e601177ded39d6567518084759d4bd9b"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.tile16.m",
+      "pass": true,
+      "shape": [
+        2,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 256,
+      "sha256": "5b66e3518a52e62949afaffae3053a4ae0941bf1be57dce43c19529d9e368ea5"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.tile16.l",
+      "pass": true,
+      "shape": [
+        2,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 256,
+      "sha256": "59114830784ffd218110f1f2490c0758508deff0511702235414337e0f9b17d3"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.tile16.alpha",
+      "pass": true,
+      "shape": [
+        2,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 256,
+      "sha256": "36267a27042b2f2cd842d15b4974aeb7922592462c535e5ec52bb4cce438a75b"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.tile32.output",
+      "pass": true,
+      "shape": [
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 16384,
+      "sha256": "01f5a56189e8c39d2c498d1fbf206e5be72549e6119900233707992ca4076903"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.tile32.O",
+      "pass": true,
+      "shape": [
+        1,
+        32,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 16384,
+      "sha256": "35d126fd449504721a6c8a9f5e2464c4b2d13de0e9b7c8f7bc8a711e9744b968"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.tile32.m",
+      "pass": true,
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 128,
+      "sha256": "47f1492e992cdcb1cc76c9b45e52fc92e5c69ee4b77e40bef65f18b76a139eb7"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.tile32.l",
+      "pass": true,
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 128,
+      "sha256": "5cdd9a2c81c87ddc3366a504c5d93bd5be08e793051846f5379cb0688c58c3c8"
+    },
+    {
+      "name": "capture-02.npz_member.prefill32.tile32.alpha",
+      "pass": true,
+      "shape": [
+        1,
+        32
+      ],
+      "dtype": "float32",
+      "bytes": 128,
+      "sha256": "38723a2e5e8a17aa7950dc008209944e898f69a7bd10a23c839d341e935fd5ca"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.query",
+      "pass": true,
+      "shape": [
+        1,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 512,
+      "sha256": "2468f4e15817394202cf413b2a7697ebd917404b6c903c9855e01a8f1b8a1a6b"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.key",
+      "pass": true,
+      "shape": [
+        48,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 24576,
+      "sha256": "f006c040caf99599b0b3d3bd8ff0b6ca43149a7d3d6b95bebc878aab77715a5a"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.value",
+      "pass": true,
+      "shape": [
+        48,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 24576,
+      "sha256": "b72fd10c2c7c92701ecd7375761705f421f41cf3eda0ab9e18057d49b1c38339"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.additive_mask",
+      "pass": true,
+      "shape": [
+        1,
+        48
+      ],
+      "dtype": "float32",
+      "bytes": 192,
+      "sha256": "5d89f056865052bcb89c910d2d62872e029fb273c3db03f8968a52a41593c1b5"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.scaling",
+      "pass": true,
+      "shape": [],
+      "dtype": "float32",
+      "bytes": 4,
+      "sha256": "08334c86b963804acd3bea683d9a8f57e81da5594d278ced1d8644a7a85198ab"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.mask_present",
+      "pass": true,
+      "shape": [],
+      "dtype": "bool",
+      "bytes": 1,
+      "sha256": "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.query_positions",
+      "pass": true,
+      "shape": [
+        1
+      ],
+      "dtype": "int64",
+      "bytes": 8,
+      "sha256": "8e9bcd43f7a4b257953cbc2b531c31f6361278e8a9bdb19f9da72658ead1ec25"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.reference",
+      "pass": true,
+      "shape": [
+        1,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 512,
+      "sha256": "d33f5ca4e30fd4bab76ba081a8ca90a6682af3c76e0a4b927a1719db50039818"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.tile8.output",
+      "pass": true,
+      "shape": [
+        1,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 512,
+      "sha256": "d9ed99b650b8dbb4a46610abd544938400a5a1407061e8994b379edb2a814fe3"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.tile8.O",
+      "pass": true,
+      "shape": [
+        6,
+        1,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 3072,
+      "sha256": "54bdb481822ce5112b944d16f56a320b35de1b5a172034196130b265acd476d0"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.tile8.m",
+      "pass": true,
+      "shape": [
+        6,
+        1
+      ],
+      "dtype": "float32",
+      "bytes": 24,
+      "sha256": "63a350ca139441a078987bdcfc3b7623b189928d3f7aabde540d32ef5750d8b6"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.tile8.l",
+      "pass": true,
+      "shape": [
+        6,
+        1
+      ],
+      "dtype": "float32",
+      "bytes": 24,
+      "sha256": "13aa34fc8f4a8bdc90acffdedfd8e12ea9e81f465463f2ca151aa6befd0158c3"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.tile8.alpha",
+      "pass": true,
+      "shape": [
+        6,
+        1
+      ],
+      "dtype": "float32",
+      "bytes": 24,
+      "sha256": "f5679c68ba5745f6fdccc0a053317c9da362ce134edeaeb354e7cf9385439a8b"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.tile16.output",
+      "pass": true,
+      "shape": [
+        1,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 512,
+      "sha256": "2d1280a346dad0f0bb9eeb1ed62fa0bcbef048d31803a88c1d1441e8a23370a4"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.tile16.O",
+      "pass": true,
+      "shape": [
+        3,
+        1,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 1536,
+      "sha256": "7f395312f36ccb3082a5eb96d9b914da69c97ac6feb5b742baa06b09b3e5f878"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.tile16.m",
+      "pass": true,
+      "shape": [
+        3,
+        1
+      ],
+      "dtype": "float32",
+      "bytes": 12,
+      "sha256": "52b2f5891e2748f66cd19b3f23a33f4eb5b41fc9b5e217f46de02b8ebb8e451c"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.tile16.l",
+      "pass": true,
+      "shape": [
+        3,
+        1
+      ],
+      "dtype": "float32",
+      "bytes": 12,
+      "sha256": "8a6bc0429ed843002c4935f2a800c717a20d9b34a24979061f06a82d30bf38db"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.tile16.alpha",
+      "pass": true,
+      "shape": [
+        3,
+        1
+      ],
+      "dtype": "float32",
+      "bytes": 12,
+      "sha256": "277fc3062d4aded3764a02082f825793a59a5ff354331b4917d0901279ee2e13"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.tile32.output",
+      "pass": true,
+      "shape": [
+        1,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 512,
+      "sha256": "bd194a559b79f9f43112cef4c17b84cff2b57a21aa2f2afb0e3c9fe3deb52ceb"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.tile32.O",
+      "pass": true,
+      "shape": [
+        2,
+        1,
+        128
+      ],
+      "dtype": "float32",
+      "bytes": 1024,
+      "sha256": "516a9b368705f10475d5f4c5d1083d8434cfbb0351240f7b0062f3788f63e005"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.tile32.m",
+      "pass": true,
+      "shape": [
+        2,
+        1
+      ],
+      "dtype": "float32",
+      "bytes": 8,
+      "sha256": "169cba42ad2cb33f8fe7199f8391cac8e014603c35b81d66f8cc3c80baceb323"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.tile32.l",
+      "pass": true,
+      "shape": [
+        2,
+        1
+      ],
+      "dtype": "float32",
+      "bytes": 8,
+      "sha256": "564a643a47ed162bb9a075ab3f1e7639f8d3fd002860f1c5a3359eef1d08b732"
+    },
+    {
+      "name": "capture-02.npz_member.decode48.tile32.alpha",
+      "pass": true,
+      "shape": [
+        2,
+        1
+      ],
+      "dtype": "float32",
+      "bytes": 8,
+      "sha256": "22b6f43bd8d27738d3213f29e96b62d01d9d6c0ab4f9732aaae803186f51eab7"
+    },
+    {
+      "name": "capture-02.persistent_cache_prefix_bitwise",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.causal_mask_positions_scale",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.independent_full_softmax",
+      "pass": true,
+      "allfinite": true,
+      "max_abs": 3.124469243496672e-07,
+      "relative_l2": 5.261480742904734e-07
+    },
+    {
+      "name": "capture-02.prefill32.tile8.positive_record",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.prefix8.m",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.prefix8.l",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.prefix8.O",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.prefix8.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.prefix16.m",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.prefix16.l",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.prefix16.O",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.prefix16.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.prefix24.m",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.prefix24.l",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.prefix24.O",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.prefix24.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.prefix32.m",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.prefix32.l",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.prefix32.O",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.prefix32.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.wrong_O_alpha_half.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.wrong_O_alpha_half.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.reset_O_each_tile.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile8.reset_O_each_tile.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile16.positive_record",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile16.prefix16.m",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile16.prefix16.l",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile16.prefix16.O",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile16.prefix16.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile16.prefix32.m",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile16.prefix32.l",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile16.prefix32.O",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile16.prefix32.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile16.wrong_O_alpha_half.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile16.wrong_O_alpha_half.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile16.reset_O_each_tile.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile16.reset_O_each_tile.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile32.positive_record",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile32.prefix32.m",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile32.prefix32.l",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile32.prefix32.O",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile32.prefix32.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile32.wrong_O_alpha_half.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile32.wrong_O_alpha_half.not_claimed_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile32.reset_O_each_tile.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-02.prefill32.tile32.reset_O_each_tile.not_claimed_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.causal_mask_positions_scale",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.independent_full_softmax",
+      "pass": true,
+      "allfinite": true,
+      "max_abs": 2.1685099105273054e-08,
+      "relative_l2": 1.1279472757608123e-07
+    },
+    {
+      "name": "capture-02.decode48.tile8.positive_record",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix8.m",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix8.l",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix8.O",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix8.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix16.m",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix16.l",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix16.O",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix16.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix24.m",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix24.l",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix24.O",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix24.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix32.m",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix32.l",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix32.O",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix32.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix40.m",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix40.l",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix40.O",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix40.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix48.m",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix48.l",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix48.O",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.prefix48.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.wrong_O_alpha_half.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.wrong_O_alpha_half.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.reset_O_each_tile.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile8.reset_O_each_tile.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile16.positive_record",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile16.prefix16.m",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile16.prefix16.l",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile16.prefix16.O",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile16.prefix16.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile16.prefix32.m",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile16.prefix32.l",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile16.prefix32.O",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile16.prefix32.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile16.prefix48.m",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile16.prefix48.l",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile16.prefix48.O",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile16.prefix48.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile16.wrong_O_alpha_half.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile16.wrong_O_alpha_half.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile16.reset_O_each_tile.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile16.reset_O_each_tile.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile32.positive_record",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile32.prefix32.m",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile32.prefix32.l",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile32.prefix32.O",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile32.prefix32.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile32.prefix48.m",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile32.prefix48.l",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile32.prefix48.O",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile32.prefix48.alpha",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile32.wrong_O_alpha_half.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile32.wrong_O_alpha_half.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile32.reset_O_each_tile.scope",
+      "pass": true
+    },
+    {
+      "name": "capture-02.decode48.tile32.reset_O_each_tile.independent_detected",
+      "pass": true
+    },
+    {
+      "name": "capture-02.exact_summary_counts",
+      "pass": true
+    },
+    {
+      "name": "repeat_capture.raw_members_bitwise",
+      "pass": true
+    },
+    {
+      "name": "repeat_capture.artifacts_identical",
+      "pass": true
+    },
+    {
+      "name": "repeat_capture.source_model_runtime_identical",
+      "pass": true
+    }
+  ],
+  "runs": {
+    "capture-01": {
+      "direct_softmax": {
+        "prefill32": {
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.124469243496672e-07,
+          "relative_l2": 5.261480742904734e-07
+        },
+        "decode48": {
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.1685099105273054e-08,
+          "relative_l2": 1.1279472757608123e-07
+        }
+      },
+      "state_prefix_checks": [
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 8,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 4.694104738689475e-06,
+          "relative_l2": 2.1373029388011813e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 8,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.26567385156018e-06,
+          "relative_l2": 5.436346179266774e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 8,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 7.583676230327185e-07,
+          "relative_l2": 6.40599927653887e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 8,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 16,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.4988301180760573e-06,
+          "relative_l2": 1.6564639117385572e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 16,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.182134784505351e-05,
+          "relative_l2": 8.666470268079239e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 16,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.5408361040989433e-06,
+          "relative_l2": 9.5453565850152e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 16,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.06595199339732e-06,
+          "relative_l2": 9.945934099675938e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 24,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.4988301180760573e-06,
+          "relative_l2": 1.3787386326540791e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 24,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 5.7225341159039544e-06,
+          "relative_l2": 5.943715130555584e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 24,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 8.882166535606473e-07,
+          "relative_l2": 6.974791636570286e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 24,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.6186698169606828e-06,
+          "relative_l2": 4.653938411320281e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 32,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.4988301180760573e-06,
+          "relative_l2": 1.3294543565907082e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 32,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 8.023643146337633e-06,
+          "relative_l2": 6.565241211183177e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 32,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.2813596509685397e-06,
+          "relative_l2": 6.854782496099949e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 32,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.807245446183714e-06,
+          "relative_l2": 4.523228691637424e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "prefix_keys": 16,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.4988301180760573e-06,
+          "relative_l2": 1.6589776714946968e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "prefix_keys": 16,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.182134784505351e-05,
+          "relative_l2": 8.662454149509135e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "prefix_keys": 16,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.6600453936497246e-06,
+          "relative_l2": 9.435023838515407e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "prefix_keys": 16,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "prefix_keys": 32,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.4988301180760573e-06,
+          "relative_l2": 1.332206730872692e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "prefix_keys": 32,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 7.5468059881345084e-06,
+          "relative_l2": 6.356694446884266e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "prefix_keys": 32,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.2813596509685397e-06,
+          "relative_l2": 6.652290817403916e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "prefix_keys": 32,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.6186698169606828e-06,
+          "relative_l2": 5.347193590127188e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 32,
+          "prefix_keys": 32,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.4988301180760573e-06,
+          "relative_l2": 1.2951156233709476e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 32,
+          "prefix_keys": 32,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 7.5468059881345084e-06,
+          "relative_l2": 5.921324403568989e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 32,
+          "prefix_keys": 32,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.1621503614177584e-06,
+          "relative_l2": 6.579548602724842e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 32,
+          "prefix_keys": 32,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 8,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 4.867049856471795e-07,
+          "relative_l2": 6.236843302455158e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 8,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 7.246098101543197e-07,
+          "relative_l2": 3.76968774150618e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 8,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.6308057488044767e-07,
+          "relative_l2": 6.872074167193721e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 8,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 16,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.395822082945642e-07,
+          "relative_l2": 2.4029169346261296e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 16,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.3385943198329642e-07,
+          "relative_l2": 7.861099926363978e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 16,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.3742083354871824e-08,
+          "relative_l2": 9.085439084820539e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 16,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 9.027860635446583e-08,
+          "relative_l2": 7.881334165089728e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 24,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.395822082945642e-07,
+          "relative_l2": 2.4029169346261296e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 24,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.2196999022460204e-07,
+          "relative_l2": 1.3735987065756077e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 24,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.0164285324520961e-07,
+          "relative_l2": 1.4680964740485752e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 24,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 32,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 4.012238399297985e-07,
+          "relative_l2": 4.012657974161401e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 32,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.027347490190067e-06,
+          "relative_l2": 2.8681897081260296e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 32,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.7454709045370294e-07,
+          "relative_l2": 3.110254263115e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 32,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.6905914501652575e-07,
+          "relative_l2": 1.7394323186854602e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 40,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 4.012238399297985e-07,
+          "relative_l2": 4.012657974161401e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 40,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.5111827238456499e-06,
+          "relative_l2": 3.4630451684744163e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 40,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.950801059637854e-07,
+          "relative_l2": 2.9964952640515136e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 40,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 48,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 4.012238399297985e-07,
+          "relative_l2": 4.012657974161401e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 48,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.940575384080546e-06,
+          "relative_l2": 5.034185519430368e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 48,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 8.03397630644298e-07,
+          "relative_l2": 4.418802865724419e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 48,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 16,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.395822082945642e-07,
+          "relative_l2": 2.4029169346261296e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 16,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.4650142432515167e-08,
+          "relative_l2": 8.603520266830188e-09
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 16,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.3742083354871824e-08,
+          "relative_l2": 9.202295390683328e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 16,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 32,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 4.012238399297985e-07,
+          "relative_l2": 4.012657974161401e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 32,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 7.889289110885045e-07,
+          "relative_l2": 2.2025632075165625e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 32,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.553378009029217e-07,
+          "relative_l2": 2.4289728151078566e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 32,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.6905914501652575e-07,
+          "relative_l2": 1.7394323186854602e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 48,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 4.012238399297985e-07,
+          "relative_l2": 4.012657974161401e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 48,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.463738225877421e-06,
+          "relative_l2": 4.2178532023103706e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 48,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 8.03397630644298e-07,
+          "relative_l2": 4.5141712442184766e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 48,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "prefix_keys": 32,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 4.012238399297985e-07,
+          "relative_l2": 4.012657974161401e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "prefix_keys": 32,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.027347490190067e-06,
+          "relative_l2": 2.8681897081260296e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "prefix_keys": 32,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.553378009029217e-07,
+          "relative_l2": 2.2287780594957616e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "prefix_keys": 32,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "prefix_keys": 48,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 4.012238399297985e-07,
+          "relative_l2": 4.012657974161401e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "prefix_keys": 48,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.463738225877421e-06,
+          "relative_l2": 4.2178532023103706e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "prefix_keys": 48,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 8.03397630644298e-07,
+          "relative_l2": 4.41776825592559e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "prefix_keys": 48,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        }
+      ],
+      "negative_checks": [
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "name": "wrong_O_alpha_half",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.4427178537165865,
+          "relative_l2": 0.7442441051641338
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "name": "reset_O_each_tile",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.5050484538078308,
+          "relative_l2": 0.9494439655814361
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "name": "wrong_O_alpha_half",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.41323300856324796,
+          "relative_l2": 0.4713983617076532
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "name": "reset_O_each_tile",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.5050484538078308,
+          "relative_l2": 0.7981376011948824
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "name": "wrong_O_alpha_half",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.18571211707165572,
+          "relative_l2": 0.5891926415406947
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "name": "reset_O_each_tile",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.23315812979937223,
+          "relative_l2": 0.7456872937591981
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "name": "wrong_O_alpha_half",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.12251074041590951,
+          "relative_l2": 0.38820931834562133
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "name": "reset_O_each_tile",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.1999583603379876,
+          "relative_l2": 0.6313782866449441
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "name": "wrong_O_alpha_half",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.0999791910115434,
+          "relative_l2": 0.31568916282800347
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "name": "reset_O_each_tile",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.1999583603379876,
+          "relative_l2": 0.6313782866449441
+        }
+      ],
+      "positive_checks": 6,
+      "negative_detected": 10,
+      "negative_not_applicable": 2,
+      "npz_members": 46
+    },
+    "capture-02": {
+      "direct_softmax": {
+        "prefill32": {
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.124469243496672e-07,
+          "relative_l2": 5.261480742904734e-07
+        },
+        "decode48": {
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.1685099105273054e-08,
+          "relative_l2": 1.1279472757608123e-07
+        }
+      },
+      "state_prefix_checks": [
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 8,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 4.694104738689475e-06,
+          "relative_l2": 2.1373029388011813e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 8,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.26567385156018e-06,
+          "relative_l2": 5.436346179266774e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 8,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 7.583676230327185e-07,
+          "relative_l2": 6.40599927653887e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 8,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 16,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.4988301180760573e-06,
+          "relative_l2": 1.6564639117385572e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 16,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.182134784505351e-05,
+          "relative_l2": 8.666470268079239e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 16,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.5408361040989433e-06,
+          "relative_l2": 9.5453565850152e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 16,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.06595199339732e-06,
+          "relative_l2": 9.945934099675938e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 24,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.4988301180760573e-06,
+          "relative_l2": 1.3787386326540791e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 24,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 5.7225341159039544e-06,
+          "relative_l2": 5.943715130555584e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 24,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 8.882166535606473e-07,
+          "relative_l2": 6.974791636570286e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 24,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.6186698169606828e-06,
+          "relative_l2": 4.653938411320281e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 32,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.4988301180760573e-06,
+          "relative_l2": 1.3294543565907082e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 32,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 8.023643146337633e-06,
+          "relative_l2": 6.565241211183177e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 32,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.2813596509685397e-06,
+          "relative_l2": 6.854782496099949e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "prefix_keys": 32,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.807245446183714e-06,
+          "relative_l2": 4.523228691637424e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "prefix_keys": 16,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.4988301180760573e-06,
+          "relative_l2": 1.6589776714946968e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "prefix_keys": 16,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.182134784505351e-05,
+          "relative_l2": 8.662454149509135e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "prefix_keys": 16,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.6600453936497246e-06,
+          "relative_l2": 9.435023838515407e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "prefix_keys": 16,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "prefix_keys": 32,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.4988301180760573e-06,
+          "relative_l2": 1.332206730872692e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "prefix_keys": 32,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 7.5468059881345084e-06,
+          "relative_l2": 6.356694446884266e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "prefix_keys": 32,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.2813596509685397e-06,
+          "relative_l2": 6.652290817403916e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "prefix_keys": 32,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.6186698169606828e-06,
+          "relative_l2": 5.347193590127188e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 32,
+          "prefix_keys": 32,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.4988301180760573e-06,
+          "relative_l2": 1.2951156233709476e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 32,
+          "prefix_keys": 32,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 7.5468059881345084e-06,
+          "relative_l2": 5.921324403568989e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 32,
+          "prefix_keys": 32,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.1621503614177584e-06,
+          "relative_l2": 6.579548602724842e-07
+        },
+        {
+          "capture": "prefill32",
+          "tile": 32,
+          "prefix_keys": 32,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 8,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 4.867049856471795e-07,
+          "relative_l2": 6.236843302455158e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 8,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 7.246098101543197e-07,
+          "relative_l2": 3.76968774150618e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 8,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.6308057488044767e-07,
+          "relative_l2": 6.872074167193721e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 8,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 16,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.395822082945642e-07,
+          "relative_l2": 2.4029169346261296e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 16,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.3385943198329642e-07,
+          "relative_l2": 7.861099926363978e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 16,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.3742083354871824e-08,
+          "relative_l2": 9.085439084820539e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 16,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 9.027860635446583e-08,
+          "relative_l2": 7.881334165089728e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 24,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.395822082945642e-07,
+          "relative_l2": 2.4029169346261296e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 24,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.2196999022460204e-07,
+          "relative_l2": 1.3735987065756077e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 24,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.0164285324520961e-07,
+          "relative_l2": 1.4680964740485752e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 24,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 32,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 4.012238399297985e-07,
+          "relative_l2": 4.012657974161401e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 32,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.027347490190067e-06,
+          "relative_l2": 2.8681897081260296e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 32,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.7454709045370294e-07,
+          "relative_l2": 3.110254263115e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 32,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.6905914501652575e-07,
+          "relative_l2": 1.7394323186854602e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 40,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 4.012238399297985e-07,
+          "relative_l2": 4.012657974161401e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 40,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.5111827238456499e-06,
+          "relative_l2": 3.4630451684744163e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 40,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 3.950801059637854e-07,
+          "relative_l2": 2.9964952640515136e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 40,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 48,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 4.012238399297985e-07,
+          "relative_l2": 4.012657974161401e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 48,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.940575384080546e-06,
+          "relative_l2": 5.034185519430368e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 48,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 8.03397630644298e-07,
+          "relative_l2": 4.418802865724419e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "prefix_keys": 48,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 16,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.395822082945642e-07,
+          "relative_l2": 2.4029169346261296e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 16,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.4650142432515167e-08,
+          "relative_l2": 8.603520266830188e-09
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 16,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.3742083354871824e-08,
+          "relative_l2": 9.202295390683328e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 16,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 32,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 4.012238399297985e-07,
+          "relative_l2": 4.012657974161401e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 32,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 7.889289110885045e-07,
+          "relative_l2": 2.2025632075165625e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 32,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.553378009029217e-07,
+          "relative_l2": 2.4289728151078566e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 32,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.6905914501652575e-07,
+          "relative_l2": 1.7394323186854602e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 48,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 4.012238399297985e-07,
+          "relative_l2": 4.012657974161401e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 48,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.463738225877421e-06,
+          "relative_l2": 4.2178532023103706e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 48,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 8.03397630644298e-07,
+          "relative_l2": 4.5141712442184766e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "prefix_keys": 48,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "prefix_keys": 32,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 4.012238399297985e-07,
+          "relative_l2": 4.012657974161401e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "prefix_keys": 32,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 1.027347490190067e-06,
+          "relative_l2": 2.8681897081260296e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "prefix_keys": 32,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.553378009029217e-07,
+          "relative_l2": 2.2287780594957616e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "prefix_keys": 32,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "prefix_keys": 48,
+          "field": "m",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 4.012238399297985e-07,
+          "relative_l2": 4.012657974161401e-08
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "prefix_keys": 48,
+          "field": "l",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 2.463738225877421e-06,
+          "relative_l2": 4.2178532023103706e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "prefix_keys": 48,
+          "field": "O",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 8.03397630644298e-07,
+          "relative_l2": 4.41776825592559e-07
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "prefix_keys": 48,
+          "field": "alpha",
+          "pass": true,
+          "allfinite": true,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        }
+      ],
+      "negative_checks": [
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "name": "wrong_O_alpha_half",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.4427178537165865,
+          "relative_l2": 0.7442441051641338
+        },
+        {
+          "capture": "prefill32",
+          "tile": 8,
+          "name": "reset_O_each_tile",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.5050484538078308,
+          "relative_l2": 0.9494439655814361
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "name": "wrong_O_alpha_half",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.41323300856324796,
+          "relative_l2": 0.4713983617076532
+        },
+        {
+          "capture": "prefill32",
+          "tile": 16,
+          "name": "reset_O_each_tile",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.5050484538078308,
+          "relative_l2": 0.7981376011948824
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "name": "wrong_O_alpha_half",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.18571211707165572,
+          "relative_l2": 0.5891926415406947
+        },
+        {
+          "capture": "decode48",
+          "tile": 8,
+          "name": "reset_O_each_tile",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.23315812979937223,
+          "relative_l2": 0.7456872937591981
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "name": "wrong_O_alpha_half",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.12251074041590951,
+          "relative_l2": 0.38820931834562133
+        },
+        {
+          "capture": "decode48",
+          "tile": 16,
+          "name": "reset_O_each_tile",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.1999583603379876,
+          "relative_l2": 0.6313782866449441
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "name": "wrong_O_alpha_half",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.0999791910115434,
+          "relative_l2": 0.31568916282800347
+        },
+        {
+          "capture": "decode48",
+          "tile": 32,
+          "name": "reset_O_each_tile",
+          "detected": true,
+          "pass": false,
+          "allfinite": true,
+          "max_abs": 0.1999583603379876,
+          "relative_l2": 0.6313782866449441
+        }
+      ],
+      "positive_checks": 6,
+      "negative_detected": 10,
+      "negative_not_applicable": 2,
+      "npz_members": 46
+    }
+  },
+  "failures": [],
+  "totals": {
+    "checks": 399,
+    "passed": 399,
+    "failed": 0
+  }
+}

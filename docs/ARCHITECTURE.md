@@ -52,3 +52,9 @@ Issue #11将本轮Python研究工具正式放入 `project/experiments/frozen_rou
 ## Issue23 固定真实权重轨迹
 
 project/experiments/qwen3_trace/使用独立D盘环境（torch2.10.0+cpu、transformers4.57.6），正式命令与输入/误差合同见该目录README与experiment.json。先运行该目录test_numeric.py协议检查和work/Liangruizhi/23/check_observer.py集成，再从清洁commit调用run.py，输出到D盘独立新目录。原有check_research五套测试仍用其指定环境；新模型依赖不强加给全局Python。
+
+## Issue27 状态与端口服务模型
+
+`project/experiments/state_ports/`包含固定slot/scratch、原子服务资源、四种启发式与小规模精确oracle。先运行`python -B scripts/check_project.py`；再在Issue23的独立环境运行`python -B -m unittest discover -s project/experiments/state_ports -p 'test_*.py'`（25项）。进程TEMP/TMP指定D:/Projects/Codex/state-port-study-20261022/process-temp。
+
+从干净commit执行`python -B project/experiments/state_ports/run.py --output <D盘新目录>`；真实head捕获用该目录capture.py的`--weights`与`--output`，具体锁定环境/模型及完整命令见[工具说明](../project/experiments/state_ports/README.md)。不将真实tensor数值验证或服务模型cycle描述为RTL/PPA。归档/图表脚本在work/Liangruizhi/27，正式资源/采集输出与独立审计位置见[实验报告](experiments/issue-27-state-port-model.md)。

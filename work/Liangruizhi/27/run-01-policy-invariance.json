@@ -1,0 +1,127 @@
+{
+  "scope": "formal run01 supplemental conditional-policy audit",
+  "case_sha256": "e82f18e9a89b358bce4adcb9e3bd283682a03ec0d8fa3dac8a9a4c8355a79773",
+  "placement_order": [
+    "O",
+    "m",
+    "l"
+  ],
+  "full_2RW_workload_config_groups": 48,
+  "best_of_four_varying_groups": 0,
+  "single_policy_variation": {
+    "critical": [],
+    "fifo": [],
+    "shortest": [
+      {
+        "config": {
+          "bank_bytes": [
+            65536,
+            65536
+          ],
+          "bank_port_bytes_per_cycle": 64,
+          "bank_ports": "2RW",
+          "burst_setup_cycles": 2,
+          "endpoint_staging_bytes": 64,
+          "external_bytes_per_cycle": 32,
+          "key_tile": 16,
+          "link_bytes_per_cycle": 64,
+          "matrix_macs_per_cycle": 1024,
+          "max_query_tile": 32,
+          "scratch_bytes": {
+            "M": 65536,
+            "V": 65536
+          },
+          "vector_elements_per_cycle": 16
+        },
+        "workload": "extrapolated-prefill-last32-of256",
+        "range": [
+          35862,
+          37626
+        ]
+      },
+      {
+        "config": {
+          "bank_bytes": [
+            65536,
+            65536
+          ],
+          "bank_port_bytes_per_cycle": 32,
+          "bank_ports": "2RW",
+          "burst_setup_cycles": 2,
+          "endpoint_staging_bytes": 64,
+          "external_bytes_per_cycle": 16,
+          "key_tile": 16,
+          "link_bytes_per_cycle": 32,
+          "matrix_macs_per_cycle": 1024,
+          "max_query_tile": 32,
+          "scratch_bytes": {
+            "M": 65536,
+            "V": 65536
+          },
+          "vector_elements_per_cycle": 16
+        },
+        "workload": "extrapolated-prefill-last32-of256",
+        "range": [
+          58488,
+          62016
+        ]
+      }
+    ],
+    "longest": []
+  },
+  "all_feasible_chosen_policy_counts": {
+    "critical": 699,
+    "shortest": 273,
+    "fifo": 252
+  },
+  "base_1RW_paired_policy_cycles": [
+    {
+      "Oml": "000",
+      "workload": "observed-prefill32",
+      "chosen_policy": "critical",
+      "policy_cycles": {
+        "critical": 7094,
+        "fifo": 7330,
+        "longest": 7494,
+        "shortest": 7460
+      },
+      "makespan": 7094
+    },
+    {
+      "Oml": "000",
+      "workload": "observed-decode48",
+      "chosen_policy": "shortest",
+      "policy_cycles": {
+        "critical": 2641,
+        "fifo": 2635,
+        "longest": 2667,
+        "shortest": 2625
+      },
+      "makespan": 2625
+    },
+    {
+      "Oml": "111",
+      "workload": "observed-prefill32",
+      "chosen_policy": "critical",
+      "policy_cycles": {
+        "critical": 6774,
+        "fifo": 6938,
+        "longest": 6972,
+        "shortest": 6938
+      },
+      "makespan": 6774
+    },
+    {
+      "Oml": "111",
+      "workload": "observed-decode48",
+      "chosen_policy": "critical",
+      "policy_cycles": {
+        "critical": 2522,
+        "fifo": 2522,
+        "longest": 2588,
+        "shortest": 2522
+      },
+      "makespan": 2522
+    }
+  ]
+}
