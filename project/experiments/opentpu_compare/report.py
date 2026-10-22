@@ -118,7 +118,7 @@ td:not(:first-child){{font-variant-numeric:tabular-nums}}.scroll{{overflow:auto}
 <p>40 个外部端口、1662bit，2.5ns 时钟、0.5ns 输入输出预算、BUF_X4/Z 输入驱动、5fF 输出负载、50ps 时钟转换。拆分暴露 684bit 地址数据与 1bit computing 反馈，无新增流水、缓存或串行化。两组父层同为 1670×1670µm，实际外部引脚逐 bit 几何一致；ACT 位于 (80,80)、MXU 位于 (486.205,80)，合并位于 (80,80)，方向 R0。</p>
 <p>块内保留 M1–M9，详细 LEF 无 M10；父层信号可用 M2–M10，PG 使用 M1/M4/M7/M10，保留详细宏障碍并核对最终 VDD/VSS 连通。物理缓冲、驱动升级、时钟树等允许变化，全部计入面积与布线成本。</p>
 <h2>完整系统结果</h2>{totals}
-<p class="note">叶单元面积含同一批 SRAM 和非填充支持单元。硬宏占地、父层 die 单独列示，不再叠加到宏内叶面积。信号线与通孔排除 special PG。WNS 来自真实父层与子块网表、分层 SPEF 的完整路径分析，不能相加各块 WNS。</p>
+<p class="note">叶单元面积含同一批 SRAM 和非填充支持单元。硬宏占地、父层 die 单独列示，不再叠加到宏内叶面积。信号线与通孔排除 special PG；父层包含外部 IO、时钟及块间连接，不能全算作 685bit ACT/MXU 边界互连。WNS 来自真实父层与子块网表、分层 SPEF 的完整路径分析，不能相加各块 WNS。</p>
 <figure><img src="assets/issue-15-ppa.png" alt="拆分与合并的面积、信号线、通孔和完整时序对比"><figcaption>块内与父层成本分开计量；完整 setup 与 hold 均为实际提取结果。</figcaption></figure>
 <figure><img src="assets/issue-15-floorplans.png" alt="相同父层边界中的实际最终宏盒形"><figcaption>从最终数据库 PG 几何审计读取宏盒形；外框和 1662bit 外部引脚相同。</figcaption></figure>
 <h2>块内结果与接口代价</h2>{block_table}
