@@ -19,7 +19,7 @@ for p in sorted(base.iterdir()):
  if not (p/'spec.json').exists(): continue
  spec=json.load(open(p/'spec.json'))
  row={'spec':spec,'exit_code':(p/'exit-code.txt').read_text().strip() if (p/'exit-code.txt').exists() else None}
- for name in ['started.txt','finished.txt','allocation.txt','resource-audit.json','experiment.json','input-sha256.json','strict-pg.json','final-pg/strict-pg.json','layer-reservation.json','transparent-sta-validation.json','resource-qualification.json','full-hierarchy-quality.json']:
+ for name in ['started.txt','finished.txt','allocation.txt','resource-audit.json','experiment.json','input-sha256.json','strict-pg.json','final-pg/strict-pg.json','layer-reservation.json','transparent-sta-validation.json','resource-qualification.json','full-hierarchy-quality.json','pre-drt-electrical-quality.json']:
   f=p/name
   if f.exists():
    row[name]=read_json(f) if f.suffix=='.json' else f.read_text()
@@ -28,7 +28,7 @@ for p in sorted(base.iterdir()):
  row['job_log_tail']=(p/'job.log').read_text(errors='replace').splitlines()[-14:] if (p/'job.log').exists() else []
  row['metrics']={}
  for f in (p/'flow/logs').rglob('*.json') if (p/'flow/logs').exists() else []:
-  if f.name in ('6_report.json','5_2_route.json'):
+  if f.name in ('6_report.json','5_2_route.json','5_1_grt.json'):
    d=read_json(f);row['metrics'][f.name]={k:v for k,v in d.items() if any(s in k for s in ['timing','area','wirelength','vias','antenna','drc','instance','violations','power','clock','net__count'])}
  for f in (p/'flow/reports').rglob('6_finish.rpt') if (p/'flow/reports').exists() else []:
   row['final_report']=f.read_text()

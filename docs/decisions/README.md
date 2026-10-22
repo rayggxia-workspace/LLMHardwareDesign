@@ -4,4 +4,5 @@
 
 复制 `_template.md` 为 `NNNN-short-title.md`，编号递增；关联相关 Issue/PR。已生效记录保持历史，改变决定时新增记录并注明替代关系。
 
-目前尚无项目决策。
+- [0001：初期资料直接进入项目目录](0001-initial-research-layout.md)（accepted）
+- [0002：openTPU 同资源物理对照约定](0002-opentpu-physical-comparison.md)（proposed，工程已试行，待PR审查）
