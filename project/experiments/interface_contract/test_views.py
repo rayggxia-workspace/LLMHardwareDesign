@@ -121,6 +121,11 @@ class ViewTests(unittest.TestCase):
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_importing_views_keeps_this_experiments_capture_module(self):
+        import capture
+        self.assertTrue(callable(capture.program))
+        self.assertEqual(Path(capture.__file__).resolve().parent, Path(__file__).resolve().parent)
+
     def test_checksum_duplicate_malformed(self):
         line='a'*64+'  boundary.sv\n'
         self.assertEqual(checksum_entries(line.encode())['boundary.sv'],'a'*64)

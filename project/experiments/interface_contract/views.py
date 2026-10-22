@@ -12,7 +12,7 @@ import sys
 
 from evidence import sha
 from liberty_profile import parse_liberty
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'macro_endpoints'))
+sys.path.append(str(Path(__file__).resolve().parent.parent / 'macro_endpoints'))
 from lef_profile import parse_lef
 
 
