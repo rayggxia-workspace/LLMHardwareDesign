@@ -37,11 +37,18 @@ def derive(folder):
     for candidate, view in views.items():
         macros[candidate] = {
             'macro': view['macro'], 'ports': len(view['ports']), 'signal_bits': len(view['bits']),
+            'producer_experiment_declaration': json.loads((folder/candidate/'experiment.json').read_bytes()),
             'input_bits': sum(r['direction']=='input' for r in view['bits'].values()),
             'output_bits': sum(r['direction']=='output' for r in view['bits'].values()),
             'pg_pins': len(view['power']), 'aliases': view['aliases'], 'constants': view['constants'],
+            'pg_direction_mismatches': [{'bit_name': p['bit_name'], 'liberty_direction': p['liberty']['effective_direction'],
+                                         'lef_direction': p['lef']['direction']} for p in view['power'] if p['direction_match'] is False],
             'yosys_creator': view['creator'], 'source_hashes': view['source_hashes'],
             'three_view_names_widths_directions': 'PASS',
+            'liberty_profile': view['liberty_metadata']['profile'],
+            'liberty_syntax_strict': view['liberty_metadata']['syntax_strict'],
+            'liberty_syntax_recovery_count': view['liberty_metadata']['syntax_recovery_count'],
+            'liberty_diagnostics': view['liberty_metadata']['diagnostics'],
             'named_type_widths': {n:p['boundary']['width_source'] for n,p in view['ports'].items()
                                   if p['boundary']['declared_width'] is None},
         }
@@ -60,7 +67,8 @@ def derive(folder):
                                 'driver_candidate': item['driver']['candidate'], 'driver_bit': item['driver']['name'],
                                 'sink_candidate': item['sink']['candidate'], 'sink_bit': item['sink']['name'],
                                 'net': item['net']})
-    summary = {'schema': 1, 'input_version': cfg['input_version'],
+    summary = {'schema': 1, 'status': 'SIGNAL_INTERFACE_CHECKED_WITH_RECORDED_INPUT_DIAGNOSTICS',
+               'input_version': cfg['input_version'],
                'capture_sha256': sha((folder/'capture.json').read_bytes()),
                'producer_hash_comparisons': len(comparisons), 'macros': macros, 'graph': graph['summary'],
                'scope': 'Selected frozen wave2-06 boundary consistency; reuses existing Issue7 wiring evidence',

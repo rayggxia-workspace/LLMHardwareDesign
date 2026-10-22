@@ -4,7 +4,8 @@ import hashlib
 import json
 import unittest
 
-from liberty_profile import LibertyProfileError, PROFILE, parse_liberty
+from liberty_profile import (AREA_SEMICOLON_COMPAT_PROFILE, LibertyProfileError,
+                             PROFILE, parse_liberty)
 
 
 TYPE = """type (vec4) {
@@ -42,9 +43,9 @@ def groups(node, name):
 
 
 class LibertyProfileTests(unittest.TestCase):
-    def reject(self, data, contains=None):
+    def reject(self, data, contains=None, **kwargs):
         with self.assertRaises(LibertyProfileError) as raised:
-            parse_liberty(data, "synthetic.lib")
+            parse_liberty(data, "synthetic.lib", **kwargs)
         error = raised.exception
         self.assertEqual(error.source_name, "synthetic.lib")
         self.assertGreaterEqual(error.line, 1)
@@ -354,6 +355,81 @@ class LibertyProfileTests(unittest.TestCase):
         function = parsed["cell"]["bits"][0]["fields"]["function"]
         self.assertEqual(function["raw"], "(A & (B | C))")
         self.assertIsNone(function["value"])
+
+    def test_missing_cell_area_semicolon_requires_explicit_compatibility(self):
+        content = "area : 89646.023 \nis_macro_cell : true;\n" + scalar("X")
+        data = library(content)
+        original = data[:]
+        self.reject(data, "possible missing semicolon")
+        parsed = parse_liberty(data, "original.lib", profile=AREA_SEMICOLON_COMPAT_PROFILE)
+        self.assertEqual(data, original)
+        self.assertEqual(parsed["source_sha256"], hashlib.sha256(original).hexdigest())
+        self.assertEqual(parsed["profile"], AREA_SEMICOLON_COMPAT_PROFILE)
+        self.assertFalse(parsed["syntax_strict"])
+        self.assertEqual(parsed["syntax_recovery_count"], 1)
+        self.assertIn("not a valid-Liberty claim", parsed["qualification"])
+        line = data.decode().splitlines().index("area : 89646.023 ") + 1
+        diagnostic = parsed["diagnostics"][0]
+        self.assertEqual(diagnostic["kind"], "missing_cell_area_semicolon_compatibility")
+        self.assertEqual((diagnostic["scope"], diagnostic["field"], diagnostic["line"], diagnostic["value_line"]),
+                         ("cell", "area", line, line))
+        self.assertEqual(diagnostic["raw_value"], "89646.023")
+        self.assertEqual((diagnostic["next_field"], diagnostic["next_field_line"]), ("is_macro_cell", line + 1))
+        self.assertEqual(diagnostic["source_fragment"], "area : 89646.023 \n")
+        cell_ast = groups(parsed["ast"], "cell")[0]
+        area = cell_ast["children"][0]
+        self.assertEqual(area["name"], "area")
+        self.assertEqual(area["value"]["raw"], "89646.023")
+        self.assertEqual(area["terminator"], "missing_semicolon_compatibility")
+        self.assertEqual(cell_ast["children"][1]["name"], "is_macro_cell")
+
+    def test_compatibility_does_not_claim_strict_mode_even_without_recovery(self):
+        data = library("area:1.0;\nis_macro_cell:true;\n" + scalar())
+        strict = parse_liberty(data)
+        compatible = parse_liberty(data, profile=AREA_SEMICOLON_COMPAT_PROFILE)
+        self.assertTrue(strict["syntax_strict"])
+        self.assertEqual(strict["syntax_recovery_count"], 0)
+        self.assertFalse(compatible["syntax_strict"])
+        self.assertEqual(compatible["syntax_recovery_count"], 0)
+        self.assertEqual(strict["cell"], compatible["cell"])
+        self.assertEqual(strict["ast"], compatible["ast"])
+
+    def test_compatibility_is_limited_to_direct_cell_area(self):
+        variants = [library(scalar(), metadata="area:1.0\nis_macro_cell:true;"),
+                    library(scalar("X", "direction:input;\narea:1.0\nis_macro_cell:true;")),
+                    library(scalar("X", groups="timing(){area:1.0\nis_macro_cell:true;}")),
+                    library("size:1.0\nis_macro_cell:true;\n" + scalar())]
+        for data in variants:
+            with self.subTest(data=data):
+                self.reject(data, profile=AREA_SEMICOLON_COMPAT_PROFILE)
+
+    def test_compatibility_does_not_relax_numeric_format_or_adjacent_statement(self):
+        variants = ["area:1.0 is_macro_cell:true;", "area:1.0\n\nis_macro_cell:true;",
+                    "area:-1.0\nis_macro_cell:true;", "area:+1.0\nis_macro_cell:true;",
+                    "area:1e3\nis_macro_cell:true;", 'area:"1.0"\nis_macro_cell:true;',
+                    "area:NaN\nis_macro_cell:true;", "area:1 + 2\nis_macro_cell:true;",
+                    "area:1.0 /*comment*/\nis_macro_cell:true;",
+                    "area:1.0\n/*comment*/is_macro_cell:true;",
+                    "area:1.0\nis_macro_cell:1;", 'area:1.0\nis_macro_cell:"true";',
+                    "area:1.0\nis_macro_cell:true", "area:\n1.0\nis_macro_cell:true;",
+                    "area:1.0\nis_macro_cell:true /*comment*/;", "area:1.0\nother:true;"]
+        for content in variants:
+            with self.subTest(content=content):
+                self.reject(library(content + "\n" + scalar()), profile=AREA_SEMICOLON_COMPAT_PROFILE)
+        parsed = parse_liberty(library("area:1\nis_macro_cell:false;\n" + scalar()),
+                               profile=AREA_SEMICOLON_COMPAT_PROFILE)
+        self.assertEqual(parsed["syntax_recovery_count"], 1)
+
+    def test_compatibility_does_not_hide_later_invalid_interface_or_duplicates(self):
+        prefix = "area:1.0\nis_macro_cell:true;\n"
+        self.reject(library(prefix + scalar("X", "direction:input; unknown_interface:true;")),
+                    "unsupported", profile=AREA_SEMICOLON_COMPAT_PROFILE)
+        self.reject(library(prefix + prefix + scalar()), "duplicate", profile=AREA_SEMICOLON_COMPAT_PROFILE)
+
+    def test_unknown_profile_cannot_select_implicit_fallback(self):
+        for profile in ["compat", "liberty-loose", "", None, False]:
+            with self.subTest(profile=profile):
+                self.reject(library(), "unknown explicit parsing profile", profile=profile)
 
 
 if __name__ == "__main__":

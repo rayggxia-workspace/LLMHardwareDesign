@@ -120,6 +120,16 @@ class ViewTests(unittest.TestCase):
             join_views(v,lib,lef)
 
 
+    def test_pg_direction_difference_is_reported_not_hidden(self):
+        v=logical();lib,lef=physical(v)
+        lib['cell']['bits'].append({'bit_name':'VDD','raw_name':'VDD','effective_direction':'input'})
+        lef['macro']['pins'].append({'name':'VDD','direction':'INOUT','use':'POWER','ports':[{'rects':[]}]})
+        p=join_views(v,lib,lef)['power'][0]
+        self.assertIs(p['direction_match'],False)
+        self.assertEqual(p['liberty']['effective_direction'],'input')
+        self.assertEqual(p['lef']['direction'],'INOUT')
+
+
 class EvidenceTests(unittest.TestCase):
     def test_importing_views_keeps_this_experiments_capture_module(self):
         import capture

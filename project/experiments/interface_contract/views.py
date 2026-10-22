@@ -11,7 +11,7 @@ import re
 import sys
 
 from evidence import sha
-from liberty_profile import parse_liberty
+from liberty_profile import AREA_SEMICOLON_COMPAT_PROFILE, parse_liberty
 sys.path.append(str(Path(__file__).resolve().parent.parent / 'macro_endpoints'))
 from lef_profile import parse_lef
 
@@ -152,10 +152,12 @@ def join_views(logical, lib, lef):
                 'GROUND' if pg_type in ('primary_ground','backup_ground','internal_ground') else None)
             if expected_use != physical['use']:
                 raise ValueError('Unresolved or mismatched Liberty pg_type/LEF USE')
-        if name in lb and library['effective_direction'] != physical['direction'].lower():
-            raise ValueError('PG ordinary-pin direction mismatch')
+        direction_match = None if library['effective_direction'] is None else (
+            library['effective_direction'] == physical['direction'].lower())
         power.append({'bit_name': name, 'classification': physical['use'].lower(), 'liberty': library,
-                      'lef': physical, 'supply_connectivity_verified': False})
+                      'lef': physical, 'supply_connectivity_verified': False,
+                      'direction_match': direction_match,
+                      'direction_scope': 'Recorded PG view declarations; not a signal or supply-connectivity proof'})
     return {**logical, 'bits': rows, 'power': power,
             'liberty_metadata': {k:v for k,v in lib.items() if k not in ('cell','ast')},
             'liberty_cell': {k:v for k,v in lib['cell'].items() if k != 'bits'},
@@ -169,6 +171,7 @@ def load_view(folder, macro):
     candidate, name = macro['id'], macro['macro']
     logical = logical_ports((folder/candidate/'elab.json').read_bytes(),
                             (folder/candidate/'boundary.sv').read_bytes(), name)
-    lib = parse_liberty((folder/candidate/(name+'_typ.lib')).read_bytes(), candidate+'/'+name+'_typ.lib')
+    lib = parse_liberty((folder/candidate/(name+'_typ.lib')).read_bytes(), candidate+'/'+name+'_typ.lib',
+                        profile=AREA_SEMICOLON_COMPAT_PROFILE)
     lef = parse_lef((folder/(candidate+'.lef')).read_bytes(), candidate+'.lef')
     return join_views(logical, lib, lef)

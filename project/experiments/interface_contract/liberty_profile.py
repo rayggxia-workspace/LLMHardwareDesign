@@ -14,6 +14,7 @@ import re
 
 
 PROFILE = "liberty-single-cell-interface-v1"
+AREA_SEMICOLON_COMPAT_PROFILE = "liberty-single-cell-interface-area-semicolon-compat-v1"
 MAX_BITS = 65536
 _IDENT = re.compile(r"[A-Za-z_][A-Za-z_0-9]*\Z")
 _INTEGER = re.compile(r"[0-9]+\Z")
@@ -87,6 +88,7 @@ class _Node:
     value: _Value | None = None
     children: list[_Node] = field(default_factory=list)
     trailing_semicolon: bool = False
+    missing_semicolon_compatibility: bool = False
 
     def public(self):
         node = {"kind": self.kind, "name": self.name, "line": self.line,
@@ -98,6 +100,8 @@ class _Node:
         if self.kind == "group":
             node["children"] = [child.public() for child in self.children]
             node["trailing_semicolon"] = self.trailing_semicolon
+        if self.missing_semicolon_compatibility:
+            node["terminator"] = "missing_semicolon_compatibility"
         return node
 
 
@@ -220,8 +224,9 @@ def _lex(text, source_name):
 
 
 class _Syntax:
-    def __init__(self, text, source_name):
+    def __init__(self, text, source_name, profile=PROFILE):
         self.text, self.source_name = text, source_name
+        self.profile, self.diagnostics = profile, []
         self.tokens = _lex(text, source_name)
         self.i, self.eof_line = 0, len(text.splitlines()) or 1
 
@@ -273,7 +278,40 @@ class _Syntax:
                 continue
             current.append(token)
 
-    def statement(self, depth=0):
+    def recover_cell_area(self, name, parent, values):
+        """One explicit compatibility rule; never rewrite the frozen bytes."""
+        if (self.profile != AREA_SEMICOLON_COMPAT_PROFILE or parent != "cell"
+                or name.raw != "area" or len(values) != 1):
+            return None
+        number = values[0]
+        following = self.tokens[self.i:self.i + 4]
+        if (number.kind != "word" or len(number.raw) > 128 or number.line != name.line
+                or not re.fullmatch(r"[0-9]+(?:\.[0-9]+)?", number.raw)
+                or not re.fullmatch(r"area[ \t]*:[ \t]*[0-9]+(?:\.[0-9]+)?",
+                                    self.text[name.start:number.end])
+                or len(following) != 4):
+            return None
+        next_name, colon, boolean, semicolon = following
+        if (next_name.kind != "word" or next_name.raw != "is_macro_cell"
+                or colon.kind != ":" or boolean.kind != "word"
+                or boolean.raw not in {"true", "false"} or semicolon.kind != ";"
+                or next_name.line != number.line + 1
+                or any(token.line != next_name.line for token in following)
+                or not re.fullmatch(r"[ \t]*(?:\r\n|\n|\r)[ \t]*",
+                                    self.text[number.end:next_name.start])
+                or not re.fullmatch(r"is_macro_cell[ \t]*:[ \t]*(?:true|false)[ \t]*;",
+                                    self.text[next_name.start:semicolon.end])):
+            return None
+        diagnostic = {"kind": "missing_cell_area_semicolon_compatibility",
+                      "profile": self.profile, "scope": "cell", "field": "area",
+                      "line": name.line, "value_line": number.line, "raw_value": number.raw,
+                      "next_field": "is_macro_cell", "next_field_line": next_name.line,
+                      "source_fragment": self.text[name.start:next_name.start],
+                      "recovery": "capture the numeric area as unterminated; retain original bytes and start the following statement at its original token"}
+        self.diagnostics.append(diagnostic)
+        return diagnostic
+
+    def statement(self, depth=0, parent=None):
         if depth > 200:
             self.error("group nesting exceeds the profile limit", self.peek())
         name = self.pop()
@@ -286,6 +324,11 @@ class _Syntax:
             self.pop()
             values, nesting = [], 0
             while True:
+                if not nesting and self.recover_cell_area(name, parent, values) is not None:
+                    last = values[-1]
+                    return _Node("attribute", name.value, name.line, name.start, last.end,
+                                 last.line, value=self.make_value(values),
+                                 missing_semicolon_compatibility=True)
                 token = self.pop()
                 if token.kind == ";" and not nesting:
                     break
@@ -311,7 +354,7 @@ class _Syntax:
             self.error("expected ';' or '{' after argument list", token)
         children, attributes = [], set()
         while self.peek() is not None and self.peek().kind != "}":
-            child = self.statement(depth + 1)
+            child = self.statement(depth + 1, parent=name.value)
             if child.kind == "attribute":
                 if child.name in attributes:
                     self.error(f"duplicate attribute {child.name!r}",
@@ -612,7 +655,7 @@ class _Interface:
             cell["bits"].append(bit)
 
 
-def parse_liberty(data: bytes, source_name: str = "") -> dict:
+def parse_liberty(data: bytes, source_name: str = "", *, profile: str = PROFILE) -> dict:
     """Parse all syntax, then extract one complete, explicitly typed interface.
 
     ``cell.pins`` retains declarations; ``cell.bits`` contains expanded endpoints.
@@ -622,11 +665,21 @@ def parse_liberty(data: bytes, source_name: str = "") -> dict:
     are not stripped. Only bus direction is inherited; other raw bus and pin
     fields are kept separately. Standalone scalar names are never guessed into
     buses, clocks or power pins.
+
+    The default profile requires explicit semicolons. The separately selected
+    ``AREA_SEMICOLON_COMPAT_PROFILE`` recognizes only a direct cell ``area``
+    containing an unsigned plain decimal on one line, with the immediately
+    following line exactly declaring ``is_macro_cell : true/false;``. It records
+    the missing terminator without inserting bytes. Its output always has
+    ``syntax_strict=False`` and does not assert that the input is valid Liberty.
     """
     if not isinstance(data, bytes):
         raise TypeError("parse_liberty expects bytes")
     if not isinstance(source_name, str):
         raise TypeError("source_name must be a string")
+    if profile not in {PROFILE, AREA_SEMICOLON_COMPAT_PROFILE}:
+        raise LibertyProfileError("unknown explicit parsing profile", source_name=source_name,
+                                  code="unsupported_profile")
     try:
         text = data.decode("ascii")
     except UnicodeDecodeError as error:
@@ -637,6 +690,12 @@ def parse_liberty(data: bytes, source_name: str = "") -> dict:
         if any((ord(char) < 32 and char not in "\t\r\n") or ord(char) == 127 for char in contents):
             raise LibertyProfileError("control character outside profile", source_name=source_name,
                                       line=line, code="lexical_error")
-    result = _Interface(_Syntax(text, source_name).parse(), source_name).extract()
-    return {"profile": PROFILE, "source_name": source_name,
-            "source_sha256": hashlib.sha256(data).hexdigest(), **result}
+    syntax = _Syntax(text, source_name, profile)
+    result = _Interface(syntax.parse(), source_name).extract()
+    result["diagnostics"] = syntax.diagnostics + result["diagnostics"]
+    if profile == AREA_SEMICOLON_COMPAT_PROFILE:
+        result["qualification"] += " Selected syntax compatibility is not a valid-Liberty claim."
+    return {"profile": profile, "source_name": source_name,
+            "source_sha256": hashlib.sha256(data).hexdigest(),
+            "syntax_strict": profile == PROFILE,
+            "syntax_recovery_count": len(syntax.diagnostics), **result}

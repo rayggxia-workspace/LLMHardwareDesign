@@ -42,3 +42,9 @@ capture与run manifest各记录实际clean commit及源码SHA；所有输入与�
 离线恢复：先核对archive-manifest.json里的ZIP SHA，把evidence.zip解压到D盘新任务临时目录，verify.py指向包含inputs/及manifest.json的解压根目录。仅实际归档结果可作证据。
 
 格式参考：[Yosys write_json](https://yosyshq.readthedocs.io/projects/yosys/en/0.43/cmd/write_json.html)、[Synopsys Liberty 2017.06手册](https://media.c3d2.de/mgoblin_media/media_entries/659/Liberty_User_Guides_and_Reference_Manual_Suite_Version_2017.06.pdf)。文档仅参考语义，非生产工具版本；实际Yosys creator原样保存，UNKNOWN Git版本保持未知。
+
+## 原始 Liberty 语法缺陷
+
+正式严格运行发现ACT第139行、MXU第174行 cell.area 缺分号，下一行为 is_macro_cell。原字节与SHA保持不变，默认严格解析仍拒绝。load_view显式选择AREA_SEMICOLON_COMPAT_PROFILE，仅允许直接cell作用域下数字area与紧邻下一行is_macro_cell之间这一种缺分号；结果保存逐处诊断和syntax_strict=false。接口字段可在该兼容profile下比对，不代表Liberty语法合格或可直接交付EDA。失败运行与恢复源码版本记入实验记录。
+
+两宏VDD/VSS在原Liberty为普通input pin，在LEF为INOUT POWER/GROUND。四处方向差异单独报告，PG不并入信号匹配通过计数，不自动改写任何方向或声称电源连通。
