@@ -16,6 +16,8 @@
 
 尚需两组父层实际终态、完整分层STA与PG检查、共同引脚几何核对和最终成本对照。synthetic SRAM无真实GDS，上游RTL等价和制造签核未完成；实验为允许M10父层PG和新增缓冲的H1，不是H2冻结底座。
 
+最新入口（2026-10-23 02:35 CST）：拆分19／89817自然FAILED1（1:05:18，UNLIMITED），DRC／天线0、最终PG通过；宏模型setup／hold +0.0890787／+0.0774049ns，但1条cap和3条slew失败，完整真实STA也有电容违例，严格不合格。回到电气全部通过的拆分17，89820在相同封存ODB／SPEF上比较4组实际规格；三只父层时钟和关键数据place10609改为BUF_X16时，旧RC setup／hold估计+0.079000585／+0.066509075ns，无报告电气违例。该估计没有物理资格。拆分20／89821于02:27:51 CST启动，runner6df289437c7eb065438c98e2681badba26fa99e2，只做这4处替换，不新增缓冲或额外优化余量，已进入完整DRT。匹配20／13的功能89822和RC覆盖89823依赖排队，runnera00ac143dae154e2049d040725c1b67b197a536e，三项均实际UNLIMITED。合并13继续作完整合格主对照；最终PPA仍待20严格资格与匹配证明。 恢复先collect／quality，来源匹配选择selection-split20-merged13.json；全部门槛通过后才compare／plot／report并做三图和HTML实际目视核验。失败则保留新终态、继续实际违例修复，不按耗时停止。当前工程commit a00ac143dae154e2049d040725c1b67b197a536e，实际作业runner按submission回执。以下续记是历史过程，不替代本条最新入口。
+
 ## 管理员与审查待办
 
 - 登记：沿用[管理中心PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5)的pending证据，未声称registered。
