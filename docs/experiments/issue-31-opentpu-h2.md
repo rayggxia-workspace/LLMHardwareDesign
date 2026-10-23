@@ -1,6 +1,6 @@
 # openTPU H2：冻结资源与限定层互联
 
-[Issue31](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/31)，负责人 YUZE-LU，审查人／优先级待指定。分支 `task/31-opentpu-h2`，依赖 [H1 PR17](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/17) @ `ce5896de47921fcdc422c4ac9c05cefcb6666bff`。H1 封存结果不修改；PR17 已在本轮期间由另一项授权整合合入 main@0cc36f3，H2 分支通过 merge 继承主线，保留原 runner 祖先。
+[Issue31](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/31)，交付 [PR35](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/35)（in_review，未合并），负责人 YUZE-LU，审查人／优先级待指定。分支 `task/31-opentpu-h2`，依赖 [H1 PR17](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/17) @ `ce5896de47921fcdc422c4ac9c05cefcb6666bff`。H1 封存结果不修改；PR17 已在本轮期间由另一项授权整合合入 main@0cc36f3，H2 分支通过 merge 继承主线，保留原 runner 祖先。
 
 ## 当前结论
 

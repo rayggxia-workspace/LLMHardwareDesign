@@ -1,6 +1,6 @@
 # 0004：H2 首个切片固定 V7 接入与低层连通关系
 
-日期：2026-10-23（Asia/Shanghai）；[Issue31](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/31)。状态：实验取舍，独立整合 DRC 待终态、审查待指定；不是项目通用制造架构定案。
+日期：2026-10-23（Asia/Shanghai）；[Issue31](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/31)。状态：实验取舍，独立整合 DRC／RC 覆盖及本切片门槛通过，[PR35](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/35) 待独立审查，审查人待指定；不是项目通用制造架构定案。
 
 H1 的 ACT/MXU 同资源实现允许父层新增缓冲及自由布线，不能直接作为少量上层定制的证据。H2 v01 从其实际最终物理库存开始：先记录接口电气／时钟／接入预算，冻结全部有源、引脚、PG、时钟、低层 wire/via 和既有 V7，再只改变 M8–M10、V8/V9。
 

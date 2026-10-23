@@ -1,7 +1,7 @@
 # 当前状态
 
 - 更新日期：2026-10-23（中国标准时间）
-- 当前阶段：H1 已合入 main；Issue31 的 H2 v01 预算及冻结有源／低层／时钟／PG的 M8–M10 受限层实例已通过回装 RC／PG／天线／电气／完整 STA，完整父层 DRC／层次 RC 覆盖审计也已通过，本同功能切片待审查
+- 当前阶段：H1 已合入 main；Issue31 的 H2 v01 预算及冻结有源／低层／时钟／PG的 M8–M10 受限层实例已通过回装 RC／PG／天线／电气／完整 STA，完整父层 DRC／层次 RC 覆盖审计也已通过，本同功能切片由 [PR35](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/35) 提交审查、Issue31 in_review
 - 当前工程：[Issue #15](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15) 已完成openTPU ACT/MXU同功能／资源的块内及父层对照。三块和两父层、六类证明共十一份封存来源严格通过；拆分叶面积+0.412%、总信号线+7.142%、通孔+2.974%，完整setup／hold两组均满足2.5ns／0.5ns预算。[中文结果与三类图表](experiments/issue-15-opentpu-results.html)已生成并目视核验，详见[实验记录](experiments/issue-15-opentpu-comparison.md)。独立全量重布线21亦已自然完成并通过十一项来源／证明对照；本次整合不启动、终止或改写既有远程作业。
 - 资料接入：[Issue #1：初始化项目并导入初期资料](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/1)；资料已进入 `main`，[PR #2](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/2) 已合并
 - 当前资料：项目说明 v1.0、专题研究文档、来源笔记，以及五个参考项目七个案例的布线分析包；三份 HTML 报告、llaccel 引擎内部分析及远程服务器规则已通过 [PR #4](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/4) 合入 `main`；工艺互连资料的逐层资源评估补充已一并提交
