@@ -1,5 +1,15 @@
 # Liangruizhi 的进度
 
+## 2026-10-23（UTC+08:00）Issue39本机数值接续
+
+[Issue39](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/39)，Liangruizhi；
+task/39-kv-scale-boundary，独立D:/Projects/LLMHardwareDesign-kvscale，base PR38@ec8fa3d。
+用户授权筛选后继续本机适合实验，局部开启已有真实短张量的整数QK/PV scale与bias验证；
+不改写Issue37的历史架构阶段，不启动其他机器或下载大模型，不接管Issue32/PR36。
+正式配置project/experiments/kv_scale/experiment.json，代码/独立Fraction/边界测试；开发探索保留D盘。
+给师兄可复制文案docs/handoffs/2026-10-23-gpu-codex-experiment-prompt.md，先续Qwen、后Gemma、最后Phi保留验证。
+当前源码准备/正式复跑待执行，PR待创建；正式结果和交接随后补齐。登记PR5 pending，看板unverified/同步pending。
+
 ## 2026-10-23（UTC+08:00）Issue37先审查架构与筛选
 
 [Issue37](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/37) / [PR38](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/38)，

@@ -1,5 +1,9 @@
 # 架构与运行
 
+Issue39本机接续在`project/experiments/kv_scale/`，先管理检查和test_core.py，再从干净commit运行run.py到D盘新目录，
+两次运行由audit.py独立整数/版本/SHA及逐字节重放。完整命令与实际范围见该目录README。
+复用Issue27真实短head，不新增权重、远程或GPU任务；师兄可复制文案见docs/handoffs/2026-10-23-gpu-codex-experiment-prompt.md。
+
 ## 架构/模型选择协议（Issue37）
 
 [全候选审查](MODEL_ARCHITECTURE_REVIEW.md)与[metadata-only工具](../project/experiments/model_selection/README.md)
