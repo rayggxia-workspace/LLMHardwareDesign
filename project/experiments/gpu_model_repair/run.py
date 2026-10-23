@@ -5,6 +5,7 @@ Auxiliary math remains explicitly floating point; this is not full-integer infer
 import argparse
 import gc
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 import subprocess
@@ -20,8 +21,10 @@ import torch.nn.functional as F
 import transformers
 
 HERE=Path(__file__).resolve().parent
-sys.path.insert(0,str(HERE.parent/'gpu_model_evidence'))
-from run import save,sha,git,compare,output_metrics,cache_tensors,cache_info,snapshot
+_spec=importlib.util.spec_from_file_location('gpu_evidence_protocol',HERE.parent/'gpu_model_evidence/run.py')
+_evidence=importlib.util.module_from_spec(_spec);_spec.loader.exec_module(_evidence)
+save,sha,git,compare,output_metrics,cache_tensors,cache_info,snapshot=(getattr(_evidence,n) for n in
+    ('save','sha','git','compare','output_metrics','cache_tensors','cache_info','snapshot'))
 
 
 def dataset_tokens(tokenizer,data,cfg):
@@ -159,7 +162,8 @@ def install(model,mode,factors):
             shape=x.shape;xf=x.reshape(-1,shape[-1]).float()/self.smooth
             scale=xf.abs().amax(-1,keepdim=True).clamp_min(1e-30)/127
             raw=(xf/scale).round();qa=raw.clamp(-127,127).to(torch.int8)
-            pad=(-qa.shape[0])%8
+            # CUDA INT8 GEMM requires M>16 on this backend, including decode/test rows.
+            pad=(-qa.shape[0])%32
             if pad:qa=F.pad(qa,(0,0,0,pad))
             acc=torch._int_mm(qa.contiguous(),self.qweight)
             self.stats['calls']+=1;self.stats['max_abs_acc']=max(self.stats['max_abs_acc'],int(acc.abs().max()))
