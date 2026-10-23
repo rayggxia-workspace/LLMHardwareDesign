@@ -13,10 +13,13 @@ def verify(deftext,plan,landings,techtext):
             _,name,layer,*box=p
             if layer.startswith('metal'):vias[name].append((layer,*map(int,box)))
     forests={f['proxy']:f for f in plan['forests']}
+    covered=[index for f in forests.values() for index in f['landings']]
+    assert len(covered)==len(set(covered)) and set(covered)==set(range(len(landings))),'Boundary access coverage differs'
     rows={routed_parts(row)[0].split()[0]:routed_parts(row) for row in section(deftext,'NETS')}
     assert set(rows)==set(forests),'Routing forest inventory differs'
     result=[]
     for name,f in forests.items():
+        assert all(landings[i]['net']==f['original_net'] for i in f['landings']),'Forest maps to wrong original signal net'
         shapes=[];links=[]
         for path in rows[name][1:]:
             pts=re.findall(r'\(\s*(-?\d+|\*)\s+(-?\d+|\*)(?:\s+(-?\d+))?\s*\)',path)

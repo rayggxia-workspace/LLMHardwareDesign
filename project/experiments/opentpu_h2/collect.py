@@ -17,7 +17,12 @@ names=['exit-code.txt','finished.txt','allocation.txt','image.sha256','tools.sha
        'electrical-budget.rpt','interface-nets.rpt','macro-nets.txt','partition.log',
        'route.log','restricted-drc.rpt','freeze-audit.json','inventory-summary.json',
        'native-api.log','native-flow-snippets.json','baseline-drc.rpt','baseline-antenna.rpt','native-stack-symbols.txt',
-       'debug-tools.json','debug-readelf.log','debug-addr2line.log','debug-gdb.log','connectivity-api.log','proxy-build.log']
+       'debug-tools.json','debug-readelf.log','debug-addr2line.log','debug-gdb.log','connectivity-api.log','proxy-build.log',
+       'forest-plan.json','access-plan.json','composite-extract.log','composite-quality.json','composite-native-freeze-audit.json',
+       'composite.integration.json','composite.freeze-audit.json','upper-connectivity.json','boundary-proof.json',
+       'parent-electrical.rpt','parent-annotation.rpt','composite-antenna.rpt','rc-connectivity.tsv',
+       'strict-qualification.log','full-hierarchy-quality.json','full-hierarchy-sta.log','final-pg.log',
+       'final-pg/strict-pg.json','h1-qualification-input-sha256.json','signal-pin-layers.tsv','routing-tech-shapes.tsv','boundary.log']
 for attempt in a.attempts:
     receipt=json.loads((HERE/'results'/(attempt+'-submission.json')).read_text())
     remote=receipt['spec']['remote']
@@ -50,6 +55,7 @@ else:
         assert hashlib.sha256(raw).hexdigest()==item['sha256']
         compressed=len(raw)>32768 or name.endswith('.rpt')
         target=out/(name+'.gz' if compressed else name)
+        target.parent.mkdir(parents=True,exist_ok=True)
         payload=gzip.compress(raw,mtime=0) if compressed else raw
         if target.exists():assert target.read_bytes()==payload,'Changed terminal evidence'
         else:target.write_bytes(payload)

@@ -37,6 +37,24 @@ try:
     (ROOT/'physical.tcl').write_text(script)
     with (ROOT/'physical-inventory.log').open('w') as log:
         subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(ROOT/'physical.tcl')],stdout=log,stderr=subprocess.STDOUT,check=True)
+    if SPEC['mode']=='checks':
+        source=Path(SPEC['source'])
+        m=json.loads(sealed(source,'experiment.json').read_text())
+        target=sealed(source,Path(m['result_relative'])/'6_final.odb')
+        script='read_db {'+str(target)+'}\n'
+        # DRC is geometric. Cached global-route guides are unnecessary and
+        # can invoke expensive guide topology reconstruction on the H1 DB.
+        script+='foreach n [[ord::get_db_block] getNets] {$n clearGuides}\nset_routing_layers -signal metal1-metal10 -clock metal1-metal10\n'
+        script+='write_def check-before.def\ndrt::check_drc -output_file integrated-drc.rpt\nwrite_def check-after.def\nputs {NATIVE_READONLY_DRC_FINISHED}\n'
+        path=ROOT/'readonly-drc.tcl';path.write_text(script)
+        with (ROOT/'readonly-drc.log').open('w') as log:
+            subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(path)],stdout=log,stderr=subprocess.STDOUT,check=True)
+        from freeze_audit import audit
+        audit(ROOT/'check-before.def',ROOT/'check-after.def',11,ROOT/'readonly-drc-freeze-audit.json')
+        passed=(ROOT/'integrated-drc.rpt').read_text().strip()==''
+        (ROOT/'readonly-drc-quality.json').write_text(json.dumps(dict(passed=passed,source=str(source),
+            scope='Standalone native full-parent geometric DRC, cached guides removed only in memory; zero markers required; all manufacturing geometry unchanged before/after checker.'),indent=2)+'\n')
+        assert passed,'Integrated native DRC markers remain'
     if SPEC['mode']=='composite':
         source=Path(SPEC['source'])
         assert sealed(source,'exit-code.txt').read_text().strip()=='0'
