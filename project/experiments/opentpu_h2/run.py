@@ -45,7 +45,12 @@ try:
         # DRC is geometric. Cached global-route guides are unnecessary and
         # can invoke expensive guide topology reconstruction on the H1 DB.
         script+='foreach n [[ord::get_db_block] getNets] {$n clearGuides}\nset_routing_layers -signal metal1-metal10 -clock metal1-metal10\n'
-        script+='write_def check-before.def\ndrt::check_drc -output_file integrated-drc.rpt\nwrite_def check-after.def\nputs {NATIVE_READONLY_DRC_FINISHED}\n'
+        box=SPEC.get('box_dbu')
+        if box:
+            assert len(box)==4 and all(type(v) is int for v in box)
+            assert 0<=box[0]<box[2]<=3340000 and 0<=box[1]<box[3]<=3340000
+        option=' -box {'+' '.join(map(str,box))+'}' if box else ''
+        script+='write_def check-before.def\ndrt::check_drc -output_file integrated-drc.rpt'+option+'\nwrite_def check-after.def\nputs {NATIVE_READONLY_DRC_FINISHED}\n'
         path=ROOT/'readonly-drc.tcl';path.write_text(script)
         with (ROOT/'readonly-drc.log').open('w') as log:
             subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(path)],stdout=log,stderr=subprocess.STDOUT,check=True)
@@ -53,7 +58,9 @@ try:
         audit(ROOT/'check-before.def',ROOT/'check-after.def',11,ROOT/'readonly-drc-freeze-audit.json')
         passed=(ROOT/'integrated-drc.rpt').read_text().strip()==''
         (ROOT/'readonly-drc-quality.json').write_text(json.dumps(dict(passed=passed,source=str(source),
-            scope='Standalone native full-parent geometric DRC, cached guides removed only in memory; zero markers required; all manufacturing geometry unchanged before/after checker.'),indent=2)+'\n')
+            full_die=not bool(box),box_dbu=box,
+            scope=('Local diagnostic only; does not qualify full-parent DRC. ' if box else 'Standalone native full-parent geometric DRC. ')+
+            'Cached guides removed only in memory; zero markers required; all manufacturing geometry unchanged before/after checker.'),indent=2)+'\n')
         assert passed,'Integrated native DRC markers remain'
     if SPEC['mode']=='composite':
         source=Path(SPEC['source'])
