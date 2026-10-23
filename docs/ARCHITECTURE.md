@@ -1,5 +1,10 @@
 # 架构与运行
 
+Issue29新分阶段综合与独立factored原型见[接续报告](experiments/issue-29-factored-synthesis.md)。
+离线审计入口`work/Liangruizhi/29/factored/audit_results.py`，需冻结旧包和新return.zip并指定新输出路径。
+同目录job.sh/inside.sh固定8CPU、3×2编译与1Yosys并行，原型是独立源文件，不替换原RTL。
+仿真通过与综合360秒超时分别记录，不能视作宏映射或PPA。
+
 本仓库保存研究资料、参考结果和本项目的初步实验工具。本分支的冻结连接模型位于 `project/experiments/frozen_routing/`；其他成员的物理Block工程见Issue #7关联PR #8/#10，未合并文件须从对应任务分支读取。最终工艺、硬件库与系统实现工具链仍未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md)中的候选架构不等于已实现硬件。
 
 ## 研究系统边界

@@ -1,5 +1,21 @@
 # Issue29继续执行入口
 
+## 2026-10-23新接续
+
+用户授权多任务CPU服务器并行后，89939原码-defer前端360秒超时；另立factored组合选择原型，未改旧RTL。
+89944严格Verilator因unused ep高位拒绝；修为2bit后89946的27配置/1872程序/54stress通过，
+1926完整结果与33保存trace哈希均与原基线相等，本机对冻结旧包独立复核通过。
+89946综合仍前端360秒超时，最终FAILED1；不能称综合通过或SRAM/物理资格。
+正式原型源码0d607f5ebc575764a62a7ebb14aba451f2f22748，原始失败491bf3e也保留。
+详见[接续报告](../experiments/issue-29-factored-synthesis.md)与work/Liangruizhi/29/factored/。
+服务器本人issue29-port-rtl-20261022/defer01、factored01、factored02；本机暂存D:/Projects/Codex/cpu-pilot-20261023，
+原始回传已下载核SHA，小包project/experiments/port_rtl/results/issue-29-factored01/。
+所有本轮作业已结束。恢复先核最新PR30/Issue29及包SHA，运行离线audit_results.py；
+不要盲重投相同前端探测。PR保持draft、Issue in_progress；管理员/审查人待指定，登记/看板缺项沿用。
+
+并行Issue53/PR54在独立cpu-pilot工作树完成两轮小模型CPU迁移，非本任务算术证据。
+随后用户新增Llama-3.2-1B，仅在本机接续；不为Llama增加远端作业或下载。
+
 - 仓库rayggxia-workspace/LLMHardwareDesign；[Issue29](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/29)／[PR30](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/30)。唯一实际身份Liangruizhi／2663955430@qq.com／182389313。
 - 分支task/29-port-rtl；独立工作树D:/Projects/LLMHardwareDesign-portrtl；base PR28@a3f8335287f6745bd96b9657a6279f12a142ac49。正式实验源码916dcf9e74ecd6a2164bdbb79991b0f3f7ed1b1e。结果提交与当前未提交改动恢复时查PR30及git status；不把结果commit替代实验source。
 - 用户本轮问解决情况，已说明“判据与局部证据已建立，最终跨模型Block方案/端到端收益仍未解决”。此问题未取消持续Goal或要求停止研究；常规工作继续自主推进。

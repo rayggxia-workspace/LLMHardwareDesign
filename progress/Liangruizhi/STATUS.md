@@ -1,5 +1,15 @@
 # Liangruizhi 的进度
 
+## 2026-10-23（UTC+08:00）Issue29分阶段综合与factored回归
+
+仍用D:/Projects/LLMHardwareDesign-portrtl、task/29-port-rtl、PR30；独立原型源码0d607f5，未改916dcf9e原码。
+89939原码-defer、89944初版与89946修正原型综合前端均360秒超时；没有通用综合/宏映射/PPA通过。
+89944编译unused-index失败保留；89946严格27配置1872程序54stress全过，本机独立核对1926结果及33trace哈希同旧包。
+186成员回传实际下载核SHA；原始日志/命令/失败和恢复入口见docs/experiments/issue-29-factored-synthesis.md。
+本轮服务器job均已结束；与独立Issue53/PR54 CPU模型迁移并行，不把后者当算术RTL。
+下一步单配置最小化前端/内存端口表示诊断，不能只延长相同任务；当前draft/in_progress，未done。
+用户新Llama本机任务另Issue跟踪，不增加远端作业。登记PR5 pending、看板unverified/同步pending，管理员/审查人待指定。
+
 - 更新：2026-10-22（UTC+08:00）；GitHub身份Liangruizhi／2663955430@qq.com／ID182389313。
 - 前一任务：[Issue19](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/19)／[PR20](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/20)，task/19-interface-contract，D:/Projects/LLMHardwareDesign-interface；base task/16-macro-endpoints，依赖PR18/14/12。capture源码16be20bf，正式run源码c3916f4f；3032信号位三视图关联、685连接与2346边界网核验完成。148项业务检查、205390项独立比较、6个篡改负例及离线重放通过。原始输入另有2处Liberty缺分号、4处PG方向差异，均原样保留并显式报告；未称宏合格/Lib语法全部通过。
 - 本轮成果：[实验记录](../../docs/experiments/issue-19-interface-contract.md)／[交接](../../docs/handoffs/2026-10-22-issue-19-interface-contract.md)；原字节归档1585317bytes，SHA与逐文件索引见正式结果目录。交付待审查，未合并／未done；PR最新head与线上状态以读回为准。

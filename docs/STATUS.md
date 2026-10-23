@@ -1,5 +1,9 @@
 # 当前状态
 
+- 2026-10-23 Issue29接续：原码单配置-defer89939及factored原型89944/89946前端均达到360秒限额，综合尚未完成。
+  原型修正索引宽度后89946的27配置/1872程序/54stress全过，1926结果及33保存trace哈希同基线，
+  原RTL/旧测量未改。见[新报告](experiments/issue-29-factored-synthesis.md)；PR30保持draft/in_progress，未获物理资格。
+
 - 更新日期：2026-10-22（中国标准时间）
 - 前阶段记录：架构定义、Block物理工程尝试、抽象冻结连接实验、真实普通LEF几何输入冻结与选定接口关联；DAC为研究目标，具体届次未指定
 - 资料接入：[Issue #1：初始化项目并导入初期资料](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/1)；资料已进入 `main`，[PR #2](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/2) 已合并，登记／看板缺项继续保留
