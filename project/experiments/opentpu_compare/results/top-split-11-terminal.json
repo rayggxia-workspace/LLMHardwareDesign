@@ -1,0 +1,362 @@
+{
+  "spec": {
+    "resume_parent": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05",
+    "pin_reference": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05",
+    "post_grt_repair_rounds": 3,
+    "targeted_drive_rounds": 8,
+    "macro_output_guards": true,
+    "joint_repair_rounds": 4,
+    "setup_target_ns": 0.15,
+    "setup_accept_ns": 0.08,
+    "mode": "top",
+    "cores": 16,
+    "runner_commit": "1333b0a4f76e0e701099129a358319910da5e969",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-11"
+  },
+  "exit_code": "1",
+  "started.txt": "2026-10-22T11:19:51Z\n",
+  "finished.txt": "2026-10-22T11:24:50Z\n",
+  "allocation.txt": "JobId=89758 JobName=yzl-ot-top UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586302 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:01 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T19:19:49 EligibleTime=2026-10-22T19:19:49 AccrueTime=2026-10-22T19:19:49 StartTime=2026-10-22T19:19:50 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T19:19:50 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T19:19:50 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3647896 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=16 NumTasks=1 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=16,mem=1M,node=1,billing=16 AllocTRES=cpu=16,node=1,billing=16 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-11/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-11 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-11/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-11/job.log Power= TresPerTask=cpu:16 \n",
+  "experiment.json": {
+    "top": "llhd_top_split",
+    "case": "opentpu_top_split",
+    "kind": "split",
+    "result_relative": "flow/results/nangate45/opentpu_top_split/base",
+    "views": {
+      "act": {
+        "name": "llhd_opentpu_act",
+        "size": [
+          326.205,
+          326.205
+        ],
+        "view": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act",
+        "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03"
+      },
+      "mxu": {
+        "name": "llhd_opentpu_mxu",
+        "size": [
+          1100.455,
+          1100.455
+        ],
+        "view": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu",
+        "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03"
+      },
+      "merged": {
+        "name": "llhd_match_merged",
+        "size": [
+          1145.375,
+          1145.375
+        ],
+        "view": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/merged",
+        "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-merged-03"
+      }
+    },
+    "locations": {
+      "u_act": [
+        80,
+        80
+      ],
+      "u_mxu": [
+        486.205,
+        80
+      ]
+    },
+    "die_um": [
+      0,
+      0,
+      1670,
+      1670
+    ],
+    "external_bits": 1662,
+    "extra_state": 0,
+    "clock_ns": 2.5,
+    "io_delay_ns": 0.5,
+    "input_driver": "BUF_X4/Z",
+    "output_load_fF": 5,
+    "pdn": "H1 additional parent M10; original detailed macro geometry retained",
+    "full_hierarchical_sta": "Required after routing; macro libraries alone do not qualify internal period",
+    "joint_timing_electrical_repair": {
+      "rounds": 4,
+      "setup_target_ns": 0.15,
+      "grt_accept_setup_ns": 0.08,
+      "strategy": "Fresh-process ODB checkpoint alternation of native timing repair and electrical guardbands; reroute/re-estimate every reload; no gate cloning/pin swaps or clock/IO relaxation"
+    },
+    "targeted_drive_repair": {
+      "rounds": 8,
+      "scope": "Only actual negative-margin standard BUF/INV drivers; smallest doubled drive with estimated 35% cap / 20% slew reserve, max X32; no macro or sequential change",
+      "macro_output_guards": true
+    },
+    "parent_resume": {
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05",
+      "pin_reference": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05",
+      "common_pin_sha256": "8c1e5da591ece5cefdd142408f1431bc5c82cb1fb91ebd075d1f3f4dfb19cdb7",
+      "initial_pg_receipt_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/strict-pg.json"
+    }
+  },
+  "input-sha256.json": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/pin-placement-quality.json": "fc1d1426ba039dd0fc89ce0aa40dc939b929aea268ce67bfd182eba51c8f967a",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/external-pin-contract.json": "30d2358ac2771f50b36c82d300a942f784c99c99de526330761ef0007231f3c0",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/experiment.json": "c29a5ef01ced5d96844da2f45e6553be746fabdecb4728bcd5b39eafb64a4ccb",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/strict-pg.json": "7eaaef09b82d5343e94ee1f7e6977e0756726454e0929d6af5ead1d2e9158040",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05/pin-placement-quality.json": "fc1d1426ba039dd0fc89ce0aa40dc939b929aea268ce67bfd182eba51c8f967a",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05/external-pin-contract.json": "30d2358ac2771f50b36c82d300a942f784c99c99de526330761ef0007231f3c0",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05/experiment.json": "f4c17359c2e1bbce6036c88a4e32338444b885b429a4e68fc19b47348a8968ee",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05/strict-pg.json": "47938407dac4f5e42c53e2041307e370cc3cb0a7545422b14036a4ae69c1c32c",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/flow/results/nangate45/opentpu_top_split/base/4_cts.odb": "cc830d0a79e059a963ec97f1a84fdffbc93ea94044ffd76b3105945e391b00a7",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/flow/results/nangate45/opentpu_top_split/base/4_cts.sdc": "e25c902e65c0462a5100c6ed8f1a13f06b65b9a474da3f174ea98e166944fd1d",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/config.mk": "8eaff4c51787a243d6ed444668a896bf3438b2e7edf6bcfb428aadcf4514de78",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/top.v": "1b3b75cea7bf67bf13dbfc333a9cba61eb37f74227241caf3c9ca00fa3641d49",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/boundary.sdc": "13cd9576c207b3ffa0ca086b4d668dd40bdeb24bf2e568effbd183b8afbd7e6b",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/resource-qualification.json": "714e1d04b96f2a82410d84f2975fa36cab93b45c967a2182a83e57cf62978169",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/stage-pins.tsv": "a2b140d743fe6604e4327e0037966c65569d257eb4151b82969d506882741008",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/placement.tcl": "73dad061581f2de6761c56e922d41161f65dd7488a0ee85452b111979805b4c9",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/pdn.tcl": "64fcf6047db77a4c849bf1ddff1356989c738d119f3d3c53f67abad6ed7410f5",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/post-pdn.tcl": "2bd8d0ca3d77f49f206781c4388877bb8f5e261ddadf85cf433501cbd243f212",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/fixed-pins.tcl": "ea9c7c799a4df0da4336d58d303b01642f273c4f9d426afc62d4eae92bd232e2",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/post-grt-repair.tcl": "50f3f3fe20565b72079bf1579d042f18cebb7ac67bba3c1244a66eeef8f66b37",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-11/runner/targeted_drive.tcl": "c5c1a7e4676d17b178fe897d21e5dd54d9fc734c60487f9db2cd40dd8e5ab4dc",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-11/runner/macro_guard.tcl": "c7ad26fb6a267df2375f5d947eb3b885f0ef50c161558fb1c188a96cec9360d1",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-11/runner/joint_repair.py": "5a1a0353e730f683f70cf6d00c268ec4fee3c170b277d0bc6280e5b34d0676a8",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act/llhd_opentpu_act.lef": "99871cd5cf868ef1b3053563d99fec303f605a23345ad5efaa81d16b81527455",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act/llhd_opentpu_act.lib": "931b8d514f43ace7e74f72f43f06f752c5bcdc1017eed72c49d17bac722b1e3a",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu/llhd_opentpu_mxu.lef": "ce7d99e802f2211d190d30fdc220481fedd00e16e223e05da3eb4633974403c4",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu/llhd_opentpu_mxu.lib": "a15ef72106dd24a148e6fef5f8a16365bc7f87a7e152184327243584d28277f4",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/merged/llhd_match_merged.lef": "eaa110806cd8da5f2949f2b7745a2ceb9c9b5075c5d45374ff9d7256ef8c21ec",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/merged/llhd_match_merged.lib": "a12c5993f49e1457b6540933c4d4157cedcb021be2766b1ca4594b08b34cb05a",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-11/flow/results/nangate45/opentpu_top_split/base/4_cts.odb": "cc830d0a79e059a963ec97f1a84fdffbc93ea94044ffd76b3105945e391b00a7"
+  },
+  "strict-pg.json": {
+    "macro_pg_iterm_count": 4,
+    "VDD_pass": true,
+    "VSS_pass": true,
+    "passed": true
+  },
+  "resource-qualification.json": {
+    "act": {
+      "passed": true,
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03",
+      "expected": {
+        "fakeram45_1r1w_32x128": 4,
+        "DFF": 606,
+        "fakeram45_1r1w_32x64": 2
+      },
+      "actual": {
+        "fakeram45_1r1w_32x128": 4,
+        "DFF": 606,
+        "fakeram45_1r1w_32x64": 2
+      },
+      "qualification": "Exact storage/state inventory, drive variants normalized; physical buffer costs separate"
+    },
+    "mxu": {
+      "passed": true,
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03",
+      "expected": {
+        "DFF": 36417,
+        "fakeram45_1r1w_64x72": 3,
+        "fakeram45_1r1w_64x40": 1,
+        "fakeram45_1r1w_64x96": 1,
+        "fakeram45_1r1w_64x64": 1
+      },
+      "actual": {
+        "DFF": 36417,
+        "fakeram45_1r1w_64x72": 3,
+        "fakeram45_1r1w_64x40": 1,
+        "fakeram45_1r1w_64x96": 1,
+        "fakeram45_1r1w_64x64": 1
+      },
+      "qualification": "Exact storage/state inventory, drive variants normalized; physical buffer costs separate"
+    },
+    "merged": {
+      "passed": true,
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-merged-03",
+      "expected": {
+        "fakeram45_1r1w_32x128": 4,
+        "DFF": 37023,
+        "fakeram45_1r1w_32x64": 2,
+        "fakeram45_1r1w_64x72": 3,
+        "fakeram45_1r1w_64x40": 1,
+        "fakeram45_1r1w_64x96": 1,
+        "fakeram45_1r1w_64x64": 1
+      },
+      "actual": {
+        "fakeram45_1r1w_32x128": 4,
+        "DFF": 37023,
+        "fakeram45_1r1w_32x64": 2,
+        "fakeram45_1r1w_64x72": 3,
+        "fakeram45_1r1w_64x40": 1,
+        "fakeram45_1r1w_64x96": 1,
+        "fakeram45_1r1w_64x64": 1
+      },
+      "qualification": "Exact storage/state inventory, drive variants normalized; physical buffer costs separate"
+    }
+  },
+  "pin-placement-quality.json": {
+    "passed": true,
+    "count": 1662,
+    "actual_layer_counts": {
+      "metal3": 832,
+      "metal2": 830
+    },
+    "canonical_sha256": "8c1e5da591ece5cefdd142408f1431bc5c82cb1fb91ebd075d1f3f4dfb19cdb7",
+    "errors": [],
+    "scope": "Actual CTS ODB BPin layer and full box; all 1662 signal bits exactly once, requested location within track snapping tolerance. Pair must match exact canonical geometry before route."
+  },
+  "last_flow_log": {
+    "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-11/flow/logs/nangate45/opentpu_top_split/base/joint-0-electrical.log",
+    "tail": [
+      "11# 0x0000000002082E23 in /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad",
+      "12# 0x000000000207EBB2 in /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad",
+      "13# 0x00000000064E43CC in /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad",
+      "14# 0x000000000207E75E in /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad",
+      "15# 0x0000000000029D90 in /lib/x86_64-linux-gnu/libc.so.6",
+      "16# __libc_start_main in /lib/x86_64-linux-gnu/libc.so.6",
+      "17# 0x000000000207E22A in /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad",
+      "Elapsed time: 0:54.24[h:]min:sec. CPU time: user 76.12 sys 1.36 (142%). Peak memory: 3163376KB."
+    ]
+  },
+  "job_log_tail": [
+    "    elif spec['mode']=='top': top(spec)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-11/runner/implementation.py\", line 352, in top",
+    "    if spec.get('resume_parent'):return resume_parent(spec)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-11/runner/implementation.py\", line 559, in resume_parent",
+    "    route_parent(spec)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-11/runner/implementation.py\", line 570, in route_parent",
+    "    execute(ROOT,spec,meta)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-11/runner/joint_repair.py\", line 54, in execute",
+    "    run(name,body);previous=name",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-11/runner/joint_repair.py\", line 35, in run",
+    "    subprocess.run(command+['RUN_SCRIPT='+str(path),'RUN_LOG_NAME_STEM='+name,'run'],",
+    "  File \"/usr/lib/python3.10/subprocess.py\", line 526, in run",
+    "    raise CalledProcessError(retcode, process.args,",
+    "subprocess.CalledProcessError: Command '['make', '-C', '/OpenROAD-flow-scripts/flow', 'DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-11/config.mk', 'WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-11/flow', 'NUM_CORES=16', 'RUN_SCRIPT=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-11/joint-0-electrical.tcl', 'RUN_LOG_NAME_STEM=joint-0-electrical', 'run']' returned non-zero exit status 2."
+  ],
+  "metrics": {
+    "5_1_grt.json": {
+      "globalroute__global_route__vias": 1804,
+      "globalroute__global_route__wirelength": 3493299,
+      "globalroute__dpl__instance__displacement__total": 74.555,
+      "globalroute__dpl__instance__displacement__mean": 0.004,
+      "globalroute__dpl__instance__displacement__max": 3.815,
+      "globalroute__dpl__route__wirelength__estimated": 3189570.0,
+      "globalroute__design__instance__count__setup_buffer": 0,
+      "globalroute__design__instance__count__hold_buffer": 33,
+      "globalroute__design__violations": 0,
+      "globalroute__antenna_diodes_count": 0,
+      "globalroute__antenna__violating__nets": 0,
+      "globalroute__antenna__violating__pins": 0,
+      "globalroute__timing__setup__tns": -0.0461511,
+      "globalroute__timing__hold__tns": 0,
+      "globalroute__timing__setup__ws": -0.0461511,
+      "globalroute__timing__hold__ws": 0.000395406,
+      "globalroute__timing__fmax__clock:clk": 392750000.0,
+      "globalroute__timing__fmax": 392750000.0,
+      "globalroute__clock__skew__setup": 0.00484558,
+      "globalroute__clock__skew__hold": 0.00484558,
+      "globalroute__timing__drv__max_slew_limit": -1.99027,
+      "globalroute__timing__drv__max_slew": 10,
+      "globalroute__timing__drv__max_cap_limit": -2.03538,
+      "globalroute__timing__drv__max_cap": 66,
+      "globalroute__timing__drv__max_fanout_limit": 0,
+      "globalroute__timing__drv__max_fanout": 0,
+      "globalroute__timing__drv__setup_violation_count": 1,
+      "globalroute__timing__drv__hold_violation_count": 0,
+      "globalroute__power__internal__total": 0.000851922,
+      "globalroute__power__switching__total": 0.00360651,
+      "globalroute__power__leakage__total": 0.000456844,
+      "globalroute__power__total": 0.00491527,
+      "globalroute__design__die__area": 2788900.0,
+      "globalroute__design__core__area": 2718490.0,
+      "globalroute__design__instance__count": 15940,
+      "globalroute__design__instance__area": 1330190.0,
+      "globalroute__design__instance__count__stdcell": 15938,
+      "globalroute__design__instance__area__stdcell": 12779.2,
+      "globalroute__design__instance__count__macros": 2,
+      "globalroute__design__instance__area__macros": 1317410.0,
+      "globalroute__design__instance__count__padcells": 0,
+      "globalroute__design__instance__area__padcells": 0,
+      "globalroute__design__instance__count__cover": 0,
+      "globalroute__design__instance__area__cover": 0,
+      "globalroute__design__instance__utilization": 0.489312,
+      "globalroute__design__instance__utilization__stdcell": 0.00912094
+    }
+  },
+  "pg_access": {},
+  "physical_repair_actions": {
+    "macro-output-guards-initial.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/t_waddr[105]\tllhd_macro_guard_018172\tBUF_X2\tleft\t483.445\t508.89",
+        "0\tu_act/r_data[274]\tllhd_macro_guard_118173\tBUF_X2\tbottom\t365.315\t76.6",
+        "0\tu_act/r_data[55]\tllhd_macro_guard_218174\tBUF_X2\tbottom\t324.435\t76.6",
+        "0\tu_act/r_data[11]\tllhd_macro_guard_318175\tBUF_X2\tbottom\t276.835\t76.6",
+        "0\tu_act/r_data[53]\tllhd_macro_guard_418176\tBUF_X2\tbottom\t323.875\t76.6",
+        "0\tu_act/r_data[70]\tllhd_macro_guard_518177\tBUF_X2\tbottom\t319.955\t76.6",
+        "0\tu_act/r_data[67]\tllhd_macro_guard_618178\tBUF_X2\tbottom\t318.835\t76.6",
+        "0\tu_act/r_data[353]\tllhd_macro_guard_718179\tBUF_X2\tbottom\t368.675\t76.6",
+        "0\tu_act/r_data[264]\tllhd_macro_guard_818180\tBUF_X2\tbottom\t362.515\t76.6",
+        "0\tu_act/r_data[68]\tllhd_macro_guard_918181\tBUF_X2\tbottom\t327.795\t76.6",
+        "0\tu_act/r_data[256]\tllhd_macro_guard_1018182\tBUF_X2\tbottom\t396.115\t76.6",
+        "0\tu_act/r_data[126]\tllhd_macro_guard_1118183\tBUF_X2\tbottom\t295.315\t76.6",
+        "0\tu_mxu/t_ren[0]\tllhd_macro_guard_1218184\tBUF_X2\tbottom\t749.68\t76.6",
+        "0\tu_act/r_data[284]\tllhd_macro_guard_1318185\tBUF_X2\tbottom\t368.115\t76.6",
+        "0\tu_act/r_data[271]\tllhd_macro_guard_1418186\tBUF_X2\tbottom\t366.995\t76.6",
+        "0\tu_act/r_data[289]\tllhd_macro_guard_1518187\tBUF_X2\tbottom\t378.755\t76.6"
+      ]
+    },
+    "macro-output-guards-joint0.tsv": {
+      "header": "",
+      "rows": []
+    },
+    "targeted-drive-initial.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire18075\tBUF_X4\tBUF_X32",
+        "0\twire18133\tBUF_X4\tBUF_X32",
+        "0\twire18091\tBUF_X4\tBUF_X32",
+        "0\twire18151\tBUF_X4\tBUF_X16",
+        "0\twire18143\tBUF_X4\tBUF_X16",
+        "0\twire18120\tBUF_X4\tBUF_X16",
+        "0\twire18138\tBUF_X4\tBUF_X16",
+        "0\twire18077\tBUF_X4\tBUF_X16",
+        "0\twire18166\tBUF_X4\tBUF_X16",
+        "0\twire18083\tBUF_X4\tBUF_X16",
+        "0\twire18161\tBUF_X4\tBUF_X16",
+        "0\twire18171\tBUF_X4\tBUF_X16",
+        "0\twire18084\tBUF_X4\tBUF_X16",
+        "0\twire18118\tBUF_X4\tBUF_X16",
+        "0\twire18116\tBUF_X4\tBUF_X16",
+        "0\twire18149\tBUF_X4\tBUF_X16",
+        "0\twire18147\tBUF_X4\tBUF_X16",
+        "0\twire18137\tBUF_X4\tBUF_X16",
+        "0\twire15464\tBUF_X4\tBUF_X16",
+        "0\twire18167\tBUF_X4\tBUF_X16",
+        "0\twire18072\tBUF_X4\tBUF_X16",
+        "0\twire18081\tBUF_X4\tBUF_X16",
+        "0\twire18160\tBUF_X4\tBUF_X8",
+        "0\tplace14259\tBUF_X1\tBUF_X2",
+        "0\tplace13294\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint0.tsv": {
+      "header": "",
+      "rows": []
+    }
+  },
+  "boundary_constraint_contract_sha256": "b08d83cc225c1753aee3027d6c97e296bc25d4cf9d5cdd7ffd0b4efc6694f044",
+  "external_pin_contract": {
+    "count": 1662,
+    "canonical_sha256": "f098a67a387ac43e41383f3df5d960806327637958075aa348ab4f6fc16134e9"
+  },
+  "output_manifest_sha256": "97f0ae3bfd71a2dcc73003f18a395e99ac3c996941af2342a56ce803d11566d2",
+  "output_manifest_entries": 77,
+  "collected_file_integrity": {
+    "spec.json": true,
+    "experiment.json": true,
+    "boundary.sdc": true,
+    "external-pin-contract.json": true,
+    "pin-placement-quality.json": true,
+    "resource-qualification.json": true,
+    "strict-pg.json": true
+  },
+  "scheduler": "89758|FAILED|1:0|00:05:01|UNLIMITED|16|node3"
+}

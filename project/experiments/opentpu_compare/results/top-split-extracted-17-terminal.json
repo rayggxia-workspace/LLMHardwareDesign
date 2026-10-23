@@ -1,0 +1,706 @@
+{
+  "spec": {
+    "extracted_eco_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16",
+    "extracted_hold_guardband_ns": 0.03,
+    "extracted_repeaters": [
+      [
+        "wire15476/Z",
+        "BUF_X4"
+      ],
+      [
+        "wire15205/Z",
+        "BUF_X4"
+      ]
+    ],
+    "extracted_replacements": [
+      [
+        "wire15476",
+        "BUF_X8",
+        "BUF_X16"
+      ],
+      [
+        "place10868",
+        "BUF_X1",
+        "BUF_X2"
+      ],
+      [
+        "place10867",
+        "BUF_X1",
+        "BUF_X2"
+      ]
+    ],
+    "mode": "top",
+    "cores": 16,
+    "runner_commit": "51db398110811d29c8c2b3e128fb3426bc3d7fdd",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-17"
+  },
+  "exit_code": "0",
+  "started.txt": "2026-10-22T14:52:58Z\n",
+  "finished.txt": "2026-10-22T15:56:11Z\n",
+  "allocation.txt": "JobId=89802 JobName=yzl-ot-top UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586258 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:02 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T22:52:56 EligibleTime=2026-10-22T22:52:56 AccrueTime=2026-10-22T22:52:56 StartTime=2026-10-22T22:52:56 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T22:52:56 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T22:52:56 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:4027925 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=16 NumTasks=1 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=16,mem=1M,node=1,billing=16 AllocTRES=cpu=16,node=1,billing=16 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-17/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-17 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-17/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-17/job.log Power= TresPerTask=cpu:16 \n",
+  "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif\n",
+  "tools.sha256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53  /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad\nc2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b  /OpenROAD-flow-scripts/tools/install/yosys/bin/yosys\n",
+  "experiment.json": {
+    "top": "llhd_top_split",
+    "case": "opentpu_top_split",
+    "kind": "split",
+    "result_relative": "flow/results/nangate45/opentpu_top_split/base",
+    "views": {
+      "act": {
+        "name": "llhd_opentpu_act",
+        "size": [
+          326.205,
+          326.205
+        ],
+        "view": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act",
+        "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03"
+      },
+      "mxu": {
+        "name": "llhd_opentpu_mxu",
+        "size": [
+          1100.455,
+          1100.455
+        ],
+        "view": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu",
+        "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03"
+      },
+      "merged": {
+        "name": "llhd_match_merged",
+        "size": [
+          1145.375,
+          1145.375
+        ],
+        "view": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/merged",
+        "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-merged-03"
+      }
+    },
+    "locations": {
+      "u_act": [
+        80,
+        80
+      ],
+      "u_mxu": [
+        486.205,
+        80
+      ]
+    },
+    "die_um": [
+      0,
+      0,
+      1670,
+      1670
+    ],
+    "external_bits": 1662,
+    "extra_state": 0,
+    "clock_ns": 2.5,
+    "io_delay_ns": 0.5,
+    "input_driver": "BUF_X4/Z",
+    "output_load_fF": 5,
+    "pdn": "H1 additional parent M10; original detailed macro geometry retained",
+    "full_hierarchical_sta": "Required after routing; macro libraries alone do not qualify internal period",
+    "targeted_drive_repair": {
+      "rounds": 8,
+      "scope": "Only actual negative-margin standard BUF/INV drivers; smallest doubled drive with estimated 35% cap / 20% slew reserve, max X32; no macro or sequential change",
+      "macro_output_guards": true
+    },
+    "parent_resume": {
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05",
+      "pin_reference": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05",
+      "common_pin_sha256": "8c1e5da591ece5cefdd142408f1431bc5c82cb1fb91ebd075d1f3f4dfb19cdb7",
+      "initial_pg_receipt_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/strict-pg.json"
+    },
+    "extracted_eco": {
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16",
+      "source_exit_code": "0",
+      "approach": "Actual extracted violation repair, then complete new signal routing/extraction; unchanged final gates; GRT estimates recorded as diagnostics"
+    }
+  },
+  "input-sha256.json": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/experiment.json": "89bdae9165ee3f0f8eacae7d922b37b233f7502d123be6266be3f38e23e41f49",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/strict-pg.json": "7eaaef09b82d5343e94ee1f7e6977e0756726454e0929d6af5ead1d2e9158040",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/final-pg/strict-pg.json": "7eaaef09b82d5343e94ee1f7e6977e0756726454e0929d6af5ead1d2e9158040",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/pin-placement-quality.json": "fc1d1426ba039dd0fc89ce0aa40dc939b929aea268ce67bfd182eba51c8f967a",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/input-sha256.json": "c0e04ee1a40b5038446af33490e8613a00552be868d6ef4112b45069ae2e34c0",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act/llhd_opentpu_act.lib": "931b8d514f43ace7e74f72f43f06f752c5bcdc1017eed72c49d17bac722b1e3a",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act/llhd_opentpu_act.lef": "99871cd5cf868ef1b3053563d99fec303f605a23345ad5efaa81d16b81527455",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu/llhd_opentpu_mxu.lib": "a15ef72106dd24a148e6fef5f8a16365bc7f87a7e152184327243584d28277f4",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu/llhd_opentpu_mxu.lef": "ce7d99e802f2211d190d30fdc220481fedd00e16e223e05da3eb4633974403c4",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/merged/llhd_match_merged.lib": "a12c5993f49e1457b6540933c4d4157cedcb021be2766b1ca4594b08b34cb05a",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/merged/llhd_match_merged.lef": "eaa110806cd8da5f2949f2b7745a2ceb9c9b5075c5d45374ff9d7256ef8c21ec",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/config.mk": "3a2d2b1e7e061533d2c330e130b59c3cee50d1709b477b5f3dc31db7d1d9a484",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/top.v": "1b3b75cea7bf67bf13dbfc333a9cba61eb37f74227241caf3c9ca00fa3641d49",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/boundary.sdc": "13cd9576c207b3ffa0ca086b4d668dd40bdeb24bf2e568effbd183b8afbd7e6b",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/external-pin-contract.json": "30d2358ac2771f50b36c82d300a942f784c99c99de526330761ef0007231f3c0",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/resource-qualification.json": "714e1d04b96f2a82410d84f2975fa36cab93b45c967a2182a83e57cf62978169",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/stage-pins.tsv": "a2b140d743fe6604e4327e0037966c65569d257eb4151b82969d506882741008",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/placement.tcl": "73dad061581f2de6761c56e922d41161f65dd7488a0ee85452b111979805b4c9",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/pdn.tcl": "64fcf6047db77a4c849bf1ddff1356989c738d119f3d3c53f67abad6ed7410f5",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/post-pdn.tcl": "c3e7909496e71d02b7f53fd8125c7b18f9f4c70fe9e0a18cb80dcfddd3fd0c9c",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/fixed-pins.tcl": "ea9c7c799a4df0da4336d58d303b01642f273c4f9d426afc62d4eae92bd232e2",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/flow/results/nangate45/opentpu_top_split/base/6_final.odb": "6f433985e9eb133f264fbb4517bffda8278b2d943fdf4e6e5a4f4fb0d54c8d87",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/flow/results/nangate45/opentpu_top_split/base/6_final.sdc": "e25c902e65c0462a5100c6ed8f1a13f06b65b9a474da3f174ea98e166944fd1d",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/flow/results/nangate45/opentpu_top_split/base/6_final.spef": "f9e56783bf23b71e331b5ab3d810daeb9d7984d127db8e0fa2cb569a30026a6f",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-17/flow/results/nangate45/opentpu_top_split/base/eco-initial.odb": "6f433985e9eb133f264fbb4517bffda8278b2d943fdf4e6e5a4f4fb0d54c8d87",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16/flow/logs/nangate45/opentpu_top_split/base/6_report.json": "65cfb460747a220227e06504c28f1c2b655f5b61b3ded2640031afc570cb6e09",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-17/runner/macro_guard.tcl": "badae23f39da32bbbfdf513c8da7b5864fbe97bf74e1d10c80abbb8098faf29c",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-17/runner/targeted_drive.tcl": "6febae67698167e5724d3c848f3076e325c121a167080a8c3003e99f38926dcb",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-17/runner/extracted_eco.tcl": "9f5cadbf62307d16af121c9bfa02c64f06eda5216777949e46e59c8420220a55",
+    "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef": "834a79295054cd4209178d1bade67c353863c47bb4b3c22ee38b862b7cec37f2",
+    "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.mod.lef": "a43aea339f12a57a63497783e508ba16f3da2dc056d3247dec7d99707c2dedef",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/act-cap20/memory-model/macros/fakeram45_1r1w_32x128.lef": "4b9bc715e801cb7f67ee947919474061de7bb6d6679e33a0af96f40d1ea16d45",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/act-cap20/memory-model/macros/fakeram45_1r1w_32x64.lef": "2f1e40d2ebb4b365e7cf1c51e2e63a51fa507d3b0c22f6ab2ccd2c022d3dd9cc",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x40.lef": "2cf329b75e1f440bd7ef041db1e6d5e48f51fd3e72cd3ad66c9b627f8cce3ce2",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x72.lef": "81d0b036c0a83c7e3b8e623e8605623bee75d69b0cecfd75e3469a2a6aa8fa0b",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x96.lef": "7f9e98c501585c0bc9d35764cc7e36fe094d6fd46302ed44d0e876274a9036f0",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x64.lef": "e12a3d77c7108bf0d1ccbf2fe82370abecb6eb8f6c43562a92be9b19aec860b2",
+    "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/act-cap20/memory-model/macros/fakeram45_1r1w_32x128.lib": "5d897d777b501c3d2d913a4aa2d5a524f54ea987b4e681765a106f8e40669913",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/act-cap20/memory-model/macros/fakeram45_1r1w_32x64.lib": "5372dfa93d7bd56d5dab5cedc10718b8c9e5b1d1f71b386ed31221364d770d58",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x96.lib": "a15f3ea4750592473176a8fa9ca0851ee32bf2c392c39614a86e00f684101eb5",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x72.lib": "58184509873e6ad0697dbb6fa4da8b7322d878634726f4e8175efee92fada80f",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x64.lib": "f040280dfc4eb015261c41de670e7a388e56f1c28163a3f7eeeb88ef4921b6e0",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x40.lib": "e9f3fee83a097638cadfa69399abac59933772f1c797d31a9d0c852597bce66d",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03/flow/results/nangate45/matched_opentpu_act/base/6_final.v": "7096f484e3a89399043e8cf3781697336c587504a47e07462485b1b5ec81fc9b",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03/flow/results/nangate45/matched_opentpu_mxu/base/6_final.v": "8dbd8d43e33606622025eae51d0c45cce13d3cdafc8e401eb4e59d102f66b6cc",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-17/flow/results/nangate45/opentpu_top_split/base/6_final.v": "adb127a06d4365b751b9263e8ce159781045e4e26906013c63e9325c9fa5d221",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-17/boundary.sdc": "13cd9576c207b3ffa0ca086b4d668dd40bdeb24bf2e568effbd183b8afbd7e6b",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-17/flow/results/nangate45/opentpu_top_split/base/6_final.spef": "686ccc9aaa29fb60d2ad9fc898a4aaf943211d741c3589c4c749d4045b2e92b1",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03/flow/results/nangate45/matched_opentpu_act/base/6_final.spef": "757d7ea6bc5b95fbe4bac32d0b4a23ce0d899a433f1fcd0cfb93a73f0a8fbb42",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03/flow/results/nangate45/matched_opentpu_mxu/base/6_final.spef": "057e690db09e8bf29427f2e963bf0fdb7701cd792d1020b93cbd0d96f6f741a0"
+  },
+  "input-trace-status.json": {
+    "execution_completed": true,
+    "tracked_input_count": 51,
+    "scope": "Inputs reached by this execution, including failure paths"
+  },
+  "strict-pg.json": {
+    "macro_pg_iterm_count": 4,
+    "VDD_pass": true,
+    "VSS_pass": true,
+    "passed": true
+  },
+  "final-pg/strict-pg.json": {
+    "macro_pg_iterm_count": 4,
+    "VDD_pass": true,
+    "VSS_pass": true,
+    "passed": true
+  },
+  "resource-qualification.json": {
+    "act": {
+      "passed": true,
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03",
+      "expected": {
+        "fakeram45_1r1w_32x128": 4,
+        "DFF": 606,
+        "fakeram45_1r1w_32x64": 2
+      },
+      "actual": {
+        "fakeram45_1r1w_32x128": 4,
+        "DFF": 606,
+        "fakeram45_1r1w_32x64": 2
+      },
+      "qualification": "Exact storage/state inventory, drive variants normalized; physical buffer costs separate"
+    },
+    "mxu": {
+      "passed": true,
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03",
+      "expected": {
+        "DFF": 36417,
+        "fakeram45_1r1w_64x72": 3,
+        "fakeram45_1r1w_64x40": 1,
+        "fakeram45_1r1w_64x96": 1,
+        "fakeram45_1r1w_64x64": 1
+      },
+      "actual": {
+        "DFF": 36417,
+        "fakeram45_1r1w_64x72": 3,
+        "fakeram45_1r1w_64x40": 1,
+        "fakeram45_1r1w_64x96": 1,
+        "fakeram45_1r1w_64x64": 1
+      },
+      "qualification": "Exact storage/state inventory, drive variants normalized; physical buffer costs separate"
+    },
+    "merged": {
+      "passed": true,
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-merged-03",
+      "expected": {
+        "fakeram45_1r1w_32x128": 4,
+        "DFF": 37023,
+        "fakeram45_1r1w_32x64": 2,
+        "fakeram45_1r1w_64x72": 3,
+        "fakeram45_1r1w_64x40": 1,
+        "fakeram45_1r1w_64x96": 1,
+        "fakeram45_1r1w_64x64": 1
+      },
+      "actual": {
+        "fakeram45_1r1w_32x128": 4,
+        "DFF": 37023,
+        "fakeram45_1r1w_32x64": 2,
+        "fakeram45_1r1w_64x72": 3,
+        "fakeram45_1r1w_64x40": 1,
+        "fakeram45_1r1w_64x96": 1,
+        "fakeram45_1r1w_64x64": 1
+      },
+      "qualification": "Exact storage/state inventory, drive variants normalized; physical buffer costs separate"
+    }
+  },
+  "full-hierarchy-quality.json": {
+    "passed": true,
+    "checks": {
+      "setup_nonnegative": true,
+      "hold_nonnegative": true,
+      "setup_tns_zero": true,
+      "reported_electrical_margins_nonnegative": true,
+      "no_reported_violations": true
+    },
+    "setup_ws_ns": 0.008518,
+    "hold_ws_ns": 0.036309,
+    "scope": "Real netlists and hierarchical SPEF, original external clock/IO budget only, no internal boundary delays"
+  },
+  "pin-placement-quality.json": {
+    "passed": true,
+    "count": 1662,
+    "actual_layer_counts": {
+      "metal3": 832,
+      "metal2": 830
+    },
+    "canonical_sha256": "8c1e5da591ece5cefdd142408f1431bc5c82cb1fb91ebd075d1f3f4dfb19cdb7",
+    "errors": [],
+    "scope": "Actual CTS ODB BPin layer and full box; all 1662 signal bits exactly once, requested location within track snapping tolerance. Pair must match exact canonical geometry before route."
+  },
+  "last_flow_log": {
+    "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-17/flow/logs/nangate45/opentpu_top_split/base/6_report.log",
+    "tail": [
+      "==========================================================================",
+      "finish report_design_area",
+      "--------------------------------------------------------------------------",
+      "Design area 1333023 um^2 49% utilization.",
+      "Elapsed time: 3:11.04[h:]min:sec. CPU time: user 186.71 sys 6.11 (100%). Peak memory: 8368300KB.",
+      "Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum",
+      "                                     s        s  Elapsed       MB [0:10)",
+      "6_report                           191      193     1.01     8172 N/A"
+    ]
+  },
+  "job_log_tail": [
+    "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+  ],
+  "metrics": {
+    "5_2_route.json": {
+      "detailedroute__route__drc_errors__iter:0": 4551,
+      "detailedroute__route__wirelength__iter:0": 3359138,
+      "detailedroute__route__drc_errors__iter:1": 268,
+      "detailedroute__route__wirelength__iter:1": 3358052,
+      "detailedroute__route__drc_errors__iter:2": 129,
+      "detailedroute__route__wirelength__iter:2": 3357907,
+      "detailedroute__route__drc_errors__iter:3": 13,
+      "detailedroute__route__wirelength__iter:3": 3357932,
+      "detailedroute__route__drc_errors__iter:4": 6,
+      "detailedroute__route__wirelength__iter:4": 3357931,
+      "detailedroute__route__drc_errors__iter:5": 6,
+      "detailedroute__route__wirelength__iter:5": 3357931,
+      "detailedroute__route__drc_errors__iter:6": 0,
+      "detailedroute__route__wirelength__iter:6": 3357937,
+      "detailedroute__route__drc_errors": 0,
+      "detailedroute__route__wirelength": 3357937,
+      "detailedroute__route__vias": 73730,
+      "detailedroute__route__vias__singlecut": 73730,
+      "detailedroute__route__vias__multicut": 0,
+      "detailedroute__antenna_diodes_count": 0,
+      "detailedroute__antenna__violating__nets": 0,
+      "detailedroute__antenna__violating__pins": 0
+    },
+    "6_report.json": {
+      "finish__design_powergrid__voltage__worst__net:VDD__corner:default": 1.09853,
+      "finish__design_powergrid__voltage__average__net:VDD__corner:default": 1.09994,
+      "finish__design_powergrid__drop__average__net:VDD__corner:default": 6.39095e-05,
+      "finish__design_powergrid__drop__worst__net:VDD__corner:default": 0.00146903,
+      "finish__design_powergrid__voltage__worst__net:VSS__corner:default": 0.0034767,
+      "finish__design_powergrid__voltage__average__net:VSS__corner:default": 4.88317e-05,
+      "finish__design_powergrid__drop__average__net:VSS__corner:default": 4.88317e-05,
+      "finish__design_powergrid__drop__worst__net:VSS__corner:default": 0.0034767,
+      "finish__design__instance__count__class:macro": 2,
+      "finish__design__instance__area__class:macro": 1317410.0,
+      "finish__design__instance__count__class:fill_cell": 187937,
+      "finish__design__instance__area__class:fill_cell": 1371490.0,
+      "finish__design__instance__count__class:tap_cell": 7780,
+      "finish__design__instance__area__class:tap_cell": 2069.48,
+      "finish__design__instance__count__class:buffer": 228,
+      "finish__design__instance__area__class:buffer": 246.582,
+      "finish__design__instance__count__class:clock_buffer": 3,
+      "finish__design__instance__area__class:clock_buffer": 3.99,
+      "finish__design__instance__count__class:timing_repair_buffer": 9377,
+      "finish__design__instance__area__class:timing_repair_buffer": 13283.2,
+      "finish__design__instance__count__class:clock_inverter": 1,
+      "finish__design__instance__area__class:clock_inverter": 8.778,
+      "finish__design__instance__count": 205328,
+      "finish__design__instance__area": 1333020.0,
+      "finish__timing__setup__tns": -0.0201057,
+      "finish__timing__hold__tns": 0,
+      "finish__timing__setup__ws": -0.0201057,
+      "finish__timing__hold__ws": 0.00340822,
+      "finish__timing__fmax__clock:clk": 396809000.0,
+      "finish__timing__fmax": 396809000.0,
+      "finish__clock__skew__setup": 0.0104949,
+      "finish__clock__skew__hold": 0.0104949,
+      "finish__timing__drv__max_slew_limit": 0.0109791,
+      "finish__timing__drv__max_slew": 0,
+      "finish__timing__drv__max_cap_limit": 0.0335315,
+      "finish__timing__drv__max_cap": 0,
+      "finish__timing__drv__max_fanout_limit": 0,
+      "finish__timing__drv__max_fanout": 0,
+      "finish__timing__drv__setup_violation_count": 1,
+      "finish__timing__drv__hold_violation_count": 0,
+      "finish__power__internal__total": 0.00106131,
+      "finish__power__switching__total": 0.00350264,
+      "finish__power__leakage__total": 0.000598556,
+      "finish__power__total": 0.0051625,
+      "finish__design__die__area": 2788900.0,
+      "finish__design__core__area": 2718490.0,
+      "finish__design__instance__count__stdcell": 17389,
+      "finish__design__instance__area__stdcell": 15612.1,
+      "finish__design__instance__count__macros": 2,
+      "finish__design__instance__area__macros": 1317410.0,
+      "finish__design__instance__count__padcells": 0,
+      "finish__design__instance__area__padcells": 0,
+      "finish__design__instance__count__cover": 0,
+      "finish__design__instance__area__cover": 0,
+      "finish__design__instance__utilization": 0.490354,
+      "finish__design__instance__utilization__stdcell": 0.0111429
+    }
+  },
+  "final_report": "\n==========================================================================\nfinish report_tns\n--------------------------------------------------------------------------\ntns max -0.02\n\n==========================================================================\nfinish report_wns\n--------------------------------------------------------------------------\nwns max -0.02\n\n==========================================================================\nfinish report_worst_slack\n--------------------------------------------------------------------------\nworst slack max -0.02\n\n==========================================================================\nfinish report_clock_min_period\n--------------------------------------------------------------------------\nclk period_min = 2.52 fmax = 396.81\n\n==========================================================================\nfinish report_clock_skew\n--------------------------------------------------------------------------\nClock clk\n   0.18 source latency u_act/clk ^\n  -0.17 target latency u_mxu/clk ^\n   0.00 CRPR\n--------------\n   0.01 setup skew\n\n\n==========================================================================\nfinish report_checks -path_delay min\n--------------------------------------------------------------------------\nStartpoint: cmd[3] (input port clocked by clk)\nEndpoint: u_mxu (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: min\n\nFanout     Cap    Slew   Delay    Time   Description\n-----------------------------------------------------------------------------\n                          0.00    0.00   clock clk (rise edge)\n                          0.00    0.00   clock network delay (propagated)\n                          0.50    0.50 ^ input external delay\n     1   29.46    0.01    0.03    0.53 ^ cmd[3] (in)\n                                         cmd[3] (net)\n                  0.03    0.00    0.53 ^ wire4527/A (BUF_X8)\n     1   97.08    0.02    0.04    0.57 ^ wire4527/Z (BUF_X8)\n                                         net4527 (net)\n                  0.03    0.02    0.58 ^ u_mxu/cmd[3] (llhd_opentpu_mxu)\n                                  0.58   data arrival time\n\n                          0.00    0.00   clock clk (rise edge)\n                          0.00    0.00   clock source latency\n     1   31.73    0.02    0.03    0.03 ^ clk (in)\n                                         clk (net)\n                  0.02    0.00    0.03 ^ clkbuf_0_clk/A (CLKBUF_X3)\n     2   22.15    0.02    0.05    0.08 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n                                         clknet_0_clk (net)\n                  0.02    0.00    0.08 ^ clkbuf_1_1__f_clk/A (CLKBUF_X3)\n     1   69.16    0.05    0.07    0.15 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n                                         clknet_1_1__leaf_clk (net)\n                  0.06    0.02    0.17 ^ u_mxu/clk (llhd_opentpu_mxu)\n                          0.00    0.17   clock reconvergence pessimism\n                          0.41    0.58   library hold time\n                                  0.58   data required time\n-----------------------------------------------------------------------------\n                                  0.58   data required time\n                                 -0.58   data arrival time\n-----------------------------------------------------------------------------\n                                  0.00   slack (MET)\n\n\n\n==========================================================================\nfinish report_checks -path_delay max\n--------------------------------------------------------------------------\nStartpoint: u_mxu (rising edge-triggered flip-flop clocked by clk)\nEndpoint: t_wdata[20] (output port clocked by clk)\nPath Group: clk\nPath Type: max\n\nFanout     Cap    Slew   Delay    Time   Description\n-----------------------------------------------------------------------------\n                          0.00    0.00   clock clk (rise edge)\n                          0.00    0.00   clock source latency\n     1   31.73    0.02    0.03    0.03 ^ clk (in)\n                                         clk (net)\n                  0.02    0.00    0.03 ^ clkbuf_0_clk/A (CLKBUF_X3)\n     2   22.15    0.02    0.05    0.08 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n                                         clknet_0_clk (net)\n                  0.02    0.00    0.08 ^ clkbuf_1_1__f_clk/A (CLKBUF_X3)\n     1   69.16    0.05    0.07    0.15 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n                                         clknet_1_1__leaf_clk (net)\n                  0.06    0.02    0.17 ^ u_mxu/clk (llhd_opentpu_mxu)\n     1    4.78    0.01    1.26    1.43 v u_mxu/t_wdata[20] (llhd_opentpu_mxu)\n                                         net1570 (net)\n                  0.01    0.00    1.43 v place10609/A (CLKBUF_X3)\n     1  102.88    0.02    0.05    1.47 v place10609/Z (CLKBUF_X3)\n                                         net10609 (net)\n                  0.22    0.18    1.65 v place10608/A (BUF_X8)\n     1   93.41    0.02    0.08    1.73 v place10608/Z (BUF_X8)\n                                         net10608 (net)\n                  0.09    0.07    1.80 v wire15202/A (BUF_X4)\n     1   49.01    0.01    0.06    1.86 v wire15202/Z (BUF_X4)\n                                         net15202 (net)\n                  0.06    0.05    1.91 v place10607/A (BUF_X2)\n     1   12.21    0.01    0.05    1.96 v place10607/Z (BUF_X2)\n                                         net10607 (net)\n                  0.01    0.00    1.97 v place10606/A (BUF_X4)\n     1    9.69    0.01    0.03    1.99 v place10606/Z (BUF_X4)\n                                         net10606 (net)\n                  0.01    0.00    2.00 v wire1764/A (BUF_X4)\n     1    6.57    0.01    0.02    2.02 v wire1764/Z (BUF_X4)\n                                         t_wdata[20] (net)\n                  0.01    0.00    2.02 v t_wdata[20] (out)\n                                  2.02   data arrival time\n\n                          2.50    2.50   clock clk (rise edge)\n                          0.00    2.50   clock network delay (propagated)\n                          0.00    2.50   clock reconvergence pessimism\n                         -0.50    2.00   output external delay\n                                  2.00   data required time\n-----------------------------------------------------------------------------\n                                  2.00   data required time\n                                 -2.02   data arrival time\n-----------------------------------------------------------------------------\n                                 -0.02   slack (VIOLATED)\n\n\n\n==========================================================================\nfinish report_checks -unconstrained\n--------------------------------------------------------------------------\nStartpoint: u_mxu (rising edge-triggered flip-flop clocked by clk)\nEndpoint: t_wdata[20] (output port clocked by clk)\nPath Group: clk\nPath Type: max\n\nFanout     Cap    Slew   Delay    Time   Description\n-----------------------------------------------------------------------------\n                          0.00    0.00   clock clk (rise edge)\n                          0.00    0.00   clock source latency\n     1   31.73    0.02    0.03    0.03 ^ clk (in)\n                                         clk (net)\n                  0.02    0.00    0.03 ^ clkbuf_0_clk/A (CLKBUF_X3)\n     2   22.15    0.02    0.05    0.08 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n                                         clknet_0_clk (net)\n                  0.02    0.00    0.08 ^ clkbuf_1_1__f_clk/A (CLKBUF_X3)\n     1   69.16    0.05    0.07    0.15 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n                                         clknet_1_1__leaf_clk (net)\n                  0.06    0.02    0.17 ^ u_mxu/clk (llhd_opentpu_mxu)\n     1    4.78    0.01    1.26    1.43 v u_mxu/t_wdata[20] (llhd_opentpu_mxu)\n                                         net1570 (net)\n                  0.01    0.00    1.43 v place10609/A (CLKBUF_X3)\n     1  102.88    0.02    0.05    1.47 v place10609/Z (CLKBUF_X3)\n                                         net10609 (net)\n                  0.22    0.18    1.65 v place10608/A (BUF_X8)\n     1   93.41    0.02    0.08    1.73 v place10608/Z (BUF_X8)\n                                         net10608 (net)\n                  0.09    0.07    1.80 v wire15202/A (BUF_X4)\n     1   49.01    0.01    0.06    1.86 v wire15202/Z (BUF_X4)\n                                         net15202 (net)\n                  0.06    0.05    1.91 v place10607/A (BUF_X2)\n     1   12.21    0.01    0.05    1.96 v place10607/Z (BUF_X2)\n                                         net10607 (net)\n                  0.01    0.00    1.97 v place10606/A (BUF_X4)\n     1    9.69    0.01    0.03    1.99 v place10606/Z (BUF_X4)\n                                         net10606 (net)\n                  0.01    0.00    2.00 v wire1764/A (BUF_X4)\n     1    6.57    0.01    0.02    2.02 v wire1764/Z (BUF_X4)\n                                         t_wdata[20] (net)\n                  0.01    0.00    2.02 v t_wdata[20] (out)\n                                  2.02   data arrival time\n\n                          2.50    2.50   clock clk (rise edge)\n                          0.00    2.50   clock network delay (propagated)\n                          0.00    2.50   clock reconvergence pessimism\n                         -0.50    2.00   output external delay\n                                  2.00   data required time\n-----------------------------------------------------------------------------\n                                  2.00   data required time\n                                 -2.02   data arrival time\n-----------------------------------------------------------------------------\n                                 -0.02   slack (VIOLATED)\n\n\n\n==========================================================================\nfinish report_check_types -max_slew -max_cap -max_fanout -violators\n--------------------------------------------------------------------------\n\n==========================================================================\nfinish max_slew_check_slack\n--------------------------------------------------------------------------\n0.0021848496980965137\n\n==========================================================================\nfinish max_slew_check_limit\n--------------------------------------------------------------------------\n0.19900000095367432\n\n==========================================================================\nfinish max_slew_check_slack_limit\n--------------------------------------------------------------------------\n0.0110\n\n==========================================================================\nfinish max_fanout_check_slack\n--------------------------------------------------------------------------\n1.0000000150474662e+30\n\n==========================================================================\nfinish max_fanout_check_limit\n--------------------------------------------------------------------------\n1.0000000150474662e+30\n\n==========================================================================\nfinish max_capacitance_check_slack\n--------------------------------------------------------------------------\n2.0338075160980225\n\n==========================================================================\nfinish max_capacitance_check_limit\n--------------------------------------------------------------------------\n60.65370559692383\n\n==========================================================================\nfinish max_capacitance_check_slack_limit\n--------------------------------------------------------------------------\n0.0335\n\n==========================================================================\nfinish max_slew_violation_count\n--------------------------------------------------------------------------\nmax slew violation count 0\n\n==========================================================================\nfinish max_fanout_violation_count\n--------------------------------------------------------------------------\nmax fanout violation count 0\n\n==========================================================================\nfinish max_cap_violation_count\n--------------------------------------------------------------------------\nmax cap violation count 0\n\n==========================================================================\nfinish setup_violation_count\n--------------------------------------------------------------------------\nsetup violation count 1\n\n==========================================================================\nfinish hold_violation_count\n--------------------------------------------------------------------------\nhold violation count 0\n\n==========================================================================\nfinish report_checks -path_delay max reg to reg\n--------------------------------------------------------------------------\nStartpoint: u_mxu (rising edge-triggered flip-flop clocked by clk)\nEndpoint: u_act (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: max\n\n  Delay    Time   Description\n---------------------------------------------------------\n   0.00    0.00   clock clk (rise edge)\n   0.00    0.00   clock source latency\n   0.03    0.03 ^ clk (in)\n   0.05    0.08 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.07    0.15 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n   0.02    0.17 ^ u_mxu/clk (llhd_opentpu_mxu)\n   1.55    1.72 ^ u_mxu/act_blk2[4] (llhd_opentpu_mxu)\n   0.05    1.78 ^ place11537/Z (BUF_X1)\n   0.04    1.82 ^ wire15446/Z (BUF_X4)\n   0.05    1.87 ^ u_act/r_blk2[4] (llhd_opentpu_act)\n           1.87   data arrival time\n\n   2.50    2.50   clock clk (rise edge)\n   0.00    2.50   clock source latency\n   0.03    2.53 ^ clk (in)\n   0.05    2.58 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.10    2.67 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.01    2.68 ^ u_act/clk (llhd_opentpu_act)\n   0.00    2.68   clock reconvergence pessimism\n   0.01    2.69   library setup time\n           2.69   data required time\n---------------------------------------------------------\n           2.69   data required time\n          -1.87   data arrival time\n---------------------------------------------------------\n           0.82   slack (MET)\n\n\n\n==========================================================================\nfinish report_checks -path_delay min reg to reg\n--------------------------------------------------------------------------\nStartpoint: u_act (rising edge-triggered flip-flop clocked by clk)\nEndpoint: u_mxu (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: min\n\n  Delay    Time   Description\n---------------------------------------------------------\n   0.00    0.00   clock clk (rise edge)\n   0.00    0.00   clock source latency\n   0.03    0.03 ^ clk (in)\n   0.05    0.08 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.10    0.17 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.01    0.18 ^ u_act/clk (llhd_opentpu_act)\n   0.45    0.63 v u_act/r_scale[41] (llhd_opentpu_act)\n   0.05    0.68 v wire15913/Z (BUF_X4)\n   0.06    0.74 v place11730/Z (BUF_X2)\n   0.01    0.75 v u_mxu/act_scale[41] (llhd_opentpu_mxu)\n           0.75   data arrival time\n\n   0.00    0.00   clock clk (rise edge)\n   0.00    0.00   clock source latency\n   0.03    0.03 ^ clk (in)\n   0.05    0.08 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.07    0.15 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n   0.02    0.17 ^ u_mxu/clk (llhd_opentpu_mxu)\n   0.00    0.17   clock reconvergence pessimism\n   0.42    0.59   library hold time\n           0.59   data required time\n---------------------------------------------------------\n           0.59   data required time\n          -0.75   data arrival time\n---------------------------------------------------------\n           0.17   slack (MET)\n\n\n\n==========================================================================\nfinish critical path target clock latency max path\n--------------------------------------------------------------------------\n0.1698\n\n==========================================================================\nfinish critical path target clock latency min path\n--------------------------------------------------------------------------\n0.1698\n\n==========================================================================\nfinish critical path source clock latency min path\n--------------------------------------------------------------------------\n0.0000\n\n==========================================================================\nfinish critical path delay\n--------------------------------------------------------------------------\n2.0201\n\n==========================================================================\nfinish critical path slack\n--------------------------------------------------------------------------\n-0.0201\n\n==========================================================================\nfinish slack div critical path delay\n--------------------------------------------------------------------------\n-0.995000\n\n==========================================================================\nfinish report_power\n--------------------------------------------------------------------------\nGroup                  Internal  Switching    Leakage      Total\n                          Power      Power      Power      Power (Watts)\n----------------------------------------------------------------\nSequential             0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%\nCombinational          1.01e-03   3.42e-03   5.98e-04   5.03e-03  97.4%\nClock                  5.32e-05   8.27e-05   5.51e-07   1.36e-04   2.6%\nMacro                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%\nPad                    0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%\n----------------------------------------------------------------\nTotal                  1.06e-03   3.50e-03   5.99e-04   5.16e-03 100.0%\n                          20.6%      67.8%      11.6%\n",
+  "route_layer_wire_um": {
+    "metal1": 0.0,
+    "metal2": 852811.0,
+    "metal3": 878614.0,
+    "metal4": 419263.0,
+    "metal5": 432700.0,
+    "metal6": 330563.0,
+    "metal7": 194232.0,
+    "metal8": 177923.0,
+    "metal9": 50523.0,
+    "metal10": 21304.0
+  },
+  "route_layer_report": {
+    "path": "flow/logs/nangate45/opentpu_top_split/base/5_2_route.log",
+    "total_um": 3357937.0,
+    "vias": 73730,
+    "scope": "Final DRT signal-route table; per-layer lengths rounded to integer um; excludes special PG"
+  },
+  "drc_convergence": [
+    {
+      "iteration": 0,
+      "kind": "optimization",
+      "violations": 4551
+    },
+    {
+      "iteration": 1,
+      "kind": "optimization",
+      "violations": 268
+    },
+    {
+      "iteration": 2,
+      "kind": "optimization",
+      "violations": 129
+    },
+    {
+      "iteration": 3,
+      "kind": "optimization",
+      "violations": 13
+    },
+    {
+      "iteration": 4,
+      "kind": "guides tiles",
+      "violations": 6
+    },
+    {
+      "iteration": 5,
+      "kind": "guides tiles",
+      "violations": 6
+    },
+    {
+      "iteration": 6,
+      "kind": "stubborn tiles",
+      "violations": 0
+    }
+  ],
+  "pg_access": {
+    "final-pg/u_act-pg-access-selection.json": {
+      "check_only": true,
+      "master": "llhd_opentpu_act",
+      "orientation": "R0",
+      "instance_location_dbu": [
+        160000,
+        160000
+      ],
+      "instance_bbox_dbu": [
+        160000,
+        160000,
+        812410,
+        812410
+      ],
+      "coordinate_contract": "Actual master origin 0 0 asserted; actual R0 location and bbox recorded here.",
+      "dbu_per_micron": 2000,
+      "guard_um": 2.0,
+      "guard_basis": "Fixed-image Nangate45 M7-M9 SPACINGTABLE maximum 1.5um; 2um conservative landing guard. Not complete spacing signoff.",
+      "actual_master_obstruction_count": 136310,
+      "M10_macro_obstructions": 0,
+      "parent_pg_vias_before": 75330,
+      "unsafe_same_net_xy_groups": 0,
+      "removed_same_net_xy_groups": 0,
+      "removed_parent_pg_vias": 0,
+      "parent_pg_vias_after": 75330,
+      "remaining_guard_intersections": 0,
+      "scope": "All new parent PG via groups (including lower-parent vias); actual imported M8/M9 OBS with full landing guard; M7 fully contained same-net PG contact allowed, otherwise guarded OBS. M10 has no macro OBS. All retained landings exported; strict PG/native and final PSM remain required."
+    },
+    "final-pg/u_mxu-pg-access-selection.json": {
+      "check_only": true,
+      "master": "llhd_opentpu_mxu",
+      "orientation": "R0",
+      "instance_location_dbu": [
+        972410,
+        160000
+      ],
+      "instance_bbox_dbu": [
+        972410,
+        160000,
+        3173320,
+        2360910
+      ],
+      "coordinate_contract": "Actual master origin 0 0 asserted; actual R0 location and bbox recorded here.",
+      "dbu_per_micron": 2000,
+      "guard_um": 2.0,
+      "guard_basis": "Fixed-image Nangate45 M7-M9 SPACINGTABLE maximum 1.5um; 2um conservative landing guard. Not complete spacing signoff.",
+      "actual_master_obstruction_count": 6506342,
+      "M10_macro_obstructions": 0,
+      "parent_pg_vias_before": 75330,
+      "unsafe_same_net_xy_groups": 0,
+      "removed_same_net_xy_groups": 0,
+      "removed_parent_pg_vias": 0,
+      "parent_pg_vias_after": 75330,
+      "remaining_guard_intersections": 0,
+      "scope": "All new parent PG via groups (including lower-parent vias); actual imported M8/M9 OBS with full landing guard; M7 fully contained same-net PG contact allowed, otherwise guarded OBS. M10 has no macro OBS. All retained landings exported; strict PG/native and final PSM remain required."
+    }
+  },
+  "extracted-source-validation.json": {
+    "passed": true,
+    "observed_macro_wns_ns": [
+      -0.00336664,
+      0.001201039
+    ],
+    "expected_macro_wns_ns": [
+      -0.00336664,
+      0.00120104
+    ],
+    "tolerance_ns": 1e-06
+  },
+  "extracted-eco-plan.json": {
+    "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-16",
+    "hold_input_guards": [
+      "a_rdata[20]",
+      "a_rdata[52]",
+      "a_rdata[56]",
+      "b_rdata[103]",
+      "b_rdata[107]",
+      "b_rdata[115]",
+      "b_rdata[116]",
+      "b_rdata[119]",
+      "b_rdata[131]",
+      "b_rdata[147]",
+      "b_rdata[14]",
+      "b_rdata[15]",
+      "b_rdata[171]",
+      "b_rdata[175]",
+      "b_rdata[199]",
+      "b_rdata[211]",
+      "b_rdata[23]",
+      "b_rdata[34]",
+      "b_rdata[35]",
+      "b_rdata[39]",
+      "b_rdata[43]",
+      "b_rdata[47]",
+      "b_rdata[51]",
+      "b_rdata[54]",
+      "b_rdata[62]",
+      "b_rdata[67]",
+      "b_rdata[70]",
+      "b_rdata[78]",
+      "b_rdata[94]",
+      "cmd[12]",
+      "cmd[130]",
+      "cmd[152]",
+      "cmd[158]",
+      "cmd[226]",
+      "cmd[228]",
+      "cmd[28]",
+      "cmd[36]",
+      "cmd[62]",
+      "cmd[7]",
+      "t_rdata[12]",
+      "t_rdata[16]",
+      "t_rdata[20]",
+      "t_rdata[36]",
+      "t_rdata[40]",
+      "t_rdata[44]",
+      "t_rdata[48]",
+      "t_rdata[52]"
+    ],
+    "hold_guardband_ns": 0.03,
+    "drive_guardband": false,
+    "repeaters": [
+      [
+        "wire15476/Z",
+        "BUF_X4"
+      ],
+      [
+        "wire15205/Z",
+        "BUF_X4"
+      ]
+    ],
+    "replacements": [
+      [
+        "wire15476",
+        "BUF_X8",
+        "BUF_X16"
+      ],
+      [
+        "place10868",
+        "BUF_X1",
+        "BUF_X2"
+      ],
+      [
+        "place10867",
+        "BUF_X1",
+        "BUF_X2"
+      ]
+    ]
+  },
+  "full-hierarchy-sta.log": "worst slack max 0.008518\nworst slack min 0.036309\ntns max 0.000000\nclk period_min = 2.49 fmax = 401.37\nStartpoint: u_mxu/_5565_[73]$_DFFE_PP_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: t_wdata[20] (output port clocked by clk)\nPath Group: clk\nPath Type: max\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.061413    0.137373 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n   0.079518    0.216890 ^ u_mxu/wire13669/Z (BUF_X16)\n   0.048741    0.265631 ^ u_mxu/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.051292    0.316923 ^ u_mxu/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.058537    0.375460 ^ u_mxu/clkbuf_1_0_0_clk_regs/Z (CLKBUF_X3)\n   0.055076    0.430537 ^ u_mxu/clkbuf_2_0_0_clk_regs/Z (CLKBUF_X3)\n   0.056846    0.487383 ^ u_mxu/clkbuf_3_1_0_clk_regs/Z (CLKBUF_X3)\n   0.065411    0.552794 ^ u_mxu/clkbuf_4_2_0_clk_regs/Z (CLKBUF_X3)\n   0.061597    0.614391 ^ u_mxu/clkbuf_6_11_0_clk_regs/Z (CLKBUF_X3)\n   0.066375    0.680765 ^ u_mxu/clkbuf_9_88__f_clk_regs/Z (CLKBUF_X3)\n   0.044892    0.725657 ^ u_mxu/clkbuf_leaf_367_clk_regs/Z (CLKBUF_X3)\n   0.000312    0.725970 ^ u_mxu/_5565_[73]$_DFFE_PP_/CK (DFF_X1)\n   0.105491    0.831461 ^ u_mxu/_5565_[73]$_DFFE_PP_/Q (DFF_X1)\n   0.129904    0.961365 ^ u_mxu/_218724_/ZN (AND2_X1)\n   0.014102    0.975467 v u_mxu/_218870_/ZN (NOR3_X2)\n   0.046554    1.022021 v u_mxu/place11414/Z (BUF_X2)\n   0.040713    1.062734 v u_mxu/max_cap13438/Z (BUF_X4)\n   0.082219    1.144953 v u_mxu/place11413/Z (BUF_X2)\n   0.088942    1.233895 ^ u_mxu/_219113_/ZN (AOI22_X1)\n   0.040029    1.273925 v u_mxu/_219114_/ZN (AOI21_X1)\n   0.068941    1.342866 v u_mxu/place10257/Z (BUF_X1)\n   0.052684    1.395549 v u_mxu/output2468/Z (BUF_X1)\n   0.047379    1.442928 v place10609/Z (CLKBUF_X3)\n   0.262418    1.705347 v place10608/Z (BUF_X8)\n   0.128287    1.833633 v wire15202/Z (BUF_X4)\n   0.101590    1.935223 v place10607/Z (BUF_X2)\n   0.030446    1.965670 v place10606/Z (BUF_X4)\n   0.025259    1.990928 v wire1764/Z (BUF_X4)\n   0.000554    1.991482 v t_wdata[20] (out)\n               1.991482   data arrival time\n\n   2.500000    2.500000   clock clk (rise edge)\n   0.000000    2.500000   clock network delay (propagated)\n   0.000000    2.500000   clock reconvergence pessimism\n  -0.500000    2.000000   output external delay\n               2.000000   data required time\n-----------------------------------------------------------------\n               2.000000   data required time\n              -1.991482   data arrival time\n-----------------------------------------------------------------\n               0.008518   slack (MET)\n\n\nStartpoint: u_mxu/_5565_[73]$_DFFE_PP_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: t_wdata[2] (output port clocked by clk)\nPath Group: clk\nPath Type: max\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.061413    0.137373 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n   0.079518    0.216890 ^ u_mxu/wire13669/Z (BUF_X16)\n   0.048741    0.265631 ^ u_mxu/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.051292    0.316923 ^ u_mxu/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.058537    0.375460 ^ u_mxu/clkbuf_1_0_0_clk_regs/Z (CLKBUF_X3)\n   0.055076    0.430537 ^ u_mxu/clkbuf_2_0_0_clk_regs/Z (CLKBUF_X3)\n   0.056846    0.487383 ^ u_mxu/clkbuf_3_1_0_clk_regs/Z (CLKBUF_X3)\n   0.065411    0.552794 ^ u_mxu/clkbuf_4_2_0_clk_regs/Z (CLKBUF_X3)\n   0.061597    0.614391 ^ u_mxu/clkbuf_6_11_0_clk_regs/Z (CLKBUF_X3)\n   0.066375    0.680765 ^ u_mxu/clkbuf_9_88__f_clk_regs/Z (CLKBUF_X3)\n   0.044892    0.725657 ^ u_mxu/clkbuf_leaf_367_clk_regs/Z (CLKBUF_X3)\n   0.000312    0.725970 ^ u_mxu/_5565_[73]$_DFFE_PP_/CK (DFF_X1)\n   0.105491    0.831461 ^ u_mxu/_5565_[73]$_DFFE_PP_/Q (DFF_X1)\n   0.129904    0.961365 ^ u_mxu/_218724_/ZN (AND2_X1)\n   0.014102    0.975467 v u_mxu/_218870_/ZN (NOR3_X2)\n   0.046554    1.022021 v u_mxu/place11414/Z (BUF_X2)\n   0.040713    1.062734 v u_mxu/max_cap13438/Z (BUF_X4)\n   0.082219    1.144953 v u_mxu/place11413/Z (BUF_X2)\n   0.077202    1.222155 ^ u_mxu/_219190_/ZN (AOI22_X1)\n   0.023471    1.245626 v u_mxu/_219191_/ZN (AOI21_X1)\n   0.065855    1.311481 v u_mxu/place10239/Z (BUF_X1)\n   0.057075    1.368556 v u_mxu/output2478/Z (BUF_X1)\n   0.027821    1.396377 v wire16530/Z (BUF_X4)\n   0.089437    1.485814 v place10577/Z (BUF_X8)\n   0.211393    1.697207 v wire15205/Z (BUF_X8)\n   0.128216    1.825423 v llhd_extracted_repeater_4/Z (BUF_X4)\n   0.069856    1.895278 v place10576/Z (BUF_X4)\n   0.036290    1.931568 v wire1747/Z (BUF_X4)\n   0.024476    1.956044 v t_wdata[2] (out)\n               1.956044   data arrival time\n\n   2.500000    2.500000   clock clk (rise edge)\n   0.000000    2.500000   clock network delay (propagated)\n   0.000000    2.500000   clock reconvergence pessimism\n  -0.500000    2.000000   output external delay\n               2.000000   data required time\n-----------------------------------------------------------------\n               2.000000   data required time\n              -1.956044   data arrival time\n-----------------------------------------------------------------\n               0.043956   slack (MET)\n\n\nStartpoint: u_mxu/_5565_[73]$_DFFE_PP_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: t_wdata[6] (output port clocked by clk)\nPath Group: clk\nPath Type: max\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.061413    0.137373 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n   0.079518    0.216890 ^ u_mxu/wire13669/Z (BUF_X16)\n   0.048741    0.265631 ^ u_mxu/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.051292    0.316923 ^ u_mxu/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.058537    0.375460 ^ u_mxu/clkbuf_1_0_0_clk_regs/Z (CLKBUF_X3)\n   0.055076    0.430537 ^ u_mxu/clkbuf_2_0_0_clk_regs/Z (CLKBUF_X3)\n   0.056846    0.487383 ^ u_mxu/clkbuf_3_1_0_clk_regs/Z (CLKBUF_X3)\n   0.065411    0.552794 ^ u_mxu/clkbuf_4_2_0_clk_regs/Z (CLKBUF_X3)\n   0.061597    0.614391 ^ u_mxu/clkbuf_6_11_0_clk_regs/Z (CLKBUF_X3)\n   0.066375    0.680765 ^ u_mxu/clkbuf_9_88__f_clk_regs/Z (CLKBUF_X3)\n   0.044892    0.725657 ^ u_mxu/clkbuf_leaf_367_clk_regs/Z (CLKBUF_X3)\n   0.000312    0.725970 ^ u_mxu/_5565_[73]$_DFFE_PP_/CK (DFF_X1)\n   0.094332    0.820302 v u_mxu/_5565_[73]$_DFFE_PP_/Q (DFF_X1)\n   0.075739    0.896042 v u_mxu/_218724_/ZN (AND2_X1)\n   0.055171    0.951213 ^ u_mxu/_218870_/ZN (NOR3_X2)\n   0.054866    1.006078 ^ u_mxu/place11414/Z (BUF_X2)\n   0.055623    1.061702 ^ u_mxu/max_cap13438/Z (BUF_X4)\n   0.110810    1.172512 ^ u_mxu/place11413/Z (BUF_X2)\n   0.043484    1.215996 v u_mxu/_219174_/ZN (AOI22_X1)\n   0.087530    1.303526 ^ u_mxu/_219175_/ZN (AOI21_X1)\n   0.100060    1.403585 ^ u_mxu/place10243/Z (BUF_X1)\n   0.090874    1.494459 ^ u_mxu/output2516/Z (BUF_X1)\n   0.042304    1.536763 ^ wire15761/Z (BUF_X4)\n   0.073813    1.610576 ^ place10459/Z (BUF_X1)\n   0.037308    1.647884 ^ wire15650/Z (BUF_X4)\n   0.116022    1.763907 ^ place10457/Z (BUF_X4)\n   0.169537    1.933444 ^ wire1672/Z (BUF_X4)\n   0.001586    1.935030 ^ t_wdata[6] (out)\n               1.935030   data arrival time\n\n   2.500000    2.500000   clock clk (rise edge)\n   0.000000    2.500000   clock network delay (propagated)\n   0.000000    2.500000   clock reconvergence pessimism\n  -0.500000    2.000000   output external delay\n               2.000000   data required time\n-----------------------------------------------------------------\n               2.000000   data required time\n              -1.935030   data arrival time\n-----------------------------------------------------------------\n               0.064970   slack (MET)\n\n\nStartpoint: u_mxu/_5565_[73]$_DFFE_PP_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: t_wdata[31] (output port clocked by clk)\nPath Group: clk\nPath Type: max\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.061413    0.137373 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n   0.079518    0.216890 ^ u_mxu/wire13669/Z (BUF_X16)\n   0.048741    0.265631 ^ u_mxu/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.051292    0.316923 ^ u_mxu/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.058537    0.375460 ^ u_mxu/clkbuf_1_0_0_clk_regs/Z (CLKBUF_X3)\n   0.055076    0.430537 ^ u_mxu/clkbuf_2_0_0_clk_regs/Z (CLKBUF_X3)\n   0.056846    0.487383 ^ u_mxu/clkbuf_3_1_0_clk_regs/Z (CLKBUF_X3)\n   0.065411    0.552794 ^ u_mxu/clkbuf_4_2_0_clk_regs/Z (CLKBUF_X3)\n   0.061597    0.614391 ^ u_mxu/clkbuf_6_11_0_clk_regs/Z (CLKBUF_X3)\n   0.066375    0.680765 ^ u_mxu/clkbuf_9_88__f_clk_regs/Z (CLKBUF_X3)\n   0.044892    0.725657 ^ u_mxu/clkbuf_leaf_367_clk_regs/Z (CLKBUF_X3)\n   0.000312    0.725970 ^ u_mxu/_5565_[73]$_DFFE_PP_/CK (DFF_X1)\n   0.094332    0.820302 v u_mxu/_5565_[73]$_DFFE_PP_/Q (DFF_X1)\n   0.075739    0.896042 v u_mxu/_218724_/ZN (AND2_X1)\n   0.055171    0.951213 ^ u_mxu/_218870_/ZN (NOR3_X2)\n   0.054866    1.006078 ^ u_mxu/place11414/Z (BUF_X2)\n   0.055623    1.061702 ^ u_mxu/max_cap13438/Z (BUF_X4)\n   0.110810    1.172512 ^ u_mxu/place11413/Z (BUF_X2)\n   0.046626    1.219139 v u_mxu/_219063_/ZN (AOI22_X1)\n   0.032933    1.252071 ^ u_mxu/_219064_/ZN (AOI21_X1)\n   0.100780    1.352851 ^ u_mxu/place10268/Z (BUF_X1)\n   0.100270    1.453121 ^ u_mxu/output2480/Z (BUF_X1)\n   0.050413    1.503534 ^ wire15769/Z (BUF_X4)\n   0.075139    1.578673 ^ place10571/Z (BUF_X2)\n   0.037964    1.616637 ^ wire16390/Z (BUF_X16)\n   0.130347    1.746984 ^ place10569/Z (BUF_X1)\n   0.037249    1.784233 ^ place10568/Z (BUF_X4)\n   0.130366    1.914599 ^ wire1743/Z (BUF_X4)\n   0.016130    1.930730 ^ t_wdata[31] (out)\n               1.930730   data arrival time\n\n   2.500000    2.500000   clock clk (rise edge)\n   0.000000    2.500000   clock network delay (propagated)\n   0.000000    2.500000   clock reconvergence pessimism\n  -0.500000    2.000000   output external delay\n               2.000000   data required time\n-----------------------------------------------------------------\n               2.000000   data required time\n              -1.930730   data arrival time\n-----------------------------------------------------------------\n               0.069270   slack (MET)\n\n\nStartpoint: u_mxu/_5565_[73]$_DFFE_PP_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: t_wdata[26] (output port clocked by clk)\nPath Group: clk\nPath Type: max\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.061413    0.137373 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n   0.079518    0.216890 ^ u_mxu/wire13669/Z (BUF_X16)\n   0.048741    0.265631 ^ u_mxu/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.051292    0.316923 ^ u_mxu/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.058537    0.375460 ^ u_mxu/clkbuf_1_0_0_clk_regs/Z (CLKBUF_X3)\n   0.055076    0.430537 ^ u_mxu/clkbuf_2_0_0_clk_regs/Z (CLKBUF_X3)\n   0.056846    0.487383 ^ u_mxu/clkbuf_3_1_0_clk_regs/Z (CLKBUF_X3)\n   0.065411    0.552794 ^ u_mxu/clkbuf_4_2_0_clk_regs/Z (CLKBUF_X3)\n   0.061597    0.614391 ^ u_mxu/clkbuf_6_11_0_clk_regs/Z (CLKBUF_X3)\n   0.066375    0.680765 ^ u_mxu/clkbuf_9_88__f_clk_regs/Z (CLKBUF_X3)\n   0.044892    0.725657 ^ u_mxu/clkbuf_leaf_367_clk_regs/Z (CLKBUF_X3)\n   0.000312    0.725970 ^ u_mxu/_5565_[73]$_DFFE_PP_/CK (DFF_X1)\n   0.094332    0.820302 v u_mxu/_5565_[73]$_DFFE_PP_/Q (DFF_X1)\n   0.075739    0.896042 v u_mxu/_218724_/ZN (AND2_X1)\n   0.055171    0.951213 ^ u_mxu/_218870_/ZN (NOR3_X2)\n   0.054866    1.006078 ^ u_mxu/place11414/Z (BUF_X2)\n   0.055623    1.061702 ^ u_mxu/max_cap13438/Z (BUF_X4)\n   0.110810    1.172512 ^ u_mxu/place11413/Z (BUF_X2)\n   0.046305    1.218817 v u_mxu/_219084_/ZN (AOI22_X1)\n   0.031892    1.250710 ^ u_mxu/_219085_/ZN (AOI21_X1)\n   0.095302    1.346012 ^ u_mxu/place10263/Z (BUF_X1)\n   0.060066    1.406078 ^ u_mxu/output2474/Z (BUF_X1)\n   0.055125    1.461202 ^ llhd_macro_guard_112/Z (BUF_X2)\n   0.053587    1.514790 ^ place10591/Z (BUF_X8)\n   0.124509    1.639298 ^ wire15631/Z (BUF_X8)\n   0.056616    1.695915 ^ wire16293/Z (BUF_X4)\n   0.111646    1.807561 ^ place10590/Z (BUF_X8)\n   0.113503    1.921064 ^ wire1754/Z (BUF_X4)\n   0.006063    1.927127 ^ t_wdata[26] (out)\n               1.927127   data arrival time\n\n   2.500000    2.500000   clock clk (rise edge)\n   0.000000    2.500000   clock network delay (propagated)\n   0.000000    2.500000   clock reconvergence pessimism\n  -0.500000    2.000000   output external delay\n               2.000000   data required time\n-----------------------------------------------------------------\n               2.000000   data required time\n              -1.927127   data arrival time\n-----------------------------------------------------------------\n               0.072873   slack (MET)\n\n\nStartpoint: u_mxu/_3721_[1]$_DFFE_PN_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: pf_block (output port clocked by clk)\nPath Group: clk\nPath Type: max\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.061413    0.137373 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n   0.079518    0.216890 ^ u_mxu/wire13669/Z (BUF_X16)\n   0.048741    0.265631 ^ u_mxu/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.051292    0.316923 ^ u_mxu/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.058537    0.375460 ^ u_mxu/clkbuf_1_0_0_clk_regs/Z (CLKBUF_X3)\n   0.055076    0.430537 ^ u_mxu/clkbuf_2_0_0_clk_regs/Z (CLKBUF_X3)\n   0.056846    0.487383 ^ u_mxu/clkbuf_3_1_0_clk_regs/Z (CLKBUF_X3)\n   0.065411    0.552794 ^ u_mxu/clkbuf_4_2_0_clk_regs/Z (CLKBUF_X3)\n   0.066382    0.619176 ^ u_mxu/clkbuf_6_10_0_clk_regs/Z (CLKBUF_X3)\n   0.082297    0.701473 ^ u_mxu/clkbuf_9_82__f_clk_regs/Z (CLKBUF_X3)\n   0.048699    0.750172 ^ u_mxu/clkbuf_leaf_136_clk_regs/Z (CLKBUF_X3)\n   0.000161    0.750333 ^ u_mxu/_3721_[1]$_DFFE_PN_/CK (DFF_X1)\n   0.109195    0.859529 v u_mxu/_3721_[1]$_DFFE_PN_/Q (DFF_X1)\n   0.047210    0.906738 ^ u_mxu/_182715_/ZN (NOR2_X1)\n   0.011769    0.918507 v u_mxu/_182716_/ZN (NOR2_X1)\n   0.061913    0.980420 v u_mxu/place11470/Z (BUF_X1)\n   0.049161    1.029581 v u_mxu/_215960_/ZN (AND2_X1)\n   0.120853    1.150434 ^ u_mxu/_215961_/ZN (AOI221_X1)\n   0.068306    1.218740 ^ u_mxu/_310433_/S (HA_X1)\n   0.009500    1.228239 v u_mxu/_182802_/ZN (INV_X1)\n   0.041773    1.270013 ^ u_mxu/_182806_/ZN (AOI21_X1)\n   0.020343    1.290356 v u_mxu/_182807_/ZN (OAI21_X1)\n   0.033306    1.323661 ^ u_mxu/_182808_/ZN (AOI21_X1)\n   0.020077    1.343738 v u_mxu/_182809_/ZN (OAI21_X1)\n   0.032518    1.376256 ^ u_mxu/_182810_/ZN (AOI21_X1)\n   0.029251    1.405508 v u_mxu/_182811_/ZN (OAI21_X1)\n   0.078473    1.483980 ^ u_mxu/_182848_/ZN (OAI221_X1)\n   0.093237    1.577217 v u_mxu/_219318_/ZN (NAND2_X1)\n   0.072414    1.649632 v u_mxu/_251457_/ZN (AND3_X1)\n   0.040437    1.690069 v u_mxu/output2057/Z (BUF_X1)\n   0.036460    1.726529 v place11463/Z (BUF_X8)\n   0.040621    1.767149 v wire15476/Z (BUF_X16)\n   0.069432    1.836581 v llhd_extracted_repeater_3/Z (BUF_X4)\n   0.084907    1.921489 v wire8638/Z (BUF_X8)\n   0.003403    1.924892 v pf_block (out)\n               1.924892   data arrival time\n\n   2.500000    2.500000   clock clk (rise edge)\n   0.000000    2.500000   clock network delay (propagated)\n   0.000000    2.500000   clock reconvergence pessimism\n  -0.500000    2.000000   output external delay\n               2.000000   data required time\n-----------------------------------------------------------------\n               2.000000   data required time\n              -1.924892   data arrival time\n-----------------------------------------------------------------\n               0.075108   slack (MET)\n\n\nStartpoint: u_mxu/u_mxu.i_w4$_DFFE_PP_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: a_addr[19] (output port clocked by clk)\nPath Group: clk\nPath Type: max\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.061413    0.137373 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n   0.079518    0.216890 ^ u_mxu/wire13669/Z (BUF_X16)\n   0.048741    0.265631 ^ u_mxu/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.051292    0.316923 ^ u_mxu/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.058537    0.375460 ^ u_mxu/clkbuf_1_0_0_clk_regs/Z (CLKBUF_X3)\n   0.055076    0.430537 ^ u_mxu/clkbuf_2_0_0_clk_regs/Z (CLKBUF_X3)\n   0.056846    0.487383 ^ u_mxu/clkbuf_3_1_0_clk_regs/Z (CLKBUF_X3)\n   0.065411    0.552794 ^ u_mxu/clkbuf_4_2_0_clk_regs/Z (CLKBUF_X3)\n   0.066382    0.619176 ^ u_mxu/clkbuf_6_10_0_clk_regs/Z (CLKBUF_X3)\n   0.083391    0.702566 ^ u_mxu/clkbuf_9_80__f_clk_regs/Z (CLKBUF_X3)\n   0.052378    0.754944 ^ u_mxu/clkbuf_leaf_146_clk_regs/Z (CLKBUF_X3)\n   0.000179    0.755123 ^ u_mxu/u_mxu.i_w4$_DFFE_PP_/CK (DFF_X1)\n   0.093751    0.848875 v u_mxu/u_mxu.i_w4$_DFFE_PP_/QN (DFF_X1)\n   0.042153    0.891028 v u_mxu/wire21497/Z (BUF_X4)\n   0.108667    0.999694 v u_mxu/_182942_/ZN (OR3_X1)\n   0.049692    1.049387 ^ u_mxu/_182945_/ZN (OAI21_X1)\n   0.041941    1.091328 v u_mxu/_182948_/ZN (OAI221_X1)\n   0.064645    1.155972 v u_mxu/_182950_/ZN (OR2_X1)\n   0.101110    1.257083 v u_mxu/_182951_/ZN (OR2_X1)\n   0.088207    1.345290 v u_mxu/place9911/Z (BUF_X2)\n   0.065016    1.410306 ^ u_mxu/_245340_/ZN (AOI21_X1)\n   0.045351    1.455657 ^ u_mxu/output1959/Z (BUF_X1)\n   0.029779    1.485436 ^ wire16300/Z (BUF_X4)\n   0.100265    1.585701 ^ place11571/Z (BUF_X4)\n   0.100782    1.686484 ^ place11570/Z (BUF_X4)\n   0.049726    1.736209 ^ wire14497/Z (BUF_X4)\n   0.155732    1.891941 ^ place11569/Z (BUF_X2)\n   0.027317    1.919258 ^ wire2243/Z (BUF_X4)\n   0.003573    1.922830 ^ a_addr[19] (out)\n               1.922830   data arrival time\n\n   2.500000    2.500000   clock clk (rise edge)\n   0.000000    2.500000   clock network delay (propagated)\n   0.000000    2.500000   clock reconvergence pessimism\n  -0.500000    2.000000   output external delay\n               2.000000   data required time\n-----------------------------------------------------------------\n               2.000000   data required time\n              -1.922830   data arrival time\n-----------------------------------------------------------------\n               0.077170   slack (MET)\n\n\nStartpoint: u_mxu/u_mxu.mx_gq$_SDFF_PP0_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: t_waddr[10] (output port clocked by clk)\nPath Group: clk\nPath Type: max\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.061413    0.137373 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n   0.079518    0.216890 ^ u_mxu/wire13669/Z (BUF_X16)\n   0.048741    0.265631 ^ u_mxu/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.051292    0.316923 ^ u_mxu/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.058537    0.375460 ^ u_mxu/clkbuf_1_0_0_clk_regs/Z (CLKBUF_X3)\n   0.055076    0.430537 ^ u_mxu/clkbuf_2_0_0_clk_regs/Z (CLKBUF_X3)\n   0.056846    0.487383 ^ u_mxu/clkbuf_3_1_0_clk_regs/Z (CLKBUF_X3)\n   0.065411    0.552794 ^ u_mxu/clkbuf_4_2_0_clk_regs/Z (CLKBUF_X3)\n   0.066382    0.619176 ^ u_mxu/clkbuf_6_10_0_clk_regs/Z (CLKBUF_X3)\n   0.069563    0.688739 ^ u_mxu/clkbuf_9_83__f_clk_regs/Z (CLKBUF_X3)\n   0.045140    0.733879 ^ u_mxu/clkbuf_leaf_123_clk_regs/Z (CLKBUF_X3)\n   0.000210    0.734089 ^ u_mxu/u_mxu.mx_gq$_SDFF_PP0_/CK (DFF_X1)\n   0.110030    0.844119 v u_mxu/u_mxu.mx_gq$_SDFF_PP0_/Q (DFF_X1)\n   0.104660    0.948779 ^ u_mxu/_218865_/ZN (NAND2_X1)\n   0.107707    1.056486 ^ u_mxu/place11741/Z (BUF_X1)\n   0.056607    1.113093 ^ u_mxu/place11740/Z (BUF_X2)\n   0.064992    1.178085 ^ u_mxu/max_cap21293/Z (BUF_X4)\n   0.018776    1.196862 v u_mxu/_218951_/ZN (NOR2_X1)\n   0.077053    1.273914 ^ u_mxu/_218953_/ZN (AOI21_X1)\n   0.055385    1.329300 ^ u_mxu/wire13383/Z (CLKBUF_X3)\n   0.064630    1.393929 ^ u_mxu/output2339/Z (BUF_X1)\n   0.038348    1.432277 ^ wire15811/Z (BUF_X4)\n   0.122645    1.554923 ^ place10992/Z (BUF_X1)\n   0.074685    1.629608 ^ place10991/Z (BUF_X2)\n   0.122635    1.752243 ^ place10990/Z (BUF_X1)\n   0.087825    1.840068 ^ place10989/Z (BUF_X1)\n   0.049336    1.889404 ^ wire2008/Z (BUF_X4)\n   0.029749    1.919153 ^ t_waddr[10] (out)\n               1.919153   data arrival time\n\n   2.500000    2.500000   clock clk (rise edge)\n   0.000000    2.500000   clock network delay (propagated)\n   0.000000    2.500000   clock reconvergence pessimism\n  -0.500000    2.000000   output external delay\n               2.000000   data required time\n-----------------------------------------------------------------\n               2.000000   data required time\n              -1.919153   data arrival time\n-----------------------------------------------------------------\n               0.080847   slack (MET)\n\n\nStartpoint: u_mxu/_5565_[73]$_DFFE_PP_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: t_wdata[30] (output port clocked by clk)\nPath Group: clk\nPath Type: max\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.061413    0.137373 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n   0.079518    0.216890 ^ u_mxu/wire13669/Z (BUF_X16)\n   0.048741    0.265631 ^ u_mxu/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.051292    0.316923 ^ u_mxu/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.058537    0.375460 ^ u_mxu/clkbuf_1_0_0_clk_regs/Z (CLKBUF_X3)\n   0.055076    0.430537 ^ u_mxu/clkbuf_2_0_0_clk_regs/Z (CLKBUF_X3)\n   0.056846    0.487383 ^ u_mxu/clkbuf_3_1_0_clk_regs/Z (CLKBUF_X3)\n   0.065411    0.552794 ^ u_mxu/clkbuf_4_2_0_clk_regs/Z (CLKBUF_X3)\n   0.061597    0.614391 ^ u_mxu/clkbuf_6_11_0_clk_regs/Z (CLKBUF_X3)\n   0.066375    0.680765 ^ u_mxu/clkbuf_9_88__f_clk_regs/Z (CLKBUF_X3)\n   0.044892    0.725657 ^ u_mxu/clkbuf_leaf_367_clk_regs/Z (CLKBUF_X3)\n   0.000312    0.725970 ^ u_mxu/_5565_[73]$_DFFE_PP_/CK (DFF_X1)\n   0.094332    0.820302 v u_mxu/_5565_[73]$_DFFE_PP_/Q (DFF_X1)\n   0.075739    0.896042 v u_mxu/_218724_/ZN (AND2_X1)\n   0.055171    0.951213 ^ u_mxu/_218870_/ZN (NOR3_X2)\n   0.054866    1.006078 ^ u_mxu/place11414/Z (BUF_X2)\n   0.055623    1.061702 ^ u_mxu/max_cap13438/Z (BUF_X4)\n   0.110810    1.172512 ^ u_mxu/place11413/Z (BUF_X2)\n   0.043418    1.215930 v u_mxu/_219068_/ZN (AOI22_X1)\n   0.031609    1.247540 ^ u_mxu/_219069_/ZN (AOI21_X1)\n   0.102327    1.349867 ^ u_mxu/place10267/Z (BUF_X1)\n   0.114792    1.464659 ^ u_mxu/output2479/Z (BUF_X1)\n   0.045564    1.510223 ^ place10575/Z (BUF_X8)\n   0.086510    1.596733 ^ wire15207/Z (BUF_X16)\n   0.153511    1.750244 ^ wire15206/Z (BUF_X16)\n   0.124767    1.875011 ^ place10573/Z (BUF_X8)\n   0.035761    1.910772 ^ wire1745/Z (BUF_X4)\n   0.002408    1.913180 ^ t_wdata[30] (out)\n               1.913180   data arrival time\n\n   2.500000    2.500000   clock clk (rise edge)\n   0.000000    2.500000   clock network delay (propagated)\n   0.000000    2.500000   clock reconvergence pessimism\n  -0.500000    2.000000   output external delay\n               2.000000   data required time\n-----------------------------------------------------------------\n               2.000000   data required time\n              -1.913180   data arrival time\n-----------------------------------------------------------------\n               0.086820   slack (MET)\n\n\nStartpoint: u_mxu/u_mxu.mx_gq$_SDFF_PP0_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: t_waddr[18] (output port clocked by clk)\nPath Group: clk\nPath Type: max\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.061413    0.137373 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n   0.079518    0.216890 ^ u_mxu/wire13669/Z (BUF_X16)\n   0.048741    0.265631 ^ u_mxu/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.051292    0.316923 ^ u_mxu/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.058537    0.375460 ^ u_mxu/clkbuf_1_0_0_clk_regs/Z (CLKBUF_X3)\n   0.055076    0.430537 ^ u_mxu/clkbuf_2_0_0_clk_regs/Z (CLKBUF_X3)\n   0.056846    0.487383 ^ u_mxu/clkbuf_3_1_0_clk_regs/Z (CLKBUF_X3)\n   0.065411    0.552794 ^ u_mxu/clkbuf_4_2_0_clk_regs/Z (CLKBUF_X3)\n   0.066382    0.619176 ^ u_mxu/clkbuf_6_10_0_clk_regs/Z (CLKBUF_X3)\n   0.069563    0.688739 ^ u_mxu/clkbuf_9_83__f_clk_regs/Z (CLKBUF_X3)\n   0.045140    0.733879 ^ u_mxu/clkbuf_leaf_123_clk_regs/Z (CLKBUF_X3)\n   0.000210    0.734089 ^ u_mxu/u_mxu.mx_gq$_SDFF_PP0_/CK (DFF_X1)\n   0.110030    0.844119 v u_mxu/u_mxu.mx_gq$_SDFF_PP0_/Q (DFF_X1)\n   0.104660    0.948779 ^ u_mxu/_218865_/ZN (NAND2_X1)\n   0.107707    1.056486 ^ u_mxu/place11741/Z (BUF_X1)\n   0.056607    1.113093 ^ u_mxu/place11740/Z (BUF_X2)\n   0.064992    1.178085 ^ u_mxu/max_cap21293/Z (BUF_X4)\n   0.016333    1.194419 v u_mxu/_218922_/ZN (NOR2_X1)\n   0.039037    1.233455 ^ u_mxu/_218924_/ZN (AOI21_X1)\n   0.086765    1.320220 ^ u_mxu/place10279/Z (BUF_X1)\n   0.104316    1.424536 ^ u_mxu/output2365/Z (BUF_X1)\n   0.053394    1.477930 ^ wire15805/Z (BUF_X4)\n   0.113585    1.591514 ^ place10910/Z (BUF_X1)\n   0.059715    1.651230 ^ place10909/Z (BUF_X2)\n   0.101338    1.752567 ^ place10908/Z (BUF_X1)\n   0.088933    1.841500 ^ place10907/Z (BUF_X1)\n   0.041475    1.882976 ^ wire1957/Z (BUF_X4)\n   0.028681    1.911657 ^ t_waddr[18] (out)\n               1.911657   data arrival time\n\n   2.500000    2.500000   clock clk (rise edge)\n   0.000000    2.500000   clock network delay (propagated)\n   0.000000    2.500000   clock reconvergence pessimism\n  -0.500000    2.000000   output external delay\n               2.000000   data required time\n-----------------------------------------------------------------\n               2.000000   data required time\n              -1.911657   data arrival time\n-----------------------------------------------------------------\n               0.088343   slack (MET)\n\n\nStartpoint: u_act/u_act.ssel[0]$_DFF_P_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: u_act/u_act.g_row[0].u_asc.u_t.g_d[0].g_c[0].g_2p.u_m.g_32x64.u_m\n          (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: min\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.093606    0.169566 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.053565    0.223131 ^ u_act/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.066192    0.289323 ^ u_act/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.063002    0.352325 ^ u_act/clkbuf_3_1__f_clk_regs/Z (CLKBUF_X3)\n   0.042294    0.394619 ^ u_act/clkbuf_leaf_13_clk_regs/Z (CLKBUF_X3)\n   0.000182    0.394801 ^ u_act/u_act.ssel[0]$_DFF_P_/CK (DFF_X1)\n   0.093777    0.488578 v u_act/u_act.ssel[0]$_DFF_P_/Q (DFF_X1)\n   0.000936    0.489514 v u_act/u_act.g_row[0].u_asc.u_t.g_d[0].g_c[0].g_2p.u_m.g_32x64.u_m/we_in (fakeram45_1r1w_32x64)\n               0.489514   data arrival time\n\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.093606    0.169566 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.080691    0.250256 ^ u_act/delaybuf_0_clk/Z (CLKBUF_X1)\n   0.046080    0.296336 ^ u_act/clkbuf_0_clk/Z (CLKBUF_X3)\n   0.094457    0.390793 ^ u_act/clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.012412    0.403205 ^ u_act/u_act.g_row[0].u_asc.u_t.g_d[0].g_c[0].g_2p.u_m.g_32x64.u_m/clk (fakeram45_1r1w_32x64)\n   0.000000    0.403205   clock reconvergence pessimism\n   0.050000    0.453205   library hold time\n               0.453205   data required time\n-----------------------------------------------------------------\n               0.453205   data required time\n              -0.489514   data arrival time\n-----------------------------------------------------------------\n               0.036309   slack (MET)\n\n\nStartpoint: u_act/u_act.g_row[1].g_pc[0].wb[1]$_DFF_P_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: u_act/u_act.g_row[0].g_pc[0].u_act.u_t.g_d[0].g_c[1].g_2p.u_m.g_32x128.u_m\n          (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: min\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.093606    0.169566 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.053565    0.223131 ^ u_act/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.066192    0.289323 ^ u_act/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.063002    0.352325 ^ u_act/clkbuf_3_1__f_clk_regs/Z (CLKBUF_X3)\n   0.041827    0.394152 ^ u_act/clkbuf_leaf_4_clk_regs/Z (CLKBUF_X3)\n   0.000233    0.394385 ^ u_act/u_act.g_row[1].g_pc[0].wb[1]$_DFF_P_/CK (DFF_X1)\n   0.096984    0.491369 v u_act/u_act.g_row[1].g_pc[0].wb[1]$_DFF_P_/Q (DFF_X1)\n   0.000921    0.492290 v u_act/u_act.g_row[0].g_pc[0].u_act.u_t.g_d[0].g_c[1].g_2p.u_m.g_32x128.u_m/w_addr_in[1] (fakeram45_1r1w_32x128)\n               0.492290   data arrival time\n\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.093606    0.169566 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.080691    0.250256 ^ u_act/delaybuf_0_clk/Z (CLKBUF_X1)\n   0.046080    0.296336 ^ u_act/clkbuf_0_clk/Z (CLKBUF_X3)\n   0.094457    0.390793 ^ u_act/clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.014584    0.405377 ^ u_act/u_act.g_row[0].g_pc[0].u_act.u_t.g_d[0].g_c[1].g_2p.u_m.g_32x128.u_m/clk (fakeram45_1r1w_32x128)\n   0.000000    0.405377   clock reconvergence pessimism\n   0.050000    0.455377   library hold time\n               0.455377   data required time\n-----------------------------------------------------------------\n               0.455377   data required time\n              -0.492290   data arrival time\n-----------------------------------------------------------------\n               0.036913   slack (MET)\n\n\nStartpoint: u_act/u_act.g_row[1].g_pc[0].wb[2]$_DFF_P_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: u_act/u_act.g_row[0].g_pc[0].u_act.u_t.g_d[0].g_c[1].g_2p.u_m.g_32x128.u_m\n          (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: min\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.093606    0.169566 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.053565    0.223131 ^ u_act/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.066192    0.289323 ^ u_act/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.063002    0.352325 ^ u_act/clkbuf_3_1__f_clk_regs/Z (CLKBUF_X3)\n   0.042413    0.394738 ^ u_act/clkbuf_leaf_12_clk_regs/Z (CLKBUF_X3)\n   0.000187    0.394925 ^ u_act/u_act.g_row[1].g_pc[0].wb[2]$_DFF_P_/CK (DFF_X1)\n   0.097167    0.492092 v u_act/u_act.g_row[1].g_pc[0].wb[2]$_DFF_P_/Q (DFF_X1)\n   0.000969    0.493060 v u_act/u_act.g_row[0].g_pc[0].u_act.u_t.g_d[0].g_c[1].g_2p.u_m.g_32x128.u_m/w_addr_in[2] (fakeram45_1r1w_32x128)\n               0.493060   data arrival time\n\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.093606    0.169566 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.080691    0.250256 ^ u_act/delaybuf_0_clk/Z (CLKBUF_X1)\n   0.046080    0.296336 ^ u_act/clkbuf_0_clk/Z (CLKBUF_X3)\n   0.094457    0.390793 ^ u_act/clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.014584    0.405377 ^ u_act/u_act.g_row[0].g_pc[0].u_act.u_t.g_d[0].g_c[1].g_2p.u_m.g_32x128.u_m/clk (fakeram45_1r1w_32x128)\n   0.000000    0.405377   clock reconvergence pessimism\n   0.050000    0.455377   library hold time\n               0.455377   data required time\n-----------------------------------------------------------------\n               0.455377   data required time\n              -0.493060   data arrival time\n-----------------------------------------------------------------\n               0.037683   slack (MET)\n\n\nStartpoint: u_act/u_act.g_row[1].g_pc[0].wb[3]$_DFF_P_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: u_act/u_act.g_row[0].g_pc[0].u_act.u_t.g_d[0].g_c[1].g_2p.u_m.g_32x128.u_m\n          (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: min\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.093606    0.169566 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.053565    0.223131 ^ u_act/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.066192    0.289323 ^ u_act/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.063002    0.352325 ^ u_act/clkbuf_3_1__f_clk_regs/Z (CLKBUF_X3)\n   0.042413    0.394738 ^ u_act/clkbuf_leaf_12_clk_regs/Z (CLKBUF_X3)\n   0.000246    0.394983 ^ u_act/u_act.g_row[1].g_pc[0].wb[3]$_DFF_P_/CK (DFF_X1)\n   0.097270    0.492254 v u_act/u_act.g_row[1].g_pc[0].wb[3]$_DFF_P_/Q (DFF_X1)\n   0.001375    0.493628 v u_act/u_act.g_row[0].g_pc[0].u_act.u_t.g_d[0].g_c[1].g_2p.u_m.g_32x128.u_m/w_addr_in[3] (fakeram45_1r1w_32x128)\n               0.493628   data arrival time\n\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.093606    0.169566 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.080691    0.250256 ^ u_act/delaybuf_0_clk/Z (CLKBUF_X1)\n   0.046080    0.296336 ^ u_act/clkbuf_0_clk/Z (CLKBUF_X3)\n   0.094457    0.390793 ^ u_act/clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.014584    0.405377 ^ u_act/u_act.g_row[0].g_pc[0].u_act.u_t.g_d[0].g_c[1].g_2p.u_m.g_32x128.u_m/clk (fakeram45_1r1w_32x128)\n   0.000000    0.405377   clock reconvergence pessimism\n   0.050000    0.455377   library hold time\n               0.455377   data required time\n-----------------------------------------------------------------\n               0.455377   data required time\n              -0.493628   data arrival time\n-----------------------------------------------------------------\n               0.038252   slack (MET)\n\n\nStartpoint: u_mxu/u_mxu.g_ask[1].g_p[8].u_pe.m[13]$_DFF_P_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: u_mxu/u_mxu.g_ask[1].g_p[8].u_pe.p[13]$_DFF_P_\n          (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: min\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.061413    0.137373 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n   0.079518    0.216890 ^ u_mxu/wire13669/Z (BUF_X16)\n   0.048741    0.265631 ^ u_mxu/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.051292    0.316923 ^ u_mxu/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.058696    0.375619 ^ u_mxu/clkbuf_1_1_0_clk_regs/Z (CLKBUF_X3)\n   0.053623    0.429242 ^ u_mxu/clkbuf_2_2_0_clk_regs/Z (CLKBUF_X3)\n   0.055913    0.485155 ^ u_mxu/clkbuf_3_5_0_clk_regs/Z (CLKBUF_X3)\n   0.066141    0.551296 ^ u_mxu/clkbuf_4_10_0_clk_regs/Z (CLKBUF_X3)\n   0.063545    0.614841 ^ u_mxu/clkbuf_6_43_0_clk_regs/Z (CLKBUF_X3)\n   0.051323    0.666165 ^ u_mxu/clkbuf_9_350__f_clk_regs/Z (CLKBUF_X3)\n   0.038289    0.704454 ^ u_mxu/clkbuf_leaf_1151_clk_regs/Z (CLKBUF_X3)\n   0.000166    0.704619 ^ u_mxu/u_mxu.g_ask[1].g_p[8].u_pe.m[13]$_DFF_P_/CK (DFF_X1)\n   0.082568    0.787187 v u_mxu/u_mxu.g_ask[1].g_p[8].u_pe.m[13]$_DFF_P_/Q (DFF_X1)\n   0.000035    0.787222 v u_mxu/u_mxu.g_ask[1].g_p[8].u_pe.p[13]$_DFF_P_/D (DFF_X1)\n               0.787222   data arrival time\n\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.061413    0.137373 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n   0.079518    0.216890 ^ u_mxu/wire13669/Z (BUF_X16)\n   0.048741    0.265631 ^ u_mxu/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.051292    0.316923 ^ u_mxu/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.058696    0.375619 ^ u_mxu/clkbuf_1_1_0_clk_regs/Z (CLKBUF_X3)\n   0.053623    0.429242 ^ u_mxu/clkbuf_2_2_0_clk_regs/Z (CLKBUF_X3)\n   0.055913    0.485155 ^ u_mxu/clkbuf_3_5_0_clk_regs/Z (CLKBUF_X3)\n   0.067676    0.552831 ^ u_mxu/clkbuf_4_11_0_clk_regs/Z (CLKBUF_X3)\n   0.067999    0.620830 ^ u_mxu/clkbuf_6_46_0_clk_regs/Z (CLKBUF_X3)\n   0.074164    0.694994 ^ u_mxu/clkbuf_9_368__f_clk_regs/Z (CLKBUF_X3)\n   0.048986    0.743980 ^ u_mxu/clkbuf_leaf_1150_clk_regs/Z (CLKBUF_X3)\n   0.000332    0.744312 ^ u_mxu/u_mxu.g_ask[1].g_p[8].u_pe.p[13]$_DFF_P_/CK (DFF_X1)\n   0.000000    0.744312   clock reconvergence pessimism\n   0.004240    0.748552   library hold time\n               0.748552   data required time\n-----------------------------------------------------------------\n               0.748552   data required time\n              -0.787222   data arrival time\n-----------------------------------------------------------------\n               0.038670   slack (MET)\n\n\nStartpoint: u_act/u_act.g_row[1].g_pc[0].wb[0]$_DFF_P_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: u_act/u_act.g_row[0].g_pc[0].u_act.u_t.g_d[0].g_c[1].g_2p.u_m.g_32x128.u_m\n          (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: min\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.093606    0.169566 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.053565    0.223131 ^ u_act/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.066192    0.289323 ^ u_act/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.063002    0.352325 ^ u_act/clkbuf_3_1__f_clk_regs/Z (CLKBUF_X3)\n   0.042413    0.394738 ^ u_act/clkbuf_leaf_12_clk_regs/Z (CLKBUF_X3)\n   0.000217    0.394955 ^ u_act/u_act.g_row[1].g_pc[0].wb[0]$_DFF_P_/CK (DFF_X1)\n   0.098058    0.493012 v u_act/u_act.g_row[1].g_pc[0].wb[0]$_DFF_P_/Q (DFF_X1)\n   0.001295    0.494307 v u_act/u_act.g_row[0].g_pc[0].u_act.u_t.g_d[0].g_c[1].g_2p.u_m.g_32x128.u_m/w_addr_in[0] (fakeram45_1r1w_32x128)\n               0.494307   data arrival time\n\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.093606    0.169566 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.080691    0.250256 ^ u_act/delaybuf_0_clk/Z (CLKBUF_X1)\n   0.046080    0.296336 ^ u_act/clkbuf_0_clk/Z (CLKBUF_X3)\n   0.094457    0.390793 ^ u_act/clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.014584    0.405377 ^ u_act/u_act.g_row[0].g_pc[0].u_act.u_t.g_d[0].g_c[1].g_2p.u_m.g_32x128.u_m/clk (fakeram45_1r1w_32x128)\n   0.000000    0.405377   clock reconvergence pessimism\n   0.050000    0.455377   library hold time\n               0.455377   data required time\n-----------------------------------------------------------------\n               0.455377   data required time\n              -0.494307   data arrival time\n-----------------------------------------------------------------\n               0.038930   slack (MET)\n\n\nStartpoint: u_act/u_act.g_row[1].g_pc[0].wb[4]$_DFF_P_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: u_act/u_act.g_row[0].g_pc[0].u_act.u_t.g_d[0].g_c[1].g_2p.u_m.g_32x128.u_m\n          (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: min\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.093606    0.169566 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.053565    0.223131 ^ u_act/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.066192    0.289323 ^ u_act/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.063002    0.352325 ^ u_act/clkbuf_3_1__f_clk_regs/Z (CLKBUF_X3)\n   0.042654    0.394978 ^ u_act/clkbuf_leaf_11_clk_regs/Z (CLKBUF_X3)\n   0.000127    0.395105 ^ u_act/u_act.g_row[1].g_pc[0].wb[4]$_DFF_P_/CK (DFF_X1)\n   0.098016    0.493120 v u_act/u_act.g_row[1].g_pc[0].wb[4]$_DFF_P_/Q (DFF_X1)\n   0.001762    0.494883 v u_act/u_act.g_row[0].g_pc[0].u_act.u_t.g_d[0].g_c[1].g_2p.u_m.g_32x128.u_m/w_addr_in[4] (fakeram45_1r1w_32x128)\n               0.494883   data arrival time\n\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.093606    0.169566 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.080691    0.250256 ^ u_act/delaybuf_0_clk/Z (CLKBUF_X1)\n   0.046080    0.296336 ^ u_act/clkbuf_0_clk/Z (CLKBUF_X3)\n   0.094457    0.390793 ^ u_act/clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.014584    0.405377 ^ u_act/u_act.g_row[0].g_pc[0].u_act.u_t.g_d[0].g_c[1].g_2p.u_m.g_32x128.u_m/clk (fakeram45_1r1w_32x128)\n   0.000000    0.405377   clock reconvergence pessimism\n   0.050000    0.455377   library hold time\n               0.455377   data required time\n-----------------------------------------------------------------\n               0.455377   data required time\n              -0.494883   data arrival time\n-----------------------------------------------------------------\n               0.039506   slack (MET)\n\n\nStartpoint: cmd[3] (input port clocked by clk)\nEndpoint: u_mxu/u_mxu.i_srs[3]$_DFFE_PP_\n          (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: min\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock network delay (propagated)\n   0.500000    0.500000 ^ input external delay\n   0.026814    0.526815 ^ cmd[3] (in)\n   0.039908    0.566723 ^ wire4527/Z (BUF_X8)\n   0.053936    0.620658 ^ u_mxu/hold20353/Z (CLKBUF_X1)\n   0.026543    0.647201 ^ u_mxu/hold15873/Z (CLKBUF_X1)\n   0.027480    0.674680 ^ u_mxu/hold20354/Z (CLKBUF_X1)\n   0.022911    0.697591 ^ u_mxu/input1814/Z (BUF_X1)\n   0.030515    0.728107 ^ u_mxu/hold15874/Z (CLKBUF_X1)\n   0.033468    0.761575 ^ u_mxu/_259917_/Z (MUX2_X1)\n   0.026797    0.788372 ^ u_mxu/hold15875/Z (CLKBUF_X1)\n   0.000016    0.788388 ^ u_mxu/u_mxu.i_srs[3]$_DFFE_PP_/D (DFF_X1)\n               0.788388   data arrival time\n\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.061413    0.137373 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n   0.079518    0.216890 ^ u_mxu/wire13669/Z (BUF_X16)\n   0.048741    0.265631 ^ u_mxu/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.051292    0.316923 ^ u_mxu/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.058537    0.375460 ^ u_mxu/clkbuf_1_0_0_clk_regs/Z (CLKBUF_X3)\n   0.055076    0.430537 ^ u_mxu/clkbuf_2_0_0_clk_regs/Z (CLKBUF_X3)\n   0.062427    0.492964 ^ u_mxu/clkbuf_3_0_0_clk_regs/Z (CLKBUF_X3)\n   0.072904    0.565868 ^ u_mxu/clkbuf_4_0_0_clk_regs/Z (CLKBUF_X3)\n   0.065375    0.631242 ^ u_mxu/clkbuf_6_0_0_clk_regs/Z (CLKBUF_X3)\n   0.062238    0.693480 ^ u_mxu/clkbuf_9_1__f_clk_regs/Z (CLKBUF_X3)\n   0.044219    0.737700 ^ u_mxu/clkbuf_leaf_5033_clk_regs/Z (CLKBUF_X3)\n   0.000074    0.737773 ^ u_mxu/u_mxu.i_srs[3]$_DFFE_PP_/CK (DFF_X1)\n   0.000000    0.737773   clock reconvergence pessimism\n   0.008623    0.746396   library hold time\n               0.746396   data required time\n-----------------------------------------------------------------\n               0.746396   data required time\n              -0.788388   data arrival time\n-----------------------------------------------------------------\n               0.041992   slack (MET)\n\n\nStartpoint: u_act/u_act.ssel[1]$_DFF_P_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: u_act/u_act.g_row[1].u_asc.u_t.g_d[0].g_c[0].g_2p.u_m.g_32x64.u_m\n          (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: min\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.093606    0.169566 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.053565    0.223131 ^ u_act/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.066192    0.289323 ^ u_act/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.063002    0.352325 ^ u_act/clkbuf_3_1__f_clk_regs/Z (CLKBUF_X3)\n   0.042294    0.394619 ^ u_act/clkbuf_leaf_13_clk_regs/Z (CLKBUF_X3)\n   0.000136    0.394754 ^ u_act/u_act.ssel[1]$_DFF_P_/CK (DFF_X1)\n   0.101689    0.496444 v u_act/u_act.ssel[1]$_DFF_P_/Q (DFF_X1)\n   0.002497    0.498941 v u_act/u_act.g_row[1].u_asc.u_t.g_d[0].g_c[0].g_2p.u_m.g_32x64.u_m/we_in (fakeram45_1r1w_32x64)\n               0.498941   data arrival time\n\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.093606    0.169566 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.080691    0.250256 ^ u_act/delaybuf_0_clk/Z (CLKBUF_X1)\n   0.046080    0.296336 ^ u_act/clkbuf_0_clk/Z (CLKBUF_X3)\n   0.094457    0.390793 ^ u_act/clkbuf_1_0__f_clk/Z (CLKBUF_X3)\n   0.014389    0.405182 ^ u_act/u_act.g_row[1].u_asc.u_t.g_d[0].g_c[0].g_2p.u_m.g_32x64.u_m/clk (fakeram45_1r1w_32x64)\n   0.000000    0.405182   clock reconvergence pessimism\n   0.050000    0.455182   library hold time\n               0.455182   data required time\n-----------------------------------------------------------------\n               0.455182   data required time\n              -0.498941   data arrival time\n-----------------------------------------------------------------\n               0.043759   slack (MET)\n\n\nStartpoint: u_mxu/u_mxu.g_col_end[1].u_bm.g_regs.r[3][15]$_DFF_P_\n            (rising edge-triggered flip-flop clocked by clk)\nEndpoint: u_mxu/_5555_[15]$_DFF_P_\n          (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: min\n\n      Delay        Time   Description\n-----------------------------------------------------------------\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.061413    0.137373 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n   0.079518    0.216890 ^ u_mxu/wire13669/Z (BUF_X16)\n   0.048741    0.265631 ^ u_mxu/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.051292    0.316923 ^ u_mxu/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.058696    0.375619 ^ u_mxu/clkbuf_1_1_0_clk_regs/Z (CLKBUF_X3)\n   0.053623    0.429242 ^ u_mxu/clkbuf_2_2_0_clk_regs/Z (CLKBUF_X3)\n   0.057311    0.486553 ^ u_mxu/clkbuf_3_4_0_clk_regs/Z (CLKBUF_X3)\n   0.069286    0.555840 ^ u_mxu/clkbuf_4_9_0_clk_regs/Z (CLKBUF_X3)\n   0.061299    0.617139 ^ u_mxu/clkbuf_6_39_0_clk_regs/Z (CLKBUF_X3)\n   0.054175    0.671314 ^ u_mxu/clkbuf_9_316__f_clk_regs/Z (CLKBUF_X3)\n   0.041535    0.712849 ^ u_mxu/clkbuf_leaf_1605_clk_regs/Z (CLKBUF_X3)\n   0.000015    0.712865 ^ u_mxu/u_mxu.g_col_end[1].u_bm.g_regs.r[3][15]$_DFF_P_/CK (DFF_X1)\n   0.082928    0.795793 v u_mxu/u_mxu.g_col_end[1].u_bm.g_regs.r[3][15]$_DFF_P_/Q (DFF_X1)\n   0.000031    0.795824 v u_mxu/_5555_[15]$_DFF_P_/D (DFF_X1)\n               0.795824   data arrival time\n\n   0.000000    0.000000   clock clk (rise edge)\n   0.000000    0.000000   clock source latency\n   0.025826    0.025826 ^ clk (in)\n   0.050134    0.075960 ^ clkbuf_0_clk/Z (CLKBUF_X3)\n   0.061413    0.137373 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)\n   0.079518    0.216890 ^ u_mxu/wire13669/Z (BUF_X16)\n   0.048741    0.265631 ^ u_mxu/clkbuf_regs_0_clk/Z (CLKBUF_X3)\n   0.051292    0.316923 ^ u_mxu/clkbuf_0_clk_regs/Z (CLKBUF_X3)\n   0.058696    0.375619 ^ u_mxu/clkbuf_1_1_0_clk_regs/Z (CLKBUF_X3)\n   0.053623    0.429242 ^ u_mxu/clkbuf_2_2_0_clk_regs/Z (CLKBUF_X3)\n   0.055913    0.485155 ^ u_mxu/clkbuf_3_5_0_clk_regs/Z (CLKBUF_X3)\n   0.067676    0.552831 ^ u_mxu/clkbuf_4_11_0_clk_regs/Z (CLKBUF_X3)\n   0.063865    0.616696 ^ u_mxu/clkbuf_6_45_0_clk_regs/Z (CLKBUF_X3)\n   0.075771    0.692467 ^ u_mxu/clkbuf_9_363__f_clk_regs/Z (CLKBUF_X3)\n   0.051186    0.743653 ^ u_mxu/clkbuf_leaf_1618_clk_regs/Z (CLKBUF_X3)\n   0.000444    0.744097 ^ u_mxu/_5555_[15]$_DFF_P_/CK (DFF_X1)\n   0.000000    0.744097   clock reconvergence pessimism\n   0.004258    0.748356   library hold time\n               0.748356   data required time\n-----------------------------------------------------------------\n               0.748356   data required time\n              -0.795824   data arrival time\n-----------------------------------------------------------------\n               0.047468   slack (MET)\n\n\nmax capacitance\n\nPin                                        Limit         Cap       Slack\n------------------------------------------------------------------------\nplace13413/Z                           60.653706   58.619896    2.033808 (MET)\n\nu_act/_2984_/ZN                        16.021700   12.995920    3.025779 (MET)\n\nu_mxu/_197606_/ZN                      10.471300    7.380482    3.090818 (MET)\n\nu_mxu/_221218_/ZN                      10.471300    7.147786    3.323514 (MET)\n\nu_mxu/_193000_/ZN                      10.471300    7.065852    3.405448 (MET)\n\nu_mxu/_221250_/ZN                      10.471300    7.048643    3.422657 (MET)\n\nu_mxu/_251854_/ZN                      10.471300    7.035940    3.435360 (MET)\n\nu_mxu/_192986_/ZN                      10.471300    6.993157    3.478142 (MET)\n\nu_mxu/_251736_/ZN                      10.471300    6.950817    3.520483 (MET)\n\nu_mxu/_263783_/ZN                      13.809200   10.207861    3.601339 (MET)\n\nu_mxu/_293056_/ZN                      10.471300    6.806541    3.664759 (MET)\n\nu_mxu/_251498_/ZN                      10.471300    6.741509    3.729791 (MET)\n\nu_mxu/_293055_/ZN                      10.471300    6.727872    3.743427 (MET)\n\nu_act/_3638_/ZN                        11.482200    7.668413    3.813787 (MET)\n\nu_mxu/_221176_/ZN                      10.471300    6.595035    3.876266 (MET)\n\nu_mxu/_192997_/ZN                      10.471300    6.550248    3.921052 (MET)\n\nu_mxu/_182706_/ZN                      10.471300    6.386774    4.084526 (MET)\n\nu_mxu/_244252_/ZN                      13.809200    9.636550    4.172650 (MET)\n\nu_mxu/_206942_/ZN                      13.809200    9.464569    4.344631 (MET)\n\nu_act/_3957_/ZN                        16.021700   11.652502    4.369197 (MET)\n\nmax slew\n\nPin                                        Limit        Slew       Slack\n------------------------------------------------------------------------\nu_act/_3950_/ZN                         0.198535    0.138646    0.059889 (MET)\nu_act/_3649_/ZN                         0.198535    0.130911    0.067624 (MET)\nplace13413/Z                            0.198535    0.123596    0.074939 (MET)\nu_mxu/_290219_/ZN                       0.198535    0.121951    0.076584 (MET)\nu_act/_4331_/ZN                         0.198535    0.115191    0.083344 (MET)\nplace13894/Z                            0.198535    0.114938    0.083597 (MET)\nplace13886/Z                            0.198535    0.113004    0.085531 (MET)\nplace13557/Z                            0.198535    0.112783    0.085752 (MET)\nplace14113/Z                            0.198535    0.112339    0.086196 (MET)\nu_mxu/_293042_/ZN                       0.198535    0.107998    0.090537 (MET)\n\nGroup                                      Slack\n------------------------------------------------\nNo paths found.\n\n",
+  "full-hierarchy-sta.log_sha256": "d68128001c4289da2bff80065096eba86d0aaa865a1cbdd30acea0b80dadf94d",
+  "hierarchy_annotation_summary": [
+    "[WARNING ORD-0011] Hierarchical flow (-hier) is currently in development and may cause multiple issues. Do not use in production environments.",
+    "[WARNING STA-0441] set_input_delay relative to a clock defined on the same port/pin not allowed.",
+    "Found 40831 unannotated drivers.",
+    "Found 0 partially unannotated drivers."
+  ],
+  "physical_repair_actions": {
+    "extracted-eco-actions.tsv": {
+      "format": "Native Tcl lists: input/repeater has target, instance, master, x_dbu, y_dbu; replacement has instance, before, after",
+      "rows": [
+        "{a_rdata[20]} llhd_extracted_input_4 BUF_X2 1238610 26400",
+        "{a_rdata[52]} llhd_extracted_input_5 BUF_X2 1302070 26400",
+        "{a_rdata[56]} llhd_extracted_input_6 BUF_X2 1309670 26400",
+        "{b_rdata[103]} llhd_extracted_input_7 BUF_X2 24140 1982820",
+        "{b_rdata[107]} llhd_extracted_input_8 BUF_X2 24140 1990660",
+        "{b_rdata[115]} llhd_extracted_input_9 BUF_X2 24140 2006340",
+        "{b_rdata[116]} llhd_extracted_input_10 BUF_X2 3315680 2006340",
+        "{b_rdata[119]} llhd_extracted_input_11 BUF_X2 24140 2014460",
+        "{b_rdata[131]} llhd_extracted_input_12 BUF_X2 24140 2038260",
+        "{b_rdata[147]} llhd_extracted_input_13 BUF_X2 24140 2069900",
+        "{b_rdata[14]} llhd_extracted_input_14 BUF_X2 1800630 3314000",
+        "{b_rdata[15]} llhd_extracted_input_15 BUF_X2 24140 1808660",
+        "{b_rdata[171]} llhd_extracted_input_16 BUF_X2 24140 2117220",
+        "{b_rdata[175]} llhd_extracted_input_17 BUF_X2 24140 2125060",
+        "{b_rdata[199]} llhd_extracted_input_18 BUF_X2 24140 2172660",
+        "{b_rdata[211]} llhd_extracted_input_19 BUF_X2 24140 2196460",
+        "{b_rdata[23]} llhd_extracted_input_20 BUF_X2 24140 1824340",
+        "{b_rdata[34]} llhd_extracted_input_21 BUF_X2 1840150 3314000",
+        "{b_rdata[35]} llhd_extracted_input_22 BUF_X2 24140 1848140",
+        "{b_rdata[39]} llhd_extracted_input_23 BUF_X2 24140 1855980",
+        "{b_rdata[43]} llhd_extracted_input_24 BUF_X2 24140 1864100",
+        "{b_rdata[47]} llhd_extracted_input_25 BUF_X2 24140 1871940",
+        "{b_rdata[51]} llhd_extracted_input_26 BUF_X2 24140 1879780",
+        "{b_rdata[54]} llhd_extracted_input_27 BUF_X2 1879670 3314000",
+        "{b_rdata[62]} llhd_extracted_input_28 BUF_X2 1895630 3314000",
+        "{b_rdata[67]} llhd_extracted_input_29 BUF_X2 24140 1911420",
+        "{b_rdata[70]} llhd_extracted_input_30 BUF_X2 1911210 3314000",
+        "{b_rdata[78]} llhd_extracted_input_31 BUF_X2 1927170 3314000",
+        "{b_rdata[94]} llhd_extracted_input_32 BUF_X2 1958710 3314000",
+        "{cmd[12]} llhd_extracted_input_33 BUF_X2 399950 26400",
+        "{cmd[130]} llhd_extracted_input_34 BUF_X2 24140 637420",
+        "{cmd[152]} llhd_extracted_input_35 BUF_X2 676590 26400",
+        "{cmd[158]} llhd_extracted_input_36 BUF_X2 24140 692860",
+        "{cmd[226]} llhd_extracted_input_37 BUF_X2 24140 827260",
+        "{cmd[228]} llhd_extracted_input_38 BUF_X2 827070 26400",
+        "{cmd[28]} llhd_extracted_input_39 BUF_X2 431490 26400",
+        "{cmd[36]} llhd_extracted_input_40 BUF_X2 447450 26400",
+        "{cmd[62]} llhd_extracted_input_41 BUF_X2 24140 502740",
+        "{cmd[7]} llhd_extracted_input_42 BUF_X2 3315680 392140",
+        "{t_rdata[12]} llhd_extracted_input_43 BUF_X2 3315680 2568300",
+        "{t_rdata[16]} llhd_extracted_input_44 BUF_X2 3315680 2576140",
+        "{t_rdata[20]} llhd_extracted_input_45 BUF_X2 3315680 2584260",
+        "{t_rdata[36]} llhd_extracted_input_46 BUF_X2 3315680 2615900",
+        "{t_rdata[40]} llhd_extracted_input_47 BUF_X2 3315680 2623740",
+        "{t_rdata[44]} llhd_extracted_input_48 BUF_X2 3315680 2631580",
+        "{t_rdata[48]} llhd_extracted_input_49 BUF_X2 3315680 2639700",
+        "{t_rdata[52]} llhd_extracted_input_50 BUF_X2 3315680 2647540",
+        "wire15476/Z llhd_extracted_repeater_3 BUF_X4 2513320 153200",
+        "wire15205/Z llhd_extracted_repeater_4 BUF_X4 2821310 2364910",
+        "wire15476 BUF_X8 BUF_X16",
+        "place10868 BUF_X1 BUF_X2",
+        "place10867 BUF_X1 BUF_X2"
+      ]
+    },
+    "macro-output-guards-extracted.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "targeted-drive-extracted.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire4698\tBUF_X8\tBUF_X16"
+      ]
+    }
+  },
+  "boundary_constraint_contract_sha256": "b08d83cc225c1753aee3027d6c97e296bc25d4cf9d5cdd7ffd0b4efc6694f044",
+  "external_pin_contract": {
+    "count": 1662,
+    "canonical_sha256": "f098a67a387ac43e41383f3df5d960806327637958075aa348ab4f6fc16134e9"
+  },
+  "actual_signal_pin_geometry": {
+    "all_contract_names_present": true,
+    "rows": 1662,
+    "canonical_sha256": "8c1e5da591ece5cefdd142408f1431bc5c82cb1fb91ebd075d1f3f4dfb19cdb7",
+    "raw_all_bterms_sha256": "2e6e883b246852b88c227021ba0543c79e4eadeade7dc16f5a781eb8dba5f618"
+  },
+  "output_manifest_sha256": "e3fe4564a85304dcad8a27cdea2c13b922f4fd0899baf4c5cef8b65901cdec9f",
+  "output_manifest_entries": 132,
+  "sealed_artifact_sha256": {
+    "boundary.sdc": "13cd9576c207b3ffa0ca086b4d668dd40bdeb24bf2e568effbd183b8afbd7e6b",
+    "flow/results/nangate45/opentpu_top_split/base/6_final.spef": "686ccc9aaa29fb60d2ad9fc898a4aaf943211d741c3589c4c749d4045b2e92b1",
+    "flow/results/nangate45/opentpu_top_split/base/6_final.v": "adb127a06d4365b751b9263e8ce159781045e4e26906013c63e9325c9fa5d221",
+    "top.v": "1b3b75cea7bf67bf13dbfc333a9cba61eb37f74227241caf3c9ca00fa3641d49"
+  },
+  "collected_file_integrity": {
+    "spec.json": true,
+    "experiment.json": true,
+    "image.sha256": true,
+    "tools.sha256": true,
+    "input-sha256.json": true,
+    "input-trace-status.json": true,
+    "boundary.sdc": true,
+    "external-pin-contract.json": true,
+    "pin-placement-quality.json": true,
+    "resource-qualification.json": true,
+    "strict-pg.json": true,
+    "final-pg/strict-pg.json": true,
+    "full-hierarchy-quality.json": true,
+    "full-hierarchy-sta.log": true,
+    "extracted-source-validation.json": true,
+    "extracted-eco-plan.json": true,
+    "extracted-eco-actions.tsv": true,
+    "extracted-before.rpt": true,
+    "extracted-setup-before.rpt": true,
+    "extracted-eco-grt-estimates.rpt": true,
+    "final-pins.tsv": true,
+    "final-pg/u_act-pg-access-selection.json": true,
+    "final-pg/u_mxu-pg-access-selection.json": true,
+    "flow/logs/nangate45/opentpu_top_split/base/6_report.json": true,
+    "flow/logs/nangate45/opentpu_top_split/base/5_2_route.json": true,
+    "flow/logs/nangate45/opentpu_top_split/base/5_2_route.log": true,
+    "flow/reports/nangate45/opentpu_top_split/base/6_finish.rpt": true,
+    "macro-output-guards-extracted.tsv": true,
+    "targeted-drive-extracted.tsv": true
+  },
+  "scheduler": "89802|COMPLETED|0:0|01:03:18|UNLIMITED|16|node3"
+}

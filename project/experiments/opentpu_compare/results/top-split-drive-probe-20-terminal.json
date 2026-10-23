@@ -1,0 +1,300 @@
+{
+  "spec": {
+    "extracted_eco_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20",
+    "extracted_size_probes": [
+      [
+        [
+          "place13151",
+          "BUF_X4",
+          "BUF_X8"
+        ]
+      ],
+      [
+        [
+          "place13151",
+          "BUF_X4",
+          "BUF_X16"
+        ]
+      ]
+    ],
+    "mode": "views",
+    "cores": 1,
+    "runner_commit": "316573e3ad5f82c3ce5635a95cdf90269c62a914",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-drive-probe-20"
+  },
+  "exit_code": "0",
+  "started.txt": "2026-10-22T19:32:38Z\n",
+  "finished.txt": "2026-10-22T19:32:54Z\n",
+  "allocation.txt": "JobId=89825 JobName=yzl-ot-views UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586235 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:02 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-23T03:32:36 EligibleTime=2026-10-23T03:32:36 AccrueTime=2026-10-23T03:32:36 StartTime=2026-10-23T03:32:36 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-23T03:32:36 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-23T03:32:36 Scheduler=Backfill Partition=c64 AllocNode:Sid=mgt01:117858 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=cpu=1,node=1,billing=1 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-drive-probe-20/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-drive-probe-20 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-drive-probe-20/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-drive-probe-20/job.log Power= TresPerTask=cpu:1 \n",
+  "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif\n",
+  "tools.sha256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53  /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad\nc2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b  /OpenROAD-flow-scripts/tools/install/yosys/bin/yosys\n",
+  "experiment.json": {
+    "top": "llhd_top_split",
+    "case": "opentpu_top_split",
+    "kind": "split",
+    "result_relative": "flow/results/nangate45/opentpu_top_split/base",
+    "views": {
+      "act": {
+        "name": "llhd_opentpu_act",
+        "size": [
+          326.205,
+          326.205
+        ],
+        "view": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act",
+        "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03"
+      },
+      "mxu": {
+        "name": "llhd_opentpu_mxu",
+        "size": [
+          1100.455,
+          1100.455
+        ],
+        "view": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu",
+        "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03"
+      },
+      "merged": {
+        "name": "llhd_match_merged",
+        "size": [
+          1145.375,
+          1145.375
+        ],
+        "view": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/merged",
+        "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-merged-03"
+      }
+    },
+    "locations": {
+      "u_act": [
+        80,
+        80
+      ],
+      "u_mxu": [
+        486.205,
+        80
+      ]
+    },
+    "die_um": [
+      0,
+      0,
+      1670,
+      1670
+    ],
+    "external_bits": 1662,
+    "extra_state": 0,
+    "clock_ns": 2.5,
+    "io_delay_ns": 0.5,
+    "input_driver": "BUF_X4/Z",
+    "output_load_fF": 5,
+    "pdn": "H1 additional parent M10; original detailed macro geometry retained",
+    "full_hierarchical_sta": "Required after routing; macro libraries alone do not qualify internal period",
+    "targeted_drive_repair": {
+      "rounds": 8,
+      "scope": "Only actual negative-margin standard BUF/INV drivers; smallest doubled drive with estimated 35% cap / 20% slew reserve, max X32; no macro or sequential change",
+      "macro_output_guards": true
+    },
+    "parent_resume": {
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05",
+      "pin_reference": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05",
+      "common_pin_sha256": "8c1e5da591ece5cefdd142408f1431bc5c82cb1fb91ebd075d1f3f4dfb19cdb7",
+      "initial_pg_receipt_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/strict-pg.json"
+    },
+    "extracted_eco": {
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20",
+      "source_exit_code": "0",
+      "approach": "Actual extracted violation repair, then complete new signal routing/extraction; unchanged final gates; GRT estimates recorded as diagnostics"
+    }
+  },
+  "input-sha256.json": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/experiment.json": "6cb8d9cd8c687a81cad7299772925410d99ce59f6bfe7e9ecb1c693889aa08fa",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/strict-pg.json": "7eaaef09b82d5343e94ee1f7e6977e0756726454e0929d6af5ead1d2e9158040",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/final-pg/strict-pg.json": "7eaaef09b82d5343e94ee1f7e6977e0756726454e0929d6af5ead1d2e9158040",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/pin-placement-quality.json": "fc1d1426ba039dd0fc89ce0aa40dc939b929aea268ce67bfd182eba51c8f967a",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/input-sha256.json": "ff7bfac140c1e01f57fa77a5ed0c1ddcdf6b90802e56661edf393acf35783d23",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act/llhd_opentpu_act.lib": "931b8d514f43ace7e74f72f43f06f752c5bcdc1017eed72c49d17bac722b1e3a",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act/llhd_opentpu_act.lef": "99871cd5cf868ef1b3053563d99fec303f605a23345ad5efaa81d16b81527455",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu/llhd_opentpu_mxu.lib": "a15ef72106dd24a148e6fef5f8a16365bc7f87a7e152184327243584d28277f4",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu/llhd_opentpu_mxu.lef": "ce7d99e802f2211d190d30fdc220481fedd00e16e223e05da3eb4633974403c4",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/merged/llhd_match_merged.lib": "a12c5993f49e1457b6540933c4d4157cedcb021be2766b1ca4594b08b34cb05a",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/merged/llhd_match_merged.lef": "eaa110806cd8da5f2949f2b7745a2ceb9c9b5075c5d45374ff9d7256ef8c21ec",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/config.mk": "556df7096a379d0cdfd1866a0aeedce3ec2a6b19e8613bc548a8b538b4761430",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/top.v": "1b3b75cea7bf67bf13dbfc333a9cba61eb37f74227241caf3c9ca00fa3641d49",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/boundary.sdc": "13cd9576c207b3ffa0ca086b4d668dd40bdeb24bf2e568effbd183b8afbd7e6b",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/external-pin-contract.json": "30d2358ac2771f50b36c82d300a942f784c99c99de526330761ef0007231f3c0",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/resource-qualification.json": "714e1d04b96f2a82410d84f2975fa36cab93b45c967a2182a83e57cf62978169",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/stage-pins.tsv": "a2b140d743fe6604e4327e0037966c65569d257eb4151b82969d506882741008",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/placement.tcl": "73dad061581f2de6761c56e922d41161f65dd7488a0ee85452b111979805b4c9",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/pdn.tcl": "64fcf6047db77a4c849bf1ddff1356989c738d119f3d3c53f67abad6ed7410f5",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/post-pdn.tcl": "ccfdac405024b6b22dc45107ea72c02c07a9f992ea0bd38f1988bdbf3e65e346",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/fixed-pins.tcl": "ea9c7c799a4df0da4336d58d303b01642f273c4f9d426afc62d4eae92bd232e2",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/flow/results/nangate45/opentpu_top_split/base/6_final.odb": "6e168b2117407a60aaf781084364856103491b62517c8d52c21e0790b2a89e3d",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/flow/results/nangate45/opentpu_top_split/base/6_final.sdc": "e25c902e65c0462a5100c6ed8f1a13f06b65b9a474da3f174ea98e166944fd1d",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/flow/results/nangate45/opentpu_top_split/base/6_final.spef": "b7eb833e2b33a6c1caa5293349e32d8c6b8cab8c2e70592323d834189cf0c154",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-drive-probe-20/flow/results/nangate45/opentpu_top_split/base/eco-initial.odb": "6e168b2117407a60aaf781084364856103491b62517c8d52c21e0790b2a89e3d",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/flow/logs/nangate45/opentpu_top_split/base/6_report.json": "9e4345a72e51b5a0e4b6092852e6c3d6d1d744e630a9bf43c387a00b29d9a88a"
+  },
+  "input-trace-status.json": {
+    "execution_completed": true,
+    "tracked_input_count": 26,
+    "scope": "Inputs reached by this execution, including failure paths"
+  },
+  "strict-pg.json": {
+    "macro_pg_iterm_count": 4,
+    "VDD_pass": true,
+    "VSS_pass": true,
+    "passed": true
+  },
+  "resource-qualification.json": {
+    "act": {
+      "passed": true,
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03",
+      "expected": {
+        "fakeram45_1r1w_32x128": 4,
+        "DFF": 606,
+        "fakeram45_1r1w_32x64": 2
+      },
+      "actual": {
+        "fakeram45_1r1w_32x128": 4,
+        "DFF": 606,
+        "fakeram45_1r1w_32x64": 2
+      },
+      "qualification": "Exact storage/state inventory, drive variants normalized; physical buffer costs separate"
+    },
+    "mxu": {
+      "passed": true,
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03",
+      "expected": {
+        "DFF": 36417,
+        "fakeram45_1r1w_64x72": 3,
+        "fakeram45_1r1w_64x40": 1,
+        "fakeram45_1r1w_64x96": 1,
+        "fakeram45_1r1w_64x64": 1
+      },
+      "actual": {
+        "DFF": 36417,
+        "fakeram45_1r1w_64x72": 3,
+        "fakeram45_1r1w_64x40": 1,
+        "fakeram45_1r1w_64x96": 1,
+        "fakeram45_1r1w_64x64": 1
+      },
+      "qualification": "Exact storage/state inventory, drive variants normalized; physical buffer costs separate"
+    },
+    "merged": {
+      "passed": true,
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-merged-03",
+      "expected": {
+        "fakeram45_1r1w_32x128": 4,
+        "DFF": 37023,
+        "fakeram45_1r1w_32x64": 2,
+        "fakeram45_1r1w_64x72": 3,
+        "fakeram45_1r1w_64x40": 1,
+        "fakeram45_1r1w_64x96": 1,
+        "fakeram45_1r1w_64x64": 1
+      },
+      "actual": {
+        "fakeram45_1r1w_32x128": 4,
+        "DFF": 37023,
+        "fakeram45_1r1w_32x64": 2,
+        "fakeram45_1r1w_64x72": 3,
+        "fakeram45_1r1w_64x40": 1,
+        "fakeram45_1r1w_64x96": 1,
+        "fakeram45_1r1w_64x64": 1
+      },
+      "qualification": "Exact storage/state inventory, drive variants normalized; physical buffer costs separate"
+    }
+  },
+  "pin-placement-quality.json": {
+    "passed": true,
+    "count": 1662,
+    "actual_layer_counts": {
+      "metal3": 832,
+      "metal2": 830
+    },
+    "canonical_sha256": "8c1e5da591ece5cefdd142408f1431bc5c82cb1fb91ebd075d1f3f4dfb19cdb7",
+    "errors": [],
+    "scope": "Actual CTS ODB BPin layer and full box; all 1662 signal bits exactly once, requested location within track snapping tolerance. Pair must match exact canonical geometry before route."
+  },
+  "last_flow_log": {
+    "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-drive-probe-20/flow/logs/nangate45/opentpu_top_split/base/sizing-probe-1.log",
+    "tail": [
+      "read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
+      "read_liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act/llhd_opentpu_act.lib",
+      "read_liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu/llhd_opentpu_mxu.lib",
+      "read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-drive-probe-20/flow/results/nangate45/opentpu_top_split/base/eco-initial.odb",
+      "read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-drive-probe-20/flow/results/nangate45/opentpu_top_split/base/eco-initial.sdc",
+      "source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl",
+      "Elapsed time: 0:03.03[h:]min:sec. CPU time: user 2.88 sys 0.13 (99%). Peak memory: 744752KB."
+    ]
+  },
+  "job_log_tail": [
+    "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+  ],
+  "metrics": {},
+  "pg_access": {},
+  "extracted-source-validation.json": {
+    "passed": true,
+    "observed_macro_wns_ns": [
+      0.075451426,
+      0.074727394
+    ],
+    "expected_macro_wns_ns": [
+      0.0754514,
+      0.0747274
+    ],
+    "tolerance_ns": 1e-06
+  },
+  "sizing-probes.json": {
+    "changes": [
+      [
+        [
+          "place13151",
+          "BUF_X4",
+          "BUF_X8"
+        ]
+      ],
+      [
+        [
+          "place13151",
+          "BUF_X4",
+          "BUF_X16"
+        ]
+      ]
+    ],
+    "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20",
+    "scope": "Sizing estimates on sealed source RC; fresh process per candidate. No legalization, rerouting or physical acceptance."
+  },
+  "sizing_probe_reports": {
+    "sizing-probe-0.rpt": "worst slack max 0.075451426\nworst slack min 0.074727394\nStartpoint: b_rdata[91] (input port clocked by clk)\nEndpoint: u_mxu (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: min\n\n         Delay           Time   Description\n-----------------------------------------------------------------------\n   0.000000000    0.000000000   clock clk (rise edge)\n   0.000000000    0.000000000   clock network delay (propagated)\n   0.500000000    0.500000000 v input external delay\n   0.030435266    0.530435264 v b_rdata[91] (in)\n   0.042013559    0.572448850 v wire10423/Z (BUF_X4)\n   0.036348093    0.608796895 v u_mxu/b_rdata[91] (llhd_opentpu_mxu)\n                  0.608796895   data arrival time\n\n   0.000000000    0.000000000   clock clk (rise edge)\n   0.103679508    0.103679508   clock network delay (propagated)\n   0.000000000    0.103679508   clock reconvergence pessimism\n                  0.103679508 ^ u_mxu/clk (llhd_opentpu_mxu)\n   0.430390000    0.534069538   library hold time\n                  0.534069538   data required time\n-----------------------------------------------------------------------\n                  0.534069538   data required time\n                 -0.608796895   data arrival time\n-----------------------------------------------------------------------\n                  0.074727394   slack (MET)\n\n\n",
+    "sizing-probe-1.rpt": "worst slack max 0.075451426\nworst slack min 0.074727394\nStartpoint: b_rdata[91] (input port clocked by clk)\nEndpoint: u_mxu (rising edge-triggered flip-flop clocked by clk)\nPath Group: clk\nPath Type: min\n\n         Delay           Time   Description\n-----------------------------------------------------------------------\n   0.000000000    0.000000000   clock clk (rise edge)\n   0.000000000    0.000000000   clock network delay (propagated)\n   0.500000000    0.500000000 v input external delay\n   0.030435266    0.530435264 v b_rdata[91] (in)\n   0.042013559    0.572448850 v wire10423/Z (BUF_X4)\n   0.036348093    0.608796895 v u_mxu/b_rdata[91] (llhd_opentpu_mxu)\n                  0.608796895   data arrival time\n\n   0.000000000    0.000000000   clock clk (rise edge)\n   0.103679508    0.103679508   clock network delay (propagated)\n   0.000000000    0.103679508   clock reconvergence pessimism\n                  0.103679508 ^ u_mxu/clk (llhd_opentpu_mxu)\n   0.430390000    0.534069538   library hold time\n                  0.534069538   data required time\n-----------------------------------------------------------------------\n                  0.534069538   data required time\n                 -0.608796895   data arrival time\n-----------------------------------------------------------------------\n                  0.074727394   slack (MET)\n\n\n"
+  },
+  "physical_repair_actions": {},
+  "boundary_constraint_contract_sha256": "b08d83cc225c1753aee3027d6c97e296bc25d4cf9d5cdd7ffd0b4efc6694f044",
+  "external_pin_contract": {
+    "count": 1662,
+    "canonical_sha256": "f098a67a387ac43e41383f3df5d960806327637958075aa348ab4f6fc16134e9"
+  },
+  "output_manifest_sha256": "7a4cf37840728bf77ad72da6550e1b872ec78eb0b369345c5e11f7d33d009bde",
+  "output_manifest_entries": 67,
+  "sealed_artifact_sha256": {
+    "boundary.sdc": "13cd9576c207b3ffa0ca086b4d668dd40bdeb24bf2e568effbd183b8afbd7e6b",
+    "top.v": "1b3b75cea7bf67bf13dbfc333a9cba61eb37f74227241caf3c9ca00fa3641d49"
+  },
+  "collected_file_integrity": {
+    "spec.json": true,
+    "experiment.json": true,
+    "image.sha256": true,
+    "tools.sha256": true,
+    "input-sha256.json": true,
+    "input-trace-status.json": true,
+    "boundary.sdc": true,
+    "external-pin-contract.json": true,
+    "pin-placement-quality.json": true,
+    "resource-qualification.json": true,
+    "strict-pg.json": true,
+    "extracted-source-validation.json": true,
+    "extracted-before.rpt": true,
+    "extracted-setup-before.rpt": true,
+    "sizing-probes.json": true,
+    "sizing-probe-0.rpt": true,
+    "sizing-probe-1.rpt": true
+  },
+  "scheduler": "89825|COMPLETED|0:0|00:00:18|UNLIMITED|1|node3"
+}

@@ -1,0 +1,2269 @@
+{
+  "spec": {
+    "resume_parent": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05",
+    "pin_reference": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05",
+    "post_grt_repair_rounds": 3,
+    "targeted_drive_rounds": 20,
+    "macro_output_guards": true,
+    "joint_repair_rounds": 6,
+    "joint_native_electrical_repair": true,
+    "fresh_process_each_electrical_eco": true,
+    "setup_target_ns": 0.2,
+    "setup_accept_ns": 0.1,
+    "hold_target_ns": 0.04,
+    "hold_accept_ns": 0.01,
+    "mode": "top",
+    "cores": 16,
+    "runner_commit": "7139190aa944dd3c88b44eb3234b869e6c3c46e8",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14"
+  },
+  "exit_code": "1",
+  "started.txt": "2026-10-22T12:04:12Z\n",
+  "finished.txt": "2026-10-22T13:49:10Z\n",
+  "allocation.txt": "JobId=89777 JobName=yzl-ot-top UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586283 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:01 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T20:04:10 EligibleTime=2026-10-22T20:04:10 AccrueTime=2026-10-22T20:04:10 StartTime=2026-10-22T20:04:11 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T20:04:11 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T20:04:11 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3720148 ReqNodeList=(null) ExcNodeList=(null) NodeList=node4 BatchHost=node4 NumNodes=1 NumCPUs=16 NumTasks=1 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=16,mem=1M,node=1,billing=16 AllocTRES=cpu=16,node=1,billing=16 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/job.log Power= TresPerTask=cpu:16 \n",
+  "experiment.json": {
+    "top": "llhd_top_split",
+    "case": "opentpu_top_split",
+    "kind": "split",
+    "result_relative": "flow/results/nangate45/opentpu_top_split/base",
+    "views": {
+      "act": {
+        "name": "llhd_opentpu_act",
+        "size": [
+          326.205,
+          326.205
+        ],
+        "view": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act",
+        "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03"
+      },
+      "mxu": {
+        "name": "llhd_opentpu_mxu",
+        "size": [
+          1100.455,
+          1100.455
+        ],
+        "view": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu",
+        "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03"
+      },
+      "merged": {
+        "name": "llhd_match_merged",
+        "size": [
+          1145.375,
+          1145.375
+        ],
+        "view": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/merged",
+        "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-merged-03"
+      }
+    },
+    "locations": {
+      "u_act": [
+        80,
+        80
+      ],
+      "u_mxu": [
+        486.205,
+        80
+      ]
+    },
+    "die_um": [
+      0,
+      0,
+      1670,
+      1670
+    ],
+    "external_bits": 1662,
+    "extra_state": 0,
+    "clock_ns": 2.5,
+    "io_delay_ns": 0.5,
+    "input_driver": "BUF_X4/Z",
+    "output_load_fF": 5,
+    "pdn": "H1 additional parent M10; original detailed macro geometry retained",
+    "full_hierarchical_sta": "Required after routing; macro libraries alone do not qualify internal period",
+    "joint_timing_electrical_repair": {
+      "rounds": 6,
+      "setup_target_ns": 0.2,
+      "grt_accept_setup_ns": 0.1,
+      "strategy": "Fresh-process ODB checkpoint alternation of native timing repair and electrical guardbands; reroute/re-estimate every reload; no gate cloning/pin swaps or clock/IO relaxation"
+    },
+    "targeted_drive_repair": {
+      "rounds": 20,
+      "scope": "Only actual negative-margin standard BUF/INV drivers; smallest doubled drive with estimated 35% cap / 20% slew reserve, max X32; no macro or sequential change",
+      "macro_output_guards": true
+    },
+    "parent_resume": {
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05",
+      "pin_reference": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05",
+      "common_pin_sha256": "8c1e5da591ece5cefdd142408f1431bc5c82cb1fb91ebd075d1f3f4dfb19cdb7",
+      "initial_pg_receipt_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/strict-pg.json"
+    }
+  },
+  "input-sha256.json": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/pin-placement-quality.json": "fc1d1426ba039dd0fc89ce0aa40dc939b929aea268ce67bfd182eba51c8f967a",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/external-pin-contract.json": "30d2358ac2771f50b36c82d300a942f784c99c99de526330761ef0007231f3c0",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/experiment.json": "c29a5ef01ced5d96844da2f45e6553be746fabdecb4728bcd5b39eafb64a4ccb",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/strict-pg.json": "7eaaef09b82d5343e94ee1f7e6977e0756726454e0929d6af5ead1d2e9158040",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05/pin-placement-quality.json": "fc1d1426ba039dd0fc89ce0aa40dc939b929aea268ce67bfd182eba51c8f967a",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05/external-pin-contract.json": "30d2358ac2771f50b36c82d300a942f784c99c99de526330761ef0007231f3c0",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05/experiment.json": "f4c17359c2e1bbce6036c88a4e32338444b885b429a4e68fc19b47348a8968ee",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-place-05/strict-pg.json": "47938407dac4f5e42c53e2041307e370cc3cb0a7545422b14036a4ae69c1c32c",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/flow/results/nangate45/opentpu_top_split/base/4_cts.odb": "cc830d0a79e059a963ec97f1a84fdffbc93ea94044ffd76b3105945e391b00a7",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/flow/results/nangate45/opentpu_top_split/base/4_cts.sdc": "e25c902e65c0462a5100c6ed8f1a13f06b65b9a474da3f174ea98e166944fd1d",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/config.mk": "8eaff4c51787a243d6ed444668a896bf3438b2e7edf6bcfb428aadcf4514de78",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/top.v": "1b3b75cea7bf67bf13dbfc333a9cba61eb37f74227241caf3c9ca00fa3641d49",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/boundary.sdc": "13cd9576c207b3ffa0ca086b4d668dd40bdeb24bf2e568effbd183b8afbd7e6b",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/resource-qualification.json": "714e1d04b96f2a82410d84f2975fa36cab93b45c967a2182a83e57cf62978169",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/stage-pins.tsv": "a2b140d743fe6604e4327e0037966c65569d257eb4151b82969d506882741008",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/placement.tcl": "73dad061581f2de6761c56e922d41161f65dd7488a0ee85452b111979805b4c9",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/pdn.tcl": "64fcf6047db77a4c849bf1ddff1356989c738d119f3d3c53f67abad6ed7410f5",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/post-pdn.tcl": "2bd8d0ca3d77f49f206781c4388877bb8f5e261ddadf85cf433501cbd243f212",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/fixed-pins.tcl": "ea9c7c799a4df0da4336d58d303b01642f273c4f9d426afc62d4eae92bd232e2",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/post-grt-repair.tcl": "50f3f3fe20565b72079bf1579d042f18cebb7ac67bba3c1244a66eeef8f66b37",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/runner/targeted_drive.tcl": "a22a6e1ac90ec726fadbc20a69af141b1c64c5bc8e28371511c5f2bb014d9868",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/runner/macro_guard.tcl": "badae23f39da32bbbfdf513c8da7b5864fbe97bf74e1d10c80abbb8098faf29c",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/runner/joint_repair.py": "690aaafcc096cfd58f975e1c4ebcdb36cfc7e87b2f5241be78ec44019034ebde",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/runner/fresh_repair.py": "d95bdba3672dafe8bd3ddd09f9fb3906b590cffa1573f3ae0ad13e65af826e4d",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act/llhd_opentpu_act.lef": "99871cd5cf868ef1b3053563d99fec303f605a23345ad5efaa81d16b81527455",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act/llhd_opentpu_act.lib": "931b8d514f43ace7e74f72f43f06f752c5bcdc1017eed72c49d17bac722b1e3a",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu/llhd_opentpu_mxu.lef": "ce7d99e802f2211d190d30fdc220481fedd00e16e223e05da3eb4633974403c4",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu/llhd_opentpu_mxu.lib": "a15ef72106dd24a148e6fef5f8a16365bc7f87a7e152184327243584d28277f4",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/merged/llhd_match_merged.lef": "eaa110806cd8da5f2949f2b7745a2ceb9c9b5075c5d45374ff9d7256ef8c21ec",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/merged/llhd_match_merged.lib": "a12c5993f49e1457b6540933c4d4157cedcb021be2766b1ca4594b08b34cb05a",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/flow/results/nangate45/opentpu_top_split/base/4_cts.odb": "cc830d0a79e059a963ec97f1a84fdffbc93ea94044ffd76b3105945e391b00a7"
+  },
+  "input-trace-status.json": {
+    "execution_completed": false,
+    "tracked_input_count": 31,
+    "scope": "Inputs reached by this execution, including failure paths"
+  },
+  "strict-pg.json": {
+    "macro_pg_iterm_count": 4,
+    "VDD_pass": true,
+    "VSS_pass": true,
+    "passed": true
+  },
+  "resource-qualification.json": {
+    "act": {
+      "passed": true,
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03",
+      "expected": {
+        "fakeram45_1r1w_32x128": 4,
+        "DFF": 606,
+        "fakeram45_1r1w_32x64": 2
+      },
+      "actual": {
+        "fakeram45_1r1w_32x128": 4,
+        "DFF": 606,
+        "fakeram45_1r1w_32x64": 2
+      },
+      "qualification": "Exact storage/state inventory, drive variants normalized; physical buffer costs separate"
+    },
+    "mxu": {
+      "passed": true,
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03",
+      "expected": {
+        "DFF": 36417,
+        "fakeram45_1r1w_64x72": 3,
+        "fakeram45_1r1w_64x40": 1,
+        "fakeram45_1r1w_64x96": 1,
+        "fakeram45_1r1w_64x64": 1
+      },
+      "actual": {
+        "DFF": 36417,
+        "fakeram45_1r1w_64x72": 3,
+        "fakeram45_1r1w_64x40": 1,
+        "fakeram45_1r1w_64x96": 1,
+        "fakeram45_1r1w_64x64": 1
+      },
+      "qualification": "Exact storage/state inventory, drive variants normalized; physical buffer costs separate"
+    },
+    "merged": {
+      "passed": true,
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-merged-03",
+      "expected": {
+        "fakeram45_1r1w_32x128": 4,
+        "DFF": 37023,
+        "fakeram45_1r1w_32x64": 2,
+        "fakeram45_1r1w_64x72": 3,
+        "fakeram45_1r1w_64x40": 1,
+        "fakeram45_1r1w_64x96": 1,
+        "fakeram45_1r1w_64x64": 1
+      },
+      "actual": {
+        "fakeram45_1r1w_32x128": 4,
+        "DFF": 37023,
+        "fakeram45_1r1w_32x64": 2,
+        "fakeram45_1r1w_64x72": 3,
+        "fakeram45_1r1w_64x40": 1,
+        "fakeram45_1r1w_64x96": 1,
+        "fakeram45_1r1w_64x64": 1
+      },
+      "qualification": "Exact storage/state inventory, drive variants normalized; physical buffer costs separate"
+    }
+  },
+  "pin-placement-quality.json": {
+    "passed": true,
+    "count": 1662,
+    "actual_layer_counts": {
+      "metal3": 832,
+      "metal2": 830
+    },
+    "canonical_sha256": "8c1e5da591ece5cefdd142408f1431bc5c82cb1fb91ebd075d1f3f4dfb19cdb7",
+    "errors": [],
+    "scope": "Actual CTS ODB BPin layer and full box; all 1662 signal bits exactly once, requested location within track snapping tolerance. Pair must match exact canonical geometry before route."
+  },
+  "last_flow_log": {
+    "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/flow/logs/nangate45/opentpu_top_split/base/joint-5-audit.log",
+    "tail": [
+      "#macroValidPlanarAp    = 5347",
+      "#macroValidViaAp       = 1794",
+      "#macroNoAp             = 0",
+      "[INFO DRT-0166] Complete pin access.",
+      "[INFO DRT-0267] cpu time = 00:00:23, elapsed time = 00:00:07, memory = 2390.28 (MB), peak = 2390.28 (MB)",
+      "write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/flow/results/nangate45/opentpu_top_split/base/joint-5-audit.odb",
+      "write_sdc -no_timestamp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/flow/results/nangate45/opentpu_top_split/base/joint-5-audit.sdc",
+      "Elapsed time: 1:01.22[h:]min:sec. CPU time: user 100.20 sys 1.90 (166%). Peak memory: 3149020KB."
+    ]
+  },
+  "job_log_tail": [
+    "    execute(SPEC)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/runner/implementation.py\", line 62, in execute",
+    "    elif spec['mode']=='top': top(spec)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/runner/implementation.py\", line 358, in top",
+    "    if spec.get('resume_parent'):return resume_parent(spec)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/runner/implementation.py\", line 566, in resume_parent",
+    "    route_parent(spec)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/runner/implementation.py\", line 577, in route_parent",
+    "    execute(ROOT,spec,meta)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/runner/joint_repair.py\", line 12, in execute",
+    "    return execute(root,spec,meta)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-14/runner/fresh_repair.py\", line 74, in execute",
+    "    raise AssertionError('Fresh-process GRT margins still fail; preserve all checkpoints before DRT')",
+    "AssertionError: Fresh-process GRT margins still fail; preserve all checkpoints before DRT"
+  ],
+  "metrics": {
+    "5_1_grt.json": {
+      "globalroute__global_route__vias": 2112,
+      "globalroute__global_route__wirelength": 3493236,
+      "globalroute__dpl__instance__displacement__total": 74.555,
+      "globalroute__dpl__instance__displacement__mean": 0.004,
+      "globalroute__dpl__instance__displacement__max": 3.815,
+      "globalroute__dpl__route__wirelength__estimated": 3189570.0,
+      "globalroute__design__instance__count__setup_buffer": 0,
+      "globalroute__design__instance__count__hold_buffer": 33,
+      "globalroute__design__violations": 0,
+      "globalroute__antenna_diodes_count": 0,
+      "globalroute__antenna__violating__nets": 0,
+      "globalroute__antenna__violating__pins": 0,
+      "globalroute__timing__setup__tns": -0.0461511,
+      "globalroute__timing__hold__tns": 0,
+      "globalroute__timing__setup__ws": -0.0461511,
+      "globalroute__timing__hold__ws": 0.000395406,
+      "globalroute__timing__fmax__clock:clk": 392750000.0,
+      "globalroute__timing__fmax": 392750000.0,
+      "globalroute__clock__skew__setup": 0.00484558,
+      "globalroute__clock__skew__hold": 0.00484558,
+      "globalroute__timing__drv__max_slew_limit": -1.99027,
+      "globalroute__timing__drv__max_slew": 10,
+      "globalroute__timing__drv__max_cap_limit": -2.03538,
+      "globalroute__timing__drv__max_cap": 66,
+      "globalroute__timing__drv__max_fanout_limit": 0,
+      "globalroute__timing__drv__max_fanout": 0,
+      "globalroute__timing__drv__setup_violation_count": 1,
+      "globalroute__timing__drv__hold_violation_count": 0,
+      "globalroute__power__internal__total": 0.000851922,
+      "globalroute__power__switching__total": 0.00360651,
+      "globalroute__power__leakage__total": 0.000456844,
+      "globalroute__power__total": 0.00491527,
+      "globalroute__design__die__area": 2788900.0,
+      "globalroute__design__core__area": 2718490.0,
+      "globalroute__design__instance__count": 15940,
+      "globalroute__design__instance__area": 1330190.0,
+      "globalroute__design__instance__count__stdcell": 15938,
+      "globalroute__design__instance__area__stdcell": 12779.2,
+      "globalroute__design__instance__count__macros": 2,
+      "globalroute__design__instance__area__macros": 1317410.0,
+      "globalroute__design__instance__count__padcells": 0,
+      "globalroute__design__instance__area__padcells": 0,
+      "globalroute__design__instance__count__cover": 0,
+      "globalroute__design__instance__area__cover": 0,
+      "globalroute__design__instance__utilization": 0.489312,
+      "globalroute__design__instance__utilization__stdcell": 0.00912094
+    }
+  },
+  "pg_access": {},
+  "joint-repair.json": [
+    {
+      "phase": 0,
+      "setup_ns": -0.103588693,
+      "hold_ns": 0.006776746,
+      "electrical_passed": false,
+      "drive_checkpoints": 20
+    },
+    {
+      "phase": 1,
+      "setup_ns": -0.111765042,
+      "hold_ns": 0.006693868,
+      "electrical_passed": false,
+      "drive_checkpoints": 20
+    },
+    {
+      "phase": 2,
+      "setup_ns": -0.046742834,
+      "hold_ns": 0.044147409,
+      "electrical_passed": false,
+      "drive_checkpoints": 15
+    },
+    {
+      "phase": 3,
+      "setup_ns": -0.072843067,
+      "hold_ns": 0.031619873,
+      "electrical_passed": true,
+      "drive_checkpoints": 6
+    },
+    {
+      "phase": 4,
+      "setup_ns": -0.108481668,
+      "hold_ns": 0.044253215,
+      "electrical_passed": true,
+      "drive_checkpoints": 10
+    },
+    {
+      "phase": 5,
+      "setup_ns": -0.114100955,
+      "hold_ns": 0.04374712,
+      "electrical_passed": true,
+      "drive_checkpoints": 15
+    }
+  ],
+  "physical_repair_actions": {
+    "joint-repair.tsv": {
+      "header": "phase\tsetup_ns\thold_ns\telectrical_passed",
+      "rows": [
+        "0\t-0.103588693\t0.006776746\tFalse",
+        "1\t-0.111765042\t0.006693868\tFalse",
+        "2\t-0.046742834\t0.044147409\tFalse",
+        "3\t-0.072843067\t0.031619873\tTrue",
+        "4\t-0.108481668\t0.044253215\tTrue",
+        "5\t-0.114100955\t0.04374712\tTrue"
+      ]
+    },
+    "macro-output-guards-initial.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/t_waddr[105]\tllhd_macro_guard_0\tBUF_X2\tleft\t483.445\t508.89",
+        "0\tu_act/r_data[274]\tllhd_macro_guard_1\tBUF_X2\tbottom\t365.315\t76.6",
+        "0\tu_act/r_data[55]\tllhd_macro_guard_2\tBUF_X2\tbottom\t324.435\t76.6",
+        "0\tu_act/r_data[11]\tllhd_macro_guard_3\tBUF_X2\tbottom\t276.835\t76.6",
+        "0\tu_act/r_data[53]\tllhd_macro_guard_4\tBUF_X2\tbottom\t323.875\t76.6",
+        "0\tu_act/r_data[70]\tllhd_macro_guard_5\tBUF_X2\tbottom\t319.955\t76.6",
+        "0\tu_act/r_data[67]\tllhd_macro_guard_6\tBUF_X2\tbottom\t318.835\t76.6",
+        "0\tu_act/r_data[353]\tllhd_macro_guard_7\tBUF_X2\tbottom\t368.675\t76.6",
+        "0\tu_act/r_data[264]\tllhd_macro_guard_8\tBUF_X2\tbottom\t362.515\t76.6",
+        "0\tu_act/r_data[68]\tllhd_macro_guard_9\tBUF_X2\tbottom\t327.795\t76.6",
+        "0\tu_act/r_data[256]\tllhd_macro_guard_10\tBUF_X2\tbottom\t396.115\t76.6",
+        "0\tu_act/r_data[126]\tllhd_macro_guard_11\tBUF_X2\tbottom\t295.315\t76.6",
+        "0\tu_mxu/t_ren[0]\tllhd_macro_guard_12\tBUF_X2\tbottom\t749.68\t76.6",
+        "0\tu_act/r_data[284]\tllhd_macro_guard_13\tBUF_X2\tbottom\t368.115\t76.6",
+        "0\tu_act/r_data[271]\tllhd_macro_guard_14\tBUF_X2\tbottom\t366.995\t76.6",
+        "0\tu_act/r_data[289]\tllhd_macro_guard_15\tBUF_X2\tbottom\t378.755\t76.6"
+      ]
+    },
+    "macro-output-guards-joint0_drive0.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_act/r_data[356]\tllhd_macro_guard_16\tBUF_X2\tbottom\t382.675\t76.6",
+        "0\tu_act/r_data[503]\tllhd_macro_guard_17\tBUF_X2\tbottom\t261.155\t76.6",
+        "0\tu_act/r_data[469]\tllhd_macro_guard_18\tBUF_X2\tbottom\t251.635\t76.6",
+        "0\tu_act/r_data[497]\tllhd_macro_guard_19\tBUF_X2\tbottom\t259.475\t76.6",
+        "0\tu_act/r_data[259]\tllhd_macro_guard_20\tBUF_X2\tbottom\t392.755\t76.6",
+        "0\tu_act/r_data[261]\tllhd_macro_guard_21\tBUF_X2\tbottom\t397.235\t76.6",
+        "0\tu_act/r_data[367]\tllhd_macro_guard_22\tBUF_X2\tbottom\t372.595\t76.6",
+        "0\tu_act/r_data[379]\tllhd_macro_guard_23\tBUF_X2\tbottom\t335.635\t76.6",
+        "0\tu_act/r_data[263]\tllhd_macro_guard_24\tBUF_X2\tbottom\t388.835\t76.6",
+        "0\tu_act/r_data[363]\tllhd_macro_guard_25\tBUF_X2\tbottom\t382.115\t76.6",
+        "0\tu_act/r_data[365]\tllhd_macro_guard_26\tBUF_X2\tbottom\t370.915\t76.6",
+        "0\tu_act/r_data[69]\tllhd_macro_guard_27\tBUF_X2\tbottom\t319.395\t76.6",
+        "0\tu_act/r_data[507]\tllhd_macro_guard_28\tBUF_X2\tbottom\t262.275\t76.6",
+        "0\tu_act/r_data[257]\tllhd_macro_guard_29\tBUF_X2\tbottom\t347.955\t76.6",
+        "0\tu_act/r_data[339]\tllhd_macro_guard_30\tBUF_X2\tbottom\t355.795\t76.6",
+        "0\tu_act/r_data[471]\tllhd_macro_guard_31\tBUF_X2\tbottom\t252.195\t76.6",
+        "0\tu_act/r_data[300]\tllhd_macro_guard_32\tBUF_X2\tbottom\t401.715\t76.6",
+        "0\tu_act/r_data[277]\tllhd_macro_guard_33\tBUF_X2\tbottom\t398.915\t76.6",
+        "0\tu_act/r_data[75]\tllhd_macro_guard_34\tBUF_X2\tbottom\t330.035\t76.6",
+        "0\tu_act/r_data[0]\tllhd_macro_guard_35\tBUF_X2\tbottom\t268.435\t76.6",
+        "0\tu_act/r_data[381]\tllhd_macro_guard_36\tBUF_X2\tbottom\t348.515\t76.6",
+        "0\tu_act/r_data[96]\tllhd_macro_guard_37\tBUF_X2\tbottom\t308.195\t76.6",
+        "0\tu_act/r_data[382]\tllhd_macro_guard_38\tBUF_X2\tbottom\t360.275\t76.6",
+        "0\tu_act/r_data[269]\tllhd_macro_guard_39\tBUF_X2\tbottom\t393.315\t76.6",
+        "0\tu_act/r_data[73]\tllhd_macro_guard_40\tBUF_X2\tbottom\t329.475\t76.6",
+        "0\tu_act/r_data[345]\tllhd_macro_guard_41\tBUF_X2\tbottom\t344.035\t76.6",
+        "0\tu_act/r_data[56]\tllhd_macro_guard_42\tBUF_X2\tbottom\t316.035\t76.6",
+        "0\tu_act/r_data[334]\tllhd_macro_guard_43\tBUF_X2\tbottom\t403.395\t76.6",
+        "0\tu_act/r_data[292]\tllhd_macro_guard_44\tBUF_X2\tbottom\t370.355\t76.6",
+        "0\tu_act/r_data[501]\tllhd_macro_guard_45\tBUF_X2\tbottom\t260.595\t76.6",
+        "0\tu_act/r_data[299]\tllhd_macro_guard_46\tBUF_X2\tbottom\t390.515\t76.6",
+        "0\tu_act/r_data[344]\tllhd_macro_guard_47\tBUF_X2\tbottom\t367.555\t76.6",
+        "0\tu_act/r_data[71]\tllhd_macro_guard_48\tBUF_X2\tbottom\t328.915\t76.6",
+        "0\tu_act/r_data[97]\tllhd_macro_guard_49\tBUF_X2\tbottom\t304.835\t76.6",
+        "0\tu_mxu/pf_uv[68]\tllhd_macro_guard_50\tBUF_X2\tleft\t483.445\t494.33",
+        "0\tu_act/r_data[315]\tllhd_macro_guard_51\tBUF_X2\tbottom\t351.875\t76.6",
+        "0\tu_act/r_data[348]\tllhd_macro_guard_52\tBUF_X2\tbottom\t340.115\t76.6",
+        "0\tu_act/r_data[380]\tllhd_macro_guard_53\tBUF_X2\tbottom\t343.475\t76.6",
+        "0\tu_act/r_data[2]\tllhd_macro_guard_54\tBUF_X2\tbottom\t286.355\t76.6",
+        "0\tu_act/r_data[77]\tllhd_macro_guard_55\tBUF_X2\tbottom\t330.595\t76.6",
+        "0\tu_mxu/act_grp[4]\tllhd_macro_guard_56\tBUF_X2\tleft\t483.445\t446.17",
+        "0\tu_act/r_data[41]\tllhd_macro_guard_57\tBUF_X2\tbottom\t298.115\t76.6",
+        "0\tu_act/r_data[351]\tllhd_macro_guard_58\tBUF_X2\tbottom\t380.435\t76.6",
+        "0\tu_act/r_data[103]\tllhd_macro_guard_59\tBUF_X2\tbottom\t263.955\t76.6",
+        "0\tu_mxu/t_waddr[97]\tllhd_macro_guard_60\tBUF_X2\tleft\t483.445\t624.81",
+        "0\tu_act/r_data[270]\tllhd_macro_guard_61\tBUF_X2\tbottom\t396.675\t76.6",
+        "0\tu_act/r_data[162]\tllhd_macro_guard_62\tBUF_X2\ttop\t94.835\t408.205",
+        "0\tu_act/r_data[396]\tllhd_macro_guard_63\tBUF_X2\tbottom\t231.475\t76.6",
+        "0\tu_act/r_data[376]\tllhd_macro_guard_64\tBUF_X2\tbottom\t339.555\t76.6",
+        "0\tu_act/r_data[298]\tllhd_macro_guard_65\tBUF_X2\tbottom\t399.475\t76.6",
+        "0\tu_act/r_data[59]\tllhd_macro_guard_66\tBUF_X2\tbottom\t312.115\t76.6",
+        "0\tu_act/r_data[40]\tllhd_macro_guard_67\tBUF_X2\tbottom\t265.075\t76.6",
+        "0\tu_act/r_data[286]\tllhd_macro_guard_68\tBUF_X2\tbottom\t393.875\t76.6",
+        "0\tu_act/r_data[221]\tllhd_macro_guard_69\tBUF_X2\ttop\t104.355\t408.205",
+        "0\tu_act/r_data[234]\tllhd_macro_guard_70\tBUF_X2\ttop\t103.795\t408.205",
+        "0\tu_act/r_data[233]\tllhd_macro_guard_71\tBUF_X2\ttop\t112.755\t408.205",
+        "0\tu_act/r_data[200]\tllhd_macro_guard_72\tBUF_X2\ttop\t99.315\t408.205",
+        "0\tu_act/r_data[372]\tllhd_macro_guard_73\tBUF_X2\tbottom\t336.755\t76.6",
+        "0\tu_act/r_data[140]\tllhd_macro_guard_74\tBUF_X2\ttop\t111.075\t408.205",
+        "0\tu_act/r_data[160]\tllhd_macro_guard_75\tBUF_X2\ttop\t108.835\t408.205",
+        "0\tu_act/r_data[8]\tllhd_macro_guard_76\tBUF_X2\tbottom\t314.355\t76.6",
+        "0\tu_mxu/act_grp[0]\tllhd_macro_guard_77\tBUF_X2\tleft\t483.445\t429.37",
+        "0\tu_act/r_data[30]\tllhd_macro_guard_78\tBUF_X2\tbottom\t296.435\t76.6",
+        "0\tu_act/r_data[383]\tllhd_macro_guard_79\tBUF_X2\tbottom\t333.955\t76.6",
+        "0\tu_act/r_data[155]\tllhd_macro_guard_80\tBUF_X2\ttop\t109.395\t408.205",
+        "0\tu_act/r_data[325]\tllhd_macro_guard_81\tBUF_X2\tbottom\t400.595\t76.6",
+        "0\tu_act/r_data[57]\tllhd_macro_guard_82\tBUF_X2\tbottom\t313.235\t76.6",
+        "0\tu_act/r_data[279]\tllhd_macro_guard_83\tBUF_X2\tbottom\t355.235\t76.6",
+        "0\tu_mxu/t_waddr[127]\tllhd_macro_guard_84\tBUF_X2\tleft\t483.445\t558.17",
+        "0\tu_mxu/t_raddr[0]\tllhd_macro_guard_85\tBUF_X2\tleft\t483.445\t451.21",
+        "0\tu_act/r_data[347]\tllhd_macro_guard_86\tBUF_X2\tbottom\t345.155\t76.6",
+        "0\tu_act/r_data[36]\tllhd_macro_guard_87\tBUF_X2\tbottom\t300.915\t76.6",
+        "0\tu_act/r_data[68]\tllhd_macro_guard_88\tBUF_X2\tbottom\t327.795\t76.6",
+        "0\tu_act/r_scale[11]\tllhd_macro_guard_89\tBUF_X2\tleft\t77.24\t148.81",
+        "0\tu_act/r_data[55]\tllhd_macro_guard_90\tBUF_X2\tbottom\t324.435\t76.6",
+        "0\tu_act/r_data[412]\tllhd_macro_guard_91\tBUF_X2\tbottom\t235.955\t76.6",
+        "0\tu_act/r_data[62]\tllhd_macro_guard_92\tBUF_X2\tbottom\t326.115\t76.6",
+        "0\tu_act/r_data[10]\tllhd_macro_guard_93\tBUF_X2\tbottom\t301.475\t76.6",
+        "0\tu_act/r_scale[4]\tllhd_macro_guard_94\tBUF_X2\tleft\t77.24\t151.05",
+        "0\tu_act/r_data[283]\tllhd_macro_guard_95\tBUF_X2\tbottom\t404.515\t76.6",
+        "0\tu_mxu/t_waddr[95]\tllhd_macro_guard_96\tBUF_X2\tleft\t483.445\t623.13",
+        "0\tu_act/r_data[329]\tllhd_macro_guard_97\tBUF_X2\tbottom\t350.195\t76.6",
+        "0\tu_act/r_data[369]\tllhd_macro_guard_98\tBUF_X2\tbottom\t338.435\t76.6",
+        "0\tu_act/r_data[146]\tllhd_macro_guard_99\tBUF_X2\ttop\t97.635\t408.205",
+        "0\tu_act/r_data[436]\tllhd_macro_guard_100\tBUF_X2\tbottom\t242.675\t76.6",
+        "0\tu_act/r_data[305]\tllhd_macro_guard_101\tBUF_X2\tbottom\t349.075\t76.6",
+        "0\tu_mxu/act_grp[7]\tllhd_macro_guard_102\tBUF_X2\tleft\t483.445\t447.85",
+        "0\tu_act/r_data[352]\tllhd_macro_guard_103\tBUF_X2\tbottom\t345.715\t76.6",
+        "0\tu_mxu/t_waddr[91]\tllhd_macro_guard_104\tBUF_X2\tleft\t483.445\t618.65",
+        "0\tu_act/r_data[337]\tllhd_macro_guard_105\tBUF_X2\tbottom\t342.355\t76.6",
+        "0\tu_act/r_data[405]\tllhd_macro_guard_106\tBUF_X2\tbottom\t212.995\t76.6",
+        "0\tu_act/r_data[360]\tllhd_macro_guard_107\tBUF_X2\tbottom\t402.275\t76.6",
+        "0\tu_act/r_data[394]\tllhd_macro_guard_108\tBUF_X2\tbottom\t230.915\t76.6",
+        "0\tu_act/r_data[397]\tllhd_macro_guard_109\tBUF_X2\tbottom\t211.875\t76.6",
+        "0\tu_act/r_data[145]\tllhd_macro_guard_110\tBUF_X2\ttop\t95.955\t408.205",
+        "0\tu_act/r_scale[125]\tllhd_macro_guard_111\tBUF_X2\tbottom\t107.155\t76.6",
+        "0\tu_mxu/a_addr[24]\tllhd_macro_guard_112\tBUF_X2\tbottom\t891.36\t76.6",
+        "0\tu_mxu/t_waddr[63]\tllhd_macro_guard_113\tBUF_X2\tleft\t483.445\t554.25",
+        "0\tu_act/r_data[149]\tllhd_macro_guard_114\tBUF_X2\ttop\t101.555\t408.205",
+        "0\tu_act/r_data[85]\tllhd_macro_guard_115\tBUF_X2\tbottom\t317.155\t76.6",
+        "0\tu_act/r_data[48]\tllhd_macro_guard_116\tBUF_X2\tbottom\t293.075\t76.6",
+        "0\tu_act/r_data[301]\tllhd_macro_guard_117\tBUF_X2\tbottom\t371.475\t76.6",
+        "0\tu_act/r_scale[3]\tllhd_macro_guard_118\tBUF_X2\tleft\t77.24\t145.45",
+        "0\tu_act/r_data[364]\tllhd_macro_guard_119\tBUF_X2\tbottom\t337.875\t76.6",
+        "0\tu_act/r_data[161]\tllhd_macro_guard_120\tBUF_X2\ttop\t125.635\t408.205",
+        "0\tu_act/r_data[410]\tllhd_macro_guard_121\tBUF_X2\tbottom\t235.395\t76.6",
+        "0\tu_act/r_data[340]\tllhd_macro_guard_122\tBUF_X2\tbottom\t366.435\t76.6",
+        "0\tu_act/r_data[166]\tllhd_macro_guard_123\tBUF_X2\ttop\t145.795\t408.205",
+        "0\tu_act/r_data[274]\tllhd_macro_guard_124\tBUF_X2\tbottom\t365.315\t76.6",
+        "0\tu_act/r_data[359]\tllhd_macro_guard_125\tBUF_X2\tbottom\t391.075\t76.6",
+        "0\tu_mxu/pf_uv[33]\tllhd_macro_guard_126\tBUF_X2\tleft\t483.445\t484.81",
+        "0\tu_mxu/t_waddr[46]\tllhd_macro_guard_127\tBUF_X2\tleft\t483.445\t566.01",
+        "0\tu_act/r_data[142]\tllhd_macro_guard_128\tBUF_X2\ttop\t135.715\t408.205",
+        "0\tu_act/r_data[25]\tllhd_macro_guard_129\tBUF_X2\tbottom\t277.395\t76.6",
+        "0\tu_act/r_data[167]\tllhd_macro_guard_130\tBUF_X2\ttop\t146.355\t408.205",
+        "0\tu_act/r_data[349]\tllhd_macro_guard_131\tBUF_X2\tbottom\t379.875\t76.6",
+        "0\tu_mxu/pf_uv[55]\tllhd_macro_guard_132\tBUF_X2\tleft\t483.445\t480.89",
+        "0\tu_mxu/t_raddr[27]\tllhd_macro_guard_133\tBUF_X2\tbottom\t877.92\t76.6",
+        "0\tu_mxu/t_waddr[47]\tllhd_macro_guard_134\tBUF_X2\tleft\t483.445\t573.85",
+        "0\tu_act/r_data[54]\tllhd_macro_guard_135\tBUF_X2\tbottom\t315.475\t76.6",
+        "0\tu_mxu/t_waddr[108]\tllhd_macro_guard_136\tBUF_X2\tleft\t483.445\t507.77",
+        "0\tu_act/r_data[144]\tllhd_macro_guard_137\tBUF_X2\ttop\t136.835\t408.205",
+        "0\tu_mxu/t_waddr[115]\tllhd_macro_guard_138\tBUF_X2\tleft\t483.445\t538.57",
+        "0\tu_act/r_data[404]\tllhd_macro_guard_139\tBUF_X2\tbottom\t233.715\t76.6",
+        "0\tu_act/r_data[63]\tllhd_macro_guard_140\tBUF_X2\tbottom\t314.915\t76.6",
+        "0\tu_mxu/pf_uv[56]\tllhd_macro_guard_141\tBUF_X2\tleft\t483.445\t477.53",
+        "0\tu_mxu/t_waddr[39]\tllhd_macro_guard_142\tBUF_X2\tleft\t483.445\t578.89",
+        "0\tu_mxu/t_wdata[22]\tllhd_macro_guard_143\tBUF_X2\tbottom\t790.56\t76.6",
+        "0\tu_act/r_data[272]\tllhd_macro_guard_144\tBUF_X2\tbottom\t402.835\t76.6",
+        "0\tu_act/r_data[384]\tllhd_macro_guard_145\tBUF_X2\tbottom\t262.835\t76.6",
+        "0\tu_mxu/pf_uv[41]\tllhd_macro_guard_146\tBUF_X2\tleft\t483.445\t470.25",
+        "0\tu_act/r_data[95]\tllhd_macro_guard_147\tBUF_X2\tbottom\t305.955\t76.6",
+        "0\tu_act/r_data[51]\tllhd_macro_guard_148\tBUF_X2\tbottom\t332.835\t76.6",
+        "0\tu_act/r_data[389]\tllhd_macro_guard_149\tBUF_X2\tbottom\t210.755\t76.6",
+        "0\tu_mxu/t_waddr[103]\tllhd_macro_guard_150\tBUF_X2\tleft\t483.445\t512.81",
+        "0\tu_act/r_data[362]\tllhd_macro_guard_151\tBUF_X2\tbottom\t391.635\t76.6",
+        "0\tu_act/r_data[163]\tllhd_macro_guard_152\tBUF_X2\ttop\t144.675\t408.205",
+        "0\tu_act/r_data[141]\tllhd_macro_guard_153\tBUF_X2\ttop\t127.315\t408.205",
+        "0\tu_act/r_data[375]\tllhd_macro_guard_154\tBUF_X2\tbottom\t353.555\t76.6",
+        "0\tu_mxu/pf_uv[35]\tllhd_macro_guard_155\tBUF_X2\tleft\t483.445\t470.81",
+        "0\tu_act/r_data[483]\tllhd_macro_guard_156\tBUF_X2\tbottom\t255.555\t76.6"
+      ]
+    },
+    "macro-output-guards-joint0_drive1.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_act/r_data[7]\tllhd_macro_guard_157\tBUF_X2\tbottom\t322.755\t76.6",
+        "0\tu_mxu/t_waddr[104]\tllhd_macro_guard_158\tBUF_X2\tleft\t483.445\t511.13",
+        "0\tu_act/r_data[377]\tllhd_macro_guard_159\tBUF_X2\tbottom\t383.795\t76.6",
+        "0\tu_mxu/t_waddr[119]\tllhd_macro_guard_160\tBUF_X2\tleft\t483.445\t546.97",
+        "0\tu_mxu/t_waddr[67]\tllhd_macro_guard_161\tBUF_X2\tleft\t483.445\t543.61",
+        "0\tu_act/r_data[406]\tllhd_macro_guard_162\tBUF_X2\tbottom\t234.275\t76.6",
+        "0\tu_mxu/t_wdata[37]\tllhd_macro_guard_163\tBUF_X2\tleft\t483.445\t634.33",
+        "0\tu_mxu/t_waddr[34]\tllhd_macro_guard_164\tBUF_X2\tleft\t483.445\t563.21",
+        "0\tu_act/r_data[101]\tllhd_macro_guard_165\tBUF_X2\tbottom\t279.635\t76.6",
+        "0\tu_mxu/a_addr[7]\tllhd_macro_guard_166\tBUF_X2\tbottom\t918.24\t76.6",
+        "0\tu_act/r_data[373]\tllhd_macro_guard_167\tBUF_X2\tbottom\t354.675\t76.6",
+        "0\tu_mxu/t_waddr[75]\tllhd_macro_guard_168\tBUF_X2\tleft\t483.445\t537.45"
+      ]
+    },
+    "macro-output-guards-joint0_drive10.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_act/r_data[318]\tllhd_macro_guard_186\tBUF_X2\tbottom\t359.715\t76.6"
+      ]
+    },
+    "macro-output-guards-joint0_drive11.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_act/r_data[108]\tllhd_macro_guard_187\tBUF_X2\tbottom\t266.755\t76.6",
+        "0\tu_act/r_data[316]\tllhd_macro_guard_188\tBUF_X2\tbottom\t359.155\t76.6",
+        "0\tu_act/r_data[304]\tllhd_macro_guard_189\tBUF_X2\tbottom\t374.275\t76.6"
+      ]
+    },
+    "macro-output-guards-joint0_drive12.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/t_raddr[76]\tllhd_macro_guard_190\tBUF_X2\tbottom\t950.72\t76.6"
+      ]
+    },
+    "macro-output-guards-joint0_drive13.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint0_drive14.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint0_drive15.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_act/r_data[293]\tllhd_macro_guard_191\tBUF_X2\tbottom\t347.395\t76.6"
+      ]
+    },
+    "macro-output-guards-joint0_drive16.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint0_drive17.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/t_waddr[70]\tllhd_macro_guard_192\tBUF_X2\tleft\t483.445\t545.29",
+        "0\tu_mxu/act_grp[3]\tllhd_macro_guard_193\tBUF_X2\tleft\t483.445\t433.85"
+      ]
+    },
+    "macro-output-guards-joint0_drive18.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint0_drive19.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_act/r_data[485]\tllhd_macro_guard_194\tBUF_X2\tbottom\t256.115\t76.6"
+      ]
+    },
+    "macro-output-guards-joint0_drive2.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_act/r_data[336]\tllhd_macro_guard_169\tBUF_X2\tbottom\t377.075\t76.6",
+        "0\tu_act/r_data[112]\tllhd_macro_guard_170\tBUF_X2\tbottom\t282.995\t76.6",
+        "0\tu_mxu/t_waddr[36]\tllhd_macro_guard_171\tBUF_X2\tleft\t483.445\t571.05",
+        "0\tu_act/r_data[357]\tllhd_macro_guard_172\tBUF_X2\tbottom\t340.675\t76.6",
+        "0\tu_mxu/act_grp[2]\tllhd_macro_guard_173\tBUF_X2\tleft\t483.445\t427.13"
+      ]
+    },
+    "macro-output-guards-joint0_drive3.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_act/r_data[481]\tllhd_macro_guard_174\tBUF_X2\tbottom\t254.995\t76.6",
+        "0\tu_mxu/t_raddr[36]\tllhd_macro_guard_175\tBUF_X2\tbottom\t934.48\t76.6",
+        "0\tu_act/r_scale[116]\tllhd_macro_guard_176\tBUF_X2\tbottom\t116.115\t76.6"
+      ]
+    },
+    "macro-output-guards-joint0_drive4.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/t_waddr[72]\tllhd_macro_guard_177\tBUF_X2\tleft\t483.445\t543.05",
+        "0\tu_act/r_data[122]\tllhd_macro_guard_178\tBUF_X2\tbottom\t267.315\t76.6"
+      ]
+    },
+    "macro-output-guards-joint0_drive5.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/t_wdata[35]\tllhd_macro_guard_179\tBUF_X2\tleft\t483.445\t633.21",
+        "0\tu_mxu/t_wen[3]\tllhd_macro_guard_180\tBUF_X2\tleft\t483.445\t643.85"
+      ]
+    },
+    "macro-output-guards-joint0_drive6.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint0_drive7.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_act/r_data[489]\tllhd_macro_guard_181\tBUF_X2\tbottom\t257.235\t76.6",
+        "0\tu_act/r_data[81]\tllhd_macro_guard_182\tBUF_X2\tbottom\t316.595\t76.6"
+      ]
+    },
+    "macro-output-guards-joint0_drive8.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/t_waddr[20]\tllhd_macro_guard_183\tBUF_X2\tleft\t483.445\t614.73",
+        "0\tu_mxu/t_waddr[40]\tllhd_macro_guard_184\tBUF_X2\tleft\t483.445\t575.53"
+      ]
+    },
+    "macro-output-guards-joint0_drive9.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/t_waddr[44]\tllhd_macro_guard_185\tBUF_X2\tleft\t483.445\t559.85"
+      ]
+    },
+    "macro-output-guards-joint1_drive0.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint1_drive1.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/t_waddr[55]\tllhd_macro_guard_195\tBUF_X2\tleft\t483.445\t572.17",
+        "0\tu_mxu/t_raddr[4]\tllhd_macro_guard_196\tBUF_X2\tbottom\t761.44\t76.6"
+      ]
+    },
+    "macro-output-guards-joint1_drive10.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint1_drive11.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint1_drive12.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/t_waddr[14]\tllhd_macro_guard_201\tBUF_X2\tleft\t483.445\t597.37"
+      ]
+    },
+    "macro-output-guards-joint1_drive13.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint1_drive14.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/t_waddr[100]\tllhd_macro_guard_202\tBUF_X2\tleft\t483.445\t510.57"
+      ]
+    },
+    "macro-output-guards-joint1_drive15.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint1_drive16.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/act_grp[6]\tllhd_macro_guard_203\tBUF_X2\tleft\t483.445\t422.09"
+      ]
+    },
+    "macro-output-guards-joint1_drive17.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_act/r_data[61]\tllhd_macro_guard_204\tBUF_X2\tbottom\t308.755\t76.6"
+      ]
+    },
+    "macro-output-guards-joint1_drive18.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_act/r_data[320]\tllhd_macro_guard_205\tBUF_X2\tbottom\t351.315\t76.6"
+      ]
+    },
+    "macro-output-guards-joint1_drive19.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_act/r_data[22]\tllhd_macro_guard_206\tBUF_X2\tbottom\t292.515\t76.6",
+        "0\tu_act/r_data[331]\tllhd_macro_guard_207\tBUF_X2\tbottom\t338.995\t76.6"
+      ]
+    },
+    "macro-output-guards-joint1_drive2.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_act/r_scale[41]\tllhd_macro_guard_197\tBUF_X2\tleft\t77.24\t163.93",
+        "0\tu_mxu/t_waddr[80]\tllhd_macro_guard_198\tBUF_X2\tleft\t483.445\t540.81",
+        "0\tu_act/r_data[350]\tllhd_macro_guard_199\tBUF_X2\tbottom\t356.355\t76.6"
+      ]
+    },
+    "macro-output-guards-joint1_drive3.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint1_drive4.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint1_drive5.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint1_drive6.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint1_drive7.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint1_drive8.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/t_waddr[66]\tllhd_macro_guard_200\tBUF_X2\tleft\t483.445\t541.37"
+      ]
+    },
+    "macro-output-guards-joint1_drive9.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint2_drive0.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint2_drive1.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint2_drive10.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/t_waddr[32]\tllhd_macro_guard_209\tBUF_X2\tleft\t483.445\t564.89"
+      ]
+    },
+    "macro-output-guards-joint2_drive11.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_act/r_scale[45]\tllhd_macro_guard_210\tBUF_X2\tleft\t77.24\t171.21"
+      ]
+    },
+    "macro-output-guards-joint2_drive12.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint2_drive13.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint2_drive14.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint2_drive2.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint2_drive3.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint2_drive4.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint2_drive5.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_act/r_data[335]\tllhd_macro_guard_208\tBUF_X2\tbottom\t349.635\t76.6"
+      ]
+    },
+    "macro-output-guards-joint2_drive6.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint2_drive7.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint2_drive8.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint2_drive9.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint3_drive0.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint3_drive1.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint3_drive2.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/t_waddr[62]\tllhd_macro_guard_211\tBUF_X2\tleft\t483.445\t551.45"
+      ]
+    },
+    "macro-output-guards-joint3_drive3.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint3_drive4.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint3_drive5.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint4_drive0.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/t_waddr[4]\tllhd_macro_guard_212\tBUF_X2\tleft\t483.445\t595.69",
+        "0\tu_mxu/act_grp[1]\tllhd_macro_guard_213\tBUF_X2\tleft\t483.445\t420.97"
+      ]
+    },
+    "macro-output-guards-joint4_drive1.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint4_drive2.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/t_waddr[28]\tllhd_macro_guard_214\tBUF_X2\tleft\t483.445\t610.81"
+      ]
+    },
+    "macro-output-guards-joint4_drive3.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint4_drive4.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint4_drive5.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_act/r_data[387]\tllhd_macro_guard_215\tBUF_X2\tbottom\t210.195\t76.6"
+      ]
+    },
+    "macro-output-guards-joint4_drive6.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint4_drive7.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint4_drive8.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint4_drive9.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint5_drive0.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_act/r_scale[6]\tllhd_macro_guard_216\tBUF_X2\tleft\t77.24\t156.65"
+      ]
+    },
+    "macro-output-guards-joint5_drive1.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint5_drive10.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/t_waddr[30]\tllhd_macro_guard_218\tBUF_X2\tleft\t483.445\t616.41"
+      ]
+    },
+    "macro-output-guards-joint5_drive11.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint5_drive12.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint5_drive13.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint5_drive14.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint5_drive2.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint5_drive3.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": [
+        "0\tu_mxu/t_waddr[116]\tllhd_macro_guard_217\tBUF_X2\tleft\t483.445\t542.49"
+      ]
+    },
+    "macro-output-guards-joint5_drive4.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint5_drive5.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint5_drive6.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint5_drive7.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint5_drive8.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "macro-output-guards-joint5_drive9.tsv": {
+      "header": "round\tpin\tinstance\tmaster\tside\tx_um\ty_um",
+      "rows": []
+    },
+    "targeted-drive-initial.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire18075\tBUF_X4\tBUF_X32",
+        "0\twire18133\tBUF_X4\tBUF_X32",
+        "0\twire18091\tBUF_X4\tBUF_X32",
+        "0\twire18151\tBUF_X4\tBUF_X16",
+        "0\twire18143\tBUF_X4\tBUF_X16",
+        "0\twire18120\tBUF_X4\tBUF_X16",
+        "0\twire18138\tBUF_X4\tBUF_X16",
+        "0\twire18077\tBUF_X4\tBUF_X16",
+        "0\twire18166\tBUF_X4\tBUF_X16",
+        "0\twire18083\tBUF_X4\tBUF_X16",
+        "0\twire18161\tBUF_X4\tBUF_X16",
+        "0\twire18171\tBUF_X4\tBUF_X16",
+        "0\twire18084\tBUF_X4\tBUF_X16",
+        "0\twire18118\tBUF_X4\tBUF_X16",
+        "0\twire18116\tBUF_X4\tBUF_X16",
+        "0\twire18149\tBUF_X4\tBUF_X16",
+        "0\twire18147\tBUF_X4\tBUF_X16",
+        "0\twire18137\tBUF_X4\tBUF_X16",
+        "0\twire15464\tBUF_X4\tBUF_X16",
+        "0\twire18167\tBUF_X4\tBUF_X16",
+        "0\twire18072\tBUF_X4\tBUF_X16",
+        "0\twire18081\tBUF_X4\tBUF_X16",
+        "0\twire18160\tBUF_X4\tBUF_X8",
+        "0\tplace14259\tBUF_X1\tBUF_X2",
+        "0\tplace13294\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint0_drive0.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire15698\tBUF_X4\tBUF_X32",
+        "0\tplace13295\tBUF_X2\tBUF_X16",
+        "0\twire15666\tBUF_X4\tBUF_X32",
+        "0\twire16494\tBUF_X4\tBUF_X32",
+        "0\twire16468\tBUF_X4\tBUF_X32",
+        "0\twire15471\tBUF_X4\tBUF_X16",
+        "0\twire16104\tBUF_X4\tBUF_X16",
+        "0\twire16469\tBUF_X4\tBUF_X16",
+        "0\twire16118\tBUF_X4\tBUF_X16",
+        "0\twire16061\tBUF_X4\tBUF_X16",
+        "0\twire16467\tBUF_X4\tBUF_X16",
+        "0\twire14939\tBUF_X4\tBUF_X8",
+        "0\twire16396\tBUF_X4\tBUF_X16",
+        "0\twire4731\tBUF_X4\tBUF_X8",
+        "0\twire16056\tBUF_X4\tBUF_X16",
+        "0\twire18508\tBUF_X4\tBUF_X8",
+        "0\twire15158\tBUF_X4\tBUF_X8",
+        "0\twire14958\tBUF_X4\tBUF_X8",
+        "0\twire15962\tBUF_X4\tBUF_X16",
+        "0\twire4725\tBUF_X4\tBUF_X8",
+        "0\twire14924\tBUF_X4\tBUF_X8",
+        "0\twire18139\tBUF_X4\tBUF_X8",
+        "0\twire15657\tBUF_X4\tBUF_X8",
+        "0\tplace13109\tBUF_X1\tBUF_X2",
+        "0\tplace13140\tBUF_X1\tBUF_X2",
+        "0\tplace12661\tBUF_X1\tBUF_X2",
+        "0\tplace12812\tBUF_X1\tBUF_X2",
+        "0\tplace13057\tBUF_X1\tBUF_X2",
+        "0\tplace13606\tBUF_X1\tBUF_X2",
+        "0\tplace13459\tBUF_X1\tBUF_X2",
+        "0\twire15533\tBUF_X4\tBUF_X8",
+        "0\tinput205\tBUF_X1\tBUF_X2",
+        "0\twire14961\tBUF_X4\tBUF_X8",
+        "0\tplace12171\tBUF_X1\tBUF_X2",
+        "0\tplace14110\tBUF_X1\tBUF_X2",
+        "0\tinput1022\tBUF_X1\tBUF_X2",
+        "0\tplace14169\tBUF_X1\tBUF_X2",
+        "0\tplace14174\tBUF_X1\tBUF_X2",
+        "0\tplace13354\tBUF_X1\tBUF_X2",
+        "0\tplace13296\tBUF_X1\tBUF_X2",
+        "0\tplace13557\tBUF_X1\tBUF_X2",
+        "0\tplace13417\tBUF_X1\tBUF_X2",
+        "0\tplace11146\tBUF_X1\tBUF_X2",
+        "0\tplace13061\tBUF_X1\tBUF_X2",
+        "0\tplace12671\tBUF_X1\tBUF_X2",
+        "0\tplace12305\tBUF_X1\tBUF_X2",
+        "0\tplace14366\tBUF_X1\tBUF_X2",
+        "0\tplace12992\tBUF_X1\tBUF_X2",
+        "0\twire4679\tBUF_X4\tBUF_X8",
+        "0\tplace12493\tBUF_X1\tBUF_X2",
+        "0\tplace13328\tBUF_X1\tBUF_X2",
+        "0\tplace12634\tBUF_X1\tBUF_X2",
+        "0\tplace13234\tBUF_X1\tBUF_X2",
+        "0\tplace13075\tBUF_X1\tBUF_X2",
+        "0\tplace11600\tBUF_X1\tBUF_X2",
+        "0\tplace11606\tBUF_X1\tBUF_X2",
+        "0\tplace12825\tBUF_X1\tBUF_X2",
+        "0\tplace12414\tBUF_X1\tBUF_X2",
+        "0\tinput557\tBUF_X1\tBUF_X2",
+        "0\tplace11281\tBUF_X1\tBUF_X2",
+        "0\tplace12958\tBUF_X1\tBUF_X2",
+        "0\tplace12585\tBUF_X1\tBUF_X2",
+        "0\tplace13515\tBUF_X1\tBUF_X2",
+        "0\tplace12628\tBUF_X1\tBUF_X2",
+        "0\tplace13174\tBUF_X1\tBUF_X2",
+        "0\tinput438\tBUF_X1\tBUF_X2",
+        "0\tplace12510\tBUF_X1\tBUF_X2",
+        "0\twire16108\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint0_drive1.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\tplace14146\tBUF_X1\tBUF_X8",
+        "0\twire15676\tBUF_X4\tBUF_X32",
+        "0\twire15690\tBUF_X4\tBUF_X32",
+        "0\twire17563\tBUF_X4\tBUF_X32",
+        "0\twire15691\tBUF_X4\tBUF_X16",
+        "0\twire15960\tBUF_X4\tBUF_X16",
+        "0\twire4491\tBUF_X4\tBUF_X8",
+        "0\twire16784\tBUF_X4\tBUF_X16",
+        "0\twire16050\tBUF_X4\tBUF_X16",
+        "0\tplace13931\tBUF_X4\tBUF_X8",
+        "0\twire14968\tBUF_X4\tBUF_X8",
+        "0\twire16465\tBUF_X4\tBUF_X8",
+        "0\twire18405\tBUF_X4\tBUF_X8",
+        "0\twire16089\tBUF_X4\tBUF_X8",
+        "0\twire15999\tBUF_X4\tBUF_X8",
+        "0\twire16001\tBUF_X4\tBUF_X8",
+        "0\twire16732\tBUF_X4\tBUF_X8",
+        "0\twire16007\tBUF_X4\tBUF_X8",
+        "0\twire16708\tBUF_X4\tBUF_X8",
+        "0\twire15552\tBUF_X4\tBUF_X8",
+        "0\twire15944\tBUF_X4\tBUF_X8",
+        "0\tplace11812\tBUF_X1\tBUF_X2",
+        "0\tplace12978\tBUF_X1\tBUF_X2",
+        "0\twire15518\tBUF_X4\tBUF_X8",
+        "0\tplace12637\tBUF_X1\tBUF_X2",
+        "0\tplace12993\tBUF_X1\tBUF_X2",
+        "0\tplace13011\tBUF_X1\tBUF_X2",
+        "0\tplace11937\tBUF_X1\tBUF_X2",
+        "0\toutput1363\tBUF_X1\tBUF_X2",
+        "0\tplace13405\tBUF_X1\tBUF_X2",
+        "0\tplace13446\tBUF_X1\tBUF_X2",
+        "0\tplace13004\tBUF_X1\tBUF_X2",
+        "0\tplace13288\tBUF_X1\tBUF_X2",
+        "0\tplace13007\tBUF_X1\tBUF_X2",
+        "0\tplace13310\tBUF_X1\tBUF_X2",
+        "0\tplace11792\tBUF_X1\tBUF_X2",
+        "0\tplace11608\tBUF_X1\tBUF_X2",
+        "0\tplace13216\tBUF_X1\tBUF_X2",
+        "0\twire15704\tBUF_X8\tBUF_X16",
+        "0\twire15562\tBUF_X4\tBUF_X8",
+        "0\twire15327\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint0_drive10.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire15701\tBUF_X4\tBUF_X16",
+        "0\twire4683\tBUF_X4\tBUF_X16",
+        "0\twire4796\tBUF_X4\tBUF_X16",
+        "0\twire14959\tBUF_X4\tBUF_X16",
+        "0\twire4922\tBUF_X4\tBUF_X16",
+        "0\twire16054\tBUF_X4\tBUF_X16",
+        "0\twire16053\tBUF_X4\tBUF_X16",
+        "0\twire18413\tBUF_X4\tBUF_X8",
+        "0\twire16787\tBUF_X4\tBUF_X8",
+        "0\twire4966\tBUF_X4\tBUF_X8",
+        "0\twire14653\tBUF_X4\tBUF_X8",
+        "0\twire18121\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint0_drive11.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\tplace13446\tBUF_X2\tBUF_X8",
+        "0\tllhd_macro_guard_127\tBUF_X2\tBUF_X8",
+        "0\twire16005\tBUF_X4\tBUF_X16",
+        "0\twire16867\tBUF_X4\tBUF_X16",
+        "0\twire15574\tBUF_X4\tBUF_X8",
+        "0\twire4731\tBUF_X8\tBUF_X16",
+        "0\twire14963\tBUF_X4\tBUF_X16",
+        "0\twire14924\tBUF_X8\tBUF_X16",
+        "0\twire15461\tBUF_X4\tBUF_X16",
+        "0\twire16818\tBUF_X4\tBUF_X8",
+        "0\tplace13366\tBUF_X1\tBUF_X2",
+        "0\tplace13336\tBUF_X1\tBUF_X2",
+        "0\tplace14184\tBUF_X1\tBUF_X2",
+        "0\tplace12476\tBUF_X1\tBUF_X2",
+        "0\twire15885\tBUF_X4\tBUF_X8",
+        "0\tplace12662\tBUF_X1\tBUF_X2"
+      ]
+    },
+    "targeted-drive-joint0_drive12.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire17674\tBUF_X4\tBUF_X32",
+        "0\twire14975\tBUF_X4\tBUF_X8",
+        "0\tplace12497\tBUF_X1\tBUF_X2",
+        "0\tplace13222\tBUF_X1\tBUF_X2"
+      ]
+    },
+    "targeted-drive-joint0_drive13.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire14923\tBUF_X4\tBUF_X16",
+        "0\twire16112\tBUF_X4\tBUF_X16",
+        "0\twire15454\tBUF_X4\tBUF_X16",
+        "0\twire4829\tBUF_X4\tBUF_X16",
+        "0\twire15335\tBUF_X4\tBUF_X16",
+        "0\twire4486\tBUF_X4\tBUF_X8",
+        "0\twire14984\tBUF_X4\tBUF_X16",
+        "0\twire14717\tBUF_X4\tBUF_X8",
+        "0\twire17566\tBUF_X4\tBUF_X8",
+        "0\tplace13151\tBUF_X2\tBUF_X4",
+        "0\tplace10617\tBUF_X16\tBUF_X32",
+        "0\twire14715\tBUF_X4\tBUF_X8",
+        "0\twire15990\tBUF_X4\tBUF_X8",
+        "0\twire16169\tBUF_X4\tBUF_X8",
+        "0\twire16048\tBUF_X4\tBUF_X8",
+        "0\twire15724\tBUF_X4\tBUF_X8",
+        "0\twire5072\tBUF_X4\tBUF_X8",
+        "0\twire16506\tBUF_X4\tBUF_X8",
+        "0\twire18435\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint0_drive14.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire17575\tBUF_X4\tBUF_X16",
+        "0\twire15468\tBUF_X4\tBUF_X16",
+        "0\twire16504\tBUF_X4\tBUF_X16",
+        "0\twire4772\tBUF_X4\tBUF_X16",
+        "0\twire18122\tBUF_X4\tBUF_X16",
+        "0\twire15991\tBUF_X4\tBUF_X16",
+        "0\twire16721\tBUF_X4\tBUF_X8",
+        "0\twire5068\tBUF_X4\tBUF_X8",
+        "0\twire14925\tBUF_X4\tBUF_X8",
+        "0\twire15958\tBUF_X4\tBUF_X8",
+        "0\twire15491\tBUF_X4\tBUF_X8",
+        "0\tplace10770\tBUF_X1\tBUF_X2",
+        "0\tplace12105\tBUF_X1\tBUF_X2",
+        "0\twire14918\tBUF_X4\tBUF_X8",
+        "0\twire17556\tBUF_X4\tBUF_X8",
+        "0\twire4607\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint0_drive15.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire15689\tBUF_X4\tBUF_X32",
+        "0\twire15755\tBUF_X4\tBUF_X16",
+        "0\twire17574\tBUF_X4\tBUF_X16",
+        "0\tplace10664\tBUF_X1\tBUF_X4",
+        "0\tplace13927\tBUF_X4\tBUF_X16",
+        "0\twire16020\tBUF_X4\tBUF_X16",
+        "0\twire15945\tBUF_X4\tBUF_X8",
+        "0\twire16060\tBUF_X4\tBUF_X8",
+        "0\twire16702\tBUF_X4\tBUF_X8",
+        "0\twire15394\tBUF_X4\tBUF_X8",
+        "0\twire15994\tBUF_X4\tBUF_X8",
+        "0\tplace12489\tBUF_X1\tBUF_X2"
+      ]
+    },
+    "targeted-drive-joint0_drive16.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire15964\tBUF_X4\tBUF_X16",
+        "0\twire14971\tBUF_X4\tBUF_X8",
+        "0\tplace14001\tBUF_X4\tBUF_X8",
+        "0\twire14936\tBUF_X4\tBUF_X8",
+        "0\twire15959\tBUF_X4\tBUF_X8",
+        "0\toutput1140\tBUF_X1\tBUF_X2",
+        "0\tplace11497\tBUF_X1\tBUF_X2",
+        "0\twire14631\tBUF_X4\tBUF_X8",
+        "0\twire16062\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint0_drive17.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire15663\tBUF_X4\tBUF_X16",
+        "0\twire15975\tBUF_X4\tBUF_X16",
+        "0\twire18367\tBUF_X4\tBUF_X16",
+        "0\twire15441\tBUF_X4\tBUF_X8",
+        "0\twire14920\tBUF_X4\tBUF_X8",
+        "0\twire15788\tBUF_X4\tBUF_X8",
+        "0\twire15589\tBUF_X4\tBUF_X8",
+        "0\twire16675\tBUF_X4\tBUF_X8",
+        "0\twire17348\tBUF_X4\tBUF_X8",
+        "0\twire16113\tBUF_X4\tBUF_X8",
+        "0\tplace11746\tBUF_X1\tBUF_X2",
+        "0\tplace11773\tBUF_X1\tBUF_X2",
+        "0\twire4693\tBUF_X4\tBUF_X8",
+        "0\twire15953\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint0_drive18.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire16115\tBUF_X4\tBUF_X16",
+        "0\twire14972\tBUF_X4\tBUF_X16",
+        "0\twire16011\tBUF_X4\tBUF_X16",
+        "0\twire18146\tBUF_X4\tBUF_X8",
+        "0\twire14955\tBUF_X8\tBUF_X16",
+        "0\twire15972\tBUF_X4\tBUF_X8",
+        "0\twire18517\tBUF_X4\tBUF_X8",
+        "0\twire16728\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint0_drive19.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire14941\tBUF_X8\tBUF_X16",
+        "0\twire16004\tBUF_X4\tBUF_X16",
+        "0\twire14990\tBUF_X4\tBUF_X16",
+        "0\twire15660\tBUF_X4\tBUF_X16",
+        "0\twire15158\tBUF_X8\tBUF_X16",
+        "0\twire16022\tBUF_X4\tBUF_X8",
+        "0\twire15717\tBUF_X4\tBUF_X8",
+        "0\twire15424\tBUF_X4\tBUF_X8",
+        "0\tplace13054\tBUF_X1\tBUF_X2",
+        "0\tplace12757\tBUF_X2\tBUF_X4",
+        "0\twire16120\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint0_drive2.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\tplace13493\tBUF_X1\tBUF_X8",
+        "0\twire15970\tBUF_X4\tBUF_X16",
+        "0\twire18368\tBUF_X4\tBUF_X16",
+        "0\twire16387\tBUF_X4\tBUF_X16",
+        "0\tplace11554\tBUF_X4\tBUF_X16",
+        "0\twire18497\tBUF_X4\tBUF_X16",
+        "0\twire15364\tBUF_X4\tBUF_X8",
+        "0\tplace13142\tBUF_X2\tBUF_X4",
+        "0\twire15976\tBUF_X4\tBUF_X16",
+        "0\twire16006\tBUF_X4\tBUF_X8",
+        "0\twire16058\tBUF_X4\tBUF_X8",
+        "0\twire16744\tBUF_X4\tBUF_X8",
+        "0\twire15366\tBUF_X4\tBUF_X8",
+        "0\tplace11807\tBUF_X1\tBUF_X2",
+        "0\twire16126\tBUF_X4\tBUF_X8",
+        "0\tplace13025\tBUF_X1\tBUF_X2",
+        "0\tplace12788\tBUF_X1\tBUF_X2",
+        "0\tplace11394\tBUF_X1\tBUF_X2",
+        "0\tplace12291\tBUF_X1\tBUF_X2",
+        "0\tplace11777\tBUF_X1\tBUF_X2",
+        "0\tplace10988\tBUF_X1\tBUF_X2",
+        "0\tinput181\tBUF_X1\tBUF_X2",
+        "0\tplace11602\tBUF_X1\tBUF_X2",
+        "0\tplace13372\tBUF_X1\tBUF_X2",
+        "0\tplace12370\tBUF_X1\tBUF_X2",
+        "0\tplace11110\tBUF_X1\tBUF_X2",
+        "0\tplace13939\tBUF_X4\tBUF_X8",
+        "0\twire16726\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint0_drive3.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire18499\tBUF_X4\tBUF_X32",
+        "0\twire15681\tBUF_X4\tBUF_X32",
+        "0\twire15696\tBUF_X4\tBUF_X32",
+        "0\twire16508\tBUF_X4\tBUF_X32",
+        "0\twire15700\tBUF_X4\tBUF_X16",
+        "0\twire15987\tBUF_X4\tBUF_X16",
+        "0\twire15979\tBUF_X4\tBUF_X16",
+        "0\twire16043\tBUF_X4\tBUF_X16",
+        "0\twire17585\tBUF_X4\tBUF_X16",
+        "0\twire15989\tBUF_X4\tBUF_X16",
+        "0\twire18127\tBUF_X4\tBUF_X16",
+        "0\twire15358\tBUF_X4\tBUF_X8",
+        "0\twire18387\tBUF_X4\tBUF_X8",
+        "0\twire15573\tBUF_X4\tBUF_X8",
+        "0\twire15982\tBUF_X4\tBUF_X8",
+        "0\twire15377\tBUF_X4\tBUF_X8",
+        "0\twire15382\tBUF_X4\tBUF_X8",
+        "0\twire16427\tBUF_X4\tBUF_X8",
+        "0\tplace12968\tBUF_X1\tBUF_X2",
+        "0\tplace13549\tBUF_X1\tBUF_X2",
+        "0\tplace13533\tBUF_X1\tBUF_X2",
+        "0\tplace11245\tBUF_X1\tBUF_X2",
+        "0\tplace13306\tBUF_X1\tBUF_X2",
+        "0\tplace12862\tBUF_X1\tBUF_X2",
+        "0\tinput834\tBUF_X1\tBUF_X2",
+        "0\twire14933\tBUF_X4\tBUF_X8",
+        "0\twire15951\tBUF_X4\tBUF_X8",
+        "0\twire15981\tBUF_X4\tBUF_X8",
+        "0\tplace12024\tBUF_X2\tBUF_X4",
+        "0\tplace13108\tBUF_X2\tBUF_X4"
+      ]
+    },
+    "targeted-drive-joint0_drive4.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire15234\tBUF_X4\tBUF_X32",
+        "0\twire16810\tBUF_X4\tBUF_X16",
+        "0\tplace13459\tBUF_X2\tBUF_X8",
+        "0\tplace13890\tBUF_X2\tBUF_X8",
+        "0\twire15952\tBUF_X4\tBUF_X16",
+        "0\twire16519\tBUF_X4\tBUF_X16",
+        "0\twire16373\tBUF_X4\tBUF_X16",
+        "0\twire17591\tBUF_X4\tBUF_X16",
+        "0\twire15643\tBUF_X4\tBUF_X16",
+        "0\twire18142\tBUF_X4\tBUF_X8",
+        "0\twire14955\tBUF_X4\tBUF_X8",
+        "0\twire15783\tBUF_X4\tBUF_X8",
+        "0\twire15997\tBUF_X4\tBUF_X8",
+        "0\twire16055\tBUF_X4\tBUF_X8",
+        "0\twire16195\tBUF_X4\tBUF_X8",
+        "0\twire16047\tBUF_X4\tBUF_X8",
+        "0\twire15797\tBUF_X4\tBUF_X8",
+        "0\twire16750\tBUF_X4\tBUF_X8",
+        "0\tplace13063\tBUF_X1\tBUF_X2",
+        "0\tplace12866\tBUF_X1\tBUF_X2",
+        "0\tplace12804\tBUF_X1\tBUF_X2",
+        "0\tplace12386\tBUF_X1\tBUF_X2",
+        "0\tplace13862\tBUF_X1\tBUF_X2",
+        "0\tplace12643\tBUF_X1\tBUF_X2",
+        "0\tinput748\tBUF_X1\tBUF_X2",
+        "0\tplace13507\tBUF_X1\tBUF_X2",
+        "0\tplace12402\tBUF_X1\tBUF_X2",
+        "0\tplace12462\tBUF_X1\tBUF_X2",
+        "0\tplace13065\tBUF_X1\tBUF_X2",
+        "0\tplace11004\tBUF_X1\tBUF_X2",
+        "0\tplace12999\tBUF_X1\tBUF_X2",
+        "0\tplace12764\tBUF_X1\tBUF_X2",
+        "0\twire16621\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint0_drive5.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire15279\tBUF_X4\tBUF_X32",
+        "0\twire15697\tBUF_X4\tBUF_X32",
+        "0\twire4944\tBUF_X4\tBUF_X16",
+        "0\twire18501\tBUF_X4\tBUF_X16",
+        "0\twire16460\tBUF_X4\tBUF_X16",
+        "0\twire18504\tBUF_X4\tBUF_X16",
+        "0\twire14909\tBUF_X4\tBUF_X16",
+        "0\tplace13946\tBUF_X4\tBUF_X16",
+        "0\twire17655\tBUF_X4\tBUF_X8",
+        "0\twire15948\tBUF_X4\tBUF_X16",
+        "0\twire16445\tBUF_X4\tBUF_X8",
+        "0\twire18148\tBUF_X4\tBUF_X8",
+        "0\twire16700\tBUF_X4\tBUF_X8",
+        "0\twire15653\tBUF_X4\tBUF_X8",
+        "0\twire15530\tBUF_X4\tBUF_X8",
+        "0\tplace12063\tBUF_X1\tBUF_X2",
+        "0\twire15378\tBUF_X4\tBUF_X8",
+        "0\twire17347\tBUF_X4\tBUF_X8",
+        "0\tplace12979\tBUF_X1\tBUF_X2",
+        "0\tplace12482\tBUF_X1\tBUF_X2",
+        "0\tinput686\tBUF_X1\tBUF_X2",
+        "0\twire16490\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint0_drive6.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire15360\tBUF_X4\tBUF_X16",
+        "0\twire18531\tBUF_X4\tBUF_X16",
+        "0\twire16503\tBUF_X4\tBUF_X16",
+        "0\twire17272\tBUF_X4\tBUF_X16",
+        "0\twire16000\tBUF_X4\tBUF_X16",
+        "0\tplace14297\tBUF_X2\tBUF_X8",
+        "0\twire14951\tBUF_X4\tBUF_X8",
+        "0\twire16686\tBUF_X4\tBUF_X8",
+        "0\twire4836\tBUF_X4\tBUF_X8",
+        "0\twire15969\tBUF_X4\tBUF_X8",
+        "0\twire15986\tBUF_X4\tBUF_X8",
+        "0\twire16002\tBUF_X4\tBUF_X8",
+        "0\tplace12813\tBUF_X1\tBUF_X2",
+        "0\tplace14157\tBUF_X1\tBUF_X2",
+        "0\tplace11784\tBUF_X1\tBUF_X2",
+        "0\tplace13899\tBUF_X1\tBUF_X2",
+        "0\twire15725\tBUF_X4\tBUF_X8",
+        "0\twire16684\tBUF_X4\tBUF_X8",
+        "0\twire15489\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint0_drive7.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire16488\tBUF_X4\tBUF_X32",
+        "0\twire15682\tBUF_X4\tBUF_X16",
+        "0\twire4676\tBUF_X4\tBUF_X16",
+        "0\twire17650\tBUF_X4\tBUF_X16",
+        "0\twire18506\tBUF_X4\tBUF_X16",
+        "0\twire15971\tBUF_X4\tBUF_X16",
+        "0\twire4866\tBUF_X4\tBUF_X16",
+        "0\twire16051\tBUF_X4\tBUF_X16",
+        "0\twire15796\tBUF_X4\tBUF_X16",
+        "0\twire17844\tBUF_X4\tBUF_X8",
+        "0\twire15966\tBUF_X4\tBUF_X16",
+        "0\twire15731\tBUF_X8\tBUF_X32",
+        "0\tinput988\tBUF_X1\tBUF_X2",
+        "0\twire16016\tBUF_X4\tBUF_X8",
+        "0\tplace11524\tBUF_X1\tBUF_X2",
+        "0\tplace12666\tBUF_X1\tBUF_X2",
+        "0\tplace13332\tBUF_X1\tBUF_X2",
+        "0\twire15967\tBUF_X4\tBUF_X8",
+        "0\twire14941\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint0_drive8.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire4846\tBUF_X4\tBUF_X16",
+        "0\twire16487\tBUF_X4\tBUF_X16",
+        "0\twire4800\tBUF_X4\tBUF_X16",
+        "0\tplace13935\tBUF_X4\tBUF_X16",
+        "0\twire18140\tBUF_X4\tBUF_X16",
+        "0\twire5004\tBUF_X4\tBUF_X16",
+        "0\twire4816\tBUF_X4\tBUF_X16",
+        "0\twire15984\tBUF_X4\tBUF_X8",
+        "0\twire15432\tBUF_X4\tBUF_X8",
+        "0\twire15800\tBUF_X4\tBUF_X8",
+        "0\twire18124\tBUF_X4\tBUF_X8",
+        "0\twire17191\tBUF_X4\tBUF_X8",
+        "0\twire18434\tBUF_X4\tBUF_X8",
+        "0\twire16561\tBUF_X4\tBUF_X8",
+        "0\tplace13385\tBUF_X1\tBUF_X2",
+        "0\twire16678\tBUF_X4\tBUF_X8",
+        "0\tplace13908\tBUF_X1\tBUF_X2",
+        "0\tplace12470\tBUF_X1\tBUF_X2",
+        "0\tplace12478\tBUF_X1\tBUF_X2"
+      ]
+    },
+    "targeted-drive-joint0_drive9.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire15695\tBUF_X4\tBUF_X32",
+        "0\twire5034\tBUF_X4\tBUF_X16",
+        "0\twire18485\tBUF_X4\tBUF_X16",
+        "0\twire18532\tBUF_X4\tBUF_X16",
+        "0\twire14666\tBUF_X4\tBUF_X8",
+        "0\twire15554\tBUF_X4\tBUF_X16",
+        "0\twire16045\tBUF_X4\tBUF_X8",
+        "0\twire15705\tBUF_X4\tBUF_X8",
+        "0\twire16173\tBUF_X4\tBUF_X8",
+        "0\tplace12475\tBUF_X1\tBUF_X2",
+        "0\tplace12378\tBUF_X1\tBUF_X2",
+        "0\tplace12471\tBUF_X1\tBUF_X2",
+        "0\tplace13727\tBUF_X1\tBUF_X2",
+        "0\twire15475\tBUF_X4\tBUF_X8",
+        "0\twire15314\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint1_drive0.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire4982\tBUF_X4\tBUF_X16",
+        "0\twire14957\tBUF_X4\tBUF_X8",
+        "0\twire15947\tBUF_X4\tBUF_X8",
+        "0\tplace13173\tBUF_X2\tBUF_X4",
+        "0\twire14658\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint1_drive1.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire16498\tBUF_X4\tBUF_X32",
+        "0\twire15795\tBUF_X4\tBUF_X8",
+        "0\twire15553\tBUF_X4\tBUF_X8",
+        "0\twire18596\tBUF_X4\tBUF_X8",
+        "0\twire5064\tBUF_X4\tBUF_X8",
+        "0\tplace11954\tBUF_X1\tBUF_X2"
+      ]
+    },
+    "targeted-drive-joint1_drive10.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire18438\tBUF_X4\tBUF_X16",
+        "0\twire4803\tBUF_X4\tBUF_X16",
+        "0\twire5020\tBUF_X4\tBUF_X16",
+        "0\twire16044\tBUF_X4\tBUF_X16",
+        "0\twire18502\tBUF_X4\tBUF_X8",
+        "0\twire18366\tBUF_X4\tBUF_X8",
+        "0\tllhd_macro_guard_183\tBUF_X2\tBUF_X4",
+        "0\twire4910\tBUF_X4\tBUF_X8",
+        "0\twire16737\tBUF_X4\tBUF_X8",
+        "0\twire15873\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint1_drive11.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire16003\tBUF_X4\tBUF_X16",
+        "0\twire4538\tBUF_X4\tBUF_X8",
+        "0\twire4956\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint1_drive12.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire16461\tBUF_X4\tBUF_X16",
+        "0\tplace13927\tBUF_X16\tBUF_X32",
+        "0\tplace13939\tBUF_X8\tBUF_X16",
+        "0\twire15426\tBUF_X4\tBUF_X8",
+        "0\twire15968\tBUF_X4\tBUF_X8",
+        "0\tplace11085\tBUF_X1\tBUF_X2"
+      ]
+    },
+    "targeted-drive-joint1_drive13.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\tplace13801\tBUF_X4\tBUF_X16",
+        "0\twire14987\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint1_drive14.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire18357\tBUF_X4\tBUF_X16",
+        "0\twire14668\tBUF_X4\tBUF_X8",
+        "0\twire16607\tBUF_X4\tBUF_X8",
+        "0\twire15718\tBUF_X4\tBUF_X8",
+        "0\tplace12996\tBUF_X1\tBUF_X2"
+      ]
+    },
+    "targeted-drive-joint1_drive15.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire15363\tBUF_X4\tBUF_X16",
+        "0\twire16294\tBUF_X4\tBUF_X8",
+        "0\twire14967\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint1_drive16.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire16616\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint1_drive17.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire4819\tBUF_X4\tBUF_X16",
+        "0\twire16008\tBUF_X4\tBUF_X16",
+        "0\twire14948\tBUF_X8\tBUF_X16",
+        "0\twire18508\tBUF_X8\tBUF_X16",
+        "0\twire15389\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint1_drive18.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire4806\tBUF_X4\tBUF_X16",
+        "0\twire18595\tBUF_X4\tBUF_X8",
+        "0\twire18617\tBUF_X4\tBUF_X8",
+        "0\twire16689\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint1_drive19.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire15874\tBUF_X4\tBUF_X8",
+        "0\tplace12623\tBUF_X1\tBUF_X2",
+        "0\twire4689\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint1_drive2.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire18418\tBUF_X4\tBUF_X16",
+        "0\twire15327\tBUF_X8\tBUF_X16",
+        "0\twire18405\tBUF_X8\tBUF_X16",
+        "0\twire15785\tBUF_X4\tBUF_X8",
+        "0\twire15954\tBUF_X4\tBUF_X8",
+        "0\twire5038\tBUF_X4\tBUF_X8",
+        "0\tplace14193\tBUF_X1\tBUF_X2",
+        "0\tplace12053\tBUF_X1\tBUF_X2"
+      ]
+    },
+    "targeted-drive-joint1_drive3.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire4813\tBUF_X4\tBUF_X8",
+        "0\twire4849\tBUF_X4\tBUF_X8",
+        "0\twire14945\tBUF_X4\tBUF_X8",
+        "0\twire16189\tBUF_X4\tBUF_X8",
+        "0\twire16114\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint1_drive4.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\tplace13328\tBUF_X2\tBUF_X8",
+        "0\twire15357\tBUF_X4\tBUF_X16",
+        "0\twire14991\tBUF_X4\tBUF_X16",
+        "0\tllhd_macro_guard_192\tBUF_X2\tBUF_X4",
+        "0\twire16724\tBUF_X4\tBUF_X8",
+        "0\tplace12390\tBUF_X1\tBUF_X2",
+        "0\twire16701\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint1_drive5.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire15356\tBUF_X4\tBUF_X16",
+        "0\tplace13533\tBUF_X2\tBUF_X8",
+        "0\twire18507\tBUF_X4\tBUF_X8",
+        "0\twire15372\tBUF_X4\tBUF_X8",
+        "0\twire15405\tBUF_X4\tBUF_X8",
+        "0\tplace11224\tBUF_X1\tBUF_X2",
+        "0\twire18408\tBUF_X4\tBUF_X8",
+        "0\twire16108\tBUF_X8\tBUF_X16"
+      ]
+    },
+    "targeted-drive-joint1_drive6.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\tplace13405\tBUF_X2\tBUF_X8",
+        "0\twire16866\tBUF_X4\tBUF_X8",
+        "0\twire15719\tBUF_X4\tBUF_X8",
+        "0\twire14969\tBUF_X4\tBUF_X8",
+        "0\twire18141\tBUF_X4\tBUF_X8",
+        "0\tplace12398\tBUF_X1\tBUF_X2"
+      ]
+    },
+    "targeted-drive-joint1_drive7.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire14980\tBUF_X4\tBUF_X8",
+        "0\twire14948\tBUF_X4\tBUF_X8",
+        "0\twire4855\tBUF_X4\tBUF_X8",
+        "0\twire16703\tBUF_X4\tBUF_X8",
+        "0\tplace12838\tBUF_X1\tBUF_X2",
+        "0\tplace12933\tBUF_X1\tBUF_X2"
+      ]
+    },
+    "targeted-drive-joint1_drive8.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\tplace13935\tBUF_X16\tBUF_X32",
+        "0\twire15665\tBUF_X4\tBUF_X16",
+        "0\twire14989\tBUF_X4\tBUF_X16",
+        "0\twire15465\tBUF_X4\tBUF_X8",
+        "0\tplace13303\tBUF_X1\tBUF_X2",
+        "0\tinput623\tBUF_X1\tBUF_X2"
+      ]
+    },
+    "targeted-drive-joint1_drive9.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire16116\tBUF_X4\tBUF_X16",
+        "0\twire17281\tBUF_X4\tBUF_X8",
+        "0\twire18389\tBUF_X4\tBUF_X8",
+        "0\tplace12518\tBUF_X1\tBUF_X2",
+        "0\tplace12965\tBUF_X1\tBUF_X2",
+        "0\tplace11839\tBUF_X1\tBUF_X2",
+        "0\twire15508\tBUF_X4\tBUF_X8",
+        "0\twire15965\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint2_drive0.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\tplace13606\tBUF_X2\tBUF_X8",
+        "0\twire14974\tBUF_X4\tBUF_X8",
+        "0\twire16135\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint2_drive1.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire14985\tBUF_X4\tBUF_X16",
+        "0\twire18587\tBUF_X4\tBUF_X8",
+        "0\tplace13952\tBUF_X1\tBUF_X2",
+        "0\tplace13358\tBUF_X1\tBUF_X2",
+        "0\tplace13220\tBUF_X1\tBUF_X2",
+        "0\tplace13844\tBUF_X1\tBUF_X2",
+        "0\twire15313\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint2_drive10.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\tplace13537\tBUF_X1\tBUF_X8",
+        "0\twire14982\tBUF_X4\tBUF_X8",
+        "0\twire15850\tBUF_X4\tBUF_X8",
+        "0\twire18387\tBUF_X8\tBUF_X16",
+        "0\tplace13149\tBUF_X1\tBUF_X2",
+        "0\tplace11615\tBUF_X1\tBUF_X2",
+        "0\twire16117\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint2_drive11.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire18615\tBUF_X4\tBUF_X8",
+        "0\twire16676\tBUF_X4\tBUF_X8",
+        "0\tinput752\tBUF_X1\tBUF_X2",
+        "0\twire15384\tBUF_X4\tBUF_X8",
+        "0\twire15857\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint2_drive12.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire15221\tBUF_X4\tBUF_X16",
+        "0\tplace12281\tBUF_X1\tBUF_X2",
+        "0\tplace13525\tBUF_X1\tBUF_X2"
+      ]
+    },
+    "targeted-drive-joint2_drive13.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\tplace13801\tBUF_X16\tBUF_X32",
+        "0\twire15374\tBUF_X4\tBUF_X8",
+        "0\tplace11776\tBUF_X1\tBUF_X2",
+        "0\twire5090\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint2_drive14.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": []
+    },
+    "targeted-drive-joint2_drive2.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire18594\tBUF_X4\tBUF_X8",
+        "0\twire16688\tBUF_X4\tBUF_X8",
+        "0\twire14943\tBUF_X4\tBUF_X8",
+        "0\twire16517\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint2_drive3.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire16453\tBUF_X4\tBUF_X8",
+        "0\twire17897\tBUF_X8\tBUF_X16"
+      ]
+    },
+    "targeted-drive-joint2_drive4.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire14832\tBUF_X4\tBUF_X8",
+        "0\twire15373\tBUF_X4\tBUF_X8",
+        "0\twire15654\tBUF_X4\tBUF_X8",
+        "0\twire16124\tBUF_X4\tBUF_X8",
+        "0\twire16338\tBUF_X4\tBUF_X8",
+        "0\twire15315\tBUF_X4\tBUF_X8",
+        "0\twire16260\tBUF_X4\tBUF_X8",
+        "0\twire16432\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint2_drive5.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire4914\tBUF_X4\tBUF_X16",
+        "0\twire15721\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint2_drive6.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire16868\tBUF_X4\tBUF_X16",
+        "0\twire15368\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint2_drive7.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire18582\tBUF_X4\tBUF_X8",
+        "0\twire18407\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint2_drive8.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire16447\tBUF_X4\tBUF_X16",
+        "0\twire16720\tBUF_X4\tBUF_X8",
+        "0\twire16295\tBUF_X4\tBUF_X8",
+        "0\twire15667\tBUF_X4\tBUF_X8",
+        "0\twire15421\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint2_drive9.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire15407\tBUF_X4\tBUF_X8",
+        "0\twire18614\tBUF_X4\tBUF_X8",
+        "0\twire15883\tBUF_X4\tBUF_X8",
+        "0\twire15957\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint3_drive0.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire17916\tBUF_X4\tBUF_X8",
+        "0\twire15877\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint3_drive1.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire18681\tBUF_X4\tBUF_X32",
+        "0\twire16105\tBUF_X4\tBUF_X16",
+        "0\tplace12520\tBUF_X1\tBUF_X2",
+        "0\tplace13619\tBUF_X1\tBUF_X2"
+      ]
+    },
+    "targeted-drive-joint3_drive2.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire16614\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint3_drive3.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire4932\tBUF_X4\tBUF_X16",
+        "0\twire15637\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint3_drive4.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\tplace13836\tBUF_X1\tBUF_X2",
+        "0\twire18676\tBUF_X4\tBUF_X8",
+        "0\tplace14155\tBUF_X1\tBUF_X2",
+        "0\tinput31\tBUF_X1\tBUF_X2",
+        "0\twire15423\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint3_drive5.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": []
+    },
+    "targeted-drive-joint4_drive0.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\tplace13497\tBUF_X1\tBUF_X8",
+        "0\twire15858\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint4_drive1.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\tplace13441\tBUF_X1\tBUF_X8",
+        "0\twire15707\tBUF_X4\tBUF_X8",
+        "0\twire16850\tBUF_X4\tBUF_X8",
+        "0\twire16693\tBUF_X4\tBUF_X8",
+        "0\tplace13463\tBUF_X1\tBUF_X2",
+        "0\twire4822\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint4_drive2.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire16518\tBUF_X4\tBUF_X16",
+        "0\tplace13372\tBUF_X2\tBUF_X8",
+        "0\twire18675\tBUF_X4\tBUF_X16"
+      ]
+    },
+    "targeted-drive-joint4_drive3.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire18131\tBUF_X4\tBUF_X8",
+        "0\twire16021\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint4_drive4.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire15511\tBUF_X4\tBUF_X16",
+        "0\tplace10790\tBUF_X1\tBUF_X2"
+      ]
+    },
+    "targeted-drive-joint4_drive5.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\tplace13521\tBUF_X1\tBUF_X8",
+        "0\twire18656\tBUF_X4\tBUF_X16"
+      ]
+    },
+    "targeted-drive-joint4_drive6.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\tllhd_macro_guard_211\tBUF_X2\tBUF_X8",
+        "0\twire4910\tBUF_X8\tBUF_X16",
+        "0\twire18421\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint4_drive7.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire4960\tBUF_X4\tBUF_X16",
+        "0\twire16249\tBUF_X8\tBUF_X16",
+        "0\twire18135\tBUF_X4\tBUF_X8",
+        "0\toutput1179\tBUF_X1\tBUF_X2"
+      ]
+    },
+    "targeted-drive-joint4_drive8.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\tplace11394\tBUF_X2\tBUF_X8",
+        "0\twire15400\tBUF_X4\tBUF_X8",
+        "0\twire18611\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint4_drive9.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": []
+    },
+    "targeted-drive-joint5_drive0.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire15219\tBUF_X4\tBUF_X32",
+        "0\twire15429\tBUF_X4\tBUF_X8",
+        "0\twire16809\tBUF_X4\tBUF_X8",
+        "0\twire18728\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint5_drive1.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire18018\tBUF_X4\tBUF_X8",
+        "0\twire17274\tBUF_X4\tBUF_X8",
+        "0\twire16418\tBUF_X4\tBUF_X8",
+        "0\twire15417\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint5_drive10.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\tplace13489\tBUF_X1\tBUF_X8",
+        "0\twire16497\tBUF_X4\tBUF_X16",
+        "0\twire16433\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint5_drive11.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\tllhd_macro_guard_177\tBUF_X2\tBUF_X4",
+        "0\twire15361\tBUF_X4\tBUF_X8",
+        "0\tplace11598\tBUF_X1\tBUF_X2"
+      ]
+    },
+    "targeted-drive-joint5_drive12.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire15812\tBUF_X4\tBUF_X8",
+        "0\twire18583\tBUF_X4\tBUF_X8",
+        "0\twire16751\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint5_drive13.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire16779\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint5_drive14.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": []
+    },
+    "targeted-drive-joint5_drive2.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire14981\tBUF_X4\tBUF_X16",
+        "0\twire18715\tBUF_X4\tBUF_X8",
+        "0\tllhd_macro_guard_185\tBUF_X2\tBUF_X4"
+      ]
+    },
+    "targeted-drive-joint5_drive3.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire5028\tBUF_X4\tBUF_X16",
+        "0\twire15845\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint5_drive4.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire18697\tBUF_X4\tBUF_X32",
+        "0\twire18679\tBUF_X4\tBUF_X16",
+        "0\tplace11660\tBUF_X1\tBUF_X2",
+        "0\toutput1193\tBUF_X1\tBUF_X2",
+        "0\twire17276\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint5_drive5.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire14940\tBUF_X4\tBUF_X16",
+        "0\tplace11596\tBUF_X1\tBUF_X2"
+      ]
+    },
+    "targeted-drive-joint5_drive6.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire14932\tBUF_X4\tBUF_X8",
+        "0\twire15983\tBUF_X4\tBUF_X8",
+        "0\tplace14275\tBUF_X2\tBUF_X4",
+        "0\toutput1175\tBUF_X1\tBUF_X2"
+      ]
+    },
+    "targeted-drive-joint5_drive7.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire15662\tBUF_X4\tBUF_X32",
+        "0\twire15943\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint5_drive8.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire18130\tBUF_X4\tBUF_X16",
+        "0\twire18706\tBUF_X4\tBUF_X8",
+        "0\twire16191\tBUF_X4\tBUF_X8"
+      ]
+    },
+    "targeted-drive-joint5_drive9.tsv": {
+      "header": "round\tinstance\tbefore\tafter",
+      "rows": [
+        "0\twire18644\tBUF_X4\tBUF_X8",
+        "0\twire4956\tBUF_X8\tBUF_X16",
+        "0\twire17578\tBUF_X4\tBUF_X8",
+        "0\tplace12964\tBUF_X1\tBUF_X2",
+        "0\toutput1133\tBUF_X1\tBUF_X2",
+        "0\twire18144\tBUF_X4\tBUF_X8",
+        "0\twire15510\tBUF_X4\tBUF_X8"
+      ]
+    }
+  },
+  "boundary_constraint_contract_sha256": "b08d83cc225c1753aee3027d6c97e296bc25d4cf9d5cdd7ffd0b4efc6694f044",
+  "external_pin_contract": {
+    "count": 1662,
+    "canonical_sha256": "f098a67a387ac43e41383f3df5d960806327637958075aa348ab4f6fc16134e9"
+  },
+  "output_manifest_sha256": "d390ca8e3c225593bbf7555d0b823de41051986de8583019b0f0a38862714260",
+  "output_manifest_entries": 1034,
+  "collected_file_integrity": {
+    "spec.json": true,
+    "experiment.json": true,
+    "boundary.sdc": true,
+    "external-pin-contract.json": true,
+    "pin-placement-quality.json": true,
+    "resource-qualification.json": true,
+    "strict-pg.json": true,
+    "joint-repair.json": true,
+    "joint-repair.tsv": true,
+    "macro-output-guards-initial.tsv": true,
+    "macro-output-guards-joint0_drive0.tsv": true,
+    "macro-output-guards-joint0_drive1.tsv": true,
+    "macro-output-guards-joint0_drive10.tsv": true,
+    "macro-output-guards-joint0_drive11.tsv": true,
+    "macro-output-guards-joint0_drive12.tsv": true,
+    "macro-output-guards-joint0_drive13.tsv": true,
+    "macro-output-guards-joint0_drive14.tsv": true,
+    "macro-output-guards-joint0_drive15.tsv": true,
+    "macro-output-guards-joint0_drive16.tsv": true,
+    "macro-output-guards-joint0_drive17.tsv": true,
+    "macro-output-guards-joint0_drive18.tsv": true,
+    "macro-output-guards-joint0_drive19.tsv": true,
+    "macro-output-guards-joint0_drive2.tsv": true,
+    "macro-output-guards-joint0_drive3.tsv": true,
+    "macro-output-guards-joint0_drive4.tsv": true,
+    "macro-output-guards-joint0_drive5.tsv": true,
+    "macro-output-guards-joint0_drive6.tsv": true,
+    "macro-output-guards-joint0_drive7.tsv": true,
+    "macro-output-guards-joint0_drive8.tsv": true,
+    "macro-output-guards-joint0_drive9.tsv": true,
+    "macro-output-guards-joint1_drive0.tsv": true,
+    "macro-output-guards-joint1_drive1.tsv": true,
+    "macro-output-guards-joint1_drive10.tsv": true,
+    "macro-output-guards-joint1_drive11.tsv": true,
+    "macro-output-guards-joint1_drive12.tsv": true,
+    "macro-output-guards-joint1_drive13.tsv": true,
+    "macro-output-guards-joint1_drive14.tsv": true,
+    "macro-output-guards-joint1_drive15.tsv": true,
+    "macro-output-guards-joint1_drive16.tsv": true,
+    "macro-output-guards-joint1_drive17.tsv": true,
+    "macro-output-guards-joint1_drive18.tsv": true,
+    "macro-output-guards-joint1_drive19.tsv": true,
+    "macro-output-guards-joint1_drive2.tsv": true,
+    "macro-output-guards-joint1_drive3.tsv": true,
+    "macro-output-guards-joint1_drive4.tsv": true,
+    "macro-output-guards-joint1_drive5.tsv": true,
+    "macro-output-guards-joint1_drive6.tsv": true,
+    "macro-output-guards-joint1_drive7.tsv": true,
+    "macro-output-guards-joint1_drive8.tsv": true,
+    "macro-output-guards-joint1_drive9.tsv": true,
+    "macro-output-guards-joint2_drive0.tsv": true,
+    "macro-output-guards-joint2_drive1.tsv": true,
+    "macro-output-guards-joint2_drive10.tsv": true,
+    "macro-output-guards-joint2_drive11.tsv": true,
+    "macro-output-guards-joint2_drive12.tsv": true,
+    "macro-output-guards-joint2_drive13.tsv": true,
+    "macro-output-guards-joint2_drive14.tsv": true,
+    "macro-output-guards-joint2_drive2.tsv": true,
+    "macro-output-guards-joint2_drive3.tsv": true,
+    "macro-output-guards-joint2_drive4.tsv": true,
+    "macro-output-guards-joint2_drive5.tsv": true,
+    "macro-output-guards-joint2_drive6.tsv": true,
+    "macro-output-guards-joint2_drive7.tsv": true,
+    "macro-output-guards-joint2_drive8.tsv": true,
+    "macro-output-guards-joint2_drive9.tsv": true,
+    "macro-output-guards-joint3_drive0.tsv": true,
+    "macro-output-guards-joint3_drive1.tsv": true,
+    "macro-output-guards-joint3_drive2.tsv": true,
+    "macro-output-guards-joint3_drive3.tsv": true,
+    "macro-output-guards-joint3_drive4.tsv": true,
+    "macro-output-guards-joint3_drive5.tsv": true,
+    "macro-output-guards-joint4_drive0.tsv": true,
+    "macro-output-guards-joint4_drive1.tsv": true,
+    "macro-output-guards-joint4_drive2.tsv": true,
+    "macro-output-guards-joint4_drive3.tsv": true,
+    "macro-output-guards-joint4_drive4.tsv": true,
+    "macro-output-guards-joint4_drive5.tsv": true,
+    "macro-output-guards-joint4_drive6.tsv": true,
+    "macro-output-guards-joint4_drive7.tsv": true,
+    "macro-output-guards-joint4_drive8.tsv": true,
+    "macro-output-guards-joint4_drive9.tsv": true,
+    "macro-output-guards-joint5_drive0.tsv": true,
+    "macro-output-guards-joint5_drive1.tsv": true,
+    "macro-output-guards-joint5_drive10.tsv": true,
+    "macro-output-guards-joint5_drive11.tsv": true,
+    "macro-output-guards-joint5_drive12.tsv": true,
+    "macro-output-guards-joint5_drive13.tsv": true,
+    "macro-output-guards-joint5_drive14.tsv": true,
+    "macro-output-guards-joint5_drive2.tsv": true,
+    "macro-output-guards-joint5_drive3.tsv": true,
+    "macro-output-guards-joint5_drive4.tsv": true,
+    "macro-output-guards-joint5_drive5.tsv": true,
+    "macro-output-guards-joint5_drive6.tsv": true,
+    "macro-output-guards-joint5_drive7.tsv": true,
+    "macro-output-guards-joint5_drive8.tsv": true,
+    "macro-output-guards-joint5_drive9.tsv": true,
+    "targeted-drive-initial.tsv": true,
+    "targeted-drive-joint0_drive0.tsv": true,
+    "targeted-drive-joint0_drive1.tsv": true,
+    "targeted-drive-joint0_drive10.tsv": true,
+    "targeted-drive-joint0_drive11.tsv": true,
+    "targeted-drive-joint0_drive12.tsv": true,
+    "targeted-drive-joint0_drive13.tsv": true,
+    "targeted-drive-joint0_drive14.tsv": true,
+    "targeted-drive-joint0_drive15.tsv": true,
+    "targeted-drive-joint0_drive16.tsv": true,
+    "targeted-drive-joint0_drive17.tsv": true,
+    "targeted-drive-joint0_drive18.tsv": true,
+    "targeted-drive-joint0_drive19.tsv": true,
+    "targeted-drive-joint0_drive2.tsv": true,
+    "targeted-drive-joint0_drive3.tsv": true,
+    "targeted-drive-joint0_drive4.tsv": true,
+    "targeted-drive-joint0_drive5.tsv": true,
+    "targeted-drive-joint0_drive6.tsv": true,
+    "targeted-drive-joint0_drive7.tsv": true,
+    "targeted-drive-joint0_drive8.tsv": true,
+    "targeted-drive-joint0_drive9.tsv": true,
+    "targeted-drive-joint1_drive0.tsv": true,
+    "targeted-drive-joint1_drive1.tsv": true,
+    "targeted-drive-joint1_drive10.tsv": true,
+    "targeted-drive-joint1_drive11.tsv": true,
+    "targeted-drive-joint1_drive12.tsv": true,
+    "targeted-drive-joint1_drive13.tsv": true,
+    "targeted-drive-joint1_drive14.tsv": true,
+    "targeted-drive-joint1_drive15.tsv": true,
+    "targeted-drive-joint1_drive16.tsv": true,
+    "targeted-drive-joint1_drive17.tsv": true,
+    "targeted-drive-joint1_drive18.tsv": true,
+    "targeted-drive-joint1_drive19.tsv": true,
+    "targeted-drive-joint1_drive2.tsv": true,
+    "targeted-drive-joint1_drive3.tsv": true,
+    "targeted-drive-joint1_drive4.tsv": true,
+    "targeted-drive-joint1_drive5.tsv": true,
+    "targeted-drive-joint1_drive6.tsv": true,
+    "targeted-drive-joint1_drive7.tsv": true,
+    "targeted-drive-joint1_drive8.tsv": true,
+    "targeted-drive-joint1_drive9.tsv": true,
+    "targeted-drive-joint2_drive0.tsv": true,
+    "targeted-drive-joint2_drive1.tsv": true,
+    "targeted-drive-joint2_drive10.tsv": true,
+    "targeted-drive-joint2_drive11.tsv": true,
+    "targeted-drive-joint2_drive12.tsv": true,
+    "targeted-drive-joint2_drive13.tsv": true,
+    "targeted-drive-joint2_drive14.tsv": true,
+    "targeted-drive-joint2_drive2.tsv": true,
+    "targeted-drive-joint2_drive3.tsv": true,
+    "targeted-drive-joint2_drive4.tsv": true,
+    "targeted-drive-joint2_drive5.tsv": true,
+    "targeted-drive-joint2_drive6.tsv": true,
+    "targeted-drive-joint2_drive7.tsv": true,
+    "targeted-drive-joint2_drive8.tsv": true,
+    "targeted-drive-joint2_drive9.tsv": true,
+    "targeted-drive-joint3_drive0.tsv": true,
+    "targeted-drive-joint3_drive1.tsv": true,
+    "targeted-drive-joint3_drive2.tsv": true,
+    "targeted-drive-joint3_drive3.tsv": true,
+    "targeted-drive-joint3_drive4.tsv": true,
+    "targeted-drive-joint3_drive5.tsv": true,
+    "targeted-drive-joint4_drive0.tsv": true,
+    "targeted-drive-joint4_drive1.tsv": true,
+    "targeted-drive-joint4_drive2.tsv": true,
+    "targeted-drive-joint4_drive3.tsv": true,
+    "targeted-drive-joint4_drive4.tsv": true,
+    "targeted-drive-joint4_drive5.tsv": true,
+    "targeted-drive-joint4_drive6.tsv": true,
+    "targeted-drive-joint4_drive7.tsv": true,
+    "targeted-drive-joint4_drive8.tsv": true,
+    "targeted-drive-joint4_drive9.tsv": true,
+    "targeted-drive-joint5_drive0.tsv": true,
+    "targeted-drive-joint5_drive1.tsv": true,
+    "targeted-drive-joint5_drive10.tsv": true,
+    "targeted-drive-joint5_drive11.tsv": true,
+    "targeted-drive-joint5_drive12.tsv": true,
+    "targeted-drive-joint5_drive13.tsv": true,
+    "targeted-drive-joint5_drive14.tsv": true,
+    "targeted-drive-joint5_drive2.tsv": true,
+    "targeted-drive-joint5_drive3.tsv": true,
+    "targeted-drive-joint5_drive4.tsv": true,
+    "targeted-drive-joint5_drive5.tsv": true,
+    "targeted-drive-joint5_drive6.tsv": true,
+    "targeted-drive-joint5_drive7.tsv": true,
+    "targeted-drive-joint5_drive8.tsv": true,
+    "targeted-drive-joint5_drive9.tsv": true
+  },
+  "scheduler": "89777|FAILED|1:0|01:45:34|UNLIMITED|16|node4"
+}

@@ -1,0 +1,62 @@
+{
+  "spec": {
+    "wire_audit_sources": {
+      "split20": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20"
+    },
+    "mode": "views",
+    "cores": 1,
+    "runner_commit": "1e85381f95a4a6e31b76c5b1b790c1a736314fc9",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/native-wire-api-01"
+  },
+  "exit_code": "0",
+  "started.txt": "2026-10-22T19:48:03Z\n",
+  "finished.txt": "2026-10-22T19:48:08Z\n",
+  "allocation.txt": "JobId=89830 JobName=yzl-ot-views UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586230 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:02 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-23T03:48:01 EligibleTime=2026-10-23T03:48:01 AccrueTime=2026-10-23T03:48:01 StartTime=2026-10-23T03:48:01 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-23T03:48:01 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-23T03:48:01 Scheduler=Backfill Partition=c64 AllocNode:Sid=mgt01:134392 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=cpu=1,node=1,billing=1 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/native-wire-api-01/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/native-wire-api-01 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/native-wire-api-01/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/native-wire-api-01/job.log Power= TresPerTask=cpu:1 \n",
+  "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif\n",
+  "tools.sha256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53  /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad\nc2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b  /OpenROAD-flow-scripts/tools/install/yosys/bin/yosys\n",
+  "input-sha256.json": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/experiment.json": "6cb8d9cd8c687a81cad7299772925410d99ce59f6bfe7e9ecb1c693889aa08fa",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/flow/results/nangate45/opentpu_top_split/base/6_final.odb": "6e168b2117407a60aaf781084364856103491b62517c8d52c21e0790b2a89e3d",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20/flow/logs/nangate45/opentpu_top_split/base/5_2_route.json": "a0ece241dc8d5d2c1c5768af1e3070a48e104eef66b310de9d0543b79d15c27d"
+  },
+  "input-trace-status.json": {
+    "execution_completed": true,
+    "tracked_input_count": 3,
+    "scope": "Inputs reached by this execution, including failure paths"
+  },
+  "job_log_tail": [
+    "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+  ],
+  "metrics": {},
+  "pg_access": {},
+  "wire-audit-sources.json": {
+    "split20": {
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-extracted-20",
+      "odb_sha256": "6e168b2117407a60aaf781084364856103491b62517c8d52c21e0790b2a89e3d",
+      "source_manifest_sha256": "7bd019597a2fc108e8075edbc113c74d124b90671fd068cf083772eac52e9501",
+      "native_drt_wire_um": 3361750,
+      "native_drt_vias": 73951,
+      "report": "native-wire-split20.log",
+      "report_sha256": "67b446e3e85ce248748239034c25383c913236ff117f4ec34a734459c541fc7f",
+      "scope": "Native report_wire_length -net * -detailed_route -summary on the complete sealed final ODB; independent of the DRT iteration table. No layout or source mutation."
+    }
+  },
+  "sizing_probe_reports": {},
+  "native_wire_reports": {
+    "native-wire-split20.log": "OpenROAD unknown \nFeatures included (+) or not (-): -GPU +GUI -Python\nThis program is licensed under the BSD-3 license. See the LICENSE file for details.\nComponents of this program may be licensed under more restrictive licenses which must be honored.\n[INFO ORD-0030] Using 1 thread(s).\nreport_wire_length [-net net_list] [-file file] [-global_route]\n   [-detailed_route] [-verbose] [-summary] \n\n[INFO GRT-0279] Detailed route wire length by layer:\nLayer    Wire length  Percentage\n--------------------------------\nmetal2  846420.94um    25%\nmetal3  874389.73um    26%\nmetal4  422009.15um    12%\nmetal5  444393.54um    13%\nmetal6  331825.05um     9%\nmetal7  190916.72um     5%\nmetal8  183487.20um     5%\nmetal9  47585.20um     1%\nmetal10 20454.40um     0%\n--------------------------------\nFINAL_SIGNAL_WIRED_NET_COUNT 11954\n"
+  },
+  "physical_repair_actions": {},
+  "output_manifest_sha256": "9e88ac5f132283a93c13a752b3623c8ab9324abfcfadf05134eee7092d3a563c",
+  "output_manifest_entries": 39,
+  "sealed_artifact_sha256": {},
+  "collected_file_integrity": {
+    "spec.json": true,
+    "image.sha256": true,
+    "tools.sha256": true,
+    "input-sha256.json": true,
+    "input-trace-status.json": true,
+    "wire-audit-sources.json": true,
+    "native-wire-split20.log": true
+  },
+  "scheduler": "89830|COMPLETED|0:0|00:00:07|UNLIMITED|1|node3"
+}

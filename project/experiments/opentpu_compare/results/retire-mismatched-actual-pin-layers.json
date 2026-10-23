@@ -1,0 +1,70 @@
+{
+  "observed_utc": "2026-10-22T09:45:28.823237Z",
+  "attempts": {
+    "structural-top-01": {
+      "job_id": "89690",
+      "scheduler_before": "JobId=89690 JobName=yzl-ot-views UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586370 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=Dependency Dependency=afterany:89682(unfulfilled),afterany:89683(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T17:23:17 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T17:23:17 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3173246 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=4 NumTasks=1 CPUs/Task=4 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=4,mem=1M,node=1,billing=4 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=4 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/structural-top-01/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/structural-top-01 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/structural-top-01/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/structural-top-01/job.log Power= TresPerTask=cpu:4 \n",
+      "reason": "Actual external pin layers differ from declared common metal2/metal3 contract; fixed placement retained old metal5/metal6 geometry. Invalid comparison, not elapsed-time cancellation."
+    },
+    "top-split-03": {
+      "job_id": "89682",
+      "scheduler_before": "JobId=89682 JobName=yzl-ot-top UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586378 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:23:16 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T17:13:00 EligibleTime=2026-10-22T17:22:12 AccrueTime=Unknown StartTime=2026-10-22T17:22:12 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T17:22:12 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T17:22:12 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3155037 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=16 NumTasks=1 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=16,mem=1M,node=1,billing=16 AllocTRES=cpu=16,node=1,billing=16 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-03/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-03 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-03/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-03/job.log Power= TresPerTask=cpu:16 \n",
+      "reason": "Actual external pin layers differ from declared common metal2/metal3 contract; fixed placement retained old metal5/metal6 geometry. Invalid comparison, not elapsed-time cancellation.",
+      "actual_pin_layers": [
+        "metal5",
+        "metal6"
+      ],
+      "pin_count": 1662,
+      "placement_sha256": "d6546e122a762714f9032a53a5ab067ce368f97dc2776692a6967180c8300379",
+      "example_commands": [
+        "place_pin -pin_name {a_addr[0]} -layer metal6 -location {0.035 568.05} -force_to_die_boundary",
+        "place_pin -pin_name {a_addr[10]} -layer metal6 -location {575.795 0.035} -force_to_die_boundary"
+      ]
+    },
+    "top-merged-03": {
+      "job_id": "89683",
+      "scheduler_before": "JobId=89683 JobName=yzl-ot-top UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586377 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:23:16 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T17:13:03 EligibleTime=2026-10-22T17:22:12 AccrueTime=Unknown StartTime=2026-10-22T17:22:12 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T17:22:12 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T17:22:12 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3155684 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=16 NumTasks=1 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=16,mem=1M,node=1,billing=16 AllocTRES=cpu=16,node=1,billing=16 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-03/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-03 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-03/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-03/job.log Power= TresPerTask=cpu:16 \n",
+      "reason": "Actual external pin layers differ from declared common metal2/metal3 contract; fixed placement retained old metal5/metal6 geometry. Invalid comparison, not elapsed-time cancellation.",
+      "actual_pin_layers": [
+        "metal5",
+        "metal6"
+      ],
+      "pin_count": 1662,
+      "placement_sha256": "001f3a64421559672146eae774d673ba629a85d63a8846ab1f604e820a7fe527",
+      "example_commands": [
+        "place_pin -pin_name {a_rdata[85]} -layer metal6 -location {682.575 1669.96} -force_to_die_boundary",
+        "place_pin -pin_name {a_rdata[88]} -layer metal6 -location {686.565 0.035} -force_to_die_boundary"
+      ]
+    },
+    "top-split-04": {
+      "job_id": "89697",
+      "scheduler_before": "JobId=89697 JobName=yzl-ot-top UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586363 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:06:26 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T17:39:02 EligibleTime=2026-10-22T17:39:02 AccrueTime=2026-10-22T17:39:02 StartTime=2026-10-22T17:39:02 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T17:39:02 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T17:39:02 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3253453 ReqNodeList=(null) ExcNodeList=(null) NodeList=node5 BatchHost=node5 NumNodes=1 NumCPUs=16 NumTasks=1 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=16,mem=1M,node=1,billing=16 AllocTRES=cpu=16,node=1,billing=16 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-04/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-04 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-04/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-04/job.log Power= TresPerTask=cpu:16 \n",
+      "reason": "Actual external pin layers differ from declared common metal2/metal3 contract; fixed placement retained old metal5/metal6 geometry. Invalid comparison, not elapsed-time cancellation.",
+      "actual_pin_layers": [
+        "metal5",
+        "metal6"
+      ],
+      "pin_count": 1662,
+      "placement_sha256": "d6546e122a762714f9032a53a5ab067ce368f97dc2776692a6967180c8300379",
+      "example_commands": [
+        "place_pin -pin_name {a_addr[0]} -layer metal6 -location {0.035 568.05} -force_to_die_boundary",
+        "place_pin -pin_name {a_addr[10]} -layer metal6 -location {575.795 0.035} -force_to_die_boundary"
+      ]
+    },
+    "top-merged-04": {
+      "job_id": "89698",
+      "scheduler_before": "JobId=89698 JobName=yzl-ot-top UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586362 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:06:23 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T17:39:05 EligibleTime=2026-10-22T17:39:05 AccrueTime=2026-10-22T17:39:05 StartTime=2026-10-22T17:39:05 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T17:39:05 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T17:39:05 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3254055 ReqNodeList=(null) ExcNodeList=(null) NodeList=node5 BatchHost=node5 NumNodes=1 NumCPUs=16 NumTasks=1 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=16,mem=1M,node=1,billing=16 AllocTRES=cpu=16,node=1,billing=16 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-04/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-04 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-04/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-merged-04/job.log Power= TresPerTask=cpu:16 \n",
+      "reason": "Actual external pin layers differ from declared common metal2/metal3 contract; fixed placement retained old metal5/metal6 geometry. Invalid comparison, not elapsed-time cancellation.",
+      "actual_pin_layers": [
+        "metal5",
+        "metal6"
+      ],
+      "pin_count": 1662,
+      "placement_sha256": "001f3a64421559672146eae774d673ba629a85d63a8846ab1f604e820a7fe527",
+      "example_commands": [
+        "place_pin -pin_name {a_rdata[85]} -layer metal6 -location {682.575 1669.96} -force_to_die_boundary",
+        "place_pin -pin_name {a_rdata[88]} -layer metal6 -location {686.565 0.035} -force_to_die_boundary"
+      ]
+    }
+  }
+}

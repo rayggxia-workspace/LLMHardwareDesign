@@ -1,0 +1,30 @@
+{
+  "spec": {
+    "sta_wrapper_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-act-02",
+    "mode": "views",
+    "cores": 4,
+    "runner_commit": "da9b27e2d371dcbc2f5480a8c40709032a3a61f1",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-02"
+  },
+  "exit_code": "1",
+  "started.txt": "2026-10-22T08:54:51Z\n",
+  "finished.txt": "2026-10-22T08:54:56Z\n",
+  "allocation.txt": "JobId=89670 JobName=yzl-ot-views UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586389 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:01 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T16:54:49 EligibleTime=2026-10-22T16:54:49 AccrueTime=2026-10-22T16:54:49 StartTime=2026-10-22T16:54:50 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T16:54:50 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T16:54:50 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3112230 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=4 NumTasks=1 CPUs/Task=4 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=4,mem=1M,node=1,billing=4 AllocTRES=cpu=4,node=1,billing=4 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=4 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-02/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-02 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-02/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-02/job.log Power= TresPerTask=cpu:4 \n",
+  "job_log_tail": [
+    "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+    "Traceback (most recent call last):",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-02/runner/run.py\", line 69, in <module>",
+    "    execute(SPEC)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-02/runner/implementation.py\", line 63, in execute",
+    "    elif spec['mode']=='views': view_probe(spec)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-02/runner/implementation.py\", line 196, in view_probe",
+    "    if spec.get('sta_wrapper_source'): sta_wrapper_test(Path(spec['sta_wrapper_source']))",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-02/runner/implementation.py\", line 449, in sta_wrapper_test",
+    "    assert len(values)==2 and all(abs(a-b)<.001 for a,b in zip(values,expected)), (values,expected)",
+    "AssertionError: ([], [1.2579, 0.0326128])"
+  ],
+  "metrics": {},
+  "output_manifest_sha256": "1ac1f1f317a23be72335ec65a0d9d9c525e71ee26624169a722c7f8ff0dd1553",
+  "output_manifest_entries": 24,
+  "scheduler": "89670|FAILED|1:0|00:00:06|UNLIMITED|4|node3"
+}

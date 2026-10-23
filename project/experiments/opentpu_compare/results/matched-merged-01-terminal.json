@@ -1,0 +1,30 @@
+{
+  "spec": {
+    "kind": "merged",
+    "mode": "matched",
+    "cores": 16,
+    "runner_commit": "6db2b5374ba4abb45d0e46976959ac023059d58b",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-merged-01"
+  },
+  "exit_code": "1",
+  "started.txt": "2026-10-22T08:16:21Z\n",
+  "finished.txt": "2026-10-22T08:16:29Z\n",
+  "allocation.txt": "JobId=89636 JobName=yzl-ot-matched UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586423 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:01 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T16:16:19 EligibleTime=2026-10-22T16:16:19 AccrueTime=2026-10-22T16:16:19 StartTime=2026-10-22T16:16:20 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T16:16:20 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T16:16:20 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3054904 ReqNodeList=(null) ExcNodeList=(null) NodeList=node5 BatchHost=node5 NumNodes=1 NumCPUs=16 NumTasks=1 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=16,mem=1M,node=1,billing=16 AllocTRES=cpu=16,node=1,billing=16 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-merged-01/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-merged-01 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-merged-01/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-merged-01/job.log Power= TresPerTask=cpu:16 \n",
+  "job_log_tail": [
+    "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+    "Traceback (most recent call last):",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-merged-01/runner/run.py\", line 69, in <module>",
+    "    execute(SPEC)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-merged-01/runner/implementation.py\", line 61, in execute",
+    "    elif spec['mode']=='matched': matched(spec)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-merged-01/runner/implementation.py\", line 128, in matched",
+    "    subprocess.run(['yosys','-Q','-T','-s','assemble.ys'],stdout=f,stderr=subprocess.STDOUT,check=True)",
+    "  File \"/usr/lib/python3.10/subprocess.py\", line 526, in run",
+    "    raise CalledProcessError(retcode, process.args,",
+    "subprocess.CalledProcessError: Command '['yosys', '-Q', '-T', '-s', 'assemble.ys']' returned non-zero exit status 1."
+  ],
+  "metrics": {},
+  "output_manifest_sha256": "07d8107320058f84e027d95bf790da3f425af29eef9932b2c9e14f8c31afc9b1",
+  "output_manifest_entries": 15,
+  "scheduler": "89636|FAILED|1:0|00:00:09|UNLIMITED|16|node5"
+}

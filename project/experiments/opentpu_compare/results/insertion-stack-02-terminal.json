@@ -1,0 +1,43 @@
+{
+  "spec": {
+    "symbolize_addresses": [
+      "0x5AD9E26",
+      "0x449A47E",
+      "0x449A34D",
+      "0x43CF942",
+      "0x43DF409"
+    ],
+    "mode": "views",
+    "cores": 1,
+    "runner_commit": "1333b0a4f76e0e701099129a358319910da5e969",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/insertion-stack-02"
+  },
+  "exit_code": "1",
+  "started.txt": "2026-10-22T11:19:54Z\n",
+  "finished.txt": "2026-10-22T11:19:57Z\n",
+  "allocation.txt": "JobId=89759 JobName=yzl-ot-views UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586301 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:01 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T19:19:52 EligibleTime=2026-10-22T19:19:52 AccrueTime=2026-10-22T19:19:52 StartTime=2026-10-22T19:19:53 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T19:19:53 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T19:19:53 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3648508 ReqNodeList=(null) ExcNodeList=(null) NodeList=node5 BatchHost=node5 NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=cpu=1,node=1,billing=1 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/insertion-stack-02/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/insertion-stack-02 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/insertion-stack-02/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/insertion-stack-02/job.log Power= TresPerTask=cpu:1 \n",
+  "job_log_tail": [
+    "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+    "Traceback (most recent call last):",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/insertion-stack-02/runner/run.py\", line 69, in <module>",
+    "    execute(SPEC)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/insertion-stack-02/runner/implementation.py\", line 63, in execute",
+    "    elif spec['mode']=='views': view_probe(spec)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/insertion-stack-02/runner/implementation.py\", line 192, in view_probe",
+    "    (ROOT/'openroad-launcher.txt').write_text(wrapper.read_text())",
+    "  File \"/usr/lib/python3.10/pathlib.py\", line 1135, in read_text",
+    "    return f.read()",
+    "  File \"/usr/lib/python3.10/codecs.py\", line 322, in decode",
+    "    (result, consumed) = self._buffer_decode(data, self.errors, final)",
+    "UnicodeDecodeError: 'utf-8' codec can't decode byte 0xf2 in position 25: invalid continuation byte"
+  ],
+  "metrics": {},
+  "pg_access": {},
+  "physical_repair_actions": {},
+  "output_manifest_sha256": "be24b8bc6c534b7d656fb8b317693511fa99d5893d7bc003127b984b7a284d36",
+  "output_manifest_entries": 25,
+  "collected_file_integrity": {
+    "spec.json": true
+  },
+  "scheduler": "89759|FAILED|1:0|00:00:05|UNLIMITED|1|node5"
+}
