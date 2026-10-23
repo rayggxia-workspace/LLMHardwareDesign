@@ -33,14 +33,14 @@ def main():
     suffixes=('layers.0.linear_attn.in_proj_qkv','layers.0.linear_attn.in_proj_a','layers.0.mlp.down_proj') if q35 else (
         'layers.0.self_attn.q_proj','layers.0.self_attn.o_proj','layers.0.mlp.down_proj')
     current={};counts={};captures={};original_mm=torch._int_mm
-    def integer_mm(a,b):
-        acc=original_mm(a,b)
+    def integer_mm(activation,weight):
+        acc=original_mm(activation,weight)
         if current:
             c=current['payload'];g=len(c['groups']);module=current['module']
             x=current['x'][:2,g*a.group_k:(g+1)*a.group_k].float()
             scale=x.abs().amax(-1,keepdim=True).clamp_min(1e-30)/127
-            c['groups'].append({'group':g,'A':a[:min(2,current['x'].shape[0])].cpu(),
-                'B':b[:,:4].cpu(),'accumulator':acc[:min(2,current['x'].shape[0]),:4].cpu(),
+            c['groups'].append({'group':g,'A':activation[:min(2,current['x'].shape[0])].cpu(),
+                'B':weight[:,:4].cpu(),'accumulator':acc[:min(2,current['x'].shape[0]),:4].cpu(),
                 'activation_scale':scale.cpu(),'weight_scale':module.wscales[g,:4].cpu()})
         return acc
     for name,module in model.named_modules():
