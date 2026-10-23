@@ -1,0 +1,99 @@
+{
+  "scope": "Measured software boundaries; not project-final integer contract",
+  "native_fp16": {
+    "weights": "FP16",
+    "activations": "FP16 outside; FP32 normalization/gates/recurrent internal paths",
+    "accumulation": "native CUDA backend; not fully characterized as one uniform type",
+    "KV": "FP16",
+    "Qwen35_recurrent": "FP32",
+    "Qwen35_conv_state": "FP16",
+    "nonlinearity": "floating point",
+    "scale": "not integer encoding"
+  },
+  "integer_matrix_candidate": {
+    "weights": "INT8 per output channel for replaced Linear only; embedding/lm_head/conv FP16",
+    "activation": "INT8 per row for replaced Linear inputs",
+    "accumulation": "INT32 torch._int_mm",
+    "output": "FP32 dequantization/bias then FP16",
+    "KV": "FP16",
+    "Qwen35_recurrent": "FP32",
+    "Qwen35_conv_state": "FP16",
+    "nonlinearity": "floating point",
+    "scale": "FP32 per row and channel; integer M/r not implemented",
+    "full_integer_validated": false
+  },
+  "state_candidate": {
+    "payload_bits": [
+      8,
+      16
+    ],
+    "arithmetic": "fake quant + native floating point update",
+    "scales": "FP32 absmax over last two axes; conv per batch",
+    "integer_update_validated": false
+  },
+  "cache_budget": {
+    "qwen35_fixed_recurrent_bytes": 50331648,
+    "qwen35_fixed_conv_bytes": 1572864,
+    "qwen35_KV_bytes_per_token": 32768,
+    "qwen25_KV_bytes_per_token": 36864,
+    "qwen35_full_cache_candidate_scale_bytes": 3424,
+    "qwen25_full_cache_candidate_scale_bytes": 576,
+    "measured_physical_traffic_bytes": null
+  },
+  "eda_acceptance": {
+    "full_integer_language_quality_prerequisite": false,
+    "required": [
+      "given-semantics split equivalence and dependency/state transfer",
+      "hardware agreement with specified bitwidth/accumulation/rounding/saturation",
+      "evidenced capacity/ports/communication/implementation cost"
+    ],
+    "prior_entries": "Historical original per-row candidates; grouped/FP32 repair groups below are separate."
+  },
+  "grouped_matrix_candidates": {
+    "qwen35_K": 32,
+    "qwen25_K": 128,
+    "W": "INT8 symmetric [-127,127] nearest-even/clamp, per output/K-group",
+    "A": "INT8 symmetric [-127,127] dynamic per token/K-group nearest-even/clamp",
+    "acc": "actual INT32 CUDA integer GEMM",
+    "scale": "FP32; absmax/127",
+    "partial_reduction": "FP32 ordered multiply then add, bias FP32",
+    "output": "FP16 original auxiliary groups; FP32 canonical Qwen35 group",
+    "KV_conv_recurrent_nonlinearity": "floating point, not integer hardware conformance",
+    "weight_payload_bytes": {
+      "qwen35": 3569090560,
+      "qwen25": 2774532096
+    },
+    "weight_scale_bytes": {
+      "qwen35": 446136320,
+      "qwen25": 86704128
+    },
+    "hardware_integer_requantization_verified": false
+  },
+  "canonical_qwen35_reference": {
+    "checkpoint_large_weights": "FP16 storage",
+    "covered_linear": "INT8/INT32 K32 then FP32 scaled sum",
+    "other_compute": "FP32 including attention, norm, convolution, recurrent state, residual and nonlinear paths",
+    "fixed_order": "RMS/L2 pairwise tree; 4-tap convolution order; sequential recurrent update; per-query exact causal prefix SDPA",
+    "scope": "batch1 unpadded causal text, fixed token IDs, no windowed/padded claim",
+    "semantics_equivalence": "128+16 and 512/2048/4096/8192+32 outputs and all compared caches exact",
+    "integer_full_graph": false
+  },
+  "repair_state_sensitivity": {
+    "arithmetic": "fake quant/dequant followed by floating update",
+    "separate_categories": [
+      "KV",
+      "conv",
+      "recurrent"
+    ],
+    "tested_bits": [
+      8,
+      16,
+      24,
+      32
+    ],
+    "INT24": "3B logical; unpacked INT32 code 4B actual",
+    "scale": "FP32 per last-axis vector",
+    "integer_state_update_verified": false,
+    "joint8192": "not run per user scope; not EDA blocker"
+  }
+}

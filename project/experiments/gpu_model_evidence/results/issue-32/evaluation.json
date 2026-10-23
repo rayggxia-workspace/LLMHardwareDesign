@@ -1,0 +1,71 @@
+{
+  "note": "Program completion is not quality acceptance. Thresholds inherited from pre-frozen reference config, not retuned. null means unavailable.",
+  "groups": [
+    {
+      "run": "qwen25-fp16-bounded-01",
+      "program_status": "completed_with_failures",
+      "all_short_checks_pass": true,
+      "all_integer_quality_samples_pass": null,
+      "long_comparison_acceptance": [
+        {
+          "prefix": 512,
+          "pass_existing_reference_threshold": true,
+          "max_state_relative_l2": 0.003662036033347249
+        },
+        {
+          "prefix": 2048,
+          "pass_existing_reference_threshold": true,
+          "max_state_relative_l2": 0.00438374700024724
+        },
+        {
+          "prefix": 4096,
+          "pass_existing_reference_threshold": true,
+          "max_state_relative_l2": 0.005095500033348799
+        },
+        {
+          "prefix": 8192,
+          "pass_existing_reference_threshold": null,
+          "max_state_relative_l2": null
+        }
+      ]
+    },
+    {
+      "run": "qwen25-fp16-int8-01",
+      "program_status": "completed",
+      "all_short_checks_pass": null,
+      "all_integer_quality_samples_pass": false,
+      "long_comparison_acceptance": []
+    },
+    {
+      "run": "qwen35-fp16-bounded-02",
+      "program_status": "completed_with_failures",
+      "all_short_checks_pass": true,
+      "all_integer_quality_samples_pass": null,
+      "long_comparison_acceptance": [
+        {
+          "prefix": 512,
+          "pass_existing_reference_threshold": false,
+          "max_state_relative_l2": 0.03878513723611832
+        },
+        {
+          "prefix": 2048,
+          "pass_existing_reference_threshold": false,
+          "max_state_relative_l2": 0.07474879175424576
+        },
+        {
+          "prefix": 4096,
+          "pass_existing_reference_threshold": null,
+          "max_state_relative_l2": null
+        }
+      ]
+    },
+    {
+      "run": "qwen35-fp16-int8-02",
+      "program_status": "completed",
+      "all_short_checks_pass": null,
+      "all_integer_quality_samples_pass": false,
+      "long_comparison_acceptance": []
+    }
+  ],
+  "historical_scope_note": "Original phase results retained. Superseded for current scope by repair-evaluation.json: full integer language quality is not an EDA prerequisite."
+}

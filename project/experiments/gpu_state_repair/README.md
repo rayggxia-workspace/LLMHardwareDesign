@@ -1,0 +1,13 @@
+# Issue32 state precision diagnosis
+
+FP32 compute uses resident FP16 checkpoint weights, with a temporary FP32 matrix for each current Linear, FP32 embedding outputs, small parameters, convolution, activations, attention and recurrent update. Vocabulary projection converts4096 output rows at a time to avoid a2.37GiB temporary; rows are independent. There is no CPU weight offload. The stored checkpoint values are preserved. This is an independent diagnostic group, not an INT8 implementation or FP32 checkpoint retraining. Default allocator cap11776MiB is reduced when actual driver free minus512MiB is smaller.
+
+`run.py --model-dir D:/Data/llm-gpu32/models/qwen35 --out D:/Data/llm-gpu32/runs/qwen35-state-fp32-01 --compute fp32 --lengths 512 2048 4096 --perturb-lengths 128 2048`
+
+Inputs follow the original teacher-forced long text. Compare 128+16 fresh full prefixes against cached and32-token chunked paths, then one-shot versus256-token chunks with32 decode steps. The original thresholds are unchanged: logits maxabs0.5/relativeL2.02 and every cache relativeL2.02. Per-state reference norm is retained to expose small-denominator effects. This observed diagnosis has no performance claim. Failures/OOM remain in results.
+
+State sensitivity uses independent KV, convolution and recurrent perturbations, each at8/16 bits. Scales are FP32 per last-axis vector (KV per head/token; recurrent per head/key-row; convolution per channel). Quantize/dequantize after each256-token prefill call and each decode token, while all arithmetic updates remain floating point. Payload/scale bytes, local round-trip, propagated state/logit errors and saturations are separate. Do not equate a passing fake-quant condition with an integer state-update contract. Joint perturbations and fixed-point nonlinear/update verification remain separate evidence requirements.
+
+`--state-bits 24 32` adds wide-state sensitivity. Code selection uses FP64 then actual INT32 codes;24-bit logical payload is distinct from its unpacked4-byte quantizer allocation. This still dequantizes before native floating-point updates. Passing it does not prove a32-bit accumulator is sufficient for fixed-point state multiplication/rescaling.
+
+`--joint-state-format` adds a combined KV16/conv16/recurrent24 perturbation; per-kind and combined conclusions are reported separately. Independent wide-code/storage check: `python -m unittest discover -s project/experiments/gpu_state_repair -p test_state.py -v`.

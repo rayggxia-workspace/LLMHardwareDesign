@@ -1,0 +1,27 @@
+{
+  "version": "issue32-fixed-k128-w8a8-v2",
+  "dataset": "Salesforce/wikitext",
+  "revision": "b08601e04326c79dfdd32d625aee71d232d685c3",
+  "configuration": "wikitext-2-raw-v1",
+  "calibration_split": "train",
+  "validation_split": "validation (physical parquet mapped to logical test for shared runner)",
+  "samples_per_split": 16,
+  "prediction_tokens": 256,
+  "selection": "Evenly spaced nonempty source rows; concatenate subsequent rows with newline until 257 tokens, take first 257. No generated feedback.",
+  "quality_acceptance": {"mean_kl_max": 0.05, "nll_delta_max": 0.15, "top1_agreement_min": 0.9},
+  "group_k": 128,
+  "method_frozen": "Fixed K128 W8A8; no parameter search or fitting on fresh validation split. Previous WikiText test and original authored set are development/regression evidence.",
+  "formats": {
+    "weight": "INT8 symmetric per-output per-K128-group",
+    "activation": "INT8 symmetric dynamic per-token per-K128-group",
+    "accumulator": "actual INT32 partial GEMM, K=128, abs bound 2064512",
+    "partial_reduction": "FP32 dequantize then sum across K groups",
+    "scale": "FP32, separate W and A scales for every K group",
+    "output": "FP16 after FP32 sum and bias",
+    "lm_head_embedding_conv": "native FP16 matrices/weights excluded from INT8 candidate",
+    "kv": "FP16",
+    "recurrent_state": "FP32",
+    "nonlinear_attention_gate_norm": "native floating point"
+  },
+  "scope": "Local grouped precision proposal; target integer matrices only, not full integer reduction or full model. Extra group scales/partial sums change hardware budgets."
+}

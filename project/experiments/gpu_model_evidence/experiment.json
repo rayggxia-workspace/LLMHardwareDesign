@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "status": "local_candidate_not_project_final_contract",
+  "vram_budget_revision": "After unbounded long01 showed >5GiB WDDM shared memory at S8192, cap allocator at driver physical free minus 512MiB; retain old group as residency-invalid diagnostic, not resident-GPU benchmark",
+  "fp16_reference_group": {"reason": "BF16 short03 failed frozen max_abs/relative_l2; separate FP16 activation group, no threshold relaxation", "weights": "official BF16 weights exactly cast to FP16", "activations": "FP16 with native FP32 promotion", "KV": "FP16", "recurrent": "FP32", "nonlinear": "FP16/FP32", "scale": "unquantized"},
+  "contract_source": "PR26@2cd9ca1513f904d5fd319be11aa23a3e5b9b9646; KV/state/nonlinear/M/r not frozen",
+  "torch": "2.10.0+cu128",
+  "transformers": "5.17.0",
+  "reference": {"weights": "BF16", "activations": "BF16 with native FP32 promotion", "accumulation": "native CUDA; not asserted integer", "KV": "native BF16", "recurrent": "native FP32", "nonlinear": "native BF16/FP32", "scale": "not quantized"},
+  "candidate_matrix": {"weights": "symmetric INT8 [-127,127] per output channel", "activations": "symmetric INT8 [-127,127] dynamic per token row", "accumulation": "torch._int_mm INT32", "output": "FP32 dequantization then BF16, original bias", "scale": "FP32 W/channel A/token; no integer M/r requantization", "excluded": "embedding, tied LM head, convolution, attention QK/PV, recurrent and nonlinear remain native float"},
+  "candidate_state_bits": [8, 16],
+  "state_quantization": "symmetric per tensor/head last 2 axes; RNE; dequantize to original dtype after each cached call; fake quant only, not integer update",
+  "reference_acceptance": {"logits_max_abs": 0.5, "logits_relative_l2": 0.02, "state_relative_l2": 0.02},
+  "candidate_screen": {"mean_kl_max": 0.05, "mean_nll_delta_max": 0.15, "top1_agreement_min": 0.90, "finite_required": true, "int32_overflow_count_max": 0},
+  "performance": {"batch": 1, "decode": 32, "chunk": 256, "warmup": 1, "repeats": 3, "prefills": [512, 2048, 4096, 8192], "backend": "sdpa; native torch GatedDeltaNet fallback", "offload": false, "observers": false, "timing": "CUDA synchronized wall time, prefill/decode/end to end separately; no tokenization/loading"},
+  "calibration_texts": [
+    "A processor reads two signed operands from memory and accumulates their products in a wider register. The controller keeps the address stable until the response arrives. Buffer capacity and bandwidth are separate constraints. ",
+    "河流从山地流向平原。研究人员每天记录水位、温度和降雨量，并用同样的方法整理观测数据。测量结果需要保留单位和时间。 ",
+    "def dot_product(left, right):\n    total = 0\n    for x, y in zip(left, right):\n        total += x * y\n    return total\n",
+    "A garden contains red flowers, green leaves and a small wooden table. Visitors follow a narrow path to the gate. The afternoon sun makes the stones warm. "
+  ],
+  "validation_texts": [
+    "The library closes at six. Before leaving, Mira returned a book about astronomy and wrote down the date of the next public lecture. She planned to compare the observations from two telescopes. ",
+    "实验小组比较两种存储方案。每次运行使用相同输入，单独记录读取、写入和等待时间。容量增加并不保证端口冲突减少，结论必须由数据支持。 ",
+    "def moving_average(values, width):\n    result = []\n    for i in range(width, len(values) + 1):\n        result.append(sum(values[i-width:i]) / width)\n    return result\n",
+    "A train carried twelve crates to the station. Four crates contained tools and the others held paper. Workers checked the labels before placing each crate on the correct shelf. "
+  ],
+  "quality_tokens_per_text": 128,
+  "quality_scope": "authored fixed bilingual/code diagnostic corpus; not standard benchmark or general language-quality acceptance",
+  "long_text": "A reproducible hardware experiment records the source revision, tensor layout, numerical format, memory capacity, access order and timing scope. A matrix engine consumes operands while a vector engine handles normalization and nonlinear functions. Persistent state must survive chunk boundaries. The same input tokens are used for every comparison. 缓存与递推状态的格式需要单独核实。"
+}

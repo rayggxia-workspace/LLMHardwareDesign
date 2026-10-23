@@ -1,5 +1,16 @@
 # YUZE-LU 的进度
 
+## 2026-10-23 Issue32 GPU固定语义证据交付
+
+- 更新时间：2026-10-23（Asia/Shanghai，UTC+08:00）；[Issue32](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/32)，负责人YUZE-LU；[PR36](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/36)，独立任务分支。
+- 用户已收敛范围：EDA验收关注给定计算语义下拆分等价、依赖/状态正确、指定整数算术硬件一致性和成本。完整整数模型语言质量不是前置条件；追加质量评估已取消，已有结果保留为敏感性证据。
+- 新结果：显式memory-efficient SDPA修复长上下文临时显存，Qwen2.5 FP16一次/分块到8192通过，8192峰值6.671/6.114GiB。Qwen3.5原生FP16长状态差异保留；FP32计算参考到8192通过。固定K32真实INT8/INT32矩阵+FP32规范辅助语义，128+16与512/2048/4096/8192+32的输出及所比较状态逐位一致。
+- 真实输入：两模型各3个投影prefill/decode全部K组部分和，独立INT64核对相等；Qwen3.5层0/14/30、head0/31的12个长前缀窗口有Q/K/V、g、beta、初末状态，独立FP64离线重放12/12通过（最大L2约6.53e-7）。
+- 边界：W/A INT8、acc INT32是真CUDA整数矩阵；FP32 scales/部分和、attention、非线性、递推等仍为浮点。INT24状态只是假量化敏感性且代码实际INT32存储。未验证整数M/r或RTL，不接管主线整数参考/划分/端口实现。
+- 检查与成本：管理结构、协议5项、实际批量整数/融合缩放/规范辅助4项测试通过，旧失败不删除。分开记录真实分配与逻辑字节，GPU耗时不外推芯片。详见[后续报告](../../docs/experiments/issue-32-qwen-repair.md)及[精度/预算](../../docs/decisions/issue-32-qwen-local-precision-candidates.md)。
+- 交付：待审查，不自行合并或标done；在线状态以Issue读回为准。完整权重/大trace本人D盘位置/SHA已索引，共享存储待指定；登记PR5 pending，看板缺read:project及board.json，unverified/同步pending。
+- 下一步：用户通知主研究线审查PR36和真实边界，按拟实现模块固定算术合同并验证硬件一致性；无需等待完整模型语言质量。[交接入口](../../docs/handoffs/2026-10-23-issue-32-gpu-evidence.md)。
+
 ## 历史阶段：Issue #7（2026-10-21）
 
 - 更新时间：2026-10-21（中国标准时间，UTC+08:00）。

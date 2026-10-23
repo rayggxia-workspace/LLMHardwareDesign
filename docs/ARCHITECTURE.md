@@ -112,3 +112,22 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 ## 数据与外部依赖
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
+
+## Issue32 GPU 真实模型实验（任务分支）
+
+正式工具位于 `project/experiments/gpu_model_evidence/`，与严格绑定 Qwen3-0.6B 的 Issue23 适配器分开。
+该目录 README 给出固定版本、完整 PowerShell 复跑命令、字段与性能/捕获范围。
+隔离环境及缓存/权重/原始数据在 D:/Data/llm-gpu32/，不修改全局 Python/驱动。
+先 `python scripts/check_project.py`，再运行该目录 `test_protocol.py` 与实际模型 `run.py`，最后 `verify.py` 读回。
+真实模型与整数验证结果以该任务的运行产物和实验报告为准；工具存在不表示验证通过。
+固定 INT8 矩阵与 INT32 累加候选不包含尚未冻结的 scale/M/r、KV、递推、非线性合同，不宣称全整数硬件支持。
+
+
+### Issue32 后续：固定语义与整数边界
+
+最新结果见[Qwen后续报告](experiments/issue-32-qwen-repair.md)。EDA验收是给定语义下拆分等价、状态/依赖正确、硬件位宽/舍入/饱和一致及可核查成本；语言质量只作敏感性证据。
+
+- `gpu_state_repair/run.py --compute fp32 --integer-group-k 32 --fused-integer --canonical-causal-aux --lengths 512 2048 4096 8192 --perturb-lengths`：显式INT8/INT32矩阵+FP32规范辅助语义，须另传`--model-dir`和全新`--out`，见报告完整命令。
+- `gpu_batched_integer/`：cuBLAS批量真实整数GEMM和NVRTC FP32缩放合并，附4项实测CUDA/数值测试；不是全整数内核。
+- `gpu_grouped_capture/`、`gpu_state_capture/`：有限真实部分和/状态输入及CPU FP64独立重放，完整命令见各README。
+- 必要代码核验入口：`gpu_model_repair/test_repair.py`、`gpu_grouped_capture/test_grouped.py`、`gpu_state_repair/test_state.py`。先运行管理检查及旧协议5项，再按变更选择业务测试；不重复扩大质量集。
