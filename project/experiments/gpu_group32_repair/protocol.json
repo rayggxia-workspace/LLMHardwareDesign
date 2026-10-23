@@ -1,0 +1,26 @@
+{
+  "version": "issue32-fixed-k32-qwen35-v3",
+  "dataset": "Salesforce/wikitext",
+  "revision": "b08601e04326c79dfdd32d625aee71d232d685c3",
+  "configuration": "wikitext-2-raw-v1",
+  "calibration_split": "train",
+  "validation_split": "validation, windows disjoint from every previously evaluated K128 validation source row",
+  "samples_per_split": 16,
+  "prediction_tokens": 256,
+  "selection": "Take evenly spaced nonempty eligible starts; advance to first257-token window with no overlap with previous16 K128 validation row ranges or other new windows. Preserve original parquet/source SHA and all excluded row ranges.",
+  "quality_acceptance": {"mean_kl_max": 0.05, "nll_delta_max": 0.15, "top1_agreement_min": 0.9},
+  "group_k": 32,
+  "method_frozen": "K128 passed4096 fresh tokens but failed an old authored regression. K32 is fixed before evaluating these new disjoint validation windows. No gate changes or FP16 matrix exceptions.",
+  "formats": {
+    "weight": "INT8 symmetric per-output per-K32-group",
+    "activation": "INT8 symmetric dynamic per-token per-K32-group",
+    "accumulator": "actual INT32 partial GEMM, K=32, abs bound516128",
+    "partial_reduction": "FP32 dequantize then sum groups",
+    "scale": "FP32 per-group W/A scales,12.5% logical payload overhead for each",
+    "output": "FP16 after FP32 sum/bias",
+    "embedding_lmhead_convolution_attention_nonlinear": "native floating point, excluded from INT8 candidate",
+    "kv": "FP16",
+    "recurrent_state": "FP32"
+  },
+  "scope": "Local format proposal requiring hardware budget review. Target integer matrix experiment; not complete integer inference."
+}

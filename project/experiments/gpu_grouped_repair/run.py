@@ -22,24 +22,24 @@ def calibration(model,cal,cfg,out):
     for ids in cal:
         o=common.call(model,ids[:,:-1],keep=1);assert torch.isfinite(o.logits).all();del o
     torch.save({},out/'smooth-factors.pt')
-    common.save(out/'calibration-frozen.json',{'method':'fixed_k128_w8a8','validation_used':False,
-        'factors_sha256':common.sha(out/'smooth-factors.pt'),'group_k':128,
+    common.save(out/'calibration-frozen.json',{'method':f'fixed_k{cfg["group_k"]}_w8a8','validation_used':False,
+        'factors_sha256':common.sha(out/'smooth-factors.pt'),'group_k':cfg['group_k'],
         'partial_reduction':'FP32 dequantize each INT32 partial then sum; not all-integer reduction'})
 
 
-def install(model,mode,factors):
+def install(model,mode,factors,group_k=128):
     assert mode=='raw','grouped candidate only; use separate native reference'
     rows=[]
     for name,m in model.named_modules():
         if not isinstance(m,torch.nn.Linear) or name=='lm_head':continue
         w=m.weight.detach().float();outdim,indim=w.shape
-        assert indim%128==0 and outdim%8==0,(name,w.shape)
-        blocks=w.reshape(outdim,indim//128,128).permute(1,0,2).contiguous()
+        assert indim%group_k==0 and outdim%8==0,(name,w.shape)
+        blocks=w.reshape(outdim,indim//group_k,group_k).permute(1,0,2).contiguous()
         scale=blocks.abs().amax(-1,keepdim=True).clamp_min(1e-30)/127
         qw=(blocks/scale).round().clamp(-127,127).to(torch.int8)
-        rows.append({'module':name,'shape':[outdim,indim],'group_k':128,'groups':indim//128,
+        rows.append({'module':name,'shape':[outdim,indim],'group_k':group_k,'groups':indim//group_k,
             'weight_payload_bytes':qw.numel(),'weight_scale_bytes':scale.numel()*4,
-            'int32_partial_worst_case_bound':128*127*127,'partial_reduction':'FP32',
+            'int32_partial_worst_case_bound':group_k*127*127,'partial_reduction':'FP32',
             'weight_relative_l2':common.compare(qw.float()*scale,blocks)['relative_l2']})
         m.register_buffer('qblocks',qw.transpose(1,2).contiguous());m.register_buffer('wscales',scale.squeeze(-1))
         m.register_parameter('weight',None)
@@ -52,7 +52,7 @@ def install(model,mode,factors):
             max_acc=torch.zeros((),device=x.device,dtype=torch.int32)
             saturations=torch.zeros((),device=x.device,dtype=torch.int64)
             for group in range(self.qblocks.shape[0]):
-                block=xf[:,group*128:(group+1)*128]
+                block=xf[:,group*group_k:(group+1)*group_k]
                 s=block.abs().amax(-1,keepdim=True).clamp_min(1e-30)/127
                 raw=(block/s).round();qa=raw.clamp(-127,127).to(torch.int8)
                 pad=(-n)%32
