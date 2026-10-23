@@ -276,9 +276,9 @@ def main():
         raise ValueError('output exists; preserve original evidence')
     if git('status', '--porcelain'):
         raise ValueError('formal run requires clean source commit')
-    cfg = json.loads((HERE/'experiment.json').read_text())
+    cfg = json.loads((HERE/'experiment.json').read_text(encoding='utf-8'))
     assert torch.__version__ == cfg['torch'] and transformers.__version__ == cfg['transformers']
-    manifest = json.loads((a.model_dir/'model-manifest.json').read_text())
+    manifest = json.loads((a.model_dir/'model-manifest.json').read_text(encoding='utf-8'))
     assert manifest['complete']
     for n, info in manifest['files'].items():
         assert sha(a.model_dir/n) == info['sha256'], n
@@ -289,6 +289,10 @@ def main():
         'start_epoch': time.time(), 'initial_free_total_bytes': torch.cuda.mem_get_info(),
         'gpu': torch.cuda.get_device_name(), 'backend': cfg['performance']['backend'],
         'phase': a.phase, 'offload': False, 'physical_traffic_measured': False})
+    save(a.out/'physical-memory-at-start.json',{'nvidia_smi':subprocess.check_output(
+        ['nvidia-smi','--query-gpu=memory.total,memory.used,memory.free','--format=csv,noheader'],text=True),
+        'cuda_free_total_bytes':torch.cuda.mem_get_info(),
+        'caution':'WDDM: CUDA free and driver physical free can differ; allocation is not physical traffic'})
     torch.manual_seed(20261023)
     torch.set_num_threads(4)
     torch.backends.cuda.matmul.allow_tf32 = False
@@ -297,7 +301,7 @@ def main():
         save(a.out/'results.json', results)
     try:
         tokenizer = AutoTokenizer.from_pretrained(a.model_dir, local_files_only=True, trust_remote_code=False)
-        raw_cfg = json.loads((a.model_dir/'config.json').read_text())
+        raw_cfg = json.loads((a.model_dir/'config.json').read_text(encoding='utf-8'))
         q35 = raw_cfg['model_type'] == 'qwen3_5'
         if q35:
             from transformers import Qwen3_5ForCausalLM, Qwen3_5TextConfig
