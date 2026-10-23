@@ -1,0 +1,88 @@
+{
+  "schema": "llm-resource-validation/1",
+  "issue": 48,
+  "recorded_at": "2026-10-23T09:11:30.528280+00:00",
+  "source_commit": "b21112bb1ce311db4ec22155f4b1ce23ffbcb5b1",
+  "python": "3.13.5",
+  "platform": "Windows",
+  "scope": "local analytical accounting only; no model/RTL/GPU/server/EDA execution",
+  "checks": [
+    {
+      "command": "python -B -m unittest discover -s project/analysis/llm_resources -v",
+      "exit_code": 0,
+      "result": "31 tests OK"
+    },
+    {
+      "command": "python -B scripts/check_project.py",
+      "exit_code": 0,
+      "result": "management structure PASS"
+    }
+  ],
+  "source_files": {
+    "project/analysis/llm_resources/estimate.py": "55e42ed6528a4f8805971ba2719b22d7ff4392a069b4ab7ab983d281990b84f3",
+    "project/analysis/llm_resources/schema.json": "8ad314e84626b600eb1b4bcb55505ecddcbff39ea9745de72537fd0627d291b4",
+    "project/analysis/llm_resources/test_estimate.py": "964553205259bd40229958b66bce0402c99754fb8f5515772df07c364490d371",
+    "project/analysis/llm_resources/profiles/block_candidate_v1.json": "671b848f3225fe5ec06cd19465bcc929d1a66c49cf8008e991ae61b0633ea430"
+  },
+  "cases": {
+    "dense_4b.json": {
+      "input_sha256": "42871815d2dea244430ec82358890948b2f5901f06da8ab10f882d22fbb49ddf",
+      "report_sha256": "6a8d43a250a7fe564100c665d90031215e7b23121f413cf7845f94ec34e5a830",
+      "source_bound": true,
+      "byte_identical_twice": true,
+      "total_parameters": 4000000000,
+      "weight_payload_bytes": 4000000000,
+      "kv_payload_bytes": 0,
+      "linear_MACs_per_step": 4000000000,
+      "matrix_instances_linear_lower_bound": 2,
+      "required_external_Bps_lower_bound": 41250000000.0,
+      "violations": [
+        "accounted_external_traffic_exceeds_effective_bandwidth"
+      ],
+      "unresolved_count": 13
+    },
+    "moe_2b.json": {
+      "input_sha256": "89328b518845ad29caffbaa4e66c7dd0888b7afe2757183d89eb2603c20b62c5",
+      "report_sha256": "f805903e266d4715b2996edbdf92f82cdf1cdf65fafa416e80ad66c45a51df69",
+      "source_bound": true,
+      "byte_identical_twice": true,
+      "total_parameters": 2000000000,
+      "weight_payload_bytes": 2000000000,
+      "kv_payload_bytes": 0,
+      "linear_MACs_per_step": 500000000,
+      "matrix_instances_linear_lower_bound": 1,
+      "required_external_Bps_lower_bound": null,
+      "violations": [],
+      "unresolved_count": 16
+    },
+    "qwen3_06b.json": {
+      "input_sha256": "b795f90e0a0d92095767da6c5fea38f1b35d5cc494f8bbd4377828359f2d87a7",
+      "report_sha256": "2c87a6f7cabec5065f4c0d5f2d23eb09980c5be8404c47f2e4edf2f577d0dd3e",
+      "source_bound": true,
+      "byte_identical_twice": true,
+      "total_parameters": 596049920,
+      "weight_payload_bytes": 595984384,
+      "kv_payload_bytes": 9175040,
+      "linear_MACs_per_step": 595984384,
+      "matrix_instances_linear_lower_bound": null,
+      "required_external_Bps_lower_bound": null,
+      "violations": [],
+      "unresolved_count": 17
+    },
+    "unknowns.json": {
+      "input_sha256": "9b5fb8e304ddd3422cf1c8aaf1e53ae85b269b21b2b35050bf502986a08aa40d",
+      "report_sha256": "c6ef9c6d1d60e6a3bae464500fdaf7399688cea8f45c85e99b0fd192ad1bb082",
+      "source_bound": true,
+      "byte_identical_twice": true,
+      "total_parameters": 4000000000,
+      "weight_payload_bytes": 4000000000,
+      "kv_payload_bytes": 0,
+      "linear_MACs_per_step": 4000000000,
+      "matrix_instances_linear_lower_bound": null,
+      "required_external_Bps_lower_bound": null,
+      "violations": [],
+      "unresolved_count": 19
+    }
+  },
+  "CI": "final PR head readback is recorded in Issue48/PR"
+}
