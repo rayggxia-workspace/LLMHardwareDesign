@@ -90,7 +90,10 @@ def main():
     p.add_argument('--vram-budget-mib',type=int,default=11776)
     p.add_argument('--state-bits',nargs='+',type=int,choices=[8,16,24,32],default=[8,16])
     p.add_argument('--joint-state-format',action='store_true',help='Also perturb KV16/conv16/recurrent24 jointly')
+    p.add_argument('--integer-group-k',type=int,choices=[32,128],help='Actual grouped INT8 matrices with FP32 auxiliary compute')
+    p.add_argument('--short-steps',type=int,choices=[1,16],default=16,help='1 is a preliminary diagnostic only; formal short check uses16')
     a=p.parse_args();assert not a.out.exists();assert not git('status','--porcelain')
+    if a.integer_group_k:assert a.compute=='fp32','integer diagnostic uses explicitly FP32 auxiliary group'
     manifest=json.loads((a.model_dir/'model-manifest.json').read_text(encoding='utf-8'));assert manifest['complete']
     for n,info in manifest['files'].items():assert sha(a.model_dir/n)==info['sha256'],n
     a.out.mkdir(parents=True)
@@ -103,6 +106,8 @@ def main():
         'command':sys.argv,'weight_storage':'FP16 checkpoint on GPU','compute':a.compute,
         'auxiliary':'native floating point; no integer claim','sdpa':'efficient_only_explicit_repeat_kv',
         'offload':False,'allocator_budget_mib':budget,'physical_free_mib_at_start':free,
+        'integer_matrix_group_k':a.integer_group_k,'short_decode_steps':a.short_steps,
+        'integer_matrix_formats':{'W':'INT8','A':'INT8','partial_acc':'INT32','scale_and_partial_sum':'FP32'} if a.integer_group_k else None,
         'state_rounding':'isolated kind, symmetric dynamic scale on last axis; fake quant, native update',
         'acceptance':{'logits_max_abs':.5,'logits_relative_l2':.02,'each_state_relative_l2':.02},
         'performance_eligible':False})
@@ -117,24 +122,30 @@ def main():
         assert ids.shape[1]==n;save(a.out/'inputs.json',{'teacher_forced':True,'token_ids':ids.tolist()})
         model,loading=common.load_model(a.model_dir);save(a.out/'loading.json',loading)
         if a.compute=='fp32':fp32_compute(model)
+        if a.integer_group_k:
+            spec=importlib.util.spec_from_file_location('state_grouped_candidate',HERE.parent/'gpu_grouped_repair/run.py')
+            grouped=importlib.util.module_from_spec(spec);spec.loader.exec_module(grouped)
+            save(a.out/'quantized-matrices.json',grouped.install(model,'raw',{},a.integer_group_k))
         def call(x,cache=None):return common.call(model,x,cache,keep=1)
         full=[]
-        for j in range(17):
+        for j in range(a.short_steps+1):
             o=call(ids[:,:128+j]);full.append(o.logits.cpu())
-            if j==16:reference=snapshot(o.past_key_values)
+            if j==a.short_steps:reference=snapshot(o.past_key_values)
             del o
         for chunk in (128,32):
             cache=None
             for pos in range(0,128,chunk):o=call(ids[:,pos:pos+chunk],cache);cache=o.past_key_values
             errors=[compare(o.logits.cpu(),full[0])]
-            for j in range(16):
+            for j in range(a.short_steps):
                 o=call(ids[:,128+j:129+j],cache);cache=o.past_key_values
                 errors.append(compare(o.logits.cpu(),full[j+1]))
             states=state_compare(cache,reference)
-            results['continuation'].append({'prefix':128,'decode':16,'chunk':chunk,'logits':errors,'states':states,
+            results['continuation'].append({'prefix':128,'decode':a.short_steps,'chunk':chunk,'logits':errors,'states':states,
                 'pass':all(logits_pass(e) for e in errors) and state_pass(states),'cache':cache_info(cache)})
             checkpoint();del o,cache
         del reference,full;gc.collect();torch.cuda.empty_cache()
+        if not all(row['pass'] for row in results['continuation']):
+            raise ValueError('short continuation failed frozen acceptance; long expansion withheld')
         for length in a.lengths:
             reference=None;reference_logits=None;reference_prefill=None
             for chunk in (length,256):
@@ -183,6 +194,8 @@ def main():
                     'logits_pass':all(logits_pass(e) for e in errors),'states_pass':state_pass(states)})
                 del o,cache;gc.collect();torch.cuda.empty_cache();checkpoint()
             del baseline,reference
+        if a.integer_group_k:
+            save(a.out/'integer-stats.json',{n:m.stats for n,m in model.named_modules() if hasattr(m,'stats')})
         results['status']='completed_with_failures' if results['failures'] else 'completed';checkpoint()
     except Exception as exc:
         results['status']='failed';results['failures'].append({'error':repr(exc),'traceback':traceback.format_exc()});checkpoint();raise

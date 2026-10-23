@@ -59,6 +59,8 @@ def main():
                 'states_pass':all(e['finite'] and e['relative_l2']<=.02 for e in se)})
             checkpoint();del o,cache
         del full,short_state;gc.collect();torch.cuda.empty_cache()
+        if not all(row['logits_pass'] and row['states_pass'] for row in results['short']):
+            raise ValueError('short INT8 mixed continuation failed; long expansion withheld')
         for length in a.lengths:
             one=None
             for chunk in (length,256):
