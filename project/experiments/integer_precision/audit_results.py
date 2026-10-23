@@ -11,7 +11,7 @@ from record import HERE,ROOT,provenance,digest,save
 
 def main():
     p=argparse.ArgumentParser();p.add_argument("--output",required=True,type=Path);a=p.parse_args()
-    checks=Counter();report_paths=[HERE/"inputs/capture-record.json",HERE/"results/numerical.json",HERE/"results/placement.json",HERE/"results-v2/numerical.json",HERE/"results-v2/refinement.json",HERE/"results-v2/refinement-v3.json",ROOT/"work/Liangruizhi/33/checks/checks.json",ROOT/"work/Liangruizhi/33/checks-v2/checks.json",ROOT/"work/Liangruizhi/33/checks-v3/checks.json",ROOT/"work/Liangruizhi/33/rtl/rtl.json"]
+    checks=Counter();report_paths=[HERE/"inputs/capture-record.json",HERE/"results/numerical.json",HERE/"results/placement.json",HERE/"results-v2/numerical.json",HERE/"results-v2/refinement.json",HERE/"results-v2/refinement-v3.json",HERE/"results-v2/placement-v4.json",ROOT/"work/Liangruizhi/33/checks/checks.json",ROOT/"work/Liangruizhi/33/checks-v2/checks.json",ROOT/"work/Liangruizhi/33/checks-v3/checks.json",ROOT/"work/Liangruizhi/33/checks-v4/checks.json",ROOT/"work/Liangruizhi/33/rtl/rtl.json"]
     source_cache={}
     for path in report_paths:
         doc=json.loads(path.read_text(encoding="utf-8"));prod=doc["producer"]
@@ -34,7 +34,8 @@ def main():
         doc,arrays=validate(package,commit,"c1899de289a04d12100db370d81485cdf75e47ca")
         checks["captured_payloads"]+=len(arrays)
         checks["exact_integer_outputs"]+=replay_linear(package)["integer_outputs_replayed"]
-    graph=json.loads((HERE/"results/placement.json").read_text(encoding="utf-8"))
+    graph=json.loads((HERE/"results-v2/placement-v4.json").read_text(encoding="utf-8"))
+    assert graph["inventory"]["state_working_bytes"]==32768
     reasons=Counter()
     for c in graph["candidates"]:
         for reason in c["rejected"]:reasons[reason]+=1
@@ -46,6 +47,8 @@ def main():
         banks=[x+window*elem*4 for x in banks]
         assert banks==c["bank_resident_bytes"] and params==c["rq_parameter_bytes"]
         assert c["boundary_bytes"]==window*elem*5
+        assert c["state_working_bytes"]==c["state_cells"]*(c["state_bits"]//8)
+        if c["feasible"]:assert c["state_working_bytes"]<=32768
         checks["capacity_metadata_cases"]+=1
         if not c["feasible"]:continue
         assert c["cycles"]>=max(c["resource_busy"].values())
@@ -64,7 +67,7 @@ def main():
         checks["independent_traffic_and_compute_cases"]+=1
     checks["input_capture_sha"]+=1
     save(a.output,{"producer":provenance("audit_results.py"),"passed":True,"checks":dict(checks),"rejections":dict(reasons),
-                   "limits":"Source/payload/graph invariants and a small exact integer replay; not a physical or full-model accuracy audit"})
+                   "limits":"Audits v4 graph with explicit 32KiB private state scratch. Initial placement.json omitted that hardware budget and is retained as superseded, not a complete finite-buffer result. Not physical or full-model accuracy audit"})
     print(dict(checks));print(dict(reasons))
 
 

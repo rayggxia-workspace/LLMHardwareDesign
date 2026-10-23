@@ -78,10 +78,12 @@ def candidate(rq,partial,state_bank,mode,rows,window,state_bits,state_cells,scal
     required={"M->V"}
     if (partial=="cross" and rq=="near") or state_bank==0:required.add("V->M")
     rejection=[]
+    state_working=state_cells*(state_bits//8)
     if boundary>2048:rejection.append("finite boundary buffer")
+    if state_working>32768:rejection.append("private state working capacity")
     if any(b>65536 for b in banks):rejection.append("per-bank capacity")
     if links=="forward_only" and "V->M" in required:rejection.append("static connection unreachable")
-    base={**descriptor,"bank_resident_bytes":banks,"boundary_bytes":boundary,"rq_parameter_bytes":params,
+    base={**descriptor,"bank_resident_bytes":banks,"boundary_bytes":boundary,"state_working_bytes":state_working,"rq_parameter_bytes":params,
           "required_connections":sorted(required),"feasible":not rejection,"rejected":rejection}
     if rejection:return base
     g=Graph(mode);previous=[() for _ in range(window)];last_state=()
@@ -141,13 +143,15 @@ def main():
         rows.append(candidate(*combo))
     save(a.output,{"producer":provenance("placement.py"),"schema":"quantized-placement-c1/1","candidates":rows,
                   "inventory":{"banks":2,"bank_bytes":65536,"beat_bytes":64,"matrix_mac_per_cycle_assumed":256,
+                               "state_working_bytes":32768,"state_working_port_assumption":"1R1W, each 64B/cycle; extra to banks and boundary buffers",
                                "rq_units":1,"rq_service_cycles_per_scalar":28,"vector_units":1,"half_duplex_links":1,"boundary_bytes":2048},
                   "limits":["Mixed operator fixture, not end-to-end Qwen model","No calibrated RTL for banks/vector/nonlinear in this graph; no PPA/timing/energy claim",
                             "Deterministic earliest-ready task order is identical, not globally optimal; static design candidates searched",
                             "Bank bursts are nonpreemptive; 2RW stripes one burst over both ports, without mixed-direction interleaving. Link packets are nonpreemptive",
                             "State16 and state32 are separate precision profiles, not a claimed accuracy-equivalent speedup",
                             "Synthetic fixed state-update service is state_cells+1 cycles/token; cannot replace true recurrence costs",
-                            "All RQ parameters assumed preloaded; read traffic counted. Model loading/setup is outside measured fixture"]})
+                            "All RQ parameters assumed preloaded; read traffic counted. Model loading/setup is outside measured fixture",
+                            "Private 32KiB state scratch is explicitly budgeted in all variants; whole-state staging is not free. No macro/PPA established"]})
     print({"candidates":len(rows),"feasible":sum(r["feasible"] for r in rows)})
 
 

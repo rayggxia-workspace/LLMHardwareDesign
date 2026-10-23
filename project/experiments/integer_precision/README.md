@@ -28,6 +28,7 @@ D:/APP/Python/python.exe -B project/experiments/integer_precision/run_rtl.py --w
 
 placement是受控混合算子fixture：32行、N16/K1024，四K片；INT32驻留/跨Block、RQ近端/共享、
 两64KiB bank、一个RQ、一个矩阵、一个向量、一个64B/cycle半双工链路、2KiB边界buffer。
+另有两方案相同的32KiB私有状态工作区，1R1W、每端口64B/cycle为假设；整状态暂存不能免费。
 每token宽状态更新不随tile行数免费减少；INT16和INT32状态分开比较。bank非抢占burst，
 2RW单burst同时用两端口，与1R1W的方向并行区别明示。矩阵/向量服务是假设，
 RQ26延迟/28启动间隔由本机RTL验证；无芯片性能、时序/PPA或模型质量外推。

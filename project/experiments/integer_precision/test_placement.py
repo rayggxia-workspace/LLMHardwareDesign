@@ -18,6 +18,7 @@ class Placement(unittest.TestCase):
         self.assertEqual(near["resource_busy"]["matrix"],shared["resource_busy"]["matrix"])
         self.assertEqual(near["resource_busy"]["vector"],shared["resource_busy"]["vector"])
         self.assertEqual(near["rq_parameter_bytes"],shared["rq_parameter_bytes"])
+        self.assertEqual(near["state_working_bytes"],4096)
         self.assertLess(near["link_beats"],shared["link_beats"])
     def test_no_free_state_reuse_when_tiling(self):
         a=candidate("near","internal",1,"1R1W",1,1,32,1024,"static")
@@ -32,6 +33,7 @@ class Placement(unittest.TestCase):
         b=candidate("near","internal",1,"1RW",4,2,32,1024,"dynamic_row")
         self.assertEqual(a["rq_parameter_bytes"],16*5)
         self.assertEqual(b["rq_parameter_bytes"],32*16*5)
+        self.assertIn("private state working capacity",candidate("near","internal",1,"1RW",4,2,32,16384,"static")["rejected"])
 
 
 if __name__=="__main__":unittest.main(verbosity=2)
