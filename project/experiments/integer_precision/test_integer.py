@@ -17,6 +17,15 @@ import capture
 
 
 class Arithmetic(unittest.TestCase):
+    def test_quantizer_output16_and_static_metadata(self):
+        from quantize import linear
+        a=np.array([[.1,-.3,.7],[.2,.1,-.2],[.15,-.2,.5]],np.float32)
+        w=np.array([[.3,-.4,.2],[-.2,.5,-.1]],np.float32)
+        for bits in (8,16):
+            result,data=linear(a,w,a[:2],"static_tensor",bits)
+            self.assertEqual(result["rq_parameter_sets"],2)
+            self.assertEqual(data[f"out_i{bits}"].dtype,np.dtype("i1" if bits==8 else "<i2"))
+            self.assertTrue(np.all(data["M_u32"][0]==data["M_u32"][1]))
     def test_rounding_ties_sign_and_extremes(self):
         for r in range(64):
             half=0 if r==0 else 1<<(r-1)
@@ -164,6 +173,21 @@ class Capture(unittest.TestCase):
         for role,dtype,value in (("requant_multiplier","<u4",1<<31),("requant_shift","u1",64)):
             d=copy.deepcopy(self.doc);d["tensors"].append(capture.tensor(self.root,"param",np.array([value],dtype=dtype),role,["p"],capture.encoding("requant_params")));self.write(d)
             with self.assertRaises(ValueError):capture.validate(self.root)
+    def test_integer_replay_rejects_validly_rehashed_wrong_result(self):
+        self.doc["tensors"]=[]
+        for name,role,array,axes in (
+            ("a_i8","activation",np.array([[1,2],[-3,4]],np.int8),["token","K"]),
+            ("w_i8","weight",np.array([[2,-1]],np.int8),["channel","K"]),
+            ("acc_i32","accumulator",np.array([[0],[-10]],dtype="<i4"),["token","channel"]),
+            ("out_i8","output",np.array([[0],[-5]],np.int8),["token","channel"]),
+            ("M_u32","requant_multiplier",np.array([1],dtype="<u4"),["channel"]),
+            ("r_u8","requant_shift",np.array([1],dtype="u1"),["channel"])):
+            self.doc["tensors"].append(capture.tensor(self.root,name,array,role,axes,capture.encoding("fixed_point",fraction_bits=0)))
+        self.write(self.doc);self.assertEqual(capture.replay_linear(self.root)["integer_outputs_replayed"],2)
+        file=self.root/"out_i8.bin";file.write_bytes(bytes([1,251]))
+        self.doc["tensors"][3]["file"]["sha256"]=capture.sha(file.read_bytes());self.write(self.doc)
+        capture.validate(self.root)
+        with self.assertRaises(ValueError):capture.replay_linear(self.root)
 
 
 if __name__=="__main__":unittest.main(verbosity=2)

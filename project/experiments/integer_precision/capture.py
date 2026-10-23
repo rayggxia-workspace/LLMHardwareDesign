@@ -137,7 +137,34 @@ def encoding(kind,**extra):
             "saturation":"clip" if kind in ("fixed_point","symmetric") else "reject",**extra}
 
 
+def replay_linear(root):
+    """Opt-in QA[M,K] * QW[N,K] + RQ graph, independent Python/Fraction oracle.
+
+    General captures still use validate; this replay intentionally requires
+    the explicit example names and does not guess arbitrary model graphs.
+    """
+    from fractions import Fraction
+    d,t=validate(root)
+    names=("a_i8","w_i8","acc_i32","M_u32","r_u8")
+    if any(k not in t for k in names):raise ValueError("linear replay missing declared inputs")
+    a,w,acc,m,r=(t[k] for k in names)
+    out=t.get("out_i8",t.get("out_i16"))
+    if out is None or a.ndim!=2 or w.ndim!=2 or a.shape[1]!=w.shape[1] or acc.shape!=(a.shape[0],w.shape[0]) or out.shape!=acc.shape:
+        raise ValueError("linear replay shape mismatch")
+    checked_outputs=0
+    for row,col in np.ndindex(acc.shape):
+        integer_sum=sum(int(x)*int(y) for x,y in zip(a[row],w[col]))
+        if not -(1<<31)<=integer_sum<(1<<31) or int(acc[row,col])!=integer_sum:
+            raise ValueError("linear integer accumulation replay failed")
+        mi=int(m[row,col] if m.ndim==2 else m[col]);ri=int(r[row,col] if r.ndim==2 else r[col])
+        value=round(Fraction(integer_sum*mi,1<<ri));b=out.dtype.itemsize*8
+        value=max(-(1<<(b-1)),min((1<<(b-1))-1,value))
+        if int(out[row,col])!=value:raise ValueError("linear RNE/saturation replay failed")
+        checked_outputs+=1
+    return {"integer_outputs_replayed":checked_outputs,"oracle":"Python arbitrary integer dot + Fraction ties-even"}
+
+
 if __name__=="__main__":
-    p=argparse.ArgumentParser();p.add_argument("root",type=Path);p.add_argument("--expected-commit");p.add_argument("--expected-revision"); a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument("root",type=Path);p.add_argument("--expected-commit");p.add_argument("--expected-revision");p.add_argument("--replay-linear",action="store_true"); a=p.parse_args()
     d,t=validate(a.root,a.expected_commit,a.expected_revision)
-    print(json.dumps({"schema":d["schema"],"validated_tensors":len(t),"execution":d["run"]["execution"]}))
+    print(json.dumps({"schema":d["schema"],"validated_tensors":len(t),"execution":d["run"]["execution"],"replay":replay_linear(a.root) if a.replay_linear else "not requested"}))
