@@ -38,7 +38,7 @@ try:
         subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(ROOT/'physical.tcl')],stdout=log,stderr=subprocess.STDOUT,check=True)
     if SPEC['mode']=='api':
         script='read_db {'+str(odb)+'}\n'
-        script+='foreach cmd {drt::check_drc drt::step_dr drt::step_end} {puts "PROC $cmd ARGS [info args $cmd] BODY [info body $cmd]"}\n'
+        script+='foreach cmd {drt::check_drc drt::step_dr} {puts "PROC $cmd ARGS [info args $cmd] BODY [info body $cmd]"}\n'
         script+='help extract_parasitics\nhelp check_antennas\nhelp write_verilog\n'
         path=ROOT/'native-api.tcl';path.write_text(script)
         with (ROOT/'native-api.log').open('w') as log:
@@ -91,6 +91,7 @@ try:
                 # is an isolated routing proxy; original pin connections are
                 # restored by construction when upper wires are integrated.
                 script+='set b [ord::get_db_block]\nforeach n [$b getNets] {if {[$n getSigType] ni {POWER GROUND}} {foreach p [$n getITerms] {$p disconnect};foreach p [$n getBTerms] {odb::dbBTerm_destroy $p}}}\n'
+                script+='foreach n [$b getNets] {if {[$n getSigType] ni {POWER GROUND}} {set w [$n getWire];if {$w ne "NULL"} {odb::dbWire_destroy $w}}}\n'
                 affected={row['net'] for row in contract['affected_nets']}
                 for serial,landing in enumerate(contract['access_landings']):
                     if landing['net'] not in affected:continue
@@ -100,6 +101,7 @@ try:
                     script+='set p [odb::dbBTerm_create $n h2_landing_'+str(serial)+']\n$p setIoType INOUT\nset bp [odb::dbBPin_create $p]\n$bp setPlacementStatus FIRM\n'
                     script+='set v [[ord::get_db_tech] findVia {'+landing['via']+'}]\nif {$v eq "NULL"} {error {Missing native landing via}}\n'
                     script+='foreach box [$v getBoxes] {set l [$box getTechLayer];if {[$l getName] eq "metal8"} {odb::dbBox_create $bp $l [expr {'+str(landing['x'])+'+[$box xMin]}] [expr {'+str(landing['y'])+'+[$box yMin]}] [expr {'+str(landing['x'])+'+[$box xMax]}] [expr {'+str(landing['y'])+'+[$box yMax]}]}}\n'
+                script+='set empty {}\nforeach n [$b getNets] {if {[$n getSigType] ni {POWER GROUND} && [llength [$n getBTerms]]==0} {lappend empty $n}}\nforeach n $empty {odb::dbNet_destroy $n}\n'
                 script+='write_db proxy-initial.odb\nwrite_def proxy-initial.def\n'
             guide=''
             for row in contract['affected_nets']:
