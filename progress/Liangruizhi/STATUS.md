@@ -22,8 +22,12 @@
 
 - 2026-10-23接续：[Issue29](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/29)，task/29-port-rtl，独立D:/Projects/LLMHardwareDesign-portrtl，base PR28@a3f8335。两bank三端点可执行RTL、有限响应FIFO、逐拍仲裁/反压、实际数据与版本检查已实现；ModelSim九组定向smoke、服务器Verilator开发阶段2程序/2压力测试通过，独立轨迹审计及正式全量扫参待完成。编译工具路径/参数宽度失败保留，不称正式结果。PR待创建；整体Goal active。
 
-- 2026-10-23正式运行更新：源码916dcf9e、[PR30](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/30)；Slurm89836／89837均COMPLETED0，两次1872程序＋54压力测试完整PASS，27份results逐字节一致。独立全量结果1698897检查、33witness逐拍2482636检查与2191来源绑定通过，8类真实变异检出。报告docs/experiments/issue-29-port-rtl.md，原始20MB证据已放共同服务器project-circuit/LLMHardwareDesign/issue-29并SHA读回，未仅留本机。通用综合89838仍运行，尚未证明宏映射/PPA，PR draft、Issue in_progress。整体Goal持续active，下一步扩差异结构与完整权重/KV/算术/物理成本；源码交付与验收区分。
+- 2026-10-23正式运行更新：源码916dcf9e、[PR30](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/30)；Slurm89836／89837均COMPLETED0，两次1872程序＋54压力测试完整PASS，27份results逐字节一致。独立全量结果1698897检查、33witness逐拍2482636检查与2191来源绑定通过，8类真实变异检出。报告docs/experiments/issue-29-port-rtl.md，原始20MB证据已放共同服务器project-circuit/LLMHardwareDesign/issue-29并SHA读回，未仅留本机。通用综合89838已TIMEOUT，未完成检查，尚未证明宏映射/PPA，PR draft、Issue in_progress。整体Goal持续active，下一步扩差异结构与完整权重/KV/算术/物理成本；源码交付与验收区分。
 
 ## 平台目标状态核验
 
 2026-10-23重新调用get_goal核验：平台目标实际为blocked，工具未返回该状态的历史原因；此前沿用active的文字不代表当前平台状态。研究目标尚未完成，本轮依既有授权继续执行并完成实验交付；平台自动续跑尚未恢复，恢复由用户/系统控制，不能以Issue进度或本地文档代替。
+
+## 89838最终状态
+
+通用Yosys作业89838于2026-10-23 09:55:54 CST达到20分钟时限，Slurm最终TIMEOUT（elapsed20:28，batch0:15）。日志确认已进入PROC_MUX，未完成后续memory_collect/check/stat/JSON；未证明综合通过，也不能把工具超时解释为RTL功能错误。原始日志和SHA索引已保存work/Liangruizhi/29/audits/synth-timeout01/。 下一步保留同一源码，使用单配置-defer与RTLIL检查点分开前端和proc成本；该后续检查尚未执行。先前运行中快照仅代表其采集时刻。

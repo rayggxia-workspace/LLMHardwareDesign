@@ -36,7 +36,7 @@ Issue27的1RW对应差异约4.51%／3.92%，本轮缩小为1.46%／1.71%。原�
 - 独立全量结果审计1698897项检查通过，核验1872结果、345384依赖、22464计算区间、103896搬运区间及27组严格编译参数；24已保存program trace共122494cycle／1332transfer的最后ack与任务end对应。
 - 独立逐拍审计：33份witness共2482636项检查、176981cycle、147868次accept与response相等；2737632个语义read bytes逐字节初始化／版本通过。2191项源码／bundle／结果绑定通过，8类真实轨迹变异全部被目标检查检出。7200B未知仅是decode未请求的尾拍padding，按实际case推导核验；首轮审计把padding误要求初始化的12个false FAIL保留，纠正检查口径后通过，未放宽语义数据规则。
 - 保存的逐周期证据为24个program witness和9个stress witness，不是1872个程序的全部逐拍轨迹。best-of-four中的最佳策略不一定是这24份critical witness，不能扩大独立逐拍覆盖范围。
-- 通用综合结构检查job89838已提交；当前仍在运行，尚未证明SRAM宏映射、实际面积、布线、时序、功率或算术RTL等价。即使通用综合通过也不能代替这些证据。
+- 通用Yosys作业89838于2026-10-23 09:55:54 CST达到20分钟时限，Slurm最终TIMEOUT（elapsed20:28，batch0:15）。日志确认已进入PROC_MUX，未完成后续memory_collect/check/stat/JSON；未证明综合通过，也不能把工具超时解释为RTL功能错误。原始日志和SHA索引已保存work/Liangruizhi/29/audits/synth-timeout01/。尚未证明SRAM宏映射、实际面积、布线、时序、功率或算术RTL等价。
 
 ## 研究判断与下一步
 
@@ -57,3 +57,7 @@ Issue27的1RW对应差异约4.51%／3.92%，本轮缩小为1.46%／1.71%。原�
 ## 平台目标状态核验
 
 2026-10-23重新调用get_goal核验：平台目标实际为blocked，工具未返回该状态的历史原因；此前沿用active的文字不代表当前平台状态。研究目标尚未完成，本轮依既有授权继续执行并完成实验交付；平台自动续跑尚未恢复，恢复由用户/系统控制，不能以Issue进度或本地文档代替。
+
+## 89838最终状态
+
+通用Yosys作业89838于2026-10-23 09:55:54 CST达到20分钟时限，Slurm最终TIMEOUT（elapsed20:28，batch0:15）。日志确认已进入PROC_MUX，未完成后续memory_collect/check/stat/JSON；未证明综合通过，也不能把工具超时解释为RTL功能错误。原始日志和SHA索引已保存work/Liangruizhi/29/audits/synth-timeout01/。 下一步保留同一源码，使用单配置-defer与RTLIL检查点分开前端和proc成本；该后续检查尚未执行。先前运行中快照仅代表其采集时刻。
