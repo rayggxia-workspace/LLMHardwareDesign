@@ -58,6 +58,26 @@ try:
         path=ROOT/'connectivity-api.tcl';path.write_text(script)
         with (ROOT/'connectivity-api.log').open('w') as log:
             subprocess.run(['openroad','-threads','1','-exit',str(path)],stdout=log,stderr=subprocess.STDOUT,check=True)
+    if SPEC['mode']=='debug':
+        source=Path(SPEC['source'])
+        proxy=sealed(source,'proxy-initial.odb')
+        guide=sealed(source,'restricted.guide')
+        path=ROOT/'debug-route.tcl'
+        path.write_text('read_db {'+str(proxy)+'}\nset_routing_layers -signal metal8-metal10\nread_guides {'+str(guide)+'}\ndetailed_route -output_drc debug-drc.rpt\n')
+        observations={}
+        exe=shutil.which('openroad')
+        for tool,args in [('readelf',['-h',exe]),('addr2line',['-f','-C','-e',exe,'0x6146056','0x4300B48','0x4160AB7','0x417C2FE','0x24AA150']),('gdb',['-batch','-ex','run','-ex','bt','--args',exe,'-threads',str(SPEC['cores']),'-exit',str(path)])]:
+            executable=shutil.which(tool)
+            if executable:
+                with (ROOT/('debug-'+tool+'.log')).open('w') as log:
+                    outcome=subprocess.run([executable]+args,stdout=log,stderr=subprocess.STDOUT)
+                observations[tool]=dict(executable=executable,exit_code=outcome.returncode)
+            else:observations[tool]=dict(available=False)
+        for candidate in ['/OpenROAD-flow-scripts/tools/OpenROAD/src/drt/src/io/io.cpp','/OpenROAD-flow-scripts/tools/OpenROAD/src/odb/src/db/dbNet.cpp']:
+            path=Path(candidate)
+            if path.is_file():
+                (ROOT/('source-'+path.name)).write_text(path.read_text())
+        (ROOT/'debug-tools.json').write_text(json.dumps(observations,indent=2)+'\n')
     if SPEC['mode'] in ('partition','route'):
         from def_routes import partition
         contract=partition(ROOT/'physical.def',ROOT/'frozen-lower.def',SPEC['bottom'])
