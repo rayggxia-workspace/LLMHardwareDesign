@@ -8,7 +8,14 @@ task/39-kv-scale-boundary，独立D:/Projects/LLMHardwareDesign-kvscale，base P
 不改写Issue37的历史架构阶段，不启动其他机器或下载大模型，不接管Issue32/PR36。
 正式配置project/experiments/kv_scale/experiment.json，代码/独立Fraction/边界测试；开发探索保留D盘。
 给师兄可复制文案docs/handoffs/2026-10-23-gpu-codex-experiment-prompt.md，先续Qwen、后Gemma、最后Phi保留验证。
-当前源码准备/正式复跑待执行，PR待创建；正式结果和交接随后补齐。登记PR5 pending，看板unverified/同步pending。
+正式源码a83e624a10ecc3f012eff2f2f770c9f9842c3a76，24组合两次CPU运行；
+89280整数比较、296448真实来源值/540指数、11测试/管理/whitespace通过，五科学文件逐字节复现。
+direct QK8局部误差大，离线同张量平衡改善仅定位，尚非全模型质量或在线整数硬件通过。
+[PR40](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/40)交付待审查/合并，未done；
+报告docs/experiments/issue-39-kv-scale-boundary.md，交接docs/handoffs/2026-10-23-issue-39-kv-scale.md，
+raw/源/结果SHA在issue-39-run01/index和work/Liangruizhi/39/manifest；恢复先核SHA和最新分工。
+后续因果scale/跨GQA变换、独立量化质量/宽算术物理仍缺；等用户通知兄方完成再核验整合。
+登记PR5 pending，看板unverified/同步pending，管理员/审查人待指定。
 
 ## 2026-10-23（UTC+08:00）Issue37先审查架构与筛选
 

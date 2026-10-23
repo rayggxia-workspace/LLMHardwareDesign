@@ -12,6 +12,10 @@ python -B project/experiments/kv_scale/audit.py D:/Projects/Codex/kvscale-202610
 ```
 
 正式run要求工作区干净、输入归档SHA和源码commit字节匹配，拒绝覆盖已有输出。
+上述两次正式运行来自源码a83e624a；最终交付后结果位于results/issue-39-run01/evidence.zip与index.json。
+运行`python -B work/Liangruizhi/39/verify.py --extract D:/Projects/Codex/kvscale-20261023/delivery-replay`，
+再以解压的run01作为audit.py参数复核；输入源审计用work/Liangruizhi/39/audit_inputs.py。
+如从后续commit重新运行，新的source commit和SHA会据实记录，不冒充原a83e624a运行。
 试开发必须`--development`且不能当正式证据。结果最终随Issue39归档交付，已有输入仍在Issue27归档。
 
 Q/K/V量化、QK平衡、bias和M/r编译为离线浮点探索；之后dot/RQ/LUT/P/PV为整数参考，
