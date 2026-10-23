@@ -17,6 +17,7 @@ common=grouped.common
 @torch.inference_mode()
 def main():
     p=argparse.ArgumentParser();p.add_argument('--model-dir',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
+    p.add_argument('--group-k',type=int,choices=[32,128],default=128)
     a=p.parse_args();assert not a.out.exists();assert not common.git('status','--porcelain')
     model_manifest=json.loads((a.model_dir/'model-manifest.json').read_text(encoding='utf-8'))
     for name,info in model_manifest['files'].items():assert common.sha(a.model_dir/name)==info['sha256']
@@ -24,7 +25,7 @@ def main():
     free=int(subprocess.check_output(['nvidia-smi','--query-gpu=memory.free','--format=csv,noheader,nounits'],text=True).splitlines()[0])
     budget=min(9728,free-512);assert budget>0
     torch.cuda.set_per_process_memory_fraction(budget*2**20/torch.cuda.get_device_properties(0).total_memory)
-    model,loading=common.load_model(a.model_dir);rows=grouped.install(model,'raw',{})
+    model,loading=common.load_model(a.model_dir);rows=grouped.install(model,'raw',{},a.group_k)
     tokenizer=common.transformers.AutoTokenizer.from_pretrained(a.model_dir,local_files_only=True)
     cfg=json.loads((HERE.parent/'gpu_model_evidence/experiment.json').read_text(encoding='utf-8'))
     ids=torch.tensor([tokenizer(cfg['long_text']*30,add_special_tokens=False)['input_ids'][:129]],device='cuda')
@@ -36,7 +37,7 @@ def main():
         acc=original_mm(a,b)
         if current:
             c=current['payload'];g=len(c['groups']);module=current['module']
-            x=current['x'][:2,g*128:(g+1)*128].float()
+            x=current['x'][:2,g*a.group_k:(g+1)*a.group_k].float()
             scale=x.abs().amax(-1,keepdim=True).clamp_min(1e-30)/127
             c['groups'].append({'group':g,'A':a[:min(2,current['x'].shape[0])].cpu(),
                 'B':b[:,:4].cpu(),'accumulator':acc[:min(2,current['x'].shape[0]),:4].cpu(),
@@ -76,7 +77,8 @@ def main():
     torch.save(captures,a.out/'grouped-partials.pt')
     common.save(a.out/'checks.json',checks);common.save(a.out/'inputs.json',ids.tolist())
     common.save(a.out/'manifest.json',{'source_commit':common.git('rev-parse','HEAD'),'model':model_manifest,
-        'selected':'three layer0 projections, first128-token prefill and one cached token, first2 rows/4 columns, all K128 groups',
+        'selected':'three layer0 projections, first128-token prefill and one cached token, first2 rows/4 columns, all K groups',
+        'group_k':a.group_k,
         'source_files':{str(p.relative_to(HERE.parent)):common.sha(p) for d in (HERE,HERE.parent/'gpu_grouped_repair',HERE.parent/'gpu_model_repair',HERE.parent/'gpu_model_evidence') for p in d.glob('*.py')},
         'allocator_budget_mib':budget,'offload':False,'performance_eligible':False,
         'formats':{'A':'INT8','W':'INT8','partial_acc':'INT32','scales':'FP32','partial_reduction':'FP32','output':'FP16'}})
