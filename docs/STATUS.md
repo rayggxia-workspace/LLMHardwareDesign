@@ -1,5 +1,11 @@
 # 当前状态
 
+- 2026-10-23 CPU迁移：[Issue53/PR54](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/54)
+  服务器独立环境已建立，已有Qwen3-0.6B两轮32CPU作业89943/89945完成，各6线程/精度条件。
+  FP32完整/cached/chunk及28层KV全通过；BF16的8/16线程分块误差超预设门，32线程相等，两轮重现。
+  只证明该小模型短上下文CPU迁移，未测更大模型/长序列、INT8或硬件收益。报告/失败/环境/输入/SHA已归档。
+  与Issue29原型回归/分阶段综合并行，分别记录；E2b完整attention与E3公平递推仍是待做主线。
+
 - 2026-10-23 E2a：[Issue51/PR52](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/52)
   完成384组织的无bias整数Linear/RQ8固定资源服务比较，8CPU/8worker服务器89937与本机逐项一致。
   各自优化已有策略后近端RQ最好仅降约0.566%，不足以固定不可绕过边界；矩阵/消费者服务未RTL校准，
