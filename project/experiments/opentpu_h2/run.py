@@ -66,7 +66,7 @@ try:
         path.write_text('read_db {'+str(proxy)+'}\nset_routing_layers -signal metal8-metal10\nread_guides {'+str(guide)+'}\ndetailed_route -output_drc debug-drc.rpt\n')
         observations={}
         exe=shutil.which('openroad')
-        for tool,args in [('readelf',['-h',exe]),('addr2line',['-f','-C','-e',exe,'0x6146056','0x4300B48','0x4160AB7','0x417C2FE','0x24AA150']),('gdb',['-batch','-ex','run','-ex','bt','--args',exe,'-threads',str(SPEC['cores']),'-exit',str(path)])]:
+        for tool,args in [('readelf',['-h','-l',exe]),('addr2line',['-f','-C','-e',exe,'0x6147056','0x4301B48','0x4161AB7','0x417D2FE','0x24AB150','0x24B371D','0x227F22A']),('gdb',['-batch','-ex','run','-ex','bt','--args',exe,'-threads',str(SPEC['cores']),'-exit',str(path)])]:
             executable=shutil.which(tool)
             if executable:
                 with (ROOT/('debug-'+tool+'.log')).open('w') as log:
