@@ -94,7 +94,7 @@ python project/experiments/opentpu_h2/test_upper_actual.py <实际restricted-fin
 python scripts/check_project.py
 ```
 
-原始 DEF／plan／partition／tech 必须来自回执所绑定的同一实际结果。`summarize.py` 核对选定终态、runner 上传摘要、工具一致、全部本地原始证据 SHA、完整 DEF 摘要及成本／层范围；不把缺失的完整 standalone DRC 写成成功。`checks` 模式清除内存 guides 后执行原生完整父层 `drt::check_drc`，导出检查前后完整 DEF 并冻结所有制造几何，不能因 DRC 改写路由。新检查配置应指向已封存回装目录。门槛和制造边界见 [Issue31 记录](experiments/issue-31-opentpu-h2.md)。
+原始 DEF／plan／partition／tech 必须来自回执所绑定的同一实际结果。`summarize.py` 核对选定终态、runner 上传摘要、工具一致、全部本地原始证据 SHA、完整 DEF 摘要及成本／层范围；要求所选八份真实终态与完整 standalone DRC 均通过，局部／故意短路控制不可替代全范围检查。`checks` 模式清除内存 guides 后执行原生完整父层 `drt::check_drc`，导出检查前后完整 DEF 并冻结所有制造几何，不能因 DRC 改写路由。新检查配置应指向已封存回装目录。annotation 模式复用原 H1 原生 flat/all-arcs 扇出审计，并逐一将实际重载的全部 RC／网表／约束摘要绑定到回装源；checks-short-control 仅在单独复制 DEF 内造短路，必须检出错误，不能作合格硬件。门槛和制造边界见 [Issue31 记录](experiments/issue-31-opentpu-h2.md)。
 
 - 阅读：从仓库根目录直接打开 `ref-project/llm-routing/总报告.html` 或 `ref-project/llm-routing/线长报告.html`；其图片和下载链接使用包内相对路径。
 - 管理结构检查：`python scripts/check_project.py`（Python 3.9+，无第三方包）。

@@ -1,10 +1,10 @@
 # openTPU H2：冻结资源与限定层互联
 
-[Issue31](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/31)，负责人 YUZE-LU，审查人／优先级待指定。分支 `task/31-opentpu-h2`，依赖 [H1 PR17](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/17) @ `ce5896de47921fcdc422c4ac9c05cefcb6666bff`。H1 封存结果不修改。
+[Issue31](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/31)，负责人 YUZE-LU，审查人／优先级待指定。分支 `task/31-opentpu-h2`，依赖 [H1 PR17](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/17) @ `ce5896de47921fcdc422c4ac9c05cefcb6666bff`。H1 封存结果不修改；PR17 已在本轮期间由另一项授权整合合入 main@0cc36f3，H2 分支通过 merge 继承主线，保留原 runner 祖先。
 
 ## 当前结论
 
-完成首个同功能、同资源的受限层实例：ACT/MXU 子块不重做，有源库存、位置、接线、引脚、PG、时钟和低层线冻结；仅重布父层 M8–M10 信号线及 V8/V9。真实回装／RC 提取、PG、天线、电容／slew／fanout、宏级及真实子网表分层 STA 通过。上层原生 DRT 最终 DRC 0，独立几何图证实全部 1,003 个上层连通森林完整接通。**独立完整父层 DRC 正在运行，尚未给出通过结论。**
+完成首个同功能、同资源的受限层实例：ACT/MXU 子块不重做，有源库存、位置、接线、引脚、PG、时钟和低层线冻结；仅重布父层 M8–M10 信号线及 V8/V9。真实回装／RC 提取、PG、天线、电容／slew／fanout、宏级及真实子网表分层 STA 通过。上层原生 DRT 最终 DRC 0，独立几何图证实全部 1,003 个上层连通森林完整接通。**独立完整父层 DRC 89877／89878 已自然完成，两组均零标记；完整分层 RC 覆盖审计 89881 也通过。本同功能切片已通过本轮全部工程门槛，待审查。**
 
 这是从 H1 目标条件化资源构造出的第一个 H2 切片。3,109,501.80 µm 原父层线已预埋，占原父层线长约 92.50%；未验证第二计算图、任意 685 bit 重排或独立于目标的通用底座。单 small／typical／固定布局与引脚，synthetic SRAM 无 GDS，未完成制造签核；不能把细小线长差解释成普遍优化收益。
 
@@ -62,7 +62,7 @@ H1 父层时钟到 MXU／ACT 入口 arrival 为 0.103687562／0.102252588 ns；�
 
 子块线长 3,286,032 µm、通孔 1,248,336 不变。宏 footprint 1,317,410.90905 µm²、die 2,788,900 µm² 为另一口径，不加到叶面积。父层取完整原生 DEF 中心线，H1 恰与源 DRT 相同；新 DRT 整数汇总 249,895 µm，实际 DEF 为 249,895.02 µm。普通信号成本不包括 special PG。未测动态功耗。
 
-RC 提取覆盖 11,954 网，无 disconnected flags。完整 STA 使用真实子网表、层次 SPEF 和原外部预算，未添加内部边界 delay。上层 DRT 0、继承的冻结低层／块内 DRC、独立完整父层 DRC 是不同证据。
+RC 提取覆盖 11,954 网，无 disconnected flags；独立完整层次审计确认 40,831 个未标注驱动均无原生 flat/all-arcs 实际扇出，部分未标注驱动为 0，连接时钟正控制通过。完整 STA 使用真实子网表、层次 SPEF 和原外部预算，未添加内部边界 delay。上层 DRT 0、继承的冻结低层／块内 DRC、独立完整父层 DRC 是不同证据。
 
 ## 封存数据与执行
 
@@ -75,14 +75,17 @@ RC 提取覆盖 11,954 网，无 disconnected flags。完整 STA 使用真实子
 | boundary-01 | 89873 | COMPLETED 0／真实 pin 所处层 |
 | route-proxy-m8-10 | 89875 | COMPLETED 0，44 秒／受限层原生 DRT |
 | composite-m8-03 | 89876 | COMPLETED 0，4:10／回装、RC、PG、完整 STA |
-| drc-h1-01／drc-h2-01 | 89877／89878 | 运行中／完整父层只读 DRC，内存清 guides，前后审计全部制造几何 |
+| drc-h1-01／drc-h2-01 | 89877／89878 | COMPLETED 0，28:13／27:58；完整父层 DRC0，内存清 guides，前后全部制造几何一致 |
+| annotation-01 | 89881 | COMPLETED 0，32 秒；全部未标注驱动原生扇出审计及连接时钟正控制通过 |
 
-全部 c64、yzl-h2-*、sbatch --time=0，实际调度及 allocation 均核验 UNLIMITED，不设置耗时截止。早期 native-api-03/89861、native-api-04/89862 也在正常计算，不按耗时取消。状态是当时观测，最终以封存清单和调度终态为准。
+全部 c64、yzl-h2-*、sbatch --time=0，实际调度及 allocation 均核验 UNLIMITED，不设置耗时截止。早期 native-api-03/89861、native-api-04/89862 也在正常计算，不按耗时取消。这两个冗余诊断不替代已封存的 89877／89878，也不构成尚缺的验收门槛；其状态是当时观测，最终以封存终态为准。
 
 H1 ODB SHA 6a80303ac643775321e95a49398671a4a5387b589b6eab1b7dfc6d217eec9a81，源清单 SHA d6764e403ac9ffe8744cb8c76dc302706e877e0526024178c372ad8dbdb4b459。完整 DEF 基线 SHA 4350947f2a6d42a98ba97d67abfb0aca38a53379a3d7dd8b61b4f54bfec5ef27、回装 SHA 75e47ee1d27d89a71ce224a195682ad07376fd54524040ca88575e1535fc4ed5。子块 ODB／网表／SPEF、宏视图、镜像／工具、配置和 runner commit 摘要均绑定提交与封存回执。
 
-collect.py 核对终态清单 SHA，较大文本用确定性 gzip 保留原始字节。summarize.py 验证选定证据／工具身份／完整 DEF 成本和允许层范围，缺少完整 DRC 就保留 pending。实际 DEF 负例测试拒绝 master、坐标、低层 wire、V7 改动；独立图负例拒绝物理开路与错网别名，两组通过且不改变原结果。命令见 [ARCHITECTURE](../ARCHITECTURE.md)。
+collect.py 核对终态清单 SHA，较大文本用确定性 gzip 保留原始字节。summarize.py 验证选定证据／工具身份／完整 DEF 成本和允许层范围，本次要求八份选定来源均自然成功、UNLIMITED、工具一致，并单独核验完整 DRC 输入 ODB 与回装源相符；局部／短路控制不能替代完整检查。实际 DEF 负例测试拒绝 master、坐标、低层 wire、V7 改动；独立图负例拒绝物理开路与错网别名，两组通过且不改变原结果。命令见 [ARCHITECTURE](../ARCHITECTURE.md)。
 
-下一步继续分析独立 DRC 终态及 marker，不改变合同或放宽原阈值。通过后需冻结独立于目标的接入／预埋线模板，再用第二计算图检验复用与资源税。层数／接入变化另建版本，不静默修改 v01。
+完整 DRC 及关键驱动局部 H1／H2 对照均通过。另用独立复制 DEF 人为添加两条 M8 重叠线作原生检测正控制：01 使用旧 ODB 重载方式发生 SIG11，精确根因未证明；02 改为干净 LEF＋DEF 导入，自然 COMPLETED0，确实检出 Short 和两个信号名，qualification_eligible=false，不冒充合格实现；原封存设计未改。
+
+下一步提交本切片独立审查；更强复用需冻结独立于目标的接入／预埋线模板，再用第二计算图检验资源税。层数／接入变化另建版本，不静默修改 v01。
 
 登记沿用 management-hub PR5 pending；Projects GraphQL 实际返回 INSUFFICIENT_SCOPES（缺 read:project），条目 unverified、同步 pending，管理员待指定。不改权限、不自合并、不标 done。

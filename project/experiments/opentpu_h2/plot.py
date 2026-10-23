@@ -11,6 +11,7 @@ REPO = HERE.parents[2]
 source = HERE / 'results/selected-evidence.json'
 data = json.loads(source.read_text(encoding='utf-8'))
 assert data['freeze']['passed'] and data['proofs']['full-hierarchy-quality.json']['passed']
+assert data['qualified_first_slice'] and all(row['passed'] for row in data['standalone_drc'].values())
 plt.rcParams.update({'font.family': 'Microsoft YaHei', 'axes.unicode_minus': False,
                      'svg.fonttype': 'none', 'svg.hashsalt': hashlib.sha256(source.read_bytes()).hexdigest(), 'font.size': 11})
 fig, axes = plt.subplots(1, 2, figsize=(12.5, 4.5), gridspec_kw={'width_ratios': [1.15, 1]})
@@ -42,7 +43,7 @@ for ax in axes:
     ax.spines[['top','right']].set_visible(False)
     ax.grid(axis='x' if ax is axes[0] else 'y', alpha=.15)
     ax.set_axisbelow(True)
-fig.text(.02, .015, '9,609 个有源支持、2,006 个 V7 接入固定；回装 RC／PG／电气／完整 STA 通过。独立完整父层 DRC 待定；尚无多计算图复用结论。', fontsize=10)
+fig.text(.02, .015, '9,609 个有源支持、2,006 个 V7 接入固定；完整父层 DRC／RC 覆盖／PG／电气／完整 STA 通过；尚无多计算图复用结论。', fontsize=10)
 fig.subplots_adjust(left=.1, right=.98, top=.79, bottom=.26, wspace=.3)
 out = REPO/'docs/experiments/assets'
 out.mkdir(exist_ok=True)
@@ -55,6 +56,6 @@ for suffix in ['png','svg']:
     files.append(dict(path=path.relative_to(REPO).as_posix(),sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
 manifest=dict(source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),outputs=files,
               generator_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-              scope='Observed single instance and exact DEF centerlines; standalone full-parent DRC pending')
+              scope='Qualified single same-function instance and exact DEF centerlines; no multi-graph reuse claim')
 (HERE/'results/plot-manifest.json').write_bytes((json.dumps(manifest,indent=2)+'\n').encode())
 print(json.dumps(manifest,indent=2))

@@ -10,7 +10,8 @@ from freeze_audit import snapshot
 
 HERE = Path(__file__).resolve().parent
 RESULTS = HERE / 'results'
-SELECTED = ['inventory-03', 'budget-03', 'boundary-01', 'route-proxy-m8-10', 'composite-m8-03']
+SELECTED = ['inventory-03', 'budget-03', 'boundary-01', 'route-proxy-m8-10', 'composite-m8-03',
+            'annotation-01', 'drc-h1-01', 'drc-h2-01']
 
 def sha(raw):
     return hashlib.sha256(raw).hexdigest()
@@ -58,6 +59,10 @@ def main():
     freeze = json.loads(evidence(parent, 'composite-native-freeze-audit.json'))
     assert freeze['passed'] and freeze['before_sha256'] == sha(a.baseline_def.read_bytes())
     assert freeze['after_sha256'] == sha(a.final_def.read_bytes())
+    inventory_manifest=json.loads((RESULTS/'inventory-03/terminal.json').read_text())['manifest']
+    parent_manifest=json.loads((RESULTS/parent/'terminal.json').read_text())['manifest']
+    assert inventory_manifest['physical.def']==freeze['before_sha256']
+    assert parent_manifest['composite-roundtrip.def']==freeze['after_sha256']
     contract_raw = (RESULTS / 'resource-contract-v01.json').read_bytes()
     contract = json.loads(contract_raw)
     assert contract['parent_active_support_total'] == 9609
@@ -102,17 +107,39 @@ def main():
     assert costs['h1']['fixed'] == costs['h2']['fixed']
     assert set(costs['h2']['custom']['by_layer_um']) <= {'8', '9', '10'}
     assert set(costs['h2']['custom']['by_via']) <= {'via8_0', 'via9_0'}
-    # Standalone DRC is a separate gate. Missing terminal results remain pending.
+    coverage = json.loads(evidence('annotation-01', 'annotation-validation.json'))['h2']
+    assert coverage['passed'] and all(coverage['checks'].values())
+    assert coverage['source'].endswith('/issue-31/composite-m8-03')
+    assert coverage['connectivity_sha256'] == sha(evidence('annotation-01', 'h2-unannotated-connectivity.tsv'))
+    known_inputs=json.loads(evidence(parent,'input-sha256.json'))
+    known_inputs.update(json.loads(evidence(parent,'h1-qualification-input-sha256.json')))
+    root=coverage['source']+'/'
+    for name,digest in parent_manifest.items():known_inputs[root+name]=digest
+    known_inputs[root+'output.sha256']=selected[parent]['manifest_sha256']
+    for path,digest in json.loads(evidence('annotation-01','input-sha256.json')).items():
+        assert known_inputs.get(path)==digest,('Changed annotation source',path)
+    proofs['annotation-validation.json'] = coverage
+    # Standalone DRC is a separate complete-die gate; local/control jobs cannot substitute.
     standalone = {}
     for attempt in ['drc-h1-01', 'drc-h2-01']:
-        if not (RESULTS / attempt / 'terminal.json').exists():
-            standalone[attempt] = dict(state='pending; not a passing DRC result')
-        else:
-            result = json.loads(evidence(attempt, 'readonly-drc-quality.json'))
-            geom = json.loads(evidence(attempt, 'readonly-drc-freeze-audit.json'))
-            assert geom['passed']
-            standalone[attempt] = result
-    out = dict(resource_contract_sha256=sha(contract_raw), selected=selected, costs=costs,
+        result = json.loads(evidence(attempt, 'readonly-drc-quality.json'))
+        geom = json.loads(evidence(attempt, 'readonly-drc-freeze-audit.json'))
+        spec = json.loads(evidence(attempt, 'spec.json'))
+        assert spec['mode']=='checks' and not spec.get('box_dbu') and not spec.get('short_control')
+        assert result['passed'] and geom['passed'] and all(geom['checks'].values())
+        assert not evidence(attempt, 'integrated-drc.rpt').strip()
+        assert spec['source']==result['source']
+        target=spec['source']+'/flow/results/nangate45/opentpu_top_split/base/6_final.odb'
+        inputs=json.loads(evidence(attempt, 'input-sha256.json'))
+        expected='6a80303ac643775321e95a49398671a4a5387b589b6eab1b7dfc6d217eec9a81'
+        if attempt=='drc-h2-01':
+            terminal=json.loads((RESULTS/parent/'terminal.json').read_text())
+            expected=terminal['manifest']['flow/results/nangate45/opentpu_top_split/base/6_final.odb']
+        assert inputs[target]==expected
+        standalone[attempt] = dict(**result, checked_odb_sha256=expected,
+            all_geometry_unchanged=geom['passed'],sealed_report_sha256=sha(evidence(attempt,'integrated-drc.rpt')))
+    out = dict(qualified_first_slice=True,resource_contract_sha256=sha(contract_raw),
+        generator_sha256=sha(Path(__file__).read_bytes()),freeze_parser_sha256=sha((HERE/'freeze_audit.py').read_bytes()),selected=selected, costs=costs,
         proofs=proofs, freeze=freeze, standalone_drc=standalone,
         scope='One same-function H1-conditioned instance. Frozen lower/clock/PG and all active resources; new M8-M10/V8-V9 conductors only. No multi-graph reuse or manufacturing signoff claim.')
     raw = (json.dumps(out, indent=2) + '\n').encode()

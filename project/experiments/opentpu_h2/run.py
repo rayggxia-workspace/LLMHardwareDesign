@@ -71,8 +71,8 @@ try:
                 end=text.index(';',start)
                 text=text[:end]+'\n + ROUTED metal8 ( 883640 2786000 ) ( 923640 * )\n'+text[end:]
             (ROOT/'deliberate-short.def').write_text(text)
-            # Fresh LEF/DEF import avoids stale MPin pin-access references
-            # retained by this binary when destroying a loaded ODB chip.
+            # This binary previously crashed after destroying a loaded ODB
+            # chip. Use a fresh LEF/DEF process; precise C++ cause is unproven.
             platform=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45')
             lefs=[platform/'lef/NangateOpenCellLibrary.tech.lef',platform/'lef/NangateOpenCellLibrary.macro.mod.lef']
             previous=json.loads(sealed(SOURCE,'input-sha256.json').read_text())

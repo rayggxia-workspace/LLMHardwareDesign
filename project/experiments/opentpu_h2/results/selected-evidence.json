@@ -1,5 +1,8 @@
 {
+  "qualified_first_slice": true,
   "resource_contract_sha256": "643e719f1bb2581142b49053cbbfdd61911bb0218475250e6d27332fd4bdb6e0",
+  "generator_sha256": "fbe1ba98d5404ffbcc258503983f7d6dd425986743b06ccbe71cd1cc89ef7933",
+  "freeze_parser_sha256": "ba43ab1913b7b3277ba64a5194b4fa90b37934a8f0e7dcca2522991ac7a448af",
   "selected": {
     "inventory-03": {
       "job_id": "89840",
@@ -30,6 +33,24 @@
       "sacct": "89876|COMPLETED|0:0|00:04:10|UNLIMITED",
       "manifest_sha256": "1a0d0d2f5c3f08975c444f02e19244d3e2509ec37576b6f7faf099e02daf5b69",
       "runner_commit": "6b1e818acc0de4f16ee25e980b424c162297c0b3"
+    },
+    "annotation-01": {
+      "job_id": "89881",
+      "sacct": "89881|COMPLETED|0:0|00:00:32|UNLIMITED",
+      "manifest_sha256": "4b5542a2a35f5b87db6697dbff101997d676f5364d9896093ffadbbddde25fc3",
+      "runner_commit": "475dc5a8500b719597949dbe352ae2b3535303af"
+    },
+    "drc-h1-01": {
+      "job_id": "89877",
+      "sacct": "89877|COMPLETED|0:0|00:28:13|UNLIMITED",
+      "manifest_sha256": "60cde872f16f12caad5458872c2062b0ef04d6cb903f6f6d92f6b1949c636148",
+      "runner_commit": "3e91b5a4ecf40078c4619ed62d0ac0b5ff3182d2"
+    },
+    "drc-h2-01": {
+      "job_id": "89878",
+      "sacct": "89878|COMPLETED|0:0|00:27:58|UNLIMITED",
+      "manifest_sha256": "1547dd527267a652c8aa9d21f2bea5f6b182b15fe000bbeb886d3aaf0df6efc9",
+      "runner_commit": "3e91b5a4ecf40078c4619ed62d0ac0b5ff3182d2"
     }
   },
   "costs": {
@@ -161,6 +182,22 @@
       "VSS_pass": true,
       "passed": true,
       "sealed_proof_sha256": "7eaaef09b82d5343e94ee1f7e6977e0756726454e0929d6af5ead1d2e9158040"
+    },
+    "annotation-validation.json": {
+      "passed": true,
+      "checks": {
+        "all_reported_drivers_resolved": true,
+        "unannotated_drivers_have_no_connected_fanout": true,
+        "partial_driver_count_zero": true,
+        "no_reported_unconstrained_endpoints": true,
+        "no_reported_missing_clocks": true
+      },
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-31/composite-m8-03",
+      "unannotated_unused_driver_count": 40831,
+      "partially_unannotated_driver_count": 0,
+      "first_errors": [],
+      "connectivity_sha256": "6df4fca010231af08f65259fb7b875581fec021c9089d1b7c3ff0aa9dad38c91",
+      "scope": "Native flat get_fanout through all arcs, pin depth 2, for every unannotated driver; connected-clock positive control. Timing acceptance remains separate."
     }
   },
   "freeze": {
@@ -186,10 +223,20 @@
   },
   "standalone_drc": {
     "drc-h1-01": {
-      "state": "pending; not a passing DRC result"
+      "passed": true,
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-reuse-20-01",
+      "scope": "Standalone native full-parent geometric DRC, cached guides removed only in memory; zero markers required; all manufacturing geometry unchanged before/after checker.",
+      "checked_odb_sha256": "6a80303ac643775321e95a49398671a4a5387b589b6eab1b7dfc6d217eec9a81",
+      "all_geometry_unchanged": true,
+      "sealed_report_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "drc-h2-01": {
-      "state": "pending; not a passing DRC result"
+      "passed": true,
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-31/composite-m8-03",
+      "scope": "Standalone native full-parent geometric DRC, cached guides removed only in memory; zero markers required; all manufacturing geometry unchanged before/after checker.",
+      "checked_odb_sha256": "2ece4818a60f48f4e40e3eb7a0944183067cb12dfea6aff35bfcfcf94f455e94",
+      "all_geometry_unchanged": true,
+      "sealed_report_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }
   },
   "scope": "One same-function H1-conditioned instance. Frozen lower/clock/PG and all active resources; new M8-M10/V8-V9 conductors only. No multi-graph reuse or manufacturing signoff claim."
