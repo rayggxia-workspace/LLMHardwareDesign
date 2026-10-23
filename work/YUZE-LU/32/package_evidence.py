@@ -49,7 +49,7 @@ with zipfile.ZipFile(out/'environment-and-audits.zip','w',zipfile.ZIP_DEFLATED) 
     # Repair receipts are task-local reports/logs, never credential files or model blobs.
     for p in (scratch/'receipts').iterdir():
         if ('repair' in p.name or 'group' in p.name or 'state' in p.name or 'efficient' in p.name or 'wikitext' in p.name) and p.suffix in ('.json','.jsonl','.log') and 'publish' not in p.name:
-            z.write(p,p.name)
+            if p.name not in z.namelist():z.write(p,p.name)
 raw=out/'selected-qwen35-layer0';raw.mkdir(exist_ok=True)
 for name in ['torch_chunk_gated_delta_rule.pt','torch_recurrent_gated_delta_rule.pt','delta-parameters.pt','preconv-qkv.pt','selected-cache.pt']:
     src=scratch/'runs/qwen35-fp16-bounded-02'/name
