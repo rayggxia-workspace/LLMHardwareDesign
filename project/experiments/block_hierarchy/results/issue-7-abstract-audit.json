@@ -1,0 +1,1144 @@
+{
+  "schema_version": 1,
+  "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
+  "updated_at": "2026-10-21T18:06:05+08:00",
+  "kind": "independent_read_only_review_of_existing_physical_reports_and_abstract",
+  "reviewer_scope": "Read completed reports, Liberty/LEF and final netlist using lightweight text parsing. No new STA, physical implementation, or source-RTL-to-physical formal equivalence run.",
+  "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+  "repository_snapshot": "346d2c942f64264ecb340d8416f9071a2cae515d",
+  "block": {
+    "attempt": "vec-physical-01",
+    "job_id": 89453,
+    "remote_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01",
+    "execution_status": "COMPLETED",
+    "exit_code": "0:0",
+    "phase_lec_deliberately_skipped": true,
+    "source_rtl_to_physical_formal_equivalence_performed": false
+  },
+  "abstract": {
+    "generated_by_attempt": "vec-physical-top-01",
+    "job_id": 89454,
+    "log": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-01/abstract.log",
+    "source_odb": "6_final.odb",
+    "source_sdc": "6_final.sdc",
+    "source_spef": "6_final.spef",
+    "log_confirms_final_odb_sdc_and_read_spef": true,
+    "log_confirms_completed_write_timing_model_and_write_abstract_lef": true,
+    "source_hash_manifests": [
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-01/block-abstract-inputs.sha256",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-01/abstract-source.txt",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/result-files.sha256"
+    ],
+    "recorded_sha256": {
+      "6_final.odb": "90a7815415c077581f37107e689507594a1ebaaccb7e4a930b1091d54d17b10a",
+      "6_final.v": "730c2c4c0eec6fcea953488c5553d26db1e57f2e13deb006689347f0267712f7",
+      "6_final.sdc": "f3c983ea390db85166eb5e823900bd9508fc987558d952cc99784ce79d71f72b",
+      "6_final.spef": "c81d00267b17778d48e6b8827331c41090174122e957f126f5aba295f811bd3c",
+      "vec_engine.lef": "76ccb5072474910f4c377576603fa4c3f495a9080ada3c3f3c493b954019f692",
+      "vec_engine_typ.lib": "9b6f42b0160aed2ea3b9d807c46eecb36a3d2560943bd08dc8afdcf617307abb"
+    },
+    "hash_comparison": "Existing compute-job manifests agree for ODB/Verilog/SDC/SPEF. Review did not rehash large databases on the login node.",
+    "lef_size_bytes": 367530,
+    "liberty_size_bytes": 970944,
+    "port_validation": {
+      "pass": true,
+      "rtl_port_count": 26,
+      "rtl_signal_bits": 2246,
+      "lef_pin_count": 2248,
+      "liberty_pin_count": 2248,
+      "extra_pins": [
+        "VDD",
+        "VSS"
+      ],
+      "signal_directions_match": true,
+      "lef_obstructions_present": true
+    }
+  },
+  "liberty_review": {
+    "signal_inputs": 1576,
+    "signal_outputs": 670,
+    "additional_input_pin_names": [
+      "VDD",
+      "VSS"
+    ],
+    "timing_type_counts": {
+      "rising_edge": 363,
+      "min_clock_tree_path": 1,
+      "max_clock_tree_path": 1,
+      "hold_rising": 765,
+      "setup_rising": 765,
+      "combinational": 7
+    },
+    "table_type_counts": {
+      "cell_rise": 372,
+      "cell_fall": 372,
+      "rise_transition": 370,
+      "fall_transition": 370,
+      "rise_constraint": 1530,
+      "fall_constraint": 1528
+    },
+    "table_check": {
+      "method": "For each recognized timing table, parse values and require at least one finite numeric value.",
+      "empty_or_nonfinite_or_missing_values_errors": 0,
+      "full_interpolation_accuracy_validated": false
+    },
+    "active_samples_checked": [
+      "clk",
+      "rst_n",
+      "instr_valid",
+      "instr[0]",
+      "pos[0]",
+      "vec_rd0_grant",
+      "vec_rd0_rvalid",
+      "vec_rd0_rdata[0]",
+      "vec_wr_grant",
+      "busy",
+      "done_pulse",
+      "vec_wr_wdata[0]"
+    ],
+    "combinational_arc_outputs": {
+      "perf_sram_stall": [
+        "vec_rd0_grant",
+        "vec_rd0_rvalid",
+        "vec_rd1_grant",
+        "vec_rd1_rvalid",
+        "vec_wr_grant"
+      ],
+      "vec_rd0_valid": [
+        "vec_rd0_rvalid"
+      ],
+      "vec_rd1_valid": [
+        "vec_rd1_rvalid"
+      ]
+    },
+    "minimum_period_check_present": false,
+    "pg_pin_group_present": false,
+    "limitations": [
+      "The clock pin has min/max_clock_tree_path models, but no minimum_period check. Parent boundary STA cannot replace the block's failed internal 3 ns timing checks.",
+      "Liberty text parsing confirms expected boundary arc/table presence, not the numerical accuracy or full semantic equivalence of the timing abstraction.",
+      "rst_n is abstracted with hold_rising/setup_rising constraints; original block reports separately identify asynchronous recovery/removal checks."
+    ]
+  },
+  "macro_power_model_review": {
+    "source": "The same SHA-256-bound vec_engine_typ.lib reviewed above.",
+    "internal_power_group_count": 0,
+    "leakage_power_group_count": 0,
+    "cell_leakage_power_value_count": 0,
+    "power_lut_template_count": 0,
+    "pg_pin_group_count": 0,
+    "pg_type_count": 0,
+    "related_power_or_ground_pin_count": 0,
+    "switching_activity_or_toggle_rate_or_static_probability_count": 0,
+    "all_power_current_activity_keyword_lines": [
+      "leakage_power_unit : 1pW;",
+      "current_unit : \"1mA\";"
+    ],
+    "nom_voltage": 1.1,
+    "effective_macro_internal_power_or_leakage_model_present": false,
+    "macro_current_or_activity_model_present": false,
+    "interpretation": "Units and nominal voltage are metadata, not characterized macro power/current values. This is a timing abstraction without a complete macro power model.",
+    "top_pdn_acceptance_limit": "Physical PG connectivity may be checked, but parent IR-drop results cannot replace power-integrity analysis with the macro's full current/activity model or override the block-level PSM warnings. No additional PI run was performed."
+  },
+  "final_netlist_crosscheck": {
+    "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/results/nangate45/llhd_vec_original/base/6_final.v",
+    "method": "Compare Liberty pin arc sets with exact final-netlist cell port connections and direct LOGIC0_X1/LOGIC1_X1 output drivers.",
+    "connected_signal_input_bits_including_clock": 766,
+    "unused_signal_input_bits": 810,
+    "unused_input_groups": {
+      "instr": 290,
+      "pos": 8,
+      "vec_rd0_rdata": 256,
+      "vec_rd1_rdata": 256
+    },
+    "connected_input_without_timing_arc_count": 0,
+    "unused_input_with_timing_arc_count": 0,
+    "output_bits_with_rising_edge_arc": 363,
+    "output_bits_without_timing_arc": 307,
+    "no_arc_output_direct_tiecell_groups": {
+      "vec_rd0_req": 1,
+      "vec_rd1_req": 1,
+      "vec_wr_req": 1,
+      "vec_wr_wdata": 256,
+      "vec_wr_wstrb": 48
+    },
+    "no_arc_output_not_direct_tiecell_count": 0,
+    "source_elaboration_statistics_used_as_final_physical_proof": false
+  },
+  "block_final_report_review": {
+    "report": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/reports/nangate45/llhd_vec_original/base/6_finish.rpt",
+    "metrics": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/logs/nangate45/llhd_vec_original/base/6_report.json",
+    "setup_wns_ns": -4.16659,
+    "setup_tns_ns": -1056.05,
+    "setup_violation_count": 287,
+    "hold_worst_slack_ns": 0.0253833,
+    "hold_tns_ns": 0,
+    "worst_setup_path": {
+      "startpoint": "u_f0.rp[0]$_DFFE_PN0P_",
+      "endpoint": "wr_data_r[187]$_DFFE_PN0P_",
+      "check": "rising-edge clk flip-flop to flip-flop data setup",
+      "path_group": "clk",
+      "path_type": "max",
+      "printed_arrival_ns": 7.62,
+      "printed_required_ns": 3.45,
+      "printed_slack_ns": -4.17
+    },
+    "asynchronous_examples": {
+      "recovery": {
+        "startpoint": "rst_n",
+        "endpoint": "u_s1.hold[13]$_DFFE_PN0P_",
+        "printed_slack_ns": 2.1
+      },
+      "removal": {
+        "startpoint": "rst_n",
+        "endpoint": "u_wc.rowbase[17]$_DFFE_PN0P_",
+        "printed_slack_ns": 0.03
+      }
+    },
+    "report_clock_min_period_ns": 7.17,
+    "report_fmax_mhz": 139.54,
+    "meets_3ns_timing": false,
+    "max_capacitance_violation_count": 59,
+    "max_slew_violation_count": 0,
+    "max_fanout_violation_count": 0,
+    "psm_reported_worst_drop_v": {
+      "VDD": 0.688493,
+      "VSS": 0.629844
+    },
+    "psm_limitations": "Supply and activity/power assumptions have not been independently audited; these tool-reported drops are not a power-integrity pass.",
+    "worst_path_operator_cause_claimed": false
+  },
+  "detailed_route_review": {
+    "drc_report": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/reports/nangate45/llhd_vec_original/base/5_route_drc.rpt",
+    "drc_report_size_bytes": 0,
+    "detailed_route_drc_errors": 0,
+    "antenna_violating_nets": 0,
+    "antenna_violating_pins": 0,
+    "warning": "GRT-0246: No diode with LEF class CORE ANTENNACELL found.",
+    "foundry_signoff_drc_claimed": false
+  },
+  "top_review": {
+    "attempt": "vec-physical-top-01",
+    "job_id": 89454,
+    "status": "FAILED",
+    "exit_code": "2:0",
+    "elapsed": "00:01:08",
+    "abstract_and_port_validation_completed": true,
+    "final_top_odb_review_completed": false,
+    "physical_interface_boolean_review_completed": false,
+    "post_final_report_review_completed": false,
+    "failure_stage": "2_4_floorplan_pdn",
+    "failure": "PDN-0006: VDD on metal7 blocked by macro obstructions on metal8 and metal9 for u_vec.",
+    "integration_acceptance": false,
+    "next": "Read actual PG-pin/OBS geometry and audit a new isolated replacement top attempt within this task. Preserve the failed attempt and all obstructions."
+  },
+  "pdn_integration_review": {
+    "status": "first_detailed_view_run_failed_final_power_grid_short_check",
+    "actual_original_lef_macro_size_um": [
+      1148.52,
+      1148.52
+    ],
+    "actual_pg_pin_layers": [
+      "metal7"
+    ],
+    "actual_pg_direction": "INOUT; VDD USE POWER; VSS USE GROUND",
+    "actual_pg_rectangles": {
+      "VDD": 38,
+      "VSS": 39
+    },
+    "actual_pg_horizontal_x_extent_um": [
+      1.14,
+      1147.41
+    ],
+    "actual_pg_stripe_width_um": 1.4,
+    "actual_original_obstruction_layers": [
+      "metal1",
+      "metal2",
+      "metal3",
+      "metal4",
+      "metal5",
+      "metal6",
+      "metal7",
+      "metal8",
+      "metal9"
+    ],
+    "actual_original_obstruction_geometry": "One full-macro rectangle on each occupied layer; PG rectangles do not extend to the macro boundary.",
+    "approved_replacement_plan": "Create a separate macro-view from the same completed 6_final.odb with write_abstract_lef -bloat_factor 0. Preserve real PG pins and detailed OBS; reuse the matched Liberty/SPEF/GDS. Add parent M10 straps and connect existing M7 PG through legal via-stack windows while retaining M8/M9 obstructions. Do not build an M5/M6 macro overlay.",
+    "original_attempt_views_must_remain_unchanged": true,
+    "actual_image_pdn_script_connectivity_check": "flow/scripts/pdn.tcl contains a supply-net loop, but its check_power_grid call is commented out. pdngen success alone is not an executed supply-connectivity check.",
+    "official_api_reference": "https://openroad.readthedocs.io/en/latest/main/src/README.html#abstract-lef-support",
+    "official_api_fact": "bloat_factor 0 produces detailed obstructions; bloat_occupied_layers produces full-layer cover obstructions.",
+    "acceptance_pending": [
+      "Detailed LEF must preserve original PG pin identities, directions and geometry and retain real occupied shapes.",
+      "PDN generation must succeed without ignore/skip-error behavior; verify actual PG connectivity and failed-via diagnostics.",
+      "Verify macro-only M7-to-M10 via stacks avoid real M8/M9 routing obstructions.",
+      "Read final replacement-top ODB, interface boolean, POST_FINAL_REPORT outputs and route DRC after terminal completion."
+    ],
+    "resource_scope": "H1 engineering integration with additional parent M10 routing resources. No H2 fixed-base or restricted-customization result."
+  },
+  "claims": {
+    "new_sta_replay": false,
+    "source_rtl_to_physical_equivalence": false,
+    "three_ns_timing_closure": false,
+    "system_signoff": false,
+    "multi_block_or_fixed_base_demonstrated": false
+  },
+  "replacement_top_review": {
+    "attempt": "vec-physical-top-02",
+    "job_id": 89456,
+    "status": "FAILED",
+    "exit_code": "2:0",
+    "elapsed": "00:08:09",
+    "resource_class": "H1 detailed OBS plus additional parent M10 power resource; not H2 fixed base",
+    "macro_view_validation": {
+      "report": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-02/macro-view-validation.json",
+      "pass": true,
+      "source_odb_is_same_completed_block": true,
+      "detailed_lef_sha256": "94cc0dead71389a7ad43065091df788f3ecaf8c99cc22244735b24f9ab7726bc",
+      "all_2248_pin_geometry_direction_use_identical": true,
+      "liberty_copied_byte_identical": true,
+      "detailed_obstruction_rectangles_per_layer": {
+        "metal1": 7174396,
+        "metal2": 1776889,
+        "metal3": 626730,
+        "metal4": 83024,
+        "metal5": 30993,
+        "metal6": 9055,
+        "metal7": 579,
+        "metal8": 96,
+        "metal9": 40
+      }
+    },
+    "pdn_generation_completed": true,
+    "pdn_warnings": {
+      "partial_pg_obstruction_percent": {
+        "VDD": 1.5,
+        "VSS": 1.3
+      },
+      "removed_via_groups": [
+        {
+          "net": "VSS",
+          "center_um": [
+            101.64,
+            643.2
+          ],
+          "reported_removed_vias": 4
+        },
+        {
+          "net": "VSS",
+          "center_um": [
+            401.58,
+            283.2
+          ],
+          "reported_removed_vias": 4
+        },
+        {
+          "net": "VDD",
+          "center_um": [
+            1227.385,
+            718.2
+          ],
+          "reported_removed_vias": 4
+        }
+      ],
+      "failed_via_report_file_found": false,
+      "absence_of_failed_via_file_means_zero_failures": false
+    },
+    "detailed_route_drc_errors": 0,
+    "detailed_route_drc_report_empty": true,
+    "failure_stage": "6_report automatic PSM VDD power-grid check",
+    "failure_codes": [
+      "PSM-0043",
+      "PSM-0069"
+    ],
+    "failure_report": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-02/flow/reports/nangate45/llhd_vec_harness/base/VDD.rpt",
+    "reported_vdd_macro_obstruction_shorts": {
+      "total": 43,
+      "metal8": 21,
+      "metal9": 22
+    },
+    "geometry_crosscheck": {
+      "method": "Subtract the frozen R0 macro translation (80,80) um from each reported top bbox, then test positive-area overlap with actual same-layer detailed LEF OBS. Read only the final 2 MiB containing M8/M9 OBS; checked 96 M8 and 40 M9 rectangles against the view report.",
+      "all_43_reported_bboxes_positive_area_overlap_detailed_macro_obs": true,
+      "samples": [
+        {
+          "layer": "metal8",
+          "top_bbox_um": [
+            477.495,
+            757.78,
+            477.69,
+            759.02
+          ],
+          "macro_local_bbox_um": [
+            397.495,
+            677.78,
+            397.69,
+            679.02
+          ],
+          "intersecting_macro_obs_um": [
+            397.495,
+            665.47,
+            397.895,
+            873.87
+          ],
+          "via_center_um": [
+            477.07,
+            758.4
+          ],
+          "via_master": "via7_8_2800_2800_2_2_1680_1680",
+          "via_cut_array_rows_columns": [
+            2,
+            2
+          ],
+          "actual_odb_metal8_landing_relative_dbu": [
+            -1240,
+            -1240,
+            1240,
+            1240
+          ],
+          "actual_odb_metal8_landing_top_um": [
+            476.45,
+            757.78,
+            477.69,
+            759.02
+          ],
+          "via_center_inside_this_obstruction": false,
+          "landing_intersection_matches_psm_bbox": true,
+          "interpretation": "The center is outside this M8 OBS; the actual 2x2 via-array metal landing extends 0.62 um from the center and overlaps the existing obstruction. This selected violation is not merely a spacing warning."
+        },
+        {
+          "layer": "metal9",
+          "top_bbox_um": [
+            476.67,
+            608.0,
+            477.47,
+            608.47
+          ],
+          "macro_local_bbox_um": [
+            396.67,
+            528.0,
+            397.47,
+            528.47
+          ],
+          "intersecting_macro_obs_um": [
+            395.695,
+            527.67,
+            560.495,
+            528.47
+          ],
+          "via_center_um": [
+            477.07,
+            608.4
+          ],
+          "via_masters_at_this_def_location": [
+            "via7_8_2800_2800_2_2_1680_1680",
+            "via8_9_2800_2800_1_1_1680_1680",
+            "via9_10_2800_2800_1_1_3360_3360"
+          ],
+          "def_metal9_landing_top_um": [
+            476.67,
+            608.0,
+            477.47,
+            608.8
+          ],
+          "via_center_inside_this_obstruction": true,
+          "landing_intersection_matches_psm_bbox": true,
+          "interpretation": "The center itself is inside the original M9 OBS. Therefore the 43 reported shorts cannot all be described as legal centers with only landing/enclosure expansion; the PDN implementation cause has not been attributed to a specific grid or native algorithm."
+        }
+      ],
+      "classification": "Positive-area geometric overlap, not merely an unproven spacing-margin warning.",
+      "exact_via_stack_enclosure_or_center_cause_confirmed": false,
+      "next_diagnostic": "The two selected geometric mechanisms are confirmed, but the native PDN placement/filtering cause and every remaining center are not individually reviewed. Evaluate the isolated guarded view with strict native VDD/VSS connectivity immediately after PDN, then verify final PG/DRC and interface checks; bloat factor 1 is not a validated repair until those checks pass.",
+      "actual_odb_probe": {
+        "directory": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-geometry-diagnostic-01",
+        "log": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-geometry-diagnostic-01/probe-02.log",
+        "script": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-geometry-diagnostic-01/probe-02.tcl",
+        "manifest": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-geometry-diagnostic-01/inputs.sha256",
+        "script_sha256": "91b04c160b8ec86638bd2fe3bec0f8ae14a7ee248925507f0ab97e783f5db364",
+        "source_final_odb_sha256": "f829851549017f417b1010318c746a022d8de5d8d48b8fd40046d79c4729dcbe",
+        "openroad_sha256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+        "dbu_per_um": 2000,
+        "scope": "Independent reading of an existing compute-node OpenDB geometry probe, not new STA, PI or a new physical flow. probe.log is the preserved first API-error attempt; probe-02.log is the successful selected-location read."
+      },
+      "independent_def_crosscheck": {
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-02/flow/results/nangate45/llhd_vec_harness/base/6_final.def",
+        "dbu_per_um": 2000,
+        "scope": "Plain-text read of the terminal failed attempt DEF: VDD SPECIALNETS place the three-layer via stacks at both selected centers. Generated via definitions reproduce the selected M8 and M9 landing extents. No separate DEF hash was available in the existing attempt manifest; the compute probe manifest anchors the reviewed ODB.",
+        "selected_samples_confirmed": 2,
+        "all_43_via_centers_and_landings_individually_reviewed": false
+      },
+      "selected_m8_actual_odb_via_landing_and_m9_def_center_confirmed": true
+    },
+    "final_top_odb_structure_review_completed": false,
+    "physical_interface_boolean_review_completed": false,
+    "post_final_report_review_completed": false,
+    "integration_acceptance": false,
+    "repair_candidate": "A new isolated view with conservative OBS bloat is a candidate, not a validated fix. Preserve the failed run and source block views; require explicit check_power_grid after PDN before later flow stages and verify final route/PG again.",
+    "early_pdn_check_tool_evidence": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-geometry-diagnostic-01/pdn-hook-source.txt",
+      "actual_image_pdn_tcl_sha256": "e074e0b502c2c9224e44d7abcb7a1476b95332a474da9a4219dc2f7657f3c87f",
+      "post_pdn_hook_before_write_db": true,
+      "default_supply_check_commented_out": true,
+      "scope": "Read saved actual-image pdn.tcl source and variables.yaml entry. This establishes hook availability and order; it is not evidence that any new guarded attempt has passed."
+    }
+  },
+  "guarded_replacement_top_review": {
+    "attempt": "vec-physical-top-03",
+    "job_id": 89457,
+    "status": "FAILED",
+    "exit_code": "2:0",
+    "elapsed": "00:03:27",
+    "time_limit": "UNLIMITED",
+    "submitted_from_commit": "da059f906a74d344547c9faa6cb59571638fd126",
+    "resource_scope": "H1 isolated new abstract view plus parent M10 power resource; not H2 fixed base",
+    "source_manifests": [
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-03/block-abstract-inputs.sha256",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-03/config-inputs.sha256",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-03/runner-inputs.sha256",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-03/result-files.sha256"
+    ],
+    "macro_view_validation": {
+      "report": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-03/macro-view-validation.json",
+      "pass": true,
+      "profile": "guarded-m10",
+      "bloat_factor": 1,
+      "all_2248_pin_geometry_direction_use_identical": true,
+      "size_um": [
+        1148.52,
+        1148.52
+      ],
+      "liberty_copied_byte_identical": true,
+      "detailed_lef_sha256": "b71e9a0dac1bbd855dc491abba2f31b69dea0b0ea684096913232edf59102439",
+      "liberty_sha256": "9b6f42b0160aed2ea3b9d807c46eecb36a3d2560943bd08dc8afdcf617307abb"
+    },
+    "actual_import_configuration": {
+      "top_config": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-03/top-config.mk",
+      "additional_lefs_points_to_new_macro_view": true,
+      "abstract_log_reports_bloat_factor_1": true,
+      "post_pdn_hook_enabled": true
+    },
+    "early_native_pg_check": {
+      "report": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-03/post-pdn-connectivity.json",
+      "report_sha256": "da04829da19a120892748d7723dfb9536c5f6e61fade2f073774acb7dbd6a6de",
+      "VDD": {
+        "pass": false,
+        "catch_code": 1,
+        "returned_value": "PSM-0069"
+      },
+      "VSS": {
+        "pass": false,
+        "catch_code": 1,
+        "returned_value": "PSM-0069"
+      },
+      "macro_pg_iterm_count": 2,
+      "macro_pg_iterms_on_expected_supply_nets": true,
+      "failure_hook_stopped_flow_before_pdn_odb_write": true
+    },
+    "short_reports": {
+      "VDD": {
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-03/post-pdn-VDD-errors.rpt",
+        "sha256": "c852b37a6954622c4f1c04772aec4c1a28eea06efaaad3cddd2cb2b08be6cf42",
+        "total": 43,
+        "metal8": 21,
+        "metal9": 22
+      },
+      "VSS": {
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-03/post-pdn-VSS-errors.rpt",
+        "sha256": "e9b054cb5d104821dcea6b330aa4da1baf7c012f86913e68c297f00d56cfc3b6",
+        "total": 22,
+        "metal8": 2,
+        "metal9": 20
+      }
+    },
+    "selected_obstruction_geometry_observation": {
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-03/macro-view/vec_engine.lef",
+      "method": "Read only the final 2 MiB containing high-layer OBS and compare the two previously identified same-layer rectangles.",
+      "metal8_original_local_um": [
+        397.495,
+        665.47,
+        397.895,
+        873.87
+      ],
+      "metal8_new_local_rectangles_um": [
+        [
+          397.495,
+          665.47,
+          397.895,
+          811.07
+        ],
+        [
+          397.495,
+          811.07,
+          398.695,
+          815.47
+        ],
+        [
+          397.495,
+          815.47,
+          397.895,
+          873.87
+        ]
+      ],
+      "metal9_original_and_new_local_um": [
+        395.695,
+        527.67,
+        560.495,
+        528.47
+      ],
+      "interpretation": "The selected M8 strip was repartitioned without expanding its critical left edge; the selected M9 rectangle is unchanged. In this actual output, bloat_factor 1 did not create a protective margin at either reviewed collision. Do not assume all OBS universally expanded by one pitch or attribute the failure to stale LEF import.",
+      "full_writer_semantics_or_every_obstruction_reviewed": false
+    },
+    "final_top_odb_structure_review_completed": false,
+    "physical_interface_boolean_review_completed": false,
+    "post_final_report_review_completed": false,
+    "integration_acceptance": false,
+    "scope": "Independent read of existing terminal reports and saved text geometry. No new STA, PI, gate-level formal proof or full-source equivalence run.",
+    "next": "Diagnose actual high-layer obstruction filtering and via landing legality before another isolated attempt; keep strict early VDD/VSS checks and all failed attempts. A valid view/port-count report alone does not accept physical integration."
+  },
+  "negative_native_pdn_audit_review": {
+    "attempt": "vec-pdn-audit-01",
+    "job_id": 89459,
+    "status": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:04:16",
+    "time_limit": "UNLIMITED",
+    "target": "vec-physical-top-02 stable terminal 6_final.odb",
+    "source_odb_sha256": "f829851549017f417b1010318c746a022d8de5d8d48b8fd40046d79c4729dcbe",
+    "input_manifest": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-pdn-audit-01/pdn-audit-inputs.sha256",
+    "result_manifest": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-pdn-audit-01/result-files.sha256",
+    "check_script_sha256": "818ea1678e56be6bf15822b19a6a262423f0165b3d47a2dcbb2b23903a00f80e",
+    "report": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-pdn-audit-01/pdn-connectivity.json",
+    "report_sha256": "da04829da19a120892748d7723dfb9536c5f6e61fade2f073774acb7dbd6a6de",
+    "VDD": {
+      "pass": false,
+      "catch_code": 1,
+      "returned_value": "PSM-0069",
+      "shorts": 43,
+      "error_report_sha256": "c852b37a6954622c4f1c04772aec4c1a28eea06efaaad3cddd2cb2b08be6cf42"
+    },
+    "VSS": {
+      "pass": false,
+      "catch_code": 1,
+      "returned_value": "PSM-0069",
+      "shorts": 22,
+      "error_report_sha256": "e9b054cb5d104821dcea6b330aa4da1baf7c012f86913e68c297f00d56cfc3b6"
+    },
+    "macro_pg_iterms_on_expected_supply_nets": true,
+    "source_via_inventory_report": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-pdn-audit-01/pdn-source-via-reports.json",
+    "source_failed_via_reports_found": 0,
+    "source_pdn_log_preserved_partial_obstruction_and_removed_via_warnings": true,
+    "absence_of_failed_via_file_means_zero_failures": false,
+    "comparison_with_guarded_early_check": "Both supply error reports are byte-identical by compute-generated SHA256 to the guarded top-03 early reports; this is a negative validation of the checker on the known failed stable ODB, not evidence of a repaired integration.",
+    "scope": "New explicitly identified read-only native PG audit job, not STA or power-current/IR-drop replay. The observed two error paths throw PSM-0069 (catch=1); do not infer all native failure modes from this one negative target.",
+    "integration_acceptance": false
+  },
+  "pg_access_policy_static_review": {
+    "profile": "legal-m10",
+    "status": "Static policy plus one isolated in-memory diagnostic reviewed; full legal-m10 top integration remains unverified.",
+    "reviewed_script": "project/experiments/block_hierarchy/filter_pg_access.tcl",
+    "reviewed_script_local_sha256": "43c803a33d96db81843c57db21f2a511f9b0b9bd3a29ab9d5b8ecd414be3a429",
+    "macro_view_bloat_factor": 0,
+    "source_scope": "Actual imported vec_engine master OBS/PG pins at asserted R0 location (80,80) um; no source block/master changes. Select only new parent VDD/VSS special-wire vias.",
+    "landing_scope": "Actual via-master routing-layer boxes translated by actual XY, including 2x2 array/enclosure. M8/M9 have no exemption; M7 landing fully contained in an original same-net PG pin is a deliberate contact; M10 has no macro OBS by assertion.",
+    "stack_completeness": "Every same-net/XY group with M8 or M9 must have exactly adjacent 7-8,8-9,9-10 edges before removal. Offset/incomplete stacks and any standalone nonvia M8/M9 PG patch fail closed. Removal deletes the complete same-net/XY group, including coincident lower-parent vias.",
+    "post_filter_reenumeration": "Fresh database enumeration exports all retained routing-layer landings and requires count consistency plus zero remaining guarded intersections. Independent TSV-based recomputation remains pending runtime outputs.",
+    "check_only_mode": "LLHD_PG_FILTER_AUDIT=2 skips every destroy call and never writes a database; an unsafe site fails before later native PG checks. LLHD_PG_FILTER_AUDIT=1 is an explicitly mutating in-memory engineering diagnostic and writes only its own pdn-filtered.odb after strict PG passes.",
+    "native_checks": "Strict per-net catch-code/native-boolean PG checks and final automatic PSM remain enabled. Correct PG names are insufficient. If site review fails before native checks, the latter are unexecuted, not passed.",
+    "tech_guard": {
+      "guard_um": 2.0,
+      "reviewed_spacing_table_maximum_um": 1.5,
+      "layers": [
+        "metal7",
+        "metal8",
+        "metal9"
+      ],
+      "actual_image_tech_lef": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+      "tech_lef_sha256": "834a79295054cd4209178d1bade67c353863c47bb4b3c22ee38b862b7cec37f2",
+      "evidence_directory": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-spacing-evidence-01",
+      "spacing_layers_sha256": "7febd9416d1b4890d7142e4152f16d6e1a226d7f592de7acd2c45d576a4d9345",
+      "method": "Independent actual-image text read and saved compute-generated layer segments/manifests agree. The 2um rectangle guard conservatively exceeds these spacing-table entries; it is not full technology-rule or foundry signoff."
+    },
+    "blocking_static_findings": [],
+    "integration_acceptance": false
+  },
+  "filtered_pdn_diagnostic_review": {
+    "attempt": "vec-pdn-filter-01",
+    "job_id": 89461,
+    "mode": "pdn-filter-audit",
+    "status": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:04:35",
+    "time_limit": "UNLIMITED",
+    "launch_code_snapshot": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-pdn-filter-01/launch-code-snapshot.json",
+    "launch_repository_commit": "6762beeba46e494d309b7738f8a25b7a9c50da4a",
+    "working_tree_clean_before_launch": true,
+    "source_attempt": "vec-physical-top-02",
+    "source_odb_sha256": "f829851549017f417b1010318c746a022d8de5d8d48b8fd40046d79c4729dcbe",
+    "input_manifest": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-pdn-filter-01/pdn-audit-inputs.sha256",
+    "executed_filter_script_sha256": "43c803a33d96db81843c57db21f2a511f9b0b9bd3a29ab9d5b8ecd414be3a429",
+    "executed_strict_pg_script_sha256": "818ea1678e56be6bf15822b19a6a262423f0165b3d47a2dcbb2b23903a00f80e",
+    "output_manifest": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-pdn-filter-01/result-files.sha256",
+    "output_sha256": {
+      "pdn-filtered.odb": "cf0f55b19689239e285c6c963bdc29541f037a56b304809b61b2d614e5bf1a74",
+      "pdn-connectivity.json": "e6b0d275b96c75cb915899f824dac7f3ecd1cd2510ece23c9e4a11d6963d5727",
+      "pg-access-selection.json": "e703e41b1f6a0dd317506221820f20e948e0e638d17e7abdd42e7e6b6c527af0",
+      "pg-access-obstructions.tsv": "8c94ac73ccb84a9e91acc767fcf3e9ce657e295ef3383db8b818f6dccd608c20",
+      "pg-access-pins.tsv": "d11282115a0944c3c9a3730a1dfd168e7a9bad4066b51a6a998c3720c6b07836",
+      "pg-removed-sites.tsv": "f748213c130163f01732eb6218fc3cd61dadb40d5cfa2b506504c8e3e272040d",
+      "pg-retained-landings.tsv": "a63e6b86878f73446371a801f7f48eb2de3e92121c8ab31dc19ab3bdea6cbf7a",
+      "pdn-audit.log": "0883ba3f8f0f60ef0773a9c80e1a7978c26ba5f965111be22fa99a5e1883c0c3"
+    },
+    "actual_native_pg_results": {
+      "VDD": {
+        "pass": true,
+        "catch_code": 0,
+        "returned_value": "1",
+        "log_message": "PSM-0040 All shapes on net VDD are connected."
+      },
+      "VSS": {
+        "pass": true,
+        "catch_code": 0,
+        "returned_value": "1",
+        "log_message": "PSM-0040 All shapes on net VSS are connected."
+      },
+      "macro_pg_iterm_count": 2,
+      "macro_pg_iterms_on_expected_supply_nets": true,
+      "method": "Independently read closed JSON and raw native log lines after terminal sacct completion; not inferred from job state or PG names."
+    },
+    "independent_tsv_geometry_recomputation": {
+      "method": "Separate Python CSV reader rechecked every retained landing row, expanded rectangle intersections and same-net M7 containment against actual exported master OBS/pins; rebuilt via-layer sets and same-net/XY station membership. No database load/mutation, STA or PI run.",
+      "actual_master_obstruction_count": 9701802,
+      "exported_obs_counts": {
+        "metal7": 579,
+        "metal8": 96,
+        "metal9": 40
+      },
+      "pg_pin_rect_counts": {
+        "VDD": 38,
+        "VSS": 39
+      },
+      "dbu_per_um": 2000,
+      "orientation": "R0",
+      "master_origin_dbu": [
+        0,
+        0
+      ],
+      "instance_location_dbu": [
+        160000,
+        160000
+      ],
+      "instance_bbox_dbu": [
+        160000,
+        160000,
+        2457040,
+        2457040
+      ],
+      "guard_um": 2.0,
+      "parent_pg_vias_before": 31872,
+      "removed_vias": 366,
+      "removed_same_net_xy_sites": 122,
+      "retained_vias": 31506,
+      "retained_landing_rows": 63012,
+      "retained_landing_rows_by_layer": {
+        "metal1": 4289,
+        "metal2": 8578,
+        "metal3": 8578,
+        "metal4": 4860,
+        "metal5": 1142,
+        "metal6": 1142,
+        "metal7": 6213,
+        "metal8": 11284,
+        "metal9": 11284,
+        "metal10": 5642
+      },
+      "m7_fully_contained_same_net_contact_exemptions": 2847,
+      "remaining_m7_to_m9_guard_intersections": 0,
+      "retained_complete_7_to_10_stack_sites": 5642,
+      "retained_incomplete_7_to_10_stack_sites": 0,
+      "removed_reason_rows_checked": 259,
+      "invalid_removed_reason_rows": 0,
+      "removed_groups_have_no_retained_members": true,
+      "both_previously_diagnosed_sample_sites_removed": true,
+      "standalone_m8_m9_pg_patch_runtime_assert_passed": true,
+      "lower_layer_boundary": "M1-M6 landings were exported/count-checked, but no full actual-OBS guard recomputation was performed for those layers. A coarse macro-bbox test finds M4=172, M5=344, M6=344 positive-overlap landing rows; that alone does not establish a violation. Native PG pass does not extend this review to all-layer spacing signoff."
+    },
+    "isolated_engineering_diagnostic_pass": true,
+    "new_top_flow_completed": false,
+    "new_sta_replay": false,
+    "new_current_or_ir_drop_analysis": false,
+    "complete_integration_acceptance": false,
+    "source_odb_read_only_by_reviewed_script": true,
+    "writes_only_own_filtered_odb": true,
+    "preserved_failures": "The original top-02/89456 and guarded top-03/89457 remain failed and unaccepted; this diagnostic does not rewrite or retroactively accept them.",
+    "next": "A clean committed full legal-m10 top attempt may proceed within this task, then independently review early/final PG, actual final ODB/interfaces, POST reports, STA/electrical/DRC and final check-only site audit. Block internal 3ns timing failure and missing macro current model remain separate limitations."
+  },
+  "legal_top_hook_failure_review": {
+    "attempt": "vec-physical-top-04",
+    "job_id": 89462,
+    "profile": "legal-m10",
+    "status": "FAILED",
+    "exit_code": "2:0",
+    "elapsed": "00:02:34",
+    "time_limit": "UNLIMITED",
+    "launch_repository_commit": "04a40734a51078b832552c490cd167eb5c5510af",
+    "working_tree_clean_before_launch": true,
+    "launch_snapshot": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/launch-code-snapshot.json",
+    "failure_stage": "POST_PDN Tcl source of filter_pg_access.tcl, before the pdn.tcl database write",
+    "actual_error": "can't read \"llhd_obs\": no such variable",
+    "root_cause": "ORFS sources the hook within a procedure frame. The collision helper declared llhd_obs/llhd_pg_pins/llhd_guard global although the sourced script initialized them in that local frame; the independent 89461 global-source diagnostic did not exercise this frame.",
+    "classification": "Hook integration scope error, not a geometry-policy rejection or failed native PG check.",
+    "raw_log": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/flow.log",
+    "raw_log_sha256": "0ce780e65d19094ce7291a09e6a0b48d5a1431c2a05b36b707cd1c7c1c7dafb9",
+    "result_manifest": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-04/result-files.sha256",
+    "macro_lef_sha256": "94cc0dead71389a7ad43065091df788f3ecaf8c99cc22244735b24f9ab7726bc",
+    "macro_liberty_sha256": "9b6f42b0160aed2ea3b9d807c46eecb36a3d2560943bd08dc8afdcf617307abb",
+    "exported_actual_obs_sha256": "8c94ac73ccb84a9e91acc767fcf3e9ce657e295ef3383db8b818f6dccd608c20",
+    "exported_actual_pg_pin_sha256": "d11282115a0944c3c9a3730a1dfd168e7a9bad4066b51a6a998c3720c6b07836",
+    "exported_macro_geometry_matches_89461": true,
+    "pg_selection_completed": false,
+    "native_vdd_check_executed": false,
+    "native_vss_check_executed": false,
+    "post_pdn_connectivity_json_exists": false,
+    "post_pdn_odb_written": false,
+    "final_route_executed": false,
+    "post_final_report_executed": false,
+    "final_interface_inspection_executed": false,
+    "integration_acceptance": false,
+    "proposed_correction": "Pass OBS, PG pin and guard values explicitly to the collision helper at both the selection and fresh-enumeration calls, and exercise procedure-frame sourcing before a new isolated full-top attempt.",
+    "review_limit": "The earlier static review and global-source diagnostic did not verify the actual ORFS procedure sourcing context. No result is inherited from 89461 to this failed full-top attempt.",
+    "scope_fix_review": {
+      "change": "llhd_pg_collisions receives OBS, same-net PG pin rectangles and guard as explicit arguments. Both selection and fresh-enumeration calls pass values from the sourcing frame; no helper global-variable capture remains.",
+      "geometry_policy_changed": false,
+      "static_blocking_findings": [],
+      "fixed_filter_script_sha256": "bc54f2695d607e0e6f4d347ae423df1dc760af19da0ad3535288f15a1fe5016c",
+      "saved_proc_source_mock_regression": {
+        "directory": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-hook-scope-diagnostic-01/",
+        "inputs_manifest": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-hook-scope-diagnostic-01/inputs.sha256",
+        "log": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-hook-scope-diagnostic-01/scope-test.log",
+        "exit_code_file": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-hook-scope-diagnostic-01/exit-code.txt",
+        "exit_code": 0,
+        "test_script_sha256": "fe3a2584b6ec09d1ceb9d3576b4e656e5ce944dd638e2c7124bb37baf8c854b3",
+        "review": "Independently read the complete test source, input hashes, closed log and generated output inventory. It sources the actual filter/posthook/audit/checker files inside a procedure with mocked OpenDB/native calls.",
+        "cases": [
+          "whole-stack in-memory mutation with both native calls",
+          "safe check-only: no deletion or DB write",
+          "unsafe check-only: no deletion/write and failure before native calls",
+          "native normal false return: strict failure"
+        ],
+        "all_cases_passed": true,
+        "is_real_eda_or_physical_evidence": false
+      },
+      "independent_pure_tcl_regression": {
+        "method": "Local no-GUI Tcl interpreter via Python tkinter.Tcl; extracted actual committed HEAD helper and patched helper and invoked them from a procedure with local data. All in memory, no database or files generated.",
+        "baseline_reproduced": "Committed helper reports can't read llhd_obs: no such variable in a procedure frame.",
+        "patched_cases_passed": [
+          "M8 overlap",
+          "M8 within guard",
+          "M8 exactly at guard remains clear",
+          "M7 same-net fully contained contact",
+          "M7 wrong-net contact rejected"
+        ],
+        "passed": true,
+        "execution_evidence": "Current tool execution transcript; no separate result file was generated."
+      },
+      "actual_orfs_hook_with_fix_verified": true,
+      "next": "Commit the reviewed fix and launch a new isolated full-top attempt from that clean SHA; require actual hook/PG/final/POST/interface checks. 89462 remains failed.",
+      "saved_original_full_source_negative_control": {
+        "directory": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/pdn-hook-scope-negative-01",
+        "baseline_commit": "04a40734a51078b832552c490cd167eb5c5510af",
+        "baseline_filter_sha256": "43c803a33d96db81843c57db21f2a511f9b0b9bd3a29ab9d5b8ecd414be3a429",
+        "other_script_and_test_hashes_match_positive_control": true,
+        "exit_code": 1,
+        "actual_error": "can't read \"llhd_pg_pins\": no such variable",
+        "interpretation": "Independently read inputs.sha256, scope-test.log and exit-code.txt. The same full-source procedure-frame mock rejects the old helper; the mock reaches the M7 PG-pin read first while production 89462 reached the OBS read first. Both expose the same global/local scope defect.",
+        "old_attempt_modified": false,
+        "is_real_eda_evidence": false
+      },
+      "actual_hook_confirmation": "89472 closed POST_PDN geometry plus both strict native PG calls passed; recorded separately as early evidence. 89462 itself remains failed."
+    }
+  },
+  "full_legal_top_review": {
+    "attempt": "vec-physical-top-05",
+    "job_id": 89472,
+    "profile": "legal-m10",
+    "launch_repository_commit": "357dd98a7a07f370a1cc2c67b066c7ecccf3bf9a",
+    "time_limit": "UNLIMITED",
+    "stage_of_this_observation": "Terminal full H1 top flow and terminal independent final-ODB check-only geometry/native-PG audit reviewed.",
+    "early_native_pg": {
+      "report": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-05/post-pdn-connectivity.json",
+      "raw_stage_log": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-05/flow/logs/nangate45/llhd_vec_harness/base/2_4_floorplan_pdn.log",
+      "VDD": {
+        "pass": true,
+        "catch_code": 0,
+        "returned_value": "1",
+        "raw_log_psm_0040_seen": true
+      },
+      "VSS": {
+        "pass": true,
+        "catch_code": 0,
+        "returned_value": "1",
+        "raw_log_psm_0040_seen": true
+      },
+      "macro_pg_iterm_count": 2,
+      "macro_pg_iterms_on_expected_supply_nets": true,
+      "independently_read_closed_report_and_native_log": true
+    },
+    "early_independent_geometry": {
+      "source": "This attempt's own closed pg-access-obstructions.tsv, pg-access-pins.tsv, pg-removed-sites.tsv and pg-retained-landings.tsv, not inherited 89461 conclusions.",
+      "retained_vias": 31506,
+      "retained_landing_rows": 63012,
+      "m7_same_net_fully_contained_contacts": 2847,
+      "remaining_m7_to_m9_2um_guard_intersections": 0,
+      "retained_complete_7_to_10_sites": 5642,
+      "retained_incomplete_7_to_10_sites": 0,
+      "removed_same_net_xy_sites": 122,
+      "removed_vias": 366,
+      "removal_reason_rows_checked": 259,
+      "invalid_removal_reason_rows": 0,
+      "removed_groups_have_no_retained_members": true,
+      "coordinate_and_master_obs_pg_pin_contract_verified": true,
+      "lower_layer_guard_recomputation_performed": false
+    },
+    "early_hook_acceptance": true,
+    "terminal_result_reviewed": true,
+    "final_drt_reviewed": true,
+    "final_native_pg_reviewed": true,
+    "final_check_only_site_audit_reviewed": true,
+    "final_physical_interface_reviewed": true,
+    "post_final_report_reviewed": true,
+    "integration_acceptance": false,
+    "hash_status": "Closed top-05 output manifest and final audit input/output manifests reviewed. Final audit input ODB hash exactly matches terminal top-05 final ODB; all independently hashed small audit/geometry/inspection files match their manifests.",
+    "scope": "Independent report/artifact reading and separate Python recomputation over actual final-ODB audit exports. H1 engineering integration, modeled boundary mapping, DRT/antenna and scoped final PG/geometry checks completed. It does not establish block or parent 3ns timing closure, all-layer/foundry spacing, full macro-current PI, original asynchronous reset timing, source-to-physical equivalence, fixed H2 base or comparative PPA benefit.",
+    "stable_input_identity_review": {
+      "method": "Independent reading of this attempt's saved launch snapshot, block-abstract-inputs.sha256, abstract-source.txt, macro-view-validation.json, port-validation.json and runner-input hashes; no new extraction or STA execution.",
+      "working_tree_clean_before_launch": true,
+      "macro_source_attempt": "vec-physical-01",
+      "macro_source_final_odb_sha256": "90a7815415c077581f37107e689507594a1ebaaccb7e4a930b1091d54d17b10a",
+      "macro_source_final_spef_sha256": "c81d00267b17778d48e6b8827331c41090174122e957f126f5aba295f811bd3c",
+      "macro_view_lef_sha256": "94cc0dead71389a7ad43065091df788f3ecaf8c99cc22244735b24f9ab7726bc",
+      "reused_liberty_sha256": "9b6f42b0160aed2ea3b9d807c46eecb36a3d2560943bd08dc8afdcf617307abb",
+      "all_2248_macro_pin_geometries_directions_uses_identical": true,
+      "signal_port_contract_prephysical_pass": true,
+      "signal_bits": 2246,
+      "source_spef_read_or_timing_model_regeneration_in_this_attempt": false,
+      "actual_model_generation_evidence": "vec-physical-top-01/abstract.log reads the block 6_final SPEF before write_timing_model; this attempt reuses that byte-identical Liberty.",
+      "fixed_filter_script_sha256": "bc54f2695d607e0e6f4d347ae423df1dc760af19da0ad3535288f15a1fe5016c",
+      "strict_pg_script_sha256": "818ea1678e56be6bf15822b19a6a262423f0165b3d47a2dcbb2b23903a00f80e",
+      "post_pdn_hook_sha256": "e484cba90e0685613deda88359cd1d39db45583e5c894408b1901efbfc801a90",
+      "final_result_identity_reviewed": true
+    },
+    "status": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:16:05",
+    "final_output_identity": {
+      "method": "Read the terminal compute-generated result-files.sha256 and hash-collector exit code 0. Independently hashed the small report/inspection files and compared them with the manifest; large physical files were not rehashed on the login node.",
+      "manifest": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-05/result-files.sha256",
+      "manifest_sha256": "a6749b52daa732922c311d4edb1a46c8dbfcc8e5b6c77241dd11d79ab606b11e",
+      "output_hash_exit_code": 0,
+      "6_final.odb": "fa26983fda37abb4412adcfb8cc4a03341d59c1cdc598b293701fe4aa29e8dc7",
+      "6_final.sdc": "93d7340aeea8c41550329d0daadb48493f5bba5ba81f9005313c37f2cf3b8d05",
+      "6_final.spef": "9a38ade09ba371de954e7854bacf4f2856d0f9a0b83b52e534e65b3475081dff",
+      "6_final.v": "97831b7e8c2d0e262d490e60099b7fe3985c9a7b1dc727255f7a364ae70c41a6",
+      "6_final.gds": "190c6a81e6a3d5882de0ac0634389da5438fed522b3186761d2ac2e7237519a1"
+    },
+    "final_report_review": {
+      "method": "Independent reading of closed ORFS stage-6 and detailed-route metrics plus the raw final log; no new STA, PI or database replay.",
+      "detailed_route_drc_errors": 0,
+      "route_drc_report_bytes": 0,
+      "antenna_violating_nets": 0,
+      "antenna_violating_pins": 0,
+      "final_raw_psm_vdd_all_shapes_connected": true,
+      "final_raw_psm_vss_all_shapes_connected": true,
+      "setup_ws_ns": -0.0429892,
+      "setup_tns_ns": -0.0611355,
+      "setup_violation_count": 3,
+      "hold_ws_ns": 0.0455689,
+      "hold_tns_ns": 0,
+      "hold_violation_count": 0,
+      "max_cap_violation_count": 0,
+      "max_slew_violation_count": 0,
+      "max_fanout_violation_count": 0,
+      "report_sha256": {
+        "5_2_route.json": "cffee8e0cd03aa9939a72d7afa7dcc593f5154a19ddbfacbbf939597badb0074",
+        "6_report.json": "9760bc32f4e5b1995432e56e026fbc2a6d88431610fb2c5cd0f8cfa3b83baa03",
+        "6_report.log": "dd652d1258f6eae874e2a99d9fbec952868013fe3b826f96fc60266638e9783b",
+        "6_finish.rpt": "2975fbd46fc22f515c32a43bc1114bcc89505ccb87a0a574a0740e5df9225a87"
+      },
+      "limitation": "DRT/antenna and parent PG checks are engineering checks, not all-layer/foundry signoff. Parent timing has 3 setup violations, and macro internal 3ns setup/cap failures remain; no full macro-current PI model exists."
+    },
+    "final_structure_and_interface_report_review": {
+      "method": "Read the actual final-ODB inspection output and physical-interface-validation.json, plus the inspection script and interface validator. The separate pilot_review bit-level final-Verilog mapping and boundary-coverage cross-check is recorded below.",
+      "macro_count": 1,
+      "macro_instance": "u_vec",
+      "macro_master": "vec_engine",
+      "macro_internal_flattened_cell_count": 0,
+      "location_dbu": [
+        160000,
+        160000
+      ],
+      "dbu_per_um": 2000,
+      "orientation": "R0",
+      "placement_status": "FIRM",
+      "master_size_dbu": [
+        2297040,
+        2297040
+      ],
+      "top_signal_pins": 2246,
+      "macro_signal_pins": 2246,
+      "missing_extra_unconnected_or_direction_mismatched_signal_pins": 0,
+      "interface_boolean": true,
+      "macro_pg_iterm_count": 2,
+      "macro_pg_iterms_on_expected_supply_nets": true,
+      "report_sha256": {
+        "physical-interface-validation.json": "a7c88c80c80976c50c79d21e9ff07bc48fc9ac10cf3cd86938fb5588e9abda55",
+        "top-physical-inspection.txt": "d9788a9bf67a06e2aad990bee790810d1feb96f6be63ffd40820d4bb3f881e1d",
+        "top-interface-pins.tsv": "5d31ff3d959f3438c609a856dd3e427dcac54ef87912621fc740f2f0241cbdd8"
+      }
+    },
+    "final_check_only_site_audit": {
+      "attempt": "vec-pdn-final-01",
+      "job_id": 89475,
+      "status": "COMPLETED",
+      "geometry_review_completed": true,
+      "native_and_terminal_review_completed": true,
+      "actual_source_odb_sha256": "fa26983fda37abb4412adcfb8cc4a03341d59c1cdc598b293701fe4aa29e8dc7",
+      "source_odb_hash_matches_terminal_top_manifest": true,
+      "check_only": true,
+      "filtered_odb_exists": false,
+      "runtime_code_commit": "357dd98a7a07f370a1cc2c67b066c7ecccf3bf9a",
+      "runtime_code_matches_commit": true,
+      "working_tree_clean_before_launch": false,
+      "dirty_files_scope": "Only docs/results files were dirty and explicitly listed in launch-code-snapshot.json; no clean-worktree claim is made.",
+      "geometry_method": "Independent separate Python CSV/rectangle recomputation over the final audit's own closed TSVs; no database mutation or STA/PI run.",
+      "actual_obstruction_counts": {
+        "metal7": 579,
+        "metal8": 96,
+        "metal9": 40
+      },
+      "actual_pg_pin_rect_counts": {
+        "VDD": 38,
+        "VSS": 39
+      },
+      "retained_vias": 31506,
+      "retained_landing_rows": 63012,
+      "m7_same_net_fully_contained_exemptions": 2847,
+      "remaining_m7_to_m9_2um_guard_intersections": 0,
+      "retained_complete_7_to_10_sites": 5642,
+      "retained_incomplete_7_to_10_sites": 0,
+      "unsafe_sites": 0,
+      "removed_sites": 0,
+      "removed_vias": 0,
+      "both_original_short_sample_sites_absent_without_audit_mutation": true,
+      "final_retained_landing_export_byte_identical_to_top_early_export": true,
+      "geometry_sha256": {
+        "pg-access-selection.json": "2bac001fb3c925e4e01709db5dbb3404aeb97627960913589f993bb27cb2fa79",
+        "pg-access-obstructions.tsv": "8c94ac73ccb84a9e91acc767fcf3e9ce657e295ef3383db8b818f6dccd608c20",
+        "pg-access-pins.tsv": "d11282115a0944c3c9a3730a1dfd168e7a9bad4066b51a6a998c3720c6b07836",
+        "pg-retained-landings.tsv": "a63e6b86878f73446371a801f7f48eb2de3e92121c8ab31dc19ab3bdea6cbf7a",
+        "pg-removed-sites.tsv": "71158ce0bdd59a3a25091f45072f31c708e8ab8c39cd3977c13c530931dd5e57"
+      },
+      "source_pdn_warning_inventory": {
+        "failed_via_report_files_found": 0,
+        "absent_failed_via_report_means_zero_failures": false,
+        "PDN_0007_warnings": 2,
+        "PDN_0195_removed_via_sites": 3,
+        "record": "pdn-source-via-reports.json preserves source warning strings."
+      },
+      "scope": "M7-M9 actual OBS/2um via-landing guard, exact same-net M7 pin containment, full 7-to-10 via-stack membership only; M1-M6 exported but not fully OBS/spacing-checked. Not foundry/all-layer spacing signoff.",
+      "exit_code": "0:0",
+      "elapsed": "00:04:34",
+      "time_limit": "UNLIMITED",
+      "actual_native_pg_results": {
+        "VDD": {
+          "pass": true,
+          "catch_code": 0,
+          "returned_value": "1",
+          "raw_log_psm_0040_seen": true
+        },
+        "VSS": {
+          "pass": true,
+          "catch_code": 0,
+          "returned_value": "1",
+          "raw_log_psm_0040_seen": true
+        },
+        "macro_pg_iterm_count": 2,
+        "macro_pg_iterms_on_expected_supply_nets": true
+      },
+      "input_manifest": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-pdn-final-01/pdn-audit-inputs.sha256",
+      "input_manifest_sha256": "a90791a6d87d7947c2579c907e3ab693ebf7a3692e3ba6ac59f138a48e98bb65",
+      "output_manifest": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-pdn-final-01/result-files.sha256",
+      "output_manifest_sha256": "5e631efd53d1ee41b387b4ff9825a39f9bb3dfed666e1770a447f611ceb14ade",
+      "output_hash_exit_code": 0,
+      "native_log_sha256": "28722b6f3be9f2fc91f4128f5d6cace0194b4fd33d6d0a0041255f3dec62568a",
+      "native_connectivity_json_sha256": "e6b0d275b96c75cb915899f824dac7f3ecd1cd2510ece23c9e4a11d6963d5727",
+      "actual_small_report_and_geometry_hashes_match_terminal_manifest": true,
+      "no_own_odb_output_exists": true,
+      "audit_mutation_performed": false,
+      "source_odb_hash_crosscheck": "The final audit compute-generated input hash fa26983f... equals the exact top-05 terminal final ODB hash, not the older filtered diagnostic ODB or an early checkpoint.",
+      "final_geometry_and_native_pg_checks_passed": true
+    },
+    "engineering_structure_and_pdn_checks_passed": true,
+    "full_quality_acceptance": false,
+    "acceptance_note": "The H1 macro integration engineering flow, actual final structure/interface mapping and scoped geometry/parent-PG checks completed successfully. Full quality acceptance remains false: parent has 3 setup violations, block internal 3ns setup/max-cap failures remain, and macro-current PI, original reset semantics, source-to-physical equivalence and foundry/all-layer spacing signoff are not established. This is not an H2 fixed-base or F0/H1 comparative result.",
+    "independent_signal_and_sta_coverage_crosscheck": {
+      "reviewer": "pilot_review; independently read actual final Verilog, harness 26-port contract, audited Liberty, POST reports and final ODB inspection outputs. This is graph/report inspection, not a new formal or STA execution.",
+      "evidence_attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-top-05",
+      "final_verilog_sha256": "97831b7e8c2d0e262d490e60099b7fe3985c9a7b1dc727255f7a364ae70c41a6",
+      "all_2246_signal_bits_map_to_expected_macro_ports_through_allowed_buffers_inverters_or_assigns": true,
+      "mapping_mismatches": 0,
+      "unknown_driver_cells": 0,
+      "multiple_drivers": 0,
+      "odd_inversions": 0,
+      "clk_direct_connection": true,
+      "buffered_other_input_bits": 1575,
+      "buffered_output_bits": 670,
+      "final_verilog_cell_counts": {
+        "vec_engine": 1,
+        "BUF_X1": 2242,
+        "BUF_X2": 3
+      },
+      "actual_liberty_signal_classification": {
+        "active_data_inputs": 765,
+        "clock_inputs": 1,
+        "unused_inputs": 810,
+        "variable_outputs": 363,
+        "constant_outputs": 307
+      },
+      "top_check_setup_unconstrained_output_count": 307,
+      "unconstrained_outputs_exactly_match_307_source_tie_no_arc_outputs": true,
+      "additional_active_output_unconstrained_gap": 0,
+      "unconstrained_constant_output_note": "High wdata 256 bits, high wstrb 48 bits, and one bit from each of three req buses; no claim of timing arcs for these constant outputs.",
+      "max_setup_violation_endpoints": [
+        "vec_rd0_req[24]",
+        "vec_rd1_req[25]",
+        "vec_rd0_req[22]"
+      ],
+      "post_final_report_hook_evidence": "6_report.log line 71 sources the POST report hook after parent RCX 4491-net extraction and parent SPEF read; actual top-*.rpt outputs and hashes exist.",
+      "parent_timing_cannot_cover_macro_internal_failure": true,
+      "physical_resource_interpretation": {
+        "cts_buffers": 0,
+        "cts_reason": "single macro clock sink",
+        "signal_buffer_instances": 2245,
+        "tap_instances": 3981,
+        "filler_instances": 44360,
+        "total_instances": 50587,
+        "macro_area_um2": 1319098.19,
+        "signal_buffer_area_um2": 1792.31,
+        "tap_area_um2": 1058.95,
+        "filler_area_um2": 325001.99,
+        "buffer_insertion_stage": "3_gp inserts 1575 input plus 670 output buffers; 5_grt upsizes only 3 to X2.",
+        "logic_beyond_macro_and_buffers_in_final_verilog": false
+      },
+      "limitation": "Structural bit mapping and modeled boundary coverage do not establish original RTL-to-physical equivalence, protocol correctness or 3ns timing closure.",
+      "max_setup_path_type": "Macro rising-clock sequential output to constrained parent output port; three max paths are VIOLATED in actual top-paths.rpt.",
+      "sdc_coverage": {
+        "clock_period_ns": 3.0,
+        "propagated_clock": true,
+        "constrained_nonclock_input_bits": 1575,
+        "constrained_output_bits": 670,
+        "input_output_delay_ns": 0.6
+      },
+      "reset_semantics_limit": "The abstract Liberty models rst_n with setup/hold checks and has no asynchronous recovery/removal timing groups. Parent rst_n min/setup/hold reports cannot establish original asynchronous reset recovery/removal correctness; source block report checks and original reset semantics remain separate."
+    },
+    "final_h1_engineering_flow_and_structure_pdn_checks_completed": true
+  }
+}
