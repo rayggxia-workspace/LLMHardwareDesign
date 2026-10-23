@@ -22,6 +22,10 @@ def main():
  for name,want in b['sources'].items():
   if digest(source/name)!=want:raise ValueError('collection source SHA '+name)
  root=a.root
+ for phase in ['phase5','phase8','phase9','phase13']:
+  binding=json.loads((root/phase/'binding.json').read_text())
+  for name,want in binding['sources'].items():
+   if digest(root/phase/name)!=want:raise ValueError('original stage source SHA '+phase+'/'+name)
  if not os.environ.get('SLURM_JOB_ID'):raise ValueError('Slurm required')
  subprocess.run([sys.executable,'-B',str(root/'phase13/summarize.py'),'--root',str(root),'--out',str(root/'batch-summary-final.json')],check=True)
  subprocess.run([sys.executable,'-B',str(source/'negative_real.py'),'--root',str(root),'--out',str(root/'negative-real01')],check=True)
