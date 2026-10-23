@@ -32,3 +32,11 @@ H1 对照保持相同初始计算／状态／存储资源，允许物理有源�
 - 看板：无 `config/board.json`；实际 GraphQL 查询返回 `INSUFFICIENT_SCOPES`，缺 `read:project`。看板 `unverified`，同步 `pending`，处理管理员待指定；未扩大令牌权限或修改组织设置。
 - Issue 状态：合并工程成果不自动证明所有科研验收条件完成；保留尚未验收的限制，不伪造独立审查。
 - 恢复第一步：读回 PR #8／#10／#17 的 head、base、CI 与 merged 状态，再同步 main；H2 继续通过其自身任务独立交付。若网络暂时不可达，先保留本地整合提交，不报告远端合并成功。
+
+## 本轮网络中断交接
+
+PR #8 的远端合并已确认；PR #10 的新 head `fbf32c502c6b6b6b68945d91dbcb2a38079ed946` 已推送且两项 CI 通过，但发起合并后本机开始持续出现 GitHub API `EOF`、Git `SSL/TLS connection failed`，连接器请求也失败，故其合并结果暂时无法读回。未确认成功不能报告已合并。结束本轮前终止本轮等待连接的 PR #10 CLI 请求，避免遗留后台写操作；这不能撤销服务端可能已收到的请求，恢复时必须先读回。
+
+PR #17 的本地整合提交 `b03e2dc` 及完整树检查回执 `b8efacf` 已完成；推送因同一连接故障失败，远端尚未确认收到整合提交，也尚未 retarget 或执行其合并。本地工作树为 `D:\Data\电路实验\LLMHardwareDesign-worktrees\issue-15-opentpu-compare`。PR #17 的更新说明已备于仓库外 `D:\Data\电路实验\block-placement-20261022-172122\merge-audit-20261023\pr-17-body.md`。
+
+网络恢复后由本任务操作者继续（无需重新请求已有合并授权）：先读取 PR #10 实际状态；如仍 OPEN，核对 head 与 CI 后使用 merge 方法合并；随后推送本地 `task/15-opentpu-compare`、将 PR #17 base 改为 main 并更新说明，等待其新 head CI 通过，再按匹配 head SHA 合并。最后 fetch 并将本地 main 快进到远端 main，核验报告路径、工作树和合并记录。不要触碰 H2 工作树，不要为此改代理、账号、令牌权限或 GitHub 保护设置。
