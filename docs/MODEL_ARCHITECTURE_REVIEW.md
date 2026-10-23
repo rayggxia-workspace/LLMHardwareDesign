@@ -1,6 +1,7 @@
 # 先审查架构，再选择算子与Block实验模型
 
-2026-10-23，Liangruizhi；[Issue37](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/37)。
+2026-10-23，Liangruizhi；[Issue37](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/37)、
+[PR38](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/38)。
 用户最新要求优先架构分析与选型，因此本轮**没有运行新增模型或缩小模型数值实验**；只读取公开
 小配置/本地框架代码、进行协议和公式检查。此前Issue33的真实小模型结果保持其原口径。
 
@@ -173,3 +174,12 @@ GPU时间仅说明该工作负载/backend，不能直接证明未来Block的收�
 Gemma/Meta授权与实际配置、适用backend、正式数据版本/样本/SHA、质量门槛审查和GPU排期未闭合，
 因此此文件是可审查的实验设计，**不是“所选模型已经验证没问题”**。
 本机资料与检查交接在docs/handoffs/2026-10-23-issue-37-model-selection.md；等待用户通知后再整合兄方证据。
+
+## 本轮检查回执
+
+正式源码946281b9a90dd36b130e691c60667b9f7d1e4d32，source_dirty=false。
+`run_checks.py`记录管理结构、8个协议/容量已知值测试、whitespace通过；
+`analyze.py`只枚举覆盖与推导逻辑容量，结果在work/Liangruizhi/37/screen.json。
+独立审计17个源文件版本绑定及3份原始日志SHA，结果audit.json；逐文件索引manifest.json。
+所有新增数据只是架构筛查，不是模型、质量或硬件实验。Issue/PR待审查/合并，不done；
+登记PR5 pending，缺board配置/Projects工具，看板unverified/同步pending。

@@ -19,3 +19,7 @@ metadata接收脚本build_catalog.py使用本次D盘小文件快照重建目录�
 配置来源不可变revision/URL/SHA在catalog.json，结果与源码绑定随后记录screen.json/checks.json/manifest.json。
 业务检查仅协议/公式，不是模型“跑通”。登记PR5 pending；无board.json/Projects工具，看板unverified/同步pending，
 处理人/审查人待指定；新模型执行仍须经过方案中的门槛和排期，不能从选型建议推定已获GPU结果。
+
+正式源码946281b9a90dd36b130e691c60667b9f7d1e4d32；PR38待审查。
+管理/8个协议测试/whitespace通过，screen.source_dirty=false，17源绑定/3日志SHA核对通过。
+全部是metadata与公式，不是模型实跑。screen/checks/audit/manifest与交接随本次结果提交交付。
