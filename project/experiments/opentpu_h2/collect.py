@@ -2,6 +2,7 @@
 import argparse
 import base64
 import hashlib
+import gzip
 import json
 from pathlib import Path
 import shlex
@@ -15,7 +16,8 @@ names=['exit-code.txt','finished.txt','allocation.txt','image.sha256','tools.sha
        'spec.json','input-sha256.json','inputs.json','partition.json','budget.log',
        'electrical-budget.rpt','interface-nets.rpt','macro-nets.txt','partition.log',
        'route.log','restricted-drc.rpt','freeze-audit.json','inventory-summary.json',
-       'native-api.log','native-flow-snippets.json','baseline-drc.rpt','baseline-antenna.rpt','native-stack-symbols.txt']
+       'native-api.log','native-flow-snippets.json','baseline-drc.rpt','baseline-antenna.rpt','native-stack-symbols.txt',
+       'debug-tools.json','debug-readelf.log','debug-addr2line.log','debug-gdb.log','connectivity-api.log','proxy-build.log']
 for attempt in a.attempts:
     receipt=json.loads((HERE/'results'/(attempt+'-submission.json')).read_text())
     remote=receipt['spec']['remote']
@@ -46,9 +48,11 @@ else:
     for name,item in data.pop('files').items():
         raw=base64.b64decode(item['base64'])
         assert hashlib.sha256(raw).hexdigest()==item['sha256']
-        target=out/name
-        if target.exists():assert target.read_bytes()==raw,'Changed terminal evidence'
-        else:target.write_bytes(raw)
+        compressed=len(raw)>32768 or name.endswith('.rpt')
+        target=out/(name+'.gz' if compressed else name)
+        payload=gzip.compress(raw,mtime=0) if compressed else raw
+        if target.exists():assert target.read_bytes()==payload,'Changed terminal evidence'
+        else:target.write_bytes(payload)
     sacct=subprocess.check_output(['ssh','-o','BatchMode=yes',receipt['host'],
         'sacct -j '+receipt['job_id']+' -X -n -P -o JobID,State,ExitCode,Elapsed,Timelimit'],text=True).strip()
     data.update(job_id=receipt['job_id'],sacct=sacct)

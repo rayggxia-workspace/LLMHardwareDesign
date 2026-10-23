@@ -11,8 +11,9 @@ results=HERE/'results'
 evidence=results/'budget-03'
 terminal=json.loads((evidence/'terminal.json').read_text())
 assert 'COMPLETED|0:0|' in terminal['sacct'] and terminal['sacct'].endswith('|UNLIMITED')
-report=(evidence/'electrical-budget.rpt').read_text()
-assert hashlib.sha256((evidence/'electrical-budget.rpt').read_bytes()).hexdigest()==terminal['manifest']['electrical-budget.rpt']
+raw=gzip.decompress((evidence/'electrical-budget.rpt.gz').read_bytes())
+report=raw.decode()
+assert hashlib.sha256(raw).hexdigest()==terminal['manifest']['electrical-budget.rpt']
 slew,cap=report.split('\nmax capacitance\n')
 def rows(text):
     found=[]
