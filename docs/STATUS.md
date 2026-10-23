@@ -1,6 +1,6 @@
 # 当前状态
 
-- 2026-10-23 [Issue61/草稿PR62](experiments/issue-61-server-models.md)：用户授权服务器补齐兄方批次，Qwen保存partial/递推状态两轮独立CPU重放通过；Gemma/Phi配置后端预检通过，公开原BF16镜像传输中，完整模型参考与整数采集尚未执行。逐模型验收表区分复用、失败、条件跳过和未执行；无GPU，不把CPU作CUDA测量。保持其他成员任务独立，未验收/未done。
+- 2026-10-23 [Issue61/PR62](experiments/issue-61-server-models.md)：Gemma3-4B、Qwen2.5-3B、Qwen3.5-4B与Phi4-mini本轮服务器CPU参考/采集全部执行；Phi封存不调参。三主测420线性/56注意力格式与1474560个有条件PV32输出、四模型5185来源张量均已实际核验；部分量化候选误差/饱和失败保留。发现动态K组scale、概率/KV分离精度、范围不变量与窗口底层分配会改变边界判断。精选包7.27MB可离线重放，服务器主包/封存包有SHA索引。完成逐token打包修正，仍非全整数非线性/整图调度/PPA验收；PR待审查合并，Issue非done。登记pending、看板unverified/同步pending。
 
 
 - 2026-10-23 [Issue59/PR60](experiments/issue-59-llama-down-scale.md)：Llama down_proj校准与K组scale已本机24候选/144数值、1152服务两轮。最佳局部误差5.39%，并非可接受全模型质量；新增对齐归约/元数据/guard边界，未决定必须INT64或固定近端RQ。粗35bit与实际W所见scale的32bit界严格区分。精选证据可重放24代表条件，全量原输入本机留索引共享pending。用户最新将兄方批次交给本会话服务器推进，Issue61先接收PR36已有数据并核剩余缺项；其他成员Issue55集成保持独立。

@@ -14,6 +14,8 @@
 
 ## 当前工作方式
 
+[服务器四模型补齐批次](docs/experiments/issue-61-server-models.md)已完成本轮CPU参考/采集、三主测420线性/56注意力整数探针与独立接收，Phi封存。动态K组scale、概率/KV分离精度及有条件INT32范围证明细化了候选边界；失败保留，尚非整图/硬件/PPA验收。详见[候选决策](docs/decisions/2026-10-23-invariant-preserving-block-boundaries.md)和[两日团队汇报](docs/reports/2026-10-23-two-day-progress.md)。
+
 [Llama down_proj校准与scale粒度](docs/experiments/issue-59-llama-down-scale.md)已完成本机24候选/144数值、1152服务两轮；改K组scale需显式对齐归约/metadata/guard，仍无最终硬件或完整质量结论。
 
 [本机Llama-3.2-1B跨模型验证](docs/experiments/issue-56-llama-cross-model.md)复用完整GQA整数与端口工具，

@@ -123,3 +123,7 @@ project/experiments/qwen3_trace/使用独立D盘环境（torch2.10.0+cpu、trans
 ## Issue59 down_proj校准与scale粒度
 
 正式工具project/experiments/down_scale；运行python scripts/check_project.py，再在已有torch2.10CPU/NumPy2.5.4独立环境执行 -B -m unittest discover -s project/experiments/down_scale -p test_contract.py -v。捕获/numeric/service/audit的完整命令及明确位宽/成本/线程/D盘边界见该目录README。numeric与service可并行，两轮新输出；正式源码6d2d6603。已交付精选包核验：python -B work/Liangruizhi/59/verify.py project/experiments/down_scale/results/issue-59-run04/index.json --extract <新D目录> --output <新JSON>。只重放包内24代表整数case/4轨迹，全部144浮点校准/编码重算需按local-data-index取得本机原始输入；共享pending，不声称远端已有。报告docs/experiments/issue-59-llama-down-scale.md。
+
+## Issue61服务器四模型与独立接收
+
+正式目录project/experiments/server_models；[README](../project/experiments/server_models/README.md)记录原始阶段commit、模型revision/协议、隔离环境、Slurm及不覆盖输出的恢复命令。先python -B scripts/check_project.py，再使用已有torch2.10CPU环境运行 -B -m unittest discover -s project/experiments/server_models -p 'test_*.py' -v（17项）；项目check_research.py五套业务回归已通过。精选包用receive_bundle.py核7.27MB SHA/117成员/27原commit源码，再review_samples.py离线重放4GQA/6整数case。完整420条件/浮点校准输入需按results/issue-61/index.json取得授权服务器primary-model-data01.zip，Phi独立封存不得调参。conditional-bounds02为全PV32条件核，causal-cost01逐token打包；均非GPU测量/新算术RTL/整图周期或PPA。完整报告docs/experiments/issue-61-server-models.md。

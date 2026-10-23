@@ -283,3 +283,9 @@ MoE dispatch/MLA/视觉不在v1完整验证范围，保留研究轴，不通过d
 
 最小实验及每条决策的分叉见[决策实验集](BLOCK_MINIMAL_EXPERIMENTS_V1.md)。
 现阶段可以交付**具体候选与可以排除的假设**，尚不能交付已验证最优Block或端到端收益数值。
+
+## 9. Issue61真实多架构数据对候选的细化（2026-10-23）
+
+四模型本轮CPU参考/完整GQA捕获已执行，Phi仅封存；三主测420线性/56注意力格式和全PV32条件核已核。动态K128 A改善down，但W128不是普适必需；KV8/P8不通用，概率和KV需分别定格式。完整归约/固定单位、Psum预算、状态版本和窗口所有权属于必须保持的合同。所见W/scale及归一化P不变量可形成有成本的INT32范围证书，不能据粗44位/35位直接要求所有通路64位，也不能据切片取消宽回退。
+
+制造前内部反馈/归约仍是候选；RQ近端/共享、M–A配对、KV bank和R独立性仍由同资源服务/物理比较决定。范围guard/L1系数、16位limb多周期、逐tokenpacket及source16KiB暂存全部计入，不能凭字节减少选边界。Gemma原生prefill底层分配大于逻辑窗口，需要生命周期/ring证明，不能按FP32字节除四。详见[决策记录](decisions/2026-10-23-invariant-preserving-block-boundaries.md)及[实际报告](experiments/issue-61-server-models.md)。本节不把候选库或E2b/E3/PPA标为通过。

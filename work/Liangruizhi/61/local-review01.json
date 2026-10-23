@@ -1,0 +1,35 @@
+{
+  "status": "PASS",
+  "GQA_groups": 4,
+  "GQA_values": 491520,
+  "INT64_partial_values": 182784,
+  "Fraction_RQ_values": 2304,
+  "linear_cases": 6,
+  "local_errors": [
+    {
+      "tag": "gemma.integer.layer0.down_proj.prefix128.prefill",
+      "relative_rmse": 0.03021152614345488
+    },
+    {
+      "tag": "gemma.integer.layer0.down_proj.prefix128.decode",
+      "relative_rmse": 0.03521564476275415
+    },
+    {
+      "tag": "qwen25.integer.layer0.down_proj.prefix128.prefill",
+      "relative_rmse": 0.026621115692805064
+    },
+    {
+      "tag": "qwen25.integer.layer0.down_proj.prefix128.decode",
+      "relative_rmse": 0.033716005600167964
+    },
+    {
+      "tag": "qwen35.integer.layer3.down_proj.prefix128.prefill",
+      "relative_rmse": 0.024995089617495247
+    },
+    {
+      "tag": "qwen35.integer.layer3.down_proj.prefix128.decode",
+      "relative_rmse": 0.036400732783943894
+    }
+  ],
+  "scope": "actual selected full-GQA FP64 replay and encoded linear i32/wide/RNE only; no full model or calibration acceptance"
+}
