@@ -48,7 +48,7 @@ def main():
     for suffix,value,role,shape in [('A',xx,'activation',[math.prod(ishape[:-1]),ishape[-1]]),('Y',yy,'reference_output',[math.prod(oshape[:-1]),oshape[-1]])]:
      put(stem+'_'+suffix+'_row'+str(int(pos)),value[row:row+1].astype('<f4'),role,['row','channel'],label+'.'+suffix,layer,{'original_shape':shape,'offsets':[int(pos),0],'policy':'one actual selected row; leading dimensions flattened in row-major order, original shape/stride in layout.json'})
    if 'bias.'+label in z.files:put(stem+'_bias',z['bias.'+label].astype('<f4'),'weight',['output'],label+'.bias',layer,{'original_shape':[oshape[-1]],'offsets':[0],'policy':'first16 output channels'})
-  for key in [k for k in z.files if k.startswith(name+'.norm.')and k.endswith('.input')]:
+  for key in [k for k in z.files if k.startswith(name+'.norm.')and k.endswith('.input')and'.cached_call'not in k]:
    base=key[:-5];label=key[len(name+'.norm.'):].removesuffix('.input');layer=int(label.split('.')[0].removeprefix('layer'));positions=z[base+'rows_within_call'];stem=label.replace('.','_');ishape=z[base+'input_shape'].tolist();oshape=z[base+'output_shape'].tolist()
    layout[label]={field:z[base+field].tolist()for field in ['input_shape','input_stride','output_shape','output_stride','rows_within_call']}
    for row,pos in enumerate(positions):
