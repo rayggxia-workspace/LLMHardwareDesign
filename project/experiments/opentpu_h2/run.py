@@ -74,7 +74,7 @@ try:
         script+='report_parasitic_annotation -report_unannotated > parent-annotation.rpt\n'
         script+='report_check_types -max_capacitance -max_slew -max_count 100000 -digits 9 -no_line_splits > parent-electrical.rpt\n'
         script+='report_check_types -violators -max_slew -max_capacitance -max_fanout -max_delay -min_delay -recovery -removal -min_period -digits 9 -no_line_splits\n'
-        script+='set f [open rc-connectivity.tsv w]\nforeach n [[ord::get_db_block] getNets] {if {[$n getSigType] ni {POWER GROUND}} {puts $f "[$n getName]\\t[$n isConnected]\\t[$n isRCDisconnected]"}}\nclose $f\n'
+        script+='set f [open rc-connectivity.tsv w]\nforeach n [[ord::get_db_block] getNets] {if {[$n getSigType] ni {POWER GROUND}} {puts $f "[$n getName]\\t[$n isRCDisconnected]"}}\nclose $f\n'
         script+='check_antennas -report_file composite-antenna.rpt\n'
         path=ROOT/'composite-extract.tcl';path.write_text(script)
         with (ROOT/'composite-extract.log').open('w') as log:
@@ -129,6 +129,13 @@ try:
     if SPEC['mode'] in ('partition','route'):
         from def_routes import partition
         contract=partition(ROOT/'physical.def',ROOT/'frozen-lower.def',SPEC['bottom'])
+        selected=set(range(len(contract['access_landings'])))
+        if SPEC.get('collapse_components'):
+            from access_components import select_accesses
+            plan=select_accesses(ROOT/'frozen-lower.def',contract['access_landings'])
+            (ROOT/'access-plan.json').write_text(json.dumps(plan,indent=2)+'\n')
+            selected=set(plan['selected'])
+        active_names={p['net'] for i,p in enumerate(contract['access_landings']) if i in selected}
         (ROOT/'partition.json').write_text(json.dumps(contract,indent=2)+'\n')
         script='read_db {'+str(odb)+'}\nhelp read_def\nhelp detailed_route\nhelp global_route\n'
         script+='odb::dbChip_destroy [[ord::get_db] getChip]\n'
@@ -176,9 +183,11 @@ try:
                     name=landing['net']
                     # Actual DB net names retain the native bus escaping.
                     script+='set n [$b findNet {'+name+'}]\nif {$n eq "NULL"} {error {Missing proxy source net}}\n'
-                    script+='set p [odb::dbBTerm_create $n h2_landing_'+str(serial)+']\n$p setIoType INOUT\nset bp [odb::dbBPin_create $p]\n$bp setPlacementStatus FIRM\n'
+                    if serial in selected:
+                        script+='set p [odb::dbBTerm_create $n h2_landing_'+str(serial)+']\n$p setIoType INOUT\nset bp [odb::dbBPin_create $p]\n$bp setPlacementStatus FIRM\n'
                     script+='set v [[ord::get_db_tech] findVia {'+landing['via']+'}]\nif {$v eq "NULL"} {error {Missing native landing via}}\n'
-                    script+='foreach box [$v getBoxes] {set l [$box getTechLayer];if {[$l getName] eq "metal8"} {odb::dbBox_create $bp $l [expr {'+str(landing['x'])+'+[$box xMin]}] [expr {'+str(landing['y'])+'+[$box yMin]}] [expr {'+str(landing['x'])+'+[$box xMax]}] [expr {'+str(landing['y'])+'+[$box yMax]}]}}\n'
+                    action='odb::dbBox_create $bp' if serial in selected else 'odb::dbObstruction_create $b'
+                    script+='foreach box [$v getBoxes] {set l [$box getTechLayer];if {[$l getName] eq "metal8"} {'+action+' $l [expr {'+str(landing['x'])+'+[$box xMin]}] [expr {'+str(landing['y'])+'+[$box yMin]}] [expr {'+str(landing['x'])+'+[$box xMax]}] [expr {'+str(landing['y'])+'+[$box yMax]}]}}\n'
                 script+='set empty {}\nforeach n [$b getNets] {if {[$n getSigType] ni {POWER GROUND} && [llength [$n getBTerms]]==0} {lappend empty $n}}\nforeach n $empty {odb::dbNet_destroy $n}\n'
                 # Upper routing has no active instances. Preserve actual
                 # detailed-macro OBS as absolute physical obstacles; NG45
@@ -189,6 +198,7 @@ try:
                 script+='# H2_PROXY_FRESH_PROCESS\n'
             guide=''
             for row in contract['affected_nets']:
+                if row['net'] not in active_names:continue
                 boxes=contract['custom_guides'][row['net']]
                 if SPEC.get('bbox_guides'):
                     boxes=[[min(b[0] for b in boxes),min(b[1] for b in boxes),
