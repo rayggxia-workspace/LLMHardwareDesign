@@ -1,7 +1,8 @@
 # huangpingyang04-lgtm 的进度
 
-- 更新时间：2026-10-23 17:11（Asia/Shanghai）。
+- 更新时间：2026-10-23 17:13（Asia/Shanghai）。
 - 当前任务：[#48 ≤4B INT8输入规范与轻量资源估算](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/48)，负责人本人，审查人/优先级待指定；待PR审查/合并，不done。
+- PR：[PR50](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/50)已创建；最新head及两项线上CI读回保存在Issue48/PR回执，未自动合并。
 - 成果：[输入合同与使用](../../docs/LLM_RESOURCE_INPUT.md)、`project/analysis/llm_resources/`的schema、标准库CLI、PR44固定候选配置快照、四个精选示例及单元/CLI测试；增加专用CI。复用候选格式，不改PR44代码、原始参考或其他成员进度。
 - 已完成：总参数≤4,000,000,000（包含全部专家/aux），W8A8/INT32、参数分区/shape/场景校验；未知量保留null；权重/scale、KV/状态、tile、六类库存/FIFO、指定路径打包、线性块数及带宽记账。报告始终是部分解析估算，没有完整模型通过结论。
 - 隔离：`C:/Users/86188/Documents/ChatGPT/2026DAC/LLMHardwareDesign-resource-estimator`，`task/48-int8-resource-estimator`，起点main `0cc36f3238c7084d7126d94c314fe7d8bf0f9c5d`；不是PR44派生分支。固定候选来源PR44@3fa0b45，完整commit和字节绑定见文档/报告；PR/最新commit/CI以Issue48交付回执为准。
