@@ -3,6 +3,7 @@ import hashlib
 import json
 from pathlib import Path
 import subprocess
+import shutil
 
 ROOT = Path.cwd()
 SPEC = json.loads((ROOT/'spec.json').read_text())
@@ -35,5 +36,16 @@ try:
     (ROOT/'physical.tcl').write_text(script)
     with (ROOT/'physical-inventory.log').open('w') as log:
         subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(ROOT/'physical.tcl')],stdout=log,stderr=subprocess.STDOUT,check=True)
+    if SPEC['mode']=='partition':
+        from def_routes import partition
+        contract=partition(ROOT/'physical.def',ROOT/'frozen-lower.def',SPEC['bottom'])
+        (ROOT/'partition.json').write_text(json.dumps(contract,indent=2)+'\n')
+        script='read_db {'+str(odb)+'}\nhelp read_def\nhelp detailed_route\nhelp global_route\n'
+        script+='foreach n [[ord::get_db_block] getNets] {if {[$n getSigType] ni {POWER GROUND}} {set w [$n getWire];if {$w ne "NULL"} {odb::dbWire_destroy $w}}}\n'
+        script+='read_def -incremental {'+str(ROOT/'frozen-lower.def')+'}\n'
+        script+='write_def {'+str(ROOT/'frozen-roundtrip.def')+'}\nwrite_db {'+str(ROOT/'frozen.odb')+'}\n'
+        path=ROOT/'partition.tcl';path.write_text(script)
+        with (ROOT/'partition.log').open('w') as log:
+            subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(path)],stdout=log,stderr=subprocess.STDOUT,check=True)
 finally:
     (ROOT/'input-sha256.json').write_text(json.dumps(INPUTS,indent=2)+'\n')

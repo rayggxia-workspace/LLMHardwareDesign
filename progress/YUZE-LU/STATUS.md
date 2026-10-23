@@ -1,5 +1,12 @@
 # YUZE-LU 的进度
 
+## 2026-10-23 openTPU H2推进
+
+- [Issue31](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/31)，独立分支`task/31-opentpu-h2`，依赖H1 PR17@ce5896d；H1待审查状态不变。
+- 正在依据实际H1最终ODB提取预制接口驱动、时钟和接入库存，建立逐实例/几何冻结合法性与限定层路由实验。无H2合格结果，不把H1线路复用当冻结。
+- 新作业全部`--time=0`、实际读回UNLIMITED；89839发现工具不含Python，自然失败，改用Tcl；inventory-03已生成原生实例/连接及完整DEF，继续分析。详见[实验记录](../../docs/experiments/issue-31-opentpu-h2.md)。
+- 登记复用PR5 pending，看板/同步仍待核验，管理员/审查人/优先级待指定。不自合并、不提前done。
+
 ## 2026-10-22 ACT/MXU 同资源物理对照
 
 - 更新时间：2026-10-23 04:37 CST，中国标准时间UTC+08:00；负责人／实际GitHub账号YUZE-LU。
