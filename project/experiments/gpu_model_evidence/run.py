@@ -281,7 +281,14 @@ def main():
     p.add_argument('--short-only', action='store_true')
     p.add_argument('--dtype',choices=['bf16','fp16'],default='bf16')
     p.add_argument('--vram-budget-mib',type=int)
+    p.add_argument('--sdpa-backend',choices=['auto','efficient','cudnn','math'],default='auto')
     a = p.parse_args()
+    if a.sdpa_backend!='auto':
+        # Explicit independent backend group; disabling all alternatives prevents silent fallback.
+        torch.backends.cuda.enable_flash_sdp(False)
+        torch.backends.cuda.enable_mem_efficient_sdp(a.sdpa_backend=='efficient')
+        torch.backends.cuda.enable_cudnn_sdp(a.sdpa_backend=='cudnn')
+        torch.backends.cuda.enable_math_sdp(a.sdpa_backend=='math')
     if a.out.exists():
         raise ValueError('output exists; preserve original evidence')
     if git('status', '--porcelain'):
@@ -303,6 +310,7 @@ def main():
         'model': manifest, 'command': sys.argv, 'configuration': cfg,
         'start_epoch': time.time(), 'initial_free_total_bytes': torch.cuda.mem_get_info(),
         'gpu': torch.cuda.get_device_name(), 'backend': cfg['performance']['backend'],
+        'sdpa_backend_enforced':a.sdpa_backend,
         'phase': a.phase, 'runtime_dtype':a.dtype, 'offload': False, 'physical_traffic_measured': False})
     save(a.out/'allocator-budget.json',{'physical_free_mib_before_context':smi_free_mib,
         'guard_mib':512,'budget_mib':budget_mib,'fraction':min(fraction,0.95),
