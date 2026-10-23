@@ -1,6 +1,7 @@
 {
   "schema_version": 1,
   "status": "local_candidate_not_project_final_contract",
+  "vram_budget_revision": "After unbounded long01 showed >5GiB WDDM shared memory at S8192, cap allocator at driver physical free minus 512MiB; retain old group as residency-invalid diagnostic, not resident-GPU benchmark",
   "fp16_reference_group": {"reason": "BF16 short03 failed frozen max_abs/relative_l2; separate FP16 activation group, no threshold relaxation", "weights": "official BF16 weights exactly cast to FP16", "activations": "FP16 with native FP32 promotion", "KV": "FP16", "recurrent": "FP32", "nonlinear": "FP16/FP32", "scale": "unquantized"},
   "contract_source": "PR26@2cd9ca1513f904d5fd319be11aa23a3e5b9b9646; KV/state/nonlinear/M/r not frozen",
   "torch": "2.10.0+cu128",

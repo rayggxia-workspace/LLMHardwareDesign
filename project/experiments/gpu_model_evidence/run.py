@@ -280,6 +280,7 @@ def main():
     p.add_argument('--lengths', nargs='*', type=int, default=[512,2048,4096,8192])
     p.add_argument('--short-only', action='store_true')
     p.add_argument('--dtype',choices=['bf16','fp16'],default='bf16')
+    p.add_argument('--vram-budget-mib',type=int)
     a = p.parse_args()
     if a.out.exists():
         raise ValueError('output exists; preserve original evidence')
@@ -292,12 +293,20 @@ def main():
     for n, info in manifest['files'].items():
         assert sha(a.model_dir/n) == info['sha256'], n
     a.out.mkdir(parents=True)
+    smi_free_mib=int(subprocess.check_output(['nvidia-smi','--query-gpu=memory.free','--format=csv,noheader,nounits'],text=True).strip().splitlines()[0])
+    budget_mib=min(a.vram_budget_mib or smi_free_mib-512,smi_free_mib-512)
+    if budget_mib<=0: raise ValueError('insufficient physical free memory after 512MiB guard')
+    fraction=budget_mib*2**20/torch.cuda.get_device_properties(0).total_memory
+    torch.cuda.set_per_process_memory_fraction(min(fraction,0.95),0)
     source = {x.name: sha(x) for x in HERE.iterdir() if x.is_file()}
     save(a.out/'run-manifest.json', {'source_commit': git('rev-parse','HEAD'), 'source_files': source,
         'model': manifest, 'command': sys.argv, 'configuration': cfg,
         'start_epoch': time.time(), 'initial_free_total_bytes': torch.cuda.mem_get_info(),
         'gpu': torch.cuda.get_device_name(), 'backend': cfg['performance']['backend'],
         'phase': a.phase, 'runtime_dtype':a.dtype, 'offload': False, 'physical_traffic_measured': False})
+    save(a.out/'allocator-budget.json',{'physical_free_mib_before_context':smi_free_mib,
+        'guard_mib':512,'budget_mib':budget_mib,'fraction':min(fraction,0.95),
+        'policy':'CUDA allocator cap from actual driver physical free, no explicit CPU offload; WDDM residency still separately observed'})
     save(a.out/'physical-memory-at-start.json',{'nvidia_smi':subprocess.check_output(
         ['nvidia-smi','--query-gpu=memory.total,memory.used,memory.free','--format=csv,noheader'],text=True),
         'cuda_free_total_bytes':torch.cuda.mem_get_info(),
@@ -448,6 +457,7 @@ def main():
                     'nll':float(F.cross_entropy(logits.float().reshape(-1,logits.shape[-1]),v[:,1:].cpu().reshape(-1)))})
             else:
                 r=torch.load(a.reference_dir/f'validation-{i}.pt',weights_only=True)
+                torch.save(logits,a.out/f'validation-{i}.pt')
                 m=output_metrics(logits,r,v[:,1:].cpu())
                 gate=cfg['candidate_screen']
                 m['screen_pass']=m['finite'] and m['mean_kl']<=gate['mean_kl_max'] and m['nll_delta']<=gate['mean_nll_delta_max'] and m['top1_agreement']>=gate['top1_agreement_min']
@@ -480,6 +490,8 @@ def main():
         gc.collect(); torch.cuda.empty_cache()
         if not a.short_only and a.phase=='reference':
             for length in a.lengths:
+                one=None
+                chunk_reference=None
                 for chunk in (length, cfg['performance']['chunk']):
                     try:
                         samples=[]
@@ -503,8 +515,13 @@ def main():
                                 if chunk==length:
                                     one=(pre_logits,tail,state)
                                 else:
-                                    entry['vs_one_shot']={'prefill_logits':compare(pre_logits,one[0]),'decode_logits':compare(tail,one[1]),
-                                         'states':[{'name':n,**compare(t,one[2][n])} for n,t in state.items()]}
+                                    if one is not None:
+                                        entry['vs_one_shot']={'prefill_logits':compare(pre_logits,one[0]),'decode_logits':compare(tail,one[1]),
+                                            'states':[{'name':n,**compare(t,one[2][n])} for n,t in state.items()]}
+                                    else:
+                                        entry['vs_one_shot']=None
+                                        entry['comparison_unavailable']='one-shot did not complete under identical allocator budget'
+                                    chunk_reference=(pre_logits,tail,state)
                                 # Only selected checkpoints persist, not every layer/step raw states.
                                 selected={n:t for n,t in state.items() if n.startswith(('0/','3/'))}
                                 torch.save({'prefill_logits':pre_logits,'decode_logits':tail,'selected_cache':selected},a.out/f'long-{length}-chunk{chunk}.pt')
@@ -513,6 +530,7 @@ def main():
                             del o,cache
                         results['performance'].append({'prefix':length,'chunk':chunk,'phase':a.phase,'samples':samples,'observers':False})
                         if chunk!=length:
+                            reference=one if one is not None else chunk_reference
                             # Sensitivity runs are never counted as performance samples.
                             for bits in cfg['candidate_state_bits']:
                                 cache=None; stats={}
@@ -527,12 +545,13 @@ def main():
                                 state=snapshot(cache)
                                 results['state_sensitivity'].append({'prefix':length,'bits':bits,
                                     'execution':'fake_quant_native_updates', 'rounding_boundary':'each 256-token prefill call and each decode token',
-                                    'final_logits_vs_one_shot':compare(o.logits.cpu(),one[1]),
-                                    'final_state_vs_one_shot':[{'name':n,**compare(t,one[2][n])} for n,t in state.items()],
+                                    'reference_chunk':length if one is not None else chunk,
+                                    'final_logits_vs_reference':compare(o.logits.cpu(),reference[1]),
+                                    'final_state_vs_reference':[{'name':n,**compare(t,reference[2][n])} for n,t in state.items()],
                                     'max_local_roundtrip_relative_l2':stats})
                                 del o,cache,state
                                 checkpoint()
-                            del one
+                            one=None;chunk_reference=None;reference=None
                     except Exception as exc:
                         results['failures'].append({'prefix':length,'chunk':chunk,'phase':a.phase,'error':repr(exc),'traceback':traceback.format_exc()})
                         for key in ('o','cache','one'):
