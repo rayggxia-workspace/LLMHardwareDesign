@@ -5,6 +5,7 @@ import numpy as np
 from numeric import check, shift_rne, encode_source, exponent_integer, calculate
 from service import packet_bytes, build
 from audit import trace_check
+from replay import packets,receive
 
 
 class Contract(unittest.TestCase):
@@ -39,6 +40,12 @@ class Contract(unittest.TestCase):
     def test_packet_quantum_and_batching(self):
         self.assertEqual(packet_bytes(16),packet_bytes(64));self.assertEqual(packet_bytes(64),128)
         self.assertEqual(packet_bytes(256),320);self.assertEqual(packet_bytes(2048),2176)
+        raw=bytes(range(256))*10;p=packets(raw,1,7)
+        self.assertEqual(receive(p,1,7,len(raw)),raw)
+        for bad in [p[:-1],list(reversed(p)),[p[0][:-1]]]:
+            with self.assertRaises(ValueError):receive(bad,1,7,len(raw))
+        changed=bytearray(p[0]);changed[64]^=1
+        with self.assertRaises(ValueError):receive([bytes(changed),*p[1:]],1,7,len(raw))
 
     def test_service_capacity_and_dependency_negative(self):
         pr={'name':'test','ag':128,'wg':8192,'mode':'dynamic'}
