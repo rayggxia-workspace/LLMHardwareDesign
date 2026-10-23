@@ -1,5 +1,11 @@
 # 当前状态
 
+- 2026-10-23精度接续：[Issue33](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/33)
+  单独实现W8A8候选合同、整数参考与本机量化划分，复用但不接管Issue25/PR26的文档范围。
+  [候选精度](INTEGER_PRECISION_CONTRACT.md)及[采集格式](GPU_CAPTURE_CONTRACT.md)先行发布；
+  当前仍在实施，尚无INT8端到端/全整数硬件能力结论。大模型/长上下文/GPU交师兄，
+  本机工作与旧FP32/BF16证据区分，待用户通知再整合兄方数据。
+
 - 更新日期：2026-10-22（中国标准时间）
 - 前阶段记录：架构定义、Block物理工程尝试、抽象冻结连接实验、真实普通LEF几何输入冻结与选定接口关联；DAC为研究目标，具体届次未指定
 - 资料接入：[Issue #1：初始化项目并导入初期资料](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/1)；资料已进入 `main`，[PR #2](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/2) 已合并，登记／看板缺项继续保留

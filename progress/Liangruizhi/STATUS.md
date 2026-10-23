@@ -1,5 +1,16 @@
 # Liangruizhi 的进度
 
+## 2026-10-23 Issue33精度合同与本机整数验证
+
+负责人Liangruizhi（2663955430@qq.com，182389313），GitHub认证已重新核验。
+已读最新Issue25/PR26及原负责人进度、Issue29/PR30与Issue31分工；无重复整数执行任务。
+独立D:/Projects/LLMHardwareDesign-integer、task/33-int8-contract，base PR30@cfd63c0；
+只在本机开展缩小核/已有Qwen3-0.6B捕获与整数/端口验证，不安排其他机器或大模型下载。
+先交付候选精度/数据与采集合同，正式实现及实测待补；PR待创建，Issue in_progress。
+参考包缺NUMERICS/pkg/LUT/isqrt/udiv完整定义，记录可知边界，不称llaccel逐位复现。
+登记PR5 pending；无board.json/当前无Projects工具，看板unverified/同步pending，
+管理员与审查人待指定。后续数据由用户通知到达再核验/整合，常规本机工作继续自主完成。
+
 - 更新：2026-10-22（UTC+08:00）；GitHub身份Liangruizhi／2663955430@qq.com／ID182389313。
 - 前一任务：[Issue19](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/19)／[PR20](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/20)，task/19-interface-contract，D:/Projects/LLMHardwareDesign-interface；base task/16-macro-endpoints，依赖PR18/14/12。capture源码16be20bf，正式run源码c3916f4f；3032信号位三视图关联、685连接与2346边界网核验完成。148项业务检查、205390项独立比较、6个篡改负例及离线重放通过。原始输入另有2处Liberty缺分号、4处PG方向差异，均原样保留并显式报告；未称宏合格/Lib语法全部通过。
 - 本轮成果：[实验记录](../../docs/experiments/issue-19-interface-contract.md)／[交接](../../docs/handoffs/2026-10-22-issue-19-interface-contract.md)；原字节归档1585317bytes，SHA与逐文件索引见正式结果目录。交付待审查，未合并／未done；PR最新head与线上状态以读回为准。
