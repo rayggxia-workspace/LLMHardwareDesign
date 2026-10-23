@@ -77,4 +77,3 @@ def build(rows,k,scale_mode,placement,lanes,window,consumer_cost,jobs=4):
         g.leases.extend([dict(kind='M',slot=slot,start=reserve_m,end=last_m[slot]),
                          dict(kind='V',slot=slot,start=reserve_v,end=last_v[slot])])
     return g
-
