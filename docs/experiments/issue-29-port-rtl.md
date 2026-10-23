@@ -1,6 +1,6 @@
 # Issue29：有限缓冲RTL如何改变状态放置结论
 
-更新：2026-10-23（UTC+08:00）。[Issue29](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/29)／[PR30](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/30)，负责人Liangruizhi。本阶段研究整体Goal仍active，尚无最终Block或端到端收益结论。
+更新：2026-10-23（UTC+08:00）。[Issue29](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/29)／[PR30](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/30)，负责人Liangruizhi。研究目标尚未完成，尚无最终Block或端到端收益结论。
 
 ## 已完成的实验与正确解释
 
@@ -53,3 +53,7 @@ Issue27的1RW对应差异约4.51%／3.92%，本轮缩小为1.46%／1.71%。原�
 - `formal-results02.tar.gz`：1215519B，第二次结果／清单／编译日志，SHA256 `8d71566b9d74233a5c7c12cfbf47b5363b9ea85f75f0fa9fbd25dba8ff13017f`。第二次33个trace摘要在results内，原trace留本人formal02目录。
 
 本人服务器原始目录`/public/home/yuzelu/RuizhiLiang/issue29-port-rtl-20261022/{formal01,formal02}`，本机完整包与审计在`D:/Projects/Codex/port-rtl-study-20261022/`。源码和正式命令见`project/experiments/port_rtl/`，独立工具和报告见`work/Liangruizhi/29/`。PR当前draft，Issue in_progress；登记pending、看板unverified／同步pending，审查人与管理员待指定。
+
+## 平台目标状态核验
+
+2026-10-23重新调用get_goal核验：平台目标实际为blocked，工具未返回该状态的历史原因；此前沿用active的文字不代表当前平台状态。研究目标尚未完成，本轮依既有授权继续执行并完成实验交付；平台自动续跑尚未恢复，恢复由用户/系统控制，不能以Issue进度或本地文档代替。

@@ -20,4 +20,12 @@ Slurm89836／89837（8CPU）COMPLETED0，正式27config、1872program、54stress
 4. 下一项高价值研究需要完整权重/KV/投影/FFN、多头层与差异架构，和真实算术/宏端口/驱动/布线预算；不要仅继续增加这个小图的配置数量。所有假设服务周期保留限制，任何改动与基线使用相同资源和相同策略搜索。
 5. PR17最新核对ce5896d已经形成成对H1结果，独立复算area+0.412%、wire+7.142%、via+2.974%，不得复述旧未配对结论。另有3文本Git LF字节与原生成CRLF SHA差异，独立报告保留失败及诊断；没有替他修改源证明。待处理人待指定，不把该问题与数值错误混为一谈，也不能声称字节全PASS。H1不是H2，更不是本attention的物理校准。
 
-登记沿用management-hub PR5 pending；本地无board.json且当前无Projects工具，在线状态unverified／同步pending。管理员待指定，需核验Issue29条目/Project ID/Status/Priority后读回。PR审查人待指定，未合并/未验收，整体研究Goal active。
+登记沿用management-hub PR5 pending；本地无board.json且当前无Projects工具，在线状态unverified／同步pending。管理员待指定，需核验Issue29条目/Project ID/Status/Priority后读回。PR审查人待指定，未合并/未验收，整体研究目标未完成，当前平台状态见下条核验。
+
+## 平台目标状态核验
+
+2026-10-23重新调用get_goal核验：平台目标实际为blocked，工具未返回该状态的历史原因；此前沿用active的文字不代表当前平台状态。研究目标尚未完成，本轮依既有授权继续执行并完成实验交付；平台自动续跑尚未恢复，恢复由用户/系统控制，不能以Issue进度或本地文档代替。
+
+## 综合前端诊断
+
+独立只读诊断见work/Liangruizhi/29/audits/synth-diagnosis.md，快照保存原始log和源码SHA。默认RESP_DEPTH2的read_verilog已完成，当前为PORT_MODE0/RESP_DEPTH1重新derive；尚未进入proc/memory_collect完成点。未见bank_mem转寄存器警告，不能凭耗时断言SRAM已FF展开。若当前作业超时，下一步使用同源码单配置read_verilog -defer; hierarchy后保存RTLIL检查点，再分开执行proc/opt/memory_collect，记录时间和内存。该建议尚未执行；不先扩九配置，不把通用memory视作宏映射。
