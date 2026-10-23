@@ -1,0 +1,37 @@
+{
+  "spec": {
+    "stitch_selftest": true,
+    "mode": "views",
+    "cores": 1,
+    "runner_commit": "8864aee4cd367c6cb211ec1b0d2aca6e0db07378",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-01"
+  },
+  "exit_code": "1",
+  "started.txt": "2026-10-22T10:24:05Z\n",
+  "finished.txt": "2026-10-22T10:24:09Z\n",
+  "allocation.txt": "JobId=89725 JobName=yzl-ot-views UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586335 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:01 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T18:24:03 EligibleTime=2026-10-22T18:24:03 AccrueTime=2026-10-22T18:24:03 StartTime=2026-10-22T18:24:04 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T18:24:04 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T18:24:04 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3567384 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=cpu=1,node=1,billing=1 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-01/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-01 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-01/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-01/job.log Power= TresPerTask=cpu:1 \n",
+  "job_log_tail": [
+    "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+    "Traceback (most recent call last):",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-01/runner/run.py\", line 69, in <module>",
+    "    execute(SPEC)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-01/runner/implementation.py\", line 63, in execute",
+    "    elif spec['mode']=='views': view_probe(spec)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-01/runner/implementation.py\", line 191, in view_probe",
+    "    execute(ROOT,run_tcl,timing_technology(),track(PLATFORM/'lib/NangateOpenCellLibrary_typical.lib'))",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-01/runner/stitch_probe.py\", line 79, in execute",
+    "    results[name]={k:float(re.search('worst slack '+k+r'\\s+([-\\d.]+)',log)[1]) for k in ['max','min']}",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/stitch-selftest-01/runner/stitch_probe.py\", line 79, in <dictcomp>",
+    "    results[name]={k:float(re.search('worst slack '+k+r'\\s+([-\\d.]+)',log)[1]) for k in ['max','min']}",
+    "TypeError: 'NoneType' object is not subscriptable"
+  ],
+  "metrics": {},
+  "pg_access": {},
+  "physical_repair_actions": {},
+  "output_manifest_sha256": "4f9ff703cb1ca9b5971d112b5b726657860e9a2a4cc6a16d81fbc10384a2ae14",
+  "output_manifest_entries": 29,
+  "collected_file_integrity": {
+    "spec.json": true
+  },
+  "scheduler": "89725|FAILED|1:0|00:00:05|UNLIMITED|1|node3"
+}

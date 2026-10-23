@@ -1,0 +1,33 @@
+{
+  "spec": {
+    "sta_wrapper_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/matched-act-02",
+    "mode": "views",
+    "cores": 4,
+    "runner_commit": "848ac037042cedf30e3195abdc5bc04313038fca",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01"
+  },
+  "exit_code": "1",
+  "started.txt": "2026-10-22T08:50:15Z\n",
+  "finished.txt": "2026-10-22T08:50:19Z\n",
+  "allocation.txt": "JobId=89662 JobName=yzl-ot-views UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586397 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:02 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-22T16:50:13 EligibleTime=2026-10-22T16:50:13 AccrueTime=2026-10-22T16:50:13 StartTime=2026-10-22T16:50:13 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-22T16:50:13 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T16:50:13 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3101987 ReqNodeList=(null) ExcNodeList=(null) NodeList=node3 BatchHost=node3 NumNodes=1 NumCPUs=4 NumTasks=1 CPUs/Task=4 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=4,mem=1M,node=1,billing=4 AllocTRES=cpu=4,node=1,billing=4 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=4 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01/runner/job.sh WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01/job.log Power= TresPerTask=cpu:4 \n",
+  "job_log_tail": [
+    "Traceback (most recent call last):",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01/runner/run.py\", line 69, in <module>",
+    "    execute(SPEC)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01/runner/implementation.py\", line 63, in execute",
+    "    elif spec['mode']=='views': view_probe(spec)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01/runner/implementation.py\", line 189, in view_probe",
+    "    if spec.get('sta_wrapper_source'): sta_wrapper_test(Path(spec['sta_wrapper_source']))",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01/runner/implementation.py\", line 415, in sta_wrapper_test",
+    "    run_tcl('transparent-sta',script)",
+    "  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01/runner/run.py\", line 44, in run_tcl",
+    "    subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(path)],stdout=f,stderr=subprocess.STDOUT,check=True)",
+    "  File \"/usr/lib/python3.10/subprocess.py\", line 526, in run",
+    "    raise CalledProcessError(retcode, process.args,",
+    "subprocess.CalledProcessError: Command '['openroad', '-threads', '4', '-exit', '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/sta-wrapper-01/transparent-sta.tcl']' returned non-zero exit status 1."
+  ],
+  "metrics": {},
+  "output_manifest_sha256": "ce5b64e3c12ed5aeafeed3270dad3e1e6e340944751888b12ce20d633cb0985a",
+  "output_manifest_entries": 23,
+  "scheduler": "89662|FAILED|1:0|00:00:06|UNLIMITED|4|node3"
+}

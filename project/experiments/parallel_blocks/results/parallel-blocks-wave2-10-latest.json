@@ -1,0 +1,243 @@
+{
+  "observed_utc": "2026-10-21T11:23:33.414074+00:00",
+  "submission": {
+    "attempt": "parallel-blocks-wave2-10",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-10",
+    "host": "yuzelu@10.129.166.172",
+    "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "plan": {
+      "C": {
+        "node": "node9",
+        "cores": 1,
+        "tasks": [
+          {
+            "name": "act-sweep-audit",
+            "kind": "physical-audit",
+            "cores": 1,
+            "case": "opentpu-act",
+            "cap_margin": 0
+          }
+        ],
+        "job_id": 89508,
+        "scheduler_readback": "JobId=89508 JobName=lyz-wave2-c UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586551 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T19:22:48 EligibleTime=2026-10-21T19:22:48 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T19:22:48 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:1350278 ReqNodeList=node9 ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-10/runner/wave2/stream.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-10/stream-C.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-10/stream-C.log Power= TresPerTask=cpu:1"
+      }
+    },
+    "profile": "act-audit",
+    "dependency": null,
+    "runner_commit": "f46deb02956c1db75e6585e7503ee02c61171b6f",
+    "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
+    "submitted_utc": "2026-10-21T11:22:44.233183+00:00",
+    "scope": "Independent ACT sweep hashes and strict worst-margin budget audit",
+    "audit_job_id": 89509,
+    "audit_scheduler_readback": "JobId=89509 JobName=lyz-wave2-audit UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586550 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=Dependency Dependency=afterany:89508(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T19:22:49 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T19:22:49 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:1350832 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-10/runner/wave2/audit.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-10/audit.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-10/audit.log Power= TresPerTask=cpu:1"
+  },
+  "scheduler": {
+    "exit_code": 0,
+    "stdout": "89508|lyz-wave2-c|COMPLETED|0:0|00:00:23|1|node9\n89508.batch|batch|COMPLETED|0:0|00:00:23|1|node9\n89508.extern|extern|COMPLETED|0:0|00:00:23|1|node9\n89508.0|lyz-act-sweep-audit|COMPLETED|0:0|00:00:20|1|node9\n89509|lyz-wave2-audit|COMPLETED|0:0|00:00:05|1|node3\n89509.batch|batch|COMPLETED|0:0|00:00:05|1|node3\n89509.extern|extern|COMPLETED|0:0|00:00:05|1|node3",
+    "stderr": ""
+  },
+  "resources": {
+    "exit_code": 0,
+    "stdout": "89508|00:00:23|1|23|00:09.047|\n89508.batch|00:00:23|1|23|00:01.304|0\n89508.extern|00:00:23|1|23|00:00:00|0\n89508.0|00:00:20|1|20|00:07.742|0\n89509|00:00:05|1|5|00:00.261|\n89509.batch|00:00:05|1|5|00:00.260|0\n89509.extern|00:00:05|1|5|00:00:00|0",
+    "stderr": ""
+  },
+  "tasks": {
+    "act-sweep-audit": {
+      "spec": {
+        "name": "act-sweep-audit",
+        "kind": "physical-audit",
+        "cores": 1,
+        "case": "opentpu-act",
+        "cap_margin": 0
+      },
+      "stream": "C",
+      "started": "2026-10-21T11:22:51Z\n",
+      "finished": "2026-10-21T11:23:11Z\n",
+      "exit_code": "0\n",
+      "hash_exit_code": "0\n",
+      "log_tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+      "validation": {
+        "passed": true,
+        "kind": "Artifact audit with strict physical budget observations",
+        "source_attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06",
+        "results": {
+          "act-cap00": {
+            "quality": {
+              "drc": 0,
+              "setup_ws_ns": 1.22599,
+              "hold_ws_ns": 0.0322719,
+              "max_cap": 2,
+              "cap_slack_over_limit_metric": -0.0438616,
+              "max_slew": 0,
+              "max_fanout": 0,
+              "instance_area_um2": 35870.1,
+              "worst_cap_slack_report_value": -2.653672933578491,
+              "setup_tns": 0,
+              "hold_tns": 0,
+              "antenna_nets": 0,
+              "antenna_pins": 0
+            },
+            "checksums": {
+              "source-inputs.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 825
+              },
+              "output-files.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 154
+              }
+            },
+            "observed_strict_tool_gates": {
+              "pipeline_exit_zero": true,
+              "output_hash_exit_zero": true,
+              "manifests_verified": true,
+              "final_report": true,
+              "drc_zero": true,
+              "antenna_zero": true,
+              "setup_nonnegative": true,
+              "hold_nonnegative": true,
+              "max_cap_count_zero": false,
+              "worst_cap_slack_nonnegative": false,
+              "cap_slack_ratio_nonnegative": false,
+              "slew_count_zero": true,
+              "slew_slack_ratio_nonnegative": true,
+              "fanout_count_zero": true,
+              "fanout_slack_ratio_nonnegative": true,
+              "abstracts_present": true,
+              "vdd_reported_connected": true,
+              "vss_reported_connected": true,
+              "no_final_errors": true
+            },
+            "observed_strict_tool_gates_pass": false,
+            "qualified_hard_macro": false,
+            "manufacturing_or_system_signoff": false,
+            "cap_slack_units": "Raw report value; section does not declare unit",
+            "area_change_vs_cap00_percent": 0.0
+          },
+          "act-cap10": {
+            "quality": {
+              "drc": 0,
+              "setup_ws_ns": 1.21024,
+              "hold_ws_ns": 0.0300581,
+              "max_cap": 0,
+              "cap_slack_over_limit_metric": -0.0128295,
+              "max_slew": 0,
+              "max_fanout": 0,
+              "instance_area_um2": 35899.1,
+              "worst_cap_slack_report_value": -0.7762006521224976,
+              "setup_tns": 0,
+              "hold_tns": 0,
+              "antenna_nets": 0,
+              "antenna_pins": 0
+            },
+            "checksums": {
+              "source-inputs.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 825
+              },
+              "output-files.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 154
+              }
+            },
+            "observed_strict_tool_gates": {
+              "pipeline_exit_zero": true,
+              "output_hash_exit_zero": true,
+              "manifests_verified": true,
+              "final_report": true,
+              "drc_zero": true,
+              "antenna_zero": true,
+              "setup_nonnegative": true,
+              "hold_nonnegative": true,
+              "max_cap_count_zero": true,
+              "worst_cap_slack_nonnegative": false,
+              "cap_slack_ratio_nonnegative": false,
+              "slew_count_zero": true,
+              "slew_slack_ratio_nonnegative": true,
+              "fanout_count_zero": true,
+              "fanout_slack_ratio_nonnegative": true,
+              "abstracts_present": true,
+              "vdd_reported_connected": true,
+              "vss_reported_connected": true,
+              "no_final_errors": true
+            },
+            "observed_strict_tool_gates_pass": false,
+            "qualified_hard_macro": false,
+            "manufacturing_or_system_signoff": false,
+            "cap_slack_units": "Raw report value; section does not declare unit",
+            "area_change_vs_cap00_percent": 0.0808472794890452
+          },
+          "act-cap20": {
+            "quality": {
+              "drc": 0,
+              "setup_ws_ns": 1.26007,
+              "hold_ws_ns": 0.0322258,
+              "max_cap": 0,
+              "cap_slack_over_limit_metric": 0.152397,
+              "max_slew": 0,
+              "max_fanout": 0,
+              "instance_area_um2": 35985.5,
+              "worst_cap_slack_report_value": 2.4416589736938477,
+              "setup_tns": 0,
+              "hold_tns": 0,
+              "antenna_nets": 0,
+              "antenna_pins": 0
+            },
+            "checksums": {
+              "source-inputs.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 825
+              },
+              "output-files.sha256": {
+                "passed": true,
+                "exit_code": 0,
+                "entries": 154
+              }
+            },
+            "observed_strict_tool_gates": {
+              "pipeline_exit_zero": true,
+              "output_hash_exit_zero": true,
+              "manifests_verified": true,
+              "final_report": true,
+              "drc_zero": true,
+              "antenna_zero": true,
+              "setup_nonnegative": true,
+              "hold_nonnegative": true,
+              "max_cap_count_zero": true,
+              "worst_cap_slack_nonnegative": true,
+              "cap_slack_ratio_nonnegative": true,
+              "slew_count_zero": true,
+              "slew_slack_ratio_nonnegative": true,
+              "fanout_count_zero": true,
+              "fanout_slack_ratio_nonnegative": true,
+              "abstracts_present": true,
+              "vdd_reported_connected": true,
+              "vss_reported_connected": true,
+              "no_final_errors": true
+            },
+            "observed_strict_tool_gates_pass": true,
+            "qualified_hard_macro": false,
+            "manufacturing_or_system_signoff": false,
+            "cap_slack_units": "Raw report value; section does not declare unit",
+            "area_change_vs_cap00_percent": 0.32171641562192876
+          }
+        },
+        "source_scheduler_observation": {
+          "exit_code": 127,
+          "stdout": "",
+          "stderr": "Executable unavailable in this environment: sacct"
+        },
+        "preferred_act_for_further_view_qualification": "act-cap20",
+        "physical_or_system_signoff": false,
+        "scope": "Pass means manifests verified; per-case strict physical gates remain separate. Candidate selection does not qualify timing arcs, driver/load models, source-to-physical equivalence or manufacturing."
+      }
+    }
+  },
+  "completion_exists": true,
+  "completion_sha256": "79eb9f76f92047beecde861cbc3dc9ade5b6c7b0c1a272f2a30f1aa551efc60a  completion.json\n"
+}
