@@ -58,19 +58,21 @@ def kv_record(cache):
     records=[];storage={};logical=0
     for index,layer in enumerate(cache.layers):
         fields={}
-        for name in ['keys','values']:
+        for name in ['keys','values','conv_states','recurrent_states']:
             tensor=getattr(layer,name,None)
             if tensor is None:continue
             size=tensor.numel()*tensor.element_size();logical+=size
             s=tensor.untyped_storage();identity=s.data_ptr()
             if identity not in storage:storage[identity]={'index':len(storage),'bytes':s.nbytes()}
             fields[name]={'shape':list(tensor.shape),'dtype':str(tensor.dtype),'logical_bytes':size,'storage':storage[identity]}
-        records.append({'layer':index,'class':type(layer).__name__,'fields':fields,'logical_tokens':int(cache.get_seq_length(index))})
+        try:tokens=int(cache.get_seq_length(index))
+        except (ValueError,AttributeError,NotImplementedError):tokens=None
+        records.append({'layer':index,'class':type(layer).__name__,'fields':fields,'logical_tokens':tokens})
     return {'layers':records,'logical_bytes':logical,'deduplicated_storage_bytes':sum(s['bytes']for s in storage.values())}
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--model',choices=['gemma','phi'],required=True);p.add_argument('--model-dir',required=True,type=Path)
+    p=argparse.ArgumentParser();p.add_argument('--model',choices=['gemma','phi','qwen25','qwen35'],required=True);p.add_argument('--model-dir',required=True,type=Path)
     p.add_argument('--plan',required=True,type=Path);p.add_argument('--binding',required=True,type=Path);p.add_argument('--out',required=True,type=Path)
     p.add_argument('--threads',type=int,default=24);a=p.parse_args()
     if a.out.exists():raise ValueError('refuse overwrite')
@@ -78,10 +80,12 @@ def main():
     for name,expected in binding['sources'].items():
         if digest(source/name)!=expected:raise ValueError('source SHA '+name)
     if digest(a.plan)!=binding['mirror_plan_sha256']:raise ValueError('mirror plan SHA')
-    if torch.__version__!='2.10.0+cpu' or transformers.__version__!='4.57.6':raise ValueError('unreviewed framework version')
+    expected_version='5.20.2'if a.model.startswith('qwen')else'4.57.6'
+    if torch.__version__!='2.10.0+cpu' or transformers.__version__!=expected_version:raise ValueError('unreviewed framework version')
     if a.threads>int(os.environ.get('SLURM_CPUS_PER_TASK','0'))or a.threads>len(os.sched_getaffinity(0)):raise ValueError('CPU allocation')
     torch.set_num_threads(a.threads);torch.set_num_interop_threads(1);torch.manual_seed(20261023);torch.use_deterministic_algorithms(True)
-    cfg=json.loads((source/'capture-protocol.json').read_text());plan=json.loads(a.plan.read_text());receipts={}
+    protocol='qwen-capture-protocol.json'if a.model.startswith('qwen')else'capture-protocol.json'
+    cfg=json.loads((source/protocol).read_text());plan=json.loads(a.plan.read_text());receipts={}
     for r in plan['files']:
         if r['model']!=a.model:continue
         f=a.model_dir/r['name']
@@ -97,13 +101,19 @@ def main():
             from transformers.models.gemma3 import modeling_gemma3 as impl
             cls=impl.Gemma3ForConditionalGeneration;tc=mcfg.text_config
             selected=[tc.layer_types.index('sliding_attention'),tc.layer_types.index('full_attention')]
-        else:
+        elif a.model=='phi':
             from transformers.models.phi3 import modeling_phi3 as impl
             cls=impl.Phi3ForCausalLM;tc=mcfg;selected=[0]
+        elif a.model=='qwen25':
+            from transformers.models.qwen2 import modeling_qwen2 as impl
+            cls=impl.Qwen2ForCausalLM;tc=mcfg;selected=[0]
+        else:
+            from transformers.models.qwen3_5 import modeling_qwen3_5 as impl
+            cls=impl.Qwen3_5ForCausalLM;tc=mcfg.text_config;selected=[tc.layer_types.index('full_attention')]
         path=inspect.getfile(impl);manifest['implementation']={'path':path,'sha256':digest(path),'class':cls.__name__}
         if digest(path)!=cfg['implementation_hashes'][a.model]:raise ValueError('framework implementation changed')
         model,loading=cls.from_pretrained(a.model_dir,local_files_only=True,trust_remote_code=False,use_safetensors=True,
-            dtype=torch.float32,attn_implementation='eager',output_loading_info=True)
+            dtype=torch.float32,attn_implementation='eager',output_loading_info=True,**({'config':tc}if a.model=='qwen35'else{}))
         if any(loading.get(k)for k in ['missing_keys','mismatched_keys','error_msgs']):raise ValueError('incomplete model load '+str(loading))
         model.eval();tokenizer=AutoTokenizer.from_pretrained(a.model_dir,local_files_only=True,trust_remote_code=False)
         layers=model.model.language_model.layers if a.model=='gemma' else model.model.layers
@@ -134,10 +144,11 @@ def main():
             return hook
         for layer in selected:
             attention=layers[layer].self_attn
-            linear_names=['q_proj','o_proj']if a.model=='gemma'else['qkv_proj','o_proj']
+            linear_names=['qkv_proj','o_proj']if a.model=='phi'else['q_proj','o_proj']
             for name in linear_names+['down_proj']:
                 module=getattr(layers[layer].mlp,name)if name=='down_proj'else getattr(attention,name)
                 label=f'layer{layer}.{name}';arrays['weight.'+label]=cpu(module.weight[:16]);handles.append(module.register_forward_hook(linear_hook(label)))
+                if module.bias is not None:arrays['bias.'+label]=cpu(module.bias[:16])
             for name,module in layers[layer].named_modules():
                 if 'norm'in name.lower()and hasattr(module,'weight'):
                     label=f'layer{layer}.{name}';arrays['norm_weight.'+label]=cpu(module.weight);handles.append(module.register_forward_hook(norm_hook(label)))
@@ -174,15 +185,19 @@ def main():
         def ids_for(text,n):
             unit=tokenizer(text,add_special_tokens=False)['input_ids'];ids=(unit*(n//len(unit)+1))[:n]
             return torch.tensor([ids],dtype=torch.long)
-        lengths=cfg[a.model+'_prefix_lengths'];runs=[('calibration',128,False)]if a.model=='gemma'else[]
+        lengths=cfg[a.model+'_prefix_lengths'];runs=[('calibration',128,False)]if a.model!='phi'else[]
         runs +=[(f'prefix{n}',n,True)for n in lengths]
         with torch.inference_mode():
             for name,prefix,evaluate in runs:
-                n=prefix+32 if evaluate else prefix;key='gemma_validation'if a.model=='gemma'else'phi_reserved'
+                n=prefix+32 if evaluate else prefix;key='phi_reserved'if a.model=='phi'else'gemma_validation'
                 text=cfg['source_texts'][key if evaluate else'calibration'];ids=ids_for(text,n);clear()
                 arrays[name+'.tokens']=ids.numpy();r=call(ids,0,keep=33 if evaluate else 1);full_logits=cpu(r.logits)
                 full={layer:{'q':frames[layer][0]['q'],'reference':frames[layer][0]['reference'],**tail[layer]}for layer in selected}
                 full_kv=kv_record(r.past_key_values);full_events=list(events)
+                hybrid={}
+                if a.model=='qwen35':
+                    hybrid={field:cpu(getattr(r.past_key_values.layers[0],field))for field in ['conv_states','recurrent_states']}
+                    for field,value in hybrid.items():arrays[f'{name}.hybrid.full.{field}']=value
                 for layer,data in full.items():
                     for field,value in data.items():arrays[f'{name}.layer{layer}.full.{field}']=value
                 for label,entries in linear.items():
@@ -218,6 +233,12 @@ def main():
                                 physical=cache.layers[layer].keys.shape[-2]
                                 if physical>tc.sliding_window:raise AssertionError('unbounded sliding KV storage')
                         got=np.concatenate(logits,axis=1);error=compare(got,full_logits)
+                        if a.model=='qwen35':
+                            for field,reference in hybrid.items():
+                                value=cpu(getattr(cache.layers[0],field));e=compare(value,reference)
+                                arrays[f'{name}.hybrid.{mode}.{field}']=value
+                                if not e['finite']or e['relative_l2']>1e-4:raise AssertionError('continuous hybrid '+field+str(e))
+                                comparison['hybrid.'+field]=e
                         if not error['finite'] or error['max_abs']>.005 or error['relative_l2']>1e-4:
                             arrays[name+'.failure.logits.full']=full_logits;arrays[name+'.failure.logits.'+mode]=got
                             raise AssertionError('logits agreement '+str(error))

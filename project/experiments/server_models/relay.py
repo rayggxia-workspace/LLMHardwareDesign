@@ -4,6 +4,7 @@ Public source files are pinned by ModelScope file commit and SHA, with official
 HF LFS SHA/Git blob checks. All model loading and experiment compute stays Slurm.
 """
 import argparse
+import hashlib
 from concurrent.futures import ThreadPoolExecutor
 import json
 from pathlib import Path
@@ -17,6 +18,14 @@ SSH=['C:/Windows/System32/OpenSSH/ssh.exe','-i','C:/Users/23123/.ssh/id_ed25519_
      '-o','IdentitiesOnly=yes','-o','BatchMode=yes','yuzelu@10.129.166.172']
 PYTHON='/public/home/yuzelu/python-3.12/bin/python3.12'
 RECEIVER='/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/phase3/receive_stream.py'
+
+
+def write_all(stream,block):
+    view=memoryview(block)
+    while view:
+        count=stream.write(view)
+        if not count:raise BrokenPipeError('zero/closed pipe write')
+        view=view[count:]
 
 
 def one(record):
@@ -33,19 +42,22 @@ def one(record):
             if offset:headers['Range']='bytes='+str(offset)+'-'
             with urllib.request.urlopen(urllib.request.Request(record['url'],headers=headers),timeout=60)as response:
                 if offset and (response.status!=206 or not response.headers.get('Content-Range','').startswith('bytes '+str(offset)+'-')):raise ValueError('resume not honored')
-                proc=subprocess.Popen(SSH+[shlex.join(args+['--offset',str(offset)])],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-                current=offset;last=time.monotonic()
+                proc=subprocess.Popen(SSH+[shlex.join(args+['--offset',str(offset)])],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,bufsize=0)
+                current=offset;last=time.monotonic();stream_hash=hashlib.sha256()
                 try:
                     while True:
                         block=response.read(1<<20)
                         if not block:break
-                        proc.stdin.write(block);current+=len(block)
+                        stream_hash.update(block);write_all(proc.stdin,block);current+=len(block)
                         if time.monotonic()-last>15:
                             print(json.dumps({'model':record['model'],'file':record['name'],'bytes':current,'total':record['bytes'],'seconds':time.monotonic()-start}),flush=True);last=time.monotonic()
                 finally:proc.stdin.close();proc.stdin=None
                 stdout,stderr=proc.communicate(timeout=120)
                 if proc.returncode:raise RuntimeError(stderr.decode(errors='replace'))
                 result=json.loads(stdout)
+                if offset==0 and stream_hash.hexdigest()!=record['sha256']:raise ValueError('upstream full-stream SHA mismatch')
+                result['upstream_stream_sha256']=stream_hash.hexdigest()
+                result['upstream_stream_begin']=offset
             print(json.dumps({'model':record['model'],'file':record['name'],'verified':True,'seconds':time.monotonic()-start}),flush=True)
             return {**record,'server':result,'seconds':time.monotonic()-start,'failures':failures,'reused':False}
         except Exception as exc:
