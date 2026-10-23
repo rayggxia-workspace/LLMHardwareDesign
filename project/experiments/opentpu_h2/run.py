@@ -70,7 +70,7 @@ try:
         else:
             guide=''
             for row in contract['affected_nets']:
-                guide+=row['net'].replace('\\','')+'\n(\n'+''.join('0 0 3340000 3340000 metal'+str(layer)+'\n' for layer in range(8,11))+')\n'
+                guide+=row['net']+'\n(\n'+''.join('0 0 3340000 3340000 metal'+str(layer)+'\n' for layer in range(8,11))+')\n'
             (ROOT/'restricted.guide').write_text(guide)
             script+='puts "GUIDE_API [info commands odb::*Guide*]"\n'
             script+='foreach n [[ord::get_db_block] getNets] {foreach g [$n getGuides] {odb::dbGuide_destroy $g}}\n'
