@@ -122,3 +122,12 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 真实模型与整数验证结果以该任务的运行产物和实验报告为准；工具存在不表示验证通过。
 固定 INT8 矩阵与 INT32 累加候选不包含尚未冻结的 scale/M/r、KV、递推、非线性合同，不宣称全整数硬件支持。
 
+
+### Issue32 后续：固定语义与整数边界
+
+最新结果见[Qwen后续报告](experiments/issue-32-qwen-repair.md)。EDA验收是给定语义下拆分等价、状态/依赖正确、硬件位宽/舍入/饱和一致及可核查成本；语言质量只作敏感性证据。
+
+- `gpu_state_repair/run.py --compute fp32 --integer-group-k 32 --fused-integer --canonical-causal-aux --lengths 512 2048 4096 8192 --perturb-lengths`：显式INT8/INT32矩阵+FP32规范辅助语义，须另传`--model-dir`和全新`--out`，见报告完整命令。
+- `gpu_batched_integer/`：cuBLAS批量真实整数GEMM和NVRTC FP32缩放合并，附4项实测CUDA/数值测试；不是全整数内核。
+- `gpu_grouped_capture/`、`gpu_state_capture/`：有限真实部分和/状态输入及CPU FP64独立重放，完整命令见各README。
+- 必要代码核验入口：`gpu_model_repair/test_repair.py`、`gpu_grouped_capture/test_grouped.py`、`gpu_state_repair/test_state.py`。先运行管理检查及旧协议5项，再按变更选择业务测试；不重复扩大质量集。

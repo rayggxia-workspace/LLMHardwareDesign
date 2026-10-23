@@ -1,4 +1,6 @@
 # Issue32：16GB GPU 真实权重、整数矩阵与上下文证据
+> 历史首轮记录。最新8192显存修复、固定语义拆分证据和用户收敛后的验收范围见[后续报告](issue-32-qwen-repair.md)。完整整数模型语言质量不是EDA主线前置条件；保留此处原始失败，不作为全主线阻塞。
+
 
 2026-10-23，负责人 YUZE-LU。[任务](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/32)，分支 `task/32-gpu-model-evidence`。这是待审查的阶段结果，不是完整整数模型或硬件验收。主研究线的小模型整数参考、划分搜索和 RTL/端口实验未在本任务重做。
 

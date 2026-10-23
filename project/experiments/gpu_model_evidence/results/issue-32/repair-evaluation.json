@@ -1,6 +1,6 @@
 {
-  "as_of_utc": "2026-10-23T07:35:20.587619+00:00",
-  "note": "Program status, dense language quality, cache continuation and full integer implementation are independent gates.",
+  "as_of_utc": "2026-10-23T07:54:42.530291+00:00",
+  "note": "EDA acceptance concerns fixed-semantics equivalence, dependencies/state transfer, specified hardware arithmetic, and evidenced costs. Language quality is sensitivity evidence, not an EDA prerequisite.",
   "mainline_contract": "PR26@2cd9ca15, state/nonlinear/scale/requantization not frozen",
   "full_integer_model_validated": false,
   "qwen35_fp16_aux_matrix_quality": {
@@ -49,11 +49,16 @@
       "pass_all_samples": true
     }
   },
-  "qwen35_canonical_fp32_aux_quality": {
-    "status": "not_run"
+  "additional_language_quality": {
+    "status": "not_run_user_scope",
+    "eda_blocker": false
+  },
+  "hardware_integer_requant_state_RTL": {
+    "status": "mainline_scope_not_validated_here",
+    "full_model_quality_required": false
   },
   "qwen35_canonical_continuation": {
-    "status": "running",
+    "status": "completed",
     "failures": [],
     "full_metadata": "qwen35-int8-canonical-fused-long-01-metadata.zip/results.json"
   },

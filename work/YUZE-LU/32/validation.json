@@ -1,13 +1,13 @@
 {
-  "checked_at": "2026-10-23T13:30:48.151529+08:00",
+  "checked_at": "2026-10-23T15:53:41.010392+08:00",
   "rule_version": "rayggxia-project-collab 1.0.0",
   "issue": 32,
   "pull_request": 36,
   "identity": "YUZE-LU",
   "status": "in_review",
   "checks": {
-    "check_project": "pass",
-    "protocol_tests": "5/5 pass",
+    "check_project": "pass (latest)",
+    "protocol_tests": "5/5 pass (latest)",
     "formal_artifact_hash_audits": "4 groups pass",
     "integer_samples_int64": "Qwen35 8; Qwen25 7 pass",
     "recurrent_independent_and_wrong_initial_state": "pass",
@@ -15,10 +15,20 @@
     "candidate_quality_recomputation": "both models 4/4 match saved metrics",
     "shipped_package_hash_and_replay": "pass",
     "syntax": "checked separately before commit",
-    "diff_check": "pass"
+    "diff_check": "pass",
+    "batched_fused_canonical_CUDA": "4/4 pass; receipts/repair-backend-tests.log",
+    "grouped_real_capture_INT64": "both models 6 selected calls each, all partials exact",
+    "long_state_FP64_offline": "12/12 pass, max relative L2 6.520143642774201e-7",
+    "canonical_given_semantics": "128+16 and 512/2048/4096/8192+32 all compared outputs/cache exact; source-at-end files_unchanged true",
+    "repair_tests": "2/2 pass",
+    "grouped_two_K_formats": "1/1 pass",
+    "wide_state_code_storage": "1/1 pass",
+    "GPU_scripts_AST": "pass",
+    "package_hashes": "69 files pass",
+    "shipped_gzip_FP64_replay": "12/12 pass, raw SHA matches original"
   },
   "scientific_acceptance": {
-    "integer_model_quality": "both fail; preserve failed samples",
+    "integer_model_quality": "historical original failures and later improved candidates retained as sensitivity only; NOT EDA prerequisite",
     "full_integer_state": "not validated",
     "physical_traffic": "not measured",
     "WDDM_residency": "not proven by allocator cap"
@@ -91,5 +101,15 @@
       "bytes": 6724,
       "sha256": "7599fb7db8b9dacc68f048a97815787b11f6de5f350c0cd3fa911bc57e9103cc"
     }
-  ]
+  ],
+  "scope": {
+    "full_integer_model_quality_eda_prerequisite": false,
+    "extra_quality": "cancelled per user scope before start",
+    "required": [
+      "fixed-semantics split equivalence/dependency/state",
+      "specified hardware arithmetic conformance (mainline)",
+      "evidenced capacity/ports/communication/cost"
+    ],
+    "GPU_role": "real model inputs, measured software execution boundaries, selected INT32 partials and floating reference states; not RTL certification"
+  }
 }
