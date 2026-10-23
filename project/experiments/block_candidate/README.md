@@ -11,5 +11,8 @@ python -B project/experiments/block_candidate/analyze.py --output D:/Projects/Co
 
 拒绝覆盖已有输出。报告逐文件SHA、源码commit及字节绑定；source_bound=false的准备运行不能当冻结源码证据。
 最终解析结果/检查与交付SHA存work/Liangruizhi/41。原模型config复用Issue37固定快照，未读取ref-project。
+正式解析源码dfb12cddb81f6acdf44a2c1f64600aa37e121a3a，执行两次且输出逐字节相同。
+从当前交付核验用`python -B work/Liangruizhi/41/verify.py`；从后续commit重新运行会记录新commit，
+不应伪装为旧源码运行，比较解析内容时需区分provenance字段。
 候选packet64B header与Issue39的8B header不同；不将两个协议的通信数字混用。
 E1–E5均是后续计划，本工具通过不代表它们已执行/通过。

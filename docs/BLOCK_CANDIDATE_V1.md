@@ -54,6 +54,8 @@ M/V/A/R/S each最多一个命令在途的候选控制由D管理，局部命令�
 - **计算**：W8A8 GEMM/QK；每个输出完整K归约为checked INT32后才允许RQ。P7×V8直接执行；
   P15×V8候选按3个radix128 digit乘法阶段执行，A侧移位合并；这不是原生单周期INT16 MAC。
   Q/K16若质量需要，将产生更多digit阶段与宽归约，是D1的新合同，尚无阵列实现证据。
+  signed16可按低7位、次7位、有符号高2位展开，16×16需9个8位dot阶段及i64合并；
+  32×16类似需15阶段。digit调度/符号/溢出/round必须独立验证，scalar Python宽乘通过不等于阵列编译已实现。
 - **状态**：两套16×16 INT32 accumulator共2KiB，A双缓冲8KiB、W双缓冲16KiB、
   参数/描述符/余量6KiB，共32KiB。完整模型权重仍在S/外存，不声称常驻。
 - **接口**：RX0 A8或明示digit流，RX1 W8/K8/V8；TX选择ACT8/16、SCORE_ACC32或PV_DIGIT_ACC32。
@@ -93,6 +95,7 @@ M/V/A/R/S each最多一个命令在途的候选控制由D管理，局部命令�
 - **具体执行合同**：初版采用可检查的**三遍score调度**：①M产生并在S存score、A求全行max；
   ②A读score计算全行exp和；③A再读score、按同一LUT计算P后送M做PV，A归约输出。
   query tile滚动执行，不物化整模型S²矩阵。score缓存、两次读取和P流量全部计入。
+  完全mask掉的tile跳过max/exp贡献，整行无有效key则报错；local窗口不能继承“首tile必有有效key”的隐含假设。
   在线softmax是后续算法候选，有限精度的round/sat顺序不天然等价，不能在placement对照中暗换算法。
 - **接口**：RX0 SCORE_ACC32/PV_DIGIT_ACC32＋Q/K/V scale引用；RX1来自S的score/KV元数据；
   TX P7/P15流到M，或最终ACT16到V/后续投影。共享一个TX会串行，产品连接需支持两种已存在的目的端点。
@@ -162,6 +165,10 @@ tile_id指向D中的shape/axis/stride/布局描述，超出字段范围分包并
 M/r每组5B、dyadic exponent每组1B；实际参数缓存miss要传独立META payload，不能仅给scale_id就当参数免费可得。
 例如256通道静态M/r为1280B，4行动态为5120B；动态bias另需4×256×4B，产生/传输成本独立。
 所有profile必须声明zero point、fraction_bits/scale粒度、tail、mask/position、round/sat/overflow；错误格式拒绝执行。
+payload数组采用little-endian、C连续、带显式axis/stride描述：i8/exponent占1B，i16/score/P15占2B，
+acc32/state32/gamma32占4B，i64占8B。逻辑i33若需要跨界，用checked/sign-extended i64容器占8B，
+不把它当4B传输。共享RQ的主对照传acc32及单独bias参数，在V内加成i33；若选择先加bias再跨界则按8B重记。
+scale引用cache miss、尾部padding和header均纳入流量，不能把只有有效数据的裸bytes当物理传输。
 
 FIFO各2KiB且整包接收候选最大payload1984B；大tensor按此分包，不能拿一个2KiB FIFO接收任意大原子事务。
 输出先预留credit再开始需要不可中断的归约，D按静态阶段安排M↔A的循环，避免P/partial相互占满。
