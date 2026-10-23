@@ -1,5 +1,20 @@
 # Liangruizhi 的进度
 
+## 2026-10-23（UTC+08:00）Issue47：独立校准、GQA共享和因果KV
+
+[Issue47](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/47)，
+[PR49](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/49)，task/47-primitive-stream，
+目录D:/Projects/LLMHardwareDesign-primitives。认证profile已核为Liangruizhi/182389313/指定邮箱。
+源码270568dfcad314f3d16e9bfa68dc378b31bdea9b，已有Qwen3-0.6B CPU，一层一个完整GQA组；
+独立校准及两组短评价，两个整数payload逐字节一致。8边界测试、79,360oracle、81,920独立输入、
+640Decimal编译值、160发布事件、3篡改负例和31成员归档校验通过。
+局部相对RMSE约64.6%/49.3%降至1.80%/1.90%，无全模型质量或硬件加速声明。
+P1–P15映射和scale/状态/格式边界已补；当前线上交付/审查状态以PR最新读回为准，未done。
+[报告](../../docs/experiments/issue-47-primitive-stream.md)、[交接](../../docs/handoffs/2026-10-23-issue-47-primitive-stream.md)。
+下一步E2 RQ/M-A同资源端口配对；不重复其他成员Issue48资源估算器，不整合师兄未通知完成的数据。
+GPU批次新文案和96核CPU条件估算已记录；本机不下载较大模型，不启动服务器或其他机器。
+登记PR5 pending；看板unverified/同步pending，管理员和审查人待指定。
+
 ## 2026-10-23（UTC+08:00）Issue41分析候选与最小决策实验
 
 [Issue41](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/41)，Liangruizhi；

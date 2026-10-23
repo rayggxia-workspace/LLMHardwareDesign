@@ -11,3 +11,9 @@
 2026-10-23（UTC+08:00）恢复时GitHub认证查询HTTP transport失败，尚未重新核验远端任务/PR。
 已依据前次Issue47接续；仅推进独立本地范围。远端上传、PR和看板同步须在账号重新认证后补做。
 本地源码提交是版本冻结，若尚未上传不称远端已有。开发运行保留development=true，不作为正式验收。
+
+随后通过get_profile核验Liangruizhi/指定邮箱/182389313，远端任务/PR/main及协作资料已重新读取。
+源码270568dfcad314f3d16e9bfa68dc378b31bdea9b已用指定连接上传，PR49建立。
+原始认证失败为历史记录，非持续权限阻塞。正式小包与完整回执见交接和PR最新状态。
+恢复先核[报告](../../../docs/experiments/issue-47-primitive-stream.md)和results索引；
+verify_delivery.py只核当前小包，可安全解压到新D盘目录。CPU超算估算已记录，未启动服务器任务。

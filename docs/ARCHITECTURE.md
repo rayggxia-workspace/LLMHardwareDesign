@@ -1,5 +1,14 @@
 # 架构与运行
 
+## Issue47 本机固定校准的GQA/KV整数参考
+
+正式代码`project/experiments/primitive_stream/`。先运行`python -B scripts/check_project.py`，
+再运行`python -B project/experiments/primitive_stream/test_stream.py`。
+已有D盘模型的捕获、两次整数运行、独立审计命令见该目录README和[实验报告](experiments/issue-47-primitive-stream.md)。
+小包核验：`python -B work/Liangruizhi/47/verify_delivery.py project/experiments/primitive_stream/results/issue-47-run01/index.json`。
+解压到新的D盘目录后audit.py可无权重/GPU重算；依赖Python/NumPy，源commit在manifest和报告中。
+这只验证局部数值/软件cache合同，不替代端口RTL、DMA/队列或PPA。原实验入口保留。
+
 Issue41通过分析给出[Block候选v1](BLOCK_CANDIDATE_V1.md)及[最小决策实验](BLOCK_MINIMAL_EXPERIMENTS_V1.md)。
 解析命令：`python -B project/experiments/block_candidate/analyze.py --output <D盘新JSON路径>`；
 只复算声明库存/容量/传输下界，见该目录README，不执行模型、RTL或远程作业。

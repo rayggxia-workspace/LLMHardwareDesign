@@ -1,5 +1,12 @@
 # 当前状态
 
+- 2026-10-23本机数值接续：[Issue47/PR49](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/49)
+  对已有Qwen3-0.6B一层完整GQA组完成独立校准、冻结KV scale和因果cache局部验证，两次整数payload一致；
+  误差改善仅为短切片证据，不是全模型质量或端口/RTL/物理收益。能力清单见[P1–P15](PRIMITIVE_CAPABILITY_MAP.md)，
+  [实际报告](experiments/issue-47-primitive-stream.md)。下一步固定语义的RQ/状态端口配对；
+  E1b完整模型质量不作EDA额外前置。用户扩展GPU批次由师兄处理，本机未下载新模型或启动其他机器。
+  未合并、未done；Issue48资源估算器由其他成员负责，保持范围分离。
+
 - 2026-10-23分析接续：Issue41形成[具体Block候选v1](BLOCK_CANDIDATE_V1.md)，
   六类模板的计算/状态/接口/预连线、声明库存、模型映射和D1–D6均显式；
   [最小实验](BLOCK_MINIMAL_EXPERIMENTS_V1.md)缩为数值门、三类边界判别和冻结后验证。
