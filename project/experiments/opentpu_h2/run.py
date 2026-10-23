@@ -68,7 +68,14 @@ try:
             script+='set f [open macro-nets.txt w]\nset nets {}\nforeach i {u_act u_mxu} {foreach p [[[ord::get_db_block] findInst $i] getITerms] {set n [$p getNet];if {$n ne "NULL" && [$n getSigType] ni {POWER GROUND}} {lappend nets [$n getName]}}}\n'
             script+='foreach n [lsort -unique $nets] {puts $f $n;report_net -digits 9 $n >> interface-nets.rpt}\nclose $f\n'
         else:
+            guide=''
+            for row in contract['affected_nets']:
+                guide+=row['net'].replace('\\','')+'\n(\n'+''.join('0 0 3340000 3340000 metal'+str(layer)+'\n' for layer in range(8,11))+')\n'
+            (ROOT/'restricted.guide').write_text(guide)
+            script+='puts "GUIDE_API [info commands odb::*Guide*]"\n'
+            script+='foreach n [[ord::get_db_block] getNets] {foreach g [$n getGuides] {odb::dbGuide_destroy $g}}\n'
             script+='set_routing_layers -signal metal8-metal10 -clock metal4-metal10\n'
+            script+='read_guides {'+str(ROOT/'restricted.guide')+'}\n'
             script+='detailed_route -output_drc restricted-drc.rpt -output_maze restricted-maze.log\n'
             script+='write_def restricted-final.def\nwrite_db restricted-final.odb\n'
         path=ROOT/(SPEC['mode']+'.tcl');path.write_text(script)
