@@ -2,11 +2,14 @@
 import unittest
 from types import SimpleNamespace
 import torch
-from run import install_int8, fake_state, output_metrics
+from run import install_int8, fake_state, output_metrics, cache_tensors
 from verify import recurrent
 
 
 class ProtocolTests(unittest.TestCase):
+    def test_dictionary_state_not_omitted(self):
+        cache=SimpleNamespace(layers=[SimpleNamespace(conv_states={0:torch.ones(1,4,4)},recurrent_states={0:torch.ones(1,2,4,4)})])
+        self.assertEqual([n for n,t in cache_tensors(cache)],['0/conv_states/0','0/recurrent_states/0'])
     def test_state_rounding_and_scale_cost(self):
         x=torch.tensor([[[[0.,1.,-2.],[0.5,1.5,2.]]]])
         cache=SimpleNamespace(layers=[SimpleNamespace(recurrent_states=[x])])

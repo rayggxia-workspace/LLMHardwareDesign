@@ -72,6 +72,10 @@ def cache_tensors(cache):
                 for j, t in enumerate(v):
                     if isinstance(t, torch.Tensor):
                         yield f'{i}/{attr}/{j}', t
+            elif isinstance(v,dict):
+                for j,t in sorted(v.items()):
+                    if isinstance(t,torch.Tensor):
+                        yield f'{i}/{attr}/{j}',t
 
 
 def snapshot(cache):
@@ -275,6 +279,7 @@ def main():
     p.add_argument('--reference-dir', type=Path)
     p.add_argument('--lengths', nargs='*', type=int, default=[512,2048,4096,8192])
     p.add_argument('--short-only', action='store_true')
+    p.add_argument('--dtype',choices=['bf16','fp16'],default='bf16')
     a = p.parse_args()
     if a.out.exists():
         raise ValueError('output exists; preserve original evidence')
@@ -292,7 +297,7 @@ def main():
         'model': manifest, 'command': sys.argv, 'configuration': cfg,
         'start_epoch': time.time(), 'initial_free_total_bytes': torch.cuda.mem_get_info(),
         'gpu': torch.cuda.get_device_name(), 'backend': cfg['performance']['backend'],
-        'phase': a.phase, 'offload': False, 'physical_traffic_measured': False})
+        'phase': a.phase, 'runtime_dtype':a.dtype, 'offload': False, 'physical_traffic_measured': False})
     save(a.out/'physical-memory-at-start.json',{'nvidia_smi':subprocess.check_output(
         ['nvidia-smi','--query-gpu=memory.total,memory.used,memory.free','--format=csv,noheader'],text=True),
         'cuda_free_total_bytes':torch.cuda.mem_get_info(),
@@ -307,14 +312,15 @@ def main():
         tokenizer = AutoTokenizer.from_pretrained(a.model_dir, local_files_only=True, trust_remote_code=False)
         raw_cfg = json.loads((a.model_dir/'config.json').read_text(encoding='utf-8'))
         q35 = raw_cfg['model_type'] == 'qwen3_5'
+        dtype=torch.bfloat16 if a.dtype=='bf16' else torch.float16
         if q35:
             from transformers import Qwen3_5ForCausalLM, Qwen3_5TextConfig
             model, loading = Qwen3_5ForCausalLM.from_pretrained(a.model_dir,
-                config=Qwen3_5TextConfig(**raw_cfg['text_config']), dtype=torch.bfloat16,
+                config=Qwen3_5TextConfig(**raw_cfg['text_config']), dtype=dtype,
                 device_map={'': 'cuda:0'}, local_files_only=True, trust_remote_code=False,
                 attn_implementation='sdpa', output_loading_info=True)
         else:
-            model, loading = AutoModelForCausalLM.from_pretrained(a.model_dir, dtype=torch.bfloat16,
+            model, loading = AutoModelForCausalLM.from_pretrained(a.model_dir, dtype=dtype,
                 device_map={'': 'cuda:0'}, local_files_only=True, trust_remote_code=False,
                 attn_implementation='sdpa', output_loading_info=True)
         save(a.out/'loading-info.json', loading)
@@ -339,7 +345,11 @@ def main():
             'calibration': 'dynamic per-row absmax has no fitted parameters; calibration run screens finite inputs only',
             'split': 'authored disjoint source texts, no held-out threshold tuning'})
         def call(x, cache=None, keep=1):
-            return model(x, past_key_values=cache, use_cache=True, logits_to_keep=keep)
+            out=model(x, past_key_values=cache, use_cache=True, logits_to_keep=keep)
+            if q35:
+                expected=2*model.config.num_hidden_layers
+                assert len(list(cache_tensors(out.past_key_values)))==expected,'incomplete hybrid cache capture'
+            return out
         if a.phase == 'integer':
             assert a.reference_dir
             save(a.out/'quantized-matrices.json', install_int8(model))
