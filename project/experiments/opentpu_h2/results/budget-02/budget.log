@@ -1,0 +1,32 @@
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 1 thread(s).
+worst slack max 0.075443432
+worst slack min 0.074719347
+report_net [-scene scene] [-digits digits] net_path [> filename] [>> filename] 
+  Report the connections and capacitance of a net.
+  -scene  Restrict the command to one scene.
+  -digits  Number of digits to print after the decimal point.
+report_clock_skew [-setup|-hold] [-clocks clocks] [-scenes scenes]
+   [-include_internal_latency] [-digits digits] 
+  Report the maximum difference in clock arrival between every source and
+  target register that has a path between the source and target registers.
+  -setup  Apply to setup checks.
+  -hold  Apply to hold checks.
+  -clocks  The clocks to report. The default is all clocks.
+  -scenes  Report clocks for these scenes. The default is all scenes.
+  -include_internal_latency  Include internal clock latency from liberty
+    min/max_clock_tree_path timing groups.
+  -digits  Number of digits to print after the decimal point.
+Clock                   Period          Waveform
+----------------------------------------------------
+clk                       2.50        0.00      1.25
+Clock clk
+   0.10 source latency u_act/clk ^
+  -0.10 target latency u_mxu/clk ^
+   0.00 CRPR
+--------------
+  -0.00 setup skew
+

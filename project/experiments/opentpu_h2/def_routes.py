@@ -22,6 +22,7 @@ def partition(source, output, bottom=8):
     via_counts = collections.Counter()
     lengths = collections.Counter()
     fixed_lengths = collections.Counter()
+    guides = {}
     for record in nets:
         split = re.split(r'\+ ROUTED |\n\s*NEW ',record)
         header = split[0].strip()
@@ -30,6 +31,7 @@ def partition(source, output, bottom=8):
         clock = '+ USE CLOCK' in header
         kept = []
         removed = []
+        boxes = []
         for path in split[1:]:
             tokens = path.strip().split()
             assert re.fullmatch(r'metal\d+',tokens[0]), tokens[:6]
@@ -49,6 +51,7 @@ def partition(source, output, bottom=8):
             else:
                 upper = layer
             x,y = map(int,points[0][:2])
+            xs,ys=[x],[y]
             length = 0
             for px,py,extension in points[1:]:
                 nx = x if px=='*' else int(px)
@@ -56,6 +59,7 @@ def partition(source, output, bottom=8):
                 assert x==nx or y==ny
                 length += abs(nx-x)+abs(ny-y)
                 x,y = nx,ny
+                xs.append(x);ys.append(y)
             layers[layer] += 1
             lengths[layer] += length
             # Boundary vias touching the first custom metal are custom.
@@ -67,8 +71,13 @@ def partition(source, output, bottom=8):
             else:
                 removed.append(path.strip())
                 custom_paths += 1
+                for guide_layer in sorted({layer,upper}):
+                    if guide_layer>=bottom:
+                        boxes.append([max(0,min(xs)-13440),max(0,min(ys)-13440),
+                            min(3340000,max(xs)+13440),min(3340000,max(ys)+13440),guide_layer])
         if removed:
             changed.append(dict(net=name,removed_paths=len(removed),fixed_paths=len(kept)))
+            guides[name]=boxes
         rows.append('    - '+header+'\n'+''.join('      + FIXED '+p+'\n' for p in kept)+'    ;\n')
     deftext = ('VERSION 5.8 ;\nDIVIDERCHAR "/" ;\nBUSBITCHARS "[]" ;\nDESIGN llhd_top_split ;\n'
         'UNITS DISTANCE MICRONS 2000 ;\nNETS '+str(len(rows))+' ;\n'+''.join(rows)+'END NETS\nEND DESIGN\n')
@@ -76,6 +85,7 @@ def partition(source, output, bottom=8):
     return dict(source_sha256=hashlib.sha256(Path(source).read_bytes()).hexdigest(),
         bottom_custom_metal=bottom,nets=len(rows),affected_nets=changed,fixed_paths=fixed_paths,
         removed_custom_paths=custom_paths,paths_per_layer=layers,
+        custom_guides=guides,
         source_wire_um={k:v/2000 for k,v in lengths.items()},
         frozen_wire_um={k:v/2000 for k,v in fixed_lengths.items()},vias=via_counts,
         scope='H1 target-conditioned lower prefabricated wires, all clock wires fixed; upper data paths deleted for real reroute. Not an independent multi-target base.')

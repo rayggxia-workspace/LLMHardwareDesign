@@ -63,14 +63,16 @@ try:
         if SPEC['mode']=='budget':
             script+='read_spef {'+str(sealed(SOURCE,Path(meta['result_relative'])/'6_final.spef'))+'}\nset_propagated_clock [all_clocks]\n'
             script+='report_worst_slack -max -digits 9\nreport_worst_slack -min -digits 9\n'
-            script+='help report_net\nhelp report_clock_skew\nreport_clock_properties\nreport_clock_skew\n'
+            script+='help report_net\nhelp report_clock_skew\nreport_clock_properties\nreport_clock_skew -digits 9 -include_internal_latency\n'
             script+='report_check_types -max_capacitance -max_slew -max_count 100000 -digits 9 -no_line_splits > electrical-budget.rpt\n'
             script+='set f [open macro-nets.txt w]\nset nets {}\nforeach i {u_act u_mxu} {foreach p [[[ord::get_db_block] findInst $i] getITerms] {set n [$p getNet];if {$n ne "NULL" && [$n getSigType] ni {POWER GROUND}} {lappend nets [$n getName]}}}\n'
+            script+='foreach n [[ord::get_db_block] getNets] {if {[$n getSigType] eq "CLOCK"} {lappend nets [$n getName]}}\n'
             script+='foreach n [lsort -unique $nets] {puts $f $n;report_net -digits 9 $n >> interface-nets.rpt}\nclose $f\n'
         else:
             guide=''
             for row in contract['affected_nets']:
-                guide+=row['net']+'\n(\n'+''.join('0 0 3340000 3340000 metal'+str(layer)+'\n' for layer in range(8,11))+')\n'
+                boxes=contract['custom_guides'][row['net']]
+                guide+=row['net']+'\n(\n'+''.join(' '.join(map(str,box[:4]))+' metal'+str(box[4])+'\n' for box in boxes)+')\n'
             (ROOT/'restricted.guide').write_text(guide)
             script+='puts "GUIDE_API [info commands odb::*Guide*]"\n'
             script+='foreach n [[ord::get_db_block] getNets] {foreach g [$n getGuides] {odb::dbGuide_destroy $g}}\n'
