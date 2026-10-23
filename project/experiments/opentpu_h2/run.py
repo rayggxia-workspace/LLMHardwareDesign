@@ -61,7 +61,8 @@ try:
         script=''.join('read_liberty {'+str(lib)+'}\n' for lib in libs)
         for lib in libs: INPUTS[str(lib)]=digest(lib)
         script+='read_db {'+str(odb if SPEC['mode']=='budget' else ROOT/'frozen.odb')+'}\n'
-        script+='read_sdc {'+str(sealed(SOURCE,Path(meta['result_relative'])/'6_final.sdc'))+'}\n'
+        if not SPEC.get('proxy'):
+            script+='read_sdc {'+str(sealed(SOURCE,Path(meta['result_relative'])/'6_final.sdc'))+'}\n'
         if SPEC['mode']=='budget':
             script+='read_spef {'+str(sealed(SOURCE,Path(meta['result_relative'])/'6_final.spef'))+'}\nset_propagated_clock [all_clocks]\n'
             script+='report_worst_slack -max -digits 9\nreport_worst_slack -min -digits 9\n'
