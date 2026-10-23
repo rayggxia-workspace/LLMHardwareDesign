@@ -47,6 +47,9 @@ def linear(a,w,calibration,mode,output_bits=8):
         out[index]=requant(int(acc[index]),int(params[index][0]),int(params[index][1]),output_bits,counts)
     reference=a.astype(np.float64)@w.astype(np.float64).T
     result=error(out.astype(np.float64)*sy[None,:],reference)
+    integer_real=acc.astype(np.float64)*np.broadcast_to(np.asarray(sa,dtype=np.float64),(a.shape[0],1))*sw.astype(np.float64)[None,:]
+    result["matrix_only_error"]=error(integer_real,reference)
+    result["requant_only_error"]=error(out.astype(np.float64)*sy[None,:],integer_real)
     result.update({"mode":mode,"output_bits":output_bits,"shape_a":list(a.shape),"shape_w":list(w.shape),"calibration_rows":len(calibration),
                    "output_scale_headroom":2,"input_out_of_calibration":int(np.count_nonzero(abs(a)/sa>127.5)),
                    "integer_counts":dict(counts),"max_abs_acc":int(np.max(abs(acc.astype(np.int64)))),
