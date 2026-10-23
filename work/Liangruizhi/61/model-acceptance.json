@@ -1,0 +1,142 @@
+{
+  "schema": "model-acceptance/1",
+  "updated_utc": "2026-10-23T13:19:06.895Z",
+  "owner": "Liangruizhi",
+  "issue": 61,
+  "pr": 62,
+  "source_pr36_commit": "2ada6cf6a61f5acff4b6052e81e15d20070dc0f3",
+  "server_root": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023",
+  "gpu_available": false,
+  "performance_policy": "CPU correctness only; existing isolated GPU timing remains separate. No target Block/PPA inference from host timing.",
+  "models": [
+    {
+      "model": "Qwen/Qwen2.5-3B",
+      "revision": "5defd2796acd3cb2051bb4c787eddc7f8f35e113",
+      "producer": "YUZE-LU / Issue32 PR36",
+      "receiver": "Liangruizhi / Issue61",
+      "status": "可复用（限定条件）/ 已执行（CPU部分和复核）",
+      "completed": [
+        "Existing GPU FP16 full/chunk reference and isolated timing, pending complete package intake audit",
+        "CPU independent NumPy INT64: 6 captured calls, 236 K groups, 1416 partial values exact, reconstructed FP16 selected outputs exact; Slurm89992/89993"
+      ],
+      "evidence": [
+        "PR36 selected-repair-inputs/qwen25-group128-capture-01-grouped-partials.pt.gz",
+        "run01/qwen25.json",
+        "run02/qwen25.json"
+      ],
+      "unfinished": [
+        "Full69-file intake and condition/quality audit",
+        "Confirm complete GQA group availability; selected partials alone are first2 rows/4 columns, not complete attention",
+        "No all-integer nonlinear/state or hardware PPA validation"
+      ],
+      "next": "Audit package; supplement only evidence that is actually absent."
+    },
+    {
+      "model": "Qwen/Qwen3.5-4B",
+      "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+      "producer": "YUZE-LU / Issue32 PR36",
+      "receiver": "Liangruizhi / Issue61",
+      "status": "可复用（限定条件）/ 已执行（CPU部分和、递推窗口复核）",
+      "completed": [
+        "CPU 6 calls, 896 K groups, 5376 INT64 partial values exact; selected reconstructed FP16 outputs exact",
+        "Independent NumPy FP64:12 real recurrent windows, layers0/14/30, heads0/31, endpoints2048/2049/8192/8193;6 adjacent state pairs exact",
+        "Existing GPU native FP16/BF16 failure history and FP32-auxiliary success retained"
+      ],
+      "evidence": [
+        "PR36 selected-repair-inputs/qwen35-group32-capture-02-grouped-partials.pt.gz",
+        "PR36 selected-repair-inputs/qwen35-long-state-capture-01-long-state-inputs.pt.gz",
+        "run01/qwen35.json",
+        "run01/states.json",
+        "run02/"
+      ],
+      "unfinished": [
+        "Complete package intake/quality/condition audit",
+        "Check global-attention full GQA coverage and convolution/state continuity evidence",
+        "FP32 auxiliary arithmetic is not an all-integer implementation"
+      ],
+      "next": "Reuse original long runs; do not reset state or represent sampled windows as a full trajectory replay."
+    },
+    {
+      "model": "google/gemma-3-4b-it",
+      "revision": "093f9f388b31de276ce2de164bdc2081324b9767",
+      "producer": "Liangruizhi",
+      "status": "已执行（后端预检）/ 未执行（正式采集、整数验证）",
+      "completed": [
+        "Native backend/config/tokenizer preflight Slurm90002 passed",
+        "Public ModelScope mirror config/README match official Git blobs; advertised shard hashes match official LFS; transfer in progress"
+      ],
+      "evidence": [
+        "backend01.json",
+        "models/gemma3-4b-093f9f38/",
+        "phase3/mirror-plan.json",
+        "phase5/binding.json"
+      ],
+      "unfinished": [
+        "Actual full-shard SHA256 completion",
+        "FP32 full/prefill/cached/chunk checks, prefixes128/1023/1024/1025/4096 +decode32",
+        "Selected full2Q/1KV groups layers0/5, normalization/MLP/KV physical storage capture",
+        "W8A8/i32 independent reference and actual-width port/capacity accounting"
+      ],
+      "blockers": [
+        "Official direct HF raw file401 and server network unavailable; public mirror relay is active replacement, no credential borrowed"
+      ],
+      "next": "Only after full SHA verified, submit24-CPU capture in new output directory."
+    },
+    {
+      "model": "microsoft/Phi-4-mini-instruct",
+      "revision": "cfbefacb99257ffa30c83adab238a50856ac3083",
+      "producer": "Liangruizhi",
+      "status": "已执行（后端预检）/ 未执行（封存采集）",
+      "completed": [
+        "Native Phi3 backend/config/tokenizer preflight Slurm90002 passed",
+        "Public original BF16 mirror transfer active, MIT notices retained"
+      ],
+      "evidence": [
+        "backend01.json",
+        "models/phi4mini-cfbefacb/",
+        "phase3/mirror-plan.json",
+        "phase5/binding.json"
+      ],
+      "unfinished": [
+        "Actual full-shard SHA256 completion",
+        "FP32 full/cached/chunk128/1024 +32; complete3Q/1KV group, partial RoPE boundary capture",
+        "Seal artifacts for independent validation after partition strategy freeze"
+      ],
+      "blockers": [
+        "Server direct HF download Slurm89995 failed DNS; relay replaces transport only"
+      ],
+      "next": "Parallel24-CPU sealed capture; do not inspect quantization quality to tune partition."
+    },
+    {
+      "model": "Qwen/Qwen3-0.6B; meta-llama/Llama-3.2-1B-Instruct",
+      "status": "可复用 / 本任务条件跳过",
+      "evidence": [
+        "Issue47/PR49",
+        "Issue53/PR54",
+        "Issue56/PR57",
+        "Issue59/PR60"
+      ],
+      "unfinished": [
+        "Existing qualification boundaries remain; Llama best selected down_proj error5.39% is not an accepted full-model result"
+      ],
+      "next": "No duplicate full-model rerun in this batch."
+    },
+    {
+      "model": "Gemma3-12B; Llama3.1-8B; DeepSeek-R1-Distill-Qwen-1.5B",
+      "status": "条件跳过",
+      "reason": "Latest primary scope does not independently require these optional extensions. Add only for an explicit uncovered decision in current Issue, not blind cross product.",
+      "next": "Preserve optional status; original R1 MLA/MoE not represented by distill."
+    },
+    {
+      "model": "Qwen3-4B; original DeepSeek-R1",
+      "status": "条件跳过",
+      "reason": "Qwen3-4B is not mandatory; original huge R1 excluded by user.",
+      "next": "Do not download or launch."
+    }
+  ],
+  "delivery": {
+    "registration": "pending management-hub PR5",
+    "board": "unverified; no board.json / Projects tool, sync pending admin",
+    "review": "PR62 draft; unmerged; task in_progress"
+  }
+}
