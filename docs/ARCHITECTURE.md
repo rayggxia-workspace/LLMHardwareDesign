@@ -1,5 +1,13 @@
 # 架构与运行
 
+## Issue56本机Llama跨模型最小验证
+
+代码`project/experiments/llama_cross/`，运行顺序/并发/精度边界见其README与[实际报告](experiments/issue-56-llama-cross-model.md)。
+先管理检查与test_contract.py。精简包核验/解压用`work/Liangruizhi/47/verify_delivery.py`配本任务index.json。
+`python -B project/experiments/llama_cross/review.py <新解压目录> --out <新D盘JSON>`独立重放全部编码整数数组和8 witness。
+完整本机浮点量化审计分别用audit.py/audit_linear.py，需D盘完整capture；小包不含全K浮点线性输入，该共享pending。
+只在本机，现有模型/venv只读复用；不新增远端机器作业/模型下载，不把NumPy整数参考称INT8速度或硬件已实现。
+
 ## Issue53 CPU模型迁移pilot
 
 代码`project/experiments/cpu_pilot/`、[实际报告](experiments/issue-53-cpu-migration.md)。

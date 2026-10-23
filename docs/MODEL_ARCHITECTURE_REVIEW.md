@@ -1,5 +1,13 @@
 # 先审查架构，再选择算子与Block实验模型
 
+## 2026-10-23接续：Llama-3.2-1B已纳入本机验证
+
+Issue56/PR57仅复用用户旁支完整下载的固定checkpoint；下文Issue37的“本轮未跑/401”保留为原阶段事实，
+不代表本次1B模型不可用或17变体均已跑通。正式合同project/experiments/llama_cross/model.json，
+来源/原始BF16 SHA/实际FP32一组GQA4/整数/端口验证见[新报告](experiments/issue-56-llama-cross-model.md)。
+16层、2048/8192、32Q/8KV、d64，无单独Q/K norm，Llama3 RoPE；tied embedding实际指针核验通过。
+普通GQA语义覆盖增量有限，真实FFN激活与scale粒度风险是本次新证据，不由厂商名称推断必须新建Block。
+
 2026-10-23，Liangruizhi；[Issue37](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/37)、
 [PR38](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/38)。
 用户最新要求优先架构分析与选型，因此本轮**没有运行新增模型或缩小模型数值实验**；只读取公开
