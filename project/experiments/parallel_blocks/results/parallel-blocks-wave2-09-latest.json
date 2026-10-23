@@ -1,0 +1,63 @@
+{
+  "observed_utc": "2026-10-21T11:26:29.220934+00:00",
+  "submission": {
+    "attempt": "parallel-blocks-wave2-09",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-09",
+    "host": "yuzelu@10.129.166.172",
+    "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "plan": {
+      "C": {
+        "node": "node9",
+        "cores": 1,
+        "tasks": [
+          {
+            "name": "full-physical-audit",
+            "kind": "physical-audit",
+            "cores": 1,
+            "case": "opentpu-act",
+            "cap_margin": 0
+          }
+        ],
+        "job_id": 89506,
+        "scheduler_readback": "JobId=89506 JobName=lyz-wave2-c UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586553 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=Dependency Dependency=afterany:89499(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T19:21:34 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T19:21:34 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:1332424 ReqNodeList=node9 ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-09/runner/wave2/stream.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-09/stream-C.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-09/stream-C.log Power= TresPerTask=cpu:1"
+      }
+    },
+    "profile": "full-physical-audit",
+    "dependency": "afterany:89499",
+    "runner_commit": "50bb759086470a76f115efc3ade2e77f53d53eff",
+    "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
+    "submitted_utc": "2026-10-21T11:21:30.485609+00:00",
+    "scope": "Independent seven-case hashes and strict worst-margin budget audit",
+    "audit_job_id": 89507,
+    "audit_scheduler_readback": "JobId=89507 JobName=lyz-wave2-audit UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586552 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=Dependency Dependency=afterany:89506(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T19:21:35 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T19:21:35 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:1332913 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-09/runner/wave2/audit.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-09/audit.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-09/audit.log Power= TresPerTask=cpu:1"
+  },
+  "scheduler": {
+    "exit_code": 0,
+    "stdout": "89506|lyz-wave2-c|CANCELLED by 10011|0:0|00:00:00|0|None assigned\n89507|lyz-wave2-audit|CANCELLED by 10011|0:0|00:00:00|0|None assigned",
+    "stderr": ""
+  },
+  "resources": {
+    "exit_code": 0,
+    "stdout": "89506|00:00:00|0|0|00:00:00|\n89507|00:00:00|0|0|00:00:00|",
+    "stderr": ""
+  },
+  "tasks": {
+    "full-physical-audit": {
+      "spec": {
+        "name": "full-physical-audit",
+        "kind": "physical-audit",
+        "cores": 1,
+        "case": "opentpu-act",
+        "cap_margin": 0
+      },
+      "stream": "C",
+      "started": null,
+      "finished": null,
+      "exit_code": null,
+      "hash_exit_code": null,
+      "log_tail": null
+    }
+  },
+  "completion_exists": false,
+  "completion_sha256": null
+}

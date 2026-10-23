@@ -1,0 +1,47 @@
+{
+  "collected_utc": "2026-10-21T10:04:56.290880+00:00",
+  "submission": {
+    "job_id": "89478",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-cap-diagnostic-01",
+    "submitted_utc": "2026-10-21T10:01:57.089858+00:00",
+    "allocation": "JobId=89478 JobName=lyz-cap-read UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586581 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T18:01:57 EligibleTime=2026-10-21T18:01:57 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T18:01:57 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:247741 ReqNodeList=node7 ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-cap-diagnostic-01/diagnose.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-cap-diagnostic-01/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-cap-diagnostic-01/job.log Power= TresPerTask=cpu:1",
+    "scope": "read exact container flow scripts on compute; no original experiment changes"
+  },
+  "source_bundle_sha256_verified": "57647db58c2b952ff320ea8c0502aee057dc764be482cf7da5f86e13916d906e",
+  "source_bundle_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-cap-diagnostic-01/flow-sources.json",
+  "allocation_at_start": "JobId=89478 JobName=lyz-cap-read UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586581 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T18:01:57 EligibleTime=2026-10-21T18:01:57 AccrueTime=2026-10-21T18:01:57 StartTime=2026-10-21T18:01:58 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-10-21T18:01:58 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T18:01:58 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:247741 ReqNodeList=node7 ExcNodeList=(null) NodeList=node7 BatchHost=node7 NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=cpu=1,node=1,billing=1 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-cap-diagnostic-01/diagnose.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-cap-diagnostic-01/job.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-cap-diagnostic-01/job.log Power= TresPerTask=cpu:1 \n",
+  "scheduler": "89478|COMPLETED|0:0|00:00:00|1|node7\n89478.batch|COMPLETED|0:0|00:00:00|1|node7\n89478.extern|COMPLETED|0:0|00:00:00|1|node7\n",
+  "selected_exact_container_source_lines": {
+    "/OpenROAD-flow-scripts/flow/scripts/variables.yaml": [
+      "748:   stages:",
+      "749:     - place",
+      "750:   tunable: 1",
+      "751:   type: float",
+      "752: CAP_MARGIN:",
+      "753:   description: >",
+      "754:     Specifies a capacitance margin when fixing max capacitance violations. This",
+      "755:     option allows you to overfix.",
+      "756:   tunable: 1",
+      "757: SLEW_MARGIN:",
+      "758:   description: >",
+      "759:     Specifies a slew margin when fixing max slew violations. This option allows",
+      "760:     you to overfix."
+    ],
+    "/OpenROAD-flow-scripts/flow/scripts/util.tcl": [
+      "55: proc repair_design_helper { } {",
+      "56:   puts \"Perform buffer insertion and gate resizing...\"",
+      "57: ",
+      "58:   set additional_args \"-verbose\"",
+      "59:   append_env_var additional_args CAP_MARGIN -cap_margin 1",
+      "60:   append_env_var additional_args SLEW_MARGIN -slew_margin 1",
+      "61:   append_env_var additional_args MATCH_CELL_FOOTPRINT -match_cell_footprint 0",
+      "62:   log_cmd repair_design {*}$additional_args",
+      "63: }",
+      "64: ",
+      "65: proc recover_power_helper { } {",
+      "66:   if { $::env(RECOVER_POWER) == 0 } {",
+      "67:     return"
+    ]
+  },
+  "scope": "Compute job read actual immutable container scripts; no PNR rerun and no changes to original batch; local file is a derived excerpt, not the source bundle"
+}

@@ -1,0 +1,554 @@
+{
+  "observed_utc": "2026-10-21T12:23:10.358873+00:00",
+  "submission": {
+    "attempt": "parallel-blocks-wave2-12",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12",
+    "host": "yuzelu@10.129.166.172",
+    "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "plan": {
+      "A": {
+        "node": "node7",
+        "cores": 32,
+        "tasks": [
+          {
+            "name": "act-cap10-repair",
+            "kind": "route-repair",
+            "cores": 16,
+            "case": "opentpu-act",
+            "cap_margin": 10,
+            "source_task": "act-cap10",
+            "replacements": [
+              [
+                "_5406_",
+                "MUX2_X1",
+                "MUX2_X2"
+              ]
+            ]
+          },
+          {
+            "name": "merged-cap20-repair",
+            "kind": "route-repair",
+            "cores": 16,
+            "case": "opentpu-act-mxu",
+            "cap_margin": 20,
+            "source_task": "merged-cap20",
+            "replacements": [
+              [
+                "u_mxu.g_ask[1].g_p[1].u_a.g_regs.r[1][3]$_DFF_P_",
+                "DFF_X1",
+                "DFF_X2"
+              ],
+              [
+                "place15504",
+                "BUF_X1",
+                "BUF_X2"
+              ],
+              [
+                "place15492",
+                "BUF_X1",
+                "BUF_X2"
+              ],
+              [
+                "place15563",
+                "BUF_X1",
+                "BUF_X2"
+              ]
+            ]
+          }
+        ],
+        "job_id": 89512,
+        "scheduler_readback": "JobId=89512 JobName=lyz-wave2-a UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586547 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T20:18:45 EligibleTime=2026-10-21T20:18:45 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T20:18:45 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:2047196 ReqNodeList=node7 ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=32 NumTasks=1 CPUs/Task=32 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=32,mem=1M,node=1,billing=32 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=32 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/runner/wave2/stream.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/stream-A.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/stream-A.log Power= TresPerTask=cpu:32"
+      },
+      "C": {
+        "node": "node9",
+        "cores": 1,
+        "tasks": [
+          {
+            "name": "cap-diagnostic",
+            "kind": "cap-diagnostic",
+            "cores": 1,
+            "case": "opentpu-act",
+            "cap_margin": 0
+          }
+        ],
+        "job_id": 89513,
+        "scheduler_readback": "JobId=89513 JobName=lyz-wave2-c UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586546 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T20:18:46 EligibleTime=2026-10-21T20:18:46 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T20:18:46 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:2047507 ReqNodeList=node9 ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/runner/wave2/stream.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/stream-C.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/stream-C.log Power= TresPerTask=cpu:1"
+      }
+    },
+    "profile": "targeted-repair",
+    "dependency": null,
+    "runner_commit": "5ff95b767fbfe599a1cdbf4c45094afe37257494",
+    "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
+    "submitted_utc": "2026-10-21T12:18:35.310796+00:00",
+    "scope": "Read-only verified wave2-06 CTS checkpoints, explicit equivalent-cell drive upgrades, new route/extraction and strict gates; no source or historical output changes",
+    "audit_job_id": 89514,
+    "audit_scheduler_readback": "JobId=89514 JobName=lyz-wave2-audit UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586545 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=Dependency Dependency=afterany:89512(unfulfilled),afterany:89513(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T20:18:48 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T20:18:48 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:2047821 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/runner/wave2/audit.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/audit.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/audit.log Power= TresPerTask=cpu:1"
+  },
+  "scheduler": {
+    "exit_code": 0,
+    "stdout": "89512|lyz-wave2-a|FAILED|1:0|00:04:10|32|node7\n89512.batch|batch|FAILED|1:0|00:04:10|32|node7\n89512.extern|extern|COMPLETED|0:0|00:04:10|32|node7\n89512.0|lyz-act-cap10-repair|COMPLETED|0:0|00:04:07|16|node7\n89512.1|lyz-merged-cap20-repair|FAILED|1:0|00:00:12|16|node7\n89513|lyz-wave2-c|COMPLETED|0:0|00:00:19|1|node9\n89513.batch|batch|COMPLETED|0:0|00:00:19|1|node9\n89513.extern|extern|COMPLETED|0:0|00:00:19|1|node9\n89513.0|lyz-cap-diagnostic|COMPLETED|0:0|00:00:17|1|node9\n89514|lyz-wave2-audit|COMPLETED|0:0|00:00:12|1|node3\n89514.batch|batch|COMPLETED|0:0|00:00:12|1|node3\n89514.extern|extern|COMPLETED|0:0|00:00:12|1|node3",
+    "stderr": ""
+  },
+  "resources": {
+    "exit_code": 0,
+    "stdout": "89512|00:04:10|32|8000|10:38.692|\n89512.batch|00:04:10|32|8000|00:01.427|13420K\n89512.extern|00:04:10|32|8000|00:00:00|0\n89512.0|00:04:07|16|3952|10:32.781|920932K\n89512.1|00:00:12|16|192|00:04.482|0\n89513|00:00:19|1|19|00:10.607|\n89513.batch|00:00:19|1|19|00:01.418|0\n89513.extern|00:00:19|1|19|00:00:00|0\n89513.0|00:00:17|1|17|00:09.188|0\n89514|00:00:12|1|12|00:01.080|\n89514.batch|00:00:12|1|12|00:01.080|0\n89514.extern|00:00:12|1|12|00:00:00|0",
+    "stderr": ""
+  },
+  "tasks": {
+    "act-cap10-repair": {
+      "spec": {
+        "name": "act-cap10-repair",
+        "kind": "route-repair",
+        "cores": 16,
+        "case": "opentpu-act",
+        "cap_margin": 10,
+        "source_task": "act-cap10",
+        "replacements": [
+          [
+            "_5406_",
+            "MUX2_X1",
+            "MUX2_X2"
+          ]
+        ]
+      },
+      "stream": "A",
+      "started": "2026-10-21T12:18:48Z\n",
+      "finished": "2026-10-21T12:22:54Z\n",
+      "exit_code": "0\n",
+      "hash_exit_code": "0\n",
+      "log_tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+      "latest_flow_log": {
+        "file": "generate_abstract.log",
+        "bytes": 1870,
+        "modified_utc": "2026-10-21T12:22:54+00:00",
+        "tail": "load_design 6_final.odb 6_final.sdc\nread_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib\nread_liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/act-cap10-repair/memory-model/macros/fakeram45_1r1w_32x64.lib\nread_liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/act-cap10-repair/memory-model/macros/fakeram45_1r1w_32x128.lib\nread_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/act-cap10-repair/flow/results/nangate45/parallel_opentpu_act/base/6_final.odb\nread_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/act-cap10-repair/flow/results/nangate45/parallel_opentpu_act/base/6_final.sdc\nsource /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl\nread_spef /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/act-cap10-repair/flow/results/nangate45/parallel_opentpu_act/base/6_final.spef\nGenerating abstract views\nwrite_timing_model /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/act-cap10-repair/flow/results/nangate45/parallel_opentpu_act/base/llhd_opentpu_act_typ.lib\nwrite_abstract_lef -bloat_occupied_layers /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/act-cap10-repair/flow/results/nangate45/parallel_opentpu_act/base/llhd_opentpu_act.lef\nElapsed time: 0:01.15[h:]min:sec. CPU time: user 1.35 sys 0.17 (131%). Peak memory: 179524KB."
+      },
+      "metrics": {
+        "5_1_grt.json": {
+          "globalroute__utilization__before__dpl": 36.069,
+          "globalroute__dpl__legalizer__type": "negotiation",
+          "globalroute__dpl__total__moves": 0,
+          "globalroute__dpl__negotiation__iterations__total": 0,
+          "globalroute__dpl__negotiation__converge__phase": 0,
+          "globalroute__dpl__negotiation__diamond__recovery__count": 0,
+          "globalroute__dpl__instance__displacement__total": 0,
+          "globalroute__dpl__instance__displacement__mean": 0,
+          "globalroute__dpl__instance__displacement__max": 0,
+          "globalroute__dpl__route__wirelength__estimated": 235070,
+          "globalroute__dpl__hpwl__delta": 0,
+          "globalroute__dpl__hpwl__delta__percent": 0,
+          "globalroute__design__violations": 0,
+          "globalroute__route__net": 5460,
+          "globalroute__route__net__special": 2,
+          "globalroute__global_route__fastroute__run_s": 0,
+          "globalroute__global_route__fastroute__initial_rsmt_s": 2.557e-05,
+          "globalroute__global_route__fastroute__route_l_s": 0.000127394,
+          "globalroute__global_route__fastroute__congestion_rsmt_s": 9.4632e-05,
+          "globalroute__global_route__fastroute__new_route_l_s": 6.1651e-05,
+          "globalroute__global_route__fastroute__spiral_s": 6.9979e-05,
+          "globalroute__global_route__fastroute__route_z_s": 2.0397e-05,
+          "globalroute__global_route__fastroute__monotonic_s": 0.00254731,
+          "globalroute__global_route__fastroute__overflow_iterations_s": 0.00225115,
+          "globalroute__global_route__fastroute__finalization_s": 0.00246591,
+          "globalroute__global_route__fastroute__snapshot_batch_route_s": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_apply_s": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_sync_s": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_count": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_nets": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_wave_count": 0,
+          "globalroute__global_route__vias": 121,
+          "globalroute__global_route__wirelength": 311485,
+          "globalroute__design__instance__count__setup_buffer": 0,
+          "globalroute__design__instance__count__hold_buffer": 0,
+          "globalroute__antenna_diodes_count": 0,
+          "globalroute__antenna__violating__nets": 0,
+          "globalroute__antenna__violating__pins": 0,
+          "globalroute__timing__setup__tns": 0,
+          "globalroute__timing__hold__tns": 0,
+          "globalroute__timing__setup__ws": 1.21962,
+          "globalroute__timing__hold__ws": 0.0338593,
+          "globalroute__timing__fmax__clock:clk": 781020000.0,
+          "globalroute__timing__fmax": 781020000.0,
+          "globalroute__clock__skew__setup": 0.026307,
+          "globalroute__clock__skew__hold": 0.026307,
+          "globalroute__timing__drv__max_slew_limit": 0.265523,
+          "globalroute__timing__drv__max_slew": 0,
+          "globalroute__timing__drv__max_cap_limit": 0.17004,
+          "globalroute__timing__drv__max_cap": 0,
+          "globalroute__timing__drv__max_fanout_limit": 0,
+          "globalroute__timing__drv__max_fanout": 0,
+          "globalroute__timing__drv__setup_violation_count": 0,
+          "globalroute__timing__drv__hold_violation_count": 0,
+          "globalroute__power__internal__total": 0.0165117,
+          "globalroute__power__switching__total": 0.00147425,
+          "globalroute__power__leakage__total": 0.000141685,
+          "globalroute__power__total": 0.0181277,
+          "globalroute__design__io": 862,
+          "globalroute__design__nets": 5469,
+          "globalroute__design__die__area": 106410,
+          "globalroute__design__core__area": 99530.6,
+          "globalroute__design__instance__count": 4644,
+          "globalroute__design__instance__area": 35899.6,
+          "globalroute__design__instance__count__stdcell": 4638,
+          "globalroute__design__instance__area__stdcell": 6752.41,
+          "globalroute__design__instance__count__macros": 6,
+          "globalroute__design__instance__area__macros": 29147.2,
+          "globalroute__design__instance__count__padcells": 0,
+          "globalroute__design__instance__area__padcells": 0,
+          "globalroute__design__instance__count__cover": 0,
+          "globalroute__design__instance__area__cover": 0,
+          "globalroute__design__instance__utilization": 0.36069,
+          "globalroute__design__instance__utilization__stdcell": 0.0959376,
+          "globalroute__design__rows": 225,
+          "globalroute__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 225,
+          "globalroute__design__sites": 228929,
+          "globalroute__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 228929,
+          "globalroute__flow__warnings__count": 701,
+          "globalroute__flow__errors__count": 0,
+          "globalroute__flow__warnings__count:GRT-0246": 1,
+          "globalroute__flow__warnings__count:RSZ-0104": 700,
+          "globalroute__flow__warnings__type_count": 2
+        },
+        "5_2_route.json": {
+          "detailedroute__route__net": 5467,
+          "detailedroute__route__net__special": 2,
+          "detailedroute__route__drc_errors__iter:0": 2640,
+          "detailedroute__route__wirelength__iter:0": 273182,
+          "detailedroute__route__drc_errors__iter:1": 880,
+          "detailedroute__route__wirelength__iter:1": 272285,
+          "detailedroute__route__drc_errors__iter:2": 812,
+          "detailedroute__route__wirelength__iter:2": 272067,
+          "detailedroute__route__drc_errors__iter:3": 398,
+          "detailedroute__route__wirelength__iter:3": 272264,
+          "detailedroute__route__drc_errors__iter:4": 366,
+          "detailedroute__route__wirelength__iter:4": 272308,
+          "detailedroute__route__drc_errors__iter:5": 345,
+          "detailedroute__route__wirelength__iter:5": 272413,
+          "detailedroute__route__drc_errors__iter:6": 324,
+          "detailedroute__route__wirelength__iter:6": 272447,
+          "detailedroute__route__drc_errors__iter:7": 274,
+          "detailedroute__route__wirelength__iter:7": 272496,
+          "detailedroute__route__drc_errors__iter:8": 215,
+          "detailedroute__route__wirelength__iter:8": 272609,
+          "detailedroute__route__drc_errors__iter:9": 125,
+          "detailedroute__route__wirelength__iter:9": 272593,
+          "detailedroute__route__drc_errors__iter:10": 18,
+          "detailedroute__route__wirelength__iter:10": 272626,
+          "detailedroute__route__drc_errors__iter:11": 8,
+          "detailedroute__route__wirelength__iter:11": 272646,
+          "detailedroute__route__drc_errors__iter:12": 8,
+          "detailedroute__route__wirelength__iter:12": 272646,
+          "detailedroute__route__drc_errors__iter:13": 0,
+          "detailedroute__route__wirelength__iter:13": 272645,
+          "detailedroute__route__drc_errors": 0,
+          "detailedroute__route__wirelength": 272645,
+          "detailedroute__route__vias": 37074,
+          "detailedroute__route__vias__singlecut": 37074,
+          "detailedroute__route__vias__multicut": 0,
+          "detailedroute__antenna_diodes_count": 0,
+          "detailedroute__antenna__violating__nets": 0,
+          "detailedroute__antenna__violating__pins": 0,
+          "detailedroute__flow__warnings__count": 1,
+          "detailedroute__flow__errors__count": 0,
+          "detailedroute__flow__warnings__count:GRT-0246": 1,
+          "detailedroute__flow__warnings__type_count": 1
+        },
+        "5_3_fillcell.json": {
+          "design__violations": 0,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "6_1_fill.json": {
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "6_report.json": {
+          "finish__design_powergrid__voltage__worst__net:VDD__corner:default": 1.09806,
+          "finish__design_powergrid__voltage__average__net:VDD__corner:default": 1.09942,
+          "finish__design_powergrid__drop__average__net:VDD__corner:default": 0.000584713,
+          "finish__design_powergrid__drop__worst__net:VDD__corner:default": 0.00193633,
+          "finish__design_powergrid__voltage__worst__net:VSS__corner:default": 0.00182942,
+          "finish__design_powergrid__voltage__average__net:VSS__corner:default": 0.000585399,
+          "finish__design_powergrid__drop__average__net:VSS__corner:default": 0.000585399,
+          "finish__design_powergrid__drop__worst__net:VSS__corner:default": 0.00182942,
+          "finish__design__instance__count__class:macro": 6,
+          "finish__design__instance__area__class:macro": 29147.2,
+          "finish__design__instance__count__class:fill_cell": 11282,
+          "finish__design__instance__area__class:fill_cell": 54142.7,
+          "finish__design__instance__count__class:tap_cell": 585,
+          "finish__design__instance__area__class:tap_cell": 155.61,
+          "finish__design__instance__count__class:clock_buffer": 133,
+          "finish__design__instance__area__class:clock_buffer": 162.526,
+          "finish__design__instance__count__class:timing_repair_buffer": 825,
+          "finish__design__instance__area__class:timing_repair_buffer": 675.906,
+          "finish__design__instance__count__class:inverter": 73,
+          "finish__design__instance__area__class:inverter": 39.368,
+          "finish__design__instance__count__class:clock_inverter": 52,
+          "finish__design__instance__area__class:clock_inverter": 46.284,
+          "finish__design__instance__count__class:sequential_cell": 606,
+          "finish__design__instance__area__class:sequential_cell": 2757.36,
+          "finish__design__instance__count__class:multi_input_combinational_cell": 2364,
+          "finish__design__instance__area__class:multi_input_combinational_cell": 2915.36,
+          "finish__design__instance__count": 15926,
+          "finish__design__instance__area": 35899.6,
+          "finish__timing__setup__tns": 0,
+          "finish__timing__hold__tns": 0,
+          "finish__timing__setup__ws": 1.20669,
+          "finish__timing__hold__ws": 0.0314514,
+          "finish__timing__fmax__clock:clk": 773209000.0,
+          "finish__timing__fmax": 773209000.0,
+          "finish__clock__skew__setup": 0.0250841,
+          "finish__clock__skew__hold": 0.0250841,
+          "finish__timing__drv__max_slew_limit": 0.262021,
+          "finish__timing__drv__max_slew": 0,
+          "finish__timing__drv__max_cap_limit": 0.0760813,
+          "finish__timing__drv__max_cap": 0,
+          "finish__timing__drv__max_fanout_limit": 0,
+          "finish__timing__drv__max_fanout": 0,
+          "finish__timing__drv__setup_violation_count": 0,
+          "finish__timing__drv__hold_violation_count": 0,
+          "finish__power__internal__total": 0.0165077,
+          "finish__power__switching__total": 0.00144524,
+          "finish__power__leakage__total": 0.000141685,
+          "finish__power__total": 0.0180946,
+          "finish__design__io": 862,
+          "finish__design__nets": 5469,
+          "finish__design__die__area": 106410,
+          "finish__design__core__area": 99530.6,
+          "finish__design__instance__count__stdcell": 4638,
+          "finish__design__instance__area__stdcell": 6752.41,
+          "finish__design__instance__count__macros": 6,
+          "finish__design__instance__area__macros": 29147.2,
+          "finish__design__instance__count__padcells": 0,
+          "finish__design__instance__area__padcells": 0,
+          "finish__design__instance__count__cover": 0,
+          "finish__design__instance__area__cover": 0,
+          "finish__design__instance__utilization": 0.36069,
+          "finish__design__instance__utilization__stdcell": 0.0959376,
+          "finish__design__rows": 225,
+          "finish__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 225,
+          "finish__design__sites": 228929,
+          "finish__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 228929,
+          "finish__flow__warnings__count": 0,
+          "finish__flow__errors__count": 0,
+          "finish__flow__warnings__type_count": 0
+        },
+        "generate_abstract.json": {
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        }
+      },
+      "quality": {
+        "drc": 0,
+        "setup_ws_ns": 1.20669,
+        "hold_ws_ns": 0.0314514,
+        "max_cap": 0,
+        "cap_slack_over_limit_metric": 0.0760813,
+        "max_slew": 0,
+        "max_fanout": 0,
+        "instance_area_um2": 35899.6
+      },
+      "stages": [
+        "grt",
+        "drt",
+        "finish"
+      ],
+      "experiment": {
+        "case": "opentpu-act",
+        "top": "llhd_opentpu_act",
+        "parameters": {
+          "D": 32,
+          "MCOLS": 2,
+          "ROWS": 2,
+          "BLOCKS": 32,
+          "LANES": 4,
+          "DEPTH": 64,
+          "IMPL": 2,
+          "CL": 16,
+          "E": 0,
+          "SID": 0
+        },
+        "clock_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "cap_margin": 10,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Upstream openTPU synthetic fakeram LEF/Liberty models, not fabricated SRAM or SRAM GDS. Same unmodified generator and small configuration for split/merged cases; no full system claim.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "Targeted CTS-checkpoint physical reroute; no full formal equivalence, hard macro qualification or signoff",
+        "repair": {
+          "source_attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/act-cap10",
+          "checkpoint": "4_cts.odb",
+          "replacements": [
+            [
+              "_5406_",
+              "MUX2_X1",
+              "MUX2_X2"
+            ]
+          ],
+          "placement_and_cts_reused": true,
+          "synthesis_repeated": false,
+          "changes": "Equivalent port-list cell drive variants; no RTL, IO budget, register or cycle changes"
+        }
+      },
+      "abstracts_present": {
+        ".lef": true,
+        "_typ.lib": true,
+        ".detailed.lef": true
+      },
+      "final_markers": [
+        "[INFO PSM-0040] All shapes on net VDD are connected.",
+        "[INFO PSM-0040] All shapes on net VSS are connected."
+      ]
+    },
+    "merged-cap20-repair": {
+      "spec": {
+        "name": "merged-cap20-repair",
+        "kind": "route-repair",
+        "cores": 16,
+        "case": "opentpu-act-mxu",
+        "cap_margin": 20,
+        "source_task": "merged-cap20",
+        "replacements": [
+          [
+            "u_mxu.g_ask[1].g_p[1].u_a.g_regs.r[1][3]$_DFF_P_",
+            "DFF_X1",
+            "DFF_X2"
+          ],
+          [
+            "place15504",
+            "BUF_X1",
+            "BUF_X2"
+          ],
+          [
+            "place15492",
+            "BUF_X1",
+            "BUF_X2"
+          ],
+          [
+            "place15563",
+            "BUF_X1",
+            "BUF_X2"
+          ]
+        ]
+      },
+      "stream": "A",
+      "started": "2026-10-21T12:18:49Z\n",
+      "finished": "2026-10-21T12:18:59Z\n",
+      "exit_code": "1\n",
+      "hash_exit_code": "0\n",
+      "log_tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\nTraceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/runner/wave2/resume_repair.py\", line 94, in <module>\n    subprocess.run(command+[target],stdout=log,stderr=subprocess.STDOUT,check=True)\n  File \"/usr/lib/python3.10/subprocess.py\", line 526, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['make', '-C', '/OpenROAD-flow-scripts/flow', 'DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/merged-cap20-repair/config.mk', 'WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-12/merged-cap20-repair/flow', 'NUM_CORES=16', 'do-route']' returned non-zero exit status 2.",
+      "latest_flow_log": {
+        "file": "5_1_grt.log",
+        "bytes": 3066,
+        "modified_utc": "2026-10-21T12:18:59+00:00",
+        "tail": "\"log_cmd source $::env($env_var)\"\n    (procedure \"source_env_var_if_exists\" line 3)\n    invoked from within\n\"source_env_var_if_exists $env_var\"\n    (procedure \"source_step_tcl\" line 3)\n    invoked from within\n\"source_step_tcl PRE GLOBAL_ROUTE\"\n    (procedure \"global_route_helper\" line 2)\n    invoked from within\n\"global_route_helper\"\n    (file \"/OpenROAD-flow-scripts/flow/scripts/global_route.tcl\" line 188)\nElapsed time: 0:00.59[h:]min:sec. CPU time: user 0.49 sys 0.09 (97%). Peak memory: 317424KB."
+      },
+      "metrics": {
+        "5_1_grt.json": {
+          "globalroute__flow__warnings__count": 0,
+          "globalroute__flow__errors__count": 0,
+          "globalroute__flow__warnings__type_count": 0
+        }
+      },
+      "quality": {
+        "drc": null,
+        "setup_ws_ns": null,
+        "hold_ws_ns": null,
+        "max_cap": null,
+        "cap_slack_over_limit_metric": null,
+        "max_slew": null,
+        "max_fanout": null,
+        "instance_area_um2": null
+      },
+      "stages": [],
+      "experiment": {
+        "case": "opentpu-act-mxu",
+        "top": "llhd_opentpu_act_mxu",
+        "parameters": {
+          "D": 32,
+          "MCOLS": 2,
+          "ROWS": 2,
+          "BLOCKS": 32,
+          "LANES": 4,
+          "DEPTH": 64,
+          "IMPL": 2,
+          "CL": 16,
+          "E": 0,
+          "SID": 0
+        },
+        "clock_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "cap_margin": 20,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Upstream openTPU synthetic fakeram LEF/Liberty models, not fabricated SRAM or SRAM GDS. Same unmodified generator and small configuration for split/merged cases; no full system claim.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "Targeted CTS-checkpoint physical reroute; no full formal equivalence, hard macro qualification or signoff",
+        "repair": {
+          "source_attempt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/merged-cap20",
+          "checkpoint": "4_cts.odb",
+          "replacements": [
+            [
+              "u_mxu.g_ask[1].g_p[1].u_a.g_regs.r[1][3]$_DFF_P_",
+              "DFF_X1",
+              "DFF_X2"
+            ],
+            [
+              "place15504",
+              "BUF_X1",
+              "BUF_X2"
+            ],
+            [
+              "place15492",
+              "BUF_X1",
+              "BUF_X2"
+            ],
+            [
+              "place15563",
+              "BUF_X1",
+              "BUF_X2"
+            ]
+          ],
+          "placement_and_cts_reused": true,
+          "synthesis_repeated": false,
+          "changes": "Equivalent port-list cell drive variants; no RTL, IO budget, register or cycle changes"
+        }
+      },
+      "abstracts_present": {
+        ".lef": false,
+        "_typ.lib": false,
+        ".detailed.lef": false
+      },
+      "final_markers": []
+    },
+    "cap-diagnostic": {
+      "spec": {
+        "name": "cap-diagnostic",
+        "kind": "cap-diagnostic",
+        "cores": 1,
+        "case": "opentpu-act",
+        "cap_margin": 0
+      },
+      "stream": "C",
+      "started": "2026-10-21T12:18:50Z\n",
+      "finished": "2026-10-21T12:19:06Z\n",
+      "exit_code": "0\n",
+      "hash_exit_code": "0\n",
+      "log_tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD",
+      "validation": {
+        "passed": true,
+        "diagnostic": "diagnostic.json",
+        "physical_or_system_signoff": false,
+        "qualified_hard_macro": false
+      }
+    }
+  },
+  "completion_exists": true,
+  "completion_sha256": "65d74d90ca710a2a4fd12086f2ac580c1b6e944a7dd58655368e50400224afc8  completion.json\n"
+}

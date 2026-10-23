@@ -1,0 +1,3845 @@
+{
+  "observed_utc": "2026-10-21T10:04:57.120848+00:00",
+  "submission": {
+    "attempt": "parallel-blocks-01",
+    "job_id": 89458,
+    "host": "yuzelu@10.129.166.172",
+    "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01",
+    "submitted_utc": "2026-10-21T09:01:52.546162+00:00",
+    "node_requested": "node7",
+    "cpu_allocation": "4 tasks x 16 CPUs = 64, one c64 node",
+    "time_limit_requested": "UNLIMITED",
+    "scheduler_readback": "JobId=89458 JobName=lyz-par4 UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586601 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T17:01:53 EligibleTime=2026-10-21T17:01:53 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T17:01:53 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:161736 ReqNodeList=node7 ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=64 NumTasks=4 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=64,mem=1M,node=1,billing=64 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/runner/batch.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/batch.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/batch.log Power= TresPerTask=cpu:16",
+    "branch": "task/7-parallel-blocks",
+    "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7",
+    "runner_commit": "2568623f91f871e139c4b7544d00d0181ce4cb01",
+    "cases": [
+      "llaccel-gemm",
+      "opentpu-act",
+      "opentpu-mxu",
+      "opentpu-act-mxu"
+    ],
+    "mainline_scope": "VECTOR, parent top/PDN and existing attempts untouched"
+  },
+  "scheduler": {
+    "exit_code": 0,
+    "stdout": "89458|lyz-par4|COMPLETED|0:0|00:41:33|64|node7\n89458.batch|batch|COMPLETED|0:0|00:41:33|64|node7\n89458.extern|extern|COMPLETED|0:0|00:41:33|64|node7\n89458.0|lyz-opentpu-mxu|COMPLETED|0:0|00:30:09|16|node7\n89458.1|lyz-opentpu-act|COMPLETED|0:0|00:05:59|16|node7\n89458.2|lyz-llaccel-gemm|COMPLETED|0:0|00:41:30|16|node7\n89458.3|lyz-opentpu-act-mxu|COMPLETED|0:0|00:33:59|16|node7",
+    "stderr": ""
+  },
+  "resource_accounting": {
+    "exit_code": 0,
+    "stdout": "89458|00:41:33|64|159552|09:46:40||\n89458.batch|00:41:33|64|159552|00:00:02|14868K|260M\n89458.extern|00:41:33|64|159552|00:00:00|0|0\n89458.0|00:30:09|16|28944|02:48:15|6570684K|6956884K\n89458.1|00:05:59|16|5744|12:59.992|792384K|1224164K\n89458.2|00:41:30|16|39840|03:42:40|8520044K|9250660K\n89458.3|00:33:59|16|32624|03:02:42|7086800K|7703144K",
+    "stderr": ""
+  },
+  "allocation": {
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "slurm_load_jobs error: Invalid job id specified"
+  },
+  "steps": {
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "scontrol: error: scontrol_print_step: slurm_get_job_steps(89458) failed: Invalid job id specified"
+  },
+  "cases": {
+    "llaccel-gemm": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/llaccel-gemm",
+      "step": "89458.2\n",
+      "started_utc": "2026-10-21T09:01:56Z\n",
+      "finished_utc": "2026-10-21T09:43:22Z\n",
+      "pipeline_exit_code": "0\n",
+      "output_hash_index": {
+        "exists": true,
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/llaccel-gemm/output-files.sha256"
+      },
+      "step_log_tail": "3_5_place_dp           .odb        142      216     1.52     1940 87656e5b96\n4_1_cts                .odb        128      301     2.35     1977 27147561b3\n5_1_grt                .odb        488     2603     5.33     3769 6f9ee8e591\n5_1_grt                .sdc                                       9adc53665e\n5_2_route              .odb        628     8507    13.53     8707 5a0dc34a07\n5_3_fillcell           .odb          4        4     0.99     1266 d3b3f8d05a\n6_1_fill               .odb          1        1     0.99      750 d3b3f8d05a\n6_1_fill               .sdc                                       9adc53665e\n6_1_merge                           15       15     0.98     1382 N/A\n6_report                           269      355     1.32     5993 N/A\nTotal                             2454    13336     5.41     8707\nmake: Leaving directory '/OpenROAD-flow-scripts/flow'",
+      "metrics": {
+        "1_synth.json": {
+          "synth__design__io": 3753,
+          "synth__design__nets": 292762,
+          "synth__design__die__area": 0,
+          "synth__design__core__area": 0,
+          "synth__design__instance__count": 221057,
+          "synth__design__instance__area": 467167,
+          "synth__design__instance__count__stdcell": 221057,
+          "synth__design__instance__area__stdcell": 467167,
+          "synth__design__instance__count__macros": 0,
+          "synth__design__instance__area__macros": 0,
+          "synth__design__instance__count__padcells": 0,
+          "synth__design__instance__area__padcells": 0,
+          "synth__design__instance__count__cover": 0,
+          "synth__design__instance__area__cover": 0,
+          "synth__design__rows": 0,
+          "synth__design__sites": 0,
+          "synth__flow__warnings__count": 1,
+          "synth__flow__errors__count": 0,
+          "synth__flow__warnings__count:STA-0441": 1,
+          "synth__flow__warnings__type_count": 1
+        },
+        "2_1_floorplan.json": {
+          "floorplan__design__instance__count__setup_buffer": 0,
+          "run__flow__platform__time_units": "1ns",
+          "run__flow__platform__capacitance_units": "1fF",
+          "run__flow__platform__resistance_units": "1kohm",
+          "run__flow__platform__voltage_units": "1v",
+          "run__flow__platform__current_units": "1mA",
+          "run__flow__platform__power_units": "1nW",
+          "run__flow__platform__distance_units": "1um",
+          "floorplan__timing__setup__tns": 0,
+          "floorplan__timing__hold__tns": 0,
+          "floorplan__timing__setup__ws": 0.99156,
+          "floorplan__timing__hold__ws": 0.0822057,
+          "floorplan__timing__fmax__clock:clk": 497899000.0,
+          "floorplan__timing__fmax": 497899000.0,
+          "floorplan__power__internal__total": 0.726508,
+          "floorplan__power__switching__total": 0.424954,
+          "floorplan__power__leakage__total": 0.00811314,
+          "floorplan__power__total": 1.15958,
+          "floorplan__design__io": 3753,
+          "floorplan__design__nets": 293068,
+          "floorplan__design__die__area": 1339390.0,
+          "floorplan__design__core__area": 1332420.0,
+          "floorplan__design__instance__count": 221363,
+          "floorplan__design__instance__area": 467330,
+          "floorplan__design__instance__count__stdcell": 221363,
+          "floorplan__design__instance__area__stdcell": 467330,
+          "floorplan__design__instance__count__macros": 0,
+          "floorplan__design__instance__area__macros": 0,
+          "floorplan__design__instance__count__padcells": 0,
+          "floorplan__design__instance__area__padcells": 0,
+          "floorplan__design__instance__count__cover": 0,
+          "floorplan__design__instance__area__cover": 0,
+          "floorplan__design__instance__utilization": 0.350738,
+          "floorplan__design__instance__utilization__stdcell": 0.350738,
+          "floorplan__design__rows": 824,
+          "floorplan__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 824,
+          "floorplan__design__sites": 5009096,
+          "floorplan__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 5009096,
+          "floorplan__flow__warnings__count": 2,
+          "floorplan__flow__errors__count": 0,
+          "floorplan__flow__warnings__count:EST-0027": 1,
+          "floorplan__flow__warnings__count:IFP-0028": 1,
+          "floorplan__flow__warnings__type_count": 2
+        },
+        "2_2_floorplan_macro.json": {
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "2_3_floorplan_tapcell.json": {
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "2_4_floorplan_pdn.json": {
+          "flow__warnings__count": 2,
+          "flow__errors__count": 0,
+          "flow__warnings__count:PDN-1051": 2,
+          "flow__warnings__type_count": 1
+        },
+        "3_1_place_gp_skip_io.json": {
+          "gpl__convergence__iteration": 536,
+          "gpl__area__final": 493418,
+          "gpl__area__final__percent": 0,
+          "route__wirelength__estimated": 4064230.0,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "3_2_place_iop.json": {
+          "floorplan__design__io": 3753,
+          "design__io__hpwl": 1686264966,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "3_3_place_gp.json": {
+          "globalplace__gpl__convergence__iteration": 507,
+          "globalplace__gpl__routability__iteration": 91,
+          "globalplace__gpl__routability__congestion": 0.833816,
+          "globalplace__gpl__area__original": 482873,
+          "globalplace__gpl__area__routability_inflation": 0,
+          "globalplace__gpl__area__routability_inflation__percent": 0,
+          "globalplace__gpl__area__timing_delta": 6780.98,
+          "globalplace__gpl__area__timing_delta__percent": 1.4043,
+          "globalplace__gpl__area__final": 489654,
+          "globalplace__gpl__area__final__percent": 1.4043,
+          "globalplace__route__wirelength__estimated": 3644350.0,
+          "globalplace__timing__setup__tns": 0,
+          "globalplace__timing__hold__tns": 0,
+          "globalplace__timing__setup__ws": 0.773651,
+          "globalplace__timing__hold__ws": 0.0890958,
+          "globalplace__timing__fmax__clock:clk": 449166000.0,
+          "globalplace__timing__fmax": 449166000.0,
+          "globalplace__power__internal__total": 0.70596,
+          "globalplace__power__switching__total": 0.591379,
+          "globalplace__power__leakage__total": 0.00808436,
+          "globalplace__power__total": 1.30542,
+          "globalplace__design__io": 3755,
+          "globalplace__design__nets": 285028,
+          "globalplace__design__die__area": 1339390.0,
+          "globalplace__design__core__area": 1332420.0,
+          "globalplace__design__instance__count": 218686,
+          "globalplace__design__instance__area": 464014,
+          "globalplace__design__instance__count__stdcell": 218686,
+          "globalplace__design__instance__area__stdcell": 464014,
+          "globalplace__design__instance__count__macros": 0,
+          "globalplace__design__instance__area__macros": 0,
+          "globalplace__design__instance__count__padcells": 0,
+          "globalplace__design__instance__area__padcells": 0,
+          "globalplace__design__instance__count__cover": 0,
+          "globalplace__design__instance__area__cover": 0,
+          "globalplace__design__instance__utilization": 0.348249,
+          "globalplace__design__instance__utilization__stdcell": 0.348249,
+          "globalplace__design__rows": 824,
+          "globalplace__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 824,
+          "globalplace__design__sites": 5009096,
+          "globalplace__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 5009096,
+          "globalplace__flow__warnings__count": 1,
+          "globalplace__flow__errors__count": 0,
+          "globalplace__flow__warnings__count:GRT-0281": 1,
+          "globalplace__flow__warnings__type_count": 1
+        },
+        "3_4_place_resized.json": {
+          "placeopt__timing__drv__floating__nets": 0,
+          "placeopt__timing__drv__floating__pins": 0,
+          "placeopt__timing__setup__tns": 0,
+          "placeopt__timing__hold__tns": 0,
+          "placeopt__timing__setup__ws": 0.773651,
+          "placeopt__timing__hold__ws": 0.0890958,
+          "placeopt__timing__fmax__clock:clk": 449166000.0,
+          "placeopt__timing__fmax": 449166000.0,
+          "placeopt__timing__drv__max_slew_limit": 0.305785,
+          "placeopt__timing__drv__max_slew": 0,
+          "placeopt__timing__drv__max_cap_limit": 1.56929e-05,
+          "placeopt__timing__drv__max_cap": 0,
+          "placeopt__timing__drv__max_fanout_limit": 0,
+          "placeopt__timing__drv__max_fanout": 0,
+          "placeopt__timing__drv__setup_violation_count": 0,
+          "placeopt__timing__drv__hold_violation_count": 0,
+          "placeopt__power__internal__total": 0.712937,
+          "placeopt__power__switching__total": 0.599895,
+          "placeopt__power__leakage__total": 0.00809712,
+          "placeopt__power__total": 1.32093,
+          "placeopt__design__io": 3755,
+          "placeopt__design__nets": 285209,
+          "placeopt__design__die__area": 1339390.0,
+          "placeopt__design__core__area": 1332420.0,
+          "placeopt__design__instance__count": 218867,
+          "placeopt__design__instance__area": 464313,
+          "placeopt__design__instance__count__stdcell": 218867,
+          "placeopt__design__instance__area__stdcell": 464313,
+          "placeopt__design__instance__count__macros": 0,
+          "placeopt__design__instance__area__macros": 0,
+          "placeopt__design__instance__count__padcells": 0,
+          "placeopt__design__instance__area__padcells": 0,
+          "placeopt__design__instance__count__cover": 0,
+          "placeopt__design__instance__area__cover": 0,
+          "placeopt__design__instance__utilization": 0.348474,
+          "placeopt__design__instance__utilization__stdcell": 0.348474,
+          "placeopt__design__rows": 824,
+          "placeopt__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 824,
+          "placeopt__design__sites": 5009096,
+          "placeopt__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 5009096,
+          "placeopt__flow__warnings__count": 0,
+          "placeopt__flow__errors__count": 0,
+          "placeopt__flow__warnings__type_count": 0
+        },
+        "3_5_place_dp.json": {
+          "detailedplace__utilization__before__dpl": 34.8474,
+          "detailedplace__dpl__legalizer__type": "negotiation",
+          "detailedplace__dpl__total__moves": 217583,
+          "detailedplace__dpl__negotiation__iterations__total": 3,
+          "detailedplace__dpl__negotiation__converge__phase": 1,
+          "detailedplace__dpl__negotiation__diamond__recovery__count": 0,
+          "detailedplace__dpl__instance__displacement__total": 265756,
+          "detailedplace__dpl__instance__displacement__mean": 1.214,
+          "detailedplace__dpl__instance__displacement__max": 6.53,
+          "detailedplace__dpl__route__wirelength__estimated": 3798680.0,
+          "detailedplace__dpl__hpwl__delta": 151178,
+          "detailedplace__dpl__hpwl__delta__percent": 4,
+          "detailedplace__dpo__total__attempts": 4270040,
+          "detailedplace__dpo__relocated__cells": 102532,
+          "detailedplace__dpo__instance__displacement__total": 201397,
+          "detailedplace__dpo__instance__displacement__mean": 1.96423,
+          "detailedplace__dpo__instance__displacement__max": 8.24,
+          "detailedplace__dpo__hpwl__delta": -121595,
+          "detailedplace__dpo__hpwl__delta__percent": -3,
+          "detailedplace__design__violations": 0,
+          "detailedplace__timing__setup__tns": 0,
+          "detailedplace__timing__hold__tns": 0,
+          "detailedplace__timing__setup__ws": 0.791805,
+          "detailedplace__timing__hold__ws": 0.0893545,
+          "detailedplace__timing__fmax__clock:clk": 452859000.0,
+          "detailedplace__timing__fmax": 452859000.0,
+          "detailedplace__timing__drv__max_slew_limit": 0.302347,
+          "detailedplace__timing__drv__max_slew": 0,
+          "detailedplace__timing__drv__max_cap_limit": -0.0274465,
+          "detailedplace__timing__drv__max_cap": 1,
+          "detailedplace__timing__drv__max_fanout_limit": 0,
+          "detailedplace__timing__drv__max_fanout": 0,
+          "detailedplace__timing__drv__setup_violation_count": 0,
+          "detailedplace__timing__drv__hold_violation_count": 0,
+          "detailedplace__power__internal__total": 0.713022,
+          "detailedplace__power__switching__total": 0.599906,
+          "detailedplace__power__leakage__total": 0.00809712,
+          "detailedplace__power__total": 1.32103,
+          "detailedplace__design__io": 3755,
+          "detailedplace__design__nets": 285209,
+          "detailedplace__design__die__area": 1339390.0,
+          "detailedplace__design__core__area": 1332420.0,
+          "detailedplace__design__instance__count": 218867,
+          "detailedplace__design__instance__area": 464313,
+          "detailedplace__design__instance__count__stdcell": 218867,
+          "detailedplace__design__instance__area__stdcell": 464313,
+          "detailedplace__design__instance__count__macros": 0,
+          "detailedplace__design__instance__area__macros": 0,
+          "detailedplace__design__instance__count__padcells": 0,
+          "detailedplace__design__instance__area__padcells": 0,
+          "detailedplace__design__instance__count__cover": 0,
+          "detailedplace__design__instance__area__cover": 0,
+          "detailedplace__design__instance__utilization": 0.348474,
+          "detailedplace__design__instance__utilization__stdcell": 0.348474,
+          "detailedplace__design__rows": 824,
+          "detailedplace__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 824,
+          "detailedplace__design__sites": 5009096,
+          "detailedplace__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 5009096,
+          "detailedplace__flow__warnings__count": 0,
+          "detailedplace__flow__errors__count": 0,
+          "detailedplace__flow__warnings__type_count": 0
+        },
+        "4_1_cts.json": {
+          "cts__utilization__before__dpl": 35.3965,
+          "cts__dpl__legalizer__type": "negotiation",
+          "cts__dpl__total__moves": 0,
+          "cts__dpl__negotiation__iterations__total": 0,
+          "cts__dpl__negotiation__converge__phase": 0,
+          "cts__dpl__negotiation__diamond__recovery__count": 0,
+          "cts__dpl__instance__displacement__total": 0.982,
+          "cts__dpl__instance__displacement__mean": 0,
+          "cts__dpl__instance__displacement__max": 0.7385,
+          "cts__dpl__route__wirelength__estimated": 3845790.0,
+          "cts__dpl__hpwl__delta": 0.3365,
+          "cts__dpl__hpwl__delta__percent": 0,
+          "cts__design__instance__count__setup_buffer": 0,
+          "cts__design__instance__count__hold_buffer": 2,
+          "cts__design__violations": 0,
+          "cts__timing__setup__tns": 0,
+          "cts__timing__hold__tns": 0,
+          "cts__timing__setup__ws": 0.801598,
+          "cts__timing__hold__ws": 0.00271233,
+          "cts__timing__fmax__clock:clk": 454876000.0,
+          "cts__timing__fmax": 454876000.0,
+          "cts__clock__skew__setup": 0.0842335,
+          "cts__clock__skew__hold": 0.0842335,
+          "cts__timing__drv__max_slew_limit": 0.303104,
+          "cts__timing__drv__max_slew": 0,
+          "cts__timing__drv__max_cap_limit": -0.00630909,
+          "cts__timing__drv__max_cap": 0,
+          "cts__timing__drv__max_fanout_limit": 0,
+          "cts__timing__drv__max_fanout": 0,
+          "cts__timing__drv__setup_violation_count": 0,
+          "cts__timing__drv__hold_violation_count": 0,
+          "cts__power__internal__total": 0.729416,
+          "cts__power__switching__total": 0.620539,
+          "cts__power__leakage__total": 0.00826871,
+          "cts__power__total": 1.35822,
+          "cts__design__io": 3755,
+          "cts__design__nets": 289034,
+          "cts__design__die__area": 1339390.0,
+          "cts__design__core__area": 1332420.0,
+          "cts__design__instance__count": 225617,
+          "cts__design__instance__area": 471630,
+          "cts__design__instance__count__stdcell": 225617,
+          "cts__design__instance__area__stdcell": 471630,
+          "cts__design__instance__count__macros": 0,
+          "cts__design__instance__area__macros": 0,
+          "cts__design__instance__count__padcells": 0,
+          "cts__design__instance__area__padcells": 0,
+          "cts__design__instance__count__cover": 0,
+          "cts__design__instance__area__cover": 0,
+          "cts__design__instance__utilization": 0.353965,
+          "cts__design__instance__utilization__stdcell": 0.353965,
+          "cts__design__rows": 824,
+          "cts__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 824,
+          "cts__design__sites": 5009096,
+          "cts__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 5009096,
+          "cts__flow__warnings__count": 0,
+          "cts__flow__errors__count": 0,
+          "cts__flow__warnings__type_count": 0
+        },
+        "5_1_grt.json": {
+          "globalroute__route__net": 289032,
+          "globalroute__route__net__special": 2,
+          "globalroute__global_route__fastroute__run_s": 0,
+          "globalroute__global_route__fastroute__initial_rsmt_s": 3.0825e-05,
+          "globalroute__global_route__fastroute__route_l_s": 3.4115e-05,
+          "globalroute__global_route__fastroute__congestion_rsmt_s": 4.5545e-05,
+          "globalroute__global_route__fastroute__new_route_l_s": 1.3093e-05,
+          "globalroute__global_route__fastroute__spiral_s": 1.6724e-05,
+          "globalroute__global_route__fastroute__route_z_s": 3.54e-07,
+          "globalroute__global_route__fastroute__monotonic_s": 0.002505,
+          "globalroute__global_route__fastroute__overflow_iterations_s": 2.73e-07,
+          "globalroute__global_route__fastroute__finalization_s": 0.00114075,
+          "globalroute__global_route__fastroute__snapshot_batch_route_s": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_apply_s": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_sync_s": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_count": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_nets": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_wave_count": 0,
+          "globalroute__global_route__vias": 91,
+          "globalroute__global_route__wirelength": 6205664,
+          "globalroute__utilization__before__dpl": 35.4095,
+          "globalroute__dpl__legalizer__type": "negotiation",
+          "globalroute__dpl__total__moves": 319,
+          "globalroute__dpl__negotiation__iterations__total": 1,
+          "globalroute__dpl__negotiation__converge__phase": 1,
+          "globalroute__dpl__negotiation__diamond__recovery__count": 0,
+          "globalroute__dpl__instance__displacement__total": 47.56,
+          "globalroute__dpl__instance__displacement__mean": 0,
+          "globalroute__dpl__instance__displacement__max": 2.8,
+          "globalroute__dpl__route__wirelength__estimated": 3846770.0,
+          "globalroute__dpl__hpwl__delta": 3.2,
+          "globalroute__dpl__hpwl__delta__percent": 0,
+          "globalroute__design__instance__count__setup_buffer": 0,
+          "globalroute__design__instance__count__hold_buffer": 49,
+          "globalroute__design__violations": 0,
+          "globalroute__antenna_diodes_count": 0,
+          "globalroute__antenna__violating__nets": 0,
+          "globalroute__antenna__violating__pins": 0,
+          "globalroute__timing__setup__tns": 0,
+          "globalroute__timing__hold__tns": 0,
+          "globalroute__timing__setup__ws": 0.794795,
+          "globalroute__timing__hold__ws": 3.86913e-05,
+          "globalroute__timing__fmax__clock:clk": 453473000.0,
+          "globalroute__timing__fmax": 453473000.0,
+          "globalroute__clock__skew__setup": 0.088058,
+          "globalroute__clock__skew__hold": 0.088058,
+          "globalroute__timing__drv__max_slew_limit": 0.297756,
+          "globalroute__timing__drv__max_slew": 0,
+          "globalroute__timing__drv__max_cap_limit": -0.0334528,
+          "globalroute__timing__drv__max_cap": 5,
+          "globalroute__timing__drv__max_fanout_limit": 0,
+          "globalroute__timing__drv__max_fanout": 0,
+          "globalroute__timing__drv__setup_violation_count": 0,
+          "globalroute__timing__drv__hold_violation_count": 0,
+          "globalroute__power__internal__total": 0.741371,
+          "globalroute__power__switching__total": 0.642609,
+          "globalroute__power__leakage__total": 0.00827526,
+          "globalroute__power__total": 1.39226,
+          "globalroute__design__io": 3755,
+          "globalroute__design__nets": 289159,
+          "globalroute__design__die__area": 1339390.0,
+          "globalroute__design__core__area": 1332420.0,
+          "globalroute__design__instance__count": 225742,
+          "globalroute__design__instance__area": 471803,
+          "globalroute__design__instance__count__stdcell": 225742,
+          "globalroute__design__instance__area__stdcell": 471803,
+          "globalroute__design__instance__count__macros": 0,
+          "globalroute__design__instance__area__macros": 0,
+          "globalroute__design__instance__count__padcells": 0,
+          "globalroute__design__instance__area__padcells": 0,
+          "globalroute__design__instance__count__cover": 0,
+          "globalroute__design__instance__area__cover": 0,
+          "globalroute__design__instance__utilization": 0.354095,
+          "globalroute__design__instance__utilization__stdcell": 0.354095,
+          "globalroute__design__rows": 824,
+          "globalroute__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 824,
+          "globalroute__design__sites": 5009096,
+          "globalroute__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 5009096,
+          "globalroute__flow__warnings__count": 21513,
+          "globalroute__flow__errors__count": 0,
+          "globalroute__flow__warnings__count:GRT-0246": 1,
+          "globalroute__flow__warnings__count:RSZ-0104": 1001,
+          "globalroute__flow__warnings__type_count": 2
+        },
+        "5_2_route.json": {
+          "detailedroute__route__net": 289157,
+          "detailedroute__route__net__special": 2,
+          "detailedroute__route__drc_errors__iter:0": 36489,
+          "detailedroute__route__wirelength__iter:0": 4520082,
+          "detailedroute__route__drc_errors__iter:1": 6837,
+          "detailedroute__route__wirelength__iter:1": 4498093,
+          "detailedroute__route__drc_errors__iter:2": 5213,
+          "detailedroute__route__wirelength__iter:2": 4494416,
+          "detailedroute__route__drc_errors__iter:3": 101,
+          "detailedroute__route__wirelength__iter:3": 4494516,
+          "detailedroute__route__drc_errors__iter:4": 0,
+          "detailedroute__route__wirelength__iter:4": 4494512,
+          "detailedroute__route__drc_errors": 0,
+          "detailedroute__route__wirelength": 4494512,
+          "detailedroute__route__vias": 1593644,
+          "detailedroute__route__vias__singlecut": 1593644,
+          "detailedroute__route__vias__multicut": 0,
+          "detailedroute__antenna_diodes_count": 0,
+          "detailedroute__antenna__violating__nets": 0,
+          "detailedroute__antenna__violating__pins": 0,
+          "detailedroute__flow__warnings__count": 1,
+          "detailedroute__flow__errors__count": 0,
+          "detailedroute__flow__warnings__count:GRT-0246": 1,
+          "detailedroute__flow__warnings__type_count": 1
+        },
+        "5_3_fillcell.json": {
+          "design__violations": 0,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "6_1_fill.json": {
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "6_report.json": {
+          "finish__design_powergrid__voltage__worst__net:VDD__corner:default": 0.988742,
+          "finish__design_powergrid__voltage__average__net:VDD__corner:default": 1.09291,
+          "finish__design_powergrid__drop__average__net:VDD__corner:default": 0.0070937,
+          "finish__design_powergrid__drop__worst__net:VDD__corner:default": 0.111258,
+          "finish__design_powergrid__voltage__worst__net:VSS__corner:default": 0.105029,
+          "finish__design_powergrid__voltage__average__net:VSS__corner:default": 0.00699609,
+          "finish__design_powergrid__drop__average__net:VSS__corner:default": 0.00699609,
+          "finish__design_powergrid__drop__worst__net:VSS__corner:default": 0.105029,
+          "finish__design__instance__count__class:fill_cell": 343798,
+          "finish__design__instance__area__class:fill_cell": 860616,
+          "finish__design__instance__count__class:tap_cell": 5365,
+          "finish__design__instance__area__class:tap_cell": 1427.09,
+          "finish__design__instance__count__class:clock_buffer": 5153,
+          "finish__design__instance__area__class:clock_buffer": 6164.55,
+          "finish__design__instance__count__class:timing_repair_buffer": 9669,
+          "finish__design__instance__area__class:timing_repair_buffer": 9626.01,
+          "finish__design__instance__count__class:inverter": 8866,
+          "finish__design__instance__area__class:inverter": 4724.43,
+          "finish__design__instance__count__class:clock_inverter": 1595,
+          "finish__design__instance__area__class:clock_inverter": 1150.45,
+          "finish__design__instance__count__class:sequential_cell": 21360,
+          "finish__design__instance__area__class:sequential_cell": 97938,
+          "finish__design__instance__count__class:multi_input_combinational_cell": 173734,
+          "finish__design__instance__area__class:multi_input_combinational_cell": 350773,
+          "finish__design__instance__count": 569540,
+          "finish__design__instance__area": 471803,
+          "finish__timing__setup__tns": 0,
+          "finish__timing__hold__tns": 0,
+          "finish__timing__setup__ws": 0.781452,
+          "finish__timing__hold__ws": 0.0250618,
+          "finish__timing__fmax__clock:clk": 450745000.0,
+          "finish__timing__fmax": 450745000.0,
+          "finish__clock__skew__setup": 0.109798,
+          "finish__clock__skew__hold": 0.109798,
+          "finish__timing__drv__max_slew_limit": 0.18563,
+          "finish__timing__drv__max_slew": 0,
+          "finish__timing__drv__max_cap_limit": -0.197326,
+          "finish__timing__drv__max_cap": 49,
+          "finish__timing__drv__max_fanout_limit": 0,
+          "finish__timing__drv__max_fanout": 0,
+          "finish__timing__drv__setup_violation_count": 0,
+          "finish__timing__drv__hold_violation_count": 0,
+          "finish__power__internal__total": 0.742368,
+          "finish__power__switching__total": 0.628595,
+          "finish__power__leakage__total": 0.00827526,
+          "finish__power__total": 1.37924,
+          "finish__design__io": 3755,
+          "finish__design__nets": 289159,
+          "finish__design__die__area": 1339390.0,
+          "finish__design__core__area": 1332420.0,
+          "finish__design__instance__count__stdcell": 225742,
+          "finish__design__instance__area__stdcell": 471803,
+          "finish__design__instance__count__macros": 0,
+          "finish__design__instance__area__macros": 0,
+          "finish__design__instance__count__padcells": 0,
+          "finish__design__instance__area__padcells": 0,
+          "finish__design__instance__count__cover": 0,
+          "finish__design__instance__area__cover": 0,
+          "finish__design__instance__utilization": 0.354095,
+          "finish__design__instance__utilization__stdcell": 0.354095,
+          "finish__design__rows": 824,
+          "finish__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 824,
+          "finish__design__sites": 5009096,
+          "finish__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 5009096,
+          "finish__flow__warnings__count": 0,
+          "finish__flow__errors__count": 0,
+          "finish__flow__warnings__type_count": 0
+        }
+      },
+      "artifacts": [
+        {
+          "name": "1_1_yosys_canonicalize.rtlil",
+          "size": 3658545
+        },
+        {
+          "name": "1_2_yosys.sdc",
+          "size": 246
+        },
+        {
+          "name": "1_2_yosys.v",
+          "size": 48396014
+        },
+        {
+          "name": "1_synth.odb",
+          "size": 117820883
+        },
+        {
+          "name": "1_synth.sdc",
+          "size": 343838
+        },
+        {
+          "name": "2_1_floorplan.odb",
+          "size": 117987270
+        },
+        {
+          "name": "2_1_floorplan.sdc",
+          "size": 343838
+        },
+        {
+          "name": "2_2_floorplan_macro.odb",
+          "size": 117987270
+        },
+        {
+          "name": "2_2_floorplan_macro.tcl",
+          "size": 1
+        },
+        {
+          "name": "2_3_floorplan_tapcell.odb",
+          "size": 119285250
+        },
+        {
+          "name": "2_4_floorplan_pdn.odb",
+          "size": 121672115
+        },
+        {
+          "name": "2_floorplan.odb",
+          "size": 121672115
+        },
+        {
+          "name": "2_floorplan.sdc",
+          "size": 343838
+        },
+        {
+          "name": "3_1_place_gp_skip_io.odb",
+          "size": 121672177
+        },
+        {
+          "name": "3_2_place_iop.odb",
+          "size": 121922593
+        },
+        {
+          "name": "3_2_place_iop.tcl",
+          "size": 382800
+        },
+        {
+          "name": "3_3_place_gp.odb",
+          "size": 119184682
+        },
+        {
+          "name": "3_4_place_resized.odb",
+          "size": 119247013
+        },
+        {
+          "name": "3_5_place_dp.odb",
+          "size": 119247013
+        },
+        {
+          "name": "3_place.odb",
+          "size": 119247013
+        },
+        {
+          "name": "3_place.sdc",
+          "size": 343838
+        },
+        {
+          "name": "4_1_cts.odb",
+          "size": 121416206
+        },
+        {
+          "name": "4_cts.odb",
+          "size": 121416206
+        },
+        {
+          "name": "4_cts.sdc",
+          "size": 343878
+        },
+        {
+          "name": "5_1_grt.odb",
+          "size": 218201162
+        },
+        {
+          "name": "5_1_grt.sdc",
+          "size": 343878
+        },
+        {
+          "name": "5_2_route.odb",
+          "size": 296230703
+        },
+        {
+          "name": "5_3_fillcell.odb",
+          "size": 376092888
+        },
+        {
+          "name": "5_route.odb",
+          "size": 376092888
+        },
+        {
+          "name": "5_route.sdc",
+          "size": 343878
+        },
+        {
+          "name": "6_1_fill.odb",
+          "size": 376092888
+        },
+        {
+          "name": "6_1_fill.sdc",
+          "size": 343878
+        },
+        {
+          "name": "6_1_merged.gds",
+          "size": 196389136
+        },
+        {
+          "name": "6_final.def",
+          "size": 210590568
+        },
+        {
+          "name": "6_final.gds",
+          "size": 196389136
+        },
+        {
+          "name": "6_final.odb",
+          "size": 376092888
+        },
+        {
+          "name": "6_final.sdc",
+          "size": 343878
+        },
+        {
+          "name": "6_final.spef",
+          "size": 272412953
+        },
+        {
+          "name": "6_final.v",
+          "size": 24784057
+        },
+        {
+          "name": "mem.json",
+          "size": 5564303
+        },
+        {
+          "name": "route.guide",
+          "size": 75398266
+        },
+        {
+          "name": "updated_clks.sdc",
+          "size": 343838
+        }
+      ],
+      "route_drc_report": {
+        "exists": true,
+        "bytes": 0
+      },
+      "stages": {
+        "synthesis": true,
+        "placement": true,
+        "cts": true,
+        "global_route": true,
+        "detailed_route": true,
+        "final_report": true
+      },
+      "acceptance": "Requires separate per-stage metric, signal/PG, timing, electrical and model review; no signoff inferred",
+      "quality_summary": {
+        "route_drc_errors": 0,
+        "setup_ws_ns": 0.781452,
+        "setup_tns_ns": 0,
+        "hold_ws_ns": 0.0250618,
+        "hold_tns_ns": 0,
+        "max_cap_violations": 49,
+        "max_slew_violations": 0,
+        "max_fanout_violations": 0,
+        "die_area_um2": 1339390.0,
+        "nonfiller_instance_area_um2": 471803,
+        "stdcell_area_um2": 471803,
+        "macro_area_um2": 0,
+        "scope": "Tool single-corner budget checks, no complete boundary load/activity or signoff"
+      },
+      "max_cap_violations_by_stage": {
+        "3_4_place_resized.json": {
+          "placeopt__timing__drv__max_cap": 0
+        },
+        "3_5_place_dp.json": {
+          "detailedplace__timing__drv__max_cap": 1
+        },
+        "4_1_cts.json": {
+          "cts__timing__drv__max_cap": 0
+        },
+        "5_1_grt.json": {
+          "globalroute__timing__drv__max_cap": 5
+        },
+        "6_report.json": {
+          "finish__timing__drv__max_cap": 49
+        }
+      },
+      "final_electrical_violation_rows": [
+        "_331213_/ZN                            60.73   72.71  -11.98 (VIOLATED)",
+        "_328774_/ZN                            60.73   70.09   -9.36 (VIOLATED)",
+        "_333026_/ZN                            26.02   34.43   -8.42 (VIOLATED)",
+        "_331243_/ZN                           118.71  126.69   -7.98 (VIOLATED)",
+        "_382081_/ZN                           106.81  112.54   -5.73 (VIOLATED)",
+        "input626/Z                             60.65   66.32   -5.67 (VIOLATED)",
+        "_324017_/Z                             60.50   66.01   -5.51 (VIOLATED)",
+        "_329968_/ZN                            22.16   27.45   -5.29 (VIOLATED)",
+        "_331244_/ZN                           106.81  111.94   -5.13 (VIOLATED)",
+        "_332847_/Z                             25.33   30.32   -4.99 (VIOLATED)",
+        "_380139_/ZN                            23.23   27.51   -4.28 (VIOLATED)",
+        "_344467_/ZN                            59.36   63.33   -3.97 (VIOLATED)",
+        "_328399_/ZN                            60.73   64.68   -3.95 (VIOLATED)",
+        "_333072_/ZN                            26.02   29.82   -3.80 (VIOLATED)",
+        "_380252_/ZN                            23.23   27.01   -3.78 (VIOLATED)",
+        "_332872_/Z                             25.33   29.07   -3.74 (VIOLATED)",
+        "_329837_/ZN                            53.41   56.32   -2.91 (VIOLATED)",
+        "_324548_/Z                             60.50   63.26   -2.76 (VIOLATED)",
+        "_329732_/ZN                            60.73   63.39   -2.66 (VIOLATED)",
+        "_380264_/ZN                            23.23   25.88   -2.65 (VIOLATED)",
+        "_333082_/Z                             25.33   27.93   -2.60 (VIOLATED)",
+        "_320369_/Z                             60.50   63.08   -2.58 (VIOLATED)",
+        "_328351_/ZN                            60.73   63.26   -2.53 (VIOLATED)",
+        "_332762_/ZN                            26.02   28.51   -2.49 (VIOLATED)",
+        "_380718_/ZN                            31.74   34.17   -2.44 (VIOLATED)",
+        "d1_val[0][160]$_DFFE_PP_/Q             60.73   63.04   -2.31 (VIOLATED)",
+        "_344413_/ZN                            53.41   55.64   -2.24 (VIOLATED)",
+        "_332860_/ZN                            26.02   28.24   -2.23 (VIOLATED)",
+        "rq_m[242]$_DFFE_PN0P_/Q                60.58   62.80   -2.22 (VIOLATED)",
+        "_267513_/ZN                           121.46  123.67   -2.21 (VIOLATED)",
+        "rq_s[57]$_DFFE_PN0P_/Q                 60.58   62.66   -2.08 (VIOLATED)",
+        "_380540_/ZN                            59.36   61.30   -1.95 (VIOLATED)",
+        "rq_m[495]$_DFFE_PN0P_/Q                60.58   62.32   -1.74 (VIOLATED)",
+        "_323483_/Z                             60.50   62.24   -1.74 (VIOLATED)",
+        "rq_m[230]$_DFFE_PN0P_/Q                60.58   62.31   -1.73 (VIOLATED)",
+        "_329898_/ZN                            26.70   28.37   -1.66 (VIOLATED)",
+        "d1_val[0][230]$_DFFE_PP_/Q             60.73   62.33   -1.60 (VIOLATED)",
+        "_380185_/ZN                            60.73   62.23   -1.50 (VIOLATED)",
+        "_333068_/ZN                            26.02   27.34   -1.33 (VIOLATED)",
+        "_400130_/ZN                            60.58   61.88   -1.30 (VIOLATED)",
+        "_357407_/ZN                            26.02   27.30   -1.28 (VIOLATED)",
+        "_382952_/ZN                            26.05   27.33   -1.28 (VIOLATED)",
+        "_331281_/ZN                            60.58   61.85   -1.27 (VIOLATED)",
+        "_379230_/ZN                            26.02   27.28   -1.27 (VIOLATED)",
+        "_332840_/Z                             25.33   26.52   -1.19 (VIOLATED)",
+        "d1_val[0][31]$_DFFE_PP_/Q              60.73   61.91   -1.18 (VIOLATED)",
+        "place20449/Z                           60.65   61.83   -1.17 (VIOLATED)",
+        "_385000_/ZN                            26.05   27.21   -1.15 (VIOLATED)",
+        "rq_m[493]$_DFFE_PN0P_/Q                60.58   61.64   -1.06 (VIOLATED)"
+      ],
+      "final_electrical_report": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/llaccel-gemm/flow/reports/nangate45/parallel_llaccel_gemm/base/6_finish.rpt",
+      "final_log_markers": [
+        "[INFO PSM-0040] All shapes on net VDD are connected.",
+        "Average IR drop  : 7.09e-03 V",
+        "Worstcase IR drop: 1.11e-01 V",
+        "[INFO PSM-0040] All shapes on net VSS are connected.",
+        "Average IR drop  : 7.00e-03 V",
+        "Worstcase IR drop: 1.05e-01 V"
+      ],
+      "experiment.json": {
+        "case": "llaccel-gemm",
+        "top": "gemm_engine",
+        "parameters": {
+          "EPILOGUE_FUSION": 0,
+          "GEMM_TN": 16,
+          "GEMM_TK": 16,
+          "GEMM_TM": 16
+        },
+        "clock_ns": 3.0,
+        "io_delay_ns": 0.6,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Original llaccel fixed v1 EPILOGUE_FUSION=0, no SRAM bank storage; original RTL inferred memories.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "independent block implementation; not top integration, H2, source-to-netlist equivalence or signoff"
+      },
+      "elaboration-summary.json": {
+        "top": "gemm_engine",
+        "ports": {
+          "clk": {
+            "direction": "input",
+            "bits": 1
+          },
+          "rst_n": {
+            "direction": "input",
+            "bits": 1
+          },
+          "instr_valid": {
+            "direction": "input",
+            "bits": 1
+          },
+          "instr": {
+            "direction": "input",
+            "bits": 512
+          },
+          "instr_ready": {
+            "direction": "output",
+            "bits": 1
+          },
+          "busy": {
+            "direction": "output",
+            "bits": 1
+          },
+          "done_pulse": {
+            "direction": "output",
+            "bits": 1
+          },
+          "done_sig_sem": {
+            "direction": "output",
+            "bits": 8
+          },
+          "gemm_w_valid": {
+            "direction": "output",
+            "bits": 1
+          },
+          "gemm_w_req": {
+            "direction": "output",
+            "bits": 26
+          },
+          "gemm_w_grant": {
+            "direction": "input",
+            "bits": 1
+          },
+          "gemm_w_rvalid": {
+            "direction": "input",
+            "bits": 1
+          },
+          "gemm_w_rdata": {
+            "direction": "input",
+            "bits": 2048
+          },
+          "gemm_a_valid": {
+            "direction": "output",
+            "bits": 1
+          },
+          "gemm_a_req": {
+            "direction": "output",
+            "bits": 26
+          },
+          "gemm_a_grant": {
+            "direction": "input",
+            "bits": 1
+          },
+          "gemm_a_rvalid": {
+            "direction": "input",
+            "bits": 1
+          },
+          "gemm_a_rdata": {
+            "direction": "input",
+            "bits": 512
+          },
+          "gemm_wr_valid": {
+            "direction": "output",
+            "bits": 1
+          },
+          "gemm_wr_req": {
+            "direction": "output",
+            "bits": 26
+          },
+          "gemm_wr_wdata": {
+            "direction": "output",
+            "bits": 512
+          },
+          "gemm_wr_wstrb": {
+            "direction": "output",
+            "bits": 64
+          },
+          "gemm_wr_grant": {
+            "direction": "input",
+            "bits": 1
+          },
+          "perf_busy": {
+            "direction": "output",
+            "bits": 1
+          },
+          "perf_mac_cycle": {
+            "direction": "output",
+            "bits": 1
+          },
+          "perf_epilogue_cycle": {
+            "direction": "output",
+            "bits": 1
+          },
+          "perf_sram_stall": {
+            "direction": "output",
+            "bits": 2
+          }
+        },
+        "port_count": 27,
+        "signal_bits": 3753,
+        "blackbox_cells": {},
+        "check": "Yosys hierarchy -check and check -assert completed; not functional equivalence"
+      },
+      "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif\n",
+      "tools.sha256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53  /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad\nc2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b  /OpenROAD-flow-scripts/tools/install/yosys/bin/yosys\n",
+      "config-inputs.sha256": "5f390345d1956c502f13c8ed366d7b7f57288b0850f06b97fb93b06a158b0212  config.mk\na171fe89d20e213ab21fd1c47847ce5df285c1ff5139f97329b6120c12817022  boundary.sdc\nc8d7009c056aedb8bd73974897c3f3c0220a0a97e994eb6dbe21bbcfa5c31be0  elab.ys\ncbd2b4cfdad0fbfe2ec73b336279ae762cf9d1cb3f124c10025fcb3bc606719d  experiment.json\n"
+    },
+    "opentpu-act": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/opentpu-act",
+      "step": "89458.1\n",
+      "started_utc": "2026-10-21T09:01:56Z\n",
+      "finished_utc": "2026-10-21T09:07:55Z\n",
+      "pipeline_exit_code": "0\n",
+      "output_hash_index": {
+        "exists": true,
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/opentpu-act/output-files.sha256"
+      },
+      "step_log_tail": "3_5_place_dp           .odb          2        3     1.48      266 f54dd6ab22\n4_1_cts                .odb          1        4     2.33      279 4ee76915eb\n5_1_grt                .odb          7       40     5.32      380 8ff1d0eb6a\n5_1_grt                .sdc                                       ed90b4e013\n5_2_route              .odb        233      581     2.49      941 fb0525d5a3\n5_3_fillcell           .odb          0        0     0.98      146 60cbe198c4\n6_1_fill               .odb          0        0     0.97      118 60cbe198c4\n6_1_fill               .sdc                                       ed90b4e013\n6_1_merge                            2        3     0.95      442 N/A\n6_report                             5        7     1.29      281 N/A\nTotal                              338      772     2.22      941\nmake: Leaving directory '/OpenROAD-flow-scripts/flow'",
+      "metrics": {
+        "1_synth.json": {
+          "synth__design__io": 860,
+          "synth__design__nets": 4654,
+          "synth__design__die__area": 0,
+          "synth__design__core__area": 0,
+          "synth__design__instance__count": 3167,
+          "synth__design__instance__area": 34994.4,
+          "synth__design__instance__count__stdcell": 3161,
+          "synth__design__instance__area__stdcell": 5847.21,
+          "synth__design__instance__count__macros": 6,
+          "synth__design__instance__area__macros": 29147.2,
+          "synth__design__instance__count__padcells": 0,
+          "synth__design__instance__area__padcells": 0,
+          "synth__design__instance__count__cover": 0,
+          "synth__design__instance__area__cover": 0,
+          "synth__design__rows": 0,
+          "synth__design__sites": 0,
+          "synth__flow__warnings__count": 1,
+          "synth__flow__errors__count": 0,
+          "synth__flow__warnings__count:STA-0441": 1,
+          "synth__flow__warnings__type_count": 1
+        },
+        "2_1_floorplan.json": {
+          "floorplan__design__instance__count__setup_buffer": 0,
+          "run__flow__platform__time_units": "1ns",
+          "run__flow__platform__capacitance_units": "1fF",
+          "run__flow__platform__resistance_units": "1kohm",
+          "run__flow__platform__voltage_units": "1v",
+          "run__flow__platform__current_units": "1mA",
+          "run__flow__platform__power_units": "1nW",
+          "run__flow__platform__distance_units": "1um",
+          "floorplan__timing__setup__tns": 0,
+          "floorplan__timing__hold__tns": 0,
+          "floorplan__timing__setup__ws": 1.40783,
+          "floorplan__timing__hold__ws": 0.0343654,
+          "floorplan__timing__fmax__clock:clk": 915606000.0,
+          "floorplan__timing__fmax": 915606000.0,
+          "floorplan__power__internal__total": 0.0159426,
+          "floorplan__power__switching__total": 0.000444136,
+          "floorplan__power__leakage__total": 0.000121695,
+          "floorplan__power__total": 0.0165084,
+          "floorplan__design__io": 860,
+          "floorplan__design__nets": 4781,
+          "floorplan__design__die__area": 106410,
+          "floorplan__design__core__area": 99530.6,
+          "floorplan__design__instance__count": 3294,
+          "floorplan__design__instance__area": 35062,
+          "floorplan__design__instance__count__stdcell": 3288,
+          "floorplan__design__instance__area__stdcell": 5914.78,
+          "floorplan__design__instance__count__macros": 6,
+          "floorplan__design__instance__area__macros": 29147.2,
+          "floorplan__design__instance__count__padcells": 0,
+          "floorplan__design__instance__area__padcells": 0,
+          "floorplan__design__instance__count__cover": 0,
+          "floorplan__design__instance__area__cover": 0,
+          "floorplan__design__instance__utilization": 0.352274,
+          "floorplan__design__instance__utilization__stdcell": 0.0840366,
+          "floorplan__design__rows": 225,
+          "floorplan__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 225,
+          "floorplan__design__sites": 374175,
+          "floorplan__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 374175,
+          "floorplan__flow__warnings__count": 2,
+          "floorplan__flow__errors__count": 0,
+          "floorplan__flow__warnings__count:EST-0027": 1,
+          "floorplan__flow__warnings__count:IFP-0028": 1,
+          "floorplan__flow__warnings__type_count": 2
+        },
+        "2_2_floorplan_macro.json": {
+          "macro_place__wirelength": 158682,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "2_3_floorplan_tapcell.json": {
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "2_4_floorplan_pdn.json": {
+          "flow__warnings__count": 1,
+          "flow__errors__count": 0,
+          "flow__warnings__count:PDN-1051": 1,
+          "flow__warnings__type_count": 1
+        },
+        "3_1_place_gp_skip_io.json": {
+          "gpl__convergence__iteration": 369,
+          "gpl__area__final": 6508.21,
+          "gpl__area__final__percent": 0,
+          "route__wirelength__estimated": 118696,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "3_2_place_iop.json": {
+          "floorplan__design__io": 860,
+          "design__io__hpwl": 82220547,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "3_3_place_gp.json": {
+          "globalplace__gpl__convergence__iteration": 1326,
+          "globalplace__gpl__routability__iteration": 966,
+          "globalplace__gpl__routability__congestion": 1.75263,
+          "globalplace__gpl__area__original": 6882.18,
+          "globalplace__gpl__area__routability_inflation": 474.283,
+          "globalplace__gpl__area__routability_inflation__percent": 6.89146,
+          "globalplace__gpl__area__timing_delta": 52.8371,
+          "globalplace__gpl__area__timing_delta__percent": 0.767737,
+          "globalplace__gpl__area__final": 7409.3,
+          "globalplace__gpl__area__final__percent": 7.65919,
+          "globalplace__route__wirelength__estimated": 202689,
+          "globalplace__timing__setup__tns": 0,
+          "globalplace__timing__hold__tns": 0,
+          "globalplace__timing__setup__ws": 1.25591,
+          "globalplace__timing__hold__ws": 0.0380359,
+          "globalplace__timing__fmax__clock:clk": 803800000.0,
+          "globalplace__timing__fmax": 803800000.0,
+          "globalplace__power__internal__total": 0.0159373,
+          "globalplace__power__switching__total": 0.000689131,
+          "globalplace__power__leakage__total": 0.000134784,
+          "globalplace__power__total": 0.0167612,
+          "globalplace__design__io": 862,
+          "globalplace__design__nets": 5336,
+          "globalplace__design__die__area": 106410,
+          "globalplace__design__core__area": 99530.6,
+          "globalplace__design__instance__count": 4432,
+          "globalplace__design__instance__area": 35652,
+          "globalplace__design__instance__count__stdcell": 4426,
+          "globalplace__design__instance__area__stdcell": 6504.76,
+          "globalplace__design__instance__count__macros": 6,
+          "globalplace__design__instance__area__macros": 29147.2,
+          "globalplace__design__instance__count__padcells": 0,
+          "globalplace__design__instance__area__padcells": 0,
+          "globalplace__design__instance__count__cover": 0,
+          "globalplace__design__instance__area__cover": 0,
+          "globalplace__design__instance__utilization": 0.358201,
+          "globalplace__design__instance__utilization__stdcell": 0.0924191,
+          "globalplace__design__rows": 225,
+          "globalplace__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 225,
+          "globalplace__design__sites": 228929,
+          "globalplace__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 228929,
+          "globalplace__flow__warnings__count": 0,
+          "globalplace__flow__errors__count": 0,
+          "globalplace__flow__warnings__type_count": 0
+        },
+        "3_4_place_resized.json": {
+          "placeopt__timing__drv__floating__nets": 0,
+          "placeopt__timing__drv__floating__pins": 0,
+          "placeopt__timing__setup__tns": 0,
+          "placeopt__timing__hold__tns": 0,
+          "placeopt__timing__setup__ws": 1.25591,
+          "placeopt__timing__hold__ws": 0.0380359,
+          "placeopt__timing__fmax__clock:clk": 803800000.0,
+          "placeopt__timing__fmax": 803800000.0,
+          "placeopt__timing__drv__max_slew_limit": 0.287203,
+          "placeopt__timing__drv__max_slew": 0,
+          "placeopt__timing__drv__max_cap_limit": 0.0315626,
+          "placeopt__timing__drv__max_cap": 0,
+          "placeopt__timing__drv__max_fanout_limit": 0,
+          "placeopt__timing__drv__max_fanout": 0,
+          "placeopt__timing__drv__setup_violation_count": 0,
+          "placeopt__timing__drv__hold_violation_count": 0,
+          "placeopt__power__internal__total": 0.015939,
+          "placeopt__power__switching__total": 0.000689601,
+          "placeopt__power__leakage__total": 0.000135276,
+          "placeopt__power__total": 0.0167639,
+          "placeopt__design__io": 862,
+          "placeopt__design__nets": 5347,
+          "placeopt__design__die__area": 106410,
+          "placeopt__design__core__area": 99530.6,
+          "placeopt__design__instance__count": 4443,
+          "placeopt__design__instance__area": 35665.3,
+          "placeopt__design__instance__count__stdcell": 4437,
+          "placeopt__design__instance__area__stdcell": 6518.06,
+          "placeopt__design__instance__count__macros": 6,
+          "placeopt__design__instance__area__macros": 29147.2,
+          "placeopt__design__instance__count__padcells": 0,
+          "placeopt__design__instance__area__padcells": 0,
+          "placeopt__design__instance__count__cover": 0,
+          "placeopt__design__instance__area__cover": 0,
+          "placeopt__design__instance__utilization": 0.358335,
+          "placeopt__design__instance__utilization__stdcell": 0.0926081,
+          "placeopt__design__rows": 225,
+          "placeopt__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 225,
+          "placeopt__design__sites": 228929,
+          "placeopt__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 228929,
+          "placeopt__flow__warnings__count": 0,
+          "placeopt__flow__errors__count": 0,
+          "placeopt__flow__warnings__type_count": 0
+        },
+        "3_5_place_dp.json": {
+          "detailedplace__utilization__before__dpl": 35.8335,
+          "detailedplace__dpl__legalizer__type": "negotiation",
+          "detailedplace__dpl__total__moves": 3845,
+          "detailedplace__dpl__negotiation__iterations__total": 3,
+          "detailedplace__dpl__negotiation__converge__phase": 1,
+          "detailedplace__dpl__negotiation__diamond__recovery__count": 0,
+          "detailedplace__dpl__instance__displacement__total": 21472.5,
+          "detailedplace__dpl__instance__displacement__mean": 4.839,
+          "detailedplace__dpl__instance__displacement__max": 133.726,
+          "detailedplace__dpl__route__wirelength__estimated": 237405,
+          "detailedplace__dpl__hpwl__delta": 34632.7,
+          "detailedplace__dpl__hpwl__delta__percent": 17,
+          "detailedplace__dpo__total__attempts": 231120,
+          "detailedplace__dpo__relocated__cells": 3053,
+          "detailedplace__dpo__instance__displacement__total": 9634.97,
+          "detailedplace__dpo__instance__displacement__mean": 3.1559,
+          "detailedplace__dpo__instance__displacement__max": 8.24,
+          "detailedplace__dpo__hpwl__delta": -6392.1,
+          "detailedplace__dpo__hpwl__delta__percent": -3,
+          "detailedplace__design__violations": 0,
+          "detailedplace__timing__setup__tns": 0,
+          "detailedplace__timing__hold__tns": 0,
+          "detailedplace__timing__setup__ws": 1.24774,
+          "detailedplace__timing__hold__ws": 0.0391675,
+          "detailedplace__timing__fmax__clock:clk": 798556000.0,
+          "detailedplace__timing__fmax": 798556000.0,
+          "detailedplace__timing__drv__max_slew_limit": 0.300403,
+          "detailedplace__timing__drv__max_slew": 0,
+          "detailedplace__timing__drv__max_cap_limit": 0.00936767,
+          "detailedplace__timing__drv__max_cap": 0,
+          "detailedplace__timing__drv__max_fanout_limit": 0,
+          "detailedplace__timing__drv__max_fanout": 0,
+          "detailedplace__timing__drv__setup_violation_count": 0,
+          "detailedplace__timing__drv__hold_violation_count": 0,
+          "detailedplace__power__internal__total": 0.0159388,
+          "detailedplace__power__switching__total": 0.000685455,
+          "detailedplace__power__leakage__total": 0.000135276,
+          "detailedplace__power__total": 0.0167596,
+          "detailedplace__design__io": 862,
+          "detailedplace__design__nets": 5347,
+          "detailedplace__design__die__area": 106410,
+          "detailedplace__design__core__area": 99530.6,
+          "detailedplace__design__instance__count": 4443,
+          "detailedplace__design__instance__area": 35665.3,
+          "detailedplace__design__instance__count__stdcell": 4437,
+          "detailedplace__design__instance__area__stdcell": 6518.06,
+          "detailedplace__design__instance__count__macros": 6,
+          "detailedplace__design__instance__area__macros": 29147.2,
+          "detailedplace__design__instance__count__padcells": 0,
+          "detailedplace__design__instance__area__padcells": 0,
+          "detailedplace__design__instance__count__cover": 0,
+          "detailedplace__design__instance__area__cover": 0,
+          "detailedplace__design__instance__utilization": 0.358335,
+          "detailedplace__design__instance__utilization__stdcell": 0.0926081,
+          "detailedplace__design__rows": 225,
+          "detailedplace__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 225,
+          "detailedplace__design__sites": 228929,
+          "detailedplace__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 228929,
+          "detailedplace__flow__warnings__count": 0,
+          "detailedplace__flow__errors__count": 0,
+          "detailedplace__flow__warnings__type_count": 0
+        },
+        "4_1_cts.json": {
+          "cts__utilization__before__dpl": 36.0361,
+          "cts__dpl__legalizer__type": "negotiation",
+          "cts__dpl__total__moves": 0,
+          "cts__dpl__negotiation__iterations__total": 0,
+          "cts__dpl__negotiation__converge__phase": 0,
+          "cts__dpl__negotiation__diamond__recovery__count": 0,
+          "cts__dpl__instance__displacement__total": 0,
+          "cts__dpl__instance__displacement__mean": 0,
+          "cts__dpl__instance__displacement__max": 0,
+          "cts__dpl__route__wirelength__estimated": 234779,
+          "cts__dpl__hpwl__delta": 0,
+          "cts__dpl__hpwl__delta__percent": 0,
+          "cts__design__instance__count__setup_buffer": 0,
+          "cts__design__instance__count__hold_buffer": 0,
+          "cts__design__violations": 0,
+          "cts__timing__setup__tns": 0,
+          "cts__timing__hold__tns": 0,
+          "cts__timing__setup__ws": 1.25338,
+          "cts__timing__hold__ws": 0.0300483,
+          "cts__timing__fmax__clock:clk": 802167000.0,
+          "cts__timing__fmax": 802167000.0,
+          "cts__clock__skew__setup": 0.0193307,
+          "cts__clock__skew__hold": 0.0193307,
+          "cts__timing__drv__max_slew_limit": 0.301114,
+          "cts__timing__drv__max_slew": 0,
+          "cts__timing__drv__max_cap_limit": 0.00803346,
+          "cts__timing__drv__max_cap": 0,
+          "cts__timing__drv__max_fanout_limit": 0,
+          "cts__timing__drv__max_fanout": 0,
+          "cts__timing__drv__setup_violation_count": 0,
+          "cts__timing__drv__hold_violation_count": 0,
+          "cts__power__internal__total": 0.0164766,
+          "cts__power__switching__total": 0.00140446,
+          "cts__power__leakage__total": 0.000140106,
+          "cts__power__total": 0.0180212,
+          "cts__design__io": 862,
+          "cts__design__nets": 5452,
+          "cts__design__die__area": 106410,
+          "cts__design__core__area": 99530.6,
+          "cts__design__instance__count": 4626,
+          "cts__design__instance__area": 35866.9,
+          "cts__design__instance__count__stdcell": 4620,
+          "cts__design__instance__area__stdcell": 6719.69,
+          "cts__design__instance__count__macros": 6,
+          "cts__design__instance__area__macros": 29147.2,
+          "cts__design__instance__count__padcells": 0,
+          "cts__design__instance__area__padcells": 0,
+          "cts__design__instance__count__cover": 0,
+          "cts__design__instance__area__cover": 0,
+          "cts__design__instance__utilization": 0.360361,
+          "cts__design__instance__utilization__stdcell": 0.0954728,
+          "cts__design__rows": 225,
+          "cts__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 225,
+          "cts__design__sites": 228929,
+          "cts__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 228929,
+          "cts__flow__warnings__count": 0,
+          "cts__flow__errors__count": 0,
+          "cts__flow__warnings__type_count": 0
+        },
+        "5_1_grt.json": {
+          "globalroute__route__net": 5450,
+          "globalroute__route__net__special": 2,
+          "globalroute__global_route__fastroute__run_s": 0,
+          "globalroute__global_route__fastroute__initial_rsmt_s": 8.915e-06,
+          "globalroute__global_route__fastroute__route_l_s": 2.061e-05,
+          "globalroute__global_route__fastroute__congestion_rsmt_s": 1.3794e-05,
+          "globalroute__global_route__fastroute__new_route_l_s": 8.704e-06,
+          "globalroute__global_route__fastroute__spiral_s": 1.0924e-05,
+          "globalroute__global_route__fastroute__route_z_s": 2.884e-06,
+          "globalroute__global_route__fastroute__monotonic_s": 0.00250125,
+          "globalroute__global_route__fastroute__overflow_iterations_s": 2.83e-07,
+          "globalroute__global_route__fastroute__finalization_s": 4.7852e-05,
+          "globalroute__global_route__fastroute__snapshot_batch_route_s": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_apply_s": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_sync_s": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_count": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_nets": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_wave_count": 0,
+          "globalroute__global_route__vias": 14,
+          "globalroute__global_route__wirelength": 311510,
+          "globalroute__utilization__before__dpl": 36.0393,
+          "globalroute__dpl__legalizer__type": "negotiation",
+          "globalroute__dpl__total__moves": 0,
+          "globalroute__dpl__negotiation__iterations__total": 0,
+          "globalroute__dpl__negotiation__converge__phase": 0,
+          "globalroute__dpl__negotiation__diamond__recovery__count": 0,
+          "globalroute__dpl__instance__displacement__total": 0,
+          "globalroute__dpl__instance__displacement__mean": 0,
+          "globalroute__dpl__instance__displacement__max": 0,
+          "globalroute__dpl__route__wirelength__estimated": 234791,
+          "globalroute__dpl__hpwl__delta": 0,
+          "globalroute__dpl__hpwl__delta__percent": 0,
+          "globalroute__design__instance__count__setup_buffer": 0,
+          "globalroute__design__instance__count__hold_buffer": 0,
+          "globalroute__design__violations": 0,
+          "globalroute__antenna_diodes_count": 0,
+          "globalroute__antenna__violating__nets": 0,
+          "globalroute__antenna__violating__pins": 0,
+          "globalroute__timing__setup__tns": 0,
+          "globalroute__timing__hold__tns": 0,
+          "globalroute__timing__setup__ws": 1.2372,
+          "globalroute__timing__hold__ws": 0.0320698,
+          "globalroute__timing__fmax__clock:clk": 791890000.0,
+          "globalroute__timing__fmax": 791890000.0,
+          "globalroute__clock__skew__setup": 0.016209,
+          "globalroute__clock__skew__hold": 0.016209,
+          "globalroute__timing__drv__max_slew_limit": 0.293084,
+          "globalroute__timing__drv__max_slew": 0,
+          "globalroute__timing__drv__max_cap_limit": -0.0117753,
+          "globalroute__timing__drv__max_cap": 0,
+          "globalroute__timing__drv__max_fanout_limit": 0,
+          "globalroute__timing__drv__max_fanout": 0,
+          "globalroute__timing__drv__setup_violation_count": 0,
+          "globalroute__timing__drv__hold_violation_count": 0,
+          "globalroute__power__internal__total": 0.0164786,
+          "globalroute__power__switching__total": 0.00144832,
+          "globalroute__power__leakage__total": 0.000140292,
+          "globalroute__power__total": 0.0180672,
+          "globalroute__design__io": 862,
+          "globalroute__design__nets": 5453,
+          "globalroute__design__die__area": 106410,
+          "globalroute__design__core__area": 99530.6,
+          "globalroute__design__instance__count": 4627,
+          "globalroute__design__instance__area": 35870.1,
+          "globalroute__design__instance__count__stdcell": 4621,
+          "globalroute__design__instance__area__stdcell": 6722.88,
+          "globalroute__design__instance__count__macros": 6,
+          "globalroute__design__instance__area__macros": 29147.2,
+          "globalroute__design__instance__count__padcells": 0,
+          "globalroute__design__instance__area__padcells": 0,
+          "globalroute__design__instance__count__cover": 0,
+          "globalroute__design__instance__area__cover": 0,
+          "globalroute__design__instance__utilization": 0.360393,
+          "globalroute__design__instance__utilization__stdcell": 0.0955181,
+          "globalroute__design__rows": 225,
+          "globalroute__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 225,
+          "globalroute__design__sites": 228929,
+          "globalroute__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 228929,
+          "globalroute__flow__warnings__count": 701,
+          "globalroute__flow__errors__count": 0,
+          "globalroute__flow__warnings__count:GRT-0246": 1,
+          "globalroute__flow__warnings__count:RSZ-0104": 700,
+          "globalroute__flow__warnings__type_count": 2
+        },
+        "5_2_route.json": {
+          "detailedroute__route__net": 5451,
+          "detailedroute__route__net__special": 2,
+          "detailedroute__route__drc_errors__iter:0": 2924,
+          "detailedroute__route__wirelength__iter:0": 273065,
+          "detailedroute__route__drc_errors__iter:1": 848,
+          "detailedroute__route__wirelength__iter:1": 272139,
+          "detailedroute__route__drc_errors__iter:2": 679,
+          "detailedroute__route__wirelength__iter:2": 271899,
+          "detailedroute__route__drc_errors__iter:3": 275,
+          "detailedroute__route__wirelength__iter:3": 272007,
+          "detailedroute__route__drc_errors__iter:4": 250,
+          "detailedroute__route__wirelength__iter:4": 272069,
+          "detailedroute__route__drc_errors__iter:5": 209,
+          "detailedroute__route__wirelength__iter:5": 272136,
+          "detailedroute__route__drc_errors__iter:6": 189,
+          "detailedroute__route__wirelength__iter:6": 272207,
+          "detailedroute__route__drc_errors__iter:7": 173,
+          "detailedroute__route__wirelength__iter:7": 272206,
+          "detailedroute__route__drc_errors__iter:8": 165,
+          "detailedroute__route__wirelength__iter:8": 272201,
+          "detailedroute__route__drc_errors__iter:9": 143,
+          "detailedroute__route__wirelength__iter:9": 272258,
+          "detailedroute__route__drc_errors__iter:10": 75,
+          "detailedroute__route__wirelength__iter:10": 272259,
+          "detailedroute__route__drc_errors__iter:11": 19,
+          "detailedroute__route__wirelength__iter:11": 272265,
+          "detailedroute__route__drc_errors__iter:12": 5,
+          "detailedroute__route__wirelength__iter:12": 272265,
+          "detailedroute__route__drc_errors__iter:13": 5,
+          "detailedroute__route__wirelength__iter:13": 272265,
+          "detailedroute__route__drc_errors__iter:14": 0,
+          "detailedroute__route__wirelength__iter:14": 272294,
+          "detailedroute__route__drc_errors": 0,
+          "detailedroute__route__wirelength": 272294,
+          "detailedroute__route__vias": 37191,
+          "detailedroute__route__vias__singlecut": 37191,
+          "detailedroute__route__vias__multicut": 0,
+          "detailedroute__antenna_diodes_count": 0,
+          "detailedroute__antenna__violating__nets": 0,
+          "detailedroute__antenna__violating__pins": 0,
+          "detailedroute__flow__warnings__count": 1,
+          "detailedroute__flow__errors__count": 0,
+          "detailedroute__flow__warnings__count:GRT-0246": 1,
+          "detailedroute__flow__warnings__type_count": 1
+        },
+        "5_3_fillcell.json": {
+          "design__violations": 0,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "6_1_fill.json": {
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "6_report.json": {
+          "finish__design_powergrid__voltage__worst__net:VDD__corner:default": 1.09778,
+          "finish__design_powergrid__voltage__average__net:VDD__corner:default": 1.09942,
+          "finish__design_powergrid__drop__average__net:VDD__corner:default": 0.000575415,
+          "finish__design_powergrid__drop__worst__net:VDD__corner:default": 0.00221873,
+          "finish__design_powergrid__voltage__worst__net:VSS__corner:default": 0.00180497,
+          "finish__design_powergrid__voltage__average__net:VSS__corner:default": 0.000567135,
+          "finish__design_powergrid__drop__average__net:VSS__corner:default": 0.000567135,
+          "finish__design_powergrid__drop__worst__net:VSS__corner:default": 0.00180497,
+          "finish__design__instance__count__class:macro": 6,
+          "finish__design__instance__area__class:macro": 29147.2,
+          "finish__design__instance__count__class:fill_cell": 11355,
+          "finish__design__instance__area__class:fill_cell": 54172.2,
+          "finish__design__instance__count__class:tap_cell": 585,
+          "finish__design__instance__area__class:tap_cell": 155.61,
+          "finish__design__instance__count__class:clock_buffer": 140,
+          "finish__design__instance__area__class:clock_buffer": 167.048,
+          "finish__design__instance__count__class:timing_repair_buffer": 810,
+          "finish__design__instance__area__class:timing_repair_buffer": 653.03,
+          "finish__design__instance__count__class:inverter": 73,
+          "finish__design__instance__area__class:inverter": 39.368,
+          "finish__design__instance__count__class:clock_inverter": 43,
+          "finish__design__instance__area__class:clock_inverter": 34.58,
+          "finish__design__instance__count__class:sequential_cell": 606,
+          "finish__design__instance__area__class:sequential_cell": 2758.42,
+          "finish__design__instance__count__class:multi_input_combinational_cell": 2364,
+          "finish__design__instance__area__class:multi_input_combinational_cell": 2914.83,
+          "finish__design__instance__count": 15982,
+          "finish__design__instance__area": 35870.1,
+          "finish__timing__setup__tns": 0,
+          "finish__timing__hold__tns": 0,
+          "finish__timing__setup__ws": 1.22599,
+          "finish__timing__hold__ws": 0.0322719,
+          "finish__timing__fmax__clock:clk": 784923000.0,
+          "finish__timing__fmax": 784923000.0,
+          "finish__clock__skew__setup": 0.0178534,
+          "finish__clock__skew__hold": 0.0178534,
+          "finish__timing__drv__max_slew_limit": 0.254416,
+          "finish__timing__drv__max_slew": 0,
+          "finish__timing__drv__max_cap_limit": -0.0438616,
+          "finish__timing__drv__max_cap": 2,
+          "finish__timing__drv__max_fanout_limit": 0,
+          "finish__timing__drv__max_fanout": 0,
+          "finish__timing__drv__setup_violation_count": 0,
+          "finish__timing__drv__hold_violation_count": 0,
+          "finish__power__internal__total": 0.0164753,
+          "finish__power__switching__total": 0.00142181,
+          "finish__power__leakage__total": 0.000140292,
+          "finish__power__total": 0.0180374,
+          "finish__design__io": 862,
+          "finish__design__nets": 5453,
+          "finish__design__die__area": 106410,
+          "finish__design__core__area": 99530.6,
+          "finish__design__instance__count__stdcell": 4621,
+          "finish__design__instance__area__stdcell": 6722.88,
+          "finish__design__instance__count__macros": 6,
+          "finish__design__instance__area__macros": 29147.2,
+          "finish__design__instance__count__padcells": 0,
+          "finish__design__instance__area__padcells": 0,
+          "finish__design__instance__count__cover": 0,
+          "finish__design__instance__area__cover": 0,
+          "finish__design__instance__utilization": 0.360393,
+          "finish__design__instance__utilization__stdcell": 0.0955181,
+          "finish__design__rows": 225,
+          "finish__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 225,
+          "finish__design__sites": 228929,
+          "finish__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 228929,
+          "finish__flow__warnings__count": 0,
+          "finish__flow__errors__count": 0,
+          "finish__flow__warnings__type_count": 0
+        }
+      },
+      "artifacts": [
+        {
+          "name": "1_1_yosys_canonicalize.rtlil",
+          "size": 707849
+        },
+        {
+          "name": "1_2_yosys.sdc",
+          "size": 248
+        },
+        {
+          "name": "1_2_yosys.v",
+          "size": 701218
+        },
+        {
+          "name": "1_synth.odb",
+          "size": 2425536
+        },
+        {
+          "name": "1_synth.sdc",
+          "size": 74762
+        },
+        {
+          "name": "2_1_floorplan.odb",
+          "size": 2498045
+        },
+        {
+          "name": "2_1_floorplan.sdc",
+          "size": 74762
+        },
+        {
+          "name": "2_2_floorplan_macro.odb",
+          "size": 2499413
+        },
+        {
+          "name": "2_2_floorplan_macro.tcl",
+          "size": 842
+        },
+        {
+          "name": "2_3_floorplan_tapcell.odb",
+          "size": 2635977
+        },
+        {
+          "name": "2_4_floorplan_pdn.odb",
+          "size": 2859908
+        },
+        {
+          "name": "2_floorplan.odb",
+          "size": 2859908
+        },
+        {
+          "name": "2_floorplan.sdc",
+          "size": 74762
+        },
+        {
+          "name": "3_1_place_gp_skip_io.odb",
+          "size": 2859970
+        },
+        {
+          "name": "3_2_place_iop.odb",
+          "size": 2917378
+        },
+        {
+          "name": "3_2_place_iop.tcl",
+          "size": 82052
+        },
+        {
+          "name": "3_3_place_gp.odb",
+          "size": 3147388
+        },
+        {
+          "name": "3_4_place_resized.odb",
+          "size": 3151243
+        },
+        {
+          "name": "3_5_place_dp.odb",
+          "size": 3151243
+        },
+        {
+          "name": "3_place.odb",
+          "size": 3151243
+        },
+        {
+          "name": "3_place.sdc",
+          "size": 74762
+        },
+        {
+          "name": "4_1_cts.odb",
+          "size": 3224316
+        },
+        {
+          "name": "4_cts.odb",
+          "size": 3224316
+        },
+        {
+          "name": "4_cts.sdc",
+          "size": 74802
+        },
+        {
+          "name": "5_1_grt.odb",
+          "size": 6428970
+        },
+        {
+          "name": "5_1_grt.sdc",
+          "size": 74802
+        },
+        {
+          "name": "5_2_route.odb",
+          "size": 8455355
+        },
+        {
+          "name": "5_3_fillcell.odb",
+          "size": 11087956
+        },
+        {
+          "name": "5_route.odb",
+          "size": 11087956
+        },
+        {
+          "name": "5_route.sdc",
+          "size": 74802
+        },
+        {
+          "name": "6_1_fill.odb",
+          "size": 11087956
+        },
+        {
+          "name": "6_1_fill.sdc",
+          "size": 74802
+        },
+        {
+          "name": "6_1_merged.gds",
+          "size": 6031620
+        },
+        {
+          "name": "6_final.def",
+          "size": 5813066
+        },
+        {
+          "name": "6_final.gds",
+          "size": 6031620
+        },
+        {
+          "name": "6_final.odb",
+          "size": 11087956
+        },
+        {
+          "name": "6_final.sdc",
+          "size": 74802
+        },
+        {
+          "name": "6_final.spef",
+          "size": 6397412
+        },
+        {
+          "name": "6_final.v",
+          "size": 540266
+        },
+        {
+          "name": "mem.json",
+          "size": 692774
+        },
+        {
+          "name": "route.guide",
+          "size": 1639342
+        },
+        {
+          "name": "updated_clks.sdc",
+          "size": 74762
+        }
+      ],
+      "route_drc_report": {
+        "exists": true,
+        "bytes": 0
+      },
+      "stages": {
+        "synthesis": true,
+        "placement": true,
+        "cts": true,
+        "global_route": true,
+        "detailed_route": true,
+        "final_report": true
+      },
+      "acceptance": "Requires separate per-stage metric, signal/PG, timing, electrical and model review; no signoff inferred",
+      "quality_summary": {
+        "route_drc_errors": 0,
+        "setup_ws_ns": 1.22599,
+        "setup_tns_ns": 0,
+        "hold_ws_ns": 0.0322719,
+        "hold_tns_ns": 0,
+        "max_cap_violations": 2,
+        "max_slew_violations": 0,
+        "max_fanout_violations": 0,
+        "die_area_um2": 106410,
+        "nonfiller_instance_area_um2": 35870.1,
+        "stdcell_area_um2": 6722.88,
+        "macro_area_um2": 29147.2,
+        "scope": "Tool single-corner budget checks, no complete boundary load/activity or signoff"
+      },
+      "max_cap_violations_by_stage": {
+        "3_4_place_resized.json": {
+          "placeopt__timing__drv__max_cap": 0
+        },
+        "3_5_place_dp.json": {
+          "detailedplace__timing__drv__max_cap": 0
+        },
+        "4_1_cts.json": {
+          "cts__timing__drv__max_cap": 0
+        },
+        "5_1_grt.json": {
+          "globalroute__timing__drv__max_cap": 0
+        },
+        "6_report.json": {
+          "finish__timing__drv__max_cap": 2
+        }
+      },
+      "final_electrical_violation_rows": [
+        "_5280_/Z                               60.50   63.15   -2.65 (VIOLATED)",
+        "_3214_/ZN                              25.33   26.89   -1.56 (VIOLATED)"
+      ],
+      "final_electrical_report": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/opentpu-act/flow/reports/nangate45/parallel_opentpu_act/base/6_finish.rpt",
+      "final_log_markers": [
+        "[INFO PSM-0040] All shapes on net VDD are connected.",
+        "Average IR drop  : 5.75e-04 V",
+        "Worstcase IR drop: 2.22e-03 V",
+        "[INFO PSM-0040] All shapes on net VSS are connected.",
+        "Average IR drop  : 5.67e-04 V",
+        "Worstcase IR drop: 1.80e-03 V"
+      ],
+      "experiment.json": {
+        "case": "opentpu-act",
+        "top": "otpu_asic_top",
+        "parameters": {
+          "D": 32,
+          "MCOLS": 2,
+          "ROWS": 2,
+          "BLOCKS": 32,
+          "LANES": 4,
+          "DEPTH": 64,
+          "IMPL": 2,
+          "CL": 16,
+          "E": 0,
+          "SID": 0
+        },
+        "clock_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Upstream openTPU synthetic fakeram LEF/Liberty models, not fabricated SRAM or SRAM GDS. Same unmodified generator and small configuration for split/merged cases; no full system claim.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "independent block implementation; not top integration, H2, source-to-netlist equivalence or signoff"
+      },
+      "elaboration-summary.json": {
+        "top": "otpu_asic_top",
+        "ports": {
+          "clk": {
+            "direction": "input",
+            "bits": 1
+          },
+          "we": {
+            "direction": "input",
+            "bits": 4
+          },
+          "w_row": {
+            "direction": "input",
+            "bits": 8
+          },
+          "w_idx": {
+            "direction": "input",
+            "bits": 32
+          },
+          "w_data": {
+            "direction": "input",
+            "bits": 32
+          },
+          "w_dup": {
+            "direction": "input",
+            "bits": 1
+          },
+          "w_off": {
+            "direction": "input",
+            "bits": 8
+          },
+          "swe": {
+            "direction": "input",
+            "bits": 1
+          },
+          "s_row": {
+            "direction": "input",
+            "bits": 8
+          },
+          "s_blk": {
+            "direction": "input",
+            "bits": 16
+          },
+          "s_data": {
+            "direction": "input",
+            "bits": 64
+          },
+          "ren": {
+            "direction": "input",
+            "bits": 2
+          },
+          "r_use": {
+            "direction": "input",
+            "bits": 1
+          },
+          "r_blk": {
+            "direction": "input",
+            "bits": 16
+          },
+          "r_blk2": {
+            "direction": "input",
+            "bits": 16
+          },
+          "r_hi": {
+            "direction": "input",
+            "bits": 2
+          },
+          "r_grp": {
+            "direction": "input",
+            "bits": 8
+          },
+          "r_data": {
+            "direction": "output",
+            "bits": 512
+          },
+          "r_scale": {
+            "direction": "output",
+            "bits": 128
+          }
+        },
+        "port_count": 19,
+        "signal_bits": 860,
+        "blackbox_cells": {
+          "fakeram45_1r1w_32x128": 4,
+          "fakeram45_1r1w_32x64": 2
+        },
+        "check": "Yosys hierarchy -check and check -assert completed; not functional equivalence"
+      },
+      "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif\n",
+      "tools.sha256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53  /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad\nc2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b  /OpenROAD-flow-scripts/tools/install/yosys/bin/yosys\n",
+      "config-inputs.sha256": "e279b1d89d9de75e88ce340e45cf866b2375642b0fa0de407f3b90a436de51f4  config.mk\n93e575af458e283bd067de99437465e3986326e9de292deb25ebd5c1b75d5e8b  boundary.sdc\nce8c61f9945e2772ad2e708d4bf3a530071fc278541f419a0ee6002bb47331c0  elab.ys\n0e3c75564f217b505b544b9dacb80720c86bda1eb5500ff7c3822eb1ff1cfbcd  experiment.json\n0ab4b283301ea22529b254d2cf3f842cbe7169ac25e98127b38128b38699d267  boundary.sv\n"
+    },
+    "opentpu-mxu": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/opentpu-mxu",
+      "step": "89458.0\n",
+      "started_utc": "2026-10-21T09:01:56Z\n",
+      "finished_utc": "2026-10-21T09:32:01Z\n",
+      "pipeline_exit_code": "0\n",
+      "output_hash_index": {
+        "exists": true,
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/opentpu-mxu/output-files.sha256"
+      },
+      "step_log_tail": "3_5_place_dp           .odb         82      134     1.63     1525 0a3a416758\n4_1_cts                .odb         77      189     2.44     1612 8f7982b16d\n5_1_grt                .odb        452     2314     5.11     2949 84bf922ae0\n5_1_grt                .sdc                                       70c8a2ac0b\n5_2_route              .odb        462     6198    13.41     6823 3ee086d6f5\n5_3_fillcell           .odb          3        4     0.97     1025 70c3586f67\n6_1_fill               .odb          1        1     0.93      600 70c3586f67\n6_1_fill               .sdc                                       70c8a2ac0b\n6_1_merge                           12       12     0.99     1161 N/A\n6_report                           188      251     1.33     4781 N/A\nTotal                             1776    10074     5.64     6823\nmake: Leaving directory '/OpenROAD-flow-scripts/flow'",
+      "metrics": {
+        "1_synth.json": {
+          "synth__design__io": 2172,
+          "synth__design__nets": 222659,
+          "synth__design__die__area": 0,
+          "synth__design__core__area": 0,
+          "synth__design__instance__count": 165942,
+          "synth__design__instance__area": 416183,
+          "synth__design__instance__count__stdcell": 165936,
+          "synth__design__instance__area__stdcell": 382635,
+          "synth__design__instance__count__macros": 6,
+          "synth__design__instance__area__macros": 33548.2,
+          "synth__design__instance__count__padcells": 0,
+          "synth__design__instance__area__padcells": 0,
+          "synth__design__instance__count__cover": 0,
+          "synth__design__instance__area__cover": 0,
+          "synth__design__rows": 0,
+          "synth__design__sites": 0,
+          "synth__flow__warnings__count": 1,
+          "synth__flow__errors__count": 0,
+          "synth__flow__warnings__count:STA-0441": 1,
+          "synth__flow__warnings__type_count": 1
+        },
+        "2_1_floorplan.json": {
+          "floorplan__design__instance__count__setup_buffer": 0,
+          "run__flow__platform__time_units": "1ns",
+          "run__flow__platform__capacitance_units": "1fF",
+          "run__flow__platform__resistance_units": "1kohm",
+          "run__flow__platform__voltage_units": "1v",
+          "run__flow__platform__current_units": "1mA",
+          "run__flow__platform__power_units": "1nW",
+          "run__flow__platform__distance_units": "1um",
+          "floorplan__timing__setup__tns": 0,
+          "floorplan__timing__hold__tns": 0,
+          "floorplan__timing__setup__ws": 0.504955,
+          "floorplan__timing__hold__ws": 0.0375348,
+          "floorplan__timing__fmax__clock:clk": 501242000.0,
+          "floorplan__timing__fmax": 501242000.0,
+          "floorplan__power__internal__total": 0.154772,
+          "floorplan__power__switching__total": 0.0281694,
+          "floorplan__power__leakage__total": 0.00659771,
+          "floorplan__power__total": 0.189539,
+          "floorplan__design__io": 2172,
+          "floorplan__design__nets": 223149,
+          "floorplan__design__die__area": 1211000.0,
+          "floorplan__design__core__area": 1187470.0,
+          "floorplan__design__instance__count": 166432,
+          "floorplan__design__instance__area": 416443,
+          "floorplan__design__instance__count__stdcell": 166426,
+          "floorplan__design__instance__area__stdcell": 382895,
+          "floorplan__design__instance__count__macros": 6,
+          "floorplan__design__instance__area__macros": 33548.2,
+          "floorplan__design__instance__count__padcells": 0,
+          "floorplan__design__instance__area__padcells": 0,
+          "floorplan__design__instance__count__cover": 0,
+          "floorplan__design__instance__area__cover": 0,
+          "floorplan__design__instance__utilization": 0.350699,
+          "floorplan__design__instance__utilization__stdcell": 0.331822,
+          "floorplan__design__rows": 778,
+          "floorplan__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 778,
+          "floorplan__design__sites": 4464164,
+          "floorplan__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4464164,
+          "floorplan__flow__warnings__count": 2,
+          "floorplan__flow__errors__count": 0,
+          "floorplan__flow__warnings__count:EST-0027": 1,
+          "floorplan__flow__warnings__count:IFP-0028": 1,
+          "floorplan__flow__warnings__type_count": 2
+        },
+        "2_2_floorplan_macro.json": {
+          "macro_place__wirelength": 1258330.0,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "2_3_floorplan_tapcell.json": {
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "2_4_floorplan_pdn.json": {
+          "flow__warnings__count": 1,
+          "flow__errors__count": 0,
+          "flow__warnings__count:PDN-1051": 1,
+          "flow__warnings__type_count": 1
+        },
+        "3_1_place_gp_skip_io.json": {
+          "gpl__convergence__iteration": 492,
+          "gpl__area__final": 409173,
+          "gpl__area__final__percent": 0,
+          "route__wirelength__estimated": 2521270.0,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "3_2_place_iop.json": {
+          "floorplan__design__io": 2172,
+          "design__io__hpwl": 825913980,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "3_3_place_gp.json": {
+          "globalplace__gpl__convergence__iteration": 1029,
+          "globalplace__gpl__routability__iteration": 664,
+          "globalplace__gpl__routability__congestion": 0.760782,
+          "globalplace__gpl__area__original": 401447,
+          "globalplace__gpl__area__routability_inflation": 7868.88,
+          "globalplace__gpl__area__routability_inflation__percent": 1.96013,
+          "globalplace__gpl__area__timing_delta": 3983.74,
+          "globalplace__gpl__area__timing_delta__percent": 0.992345,
+          "globalplace__gpl__area__final": 413300,
+          "globalplace__gpl__area__final__percent": 2.95248,
+          "globalplace__route__wirelength__estimated": 2166560.0,
+          "globalplace__timing__setup__tns": 0,
+          "globalplace__timing__hold__tns": 0,
+          "globalplace__timing__setup__ws": 0.305189,
+          "globalplace__timing__hold__ws": 0.0380474,
+          "globalplace__timing__fmax__clock:clk": 455620000.0,
+          "globalplace__timing__fmax": 455620000.0,
+          "globalplace__power__internal__total": 0.153359,
+          "globalplace__power__switching__total": 0.0436348,
+          "globalplace__power__leakage__total": 0.00652211,
+          "globalplace__power__total": 0.203516,
+          "globalplace__design__io": 2174,
+          "globalplace__design__nets": 214682,
+          "globalplace__design__die__area": 1211000.0,
+          "globalplace__design__core__area": 1187470.0,
+          "globalplace__design__instance__count": 162866,
+          "globalplace__design__instance__area": 412290,
+          "globalplace__design__instance__count__stdcell": 162860,
+          "globalplace__design__instance__area__stdcell": 378742,
+          "globalplace__design__instance__count__macros": 6,
+          "globalplace__design__instance__area__macros": 33548.2,
+          "globalplace__design__instance__count__padcells": 0,
+          "globalplace__design__instance__area__padcells": 0,
+          "globalplace__design__instance__count__cover": 0,
+          "globalplace__design__instance__area__cover": 0,
+          "globalplace__design__instance__utilization": 0.347201,
+          "globalplace__design__instance__utilization__stdcell": 0.328222,
+          "globalplace__design__rows": 778,
+          "globalplace__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 778,
+          "globalplace__design__sites": 4306026,
+          "globalplace__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4306026,
+          "globalplace__flow__warnings__count": 1,
+          "globalplace__flow__errors__count": 0,
+          "globalplace__flow__warnings__count:GRT-0281": 1,
+          "globalplace__flow__warnings__type_count": 1
+        },
+        "3_4_place_resized.json": {
+          "placeopt__timing__drv__floating__nets": 0,
+          "placeopt__timing__drv__floating__pins": 0,
+          "placeopt__timing__setup__tns": 0,
+          "placeopt__timing__hold__tns": 0,
+          "placeopt__timing__setup__ws": 0.305189,
+          "placeopt__timing__hold__ws": 0.0380474,
+          "placeopt__timing__fmax__clock:clk": 455620000.0,
+          "placeopt__timing__fmax": 455620000.0,
+          "placeopt__timing__drv__max_slew_limit": 0.320499,
+          "placeopt__timing__drv__max_slew": 0,
+          "placeopt__timing__drv__max_cap_limit": 8.51382e-05,
+          "placeopt__timing__drv__max_cap": 0,
+          "placeopt__timing__drv__max_fanout_limit": 0,
+          "placeopt__timing__drv__max_fanout": 0,
+          "placeopt__timing__drv__setup_violation_count": 0,
+          "placeopt__timing__drv__hold_violation_count": 0,
+          "placeopt__power__internal__total": 0.153488,
+          "placeopt__power__switching__total": 0.0436661,
+          "placeopt__power__leakage__total": 0.00653295,
+          "placeopt__power__total": 0.203687,
+          "placeopt__design__io": 2174,
+          "placeopt__design__nets": 214833,
+          "placeopt__design__die__area": 1211000.0,
+          "placeopt__design__core__area": 1187470.0,
+          "placeopt__design__instance__count": 163017,
+          "placeopt__design__instance__area": 412539,
+          "placeopt__design__instance__count__stdcell": 163011,
+          "placeopt__design__instance__area__stdcell": 378991,
+          "placeopt__design__instance__count__macros": 6,
+          "placeopt__design__instance__area__macros": 33548.2,
+          "placeopt__design__instance__count__padcells": 0,
+          "placeopt__design__instance__area__padcells": 0,
+          "placeopt__design__instance__count__cover": 0,
+          "placeopt__design__instance__area__cover": 0,
+          "placeopt__design__instance__utilization": 0.347411,
+          "placeopt__design__instance__utilization__stdcell": 0.328438,
+          "placeopt__design__rows": 778,
+          "placeopt__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 778,
+          "placeopt__design__sites": 4306026,
+          "placeopt__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4306026,
+          "placeopt__flow__warnings__count": 0,
+          "placeopt__flow__errors__count": 0,
+          "placeopt__flow__warnings__type_count": 0
+        },
+        "3_5_place_dp.json": {
+          "detailedplace__utilization__before__dpl": 34.7411,
+          "detailedplace__dpl__legalizer__type": "negotiation",
+          "detailedplace__dpl__total__moves": 172328,
+          "detailedplace__dpl__negotiation__iterations__total": 7,
+          "detailedplace__dpl__negotiation__converge__phase": 1,
+          "detailedplace__dpl__negotiation__diamond__recovery__count": 0,
+          "detailedplace__dpl__instance__displacement__total": 263194,
+          "detailedplace__dpl__instance__displacement__mean": 1.6145,
+          "detailedplace__dpl__instance__displacement__max": 87.2245,
+          "detailedplace__dpl__route__wirelength__estimated": 2368200.0,
+          "detailedplace__dpl__hpwl__delta": 197302,
+          "detailedplace__dpl__hpwl__delta__percent": 9,
+          "detailedplace__dpo__total__attempts": 3162160,
+          "detailedplace__dpo__relocated__cells": 91128,
+          "detailedplace__dpo__instance__displacement__total": 208885,
+          "detailedplace__dpo__instance__displacement__mean": 2.29221,
+          "detailedplace__dpo__instance__displacement__max": 8.24,
+          "detailedplace__dpo__hpwl__delta": -127075,
+          "detailedplace__dpo__hpwl__delta__percent": -5,
+          "detailedplace__design__violations": 0,
+          "detailedplace__timing__setup__tns": 0,
+          "detailedplace__timing__hold__tns": 0,
+          "detailedplace__timing__setup__ws": 0.330966,
+          "detailedplace__timing__hold__ws": 0.0430532,
+          "detailedplace__timing__fmax__clock:clk": 461035000.0,
+          "detailedplace__timing__fmax": 461035000.0,
+          "detailedplace__timing__drv__max_slew_limit": 0.305676,
+          "detailedplace__timing__drv__max_slew": 0,
+          "detailedplace__timing__drv__max_cap_limit": -0.0230771,
+          "detailedplace__timing__drv__max_cap": 3,
+          "detailedplace__timing__drv__max_fanout_limit": 0,
+          "detailedplace__timing__drv__max_fanout": 0,
+          "detailedplace__timing__drv__setup_violation_count": 0,
+          "detailedplace__timing__drv__hold_violation_count": 0,
+          "detailedplace__power__internal__total": 0.1535,
+          "detailedplace__power__switching__total": 0.0438381,
+          "detailedplace__power__leakage__total": 0.00653295,
+          "detailedplace__power__total": 0.203871,
+          "detailedplace__design__io": 2174,
+          "detailedplace__design__nets": 214833,
+          "detailedplace__design__die__area": 1211000.0,
+          "detailedplace__design__core__area": 1187470.0,
+          "detailedplace__design__instance__count": 163017,
+          "detailedplace__design__instance__area": 412539,
+          "detailedplace__design__instance__count__stdcell": 163011,
+          "detailedplace__design__instance__area__stdcell": 378991,
+          "detailedplace__design__instance__count__macros": 6,
+          "detailedplace__design__instance__area__macros": 33548.2,
+          "detailedplace__design__instance__count__padcells": 0,
+          "detailedplace__design__instance__area__padcells": 0,
+          "detailedplace__design__instance__count__cover": 0,
+          "detailedplace__design__instance__area__cover": 0,
+          "detailedplace__design__instance__utilization": 0.347411,
+          "detailedplace__design__instance__utilization__stdcell": 0.328438,
+          "detailedplace__design__rows": 778,
+          "detailedplace__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 778,
+          "detailedplace__design__sites": 4306026,
+          "detailedplace__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4306026,
+          "detailedplace__flow__warnings__count": 0,
+          "detailedplace__flow__errors__count": 0,
+          "detailedplace__flow__warnings__type_count": 0
+        },
+        "4_1_cts.json": {
+          "cts__utilization__before__dpl": 36.0255,
+          "cts__dpl__legalizer__type": "negotiation",
+          "cts__dpl__total__moves": 20361,
+          "cts__dpl__negotiation__iterations__total": 28,
+          "cts__dpl__negotiation__converge__phase": 2,
+          "cts__dpl__negotiation__diamond__recovery__count": 1,
+          "cts__dpl__instance__displacement__total": 34996,
+          "cts__dpl__instance__displacement__mean": 0.196,
+          "cts__dpl__instance__displacement__max": 84.433,
+          "cts__dpl__route__wirelength__estimated": 2456450.0,
+          "cts__dpl__hpwl__delta": 7848.85,
+          "cts__dpl__hpwl__delta__percent": 0,
+          "cts__design__instance__count__setup_buffer": 0,
+          "cts__design__instance__count__hold_buffer": 4768,
+          "cts__design__violations": 0,
+          "cts__timing__setup__tns": 0,
+          "cts__timing__hold__tns": -1.97077,
+          "cts__timing__setup__ws": 0.217085,
+          "cts__timing__hold__ws": -0.0248323,
+          "cts__timing__fmax__clock:clk": 438037000.0,
+          "cts__timing__fmax": 438037000.0,
+          "cts__clock__skew__setup": 0.0506027,
+          "cts__clock__skew__hold": 0.0506027,
+          "cts__timing__drv__max_slew_limit": 0.30208,
+          "cts__timing__drv__max_slew": 0,
+          "cts__timing__drv__max_cap_limit": -0.0298402,
+          "cts__timing__drv__max_cap": 3,
+          "cts__timing__drv__max_fanout_limit": 0,
+          "cts__timing__drv__max_fanout": 0,
+          "cts__timing__drv__setup_violation_count": 0,
+          "cts__timing__drv__hold_violation_count": 179,
+          "cts__power__internal__total": 0.184251,
+          "cts__power__switching__total": 0.0802157,
+          "cts__power__leakage__total": 0.00685227,
+          "cts__power__total": 0.271319,
+          "cts__design__io": 2174,
+          "cts__design__nets": 225566,
+          "cts__design__die__area": 1211000.0,
+          "cts__design__core__area": 1187470.0,
+          "cts__design__instance__count": 178187,
+          "cts__design__instance__area": 427792,
+          "cts__design__instance__count__stdcell": 178181,
+          "cts__design__instance__area__stdcell": 394243,
+          "cts__design__instance__count__macros": 6,
+          "cts__design__instance__area__macros": 33548.2,
+          "cts__design__instance__count__padcells": 0,
+          "cts__design__instance__area__padcells": 0,
+          "cts__design__instance__count__cover": 0,
+          "cts__design__instance__area__cover": 0,
+          "cts__design__instance__utilization": 0.360255,
+          "cts__design__instance__utilization__stdcell": 0.341656,
+          "cts__design__rows": 778,
+          "cts__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 778,
+          "cts__design__sites": 4306026,
+          "cts__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4306026,
+          "cts__flow__warnings__count": 1,
+          "cts__flow__errors__count": 0,
+          "cts__flow__warnings__count:DPL-0700": 1,
+          "cts__flow__warnings__type_count": 1
+        },
+        "5_1_grt.json": {
+          "globalroute__route__net": 225564,
+          "globalroute__route__net__special": 2,
+          "globalroute__global_route__fastroute__run_s": 0,
+          "globalroute__global_route__fastroute__initial_rsmt_s": 0.00297775,
+          "globalroute__global_route__fastroute__route_l_s": 0.00698872,
+          "globalroute__global_route__fastroute__congestion_rsmt_s": 0.00801536,
+          "globalroute__global_route__fastroute__new_route_l_s": 0.00394322,
+          "globalroute__global_route__fastroute__spiral_s": 0.00423812,
+          "globalroute__global_route__fastroute__route_z_s": 0.00149937,
+          "globalroute__global_route__fastroute__monotonic_s": 0.0204324,
+          "globalroute__global_route__fastroute__overflow_iterations_s": 0.020518,
+          "globalroute__global_route__fastroute__finalization_s": 0.198697,
+          "globalroute__global_route__fastroute__snapshot_batch_route_s": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_apply_s": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_sync_s": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_count": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_nets": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_wave_count": 0,
+          "globalroute__global_route__vias": 16677,
+          "globalroute__global_route__wirelength": 4216592,
+          "globalroute__utilization__before__dpl": 36.0994,
+          "globalroute__dpl__legalizer__type": "negotiation",
+          "globalroute__dpl__total__moves": 15466,
+          "globalroute__dpl__negotiation__iterations__total": 37,
+          "globalroute__dpl__negotiation__converge__phase": 1,
+          "globalroute__dpl__negotiation__diamond__recovery__count": 0,
+          "globalroute__dpl__instance__displacement__total": 14669.6,
+          "globalroute__dpl__instance__displacement__mean": 0.0815,
+          "globalroute__dpl__instance__displacement__max": 53.64,
+          "globalroute__dpl__route__wirelength__estimated": 2461510.0,
+          "globalroute__dpl__hpwl__delta": 4288.6,
+          "globalroute__dpl__hpwl__delta__percent": 0,
+          "globalroute__design__instance__count__setup_buffer": 0,
+          "globalroute__design__instance__count__hold_buffer": 1002,
+          "globalroute__design__violations": 0,
+          "globalroute__antenna_diodes_count": 0,
+          "globalroute__antenna__violating__nets": 0,
+          "globalroute__antenna__violating__pins": 0,
+          "globalroute__timing__setup__tns": 0,
+          "globalroute__timing__hold__tns": -0.143175,
+          "globalroute__timing__setup__ws": 0.192604,
+          "globalroute__timing__hold__ws": -0.0187414,
+          "globalroute__timing__fmax__clock:clk": 433389000.0,
+          "globalroute__timing__fmax": 433389000.0,
+          "globalroute__clock__skew__setup": 0.0798268,
+          "globalroute__clock__skew__hold": 0.0798268,
+          "globalroute__timing__drv__max_slew_limit": 0.285288,
+          "globalroute__timing__drv__max_slew": 0,
+          "globalroute__timing__drv__max_cap_limit": -0.0602618,
+          "globalroute__timing__drv__max_cap": 9,
+          "globalroute__timing__drv__max_fanout_limit": 0,
+          "globalroute__timing__drv__max_fanout": 0,
+          "globalroute__timing__drv__setup_violation_count": 0,
+          "globalroute__timing__drv__hold_violation_count": 44,
+          "globalroute__power__internal__total": 0.184557,
+          "globalroute__power__switching__total": 0.0823991,
+          "globalroute__power__leakage__total": 0.00686684,
+          "globalroute__power__total": 0.273823,
+          "globalroute__design__io": 2174,
+          "globalroute__design__nets": 226615,
+          "globalroute__design__die__area": 1211000.0,
+          "globalroute__design__core__area": 1187470.0,
+          "globalroute__design__instance__count": 179236,
+          "globalroute__design__instance__area": 428669,
+          "globalroute__design__instance__count__stdcell": 179230,
+          "globalroute__design__instance__area__stdcell": 395120,
+          "globalroute__design__instance__count__macros": 6,
+          "globalroute__design__instance__area__macros": 33548.2,
+          "globalroute__design__instance__count__padcells": 0,
+          "globalroute__design__instance__area__padcells": 0,
+          "globalroute__design__instance__count__cover": 0,
+          "globalroute__design__instance__area__cover": 0,
+          "globalroute__design__instance__utilization": 0.360994,
+          "globalroute__design__instance__utilization__stdcell": 0.342416,
+          "globalroute__design__rows": 778,
+          "globalroute__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 778,
+          "globalroute__design__sites": 4306026,
+          "globalroute__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4306026,
+          "globalroute__flow__warnings__count": 35705,
+          "globalroute__flow__errors__count": 0,
+          "globalroute__flow__warnings__count:GRT-0246": 1,
+          "globalroute__flow__warnings__count:RSZ-0104": 1001,
+          "globalroute__flow__warnings__type_count": 2
+        },
+        "5_2_route.json": {
+          "detailedroute__route__net": 226613,
+          "detailedroute__route__net__special": 2,
+          "detailedroute__route__drc_errors__iter:0": 25239,
+          "detailedroute__route__wirelength__iter:0": 3020838,
+          "detailedroute__route__drc_errors__iter:1": 4585,
+          "detailedroute__route__wirelength__iter:1": 3005695,
+          "detailedroute__route__drc_errors__iter:2": 3230,
+          "detailedroute__route__wirelength__iter:2": 3003833,
+          "detailedroute__route__drc_errors__iter:3": 80,
+          "detailedroute__route__wirelength__iter:3": 3003921,
+          "detailedroute__route__drc_errors__iter:4": 0,
+          "detailedroute__route__wirelength__iter:4": 3003904,
+          "detailedroute__route__drc_errors": 0,
+          "detailedroute__route__wirelength": 3003904,
+          "detailedroute__route__vias": 1196862,
+          "detailedroute__route__vias__singlecut": 1196862,
+          "detailedroute__route__vias__multicut": 0,
+          "detailedroute__antenna_diodes_count": 0,
+          "detailedroute__antenna__violating__nets": 0,
+          "detailedroute__antenna__violating__pins": 0,
+          "detailedroute__flow__warnings__count": 1,
+          "detailedroute__flow__errors__count": 0,
+          "detailedroute__flow__warnings__count:GRT-0246": 1,
+          "detailedroute__flow__warnings__type_count": 1
+        },
+        "5_3_fillcell.json": {
+          "design__violations": 0,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "6_1_fill.json": {
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "6_report.json": {
+          "finish__design_powergrid__voltage__worst__net:VDD__corner:default": 1.09442,
+          "finish__design_powergrid__voltage__average__net:VDD__corner:default": 1.09849,
+          "finish__design_powergrid__drop__average__net:VDD__corner:default": 0.00151186,
+          "finish__design_powergrid__drop__worst__net:VDD__corner:default": 0.00558233,
+          "finish__design_powergrid__voltage__worst__net:VSS__corner:default": 0.00526846,
+          "finish__design_powergrid__voltage__average__net:VSS__corner:default": 0.00144614,
+          "finish__design_powergrid__drop__average__net:VSS__corner:default": 0.00144614,
+          "finish__design_powergrid__drop__worst__net:VSS__corner:default": 0.00526846,
+          "finish__design__instance__count__class:macro": 6,
+          "finish__design__instance__area__class:macro": 33548.2,
+          "finish__design__instance__count__class:fill_cell": 257251,
+          "finish__design__instance__area__class:fill_cell": 750283,
+          "finish__design__instance__count__class:tap_cell": 4903,
+          "finish__design__instance__area__class:tap_cell": 1304.2,
+          "finish__design__instance__count__class:clock_buffer": 8331,
+          "finish__design__instance__area__class:clock_buffer": 9841.47,
+          "finish__design__instance__count__class:timing_repair_buffer": 11500,
+          "finish__design__instance__area__class:timing_repair_buffer": 10496.9,
+          "finish__design__instance__count__class:inverter": 5927,
+          "finish__design__instance__area__class:inverter": 3157.15,
+          "finish__design__instance__count__class:clock_inverter": 2071,
+          "finish__design__instance__area__class:clock_inverter": 1606.37,
+          "finish__design__instance__count__class:sequential_cell": 36417,
+          "finish__design__instance__area__class:sequential_cell": 164682,
+          "finish__design__instance__count__class:multi_input_combinational_cell": 110081,
+          "finish__design__instance__area__class:multi_input_combinational_cell": 204032,
+          "finish__design__instance__count": 436487,
+          "finish__design__instance__area": 428669,
+          "finish__timing__setup__tns": 0,
+          "finish__timing__hold__tns": 0,
+          "finish__timing__setup__ws": 0.267694,
+          "finish__timing__hold__ws": 0.0524039,
+          "finish__timing__fmax__clock:clk": 447967000.0,
+          "finish__timing__fmax": 447967000.0,
+          "finish__clock__skew__setup": 0.0754761,
+          "finish__clock__skew__hold": 0.0754761,
+          "finish__timing__drv__max_slew_limit": 0.213955,
+          "finish__timing__drv__max_slew": 0,
+          "finish__timing__drv__max_cap_limit": -0.27357,
+          "finish__timing__drv__max_cap": 12,
+          "finish__timing__drv__max_fanout_limit": 0,
+          "finish__timing__drv__max_fanout": 0,
+          "finish__timing__drv__setup_violation_count": 0,
+          "finish__timing__drv__hold_violation_count": 0,
+          "finish__power__internal__total": 0.184321,
+          "finish__power__switching__total": 0.0791276,
+          "finish__power__leakage__total": 0.00686684,
+          "finish__power__total": 0.270315,
+          "finish__design__io": 2174,
+          "finish__design__nets": 226615,
+          "finish__design__die__area": 1211000.0,
+          "finish__design__core__area": 1187470.0,
+          "finish__design__instance__count__stdcell": 179230,
+          "finish__design__instance__area__stdcell": 395120,
+          "finish__design__instance__count__macros": 6,
+          "finish__design__instance__area__macros": 33548.2,
+          "finish__design__instance__count__padcells": 0,
+          "finish__design__instance__area__padcells": 0,
+          "finish__design__instance__count__cover": 0,
+          "finish__design__instance__area__cover": 0,
+          "finish__design__instance__utilization": 0.360994,
+          "finish__design__instance__utilization__stdcell": 0.342416,
+          "finish__design__rows": 778,
+          "finish__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 778,
+          "finish__design__sites": 4306026,
+          "finish__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4306026,
+          "finish__flow__warnings__count": 0,
+          "finish__flow__errors__count": 0,
+          "finish__flow__warnings__type_count": 0
+        }
+      },
+      "artifacts": [
+        {
+          "name": "1_1_yosys_canonicalize.rtlil",
+          "size": 5293000
+        },
+        {
+          "name": "1_2_yosys.sdc",
+          "size": 248
+        },
+        {
+          "name": "1_2_yosys.v",
+          "size": 35206106
+        },
+        {
+          "name": "1_synth.odb",
+          "size": 89999113
+        },
+        {
+          "name": "1_synth.sdc",
+          "size": 188417
+        },
+        {
+          "name": "2_1_floorplan.odb",
+          "size": 90237096
+        },
+        {
+          "name": "2_1_floorplan.sdc",
+          "size": 188417
+        },
+        {
+          "name": "2_2_floorplan_macro.odb",
+          "size": 90238464
+        },
+        {
+          "name": "2_2_floorplan_macro.tcl",
+          "size": 779
+        },
+        {
+          "name": "2_3_floorplan_tapcell.odb",
+          "size": 91430279
+        },
+        {
+          "name": "2_4_floorplan_pdn.odb",
+          "size": 93551458
+        },
+        {
+          "name": "2_floorplan.odb",
+          "size": 93551458
+        },
+        {
+          "name": "2_floorplan.sdc",
+          "size": 188417
+        },
+        {
+          "name": "3_1_place_gp_skip_io.odb",
+          "size": 93551520
+        },
+        {
+          "name": "3_2_place_iop.odb",
+          "size": 93692640
+        },
+        {
+          "name": "3_2_place_iop.tcl",
+          "size": 209257
+        },
+        {
+          "name": "3_3_place_gp.odb",
+          "size": 90802062
+        },
+        {
+          "name": "3_4_place_resized.odb",
+          "size": 90854121
+        },
+        {
+          "name": "3_5_place_dp.odb",
+          "size": 90854121
+        },
+        {
+          "name": "3_place.odb",
+          "size": 90854121
+        },
+        {
+          "name": "3_place.sdc",
+          "size": 188417
+        },
+        {
+          "name": "4_1_cts.odb",
+          "size": 96298229
+        },
+        {
+          "name": "4_cts.odb",
+          "size": 96298229
+        },
+        {
+          "name": "4_cts.sdc",
+          "size": 188457
+        },
+        {
+          "name": "5_1_grt.odb",
+          "size": 169919281
+        },
+        {
+          "name": "5_1_grt.sdc",
+          "size": 188457
+        },
+        {
+          "name": "5_2_route.odb",
+          "size": 228158574
+        },
+        {
+          "name": "5_3_fillcell.odb",
+          "size": 288020430
+        },
+        {
+          "name": "5_route.odb",
+          "size": 288020430
+        },
+        {
+          "name": "5_route.sdc",
+          "size": 188457
+        },
+        {
+          "name": "6_1_fill.odb",
+          "size": 288020430
+        },
+        {
+          "name": "6_1_fill.sdc",
+          "size": 188457
+        },
+        {
+          "name": "6_1_merged.gds",
+          "size": 152924794
+        },
+        {
+          "name": "6_final.def",
+          "size": 163708003
+        },
+        {
+          "name": "6_final.gds",
+          "size": 152924794
+        },
+        {
+          "name": "6_final.odb",
+          "size": 288020430
+        },
+        {
+          "name": "6_final.sdc",
+          "size": 188457
+        },
+        {
+          "name": "6_final.spef",
+          "size": 200162713
+        },
+        {
+          "name": "6_final.v",
+          "size": 22949533
+        },
+        {
+          "name": "mem.json",
+          "size": 5661243
+        },
+        {
+          "name": "route.guide",
+          "size": 55185595
+        },
+        {
+          "name": "updated_clks.sdc",
+          "size": 188417
+        }
+      ],
+      "route_drc_report": {
+        "exists": true,
+        "bytes": 0
+      },
+      "stages": {
+        "synthesis": true,
+        "placement": true,
+        "cts": true,
+        "global_route": true,
+        "detailed_route": true,
+        "final_report": true
+      },
+      "acceptance": "Requires separate per-stage metric, signal/PG, timing, electrical and model review; no signoff inferred",
+      "quality_summary": {
+        "route_drc_errors": 0,
+        "setup_ws_ns": 0.267694,
+        "setup_tns_ns": 0,
+        "hold_ws_ns": 0.0524039,
+        "hold_tns_ns": 0,
+        "max_cap_violations": 12,
+        "max_slew_violations": 0,
+        "max_fanout_violations": 0,
+        "die_area_um2": 1211000.0,
+        "nonfiller_instance_area_um2": 428669,
+        "stdcell_area_um2": 395120,
+        "macro_area_um2": 33548.2,
+        "scope": "Tool single-corner budget checks, no complete boundary load/activity or signoff"
+      },
+      "max_cap_violations_by_stage": {
+        "3_4_place_resized.json": {
+          "placeopt__timing__drv__max_cap": 0
+        },
+        "3_5_place_dp.json": {
+          "detailedplace__timing__drv__max_cap": 3
+        },
+        "4_1_cts.json": {
+          "cts__timing__drv__max_cap": 3
+        },
+        "5_1_grt.json": {
+          "globalroute__timing__drv__max_cap": 9
+        },
+        "6_report.json": {
+          "finish__timing__drv__max_cap": 12
+        }
+      },
+      "final_electrical_violation_rows": [
+        "_215362_/ZN                            26.02   33.13   -7.12 (VIOLATED)",
+        "_215365_/ZN                            26.02   31.67   -5.66 (VIOLATED)",
+        "_189306_/Z                             25.33   30.63   -5.30 (VIOLATED)",
+        "_219448_/ZN                            25.33   30.43   -5.10 (VIOLATED)",
+        "_219486_/ZN                            25.33   30.22   -4.89 (VIOLATED)",
+        "_273064_/ZN                            53.41   57.45   -4.04 (VIOLATED)",
+        "u_mxu.rowi[45]$_DFF_P_/Q               60.73   62.80   -2.07 (VIOLATED)",
+        "_256613_/ZN                            26.02   27.30   -1.28 (VIOLATED)",
+        "_287787_/Z                             60.50   61.69   -1.19 (VIOLATED)",
+        "_191869_/ZN                            26.02   27.20   -1.18 (VIOLATED)",
+        "u_mxu.i_w4$_DFFE_PP_/QN                60.27   61.33   -1.05 (VIOLATED)",
+        "_198924_/ZN                            26.02   27.02   -1.00 (VIOLATED)"
+      ],
+      "final_electrical_report": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/opentpu-mxu/flow/reports/nangate45/parallel_opentpu_mxu/base/6_finish.rpt",
+      "final_log_markers": [
+        "[INFO PSM-0040] All shapes on net VDD are connected.",
+        "Average IR drop  : 1.51e-03 V",
+        "Worstcase IR drop: 5.58e-03 V",
+        "[INFO PSM-0040] All shapes on net VSS are connected.",
+        "Average IR drop  : 1.45e-03 V",
+        "Worstcase IR drop: 5.27e-03 V"
+      ],
+      "experiment.json": {
+        "case": "opentpu-mxu",
+        "top": "otpu_asic_top",
+        "parameters": {
+          "D": 32,
+          "MCOLS": 2,
+          "ROWS": 2,
+          "BLOCKS": 32,
+          "LANES": 4,
+          "DEPTH": 64,
+          "IMPL": 2,
+          "CL": 16,
+          "E": 0,
+          "SID": 0
+        },
+        "clock_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Upstream openTPU synthetic fakeram LEF/Liberty models, not fabricated SRAM or SRAM GDS. Same unmodified generator and small configuration for split/merged cases; no full system claim.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "independent block implementation; not top integration, H2, source-to-netlist equivalence or signoff"
+      },
+      "elaboration-summary.json": {
+        "top": "otpu_asic_top",
+        "ports": {
+          "clk": {
+            "direction": "input",
+            "bits": 1
+          },
+          "rst": {
+            "direction": "input",
+            "bits": 1
+          },
+          "start": {
+            "direction": "input",
+            "bits": 1
+          },
+          "go": {
+            "direction": "input",
+            "bits": 1
+          },
+          "cmd": {
+            "direction": "input",
+            "bits": 240
+          },
+          "rdy": {
+            "direction": "output",
+            "bits": 1
+          },
+          "done": {
+            "direction": "output",
+            "bits": 1
+          },
+          "computing": {
+            "direction": "output",
+            "bits": 1
+          },
+          "pf_level": {
+            "direction": "output",
+            "bits": 7
+          },
+          "pf_starve": {
+            "direction": "output",
+            "bits": 1
+          },
+          "pf_block": {
+            "direction": "output",
+            "bits": 1
+          },
+          "pf_u": {
+            "direction": "output",
+            "bits": 1
+          },
+          "pf_uv": {
+            "direction": "output",
+            "bits": 128
+          },
+          "a_req": {
+            "direction": "output",
+            "bits": 1
+          },
+          "a_addr": {
+            "direction": "output",
+            "bits": 32
+          },
+          "a_gnt": {
+            "direction": "input",
+            "bits": 1
+          },
+          "a_rvalid": {
+            "direction": "input",
+            "bits": 1
+          },
+          "a_rdata": {
+            "direction": "input",
+            "bits": 256
+          },
+          "b_req": {
+            "direction": "output",
+            "bits": 1
+          },
+          "b_addr": {
+            "direction": "output",
+            "bits": 32
+          },
+          "b_gnt": {
+            "direction": "input",
+            "bits": 1
+          },
+          "b_rvalid": {
+            "direction": "input",
+            "bits": 1
+          },
+          "b_rdata": {
+            "direction": "input",
+            "bits": 256
+          },
+          "t_ren": {
+            "direction": "output",
+            "bits": 4
+          },
+          "t_raddr": {
+            "direction": "output",
+            "bits": 128
+          },
+          "t_rdata": {
+            "direction": "input",
+            "bits": 128
+          },
+          "t_wen": {
+            "direction": "output",
+            "bits": 4
+          },
+          "t_waddr": {
+            "direction": "output",
+            "bits": 128
+          },
+          "t_wdata": {
+            "direction": "output",
+            "bits": 128
+          },
+          "t_gnt": {
+            "direction": "input",
+            "bits": 1
+          },
+          "act_blk": {
+            "direction": "output",
+            "bits": 16
+          },
+          "act_blk2": {
+            "direction": "output",
+            "bits": 16
+          },
+          "act_hi": {
+            "direction": "output",
+            "bits": 2
+          },
+          "act_grp": {
+            "direction": "output",
+            "bits": 8
+          },
+          "act_ren": {
+            "direction": "output",
+            "bits": 2
+          },
+          "act_data": {
+            "direction": "input",
+            "bits": 512
+          },
+          "act_scale": {
+            "direction": "input",
+            "bits": 128
+          }
+        },
+        "port_count": 37,
+        "signal_bits": 2172,
+        "blackbox_cells": {
+          "fakeram45_1r1w_64x72": 3,
+          "fakeram45_1r1w_64x40": 1,
+          "fakeram45_1r1w_64x96": 1,
+          "fakeram45_1r1w_64x64": 1
+        },
+        "check": "Yosys hierarchy -check and check -assert completed; not functional equivalence"
+      },
+      "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif\n",
+      "tools.sha256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53  /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad\nc2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b  /OpenROAD-flow-scripts/tools/install/yosys/bin/yosys\n",
+      "config-inputs.sha256": "178a36cec34619864d0662538f041ce561448232e72405700946752668a6c019  config.mk\n93e575af458e283bd067de99437465e3986326e9de292deb25ebd5c1b75d5e8b  boundary.sdc\nc5e82a687112db08b8e24d200534921f9dc26558450528303e189393fff0b156  elab.ys\nc5c0fdbbef3e738215b30cfccac9e54e04c13c84fa2871325a8fff3ff2a926e2  experiment.json\n19346b2636f1f62842bcc4beda078390493da685d8c509128f3c15f9762dad69  boundary.sv\n"
+    },
+    "opentpu-act-mxu": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/opentpu-act-mxu",
+      "step": "89458.3\n",
+      "started_utc": "2026-10-21T09:01:56Z\n",
+      "finished_utc": "2026-10-21T09:35:51Z\n",
+      "pipeline_exit_code": "0\n",
+      "output_hash_index": {
+        "exists": true,
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/opentpu-act-mxu/output-files.sha256"
+      },
+      "step_log_tail": "3_5_place_dp           .odb         82      135     1.64     1555 3ca18465bc\n4_1_cts                .odb         73      192     2.60     1640 6c159c86ce\n5_1_grt                .odb        460     2141     4.66     3119 ed4d3c7a87\n5_1_grt                .sdc                                       64d518987b\n5_2_route              .odb        537     6977    12.99     7034 a6079e482d\n5_3_fillcell           .odb          4        4     1.00     1063 95ef584adb\n6_1_fill               .odb          1        1     0.98      617 95ef584adb\n6_1_fill               .sdc                                       64d518987b\n6_1_merge                           12       13     0.99     1183 N/A\n6_report                           206      282     1.37     4447 N/A\nTotal                             2006    10936     5.43     7034\nmake: Leaving directory '/OpenROAD-flow-scripts/flow'",
+      "metrics": {
+        "1_synth.json": {
+          "synth__design__io": 1662,
+          "synth__design__nets": 225811,
+          "synth__design__die__area": 0,
+          "synth__design__core__area": 0,
+          "synth__design__instance__count": 168309,
+          "synth__design__instance__area": 449792,
+          "synth__design__instance__count__stdcell": 168297,
+          "synth__design__instance__area__stdcell": 387096,
+          "synth__design__instance__count__macros": 12,
+          "synth__design__instance__area__macros": 62695.4,
+          "synth__design__instance__count__padcells": 0,
+          "synth__design__instance__area__padcells": 0,
+          "synth__design__instance__count__cover": 0,
+          "synth__design__instance__area__cover": 0,
+          "synth__design__rows": 0,
+          "synth__design__sites": 0,
+          "synth__flow__warnings__count": 1,
+          "synth__flow__errors__count": 0,
+          "synth__flow__warnings__count:STA-0441": 1,
+          "synth__flow__warnings__type_count": 1
+        },
+        "2_1_floorplan.json": {
+          "floorplan__design__instance__count__setup_buffer": 0,
+          "run__flow__platform__time_units": "1ns",
+          "run__flow__platform__capacitance_units": "1fF",
+          "run__flow__platform__resistance_units": "1kohm",
+          "run__flow__platform__voltage_units": "1v",
+          "run__flow__platform__current_units": "1mA",
+          "run__flow__platform__power_units": "1nW",
+          "run__flow__platform__distance_units": "1um",
+          "floorplan__timing__setup__tns": 0,
+          "floorplan__timing__hold__tns": 0,
+          "floorplan__timing__setup__ws": 0.219324,
+          "floorplan__timing__hold__ws": 0.0343654,
+          "floorplan__timing__fmax__clock:clk": 438467000.0,
+          "floorplan__timing__fmax": 438467000.0,
+          "floorplan__power__internal__total": 0.145955,
+          "floorplan__power__switching__total": 0.0144165,
+          "floorplan__power__leakage__total": 0.00662187,
+          "floorplan__power__total": 0.166993,
+          "floorplan__design__io": 1662,
+          "floorplan__design__nets": 226429,
+          "floorplan__design__die__area": 1307890.0,
+          "floorplan__design__core__area": 1283630.0,
+          "floorplan__design__instance__count": 168927,
+          "floorplan__design__instance__area": 450120,
+          "floorplan__design__instance__count__stdcell": 168915,
+          "floorplan__design__instance__area__stdcell": 387425,
+          "floorplan__design__instance__count__macros": 12,
+          "floorplan__design__instance__area__macros": 62695.4,
+          "floorplan__design__instance__count__padcells": 0,
+          "floorplan__design__instance__area__padcells": 0,
+          "floorplan__design__instance__count__cover": 0,
+          "floorplan__design__instance__area__cover": 0,
+          "floorplan__design__instance__utilization": 0.350662,
+          "floorplan__design__instance__utilization__stdcell": 0.317318,
+          "floorplan__design__rows": 809,
+          "floorplan__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 809,
+          "floorplan__design__sites": 4825685,
+          "floorplan__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4825685,
+          "floorplan__flow__warnings__count": 2,
+          "floorplan__flow__errors__count": 0,
+          "floorplan__flow__warnings__count:EST-0027": 1,
+          "floorplan__flow__warnings__count:IFP-0028": 1,
+          "floorplan__flow__warnings__type_count": 2
+        },
+        "2_2_floorplan_macro.json": {
+          "macro_place__wirelength": 3025770.0,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "2_3_floorplan_tapcell.json": {
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "2_4_floorplan_pdn.json": {
+          "flow__warnings__count": 1,
+          "flow__errors__count": 0,
+          "flow__warnings__count:PDN-1051": 1,
+          "flow__warnings__type_count": 1
+        },
+        "3_1_place_gp_skip_io.json": {
+          "gpl__convergence__iteration": 461,
+          "gpl__area__final": 413716,
+          "gpl__area__final__percent": 0,
+          "route__wirelength__estimated": 3124890.0,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "3_2_place_iop.json": {
+          "floorplan__design__io": 1662,
+          "design__io__hpwl": 642005918,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "3_3_place_gp.json": {
+          "globalplace__gpl__convergence__iteration": 876,
+          "globalplace__gpl__routability__iteration": 465,
+          "globalplace__gpl__routability__congestion": 0.965073,
+          "globalplace__gpl__area__original": 405634,
+          "globalplace__gpl__area__routability_inflation": 3166.85,
+          "globalplace__gpl__area__routability_inflation__percent": 0.780717,
+          "globalplace__gpl__area__timing_delta": 4710.84,
+          "globalplace__gpl__area__timing_delta__percent": 1.16135,
+          "globalplace__gpl__area__final": 413512,
+          "globalplace__gpl__area__final__percent": 1.94207,
+          "globalplace__route__wirelength__estimated": 2786510.0,
+          "globalplace__timing__setup__tns": 0,
+          "globalplace__timing__hold__tns": 0,
+          "globalplace__timing__setup__ws": 0.301985,
+          "globalplace__timing__hold__ws": 0.0434728,
+          "globalplace__timing__fmax__clock:clk": 454956000.0,
+          "globalplace__timing__fmax": 454956000.0,
+          "globalplace__power__internal__total": 0.145965,
+          "globalplace__power__switching__total": 0.0233159,
+          "globalplace__power__leakage__total": 0.00655246,
+          "globalplace__power__total": 0.175834,
+          "globalplace__design__io": 1664,
+          "globalplace__design__nets": 217947,
+          "globalplace__design__die__area": 1307890.0,
+          "globalplace__design__core__area": 1283630.0,
+          "globalplace__design__instance__count": 165523,
+          "globalplace__design__instance__area": 446071,
+          "globalplace__design__instance__count__stdcell": 165511,
+          "globalplace__design__instance__area__stdcell": 383376,
+          "globalplace__design__instance__count__macros": 12,
+          "globalplace__design__instance__area__macros": 62695.4,
+          "globalplace__design__instance__count__padcells": 0,
+          "globalplace__design__instance__area__padcells": 0,
+          "globalplace__design__instance__count__cover": 0,
+          "globalplace__design__instance__area__cover": 0,
+          "globalplace__design__instance__utilization": 0.347507,
+          "globalplace__design__instance__utilization__stdcell": 0.314001,
+          "globalplace__design__rows": 829,
+          "globalplace__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 829,
+          "globalplace__design__sites": 4492180,
+          "globalplace__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4492180,
+          "globalplace__flow__warnings__count": 1,
+          "globalplace__flow__errors__count": 0,
+          "globalplace__flow__warnings__count:GRT-0281": 1,
+          "globalplace__flow__warnings__type_count": 1
+        },
+        "3_4_place_resized.json": {
+          "placeopt__timing__drv__floating__nets": 0,
+          "placeopt__timing__drv__floating__pins": 0,
+          "placeopt__timing__setup__tns": 0,
+          "placeopt__timing__hold__tns": 0,
+          "placeopt__timing__setup__ws": 0.301985,
+          "placeopt__timing__hold__ws": 0.0434728,
+          "placeopt__timing__fmax__clock:clk": 454956000.0,
+          "placeopt__timing__fmax": 454956000.0,
+          "placeopt__timing__drv__max_slew_limit": 0.315485,
+          "placeopt__timing__drv__max_slew": 0,
+          "placeopt__timing__drv__max_cap_limit": 0.00139126,
+          "placeopt__timing__drv__max_cap": 0,
+          "placeopt__timing__drv__max_fanout_limit": 0,
+          "placeopt__timing__drv__max_fanout": 0,
+          "placeopt__timing__drv__setup_violation_count": 0,
+          "placeopt__timing__drv__hold_violation_count": 0,
+          "placeopt__power__internal__total": 0.146056,
+          "placeopt__power__switching__total": 0.0233368,
+          "placeopt__power__leakage__total": 0.00656593,
+          "placeopt__power__total": 0.175958,
+          "placeopt__design__io": 1664,
+          "placeopt__design__nets": 218128,
+          "placeopt__design__die__area": 1307890.0,
+          "placeopt__design__core__area": 1283630.0,
+          "placeopt__design__instance__count": 165704,
+          "placeopt__design__instance__area": 446376,
+          "placeopt__design__instance__count__stdcell": 165692,
+          "placeopt__design__instance__area__stdcell": 383680,
+          "placeopt__design__instance__count__macros": 12,
+          "placeopt__design__instance__area__macros": 62695.4,
+          "placeopt__design__instance__count__padcells": 0,
+          "placeopt__design__instance__area__padcells": 0,
+          "placeopt__design__instance__count__cover": 0,
+          "placeopt__design__instance__area__cover": 0,
+          "placeopt__design__instance__utilization": 0.347744,
+          "placeopt__design__instance__utilization__stdcell": 0.314251,
+          "placeopt__design__rows": 829,
+          "placeopt__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 829,
+          "placeopt__design__sites": 4492180,
+          "placeopt__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4492180,
+          "placeopt__flow__warnings__count": 0,
+          "placeopt__flow__errors__count": 0,
+          "placeopt__flow__warnings__type_count": 0
+        },
+        "3_5_place_dp.json": {
+          "detailedplace__utilization__before__dpl": 34.7744,
+          "detailedplace__dpl__legalizer__type": "negotiation",
+          "detailedplace__dpl__total__moves": 163069,
+          "detailedplace__dpl__negotiation__iterations__total": 12,
+          "detailedplace__dpl__negotiation__converge__phase": 1,
+          "detailedplace__dpl__negotiation__diamond__recovery__count": 0,
+          "detailedplace__dpl__instance__displacement__total": 223550,
+          "detailedplace__dpl__instance__displacement__mean": 1.349,
+          "detailedplace__dpl__instance__displacement__max": 142.417,
+          "detailedplace__dpl__route__wirelength__estimated": 2927220.0,
+          "detailedplace__dpl__hpwl__delta": 136982,
+          "detailedplace__dpl__hpwl__delta__percent": 5,
+          "detailedplace__dpo__total__attempts": 3212240,
+          "detailedplace__dpo__relocated__cells": 81647,
+          "detailedplace__dpo__instance__displacement__total": 179943,
+          "detailedplace__dpo__instance__displacement__mean": 2.20391,
+          "detailedplace__dpo__instance__displacement__max": 8.24,
+          "detailedplace__dpo__hpwl__delta": -95556.5,
+          "detailedplace__dpo__hpwl__delta__percent": -3,
+          "detailedplace__design__violations": 0,
+          "detailedplace__timing__setup__tns": 0,
+          "detailedplace__timing__hold__tns": 0,
+          "detailedplace__timing__setup__ws": 0.322807,
+          "detailedplace__timing__hold__ws": 0.0429811,
+          "detailedplace__timing__fmax__clock:clk": 459307000.0,
+          "detailedplace__timing__fmax": 459307000.0,
+          "detailedplace__timing__drv__max_slew_limit": 0.310726,
+          "detailedplace__timing__drv__max_slew": 0,
+          "detailedplace__timing__drv__max_cap_limit": -0.00989177,
+          "detailedplace__timing__drv__max_cap": 0,
+          "detailedplace__timing__drv__max_fanout_limit": 0,
+          "detailedplace__timing__drv__max_fanout": 0,
+          "detailedplace__timing__drv__setup_violation_count": 0,
+          "detailedplace__timing__drv__hold_violation_count": 0,
+          "detailedplace__power__internal__total": 0.146051,
+          "detailedplace__power__switching__total": 0.0232451,
+          "detailedplace__power__leakage__total": 0.00656593,
+          "detailedplace__power__total": 0.175862,
+          "detailedplace__design__io": 1664,
+          "detailedplace__design__nets": 218128,
+          "detailedplace__design__die__area": 1307890.0,
+          "detailedplace__design__core__area": 1283630.0,
+          "detailedplace__design__instance__count": 165704,
+          "detailedplace__design__instance__area": 446376,
+          "detailedplace__design__instance__count__stdcell": 165692,
+          "detailedplace__design__instance__area__stdcell": 383680,
+          "detailedplace__design__instance__count__macros": 12,
+          "detailedplace__design__instance__area__macros": 62695.4,
+          "detailedplace__design__instance__count__padcells": 0,
+          "detailedplace__design__instance__area__padcells": 0,
+          "detailedplace__design__instance__count__cover": 0,
+          "detailedplace__design__instance__area__cover": 0,
+          "detailedplace__design__instance__utilization": 0.347744,
+          "detailedplace__design__instance__utilization__stdcell": 0.314251,
+          "detailedplace__design__rows": 829,
+          "detailedplace__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 829,
+          "detailedplace__design__sites": 4492180,
+          "detailedplace__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4492180,
+          "detailedplace__flow__warnings__count": 0,
+          "detailedplace__flow__errors__count": 0,
+          "detailedplace__flow__warnings__type_count": 0
+        },
+        "4_1_cts.json": {
+          "cts__utilization__before__dpl": 35.8183,
+          "cts__dpl__legalizer__type": "negotiation",
+          "cts__dpl__total__moves": 13524,
+          "cts__dpl__negotiation__iterations__total": 38,
+          "cts__dpl__negotiation__converge__phase": 2,
+          "cts__dpl__negotiation__diamond__recovery__count": 1,
+          "cts__dpl__instance__displacement__total": 42880.8,
+          "cts__dpl__instance__displacement__mean": 0.24,
+          "cts__dpl__instance__displacement__max": 130.516,
+          "cts__dpl__route__wirelength__estimated": 3053860.0,
+          "cts__dpl__hpwl__delta": 10283.1,
+          "cts__dpl__hpwl__delta__percent": 0,
+          "cts__design__instance__count__setup_buffer": 0,
+          "cts__design__instance__count__hold_buffer": 2275,
+          "cts__design__violations": 0,
+          "cts__timing__setup__tns": 0,
+          "cts__timing__hold__tns": -0.898348,
+          "cts__timing__setup__ws": 0.454195,
+          "cts__timing__hold__ws": -0.0184672,
+          "cts__timing__fmax__clock:clk": 488805000.0,
+          "cts__timing__fmax": 488805000.0,
+          "cts__clock__skew__setup": 0.113625,
+          "cts__clock__skew__hold": 0.113625,
+          "cts__timing__drv__max_slew_limit": 0.310108,
+          "cts__timing__drv__max_slew": 0,
+          "cts__timing__drv__max_cap_limit": -0.0096929,
+          "cts__timing__drv__max_cap": 0,
+          "cts__timing__drv__max_fanout_limit": 0,
+          "cts__timing__drv__max_fanout": 0,
+          "cts__timing__drv__setup_violation_count": 0,
+          "cts__timing__drv__hold_violation_count": 167,
+          "cts__power__internal__total": 0.176956,
+          "cts__power__switching__total": 0.0601716,
+          "cts__power__leakage__total": 0.00685686,
+          "cts__power__total": 0.243984,
+          "cts__design__io": 1664,
+          "cts__design__nets": 226427,
+          "cts__design__die__area": 1307890.0,
+          "cts__design__core__area": 1283630.0,
+          "cts__design__instance__count": 178562,
+          "cts__design__instance__area": 459775,
+          "cts__design__instance__count__stdcell": 178550,
+          "cts__design__instance__area__stdcell": 397080,
+          "cts__design__instance__count__macros": 12,
+          "cts__design__instance__area__macros": 62695.4,
+          "cts__design__instance__count__padcells": 0,
+          "cts__design__instance__area__padcells": 0,
+          "cts__design__instance__count__cover": 0,
+          "cts__design__instance__area__cover": 0,
+          "cts__design__instance__utilization": 0.358183,
+          "cts__design__instance__utilization__stdcell": 0.325226,
+          "cts__design__rows": 829,
+          "cts__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 829,
+          "cts__design__sites": 4492180,
+          "cts__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4492180,
+          "cts__flow__warnings__count": 1,
+          "cts__flow__errors__count": 0,
+          "cts__flow__warnings__count:DPL-0700": 1,
+          "cts__flow__warnings__type_count": 1
+        },
+        "5_1_grt.json": {
+          "globalroute__route__net": 226425,
+          "globalroute__route__net__special": 2,
+          "globalroute__global_route__fastroute__run_s": 0,
+          "globalroute__global_route__fastroute__initial_rsmt_s": 0.00202667,
+          "globalroute__global_route__fastroute__route_l_s": 0.00872866,
+          "globalroute__global_route__fastroute__congestion_rsmt_s": 0.00729957,
+          "globalroute__global_route__fastroute__new_route_l_s": 0.00457506,
+          "globalroute__global_route__fastroute__spiral_s": 0.00476393,
+          "globalroute__global_route__fastroute__route_z_s": 0.00291262,
+          "globalroute__global_route__fastroute__monotonic_s": 0.0327657,
+          "globalroute__global_route__fastroute__overflow_iterations_s": 0.102767,
+          "globalroute__global_route__fastroute__finalization_s": 0.460692,
+          "globalroute__global_route__fastroute__snapshot_batch_route_s": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_apply_s": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_sync_s": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_count": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_nets": 0,
+          "globalroute__global_route__fastroute__snapshot_batch_wave_count": 0,
+          "globalroute__global_route__vias": 11675,
+          "globalroute__global_route__wirelength": 4855265,
+          "globalroute__utilization__before__dpl": 35.8665,
+          "globalroute__dpl__legalizer__type": "negotiation",
+          "globalroute__dpl__total__moves": 8128,
+          "globalroute__dpl__negotiation__iterations__total": 58,
+          "globalroute__dpl__negotiation__converge__phase": 1,
+          "globalroute__dpl__negotiation__diamond__recovery__count": 0,
+          "globalroute__dpl__instance__displacement__total": 18637.2,
+          "globalroute__dpl__instance__displacement__mean": 0.1035,
+          "globalroute__dpl__instance__displacement__max": 85.79,
+          "globalroute__dpl__route__wirelength__estimated": 3056830.0,
+          "globalroute__dpl__hpwl__delta": 2323.63,
+          "globalroute__dpl__hpwl__delta__percent": 0,
+          "globalroute__design__instance__count__setup_buffer": 0,
+          "globalroute__design__instance__count__hold_buffer": 629,
+          "globalroute__design__violations": 0,
+          "globalroute__antenna_diodes_count": 0,
+          "globalroute__antenna__violating__nets": 0,
+          "globalroute__antenna__violating__pins": 0,
+          "globalroute__timing__setup__tns": 0,
+          "globalroute__timing__hold__tns": -0.331223,
+          "globalroute__timing__setup__ws": 0.430452,
+          "globalroute__timing__hold__ws": -0.0208719,
+          "globalroute__timing__fmax__clock:clk": 483197000.0,
+          "globalroute__timing__fmax": 483197000.0,
+          "globalroute__clock__skew__setup": 0.119299,
+          "globalroute__clock__skew__hold": 0.119299,
+          "globalroute__timing__drv__max_slew_limit": 0.305061,
+          "globalroute__timing__drv__max_slew": 0,
+          "globalroute__timing__drv__max_cap_limit": -0.018329,
+          "globalroute__timing__drv__max_cap": 1,
+          "globalroute__timing__drv__max_fanout_limit": 0,
+          "globalroute__timing__drv__max_fanout": 0,
+          "globalroute__timing__drv__setup_violation_count": 0,
+          "globalroute__timing__drv__hold_violation_count": 73,
+          "globalroute__power__internal__total": 0.177194,
+          "globalroute__power__switching__total": 0.0621892,
+          "globalroute__power__leakage__total": 0.00686944,
+          "globalroute__power__total": 0.246253,
+          "globalroute__design__io": 1664,
+          "globalroute__design__nets": 227121,
+          "globalroute__design__die__area": 1307890.0,
+          "globalroute__design__core__area": 1283630.0,
+          "globalroute__design__instance__count": 179256,
+          "globalroute__design__instance__area": 460394,
+          "globalroute__design__instance__count__stdcell": 179244,
+          "globalroute__design__instance__area__stdcell": 397699,
+          "globalroute__design__instance__count__macros": 12,
+          "globalroute__design__instance__area__macros": 62695.4,
+          "globalroute__design__instance__count__padcells": 0,
+          "globalroute__design__instance__area__padcells": 0,
+          "globalroute__design__instance__count__cover": 0,
+          "globalroute__design__instance__area__cover": 0,
+          "globalroute__design__instance__utilization": 0.358665,
+          "globalroute__design__instance__utilization__stdcell": 0.325733,
+          "globalroute__design__rows": 829,
+          "globalroute__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 829,
+          "globalroute__design__sites": 4492180,
+          "globalroute__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4492180,
+          "globalroute__flow__warnings__count": 36371,
+          "globalroute__flow__errors__count": 0,
+          "globalroute__flow__warnings__count:GRT-0246": 1,
+          "globalroute__flow__warnings__count:RSZ-0104": 1001,
+          "globalroute__flow__warnings__type_count": 2
+        },
+        "5_2_route.json": {
+          "detailedroute__route__net": 227119,
+          "detailedroute__route__net__special": 2,
+          "detailedroute__route__drc_errors__iter:0": 29462,
+          "detailedroute__route__wirelength__iter:0": 3611528,
+          "detailedroute__route__drc_errors__iter:1": 4724,
+          "detailedroute__route__wirelength__iter:1": 3594035,
+          "detailedroute__route__drc_errors__iter:2": 3402,
+          "detailedroute__route__wirelength__iter:2": 3592083,
+          "detailedroute__route__drc_errors__iter:3": 197,
+          "detailedroute__route__wirelength__iter:3": 3592414,
+          "detailedroute__route__drc_errors__iter:4": 64,
+          "detailedroute__route__wirelength__iter:4": 3592425,
+          "detailedroute__route__drc_errors__iter:5": 0,
+          "detailedroute__route__wirelength__iter:5": 3592391,
+          "detailedroute__route__drc_errors": 0,
+          "detailedroute__route__wirelength": 3592391,
+          "detailedroute__route__vias": 1197582,
+          "detailedroute__route__vias__singlecut": 1197582,
+          "detailedroute__route__vias__multicut": 0,
+          "detailedroute__antenna_diodes_count": 0,
+          "detailedroute__antenna__violating__nets": 0,
+          "detailedroute__antenna__violating__pins": 0,
+          "detailedroute__flow__warnings__count": 1,
+          "detailedroute__flow__errors__count": 0,
+          "detailedroute__flow__warnings__count:GRT-0246": 1,
+          "detailedroute__flow__warnings__type_count": 1
+        },
+        "5_3_fillcell.json": {
+          "design__violations": 0,
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "6_1_fill.json": {
+          "flow__warnings__count": 0,
+          "flow__errors__count": 0,
+          "flow__warnings__type_count": 0
+        },
+        "6_report.json": {
+          "finish__design_powergrid__voltage__worst__net:VDD__corner:default": 1.09174,
+          "finish__design_powergrid__voltage__average__net:VDD__corner:default": 1.09877,
+          "finish__design_powergrid__drop__average__net:VDD__corner:default": 0.0012295,
+          "finish__design_powergrid__drop__worst__net:VDD__corner:default": 0.00826024,
+          "finish__design_powergrid__voltage__worst__net:VSS__corner:default": 0.00705776,
+          "finish__design_powergrid__voltage__average__net:VSS__corner:default": 0.00120371,
+          "finish__design_powergrid__drop__average__net:VSS__corner:default": 0.00120371,
+          "finish__design_powergrid__drop__worst__net:VSS__corner:default": 0.00705776,
+          "finish__design__instance__count__class:macro": 12,
+          "finish__design__instance__area__class:macro": 62695.4,
+          "finish__design__instance__count__class:fill_cell": 284031,
+          "finish__design__instance__area__class:fill_cell": 797221,
+          "finish__design__instance__count__class:tap_cell": 5080,
+          "finish__design__instance__area__class:tap_cell": 1351.28,
+          "finish__design__instance__count__class:clock_buffer": 8573,
+          "finish__design__instance__area__class:clock_buffer": 10085.9,
+          "finish__design__instance__count__class:timing_repair_buffer": 8806,
+          "finish__design__instance__area__class:timing_repair_buffer": 8389.37,
+          "finish__design__instance__count__class:inverter": 6229,
+          "finish__design__instance__area__class:inverter": 3314.63,
+          "finish__design__instance__count__class:clock_inverter": 2010,
+          "finish__design__instance__area__class:clock_inverter": 1498.38,
+          "finish__design__instance__count__class:sequential_cell": 37014,
+          "finish__design__instance__area__class:sequential_cell": 167466,
+          "finish__design__instance__count__class:multi_input_combinational_cell": 111532,
+          "finish__design__instance__area__class:multi_input_combinational_cell": 205594,
+          "finish__design__instance__count": 463287,
+          "finish__design__instance__area": 460394,
+          "finish__timing__setup__tns": 0,
+          "finish__timing__hold__tns": 0,
+          "finish__timing__setup__ws": 0.478511,
+          "finish__timing__hold__ws": 0.0342305,
+          "finish__timing__fmax__clock:clk": 494685000.0,
+          "finish__timing__fmax": 494685000.0,
+          "finish__clock__skew__setup": 0.139857,
+          "finish__clock__skew__hold": 0.139857,
+          "finish__timing__drv__max_slew_limit": 0.245034,
+          "finish__timing__drv__max_slew": 0,
+          "finish__timing__drv__max_cap_limit": -0.18247,
+          "finish__timing__drv__max_cap": 41,
+          "finish__timing__drv__max_fanout_limit": 0,
+          "finish__timing__drv__max_fanout": 0,
+          "finish__timing__drv__setup_violation_count": 0,
+          "finish__timing__drv__hold_violation_count": 0,
+          "finish__power__internal__total": 0.177,
+          "finish__power__switching__total": 0.0599989,
+          "finish__power__leakage__total": 0.00686944,
+          "finish__power__total": 0.243868,
+          "finish__design__io": 1664,
+          "finish__design__nets": 227121,
+          "finish__design__die__area": 1307890.0,
+          "finish__design__core__area": 1283630.0,
+          "finish__design__instance__count__stdcell": 179244,
+          "finish__design__instance__area__stdcell": 397699,
+          "finish__design__instance__count__macros": 12,
+          "finish__design__instance__area__macros": 62695.4,
+          "finish__design__instance__count__padcells": 0,
+          "finish__design__instance__area__padcells": 0,
+          "finish__design__instance__count__cover": 0,
+          "finish__design__instance__area__cover": 0,
+          "finish__design__instance__utilization": 0.358665,
+          "finish__design__instance__utilization__stdcell": 0.325733,
+          "finish__design__rows": 829,
+          "finish__design__rows:FreePDK45_38x28_10R_NP_162NW_34O": 829,
+          "finish__design__sites": 4492180,
+          "finish__design__sites:FreePDK45_38x28_10R_NP_162NW_34O": 4492180,
+          "finish__flow__warnings__count": 0,
+          "finish__flow__errors__count": 0,
+          "finish__flow__warnings__type_count": 0
+        }
+      },
+      "artifacts": [
+        {
+          "name": "1_1_yosys_canonicalize.rtlil",
+          "size": 5890927
+        },
+        {
+          "name": "1_2_yosys.sdc",
+          "size": 248
+        },
+        {
+          "name": "1_2_yosys.v",
+          "size": 36177971
+        },
+        {
+          "name": "1_synth.odb",
+          "size": 91443272
+        },
+        {
+          "name": "1_synth.sdc",
+          "size": 143001
+        },
+        {
+          "name": "2_1_floorplan.odb",
+          "size": 91739831
+        },
+        {
+          "name": "2_1_floorplan.sdc",
+          "size": 143001
+        },
+        {
+          "name": "2_2_floorplan_macro.odb",
+          "size": 91741415
+        },
+        {
+          "name": "2_2_floorplan_macro.tcl",
+          "size": 1628
+        },
+        {
+          "name": "2_3_floorplan_tapcell.odb",
+          "size": 92973696
+        },
+        {
+          "name": "2_4_floorplan_pdn.odb",
+          "size": 95295663
+        },
+        {
+          "name": "2_floorplan.odb",
+          "size": 95295663
+        },
+        {
+          "name": "2_floorplan.sdc",
+          "size": 143001
+        },
+        {
+          "name": "3_1_place_gp_skip_io.odb",
+          "size": 95295725
+        },
+        {
+          "name": "3_2_place_iop.odb",
+          "size": 95399693
+        },
+        {
+          "name": "3_2_place_iop.tcl",
+          "size": 157676
+        },
+        {
+          "name": "3_3_place_gp.odb",
+          "size": 92506789
+        },
+        {
+          "name": "3_4_place_resized.odb",
+          "size": 92569144
+        },
+        {
+          "name": "3_5_place_dp.odb",
+          "size": 92569144
+        },
+        {
+          "name": "3_place.odb",
+          "size": 92569144
+        },
+        {
+          "name": "3_place.sdc",
+          "size": 143001
+        },
+        {
+          "name": "4_1_cts.odb",
+          "size": 97068505
+        },
+        {
+          "name": "4_cts.odb",
+          "size": 97068505
+        },
+        {
+          "name": "4_cts.sdc",
+          "size": 143041
+        },
+        {
+          "name": "5_1_grt.odb",
+          "size": 172120638
+        },
+        {
+          "name": "5_1_grt.sdc",
+          "size": 143041
+        },
+        {
+          "name": "5_2_route.odb",
+          "size": 230689762
+        },
+        {
+          "name": "5_3_fillcell.odb",
+          "size": 296783822
+        },
+        {
+          "name": "5_route.odb",
+          "size": 296783822
+        },
+        {
+          "name": "5_route.sdc",
+          "size": 143041
+        },
+        {
+          "name": "6_1_fill.odb",
+          "size": 296783822
+        },
+        {
+          "name": "6_1_fill.sdc",
+          "size": 143041
+        },
+        {
+          "name": "6_1_merged.gds",
+          "size": 156279262
+        },
+        {
+          "name": "6_final.def",
+          "size": 167266822
+        },
+        {
+          "name": "6_final.gds",
+          "size": 156279262
+        },
+        {
+          "name": "6_final.odb",
+          "size": 296783822
+        },
+        {
+          "name": "6_final.sdc",
+          "size": 143041
+        },
+        {
+          "name": "6_final.spef",
+          "size": 205152029
+        },
+        {
+          "name": "6_final.v",
+          "size": 23282266
+        },
+        {
+          "name": "mem.json",
+          "size": 6432426
+        },
+        {
+          "name": "route.guide",
+          "size": 55877828
+        },
+        {
+          "name": "updated_clks.sdc",
+          "size": 143001
+        }
+      ],
+      "route_drc_report": {
+        "exists": true,
+        "bytes": 0
+      },
+      "stages": {
+        "synthesis": true,
+        "placement": true,
+        "cts": true,
+        "global_route": true,
+        "detailed_route": true,
+        "final_report": true
+      },
+      "acceptance": "Requires separate per-stage metric, signal/PG, timing, electrical and model review; no signoff inferred",
+      "quality_summary": {
+        "route_drc_errors": 0,
+        "setup_ws_ns": 0.478511,
+        "setup_tns_ns": 0,
+        "hold_ws_ns": 0.0342305,
+        "hold_tns_ns": 0,
+        "max_cap_violations": 41,
+        "max_slew_violations": 0,
+        "max_fanout_violations": 0,
+        "die_area_um2": 1307890.0,
+        "nonfiller_instance_area_um2": 460394,
+        "stdcell_area_um2": 397699,
+        "macro_area_um2": 62695.4,
+        "scope": "Tool single-corner budget checks, no complete boundary load/activity or signoff"
+      },
+      "max_cap_violations_by_stage": {
+        "3_4_place_resized.json": {
+          "placeopt__timing__drv__max_cap": 0
+        },
+        "3_5_place_dp.json": {
+          "detailedplace__timing__drv__max_cap": 0
+        },
+        "4_1_cts.json": {
+          "cts__timing__drv__max_cap": 0
+        },
+        "5_1_grt.json": {
+          "globalroute__timing__drv__max_cap": 1
+        },
+        "6_report.json": {
+          "finish__timing__drv__max_cap": 41
+        }
+      },
+      "final_electrical_violation_rows": [
+        "u_mxu.f_tl[6]$_SDFFE_PP0P_/Q           60.73   71.81  -11.08 (VIOLATED)",
+        "place15526/Z                           60.65   66.82   -6.16 (VIOLATED)",
+        "_312437_/S                             25.25   30.64   -5.38 (VIOLATED)",
+        "_262746_/ZN                           106.81  111.68   -4.87 (VIOLATED)",
+        "place15524/Z                           60.65   65.36   -4.71 (VIOLATED)",
+        "place15636/Z                           60.65   65.09   -4.44 (VIOLATED)",
+        "_221278_/ZN                            25.33   29.71   -4.38 (VIOLATED)",
+        "_249233_/ZN                            25.33   29.31   -3.98 (VIOLATED)",
+        "_222076_/ZN                            25.33   29.21   -3.88 (VIOLATED)",
+        "_222080_/ZN                            25.33   29.16   -3.83 (VIOLATED)",
+        "_189641_/ZN                            26.02   29.61   -3.60 (VIOLATED)",
+        "place15532/Z                           60.65   64.02   -3.37 (VIOLATED)",
+        "place15546/Z                           60.65   64.00   -3.35 (VIOLATED)",
+        "_208696_/Z                             60.50   63.75   -3.25 (VIOLATED)",
+        "_250014_/ZN                            26.02   29.14   -3.13 (VIOLATED)",
+        "place15539/Z                           60.65   63.68   -3.03 (VIOLATED)",
+        "u_mxu.u_ts.g_regs.r[2][11]$_DFF_P_/Q   60.73   63.71   -2.98 (VIOLATED)",
+        "_259590_/ZN                           101.01  103.75   -2.73 (VIOLATED)",
+        "_221202_/ZN                            25.33   28.00   -2.67 (VIOLATED)",
+        "u_mxu.u_ts.g_regs.r[4][15]$_DFF_P_/Q   60.73   63.38   -2.65 (VIOLATED)",
+        "_224344_/ZN                            16.02   18.52   -2.50 (VIOLATED)",
+        "_249222_/ZN                            25.33   27.80   -2.47 (VIOLATED)",
+        "place15484/Z                           60.65   63.04   -2.39 (VIOLATED)",
+        "_268838_/ZN                            60.73   63.11   -2.38 (VIOLATED)",
+        "place15527/Z                           60.65   62.82   -2.17 (VIOLATED)",
+        "place15544/Z                           60.65   62.63   -1.98 (VIOLATED)",
+        "_222699_/ZN                            26.70   28.67   -1.97 (VIOLATED)",
+        "_223903_/ZN                            16.02   17.86   -1.84 (VIOLATED)",
+        "place15509/Z                           60.65   62.46   -1.80 (VIOLATED)",
+        "_221303_/ZN                            25.33   26.95   -1.62 (VIOLATED)",
+        "_222270_/ZN                            13.81   15.32   -1.51 (VIOLATED)",
+        "_259554_/ZN                            53.41   54.88   -1.48 (VIOLATED)",
+        "_221498_/ZN                            13.81   15.28   -1.47 (VIOLATED)",
+        "_250008_/ZN                            26.02   27.43   -1.42 (VIOLATED)",
+        "_222045_/ZN                            25.33   26.70   -1.37 (VIOLATED)",
+        "place15493/Z                           60.65   61.88   -1.22 (VIOLATED)",
+        "_267362_/ZN                            13.81   15.03   -1.22 (VIOLATED)",
+        "_249315_/ZN                            26.70   27.90   -1.19 (VIOLATED)",
+        "_257675_/ZN                            13.81   14.84   -1.04 (VIOLATED)",
+        "_249207_/ZN                            26.70   27.71   -1.00 (VIOLATED)",
+        "_224104_/ZN                            16.02   17.02   -1.00 (VIOLATED)"
+      ],
+      "final_electrical_report": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/opentpu-act-mxu/flow/reports/nangate45/parallel_opentpu_act_mxu/base/6_finish.rpt",
+      "final_log_markers": [
+        "[INFO PSM-0040] All shapes on net VDD are connected.",
+        "Average IR drop  : 1.23e-03 V",
+        "Worstcase IR drop: 8.26e-03 V",
+        "[INFO PSM-0040] All shapes on net VSS are connected.",
+        "Average IR drop  : 1.20e-03 V",
+        "Worstcase IR drop: 7.06e-03 V"
+      ],
+      "experiment.json": {
+        "case": "opentpu-act-mxu",
+        "top": "otpu_asic_top",
+        "parameters": {
+          "D": 32,
+          "MCOLS": 2,
+          "ROWS": 2,
+          "BLOCKS": 32,
+          "LANES": 4,
+          "DEPTH": 64,
+          "IMPL": 2,
+          "CL": 16,
+          "E": 0,
+          "SID": 0
+        },
+        "clock_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "source_rtl_modified": false,
+        "added_registers": 0,
+        "phase_lec": "explicitly disabled physical-only route",
+        "memory_model": "Upstream openTPU synthetic fakeram LEF/Liberty models, not fabricated SRAM or SRAM GDS. Same unmodified generator and small configuration for split/merged cases; no full system claim.",
+        "external_driver_load_model": "not specified; boundary timing budget only",
+        "scope": "independent block implementation; not top integration, H2, source-to-netlist equivalence or signoff"
+      },
+      "elaboration-summary.json": {
+        "top": "otpu_asic_top",
+        "ports": {
+          "clk": {
+            "direction": "input",
+            "bits": 1
+          },
+          "we": {
+            "direction": "input",
+            "bits": 4
+          },
+          "w_row": {
+            "direction": "input",
+            "bits": 8
+          },
+          "w_idx": {
+            "direction": "input",
+            "bits": 32
+          },
+          "w_data": {
+            "direction": "input",
+            "bits": 32
+          },
+          "w_dup": {
+            "direction": "input",
+            "bits": 1
+          },
+          "w_off": {
+            "direction": "input",
+            "bits": 8
+          },
+          "swe": {
+            "direction": "input",
+            "bits": 1
+          },
+          "s_row": {
+            "direction": "input",
+            "bits": 8
+          },
+          "s_blk": {
+            "direction": "input",
+            "bits": 16
+          },
+          "s_data": {
+            "direction": "input",
+            "bits": 64
+          },
+          "rst": {
+            "direction": "input",
+            "bits": 1
+          },
+          "start": {
+            "direction": "input",
+            "bits": 1
+          },
+          "go": {
+            "direction": "input",
+            "bits": 1
+          },
+          "cmd": {
+            "direction": "input",
+            "bits": 240
+          },
+          "rdy": {
+            "direction": "output",
+            "bits": 1
+          },
+          "done": {
+            "direction": "output",
+            "bits": 1
+          },
+          "computing": {
+            "direction": "output",
+            "bits": 1
+          },
+          "pf_level": {
+            "direction": "output",
+            "bits": 7
+          },
+          "pf_starve": {
+            "direction": "output",
+            "bits": 1
+          },
+          "pf_block": {
+            "direction": "output",
+            "bits": 1
+          },
+          "pf_u": {
+            "direction": "output",
+            "bits": 1
+          },
+          "pf_uv": {
+            "direction": "output",
+            "bits": 128
+          },
+          "a_req": {
+            "direction": "output",
+            "bits": 1
+          },
+          "a_addr": {
+            "direction": "output",
+            "bits": 32
+          },
+          "a_gnt": {
+            "direction": "input",
+            "bits": 1
+          },
+          "a_rvalid": {
+            "direction": "input",
+            "bits": 1
+          },
+          "a_rdata": {
+            "direction": "input",
+            "bits": 256
+          },
+          "b_req": {
+            "direction": "output",
+            "bits": 1
+          },
+          "b_addr": {
+            "direction": "output",
+            "bits": 32
+          },
+          "b_gnt": {
+            "direction": "input",
+            "bits": 1
+          },
+          "b_rvalid": {
+            "direction": "input",
+            "bits": 1
+          },
+          "b_rdata": {
+            "direction": "input",
+            "bits": 256
+          },
+          "t_ren": {
+            "direction": "output",
+            "bits": 4
+          },
+          "t_raddr": {
+            "direction": "output",
+            "bits": 128
+          },
+          "t_rdata": {
+            "direction": "input",
+            "bits": 128
+          },
+          "t_wen": {
+            "direction": "output",
+            "bits": 4
+          },
+          "t_waddr": {
+            "direction": "output",
+            "bits": 128
+          },
+          "t_wdata": {
+            "direction": "output",
+            "bits": 128
+          },
+          "t_gnt": {
+            "direction": "input",
+            "bits": 1
+          }
+        },
+        "port_count": 40,
+        "signal_bits": 1662,
+        "blackbox_cells": {
+          "fakeram45_1r1w_32x128": 4,
+          "fakeram45_1r1w_32x64": 2,
+          "fakeram45_1r1w_64x72": 3,
+          "fakeram45_1r1w_64x40": 1,
+          "fakeram45_1r1w_64x96": 1,
+          "fakeram45_1r1w_64x64": 1
+        },
+        "check": "Yosys hierarchy -check and check -assert completed; not functional equivalence"
+      },
+      "image.sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif\n",
+      "tools.sha256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53  /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad\nc2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b  /OpenROAD-flow-scripts/tools/install/yosys/bin/yosys\n",
+      "config-inputs.sha256": "24001b204924602927d1b1cabc0d24cf7289d6351fb5e117f63cbdc6768eaff9  config.mk\n93e575af458e283bd067de99437465e3986326e9de292deb25ebd5c1b75d5e8b  boundary.sdc\n78a4dd8e76c4100c623660fa0a4f9a51e1ac5ff78f76973c61d02c6613706c33  elab.ys\n8f40294fee34818f87d17471265e9b0a626e5cc7c64e5648d8b32b152149df16  experiment.json\n23dc0948af8f38793e84a7d2f1135e6a320b4e5b5843c298dcf5cbf79469fa02  boundary.sv\n"
+    }
+  },
+  "completion_audit": {
+    "submission": {
+      "parent_job_id": 89458,
+      "audit_job_id": 89460,
+      "attempt": "parallel-blocks-01",
+      "dependency": "afterany:89458",
+      "scheduler_readback": "JobId=89460 JobName=lyz-par-audit UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294586599 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=Dependency Dependency=afterany:89458(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-10-21T17:13:11 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T17:13:11 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:175411 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=1M,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/observer-v1/completion.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/completion-audit.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-01/completion-audit.log Power= TresPerTask=cpu:1",
+      "purpose": "One-shot terminal evidence collection/checksums on compute, no new physical analysis"
+    },
+    "scheduler": {
+      "exit_code": 0,
+      "stdout": "89460|lyz-par-audit|COMPLETED|0:0|00:00:21|1|node3\n89460.batch|batch|COMPLETED|0:0|00:00:21|1|node3\n89460.extern|extern|COMPLETED|0:0|00:00:21|1|node3",
+      "stderr": ""
+    },
+    "completion_exists": true,
+    "completion_sha256": "4e6d7c24518f8ef55d45b57eb5325d0e7329dfc773273f8c339c4496fd885903  completion.json\n",
+    "exit_code": "0\n"
+  },
+  "memory_resource_comparison": {
+    "split": {
+      "fakeram45_1r1w_32x128": 4,
+      "fakeram45_1r1w_32x64": 2,
+      "fakeram45_1r1w_64x72": 3,
+      "fakeram45_1r1w_64x40": 1,
+      "fakeram45_1r1w_64x96": 1,
+      "fakeram45_1r1w_64x64": 1
+    },
+    "merged": {
+      "fakeram45_1r1w_32x128": 4,
+      "fakeram45_1r1w_32x64": 2,
+      "fakeram45_1r1w_64x72": 3,
+      "fakeram45_1r1w_64x40": 1,
+      "fakeram45_1r1w_64x96": 1,
+      "fakeram45_1r1w_64x64": 1
+    },
+    "identical_instances_by_model": true,
+    "scope": "Actual elaborated blackbox type/count, not physical endpoint/clock/PDN cost or functional equivalence"
+  }
+}
