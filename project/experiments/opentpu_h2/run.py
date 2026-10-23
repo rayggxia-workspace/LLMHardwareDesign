@@ -66,10 +66,10 @@ try:
             script+='help report_net\nhelp report_clock_skew\nreport_clock_properties\nreport_clock_skew\n'
             script+='report_check_types -max_capacitance -max_slew -max_count 100000 -digits 9 -no_line_splits > electrical-budget.rpt\n'
             script+='set f [open macro-nets.txt w]\nset nets {}\nforeach i {u_act u_mxu} {foreach p [[[ord::get_db_block] findInst $i] getITerms] {set n [$p getNet];if {$n ne "NULL" && [$n getSigType] ni {POWER GROUND}} {lappend nets [$n getName]}}}\n'
-            script+='foreach n [lsort -unique $nets] {puts $f $n;report_net -connections -verbose $n >> interface-nets.rpt}\nclose $f\n'
+            script+='foreach n [lsort -unique $nets] {puts $f $n;report_net -digits 9 $n >> interface-nets.rpt}\nclose $f\n'
         else:
             script+='set_routing_layers -signal metal8-metal10 -clock metal4-metal10\n'
-            script+='detailed_route -bottom_routing_layer metal8 -top_routing_layer metal10 -output_drc restricted-drc.rpt -output_maze restricted-maze.log\n'
+            script+='detailed_route -output_drc restricted-drc.rpt -output_maze restricted-maze.log\n'
             script+='write_def restricted-final.def\nwrite_db restricted-final.odb\n'
         path=ROOT/(SPEC['mode']+'.tcl');path.write_text(script)
         with (ROOT/(SPEC['mode']+'.log')).open('w') as log:
