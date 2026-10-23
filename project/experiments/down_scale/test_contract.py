@@ -36,6 +36,8 @@ class Contract(unittest.TestCase):
         with self.assertRaises(ValueError):shift_rne(1,64)
         with self.assertRaises(OverflowError):calculate(np.ones((1,2),dtype=np.int8),np.ones((1,2),dtype=np.int8),
             np.array([[0,63]],dtype=np.int8),np.array([[0]],dtype=np.int8),np.array([0],dtype=np.int8),1,2)
+        with self.assertRaises(ValueError):calculate(np.array([[-128]],dtype=np.int8),np.ones((1,1),dtype=np.int8),
+            np.array([[0]],dtype=np.int8),np.array([[0]],dtype=np.int8),np.array([0],dtype=np.int8),1,1)
 
     def test_packet_quantum_and_batching(self):
         self.assertEqual(packet_bytes(16),packet_bytes(64));self.assertEqual(packet_bytes(64),128)

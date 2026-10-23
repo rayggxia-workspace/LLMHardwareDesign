@@ -101,6 +101,8 @@ def quantize(x, profile, static=None):
 
 def calculate(qa, qw, ea, ew, ey, ag, wg):
     rows, k = qa.shape; n = len(qw); group = min(ag, wg); groups = k//group
+    if k%group or ag%group or wg%group:raise ValueError('unsupported tail/group')
+    if np.max(abs(qa.astype(np.int16)))>127 or np.max(abs(qw.astype(np.int16)))>127:raise ValueError('symmetric i8 domain')
     parts = np.empty((groups, rows, n), dtype=np.int32)
     units = np.empty(parts.shape, dtype=np.int16)
     for g in range(groups):
@@ -116,6 +118,9 @@ def calculate(qa, qw, ea, ew, ey, ag, wg):
         exact = 0; bound = 0; early_sum = 0
         for g in range(groups):
             delta = int(units[(g,)+idx])-int(e0[idx]); max_spread = max(max_spread, delta)
+            # For full K8192: K*127^2 << 35 < 2^63. Hardware may use this
+            # sufficient, data-independent min/max guard, not a free bound sum.
+            if delta>35:raise OverflowError('candidate exponent-spread guard')
             exact = check(exact + (int(parts[(g,)+idx]) << delta), 64)
             bound += group*127**2 << delta
             early_sum += max(-128, min(127, shift_rne(parts[(g,)+idx], int(ey[idx[1]])-int(units[(g,)+idx]))))

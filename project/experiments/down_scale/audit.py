@@ -134,6 +134,7 @@ def main():
                 bound=sum(group*127**2*(1<<(int(u[idx])-common)) for u in units)
                 maxbound=max(maxbound,bound);maxobs=max(maxobs,abs(integer.numerator));bits=max(bits,bound.bit_length()+1)
                 spread=max(spread,max(int(u[idx])-common for u in units))
+                if max(int(u[idx])-common for u in units)>35:raise AssertionError('spread guard')
                 expected_before[idx]=float(value);expected_after[idx]=code*2.**int(ey[idx[1]]);final_values+=1
             for field,value in [('worst_aligned_bound',maxbound),('observed_max_abs_aligned_acc',maxobs),('max_scale_exponent_spread',spread),('required_signed_bits_for_this_scale_matrix',bits),('output_saturation_count',sat),('early_group_RQ_mismatches',early)]:
                 if record[field]!=value:raise AssertionError('reported '+field)

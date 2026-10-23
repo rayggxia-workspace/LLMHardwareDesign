@@ -78,7 +78,7 @@ def build(pr, rows, placement, limb_cycles, batch):
     # Combined ea+ew and min per output: no FP compiler, no free complete table.
     meta = g.transfer('S6',ep,a_meta+w_meta+16,'S6',port,(previous,),destination_offset=moff,kind='META_RQ')
     mr = g.memory(port,a_meta+w_meta+16,moff,meta,label='scale compiler metadata read')
-    compile_node = g.add('product exponents and minimum unit',math.ceil(elements*ng/8),('wide',),(mr,))
+    compile_node = g.add('product exponents min max and spread<=35 guard',3*math.ceil(elements*ng/8)+math.ceil(elements/8),('wide',),(mr,))
     e0store = g.memory(port,2*elements,moff+a_meta+w_meta+16,(compile_node,),True,'aligned e0 store')
     ao = 2048 if placement=='near' else 10240
     zero = g.memory(port,elements*8,ao,(e0store,),True,'aligned INT64 zero')

@@ -47,10 +47,14 @@ def run(directory):
         if hashlib.sha256(raw).hexdigest()!=record['sha256']:raise ValueError('array SHA '+name)
         return np.load(io.BytesIO(raw),allow_pickle=False)
     reports=json.loads((directory/'numeric/numeric.json').read_text());profiles={p['name']:p for p in json.loads((directory/'numeric/profiles.json').read_text())}
+    if (directory/'replay-cases.json').exists():
+        wanted=json.loads((directory/'replay-cases.json').read_text());reports=[r for r in reports if r['key']in wanted]
+        if len(reports)!=len(wanted):raise ValueError('selected case inventory')
     ey=array('Y_e');outputs=partials=packet_count=wire_bytes=0;proof=[]
     for record in reports:
         key=record['key'];pr=profiles[record['profile']];ag,wg=pr['ag'],pr['wg'];group=min(ag,wg)
         qa=array(key+'.A_i8');ea=array(key+'.A_e');qw=array(pr['name']+'.W_i8');ew=array(pr['name']+'.W_e')
+        if max(int(np.max(abs(qa.astype(np.int16)))),int(np.max(abs(qw.astype(np.int16)))))>127:raise ValueError('symmetric i8 domain')
         expected=array(key+'.out');saved_acc=array(key+'.acc');saved_e0=array(key+'.e0');saved_parts=array(key+'.parts')
         # Decode uses immediate row1, prefill row4; both paths have identical grouping/scales.
         tile=1 if record['phase']=='decode' else 4
@@ -78,6 +82,7 @@ def run(directory):
                 units=[int(ae[idx[0],(g*group)//ag])+int(we[idx[1],(g*group)//wg]) for g in range(len(received))]
                 value=sum((Fraction(int(part[idx]))*Fraction(2)**unit for part,unit in zip(received,units)),Fraction(0))
                 minimum=min(units);acc=value/(Fraction(2)**minimum)
+                if max(units)-minimum>35 or not -(1<<63)<=acc.numerator<(1<<63):raise AssertionError('wide format/spread guard')
                 if acc.denominator!=1 or acc.numerator!=int(saved_acc[row+idx[0],idx[1]]) or minimum!=saved_e0[row+idx[0],idx[1]]:raise AssertionError('wide accumulation')
                 shared[idx]=max(-128,min(127,round(value/(Fraction(2)**int(ye[idx[1]])))))
                 outputs+=1

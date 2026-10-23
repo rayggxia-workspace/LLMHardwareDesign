@@ -11,6 +11,10 @@ aligned exactly by left shifts to min(eA+eW), checked against both observed and
 format-wide INT64 bounds; no intermediate rounding. Exponent formats are i8
 for A/W/Y, i16 for product/common units; shifts outside +/-63 reject. Only
 divisible declared K groups are supported; tails are not silently padded.
+For this K8192 domain a min/max exponent-spread guard <=35 is sufficient for
+INT64 format safety (K*127^2<<35 < 2^63); reject larger spread, never wrap.
+Final saturating left shifts detect output overflow before materializing the
+shifted result; right shifts use explicit guard/round/sticky and signed ties.
 
 Static max/MSE use original32 or expanded128 calibration only. MSE searches
 seven fixed dyadic exponents using input reconstruction MSE, deterministic
@@ -48,8 +52,8 @@ weight fetch, upstream nonlinear cost, full layer N2048 or inter-operator pipeli
 
 Dynamic full row needs two source passes (32KiB won't fit V16KiB); groups <=2048
 retain <=8KiB source in V, reread locally for scan and quantization. Source max,
-integer CLZ/compare (3 assumed cycles), A8 publication, metadata compiler (one
-eA+eW/min per 8 lanes/cycle), partial packets, 64bit shifts/adds, final wide RNE,
+integer CLZ/compare (3 assumed cycles), A8 publication, metadata compiler (three
+eA+eW/min/max slots per 8 lanes plus one spread guard slot per 8 outputs), partial packets, 64bit shifts/adds, final wide RNE,
 and bank read/write traffic are included. Wide work assumes 4 32bit limb slots
 per lane per update/final RNE; vary each slot 1/2/4 cycles. No divide, square root,
 LUT or wide multiplier occurs on this dyadic path. The added shift/carry/adder/
