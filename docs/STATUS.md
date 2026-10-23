@@ -1,5 +1,11 @@
 # 当前状态
 
+- 2026-10-23本机接续：[Issue39/PR40](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/40)
+  复用真实Qwen3短head完成24组合整数QK/PV及bias边界，89280整数比较和两次科学payload重放通过。
+  direct量化局部误差大，离线平衡仅定位，在线scale/GQA共享/正式质量与物理资格尚未闭合，不宣称最终Block。
+  [记录](experiments/issue-39-kv-scale-boundary.md)及[师兄Codex可复制文案](handoffs/2026-10-23-gpu-codex-experiment-prompt.md)已交付待审查；
+  师兄Issue32 Qwen仍优先，未重复GPU/大模型，等用户完成通知再整合。
+
 - 2026-10-23精度接续：[Issue33](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/33)
   单独实现W8A8候选合同、整数参考与本机量化划分，复用但不接管Issue25/PR26的文档范围。
   [候选精度](INTEGER_PRECISION_CONTRACT.md)及[采集格式](GPU_CAPTURE_CONTRACT.md)已先行发布；

@@ -169,6 +169,10 @@ GPU时间仅说明该工作负载/backend，不能直接证明未来Block的收�
 
 ## 继续工作的入口
 
+接续更新：用户已在Issue39授权本机适合实验，局部数值配置见kv_scale/experiment.json；
+本页及model_selection/plan.json的关闭标志保留为Issue37架构阶段快照，不覆盖新的局部授权。
+实际本机结果见experiments/issue-39-kv-scale-boundary.md；完整候选模型接入/质量门槛仍未通过。
+
 可机读方案在[plan.json](../project/experiments/model_selection/plan.json)，新增数值实跑当前关闭。
 师兄Issue32/PR36仍优先其Qwen修复，本轮只核其任务范围，没有整合其结果或改变分工。
 Gemma/Meta授权与实际配置、适用backend、正式数据版本/样本/SHA、质量门槛审查和GPU排期未闭合，
