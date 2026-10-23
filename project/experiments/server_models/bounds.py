@@ -62,9 +62,9 @@ def main():
       if np.any(psum>budget[None,:])or np.any(pi[:,~mask]):raise AssertionError('P-sum/mask invariant')
       pv=pi@vi;value=pv.astype(np.float64)*2.**(ve-f);error=float(np.linalg.norm(value-ref[:,pos])/max(np.linalg.norm(ref[:,pos].astype(np.float64)),1e-30));original=next(r for r in stored if r['case']==name and r['layer']==layer and r['KV_bits']==kvbits and r['P_bits']==pbits)
       if abs(error-original['attention_error']['relative_rmse'])>1e-12:raise AssertionError('frozen attention replay metrics')
-      certified=int(np.max(budget))*bound;limb_bound=int(np.max(budget))*(41024 if kvbits==16 else127)
-      pd=[(pi[0,0]>>(7*j))&127 for j in range(3 if pbits==16 else1)];rest=vi[:,0].copy();vd=[]
-      for j in range(3 if kvbits==16 else1):
+      certified=int(np.max(budget))*bound;limb_bound=int(np.max(budget))*(41024 if kvbits==16 else 127)
+      pd=[(pi[0,0]>>(7*j))&127 for j in range(3 if pbits==16 else 1)];rest=vi[:,0].copy();vd=[]
+      for j in range(3 if kvbits==16 else 1):
        if kvbits==8:vd.append(rest);break
        digit=(rest+64)%128-64;vd.append(digit);rest=(rest-digit)//128
       accumulator=0;maxprefix=0
