@@ -23,5 +23,5 @@ try:verify(text,wrong,parts['access_landings'],tech)
 except AssertionError:alias_rejected=True
 else:raise AssertionError('Wrong signal mapping accepted')
 a.output.write_text(json.dumps(dict(passed=True,actual_forests=positive['forest_count'],physical_open_rejected=True,
-    wrong_alias_rejected=alias_rejected,scope='Actual routed positive and deliberately disconnected/wrong-net negative controls; no source mutation'),indent=2)+'\n')
+    wrong_alias_rejected=alias_rejected,scope='Actual routed positive and deliberately disconnected/wrong-net negative controls; no source mutation'),indent=2)+'\n',encoding='utf-8',newline='\n')
 print('Actual upper conductor graph and two independent negatives passed.')

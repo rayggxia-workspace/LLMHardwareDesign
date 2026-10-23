@@ -42,5 +42,5 @@ with tempfile.TemporaryDirectory(prefix='h2-freeze-') as directory:
     path=root/'allowed-upper.def';path.write_text(allowed)
     result=audit(frozen,path,8,root/'allowed-upper.json',True)
     observations['upper_mask_only']=dict(passed=result['passed'],scope='Mask/freeze legality only; intentionally no physical qualification')
-a.output.write_text(json.dumps(dict(passed=True,source=str(a.source),tests=observations),indent=2)+'\n')
+a.output.write_text(json.dumps(dict(passed=True,source=str(a.source),tests=observations),indent=2)+'\n',encoding='utf-8',newline='\n')
 print('Actual full DEF freeze mutations rejected; upper mask change classified separately.')

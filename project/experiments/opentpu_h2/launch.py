@@ -47,5 +47,5 @@ receipt = dict(spec=spec,job_id=job,scheduler_readback=readback,host=HOST,image=
 receipt['h1_support_files']={f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in support}
 receipt['h1_root_tcl_aliases']={f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in aliases}
 (HERE/'results').mkdir(exist_ok=True)
-(HERE/'results'/(a.attempt+'-submission.json')).write_text(json.dumps(receipt,indent=2)+'\n')
+(HERE/'results'/(a.attempt+'-submission.json')).write_text(json.dumps(receipt,indent=2)+'\n',encoding='utf-8',newline='\n')
 print(json.dumps(receipt,indent=2))

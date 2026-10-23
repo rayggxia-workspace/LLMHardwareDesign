@@ -2,10 +2,12 @@
 
 ## 2026-10-23 openTPU H2推进
 
-- [Issue31](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/31)，独立分支`task/31-opentpu-h2`，依赖H1 PR17@ce5896d；H1待审查状态不变。
-- 正在依据实际H1最终ODB提取预制接口驱动、时钟和接入库存，建立逐实例/几何冻结合法性与限定层路由实验。无H2合格结果，不把H1线路复用当冻结。
-- 新作业全部`--time=0`、实际读回UNLIMITED；89839发现工具不含Python，自然失败，改用Tcl；inventory-03已生成原生实例/连接及完整DEF，继续分析。详见[实验记录](../../docs/experiments/issue-31-opentpu-h2.md)。
-- 登记复用PR5 pending，看板/同步仍待核验，管理员/审查人/优先级待指定。不自合并、不提前done。
+- [Issue31](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/31)，分支 task/31-opentpu-h2，依赖 H1 PR17@ce5896d；负责人 YUZE-LU，审查人／优先级待指定。当前 in_progress，尚未验收。
+- 已冻结 v01 预算：9,609 个父层有源支持（含 4 个时钟）、2,006 个 V7 落点、原外部驱动／负载／时钟预算；不允许新增／增强／移动器件。205,331 个实例及连接／引脚／PG、144,496 个冻结 wire/via 原语实际完全相同。
+- 首个受限层 route-proxy-m8-10／89875 上层 DRC0，1,003 个森林连接 690 个原信号网；composite-m8-03／89876 自然 COMPLETED0，真实回装 RC／PG／天线／cap／slew／fanout／完整分层 STA 通过。setup／hold +0.102306／+0.036146 ns；父层中心线 3,359,396.82 µm、通孔 73,915，由完整原生 DEF 复核。前两次回装电容超限通过保留低层连通关系消除，没有升级驱动。
+- 独立完整父层 DRC 89877／89878 运行中；早期 native-api 89861／89862 继续运行。全部 UNLIMITED，不按耗时取消，不将待定项写成成功。真实 DEF／导体图负例测试及管理结构／Python 编译检查通过。
+- [实验记录](../../docs/experiments/issue-31-opentpu-h2.md)、[取舍0004](../../docs/decisions/0004-opentpu-h2-fixed-access.md)、project/experiments/opentpu_h2/results 保存来源、失败和成功证据。约92.50%原父层线已预埋，只验证同功能切片，未证明多计算图复用；M8/M9块内固定图形仍涉及后续制造。
+- 下一步：等完整 DRC 自然终态，按 marker 与 H1 对照继续调整，再更新证据和提交审查。不自合并或标 done。登记 management-hub PR5 pending；Projects 缺 read:project，条目 unverified、同步 pending，管理员待指定。
 
 ## 2026-10-22 ACT/MXU 同资源物理对照
 

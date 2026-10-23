@@ -22,7 +22,8 @@ names=['exit-code.txt','finished.txt','allocation.txt','image.sha256','tools.sha
        'composite.integration.json','composite.freeze-audit.json','upper-connectivity.json','boundary-proof.json',
        'parent-electrical.rpt','parent-annotation.rpt','composite-antenna.rpt','rc-connectivity.tsv',
        'strict-qualification.log','full-hierarchy-quality.json','full-hierarchy-sta.log','final-pg.log',
-       'final-pg/strict-pg.json','h1-qualification-input-sha256.json','signal-pin-layers.tsv','routing-tech-shapes.tsv','boundary.log']
+       'final-pg/strict-pg.json','h1-qualification-input-sha256.json','signal-pin-layers.tsv','routing-tech-shapes.tsv','boundary.log','readonly-drc.log','readonly-drc-quality.json',
+       'readonly-drc-freeze-audit.json','integrated-drc.rpt']
 for attempt in a.attempts:
     receipt=json.loads((HERE/'results'/(attempt+'-submission.json')).read_text())
     remote=receipt['spec']['remote']
@@ -65,5 +66,5 @@ else:
     target=out/'terminal.json'
     if target.exists():
         assert json.loads(target.read_text())['manifest_sha256']==data['manifest_sha256']
-    else:target.write_text(json.dumps(data,indent=2)+'\n')
+    else:target.write_text(json.dumps(data,indent=2)+'\n',encoding='utf-8',newline='\n')
     print(attempt,sacct)

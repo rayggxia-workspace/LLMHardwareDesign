@@ -54,5 +54,5 @@ contract=dict(version='h2-opentpu-target-conditioned-v01',state='candidate; no q
     macro_pin_slew_budget=macro_slew,macro_pin_cap_budget=macro_cap,
     acceptance='Original absolute electrical/setup/hold/DRC/antenna/PG limits, full hierarchical extraction and RC coverage; no post-freeze repair of active devices.',
     scope='Single openTPU H1-conditioned access/wire inventory, not independent multi-graph base or manufacturing signoff. Abstract macro budgets do not replace child-internal load and full-hierarchy STA.')
-(results/'resource-contract-v01.json').write_text(json.dumps(contract,indent=2)+'\n')
+(results/'resource-contract-v01.json').write_text(json.dumps(contract,indent=2)+'\n',encoding='utf-8',newline='\n')
 print(json.dumps({k:v for k,v in contract.items() if not k.startswith('macro_pin')},indent=2))

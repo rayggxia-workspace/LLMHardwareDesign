@@ -1,0 +1,196 @@
+{
+  "resource_contract_sha256": "643e719f1bb2581142b49053cbbfdd61911bb0218475250e6d27332fd4bdb6e0",
+  "selected": {
+    "inventory-03": {
+      "job_id": "89840",
+      "sacct": "89840|COMPLETED|0:0|00:00:09|UNLIMITED",
+      "manifest_sha256": "3328e155ad5cfe133fc92f9e1548dca7fa702857fe669c79004be55b3dbe8fb8",
+      "runner_commit": "45376c50af0004ce995e8d3cd9cb84484cf41f5c"
+    },
+    "budget-03": {
+      "job_id": "89853",
+      "sacct": "89853|COMPLETED|0:0|00:00:18|UNLIMITED",
+      "manifest_sha256": "4854992ddac1a4ddebdaa6a90097d5f93ee1c2b036ff227b9246237d3999b8b2",
+      "runner_commit": "03cad5314fb43a6cc272b18daf3e5c81c65ae341"
+    },
+    "boundary-01": {
+      "job_id": "89873",
+      "sacct": "89873|COMPLETED|0:0|00:00:11|UNLIMITED",
+      "manifest_sha256": "30114dd9669acd413c7c99ba4bd19dd1e6c34676ac7b0e7514933e7f536222c6",
+      "runner_commit": "700436dcb00d2c5c6a63f7b552b37fec27d80887"
+    },
+    "route-proxy-m8-10": {
+      "job_id": "89875",
+      "sacct": "89875|COMPLETED|0:0|00:00:44|UNLIMITED",
+      "manifest_sha256": "8db46f708203f05ad08710664b72caa74531c7fa3284f374f034f2588b96099e",
+      "runner_commit": "db9ce00534586abcdf8d67d86049fbcdceb71de0"
+    },
+    "composite-m8-03": {
+      "job_id": "89876",
+      "sacct": "89876|COMPLETED|0:0|00:04:10|UNLIMITED",
+      "manifest_sha256": "1a0d0d2f5c3f08975c444f02e19244d3e2509ec37576b6f7faf099e02daf5b69",
+      "runner_commit": "6b1e818acc0de4f16ee25e980b424c162297c0b3"
+    }
+  },
+  "costs": {
+    "h1": {
+      "fixed": {
+        "wire_um": 3109501.8,
+        "by_layer_um": {
+          "3": 873795.52,
+          "2": 846372.99,
+          "4": 421988.71,
+          "5": 444477.965,
+          "6": 331949.175,
+          "7": 190917.44
+        },
+        "vias": 72969,
+        "by_via": {
+          "via2_5": 26244,
+          "via1_4": 15226,
+          "via1_7": 3992,
+          "via3_2": 8439,
+          "via4_0": 7627,
+          "via5_0": 6619,
+          "via6_0": 2816,
+          "via7_0": 2006
+        }
+      },
+      "custom": {
+        "wire_um": 252205.2,
+        "by_layer_um": {
+          "8": 183541.6,
+          "9": 48209.2,
+          "10": 20454.4
+        },
+        "vias": 984,
+        "by_via": {
+          "via8_0": 802,
+          "via9_0": 182
+        }
+      },
+      "parent_wire_um": 3361707.0,
+      "parent_vias": 73953
+    },
+    "h2": {
+      "fixed": {
+        "wire_um": 3109501.8,
+        "by_layer_um": {
+          "3": 873795.52,
+          "2": 846372.99,
+          "4": 421988.71,
+          "5": 444477.965,
+          "6": 331949.175,
+          "7": 190917.44
+        },
+        "vias": 72969,
+        "by_via": {
+          "via2_5": 26244,
+          "via1_4": 15226,
+          "via1_7": 3992,
+          "via3_2": 8439,
+          "via4_0": 7627,
+          "via5_0": 6619,
+          "via6_0": 2816,
+          "via7_0": 2006
+        }
+      },
+      "custom": {
+        "wire_um": 249895.02,
+        "by_layer_um": {
+          "8": 198564.62,
+          "9": 47666.4,
+          "10": 3664.0
+        },
+        "vias": 946,
+        "by_via": {
+          "via8_0": 876,
+          "via9_0": 70
+        }
+      },
+      "parent_wire_um": 3359396.82,
+      "parent_vias": 73915
+    }
+  },
+  "proofs": {
+    "composite-quality.json": {
+      "passed": true,
+      "checks": {
+        "parent_setup_nonnegative": true,
+        "parent_hold_nonnegative": true,
+        "parent_tns_zero": true,
+        "no_parent_electrical_violations": true,
+        "antenna_zero": true,
+        "rc_not_disconnected": true
+      },
+      "scope": "Full resource/geometry freeze, actual RC extraction, parent and real hierarchical STA/PG. Integrated full-chip standalone DRC remains a separate check; upper native DRC and original frozen lower/block DRC are compositional evidence.",
+      "sealed_proof_sha256": "6fffe58c9ecc9d5b4c01e22f4f88b511da489c1670d1d70bf130ba6023ecad3b"
+    },
+    "full-hierarchy-quality.json": {
+      "passed": true,
+      "checks": {
+        "setup_nonnegative": true,
+        "hold_nonnegative": true,
+        "setup_tns_zero": true,
+        "reported_electrical_margins_nonnegative": true,
+        "no_reported_violations": true
+      },
+      "setup_ws_ns": 0.102306,
+      "hold_ws_ns": 0.036146,
+      "scope": "Real netlists and hierarchical SPEF, original external clock/IO budget only, no internal boundary delays",
+      "sealed_proof_sha256": "4cf674338ad62c99a6eaac1ae868b4ff6bf27c0c509368e2541db577cb05273c"
+    },
+    "upper-connectivity.json": {
+      "passed": true,
+      "forest_count": 1003,
+      "scope": "Actual routed metal rectangles with native technology widths/via enclosures, exact endpoint extension and prepaid V7 M8 landing rectangles. Require positive-area contact; no net-name-only or tolerance-based connection.",
+      "sealed_proof_sha256": "8a44b6f128c4b0e32e97ab1e92eafe8b6ec6ec69263d7d2e6cd2311156c96baf"
+    },
+    "boundary-proof.json": {
+      "passed": true,
+      "signal_pin_shape_rows": 4774,
+      "max_signal_pin_layer": 6,
+      "upper_forests": 1003,
+      "original_logical_nets": 690,
+      "all_access_graphs_connected": true,
+      "sealed_proof_sha256": "8af0a7ad4c2c2f6883fda06271022026e70f03758316a3632734b27ef05a1600"
+    },
+    "final-pg/strict-pg.json": {
+      "macro_pg_iterm_count": 4,
+      "VDD_pass": true,
+      "VSS_pass": true,
+      "passed": true,
+      "sealed_proof_sha256": "7eaaef09b82d5343e94ee1f7e6977e0756726454e0929d6af5ead1d2e9158040"
+    }
+  },
+  "freeze": {
+    "passed": true,
+    "checks": {
+      "components": true,
+      "pg": true,
+      "pins": true,
+      "connectivity": true,
+      "fixed": true,
+      "custom_geometry_present": true
+    },
+    "bottom_custom_metal": 8,
+    "fixed_primitive_count": 144496,
+    "final_custom_primitive_count": 3575,
+    "missing_frozen_count": 0,
+    "added_frozen_count": 0,
+    "missing_first20": [],
+    "added_first20": [],
+    "before_sha256": "4350947f2a6d42a98ba97d67abfb0aca38a53379a3d7dd8b61b4f54bfec5ef27",
+    "after_sha256": "75e47ee1d27d89a71ce224a195682ad07376fd54524040ca88575e1535fc4ed5",
+    "scope": "Exact master/placement/status/connections/PG/pins and conservative ordinary wire/via primitive multiset. Fixed V7 access landings are included. Equivalent resegmentation may be rejected; no geometric change is silently accepted."
+  },
+  "standalone_drc": {
+    "drc-h1-01": {
+      "state": "pending; not a passing DRC result"
+    },
+    "drc-h2-01": {
+      "state": "pending; not a passing DRC result"
+    }
+  },
+  "scope": "One same-function H1-conditioned instance. Frozen lower/clock/PG and all active resources; new M8-M10/V8-V9 conductors only. No multi-graph reuse or manufacturing signoff claim."
+}
