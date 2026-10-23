@@ -1,0 +1,625 @@
+{
+  "status": "PASS",
+  "scope": "post-hoc descriptive analysis and synthetic format bound, no new heldout tuning or quality acceptance",
+  "input_sha256": {
+    "capture02\\capture.npz": "0504e25ec36aa88d96ae4c3365ce22533ff3946d92c961f7e80bee0eb3daf749",
+    "numeric04\\integers.npz": "f2ab8e5df7482576e5ad10280ba434dbec83d1661e0c424a06c71e6d1c391ab3",
+    "numeric04\\numeric.json": "92f75228e1693f58db00b6045c87ca2f98cb479eaea11b8f37f490694f6ad1c7",
+    "service04\\service.json": "bcbe4a677b346169bfa3b330c31eb0000f716e6421d5b7ba40679104f544b3a4"
+  },
+  "source_sha256": "b908d57ceb3a9e6e5df12555f14883c38417bbdf257ced13f5b6964aa093182b",
+  "chosen": [
+    {
+      "profile": "static_original32_max_8192_8192",
+      "max_case_relative_rmse": 0.9182922264105426,
+      "heldout": [
+        {
+          "phase": "prefill",
+          "before_final_RQ": {
+            "relative_rmse": 0.8569375859396703,
+            "max_abs": 0.1148897111415863
+          },
+          "after_final_RQ": {
+            "relative_rmse": 0.8566481192872418,
+            "max_abs": 0.1153779923915863
+          },
+          "A_zero_fraction": 0.9986305236816406,
+          "A_clip_count": 0,
+          "required_signed_bits_for_this_scale_matrix": 28
+        },
+        {
+          "phase": "decode",
+          "before_final_RQ": {
+            "relative_rmse": 0.9172055569312249,
+            "max_abs": 0.07843966037034988
+          },
+          "after_final_RQ": {
+            "relative_rmse": 0.9182922264105426,
+            "max_abs": 0.07868380099534988
+          },
+          "A_zero_fraction": 0.9988555908203125,
+          "A_clip_count": 0,
+          "required_signed_bits_for_this_scale_matrix": 28
+        }
+      ],
+      "mid_limb_cost_pairs": [
+        {
+          "profile": "static_original32_max_8192_8192",
+          "rows": 1,
+          "limb_cycles": 2,
+          "near_cycles": 49508,
+          "shared_cycles": 49514,
+          "near_best_batch_policy": [
+            1,
+            "critical"
+          ],
+          "shared_best_batch_policy": [
+            1,
+            "critical"
+          ],
+          "cycle_reduction_fraction": 0.0001211778486892596,
+          "near_wire_bytes": 228672,
+          "shared_wire_bytes": 228672
+        },
+        {
+          "profile": "static_original32_max_8192_8192",
+          "rows": 4,
+          "limb_cycles": 2,
+          "near_cycles": 96113,
+          "shared_cycles": 96149,
+          "near_best_batch_policy": [
+            1,
+            "critical"
+          ],
+          "shared_best_batch_policy": [
+            1,
+            "critical"
+          ],
+          "cycle_reduction_fraction": 0.00037441887071108386,
+          "near_wire_bytes": 495360,
+          "shared_wire_bytes": 495552
+        }
+      ]
+    },
+    {
+      "profile": "dynamic_none_max_8192_8192",
+      "max_case_relative_rmse": 0.16877135888001388,
+      "heldout": [
+        {
+          "phase": "prefill",
+          "before_final_RQ": {
+            "relative_rmse": 0.14157300732400818,
+            "max_abs": 0.03869352675974369
+          },
+          "after_final_RQ": {
+            "relative_rmse": 0.1430270618511798,
+            "max_abs": 0.03967008925974369
+          },
+          "A_zero_fraction": 0.4556846618652344,
+          "A_clip_count": 0,
+          "required_signed_bits_for_this_scale_matrix": 28
+        },
+        {
+          "phase": "decode",
+          "before_final_RQ": {
+            "relative_rmse": 0.08366010882712861,
+            "max_abs": 0.007265465334057808
+          },
+          "after_final_RQ": {
+            "relative_rmse": 0.08534433859363998,
+            "max_abs": 0.006822960451245308
+          },
+          "A_zero_fraction": 0.3795623779296875,
+          "A_clip_count": 0,
+          "required_signed_bits_for_this_scale_matrix": 28
+        }
+      ],
+      "mid_limb_cost_pairs": [
+        {
+          "profile": "dynamic_none_max_8192_8192",
+          "rows": 1,
+          "limb_cycles": 2,
+          "near_cycles": 57268,
+          "shared_cycles": 57274,
+          "near_best_batch_policy": [
+            1,
+            "critical"
+          ],
+          "shared_best_batch_policy": [
+            1,
+            "critical"
+          ],
+          "cycle_reduction_fraction": 0.00010475957677130985,
+          "near_wire_bytes": 262848,
+          "shared_wire_bytes": 262848
+        },
+        {
+          "profile": "dynamic_none_max_8192_8192",
+          "rows": 4,
+          "limb_cycles": 2,
+          "near_cycles": 127129,
+          "shared_cycles": 127165,
+          "near_best_batch_policy": [
+            1,
+            "critical"
+          ],
+          "shared_best_batch_policy": [
+            1,
+            "critical"
+          ],
+          "cycle_reduction_fraction": 0.000283096764046711,
+          "near_wire_bytes": 631680,
+          "shared_wire_bytes": 631872
+        }
+      ]
+    },
+    {
+      "profile": "dynamic_none_max_128_8192",
+      "max_case_relative_rmse": 0.07361393097249364,
+      "heldout": [
+        {
+          "phase": "prefill",
+          "before_final_RQ": {
+            "relative_rmse": 0.06897727708519912,
+            "max_abs": 0.02031121589243412
+          },
+          "after_final_RQ": {
+            "relative_rmse": 0.07213820894411015,
+            "max_abs": 0.02013883925974369
+          },
+          "A_zero_fraction": 0.12226486206054688,
+          "A_clip_count": 0,
+          "required_signed_bits_for_this_scale_matrix": 34
+        },
+        {
+          "phase": "decode",
+          "before_final_RQ": {
+            "relative_rmse": 0.027982744331121974,
+            "max_abs": 0.001996707171201706
+          },
+          "after_final_RQ": {
+            "relative_rmse": 0.035523178562571645,
+            "max_abs": 0.002590478863567114
+          },
+          "A_zero_fraction": 0.1131134033203125,
+          "A_clip_count": 0,
+          "required_signed_bits_for_this_scale_matrix": 31
+        }
+      ],
+      "mid_limb_cost_pairs": [
+        {
+          "profile": "dynamic_none_max_128_8192",
+          "rows": 1,
+          "limb_cycles": 2,
+          "near_cycles": 58102,
+          "shared_cycles": 58924,
+          "near_best_batch_policy": [
+            1,
+            "critical"
+          ],
+          "shared_best_batch_policy": [
+            4,
+            "critical"
+          ],
+          "cycle_reduction_fraction": 0.013950173104337792,
+          "near_wire_bytes": 235264,
+          "shared_wire_bytes": 240256
+        },
+        {
+          "profile": "dynamic_none_max_128_8192",
+          "rows": 4,
+          "limb_cycles": 2,
+          "near_cycles": 130123,
+          "shared_cycles": 133243,
+          "near_best_batch_policy": [
+            1,
+            "critical"
+          ],
+          "shared_best_batch_policy": [
+            4,
+            "critical"
+          ],
+          "cycle_reduction_fraction": 0.02341586424802804,
+          "near_wire_bytes": 521536,
+          "shared_wire_bytes": 538816
+        }
+      ]
+    },
+    {
+      "profile": "dynamic_none_max_128_128",
+      "max_case_relative_rmse": 0.053937672784849976,
+      "heldout": [
+        {
+          "phase": "prefill",
+          "before_final_RQ": {
+            "relative_rmse": 0.0481164495207386,
+            "max_abs": 0.01057543233036995
+          },
+          "after_final_RQ": {
+            "relative_rmse": 0.053937672784849976,
+            "max_abs": 0.01068306714296341
+          },
+          "A_zero_fraction": 0.12226486206054688,
+          "A_clip_count": 0,
+          "required_signed_bits_for_this_scale_matrix": 35
+        },
+        {
+          "phase": "decode",
+          "before_final_RQ": {
+            "relative_rmse": 0.023315094496173874,
+            "max_abs": 0.0016142651438713074
+          },
+          "after_final_RQ": {
+            "relative_rmse": 0.03405146307234027,
+            "max_abs": 0.002590478863567114
+          },
+          "A_zero_fraction": 0.1131134033203125,
+          "A_clip_count": 0,
+          "required_signed_bits_for_this_scale_matrix": 31
+        }
+      ],
+      "mid_limb_cost_pairs": [
+        {
+          "profile": "dynamic_none_max_128_128",
+          "rows": 1,
+          "limb_cycles": 2,
+          "near_cycles": 58545,
+          "shared_cycles": 59367,
+          "near_best_batch_policy": [
+            1,
+            "critical"
+          ],
+          "shared_best_batch_policy": [
+            4,
+            "critical"
+          ],
+          "cycle_reduction_fraction": 0.013846076102885442,
+          "near_wire_bytes": 237312,
+          "shared_wire_bytes": 242304
+        },
+        {
+          "profile": "dynamic_none_max_128_128",
+          "rows": 4,
+          "limb_cycles": 2,
+          "near_cycles": 130566,
+          "shared_cycles": 133686,
+          "near_best_batch_policy": [
+            1,
+            "critical"
+          ],
+          "shared_best_batch_policy": [
+            4,
+            "critical"
+          ],
+          "cycle_reduction_fraction": 0.0233382702751223,
+          "near_wire_bytes": 523584,
+          "shared_wire_bytes": 540864
+        }
+      ]
+    }
+  ],
+  "weight_aware_adversarial_bound": [
+    {
+      "text": "systems",
+      "row": 9,
+      "output": 14,
+      "exact_weight_aware_aligned_max": 1628977057,
+      "signed_bits": 32,
+      "exceeds_i32": false,
+      "source32_valid": true,
+      "dynamic_exponents_reproduced": true,
+      "observed_capture_max": 801151
+    },
+    {
+      "text": "arithmetic",
+      "row": 12,
+      "output": 14,
+      "exact_weight_aware_aligned_max": 1616862273,
+      "signed_bits": 32,
+      "exceeds_i32": false,
+      "source32_valid": true,
+      "dynamic_exponents_reproduced": true,
+      "observed_capture_max": 992010
+    },
+    {
+      "text": "heldout",
+      "row": 10,
+      "output": 14,
+      "exact_weight_aware_aligned_max": 1623441762,
+      "signed_bits": 32,
+      "exceeds_i32": false,
+      "source32_valid": true,
+      "dynamic_exponents_reproduced": true,
+      "observed_capture_max": 1053310
+    }
+  ],
+  "calibration_stats": [
+    {
+      "text": "calibration",
+      "max_abs": 27.452838897705078,
+      "median_abs": 0.004187234677374363,
+      "max_row": 7
+    },
+    {
+      "text": "cal_science",
+      "max_abs": 24.6969051361084,
+      "median_abs": 0.0037969141267240047,
+      "max_row": 5
+    },
+    {
+      "text": "cal_code",
+      "max_abs": 19.660797119140625,
+      "median_abs": 0.0036537039559334517,
+      "max_row": 8
+    },
+    {
+      "text": "cal_dialogue",
+      "max_abs": 30.410497665405273,
+      "median_abs": 0.0035714427940547466,
+      "max_row": 10
+    }
+  ],
+  "numerical_screen_pass_profiles": [],
+  "all_profiles_cost_fraction_range": [
+    0.00010470107842110774,
+    0.028394353891937642
+  ],
+  "all_output_saturations": 0,
+  "all_early_rounding_mismatches": 25847,
+  "mid_limb_rows4_cost_details": [
+    {
+      "profile": "static_original32_max_8192_8192",
+      "cycles": 96113,
+      "metadata_buffer_bytes": 161,
+      "wide_accumulator_bytes": 512,
+      "partial_staging_bytes": 256,
+      "wide_updates": 64,
+      "bytes": {
+        "memory_logical": 1084825,
+        "memory_physical": 1085200,
+        "wire": 495360,
+        "wire_payload": 458946,
+        "wire_META_STATIC": 128,
+        "wire_SOURCE32_DMA": 135424,
+        "wire_A32_QUANT_INPUT": 136192,
+        "wire_A8_PUBLISH": 34816,
+        "wire_META_RQ": 128,
+        "wire_W8": 139264,
+        "wire_A8": 49152,
+        "wire_ACT8": 128,
+        "wire_RESULT8": 128
+      },
+      "busy": {
+        "S6": 6,
+        "bus": 30960,
+        "S6TX": 16,
+        "V1RX": 8,
+        "VC": 20507,
+        "EXT": 8192,
+        "EXTTX": 8464,
+        "S4RX": 8464,
+        "S4": 16384,
+        "S4TX": 8512,
+        "V0RX": 8520,
+        "vector": 4096,
+        "V0TX": 2184,
+        "S5RX": 2176,
+        "S5": 4096,
+        "M1RX": 8,
+        "MC": 204,
+        "wide": 160,
+        "S0": 2048,
+        "S0TX": 2176,
+        "M0RX": 11776,
+        "MW0": 8768,
+        "S5TX": 3072,
+        "MA0": 5696,
+        "matrix": 9344,
+        "MW1": 8768,
+        "MA1": 5696,
+        "S1": 2048,
+        "S1TX": 2176,
+        "S2": 2048,
+        "S2TX": 2176,
+        "S3": 2048,
+        "S3TX": 2176,
+        "M0TX": 8,
+        "S7RX": 8,
+        "S7": 4
+      }
+    },
+    {
+      "profile": "dynamic_none_max_8192_8192",
+      "cycles": 127129,
+      "metadata_buffer_bytes": 164,
+      "wide_accumulator_bytes": 512,
+      "partial_staging_bytes": 256,
+      "wide_updates": 64,
+      "bytes": {
+        "memory_logical": 1478060,
+        "memory_physical": 1478480,
+        "wire": 631680,
+        "wire_payload": 590024,
+        "wire_META_STATIC": 128,
+        "wire_SOURCE32_DMA": 135424,
+        "wire_A32_SCAN": 136192,
+        "wire_A32_QUANT_INPUT": 136192,
+        "wire_A8_PUBLISH": 34816,
+        "wire_META_DYNAMIC": 128,
+        "wire_META_RQ": 128,
+        "wire_W8": 139264,
+        "wire_A8": 49152,
+        "wire_ACT8": 128,
+        "wire_RESULT8": 128
+      },
+      "busy": {
+        "S6": 6,
+        "bus": 39480,
+        "S6TX": 16,
+        "V1RX": 8,
+        "VC": 36895,
+        "EXT": 8192,
+        "EXTTX": 8464,
+        "S4RX": 8464,
+        "S4": 24576,
+        "S4TX": 17024,
+        "V0RX": 17032,
+        "vector": 8220,
+        "V0TX": 2184,
+        "S5RX": 2176,
+        "S5": 4096,
+        "V1TX": 8,
+        "S6RX": 8,
+        "M1RX": 8,
+        "MC": 204,
+        "wide": 160,
+        "S0": 2048,
+        "S0TX": 2176,
+        "M0RX": 11776,
+        "MW0": 8768,
+        "S5TX": 3072,
+        "MA0": 5696,
+        "matrix": 9344,
+        "MW1": 8768,
+        "MA1": 5696,
+        "S1": 2048,
+        "S1TX": 2176,
+        "S2": 2048,
+        "S2TX": 2176,
+        "S3": 2048,
+        "S3TX": 2176,
+        "M0TX": 8,
+        "S7RX": 8,
+        "S7": 4
+      }
+    },
+    {
+      "profile": "dynamic_none_max_128_8192",
+      "cycles": 130123,
+      "metadata_buffer_bytes": 416,
+      "wide_accumulator_bytes": 512,
+      "partial_staging_bytes": 256,
+      "wide_updates": 4096,
+      "bytes": {
+        "memory_logical": 1323760,
+        "memory_physical": 1332208,
+        "wire": 521536,
+        "wire_payload": 459456,
+        "wire_META_STATIC": 128,
+        "wire_SOURCE32_DMA": 135424,
+        "wire_A32_QUANT_INPUT": 147456,
+        "wire_A8_PUBLISH": 49152,
+        "wire_META_DYNAMIC": 320,
+        "wire_META_RQ": 384,
+        "wire_W8": 139264,
+        "wire_A8": 49152,
+        "wire_ACT8": 128,
+        "wire_RESULT8": 128
+      },
+      "busy": {
+        "S6": 36,
+        "bus": 32596,
+        "S6TX": 32,
+        "V1RX": 8,
+        "VC": 29210,
+        "EXT": 8192,
+        "EXTTX": 8464,
+        "S4RX": 8464,
+        "S4": 16384,
+        "S4TX": 9216,
+        "V0RX": 9224,
+        "vector": 9216,
+        "V0TX": 3080,
+        "S5RX": 3072,
+        "S5": 4096,
+        "V1TX": 20,
+        "S6RX": 20,
+        "M1RX": 24,
+        "MC": 6909,
+        "wide": 5704,
+        "S0": 2048,
+        "S0TX": 2176,
+        "M0RX": 11776,
+        "MW0": 8768,
+        "S5TX": 3072,
+        "MA0": 5696,
+        "matrix": 9344,
+        "MW1": 8768,
+        "MA1": 5696,
+        "S1": 2048,
+        "S1TX": 2176,
+        "S2": 2048,
+        "S2TX": 2176,
+        "S3": 2048,
+        "S3TX": 2176,
+        "M0TX": 8,
+        "S7RX": 8,
+        "S7": 4
+      }
+    },
+    {
+      "profile": "dynamic_none_max_128_128",
+      "cycles": 130566,
+      "metadata_buffer_bytes": 1424,
+      "wide_accumulator_bytes": 512,
+      "partial_staging_bytes": 256,
+      "wide_updates": 4096,
+      "bytes": {
+        "memory_logical": 1328800,
+        "memory_physical": 1337248,
+        "wire": 523584,
+        "wire_payload": 461472,
+        "wire_META_STATIC": 1152,
+        "wire_SOURCE32_DMA": 135424,
+        "wire_A32_QUANT_INPUT": 147456,
+        "wire_A8_PUBLISH": 49152,
+        "wire_META_DYNAMIC": 320,
+        "wire_META_RQ": 1408,
+        "wire_W8": 139264,
+        "wire_A8": 49152,
+        "wire_ACT8": 128,
+        "wire_RESULT8": 128
+      },
+      "busy": {
+        "S6": 162,
+        "bus": 32724,
+        "S6TX": 160,
+        "V1RX": 72,
+        "VC": 29273,
+        "EXT": 8192,
+        "EXTTX": 8464,
+        "S4RX": 8464,
+        "S4": 16384,
+        "S4TX": 9216,
+        "V0RX": 9224,
+        "vector": 9216,
+        "V0TX": 3080,
+        "S5RX": 3072,
+        "S5": 4096,
+        "V1TX": 20,
+        "S6RX": 20,
+        "M1RX": 88,
+        "MC": 7035,
+        "wide": 5704,
+        "S0": 2048,
+        "S0TX": 2176,
+        "M0RX": 11776,
+        "MW0": 8768,
+        "S5TX": 3072,
+        "MA0": 5696,
+        "matrix": 9344,
+        "MW1": 8768,
+        "MA1": 5696,
+        "S1": 2048,
+        "S1TX": 2176,
+        "S2": 2048,
+        "S2TX": 2176,
+        "S3": 2048,
+        "S3TX": 2176,
+        "M0TX": 8,
+        "S7RX": 8,
+        "S7": 4
+      }
+    }
+  ]
+}
