@@ -27,6 +27,11 @@ def fp32_compute(model):
     for module in model.modules():
         if isinstance(module,torch.nn.Linear):
             def forward(self,x):
+                if self.out_features>32768:
+                    # Vocabulary rows are independent. Avoid a multi-GiB FP32 lm_head copy.
+                    return torch.cat([F.linear(x.float(),self.weight[start:start+4096].float(),
+                        None if self.bias is None else self.bias[start:start+4096].float())
+                        for start in range(0,self.out_features,4096)],dim=-1)
                 return F.linear(x.float(),self.weight.float(),None if self.bias is None else self.bias.float())
             module.forward=types.MethodType(forward,module)
         elif isinstance(module,torch.nn.Embedding):
@@ -49,10 +54,15 @@ def perturb(cache,state_kind,bits):
         if kind(name)!=state_kind or not t.numel():continue
         # KV per-head/token vector; recurrent per-head/key row; conv per-channel.
         scale=t.float().abs().amax(-1,keepdim=True).clamp_min(1e-30)/bound
-        raw=(t.float()/scale).round();q=raw.clamp(-bound,bound)
-        deq=(q*scale).to(t.dtype)
+        # INT24/32 code selection uses FP64 so all integer codes are exact before casting.
+        work=t.double()/scale.double() if bits>16 else t.float()/scale
+        raw=work.round()
+        storage_dtype=torch.int8 if bits==8 else torch.int16 if bits==16 else torch.int32
+        q=raw.clamp(-bound,bound).to(storage_dtype)
+        deq=(q.double()*scale.double()).to(t.dtype) if bits>16 else (q.float()*scale).to(t.dtype)
         records.append({'name':name,'bits':bits,'payload_bytes':t.numel()*(bits//8),
             'scale_bytes':scale.numel()*4,'native_dtype':str(t.dtype),'native_bytes':t.numel()*t.element_size(),
+            'quantizer_code_storage_dtype':str(q.dtype),'quantizer_code_allocation_bytes':q.numel()*q.element_size(),
             'saturation_count':int((raw.abs()>bound).sum()),**compare(deq,t)})
         t.copy_(deq)
     return records
@@ -78,6 +88,7 @@ def main():
     p.add_argument('--lengths',nargs='*',type=int,default=[512,2048,4096])
     p.add_argument('--perturb-lengths',nargs='*',type=int,default=[128,2048])
     p.add_argument('--vram-budget-mib',type=int,default=11776)
+    p.add_argument('--state-bits',nargs='+',type=int,choices=[8,16,24,32],default=[8,16])
     a=p.parse_args();assert not a.out.exists();assert not git('status','--porcelain')
     manifest=json.loads((a.model_dir/'model-manifest.json').read_text(encoding='utf-8'));assert manifest['complete']
     for n,info in manifest['files'].items():assert sha(a.model_dir/n)==info['sha256'],n
@@ -152,7 +163,7 @@ def main():
             reference=snapshot(cache);del o,cache
             kinds=sorted({kind(name) for name in reference})
             for state_kind in kinds:
-                for bits in (8,16):
+                for bits in a.state_bits:
                     cache=None;local={};errors=[]
                     for pos in range(0,length,256):
                         o=call(ids[:,pos:min(pos+256,length)],cache);cache=o.past_key_values
