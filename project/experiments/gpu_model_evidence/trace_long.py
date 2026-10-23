@@ -10,7 +10,20 @@ import traceback
 
 import torch
 from transformers import AutoModelForCausalLM
-from run import Observer, cache_info, git, save, sha, HERE
+from run import Observer, OpObserver, cache_info, git, save, sha, HERE
+
+
+class MemoryObserver(OpObserver):
+    def __torch_dispatch__(self, func, types, args=(), kwargs=None):
+        before=torch.cuda.memory_allocated()
+        torch.cuda.reset_peak_memory_stats()
+        result=super().__torch_dispatch__(func,types,args,kwargs)
+        self.events[-1]['allocator']={
+            'before_allocated_bytes':before,'after_allocated_bytes':torch.cuda.memory_allocated(),
+            'peak_during_operator_bytes':torch.cuda.max_memory_allocated(),
+            'transient_above_before_bytes':max(0,torch.cuda.max_memory_allocated()-before),
+            'scope':'PyTorch allocator only; observer run; CUDA workspace outside allocator not measured'}
+        return result
 
 
 class Aggregate:
@@ -35,6 +48,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument('--reference-dir', type=Path, required=True)
     p.add_argument('--out', type=Path, required=True)
+    p.add_argument('--memory-short',action='store_true')
     a = p.parse_args()
     assert not git('status', '--porcelain'), 'commit source first'
     a.out.mkdir(parents=True)
@@ -64,6 +78,17 @@ def main():
                   reference_dir=str(a.reference_dir), reference_manifest_sha256=sha(a.reference_dir/'run-manifest.json'),
                   dtype=str(dtype), backend='sdpa', budget_mib=budget, start_epoch=time.time(),
                   performance_eligible=False, measured_traffic_bytes=None, conditions=[])
+    if a.memory_short:
+        with MemoryObserver() as obs:
+            o=model(ids[:,:128],use_cache=True,logits_to_keep=1)
+            o=model(ids[:,128:129],past_key_values=o.past_key_values,use_cache=True,logits_to_keep=1)
+        result.update(events=obs.events,cache=cache_info(o.past_key_values),prefix=128,decode=1,
+                      files_unchanged=source=={x.name:sha(x) for x in HERE.iterdir() if x.is_file()})
+        save(a.out/'observed-short-memory.json',result)
+        save(a.out/'artifact-index.json',{'observed-short-memory.json':{
+            'bytes':(a.out/'observed-short-memory.json').stat().st_size,
+            'sha256':sha(a.out/'observed-short-memory.json')}})
+        return
     for length in (512,2048,4096,8192):
         for chunk in (length,256):
             entry = dict(prefix=length,chunk=chunk,decode=32)

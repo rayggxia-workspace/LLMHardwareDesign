@@ -45,6 +45,7 @@ with zipfile.ZipFile(out/'environment-and-audits.zip','w',zipfile.ZIP_DEFLATED) 
 raw=out/'selected-qwen35-layer0';raw.mkdir(exist_ok=True)
 for name in ['torch_chunk_gated_delta_rule.pt','torch_recurrent_gated_delta_rule.pt','delta-parameters.pt','preconv-qkv.pt','selected-cache.pt']:
     src=scratch/'runs/qwen35-fp16-bounded-02'/name
+    if (raw/(name+'.gz')).exists():continue
     with src.open('rb') as f,gzip.open(raw/(name+'.gz'),'wb',compresslevel=6) as g:shutil.copyfileobj(f,g)
 save(out/'package-index.json',{str(p.relative_to(out)):{'bytes':p.stat().st_size,'sha256':sha(p)} for p in out.rglob('*') if p.is_file() and p.name!='package-index.json'})
 print('packaged',len(summary),'runs',len(timings),'samples',sum(p.stat().st_size for p in out.rglob('*') if p.is_file())/2**20,'MiB')
