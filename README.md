@@ -36,4 +36,8 @@ python scripts/check_project.py
 
 ## 当前研究主线
 
+接续分析见[具体Block候选v1](docs/BLOCK_CANDIDATE_V1.md)：明确M/V/A/R/S/D的计算、状态、
+接口和预连线，并以[最小决策实验](docs/BLOCK_MINIMAL_EXPERIMENTS_V1.md)区分待选边界。
+这是分析候选与后续验证计划，尚无最终制造划分或端到端硬件收益结论。
+
 以[共同研究问题](docs/RESEARCH_QUESTION.md)为判据，优先研究算子/Block划分及内部预连线/接口裕量。首轮[方法](docs/OPERATOR_BLOCK_PARTITION.md)与[实际结果](docs/experiments/issue-21-operator-partition.md)区分调度、状态归属和物理边界；630调度案例与缩小数值核已完成，不等同完整模型或端到端硬件收益。

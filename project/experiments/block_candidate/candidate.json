@@ -1,0 +1,45 @@
+{
+  "schema": "block-candidate/1",
+  "status": "analytical candidate; not implemented hardware",
+  "issue": 41,
+  "data_link_bits": 128,
+  "beat_bytes": 64,
+  "packet_header_bytes": 64,
+  "endpoint_fifo_bytes": 2048,
+  "s_bank_bytes": 32768,
+  "s_bank_count": 8,
+  "s_port": "1RW,128bit; reads/writes serialized per bank",
+  "logical_bindings_hybrid": {
+    "M": ["V", "A", "S1", "S6"], "V": ["M", "R", "S1", "S2"],
+    "A": ["M", "V", "S3", "S4"], "R": ["V", "S5", "S7", "S1"],
+    "D": ["S0", "S1", "S5", "S7"],
+    "S0": ["M", "V", "D"], "S1": ["M", "V", "D"],
+    "S2": ["M", "A", "V", "D"], "S3": ["A", "D"],
+    "S4": ["M", "A", "V", "D"], "S5": ["R", "V", "D"],
+    "S6": ["M", "V", "D"], "S7": ["R", "V", "D"]
+  },
+  "Gemma_V_destinations": ["M", "S4", "S1", "S2"],
+  "D_data_RX_arbiter_fanin": 8,
+  "blocks": [
+    {"id": "M", "instances": 1, "native_mul8": 256, "rq_mul8": 1, "private_bytes": 32768, "rom_bytes": 0, "rx": 2, "tx": 1},
+    {"id": "V", "instances": 1, "native_mul8": 8, "rq_mul8": 0, "private_bytes": 16384, "rom_bytes": 8192, "rx": 2, "tx": 1},
+    {"id": "A", "instances": 1, "native_mul8": 8, "rq_mul8": 0, "private_bytes": 32768, "rom_bytes": 20480, "rx": 2, "tx": 1},
+    {"id": "R", "instances": 1, "native_mul8": 8, "rq_mul8": 0, "private_bytes": 32768, "rom_bytes": 0, "rx": 2, "tx": 1},
+    {"id": "D", "instances": 1, "native_mul8": 0, "rq_mul8": 0, "private_bytes": 8192, "rom_bytes": 0, "rx": 1, "tx": 1}
+  ],
+  "hypothetical_rq_II_cycles": 28,
+  "hypothetical_rq_lanes": [1, 8],
+  "matmul_example": {"M": 16, "N": 16, "K": 128},
+  "attention_example": {"Q_tile": 4, "K_tile": 64, "head_dim": 256, "sequence": 4096, "score_bytes": 2, "O_bytes": 8},
+  "recurrence_tile": {"K": 128, "V": 32, "state_bytes": 4},
+  "decision_experiments": {
+    "E1": ["D1"],
+    "E2": ["D2", "D3", "D5"],
+    "E3": ["D4", "D5"],
+    "E4": ["D6"],
+    "E5": ["frozen_validation_only"]
+  },
+  "decision_names": {"D1": "format and conversion boundary", "D2": "RQ location and lane budget", "D3": "M/A separation", "D4": "R feedback vs shared wide pool", "D5": "bank ownership and serialization", "D6": "fixed vs product-custom wiring"},
+  "minimum_set_scope": "E1 numeric gate + E2/E3/E4 boundary discrimination + E5 frozen acceptance; conditional, not a globally proven minimum",
+  "jobs_launched": false
+}

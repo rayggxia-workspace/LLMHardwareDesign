@@ -1,0 +1,125 @@
+{
+  "schema": "block-candidate-analysis/1",
+  "scope": "declared analytical inventory, not area/energy/cycle measurement",
+  "inventory": {
+    "signed8_multiplier_units": 281,
+    "private_bytes": 122880,
+    "bank_bytes": 262144,
+    "endpoint_fifo_count": 30,
+    "endpoint_fifo_bytes": 61440,
+    "rom_bytes": 28672,
+    "all_declared_memory_bytes": 475136
+  },
+  "matmul_lower_bounds": {
+    "tile": {
+      "M": 16,
+      "N": 16,
+      "K": 128
+    },
+    "MACs": 32768,
+    "ideal_peak_cycles_lower_bound": 128,
+    "RQ_service_cycles_lower_bound": {
+      "1": 7168,
+      "8": 896
+    },
+    "qualification": "RQ33 II28 is a sensitivity assumption; prior RQ32 RTL II28 does not qualify RQ33 or matrix utilization"
+  },
+  "attention": {
+    "score_spill_bytes": 32768,
+    "O_i64_bytes": 8192,
+    "score_plus_O_bytes": 40960,
+    "private_A_bytes": 32768,
+    "score_write_two_reads_bytes": 98304,
+    "conclusion": "scores plus O exceed A private RAM; S/backing traffic required for this canonical three-pass schedule"
+  },
+  "recurrence": {
+    "resident_tile_bytes": 16384,
+    "qwen35_canonical_state_i32_bytes": 50331648,
+    "conv_history_i16_bytes": 1179648,
+    "conv_history_f32_bytes": 2359296,
+    "R_plus_all_S_bytes_upper_bound": 294912,
+    "cold_once_per_token_state_read_write_bytes": 100663296,
+    "qualification": "one matrix per value head, canonical layout assumed; actual backend allocation not measured; cold bound assumes every element loaded/written once, no resident/external-cache reuse"
+  },
+  "wire_examples": [
+    {
+      "rows": 1,
+      "N": 16,
+      "raw_i32_bytes": 128,
+      "rq_i8_bytes": 128,
+      "rq_i16_bytes": 128,
+      "raw_link_cycles": 8,
+      "rq_i8_link_cycles": 8
+    },
+    {
+      "rows": 4,
+      "N": 16,
+      "raw_i32_bytes": 320,
+      "rq_i8_bytes": 128,
+      "rq_i16_bytes": 192,
+      "raw_link_cycles": 20,
+      "rq_i8_link_cycles": 8
+    }
+  ],
+  "scale_params": {
+    "rows": 4,
+    "channels": 256,
+    "static_M_r_bytes": 1280,
+    "row_dynamic_M_r_bytes": 5120
+  },
+  "logical_graph": {
+    "nodes": 13,
+    "directed_edges": 45,
+    "maximum_TX_destinations": 4,
+    "D_reaches_all_and_returns": true,
+    "qualification": "block-level directed reachability only; no contention, deadlock, pin or timing proof"
+  },
+  "decisions": {
+    "D1": "format and conversion boundary",
+    "D2": "RQ location and lane budget",
+    "D3": "M/A separation",
+    "D4": "R feedback vs shared wide pool",
+    "D5": "bank ownership and serialization",
+    "D6": "fixed vs product-custom wiring"
+  },
+  "experiment_to_decision": {
+    "E1": [
+      "D1"
+    ],
+    "E2": [
+      "D2",
+      "D3",
+      "D5"
+    ],
+    "E3": [
+      "D4",
+      "D5"
+    ],
+    "E4": [
+      "D6"
+    ],
+    "E5": [
+      "frozen_validation_only"
+    ]
+  },
+  "provenance": {
+    "commit": "dfb12cddb81f6acdf44a2c1f64600aa37e121a3a",
+    "python": "3.13.14",
+    "files": {
+      "project/experiments/block_candidate/analyze.py": {
+        "sha256": "92d1a44e229952e9160db8cc259216ae8e5c66862cb0e4a177f11800cabbfa30",
+        "matches_commit": true
+      },
+      "project/experiments/block_candidate/candidate.json": {
+        "sha256": "671b848f3225fe5ec06cd19465bcc929d1a66c49cf8008e991ae61b0633ea430",
+        "matches_commit": true
+      },
+      "project/experiments/model_selection/configs/qwen35.json": {
+        "sha256": "ddc63e1c717afa86c865bb5e01313d89d72bb53b97ad4a8a03ba8510c0621670",
+        "matches_commit": true
+      }
+    },
+    "source_bound": true,
+    "note": "analytical derivations only; bindings distinguish committed source from preparation"
+  }
+}

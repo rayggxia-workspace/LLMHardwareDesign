@@ -1,5 +1,20 @@
 # Liangruizhi 的进度
 
+## 2026-10-23（UTC+08:00）Issue41分析候选与最小决策实验
+
+[Issue41](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/41)，Liangruizhi；
+task/41-block-candidate-v1，独立D:/Projects/LLMHardwareDesign-blockv1，base PR40@f2e55e0。
+按用户要求给出M/V/A/R/S/D具体候选，计算、状态、接口、预连线/定制范围和D1–D6；
+E1数值门、E2/E3/E4三项边界判别、E5冻结验证；不把所有模型/精度/长度盲跑。
+正式文档docs/BLOCK_CANDIDATE_V1.md、docs/BLOCK_MINIMAL_EXPERIMENTS_V1.md；解析工具block_candidate。
+本轮不新跑模型/RTL/GPU/远程，不整合尚未获用户完成通知的兄方结果。
+源码dfb12cddb81f6acdf44a2c1f64600aa37e121a3a，两次解析逐字节一致、三源码绑定、8已知值、
+两个容量反例、D1–D6覆盖/文档链接及管理/whitespace通过；这不代表E1–E5已跑。
+[PR44](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/44)已上传，待审查合并，未done；
+交接docs/handoffs/2026-10-23-issue-41-block-candidate-v1.md，分析/验证/SHA见work/Liangruizhi/41。
+本轮后续仅按门槛选择E1缺项；Issue42/43资源/方法调研并行互补，不接管。登记PR5 pending，
+看板unverified/同步pending，审查人/管理员待指定。
+
 ## 2026-10-23（UTC+08:00）Issue39本机数值接续
 
 [Issue39](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/39)，Liangruizhi；

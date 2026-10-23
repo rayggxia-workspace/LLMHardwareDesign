@@ -1,5 +1,12 @@
 # 当前状态
 
+- 2026-10-23分析接续：Issue41形成[具体Block候选v1](BLOCK_CANDIDATE_V1.md)，
+  六类模板的计算/状态/接口/预连线、声明库存、模型映射和D1–D6均显式；
+  [最小实验](BLOCK_MINIMAL_EXPERIMENTS_V1.md)缩为数值门、三类边界判别和冻结后验证。
+  本轮只解析复算，不新增模型/RTL/GPU/远程运行；硬件资格/收益未验证，未接管兄方Issue32/31。
+  [PR44](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/44)交付待审查合并；
+  与其他成员Issue42方法/Issue43资源约束互补，后续只按决策分叉补验证。
+
 - 2026-10-23本机接续：[Issue39/PR40](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/40)
   复用真实Qwen3短head完成24组合整数QK/PV及bias边界，89280整数比较和两次科学payload重放通过。
   direct量化局部误差大，离线平衡仅定位，在线scale/GQA共享/正式质量与物理资格尚未闭合，不宣称最终Block。

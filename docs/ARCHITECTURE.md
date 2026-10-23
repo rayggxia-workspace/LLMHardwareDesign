@@ -1,5 +1,9 @@
 # 架构与运行
 
+Issue41通过分析给出[Block候选v1](BLOCK_CANDIDATE_V1.md)及[最小决策实验](BLOCK_MINIMAL_EXPERIMENTS_V1.md)。
+解析命令：`python -B project/experiments/block_candidate/analyze.py --output <D盘新JSON路径>`；
+只复算声明库存/容量/传输下界，见该目录README，不执行模型、RTL或远程作业。
+
 Issue39本机接续在`project/experiments/kv_scale/`，先管理检查和test_core.py，再从干净commit运行run.py到D盘新目录，
 两次运行由audit.py独立整数/版本/SHA及逐字节重放。完整命令与实际范围见该目录README。
 复用Issue27真实短head，不新增权重、远程或GPU任务；师兄可复制文案见docs/handoffs/2026-10-23-gpu-codex-experiment-prompt.md。
