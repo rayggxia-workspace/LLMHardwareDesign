@@ -15,7 +15,7 @@ names=['exit-code.txt','finished.txt','allocation.txt','image.sha256','tools.sha
        'spec.json','input-sha256.json','inputs.json','partition.json','budget.log',
        'electrical-budget.rpt','interface-nets.rpt','macro-nets.txt','partition.log',
        'route.log','restricted-drc.rpt','freeze-audit.json','inventory-summary.json',
-       'native-api.log','native-flow-snippets.json','baseline-drc.rpt','baseline-antenna.rpt']
+       'native-api.log','native-flow-snippets.json','baseline-drc.rpt','baseline-antenna.rpt','native-stack-symbols.txt']
 for attempt in a.attempts:
     receipt=json.loads((HERE/'results'/(attempt+'-submission.json')).read_text())
     remote=receipt['spec']['remote']

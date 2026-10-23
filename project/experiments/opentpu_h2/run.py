@@ -37,6 +37,8 @@ try:
     with (ROOT/'physical-inventory.log').open('w') as log:
         subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(ROOT/'physical.tcl')],stdout=log,stderr=subprocess.STDOUT,check=True)
     if SPEC['mode']=='api':
+        with (ROOT/'native-stack-symbols.txt').open('w') as log:
+            subprocess.run(['addr2line','-f','-C','-e',shutil.which('openroad'),'0x5F46056','0x4100B48','0x3F60AB7','0x3F7C2FE','0x22AA150','0x22B271D'],stdout=log,stderr=subprocess.STDOUT,check=True)
         script='read_db {'+str(odb)+'}\n'
         script+='foreach cmd {drt::check_drc drt::step_dr} {puts "PROC $cmd ARGS [info args $cmd] BODY [info body $cmd]"}\n'
         script+='help extract_parasitics\nhelp check_antennas\nhelp write_verilog\n'
