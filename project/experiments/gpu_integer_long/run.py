@@ -19,6 +19,7 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--model-dir',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--reference-dir',type=Path,required=True);p.add_argument('--reference-8192',type=Path)
     p.add_argument('--group-k',type=int,choices=[32,128],required=True);p.add_argument('--lengths',nargs='+',type=int,default=[512,2048,4096,8192])
+    p.add_argument('--batched-integer',action='store_true')
     a=p.parse_args();assert not a.out.exists();assert not common.git('status','--porcelain')
     manifest=json.loads((a.model_dir/'model-manifest.json').read_text(encoding='utf-8'))
     for n,info in manifest['files'].items():assert common.sha(a.model_dir/n)==info['sha256'],n
@@ -28,7 +29,7 @@ def main():
     a.out.mkdir(parents=True);common.configure_backend();torch.set_num_threads(4)
     free=int(subprocess.check_output(['nvidia-smi','--query-gpu=memory.free','--format=csv,noheader,nounits'],text=True).splitlines()[0])
     budget=min(11776,free-512);torch.cuda.set_per_process_memory_fraction(budget*2**20/torch.cuda.get_device_properties(0).total_memory)
-    source={str(p.relative_to(HERE.parent)):common.sha(p) for d in (HERE,HERE.parent/'gpu_grouped_repair',HERE.parent/'gpu_model_repair',HERE.parent/'gpu_model_evidence') for p in d.glob('*.py')}
+    source={str(p.relative_to(HERE.parent)):common.sha(p) for d in (HERE,HERE.parent/'gpu_grouped_repair',HERE.parent/'gpu_model_repair',HERE.parent/'gpu_model_evidence',HERE.parent/'gpu_batched_integer') for p in d.glob('*.py')}
     common.save(a.out/'manifest.json',{'source_commit':common.git('rev-parse','HEAD'),'source_files':source,'model':manifest,
         'group_k':a.group_k,'W':'INT8 per-output/K group','A':'INT8 per-token/K group','acc':'INT32 partials',
         'scales_partial_sum':'FP32','output':'FP16','state_nonlinear_attention':'native float',
@@ -38,7 +39,13 @@ def main():
     def checkpoint():common.save(a.out/'results.json',results)
     try:
         model,loading=common.load_model(a.model_dir);common.save(a.out/'loading.json',loading)
-        common.save(a.out/'matrices.json',grouped.install(model,'raw',{},a.group_k))
+        if a.batched_integer:
+            spec=importlib.util.spec_from_file_location('long_batched_int8',HERE.parent/'gpu_batched_integer/kernel.py')
+            backend=importlib.util.module_from_spec(spec);spec.loader.exec_module(backend)
+            matrices=backend.install(model,'raw',{},a.group_k)
+            common.save(a.out/'integer-backend.json',model.integer_backend_receipt)
+        else:matrices=grouped.install(model,'raw',{},a.group_k)
+        common.save(a.out/'matrices.json',matrices)
         ids_data=json.loads((a.reference_dir/'inputs.json').read_text(encoding='utf-8'))['long_token_ids']
         ids=torch.tensor(ids_data,device='cuda');assert ids.shape[1]>=max(a.lengths)+32
         common.save(a.out/'inputs.json',{'teacher_forced':True,'token_ids':ids_data})
