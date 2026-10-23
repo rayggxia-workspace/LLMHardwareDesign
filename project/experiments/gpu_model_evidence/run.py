@@ -507,6 +507,9 @@ def main():
                 one=None
                 chunk_reference=None
                 for chunk in (length, cfg['performance']['chunk']):
+                    # A previous exception traceback may have retained failed-call tensors.
+                    # Collect only after leaving its except suite (when `exc` is cleared).
+                    gc.collect(); torch.cuda.empty_cache()
                     try:
                         samples=[]
                         for rep in range(-cfg['performance']['warmup'],cfg['performance']['repeats']):
