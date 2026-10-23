@@ -34,7 +34,7 @@ def main():
     for directory in [a.numeric,a.service]:
         label='numeric' if directory.startswith('numeric') else 'service'
         for f in sorted((a.run/directory).glob('*.json')):members[label+'/'+f.name]=f.read_bytes()
-    for name in ['audit04.json','repeat.json','capture01/manifest.json','capture01/inputs.json','capture02/manifest.json',
+    for name in ['audit04.json','analysis.json','repeat.json','capture01/manifest.json','capture01/inputs.json','capture02/manifest.json',
                  'capture02/inputs.json','capture01.log','capture02.log','numeric04.log','numeric05.log','service01.log','service04.log','service05.log','audit04.log']:
         f=a.run/name
         if f.exists():members['records/'+name]=f.read_bytes()
@@ -48,6 +48,7 @@ def main():
     members['source/experiment.json']=(ROOT/'project/experiments/down_scale/experiment.json').read_bytes()
     members['source/README.md']=(ROOT/'project/experiments/down_scale/README.md').read_bytes()
     members['source/package.py']=Path(__file__).read_bytes()
+    members['source/analyze.py']=(Path(__file__).parent/'analyze.py').read_bytes()
     member_index={name:{'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()} for name,raw in sorted(members.items())}
     members['members.json']=(json.dumps(member_index,indent=2)+'\n').encode()
     a.output.mkdir(parents=True)

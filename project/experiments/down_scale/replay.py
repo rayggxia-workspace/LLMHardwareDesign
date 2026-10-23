@@ -50,12 +50,24 @@ def run(directory):
     if (directory/'replay-cases.json').exists():
         wanted=json.loads((directory/'replay-cases.json').read_text());reports=[r for r in reports if r['key']in wanted]
         if len(reports)!=len(wanted):raise ValueError('selected case inventory')
-    ey=array('Y_e');outputs=partials=packet_count=wire_bytes=0;proof=[]
+    ey=array('Y_e');outputs=partials=packet_count=wire_bytes=0;proof=[];bounds=[]
     for record in reports:
         key=record['key'];pr=profiles[record['profile']];ag,wg=pr['ag'],pr['wg'];group=min(ag,wg)
         qa=array(key+'.A_i8');ea=array(key+'.A_e');qw=array(pr['name']+'.W_i8');ew=array(pr['name']+'.W_e')
         if max(int(np.max(abs(qa.astype(np.int16)))),int(np.max(abs(qw.astype(np.int16)))))>127:raise ValueError('symmetric i8 domain')
         expected=array(key+'.out');saved_acc=array(key+'.acc');saved_e0=array(key+'.e0');saved_parts=array(key+'.parts')
+        if record['profile']=='dynamic_none_max_128_128' and record['phase']=='prefill':
+            maximum=0
+            for i in range(len(qa)):
+                for j in range(16):
+                    units=ea[i].astype(np.int16)+ew[j].astype(np.int16);minimum=int(min(units))
+                    adversary=np.sign(qw[j].astype(np.int16))*127
+                    exact=0
+                    for g,u in enumerate(units):
+                        partial=int(adversary[g*128:(g+1)*128].astype(np.int64)@qw[j,g*128:(g+1)*128].astype(np.int64))
+                        exact+=partial<<(int(u)-minimum)
+                    maximum=max(maximum,exact)
+            bounds.append({'text':record['text'],'exact_weight_aware_aligned_max':maximum})
         # Decode uses immediate row1, prefill row4; both paths have identical grouping/scales.
         tile=1 if record['phase']=='decode' else 4
         for row in range(0,len(qa),tile):
@@ -91,8 +103,13 @@ def run(directory):
             if not np.array_equal(near,shared):raise AssertionError('near/shared RQ changed outputs')
             packet_count+=len(near_packets);wire_bytes+=sum(map(len,near_packets))
         proof.append(key)
+    if (directory/'records/analysis.json').exists():
+        analysis=json.loads((directory/'records/analysis.json').read_text())
+        expected={r['text']:r['exact_weight_aware_aligned_max'] for r in analysis['weight_aware_adversarial_bound']}
+        if any(expected.get(r['text'])!=r['exact_weight_aware_aligned_max'] for r in bounds):raise AssertionError('weight-aware bound')
     return {'status':'PASS','cases':len(proof),'Fraction_output_values':outputs,'INT64_partial_values':partials,
             'packets_decoded':packet_count,'packet_wire_bytes':wire_bytes,
+            'weight_aware_adversarial_bounds':bounds,
             'scope':'encoded integer/metadata roundtrip, no raw float calibration or hardware claim'}
 
 
