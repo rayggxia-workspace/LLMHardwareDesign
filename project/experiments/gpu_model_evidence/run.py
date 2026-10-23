@@ -289,6 +289,11 @@ def main():
         torch.backends.cuda.enable_mem_efficient_sdp(a.sdpa_backend=='efficient')
         torch.backends.cuda.enable_cudnn_sdp(a.sdpa_backend=='cudnn')
         torch.backends.cuda.enable_math_sdp(a.sdpa_backend=='math')
+        if a.sdpa_backend=='efficient':
+            # Torch 2.10 efficient SDPA requires equal query/KV head counts.
+            # Reuse Transformers' explicit repeat_kv branch; do not change masks/causality.
+            from transformers.integrations import sdpa_attention
+            sdpa_attention.use_gqa_in_sdpa = lambda attention_mask, key, value: False
     if a.out.exists():
         raise ValueError('output exists; preserve original evidence')
     if git('status', '--porcelain'):
@@ -311,6 +316,7 @@ def main():
         'start_epoch': time.time(), 'initial_free_total_bytes': torch.cuda.mem_get_info(),
         'gpu': torch.cuda.get_device_name(), 'backend': cfg['performance']['backend'],
         'sdpa_backend_enforced':a.sdpa_backend,
+        'gqa_execution':'explicit_repeat_kv' if a.sdpa_backend=='efficient' else 'transformers_default',
         'phase': a.phase, 'runtime_dtype':a.dtype, 'offload': False, 'physical_traffic_measured': False})
     save(a.out/'allocator-budget.json',{'physical_free_mib_before_context':smi_free_mib,
         'guard_mib':512,'budget_mib':budget_mib,'fraction':min(fraction,0.95),
