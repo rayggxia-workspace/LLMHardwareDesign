@@ -1,0 +1,25 @@
+name: LLM resource accounting
+
+on:
+  push:
+    paths:
+      - 'project/analysis/llm_resources/**'
+      - '.github/workflows/llm-resources.yml'
+  pull_request:
+    paths:
+      - 'project/analysis/llm_resources/**'
+      - '.github/workflows/llm-resources.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  unit-and-cli:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Check accounting, validation and CLI behavior
+        run: python3 -B -m unittest discover -s project/analysis/llm_resources -v

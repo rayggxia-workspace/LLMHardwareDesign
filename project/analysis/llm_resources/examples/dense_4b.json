@@ -1,0 +1,100 @@
+{
+  "schema_version": "llm-resource-input/1",
+  "model": {
+    "name": "synthetic-4B-envelope",
+    "kind": "dense",
+    "total_parameters": 4000000000,
+    "int8_parameters": 4000000000,
+    "auxiliary_parameters": [],
+    "linear_ops": null,
+    "linear_macs_per_token": 4000000000,
+    "linear_outputs_per_token": null,
+    "attention": [],
+    "recurrent_states": [],
+    "max_context_tokens": null,
+    "source": {
+      "kind": "hypothetical",
+      "uri": "local:synthetic-envelope",
+      "revision": null,
+      "note": "All 4B weights assumed active once per token; no attention or full graph supplied. Not a real model."
+    }
+  },
+  "precision": {
+    "weight_bits": 8,
+    "activation_bits": 8,
+    "accumulator_bits": 32,
+    "kv_bits": 8,
+    "quantization_contract": null
+  },
+  "scenario": {
+    "phase": "decode",
+    "batch": 1,
+    "input_tokens": 128,
+    "output_tokens": 32,
+    "cached_tokens": 0,
+    "target_tokens_per_second": 10
+  },
+  "hardware": {
+    "candidate_file": "../profiles/block_candidate_v1.json",
+    "matrix_counts": [
+      1,
+      2,
+      4
+    ],
+    "clock_hz": 250000000,
+    "matrix_utilization": 0.5,
+    "rq_initiation_interval_cycles": null,
+    "external_capacity_bytes": 8000000000,
+    "external_effective_bytes_per_second": 32000000000,
+    "link_effective_fraction": null,
+    "shared_reserve_bytes": 0
+  },
+  "placement": {
+    "weights": "external",
+    "kv": "external",
+    "recurrent": "external"
+  },
+  "accounting": {
+    "weight_scale": {
+      "group_elements": 128,
+      "bytes_per_group": 4
+    },
+    "kv_scale": {
+      "group_elements": 128,
+      "bytes_per_group": 4
+    },
+    "weight_padding_bytes": null,
+    "shared_workspace_bytes": null,
+    "external_workspace_bytes": null,
+    "weight_read_passes": 1,
+    "kv_read_multiplier": null,
+    "recurrent_read_write_passes": null
+  },
+  "mapping": {
+    "matrix_tile": {
+      "rows": 16,
+      "columns": 16,
+      "reduction": 128,
+      "operand_copies": 2,
+      "accumulator_copies": 2,
+      "reserved_bytes": 6144
+    }
+  },
+  "transfers": [
+    {
+      "name": "example-score-tile-only",
+      "path": [
+        "M",
+        "A"
+      ],
+      "shape": [
+        4,
+        16
+      ],
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "messages_per_step": null
+    }
+  ]
+}

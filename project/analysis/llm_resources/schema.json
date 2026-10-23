@@ -1,0 +1,776 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "llm-resource-input/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "model",
+    "precision",
+    "scenario",
+    "hardware",
+    "placement",
+    "accounting",
+    "mapping",
+    "transfers"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "llm-resource-input/1"
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "kind",
+        "total_parameters",
+        "int8_parameters",
+        "auxiliary_parameters",
+        "linear_ops",
+        "linear_macs_per_token",
+        "linear_outputs_per_token",
+        "attention",
+        "recurrent_states",
+        "max_context_tokens",
+        "source"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "dense",
+            "moe",
+            "hybrid"
+          ]
+        },
+        "total_parameters": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4000000000
+        },
+        "int8_parameters": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4000000000
+        },
+        "auxiliary_parameters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "parameters",
+              "storage_bits"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "parameters": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "storage_bits": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      8,
+                      16,
+                      32,
+                      64
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          },
+          "minItems": 0
+        },
+        "linear_ops": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "name",
+                  "instances",
+                  "active_instances",
+                  "input_features",
+                  "output_features",
+                  "prefill_rows"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "instances": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "active_instances": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "input_features": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "output_features": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "prefill_rows": {
+                    "enum": [
+                      "all",
+                      "last"
+                    ]
+                  }
+                }
+              },
+              "minItems": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "linear_macs_per_token": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "linear_outputs_per_token": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attention": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "layers",
+              "query_heads",
+              "kv_heads",
+              "head_dim",
+              "window_tokens"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "layers": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "query_heads": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "kv_heads": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "head_dim": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "window_tokens": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          },
+          "minItems": 0
+        },
+        "recurrent_states": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "elements_per_sequence",
+              "storage_bits",
+              "extra_bytes_per_sequence"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "elements_per_sequence": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "storage_bits": {
+                "enum": [
+                  8,
+                  16,
+                  32,
+                  64
+                ]
+              },
+              "extra_bytes_per_sequence": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "minItems": 0
+        },
+        "max_context_tokens": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "uri",
+            "revision",
+            "note"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "hypothetical",
+                "config_derived",
+                "user_supplied"
+              ]
+            },
+            "uri": {
+              "type": "string",
+              "minLength": 1
+            },
+            "revision": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "note": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "precision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "weight_bits",
+        "activation_bits",
+        "accumulator_bits",
+        "kv_bits",
+        "quantization_contract"
+      ],
+      "properties": {
+        "weight_bits": {
+          "const": 8
+        },
+        "activation_bits": {
+          "const": 8
+        },
+        "accumulator_bits": {
+          "const": 32
+        },
+        "kv_bits": {
+          "enum": [
+            8,
+            16
+          ]
+        },
+        "quantization_contract": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phase",
+        "batch",
+        "input_tokens",
+        "output_tokens",
+        "cached_tokens",
+        "target_tokens_per_second"
+      ],
+      "properties": {
+        "phase": {
+          "enum": [
+            "prefill",
+            "decode"
+          ]
+        },
+        "batch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "input_tokens": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "output_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cached_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "target_tokens_per_second": {
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "hardware": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_file",
+        "matrix_counts",
+        "clock_hz",
+        "matrix_utilization",
+        "rq_initiation_interval_cycles",
+        "external_capacity_bytes",
+        "external_effective_bytes_per_second",
+        "link_effective_fraction",
+        "shared_reserve_bytes"
+      ],
+      "properties": {
+        "candidate_file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "matrix_counts": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65536
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "maxItems": 64
+        },
+        "clock_hz": {
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "matrix_utilization": {
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rq_initiation_interval_cycles": {
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "external_capacity_bytes": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "external_effective_bytes_per_second": {
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "link_effective_fraction": {
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "shared_reserve_bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "placement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "weights",
+        "kv",
+        "recurrent"
+      ],
+      "properties": {
+        "weights": {
+          "enum": [
+            "shared",
+            "external",
+            "unknown"
+          ]
+        },
+        "kv": {
+          "enum": [
+            "shared",
+            "external",
+            "unknown"
+          ]
+        },
+        "recurrent": {
+          "enum": [
+            "shared",
+            "external",
+            "unknown"
+          ]
+        }
+      }
+    },
+    "accounting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "weight_scale",
+        "kv_scale",
+        "weight_padding_bytes",
+        "shared_workspace_bytes",
+        "external_workspace_bytes",
+        "weight_read_passes",
+        "kv_read_multiplier",
+        "recurrent_read_write_passes"
+      ],
+      "properties": {
+        "weight_scale": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "group_elements",
+                "bytes_per_group"
+              ],
+              "properties": {
+                "group_elements": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "bytes_per_group": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "kv_scale": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "group_elements",
+                "bytes_per_group"
+              ],
+              "properties": {
+                "group_elements": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "bytes_per_group": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "weight_padding_bytes": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "shared_workspace_bytes": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "external_workspace_bytes": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "weight_read_passes": {
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "kv_read_multiplier": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recurrent_read_write_passes": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "matrix_tile"
+      ],
+      "properties": {
+        "matrix_tile": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "rows",
+            "columns",
+            "reduction",
+            "operand_copies",
+            "accumulator_copies",
+            "reserved_bytes"
+          ],
+          "properties": {
+            "rows": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "columns": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "reduction": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "operand_copies": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "accumulator_copies": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "reserved_bytes": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "transfers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "path",
+          "shape",
+          "logical_bits",
+          "storage_bits",
+          "metadata_bytes",
+          "messages_per_step"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "path": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 2
+          },
+          "shape": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "minItems": 1
+          },
+          "logical_bits": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 64
+          },
+          "storage_bits": {
+            "enum": [
+              8,
+              16,
+              32,
+              64
+            ]
+          },
+          "metadata_bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "messages_per_step": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "minItems": 0
+    }
+  }
+}
