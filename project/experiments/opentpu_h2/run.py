@@ -52,6 +52,12 @@ try:
             p=Path('/OpenROAD-flow-scripts/flow')/name
             if p.exists():snippets[name]=p.read_text()
         (ROOT/'native-flow-snippets.json').write_text(json.dumps(snippets,indent=2)+'\n')
+    if SPEC['mode']=='connectivity':
+        script='read_db {'+str(odb)+'}\nputs "LOGGER_API [info commands utl::*ogger*] [info commands ord::*ogger*]"\n'
+        script+='puts "NET_API [info commands odb::*Net*onnect*]"\n'
+        path=ROOT/'connectivity-api.tcl';path.write_text(script)
+        with (ROOT/'connectivity-api.log').open('w') as log:
+            subprocess.run(['openroad','-threads','1','-exit',str(path)],stdout=log,stderr=subprocess.STDOUT,check=True)
     if SPEC['mode'] in ('partition','route'):
         from def_routes import partition
         contract=partition(ROOT/'physical.def',ROOT/'frozen-lower.def',SPEC['bottom'])
@@ -106,6 +112,11 @@ try:
                     script+='set v [[ord::get_db_tech] findVia {'+landing['via']+'}]\nif {$v eq "NULL"} {error {Missing native landing via}}\n'
                     script+='foreach box [$v getBoxes] {set l [$box getTechLayer];if {[$l getName] eq "metal8"} {odb::dbBox_create $bp $l [expr {'+str(landing['x'])+'+[$box xMin]}] [expr {'+str(landing['y'])+'+[$box yMin]}] [expr {'+str(landing['x'])+'+[$box xMax]}] [expr {'+str(landing['y'])+'+[$box yMax]}]}}\n'
                 script+='set empty {}\nforeach n [$b getNets] {if {[$n getSigType] ni {POWER GROUND} && [llength [$n getBTerms]]==0} {lappend empty $n}}\nforeach n $empty {odb::dbNet_destroy $n}\n'
+                # Upper routing has no active instances. Preserve actual
+                # detailed-macro OBS as absolute physical obstacles; NG45
+                # standard-cell geometry lies below the custom surface.
+                script+='foreach name {u_act u_mxu} {set i [$b findInst $name];if {[$i getOrient] ne "R0"} {error {Unsupported macro transform}};lassign [$i getLocation] dx dy;foreach box [[$i getMaster] getObstructions] {set l [$box getTechLayer];if {[$l getName] in {metal8 metal9 metal10}} {odb::dbObstruction_create $b $l [expr {$dx+[$box xMin]}] [expr {$dy+[$box yMin]}] [expr {$dx+[$box xMax]}] [expr {$dy+[$box yMax]}]}}}\n'
+                script+='set allinsts [$b getInsts]\nforeach i $allinsts {odb::dbInst_destroy $i}\n'
                 script+='write_db proxy-initial.odb\nwrite_def proxy-initial.def\n'
                 script+='# H2_PROXY_FRESH_PROCESS\n'
             guide=''
