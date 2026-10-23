@@ -58,3 +58,7 @@ project/experiments/qwen3_trace/使用独立D盘环境（torch2.10.0+cpu、trans
 `project/experiments/state_ports/`包含固定slot/scratch、原子服务资源、四种启发式与小规模精确oracle。先运行`python -B scripts/check_project.py`；再在Issue23的独立环境运行`python -B -m unittest discover -s project/experiments/state_ports -p 'test_*.py'`（25项）。进程TEMP/TMP指定D:/Projects/Codex/state-port-study-20261022/process-temp。
 
 从干净commit执行`python -B project/experiments/state_ports/run.py --output <D盘新目录>`；真实head捕获用该目录capture.py的`--weights`与`--output`，具体锁定环境/模型及完整命令见[工具说明](../project/experiments/state_ports/README.md)。不将真实tensor数值验证或服务模型cycle描述为RTL/PPA。归档/图表脚本在work/Liangruizhi/27，正式资源/采集输出与独立审计位置见[实验报告](experiments/issue-27-state-port-model.md)。
+
+## Issue29 有限缓冲bank控制器RTL
+
+正式实现project/experiments/port_rtl；先python -B scripts/check_project.py，再python -B -m unittest discover -s work/Liangruizhi/29 -p "test_*.py"。干净源码运行python -B project/experiments/port_rtl/prepare.py --output <D盘新目录>，校验bundle SHA后在本人服务器目录解压，以sbatch source/job.sh执行（8CPU、debug29分钟上限）。精确工具、合同、结果与局限见[实验记录](experiments/issue-29-port-rtl.md)。独立trace及汇总审计工具在work/Liangruizhi/29；大trace在授权共同issue-29存储，按报告SHA读取。RTL仿真不代表完整算术或物理验证。

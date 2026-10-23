@@ -21,3 +21,5 @@
 - 协作同步：PR24的head与CI延迟已解除，7e0e82b7线上Project structure检查通过（run39775448318）；PR17固定0f58e74首个合并父层通过物理/分层STA，但配对与父层证书未闭合；PR26固定2cd9ca15独立负责benchmark调研，不重复其范围。登记PR5 pending，Projects工具/本地board配置缺失，在线状态unverified/同步pending，处理人待指定。
 
 - 2026-10-23接续：[Issue29](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/29)，task/29-port-rtl，独立D:/Projects/LLMHardwareDesign-portrtl，base PR28@a3f8335。两bank三端点可执行RTL、有限响应FIFO、逐拍仲裁/反压、实际数据与版本检查已实现；ModelSim九组定向smoke、服务器Verilator开发阶段2程序/2压力测试通过，独立轨迹审计及正式全量扫参待完成。编译工具路径/参数宽度失败保留，不称正式结果。PR待创建；整体Goal active。
+
+- 2026-10-23正式运行更新：源码916dcf9e、[PR30](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/30)；Slurm89836／89837均COMPLETED0，两次1872程序＋54压力测试完整PASS，27份results逐字节一致。独立全量结果1698897检查、33witness逐拍2482636检查与2191来源绑定通过，8类真实变异检出。报告docs/experiments/issue-29-port-rtl.md，原始20MB证据已放共同服务器project-circuit/LLMHardwareDesign/issue-29并SHA读回，未仅留本机。通用综合89838仍运行，尚未证明宏映射/PPA，PR draft、Issue in_progress。整体Goal持续active，下一步扩差异结构与完整权重/KV/算术/物理成本；源码交付与验收区分。
