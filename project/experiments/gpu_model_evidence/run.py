@@ -334,7 +334,8 @@ def main():
             'implementation_sha256': sha(Path(impl)), 'allocated_bytes': torch.cuda.memory_allocated(),
             'reserved_bytes': torch.cuda.memory_reserved()})
         def tokens(text, n):
-            v = tokenizer(text*max(1,n), add_special_tokens=False, return_tensors='pt')['input_ids'][:,:n]
+            base_len=len(tokenizer(text,add_special_tokens=False)['input_ids'])
+            v = tokenizer(text*(n//max(1,base_len)+2), add_special_tokens=False, return_tensors='pt')['input_ids'][:,:n]
             assert v.shape[1] == n
             return v.to('cuda')
         ids = tokens(cfg['long_text'], max([144]+[n+32 for n in a.lengths]))
@@ -344,6 +345,12 @@ def main():
             'validation_token_ids': [v.tolist() for v in val], 'teacher_forced': True,
             'calibration': 'dynamic per-row absmax has no fitted parameters; calibration run screens finite inputs only',
             'split': 'authored disjoint source texts, no held-out threshold tuning'})
+        if a.phase=='integer':
+            previous=json.loads((a.reference_dir/'inputs.json').read_text(encoding='utf-8'))
+            current=json.loads((a.out/'inputs.json').read_text(encoding='utf-8'))
+            assert previous==current,'reference/candidate inputs differ'
+            previous_manifest=json.loads((a.reference_dir/'run-manifest.json').read_text(encoding='utf-8'))
+            assert previous_manifest['runtime_dtype']==a.dtype,'reference/candidate native dtype differs'
         def call(x, cache=None, keep=1):
             out=model(x, past_key_values=cache, use_cache=True, logits_to_keep=keep)
             if q35:
@@ -550,6 +557,8 @@ def main():
         checkpoint()
         raise
     finally:
+        save(a.out/'source-at-end.json',{'source_commit':git('rev-parse','HEAD'),
+            'files_unchanged':source=={x.name:sha(x) for x in HERE.iterdir() if x.is_file()}})
         save(a.out/'artifact-index.json',{str(p.relative_to(a.out)):{'bytes':p.stat().st_size,'sha256':sha(p)} for p in a.out.rglob('*') if p.is_file() and p.name!='artifact-index.json'})
 
 
