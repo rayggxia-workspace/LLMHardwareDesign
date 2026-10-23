@@ -20,6 +20,7 @@ def main():
     p.add_argument('--reference-dir',type=Path,required=True);p.add_argument('--reference-8192',type=Path)
     p.add_argument('--group-k',type=int,choices=[32,128],required=True);p.add_argument('--lengths',nargs='+',type=int,default=[512,2048,4096,8192])
     p.add_argument('--batched-integer',action='store_true')
+    p.add_argument('--fused-integer',action='store_true')
     a=p.parse_args();assert not a.out.exists();assert not common.git('status','--porcelain')
     manifest=json.loads((a.model_dir/'model-manifest.json').read_text(encoding='utf-8'))
     for n,info in manifest['files'].items():assert common.sha(a.model_dir/n)==info['sha256'],n
@@ -39,8 +40,9 @@ def main():
     def checkpoint():common.save(a.out/'results.json',results)
     try:
         model,loading=common.load_model(a.model_dir);common.save(a.out/'loading.json',loading)
-        if a.batched_integer:
-            spec=importlib.util.spec_from_file_location('long_batched_int8',HERE.parent/'gpu_batched_integer/kernel.py')
+        if a.batched_integer or a.fused_integer:
+            backend_file='fused.py' if a.fused_integer else 'kernel.py'
+            spec=importlib.util.spec_from_file_location('long_batched_int8',HERE.parent/'gpu_batched_integer'/backend_file)
             backend=importlib.util.module_from_spec(spec);spec.loader.exec_module(backend)
             matrices=backend.install(model,'raw',{},a.group_k)
             common.save(a.out/'integer-backend.json',model.integer_backend_receipt)

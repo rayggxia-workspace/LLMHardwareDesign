@@ -193,7 +193,7 @@ def main():
     p.add_argument('--reference-dir',type=Path);p.add_argument('--vram-budget-mib',type=int,default=9728)
     p.add_argument('--native-compute',choices=['fp16','fp32'],default='fp16')
     p.add_argument('--canonical-causal-aux',action='store_true')
-    p.add_argument('--integer-backend',choices=['scalar','batched'],default='scalar')
+    p.add_argument('--integer-backend',choices=['scalar','batched','fused'],default='scalar')
     p.add_argument('--protocol',type=Path)
     a=p.parse_args()
     if a.out.exists():raise ValueError('output exists')
@@ -234,7 +234,7 @@ def main():
             aux=importlib.util.module_from_spec(spec);spec.loader.exec_module(aux);aux.fp32_compute(model)
         if a.canonical_causal_aux:
             spec=importlib.util.spec_from_file_location('quality_causal_aux',HERE.parent/'gpu_state_repair/canonical.py')
-            aux=importlib.util.module_from_spec(spec);spec.loader.exec_module(aux);aux.install()
+            aux=importlib.util.module_from_spec(spec);spec.loader.exec_module(aux);aux.install(model)
         if a.mode=='reference':calibrate(model,cal,cfg,a.out)
         else:
             assert a.reference_dir
@@ -245,8 +245,9 @@ def main():
             frozen=json.loads((a.reference_dir/'calibration-frozen.json').read_text(encoding='utf-8'))
             assert sha(a.reference_dir/'smooth-factors.pt')==frozen['factors_sha256']
             factors=torch.load(a.reference_dir/'smooth-factors.pt',weights_only=True) if a.mode=='smooth' else {}
-            if a.integer_backend=='batched':
-                spec=importlib.util.spec_from_file_location('quality_batched_int8',HERE.parent/'gpu_batched_integer/kernel.py')
+            if a.integer_backend!='scalar':
+                backend_file='fused.py' if a.integer_backend=='fused' else 'kernel.py'
+                spec=importlib.util.spec_from_file_location('quality_batched_int8',HERE.parent/'gpu_batched_integer'/backend_file)
                 backend=importlib.util.module_from_spec(spec);spec.loader.exec_module(backend)
                 matrices=backend.install(model,a.mode,factors,cfg['group_k'])
                 save(a.out/'integer-backend.json',model.integer_backend_receipt)
