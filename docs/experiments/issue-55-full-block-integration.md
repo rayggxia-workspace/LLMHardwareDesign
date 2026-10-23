@@ -1,6 +1,6 @@
 # Issue #55：完整案例集成阶段记录
 
-任务：[Issue #55](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/55)，负责人 huangpingyang04-lgtm。分支 `task/55-full-block-integration`；阶段一状态为 pass_with_inherited_issues；首次精选交付正在准备，本任务PR尚未创建。当前没有冻结底座版本，尚未消耗主要底座候选轮次。
+任务：[Issue #55](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/55)，负责人 huangpingyang04-lgtm。分支 `task/55-full-block-integration`；阶段一状态为 pass_with_inherited_issues；已创建持续[草稿PR #58](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/58)，未合并。当前没有冻结底座版本，尚未消耗主要底座候选轮次。
 
 服务器根目录（下文所有相对证据从此开始）：
 `/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z`
@@ -71,3 +71,5 @@
 登记pending（管理中心PR5待合并）；Projects unverified、同步pending（缺config/board.json和已验证能力）；审查人待指定。Issue保持in_progress，不自动合并。
 
 阶段一追加证据：runs/cleanup-opentpu-review-01/（89968）；runs/parameters-{opentpu,llaccel}-01/（89970）；runs/access-{act,mxu,gemm,vector}-01/（89969）。机器摘要与关键SHA见正式代码results/summary.json；失败和后续阶段不因本阶段通过而改为通过。
+
+首批远端发布commit：e5b858bfb3cf238273dac1f4ba04f4235bebc8de；服务器审查commit：21d791bced62ec4cbac56f11c14f5db8572f02e5。完整Git tree一致（aee7964565711680c955ef0e899d42eec68d23b5）；GitHub Project structure检查39948031519成功。源码快照commit保留本地实验身份，GitHub精选交付commit独立记录。
