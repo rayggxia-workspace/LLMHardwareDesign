@@ -89,6 +89,7 @@ def main():
     p.add_argument('--perturb-lengths',nargs='*',type=int,default=[128,2048])
     p.add_argument('--vram-budget-mib',type=int,default=11776)
     p.add_argument('--state-bits',nargs='+',type=int,choices=[8,16,24,32],default=[8,16])
+    p.add_argument('--joint-state-format',action='store_true',help='Also perturb KV16/conv16/recurrent24 jointly')
     a=p.parse_args();assert not a.out.exists();assert not git('status','--porcelain')
     manifest=json.loads((a.model_dir/'model-manifest.json').read_text(encoding='utf-8'));assert manifest['complete']
     for n,info in manifest['files'].items():assert sha(a.model_dir/n)==info['sha256'],n
@@ -162,22 +163,25 @@ def main():
             for j in range(32):o=call(ids[:,length+j:length+j+1],cache);cache=o.past_key_values;baseline.append(o.logits.cpu())
             reference=snapshot(cache);del o,cache
             kinds=sorted({kind(name) for name in reference})
-            for state_kind in kinds:
-                for bits in a.state_bits:
-                    cache=None;local={};errors=[]
-                    for pos in range(0,length,256):
-                        o=call(ids[:,pos:min(pos+256,length)],cache);cache=o.past_key_values
-                        for r in perturb(cache,state_kind,bits):local[r['name']]=r
-                    for j in range(32):
-                        o=call(ids[:,length+j:length+j+1],cache);cache=o.past_key_values
-                        errors.append(compare(o.logits.cpu(),baseline[j]))
-                        for r in perturb(cache,state_kind,bits):
-                            old=local[r['name']];r['relative_l2']=max(old['relative_l2'],r['relative_l2']);local[r['name']]=r
-                    states=state_compare(cache,reference)
-                    results['sensitivity'].append({'prefix':length,'decode':32,'kind':state_kind,'bits':bits,
-                        'execution':'fake_quant_native_update','logits':errors,'states':states,'local_roundtrip':list(local.values()),
-                        'logits_pass':all(logits_pass(e) for e in errors),'states_pass':state_pass(states)})
-                    del o,cache;gc.collect();torch.cuda.empty_cache();checkpoint()
+            cases=[(state_kind,bits,{state_kind:bits}) for state_kind in kinds for bits in a.state_bits]
+            if a.joint_state_format:cases.append(('joint',None,{k:24 if k=='recurrent' else 16 for k in kinds}))
+            for state_kind,bits,formats in cases:
+                def round_cache(cache):
+                    return [row for k,b in formats.items() for row in perturb(cache,k,b)]
+                cache=None;local={};errors=[]
+                for pos in range(0,length,256):
+                    o=call(ids[:,pos:min(pos+256,length)],cache);cache=o.past_key_values
+                    for r in round_cache(cache):local[r['name']]=r
+                for j in range(32):
+                    o=call(ids[:,length+j:length+j+1],cache);cache=o.past_key_values
+                    errors.append(compare(o.logits.cpu(),baseline[j]))
+                    for r in round_cache(cache):
+                        old=local[r['name']];r['relative_l2']=max(old['relative_l2'],r['relative_l2']);local[r['name']]=r
+                states=state_compare(cache,reference)
+                results['sensitivity'].append({'prefix':length,'decode':32,'kind':state_kind,'bits':bits,'formats':formats,
+                    'execution':'fake_quant_native_update','logits':errors,'states':states,'local_roundtrip':list(local.values()),
+                    'logits_pass':all(logits_pass(e) for e in errors),'states_pass':state_pass(states)})
+                del o,cache;gc.collect();torch.cuda.empty_cache();checkpoint()
             del baseline,reference
         results['status']='completed_with_failures' if results['failures'] else 'completed';checkpoint()
     except Exception as exc:
