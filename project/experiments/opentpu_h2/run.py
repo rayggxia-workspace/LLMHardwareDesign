@@ -36,6 +36,18 @@ try:
     (ROOT/'physical.tcl').write_text(script)
     with (ROOT/'physical-inventory.log').open('w') as log:
         subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(ROOT/'physical.tcl')],stdout=log,stderr=subprocess.STDOUT,check=True)
+    if SPEC['mode']=='api':
+        script='read_db {'+str(odb)+'}\n'
+        script+='foreach cmd {drt::check_drc drt::step_dr drt::step_end} {puts "PROC $cmd ARGS [info args $cmd] BODY [info body $cmd]"}\n'
+        script+='help extract_parasitics\nhelp check_antennas\nhelp write_verilog\n'
+        path=ROOT/'native-api.tcl';path.write_text(script)
+        with (ROOT/'native-api.log').open('w') as log:
+            subprocess.run(['openroad','-threads','1','-exit',str(path)],stdout=log,stderr=subprocess.STDOUT,check=True)
+        snippets={}
+        for name in ['scripts/final_report.tcl','scripts/extract.tcl','scripts/rcx.tcl','scripts/fillcell.tcl','scripts/final.tcl','platforms/nangate45/config.mk']:
+            p=Path('/OpenROAD-flow-scripts/flow')/name
+            if p.exists():snippets[name]=p.read_text()
+        (ROOT/'native-flow-snippets.json').write_text(json.dumps(snippets,indent=2)+'\n')
     if SPEC['mode'] in ('partition','route'):
         from def_routes import partition
         contract=partition(ROOT/'physical.def',ROOT/'frozen-lower.def',SPEC['bottom'])
