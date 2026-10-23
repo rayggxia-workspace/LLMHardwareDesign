@@ -1,14 +1,15 @@
 # 当前状态
 
 - 更新日期：2026-10-21（中国标准时间）
-- 当前阶段：架构定义、研究方案整理与初期资料接入
-- 当前任务：[Issue #1：初始化项目并导入初期资料](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/1)；资料已进入 `main`，[PR #2](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/2) 已合并
-- 当前资料：项目说明 v1.0、专题研究文档、来源笔记，以及五个参考项目七个案例的布线分析包；三份 HTML 报告、llaccel 引擎内部分析及远程服务器规则已通过 [PR #4](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/4) 合入 `main`；工艺互连资料的逐层资源评估补充已一并提交
+- 当前阶段：架构定义与研究方案整理；已完成代表性 Block 及单宏顶层的最终路由和独立几何／供电复核，尚未冻结底座
+- 当前任务：[Issue #7：候选 Block 边界及分层布线](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7)，研究 openTPU 的 ACT／MXU 粒度及 llaccel 完整引擎粒度，先以原完整 VECTOR 检验实现流程。见[实验计划](experiments/openTPU-llaccel-block-plan.md)与[现场记录](experiments/issue-7-vector-pilot.md)
+- 资料接入：[Issue #1](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/1) 的初期资料由 [PR #2](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/2) 导入；新版三份参考报告、llaccel 引擎分析、远程规则与工艺互连补充由 [PR #4](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/4) 合入 `main`（`1d80491`），本任务不重复维护该包
 - 已确认边界：研究对象和主要问题已写入项目说明；具体工艺、Block 资源、定制层集合和工具链未冻结
-- 关键限制：现有布线结果包含少量 RTL 片段，不含完整源工程、物理数据库、工具环境和日志，不能单靠本仓库复跑物理实现
-- 下一步：审查管理中心登记 PR、核验项目看板；确定第一个可执行的研究问题、输入集合和验收口径
+- 关键限制：本仓库参考包不包含完整物理输入；本轮用户已授权复用集群原工程，已核实其工程及工具路径可访问。新实验独立保存于 `LLMHardwareDesign/issue-7/<attempt>/`，不覆盖原始结果。常规宏集成不等于受限定制底座、全系统功能验证或签核
+- 首轮结果：完整 VECTOR 已完成详细布线并导出最终寄生／宏模型，DRT错误0；3 ns setup及电容检查未通过。修复宏PG接入后，89472完整顶层 `COMPLETED 0:0`，DRT错误0、最终双网PSM和2246位接口检查通过，89475最终只读审计通过；父级仍有3个setup违例。历次失败保留，这些工程结果不构成合格硬核或系统签核
+- 下一步：审查本轮工程和失败证据，处理时序／电气及模型限制；再建立同资源扁平／分层对照、冻结资源和受限互联、多计算图验证。具体工艺与硬核库仍需决策
 - 任务入口：[本仓库 Issues](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues)
 - 项目登记：[管理中心 PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) 待审查；合并前状态为 pending
-- Projects 入口：[组织总览看板](https://github.com/orgs/rayggxia-workspace/projects/1) 为管理中心配置的候选入口；本仓库无 `config/board.json`，当前凭据缺少 `read:project`，实际接入与本任务条目未核验，详见 Issue #3 交接
+- Projects 入口：候选[组织看板 #1](https://github.com/orgs/rayggxia-workspace/projects/1)；本轮查询因缺少 `read:project` 失败，且无 `config/board.json`，实际看板与条目 `unverified`、同步 `pending`。恢复动作见 [Issue #7 看板交接](handoffs/2026-10-21-issue-7-projects.md)
 
 本页只记录全项目阶段和关键限制；具体任务进度以 Issue 和 PR 为准。
