@@ -61,6 +61,17 @@ try:
         m=json.loads(sealed(source,'experiment.json').read_text())
         target=sealed(source,Path(m['result_relative'])/'6_final.odb')
         script='read_db {'+str(target)+'}\n'
+        control=SPEC.get('short_control',False)
+        if control:
+            assert source==SOURCE and SPEC.get('box_dbu'), 'Only isolated H1 local calibration is supported'
+            text=(ROOT/'physical.def').read_text()
+            for name in ('a_addr[0]','a_addr[1]'):
+                token='    - '+name+' '
+                start=text.index(token,text.index('NETS 11954'))
+                end=text.index(';',start)
+                text=text[:end]+'\n + ROUTED metal8 ( 883640 2786000 ) ( 923640 * )\n'+text[end:]
+            (ROOT/'deliberate-short.def').write_text(text)
+            script+='odb::dbChip_destroy [[ord::get_db] getChip]\nread_def {'+str(ROOT/'deliberate-short.def')+'}\n'
         # DRC is geometric. Cached global-route guides are unnecessary and
         # can invoke expensive guide topology reconstruction on the H1 DB.
         script+='foreach n [[ord::get_db_block] getNets] {$n clearGuides}\nset_routing_layers -signal metal1-metal10 -clock metal1-metal10\n'
@@ -75,12 +86,16 @@ try:
             subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(path)],stdout=log,stderr=subprocess.STDOUT,check=True)
         from freeze_audit import audit
         audit(ROOT/'check-before.def',ROOT/'check-after.def',11,ROOT/'readonly-drc-freeze-audit.json')
-        passed=(ROOT/'integrated-drc.rpt').read_text().strip()==''
+        report=(ROOT/'integrated-drc.rpt').read_text()
+        passed=report.strip()==''
+        detected=not passed and 'short' in report.lower() and all(n in report for n in ('a_addr[0]','a_addr[1]'))
         (ROOT/'readonly-drc-quality.json').write_text(json.dumps(dict(passed=passed,source=str(source),
-            full_die=not bool(box),box_dbu=box,
+            full_die=not bool(box),box_dbu=box,deliberate_short_control=control,expected_short_detected=detected if control else None,
+            qualification_eligible=not control,
             scope=('Local diagnostic only; does not qualify full-parent DRC. ' if box else 'Standalone native full-parent geometric DRC. ')+
-            'Cached guides removed only in memory; zero markers required; all manufacturing geometry unchanged before/after checker.'),indent=2)+'\n')
-        assert passed,'Integrated native DRC markers remain'
+            ('Two intentionally overlapping M8 conductors in a separate copied DEF. ' if control else '')+
+            'Cached guides removed only in memory; all manufacturing geometry unchanged before/after checker.'),indent=2)+'\n')
+        assert detected if control else passed,'Native DRC short control not detected' if control else 'Integrated native DRC markers remain'
     if SPEC['mode']=='composite':
         source=Path(SPEC['source'])
         assert sealed(source,'exit-code.txt').read_text().strip()=='0'
