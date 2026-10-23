@@ -1,5 +1,10 @@
 # Issue #7 并发实验恢复与主线协调
 
+## 2026-10-23 用户授权阶段整合
+
+PR8、PR10、PR17 及 HTML 由本次用户明确授权整合，H2（Issue31）继续独立运行。原89558两路已失败，89559完成的只是产物审计；终态原因及新 H1 合格对照以 Issue15 / PR17 为准，下文较早恢复入口保留为历史记录，勿再重复提交。新图集与模块报告已集中到 `ref-project/llm-routing/docs/`，来源日期和失败边界保留。完整合并、验证及看板缺项回执将写入 `docs/handoffs/2026-10-23-h1-html-integration.md`，不以合并宣布 H2 成功。
+
+
 ## 最新恢复入口：2026-10-22阶段总结与补充
 
 用户授权总结验收并自行提交必要补充。原七路基线＋两次完成布线的接续均结束，严格工具门槛4份通过、5份未过；可阶段总结送审，不能完整宏／H2验收。入口为[阶段验收矩阵](../experiments/issue-7-parallel-blocks-acceptance.md)及[派生索引](../../project/experiments/parallel_blocks/results/parallel-blocks-acceptance-20261022.json)。
