@@ -11,6 +11,7 @@ import json
 import math
 from pathlib import Path
 import sys
+sys.path.insert(0,str(Path(__file__).resolve().parent))
 from common import HERE, config, save, provenance, manifest
 from numeric import profiles
 sys.path.insert(0, str(HERE.parent/'rq_ports'))
