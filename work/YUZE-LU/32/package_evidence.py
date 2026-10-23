@@ -22,7 +22,8 @@ for run in sorted((scratch/'runs').iterdir()):
         row.update(run=run.name,long_comparisons=[])
         for case in r['performance']:
             for s in case['samples']:
-                timings.append({'run':run.name,'prefix':case['prefix'],'chunk':case['chunk'],**{k:v for k,v in s.items() if k not in ['cache','vs_one_shot','comparison_unavailable']}})
+                eligible=run.name in ('qwen35-fp16-bounded-02','qwen25-fp16-bounded-01')
+                timings.append({'run':run.name,'performance_eligible':eligible,'prefix':case['prefix'],'chunk':case['chunk'],**{k:v for k,v in s.items() if k not in ['cache','vs_one_shot','comparison_unavailable']}})
             sample=next(x for x in case['samples'] if x['repeat']==0)
             row['long_comparisons'].append({'prefix':case['prefix'],'chunk':case['chunk'],'comparison':sample.get('vs_one_shot'),'cache':sample['cache'],'median_total_s':statistics.median(x['total_s'] for x in case['samples'] if not x['warmup'])})
         summary.append(row)
