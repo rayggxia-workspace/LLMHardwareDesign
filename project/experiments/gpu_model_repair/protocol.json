@@ -1,0 +1,28 @@
+{
+  "version": "issue32-qwen-repair-v1",
+  "dataset": "Salesforce/wikitext",
+  "revision": "b08601e04326c79dfdd32d625aee71d232d685c3",
+  "configuration": "wikitext-2-raw-v1",
+  "calibration_split": "train",
+  "validation_split": "test",
+  "samples_per_split": 16,
+  "prediction_tokens": 256,
+  "selection": "Evenly spaced nonempty source rows; concatenate subsequent rows with newline until 257 tokens, take first 257. No generated feedback.",
+  "smoothquant_alpha_candidates": [0.0, 0.25, 0.5, 0.75, 1.0],
+  "calibration_rows_per_linear": 32,
+  "calibration_objective": "Per-layer relative output MSE on deterministic calibration activation rows. No held-out tuning.",
+  "quality_acceptance": {"mean_kl_max": 0.05, "nll_delta_max": 0.15, "top1_agreement_min": 0.9},
+  "reference_acceptance": {"logits_max_abs": 0.5, "logits_relative_l2": 0.02, "state_relative_l2": 0.02},
+  "formats": {
+    "weight": "INT8 symmetric per-output-channel",
+    "activation": "INT8 symmetric dynamic per-token row after SmoothQuant rescaling",
+    "accumulator": "actual torch._int_mm INT32",
+    "scale": "FP32; SmoothQuant channel factors FP32",
+    "requantization": "FP32 dequantization to FP16; no integer M/r contract",
+    "kv": "native FP16 unless separately labeled state perturbation",
+    "recurrent_state": "native FP32 unless separately labeled state perturbation",
+    "convolution_state": "native FP16 unless separately labeled state perturbation",
+    "nonlinear_attention_gate_norm_residual": "native floating point; not end-to-end integer"
+  },
+  "scope": "Local diagnostic candidate, not the final project precision contract. Do not adjust acceptance after inspecting validation. Fake quantization timings excluded from performance claims."
+}
