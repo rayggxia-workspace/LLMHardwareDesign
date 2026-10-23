@@ -1,5 +1,18 @@
 # Liangruizhi 的进度
 
+## 2026-10-23（UTC+08:00）Issue51：E2a与8核服务器重放
+
+[Issue51](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/51)，[PR52](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/52)，
+task/51-rq-placement，D:/Projects/LLMHardwareDesign-rqports，base PR49@6776470。
+指定GitHub登录已核；用户新授权服务器并行，已读REMOTE_RULES，仅本人目录执行89936/89937，均8CPU/8worker并COMPLETED0:0。
+正式源码134838c71282f1a823cc99b3d857ebe3331b8d3b；1088 Fraction RQ、8边界测试、384组织服务/资源/credit审计，
+981312节点/80832packet，服务器与本机384例逐项相等，原始回传已核SHA。
+PE寄存器从单口MC分账并保持总32KiB，复跑数字不变；48对各自最佳策略近端最多降0.5657%、最差增0.0650%，
+不固定不可绕过近端RQ；没有完整attention/RTL/物理或模型质量结论。
+[报告](../../docs/experiments/issue-51-rq-port-placement.md)、[交接](../../docs/handoffs/2026-10-23-issue-51-rq-ports.md)。
+下一步E2b attention/M-A；完整模型CPU迁移先现代框架/已有权重pilot，尚未开始，不与师兄未知进度重复。
+登记PR5 pending；看板unverified/同步pending；审查人/管理员待指定，未合并未done。实际交付状态以PR最新读回为准。
+
 ## 2026-10-23（UTC+08:00）Issue47：独立校准、GQA共享和因果KV
 
 [Issue47](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/47)，
