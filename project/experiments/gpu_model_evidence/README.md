@@ -40,6 +40,7 @@ CUDA wheel SHA256 `fbde8f6a9ec8c76979a0d14df21c10b9e5cab6f0d106a73ca73e2179bc597
 - events.json：有序真实模块接口形状/dtype/逻辑字节/存储大小/stride。包含投影、attention/递推模块、norm、MLP 和 decoder 残差接口；不声称从 hook 恢复完整跨模块 DAG、融合 SDPA 内部概率/归约或实测流量。
 - operator-events.json：真实 ATen functional 形状/dtype、逻辑读写字节与基于张量身份的 producer event，覆盖残差加法与非线性。融合 SDPA 内部、别名之间的完整依赖和物理流量仍不在捕获范围。
 - trace_long.py / observed-long.json：独立观察器运行，按实际模块/SDPA接口及形状聚合调用次数，逐档记录缓存和分配峰值、失败；不可用作性能数据。传入同组 `--reference-dir` 和未存在的 `--out`，复用原始 token IDs、精度和模型文件 SHA。
+  加 `--memory-short` 时单独执行128+1，输出 observed-short-memory.json：每ATen算子的allocator before/after/peak及transient_above_before_bytes；不包含allocator之外CUDA workspace，绝不作为计时组。
 - cache：逐层真实 KV/conv/recurrent 张量，logical_bytes 与去重 storage_bytes 分开。measured_traffic_bytes=null 表示未测，不是0。storage 不能与逻辑张量简单相加当峰值。
 - quantized-matrices.json：实际 INT8 权重和 FP32 通道 scale 字节、权重量化误差、INT32 最坏累加界。integer-kernel-stats.json 给真实调用数/最大观察累加/饱和。实际调用 torch._int_mm；输出 scale 相乘/偏置仍浮点，无整数 M/r 重定标、无整数非线性/状态。
 - state_sensitivity：INT8/INT16候选的 native→quantize→dequantize 状态扰动；**假量化**，状态更新仍原生浮点。短条件每次 decode call 后舍入；长条件每256-token prefill边界和逐 decode 舍入，不能说逐 token prefill 全整数状态更新。保留每层误差汇总，不保存每步全状态。

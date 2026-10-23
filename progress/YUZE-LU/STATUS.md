@@ -1,5 +1,15 @@
 # YUZE-LU 的进度
 
+## 2026-10-23 Issue32 GPU模型阶段交付
+
+- 更新时间：2026-10-23（Asia/Shanghai，UTC+08:00）；[Issue32](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/32)，负责人YUZE-LU。
+- 已完成：RTX4060Ti16GB隔离环境、固定官方版本与逐文件SHA；Qwen3.5纯文本和Qwen2.5真实权重短参考、真INT8矩阵候选、状态敏感性、长上下文、独立观察器与原始递推捕获。代码、JSON/CSV与少量真实状态通过[PR36](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/36)交付。
+- 结果：FP16短参考通过；Qwen2.5一次/分块对照通过到4096，8192分块完成；Qwen3.5分块运行到4096但长状态等价未通过。真实整数矩阵样本核对通过，模型质量候选均失败，不宣称完整INT8模型。BF16失败、OOM、WDDM spill历史均保留。
+- 检查：结构、5项协议测试、正式产物SHA、真实INT8样本INT64核对、递推重放/负例、参考重复与质量读回、交付包重放通过。无RTL/划分搜索重复开发。
+- 状态：in_review，待指定审查人，不合并、不标done。完整格式合同与大trace共享存储待指定；登记PR5仍pending，Projects缺read:project，unverified/同步pending。
+- 下一步：由用户通知主研究线检查PR36，冻结状态/非线性/scale及质量合同，再验证整数状态更新；入口见[交接](../../docs/handoffs/2026-10-23-issue-32-gpu-evidence.md)。
+
+
 ## 历史阶段：Issue #7（2026-10-21）
 
 - 更新时间：2026-10-21（中国标准时间，UTC+08:00）。

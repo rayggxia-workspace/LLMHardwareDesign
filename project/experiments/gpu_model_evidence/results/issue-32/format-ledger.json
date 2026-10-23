@@ -1,0 +1,43 @@
+{
+  "scope": "Measured software boundaries; not project-final integer contract",
+  "native_fp16": {
+    "weights": "FP16",
+    "activations": "FP16 outside; FP32 normalization/gates/recurrent internal paths",
+    "accumulation": "native CUDA backend; not fully characterized as one uniform type",
+    "KV": "FP16",
+    "Qwen35_recurrent": "FP32",
+    "Qwen35_conv_state": "FP16",
+    "nonlinearity": "floating point",
+    "scale": "not integer encoding"
+  },
+  "integer_matrix_candidate": {
+    "weights": "INT8 per output channel for replaced Linear only; embedding/lm_head/conv FP16",
+    "activation": "INT8 per row for replaced Linear inputs",
+    "accumulation": "INT32 torch._int_mm",
+    "output": "FP32 dequantization/bias then FP16",
+    "KV": "FP16",
+    "Qwen35_recurrent": "FP32",
+    "Qwen35_conv_state": "FP16",
+    "nonlinearity": "floating point",
+    "scale": "FP32 per row and channel; integer M/r not implemented",
+    "full_integer_validated": false
+  },
+  "state_candidate": {
+    "payload_bits": [
+      8,
+      16
+    ],
+    "arithmetic": "fake quant + native floating point update",
+    "scales": "FP32 absmax over last two axes; conv per batch",
+    "integer_update_validated": false
+  },
+  "cache_budget": {
+    "qwen35_fixed_recurrent_bytes": 50331648,
+    "qwen35_fixed_conv_bytes": 1572864,
+    "qwen35_KV_bytes_per_token": 32768,
+    "qwen25_KV_bytes_per_token": 36864,
+    "qwen35_full_cache_candidate_scale_bytes": 3424,
+    "qwen25_full_cache_candidate_scale_bytes": 576,
+    "measured_physical_traffic_bytes": null
+  }
+}
