@@ -1,5 +1,11 @@
 # 当前状态
 
+- 2026-10-23 E2a：[Issue51/PR52](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/52)
+  完成384组织的无bias整数Linear/RQ8固定资源服务比较，8CPU/8worker服务器89937与本机逐项一致。
+  各自优化已有策略后近端RQ最好仅降约0.566%，不足以固定不可绕过边界；矩阵/消费者服务未RTL校准，
+  不构成完整E2、LLM端到端或物理收益。正式[报告](experiments/issue-51-rq-port-placement.md)与作业/SHA已留档。
+  用户已授权服务器CPU并行；完整模型迁移尚缺现代框架/权重和pilot，师兄GPU专属测量保持分工。
+
 - 2026-10-23本机数值接续：[Issue47/PR49](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/49)
   对已有Qwen3-0.6B一层完整GQA组完成独立校准、冻结KV scale和因果cache局部验证，两次整数payload一致；
   误差改善仅为短切片证据，不是全模型质量或端口/RTL/物理收益。能力清单见[P1–P15](PRIMITIVE_CAPABILITY_MAP.md)，

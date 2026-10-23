@@ -1,5 +1,14 @@
 # 架构与运行
 
+## Issue51 E2a有限端口与服务器重放
+
+`project/experiments/rq_ports/`对完整K无bias整数Linear/RQ8做固定资源比较。
+先`python -B scripts/check_project.py`，再`python -B project/experiments/rq_ports/test_model.py`。
+本机run.py、独立verify.py与prepare_server.py命令在该目录README；server.py只需Python3.6+标准库，
+Slurm job.sh固定8CPU/8worker/20分钟/lrz-rqports，严格本人目录和源码/输入SHA。用户已授权此范围服务器执行。
+结果核包可复用`work/Liangruizhi/47/verify_delivery.py`，将本任务index.json作为参数；解压新D盘目录后verify.py重算。
+服务图不是端口RTL、芯片周期或全模型结果，见[报告](experiments/issue-51-rq-port-placement.md)。
+
 ## Issue47 本机固定校准的GQA/KV整数参考
 
 正式代码`project/experiments/primitive_stream/`。先运行`python -B scripts/check_project.py`，
