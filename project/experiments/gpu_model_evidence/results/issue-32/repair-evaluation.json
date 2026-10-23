@@ -1,0 +1,61 @@
+{
+  "as_of_utc": "2026-10-23T07:35:20.587619+00:00",
+  "note": "Program status, dense language quality, cache continuation and full integer implementation are independent gates.",
+  "mainline_contract": "PR26@2cd9ca15, state/nonlinear/scale/requantization not frozen",
+  "full_integer_model_validated": false,
+  "qwen35_fp16_aux_matrix_quality": {
+    "status": "completed",
+    "test_aggregate": {
+      "mean_kl": 0.0009727160031616222,
+      "nll": 2.653631456196308,
+      "reference_nll": 2.653945170342922,
+      "nll_delta": -0.0003137141466140747,
+      "top1_agreement": 0.985595703125,
+      "perplexity": 14.205531857801232,
+      "predictions": 4096,
+      "pass_all_samples": true
+    },
+    "regression_aggregate": {
+      "mean_kl": 0.011578884656046284,
+      "nll": 1.1065908297896385,
+      "reference_nll": 1.1002386212348938,
+      "nll_delta": 0.0063522085547447205,
+      "top1_agreement": 0.990234375,
+      "perplexity": 3.024031363495035,
+      "predictions": 512,
+      "pass_all_samples": true
+    }
+  },
+  "qwen25_fp16_aux_matrix_quality": {
+    "status": "completed",
+    "test_aggregate": {
+      "mean_kl": 0.007529909576987848,
+      "nll": 2.668351650238037,
+      "reference_nll": 2.665227010846138,
+      "nll_delta": 0.003124639391899109,
+      "top1_agreement": 0.955810546875,
+      "perplexity": 14.416186679356233,
+      "predictions": 4096,
+      "pass_all_samples": true
+    },
+    "regression_aggregate": {
+      "mean_kl": 0.006990881462115794,
+      "nll": 1.1045682355761528,
+      "reference_nll": 1.1103684604167938,
+      "nll_delta": -0.005800224840641022,
+      "top1_agreement": 0.982421875,
+      "perplexity": 3.017921156475525,
+      "predictions": 512,
+      "pass_all_samples": true
+    }
+  },
+  "qwen35_canonical_fp32_aux_quality": {
+    "status": "not_run"
+  },
+  "qwen35_canonical_continuation": {
+    "status": "running",
+    "failures": [],
+    "full_metadata": "qwen35-int8-canonical-fused-long-01-metadata.zip/results.json"
+  },
+  "qwen25_integer_continuation": null
+}
