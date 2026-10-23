@@ -1,5 +1,10 @@
 # 架构与运行
 
+Issue29新分阶段综合与独立factored原型见[接续报告](experiments/issue-29-factored-synthesis.md)。
+离线审计入口`work/Liangruizhi/29/factored/audit_results.py`，需冻结旧包和新return.zip并指定新输出路径。
+同目录job.sh/inside.sh固定8CPU、3×2编译与1Yosys并行，原型是独立源文件，不替换原RTL。
+仿真通过与综合360秒超时分别记录，不能视作宏映射或PPA。
+
 本仓库保存研究资料、参考结果和本项目的初步实验工具。本分支的冻结连接模型位于 `project/experiments/frozen_routing/`；其他成员的物理Block工程见Issue #7关联PR #8/#10，未合并文件须从对应任务分支读取。最终工艺、硬件库与系统实现工具链仍未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md)中的候选架构不等于已实现硬件。
 
 ## 研究系统边界
@@ -58,3 +63,7 @@ project/experiments/qwen3_trace/使用独立D盘环境（torch2.10.0+cpu、trans
 `project/experiments/state_ports/`包含固定slot/scratch、原子服务资源、四种启发式与小规模精确oracle。先运行`python -B scripts/check_project.py`；再在Issue23的独立环境运行`python -B -m unittest discover -s project/experiments/state_ports -p 'test_*.py'`（25项）。进程TEMP/TMP指定D:/Projects/Codex/state-port-study-20261022/process-temp。
 
 从干净commit执行`python -B project/experiments/state_ports/run.py --output <D盘新目录>`；真实head捕获用该目录capture.py的`--weights`与`--output`，具体锁定环境/模型及完整命令见[工具说明](../project/experiments/state_ports/README.md)。不将真实tensor数值验证或服务模型cycle描述为RTL/PPA。归档/图表脚本在work/Liangruizhi/27，正式资源/采集输出与独立审计位置见[实验报告](experiments/issue-27-state-port-model.md)。
+
+## Issue29 有限缓冲bank控制器RTL
+
+正式实现project/experiments/port_rtl；先python -B scripts/check_project.py，再python -B -m unittest discover -s work/Liangruizhi/29 -p "test_*.py"。干净源码运行python -B project/experiments/port_rtl/prepare.py --output <D盘新目录>，校验bundle SHA后在本人服务器目录解压，以sbatch source/job.sh执行（8CPU、debug29分钟上限）。精确工具、合同、结果与局限见[实验记录](experiments/issue-29-port-rtl.md)。独立trace及汇总审计工具在work/Liangruizhi/29；大trace在授权共同issue-29存储，按报告SHA读取。RTL仿真不代表完整算术或物理验证。

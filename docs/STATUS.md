@@ -1,5 +1,9 @@
 # 当前状态
 
+- 2026-10-23 Issue29接续：原码单配置-defer89939及factored原型89944/89946前端均达到360秒限额，综合尚未完成。
+  原型修正索引宽度后89946的27配置/1872程序/54stress全过，1926结果及33保存trace哈希同基线，
+  原RTL/旧测量未改。见[新报告](experiments/issue-29-factored-synthesis.md)；PR30保持draft/in_progress，未获物理资格。
+
 - 更新日期：2026-10-22（中国标准时间）
 - 前阶段记录：架构定义、Block物理工程尝试、抽象冻结连接实验、真实普通LEF几何输入冻结与选定接口关联；DAC为研究目标，具体届次未指定
 - 资料接入：[Issue #1：初始化项目并导入初期资料](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/1)；资料已进入 `main`，[PR #2](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/2) 已合并，登记／看板缺项继续保留
@@ -24,3 +28,10 @@
 - 真实模型接续：[Issue23/PR24](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/24)已提交待审查，已用固定Qwen3-0.6B权重跑通CPU FP32 prefill/decode；54数值对照、4状态错误负例、13720真实边界事件与两次重放通过。chunking缩小临时张量而同prefix持久KV不变，见[实际记录](experiments/issue-23-qwen3-real-trace.md)。尚无端到端硬件收益，下一步同trace约束bank/端口/带宽并扩差异架构。
 - 状态/端口阶段：[Issue27](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/27)正式源码6ffb9417完成3456条件（1224可行/2232拒绝）、4896策略调度及两次重放；真实Qwen单头6在线核正例/10适用错误负例通过。相同流量的placement收益依赖端口与调度，本阶段未物理校准，不能称芯片加速，见[实际报告](experiments/issue-27-state-port-model.md)。下一步可执行微架构端口验证、独立精度合同与差异/完整工作负载耦合。
 - 并行更新（核对固定版本）：[PR26@2cd9ca15](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/26)负责benchmark调研，W8A8/INT32矩阵与未冻结KV/非线性格式分开；[PR17@0f58e74](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/17)首个合并父层通过物理/完整分层STA门槛，合格拆分对及父层功能/RC覆盖/总PPA仍未完成，H1不等于H2。
+
+- 2026-10-23：Issue29／PR30完成固定源码916dcf9e的两次bank控制器RTL仿真，每次1872程序／54压力测试／27硬件配置通过，完整结果逐字节复现；独立33witness数据／版本／端口审计通过。1RW状态放置的最佳已找到周期差异缩至prefill1.46%／decode1.71%，2RW本轮八placement等效；仍是合成M/V延迟，不是完整LLM或PPA。通用综合job89838已TIMEOUT，未完成检查，PR draft／Issue in_progress。见[记录](experiments/issue-29-port-rtl.md)。
+- 物理并行更新：PR17@ce5896d已形成合格openTPU拆分/合并H1对照，拆分area+0.412%／wire+7.142%／via+2.974%；不是H2或attention校准。独立审计发现3文本Git LF与原生成CRLF的manifest SHA差异，数值复算通过但字节证据缺项仍待处理；不再沿用旧“未配对”状态。
+
+## 89838最终状态
+
+通用Yosys作业89838于2026-10-23 09:55:54 CST达到20分钟时限，Slurm最终TIMEOUT（elapsed20:28，batch0:15）。日志确认已进入PROC_MUX，未完成后续memory_collect/check/stat/JSON；未证明综合通过，也不能把工具超时解释为RTL功能错误。原始日志和SHA索引已保存work/Liangruizhi/29/audits/synth-timeout01/。 下一步保留同一源码，使用单配置-defer与RTLIL检查点分开前端和proc成本；该后续检查尚未执行。先前运行中快照仅代表其采集时刻。

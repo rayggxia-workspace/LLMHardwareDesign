@@ -1,0 +1,333 @@
+
+-- Running command `read_verilog -sv -D SYNTHESIS source/bank_port_fabric.sv; hierarchy -check -top bank_port_fabric -chparam PORT_MODE 0 -chparam RESP_DEPTH 1; proc; opt; memory_collect; check -assert; stat; write_json synth-check/m0-d1.json' --
+
+1. Executing Verilog-2005 frontend: source/bank_port_fabric.sv
+Parsing SystemVerilog input from `source/bank_port_fabric.sv' to AST representation.
+Generating RTLIL representation for module `\bank_port_fabric'.
+Warning: Replacing memory \rr with list of registers. See source/bank_port_fabric.sv:135
+Warning: Replacing memory \response_count with list of registers. See source/bank_port_fabric.sv:132
+Warning: Replacing memory \wr_ptr with list of registers. See source/bank_port_fabric.sv:149, source/bank_port_fabric.sv:131
+Warning: Replacing memory \rd_ptr with list of registers. See source/bank_port_fabric.sv:130
+Warning: Replacing memory \slot_ep with list of registers. See source/bank_port_fabric.sv:83
+Warning: Replacing memory \slot_valid with list of registers. See source/bank_port_fabric.sv:82
+Warning: Replacing memory \rr_next with list of registers. See source/bank_port_fabric.sv:80
+Warning: Replacing memory \credit with list of registers. See source/bank_port_fabric.sv:101, source/bank_port_fabric.sv:68
+Successfully finished Verilog frontend.
+
+2. Executing HIERARCHY pass (managing design hierarchy).
+Parameter \PORT_MODE = 0
+Parameter \RESP_DEPTH = 1
+
+3. Executing AST frontend in derive mode using pre-parsed AST for module `\bank_port_fabric'.
+Parameter \PORT_MODE = 0
+Parameter \RESP_DEPTH = 1
+Generating RTLIL representation for module `$paramod$1c26ef1438eb343c0c6c4f6c19e93cd562d8a698\bank_port_fabric'.
+Warning: Replacing memory \rr with list of registers. See source/bank_port_fabric.sv:135
+Warning: Replacing memory \response_count with list of registers. See source/bank_port_fabric.sv:132
+Warning: Replacing memory \wr_ptr with list of registers. See source/bank_port_fabric.sv:149, source/bank_port_fabric.sv:131
+Warning: Replacing memory \rd_ptr with list of registers. See source/bank_port_fabric.sv:130
+Warning: Replacing memory \slot_ep with list of registers. See source/bank_port_fabric.sv:83
+Warning: Replacing memory \slot_valid with list of registers. See source/bank_port_fabric.sv:82
+Warning: Replacing memory \rr_next with list of registers. See source/bank_port_fabric.sv:80
+Warning: Replacing memory \credit with list of registers. See source/bank_port_fabric.sv:101, source/bank_port_fabric.sv:68
+
+3.1. Analyzing design hierarchy..
+Top module:  \bank_port_fabric
+
+3.2. Analyzing design hierarchy..
+Top module:  \bank_port_fabric
+Removing unused module `$paramod$1c26ef1438eb343c0c6c4f6c19e93cd562d8a698\bank_port_fabric'.
+Removed 1 unused modules.
+
+4. Executing PROC pass (convert processes to netlists).
+
+4.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+4.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Removed 12 dead cases from process $proc$source/bank_port_fabric.sv:53$8244 in module bank_port_fabric.
+Marked 51 switch rules as full_case in process $proc$source/bank_port_fabric.sv:53$8244 in module bank_port_fabric.
+Marked 288 switch rules as full_case in process $proc$source/bank_port_fabric.sv:127$8820 in module bank_port_fabric.
+Removed a total of 12 dead cases.
+
+4.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 5 redundant assignments.
+Promoted 956 assignments to connections.
+
+4.4. Executing PROC_INIT pass (extract init attributes).
+
+4.5. Executing PROC_ARST pass (detect async resets in processes).
+
+4.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~339 debug messages>
+
+4.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\bank_port_fabric.$proc$source/bank_port_fabric.sv:53$8244'.
+     1/228: $6$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.served_write[0:0]$8819
+     2/228: $6$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.served_read[0:0]$8818
+     3/228: $6\rr_next[1][1:0]
+     4/228: $6$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.first_address[9:0]$8809
+     5/228: $12\slot_ep[0][1:0]
+     6/228: $12\slot_ep[3][1:0]
+     7/228: $12\slot_ep[2][1:0]
+     8/228: $12\slot_ep[1][1:0]
+     9/228: $12\slot_valid[0][0:0]
+    10/228: $12\slot_valid[3][0:0]
+    11/228: $12\slot_valid[2][0:0]
+    12/228: $12\slot_valid[1][0:0]
+    13/228: $5$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.served_write[0:0]$8784
+    14/228: $5$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.served_read[0:0]$8783
+    15/228: $3$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.selected_count[31:0]$8782
+    16/228: $5\rr_next[1][1:0]
+    17/228: $5$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.first_address[9:0]$8785
+    18/228: $6\selected_ep[2:0]
+    19/228: $1$bitselwrite$pos$source/bank_port_fabric.sv:110$7941[31:0]$8787
+    20/228: $6\req_ready[2:0]
+    21/228: $1$bitselwrite$pos$source/bank_port_fabric.sv:109$7940[31:0]$8786
+    22/228: $11\slot_ep[3][1:0]
+    23/228: $11\slot_ep[2][1:0]
+    24/228: $11\slot_ep[1][1:0]
+    25/228: $11\slot_ep[0][1:0]
+    26/228: $1$mem2reg_wr$\slot_ep$source/bank_port_fabric.sv:108$7965_ADDR[1:0]$8790
+    27/228: $1$mem2reg_wr$\slot_ep$source/bank_port_fabric.sv:108$7965_DATA[1:0]$8791
+    28/228: $11\slot_valid[3][0:0]
+    29/228: $11\slot_valid[2][0:0]
+    30/228: $11\slot_valid[1][0:0]
+    31/228: $11\slot_valid[0][0:0]
+    32/228: $1$mem2reg_wr$\slot_valid$source/bank_port_fabric.sv:107$7964_ADDR[1:0]$8788
+    33/228: $1$mem2reg_wr$\slot_valid$source/bank_port_fabric.sv:107$7964_DATA[0:0]$8789
+    34/228: $1$mem2reg_rd$\credit$source/bank_port_fabric.sv:101$7963_DATA[0:0]$8751
+    35/228: $1$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.$fordecl_block$7.$for_loop$8[2].$unnamed_block$9.mode_ok[0:0]$8749
+    36/228: $1$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.$fordecl_block$7.$for_loop$8[2].$unnamed_block$9.ep[31:0]$8747
+    37/228: $4$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.served_write[0:0]$8744
+    38/228: $4$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.served_read[0:0]$8743
+    39/228: $4\rr_next[1][1:0]
+    40/228: $4$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.first_address[9:0]$8734
+    41/228: $10\slot_ep[0][1:0]
+    42/228: $10\slot_ep[3][1:0]
+    43/228: $10\slot_ep[2][1:0]
+    44/228: $10\slot_ep[1][1:0]
+    45/228: $10\slot_valid[0][0:0]
+    46/228: $10\slot_valid[3][0:0]
+    47/228: $10\slot_valid[2][0:0]
+    48/228: $10\slot_valid[1][0:0]
+    49/228: $3$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.served_write[0:0]$8709
+    50/228: $3$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.served_read[0:0]$8708
+    51/228: $2$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.selected_count[31:0]$8707
+    52/228: $3\rr_next[1][1:0]
+    53/228: $3$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.first_address[9:0]$8710
+    54/228: $5\selected_ep[2:0]
+    55/228: $1$bitselwrite$pos$source/bank_port_fabric.sv:110$7939[31:0]$8712
+    56/228: $5\req_ready[2:0]
+    57/228: $1$bitselwrite$pos$source/bank_port_fabric.sv:109$7938[31:0]$8711
+    58/228: $9\slot_ep[3][1:0]
+    59/228: $9\slot_ep[2][1:0]
+    60/228: $9\slot_ep[1][1:0]
+    61/228: $9\slot_ep[0][1:0]
+    62/228: $1$mem2reg_wr$\slot_ep$source/bank_port_fabric.sv:108$7962_ADDR[1:0]$8715
+    63/228: $1$mem2reg_wr$\slot_ep$source/bank_port_fabric.sv:108$7962_DATA[1:0]$8716
+    64/228: $9\slot_valid[3][0:0]
+    65/228: $9\slot_valid[2][0:0]
+    66/228: $9\slot_valid[1][0:0]
+    67/228: $9\slot_valid[0][0:0]
+    68/228: $1$mem2reg_wr$\slot_valid$source/bank_port_fabric.sv:107$7961_ADDR[1:0]$8713
+    69/228: $1$mem2reg_wr$\slot_valid$source/bank_port_fabric.sv:107$7961_DATA[0:0]$8714
+    70/228: $1$mem2reg_rd$\credit$source/bank_port_fabric.sv:101$7960_DATA[0:0]$8676
+    71/228: $1$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.$fordecl_block$7.$for_loop$8[1].$unnamed_block$9.mode_ok[0:0]$8674
+    72/228: $1$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.$fordecl_block$7.$for_loop$8[1].$unnamed_block$9.ep[31:0]$8672
+    73/228: $2$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.served_write[0:0]$8669
+    74/228: $2$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.served_read[0:0]$8668
+    75/228: $2\rr_next[1][1:0]
+    76/228: $2$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.first_address[9:0]$8659
+    77/228: $8\slot_ep[0][1:0]
+    78/228: $8\slot_ep[3][1:0]
+    79/228: $8\slot_ep[2][1:0]
+    80/228: $8\slot_ep[1][1:0]
+    81/228: $8\slot_valid[0][0:0]
+    82/228: $8\slot_valid[3][0:0]
+    83/228: $8\slot_valid[2][0:0]
+    84/228: $8\slot_valid[1][0:0]
+    85/228: $1$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.served_write[0:0]$8634
+    86/228: $1$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.served_read[0:0]$8633
+    87/228: $1$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.selected_count[31:0]$8632
+    88/228: $1\rr_next[1][1:0]
+    89/228: $1$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.first_address[9:0]$8635
+    90/228: $4\selected_ep[2:0]
+    91/228: $1$bitselwrite$pos$source/bank_port_fabric.sv:110$7937[31:0]$8637
+    92/228: $4\req_ready[2:0]
+    93/228: $1$bitselwrite$pos$source/bank_port_fabric.sv:109$7936[31:0]$8636
+    94/228: $7\slot_ep[3][1:0]
+    95/228: $7\slot_ep[2][1:0]
+    96/228: $7\slot_ep[1][1:0]
+    97/228: $7\slot_ep[0][1:0]
+    98/228: $1$mem2reg_wr$\slot_ep$source/bank_port_fabric.sv:108$7959_ADDR[1:0]$8640
+    99/228: $1$mem2reg_wr$\slot_ep$source/bank_port_fabric.sv:108$7959_DATA[1:0]$8641
+   100/228: $7\slot_valid[3][0:0]
+   101/228: $7\slot_valid[2][0:0]
+   102/228: $7\slot_valid[1][0:0]
+   103/228: $7\slot_valid[0][0:0]
+   104/228: $1$mem2reg_wr$\slot_valid$source/bank_port_fabric.sv:107$7958_ADDR[1:0]$8638
+   105/228: $1$mem2reg_wr$\slot_valid$source/bank_port_fabric.sv:107$7958_DATA[0:0]$8639
+   106/228: $1$mem2reg_rd$\credit$source/bank_port_fabric.sv:101$7957_DATA[0:0]$8601
+   107/228: $1$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.$fordecl_block$7.$for_loop$8[0].$unnamed_block$9.mode_ok[0:0]$8599
+   108/228: $1$fordecl_block$3.$for_loop$4[1].$unnamed_block$10.$fordecl_block$7.$for_loop$8[0].$unnamed_block$9.ep[31:0]$8597
+   109/228: $6$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.served_write[0:0]$8594
+   110/228: $6$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.served_read[0:0]$8593
+   111/228: $6\rr_next[0][1:0]
+   112/228: $6$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.first_address[9:0]$8584
+   113/228: $6\slot_ep[0][1:0]
+   114/228: $6\slot_ep[3][1:0]
+   115/228: $6\slot_ep[2][1:0]
+   116/228: $6\slot_ep[1][1:0]
+   117/228: $6\slot_valid[0][0:0]
+   118/228: $6\slot_valid[3][0:0]
+   119/228: $6\slot_valid[2][0:0]
+   120/228: $6\slot_valid[1][0:0]
+   121/228: $5$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.served_write[0:0]$8559
+   122/228: $5$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.served_read[0:0]$8558
+   123/228: $3$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.selected_count[31:0]$8557
+   124/228: $5\rr_next[0][1:0]
+   125/228: $5$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.first_address[9:0]$8560
+   126/228: $3\selected_ep[2:0]
+   127/228: $1$bitselwrite$pos$source/bank_port_fabric.sv:110$7935[31:0]$8562
+   128/228: $3\req_ready[2:0]
+   129/228: $1$bitselwrite$pos$source/bank_port_fabric.sv:109$7934[31:0]$8561
+   130/228: $5\slot_ep[3][1:0]
+   131/228: $5\slot_ep[2][1:0]
+   132/228: $5\slot_ep[1][1:0]
+   133/228: $5\slot_ep[0][1:0]
+   134/228: $1$mem2reg_wr$\slot_ep$source/bank_port_fabric.sv:108$7956_ADDR[1:0]$8565
+   135/228: $1$mem2reg_wr$\slot_ep$source/bank_port_fabric.sv:108$7956_DATA[1:0]$8566
+   136/228: $5\slot_valid[3][0:0]
+   137/228: $5\slot_valid[2][0:0]
+   138/228: $5\slot_valid[1][0:0]
+   139/228: $5\slot_valid[0][0:0]
+   140/228: $1$mem2reg_wr$\slot_valid$source/bank_port_fabric.sv:107$7955_ADDR[1:0]$8563
+   141/228: $1$mem2reg_wr$\slot_valid$source/bank_port_fabric.sv:107$7955_DATA[0:0]$8564
+   142/228: $1$mem2reg_rd$\credit$source/bank_port_fabric.sv:101$7954_DATA[0:0]$8526
+   143/228: $1$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.$fordecl_block$7.$for_loop$8[2].$unnamed_block$9.mode_ok[0:0]$8524
+   144/228: $1$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.$fordecl_block$7.$for_loop$8[2].$unnamed_block$9.ep[31:0]$8522
+   145/228: $4$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.served_write[0:0]$8519
+   146/228: $4$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.served_read[0:0]$8518
+   147/228: $4\rr_next[0][1:0]
+   148/228: $4$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.first_address[9:0]$8509
+   149/228: $4\slot_ep[0][1:0]
+   150/228: $4\slot_ep[3][1:0]
+   151/228: $4\slot_ep[2][1:0]
+   152/228: $4\slot_ep[1][1:0]
+   153/228: $4\slot_valid[0][0:0]
+   154/228: $4\slot_valid[3][0:0]
+   155/228: $4\slot_valid[2][0:0]
+   156/228: $4\slot_valid[1][0:0]
+   157/228: $3$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.served_write[0:0]$8484
+   158/228: $3$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.served_read[0:0]$8483
+   159/228: $2$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.selected_count[31:0]$8482
+   160/228: $3\rr_next[0][1:0]
+   161/228: $3$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.first_address[9:0]$8485
+   162/228: $2\selected_ep[2:0]
+   163/228: $1$bitselwrite$pos$source/bank_port_fabric.sv:110$7933[31:0]$8487
+   164/228: $2\req_ready[2:0]
+   165/228: $1$bitselwrite$pos$source/bank_port_fabric.sv:109$7932[31:0]$8486
+   166/228: $3\slot_ep[3][1:0]
+   167/228: $3\slot_ep[2][1:0]
+   168/228: $3\slot_ep[1][1:0]
+   169/228: $3\slot_ep[0][1:0]
+   170/228: $1$mem2reg_wr$\slot_ep$source/bank_port_fabric.sv:108$7953_ADDR[1:0]$8490
+   171/228: $1$mem2reg_wr$\slot_ep$source/bank_port_fabric.sv:108$7953_DATA[1:0]$8491
+   172/228: $3\slot_valid[3][0:0]
+   173/228: $3\slot_valid[2][0:0]
+   174/228: $3\slot_valid[1][0:0]
+   175/228: $3\slot_valid[0][0:0]
+   176/228: $1$mem2reg_wr$\slot_valid$source/bank_port_fabric.sv:107$7952_ADDR[1:0]$8488
+   177/228: $1$mem2reg_wr$\slot_valid$source/bank_port_fabric.sv:107$7952_DATA[0:0]$8489
+   178/228: $1$mem2reg_rd$\credit$source/bank_port_fabric.sv:101$7951_DATA[0:0]$8451
+   179/228: $1$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.$fordecl_block$7.$for_loop$8[1].$unnamed_block$9.mode_ok[0:0]$8449
+   180/228: $1$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.$fordecl_block$7.$for_loop$8[1].$unnamed_block$9.ep[31:0]$8447
+   181/228: $2$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.served_write[0:0]$8444
+   182/228: $2$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.served_read[0:0]$8443
+   183/228: $2\rr_next[0][1:0]
+   184/228: $2$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.first_address[9:0]$8434
+   185/228: $2\slot_ep[0][1:0]
+   186/228: $2\slot_ep[3][1:0]
+   187/228: $2\slot_ep[2][1:0]
+   188/228: $2\slot_ep[1][1:0]
+   189/228: $2\slot_valid[0][0:0]
+   190/228: $2\slot_valid[3][0:0]
+   191/228: $2\slot_valid[2][0:0]
+   192/228: $2\slot_valid[1][0:0]
+   193/228: $1$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.served_write[0:0]$8409
+   194/228: $1$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.served_read[0:0]$8408
+   195/228: $1$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.selected_count[31:0]$8407
+   196/228: $1\rr_next[0][1:0]
+   197/228: $1$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.first_address[9:0]$8410
+   198/228: $1\selected_ep[2:0]
+   199/228: $1$bitselwrite$pos$source/bank_port_fabric.sv:110$7931[31:0]$8412
+   200/228: $1\req_ready[2:0]
+   201/228: $1$bitselwrite$pos$source/bank_port_fabric.sv:109$7930[31:0]$8411
+   202/228: $1\slot_ep[3][1:0]
+   203/228: $1\slot_ep[2][1:0]
+   204/228: $1\slot_ep[1][1:0]
+   205/228: $1\slot_ep[0][1:0]
+   206/228: $1$mem2reg_wr$\slot_ep$source/bank_port_fabric.sv:108$7950_ADDR[1:0]$8415
+   207/228: $1$mem2reg_wr$\slot_ep$source/bank_port_fabric.sv:108$7950_DATA[1:0]$8416
+   208/228: $1\slot_valid[3][0:0]
+   209/228: $1\slot_valid[2][0:0]
+   210/228: $1\slot_valid[1][0:0]
+   211/228: $1\slot_valid[0][0:0]
+   212/228: $1$mem2reg_wr$\slot_valid$source/bank_port_fabric.sv:107$7949_ADDR[1:0]$8413
+   213/228: $1$mem2reg_wr$\slot_valid$source/bank_port_fabric.sv:107$7949_DATA[0:0]$8414
+   214/228: $1$mem2reg_rd$\credit$source/bank_port_fabric.sv:101$7948_DATA[0:0]$8376
+   215/228: $1$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.$fordecl_block$7.$for_loop$8[0].$unnamed_block$9.mode_ok[0:0]$8374
+   216/228: $1$fordecl_block$3.$for_loop$4[0].$unnamed_block$10.$fordecl_block$7.$for_loop$8[0].$unnamed_block$9.ep[31:0]$8372
+   217/228: $3\rsp_tag[95:64]
+   218/228: $3\rsp_data[1535:1024]
+   219/228: $3\rsp_write[2:2]
+   220/228: $3\rsp_valid[2:2]
+   221/228: $2\rsp_tag[63:32]
+   222/228: $2\rsp_data[1023:512]
+   223/228: $2\rsp_write[1:1]
+   224/228: $2\rsp_valid[1:1]
+   225/228: $1\rsp_tag[31:0]
+   226/228: $1\rsp_data[511:0]
+   227/228: $1\rsp_write[0:0]
+   228/228: $1\rsp_valid[0:0]
+Creating decoders for process `\bank_port_fabric.$proc$source/bank_port_fabric.sv:127$8820'.
+     1/3292: $4$mem2reg_rd$\wr_ptr$source/bank_port_fabric.sv:169$7973_DATA[0:0]$15841
+     2/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8242_EN[511:0]$15832
+     3/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8242_DATA[511:0]$15831
+     4/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8242_ADDR[31:0]$15830
+     5/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8241_EN[511:0]$15818
+     6/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8241_DATA[511:0]$15817
+     7/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8241_ADDR[31:0]$15816
+     8/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8240_EN[511:0]$15804
+     9/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8240_DATA[511:0]$15803
+    10/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8240_ADDR[31:0]$15802
+    11/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8239_EN[511:0]$15790
+    12/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8239_DATA[511:0]$15789
+    13/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8239_ADDR[31:0]$15788
+    14/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8238_EN[511:0]$15776
+    15/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8238_DATA[511:0]$15775
+    16/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8238_ADDR[31:0]$15774
+    17/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8237_EN[511:0]$15762
+    18/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8237_DATA[511:0]$15761
+    19/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8237_ADDR[31:0]$15760
+    20/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8236_EN[511:0]$15748
+    21/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8236_DATA[511:0]$15747
+    22/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8236_ADDR[31:0]$15746
+    23/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8235_EN[511:0]$15734
+    24/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8235_DATA[511:0]$15733
+    25/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8235_ADDR[31:0]$15732
+    26/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8234_EN[511:0]$15720
+    27/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8234_DATA[511:0]$15719
+    28/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8234_ADDR[31:0]$15718
+    29/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8233_EN[511:0]$15706
+    30/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8233_DATA[511:0]$15705
+    31/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8233_ADDR[31:0]$15704
+    32/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8232_EN[511:0]$15692
+    33/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8232_DATA[511:0]$15691
+    34/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8232_ADDR[31:0]$15690
+    35/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8231_EN[511:0]$15678
+    36/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8231_DATA[511:0]$15677
+    37/3292: $4$memwr$\bank_mem$source/bank_port_fabric.sv:165$8231_ADDR[31:0]$15676
+    38/3292: $4$memwr$\bank_m

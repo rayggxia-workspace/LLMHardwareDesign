@@ -1,5 +1,15 @@
 # Liangruizhi 的进度
 
+## 2026-10-23（UTC+08:00）Issue29分阶段综合与factored回归
+
+仍用D:/Projects/LLMHardwareDesign-portrtl、task/29-port-rtl、PR30；独立原型源码0d607f5，未改916dcf9e原码。
+89939原码-defer、89944初版与89946修正原型综合前端均360秒超时；没有通用综合/宏映射/PPA通过。
+89944编译unused-index失败保留；89946严格27配置1872程序54stress全过，本机独立核对1926结果及33trace哈希同旧包。
+186成员回传实际下载核SHA；原始日志/命令/失败和恢复入口见docs/experiments/issue-29-factored-synthesis.md。
+本轮服务器job均已结束；与独立Issue53/PR54 CPU模型迁移并行，不把后者当算术RTL。
+下一步单配置最小化前端/内存端口表示诊断，不能只延长相同任务；当前draft/in_progress，未done。
+用户新Llama本机任务另Issue跟踪，不增加远端作业。登记PR5 pending、看板unverified/同步pending，管理员/审查人待指定。
+
 - 更新：2026-10-22（UTC+08:00）；GitHub身份Liangruizhi／2663955430@qq.com／ID182389313。
 - 前一任务：[Issue19](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/19)／[PR20](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/20)，task/19-interface-contract，D:/Projects/LLMHardwareDesign-interface；base task/16-macro-endpoints，依赖PR18/14/12。capture源码16be20bf，正式run源码c3916f4f；3032信号位三视图关联、685连接与2346边界网核验完成。148项业务检查、205390项独立比较、6个篡改负例及离线重放通过。原始输入另有2处Liberty缺分号、4处PG方向差异，均原样保留并显式报告；未称宏合格/Lib语法全部通过。
 - 本轮成果：[实验记录](../../docs/experiments/issue-19-interface-contract.md)／[交接](../../docs/handoffs/2026-10-22-issue-19-interface-contract.md)；原字节归档1585317bytes，SHA与逐文件索引见正式结果目录。交付待审查，未合并／未done；PR最新head与线上状态以读回为准。
@@ -19,3 +29,15 @@
 - 最新接续：[Issue27](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/27)，task/27-state-port-model，独立D:/Projects/LLMHardwareDesign-stateport；base PR24的7e0e82b7。源码6ffb9417f0f01f614b733ce6c3ca9837906b3203已远端上传，干净源码完成两次资源扫参与两次实际head捕获；3456条件/4896调度、6数值正例/10适用负例、8科学payload逐字节重放通过。25业务测试、96图独立审计及399项实际输入审计通过。归档491436B，SHA f760dec66344c11fe9c7f04f55d91f610157d7ad624f6d66faa6a9bbdb1f1588。见[报告](../../docs/experiments/issue-27-state-port-model.md)；[PR28](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/28)已创建，本提交包含完整结果；待审查/合并，未done。
 - 研究判断：状态归属须结合不可隐藏的端口争用、逐bank容量及物理边界余量；当前模型没有校准时序/面积/能量，不能称最终Block或全模型加速。接下来推进可执行端口微架构与独立精度合同，再覆盖完整/差异模型；持续Goal仍active。
 - 协作同步：PR24的head与CI延迟已解除，7e0e82b7线上Project structure检查通过（run39775448318）；PR17固定0f58e74首个合并父层通过物理/分层STA，但配对与父层证书未闭合；PR26固定2cd9ca15独立负责benchmark调研，不重复其范围。登记PR5 pending，Projects工具/本地board配置缺失，在线状态unverified/同步pending，处理人待指定。
+
+- 2026-10-23接续：[Issue29](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/29)，task/29-port-rtl，独立D:/Projects/LLMHardwareDesign-portrtl，base PR28@a3f8335。两bank三端点可执行RTL、有限响应FIFO、逐拍仲裁/反压、实际数据与版本检查已实现；ModelSim九组定向smoke、服务器Verilator开发阶段2程序/2压力测试通过，独立轨迹审计及正式全量扫参待完成。编译工具路径/参数宽度失败保留，不称正式结果。PR待创建；整体Goal active。
+
+- 2026-10-23正式运行更新：源码916dcf9e、[PR30](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/30)；Slurm89836／89837均COMPLETED0，两次1872程序＋54压力测试完整PASS，27份results逐字节一致。独立全量结果1698897检查、33witness逐拍2482636检查与2191来源绑定通过，8类真实变异检出。报告docs/experiments/issue-29-port-rtl.md，原始20MB证据已放共同服务器project-circuit/LLMHardwareDesign/issue-29并SHA读回，未仅留本机。通用综合89838已TIMEOUT，未完成检查，尚未证明宏映射/PPA，PR draft、Issue in_progress。整体Goal持续active，下一步扩差异结构与完整权重/KV/算术/物理成本；源码交付与验收区分。
+
+## 平台目标状态核验
+
+2026-10-23重新调用get_goal核验：平台目标实际为blocked，工具未返回该状态的历史原因；此前沿用active的文字不代表当前平台状态。研究目标尚未完成，本轮依既有授权继续执行并完成实验交付；平台自动续跑尚未恢复，恢复由用户/系统控制，不能以Issue进度或本地文档代替。
+
+## 89838最终状态
+
+通用Yosys作业89838于2026-10-23 09:55:54 CST达到20分钟时限，Slurm最终TIMEOUT（elapsed20:28，batch0:15）。日志确认已进入PROC_MUX，未完成后续memory_collect/check/stat/JSON；未证明综合通过，也不能把工具超时解释为RTL功能错误。原始日志和SHA索引已保存work/Liangruizhi/29/audits/synth-timeout01/。 下一步保留同一源码，使用单配置-defer与RTLIL检查点分开前端和proc成本；该后续检查尚未执行。先前运行中快照仅代表其采集时刻。
