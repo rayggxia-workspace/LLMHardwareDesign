@@ -20,7 +20,7 @@ for run in sorted((scratch/'runs').iterdir()):
         r=json.loads(rpath.read_text(encoding='utf-8'))
         if r['status']=='running' or not (run/'source-at-end.json').exists():continue
         row={k:r.get(k,[]) for k in ('status','correctness','quality','state_sensitivity','failures')}
-        for k in ('continuation','sensitivity','test_aggregate','regression_aggregate','peak_allocated_bytes'):
+        for k in ('continuation','sensitivity','short','long','test_aggregate','regression_aggregate','peak_allocated_bytes'):
             if k in r:row[k]=r[k]
         row.update(run=run.name,long_comparisons=[])
         for case in r.get('performance',[]):
@@ -46,10 +46,21 @@ with zipfile.ZipFile(out/'environment-and-audits.zip','w',zipfile.ZIP_DEFLATED) 
     for p in (scratch/'receipts').iterdir():
         if p.name in ['environment-before-cuda.json','environment-cuda.json','requirements-lock.txt','protocol-cuda.log','qwen35-long-wddm-samples.jsonl'] or p.name.endswith('-audit.json') or p.name.endswith('-readback.json'):
             z.write(p,p.name)
+    # Repair receipts are task-local reports/logs, never credential files or model blobs.
+    for p in (scratch/'receipts').iterdir():
+        if ('repair' in p.name or 'group' in p.name or 'state' in p.name or 'efficient' in p.name or 'wikitext' in p.name) and p.suffix in ('.json','.jsonl','.log') and 'publish' not in p.name:
+            z.write(p,p.name)
 raw=out/'selected-qwen35-layer0';raw.mkdir(exist_ok=True)
 for name in ['torch_chunk_gated_delta_rule.pt','torch_recurrent_gated_delta_rule.pt','delta-parameters.pt','preconv-qkv.pt','selected-cache.pt']:
     src=scratch/'runs/qwen35-fp16-bounded-02'/name
     if (raw/(name+'.gz')).exists():continue
     with src.open('rb') as f,gzip.open(raw/(name+'.gz'),'wb',compresslevel=6) as g:shutil.copyfileobj(f,g)
+extra=out/'selected-repair-inputs';extra.mkdir(exist_ok=True)
+for run_name,name in [('qwen35-group32-capture-02','grouped-partials.pt'),
+        ('qwen25-group128-capture-01','grouped-partials.pt'),
+        ('qwen35-long-state-capture-01','long-state-inputs.pt')]:
+    src=scratch/'runs'/run_name/name
+    if src.exists():
+        with src.open('rb') as f,gzip.open(extra/(run_name+'-'+name+'.gz'),'wb',compresslevel=6) as g:shutil.copyfileobj(f,g)
 save(out/'package-index.json',{str(p.relative_to(out)):{'bytes':p.stat().st_size,'sha256':sha(p)} for p in out.rglob('*') if p.is_file() and p.name!='package-index.json'})
 print('packaged',len(summary),'runs',len(timings),'samples',sum(p.stat().st_size for p in out.rglob('*') if p.is_file())/2**20,'MiB')
