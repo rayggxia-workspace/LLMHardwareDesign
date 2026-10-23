@@ -317,8 +317,13 @@ def compute(config, candidate):
         violations.append("external_backing_accounted_bytes_exceed_capacity")
 
     external_traffic = 0
+    traffic_incomplete = any(
+        placement[name] == "unknown" and amount > 0
+        for name, amount in (("weights", weight_known), ("kv", kv_payload + kv_scales), ("recurrent", state)))
     weight_traffic = kv_traffic = state_traffic = None
     if placement["weights"] == "external":
+        # Missing layout/auxiliary transfers preclude a complete traffic ledger.
+        traffic_incomplete = True
         active_scale = scale_storage(active_weights, accounting["weight_scale"])
         if accounting["weight_read_passes"] is None:
             unresolved.append("accounting.weight_read_passes")
@@ -329,6 +334,7 @@ def compute(config, candidate):
     if placement["kv"] == "external" and model["attention"]:
         factor = accounting["kv_read_multiplier"]
         if factor is None:
+            traffic_incomplete = True
             external_traffic += kv_writes
             unresolved.append("accounting.kv_read_multiplier (no inter-query reuse assumed by basis only)")
         else:
@@ -337,6 +343,7 @@ def compute(config, candidate):
     if placement["recurrent"] == "external" and state:
         passes = accounting["recurrent_read_write_passes"]
         if passes is None:
+            traffic_incomplete = True
             unresolved.append("accounting.recurrent_read_write_passes")
         else:
             state_traffic = 2 * state * rows * passes
@@ -344,7 +351,8 @@ def compute(config, candidate):
     bw = hw["external_effective_bytes_per_second"]
     if bw is None:
         unresolved.append("hardware.external_effective_bytes_per_second")
-    required_bw = None if deadline is None else external_traffic / deadline
+    has_rate_bound = external_traffic > 0 or not traffic_incomplete
+    required_bw = None if deadline is None or not has_rate_bound else external_traffic / deadline
     if required_bw is not None and bw is not None and required_bw > bw:
         violations.append("accounted_external_traffic_exceeds_effective_bandwidth")
 
@@ -430,8 +438,10 @@ def compute(config, candidate):
                      "KV_append_accounted_bytes_per_step": kv_writes,
                      "recurrent_accounted_bytes_per_step": state_traffic,
                      "total_accounted_bytes_per_step_lower_bound": external_traffic,
+                     "listed_policy_traffic_incomplete": traffic_incomplete,
                      "required_bytes_per_second_lower_bound": required_bw,
-                     "service_seconds_lower_bound": None if bw is None else external_traffic / bw},
+                     "service_seconds_lower_bound": None if bw is None or not has_rate_bound else external_traffic / bw,
+                     "qualification": "only listed policy terms; not a complete model transfer schedule"},
         "matrix_instances_linear_lower_bound": min_matrices,
         "scans": scans, "transfers": transfers,
         "known_constraint_violations_under_input_assumptions": violations,

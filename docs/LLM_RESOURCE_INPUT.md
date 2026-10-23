@@ -39,7 +39,7 @@ python -B -m unittest discover -s project/analysis/llm_resources -v
 - **外存**：权重流量按active矩阵权重和显式读取遍数，容量仍按总权重。MoE跨行/跨batch选中专家的并集、命中率需另提供，未定便留空。KV读基数假设每query行读其可见KV、组内共享、没有跨query复用；只有给出读取倍率才进入所选DRAM搬运账。倍率可表示多遍读取或跨query缓存复用，不是从KV容量自动推出的实测值。append写入另计。
 - **候选内存/链路**：计入每类私有RAM、S bank、ROM和每个端点FIFO。64B header、64B payload对齐、2KiB FIFO时最大payload1984B，大传输分包；指定路径的每一跳分别计费。消息数未知时只给单消息成本，缺完整并发/仲裁/流量表时不判带宽可行。
 
-主要输出：`storage`（已计入容量下界）、`work`、`external`（已计入流量/带宽下界）、`matrix_instances_linear_lower_bound`、`scans`、`transfers`、`known_constraint_violations_under_input_assumptions`及`unresolved`。**没有违例只说明这些必要检查未排除候选；没有“完整通过”状态。** 空缺项未进入已知下界，不表示实际为0。每个扫描点均标记topology未映射，扩大M库存不会自动复制连接或带宽。
+主要输出：`storage`（已计入容量下界）、`work`、`external`（已计入流量/带宽下界）、`matrix_instances_linear_lower_bound`、`scans`、`transfers`、`known_constraint_violations_under_input_assumptions`及`unresolved`。**没有违例只说明这些必要检查未排除候选；没有“完整通过”状态。** 空缺项未进入已知下界，不表示实际为0；相关搬运全部未知时，带宽/时间保留null。`listed_policy_traffic_incomplete`标明列出的搬运账是否仍缺项，即使为false也不等于覆盖完整模型通信。每个扫描点均标记topology未映射，扩大M库存不会自动复制连接或带宽。
 
 ## 四个精选示例
 

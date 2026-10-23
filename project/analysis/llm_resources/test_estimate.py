@@ -155,6 +155,9 @@ class ResourceTests(unittest.TestCase):
         self.assertEqual(r["storage"]["int8_weight_payload_bytes"], 2_000_000_000)
         self.assertEqual(r["work"]["linear_MACs_per_step"], 500_000_000)
         self.assertIsNone(r["external"]["linear_weight_accounted_bytes_per_step"])
+        self.assertIsNone(r["external"]["required_bytes_per_second_lower_bound"])
+        self.assertIsNone(r["external"]["service_seconds_lower_bound"])
+        self.assertTrue(r["external"]["listed_policy_traffic_incomplete"])
         self.config["accounting"]["weight_read_passes"] = 1
         self.assertEqual(self.report()["external"]["linear_weight_accounted_bytes_per_step"], 515_625_000)
 
