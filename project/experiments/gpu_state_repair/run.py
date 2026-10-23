@@ -92,6 +92,7 @@ def main():
     p.add_argument('--joint-state-format',action='store_true',help='Also perturb KV16/conv16/recurrent24 jointly')
     p.add_argument('--integer-group-k',type=int,choices=[32,128],help='Actual grouped INT8 matrices with FP32 auxiliary compute')
     p.add_argument('--short-steps',type=int,choices=[1,16],default=16,help='1 is a preliminary diagnostic only; formal short check uses16')
+    p.add_argument('--canonical-causal-aux',action='store_true',help='Sequential recurrence, fixed conv sum, per-query causal SDPA; floating-point diagnostic')
     a=p.parse_args();assert not a.out.exists();assert not git('status','--porcelain')
     if a.integer_group_k:assert a.compute=='fp32','integer diagnostic uses explicitly FP32 auxiliary group'
     manifest=json.loads((a.model_dir/'model-manifest.json').read_text(encoding='utf-8'));assert manifest['complete']
@@ -103,7 +104,8 @@ def main():
     common.configure_backend();torch.backends.cudnn.allow_tf32=False;torch.set_num_threads(4)
     source={p.name:sha(p) for p in HERE.iterdir() if p.is_file()}
     save(a.out/'manifest.json',{'source_commit':git('rev-parse','HEAD'),'source_files':source,'model':manifest,
-        'command':sys.argv,'weight_storage':'FP16 checkpoint on GPU','compute':a.compute,
+        'command':sys.argv,'weight_storage':'INT8 covered matrices, remaining checkpoint FP16' if a.integer_group_k else 'FP16 checkpoint on GPU','compute':a.compute,
+        'canonical_causal_aux':a.canonical_causal_aux,
         'auxiliary':'native floating point; no integer claim','sdpa':'efficient_only_explicit_repeat_kv',
         'offload':False,'allocator_budget_mib':budget,'physical_free_mib_at_start':free,
         'integer_matrix_group_k':a.integer_group_k,'short_decode_steps':a.short_steps,
@@ -126,6 +128,9 @@ def main():
             spec=importlib.util.spec_from_file_location('state_grouped_candidate',HERE.parent/'gpu_grouped_repair/run.py')
             grouped=importlib.util.module_from_spec(spec);spec.loader.exec_module(grouped)
             save(a.out/'quantized-matrices.json',grouped.install(model,'raw',{},a.integer_group_k))
+        if a.canonical_causal_aux:
+            spec=importlib.util.spec_from_file_location('canonical_qwen_aux',HERE/'canonical.py')
+            canonical=importlib.util.module_from_spec(spec);spec.loader.exec_module(canonical);canonical.install()
         def call(x,cache=None):return common.call(model,x,cache,keep=1)
         full=[]
         for j in range(a.short_steps+1):
