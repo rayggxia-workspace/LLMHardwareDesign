@@ -30,7 +30,7 @@ def main():
     if a.status:
         print(json.dumps({'status':'PARTIAL','offset':offset,'expected_bytes':a.size}));return
     if a.offset!=offset or offset>a.size:raise ValueError('offset changed')
-    with part.open('ab' if offset else 'xb')as f:
+    with part.open('ab')as f:
         while True:
             raw=sys.stdin.buffer.read(1<<20)
             if not raw:break
