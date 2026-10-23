@@ -1,5 +1,13 @@
 # 架构与运行
 
+## 架构/模型选择协议（Issue37）
+
+[全候选审查](MODEL_ARCHITECTURE_REVIEW.md)与[metadata-only工具](../project/experiments/model_selection/README.md)
+仅做公开config/覆盖/容量公式及协议检查，不加载模型、下载权重或运行GPU。
+复现命令：`python -B project/experiments/model_selection/test_catalog.py`，
+`python -B project/experiments/model_selection/analyze.py --output D:/Projects/Codex/gemma-phi-20261023/screen-replay.json`。
+该检查不能当成所选模型正确性、INT8质量或端到端硬件收益。
+
 ## 候选整数验证（Issue33）
 
 精度合同见[INTEGER_PRECISION_CONTRACT.md](INTEGER_PRECISION_CONTRACT.md)，

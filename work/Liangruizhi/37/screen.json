@@ -1,0 +1,830 @@
+{
+  "schema": "architecture-screen/1",
+  "source_commit": "946281b9a90dd36b130e691c60667b9f7d1e4d32",
+  "source_dirty": false,
+  "source_sha256": {
+    "project/experiments/model_selection/analyze.py": "b65facfc1092646594be6409729a019eb314c7f1de6e6415a60225d60ca5caf0",
+    "project/experiments/model_selection/run_checks.py": "f86bb1b62ad19a0d00b3c886db9d490e641d376b154b6b7a2276f26845eea0df",
+    "project/experiments/model_selection/test_catalog.py": "dc20637c71b370544d8092a3bb7345cbb35778bfcdbc858c37b26d56b50ebc99",
+    "project/experiments/model_selection/catalog.json": "4a5729f4b1f7a48d2bbb6656aeefb41cab8a3d28fa325ef91f42b8a7ae94f15e",
+    "project/experiments/model_selection/plan.json": "d371c5b771855b1f35424726ea3b2ff2dcd8cb309513b66da27e8d8dd221e97a",
+    "project/experiments/model_selection/configs/phi.json": "ac65d86061d3d0d704ee2511fd0eb8713ef19eb6eedba17c3080a4165d5b933b",
+    "project/experiments/model_selection/configs/qwen2.json": "a58e896d2756a7947f23f3db55667c19ca3b8524188a30c8c640cd7ff72a5136",
+    "project/experiments/model_selection/configs/qwen25-small.json": "18e18afcaccafade98daf13a54092927904649e1dd4eba8299ab717d5d94ff45",
+    "project/experiments/model_selection/configs/qwen25.json": "eed00b17e22553979d090fa492e587e92885e328914c8e0b0b78f0a0d3576b3b",
+    "project/experiments/model_selection/configs/qwen3-4.json": "8ba006f74fecfaaeb392872a60f4a480e7ec9860153d2e1b769ec81f9a147f8a",
+    "project/experiments/model_selection/configs/qwen3.json": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+    "project/experiments/model_selection/configs/qwen35-small.json": "b90b86f35c8e6925ef74ee04d0e758f0a845c83a42089ad82bbaa948de9b4204",
+    "project/experiments/model_selection/configs/qwen35.json": "ddc63e1c717afa86c865bb5e01313d89d72bb53b97ad4a8a03ba8510c0621670",
+    "project/experiments/model_selection/configs/qwen3moe.json": "2850ddb3bf7aecad20b611e2d44f3077fc8193f4827c93beddd4c02ad63c2297",
+    "project/experiments/model_selection/configs/r1.json": "79ddea672a62e95d3f0be27be434375538e1988975971cffcf87c96c1de84a65",
+    "project/experiments/model_selection/configs/r1distill-llama.json": "54acfad3cffe057640904ca8a1e83525e6551c70c7a04c641f5a9eda0bbf64bd",
+    "project/experiments/model_selection/configs/r1distill.json": "37bd455e9679d2959536270fed49d25cc7c290a64f6e52abb97c71345a9cee41"
+  },
+  "method": "metadata-only coverage enumeration and analytical storage, not model/quality/INT8 performance experiment",
+  "chosen_primary": [
+    "gemma4",
+    "qwen25",
+    "qwen35"
+  ],
+  "screen_cost": 1,
+  "primary_count": 3,
+  "rows": [
+    {
+      "key": "r1",
+      "model_id": "deepseek-ai/DeepSeek-R1",
+      "revision": "56d4cbbb4d29f4355bab4b9a39ccb717a14ad5ad",
+      "features": [
+        "moe",
+        "mla",
+        "shared_expert",
+        "group_topk",
+        "silu"
+      ],
+      "config_status": "captured",
+      "role": "config/operator-only native MoE/MLA axis; no end-to-end coverage claim",
+      "hypothetical_all_tensor_bf16_bytes": 1368979691008,
+      "hypothetical_all_tensor_packed4_bytes": 342244922752,
+      "weight_caveat": "Hypothetical uniform payload only. Not checkpoint bytes, quantized size or VRAM; mixed tensors/scales/zero-points/codebooks/vision/backend extra. FP8 R1 especially must not use this as real BF16 metadata.",
+      "states": [
+        {
+          "status": "MLA requires a specific compressed/expanded cache algorithm; GQA formula rejected",
+          "candidate_compressed_elements_per_token_per_layer": 576,
+          "expert_count": 256,
+          "selected_experts": 8
+        },
+        {
+          "status": "MLA requires a specific compressed/expanded cache algorithm; GQA formula rejected",
+          "candidate_compressed_elements_per_token_per_layer": 576,
+          "expert_count": 256,
+          "selected_experts": 8
+        },
+        {
+          "status": "MLA requires a specific compressed/expanded cache algorithm; GQA formula rejected",
+          "candidate_compressed_elements_per_token_per_layer": 576,
+          "expert_count": 256,
+          "selected_experts": 8
+        }
+      ]
+    },
+    {
+      "key": "r1distill",
+      "model_id": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
+      "revision": "ad9f0ae0864d7fbcd1cd905e3c6c5b069cc8b562",
+      "features": [
+        "pure_global_gqa",
+        "silu",
+        "rmsnorm",
+        "qkv_bias"
+      ],
+      "config_status": "captured",
+      "role": "defer redundant scale/training-family extension or alternative heldout; not mandatory",
+      "hypothetical_all_tensor_bf16_bytes": 3554176000,
+      "hypothetical_all_tensor_packed4_bytes": 888544000,
+      "weight_caveat": "Hypothetical uniform payload only. Not checkpoint bytes, quantized size or VRAM; mixed tensors/scales/zero-points/codebooks/vision/backend extra. FP8 R1 especially must not use this as real BF16 metadata.",
+      "states": [
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 128,
+          "full_layers": 28,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 3670016,
+          "head_dim": 128,
+          "kv_heads": 2,
+          "scale_metadata_packing_workspace_excluded": true
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 1024,
+          "full_layers": 28,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 29360128,
+          "head_dim": 128,
+          "kv_heads": 2,
+          "scale_metadata_packing_workspace_excluded": true
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 8192,
+          "full_layers": 28,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 234881024,
+          "head_dim": 128,
+          "kv_heads": 2,
+          "scale_metadata_packing_workspace_excluded": true
+        }
+      ]
+    },
+    {
+      "key": "r1distill-llama",
+      "model_id": "deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
+      "revision": "6a6f4aa4197940add57724a7707d069478df56b1",
+      "features": [
+        "pure_global_gqa",
+        "silu",
+        "rmsnorm"
+      ],
+      "config_status": "captured",
+      "role": "defer redundant scale/training-family extension or alternative heldout; not mandatory",
+      "hypothetical_all_tensor_bf16_bytes": 16060522496,
+      "hypothetical_all_tensor_packed4_bytes": 4015130624,
+      "weight_caveat": "Hypothetical uniform payload only. Not checkpoint bytes, quantized size or VRAM; mixed tensors/scales/zero-points/codebooks/vision/backend extra. FP8 R1 especially must not use this as real BF16 metadata.",
+      "states": [
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 128,
+          "full_layers": 32,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 16777216,
+          "head_dim": 128,
+          "kv_heads": 8,
+          "scale_metadata_packing_workspace_excluded": true
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 1024,
+          "full_layers": 32,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 134217728,
+          "head_dim": 128,
+          "kv_heads": 8,
+          "scale_metadata_packing_workspace_excluded": true
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 8192,
+          "full_layers": 32,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 1073741824,
+          "head_dim": 128,
+          "kv_heads": 8,
+          "scale_metadata_packing_workspace_excluded": true
+        }
+      ]
+    },
+    {
+      "key": "llama3",
+      "model_id": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "revision": "8afb486c1db24fe5011ec46dfbe5b5dccdb575c2",
+      "features": [
+        "pure_global_gqa",
+        "silu",
+        "rmsnorm"
+      ],
+      "config_status": "HTTP401 access missing; no mirror/default substitution",
+      "role": "defer redundant scale/training-family extension or alternative heldout; not mandatory",
+      "hypothetical_all_tensor_bf16_bytes": 16060522496,
+      "hypothetical_all_tensor_packed4_bytes": 4015130624,
+      "weight_caveat": "Hypothetical uniform payload only. Not checkpoint bytes, quantized size or VRAM; mixed tensors/scales/zero-points/codebooks/vision/backend extra. FP8 R1 especially must not use this as real BF16 metadata.",
+      "states": [
+        {
+          "status": "pending gated checkpoint config; no inferred geometry"
+        },
+        {
+          "status": "pending gated checkpoint config; no inferred geometry"
+        },
+        {
+          "status": "pending gated checkpoint config; no inferred geometry"
+        }
+      ]
+    },
+    {
+      "key": "llama32",
+      "model_id": "meta-llama/Llama-3.2-3B-Instruct",
+      "revision": "0cb88a4f764b7a12671c53f0838cd831a0843b95",
+      "features": [
+        "pure_global_gqa",
+        "silu",
+        "rmsnorm"
+      ],
+      "config_status": "HTTP401 access missing; no mirror/default substitution",
+      "role": "defer redundant scale/training-family extension or alternative heldout; not mandatory",
+      "hypothetical_all_tensor_bf16_bytes": 6425499648,
+      "hypothetical_all_tensor_packed4_bytes": 1606374912,
+      "weight_caveat": "Hypothetical uniform payload only. Not checkpoint bytes, quantized size or VRAM; mixed tensors/scales/zero-points/codebooks/vision/backend extra. FP8 R1 especially must not use this as real BF16 metadata.",
+      "states": [
+        {
+          "status": "pending gated checkpoint config; no inferred geometry"
+        },
+        {
+          "status": "pending gated checkpoint config; no inferred geometry"
+        },
+        {
+          "status": "pending gated checkpoint config; no inferred geometry"
+        }
+      ]
+    },
+    {
+      "key": "llama32-1",
+      "model_id": "meta-llama/Llama-3.2-1B",
+      "revision": "4e20de362430cd3b72f300e6b0f18e50e7166e08",
+      "features": [
+        "pure_global_gqa",
+        "silu",
+        "rmsnorm"
+      ],
+      "config_status": "HTTP401 access missing; no mirror/default substitution",
+      "role": "defer redundant scale/training-family extension or alternative heldout; not mandatory",
+      "hypothetical_all_tensor_bf16_bytes": 2471628800,
+      "hypothetical_all_tensor_packed4_bytes": 617907200,
+      "weight_caveat": "Hypothetical uniform payload only. Not checkpoint bytes, quantized size or VRAM; mixed tensors/scales/zero-points/codebooks/vision/backend extra. FP8 R1 especially must not use this as real BF16 metadata.",
+      "states": [
+        {
+          "status": "pending gated checkpoint config; no inferred geometry"
+        },
+        {
+          "status": "pending gated checkpoint config; no inferred geometry"
+        },
+        {
+          "status": "pending gated checkpoint config; no inferred geometry"
+        }
+      ]
+    },
+    {
+      "key": "qwen2",
+      "model_id": "Qwen/Qwen2-1.5B-Instruct",
+      "revision": "ba1cf1846d7df0a0591d6c00649f57e798519da8",
+      "features": [
+        "pure_global_gqa",
+        "silu",
+        "rmsnorm",
+        "qkv_bias"
+      ],
+      "config_status": "captured",
+      "role": "defer redundant scale/training-family extension or alternative heldout; not mandatory",
+      "hypothetical_all_tensor_bf16_bytes": 3087428608,
+      "hypothetical_all_tensor_packed4_bytes": 771857152,
+      "weight_caveat": "Hypothetical uniform payload only. Not checkpoint bytes, quantized size or VRAM; mixed tensors/scales/zero-points/codebooks/vision/backend extra. FP8 R1 especially must not use this as real BF16 metadata.",
+      "states": [
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 128,
+          "full_layers": 28,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 3670016,
+          "head_dim": 128,
+          "kv_heads": 2,
+          "scale_metadata_packing_workspace_excluded": true
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 1024,
+          "full_layers": 28,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 29360128,
+          "head_dim": 128,
+          "kv_heads": 2,
+          "scale_metadata_packing_workspace_excluded": true
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 8192,
+          "full_layers": 28,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 234881024,
+          "head_dim": 128,
+          "kv_heads": 2,
+          "scale_metadata_packing_workspace_excluded": true
+        }
+      ]
+    },
+    {
+      "key": "qwen25-small",
+      "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+      "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+      "features": [
+        "pure_global_gqa",
+        "silu",
+        "rmsnorm",
+        "qkv_bias"
+      ],
+      "config_status": "captured",
+      "role": "defer redundant scale/training-family extension or alternative heldout; not mandatory",
+      "hypothetical_all_tensor_bf16_bytes": 988065536,
+      "hypothetical_all_tensor_packed4_bytes": 247016384,
+      "weight_caveat": "Hypothetical uniform payload only. Not checkpoint bytes, quantized size or VRAM; mixed tensors/scales/zero-points/codebooks/vision/backend extra. FP8 R1 especially must not use this as real BF16 metadata.",
+      "states": [
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 128,
+          "full_layers": 24,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 1572864,
+          "head_dim": 64,
+          "kv_heads": 2,
+          "scale_metadata_packing_workspace_excluded": true
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 1024,
+          "full_layers": 24,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 12582912,
+          "head_dim": 64,
+          "kv_heads": 2,
+          "scale_metadata_packing_workspace_excluded": true
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 8192,
+          "full_layers": 24,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 100663296,
+          "head_dim": 64,
+          "kv_heads": 2,
+          "scale_metadata_packing_workspace_excluded": true
+        }
+      ]
+    },
+    {
+      "key": "qwen25",
+      "model_id": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "features": [
+        "pure_global_gqa",
+        "silu",
+        "rmsnorm",
+        "qkv_bias"
+      ],
+      "config_status": "captured",
+      "role": "primary, existing Issue32; result readiness not inferred",
+      "hypothetical_all_tensor_bf16_bytes": 6171877376,
+      "hypothetical_all_tensor_packed4_bytes": 1542969344,
+      "weight_caveat": "Hypothetical uniform payload only. Not checkpoint bytes, quantized size or VRAM; mixed tensors/scales/zero-points/codebooks/vision/backend extra. FP8 R1 especially must not use this as real BF16 metadata.",
+      "states": [
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 128,
+          "full_layers": 36,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 4718592,
+          "head_dim": 128,
+          "kv_heads": 2,
+          "scale_metadata_packing_workspace_excluded": true
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 1024,
+          "full_layers": 36,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 37748736,
+          "head_dim": 128,
+          "kv_heads": 2,
+          "scale_metadata_packing_workspace_excluded": true
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 8192,
+          "full_layers": 36,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 301989888,
+          "head_dim": 128,
+          "kv_heads": 2,
+          "scale_metadata_packing_workspace_excluded": true
+        }
+      ]
+    },
+    {
+      "key": "qwen3",
+      "model_id": "Qwen/Qwen3-0.6B",
+      "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+      "features": [
+        "pure_global_gqa",
+        "qk_norm",
+        "silu",
+        "rmsnorm"
+      ],
+      "config_status": "captured",
+      "role": "reuse existing local ordinary-attention reference, no extra mandatory Qwen3 model",
+      "hypothetical_all_tensor_bf16_bytes": 1503264768,
+      "hypothetical_all_tensor_packed4_bytes": 375816192,
+      "weight_caveat": "Hypothetical uniform payload only. Not checkpoint bytes, quantized size or VRAM; mixed tensors/scales/zero-points/codebooks/vision/backend extra. FP8 R1 especially must not use this as real BF16 metadata.",
+      "states": [
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 128,
+          "full_layers": 28,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 14680064,
+          "head_dim": 128,
+          "kv_heads": 8,
+          "scale_metadata_packing_workspace_excluded": true
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 1024,
+          "full_layers": 28,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 117440512,
+          "head_dim": 128,
+          "kv_heads": 8,
+          "scale_metadata_packing_workspace_excluded": true
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 8192,
+          "full_layers": 28,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 939524096,
+          "head_dim": 128,
+          "kv_heads": 8,
+          "scale_metadata_packing_workspace_excluded": true
+        }
+      ]
+    },
+    {
+      "key": "qwen3-4",
+      "model_id": "Qwen/Qwen3-4B",
+      "revision": "1cfa9a7208912126459214e8b04321603b3df60c",
+      "features": [
+        "pure_global_gqa",
+        "qk_norm",
+        "silu",
+        "rmsnorm"
+      ],
+      "config_status": "captured",
+      "role": "defer redundant scale/training-family extension or alternative heldout; not mandatory",
+      "hypothetical_all_tensor_bf16_bytes": 8044936192,
+      "hypothetical_all_tensor_packed4_bytes": 2011234048,
+      "weight_caveat": "Hypothetical uniform payload only. Not checkpoint bytes, quantized size or VRAM; mixed tensors/scales/zero-points/codebooks/vision/backend extra. FP8 R1 especially must not use this as real BF16 metadata.",
+      "states": [
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 128,
+          "full_layers": 36,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 18874368,
+          "head_dim": 128,
+          "kv_heads": 8,
+          "scale_metadata_packing_workspace_excluded": true
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 1024,
+          "full_layers": 36,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 150994944,
+          "head_dim": 128,
+          "kv_heads": 8,
+          "scale_metadata_packing_workspace_excluded": true
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 8192,
+          "full_layers": 36,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 1207959552,
+          "head_dim": 128,
+          "kv_heads": 8,
+          "scale_metadata_packing_workspace_excluded": true
+        }
+      ]
+    },
+    {
+      "key": "qwen3moe",
+      "model_id": "Qwen/Qwen3-30B-A3B",
+      "revision": "ad44e777bcd18fa416d9da3bd8f70d33ebb85d39",
+      "features": [
+        "moe",
+        "qk_norm",
+        "silu",
+        "expert_dispatch"
+      ],
+      "config_status": "captured",
+      "role": "config/operator-only MoE axis; not 16GB high-precision full-model suite",
+      "hypothetical_all_tensor_bf16_bytes": 61064245248,
+      "hypothetical_all_tensor_packed4_bytes": 15266061312,
+      "weight_caveat": "Hypothetical uniform payload only. Not checkpoint bytes, quantized size or VRAM; mixed tensors/scales/zero-points/codebooks/vision/backend extra. FP8 R1 especially must not use this as real BF16 metadata.",
+      "states": [
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 128,
+          "full_layers": 48,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 12582912,
+          "head_dim": 128,
+          "kv_heads": 4,
+          "scale_metadata_packing_workspace_excluded": true
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 1024,
+          "full_layers": 48,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 100663296,
+          "head_dim": 128,
+          "kv_heads": 4,
+          "scale_metadata_packing_workspace_excluded": true
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 8192,
+          "full_layers": 48,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 805306368,
+          "head_dim": 128,
+          "kv_heads": 4,
+          "scale_metadata_packing_workspace_excluded": true
+        }
+      ]
+    },
+    {
+      "key": "qwen35",
+      "model_id": "Qwen/Qwen3.5-4B",
+      "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+      "features": [
+        "hybrid_recurrence",
+        "conv_history",
+        "partial_rope",
+        "silu",
+        "full_attention_subset"
+      ],
+      "config_status": "captured",
+      "role": "primary, existing Issue32; result readiness not inferred",
+      "hypothetical_all_tensor_bf16_bytes": 9319730176,
+      "hypothetical_all_tensor_packed4_bytes": 2329932544,
+      "weight_caveat": "Hypothetical uniform payload only. Not checkpoint bytes, quantized size or VRAM; mixed tensors/scales/zero-points/codebooks/vision/backend extra. FP8 R1 especially must not use this as real BF16 metadata.",
+      "states": [
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 128,
+          "full_layers": 8,
+          "local_layers": 0,
+          "recurrent_layers": 24,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 4194304,
+          "head_dim": 256,
+          "kv_heads": 4,
+          "scale_metadata_packing_workspace_excluded": true,
+          "candidate_state_f32_bytes": 50331648,
+          "candidate_conv_f16_minimum_history_bytes": 1179648,
+          "candidate_conv_f16_kernel_alloc_bytes": 1572864,
+          "recurrence_caveat": "Canonical per-value-head GDN layout assumed; actual cache dtype/layout still requires capture"
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 1024,
+          "full_layers": 8,
+          "local_layers": 0,
+          "recurrent_layers": 24,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 33554432,
+          "head_dim": 256,
+          "kv_heads": 4,
+          "scale_metadata_packing_workspace_excluded": true,
+          "candidate_state_f32_bytes": 50331648,
+          "candidate_conv_f16_minimum_history_bytes": 1179648,
+          "candidate_conv_f16_kernel_alloc_bytes": 1572864,
+          "recurrence_caveat": "Canonical per-value-head GDN layout assumed; actual cache dtype/layout still requires capture"
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 8192,
+          "full_layers": 8,
+          "local_layers": 0,
+          "recurrent_layers": 24,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 268435456,
+          "head_dim": 256,
+          "kv_heads": 4,
+          "scale_metadata_packing_workspace_excluded": true,
+          "candidate_state_f32_bytes": 50331648,
+          "candidate_conv_f16_minimum_history_bytes": 1179648,
+          "candidate_conv_f16_kernel_alloc_bytes": 1572864,
+          "recurrence_caveat": "Canonical per-value-head GDN layout assumed; actual cache dtype/layout still requires capture"
+        }
+      ]
+    },
+    {
+      "key": "qwen35-small",
+      "model_id": "Qwen/Qwen3.5-0.8B",
+      "revision": "2fc06364715b967f1860aea9cf38778875588b17",
+      "features": [
+        "hybrid_recurrence",
+        "conv_history",
+        "partial_rope",
+        "silu",
+        "full_attention_subset"
+      ],
+      "config_status": "captured",
+      "role": "defer redundant scale/training-family extension or alternative heldout; not mandatory",
+      "hypothetical_all_tensor_bf16_bytes": 1746877568,
+      "hypothetical_all_tensor_packed4_bytes": 436719392,
+      "weight_caveat": "Hypothetical uniform payload only. Not checkpoint bytes, quantized size or VRAM; mixed tensors/scales/zero-points/codebooks/vision/backend extra. FP8 R1 especially must not use this as real BF16 metadata.",
+      "states": [
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 128,
+          "full_layers": 6,
+          "local_layers": 0,
+          "recurrent_layers": 18,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 1572864,
+          "head_dim": 256,
+          "kv_heads": 2,
+          "scale_metadata_packing_workspace_excluded": true,
+          "candidate_state_f32_bytes": 18874368,
+          "candidate_conv_f16_minimum_history_bytes": 663552,
+          "candidate_conv_f16_kernel_alloc_bytes": 884736,
+          "recurrence_caveat": "Canonical per-value-head GDN layout assumed; actual cache dtype/layout still requires capture"
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 1024,
+          "full_layers": 6,
+          "local_layers": 0,
+          "recurrent_layers": 18,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 12582912,
+          "head_dim": 256,
+          "kv_heads": 2,
+          "scale_metadata_packing_workspace_excluded": true,
+          "candidate_state_f32_bytes": 18874368,
+          "candidate_conv_f16_minimum_history_bytes": 663552,
+          "candidate_conv_f16_kernel_alloc_bytes": 884736,
+          "recurrence_caveat": "Canonical per-value-head GDN layout assumed; actual cache dtype/layout still requires capture"
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 8192,
+          "full_layers": 6,
+          "local_layers": 0,
+          "recurrent_layers": 18,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 100663296,
+          "head_dim": 256,
+          "kv_heads": 2,
+          "scale_metadata_packing_workspace_excluded": true,
+          "candidate_state_f32_bytes": 18874368,
+          "candidate_conv_f16_minimum_history_bytes": 663552,
+          "candidate_conv_f16_kernel_alloc_bytes": 884736,
+          "recurrence_caveat": "Canonical per-value-head GDN layout assumed; actual cache dtype/layout still requires capture"
+        }
+      ]
+    },
+    {
+      "key": "gemma4",
+      "model_id": "google/gemma-3-4b-it",
+      "revision": "093f9f388b31de276ce2de164bdc2081324b9767",
+      "features": [
+        "local_global_attention",
+        "qk_norm",
+        "pre_post_norm",
+        "gelu"
+      ],
+      "config_status": "HTTP401 access missing; no mirror/default substitution",
+      "role": "conditional primary, authorization and actual config/backend gate pending",
+      "hypothetical_all_tensor_bf16_bytes": 8600158944,
+      "hypothetical_all_tensor_packed4_bytes": 2150039736,
+      "weight_caveat": "Hypothetical uniform payload only. Not checkpoint bytes, quantized size or VRAM; mixed tensors/scales/zero-points/codebooks/vision/backend extra. FP8 R1 especially must not use this as real BF16 metadata.",
+      "states": [
+        {
+          "status": "pending gated checkpoint config; no inferred geometry"
+        },
+        {
+          "status": "pending gated checkpoint config; no inferred geometry"
+        },
+        {
+          "status": "pending gated checkpoint config; no inferred geometry"
+        }
+      ]
+    },
+    {
+      "key": "gemma12",
+      "model_id": "google/gemma-3-12b-it",
+      "revision": "96b6f1eccf38110c56df3a15bffe176da04bfd80",
+      "features": [
+        "local_global_attention",
+        "qk_norm",
+        "pre_post_norm",
+        "gelu"
+      ],
+      "config_status": "HTTP401 access missing; no mirror/default substitution",
+      "role": "defer scale-only W4A16 deployment extension, not W8A8 primary",
+      "hypothetical_all_tensor_bf16_bytes": 24374650080,
+      "hypothetical_all_tensor_packed4_bytes": 6093662520,
+      "weight_caveat": "Hypothetical uniform payload only. Not checkpoint bytes, quantized size or VRAM; mixed tensors/scales/zero-points/codebooks/vision/backend extra. FP8 R1 especially must not use this as real BF16 metadata.",
+      "states": [
+        {
+          "status": "pending gated checkpoint config; no inferred geometry"
+        },
+        {
+          "status": "pending gated checkpoint config; no inferred geometry"
+        },
+        {
+          "status": "pending gated checkpoint config; no inferred geometry"
+        }
+      ]
+    },
+    {
+      "key": "phi",
+      "model_id": "microsoft/Phi-4-mini-instruct",
+      "revision": "cfbefacb99257ffa30c83adab238a50856ac3083",
+      "features": [
+        "pure_global_gqa",
+        "partial_rope",
+        "fused_projection",
+        "longrope",
+        "silu",
+        "rmsnorm"
+      ],
+      "config_status": "captured",
+      "role": "single proposed heldout validation after Block policy frozen",
+      "hypothetical_all_tensor_bf16_bytes": 7672043520,
+      "hypothetical_all_tensor_packed4_bytes": 1918010880,
+      "weight_caveat": "Hypothetical uniform payload only. Not checkpoint bytes, quantized size or VRAM; mixed tensors/scales/zero-points/codebooks/vision/backend extra. FP8 R1 especially must not use this as real BF16 metadata.",
+      "states": [
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 128,
+          "full_layers": 32,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 16777216,
+          "head_dim": 128,
+          "kv_heads": 8,
+          "scale_metadata_packing_workspace_excluded": true
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 1024,
+          "full_layers": 32,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 134217728,
+          "head_dim": 128,
+          "kv_heads": 8,
+          "scale_metadata_packing_workspace_excluded": true
+        },
+        {
+          "status": "analytical logical payload, not observed allocation/traffic",
+          "length": 8192,
+          "full_layers": 32,
+          "local_layers": 0,
+          "recurrent_layers": 0,
+          "kv_element_bytes": 2,
+          "kv_payload_bytes": 1073741824,
+          "head_dim": 128,
+          "kv_heads": 8,
+          "scale_metadata_packing_workspace_excluded": true
+        }
+      ]
+    }
+  ],
+  "cannot_claim": [
+    "native DeepSeek-R1/MoE/MLA end-to-end validation",
+    "INT8 hardware speed",
+    "Gemma or Meta config geometry verified",
+    "any new model numerical inference completed"
+  ]
+}

@@ -1,5 +1,18 @@
 # Liangruizhi 的进度
 
+## 2026-10-23（UTC+08:00）Issue37先审查架构与筛选
+
+[Issue37](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/37) / [PR38](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/38)，
+task/37-gemma-phi-protocol，独立D:/Projects/LLMHardwareDesign-gemma-phi，base PR34@4a3f5e4。
+用户追加“先分析所有已提架构再选型”，本轮只元数据/源码审查与协议/容量公式检查，无新增模型或缩小模型推理。
+17变体、12份固定官方config/SHA、5份401缺口；拟主测Qwen2.5-3B/Qwen3.5-4B/条件Gemma4B，
+复用已有Qwen3-0.6B，Phi作一个后续保留验证，其他重复规模/原生MoE/MLA按理由暂缓完整实跑。
+见[正式审查](../../docs/MODEL_ARCHITECTURE_REVIEW.md)与[交接](../../docs/handoffs/2026-10-23-issue-37-model-selection.md)。
+源码946281b9a90dd36b130e691c60667b9f7d1e4d32；8个协议测试/管理/whitespace通过，源码/日志绑定通过，
+不称模型验证通过。当前new_numerical_runs_enabled=false；门控接入、整数bias/norm/归约合同、正式质量预算待闭合。
+不接管Issue32/PR36的Qwen修复；未整合兄方数据，等用户通知。登记PR5 pending、看板unverified/同步pending。
+PR待审查/合并，审查人/管理员待指定，未done；后续在已有授权和分工范围内推进，不新增确认流程。
+
 ## 2026-10-23 Issue33精度合同与本机整数验证
 
 负责人Liangruizhi（2663955430@qq.com，182389313），GitHub认证已重新核验。
