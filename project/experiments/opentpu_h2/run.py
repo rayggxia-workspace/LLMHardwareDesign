@@ -37,6 +37,25 @@ try:
     (ROOT/'physical.tcl').write_text(script)
     with (ROOT/'physical-inventory.log').open('w') as log:
         subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(ROOT/'physical.tcl')],stdout=log,stderr=subprocess.STDOUT,check=True)
+    if SPEC['mode']=='annotation':
+        import sys
+        sys.path.insert(0,str(ROOT/'runner/h1'))
+        from annotation_audit import execute
+        source=Path(SPEC['source'])
+        previous=json.loads(sealed(source,'h1-qualification-input-sha256.json').read_text())
+        manifest={n[2:]:h for h,n in (line.split(None,1) for line in (source/'output.sha256').read_text().splitlines())}
+        def track(path):
+            path=Path(path)
+            expected=previous.get(str(path))
+            if path.is_relative_to(source):expected=manifest.get(path.relative_to(source).as_posix())
+            assert expected and digest(path)==expected,'Changed hierarchical annotation input '+str(path)
+            INPUTS[str(path)]=expected
+            return path
+        def run_tcl(name,text):
+            path=ROOT/(name+'.tcl');path.write_text(text)
+            with (ROOT/(name+'.log')).open('w') as log:
+                subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(path)],stdout=log,stderr=subprocess.STDOUT,check=True)
+        execute(ROOT,{'h2':source},run_tcl,track)
     if SPEC['mode']=='checks':
         source=Path(SPEC['source'])
         m=json.loads(sealed(source,'experiment.json').read_text())

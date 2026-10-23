@@ -23,7 +23,8 @@ names=['exit-code.txt','finished.txt','allocation.txt','image.sha256','tools.sha
        'parent-electrical.rpt','parent-annotation.rpt','composite-antenna.rpt','rc-connectivity.tsv',
        'strict-qualification.log','full-hierarchy-quality.json','full-hierarchy-sta.log','final-pg.log',
        'final-pg/strict-pg.json','h1-qualification-input-sha256.json','signal-pin-layers.tsv','routing-tech-shapes.tsv','boundary.log','readonly-drc.log','readonly-drc-quality.json',
-       'readonly-drc-freeze-audit.json','integrated-drc.rpt']
+       'readonly-drc-freeze-audit.json','integrated-drc.rpt','annotation-validation.json','annotation-h2.log',
+       'h2-unannotated-connectivity.tsv']
 for attempt in a.attempts:
     receipt=json.loads((HERE/'results'/(attempt+'-submission.json')).read_text())
     remote=receipt['spec']['remote']
