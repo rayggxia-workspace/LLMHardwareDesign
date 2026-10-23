@@ -1,0 +1,23 @@
+{
+  "version": "issue32-k32-fp32-canonical-aux-v4",
+  "dataset": "Salesforce/wikitext",
+  "revision": "b08601e04326c79dfdd32d625aee71d232d685c3",
+  "configuration": "wikitext-2-raw-v1",
+  "calibration_split": "train",
+  "validation_split": "validation, same V3 windows; reused to assess auxiliary precision, not claimed newly untouched",
+  "samples_per_split": 16,
+  "prediction_tokens": 256,
+  "selection": "The unchanged V3 sampler excludes all previous K128 validation row ranges and chooses16 mutually disjoint windows. Auxiliary execution order was selected using separate fixed teacher-forced continuation, not validation metric tuning.",
+  "quality_acceptance": {"mean_kl_max": 0.05, "nll_delta_max": 0.15, "top1_agreement_min": 0.9},
+  "group_k": 32,
+  "method_frozen": "Same K32 integer quantization, now FP32 auxiliary computation with per-token recurrence, fixed-order convolution and per-query causal SDPA. Native reference uses the same auxiliary backend. Batch GEMM accumulators are exact INT32 and tested bitwise equivalent to prior group kernel.",
+  "formats": {
+    "weight": "INT8 symmetric per-output per-K32-group, except remaining native weights",
+    "activation": "INT8 symmetric dynamic per-token per-K32-group",
+    "accumulator": "actual INT32 partial GEMM",
+    "partial_reduction_scale": "FP32",
+    "auxiliary_activation_output_attention_state_nonlinear": "FP32",
+    "large_native_weights": "FP16 storage, FP32 temporary compute, no CPU offload"
+  },
+  "scope": "Diagnostic mixed precision. No full integer inference claim; no performance claim. Quality and continuation need independent pass."
+}

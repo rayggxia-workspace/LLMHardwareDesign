@@ -194,10 +194,12 @@ def main():
     p.add_argument('--native-compute',choices=['fp16','fp32'],default='fp16')
     p.add_argument('--canonical-causal-aux',action='store_true')
     p.add_argument('--integer-backend',choices=['scalar','batched'],default='scalar')
+    p.add_argument('--protocol',type=Path)
     a=p.parse_args()
     if a.out.exists():raise ValueError('output exists')
     assert not git('status','--porcelain'),'clean committed source required'
-    cfg=json.loads((HERE/'protocol.json').read_text(encoding='utf-8'))
+    protocol_path=a.protocol or HERE/'protocol.json'
+    cfg=json.loads(protocol_path.read_text(encoding='utf-8'))
     assert torch.__version__=='2.10.0+cu128' and transformers.__version__=='5.17.0'
     model_manifest=json.loads((a.model_dir/'model-manifest.json').read_text(encoding='utf-8'))
     assert model_manifest['complete']
@@ -210,6 +212,7 @@ def main():
     save(a.out/'manifest.json',{'source_commit':git('rev-parse','HEAD'),'source_files':source,
         'model':model_manifest,'protocol':cfg,'command':sys.argv,'mode':a.mode,'runtime_dtype':a.native_compute,
         'canonical_causal_aux':a.canonical_causal_aux,'integer_backend':a.integer_backend,
+        'protocol_path':str(protocol_path),'protocol_sha256':sha(protocol_path),
         'sdpa_backend':'efficient_only','gqa':'explicit_repeat_kv','allocator_budget_mib':budget,
         'physical_free_mib':smifree,'offload':False,'observed_run_not_performance':True})
     results={'status':'running','quality':[],'failures':[]}
