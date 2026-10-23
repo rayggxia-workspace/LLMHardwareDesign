@@ -16,3 +16,5 @@
 - Projects 入口：候选[组织看板 #1](https://github.com/orgs/rayggxia-workspace/projects/1)；本轮查询因缺少 `read:project` 失败，且无 `config/board.json`，实际看板与条目 `unverified`、同步 `pending`。恢复动作见 [Issue #7 看板交接](handoffs/2026-10-21-issue-7-projects.md)
 
 本页只记录全项目阶段和关键限制；具体任务进度以 Issue 和 PR 为准。
+
+- 独立小目标补充（Issue #42，2026-10-23）：同一 INV/AND 冻结底座、M1–M10 不变、仅新增 M11/M12 接线的两个真实组合控制锥已取得原生几何与源表达式功能对照证据；现提炼为参数化重放程序，15项测试与两案例对照通过，待PR审查。它不改变H1/H2任务结论，也不代表完整核心或真实新增工艺签核。[范围与证据](experiments/issue-42-frozen-control-cones.md)。

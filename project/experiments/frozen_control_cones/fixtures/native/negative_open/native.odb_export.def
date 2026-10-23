@@ -1,0 +1,117 @@
+VERSION 5.8 ;
+DIVIDERCHAR "/" ;
+BUSBITCHARS "[]" ;
+DESIGN paired_gates ;
+UNITS DISTANCE MICRONS 2000 ;
+DIEAREA ( 0 0 ) ( 240000 120000 ) ;
+TRACKS Y 140 DO 38 STEP 3200 LAYER metal11 ;
+TRACKS X 190 DO 75 STEP 3200 LAYER metal12 ;
+NONDEFAULTRULES 1 ;
+    - HPY_PAD
+      + LAYER metal1 WIDTH 140
+      + LAYER metal2 WIDTH 140
+      + LAYER metal3 WIDTH 140
+      + LAYER metal4 WIDTH 280
+      + LAYER metal5 WIDTH 280
+      + LAYER metal6 WIDTH 280
+      + LAYER metal7 WIDTH 800
+      + LAYER metal8 WIDTH 800
+      + LAYER metal9 WIDTH 1600
+      + LAYER metal10 WIDTH 3200
+      + LAYER metal11 WIDTH 1600
+      + LAYER metal12 WIDTH 1600
+    ;
+END NONDEFAULTRULES
+COMPONENTS 2 ;
+    - and_gate AND2_X1 + FIXED ( 80180 22400 ) N ;
+    - not_b INV_X1 + FIXED ( 20520 22400 ) N ;
+END COMPONENTS
+PINS 5 ;
+    - VDD + NET VDD + SPECIAL + DIRECTION INOUT + USE POWER
+      + PORT
+        + LAYER metal1 ( -170 -170 ) ( 170 170 )
+        + FIXED ( 16000 25200 ) N ;
+    - VSS + NET VSS + SPECIAL + DIRECTION INOUT + USE GROUND
+      + PORT
+        + LAYER metal1 ( -170 -170 ) ( 170 170 )
+        + FIXED ( 16000 22400 ) N ;
+    - a + NET a + DIRECTION INPUT + USE SIGNAL
+      + PORT
+        + LAYER metal10 ( -1600 -1600 ) ( 1600 1600 )
+        + FIXED ( 150190 67340 ) N ;
+    - b + NET b + DIRECTION INPUT + USE SIGNAL
+      + PORT
+        + LAYER metal10 ( -1600 -1600 ) ( 1600 1600 )
+        + FIXED ( 150190 41740 ) N ;
+    - y + NET y + DIRECTION OUTPUT + USE SIGNAL
+      + PORT
+        + LAYER metal10 ( -1600 -1600 ) ( 1600 1600 )
+        + FIXED ( 150190 92940 ) N ;
+END PINS
+SPECIALNETS 2 ;
+    - VDD ( PIN VDD ) ( * VDD ) + USE POWER
+      + ROUTED metal1 340 ( 16000 25200 ) ( 90000 25200 ) ;
+    - VSS ( PIN VSS ) ( * VSS ) + USE GROUND
+      + ROUTED metal1 340 ( 16000 22400 ) ( 90000 22400 ) ;
+END SPECIALNETS
+NETS 4 ;
+    - a ( PIN a ) ( and_gate A1 ) + USE SIGNAL + NONDEFAULTRULE HPY_PAD
+      + ROUTED metal1 ( 80420 23620 ) via1_4
+      NEW metal2 ( 80420 23620 ) ( * 67340 ) via2_4
+      NEW metal3 ( 80420 67340 ) ( 70990 * ) via3_0
+      NEW metal4 ( 70990 67340 ) via4_0
+      NEW metal5 ( 70990 67340 ) via5_0
+      NEW metal6 ( 70990 67340 ) via6_0
+      NEW metal7 ( 70990 67340 ) via7_0
+      NEW metal8 ( 70990 67340 ) via8_0
+      NEW metal9 ( 70990 67340 ) via9_0
+      NEW metal10 ( 70990 67340 ) ( 150190 * ) ;
+    - b ( PIN b ) ( not_b A ) ( and_gate A2 ) + USE SIGNAL + NONDEFAULTRULE HPY_PAD
+      + ROUTED metal1 ( 20740 23620 ) via1_4
+      NEW metal2 ( 20740 23620 ) ( * 41740 ) via2_4
+      NEW metal3 ( 20740 41740 ) ( 10190 * ) via3_0
+      NEW metal4 ( 10190 41740 ) via4_0
+      NEW metal5 ( 10190 41740 ) via5_0
+      NEW metal6 ( 10190 41740 ) via6_0
+      NEW metal7 ( 10190 41740 ) via7_0
+      NEW metal8 ( 10190 41740 ) via8_0
+      NEW metal9 ( 10190 41740 ) via9_0
+      NEW metal10 ( 10190 41740 ) ( 150190 * )
+      NEW metal1 ( 80810 23620 ) via1_4
+      NEW metal2 ( 80810 23620 ) ( * 80140 ) via2_4
+      NEW metal3 ( 80810 80140 ) ( 94990 * ) via3_0
+      NEW metal4 ( 94990 80140 ) via4_0
+      NEW metal5 ( 94990 80140 ) via5_0
+      NEW metal6 ( 94990 80140 ) via6_0
+      NEW metal7 ( 94990 80140 ) via7_0
+      NEW metal8 ( 94990 80140 ) via8_0
+      NEW metal9 ( 94990 80140 ) via9_0
+      NEW metal10 ( 94990 80140 ) ( 150190 * )
+      NEW metal10 ( 150190 41740 ) HPY_VIA10
+      NEW metal11 ( 150190 41740 ) ( 201790 * ) HPY_VIA11
+      NEW metal12 ( 201790 41740 ) ( * 80140 ) HPY_VIA11
+      NEW metal11 ( 201790 80140 ) ( 150190 * ) ;
+    - nb ( not_b ZN ) + USE SIGNAL + NONDEFAULTRULE HPY_PAD
+      + ROUTED metal1 ( 21080 23900 ) via1_4
+      NEW metal2 ( 21080 23900 ) ( * 54540 ) via2_4
+      NEW metal3 ( 21080 54540 ) ( 29390 * ) via3_0
+      NEW metal4 ( 29390 54540 ) via4_0
+      NEW metal5 ( 29390 54540 ) via5_0
+      NEW metal6 ( 29390 54540 ) via6_0
+      NEW metal7 ( 29390 54540 ) via7_0
+      NEW metal8 ( 29390 54540 ) via8_0
+      NEW metal9 ( 29390 54540 ) via9_0
+      NEW metal10 ( 29390 54540 ) ( 150190 * ) ;
+    - y ( PIN y ) ( and_gate ZN ) + USE SIGNAL + NONDEFAULTRULE HPY_PAD
+      + ROUTED metal1 ( 81490 23900 ) via1_4
+      NEW metal2 ( 81490 23900 ) ( * 92940 ) via2_4
+      NEW metal3 ( 81490 92940 ) ( 110990 * ) via3_0
+      NEW metal4 ( 110990 92940 ) via4_0
+      NEW metal5 ( 110990 92940 ) via5_0
+      NEW metal6 ( 110990 92940 ) via6_0
+      NEW metal7 ( 110990 92940 ) via7_0
+      NEW metal8 ( 110990 92940 ) via8_0
+      NEW metal9 ( 110990 92940 ) via9_0
+      NEW metal10 ( 110990 92940 ) ( 150190 * ) ;
+END NETS
+END DESIGN
