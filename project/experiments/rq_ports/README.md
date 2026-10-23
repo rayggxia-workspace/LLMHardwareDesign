@@ -24,7 +24,7 @@ python -B project/experiments/rq_ports/prepare_server.py --local D:/Projects/Cod
 - 8数值fixture×2RQ库存×2活动窗口×3消费者服务×2固定调度×2位置。1/8RQ lane属于不同库存，分别配对，
   不将多7个乘法器的收益写成位置收益。RQ延迟26/间隔28来自旧RQ32 RTL，bank回压会延长；8lane复制控制尚未RTL校准。
 - 每个128bit口一次服务16B；packet一个64B header、payload向64B对齐，1984B最大分片，整包TX/RX各2KiB，store-and-forward。
-  单共享半双工bus；S8×32KiB各1RW；M的两A4KiB、两W8KiB和MC8KiB，共32KiB；V16KiB且1RW。
+  单共享半双工bus；S8×32KiB各1RW；M的两A4KiB、两W8KiB、MC6KiB和并行PE累加寄存器2KiB，共32KiB；V16KiB且1RW。
   A/W bank计算读和写串行，MC的acc/参数/RQ输出竞争一口；RQ输入双staging256B、V消费者scratch512B另计且两方案相同。
   每活动S的TX/RX FIFO、M/V两个RX和一个TX均固定；所有bank/端口与私有存储在每个位置配对不变，未做宏/PPA。
 - K128输入已打包且常驻S；数据预处理、外存及初始S加载在计时边界外。q_proj权重16KiB可一次载入M后复用，

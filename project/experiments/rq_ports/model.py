@@ -13,7 +13,7 @@ class Graph:
     def __init__(self):
         self.nodes=[];self.last_tx={};self.last_rx={};self.packets=[];self.leases=[]
         self.bytes=Counter();self.sizes={**{f'S{i}':32768 for i in range(8)},
-            'MA0':4096,'MA1':4096,'MW0':8192,'MW1':8192,'MC':8192,'VC':16384}
+            'MA0':4096,'MA1':4096,'MW0':8192,'MW1':8192,'MC':6144,'VC':16384}
 
     def add(self,label,duration,resources=(),deps=(),**extra):
         deps=tuple(sorted(set(x for x in deps if x is not None)))
