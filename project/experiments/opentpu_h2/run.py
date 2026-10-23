@@ -156,7 +156,9 @@ try:
             buildpath=ROOT/'proxy-build.tcl';buildpath.write_text(build)
             with (ROOT/'proxy-build.log').open('w') as log:
                 subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(buildpath)],stdout=log,stderr=subprocess.STDOUT,check=True)
-            path.write_text('read_db {'+str(ROOT/'proxy-initial.odb')+'}\n'+route)
+            tech=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef')
+            INPUTS[str(tech)]=digest(tech)
+            path.write_text('read_lef {'+str(tech)+'}\nread_def {'+str(ROOT/'proxy-initial.def')+'}\n'+route)
         with (ROOT/(SPEC['mode']+'.log')).open('w') as log:
             subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(path)],stdout=log,stderr=subprocess.STDOUT,check=True)
 finally:
