@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import subprocess
 import shutil
+import re
 
 ROOT = Path.cwd()
 SPEC = json.loads((ROOT/'spec.json').read_text())
@@ -36,6 +37,52 @@ try:
     (ROOT/'physical.tcl').write_text(script)
     with (ROOT/'physical-inventory.log').open('w') as log:
         subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(ROOT/'physical.tcl')],stdout=log,stderr=subprocess.STDOUT,check=True)
+    if SPEC['mode']=='composite':
+        source=Path(SPEC['source'])
+        assert sealed(source,'exit-code.txt').read_text().strip()=='0'
+        route=sealed(source,'route.log').read_text()
+        assert re.findall(r'Number of violations = (\d+)',route)[-1]=='0'
+        from integrate import integrate
+        integrate(sealed(source,'frozen-roundtrip.def'),sealed(source,'restricted-final.def'),ROOT/'composite.def')
+        relative=Path(meta['result_relative']);dest=ROOT/relative;dest.mkdir(parents=True)
+        shutil.copy2(sealed(SOURCE,'boundary.sdc'),ROOT/'boundary.sdc')
+        for ext in ('v','sdc'):
+            shutil.copy2(sealed(SOURCE,relative/('6_final.'+ext)),dest/('6_final.'+ext))
+        (ROOT/'experiment.json').write_text(json.dumps(meta,indent=2)+'\n')
+        previous=json.loads(sealed(SOURCE,'input-sha256.json').read_text())
+        platform=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45')
+        lefs=[platform/'lef/NangateOpenCellLibrary.tech.lef',platform/'lef/NangateOpenCellLibrary.macro.mod.lef']
+        libs=[platform/'lib/NangateOpenCellLibrary_typical.lib']
+        for kind in ('act','mxu'):
+            view=meta['views'][kind]
+            for ext,group in [('.lef',lefs),('.lib',libs)]:
+                path=Path(view['view'])/(view['name']+ext)
+                assert digest(path)==previous[str(path)],'Changed frozen macro view'
+                group.append(path)
+            child=Path(view['source'])
+            childmeta=json.loads(sealed(child,'experiment.json').read_text())
+            childrel=Path(childmeta['result_relative'])
+            for ext in ('v','sdc','spef','odb'):sealed(child,childrel/('6_final.'+ext))
+        for path in lefs+libs+[platform/'rcx_patterns.rules']:INPUTS[str(path)]=digest(path)
+        script=''.join('read_lef {'+str(path)+'}\n' for path in lefs)
+        script+=''.join('read_liberty {'+str(path)+'}\n' for path in libs)
+        script+='read_def {'+str(ROOT/'composite.def')+'}\nread_sdc {'+str(dest/'6_final.sdc')+'}\n'
+        script+='write_db {'+str(dest/'6_final.odb')+'}\nwrite_def composite-roundtrip.def\n'
+        script+='define_process_corner -ext_model_index 0 X\nset_extraction_rules_file {'+str(platform/'rcx_patterns.rules')+'}\nextract_parasitics\n'
+        script+='write_spef {'+str(dest/'6_final.spef')+'}\nread_spef {'+str(dest/'6_final.spef')+'}\nset_propagated_clock [all_clocks]\n'
+        script+='report_worst_slack -max -digits 9\nreport_worst_slack -min -digits 9\nreport_tns -digits 9\n'
+        script+='report_parasitic_annotation -report_unannotated > parent-annotation.rpt\n'
+        script+='report_check_types -max_capacitance -max_slew -max_count 100000 -digits 9 -no_line_splits > parent-electrical.rpt\n'
+        script+='report_check_types -violators -max_slew -max_capacitance -max_fanout -max_delay -min_delay -recovery -removal -min_period -digits 9 -no_line_splits\n'
+        script+='set f [open rc-connectivity.tsv w]\nforeach n [[ord::get_db_block] getNets] {if {[$n getSigType] ni {POWER GROUND}} {puts $f "[$n getName]\\t[$n isConnected]\\t[$n isRCDisconnected]"}}\nclose $f\n'
+        script+='check_antennas -report_file composite-antenna.rpt\n'
+        path=ROOT/'composite-extract.tcl';path.write_text(script)
+        with (ROOT/'composite-extract.log').open('w') as log:
+            subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(path)],stdout=log,stderr=subprocess.STDOUT,check=True)
+        from freeze_audit import audit
+        audit(ROOT/'physical.def',ROOT/'composite-roundtrip.def',8,ROOT/'composite-native-freeze-audit.json',True)
+        with (ROOT/'strict-qualification.log').open('w') as log:
+            subprocess.run(['python3',str(ROOT/'runner/qualify.py')],stdout=log,stderr=subprocess.STDOUT,check=True)
     if SPEC['mode']=='api':
         with (ROOT/'native-stack-symbols.txt').open('w') as log:
             subprocess.run(['addr2line','-f','-C','-e',shutil.which('openroad'),'0x5F46056','0x4100B48','0x3F60AB7','0x3F7C2FE','0x22AA150','0x22B271D'],stdout=log,stderr=subprocess.STDOUT,check=True)

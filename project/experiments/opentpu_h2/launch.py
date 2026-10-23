@@ -29,6 +29,9 @@ ssh('test ! -e ' + shlex.quote(remote) + ' && mkdir -p ' + shlex.quote(remote+'/
 files = sorted(f for f in HERE.iterdir() if f.suffix in ('.py', '.tcl', '.sh'))
 assert all(b'\r\n' not in f.read_bytes() for f in files), 'Upload exact committed LF runner bytes'
 subprocess.run(['scp', *map(str, files), HOST+':'+remote+'/runner/'], check=True)
+support=sorted(f for f in (HERE.parent/'opentpu_compare').iterdir() if f.suffix in ('.py','.tcl'))
+ssh('mkdir '+shlex.quote(remote+'/runner/h1'))
+subprocess.run(['scp',*map(str,support),HOST+':'+remote+'/runner/h1/'],check=True)
 ssh('printf %s ' + shlex.quote(json.dumps(spec, indent=2)+'\n')+' > '+shlex.quote(remote+'/spec.json'))
 ssh('bash -n '+shlex.quote(remote+'/runner/job.sh'))
 job = ssh(shlex.join(['sbatch','--parsable','-p','c64','-N','1','-n','1','-c',str(a.cores),
@@ -39,6 +42,7 @@ assert 'TimeLimit=UNLIMITED' in readback
 receipt = dict(spec=spec,job_id=job,scheduler_readback=readback,host=HOST,image=IMAGE,
     submitted_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
     runner_files={f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in files})
+receipt['h1_support_files']={f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in support}
 (HERE/'results').mkdir(exist_ok=True)
 (HERE/'results'/(a.attempt+'-submission.json')).write_text(json.dumps(receipt,indent=2)+'\n')
 print(json.dumps(receipt,indent=2))
