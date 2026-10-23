@@ -1,5 +1,11 @@
 # 当前状态
 
+- 2026-10-23 Llama跨模型：[Issue56/PR57](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/57)
+  已有1B权重本机完成一层完整4Q/1KV的FP32/cached、两轮整数GQA/16线性条件/384端口配置。
+  重要边界：down静态A约99.8%置零且局部误差70%–83%，动态行scale改善仍非应用质量通过；完整K内留需同乘积scale。
+  近端RQ服务最大仅降约0.405%，不冻结不可绕过连接。精简包可重放全部编码整数与8 witness，完整浮点输入本机留SHA/共享pending。
+  [报告](experiments/issue-56-llama-cross-model.md)/[决策](decisions/2026-10-23-llama-scale-and-block-boundaries.md)；全模型/RTL/PPA未验收，未done。
+
 - 2026-10-23 CPU迁移：[Issue53/PR54](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/54)
   服务器独立环境已建立，已有Qwen3-0.6B两轮32CPU作业89943/89945完成，各6线程/精度条件。
   FP32完整/cached/chunk及28层KV全通过；BF16的8/16线程分块误差超预设门，32线程相等，两轮重现。
