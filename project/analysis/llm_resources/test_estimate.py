@@ -213,6 +213,20 @@ class ResourceTests(unittest.TestCase):
         with self.assertRaises(e.InputError):
             self.report()
 
+    def test_reference_edges_share_one_TX_and_do_not_scale_implicitly(self):
+        self.config["hardware"]["link_effective_fraction"] = 1
+        first = self.config["transfers"][0]
+        first.update(shape=[256], messages_per_step=200000)
+        second = copy.deepcopy(first)
+        second.update(name="second", path=["M", "V"])
+        self.config["transfers"].append(second)
+        r = self.report()["reference_transport"]
+        # Each 1024-byte payload costs 1088 wire bytes, twice per reference M TX.
+        self.assertEqual(r["shared_TX"]["M"]["accounted_wire_bytes_per_step"], 435200000)
+        self.assertTrue(r["shared_TX"]["M"]["lower_bound_exceeds_capacity"])
+        self.assertTrue(all(not edge["lower_bound_exceeds_capacity"] for edge in r["edges"]))
+        self.assertFalse(r["complete_model_transfer_schedule"])
+
     def test_rq_is_separate_and_not_free(self):
         self.config["model"]["linear_outputs_per_token"] = 1_000_000
         self.config["hardware"]["rq_initiation_interval_cycles"] = 28

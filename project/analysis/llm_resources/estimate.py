@@ -332,6 +332,7 @@ def compute(config, candidate):
             external_traffic += weight_traffic
             unresolved.append("weight transfer padding and auxiliary parameter traffic not scheduled")
     if placement["kv"] == "external" and model["attention"]:
+        traffic_incomplete |= accounting["kv_scale"] is None
         factor = accounting["kv_read_multiplier"]
         if factor is None:
             traffic_incomplete = True
@@ -391,6 +392,7 @@ def compute(config, candidate):
 
     graph = candidate["logical_bindings_hybrid"]
     transfers = []
+    edge_bytes, tx_bytes = {}, {}
     for transfer in config["transfers"]:
         path = transfer["path"]
         if any(src not in graph or dst not in graph[src] for src, dst in zip(path, path[1:])):
@@ -399,6 +401,10 @@ def compute(config, candidate):
         packed = packet(payload, candidate)
         messages = transfer["messages_per_step"]
         wire_step = None if messages is None else packed["wire_bytes"] * messages * (len(path) - 1)
+        if messages is not None:
+            for src, dst in zip(path, path[1:]):
+                edge_bytes[(src, dst)] = edge_bytes.get((src, dst), 0) + packed["wire_bytes"] * messages
+                tx_bytes[src] = tx_bytes.get(src, 0) + packed["wire_bytes"] * messages
         fraction = hw["link_effective_fraction"]
         transfers.append({"name": transfer["name"], "payload_bytes": payload, "path": path,
                           **packed, "hop_summed_wire_bytes_per_step": wire_step,
@@ -409,6 +415,27 @@ def compute(config, candidate):
             unresolved.append(f"transfer {transfer['name']}: messages_per_step")
     if hw["link_effective_fraction"] is None:
         unresolved.append("hardware.link_effective_fraction")
+    link_capacity = (None if frequency is None or hw["link_effective_fraction"] is None else
+                     candidate["data_link_bits"] / 8 * frequency * hw["link_effective_fraction"])
+    def service_entry(amount, capacity):
+        required = None if deadline is None else amount / deadline
+        return {"accounted_wire_bytes_per_step": amount, "required_bytes_per_second": required,
+                "capacity_bytes_per_second": capacity,
+                "lower_bound_exceeds_capacity": None if required is None or capacity is None else required > capacity}
+    template_tx = {b["id"]: b["tx"] for b in candidate["blocks"]}
+    tx_entries = {}
+    for node, amount in sorted(tx_bytes.items()):
+        ports = 1 if node.startswith("S") else template_tx[node]
+        tx_entries[node] = service_entry(amount, None if link_capacity is None else ports * link_capacity)
+    transport = {
+        "scope": "one instance per named compute node in reference graph; never extrapolated to scaled inventories",
+        "complete_model_transfer_schedule": False,
+        "all_listed_message_counts_known": bool(config["transfers"]) and all(t["messages_per_step"] is not None for t in config["transfers"]),
+        "edges": [{"source": src, "destination": dst, **service_entry(amount, link_capacity)}
+                  for (src, dst), amount in sorted(edge_bytes.items())],
+        "shared_TX": tx_entries,
+        "qualification": "sums only listed transfers; RX mux, S 1RW arbitration and physical paths remain unresolved",
+    }
     unresolved.extend(["full operator/precision coverage and physical qualification",
                        "nonlinear/attention wide lowering, bank arbitration, complete transfer schedule",
                        "static routing, pin/track/via budgets, clocks, deadlock and cycle-level execution"])
@@ -443,7 +470,7 @@ def compute(config, candidate):
                      "service_seconds_lower_bound": None if bw is None or not has_rate_bound else external_traffic / bw,
                      "qualification": "only listed policy terms; not a complete model transfer schedule"},
         "matrix_instances_linear_lower_bound": min_matrices,
-        "scans": scans, "transfers": transfers,
+        "scans": scans, "transfers": transfers, "reference_transport": transport,
         "known_constraint_violations_under_input_assumptions": violations,
         "unresolved": sorted(set(unresolved)),
         "formulas": {

@@ -37,7 +37,7 @@ python -B -m unittest discover -s project/analysis/llm_resources -v
 - **状态**：预留容量按`C=cached+input+output`，local KV按window截断；KV scales按每token/每KV头的一行分组。decode单步在`C−1`处评估，这是生成最后一个预留输出时的上下文；prefill注意力使用包含cached前缀的因果三角形。只算所选phase，不估整段生成或端到端延迟。
 - **计算**：逐Linear按active实例×处理行数×K×N；LM head可只处理prefill末行。矩阵数量下界为`ceil(线性MAC / (每块native_mul8×频率×利用率×目标单步秒数))`。RQ按显式II另列稳态服务代理；不把281个所有用途的乘法器当256位置矩阵阵列算力，也不把RQ/attention/非线性当免费。
 - **外存**：权重流量按active矩阵权重和显式读取遍数，容量仍按总权重。MoE跨行/跨batch选中专家的并集、命中率需另提供，未定便留空。KV读基数假设每query行读其可见KV、组内共享、没有跨query复用；只有给出读取倍率才进入所选DRAM搬运账。倍率可表示多遍读取或跨query缓存复用，不是从KV容量自动推出的实测值。append写入另计。
-- **候选内存/链路**：计入每类私有RAM、S bank、ROM和每个端点FIFO。64B header、64B payload对齐、2KiB FIFO时最大payload1984B，大传输分包；指定路径的每一跳分别计费。消息数未知时只给单消息成本，缺完整并发/仲裁/流量表时不判带宽可行。
+- **候选内存/链路**：计入每类私有RAM、S bank、ROM和每个端点FIFO。64B header、64B payload对齐、2KiB FIFO时最大payload1984B，大传输分包；指定路径的每一跳分别计费。已知每步消息数时，`reference_transport`按原单M参考图汇总每条边及共享TX的带宽下界，防止把一个TX的多个目的地当成独立带宽；不外推到扩大库存。消息数未知时只给单消息成本，缺完整并发/仲裁/流量表时不判带宽可行。
 
 主要输出：`storage`（已计入容量下界）、`work`、`external`（已计入流量/带宽下界）、`matrix_instances_linear_lower_bound`、`scans`、`transfers`、`known_constraint_violations_under_input_assumptions`及`unresolved`。**没有违例只说明这些必要检查未排除候选；没有“完整通过”状态。** 空缺项未进入已知下界，不表示实际为0；相关搬运全部未知时，带宽/时间保留null。`listed_policy_traffic_incomplete`标明列出的搬运账是否仍缺项，即使为false也不等于覆盖完整模型通信。每个扫描点均标记topology未映射，扩大M库存不会自动复制连接或带宽。
 
