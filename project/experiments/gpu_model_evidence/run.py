@@ -27,7 +27,11 @@ ROOT = HERE.parents[2]
 
 
 def save(path, value):
-    path.write_text(json.dumps(value, indent=2, ensure_ascii=False, allow_nan=False) + '\n', encoding='utf-8')
+    def json_default(obj):
+        if isinstance(obj,set):
+            return sorted(obj)
+        raise TypeError(f'unsupported JSON type: {type(obj).__name__}')
+    path.write_text(json.dumps(value, indent=2, ensure_ascii=False, allow_nan=False, default=json_default) + '\n', encoding='utf-8')
 
 
 def sha(path):
