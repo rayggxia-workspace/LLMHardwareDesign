@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "source_scope": "Qwen2.5 actual saved artifacts only, no model rerun, Phi untouched",
+  "checks": [
+    {
+      "kind": "actual Qwen2.5 saved INT8 output changed and producer NPZ SHA recomputed",
+      "status": "REJECTED_AS_EXPECTED",
+      "returncode": 1,
+      "key": "layer0.down_proj.dynamic_K128_W128.prefix1024.decode.out",
+      "old": 9,
+      "new": 10,
+      "mutated_npz_sha256": "ad2de33b055179eef87a9cb239e865a1f1102eceed75983f35e2d1f805d46f3b"
+    },
+    {
+      "kind": "actual exported FP32 activation low mantissa bit changed, SHA and index recomputed; internal schema passed",
+      "status": "REJECTED_AS_EXPECTED",
+      "returncode": 1,
+      "tensor": "layer0_down_proj_A_row0",
+      "mutated_payload_sha256": "375ad46cae933263eaf3dc9d72c4bdeafa4982f4dc07fe6db37e443dd6f57164"
+    }
+  ]
+}

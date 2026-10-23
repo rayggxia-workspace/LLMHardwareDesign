@@ -1,0 +1,70 @@
+{
+  "schema": "captured-integer-probe/1",
+  "scope": "Selected real full-K linear and complete shared-GQA group. Software integer reference, not full model quality, integer nonlinear/state implementation or target timing.",
+  "linear_profiles": [
+    {
+      "name": "static_tensor_Wout",
+      "mode": "static",
+      "ag": "K",
+      "wg": "K"
+    },
+    {
+      "name": "dynamic_row_Wout",
+      "mode": "dynamic",
+      "ag": "K",
+      "wg": "K"
+    },
+    {
+      "name": "static_K128_W128",
+      "mode": "static",
+      "ag": 128,
+      "wg": 128
+    },
+    {
+      "name": "dynamic_K128_Wout",
+      "mode": "dynamic",
+      "ag": 128,
+      "wg": "K"
+    },
+    {
+      "name": "dynamic_K128_W128",
+      "mode": "dynamic",
+      "ag": 128,
+      "wg": 128
+    }
+  ],
+  "source_bridge": "observed FP32 -> checked S32Q20 with nearest-even; quantized to signed symmetric INT8 [-127,127]",
+  "scales": "signed int8 dyadic exponent, W per output/K group, A per row/K group or calibration static, final Y per output from twice calibration max",
+  "rounding": "exact RNE, one final saturation to signed i8 [-128,127]; no per-group premature RQ",
+  "partial": "i32, Kgroup*127^2 < 2^31; checked i64 mixed-scale alignment; separate observed and sufficient format/actual-W bounds",
+  "attention": {
+    "query": "dynamic per-query S8, dyadic scale integer-derived after S32Q20 bridge",
+    "KV_bits": [
+      8,
+      16
+    ],
+    "KV_scale": "per head/tensor calibrated, dyadic, frozen before evaluation",
+    "P_bits": [
+      8,
+      16
+    ],
+    "P_scale": "signed nonnegative range [0,2^(bits-1)-1] with step 2^-(bits-1)",
+    "queries": "first4/last4 prefill positions plus32 cached decode positions, deduplicated",
+    "softmax": "FP64 exp/div floating fallback; observed scaling and actual causal/window mask, not all-integer softmax",
+    "dot": "NumPy i64 reference plus scalar independent dot witnesses; i32 partial admissibility and wide bounds explicitly reported"
+  },
+  "cost": {
+    "link_bits": 128,
+    "packet_alignment": 64,
+    "header_bytes": 64,
+    "packet_payload": 1984,
+    "bank_port": "one128bit read/write per cycle lower bound only; no scheduled E2/PPA claim",
+    "fixed_local_scratch_bytes": 16384,
+    "multiplier": "S8xS8 only candidate, 16-bit operand via 3 balanced-radix128 signed8 limbs; 16x8=3 products,16x16=9 plus shifts/adds, no free INT16 or U8 path",
+    "metadata": "A/W/Y exponent bytes, coordinates and packet alignment included; initial W/source traffic separate and not free"
+  },
+  "local_screen": {
+    "max_relative_rmse": 0.05,
+    "note": "Inherited exploratory local screen only, not task-quality acceptance."
+  }
+}

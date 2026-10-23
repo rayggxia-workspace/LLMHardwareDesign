@@ -1,0 +1,1420 @@
+{
+  "schema": "server-batch-readout/1",
+  "model_quality_accepted": false,
+  "target_hardware_validated": false,
+  "models": {
+    "gemma": {
+      "model": {
+        "id": "google/gemma-3-4b-it",
+        "revision": "093f9f388b31de276ce2de164bdc2081324b9767"
+      },
+      "capture_source_commit": "8a1fe4bfed52dd0baa552c6043f507bafe902c03",
+      "capture_script_seconds": 96.42234618263319,
+      "capture_peak_RSS_bytes": 22486183936,
+      "versions": {
+        "torch": "2.10.0+cpu",
+        "transformers": "4.57.6",
+        "numpy": "2.2.6"
+      },
+      "threads": 24,
+      "case_names": [
+        "calibration",
+        "prefix128",
+        "prefix1023",
+        "prefix1024",
+        "prefix1025",
+        "prefix4096"
+      ],
+      "group_Q_heads": 2,
+      "head_dim": 256,
+      "selected_layers": [
+        0,
+        5
+      ],
+      "sealed_reserved": false,
+      "raw_capture": {
+        "bytes": 267293179,
+        "sha256": "2dca116bd7cf013ad7686e85372a20f4d933576acb75ab602ee15c5e49a0922b"
+      },
+      "strict_validated_tensors": 3618,
+      "KV": [
+        {
+          "case": "calibration",
+          "full_logical_bytes": 35651584,
+          "full_backing_storage_bytes": 35651584
+        },
+        {
+          "case": "prefix128",
+          "full_logical_bytes": 44564480,
+          "full_backing_storage_bytes": 44564480,
+          "cached_last33_logits": {
+            "finite": true,
+            "max_abs": 9.775161743164062e-05,
+            "relative_l2": 1.5574114399631036e-06
+          },
+          "cached_GQA_max_relative_l2": 1.0453990833985126e-06,
+          "cached_initial_logical_bytes": 35651584,
+          "cached_initial_backing_storage_bytes": 35651584,
+          "cached_final_logical_bytes": 44564480,
+          "cached_final_backing_storage_bytes": 44564480,
+          "chunk_last33_logits": {
+            "finite": true,
+            "max_abs": 6.961822509765625e-05,
+            "relative_l2": 1.3392611380547671e-06
+          },
+          "chunk_GQA_max_relative_l2": 1.0065919159355668e-06,
+          "chunk_initial_logical_bytes": 35651584,
+          "chunk_initial_backing_storage_bytes": 35651584,
+          "chunk_final_logical_bytes": 44564480,
+          "chunk_final_backing_storage_bytes": 44564480
+        },
+        {
+          "case": "prefix1023",
+          "full_logical_bytes": 286244864,
+          "full_backing_storage_bytes": 293847040,
+          "cached_last33_logits": {
+            "finite": true,
+            "max_abs": 7.62939453125e-05,
+            "relative_l2": 1.7121570253022181e-06
+          },
+          "cached_GQA_max_relative_l2": 8.446232890317058e-07,
+          "cached_initial_logical_bytes": 284934144,
+          "cached_initial_backing_storage_bytes": 284934144,
+          "cached_final_logical_bytes": 286244864,
+          "cached_final_backing_storage_bytes": 286482432,
+          "chunk_last33_logits": {
+            "finite": true,
+            "max_abs": 8.20159912109375e-05,
+            "relative_l2": 1.4848190742129253e-06
+          },
+          "chunk_GQA_max_relative_l2": 1.0557275732250269e-06,
+          "chunk_initial_logical_bytes": 35651584,
+          "chunk_initial_backing_storage_bytes": 35651584,
+          "chunk_final_logical_bytes": 286244864,
+          "chunk_final_backing_storage_bytes": 293609472
+        },
+        {
+          "case": "prefix1024",
+          "full_logical_bytes": 286285824,
+          "full_backing_storage_bytes": 294125568,
+          "cached_last33_logits": {
+            "finite": true,
+            "max_abs": 7.05718994140625e-05,
+            "relative_l2": 1.4361034053654778e-06
+          },
+          "cached_GQA_max_relative_l2": 8.187850846051337e-07,
+          "cached_initial_logical_bytes": 284975104,
+          "cached_initial_backing_storage_bytes": 285212672,
+          "cached_final_logical_bytes": 286285824,
+          "cached_final_backing_storage_bytes": 286523392,
+          "chunk_last33_logits": {
+            "finite": true,
+            "max_abs": 7.939338684082031e-05,
+            "relative_l2": 1.2846955623290426e-06
+          },
+          "chunk_GQA_max_relative_l2": 1.0717939087780677e-06,
+          "chunk_initial_logical_bytes": 35651584,
+          "chunk_initial_backing_storage_bytes": 35651584,
+          "chunk_final_logical_bytes": 286285824,
+          "chunk_final_backing_storage_bytes": 293888000
+        },
+        {
+          "case": "prefix1025",
+          "full_logical_bytes": 286326784,
+          "full_backing_storage_bytes": 294404096,
+          "cached_last33_logits": {
+            "finite": true,
+            "max_abs": 0.00011110305786132812,
+            "relative_l2": 1.0886687392185087e-06
+          },
+          "cached_GQA_max_relative_l2": 8.348263657818662e-07,
+          "cached_initial_logical_bytes": 285016064,
+          "cached_initial_backing_storage_bytes": 285491200,
+          "cached_final_logical_bytes": 286326784,
+          "cached_final_backing_storage_bytes": 286564352,
+          "chunk_last33_logits": {
+            "finite": true,
+            "max_abs": 9.34600830078125e-05,
+            "relative_l2": 1.1178561327885672e-06
+          },
+          "chunk_GQA_max_relative_l2": 1.0725626596253143e-06,
+          "chunk_initial_logical_bytes": 35651584,
+          "chunk_initial_backing_storage_bytes": 35651584,
+          "chunk_final_logical_bytes": 286326784,
+          "chunk_final_backing_storage_bytes": 294166528
+        },
+        {
+          "case": "prefix4096",
+          "full_logical_bytes": 412114944,
+          "full_backing_storage_bytes": 1149763584,
+          "cached_last33_logits": {
+            "finite": true,
+            "max_abs": 0.00011539459228515625,
+            "relative_l2": 1.8479115929186113e-06
+          },
+          "cached_GQA_max_relative_l2": 5.380336904062814e-07,
+          "cached_initial_logical_bytes": 410804224,
+          "cached_initial_backing_storage_bytes": 1140850688,
+          "cached_final_logical_bytes": 412114944,
+          "cached_final_backing_storage_bytes": 412352512,
+          "chunk_last33_logits": {
+            "finite": true,
+            "max_abs": 0.0003895759582519531,
+            "relative_l2": 6.213514564732145e-06
+          },
+          "chunk_GQA_max_relative_l2": 7.840660817928505e-07,
+          "chunk_initial_logical_bytes": 35651584,
+          "chunk_initial_backing_storage_bytes": 35651584,
+          "chunk_final_logical_bytes": 412114944,
+          "chunk_final_backing_storage_bytes": 419717120
+        }
+      ],
+      "export_source_audit": {
+        "status": "PASS",
+        "exported_tensors_bound_to_actual_source": 3618,
+        "source_bytes_compared": 133127424,
+        "scope": "exact actual tensor fields/values/layout; full native-call scope, no cached norm mixing; not model quality",
+        "original_capture_manifest_sha256": "f1209a433810e8cc890c06bfb6ccd535d5925f64192788a18610851d2d682311"
+      },
+      "integer_source_commit": "3f17910ec3d9591a10e9b98ff09916154385751d",
+      "integer_seconds": 61.76677777385339,
+      "independent_checks": {
+        "cases": 300,
+        "INT64_partial_values": 2718720,
+        "arbitrary_integer_aligned_values": 115200,
+        "Fraction_RQ_values": 115200,
+        "activation_codes_checked": 35635200,
+        "dynamic_or_static_A_exponents": 169920,
+        "packet_checks": 1200
+      },
+      "linear_profiles": [
+        {
+          "linear": "layer0.down_proj",
+          "profile": "dynamic_K128_W128",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.028834490078340047,
+          "worst_after_RQ_rmse": 0.03810262111919154,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 33,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.down_proj",
+          "profile": "dynamic_K128_Wout",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.03301302863398978,
+          "worst_after_RQ_rmse": 0.04082639814337548,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 33,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.down_proj",
+          "profile": "dynamic_row_Wout",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.13816559792486227,
+          "worst_after_RQ_rmse": 0.14025145328994423,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 29,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.down_proj",
+          "profile": "static_K128_W128",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.2587596174104655,
+          "worst_after_RQ_rmse": 0.2585584418227099,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 0,
+          "A_clipping": 319,
+          "max_coarse_signed_bound_bits": 31,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.down_proj",
+          "profile": "static_tensor_Wout",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.2838396199573418,
+          "worst_after_RQ_rmse": 0.2840427534705859,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 29,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.o_proj",
+          "profile": "dynamic_K128_W128",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.01943794176098702,
+          "worst_after_RQ_rmse": 0.034134929528280226,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 5,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 29,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.o_proj",
+          "profile": "dynamic_K128_Wout",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.02121519351775402,
+          "worst_after_RQ_rmse": 0.034817154666238484,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 5,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 29,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.o_proj",
+          "profile": "dynamic_row_Wout",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.03260309487946628,
+          "worst_after_RQ_rmse": 0.03856912547003466,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 5,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 26,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.o_proj",
+          "profile": "static_K128_W128",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.03003945108804155,
+          "worst_after_RQ_rmse": 0.03762643310437075,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 5,
+          "A_clipping": 15,
+          "max_coarse_signed_bound_bits": 28,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.o_proj",
+          "profile": "static_tensor_Wout",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.033231743068496515,
+          "worst_after_RQ_rmse": 0.039028335655154324,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 5,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 26,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.q_proj",
+          "profile": "dynamic_K128_W128",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.019378576592037854,
+          "worst_after_RQ_rmse": 0.024686481764101743,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 21,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 30,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.q_proj",
+          "profile": "dynamic_K128_Wout",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.020669979531851703,
+          "worst_after_RQ_rmse": 0.02506890821174654,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 21,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 29,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.q_proj",
+          "profile": "dynamic_row_Wout",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.053142869192725296,
+          "worst_after_RQ_rmse": 0.05289290102755915,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 16,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 27,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.q_proj",
+          "profile": "static_K128_W128",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.03680645970555742,
+          "worst_after_RQ_rmse": 0.040457957797520976,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 21,
+          "A_clipping": 46,
+          "max_coarse_signed_bound_bits": 29,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.q_proj",
+          "profile": "static_tensor_Wout",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.09331677609428699,
+          "worst_after_RQ_rmse": 0.09246826279291724,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 16,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 27,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer5.down_proj",
+          "profile": "dynamic_K128_W128",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.037694116572927046,
+          "worst_after_RQ_rmse": 0.039995472622841075,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 33,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer5.down_proj",
+          "profile": "dynamic_K128_Wout",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.04053081470162848,
+          "worst_after_RQ_rmse": 0.04210777121012228,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 32,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer5.down_proj",
+          "profile": "dynamic_row_Wout",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.17878998849460367,
+          "worst_after_RQ_rmse": 0.1822535225559773,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 29,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer5.down_proj",
+          "profile": "static_K128_W128",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.21933432468533479,
+          "worst_after_RQ_rmse": 0.2205527212370853,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 0,
+          "A_clipping": 560,
+          "max_coarse_signed_bound_bits": 31,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer5.down_proj",
+          "profile": "static_tensor_Wout",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.2103896873727165,
+          "worst_after_RQ_rmse": 0.212229497317786,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 29,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer5.o_proj",
+          "profile": "dynamic_K128_W128",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.02122488109610848,
+          "worst_after_RQ_rmse": 0.027324217123296034,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 29,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer5.o_proj",
+          "profile": "dynamic_K128_Wout",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.021450641811958864,
+          "worst_after_RQ_rmse": 0.02801154343264671,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 28,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer5.o_proj",
+          "profile": "dynamic_row_Wout",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.02858283388954703,
+          "worst_after_RQ_rmse": 0.032922008755713154,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 26,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer5.o_proj",
+          "profile": "static_K128_W128",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.03189751482799033,
+          "worst_after_RQ_rmse": 0.03646656977549219,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 27,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer5.o_proj",
+          "profile": "static_tensor_Wout",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.05304168763248105,
+          "worst_after_RQ_rmse": 0.055523420285699523,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 26,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer5.q_proj",
+          "profile": "dynamic_K128_W128",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.018340161644103157,
+          "worst_after_RQ_rmse": 0.024672679161067475,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 30,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer5.q_proj",
+          "profile": "dynamic_K128_Wout",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.02006800016617724,
+          "worst_after_RQ_rmse": 0.025009977563384814,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 29,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer5.q_proj",
+          "profile": "dynamic_row_Wout",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.04769093136075979,
+          "worst_after_RQ_rmse": 0.049818879266254404,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 27,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer5.q_proj",
+          "profile": "static_K128_W128",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.0244866836596719,
+          "worst_after_RQ_rmse": 0.030299044195511746,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 16,
+          "max_coarse_signed_bound_bits": 28,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer5.q_proj",
+          "profile": "static_tensor_Wout",
+          "cases": 10,
+          "worst_before_RQ_rmse": 0.057308688597533505,
+          "worst_after_RQ_rmse": 0.06007685899421859,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 27,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        }
+      ],
+      "attention_formats": [
+        {
+          "layer": 0,
+          "KV_bits": 8,
+          "P_bits": 8,
+          "worst_attention_rmse": 0.3446618258960784,
+          "max_P_zero_fraction": 0.9921481346899225,
+          "K_clips": 0,
+          "V_clips": 0,
+          "max_PV_signed_bound_bits": 27,
+          "signed8_limb_products_per_base_PV_MAC": 1,
+          "scope": "selected completeGQA group, static KV calibration, FP64 softmax fallback"
+        },
+        {
+          "layer": 0,
+          "KV_bits": 8,
+          "P_bits": 16,
+          "worst_attention_rmse": 0.03524838961137232,
+          "max_P_zero_fraction": 0.7846384447674418,
+          "K_clips": 0,
+          "V_clips": 0,
+          "max_PV_signed_bound_bits": 35,
+          "signed8_limb_products_per_base_PV_MAC": 3,
+          "scope": "selected completeGQA group, static KV calibration, FP64 softmax fallback"
+        },
+        {
+          "layer": 0,
+          "KV_bits": 16,
+          "P_bits": 8,
+          "worst_attention_rmse": 0.34308478182242824,
+          "max_P_zero_fraction": 0.9921057412790698,
+          "K_clips": 0,
+          "V_clips": 0,
+          "max_PV_signed_bound_bits": 35,
+          "signed8_limb_products_per_base_PV_MAC": 3,
+          "scope": "selected completeGQA group, static KV calibration, FP64 softmax fallback"
+        },
+        {
+          "layer": 0,
+          "KV_bits": 16,
+          "P_bits": 16,
+          "worst_attention_rmse": 0.004995000712388625,
+          "max_P_zero_fraction": 0.784577882751938,
+          "K_clips": 0,
+          "V_clips": 0,
+          "max_PV_signed_bound_bits": 44,
+          "signed8_limb_products_per_base_PV_MAC": 9,
+          "scope": "selected completeGQA group, static KV calibration, FP64 softmax fallback"
+        },
+        {
+          "layer": 5,
+          "KV_bits": 8,
+          "P_bits": 8,
+          "worst_attention_rmse": 0.0689477682199723,
+          "max_P_zero_fraction": 0.9926507994186047,
+          "K_clips": 0,
+          "V_clips": 0,
+          "max_PV_signed_bound_bits": 27,
+          "signed8_limb_products_per_base_PV_MAC": 1,
+          "scope": "selected completeGQA group, static KV calibration, FP64 softmax fallback"
+        },
+        {
+          "layer": 5,
+          "KV_bits": 8,
+          "P_bits": 16,
+          "worst_attention_rmse": 0.044850648507831097,
+          "max_P_zero_fraction": 0.9354802567829458,
+          "K_clips": 0,
+          "V_clips": 0,
+          "max_PV_signed_bound_bits": 35,
+          "signed8_limb_products_per_base_PV_MAC": 3,
+          "scope": "selected completeGQA group, static KV calibration, FP64 softmax fallback"
+        },
+        {
+          "layer": 5,
+          "KV_bits": 16,
+          "P_bits": 8,
+          "worst_attention_rmse": 0.06240741243878855,
+          "max_P_zero_fraction": 0.9926477713178294,
+          "K_clips": 0,
+          "V_clips": 0,
+          "max_PV_signed_bound_bits": 35,
+          "signed8_limb_products_per_base_PV_MAC": 3,
+          "scope": "selected completeGQA group, static KV calibration, FP64 softmax fallback"
+        },
+        {
+          "layer": 5,
+          "KV_bits": 16,
+          "P_bits": 16,
+          "worst_attention_rmse": 0.01739469611797939,
+          "max_P_zero_fraction": 0.9352077277131783,
+          "K_clips": 0,
+          "V_clips": 0,
+          "max_PV_signed_bound_bits": 44,
+          "signed8_limb_products_per_base_PV_MAC": 9,
+          "scope": "selected completeGQA group, static KV calibration, FP64 softmax fallback"
+        }
+      ]
+    },
+    "qwen25": {
+      "model": {
+        "id": "Qwen/Qwen2.5-3B",
+        "revision": "5defd2796acd3cb2051bb4c787eddc7f8f35e113",
+        "reference_manifest_commit": "2ada6cf6a61f5acff4b6052e81e15d20070dc0f3"
+      },
+      "capture_source_commit": "a96eef6175d15173496d674caee7b0078971f2f5",
+      "capture_script_seconds": 22.762199954129755,
+      "capture_peak_RSS_bytes": 18832941056,
+      "versions": {
+        "torch": "2.10.0+cpu",
+        "transformers": "5.20.2",
+        "numpy": "2.2.6"
+      },
+      "threads": 24,
+      "case_names": [
+        "calibration",
+        "prefix128",
+        "prefix1024"
+      ],
+      "group_Q_heads": 8,
+      "head_dim": 128,
+      "selected_layers": [
+        0
+      ],
+      "sealed_reserved": false,
+      "raw_capture": {
+        "bytes": 34851938,
+        "sha256": "e7b8162bae2e8e85962de5e46a32b656ff3e51095149810ea81a779820cf0d10"
+      },
+      "strict_validated_tensors": 513,
+      "KV": [
+        {
+          "case": "calibration",
+          "full_logical_bytes": 9437184,
+          "full_backing_storage_bytes": 9437184
+        },
+        {
+          "case": "prefix128",
+          "full_logical_bytes": 11796480,
+          "full_backing_storage_bytes": 11796480,
+          "cached_last33_logits": {
+            "finite": true,
+            "max_abs": 2.6345252990722656e-05,
+            "relative_l2": 1.0468671206219486e-06
+          },
+          "cached_GQA_max_relative_l2": 6.383928905777287e-07,
+          "cached_initial_logical_bytes": 9437184,
+          "cached_initial_backing_storage_bytes": 9437184,
+          "cached_final_logical_bytes": 11796480,
+          "cached_final_backing_storage_bytes": 11796480,
+          "chunk_last33_logits": {
+            "finite": true,
+            "max_abs": 3.743171691894531e-05,
+            "relative_l2": 1.020799990660784e-06
+          },
+          "chunk_GQA_max_relative_l2": 6.176005195507559e-07,
+          "chunk_initial_logical_bytes": 9437184,
+          "chunk_initial_backing_storage_bytes": 9437184,
+          "chunk_final_logical_bytes": 11796480,
+          "chunk_final_backing_storage_bytes": 11796480
+        },
+        {
+          "case": "prefix1024",
+          "full_logical_bytes": 77856768,
+          "full_backing_storage_bytes": 77856768,
+          "cached_last33_logits": {
+            "finite": true,
+            "max_abs": 4.5299530029296875e-05,
+            "relative_l2": 8.68314255619548e-07
+          },
+          "cached_GQA_max_relative_l2": 2.9087594660881926e-07,
+          "cached_initial_logical_bytes": 75497472,
+          "cached_initial_backing_storage_bytes": 75497472,
+          "cached_final_logical_bytes": 77856768,
+          "cached_final_backing_storage_bytes": 77856768,
+          "chunk_last33_logits": {
+            "finite": true,
+            "max_abs": 4.1961669921875e-05,
+            "relative_l2": 9.799814504788084e-07
+          },
+          "chunk_GQA_max_relative_l2": 1.555508039665435e-06,
+          "chunk_initial_logical_bytes": 9437184,
+          "chunk_initial_backing_storage_bytes": 9437184,
+          "chunk_final_logical_bytes": 77856768,
+          "chunk_final_backing_storage_bytes": 77856768
+        }
+      ],
+      "export_source_audit": {
+        "status": "PASS",
+        "exported_tensors_bound_to_actual_source": 513,
+        "source_bytes_compared": 19828416,
+        "scope": "exact actual tensor fields/values/layout; full native-call scope, no cached norm mixing; not model quality",
+        "original_capture_manifest_sha256": "165e8109f8025c8bfafc9079d5a9e40e688897162cf6e9ca48d337efd5c3b5e5"
+      },
+      "integer_source_commit": "3f17910ec3d9591a10e9b98ff09916154385751d",
+      "integer_seconds": 11.068580445833504,
+      "independent_checks": {
+        "cases": 60,
+        "INT64_partial_values": 552960,
+        "arbitrary_integer_aligned_values": 23040,
+        "Fraction_RQ_values": 23040,
+        "activation_codes_checked": 7249920,
+        "dynamic_or_static_A_exponents": 34560,
+        "packet_checks": 240
+      },
+      "linear_profiles": [
+        {
+          "linear": "layer0.down_proj",
+          "profile": "dynamic_K128_W128",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.02956240079444361,
+          "worst_after_RQ_rmse": 0.03371600560016796,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 34,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.down_proj",
+          "profile": "dynamic_K128_Wout",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.031712554699307255,
+          "worst_after_RQ_rmse": 0.03477516941618351,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 32,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.down_proj",
+          "profile": "dynamic_row_Wout",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.1823891168934287,
+          "worst_after_RQ_rmse": 0.18266578713002274,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 29,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.down_proj",
+          "profile": "static_K128_W128",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.42129465408527933,
+          "worst_after_RQ_rmse": 0.4224844678785213,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 0,
+          "A_clipping": 323,
+          "max_coarse_signed_bound_bits": 32,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.down_proj",
+          "profile": "static_tensor_Wout",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.2731706918049897,
+          "worst_after_RQ_rmse": 0.2744623685381119,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 29,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.o_proj",
+          "profile": "dynamic_K128_W128",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.023694736404243712,
+          "worst_after_RQ_rmse": 0.03002082832607414,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 31,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.o_proj",
+          "profile": "dynamic_K128_Wout",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.0249376450771049,
+          "worst_after_RQ_rmse": 0.030715837075938175,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 29,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.o_proj",
+          "profile": "dynamic_row_Wout",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.03960015016236588,
+          "worst_after_RQ_rmse": 0.043644119547242934,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 26,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.o_proj",
+          "profile": "static_K128_W128",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.038596686444273096,
+          "worst_after_RQ_rmse": 0.04296976589379263,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 28,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.o_proj",
+          "profile": "static_tensor_Wout",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.049534997741112405,
+          "worst_after_RQ_rmse": 0.05208647234933222,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 26,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.q_proj",
+          "profile": "dynamic_K128_W128",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.005893600079208936,
+          "worst_after_RQ_rmse": 0.011876230786852298,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 31,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.q_proj",
+          "profile": "dynamic_K128_Wout",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.006985188187792238,
+          "worst_after_RQ_rmse": 0.012293591937035733,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 32,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.q_proj",
+          "profile": "dynamic_row_Wout",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.011504681741908152,
+          "worst_after_RQ_rmse": 0.015158478326394876,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 33,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.q_proj",
+          "profile": "static_K128_W128",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.008522945645646329,
+          "worst_after_RQ_rmse": 0.013307174933263015,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 6,
+          "max_coarse_signed_bound_bits": 32,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer0.q_proj",
+          "profile": "static_tensor_Wout",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.01567302933023815,
+          "worst_after_RQ_rmse": 0.01850388188268505,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 33,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        }
+      ],
+      "attention_formats": [
+        {
+          "layer": 0,
+          "KV_bits": 8,
+          "P_bits": 8,
+          "worst_attention_rmse": 0.13976888027732337,
+          "max_P_zero_fraction": 0.9773674242424243,
+          "K_clips": 0,
+          "V_clips": 0,
+          "max_PV_signed_bound_bits": 26,
+          "signed8_limb_products_per_base_PV_MAC": 1,
+          "scope": "selected completeGQA group, static KV calibration, FP64 softmax fallback"
+        },
+        {
+          "layer": 0,
+          "KV_bits": 8,
+          "P_bits": 16,
+          "worst_attention_rmse": 0.12503424196873175,
+          "max_P_zero_fraction": 0.5558623342803031,
+          "K_clips": 0,
+          "V_clips": 0,
+          "max_PV_signed_bound_bits": 34,
+          "signed8_limb_products_per_base_PV_MAC": 3,
+          "scope": "selected completeGQA group, static KV calibration, FP64 softmax fallback"
+        },
+        {
+          "layer": 0,
+          "KV_bits": 16,
+          "P_bits": 8,
+          "worst_attention_rmse": 0.06434576504274594,
+          "max_P_zero_fraction": 0.977728456439394,
+          "K_clips": 0,
+          "V_clips": 0,
+          "max_PV_signed_bound_bits": 34,
+          "signed8_limb_products_per_base_PV_MAC": 3,
+          "scope": "selected completeGQA group, static KV calibration, FP64 softmax fallback"
+        },
+        {
+          "layer": 0,
+          "KV_bits": 16,
+          "P_bits": 16,
+          "worst_attention_rmse": 0.005758889704864736,
+          "max_P_zero_fraction": 0.5538204308712121,
+          "K_clips": 0,
+          "V_clips": 0,
+          "max_PV_signed_bound_bits": 42,
+          "signed8_limb_products_per_base_PV_MAC": 9,
+          "scope": "selected completeGQA group, static KV calibration, FP64 softmax fallback"
+        }
+      ]
+    },
+    "qwen35": {
+      "model": {
+        "id": "Qwen/Qwen3.5-4B",
+        "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+        "reference_manifest_commit": "2ada6cf6a61f5acff4b6052e81e15d20070dc0f3"
+      },
+      "capture_source_commit": "a96eef6175d15173496d674caee7b0078971f2f5",
+      "capture_script_seconds": 25.55781176034361,
+      "capture_peak_RSS_bytes": 25559715840,
+      "versions": {
+        "torch": "2.10.0+cpu",
+        "transformers": "5.20.2",
+        "numpy": "2.2.6"
+      },
+      "threads": 24,
+      "case_names": [
+        "calibration",
+        "prefix128",
+        "prefix1024"
+      ],
+      "group_Q_heads": 4,
+      "head_dim": 256,
+      "selected_layers": [
+        3
+      ],
+      "sealed_reserved": false,
+      "raw_capture": {
+        "bytes": 57326601,
+        "sha256": "ba1018985162a6308d2d984969505d35f93614ff401af30e91fa2e4205c3ba7b"
+      },
+      "strict_validated_tensors": 714,
+      "KV": [
+        {
+          "case": "calibration",
+          "full_logical_bytes": 61865984,
+          "full_backing_storage_bytes": 61865984
+        },
+        {
+          "case": "prefix128",
+          "full_logical_bytes": 63963136,
+          "full_backing_storage_bytes": 63963136,
+          "cached_last33_logits": {
+            "finite": true,
+            "max_abs": 7.253885269165039e-05,
+            "relative_l2": 1.580865891942395e-06
+          },
+          "cached_GQA_max_relative_l2": 1.099174882027252e-06,
+          "cached_initial_logical_bytes": 61865984,
+          "cached_initial_backing_storage_bytes": 61865984,
+          "cached_final_logical_bytes": 63963136,
+          "cached_final_backing_storage_bytes": 63963136,
+          "chunk_last33_logits": {
+            "finite": true,
+            "max_abs": 0.00010335445404052734,
+            "relative_l2": 1.6609416966493337e-06
+          },
+          "chunk_GQA_max_relative_l2": 1.0393542838990774e-06,
+          "chunk_initial_logical_bytes": 61865984,
+          "chunk_initial_backing_storage_bytes": 61865984,
+          "chunk_final_logical_bytes": 63963136,
+          "chunk_final_backing_storage_bytes": 63963136
+        },
+        {
+          "case": "prefix1024",
+          "full_logical_bytes": 122683392,
+          "full_backing_storage_bytes": 122683392,
+          "cached_last33_logits": {
+            "finite": true,
+            "max_abs": 0.0017428398132324219,
+            "relative_l2": 1.8207425277194344e-05
+          },
+          "cached_GQA_max_relative_l2": 8.05764649088624e-07,
+          "cached_initial_logical_bytes": 120586240,
+          "cached_initial_backing_storage_bytes": 120586240,
+          "cached_final_logical_bytes": 122683392,
+          "cached_final_backing_storage_bytes": 122683392,
+          "chunk_last33_logits": {
+            "finite": true,
+            "max_abs": 0.0015659332275390625,
+            "relative_l2": 2.0502322609423677e-05
+          },
+          "chunk_GQA_max_relative_l2": 1.1173497726986622e-06,
+          "chunk_initial_logical_bytes": 61865984,
+          "chunk_initial_backing_storage_bytes": 61865984,
+          "chunk_final_logical_bytes": 122683392,
+          "chunk_final_backing_storage_bytes": 122683392
+        }
+      ],
+      "export_source_audit": {
+        "status": "PASS",
+        "exported_tensors_bound_to_actual_source": 714,
+        "source_bytes_compared": 28792320,
+        "scope": "exact actual tensor fields/values/layout; full native-call scope, no cached norm mixing; not model quality",
+        "original_capture_manifest_sha256": "20101ece55df9845aede7fd3674419e973f74e3a41d61531a53ac9964be6dbe5"
+      },
+      "integer_source_commit": "3f17910ec3d9591a10e9b98ff09916154385751d",
+      "integer_seconds": 11.59628144884482,
+      "independent_checks": {
+        "cases": 60,
+        "INT64_partial_values": 580608,
+        "arbitrary_integer_aligned_values": 23040,
+        "Fraction_RQ_values": 23040,
+        "activation_codes_checked": 7618560,
+        "dynamic_or_static_A_exponents": 36288,
+        "packet_checks": 240
+      },
+      "linear_profiles": [
+        {
+          "linear": "layer3.down_proj",
+          "profile": "dynamic_K128_W128",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.008435762834294886,
+          "worst_after_RQ_rmse": 0.04828734380416222,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 33,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer3.down_proj",
+          "profile": "dynamic_K128_Wout",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.012285580648607066,
+          "worst_after_RQ_rmse": 0.04927109578018278,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 31,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer3.down_proj",
+          "profile": "dynamic_row_Wout",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.030346824552275758,
+          "worst_after_RQ_rmse": 0.05315854650649953,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 29,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer3.down_proj",
+          "profile": "static_K128_W128",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.04723757369429531,
+          "worst_after_RQ_rmse": 0.059302459056479566,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 0,
+          "A_clipping": 116,
+          "max_coarse_signed_bound_bits": 32,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer3.down_proj",
+          "profile": "static_tensor_Wout",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.07636102625862472,
+          "worst_after_RQ_rmse": 0.08581412184808651,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 29,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer3.o_proj",
+          "profile": "dynamic_K128_W128",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.004169172269088989,
+          "worst_after_RQ_rmse": 0.01254363298052869,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 32,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer3.o_proj",
+          "profile": "dynamic_K128_Wout",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.004746144823559277,
+          "worst_after_RQ_rmse": 0.012610588597462584,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 31,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer3.o_proj",
+          "profile": "dynamic_row_Wout",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.021674520961408667,
+          "worst_after_RQ_rmse": 0.025256336187571605,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 27,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer3.o_proj",
+          "profile": "static_K128_W128",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.012712412547621454,
+          "worst_after_RQ_rmse": 0.01947593718785692,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 25,
+          "max_coarse_signed_bound_bits": 30,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer3.o_proj",
+          "profile": "static_tensor_Wout",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.034096693885884266,
+          "worst_after_RQ_rmse": 0.03738684972851211,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 27,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer3.q_proj",
+          "profile": "dynamic_K128_W128",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.030564190903086142,
+          "worst_after_RQ_rmse": 0.03513311006838103,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 30,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer3.q_proj",
+          "profile": "dynamic_K128_Wout",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.03239005913526161,
+          "worst_after_RQ_rmse": 0.03597273440565931,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 29,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer3.q_proj",
+          "profile": "dynamic_row_Wout",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.09628135976365247,
+          "worst_after_RQ_rmse": 0.09725064168161505,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 27,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer3.q_proj",
+          "profile": "static_K128_W128",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.031129475030068406,
+          "worst_after_RQ_rmse": 0.035118764126170696,
+          "all_exploratory_local_screen_passed": true,
+          "output_saturation_count": 0,
+          "A_clipping": 2,
+          "max_coarse_signed_bound_bits": 29,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        },
+        {
+          "linear": "layer3.q_proj",
+          "profile": "static_tensor_Wout",
+          "cases": 4,
+          "worst_before_RQ_rmse": 0.09643206889994273,
+          "worst_after_RQ_rmse": 0.0975196205118372,
+          "all_exploratory_local_screen_passed": false,
+          "output_saturation_count": 0,
+          "A_clipping": 0,
+          "max_coarse_signed_bound_bits": 27,
+          "scope": "selected16 outputs/fullK, local5% screen only, not full-model quality"
+        }
+      ],
+      "attention_formats": [
+        {
+          "layer": 3,
+          "KV_bits": 8,
+          "P_bits": 8,
+          "worst_attention_rmse": 0.233669576119236,
+          "max_P_zero_fraction": 0.9599786931818182,
+          "K_clips": 0,
+          "V_clips": 0,
+          "max_PV_signed_bound_bits": 26,
+          "signed8_limb_products_per_base_PV_MAC": 1,
+          "scope": "selected completeGQA group, static KV calibration, FP64 softmax fallback"
+        },
+        {
+          "layer": 3,
+          "KV_bits": 8,
+          "P_bits": 16,
+          "worst_attention_rmse": 0.028807877212082104,
+          "max_P_zero_fraction": 0.2708451704545455,
+          "K_clips": 0,
+          "V_clips": 0,
+          "max_PV_signed_bound_bits": 34,
+          "signed8_limb_products_per_base_PV_MAC": 3,
+          "scope": "selected completeGQA group, static KV calibration, FP64 softmax fallback"
+        },
+        {
+          "layer": 3,
+          "KV_bits": 16,
+          "P_bits": 8,
+          "worst_attention_rmse": 0.23302857140390731,
+          "max_P_zero_fraction": 0.9599254261363637,
+          "K_clips": 0,
+          "V_clips": 0,
+          "max_PV_signed_bound_bits": 34,
+          "signed8_limb_products_per_base_PV_MAC": 3,
+          "scope": "selected completeGQA group, static KV calibration, FP64 softmax fallback"
+        },
+        {
+          "layer": 3,
+          "KV_bits": 16,
+          "P_bits": 16,
+          "worst_attention_rmse": 0.009496674838396313,
+          "max_P_zero_fraction": 0.27040719696969695,
+          "K_clips": 0,
+          "V_clips": 0,
+          "max_PV_signed_bound_bits": 42,
+          "signed8_limb_products_per_base_PV_MAC": 9,
+          "scope": "selected completeGQA group, static KV calibration, FP64 softmax fallback"
+        }
+      ]
+    },
+    "phi": {
+      "model": {
+        "id": "microsoft/Phi-4-mini-instruct",
+        "revision": "cfbefacb99257ffa30c83adab238a50856ac3083"
+      },
+      "capture_source_commit": "8a1fe4bfed52dd0baa552c6043f507bafe902c03",
+      "capture_script_seconds": 19.119934448041022,
+      "capture_peak_RSS_bytes": 18416500736,
+      "versions": {
+        "torch": "2.10.0+cpu",
+        "transformers": "4.57.6",
+        "numpy": "2.2.6"
+      },
+      "threads": 24,
+      "case_names": [
+        "prefix128",
+        "prefix1024"
+      ],
+      "group_Q_heads": 3,
+      "head_dim": 128,
+      "selected_layers": [
+        0
+      ],
+      "sealed_reserved": true,
+      "raw_capture": {
+        "bytes": 21792584,
+        "sha256": "5fb19627cbe138b2200742d5d14938a743b363af906de256d7c36402cd894aec"
+      },
+      "strict_validated_tensors": 340,
+      "KV": [
+        {
+          "case": "prefix128",
+          "full_logical_bytes": 41943040,
+          "full_backing_storage_bytes": 41943040,
+          "cached_last33_logits": {
+            "finite": true,
+            "max_abs": 6.4849853515625e-05,
+            "relative_l2": 4.0262077217141933e-07
+          },
+          "cached_GQA_max_relative_l2": 2.296003462331221e-07,
+          "cached_initial_logical_bytes": 33554432,
+          "cached_initial_backing_storage_bytes": 33554432,
+          "cached_final_logical_bytes": 41943040,
+          "cached_final_backing_storage_bytes": 41943040,
+          "chunk_last33_logits": {
+            "finite": true,
+            "max_abs": 0.000141143798828125,
+            "relative_l2": 5.860249076238679e-07
+          },
+          "chunk_GQA_max_relative_l2": 6.074776509756561e-08,
+          "chunk_initial_logical_bytes": 33554432,
+          "chunk_initial_backing_storage_bytes": 33554432,
+          "chunk_final_logical_bytes": 41943040,
+          "chunk_final_backing_storage_bytes": 41943040
+        },
+        {
+          "case": "prefix1024",
+          "full_logical_bytes": 276824064,
+          "full_backing_storage_bytes": 276824064,
+          "cached_last33_logits": {
+            "finite": true,
+            "max_abs": 6.103515625e-05,
+            "relative_l2": 3.959339615578175e-07
+          },
+          "cached_GQA_max_relative_l2": 8.897162311588874e-08,
+          "cached_initial_logical_bytes": 268435456,
+          "cached_initial_backing_storage_bytes": 268435456,
+          "cached_final_logical_bytes": 276824064,
+          "cached_final_backing_storage_bytes": 276824064,
+          "chunk_last33_logits": {
+            "finite": true,
+            "max_abs": 7.2479248046875e-05,
+            "relative_l2": 3.8778485416688256e-07
+          },
+          "chunk_GQA_max_relative_l2": 1.7541951010474104e-07,
+          "chunk_initial_logical_bytes": 33554432,
+          "chunk_initial_backing_storage_bytes": 33554432,
+          "chunk_final_logical_bytes": 276824064,
+          "chunk_final_backing_storage_bytes": 276824064
+        }
+      ],
+      "export_source_audit": {
+        "status": "PASS",
+        "exported_tensors_bound_to_actual_source": 340,
+        "source_bytes_compared": 10288640,
+        "scope": "exact actual tensor fields/values/layout; full native-call scope, no cached norm mixing; not model quality",
+        "original_capture_manifest_sha256": "2bc50d7a7da95f5956e0643fc5f72667405a93a00e34fa1222bb92a6648daa54"
+      }
+    }
+  },
+  "status": "PASS_EXECUTED_STAGES"
+}

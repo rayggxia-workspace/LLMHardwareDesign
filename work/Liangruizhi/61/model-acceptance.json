@@ -1,0 +1,402 @@
+{
+  "schema": "model-acceptance/2",
+  "updated_utc": "2026-10-23T15:20:51.389Z",
+  "owner": "Liangruizhi",
+  "issue": 61,
+  "pr": 62,
+  "source_pr36_commit": "2ada6cf6a61f5acff4b6052e81e15d20070dc0f3",
+  "server_root": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023",
+  "gpu_available": false,
+  "performance_policy": "CPU correctness only; existing isolated GPU timing remains separate. No target Block/PPA inference from host timing.",
+  "models": [
+    {
+      "model": "Qwen/Qwen2.5-3B",
+      "revision": "5defd2796acd3cb2051bb4c787eddc7f8f35e113",
+      "producer": "YUZE-LU / Issue32 PR36",
+      "receiver": "Liangruizhi / Issue61",
+      "status": "已执行（参考/完整GQA/软件整数/严格接收/成本）；失败（部分数值候选）",
+      "completed": [
+        "calibration/prefix128/prefix1024 prefill/cached32/chunk128一致性通过，真实token/config/impl/input/artifactSHA在capture manifest",
+        "完整8Q/1KV，layers0，strict02逐值绑定513张量，旧strict01废止",
+        "60线性整数条件、完整注意力格式探针，独立INT64/Fraction/编码/metadata/packet重算",
+        "56总条件中的对应全PV32核与I64全输出相等；fixed-W及Psum条件证书，非无条件INT32硬件证明",
+        "420总条件中的逐token因果打包/容量/guard成本，非端到端周期或PPA",
+        "PR36@2ada6cf69文件已审计（57原字节、12CRLF精确重构），GPU长结果只复用不重跑；原失败条件保留"
+      ],
+      "evidence": [
+        "qwen25-gqa01",
+        "qwen25-strict02",
+        "qwen25-export-source02.json",
+        "project/experiments/server_models/results/issue-61/index.json"
+      ],
+      "unfinished": [
+        "未执行：本批新算术RTL/目标时序/PPA、全整数exp/div/norm/state、整图同资源端口调度",
+        "应用质量未验收；5%局部探索门不等于全模型质量，最新Issue32取消的额外质量任务不自行恢复"
+      ],
+      "next": "在新Issue冻结数值/库存后做E2b/E3及目标实现；不重复本批完整加载。",
+      "owner": "Liangruizhi",
+      "producer_of_this_CPU_batch": "Liangruizhi / Issue61",
+      "runtime": {
+        "reference": "original BF16 weights loaded as CPU FP32, eager, B1,24threads, not performance eligible",
+        "versions": {
+          "torch": "2.10.0+cpu",
+          "transformers": "5.20.2",
+          "numpy": "2.2.6"
+        },
+        "capture_source": "a96eef6175d15173496d674caee7b0078971f2f5",
+        "integer_source": "3f17910ec3d9591a10e9b98ff09916154385751d",
+        "source_commit_bounds": "4ca7214923dd5d87934fb2e10211517bbca35c19",
+        "jobs": {
+          "capture": 90033,
+          "integer": 90034,
+          "independent": 90035,
+          "strict": 90040
+        }
+      },
+      "stages": [
+        {
+          "stage": "reference prefill/cached/chunk",
+          "status": "已执行",
+          "result": "PASS under frozen local consistency thresholds",
+          "job": 90033
+        },
+        {
+          "stage": "strict02/source binding",
+          "status": "已执行",
+          "result": "PASS",
+          "job": 90040
+        },
+        {
+          "stage": "integer arithmetic/readback",
+          "status": "已执行",
+          "result": {
+            "cases": 60,
+            "INT64_partial_values": 552960,
+            "arbitrary_integer_aligned_values": 23040,
+            "Fraction_RQ_values": 23040,
+            "activation_codes_checked": 7249920,
+            "dynamic_or_static_A_exponents": 34560,
+            "packet_checks": 240
+          },
+          "job": 90034
+        },
+        {
+          "stage": "quantization candidates",
+          "status": "失败/已执行",
+          "result": "静态down及低位概率/KV等误差超局部门；完整失败/饱和保留，不等于所有方案通过"
+        },
+        {
+          "stage": "full PV32 conditional kernel",
+          "status": "已执行",
+          "result": "PASS given declared invariants",
+          "job": 90046
+        },
+        {
+          "stage": "causal packet/capacity accounting",
+          "status": "已执行",
+          "result": "lower bounds/explicit hypotheses only",
+          "job": 90047
+        },
+        {
+          "stage": "original GPU evidence intake",
+          "status": "可复用",
+          "result": "PR36 pinned, two independent CPU replay runs; original large D:/Data GPU files not all transferred into this new server batch"
+        }
+      ],
+      "blockers": []
+    },
+    {
+      "model": "Qwen/Qwen3.5-4B",
+      "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+      "producer": "YUZE-LU / Issue32 PR36",
+      "receiver": "Liangruizhi / Issue61",
+      "status": "已执行（参考/完整GQA/软件整数/严格接收/成本）；失败（部分数值候选）",
+      "completed": [
+        "calibration/prefix128/prefix1024 prefill/cached32/chunk128一致性通过，真实token/config/impl/input/artifactSHA在capture manifest",
+        "完整4Q/1KV，layers3，strict02逐值绑定714张量，旧strict01废止",
+        "60线性整数条件、完整注意力格式探针，独立INT64/Fraction/编码/metadata/packet重算",
+        "56总条件中的对应全PV32核与I64全输出相等；fixed-W及Psum条件证书，非无条件INT32硬件证明",
+        "420总条件中的逐token因果打包/容量/guard成本，非端到端周期或PPA",
+        "PR36@2ada6cf69文件已审计（57原字节、12CRLF精确重构），GPU长结果只复用不重跑；原失败条件保留"
+      ],
+      "evidence": [
+        "qwen35-gqa01",
+        "qwen35-strict02",
+        "qwen35-export-source02.json",
+        "project/experiments/server_models/results/issue-61/index.json"
+      ],
+      "unfinished": [
+        "未执行：本批新算术RTL/目标时序/PPA、全整数exp/div/norm/state、整图同资源端口调度",
+        "应用质量未验收；5%局部探索门不等于全模型质量，最新Issue32取消的额外质量任务不自行恢复"
+      ],
+      "next": "在新Issue冻结数值/库存后做E2b/E3及目标实现；不重复本批完整加载。",
+      "owner": "Liangruizhi",
+      "producer_of_this_CPU_batch": "Liangruizhi / Issue61",
+      "runtime": {
+        "reference": "original BF16 weights loaded as CPU FP32, eager, B1,24threads, not performance eligible",
+        "versions": {
+          "torch": "2.10.0+cpu",
+          "transformers": "5.20.2",
+          "numpy": "2.2.6"
+        },
+        "capture_source": "a96eef6175d15173496d674caee7b0078971f2f5",
+        "integer_source": "3f17910ec3d9591a10e9b98ff09916154385751d",
+        "source_commit_bounds": "4ca7214923dd5d87934fb2e10211517bbca35c19",
+        "jobs": {
+          "capture": 90036,
+          "integer": 90037,
+          "independent": 90038,
+          "strict": 90041
+        }
+      },
+      "stages": [
+        {
+          "stage": "reference prefill/cached/chunk",
+          "status": "已执行",
+          "result": "PASS under frozen local consistency thresholds",
+          "job": 90036
+        },
+        {
+          "stage": "strict02/source binding",
+          "status": "已执行",
+          "result": "PASS",
+          "job": 90041
+        },
+        {
+          "stage": "integer arithmetic/readback",
+          "status": "已执行",
+          "result": {
+            "cases": 60,
+            "INT64_partial_values": 580608,
+            "arbitrary_integer_aligned_values": 23040,
+            "Fraction_RQ_values": 23040,
+            "activation_codes_checked": 7618560,
+            "dynamic_or_static_A_exponents": 36288,
+            "packet_checks": 240
+          },
+          "job": 90037
+        },
+        {
+          "stage": "quantization candidates",
+          "status": "失败/已执行",
+          "result": "静态down及低位概率/KV等误差超局部门；完整失败/饱和保留，不等于所有方案通过"
+        },
+        {
+          "stage": "full PV32 conditional kernel",
+          "status": "已执行",
+          "result": "PASS given declared invariants",
+          "job": 90046
+        },
+        {
+          "stage": "causal packet/capacity accounting",
+          "status": "已执行",
+          "result": "lower bounds/explicit hypotheses only",
+          "job": 90047
+        },
+        {
+          "stage": "original GPU evidence intake",
+          "status": "可复用",
+          "result": "PR36 pinned, two independent CPU replay runs; original large D:/Data GPU files not all transferred into this new server batch"
+        }
+      ],
+      "blockers": []
+    },
+    {
+      "model": "google/gemma-3-4b-it",
+      "revision": "093f9f388b31de276ce2de164bdc2081324b9767",
+      "producer": "Liangruizhi",
+      "status": "已执行（参考/完整GQA/软件整数/严格接收/成本）；失败（部分数值候选）",
+      "completed": [
+        "calibration/prefix128/prefix1023/prefix1024/prefix1025/prefix4096 prefill/cached32/chunk128一致性通过，真实token/config/impl/input/artifactSHA在capture manifest",
+        "完整2Q/1KV，layers0/5，strict02逐值绑定3618张量，旧strict01废止",
+        "300线性整数条件、完整注意力格式探针，独立INT64/Fraction/编码/metadata/packet重算",
+        "56总条件中的对应全PV32核与I64全输出相等；fixed-W及Psum条件证书，非无条件INT32硬件证明",
+        "420总条件中的逐token因果打包/容量/guard成本，非端到端周期或PPA"
+      ],
+      "evidence": [
+        "gemma-capture01",
+        "gemma-strict02",
+        "gemma-export-source02.json",
+        "project/experiments/server_models/results/issue-61/index.json"
+      ],
+      "unfinished": [
+        "未执行：本批新算术RTL/目标时序/PPA、全整数exp/div/norm/state、整图同资源端口调度",
+        "应用质量未验收；5%局部探索门不等于全模型质量，最新Issue32取消的额外质量任务不自行恢复"
+      ],
+      "blockers": [],
+      "next": "在新Issue冻结数值/库存后做E2b/E3及目标实现；不重复本批完整加载。",
+      "owner": "Liangruizhi",
+      "producer_of_this_CPU_batch": "Liangruizhi / Issue61",
+      "runtime": {
+        "reference": "original BF16 weights loaded as CPU FP32, eager, B1,24threads, not performance eligible",
+        "versions": {
+          "torch": "2.10.0+cpu",
+          "transformers": "4.57.6",
+          "numpy": "2.2.6"
+        },
+        "capture_source": "8a1fe4bfed52dd0baa552c6043f507bafe902c03",
+        "integer_source": "3f17910ec3d9591a10e9b98ff09916154385751d",
+        "source_commit_bounds": "4ca7214923dd5d87934fb2e10211517bbca35c19",
+        "jobs": {
+          "capture": 90030,
+          "integer": 90031,
+          "independent": 90032,
+          "strict": 90039
+        }
+      },
+      "stages": [
+        {
+          "stage": "reference prefill/cached/chunk",
+          "status": "已执行",
+          "result": "PASS under frozen local consistency thresholds",
+          "job": 90030
+        },
+        {
+          "stage": "strict02/source binding",
+          "status": "已执行",
+          "result": "PASS",
+          "job": 90039
+        },
+        {
+          "stage": "integer arithmetic/readback",
+          "status": "已执行",
+          "result": {
+            "cases": 300,
+            "INT64_partial_values": 2718720,
+            "arbitrary_integer_aligned_values": 115200,
+            "Fraction_RQ_values": 115200,
+            "activation_codes_checked": 35635200,
+            "dynamic_or_static_A_exponents": 169920,
+            "packet_checks": 1200
+          },
+          "job": 90031
+        },
+        {
+          "stage": "quantization candidates",
+          "status": "失败/已执行",
+          "result": "静态down及低位概率/KV等误差超局部门；完整失败/饱和保留，不等于所有方案通过"
+        },
+        {
+          "stage": "full PV32 conditional kernel",
+          "status": "已执行",
+          "result": "PASS given declared invariants",
+          "job": 90046
+        },
+        {
+          "stage": "causal packet/capacity accounting",
+          "status": "已执行",
+          "result": "lower bounds/explicit hypotheses only",
+          "job": 90047
+        }
+      ]
+    },
+    {
+      "model": "microsoft/Phi-4-mini-instruct",
+      "revision": "cfbefacb99257ffa30c83adab238a50856ac3083",
+      "producer": "Liangruizhi",
+      "status": "已执行（参考/来源/封存）；未执行（冻结后独立验证）",
+      "completed": [
+        "prefix128/prefix1024 prefill/cached32/chunk128一致性通过，真实token/config/impl/input/artifactSHA在capture manifest",
+        "完整3Q/1KV，layers0，strict02逐值绑定340张量，旧strict01废止",
+        "原始数据封存phi-reserved02-sealed.zip；禁止量化调优/解封后反向调整当前划分"
+      ],
+      "evidence": [
+        "phi-reserved01",
+        "phi-strict02",
+        "phi-export-source02.json",
+        "project/experiments/server_models/results/issue-61/index.json"
+      ],
+      "unfinished": [
+        "策略冻结后的正式独立验证未执行，Phi尚未用于数值筛选或划分收益验收"
+      ],
+      "blockers": [],
+      "next": "主策略与阈值冻结并记录SHA后再开独立验证，不将封存等同已泛化通过。",
+      "owner": "Liangruizhi",
+      "producer_of_this_CPU_batch": "Liangruizhi / Issue61",
+      "runtime": {
+        "reference": "original BF16 weights loaded as CPU FP32, eager, B1,24threads, not performance eligible",
+        "versions": {
+          "torch": "2.10.0+cpu",
+          "transformers": "4.57.6",
+          "numpy": "2.2.6"
+        },
+        "capture_source": "8a1fe4bfed52dd0baa552c6043f507bafe902c03",
+        "integer_source": null,
+        "source_commit_bounds": "4ca7214923dd5d87934fb2e10211517bbca35c19",
+        "jobs": {
+          "capture": 90026,
+          "strict": 90042
+        }
+      },
+      "stages": [
+        {
+          "stage": "reference prefill/cached/chunk",
+          "status": "已执行",
+          "result": "PASS under frozen local consistency thresholds",
+          "job": 90026
+        },
+        {
+          "stage": "strict02/source binding",
+          "status": "已执行",
+          "result": "PASS",
+          "job": 90042
+        },
+        {
+          "stage": "quantization/partition tuning",
+          "status": "条件跳过",
+          "result": "independent holdout protection"
+        },
+        {
+          "stage": "post-freeze independent validation",
+          "status": "未执行",
+          "result": "requires frozen strategy/code/thresholds"
+        }
+      ]
+    },
+    {
+      "model": "Qwen/Qwen3-0.6B; meta-llama/Llama-3.2-1B-Instruct",
+      "status": "可复用 / 本任务条件跳过",
+      "evidence": [
+        "Issue47/PR49",
+        "Issue53/PR54",
+        "Issue56/PR57",
+        "Issue59/PR60"
+      ],
+      "unfinished": [
+        "Existing qualification boundaries remain; Llama best selected down_proj error5.39% is not an accepted full-model result"
+      ],
+      "next": "No duplicate full-model rerun in this batch."
+    },
+    {
+      "model": "Gemma3-12B; Llama3.1-8B; DeepSeek-R1-Distill-Qwen-1.5B",
+      "status": "条件跳过",
+      "reason": "Latest primary scope does not independently require these optional extensions. Add only for an explicit uncovered decision in current Issue, not blind cross product.",
+      "next": "Preserve optional status; original R1 MLA/MoE not represented by distill."
+    },
+    {
+      "model": "Qwen3-4B; original DeepSeek-R1",
+      "status": "条件跳过",
+      "reason": "Qwen3-4B is not mandatory; original huge R1 excluded by user.",
+      "next": "Do not download or launch."
+    }
+  ],
+  "delivery": {
+    "registration": "pending management-hub PR5",
+    "board": "unverified; no board.json / Projects tool, sync pending admin",
+    "review": "PR62交付待审查；不自行合并或done，审查人待指定",
+    "artifacts_index": "project/experiments/server_models/results/issue-61/index.json",
+    "server_primary": {
+      "path": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/primary-model-data01.zip",
+      "bytes": 569140969,
+      "sha256": "2f03daf778c6667aae49d2edd40f3397227514e59c6342d367a552cac6ff7730",
+      "members": 4941
+    },
+    "server_phi_sealed": {
+      "path": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/phi-reserved02-sealed.zip",
+      "bytes": 30232659,
+      "sha256": "373a030cc3f4087664d69d20bb13a9ed504e9753972c8a52cf1d5edaa4c668ed",
+      "members": 383
+    }
+  },
+  "model_batch_execution": "本轮冻结CPU范围全部执行；数值候选失败保留，非硬件/应用质量验收"
+}

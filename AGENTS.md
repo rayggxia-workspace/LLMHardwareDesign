@@ -1,5 +1,10 @@
 # AI 协作约定
 
+## 2026-10-23服务器补齐批次（Issue61）
+
+用户明确授权本会话在既有CPU服务器接收原兄方批次并并行完成，覆盖本文件历史“只在本机/等待结果通知”的调度限制，仅适用于已认领Issue61范围。Qwen2.5-3B/Qwen3.5-4B复用已审计PR36长GPU证据，补短完整GQA；Gemma3-4B文本路径/窗口为主测；Phi仅采集封存，不用其结果调当前划分。所有模型加载/算术通过本人目录lrz-* Slurm，不启动其他机器、不动他人作业。GPU专属指标仍未执行，CPU不替代CUDA/显存或硬件PPA。最新验收/失败/条件跳过及数据SHA见docs/experiments/issue-61-server-models.md和work/Liangruizhi/61/model-acceptance.json；不能从下载或脚本完成推断实验通过。
+
+
 ## 2026-10-23 Llama本机最小验证（Issue56）
 
 用户指定复用旁支已下载并核验的Llama-3.2-1B-Instruct，作为现有Qwen划分的跨模型验证。

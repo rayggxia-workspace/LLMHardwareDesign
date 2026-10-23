@@ -1,0 +1,59 @@
+{
+  "schema": "server-batch-delivery/1",
+  "issue": 61,
+  "repository": "rayggxia-workspace/LLMHardwareDesign",
+  "owner": "Liangruizhi",
+  "updated_utc": "2026-10-23T15:16:52.740Z",
+  "server_root": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023",
+  "sources": {
+    "capture_gemma_phi": "8a1fe4bfed52dd0baa552c6043f507bafe902c03",
+    "capture_qwen": "a96eef6175d15173496d674caee7b0078971f2f5",
+    "integer": "3f17910ec3d9591a10e9b98ff09916154385751d",
+    "final_strict_export": "0ff14d76d51beb0a0c607d7e0d024a41b49fd661",
+    "collection": "7fdd2c243e8c1e8a1b9abfcae262ebc9f27bd1b5",
+    "pv32": "4ca7214923dd5d87934fb2e10211517bbca35c19",
+    "causal_cost": "8211803c9a6f7bab42f66ef320410693b9522be2"
+  },
+  "artifacts": {
+    "batch-metadata01.zip": {
+      "bytes": 7269991,
+      "sha256": "b2e94f70861d92debf71d5f0055a7006c6c1731db688e46c0473d0786b9530fa",
+      "scope": "logs,metrics,source snapshots and selected independent review"
+    },
+    "conditional-bounds01.json": {
+      "bytes": 274859,
+      "sha256": "00b09030286933336d7976479b2d4dfe36469f13c5782b147664b3b45ff1c356",
+      "scope": "conditional fixed-W/P-sum bounds;02 includes full32bit PV kernel"
+    },
+    "conditional-bounds02.json": {
+      "bytes": 296152,
+      "sha256": "9897fc12300206c9c0b6e357beb6d7f1d6bbe63dbfdcef882f07396bdcf7938a",
+      "scope": "conditional fixed-W/P-sum bounds;02 includes full32bit PV kernel"
+    },
+    "causal-cost01.json": {
+      "bytes": 627318,
+      "sha256": "5e34b9543fb1d88e3da0f426f93557647329de95e9ccbed9e4ed1b714e27fa2c",
+      "scope": "420 selected linear cases, per-causal-call packet/capacity/range-guard lower bounds"
+    }
+  },
+  "server_full_data": {
+    "path": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/primary-model-data01.zip",
+    "bytes": 569140969,
+    "sha256": "2f03daf778c6667aae49d2edd40f3397227514e59c6342d367a552cac6ff7730",
+    "members": 4941
+  },
+  "server_reserved_phi": {
+    "path": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/phi-reserved02-sealed.zip",
+    "bytes": 30232659,
+    "sha256": "373a030cc3f4087664d69d20bb13a9ed504e9753972c8a52cf1d5edaa4c668ed",
+    "members": 383
+  },
+  "quality_accepted": false,
+  "hardware_validated": false,
+  "notes": [
+    "batch-metadata01.zip contains117 indexed members plus artifact-index.json, including selected review-samples01.zip; full primary raw data remain on authorized server, no full weights in Git.",
+    "conditional-bounds02 adds full I32 PV limb kernel to frozen01; all420linear/56attention common fields unchanged.",
+    "causal-cost01 separates every cached decode token; old integer cost fields aggregate selected rows and are lower bounds, not causal scheduled cycles.",
+    "Phi raw sealed data have only reference/source checks, no quantization or partition tuning."
+  ]
+}

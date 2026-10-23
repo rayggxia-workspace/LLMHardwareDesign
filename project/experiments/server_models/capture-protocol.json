@@ -1,0 +1,46 @@
+{
+  "schema": "server-model-capture/1",
+  "seed": 20261023,
+  "batch_size": 1,
+  "checkpoint_storage": "original BF16, verified against publisher hashes",
+  "compute": "CPU FP32 native transformers4.57.6/eager, no remote code execution",
+  "calibration_tokens": 128,
+  "decode_tokens": 32,
+  "chunk_tokens": 128,
+  "gemma_prefix_lengths": [
+    128,
+    1023,
+    1024,
+    1025,
+    4096
+  ],
+  "phi_prefix_lengths": [
+    128,
+    1024
+  ],
+  "gemma_layers": "first sliding and first full attention, selected by actual native config before evaluation",
+  "phi_layers": [
+    0
+  ],
+  "GQA": "all Q heads sharing KV head0; post-normalization/post-RoPE observation before o_proj",
+  "small_linear_rows": "first8 and last8 of each observed call, deduplicated",
+  "linear_outputs": 16,
+  "source_texts": {
+    "calibration": "A technical calibration notebook describes a processor with matrix units, vector units, and shared memory banks. Requests carry a sequence identifier, a token position, a data format, and a completion event. A controller cannot read an unfinished write. Scale parameters remain attached to the data they describe. A scientific report distinguishes measured results from proposed capabilities. It records code versions, input hashes, numerical tolerances, and the exact command. Repeated measurements and independent checks help identify mistakes. This passage is calibration material and is separate from the validation material. ",
+    "gemma_validation": "A research team studies water use in several gardens. Each morning, a sensor records the soil moisture in every bed. The notebook preserves the original observations, including missing values and the instrument settings. A program computes a weekly summary without replacing the daily records. Reviewers check a few hand calculated examples before trusting the summary. Some observations are recent and others are distant in time. A useful memory policy must distinguish the two without changing the requested calculation. The team repeats this procedure and documents all assumptions. ",
+    "phi_reserved": "A reserved validation record describes a collection of small programs and mathematical examples. A loop adds consecutive integers and another routine checks whether a list is sorted. A test includes empty inputs, negative values, repeated elements, and an example whose answer can be calculated by hand. Researchers preserve the inputs and outputs before comparing implementations. This material is sealed for later validation and is not used to choose the hardware partition. Independent reproduction checks data continuity and arithmetic consistency. "
+  },
+  "text_policy": "Repeat the named passage only to reach frozen token lengths; no claim of a representative language-quality corpus. Separate calibration/validation strings. Phi data sealed, no quantization quality or partition tuning.",
+  "tolerance": {
+    "GQA_atol": 0.0001,
+    "GQA_rtol": 0.0001,
+    "logits_max_abs": 0.005,
+    "logits_relative_l2": 0.0001
+  },
+  "performance_eligible": false,
+  "scope": "Fixed-reference correctness, real selected full-GQA/linear/vector/KV boundaries. Not GPU measurement, integer nonlinear/state, or accepted application quality.",
+  "implementation_hashes": {
+    "phi": "3b2e19b8396d472c6bad2cc86d10950c34aa5a13debcd9288daa8ee026f7c3bd",
+    "gemma": "b92013d0558381b76b0f74d2b30890cd3aaa9daa58a269d7a12b5a5c5a8e9eb7"
+  }
+}

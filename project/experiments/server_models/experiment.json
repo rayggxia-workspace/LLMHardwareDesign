@@ -1,0 +1,49 @@
+{
+  "schema": "server-model-intake/1",
+  "issue": 61,
+  "source_PR": 36,
+  "source_commit": "2ada6cf6a61f5acff4b6052e81e15d20070dc0f3",
+  "phase": "actual tensor CPU independent replay before missing-model execution",
+  "inputs": {
+    "qwen25-partials.pt.gz": {
+      "bytes": 218914,
+      "sha256": "ab6b0d8c527aad005a45b6f5b14d6281e3d435cd03dde4dbf02c33dbbba7be98"
+    },
+    "qwen35-partials.pt.gz": {
+      "bytes": 387821,
+      "sha256": "bd06f4c23026d955ca3e1df2f846fe31a39c32ab1c092d81d9b835f3f0f68e5a"
+    },
+    "qwen35-states.pt.gz": {
+      "bytes": 8904636,
+      "sha256": "049c1cf4e81044fdc740dd1e65701a86293f31293d4b0ee2c554daecfef4e91a"
+    }
+  },
+  "thresholds": {
+    "integer_mismatches": 0,
+    "FP32_auxiliary_to_FP16_max_abs": 0.02,
+    "FP64_state_relative_l2": 0.0001,
+    "adjacent_saved_states": "bit equal"
+  },
+  "server_root": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023",
+  "partition": "c96",
+  "CPUs": 8,
+  "parallel_processes": 3,
+  "threads_per_process": 1,
+  "primary_models": [
+    "Qwen/Qwen2.5-3B",
+    "Qwen/Qwen3.5-4B",
+    "google/gemma-3-4b-it"
+  ],
+  "reserved_model": "microsoft/Phi-4-mini-instruct",
+  "conditional_extensions": [
+    "google/gemma-3-12b-it",
+    "meta-llama/Llama-3.1-8B-Instruct",
+    "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"
+  ],
+  "not_required": [
+    "Qwen/Qwen3-4B",
+    "original DeepSeek-R1 or other huge checkpoints"
+  ],
+  "GPU_measurements": "Cannot reproduce CUDA performance/VRAM on CPU; preserve original GPU conditions separately. No GPU registered in checked c96 GRES.",
+  "quality": "No full integer language quality gate before fixed-semantics EDA. Phi sealed data not used for partition tuning."
+}

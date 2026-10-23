@@ -1,5 +1,9 @@
 # Liangruizhi 的进度
 
+## 2026-10-23（UTC+08:00）Issue61服务器批次交付
+
+[Issue61](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/61)/[PR62](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/62)，task/61-server-models，D:/Projects/LLMHardwareDesign-servermodels，基于PR60。四模型CPU full/cached/chunk/GQA和SHA已执行，Phi独立封存；Qwen原GPU长结果完成69文件条件审计与两轮partial/state复核。三主测420线性/56注意力，四模型5185严格来源张量；161280 Fraction RQ、3852288 partial独立通过。90046完整PV32核1474560输出匹配I64，范围证明依Psum/固定Vscale和guard；90047补逐token包，旧聚合decode成本只作下界。动态K128跨模型改善down，但Gemma部分投影饱和、Qwen2.5 KV8及其他候选失败不隐去，Llama既有5.39%失败保留。正式源码阶段8a1fe4b/a96eef6/3f17910/0ff14d7/7fdd2c2/4ca7214/8211803。报告/决策/验收表/服务器569MB主包、30MB Phi封存包、7.27MB精选包完整SHA索引已整理，精选4GQA/6case本机独立重放。管理检查、五套项目业务、17个新边界测试通过。下一步E1输出合同、E2b完整attention和E3公平状态/物理资格；不把局部数值门、CPU耗时或字节下界称完整模型/芯片收益。交付后in_review，待指定审查人/合并，非done；登记PR5 pending，无board.json/Projects能力，看板unverified/同步pending。完整交接docs/handoffs/2026-10-23-issue-61-server-models.md。
+
 ## 2026-10-23（UTC+08:00）Issue59：Llama down_proj校准/分组与成本
 
 [Issue59](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/59)/[PR60](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/60)，task/59-down-scale，D:/Projects/LLMHardwareDesign-downscale；正式数值/服务源码6d2d6603fde7e2372bd399c1cee511e33e6c2781。全部本机，24候选/144数值与1152服务两轮；13科学文件一致，46080 Fraction输出/1768320 partial独立复核。静态校准扩容/MSE未解决，K128/W128最坏5.39%仍未过探索门；粗35bit与实际W所见scale的32bit安全界分开，guard成本待做。近M模型服务约1.4%/2.3%，未RTL校准，不冻结最终边界。192成员精选包2.63MB已重放24代表case/7680输出/4 witness，全量144编码/浮点原输入本机留SHA共享pending。报告/决策/交接/work59完整保留失败和边界；待审查合并，非done。用户随后授权服务器承接兄方所有安排，另开[Issue61](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/61)先PR36数据接收/逐模型验收/Slurm并行；不混入本轮实际执行。登记PR5 pending；无board.json/Projects能力，看板unverified同步pending，审查人/管理员/完整输入共享处理人待指定。
