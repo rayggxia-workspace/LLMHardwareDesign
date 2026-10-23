@@ -1,0 +1,94 @@
+{
+  "producer": {
+    "code_commit": "db74f40e3c91783e0a64b17cf95df000e06223d0",
+    "source_dirty": false,
+    "source_sha256": {
+      "project/experiments/integer_precision/capture.py": "fb3b7e663052878a306728b526a256527de3b19723b2a2fdc25b7db2c82b0bed",
+      "project/experiments/integer_precision/capture.schema.json": "1dbaaaf040f740c1da4fe63c0eb0abadc67c7dfa0a2e2a8c3bc2b2680933a0a1",
+      "project/experiments/integer_precision/capture_qwen3.py": "50bf8372518749c4cdee8b19fdacfb1c45d86bcdcb173fa54f8dcfab7c43b7f4",
+      "project/experiments/integer_precision/fixed.py": "de8314ecfcd37b5478d69ae060206729779b5fe352f4addf9ca3543bba5ba506",
+      "project/experiments/integer_precision/placement.py": "ea01d780522726679b544b12a49aeec06c7418826b43e8942c2355bc11a1ce79",
+      "project/experiments/integer_precision/quantize.py": "b9dac6a0e4d786a53a7815ba83653928f0382c4b70877971311f8fc76422c891",
+      "project/experiments/integer_precision/record.py": "78ec7eb7049ee855b8080ad5d67a14955b7bd082a1c38759566dae3492fc39f9",
+      "project/experiments/integer_precision/reference.py": "42cb92ef8b7b88c5cb81fc2264997ae43e45805026eba094d1b55362c4245283",
+      "project/experiments/integer_precision/requant_serial.sv": "c190dbffb293809270fa8dcd1273d8e5d9523c3674d37b3ab0a84443adf85bf0",
+      "project/experiments/integer_precision/run_checks.py": "3a633e743b62592ba1c704693f40c74ae04770bb91cf0553307d55b7c0cd70f2",
+      "project/experiments/integer_precision/run_numeric.py": "b6581257e4b2e035a7fcf243fe31245c3ae118146daf116173b4406731de996b",
+      "project/experiments/integer_precision/run_rtl.py": "e1e69d467a695f2ad567c03a4b791c446091129062d2fdc9d7bbdf33029c3765",
+      "project/experiments/integer_precision/tables.json": "f9e4acf3f70ffadd565c97ceeb567924edc3e221ae086e3c955984cb57cdf182",
+      "project/experiments/integer_precision/tables.py": "b116b84c26b27d03eb8469997af1ef47a9137566681d094845511b9543474053",
+      "project/experiments/integer_precision/tb_requant.sv": "19769eccbfd75587791eb834dee0643bd914fbb5ec81c16b478cdd18c71cc992",
+      "project/experiments/integer_precision/test_integer.py": "3e06d52513dedb05f22ed49c2f749d8641d9378d4f33e25af5595d110e29fbca",
+      "project/experiments/integer_precision/test_placement.py": "bb8a149c3e16fff7f7ff4d11b462211a690a31de6507afe68395fa86b9068869",
+      "project/experiments/integer_precision/vectors.py": "e13dbd04eea37e5a418b3892a5e6a5fc3f2ec7f7fd72a558b7d85d0012c09929"
+    },
+    "script": "run_rtl.py",
+    "arguments": [
+      "--work",
+      "D:/Projects/Codex/int8-contract-20261023/rtl-formal",
+      "--output",
+      "work/Liangruizhi/33/rtl"
+    ],
+    "tool_versions": {
+      "python": "3.13.14",
+      "numpy": "2.5.0"
+    },
+    "hardware": {
+      "host": "Liangruizhi local Windows PC",
+      "machine": "AMD64",
+      "backend": "CPU reference"
+    }
+  },
+  "tool": "ModelSim ALTERA STARTER 10.1d",
+  "passed": true,
+  "commands": [
+    {
+      "argv": [
+        "D:\\altera\\13.0sp1\\modelsim_ase\\win32aloem\\vlib.exe",
+        "D:\\Projects\\Codex\\int8-contract-20261023\\rtl-formal\\lib"
+      ],
+      "returncode": 0,
+      "log": "rtl-0.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "D:\\altera\\13.0sp1\\modelsim_ase\\win32aloem\\vlog.exe",
+        "-sv",
+        "-work",
+        "D:\\Projects\\Codex\\int8-contract-20261023\\rtl-formal\\lib",
+        "D:\\Projects\\LLMHardwareDesign-integer\\project\\experiments\\integer_precision\\requant_serial.sv",
+        "D:\\Projects\\LLMHardwareDesign-integer\\project\\experiments\\integer_precision\\tb_requant.sv"
+      ],
+      "returncode": 0,
+      "log": "rtl-1.log",
+      "sha256": "4affee39dd07cff04a90e344e5bc71a0feee108a0d470b8ef2443b4ef6d51d08"
+    },
+    {
+      "argv": [
+        "D:\\altera\\13.0sp1\\modelsim_ase\\win32aloem\\vsim.exe",
+        "-c",
+        "-lib",
+        "D:\\Projects\\Codex\\int8-contract-20261023\\rtl-formal\\lib",
+        "tb_requant",
+        "-do",
+        "run -all; quit -f"
+      ],
+      "returncode": 0,
+      "log": "rtl-2.log",
+      "sha256": "97e3fd0b2e5e57b58121bcd5390ac1decb9f4adc7401cea9b46c08083c002b68"
+    }
+  ],
+  "vectors_sha256": "4b47d3d353fcb63a0e6d3d27858a7e87e71ad2ac73d7e9bd7651d4b3bb8738df",
+  "case_count": 1028,
+  "observations": {
+    "cases": 1028,
+    "latency_min": 26,
+    "latency_max": 26,
+    "min_start_interval": 28
+  },
+  "limits": [
+    "RTL functional simulation only; no synthesis/PPA/frequency/energy measured",
+    "Only RQ32->8/16 is RTL; wide nonlinear/state costs are algorithmic candidates"
+  ]
+}
