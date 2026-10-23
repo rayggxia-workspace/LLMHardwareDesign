@@ -23,6 +23,7 @@ def partition(source, output, bottom=8):
     lengths = collections.Counter()
     fixed_lengths = collections.Counter()
     guides = {}
+    landings = []
     for record in nets:
         split = re.split(r'\+ ROUTED |\n\s*NEW ',record)
         header = split[0].strip()
@@ -47,6 +48,7 @@ def partition(source, output, bottom=8):
                 assert v, via
                 upper = int(v[1])+1
                 assert layer in (upper-1,upper)
+                assert len(points)==1, 'Via path must be separate from wire segments'
                 via_counts[via]+=1
             else:
                 upper = layer
@@ -62,8 +64,11 @@ def partition(source, output, bottom=8):
                 xs.append(x);ys.append(y)
             layers[layer] += 1
             lengths[layer] += length
-            # Boundary vias touching the first custom metal are custom.
-            frozen = clock or max(layer,upper)<bottom
+            # Fixed boundary via and its upper landing are prepaid access.
+            # Custom routing starts at that landing; it cannot invent V7.
+            frozen = clock or (via and upper<=bottom) or (not via and layer<bottom)
+            if via and upper==bottom and not clock:
+                landings.append(dict(net=name,via=via,x=x,y=y))
             if frozen:
                 kept.append(path.strip())
                 fixed_paths += 1
@@ -86,6 +91,7 @@ def partition(source, output, bottom=8):
         bottom_custom_metal=bottom,nets=len(rows),affected_nets=changed,fixed_paths=fixed_paths,
         removed_custom_paths=custom_paths,paths_per_layer=layers,
         custom_guides=guides,
+        access_landings=landings,
         source_wire_um={k:v/2000 for k,v in lengths.items()},
         frozen_wire_um={k:v/2000 for k,v in fixed_lengths.items()},vias=via_counts,
         scope='H1 target-conditioned lower prefabricated wires, all clock wires fixed; upper data paths deleted for real reroute. Not an independent multi-target base.')

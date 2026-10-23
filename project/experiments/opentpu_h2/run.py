@@ -47,6 +47,8 @@ try:
         path=ROOT/'partition.tcl';path.write_text(script)
         with (ROOT/'partition.log').open('w') as log:
             subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(path)],stdout=log,stderr=subprocess.STDOUT,check=True)
+        from freeze_audit import audit
+        audit(ROOT/'physical.def',ROOT/'frozen-roundtrip.def',SPEC['bottom'],ROOT/'freeze-audit.json')
     if SPEC['mode'] in ('budget','route'):
         libs=[Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')]
         previous=json.loads(sealed(SOURCE,'input-sha256.json').read_text())
@@ -69,6 +71,23 @@ try:
             script+='foreach n [[ord::get_db_block] getNets] {if {[$n getSigType] eq "CLOCK"} {lappend nets [$n getName]}}\n'
             script+='foreach n [lsort -unique $nets] {puts $f $n;report_net -digits 9 $n >> interface-nets.rpt}\nclose $f\n'
         else:
+            script+='puts "DRT_API [info commands drt::*]"\n'
+            if SPEC.get('proxy'):
+                # The router needs terminals at prepaid access landings, not
+                # original M1/M3/M5 pins behind frozen lower conductors. This
+                # is an isolated routing proxy; original pin connections are
+                # restored by construction when upper wires are integrated.
+                script+='set b [ord::get_db_block]\nforeach n [$b getNets] {if {[$n getSigType] ni {POWER GROUND}} {foreach p [$n getITerms] {$p disconnect};foreach p [$n getBTerms] {odb::dbBTerm_destroy $p}}}\n'
+                affected={row['net'] for row in contract['affected_nets']}
+                for serial,landing in enumerate(contract['access_landings']):
+                    if landing['net'] not in affected:continue
+                    name=landing['net']
+                    # Actual DB net names retain the native bus escaping.
+                    script+='set n [$b findNet {'+name+'}]\nif {$n eq "NULL"} {error {Missing proxy source net}}\n'
+                    script+='set p [odb::dbBTerm_create $n h2_landing_'+str(serial)+']\n$p setIoType INOUT\nset bp [odb::dbBPin_create $p]\n$bp setPlacementStatus FIRM\n'
+                    script+='set v [[ord::get_db_tech] findVia {'+landing['via']+'}]\nif {$v eq "NULL"} {error {Missing native landing via}}\n'
+                    script+='foreach box [$v getBoxes] {set l [$box getTechLayer];if {[$l getName] eq "metal8"} {odb::dbBox_create $bp $l [expr {'+str(landing['x'])+'+[$box xMin]}] [expr {'+str(landing['y'])+'+[$box yMin]}] [expr {'+str(landing['x'])+'+[$box xMax]}] [expr {'+str(landing['y'])+'+[$box yMax]}]}}\n'
+                script+='write_db proxy-initial.odb\nwrite_def proxy-initial.def\n'
             guide=''
             for row in contract['affected_nets']:
                 boxes=contract['custom_guides'][row['net']]
