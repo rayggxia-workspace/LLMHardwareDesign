@@ -26,7 +26,14 @@ try:
     odb = sealed(SOURCE,Path(meta['result_relative'])/'6_final.odb')
     args = dict(source=str(SOURCE),odb=str(odb),meta=meta)
     (ROOT/'inputs.json').write_text(json.dumps(args,indent=2)+'\n')
+    script = 'read_db {'+str(odb)+'}\n'
+    script += 'set b [ord::get_db_block]\nset f [open active-inventory.tsv w]\n'
+    script += 'foreach i [$b getInsts] {puts $f "[$i getName]\\t[[$i getMaster] getName]\\t[$i getLocation]\\t[$i getOrient]\\t[$i getPlacementStatus]"}\nclose $f\n'
+    script += 'set f [open connectivity.tsv w]\nforeach n [$b getNets] {foreach p [$n getITerms] {puts $f "[$n getName]\\t[$n getSigType]\\t[[$p getInst] getName]\\t[[$p getMTerm] getName]"}}\nclose $f\n'
+    script += 'puts "WIRE_APIS [info commands odb::*Wire*]"\n'
+    script += 'write_def physical.def\n'
+    (ROOT/'physical.tcl').write_text(script)
     with (ROOT/'physical-inventory.log').open('w') as log:
-        subprocess.run(['openroad','-exit','-python',str(ROOT/'runner/physical.py')],stdout=log,stderr=subprocess.STDOUT,check=True)
+        subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(ROOT/'physical.tcl')],stdout=log,stderr=subprocess.STDOUT,check=True)
 finally:
     (ROOT/'input-sha256.json').write_text(json.dumps(INPUTS,indent=2)+'\n')
