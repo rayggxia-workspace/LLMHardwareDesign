@@ -21,7 +21,18 @@ for run in sorted((scratch/'runs').iterdir()):
         if r['status']=='running' or not (run/'source-at-end.json').exists():continue
         row={k:r.get(k,[]) for k in ('status','correctness','quality','state_sensitivity','failures')}
         for k in ('continuation','sensitivity','short','long','test_aggregate','regression_aggregate','peak_allocated_bytes'):
-            if k in r:row[k]=r[k]
+            if k not in r:continue
+            if k in ('continuation','sensitivity'):
+                row[k]=[]
+                for item in r[k]:
+                    small={key:value for key,value in item.items() if key not in ('states','cache','local_roundtrip','logits')}
+                    small['max_state_relative_l2']=max((s['relative_l2'] for s in item.get('states',[]) if s['finite']),default=None)
+                    if isinstance(item.get('logits'),list):
+                        small['max_logits_relative_l2']=max((s['relative_l2'] for s in item['logits'] if s['finite']),default=None)
+                    if 'cache' in item:small['cache_logical_bytes']=item['cache']['logical_bytes']
+                    row[k].append(small)
+            else:row[k]=r[k]
+        row['full_results_metadata_zip']=run.name+'-metadata.zip/results.json'
         row.update(run=run.name,long_comparisons=[])
         for case in r.get('performance',[]):
             for s in case['samples']:
