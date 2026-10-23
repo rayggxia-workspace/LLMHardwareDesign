@@ -54,13 +54,21 @@ def allowed_mask(qpos,kpos,window):
     return mask
 
 
+def cache_tensor_fields(layer):
+    fields={}
+    for name in ['keys','values','conv_states','recurrent_states']:
+        value=getattr(layer,name,None)
+        items=value.items()if isinstance(value,dict)else enumerate(value)if isinstance(value,(tuple,list))else[(None,value)]
+        for key,tensor in items:
+            if isinstance(tensor,torch.Tensor):fields[name+(''if key is None else'__'+str(key))]=tensor
+    return fields
+
+
 def kv_record(cache):
     records=[];storage={};logical=0
     for index,layer in enumerate(cache.layers):
         fields={}
-        for name in ['keys','values','conv_states','recurrent_states']:
-            tensor=getattr(layer,name,None)
-            if tensor is None:continue
+        for name,tensor in cache_tensor_fields(layer).items():
             size=tensor.numel()*tensor.element_size();logical+=size
             s=tensor.untyped_storage();identity=s.data_ptr()
             if identity not in storage:storage[identity]={'index':len(storage),'bytes':s.nbytes()}
@@ -196,7 +204,8 @@ def main():
                 full_kv=kv_record(r.past_key_values);full_events=list(events)
                 hybrid={}
                 if a.model=='qwen35':
-                    hybrid={field:cpu(getattr(r.past_key_values.layers[0],field))for field in ['conv_states','recurrent_states']}
+                    hybrid={field:cpu(tensor)for field,tensor in cache_tensor_fields(r.past_key_values.layers[0]).items()}
+                    if not hybrid:raise AssertionError('missing actual hybrid states')
                     for field,value in hybrid.items():arrays[f'{name}.hybrid.full.{field}']=value
                 for layer,data in full.items():
                     for field,value in data.items():arrays[f'{name}.layer{layer}.full.{field}']=value
@@ -235,7 +244,7 @@ def main():
                         got=np.concatenate(logits,axis=1);error=compare(got,full_logits)
                         if a.model=='qwen35':
                             for field,reference in hybrid.items():
-                                value=cpu(getattr(cache.layers[0],field));e=compare(value,reference)
+                                value=cpu(cache_tensor_fields(cache.layers[0])[field]);e=compare(value,reference)
                                 arrays[f'{name}.hybrid.{mode}.{field}']=value
                                 if not e['finite']or e['relative_l2']>1e-4:raise AssertionError('continuous hybrid '+field+str(e))
                                 comparison['hybrid.'+field]=e

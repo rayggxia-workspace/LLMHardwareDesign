@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 import torch
 import transformers
-from capture import allowed_mask,compare,digest,save
+from capture import allowed_mask,compare,digest,save,cache_tensor_fields
 
 def one(family):
  if family=='gemma':
@@ -49,8 +49,8 @@ def one(family):
     end=stop;out=model(ids[:,begin:stop],past_key_values=cache,use_cache=True);cache=out.past_key_values;pieces.append(out.logits)
    got=torch.cat(pieces,dim=1);error=compare(got.numpy(),ref.numpy());assert torch.allclose(got,ref,atol=1e-5,rtol=1e-4)
    if family=='qwen35':
-    for name in ['conv_states','recurrent_states']:
-     a=getattr(cache.layers[0],name);b=getattr(full.past_key_values.layers[0],name);assert torch.allclose(a,b,atol=1e-5,rtol=1e-4)
+    aa=cache_tensor_fields(cache.layers[0]);bb=cache_tensor_fields(full.past_key_values.layers[0]);assert aa.keys()==bb.keys()and aa
+    for name in aa:assert torch.allclose(aa[name],bb[name],atol=1e-5,rtol=1e-4)
   return {'model':family,'status':'PASS','GQA_checks':checks,'logits':error,'implementation_sha256':digest(inspect.getfile(impl)),'config':cfg.to_dict()}
  finally:impl.eager_attention_forward=original
 

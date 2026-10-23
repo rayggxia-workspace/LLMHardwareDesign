@@ -3,10 +3,17 @@ import numpy as np
 import torch
 from transformers import DynamicCache
 from transformers.models.gemma3.configuration_gemma3 import Gemma3TextConfig
-from capture import allowed_mask,kv_record
+from capture import allowed_mask,kv_record,cache_tensor_fields
 
 
 class CacheContract(unittest.TestCase):
+    def test_dictionary_hybrid_state_is_not_omitted(self):
+        class Layer:pass
+        layer=Layer();layer.conv_states={0:torch.arange(8,dtype=torch.float32),1:None};layer.recurrent_states={0:torch.ones(4,dtype=torch.float32)}
+        fields=cache_tensor_fields(layer)
+        self.assertEqual(set(fields),{'conv_states__0','recurrent_states__0'})
+        self.assertEqual(sum(t.numel()*t.element_size()for t in fields.values()),48)
+
     def test_sliding_mask_boundary(self):
         got=allowed_mask(np.array([3,4,5]),np.arange(6),4)
         self.assertEqual(got.astype(int).tolist(),[[1,1,1,1,0,0],[0,1,1,1,1,0],[0,0,1,1,1,1]])
