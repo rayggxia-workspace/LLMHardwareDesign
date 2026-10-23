@@ -12,10 +12,14 @@ import sys
 import time
 import traceback
 import types
+import weakref
+from collections import Counter
 
 import torch
 import torch.nn.functional as F
 import transformers
+from torch.utils._python_dispatch import TorchDispatchMode
+from torch.utils._pytree import tree_flatten
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 HERE = Path(__file__).resolve().parent
@@ -111,6 +115,17 @@ class Observer:
         self.handles = []
 
     def __enter__(self):
+        from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS
+        self.attention_registry = ALL_ATTENTION_FUNCTIONS
+        self.original_sdpa = ALL_ATTENTION_FUNCTIONS['sdpa']
+        def sdpa(module, query, key, value, *args, **kwargs):
+            out = self.original_sdpa(module, query, key, value, *args, **kwargs)
+            self.events.append({'event_id':len(self.events),'module':f'attention/{module.layer_idx}/sdpa',
+                'class':'sdpa_interface','inputs':[record(t) for t in (query,key,value)],
+                'outputs':[record(out[0])], 'boundary':'post-RoPE/cache, before GQA repeat inside SDPA',
+                'measured_traffic_bytes':None})
+            return out
+        ALL_ATTENTION_FUNCTIONS.register('sdpa',sdpa)
         names = {id(m): n for n, m in self.model.named_modules()}
         def hook(m, args, out):
             inputs = [record(t) for t in args if isinstance(t, torch.Tensor)]
@@ -127,6 +142,36 @@ class Observer:
     def __exit__(self, *args):
         for h in self.handles:
             h.remove()
+        self.attention_registry.register('sdpa',self.original_sdpa)
+
+
+class OpObserver(TorchDispatchMode):
+    """Actual ATen functional interfaces, including residual adds and recurrence arithmetic.
+
+    Tensor identity dependencies cover observed outputs; unmatched inputs are external/cache/weight.
+    Does not expose operations fused inside SDPA/CUDA kernels or physical memory transactions.
+    """
+    def __init__(self):
+        self.events=[]
+        self.producers={}
+
+    def __torch_dispatch__(self, func, types, args=(), kwargs=None):
+        inputs=[t for t in tree_flatten((args,kwargs or {}))[0] if isinstance(t,torch.Tensor)]
+        deps=[]
+        for t in inputs:
+            old=self.producers.get(id(t))
+            deps.append(old[1] if old and old[0]() is t else None)
+        result=func(*args,**(kwargs or {}))
+        outputs=[t for t in tree_flatten(result)[0] if isinstance(t,torch.Tensor)]
+        eid=len(self.events)
+        self.events.append({'event_id':eid,'operator':str(func),'inputs':[record(t) for t in inputs],
+            'input_producer_events':deps,'outputs':[record(t) for t in outputs],
+            'logical_read_bytes':sum(t.numel()*t.element_size() for t in inputs),
+            'logical_write_bytes':sum(t.numel()*t.element_size() for t in outputs),
+            'measured_traffic_bytes':None})
+        for t in outputs:
+            self.producers[id(t)]=(weakref.ref(t),eid)
+        return result
 
 
 @contextmanager
@@ -357,6 +402,15 @@ def main():
             if q35:
                 del cache,before
             gc.collect(); torch.cuda.empty_cache()
+            with OpObserver() as opobs:
+                o=call(ids[:,:128]); o=call(ids[:,128:129],o.past_key_values)
+            op_error=compare(o.logits.cpu(),unobserved)
+            save(a.out/'operator-events.json',opobs.events)
+            save(a.out/'operator-counts.json',dict(Counter(e['operator'] for e in opobs.events)))
+            results['correctness'].append({'mode':'dispatch_observed_vs_fresh_prefix','logits':op_error,
+                'pass':op_error['finite'] and op_error['max_abs']<=cfg['reference_acceptance']['logits_max_abs'] and op_error['relative_l2']<=cfg['reference_acceptance']['logits_relative_l2']})
+            del o,opobs
+            gc.collect();torch.cuda.empty_cache()
             checkpoint()
             if not all(x['pass'] for x in results['correctness']):
                 raise ValueError('short reference continuation failed frozen acceptance; long expansion withheld')
