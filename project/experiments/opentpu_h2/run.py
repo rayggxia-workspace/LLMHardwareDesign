@@ -71,7 +71,19 @@ try:
                 end=text.index(';',start)
                 text=text[:end]+'\n + ROUTED metal8 ( 883640 2786000 ) ( 923640 * )\n'+text[end:]
             (ROOT/'deliberate-short.def').write_text(text)
-            script+='odb::dbChip_destroy [[ord::get_db] getChip]\nread_def {'+str(ROOT/'deliberate-short.def')+'}\n'
+            # Fresh LEF/DEF import avoids stale MPin pin-access references
+            # retained by this binary when destroying a loaded ODB chip.
+            platform=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45')
+            lefs=[platform/'lef/NangateOpenCellLibrary.tech.lef',platform/'lef/NangateOpenCellLibrary.macro.mod.lef']
+            previous=json.loads(sealed(SOURCE,'input-sha256.json').read_text())
+            for kind in ('act','mxu'):
+                view=m['views'][kind]
+                path=Path(view['view'])/(view['name']+'.lef')
+                assert digest(path)==previous[str(path)]
+                lefs.append(path)
+            for path in lefs:INPUTS[str(path)]=digest(path)
+            script=''.join('read_lef {'+str(path)+'}\n' for path in lefs)
+            script+='read_def {'+str(ROOT/'deliberate-short.def')+'}\n'
         # DRC is geometric. Cached global-route guides are unnecessary and
         # can invoke expensive guide topology reconstruction on the H1 DB.
         script+='foreach n [[ord::get_db_block] getNets] {$n clearGuides}\nset_routing_layers -signal metal1-metal10 -clock metal1-metal10\n'
