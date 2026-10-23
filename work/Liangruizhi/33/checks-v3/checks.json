@@ -1,0 +1,89 @@
+{
+  "producer": {
+    "code_commit": "fb94abcc0f64e2d576587174046a08330d74556c",
+    "source_dirty": false,
+    "source_sha256": {
+      "project/experiments/integer_precision/audit_results.py": "c0bc32d18c1f874011560eeaef4a30a3d81cdf903403958262e7b1c622ed70e6",
+      "project/experiments/integer_precision/capture.py": "a9d6d633d2e8d5d294e44f58e57a4f63d06716d51d6dbe457cd441bae395009f",
+      "project/experiments/integer_precision/capture.schema.json": "1dbaaaf040f740c1da4fe63c0eb0abadc67c7dfa0a2e2a8c3bc2b2680933a0a1",
+      "project/experiments/integer_precision/capture_qwen3.py": "50bf8372518749c4cdee8b19fdacfb1c45d86bcdcb173fa54f8dcfab7c43b7f4",
+      "project/experiments/integer_precision/fixed.py": "de8314ecfcd37b5478d69ae060206729779b5fe352f4addf9ca3543bba5ba506",
+      "project/experiments/integer_precision/placement.py": "ea01d780522726679b544b12a49aeec06c7418826b43e8942c2355bc11a1ce79",
+      "project/experiments/integer_precision/quantize.py": "a36e6a130af513f868725324b06ec4bac153a14ae6779197e11a03fd85908baf",
+      "project/experiments/integer_precision/record.py": "78ec7eb7049ee855b8080ad5d67a14955b7bd082a1c38759566dae3492fc39f9",
+      "project/experiments/integer_precision/reference.py": "42cb92ef8b7b88c5cb81fc2264997ae43e45805026eba094d1b55362c4245283",
+      "project/experiments/integer_precision/refine_numeric.py": "af4e12f61457d96e2a8bce2e090ce3940cbe9f830ff89296bf640d81c7c33592",
+      "project/experiments/integer_precision/requant_serial.sv": "c190dbffb293809270fa8dcd1273d8e5d9523c3674d37b3ab0a84443adf85bf0",
+      "project/experiments/integer_precision/run_checks.py": "3a633e743b62592ba1c704693f40c74ae04770bb91cf0553307d55b7c0cd70f2",
+      "project/experiments/integer_precision/run_numeric.py": "b6581257e4b2e035a7fcf243fe31245c3ae118146daf116173b4406731de996b",
+      "project/experiments/integer_precision/run_rtl.py": "e1e69d467a695f2ad567c03a4b791c446091129062d2fdc9d7bbdf33029c3765",
+      "project/experiments/integer_precision/tables.json": "f9e4acf3f70ffadd565c97ceeb567924edc3e221ae086e3c955984cb57cdf182",
+      "project/experiments/integer_precision/tables.py": "b116b84c26b27d03eb8469997af1ef47a9137566681d094845511b9543474053",
+      "project/experiments/integer_precision/tb_requant.sv": "19769eccbfd75587791eb834dee0643bd914fbb5ec81c16b478cdd18c71cc992",
+      "project/experiments/integer_precision/test_integer.py": "639c914703a48fde9138efcadcd21f15d20327e324878cf51c115f1c35363876",
+      "project/experiments/integer_precision/test_placement.py": "bb8a149c3e16fff7f7ff4d11b462211a690a31de6507afe68395fa86b9068869",
+      "project/experiments/integer_precision/vectors.py": "e13dbd04eea37e5a418b3892a5e6a5fc3f2ec7f7fd72a558b7d85d0012c09929"
+    },
+    "script": "run_checks.py",
+    "arguments": [
+      "--output",
+      "work/Liangruizhi/33/checks-v3"
+    ],
+    "tool_versions": {
+      "python": "3.13.14",
+      "numpy": "2.5.0"
+    },
+    "hardware": {
+      "host": "Liangruizhi local Windows PC",
+      "machine": "AMD64",
+      "backend": "CPU reference"
+    }
+  },
+  "checks": [
+    {
+      "name": "management",
+      "argv": [
+        "D:\\APP\\Python\\python.exe",
+        "-B",
+        "scripts/check_project.py"
+      ],
+      "returncode": 0,
+      "log": "management.log",
+      "sha256": "730947a7c3fd614468545b021d2f63cd9c8010e43c09ec792b3a49857f48c557"
+    },
+    {
+      "name": "integer",
+      "argv": [
+        "D:\\APP\\Python\\python.exe",
+        "-B",
+        "D:\\Projects\\LLMHardwareDesign-integer\\project\\experiments\\integer_precision\\test_integer.py"
+      ],
+      "returncode": 0,
+      "log": "integer.log",
+      "sha256": "db42970f80067a3d934c1d88ff08f50b6335d48e6984919467ad2f5cf77735e7"
+    },
+    {
+      "name": "placement",
+      "argv": [
+        "D:\\APP\\Python\\python.exe",
+        "-B",
+        "D:\\Projects\\LLMHardwareDesign-integer\\project\\experiments\\integer_precision\\test_placement.py"
+      ],
+      "returncode": 0,
+      "log": "placement.log",
+      "sha256": "b88761431cc609c77df46ccebacd90bcb1c84c507664365b87493521da3ead89"
+    },
+    {
+      "name": "whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "log": "whitespace.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "passed": true
+}

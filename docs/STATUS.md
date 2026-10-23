@@ -2,9 +2,12 @@
 
 - 2026-10-23精度接续：[Issue33](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/33)
   单独实现W8A8候选合同、整数参考与本机量化划分，复用但不接管Issue25/PR26的文档范围。
-  [候选精度](INTEGER_PRECISION_CONTRACT.md)及[采集格式](GPU_CAPTURE_CONTRACT.md)先行发布；
-  当前仍在实施，尚无INT8端到端/全整数硬件能力结论。大模型/长上下文/GPU交师兄，
-  本机工作与旧FP32/BF16证据区分，待用户通知再整合兄方数据。
+  [候选精度](INTEGER_PRECISION_CONTRACT.md)及[采集格式](GPU_CAPTURE_CONTRACT.md)已先行发布；
+  本机阶段现已完成并交付[PR34](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/34)待审查，未done。
+  [报告](experiments/issue-33-integer-precision.md)：20业务测试、1028 RQ RTL用例、实际Qwen3切片和
+  4608点量化图搜索。近端RQ减少通信不等于关键路径改善，P7长行全零、短校准裁剪及私有工作区成本均保留。
+  尚无INT8端到端/全整数硬件能力结论。大模型/长上下文/GPU交师兄，不启动其他机器；
+  [交接](handoffs/2026-10-23-issue-33-integer-precision.md)后等用户通知再整合，旧active文字仅为历史。
 
 - 更新日期：2026-10-22（中国标准时间）
 - 前阶段记录：架构定义、Block物理工程尝试、抽象冻结连接实验、真实普通LEF几何输入冻结与选定接口关联；DAC为研究目标，具体届次未指定
