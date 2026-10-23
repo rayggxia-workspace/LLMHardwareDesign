@@ -1,0 +1,70 @@
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 16 thread(s).
+[INFO ODB-0227] LEF file: /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef, created 22 layers, 27 vias
+[INFO ODB-0227] LEF file: /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.mod.lef, created 135 library cells
+[INFO ODB-0227] LEF file: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/act/llhd_opentpu_act.lef, created 1 library cells
+[INFO ODB-0221] 1000000 lines parsed!
+[INFO ODB-0221] 2000000 lines parsed!
+[INFO ODB-0221] 3000000 lines parsed!
+[INFO ODB-0221] 4000000 lines parsed!
+[INFO ODB-0221] 5000000 lines parsed!
+[INFO ODB-0221] 6000000 lines parsed!
+[INFO ODB-0227] LEF file: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/top-split-place-05/views/mxu/llhd_opentpu_mxu.lef, created 1 library cells
+[INFO ODB-0127] Reading DEF file: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-31/composite-m8-01/composite.def
+[INFO ODB-0128] Design: llhd_top_split
+[INFO ODB-0094] 		Created 100000 Insts
+[INFO ODB-0094] 		Created 200000 Insts
+[INFO ODB-0130]     Created 1664 pins.
+[INFO ODB-0131]     Created 205331 components and 432912 component-terminals.
+[INFO ODB-0132]     Created 2 special nets and 410662 connections.
+[INFO ODB-0133]     Created 11954 nets and 22249 connections.
+[INFO ODB-0134] Finished DEF file: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-31/composite-m8-01/composite.def
+[INFO RCX-0431] Defined process_corner X with ext_model_index 0
+[INFO RCX-0029] Defined extraction corner X
+[INFO RCX-0435] Reading extraction model file /OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules ...
+[INFO RCX-0436] RC segment generation llhd_top_split (max_merge_res 50.0) ...
+[INFO RCX-0040] Final 69801 rc segments
+[INFO RCX-0439] Coupling Cap extraction llhd_top_split ...
+[INFO RCX-0440] Coupling threshhold is 0.1000 fF, coupling capacitance less than 0.1000 fF will be grounded.
+[INFO RCX-0442] 14% of 77446 wires extracted
+[INFO RCX-0442] 19% of 77446 wires extracted
+[INFO RCX-0442] 25% of 77446 wires extracted
+[INFO RCX-0442] 30% of 77446 wires extracted
+[INFO RCX-0442] 38% of 77446 wires extracted
+[INFO RCX-0442] 42% of 77446 wires extracted
+[INFO RCX-0442] 48% of 77446 wires extracted
+[INFO RCX-0442] 54% of 77446 wires extracted
+[INFO RCX-0442] 67% of 77446 wires extracted
+[INFO RCX-0442] 83% of 77446 wires extracted
+[INFO RCX-0442] 90% of 77446 wires extracted
+[INFO RCX-0442] 94% of 77446 wires extracted
+[INFO RCX-0442] 100% of 77446 wires extracted
+[INFO RCX-0045] Extract 11954 nets, 81755 rsegs, 81755 caps, 100089 ccs
+[INFO RCX-0443] 11954 nets finished
+worst slack max 0.075443432
+worst slack min 0.074719287
+tns max 0.000000000
+Group                                         Slack
+---------------------------------------------------
+No paths found.
+
+max capacitance
+
+Pin                                           Limit            Cap          Slack
+---------------------------------------------------------------------------------
+wire15719/Z                           242.309997559  254.362640381  -12.052641869 (VIOLATED)
+
+Wrong number or type of arguments for overloaded function 'dbNet_isConnected'.
+  Possible C/C++ prototypes are:
+    odb::dbNet::isConnected(odb::dbNet const *) const
+    odb::dbNet::isConnected(odb::dbModNet const *) const
+
+    while executing
+"$n isConnected"
+    ("foreach" body line 1)
+    invoked from within
+"foreach n [[ord::get_db_block] getNets] {if {[$n getSigType] ni {POWER GROUND}} {puts $f "[$n getName]\t[$n isConnected]\t[$n isRCDisconnected]"}}"
+    (file "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-31/composite-m8-01/composite-extract.tcl" line 25)

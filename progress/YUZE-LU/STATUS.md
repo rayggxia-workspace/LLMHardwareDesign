@@ -1,5 +1,15 @@
 # YUZE-LU 的进度
 
+## 2026-10-23 openTPU H2推进
+
+- [Issue31](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/31)，分支 task/31-opentpu-h2，物理基线 ce5896d，H1 PR17 已实读合入 main@0cc36f3；负责人 YUZE-LU，审查人／优先级待指定。本同功能切片工程门槛通过，已提交 [PR35](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/35)，Issue in_review；未合并，不标 done。
+- 已冻结 v01 预算：9,609 个父层有源支持（含 4 个时钟）、2,006 个 V7 落点、原外部驱动／负载／时钟预算；不允许新增／增强／移动器件。205,331 个实例及连接／引脚／PG、144,496 个冻结 wire/via 原语实际完全相同。
+- 首个受限层 route-proxy-m8-10／89875 上层 DRC0，1,003 个森林连接 690 个原信号网；composite-m8-03／89876 自然 COMPLETED0，真实回装 RC／PG／天线／cap／slew／fanout／完整分层 STA 通过。setup／hold +0.102306／+0.036146 ns；父层中心线 3,359,396.82 µm、通孔 73,915，由完整原生 DEF 复核。前两次回装电容超限通过保留低层连通关系消除，没有升级驱动。
+- 独立完整父层 DRC 89877／89878 自然 COMPLETED0、零标记，全部制造几何检查前后一致；89881 层次 RC 覆盖证明全部 40,831 个未标注驱动无真实扇出，partial 0。早期冗余 native-api 89861／89862 继续运行。全部 UNLIMITED，不按耗时取消，不将待定项写成成功。真实 DEF／导体图负例测试及管理结构／Python 编译检查通过。
+- [实验记录](../../docs/experiments/issue-31-opentpu-h2.md)、[取舍0004](../../docs/decisions/0004-opentpu-h2-fixed-access.md)、project/experiments/opentpu_h2/results 保存来源、失败和成功证据。约92.50%原父层线已预埋，只验证同功能切片，未证明多计算图复用；M8/M9块内固定图形仍涉及后续制造。
+- 下一步：PR35 待独立审查，审查人待指定；第二计算图与独立于目标的接入模板属于后续实验。原生人为短路正控制02已检出错误，明确不可作合格硬件。不自合并或标 done。登记 management-hub PR5 pending；Projects 缺 read:project，条目 unverified、同步 pending，管理员待指定。
+
+
 ## 历史阶段：Issue #7（2026-10-21）
 
 - 更新时间：2026-10-21（中国标准时间，UTC+08:00）。

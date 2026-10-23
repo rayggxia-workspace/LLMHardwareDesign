@@ -1,0 +1,42 @@
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 1 thread(s).
+PROC drt::check_drc ARGS args BODY 
+  sta::parse_key_args "check_drc" args  keys { -box -output_file -marker_name }  flags {} ;# checker off
+  sta::check_argc_eq0 "check_drc" $args
+  set box { 0 0 0 0 }
+  if { [info exists keys(-box)] } {
+    set box $keys(-box)
+    if { [llength $box] != 4 } {
+      utl::error DRT 612 "-box is a list of 4 coordinates."
+    }
+  }
+  set marker_name "DRC"
+  if { [info exists keys(-marker_name)] } {
+    set marker_name $keys(-marker_name)
+  }
+  lassign $box x1 y1 x2 y2
+  if { [info exists keys(-output_file)] } {
+    set output_file $keys(-output_file)
+  } else {
+    utl::error DRT 613 "-output_file is required for check_drc command"
+  }
+  drt::check_drc_cmd $output_file $x1 $y1 $x2 $y2 $marker_name
+
+PROC drt::step_dr ARGS args BODY 
+  # args match FlexDR::SearchRepairArgs
+  if { [llength $args] != 9 } {
+    utl::error DRT 308 "step_dr requires nine positional arguments."
+  }
+
+  drt::detailed_route_step_drt {*}$args
+
+"drt::step_end" isn't a procedure
+    while executing
+"info args $cmd"
+    ("foreach" body line 1)
+    invoked from within
+"foreach cmd {drt::check_drc drt::step_dr drt::step_end} {puts "PROC $cmd ARGS [info args $cmd] BODY [info body $cmd]"}"
+    (file "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-31/native-api-01/native-api.tcl" line 2)

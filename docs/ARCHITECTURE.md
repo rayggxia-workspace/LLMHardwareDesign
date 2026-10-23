@@ -71,6 +71,31 @@ python project/experiments/opentpu_compare/compare.py project/experiments/opentp
 
 ## 本地阅读与验证
 
+Issue31 的 `project/experiments/opentpu_h2/` 复用 H1 已封存 ACT/MXU 和父层，新增版本化预算、原生 DEF 冻结审计、V7 上侧真实接入、受限 M8–M10 路由代理及完整回装。`routing_forest.py` 保留原低层分量并验证上层森林组成的连接；`upper_connectivity.py` 用原生宽度／via 包围形状独立核对实际导体连接。代理中没有 active instances，最终必须回装原完整设计，并审计全部实例、连接、PG、pin 和固定 wire/via；不能把代理当最终硬件。
+
+所有新尝试名必须唯一，runner 先提交；`launch.py` 使用 c64、`--time=0` 并读回 UNLIMITED，不替换或中断 H1 作业。实际原始物理数据仍依赖获授权集群。示例顺序（占位尝试名须换为全新名称，不能覆盖已有结果）：
+
+```powershell
+python project/experiments/opentpu_h2/launch.py <全新预算名> --spec project/experiments/opentpu_h2/budget.json
+python project/experiments/opentpu_h2/launch.py <全新森林路由名> --cores 16 --spec project/experiments/opentpu_h2/route-proxy-forest.json
+# composite-forest.json 的 source 应明确指向刚封存的成功路由，另存新配置后提交。
+python project/experiments/opentpu_h2/launch.py <全新回装名> --cores 16 --spec <已提交新回装配置>
+python project/experiments/opentpu_h2/collect.py inventory-03 budget-03 boundary-01 route-proxy-m8-10 composite-m8-03
+python project/experiments/opentpu_h2/budget_contract.py
+```
+
+预算生成器使用已选定的真实 H1 数据，v01 是首次冻结的候选合同；不要在后续成功后重定义它。采集器只接受封存输出 SHA，并以 gzip 保留大文本的原始字节。完整 DEF 留集群，下载到仓库外暂存后按封存 SHA 验证，复核命令如下：
+
+```powershell
+python project/experiments/opentpu_h2/summarize.py <H1完整DEF> <H2原生回装完整DEF>
+python project/experiments/opentpu_h2/plot.py
+python project/experiments/opentpu_h2/test_freeze_actual.py <H1完整DEF> <验证回执JSON>
+python project/experiments/opentpu_h2/test_upper_actual.py <实际restricted-final.def> <forest-plan.json> <partition.json> <routing-tech-shapes.tsv> <验证回执JSON>
+python scripts/check_project.py
+```
+
+原始 DEF／plan／partition／tech 必须来自回执所绑定的同一实际结果。`summarize.py` 核对选定终态、runner 上传摘要、工具一致、全部本地原始证据 SHA、完整 DEF 摘要及成本／层范围；要求所选八份真实终态与完整 standalone DRC 均通过，局部／故意短路控制不可替代全范围检查。`checks` 模式清除内存 guides 后执行原生完整父层 `drt::check_drc`，导出检查前后完整 DEF 并冻结所有制造几何，不能因 DRC 改写路由。新检查配置应指向已封存回装目录。annotation 模式复用原 H1 原生 flat/all-arcs 扇出审计，并逐一将实际重载的全部 RC／网表／约束摘要绑定到回装源；checks-short-control 仅在单独复制 DEF 内造短路，必须检出错误，不能作合格硬件。门槛和制造边界见 [Issue31 记录](experiments/issue-31-opentpu-h2.md)。
+
 - 阅读：从仓库根目录直接打开 `ref-project/llm-routing/总报告.html` 或 `ref-project/llm-routing/线长报告.html`；其图片和下载链接使用包内相对路径。
 - 管理结构检查：`python scripts/check_project.py`（Python 3.9+，无第三方包）。
 - 本次用户授权的报告更新检查：`python work/YUZE-LU/3/sync_reports.py`（Python 3.9+，需要 `beautifulsoup4`）；只读核验两份报告的资源、锚点、清单及图片展示状态。该任务脚本不是例行维护入口；再次同步需用户明确要求，并传入 `--sync --source <源报告目录>`。
