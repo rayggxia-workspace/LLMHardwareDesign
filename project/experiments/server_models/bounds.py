@@ -20,6 +20,27 @@ def exponent(m):
  if m>127*(1<<s):s+=1
  return s-20
 
+def pv32(pi,vi,pbits,kvbits,budget):
+ """S8-valued limb matmuls, actual I32 adds, independent I64 sidecar checks."""
+ if np.any(pi<0)or np.any(pi>(1<<(pbits-1))-1)or np.any(abs(vi)>(1<<(kvbits-1))-1):raise ValueError('PV input format')
+ if np.any(pi.sum(-1)>budget[None,:]):raise ValueError('P sum guard')
+ limit=int(np.max(budget))*(41024 if kvbits==16 else 127)
+ if limit>=1<<31:raise OverflowError('format budget not certified for every32bit limb prefix')
+ pd=[((pi>>(7*j))&127).astype(np.int8)for j in range(3 if pbits==16 else 1)]
+ rest=vi.astype(np.int64).copy();vd=[]
+ for j in range(3 if kvbits==16 else 1):
+  digit=(rest+64)%128-64 if kvbits==16 else rest;vd.append(digit.astype(np.int8));rest=(rest-digit)//128
+ acc=np.zeros((*pi.shape[:-1],vi.shape[-1]),dtype=np.int32);prefix_max=0
+ for i,x in enumerate(pd):
+  for j,y in enumerate(vd):
+   if pi.shape[-1]*127*int(np.max(abs(y.astype(np.int16))))>=1<<31:raise OverflowError('S8 partial bound')
+   partial=x.astype(np.int32)@y.astype(np.int32);term=partial.astype(np.int64)<<((i+j)*7);expected=acc.astype(np.int64)+term
+   if np.max(abs(term))>=1<<31 or np.max(abs(expected))>=1<<31:raise OverflowError('I32 shift/add')
+   acc=np.add(acc,term.astype(np.int32),dtype=np.int32)
+   if not np.array_equal(acc,expected):raise AssertionError('I32 sidecar comparison')
+   prefix_max=max(prefix_max,int(np.max(abs(expected))))
+ return acc,{'full_PV_i32_values':acc.size,'S8_matmul_passes':len(pd)*len(vd),'max_observed_limb_prefix_abs':prefix_max,'format_limb_prefix_absolute_bound':limit,'implementation':'S8-valued operands, NumPy I32 matmul/add with independent I64 overflow sidecar; no native INT8 speed or RTL claim'}
+
 def main():
  p=argparse.ArgumentParser();p.add_argument('--root',required=True,type=Path);p.add_argument('--binding',required=True,type=Path);p.add_argument('--out',required=True,type=Path);a=p.parse_args()
  if a.out.exists():raise ValueError('refuse overwrite')
@@ -61,6 +82,8 @@ def main():
       f=pbits-1;pi=np.clip(np.rint(prob*2**f),0,2**f-1).astype(np.int64);psum=pi.sum(-1);budget=2**f+(active+1)//2+1
       if np.any(psum>budget[None,:])or np.any(pi[:,~mask]):raise AssertionError('P-sum/mask invariant')
       pv=pi@vi;value=pv.astype(np.float64)*2.**(ve-f);error=float(np.linalg.norm(value-ref[:,pos])/max(np.linalg.norm(ref[:,pos].astype(np.float64)),1e-30));original=next(r for r in stored if r['case']==name and r['layer']==layer and r['KV_bits']==kvbits and r['P_bits']==pbits)
+      narrow,kernel=pv32(pi,vi,pbits,kvbits,budget)
+      if not np.array_equal(narrow,pv):raise AssertionError('complete32bit PV limb kernel differs from INT64 reference')
       if abs(error-original['attention_error']['relative_rmse'])>1e-12:raise AssertionError('frozen attention replay metrics')
       certified=int(np.max(budget))*bound;limb_bound=int(np.max(budget))*(41024 if kvbits==16 else 127)
       pd=[(pi[0,0]>>(7*j))&127 for j in range(3 if pbits==16 else 1)];rest=vi[:,0].copy();vd=[]
@@ -71,7 +94,7 @@ def main():
       for i,x in enumerate(pd):
        for j,y in enumerate(vd):accumulator+=int(x@y)<<((i+j)*7);maxprefix=max(maxprefix,abs(accumulator))
       if accumulator!=int(pv[0,0,0])or maxprefix>limb_bound:raise AssertionError('S8 limb prefix witness')
-      att.append({'case':name,'layer':layer,'KV_bits':kvbits,'P_bits':pbits,'active_keys_max':int(np.max(active)),'observed_P_sum_max':int(np.max(psum)),'certified_P_sum_budget_max':int(np.max(budget)),'coarse_arbitrary_P_format_bits':original['cost']['PV_accumulator_required_signed_bound_bits'],'normalized_P_format_bound':certified,'normalized_P_signed_bits':bits(certified),'all_limb_prefixes_absolute_bound':limb_bound,'limb_prefix_signed_bits':bits(limb_bound),'INT32_sufficient_given_Psum_and_static_Vscale':limb_bound<(1<<31),'source_relative_rmse':error,'P_sum_guard_counter_bytes_per_query_head':4,'base_S8_products_per_MAC':len(pd)*len(vd)})
+      att.append({'case':name,'layer':layer,'KV_bits':kvbits,'P_bits':pbits,'active_keys_max':int(np.max(active)),'observed_P_sum_max':int(np.max(psum)),'certified_P_sum_budget_max':int(np.max(budget)),'coarse_arbitrary_P_format_bits':original['cost']['PV_accumulator_required_signed_bound_bits'],'normalized_P_format_bound':certified,'normalized_P_signed_bits':bits(certified),'all_limb_prefixes_absolute_bound':limb_bound,'limb_prefix_signed_bits':bits(limb_bound),'INT32_sufficient_given_Psum_and_static_Vscale':limb_bound<(1<<31),'source_relative_rmse':error,'P_sum_guard_counter_bytes_per_query_head':4,'base_S8_products_per_MAC':len(pd)*len(vd),'full_PV32_software':kernel})
   result['models'][model]={'capture_manifest_sha256':sha(cap/'manifest.json'),'integer_manifest_sha256':sha(qdir/'manifest.json'),'linear':linear,'attention':att}
  a.out.write_text(json.dumps(result,indent=2)+'\n',newline='\n');print(json.dumps({'status':'PASS','linear_cases':sum(len(m['linear'])for m in result['models'].values()),'attention_cases':sum(len(m['attention'])for m in result['models'].values())}))
 if __name__=='__main__':main()
