@@ -45,7 +45,24 @@ try:
         from integrate import integrate
         aliases=None
         if (source/'forest-plan.json').exists():
-            aliases={f['proxy']:f['original_net'] for f in json.loads(sealed(source,'forest-plan.json').read_text())['forests']}
+            plan=json.loads(sealed(source,'forest-plan.json').read_text())
+            aliases={f['proxy']:f['original_net'] for f in plan['forests']}
+            parts=json.loads(sealed(source,'partition.json').read_text())
+            proxyodb=sealed(source,'restricted-final.odb')
+            native='read_db {'+str(proxyodb)+'}\nset f [open routing-tech-shapes.tsv w]\nset tech [ord::get_db_tech]\nforeach l [$tech getLayers] {if {[$l getRoutingLevel]>0} {puts $f [list LAYER [$l getName] [$l getWidth]]}}\nforeach v [$tech getVias] {foreach box [$v getBoxes] {set l [$box getTechLayer];puts $f [list VIA [$v getName] [$l getName] [$box xMin] [$box yMin] [$box xMax] [$box yMax]]}}\nclose $f\n'
+            (ROOT/'upper-tech.tcl').write_text(native)
+            with (ROOT/'upper-tech.log').open('w') as log:
+                subprocess.run(['openroad','-threads','1','-exit',str(ROOT/'upper-tech.tcl')],stdout=log,stderr=subprocess.STDOUT,check=True)
+            from upper_connectivity import verify
+            proof=verify(sealed(source,'restricted-final.def').read_text(),plan,parts['access_landings'],(ROOT/'routing-tech-shapes.tsv').read_text())
+            (ROOT/'upper-connectivity.json').write_text(json.dumps(proof,indent=2)+'\n')
+            assert proof['passed'],'Routed upper forest disconnected'
+            boundary=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-31/boundary-01')
+            pinrows=sealed(boundary,'signal-pin-layers.tsv').read_text().splitlines()
+            assert pinrows and all(0<int(row.split()[-1])<8 for row in pinrows),'Actual signal terminal outside prepaid lower surface'
+            (ROOT/'boundary-proof.json').write_text(json.dumps(dict(passed=True,signal_pin_shape_rows=len(pinrows),
+                max_signal_pin_layer=max(int(row.split()[-1]) for row in pinrows),upper_forests=proof['forest_count'],
+                original_logical_nets=len(plan['proofs']),all_access_graphs_connected=plan['passed']),indent=2)+'\n')
         integrate(sealed(source,'frozen-roundtrip.def'),sealed(source,'restricted-final.def'),ROOT/'composite.def',aliases)
         relative=Path(meta['result_relative']);dest=ROOT/relative;dest.mkdir(parents=True)
         shutil.copy2(sealed(SOURCE,'boundary.sdc'),ROOT/'boundary.sdc')
@@ -86,6 +103,17 @@ try:
         audit(ROOT/'physical.def',ROOT/'composite-roundtrip.def',8,ROOT/'composite-native-freeze-audit.json',True)
         with (ROOT/'strict-qualification.log').open('w') as log:
             subprocess.run(['python3',str(ROOT/'runner/qualify.py')],stdout=log,stderr=subprocess.STDOUT,check=True)
+        log=(ROOT/'composite-extract.log').read_text()
+        electrical=(ROOT/'parent-electrical.rpt').read_text()
+        checks=dict(parent_setup_nonnegative=float(re.search(r'worst slack max\s+([-+\d.eE]+)',log)[1])>=0,
+            parent_hold_nonnegative=float(re.search(r'worst slack min\s+([-+\d.eE]+)',log)[1])>=0,
+            parent_tns_zero=float(re.search(r'tns max\s+([-+\d.eE]+)',log)[1])==0,
+            no_parent_electrical_violations='(VIOLATED)' not in electrical and '(VIOLATED)' not in log,
+            antenna_zero='Found 0 net violations.' in log and 'Found 0 pin violations.' in log,
+            rc_not_disconnected=all(row.split()[-1]=='0' for row in (ROOT/'rc-connectivity.tsv').read_text().splitlines()))
+        (ROOT/'composite-quality.json').write_text(json.dumps(dict(passed=all(checks.values()),checks=checks,
+            scope='Full resource/geometry freeze, actual RC extraction, parent and real hierarchical STA/PG. Integrated full-chip standalone DRC remains a separate check; upper native DRC and original frozen lower/block DRC are compositional evidence.'),indent=2)+'\n')
+        assert all(checks.values()),'Composite physical/electrical constraints failed'
     if SPEC['mode']=='api':
         with (ROOT/'native-stack-symbols.txt').open('w') as log:
             subprocess.run(['addr2line','-f','-C','-e',shutil.which('openroad'),'0x5F46056','0x4100B48','0x3F60AB7','0x3F7C2FE','0x22AA150','0x22B271D'],stdout=log,stderr=subprocess.STDOUT,check=True)
