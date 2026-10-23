@@ -2,6 +2,7 @@
 
 - 更新时间：2026-10-23 15:56（Asia/Shanghai）。
 - 当前任务：[#43 五个开源加速器的模型规模与资源调研](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/43)，负责人本人；交付后保持 in_review，审查人/优先级待指定，未验收或合并。
+- PR：[PR46](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/46)已创建；最新commit与线上CI读回保存在Issue43/PR回执，未自动合并。
 - 成果：[正式调研](../../docs/OPEN_ACCELERATOR_CAPACITY_SURVEY.md)、README入口。分开INT8、FP4混合、INT4和BF16，列模型规模/计算/存储/带宽及来源范围；给出容量、MAC和各路径带宽下界、假设数值算例、Block库存与预连线输入。llaccel上游身份已由参考包commit对应到taisirhassan/llaccel。
 - 隔离：工作目录 `C:/Users/86188/Documents/ChatGPT/2026DAC/LLMHardwareDesign-accelerator-survey`；分支 `task/43-accelerator-capacity`，起点 main `0cc36f3238c7084d7126d94c314fe7d8bf0f9c5d`；commit/PR上传回执与线上CI读回以本任务Issue为准。
 - 验证：`python scripts/check_project.py`通过；24个固定commit GitHub文件实际读取，Gemmini DAC2021作者PDF核对§IV/Fig.6；4张Markdown表、引用定义/使用、5个上游commit及表中公式以本机Python复算通过；`git diff --check`通过。管理检查不验证产品行为；未运行模型、量化、完整推理或物理实验，无服务器操作。
