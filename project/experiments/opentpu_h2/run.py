@@ -41,8 +41,8 @@ try:
         contract=partition(ROOT/'physical.def',ROOT/'frozen-lower.def',SPEC['bottom'])
         (ROOT/'partition.json').write_text(json.dumps(contract,indent=2)+'\n')
         script='read_db {'+str(odb)+'}\nhelp read_def\nhelp detailed_route\nhelp global_route\n'
-        script+='foreach n [[ord::get_db_block] getNets] {if {[$n getSigType] ni {POWER GROUND}} {set w [$n getWire];if {$w ne "NULL"} {odb::dbWire_destroy $w}}}\n'
-        script+='read_def -incremental {'+str(ROOT/'frozen-lower.def')+'}\n'
+        script+='odb::dbChip_destroy [[ord::get_db] getChip]\n'
+        script+='read_def {'+str(ROOT/'frozen-lower.def')+'}\n'
         script+='write_def {'+str(ROOT/'frozen-roundtrip.def')+'}\nwrite_db {'+str(ROOT/'frozen.odb')+'}\n'
         path=ROOT/'partition.tcl';path.write_text(script)
         with (ROOT/'partition.log').open('w') as log:

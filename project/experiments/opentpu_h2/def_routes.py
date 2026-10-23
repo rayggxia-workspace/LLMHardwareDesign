@@ -84,8 +84,10 @@ def partition(source, output, bottom=8):
             changed.append(dict(net=name,removed_paths=len(removed),fixed_paths=len(kept)))
             guides[name]=boxes
         rows.append('    - '+header+'\n'+''.join('      + FIXED '+p+'\n' for p in kept)+'    ;\n')
-    deftext = ('VERSION 5.8 ;\nDIVIDERCHAR "/" ;\nBUSBITCHARS "[]" ;\nDESIGN llhd_top_split ;\n'
-        'UNITS DISTANCE MICRONS 2000 ;\nNETS '+str(len(rows))+' ;\n'+''.join(rows)+'END NETS\nEND DESIGN\n')
+    # Full DEF import is required. Native -incremental accepts the file but
+    # does not import the ordinary routing in this binary; geometry audit
+    # exposed that loss. Preserve every other native DEF section verbatim.
+    deftext=text[:match.start()]+'NETS '+str(len(rows))+' ;\n'+''.join(rows)+text[match.end()-len('END NETS'):]
     Path(output).write_text(deftext)
     return dict(source_sha256=hashlib.sha256(Path(source).read_bytes()).hexdigest(),
         bottom_custom_metal=bottom,nets=len(rows),affected_nets=changed,fixed_paths=fixed_paths,
