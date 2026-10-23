@@ -119,3 +119,7 @@ project/experiments/qwen3_trace/使用独立D盘环境（torch2.10.0+cpu、trans
 ## Issue29 有限缓冲bank控制器RTL
 
 正式实现project/experiments/port_rtl；先python -B scripts/check_project.py，再python -B -m unittest discover -s work/Liangruizhi/29 -p "test_*.py"。干净源码运行python -B project/experiments/port_rtl/prepare.py --output <D盘新目录>，校验bundle SHA后在本人服务器目录解压，以sbatch source/job.sh执行（8CPU、debug29分钟上限）。精确工具、合同、结果与局限见[实验记录](experiments/issue-29-port-rtl.md)。独立trace及汇总审计工具在work/Liangruizhi/29；大trace在授权共同issue-29存储，按报告SHA读取。RTL仿真不代表完整算术或物理验证。
+
+## Issue59 down_proj校准与scale粒度
+
+正式工具project/experiments/down_scale；运行python scripts/check_project.py，再在已有torch2.10CPU/NumPy2.5.4独立环境执行 -B -m unittest discover -s project/experiments/down_scale -p test_contract.py -v。捕获/numeric/service/audit的完整命令及明确位宽/成本/线程/D盘边界见该目录README。numeric与service可并行，两轮新输出；正式源码6d2d6603。已交付精选包核验：python -B work/Liangruizhi/59/verify.py project/experiments/down_scale/results/issue-59-run04/index.json --extract <新D目录> --output <新JSON>。只重放包内24代表整数case/4轨迹，全部144浮点校准/编码重算需按local-data-index取得本机原始输入；共享pending，不声称远端已有。报告docs/experiments/issue-59-llama-down-scale.md。

@@ -1,0 +1,29 @@
+{
+  "schema": "down-scale/1",
+  "issue": 59,
+  "parent_capture_sha256": "b9de8825b6f063a3924aef25d3132b2ef28e7c2e445500d6d3bb123b6e96541c",
+  "model_contract": "project/experiments/llama_cross/model.json",
+  "layer": 0,
+  "outputs": 16,
+  "K": 8192,
+  "calibration_tokens_per_passage": 32,
+  "prefix_tokens": 32,
+  "decode_tokens": 8,
+  "source_format": {"signed_bits": 32, "exponent": -20},
+  "new_calibration_texts": {
+    "cal_science": "A laboratory notebook records temperature, pressure, and elapsed time for each observation. Researchers compare repeated measurements before estimating an uncertainty. The record includes the instrument settings and the calibration date. Independent samples help detect a systematic error. A scientific explanation should identify what the observations support and what remains uncertain. These sentences provide calibration data only and do not constitute a model quality benchmark.",
+    "cal_code": "def count_even(values):\n    total = 0\n    for value in values:\n        if value % 2 == 0:\n            total += 1\n    return total\nThe function visits every element once. A test should cover an empty list, negative integers, duplicate elements, and a single odd element. A reviewer checks the expected outputs before changing the implementation. This source fragment is used for calibration only.",
+    "cal_dialogue": "User: Please explain why a train timetable sometimes changes. Assistant: A timetable coordinates vehicles, stations, and staff. Maintenance, passenger demand, and unexpected delays can require an adjustment. Check the date printed on a schedule before planning a journey. User: How can I keep useful notes? Assistant: Record the source, the time, the assumptions, and the result so that another person can check the reasoning. This dialogue is calibration material."
+  },
+  "new_heldout_text": "A gardener divides a rectangular plot into equal beds. The first bed contains beans, the second contains carrots, and the remaining beds contain herbs. After a dry week, the gardener measures the moisture before watering. The notebook compares each measurement with the previous day and records any missing values. A small program can summarize these observations without changing the original records. Explain how to check the program using a few hand calculated examples.",
+  "static_calibration_sets": ["original32", "expanded128"],
+  "static_objectives": ["max", "mse"],
+  "mse_exponent_offsets": [0, -1, -2, -3, -4, -5, -6],
+  "static_A_group": 512,
+  "dynamic_A_groups": [128, 512, 2048],
+  "W_granularities": [8192, 128],
+  "exploratory_numerical_gate": {"max_case_relative_rmse": 0.05, "output_saturation_fraction": 0.001, "scope": "local sensitivity screen only; no application quality acceptance"},
+  "service": {"rows": [1, 4], "lanes": 8, "wide_limb_cycles": [1, 2, 4], "policies": ["fifo", "critical"], "placements": ["near", "shared"], "group_packet_batch": [1, 4], "bus_bytes_per_cycle": 16, "S_banks": 8, "S_bank_bytes": 32768, "M_bytes": 32768, "V_bytes": 16384},
+  "scope": "Local CPU layer0 first16 down_proj outputs, full K8192; not complete layer/model quality, hardware speed, RTL or PPA. Selection uses calibration only; systems/arithmetic are previously observed diagnostics, new heldout is untouched by parameter selection.",
+  "remote_jobs": false
+}

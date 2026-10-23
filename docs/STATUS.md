@@ -1,5 +1,8 @@
 # 当前状态
 
+- 2026-10-23 [Issue59/PR60](experiments/issue-59-llama-down-scale.md)：Llama down_proj校准与K组scale已本机24候选/144数值、1152服务两轮。最佳局部误差5.39%，并非可接受全模型质量；新增对齐归约/元数据/guard边界，未决定必须INT64或固定近端RQ。粗35bit与实际W所见scale的32bit界严格区分。精选证据可重放24代表条件，全量原输入本机留索引共享pending。用户最新将兄方批次交给本会话服务器推进，Issue61先接收PR36已有数据并核剩余缺项；其他成员Issue55集成保持独立。
+
+
 - 2026-10-23 Llama跨模型：[Issue56/PR57](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/57)
   已有1B权重本机完成一层完整4Q/1KV的FP32/cached、两轮整数GQA/16线性条件/384端口配置。
   重要边界：down静态A约99.8%置零且局部误差70%–83%，动态行scale改善仍非应用质量通过；完整K内留需同乘积scale。

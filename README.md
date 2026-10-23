@@ -14,6 +14,8 @@
 
 ## 当前工作方式
 
+[Llama down_proj校准与scale粒度](docs/experiments/issue-59-llama-down-scale.md)已完成本机24候选/144数值、1152服务两轮；改K组scale需显式对齐归约/metadata/guard，仍无最终硬件或完整质量结论。
+
 [本机Llama-3.2-1B跨模型验证](docs/experiments/issue-56-llama-cross-model.md)复用完整GQA整数与端口工具，
 保留静态FFN激活量化的大误差、容量拒绝和微小RQ服务差异；它是局部候选证据，非全模型/硬件方案验收。
 

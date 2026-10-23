@@ -1,5 +1,7 @@
 # 算子与Block划分候选 v1：局部归约、分级状态、产品定制连接
 
+Issue59补充：[Llama down_proj](experiments/issue-59-llama-down-scale.md)的K分组需显式ALIGN_REDUCE、单位/版本metadata和完整组事件；不能默认完整K同INT32单位。粗35bit界不强制INT64：固定真实W/所见scale更紧界可容INT32，但guard/metadata成本待比较。保留可旁路近M归约和共享V，尚不冻结硬连接。
+
 2026-10-23（UTC+08:00），Liangruizhi，[Issue41](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/41)。
 这是**分析提出的可证伪候选**，不是已实现IP、最优划分或已验证硬件收益。
 承接[共同问题](RESEARCH_QUESTION.md)、[v0方法](OPERATOR_BLOCK_PARTITION.md)、
