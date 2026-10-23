@@ -55,7 +55,7 @@ with (out/'all-timing-samples.csv').open('w',newline='') as f:
 save(out/'model-manifests.json',{n:json.loads((scratch/'models'/n/'model-manifest.json').read_text()) for n in ['qwen35','qwen25']})
 with zipfile.ZipFile(out/'environment-and-audits.zip','w',zipfile.ZIP_DEFLATED) as z:
     for p in (scratch/'receipts').iterdir():
-        if p.name in ['environment-before-cuda.json','environment-cuda.json','requirements-lock.txt','protocol-cuda.log','qwen35-long-wddm-samples.jsonl'] or p.name.endswith('-audit.json') or p.name.endswith('-readback.json'):
+        if p.name in ['environment-before-cuda.json','environment-cuda.json','requirements-lock.txt','requirements-repair-lock.txt','protocol-cuda.log','qwen35-long-wddm-samples.jsonl'] or p.name.endswith('-audit.json') or p.name.endswith('-readback.json'):
             z.write(p,p.name)
     # Repair receipts are task-local reports/logs, never credential files or model blobs.
     for p in (scratch/'receipts').iterdir():
