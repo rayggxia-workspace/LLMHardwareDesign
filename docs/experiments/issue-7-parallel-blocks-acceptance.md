@@ -1,5 +1,12 @@
 # Issue #7 并发实验阶段总结与验收边界
 
+## 2026-10-23 阶段整合更新
+
+用户授权将本工作线阶段证据、主线 PR8、H1 对照 PR17 和两份 HTML 整合进 main。下文九份基线/接续仍是原阶段快照，不改写历史失败。原根17/89558 的 CAP_MARGIN30/40 两路均 FAILED，89559 仅产物审计 COMPLETED；后续 H1 记录已查明升级 BUF 的 dont_touch 与 InsertBufferBeforeLoads 冲突（RSZ-3006），不是超时。结果与后续修复见[Issue15 正式工程记录](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/15-opentpu-compare/docs/experiments/issue-15-opentpu-comparison.md)。本次不重复提交旧作业，也不改写旧封存终态。
+
+H1 的 ACT/MXU 同资源块内及双父层对照已在 PR17 形成合格工程结果；它是后续独立交付，不能倒填为本页原始宏已全部合格。两份 HTML 整理在 `ref-project/llm-routing/docs/`。VECTOR 的 setup、电容和通用形式等价缺口保留；H2 在 Issue31 独立推进。
+
+
 - 核验日期：2026-10-22，中国标准时间（UTC+08:00）。Refs [Issue #7](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/7)，沿用[草稿PR #10](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/10)。
 - 结论：**原并发批次可进行阶段性实验总结和送审；通过列出工具预算的候选可进入宏资格检查。完整硬宏、系统和H2预制底座仍不可验收。** 失败结果也是本阶段交付的一部分，不要求把所有参数点改成成功。
 - 本页只维护并行工作线的结果。主线PR #8、VECTOR／PG、工作树及89448形式验证作业均未修改。
@@ -39,7 +46,7 @@
 
 本次只读核验主线PR8仍待审查：VECTOR与单宏顶层已有实际路由／PG工程结果，但保留setup、电容、模型及等价限制；队列89448仍RUNNING。它们是主线的独立交付，不并入本页的4份预算通过计数。
 
-## 自主补充的必要实验
+## 自主补充的必要实验（2026-10-22 提交时快照）
 
 已在新根 `yuzelu@10.129.166.172:/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-17/` 提交并观察到运行：
 
