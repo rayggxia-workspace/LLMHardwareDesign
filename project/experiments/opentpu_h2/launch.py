@@ -32,6 +32,8 @@ subprocess.run(['scp', *map(str, files), HOST+':'+remote+'/runner/'], check=True
 support=sorted(f for f in (HERE.parent/'opentpu_compare').iterdir() if f.suffix in ('.py','.tcl'))
 ssh('mkdir '+shlex.quote(remote+'/runner/h1'))
 subprocess.run(['scp',*map(str,support),HOST+':'+remote+'/runner/h1/'],check=True)
+aliases=[f for f in support if f.name in ('filter_pg.tcl','check_pg.tcl')]
+subprocess.run(['scp',*map(str,aliases),HOST+':'+remote+'/runner/'],check=True)
 ssh('printf %s ' + shlex.quote(json.dumps(spec, indent=2)+'\n')+' > '+shlex.quote(remote+'/spec.json'))
 ssh('bash -n '+shlex.quote(remote+'/runner/job.sh'))
 job = ssh(shlex.join(['sbatch','--parsable','-p','c64','-N','1','-n','1','-c',str(a.cores),
@@ -43,6 +45,7 @@ receipt = dict(spec=spec,job_id=job,scheduler_readback=readback,host=HOST,image=
     submitted_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
     runner_files={f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in files})
 receipt['h1_support_files']={f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in support}
+receipt['h1_root_tcl_aliases']={f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in aliases}
 (HERE/'results').mkdir(exist_ok=True)
 (HERE/'results'/(a.attempt+'-submission.json')).write_text(json.dumps(receipt,indent=2)+'\n')
 print(json.dumps(receipt,indent=2))

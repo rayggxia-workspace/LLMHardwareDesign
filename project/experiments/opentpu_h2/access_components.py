@@ -47,7 +47,8 @@ def select_accesses(frozen,landings):
             for group in groups.values():
                 index,p=min(group,key=lambda row:(abs(row[1]['x']-cx)+abs(row[1]['y']-cy),row[0]))
                 choice.append(index);selected.append(index)
-        summary.append(dict(net=name,landings=len(pads),fixed_components=len(groups),selected=choice))
+        summary.append(dict(net=name,landings=len(pads),fixed_components=len(groups),selected=choice,
+            groups=[[index for index,p in group] for group in groups.values()]))
     return dict(selected=selected,nets=summary,
         source_landings=len(landings),selected_landings=len(selected),
         scope='Only proven same-layer centerline contacts and native fixed vias merge prepaid accesses. All physical access landings remain frozen; unused ones remain upper obstacles. No active or lower-wire changes.')

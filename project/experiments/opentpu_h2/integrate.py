@@ -7,14 +7,14 @@ from freeze_audit import section,audit
 def routed_parts(row):
     return re.split(r'\+ (?:ROUTED|FIXED) |\n\s*NEW ',row)
 
-def integrate(frozen,proxy,output):
+def integrate(frozen,proxy,output,aliases=None):
     base=Path(frozen).read_text();new=Path(proxy).read_text()
     native={}
     count=0
     for row in section(new,'NETS'):
         parts=routed_parts(row)
-        name=parts[0].split()[0]
-        assert name not in native
+        proxy_name=parts[0].split()[0]
+        name=aliases[proxy_name] if aliases is not None else proxy_name
         paths=[]
         for path in parts[1:]:
             layer=re.match(r'metal(\d+)\s',path)
@@ -24,7 +24,7 @@ def integrate(frozen,proxy,output):
             if len(rest)==2:
                 assert re.fullmatch(r'via[89](?:_\d+)?',rest[1]),'Proxy wrote non-custom via'
             paths.append(path.strip());count+=1
-        native[name]=paths
+        native.setdefault(name,[]).extend(paths)
     assert native and count>0
     rows=[];matched=set()
     for row in section(base,'NETS'):

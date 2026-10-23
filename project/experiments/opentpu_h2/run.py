@@ -43,7 +43,10 @@ try:
         route=sealed(source,'route.log').read_text()
         assert re.findall(r'Number of violations = (\d+)',route)[-1]=='0'
         from integrate import integrate
-        integrate(sealed(source,'frozen-roundtrip.def'),sealed(source,'restricted-final.def'),ROOT/'composite.def')
+        aliases=None
+        if (source/'forest-plan.json').exists():
+            aliases={f['proxy']:f['original_net'] for f in json.loads(sealed(source,'forest-plan.json').read_text())['forests']}
+        integrate(sealed(source,'frozen-roundtrip.def'),sealed(source,'restricted-final.def'),ROOT/'composite.def',aliases)
         relative=Path(meta['result_relative']);dest=ROOT/relative;dest.mkdir(parents=True)
         shutil.copy2(sealed(SOURCE,'boundary.sdc'),ROOT/'boundary.sdc')
         for ext in ('v','sdc'):
@@ -144,6 +147,15 @@ try:
             (ROOT/'access-plan.json').write_text(json.dumps(plan,indent=2)+'\n')
             selected=set(plan['selected'])
         active_names={p['net'] for i,p in enumerate(contract['access_landings']) if i in selected}
+        routing_landings=contract['access_landings']
+        if SPEC.get('forest'):
+            from routing_forest import plan_forest
+            forest=plan_forest(ROOT/'physical.def',ROOT/'frozen-lower.def',contract['access_landings'])
+            (ROOT/'forest-plan.json').write_text(json.dumps(forest,indent=2)+'\n')
+            byindex={i:tree['proxy'] for tree in forest['forests'] for i in tree['landings']}
+            selected=set(byindex)
+            active_names=set(byindex.values())
+            routing_landings=[dict(p,net=byindex.get(i,p['net'])) for i,p in enumerate(contract['access_landings'])]
         (ROOT/'partition.json').write_text(json.dumps(contract,indent=2)+'\n')
         script='read_db {'+str(odb)+'}\nhelp read_def\nhelp detailed_route\nhelp global_route\n'
         script+='odb::dbChip_destroy [[ord::get_db] getChip]\n'
@@ -186,7 +198,10 @@ try:
                 script+='set b [ord::get_db_block]\nforeach n [$b getNets] {if {[$n getSigType] ni {POWER GROUND}} {foreach p [$n getITerms] {$p disconnect};foreach p [$n getBTerms] {odb::dbBTerm_destroy $p}}}\n'
                 script+='foreach n [$b getNets] {if {[$n getSigType] ni {POWER GROUND}} {set w [$n getWire];if {$w ne "NULL"} {odb::dbWire_destroy $w}}}\n'
                 affected={row['net'] for row in contract['affected_nets']}
-                for serial,landing in enumerate(contract['access_landings']):
+                if SPEC.get('forest'):
+                    affected=active_names
+                    for name in sorted(active_names):script+='odb::dbNet_create $b {'+name+'}\n'
+                for serial,landing in enumerate(routing_landings):
                     if landing['net'] not in affected:continue
                     name=landing['net']
                     # Actual DB net names retain the native bus escaping.
@@ -205,10 +220,12 @@ try:
                 script+='write_db proxy-initial.odb\nwrite_def proxy-initial.def\n'
                 script+='# H2_PROXY_FRESH_PROCESS\n'
             guide=''
-            for row in contract['affected_nets']:
+            guide_rows=contract['affected_nets']
+            if SPEC.get('forest'):guide_rows=[dict(net=f['proxy'],box=f['guide_box']) for f in forest['forests']]
+            for row in guide_rows:
                 if row['net'] not in active_names:continue
-                boxes=contract['custom_guides'][row['net']]
-                if SPEC.get('bbox_guides'):
+                boxes=[row['box']+[layer] for layer in range(8,11)] if SPEC.get('forest') else contract['custom_guides'][row['net']]
+                if SPEC.get('bbox_guides') and not SPEC.get('forest'):
                     boxes=[[min(b[0] for b in boxes),min(b[1] for b in boxes),
                         max(b[2] for b in boxes),max(b[3] for b in boxes),layer] for layer in range(8,11)]
                 guide+=row['net']+'\n(\n'+''.join(' '.join(map(str,box[:4]))+' metal'+str(box[4])+'\n' for box in boxes)+')\n'
