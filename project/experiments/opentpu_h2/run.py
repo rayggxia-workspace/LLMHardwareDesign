@@ -106,6 +106,14 @@ try:
         path=ROOT/'connectivity-api.tcl';path.write_text(script)
         with (ROOT/'connectivity-api.log').open('w') as log:
             subprocess.run(['openroad','-threads','1','-exit',str(path)],stdout=log,stderr=subprocess.STDOUT,check=True)
+    if SPEC['mode']=='boundary':
+        script='read_db {'+str(odb)+'}\nset b [ord::get_db_block]\n'
+        script+='set f [open signal-pin-layers.tsv w]\nset seen {}\nforeach i [$b getInsts] {set m [$i getMaster];set name [$m getName];if {[dict exists $seen $name]} {continue};dict set seen $name 1;foreach t [$m getMTerms] {if {[$t getSigType] in {POWER GROUND}} {continue};foreach p [$t getMPins] {foreach box [$p getGeometry] {set l [$box getTechLayer];if {$l ne "NULL"} {puts $f [list $name [$t getName] [$l getName] [$l getRoutingLevel]]}}}}}\n'
+        script+='foreach t [$b getBTerms] {if {[$t getSigType] in {POWER GROUND}} {continue};foreach p [$t getBPins] {foreach box [$p getBoxes] {set l [$box getTechLayer];puts $f [list TOP [$t getName] [$l getName] [$l getRoutingLevel]]}}}\nclose $f\n'
+        script+='set f [open routing-tech-shapes.tsv w]\nset tech [ord::get_db_tech]\nforeach l [$tech getLayers] {if {[$l getRoutingLevel]>0} {puts $f [list LAYER [$l getName] [$l getWidth]]}}\nforeach v [$tech getVias] {foreach box [$v getBoxes] {set l [$box getTechLayer];puts $f [list VIA [$v getName] [$l getName] [$box xMin] [$box yMin] [$box xMax] [$box yMax]]}}\nclose $f\n'
+        path=ROOT/'boundary.tcl';path.write_text(script)
+        with (ROOT/'boundary.log').open('w') as log:
+            subprocess.run(['openroad','-threads','1','-exit',str(path)],stdout=log,stderr=subprocess.STDOUT,check=True)
     if SPEC['mode']=='debug':
         source=Path(SPEC['source'])
         proxy=sealed(source,'proxy-initial.odb')
