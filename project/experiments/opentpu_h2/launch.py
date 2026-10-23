@@ -27,6 +27,7 @@ spec = json.loads(a.spec.read_text()) if a.spec else {'mode': 'inventory'}
 spec.update(cores=a.cores, runner_commit=commit, remote=remote)
 ssh('test ! -e ' + shlex.quote(remote) + ' && mkdir -p ' + shlex.quote(remote+'/runner'))
 files = sorted(f for f in HERE.iterdir() if f.suffix in ('.py', '.tcl', '.sh'))
+assert all(b'\r\n' not in f.read_bytes() for f in files), 'Upload exact committed LF runner bytes'
 subprocess.run(['scp', *map(str, files), HOST+':'+remote+'/runner/'], check=True)
 ssh('printf %s ' + shlex.quote(json.dumps(spec, indent=2)+'\n')+' > '+shlex.quote(remote+'/spec.json'))
 ssh('bash -n '+shlex.quote(remote+'/runner/job.sh'))
