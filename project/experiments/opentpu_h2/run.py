@@ -142,6 +142,9 @@ try:
             guide=''
             for row in contract['affected_nets']:
                 boxes=contract['custom_guides'][row['net']]
+                if SPEC.get('bbox_guides'):
+                    boxes=[[min(b[0] for b in boxes),min(b[1] for b in boxes),
+                        max(b[2] for b in boxes),max(b[3] for b in boxes),layer] for layer in range(8,11)]
                 guide+=row['net']+'\n(\n'+''.join(' '.join(map(str,box[:4]))+' metal'+str(box[4])+'\n' for box in boxes)+')\n'
             (ROOT/'restricted.guide').write_text(guide)
             script+='puts "GUIDE_API [info commands odb::*Guide*]"\n'
