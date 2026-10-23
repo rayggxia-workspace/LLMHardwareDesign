@@ -14,4 +14,4 @@ esac
 export TMPDIR="$root/tmp" HF_HOME="$root/cache" TORCH_HOME="$root/cache"
 export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_IMPLICIT_TOKEN=1 TOKENIZERS_PARALLELISM=false
 export PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=24 MKL_NUM_THREADS=24 OPENBLAS_NUM_THREADS=1
-"$root/venv-modern/bin/python" -u -B "$root/phase7/capture.py" --model "$model" --model-dir "$root/models/$modeldir" --plan "$root/phase6/qwen-mirror-plan.json" --binding "$root/phase7/binding.json" --threads 24 --out "$root/$model-gqa01"
+"$root/venv-modern/bin/python" -u -B "$root/phase9/capture.py" --model "$model" --model-dir "$root/models/$modeldir" --plan "$root/phase6/qwen-mirror-plan.json" --binding "$root/phase9/binding.json" --threads 24 --out "$root/$model-gqa01"
