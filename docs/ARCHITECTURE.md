@@ -112,3 +112,7 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 ## 数据与外部依赖
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
+
+## Issue #55：完整硬件案例共同底座
+
+完整openTPU small/llaccel_core输入、辅助分区与M9/M10定制流程位于[block_full_integration](../project/experiments/block_full_integration/README.md)。阶段一完整输入/基准已验证并保留继承问题；完整集成、冻结底座和最终定制尚未通过。运行命令、不可覆盖的新目录约束与Slurm快照入口见该README。原始参考和其他成员目录只读；本任务新输出全部位于PingyangHuang/issue-55下。

@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "status": "unvalidated_fixed_access_contract_draft",
+  "source": "Issue55 task: fixed M1-M8, customizable M9/M10",
+  "specification_finalized": false,
+  "required_inputs": {
+    "qualified_macro_database": null,
+    "original_and_migrated_native_inventory": null,
+    "target_port_semantics_and_clock_reset_policy": null,
+    "actual_block_track_patterns": null,
+    "full_technology_lef_and_via_rules": null,
+    "macro_placement_orientation_and_interface_transform": null,
+    "allowed_wrapper_outline_or_halo": null
+  },
+  "layer_ownership": {
+    "fixed_routing_levels": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "fixed_via_connections": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        7,
+        8
+      ]
+    ],
+    "custom_routing_levels": [
+      9,
+      10
+    ],
+    "custom_via_connections": [
+      [
+        8,
+        9
+      ],
+      [
+        9,
+        10
+      ]
+    ],
+    "boundary_rule": "Every customizable 8-9 via bottom landing must be fully covered by the pre-existing fixed M8 landing. It must add zero M1-M8 conductor area.",
+    "same_base_rule": "All target-specific variants retain identical instances, masters, placement/orientation, fixed lower-metal conductor coverage, fixed via definitions/positions and fixed pin-access resource IDs."
+  },
+  "proposed_steps": [
+    "First migrate original signal wires off reserved layers and qualify unchanged cells, non-target wires and PG.",
+    "Enumerate real BPin rectangles and real track patterns. Treat ports as distinct electrical terminals, not declared bandwidth.",
+    "Generate candidate escape corridors outside the original macro boundary or in explicitly available internal regions, honoring lower-layer obstructions and PG.",
+    "Assign each port a stable M8 landing ID and one fixed escape path including required lower vias.",
+    "Validate every escape against all original and other escape conductors, PG and pins; run native DRC and full-model RC/STA.",
+    "Enclose all fixed escape geometry in the wrapper footprint, include keepouts, and qualify nonoverlapping footprints.",
+    "Freeze one common access map and lower-metal database before target-specific V8/M9/V9/M10 routing.",
+    "Compare physical metal coverage at the boundary, so a duplicate via landing record cannot hide added metal or falsely imply a mask change."
+  ],
+  "candidate_access_patterns": [
+    {
+      "id": "staggered_two_dimensional_halo",
+      "status": "candidate_not_selected",
+      "adjustable": [
+        "halo_width",
+        "row_count",
+        "per-side capacity",
+        "access pitch",
+        "fixed escape layer assignment"
+      ]
+    },
+    {
+      "id": "sparse_surface_access",
+      "status": "candidate_not_selected",
+      "condition": "Only after native obstruction/PG/route clearance and full physical checks establish available regions"
+    }
+  ],
+  "observed_case_constraints": {
+    "units": "micron",
+    "signal_pin_layers": [
+      5,
+      6
+    ],
+    "power_pin_layer": 7,
+    "signal_pin_nominal_width": 0.14,
+    "fixed_M8_nominal_pitch": 0.8,
+    "custom_M9_nominal_pitch": 1.6,
+    "via8_0_bottom_M8_landing_width": 0.4,
+    "via8_0_top_M9_landing_width": 0.8,
+    "M9_nominal_spacing": 0.8,
+    "one_ring_optimistic_capacity": [
+      {
+        "case_id": "act",
+        "side": 326.205,
+        "signal_port_bits": 860,
+        "optimistic_single_ring_slots": 816,
+        "necessary_condition": "fails"
+      },
+      {
+        "case_id": "gemm",
+        "side": 1157.32,
+        "signal_port_bits": 3753,
+        "optimistic_single_ring_slots": 2896,
+        "necessary_condition": "fails"
+      },
+      {
+        "case_id": "mxu",
+        "side": 1100.455,
+        "signal_port_bits": 2172,
+        "optimistic_single_ring_slots": 2752,
+        "necessary_condition": "count_only_pass_not_routability"
+      },
+      {
+        "case_id": "vector",
+        "side": 1148.52,
+        "signal_port_bits": 2246,
+        "optimistic_single_ring_slots": 2872,
+        "necessary_condition": "count_only_pass_not_routability"
+      }
+    ],
+    "capacity_formula": "4 * (floor(side / 1.6) + 1), before corners, PG, obstacles, direction, actual track phase or larger width-dependent spacing",
+    "capacity_limitation": "Necessary-count screening only; does not prove any access path exists."
+  },
+  "acceptance": {
+    "required": [
+      "all selected ports geometrically reachable",
+      "all required escape nets connected",
+      "no target-vs-all shorts",
+      "native DRC reported and reviewed",
+      "cell/master/location/orient unchanged",
+      "no unapproved changes to original lower geometry",
+      "all fixed wrapper regions nonoverlapping",
+      "V8 bottom-metal area contained in fixed pads",
+      "original and new RC/STA with complete cell/memory libraries and annotation coverage"
+    ],
+    "unproven": [
+      "full-foundry manufacturability",
+      "arbitrary future Block generality",
+      "arbitrary LLM benchmark adaptation"
+    ]
+  }
+}

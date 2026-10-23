@@ -1,0 +1,371 @@
+{
+  "schema_version": 1,
+  "updated_utc": "2026-10-23T11:39:58.709846+00:00",
+  "repository": "rayggxia-workspace/LLMHardwareDesign",
+  "issue": 55,
+  "owner": "huangpingyang04-lgtm",
+  "task_root": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z",
+  "source_commit_at_stage1_review": "b415b0a688160c6943e904350ec81acd455e8550",
+  "frozen_base_version": null,
+  "major_base_candidates_used": 0,
+  "layer_policy": {
+    "fixed": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "custom": [
+      9,
+      10
+    ],
+    "custom_via_connections": [
+      [
+        8,
+        9
+      ],
+      [
+        9,
+        10
+      ]
+    ],
+    "M11_M12": "separate fallback only"
+  },
+  "stages": {
+    "1": {
+      "status": "pass_with_inherited_issues",
+      "scope": "Complete input/hierarchy ownership inventory and executable finite original-design baselines; no integration or signoff claim",
+      "inheritance": [
+        "VECTOR input setup WNS -4.16659 ns and 59 max-cap violations",
+        "Research FakeRAM and two-state simulation; no production SRAM or exhaustive formal proof"
+      ],
+      "cleanup": "442 state/memory definitions have no raw local output path, 1 no path after restricted two-state constants; 6 retained state interface expressions attributed. Raw checkpoint retained.",
+      "parameter_evidence": "Executed -G overrides plus pinned SV bindings/defaults and actual port/generate consequences; missing JSON parameter metadata not fabricated"
+    },
+    "2": {
+      "status": null,
+      "execution": "partial preparation, complete integration not validated"
+    },
+    "3": {
+      "status": "fail",
+      "execution": "First ACT selective migration completed routing but failed target-vs-all contact acceptance",
+      "job_id": 89967,
+      "fixed_resources_unchanged": true,
+      "M9_M10_remaining_electrical_boxes": 0,
+      "required_target_nets": 69,
+      "connected_target_nets": 69,
+      "different_net_shape_contacts": 43,
+      "router_reported_DRVs": 1,
+      "classification": "new migration failure, not inherited input failure",
+      "full_common_base": "not built"
+    },
+    "4": {
+      "status": null,
+      "execution": "not executed"
+    }
+  },
+  "baseline_extensions": {
+    "llaccel": {
+      "seeds": [
+        0,
+        2
+      ],
+      "launches_per_seed": 30,
+      "checks_per_seed": 60,
+      "failures": 0,
+      "seed1": "reused historical original baseline",
+      "new_backpressure": "not introduced"
+    },
+    "opentpu": {
+      "cases": 20,
+      "legacy": 8,
+      "seeded": 12,
+      "ready_seeds": [
+        0,
+        1,
+        2
+      ],
+      "trace_rows": 87160,
+      "memory_bytes_compared": 5242880,
+      "failures": 0
+    }
+  },
+  "core_inputs": [
+    {
+      "id": "act",
+      "master": "llhd_opentpu_act",
+      "source_commit": "f237dab2f196855a59a083b1454786df8f01291f",
+      "size_um": [
+        326.205,
+        326.205
+      ],
+      "internal_instances": 16178,
+      "signal_port_bits": 860,
+      "custom_layer_existing_net_counts": {
+        "metal9": 69
+      },
+      "inherited_metrics": {
+        "finish__timing__setup__tns": 0,
+        "finish__timing__hold__tns": 0,
+        "finish__timing__setup__ws": 1.27562,
+        "finish__timing__hold__ws": 0.0361168,
+        "finish__timing__drv__max_slew_limit": 0.301655,
+        "finish__timing__drv__max_slew": 0,
+        "finish__timing__drv__max_cap_limit": 0.188855,
+        "finish__timing__drv__max_cap": 0,
+        "finish__timing__drv__max_fanout_limit": 0,
+        "finish__timing__drv__max_fanout": 0
+      }
+    },
+    {
+      "id": "gemm",
+      "master": "gemm_engine",
+      "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+      "size_um": [
+        1157.32,
+        1157.32
+      ],
+      "internal_instances": 571780,
+      "signal_port_bits": 3753,
+      "custom_layer_existing_net_counts": {
+        "metal9": 47,
+        "metal10": 3
+      },
+      "inherited_metrics": {
+        "finish__timing__setup__tns": 0,
+        "finish__timing__hold__tns": 0,
+        "finish__timing__setup__ws": 0.775024,
+        "finish__timing__hold__ws": 0.0518109,
+        "finish__timing__drv__max_slew_limit": 0.349461,
+        "finish__timing__drv__max_slew": 0,
+        "finish__timing__drv__max_cap_limit": 0.00851057,
+        "finish__timing__drv__max_cap": 0,
+        "finish__timing__drv__max_fanout_limit": 0,
+        "finish__timing__drv__max_fanout": 0
+      }
+    },
+    {
+      "id": "mxu",
+      "master": "llhd_opentpu_mxu",
+      "source_commit": "f237dab2f196855a59a083b1454786df8f01291f",
+      "size_um": [
+        1100.455,
+        1100.455
+      ],
+      "internal_instances": 441518,
+      "signal_port_bits": 2172,
+      "custom_layer_existing_net_counts": {
+        "metal9": 11
+      },
+      "inherited_metrics": {
+        "finish__timing__setup__tns": 0,
+        "finish__timing__hold__tns": 0,
+        "finish__timing__setup__ws": 0.210635,
+        "finish__timing__hold__ws": 0.0386703,
+        "finish__timing__drv__max_slew_limit": 0.385744,
+        "finish__timing__drv__max_slew": 0,
+        "finish__timing__drv__max_cap_limit": 0.29517,
+        "finish__timing__drv__max_cap": 0,
+        "finish__timing__drv__max_fanout_limit": 0,
+        "finish__timing__drv__max_fanout": 0
+      }
+    },
+    {
+      "id": "vector",
+      "master": "vec_engine",
+      "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+      "size_um": [
+        1148.52,
+        1148.52
+      ],
+      "internal_instances": 733546,
+      "signal_port_bits": 2246,
+      "custom_layer_existing_net_counts": {
+        "metal9": 40
+      },
+      "inherited_metrics": {
+        "finish__timing__setup__tns": -1056.05,
+        "finish__timing__hold__tns": 0,
+        "finish__timing__setup__ws": -4.16659,
+        "finish__timing__hold__ws": 0.0253833,
+        "finish__timing__drv__max_slew_limit": 0.16234,
+        "finish__timing__drv__max_slew": 0,
+        "finish__timing__drv__max_cap_limit": -0.241973,
+        "finish__timing__drv__max_cap": 59,
+        "finish__timing__drv__max_fanout_limit": 0,
+        "finish__timing__drv__max_fanout": 0
+      }
+    }
+  ],
+  "evidence": {
+    "llaccel_parameters": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/parameters-llaccel-01/execution.json",
+      "bytes": 2535,
+      "sha256": "c52899350b1517f205426e7c794364c7252f7e82045291629d3e12216a81fead",
+      "status": "PASS_SOURCE_BINDING_AND_ELABORATED_BOUNDARY_EVIDENCE"
+    },
+    "opentpu_parameters": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/parameters-opentpu-01/execution.json",
+      "bytes": 3392,
+      "sha256": "bcb80e68b38294af6f1fcea57c8b7a13e7abc718c233718ac7e9b421481915d4",
+      "status": "PASS_SOURCE_BINDING_AND_ELABORATED_BOUNDARY_EVIDENCE"
+    },
+    "opentpu_cleanup": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/cleanup-opentpu-review-01/execution.json",
+      "bytes": 3889,
+      "sha256": "95f0f382a05e5f691389371e2a32567515f6fc1bce5407a11a2c1d4b69ba4537",
+      "status": "PASS_LIMITED_CLEANUP_ATTRIBUTION"
+    },
+    "llaccel_seed_extension": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/baseline-extra-01/execution.json",
+      "bytes": 11137,
+      "sha256": "482d074643ae33abb816f17b78062752c7c1e9217bd294e65c503137a2c8b2db",
+      "status": "PASS_ORIGINAL_RTL_SEEDS_0_2_EXTENSION"
+    },
+    "opentpu_observer": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/open-observer-replay-01/execution.json",
+      "bytes": 103225,
+      "sha256": "49ece4c687208c4c07efe219ef922d50c8d990b0b49704f0239e8a73507604c8",
+      "status": "PASS_ORIGINAL_OBSERVER_LEGACY8_SEEDED12"
+    },
+    "act_native": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/native-act-01/execution.json",
+      "bytes": 18498,
+      "sha256": "7f7e33a08a5c240cb0bc8c0565ad470f814842a7383231679bba74e31dac3446"
+    },
+    "mxu_native": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/native-mxu-01/execution.json",
+      "bytes": 18510,
+      "sha256": "32f90207e5c437579b618b542a310a61eb8b35fbbcdb3dc28cab805bc81943f4"
+    },
+    "gemm_native": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/native-gemm-01/execution.json",
+      "bytes": 19064,
+      "sha256": "859943ccd43b8554b54f4db03aa24b26c8bb51612fdbdeaf91bd0acf61b60efb"
+    },
+    "vector_native": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/native-vector-01/execution.json",
+      "bytes": 18450,
+      "sha256": "30cc65b225bd3ca5831e80d7e6c6933ca01eeb88b32d9ccf46ef976864136dc9"
+    },
+    "mxu_review": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/catalog-and-reviews-01-driver/mxu-independent-review.json",
+      "bytes": 4797,
+      "sha256": "3e83403f102ec0f9c2e557378a60410b54232d6d7cca0f6bdc47fbcd06512b01"
+    },
+    "gemm_review": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/catalog-and-reviews-01-driver/gemm-independent-review.json",
+      "bytes": 5033,
+      "sha256": "7314890d60a1aabf94c80ad380a65649547ecba2cdb3a8c24bd1f8e3a8533cca"
+    },
+    "vector_review": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/catalog-and-reviews-01-driver/vector-independent-review.json",
+      "bytes": 4771,
+      "sha256": "7fe1400cd8024905e14f60f926b7f5862e3ce18f08fdfc05e3a948fadbe062b6"
+    },
+    "runs/catalog-01/input_manifest.json": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/catalog-01/input_manifest.json",
+      "bytes": 69602,
+      "sha256": "04e435633b3e05882b5e46f1a0036cf41dbcc404404f7cb8b64241563f3e6398"
+    },
+    "runs/catalog-01/block_catalog.json": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/catalog-01/block_catalog.json",
+      "bytes": 89332,
+      "sha256": "ddbd1436097d786c1f8b2ea7527408ba9eca07094b4d1dfddd435a0cd2298ce2"
+    },
+    "inputs/rtl_inventory.json": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/inputs/rtl_inventory.json",
+      "bytes": 184712,
+      "sha256": "349d6ff5e1aecbbfde22fc077cbfca5c6572a53fe9b6c61f4d84a34086a95407"
+    },
+    "inputs/baseline_evidence.json": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/inputs/baseline_evidence.json",
+      "bytes": 92438,
+      "sha256": "5432878481e0358aa296c0f623f7f6fa270b6315a8e3a6a0186f43b7bc802080"
+    },
+    "deliverables/coverage_map.csv": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/deliverables/coverage_map.csv",
+      "bytes": 20464,
+      "sha256": "fa123ffc0536c0ed57f865fe9b70d9735b7cdc56966388db5b295330f3260bed"
+    },
+    "deliverables/open_observer_89965_independent_review.json": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/deliverables/open_observer_89965_independent_review.json",
+      "bytes": 8741,
+      "sha256": "aeb59272b94904b787823d7ef9b7003f4684c6fde6a748a3e3512e9e05dcd2a3"
+    },
+    "runs/hierarchy-opentpu-04/execution.json": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/hierarchy-opentpu-04/execution.json",
+      "bytes": 3773,
+      "sha256": "c467757bf282be2f9266cd66c07b5ce706584f64ccad2b28c57a9cfe320474ea"
+    },
+    "runs/hierarchy-opentpu-04/partition_inventory.json": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/hierarchy-opentpu-04/partition_inventory.json",
+      "bytes": 2114,
+      "sha256": "1ca13f343fd434a3c7ebc15107122390056a50888994e17158aa67bd210ebc08"
+    },
+    "runs/hierarchy-llaccel-03/execution.json": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/hierarchy-llaccel-03/execution.json",
+      "bytes": 3109,
+      "sha256": "a6e779026660c317acd4ebc7e230351147f8aae41bf0fbc7b70dffe20aeca966"
+    },
+    "runs/hierarchy-llaccel-03/partition_inventory.json": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/hierarchy-llaccel-03/partition_inventory.json",
+      "bytes": 1791,
+      "sha256": "b9b7f1e5543662d7653850ac093d95eedd70969f1264a37974a1b377e3436b39"
+    },
+    "runs/migration-prepare-act-03/execution.json": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/migration-prepare-act-03/execution.json",
+      "bytes": 24177,
+      "sha256": "5e3609c88624269add458fbfeba03182384c875cc749eb1d9fc97bf80dc2b30e"
+    },
+    "runs/native-geometry-act-01-driver/original-target-geometry.json": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/native-geometry-act-01-driver/original-target-geometry.json",
+      "bytes": 39972,
+      "sha256": "0cd6bdcaff16084dc75b7657725d645806b2039d15e4629a48f961d5d303d1a1"
+    },
+    "act_review": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/stage1-readonly-01-driver/act-independent-review.json",
+      "bytes": 4594,
+      "sha256": "72542423d35535f06f1ee0082bdf147c16a840ccccc433096b303b7d2af516f4"
+    },
+    "runs/migration-route-act-01/execution.json": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/migration-route-act-01/execution.json",
+      "bytes": 28359,
+      "sha256": "627fea091a1b03a508d0a0df09179ad6bb69ea4a6a9739b163402b52e39cbd03"
+    },
+    "runs/migration-route-act-01/route_comparison.json": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/migration-route-act-01/route_comparison.json",
+      "bytes": 57153,
+      "sha256": "5331f10891986679b230299264e2deb73d6a79653fce6e66b3744c8f63b5add3"
+    },
+    "runs/migration-route-act-01/upper_layer_check.json": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/migration-route-act-01/upper_layer_check.json",
+      "bytes": 181,
+      "sha256": "42f489b6a2ed1b1061e0c2feb08038046df32eef9475c669176de5b9266ce2c7"
+    },
+    "runs/migration-route-act-01/route_target_geometry.json": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/migration-route-act-01/route_target_geometry.json",
+      "bytes": 54077,
+      "sha256": "bb478e7104b6a94e5f968096849cea7ebec641d022be77ee4e0517af67ac592e"
+    }
+  },
+  "known_limits": [
+    "No common frozen base",
+    "No new complete integrated DUT paired comparison",
+    "No M8 fixed escape route",
+    "No full macro replacement equivalence",
+    "No final M9/M10 customization or new RC/STA acceptance"
+  ],
+  "delivery": {
+    "remote_branch": "task/55-full-block-integration",
+    "pull_request": null,
+    "uploaded": false,
+    "registry": "pending management-hub PR5 merge",
+    "projects": "unverified; sync pending missing board config/capability",
+    "reviewer": "not assigned"
+  }
+}

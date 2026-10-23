@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "purpose": "Native input inventory; M1-M8 fixed / M9-M10 customization candidate; not a migrated base",
+  "case_version": "report-vector-gemm__issue15-m9-act-mxu",
+  "technology_inputs": {
+    "technology_lef": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+    "cell_lef": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.mod.lef",
+    "cell_liberty": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
+    "rc_rules": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+    "wire_rc": "/OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl"
+  },
+  "cases": [
+    {
+      "id": "vector",
+      "role": "primary",
+      "expected_master": "vec_engine",
+      "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+      "parameters": null,
+      "clock_constraints": {
+        "period_ns": 3,
+        "io_delay_ns": 0.6,
+        "input_driver": null,
+        "output_load_fF": null,
+        "scope": "Block boundary constraints; full original target constraints require separate source audit"
+      },
+      "inputs": {
+        "odb": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/results/nangate45/llhd_vec_original/base/6_final.odb",
+        "netlist": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/results/nangate45/llhd_vec_original/base/6_final.v",
+        "sdc": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/results/nangate45/llhd_vec_original/base/6_final.sdc",
+        "spef": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/results/nangate45/llhd_vec_original/base/6_final.spef",
+        "lef": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/results/nangate45/llhd_vec_original/base/vec_engine.lef",
+        "liberty": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/results/nangate45/llhd_vec_original/base/vec_engine_typ.lib",
+        "constraint_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/vec.sdc"
+      },
+      "inherited_metrics": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/logs/nangate45/llhd_vec_original/base/6_report.json",
+      "scope_limitations": [
+        "No source RTL-to-final-netlist full equivalence established by this inventory",
+        "Synthetic SRAM where present; external llaccel banks excluded from core"
+      ]
+    },
+    {
+      "id": "gemm",
+      "role": "primary",
+      "expected_master": "gemm_engine",
+      "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+      "parameters": {
+        "EPILOGUE_FUSION": 0,
+        "GEMM_TM": 16,
+        "GEMM_TN": 16,
+        "GEMM_TK": 16
+      },
+      "clock_constraints": {
+        "period_ns": 3,
+        "io_delay_ns": 0.6,
+        "input_driver": null,
+        "output_load_fF": null,
+        "scope": "Block boundary constraints; full original target constraints require separate source audit"
+      },
+      "inputs": {
+        "odb": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/6_final.odb",
+        "netlist": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/6_final.v",
+        "sdc": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/6_final.sdc",
+        "spef": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/6_final.spef",
+        "lef": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/gemm_engine.lef",
+        "liberty": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/gemm_engine_typ.lib",
+        "constraint_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/boundary.sdc"
+      },
+      "inherited_metrics": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/logs/nangate45/parallel_llaccel_gemm/base/6_report.json",
+      "scope_limitations": [
+        "No source RTL-to-final-netlist full equivalence established by this inventory",
+        "Synthetic SRAM where present; external llaccel banks excluded from core"
+      ]
+    },
+    {
+      "id": "act",
+      "role": "primary",
+      "expected_master": "llhd_opentpu_act",
+      "source_commit": "f237dab2f196855a59a083b1454786df8f01291f",
+      "parameters": {
+        "D": 32,
+        "MCOLS": 2,
+        "ROWS": 2,
+        "BLOCKS": 32,
+        "LANES": 4,
+        "DEPTH": 64,
+        "IMPL": 2,
+        "CL": 16,
+        "E": 0,
+        "SID": 0
+      },
+      "clock_constraints": {
+        "period_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "input_driver": "BUF_X4/Z",
+        "output_load_fF": 5,
+        "scope": "Block boundary constraints; full original target constraints require separate source audit"
+      },
+      "inputs": {
+        "odb": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03/flow/results/nangate45/matched_opentpu_act/base/6_final.odb",
+        "netlist": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03/flow/results/nangate45/matched_opentpu_act/base/6_final.v",
+        "sdc": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03/flow/results/nangate45/matched_opentpu_act/base/6_final.sdc",
+        "spef": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03/flow/results/nangate45/matched_opentpu_act/base/6_final.spef",
+        "lef": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03/flow/results/nangate45/matched_opentpu_act/base/llhd_opentpu_act.lef",
+        "liberty": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03/flow/results/nangate45/matched_opentpu_act/base/llhd_opentpu_act_typ.lib",
+        "constraint_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03/boundary.sdc"
+      },
+      "inherited_metrics": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-act-03/flow/logs/nangate45/matched_opentpu_act/base/6_report.json",
+      "scope_limitations": [
+        "No source RTL-to-final-netlist full equivalence established by this inventory",
+        "Synthetic SRAM where present; external llaccel banks excluded from core"
+      ]
+    },
+    {
+      "id": "mxu",
+      "role": "primary",
+      "expected_master": "llhd_opentpu_mxu",
+      "source_commit": "f237dab2f196855a59a083b1454786df8f01291f",
+      "parameters": {
+        "D": 32,
+        "MCOLS": 2,
+        "ROWS": 2,
+        "BLOCKS": 32,
+        "LANES": 4,
+        "DEPTH": 64,
+        "IMPL": 2,
+        "CL": 16,
+        "E": 0,
+        "SID": 0
+      },
+      "clock_constraints": {
+        "period_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "input_driver": "BUF_X4/Z",
+        "output_load_fF": 5,
+        "scope": "Block boundary constraints; full original target constraints require separate source audit"
+      },
+      "inputs": {
+        "odb": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03/flow/results/nangate45/matched_opentpu_mxu/base/6_final.odb",
+        "netlist": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03/flow/results/nangate45/matched_opentpu_mxu/base/6_final.v",
+        "sdc": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03/flow/results/nangate45/matched_opentpu_mxu/base/6_final.sdc",
+        "spef": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03/flow/results/nangate45/matched_opentpu_mxu/base/6_final.spef",
+        "lef": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03/flow/results/nangate45/matched_opentpu_mxu/base/llhd_opentpu_mxu.lef",
+        "liberty": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03/flow/results/nangate45/matched_opentpu_mxu/base/llhd_opentpu_mxu_typ.lib",
+        "constraint_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03/boundary.sdc"
+      },
+      "inherited_metrics": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-mxu-03/flow/logs/nangate45/matched_opentpu_mxu/base/6_report.json",
+      "scope_limitations": [
+        "No source RTL-to-final-netlist full equivalence established by this inventory",
+        "Synthetic SRAM where present; external llaccel banks excluded from core"
+      ]
+    },
+    {
+      "id": "merged_m9_alternative",
+      "role": "alternative_not_hashed",
+      "expected_master": "llhd_match_merged",
+      "odb": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-15/m9-merged-03/flow/results/nangate45/matched_opentpu_merged/base/6_final.odb",
+      "note": "Alternative to ACT plus MXU, never add as duplicate functionality"
+    },
+    {
+      "id": "report_split_alternatives",
+      "role": "alternative_not_hashed",
+      "paths": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/act-cap20",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/mxu-cap20"
+      ],
+      "note": "Original report split instances; superseded only by explicit current candidate selection"
+    }
+  ],
+  "custom_routing_levels": [
+    9,
+    10
+  ]
+}
