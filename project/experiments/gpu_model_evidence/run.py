@@ -346,9 +346,11 @@ def main():
             for j in range(17):
                 o = call(ids[:,:128+j])
                 full.append(o.logits.detach().cpu())
+                if j==16:
+                    fresh_final_state=snapshot(o.past_key_values)
                 del o
             torch.save(full, a.out/'short-full-logits.pt')
-            ref_state = None
+            ref_state = fresh_final_state
             for kind in ('cached', 'chunked'):
                 cache = None
                 for start in range(0,128,128 if kind=='cached' else 32):
@@ -361,15 +363,13 @@ def main():
                     seq.append(o.logits.detach().cpu())
                 errors = [compare(x,y) for x,y in zip(seq,full)]
                 state = snapshot(cache)
-                state_errors = [] if ref_state is None else [{'name':n,**compare(t,ref_state[n])} for n,t in state.items()]
-                if ref_state is None:
-                    ref_state = state
+                state_errors = [{'name':n,**compare(t,ref_state[n])} for n,t in state.items()]
                 ok = all(e['finite'] and e['max_abs'] <= cfg['reference_acceptance']['logits_max_abs'] and e['relative_l2'] <= cfg['reference_acceptance']['logits_relative_l2'] for e in errors)
                 ok = ok and all(e['finite'] and e['relative_l2'] <= cfg['reference_acceptance']['state_relative_l2'] for e in state_errors)
                 results['correctness'].append({'mode':kind,'pass':ok,'logits':errors,'states':state_errors,'cache':cache_info(cache)})
                 del o,cache,state
                 checkpoint()
-            del ref_state, full
+            del ref_state, fresh_final_state, full
             # Limited raw capture and observer run are separate from all performance samples.
             o=call(ids[:,:129]); unobserved=o.logits.detach().cpu(); del o
             if q35:
