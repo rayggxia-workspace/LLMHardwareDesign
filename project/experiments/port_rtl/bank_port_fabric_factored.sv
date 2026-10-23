@@ -171,8 +171,8 @@ module bank_port_fabric #(
             for (int bank = 0; bank < 2; bank = bank + 1) begin
                 for (int slot = 0; slot < 2; slot = slot + 1) begin
                     if (slot_valid[bank][slot]) begin
-                        int ep;
-                        ep = int'(slot_ep[bank][slot]);
+                        logic [1:0] ep;
+                        ep = slot_ep[bank][slot];
                         if (req_write[ep]) begin
                             response_data[ep][wr_ptr[ep]] <= '0;
                             for (int lane = 0; lane < 64; lane = lane + 1) begin

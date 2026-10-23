@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --time=00:29:00
 set -euo pipefail
-cd /public/home/yuzelu/RuizhiLiang/issue29-port-rtl-20261022/factored01
+case "$PWD" in /public/home/yuzelu/RuizhiLiang/issue29-port-rtl-20261022/factored*) ;; *) exit 2 ;; esac
 mkdir -p tmp
 /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv --contain \
   --bind "$PWD:/work" --bind /public/home/yuzelu/opt/eda:/eda:ro \
