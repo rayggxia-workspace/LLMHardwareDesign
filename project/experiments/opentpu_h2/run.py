@@ -107,6 +107,7 @@ try:
                     script+='foreach box [$v getBoxes] {set l [$box getTechLayer];if {[$l getName] eq "metal8"} {odb::dbBox_create $bp $l [expr {'+str(landing['x'])+'+[$box xMin]}] [expr {'+str(landing['y'])+'+[$box yMin]}] [expr {'+str(landing['x'])+'+[$box xMax]}] [expr {'+str(landing['y'])+'+[$box yMax]}]}}\n'
                 script+='set empty {}\nforeach n [$b getNets] {if {[$n getSigType] ni {POWER GROUND} && [llength [$n getBTerms]]==0} {lappend empty $n}}\nforeach n $empty {odb::dbNet_destroy $n}\n'
                 script+='write_db proxy-initial.odb\nwrite_def proxy-initial.def\n'
+                script+='# H2_PROXY_FRESH_PROCESS\n'
             guide=''
             for row in contract['affected_nets']:
                 boxes=contract['custom_guides'][row['net']]
@@ -119,6 +120,12 @@ try:
             script+='detailed_route -output_drc restricted-drc.rpt -output_maze restricted-maze.log\n'
             script+='write_def restricted-final.def\nwrite_db restricted-final.odb\n'
         path=ROOT/(SPEC['mode']+'.tcl');path.write_text(script)
+        if SPEC.get('proxy'):
+            build,route=script.split('# H2_PROXY_FRESH_PROCESS\n')
+            buildpath=ROOT/'proxy-build.tcl';buildpath.write_text(build)
+            with (ROOT/'proxy-build.log').open('w') as log:
+                subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(buildpath)],stdout=log,stderr=subprocess.STDOUT,check=True)
+            path.write_text('read_db {'+str(ROOT/'proxy-initial.odb')+'}\n'+route)
         with (ROOT/(SPEC['mode']+'.log')).open('w') as log:
             subprocess.run(['openroad','-threads',str(SPEC['cores']),'-exit',str(path)],stdout=log,stderr=subprocess.STDOUT,check=True)
 finally:
