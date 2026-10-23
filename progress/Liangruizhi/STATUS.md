@@ -1,5 +1,17 @@
 # Liangruizhi 的进度
 
+## 2026-10-23（UTC+08:00）Issue53：CPU服务器小模型迁移
+
+[Issue53](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/53)、[PR54](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/54)，
+task/53-cpu-model-pilot，D:/Projects/LLMHardwareDesign-cpupilot，base PR52。
+正式推理源码70c0157e348dc4bc1b3792fdb12ee3d78a342a57；现代独立venv/离线依赖、已有固定权重SHA通过。
+89943/89945两次32CPU自然完成，各6条件。FP32三线程全过，BF168/16线程各17门失败、32线程全相等，两轮重现。
+两个回传包81成员分别核SHA，独立标量/来源/计时审计与3篡改负例通过，不称第二数值内核或全模型质量。
+实际结果和可迁移/不可替代GPU边界见docs/experiments/issue-53-cpu-migration.md；失败/原始计时保留。
+另在task/29-port-rtl推进原码-defer与factored原型回归/综合，不混同；本机不下载大模型，未整合兄方数值包。
+下一步E2b完整attention端口配对；按架构分别pilot，复用兄方已有GPU证据，GPU专属测量不改派CPU。
+登记PR5 pending；无board.json/Projects工具，看板unverified/同步pending；审查人/管理员待指定，未合并未done。
+
 ## 2026-10-23（UTC+08:00）Issue51：E2a与8核服务器重放
 
 [Issue51](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/51)，[PR52](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/52)，

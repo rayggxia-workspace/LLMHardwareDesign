@@ -1,5 +1,13 @@
 # 架构与运行
 
+## Issue53 CPU模型迁移pilot
+
+代码`project/experiments/cpu_pilot/`、[实际报告](experiments/issue-53-cpu-migration.md)。
+先`python -B scripts/check_project.py`；核包可用`work/Liangruizhi/47/verify_delivery.py`检查本任务index.json并解压新D盘目录。
+`python -B project/experiments/cpu_pilot/audit.py <解压目录>/round1 --out <新审计JSON>`；
+第二轮把root换round2并加`--run run02`。这是标量/来源审计，完整推理命令及Slurm资源见该目录README/job.sh。
+FP32/BF16软件结果不转换成W8A8性能；BF16失败保留，进程RSS不等于Slurm内存预留。
+
 ## Issue51 E2a有限端口与服务器重放
 
 `project/experiments/rq_ports/`对完整K无bias整数Linear/RQ8做固定资源比较。
