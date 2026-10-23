@@ -40,11 +40,13 @@ try:
         script='read_db {'+str(odb)+'}\n'
         script+='foreach cmd {drt::check_drc drt::step_dr} {puts "PROC $cmd ARGS [info args $cmd] BODY [info body $cmd]"}\n'
         script+='help extract_parasitics\nhelp check_antennas\nhelp write_verilog\n'
+        script+='puts "CONNECTIVITY_API [info commands odb::*is*onnect*]"\ncatch {odb::orderWires} msg;puts "ORDERWIRES_USAGE $msg"\n'
+        script+='drt::check_drc -output_file baseline-drc.rpt\ncheck_antennas -report_file baseline-antenna.rpt\n'
         path=ROOT/'native-api.tcl';path.write_text(script)
         with (ROOT/'native-api.log').open('w') as log:
             subprocess.run(['openroad','-threads','1','-exit',str(path)],stdout=log,stderr=subprocess.STDOUT,check=True)
         snippets={}
-        for name in ['scripts/final_report.tcl','scripts/extract.tcl','scripts/rcx.tcl','scripts/fillcell.tcl','scripts/final.tcl','platforms/nangate45/config.mk']:
+        for name in ['scripts/final_report.tcl','scripts/final_connect.tcl','scripts/final_outputs.tcl','scripts/extract.tcl','scripts/rcx.tcl','scripts/rcx_helpers.tcl','scripts/fillcell.tcl','scripts/final.tcl','platforms/nangate45/config.mk']:
             p=Path('/OpenROAD-flow-scripts/flow')/name
             if p.exists():snippets[name]=p.read_text()
         (ROOT/'native-flow-snippets.json').write_text(json.dumps(snippets,indent=2)+'\n')
