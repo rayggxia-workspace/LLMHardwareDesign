@@ -191,6 +191,9 @@ def main():
     p.add_argument('--data-dir',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--mode',choices=['reference','w8','a8','raw','smooth'],required=True)
     p.add_argument('--reference-dir',type=Path);p.add_argument('--vram-budget-mib',type=int,default=9728)
+    p.add_argument('--native-compute',choices=['fp16','fp32'],default='fp16')
+    p.add_argument('--canonical-causal-aux',action='store_true')
+    p.add_argument('--integer-backend',choices=['scalar','batched'],default='scalar')
     a=p.parse_args()
     if a.out.exists():raise ValueError('output exists')
     assert not git('status','--porcelain'),'clean committed source required'
@@ -205,7 +208,8 @@ def main():
     torch.cuda.set_per_process_memory_fraction(budget*2**20/torch.cuda.get_device_properties(0).total_memory)
     source={p.name:sha(p) for p in HERE.iterdir() if p.is_file()}
     save(a.out/'manifest.json',{'source_commit':git('rev-parse','HEAD'),'source_files':source,
-        'model':model_manifest,'protocol':cfg,'command':sys.argv,'mode':a.mode,'runtime_dtype':'FP16',
+        'model':model_manifest,'protocol':cfg,'command':sys.argv,'mode':a.mode,'runtime_dtype':a.native_compute,
+        'canonical_causal_aux':a.canonical_causal_aux,'integer_backend':a.integer_backend,
         'sdpa_backend':'efficient_only','gqa':'explicit_repeat_kv','allocator_budget_mib':budget,
         'physical_free_mib':smifree,'offload':False,'observed_run_not_performance':True})
     results={'status':'running','quality':[],'failures':[]}
@@ -222,16 +226,29 @@ def main():
             regression.append(torch.tensor([ids],device='cuda'))
         save(a.out/'regression-inputs.json',[x.tolist() for x in regression])
         model,loading=load_model(a.model_dir);save(a.out/'loading.json',loading)
+        if a.native_compute=='fp32':
+            spec=importlib.util.spec_from_file_location('quality_fp32_aux',HERE.parent/'gpu_state_repair/run.py')
+            aux=importlib.util.module_from_spec(spec);spec.loader.exec_module(aux);aux.fp32_compute(model)
+        if a.canonical_causal_aux:
+            spec=importlib.util.spec_from_file_location('quality_causal_aux',HERE.parent/'gpu_state_repair/canonical.py')
+            aux=importlib.util.module_from_spec(spec);spec.loader.exec_module(aux);aux.install()
         if a.mode=='reference':calibrate(model,cal,cfg,a.out)
         else:
             assert a.reference_dir
             previous=json.loads((a.reference_dir/'manifest.json').read_text(encoding='utf-8'))
             assert previous['model']==model_manifest and previous['protocol']==cfg
+            assert previous['runtime_dtype']==a.native_compute and previous['canonical_causal_aux']==a.canonical_causal_aux
             assert (a.reference_dir/'inputs.json').read_bytes()==(a.out/'inputs.json').read_bytes()
             frozen=json.loads((a.reference_dir/'calibration-frozen.json').read_text(encoding='utf-8'))
             assert sha(a.reference_dir/'smooth-factors.pt')==frozen['factors_sha256']
             factors=torch.load(a.reference_dir/'smooth-factors.pt',weights_only=True) if a.mode=='smooth' else {}
-            save(a.out/'quantized-matrices.json',install(model,a.mode,factors))
+            if a.integer_backend=='batched':
+                spec=importlib.util.spec_from_file_location('quality_batched_int8',HERE.parent/'gpu_batched_integer/kernel.py')
+                backend=importlib.util.module_from_spec(spec);spec.loader.exec_module(backend)
+                matrices=backend.install(model,a.mode,factors,cfg['group_k'])
+                save(a.out/'integer-backend.json',model.integer_backend_receipt)
+            else:matrices=install(model,a.mode,factors)
+            save(a.out/'quantized-matrices.json',matrices)
             save(a.out/'calibration-frozen.json',frozen)
         for split,items in [('test',val),('regression',regression)]:
             for i,ids in enumerate(items):

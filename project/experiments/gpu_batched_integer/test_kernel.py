@@ -21,8 +21,9 @@ class BatchedChecks(unittest.TestCase):
             new.load_state_dict(old.state_dict())
             with torch.inference_mode():
                 grouped.install(old,'raw',{},k);install(new,'raw',{},k)
-                for n in (1,129):
-                    x=torch.randn(1,n,256,device='cuda',dtype=torch.float16)
-                    self.assertTrue(torch.equal(old(x),new(x)),(k,n))
+                for dtype in (torch.float16,torch.float32):
+                    for n in (1,129):
+                        x=torch.randn(1,n,256,device='cuda',dtype=dtype)
+                        self.assertTrue(torch.equal(old(x),new(x)),(k,n,dtype))
 
 if __name__=='__main__':unittest.main()

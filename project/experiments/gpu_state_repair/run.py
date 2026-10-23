@@ -93,6 +93,7 @@ def main():
     p.add_argument('--integer-group-k',type=int,choices=[32,128],help='Actual grouped INT8 matrices with FP32 auxiliary compute')
     p.add_argument('--short-steps',type=int,choices=[1,16],default=16,help='1 is a preliminary diagnostic only; formal short check uses16')
     p.add_argument('--canonical-causal-aux',action='store_true',help='Sequential recurrence, fixed conv sum, per-query causal SDPA; floating-point diagnostic')
+    p.add_argument('--batched-integer',action='store_true')
     a=p.parse_args();assert not a.out.exists();assert not git('status','--porcelain')
     if a.integer_group_k:assert a.compute=='fp32','integer diagnostic uses explicitly FP32 auxiliary group'
     manifest=json.loads((a.model_dir/'model-manifest.json').read_text(encoding='utf-8'));assert manifest['complete']
@@ -125,9 +126,11 @@ def main():
         model,loading=common.load_model(a.model_dir);save(a.out/'loading.json',loading)
         if a.compute=='fp32':fp32_compute(model)
         if a.integer_group_k:
-            spec=importlib.util.spec_from_file_location('state_grouped_candidate',HERE.parent/'gpu_grouped_repair/run.py')
+            target=HERE.parent/'gpu_batched_integer/kernel.py' if a.batched_integer else HERE.parent/'gpu_grouped_repair/run.py'
+            spec=importlib.util.spec_from_file_location('state_grouped_candidate',target)
             grouped=importlib.util.module_from_spec(spec);spec.loader.exec_module(grouped)
             save(a.out/'quantized-matrices.json',grouped.install(model,'raw',{},a.integer_group_k))
+            if hasattr(model,'integer_backend_receipt'):save(a.out/'integer-backend.json',model.integer_backend_receipt)
         if a.canonical_causal_aux:
             spec=importlib.util.spec_from_file_location('canonical_qwen_aux',HERE/'canonical.py')
             canonical=importlib.util.module_from_spec(spec);spec.loader.exec_module(canonical);canonical.install()

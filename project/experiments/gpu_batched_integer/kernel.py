@@ -45,6 +45,10 @@ class BatchedInt8:
 def install(model,mode,factors,group_k=128):
     records=grouped.install(model,mode,factors,group_k)
     engine=BatchedInt8()
+    model.integer_backend_receipt={'name':'cublasGemmStridedBatchedEx_INT8_INT32',
+        'dll':str(engine.dll_path),'dll_sha256':grouped.common.sha(engine.dll_path),
+        'compute_enum':72,'input_enum':3,'output_enum':10,'float_gemm_fallback':False,
+        'partial_sum':'FP32 in original serial group order'}
     for module in model.modules():
         if not hasattr(module,'qblocks'):continue
         module.stats['batched_launches']=0
