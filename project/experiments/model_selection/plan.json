@@ -1,0 +1,28 @@
+{
+  "schema": "architecture-experiment-plan/1",
+  "stage": "architecture/protocol review; new numerical runs paused",
+  "required_primary_features": ["pure_global_gqa", "hybrid_recurrence", "local_global_attention", "qk_norm", "gelu"],
+  "primary": ["qwen25", "qwen35", "gemma4"],
+  "local_existing_reference": ["qwen3"],
+  "heldout_default": "phi",
+  "heldout_alternatives_not_additional_mandatory_runs": ["llama32-1", "llama32", "r1distill"],
+  "max_primary_new_models": 1,
+  "new_numerical_runs_enabled": false,
+  "integer_capability_gaps_to_close_before_full_model_acceptance": ["Qwen2 QKV bias with potentially 33-bit post-add; existing RQ32 is insufficient", "Gemma GELU and effective gamma=1+weight; current SiLU/RMS candidate is not equivalent", "token-block KV scales must be aligned inside QK/softmax/PV reductions", "online dynamic scales and scale-dependent bias not implemented", "wide recurrence and nonlinear physical implementation not established"],
+  "primary_access_conditions": {"gemma4": "pending authorized config/checkpoint/tokenizer and implementation audit"},
+  "excluded_end_to_end_claims": ["native MoE", "MLA", "multimodal vision", "all LLM architectures", "4bit as W8A8 hardware"],
+  "execution_order": ["architecture_and_scope_review", "access_config_backend_gate", "float_correctness", "per_model_calibration_and_quality", "same_contract_partition", "heldout_generalization"],
+  "preliminary_engineering_quality_gate": {
+    "integer_reference_mismatch": 0,
+    "unhandled_overflow": 0,
+    "nonfinite": 0,
+    "validation_nll_relative_increase_max": 0.05,
+    "task_accuracy_drop_absolute_max": 0.02,
+    "status": "proposal to freeze before data access; engineering tolerance, not established scientific consensus",
+    "uncertainty_rule": "paired bootstrap 95% CI must bound degradation within budget; otherwise inconclusive and do not accept; no threshold tuning on eval"
+  },
+  "calibration": {"natural_text": "WikiText train, immutable revision and nonoverlapping documents fixed before collection", "evaluation": "WikiText test; heldout tasks separate; no first8-token shortcut", "heldout_rule": "can calibrate numerical scales using predeclared training recipe; cannot tune Block policy or acceptance thresholds on heldout evaluation"},
+  "performance": {"batch": 1, "initial_prefix": 128, "teacher_forced_steps": 16, "lengths": [512, 1023, 1024, 1025, 2048, 4096], "optional_lengths": [8192], "warmup": 3, "repeats": 5, "synchronize": true, "hook_off_for_timing": true, "offload_allowed_in_gpu_latency_suite": false},
+  "resource_gate": {"gpu_bytes_nominal": 17179869184, "free_vram_reserve_bytes_proposed": 2147483648, "rule": "use observed free GPU bytes and measured peak; metadata bounds are not permission to launch or guarantee of fit"},
+  "ownership": {"local_design": "Liangruizhi", "existing_qwen_gpu": "Issue32 existing owner", "new_gpu_execution": "pending owner/schedule, no remote launch", "result_integration": "only after user notifies brother results ready"}
+}
