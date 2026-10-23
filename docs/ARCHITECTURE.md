@@ -1,5 +1,12 @@
 # 架构与运行
 
+## 候选整数验证（Issue33）
+
+精度合同见[INTEGER_PRECISION_CONTRACT.md](INTEGER_PRECISION_CONTRACT.md)，
+可复现的本机检查、已有Qwen3-0.6B捕获、严格接收、量化图搜索与ModelSim命令见
+[integer_precision/README](../project/experiments/integer_precision/README.md)。只用本机，不下载大模型。
+整数参考、离线浮点校准、假设的服务周期与实际RTL延迟分别记录，不能混称全整数芯片收益。
+
 本仓库保存研究资料、参考结果和本项目的初步实验工具。本分支的冻结连接模型位于 `project/experiments/frozen_routing/`；其他成员的物理Block工程见Issue #7关联PR #8/#10，未合并文件须从对应任务分支读取。最终工艺、硬件库与系统实现工具链仍未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md)中的候选架构不等于已实现硬件。
 
 ## 研究系统边界

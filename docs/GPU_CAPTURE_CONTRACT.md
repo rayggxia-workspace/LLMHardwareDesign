@@ -32,11 +32,17 @@ scale/指数/M/r也是manifest内独立tensor或明确常量，不得只有无�
 integer_reference、integer_kernel或fake_quant，说明浮点回退。未量化参考不能冒用integer_kernel。
 
 分组量化的`group_axes/group_shape`与原tensor维度严格对应，metadata引用指向真实payload。
+按token-block分组还需`block_shape`，组数按对应维度除block长度向上取整。
+INT32 accumulator通过`scaled_accumulator`的`scale_factor_tensors/scale_factor_axes`
+声明输入scale与权重scale的外积映射，不能省掉实际累加scale。
+可选`selection`记录原shape、连续切片offset与规则；teacher-forced/generated用`token_mode`。
 建议payload和metadata分开文件，打包/对齐由布局描述明示；接收器先核路径、大小、SHA、
 shape/dtype/axis/格式，再进入计算，拒绝pickle/object、路径逃逸和缺少缩放定义。
 数据包源码、样例与验证CLI将放`project/experiments/integer_precision/`。
 机器可读入口为[capture.schema.json](../project/experiments/integer_precision/capture.schema.json)。
 整数Python参考用integer_reference；真实设备整数kernel才用integer_kernel，不能混写。
+当前接收器核验payload及manifest内部一致性，不能凭model SHA证明未提供的全部权重/源码正确；
+整合时仍须与获授权源包和预期commit/revision核对。
 
 大文件存项目认可且获授权共享存储，Git只存manifest、脚本、统计、SHA与位置。
 本机接收器不会自行去其他机器运行或下载新大模型；没有真实包时只报告接口测试结果。
