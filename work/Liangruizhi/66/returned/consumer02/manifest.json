@@ -1,0 +1,149 @@
+{
+  "status": "PASS",
+  "source": {
+    "commit": "bad673e07edff7ba859b8192252d8c25ae633615",
+    "consumer_sha256": "cabd518b527b62990903563f010fce2501bb3accdbfe8f7d62361b1fc4789de3",
+    "binding": {
+      "commit": "bad673e07edff7ba859b8192252d8c25ae633615",
+      "sources": {
+        "project/experiments/scale_state/consumer.py": "cabd518b527b62990903563f010fce2501bb3accdbfe8f7d62361b1fc4789de3"
+      },
+      "consumer_sha256": "cabd518b527b62990903563f010fce2501bb3accdbfe8f7d62361b1fc4789de3"
+    }
+  },
+  "input_manifest_sha256": "ceb0a75cc20a4f4c6c8c2eb9a153fe6f5bc6743c177aeca211fb6b62d76c6dcc",
+  "input_artifact_sha256": "1a7d97d2cbc71beeb60e2ea3f360a1da3a882e3d8feadc2ff3b3c6a14965dceb",
+  "model": {
+    "id": "Qwen/Qwen3.5-4B",
+    "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+    "reference_manifest_commit": "2ada6cf6a61f5acff4b6052e81e15d20070dc0f3"
+  },
+  "capture_chain_checks": {
+    "calibration": {
+      "down": {
+        "relative_rmse": 3.6044711142857334e-07,
+        "max_abs": 4.172325134277344e-07
+      },
+      "sum": {
+        "relative_rmse": 0.0,
+        "max_abs": 0.0
+      },
+      "norm": {
+        "relative_rmse": 5.015867179587512e-08,
+        "max_abs": 3.814697265625e-06
+      },
+      "projection": {
+        "relative_rmse": 3.679747438034015e-07,
+        "max_abs": 1.6689300537109375e-06
+      }
+    },
+    "prefill": {
+      "down": {
+        "relative_rmse": 3.5573622459203706e-07,
+        "max_abs": 2.384185791015625e-07
+      },
+      "sum": {
+        "relative_rmse": 0.0,
+        "max_abs": 0.0
+      },
+      "norm": {
+        "relative_rmse": 4.429920207568606e-08,
+        "max_abs": 3.814697265625e-06
+      },
+      "projection": {
+        "relative_rmse": 4.03943841098831e-07,
+        "max_abs": 1.1920928955078125e-06
+      }
+    },
+    "decode": {
+      "down": {
+        "relative_rmse": 5.572664816613755e-07,
+        "max_abs": 2.980232238769531e-07
+      },
+      "sum": {
+        "relative_rmse": 0.0,
+        "max_abs": 0.0
+      },
+      "norm": {
+        "relative_rmse": 6.838822230591733e-08,
+        "max_abs": 3.814697265625e-06
+      },
+      "projection": {
+        "relative_rmse": 4.600062059457527e-07,
+        "max_abs": 1.6689300537109375e-06
+      }
+    }
+  },
+  "conditions": 8,
+  "weight_Fraction_endpoint_witnesses": {
+    "down": 368640,
+    "next": 640
+  },
+  "seconds": 14.67820307193324,
+  "environment": {
+    "python": "3.12.7",
+    "numpy": "2.2.6"
+  },
+  "scope": "Qwen3.5 full-hidden down/residual/norm/selected-next-projection reference.\n\nFP32 captured source -> S32Q20, offline weight/Y compilers and full-hidden\nFP32 RMSNorm are explicit float boundaries. Other arithmetic is integer with\nindependent witnesses. This is neither a full integer model nor target timing.\n",
+  "topology": "layer3.mlp.down_proj -> complete hidden residual -> layer4.input_layernorm(1+weight,eps1e-6) -> layer4.linear_attn.in_proj_qkv[:16] (Q prefix, not whole GDN)",
+  "profiles": [
+    "static_ACT8",
+    "same_range_ACT16",
+    "tile16_delta_ACT8",
+    "delta_to_K128_ACT8"
+  ],
+  "float_boundaries": [
+    "original native FP32 down input/residual",
+    "offline FP64 W/Y compilers",
+    "FP32 complete-hidden RMSNorm and dequant conversion",
+    "FP32 norm -> S32Q20 bridge; numerical metrics"
+  ],
+  "scale_contract": "base eY per output channel; delta per16-output tile/row, so even within a tile units need not be equal; K128 conversion is explicit before residual; norm then publishes newly quantized A8K128",
+  "evidence_limits": [
+    "previously selected short diagnostic positions, no application quality acceptance",
+    "not all-integer norm/model or full next8192 projection/GDN",
+    "logical traffic/1RW lower bounds, not finite schedule/RTL/PPA"
+  ],
+  "artifacts": {
+    "common.npz": {
+      "bytes": 44924712,
+      "sha256": "2685cf3d1085c7f97262550e203d4c49a155d51bc50428f52ef7f81cc47e1a19"
+    },
+    "consumer.json": {
+      "bytes": 39036,
+      "sha256": "7799694048143736aaed6bb36d3d03ea254a4830999fa45cc05b1493ea222d19"
+    },
+    "decode.delta_to_K128_ACT8.npz": {
+      "bytes": 1596851,
+      "sha256": "bc8a8820a99732de29a3e8e402296a205dafd351d082a2fda6bd3036d8c35dc1"
+    },
+    "decode.same_range_ACT16.npz": {
+      "bytes": 1756206,
+      "sha256": "1b5ad54ace8d0275baa9842f5509fd1c51787d7f2448d06db7bbf56ef6a18f7c"
+    },
+    "decode.static_ACT8.npz": {
+      "bytes": 1575318,
+      "sha256": "d0fb86f4bb2b5894398152fb162188b43c3c131169fde8639241ede8c05e5cdd"
+    },
+    "decode.tile16_delta_ACT8.npz": {
+      "bytes": 1617668,
+      "sha256": "008726a6bbfeb70f9dd0ba59ae879f9446c546b12d26de135247f7c4822c80da"
+    },
+    "prefill.delta_to_K128_ACT8.npz": {
+      "bytes": 406612,
+      "sha256": "c2b841f344fca1f506d3f53084a0a88750f809420ae256aeb1367b1ad26110ed"
+    },
+    "prefill.same_range_ACT16.npz": {
+      "bytes": 447255,
+      "sha256": "f2fe314d1d4f7f9f89f1e94b5cd8603cedbfe4de999ed1654658f703cbdab34b"
+    },
+    "prefill.static_ACT8.npz": {
+      "bytes": 402772,
+      "sha256": "80ddf0e88dcd0ea49d9a29002bfbe3a11fa72822dfb56c6bbd5ec431d47d2f94"
+    },
+    "prefill.tile16_delta_ACT8.npz": {
+      "bytes": 412498,
+      "sha256": "0ff8365dd04d7db819b7a5a349be86a9d38f45d6f620e36a23a7c9b86e51ac94"
+    }
+  }
+}

@@ -1,0 +1,826 @@
+[
+  {
+    "id": "prefill.static_ACT8",
+    "status": "PASS",
+    "rows": 8,
+    "hidden": 2560,
+    "X16_reencoding_vs_input_sum": {
+      "relative_rmse": 0.000352458590578755,
+      "max_abs": 6.103515625e-05
+    },
+    "FPnorm_after_X16_vs_original_FPnorm": {
+      "relative_rmse": 0.0004213971457759865,
+      "max_abs": 0.0011098682880401611
+    },
+    "integer_norm_vs_FPnorm_on_X16": {
+      "relative_rmse": 4.7586573406698937e-07,
+      "max_abs": 1.049041748046875e-05
+    },
+    "integer_norm_vs_original_FPnorm": {
+      "relative_rmse": 0.00042139842308796746,
+      "max_abs": 0.0011096671223640442
+    },
+    "next_projection_vs_original_FPnorm_chain": {
+      "relative_rmse": 0.002833992417420016,
+      "max_abs": 0.00489044189453125
+    },
+    "next_projection_vs_native": {
+      "relative_rmse": 0.0351576436570516,
+      "max_abs": 0.07885454595088959
+    },
+    "next_integer": {
+      "INT64_partial_values_checked": 2560,
+      "Python_complete_reduction_witnesses": 24,
+      "group": 128,
+      "groups": 20,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 381588,
+      "format_bound_max": 350967040,
+      "exponent_spread_max": 7,
+      "MACs": 327680,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "final_RQ": {
+      "saturation": 0,
+      "Fraction_output_codes": 128
+    },
+    "counts": {
+      "X16_Fraction_codes": 20480,
+      "norm_pre_gamma_Fraction_codes": 20480,
+      "norm_gamma_Fraction_codes": 20480,
+      "fresh_A8_Fraction_codes": 20480,
+      "isqrt_math_oracles": 8,
+      "divider_Fraction_oracles": 8,
+      "isqrt_restoring_rounds": 256,
+      "divide_restoring_rounds": 512,
+      "zero_rows": 0
+    },
+    "candidate_cost": {
+      "gamma_S32Q20_bytes": 10240,
+      "norm_S32Q20_row_bytes": 10240,
+      "X16_row_bytes": 5120,
+      "mixed_sum_I64_plus_I16_row_bytes": 25600,
+      "inverse_U32Q30_bytes_per_row": 4,
+      "aligned_I64_row_bytes": 20480,
+      "aligned_I64_row_fits_V16KiB": false,
+      "finite_buffer_alternatives": {
+        "two_source_passes": {
+          "sum_and_units_read_bytes_per_row": 51200,
+          "aligned_spill_RW_bytes": 0
+        },
+        "aligned_spill": {
+          "sum_and_units_read_bytes_per_row": 25600,
+          "aligned_spill_RW_bytes": 40960
+        }
+      },
+      "selected_candidate_buffer_route": "two_source_passes; Python aligned list is software reference storage, not free V SRAM",
+      "fresh_A8_payload_bytes": 20480,
+      "fresh_A8_K128_exponent_bytes": 160,
+      "norm_to_M_row_packet_bytes": 22016,
+      "X16_square_products": 20480,
+      "U64_square_sum_add_terms": 20480,
+      "S8_only_products_per_S16square_upper": 9,
+      "S16xU32_products": 20480,
+      "S32xS32_gamma_products": 20480,
+      "S8_only_products_per_S16xU32_upper": 15,
+      "S8_only_products_per_S32xS32_upper": 25,
+      "S8_decomposition_scope": "candidate3x5 or5x5 radix128 S8 products plus S64 shift/add; not executed S8 multiplier kernels or free wide hardware",
+      "sqrt_div_scope": "actual software32-step radix4 isqrt and64-step U64/U32 restoring divide/RNE; hardware resources/clock/latency uncalibrated",
+      "1RW128bit_row_read_write_lower_bound_beats": {
+        "sum_and_units_two_reads": 3200,
+        "X16_write_then_norm_read_if_square_fused_at_encoding": 640,
+        "X16_write_square_read_norm_read_if_not_fused": 960,
+        "gamma_read": 640,
+        "norm32_write_read": 1280,
+        "fresh_A8_write_read": 320,
+        "fresh_Ae_write_read": 4
+      },
+      "buffer_scope": "source two-read route vs aligned spill and fused vs materialized square are alternative accounts, not added together; full gamma plus norm32 row exceeds16KiB, use gamma/K128 tiles or charged spill; no finite schedule or PPA"
+    },
+    "fresh_A8_source": "integer S32Q20, no floating bridge or encode_rows",
+    "integer_norm_candidate": true,
+    "full_integer_model_qualified": false,
+    "hardware_performance_accepted": false
+  },
+  {
+    "id": "prefill.same_range_ACT16",
+    "status": "PASS",
+    "rows": 8,
+    "hidden": 2560,
+    "X16_reencoding_vs_input_sum": {
+      "relative_rmse": 0.00035018743344777633,
+      "max_abs": 6.103515625e-05
+    },
+    "FPnorm_after_X16_vs_original_FPnorm": {
+      "relative_rmse": 0.0004193623727849863,
+      "max_abs": 0.0010797381401062012
+    },
+    "integer_norm_vs_FPnorm_on_X16": {
+      "relative_rmse": 4.996593179642543e-07,
+      "max_abs": 1.430511474609375e-05
+    },
+    "integer_norm_vs_original_FPnorm": {
+      "relative_rmse": 0.00041936135357816613,
+      "max_abs": 0.0010796785354614258
+    },
+    "next_projection_vs_original_FPnorm_chain": {
+      "relative_rmse": 0.004744747137398901,
+      "max_abs": 0.01163482666015625
+    },
+    "next_projection_vs_native": {
+      "relative_rmse": 0.032537803797703095,
+      "max_abs": 0.07226274907588959
+    },
+    "next_integer": {
+      "INT64_partial_values_checked": 2560,
+      "Python_complete_reduction_witnesses": 24,
+      "group": 128,
+      "groups": 20,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 383040,
+      "format_bound_max": 350967040,
+      "exponent_spread_max": 7,
+      "MACs": 327680,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "final_RQ": {
+      "saturation": 0,
+      "Fraction_output_codes": 128
+    },
+    "counts": {
+      "X16_Fraction_codes": 20480,
+      "norm_pre_gamma_Fraction_codes": 20480,
+      "norm_gamma_Fraction_codes": 20480,
+      "fresh_A8_Fraction_codes": 20480,
+      "isqrt_math_oracles": 8,
+      "divider_Fraction_oracles": 8,
+      "isqrt_restoring_rounds": 256,
+      "divide_restoring_rounds": 512,
+      "zero_rows": 0
+    },
+    "candidate_cost": {
+      "gamma_S32Q20_bytes": 10240,
+      "norm_S32Q20_row_bytes": 10240,
+      "X16_row_bytes": 5120,
+      "mixed_sum_I64_plus_I16_row_bytes": 25600,
+      "inverse_U32Q30_bytes_per_row": 4,
+      "aligned_I64_row_bytes": 20480,
+      "aligned_I64_row_fits_V16KiB": false,
+      "finite_buffer_alternatives": {
+        "two_source_passes": {
+          "sum_and_units_read_bytes_per_row": 51200,
+          "aligned_spill_RW_bytes": 0
+        },
+        "aligned_spill": {
+          "sum_and_units_read_bytes_per_row": 25600,
+          "aligned_spill_RW_bytes": 40960
+        }
+      },
+      "selected_candidate_buffer_route": "two_source_passes; Python aligned list is software reference storage, not free V SRAM",
+      "fresh_A8_payload_bytes": 20480,
+      "fresh_A8_K128_exponent_bytes": 160,
+      "norm_to_M_row_packet_bytes": 22016,
+      "X16_square_products": 20480,
+      "U64_square_sum_add_terms": 20480,
+      "S8_only_products_per_S16square_upper": 9,
+      "S16xU32_products": 20480,
+      "S32xS32_gamma_products": 20480,
+      "S8_only_products_per_S16xU32_upper": 15,
+      "S8_only_products_per_S32xS32_upper": 25,
+      "S8_decomposition_scope": "candidate3x5 or5x5 radix128 S8 products plus S64 shift/add; not executed S8 multiplier kernels or free wide hardware",
+      "sqrt_div_scope": "actual software32-step radix4 isqrt and64-step U64/U32 restoring divide/RNE; hardware resources/clock/latency uncalibrated",
+      "1RW128bit_row_read_write_lower_bound_beats": {
+        "sum_and_units_two_reads": 3200,
+        "X16_write_then_norm_read_if_square_fused_at_encoding": 640,
+        "X16_write_square_read_norm_read_if_not_fused": 960,
+        "gamma_read": 640,
+        "norm32_write_read": 1280,
+        "fresh_A8_write_read": 320,
+        "fresh_Ae_write_read": 4
+      },
+      "buffer_scope": "source two-read route vs aligned spill and fused vs materialized square are alternative accounts, not added together; full gamma plus norm32 row exceeds16KiB, use gamma/K128 tiles or charged spill; no finite schedule or PPA"
+    },
+    "fresh_A8_source": "integer S32Q20, no floating bridge or encode_rows",
+    "integer_norm_candidate": true,
+    "full_integer_model_qualified": false,
+    "hardware_performance_accepted": false
+  },
+  {
+    "id": "prefill.tile16_delta_ACT8",
+    "status": "PASS",
+    "rows": 8,
+    "hidden": 2560,
+    "X16_reencoding_vs_input_sum": {
+      "relative_rmse": 0.0003523190703253701,
+      "max_abs": 6.103515625e-05
+    },
+    "FPnorm_after_X16_vs_original_FPnorm": {
+      "relative_rmse": 0.0004218249342901279,
+      "max_abs": 0.0011175721883773804
+    },
+    "integer_norm_vs_FPnorm_on_X16": {
+      "relative_rmse": 4.852088751747736e-07,
+      "max_abs": 1.239776611328125e-05
+    },
+    "integer_norm_vs_original_FPnorm": {
+      "relative_rmse": 0.00042181954292104464,
+      "max_abs": 0.0011169612407684326
+    },
+    "next_projection_vs_original_FPnorm_chain": {
+      "relative_rmse": 0.003908341575221969,
+      "max_abs": 0.0114898681640625
+    },
+    "next_projection_vs_native": {
+      "relative_rmse": 0.033087807963181545,
+      "max_abs": 0.07543657720088959
+    },
+    "next_integer": {
+      "INT64_partial_values_checked": 2560,
+      "Python_complete_reduction_witnesses": 24,
+      "group": 128,
+      "groups": 20,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 383970,
+      "format_bound_max": 350967040,
+      "exponent_spread_max": 7,
+      "MACs": 327680,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "final_RQ": {
+      "saturation": 0,
+      "Fraction_output_codes": 128
+    },
+    "counts": {
+      "X16_Fraction_codes": 20480,
+      "norm_pre_gamma_Fraction_codes": 20480,
+      "norm_gamma_Fraction_codes": 20480,
+      "fresh_A8_Fraction_codes": 20480,
+      "isqrt_math_oracles": 8,
+      "divider_Fraction_oracles": 8,
+      "isqrt_restoring_rounds": 256,
+      "divide_restoring_rounds": 512,
+      "zero_rows": 0
+    },
+    "candidate_cost": {
+      "gamma_S32Q20_bytes": 10240,
+      "norm_S32Q20_row_bytes": 10240,
+      "X16_row_bytes": 5120,
+      "mixed_sum_I64_plus_I16_row_bytes": 25600,
+      "inverse_U32Q30_bytes_per_row": 4,
+      "aligned_I64_row_bytes": 20480,
+      "aligned_I64_row_fits_V16KiB": false,
+      "finite_buffer_alternatives": {
+        "two_source_passes": {
+          "sum_and_units_read_bytes_per_row": 51200,
+          "aligned_spill_RW_bytes": 0
+        },
+        "aligned_spill": {
+          "sum_and_units_read_bytes_per_row": 25600,
+          "aligned_spill_RW_bytes": 40960
+        }
+      },
+      "selected_candidate_buffer_route": "two_source_passes; Python aligned list is software reference storage, not free V SRAM",
+      "fresh_A8_payload_bytes": 20480,
+      "fresh_A8_K128_exponent_bytes": 160,
+      "norm_to_M_row_packet_bytes": 22016,
+      "X16_square_products": 20480,
+      "U64_square_sum_add_terms": 20480,
+      "S8_only_products_per_S16square_upper": 9,
+      "S16xU32_products": 20480,
+      "S32xS32_gamma_products": 20480,
+      "S8_only_products_per_S16xU32_upper": 15,
+      "S8_only_products_per_S32xS32_upper": 25,
+      "S8_decomposition_scope": "candidate3x5 or5x5 radix128 S8 products plus S64 shift/add; not executed S8 multiplier kernels or free wide hardware",
+      "sqrt_div_scope": "actual software32-step radix4 isqrt and64-step U64/U32 restoring divide/RNE; hardware resources/clock/latency uncalibrated",
+      "1RW128bit_row_read_write_lower_bound_beats": {
+        "sum_and_units_two_reads": 3200,
+        "X16_write_then_norm_read_if_square_fused_at_encoding": 640,
+        "X16_write_square_read_norm_read_if_not_fused": 960,
+        "gamma_read": 640,
+        "norm32_write_read": 1280,
+        "fresh_A8_write_read": 320,
+        "fresh_Ae_write_read": 4
+      },
+      "buffer_scope": "source two-read route vs aligned spill and fused vs materialized square are alternative accounts, not added together; full gamma plus norm32 row exceeds16KiB, use gamma/K128 tiles or charged spill; no finite schedule or PPA"
+    },
+    "fresh_A8_source": "integer S32Q20, no floating bridge or encode_rows",
+    "integer_norm_candidate": true,
+    "full_integer_model_qualified": false,
+    "hardware_performance_accepted": false
+  },
+  {
+    "id": "prefill.delta_to_K128_ACT8",
+    "status": "PASS",
+    "rows": 8,
+    "hidden": 2560,
+    "X16_reencoding_vs_input_sum": {
+      "relative_rmse": 0.00035234390054242874,
+      "max_abs": 6.103515625e-05
+    },
+    "FPnorm_after_X16_vs_original_FPnorm": {
+      "relative_rmse": 0.00042183083727037645,
+      "max_abs": 0.0011172965168952942
+    },
+    "integer_norm_vs_FPnorm_on_X16": {
+      "relative_rmse": 4.956792016346902e-07,
+      "max_abs": 1.049041748046875e-05
+    },
+    "integer_norm_vs_original_FPnorm": {
+      "relative_rmse": 0.0004218321989022841,
+      "max_abs": 0.0011169463396072388
+    },
+    "next_projection_vs_original_FPnorm_chain": {
+      "relative_rmse": 0.004926396648673491,
+      "max_abs": 0.01090240478515625
+    },
+    "next_projection_vs_native": {
+      "relative_rmse": 0.033160787949372286,
+      "max_abs": 0.07131670415401459
+    },
+    "next_integer": {
+      "INT64_partial_values_checked": 2560,
+      "Python_complete_reduction_witnesses": 24,
+      "group": 128,
+      "groups": 20,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 382348,
+      "format_bound_max": 350967040,
+      "exponent_spread_max": 7,
+      "MACs": 327680,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "final_RQ": {
+      "saturation": 0,
+      "Fraction_output_codes": 128
+    },
+    "counts": {
+      "X16_Fraction_codes": 20480,
+      "norm_pre_gamma_Fraction_codes": 20480,
+      "norm_gamma_Fraction_codes": 20480,
+      "fresh_A8_Fraction_codes": 20480,
+      "isqrt_math_oracles": 8,
+      "divider_Fraction_oracles": 8,
+      "isqrt_restoring_rounds": 256,
+      "divide_restoring_rounds": 512,
+      "zero_rows": 0
+    },
+    "candidate_cost": {
+      "gamma_S32Q20_bytes": 10240,
+      "norm_S32Q20_row_bytes": 10240,
+      "X16_row_bytes": 5120,
+      "mixed_sum_I64_plus_I16_row_bytes": 25600,
+      "inverse_U32Q30_bytes_per_row": 4,
+      "aligned_I64_row_bytes": 20480,
+      "aligned_I64_row_fits_V16KiB": false,
+      "finite_buffer_alternatives": {
+        "two_source_passes": {
+          "sum_and_units_read_bytes_per_row": 51200,
+          "aligned_spill_RW_bytes": 0
+        },
+        "aligned_spill": {
+          "sum_and_units_read_bytes_per_row": 25600,
+          "aligned_spill_RW_bytes": 40960
+        }
+      },
+      "selected_candidate_buffer_route": "two_source_passes; Python aligned list is software reference storage, not free V SRAM",
+      "fresh_A8_payload_bytes": 20480,
+      "fresh_A8_K128_exponent_bytes": 160,
+      "norm_to_M_row_packet_bytes": 22016,
+      "X16_square_products": 20480,
+      "U64_square_sum_add_terms": 20480,
+      "S8_only_products_per_S16square_upper": 9,
+      "S16xU32_products": 20480,
+      "S32xS32_gamma_products": 20480,
+      "S8_only_products_per_S16xU32_upper": 15,
+      "S8_only_products_per_S32xS32_upper": 25,
+      "S8_decomposition_scope": "candidate3x5 or5x5 radix128 S8 products plus S64 shift/add; not executed S8 multiplier kernels or free wide hardware",
+      "sqrt_div_scope": "actual software32-step radix4 isqrt and64-step U64/U32 restoring divide/RNE; hardware resources/clock/latency uncalibrated",
+      "1RW128bit_row_read_write_lower_bound_beats": {
+        "sum_and_units_two_reads": 3200,
+        "X16_write_then_norm_read_if_square_fused_at_encoding": 640,
+        "X16_write_square_read_norm_read_if_not_fused": 960,
+        "gamma_read": 640,
+        "norm32_write_read": 1280,
+        "fresh_A8_write_read": 320,
+        "fresh_Ae_write_read": 4
+      },
+      "buffer_scope": "source two-read route vs aligned spill and fused vs materialized square are alternative accounts, not added together; full gamma plus norm32 row exceeds16KiB, use gamma/K128 tiles or charged spill; no finite schedule or PPA"
+    },
+    "fresh_A8_source": "integer S32Q20, no floating bridge or encode_rows",
+    "integer_norm_candidate": true,
+    "full_integer_model_qualified": false,
+    "hardware_performance_accepted": false
+  },
+  {
+    "id": "decode.static_ACT8",
+    "status": "PASS",
+    "rows": 32,
+    "hidden": 2560,
+    "X16_reencoding_vs_input_sum": {
+      "relative_rmse": 0.0004868467906767384,
+      "max_abs": 0.0001220703125
+    },
+    "FPnorm_after_X16_vs_original_FPnorm": {
+      "relative_rmse": 0.0005861159964198938,
+      "max_abs": 0.0015950202941894531
+    },
+    "integer_norm_vs_FPnorm_on_X16": {
+      "relative_rmse": 4.921143113274079e-07,
+      "max_abs": 1.621246337890625e-05
+    },
+    "integer_norm_vs_original_FPnorm": {
+      "relative_rmse": 0.000586113654598816,
+      "max_abs": 0.0015940666198730469
+    },
+    "next_projection_vs_original_FPnorm_chain": {
+      "relative_rmse": 0.004209354179754658,
+      "max_abs": 0.017108917236328125
+    },
+    "next_projection_vs_native": {
+      "relative_rmse": 0.031620649845728314,
+      "max_abs": 0.08584988117218018
+    },
+    "next_integer": {
+      "INT64_partial_values_checked": 10240,
+      "Python_complete_reduction_witnesses": 96,
+      "group": 128,
+      "groups": 20,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 651054,
+      "format_bound_max": 361289600,
+      "exponent_spread_max": 7,
+      "MACs": 1310720,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "final_RQ": {
+      "saturation": 0,
+      "Fraction_output_codes": 512
+    },
+    "counts": {
+      "X16_Fraction_codes": 81920,
+      "norm_pre_gamma_Fraction_codes": 81920,
+      "norm_gamma_Fraction_codes": 81920,
+      "fresh_A8_Fraction_codes": 81920,
+      "isqrt_math_oracles": 32,
+      "divider_Fraction_oracles": 32,
+      "isqrt_restoring_rounds": 1024,
+      "divide_restoring_rounds": 2048,
+      "zero_rows": 0
+    },
+    "candidate_cost": {
+      "gamma_S32Q20_bytes": 10240,
+      "norm_S32Q20_row_bytes": 10240,
+      "X16_row_bytes": 5120,
+      "mixed_sum_I64_plus_I16_row_bytes": 25600,
+      "inverse_U32Q30_bytes_per_row": 4,
+      "aligned_I64_row_bytes": 20480,
+      "aligned_I64_row_fits_V16KiB": false,
+      "finite_buffer_alternatives": {
+        "two_source_passes": {
+          "sum_and_units_read_bytes_per_row": 51200,
+          "aligned_spill_RW_bytes": 0
+        },
+        "aligned_spill": {
+          "sum_and_units_read_bytes_per_row": 25600,
+          "aligned_spill_RW_bytes": 40960
+        }
+      },
+      "selected_candidate_buffer_route": "two_source_passes; Python aligned list is software reference storage, not free V SRAM",
+      "fresh_A8_payload_bytes": 81920,
+      "fresh_A8_K128_exponent_bytes": 640,
+      "norm_to_M_row_packet_bytes": 88064,
+      "X16_square_products": 81920,
+      "U64_square_sum_add_terms": 81920,
+      "S8_only_products_per_S16square_upper": 9,
+      "S16xU32_products": 81920,
+      "S32xS32_gamma_products": 81920,
+      "S8_only_products_per_S16xU32_upper": 15,
+      "S8_only_products_per_S32xS32_upper": 25,
+      "S8_decomposition_scope": "candidate3x5 or5x5 radix128 S8 products plus S64 shift/add; not executed S8 multiplier kernels or free wide hardware",
+      "sqrt_div_scope": "actual software32-step radix4 isqrt and64-step U64/U32 restoring divide/RNE; hardware resources/clock/latency uncalibrated",
+      "1RW128bit_row_read_write_lower_bound_beats": {
+        "sum_and_units_two_reads": 3200,
+        "X16_write_then_norm_read_if_square_fused_at_encoding": 640,
+        "X16_write_square_read_norm_read_if_not_fused": 960,
+        "gamma_read": 640,
+        "norm32_write_read": 1280,
+        "fresh_A8_write_read": 320,
+        "fresh_Ae_write_read": 4
+      },
+      "buffer_scope": "source two-read route vs aligned spill and fused vs materialized square are alternative accounts, not added together; full gamma plus norm32 row exceeds16KiB, use gamma/K128 tiles or charged spill; no finite schedule or PPA"
+    },
+    "fresh_A8_source": "integer S32Q20, no floating bridge or encode_rows",
+    "integer_norm_candidate": true,
+    "full_integer_model_qualified": false,
+    "hardware_performance_accepted": false
+  },
+  {
+    "id": "decode.same_range_ACT16",
+    "status": "PASS",
+    "rows": 32,
+    "hidden": 2560,
+    "X16_reencoding_vs_input_sum": {
+      "relative_rmse": 0.0004859637864012952,
+      "max_abs": 0.0001220703125
+    },
+    "FPnorm_after_X16_vs_original_FPnorm": {
+      "relative_rmse": 0.000584922932837242,
+      "max_abs": 0.0015967786312103271
+    },
+    "integer_norm_vs_FPnorm_on_X16": {
+      "relative_rmse": 4.830140914112001e-07,
+      "max_abs": 1.430511474609375e-05
+    },
+    "integer_norm_vs_original_FPnorm": {
+      "relative_rmse": 0.0005849228268229899,
+      "max_abs": 0.0015975236892700195
+    },
+    "next_projection_vs_original_FPnorm_chain": {
+      "relative_rmse": 0.004617098911692083,
+      "max_abs": 0.01288604736328125
+    },
+    "next_projection_vs_native": {
+      "relative_rmse": 0.03091985507404052,
+      "max_abs": 0.08570504188537598
+    },
+    "next_integer": {
+      "INT64_partial_values_checked": 10240,
+      "Python_complete_reduction_witnesses": 96,
+      "group": 128,
+      "groups": 20,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 652718,
+      "format_bound_max": 439741056,
+      "exponent_spread_max": 7,
+      "MACs": 1310720,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "final_RQ": {
+      "saturation": 0,
+      "Fraction_output_codes": 512
+    },
+    "counts": {
+      "X16_Fraction_codes": 81920,
+      "norm_pre_gamma_Fraction_codes": 81920,
+      "norm_gamma_Fraction_codes": 81920,
+      "fresh_A8_Fraction_codes": 81920,
+      "isqrt_math_oracles": 32,
+      "divider_Fraction_oracles": 32,
+      "isqrt_restoring_rounds": 1024,
+      "divide_restoring_rounds": 2048,
+      "zero_rows": 0
+    },
+    "candidate_cost": {
+      "gamma_S32Q20_bytes": 10240,
+      "norm_S32Q20_row_bytes": 10240,
+      "X16_row_bytes": 5120,
+      "mixed_sum_I64_plus_I16_row_bytes": 25600,
+      "inverse_U32Q30_bytes_per_row": 4,
+      "aligned_I64_row_bytes": 20480,
+      "aligned_I64_row_fits_V16KiB": false,
+      "finite_buffer_alternatives": {
+        "two_source_passes": {
+          "sum_and_units_read_bytes_per_row": 51200,
+          "aligned_spill_RW_bytes": 0
+        },
+        "aligned_spill": {
+          "sum_and_units_read_bytes_per_row": 25600,
+          "aligned_spill_RW_bytes": 40960
+        }
+      },
+      "selected_candidate_buffer_route": "two_source_passes; Python aligned list is software reference storage, not free V SRAM",
+      "fresh_A8_payload_bytes": 81920,
+      "fresh_A8_K128_exponent_bytes": 640,
+      "norm_to_M_row_packet_bytes": 88064,
+      "X16_square_products": 81920,
+      "U64_square_sum_add_terms": 81920,
+      "S8_only_products_per_S16square_upper": 9,
+      "S16xU32_products": 81920,
+      "S32xS32_gamma_products": 81920,
+      "S8_only_products_per_S16xU32_upper": 15,
+      "S8_only_products_per_S32xS32_upper": 25,
+      "S8_decomposition_scope": "candidate3x5 or5x5 radix128 S8 products plus S64 shift/add; not executed S8 multiplier kernels or free wide hardware",
+      "sqrt_div_scope": "actual software32-step radix4 isqrt and64-step U64/U32 restoring divide/RNE; hardware resources/clock/latency uncalibrated",
+      "1RW128bit_row_read_write_lower_bound_beats": {
+        "sum_and_units_two_reads": 3200,
+        "X16_write_then_norm_read_if_square_fused_at_encoding": 640,
+        "X16_write_square_read_norm_read_if_not_fused": 960,
+        "gamma_read": 640,
+        "norm32_write_read": 1280,
+        "fresh_A8_write_read": 320,
+        "fresh_Ae_write_read": 4
+      },
+      "buffer_scope": "source two-read route vs aligned spill and fused vs materialized square are alternative accounts, not added together; full gamma plus norm32 row exceeds16KiB, use gamma/K128 tiles or charged spill; no finite schedule or PPA"
+    },
+    "fresh_A8_source": "integer S32Q20, no floating bridge or encode_rows",
+    "integer_norm_candidate": true,
+    "full_integer_model_qualified": false,
+    "hardware_performance_accepted": false
+  },
+  {
+    "id": "decode.tile16_delta_ACT8",
+    "status": "PASS",
+    "rows": 32,
+    "hidden": 2560,
+    "X16_reencoding_vs_input_sum": {
+      "relative_rmse": 0.0004864757448166745,
+      "max_abs": 0.0001220703125
+    },
+    "FPnorm_after_X16_vs_original_FPnorm": {
+      "relative_rmse": 0.0005860463633538475,
+      "max_abs": 0.0015960931777954102
+    },
+    "integer_norm_vs_FPnorm_on_X16": {
+      "relative_rmse": 4.809496303243971e-07,
+      "max_abs": 1.621246337890625e-05
+    },
+    "integer_norm_vs_original_FPnorm": {
+      "relative_rmse": 0.0005860455965321087,
+      "max_abs": 0.0015953779220581055
+    },
+    "next_projection_vs_original_FPnorm_chain": {
+      "relative_rmse": 0.004974960527574649,
+      "max_abs": 0.02413177490234375
+    },
+    "next_projection_vs_native": {
+      "relative_rmse": 0.030859532020764656,
+      "max_abs": 0.08246243000030518
+    },
+    "next_integer": {
+      "INT64_partial_values_checked": 10240,
+      "Python_complete_reduction_witnesses": 96,
+      "group": 128,
+      "groups": 20,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 648809,
+      "format_bound_max": 435612032,
+      "exponent_spread_max": 7,
+      "MACs": 1310720,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "final_RQ": {
+      "saturation": 0,
+      "Fraction_output_codes": 512
+    },
+    "counts": {
+      "X16_Fraction_codes": 81920,
+      "norm_pre_gamma_Fraction_codes": 81920,
+      "norm_gamma_Fraction_codes": 81920,
+      "fresh_A8_Fraction_codes": 81920,
+      "isqrt_math_oracles": 32,
+      "divider_Fraction_oracles": 32,
+      "isqrt_restoring_rounds": 1024,
+      "divide_restoring_rounds": 2048,
+      "zero_rows": 0
+    },
+    "candidate_cost": {
+      "gamma_S32Q20_bytes": 10240,
+      "norm_S32Q20_row_bytes": 10240,
+      "X16_row_bytes": 5120,
+      "mixed_sum_I64_plus_I16_row_bytes": 25600,
+      "inverse_U32Q30_bytes_per_row": 4,
+      "aligned_I64_row_bytes": 20480,
+      "aligned_I64_row_fits_V16KiB": false,
+      "finite_buffer_alternatives": {
+        "two_source_passes": {
+          "sum_and_units_read_bytes_per_row": 51200,
+          "aligned_spill_RW_bytes": 0
+        },
+        "aligned_spill": {
+          "sum_and_units_read_bytes_per_row": 25600,
+          "aligned_spill_RW_bytes": 40960
+        }
+      },
+      "selected_candidate_buffer_route": "two_source_passes; Python aligned list is software reference storage, not free V SRAM",
+      "fresh_A8_payload_bytes": 81920,
+      "fresh_A8_K128_exponent_bytes": 640,
+      "norm_to_M_row_packet_bytes": 88064,
+      "X16_square_products": 81920,
+      "U64_square_sum_add_terms": 81920,
+      "S8_only_products_per_S16square_upper": 9,
+      "S16xU32_products": 81920,
+      "S32xS32_gamma_products": 81920,
+      "S8_only_products_per_S16xU32_upper": 15,
+      "S8_only_products_per_S32xS32_upper": 25,
+      "S8_decomposition_scope": "candidate3x5 or5x5 radix128 S8 products plus S64 shift/add; not executed S8 multiplier kernels or free wide hardware",
+      "sqrt_div_scope": "actual software32-step radix4 isqrt and64-step U64/U32 restoring divide/RNE; hardware resources/clock/latency uncalibrated",
+      "1RW128bit_row_read_write_lower_bound_beats": {
+        "sum_and_units_two_reads": 3200,
+        "X16_write_then_norm_read_if_square_fused_at_encoding": 640,
+        "X16_write_square_read_norm_read_if_not_fused": 960,
+        "gamma_read": 640,
+        "norm32_write_read": 1280,
+        "fresh_A8_write_read": 320,
+        "fresh_Ae_write_read": 4
+      },
+      "buffer_scope": "source two-read route vs aligned spill and fused vs materialized square are alternative accounts, not added together; full gamma plus norm32 row exceeds16KiB, use gamma/K128 tiles or charged spill; no finite schedule or PPA"
+    },
+    "fresh_A8_source": "integer S32Q20, no floating bridge or encode_rows",
+    "integer_norm_candidate": true,
+    "full_integer_model_qualified": false,
+    "hardware_performance_accepted": false
+  },
+  {
+    "id": "decode.delta_to_K128_ACT8",
+    "status": "PASS",
+    "rows": 32,
+    "hidden": 2560,
+    "X16_reencoding_vs_input_sum": {
+      "relative_rmse": 0.0004864990269769758,
+      "max_abs": 0.0001220703125
+    },
+    "FPnorm_after_X16_vs_original_FPnorm": {
+      "relative_rmse": 0.000586035906426166,
+      "max_abs": 0.0015958547592163086
+    },
+    "integer_norm_vs_FPnorm_on_X16": {
+      "relative_rmse": 4.882382782503073e-07,
+      "max_abs": 1.811981201171875e-05
+    },
+    "integer_norm_vs_original_FPnorm": {
+      "relative_rmse": 0.0005860363686599482,
+      "max_abs": 0.0015949010848999023
+    },
+    "next_projection_vs_original_FPnorm_chain": {
+      "relative_rmse": 0.004909856049847531,
+      "max_abs": 0.01895904541015625
+    },
+    "next_projection_vs_native": {
+      "relative_rmse": 0.03205485258949493,
+      "max_abs": 0.08108770847320557
+    },
+    "next_integer": {
+      "INT64_partial_values_checked": 10240,
+      "Python_complete_reduction_witnesses": 96,
+      "group": 128,
+      "groups": 20,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 644982,
+      "format_bound_max": 361289600,
+      "exponent_spread_max": 7,
+      "MACs": 1310720,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "final_RQ": {
+      "saturation": 0,
+      "Fraction_output_codes": 512
+    },
+    "counts": {
+      "X16_Fraction_codes": 81920,
+      "norm_pre_gamma_Fraction_codes": 81920,
+      "norm_gamma_Fraction_codes": 81920,
+      "fresh_A8_Fraction_codes": 81920,
+      "isqrt_math_oracles": 32,
+      "divider_Fraction_oracles": 32,
+      "isqrt_restoring_rounds": 1024,
+      "divide_restoring_rounds": 2048,
+      "zero_rows": 0
+    },
+    "candidate_cost": {
+      "gamma_S32Q20_bytes": 10240,
+      "norm_S32Q20_row_bytes": 10240,
+      "X16_row_bytes": 5120,
+      "mixed_sum_I64_plus_I16_row_bytes": 25600,
+      "inverse_U32Q30_bytes_per_row": 4,
+      "aligned_I64_row_bytes": 20480,
+      "aligned_I64_row_fits_V16KiB": false,
+      "finite_buffer_alternatives": {
+        "two_source_passes": {
+          "sum_and_units_read_bytes_per_row": 51200,
+          "aligned_spill_RW_bytes": 0
+        },
+        "aligned_spill": {
+          "sum_and_units_read_bytes_per_row": 25600,
+          "aligned_spill_RW_bytes": 40960
+        }
+      },
+      "selected_candidate_buffer_route": "two_source_passes; Python aligned list is software reference storage, not free V SRAM",
+      "fresh_A8_payload_bytes": 81920,
+      "fresh_A8_K128_exponent_bytes": 640,
+      "norm_to_M_row_packet_bytes": 88064,
+      "X16_square_products": 81920,
+      "U64_square_sum_add_terms": 81920,
+      "S8_only_products_per_S16square_upper": 9,
+      "S16xU32_products": 81920,
+      "S32xS32_gamma_products": 81920,
+      "S8_only_products_per_S16xU32_upper": 15,
+      "S8_only_products_per_S32xS32_upper": 25,
+      "S8_decomposition_scope": "candidate3x5 or5x5 radix128 S8 products plus S64 shift/add; not executed S8 multiplier kernels or free wide hardware",
+      "sqrt_div_scope": "actual software32-step radix4 isqrt and64-step U64/U32 restoring divide/RNE; hardware resources/clock/latency uncalibrated",
+      "1RW128bit_row_read_write_lower_bound_beats": {
+        "sum_and_units_two_reads": 3200,
+        "X16_write_then_norm_read_if_square_fused_at_encoding": 640,
+        "X16_write_square_read_norm_read_if_not_fused": 960,
+        "gamma_read": 640,
+        "norm32_write_read": 1280,
+        "fresh_A8_write_read": 320,
+        "fresh_Ae_write_read": 4
+      },
+      "buffer_scope": "source two-read route vs aligned spill and fused vs materialized square are alternative accounts, not added together; full gamma plus norm32 row exceeds16KiB, use gamma/K128 tiles or charged spill; no finite schedule or PPA"
+    },
+    "fresh_A8_source": "integer S32Q20, no floating bridge or encode_rows",
+    "integer_norm_candidate": true,
+    "full_integer_model_qualified": false,
+    "hardware_performance_accepted": false
+  }
+]

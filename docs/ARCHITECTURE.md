@@ -1,5 +1,9 @@
 # 架构与运行
 
+## Issue66：完整消费者与连续整数状态
+
+[报告](experiments/issue-66-scale-state.md)与[代码/复现](../project/experiments/scale_state/README.md)覆盖完整H2560消费者、整数input RMSNorm、连续conv/R和真实256步诊断；下一投影只16/8192，FP SiLU/QK L2norm/gates明确。先python -B scripts/check_project.py；再scripts/check_research.py及unittest discover -s project/experiments/scale_state -p "test_*.py" -v。精选SHA/源码安全接收和selected_review实际重放命令见模块README，所有原始Slurm命令/binding/版本见work66。新整数函数不等于硬件资格；V16KiB重读、R shadow/范围/epoch与同资源有限端口仍需后续服务证据。
+
 ## Issue64：综合方案v2与服务器最小决策实验
 
 [Block v2](BLOCK_PARTITION_V2.md)与[实际报告](experiments/issue-64-block-v2.md)区分单位/归约/状态合同和物理归属。正式代码project/experiments/block_decisions/，完整运行/接收命令见[README](../project/experiments/block_decisions/README.md)。先python -B scripts/check_project.py，再scripts/check_research.py与unittest discover该目录；receive_attention.py --self-test及work64/audit_service.py --self-test覆盖边界。

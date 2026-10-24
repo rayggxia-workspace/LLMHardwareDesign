@@ -2,7 +2,7 @@
 
 本模块只实现 Qwen3.5 Gated Delta Rule 的整数状态闭包。真实 FP32 capture、conv/SiLU、L2norm/rsqrt/head scaling、sigmoid/softplus/exp、初态和 scale 编译均是明确的浮点桥；不能称完整整数模型或目标硬件能力。
 
-先完整 FP64 逐步 replay，核对原生 output/最终 state；旧 256 步窗只以同一真实初态运行整数前 32 步、报告 1/8/32 步，不将其前32终态接到原end256的相邻窗。新 capture 的33个真实 state boundary可额外直接对比。所有整数步骤使用前一步整数状态，不从原生轨迹重置。
+先完整 FP64 逐步 replay，核对原生 output/最终 state；首批旧 256 步窗以同一真实初态运行整数前 32 步、报告 1/8/32 步；后续独立长诊断使用 --steps 256 跑原完整256步（邻接原1步窗仍1步），不将其前32终态接到原end256的相邻窗。新 capture 的33个真实 state boundary可额外直接对比。所有整数步骤使用前一步整数状态，不从原生轨迹重置。
 
 ## 冻结格式
 

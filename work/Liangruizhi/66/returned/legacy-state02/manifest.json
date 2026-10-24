@@ -1,0 +1,239 @@
+{
+  "status": "PASS",
+  "source": {
+    "state_sha256": "c15de159129a02ac9944f06cfa694c37ffc8ac6f03a517c5087d739f913e2a3c",
+    "input_manifest_sha256": "db92fb4943e775164c6b1035fd3f9a1bcd8c30851d7f1c89aab96de98d021313",
+    "input_NPZ_sha256": "facb5a23145501a093deee792a3b87fa1a21bafb0566645ef9209ffeae088a5f",
+    "input_NPZ_name": "windows.npz",
+    "input_provenance": {
+      "status": "PASS",
+      "source_commit": "aa7afb9b9b7ce95e1b835b833e6ab91b93c1b0cb",
+      "source_sha256": "b751b6207340075119818de22343d5e3d46de006a837d73b01c3b696327cacac",
+      "input": {
+        "path": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/input/qwen35-states.pt.gz",
+        "sha256": "049c1cf4e81044fdc740dd1e65701a86293f31293d4b0ee2c554daecfef4e91a",
+        "uncompressed_sha256": "82b687879c4ef37d906b02cc43378cc7f4bc80fc445798da07c1af743917e719"
+      },
+      "origin_commit": "2ada6cf6a61f5acff4b6052e81e15d20070dc0f3",
+      "scope": "SHA-bound lossless export of actual PR36 continuous state windows; no new inference.",
+      "environment": {
+        "python": "3.12.7",
+        "torch": "2.10.0+cpu",
+        "numpy": "2.2.6"
+      },
+      "job_id": "90059"
+    },
+    "commit": "29bee170344d505779df878b8b17a7ab856e9f88",
+    "binding_sha256": "91e530951e8994aa5fef14f319855f600fbbd9b64e68cc0180c6bef684a29c2b"
+  },
+  "integer_conditions": 48,
+  "failures": [],
+  "seconds": 17.88825516682118,
+  "scope": "Qwen3.5 continuous integer-state candidates, not a complete integer model.\n\nFP32 capture, L2 normalization/sqrt(D), sigmoid/softplus/exp and initial/scale\ncompilers are explicit offline bridges. Only the typed recurrence below is\ninteger. No intermediate state is reset from a captured native state.\n",
+  "floating_bridges": [
+    "captured FP32 conv/SiLU and QKV projections",
+    "offline FP64 L2norm/rsqrt/head scaling",
+    "source sigmoid/softplus/exp and U16Q15/U32Q31 gate compiler",
+    "initial state and static exponent compiler",
+    "FP64 numerical oracle only"
+  ],
+  "conv_scope": "No integer convolution implementation in this first state-only batch; four-slot history and conv/SiLU candidate require separate captured preconv/weights/state. No conv bytes are silently counted as validated state.",
+  "artifacts": {
+    "layer0-end2048.S16.D15.npz": {
+      "bytes": 9316384,
+      "sha256": "45a35fd3c12b85144fea94e22ef3cad646e8b25309598c3b7d865c5e2f89a7a2"
+    },
+    "layer30-end8193.S32.D15.npz": {
+      "bytes": 749634,
+      "sha256": "26aedda58ce2142e3f690d049fc5ae4d417c3d7e8f2d8aad383f350133dd602a"
+    },
+    "layer14-end8192.S16.D15.npz": {
+      "bytes": 9796241,
+      "sha256": "31ad30c71299c69e2e699a560f6a8b7681c606c57311f9efafc0c5c38b56e407"
+    },
+    "layer14-end8193.S16.D31.npz": {
+      "bytes": 537347,
+      "sha256": "d7210e459d40adf058a67ed6a77cbb1a1242022ec3dcce0458b60814b5f9b50b"
+    },
+    "layer30-end2048.S16.D31.npz": {
+      "bytes": 9825027,
+      "sha256": "7f23906a67fbbdffc347f1fe3ce143cb80926646a22b4663e80d2e1c0eaa13cd"
+    },
+    "layer0-end2049.S32.D15.npz": {
+      "bytes": 723885,
+      "sha256": "73a746fc7d8094c7eaa29135f240a76f362682f0ddeb0a8e3a74548356183cac"
+    },
+    "layer14-end2049.S32.D31.npz": {
+      "bytes": 752889,
+      "sha256": "841601e5bf38d91e204dc8a72dbb0482b5b5ae4e1c3490696773189728846e66"
+    },
+    "layer30-end8192.S32.D15.npz": {
+      "bytes": 12275574,
+      "sha256": "3e45fac5713e6b79f640282ec6bb53c8e69fce71fe9798181987dc8356ab3fad"
+    },
+    "layer14-end2049.S32.D15.npz": {
+      "bytes": 752882,
+      "sha256": "9ef139a51949ac8e7ac06a075b727e2354753e69bb738bdded4d1064be2a4b44"
+    },
+    "layer0-end2049.S32.D31.npz": {
+      "bytes": 723949,
+      "sha256": "e8e09429a3e68a5b3d81cfdc7376202b40777bd8af43c98660e2380063f96eb9"
+    },
+    "layer0-end8192.S32.D15.npz": {
+      "bytes": 12025050,
+      "sha256": "59731d6002d0e91e33d3a1985035a59430e7ae397016659cf5b7037f5ffd1e9b"
+    },
+    "layer0-end8193.S32.D31.npz": {
+      "bytes": 728201,
+      "sha256": "1a28a730dee1a77de08309eca3c6dbbe3305fb34ab168b33a7b4b5ded69d3aa0"
+    },
+    "layer14-end8193.S16.D15.npz": {
+      "bytes": 537342,
+      "sha256": "b60aea9bc1352636066de13ccf5396e374cb60745e7df8cf2c66403042022ca9"
+    },
+    "layer30-end2049.S32.D31.npz": {
+      "bytes": 752368,
+      "sha256": "78a5b9e107a80096cdc992b2a2e49ae5ecb711fb750eca50fbc02f01d030c003"
+    },
+    "layer30-end2049.S16.D31.npz": {
+      "bytes": 535814,
+      "sha256": "2f31bc5873f7880b3ee350ba7476099d2659f0b3c114006d0ac2bd20c1fbeefc"
+    },
+    "layer30-end2049.S32.D15.npz": {
+      "bytes": 752348,
+      "sha256": "97a6f4db80a992d78621471031ba410c56bde18638e3c6a2fef541140ea28497"
+    },
+    "layer30-end2048.S32.D15.npz": {
+      "bytes": 12281032,
+      "sha256": "7b4ed883af931ae9eb65c233a6be5eb27366dcf038a5a26b7273d92d0c0489d1"
+    },
+    "layer30-end8193.S16.D31.npz": {
+      "bytes": 530882,
+      "sha256": "d2df1255330d661b6423b1935fd0c619669e107d536c99b1a4ef5becd28f016b"
+    },
+    "layer0-end8193.S16.D15.npz": {
+      "bytes": 489666,
+      "sha256": "1842df399241a096fe47e810753861e2ab5497f7b7d519b2192f7ac805452ccf"
+    },
+    "layer0-end8193.S32.D15.npz": {
+      "bytes": 728179,
+      "sha256": "46984da24dc4cdc9cbb7100fd9bb3a2111a6da597ac40829769c970932777fbc"
+    },
+    "layer30-end8192.S16.D31.npz": {
+      "bytes": 9813557,
+      "sha256": "1e8fd89d828e3281c1005d0b8273b802b09316effba4e1239fb8726ffadb0df1"
+    },
+    "layer14-end2048.S32.D15.npz": {
+      "bytes": 12258051,
+      "sha256": "3b8940ff985c60fcaae77924822d40b463883e5264df7c070f51970b2ff679cc"
+    },
+    "layer14-end2049.S16.D15.npz": {
+      "bytes": 540089,
+      "sha256": "86fefeb8fd5c7a7705a04faa79e17385945dc9d34107d43a0e9588997ce84cbd"
+    },
+    "layer14-end8192.S32.D31.npz": {
+      "bytes": 12243748,
+      "sha256": "77ae9897d173f9e5fbf0dd7100662cbed913c638282481944ef6bbb434db5b77"
+    },
+    "layer30-end2048.S32.D31.npz": {
+      "bytes": 12281142,
+      "sha256": "87f3481f8ef6812e8b0c25c172362aa1e9757c7358b7051fc6ef0fb048d102ca"
+    },
+    "layer0-end2048.S32.D15.npz": {
+      "bytes": 12015801,
+      "sha256": "bc900a8fd7e0ae7a3c0f9be9d7910c808de060cf2a7aa5472654fec1bc84b949"
+    },
+    "layer14-end2048.S16.D15.npz": {
+      "bytes": 9827841,
+      "sha256": "2f156da5fa22fcf12ba6b4a5675e5d0fd8e6368fe8fef99280e2b86fe397faed"
+    },
+    "layer30-end2048.S16.D15.npz": {
+      "bytes": 9824859,
+      "sha256": "b4cc192e14b416cdee0aaadf0f89455c0c0636f466d1e32f6304a5f05d693a94"
+    },
+    "layer0-end8192.S32.D31.npz": {
+      "bytes": 12025052,
+      "sha256": "b756798357a37058f9c16b4081f7c3ae993eacfd01eac39955a1ca8cc645c01c"
+    },
+    "layer0-end2049.S16.D31.npz": {
+      "bytes": 482102,
+      "sha256": "d7f6a52734df5ebe7f64fdb57b15a9fcae9fc7c091ba023d45b0ca93bbfd01b1"
+    },
+    "layer14-end2048.S32.D31.npz": {
+      "bytes": 12258361,
+      "sha256": "9c8eb4e57683d1710c544e4b955b8656ca09b7bf6ac875e8dfe9afdd5f713e15"
+    },
+    "layer30-end8192.S32.D31.npz": {
+      "bytes": 12275920,
+      "sha256": "6317c1953262c5d813516fdf6a160b1962e018a8ab136e4ec503326a0afffd80"
+    },
+    "layer0-end2049.S16.D15.npz": {
+      "bytes": 482099,
+      "sha256": "9ea30515886dd4427b48e3e8131e4dd1ab81ed051ad595bcadc98f82bb0e6468"
+    },
+    "layer14-end8193.S32.D31.npz": {
+      "bytes": 751564,
+      "sha256": "aaf65bd8021a6339633221e51dce89c4e262f9f49e2935f50a23a2583a741f9a"
+    },
+    "layer30-end8192.S16.D15.npz": {
+      "bytes": 9813456,
+      "sha256": "e2339fb1c3f165d36ef6af2584a2121c30cea27d1addca4ff5531a032df09739"
+    },
+    "layer0-end8192.S16.D31.npz": {
+      "bytes": 9348613,
+      "sha256": "72c3b263c1f0834889675bd7948e41de337821cbf34a80171ea1dc2c64055106"
+    },
+    "layer0-end8192.S16.D15.npz": {
+      "bytes": 9348468,
+      "sha256": "c78e30f138a20b0d9defaae002fde26ac851cfd30dcde0846a25b3e2e1b9a28d"
+    },
+    "layer14-end8192.S32.D15.npz": {
+      "bytes": 12243769,
+      "sha256": "d0f543ef0f989db8f8bec63af03900523e6331eabdcdffb9856279e10d69c5be"
+    },
+    "layer30-end8193.S32.D31.npz": {
+      "bytes": 749646,
+      "sha256": "6f3bcc373153311750ef3cc55073a0ca3ba81f48f32b98c581a9683c269e014f"
+    },
+    "layer14-end8193.S32.D15.npz": {
+      "bytes": 751539,
+      "sha256": "989e2d8122970d325f9c540fa614d5bbcf09ba19fb0cb460e0a7b0eed42afd86"
+    },
+    "layer14-end2049.S16.D31.npz": {
+      "bytes": 540094,
+      "sha256": "2d2a391d801d5f9bc970d1b76f7268125ebeb6d92c233291ff1ab91530bae66c"
+    },
+    "layer14-end8192.S16.D31.npz": {
+      "bytes": 9796385,
+      "sha256": "421714880906dd40e4cc10364a760a61455c8cb064d4fabc4f4d877ecb309e04"
+    },
+    "state-results.json": {
+      "bytes": 769732,
+      "sha256": "43c70a70db6669bcfe3898cc2ab9c34b36113d6d86da225447258b192860b34a"
+    },
+    "layer14-end2048.S16.D31.npz": {
+      "bytes": 9828029,
+      "sha256": "6741e7198faf4050896461234ed919219208366d9a2d17b03f2d1c14d61507cb"
+    },
+    "layer0-end2048.S16.D31.npz": {
+      "bytes": 9316444,
+      "sha256": "8682bc4fe94cefe1f48db13df8e834f0a88377da7bbe475de8d8c0cff3d97776"
+    },
+    "layer30-end2049.S16.D15.npz": {
+      "bytes": 535805,
+      "sha256": "c9e301b9d31f8d4642238b8d9ba5a57ba05333d3ee62a84a5a475eda285aa905"
+    },
+    "layer0-end8193.S16.D31.npz": {
+      "bytes": 489670,
+      "sha256": "24e5046332f378a2e1616a50fc8f42a00ead5fda8ccbdaeeecc9ac89e14626c8"
+    },
+    "layer0-end2048.S32.D31.npz": {
+      "bytes": 12015574,
+      "sha256": "04acef0217ae4876db2b4495d1b5ab26e01669d85c6f7d6a41627eca57b98701"
+    },
+    "layer30-end8193.S16.D15.npz": {
+      "bytes": 530879,
+      "sha256": "aea95f9bedf23d4f3213b808580995c3934d7b41f481f7c226d264f918c8f656"
+    }
+  }
+}

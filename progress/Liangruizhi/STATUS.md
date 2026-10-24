@@ -1,5 +1,13 @@
 # Liangruizhi 的进度
 
+## 2026-10-24（UTC+08:00）Issue66完整消费者与连续整数状态
+
+[Issue66](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/66)/[PR67](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/67)，task/66-scale-state，D:/Projects/LLMHardwareDesign-scale-state，base PR65@ec3008c。本人服务器90059–90082实际24作业全COMPLETED0:0，独立输出/干净冻结commit及源码/输入/成果SHA；完整H消费者8profile、整数input RMS8、conv4、native R8、coupled2、旧32/1与256/1各48诊断双轮。主receiver全量验算及真实重写SHA负例通过；扩展仅3个完整256见证独立数学重放，全部48二轮SHA，界限明确。15capsule/21Git源核验，小精选本机2R+2consumer实重放PASS。
+
+S32降低短误差仍未解除长窗Sat184/193；D31不是既定必需；tileδ perchannel base保留，不强制早转K128；整数norm新增X16误差/宽算术/51.2KB源重读及有限16KiB义务。报告/方案/决策/统一索引、19.58MB精选及5.21GB服务器完整包SHA已整理，norm01/02旧成本与03/04新版分列，FP桥/失败不覆盖。无新模型下载、Phi封存，不改他人Issue55/63工程。
+
+下一步R范围/重定标epoch与V/R/S同资源有限端口服务、width/布局/RTL物理资格；不再重复模型矩阵。源码版本按各phase而非文档HEAD；[完整交接](../../docs/handoffs/2026-10-24-issue-66-scale-state.md)。交付in_review、待指定审查人/合并，非done；登记PR5 pending，无board.json/Projects能力，看板unverified/同步pending待管理员。
+
 ## 2026-10-24（UTC+08:00）Issue64综合方案与最小分叉交付
 
 [Issue64](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/64)/[PR65](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/65)，task/64-block-v2，D:/Projects/LLMHardwareDesign-blockv2，base PR62@30fcd63。独立子树B/C模块由root核验整合，未触其他任务分支。本人服务器issue64-block-v2-20261024目录实际lrz-*并行：90048/49输出180×6条件、各410112 Fraction；90050/51 attention56条件、各7106560QK/1474560PV；90055独立全接收；90056/57服务576调度/96配对；90058归档，均COMPLETED0:0。90052/53/54启动错误保留，修复后同源重试。

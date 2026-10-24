@@ -1,5 +1,7 @@
 # 当前状态
 
+- 2026-10-24 [Issue66/PR67](experiments/issue-66-scale-state.md)：服务器90059–90082共24作业实际完成，补完整H2560消费者/下一16输出、整数RMSNorm、连续conv/R及真实256步范围诊断，科学双轮与主接收/精选重放通过。S32短32步输出约0.057%对S16约0.64%，但长窗同范围仍Sat184/193；早转K128省128B/row却增加norm/未最终RQ的next16误差；V整行超16KiB必须重读/spill。修订[Block v2第8/9节](BLOCK_PARTITION_V2.md)，固定单位/归约/owner/epoch/range义务，保留物理归属候选。19.58MB精选在仓库、5.21GB全量在授权服务器有SHA；Phi封存，无新模型下载。剩余有限V/R/S服务、R范围/重定标、FP桥和物理资格；待审查合并，非整图/硬件验收，登记pending/看板unverified同步pending。
+
 - 2026-10-24 [Issue64/PR65](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/65)：[Block v2](BLOCK_PARTITION_V2.md)给出M/V/A/R/S/D计算/状态/接口/预连线，分清已确定的语义合同与待验证制造边界。服务器A两轮180×6输出条件，B两轮56整数attention条件及全量独立接收，C两轮576调度/96配对均完成。Llama旧诊断5.39%→动态Y8约4.93%/同范围Y16约4.81%，后继scale仍未验；省内部header仅减少0.083%–0.167%条件周期，不固化M+A。精选10.08MB/完整服务器240.39MB均有SHA索引，数值/轨迹/源快照核验通过，失败保留。无新模型下载/其他成员工程，无全模型整数质量或目标PPA；交付待审查合并/未done。剩余消费者scale、连续R整数化及布局/SFU物理资格；登记pending、看板unverified/同步pending。
 
 - 2026-10-23 [Issue61/PR62](experiments/issue-61-server-models.md)：Gemma3-4B、Qwen2.5-3B、Qwen3.5-4B与Phi4-mini本轮服务器CPU参考/采集全部执行；Phi封存不调参。三主测420线性/56注意力格式与1474560个有条件PV32输出、四模型5185来源张量均已实际核验；部分量化候选误差/饱和失败保留。发现动态K组scale、概率/KV分离精度、范围不变量与窗口底层分配会改变边界判断。精选包7.27MB可离线重放，服务器主包/封存包有SHA索引。完成逐token打包修正，仍非全整数非线性/整图调度/PPA验收；PR待审查合并，Issue非done。登记pending、看板unverified/同步pending。

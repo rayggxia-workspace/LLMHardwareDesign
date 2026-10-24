@@ -12,6 +12,10 @@
 
 `sources/` 保存手写笔记和讨论资料；`ref-project/llm-routing/` 保存参考项目结果包，**不纳入 Agent 的主动或例行维护范围**；用户更新后可按要求提交，无需逐项审查或做哈希检查。该包不包含源代码、完整物理数据库、工具环境或运行日志，不能单靠仓库内容重新运行物理实现。详情见[来源与复现边界](docs/DATA_PROVENANCE.md)。
 
+## 最新关键边界证据（2026-10-24）
+
+[Issue66消费者/连续整数状态报告](docs/experiments/issue-66-scale-state.md)已完成服务器并行双轮及独立接收，补完整hidden消费者和整数input RMSNorm。S32降低短程误差，却未解决长窗同范围饱和；V整行缓冲超限需要重读/spill。因此[Block v2第8/9节](docs/BLOCK_PARTITION_V2.md)收敛数值/状态/资源义务，保留制造边界候选。19.58MB精选可离线验算，5.21GB全量在授权服务器留SHA；PR67待审查合并，非全模型整数或硬件PPA验收。
+
 ## 当前工作方式
 
 [有证据的Block方案v2](docs/BLOCK_PARTITION_V2.md)已综合Llama/Qwen及服务器主测，并完成[Issue64三组最小服务器实验](docs/experiments/issue-64-block-v2.md)：输出格式、整数attention闭包和同库存完整GQA条件服务。单位/完整归约/共享状态合同可以确定；M+A合宏、R独立、RQ位置和端到端收益仍待验证。10.08MB精选包与独立接收可复查，原失败保留，PR65待审查。

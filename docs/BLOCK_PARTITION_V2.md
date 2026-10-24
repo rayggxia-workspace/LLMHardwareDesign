@@ -1,6 +1,6 @@
 # 算子与Block划分方案v2：单位、范围、状态闭包与可选物理归属
 
-2026-10-24（Asia/Shanghai）；负责人Liangruizhi；Issue64，基于PR62及此前Llama/Qwen证据。状态：有证据的具体候选，非最终最优制造库/芯片验收。新增A/B/C服务器两轮及独立接收已完成；[完整报告](experiments/issue-64-block-v2.md)与[成果索引](../project/experiments/block_decisions/results/issue-64/index.json)可复查。
+2026-10-24（Asia/Shanghai）；负责人Liangruizhi；Issue64，基于PR62及此前Llama/Qwen证据。状态：有证据的具体候选，非最终最优制造库/芯片验收。Issue66进一步完成完整hidden消费者、整数RMSNorm与连续R/conv及256步范围诊断；最新修订见第9节。新增A/B/C服务器两轮及独立接收已完成；[完整报告](experiments/issue-64-block-v2.md)与[成果索引](../project/experiments/block_decisions/results/issue-64/index.json)可复查。
 
 ## 1. 划分方法与证据层级
 
@@ -35,7 +35,7 @@
 | M矩阵/受检归约 | 16×16 S8阵列，Ktile128 i32部分和；单位对齐、完整归约/bias后单次RQ；32KiB含双buffer、PE和受限scratch | operand→MAC→组acc反馈；完整/partial typed mux，RQ可绕过；归约引擎数量不得随placement复制 | A8/W8或S8 digit；PARTIAL32+unit/组计数；COMPLETE32/宽格式+证书；ACT8/16；A分组128/更粗及Wout/W128、RQ近M/共享V按合同配置 |
 | V向量/转换 | norm、RoPE、SiLU/GELU、残差、scale编译和格式转换；8lane/16KiB候选，宽平方和/移位/比较和SFU单独声明 | shuffle/reduce/可装载表→RNE/SAT；共享ROM/divider真实仲裁；copy/pack也占端口 | 有版本的gamma/epsilon/LUT/scale；动态row delta与消费者/残差对齐；多模型非线性不固化成单一矩阵epilogue |
 | A注意力闭包 | 规范化概率、mask、Psum守卫、固定V单位的PV完整归约；32KiB临时，20KiB单读ROM候选 | score→max/exp/sum/div→受检P→PV反馈→最终转换；与M共用矩阵资源，不赠第二阵列 | M→A score/partial及A→M P双向；KV8/16、主路径P15（P7只允许独立接受的受限profile）、长度/窗口/单位/epoch和guard；独立A或同宏M+A仍比较 |
-| R递推/conv闭包 | 当前K128×V32 tile16KiB state32候选，32KiB总scratch；history/epoch单owner；投影全K后更新 | history环反馈；decay→projection→delta→outer update→commit→output；不提前partial-K写state | q/k/v/beta/decay格式与初态、共享keyhead、state page epoch；独立R/共享V待整数数值及公平服务对照 |
+| R递推/conv闭包 | K128×V32 S32单buffer16KiB；old+shadow已占32KiB无aux余量，V16/S侧shadow/合法原位待选；history/epoch单owner；投影全K后更新 | history环反馈；decay→projection→delta→outer update→从新state形成output→同版本共同commit/发布；不提前partial-K写state | q/k/v/beta/decay格式与初态、共享keyhead、state page epoch；独立R/共享V待整数数值及公平服务对照 |
 | S存储slice | 8×32KiB、各128bit1RW候选；权重、全局KV、局部ring、score、recurrence backing按生命周期分配 | RX FIFO→单bank仲裁→SRAM→TX；不因有RX/TX当1R1W | owner/alias/valid length/ring位置，scale同页或静态profile；bank归属、复制/广播与M/V/A/R连接按产品图确定 |
 | D搬运/控制 | DMA、tile/digit循环、credit/完成/异常、状态版本及受限页表，8KiB描述符候选 | 制造前命令/完成/错误网和有限队列；先写数据再发布epoch | 引用已有端点/地址/格式profile，运行时换描述符不增加端口/算术/金属；跨块可达/多跳/背压仍付资源 |
 
@@ -67,7 +67,7 @@
 
 Y16_same_range精确保持旧Y8上下端点（代码[-32768,32512]、原step/256），不是偷偷扩大动态范围。Gemma q/o在相同范围Y16下仍有原21/5次饱和；扩大到4xcal的Y16或当前整数row delta可消除本批饱和，但有各自范围/存储/计算代价。简单扩大Y8范围反而降低分辨率，不能一律加裕量。
 
-row delta完全由acc/unit/base计算，不读FP评价目标；它是**每个16输出tile的逐行增量**，不是全hidden行统一scale。进入下一矩阵可能形成K16单位，需同样的ALIGN_REDUCE或先转到K128统一单位；本轮未测该后继误差/代价。因此保留ACT16和带tile/epoch scale的ACT8接口，暂不把动态delta强固化。在本轮声明的64B外header、32B坐标、16B逐输出指数和16B Y8的packet中，每行1B显式delta使decode物理包128B→192B，与该tile Y16相同；复用已预留字段才保持128B。若坐标已在header、scale驻留，Y8/Y16也可能同为128B，不能外推成任意协议必加64B。扫描/完整tile等待/暂存与后继矩阵16×8的3基础积均非免费。
+row delta完全由acc/unit/base计算，不读FP评价目标；它是**每个16输出tile的逐行增量**，不是全hidden行统一scale。进入下一矩阵可能形成K16单位，需同样的ALIGN_REDUCE或先转到K128统一单位；Issue64当时未测该后继；Issue66已补完整hidden链，见第9节，不能仍按旧16输出估计。因此保留ACT16和带tile/epoch scale的ACT8接口，暂不把动态delta强固化。在本轮声明的64B外header、32B坐标、16B逐输出指数和16B Y8的packet中，每行1B显式delta使decode物理包128B→192B，与该tile Y16相同；复用已预留字段才保持128B。若坐标已在header、scale驻留，Y8/Y16也可能同为128B，不能外推成任意协议必加64B。扫描/完整tile等待/暂存与后继矩阵16×8的3基础积均非免费。
 
 ## 6. 整数attention闭包的新增证据
 
@@ -83,13 +83,29 @@ Psum证明现在在这个实际整数归一化候选下得到执行验证，但�
 
 只改物理标签的colocated_control在96/96配对与split完全相同。colocated_stream仅删除内部M↔A packet header，payload/RAM/同bus/credit保留，模型完成周期减少**0.0833%–0.1675%**。这说明在本轮保守pack、逐头KV重读和64步U64除法假设下，省header不足以固化M+A；不证明所有实现的合宏收益都小，也不是整图/PPA结论。先校准布局/宽SFU/端口，更可能改变本轮决策。C的T≤1024未越Gemma窗口，同shape local/global服务相同；窗口生命周期来自既有真实捕获，不是C的周期对照。独立接收重构96配对、核验3轨迹的依赖/端口/有限credit与4种负例；两轮6科学文件字节相同。
 
-## 8. 最小剩余验证及冻结条件
+## 8. 最小剩余验证及冻结条件（Issue66后）
 
-| 优先级 | 仅保留的分叉 | 最小证据及决定什么 |
+Issue64 A/B/C，以及Issue66消费者/整数norm、连续R/conv、原256步诊断已在服务器完成双轮；独立全值验算只覆盖接收前固定的三个长窗见证，其余长条件核二轮SHA，不重复完整模型/品牌矩阵。下一组仅保留尚影响物理归属的分叉。
+
+| 优先级 | 剩余分叉 | 决策所需最小证据 |
 | --- | --- | --- |
-| P1 | 输出tile动态scale或ACT16进入消费者 | 同一实际MLP/down完整输出→残差/norm/下一Linear，固定A/W与评价；比较K16单位对齐、转K128再量化和ACT16的误差、宽归约、pack/元数据及单口buffer。决定是否把动态delta/RQ近M做固定能力，而非仅保留接口 |
-| P1 | Qwen3.5连续R整数状态与归属 | 复用已采真实初末状态/输入，先冻结定点decay、update、conv及round/sat顺序，8/32步及跨chunk独立参考；再用同库存V/R叠加相同FFN/attention请求。决定R专用模板是否有必要；未通过先保留R逻辑闭包 |
-| P2 | M/A物理配对资格 | 先以适用RTL校准K/V pack、非dyadic32×32、U64 div和ROM端口，再在同精度/完整attention服务比一对候选；与Issue55/63协调真实端点、时序/布线/容量。不得拿本轮条件周期直接选制造边界 |
-| 冻结后 | Phi独立验证与整图主张 | 冻结profile、映射、阈值后才解封；失败则缩小适用范围并另起修订，不反向调参后仍称独立。端到端收益必须另有同资源整图及物理证据 |
+| P1 | V归一化与RQ/streaming | 冻结同一整数精度/范围，对完整H输入、两遍scale scan、gamma/K128 tile、新A8及所有写读做有限16KiB/1RW/FIFO调度；比较同资源近M与共享V。仅有字节/乘积下界不能选位置 |
+| P1 | R范围/提交与物理归属 | 先冻结范围guard、合法重定标epoch或回退，不能掩盖184/193饱和；再公平比较V16、V32+S-shadow及有证明的原位提交，叠加相同FFN/attention竞争。R内SiLU/QK L2norm/GatedRMS/gates仍需整数合同 |
+| P2 | M/A及宽SFU物理资格 | 以适用RTL校准K/V pack、32×32/64bit算术、整数sqrt/div、ROM/银行端口；只对剩余一对组织做合法连接/时序/布线，与Issue55/63协调，不接管他人工程 |
+| 冻结后 | Phi及端到端 | 冻结profile/映射/阈值后才解封；完整应用质量和同资源整图/物理收益另行验收，失败不事后调参仍称独立 |
 
-本轮最小A/B/C已经在服务器完成，不再重复。上述未完成项按依赖接续，优先复用实际张量和小核；不扩多模型×长度矩阵，不在没有数值合同/源数据时启动无意义长作业。Issue55/63由其他成员负责，不能由本任务重复占用其工程。
+## 9. Issue66修订：完整消费者和连续整数状态
+
+[实际报告](experiments/issue-66-scale-state.md)、[数据及SHA索引](../project/experiments/scale_state/results/issue-66/index.json)补充了前述证据。完整down输出H2560→残差→完整RMSNorm→下一QKV投影前16/8192输出，而不是旧16通道孤立down。两组文本校准/评价分开，未重用Phi。以下是可据此收敛的义务与仍保留的选择。
+
+| 边界 | 本轮证据 | 固定的合同/候选能力 | 暂不固定的物理决定 |
+| --- | --- | --- | --- |
+| M输出→V | 静态8/同范围16均37次sat；tileδ零sat；提前K128每行省128B但norm/未最终RQ的next16误差增加 | typed ACT8/ACT16、逐通道base+tileδ、完整K归约后RQ、范围守卫；不能跨单位直接加 | ACT16统一启用、强制早转K128、近M RQ独占 |
+| 残差→norm→新A8 | 整数RMS相同X16误差约0.00005%，计重编码为最高0.05862%；next相对旧桥变化最高0.4975% | 完整hidden统计、alignment/RNE、gamma/epsilon版本、新A8K128单位及发布顺序；sqrt/div/宽乘是显式候选成本 | V16KiB内整行不适配，两遍源读或spill/streaming需公平调度；未证明一定同宏或硬件已支持 |
+| R状态闭包 | 新32步S16/D15输出0.644%，S32/D31约0.0567%；同范围长窗仍有184/193次sat | 完整K预测先于delta/update、从新state输出、owner/position/epoch及范围失败协议；S32优先工作参考而非普遍合格 | 固定S32范围、D31必需、R专用模板；不能只看低输出RMSE跳过sat |
+| R/conv/入口 | coupled32步输出约0.86%–0.96%；入口clip102/initial14，两种history位宽均存在 | 连续非零history、相同范围位宽对照、输入clip独立于R内部sat；FP SiLU/QK norm/gates边界 | 整条全整数GDN、只提高history bits就消除范围问题 |
+| R↔S | V32 old/new共32KiB已无aux；S32全head64KiB，全模型backing48MiB候选 | shadow/commit读写、Vhead状态不别名、跨Vtile的完整head norm屏障、bank/credit付费 | V16与外部shadow/合法原位之间须同资源比较，不凭32KiB标签宣布R独立 |
+
+整数norm候选的对齐行20,480B、mixed输入25,600B均超V16KiB。两遍源读51,200B/row，或显式aligned spill写读40,960B加一遍源；与X16平方融合/物化分别是互斥路线。单口动作下界6084/6404beats并非目标周期。32/64次sqrt/div参考迭代也不是目标时序。gamma+norm行20,480B需分tile/流式，不赠容量。
+
+D15把真实近1 decay中106/512编码成1，D31消除了这一分辨率损失，但同窗S32输出只小幅改善、S16略差，尚无普遍必须D31的证据。S32降低舍入不扩大动态范围；184/193是定义的最终饱和，内核执行成功仍不能称无饱和或模型已接受。当前整数input RMSNorm不覆盖R内部q/k L2norm及GatedRMSNorm。A/R逻辑闭包更加明确，M/V/A/R/S/D六模板的物理数目和相邻预连线仍是待验证候选。
