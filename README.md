@@ -14,6 +14,8 @@
 
 ## 最新关键边界证据（2026-10-24）
 
+[Issue68范围/同资源服务](docs/experiments/issue-68-range-service.md)已在服务器完成因果重定标双轮、独立整数接收与两套各56配置的V/R/S双轮有限服务。固定旧S32窗两次重定标消除193次sat，但包含额外clone/retry成本；每套48个共享/拆分同资源轨迹对照为零差。tile16本地shadow作为下一轮工作基线，独立R/合宏、完整质量及RTL/PPA仍未定，详见[新决策](docs/decisions/2026-10-24-r-range-and-finite-service.md)与[Block v2第10节](docs/BLOCK_PARTITION_V2.md)。PR69待审查合并。
+
 [Issue66消费者/连续整数状态报告](docs/experiments/issue-66-scale-state.md)已完成服务器并行双轮及独立接收，补完整hidden消费者和整数input RMSNorm。S32降低短程误差，却未解决长窗同范围饱和；V整行缓冲超限需要重读/spill。因此[Block v2第8/9节](docs/BLOCK_PARTITION_V2.md)收敛数值/状态/资源义务，保留制造边界候选。19.58MB精选可离线验算，5.21GB全量在授权服务器留SHA；PR67待审查合并，非全模型整数或硬件PPA验收。
 
 可转发团队的[算子与Block划分阶段性总结](docs/reports/2026-10-24-operator-block-partition-summary.md)汇总已完成的架构级分区、实验依据和下一阶段验证。

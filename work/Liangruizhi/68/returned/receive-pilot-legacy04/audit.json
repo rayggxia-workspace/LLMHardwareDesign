@@ -1,0 +1,141 @@
+{
+  "cases": [
+    {
+      "commit_contract": "causal guard/rescale, no failed-token publication, atomic state/output/units/epoch/version commit",
+      "cycles": 2071824604,
+      "id": [
+        "legacy.layer0-end8192.S32.D31.guard_rescale",
+        "shared4_4",
+        16,
+        "reread",
+        1,
+        "fifo"
+      ],
+      "independent_lower_bound": 2071815382,
+      "operations": 158624,
+      "payload_bytes": 208238208,
+      "physical_claim": false,
+      "precedence_lower_bound": 2071815382,
+      "resident_bytes": {
+        "EXT": 52078848,
+        "M": 32768,
+        "R": 24576,
+        "S0": 27648,
+        "S1": 30720,
+        "S2": 16384,
+        "S3": 16384,
+        "S5": 2048,
+        "S6": 16384,
+        "S7": 16384,
+        "V": 15552
+      },
+      "task_fingerprint": "3fcec9fd1be2781a5819279c9114ceedd6ef98e2be7711fc645ccf7435817efa",
+      "wire_bytes": 212500224,
+      "witness": "task0.shared4_4.tile16.reread.ext1.fifo.json.gz"
+    }
+  ],
+  "complete_witnesses": 1,
+  "declared_source_root": "/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024",
+  "declared_strategies": [
+    "fifo"
+  ],
+  "finite_groups": [
+    {
+      "candidates": 1,
+      "claim": "minimum only within recorded finite grid, includes granularity variants; no global optimum or physical merge benefit",
+      "commit_contract": "causal guard/rescale, no failed-token publication, atomic state/output/units/epoch/version commit",
+      "cycles": 2071824604,
+      "ext_ii": 1,
+      "task": "legacy.layer0-end8192.S32.D31.guard_rescale",
+      "winner": "task0.shared4_4.tile16.reread.ext1.fifo.json.gz"
+    }
+  ],
+  "hardware_implemented": false,
+  "limitation": "Conditional declared scalar-lowering and conservative fixed-slot schedules; independent norm/R streams and auxiliary proxies; no RTL/PPA/full-model speed or global-optimality proof",
+  "negative_checks": [
+    {
+      "artifact": {
+        "bytes": 4706397,
+        "sha256": "ec916afb6ecd7a02f041d09efad43e2badf139f3ce61f1f817551482d9bbbfbf"
+      },
+      "capsule": "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-pilot-legacy04/rehashed-dependency",
+      "error": "semantic scratch/data predecessor norm",
+      "mutation": "dependency",
+      "rewritten_SHA_passed": true,
+      "status": "REJECTED_INDEPENDENT_SEMANTICS"
+    },
+    {
+      "artifact": {
+        "bytes": 4706392,
+        "sha256": "05cf99de7e72af779f13a6b1e7772abefcb6c2fe30d0469d38c18a9700dd94a9"
+      },
+      "capsule": "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-pilot-legacy04/rehashed-overlap",
+      "error": "resource overlap/capacity PORT:EXT",
+      "mutation": "overlap",
+      "rewritten_SHA_passed": true,
+      "status": "REJECTED_INDEPENDENT_SEMANTICS"
+    },
+    {
+      "artifact": {
+        "bytes": 4706390,
+        "sha256": "1f5c51803f9b14bfc48994f13241a7b2ad81bcc54c8182944b75a014e971bcea"
+      },
+      "capsule": "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-pilot-legacy04/rehashed-capacity",
+      "error": "allocation address capacity",
+      "mutation": "capacity",
+      "rewritten_SHA_passed": true,
+      "status": "REJECTED_INDEPENDENT_SEMANTICS"
+    },
+    {
+      "artifact": {
+        "bytes": 4706406,
+        "sha256": "e4602a7d077ecee320a6eb8befd825cead8283b4c362cc6aadd330e713f7770d"
+      },
+      "capsule": "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-pilot-legacy04/rehashed-epoch",
+      "error": "causal task unit/epoch transition",
+      "mutation": "epoch",
+      "rewritten_SHA_passed": true,
+      "status": "REJECTED_INDEPENDENT_SEMANTICS"
+    }
+  ],
+  "norm_stage": "norm03",
+  "quality_accepted": false,
+  "range_root": "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-legacy01",
+  "seconds": 90.44362799171358,
+  "shared_split_label_only_cycles_difference": null,
+  "shared_split_label_only_pairs": 0,
+  "shared_split_signatures": [
+    {
+      "key": [
+        "legacy.layer0-end8192.S32.D31.guard_rescale",
+        16,
+        "reread",
+        1,
+        "fifo",
+        "4_4"
+      ],
+      "organizations": [
+        "shared4_4"
+      ],
+      "signature": {
+        "allocations_sha256": "47f4800d8ca4297dafb93dff8563d67a6400a891f00be53c1a6eb30ce5ced77c",
+        "cycles": 2071824604,
+        "inventory_sha256": "5785769b143c604cf786c4e369d7e2a7bccea65abe61749655ab6eb9cfc65c66",
+        "nodes_sha256": "23f8e9f82075cc62fcbe690b151d24aa28575ee83e7c26ef6fa4e8a509f0b766"
+      }
+    }
+  ],
+  "source": {
+    "binding_sha256": "5806c4e3f129d545738d70b456ef7a35149f346ce41a84a8914d60375bb00a49",
+    "commit": "ff53f65ff447b8706ab362d4abe88d5b41548532",
+    "receive_service_sha256": "325a3668f6855019b43f273502e4ddb033e5f5422656c8bd070eaf777b492e75"
+  },
+  "status": "PASS_INDEPENDENT_SERVICE",
+  "strategy_scope": "minimum only over the manifest-declared nonempty subset; a one-strategy pilot does not validate an unexecuted strategy",
+  "two_rounds": {
+    "all_scientific_SHA_identical": true,
+    "arithmetic_schedules_independent": 1,
+    "artifacts": 2
+  },
+  "validation": "Every witness independent operation/payload/address/epoch/dependency/calendar/FIFO/slot/lower-bound replay; original numeric source SHA checked, not redoing arithmetic"
+}

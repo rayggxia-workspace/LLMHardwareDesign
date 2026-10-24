@@ -1,0 +1,32 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase13/project/experiments/range_service/merge_audits.py",
+    "--root",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024",
+    "--suite",
+    "legacy",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-service-legacy-merged01.json",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase13/binding.json"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase13/project/experiments/range_service/merge_audits.py --root /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024 --suite legacy --out /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-service-legacy-merged01.json --binding /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase13/binding.json",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i68-merge-service-legacy01",
+    "--partition=c96",
+    "--cpus-per-task=1",
+    "--time=00:30:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/merge-service-legacy01-%j.log",
+    "--dependency=afterok:90135:90136:90140:90141:90142:90143:90144:90145:90146",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase13/project/experiments/range_service/merge_audits.py --root /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024 --suite legacy --out /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-service-legacy-merged01.json --binding /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase13/binding.json"
+  ],
+  "stdout": "90148",
+  "phase": "phase13",
+  "binding_sha256": "eff6cf2f9bec64b6425ab5fea6124a6af6d5e19dbf85661ad138163cfbb1296b"
+}

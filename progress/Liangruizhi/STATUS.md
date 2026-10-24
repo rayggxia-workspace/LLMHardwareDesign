@@ -1,11 +1,14 @@
 # Liangruizhi 的进度
 
-## 2026-10-24（UTC+08:00）Issue68范围协议与同资源服务（进行中）
+## 2026-10-24（UTC+08:00）Issue68 R范围/有限服务交付
 
-[Issue68](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/68)/[草稿PR69](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/69)，task/68-range-service，D:/Projects/LLMHardwareDesign-range-service，base PR67@8bde3bf。range/service/audit独立子worktree，root整合与所有远端操作。90084/85原生各12、90087/88旧256步各72条件两轮已完成；90086/89各6预先固定条件独立数学接收PASS，其余SHA；90091四条件checkpoint PASS。90083输入脚本语法启动失败原样保留，修正90090通过后数值才启动。因果重定标在受检长24源格式中全执行、无发布sat；原1508sat及guard的8个中止保留，未当质量通过。
+[Issue68](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/68)/[PR69](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/69)，task/68-range-service，D:/Projects/LLMHardwareDesign-range-service，base PR67@8bde3bf。独立worktree整合；所有实际计算本人新服务器目录lrz-i68-*并行，无新下载/Phi解封/他人任务中断。
 
-当前V/R/S服务仍在源/接收方法冻结阶段，下一步在服务器同资源分片并行，计重试/代际shadow/全unit扫描和两plane打包；不凭逻辑成功决定R独立或PPA。原模型只读、无新下载/Phi调优、他人55/63和89448不动。完整中间证据见work68，最终源/结果/索引/交接待服务结果回填。登记pending/看板unverified同步pending，待指定审查人，Issue in_progress而非done。
+R native12/legacy72每轮两轮完成；固定各6条件独立数学通过，其余科学SHA；4checkpoint通过。固定S32旧256窗两次重定标消除193sat，S16局部误差略退化，不称模型质量通过。28服务分片双轮，两套各56配置/112完整witness均独立接收，每套48label轨迹对照0差。fulltrial clone、失败重试、重新量化元数据、完整norm单位预扫/布局及有限端口计价。tile16作为下一轮工作基线，独立R/合宏/完整质量/RTL/PPA未定。
 
+69边界测试、管理结构、原164研究回归通过；2.42MB真实两次重定标精选和4完整服务witness均已服务器/本机独立重放。原失败和取消替代保留，成果位置及SHA见[索引](../../project/experiments/range_service/results/issue-68/index.json)、[报告](../../docs/experiments/issue-68-range-service.md)、[交接](../../docs/handoffs/2026-10-24-issue-68-range-service.md)。
+
+下一步独立生命周期/整数gated后继、宽算术/M复用与真实端点时序校准；保留他人Issue55/63范围。任务分支/PR交付待审查合并，非done。登记PR5 pending；无board.json/Projects能力，看板unverified、同步pending待管理员；审查人待指定。
 
 ## 2026-10-24（UTC+08:00）Issue66完整消费者与连续整数状态
 

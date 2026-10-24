@@ -9,4 +9,6 @@ Issue68 / PR69；[正式记录](../../../docs/experiments/issue-68-range-service
 
 先运行`python -B scripts/check_project.py`，再在已有NumPy环境执行`python -B -m unittest discover -s project/experiments/range_service -p "test_*.py"`。临时目录指向D盘任务目录。数值与服务实际任务均经本人CPU服务器Slurm，不新增权重或其他机器。
 
-当前R实际双轮已完成；服务28分片与聚合/全量接收进行中。不能将软件整数、条件服务周期写成全模型质量、RTL/PPA或制造边界验收。
+本批R实际双轮、checkpoint与28服务分片/聚合/全量独立接收均完成；69项边界测试通过。不能将软件整数、条件服务周期写成全模型质量、RTL/PPA或制造边界验收。
+
+[交付索引](results/issue-68/index.json)保存约18.17MB精选和8.02GB服务器完整包的路径/大小/SHA。R包用portable_r.py verify独立重放；4服务witness用service_selected.py verify --index results/issue-68/service-selected/index.json --out <新D盘receipt>，离线检查日历/容量/元数据，不重新核原NPZ算术。原失败及双轮、并行审计合并、有限候选分析均分层留痕。
