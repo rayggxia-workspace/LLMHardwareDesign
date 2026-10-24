@@ -22,3 +22,19 @@ head、attempt、当前/试算单位、epoch、guard、accept、published版本�
 
 至少执行真正重写SHA的code、LUT/参数、route/epoch等语义篡改负例。每项分别
 保留hash层和数学/协议层结果，不把文件哈希通过当数值正确或硬件质量通过。
+
+## Granite显式参考接收
+
+`receive_reference.py`只接收新Granite三种precision参考，不重新运行完整模型。
+它核全部router线性前向误差界、每layer/profile最敏感token的独立完整K标量
+`math.fsum`、actual-logit top8/严格exact-tie规则及softmax/cast；全32层hidden/
+MoE与LM的已发布trace误差和原gate完整重算。模型attention/expert输出自身未在
+接收机从权重重新运行，因此不声称全模型算术逐位接收或质量通过。
+
+```text
+python -B project/experiments/closure/receive_reference.py --result <granite-ref> --original <Issue70-capture> --producer-source <frozen-granite_reference.py> --binding <JSON> --out <new-receipt>
+```
+
+binding为真实commit、`receive_reference_sha256`和`audit_io_sha256`。
+默认实际改写NPZ logit/route及JSON资格、重写manifest SHA，再要求语义拒绝；
+mutated容器留接收目录供核查。`--skip-negatives`只能得到PARTIAL_NO_NEGATIVES。
