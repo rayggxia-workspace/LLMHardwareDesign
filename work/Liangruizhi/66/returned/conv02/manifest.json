@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "source_commit": "bad673e07edff7ba859b8192252d8c25ae633615",
+  "source_sha256": "55bbe0ad231d6835b6fd06356e6dad127a81ba99e17258610cedbce2a408536d",
+  "capture_manifest_sha256": "ceb0a75cc20a4f4c6c8c2eb9a153fe6f5bc6743c177aeca211fb6b62d76c6dcc",
+  "input_sha256": "37f9d8e8fa5aa803925fbdfaca580b54ea493efa3489929505a8fd2de5599dc4",
+  "scope": "Integer causal convolution history with fixed calibration scales; SiLU remains an explicit FP64 bridge.\nW8 per channel; H8 or H16 per channel; full four-tap I32 dot with Python-int oracle. No target timing.\n",
+  "float_boundaries": [
+    "FP32 capture -> dyadic source encoding",
+    "offline scale compiler",
+    "SiLU FP64 bridge",
+    "subsequent QK norm/decay/beta compilation remain explicit in state experiment"
+  ],
+  "environment": {
+    "python": "3.12.7",
+    "numpy": "2.2.6"
+  },
+  "seconds": 0.2001352570950985,
+  "artifacts": {
+    "metrics.json": {
+      "bytes": 4762,
+      "sha256": "13f095a5539058adbe63207a71344115a05f599b49139f331844dd2506ab00bc"
+    },
+    "conv-output.npz": {
+      "bytes": 1493093,
+      "sha256": "05fd0a229129a77899adc6165aa4d71e1d813b28272ef028558dcb9ff4c3c7b3"
+    }
+  }
+}

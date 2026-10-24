@@ -1,0 +1,68 @@
+{
+  "status": "PASS",
+  "source_commit": "9dcac843e75d47b409a28768e1d128e5ff45c0e0",
+  "norm_sha256": "3c8d5f0eccb50e2dd30fd056c1d21f4171493a012c12c5fb3c2f4b3a3cf1a863",
+  "consumer_dependency_sha256": "cabd518b527b62990903563f010fce2501bb3accdbfe8f7d62361b1fc4789de3",
+  "capture_manifest_sha256": "ceb0a75cc20a4f4c6c8c2eb9a153fe6f5bc6743c177aeca211fb6b62d76c6dcc",
+  "consumer_manifest_sha256": "90cda83e02ec6571e86223a972102813bff8f33ff80c2503e9014c959f3889c8",
+  "conditions": 8,
+  "passed": 8,
+  "epsilon": {
+    "decimal": "0.000001",
+    "compiled_U64Q40": 1099512
+  },
+  "sqrtH_U32Q20": 53054215,
+  "gamma_compile": "offlineFP32 effective1+stored_weight -> RNE S32Q20, Fraction checked",
+  "Den_contract": "(sum(X16^2)<<16)+RNE(epsQ40*H,24+2*eRow); U64 nonzero; zero input row returns0",
+  "norm_contract": "invQ30=RNE((sqrtH_Q20<<18)/isqrt(Den)); normQ20=RNE(X16*invQ30,10); thenRNE(*gammaQ20,20)checkedS32",
+  "seconds": 3.959957958664745,
+  "environment": {
+    "python": "3.12.7",
+    "numpy": "2.2.6"
+  },
+  "scope": "Integer RMSNorm candidate on frozen full-hidden consumer sums, no model rerun.\n\nOnly epsilon/gamma/sqrtH compilation and numerical diagnostics use floating\npoint. The norm->A8K128->next-projection candidate executes integers. Costs are\nexplicit unimplemented hardware candidates, not measured target cycles/PPA.\n",
+  "float_runtime_fallback": false,
+  "whole_integer_model_qualified": false,
+  "artifacts": {
+    "constants.npz": {
+      "bytes": 3958,
+      "sha256": "7a61817154468aa35e678dc118bc04a77c73bd63295950f9b4b8f1944fa29791"
+    },
+    "decode.delta_to_K128_ACT8.npz": {
+      "bytes": 727388,
+      "sha256": "2d29f45e87d3a031061f185f437394c742fa6242f0aea9240ed5c98b40597eae"
+    },
+    "decode.same_range_ACT16.npz": {
+      "bytes": 727223,
+      "sha256": "158043ab1ba33c69141523f0e9c322344ac555b653d2fd85a443f240243c813d"
+    },
+    "decode.static_ACT8.npz": {
+      "bytes": 727243,
+      "sha256": "83599e899dc733ddf7892e00ae4ade537e6049db1d06abb937322d25b125d182"
+    },
+    "decode.tile16_delta_ACT8.npz": {
+      "bytes": 727449,
+      "sha256": "1f6732d070fa9efb8625d34c6a671e16a51db9bd3c4e1bc02dcfd5a7f7b3332d"
+    },
+    "norm.json": {
+      "bytes": 32174,
+      "sha256": "d6beb05c8623e990cbba32afb166ee5926b97fd462f00a99706eb466465e49c2"
+    },
+    "prefill.delta_to_K128_ACT8.npz": {
+      "bytes": 189677,
+      "sha256": "8bbd451dd159a2e48d026e4e36813833f649603d98e5b8cea88e9c825c86f224"
+    },
+    "prefill.same_range_ACT16.npz": {
+      "bytes": 189569,
+      "sha256": "ab6ea992db01e70e7ff2c5133ae6dfa2ab80a460e8a3b5e8a3092afa6466cb3f"
+    },
+    "prefill.static_ACT8.npz": {
+      "bytes": 189716,
+      "sha256": "dc04b161925d759fc9bcef10b3f838c9a44fea3cbdfee25cf2d378bf4a995749"
+    },
+    "prefill.tile16_delta_ACT8.npz": {
+      "bytes": 189674,
+      "sha256": "3df3ec6f90c9af770271834e916dbe6bc8c115bf39087e298f20ac6ea10702a4"
+    }
+  }
+}

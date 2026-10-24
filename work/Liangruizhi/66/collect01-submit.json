@@ -1,0 +1,30 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/phase15/project/experiments/scale_state/collect.py",
+    "--root",
+    "/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/delivery01",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/phase15/binding.json"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/phase15/project/experiments/scale_state/collect.py --root /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024 --out /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/delivery01 --binding /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/phase15/binding.json",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i66-collect01",
+    "--partition=c96",
+    "--cpus-per-task=2",
+    "--time=00:30:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/collect01-%j.log",
+    "--dependency=afterok:90081",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/phase15/project/experiments/scale_state/collect.py --root /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024 --out /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/delivery01 --binding /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/phase15/binding.json"
+  ],
+  "stdout": "90082",
+  "phase": "phase15",
+  "binding_sha256": "f457fc20c112ecd48c86ad377e7d3417dfeef07c8efedc6d167cac06612a5465"
+}

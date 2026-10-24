@@ -1,0 +1,1018 @@
+[
+  {
+    "case": "prefill",
+    "profile": "static_ACT8",
+    "rows": 8,
+    "hidden": 2560,
+    "next_selected_outputs": 16,
+    "upstream_down_before_outlet_RQ_vs_native": {
+      "relative_rmse": 0.020656818172505333,
+      "max_abs": 0.01072239875793457
+    },
+    "down_after_outlet_RQ_vs_native": {
+      "relative_rmse": 0.0338003576607381,
+      "max_abs": 0.06971675157546997
+    },
+    "transport_requant_vs_outlet": {
+      "relative_rmse": 0.0,
+      "max_abs": 0.0
+    },
+    "sum_vs_native": {
+      "relative_rmse": 0.014205091909084219,
+      "max_abs": 0.06971631944179535
+    },
+    "norm_vs_native": {
+      "relative_rmse": 0.015212613907195392,
+      "max_abs": 0.7130493521690369
+    },
+    "next_projection_vs_native": {
+      "relative_rmse": 0.035126305372910206,
+      "max_abs": 0.07712267339229584
+    },
+    "next_projection_vs_native_norm_same_W8A8": {
+      "relative_rmse": 0.020677835881760268,
+      "max_abs": 0.043731689453125
+    },
+    "next_projection_vs_upstream_no_outlet_RQ": {
+      "relative_rmse": 0.020912063897570755,
+      "max_abs": 0.049041748046875
+    },
+    "native_norm_W8A8_vs_native_projection": {
+      "relative_rmse": 0.03156251569805922,
+      "max_abs": 0.06437395513057709
+    },
+    "next_final_ACT8_vs_native": {
+      "relative_rmse": 0.038237346485470974,
+      "max_abs": 0.08958147466182709
+    },
+    "down_integer": {
+      "INT64_partial_values_checked": 1474560,
+      "Python_complete_reduction_witnesses": 40,
+      "group": 128,
+      "groups": 72,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 9452536,
+      "format_bound_max": 2545543296,
+      "exponent_spread_max": 9,
+      "MACs": 188743680,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "next_integer": {
+      "INT64_partial_values_checked": 2560,
+      "Python_complete_reduction_witnesses": 24,
+      "group": 128,
+      "groups": 20,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 382313,
+      "format_bound_max": 350967040,
+      "exponent_spread_max": 7,
+      "MACs": 327680,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "next_final_RQ": {
+      "saturation": 0,
+      "Fraction_output_codes": 128
+    },
+    "input_A_Fraction_witnesses": 1152,
+    "norm_A_Fraction_witnesses": 320,
+    "costs": {
+      "rows": 8,
+      "complete_hidden_channels": 2560,
+      "next_projection_selected_outputs": 16,
+      "source_down_full_K": 9216,
+      "ACT_payload_bytes": 20480,
+      "static_base_exponent_bytes": 2560,
+      "incoming_tile16_delta_bytes": 0,
+      "outgoing_scale_metadata_bytes": 0,
+      "complete_row_packet_bytes_static_base_resident": 22016,
+      "packet_contract": "each row separately,64B header,32B coordinates,64B payload alignment,max1984B fragments; base scale resident and its initial transfer counted separately",
+      "initial_base_scale_wire_bytes": 2688,
+      "original_outlet_per16output_tile_packet_bytes_explicit_scale": 163840,
+      "one_row_exact_residual_S64_plus_I16_units_bytes": 25600,
+      "one_row_F32_norm_buffer_bytes": 10240,
+      "F32_norm_gamma_bytes": 10240,
+      "norm_V16KiB_capacity": {
+        "exact_sum_and_units_fit": false,
+        "one_inplace_F32_row_fits": true,
+        "row_and_gamma_simultaneously_fit": false
+      },
+      "norm_float_boundary_cost": "FP32 conversion,full hidden sum-of-squares/rsqrt/gamma remain floating; integer hardware implementation/cycles pending; in-place two-pass or spill/gamma reads must be scheduled",
+      "single128bit_1RW_bank_lower_bound_beats": {
+        "ACT_write_read": 2560,
+        "wide_sum_write_read": 20480,
+        "unit_write_read": 5120,
+        "norm_gamma_read": 5120
+      },
+      "down_W8_total_bytes": 23592960,
+      "down_W128_exponent_total_bytes": 184320,
+      "one16output_down_W128_scale_bytes": 1152,
+      "one16output_fixed_W_L1_U32_certificate_bytes_if_used": 4608,
+      "next_projection_W8_bytes": 40960,
+      "next_projection_W128_scale_bytes": 320,
+      "next_projection_input": "fresh A8K128 after explicit FP32 norm bridge; same W8K128 acrossvariants; do not mechanically charge3 products solely because prenorm ACT was16bit",
+      "scope": "logical sizes and physical packet/1RW lower bounds, no finite scheduler,RTL or PPA",
+      "integer_work": {
+        "saturation": 36,
+        "Fraction_output_codes": 20480,
+        "Fraction_residual_add_values": 20480,
+        "S64_align_add_values": 20480,
+        "residual_bridge_max_abs": 4.76837158203125e-07
+      }
+    },
+    "integer_norm_implemented": false,
+    "complete_next8192_projection": false,
+    "full_model_quality_accepted": false,
+    "hardware_performance_accepted": false
+  },
+  {
+    "case": "prefill",
+    "profile": "same_range_ACT16",
+    "rows": 8,
+    "hidden": 2560,
+    "next_selected_outputs": 16,
+    "upstream_down_before_outlet_RQ_vs_native": {
+      "relative_rmse": 0.020656818172505333,
+      "max_abs": 0.01072239875793457
+    },
+    "down_after_outlet_RQ_vs_native": {
+      "relative_rmse": 0.030100505786432134,
+      "max_abs": 0.06971675157546997
+    },
+    "transport_requant_vs_outlet": {
+      "relative_rmse": 0.0,
+      "max_abs": 0.0
+    },
+    "sum_vs_native": {
+      "relative_rmse": 0.012650171428899206,
+      "max_abs": 0.06971631944179535
+    },
+    "norm_vs_native": {
+      "relative_rmse": 0.013650462684954567,
+      "max_abs": 0.7130311131477356
+    },
+    "next_projection_vs_native": {
+      "relative_rmse": 0.03284961826920402,
+      "max_abs": 0.07789324223995209
+    },
+    "next_projection_vs_native_norm_same_W8A8": {
+      "relative_rmse": 0.019877512510162915,
+      "max_abs": 0.04085540771484375
+    },
+    "next_projection_vs_upstream_no_outlet_RQ": {
+      "relative_rmse": 0.011869396151754101,
+      "max_abs": 0.03118133544921875
+    },
+    "native_norm_W8A8_vs_native_projection": {
+      "relative_rmse": 0.03156251569805922,
+      "max_abs": 0.06437395513057709
+    },
+    "next_final_ACT8_vs_native": {
+      "relative_rmse": 0.0364142051537569,
+      "max_abs": 0.08958147466182709
+    },
+    "down_integer": {
+      "INT64_partial_values_checked": 1474560,
+      "Python_complete_reduction_witnesses": 40,
+      "group": 128,
+      "groups": 72,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 9452536,
+      "format_bound_max": 2545543296,
+      "exponent_spread_max": 9,
+      "MACs": 188743680,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "next_integer": {
+      "INT64_partial_values_checked": 2560,
+      "Python_complete_reduction_witnesses": 24,
+      "group": 128,
+      "groups": 20,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 382363,
+      "format_bound_max": 350967040,
+      "exponent_spread_max": 7,
+      "MACs": 327680,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "next_final_RQ": {
+      "saturation": 0,
+      "Fraction_output_codes": 128
+    },
+    "input_A_Fraction_witnesses": 1152,
+    "norm_A_Fraction_witnesses": 320,
+    "costs": {
+      "rows": 8,
+      "complete_hidden_channels": 2560,
+      "next_projection_selected_outputs": 16,
+      "source_down_full_K": 9216,
+      "ACT_payload_bytes": 40960,
+      "static_base_exponent_bytes": 2560,
+      "incoming_tile16_delta_bytes": 0,
+      "outgoing_scale_metadata_bytes": 0,
+      "complete_row_packet_bytes_static_base_resident": 43008,
+      "packet_contract": "each row separately,64B header,32B coordinates,64B payload alignment,max1984B fragments; base scale resident and its initial transfer counted separately",
+      "initial_base_scale_wire_bytes": 2688,
+      "original_outlet_per16output_tile_packet_bytes_explicit_scale": 245760,
+      "one_row_exact_residual_S64_plus_I16_units_bytes": 25600,
+      "one_row_F32_norm_buffer_bytes": 10240,
+      "F32_norm_gamma_bytes": 10240,
+      "norm_V16KiB_capacity": {
+        "exact_sum_and_units_fit": false,
+        "one_inplace_F32_row_fits": true,
+        "row_and_gamma_simultaneously_fit": false
+      },
+      "norm_float_boundary_cost": "FP32 conversion,full hidden sum-of-squares/rsqrt/gamma remain floating; integer hardware implementation/cycles pending; in-place two-pass or spill/gamma reads must be scheduled",
+      "single128bit_1RW_bank_lower_bound_beats": {
+        "ACT_write_read": 5120,
+        "wide_sum_write_read": 20480,
+        "unit_write_read": 5120,
+        "norm_gamma_read": 5120
+      },
+      "down_W8_total_bytes": 23592960,
+      "down_W128_exponent_total_bytes": 184320,
+      "one16output_down_W128_scale_bytes": 1152,
+      "one16output_fixed_W_L1_U32_certificate_bytes_if_used": 4608,
+      "next_projection_W8_bytes": 40960,
+      "next_projection_W128_scale_bytes": 320,
+      "next_projection_input": "fresh A8K128 after explicit FP32 norm bridge; same W8K128 acrossvariants; do not mechanically charge3 products solely because prenorm ACT was16bit",
+      "scope": "logical sizes and physical packet/1RW lower bounds, no finite scheduler,RTL or PPA",
+      "integer_work": {
+        "saturation": 36,
+        "Fraction_output_codes": 20480,
+        "Fraction_residual_add_values": 20480,
+        "S64_align_add_values": 20480,
+        "residual_bridge_max_abs": 4.76837158203125e-07
+      }
+    },
+    "integer_norm_implemented": false,
+    "complete_next8192_projection": false,
+    "full_model_quality_accepted": false,
+    "hardware_performance_accepted": false
+  },
+  {
+    "case": "prefill",
+    "profile": "tile16_delta_ACT8",
+    "rows": 8,
+    "hidden": 2560,
+    "next_selected_outputs": 16,
+    "upstream_down_before_outlet_RQ_vs_native": {
+      "relative_rmse": 0.020656818172505333,
+      "max_abs": 0.01072239875793457
+    },
+    "down_after_outlet_RQ_vs_native": {
+      "relative_rmse": 0.02255606926367968,
+      "max_abs": 0.012130498886108398
+    },
+    "transport_requant_vs_outlet": {
+      "relative_rmse": 0.0,
+      "max_abs": 0.0
+    },
+    "sum_vs_native": {
+      "relative_rmse": 0.009479524576503565,
+      "max_abs": 0.012130975723266602
+    },
+    "norm_vs_native": {
+      "relative_rmse": 0.010334683087531937,
+      "max_abs": 0.08305168151855469
+    },
+    "next_projection_vs_native": {
+      "relative_rmse": 0.032612060581719914,
+      "max_abs": 0.07766436040401459
+    },
+    "next_projection_vs_native_norm_same_W8A8": {
+      "relative_rmse": 0.020311182819760076,
+      "max_abs": 0.03905487060546875
+    },
+    "next_projection_vs_upstream_no_outlet_RQ": {
+      "relative_rmse": 0.011321740481568535,
+      "max_abs": 0.018768310546875
+    },
+    "native_norm_W8A8_vs_native_projection": {
+      "relative_rmse": 0.03156251569805922,
+      "max_abs": 0.06437395513057709
+    },
+    "next_final_ACT8_vs_native": {
+      "relative_rmse": 0.03626728578757018,
+      "max_abs": 0.08958147466182709
+    },
+    "down_integer": {
+      "INT64_partial_values_checked": 1474560,
+      "Python_complete_reduction_witnesses": 40,
+      "group": 128,
+      "groups": 72,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 9452536,
+      "format_bound_max": 2545543296,
+      "exponent_spread_max": 9,
+      "MACs": 188743680,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "next_integer": {
+      "INT64_partial_values_checked": 2560,
+      "Python_complete_reduction_witnesses": 24,
+      "group": 128,
+      "groups": 20,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 384302,
+      "format_bound_max": 350967040,
+      "exponent_spread_max": 7,
+      "MACs": 327680,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "next_final_RQ": {
+      "saturation": 0,
+      "Fraction_output_codes": 128
+    },
+    "input_A_Fraction_witnesses": 1152,
+    "norm_A_Fraction_witnesses": 320,
+    "costs": {
+      "rows": 8,
+      "complete_hidden_channels": 2560,
+      "next_projection_selected_outputs": 16,
+      "source_down_full_K": 9216,
+      "ACT_payload_bytes": 20480,
+      "static_base_exponent_bytes": 2560,
+      "incoming_tile16_delta_bytes": 1280,
+      "outgoing_scale_metadata_bytes": 1280,
+      "complete_row_packet_bytes_static_base_resident": 23040,
+      "packet_contract": "each row separately,64B header,32B coordinates,64B payload alignment,max1984B fragments; base scale resident and its initial transfer counted separately",
+      "initial_base_scale_wire_bytes": 2688,
+      "original_outlet_per16output_tile_packet_bytes_explicit_scale": 245760,
+      "one_row_exact_residual_S64_plus_I16_units_bytes": 25600,
+      "one_row_F32_norm_buffer_bytes": 10240,
+      "F32_norm_gamma_bytes": 10240,
+      "norm_V16KiB_capacity": {
+        "exact_sum_and_units_fit": false,
+        "one_inplace_F32_row_fits": true,
+        "row_and_gamma_simultaneously_fit": false
+      },
+      "norm_float_boundary_cost": "FP32 conversion,full hidden sum-of-squares/rsqrt/gamma remain floating; integer hardware implementation/cycles pending; in-place two-pass or spill/gamma reads must be scheduled",
+      "single128bit_1RW_bank_lower_bound_beats": {
+        "ACT_write_read": 2560,
+        "wide_sum_write_read": 20480,
+        "unit_write_read": 5120,
+        "norm_gamma_read": 5120
+      },
+      "down_W8_total_bytes": 23592960,
+      "down_W128_exponent_total_bytes": 184320,
+      "one16output_down_W128_scale_bytes": 1152,
+      "one16output_fixed_W_L1_U32_certificate_bytes_if_used": 4608,
+      "next_projection_W8_bytes": 40960,
+      "next_projection_W128_scale_bytes": 320,
+      "next_projection_input": "fresh A8K128 after explicit FP32 norm bridge; same W8K128 acrossvariants; do not mechanically charge3 products solely because prenorm ACT was16bit",
+      "scope": "logical sizes and physical packet/1RW lower bounds, no finite scheduler,RTL or PPA",
+      "integer_work": {
+        "saturation": 0,
+        "Fraction_output_codes": 20480,
+        "Fraction_residual_add_values": 20480,
+        "S64_align_add_values": 20480,
+        "residual_bridge_max_abs": 4.76837158203125e-07,
+        "delta_search_trials": 20701,
+        "delta_RNE_compare_terms": 331216
+      }
+    },
+    "integer_norm_implemented": false,
+    "complete_next8192_projection": false,
+    "full_model_quality_accepted": false,
+    "hardware_performance_accepted": false
+  },
+  {
+    "case": "prefill",
+    "profile": "delta_to_K128_ACT8",
+    "rows": 8,
+    "hidden": 2560,
+    "next_selected_outputs": 16,
+    "upstream_down_before_outlet_RQ_vs_native": {
+      "relative_rmse": 0.020656818172505333,
+      "max_abs": 0.01072239875793457
+    },
+    "down_after_outlet_RQ_vs_native": {
+      "relative_rmse": 0.02255606926367968,
+      "max_abs": 0.012130498886108398
+    },
+    "transport_requant_vs_outlet": {
+      "relative_rmse": 0.021220224557070837,
+      "max_abs": 0.0146484375
+    },
+    "sum_vs_native": {
+      "relative_rmse": 0.012932658526584373,
+      "max_abs": 0.016551300883293152
+    },
+    "norm_vs_native": {
+      "relative_rmse": 0.01407691555425995,
+      "max_abs": 0.18036480247974396
+    },
+    "next_projection_vs_native": {
+      "relative_rmse": 0.032854750586135524,
+      "max_abs": 0.06998156011104584
+    },
+    "next_projection_vs_native_norm_same_W8A8": {
+      "relative_rmse": 0.02373469954632905,
+      "max_abs": 0.04177093505859375
+    },
+    "next_projection_vs_upstream_no_outlet_RQ": {
+      "relative_rmse": 0.020990880064622908,
+      "max_abs": 0.039306640625
+    },
+    "native_norm_W8A8_vs_native_projection": {
+      "relative_rmse": 0.03156251569805922,
+      "max_abs": 0.06437395513057709
+    },
+    "next_final_ACT8_vs_native": {
+      "relative_rmse": 0.03599176950741137,
+      "max_abs": 0.08384513854980469
+    },
+    "down_integer": {
+      "INT64_partial_values_checked": 1474560,
+      "Python_complete_reduction_witnesses": 40,
+      "group": 128,
+      "groups": 72,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 9452536,
+      "format_bound_max": 2545543296,
+      "exponent_spread_max": 9,
+      "MACs": 188743680,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "next_integer": {
+      "INT64_partial_values_checked": 2560,
+      "Python_complete_reduction_witnesses": 24,
+      "group": 128,
+      "groups": 20,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 382874,
+      "format_bound_max": 350967040,
+      "exponent_spread_max": 7,
+      "MACs": 327680,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "next_final_RQ": {
+      "saturation": 0,
+      "Fraction_output_codes": 128
+    },
+    "input_A_Fraction_witnesses": 1152,
+    "norm_A_Fraction_witnesses": 320,
+    "costs": {
+      "rows": 8,
+      "complete_hidden_channels": 2560,
+      "next_projection_selected_outputs": 16,
+      "source_down_full_K": 9216,
+      "ACT_payload_bytes": 20480,
+      "static_base_exponent_bytes": 2560,
+      "incoming_tile16_delta_bytes": 1280,
+      "outgoing_scale_metadata_bytes": 160,
+      "complete_row_packet_bytes_static_base_resident": 22016,
+      "packet_contract": "each row separately,64B header,32B coordinates,64B payload alignment,max1984B fragments; base scale resident and its initial transfer counted separately",
+      "initial_base_scale_wire_bytes": 2688,
+      "original_outlet_per16output_tile_packet_bytes_explicit_scale": 245760,
+      "one_row_exact_residual_S64_plus_I16_units_bytes": 25600,
+      "one_row_F32_norm_buffer_bytes": 10240,
+      "F32_norm_gamma_bytes": 10240,
+      "norm_V16KiB_capacity": {
+        "exact_sum_and_units_fit": false,
+        "one_inplace_F32_row_fits": true,
+        "row_and_gamma_simultaneously_fit": false
+      },
+      "norm_float_boundary_cost": "FP32 conversion,full hidden sum-of-squares/rsqrt/gamma remain floating; integer hardware implementation/cycles pending; in-place two-pass or spill/gamma reads must be scheduled",
+      "single128bit_1RW_bank_lower_bound_beats": {
+        "ACT_write_read": 2560,
+        "wide_sum_write_read": 20480,
+        "unit_write_read": 5120,
+        "norm_gamma_read": 5120
+      },
+      "down_W8_total_bytes": 23592960,
+      "down_W128_exponent_total_bytes": 184320,
+      "one16output_down_W128_scale_bytes": 1152,
+      "one16output_fixed_W_L1_U32_certificate_bytes_if_used": 4608,
+      "next_projection_W8_bytes": 40960,
+      "next_projection_W128_scale_bytes": 320,
+      "next_projection_input": "fresh A8K128 after explicit FP32 norm bridge; same W8K128 acrossvariants; do not mechanically charge3 products solely because prenorm ACT was16bit",
+      "scope": "logical sizes and physical packet/1RW lower bounds, no finite scheduler,RTL or PPA",
+      "integer_work": {
+        "saturation": 0,
+        "Fraction_output_codes": 20480,
+        "Fraction_residual_add_values": 20480,
+        "S64_align_add_values": 20480,
+        "residual_bridge_max_abs": 4.76837158203125e-07,
+        "K128_alignment_and_RNE_values": 20480,
+        "Fraction_K128_conversion_values": 20480,
+        "K128_exponent_bytes": 160,
+        "K128_S64_scan_read_write_values": 40960,
+        "delta_search_trials": 20701,
+        "delta_RNE_compare_terms": 331216
+      }
+    },
+    "integer_norm_implemented": false,
+    "complete_next8192_projection": false,
+    "full_model_quality_accepted": false,
+    "hardware_performance_accepted": false
+  },
+  {
+    "case": "decode",
+    "profile": "static_ACT8",
+    "rows": 32,
+    "hidden": 2560,
+    "next_selected_outputs": 16,
+    "upstream_down_before_outlet_RQ_vs_native": {
+      "relative_rmse": 0.018454773021023777,
+      "max_abs": 0.005380898714065552
+    },
+    "down_after_outlet_RQ_vs_native": {
+      "relative_rmse": 0.02804598308484329,
+      "max_abs": 0.034063130617141724
+    },
+    "transport_requant_vs_outlet": {
+      "relative_rmse": 0.0,
+      "max_abs": 0.0
+    },
+    "sum_vs_native": {
+      "relative_rmse": 0.008946366739468919,
+      "max_abs": 0.03406333923339844
+    },
+    "norm_vs_native": {
+      "relative_rmse": 0.01055163265065532,
+      "max_abs": 0.12796974182128906
+    },
+    "next_projection_vs_native": {
+      "relative_rmse": 0.031503419624110254,
+      "max_abs": 0.0841294527053833
+    },
+    "next_projection_vs_native_norm_same_W8A8": {
+      "relative_rmse": 0.02256668605220004,
+      "max_abs": 0.0610198974609375
+    },
+    "next_projection_vs_upstream_no_outlet_RQ": {
+      "relative_rmse": 0.020346885061612047,
+      "max_abs": 0.06073760986328125
+    },
+    "native_norm_W8A8_vs_native_projection": {
+      "relative_rmse": 0.029358218860656073,
+      "max_abs": 0.08947014808654785
+    },
+    "next_final_ACT8_vs_native": {
+      "relative_rmse": 0.034123117999202056,
+      "max_abs": 0.11075985431671143
+    },
+    "down_integer": {
+      "INT64_partial_values_checked": 5898240,
+      "Python_complete_reduction_witnesses": 160,
+      "group": 128,
+      "groups": 72,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 2152660,
+      "format_bound_max": 1878705920,
+      "exponent_spread_max": 9,
+      "MACs": 754974720,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "next_integer": {
+      "INT64_partial_values_checked": 10240,
+      "Python_complete_reduction_witnesses": 96,
+      "group": 128,
+      "groups": 20,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 651012,
+      "format_bound_max": 361289600,
+      "exponent_spread_max": 7,
+      "MACs": 1310720,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "next_final_RQ": {
+      "saturation": 0,
+      "Fraction_output_codes": 512
+    },
+    "input_A_Fraction_witnesses": 4608,
+    "norm_A_Fraction_witnesses": 1280,
+    "costs": {
+      "rows": 32,
+      "complete_hidden_channels": 2560,
+      "next_projection_selected_outputs": 16,
+      "source_down_full_K": 9216,
+      "ACT_payload_bytes": 81920,
+      "static_base_exponent_bytes": 2560,
+      "incoming_tile16_delta_bytes": 0,
+      "outgoing_scale_metadata_bytes": 0,
+      "complete_row_packet_bytes_static_base_resident": 88064,
+      "packet_contract": "each row separately,64B header,32B coordinates,64B payload alignment,max1984B fragments; base scale resident and its initial transfer counted separately",
+      "initial_base_scale_wire_bytes": 2688,
+      "original_outlet_per16output_tile_packet_bytes_explicit_scale": 655360,
+      "one_row_exact_residual_S64_plus_I16_units_bytes": 25600,
+      "one_row_F32_norm_buffer_bytes": 10240,
+      "F32_norm_gamma_bytes": 10240,
+      "norm_V16KiB_capacity": {
+        "exact_sum_and_units_fit": false,
+        "one_inplace_F32_row_fits": true,
+        "row_and_gamma_simultaneously_fit": false
+      },
+      "norm_float_boundary_cost": "FP32 conversion,full hidden sum-of-squares/rsqrt/gamma remain floating; integer hardware implementation/cycles pending; in-place two-pass or spill/gamma reads must be scheduled",
+      "single128bit_1RW_bank_lower_bound_beats": {
+        "ACT_write_read": 10240,
+        "wide_sum_write_read": 81920,
+        "unit_write_read": 20480,
+        "norm_gamma_read": 20480
+      },
+      "down_W8_total_bytes": 23592960,
+      "down_W128_exponent_total_bytes": 184320,
+      "one16output_down_W128_scale_bytes": 1152,
+      "one16output_fixed_W_L1_U32_certificate_bytes_if_used": 4608,
+      "next_projection_W8_bytes": 40960,
+      "next_projection_W128_scale_bytes": 320,
+      "next_projection_input": "fresh A8K128 after explicit FP32 norm bridge; same W8K128 acrossvariants; do not mechanically charge3 products solely because prenorm ACT was16bit",
+      "scope": "logical sizes and physical packet/1RW lower bounds, no finite scheduler,RTL or PPA",
+      "integer_work": {
+        "saturation": 1,
+        "Fraction_output_codes": 81920,
+        "Fraction_residual_add_values": 81920,
+        "S64_align_add_values": 81920,
+        "residual_bridge_max_abs": 4.76837158203125e-07
+      }
+    },
+    "integer_norm_implemented": false,
+    "complete_next8192_projection": false,
+    "full_model_quality_accepted": false,
+    "hardware_performance_accepted": false
+  },
+  {
+    "case": "decode",
+    "profile": "same_range_ACT16",
+    "rows": 32,
+    "hidden": 2560,
+    "next_selected_outputs": 16,
+    "upstream_down_before_outlet_RQ_vs_native": {
+      "relative_rmse": 0.018454773021023777,
+      "max_abs": 0.005380898714065552
+    },
+    "down_after_outlet_RQ_vs_native": {
+      "relative_rmse": 0.018470582549000567,
+      "max_abs": 0.0062904953956604
+    },
+    "transport_requant_vs_outlet": {
+      "relative_rmse": 0.0,
+      "max_abs": 0.0
+    },
+    "sum_vs_native": {
+      "relative_rmse": 0.005891920502353796,
+      "max_abs": 0.006290510296821594
+    },
+    "norm_vs_native": {
+      "relative_rmse": 0.007309608207546406,
+      "max_abs": 0.07389867305755615
+    },
+    "next_projection_vs_native": {
+      "relative_rmse": 0.031011131421321985,
+      "max_abs": 0.08980584144592285
+    },
+    "next_projection_vs_native_norm_same_W8A8": {
+      "relative_rmse": 0.01600068806433854,
+      "max_abs": 0.0371551513671875
+    },
+    "next_projection_vs_upstream_no_outlet_RQ": {
+      "relative_rmse": 0.0018221936358300806,
+      "max_abs": 0.01329803466796875
+    },
+    "native_norm_W8A8_vs_native_projection": {
+      "relative_rmse": 0.029358218860656073,
+      "max_abs": 0.08947014808654785
+    },
+    "next_final_ACT8_vs_native": {
+      "relative_rmse": 0.03457536818838054,
+      "max_abs": 0.11075985431671143
+    },
+    "down_integer": {
+      "INT64_partial_values_checked": 5898240,
+      "Python_complete_reduction_witnesses": 160,
+      "group": 128,
+      "groups": 72,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 2152660,
+      "format_bound_max": 1878705920,
+      "exponent_spread_max": 9,
+      "MACs": 754974720,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "next_integer": {
+      "INT64_partial_values_checked": 10240,
+      "Python_complete_reduction_witnesses": 96,
+      "group": 128,
+      "groups": 20,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 652628,
+      "format_bound_max": 439741056,
+      "exponent_spread_max": 7,
+      "MACs": 1310720,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "next_final_RQ": {
+      "saturation": 0,
+      "Fraction_output_codes": 512
+    },
+    "input_A_Fraction_witnesses": 4608,
+    "norm_A_Fraction_witnesses": 1280,
+    "costs": {
+      "rows": 32,
+      "complete_hidden_channels": 2560,
+      "next_projection_selected_outputs": 16,
+      "source_down_full_K": 9216,
+      "ACT_payload_bytes": 163840,
+      "static_base_exponent_bytes": 2560,
+      "incoming_tile16_delta_bytes": 0,
+      "outgoing_scale_metadata_bytes": 0,
+      "complete_row_packet_bytes_static_base_resident": 172032,
+      "packet_contract": "each row separately,64B header,32B coordinates,64B payload alignment,max1984B fragments; base scale resident and its initial transfer counted separately",
+      "initial_base_scale_wire_bytes": 2688,
+      "original_outlet_per16output_tile_packet_bytes_explicit_scale": 983040,
+      "one_row_exact_residual_S64_plus_I16_units_bytes": 25600,
+      "one_row_F32_norm_buffer_bytes": 10240,
+      "F32_norm_gamma_bytes": 10240,
+      "norm_V16KiB_capacity": {
+        "exact_sum_and_units_fit": false,
+        "one_inplace_F32_row_fits": true,
+        "row_and_gamma_simultaneously_fit": false
+      },
+      "norm_float_boundary_cost": "FP32 conversion,full hidden sum-of-squares/rsqrt/gamma remain floating; integer hardware implementation/cycles pending; in-place two-pass or spill/gamma reads must be scheduled",
+      "single128bit_1RW_bank_lower_bound_beats": {
+        "ACT_write_read": 20480,
+        "wide_sum_write_read": 81920,
+        "unit_write_read": 20480,
+        "norm_gamma_read": 20480
+      },
+      "down_W8_total_bytes": 23592960,
+      "down_W128_exponent_total_bytes": 184320,
+      "one16output_down_W128_scale_bytes": 1152,
+      "one16output_fixed_W_L1_U32_certificate_bytes_if_used": 4608,
+      "next_projection_W8_bytes": 40960,
+      "next_projection_W128_scale_bytes": 320,
+      "next_projection_input": "fresh A8K128 after explicit FP32 norm bridge; same W8K128 acrossvariants; do not mechanically charge3 products solely because prenorm ACT was16bit",
+      "scope": "logical sizes and physical packet/1RW lower bounds, no finite scheduler,RTL or PPA",
+      "integer_work": {
+        "saturation": 1,
+        "Fraction_output_codes": 81920,
+        "Fraction_residual_add_values": 81920,
+        "S64_align_add_values": 81920,
+        "residual_bridge_max_abs": 4.76837158203125e-07
+      }
+    },
+    "integer_norm_implemented": false,
+    "complete_next8192_projection": false,
+    "full_model_quality_accepted": false,
+    "hardware_performance_accepted": false
+  },
+  {
+    "case": "decode",
+    "profile": "tile16_delta_ACT8",
+    "rows": 32,
+    "hidden": 2560,
+    "next_selected_outputs": 16,
+    "upstream_down_before_outlet_RQ_vs_native": {
+      "relative_rmse": 0.018454773021023777,
+      "max_abs": 0.005380898714065552
+    },
+    "down_after_outlet_RQ_vs_native": {
+      "relative_rmse": 0.022020198656975784,
+      "max_abs": 0.02959531545639038
+    },
+    "transport_requant_vs_outlet": {
+      "relative_rmse": 0.0,
+      "max_abs": 0.0
+    },
+    "sum_vs_native": {
+      "relative_rmse": 0.007024218343463592,
+      "max_abs": 0.029595375061035156
+    },
+    "norm_vs_native": {
+      "relative_rmse": 0.008408062223688383,
+      "max_abs": 0.0831146240234375
+    },
+    "next_projection_vs_native": {
+      "relative_rmse": 0.03085764980342604,
+      "max_abs": 0.0846177339553833
+    },
+    "next_projection_vs_native_norm_same_W8A8": {
+      "relative_rmse": 0.01795832107695027,
+      "max_abs": 0.0372314453125
+    },
+    "next_projection_vs_upstream_no_outlet_RQ": {
+      "relative_rmse": 0.013606742050361354,
+      "max_abs": 0.0404052734375
+    },
+    "native_norm_W8A8_vs_native_projection": {
+      "relative_rmse": 0.029358218860656073,
+      "max_abs": 0.08947014808654785
+    },
+    "next_final_ACT8_vs_native": {
+      "relative_rmse": 0.034444181506465936,
+      "max_abs": 0.11075985431671143
+    },
+    "down_integer": {
+      "INT64_partial_values_checked": 5898240,
+      "Python_complete_reduction_witnesses": 160,
+      "group": 128,
+      "groups": 72,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 2152660,
+      "format_bound_max": 1878705920,
+      "exponent_spread_max": 9,
+      "MACs": 754974720,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "next_integer": {
+      "INT64_partial_values_checked": 10240,
+      "Python_complete_reduction_witnesses": 96,
+      "group": 128,
+      "groups": 20,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 648870,
+      "format_bound_max": 435612032,
+      "exponent_spread_max": 7,
+      "MACs": 1310720,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "next_final_RQ": {
+      "saturation": 0,
+      "Fraction_output_codes": 512
+    },
+    "input_A_Fraction_witnesses": 4608,
+    "norm_A_Fraction_witnesses": 1280,
+    "costs": {
+      "rows": 32,
+      "complete_hidden_channels": 2560,
+      "next_projection_selected_outputs": 16,
+      "source_down_full_K": 9216,
+      "ACT_payload_bytes": 81920,
+      "static_base_exponent_bytes": 2560,
+      "incoming_tile16_delta_bytes": 5120,
+      "outgoing_scale_metadata_bytes": 5120,
+      "complete_row_packet_bytes_static_base_resident": 92160,
+      "packet_contract": "each row separately,64B header,32B coordinates,64B payload alignment,max1984B fragments; base scale resident and its initial transfer counted separately",
+      "initial_base_scale_wire_bytes": 2688,
+      "original_outlet_per16output_tile_packet_bytes_explicit_scale": 983040,
+      "one_row_exact_residual_S64_plus_I16_units_bytes": 25600,
+      "one_row_F32_norm_buffer_bytes": 10240,
+      "F32_norm_gamma_bytes": 10240,
+      "norm_V16KiB_capacity": {
+        "exact_sum_and_units_fit": false,
+        "one_inplace_F32_row_fits": true,
+        "row_and_gamma_simultaneously_fit": false
+      },
+      "norm_float_boundary_cost": "FP32 conversion,full hidden sum-of-squares/rsqrt/gamma remain floating; integer hardware implementation/cycles pending; in-place two-pass or spill/gamma reads must be scheduled",
+      "single128bit_1RW_bank_lower_bound_beats": {
+        "ACT_write_read": 10240,
+        "wide_sum_write_read": 81920,
+        "unit_write_read": 20480,
+        "norm_gamma_read": 20480
+      },
+      "down_W8_total_bytes": 23592960,
+      "down_W128_exponent_total_bytes": 184320,
+      "one16output_down_W128_scale_bytes": 1152,
+      "one16output_fixed_W_L1_U32_certificate_bytes_if_used": 4608,
+      "next_projection_W8_bytes": 40960,
+      "next_projection_W128_scale_bytes": 320,
+      "next_projection_input": "fresh A8K128 after explicit FP32 norm bridge; same W8K128 acrossvariants; do not mechanically charge3 products solely because prenorm ACT was16bit",
+      "scope": "logical sizes and physical packet/1RW lower bounds, no finite scheduler,RTL or PPA",
+      "integer_work": {
+        "saturation": 0,
+        "Fraction_output_codes": 81920,
+        "Fraction_residual_add_values": 81920,
+        "S64_align_add_values": 81920,
+        "residual_bridge_max_abs": 4.76837158203125e-07,
+        "delta_search_trials": 81393,
+        "delta_RNE_compare_terms": 1302288
+      }
+    },
+    "integer_norm_implemented": false,
+    "complete_next8192_projection": false,
+    "full_model_quality_accepted": false,
+    "hardware_performance_accepted": false
+  },
+  {
+    "case": "decode",
+    "profile": "delta_to_K128_ACT8",
+    "rows": 32,
+    "hidden": 2560,
+    "next_selected_outputs": 16,
+    "upstream_down_before_outlet_RQ_vs_native": {
+      "relative_rmse": 0.018454773021023777,
+      "max_abs": 0.005380898714065552
+    },
+    "down_after_outlet_RQ_vs_native": {
+      "relative_rmse": 0.022020198656975784,
+      "max_abs": 0.02959531545639038
+    },
+    "transport_requant_vs_outlet": {
+      "relative_rmse": 0.012997874438507015,
+      "max_abs": 0.00390625
+    },
+    "sum_vs_native": {
+      "relative_rmse": 0.008177887023478124,
+      "max_abs": 0.029595375061035156
+    },
+    "norm_vs_native": {
+      "relative_rmse": 0.009937260681606126,
+      "max_abs": 0.08756065368652344
+    },
+    "next_projection_vs_native": {
+      "relative_rmse": 0.032437933616132716,
+      "max_abs": 0.07993566989898682
+    },
+    "next_projection_vs_native_norm_same_W8A8": {
+      "relative_rmse": 0.023778295564888943,
+      "max_abs": 0.0710601806640625
+    },
+    "next_projection_vs_upstream_no_outlet_RQ": {
+      "relative_rmse": 0.020744168958682092,
+      "max_abs": 0.04716300964355469
+    },
+    "native_norm_W8A8_vs_native_projection": {
+      "relative_rmse": 0.029358218860656073,
+      "max_abs": 0.08947014808654785
+    },
+    "next_final_ACT8_vs_native": {
+      "relative_rmse": 0.03562342157629839,
+      "max_abs": 0.07645416259765625
+    },
+    "down_integer": {
+      "INT64_partial_values_checked": 5898240,
+      "Python_complete_reduction_witnesses": 160,
+      "group": 128,
+      "groups": 72,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 2152660,
+      "format_bound_max": 1878705920,
+      "exponent_spread_max": 9,
+      "MACs": 754974720,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "next_integer": {
+      "INT64_partial_values_checked": 10240,
+      "Python_complete_reduction_witnesses": 96,
+      "group": 128,
+      "groups": 20,
+      "I32_group_bound": 2064512,
+      "observed_acc_abs_max": 645598,
+      "format_bound_max": 361289600,
+      "exponent_spread_max": 7,
+      "MACs": 1310720,
+      "scope": "I32 group dot/I64 exact mixed scale; no intermediate RQ, no target timing"
+    },
+    "next_final_RQ": {
+      "saturation": 0,
+      "Fraction_output_codes": 512
+    },
+    "input_A_Fraction_witnesses": 4608,
+    "norm_A_Fraction_witnesses": 1280,
+    "costs": {
+      "rows": 32,
+      "complete_hidden_channels": 2560,
+      "next_projection_selected_outputs": 16,
+      "source_down_full_K": 9216,
+      "ACT_payload_bytes": 81920,
+      "static_base_exponent_bytes": 2560,
+      "incoming_tile16_delta_bytes": 5120,
+      "outgoing_scale_metadata_bytes": 640,
+      "complete_row_packet_bytes_static_base_resident": 88064,
+      "packet_contract": "each row separately,64B header,32B coordinates,64B payload alignment,max1984B fragments; base scale resident and its initial transfer counted separately",
+      "initial_base_scale_wire_bytes": 2688,
+      "original_outlet_per16output_tile_packet_bytes_explicit_scale": 983040,
+      "one_row_exact_residual_S64_plus_I16_units_bytes": 25600,
+      "one_row_F32_norm_buffer_bytes": 10240,
+      "F32_norm_gamma_bytes": 10240,
+      "norm_V16KiB_capacity": {
+        "exact_sum_and_units_fit": false,
+        "one_inplace_F32_row_fits": true,
+        "row_and_gamma_simultaneously_fit": false
+      },
+      "norm_float_boundary_cost": "FP32 conversion,full hidden sum-of-squares/rsqrt/gamma remain floating; integer hardware implementation/cycles pending; in-place two-pass or spill/gamma reads must be scheduled",
+      "single128bit_1RW_bank_lower_bound_beats": {
+        "ACT_write_read": 10240,
+        "wide_sum_write_read": 81920,
+        "unit_write_read": 20480,
+        "norm_gamma_read": 20480
+      },
+      "down_W8_total_bytes": 23592960,
+      "down_W128_exponent_total_bytes": 184320,
+      "one16output_down_W128_scale_bytes": 1152,
+      "one16output_fixed_W_L1_U32_certificate_bytes_if_used": 4608,
+      "next_projection_W8_bytes": 40960,
+      "next_projection_W128_scale_bytes": 320,
+      "next_projection_input": "fresh A8K128 after explicit FP32 norm bridge; same W8K128 acrossvariants; do not mechanically charge3 products solely because prenorm ACT was16bit",
+      "scope": "logical sizes and physical packet/1RW lower bounds, no finite scheduler,RTL or PPA",
+      "integer_work": {
+        "saturation": 0,
+        "Fraction_output_codes": 81920,
+        "Fraction_residual_add_values": 81920,
+        "S64_align_add_values": 81920,
+        "residual_bridge_max_abs": 4.76837158203125e-07,
+        "K128_alignment_and_RNE_values": 81920,
+        "Fraction_K128_conversion_values": 81920,
+        "K128_exponent_bytes": 640,
+        "K128_S64_scan_read_write_values": 163840,
+        "delta_search_trials": 81393,
+        "delta_RNE_compare_terms": 1302288
+      }
+    },
+    "integer_norm_implemented": false,
+    "complete_next8192_projection": false,
+    "full_model_quality_accepted": false,
+    "hardware_performance_accepted": false
+  }
+]

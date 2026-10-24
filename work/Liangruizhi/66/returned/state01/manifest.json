@@ -1,0 +1,241 @@
+{
+  "status": "PASS",
+  "source": {
+    "state_sha256": "c15de159129a02ac9944f06cfa694c37ffc8ac6f03a517c5087d739f913e2a3c",
+    "input_manifest_sha256": "ceb0a75cc20a4f4c6c8c2eb9a153fe6f5bc6743c177aeca211fb6b62d76c6dcc",
+    "input_NPZ_sha256": "37f9d8e8fa5aa803925fbdfaca580b54ea493efa3489929505a8fd2de5599dc4",
+    "input_NPZ_name": "state-raw.npz",
+    "input_provenance": {
+      "status": "PASS",
+      "source_commit": "38bd2604dda6c909710306f05882323f1211ee28",
+      "source_binding_sha256": "1366a1b05b0e330d524905a87f6ad003559ab82137caa519140da5b8be4b8f61",
+      "model": {
+        "id": "Qwen/Qwen3.5-4B",
+        "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+        "reference_manifest_commit": "2ada6cf6a61f5acff4b6052e81e15d20070dc0f3"
+      },
+      "model_files": {
+        "LICENSE": {
+          "bytes": 11343,
+          "sha256": "50cbab8a892c5f2993b8c7351a99182507472def3b1374558308605d99b86b32",
+          "source_revision": "f09dfc75214c5f2f4940ae6a26c126ce93828a9b"
+        },
+        "README.md": {
+          "bytes": 77661,
+          "sha256": "1406be1b6b8fd8a6545870da516912804756593628a1d0fb0a7965211e82a7bb",
+          "source_revision": "f09dfc75214c5f2f4940ae6a26c126ce93828a9b"
+        },
+        "chat_template.jinja": {
+          "bytes": 7756,
+          "sha256": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715",
+          "source_revision": "f09dfc75214c5f2f4940ae6a26c126ce93828a9b"
+        },
+        "config.json": {
+          "bytes": 3161,
+          "sha256": "ddc63e1c717afa86c865bb5e01313d89d72bb53b97ad4a8a03ba8510c0621670",
+          "source_revision": "fcb1a040bb418b0b8add6f6f6c475386abc2cb97"
+        },
+        "merges.txt": {
+          "bytes": 3353259,
+          "sha256": "a9d356d7bdf1ef4949e3e748e95b8e10ad9d4e2e838eddc38a0a7b6b94d1db8d",
+          "source_revision": "fcb1a040bb418b0b8add6f6f6c475386abc2cb97"
+        },
+        "model.safetensors-00001-of-00002.safetensors": {
+          "bytes": 5329398688,
+          "sha256": "26a93f066e1916adb13453dae5a0c707c0fbc71299ed98779571a907b8e74c61",
+          "source_revision": "fcb1a040bb418b0b8add6f6f6c475386abc2cb97"
+        },
+        "model.safetensors-00002-of-00002.safetensors": {
+          "bytes": 3990429408,
+          "sha256": "cb544bd9bfae93dc59b0f22b292f5933573854a7f9b97835c67060d7d910e188",
+          "source_revision": "fcb1a040bb418b0b8add6f6f6c475386abc2cb97"
+        },
+        "model.safetensors.index.json": {
+          "bytes": 76196,
+          "sha256": "cf3f798ee02ba45f9622aa8892a47369ab667d0afbf154ee7c2212de42e6302d",
+          "source_revision": "fcb1a040bb418b0b8add6f6f6c475386abc2cb97"
+        },
+        "tokenizer.json": {
+          "bytes": 12807982,
+          "sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42",
+          "source_revision": "fcb1a040bb418b0b8add6f6f6c475386abc2cb97"
+        },
+        "tokenizer_config.json": {
+          "bytes": 16710,
+          "sha256": "316230d6a809701f4db5ea8f8fc862bc3a6f3229c937c174e674ff3ca0a64ac8",
+          "source_revision": "f09dfc75214c5f2f4940ae6a26c126ce93828a9b"
+        },
+        "vocab.json": {
+          "bytes": 6722759,
+          "sha256": "ce99b4cb2983d118806ce0a8b777a35b093e2000a503ebde25853284c9dfa003",
+          "source_revision": "fcb1a040bb418b0b8add6f6f6c475386abc2cb97"
+        }
+      },
+      "implementation": {
+        "path": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/lib/python3.12/site-packages/transformers/models/qwen3_5/modeling_qwen3_5.py",
+        "sha256": "b4b17fe08d8d54da34a0fce78639666279ae7fd0a9e4ec06fce6602774707ca3",
+        "class": "Qwen3_5ForCausalLM"
+      },
+      "versions": {
+        "python": "3.12.7",
+        "torch": "2.10.0+cpu",
+        "transformers": "5.20.2",
+        "numpy": "2.2.6"
+      },
+      "job": "90060",
+      "threads": 24,
+      "scope": "Bounded Qwen3.5 native CPU capture of a full-hidden consumer chain and actual continuous R inputs.\nNo new model downloads; original BF16 checkpoint computes FP32. Captures are references, not integer qualification.\n",
+      "integer_qualified": false,
+      "loading": {
+        "missing_keys": "set()",
+        "unexpected_keys": "set()",
+        "mismatched_keys": "set()",
+        "error_msgs": []
+      },
+      "chain": {
+        "from_layer": 3,
+        "to_layer": 4,
+        "hidden_size": 2560,
+        "K": 9216,
+        "next_projection_outputs": 16,
+        "next_projection_native_outputs": 8192,
+        "norm_epsilon": 1e-06,
+        "norm_weight_contract": "effective gamma=1+stored weight",
+        "down_bias": false,
+        "next_projection_bias": false,
+        "selection": "cal first8/last8 prefix;eval first4/last4 prefix and all32decode",
+        "scope": "full hidden at down/residual/norm; first16 outputs of actual next projection, not full GDN"
+      },
+      "state": {
+        "layer": 0,
+        "value_heads": [
+          0,
+          1
+        ],
+        "key_heads": [
+          0,
+          0
+        ],
+        "key_dim": 128,
+        "value_dim": 128,
+        "conv_channels": 512,
+        "native_conv_cache_slots": 4,
+        "conv_activation": "silu FP32 native reference",
+        "use_qk_l2norm": true,
+        "checks": [
+          {
+            "case": "calibration",
+            "prefix": 128,
+            "start_position": 128,
+            "end_position": 160,
+            "continuous_steps": 32,
+            "R_adjacent_boundaries_exact": 31,
+            "conv_adjacent_boundaries_exact": 31,
+            "head_to_key": {
+              "0": 0,
+              "1": 0
+            }
+          },
+          {
+            "case": "evaluation",
+            "prefix": 128,
+            "start_position": 128,
+            "end_position": 160,
+            "continuous_steps": 32,
+            "R_adjacent_boundaries_exact": 31,
+            "conv_adjacent_boundaries_exact": 31,
+            "head_to_key": {
+              "0": 0,
+              "1": 0
+            }
+          }
+        ]
+      },
+      "seconds": 28.214268896263093,
+      "calibration_windows": [
+        "calibration"
+      ],
+      "window_metadata": {
+        "calibration": {
+          "case": "calibration",
+          "prefix": 128,
+          "start_position": 128,
+          "end_position": 160,
+          "continuous_steps": 32,
+          "R_adjacent_boundaries_exact": 31,
+          "conv_adjacent_boundaries_exact": 31,
+          "head_to_key": {
+            "0": 0,
+            "1": 0
+          }
+        },
+        "evaluation": {
+          "case": "evaluation",
+          "prefix": 128,
+          "start_position": 128,
+          "end_position": 160,
+          "continuous_steps": 32,
+          "R_adjacent_boundaries_exact": 31,
+          "conv_adjacent_boundaries_exact": 31,
+          "head_to_key": {
+            "0": 0,
+            "1": 0
+          }
+        }
+      },
+      "_state_adapter": "new calibrated continuous32 capture; only state-raw.npz artifact verified by this branch"
+    },
+    "commit": "29bee170344d505779df878b8b17a7ab856e9f88",
+    "binding_sha256": "91e530951e8994aa5fef14f319855f600fbbd9b64e68cc0180c6bef684a29c2b"
+  },
+  "integer_conditions": 8,
+  "failures": [],
+  "seconds": 7.137855579145253,
+  "scope": "Qwen3.5 continuous integer-state candidates, not a complete integer model.\n\nFP32 capture, L2 normalization/sqrt(D), sigmoid/softplus/exp and initial/scale\ncompilers are explicit offline bridges. Only the typed recurrence below is\ninteger. No intermediate state is reset from a captured native state.\n",
+  "floating_bridges": [
+    "captured FP32 conv/SiLU and QKV projections",
+    "offline FP64 L2norm/rsqrt/head scaling",
+    "source sigmoid/softplus/exp and U16Q15/U32Q31 gate compiler",
+    "initial state and static exponent compiler",
+    "FP64 numerical oracle only"
+  ],
+  "conv_scope": "No integer convolution implementation in this first state-only batch; four-slot history and conv/SiLU candidate require separate captured preconv/weights/state. No conv bytes are silently counted as validated state.",
+  "artifacts": {
+    "evaluation.S16.D31.npz": {
+      "bytes": 13126301,
+      "sha256": "74e21715831524fd8fee924ac8e7596cd597791d7fab2cb26ee8c27183fb0456"
+    },
+    "evaluation.S32.D31.npz": {
+      "bytes": 15926068,
+      "sha256": "a590053c5ff559d8d73c501bc5362216d1b79fc7b8d9b5209603adac67cb9b1d"
+    },
+    "calibration.S32.D15.npz": {
+      "bytes": 15936921,
+      "sha256": "13d4eb32cc6838cbd26dbd745c840ab964fcf7b09a0c4725dbcfab12cafc3051"
+    },
+    "calibration.S16.D31.npz": {
+      "bytes": 13136071,
+      "sha256": "4c13df8ac7d3192532686433ec53c0ceea62be51b302fcfbe75cbc1a148f775d"
+    },
+    "evaluation.S16.D15.npz": {
+      "bytes": 13126253,
+      "sha256": "0fb5a3c260f3eb411ed8e1c0d13ec657cefa4a8b6ec23caa555d5cae950f4334"
+    },
+    "evaluation.S32.D15.npz": {
+      "bytes": 15925963,
+      "sha256": "9e85b6deb26696208ff8e8f9280de29f12ad880526afc6a3e5798481010401c7"
+    },
+    "calibration.S32.D31.npz": {
+      "bytes": 15936881,
+      "sha256": "0fc14ae91ddefd44d9a1319447177a7049ff99e4156840e43052d1fe41ead00e"
+    },
+    "state-results.json": {
+      "bytes": 189272,
+      "sha256": "d321f2d5fa6ada4a86cf7eae0de593a500c9649cc1853682f0ffac5868f19044"
+    },
+    "calibration.S16.D15.npz": {
+      "bytes": 13135946,
+      "sha256": "f98e46e44b3c255b84625d21179560a5a453dbae4892b10512b53ae544fad449"
+    }
+  }
+}

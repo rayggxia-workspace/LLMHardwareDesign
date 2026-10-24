@@ -1,0 +1,236 @@
+{
+  "status": "PASS",
+  "source_sha256": "85a76c4580dae570b55e22a8d155e7523f95b7be5c8e9ddaf4aeff200955ba91",
+  "scope": "Portable review of selected Issue66 integer evidence.\n\nImports only the two SHA-pinned independent receivers, never producer kernels.\nReplays two complete32-step integer states and two complete-hidden consumer\npaths from already encoded upstream data. This does not re-prove original\ncapture, down GEMM/weight compiler, full model quality, integer norm or PPA.\n",
+  "states": [
+    {
+      "id": "evaluation.S16.D15",
+      "status": "PASS",
+      "artifact_sha256": "0ac99f0f03cad34ef39350fdff603db3cc322ed8aa9fdbd91a559bacaa4f2f4f",
+      "original_full_artifact": {
+        "bytes": 13126253,
+        "sha256": "0fb5a3c260f3eb411ed8e1c0d13ec657cefa4a8b6ec23caa555d5cae950f4334"
+      },
+      "counts": {
+        "decay_RNE": 1048576,
+        "pred_RNE": 8192,
+        "delta_RNE": 8192,
+        "state_saturations": 0,
+        "outer_RNE": 1048576,
+        "output_Fraction_RNE": 8192
+      },
+      "observed_absolute_max": {
+        "decay_product": 504824422,
+        "decayed_state": 15406,
+        "prediction_dot": 534991550,
+        "prediction": 16327,
+        "aligned_value": 39092,
+        "residual": 38062,
+        "beta_product": 1081303358,
+        "correction": 32999,
+        "outer_product": 799628040,
+        "state_sum": 30153,
+        "output_dot": 25415867
+      },
+      "minimal_signed_bits": {
+        "decay_product": 30,
+        "decayed_state": 15,
+        "prediction_dot": 30,
+        "prediction": 15,
+        "aligned_value": 17,
+        "residual": 17,
+        "beta_product": 32,
+        "correction": 17,
+        "outer_product": 31,
+        "state_sum": 16,
+        "output_dot": 26
+      },
+      "full_state_values": 1081344,
+      "full_output_values": 8192,
+      "commit_events": 32,
+      "in_memory_wrong_commit_rejected": "state commit/version/hash continuity step 0",
+      "scope": "all32 integer recurrence and version/state/output commits; omitted float/calibration references not independently rechecked in this portable subset"
+    },
+    {
+      "id": "evaluation.S32.D31",
+      "status": "PASS",
+      "artifact_sha256": "080eb62552a606c2bda8c8fe27eff65a0ca07d5ef07ca4c8650eadb64a2a7ca0",
+      "original_full_artifact": {
+        "bytes": 15926068,
+        "sha256": "a590053c5ff559d8d73c501bc5362216d1b79fc7b8d9b5209603adac67cb9b1d"
+      },
+      "counts": {
+        "decay_RNE": 1048576,
+        "pred_RNE": 8192,
+        "delta_RNE": 8192,
+        "state_saturations": 0,
+        "outer_RNE": 1048576,
+        "output_Fraction_RNE": 8192
+      },
+      "observed_absolute_max": {
+        "decay_product": 2168835758781064765,
+        "decayed_state": 1009942851,
+        "prediction_dot": 35056971698357,
+        "prediction": 1069853873,
+        "aligned_value": 2561933312,
+        "residual": 2494386114,
+        "beta_product": 70863015112626,
+        "correction": 2162567600,
+        "outer_product": 52402987651200,
+        "state_sum": 1976036459,
+        "output_dot": 1666192583223
+      },
+      "minimal_signed_bits": {
+        "decay_product": 62,
+        "decayed_state": 31,
+        "prediction_dot": 46,
+        "prediction": 31,
+        "aligned_value": 33,
+        "residual": 33,
+        "beta_product": 48,
+        "correction": 33,
+        "outer_product": 47,
+        "state_sum": 32,
+        "output_dot": 42
+      },
+      "full_state_values": 1081344,
+      "full_output_values": 8192,
+      "commit_events": 32,
+      "in_memory_wrong_commit_rejected": "state commit/version/hash continuity step 0",
+      "scope": "all32 integer recurrence and version/state/output commits; omitted float/calibration references not independently rechecked in this portable subset"
+    }
+  ],
+  "consumer": [
+    {
+      "profile": "tile16_delta_ACT8",
+      "status": "PASS",
+      "counts": {
+        "Fraction_delta_admissibility_terms": 163840,
+        "Fraction_outlet_codes": 81920,
+        "Fraction_residual_values": 81920,
+        "norm_A_codes": 81920,
+        "Fraction_norm_A_endpoints": 1280,
+        "next_I64_partial_values": 10240,
+        "next_arbitrary_integer_reductions": 512,
+        "next_Fraction_mixed_unit_terms": 10240,
+        "Fraction_next_final_codes": 512
+      },
+      "metrics_recomputed": {
+        "upstream_down_before_outlet_RQ_vs_native": {
+          "relative_rmse": 0.018454773021023833,
+          "max_abs": 0.005380898714065552
+        },
+        "down_after_outlet_RQ_vs_native": {
+          "relative_rmse": 0.02202019865697585,
+          "max_abs": 0.02959531545639038
+        },
+        "transport_requant_vs_outlet": {
+          "relative_rmse": 0.0,
+          "max_abs": 0.0
+        },
+        "sum_vs_native": {
+          "relative_rmse": 0.0070242183434636,
+          "max_abs": 0.029595375061035156
+        },
+        "norm_vs_native": {
+          "relative_rmse": 0.008408062223688395,
+          "max_abs": 0.0831146240234375
+        },
+        "next_projection_vs_native": {
+          "relative_rmse": 0.03085764980342604,
+          "max_abs": 0.0846177339553833
+        },
+        "next_final_ACT8_vs_native": {
+          "relative_rmse": 0.034444181506465936,
+          "max_abs": 0.11075985431671143
+        }
+      },
+      "in_memory_wrong_outlet_rejected": "Fraction outlet/final code",
+      "not_recomputed_metrics": [
+        "next_projection_vs_native_norm_same_W8A8",
+        "next_projection_vs_upstream_no_outlet_RQ",
+        "native_norm_W8A8_vs_native_projection"
+      ],
+      "scope": "already encoded full-hidden down accumulator/scale -> outlet -> exact residual -> FP32 full-hidden norm bridge -> fresh A8K128 -> completeK next16 -> RQ; source down GEMM/calibration/W compiler/counterfactual references absent",
+      "artifact_sha256": "008726a6bbfeb70f9dd0ba59ae879f9446c546b12d26de135247f7c4822c80da"
+    },
+    {
+      "profile": "delta_to_K128_ACT8",
+      "status": "PASS",
+      "counts": {
+        "Fraction_delta_admissibility_terms": 163840,
+        "Fraction_outlet_codes": 81920,
+        "Fraction_K128_conversion": 81920,
+        "Fraction_residual_values": 81920,
+        "norm_A_codes": 81920,
+        "Fraction_norm_A_endpoints": 1280,
+        "next_I64_partial_values": 10240,
+        "next_arbitrary_integer_reductions": 512,
+        "next_Fraction_mixed_unit_terms": 10240,
+        "Fraction_next_final_codes": 512
+      },
+      "metrics_recomputed": {
+        "upstream_down_before_outlet_RQ_vs_native": {
+          "relative_rmse": 0.018454773021023833,
+          "max_abs": 0.005380898714065552
+        },
+        "down_after_outlet_RQ_vs_native": {
+          "relative_rmse": 0.02202019865697585,
+          "max_abs": 0.02959531545639038
+        },
+        "transport_requant_vs_outlet": {
+          "relative_rmse": 0.012997874438507015,
+          "max_abs": 0.00390625
+        },
+        "sum_vs_native": {
+          "relative_rmse": 0.008177887023478134,
+          "max_abs": 0.029595375061035156
+        },
+        "norm_vs_native": {
+          "relative_rmse": 0.009937260681606141,
+          "max_abs": 0.08756065368652344
+        },
+        "next_projection_vs_native": {
+          "relative_rmse": 0.032437933616132716,
+          "max_abs": 0.07993566989898682
+        },
+        "next_final_ACT8_vs_native": {
+          "relative_rmse": 0.03562342157629839,
+          "max_abs": 0.07645416259765625
+        }
+      },
+      "in_memory_wrong_outlet_rejected": "Fraction outlet/final code",
+      "not_recomputed_metrics": [
+        "next_projection_vs_native_norm_same_W8A8",
+        "next_projection_vs_upstream_no_outlet_RQ",
+        "native_norm_W8A8_vs_native_projection"
+      ],
+      "scope": "already encoded full-hidden down accumulator/scale -> outlet -> exact residual -> FP32 full-hidden norm bridge -> fresh A8K128 -> completeK next16 -> RQ; source down GEMM/calibration/W compiler/counterfactual references absent",
+      "artifact_sha256": "bc8a8820a99732de29a3e8e402296a205dafd351d082a2fda6bd3036d8c35dc1"
+    }
+  ],
+  "environment": {
+    "python": "3.13.14",
+    "numpy": "2.5.4",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "selected_index_sha256": "ba14f10b800c9ae5afc111937058acdf7efd0da3676997c3128eb036b4af03bb",
+  "independent_receivers": {
+    "project/experiments/scale_state/receive_state.py": "4a08cd4c4242c4a37ba000c21ed06f2ebf44b60c476df163ff28d5d664c83a86",
+    "project/experiments/scale_state/consumer_receive.py": "678e2dc7939d09f7edb5e8e917f979c860d1be01769eb67b5a792587341c858b"
+  },
+  "integer_boundary_checks": {
+    "signed_RNE_Fraction_boundaries": 144,
+    "premature_partial_rounding_rejected": true,
+    "outer_RNE_before_integer_add_distinguished": true
+  },
+  "consumer_auxiliary_sha256": "45c0468b98bfa7516172b1efdbbbbce9e62ab2f6dca5ecdf82c2bc5c430f3db4",
+  "limitations": [
+    "No reproof of omitted original native capture or model/weight calibration compilers.",
+    "No repeat of source down GEMM or absent counterfactual metrics.",
+    "R numerical quality metrics require omitted original float references; integer values and commits are replayed.",
+    "Norm in these two consumer samples is an explicit FP32 bridge; newer integer RMS experiments are outside this selected subset.",
+    "No model-quality acceptance, target cycles, RTL or PPA."
+  ],
+  "seconds": 15.475036399904639
+}
