@@ -10,9 +10,12 @@
 - R：两head，每head K128/V128，S32/D31，Q/K S16、beta U16、prediction/
   correction/输出受检I64。V按16/32切片，始终保留完整K归约。全部proposal写入
   后备新generation后才检查全group guard；成功再显式第二遍读回完整新state做
-  输出，完整Vhead屏障后共同发布state/output/units/epoch/version。
+  输出，完整Vhead屏障后共同发布state/output/units/epoch/version。每cell始终先用
+  受检I64算proposal并OR范围flag；不能表示的cell只可饱和写未发布S32影子，失败整代
+  不发布/不读作output。成功groupguard时所有cell原样S32，不需要免费存I64整代。
 - V：H2560，mixed I64+I16输入25,600B，X16行5120B，gamma S32Q20共10,240B。
-  两遍源读与aligned spill写读40,960B互斥；gamma/K128流式。normQ20逐K128
+  两遍源读与aligned spill写读40,960B互斥；两者均先付完整I16 unit-only预扫描5120B，
+  得到全行finest unit再允许分tile对齐/spill，不能用未来单位免费回填。gamma/K128流式。normQ20逐K128
   写回再读出确定新A8，不省略归一化后动态scale的max/编码依赖。
 - 相同附加流：每norm行一个16×16×4096的矩阵代理，以及明确有界的FFN RQ/
   attention reduction代理。不能把这些代理称完整FFN/attention/整模型执行时间。
@@ -34,7 +37,7 @@ R tile16的old/new分别8192B，另有aux8192B，共24KiB；tile32 old16384B加a
 new16384B必须放S4并逐不超过1KiB的受检结果fragment付R→S总线成本。
 完整两head old/new各128KiB，不能免费驻留S或R；S2/S3仅分页暂存。
 EXT有限128MiB，S32全模型状态48MiB、selected proposal128KiB、trial128KiB、真实
-输入、descriptor及raw初态各有固定槽位。EXT单端口1/16 cycle每128bit是待校准敏感性。
+  输入、descriptor及raw初态各有固定槽位。EXT单端口1/16 cycle每128bit是待校准敏感性。
 两个generation在提交后交换角色，不复制整个模型；未访问的模型状态仍占容量。
 初态row-major到候选tile-major的分页/布局转换显式收读取、地址/重排及写回成本。
 

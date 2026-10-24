@@ -195,6 +195,7 @@ class Graph:
                         [self.res("PORT:R", 0, rw), self.res("CTRL", rw, cycles),
                          self.res("PORT:R", rw + cycles, rw)],
                         dict(meta or {}, descriptor_bytes=count, descriptor_object="R.aux",
+                             descriptor_object_offset=4096,
                              descriptor_read_beats=rw, descriptor_write_beats=rw))
 
     def packet(self, src, dst, n, deps=(), meta=None, src_object=None, dst_object=None):
@@ -258,9 +259,20 @@ def build_norm(g, row, deps):
              scale_epoch="saved dynamic row units; actual integer norms03 units fingerprinted")
     tail = g.packet("EXT", "S0", 25600, deps, dict(m, operation="load_mixed", src_object_offset=row * 25600),
                     "backing.consumer_input", "source.mixed")
+    # The row's finest unit must be known BEFORE any aligned tile is spilled.
+    # Source layout is two planes: H*I64 codes then H*I16 unit descriptors.
+    # This common unit-only prepass is real SRAM/bus/lane traffic, not free
+    # future knowledge used to align a tile that has already left V.
+    for tile in range(20):
+        tail = g.packet("S0", "V", 256, [tail],
+                        dict(m, tile=tile, operation="unit_prepass", src_object_offset=20480 + tile * 256),
+                        "source.mixed", "V.norm_tile")
+        tail = g.math("V", "unit_min_scan", 128 * 10, 256, 16, [tail], dict(m, tile=tile))
+    tail = g.control("full_hidden_finest_unit", [tail], m)
     # A scan is a complete H dependency. It may stream through a fixed tile.
     for tile in range(20):
-        tail = g.packet("S0", "V", 1280, [tail], dict(m, tile=tile, operation="max_scan", src_object_offset=tile * 1280), "source.mixed", "V.norm_tile")
+        tail = g.packet("S0", "V", 1280, [tail], dict(m, tile=tile, operation="max_scan",
+                        src_regions=[{"offset": tile * 1024, "bytes": 1024}, {"offset": 20480 + tile * 256, "bytes": 256}]), "source.mixed", "V.norm_tile")
         tail = g.math("V", "align_max", 128 * 20, 1280,
                       1024 if g.config["norm_route"] == "spill" else 16,
                       [tail], dict(m, tile=tile))
@@ -269,7 +281,8 @@ def build_norm(g, row, deps):
     tail = g.control("full_hidden_max", [tail], m)
     for tile in range(20):
         if g.config["norm_route"] == "reread":
-            tail = g.packet("S0", "V", 1280, [tail], dict(m, tile=tile, operation="reread_mixed", src_object_offset=tile * 1280), "source.mixed", "V.norm_tile")
+            tail = g.packet("S0", "V", 1280, [tail], dict(m, tile=tile, operation="reread_mixed",
+                            src_regions=[{"offset": tile * 1024, "bytes": 1024}, {"offset": 20480 + tile * 256, "bytes": 256}]), "source.mixed", "V.norm_tile")
             work = 128 * (20 + 10 + mulslots(3, 3) + 10)
         else:
             tail = g.packet("S1", "V", 1024, [tail], dict(m, tile=tile, operation="read_aligned", src_object_offset=tile * 1024), "aligned.spill", "V.norm_tile")
@@ -303,7 +316,10 @@ def recurrent_tile(g, token, attempt, head, tile, deps, do_output=False, epoch=0
     ds = 5 if b == 4 else 3
     m = dict(stream="R", token=token, attempt=attempt, head=head, tile=tile,
              K=K, Vtile=tv, state_bits=b * 8, decay_bits=31,
-             scale_epoch=epoch, complete_K=True)
+             scale_epoch=epoch, complete_K=True,
+             proposal_arithmetic="checked I64 then immediate per-cell range flag OR",
+             proposal_storage_bits=b * 8,
+             invalid_cell_storage="saturate only unpublished shadow; whole token discarded on failed group guard; never consumed by output")
     backing_offset = (head * K * V + tile * cells) * b
     tail = g.packet("EXT", "S2", n, deps, dict(m, operation="page_committed_or_trial_old", src_object_offset=backing_offset),
                     g.committed_slot if attempt == 0 else "backing.trial", "R.stage_old")
