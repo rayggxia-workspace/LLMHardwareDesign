@@ -477,7 +477,7 @@ def capture(args):
     binding = json.loads(Path(args.binding).read_text(encoding="utf-8")) if args.binding else {"commit": "unbound", "files": []}
     artifacts = [{"path": p.name, "bytes": p.stat().st_size, "sha256": sha(p), "kind": "npz" if p.suffix == ".npz" else "json"}
                  for p in sorted(out.iterdir()) if p.is_file()]
-    write_json(out / "manifest.json", {"schema": "falcon-h1-bounded-v1", "source": binding,
+    write_json(out / "manifest.json", {"schema": "falcon-h1-bounded-v1", "status": "EXECUTED", "source": binding,
                "producer_sha256": sha(__file__), "artifacts": artifacts,
                "claims": "FP32 native continuity, independent FP64 recurrence and integer-state-storage diagnostics; not full integer hardware."})
     print(json.dumps({"out": str(out), "manifest_sha256": sha(out / "manifest.json"), "elapsed_seconds": report["elapsed_seconds"]}))
