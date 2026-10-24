@@ -22,15 +22,15 @@ int main(int argc, char** argv) {
         Vbyte_core top; top.reset=1; top.request=0; top.rom_request=0; edge(top); edge(top); top.reset=0;
         std::array<int,512> memory; memory.fill(-1); std::array<bool,512> live{};
         std::ifstream trace(argv[1]); need(trace.good(),"trace open"); std::ofstream actual(argv[3]);
-        std::string line, current; std::uint64_t actions=0, cases=0, clocks=0; std::array<std::uint64_t,8> lanes{};
+        std::string line, current; bool started=false; std::uint64_t actions=0, cases=0, clocks=0; std::array<std::uint64_t,8> lanes{};
         while(std::getline(trace,line)) {
             if(line.empty()) continue;
             std::istringstream row(line); char kind; row>>kind;
-            if(kind=='B') { row>>current; memory.fill(-1); live.fill(false); ++cases; }
+            if(kind=='B') { row>>current; memory.fill(-1); live.fill(false); started=false; ++cases; }
             else if(kind=='M') { int start,size; row>>start>>size; need(start>=0&&size>=0&&start+size<=512,"frame allocate");
                 for(int i=start;i<start+size;++i) { need(!live[i],"frame overlap"); live[i]=true; memory[i]=-1; } }
             else if(kind=='F') { int start,size; row>>start>>size; for(int i=start;i<start+size;++i) { need(i>=0&&i<512&&live[i],"free live");live[i]=false;memory[i]=-1; } }
-            else if(kind=='I') { int address,value; row>>address>>value; need(address>=0&&address<512&&live[address]&&value>=0&&value<256,"input initialization");memory[address]=value; }
+            else if(kind=='I') { int address,value; row>>address>>value; need(!started,"no initialization injection after first action"); need(address>=0&&address<512&&live[address]&&value>=0&&value<256,"input initialization");memory[address]=value; }
             else if(kind=='O') {
                 std::string name, refs, values; int sign; row>>name>>sign>>refs>>values;
                 for(char& x:refs)if(x==',')x=' ';for(char& x:values)if(x==',')x=' ';
@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
                 while(rr>>address){need(bool(vv>>value),"output value parse");need(read_ref(memory,live,address)==value,"final output from actual live RTL store");}
             }
             else if(kind=='A') {
-                int op,ra,rb,rc,rd,rh,av,bv,cv,lo,hi; row>>op>>ra>>rb>>rc>>rd>>rh>>av>>bv>>cv>>lo>>hi;
+                started=true; int op,ra,rb,rc,rd,rh,av,bv,cv,lo,hi; row>>op>>ra>>rb>>rc>>rd>>rh>>av>>bv>>cv>>lo>>hi;
                 need(!row.fail() && op>=0 && op<=11,"action parse/opcode domain");
                 int a=read_ref(memory,live,ra), b=read_ref(memory,live,rb), c=read_ref(memory,live,rc);
                 need(a==av&&b==bv&&c==cv,"trace must consume actual causal RTL store");

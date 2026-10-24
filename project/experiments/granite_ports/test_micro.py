@@ -45,6 +45,12 @@ class TinyByteTests(unittest.TestCase):
             self.assertEqual(r['value'], expected)
             self.assertEqual(r['valid'], -(1<<31) <= expected < 1<<31)
 
+    def test_S16_scale_sign_extension(self):
+        for value in (-(1<<15), -1, 0, (1<<15)-1):
+            result, profile = M.execute('signextend_s16_i64', value)
+            self.assertEqual(result, {'value': value, 'valid': True})
+            self.assertEqual(profile['scalar_ALU_dependency_cycles'], 10)
+
     def test_shift_inverse_guards_full_domain(self):
         for op, a, shift, width in [('align_s32_i64', -(1<<31), 32, 64),
                                      ('align_s32_i64', 1, 63, 64),

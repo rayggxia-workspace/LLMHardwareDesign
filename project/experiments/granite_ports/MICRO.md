@@ -4,7 +4,7 @@
 
 ## 可执行层与限制
 
-micro.py实现17个typed操作：S32×S32、S64×S32、S32×U16（分别25/45/15个signed-high radix128 S8积）、S64加减/比较/最大值/绝对值、U128加法、S32→S64对齐、S64→S128和U128左移、S64/S128右移RNE及I32拒绝guard、U128恢复除法、U128整数平方根、signed128/U64任意分母RNE到I32。RNE含负数tie、sticky、完整增量carry、符号恢复及高字节guard；零除/溢出记录拒绝，保留原始wrapped输出作诊断。
+micro.py实现18个typed操作：S32×S32、S64×S32、S32×U16（分别25/45/15个signed-high radix128 S8积）、S64加减/比较/最大值/绝对值、U128加法、S16→S64显式符号扩展、S32→S64对齐、S64→S128和U128左移、S64/S128右移RNE及I32拒绝guard、U128恢复除法、U128整数平方根、signed128/U64任意分母RNE到I32。RNE含负数tie、sticky、完整增量carry、符号恢复及高字节guard；零除/溢出记录拒绝，保留原始wrapped输出作诊断。
 
 byte_core.sv只有8个S8/byte lane：两个signed8输入的16位乘积、byte add/sub carry/borrow、byte shift/逻辑/比较/mux，以及一个32位同步ROM读端口。**没有原生宽乘、宽除、开方或免费宽adder。** C++用有限外部byte store的实际RTL返回值，因果串联后继操作；每一步均对输入/输出校验，最后按live地址提取输出。所有8lane轮流覆盖，但没有证明8个宽任务合法同时执行。
 

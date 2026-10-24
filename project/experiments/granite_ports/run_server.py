@@ -53,6 +53,7 @@ def oracle(op, a, b=0, shift=0):
         encoded = v & ((1<<width)-1)
         if signed and encoded >= 1<<(width-1): encoded -= 1<<width
         result = {'value': encoded}
+    elif op == 'signextend_s16_i64': result = {'value': a}
     elif op == 'abs_s64': result = {'value': abs(a)}
     elif op == 'cmp_s64': result = {'less': a < b, 'equal': a == b}
     elif op == 'max_s64': result = {'value': max(a, b)}
@@ -86,6 +87,7 @@ def cases(random_count=2):
                        ('mul_s32_u16', -(1<<31), 32768), ('mul_s32_u16', (1<<31)-1, 65535)]: add(op, aa, bb)
     for op in ('add_s64', 'sub_s64', 'max_s64', 'cmp_s64'):
         for aa, bb in [(-(1<<63), (1<<63)-1), ((1<<63)-1, -1), (0, 0)]: add(op, aa, bb)
+    for aa in (-(1<<15), -1, 0, (1<<15)-1): add('signextend_s16_i64', aa)
     add('add_u128', (1<<128)-1, 1); add('add_u128', 0, (1<<128)-1)
     for aa in (-(1<<63), -1, 0, (1<<63)-1): add('abs_s64', aa)
     for op in ('rne_s64_i32', 'rne_s128_i32'):
@@ -99,7 +101,8 @@ def cases(random_count=2):
     rng = random.Random(7601)
     for op in M.OP_SPECS:
         for _ in range(random_count):
-            if op == 'mul_s32_u16': aa, bb = rng.randrange(-(1<<31), 1<<31), rng.randrange(1<<16)
+            if op == 'signextend_s16_i64': aa, bb = rng.randrange(-(1<<15), 1<<15), 0
+            elif op == 'mul_s32_u16': aa, bb = rng.randrange(-(1<<31), 1<<31), rng.randrange(1<<16)
             elif op in ('add_u128', 'shl_u128', 'udiv_u128', 'isqrt_u128'): aa, bb = rng.randrange(1<<128), rng.randrange(1, 1<<128)
             elif op in ('rne_s128_i32', 'div_rne_s128_u64_i32'): aa, bb = rng.randrange(-(1<<127), 1<<127), rng.randrange(1, 1<<64)
             elif op in ('mul_s32_s32', 'align_s32_i64'): aa, bb = rng.randrange(-(1<<31), 1<<31), rng.randrange(-(1<<31), 1<<31)
@@ -131,6 +134,7 @@ def actual_cases(granite, compiled):
                         for c in (0, 1535):
                             a = int(z['down_acc32'][t, rank, c]); b = int(const[f'L{layer}.down_mant_q31'][expert, c])
                             add('mul_s32_s32', a, b, provenance={'down_acc32': [t, rank, c], 'expert': expert, 'mantissa_output': c}, expected=z['down_RQ_product64'][t, rank, c])
+                            add('signextend_s16_i64', const[f'L{layer}.down_exp'][expert, c], provenance={'down_exp': [expert, c]})
                             shift = 31-int(const[f'L{layer}.down_exp'][expert, c])-int(z['mid_delta'][t, rank])
                             need(0 <= shift <= 128, 'actual RQ falls within calibrated right-shift domain')
                             add('rne_s64_i32', a*b, shift=shift, provenance={'down_RQ_product64': [t, rank, c], 'shift_formula': '31-exp-mid_delta'}, expected=z['down_q12'][t, rank, c])

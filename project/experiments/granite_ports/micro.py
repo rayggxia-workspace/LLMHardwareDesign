@@ -348,6 +348,7 @@ OP_SPECS = {
     'abs_s64': {'input': ['S64'], 'output': 'U64'},
     'max_s64': {'input': ['S64', 'S64'], 'output': 'S64'},
     'cmp_s64': {'input': ['S64', 'S64'], 'output': 'less/equal'},
+    'signextend_s16_i64': {'input': ['S16'], 'output': 'S64'},
     'align_s32_i64': {'input': ['S32', 'shift0..63'], 'output': 'S64', 'overflow': 'reject'},
     'shl_s64_s128': {'input': ['S64', 'shift0..127'], 'output': 'S128', 'overflow': 'reject'},
     'shl_u128': {'input': ['U128', 'shift0..127'], 'output': 'U128', 'overflow': 'reject'},
@@ -408,6 +409,11 @@ def execute(op, a, b=0, shift=0, stream=None, case='tiny'):
             for x, y, dst in zip(bb, aa, out): m.op('MUX', x, y, compare_flags[0], dst)
             result = {'value': m.signed(out)}
         else: result = {'less': bool(m.value(compare_flags[0])), 'equal': bool(m.value(compare_flags[1]))}
+    elif op == 'signextend_s16_i64':
+        aa = input_value(m, 'input_a', a, 2); out = m.alloc('output', 8); flags = m.alloc('extend_sign', 1)
+        copy(m, aa, out[:2]); m.op('SHR', aa[-1], immediate(7), dst=flags[0])
+        m.op('MUX', FF, Z, flags[0], flags[0]); fill(m, out[2:], flags[0])
+        result = {'value': m.signed(out)}
     elif op in ('align_s32_i64', 'shl_s64_s128', 'shl_u128'):
         width = 4 if op == 'align_s32_i64' else 8 if op == 'shl_s64_s128' else 16
         limit = 63 if op == 'align_s32_i64' else 127
