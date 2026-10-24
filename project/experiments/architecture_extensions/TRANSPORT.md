@@ -8,6 +8,8 @@ python -B transport.py --granite GRANITE_NUMERIC_DIR --falcon FALCON_CAPTURE_DIR
 
 两输入可只提供其一，以便独立并行。binding须有`commit`、`transport_sha256`及`interval_checker_sha256`（`project/experiments/range_service/receive_service.py`）。严格核来源manifest及全部实际artifact SHA，不接受下载/脚本完成代替执行结果；Falcon还核NPZ实际header的完整state、branch、gatednorm形状和dtype，不据配置推测已采集。禁止覆盖输出。
 
+Granite若来自保留原chunk失败的`PARTIAL_DIAGNOSTIC`数值结果，默认拒绝；仅显式`--diagnostic-failed-chunk`允许做相同收窄范围的COPY/容量诊断。transport输出状态继续`PARTIAL_DIAGNOSTIC`，逐级透传`capture_status=FAIL`、原失败阈值/数值与`chunk_reference_accepted=false`，COPY日历通过不会将原参考、chunk或全模型质量变成PASS。
+
 固定库存沿用Issue68：V16KiB、R32KiB、M32KiB、S八bank各32KiB、EXT128MiB，各一共享1RW128bit端口；单128bit BUS，32B包头、16Bbeat、每packet最多1984B payload、每端TX/RX各2KiB FIFO。EXT端口II1为未测敏感性假设。每packet显式source read→BUS→dest write，完整依赖、地址、资源保留和FIFO credits保存在gzip witness；独立`receive_service.verify_intervals`对全图扫资源、依赖、容量及下界。没有引用生产scheduler作接收。每个bank的TX/RX endpoint独占保守限制仍保留。
 
 每个明确地址访问分别支付`ceil(((offset mod16)+bytes)/16)`拍，不将不同地址的小读取免费拼到一拍；packet的source和destination也各按自己的未对齐地址计端口拍，BUS按payload+32B header打包。比如offset15的3B descriptor占两拍；如将来实现word读取并驻留/复用，须另给缓冲与生命周期证明，本轮不赠该优化。

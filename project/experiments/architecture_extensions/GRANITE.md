@@ -28,3 +28,5 @@ Issue70；此页记录生产协议，实际执行与结果须以manifest/作业�
 binding含`commit`与`granite_diagnose_sha256`。严格核原失败manifest、全部artifact及原模型文件SHA，复用其72个评价token、原模型revision、原框架实现SHA、FP32/eager和原门；不重下权重，不改原capture。
 
 四个独立profile：原生full72、原生cached64+8、原生chunk16、chunk16固定full-run每层每token专家ID（当前logits重新softmax）。最后一个是**改变路由算法的反事实诊断控制**，不能替换原生参考或声称PASS。保存32层每token router输入/logits/top8 ID/weight、MoE和层输出以及LM logits；比较首个集合变化层、top8/9 margin、输入/输出误差和固定ID后剩余差异。固定ID显著压低误差只能支持路由非连续性放大，不能证明全部误差来自特定浮点算子或据此放宽门。原失败和全模型质量/硬件未验状态持续保留。
+
+数值入口默认拒绝FAIL capture。只有显式`numeric --diagnostic-failed-chunk`，并逐项核验原阈值未变、cal/eval完整cached及MoE replay均过、cal chunk16过、仅evaluation.chunk16失败，才允许复用完整layer0真实FP32张量做局部整数/结构诊断。输出状态固定为`PARTIAL_DIAGNOSTIC`，`reference_qualification.capture_status=FAIL`、`chunk_reference_accepted=false`和完整原失败/阈值链均写入manifest与metrics；独立receiver同样须显式接受这个收窄范围。此开关不修改原捕获、不放宽门、不使chunk/整图参考或全模型量化质量通过。

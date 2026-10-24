@@ -3,6 +3,7 @@ import importlib.util
 from pathlib import Path
 import unittest
 from fractions import Fraction
+import copy
 import tempfile
 import numpy as np
 
@@ -112,6 +113,38 @@ class GraniteTests(unittest.TestCase):
         diff=d.compare_routes(full,np.asarray([[0,1]]),other,np.asarray([[0,2]]))
         self.assertAlmostEqual(diff['minimum_full_top8_margin'],1e-7)
         self.assertEqual(diff['changes'][0]['position'],0)
+
+    def failed_chunk_fixture(self):
+        case={'batch':1,'prefill':64,'decode':8,'tokens':list(range(72)),
+              'cached':{'relative_l2':1e-6,'max_abs':1e-4},
+              'moe_replay':{'relative_l2':1e-7,'max_abs':1e-5},
+              'chunk16':{'relative_l2':1e-6,'max_abs':1e-4},'passed':True}
+        cal=copy.deepcopy(case);ev=copy.deepcopy(case)
+        ev['chunk16']={'relative_l2':.0058,'max_abs':1.18};ev['passed']=False
+        return {'kind':'granite_capture','status':'FAIL',
+                'correctness_gate':{'relative_l2_max':2e-4,'max_abs_max':2e-3,'passed':False},
+                'cases':{'calibration':cal,'evaluation':ev}}
+
+    def test_partial_capture_requires_explicit_flag_and_retains_failure(self):
+        source=self.failed_chunk_fixture()
+        with self.assertRaises(ValueError):
+            g.qualify_capture(source)
+        q=g.qualify_capture(source,True)
+        self.assertEqual(q['capture_status'],'FAIL')
+        self.assertEqual(q['failed_checks'][0]['check'],'evaluation.chunk16')
+        self.assertFalse(q['quality_accepted']);self.assertFalse(q['chunk_reference_accepted'])
+        self.assertEqual(source['status'],'FAIL')
+
+    def test_partial_does_not_allow_other_failures_or_gate_changes(self):
+        for path,value in [(('cases','calibration','cached','max_abs'),.1),
+                           (('cases','evaluation','moe_replay','relative_l2'),.1),
+                           (('cases','calibration','chunk16','max_abs'),.1),
+                           (('correctness_gate','max_abs_max'),2.),
+                           (('cases','evaluation','passed'),True)]:
+            source=self.failed_chunk_fixture();obj=source
+            for key in path[:-1]:obj=obj[key]
+            obj[path[-1]]=value
+            with self.assertRaises(ValueError):g.qualify_capture(source,True)
 
 
 if __name__ == '__main__':

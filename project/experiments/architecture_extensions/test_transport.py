@@ -170,6 +170,20 @@ class TransportTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 t.run(SimpleNamespace(granite=gran,falcon=falcon,binding=binding,out=base/'bad'))
 
+    def test_partial_source_requires_explicit_and_retains_original_fail(self):
+        root=Path('D:/Projects/Codex/moe-hybrid-20261024-1419/transport-tests')
+        root.mkdir(parents=True,exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=root) as tmp:
+            folder=Path(tmp)
+            q={'capture_status':'FAIL','chunk_reference_accepted':False,'quality_accepted':False,
+               'failed_checks':[{'check':'evaluation.chunk16','actual':{'relative_l2':.0058,'max_abs':1.18}}]}
+            t.save(folder/'manifest.json',{'kind':'granite_numeric','status':'PARTIAL_DIAGNOSTIC',
+                'reference_qualification':q,'artifacts':[]})
+            with self.assertRaises(ValueError):t.load_source(folder,'granite_numeric')
+            manifest,receipt=t.load_source(folder,'granite_numeric',diagnostic_failed_chunk=True)
+            self.assertEqual(receipt['status'],'PARTIAL_DIAGNOSTIC')
+            self.assertEqual(receipt['reference_qualification']['capture_status'],'FAIL')
+
 
 if __name__=='__main__':
     unittest.main()

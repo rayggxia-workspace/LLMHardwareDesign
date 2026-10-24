@@ -308,13 +308,54 @@ def silu(x):
     return x*sigmoid
 
 
+def qualify_capture(manifest, diagnostic_failed_chunk=False):
+    """Explicitly narrow one retained failure; never convert it into reference PASS."""
+    if manifest.get('status')=='PASS' and manifest.get('correctness_gate',{}).get('passed') is True:
+        return {'capture_status':'PASS','failed_checks':[],
+                'allowed_scope':'captured layer0 numerical/structural experiment; not full-model quantization quality',
+                'quality_accepted':False,'chunk_reference_accepted':True,
+                'original_correctness_gate':manifest['correctness_gate']}
+    if not diagnostic_failed_chunk:
+        raise ValueError('capture correctness not passed; explicit diagnostic narrowing required')
+    gate=manifest.get('correctness_gate',{})
+    if (manifest.get('kind')!='granite_capture' or manifest.get('status')!='FAIL'
+            or gate.get('passed') is not False or gate.get('relative_l2_max')!=2e-4
+            or gate.get('max_abs_max')!=2e-3 or set(manifest.get('cases',{}))!={'calibration','evaluation'}):
+        raise ValueError('unreviewed failed-capture structure or changed original gate')
+    def passed(value, relative=2e-4, absolute=2e-3):
+        try:
+            r=float(value['relative_l2']);a=float(value['max_abs'])
+            return bool(np.isfinite(r) and np.isfinite(a) and 0<=r<=relative and 0<=a<=absolute)
+        except (KeyError,TypeError,ValueError):
+            return False
+    for name in ('calibration','evaluation'):
+        case=manifest['cases'][name]
+        if (case.get('batch'),case.get('prefill'),case.get('decode'),len(case.get('tokens',[])))!=(1,64,8,72):
+            raise ValueError('changed failed-capture token protocol')
+        if not passed(case.get('cached',{})) or not passed(case.get('moe_replay',{}),2e-5,2e-3):
+            raise ValueError('cached or complete MoE replay not eligible for partial diagnostics')
+    cal=manifest['cases']['calibration'];ev=manifest['cases']['evaluation']
+    if not passed(cal.get('chunk16',{})) or passed(ev.get('chunk16',{})):
+        raise ValueError('only the retained evaluation.chunk16 failure is eligible')
+    if any(not np.isfinite(float(ev['chunk16'][k])) or float(ev['chunk16'][k])<0
+           for k in ('relative_l2','max_abs')):
+        raise ValueError('retained failed check must still have finite nonnegative metrics')
+    if cal.get('passed') is not True or ev.get('passed') is not False:
+        raise ValueError('case failure flags inconsistent with retained failure')
+    return {'capture_status':'FAIL','failed_checks':[{'check':'evaluation.chunk16','actual':ev['chunk16']}],
+            'allowed_scope':'captured layer0 local numerical/structural diagnostics only',
+            'quality_accepted':False,'chunk_reference_accepted':False,
+            'original_correctness_gate':gate,'original_case_checks':{name:{key:manifest['cases'][name][key]
+                for key in ('cached','chunk16','moe_replay','passed')} for name in ('calibration','evaluation')}}
+
+
 def numeric(args):
     binding = source_binding(args.binding)
     if args.out.exists():
         raise ValueError('refuse overwrite')
     cm = json.loads((args.capture/'manifest.json').read_text())
-    if cm['status'] != 'PASS' or not cm['correctness_gate']['passed']:
-        raise ValueError('capture correctness not passed')
+    qualification=qualify_capture(cm,getattr(args,'diagnostic_failed_chunk',False))
+    partial=qualification['capture_status']=='FAIL'
     for rec in cm['artifacts']:
         if digest(args.capture/rec['path']) != rec['sha256']:
             raise ValueError('capture artifact SHA '+rec['path'])
@@ -480,7 +521,7 @@ def numeric(args):
         raise ValueError('incomplete witness set')
     deterministic_npz(args.out/'witnesses.npz',data)
     save(args.out/'witnesses.json',witnesses)
-    metrics = {'schema_version':1,'cases':cases,'calibration':{'tokens':64,
+    metrics = {'schema_version':1,'reference_qualification':qualification,'cases':cases,'calibration':{'tokens':64,
         'source':'calibration first64 only; no evaluation quality selection',
         'input_static_scale':cal_scale_x,'intermediate_static_scale':cal_scale_mid,
         'common_unit_exp':common_exp,'common_S32_calibration_target_bits':23},
@@ -496,7 +537,8 @@ def numeric(args):
             'witnesses':'32 full-K actual dots,32 RQs,4 full-H1536 eight-expert merges; independent receiver required'},
         'decision_scope':'route_fixed is diagnostic, not dynamic MoE claim; no full-model quality or hardware speed claim'}
     save(args.out/'metrics.json',metrics)
-    manifest = {'schema_version':1,'kind':'granite_numeric','status':'EXECUTED',
+    manifest = {'schema_version':1,'kind':'granite_numeric','status':'PARTIAL_DIAGNOSTIC' if partial else 'EXECUTED',
+        'reference_qualification':qualification,'diagnostic_failed_chunk_explicit':bool(getattr(args,'diagnostic_failed_chunk',False)),
         'source':{'commit':binding['commit'],'granite_sha256':digest(__file__),
                   'binding_sha256':digest(args.binding),'capture_manifest_sha256':digest(args.capture/'manifest.json'),
                   'capture_source':cm['source']},'capture':str(args.capture),
@@ -521,6 +563,8 @@ def main():
     n.add_argument('--capture',type=Path,required=True)
     n.add_argument('--binding',type=Path,required=True)
     n.add_argument('--out',type=Path,required=True)
+    n.add_argument('--diagnostic-failed-chunk',action='store_true',
+                   help='explicitly allow only retained eval chunk16 failure for local layer0 diagnostics; never reference PASS')
     a = p.parse_args()
     (capture if a.command=='capture' else numeric)(a)
 

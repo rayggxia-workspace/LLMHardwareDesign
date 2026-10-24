@@ -300,11 +300,19 @@ def norm_join_graph(norm_h,hidden,tile,layout,norm_before_gate=False):
     return g
 
 
-def load_source(directory,kind):
+def load_source(directory,kind,diagnostic_failed_chunk=False):
     manifest=json.loads((directory/'manifest.json').read_text())
     if manifest.get('kind')!=kind and not(kind=='falcon_capture' and manifest.get('schema')=='falcon-h1-bounded-v1'):
         raise ValueError('source kind expected '+kind)
-    if manifest.get('status') not in ('PASS','EXECUTED'):
+    if manifest.get('status')=='PARTIAL_DIAGNOSTIC':
+        qualification=manifest.get('reference_qualification',{})
+        if (not diagnostic_failed_chunk or kind!='granite_numeric'
+                or qualification.get('capture_status')!='FAIL'
+                or qualification.get('chunk_reference_accepted') is not False
+                or qualification.get('quality_accepted') is not False
+                or [v.get('check') for v in qualification.get('failed_checks',[])]!=['evaluation.chunk16']):
+            raise ValueError('partial failed-chunk source needs explicit restricted diagnostic scope')
+    elif manifest.get('status') not in ('PASS','EXECUTED'):
         raise ValueError('source not successfully executed')
     verified=[]
     for a in manifest['artifacts']:
@@ -314,6 +322,7 @@ def load_source(directory,kind):
             raise ValueError('source artifact SHA '+str(p))
         verified.append({'path':a['path'],'sha256':a['sha256'],'bytes':p.stat().st_size})
     return manifest,{'path':str(directory),'manifest_sha256':sha(directory/'manifest.json'),
+                     'status':manifest['status'],'reference_qualification':manifest.get('reference_qualification'),
                      'verified_artifacts':verified}
 
 
@@ -346,7 +355,7 @@ def run(args):
     verify=independent_checker(checker)
     sources={};certs=[];specs=[];ledgers={}
     if args.granite:
-        gm,sources['granite']=load_source(args.granite,'granite_numeric')
+        gm,sources['granite']=load_source(args.granite,'granite_numeric',getattr(args,'diagnostic_failed_chunk',False))
         metrics=json.loads((args.granite/'metrics.json').read_text())
         actual=[c for c in metrics['cases'] if c['activation']=='dynamic_row' and c['route']=='route_recomputed']
         if not actual or actual[0]['logical_payload_per_token']['expert_return_S32']!=8*1536*4:
@@ -446,11 +455,15 @@ def run(args):
                 'packets':sum(n['kind']=='packet' for n in nodes),'route_payload_bytes':dict(g.logical),
                 'independent_interval_audit':audit,'scope':witness['scope'],'precision':precision})
     metrics={'schema_version':1,'capacity_certificates':certs,'ledgers':ledgers,'copy_calendars':rows,
+        'reference_qualifications':{k:v['reference_qualification'] for k,v in sources.items() if v.get('reference_qualification')},
         'qualification':'fixed finite banks/BUS/FIFOs; source data format held constant within each comparison; no compute scheduling or physical timing',
         'not_ranked':'capacity rejected materialized candidates have no fabricated cycles; FP32 and S16 are separate, not performance peers'}
     save(args.out/'metrics.json',metrics)
     artifacts.append({'path':'metrics.json','bytes':(args.out/'metrics.json').stat().st_size,'sha256':sha(args.out/'metrics.json'),'kind':'capacity_and_copy_metrics'})
-    save(args.out/'manifest.json',{'schema_version':1,'kind':'architecture_transport','status':'EXECUTED',
+    partial=any(v['status']=='PARTIAL_DIAGNOSTIC' for v in sources.values())
+    save(args.out/'manifest.json',{'schema_version':1,'kind':'architecture_transport','status':'PARTIAL_DIAGNOSTIC' if partial else 'EXECUTED',
+        'reference_qualifications':metrics['reference_qualifications'],
+        'diagnostic_failed_chunk_explicit':bool(getattr(args,'diagnostic_failed_chunk',False)),
         'source':{'commit':binding['commit'],'transport_sha256':sha(__file__),'interval_checker_sha256':sha(checker),
                   'binding_sha256':sha(args.binding)},'sources':sources,'host':platform.node(),
         'artifacts':artifacts,'acceptance':'copy interval witness checked, arithmetic/end-to-end/hardware not validated'})
@@ -460,6 +473,7 @@ def main():
     p=argparse.ArgumentParser(__doc__)
     p.add_argument('--granite',type=Path);p.add_argument('--falcon',type=Path)
     p.add_argument('--binding',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
+    p.add_argument('--diagnostic-failed-chunk',action='store_true')
     run(p.parse_args())
 
 
