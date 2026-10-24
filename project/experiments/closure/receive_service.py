@@ -24,6 +24,7 @@ def need(ok, message):
 
 BYTE_COST = {"mul32": 265, "add64": 10, "rne64": 10, "abs64": 10,
              "compare64": 10, "reduce_flag": 1, "normadd128": 18,
+             "shift128": 18, "rne_div128_finalize": 64,
              "copy_byte": 1, "scalar_control": 10, "cast_i32_guard": 20}
 
 
@@ -55,6 +56,10 @@ def check_allocations(inventory, allocations):
     need(inventory["byte_cost"] == BYTE_COST and inventory["alu_slots64"] == 10
          and inventory["alu_slots128"] == 18 and inventory["SFUiterations"] == {"division128": 128, "isqrt128": 64},
          "explicit bytewise wide arithmetic and scalar SFU cost")
+    if "SFU_fixed_state" in inventory:
+        need(inventory["SFU_fixed_state"]["bytes"] == 48
+             and inventory["SFU_fixed_state"]["charged_within_aux_reserve"] is True,
+             "fixed SFU state charged to existing storage")
     need(inventory["packet"] == {"header_bytes": 32, "beat_bytes": 16, "max_payload": 1984,
                                   "FIFO_bytes": 2048, "BUS_count": 1, "BUS_bits": 128},
          "same finite BUS and FIFO")
@@ -416,6 +421,8 @@ def verify(result, numeric, compiled, math_receipt, producer_source):
          and totals["isqrt_iterations"] == report["ops"]["isqrt_restoring_iterations"]
          and totals["lut_reads"] == sum(report["ops"][key] for key in ("silu_lut_read_i32", "dt_lut_read_i32", "alpha_lut_read_u32")),
          "complete accepted numerical arithmetic and LUT inventory")
+    need(totals["shift128"] == totals["rne_div128_finalize"] == 72 * (2560 + 4096 + 2560),
+         "full norm numerator shifts and signed RNE finalization")
     return {"status": "PASS", "config": config, "artifacts": artifacts, "math_receipt": descriptor(math_receipt),
             "macro_events_checked": event_count, "expanded_leaves_proved_by_induction": expanded,
             "state_head_proposals_checked": len(proposals), "complete_norm_groups": 216,
