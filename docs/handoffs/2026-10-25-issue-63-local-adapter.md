@@ -38,3 +38,7 @@ C缺同版完整实例/放置/朝向、固定M8 escape/landing、冻结底座及
 物理任务/资产提供方（具体处理人待指定）需提供同版冻结实例/端口/固定M8引出/技术via/PG与clock资格。收到后先固定commit和SHA，再实现明确的物理绑定合同检查。
 
 看板未配置config/board.json，当前工具没有Projects能力：实际条目unverified、同步pending。管理员待指定，需要核验本Issue条目、Project ID=llm-hardware-design、实际Status/Priority并读回，不创建新看板或扩大权限。登记沿用management-hub PR5 pending，最终以读回为准。审查人待指定；PR不合并，Issue不提前done或关闭。
+
+## 2026-10-25 正式本机复跑回执
+
+干净执行源 `aa6f096695af45e9898090ce4f8006b8c9265029`，实际195项测试（32原小图、31原估算器、132适配器），0跳过；10个场景在独立源码副本/新进程/新cwd中重放，四个科学JSON逐字节及SHA一致。原fixture/expected/来源快照前后不变。真实导入/3032bit audit与bind/verify/replay独立重放一致，显式physical请求退出3。科学摘要SHA `f2ec30e28966be33888cf314bd5e93a0bb24378d4147d79cbdd9ad9971efbbdc`。原始日志和完整结果为 `.local/runs/formal-01/`；精选[回执](../../work/huangpingyang04-lgtm/63/receipt.json)与[科学摘要](../../work/huangpingyang04-lgtm/63/science.json)。C保持blocked，远端上传/CI/审查/看板另行核验。

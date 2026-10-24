@@ -29,3 +29,10 @@
 - 已恢复通用core/CLI/consumer/resource bridge和例子；本轮32上游小图+31估算器+42核心+23资源桥通过，最小build/verify通过。
 - 下一步：同一Draft PR持续接入v2两图、真实端口、完整独立复跑。C缺M8固定接入/同版冻结底座保持blocked。
 - 登记pending、Projects unverified/同步pending，审查人待指定；不标done。
+
+### #63 本机软件提交待审查（2026-10-25 Asia/Shanghai）
+
+- 持续Draft PR #79：https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/79，Refs #63；依赖PR78。
+- 正式干净执行源 aa6f096695af45e9898090ce4f8006b8c9265029；195 tests/0skip，10场景独立源码目录/进程重放科学SHA一致，固定输入不变。
+- A选定软件范围pass；B三真实LEF/3032旧bit对照pass，协议未验；C同版M8/冻结底座缺项blocked。服务器未连接、未比较、未覆盖。
+- 代码/说明/精选receipt见work/huangpingyang04-lgtm/63；CI和最终远端head待本次push读回。软件in_review，不标done、不合并；审查人待指定。看板unverified/同步pending。

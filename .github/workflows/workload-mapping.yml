@@ -6,11 +6,8 @@ on:
       - 'project/analysis/llm_resources/**'
       - 'project/analysis/block_v2_offline/**'
       - '.github/workflows/workload-mapping.yml'
-  push:
-    branches: ['task/63-workload-layout-adapter']
-    paths:
-      - 'project/analysis/workload_mapping/**'
-      - '.github/workflows/workload-mapping.yml'
+      - 'work/huangpingyang04-lgtm/63/**'
+      - 'docs/WORKLOAD_MAPPING_INPUT.md'
 permissions:
   contents: read
 jobs:
@@ -44,3 +41,13 @@ jobs:
           GIT_NO_LAZY_FETCH: '1'
           PYTHONDONTWRITEBYTECODE: '1'
         run: python -B -m project.analysis.workload_mapping.validate_delivery --output-dir .local/runs/ci
+      - name: Keep selected CI receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: workload-mapping-receipts
+          path: |
+            .local/runs/ci/receipt.json
+            .local/runs/ci/science.json
+            .local/runs/ci/failure.json
+          if-no-files-found: warn

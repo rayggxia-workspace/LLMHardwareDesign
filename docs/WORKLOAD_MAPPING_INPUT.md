@@ -108,3 +108,7 @@ python -B -m project.analysis.workload_mapping.validate_delivery --output-dir .l
 新clone可先显式获取两个固定commit对象，再运行`assets/acquire_reference_assets.py --allow-git-object-fetch --output-dir .local/dependencies/reference_assets`；该命令仅为GitHub固定资产取得，必须单独授权其显式Git对象获取。转换/测试/replay没有调用它，不会自动联网或追踪浮动版本。原ZIP和全LEF仅.local保存，仓库不上传>1MiB原始归档。CI将获取与科学运行分为独立步骤，科学阶段设置GIT_NO_LAZY_FETCH=1。
 
 当前独立消费端仍是拟议#55接口验证，未实际布局布线、未证明死锁/时序/RC/DRC或物理收益。新协议/新算子语义可能需要新适配实现；两种synthetic配置替换只证明本版合同配置机制。
+
+## 2026-10-25 正式本机复跑回执
+
+干净执行源 `aa6f096695af45e9898090ce4f8006b8c9265029`，实际195项测试（32原小图、31原估算器、132适配器），0跳过；10个场景在独立源码副本/新进程/新cwd中重放，四个科学JSON逐字节及SHA一致。原fixture/expected/来源快照前后不变。真实导入/3032bit audit与bind/verify/replay独立重放一致，显式physical请求退出3。科学摘要SHA `f2ec30e28966be33888cf314bd5e93a0bb24378d4147d79cbdd9ad9971efbbdc`。原始日志和完整结果为 `.local/runs/formal-01/`；精选[回执](../work/huangpingyang04-lgtm/63/receipt.json)与[科学摘要](../work/huangpingyang04-lgtm/63/science.json)。C保持blocked，远端上传/CI/审查/看板另行核验。
