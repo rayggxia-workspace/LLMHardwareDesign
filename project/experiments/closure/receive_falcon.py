@@ -307,6 +307,16 @@ def equal_array(expected, actual, name):
          and np.array_equal(expected, actual), "integer stage " + name)
 
 
+def reference_metric(actual, reference):
+    x, y = np.asarray(actual, np.float64), np.asarray(reference, np.float64)
+    need(x.shape == y.shape and np.isfinite(x).all() and np.isfinite(y).all(),
+         "post-run finite reference metric")
+    delta = x - y
+    return {"relative_l2": float(np.sqrt(np.sum(delta * delta)) /
+                                 max(float(np.sqrt(np.sum(y * y))), 1e-30)),
+            "max_abs": float(np.max(np.abs(delta), initial=0))}
+
+
 def verify(result, compiled, capture, chain_source, int_source):
     result, compiled, capture = Path(result), Path(compiled), Path(capture)
     man, checked = verify_manifest(result, statuses=("EXECUTED",))
@@ -402,11 +412,33 @@ def verify(result, compiled, capture, chain_source, int_source):
     lut_bytes = sum(v.nbytes for name, v in const.items() if "lut" in name)
     need(lut_bytes == spec["nonlinear_lut"]["rom_payload_bytes"]
          == report["actual_payload"]["lut_rom_payload_bytes"], "actual LUT ROM payload")
+    # Only after the integer result has been established, expose float
+    # references and recompute all reported local errors. They do not select
+    # online state units or change a numerical acceptance threshold.
+    reference = load_arrays(compiled / "reference.npz")
+    for name, value in reference.items():
+        need(name in captured and np.array_equal(value, captured[name]),
+             "post-run reference remains actual capture " + name)
+    expected_errors = {}
+    mapping = {"input_norm_q12": "norm", "projected_q12": "projected", "scan_q12": "raw_scan",
+               "gated_norm_q12": "scan_normed", "out_linear_q12": "mamba",
+               "join_q12": "pre_ff_input", "next_norm_q12": "next_norm_reference"}
+    for stage, suffix in mapping.items():
+        if stage in trace:
+            err = reference_metric(trace[stage].astype(np.float64) / (1 << 12),
+                                   reference[split + "." + suffix][:len(trace[stage])])
+            actual = report["reference_errors"][stage]
+            for key, value in err.items():
+                need(abs(float(actual[key]) - value) <= max(1e-13, abs(value) * 3e-11),
+                     "independent post-run reference error " + stage + "." + key)
+            expected_errors[stage] = err
+    need(set(report["reference_errors"]) == set(expected_errors), "all post-run local errors")
     return {"status": "PASS", "mode": mode, "split": split, "state_bits": bits, "policy": policy,
             "committed_tokens": count, "input_tokens": len(x), "published_state_saturations": state["saturations"],
             "rescale_events": state["rescale_events"], "final_epoch": state["epoch"],
             "integer_stages_checked": len(trace), "state_attempts_checked": sum(len(t["attempts"]) for t in txn["tokens"]),
             "runtime_source_audit": source_audit, "independent_operation_inventory": dict(eng.ops),
+            "post_run_reference_errors": expected_errors,
             "artifacts": checked, "compiled_artifacts": cc, "capture_artifacts": capture_checked,
             "limits": ["Integer software oracle and declared source audit; no native INT8 kernel, hardware speed, RTL/PPA or application-quality acceptance",
                        "Native attention and residual external-cut encoding remain; state mode additionally bypasses integer in-projection",
