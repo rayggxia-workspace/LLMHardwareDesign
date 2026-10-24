@@ -59,7 +59,7 @@ binding还需falcon_resume_sha256；falcon_chain_sha256、falcon_int_sha256按�
 
 ## 不能遗漏的宽度与原phase历史限定
 
-完整S32状态码×C32经N256归约的通用最坏绝对界为2^70，保证全码域约需71signed bits；当前候选只是实际max-product×N满足I64时执行，超界拒绝，不能宣传I64对任意合法S32/C32永不溢出。alpha UQ31×S32积界2^62可I64；dtB20有独立I32 guard，再乘x32。S16只是状态存储较窄，本候选计算先widenS32，不能自动将其宽乘服务减半。
+完整S32状态码×C32经N256归约的通用最坏绝对界为2^70，保证全码域需72signed bits；当前候选只是实际max-product×N满足I64时执行，超界拒绝，不能宣传I64对任意合法S32/C32永不溢出。alpha UQ31×S32积界2^62可I64；dtB20有独立I32 guard，再乘x32。S16只是状态存储较窄，本候选计算先widenS32，不能自动将其宽乘服务减半。
 
 原phase的conv_history_final_q12属于全72预处理历史；static_guard拒绝后它不是已提交前缀cache，不允许恢复。原phase只核算子整数链和R发布，不核完整历史事务；完整guard-rescale72基准的最终历史可与新phase逐码对照。原失败/字段/manifest不覆盖，新phase的atomic branch接续才有完整历史资格。
 

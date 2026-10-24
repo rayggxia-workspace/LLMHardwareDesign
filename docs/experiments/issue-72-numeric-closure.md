@@ -61,7 +61,7 @@ full S32重标的局部relativeL2：inputnorm0.0181%、projected2.4868%、scan1.
 
 ### 必须计入的宽度和存储
 
-dtB先RNE12为I32Q20，再与x乘并按state unit重标；不能合成一次三乘舍入。alpha×state可I64；S32×C32完整N256通用最坏需约71 signed bits，当前I64候选用实际保守界guard、超界拒绝，不覆盖全码域。norm含U128平方和、除法及isqrt；候选位迭代128/64轮，尚无RTL。宽乘按S8 digit和宽shift/add记账。
+dtB先RNE12为I32Q20，再与x乘并按state unit重标；不能合成一次三乘舍入。alpha×state可I64；S32×C32完整N256通用最坏需72 signed bits，当前I64候选用实际保守界guard、超界拒绝，不覆盖全码域。冻结phase13/service元数据的71位是漏计最负码边界的笔误，原artifact不覆盖；全码域应72位，实际I64 guard及本批结论不变，见[勘误](../../project/experiments/closure/ERRATA.md)。norm含U128平方和、除法及isqrt；候选位迭代128/64轮，尚无RTL。宽乘按S8 digit和宽shift/add记账。
 
 单layer完整S32/S16状态4/2MiB，旧态/私有候选/完整I64 proposal、73,728B conv历史和新旧两代、units/epoch/version必须有真实槽位。LUT总4,260,100B、W8权重32,849,920B、矩阵参数67,776B另计；不得塞进V16KiB或以FP32字节除四估计。
 
@@ -124,6 +124,6 @@ R8占R32768B；V2占V14336B；R16占R24576B+S0 32768B，其他库存相同。S16
 
 完整包9,898,974,561B/1096成员仅授权服务器：/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/delivery01/full-results.zip，SHA-256 80e0b598039256f576bc6280d1f677713df5d5b36b8ff8ec1e22f35ee7c60197。精选2,480,138B/286成员在仓库（metadata-only），SHA 165d57d6050e0ef0e8775d7d081175d35e8bb85fffcc163db3f08d6bb547c883。两包在服务器逐成员字节验收，精选在本机再次逐成员验收；这不替代独立服务器数学。43个phase源blob逐一对原Git commit SHA通过。完整包含执行产物/负例和归档前日志；collector/验包后续收据另在统一索引，不伪称在自身快照内。原Issue70数据/权重属明确外部输入，解包本批不能省略其SHA复核。
 
-本机89项新边界测试、80项原architecture_extensions回归、python -B scripts/check_project.py及git diff --check通过。没有本机模型/真实张量数学或其他机器任务。命令、接收与恢复详见[交接](../handoffs/2026-10-24-issue-72-numeric-closure.md)和closure/README.md。
+本机90项新边界测试、80项原architecture_extensions回归、python -B scripts/check_project.py及git diff --check通过。没有本机模型/真实张量数学或其他机器任务。命令、接收与恢复详见[交接](../handoffs/2026-10-24-issue-72-numeric-closure.md)和closure/README.md。
 
 本地与服务器成果已整理，使用同一PR73交付待审查合并，不自行合并或提前done。登记management-hub PR5 pending；无board.json/Projects能力，看板unverified、同步pending待管理员；审查人待指定。以上是架构合同进一步收敛，物理宏与端到端收益尚未定稿。

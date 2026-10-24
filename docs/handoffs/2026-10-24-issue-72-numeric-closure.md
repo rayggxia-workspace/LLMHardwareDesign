@@ -13,7 +13,7 @@
 - 固定同一gatedinput的whole/K512/K256三条件独立通过；nextnorm L2约3.03/1.87/1.67%，部分maxabs变坏，partial wire1/8/16倍，宽对齐/metadata非免费。
 - 20完整算术服务及10个label零差；Dpage/bank实际变化差小于0.02%，不足以定独立R/合宏。grouped函数不能套whole-row时隙。
 - 103本人Slurm作业100完成、3FAIL保留；另一次依赖提交拒绝无job。结束核对本批无活跃任务，成员89448未中断。
-- 本机89新测试、80旧模块、check_project、diffcheck通过。实际模型/张量/服务只服务器，无其他机器任务。
+- 本机90新测试、80旧模块、check_project、diffcheck通过。实际模型/张量/服务只服务器，无其他机器任务。
 
 ## 数据、SHA与实际验证
 

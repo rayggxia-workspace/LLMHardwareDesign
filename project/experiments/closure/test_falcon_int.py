@@ -59,6 +59,22 @@ class IntegerBoundary(unittest.TestCase):
         c=self.make_coeff(1);c['x_q12'][:]=1<<12;c['c_q12'][:]=(1<<31)-1
         r=f.scan(c,np.zeros(2,np.int16),np.zeros(2,np.int32),16,'guard_rescale',f.Ops())
         self.assertEqual(r['committed'],0);self.assertEqual(r['rejection']['reason'],'readout_wide_guard');self.assertEqual(r['transactions'][0]['before'],r['transactions'][0]['after'])
+    def test_full_i32_min_readout_needs_72_bits_and_aborts(self):
+        exact=256*((-(1<<31))**2)
+        self.assertEqual(exact,1<<70)
+        self.assertGreater(exact,(1<<70)-1)  # largest signed 71-bit value
+        state=np.full((1,1,256),-(1<<31),np.int32);units=np.zeros(1,np.int16)
+        coeff={'x_q12':np.zeros((1,1,1),np.int32),'b_q12':np.zeros((1,256),np.int32),
+               'c_q12':np.full((1,256),-(1<<31),np.int32),'dt_q20':np.zeros((1,1),np.int32),
+               'alpha_q31':np.full((1,1),1<<31,np.uint32)}
+        contract={'bits':32,'policy':'static_guard','heads':1,'dim':1,'n':256,
+                  'injection':'dt20*B12_RNE12_then_x12_RNE(32+state_exp)','maximum_retries':8}
+        resume={'state':state,'units':units,'epoch':0,'position':0,
+                'checkpoint':f.checkpoint(state,units,0,0,contract)}
+        result=f.scan(coeff,units,np.zeros(1,np.int32),32,'static_guard',f.Ops(),resume=resume)
+        self.assertEqual(result['committed'],0)
+        self.assertEqual(result['rejection']['reason'],'readout_wide_guard')
+        self.assertEqual(result['transactions'][0]['before'],result['transactions'][0]['after'])
     def test_checkpoint_tampering_rejected(self):
         state=np.zeros((2,2,3),np.int16);units=np.zeros(2,np.int16);contract={'bits':16};desc=f.checkpoint(state,units,3,4,contract)
         f.validate_checkpoint(desc,state,units,3,4,contract)

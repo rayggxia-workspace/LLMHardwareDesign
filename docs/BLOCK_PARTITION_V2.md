@@ -137,7 +137,7 @@ Falcon FP32/FP64连续性23门及完整层/head见证通过独立接收；S16/S3
 
 Falcon新增软件整数闭包覆盖完整R分支和4096维共享消费者。S16/S32 full因果重标各72step零发布sat，51个head事件/25epoch；旧态右移逐次RNE、当前输入guard、私有trial、单位/epoch/version和重试不能删。完整conv历史73,728B随状态/单位保存，完整分支末端失败不泄漏发布是当前协议候选；若改为消费者解耦提交，必须另付版本队列/信用/回滚与完整依赖，不宣称数学上只能同宏。
 
-单layerS16/S32状态2/4MiB、I64 proposal8MiB、旧新history、LUT4,260,100B、全部矩阵权重与参数不可能免费驻R32KiB/V16KiB。S负责有限backing和代际，R逻辑负责反馈/guard，V负责完整跨head归约及后继，M负责完整K的投影/部分和；这证明接口义务，尚不证明四者应分别制造。S32/C32完整N256通用读出约71signed bits，当前I64软件候选有guard而非全码域保证。
+单layerS16/S32状态2/4MiB、I64 proposal8MiB、旧新history、LUT4,260,100B、全部矩阵权重与参数不可能免费驻R32KiB/V16KiB。S负责有限backing和代际，R逻辑负责反馈/guard，V负责完整跨head归约及后继，M负责完整K的投影/部分和；这证明接口义务，尚不证明四者应分别制造。S32/C32完整N256通用读出72signed bits，当前I64软件候选有guard而非全码域保证。
 
 M/V重新量化边界须保留实际K组单位与宽ALIGN_REDUCE。whole-row/K512/K256输出投影受控分叉保持相同输入/W8/scale与完整消费者，只改A8粒度；不能先将各组RQ成同一窄输出再加，改舍入顺序会改变函数。额外partial、I16 scale、宽乘/加/移位、全归约和缓冲须进入同精度同资源比较后才决定近M或共享V。局部L2改善不是整模型质量通过，也不能把不同粒度当placement收益。
 

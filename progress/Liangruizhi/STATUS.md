@@ -6,7 +6,7 @@
 
 Granite新model64条件原门自洽、768整数router/gate独立通过，旧FAIL/内部FP32明示；eval动态W8集合变720/6912，W16 6/6912，全部选择性宽回退。Falcon12整数条件、6完整conv/R续接、3输出投影粒度独立接收；full S16/S32 GU72步零发布sat/51head事件/25epoch，nextnorm约3.03%，K512/K256降至1.87%/1.67%局部L2但partial wire增8/16倍，非完整模型质量。20完整算术服务独立PASS/10label零差；部署差<0.02%，不冻结独立R/V-R合宏。
 
-103服务器job100完成/3FAIL保留，43原Git源核验；9.90GB完整1096成员服务器/2.48MB精选286 metadata成员本机逐字节验收。89新边界/80旧模块/管理结构/diffcheck通过。[报告](../../docs/experiments/issue-72-numeric-closure.md)、[索引](../../project/experiments/closure/results/issue-72/index.json)、[交接](../../docs/handoffs/2026-10-24-issue-72-numeric-closure.md)。下一步真实wide/SFU/ROM/RQ、同函数grouped服务与prefill/权重复用，Granite全MoE/整模型质量/物理资格仍待验。交付in_review而非done，登记PR5 pending、看板unverified/同步pending待管理员、审查人待指定。
+103服务器job100完成/3FAIL保留，43原Git源核验；9.90GB完整1096成员服务器/2.48MB精选286 metadata成员本机逐字节验收。90新边界/80旧模块/管理结构/diffcheck通过。[报告](../../docs/experiments/issue-72-numeric-closure.md)、[索引](../../project/experiments/closure/results/issue-72/index.json)、[交接](../../docs/handoffs/2026-10-24-issue-72-numeric-closure.md)。下一步真实wide/SFU/ROM/RQ、同函数grouped服务与prefill/权重复用，Granite全MoE/整模型质量/物理资格仍待验。交付in_review而非done，登记PR5 pending、看板unverified/同步pending待管理员、审查人待指定。
 
 ## 2026-10-24（UTC+08:00）Issue70小MoE/并行混合架构（待审查合并）
 

@@ -13,4 +13,4 @@
 
 恢复先核最新规则/Issue/PR/评论/成员55/63及本人认证，读正式索引，验外包和全部成员SHA，再按原phase源码和slurm JSON里的command复跑到全新out。既有issue61 venv-modern/线程按原配置，不申请服务器误配的--mem，不重下载模型。metadata-only精选不能代替完整数组/原capture；字节接收不是数学/质量/RTL验收。
 
-本机89新边界/80旧模块/管理结构/diffcheck通过；103服务器job100完成、3FAIL保留；所有入比较的接收PASS。未完成：Granite全MoE整数及质量、Falcon整模型/长窗、真实wide/SFU/ROM和grouped-RQ同资源服务/prefill复用、物理宏与PPA。审查/合并待指定，不done；登记PR5 pending，看板unverified/同步pending待管理员。[交接](../../../docs/handoffs/2026-10-24-issue-72-numeric-closure.md)。
+本机90新边界/80旧模块/管理结构/diffcheck通过；103服务器job100完成、3FAIL保留；所有入比较的接收PASS。未完成：Granite全MoE整数及质量、Falcon整模型/长窗、真实wide/SFU/ROM和grouped-RQ同资源服务/prefill复用、物理宏与PPA。审查/合并待指定，不done；登记PR5 pending，看板unverified/同步pending待管理员。[交接](../../../docs/handoffs/2026-10-24-issue-72-numeric-closure.md)。

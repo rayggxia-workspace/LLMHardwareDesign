@@ -1,6 +1,6 @@
 # 当前状态
 
-- 2026-10-24 [Issue72/PR73](experiments/issue-72-numeric-closure.md)：Granite条件参考/768整数路由、Falcon12完整整数R条件/6连续恢复/3输出粒度及20完整compute服务独立接收；10对标签零差，真实部署差<0.02%，继续保留物理宏映射自由。因果重标72步零发布sat，局部误差与完整模型质量分列。103作业100完成/3失败保留，9.90GB完整/2.48MB精选和43原源SHA已验；89新/80旧测试通过。待审查合并非done；登记pending、看板unverified/同步pending。
+- 2026-10-24 [Issue72/PR73](experiments/issue-72-numeric-closure.md)：Granite条件参考/768整数路由、Falcon12完整整数R条件/6连续恢复/3输出粒度及20完整compute服务独立接收；10对标签零差，真实部署差<0.02%，继续保留物理宏映射自由。因果重标72步零发布sat，局部误差与完整模型质量分列。103作业100完成/3失败保留，9.90GB完整/2.48MB精选和43原源SHA已验；90新/80旧测试通过。待审查合并非done；登记pending、看板unverified/同步pending。
 
 
 - 2026-10-24 [Issue70/PR71](experiments/issue-70-moe-hybrid.md)：Granite/Falcon服务器最小集已执行。Falcon23项原生/FP64门与独立接收通过，S16/S32固定范围均4sat；Granite eval chunk16失败定位至layer13/token42路由放大，原FAIL保留，32dot/32RQ/4merge仅PARTIAL_DIAGNOSTIC。24配置COPY-only双轮/独立接收完成，非完整算术或PPA。保留六逻辑模板，新增动态路由/宽merge、二维state tile、4096跨head norm及三输入join义务；物理归属未冻结。966MB完整证据在授权服务器，3.14MB精选43成员已核SHA；待审查合并非done；登记pending、看板unverified/同步pending。

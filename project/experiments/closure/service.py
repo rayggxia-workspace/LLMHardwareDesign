@@ -410,7 +410,7 @@ class Builder:
         self.loop(body,128//D,page)
         self.transfer(body,aux,'ext.readout_guardmax',8,7168,head*8)
         self.macro('state.readout_products_guard',body,{'head':head,'unit':unit,'epoch':epoch,'Dpage':D,'N':N,'bits':bits,
-            'generic_unchecked_sum_requires_signed_bits':71,'actual_I64_maxproduct_guard':True},token)
+            'generic_unchecked_sum_requires_signed_bits':72,'actual_I64_maxproduct_guard':True},token)
 
     def readout(self,token,head,unit,epoch,bits):
         N=256;aux=self.aux;body=[];row=[];cell=[]
@@ -563,7 +563,7 @@ def run(args):
                 'No physical layout/timing calibration; baseline bytewise costs and wide-factor sensitivity are explicit assumptions',
                 'All single-token matrix operations use16 effective PEs from M256; prefill64 also deliberately not batched',
                 'The same math task/source/units/epochs/backing is used in each placement; pure split/shared label has identical calendar',
-                'Readout actual I64 guards accepted; generic S32xC32xN256 may require71bits and is not promised without guards'],
+                'Readout actual I64 guards accepted; generic S32xC32xN256 may require72bits and is not promised without guards'],
             'environment':{'python':platform.python_version(),'numpy':np.__version__}}
         put(out/'summary.json',summary)
         manifest['status']='EXECUTED_CONDITIONAL_SERVICE'

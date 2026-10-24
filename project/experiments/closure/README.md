@@ -23,7 +23,7 @@ python -B -m unittest discover -s project/experiments/architecture_extensions -p
 python -B project/experiments/closure/verify_delivery.py --index project/experiments/closure/results/issue-72/delivery-index.json --archive project/experiments/closure/results/issue-72/selected.zip --out <新D盘receipt.json>
 ~~~
 
-实际结果89项新检查、80项旧模块、管理结构通过。最后一条只验2.48MB精选metadata的SHA/全部286成员，不能在缺少完整数组时重算数学。完整9.90GB包按index.server_root取得，使用同工具指定full-results.zip核1096成员；原Issue70输入/权重仍是明确外部依赖。
+实际结果90项新检查、80项旧模块、管理结构通过。最后一条只验2.48MB精选metadata的SHA/全部286成员，不能在缺少完整数组时重算数学。完整9.90GB包按index.server_root取得，使用同工具指定full-results.zip核1096成员；原Issue70输入/权重仍是明确外部依赖。
 
 ## 原始执行与复跑
 
