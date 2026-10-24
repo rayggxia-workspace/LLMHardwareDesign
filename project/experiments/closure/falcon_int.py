@@ -37,10 +37,11 @@ def maximum(a):
     if lo==-(1<<63):raise OverflowError('I64_MIN forbidden before abs')
     return max(abs(lo),abs(hi))
 
-def checked_mul(a,b,ops=None,abits=32,bbits=32):
+def checked_mul(a,b,ops=None,abits=32,bbits=32,*,a_unsigned=False,b_unsigned=False):
     a=require_int(a);b=require_int(b)
-    for operand,width in ((a,abits),(b,bbits)):
-        if operand.size and (int(operand.min())<-(1<<(width-1)) or int(operand.max())>(1<<width)-1):raise OverflowError('operand exceeds declared storage width')
+    for operand,width,unsigned in ((a,abits,a_unsigned),(b,bbits,b_unsigned)):
+        lo=0 if unsigned else -(1<<(width-1));hi=(1<<width)-1 if unsigned else (1<<(width-1))-1
+        if operand.size and (int(operand.min())<lo or int(operand.max())>hi):raise OverflowError('operand exceeds declared storage width/sign')
     if maximum(a)*maximum(b)>I64:raise OverflowError('multiply conservative I64 guard')
     if ops:ops.mul(np.broadcast_shapes(a.shape,b.shape) and int(np.prod(np.broadcast_shapes(a.shape,b.shape))) or 1,abits,bbits)
     return a*b
@@ -166,7 +167,8 @@ def proposal(old,exp,alpha,dt,x,b,ops):
     # dtB20*x12 --RNE(32+state_exp)--> state code. This differs from
     # one RNE after triple multiplication and is independently testable.
     old=require_int(old);exp=require_int(exp);alpha=require_int(alpha);dt=require_int(dt);x=require_int(x);b=require_int(b)
-    decay=rshift(checked_mul(old,alpha[:,None,None],ops,32,32),31,ops)
+    if alpha.min(initial=0)<0 or alpha.max(initial=0)>(1<<31):raise OverflowError('alpha UQ0.31 outside [0,1]')
+    decay=rshift(checked_mul(old,alpha[:,None,None],ops,32,32,b_unsigned=True),31,ops)
     dtb=cast_i32(rshift(checked_mul(dt[:,None],b[None,:],ops,32,32),12,ops))
     raw=checked_mul(x[:,:,None],dtb[:,None,:],ops,32,32)
     injection=np.empty_like(raw)

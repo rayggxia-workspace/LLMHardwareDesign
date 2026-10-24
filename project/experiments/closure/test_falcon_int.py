@@ -14,6 +14,8 @@ class IntegerBoundary(unittest.TestCase):
         with self.assertRaises(OverflowError):f.rshift(np.array([-(1<<63)],np.int64),1)
         with self.assertRaises(OverflowError):f.checked_mul(np.array([1<<40]),np.array([1<<30]))
         with self.assertRaises(OverflowError):f.cast_i32(np.array([1<<31]))
+        with self.assertRaises(OverflowError):f.checked_mul(np.array([1<<31]),np.array([1]))
+        self.assertEqual(int(f.checked_mul(np.array([1]),np.array([1<<31]),b_unsigned=True)[0]),1<<31)
         self.assertEqual(f.rshift(np.array([-7,7]),100).tolist(),[0,0])
     def test_full_k_linear_dynamic_integer_scales(self):
         x=np.array([[4096,-8192,12288],[0,0,0]],np.int32);w=np.array([[127,127,-127],[-127,0,127]],np.int8)
