@@ -2,7 +2,7 @@
 import copy
 import unittest
 
-from service import GROUPS, ORGANIZATIONS, audit, build, config, inventory, lut_bytes
+from service import GROUPS, ORGANIZATIONS, audit, build, config, inventory, lut_bytes, verify_binding
 
 
 class AttentionServiceTests(unittest.TestCase):
@@ -83,6 +83,30 @@ class AttentionServiceTests(unittest.TestCase):
         first["a_offset"] = 4096
         with self.assertRaisesRegex(AssertionError, "matrix operand capacity"):
             audit(g, g.schedule("critical"))
+
+    def test_score32_Q12_storage_and_two_read_passes(self):
+        g, scheduled = self.small(queries=4)
+        all_packets = g.packets + g.streams
+        score = [p for p in all_packets if p["kind"] == "SCORE32Q12"]
+        self.assertEqual(sum(p["payload"] for p in score), g.expected["score_elements"] * 4)
+        for kind in ("SCORE_SUM_PASS", "SCORE_NORMALIZE_PASS"):
+            self.assertEqual(sum(p["payload"] for p in all_packets if p["kind"] == kind),
+                             g.expected["valid_elements"] * 4)
+        self.assertFalse(any("score16" in n["label"].lower() for n in g.nodes))
+        self.assertTrue(any(n["label"] == "score32Q12 write" and n["bytes"] == 256 for n in g.nodes))
+        audit(g, scheduled)
+
+    def test_binding_checks_both_actual_files_before_run(self):
+        actual = verify_binding({})
+        binding = dict(source_commit="a" * 40, service_sha256=actual["code_sha256"],
+                       dependency_sha256=actual["dependency_sha256"])
+        self.assertEqual(verify_binding(binding)["status"], "VERIFIED")
+        with self.assertRaisesRegex(ValueError, "service/code"):
+            verify_binding({**binding, "service_sha256": "0" * 64})
+        with self.assertRaisesRegex(ValueError, "dependency"):
+            verify_binding({**binding, "dependency_sha256": "0" * 64})
+        with self.assertRaisesRegex(ValueError, "source_commit"):
+            verify_binding({**binding, "source_commit": "unverified"})
 
     def test_reject_packet_truncation_and_removed_bus(self):
         g, scheduled = self.small("colocated_stream")

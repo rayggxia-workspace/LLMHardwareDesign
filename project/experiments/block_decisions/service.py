@@ -103,7 +103,7 @@ class AttentionGraph(Graph):
             QK=dict(raw=[0, 8192], digits=[8192, 12288],
                     partial=[20480, 1024], score=[21504, 256], meta=[24128, 256],
                     row_state=[24448, 256]),
-            softmax=dict(score=[0, 256], exp=[4096, 512], meta=[24128, 256],
+            softmax=dict(score=[0, 512], exp=[4096, 512], meta=[24128, 256],
                          row_state=[24448, 256]),
             PV=dict(raw_V=[0, 4096], V_digits=[4096, 6144],
                     raw_P=[10240, 1024], P_digits=[11264, 1536],
@@ -217,7 +217,7 @@ def build(c):
         qi = g.packet("EXT", "S7", q * d, "EXT", "S7", (start,),
                       Qbase + head * q * d, 0, "Q8")
         query = g.packet("S7", "M0", q * d, "S7", "MA0", qi, kind="Q8")
-        ms = g.memory("AC", q * 2, 24448, (*qm,), True, "initialize row max")
+        ms = g.memory("AC", q * 4, 24448, (*qm,), True, "initialize score32 row max")
         ls = g.memory("AC", q * 8, 24480, (ms,), True, "initialize sum64 zero")
         previous = g.add("QK phase begin", 0, (), (*query, ls))
         for kb in range(0, T, 16):
@@ -256,26 +256,26 @@ def build(c):
                 products = g.vector("QK32 M31 S8 limb products", q * 16, 20, (merge,))
                 scaled = g.wide("QK M31 product64 combine", q * 16, 80, (products,))
             score = g.vector("score RNE/saturate/mask", q * 16, 4, (scaled,))
-            store = g.memory("AC", q * 16 * 2, 21504, (score,), True, "score16 write")
-            r = g.memory("AC", q * 16 * 2, 21504, (store,), label="score max read")
-            old = g.memory("AC", q * 2, 24448, (r,), label="row max read")
+            store = g.memory("AC", q * 16 * 4, 21504, (score,), True, "score32Q12 write")
+            r = g.memory("AC", q * 16 * 4, 21504, (store,), label="score32 max read")
+            old = g.memory("AC", q * 4, 24448, (r,), label="row max32 read")
             maximum = g.vector("row max reduce", q * 16, 2, (old,))
-            maximum = g.memory("AC", q * 2, 24448, (maximum,), True, "row max write")
+            maximum = g.memory("AC", q * 4, 24448, (maximum,), True, "row max32 write")
             spills = []
             for row in range(q):
-                spills += g.packet("A", "S4", 32, "AC", "S4", (store, maximum),
-                                   21504 + row * 32, (row * T + kb) * 2, "SCORE16")
+                spills += g.packet("A", "S4", 64, "AC", "S4", (store, maximum),
+                                   21504 + row * 64, (row * T + kb) * 4, "SCORE32Q12")
             previous = g.add("score tile retired", 0, (), spills)
 
-        # First exp pass accumulates U64/f24 sums; each valid key is looked up.
+        # First exp pass accumulates U64/Q30 sums; each valid key is looked up.
         for row in range(q):
             active = T - q + row + 1
             for kb in range(0, active, 128):
                 count = min(128, active - kb)
-                data = g.packet("S4", "A0", count * 2, "S4", "AC", (previous,),
-                                (row * T + kb) * 2, 0, "SCORE_SUM_PASS")
-                read = g.memory("AC", count * 2, 0, data, label="sum score read")
-                maximum = g.memory("AC", 2, 24448 + row * 2, (read,), label="sum max read")
+                data = g.packet("S4", "A0", count * 4, "S4", "AC", (previous,),
+                                (row * T + kb) * 4, 0, "SCORE_SUM_PASS")
+                read = g.memory("AC", count * 4, 0, data, label="sum score32 read")
+                maximum = g.memory("AC", 4, 24448 + row * 4, (read,), label="sum max32 read")
                 exp = _exp(g, count, (maximum,))
                 ew = g.memory("AC", count * 4, 4096, (exp,), True, "exp32 scratch write")
                 er = g.memory("AC", count * 4, 4096, (ew,), label="exp32 scratch read")
@@ -290,10 +290,10 @@ def build(c):
             previous = reset
             for kb in range(0, active, 128):
                 count = min(128, active - kb)
-                data = g.packet("S4", "A0", count * 2, "S4", "AC", (previous,),
-                                (row * T + kb) * 2, 0, "SCORE_NORMALIZE_PASS")
-                read = g.memory("AC", count * 2, 0, data, label="normalize score read")
-                maximum = g.memory("AC", 2, 24448 + row * 2, (read,), label="normalize max read")
+                data = g.packet("S4", "A0", count * 4, "S4", "AC", (previous,),
+                                (row * T + kb) * 4, 0, "SCORE_NORMALIZE_PASS")
+                read = g.memory("AC", count * 4, 0, data, label="normalize score32 read")
+                maximum = g.memory("AC", 4, 24448 + row * 4, (read,), label="normalize max32 read")
                 exp = _exp(g, count, (maximum,))
                 ew = g.memory("AC", count * 4, 4096, (exp,), True, "normalize exp write")
                 er = g.memory("AC", count * 4, 4096, (ew,), label="normalize exp read")
@@ -474,6 +474,11 @@ def audit(g, scheduled):
                   (p["src"] == "EXT" or kind == "RESULT64")]
         if sum(p["payload"] for p in values) != expected:
             raise AssertionError("backing/result accounting " + kind)
+    if sum(p["payload"] for p in packets if p["kind"] == "SCORE32Q12") != e["score_elements"] * 4:
+        raise AssertionError("score32 spill accounting")
+    for kind in ("SCORE_SUM_PASS", "SCORE_NORMALIZE_PASS"):
+        if sum(p["payload"] for p in packets if p["kind"] == kind) != e["valid_elements"] * 4:
+            raise AssertionError("score32 two-pass accounting")
     return {**base, "packets": len(packets), "internal_stream_fragments": len(g.streams),
             "mixed_protocol_credit": "PASS", "all_GQA_heads_and_passes": "PASS",
             "scratch_leases": len(head_leases)}
@@ -494,6 +499,25 @@ def _write_json(path, value):
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def verify_binding(binding):
+    """Verify supplied source SHA values before creating outputs and at finish."""
+    code_sha = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+    dependency_sha = hashlib.sha256(_MODEL_PATH.read_bytes()).hexdigest()
+    if not isinstance(binding, dict):
+        raise ValueError("binding must be an object")
+    if binding:
+        commit = binding.get("source_commit", "")
+        if not isinstance(commit, str) or len(commit) != 40 or any(c not in "0123456789abcdef" for c in commit):
+            raise ValueError("binding requires a40-hex source_commit")
+        supplied_code = binding.get("service_sha256", binding.get("code_sha256"))
+        if supplied_code != code_sha:
+            raise ValueError("binding service/code SHA256 missing or mismatched")
+        if binding.get("dependency_sha256") != dependency_sha:
+            raise ValueError("binding dependency SHA256 missing or mismatched")
+    return dict(status="VERIFIED" if binding else "NOT_PROVIDED",
+                code_sha256=code_sha, dependency_sha256=dependency_sha)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, required=True)
@@ -502,6 +526,9 @@ def main(argv=None):
     if args.out.exists():
         raise FileExistsError("new output directory required")
     binding = json.loads(args.binding.read_text(encoding="utf-8-sig")) if args.binding else {}
+    if args.binding and not binding:
+        raise ValueError("empty supplied binding")
+    bound_sources = verify_binding(binding)
     args.out.mkdir(parents=True)
     cases, witnesses, pairs = [], [], []
     for group in GROUPS:
@@ -545,13 +572,13 @@ def main(argv=None):
                                                 status="REJECT_LUT_CAPACITY"),
                                             dict(step=256, required=lut_bytes(256), capacity=16384,
                                                  status="REJECT_LUT_CAPACITY")],
-                precision="Q8;KV8/16;score16;exp U32/f24;sum U64;P15;PV64;O16;RESULT64",
+                precision="Q8;KV8/16;score I32Q12;exp U32Q30;sum U64Q30;P15;PV64;O16 dyadic;RESULT64",
                 score_coefficients={"d128_M_Q30": 94906266, "d128_U7_digits": [26, 79, 32, 45, 0],
                                     "d128_S8_products_per_output": 20,
                                     "d256_M_Q30": 67108864, "d256_power2_fused_shift": True},
                 arithmetic_scope="bounded Q8/KV16 symmetric codes; checked-format QK32 then M31 product64; final O uses dyadic exponents; range/epoch guards assumed accepted, no numeric values computed",
                 exclusions=["unverified numeric/quality implementation", "RTL/PPA/target timing",
-                            "online attention", "KV append/transpose cost", "full model",
+                            "online attention", "KV append/producer layout formation", "full model",
                             "optimized GQA KV reuse; reloaded per head here"],
                 scheduler="fifo/critical separately optimized; not globally optimal",
                 scratch_allocations=AttentionGraph(config(), 1).allocations))
@@ -559,11 +586,14 @@ def main(argv=None):
     for p in sorted(args.out.iterdir()):
         data = p.read_bytes()
         files[p.name] = dict(bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
+    if verify_binding(binding) != bound_sources:
+        raise RuntimeError("source files changed during execution")
     manifest = dict(schema="conditional-attention-service/1", status="PASS", binding=binding,
                     source_commit=binding.get("source_commit", "unverified"),
-                    code_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                    source_verification=bound_sources,
+                    code_sha256=bound_sources["code_sha256"],
                     dependency_path="project/experiments/rq_ports/model.py",
-                    dependency_sha256=hashlib.sha256(_MODEL_PATH.read_bytes()).hexdigest(),
+                    dependency_sha256=bound_sources["dependency_sha256"],
                     cases=len(cases), optimized_pairs=len(pairs), witnesses=witnesses, files=files,
                     hardware_performance_accepted=False, numeric_quality_accepted=False)
     _write_json(args.out / "manifest.json", manifest)
