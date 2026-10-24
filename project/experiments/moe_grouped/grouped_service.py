@@ -68,7 +68,7 @@ class Builder(base.Builder):
     def engine(self,body,obj,offset,n,mode='read',index=()):
         a=self.alloc[obj];x=self.access(obj,offset,n,mode,index_strides=index);cost=base.packet_cost(a['offset']+offset,0,n)
         bankbeats=cost['src_beats'];rr=[('bank.'+a['bank'],bankbeats),('BUS',cost['wire_beats'])] if mode=='read' else [('BUS',cost['wire_beats']),('bank.'+a['bank'],bankbeats)]
-        counts={'engine_operand_read_bytes' if mode=='read' else 'engine_operand_write_bytes':n,'engine_local_beats':bankbeats,'engine_wire_bytes':cost['wire_bytes'],'engine_wire_beats':cost['wire_beats'],'engine_packets':cost['packets']}
+        counts={'engine_operand_read_bytes' if mode=='read' else 'engine_operand_write_bytes':n,'engine_local_beats':bankbeats,'engine_wire_bytes':cost['wire_bytes'],'engine_wire_beats':cost['wire_beats'],'engine_packets':cost['packets'],'wire_bytes':cost['wire_bytes'],'wire_beats':cost['wire_beats'],'packets':cost['packets'],'payload_bytes':n,'src_beats':bankbeats if mode=='read' else 0,'dst_beats':bankbeats if mode=='write' else 0}
         return self.leaf(body,'engine_access',rr,accesses=[x],counts=counts,FIFO_peak_bytes=32+16*((min(n,1984)+15)//16),engine='VR8',semantics='same bus-attached eight lane engine; no direct uncharged M ALU')
     def inherit(self,event):
         e=copy.deepcopy(event);duration=e['end']-e['start'];oldid=e['id'];digest=canonical_sha(e)

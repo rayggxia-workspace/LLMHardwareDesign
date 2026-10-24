@@ -24,7 +24,7 @@ class GroupedCalendar(unittest.TestCase):
     def test_engine_every_operand_uses_bank_and_bus(self):
         b=g.Builder(self.summary(),'near_m');body=[];r=b.engine(body,b.obj('product'),4,128);w=b.engine(body,b.obj('product'),0,256,'write')
         self.assertEqual([x['name'] for x in r['resources']],['bank.M','BUS']);self.assertEqual([x['name'] for x in w['resources']],['BUS','bank.M'])
-        self.assertEqual(r['counts']['engine_local_beats'],9);self.assertEqual(r['counts']['engine_wire_bytes'],160);self.assertLessEqual(w['FIFO_peak_bytes'],2048)
+        self.assertEqual(r['counts']['wire_bytes'],r['counts']['engine_wire_bytes']);self.assertEqual(r['counts']['src_beats'],9);self.assertEqual(r['counts']['dst_beats'],0);self.assertEqual(r['counts']['engine_local_beats'],9);self.assertEqual(r['counts']['engine_wire_bytes'],160);self.assertLessEqual(w['FIFO_peak_bytes'],2048)
     def test_all_matrix_group_sizes_charge_exact_full_group(self):
         for k in (256,512,4096):
             b=g.Builder(self.summary(),'near_m');body=[];b.matrix_group(body,0,k);b.count_tree(body,1)
@@ -37,7 +37,7 @@ class GroupedCalendar(unittest.TestCase):
     def test_real_partial_crossing_sharedV_only(self):
         a=g.Builder(self.summary(),'near_m');b=g.Builder(self.summary(),'shared_v');aa=[];bb=[]
         a.align(aa,0,16,[1]*16,1);b.align(bb,0,16,[1]*16,1);a.count_tree(aa,1);b.count_tree(bb,1)
-        self.assertNotIn('packets',a.totals);self.assertEqual(b.totals['payload_bytes'],64);self.assertEqual(a.totals['engine_operand_read_bytes'],b.totals['engine_operand_read_bytes']);self.assertEqual(a.totals['signextend_i32_i64'],b.totals['signextend_i32_i64'])
+        self.assertEqual(b.totals['payload_bytes']-a.totals['payload_bytes'],64);self.assertEqual(a.totals['engine_operand_read_bytes'],b.totals['engine_operand_read_bytes']);self.assertEqual(a.totals['signextend_i32_i64'],b.totals['signextend_i32_i64'])
     def test_inherited_event_content_bound_despite_new_global_time(self):
         b=g.Builder(self.summary(),'near_m');e={'id':4,'stage':'input_norm.reduce','token':0,'phase':'prefill','start':111,'end':114,'deps':[3],'meta':{'group':2560},'body':[{'kind':'compute','start':0,'end':3,'resources':[{'name':'VR8','start':0,'end':3}],'counts':{'add64':2}}]};digest=g.canonical_sha(e);b.inherit(e)
         self.assertEqual(b.events[0]['inherited_canonical_sha256'],digest);self.assertEqual(g.canonical_sha(b.events[0]),digest);self.assertEqual(b.events[0]['start'],0);self.assertEqual(b.clock,3)
