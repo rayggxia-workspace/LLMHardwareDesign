@@ -1,5 +1,9 @@
 # AI 协作约定
 
+## 2026-10-24 Issue74完整MoE与分组边界
+
+用户授权在本人新CPU服务器目录lrz-i74-*并行补齐Granite真实残差/norm→integer路由/8expert→宽合并/下游，以及固定group量化函数的同精度同资源M/V驻留比较。协议见project/experiments/moe_grouped/PROTOCOL.md；只读旧70/72权重/结果，独立分支/worktree/out，所有格式/非线性/宽乘/重对齐/metadata/端口/buffer真实记账。旧失败/勘误保留，封闭整数路径不得FP桥，无新模型/其他机器/Phi解封/成员55和63接管；条件服务非质量/RTL/PPA。
+
 ## 2026-10-24 Issue72定稿关键接续
 
 用户授权只读复用Granite/Falcon权重和70证据，在本人新Issue72 CPU服务器Slurm lrz-*并行验证路由精度/因果状态范围与完整整数R消费者，再做同精度同资源边界。原生FP32失败、固定ID反事实、FP64桥与COPY限定原样保留；新高精参考不能改写旧结果，runtime封闭整数段不得混入未声明FP。offline编译只用cal/static参数，online不读未来native。完整32head/4096norm/三输入join及private trial/epoch/恢复/宽算术/元数据/端口真实记账。未校准条件服务非RTL/PPA。无新模型、其他机器、Phi解封或成员55/63接管；独立子worktree，新out/source/input/output SHA，当前协议见project/experiments/closure/PROTOCOL.md。
