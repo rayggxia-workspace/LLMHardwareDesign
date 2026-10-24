@@ -151,9 +151,10 @@ def scientific(summary):
     return result
 
 
-def read_case(root, layer, tile, placement, label, suffix):
+def read_case(root, layer, tile, placement, label, suffix, receipt_root=None):
     name = f'service-l{layer}-t{tile}-{placement}-{label}{suffix}'
-    folder = Path(root)/name; receipt_path = Path(root)/('audit-'+name)/'receipt.json'
+    folder = Path(root)/name
+    receipt_path = Path(root if receipt_root is None else receipt_root)/('audit-'+name)/'receipt.json'
     m, artifacts = verify_manifest(folder, 'granite-service-run76-v1', 'EXECUTED_CONDITIONAL_SERVICE')
     need({'summary.json', 'row_hashes.json', 'witness.jsonl.gz'} <= set(artifacts), 'complete service artifacts')
     r = load(receipt_path); s = load(folder/'summary.json'); t = s['task']; cfg = s['config']; c = s['counts']
@@ -221,7 +222,7 @@ def read_case(root, layer, tile, placement, label, suffix):
         need(r[field]['sha256'] == t[field+'_sha256'], 'source descriptor '+field)
     hash_string(t['numeric_trajectory_sha256'], 'numeric trajectory')
     source = m['source']; need(re.fullmatch('[0-9a-f]{40}', source['commit']) and source['service_sha256'] == m['producer_sha256'], 'frozen service source')
-    evidence = {'case': name, 'manifest': desc(folder/'manifest.json'), 'receipt': desc(receipt_path),
+    evidence = {'case': name, 'manifest': desc(folder/'manifest.json'), 'receipt': desc(receipt_path), 'receipt_path': str(receipt_path),
                 'artifacts': artifacts, 'producer_source': source, 'receiver_source': r['source']}
     return {'name': name, 'folder': folder, 'summary': s, 'receipt': r, 'manifest': m, 'artifacts': artifacts,
             'row_hashes': row_hashes, 'allocation': allocation, 'evidence': evidence}
@@ -299,9 +300,9 @@ def metrics(case):
             'numeric_row_hashes_sha256': r['numeric_row_hashes_sha256']}
 
 
-def compare(root, suffix='01'):
+def compare(root, suffix='01', receipt_root=None):
     need(re.fullmatch('[0-9]+', suffix), 'numeric complete-batch suffix')
-    cases = {(layer, tile, p, label): read_case(root, layer, tile, p, label, suffix)
+    cases = {(layer, tile, p, label): read_case(root, layer, tile, p, label, suffix, receipt_root)
              for layer in LAYERS for tile in TILES for p in PLACEMENTS for label in LABELS}
     exemplar = cases[(0, 128, 'near_m', 'split')]
     calibration = calibration_proof(root, exemplar['summary']['task'])
@@ -346,16 +347,16 @@ def compare(root, suffix='01'):
                             'relative_to_tile128': [{'tile': tile, 'end_slot_delta': cases[(layer, tile, p, 'split')]['summary']['end_slot']-base['end_slot'],
                                                     'end_slot_percent': 100*(cases[(layer, tile, p, 'split')]['summary']['end_slot']-base['end_slot'])/base['end_slot']} for tile in TILES]})
     return {'schema': 'granite-service-comparison76-v1', 'status': 'PASS_BOUND_FINITE_SERVICE_COMPARISON',
-            'case_suffix': suffix, 'conditions_expected': 24, 'independent_receipts_pass': 24,
+            'case_suffix': suffix, 'service_receipt_root': str(Path(root if receipt_root is None else receipt_root)), 'conditions_expected': 24, 'independent_receipts_pass': 24,
             'calibration': calibration, 'label_controls': labels, 'paired_placements': pairs, 'window_comparisons': windows,
             'full1536_merge': [metrics(cases[(layer, 1536, p, label)]) for layer in LAYERS for p in PLACEMENTS for label in LABELS],
             'old_full8S32_in_V': {'status': 'REJECTED', 'bytes': 49152, 'capacity': 16384},
             'case_metrics': [metrics(v) for v in cases.values()], 'input_evidence': [v['evidence'] for v in cases.values()], 'limits': LIMITS}
 
 
-def run(root, out, source_commit=None, suffix='01'):
+def run(root, out, source_commit=None, suffix='01', receipt_root=None):
     out = Path(out); need(not out.exists(), 'output directory must be new')
-    report = compare(root, suffix); out.mkdir(parents=True, exist_ok=False)
+    report = compare(root, suffix, receipt_root); out.mkdir(parents=True, exist_ok=False)
     source = {'commit': source_commit or 'UNSPECIFIED', 'compare_service76_sha256': sha(__file__)}
     report['source'] = source; put(out/'report.json', report)
     put(out/'manifest.json', {'schema': 'granite-service-comparison-run76-v1', 'status': report['status'], 'source': source,
@@ -365,9 +366,10 @@ def run(root, out, source_commit=None, suffix='01'):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__); p.add_argument('--root', type=Path, required=True); p.add_argument('--out', type=Path, required=True)
+    p.add_argument('--receipt-root', type=Path, help='Service receipts only; exact directory, never falls back to root')
     p.add_argument('--source-commit'); p.add_argument('--suffix', default='01'); args = p.parse_args()
     if args.source_commit: need(re.fullmatch('[0-9a-f]{40}', args.source_commit), 'full comparison commit SHA')
-    report = run(args.root, args.out, args.source_commit, args.suffix)
+    report = run(args.root, args.out, args.source_commit, args.suffix, args.receipt_root)
     print(json.dumps({'status': report['status'], 'receipts': report['independent_receipts_pass'], 'out': str(args.out)}))
 
 

@@ -238,6 +238,24 @@ class CompareServiceTests(unittest.TestCase):
         task = self.resign_calibration(report_mutation=lambda r: r['ROM'].update(reserved_bytes=73736))
         with self.assertRaisesRegex(ValueError, 'original LUT words, padding'): C.calibration_proof(self.root, task)
 
+    def test_explicit_formal_receipt_root_never_falls_back(self):
+        selected = self.root/'formal-receipts02'; selected.mkdir()
+        name = 'audit-service-l0-t128-near_m-split01'
+        destination = selected/name; destination.mkdir()
+        (self.root/name/'receipt.json').replace(destination/'receipt.json')
+        # Other old-root PASS receipts exist, but missing selected receipts must fail.
+        with self.assertRaises(FileNotFoundError): C.compare(self.root, receipt_root=selected)
+        for old in self.root.glob('audit-service-*'):
+            if old.name == name: continue
+            target = selected/old.name; target.mkdir(); (old/'receipt.json').replace(target/'receipt.json')
+        report = C.compare(self.root, receipt_root=selected)
+        self.assertEqual(report['service_receipt_root'], str(selected))
+        self.assertTrue(all(str(selected) in e['receipt_path'] for e in report['input_evidence']))
+        (destination/'receipt.json').unlink()
+        # Even an old-root replacement cannot silently substitute the formal receipt.
+        write(self.root/name/'receipt.json', {'status': 'PASS_FINITE_SERVICE'})
+        with self.assertRaises(FileNotFoundError): C.compare(self.root, receipt_root=selected)
+
     def test_compare_output_exclusive_and_manifest_bound(self):
         out = self.root/'result'; C.run(self.root, out, '4'*40)
         m = C.load(out/'manifest.json'); self.assertEqual(m['artifacts'][0]['sha256'], C.sha(out/'report.json'))
