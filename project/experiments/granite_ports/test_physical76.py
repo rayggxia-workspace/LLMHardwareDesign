@@ -2,7 +2,7 @@
 import unittest
 
 from physical76 import (CAPACITIES, check_access, check_regions, local_beats,
-                        packet_segments)
+                        packet_segments, phase_intervals)
 
 
 def region(name, size, time=None):
@@ -48,6 +48,25 @@ class FiniteStorageTests(unittest.TestCase):
         access = {"offset": 0, "bytes": 16, "repeat": 1, "stride": 0, "index_strides": [1]}
         with self.assertRaisesRegex(ValueError, "noninvariant"):
             local_beats(0, access, (2,))
+
+    def test_full_merge_can_reuse_dead_front_storage(self):
+        macros = [{"meta": {"token": t, "phase": p}} for t in range(2) for p in ("front", "down", "norm")]
+        def phased(name, count, phase, offset=1408):
+            obj = region(name, count)
+            obj.update(offset=offset, lifetime={"kind": "token_phase", "phases": [phase], "every_token": True,
+                                              "barriers": "front -> down -> norm -> next_token"})
+            return obj
+        allocations = [region("global", 1408), phased("front", 9728, "front"),
+                       phased("fullH_s64", 12288, "down"), phased("O16_RQ", 480, "down", 13696)]
+        objects, high = check_regions(CAPACITIES, allocations, len(macros), macros)
+        self.assertEqual(high["V"], 14176)
+        access = {"object": "front", "offset": 0, "bytes": 16, "mode": "read", "repeat": 1,
+                  "stride": 0, "index_strides": []}
+        with self.assertRaisesRegex(ValueError, "live interval"):
+            check_access(access, objects, (), 1, len(macros), phase_intervals(macros))
+        bad = macros.copy(); bad[1] = {"meta": {"token": 0, "phase": "norm"}}
+        with self.assertRaisesRegex(ValueError, "phase barrier"):
+            check_regions(CAPACITIES, allocations, len(bad), bad)
 
 
 if __name__ == "__main__":

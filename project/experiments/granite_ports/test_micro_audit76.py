@@ -40,6 +40,18 @@ class IndependentMicroTests(unittest.TestCase):
         self.assertEqual(oracle("abs_s64", -(1 << 63)), {"value": 1 << 63, "valid": True})
         self.assertEqual(oracle("div_rne_s128_u64_i32", -5, 2), {"value": -2, "valid": True})
         self.assertEqual(oracle("udiv_u128", 7, 0), {"valid": False})
+        self.assertEqual(oracle("sub_s64", -(1 << 63), 1), {"value": (1 << 63)-1, "valid": False})
+        self.assertEqual(oracle("max_s64", -(1 << 63), -1), {"value": -1, "valid": True})
+        self.assertEqual(oracle("signextend_s16_i64", -32768), {"value": -32768, "valid": True})
+
+    def test_published_output_must_read_actual_live_bytes(self):
+        lines = ["B tiny", "M 0 2 input", "I 0 255", "I 1 1", "O value 1 0 255", "O valid 0 1 1", "E tiny"]
+        result = replay_lines(lines)[0]
+        self.assertEqual(result["outputs"], {"value": -1, "valid": True})
+        self.assertEqual(result["result_read_bytes"], 2)
+        lines[-3] = "O value 1 0 254"
+        with self.assertRaisesRegex(ValueError, "causal live-store"):
+            replay_lines(lines)
 
 
 if __name__ == "__main__":

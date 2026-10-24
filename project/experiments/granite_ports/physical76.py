@@ -22,8 +22,44 @@ def lifetime(value, events):
     return tuple(value)
 
 
-def check_regions(capacities, allocations, events):
+def phase_intervals(macros):
+    """Derive reusable phase intervals from the actual serialized macro order."""
+    need(isinstance(macros, list) and bool(macros), "actual phase calendar")
+    phases = ("front", "down", "norm")
+    timeline, previous, start = {}, None, 0
+    for index, event in enumerate(macros):
+        meta = event["meta"]
+        token, phase = meta["token"], meta["phase"]
+        need(type(token) is int and token >= 0 and phase in phases, "actual token/phase")
+        current = (token, phases.index(phase))
+        if previous is not None and current != previous:
+            expected = (previous[0], previous[1]+1) if previous[1] < 2 else (previous[0]+1, 0)
+            need(current == expected, "front/down/norm/next-token phase barrier order")
+            timeline[previous] = (start, index)
+            start = index
+        elif previous is None:
+            need(current == (0, 0), "phase calendar begins at token0/front")
+        previous = current
+    need(previous[1] == 2, "last token nextnorm must finish")
+    timeline[previous] = (start, len(macros))
+    return timeline
+
+
+def intervals(value, events, phases=None):
+    if not isinstance(value, dict):
+        return [lifetime(value, events)]
+    need(value.get("kind") == "token_phase" and value.get("every_token") is True
+         and value.get("barriers") == "front -> down -> norm -> next_token"
+         and isinstance(value.get("phases"), list) and value["phases"]
+         and len(value["phases"]) == len(set(value["phases"]))
+         and all(p in ("front", "down", "norm") for p in value["phases"])
+         and phases is not None, "phase lifetime needs actual barrier calendar")
+    return [span for (_, p), span in phases.items() if ("front", "down", "norm")[p] in value["phases"]]
+
+
+def check_regions(capacities, allocations, events, macros=None):
     need(capacities == CAPACITIES, "fixed finite bank inventory")
+    phases = phase_intervals(macros) if macros is not None else None
     objects, banks, high = {}, defaultdict(list), {}
     for value in allocations:
         name, bank = value["object"], value["bank"]
@@ -32,12 +68,12 @@ def check_regions(capacities, allocations, events):
              "unique existing-bank object")
         need(type(off) is type(count) is int and off >= 0 and count > 0
              and off+count <= capacities[bank], "finite capacity "+name)
-        begin, end = lifetime(value["lifetime"], events)
-        for left, right, birth, death, other in banks[bank]:
+        spans = intervals(value["lifetime"], events, phases)
+        for left, right, other_spans, other in banks[bank]:
             intersects_bytes = off < right and left < off+count
-            intersects_time = begin < death and birth < end
+            intersects_time = any(begin < death and birth < end for begin, end in spans for birth, death in other_spans)
             need(not (intersects_bytes and intersects_time), "live alias "+name+"/"+other)
-        banks[bank].append((off, off+count, begin, end, name))
+        banks[bank].append((off, off+count, spans, name))
         high[bank] = max(high.get(bank, 0), off+count)
         objects[name] = value
     need(bool(objects), "nonempty concrete memory deployment")
@@ -62,13 +98,13 @@ def affine_bounds(access, loops):
     return low, high+(repeat-1)*stride+size
 
 
-def check_access(access, objects, loops, macro, events):
+def check_access(access, objects, loops, macro, events, phases=None):
     need(access["object"] in objects and access["mode"] in ("read", "write"), "actual access object/mode")
     obj = objects[access["object"]]
     low, high = affine_bounds(access, loops)
-    begin, end = lifetime(obj["lifetime"], events)
+    spans = intervals(obj["lifetime"], events, phases)
     need(0 <= low < high <= obj["bytes"], "affine access exceeds object "+access["object"])
-    need(begin <= macro < end, "use outside live interval "+access["object"])
+    need(any(begin <= macro < end for begin, end in spans), "use outside live interval "+access["object"])
     return obj
 
 
