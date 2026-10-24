@@ -35,7 +35,7 @@
 | M矩阵/受检归约 | 16×16 S8阵列，Ktile128 i32部分和；单位对齐、完整归约/bias后单次RQ；32KiB含双buffer、PE和受限scratch | operand→MAC→组acc反馈；完整/partial typed mux，RQ可绕过；归约引擎数量不得随placement复制 | A8/W8或S8 digit；PARTIAL32+unit/组计数；COMPLETE32/宽格式+证书；ACT8/16；A分组128/更粗及Wout/W128、RQ近M/共享V按合同配置 |
 | V向量/转换 | norm、RoPE、SiLU/GELU、残差、scale编译和格式转换；8lane/16KiB候选，宽平方和/移位/比较和SFU单独声明 | shuffle/reduce/可装载表→RNE/SAT；共享ROM/divider真实仲裁；copy/pack也占端口 | 有版本的gamma/epsilon/LUT/scale；动态row delta与消费者/残差对齐；多模型非线性不固化成单一矩阵epilogue |
 | A注意力闭包 | 规范化概率、mask、Psum守卫、固定V单位的PV完整归约；32KiB临时，20KiB单读ROM候选 | score→max/exp/sum/div→受检P→PV反馈→最终转换；与M共用矩阵资源，不赠第二阵列 | M→A score/partial及A→M P双向；KV8/16、主路径P15（P7只允许独立接受的受限profile）、长度/窗口/单位/epoch和guard；独立A或同宏M+A仍比较 |
-| R递推/conv闭包 | K128×V32 S32单buffer16KiB；old+shadow已占32KiB无aux余量，V16/S侧shadow/合法原位待选；history/epoch单owner；投影全K后更新 | history环反馈；decay→projection→delta→outer update→从新state形成output→同版本共同commit/发布；不提前partial-K写state | q/k/v/beta/decay格式与初态、共享keyhead、state page epoch；独立R/共享V待整数数值及公平服务对照 |
+| R递推/conv闭包 | 完整共享key组状态与history/epoch单owner；K128×V32 S32为服务tile、非完整head；old+shadow32KiB无aux余量，tile16本地shadow或tile32/S侧shadow待比较；投影全K后更新 | history环反馈；decay→projection→delta→outer update→从新state形成output→同版本共同commit/发布；不提前partial-K写state | q/k/v/beta/decay格式与初态、共享keyhead、state page epoch；独立R/共享V待整数数值及公平服务对照 |
 | S存储slice | 8×32KiB、各128bit1RW候选；权重、全局KV、局部ring、score、recurrence backing按生命周期分配 | RX FIFO→单bank仲裁→SRAM→TX；不因有RX/TX当1R1W | owner/alias/valid length/ring位置，scale同页或静态profile；bank归属、复制/广播与M/V/A/R连接按产品图确定 |
 | D搬运/控制 | DMA、tile/digit循环、credit/完成/异常、状态版本及受限页表，8KiB描述符候选 | 制造前命令/完成/错误网和有限队列；先写数据再发布epoch | 引用已有端点/地址/格式profile，运行时换描述符不增加端口/算术/金属；跨块可达/多跳/背压仍付资源 |
 
@@ -109,3 +109,15 @@ Issue64 A/B/C，以及Issue66消费者/整数norm、连续R/conv、原256步诊�
 整数norm候选的对齐行20,480B、mixed输入25,600B均超V16KiB。两遍源读51,200B/row，或显式aligned spill写读40,960B加一遍源；与X16平方融合/物化分别是互斥路线。单口动作下界6084/6404beats并非目标周期。32/64次sqrt/div参考迭代也不是目标时序。gamma+norm行20,480B需分tile/流式，不赠容量。
 
 D15把真实近1 decay中106/512编码成1，D31消除了这一分辨率损失，但同窗S32输出只小幅改善、S16略差，尚无普遍必须D31的证据。S32降低舍入不扩大动态范围；184/193是定义的最终饱和，内核执行成功仍不能称无饱和或模型已接受。当前整数input RMSNorm不覆盖R内部q/k L2norm及GatedRMSNorm。A/R逻辑闭包更加明确，M/V/A/R/S/D六模板的物理数目和相邻预连线仍是待验证候选。
+
+## 10. Issue68：范围协议与物理边界接续（2026-10-24）
+
+[R范围/同资源服务记录](experiments/issue-68-range-service.md)补上因果重定标：当前整数proposal越界时，旧提交态按head做一次RNE右移、unit加一，并完整重试同token；多次逐一RNE不能合并为一次更大移位。state、output、units、epoch、version共同发布，失败attempt不可先更新消费者或history。源S32仍同物理范围，不能靠扩大到任意INT32偷过guard。独立接收确认固定旧256步窗S32/D31两次rescale后完整通过，原193次sat消除；新32步源没有触发，不能视为重定标的新独立质量验证。S16局部误差并未改善；全生命周期、下游gated-norm/SiLU和模型质量仍未验收。
+
+本批需要制造模板保留的义务更具体：R先完整K归约、全group范围guard后才从新generation形成输出，全部V分块完成后共同提交；S/D必须携带单位/epoch/version及失效、重试和代际发布接口。具体把guard/RNE/SFU放在哪个宏仍可选择，但不能删除这些资源或把读写当免费。跨chunk保存所有上述状态已逐码测试，checksum只是软件完整性，不是硬件认证资格。
+
+完整双head S32状态old/new各128KiB，48MiB全模型状态在声明有限EXT中保留，S256KiB还承担其他流，不能把两个整代免费常驻在R32KiB。实际服务候选采用tile16的old/new各8KiB+aux8KiB（R24KiB），或tile32 old16KiB+aux8KiB、new16KiB放S4。失败首次重试还需完整双head clone及坏head重编码。原位方案未证明同样abort/rollback语义，故不进placement主排名。
+
+V完整H2560 mixed sum+unit为25600B，超过16KiB。服务先付原SoA到K128 blocked打包，再完整5120B单位预扫，随后比较两遍源读或aligned spill，gamma与新A8/Ae另计。不能把选了finest unit后的对齐当免费，也不能把旧6084/6404B每行下界说成已经含本次新增预扫/布局成本。
+
+服务完整同资源结果尚在执行；共享/拆分同lane配额与同路由是标签零差异对照，shared8是另一发射粒度。当前不据此固定独立R宏或V/R合宏。
