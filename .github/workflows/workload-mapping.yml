@@ -34,7 +34,7 @@ jobs:
         run: |
           git config remote.origin.promisor true
           git config remote.origin.partialclonefilter blob:none
-          git fetch --no-tags --depth=1 --filter=blob:none origin 19c4b829211678d1a6fefa61bc0a23e68e4f13e1 cce235975b7be6d77247c9c9c7b09ea15608e2cf
+          git fetch --no-tags --depth=1 --filter=blob:none origin a5ff0c5af973ffeafa441712cd3f6e491da5a2fd 19c4b829211678d1a6fefa61bc0a23e68e4f13e1 cce235975b7be6d77247c9c9c7b09ea15608e2cf
           python -B project/analysis/workload_mapping/assets/acquire_reference_assets.py --allow-git-object-fetch --output-dir .local/dependencies/reference_assets
       - name: Offline tests, original acceptance and independent replay
         env:
