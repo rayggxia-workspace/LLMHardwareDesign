@@ -44,3 +44,5 @@ C缺同版完整实例/放置/朝向、固定M8 escape/landing、冻结底座及
 干净执行源 `aa6f096695af45e9898090ce4f8006b8c9265029`，实际195项测试（32原小图、31原估算器、132适配器），0跳过；10个场景在独立源码副本/新进程/新cwd中重放，四个科学JSON逐字节及SHA一致。原fixture/expected/来源快照前后不变。真实导入/3032bit audit与bind/verify/replay独立重放一致，显式physical请求退出3。科学摘要SHA `f2ec30e28966be33888cf314bd5e93a0bb24378d4147d79cbdd9ad9971efbbdc`。原始日志和完整结果为 `.local/runs/formal-01/`；精选[回执](../../work/huangpingyang04-lgtm/63/receipt.json)与[科学摘要](../../work/huangpingyang04-lgtm/63/science.json)。C保持blocked，远端上传/CI/审查/看板另行核验。
 
 首次CI run40114649385在fixed-dependency-diff返回128，因浅克隆没有固定PR78基线commit。原失败保留work/.../63/ci_first_failure.json及GitHub job日志；获取步骤加入该精确commit，原Git差异审计门槛不变。整体CI仍待后续真实终态，不能用本机通过替代。
+
+最新正式资格为 `.local/runs/formal-03`，执行源 `fee9ca211fcfa1440a2a4f2a3607762129957e00`：197项（32原小图+31原估算器+134适配器），0跳过，10场景独立副本/进程重放。新增反例覆盖输出重新hash后的类型/事件错误；科学摘要仍为f2ec30e28966be33888cf314bd5e93a0bb24378d4147d79cbdd9ad9971efbbdc，与195项旧回执逐字节相同，旧receipt不覆盖。见[最新receipt](../../work/huangpingyang04-lgtm/63/formal-03/receipt.json)。CI基线获取修复后run40114765442已真实success；最终发布head的CI与待审查状态以PR79实际读回为准。登记PR5仍open/unmerged/pending；Projects无配置/工具，unverified/同步pending。

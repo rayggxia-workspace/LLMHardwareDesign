@@ -36,3 +36,5 @@
 - 正式干净执行源 aa6f096695af45e9898090ce4f8006b8c9265029；195 tests/0skip，10场景独立源码目录/进程重放科学SHA一致，固定输入不变。
 - A选定软件范围pass；B三真实LEF/3032旧bit对照pass，协议未验；C同版M8/冻结底座缺项blocked。服务器未连接、未比较、未覆盖。
 - 代码/说明/精选receipt见work/huangpingyang04-lgtm/63；CI和最终远端head待本次push读回。软件in_review，不标done、不合并；审查人待指定。看板unverified/同步pending。
+
+#63最新正式复跑：源fee9ca211fcfa1440a2a4f2a3607762129957e00，197 tests/0skip，10场景独立重放，旧科学结果SHA不变。PR79持续交付，CI基线修复后的run40114765442通过，最终head CI读回见PR；本机/上传/CI与未审查/未合并状态区分。A/B选定范围pass，C仍blocked，Issue in_review，不done。
