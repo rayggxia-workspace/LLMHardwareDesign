@@ -83,6 +83,15 @@ class IntegerState(unittest.TestCase):
         d15,_=bridge_codes(np.array([true]),-15,0,1<<15);d31,_=bridge_codes(np.array([true]),-31,0,1<<31)
         self.assertEqual(int(d15[0]),1<<15);self.assertLess(int(d31[0]),1<<31)
         self.assertGreater(abs(1-true**8192),abs(1-true**32))
+        initial=np.array([[[1<<24]]],dtype=np.int64)
+        encoded={'q':np.full((256,1,1),32767),'k':np.zeros((256,1,1),dtype=np.int64),'v':np.zeros((256,1,1),dtype=np.int64),'beta':np.zeros((256,1),dtype=np.int64)}
+        traces=[]
+        for df,d in [(15,d15),(31,d31)]:
+            e={**encoded,'decay':np.full((256,1),int(d[0]))}
+            _,s,_=run_integer(e,initial,np.array([-24]),np.array([-10]),32,{'decay_fraction':df},0,32)
+            traces.append(s)
+        self.assertEqual(int(traces[0][-1,0,0,0]),1<<24)
+        self.assertLess(int(traces[1][-1,0,0,0]),int(traces[1][32,0,0,0]))
 
     def test_commit_rejects_stale_foreign_epoch_position_and_mutation(self):
         lease=StateLease(np.ones((1,2,2),dtype=np.int64),{'sequence':'a','epoch':0,'unit':[-15]},128)
@@ -134,6 +143,9 @@ class IntegerState(unittest.TestCase):
             with np.load(root/'results/evaluation.S32.D31.npz',allow_pickle=False) as z:
                 self.assertEqual(z['decay'].dtype,np.uint32);self.assertEqual(z['state_trace'].dtype,np.int32);self.assertEqual(z['state_trace'].shape,(5,2,4,4))
             with self.assertRaises(ValueError):execute(root,root/'results')
+            execute(root,root/'limit256',steps=256)
+            long_records=json.loads((root/'limit256/state-results.json').read_text())
+            self.assertTrue(all(x['requested_step_limit']==256 and x['integer_steps']==4 for x in long_records))
             conv=root/'conv';conv.mkdir();carrays={}
             for variant,factor in [('conv8',.99),('conv16',1.001)]:
                 for name in ('calibration','evaluation'):

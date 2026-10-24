@@ -22,6 +22,7 @@
 ```text
 python -B project/experiments/scale_state/state.py --root <capture目录> --binding <冻结JSON> --out <新的结果目录>
 python -B project/experiments/scale_state/state.py --root <capture目录> --conv <整数conv结果目录> --only-coupled --binding <冻结JSON> --out <新的耦合结果目录>
+python -B project/experiments/scale_state/state.py --root <旧真实256步窗目录> --steps 256 --binding <冻结JSON> --out <新的旧窗256步诊断目录>
 python -B -m unittest discover -s project/experiments/scale_state -p test_state*.py -v
 ```
 
@@ -30,6 +31,8 @@ binding 格式为 `{"commit":"实际commit","state_sha256":"state.py实际SHA"}`
 每条件输出 `窗口.S16.D15.npz` 等，保存 compact Q/K/V、unsigned beta/decay、初态、全部整数 state 边界、I64输出、scale、原生输出和 FP64状态参考。state-results.json 给逐长度误差、初态/operand裁剪、饱和、near-one decay、保守/观察位宽、commit记录及成本；manifest.json索引 SHA 和源版本。calibration 条件只作编译/诊断，evaluation不能称完整模型质量接受。
 
 可选 `--conv` 严格接收 `conv-output.npz`、其manifest SHA/bytes及 `capture_manifest_sha256`。`conv8/conv16.evaluation.query/key/value` 分别由 H8/W8、H16/W8 整数conv及明示SiLU桥产生。只在 evaluation S32/D31追加两项，使用原生独立cal编译的同一eS/eV，隔离conv输入变化；g/beta和真实初态保持原源。另保存同coupled输入FP64状态/输出参考，将conv输入/浮点桥误差与R整数误差分开。`--only-coupled` 仅执行这两项，不重复已完成native八项；不带该参数共十项（校准四、评价六）。conv自身的实现/成本由其单独结果索引负责，本模块不冒充全整数conv到norm/门控链。
+
+`--steps` 默认32，可选256，只消费原窗已有真实步数（例如原1步窗仍只执行1步）。不会复制token、拼接窗口或在中间重编码state。长窗报告1/8/32/256及原native最终态对比，记录requested/actual原始长度；它扩展旧诊断跨度，不是新的独立质量样本。完整整数state trace及FP64参考留在服务器，较大文件按项目共享存储/SHA规则交付。
 
 chunk8/16 与整段严格保持相同初态码和 scale/epoch，逐输出、state、commit完全一致。StateLease 用 sequence/scale/epoch/position/version/旧新state和输出哈希拒绝过期、异序列、改码和重复commit；哈希是软件证据，并非假设硬件已有 SHA 引擎。
 

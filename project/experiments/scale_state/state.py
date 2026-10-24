@@ -9,7 +9,9 @@ import hashlib
 import io
 import json
 import math
+import os
 from pathlib import Path
+import platform
 import re
 import time
 import zipfile
@@ -253,8 +255,9 @@ def load_capture(root):
     return manifest,np.load(root/name,allow_pickle=False),name
 
 
-def execute(root,out,binding=None,conv=None,only_coupled=False):
+def execute(root,out,binding=None,conv=None,only_coupled=False,steps=32):
     if out.exists():raise ValueError('refuse existing output directory')
+    if steps not in (32,256):raise ValueError('frozen step limits32/256 only')
     manifest,z,input_name=load_capture(root);out.mkdir(parents=True);start=time.monotonic();records=[];errors=[]
     source={'state_sha256':sha(Path(__file__)),'input_manifest_sha256':sha(root/'manifest.json'),'input_NPZ_sha256':sha(root/input_name),'input_NPZ_name':input_name,
       'input_provenance':{k:v for k,v in manifest.items() if k not in ('windows','artifacts')}}
@@ -278,10 +281,10 @@ def execute(root,out,binding=None,conv=None,only_coupled=False):
             p={field:z[name+'.'+field] for field in ('query','key','value','g','beta','initial_state','output','final_state')}
             if any(not np.isfinite(x).all() for x in p.values()):raise ValueError('nonfinite native data')
             if p['initial_state'].shape[0]!=1:raise ValueError('B1 initial state')
-            native_out,reference_states,final,normalized=float_reference(p)
+            native_out,reference_states,final,normalized=float_reference(p,keep=steps)
             oracle_out=metric(native_out,np.asarray(p['output'])[0]);oracle_state=metric(final,np.asarray(p['final_state'])[0])
             if oracle_out['relative_rmse']>=1e-4 or oracle_state['relative_rmse']>=1e-4:raise ValueError('native FP32/independent FP64 reference mismatch')
-            length=min(32,len(native_out));h,dim,width=p['initial_state'].shape[1:]
+            length=min(steps,len(native_out));h,dim,width=p['initial_state'].shape[1:]
             state_unit=head_units(p['initial_state'][0],32767,0)
             value_unit=np.full(h,-10,dtype=np.int16)
             scale_source='initial-state encoding/transition profile: 2x perhead max; floor=-26; not a lifetime calibrated static capability'
@@ -299,7 +302,9 @@ def execute(root,out,binding=None,conv=None,only_coupled=False):
             if meta:inferred_start=int(meta['start_position'])
             native_states=None
             if name+'.state_boundaries' in z:
-                native_states=z[name+'.state_boundaries'][:,0]
+                all_native_states=z[name+'.state_boundaries'][:,0]
+                if len(all_native_states)!=len(native_out)+1:raise ValueError('native captured state count')
+                native_states=all_native_states[:length+1]
                 if native_states.shape!=reference_states.shape or metric(native_states,reference_states)['relative_rmse']>=1e-4:
                     raise ValueError('native captured intermediate state/FP64 mismatch')
             profiles=[] if only_coupled else [(16,15,'native'),(16,31,'native'),(32,15,'native'),(32,31,'native')]
@@ -312,7 +317,7 @@ def execute(root,out,binding=None,conv=None,only_coupled=False):
                         value=conv_data[variant+'.'+name+'.'+key]
                         if value.shape!=p[key].shape or not np.isfinite(value).all():raise ValueError('coupled QKV shape/finite contract')
                         cp[key]=value
-                    coupled_y,coupled_s,_,inputs=float_reference(cp)
+                    coupled_y,coupled_s,_,inputs=float_reference(cp,keep=steps)
                 encoded={};clip={}
                 for key in ('q','k'):encoded[key],clip[key]=bridge_codes(inputs[key][:length],-15,-32767,32767)
                 encoded['v'],clip['v']=bridge_codes(inputs['v'][:length],value_unit[None,:,None],-32767,32767)
@@ -325,7 +330,7 @@ def execute(root,out,binding=None,conv=None,only_coupled=False):
                   'value_unit':value_unit.tolist(),'QK_unit':-15,'beta_unit':-15,'decay_fraction':df,
                   'input_variant':variant,
                   'stage_contract':'decay RNE at declared fraction; prediction/beta/outer/output RNE15; state-only final saturation'}
-                y,s,stats=run_integer(encoded,initial,unit,value_unit,bits,desc,inferred_start,chunk=32)
+                y,s,stats=run_integer(encoded,initial,unit,value_unit,bits,desc,inferred_start,chunk=length)
                 for chunk in (8,16):
                     cy,cs,cstats=run_integer(encoded,initial,unit,value_unit,bits,desc,inferred_start,chunk=chunk)
                     if not np.array_equal(y,cy) or not np.array_equal(s,cs) or stats['commits']!=cstats['commits']:
@@ -333,10 +338,11 @@ def execute(root,out,binding=None,conv=None,only_coupled=False):
                 samples=[]
                 physical_y=y.astype(np.float64)*np.exp2(unit)[None,:,None]
                 physical_s=s.astype(np.float64)*np.exp2(unit)[None,:,None,None]
-                for n in sorted({1,min(8,length),length}):
+                for n in sorted({1,min(8,length),min(32,length),length}):
                     row={'steps':n,'output_vs_native':metric(physical_y[:n],np.asarray(p['output'])[0,:n]),
                         'state_vs_FP64_replay':metric(physical_s[n],reference_states[n]),'state_reference_scope':'actual native captured boundaries and independent FP64 replay' if native_states is not None else 'FP64 replay checked at original captured full-window endpoint, not captured native state at this short prefix'}
                     if native_states is not None:row['state_vs_native_capture']=metric(physical_s[n],native_states[n])
+                    if n==len(native_out):row['state_vs_native_final']=metric(physical_s[n],p['final_state'][0])
                     if coupled_y is not None:
                         row['output_vs_FP64_same_coupled_input']=metric(physical_y[:n],coupled_y[:n])
                         row['state_vs_FP64_same_coupled_input']=metric(physical_s[n],coupled_s[n])
@@ -352,8 +358,8 @@ def execute(root,out,binding=None,conv=None,only_coupled=False):
                     arrays['FP64_coupled_input_state_reference']=coupled_s[:length+1]
                 save_npz(out/filename,arrays)
                 proofs=[format_bounds(dim,bits,su,vu,df) for su,vu in zip(unit,value_unit)]
-                records.append({'id':label,'status':'PASS_INTEGER_EXECUTION','original_native_steps':len(native_out),'integer_steps':length,
-                  'integer_scope':'one original contiguous window prefix only; no cross-window integer continuity claim','position_source':'actual captured positions; candidate epoch0 is a new encoding epoch' if meta else 'end minus original T inferred from original window ID; no independently captured runtime epoch' if endmatch else 'unknown: local window index only',
+                records.append({'id':label,'status':'PASS_INTEGER_EXECUTION','original_native_steps':len(native_out),'integer_steps':length,'requested_step_limit':steps,
+                  'integer_scope':('entire original contiguous window' if length==len(native_out) else 'one original contiguous window prefix')+' only; no cross-window integer continuity claim','position_source':'actual captured positions; candidate epoch0 is a new encoding epoch' if meta else 'end minus original T inferred from original window ID; no independently captured runtime epoch' if endmatch else 'unknown: local window index only',
                   'format':desc,'scale_source':scale_source,'initial_state_scan_elements':int(p['initial_state'].size),
                   'offline_scale_compiler_scan_elements':compiler_scan_elements,
                   'role':'calibration' if name in calnames else 'independent evaluation' if calnames else 'previously observed legacy diagnostic',
@@ -366,6 +372,7 @@ def execute(root,out,binding=None,conv=None,only_coupled=False):
             errors.append({'window':name,'status':'FAIL','error_type':type(exc).__name__,'error':str(exc)})
     save(out/'state-results.json',records)
     save(out/'manifest.json',{'status':'FAIL' if errors else 'PASS','source':source,'integer_conditions':len(records),'failures':errors,
+      'requested_step_limit':steps,'environment':{'python':platform.python_version(),'numpy':np.__version__,'host':platform.node(),'SLURM_JOB_ID':os.environ.get('SLURM_JOB_ID'),'OMP_NUM_THREADS':os.environ.get('OMP_NUM_THREADS'),'MKL_NUM_THREADS':os.environ.get('MKL_NUM_THREADS'),'OPENBLAS_NUM_THREADS':os.environ.get('OPENBLAS_NUM_THREADS')},'performance_eligible':False,
       'seconds':time.monotonic()-start,'scope':__doc__,'floating_bridges':['captured FP32 conv/SiLU and QKV projections','offline FP64 L2norm/rsqrt/head scaling','source sigmoid/softplus/exp and U16Q15/U32Q31 gate compiler','initial state and static exponent compiler','FP64 numerical oracle only'],
       'conv_scope':'Native and optionally externally verified H8/W8 or H16/W8 integer conv outputs; SiLU and subsequent L2 normalization remain explicit floating bridges. Same native-calibration eS/eV reused for controlled coupled comparison. Conv implementation/cost is independently indexed, not duplicated in R cost.',
       'run_selection':'coupled-only evaluation2' if only_coupled else 'native calibration4/evaluation4 and optional coupled evaluation2',
@@ -377,7 +384,8 @@ def execute(root,out,binding=None,conv=None,only_coupled=False):
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--root',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--binding',type=Path)
     p.add_argument('--conv',type=Path);p.add_argument('--only-coupled',action='store_true')
-    a=p.parse_args();execute(a.root,a.out,a.binding,a.conv,a.only_coupled)
+    p.add_argument('--steps',type=int,choices=(32,256),default=32)
+    a=p.parse_args();execute(a.root,a.out,a.binding,a.conv,a.only_coupled,a.steps)
 
 
 if __name__=='__main__':main()
