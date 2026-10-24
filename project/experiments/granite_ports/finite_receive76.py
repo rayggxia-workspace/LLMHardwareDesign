@@ -112,6 +112,45 @@ def verify_stage_addresses(event, objects, owner):
     """Check graph objects and exact complete tensor slices, beyond byte totals."""
     stage, m = event["stage"], event["meta"]
     leaves = list(nested_leaves(event["body"]))
+    def operand(obj, offset, size, mode, axes, loops=None):
+        matches = [(node, repeat, a) for node, repeat in leaves for a in node.get("accesses", [])
+                   if a["object"] == obj and a["offset"] == offset and a["bytes"] == size and a["mode"] == mode
+                   and a["index_strides"] == axes and (loops is None or repeat == loops)]
+        need(bool(matches), "actual consumer operand/row/format address "+stage+":"+obj)
+        return matches
+    def shift_values():
+        return [node["parameters"]["shift"] for node, _ in leaves if node["kind"] == "micro"
+                and node["op"] in ("rne_s64_i32", "rne_s128_i32", "shl_s64_s128", "shl_u128")
+                and "shift" in node["parameters"]]
+    if stage.endswith((".full_absmax_scan", ".A8_encode")):
+        source = "cut.norm" if stage.startswith("expert_input") else "front.mid"
+        offset = m["token"]*6144 if source == "cut.norm" else 0
+        operand(source, offset, 32, "read", [32], (m["K"]//8,))
+        if stage.endswith(".A8_encode"):
+            target = "front.norm_a8" if m["rank"] is None else "S0.mid_a8"
+            position = 0 if m["rank"] is None else m["rank"]*512
+            operand(target, position, 8, "write", [8], (m["K"]//8,))
+            need(shift_values() == [m["delta"]], "causal current-row scale used by actual A8 encode")
+    if stage.endswith(".minimal_shift_publish"):
+        rank = m["rank"]
+        operand("S0.input_delta" if rank is None else "S0.mid_delta", 0 if rank is None else rank*2, 2, "write", [])
+        operand("S0.input_delta64" if rank is None else "S0.mid_delta64", 0 if rank is None else rank*8, 8, "write", [])
+        need(shift_values() == list(range(m["delta"]+1)), "all failed minimal-scale probes and successful current-row guard paid")
+    if stage == "front.published_router_and_A8":
+        operand("cut.ids", m["token"]*8, 8, "read", [])
+        operand("cut.gates", m["token"]*16, 16, "read", [])
+        operand("S0.ids", 0, 8, "write", []); operand("S0.gates", 0, 16, "write", [])
+        operand("front.norm_a8", 0, 1536, "read", []); operand("M.a", 0, 1536, "write", [])
+    if stage == "front.silu_LUT":
+        operand("front.gateup", 0, 32, "read", [32], (64,))
+        operand("V.index32", 0, 4, "read", [4], (64, 8))
+        operand("front.silu", 0, 4, "write", [32, 4], (64, 8))
+        need(shift_values() == [4, 0], "actual integer LUT index RNE and guarded cast")
+    if stage == "front.mid_Q12":
+        operand("front.silu", 0, 32, "read", [32], (64,))
+        operand("front.gateup", 2048, 32, "read", [32], (64,))
+        operand("front.mid", 0, 32, "write", [32], (64,))
+        need(shift_values() == [12], "preserved Q24 to Q12 mid rounding before dynamic A8")
     if stage in ("gate_up.fullK_RQ", "down.fullK_RQ_merge"):
         which = "gate_up" if stage.startswith("gate_up") else "down"
         O, K, first = m["O"], m["K"], m["Ostart"]
@@ -136,6 +175,9 @@ def verify_stage_addresses(event, objects, owner):
         if which == "down":
             need(any(node["kind"] == "micro" and node["op"] == "mul_s32_u16" and node["parameters"]["gate_rank"] == m["rank"] for node, _ in leaves)
                  and any(node["kind"] == "micro" and node["op"] == "add_s64" and node["parameters"]["rank_prefix"] == m["rank"] for node, _ in leaves), "actual same rank Q15 gate then full prefix consumer")
+            operand("S0.gates", m["rank"]*2, 2, "read", [], (m["Ocount"]//16,))
+            operand("down.merge64", 0, 128, "read", [128], (m["Ocount"]//16,))
+            operand("down.merge64", 0, 128, "write", [128], (m["Ocount"]//16,))
     if stage == "front.expert_dispatch" or stage == "down.load_mid_and_dispatch":
         transfers = [node for node, _ in leaves if node["kind"] == "transfer"]
         need(any(n["packet"]["src"] == "const.dispatch" and n["packet"]["src_offset"] == m["expert"]*64
@@ -147,6 +189,21 @@ def verify_stage_addresses(event, objects, owner):
         transfers = [node for node, _ in leaves if node["kind"] == "transfer"]
         need(any(n["packet"]["dst"] == "ext.layer_output" and n["packet"]["dst_offset"] == m["token"]*6144+m["Ostart"]*4
                  and n["packet"]["bytes"] == 64 and n["accesses"][1]["index_strides"] == [64] for n in transfers), "stream O16 layerout to actual token EXT, no hidden full Q12 buffer")
+        operand("cut.residual", m["token"]*6144+m["Ostart"]*4, 64, "read", [64], (m["Ocount"]//16,))
+        operand("const.scalars", 0, 4, "read", [], (m["Ocount"]//16,))
+        need(shift_values() == [15, 20, 0], "complete8 merge once RNE15, coefficient once RNE20 then I32 join guard")
+    if stage == "norm.full1536_sumsq":
+        matched = operand("ext.layer_output", m["token"]*6144, 32, "read", [32], (192,))
+        need(len(matched) == 2, "full same operand squared, no truncated or old layer norm")
+    if stage == "norm.complete_reduction_barrier":
+        operand("const.scalars", 32, 16, "read", [])
+        operand("const.scalars", 16, 16, "read", [])
+        need(shift_values() == [40], "wholeH1536 floor variance plus Q24 epsilon and exact isqrt input")
+    if stage == "norm.full1536_emit":
+        operand("ext.layer_output", m["token"]*6144, 32, "read", [32], (192,))
+        operand("const.next_gamma", 0, 32, "read", [32], (192,))
+        operand("ext.nextnorm", m["token"]*6144, 32, "write", [32], (192,))
+        need(shift_values() == [12], "true nextgamma normalization wide numerator shift")
 
 
 def verify_rows(root, result, trace, layer):
