@@ -1,0 +1,36 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase6/project/experiments/range_service/service.py",
+    "--root",
+    "/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024",
+    "--range",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-native01",
+    "--task",
+    "native.evaluation.S32.D31.guard_rescale",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/svc-n-split6_2-01",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase6/binding.json",
+    "--organization",
+    "split6_2"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase6/project/experiments/range_service/service.py --root /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024 --range /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-native01 --task native.evaluation.S32.D31.guard_rescale --out /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/svc-n-split6_2-01 --binding /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase6/binding.json --organization split6_2",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i68-svc-n-split6_2-01",
+    "--partition=c96",
+    "--cpus-per-task=1",
+    "--time=00:45:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/svc-n-split6_2-01-%j.log",
+    "--dependency=afterok:90102",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase6/project/experiments/range_service/service.py --root /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024 --range /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-native01 --task native.evaluation.S32.D31.guard_rescale --out /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/svc-n-split6_2-01 --binding /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase6/binding.json --organization split6_2"
+  ],
+  "stdout": "90110",
+  "phase": "phase6",
+  "binding_sha256": "d2b83ef1104f55870af7852bfbcd9c386fd8b5766585ff823e7a2e117e283600"
+}

@@ -27,3 +27,9 @@ norm32与旧R256属于不同真实捕获；同场比较只作为两个独立竞�
 接收前固定的layer0/end8192 S32/D31：static193sat、guard第4token拒绝；adaptive两波、单位[-27,-33]→[-27,-31]、epoch2，完整256步且0sat。输出局部RMSE约0.04821%→0.04724%，final state对FP64约0.07255%→0.06317%，重编码自身额外读写262144B/RNE32768cell，完整重试/代际shadow另需服务计价。S16同窗adaptive输出约1.01663%，并未因消除sat就变成应用质量通过。所有样本仍是既有观察诊断，非新独立质量集合或通用生命周期证明。
 
 补充软件checkpoint携state/units/epoch/version/position/sequence，实际chunk接续逐码/事件一致；unkeyed checksum只表软件完整性，不声称认证或硬件SHA引擎。原range计算源83ef2b0...及运行commit7ea68a4保留，兼容resume扩展源db92865...单独phase5；未覆写原数值结果。
+
+## 同资源服务实际执行中
+
+冻结service源0fa2cc07aa192d746db34ebbb96ca512dcd52c99ff940c98ec0a98a85769d59c@ae9d26b，4个单配置producer pilot90092/93/95/96完成。接收器先因只允许双策略而拒绝显式fifo子集；两版原失败及一次root接收路径误填均保留，未重新运行数值或producer掩盖失败。最新phase9读取原pilot01/02，90102 native已PASS、90103 legacy实际仍在接收。
+
+28分片90104–90131，每分片独立目录、1CPU/1线程、7组织×2源任务×2轮，默认2tile×2norm route×2EXT×2strategy，预计每轮每源56配置/112witness。4逻辑聚合90132/33/35/36及全量独立接收90134/37已afterok排队，未提前称完成。label-only sharedX_Y/splitX_Y保持逐节点相同资源，shared8是不同发射粒度，不归为纯物理归属收益。

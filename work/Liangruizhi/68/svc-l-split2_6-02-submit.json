@@ -1,0 +1,36 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase6/project/experiments/range_service/service.py",
+    "--root",
+    "/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024",
+    "--range",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-legacy01",
+    "--task",
+    "legacy.layer0-end8192.S32.D31.guard_rescale",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/svc-l-split2_6-02",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase6/binding.json",
+    "--organization",
+    "split2_6"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase6/project/experiments/range_service/service.py --root /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024 --range /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-legacy01 --task legacy.layer0-end8192.S32.D31.guard_rescale --out /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/svc-l-split2_6-02 --binding /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase6/binding.json --organization split2_6",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i68-svc-l-split2_6-02",
+    "--partition=c96",
+    "--cpus-per-task=1",
+    "--time=00:45:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/svc-l-split2_6-02-%j.log",
+    "--dependency=afterok:90103",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase6/project/experiments/range_service/service.py --root /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024 --range /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-legacy01 --task legacy.layer0-end8192.S32.D31.guard_rescale --out /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/svc-l-split2_6-02 --binding /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase6/binding.json --organization split2_6"
+  ],
+  "stdout": "90129",
+  "phase": "phase6",
+  "binding_sha256": "d2b83ef1104f55870af7852bfbcd9c386fd8b5766585ff823e7a2e117e283600"
+}
