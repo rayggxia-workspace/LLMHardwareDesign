@@ -77,16 +77,20 @@ def complete_dot(a, w, accumulator_bits=32):
 
 
 def signed_s8_digits(code, bits):
-    """Sign/magnitude base-128 digits, each in the true S8 domain.
+    """Radix-128 low digits and a signed S8 most-significant digit.
 
     Width fixes the number of digits.  Tiny observed operands therefore do not
     earn a hidden fast path in the conditional service inventory.
     """
     n = checked(integer(code), bits)
-    count = (bits + 6) // 7
-    sign = -1 if n < 0 else 1
-    magnitude = abs(n)
-    result = [sign * ((magnitude >> (7 * i)) & 127) for i in range(count)]
+    count = 1 if bits <= 8 else 1 + (bits - 8 + 6) // 7
+    remainder = n
+    result = []
+    for _ in range(count - 1):
+        result.append(remainder & 127)
+        remainder >>= 7
+    result.append(remainder)
+    need(all(-128 <= v <= 127 for v in result), "true signed S8 digits")
     need(sum(x * (1 << (7 * i)) for i, x in enumerate(result)) == n,
          "digit reconstruction")
     return result

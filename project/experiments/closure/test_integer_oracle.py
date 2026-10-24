@@ -42,7 +42,8 @@ class OracleTests(unittest.TestCase):
                 for b in (-32768, -1, 0, 1, 32767):
                     r = oracle.lowered_product(a, b, bits, 16)
                     self.assertEqual(r["value"], a * b)
-                    self.assertEqual(r["s8_products"], ((bits + 6) // 7) * 3)
+                    count = 1 if bits == 8 else 1 + (bits - 8 + 6) // 7
+                    self.assertEqual(r["s8_products"], count * 3)
                     self.assertEqual(r["wide_shift_adds"], r["s8_products"])
 
     def test_restoring_division_and_nearest_even(self):
