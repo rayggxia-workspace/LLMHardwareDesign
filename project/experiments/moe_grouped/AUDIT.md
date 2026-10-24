@@ -10,6 +10,7 @@
 - compiler可用cal/static数据生成固定W8、Q31/exp、LUT和常数。运行时只能用当前整数输入/状态选择activation scale，不读FP参考、未来token或eval误差；SiLU、中间乘法和A8编码不得保留旧FP64桥。
 - 所有完整K dot、RQ前后、LUT索引/值、activation exponent、实际ID/Q15 gate、专家输出、对齐/每个merge prefix、最终Q12和完整norm须有可复算整数码。观察数组不得作为隐含硬件库存。
 - 逐输出/逐专家单位必须唯一。先对齐完整和后RQ与逐专家先RQ是不同数值函数，必须提前冻结；RNE、饱和、全码域溢出guard与失败发布语义明确。R16不能只验证少数witness却称全部真实S8 lowering。
+- 共同S64 logit相减在通用域需要I65，乘S32 log2e常数最多需I97/I128候选；若使用signed-high radix128需10×5=50个S8积与49次I128重组。当前router gate只证明精确整数数学与次数，不能套64×32的45积费用或称该宽路径已实现。
 - 独立接收全量重算完整被选专家；用Python int/Fraction和位算法核验宽乘、除法、开方及边界，不用producer的函数自证。LUT/compiler编码与运行时整数链分开核验。至少三个实际artifact修改并重写SHA的负例，需到数学层拒绝。
 - 原生/条件高精度误差只在整数链完成后离线诊断，不以局部误差代替全模型质量门槛。
 
@@ -27,7 +28,15 @@ g0/K512/K256各自绑定既有PASS数值manifest、数学receipt及固定gatedno
 ## 测试命令与状态
 
 ```text
-python -B -m unittest discover -s project/experiments/moe_grouped -p test_audit_io74.py -v
+python -B -m unittest discover -s project/experiments/moe_grouped -p test_*.py -v
+python -B project/experiments/moe_grouped/receive_granite.py --result RUN --compiled COMPILED --capture CAPTURE --producer-source FROZEN/granite_chain.py --binding BIND --out NEW
+python -B project/experiments/moe_grouped/receive_grouped_service.py --result RUN --base-service OLD --base-receipt OLD_RECEIPT --grouped GROUP --grouped-receipt GROUP_RECEIPT --baseline BASELINE --compiled COMPILED --producer-source FROZEN/grouped_service.py --helper-source FROZEN/closure/service.py --binding BIND --out NEW
 ```
 
-实际服务器数据接收：未执行，等待producer冻结schema与capture。仓库/Issue/PR/看板由root核验与同步；本子任务未进行远端读写。
+接收binding需实际Git commit、对应receiver文件SHA与audit_io74.py SHA。默认做实际磁盘artifact变更、重新写manifest SHA后进入数学/服务层拒绝；--skip-negatives必须记NOT_EXECUTED。编译与运行分phase源码不同时可用--compiler-source分别绑定，不能将新HEAD冒充旧运行源。
+
+18项本机小型合成测试和项目结构检查通过；没有在本机加载真实模型/张量。
+
+Granite服务器8条件的独立数学接收已执行，本机回读8份receipt均PASS、每份43整数stage/576完整专家路径、3项真实SHA重写负例通过；4项R16各25920个真实全行S8partial输出已核。合计4608完整被选专家路径，不是4608独立样本或全模型质量验收。回执目录为本人任务临时目录moe-grouped-20261024-01/audit/audit-granite-*，正式索引与服务器位置由root共同报告登记。真实数组保留服务器，本机只读JSON元数据。
+
+Falcon grouped服务独立接收工具已完成小型测试；真实服务接收仍待服务器执行，不将producer完成等同于接收通过。仓库/Issue/PR/看板由root核验与同步；本子任务未进行远端读写。
