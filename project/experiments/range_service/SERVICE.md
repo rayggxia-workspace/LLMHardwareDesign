@@ -17,6 +17,9 @@
   两遍源读与aligned spill写读40,960B互斥；两者均先付完整I16 unit-only预扫描5120B，
   得到全行finest unit再允许分tile对齐/spill，不能用未来单位免费回填。gamma/K128流式。normQ20逐K128
   写回再读出确定新A8，不省略归一化后动态scale的max/编码依赖。
+  源EXT是分离I64 code/I16 unit两plane；每行先按20个K128块付两packet和地址生成，
+  写S0为`[128×I64,128×I16]`blocked layout，再连续读1280B。unit预扫描每块
+  offset=`tile*1280+1024`，5120B元数据流量明确，不赠隐式SoA/AoS转换。
 - 相同附加流：每norm行一个16×16×4096的矩阵代理，以及明确有界的FFN RQ/
   attention reduction代理。不能把这些代理称完整FFN/attention/整模型执行时间。
 - 总计8个S8 lane、2个活动context和唯一共享sqrt/div SFU；后者按32/64迭代计。

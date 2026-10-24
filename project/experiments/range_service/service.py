@@ -257,22 +257,35 @@ class Graph:
 def build_norm(g, row, deps):
     m = dict(stream="norm", row=row, hidden=H, precision="X16/normQ20/A8K128",
              scale_epoch="saved dynamic row units; actual integer norms03 units fingerprinted")
-    tail = g.packet("EXT", "S0", 25600, deps, dict(m, operation="load_mixed", src_object_offset=row * 25600),
-                    "backing.consumer_input", "source.mixed")
+    tail = list(deps)
+    # Input backing contains separate code/unit planes. Explicitly pack each
+    # K128 block into S0 as [128*I64,128*I16], charging both packets and address
+    # generation. No contradictory SoA scan / AoS contiguous read assumption.
+    for tile in range(20):
+        p = g.control("norm_source_layout_address", tail, dict(m, tile=tile), cycles=2)
+        p = g.packet("EXT", "S0", 1024, [p],
+                     dict(m, tile=tile, operation="load_mixed_code_plane",
+                          src_object_offset=row * 25600 + tile * 1024,
+                          dst_object_offset=tile * 1280), "backing.consumer_input", "source.mixed")
+        p = g.packet("EXT", "S0", 256, [p],
+                     dict(m, tile=tile, operation="load_mixed_unit_plane",
+                          src_object_offset=row * 25600 + 20480 + tile * 256,
+                          dst_object_offset=tile * 1280 + 1024), "backing.consumer_input", "source.mixed")
+        tail = [p]
+    tail = tail[-1]
     # The row's finest unit must be known BEFORE any aligned tile is spilled.
-    # Source layout is two planes: H*I64 codes then H*I16 unit descriptors.
+    # S0 layout is20 K128 blocks: [128*I64 codes,128*I16 units].
     # This common unit-only prepass is real SRAM/bus/lane traffic, not free
     # future knowledge used to align a tile that has already left V.
     for tile in range(20):
         tail = g.packet("S0", "V", 256, [tail],
-                        dict(m, tile=tile, operation="unit_prepass", src_object_offset=20480 + tile * 256),
+                        dict(m, tile=tile, operation="unit_prepass", src_object_offset=tile * 1280 + 1024),
                         "source.mixed", "V.norm_tile")
         tail = g.math("V", "unit_min_scan", 128 * 10, 256, 16, [tail], dict(m, tile=tile))
     tail = g.control("full_hidden_finest_unit", [tail], m)
     # A scan is a complete H dependency. It may stream through a fixed tile.
     for tile in range(20):
-        tail = g.packet("S0", "V", 1280, [tail], dict(m, tile=tile, operation="max_scan",
-                        src_regions=[{"offset": tile * 1024, "bytes": 1024}, {"offset": 20480 + tile * 256, "bytes": 256}]), "source.mixed", "V.norm_tile")
+        tail = g.packet("S0", "V", 1280, [tail], dict(m, tile=tile, operation="max_scan", src_object_offset=tile * 1280), "source.mixed", "V.norm_tile")
         tail = g.math("V", "align_max", 128 * 20, 1280,
                       1024 if g.config["norm_route"] == "spill" else 16,
                       [tail], dict(m, tile=tile))
@@ -281,8 +294,7 @@ def build_norm(g, row, deps):
     tail = g.control("full_hidden_max", [tail], m)
     for tile in range(20):
         if g.config["norm_route"] == "reread":
-            tail = g.packet("S0", "V", 1280, [tail], dict(m, tile=tile, operation="reread_mixed",
-                            src_regions=[{"offset": tile * 1024, "bytes": 1024}, {"offset": 20480 + tile * 256, "bytes": 256}]), "source.mixed", "V.norm_tile")
+            tail = g.packet("S0", "V", 1280, [tail], dict(m, tile=tile, operation="reread_mixed", src_object_offset=tile * 1280), "source.mixed", "V.norm_tile")
             work = 128 * (20 + 10 + mulslots(3, 3) + 10)
         else:
             tail = g.packet("S1", "V", 1024, [tail], dict(m, tile=tile, operation="read_aligned", src_object_offset=tile * 1024), "aligned.spill", "V.norm_tile")
