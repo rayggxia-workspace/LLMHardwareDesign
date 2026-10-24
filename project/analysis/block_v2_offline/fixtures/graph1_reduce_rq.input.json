@@ -1,0 +1,195 @@
+{
+  "contract_version": "block-v2-offline/1",
+  "source_commit": "88e9c4b2c3bb1b93b7155ba87ad11853e6c15512",
+  "graph_id": "graph1_reduce_rq",
+  "nodes": [
+    {
+      "id": "m_k0",
+      "block": "M",
+      "op": "PARTIAL32",
+      "depends_on": []
+    },
+    {
+      "id": "m_k1",
+      "block": "M",
+      "op": "PARTIAL32",
+      "depends_on": []
+    },
+    {
+      "id": "v_reduce",
+      "block": "V",
+      "op": "COMPLETE32",
+      "depends_on": [
+        "m_k0",
+        "m_k1"
+      ]
+    },
+    {
+      "id": "v_rq",
+      "block": "V",
+      "op": "RNE_SAT8",
+      "depends_on": [
+        "v_reduce"
+      ]
+    },
+    {
+      "id": "v_add",
+      "block": "V",
+      "op": "RESIDUAL16",
+      "depends_on": [
+        "v_rq"
+      ]
+    }
+  ],
+  "edges": [
+    [
+      "m_k0",
+      "v_reduce"
+    ],
+    [
+      "m_k1",
+      "v_reduce"
+    ],
+    [
+      "v_reduce",
+      "v_rq"
+    ],
+    [
+      "v_rq",
+      "v_add"
+    ]
+  ],
+  "link": {
+    "bits": 128,
+    "header_bytes": 64,
+    "payload_alignment_bytes": 64,
+    "max_packet_bytes": 2048,
+    "hops": 1,
+    "metadata_in_header": true
+  },
+  "initial_residency": {
+    "M": [
+      "x",
+      "W"
+    ],
+    "V": [
+      "residual"
+    ],
+    "runtime_setup_charged": false
+  },
+  "resources": {
+    "instances": {
+      "M": 1,
+      "V": 1
+    },
+    "private_bytes": {
+      "M": 52,
+      "V": 64
+    },
+    "endpoint_fifo_bytes": 128,
+    "max_inflight_messages": 1,
+    "clock_hz": null,
+    "service_rate": null
+  },
+  "protocol": {
+    "reduce_order": [
+      0,
+      1
+    ],
+    "rq_position": "after_complete",
+    "rq_divisor": 2,
+    "rounding": "RNE",
+    "saturate_bits": 8,
+    "output_bits": 16
+  },
+  "data": {
+    "x": {
+      "dtype": "INT8",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "signedness": "signed",
+      "unit": 1,
+      "shape": [
+        4
+      ],
+      "layout": "K",
+      "values": [
+        2,
+        -1,
+        3,
+        4
+      ]
+    },
+    "W": {
+      "dtype": "INT8",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "signedness": "signed",
+      "unit": 1,
+      "shape": [
+        2,
+        4
+      ],
+      "layout": "output_channel,K",
+      "values": [
+        [
+          1,
+          2,
+          -1,
+          0
+        ],
+        [
+          -2,
+          1,
+          1,
+          2
+        ]
+      ]
+    },
+    "residual": {
+      "dtype": "INT8",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "signedness": "signed",
+      "unit": 2,
+      "shape": [
+        2
+      ],
+      "layout": "output_channel",
+      "values": [
+        1,
+        -2
+      ]
+    },
+    "groups": [
+      {
+        "id": 0,
+        "k_start": 0,
+        "k_stop": 2,
+        "unit": 1,
+        "dtype": "INT32",
+        "shape": [
+          2
+        ],
+        "path": [
+          "M",
+          "V"
+        ]
+      },
+      {
+        "id": 1,
+        "k_start": 2,
+        "k_stop": 4,
+        "unit": 1,
+        "dtype": "INT32",
+        "shape": [
+          2
+        ],
+        "path": [
+          "M",
+          "V"
+        ]
+      }
+    ]
+  }
+}

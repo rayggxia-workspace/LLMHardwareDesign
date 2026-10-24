@@ -1,0 +1,228 @@
+{
+  "graph_id": "graph2_state_commit",
+  "normal": {
+    "commits": [
+      {
+        "step": 1,
+        "state": [
+          3,
+          0
+        ],
+        "unit": 1,
+        "epoch": 0,
+        "version": 1
+      },
+      {
+        "step": 2,
+        "state": [
+          2,
+          4
+        ],
+        "unit": 1,
+        "epoch": 0,
+        "version": 2
+      },
+      {
+        "step": 3,
+        "state": [
+          5,
+          2
+        ],
+        "unit": 1,
+        "epoch": 0,
+        "version": 3
+      }
+    ],
+    "final_state": [
+      5,
+      2
+    ],
+    "version": 3,
+    "unit": 1,
+    "epoch": 0,
+    "snapshot": [
+      5,
+      2
+    ],
+    "failed_attempts": 0,
+    "runtime_traffic": {
+      "messages": 6,
+      "packets": 6,
+      "logical_payload_bytes": 24,
+      "physical_bytes": 768,
+      "link_beats": 48
+    },
+    "s_bank_schedule": [
+      {
+        "slot": 0,
+        "op": "read_input",
+        "step": 1
+      },
+      {
+        "slot": 1,
+        "op": "write_snapshot",
+        "step": 1
+      },
+      {
+        "slot": 2,
+        "op": "read_input",
+        "step": 2
+      },
+      {
+        "slot": 3,
+        "op": "write_snapshot",
+        "step": 2
+      },
+      {
+        "slot": 4,
+        "op": "read_input",
+        "step": 3
+      },
+      {
+        "slot": 5,
+        "op": "write_snapshot",
+        "step": 3
+      }
+    ]
+  },
+  "after_t2_abort": {
+    "state": [
+      3,
+      0
+    ],
+    "version": 1,
+    "snapshot": [
+      3,
+      0
+    ],
+    "published_count": 1
+  },
+  "failure_retry": {
+    "commits": [
+      {
+        "step": 1,
+        "state": [
+          3,
+          0
+        ],
+        "unit": 1,
+        "epoch": 0,
+        "version": 1
+      },
+      {
+        "step": 2,
+        "state": [
+          2,
+          4
+        ],
+        "unit": 1,
+        "epoch": 0,
+        "version": 2
+      },
+      {
+        "step": 3,
+        "state": [
+          5,
+          2
+        ],
+        "unit": 1,
+        "epoch": 0,
+        "version": 3
+      }
+    ],
+    "final_state": [
+      5,
+      2
+    ],
+    "version": 3,
+    "unit": 1,
+    "epoch": 0,
+    "snapshot": [
+      5,
+      2
+    ],
+    "failed_attempts": 1,
+    "runtime_traffic": {
+      "messages": 7,
+      "packets": 7,
+      "logical_payload_bytes": 28,
+      "physical_bytes": 896,
+      "link_beats": 56
+    },
+    "s_bank_schedule": [
+      {
+        "slot": 0,
+        "op": "read_input",
+        "step": 1
+      },
+      {
+        "slot": 1,
+        "op": "write_snapshot",
+        "step": 1
+      },
+      {
+        "slot": 2,
+        "op": "read_input",
+        "step": 2
+      },
+      {
+        "slot": 3,
+        "op": "read_input",
+        "step": 2
+      },
+      {
+        "slot": 4,
+        "op": "write_snapshot",
+        "step": 2
+      },
+      {
+        "slot": 5,
+        "op": "read_input",
+        "step": 3
+      },
+      {
+        "slot": 6,
+        "op": "write_snapshot",
+        "step": 3
+      }
+    ]
+  },
+  "resume_equal": true,
+  "setup_state_copies_traffic": {
+    "messages": 2,
+    "packets": 2,
+    "logical_payload_bytes": 8,
+    "physical_bytes": 256,
+    "link_beats": 16
+  },
+  "setup_inputs_traffic": {
+    "messages": 3,
+    "packets": 3,
+    "logical_payload_bytes": 12,
+    "physical_bytes": 384,
+    "link_beats": 24
+  },
+  "storage": {
+    "regions_bytes": {
+      "R": {
+        "old": 4,
+        "proposal": 8,
+        "shadow": 4,
+        "input": 4,
+        "control_metadata": 32
+      },
+      "S": {
+        "inputs": 12,
+        "committed_snapshot": 4,
+        "rx_staging": 4,
+        "control_metadata": 24
+      }
+    },
+    "peak_reserved_bytes": {
+      "R": 52,
+      "S": 44
+    },
+    "fifo_reserved_bytes": 512,
+    "total_reserved_bytes": 608
+  }
+}
