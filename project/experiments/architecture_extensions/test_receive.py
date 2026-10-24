@@ -210,12 +210,21 @@ class ReceiverTests(unittest.TestCase):
                weight_scale=np.full(16,1/127),calibration_input=np.ones((1,3)),evaluation_input=np.ones((2,3)))
         for s in ("cal_static_tensor","eval_dynamic_row"):
             z[s+"_input_code"]=np.full((2,3),127,np.int8)
-            z[s+"_input_scale"]=np.full((2,1),1/127)
+            z[s+"_input_scale"]=np.full((2,1),1/127,dtype=np.float64 if s=="cal_static_tensor" else np.float32)
             z[s+"_accumulator"]=np.full((2,16),3*127*127,np.int32)
             z[s+"_dequant"]=z[s+"_accumulator"]*z[s+"_input_scale"]*z["weight_scale"][None,:]
         self.assertEqual(r.verify_projection(z,full=True)["source_encoding_values"],60)
         z["cal_static_tensor_input_scale"][0,0]*=2
         with self.assertRaisesRegex(ValueError,"A scale source"):r.verify_projection(z,full=True)
+
+    def test_dynamic_projection_preserves_fp32_bridge_dtype(self):
+        # 1/127 differs between FP32 and FP64. The saved raw source remains an
+        # exact FP32->FP64 cast, so its storage dtype does not change quantizer.
+        raw=np.ones((2,3),np.float32)
+        self.assertNotEqual(float(np.max(raw)/127),float(np.max(raw.astype(np.float64))/127))
+        scale=np.maximum(np.max(np.abs(raw),axis=1,keepdims=True),1e-30)/127
+        self.assertEqual(scale.dtype,np.float32)
+        self.assertEqual((raw/scale).dtype,np.float32)
 
     def test_descriptor_owner_epoch_and_complete_shapes(self):
         cap={};total=2

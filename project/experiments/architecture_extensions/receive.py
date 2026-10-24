@@ -436,11 +436,19 @@ def verify_projection(z, *, full=False):
         if full:
             raw = np.asarray(z["evaluation_input"], np.float64)
             cal = np.asarray(z["calibration_input"], np.float64)
-            scales = (np.full((len(raw), 1), max(float(np.max(np.abs(cal))), 1e-30) / 127)
+            # The producer receives FP32 captured norm*MuP inputs, then stores
+            # them losslessly as FP64. Its dynamic max/divide and activation
+            # divide remain FP32; static Python-float scale is FP64. Recreate
+            # those explicit bridge dtypes, not a different FP64 quantizer.
+            raw32,cal32=raw.astype(np.float32),cal.astype(np.float32)
+            require(np.array_equal(raw32.astype(np.float64),raw)
+                    and np.array_equal(cal32.astype(np.float64),cal),
+                    "projection stored input must be exact FP32 cast")
+            scales = (np.full((len(raw), 1), max(float(np.max(np.abs(cal32))), 1e-30) / 127)
                       if scheme == "cal_static_tensor" else
-                      np.maximum(np.max(np.abs(raw), axis=1, keepdims=True), 1e-30) / 127)
+                      np.maximum(np.max(np.abs(raw32), axis=1, keepdims=True), 1e-30) / 127)
             require(np.array_equal(scales, z[scheme + "_input_scale"]), "projection A scale source")
-            wanted = np.clip(np.rint(raw / scales), -127, 127).astype(np.int8)
+            wanted = np.clip(np.rint(raw32 / scales), -127, 127).astype(np.int8)
             require(np.array_equal(a, wanted), "projection A8 source encoding")
             compare_float(z[scheme + "_dequant"], acc * scales * z["weight_scale"][None, :],
                           "projection FP dequant", atol=1e-12, rtol=1e-13)
@@ -452,6 +460,7 @@ def verify_projection(z, *, full=False):
             require(127 * sum(abs(int(q)) for q in w[j]) < (1 << 31), "projection INT32 conditional bound")
             values += 1
     return dict(complete_dot_values=values, source_encoding_values=encoded, K=w.shape[1], outputs=16,
+                activation_bridge="FP32 stored exactly as FP64; dynamic max/division FP32, static scale/division FP64",
                 qualification="stored W8A8 codes; floating scale bridge remains")
 
 
