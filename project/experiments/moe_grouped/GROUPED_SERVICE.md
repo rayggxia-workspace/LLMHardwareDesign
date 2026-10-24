@@ -31,3 +31,20 @@ binding需commit、grouped_service_sha256、closure_service_sha256（只读helpe
 所有事件保守串行，prefill也无batch；不称优化调度、真实时钟或PPA。新wide数据准备更详细，绝不能直接将新whole-row绝对slots与旧简化kernel当硬件进步比较；有效比较只在本批同g、同配方、同资源、同数值轨迹的两个驻留政策之间。label应逐byte零差。
 
 S32 partial→S64符号扩展按11 byteops（8字节复制/填符号+符号提取1+控制2）；四字节partial动态左移到I64按18 byteops，不套用只含两字节S8乘积的常数shift64=14。I128到I32 guard扫描12个高字节，按32而非I64 guard20计。
+
+
+## 十二配置的独立比较
+
+compare_grouped_service.py 仅用标准库，不导入producer、closure或接收器，不读取张量内容。正式执行应在服务器，逐文件流式核验summary/splice/witness实际字节SHA和size，核12份独立PASS receipt、其manifest绑定、四类已改SHA语义负例和全部184320个实际最终宽积的既有接收。它继承接收器的数值/日历验证，不声称再次执行这些检查。
+
+~~~text
+python -B project/experiments/moe_grouped/compare_grouped_service.py --root SERVER_ISSUE74_ROOT --out SERVER_ISSUE74_ROOT/comparison01 --source-commit FULL_COMPARE_COMMIT
+~~~
+
+默认固定g0/K512/K256 × near_m/shared_v × split/shared的02后缀全部12项；--suffix可显式选择另一完整批次，不能少选条件。默认receipt位于root/audit-CASE/receipt.json，可用--receipt-root指定同一结构的只读收件根目录。输出目录须不存在，生成report和manifest。缺失、FAIL或哈希不符都拒绝生成成功报告。
+
+同g、同placement的label必须scientific summary相同，witness和splice逐字节相同；只允许label、observer环境/耗时不同。所有12项须保留完全相同的库存、真实allocations/生命周期和bank高水、prefix/权重/编译器/外部cut绑定。M/V同g须保留同数学产物、所有算术/宽操作和engine操作数费用。shared_v多72×34=2448个本地copy_byte是既定descriptor驻留开销，单列而不误称数值函数改变。
+
+交通差用协议闭合：V每token/outputtile/group接收64B完整INT32 partial，wire为96B；M每token接收34B填充descriptor，wire为80B。故shared_v减near_m的wire严格等于72×160×G×96−72×80，payload严格等于72×160×G×64−72×34。报告分列有效I16 groupdelta、common unit、真实34B descriptor、固定256B endpoint元数据buffer和未按G复制的per-output静态scale。engine_wire已包含在wire总量内，报告只用减法派生non_engine，绝不重复相加。
+
+报告中的收益分母明确为同g shared_v完整继承链的end slots或wire，两个label为零差控制；跨g可以同时展示误差和成本，但不是同函数placement因果比较。所有物理线长、RTL内存功能模拟、实现时钟及最终模型质量限制继续保留。tiny tests用合成JSON和几十字节假witness，覆盖重写全部SHA后的label/端口/宽积/元数据/数学篡改、原始文件篡改、缺失或FAIL回执、engine子集及排他输出；不跑模型数学。
