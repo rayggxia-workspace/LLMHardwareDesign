@@ -40,3 +40,18 @@ python -B -m unittest discover -s project/experiments/closure -p test_falcon_int
 ~~~
 
 binding需commit、falcon_chain_sha256、falcon_int_sha256；capture单独falcon_capture_sha256。每out不得存在；manifest冻结全部artifact大小/SHA。reference.npz仅在完整整数执行结束后才读取用于误差报告。编译器原始float reference不可用于运行时分支或scale；这是软件分离合同，独立接收还需重算和源码核验。
+
+
+## 完整连续历史接续资格（后续phase）
+
+初版phase把conv全序列因果预计算，再恢复R状态；它只证明算子整数链和R checkpoint，**不证明完整conv+R的恢复事务**。初版产物不改写。falcon_resume.py另阶段按token重算完整输入norm/投影、以已提交conv历史生成私有新历史，运行R私有trial和全部消费者，最后才共同发布conv/state/units/epoch/version/position/输出。R本地COMMIT在外层branch_published之前只是私有试算，不是硬件已发布。任一R/consumer拒绝，外层提交描述符不变。
+
+新阶段消费同一compiled及已完成full基准，仅比较整数数组和全部状态SHA，不加载FP reference。分别full、chunk8、chunk16、prefill64+8次单token decode；chunk边界实际保存并重载完整conv和state，以及单位/epoch/version/position/owner/合同。8种真实篡改（state/conv/unit/owner/epoch/position/version/contract）必须拒绝。
+
+conv history=4608×4×I32=73728B；old+private trial=147456B，不能免费送R32KiB。状态完整旧态/私有trial、宽proposal、有限S/backing都另计。checkpoint文件SHA与复制属于资格观察者，单列成本，不混入产品必须每8token执行的流程；持久历史库存及更新IO是必需义务。
+
+~~~text
+python -B project/experiments/closure/falcon_resume.py --compiled COMPILED --baseline FULL_GUARD_RESULT --schedule prefill64decode1 --binding BIND --out NEW
+~~~
+
+binding还需falcon_resume_sha256；falcon_chain_sha256、falcon_int_sha256按本phase新源重新绑定。fi.scan兼容resume=None默认旧语义；旧已冻结结果仍保留，不能用新source覆盖原run绑定。接续功能的真实资格以服务器逐stage逐码比较和独立接收为准。

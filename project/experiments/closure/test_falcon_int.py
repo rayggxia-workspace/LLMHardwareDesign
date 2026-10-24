@@ -72,4 +72,28 @@ class IntegerBoundary(unittest.TestCase):
         actual,stages=f.proposal(old,u,alpha,dt,x,b,f.Ops())
         dtb=f.rdiv(3*(1<<11),1<<12);expected=f.rdiv(dtb*int(x[0,0]),1<<32)
         self.assertEqual(int(actual[0,0,0]),expected);self.assertIn('dtb_q20_sha256',stages)
+    def test_actual_state_resume_matches_unbroken(self):
+        c=self.make_coeff(5);full=f.scan(c,np.zeros(2,np.int16),np.zeros(2,np.int32),16,'guard_rescale',f.Ops(),chunk=0)
+        first={k:v[:2] for k,v in c.items()};rest={k:v[2:] for k,v in c.items()}
+        r1=f.scan(first,np.zeros(2,np.int16),np.zeros(2,np.int32),16,'guard_rescale',f.Ops(),chunk=0)
+        descriptor=r1['transactions'][-1]['after']
+        resumed={'state':r1['final_state'],'units':r1['units_trace'][-1],'epoch':r1['epoch'],'position':2,'checkpoint':descriptor}
+        r2=f.scan(rest,np.zeros(2,np.int16),np.zeros(2,np.int32),16,'guard_rescale',f.Ops(),chunk=0,resume=resumed)
+        self.assertEqual(full['state_sha256'],r1['state_sha256']+r2['state_sha256'][1:]);np.testing.assert_array_equal(full['final_state'],r2['final_state']);self.assertEqual(r2['final_position'],5)
+        bad=dict(resumed);bad['position']=3
+        with self.assertRaises(ValueError):f.scan(rest,np.zeros(2,np.int16),np.zeros(2,np.int32),16,'guard_rescale',f.Ops(),resume=bad)
+    def test_complete_conv_history_continuous(self):
+        spec={'inner':4,'heads':2,'state_size':3,'head_dim':2};channels=10
+        const={'conv_weight_q20':np.full((channels,4),1<<18,np.int32),'conv_bias_q12':np.zeros(channels,np.int32),'silu_lut_q12':np.arange(16385,dtype=np.int32),'dt_bias_q12':np.zeros(2,np.int32),'dt_lut_q20':np.full((2,16385),1<<20,np.int32),'alpha_lut_q31':np.full((2,16385),1<<30,np.uint32)}
+        p=np.arange(5*16,dtype=np.int32).reshape(5,16)*128
+        full=f.coefficients(p,const,spec,f.Ops());a=f.coefficients(p[:2],const,spec,f.Ops());b=f.coefficients(p[2:],const,spec,f.Ops(),initial_history=a['conv_history_final_q12'])
+        np.testing.assert_array_equal(full['conv_q12'],np.concatenate([a['conv_q12'],b['conv_q12']]));np.testing.assert_array_equal(full['conv_history_final_q12'],b['conv_history_final_q12'])
+        reset=f.coefficients(p[2:],const,spec,f.Ops());self.assertFalse(np.array_equal(reset['conv_q12'],b['conv_q12']))
+    def test_full_checkpoint_checks_state_and_conv_together(self):
+        import falcon_resume as resume
+        state=np.zeros((2,2,3),np.int16);units=np.zeros(2,np.int16);history=np.zeros((10,4),np.int32);contract={'bits':16,'heads':2,'dim':2,'n':3,'compiled_manifest_sha256':'fixture'}
+        d=resume.complete_checkpoint(state,units,history,2,4,contract)
+        restored=resume.restore(d,state,units,history,4,contract);self.assertEqual(restored[-1],2)
+        negative=resume.corrupted_checkpoint_negatives(d,state,units,history,4,contract);self.assertEqual(len(negative),8);self.assertTrue(all(x['rejected'] for x in negative))
 if __name__=='__main__':unittest.main()
+

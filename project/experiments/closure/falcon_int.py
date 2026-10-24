@@ -138,10 +138,12 @@ def silu(x,lut,ops,counts):
     ops.add('silu_lut_read_i32',x.size)
     return cast_i32(result)
 
-def coefficients(projected,constants,spec,ops):
+def coefficients(projected,constants,spec,ops,*,initial_history=None):
     p=require_int(projected);inner=int(spec['inner']);heads=int(spec['heads']);n=int(spec['state_size']);dim=int(spec['head_dim'])
     gate=p[:,:inner].copy();conv_input=p[:,inner:2*inner+2*n]
-    history=np.zeros((inner+2*n,4),np.int64);conv=[];counts={}
+    history=np.zeros((inner+2*n,4),np.int64) if initial_history is None else require_int(initial_history).copy()
+    if history.shape!=(inner+2*n,4):raise ValueError('complete continuous conv history shape')
+    cast_i32(history);conv=[];counts={}
     wc=require_int(constants['conv_weight_q20']);bias=require_int(constants['conv_bias_q12'])
     for row in conv_input:
         history[:,:-1]=history[:,1:];history[:,-1]=row
@@ -182,12 +184,20 @@ def checkpoint(state,units,epoch,position,contract):
 def validate_checkpoint(desc,state,units,epoch,position,contract):
     if desc!=checkpoint(state,units,epoch,position,contract):raise ValueError('checkpoint state/unit/epoch/position/version/contract mismatch')
 
-def scan(coeff,initial_units,skip_q20,bits,policy,ops,*,chunk=8,max_retry=8):
+def scan(coeff,initial_units,skip_q20,bits,policy,ops,*,chunk=8,max_retry=8,resume=None):
     if policy not in ('static_sat','static_guard','guard_rescale') or bits not in (16,32):raise ValueError('policy/bits')
     x,b,c,dt,alpha=[require_int(coeff[k]) for k in ('x_q12','b_q12','c_q12','dt_q20','alpha_q31')]
     t,heads,dim=x.shape;n=b.shape[1];state=np.zeros((heads,dim,n),np.int64);units=require_int(initial_units).copy();epoch=0;position=0
     lo=-(1<<(bits-1));hi=(1<<(bits-1))-1;outputs=[];transactions=[];events=[];checkpoints=[];units_trace=[units.copy()];states_sha=[array_sha(state.astype('int'+str(bits)))];sat=0
     contract={'bits':bits,'policy':policy,'heads':heads,'dim':dim,'n':n,'injection':'dt20*B12_RNE12_then_x12_RNE(32+state_exp)','maximum_retries':max_retry}
+    if resume is not None:
+        state=require_int(resume['state']).copy();units=require_int(resume['units']).copy();epoch=int(resume['epoch']);position=int(resume['position'])
+        if state.shape!=(heads,dim,n) or units.shape!=(heads,):raise ValueError('resume full state/head shape')
+        if int(state.min(initial=0))<lo or int(state.max(initial=0))>hi or np.any(units<-127) or np.any(units>127):raise ValueError('resume format')
+        if epoch<0 or epoch>(1<<32)-1 or position<0:raise ValueError('resume metadata range')
+        validate_checkpoint(resume['checkpoint'],state.astype('int'+str(bits)),units,epoch,position,contract)
+        units_trace=[units.copy()];states_sha=[array_sha(state.astype('int'+str(bits)))]
+    initial_state=state.astype('int'+str(bits)).copy();start_position=position
     rejection=None
     for ti in range(t):
         old=state.copy();trial=old.copy();u=units.copy();trial_epoch=epoch;attempts=[];committed=False
@@ -217,7 +227,7 @@ def scan(coeff,initial_units,skip_q20,bits,policy,ops,*,chunk=8,max_retry=8):
                     out=cast_i32(checked_add(scanout,skip,ops))
                 except OverflowError as exc:
                     rec['result']='ABORT';rec['wide_error']='readout: '+str(exc);rec['published']=False
-                    attempts.append(rec);rejection={'token':ti,'reason':'readout_wide_guard'};break
+                    attempts.append(rec);rejection={'token':start_position+ti,'reason':'readout_wide_guard'};break
                 sat+=pending_sat;state=new;units=u;epoch=trial_epoch;position+=1;outputs.append(out);units_trace.append(units.copy());states_sha.append(array_sha(state.astype('int'+str(bits))))
                 ops.add('readout_reduce_i64',heads*dim*(n-1));ops.add('state_committed_bytes',heads*dim*n*(bits//8));ops.add('commit_descriptor_bytes',32+heads*2)
                 rec['published']=True;rec['result']='COMMIT';committed=True;attempts.append(rec);break
@@ -235,9 +245,9 @@ def scan(coeff,initial_units,skip_q20,bits,policy,ops,*,chunk=8,max_retry=8):
         if not committed:
             if after!=before:raise AssertionError('rejected token changed published state')
             break
-        if chunk and (position%chunk==0 or position==t):
+        if chunk and (position%chunk==0 or position-start_position==t):
             # Serialize/reload actual integer state and metadata at chunk boundaries.
             restored=state.astype('int'+str(bits)).copy();restored_units=np.array(after['units'],np.int16)
             validate_checkpoint(after,restored,restored_units,epoch,position,contract)
             state=restored.astype(np.int64);units=restored_units.astype(np.int64);checkpoints.append(after)
-    return {'output_q12':np.asarray(outputs,np.int32).reshape(-1,heads*dim),'initial_state':np.zeros((heads,dim,n),dtype='int'+str(bits)),'final_state':state.astype('int'+str(bits)),'units_trace':np.asarray(units_trace,np.int16),'state_sha256':states_sha,'transactions':transactions,'rescale_events':events,'checkpoints':checkpoints,'saturations':sat,'committed':position,'rejection':rejection,'epoch':epoch,'contract':contract}
+    return {'output_q12':np.asarray(outputs,np.int32).reshape(-1,heads*dim),'initial_state':initial_state,'final_state':state.astype('int'+str(bits)),'units_trace':np.asarray(units_trace,np.int16),'state_sha256':states_sha,'transactions':transactions,'rescale_events':events,'checkpoints':checkpoints,'saturations':sat,'committed':position-start_position,'final_position':position,'rejection':rejection,'epoch':epoch,'contract':contract}
