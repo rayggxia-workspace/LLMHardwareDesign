@@ -144,3 +144,18 @@ M/V重新量化边界须保留实际K组单位与宽ALIGN_REDUCE。whole-row/K51
 制造前当前更稳妥的候选固定项是局部MAC累加反馈、受控tile循环、完整group归约协议、范围检查与代际提交控制。M↔V/R↔S的数据端点、宽部分和、带单位/epoch状态、双代缓冲/背压与广播保留产品映射自由；具体实例数、tile、共享SFU、R是否独立宏、近M重标与资源分配仍等服务/RTL/布线/时序资格。旧COPY日历和CPU时间不作PPA或端到端收益。
 
 Issue72本批补完后的结论：20个完整compute配置独立接收，10个split/shared标签对照完整日历SHA零差；同S16/S32分别比较R32-D8、V16-D2、R32-D16/Sspill，保守串行时隙差均<0.02%，D16spill轻微更快反例保留。因此不能据本批冻结独立R或V/R合宏。固定同gatedinput的K512/K256输出A8让后继局部L2由3.03%降到1.87%/1.67%，但partial wire增8/16倍、部分maxabs变坏；该新数值函数未纳入whole-row服务，仍需真实width/SFU/ROM/RQ和同函数端口校准。应保留接口/单位/归约/代际义务及物理映射自由，下一步优化合法prefill复用与宽算术，不重复加模型。详见[决策](decisions/2026-10-24-routing-integer-closure-and-boundaries.md)。
+
+
+## 13. Issue74：完整MoE闭包与分组重标驻留
+
+[完整报告](experiments/issue-74-moe-grouped.md)补齐Granite层0/13的真实post-attention residual→完整norm→实际R8/R16 router/top8/Q15→全部8expert gate/up/整数SiLU/门乘/down→共同Q12宽合并→0.22残差系数→完整nextnorm。8条件全量独立PASS；外部Attention/此前及更后层、model64内部FP32 cast和原FAIL保留，非整模型质量或新cached-decode调度。合计4608条被选路径是重复精度条件，不是独立样本数。
+
+router与expert必须消费同一current整数norm，不能拼旧native输入；route descriptor带动态ID/Q15/单位。R16实际9个S8 dot/完整路由降低原native集合变化，但层13 eval仍有current-norm扰动与router误差抵消，不能将最终0差当一般稳健性证书。专家统一W8A8/fullK INT32，down先RQ共同Q12后全8路S64 merge及一次final RNE；更改该舍入顺序属于新函数。
+
+单层expert W8约94.37MB/静态scale614400B，双层不能常驻EXT128MiB；每expert完整512 mid需2KiB scan buffer或重读。8路全output49152B，merge12288B加输出6144B超V16KiB，制造接口须支持实际流式tile/spill/背压。整数SiLU表65540B、router表8196B及norm宽算术不能藏为免费向量功能。通用logit差I65×S32需I97/I128，不能套64×32的45个S8积报价。上述是完整数学与资源义务；Granite同资源grouped服务尚未执行。
+
+分组公平服务复用的是Falcon固定gatedinput的whole/K512/K256，各g分别同函数同资源比较M/V驻留。12配置独立PASS，6label日历逐字节零差。共享VR8/银行选择服务、M256/B1有效16PE、全部1RW RAM/BUS/FIFO/ROM相同，不赠M私有宽ALU；两端同预留1344B scratch，V另64B delta。实际32×32和64×32宽RQ产品共552960个S8/字节carry逐码通过，费用含digit、重对齐、全宽RNE/guard和所有operand IO。
+
+near M相对shared V完整继承链时隙分别仅少0.001007%/0.008010%/0.016005%；wire少1100160/8841600/17688960B。engine wire是总wire子集。旧whole-O协议、新Otile16协议与新旧微程序费用不能混算；该分母有外部A/residual cut，不是整模型或目标芯片周期。结论是保留typed PARTIAL32/ALIGN64/宽RQ旁路与参数化驻留，不据此固化近M独占或M/V合宏。
+
+误差归因不支持盲加mid小数位：最终Q12 RNE能量仅总mid误差3.16e-8–3.14e-6，mid进入该步前已有显著误差，后续A8另损失约3.2%。delta最低6/7，没有delta0导致的低幅量程闲置行，本批不跑midF20。后续先校准实际S8宽微程序、SFU/共享ROM及bank-select接口，再做Granite有限expert/merge tile调度；质量方面先隔离gate/up量化而非扩品牌。R/A语义闭包、动态S归属与产品映射继续保留，RTL/时序/布线/整图收益及冻结后Phi未验收。

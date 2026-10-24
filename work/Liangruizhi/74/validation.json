@@ -1,0 +1,62 @@
+{
+  "schema": "issue74-validation-v1",
+  "at": "2026-10-24T13:24:31.839Z",
+  "scope": "PC tiny synthetic tests and byte reception only; real model/tensor/service server",
+  "checks": [
+    {
+      "command": "python -B scripts/check_project.py",
+      "exit_code": 0,
+      "result": "PASS project management structure only"
+    },
+    {
+      "command": "python -B -m unittest discover -s project/experiments/moe_grouped -p test_*.py",
+      "environment": "D:/Projects/Codex/qwen3-inference-20261022/environment/.venv/Scripts/python.exe",
+      "exit_code": 0,
+      "tests": 63,
+      "result": "OK",
+      "raw_log": "final-moe-tests.log",
+      "log_normalization": "PowerShell CRLF transcript normalized to LF for Git; original retained in task D temp"
+    },
+    {
+      "command": "python -B -m unittest discover -s project/experiments/closure -p test_*.py",
+      "exit_code": 0,
+      "tests": 90,
+      "result": "OK observed exec output; not a tensor/model rerun"
+    },
+    {
+      "command": "python -B -m unittest discover -s project/experiments/architecture_extensions -p test_*.py",
+      "exit_code": 0,
+      "tests": 80,
+      "result": "OK observed exec output; not a tensor/model rerun"
+    },
+    {
+      "command": "closure/verify_delivery.py --index DELIVERY --archive selected.zip --out NEW",
+      "exit_code": 0,
+      "members": 153,
+      "result": "PASS_BYTE_RECEPTION"
+    },
+    {
+      "command": "work/Liangruizhi/74/verify_sources.py --repository REPO --index DELIVERY --selected selected.zip --out NEW",
+      "exit_code": 0,
+      "phases": 10,
+      "sources": 20,
+      "result": "PASS original Git blob bytes"
+    }
+  ],
+  "server": {
+    "jobs": 51,
+    "completed": 51,
+    "mathematical_receipts": 8,
+    "service_receipts": 12,
+    "semantic_negatives": 72,
+    "comparison": "PASS_BOUND_COMPARISON",
+    "primary_archive_members_verified": 505,
+    "selected_archive_members_verified": 153
+  },
+  "not_performed": [
+    "whole-model quality acceptance",
+    "new Granite cached-decode schedule",
+    "Granite grouped finite-port service",
+    "RTL/STA/PPA of new arithmetic"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/phase1/project/experiments/moe_grouped/granite_capture.py",
+    "--model",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models-relay/granite",
+    "--reference",
+    "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/granite-model6402",
+    "--reference-producer",
+    "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/phase3/project/experiments/closure/granite_reference.py",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/phase1/binding.json",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/granite-capture01",
+    "--threads",
+    "8"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/phase1/project/experiments/moe_grouped/granite_capture.py --model /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models-relay/granite --reference /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/granite-model6402 --reference-producer /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/phase3/project/experiments/closure/granite_reference.py --binding /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/phase1/binding.json --out /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/granite-capture01 --threads 8",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i74-granite-capture01",
+    "--partition=c96",
+    "--cpus-per-task=8",
+    "--time=00:30:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/granite-capture01-%j.log",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/phase1/project/experiments/moe_grouped/granite_capture.py --model /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models-relay/granite --reference /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/granite-model6402 --reference-producer /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/phase3/project/experiments/closure/granite_reference.py --binding /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/phase1/binding.json --out /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/granite-capture01 --threads 8"
+  ],
+  "stdout": "90284",
+  "phase": "phase1",
+  "binding_sha256": "a6fd75b536d85dd71c82b40cfa4097c8ed33c394270848a7fb7c89afd035853d"
+}

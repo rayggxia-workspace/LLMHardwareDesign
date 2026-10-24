@@ -1,5 +1,7 @@
 # 当前状态
 
+- 2026-10-24 [Issue74/PR75](experiments/issue-74-moe-grouped.md)：Granite真实两层cut完整整数router→8expert→merge/consumer独立PASS，Falcon分组同函数M/V服务12配置/6label零差；计全宽算术/对齐/元数据/端口后近M条件时隙收益仅0.001%–0.016%，保留物理映射自由。51服务器作业全完成、10phase20源/2.10GB完整与8.17MB精选逐字节核验；63新/90+80旧检查通过。Granite grouped服务/整模型质量/RTL/PPA未验收；下一步有限expert/merge调度与宽算术/SFU/ROM校准。待审查合并非done；登记pending、看板unverified/同步pending。
+
 - 2026-10-24 [Issue72/PR73](experiments/issue-72-numeric-closure.md)：Granite条件参考/768整数路由、Falcon12完整整数R条件/6连续恢复/3输出粒度及20完整compute服务独立接收；10对标签零差，真实部署差<0.02%，继续保留物理宏映射自由。因果重标72步零发布sat，局部误差与完整模型质量分列。103作业100完成/3失败保留，9.90GB完整/2.48MB精选和43原源SHA已验；90新/80旧测试通过。待审查合并非done；登记pending、看板unverified/同步pending。
 
 

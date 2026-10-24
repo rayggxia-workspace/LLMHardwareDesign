@@ -1,0 +1,43 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/phase5/project/experiments/moe_grouped/grouped_service.py",
+    "--base-service",
+    "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/service-s32-r32_d8-shared-w102",
+    "--base-receipt",
+    "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/audit-service-s32-r32_d8-shared-w102/receipt.json",
+    "--grouped",
+    "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-outproj-g25601",
+    "--grouped-receipt",
+    "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/audit-falcon-outproj-g25601/receipt.json",
+    "--baseline",
+    "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-full-32-guard_rescale01",
+    "--compiled",
+    "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-compiled01",
+    "--placement",
+    "near_m",
+    "--label",
+    "split",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/phase5/binding.json",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/group-g256-near_m-split01"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/phase5/project/experiments/moe_grouped/grouped_service.py --base-service /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/service-s32-r32_d8-shared-w102 --base-receipt /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/audit-service-s32-r32_d8-shared-w102/receipt.json --grouped /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-outproj-g25601 --grouped-receipt /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/audit-falcon-outproj-g25601/receipt.json --baseline /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-full-32-guard_rescale01 --compiled /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-compiled01 --placement near_m --label split --binding /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/phase5/binding.json --out /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/group-g256-near_m-split01",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i74-group-g256-near_m-split01",
+    "--partition=c96",
+    "--cpus-per-task=2",
+    "--time=00:30:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/group-g256-near_m-split01-%j.log",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/phase5/project/experiments/moe_grouped/grouped_service.py --base-service /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/service-s32-r32_d8-shared-w102 --base-receipt /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/audit-service-s32-r32_d8-shared-w102/receipt.json --grouped /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-outproj-g25601 --grouped-receipt /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/audit-falcon-outproj-g25601/receipt.json --baseline /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-full-32-guard_rescale01 --compiled /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-compiled01 --placement near_m --label split --binding /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/phase5/binding.json --out /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/group-g256-near_m-split01"
+  ],
+  "stdout": "90305",
+  "phase": "phase5",
+  "binding_sha256": "8ed1e626e239a4295c8475ac0e95911ffe05dec0d0d37c2726651d667a84e83f"
+}
