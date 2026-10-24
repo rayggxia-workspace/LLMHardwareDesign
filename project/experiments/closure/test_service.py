@@ -74,4 +74,22 @@ class ServiceTests(unittest.TestCase):
         self.assertEqual(body[0]['resources'][0]['end'],25+24*10+10)
         self.assertEqual([r['name'] for r in body[0]['resources'][1:]],['SFU','SFU'])
 
+    def test_one_synthetic_state_head_all_placements(self):
+        # Metadata-only graph; no model/runtime arrays are read or generated.
+        for placement in s.VARIANTS:
+            for bits in (16,32):
+                b=s.Builder(placement);b.units_trial='ext.units';b.desc_trial='ext.desc';b.state_next='ext.new'
+                for name,n in {'dt':128,'conv':4608*4,'alpha':128,'trial':32*128*256*(bits//8),
+                    'units':64,'desc':96,'decay':32*128*256*8,'injection':32*128*256*8,'proposal':32*128*256*8,
+                    'readout_product':32*128*256*8,'new':32*128*256*(bits//8),'readout_guardmax':256,
+                    'guard_flags':128,'scan':4096*4}.items():b.add('ext.'+name,'EXT',n)
+                b.add('const.skip_q20','EXT',128)
+                b.terms(0,0,0,-28,0,bits,{})
+                b.global_wide_guard(0,0)
+                b.proposal(0,0,0,-28,0,bits,{})
+                b.pre_readout(0,0,-28,0,bits)
+                b.readout(0,0,-28,0,bits)
+                for event in b.events:bounds(b,event['body'])
+                self.assertEqual(b.events[-1]['meta']['N'],256)
+
 if __name__=='__main__':unittest.main()
