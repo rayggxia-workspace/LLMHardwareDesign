@@ -22,6 +22,8 @@
 | R/窗口真实证据 | Q35连续初末状态及12原窗口/6边界重放；Gemma1023/1024/1025及4096+32 | 状态owner/epoch/连续history、local/global不同生命周期 | FP32连续性不等于整数状态；框架底层分配不等于硬件必需SRAM |
 | RQ同资源服务 Issue51/56/59 | 已声明的局部服务/边界/库存，各自优化调度 | Qwen最大0.5657%、Llama约1.385%/2.334%不足以唯一固化近M | 不同服务边界不能拼成端到端收益，新模型不能继承百分比 |
 
+覆盖的是架构轴：普通dense GQA（Qwen2.5/Llama）、带QK norm的普通attention（Qwen3小模型）、Gemma局部/全局与GELU差异、Qwen3.5递推/全局混合。Phi只封存，不算当前方案的独立泛化通过。原版DeepSeek-R1的MLA/MoE、其他未跑架构和完整训练都未得到本轮数值覆盖，R1蒸馏不能替代原版。论文若扩大到这些架构，应新增真正改变状态/通信的合同与证据，不凭品牌数量声称全覆盖。
+
 原始出处：[Issue47](experiments/issue-47-primitive-stream.md)、[Issue51](experiments/issue-51-rq-port-placement.md)、[Issue56](experiments/issue-56-llama-cross-model.md)、[Issue59](experiments/issue-59-llama-down-scale.md)、[Issue61](experiments/issue-61-server-models.md)。模型revisions、源码commit、环境、输入SHA和成果索引按这些原合同保留。Phi仅封存不参与当前调优。
 
 ## 3. 本版具体Block方案
@@ -51,6 +53,30 @@
 
 **尚不能确定的制造边界**：M+A是否合宏、R是否独立、近M RQ唯一性、全路径INT8还是局部ACT16、全部混合归约32或宽回退、真实KV bank/总线拓扑，以及端到端收益。不得把“全候选通过”“全模型整数可用”“物理布线/时序通过”写进本版结论。
 
-## 5. 本轮最小实验和下一步
+## 5. 新输出实验对候选的修正
+
+服务器90048/90049两轮（源码46c0b46e46f786c785489ce8b316bc0a72fd3d28）固定180组A/W/acc，比较6种Y合同共1080条件，每轮410112 Fraction最终码，三科学文件字节一致。沿用已观察的诊断样本，不能事后改写Issue59失败或宣布新独立质量通过。
+
+| 所选down，动态A128/W128 | 原Y8/2xcal | 同物理范围Y16 | 整数row-delta Y8 |
+| --- | ---: | ---: | ---: |
+| Llama layer0 | 5.394% | 4.811% | 4.926% |
+| Gemma layer0 | 3.810% | 2.884% | 3.105% |
+| Gemma layer5 | 4.000% | 3.770% | 3.839% |
+| Qwen2.5 layer0 | 3.372% | 2.956% | 3.090% |
+| Qwen3.5 layer3 | 4.829% | 0.840% | 2.486% |
+
+Y16_same_range精确保持旧Y8上下端点（代码[-32768,32512]、原step/256），不是偷偷扩大动态范围。Gemma q/o在相同范围Y16下仍有原21/5次饱和；扩大到4xcal的Y16或当前整数row delta可消除本批饱和，但有各自范围/存储/计算代价。简单扩大Y8范围反而降低分辨率，不能一律加裕量。
+
+row delta完全由acc/unit/base计算，不读FP评价目标；它是**每个16输出tile的逐行增量**，不是全hidden行统一scale。进入下一矩阵可能形成K16单位，需同样的ALIGN_REDUCE或先转到K128统一单位；本轮未测该后继误差/代价。因此保留ACT16和带tile/epoch scale的ACT8接口，暂不把动态delta强固化。每行1B显式delta可能把decode物理包128B推到192B，与该tile静态ACT16相同；复用既有header字段才可保持128B，需协议已预留。扫描/完整tile等待/暂存与后继矩阵16×8的3基础积均非免费。
+
+## 6. 整数attention闭包的新增证据
+
+90050/90051两轮从相同三主测完整GQA采样，56条件均执行成功：QK32全7106560值、PV32全1474560值与I64参考一致；27850个概率Fraction见证。原FP32→S32Q20、KV静态scale、scaling/LUT离线编译仍明确，**此边界之后**QK、S32Q12重定标、LUT、U64 sum/div RNE、P15及受检PV都走整数，尚非完整整数模型或硬件。
+
+相对于同编码Q/K/V、FP64softmax再P15的输出，LUT步1/128最坏新增相对RMSE约0.0747%，步1/256约0.0436%；Qwen2.5 KV8的原约12.50%误差并未被换整数softmax消除，不能用非线性精度掩盖KV瓶颈。两份表为8196/16388B：A20KiB候选可容纳，V8KiB不能原样接收，即使小表也超4B。常量端点旁路压缩表属于需另冻结/证明的优化，不把表字节抹去。
+
+Psum证明现在在这个实际整数归一化候选下得到执行验证，但仍受固定Vscale/合法mask/长度和guard约束。head256 scaling可合入dyadic RNE；head128非dyadic缩放需要显式32×32→64或有成本的S8分解；U64除法/单ROM口是潜在主导资源。A闭包是更有依据的逻辑模板，M+A是否同宏仍交同库存服务/物理对照。
+
+## 7. 本轮最小实验和下一步
 
 新Issue64先并行输出格式、整数attention数值闭包和明确条件下的attention服务原型，复用已有真实张量而非再下载/完整推理。结果、scope、失败与SHA见后续Issue64实验报告。E3真实状态整数化及公平归属仍是剩余单独分叉；物理只对数值/服务留下的一对候选，协调已有Issue55/63，不盲开重复工程。Phi在方案/参数/阈值冻结后再做独立验证，不能反过来用它调当前方案。

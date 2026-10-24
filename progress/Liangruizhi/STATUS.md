@@ -1,5 +1,9 @@
 # Liangruizhi 的进度
 
+## 2026-10-24（UTC+08:00）Issue64综合方案与最小分叉
+
+[Issue64](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/64)/[草稿PR65](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/65)，task/64-block-v2，D:/Projects/LLMHardwareDesign-blockv2，base PR62。独立子工作树attention/service只写自己模块；root cherry-pick审查后统一冻结。本人服务器issue64-block-v2-20261024目录，新lrz-*作业复用既有数据，不触Phi。输出46c0b46两轮90048/49完成1080条件/410112 Fraction码；独立回执通过，Llama旧诊断5.39%→row/tile delta4.93%但后继K16/K128对齐仍待验。attention源码de63c7a及冻结commit3a6416d，两轮90050/51完成56条件、7106560QK与1474560PV I32对I64。实现后整数闭包不代表宽乘/div/LUT硬件存在；Psum/scale约束与硬件成本明确。服务条件对照及完整接收继续，详见v2方案，未验收/未done；登记PR5 pending，看板unverified/同步pending待管理员，审查人待指定。
+
 ## 2026-10-23（UTC+08:00）Issue61服务器批次交付
 
 [Issue61](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/61)/[PR62](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/62)，task/61-server-models，D:/Projects/LLMHardwareDesign-servermodels，基于PR60。四模型CPU full/cached/chunk/GQA和SHA已执行，Phi独立封存；Qwen原GPU长结果完成69文件条件审计与两轮partial/state复核。三主测420线性/56注意力，四模型5185严格来源张量；161280 Fraction RQ、3852288 partial独立通过。90046完整PV32核1474560输出匹配I64，范围证明依Psum/固定Vscale和guard；90047补逐token包，旧聚合decode成本只作下界。动态K128跨模型改善down，但Gemma部分投影饱和、Qwen2.5 KV8及其他候选失败不隐去，Llama既有5.39%失败保留。正式源码阶段8a1fe4b/a96eef6/3f17910/0ff14d7/7fdd2c2/4ca7214/8211803。报告/决策/验收表/服务器569MB主包、30MB Phi封存包、7.27MB精选包完整SHA索引已整理，精选4GQA/6case本机独立重放。管理检查、五套项目业务、17个新边界测试通过。下一步E1输出合同、E2b完整attention和E3公平状态/物理资格；不把局部数值门、CPU耗时或字节下界称完整模型/芯片收益。交付后in_review，待指定审查人/合并，非done；登记PR5 pending，无board.json/Projects能力，看板unverified/同步pending。完整交接docs/handoffs/2026-10-23-issue-61-server-models.md。

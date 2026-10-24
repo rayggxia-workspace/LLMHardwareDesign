@@ -1,0 +1,434 @@
+{
+  "status": "PASS",
+  "audit_script_sha256": "33b5fe8f93ba535299e7e575bb8a8a865aa414f992a5c2ff11d5243ad42a1ac6",
+  "seconds": 2.365351099986583,
+  "independence": "No producer imports; Fraction ties-to-even at every element and independent per-row offset search, metric and packet recomputation.",
+  "two_round_science_files_identical": true,
+  "manifests_equal_except_runtime_seconds": true,
+  "Llama_original_encoded_cases_exact": 12,
+  "Llama_original_baseline_codes_exact_across_two_runs": 7680,
+  "Llama_original_encoded_npz_sha256": "f2ab8e5df7482576e5ad10280ba434dbec83d1661e0c424a06c71e6d1c391ab3",
+  "Llama_original_capture_npz_sha256": "0504e25ec36aa88d96ae4c3365ce22533ff3946d92c961f7e80bee0eb3daf749",
+  "scope_limits": [
+    "Three server upstream A/W/partial arrays not redownloaded/reproved in this audit; provenance SHA bound to original manifests.",
+    "Llama prior A/W/partial not recomputed here; acc, units, base, FP diagnostic reference and original Y8 output matched original files for all 12 included cases.",
+    "Llama approximately 4.93% is reused previously observed diagnostic evidence, not a new independent model-quality acceptance.",
+    "Packets and minimum buffer/metadata plus base-product multiplier are accounting assumptions, not full next-S8/residual/norm scheduling, cycles, RTL or PPA."
+  ],
+  "runs": [
+    {
+      "run": "output01",
+      "source_commit": "46c0b46e46f786c785489ce8b316bc0a72fd3d28",
+      "source_sha256": "9381f80afcb24de121fea9fa20a476c1b9c92709fc8e3738a977a35fcc6b3d58",
+      "artifact_hashes_verified": 3,
+      "cases": 180,
+      "conditions": 1080,
+      "Fraction_output_values": 410112,
+      "independent_dynamic_delta_rows": 4272,
+      "dynamic_delta_fraction_candidate_trials": 68252,
+      "dynamic_delta_fraction_terms": 1092032,
+      "metric_fields_and_packet_variants_verified": 2160,
+      "summary_groups": 156,
+      "artifacts": {
+        "metrics.json": {
+          "bytes": 1520062,
+          "sha256": "8cdc4fda53bba1216687ba115d126e4fe2508d3151e313a0649df254f1f8305d"
+        },
+        "summary.json": {
+          "bytes": 57136,
+          "sha256": "522979e3a3bb10a07ac46c0d9331a6579a7437892be76e49598f9a20507ff366"
+        },
+        "outputs.npz": {
+          "bytes": 1651751,
+          "sha256": "294eb3dc5734e216bc4a1b6d03bf64f0bfbd581d7ec548f8f6370adea906dc58"
+        }
+      },
+      "input_manifest_bindings": {
+        "gemma": {
+          "capture": "f1209a433810e8cc890c06bfb6ccd535d5925f64192788a18610851d2d682311",
+          "integer": "2417c97350136c8ed36804cd9b46e5201b00592a1d6e9471c0ad4b32801cb88a",
+          "raw": "2dca116bd7cf013ad7686e85372a20f4d933576acb75ab602ee15c5e49a0922b",
+          "encoded": "136ccfe39a8bb2ea4d66c29bf1b671f29570f5737cb5a79e509b754979941c6a"
+        },
+        "qwen25": {
+          "capture": "165e8109f8025c8bfafc9079d5a9e40e688897162cf6e9ca48d337efd5c3b5e5",
+          "integer": "e7f7662e1b2eb5cbf4661e7a771e78ca0268675aad03d6fd8f9bed00988bf6d0",
+          "raw": "e7b8162bae2e8e85962de5e46a32b656ff3e51095149810ea81a779820cf0d10",
+          "encoded": "3cd32025c876eb1c5e51bb08cc5dd3741e7778e66565588eeeaa3e3e4746bff4"
+        },
+        "qwen35": {
+          "capture": "20101ece55df9845aede7fd3674419e973f74e3a41d61531a53ac9964be6dbe5",
+          "integer": "e852875367f1c0b08ce73986c99934c78d56d5ca55b01e0cde958d9fc1f68928",
+          "raw": "ba1018985162a6308d2d984969505d35f93614ff401af30e91fa2e4205c3ba7b",
+          "encoded": "43be44b42cdde0ef164397161d6e190c939f55f7ce93b1f2a0bcd4ddb362c783"
+        },
+        "llama": {
+          "capture": "40cdffc72b97b00add5927bd2c2d077d2e8f93966386452b111678015341b71b",
+          "integer": "e90cd1fe067d6e82ced300bdd04cb13218637040f0341c5cfb3c75a8c4a69ef7",
+          "raw": "0504e25ec36aa88d96ae4c3365ce22533ff3946d92c961f7e80bee0eb3daf749",
+          "encoded": "f2ab8e5df7482576e5ad10280ba434dbec83d1661e0c424a06c71e6d1c391ab3"
+        }
+      },
+      "negative_rehashed_code": {
+        "case": "gemma.layer0.down_proj.dynamic_K128_W128.prefix1023.decode",
+        "profile": "Y8_cal_max",
+        "mutant_path": "D:\\Projects\\Codex\\issue64-block-v2-20261024\\output-audit-portable\\forged-rehashed-outputs-output01.npz",
+        "sha256_updated_to": "82df785a12927e16fbd37655640edd5fcd4d3ddf79da716716a5dcd1b612ebeb",
+        "status": "REJECTED by Fraction code oracle despite matching recomputed SHA"
+      },
+      "llama_readout": [
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_128",
+          "Y_profile": "Y16_4xcal_range",
+          "conditions": 6,
+          "worst_before_RQ": 0.048116449520738604,
+          "worst_after_RQ": 0.04812352698586512,
+          "saturations": 0,
+          "all_local_diagnostic_screen": true,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_128",
+          "Y_profile": "Y16_original_same_range",
+          "conditions": 6,
+          "worst_before_RQ": 0.048116449520738604,
+          "worst_after_RQ": 0.0481128156238848,
+          "saturations": 0,
+          "all_local_diagnostic_screen": true,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_128",
+          "Y_profile": "Y8_4xcal",
+          "conditions": 6,
+          "worst_before_RQ": 0.048116449520738604,
+          "worst_after_RQ": 0.06733423821903815,
+          "saturations": 0,
+          "all_local_diagnostic_screen": false,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_128",
+          "Y_profile": "Y8_cal_max",
+          "conditions": 6,
+          "worst_before_RQ": 0.048116449520738604,
+          "worst_after_RQ": 0.04962397919341557,
+          "saturations": 3,
+          "all_local_diagnostic_screen": false,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_128",
+          "Y_profile": "Y8_integer_row_delta",
+          "conditions": 6,
+          "worst_before_RQ": 0.048116449520738604,
+          "worst_after_RQ": 0.04926403272448498,
+          "saturations": 0,
+          "all_local_diagnostic_screen": true,
+          "maximum_Y_delta_payload_bytes": 32,
+          "max_delta_terms_per_case": 7936
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_128",
+          "Y_profile": "Y8_original_2xcal",
+          "conditions": 6,
+          "worst_before_RQ": 0.048116449520738604,
+          "worst_after_RQ": 0.053937672784849976,
+          "saturations": 0,
+          "all_local_diagnostic_screen": false,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_8192",
+          "Y_profile": "Y16_4xcal_range",
+          "conditions": 6,
+          "worst_before_RQ": 0.070058945500635,
+          "worst_after_RQ": 0.07007921178612707,
+          "saturations": 0,
+          "all_local_diagnostic_screen": false,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_8192",
+          "Y_profile": "Y16_original_same_range",
+          "conditions": 6,
+          "worst_before_RQ": 0.070058945500635,
+          "worst_after_RQ": 0.07005315723608818,
+          "saturations": 0,
+          "all_local_diagnostic_screen": false,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_8192",
+          "Y_profile": "Y8_4xcal",
+          "conditions": 6,
+          "worst_before_RQ": 0.070058945500635,
+          "worst_after_RQ": 0.08495439213936277,
+          "saturations": 0,
+          "all_local_diagnostic_screen": false,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_8192",
+          "Y_profile": "Y8_cal_max",
+          "conditions": 6,
+          "worst_before_RQ": 0.070058945500635,
+          "worst_after_RQ": 0.0715175961355374,
+          "saturations": 1,
+          "all_local_diagnostic_screen": false,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_8192",
+          "Y_profile": "Y8_integer_row_delta",
+          "conditions": 6,
+          "worst_before_RQ": 0.070058945500635,
+          "worst_after_RQ": 0.07106454737017184,
+          "saturations": 0,
+          "all_local_diagnostic_screen": false,
+          "maximum_Y_delta_payload_bytes": 32,
+          "max_delta_terms_per_case": 7920
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_8192",
+          "Y_profile": "Y8_original_2xcal",
+          "conditions": 6,
+          "worst_before_RQ": 0.070058945500635,
+          "worst_after_RQ": 0.07361393097249362,
+          "saturations": 0,
+          "all_local_diagnostic_screen": false,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        }
+      ]
+    },
+    {
+      "run": "output02",
+      "source_commit": "46c0b46e46f786c785489ce8b316bc0a72fd3d28",
+      "source_sha256": "9381f80afcb24de121fea9fa20a476c1b9c92709fc8e3738a977a35fcc6b3d58",
+      "artifact_hashes_verified": 3,
+      "cases": 180,
+      "conditions": 1080,
+      "Fraction_output_values": 410112,
+      "independent_dynamic_delta_rows": 4272,
+      "dynamic_delta_fraction_candidate_trials": 68252,
+      "dynamic_delta_fraction_terms": 1092032,
+      "metric_fields_and_packet_variants_verified": 2160,
+      "summary_groups": 156,
+      "artifacts": {
+        "metrics.json": {
+          "bytes": 1520062,
+          "sha256": "8cdc4fda53bba1216687ba115d126e4fe2508d3151e313a0649df254f1f8305d"
+        },
+        "summary.json": {
+          "bytes": 57136,
+          "sha256": "522979e3a3bb10a07ac46c0d9331a6579a7437892be76e49598f9a20507ff366"
+        },
+        "outputs.npz": {
+          "bytes": 1651751,
+          "sha256": "294eb3dc5734e216bc4a1b6d03bf64f0bfbd581d7ec548f8f6370adea906dc58"
+        }
+      },
+      "input_manifest_bindings": {
+        "gemma": {
+          "capture": "f1209a433810e8cc890c06bfb6ccd535d5925f64192788a18610851d2d682311",
+          "integer": "2417c97350136c8ed36804cd9b46e5201b00592a1d6e9471c0ad4b32801cb88a",
+          "raw": "2dca116bd7cf013ad7686e85372a20f4d933576acb75ab602ee15c5e49a0922b",
+          "encoded": "136ccfe39a8bb2ea4d66c29bf1b671f29570f5737cb5a79e509b754979941c6a"
+        },
+        "qwen25": {
+          "capture": "165e8109f8025c8bfafc9079d5a9e40e688897162cf6e9ca48d337efd5c3b5e5",
+          "integer": "e7f7662e1b2eb5cbf4661e7a771e78ca0268675aad03d6fd8f9bed00988bf6d0",
+          "raw": "e7b8162bae2e8e85962de5e46a32b656ff3e51095149810ea81a779820cf0d10",
+          "encoded": "3cd32025c876eb1c5e51bb08cc5dd3741e7778e66565588eeeaa3e3e4746bff4"
+        },
+        "qwen35": {
+          "capture": "20101ece55df9845aede7fd3674419e973f74e3a41d61531a53ac9964be6dbe5",
+          "integer": "e852875367f1c0b08ce73986c99934c78d56d5ca55b01e0cde958d9fc1f68928",
+          "raw": "ba1018985162a6308d2d984969505d35f93614ff401af30e91fa2e4205c3ba7b",
+          "encoded": "43be44b42cdde0ef164397161d6e190c939f55f7ce93b1f2a0bcd4ddb362c783"
+        },
+        "llama": {
+          "capture": "40cdffc72b97b00add5927bd2c2d077d2e8f93966386452b111678015341b71b",
+          "integer": "e90cd1fe067d6e82ced300bdd04cb13218637040f0341c5cfb3c75a8c4a69ef7",
+          "raw": "0504e25ec36aa88d96ae4c3365ce22533ff3946d92c961f7e80bee0eb3daf749",
+          "encoded": "f2ab8e5df7482576e5ad10280ba434dbec83d1661e0c424a06c71e6d1c391ab3"
+        }
+      },
+      "negative_rehashed_code": {
+        "case": "gemma.layer0.down_proj.dynamic_K128_W128.prefix1023.decode",
+        "profile": "Y8_cal_max",
+        "mutant_path": "D:\\Projects\\Codex\\issue64-block-v2-20261024\\output-audit-portable\\forged-rehashed-outputs-output02.npz",
+        "sha256_updated_to": "82df785a12927e16fbd37655640edd5fcd4d3ddf79da716716a5dcd1b612ebeb",
+        "status": "REJECTED by Fraction code oracle despite matching recomputed SHA"
+      },
+      "llama_readout": [
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_128",
+          "Y_profile": "Y16_4xcal_range",
+          "conditions": 6,
+          "worst_before_RQ": 0.048116449520738604,
+          "worst_after_RQ": 0.04812352698586512,
+          "saturations": 0,
+          "all_local_diagnostic_screen": true,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_128",
+          "Y_profile": "Y16_original_same_range",
+          "conditions": 6,
+          "worst_before_RQ": 0.048116449520738604,
+          "worst_after_RQ": 0.0481128156238848,
+          "saturations": 0,
+          "all_local_diagnostic_screen": true,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_128",
+          "Y_profile": "Y8_4xcal",
+          "conditions": 6,
+          "worst_before_RQ": 0.048116449520738604,
+          "worst_after_RQ": 0.06733423821903815,
+          "saturations": 0,
+          "all_local_diagnostic_screen": false,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_128",
+          "Y_profile": "Y8_cal_max",
+          "conditions": 6,
+          "worst_before_RQ": 0.048116449520738604,
+          "worst_after_RQ": 0.04962397919341557,
+          "saturations": 3,
+          "all_local_diagnostic_screen": false,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_128",
+          "Y_profile": "Y8_integer_row_delta",
+          "conditions": 6,
+          "worst_before_RQ": 0.048116449520738604,
+          "worst_after_RQ": 0.04926403272448498,
+          "saturations": 0,
+          "all_local_diagnostic_screen": true,
+          "maximum_Y_delta_payload_bytes": 32,
+          "max_delta_terms_per_case": 7936
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_128",
+          "Y_profile": "Y8_original_2xcal",
+          "conditions": 6,
+          "worst_before_RQ": 0.048116449520738604,
+          "worst_after_RQ": 0.053937672784849976,
+          "saturations": 0,
+          "all_local_diagnostic_screen": false,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_8192",
+          "Y_profile": "Y16_4xcal_range",
+          "conditions": 6,
+          "worst_before_RQ": 0.070058945500635,
+          "worst_after_RQ": 0.07007921178612707,
+          "saturations": 0,
+          "all_local_diagnostic_screen": false,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_8192",
+          "Y_profile": "Y16_original_same_range",
+          "conditions": 6,
+          "worst_before_RQ": 0.070058945500635,
+          "worst_after_RQ": 0.07005315723608818,
+          "saturations": 0,
+          "all_local_diagnostic_screen": false,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_8192",
+          "Y_profile": "Y8_4xcal",
+          "conditions": 6,
+          "worst_before_RQ": 0.070058945500635,
+          "worst_after_RQ": 0.08495439213936277,
+          "saturations": 0,
+          "all_local_diagnostic_screen": false,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_8192",
+          "Y_profile": "Y8_cal_max",
+          "conditions": 6,
+          "worst_before_RQ": 0.070058945500635,
+          "worst_after_RQ": 0.0715175961355374,
+          "saturations": 1,
+          "all_local_diagnostic_screen": false,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_8192",
+          "Y_profile": "Y8_integer_row_delta",
+          "conditions": 6,
+          "worst_before_RQ": 0.070058945500635,
+          "worst_after_RQ": 0.07106454737017184,
+          "saturations": 0,
+          "all_local_diagnostic_screen": false,
+          "maximum_Y_delta_payload_bytes": 32,
+          "max_delta_terms_per_case": 7920
+        },
+        {
+          "model": "llama",
+          "linear": "layer0.down_proj.dynamic_none_max_128_8192",
+          "Y_profile": "Y8_original_2xcal",
+          "conditions": 6,
+          "worst_before_RQ": 0.070058945500635,
+          "worst_after_RQ": 0.07361393097249362,
+          "saturations": 0,
+          "all_local_diagnostic_screen": false,
+          "maximum_Y_delta_payload_bytes": 0,
+          "max_delta_terms_per_case": 0
+        }
+      ]
+    }
+  ]
+}
