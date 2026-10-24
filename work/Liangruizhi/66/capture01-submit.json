@@ -1,0 +1,31 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/phase2b/project/experiments/scale_state/capture_qwen35.py",
+    "--root",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/phase2b/binding.json",
+    "--threads",
+    "24",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/capture01"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/phase2b/project/experiments/scale_state/capture_qwen35.py --root /public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023 --binding /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/phase2b/binding.json --threads 24 --out /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/capture01",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i66-capture01",
+    "--partition=c96",
+    "--cpus-per-task=24",
+    "--time=00:30:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/capture01-%j.log",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/phase2b/project/experiments/scale_state/capture_qwen35.py --root /public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023 --binding /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/phase2b/binding.json --threads 24 --out /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/capture01"
+  ],
+  "stdout": "90060",
+  "phase": "phase2b",
+  "binding_sha256": "1366a1b05b0e330d524905a87f6ad003559ab82137caa519140da5b8be4b8f61"
+}

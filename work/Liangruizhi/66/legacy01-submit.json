@@ -1,0 +1,29 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/phase1b/project/experiments/scale_state/export_legacy_state.py",
+    "--input",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/input/qwen35-states.pt.gz",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/phase1b/binding.json",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/legacy01"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/phase1b/project/experiments/scale_state/export_legacy_state.py --input /public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/input/qwen35-states.pt.gz --binding /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/phase1b/binding.json --out /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/legacy01",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i66-legacy01",
+    "--partition=c96",
+    "--cpus-per-task=2",
+    "--time=00:20:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/legacy01-%j.log",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/phase1b/project/experiments/scale_state/export_legacy_state.py --input /public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/input/qwen35-states.pt.gz --binding /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/phase1b/binding.json --out /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/legacy01"
+  ],
+  "stdout": "90059",
+  "phase": "phase1b",
+  "binding_sha256": "23b1276d0f5e3e7f5b184ae8377260195d337c5d069f5db5873ac8187d28283a"
+}
