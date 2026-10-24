@@ -1,0 +1,33 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/phase5/project/experiments/closure/falcon_resume.py",
+    "--compiled",
+    "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-compiled01",
+    "--baseline",
+    "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-full-32-guard_rescale01",
+    "--schedule",
+    "prefill64decode1",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/phase5/binding.json",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/resume-falcon-32-prefill64decode101"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/phase5/project/experiments/closure/falcon_resume.py --compiled /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-compiled01 --baseline /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-full-32-guard_rescale01 --schedule prefill64decode1 --binding /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/phase5/binding.json --out /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/resume-falcon-32-prefill64decode101",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i72-resume-falcon-32-prefill64decode101",
+    "--partition=c96",
+    "--cpus-per-task=2",
+    "--time=00:30:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/resume-falcon-32-prefill64decode101-%j.log",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/phase5/project/experiments/closure/falcon_resume.py --compiled /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-compiled01 --baseline /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-full-32-guard_rescale01 --schedule prefill64decode1 --binding /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/phase5/binding.json --out /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/resume-falcon-32-prefill64decode101"
+  ],
+  "stdout": "90205",
+  "phase": "phase5",
+  "binding_sha256": "aeea2852679c8b63428f5faa245e67914a384cd4638c0261d292e6ff0fccf408"
+}

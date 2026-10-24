@@ -1,5 +1,9 @@
 # Liangruizhi 的进度
 
+## 2026-10-24 UTC+08 Issue72定稿关键接续（进行中）
+
+Issue72，task/72-numeric-closure，根D:/Projects/LLMHardwareDesign-numeric-closure，承接PR71@f4d2c46；三个独立子worktree。已核本人账号、最新Issue/PR/评论/成员55/63与服务器资源，无重复活动；本人新server issue72目录Slurm并行。Granite native32原FAIL复现，router64把失败移到cached，model64显式eager新参考初步自洽/待完整独立接收；FP64 grouped kernel失败保留。Falcon全32head完整整数R分支12条件执行，因果重标零发布sat/局部nextnorm约3.03%，schema接收修复/完整conv+R恢复及独立数学进行中；768router诊断已提交。同资源compute/通信比较随后，未提前冻结边界或称模型质量/RTL/PPA通过。[当前报告](../../docs/experiments/issue-72-numeric-closure.md)，source/命令在work/Liangruizhi/72；无新模型/其他机器/Phi解封。登记pending/看板unverified同步pending，审查待指定。
+
 ## 2026-10-24（UTC+08:00）Issue70小MoE/并行混合架构（待审查合并）
 
 [Issue70](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/70)/[PR71](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/71)，task/70-moe-hybrid，根D:/Projects/LLMHardwareDesign-moe-hybrid，base PR69@ab2edaa。两模型固定官方BF16权重全SHA及server复核通过，本机D盘仅中转，无本机模型计算；本人服务器node13 Slurm最小集、独立数值/路由归因/端口负例及双轮接收已执行。Granite原chunk16 FAIL保留，layer13/token42极小路由边界，局部32dot/32RQ/4merge为PARTIAL/mathPASS；Falcon23参考门通过，但S16/S32均4sat且FP64更新。24 COPY-only配置双轮/独立核，非E2E/PPA；六逻辑Block保留，动态路由/宽merge、参数化state tile、完整gatednorm及三输入join合同新增。

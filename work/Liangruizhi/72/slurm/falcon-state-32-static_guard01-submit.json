@@ -1,0 +1,39 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/phase3/project/experiments/closure/falcon_chain.py",
+    "run",
+    "--compiled",
+    "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-compiled01",
+    "--mode",
+    "state",
+    "--bits",
+    "32",
+    "--policy",
+    "static_guard",
+    "--chunk",
+    "8",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/phase3/binding.json",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-state-32-static_guard01"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/phase3/project/experiments/closure/falcon_chain.py run --compiled /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-compiled01 --mode state --bits 32 --policy static_guard --chunk 8 --binding /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/phase3/binding.json --out /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-state-32-static_guard01",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i72-falcon-state-32-static_guard01",
+    "--partition=c96",
+    "--cpus-per-task=2",
+    "--time=00:30:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-state-32-static_guard01-%j.log",
+    "--dependency=afterok:90188",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/phase3/project/experiments/closure/falcon_chain.py run --compiled /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-compiled01 --mode state --bits 32 --policy static_guard --chunk 8 --binding /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/phase3/binding.json --out /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/falcon-state-32-static_guard01"
+  ],
+  "stdout": "90193",
+  "phase": "phase3",
+  "binding_sha256": "608be1121ecf2cab433e29eb053f6ce79a4756616e373757bdd08220189e06cb"
+}
