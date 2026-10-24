@@ -192,8 +192,13 @@ class AttentionGraph(Graph):
 
 def _exp(g, elements, dependencies):
     g.operations["LUT_reads"] += elements
+    # Two signed32 scores can require33 bits for their difference. The existing
+    # wide resource performs this before vector clamp/index generation; neither
+    # the difference nor the ROM address is supplied for free by the table.
+    delta = g.wide("score delta33 subtract", elements, 4, dependencies)
+    address = g.vector("exp delta clamp/index", elements, 4, (delta,))
     node = g.add("exp LUT one read port", elements * g.config["exp_ii"],
-                 ("sfu", "LUT"), dependencies, elements=elements)
+                 ("sfu", "LUT"), (address,), elements=elements)
     return node
 
 
@@ -459,6 +464,10 @@ def audit(g, scheduled):
             actual["exp_elements"] += node["elements"]
             if node["duration"] != node["elements"] * c["exp_ii"]:
                 raise AssertionError("one ROM read port")
+        elif node["label"] == "score delta33 subtract":
+            actual["delta_elements"] += node["elements"]
+        elif node["label"] == "exp delta clamp/index":
+            actual["index_elements"] += node["elements"]
         elif node["label"] == "U64 restoring normalize divide":
             actual["divide_elements"] += node["elements"]
             if node["duration"] != 64 * node["elements"]:
@@ -467,6 +476,8 @@ def audit(g, scheduled):
         raise AssertionError("missing GQA heads or S8 limb stages")
     if actual["exp_elements"] != 2 * e["valid_elements"] or actual["divide_elements"] != e["valid_elements"]:
         raise AssertionError("missing softmax pass or head")
+    if actual["delta_elements"] != actual["exp_elements"] or actual["index_elements"] != actual["exp_elements"]:
+        raise AssertionError("missing exp delta/index service")
     for kind, expected in (("Kraw", e["K_backing_bytes"]),
                            ("Vraw_feature_major", e["V_backing_bytes"]),
                            ("Q8", e["Q_backing_bytes"]), ("RESULT64", e["result_bytes"])):
