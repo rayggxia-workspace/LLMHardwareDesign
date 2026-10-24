@@ -116,6 +116,19 @@ class CliTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"SHA mismatch"):
             verify_bundle(out)
 
+    def test_independent_reader_rejects_rehashed_invalid_event_and_byte_types(self):
+        mapping = core.build(self.graph,self.blocks)["mapping_request"]
+        for field in ("event","metadata"):
+            bad = copy.deepcopy(mapping)
+            if field == "event":
+                bad["logical_graph"]["events"][0]["kind"] = "trnasfer"
+                bad["events"] = copy.deepcopy(bad["logical_graph"]["events"])
+            else:
+                bad["logical_graph"]["tensors"][0]["metadata_bytes"] = False
+            bad["graph_sha256"] = core.digest(bad["logical_graph"])
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                verify_mapping(bad)
+
     def test_duplicate_json_nonzero_and_failure_report(self):
         g,b = self.root/"g.json",self.root/"b.json"
         g.write_text('{"schema_version":"workload-mapping/1","schema_version":"typo"}')

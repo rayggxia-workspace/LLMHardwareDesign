@@ -25,7 +25,13 @@ def verify_mapping(m):
     check(len(links) == len(m["links"]), "duplicate link")
     check(len(events) == len(m["events"]), "duplicate event")
     allocations = {s["id"]: s for s in m["storage"]["allocations"]}
+    check(len(allocations) == len(m["storage"]["allocations"]), "duplicate allocation")
     positions = {eid: i for i, eid in enumerate(events)}
+    previous_step = -1
+    for e in m["events"]:
+        check(e["kind"] in ("call","transfer") and e["phase"] in ("prefill","decode","iteration"), "event kind/phase")
+        check(type(e["step"]) is int and e["step"] >= previous_step, "event step type/order")
+        previous_step = e["step"]
     for s in allocations.values():
         check(s["resource"] in resources and type(s["size_bytes"]) is int and s["size_bytes"] >= 0, "invalid storage byte unit")
         check(s["begin"] in events and s["end"] in events and positions[s["begin"]] <= positions[s["end"]], "storage lifetime reference")
@@ -49,10 +55,19 @@ def verify_mapping(m):
     tensors = {t["id"]: t for t in graph["tensors"]}
     calls = {c["id"]: c for c in graph["calls"]}
     transfers = {t["id"]: t for t in graph["transfers"]}
+    nodes = {n["id"]:n for n in graph["nodes"]}
+    check(len(tensors)==len(graph["tensors"]) and len(calls)==len(graph["calls"]) and len(transfers)==len(graph["transfers"]), "duplicate logical identity")
+    check(sorted(e["ref"] for e in m["events"] if e["kind"]=="call")==sorted(calls), "call event coverage")
+    check(sorted(e["ref"] for e in m["events"] if e["kind"]=="transfer")==sorted(transfers), "transfer event coverage")
+    for c in calls.values():
+        check(c["node"] in nodes and c["resource"] in resources, "call node/resource reference")
     def nbytes(t):
         check(all(type(n) is int and n > 0 for n in t["shape"]) and bool(t["shape"]), "shape")
-        check(t["storage_bits"] in (8, 16, 32, 64), "container unit")
-        check(0 < t["logical_bits"] <= t["storage_bits"], "logical/container mismatch")
+        check(type(t["storage_bits"]) is int and t["storage_bits"] in (8, 16, 32, 64), "container unit")
+        check(type(t["logical_bits"]) is int and 0 < t["logical_bits"] <= t["storage_bits"], "logical/container mismatch")
+        check(type(t["offset_bytes"]) is int and t["offset_bytes"] >= 0, "offset byte type")
+        check(t["metadata_bytes"] is None or (type(t["metadata_bytes"]) is int and t["metadata_bytes"] >= 0), "metadata byte type")
+        check(type(t["initial"]) is bool, "initial flag type")
         check(t["logical_bits"] != 33 or t["storage_bits"] == 64, "i33 container")
         return math.prod(t["shape"])*t["storage_bits"]//8+(t["metadata_bytes"] or 0)
     def root(tid):

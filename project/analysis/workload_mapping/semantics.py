@@ -94,6 +94,7 @@ def validate_semantics(s, graph, blocks):
             integer(tx[field], field)
         require(tx["outcome"] in ("commit", "abort"), "unknown trial outcome")
         require(tx["guard"] == "all_lanes_exact" and type(tx["guard_pass"]) is bool and tx["private"] is True, "full guard/private shadow contract required")
+        require(tx["guard_pass"], "failed guard cannot materialize a valid shadow; this finite profile supports late abort")
         st = tx["state"]
         if st not in current:
             initial = states[st]["initial"]
@@ -227,6 +228,11 @@ def consume_semantics(s, graph, report, resources=None):
     calls = {c["id"]:c for c in graph["calls"]}
     pos = {e["ref"]:i for i,e in enumerate(graph["events"])}
     demand(set(f) == {t["id"] for t in graph["tensors"]}, "format coverage")
+    for item in f.values():
+        demand(item["unit"] is None or (type(item["unit"]) is int and item["unit"]>0), "unit type")
+        for key in ("epoch","version","group"):
+            demand(item[key] is None or (type(item[key]) is int and item[key]>=0), key+" type")
+        demand(item["signedness"] in ("signed","unsigned","unknown") and item["stage"] in STAGES, "format certificate")
     for r in s["reductions"]:
         items = [f[t] for t in r["partials"]]
         demand(sorted(x["group"] for x in items) == sorted(set(r["expected_groups"])) and len(items) == len(set(r["partials"])), "group coverage")
@@ -239,6 +245,8 @@ def consume_semantics(s, graph, report, resources=None):
     transitions = []
     terminals = {}
     for tx in s["transactions"]:
+        demand(all(type(tx[k]) is int and tx[k]>=0 for k in ("epoch","expected_version","version","attempt","step","unit")), "transaction integer type")
+        demand(type(tx["guard_pass"]) is bool and tx["private"] is True and tx["guard_pass"], "guard/shadow flag type or failed guard")
         old = f[state[tx["state"]]]
         demand(tx["previous"] == state[tx["state"]] and (old["owner"],old["unit"],old["epoch"],old["version"]) == (tx["owner"],tx["unit"],tx["epoch"],tx["expected_version"]), "owner/unit/epoch/version feedback")
         ids = [tx[k] for k in ("proposal_call","guard_call","shadow_call","terminal_call")]

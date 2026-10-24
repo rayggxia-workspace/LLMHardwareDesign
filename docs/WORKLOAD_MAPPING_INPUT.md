@@ -112,3 +112,5 @@ python -B -m project.analysis.workload_mapping.validate_delivery --output-dir .l
 ## 2026-10-25 正式本机复跑回执
 
 干净执行源 `aa6f096695af45e9898090ce4f8006b8c9265029`，实际195项测试（32原小图、31原估算器、132适配器），0跳过；10个场景在独立源码副本/新进程/新cwd中重放，四个科学JSON逐字节及SHA一致。原fixture/expected/来源快照前后不变。真实导入/3032bit audit与bind/verify/replay独立重放一致，显式physical请求退出3。科学摘要SHA `f2ec30e28966be33888cf314bd5e93a0bb24378d4147d79cbdd9ad9971efbbdc`。原始日志和完整结果为 `.local/runs/formal-01/`；精选[回执](../work/huangpingyang04-lgtm/63/receipt.json)与[科学摘要](../work/huangpingyang04-lgtm/63/science.json)。C保持blocked，远端上传/CI/审查/看板另行核验。
+
+独立消费端另拒绝重新计算来源hash后仍非法的事件枚举、byte/单位bool类型等。事务建图当前支持全guard通过后、commit前的late abort；guard失败由原验收器拒绝，不允许将失败guard后的shadow标为有效。该边界不声称支持任意异常控制流。新增两项反例测试在后续正式复跑中独立计数，不改写195项旧回执。

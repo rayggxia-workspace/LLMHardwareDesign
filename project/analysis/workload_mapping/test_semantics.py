@@ -126,6 +126,19 @@ class SemanticTests(unittest.TestCase):
         s["source"]["commit"] = "floating-main"
         with self.assertRaises(ValueError):
             validate_semantics(s,g,b)
+
+    def test_consumer_rejects_bool_unit_and_materialized_failed_guard(self):
+        g,b,s = self.data(True)
+        result = core.build(g,b)
+        apply_semantics(result,g,b,s)
+        bad = copy.deepcopy(result["mapping_request"])
+        bad["semantics"]["tensor_formats"][0]["unit"] = True
+        bad["semantics_sha256"] = core.digest(bad["semantics"])
+        with self.assertRaisesRegex(ValueError,"unit type"):
+            verify_mapping(bad)
+        s["transactions"][1]["guard_pass"] = False
+        with self.assertRaisesRegex(ValueError,"failed guard"):
+            validate_semantics(s,g,b)
         g,b,s = self.data()
         s["ignore_errors"] = True
         with self.assertRaises(ValueError):
