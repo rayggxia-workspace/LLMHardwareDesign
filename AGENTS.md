@@ -1,5 +1,9 @@
 # AI 协作约定
 
+## 2026-10-24 Issue76有限Granite与微实现校准
+
+用户授权本人新CPU服务器lrz-i76-*并行接续Granite expert→merge有限容量/端口/缓冲、受限S8宽算术/SFU/ROM可执行成本校准。旧74全数学与Falcon服务只读，最小两评价层×tile128/256×M/V×labels共16同函数配置；实际微程序/RTL核/候选费用和未做物理时序分开。协议project/experiments/granite_ports/PROTOCOL.md；完整数组/服务/微实现仅服务器，PC源码/微合成/metadata/字节。固定精度/库存，不赠宽单元/容量/端口；未知费用拒排名，无新模型/其他机器/Phi解封/成员55和63接管，独立branch/worktree/out与完整来源/负例/交接。
+
 ## 2026-10-24 Issue74完整MoE与分组边界
 
 用户授权在本人新CPU服务器目录lrz-i74-*并行补齐Granite真实残差/norm→integer路由/8expert→宽合并/下游，以及固定group量化函数的同精度同资源M/V驻留比较。协议见project/experiments/moe_grouped/PROTOCOL.md；只读旧70/72权重/结果，独立分支/worktree/out，所有格式/非线性/宽乘/重对齐/metadata/端口/buffer真实记账。旧失败/勘误保留，封闭整数路径不得FP桥，无新模型/其他机器/Phi解封/成员55和63接管；条件服务非质量/RTL/PPA。
