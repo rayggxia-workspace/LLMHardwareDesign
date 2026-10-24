@@ -89,3 +89,20 @@ python -B project/experiments/closure/receive_continuity.py --result <resume-run
 binding包含真实commit及`receive_continuity`/`receive_falcon`/`audit_io`/
 `integer_oracle`四个`_sha256`。默认checkpoint state、conv、重新计算checksum的
 owner和private unit四个真实SHA重写负例，分别核语义拒绝。
+
+## 固定输入out_proj精度分叉
+
+`receive_outproj.py`先核已PASS的完整S32 guard baseline receipt和所有来源SHA；
+同一gatednorm整数输入、W8权重和静态输出scale下，重算whole/K512/K256动态
+A8、所有完整group INT32 dot、共同单位与有序I64对齐归约、checked I128乘子
+积的signed-hi/unsigned-lo、一次最终RNE、完整MuP/join/nextnorm及元数据/
+packet成本。whole必须逐码重现旧轨迹；参考误差在整数结束后独立计算，未作
+评价误差拟合。该受控实验不能当物理部署或模型质量通过。
+
+```text
+python -B project/experiments/closure/receive_outproj.py --result <outproj> --baseline <fullS32> --baseline-receipt <math-PASS-receipt.json> --compiled <compiled> --producer-source <frozen-falcon_outproj.py> --binding <JSON> --out <new-receipt>
+```
+
+binding含真实commit和`receive_outproj`/`receive_falcon`/`audit_io`/
+`integer_oracle`四项`_sha256`；默认A8 code、I128低字和alignment unit三个实际
+artifact改写/SHA重写负例，不能跳过后仍报完整PASS。
