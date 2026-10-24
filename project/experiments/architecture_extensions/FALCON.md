@@ -17,8 +17,13 @@ of width128; Mamba has 32 heads, width128, state256 and one shared B/C group.
    branch outputs, residual and next-norm input; account fanout, two join reads,
    output write, distinct growing KV and fixed conv/SSM state. Sequential CPU
    execution is not a hardware concurrency or PPA result.
+   Additionally the 3B model gates before one RMSNorm group across all4096 Mamba
+   channels (all32 heads). Raw scan, gate and gamma alone total48KiB in FP32;
+   a16KiB V scratch needs a streaming/re-read/spill protocol. R head-state
+   independence must not be mistaken for independent per-head output norm.
 3. **Matrix/scale boundary.** One true Mamba input projection, complete K2560,
-   first16 outputs; W8 per-output, A8 calibration-static versus dynamic-per-row,
+   sixteen outputs (first4 each of gate/x/B/dt); W8 per-output, A8
+   calibration-static versus dynamic-per-row,
    signed symmetric[-127,127], RNE, INT32 checked before cast. Dequantization and
    scale handling remain floating references. Do not quantize only K slices and
    claim the complete dot product passed.

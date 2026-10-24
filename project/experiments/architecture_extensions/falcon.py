@@ -104,6 +104,8 @@ def recurrence(a, dt, x, b, c, skip, initial=None, *, storage_bits=None, unit=No
     low, high = (-(1 << (storage_bits - 1)), (1 << (storage_bits - 1)) - 1) if storage_bits else (0, 0)
     for i in range(t):
         proposal = state * a[i] + (dt[i] * b[i][None, :]) * x[i][:, None]
+        if not np.all(np.isfinite(proposal)):
+            raise OverflowError("non-finite FP64 update bridge")
         sat = 0
         if storage_bits:
             rounded = np.rint(proposal / unit)
@@ -158,6 +160,9 @@ def costs(config, length, *, state_bits=32, conv_bits=32, kv_bits=32, scale_bits
             "hybrid_norm_fanout_payload_per_layer_token_fp32": 2 * hidden * 4,
             "hybrid_branch_join_read_payload_per_layer_token_fp32": 2 * hidden * 4,
             "hybrid_join_write_payload_per_layer_token_fp32": hidden * 4,
+            "mamba_gated_norm_vector_elements": inner,
+            "mamba_gated_norm_raw_gate_gamma_payload_fp32": 3 * inner * 4,
+            "mamba_gated_norm_group_reduction_elements": inner // config["mamba_n_groups"],
             "qualification": "Logical payload; independent format candidates, not all-integer or physical timing. Owner descriptor is a declared 24-byte record, endpoint/link packing remains separate."}
 
 
@@ -279,6 +284,7 @@ def capture(args):
               mixer.register_forward_hook(save_hook("mamba")),
               layer.pre_ff_layernorm.register_forward_pre_hook(save_hook("pre_ff_input", before=True)),
               mixer.in_proj.register_forward_hook(save_hook("projected_raw")),
+              mixer.norm.register_forward_pre_hook(save_hook("raw_scan", before=True)),
               mixer.out_proj.register_forward_pre_hook(save_hook("scan_normed", before=True))]
     def trace_scan_hook(module, values):
         if trace_scan["enabled"]:
@@ -380,7 +386,7 @@ def capture(args):
         arrays[split + ".projected"] = arrays[split + ".projected_raw"] * _np(mixer.mup_vector)[0]
     for name, weight in (("conv_weight", mixer.conv1d.weight), ("conv_bias", mixer.conv1d.bias),
                          ("dt_bias", mixer.dt_bias), ("A_log", mixer.A_log), ("D", mixer.D),
-                         ("mup_vector", mixer.mup_vector)):
+                         ("mup_vector", mixer.mup_vector), ("gated_norm_gamma", mixer.norm.weight)):
         if weight is not None:
             arrays["weight." + name] = _np(weight)
     # Prove the parallel join using the exact captured data and configured MuP multipliers.
@@ -398,6 +404,18 @@ def capture(args):
         numeric[split + ".initial_state"] = np.zeros_like(ref["states"][0])
     numeric["native.head0.states"] = arrays["native.head0.states"]
     numeric["native.head0.output"] = arrays["native.head0.output"]
+    # Whole4096 gated norm couples all32 head outputs even though each R state
+    # recurrence is independent. This consumer is explicitly floating here.
+    gate = arrays["evaluation.projected"][:, :mixer.intermediate_size].astype(np.float64)
+    raw_scan = arrays["evaluation.raw_scan"].astype(np.float64)
+    silu_gate = gate / (1 + np.exp(-gate))
+    gated = raw_scan * silu_gate if not config.mamba_norm_before_gate else raw_scan
+    grouped = gated.reshape(total, mixer.n_groups, -1)
+    rms = grouped / np.sqrt(np.mean(grouped * grouped, axis=-1, keepdims=True) + config.rms_norm_eps)
+    norm_reference = rms.reshape(total, -1) * arrays["weight.gated_norm_gamma"]
+    if config.mamba_norm_before_gate:
+        norm_reference *= silu_gate
+    numeric["gated_norm.fp64_reference"] = norm_reference
     c = {name: numeric["evaluation." + name] for name in ("a", "dt", "x", "b", "c", "skip")}
     state_results = []
     for bits in (16, 32):
@@ -411,13 +429,18 @@ def capture(args):
         numeric[f"S{bits}.unit_exponent"] = np.asarray(int(math.log2(unit)), np.int64)
         state_results.append({"storage_bits": bits, "unit": unit, "unit_exponent": int(math.log2(unit)),
                               "unit_source": "calibration16_only", "saturations": int(candidate["saturations"].sum()),
+                              "candidate_unit_format": "signed INT16 power-of-two exponent,2 bytes/head; NPZ uses int64 witness",
                               "output_error_vs_fp64": metric(candidate["output"], numeric["evaluation.fp64_output"]),
                               "final_state_error_vs_fp64": metric(candidate["states"][-1], numeric["evaluation.fp64_states"][-1]),
                               "bridge": "FP64 conv/SiLU/softplus/exp and coefficient multiplications; integer storage only"})
     # This is a projection experiment, not quantization of all branches or weights.
+    projection_indices = np.concatenate((np.arange(4), np.arange(mixer.intermediate_size, mixer.intermediate_size + 4),
+        np.arange(2 * mixer.intermediate_size, 2 * mixer.intermediate_size + 4),
+        np.arange(mixer.intermediate_size + mixer.conv_dim, mixer.intermediate_size + mixer.conv_dim + 4)))
     w8_results, w8_arrays = _w8a8(arrays["calibration.norm"] * config.ssm_in_multiplier,
                                 arrays["evaluation.norm"] * config.ssm_in_multiplier,
-                                _np(mixer.in_proj.weight)[:16])
+                                _np(mixer.in_proj.weight)[projection_indices])
+    w8_arrays["projection_output_indices"] = projection_indices
     cfg = config.to_dict()
     report = {"schema": "falcon-h1-bounded-v1", "architecture": "parallel Attention + Mamba2 (not GDN)",
               "model": "tiiuae/Falcon-H1-3B-Instruct", "model_revision": args.revision,
@@ -430,7 +453,12 @@ def capture(args):
                                  "detected": bool(reset_error["max_abs"] > 1e-5)},
               "state_fp64_vs_native_tokenwise": metric(numeric["evaluation.fp64_states"], arrays["native.head0.states"]),
               "output_fp64_vs_native_tokenwise": metric(numeric["evaluation.fp64_output"], arrays["native.head0.output"]),
+              "gated_norm": {"norm_before_gate": config.mamba_norm_before_gate, "groups": mixer.n_groups,
+                  "elements": mixer.intermediate_size, "raw_gate_gamma_bytes_fp32": 3 * mixer.intermediate_size * 4,
+                  "fp64_reference_vs_native": metric(norm_reference, arrays["evaluation.scan_normed"]),
+                  "bridge": "FP64 SiLU, multiply, whole-group sum/sqrt/divide/gamma; native FP32 reference; not integer path"},
               "state_storage_candidates": state_results, "projection_w8a8": w8_results,
+              "projection_outputs": {"indices": projection_indices.tolist(), "sections": ["gate_first4", "x_first4", "B_first4", "dt_first4"]},
               "inventory": [costs(cfg, total), costs(cfg, total, state_bits=16, state_format="S16"),
                             costs(cfg, total, state_bits=32, state_format="S32")],
               "limits": ["One actual complete head0 D128xN256; B/C shared by all32 heads. Full-layer initial/final state and complete hybrid branches retained.",

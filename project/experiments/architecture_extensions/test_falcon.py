@@ -118,6 +118,8 @@ class ProjectionAndCostTests(unittest.TestCase):
         self.assertEqual(s32["kv_payload_per_layer"], 147456)
         self.assertEqual(s16["state_units_per_layer"], 64)
         self.assertEqual(s16["conv_payload_per_layer"], s32["conv_payload_per_layer"])
+        self.assertEqual(s32["mamba_gated_norm_raw_gate_gamma_payload_fp32"], 49152)
+        self.assertEqual(f.costs(cfg, 72, state_format="S32")["state_units_per_layer"], 64)
 
     def test_nonfinite_config_is_explicit_string(self):
         value = f._finite_json({"limits": (0, float("inf"))})
