@@ -68,7 +68,7 @@ def route_summary(logits, ids, stable):
 
 def verify_router(x, w, logits, ids, weights, precision):
     dtype_x = np.float64 if precision == "model64" else np.float32
-    dtype_logit = np.float32 if precision == "native32" else np.float64
+    dtype_logit = np.float32 if precision in ("native32", "native32_eager") else np.float64
     need(x.dtype == dtype_x and w.dtype == dtype_x and logits.dtype == dtype_logit
          and weights.dtype == dtype_x and x.ndim == 2 and w.shape == (40, x.shape[1])
          and logits.shape == (len(x), 40) and weights.shape == ids.shape,
@@ -84,7 +84,7 @@ def verify_router(x, w, logits, ids, weights, precision):
     gamma = operations * epsilon / (1 - operations * epsilon)
     allowance = gamma * magnitude + np.finfo(dtype_logit).tiny * operations
     need(np.all(np.abs(expected - logits) <= allowance), "router independent linear bound")
-    summary = route_summary(logits, ids, precision != "native32")
+    summary = route_summary(logits, ids, precision not in ("native32", "native32_eager"))
     selected = np.take_along_axis(logits.astype(np.float64), ids, 1)
     exponent = np.exp(selected - np.max(selected, axis=1, keepdims=True))
     probabilities = exponent / np.sum(exponent, axis=1, keepdims=True)
@@ -114,7 +114,7 @@ def verify(folder, original_folder, producer_source):
     need(m["implementation"]["sha256"] == original["implementation"]["sha256"]
          == sha(folder / "granitemoe-implementation.py"), "framework source unchanged")
     precision = m["precision_variant"]
-    need(precision in ("native32", "router64", "model64"), "reference variant")
+    need(precision in ("native32", "native32_eager", "router64", "model64"), "reference variant")
     report, z = load_json(folder / "report.json"), arrays(folder / "trace.npz")
     need(report["precision_variant"] == precision and report["unchanged_gate"] == GATE
          and report["original_capture_status"] == "FAIL", "unchanged reference gate")
@@ -148,7 +148,7 @@ def verify(folder, original_folder, producer_source):
                 observed = run["router_observed_dtypes"][str(layer)]
                 expected_types = {"input": "torch.float64" if precision == "model64" else "torch.float32",
                                   "weight": "torch.float64" if precision == "model64" else "torch.float32",
-                                  "logits": "torch.float32" if precision == "native32" else "torch.float64",
+                                  "logits": "torch.float32" if precision in ("native32", "native32_eager") else "torch.float64",
                                   "softmax_return": "torch.float64" if precision == "model64" else "torch.float32"}
                 need(observed == expected_types, "reported observed router dtypes")
         comparisons[case] = {}
@@ -174,11 +174,27 @@ def verify(folder, original_folder, producer_source):
                 for target, field in (("logits_error", "logits"), ("router_input_error", "router_input"),
                                       ("moe_output_error", "moe_output"), ("layer_hidden_error", "hidden")):
                     equal_metric(row[target], metric(z[q + field], z[p + field]))
-                need(row["full"] == route_summary(z[p + "logits"], first, precision != "native32")
-                     and row["other"] == route_summary(z[q + "logits"], other, precision != "native32"),
+                need(row["full"] == route_summary(z[p + "logits"], first, precision not in ("native32", "native32_eager"))
+                     and row["other"] == route_summary(z[q + "logits"], other, precision not in ("native32", "native32_eager")),
                      "comparison margins")
             need(c["total_layer_token_set_changes"] == total, "total changed layer-token count")
             comparisons[case][profile] = dict(error=err, gate_passed=passed, layer_token_set_changes=total)
+    backend_control = None
+    if precision == "native32_eager":
+        backend_control = []
+        for layer in range(32):
+            p = "backend_control." + str(layer) + "."
+            expected_keys.update((p + "native", p + "eager"))
+            need(z[p + "native"].shape == z[p + "eager"].shape == (72, 1536),
+                 "same-input complete expert backend control")
+            err = metric(z[p + "eager"], z[p + "native"])
+            row = m["expert_backend"]["same_input_controls"][str(layer)]
+            equal_metric(row["error"], err)
+            passed = err["relative_l2"] <= 2e-5 and err["max_abs"] <= 2e-3
+            need(row["passes_same_math_control"] is passed, "backend same-math gate")
+            backend_control.append(passed)
+        need(m["expert_backend"]["all_same_math_controls_pass"] is all(backend_control),
+             "all backend controls")
     need(set(z) == expected_keys, "complete exact trace key index")
     qualification = "PASS" if all_passed else "FAIL"
     need(report["reference_self_consistency"] == m["reference_self_consistency"] == qualification,
@@ -187,6 +203,7 @@ def verify(folder, original_folder, producer_source):
             "reference_self_consistency": qualification, "original_capture_status": "FAIL",
             "artifacts": checked, "original_artifacts_checked": len(original_checked),
             "router_profile_layers": 192, "independent_scalar_complete_dots": scalar_dots,
+            "native32_eager_backend_controls": backend_control,
             "comparisons": comparisons,
             "limits": ["Receiver validates router math, provenance and published trace comparisons; does not rerun full attention/expert model",
                        "Floating reference arithmetic; no integer deployment or model application quality acceptance",

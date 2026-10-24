@@ -38,3 +38,21 @@ python -B project/experiments/closure/receive_reference.py --result <granite-ref
 binding为真实commit、`receive_reference_sha256`和`audit_io_sha256`。
 默认实际改写NPZ logit/route及JSON资格、重写manifest SHA，再要求语义拒绝；
 mutated容器留接收目录供核查。`--skip-negatives`只能得到PARTIAL_NO_NEGATIVES。
+
+## Falcon完整整数R支路接收
+
+`receive_falcon.py`不导入producer；独立负数floor-quotient RNE、完整W8 dot、
+U128 restoring sqrt/div、持续conv/LUT/32head state、4096 gatednorm、out_proj、
+外部attention/residual join和H2560 nextnorm重算，核每stage整数、每proposal/
+state SHA、范围判断、单位/epoch/原子发布/失败不变及连续checkpoint。仅此R支路
+闭包；attention与MLP依然cut。编译器生成的浮点LUT/原生cal最大值并未由整数
+重放变为无浮点硬件，接收也不声称其模型质量通过。
+
+```text
+python -B project/experiments/closure/receive_falcon.py --result <run> --compiled <compiled> --capture <Issue72-capture> --chain-source <frozen-falcon_chain.py> --int-source <frozen-falcon_int.py> --binding <JSON> --out <new-receipt>
+```
+
+binding为真实commit、`receive_falcon_sha256`、`audit_io_sha256`和
+`integer_oracle_sha256`。默认runtime code、commit epoch、initial unit三个
+真实artifact改写并重写SHA的负例；后者更新compiler manifest并同步run的输入
+manifest指针，避免仅靠旧hash检测。`--skip-negatives`标PARTIAL_NO_NEGATIVES。
