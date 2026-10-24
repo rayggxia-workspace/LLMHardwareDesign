@@ -1,0 +1,499 @@
+[
+  {
+    "baseline_manifest_sha256": "db07a03c2dc50f77110f4abe8946b534233c378e61485ef19fed090f9d85ce4b",
+    "calibration": "no new scale fitting; same original cal16 compiler/weight scales. Current integer row/group selects minimal RNE rightshift, no future/native state or eval error selection. K4096/512/256 predeclared before runs.",
+    "compiled_manifest_sha256": "5f9bd4f5cf2374f54180164d9d24ae1214c4142b10776854335cb66377ad4089",
+    "costs": {
+      "a8_delta_payload_bytes": 144,
+      "a8_delta_wire_bytes": 3456,
+      "common_delta_transmission_required": false,
+      "common_delta_witness_bytes": 144,
+      "factoring": "one static peroutput W scale plus one dynamic I16 A8 exponent/group,row; W scale factors outside complete partial sum, no G copies of peroutput Q31 metadata",
+      "fixed_output_scale_payload_bytes": 15360,
+      "fixed_weight_w8_payload_bytes": 10485760,
+      "partial_dot_payload_bytes": 737280,
+      "partial_dot_wire_bytes": 751104,
+      "protocol": "32B header,16B beats,payload1984,FIFO2KiB; each group output row and dynamic exponent vector separate stream; excludes route hop multiplier, weight loading schedule and descriptor allocator overhead"
+    },
+    "elapsed_seconds": 2.5520055294036865,
+    "fixed_w_exp_array_sha256": "3dad0b39304c8b565ddfb27826c037b6a44eae02c5e319f02917c246ff00c8b4",
+    "fixed_w_scale_array_sha256": "e79043b2696aa7a08b4eb9a8710d7ac8a53aea9b02cd865f1fd9d2fc24e93702",
+    "frozen_input_array_sha256": "96f2a3763072e55db675996b97a19e9406b851879bb83b541f3ae55d23f9d274",
+    "frozen_weight_array_sha256": "9b79c667b9c20c249ef9ea6f7029c57fbaa7a7ef260c75130881ec555f5c97e3",
+    "group_k": 0,
+    "groups": 1,
+    "limits": [
+      "One frozen fullS32 guard-rescale trajectory, output projection only; R and gatednorm not refitted.",
+      "Group partial scales differ; sum aligned completeK in I64 then one checked I128 Q31/RNE. Extra rounding pergroup would be a different numerical function.",
+      "Fixed input error and native errors remain diagnostics, no application quality gate/PPA/real INT8 kernel result.",
+      "Logical partial streams are concrete protocol obligations for this schedule, not unavoidable E2E lower bounds or optimal batching.",
+      "Full G*O partials cannot reside in V16KiB; output tiling/streaming must be priced before placement benefit."
+    ],
+    "ops": {
+      "a8_scale_scan_elements": 4030464,
+      "add_i64": 552960,
+      "division_restoring_iterations": 23602176,
+      "isqrt_restoring_iterations": 4608,
+      "matrix_int32_accum": 754974720,
+      "mul_32x32": 921600,
+      "mul_8x8": 754974720,
+      "norm_reduce_add_u128": 184248,
+      "rne_shift_i64": 4399104,
+      "rq_i64_rne": 184320,
+      "s8_signed_high_radix128_products": 778014720,
+      "wide_digit_shift_add": 22118400
+    },
+    "phase_errors": {
+      "decode8": {
+        "join_q12": {
+          "vs_frozen_integer_baseline": {
+            "max_abs": 0,
+            "relative_l2": 0
+          },
+          "vs_native_reference": {
+            "max_abs": 0.36513280868530273,
+            "relative_l2": 0.027165288420732632
+          }
+        },
+        "next_norm_q12": {
+          "vs_frozen_integer_baseline": {
+            "max_abs": 0,
+            "relative_l2": 0
+          },
+          "vs_native_reference": {
+            "max_abs": 0.2501993179321289,
+            "relative_l2": 0.0258590995260007
+          }
+        },
+        "out_linear_q12": {
+          "vs_frozen_integer_baseline": {
+            "max_abs": 0,
+            "relative_l2": 0
+          },
+          "vs_native_reference": {
+            "max_abs": 4.132072448730469,
+            "relative_l2": 0.05886727699403867
+          }
+        }
+      },
+      "prefill64": {
+        "join_q12": {
+          "vs_frozen_integer_baseline": {
+            "max_abs": 0,
+            "relative_l2": 0
+          },
+          "vs_native_reference": {
+            "max_abs": 0.47190380096435547,
+            "relative_l2": 0.03205394961298227
+          }
+        },
+        "next_norm_q12": {
+          "vs_frozen_integer_baseline": {
+            "max_abs": 0,
+            "relative_l2": 0
+          },
+          "vs_native_reference": {
+            "max_abs": 1.1106605529785156,
+            "relative_l2": 0.03077554274843906
+          }
+        },
+        "out_linear_q12": {
+          "vs_frozen_integer_baseline": {
+            "max_abs": 0,
+            "relative_l2": 0
+          },
+          "vs_native_reference": {
+            "max_abs": 5.3364386558532715,
+            "relative_l2": 0.06826749121169284
+          }
+        }
+      }
+    },
+    "reference_errors": {
+      "join_q12": {
+        "vs_frozen_integer_baseline": {
+          "max_abs": 0,
+          "relative_l2": 0
+        },
+        "vs_native_reference": {
+          "max_abs": 0.47190380096435547,
+          "relative_l2": 0.03151573428850079
+        }
+      },
+      "next_norm_q12": {
+        "vs_frozen_integer_baseline": {
+          "max_abs": 0,
+          "relative_l2": 0
+        },
+        "vs_native_reference": {
+          "max_abs": 1.1106605529785156,
+          "relative_l2": 0.03028864736230588
+        }
+      },
+      "out_linear_q12": {
+        "vs_frozen_integer_baseline": {
+          "max_abs": 0,
+          "relative_l2": 0
+        },
+        "vs_native_reference": {
+          "max_abs": 5.3364386558532715,
+          "relative_l2": 0.06725674504169478
+        }
+      }
+    },
+    "schema": "falcon-outproj-granularity-v1",
+    "status": "EXECUTED_INTEGER_DIAGNOSTIC",
+    "whole_row_comparison": {
+      "a8": true,
+      "a8_delta": true,
+      "attention_scaled_q12": true,
+      "join_q12": true,
+      "mamba_scaled_q12": true,
+      "next_norm_q12": true,
+      "out_linear_q12": true,
+      "partial_acc32": true
+    },
+    "widths": {
+      "arbitrary_I32_input_bound": "minimal RNE A8 rightshift delta<=25; sum |partial|<<relative_delta <= K*127*127*2^25 <2^51 at K4096; Q31 product <2^82, not a blanket I64 guarantee",
+      "declared_alignment_bits": 32,
+      "declared_rq_product_bits": 64,
+      "full_k": 4096,
+      "group_k": 4096,
+      "groups": 1,
+      "largest_aligned_sum_magnitude_bits": 17,
+      "largest_product_magnitude_bits": 48,
+      "observed_rq_products_fit_i64": true,
+      "partial_worst_int32_absolute_bound": 66064384
+    }
+  },
+  {
+    "baseline_manifest_sha256": "db07a03c2dc50f77110f4abe8946b534233c378e61485ef19fed090f9d85ce4b",
+    "calibration": "no new scale fitting; same original cal16 compiler/weight scales. Current integer row/group selects minimal RNE rightshift, no future/native state or eval error selection. K4096/512/256 predeclared before runs.",
+    "compiled_manifest_sha256": "5f9bd4f5cf2374f54180164d9d24ae1214c4142b10776854335cb66377ad4089",
+    "costs": {
+      "a8_delta_payload_bytes": 1152,
+      "a8_delta_wire_bytes": 3456,
+      "common_delta_transmission_required": false,
+      "common_delta_witness_bytes": 144,
+      "factoring": "one static peroutput W scale plus one dynamic I16 A8 exponent/group,row; W scale factors outside complete partial sum, no G copies of peroutput Q31 metadata",
+      "fixed_output_scale_payload_bytes": 15360,
+      "fixed_weight_w8_payload_bytes": 10485760,
+      "partial_dot_payload_bytes": 5898240,
+      "partial_dot_wire_bytes": 6008832,
+      "protocol": "32B header,16B beats,payload1984,FIFO2KiB; each group output row and dynamic exponent vector separate stream; excludes route hop multiplier, weight loading schedule and descriptor allocator overhead"
+    },
+    "elapsed_seconds": 3.1048314571380615,
+    "fixed_w_exp_array_sha256": "3dad0b39304c8b565ddfb27826c037b6a44eae02c5e319f02917c246ff00c8b4",
+    "fixed_w_scale_array_sha256": "e79043b2696aa7a08b4eb9a8710d7ac8a53aea9b02cd865f1fd9d2fc24e93702",
+    "frozen_input_array_sha256": "96f2a3763072e55db675996b97a19e9406b851879bb83b541f3ae55d23f9d274",
+    "frozen_weight_array_sha256": "9b79c667b9c20c249ef9ea6f7029c57fbaa7a7ef260c75130881ec555f5c97e3",
+    "group_k": 512,
+    "groups": 8,
+    "limits": [
+      "One frozen fullS32 guard-rescale trajectory, output projection only; R and gatednorm not refitted.",
+      "Group partial scales differ; sum aligned completeK in I64 then one checked I128 Q31/RNE. Extra rounding pergroup would be a different numerical function.",
+      "Fixed input error and native errors remain diagnostics, no application quality gate/PPA/real INT8 kernel result.",
+      "Logical partial streams are concrete protocol obligations for this schedule, not unavoidable E2E lower bounds or optimal batching.",
+      "Full G*O partials cannot reside in V16KiB; output tiling/streaming must be priced before placement benefit."
+    ],
+    "ops": {
+      "a8_scale_scan_elements": 3626496,
+      "add_i64": 1843200,
+      "division_restoring_iterations": 23602176,
+      "isqrt_restoring_iterations": 4608,
+      "matrix_int32_accum": 754974720,
+      "mul_32x32": 737280,
+      "mul_64x32": 184320,
+      "mul_8x8": 754974720,
+      "norm_reduce_add_u128": 184248,
+      "rne_shift_i64": 4814336,
+      "rq_i128_rne": 184320,
+      "s8_signed_high_radix128_products": 781701120,
+      "wide_digit_shift_add": 25804800
+    },
+    "phase_errors": {
+      "decode8": {
+        "join_q12": {
+          "vs_frozen_integer_baseline": {
+            "max_abs": 1470,
+            "relative_l2": 0.023550145752695383
+          },
+          "vs_native_reference": {
+            "max_abs": 0.23277854919433594,
+            "relative_l2": 0.018594594486964083
+          }
+        },
+        "next_norm_q12": {
+          "vs_frozen_integer_baseline": {
+            "max_abs": 649,
+            "relative_l2": 0.022521917983185803
+          },
+          "vs_native_reference": {
+            "max_abs": 0.2554035186767578,
+            "relative_l2": 0.01725812738273505
+          }
+        },
+        "out_linear_q12": {
+          "vs_frozen_integer_baseline": {
+            "max_abs": 16627,
+            "relative_l2": 0.051085370114335726
+          },
+          "vs_native_reference": {
+            "max_abs": 2.63409423828125,
+            "relative_l2": 0.040294404636182106
+          }
+        }
+      },
+      "prefill64": {
+        "join_q12": {
+          "vs_frozen_integer_baseline": {
+            "max_abs": 1936,
+            "relative_l2": 0.02858458224441568
+          },
+          "vs_native_reference": {
+            "max_abs": 0.2498025894165039,
+            "relative_l2": 0.02042010670101829
+          }
+        },
+        "next_norm_q12": {
+          "vs_frozen_integer_baseline": {
+            "max_abs": 3825,
+            "relative_l2": 0.027448395372514374
+          },
+          "vs_native_reference": {
+            "max_abs": 0.6571474075317383,
+            "relative_l2": 0.018837728639251476
+          }
+        },
+        "out_linear_q12": {
+          "vs_frozen_integer_baseline": {
+            "max_abs": 21894,
+            "relative_l2": 0.060793344506603224
+          },
+          "vs_native_reference": {
+            "max_abs": 2.823505401611328,
+            "relative_l2": 0.04348991956021011
+          }
+        }
+      }
+    },
+    "reference_errors": {
+      "join_q12": {
+        "vs_frozen_integer_baseline": {
+          "max_abs": 1936,
+          "relative_l2": 0.02803680825380837
+        },
+        "vs_native_reference": {
+          "max_abs": 0.2498025894165039,
+          "relative_l2": 0.02021295579921177
+        }
+      },
+      "next_norm_q12": {
+        "vs_frozen_integer_baseline": {
+          "max_abs": 3825,
+          "relative_l2": 0.026964453998130772
+        },
+        "vs_native_reference": {
+          "max_abs": 0.6571474075317383,
+          "relative_l2": 0.018675431735975242
+        }
+      },
+      "out_linear_q12": {
+        "vs_frozen_integer_baseline": {
+          "max_abs": 21894,
+          "relative_l2": 0.0597653140021434
+        },
+        "vs_native_reference": {
+          "max_abs": 2.823505401611328,
+          "relative_l2": 0.04313566583545221
+        }
+      }
+    },
+    "schema": "falcon-outproj-granularity-v1",
+    "status": "EXECUTED_INTEGER_DIAGNOSTIC",
+    "whole_row_comparison": {
+      "attention_scaled_q12": true,
+      "join_q12": false,
+      "mamba_scaled_q12": false,
+      "next_norm_q12": false,
+      "out_linear_q12": false
+    },
+    "widths": {
+      "arbitrary_I32_input_bound": "minimal RNE A8 rightshift delta<=25; sum |partial|<<relative_delta <= K*127*127*2^25 <2^51 at K4096; Q31 product <2^82, not a blanket I64 guarantee",
+      "declared_alignment_bits": 64,
+      "declared_rq_product_bits": 128,
+      "full_k": 4096,
+      "group_k": 512,
+      "groups": 8,
+      "largest_aligned_sum_magnitude_bits": 20,
+      "largest_product_magnitude_bits": 51,
+      "observed_rq_products_fit_i64": true,
+      "partial_worst_int32_absolute_bound": 8258048
+    }
+  },
+  {
+    "baseline_manifest_sha256": "db07a03c2dc50f77110f4abe8946b534233c378e61485ef19fed090f9d85ce4b",
+    "calibration": "no new scale fitting; same original cal16 compiler/weight scales. Current integer row/group selects minimal RNE rightshift, no future/native state or eval error selection. K4096/512/256 predeclared before runs.",
+    "compiled_manifest_sha256": "5f9bd4f5cf2374f54180164d9d24ae1214c4142b10776854335cb66377ad4089",
+    "costs": {
+      "a8_delta_payload_bytes": 2304,
+      "a8_delta_wire_bytes": 4608,
+      "common_delta_transmission_required": false,
+      "common_delta_witness_bytes": 144,
+      "factoring": "one static peroutput W scale plus one dynamic I16 A8 exponent/group,row; W scale factors outside complete partial sum, no G copies of peroutput Q31 metadata",
+      "fixed_output_scale_payload_bytes": 15360,
+      "fixed_weight_w8_payload_bytes": 10485760,
+      "partial_dot_payload_bytes": 11796480,
+      "partial_dot_wire_bytes": 12017664,
+      "protocol": "32B header,16B beats,payload1984,FIFO2KiB; each group output row and dynamic exponent vector separate stream; excludes route hop multiplier, weight loading schedule and descriptor allocator overhead"
+    },
+    "elapsed_seconds": 3.9097201824188232,
+    "fixed_w_exp_array_sha256": "3dad0b39304c8b565ddfb27826c037b6a44eae02c5e319f02917c246ff00c8b4",
+    "fixed_w_scale_array_sha256": "e79043b2696aa7a08b4eb9a8710d7ac8a53aea9b02cd865f1fd9d2fc24e93702",
+    "frozen_input_array_sha256": "96f2a3763072e55db675996b97a19e9406b851879bb83b541f3ae55d23f9d274",
+    "frozen_weight_array_sha256": "9b79c667b9c20c249ef9ea6f7029c57fbaa7a7ef260c75130881ec555f5c97e3",
+    "group_k": 256,
+    "groups": 16,
+    "limits": [
+      "One frozen fullS32 guard-rescale trajectory, output projection only; R and gatednorm not refitted.",
+      "Group partial scales differ; sum aligned completeK in I64 then one checked I128 Q31/RNE. Extra rounding pergroup would be a different numerical function.",
+      "Fixed input error and native errors remain diagnostics, no application quality gate/PPA/real INT8 kernel result.",
+      "Logical partial streams are concrete protocol obligations for this schedule, not unavoidable E2E lower bounds or optimal batching.",
+      "Full G*O partials cannot reside in V16KiB; output tiling/streaming must be priced before placement benefit."
+    ],
+    "ops": {
+      "a8_scale_scan_elements": 3501312,
+      "add_i64": 3317760,
+      "division_restoring_iterations": 23602176,
+      "isqrt_restoring_iterations": 4608,
+      "matrix_int32_accum": 754974720,
+      "mul_32x32": 737280,
+      "mul_64x32": 184320,
+      "mul_8x8": 754974720,
+      "norm_reduce_add_u128": 184248,
+      "rne_shift_i64": 5848832,
+      "rq_i128_rne": 184320,
+      "s8_signed_high_radix128_products": 781701120,
+      "wide_digit_shift_add": 25804800
+    },
+    "phase_errors": {
+      "decode8": {
+        "join_q12": {
+          "vs_frozen_integer_baseline": {
+            "max_abs": 1446,
+            "relative_l2": 0.024229590148024685
+          },
+          "vs_native_reference": {
+            "max_abs": 0.2105426788330078,
+            "relative_l2": 0.016832838477626358
+          }
+        },
+        "next_norm_q12": {
+          "vs_frozen_integer_baseline": {
+            "max_abs": 698,
+            "relative_l2": 0.02313567453461405
+          },
+          "vs_native_reference": {
+            "max_abs": 0.2930011749267578,
+            "relative_l2": 0.01579367535884552
+          }
+        },
+        "out_linear_q12": {
+          "vs_frozen_integer_baseline": {
+            "max_abs": 16360,
+            "relative_l2": 0.052559642817872204
+          },
+          "vs_native_reference": {
+            "max_abs": 2.3801565170288086,
+            "relative_l2": 0.036477817104687824
+          }
+        }
+      },
+      "prefill64": {
+        "join_q12": {
+          "vs_frozen_integer_baseline": {
+            "max_abs": 1892,
+            "relative_l2": 0.02899378710546694
+          },
+          "vs_native_reference": {
+            "max_abs": 0.26237261295318604,
+            "relative_l2": 0.01848285657192383
+          }
+        },
+        "next_norm_q12": {
+          "vs_frozen_integer_baseline": {
+            "max_abs": 3981,
+            "relative_l2": 0.028068641069380257
+          },
+          "vs_native_reference": {
+            "max_abs": 0.6271181106567383,
+            "relative_l2": 0.016841534162427698
+          }
+        },
+        "out_linear_q12": {
+          "vs_frozen_integer_baseline": {
+            "max_abs": 21407,
+            "relative_l2": 0.06166302315922424
+          },
+          "vs_native_reference": {
+            "max_abs": 2.968975067138672,
+            "relative_l2": 0.039364257780880506
+          }
+        }
+      }
+    },
+    "reference_errors": {
+      "join_q12": {
+        "vs_frozen_integer_baseline": {
+          "max_abs": 1892,
+          "relative_l2": 0.02847237161732671
+        },
+        "vs_native_reference": {
+          "max_abs": 0.26237261295318604,
+          "relative_l2": 0.018295608991235054
+        }
+      },
+      "next_norm_q12": {
+        "vs_frozen_integer_baseline": {
+          "max_abs": 3981,
+          "relative_l2": 0.027583150001163598
+        },
+        "vs_native_reference": {
+          "max_abs": 0.6271181106567383,
+          "relative_l2": 0.01673277366766338
+        }
+      },
+      "out_linear_q12": {
+        "vs_frozen_integer_baseline": {
+          "max_abs": 21407,
+          "relative_l2": 0.060693279488755414
+        },
+        "vs_native_reference": {
+          "max_abs": 2.968975067138672,
+          "relative_l2": 0.03904424548556174
+        }
+      }
+    },
+    "schema": "falcon-outproj-granularity-v1",
+    "status": "EXECUTED_INTEGER_DIAGNOSTIC",
+    "whole_row_comparison": {
+      "attention_scaled_q12": true,
+      "join_q12": false,
+      "mamba_scaled_q12": false,
+      "next_norm_q12": false,
+      "out_linear_q12": false
+    },
+    "widths": {
+      "arbitrary_I32_input_bound": "minimal RNE A8 rightshift delta<=25; sum |partial|<<relative_delta <= K*127*127*2^25 <2^51 at K4096; Q31 product <2^82, not a blanket I64 guarantee",
+      "declared_alignment_bits": 64,
+      "declared_rq_product_bits": 128,
+      "full_k": 4096,
+      "group_k": 256,
+      "groups": 16,
+      "largest_aligned_sum_magnitude_bits": 21,
+      "largest_product_magnitude_bits": 51,
+      "observed_rq_products_fit_i64": true,
+      "partial_worst_int32_absolute_bound": 4129024
+    }
+  }
+]

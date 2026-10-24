@@ -1,5 +1,13 @@
 # Liangruizhi 的进度
 
+## 2026-10-24 UTC+08 Issue72闭环交付（待审查合并）
+
+[Issue72](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/72)/[PR73](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/73)，task/72-numeric-closure，D:/Projects/LLMHardwareDesign-numeric-closure，base PR71@f4d2c46。本人身份/最新任务及成员55/63已核，三个独立子worktree；全部真实模型/张量/服务本人c96 node13/node14新目录Slurm，无新下载/其他机器/Phi解封。
+
+Granite新model64条件原门自洽、768整数router/gate独立通过，旧FAIL/内部FP32明示；eval动态W8集合变720/6912，W16 6/6912，全部选择性宽回退。Falcon12整数条件、6完整conv/R续接、3输出投影粒度独立接收；full S16/S32 GU72步零发布sat/51head事件/25epoch，nextnorm约3.03%，K512/K256降至1.87%/1.67%局部L2但partial wire增8/16倍，非完整模型质量。20完整算术服务独立PASS/10label零差；部署差<0.02%，不冻结独立R/V-R合宏。
+
+103服务器job100完成/3FAIL保留，43原Git源核验；9.90GB完整1096成员服务器/2.48MB精选286 metadata成员本机逐字节验收。90新边界/80旧模块/管理结构/diffcheck通过。[报告](../../docs/experiments/issue-72-numeric-closure.md)、[索引](../../project/experiments/closure/results/issue-72/index.json)、[交接](../../docs/handoffs/2026-10-24-issue-72-numeric-closure.md)。下一步真实wide/SFU/ROM/RQ、同函数grouped服务与prefill/权重复用，Granite全MoE/整模型质量/物理资格仍待验。交付in_review而非done，登记PR5 pending、看板unverified/同步pending待管理员、审查人待指定。
+
 ## 2026-10-24（UTC+08:00）Issue70小MoE/并行混合架构（待审查合并）
 
 [Issue70](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/70)/[PR71](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/71)，task/70-moe-hybrid，根D:/Projects/LLMHardwareDesign-moe-hybrid，base PR69@ab2edaa。两模型固定官方BF16权重全SHA及server复核通过，本机D盘仅中转，无本机模型计算；本人服务器node13 Slurm最小集、独立数值/路由归因/端口负例及双轮接收已执行。Granite原chunk16 FAIL保留，layer13/token42极小路由边界，局部32dot/32RQ/4merge为PARTIAL/mathPASS；Falcon23参考门通过，但S16/S32均4sat且FP64更新。24 COPY-only配置双轮/独立核，非E2E/PPA；六逻辑Block保留，动态路由/宽merge、参数化state tile、完整gatednorm及三输入join合同新增。

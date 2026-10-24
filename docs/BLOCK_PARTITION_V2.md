@@ -130,3 +130,17 @@ V完整H2560 mixed sum+unit为25600B，超过16KiB。服务先付原SoA到K128 b
 Falcon FP32/FP64连续性23门及完整层/head见证通过独立接收；S16/S32范围均约±8、均4sat，0.606%为FP64更新+整数存储诊断。单head128KiB/64KiB均超R32KiB，tile按D/N参数化，旧GDN tile16不可直接搬。gate后4096单group norm需跨head完整归约，residual+A+R三输入join显式；不能全驻V16KiB。全模型FP32 SSM单独128MiB，旧EXT加conv/KV即拒绝。
 
 六逻辑模板保留，动态路由、R连续/range/epoch与V完整消费者更有依据。24种COPY-only配置双轮/独立端口接收仅提供同库存搬运/容量证据，不含算术/全权重/KV，不决定独立R/V-R合宏、真实芯片周期或E2E。Falcon Mamba2专属因果重定标及完整整数链、Granite高精度路由合同/参数驻留待后续验证；Phi封存、成员55/63不变。
+
+## 12. Issue72：路由与完整整数R消费者的边界收敛
+
+[Issue72报告](experiments/issue-72-numeric-closure.md)追加新合同，不覆盖Issue70的FAIL或FP桥结果。Granite model64显式eager在原门下参考自洽，但框架仍有内部FP32 cast；单独router64不能解除上游扰动。冻结真实hidden的评价W8动态router有720/6912个top8集合变化，W16降到6/6912；当前证书13,824行全部宽回退，W16仍有1,359行不被证书保证。制造前不应固定所见expert或假设廉价纯W8 router足够；保留动态topk/dispatch、宽比较/重算、单位和gate/LUT接口，具体精度/回退资源仍是待验候选。
+
+Falcon新增软件整数闭包覆盖完整R分支和4096维共享消费者。S16/S32 full因果重标各72step零发布sat，51个head事件/25epoch；旧态右移逐次RNE、当前输入guard、私有trial、单位/epoch/version和重试不能删。完整conv历史73,728B随状态/单位保存，完整分支末端失败不泄漏发布是当前协议候选；若改为消费者解耦提交，必须另付版本队列/信用/回滚与完整依赖，不宣称数学上只能同宏。
+
+单layerS16/S32状态2/4MiB、I64 proposal8MiB、旧新history、LUT4,260,100B、全部矩阵权重与参数不可能免费驻R32KiB/V16KiB。S负责有限backing和代际，R逻辑负责反馈/guard，V负责完整跨head归约及后继，M负责完整K的投影/部分和；这证明接口义务，尚不证明四者应分别制造。S32/C32完整N256通用读出72signed bits，当前I64软件候选有guard而非全码域保证。
+
+M/V重新量化边界须保留实际K组单位与宽ALIGN_REDUCE。whole-row/K512/K256输出投影受控分叉保持相同输入/W8/scale与完整消费者，只改A8粒度；不能先将各组RQ成同一窄输出再加，改舍入顺序会改变函数。额外partial、I16 scale、宽乘/加/移位、全归约和缓冲须进入同精度同资源比较后才决定近M或共享V。局部L2改善不是整模型质量通过，也不能把不同粒度当placement收益。
+
+制造前当前更稳妥的候选固定项是局部MAC累加反馈、受控tile循环、完整group归约协议、范围检查与代际提交控制。M↔V/R↔S的数据端点、宽部分和、带单位/epoch状态、双代缓冲/背压与广播保留产品映射自由；具体实例数、tile、共享SFU、R是否独立宏、近M重标与资源分配仍等服务/RTL/布线/时序资格。旧COPY日历和CPU时间不作PPA或端到端收益。
+
+Issue72本批补完后的结论：20个完整compute配置独立接收，10个split/shared标签对照完整日历SHA零差；同S16/S32分别比较R32-D8、V16-D2、R32-D16/Sspill，保守串行时隙差均<0.02%，D16spill轻微更快反例保留。因此不能据本批冻结独立R或V/R合宏。固定同gatedinput的K512/K256输出A8让后继局部L2由3.03%降到1.87%/1.67%，但partial wire增8/16倍、部分maxabs变坏；该新数值函数未纳入whole-row服务，仍需真实width/SFU/ROM/RQ和同函数端口校准。应保留接口/单位/归约/代际义务及物理映射自由，下一步优化合法prefill复用与宽算术，不重复加模型。详见[决策](decisions/2026-10-24-routing-integer-closure-and-boundaries.md)。

@@ -14,6 +14,8 @@
 
 ## 最新关键边界证据（2026-10-24）
 
+[Issue72关键闭环](docs/experiments/issue-72-numeric-closure.md)已在本人CPU服务器完成：Granite高精度条件参考和768整数路由、Falcon完整整数R分支/续接及3种out_proj粒度、20完整compute服务均独立接收。因果重标在当前72步零发布sat；分组A8降低局部L2但增partial成本。10对标签零差、实际部署差<0.02%，不支持冻结独立R或V/R合宏。详见[Block v2第12节](docs/BLOCK_PARTITION_V2.md)和[索引](project/experiments/closure/results/issue-72/index.json)。完整9.90GB授权服务器/精选2.48MB metadata均SHA验收，PR73待审查合并，非质量/RTL/PPA验收。
+
 [Issue70新增架构最小集](docs/experiments/issue-70-moe-hybrid.md)已在服务器完成Granite小MoE与Falcon并行Attention/SSM的采集、独立数值/路由归因和24配置双轮COPY端口核验。Granite chunk16原FAIL保留、局部仅PARTIAL；Falcon23参考门通过，但两整数状态存储候选均4sat且有FP64更新桥。[Block v2第11节](docs/BLOCK_PARTITION_V2.md)补动态路由/宽merge、参数化状态tile、4096跨head norm及三输入join；未冻结物理宏或E2E。3.14MB精选/966MB服务器完整包有SHA索引，PR71待审查合并。
 
 [Issue68范围/同资源服务](docs/experiments/issue-68-range-service.md)已在服务器完成因果重定标双轮、独立整数接收与两套各56配置的V/R/S双轮有限服务。固定旧S32窗两次重定标消除193次sat，但包含额外clone/retry成本；每套48个共享/拆分同资源轨迹对照为零差。tile16本地shadow作为下一轮工作基线，独立R/合宏、完整质量及RTL/PPA仍未定，详见[新决策](docs/decisions/2026-10-24-r-range-and-finite-service.md)与[Block v2第10节](docs/BLOCK_PARTITION_V2.md)。PR69待审查合并。
