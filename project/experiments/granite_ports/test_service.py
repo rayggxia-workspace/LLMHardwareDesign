@@ -66,6 +66,50 @@ class Tests(unittest.TestCase):
         b=m.Builder(128,'M',{'ops':{}})
         with self.assertRaisesRegex(ValueError,'unknown/unqualified'):b.compute([],'native_mul128')
 
+    def test_RNE64_large_shift_exact_boundary(self):
+        for n in (-(1<<63),-(1<<63)+1,-1,0,1,(1<<63)-1):
+            self.assertEqual(m.rne_s64_observer(n,64),0)
+            self.assertEqual(m.rne_s64_observer(n,128),0)
+            self.assertEqual(m.rne_s64_observer(n,131),0)
+        self.assertEqual(m.rne_s64_observer(-(1<<63),63),-1)
+        self.assertEqual(m.rne_s64_observer(3,1),2)
+        self.assertEqual(m.rne_s64_observer(-5,1),-2)
+        with self.assertRaises(ValueError):m.rne_s64_observer(1,-1)
+        with self.assertRaises(ValueError):m.rne_s64_observer(1<<63,128)
+
+    def test_all_metadata_decoder_no_changed_position_shortcut(self):
+        ids=np.tile(np.arange(8,dtype=np.uint8),(72,1));shape=(72,8,4)
+        trace={'router.ids':ids,'expert_input_delta':np.zeros(72,np.int16),'mid_delta':np.zeros((72,8),np.int16)}
+        const={}
+        for which in ('gate_up','down'):
+            const[which+'_exp']=np.full((40,4),1,np.int16)
+            trace[which+'_RQ_product64']=np.zeros(shape,np.int64);trace[which+'_q12']=np.zeros(shape,np.int32)
+        const['gate_up_exp'][0,0]=-100
+        trace['gate_up_RQ_product64'][:,0,0]=-(1<<63)
+        ev=m.rq_decoder_evidence(trace,const);g=ev['operations']['gate_up']
+        self.assertEqual(g['actual_outputs'],72*8*4)
+        self.assertEqual(g['changed_count'],72)
+        self.assertEqual(g['raw_maximum'],131);self.assertEqual(g['decoded_maximum'],128)
+        self.assertTrue(all(x['original_RNE']==x['decoded_RNE']==x['published_Q12']==0 for x in g['changed_positions']))
+        self.assertEqual(len(g['raw_token_rank_sha256']),72)
+        trace['gate_up_q12'][0,0,0]=1
+        with self.assertRaisesRegex(ValueError,'equivalence'):m.rq_decoder_evidence(trace,const)
+        trace['gate_up_q12'][0,0,0]=0;const['down_exp'][1,2]=32
+        with self.assertRaisesRegex(ValueError,'negative actual RQ shift'):m.rq_decoder_evidence(trace,const)
+
+    def test_decoder_uniform_fourops_and_constant_no_capacity_growth(self):
+        b=m.Builder(1536,'V',calibration());m.allocate(b)
+        before=dict(b.used);m.matrix(b,0,'down','down',0,0,1536,512,0,16,0,True)
+        self.assertEqual(dict(b.used),before)
+        self.assertEqual(b.counts['op.cmp_s64'],16)
+        self.assertEqual(b.counts['op.max_s64'],16)
+        self.assertEqual(b.counts['op.sub_s64'],64)
+        self.assertEqual(b.counts['rq_shift_guard_controller_slots'],16)
+        scalars,_=m.deployment_bytes(b,{})
+        self.assertEqual(len(scalars),96)
+        self.assertEqual(int.from_bytes(scalars[64:72],'little',signed=True),128)
+        check_ranges(b)
+
     def test_scalar_SFU_reserves_shared_lane_and_frame_RMW(self):
         b=m.Builder(128,'M',calibration());m.allocate(b);body=[]
         e=b.compute(body,'udiv_u128',3)

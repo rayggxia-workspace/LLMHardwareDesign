@@ -18,6 +18,7 @@ KIB=1024
 MIB=1024*KIB
 REVISION='a02780686e08a03fe0d2679a293b5c74a90efa89'
 PHYSICAL_K=512
+RQ_DECODER_FEE_VERSION='NONNEGATIVE_MIN128_FOUR_TYPED_PLUS_FLAG_TEST76_V1'
 
 
 def sha(path):
@@ -324,6 +325,61 @@ def at(obj,offset,n,index=()):return (obj,offset,n,tuple(index))
 def meta(token,phase,**kw):return {'token':int(token),'phase':phase,**kw}
 
 
+def rne_s64_observer(value,shift):
+    """Offline exact observer only; target RNE/decoder costs are separate."""
+    value=int(value);shift=int(shift)
+    if not -(1<<63)<=value<(1<<63) or shift<0:raise ValueError('S64/nonnegative observer domain')
+    if shift==0:return value
+    q,r=divmod(abs(value),1<<shift);half=1<<(shift-1)
+    q+=int(r>half or (r==half and q%2))
+    return -q if value<0 else q
+
+
+def rq_decoder_evidence(trace,const):
+    """All real metadata, plus exact proof witnesses at every changed position.
+
+    Source exponent/delta/product/published codes remain immutable.  This is
+    scientific bookkeeping, never an uncharged target decoding operation.
+    """
+    evidence={'schema':'granite-rq-decoder76-v1','fee_version':RQ_DECODER_FEE_VERSION,'raw_formula':'31-weight_exponent_I16-current_activation_delta_I16',
+        'decoded_formula':'128-max(128-raw_shift,0), guarded raw_shift>=0',
+        'proof':'For signed S64 n and s>=64, |n|/2**s<=1/2; the only equality is I64_MIN at s64, tie-to-even zero. Hence all s>128 may map to128 exactly.',
+        'target_policy':'all outputs execute cmp/sub/max/sub and explicit flag consumption; no observed-position shortcut',
+        'observer_cost':'hashes/histograms/equality witnesses are offline observations, not target operations',
+        'operations':{}}
+    ids=np.asarray(trace['router.ids'])
+    if np.any(ids<0) or np.any(ids>=40):raise ValueError('actual expert ID range')
+    for which,pkey,qkey in (('gate_up','gate_up_RQ_product64','gate_up_q12'),('down','down_RQ_product64','down_q12')):
+        exp=np.asarray(const[which+'_exp'])
+        if exp.dtype!=np.int16 or exp.ndim!=2 or exp.shape[0]!=40:raise ValueError('source exponent I16/40 experts')
+        product=np.asarray(trace[pkey]);published=np.asarray(trace[qkey]);O=exp.shape[1]
+        if ids.shape!=(72,8) or product.dtype!=np.int64 or product.shape!=(72,8,O) or published.shape!=product.shape:
+            raise ValueError('complete actual S64 RQ products/published codes')
+        raw=np.empty(product.shape,np.int64);decoded=np.empty_like(raw);changed=[]
+        for token in range(72):
+            for rank,expert in enumerate(ids[token]):
+                delta=int(trace['expert_input_delta'][token]) if which=='gate_up' else int(trace['mid_delta'][token,rank])
+                row=31-exp[int(expert)].astype(np.int64)-delta
+                if np.any(row<0):raise ValueError('negative actual RQ shift needs explicit left-shift/overflow policy; no clamp')
+                raw[token,rank]=row;decoded[token,rank]=128-np.maximum(128-row,0)
+                for output in np.flatnonzero(row>128):
+                    n=int(product[token,rank,output]);s=int(row[output]);d=int(decoded[token,rank,output])
+                    before=rne_s64_observer(n,s);after=rne_s64_observer(n,d);q=int(published[token,rank,output])
+                    if before!=after or before!=q or before!=0:raise ValueError('actual decoder RNE/published equivalence')
+                    changed.append({'token':token,'phase':'prefill64' if token<64 else 'decode8','rank':rank,'expert':int(expert),'output':int(output),
+                        'weight_exponent_I16':int(exp[int(expert),output]),'activation_delta_I16':delta,'raw_shift':s,'decoded_shift':d,
+                        'RQ_product_S64':n,'original_RNE':before,'decoded_RNE':after,'published_Q12':q})
+        hist=lambda a:{str(int(k)):int(v) for k,v in zip(*np.unique(a,return_counts=True))}
+        evidence['operations'][which]={'shape':list(raw.shape),'actual_outputs':int(raw.size),'raw_minimum':int(raw.min()),'raw_maximum':int(raw.max()),
+            'decoded_minimum':int(decoded.min()),'decoded_maximum':int(decoded.max()),'negative_count':0,'changed_count':len(changed),
+            'raw_histogram':hist(raw),'decoded_histogram':hist(decoded),'raw_array_sha256':array_sha(raw),'decoded_array_sha256':array_sha(decoded),
+            'raw_token_rank_sha256':[[array_sha(raw[t,r]) for r in range(8)] for t in range(72)],
+            'decoded_token_rank_sha256':[[array_sha(decoded[t,r]) for r in range(8)] for t in range(72)],
+            'source_product_key':pkey,'source_published_key':qkey,'source_product_array_sha256':array_sha(product),
+            'source_published_array_sha256':array_sha(published),'changed_positions':changed,'unchanged_positions_identical_shift':int(raw.size)-len(changed)}
+    return evidence
+
+
 def dynamic(b,token,phase,which,n,source,source_offset,destination,destination_offset,delta,rank=None):
     """Full current-row absmax, causal minimal RNE shift, full encode."""
     body=[];b.transfer(body,'const.zero','V.ctrl64',16,0,0)
@@ -380,9 +436,20 @@ def matrix(b,token,phase,which,expert,rank,O,K,Ostart,Ocount,delta,merge=False):
     kernel(b,one,'signextend_s16_i64',16,[at(exponent,0,32)],[at(shifts,0,128)])
     kernel(b,one,'sub_s64',16,[at('const.scalars',48,8),at(shifts,0,128)],[at(shifts,0,128)],{'broadcast_a':True,'formula':'31-exponent'})
     kernel(b,one,'sub_s64',16,[at(shifts,0,128),at(d64,doff,8)],[at(shifts,0,128)],{'broadcast_b':True,'formula':'31-exponent-delta','delta':int(delta)})
+    kernel(b,one,'cmp_s64',16,[at(shifts,0,128),at('const.zero',0,8)],[at('V.small32',0,32)],
+        {'broadcast_b':True,'guard':'raw RQ shift must be nonnegative; reject otherwise, never clamp a negative shift'})
+    b.engine(one,'V.small32',0,32)
+    b.leaf(one,'rq_nonnegative_guard',[('VR8',16)],counts={'rq_shift_guard_controller_slots':16},
+        count=16,source='V.small32',less_flag_stride_bytes=2,negative_action='abort before decoder/RNE',
+        action='candidate controller: one less-flag test/dispatch per output; fault if less',
+        controller_level='same software-controller candidate as micro dispatch, not independently implemented full FSM')
+    kernel(b,one,'sub_s64',16,[at('const.scalars',64,8),at(shifts,0,128)],[at(shifts,0,128)],{'broadcast_a':True,'formula':'128-raw_shift'})
+    kernel(b,one,'max_s64',16,[at(shifts,0,128),at('const.zero',0,8)],[at(shifts,0,128)],{'broadcast_b':True,'formula':'max(128-raw_shift,0)'})
+    kernel(b,one,'sub_s64',16,[at('const.scalars',64,8),at(shifts,0,128)],[at(shifts,0,128)],{'broadcast_a':True,'formula':'128-max(128-raw_shift,0)'})
     kernel(b,one,'mul_s32_s32',16,[at(acc,0,64),at(mant,0,64)],[at(product,0,128)])
     kernel(b,one,'rne_s64_i32',16,[at(product,0,128),at(shifts,0,128)],[at(out,0,64)],
-        {'shift_source':which+'_exp plus current delta','shift_domain':[0,128],'fraction_output':12})
+        {'shift_source':which+'_exp plus current delta through charged nonnegative guard/min128 decoder','shift_domain':[0,128],
+            'raw_shift_formula':'31-exponent-delta','decoded_shift_formula':'128-max(128-raw_shift,0)','fraction_output':12})
     if merge:
         kernel(b,one,'mul_s32_u16',16,[at(out,0,64),at('S0.gates',rank*2,2)],[at(product,0,128)],{'broadcast_b':True,'gate_rank':rank,'gate_format':'U16Q15'})
         kernel(b,one,'add_s64',16,[at('down.merge64',0,128,(128,)),at(product,0,128)],[at('down.merge64',0,128,(128,))],
@@ -532,12 +599,10 @@ def prepare(args):
             const[key]=source['L%d.%s'%(layer,key)]
         const['multiplier']=source['residual_multiplier_q20'];const['silu']=source['silu_lut_q12'];const['exp2']=source['route_exp2_q24']
     if int(const['multiplier'])!=230687 or const['silu'].nbytes!=65540 or const['exp2'].nbytes!=8196:raise ValueError('frozen scalar/LUT formats')
-    for t in range(72):
-        for rank,expert in enumerate(trace['router.ids'][t]):
-            if not 0<=int(expert)<40:raise ValueError('actual expert ID range')
-            for which,delta in (('gate_up',trace['expert_input_delta'][t]),('down',trace['mid_delta'][t,rank])):
-                shifts=31-const[which+'_exp'][int(expert)].astype(np.int64)-int(delta)
-                if np.any(shifts<0) or np.any(shifts>128):raise ValueError('all actual output RQ shifts in calibrated domain')
+    if np.any(trace['router.ids']>=40):raise ValueError('actual expert ID range')
+    decoder=rq_decoder_evidence(trace,const)
+    decoder['source']={'layer':layer,'numeric_manifest_sha256':sha(args.result/'manifest.json'),
+        'compiled_manifest_sha256':sha(args.compiled/'manifest.json'),'numeric_receipt_sha256':sha(args.receipt)}
     rows={'schema':'granite-service-rowhashes76-v1','layer':layer,'source_manifest_sha256':sha(args.result/'manifest.json'),'stages':{}}
     for key,a in sorted(trace.items()):
         axis=0 if a.ndim and a.shape[0]==72 else 1 if a.ndim>1 and a.shape[1]==72 else None
@@ -548,17 +613,17 @@ def prepare(args):
         'numeric_manifest_sha256':sha(args.result/'manifest.json'),'compiled_manifest_sha256':sha(args.compiled/'manifest.json'),
         'numeric_receipt_sha256':sha(args.receipt),'packed_manifest_sha256':sha(args.packed/'manifest.json'),'packed_receipt_sha256':sha(args.packed_receipt),
         'calibration_manifest_sha256':sha(args.calibration/'manifest.json'),'calibration_cost_table_sha256':sha(args.calibration/'cost_table.json'),'calibration_receipt_sha256':sha(args.calibration_receipt),
-        'numeric_trajectory_sha256':trajectory,'source_bound_numeric_status':'PASS','source_bound_micro_status':'PASS',
+        'numeric_trajectory_sha256':trajectory,'source_bound_numeric_status':'PASS','source_bound_micro_status':'PASS','rq_decoder_fee_version':RQ_DECODER_FEE_VERSION,
         'numeric_source':nm['source'],'packed_source':pm['source'],'calibration_source':mm['source'],
         'actual_expert_ids':trace['router.ids'].tolist(),'expert_input_delta':trace['expert_input_delta'].tolist(),'mid_delta':trace['mid_delta'].tolist(),
         'external_cut':'current norm/router already published; postnorm/router computation excluded, all consumed cut IO included',
         'reference_errors_preserved':report['reference_errors'],'original_issue70_status':'FAIL'}
-    return task,trace,const,cal,rows
+    return task,trace,const,cal,rows,decoder
 
 
 def deployment_bytes(b,const):
     scalars=bytearray(96)
-    for off,value,width,signed in ((0,230687,4,True),(16,17,16,False),(32,1536,16,False),(48,31,8,True),(56,127,8,True),(72,8192,8,True),(80,-131072,8,True),(88,131072,8,True)):
+    for off,value,width,signed in ((0,230687,4,True),(16,17,16,False),(32,1536,16,False),(48,31,8,True),(56,127,8,True),(64,128,8,True),(72,8192,8,True),(80,-131072,8,True),(88,131072,8,True)):
         scalars[off:off+width]=int(value).to_bytes(width,'little',signed=signed)
     desc=bytearray(40*64)
     for expert in range(40):
@@ -575,14 +640,18 @@ def run_service(args):
     binding=bind(args.binding);out.mkdir(parents=True);started=time.monotonic()
     manifest={'schema':'granite-service-run76-v1','status':'ERROR','source':binding,'producer_sha256':sha(__file__),'artifacts':[]}
     try:
-        task,trace,const,cal,rows=prepare(args);owner='M' if args.placement=='near_m' else 'V'
+        task,trace,const,cal,rows,decoder=prepare(args);owner='M' if args.placement=='near_m' else 'V'
         b=Builder(args.tile,owner,cal);capacity=allocate(b)
         b.inventory['calibrated_byte_core']=cal['inventory'];b.inventory['VR8_operand_register_total_bytes']=40
         b.inventory['ROM'].update(active_payload_bytes=73736,physical_reserved_bytes=131072,global_pool_bytes=4260100)
         b.inventory['micro_controller_level']=cal['level'];b.inventory['micro_source']=cal['source']
         b.inventory['controller_dispatch']='one candidate software dispatch slot per byte action; complete wide/address FSM not RTL implemented'
+        b.inventory['RQ_shift_decoder']={'raw':'31-exponent_I16-current_delta_I16','guard':'cmp_s64 then explicit flags IO and one candidate controller test slot per output',
+            'decoded':'128-max(128-raw,0)','typed_ops_per_output':['cmp_s64','sub_s64','max_s64','sub_s64'],'constant128':'const.scalars+64 S64 inside existing96B',
+            'negative_shift':'fault, requires a separate explicit left-shift/overflow profile','equivalence':'signed S64 RNE(s>=64)=0 including I64_MIN/s64 tie-to-even'}
         for t in range(72):front(b,t,trace);downstream(b,t,trace);nextnorm(b,t)
         put(out/'row_hashes.json',rows);task['row_hashes_sha256']=sha(out/'row_hashes.json')
+        put(out/'rq_decoder.json',decoder);task['rq_decoder_sha256']=sha(out/'rq_decoder.json')
         scalars,dispatch=deployment_bytes(b,const);(out/'deployed_scalars.bin').write_bytes(scalars);(out/'expert_dispatch.bin').write_bytes(dispatch);(out/'zero16.bin').write_bytes(bytes(16))
         static={'schema':'granite-service-deployment76-v1','packed_codes_deployment_bytes':94371840,'static_scale_bytes':614400,
             'scale_arrays':{k:{'dtype':str(a.dtype),'shape':list(a.shape),'bytes':a.nbytes,'array_sha256':array_sha(a)} for k,a in const.items() if k not in ('silu','exp2')},

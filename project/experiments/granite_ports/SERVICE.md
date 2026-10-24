@@ -72,4 +72,16 @@ summary.json schema=granite-service76-v1：task绑定numeric/compiled/receipt/pa
 
 witness.jsonl.gz每行macro含id/start/end/deps/meta/body；loop body时间相对iteration原点，end=start+count×period。access.index_strides对loop索引右对齐；offset/range/leading拍独立重建。micro地址class仅绑定已核512B程序和全shift域，LUT class回链原silu_lut_index。label不进入builder，同配置split/shared应witness逐字节零差；同层所有tile/placement数值rowhash相同。
 
-接收另核完整8mid持久barrier、全K/8prefix/共同单位、真实consumer、phase实liveness、ROM/widthfee/port/FIFO及48KiB拒例。当前源码不能替代实际接收。工具交付时本机10项小合成及项目结构检查通过，未加载真实NPZ/运行模型或真实服务。无整模型质量、实际INT8速度、最终物理边界或PPA结论。
+接收另核完整8mid持久barrier、全K/8prefix/共同单位、真实consumer、phase实liveness、ROM/widthfee/port/FIFO及48KiB拒例。当前源码不能替代实际接收。工具交付时本机13项小合成及项目结构检查通过，未加载真实NPZ/运行模型或真实服务。无整模型质量、实际INT8速度、最终物理边界或PPA结论。
+
+## 非负RQ移位解码：统一新费用版本
+
+原02版本的L0服务在准备阶段拒绝raw shift>128，保留失败，不称原服务通过。真实服务器诊断90396表明：L0 gate_up全部589824输出的raw shift为28..131，3976个>64，其中32个>128（130×10、131×22，均为非零S64 product）；L0 down为27..36；L13 gate_up为27..34、down为26..37。所有负shift为0。诊断只读原74产物，没有修改原exponent、delta、精度或Q12结果。
+
+对任意signed S64 n，s>=64时绝对商<=1/2，唯一等号是I64_MIN、s=64，RNE取偶仍为0。因此非负s>128映射128与原数学结果完全相同；此证明不适用于负shift。当前profile遇到负shift必须在RNE前中止，需另立有明确左移/溢出语义的profile，不将其clamp为0。
+
+费用版本NONNEGATIVE_MIN128_FOUR_TYPED_PLUS_FLAG_TEST76_V1在两个层、全部24配置、每一个输出统一执行：cmp_s64(raw,0)产生less/equal flags，sub_s64(128,raw)，max_s64(临时,0)，sub_s64(128,临时)，得到min(raw,128)。cmp结果32B实际写入V.small32并经engine读取，逐output额外1slot候选controller test/dispatch；负flag令控制在decoder/RNE前中止。该控制与其余wide controller一样未实现完整FSM RTL，不冒称新硬件能力。所有caller IO、micro frame/ALU/dispatch费用都计入，不只在32个超范围位置执行解码。
+
+每72token的1474560个gate_up/down输出新增同数cmp_s64/max_s64和2949120个sub_s64，另1474560个controller guard槽。const.scalars+64..71存S64常数128，仍占既有96B；existing shift64缓冲128B原位复用，V.small32存32B flags，最大四op caller暂存264B，不增任何RAM或端口。所有矩阵、Q12 stage数值、原43stage rowhash和容量峰值保持同源；02与03因费用不同不得混排。
+
+新增rq_decoder.json schema=granite-rq-decoder76-v1，包含fee_version、source的layer/numeric/compiled/receipt SHA、每gate_up/down的raw/decoded完整shape与arraySHA、72×8逐row SHA、全量histogram/范围和所有changed_positions。每changed位置记录token/rank/expert/output、原I16 exponent/current delta、非零或零S64 product、raw/decoded shift及original_RNE/decoded_RNE/published_Q12，三个值须严格相等且为0。未改位置以相同shift及完整摘要绑定。summary.task.rq_decoder_sha256和rq_decoder_fee_version防止不同费用版本混合。哈希和事后等价证明是科学观察，目标硬件实际比较/解码/守卫则全部收费。
