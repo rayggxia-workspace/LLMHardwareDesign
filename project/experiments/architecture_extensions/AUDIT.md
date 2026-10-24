@@ -40,6 +40,8 @@ softmax、SiLU、scale 选择、除法和 Q31 系数生成仍有浮点桥；这�
 
 投影的浮点编码桥有明确求值 dtype：原始 norm×MuP 输入为 FP32，保存时无损转成 FP64；dynamic max/127 与输入除法仍在 FP32，static Python-float scale 和输入除法为 FP64。接收按这些实际规则重建，严格等值检查 scale、codes 与 dots，不能把文件保存 dtype 当作另一种量化器。旧接收将 dynamic scale 按 FP64 重建所致的失败应保留，修接收后仅重跑审计。
 
+接收另外记录实际 scale NPZ 的 dtype/元素数/nbytes，避免将 producer 旧报告中硬编码的 `size*8` 当作每种方案真实存储。动态 FP32 scale 和静态 FP64 scale 分开；若目标接口另选 FP64，须显式记录转换与传输格式，不能静默改写原始 SHA 绑定报告。
+
 ## COPY/PORT-IO 独立接收
 
 transport 接收不导入 producer 或 producer 调用的 checker。它重新核所有实际来源 manifest/artifacts、完整日历 gzip、每个分包的 header/padding、连续对象与银行地址、每次访问的 128-bit 拍数，以及依赖和资源容量事件扫描。不同地址不能免费拼接：例如 offset=15 的 3-byte 元数据须两拍。每个已声明 suite/tile 都有相同两种 staging layout 与两种策略预算，配置数从实际清单推导。

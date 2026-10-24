@@ -293,7 +293,10 @@ class ReceiverTests(unittest.TestCase):
             z[s+"_input_scale"]=np.full((2,1),1/127,dtype=np.float64 if s=="cal_static_tensor" else np.float32)
             z[s+"_accumulator"]=np.full((2,16),3*127*127,np.int32)
             z[s+"_dequant"]=z[s+"_accumulator"]*z[s+"_input_scale"]*z["weight_scale"][None,:]
-        self.assertEqual(r.verify_projection(z,full=True)["source_encoding_values"],60)
+        received=r.verify_projection(z,full=True)
+        self.assertEqual(received["source_encoding_values"],60)
+        self.assertEqual(received["scale_metadata"]["eval_dynamic_row"]["stored_bytes"],8)
+        self.assertEqual(received["scale_metadata"]["cal_static_tensor"]["stored_bytes"],16)
         z["cal_static_tensor_input_scale"][0,0]*=2
         with self.assertRaisesRegex(ValueError,"A scale source"):r.verify_projection(z,full=True)
 

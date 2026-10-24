@@ -460,6 +460,7 @@ def verify_projection(z, *, full=False):
     require(np.all(np.abs(w.astype(np.int16)) <= 127), "projection symmetric W8")
     values = 0
     encoded = 0
+    scale_metadata = {}
     if full:
         raw = np.asarray(z["weight"], np.float64)
         ws = np.maximum(np.max(np.abs(raw), axis=1), 1e-30) / 127
@@ -487,6 +488,11 @@ def verify_projection(z, *, full=False):
                       if scheme == "cal_static_tensor" else
                       np.maximum(np.max(np.abs(raw32), axis=1, keepdims=True), 1e-30) / 127)
             require(np.array_equal(scales, z[scheme + "_input_scale"]), "projection A scale source")
+            stored=np.asarray(z[scheme+"_input_scale"])
+            scale_metadata[scheme]=dict(dtype=str(stored.dtype),stored_bytes=stored.nbytes,
+                                        elements=stored.size,weight_scale_dtype=str(z["weight_scale"].dtype),
+                                        weight_scale_bytes=z["weight_scale"].nbytes,
+                                        qualification="actual NPZ witness storage; target transport format/packing separate")
             wanted = np.clip(np.rint(raw32 / scales), -127, 127).astype(np.int8)
             require(np.array_equal(a, wanted), "projection A8 source encoding")
             compare_float(z[scheme + "_dequant"], acc * scales * z["weight_scale"][None, :],
@@ -499,6 +505,7 @@ def verify_projection(z, *, full=False):
             require(127 * sum(abs(int(q)) for q in w[j]) < (1 << 31), "projection INT32 conditional bound")
             values += 1
     return dict(complete_dot_values=values, source_encoding_values=encoded, K=w.shape[1], outputs=16,
+                scale_metadata=scale_metadata,
                 activation_bridge="FP32 stored exactly as FP64; dynamic max/division FP32, static scale/division FP64",
                 qualification="stored W8A8 codes; floating scale bridge remains")
 
