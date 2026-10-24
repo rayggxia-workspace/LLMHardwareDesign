@@ -51,3 +51,32 @@ epoch/version/position descriptor、全group原子commit；失败代不作消费
 
 服务时隙的基础算术/端口时延尚无RTL校准时逐项写明假设并做敏感性，不给
 伪精确硬件周期。若数值链失败，允许保存成本诊断，禁止排名为已验证划分收益。
+
+## 本轮实际有限服务的独立接收
+
+`receive_service.py`不导入service producer。递归校每template串行日历、loop
+次数/period、闭式计数及affine对象地址范围；用最多16个模16地址余数证明逐
+packet的leading-offset拍数，既不过度要求所有stride为16倍，也不漏算真实
+跨拍。源码数值回链、每head/attempt/unit/epoch、全group/I64 guard、完整N
+readout、完整4096norm及末消费者后16B发布均独立核验。默认port/head/norm/
+RAM四个实际artifact/SHA重写负例。
+
+```text
+python -B project/experiments/closure/receive_service.py --result <service> --numeric <full-guard-run> --compiled <compiled> --math-receipt <independent-PASS.json> --producer-source <frozen-service.py> --binding <JSON> --out <new-receipt>
+```
+
+binding含真实commit、`receive_service_sha256`、`audit_io_sha256`。
+`--skip-negatives`只得PARTIAL_NO_NEGATIVES。新服务库存明确包含M256的16×16
+S8 PE及VR8的8个S8 lane，单row只用16个matrix PE，不能与旧只有matrix代理
+的COPY/Issue68服务数字直接比收益。SFU只有一份，48B固定128bit操作数状态
+从已有aux8KiB中预留；U128 numerator shift和division RNE finalize也另收费。
+
+完整proposal/decay/injection/readout-products的EXT暂存、私有history/units/
+descriptor代和所有clone都占容量并付IO。初态物化在setup；已发布代在每token
+内不可写，新state/history/unit只在nextnorm完成后以单128bit描述符发布。
+模板层数超过一亿实际leaf时采用归纳接收，不能把压缩文件大小当物理缓冲量。
+
+本工具将已独立重算的值轨迹与合法有界服务结构关联，没有做RTL或内存字节级
+功能模拟。所有宏及叶均采用保守串行政策，未搜索prefill batching或最优互锁；
+因此只能报告该合同下的服务差异、容量拒绝及零差对照，不能宣布独立R物理宏
+胜出或将条件时隙换算成真实LLM速度。
