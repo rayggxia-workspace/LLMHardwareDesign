@@ -134,6 +134,22 @@ class IntegerState(unittest.TestCase):
             with np.load(root/'results/evaluation.S32.D31.npz',allow_pickle=False) as z:
                 self.assertEqual(z['decay'].dtype,np.uint32);self.assertEqual(z['state_trace'].dtype,np.int32);self.assertEqual(z['state_trace'].shape,(5,2,4,4))
             with self.assertRaises(ValueError):execute(root,root/'results')
+            conv=root/'conv';conv.mkdir();carrays={}
+            for variant,factor in [('conv8',.99),('conv16',1.001)]:
+                for name in ('calibration','evaluation'):
+                    for field in ('query','key','value'):carrays[variant+'.'+name+'.'+field]=arrays[name+'.'+field]*factor
+            save_npz(conv/'conv-output.npz',carrays)
+            save(conv/'manifest.json',{'status':'PASS','capture_manifest_sha256':sha(root/'manifest.json'),
+                'artifacts':{'conv-output.npz':{'bytes':(conv/'conv-output.npz').stat().st_size,'sha256':sha(conv/'conv-output.npz')}}})
+            execute(root,root/'coupled',conv=conv,only_coupled=True)
+            records=json.loads((root/'coupled/state-results.json').read_text());self.assertEqual(len(records),2)
+            for row in records:
+                with np.load(root/'coupled'/row['artifact']['name'],allow_pickle=False) as z,np.load(root/'results/evaluation.S32.D31.npz',allow_pickle=False) as original:
+                    self.assertTrue(np.array_equal(z['state_units'],original['state_units']))
+                    self.assertTrue(np.array_equal(z['value_units'],original['value_units']))
+                    self.assertIn('FP64_coupled_input_output_reference',z.files)
+                self.assertEqual(row['format']['decay_fraction'],31)
+                self.assertIn(row['format']['input_variant'],('conv8','conv16'))
 
 
 if __name__=='__main__':unittest.main()
