@@ -105,3 +105,19 @@ two server rounds. All scientific NPZ/JSON should be byte-identical between
 rounds; manifest includes real runtime/environment and may differ. Preserve
 failed logs and outputs, never overwrite a prior run. Full weights/large
 captures remain authorized-server artifacts, with repository indices/SHA.
+
+The standalone `consumer_receive.py` never imports producer arithmetic. It
+checks both rounds' artifact hashes and exact scientific-file equality,
+independently compiles weights/scales (`frexp`, not producer `log2`), verifies
+all down group dots via I64, all outlet/residual/K128 codes via Fraction,
+complete FP32 norm and downstream encodings/partial dots/complete reductions,
+all8 metrics and metadata/packet/capacity counts. It replays one full round;
+the other is bound by every file's byte equality, not claimed as a second
+independent arithmetic rerun. It persists one actual altered outlet-code NPZ
+and its rewritten checksum specimen manifest, accepts the new checksum, then
+requires independent numerical rejection. This is a standalone actual-file
+negative specimen, not a recapture or a duplicate of all batch data.
+
+```text
+python -B project/experiments/scale_state/consumer_receive.py --capture <capture01> --input <parent-containing-consumer01-and-consumer02> --out <new-receipt.json> --negative-dir <new-negative-specimen-dir>
+```
