@@ -502,6 +502,14 @@ def lane_partition(organization):
     return tuple(map(int, suffix.split("_")))
 
 
+def declared_strategies(config):
+    """A pilot can declare one strategy; only its actual finite scope is ranked."""
+    strategies = config.get("strategies")
+    require(isinstance(strategies, list) and strategies and len(strategies) == len(set(strategies))
+            and set(strategies) <= {"fifo", "critical"}, "nonempty declared legal strategy subset")
+    return set(strategies)
+
+
 def verify_inventory(witness):
     inv, c = witness["inventory"], witness["config"]
     require(c["tile"] in (16, 32) and c["state_bits"] in (16, 32)
@@ -815,6 +823,7 @@ def execute(integer, repeat, root, range_root, out, binding=None, norm_stage="no
     require(metrics["schema"] == "issue68-service/1" and metrics["status"] == "PASS_CONDITIONAL_SCHEDULE"
             and metrics["source"] == m["source"], "service metrics/source status")
     require(any(row["profile"] == "in_place" for row in metrics["refused"]), "different abort/rollback contract excluded")
+    strategy_scope = declared_strategies(m["config"])
     cases, seen, fairness = [], set(), {}
     all_witnesses, chosen_negative = set(), None
     for row in metrics["results"]:
@@ -825,7 +834,8 @@ def execute(integer, repeat, root, range_root, out, binding=None, norm_stage="no
         identity = (row["task"], row["organization"], row["tile"], row["norm_route"], row["ext_ii"])
         require(identity not in seen, "unique finite service case")
         seen.add(identity)
-        require({s["strategy"] for s in row["strategies"]} == {"fifo", "critical"}, "both predeclared scheduling strategies")
+        require(len(row["strategies"]) == len(strategy_scope)
+                and {s["strategy"] for s in row["strategies"]} == strategy_scope, "exact declared scheduling strategy subset")
         for strategy in row["strategies"]:
             name = strategy["witness"]
             require(name in checked and name not in all_witnesses, "indexed unique service witness")
@@ -856,7 +866,7 @@ def execute(integer, repeat, root, range_root, out, binding=None, norm_stage="no
             if chosen_negative is None:
                 chosen_negative = name
         best = min(row["strategies"], key=lambda s: (s["cycles"], s["strategy"]))
-        require(row["best"] == best, "minimum within two fixed strategies")
+        require(row["best"] == best, "minimum within declared fixed strategies")
     require(all_witnesses == {name for name in checked if name.endswith(".json.gz")}, "no unreviewed witness omitted")
     observed_tasks = {identity[0] for identity in seen}
     expected_cases = {(task, org, tile, route, ext) for task in observed_tasks for org in m["config"]["lane_profiles"]
@@ -879,6 +889,7 @@ def execute(integer, repeat, root, range_root, out, binding=None, norm_stage="no
         shared_split_label_only_pairs=pairs, shared_split_label_only_cycles_difference=0 if pairs else None,
         shared_split_signatures=[dict(key=list(key), signature=value["signature"], organizations=sorted(value["organizations"])) for key, value in fairness.items()],
         declared_source_root=str(root), norm_stage=norm_stage, range_root=str(range_root) if range_root else None,
+        declared_strategies=sorted(strategy_scope), strategy_scope="minimum only over the manifest-declared nonempty subset; a one-strategy pilot does not validate an unexecuted strategy",
         validation="Every witness independent operation/payload/address/epoch/dependency/calendar/FIFO/slot/lower-bound replay; original numeric source SHA checked, not redoing arithmetic",
         quality_accepted=False, hardware_implemented=False,
         limitation="Conditional declared scalar-lowering and conservative fixed-slot schedules; independent norm/R streams and auxiliary proxies; no RTL/PPA/full-model speed or global-optimality proof")

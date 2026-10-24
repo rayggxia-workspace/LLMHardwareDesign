@@ -76,6 +76,16 @@ class ServiceAuditTests(unittest.TestCase):
         for suffix in ("2_6", "4_4", "6_2"):
             self.assertEqual(r.lane_partition("shared" + suffix), r.lane_partition("split" + suffix))
 
+    def test_single_strategy_pilot_scope(self):
+        self.assertEqual(r.declared_strategies({"strategies": ["fifo"]}), {"fifo"})
+        self.assertEqual(r.declared_strategies({"strategies": ["critical"]}), {"critical"})
+        self.assertEqual(r.declared_strategies({"strategies": ["fifo", "critical"]}), {"fifo", "critical"})
+
+    def test_strategy_scope_cannot_silently_expand_or_be_empty(self):
+        for choices in ([], ["fifo", "fifo"], ["random"], ["fifo", "optimal"], None):
+            with self.assertRaisesRegex(AssertionError, "nonempty declared legal strategy subset"):
+                r.declared_strategies({"strategies": choices})
+
     def test_overlap_negative_keeps_dependency_ready(self):
         a = node("a", duration=10, resource="LANE:0")
         b = node("b", start=10, duration=10, resource="LANE:0")
