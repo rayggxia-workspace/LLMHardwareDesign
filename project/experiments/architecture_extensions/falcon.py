@@ -231,16 +231,20 @@ def _w8a8(cal_x, eval_x, weight):
         key = name + "_"
         arrays.update({key + "input_code": qx, key + "input_scale": scale,
                        key + "accumulator": acc.astype(np.int32), key + "dequant": dequant})
-        serialized_bytes = int(scale.size * 8)
-        minimum_unique_bytes = 8 if name == "cal_static_tensor" else serialized_bytes
+        serialized_bytes = int(scale.nbytes)
+        native_parameter_bytes = int(scale.itemsize) if name == "cal_static_tensor" else serialized_bytes
+        explicit_fp64_parameter_bytes = 8 if name == "cal_static_tensor" else int(scale.size * 8)
         results.append({"scheme": name, "activation_saturations": int(np.count_nonzero(np.abs(unclip) > 127)),
                         "error": metric(dequant, eval_x @ w.T), "K": w.shape[1], "outputs": w.shape[0],
                         "int32_worst_case_abs_bound": int(w.shape[1] * 127 * 127),
                         "max_actual_accumulator_abs": int(np.max(np.abs(acc))),
-                        "weight_scale_bytes": int(ws.size * 8), "activation_scale_bytes": serialized_bytes,
+                        "weight_scale_bytes": int(ws.nbytes),
+                        "activation_scale_metadata_dtype": str(scale.dtype),
                         "serialized_activation_scale_metadata_bytes": serialized_bytes,
-                        "minimum_unique_activation_scale_parameter_bytes_fp64": minimum_unique_bytes,
-                        "scale_metadata_qualification": "activation_scale_bytes is the serialized per-row FP64 witness array, not minimum physical transport. Static tensor scale is one unique8B scalar; dynamic row scale is8B/row. Broadcast/residency, descriptor/packet overhead, format conversion and port service require an explicit transport contract.",
+                        "activation_scale_parameter_payload_bytes_native": native_parameter_bytes,
+                        "candidate_activation_scale_parameter_payload_bytes_if_explicit_fp64": explicit_fp64_parameter_bytes,
+                        "legacy_activation_scale_bytes_assuming_fp64_deprecated": int(scale.size * 8),
+                        "scale_metadata_qualification": "Native dtype/nbytes are read from the actual scale array; scale arithmetic is unchanged. Serialized metadata bytes denotes uncompressed scale-element payload, excluding NPY/ZIP container overhead. The old activation_scale_bytes=size*8 was incorrect for native FP32 dynamic scales and is deprecated. Parameter payload assumes one global static scalar or one parameter per dynamic row; neither array bytes nor these payloads are measured wire cost. FP64 candidate bytes apply only if that format is explicitly selected; conversion, broadcast/residency, descriptors, packets and ports require an explicit hardware contract.",
                         "qualification": "Software INT32 dot reference; floating scale/dequant; no INT8 throughput claim."})
     return results, arrays
 

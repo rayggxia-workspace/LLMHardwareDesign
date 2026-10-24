@@ -28,15 +28,36 @@ field to30720B. The original20480B is not a valid total join-read cost.
 
 ## Scale witness versus transfer
 
-Both original projection rows report `activation_scale_bytes=576`: the NPZ
-serializes a72x1 FP64 scale array for each scheme. For calibration-static tensor
-scale those72 entries repeat one value. Its minimum unique parameter payload is
-**8B**, while dynamic-per-row scale requires **576B for72 rows**. These minima
-exclude resident/broadcast setup, packet/descriptor overhead and any conversion
-to an eventual hardware scale format. They are not measured physical transfer.
-The original scale values and codes remain unchanged. Current source retains the
-legacy array-byte field, adds `serialized_activation_scale_metadata_bytes` and
-`minimum_unique_activation_scale_parameter_bytes_fp64`, and states this boundary.
+Both original projection rows report `activation_scale_bytes=576`, computed as
+`scale.size*8` rather than `scale.nbytes`. **This legacy field is wrong for the
+dynamic scheme and is deprecated.** Actual array formats are:
+
+| Scheme | Actual scale array | Scale element payload (`nbytes`) | Native parameter payload | If explicitly stored as FP64 |
+| --- | --- | --- | --- | --- |
+| Calibration-static tensor | float64,72x1 | 576B | One shared scalar:8B | 8B shared parameter |
+| Dynamic-per-row | float32,72x1 | **288B** | 72 row parameters:288B | 72 parameters:576B |
+
+The dynamic calculation retains the native FP32 activation dtype; reading an
+input witness later as FP64 does not retroactively make its scale calculation
+or stored array FP64. A previous version of this erratum repeated the incorrect
+FP64 assumption; this table corrects that description without changing evidence.
+Array payload sizes exclude NPY headers and ZIP compression/container overhead;
+they do not describe the total NPZ file or compressed member size.
+
+The parameter payloads assume one global static scalar or one value per dynamic
+row, before broadcast/resident setup, descriptors, packets, physical packing,
+ports or equality compression. Hardware scale format is **not determined**.
+The conditional FP64 column requires an explicit representation/conversion
+contract and its cost; it does not describe the actual dynamic NPZ array.
+The original scale values, arithmetic, codes and hashes remain unchanged.
+
+Current source reads actual `scale.dtype`/`scale.nbytes` and exposes
+`activation_scale_metadata_dtype`, `serialized_activation_scale_metadata_bytes`
+and `activation_scale_parameter_payload_bytes_native`. It removes the ambiguous
+`activation_scale_bytes` field; the old assumption is retained only under the
+explicitly deprecated name `legacy_activation_scale_bytes_assuming_fp64_deprecated`.
+The optional FP64 representation is separately named
+`candidate_activation_scale_parameter_payload_bytes_if_explicit_fp64`.
 
 ## Numerical and placement qualifications
 

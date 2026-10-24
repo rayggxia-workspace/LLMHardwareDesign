@@ -103,13 +103,31 @@ class ProjectionAndCostTests(unittest.TestCase):
         self.assertEqual(results[1]["activation_saturations"], 0)
         self.assertEqual(results[0]["serialized_activation_scale_metadata_bytes"], 16)
         self.assertEqual(results[1]["serialized_activation_scale_metadata_bytes"], 16)
-        self.assertEqual(results[0]["minimum_unique_activation_scale_parameter_bytes_fp64"], 8)
-        self.assertEqual(results[1]["minimum_unique_activation_scale_parameter_bytes_fp64"], 16)
+        self.assertEqual(results[0]["activation_scale_parameter_payload_bytes_native"], 8)
+        self.assertEqual(results[1]["activation_scale_parameter_payload_bytes_native"], 16)
         for scheme in ("cal_static_tensor", "eval_dynamic_row"):
             qx = arrays[scheme + "_input_code"].astype(np.int64)
             qw = arrays["weight_code"].astype(np.int64)
             expected = np.array([[sum(int(v) * int(z) for v, z in zip(row, col)) for col in qw] for row in qx])
             np.testing.assert_array_equal(expected, arrays[scheme + "_accumulator"])
+
+    def test_native_float32_dynamic_scale_metadata(self):
+        cal = np.array([[1, 2, 3, 4], [-2, -1, 1, 2]], dtype=np.float32)
+        evaluation = np.array([[100, 2, 1, 4], [1, -2, -3, 4]], dtype=np.float32)
+        w = np.array([[1, 2, -1, 3], [1, 1, 1, 1]], dtype=np.float32)
+        results, arrays = f._w8a8(cal, evaluation, w)
+        static, dynamic = results
+        self.assertEqual(arrays["cal_static_tensor_input_scale"].dtype, np.float64)
+        self.assertEqual(arrays["eval_dynamic_row_input_scale"].dtype, np.float32)
+        self.assertEqual(static["activation_scale_metadata_dtype"], "float64")
+        self.assertEqual(dynamic["activation_scale_metadata_dtype"], "float32")
+        self.assertEqual(static["serialized_activation_scale_metadata_bytes"], 16)
+        self.assertEqual(dynamic["serialized_activation_scale_metadata_bytes"], 8)
+        self.assertEqual(static["activation_scale_parameter_payload_bytes_native"], 8)
+        self.assertEqual(dynamic["activation_scale_parameter_payload_bytes_native"], 8)
+        self.assertEqual(dynamic["candidate_activation_scale_parameter_payload_bytes_if_explicit_fp64"], 16)
+        self.assertNotIn("activation_scale_bytes", dynamic)
+        self.assertEqual(dynamic["legacy_activation_scale_bytes_assuming_fp64_deprecated"], 16)
 
     def test_config_inventory_no_fp32_divide_four(self):
         cfg = dict(mamba_n_heads=32, mamba_d_head=128, mamba_d_state=256, mamba_d_ssm=4096,
