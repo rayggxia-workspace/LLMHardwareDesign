@@ -137,7 +137,7 @@ def main():
         receipt["negative_tests"] = [] if args.skip_negatives else [negative_pack(args.packed, args.compiled, args.producer_source, args.out)]
     else:
         from finite_receive76 import finite_negatives, verify_finite
-        for name in ("finite_receive76", "calendar76", "physical76"):
+        for name in ("finite_receive76", "calendar76", "physical76", "rq_decoder76"):
             need(binding.get(name+"_sha256") == sha(Path(__file__).with_name(name+".py")), "independent finite helper binding "+name)
         try:
             receipt = verify_finite(args.run, args.result, args.compiled, args.numeric_receipt, args.packed, args.packed_receipt,

@@ -13,6 +13,7 @@ from audit_io76 import (descriptor, load_json, need, replace_artifact_hash,
                         save_json, sha, source_binding, verify_manifest)
 from calendar76 import Calendar
 from physical76 import CAPACITIES, check_regions
+from rq_decoder76 import FEE_VERSION, reconstruct
 
 
 REVISION = "a02780686e08a03fe0d2679a293b5c74a90efa89"
@@ -30,7 +31,7 @@ def array_sha(value):
 
 def count_math(counts):
     return {key: value for key, value in counts.items() if key.startswith("op.") or key in
-            ("matrix_S8_MACs", "matrix_issued_cycles", "matrix_resets", "ROM_word32_reads")}
+            ("matrix_S8_MACs", "matrix_issued_cycles", "matrix_resets", "ROM_word32_reads", "rq_shift_guard_controller_slots")}
 
 
 def nested_leaves(nodes, loops=()):
@@ -56,8 +57,9 @@ def verify_stage_math(event, actual):
         n = meta["K"]; expected = operation_counts(align_s32_i64=n, rne_s64_i32=n)
     elif stage.startswith(("gate_up.fullK_RQ", "down.fullK_RQ")):
         n, k = meta["Ocount"], meta["K"]
-        expected = operation_counts(signextend_s16_i64=n, sub_s64=2*n, mul_s32_s32=n, rne_s64_i32=n)
+        expected = operation_counts(signextend_s16_i64=n, sub_s64=4*n, cmp_s64=n, max_s64=n, mul_s32_s32=n, rne_s64_i32=n)
         expected.update(matrix_S8_MACs=n*k, matrix_issued_cycles=n*k//16, matrix_resets=n//16)
+        expected["rq_shift_guard_controller_slots"] = n
         if stage == "down.fullK_RQ_merge": expected.update(operation_counts(mul_s32_u16=n, add_s64=n))
     elif stage == "front.silu_LUT":
         expected = operation_counts(align_s32_i64=1024, cmp_s64=1024, rne_s64_i32=1024, add_s64=512)
@@ -172,6 +174,26 @@ def verify_stage_addresses(event, objects, owner):
         memory_reads = [a for node, _ in leaves if node["kind"] == "access" for a in node["accesses"] if a["mode"] == "read"]
         need(any(a["object"] == "M.a" and a["offset"] == 0 and a["bytes"] == 16 and a["index_strides"] == [512, 16] for a in memory_reads)
              and any(a["object"] == "M.weight" and a["offset"] == 0 and a["bytes"] == 16 and a["index_strides"] == [256, 16] for a in memory_reads), "physical K16 input registers and one legal weight16 beat/K")
+        micros = [(i, node) for i, (node, _) in enumerate(leaves) if node["kind"] == "micro"]
+        formulae = [node["parameters"].get("formula") for _, node in micros if node["op"] in ("sub_s64", "max_s64")]
+        need(formulae == ["31-exponent", "31-exponent-delta", "128-raw_shift", "max(128-raw_shift,0)", "128-max(128-raw_shift,0)"],
+             "complete charged raw-to-decoded shift graph")
+        guard_positions = [(i, node, loops) for i, (node, loops) in enumerate(leaves) if node["kind"] == "rq_nonnegative_guard"]
+        need(len(guard_positions) == 1 and guard_positions[0][2] == (m["Ocount"]//16,), "guard controller covers every physical O16")
+        guard_i = guard_positions[0][0]
+        prior, _ = leaves[guard_i-1]
+        need(prior["kind"] == "engine_access" and prior["accesses"] == [{"object": "V.small32", "offset": 0, "bytes": 32,
+            "mode": "read", "repeat": 1, "stride": 0, "index_strides": []}], "negative guard consumes actual16 less/equal flags over real IO")
+        cmp_i = [i for i, node in micros if node["op"] == "cmp_s64"]
+        decode_i = [i for i, node in micros if node["parameters"].get("formula") == "128-raw_shift"]
+        need(len(cmp_i) == len(decode_i) == 1 and cmp_i[0] < guard_i < decode_i[0], "negative guard before all decoder and RNE execution")
+        operand("V.small32", 0, 32, "write", [], (m["Ocount"]//16,))
+        constant_reads = operand("const.scalars", 64, 8, "read", [], (m["Ocount"]//16,))
+        need(len(constant_reads) == 2, "both decoder sub operations read real deployed128")
+        checked_rne = [node for _, node in micros if node["op"] == "rne_s64_i32"]
+        need(len(checked_rne) == 1 and checked_rne[0]["parameters"].get("raw_shift_formula") == "31-exponent-delta"
+             and checked_rne[0]["parameters"].get("decoded_shift_formula") == "128-max(128-raw_shift,0)"
+             and checked_rne[0]["parameters"]["shift_domain"] == [0, 128], "actual RNE consumes charged decoded control")
         if which == "down":
             need(any(node["kind"] == "micro" and node["op"] == "mul_s32_u16" and node["parameters"]["gate_rank"] == m["rank"] for node, _ in leaves)
                  and any(node["kind"] == "micro" and node["op"] == "add_s64" and node["parameters"]["rank_prefix"] == m["rank"] for node, _ in leaves), "actual same rank Q15 gate then full prefix consumer")
@@ -234,9 +256,10 @@ def verify_deployment(root, summary, const):
          "only one packed complete40 weight deployment")
     scalars = bytearray(96)
     for offset, value, count, signed in ((0, 230687, 4, True), (16, 17, 16, False), (32, 1536, 16, False),
-                                         (48, 31, 8, True), (56, 127, 8, True), (72, 8192, 8, True), (80, -131072, 8, True), (88, 131072, 8, True)):
+                                         (48, 31, 8, True), (56, 127, 8, True), (64, 128, 8, True), (72, 8192, 8, True), (80, -131072, 8, True), (88, 131072, 8, True)):
         scalars[offset:offset+count] = value.to_bytes(count, "little", signed=signed)
     need((Path(root)/"deployed_scalars.bin").read_bytes() == scalars and int(const["residual_multiplier_q20"]) == 230687, "actual integer constants/epsilon/coefficient bytes")
+    need((Path(root)/"zero16.bin").read_bytes() == bytes(16), "actual deployed zero for guard and decoder")
     descriptors = bytearray()
     for expert in range(40):
         fields = [objects["const.gate_up_w8"]["offset"]+expert*1024*1536,
@@ -251,6 +274,7 @@ def verify_deployment(root, summary, const):
     need(deployment["schema"] == "granite-service-deployment76-v1" and deployment["packed_codes_deployment_bytes"] == 94371840
          and deployment["static_scale_bytes"] == 614400 and deployment["deployed_scalars"] == descriptor(Path(root)/"deployed_scalars.bin")
          and deployment["expert_dispatch"] == descriptor(Path(root)/"expert_dispatch.bin"), "actual static deployment artifact binding")
+    need(deployment["static_zero16"] == descriptor(Path(root)/"zero16.bin"), "real zero deployment SHA/size")
     wanted_scales = {}
     for key in ("gate_up_mant_q31", "gate_up_exp", "down_mant_q31", "down_exp", "next_gamma_q20"):
         a = const[f"L{layer}."+key]
@@ -313,11 +337,10 @@ def verify_finite(root, result, compiled, numeric_receipt, packed, packed_receip
     need(task["reference_errors_preserved"] == report["reference_errors"] and task["original_issue70_status"] == "FAIL", "keep old numerical limitations and failure")
     need(np.max(np.abs(trace["expert_gate_q12"].astype(np.int64))) <= 131072
          and np.min(trace["silu_lut_index"]) >= 0 and np.max(trace["silu_lut_index"]) <= 16384, "no unpriced nonlinear asymptote/format path")
-    for token in range(72):
-        for rank, expert in enumerate(trace["router.ids"][token]):
-            for which, delta in (("gate_up", trace["expert_input_delta"][token]), ("down", trace["mid_delta"][token, rank])):
-                shifts = 31-const[f"L{layer}.{which}_exp"][int(expert)].astype(np.int64)-int(delta)
-                need(np.all((shifts >= 0) & (shifts <= 128)), "all actual RQ shift widths calibrated")
+    decoder, zero_checked = reconstruct(trace, const, layer, {"layer": layer, "numeric_manifest_sha256": sha(result/"manifest.json"),
+                                      "compiled_manifest_sha256": sha(compiled/"manifest.json"), "numeric_receipt_sha256": sha(numeric_receipt)})
+    need(load_json(root/"rq_decoder.json") == decoder, "independent original/decoded RQ controls and full exact equivalence ledger")
+    need(task["rq_decoder_fee_version"] == FEE_VERSION and task["rq_decoder_sha256"] == sha(root/"rq_decoder.json"), "actual new RQ decoder fee/source binding")
     verify_deployment(root, summary, const)
     with gzip.open(root/"witness.jsonl.gz", "rt", encoding="utf-8") as stream: macros = [json.loads(line) for line in stream]
     cal = load_json(calibration/"cost_table.json")
@@ -343,6 +366,7 @@ def verify_finite(root, result, compiled, numeric_receipt, packed, packed_receip
     need(summary["phase_peak_bytes"] == capacity["phase_peak_bytes"] == phase_high, "actual live-phase physical high water")
     math_profile = count_math(physical["counts"])
     need(math_profile["matrix_S8_MACs"] == 72*8*(1024*1536+1536*512), "all actual whole-expert native S8 MACs executed in service")
+    need(physical["counts"]["rq_shift_guard_controller_slots"] == 1474560, "all RQ outputs pay real guard and decoder")
     try:
         check_regions(CAPACITIES, [{"object": "full8S32return", "bank": "V", "offset": 0, "bytes": 49152,
                                   "lifetime": ["task_start", "task_end"]}], 1)
@@ -356,6 +380,8 @@ def verify_finite(root, result, compiled, numeric_receipt, packed, packed_receip
             "numeric_receipt": descriptor(numeric_receipt), "packed_manifest": descriptor(packed/"manifest.json"), "packed_receipt": descriptor(packed_receipt),
             "calibration_manifest": descriptor(calibration/"manifest.json"), "calibration_receipt": descriptor(calibration_receipt),
             "integer_profile": math_profile, "integer_profile_sha256": canonical(math_profile), "numeric_row_hashes_sha256": canonical(rows),
+            "rq_decoder": descriptor(root/"rq_decoder.json"), "rq_decoder_canonical_sha256": canonical(decoder), "rq_decoder_checked": True,
+            "rq_decoder_fee_version": FEE_VERSION, "RQ_decoded_outputs_checked": 1474560, "RQ_large_shift_zero_outputs_checked": zero_checked,
             "inventory_sha256": canonical(summary["inventory"]), "allocations_sha256": canonical(summary["allocations"]), **physical,
             "full8S32_V_rejection": {"bytes": 49152, "capacity": 16384, "status": "REJECTED"}, "fullH_s64_merge_bytes": 12288,
             "phase_lifetime_checked": True, "limits": summary["limits"]}
@@ -380,7 +406,7 @@ def finite_negatives(args):
     # Hardlink immutable inputs, atomically replace each changed artifact before
     # rewriting its manifest. Never mutate a linked original file in-place.
     findings = []
-    for name in ("port", "capacity", "numeric", "widthfee", "ROM"):
+    for name in ("port", "capacity", "numeric", "widthfee", "ROM", "rq_decoder"):
         destination = Path(args.out)/("negative-"+name)
         shutil.copytree(args.run, destination, copy_function=os.link)
         # The manifest must itself stop sharing an inode before replacement.
@@ -393,7 +419,8 @@ def finite_negatives(args):
                 mutate_witness(destination/"witness.jsonl.gz", lambda n: n["kind"] == "access" and bool(n["resources"]), edit)
             else:
                 def edit(node): node["counts"]["micro_alu_cycles"] -= 1
-                mutate_witness(destination/"witness.jsonl.gz", lambda n: n["kind"] == "micro", edit)
+                mutate_witness(destination/"witness.jsonl.gz", lambda n: n["kind"] == "micro" and n["op"] == "max_s64"
+                               and n["parameters"].get("formula") == "max(128-raw_shift,0)", edit)
             changed = ["witness.jsonl.gz"]
         elif name == "numeric":
             rows = load_json(destination/"row_hashes.json")
@@ -404,6 +431,14 @@ def finite_negatives(args):
             summary["task"]["numeric_trajectory_sha256"] = canonical(rows)
             (destination/"summary.json").unlink(); save_json(destination/"summary.json", summary)
             changed = ["row_hashes.json", "summary.json"]
+        elif name == "rq_decoder":
+            decoder = load_json(destination/"rq_decoder.json")
+            decoder["operations"]["gate_up"]["decoded_maximum"] += 1
+            (destination/"rq_decoder.json").unlink(); save_json(destination/"rq_decoder.json", decoder)
+            summary = load_json(destination/"summary.json")
+            summary["task"]["rq_decoder_sha256"] = sha(destination/"rq_decoder.json")
+            (destination/"summary.json").unlink(); save_json(destination/"summary.json", summary)
+            changed = ["rq_decoder.json", "summary.json"]
         else:
             summary = load_json(destination/"summary.json")
             if name == "capacity": next(a for a in summary["allocations"] if a["object"] == "down.merge64").update(bank="V", bytes=49152)
@@ -419,7 +454,8 @@ def finite_negatives(args):
             reason = str(error)
             expected = {"port": "actual single-port/BUS/arithmetic interval or width fee",
                         "capacity": "finite capacity down.merge64", "numeric": "actual integer numeric row/stage binding",
-                        "widthfee": "independently derived physical/width/ROM counts micro", "ROM": "ROM single32bit port exact contract"}[name]
+                        "widthfee": "independently derived physical/width/ROM counts micro", "ROM": "ROM single32bit port exact contract",
+                        "rq_decoder": "independent original/decoded RQ controls and full exact equivalence ledger"}[name]
             need(reason == expected, "negative must reach independent semantic "+name+", got "+reason)
             findings.append({"name": name, "status": "REJECTED_AFTER_SHA_REWRITE", "reason": reason,
                              "changed_artifacts": {path: descriptor(destination/path) for path in changed}})

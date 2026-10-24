@@ -32,7 +32,7 @@
 
 至少对port、capacity、numeric row、width fee和ROM五类实际artifact变更、重新写manifest SHA，再由独立语义检查拒绝。仅hash层失败不算这些测试通过。保留失败产物，不覆盖新输出；未执行的接收或微校准明确记录。
 
-当前未有正式service/微校准接收回执。本文件不是实验通过或物理边界定稿声明。
+微校准03已由root在服务器独立接收：807案例、1,082,106实际byte动作、18 typed key及69个ROM连续请求；这是byte核功能和有界微程序证据，仍非完整宽FSM/RF或物理边界定稿。正式服务03仍待接收，旧版本的失败与诊断不改写。
 
 ## 独立工具入口
 
@@ -42,8 +42,18 @@
 
 micro绑定必须有`receive_micro76_sha256`、`micro_audit76_sha256`、`audit_io76_sha256`和真实commit。软件控制器/寻址与有限frame并非完整宽RTL FSM/RF，额外dispatch费用是候选；回执不声称RTL时序或PPA。
 
-`receive_service.py service --run <service> --result <74R16eval> --numeric-receipt <74mathreceipt> --compiled <74compiled> --packed <pack> --packed-receipt <packreceipt> --calibration <micro03> --calibration-receipt <microreceipt> --producer-source <frozen service.py> --binding <json> --out <newdir>`接收完整finite服务。绑定包含`receive_service_sha256`、`audit_io76_sha256`、`finite_receive76_sha256`、`calendar76_sha256`、`physical76_sha256`。默认五种实际artifact重写SHA负例：port、capacity、numeric、widthfee、ROM；`--skip-negatives`只能得到明确未执行的负例状态，不供正式比较。
+`receive_service.py service --run <service> --result <74R16eval> --numeric-receipt <74mathreceipt> --compiled <74compiled> --packed <pack> --packed-receipt <packreceipt> --calibration <micro03> --calibration-receipt <microreceipt> --producer-source <frozen service.py> --binding <json> --out <newdir>`接收完整finite服务。绑定包含`receive_service_sha256`、`audit_io76_sha256`、`finite_receive76_sha256`、`calendar76_sha256`、`physical76_sha256`、`rq_decoder76_sha256`。正式03默认六种实际artifact重写SHA负例：port、capacity、numeric、widthfee、ROM、rq_decoder；`--skip-negatives`只能得到明确未执行的负例状态，不供正式比较。
 
 正式银行不假定支持byte mask。1B micro写按128bit RMW读旧行+写共2银行拍，BUS新字节包仍48B；单标量费用为ALU+候选dispatch+4×frame读取+5×frame写入。partial包目标端和4B ROM回复也付旧行读拍与有限FIFO暂存；完整16B对齐写不额外RMW。active ROM73736B与实际核reservation131072B以及全局池4260100B分别记录。所有receipt的profile/row/inventory/alloc摘要SHA使用排序key、紧凑分隔符的canonical JSON；文件SHA另列，避免混淆。
 
 8192B传输不能按全源读取→全BUS→全目标写回的literal区间使用2KiB FIFO。正式transfer必须明确逐packet源读→BUS→目标RMW/写的等时重排证书，并以整个leaf的唯一源bank/BUS/目标bank资源envelope保证无其他并发。独立检查每包真实leading offset、最多两条partial旧行、header/padding/credit及完整目标提交后才接下一包；同bank affine源/目标跨包重叠拒绝。根作业90346旧pilot01保留为DIAGNOSTIC_FIFO_ORDER_NOT_QUALIFIED；相同总slot不能把旧日历当成已正式接收。正式02回执另有`packet_retiming_checked=true`及`serial_one_packet_source_BUS_destination_RMW`政策标识。
+
+## 正式03：实际大右移控制的精确有费映射
+
+实际范围诊断90396发现L0 gate/up原shift为28..131，其中32位置为130（10个）或131（22个），原S64乘积均非零；其余三种层/矩阵范围26..37，所有位置没有负shift。原L0服务02准备失败保留，L13服务02也不与新费用03混排。
+
+原weight exponent、activation delta、S64 product和Q12输出均不改。对全部1,474,560个RQ输出统一付`cmp_s64(raw,0)`、两次`sub_s64`和一次`max_s64`，得到`128-max(128-raw,0)`；cmp flags真实写/read32B并付每output一个候选controller test槽，负数必须fault。常数128位于既有96B scalars的64..71，零值有实际zero16 artifact，不赠端口、RAM或私有算术单元。
+
+独立数学：任意S64乘积n在s>=64时，绝对值不超过半LSB；唯一等号为I64_MIN/s64的负半tie，RNE选偶数0。故s>128可精确映射128，不能把负shift也clamp。接收工具重构每个原始/解码控制、完整array/72×8 row SHA和直方图；所有变化位置核原RNE、解码RNE及既有published码同为0，额外核全部s>=64输出为0。Fraction边界测试覆盖63/64/128/130/131/32799及S64极值。hash/histogram是离线observer，不作免费目标decoder。
+
+正式fee version固定`NONNEGATIVE_MIN128_FOUR_TYPED_PLUS_FLAG_TEST76_V1`。回执必须另有rq_decoder descriptor/canonicalSHA/checked/fee_version和1,474,560输出数；新decoder负例改实际账本及所有SHA仍须被真实控制重构拒绝，widthfee负例针对新增max节点少报成本。此修复恢复原数值函数的可执行控制范围，不改善原Q12误差，也不证明完整模型质量或RTL/PPA。

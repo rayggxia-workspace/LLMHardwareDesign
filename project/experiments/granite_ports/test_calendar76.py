@@ -73,5 +73,16 @@ class CalendarPrimitiveTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "alias across affine"):
             audit.leaf(alias, [], 0)
 
+    def test_negative_guard_flags_are_consumed_with_controller_fee(self):
+        audit = Calendar.__new__(Calendar); audit.peak_fifo = 0
+        node = {"kind": "rq_nonnegative_guard", "start": 0, "end": 16,
+                "count": 16, "source": "V.small32", "less_flag_stride_bytes": 2,
+                "negative_action": "abort before decoder/RNE", "counts": {"rq_shift_guard_controller_slots": 16},
+                "resources": [{"name": "VR8", "start": 0, "end": 16}]}
+        self.assertEqual(audit.leaf(node, [], 0), {"rq_shift_guard_controller_slots": 16})
+        node["end"] = 15; node["resources"][0]["end"] = 15
+        with self.assertRaisesRegex(ValueError, "finite service duration"):
+            audit.leaf(node, [], 0)
+
 
 if __name__ == "__main__": unittest.main()

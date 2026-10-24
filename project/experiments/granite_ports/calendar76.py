@@ -130,6 +130,11 @@ class Calendar:
         need(self.objects["ROM.padding"]["bytes"] == 57336
              and sum(value["bytes"] for value in self.objects.values() if value["bank"] == "ROM") == 131072,
              "physical tested ROM reservation distinct from active LUT payload")
+        need(inventory.get("RQ_shift_decoder") == {
+            "raw": "31-exponent_I16-current_delta_I16", "guard": "cmp_s64 then explicit flags IO and one candidate controller test slot per output",
+            "decoded": "128-max(128-raw,0)", "typed_ops_per_output": ["cmp_s64", "sub_s64", "max_s64", "sub_s64"],
+            "constant128": "const.scalars+64 S64 inside existing96B", "negative_shift": "fault, requires a separate explicit left-shift/overflow profile",
+            "equivalence": "signed S64 RNE(s>=64)=0 including I64_MIN/s64 tie-to-even"}, "charged nonnegative full-RQ shift decoder contract")
         self.counts = Counter(); self.templates = 0; self.physical_leaves = 0
         self.per_macro, self.peak_fifo = [], 0
 
@@ -231,6 +236,11 @@ class Calendar:
         elif kind == "matrix_acc_reset":
             need(node["register_object"] == "M.acc_regs" and self.objects["M.acc_regs"]["bytes"] == node["bytes"] == 64, "matrix finite reset registers")
             expected = {"matrix_resets": 1}; sequential_resources(node, [("M256", 1)])
+        elif kind == "rq_nonnegative_guard":
+            need(node["count"] == 16 and node["source"] == "V.small32" and node["less_flag_stride_bytes"] == 2
+                 and node["negative_action"] == "abort before decoder/RNE", "real full O16 negative guard controller")
+            expected = {"rq_shift_guard_controller_slots": 16}
+            sequential_resources(node, [("VR8", 16)])
         elif kind == "matrix_mac16":
             need(node["active_PEs"] == 16 and node["accumulator_register_bytes"] == 64
                  and node["A_register_bytes"] == node["W_register_bytes"] == 16, "actual one-row physical MAC16 inventory")
