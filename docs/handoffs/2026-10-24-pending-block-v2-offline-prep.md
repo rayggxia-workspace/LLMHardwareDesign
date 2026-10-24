@@ -115,3 +115,9 @@ python -B project/analysis/block_v2_offline/validate_delivery.py --output-dir pr
 本批无新Issue，PR说明使用Refs #63作为部分接续，不宣称完成/关闭适配器任务。审查人待指定，不自动合并。项目登记/Projects仍pending/unverified，缺少board配置/连接器Projects能力的事项原样交接，不因上传PR改成synced/done。PR总结与发布前新证据放在`project/analysis/block_v2_offline/evidence/`；后续回执记录实际commit/PR URL及读回状态。
 
 发布前`run03-pr-preflight`中管理结构、新32测试、旧31回归及两图重复重放均通过，但`git diff --check`退出2、范围检查发现YUZE-LU文件多出一个空行，因此整体回执为false，原样保留。经归一化换行后逐字节确认正文与基线完全一致，仅为移除本批新增进度段时留下的行尾/CRLF差异；已恢复其基线原字节，不改其他成员内容。补充目录级`.gitattributes`，使固定fixtures、来源和旧回执在Windows/Linux checkout时不被行尾转换破坏SHA。修复后的完整检查另存全新run04，不覆盖失败记录。
+
+发布事实：2026-10-25 00:19（Asia/Shanghai），[Draft PR #78](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/78)已创建并读回`open/draft=true`、作者`huangpingyang04-lgtm`、base=`task/48-int8-resource-estimator`@b06d85a。实现提交`3b1fc28fb6b733e0bcf3decc0aae20ba21196f1c`由Git HTTPS实际推送；后续文档回执提交独立追加，最终HEAD以PR读回为准，不把旧run01/run02改写成发布后绑定。
+
+连接器因Unknown tool不可用，浏览器焦点变化后停止桌面输入；启动浏览器进程的命令曾被自动审批以blocked by policy拒绝，未重复该启动命令。最终通过Git标准凭据管理器在进程内认证GitHub API，先GET /user确认`huangpingyang04-lgtm`/239819021，再核仓库push权限true、无重复PR及base/head SHA，才POST创建Draft。凭据没有写入文件、回执或输出。API另读回PR50 open/unmerged/head=b06d85a，Issue63 open/status:blocked/负责人本人；保持Issue63状态不变，不更改Projects或合并PR。
+
+run04实际完整成功；暂存时Git把原CRLF的不可改证据判作行尾空白，故仅对原字节来源/证据声明标准`cr-at-eol`，仍保留blank-at-eol/blank-at-eof/space-before-tab检查。之后`git diff --cached --check`退出0，10份固定fixture/来源文件的Git索引字节与工作文件逐一相同，112文件/422733B且范围无越界。业务实现/fixture未为发布而改写。

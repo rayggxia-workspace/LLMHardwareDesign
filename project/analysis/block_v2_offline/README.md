@@ -4,6 +4,8 @@
 
 以上为2026-10-24离线交付快照。2026-10-25用户已授权以`huangpingyang04-lgtm`发布独立Draft PR；[交接发布追加节](../../../docs/handoffs/2026-10-24-pending-block-v2-offline-prep.md)记录当前事实，run01/run02及来源manifest保留原始状态，不伪改为已绑定新commit。
 
+已交付[Draft PR #78](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/78)，base为PR50的`task/48-int8-resource-estimator`，Refs #63但不关闭其通用适配器任务。本次发布前完整成功回执为[run04](evidence/run04-pr-preflight/validation.json)，原run03行尾检查失败记录保留；实现提交3b1fc28，后续HEAD由PR及发布回执绑定。
+
 仅需 Python 3.10+ 标准库。从仓库根目录执行：
 
 ```powershell

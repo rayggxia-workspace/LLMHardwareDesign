@@ -16,8 +16,8 @@
 ## 2026-10-25 Block v2 字段与合成图 Draft PR
 
 - 用户明确授权将此前离线成果总结并提交Draft PR，并指定使用`huangpingyang04-lgtm`成员身份；Git凭据账户列表、Git作者配置及浏览器GitHub用户菜单均与之匹配。原10月24日离线禁push/PR为历史范围，当前只开放本批发布，服务器/EDA/模型/合并仍不执行。
-- 分支`codex/block-v2-offline-prep`，基线`b06d85a801a87c07f9745ccae6950dc7e4cbd0d2`；远端读取确认PR50基础分支`task/48-int8-resource-estimator`仍指向该基线，main仍为0cc36f3。拟以该基础分支为PR base，避免混入PR50既有17文件改动；不合并或重写依赖分支。
+- 分支`codex/block-v2-offline-prep`，基线`b06d85a801a87c07f9745ccae6950dc7e4cbd0d2`；远端读取确认PR50基础分支`task/48-int8-resource-estimator`仍指向该基线，main仍为0cc36f3。[Draft PR #78](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/78)已使用该基础分支为base，避免混入PR50既有17文件改动；不合并或重写依赖分支。
 - 成果：[字段对照](../../docs/BLOCK_V2_FIELD_MAPPING.md)、[两图输入/独立expected/标准库验证器](../../project/analysis/block_v2_offline/README.md)。图1完整归约/RQ/残差，图2guard/shadow/原子提交/失败重试/保存恢复，含通信与proposal/metadata存储账。固定v2源88e9c4b不替换，旧估算器/快照不修改。
-- 离线证据run01/run02保留原字节和当时未提交状态；本次发布前重跑见后续新增回执。32新测试、31旧回归先前实际通过；不据此宣称真实模型、全整数硬件或PPA通过。
-- 本批没有新Issue；Refs [#63](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/63)只作为接续，未关闭/接管通用适配器。Draft PR链接与提交身份以[本批交接发布追加节](../../docs/handoffs/2026-10-24-pending-block-v2-offline-prep.md)为准；待指定审查人，未合并/未done。
-- 登记沿用management-hub PR5 pending，最新登记事实未重读；无board.json，实际Projects条目unverified、同步pending，管理员待指定。GitHub连接器仍Unknown tool，发布使用已核身份的Git HTTPS及浏览器回退；未修改全局账号/作者设置或其他成员已有进度。
+- 离线证据run01/run02保留原字节和当时未提交状态；本次发布前run04-pr-preflight再次实际通过管理检查、32新测试、31旧回归及两图确定性/保护检查。run03行尾检查失败及修复记录保留；最终暂存差异检查通过，固定fixture/来源字节与Git索引一致。不据此宣称真实模型、全整数硬件或PPA通过。
+- 本批没有新Issue；Refs [#63](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/63)只作为接续，API读回其仍open/status:blocked、负责人本人，不改变其状态。实现提交`3b1fc28fb6b733e0bcf3decc0aae20ba21196f1c`已推送并由[PR78](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/78)交付；PR后续HEAD/发布回执以[交接追加节](../../docs/handoffs/2026-10-24-pending-block-v2-offline-prep.md)及线上记录为准。待指定审查人，未合并/未done。
+- 登记沿用management-hub PR5 pending，最新登记事实未重读；无board.json，Issue63页面无Projects关联，适用看板/条目unverified、同步pending，管理员待指定。GitHub连接器仍Unknown tool，最终以现有Git凭据管理器认证的GitHub API发布，/user读回本人`huangpingyang04-lgtm`、ID239819021，仓库push权限true；不写盘/输出凭据，未修改全局账号/作者设置或其他成员已有进度。
