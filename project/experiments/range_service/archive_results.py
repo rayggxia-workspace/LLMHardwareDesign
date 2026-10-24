@@ -31,6 +31,7 @@ def main():
  for current,dirs,names in os.walk(root,followlinks=False):
   dirs[:]=sorted(d for d in dirs if not (root/Path(current).relative_to(root)/d).is_symlink()and d!='tmp'and not (Path(current)==root and d.startswith('delivery')))
   for name in sorted(names):
+   if Path(current)==root and name.endswith('-'+os.environ.get('SLURM_JOB_ID','NO_CURRENT_JOB')+'.log'):continue
    path=Path(current)/name
    if path.is_symlink()or not path.is_file():raise ValueError('non regular artifact')
    files.append(path)
@@ -44,7 +45,15 @@ def main():
   z.writestr('ARCHIVE_INDEX.json',json.dumps({'source':binding,'root':str(root),'files':entries,'required_receipts':receipts},sort_keys=True,indent=2)+'\n')
  with zipfile.ZipFile(dest)as z:
   if z.testzip()is not None:raise ValueError('archive CRC failed')
- result={'status':'PASS_ARCHIVED_WITH_CRC','source':binding,'archive':{'path':str(dest),'bytes':dest.stat().st_size,'sha256':sha(dest)},'files':len(entries),'uncompressed_bytes':sum(x['bytes']for x in entries.values()),'required_receipts':receipts,'old_input':'Issue66 original data remain read-only external dependency; index previous full-results01.zip separately','limitations':'Stored files and receipt hashes; CRC does not re-execute arithmetic, source legitimacy, RTL or quality. Archive job own final log is external.'}
+  names=z.namelist()
+  if len(names)!=len(set(names))or set(names)!=set(entries)|{'ARCHIVE_INDEX.json'}:raise ValueError('archive member set')
+  if json.loads(z.read('ARCHIVE_INDEX.json'))['files']!=entries:raise ValueError('archive index mismatch')
+  for name,expected in entries.items():
+   h=hashlib.sha256();size=0
+   with z.open(name)as f:
+    for b in iter(lambda:f.read(8<<20),b''):h.update(b);size+=len(b)
+   if size!=expected['bytes']or h.hexdigest()!=expected['sha256']:raise ValueError('archived member SHA mismatch: '+name)
+ result={'status':'PASS_ARCHIVED_WITH_MEMBER_SHA_AND_CRC','source':binding,'archive':{'path':str(dest),'bytes':dest.stat().st_size,'sha256':sha(dest)},'files':len(entries),'uncompressed_bytes':sum(x['bytes']for x in entries.values()),'required_receipts':receipts,'old_input':'Issue66 original data remain read-only external dependency; index previous full-results01.zip separately','limitations':'Stored files, receipt hashes, archive member SHA/bytes and CRC; does not re-execute arithmetic, source legitimacy, RTL or quality. Archive job own final log is excluded and external.'}
  save(out/'delivery.json',result);print(json.dumps(result),flush=True)
 
 if __name__=='__main__':main()
