@@ -290,30 +290,36 @@ def validate(graph, blocks):
     x = parse(graph, blocks)
     tensors, stores, events, roots = (x[k] for k in ("tensors", "stores", "events", "roots"))
     pos = x["positions"]
-    event_for = {e["ref"]: pos[e["id"]] for e in events.values()}
-    uses = {tid: [] for tid in tensors}
-    for call in x["calls"].values():
-        for tid in call["reads"]:
-            uses[roots[tid]].append(event_for[call["id"]])
-    for tr in x["transfers"].values():
-        uses[roots[tr["tensor"]]].append(event_for[tr["id"]])
-    last_use = {tid: max(indices, default=-1) for tid, indices in uses.items()}
-    resident, produced = {sid: set() for sid in stores}, set()
+    resident, produced = {sid: [] for sid in stores}, set()
+    overwritten = set()
     def active(sid, at):
         require(pos[stores[sid]["begin"]] <= at <= pos[stores[sid]["end"]], "use outside storage lifetime")
-    def covers(held, wanted):
-        a, b = tensors[held], tensors[wanted]
-        return roots[held] == roots[wanted] and a["offset_bytes"] <= b["offset_bytes"] and a["offset_bytes"]+tensor_bytes(a) >= b["offset_bytes"]+tensor_bytes(b)
+    def covers(sid, wanted):
+        t = tensors[wanted]
+        cursor, stop = t["offset_bytes"], t["offset_bytes"]+tensor_bytes(t)
+        ranges = sorted((lo,hi) for root,lo,hi in resident[sid] if root == roots[wanted])
+        for lo,hi in ranges:
+            if lo > cursor:
+                break
+            cursor = max(cursor,hi)
+            if cursor >= stop:
+                return True
+        return False
     def write(tid, sid, at):
         active(sid, at)
         t = tensors[tid]
-        for old in list(resident[sid]):
-            a = tensors[old]
-            overlap = max(t["offset_bytes"], a["offset_bytes"]) < min(t["offset_bytes"]+tensor_bytes(t), a["offset_bytes"]+tensor_bytes(a))
-            if roots[old] != roots[tid] and overlap:
-                require(last_use[roots[old]] <= at, f"{sid}: premature overwrite of live tensor/state {old}")
-                resident[sid].remove(old)
-        resident[sid].add(tid)
+        lo, hi = t["offset_bytes"], t["offset_bytes"]+tensor_bytes(t)
+        retained = []
+        for old, start, stop in resident[sid]:
+            if old == roots[tid] or stop <= lo or start >= hi:
+                retained.append((old,start,stop))
+                continue
+            overwritten.add((sid,old))
+            if start < lo:
+                retained.append((old,start,lo))
+            if stop > hi:
+                retained.append((old,hi,stop))
+        resident[sid] = retained+[(roots[tid],lo,hi)]
         produced.add(roots[tid])
     for t in tensors.values():
         if t["initial"]:
@@ -328,7 +334,9 @@ def validate(graph, blocks):
             call = x["calls"][e["ref"]]
             for tid in call["reads"]:
                 require(roots[tid] in produced, f"{call['id']}: consume before production of {tid}")
-                locations = [sid for sid, values in resident.items() if stores[sid]["resource"] == call["resource"] and any(covers(held, tid) for held in values)]
+                locations = [sid for sid in resident if stores[sid]["resource"] == call["resource"] and covers(sid,tid)]
+                if not locations and any(root == roots[tid] and stores[sid]["resource"] == call["resource"] for sid,root in overwritten):
+                    raise InputError(f"{call['id']}: premature overwrite leaves {tid} unavailable at its consumer")
                 require(bool(locations), f"{call['id']}: {tid} not resident; explicit transfer required")
                 for sid in locations:
                     active(sid, at)
@@ -340,7 +348,7 @@ def validate(graph, blocks):
             tr = x["transfers"][e["ref"]]
             tid, t = tr["tensor"], tensors[tr["tensor"]]
             active(tr["source_storage"], at)
-            require(any(covers(held, tid) for held in resident[tr["source_storage"]]), "source tensor not resident")
+            require(covers(tr["source_storage"],tid), "source tensor not resident or overwritten")
             write(tid, tr["destination_storage"], at)
             path = [stores[tr["source_storage"]]["resource"]] + [x["links"][lid]["destination"] for lid in tr["path"]]
             communications.append(dict(id=tr["id"], event=e["id"], tensor=tid,
@@ -418,11 +426,15 @@ def build(graph, blocks):
     stores = {s["id"]:s for s in graph["storages"]}
     positions = {e["id"]:i for i,e in enumerate(graph["events"])}
     mapping["value_lifetimes"] = []
+    tensors_by_id = {t["id"]:t for t in graph["tensors"]}
     for t in graph["tensors"]:
+        origin = t
+        while origin["alias_of"] is not None:
+            origin = tensors_by_id[origin["alias_of"]]
         uses = [event_for[c] for c in t["consumers"]]
         uses += [event_for[tr["id"]] for tr in graph["transfers"] if tr["tensor"] == t["id"]]
         mapping["value_lifetimes"].append({"tensor":t["id"],
-            "produced_event":event_for.get(t["producer"]),
+            "produced_event":event_for.get(origin["producer"]),
             "use_events":sorted(set(uses),key=positions.get),
             "last_use_event":max(uses,key=positions.get) if uses else None,
             "reserved_storage_release_event":stores[t["storage"]]["end"],

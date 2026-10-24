@@ -24,6 +24,15 @@ def verify_mapping(m):
     check(len(resources) == len(m["resources"]), "duplicate resource")
     check(len(links) == len(m["links"]), "duplicate link")
     check(len(events) == len(m["events"]), "duplicate event")
+    for r in resources.values():
+        check(set(r)=={"id","kind","capacity_bytes","capabilities","ports"}, "resource contract fields")
+        check(r["capacity_bytes"] is None or (type(r["capacity_bytes"]) is int and r["capacity_bytes"]>=0), "capacity byte type")
+        check(len({p["id"] for p in r["ports"]})==len(r["ports"]), "duplicate logical port")
+        for p in r["ports"]:
+            check(set(p)=={"id","direction","protocol","width_bits","fifo_bytes"}, "port contract fields")
+            for k in ("width_bits","fifo_bytes"):
+                check(p[k] is None or (type(p[k]) is int and p[k]>0), "port quantity type")
+            check(p["width_bits"] is None or p["width_bits"]%8==0, "interface byte alignment")
     allocations = {s["id"]: s for s in m["storage"]["allocations"]}
     check(len(allocations) == len(m["storage"]["allocations"]), "duplicate allocation")
     positions = {eid: i for i, eid in enumerate(events)}
@@ -77,17 +86,24 @@ def verify_mapping(m):
             seen.add(tid)
             tid = tensors[tid]["alias_of"]
         return tid
-    def covers(held, wanted):
-        a, b = tensors[held], tensors[wanted]
-        return root(held) == root(wanted) and a["offset_bytes"] <= b["offset_bytes"] and a["offset_bytes"]+nbytes(a) >= b["offset_bytes"]+nbytes(b)
-    live = {sid: set() for sid in allocations}
-    call_positions = {e["ref"]: i for i, e in enumerate(m["events"])}
-    last = {tid: -1 for tid in tensors}
-    for c in calls.values():
-        for tid in c["reads"]:
-            last[root(tid)] = max(last[root(tid)], call_positions[c["id"]])
-    for tr in transfers.values():
-        last[root(tr["tensor"])] = max(last[root(tr["tensor"])], call_positions[tr["id"]])
+    live = {sid: [] for sid in allocations}
+    def covers(sid, wanted):
+        t = tensors[wanted]
+        uncovered = [(t["offset_bytes"],t["offset_bytes"]+nbytes(t))]
+        for identity,left,right in live[sid]:
+            if identity != root(wanted):
+                continue
+            remaining = []
+            for lo,hi in uncovered:
+                if hi <= left or lo >= right:
+                    remaining.append((lo,hi))
+                else:
+                    if lo < left:
+                        remaining.append((lo,left))
+                    if hi > right:
+                        remaining.append((right,hi))
+            uncovered = remaining
+        return not uncovered
     def active(sid, at):
         s = allocations[sid]
         check(positions[s["begin"]] <= at <= positions[s["end"]], "value used after release or before allocation")
@@ -95,14 +111,23 @@ def verify_mapping(m):
         active(sid, at)
         t = tensors[tid]
         check(t["offset_bytes"]+nbytes(t) <= allocations[sid]["size_bytes"], "storage range")
-        for old in list(live[sid]):
-            a = tensors[old]
-            if root(old) != root(tid) and max(a["offset_bytes"], t["offset_bytes"]) < min(a["offset_bytes"]+nbytes(a), t["offset_bytes"]+nbytes(t)):
-                check(last[root(old)] <= at, "live value prematurely overwritten")
-                live[sid].remove(old)
-        live[sid].add(tid)
+        lo,hi = t["offset_bytes"],t["offset_bytes"]+nbytes(t)
+        kept = []
+        for identity,left,right in live[sid]:
+            if identity == root(tid):
+                kept.append((identity,left,right))
+            else:
+                for begin,end in ((left,min(right,lo)),(max(left,hi),right)):
+                    if begin < end:
+                        kept.append((identity,begin,end))
+        live[sid] = kept+[(root(tid),lo,hi)]
     for tid, t in tensors.items():
         nbytes(t)
+        if t["alias_of"] is not None:
+            check(t["alias_of"] in tensors and not t["initial"] and t["producer"] is None, "alias identity/production")
+            parent = tensors[t["alias_of"]]
+            check(t["storage"]==parent["storage"] and t["logical_bits"]==parent["logical_bits"] and t["storage_bits"]==parent["storage_bits"], "alias storage/format")
+            check(parent["offset_bytes"]<=t["offset_bytes"] and t["offset_bytes"]+nbytes(t)<=parent["offset_bytes"]+nbytes(parent), "alias view range")
         if t["initial"]:
             write(tid, t["storage"], 0)
         if t["producer"] is not None:
@@ -116,14 +141,14 @@ def verify_mapping(m):
         if event["kind"] == "call":
             c = calls[event["ref"]]
             for tid in c["reads"]:
-                check(any(allocations[sid]["resource"] == c["resource"] and any(covers(held, tid) for held in helds) for sid, helds in live.items()), "consume before production/transfer or missing feedback")
+                check(any(allocations[sid]["resource"] == c["resource"] and covers(sid,tid) for sid in live), "consume before production/transfer, overwrite or missing feedback")
             for tid in c["writes"]:
                 check(allocations[tensors[tid]["storage"]]["resource"] == c["resource"], "producer allocation")
                 write(tid, tensors[tid]["storage"], at)
         else:
             tr = transfers[event["ref"]]
             active(tr["source_storage"], at)
-            check(any(covers(held, tr["tensor"]) for held in live[tr["source_storage"]]), "transfer source invalid")
+            check(covers(tr["source_storage"],tr["tensor"]), "transfer source invalid")
             write(tr["tensor"], tr["destination_storage"], at)
             emitted.append(tr["id"])
         used = {rid: 0 for rid in resources}
@@ -156,7 +181,7 @@ def verify_mapping(m):
     for tid,t in tensors.items():
         uses = [event_by_ref[c] for c in t["consumers"]]
         uses += [event_by_ref[tr["id"]] for tr in transfers.values() if tr["tensor"] == tid]
-        expected_lifetimes.append({"tensor":tid,"produced_event":event_by_ref.get(t["producer"]),
+        expected_lifetimes.append({"tensor":tid,"produced_event":event_by_ref.get(tensors[root(tid)]["producer"]),
             "use_events":sorted(set(uses),key=positions.get),
             "last_use_event":max(uses,key=positions.get) if uses else None,
             "reserved_storage_release_event":allocations[t["storage"]]["end"],
@@ -176,6 +201,15 @@ def verify_mapping(m):
             check(lid in links and links[lid]["source"] == path[-1], "directed path")
             path.append(links[lid]["destination"])
         check(path == c["path"] and path[-1] == allocations[tr["destination_storage"]]["resource"], "path endpoint")
+        widths = []
+        for lid in c["links"]:
+            link = links[lid]
+            for side in ("source","destination"):
+                port = next(p for p in resources[link[side]]["ports"] if p["id"]==link[side+"_port"])
+                widths.append(port["width_bits"])
+                if port["fifo_bytes"] is not None and c["transport"] is not None:
+                    check(port["fifo_bytes"]>=min(2048,c["transport"]["wire_bytes"]), "endpoint FIFO cannot hold frame")
+        check(widths == c["interface_width_bits"], "interface width declaration mismatch")
         if c["metadata_bytes"] is not None and len(path) >= 2:
             accounting_inputs.append({k: c[k] for k in ("id", "path", "shape", "logical_bits", "storage_bits", "metadata_bytes", "messages")})
     from .resource_bridge import account

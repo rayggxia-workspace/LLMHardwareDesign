@@ -227,7 +227,85 @@ class MappingTests(unittest.TestCase):
         weight = next(t for t in graph["tensors"] if t["id"] == "t_weight")
         result = next(t for t in graph["tensors"] if t["id"] == "t_matrix_first")
         result["storage"] = weight["storage"]
+        for tr in graph["transfers"]:
+            if tr["tensor"] == result["id"]:
+                tr["source_storage"] = weight["storage"]
         self.reject(graph, blocks, "premature overwrite")
+
+    def test_source_slot_reuse_after_copy_keeps_remote_value_alive(self):
+        b = examples._Graph("copy-then-reuse", "Synthetic explicit copy before source slot reuse")
+        seed = b.tensor("seed", [4], "A")
+        old = b.call("produce", "produce", "A", [seed], [4])
+        b._copy(old, "B", "iteration")
+        replacement = b.call("replace", "produce", "A", [seed], [4])
+        b.call("consume_copy", "consume", "B", [old], [4])
+        g, blocks = b.finish()
+        original = b.tensors[old]["storage"]
+        unused = b.tensors[replacement]["storage"]
+        b.tensors[replacement]["storage"] = original
+        g["storages"] = [s for s in g["storages"] if s["id"] != unused]
+        result = core.build(g, blocks)
+        from project.analysis.workload_mapping.consumer import verify_mapping
+        self.assertEqual(verify_mapping(result["mapping_request"])["status"], "pass")
+        self.assertEqual(len(result["mapping_request"]["communication"]), 1)
+        self.assertEqual(result["mapping_request"]["storage"]["peak_bytes"], {"A":8,"B":8})
+
+    def test_partial_overwrite_preserves_only_unmodified_view_bytes(self):
+        b = examples._Graph("partial-overwrite", "Synthetic nonoverlapping view remains valid")
+        seed = b.tensor("seed", [4], "A")
+        old = b.call("produce", "produce", "A", [seed], [8])
+        view = b.alias("first_half", old)
+        b.tensors[view]["shape"] = [4]
+        replacement = b.call("replace", "produce", "A", [seed], [4])
+        b.call("consume_view", "consume", "A", [view], [4])
+        g, blocks = b.finish()
+        unused = b.tensors[replacement]["storage"]
+        b.tensors[replacement].update(storage=b.tensors[old]["storage"],offset_bytes=4)
+        g["storages"] = [s for s in g["storages"] if s["id"] != unused]
+        result = core.build(g, blocks)
+        from project.analysis.workload_mapping.consumer import verify_mapping
+        verify_mapping(result["mapping_request"])
+        lifetime = next(v for v in result["mapping_request"]["value_lifetimes"] if v["tensor"] == view)
+        self.assertEqual(lifetime["produced_event"], "e_c_produce")
+        bad_mapping = copy.deepcopy(result["mapping_request"])
+        next(t for t in bad_mapping["logical_graph"]["tensors"] if t["id"]==view)["storage"] = b.tensors[seed]["storage"]
+        bad_mapping["graph_sha256"] = core.digest(bad_mapping["logical_graph"])
+        with self.assertRaisesRegex(ValueError,"alias storage"):
+            verify_mapping(bad_mapping)
+        bad = copy.deepcopy(g)
+        consumer = next(c for c in bad["calls"] if view in c["reads"])
+        consumer["reads"] = [old]
+        next(t for t in bad["tensors"] if t["id"] == view)["consumers"].remove(consumer["id"])
+        next(t for t in bad["tensors"] if t["id"] == old)["consumers"].append(consumer["id"])
+        self.reject(bad, blocks, "overwrite")
+
+    def test_two_explicit_partial_copies_can_cover_full_parent(self):
+        b = examples._Graph("two-part-copies", "Synthetic two disjoint views copied to one buffer")
+        old = b.tensor("base", [8], "A")
+        first, second = b.alias("first", old), b.alias("second", old)
+        b.tensors[first]["shape"] = [4]
+        b.tensors[second].update(shape=[4],offset_bytes=4)
+        b._copy(first, "B", "iteration")
+        b._copy(second, "B", "iteration")
+        b.call("consume_full", "consume", "B", [first], [8])
+        g, blocks = b.finish()
+        a, z = g["transfers"]
+        destination, unused = a["destination_storage"], z["destination_storage"]
+        z["destination_storage"] = destination
+        g["storages"] = [s for s in g["storages"] if s["id"] != unused]
+        next(s for s in g["storages"] if s["id"] == destination)["size_bytes"] = 8
+        call = next(c for c in g["calls"] if first in c["reads"])
+        call["reads"] = [old]
+        b.tensors[first]["consumers"].remove(call["id"])
+        b.tensors[old]["consumers"].append(call["id"])
+        result = core.build(g, blocks)
+        from project.analysis.workload_mapping.consumer import verify_mapping
+        verify_mapping(result["mapping_request"])
+        self.assertEqual(len(result["mapping_request"]["communication"]),2)
+        bad = copy.deepcopy(g)
+        removed = bad["transfers"].pop()
+        bad["events"] = [e for e in bad["events"] if e["ref"] != removed["id"]]
+        self.reject(bad, blocks, "resident")
 
     def test_in_place_write_requires_new_version(self):
         graph, blocks = examples.minimal()
