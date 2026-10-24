@@ -22,6 +22,12 @@ def allocation(name, bank, off=0, n=4096):
 
 
 class CalendarTests(unittest.TestCase):
+    def test_modulo_sixteen_scalar_loop_address_classes(self):
+        self.assertEqual(receiver.loop_residues(0, [4], (128,)), {0, 4, 8, 12})
+        self.assertEqual(receiver.loop_residues(0, [8], (64,)), {0, 8})
+        self.assertEqual(receiver.loop_residues(3, [16, 32], (32, 32)), {3})
+        self.assertEqual(receiver.loop_residues(2, [4], (2,)), {2, 6})
+
     def test_physical_packet_leading_beat_each_segment(self):
         count = receiver.packet_accounting(1, 15, 1985)
         self.assertEqual(count, {"payload_bytes": 1985, "src_beats": 126, "dst_beats": 126,

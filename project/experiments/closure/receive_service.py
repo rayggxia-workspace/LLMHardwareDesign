@@ -97,6 +97,19 @@ def address_range(access, objects, loops):
     return obj
 
 
+def loop_residues(offset, strides, loops):
+    """Exact modulo-16 affine address classes, at most sixteen possibilities."""
+    need(len(strides) <= len(loops), "loop residue axis depth")
+    padded = [0] * (len(loops) - len(strides)) + strides
+    residues = {int(offset) % 16}
+    for stride, count in zip(padded, loops):
+        step = int(stride) % 16
+        period = 16 // math.gcd(step, 16)
+        shifts = {(i * step) % 16 for i in range(min(count, period))}
+        residues = {(a + b) % 16 for a in residues for b in shifts}
+    return residues
+
+
 def verify_tree(nodes, duration, objects, inventory, loops=()):
     totals = Counter()
     cursor = 0
@@ -143,10 +156,12 @@ def verify_tree(nodes, duration, objects, inventory, loops=()):
             sa, da = objects[source["object"]], objects[dest["object"]]
             # Loop increments must preserve beat class. The exact affine range
             # is checked above; any non-invariant class needs a different proof.
-            need(all(int(x) % 16 == 0 for x in source["index_strides"] + dest["index_strides"]),
-                 "transfer loop beat class invariant")
             expected = packet_accounting(sa["offset"] + p["src_offset"], da["offset"] + p["dst_offset"],
                                          p["bytes"], p["segments"], p["src_stride"], p["dst_stride"])
+            source_classes = loop_residues(sa["offset"] + p["src_offset"], source["index_strides"], loops)
+            dest_classes = loop_residues(da["offset"] + p["dst_offset"], dest["index_strides"], loops)
+            need(all(packet_accounting(s, d, p["bytes"], p["segments"], p["src_stride"], p["dst_stride"]) == expected
+                     for s in source_classes for d in dest_classes), "transfer loop physical beat invariance")
             need(counts == expected, "physical packet/leading-offset beats")
             resources = [("bank." + sa["bank"], expected["src_beats"]), ("BUS", expected["wire_beats"]),
                          ("bank." + da["bank"], expected["dst_beats"])]
@@ -156,9 +171,12 @@ def verify_tree(nodes, duration, objects, inventory, loops=()):
             total_beats = 0
             for access in accesses:
                 obj = objects[access["object"]]
-                need(all(int(x) % 16 == 0 for x in access["index_strides"]), "local access loop beat class")
                 beats = sum(((obj["offset"] + access["offset"] + i * access["stride"]) % 16 + access["bytes"] + 15) // 16
                             for i in range(access["repeat"]))
+                residues = loop_residues(obj["offset"] + access["offset"], access["index_strides"], loops)
+                need(all(sum(((residue + i * access["stride"]) % 16 + access["bytes"] + 15) // 16
+                             for i in range(access["repeat"])) == beats for residue in residues),
+                     "local loop physical beat invariance")
                 resources.append(("bank." + obj["bank"], beats))
                 total_beats += beats
             need(counts == {"local_beats": total_beats}, "actual local physical beats")
