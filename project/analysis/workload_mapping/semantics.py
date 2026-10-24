@@ -53,6 +53,8 @@ def validate_semantics(s, graph, blocks):
         require(len(set(values)) == 1, reason)
     for r in sequence(s["reductions"], "reductions"):
         obj(r, "call partials expected_groups complete rq_call rq_output target_unit", "reduction")
+        if r["target_unit"] is not None:
+            integer(r["target_unit"], "target_unit", 1)
         require(r["call"] in calls and r["complete"] in tensors, "reduction reference")
         require(r["partials"] and set(r["partials"]) <= set(tensors), "missing reduction partial")
         unique(r["partials"], "reduction partials")
@@ -234,6 +236,7 @@ def consume_semantics(s, graph, report, resources=None):
             demand(item[key] is None or (type(item[key]) is int and item[key]>=0), key+" type")
         demand(item["signedness"] in ("signed","unsigned","unknown") and item["stage"] in STAGES, "format certificate")
     for r in s["reductions"]:
+        demand(r["target_unit"] is None or (type(r["target_unit"]) is int and r["target_unit"]>0), "target unit type")
         items = [f[t] for t in r["partials"]]
         demand(sorted(x["group"] for x in items) == sorted(set(r["expected_groups"])) and len(items) == len(set(r["partials"])), "group coverage")
         demand(all(x["stage"] == "PARTIAL" and x["unit"] == f[r["complete"]]["unit"] for x in items), "unit/certificate")

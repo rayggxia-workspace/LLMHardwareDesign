@@ -128,6 +128,12 @@ class SemanticTests(unittest.TestCase):
             validate_semantics(s,g,b)
 
     def test_consumer_rejects_bool_unit_and_materialized_failed_guard(self):
+        g,b,s = self.data()
+        r = s["reductions"][0]
+        r["target_unit"] = True
+        next(f for f in s["tensor_formats"] if f["tensor"] == r["rq_output"])["unit"] = 1
+        with self.assertRaisesRegex(ValueError,"target_unit"):
+            validate_semantics(s,g,b)
         g,b,s = self.data(True)
         result = core.build(g,b)
         apply_semantics(result,g,b,s)
