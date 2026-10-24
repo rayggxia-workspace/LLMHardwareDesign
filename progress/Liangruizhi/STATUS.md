@@ -2,7 +2,7 @@
 
 ## 2026-10-24（UTC+08:00）Issue70小MoE/并行混合架构（进行中）
 
-Issue70，task/70-moe-hybrid，根D:/Projects/LLMHardwareDesign-moe-hybrid，base PR69@ab2edaa。已核实际账号Liangruizhi/182389313、规则/旧Issue/PR/评论/未合并交接，未发现Granite/Falcon重复认领，保留成员55/63范围。两模型官方revision/metadata和决策最小集已冻结，代码27项边界测试/管理结构通过；实际下载90152/53和afterok捕获90154/55已提交，不把脚本或下载当数值/硬件通过。所有实际计算在本人服务器新issue70目录，Phi封存。结果、接收、SHA及PR回填；登记pending/看板unverified同步pending，待指定审查人。
+Issue70，task/70-moe-hybrid，根D:/Projects/LLMHardwareDesign-moe-hybrid，base PR69@ab2edaa。已核实际账号Liangruizhi/182389313、规则/旧Issue/PR/未合并交接，保留成员55/63范围。两模型官方revision、决策最小集和精度门限冻结；生产/接收/传输共59边界测试与管理结构通过。首轮服务器下载90152/53失败，依赖90154/55取消替换；本机D盘官方权重全SHA通过，正向新server models-relay目录中转并安排Slurm复核、两模型各8CPU并行捕获。本机无模型计算，实际模型数值/资源接收尚未完成，Phi封存。结果、SHA及PR回填；登记pending/看板unverified同步pending，待指定审查人。
 
 
 ## 2026-10-24（UTC+08:00）Issue68 R范围/有限服务交付
