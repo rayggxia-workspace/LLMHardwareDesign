@@ -25,6 +25,17 @@ there is no claim of existing hardware, target clock/cycles, PPA or complete
 integer model. Root scheduling uses new immutable server outputs and two
 independent rounds. Only synthetic tests run locally.
 
+An aligned I64 full-hidden row is20.48KB, exceeding V16KiB before other state.
+The declared finite-buffer candidate rereads the sum+unit source for max scan
+and encoding (51.2KB/row); an alternative is explicit aligned spill/write/read.
+These are mutually exclusive cost routes, not free Python-list SRAM. The
+square may consume each produced X16 code before its store, or separately
+reread the5.12KB X16 row; both port accounts are reported and cannot be added.
+Gamma and norm-Q20 use K128-sized streaming tiles if a16KiB scratch is retained.
+Fresh A8 payload/exponent bytes, output writes/reads and packed transport to M
+are charged explicitly. No streaming schedule or concurrent lane throughput
+has been proven by this numeric reference.
+
 ```text
 python -B -m unittest discover -s project/experiments/scale_state -p test_norm.py -v
 python -B project/experiments/scale_state/norm.py --capture <capture01> --consumer <consumer01> --out <new-norm01> --binding <norm-binding.json>
