@@ -2,7 +2,7 @@
 
 ## 2026-10-24 UTC+08 Issue76进行中
 
-[Issue76](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/76)，task/76-granite-ports，root D:/Projects/LLMHardwareDesign-granite-ports，base PR75@ce2d08f。用户新授权继续Granite有限expert→merge端口缓冲与宽/SFU/ROM校准；三独立子worktree，协议先冻结，工具探测/微实现/16服务/独立接收尚待执行，PR待创建。本人最新账号/74PR交付/依赖/成员已核，见work76；所有真实数组/服务/微实现仅本人新Slurm目录，PC源/微合成/JSON。无新模型/其他机器/Phi解封/55和63接管；原74结果不改写。登记pending、看板unverified/同步pending，管理员/审查人待指定。
+[Issue76](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/76)，task/76-granite-ports，root D:/Projects/LLMHardwareDesign-granite-ports，base PR75@ce2d08f。用户新授权继续Granite有限expert→merge端口缓冲与宽/SFU/ROM校准；三独立子worktree，协议先冻结，工具探测/两层packed及独立接收已PASS；正式micro03/独立90343通过18key、807case/1082106实际RTL动作/132真实码、69ROM请求；旧01实质拒绝和02少key保留。正式24有限服务尚待执行，新增1536fullacc的生命周期对照不改函数/库存，见协议。PR77 draft持续更新。本人最新账号/74PR交付/依赖/成员已核，见work76；所有真实数组/服务/微实现仅本人新Slurm目录，PC源/微合成/JSON。无新模型/其他机器/Phi解封/55和63接管；原74结果不改写。登记pending、看板unverified/同步pending，管理员/审查人待指定。
 
 ## 2026-10-24 UTC+08 Issue74交付（待审查合并）
 

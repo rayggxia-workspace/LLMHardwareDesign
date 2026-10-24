@@ -2,7 +2,7 @@
 
 ## 2026-10-24 Issue76有限Granite与微实现校准
 
-用户授权本人新CPU服务器lrz-i76-*并行接续Granite expert→merge有限容量/端口/缓冲、受限S8宽算术/SFU/ROM可执行成本校准。旧74全数学与Falcon服务只读，最小两评价层×tile128/256×M/V×labels共16同函数配置；实际微程序/RTL核/候选费用和未做物理时序分开。协议project/experiments/granite_ports/PROTOCOL.md；完整数组/服务/微实现仅服务器，PC源码/微合成/metadata/字节。固定精度/库存，不赠宽单元/容量/端口；未知费用拒排名，无新模型/其他机器/Phi解封/成员55和63接管，独立branch/worktree/out与完整来源/负例/交接。
+用户授权本人新CPU服务器lrz-i76-*并行接续Granite expert→merge有限容量/端口/缓冲、受限S8宽算术/SFU/ROM可执行成本校准。旧74全数学与Falcon服务只读，最小两评价层×merge窗口128/256/1536×M/V×labels共24同函数配置，1536为正式服务前基于生命周期新增对照；实际微程序/RTL核/候选费用和未做物理时序分开。协议project/experiments/granite_ports/PROTOCOL.md；完整数组/服务/微实现仅服务器，PC源码/微合成/metadata/字节。固定精度/库存，不赠宽单元/容量/端口；未知费用拒排名，无新模型/其他机器/Phi解封/成员55和63接管，独立branch/worktree/out与完整来源/负例/交接。
 
 ## 2026-10-24 Issue74完整MoE与分组边界
 

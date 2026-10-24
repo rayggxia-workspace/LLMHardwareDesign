@@ -1,0 +1,117 @@
+{
+  "schema": "issue76-tool-probe-v1",
+  "source": {
+    "commit": "1ec3cc07be6ffb08d0b691ee7db87af938f11c36",
+    "sources": {
+      "project/experiments/granite_ports/PROTOCOL.md": "2e6ca24d1373ab807213870678a8d1c38c5fd0f366cc807f97b78d03c9fed3e5",
+      "project/experiments/granite_ports/tool_probe.py": "8154f47a9fcf5615f149b5b7531fc39e74244378474af19821d2b65aa3ff705a"
+    },
+    "tool_probe_sha256": "8154f47a9fcf5615f149b5b7531fc39e74244378474af19821d2b65aa3ff705a"
+  },
+  "commands": [
+    {
+      "command": [
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "--version"
+      ],
+      "exit_code": 0,
+      "log": "command0.log",
+      "sha256": "87572c8e2c2a32f6149fa607f57c9f1646131c409881662cfc407e481da2c1ca",
+      "elapsed": 11.240504398941994
+    },
+    {
+      "command": [
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--contain",
+        "--bind",
+        "/public/home/yuzelu/opt/eda:/eda:ro",
+        "/public/home/yuzelu/opt/eda/containers/orfs-26Q1-repacked.sif",
+        "/eda/verilator-5.042/bin/verilator",
+        "--version"
+      ],
+      "exit_code": 0,
+      "log": "command1.log",
+      "sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f",
+      "elapsed": 0.821928275283426
+    },
+    {
+      "command": [
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--contain",
+        "--bind",
+        "/public/home/yuzelu/opt/eda:/eda:ro",
+        "/public/home/yuzelu/opt/eda/containers/orfs-26Q1-repacked.sif",
+        "g++",
+        "--version"
+      ],
+      "exit_code": 0,
+      "log": "command2.log",
+      "sha256": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+      "elapsed": 0.2325640209019184
+    },
+    {
+      "command": [
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--contain",
+        "--bind",
+        "/public/home/yuzelu/opt/eda:/eda:ro",
+        "/public/home/yuzelu/opt/eda/containers/orfs-26Q1-repacked.sif",
+        "python3",
+        "--version"
+      ],
+      "exit_code": 0,
+      "log": "command3.log",
+      "sha256": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+      "elapsed": 0.2366817439906299
+    },
+    {
+      "command": [
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--contain",
+        "--bind",
+        "/public/home/yuzelu/opt/eda:/eda:ro",
+        "/public/home/yuzelu/opt/eda/containers/orfs-26Q1-repacked.sif",
+        "yosys",
+        "-V"
+      ],
+      "exit_code": 0,
+      "log": "command4.log",
+      "sha256": "c1d2e07190cfd386c85f01f6c3821db1201b7d4cd6b65716da5d431f2dcd29ac",
+      "elapsed": 0.4141026013530791
+    }
+  ],
+  "files": [
+    {
+      "path": "/public/software/singularity-ce-4.3.4/bin/singularity",
+      "exists": true,
+      "bytes": 115134672,
+      "sha256": "5d452c898d5f27d895fe6819710797c22bb37460003a1ef5241714e228ec5b58"
+    },
+    {
+      "path": "/public/home/yuzelu/opt/eda/containers/orfs-26Q1-repacked.sif",
+      "exists": true,
+      "bytes": 1522868224,
+      "sha256": "c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df"
+    },
+    {
+      "path": "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator_bin",
+      "exists": true,
+      "bytes": 18824040,
+      "sha256": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd"
+    }
+  ],
+  "python_host": "3.12.7",
+  "status": "PASS_EXISTING_TOOL_PROBE",
+  "limits": [
+    "Read-only tool probe on CPU Slurm, not a model experiment or RTL/math qualification.",
+    "No installation; existing shared tools mounted read-only."
+  ]
+}
