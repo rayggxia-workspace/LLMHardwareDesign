@@ -64,7 +64,7 @@ byte核心RTL重放、软件宽微程序、1/action候选dispatch与未实现完
 
 微frame每byte read=1bank拍+48B BUS=4slot；write=旧行read+write两bank拍+48B BUS=5slot。因此总micro时间=ALU+dispatch+4reads+5writes，bank拍=reads+2writes，wire=48(reads+writes)。ROM4B/I16/小flag写同样RMW，完整对齐16B写不额外读。
 
-FIFO峰=32+16ceil(payload/16)+16×partial目的beat数。1984B非对齐最多两edge，2016+32=2048恰好；40B寄存不能再永久挤入。caller暂存≤512B，micro整体FIFO保守1024B。M/V均经同bank-select BUS-attached VR8，nearM不赠ALU或物理locality。
+transfer叶采用唯一source-bank/BUS/destination-bank全窗口资源envelope，并给出可逐packet独立展开的serial_packet_retiming_certificate：明确真实src/dst offset、payload、源读→BUS→目的RMW/写的子区间；不能将8192B聚合源读→BUS→目的写当有限FIFO日历。总时隙和计数不变，实际每次只驻一包。FIFO峰取max(32+16×源physical read拍数，32+16ceil(payload/16)+16×partial目的beat数)，同时覆盖源非对齐汇集与目的old-line shadow的互斥阶段。1984B非对齐最多两edge，2016+32=2048恰好；40B寄存不能再永久挤入。caller暂存≤512B，micro整体FIFO保守1024B。M/V均经同bank-select BUS-attached VR8，nearM不赠ALU或物理locality。
 
 ## Witness与范围
 
@@ -72,4 +72,4 @@ summary.json schema=granite-service76-v1：task绑定numeric/compiled/receipt/pa
 
 witness.jsonl.gz每行macro含id/start/end/deps/meta/body；loop body时间相对iteration原点，end=start+count×period。access.index_strides对loop索引右对齐；offset/range/leading拍独立重建。micro地址class仅绑定已核512B程序和全shift域，LUT class回链原silu_lut_index。label不进入builder，同配置split/shared应witness逐字节零差；同层所有tile/placement数值rowhash相同。
 
-接收另核完整8mid持久barrier、全K/8prefix/共同单位、真实consumer、phase实liveness、ROM/widthfee/port/FIFO及48KiB拒例。当前源码不能替代实际接收。工具交付时本机9项小合成及项目结构检查通过，未加载真实NPZ/运行模型或真实服务。无整模型质量、实际INT8速度、最终物理边界或PPA结论。
+接收另核完整8mid持久barrier、全K/8prefix/共同单位、真实consumer、phase实liveness、ROM/widthfee/port/FIFO及48KiB拒例。当前源码不能替代实际接收。工具交付时本机10项小合成及项目结构检查通过，未加载真实NPZ/运行模型或真实服务。无整模型质量、实际INT8速度、最终物理边界或PPA结论。

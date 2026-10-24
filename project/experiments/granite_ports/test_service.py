@@ -98,6 +98,22 @@ class Tests(unittest.TestCase):
         self.assertEqual(b.events[-1]['stage'],'norm.publish_after_complete_consumer')
         self.assertTrue(all(e['meta']['token']==71 for e in b.events))
 
+    def test_large_transfer_is_actual_packet_calendar_not_bulk_FIFO(self):
+        b=m.Builder(1536,'V',calibration());m.allocate(b);body=[]
+        event=b.transfer(body,'const.gate_up_w8','M.weight',8192)
+        cert=event['serial_packet_retiming_certificate']
+        self.assertEqual(len(cert['packets']),5)
+        self.assertEqual(sum(p['payload_bytes'] for p in cert['packets']),8192)
+        self.assertEqual(cert['packets'][0]['start'],0)
+        self.assertEqual(cert['packets'][-1]['end'],event['end'])
+        self.assertEqual(len({r['name'] for r in event['resources']}),len(event['resources']))
+        self.assertTrue(all(r['start']==0 and r['end']==event['end'] for r in event['resources']))
+        self.assertLessEqual(max(p['FIFO_peak_bytes'] for p in cert['packets']),2048)
+        self.assertTrue(all(p['payload_bytes']<=1984 for p in cert['packets']))
+        other=[];source_unaligned=b.transfer(other,'cut.norm','M.weight',1984,1,0)
+        self.assertEqual(source_unaligned['FIFO_peak_bytes'],2032)
+        with self.assertRaisesRegex(ValueError,'engine caller staging'):b.engine([], 'M.weight',0,8192)
+
     def test_partial_write_has_endpoint_RMW_and_fits_FIFO(self):
         self.assertEqual(m.partial_write_beats(0,16),0)
         self.assertEqual(m.partial_write_beats(15,2),2)

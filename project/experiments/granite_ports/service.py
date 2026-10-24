@@ -193,15 +193,35 @@ class Builder:
     def transfer(self,body,src,dst,n,so=0,do=0,src_index=(),dst_index=()):
         s=self.alloc[src];d=self.alloc[dst];c=packet_cost(s['offset']+so,d['offset']+do,n)
         c['bank_beats']=c.get('src_beats',0)+c.get('dst_beats',0)+c.get('dst_rmw_beats',0)
-        peak=0;done=0
+        packets=[];done=0;cursor=0;peak=0
         while done<n:
-            size=min(1984,n-done);peak=max(peak,32+16*((size+15)//16)+16*partial_write_beats(d['offset']+do+done,size));done+=size
+            size=min(1984,n-done);sa=s['offset']+so+done;da=d['offset']+do+done
+            sb=beats(sa,size);db=beats(da,size);rmw=partial_write_beats(da,size);wire=2+(size+15)//16
+            source_peak=32+16*sb;destination_peak=32+16*((size+15)//16)+16*rmw
+            packet_peak=max(source_peak,destination_peak);peak=max(peak,packet_peak)
+            duration=sb+wire+db+rmw
+            packets.append({'index':len(packets),'src_offset':so+done,'dst_offset':do+done,'payload_bytes':size,
+                'src_absolute_offset':sa,'dst_absolute_offset':da,'src_beats':sb,'dst_beats':db,'dst_rmw_beats':rmw,
+                'wire_beats':wire,'start':cursor,'end':cursor+duration,'FIFO_peak_bytes':packet_peak,
+                'steps':[{'resource':'bank.'+s['bank'],'start':cursor,'end':cursor+sb},
+                    {'resource':'BUS','start':cursor+sb,'end':cursor+sb+wire},
+                    {'resource':'bank.'+d['bank'],'start':cursor+sb+wire,'end':cursor+duration,'operation':'destination old-line RMW reads then writes'}]})
+            cursor+=duration;done+=size
         if peak>2048:raise ValueError('finite packet/RMW FIFO')
-        return self.leaf(body,'transfer',[('bank.'+s['bank'],c.get('src_beats',0)),('BUS',c.get('wire_beats',0)),('bank.'+d['bank'],c.get('dst_rmw_beats',0)+c.get('dst_beats',0))],
+        names=list(dict.fromkeys(('bank.'+s['bank'],'BUS','bank.'+d['bank'])))
+        return self.leaf(body,'transfer',[(name,cursor) for name in names],simultaneous=True,
             accesses=[self.access(src,so,n,index_strides=src_index),self.access(dst,do,n,'write',index_strides=dst_index)],
-            counts=c,FIFO_peak_bytes=peak,packet={'src':src,'dst':dst,'src_offset':so,'dst_offset':do,'bytes':n,'partial_write':'endpoint RMW'})
+            counts=c,FIFO_peak_bytes=peak,packet={'src':src,'dst':dst,'src_offset':so,'dst_offset':do,'bytes':n,'partial_write':'endpoint RMW'},
+            serial_packet_retiming_certificate={'kind':'bounded_serial_packet_retiming','max_payload_bytes':1984,'header_bytes':32,
+                'per_packet_order':'source reads -> BUS -> destination RMW/read/write','resident_payload_only_one_packet':True,
+                'all_endpoint_state_within_FIFO':True,'duration_formula':'sum(src_beats + wire_beats + dst_beats + dst_rmw_beats)',
+                'FIFO_peak_rule':'max(32+16*source_physical_beats,32+16*ceil(payload/16)+16*destination_partial_beats)',
+                'packet_times_relative_to_leaf':True,'source_index_strides':list(src_index),'destination_index_strides':list(dst_index),
+                'resource_reservation':'unique bank/BUS resources reserved for whole leaf; explicit packet steps fit inside, global serial policy',
+                'packets':packets})
 
     def engine(self,body,obj,offset,n,mode='read',index=()):
+        if n>512:raise ValueError('engine caller staging exceeds512; large transfer requires packet certificate')
         a=self.alloc[obj];c=packet_cost(a['offset']+offset,0,n) if mode=='read' else packet_cost(0,a['offset']+offset,n)
         bankbeats=c.get('src_beats',0) if mode=='read' else c.get('dst_beats',0)+c.get('dst_rmw_beats',0)
         rr=[('bank.'+a['bank'],bankbeats),('BUS',c.get('wire_beats',0))] if mode=='read' else [('BUS',c.get('wire_beats',0)),('bank.'+a['bank'],bankbeats)]
