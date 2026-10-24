@@ -159,3 +159,33 @@ router与expert必须消费同一current整数norm，不能拼旧native输入；
 near M相对shared V完整继承链时隙分别仅少0.001007%/0.008010%/0.016005%；wire少1100160/8841600/17688960B。engine wire是总wire子集。旧whole-O协议、新Otile16协议与新旧微程序费用不能混算；该分母有外部A/residual cut，不是整模型或目标芯片周期。结论是保留typed PARTIAL32/ALIGN64/宽RQ旁路与参数化驻留，不据此固化近M独占或M/V合宏。
 
 误差归因不支持盲加mid小数位：最终Q12 RNE能量仅总mid误差3.16e-8–3.14e-6，mid进入该步前已有显著误差，后续A8另损失约3.2%。delta最低6/7，没有delta0导致的低幅量程闲置行，本批不跑midF20。后续先校准实际S8宽微程序、SFU/共享ROM及bank-select接口，再做Granite有限expert/merge tile调度；质量方面先隔离gate/up量化而非扩品牌。R/A语义闭包、动态S归属与产品映射继续保留，RTL/时序/布线/整图收益及冻结后Phi未验收。
+
+## 14. Issue76：有限Granite merge与受限宽算术校准
+
+[新报告](experiments/issue-76-granite-ports.md)/[Issue76](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/76)/[PR77](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/77)。本人CPU服务器24完整expert→merge→nextnorm同函数/同资源配置全部独立PASS；6驻留对、12标签逐字节零差，原43stage/原精度不改。它收敛容量/接口义务，不宣称制造宏、全模型质量或端到端物理收益定稿。
+
+### 14.1 修正容量排除理由
+
+全8路S32返回49,152B仍不能驻V16KiB；但完整H1536的S64 merge仅12,288B，可在front释放、midA8缓存S0、O16流式RQ/写EXT、nextnorm屏障后复用的调度中合法驻V。独立实际offset/phase访问高水V14,224B，余2,160B；对比窗口128/256的全任务V峰11,184B，只增加3,040B高水。nearM全merge为M22,608B/V11,184B，原M32KiB/V16KiB库存不变。因此第13节静态acc+完整输出相加不能作为排除fullmerge的充分理由；此前实验原条件保留，以本节真实生命周期结果修正推论。
+
+最大实际FIFO2,016B<=2,048B，必须以每packet源读→BUS→目的RMW/写后下一包的信用/完成顺序实现，不能靠聚合总slot声称容量合法。128bit1RW的部分写真实RMW、不假定byte mask。
+
+### 14.2 固定哪些边界，保留哪些定制选择
+
+|边界|本批有据约束|仍保留的产品/实现选择|
+|---|---|---|
+|M内部MAC/partial|S8乘法与同单位INT32 fullK局部反馈，O16真实输出，partial/complete标记与溢出界；不同单位显式重对齐|近M或共享V的RQ/merge驻留，M↔V宽旁路端点；无证据强制M/V融合|
+|V宽微运算/scale|有限frame/operand、S16元数据到S64、完整carry/RNE/guard与真实旗标消费；任何稀有scale也要合法译码|局部frame/独立RF或BUS-attached策略、controller/FSM实现及预连线，均需同库存重新校准|
+|V/SFU/ROM|18typed key有受限byte实现，SFU借VR8 lane0，单32bit ROM请求/返回仲裁，131072B真实预留|SFU专用化/并行度、ROM宏/真实latency和工艺时序；不能免费增加lane/port|
+|expert→merge|动态ID/gate、完整8路prefix、共同Q12、一次finalRNE、真实残差/完整nextnorm与owner/phase屏障|merge128/256/1536、M或V所有权、S/backing映射；不固定样本中的expert拓扑|
+|S/D与已有R/A|显式容量/生命周期/1RW/BUS/FIFO信用和完成；保留旧R range/unit/epoch原子发布合同|动态fanout与外部endpoint连接；本批不含R/A执行，不能替代既有连续状态或KV证据|
+
+候选制造前固定的是局部反馈、有限暂存/仲裁、合法单位与完成协议；跨模板旁路、动态dispatch和bank/backing端点仍是产品配置候选。逻辑归约闭包不要求同一制造宏。M/V/A/R/S/D六逻辑模板继续保留。
+
+### 14.3 成本证据与收敛限制
+
+micro03有807case/1,082,106实际byte RTL动作、132真实Granite码及69ROM请求独立PASS。所有宽乘/除/isqrt/RNE由S8/byte动作构造；SFU共享VR8、40B操作数寄存从V扣除、512B frame及完整IO计价，无免费INT16乘法、宽除法或总carry÷8。ROM有效73,736B、预留131,072B、单32bit口功能lat2/II1分列；完整wide/address FSM、RF/STA/PPA未验收。
+
+实际L0有32处RQ shift130/131，原02失败保留；新03统一每个输出cmp/sub/max/sub+guard标志读写/控制，以s>=64的S64 RNE恒0证明min(s,128)不改原码。3,976是全部大右移零码检查数，不能当32处控制改变数。原scale/43stage及全部配置精度一致。
+
+6对nearM都仅少774,144条件slots/5,308,416wire B（55,296个64B partial包），占完整cut服务约0.0008405%；完整merge相对128少709,632slots。当前约99.75% wire来自逐byte frame流量，约99.46% slots来自micro的ALU+候选dispatch+frameIO子集。因此优先校准同8lane/512B/有限端口的局部frame与完整controller，保留既有保守BUS基线，再判物理宏/预连线；不据极小驻留差或巨大保守绝对值冻结融合，也不外推整模型收益。

@@ -1,8 +1,14 @@
 # Liangruizhi 的进度
 
-## 2026-10-24 UTC+08 Issue76进行中
+## 2026-10-24 UTC+08 Issue76交付（待审查合并）
 
-[Issue76](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/76)，task/76-granite-ports，root D:/Projects/LLMHardwareDesign-granite-ports，base PR75@ce2d08f。用户新授权继续Granite有限expert→merge端口缓冲与宽/SFU/ROM校准；三独立子worktree，协议先冻结，工具探测/两层packed及独立接收已PASS；正式micro03/独立90343通过18key、807case/1082106实际RTL动作/132真实码、69ROM请求；旧01实质拒绝和02少key保留。正式24有限服务尚待执行，新增1536fullacc的生命周期对照不改函数/库存，见协议。PR77 draft持续更新。本人最新账号/74PR交付/依赖/成员已核，见work76；所有真实数组/服务/微实现仅本人新Slurm目录，PC源/微合成/JSON。无新模型/其他机器/Phi解封/55和63接管；原74结果不改写。登记pending、看板unverified/同步pending，管理员/审查人待指定。
+[Issue76](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/76)/[PR77](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/77)，task/76-granite-ports，D:/Projects/LLMHardwareDesign-granite-ports，base PR75@ce2d08f。已核Liangruizhi/182389313本人认证、项目/依赖及成员55(in_progress)/63(blocked)/PR58，无重复范围；三独立子worktree。所有实际pack/数组/微核RTL/有限服务/独立接收均仅本人CPU Slurm，PC源码/微合成/JSON/字节，无新模型/其他机器/Phi解封或成员接管。
+
+两层W8 pack完整接收；micro03 18key/807case/1,082,106真实byte RTL动作/132真实码和69ROM请求独立PASS；24新版03有限完整expert→merge/nextnorm全独立PASS/144实际重SHA负例，6同函数驻留对和12标签零差。完整merge V峰14,224B<=16KiB，原全8返回49,152B仍拒绝；近M仅省0.0008405%条件slots，公共byteframe wire约99.75%、micro整体slots约99.46%，不足以冻结融合。32处RQ超域原失败保留，有费等价译码后全部24同版重跑；3,976大右移零码与32控制变化分列。
+
+114实际作业89COMPLETED/13FAILED/12仅自有依赖取消，失败原样归档。完整8,735,106,471B/2,526成员服务器、精选5,199,361B/394 metadata入仓库，两包服务器/精选PC逐成员SHA，19phase66原Git源字节核验通过。新69/相关63微合成、结构检查通过，最终diff另留回执。完整wideFSM/RF/STA/PPA/整模型质量未验收；下一步同资源局部frame/完整controller校准，保留M/V/A/R/S/D逻辑模板及物理映射选择。
+
+[报告](../../docs/experiments/issue-76-granite-ports.md)、[索引](../../project/experiments/granite_ports/results/issue-76/index.json)、[交接](../../docs/handoffs/2026-10-24-issue-76-granite-ports.md)。PR交付后待审查合并，非done；登记PR5 pending、board404/无Projects能力，看板unverified/同步pending，管理员/审查人待指定。
 
 ## 2026-10-24 UTC+08 Issue74交付（待审查合并）
 

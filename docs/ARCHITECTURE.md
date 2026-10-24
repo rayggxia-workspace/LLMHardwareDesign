@@ -163,3 +163,9 @@ project/experiments/qwen3_trace/使用独立D盘环境（torch2.10.0+cpu、trans
 正式工具project/experiments/moe_grouped；[README](../project/experiments/moe_grouped/README.md)给出合同、恢复/接收命令及服务器边界。先python -B scripts/check_project.py，再已有NumPy环境执行 -B -m unittest discover -s project/experiments/moe_grouped -p test_*.py（63项），相关closure90和architecture_extensions80回归本批通过。真实模型/数值/服务仅本人CPU Slurm，PC只微合成/元数据/字节接收，TEMP/TMP仅D盘当前任务。
 
 精选接收复用closure/verify_delivery.py --index project/experiments/moe_grouped/results/issue-74/delivery-index.json --archive project/experiments/moe_grouped/results/issue-74/selected.zip --out NEW.json；核153 metadata成员，不替代完整数学。work74/verify_sources.py核10phase/20原Git源字节。全部原命令、20源绑定、51实际作业和2.10GB完整输入位置/SHA见results/issue-74/index.json及work74，复跑需原phase/新out，不拿最新HEAD冒充旧执行源。Granite grouped服务/全模型质量/目标RTL/PPA未验收。
+
+## Issue76 Granite有限端口与宽微核校准
+
+正式目录project/experiments/granite_ports，[README](../project/experiments/granite_ports/README.md)和PROTOCOL/SERVICE/MICRO/AUDIT约束原函数与有限库存。先python -B scripts/check_project.py，再用已有NumPy环境运行 -B -m unittest discover -s project/experiments/granite_ports -p 'test_*.py'（69项）；相关moe_grouped原63项本批通过。本机只微合成/JSON/字节，TEMP/TMP指向D盘当前任务。所有实际pack/RTL微核/数组/服务与完整接收均本人CPU Slurm。
+
+精选接收：python -B project/experiments/closure/verify_delivery.py --index project/experiments/granite_ports/results/issue-76/delivery-index.json --archive project/experiments/granite_ports/results/issue-76/selected.zip --out NEW.json；核394 metadata，不重算目标服务。源码接收：python -B work/Liangruizhi/76/verify_sources.py --repository REPO --index DELIVERY_INDEX --selected SELECTED_ZIP --expected-phases 19 --out NEW.json；核19phase66原Git blob。完整8.74GB/2526成员留授权服务器，两包及精选本机逐字节核过，SHA/实际命令/114Slurm见结果索引与work76。恢复用原phase源码/新out，保留失败/取消和fee版本，不以新HEAD替代。24正式03服务/6驻留对/12label已接收；完整wide/address FSM/RF/STA/PPA、局部frame优化及整模型质量未验收。

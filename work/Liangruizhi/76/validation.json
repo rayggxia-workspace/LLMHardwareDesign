@@ -1,0 +1,61 @@
+{
+  "schema": "issue76-validation-v1",
+  "at": "2026-10-24T15:34:14.819Z",
+  "scope": "PC tiny synthetic/JSON/byte only; actual tensor/pack/RTL/finite service and complete receivers only authorized CPU server",
+  "checks": [
+    {
+      "command": "python -B scripts/check_project.py",
+      "exit_code": 0,
+      "result": "PASS management structure only"
+    },
+    {
+      "command": "python -B -m unittest discover -s project/experiments/granite_ports -p test_*.py",
+      "tests": 69,
+      "exit_code": 0,
+      "result": "OK",
+      "log": "final-granite-ports-tests.log"
+    },
+    {
+      "command": "python -B -m unittest discover -s project/experiments/moe_grouped -p test_*.py",
+      "tests": 63,
+      "exit_code": 0,
+      "result": "OK related original numerical module synthetic regression",
+      "log": "related-moe-grouped-tests.log"
+    },
+    {
+      "command": "closure/verify_delivery.py --index DELIVERY --archive selected.zip --out NEW",
+      "members": 394,
+      "exit_code": 0,
+      "result": "PASS_BYTE_RECEPTION"
+    },
+    {
+      "command": "work/Liangruizhi/76/verify_sources.py --repository REPO --index DELIVERY --selected selected.zip --out NEW --expected-phases19",
+      "phases": 19,
+      "sources": 66,
+      "exit_code": 0,
+      "result": "PASS original Git blob bytes"
+    }
+  ],
+  "server": {
+    "jobs": 114,
+    "states": {
+      "COMPLETED": 89,
+      "FAILED": 13,
+      "CANCELLED": 12
+    },
+    "finite_independent_receipts": 24,
+    "formal_service_semantic_negatives": 144,
+    "comparison": "PASS_BOUND_FINITE_SERVICE_COMPARISON",
+    "full_archive_members_verified": 2526,
+    "selected_archive_members_verified": 394
+  },
+  "log_note": "Original PowerShell transcript retained in D task temp; committed logs normalize CRLF to LF.",
+  "not_performed": [
+    "new model or cached-decode schedule",
+    "application quality acceptance",
+    "full wide/address controller and RF RTL implementation",
+    "macro/ROM STA/PPA or actual physical locality",
+    "optimized local microframe comparison",
+    "whole-model E2E target performance"
+  ]
+}

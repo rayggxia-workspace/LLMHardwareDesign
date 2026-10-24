@@ -1,4 +1,4 @@
-"""Archive only explicit Issue76 artifacts; never weights/caches or other tasks."""
+"""Archive only explicit Issue76 artifacts; never original model weights/caches or other tasks."""
 import argparse,hashlib,json,zipfile
 from pathlib import Path
 
