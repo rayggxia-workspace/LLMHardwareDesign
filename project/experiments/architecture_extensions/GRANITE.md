@@ -20,3 +20,11 @@ Issue70；此页记录生产协议，实际执行与结果须以manifest/作业�
 增加共同单位合并候选：仅根据校准MoE输出最大值，选power-of-two unit，使校准值约占23bits；各expert down的S32结果以Q31 multiplier和int16 shift转换为共同S32（饱和/RNE明确），路由权重Q0.15；S64权重乘积/8路求和，RNE15及S32饱和得到输出。该方案对宽乘和64bit合并有需求，尚未提供8bit单元lowering周期，不能当成已支持硬件。Q31参数生成和scale选择仍用浮点，元数据/运算成本明确待资格验证。
 
 输出`metrics.json`（8个phase候选、误差/负载/逻辑字节）、`witnesses.npz/json`（32实际完整K dot、32实际RQ、每4个候选一个token完整8×1536共同单位合并）。独立receiver验证后才可称见证通过；不从小样本或零饱和推断全模型质量通过。逻辑数据量分别列A8、S32、route id/weight、FP64 scale与Q31/shift；未测header/物理beat、权重驻留和多播，不能将其当硬件端口/周期结论。完整40专家层权重原FP32约377MB，大文件仅授权服务器存储，仓库保存位置/SHA。
+
+## 原生chunk失败的最小定位
+
+`granite_diagnose.py --model MODEL_DIR --capture FAILED_CAPTURE --binding JSON --out NEW --threads 8`
+
+binding含`commit`与`granite_diagnose_sha256`。严格核原失败manifest、全部artifact及原模型文件SHA，复用其72个评价token、原模型revision、原框架实现SHA、FP32/eager和原门；不重下权重，不改原capture。
+
+四个独立profile：原生full72、原生cached64+8、原生chunk16、chunk16固定full-run每层每token专家ID（当前logits重新softmax）。最后一个是**改变路由算法的反事实诊断控制**，不能替换原生参考或声称PASS。保存32层每token router输入/logits/top8 ID/weight、MoE和层输出以及LM logits；比较首个集合变化层、top8/9 margin、输入/输出误差和固定ID后剩余差异。固定ID显著压低误差只能支持路由非连续性放大，不能证明全部误差来自特定浮点算子或据此放宽门。原失败和全模型质量/硬件未验状态持续保留。

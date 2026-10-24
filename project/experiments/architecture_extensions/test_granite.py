@@ -9,6 +9,8 @@ import numpy as np
 spec = importlib.util.spec_from_file_location('granite', Path(__file__).with_name('granite.py'))
 g = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(g)
+dspec=importlib.util.spec_from_file_location('granite_diagnose',Path(__file__).with_name('granite_diagnose.py'))
+d=importlib.util.module_from_spec(dspec);dspec.loader.exec_module(d)
 
 
 class GraniteTests(unittest.TestCase):
@@ -93,6 +95,23 @@ class GraniteTests(unittest.TestCase):
     def test_silu_stable_at_extremes(self):
         y = g.silu(np.asarray([-1000.,0.,1000.]))
         np.testing.assert_array_equal(y,[0.,0.,1000.])
+
+    def test_route_diagnostic_set_and_rank_are_separate(self):
+        logits=np.asarray([[4.,3.,2.,1.]])
+        rank=d.compare_routes(logits,np.asarray([[0,1]]),logits,np.asarray([[1,0]]))
+        self.assertEqual(rank['set_changed_tokens'],0)
+        self.assertEqual(rank['ordered_changed_tokens'],1)
+        flipped=d.compare_routes(logits,np.asarray([[0,1]]),np.asarray([[4.,2.,3.,1.]]),np.asarray([[0,2]]))
+        self.assertEqual(flipped['set_changed_tokens'],1)
+        self.assertEqual(flipped['changes'][0]['replaced_experts'],1)
+        self.assertEqual(flipped['changes'][0]['full_margin'],1.)
+
+    def test_route_diagnostic_near_boundary(self):
+        full=np.asarray([[3.,1.,1.-1e-7,0.]])
+        other=np.asarray([[3.,1.-1e-7,1.,0.]])
+        diff=d.compare_routes(full,np.asarray([[0,1]]),other,np.asarray([[0,2]]))
+        self.assertAlmostEqual(diff['minimum_full_top8_margin'],1e-7)
+        self.assertEqual(diff['changes'][0]['position'],0)
 
 
 if __name__ == '__main__':
