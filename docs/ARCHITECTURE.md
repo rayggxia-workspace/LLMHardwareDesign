@@ -1,5 +1,11 @@
 # 架构与运行
 
+## Issue64：综合方案v2与服务器最小决策实验
+
+[Block v2](BLOCK_PARTITION_V2.md)与[实际报告](experiments/issue-64-block-v2.md)区分单位/归约/状态合同和物理归属。正式代码project/experiments/block_decisions/，完整运行/接收命令见[README](../project/experiments/block_decisions/README.md)。先python -B scripts/check_project.py，再scripts/check_research.py与unittest discover该目录；receive_attention.py --self-test及work64/audit_service.py --self-test覆盖边界。
+
+精选10.08MB可在D盘新目录以work/Liangruizhi/64/verify_delivery.py核外/内SHA和6原Git源，再replay_selected_attention.py重放两实际NPZ及两LUT、audit_service.py核全部576/96与3轨迹。A独立audit_output.py还需原Llama capture02/numeric04或服务器full包。只在本人授权服务器目录通过Slurm lrz-*并行，实际90048–58及失败见报告；不新增权重/模型完整加载。B受检PV32与C portablePV64/O16服务分列，软件/条件周期不作为INT8硬件速度、整图或PPA。
+
 ## Issue56本机Llama跨模型最小验证
 
 代码`project/experiments/llama_cross/`，运行顺序/并发/精度边界见其README与[实际报告](experiments/issue-56-llama-cross-model.md)。

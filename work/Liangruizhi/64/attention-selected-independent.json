@@ -1,0 +1,71 @@
+{
+  "status": "PASS",
+  "scope": "two selected actual samples; full server56-case receiver is separate",
+  "independent_receiver_sha256": "5ac33027fcd6fb4c68005ad1c1bb8f3847265447a335ad3402d5e2986058bed7",
+  "numpy": "2.5.4",
+  "counts": {
+    "QK_I64_values": 381440,
+    "score_integer_values": 381440,
+    "score_Fraction_witnesses": 1987,
+    "exp_and_P15_values": 381440,
+    "PV_I64_values": 61440,
+    "diagnostic_metrics": 14
+  },
+  "cases": [
+    {
+      "id": "qwen25.prefix128.l0.kv16.lut128",
+      "status": "PASS",
+      "QK_values": 51200,
+      "P15_values": 51200,
+      "PV_values": 40960,
+      "Fraction_score_witnesses": 1587,
+      "maximum_Psum": 32776,
+      "maximum_Psum_budget": 32849,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.005388399935631402,
+          "max_abs": 0.028175748884677887
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.005385028275665204,
+          "max_abs": 0.027843378484249115
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0004670059091483719,
+          "max_abs": 0.001053977757692337
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix4096.l0.kv16.lut128",
+      "status": "PASS",
+      "QK_values": 330240,
+      "P15_values": 330240,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 400,
+      "maximum_Psum": 32795,
+      "maximum_Psum_budget": 33281,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.004240804574266425,
+          "max_abs": 0.520698070526123
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.004302151499578572,
+          "max_abs": 0.5507328510284424
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0003723633228357453,
+          "max_abs": 0.039806365966796875
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    }
+  ],
+  "Decimal50_LUT_entries": 6146,
+  "hardware_performance_accepted": false,
+  "full_model_quality_accepted": false
+}

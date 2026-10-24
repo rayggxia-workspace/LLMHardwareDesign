@@ -53,7 +53,7 @@ M/V/A/R/S each最多一个命令在途的候选控制由D管理，局部命令�
 
 ### M：保持完整归约语义的矩阵tile
 
-- **计算**：W8A8 GEMM/QK；每个输出完整K归约为checked INT32后才允许RQ。P7×V8直接执行；
+- **计算**：W8A8 GEMM/QK；仅同单位K组保持checked INT32，跨组scale经显式ALIGN_REDUCE，受检32或宽回退后完整归约才允许最终RQ。P7×V8直接执行；
   P15×V8候选按3个radix128 digit乘法阶段执行，A侧移位合并；这不是原生单周期INT16 MAC。
   Q/K16若质量需要，将产生更多digit阶段与宽归约，是D1的新合同，尚无阵列实现证据。
   signed16可按低7位、次7位、有符号高2位展开，16×16需9个8位dot阶段及i64合并；
@@ -90,7 +90,7 @@ M/V/A/R/S each最多一个命令在途的候选控制由D管理，局部命令�
 ### A：attention的score、概率与宽输出归约
 
 - **计算**：QK ACC32按Q/K scale重定标为score i16/f8；mask/max/exp/sum；P7或P15；
-  接收PV整数部分和、按V block scale和digit位置对齐为i64输出累加器，最后一次RNE/Sat16。
+  接收PV整数部分和、按V block scale和digit位置对齐；固定Vscale且Psum证明通过可条件i32，其他合同保留checked宽输出累加器，最后一次RNE/Sat16。
   不能把K scale提到softmax外、V scale提到整段PV和外。
 - **状态**：最多4个query行的m/l、O[4,d≤256] i64共8KiB；Q缓存≤2KiB、tile score/P缓冲及metadata，
   全部总计≤32KiB。持久KV不在这32KiB中；每个S/外存页的scale版本与cache位置由D追踪。
@@ -240,7 +240,7 @@ RX1接S0/S2/S4/S5/S7；A.RX0接M/S2/S4、RX1接S3；R.RX0接S5/S7、RX1接V。
 | Qwen2.5全局GQA | V norm→M QKV/bias/RQ→V RoPE/转换→S KV；M↔A attention→M输出投影；M/V/S做FFN/残差 | bias33与行scale；global KV随长度增长，不能按参数量推容量 |
 | 既有Qwen3-0.6B | 同上，Q/K norm在V；已有真实短head仅作局部精度/接口回归 | 单头离线平衡不能当全部GQA共享或因果cache方案 |
 | Qwen3.5 hybrid | full-attn层走M/V/A/S；linear层M投影→R卷积→V规范化/门→R state→V输出norm/gate→M投影 | conv与recurrent state分开；混合层仍共享M/V，不能假设两阶段不争用；out gate另计 |
-| 条件Gemma3-4B文本 | M/V/A/S，S分local ring/global append；V承担实际norm/GELU | 实际窗口、层表、gamma/cast需授权config/实现核对，未接入前不填伪精确物理容量 |
+| 条件Gemma3-4B文本 | M/V/A/S，S分local ring/global append；V承担实际norm/GELU | Issue61已实际CPU文本接入/局部全局/window±1/4096验证；gamma整数化、硬件ring/物理容量仍待验证 |
 | Phi保留验证 | 冻结后用M/V/A/S；融合qkv/gate-up描述符拆成M tile调度 | 部分RoPE/LongRoPE和融合存储布局；不能用其trace调Block策略后仍称保留验证 |
 
 FFN主调度为M分块生成gate/up、V逐点激活/乘门、S保存gated片段、M down完整K累加。
