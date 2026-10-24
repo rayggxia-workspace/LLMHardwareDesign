@@ -1,0 +1,351 @@
+{
+  "schema_version": 1,
+  "kind": "granite_capture",
+  "status": "FAIL",
+  "source": {
+    "commit": "ac9d3f3d4785e3d855045744a8608d2b1885d643",
+    "granite_sha256": "7593b9ee24d5dac95776ad2f36c96b2bac6906279c651bc225ae69f129dcf2ef",
+    "binding_sha256": "6cf8a27c31c705b29c8983d67535933454030f8d1b8cc1b3fe34fa8d43cff4f5"
+  },
+  "model_revision": "a02780686e08a03fe0d2679a293b5c74a90efa89",
+  "scope": "one complete layer0 MoE; full model FP32 CPU correctness only",
+  "host": "node13",
+  "versions": {
+    "torch": "2.10.0+cpu",
+    "numpy": "2.2.6",
+    "transformers": "5.20.2",
+    "python": "3.12.7 (main, Oct 26 2025, 19:10:49) [GCC 8.5.0 20210514 (Red Hat 8.5.0-28)]"
+  },
+  "precision": {
+    "source": "torch.bfloat16",
+    "reference_execution": "CPU FP32 cast of source weights; eager attention"
+  },
+  "threads": 8,
+  "config": {
+    "transformers_version": "5.20.2",
+    "architectures": [
+      "GraniteMoeForCausalLM"
+    ],
+    "output_hidden_states": false,
+    "return_dict": true,
+    "dtype": "bfloat16",
+    "chunk_size_feed_forward": 0,
+    "is_encoder_decoder": false,
+    "id2label": {
+      "0": "LABEL_0",
+      "1": "LABEL_1"
+    },
+    "label2id": {
+      "LABEL_0": 0,
+      "LABEL_1": 1
+    },
+    "problem_type": null,
+    "vocab_size": 49155,
+    "hidden_size": 1536,
+    "intermediate_size": 512,
+    "num_hidden_layers": 32,
+    "num_attention_heads": 24,
+    "num_key_value_heads": 8,
+    "hidden_act": "silu",
+    "max_position_embeddings": 131072,
+    "initializer_range": 0.02,
+    "rms_norm_eps": 1e-06,
+    "use_cache": true,
+    "pad_token_id": 0,
+    "bos_token_id": 0,
+    "eos_token_id": 0,
+    "tie_word_embeddings": true,
+    "rope_parameters": {
+      "rope_theta": 10000000.0,
+      "rope_type": "default"
+    },
+    "attention_bias": false,
+    "attention_dropout": 0.0,
+    "embedding_multiplier": 12.0,
+    "logits_scaling": 6.0,
+    "residual_multiplier": 0.22,
+    "attention_multiplier": 0.015625,
+    "num_local_experts": 40,
+    "num_experts_per_tok": 8,
+    "output_router_logits": false,
+    "router_aux_loss_coef": 0.0,
+    "_name_or_path": "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models-relay/granite",
+    "model_type": "granitemoe",
+    "output_attentions": false
+  },
+  "artifacts": [
+    {
+      "path": "capture.npz",
+      "sha256": "c6fb62438b80dd0b40892881c54917d1bf0580336b71ea7d6526976334e125c0",
+      "bytes": 181571755,
+      "kind": "complete_layer0_moe"
+    },
+    {
+      "path": "granitemoe-implementation.py",
+      "sha256": "493ad75906ef3b72deaa614cd887f0546bd9338abd1883197744634c4cd40ef3",
+      "bytes": 28714,
+      "kind": "framework_source"
+    }
+  ],
+  "performance_eligible": false,
+  "model_files": {
+    "SOURCE_METADATA.json": {
+      "bytes": 7820,
+      "sha256": "0d39154d71c6f1c7a7c3e41ed38ca0418f07eddf4ab5cf594e2b5dfea0f8a02c"
+    },
+    "added_tokens.json": {
+      "bytes": 87,
+      "sha256": "081bdeaf76fc5463cc2e20fbadf17ad9eb569bb5343b120cc64b98840754f96c"
+    },
+    "config.json": {
+      "bytes": 890,
+      "sha256": "b431a9f3059a59f60ca3e30b345fab29ea5789523c89e798b61ac96a201f2279"
+    },
+    "download_receipt.json": {
+      "bytes": 4841,
+      "sha256": "4d733dd5122d60ac1e0625f9330fbe0665e7c07e8c801dd0eb612ce2d9dd0897"
+    },
+    "generation_config.json": {
+      "bytes": 132,
+      "sha256": "df006c64ad35b18712527cb5130a7a13a4d8a7c5c23653feea59be88e2e2a4ca"
+    },
+    "merges.txt": {
+      "bytes": 441810,
+      "sha256": "303127a244b0078878156c17229f36d11b7a3a3f8e47b7cfdbb304ff46be5030"
+    },
+    "model-00001-of-00002.safetensors": {
+      "bytes": 4998548704,
+      "sha256": "c4467e3124323e483c31ef2ab8afed70d2734bdb2bb03a5b05da4d4a529735b1"
+    },
+    "model-00002-of-00002.safetensors": {
+      "bytes": 1599073464,
+      "sha256": "065160c51d07aa9614aad8e5f6e43ac5fdbfa0320dec47cf0a0c0f0a0d3cc17c"
+    },
+    "model.safetensors.index.json": {
+      "bytes": 25523,
+      "sha256": "0348b44fdd7474f6c17288e43450930874bb1ef1eefa9d125a389b82f52cdc41"
+    },
+    "relay_download_receipt.json": {
+      "bytes": 7182,
+      "sha256": "1443c6cd6f0b7bcdfad5ac1645e4922b7fc194150640f402c7a652862bd65eb5"
+    },
+    "special_tokens_map.json": {
+      "bytes": 701,
+      "sha256": "596d752bf46f5cace1f6826b52ed7d913347a4eea0ecce8ab2f869471ca40369"
+    },
+    "tokenizer.json": {
+      "bytes": 3475806,
+      "sha256": "ed944c0b3d71e2d651a5ba0f8e7b350faff30031c8e3353de70b12b9c1bf5654"
+    },
+    "tokenizer_config.json": {
+      "bytes": 8072,
+      "sha256": "ab17e0d532ecf47e9d8451939dd81f25dd98c5fba4b6742584549bbf9c1f06b9"
+    },
+    "vocab.json": {
+      "bytes": 776995,
+      "sha256": "80ab859339a2525fdfbda14bc39df02dffb824aefdaf86426217bbb146d17e01"
+    }
+  },
+  "implementation": {
+    "path": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/lib/python3.12/site-packages/transformers/models/granitemoe/modeling_granitemoe.py",
+    "sha256": "493ad75906ef3b72deaa614cd887f0546bd9338abd1883197744634c4cd40ef3",
+    "moe_class": "GraniteMoeMoE",
+    "layout": "experts.gate_up_proj/down_proj;router.weight"
+  },
+  "cases": {
+    "calibration": {
+      "tokens": [
+        51,
+        13255,
+        13234,
+        265,
+        9371,
+        4991,
+        5045,
+        38373,
+        461,
+        4117,
+        2857,
+        32,
+        11072,
+        2404,
+        663,
+        604,
+        1464,
+        10204,
+        538,
+        44361,
+        32,
+        9803,
+        322,
+        1509,
+        30,
+        16388,
+        15932,
+        30,
+        4324,
+        538,
+        44361,
+        30,
+        32360,
+        461,
+        1688,
+        32,
+        6403,
+        16042,
+        706,
+        2298,
+        7205,
+        8111,
+        645,
+        11903,
+        706,
+        32,
+        399,
+        42594,
+        9624,
+        10994,
+        322,
+        1542,
+        14121,
+        30,
+        1914,
+        1340,
+        461,
+        1509,
+        7937,
+        32,
+        399,
+        13255,
+        13234,
+        265,
+        9371,
+        4991,
+        5045,
+        38373,
+        461,
+        4117,
+        2857,
+        32
+      ],
+      "text": "A hardware researcher checks integer matrix multiplication and memory access. Each token chooses several experts. Record the input, routing scores, selected experts, normalization and output. Calibration data must remain separate from evaluation data. A reproducible experiment fixes the model revision, source code and input tokens. ",
+      "batch": 1,
+      "prefill": 64,
+      "decode": 8,
+      "decode_mode": "fixed teacher-forced continuation; not generated quality",
+      "cached": {
+        "relative_l2": 4.4898182397156684e-07,
+        "max_abs": 2.574920654296875e-05
+      },
+      "chunk16": {
+        "relative_l2": 4.860637128642333e-07,
+        "max_abs": 3.2901763916015625e-05
+      },
+      "moe_replay": {
+        "relative_l2": 6.654871720387743e-08,
+        "max_abs": 4.76837158203125e-07
+      },
+      "passed": true
+    },
+    "evaluation": {
+      "tokens": [
+        12375,
+        312,
+        4504,
+        26344,
+        2280,
+        461,
+        14189,
+        2819,
+        6655,
+        32,
+        399,
+        4253,
+        15321,
+        21739,
+        544,
+        10204,
+        309,
+        2542,
+        4954,
+        32,
+        516,
+        694,
+        4324,
+        20441,
+        2504,
+        2164,
+        1742,
+        432,
+        312,
+        1326,
+        461,
+        16846,
+        3623,
+        19969,
+        32,
+        886,
+        4736,
+        2298,
+        24070,
+        19404,
+        30,
+        31948,
+        461,
+        7153,
+        4991,
+        24615,
+        3899,
+        2218,
+        15945,
+        1346,
+        46192,
+        556,
+        39431,
+        32,
+        12836,
+        312,
+        4504,
+        26344,
+        2280,
+        461,
+        14189,
+        2819,
+        6655,
+        32,
+        399,
+        4253,
+        15321,
+        21739,
+        544,
+        10204,
+        309,
+        2542
+      ],
+      "text": "Compute a short numerical example and explain its steps. A library stores books on several shelves. Eight selected workers each process part of a request and combine their answers. The implementation must preserve ordering, scales and exact integer accumulation while reporting any clipping or approximation. ",
+      "batch": 1,
+      "prefill": 64,
+      "decode": 8,
+      "decode_mode": "fixed teacher-forced continuation; not generated quality",
+      "cached": {
+        "relative_l2": 5.833917947267969e-07,
+        "max_abs": 2.810359001159668e-05
+      },
+      "chunk16": {
+        "relative_l2": 0.005823341780697408,
+        "max_abs": 1.1829700469970703
+      },
+      "moe_replay": {
+        "relative_l2": 6.660252867765487e-08,
+        "max_abs": 4.76837158203125e-07
+      },
+      "passed": false
+    }
+  },
+  "correctness_gate": {
+    "relative_l2_max": 0.0002,
+    "max_abs_max": 0.002,
+    "passed": false
+  },
+  "seconds": 72.31970627699047
+}
