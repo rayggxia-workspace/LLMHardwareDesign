@@ -1,0 +1,7 @@
+# Block decisions v2 (Issue64)
+
+OwnerLiangruizhi; based onPR62@30fcd63. This task synthesizes earlier Qwen/Llama/primary CPU evidence without treating different protocols as one benchmark. New experiments reuse fixed actual inputs only, no model downloads/full inference, no Phi tuning. Source/inputs/config/results SHA and distinct Slurm runs are mandatory.
+
+output.py freezes A/W/complete accumulator and varies final Y contract: baselineY8/2xcal, calibration maxY8,4xcalY8, same-rangeY16 (exact asymmetric old endpoints),4xcalY16, and integer-derived per-row deltaY8. The dynamic delta scans only complete integer outputs, never floating evaluation references. Existing evaluation sets are previously observed diagnostic data; no fresh quality holdout claim. Fraction RNE checks every output; baseline must reproduce stored old codes. Y16 downstream on S8-only compute needs3 products, plus shifts/scale alignment. Per-row metadata can cross packet padding; both explicit delta payload and conditional header-field reuse are recorded. No cycle/PPA claim.
+
+Run management check first, then test_output.py with existing NumPy Python. output.py requires --root <read-only Issue61 server data> --llama <copied verified capture02/numeric04> --binding <source SHA and commit> --out <new directory>. Every manifest artifact must exist and hash-match. Server computation uses own newIssue64 directory, lrz prefix and Slurm; input staging and reports on localD. Do not overwrite oldphase/results. Additional attention/service programs have separate scopes and later frozen bindings.
