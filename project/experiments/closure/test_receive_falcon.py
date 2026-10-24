@@ -73,6 +73,15 @@ def simple_transactions(length, bits, policy, exponent):
 
 
 class FalconReceiptTests(unittest.TestCase):
+    def test_b1_token_shape_is_canonical_not_extra_batch(self):
+        values = np.arange(16, dtype=np.int64)
+        self.assertEqual(receiver.token_sequence(values[None], 16).tolist(), values.tolist())
+        self.assertEqual(receiver.token_sequence(values, 16).tolist(), values.tolist())
+        with self.assertRaisesRegex(ValueError, "B1"):
+            receiver.token_sequence(np.tile(values, (2, 1)), 16)
+        with self.assertRaisesRegex(ValueError, "B1"):
+            receiver.token_sequence(values[:15], 16)
+
     def test_independent_signed_rne_vector(self):
         replay = receiver.Replay()
         values = np.arange(-101, 102, dtype=np.int64)

@@ -46,6 +46,13 @@ def i32(a):
     return x.astype(np.int32)
 
 
+def token_sequence(values, length):
+    x = np.asarray(values)
+    need(x.dtype.kind in "iu" and x.shape in ((length,), (1, length)),
+         "B1 token sequence shape/dtype")
+    return x.reshape(length)
+
+
 class Replay:
     def __init__(self):
         self.ops = Counter()
@@ -331,8 +338,9 @@ def verify(result, compiled, capture, chain_source, int_source):
                  and encoded.max(initial=0) < 1 << 31, "compiler external cut representable")
             equal_array(encoded.astype(np.int32), inputs[split_name + "." + suffix + "_q12"],
                         "real external cut " + split_name + "." + suffix)
-    need(len(inputs["calibration.tokens"]) == 16 and len(inputs["evaluation.tokens"]) == 72
-         and inputs["calibration.tokens"].tolist() != inputs["evaluation.tokens"][:16].tolist(),
+    calibration_tokens = token_sequence(inputs["calibration.tokens"], 16)
+    evaluation_tokens = token_sequence(inputs["evaluation.tokens"], 72)
+    need(calibration_tokens.tolist() != evaluation_tokens[:16].tolist(),
          "calibration/evaluation separation")
     z, report, txn = load_arrays(result / "runtime.npz"), load_json(result / "report.json"), load_json(result / "transactions.json")
     need(report["compiled_manifest_sha256"] == sha(compiled / "manifest.json"), "compiled input binding")
