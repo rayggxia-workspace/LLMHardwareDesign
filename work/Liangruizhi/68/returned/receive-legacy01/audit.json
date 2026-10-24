@@ -1,0 +1,478 @@
+{
+  "conditions_SHA_checked": 72,
+  "hardware_implemented": false,
+  "integer_manifest_sha256": "07b574dbd0577cfc7e0fc88667321a0ec03df2a03d0d14a2b79c387585c4abc6",
+  "limitation": "Software integer arithmetic and causal transaction evidence, no RTL/PPA, no whole-model quality or throughput; Issue66 source encodings reused without requalifying source floating bridges",
+  "negative_checks": [
+    {
+      "artifact_SHA_passed": true,
+      "error": "integer output oracle",
+      "mutation": "output",
+      "status": "REJECTED_INDEPENDENT_SEMANTICS"
+    },
+    {
+      "artifact_SHA_passed": true,
+      "error": "committed state/output unit epoch oracle",
+      "mutation": "epoch",
+      "status": "REJECTED_INDEPENDENT_SEMANTICS"
+    }
+  ],
+  "quality_accepted": false,
+  "seconds": 107.71254759188741,
+  "selected_conditions": [
+    {
+      "abort_preserves_published_state_unit_epoch": true,
+      "committed_tokens": 256,
+      "complete_K_Pythonint_oracle": true,
+      "cost": {
+        "attempts": 256,
+        "commit_metadata_candidate_bytes_per_token": 70,
+        "guard_scan_elements": 8388608,
+        "integer_products_executed": {
+          "beta": 65536,
+          "decay": 8388608,
+          "outer": 8388608,
+          "output": 8388608,
+          "prediction": 8388608
+        },
+        "minimum_old_new_atomic_payload_bytes": 131072,
+        "rescale_RNE_elements": 0,
+        "rescale_scale_epoch_write_bytes": 0,
+        "rescale_scan_elements": 0,
+        "rescale_state_read_bytes": 0,
+        "rescale_state_write_bytes": 0,
+        "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified",
+        "software_trial_copy_not_free_hardware": true,
+        "state_bytes": 65536,
+        "width_rejected_attempts_cost_unqualified": 0
+      },
+      "error_by_length": [
+        {
+          "output_vs_native": {
+            "max_abs": 0.000245738890953362,
+            "relative_rmse": 0.007355199830428154
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0005985423791039501,
+            "relative_rmse": 0.002413006646202975
+          },
+          "steps": 1
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.0003237724304199219,
+            "relative_rmse": 0.007661070759787697
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.001619839224413555,
+            "relative_rmse": 0.004073633508733865
+          },
+          "steps": 8
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.0004489719867706299,
+            "relative_rmse": 0.00886853404294098
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.020807275015970017,
+            "relative_rmse": 0.008632364995422465
+          },
+          "steps": 32
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.0006241810624487698,
+            "relative_rmse": 0.010160813260524216
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.00746108867662592,
+            "relative_rmse": 0.022486580237507294
+          },
+          "steps": 256
+        }
+      ],
+      "execution_pass": true,
+      "hardware_implemented": false,
+      "id": "legacy.layer0-end8192.S16.D31.static_sat",
+      "quality_accepted": false,
+      "range_pass": false,
+      "requested_tokens": 256,
+      "rescale_waves": 0,
+      "saturations_published": 193
+    },
+    {
+      "abort_preserves_published_state_unit_epoch": true,
+      "committed_tokens": 3,
+      "complete_K_Pythonint_oracle": true,
+      "cost": {
+        "attempts": 4,
+        "commit_metadata_candidate_bytes_per_token": 70,
+        "guard_scan_elements": 131072,
+        "integer_products_executed": {
+          "beta": 1024,
+          "decay": 131072,
+          "outer": 131072,
+          "output": 98304,
+          "prediction": 131072
+        },
+        "minimum_old_new_atomic_payload_bytes": 131072,
+        "rescale_RNE_elements": 0,
+        "rescale_scale_epoch_write_bytes": 0,
+        "rescale_scan_elements": 0,
+        "rescale_state_read_bytes": 0,
+        "rescale_state_write_bytes": 0,
+        "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified",
+        "software_trial_copy_not_free_hardware": true,
+        "state_bytes": 65536,
+        "width_rejected_attempts_cost_unqualified": 0
+      },
+      "error_by_length": [
+        {
+          "output_vs_native": {
+            "max_abs": 0.000245738890953362,
+            "relative_rmse": 0.007355199830428154
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0005985423791039501,
+            "relative_rmse": 0.002413006646202975
+          },
+          "steps": 1
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.00026106974110007286,
+            "relative_rmse": 0.007472872817505824
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0009988397574575512,
+            "relative_rmse": 0.0031083790123852526
+          },
+          "steps": 3
+        }
+      ],
+      "execution_pass": true,
+      "hardware_implemented": false,
+      "id": "legacy.layer0-end8192.S16.D31.static_guard",
+      "quality_accepted": false,
+      "range_pass": false,
+      "requested_tokens": 256,
+      "rescale_waves": 0,
+      "saturations_published": 0
+    },
+    {
+      "abort_preserves_published_state_unit_epoch": true,
+      "committed_tokens": 256,
+      "complete_K_Pythonint_oracle": true,
+      "cost": {
+        "attempts": 258,
+        "commit_metadata_candidate_bytes_per_token": 70,
+        "guard_scan_elements": 8454144,
+        "integer_products_executed": {
+          "beta": 66048,
+          "decay": 8454144,
+          "outer": 8454144,
+          "output": 8388608,
+          "prediction": 8454144
+        },
+        "minimum_old_new_atomic_payload_bytes": 131072,
+        "rescale_RNE_elements": 32768,
+        "rescale_scale_epoch_write_bytes": 10,
+        "rescale_scan_elements": 32768,
+        "rescale_state_read_bytes": 65536,
+        "rescale_state_write_bytes": 65536,
+        "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified",
+        "software_trial_copy_not_free_hardware": true,
+        "state_bytes": 65536,
+        "width_rejected_attempts_cost_unqualified": 0
+      },
+      "error_by_length": [
+        {
+          "output_vs_native": {
+            "max_abs": 0.000245738890953362,
+            "relative_rmse": 0.007355199830428154
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0005985423791039501,
+            "relative_rmse": 0.002413006646202975
+          },
+          "steps": 1
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.0003237724304199219,
+            "relative_rmse": 0.007662540793625073
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.001619839224413555,
+            "relative_rmse": 0.0040743839236031315
+          },
+          "steps": 8
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.0004489719867706299,
+            "relative_rmse": 0.008873750799635106
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0029257283071242937,
+            "relative_rmse": 0.00797202703172336
+          },
+          "steps": 32
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.0006241810624487698,
+            "relative_rmse": 0.010166308549071364
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.00746108867662592,
+            "relative_rmse": 0.02248441491254837
+          },
+          "steps": 256
+        }
+      ],
+      "execution_pass": true,
+      "hardware_implemented": false,
+      "id": "legacy.layer0-end8192.S16.D31.guard_rescale",
+      "quality_accepted": false,
+      "range_pass": true,
+      "requested_tokens": 256,
+      "rescale_waves": 2,
+      "saturations_published": 0
+    },
+    {
+      "abort_preserves_published_state_unit_epoch": true,
+      "committed_tokens": 256,
+      "complete_K_Pythonint_oracle": true,
+      "cost": {
+        "attempts": 256,
+        "commit_metadata_candidate_bytes_per_token": 70,
+        "guard_scan_elements": 8388608,
+        "integer_products_executed": {
+          "beta": 65536,
+          "decay": 8388608,
+          "outer": 8388608,
+          "output": 8388608,
+          "prediction": 8388608
+        },
+        "minimum_old_new_atomic_payload_bytes": 262144,
+        "rescale_RNE_elements": 0,
+        "rescale_scale_epoch_write_bytes": 0,
+        "rescale_scan_elements": 0,
+        "rescale_state_read_bytes": 0,
+        "rescale_state_write_bytes": 0,
+        "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified",
+        "software_trial_copy_not_free_hardware": true,
+        "state_bytes": 131072,
+        "width_rejected_attempts_cost_unqualified": 0
+      },
+      "error_by_length": [
+        {
+          "output_vs_native": {
+            "max_abs": 3.3639371395111084e-05,
+            "relative_rmse": 0.0001900362447580295
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.00011577333734221688,
+            "relative_rmse": 0.00014560347293431197
+          },
+          "steps": 1
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.00012140721082687378,
+            "relative_rmse": 0.00033749043055986963
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.00016838987394244762,
+            "relative_rmse": 0.0002315136220752467
+          },
+          "steps": 8
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.00017149001359939575,
+            "relative_rmse": 0.000479684134691893
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.020807275015970017,
+            "relative_rmse": 0.003345344036467832
+          },
+          "steps": 32
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.0001726001501083374,
+            "relative_rmse": 0.0004821392320174119
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.002860561142175422,
+            "relative_rmse": 0.0007255260026292541
+          },
+          "steps": 256
+        }
+      ],
+      "execution_pass": true,
+      "hardware_implemented": false,
+      "id": "legacy.layer0-end8192.S32.D31.static_sat",
+      "quality_accepted": false,
+      "range_pass": false,
+      "requested_tokens": 256,
+      "rescale_waves": 0,
+      "saturations_published": 193
+    },
+    {
+      "abort_preserves_published_state_unit_epoch": true,
+      "committed_tokens": 3,
+      "complete_K_Pythonint_oracle": true,
+      "cost": {
+        "attempts": 4,
+        "commit_metadata_candidate_bytes_per_token": 70,
+        "guard_scan_elements": 131072,
+        "integer_products_executed": {
+          "beta": 1024,
+          "decay": 131072,
+          "outer": 131072,
+          "output": 98304,
+          "prediction": 131072
+        },
+        "minimum_old_new_atomic_payload_bytes": 262144,
+        "rescale_RNE_elements": 0,
+        "rescale_scale_epoch_write_bytes": 0,
+        "rescale_scan_elements": 0,
+        "rescale_state_read_bytes": 0,
+        "rescale_state_write_bytes": 0,
+        "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified",
+        "software_trial_copy_not_free_hardware": true,
+        "state_bytes": 131072,
+        "width_rejected_attempts_cost_unqualified": 0
+      },
+      "error_by_length": [
+        {
+          "output_vs_native": {
+            "max_abs": 3.3639371395111084e-05,
+            "relative_rmse": 0.0001900362447580295
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.00011577333734221688,
+            "relative_rmse": 0.00014560347293431197
+          },
+          "steps": 1
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.00012140721082687378,
+            "relative_rmse": 0.0004765806412127053
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.00020341661948321613,
+            "relative_rmse": 0.00029585923802803005
+          },
+          "steps": 3
+        }
+      ],
+      "execution_pass": true,
+      "hardware_implemented": false,
+      "id": "legacy.layer0-end8192.S32.D31.static_guard",
+      "quality_accepted": false,
+      "range_pass": false,
+      "requested_tokens": 256,
+      "rescale_waves": 0,
+      "saturations_published": 0
+    },
+    {
+      "abort_preserves_published_state_unit_epoch": true,
+      "committed_tokens": 256,
+      "complete_K_Pythonint_oracle": true,
+      "cost": {
+        "attempts": 258,
+        "commit_metadata_candidate_bytes_per_token": 70,
+        "guard_scan_elements": 8454144,
+        "integer_products_executed": {
+          "beta": 66048,
+          "decay": 8454144,
+          "outer": 8454144,
+          "output": 8388608,
+          "prediction": 8454144
+        },
+        "minimum_old_new_atomic_payload_bytes": 262144,
+        "rescale_RNE_elements": 32768,
+        "rescale_scale_epoch_write_bytes": 10,
+        "rescale_scan_elements": 32768,
+        "rescale_state_read_bytes": 131072,
+        "rescale_state_write_bytes": 131072,
+        "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified",
+        "software_trial_copy_not_free_hardware": true,
+        "state_bytes": 131072,
+        "width_rejected_attempts_cost_unqualified": 0
+      },
+      "error_by_length": [
+        {
+          "output_vs_native": {
+            "max_abs": 3.3639371395111084e-05,
+            "relative_rmse": 0.0001900362447580295
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.00011577333734221688,
+            "relative_rmse": 0.00014560347293431197
+          },
+          "steps": 1
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.00012140721082687378,
+            "relative_rmse": 0.00033745379684935894
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.00016838987394244762,
+            "relative_rmse": 0.00023134256390504527
+          },
+          "steps": 8
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.00017149001359939575,
+            "relative_rmse": 0.0004625142684318949
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0001846556773227176,
+            "relative_rmse": 0.0004363354033886584
+          },
+          "steps": 32
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.0001726001501083374,
+            "relative_rmse": 0.00047241237420908566
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0002515494339587858,
+            "relative_rmse": 0.0006316608312701247
+          },
+          "steps": 256
+        }
+      ],
+      "execution_pass": true,
+      "hardware_implemented": false,
+      "id": "legacy.layer0-end8192.S32.D31.guard_rescale",
+      "quality_accepted": false,
+      "range_pass": true,
+      "requested_tokens": 256,
+      "rescale_waves": 2,
+      "saturations_published": 0
+    }
+  ],
+  "selection": "native evaluation S16/S32 D31 full32 and legacy layer0/end8192 S16/S32 D31 full256, allthree causal profiles; other conditions SHA only",
+  "source": {
+    "binding_sha256": "f40c101633eb59bbc3b355525e82a6ff5f72b59b1ff9d9f95f7a6a93c47780f3",
+    "commit": "7ea68a4b1d4702c102148f1b3a2b9c9b40d41a07",
+    "receive_range_sha256": "e1f4feac39c582dc06574894fcea88bd52dd6451d62de0bca1490b758d599ace"
+  },
+  "status": "PASS_INDEPENDENT_ARITHMETIC",
+  "two_rounds": {
+    "all_scientific_SHA_identical": true,
+    "arithmetic_rounds": 1,
+    "artifacts": 145
+  }
+}

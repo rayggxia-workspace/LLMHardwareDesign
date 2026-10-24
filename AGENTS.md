@@ -1,5 +1,10 @@
 # AI 协作约定
 
+## 2026-10-24范围/重定标与同资源服务（Issue68）
+
+用户授权按既有划分在本人CPU服务器并行接续R范围/因果重定标、V/R/S有限端口缓冲验证。复用Issue66已编码真实输入与norm/状态轨迹；不新增下载/完整模型加载，不解封Phi、不接管Issue55/63。在线scale选择只读当前整数状态/输入及guard，不能看未来原生状态或评价误差；重编码/重试/epoch与原子发布成本显式。placement配对必须同数值任务/精度/单位轨迹/提交恢复语义、同算术和银行/链路/FIFO/外部backing库存，不赠SFU/带宽/内存；不同失败语义方案单列。每phase干净commit和源码/input/result SHA，所有真实计算本人新Issue68目录Slurm lrz-*。条件服务周期不称RTL/PPA或整图LLM性能，原clip/sat和FP桥保留。
+
+
 ## 2026-10-24关键边界接续（Issue66）
 
 用户明确授权在本人CPU服务器并行验证完整消费者链scale与Qwen3.5连续整数状态。继承Issue64已核证据与原失败；只读复用已有权重/真实张量，缺完整hidden/residual/next norm或连续conv输入时可有界新采集，不新增模型下载，Phi封存，不接管Issue55/63。所有实际计算新Issue66本人目录Slurm lrz-*，每阶段冻结源/config/数据/结果SHA；完整hidden与连续history必须真实，FP桥、整数候选和硬件资格分开报告。分支/Issue/PR/交接按统一规则，未审查合并不done。

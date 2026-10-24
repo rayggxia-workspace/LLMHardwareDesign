@@ -1,0 +1,34 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase2/project/experiments/range_service/range.py",
+    "--native",
+    "/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/state01",
+    "--legacy",
+    "/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/long-state01",
+    "--suite",
+    "native",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-native01",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase2/binding.json"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase2/project/experiments/range_service/range.py --native /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/state01 --legacy /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/long-state01 --suite native --out /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-native01 --binding /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase2/binding.json",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i68-range-native01",
+    "--partition=c96",
+    "--cpus-per-task=2",
+    "--time=00:30:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-native01-%j.log",
+    "--dependency=afterok:90083",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase2/project/experiments/range_service/range.py --native /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/state01 --legacy /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/long-state01 --suite native --out /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-native01 --binding /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase2/binding.json"
+  ],
+  "stdout": "90084",
+  "phase": "phase2",
+  "binding_sha256": "c71a8fb3b7af36f429a214ca51e9150de1b9f4da415e57b3e8cc2b7b07a3e8f7"
+}

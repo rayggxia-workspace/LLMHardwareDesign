@@ -1,0 +1,35 @@
+{
+  "source_commit": "7d095f66bb38e4af26912dcd8f054ed5f7c1fde1",
+  "checks": [
+    {
+      "tag": "management",
+      "command": [
+        "python",
+        "-B",
+        "scripts/check_project.py"
+      ],
+      "exit_code": 0,
+      "log_sha256": "730947a7c3fd614468545b021d2f63cd9c8010e43c09ec792b3a49857f48c557",
+      "log": "management-final.log"
+    },
+    {
+      "tag": "range-service-tests",
+      "command": [
+        "D:/Projects/Codex/qwen3-inference-20261022/environment/.venv/Scripts/python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "project/experiments/range_service",
+        "-p",
+        "test_*.py"
+      ],
+      "exit_code": 0,
+      "log_sha256": "cb92e8d5c616385205628bfac5b126adf48a27677227d3144e491a3725afd242",
+      "log": "range-service-tests-final.log"
+    }
+  ],
+  "old_research_regression": "python scripts/check_research.py actually passed earlier this same task (164 tests); old modules unchanged after, no gratuitous repeats",
+  "real_server_receipts": "reported separately from unit tests"
+}

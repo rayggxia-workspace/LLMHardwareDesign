@@ -1,0 +1,36 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase3/project/experiments/range_service/receive_range.py",
+    "--integer",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-legacy01",
+    "--repeat",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-legacy02",
+    "--native",
+    "/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/state01",
+    "--legacy",
+    "/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/long-state01",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-legacy01",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase3/binding.json"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase3/project/experiments/range_service/receive_range.py --integer /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-legacy01 --repeat /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-legacy02 --native /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/state01 --legacy /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/long-state01 --out /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-legacy01 --binding /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase3/binding.json",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i68-receive-legacy01",
+    "--partition=c96",
+    "--cpus-per-task=2",
+    "--time=00:30:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-legacy01-%j.log",
+    "--dependency=afterok:90087:90088",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase3/project/experiments/range_service/receive_range.py --integer /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-legacy01 --repeat /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-legacy02 --native /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/state01 --legacy /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024/long-state01 --out /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-legacy01 --binding /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase3/binding.json"
+  ],
+  "stdout": "90089",
+  "phase": "phase3",
+  "binding_sha256": "f40c101633eb59bbc3b355525e82a6ff5f72b59b1ff9d9f95f7a6a93c47780f3"
+}

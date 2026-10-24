@@ -1,0 +1,2582 @@
+[
+  {
+    "id": "native.evaluation.S16.D15.static_sat",
+    "role": "native",
+    "source_id": "evaluation.S16.D15",
+    "source_artifact": {
+      "name": "evaluation.S16.D15.npz",
+      "bytes": 13126253,
+      "sha256": "0fb5a3c260f3eb411ed8e1c0d13ec657cefa4a8b6ec23caa555d5cae950f4334"
+    },
+    "format": {
+      "window": "evaluation",
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b",
+      "head_slots": [
+        0,
+        1
+      ],
+      "source_input_sha256": "37f9d8e8fa5aa803925fbdfaca580b54ea493efa3489929505a8fd2de5599dc4",
+      "format_epoch": 0,
+      "state_bits": 16,
+      "state_unit": [
+        -12,
+        -12
+      ],
+      "value_unit": [
+        -11,
+        -10
+      ],
+      "QK_unit": -15,
+      "beta_unit": -15,
+      "decay_fraction": 15,
+      "stage_contract": "decay RNE at declared fraction; prediction/beta/outer/output RNE15; state-only final saturation"
+    },
+    "policy": "static_sat",
+    "protocol_version": "causal-range/1",
+    "max_rescale_retries": 8,
+    "original_initial_bridge_code_clips": 0,
+    "original_operand_bridge_clips": {
+      "q": 0,
+      "k": 0,
+      "v": 0,
+      "beta": 0,
+      "decay": 0
+    },
+    "original_saturations": 0,
+    "original_scale_source": "declared external calibration windows only; 2x perhead maxima, fixed across evaluation; state floor=-26",
+    "original_conservative_format_proofs": [
+      {
+        "absolute_bounds": {
+          "decay_product": 1073741824,
+          "prediction_dot": 137434759168,
+          "prediction_state_unit": 4194176,
+          "aligned_value": 65534,
+          "residual": 4259710,
+          "beta_product": 139582177280,
+          "correction_state_unit": 4259710,
+          "outer_product": 139577917570,
+          "state_sum": 4292349,
+          "output_dot": 137434759168
+        },
+        "signed_bits": {
+          "decay_product": 32,
+          "prediction_dot": 38,
+          "prediction_state_unit": 23,
+          "aligned_value": 17,
+          "residual": 24,
+          "beta_product": 39,
+          "correction_state_unit": 24,
+          "outer_product": 39,
+          "state_sum": 24,
+          "output_dot": 38
+        }
+      },
+      {
+        "absolute_bounds": {
+          "decay_product": 1073741824,
+          "prediction_dot": 137434759168,
+          "prediction_state_unit": 4194176,
+          "aligned_value": 131068,
+          "residual": 4325244,
+          "beta_product": 141729595392,
+          "correction_state_unit": 4325244,
+          "outer_product": 141725270148,
+          "state_sum": 4357881,
+          "output_dot": 137434759168
+        },
+        "signed_bits": {
+          "decay_product": 32,
+          "prediction_dot": 38,
+          "prediction_state_unit": 23,
+          "aligned_value": 18,
+          "residual": 24,
+          "beta_product": 39,
+          "correction_state_unit": 24,
+          "outer_product": 39,
+          "state_sum": 24,
+          "output_dot": 38
+        }
+      }
+    ],
+    "original_role": "independent evaluation",
+    "original_position_source": "actual captured positions; candidate epoch0 is a new encoding epoch",
+    "requested_tokens": 32,
+    "committed_tokens": 32,
+    "status": "EXECUTED",
+    "rejection": null,
+    "saturations_published": 0,
+    "rescale_waves": 0,
+    "rescaled_head_events": 0,
+    "final": {
+      "state_sha256": "ce6902698401fd95fe23038289053d6cc9c594190786508e8a753187fd005571",
+      "units": [
+        -12,
+        -12
+      ],
+      "epoch": 0,
+      "version": 32,
+      "position": 160,
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b"
+    },
+    "observed_signed_bits": {
+      "decay_product": 30,
+      "decayed_state": 15,
+      "prediction_dot": 30,
+      "prediction": 15,
+      "aligned_value": 17,
+      "residual": 17,
+      "beta_product": 32,
+      "correction": 17,
+      "outer_product": 31,
+      "state_sum": 16,
+      "output_dot": 26
+    },
+    "cost": {
+      "state_bytes": 65536,
+      "minimum_old_new_atomic_payload_bytes": 131072,
+      "software_trial_copy_not_free_hardware": true,
+      "guard_scan_elements": 1048576,
+      "integer_products_executed": {
+        "decay": 1048576,
+        "prediction": 1048576,
+        "beta": 8192,
+        "outer": 1048576,
+        "output": 1048576
+      },
+      "width_rejected_attempts_cost_unqualified": 0,
+      "rescale_scan_elements": 0,
+      "rescale_RNE_elements": 0,
+      "rescale_state_read_bytes": 0,
+      "rescale_state_write_bytes": 0,
+      "rescale_scale_epoch_write_bytes": 0,
+      "commit_metadata_candidate_bytes_per_token": 70,
+      "attempts": 32,
+      "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified"
+    },
+    "static_original_bitexact": true,
+    "error_by_length": [
+      {
+        "steps": 1,
+        "output_vs_native": {
+          "relative_rmse": 0.0068896009706017605,
+          "max_abs": 0.0001332610845565796
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.0017384221940532792,
+          "max_abs": 0.00041825336086527467
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.0017384224970155406,
+          "max_abs": 0.00041825324296951294
+        }
+      },
+      {
+        "steps": 8,
+        "output_vs_native": {
+          "relative_rmse": 0.006999212250470505,
+          "max_abs": 0.00018605589866638184
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.0023514885885472024,
+          "max_abs": 0.0009728734429112441
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.0023514888764976176,
+          "max_abs": 0.0009728739969432354
+        }
+      },
+      {
+        "steps": 32,
+        "output_vs_native": {
+          "relative_rmse": 0.006438375571587161,
+          "max_abs": 0.00028637051582336426
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.004951944364612952,
+          "max_abs": 0.0019072487442634255
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.00495194408682145,
+          "max_abs": 0.001907247118651867
+        }
+      }
+    ],
+    "artifact": {
+      "name": "native.evaluation.S16.D15.static_sat.npz",
+      "bytes": 771388,
+      "sha256": "e5e88facc9b0246443b054c9cae5a5861668c2ef7edc15083af29de6e2e8b85f"
+    },
+    "transaction_trace": {
+      "name": "native.evaluation.S16.D15.static_sat.json",
+      "bytes": 87116,
+      "sha256": "c7e46c25efa2fe7cf9194129216a15c2b356d514b56187e7b05f689c6910f05a"
+    },
+    "quality_accepted": false,
+    "hardware_implemented": false
+  },
+  {
+    "id": "native.evaluation.S16.D15.static_guard",
+    "role": "native",
+    "source_id": "evaluation.S16.D15",
+    "source_artifact": {
+      "name": "evaluation.S16.D15.npz",
+      "bytes": 13126253,
+      "sha256": "0fb5a3c260f3eb411ed8e1c0d13ec657cefa4a8b6ec23caa555d5cae950f4334"
+    },
+    "format": {
+      "window": "evaluation",
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b",
+      "head_slots": [
+        0,
+        1
+      ],
+      "source_input_sha256": "37f9d8e8fa5aa803925fbdfaca580b54ea493efa3489929505a8fd2de5599dc4",
+      "format_epoch": 0,
+      "state_bits": 16,
+      "state_unit": [
+        -12,
+        -12
+      ],
+      "value_unit": [
+        -11,
+        -10
+      ],
+      "QK_unit": -15,
+      "beta_unit": -15,
+      "decay_fraction": 15,
+      "stage_contract": "decay RNE at declared fraction; prediction/beta/outer/output RNE15; state-only final saturation"
+    },
+    "policy": "static_guard",
+    "protocol_version": "causal-range/1",
+    "max_rescale_retries": 8,
+    "original_initial_bridge_code_clips": 0,
+    "original_operand_bridge_clips": {
+      "q": 0,
+      "k": 0,
+      "v": 0,
+      "beta": 0,
+      "decay": 0
+    },
+    "original_saturations": 0,
+    "original_scale_source": "declared external calibration windows only; 2x perhead maxima, fixed across evaluation; state floor=-26",
+    "original_conservative_format_proofs": [
+      {
+        "absolute_bounds": {
+          "decay_product": 1073741824,
+          "prediction_dot": 137434759168,
+          "prediction_state_unit": 4194176,
+          "aligned_value": 65534,
+          "residual": 4259710,
+          "beta_product": 139582177280,
+          "correction_state_unit": 4259710,
+          "outer_product": 139577917570,
+          "state_sum": 4292349,
+          "output_dot": 137434759168
+        },
+        "signed_bits": {
+          "decay_product": 32,
+          "prediction_dot": 38,
+          "prediction_state_unit": 23,
+          "aligned_value": 17,
+          "residual": 24,
+          "beta_product": 39,
+          "correction_state_unit": 24,
+          "outer_product": 39,
+          "state_sum": 24,
+          "output_dot": 38
+        }
+      },
+      {
+        "absolute_bounds": {
+          "decay_product": 1073741824,
+          "prediction_dot": 137434759168,
+          "prediction_state_unit": 4194176,
+          "aligned_value": 131068,
+          "residual": 4325244,
+          "beta_product": 141729595392,
+          "correction_state_unit": 4325244,
+          "outer_product": 141725270148,
+          "state_sum": 4357881,
+          "output_dot": 137434759168
+        },
+        "signed_bits": {
+          "decay_product": 32,
+          "prediction_dot": 38,
+          "prediction_state_unit": 23,
+          "aligned_value": 18,
+          "residual": 24,
+          "beta_product": 39,
+          "correction_state_unit": 24,
+          "outer_product": 39,
+          "state_sum": 24,
+          "output_dot": 38
+        }
+      }
+    ],
+    "original_role": "independent evaluation",
+    "original_position_source": "actual captured positions; candidate epoch0 is a new encoding epoch",
+    "requested_tokens": 32,
+    "committed_tokens": 32,
+    "status": "EXECUTED",
+    "rejection": null,
+    "saturations_published": 0,
+    "rescale_waves": 0,
+    "rescaled_head_events": 0,
+    "final": {
+      "state_sha256": "ce6902698401fd95fe23038289053d6cc9c594190786508e8a753187fd005571",
+      "units": [
+        -12,
+        -12
+      ],
+      "epoch": 0,
+      "version": 32,
+      "position": 160,
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b"
+    },
+    "observed_signed_bits": {
+      "decay_product": 30,
+      "decayed_state": 15,
+      "prediction_dot": 30,
+      "prediction": 15,
+      "aligned_value": 17,
+      "residual": 17,
+      "beta_product": 32,
+      "correction": 17,
+      "outer_product": 31,
+      "state_sum": 16,
+      "output_dot": 26
+    },
+    "cost": {
+      "state_bytes": 65536,
+      "minimum_old_new_atomic_payload_bytes": 131072,
+      "software_trial_copy_not_free_hardware": true,
+      "guard_scan_elements": 1048576,
+      "integer_products_executed": {
+        "decay": 1048576,
+        "prediction": 1048576,
+        "beta": 8192,
+        "outer": 1048576,
+        "output": 1048576
+      },
+      "width_rejected_attempts_cost_unqualified": 0,
+      "rescale_scan_elements": 0,
+      "rescale_RNE_elements": 0,
+      "rescale_state_read_bytes": 0,
+      "rescale_state_write_bytes": 0,
+      "rescale_scale_epoch_write_bytes": 0,
+      "commit_metadata_candidate_bytes_per_token": 70,
+      "attempts": 32,
+      "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified"
+    },
+    "static_original_bitexact": false,
+    "error_by_length": [
+      {
+        "steps": 1,
+        "output_vs_native": {
+          "relative_rmse": 0.0068896009706017605,
+          "max_abs": 0.0001332610845565796
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.0017384221940532792,
+          "max_abs": 0.00041825336086527467
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.0017384224970155406,
+          "max_abs": 0.00041825324296951294
+        }
+      },
+      {
+        "steps": 8,
+        "output_vs_native": {
+          "relative_rmse": 0.006999212250470505,
+          "max_abs": 0.00018605589866638184
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.0023514885885472024,
+          "max_abs": 0.0009728734429112441
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.0023514888764976176,
+          "max_abs": 0.0009728739969432354
+        }
+      },
+      {
+        "steps": 32,
+        "output_vs_native": {
+          "relative_rmse": 0.006438375571587161,
+          "max_abs": 0.00028637051582336426
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.004951944364612952,
+          "max_abs": 0.0019072487442634255
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.00495194408682145,
+          "max_abs": 0.001907247118651867
+        }
+      }
+    ],
+    "artifact": {
+      "name": "native.evaluation.S16.D15.static_guard.npz",
+      "bytes": 771388,
+      "sha256": "e5e88facc9b0246443b054c9cae5a5861668c2ef7edc15083af29de6e2e8b85f"
+    },
+    "transaction_trace": {
+      "name": "native.evaluation.S16.D15.static_guard.json",
+      "bytes": 87118,
+      "sha256": "47b82af86faee4a571da470a3e3e8002579e7ac42ffdf6818cb058e5bf1c9c7d"
+    },
+    "quality_accepted": false,
+    "hardware_implemented": false
+  },
+  {
+    "id": "native.evaluation.S16.D15.guard_rescale",
+    "role": "native",
+    "source_id": "evaluation.S16.D15",
+    "source_artifact": {
+      "name": "evaluation.S16.D15.npz",
+      "bytes": 13126253,
+      "sha256": "0fb5a3c260f3eb411ed8e1c0d13ec657cefa4a8b6ec23caa555d5cae950f4334"
+    },
+    "format": {
+      "window": "evaluation",
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b",
+      "head_slots": [
+        0,
+        1
+      ],
+      "source_input_sha256": "37f9d8e8fa5aa803925fbdfaca580b54ea493efa3489929505a8fd2de5599dc4",
+      "format_epoch": 0,
+      "state_bits": 16,
+      "state_unit": [
+        -12,
+        -12
+      ],
+      "value_unit": [
+        -11,
+        -10
+      ],
+      "QK_unit": -15,
+      "beta_unit": -15,
+      "decay_fraction": 15,
+      "stage_contract": "decay RNE at declared fraction; prediction/beta/outer/output RNE15; state-only final saturation"
+    },
+    "policy": "guard_rescale",
+    "protocol_version": "causal-range/1",
+    "max_rescale_retries": 8,
+    "original_initial_bridge_code_clips": 0,
+    "original_operand_bridge_clips": {
+      "q": 0,
+      "k": 0,
+      "v": 0,
+      "beta": 0,
+      "decay": 0
+    },
+    "original_saturations": 0,
+    "original_scale_source": "declared external calibration windows only; 2x perhead maxima, fixed across evaluation; state floor=-26",
+    "original_conservative_format_proofs": [
+      {
+        "absolute_bounds": {
+          "decay_product": 1073741824,
+          "prediction_dot": 137434759168,
+          "prediction_state_unit": 4194176,
+          "aligned_value": 65534,
+          "residual": 4259710,
+          "beta_product": 139582177280,
+          "correction_state_unit": 4259710,
+          "outer_product": 139577917570,
+          "state_sum": 4292349,
+          "output_dot": 137434759168
+        },
+        "signed_bits": {
+          "decay_product": 32,
+          "prediction_dot": 38,
+          "prediction_state_unit": 23,
+          "aligned_value": 17,
+          "residual": 24,
+          "beta_product": 39,
+          "correction_state_unit": 24,
+          "outer_product": 39,
+          "state_sum": 24,
+          "output_dot": 38
+        }
+      },
+      {
+        "absolute_bounds": {
+          "decay_product": 1073741824,
+          "prediction_dot": 137434759168,
+          "prediction_state_unit": 4194176,
+          "aligned_value": 131068,
+          "residual": 4325244,
+          "beta_product": 141729595392,
+          "correction_state_unit": 4325244,
+          "outer_product": 141725270148,
+          "state_sum": 4357881,
+          "output_dot": 137434759168
+        },
+        "signed_bits": {
+          "decay_product": 32,
+          "prediction_dot": 38,
+          "prediction_state_unit": 23,
+          "aligned_value": 18,
+          "residual": 24,
+          "beta_product": 39,
+          "correction_state_unit": 24,
+          "outer_product": 39,
+          "state_sum": 24,
+          "output_dot": 38
+        }
+      }
+    ],
+    "original_role": "independent evaluation",
+    "original_position_source": "actual captured positions; candidate epoch0 is a new encoding epoch",
+    "requested_tokens": 32,
+    "committed_tokens": 32,
+    "status": "EXECUTED",
+    "rejection": null,
+    "saturations_published": 0,
+    "rescale_waves": 0,
+    "rescaled_head_events": 0,
+    "final": {
+      "state_sha256": "ce6902698401fd95fe23038289053d6cc9c594190786508e8a753187fd005571",
+      "units": [
+        -12,
+        -12
+      ],
+      "epoch": 0,
+      "version": 32,
+      "position": 160,
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b"
+    },
+    "observed_signed_bits": {
+      "decay_product": 30,
+      "decayed_state": 15,
+      "prediction_dot": 30,
+      "prediction": 15,
+      "aligned_value": 17,
+      "residual": 17,
+      "beta_product": 32,
+      "correction": 17,
+      "outer_product": 31,
+      "state_sum": 16,
+      "output_dot": 26
+    },
+    "cost": {
+      "state_bytes": 65536,
+      "minimum_old_new_atomic_payload_bytes": 131072,
+      "software_trial_copy_not_free_hardware": true,
+      "guard_scan_elements": 1048576,
+      "integer_products_executed": {
+        "decay": 1048576,
+        "prediction": 1048576,
+        "beta": 8192,
+        "outer": 1048576,
+        "output": 1048576
+      },
+      "width_rejected_attempts_cost_unqualified": 0,
+      "rescale_scan_elements": 0,
+      "rescale_RNE_elements": 0,
+      "rescale_state_read_bytes": 0,
+      "rescale_state_write_bytes": 0,
+      "rescale_scale_epoch_write_bytes": 0,
+      "commit_metadata_candidate_bytes_per_token": 70,
+      "attempts": 32,
+      "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified"
+    },
+    "static_original_bitexact": false,
+    "error_by_length": [
+      {
+        "steps": 1,
+        "output_vs_native": {
+          "relative_rmse": 0.0068896009706017605,
+          "max_abs": 0.0001332610845565796
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.0017384221940532792,
+          "max_abs": 0.00041825336086527467
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.0017384224970155406,
+          "max_abs": 0.00041825324296951294
+        }
+      },
+      {
+        "steps": 8,
+        "output_vs_native": {
+          "relative_rmse": 0.006999212250470505,
+          "max_abs": 0.00018605589866638184
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.0023514885885472024,
+          "max_abs": 0.0009728734429112441
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.0023514888764976176,
+          "max_abs": 0.0009728739969432354
+        }
+      },
+      {
+        "steps": 32,
+        "output_vs_native": {
+          "relative_rmse": 0.006438375571587161,
+          "max_abs": 0.00028637051582336426
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.004951944364612952,
+          "max_abs": 0.0019072487442634255
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.00495194408682145,
+          "max_abs": 0.001907247118651867
+        }
+      }
+    ],
+    "artifact": {
+      "name": "native.evaluation.S16.D15.guard_rescale.npz",
+      "bytes": 771388,
+      "sha256": "e5e88facc9b0246443b054c9cae5a5861668c2ef7edc15083af29de6e2e8b85f"
+    },
+    "transaction_trace": {
+      "name": "native.evaluation.S16.D15.guard_rescale.json",
+      "bytes": 87119,
+      "sha256": "866cdb360db1ff0b6cb2ae8d03da22c39083b07f70bb7b6a774a63e040e7914a"
+    },
+    "quality_accepted": false,
+    "hardware_implemented": false
+  },
+  {
+    "id": "native.evaluation.S16.D31.static_sat",
+    "role": "native",
+    "source_id": "evaluation.S16.D31",
+    "source_artifact": {
+      "name": "evaluation.S16.D31.npz",
+      "bytes": 13126301,
+      "sha256": "74e21715831524fd8fee924ac8e7596cd597791d7fab2cb26ee8c27183fb0456"
+    },
+    "format": {
+      "window": "evaluation",
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b",
+      "head_slots": [
+        0,
+        1
+      ],
+      "source_input_sha256": "37f9d8e8fa5aa803925fbdfaca580b54ea493efa3489929505a8fd2de5599dc4",
+      "format_epoch": 0,
+      "state_bits": 16,
+      "state_unit": [
+        -12,
+        -12
+      ],
+      "value_unit": [
+        -11,
+        -10
+      ],
+      "QK_unit": -15,
+      "beta_unit": -15,
+      "decay_fraction": 31,
+      "stage_contract": "decay RNE at declared fraction; prediction/beta/outer/output RNE15; state-only final saturation"
+    },
+    "policy": "static_sat",
+    "protocol_version": "causal-range/1",
+    "max_rescale_retries": 8,
+    "original_initial_bridge_code_clips": 0,
+    "original_operand_bridge_clips": {
+      "q": 0,
+      "k": 0,
+      "v": 0,
+      "beta": 0,
+      "decay": 0
+    },
+    "original_saturations": 0,
+    "original_scale_source": "declared external calibration windows only; 2x perhead maxima, fixed across evaluation; state floor=-26",
+    "original_conservative_format_proofs": [
+      {
+        "absolute_bounds": {
+          "decay_product": 70368744177664,
+          "prediction_dot": 137434759168,
+          "prediction_state_unit": 4194176,
+          "aligned_value": 65534,
+          "residual": 4259710,
+          "beta_product": 139582177280,
+          "correction_state_unit": 4259710,
+          "outer_product": 139577917570,
+          "state_sum": 4292349,
+          "output_dot": 137434759168
+        },
+        "signed_bits": {
+          "decay_product": 48,
+          "prediction_dot": 38,
+          "prediction_state_unit": 23,
+          "aligned_value": 17,
+          "residual": 24,
+          "beta_product": 39,
+          "correction_state_unit": 24,
+          "outer_product": 39,
+          "state_sum": 24,
+          "output_dot": 38
+        }
+      },
+      {
+        "absolute_bounds": {
+          "decay_product": 70368744177664,
+          "prediction_dot": 137434759168,
+          "prediction_state_unit": 4194176,
+          "aligned_value": 131068,
+          "residual": 4325244,
+          "beta_product": 141729595392,
+          "correction_state_unit": 4325244,
+          "outer_product": 141725270148,
+          "state_sum": 4357881,
+          "output_dot": 137434759168
+        },
+        "signed_bits": {
+          "decay_product": 48,
+          "prediction_dot": 38,
+          "prediction_state_unit": 23,
+          "aligned_value": 18,
+          "residual": 24,
+          "beta_product": 39,
+          "correction_state_unit": 24,
+          "outer_product": 39,
+          "state_sum": 24,
+          "output_dot": 38
+        }
+      }
+    ],
+    "original_role": "independent evaluation",
+    "original_position_source": "actual captured positions; candidate epoch0 is a new encoding epoch",
+    "requested_tokens": 32,
+    "committed_tokens": 32,
+    "status": "EXECUTED",
+    "rejection": null,
+    "saturations_published": 0,
+    "rescale_waves": 0,
+    "rescaled_head_events": 0,
+    "final": {
+      "state_sha256": "c742c1378360abbe386a5be4c9d921e4ce70ef15191cb1cbfe9fea58814a303a",
+      "units": [
+        -12,
+        -12
+      ],
+      "epoch": 0,
+      "version": 32,
+      "position": 160,
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b"
+    },
+    "observed_signed_bits": {
+      "decay_product": 46,
+      "decayed_state": 15,
+      "prediction_dot": 30,
+      "prediction": 15,
+      "aligned_value": 17,
+      "residual": 17,
+      "beta_product": 32,
+      "correction": 17,
+      "outer_product": 31,
+      "state_sum": 16,
+      "output_dot": 26
+    },
+    "cost": {
+      "state_bytes": 65536,
+      "minimum_old_new_atomic_payload_bytes": 131072,
+      "software_trial_copy_not_free_hardware": true,
+      "guard_scan_elements": 1048576,
+      "integer_products_executed": {
+        "decay": 1048576,
+        "prediction": 1048576,
+        "beta": 8192,
+        "outer": 1048576,
+        "output": 1048576
+      },
+      "width_rejected_attempts_cost_unqualified": 0,
+      "rescale_scan_elements": 0,
+      "rescale_RNE_elements": 0,
+      "rescale_state_read_bytes": 0,
+      "rescale_state_write_bytes": 0,
+      "rescale_scale_epoch_write_bytes": 0,
+      "commit_metadata_candidate_bytes_per_token": 70,
+      "attempts": 32,
+      "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified"
+    },
+    "static_original_bitexact": true,
+    "error_by_length": [
+      {
+        "steps": 1,
+        "output_vs_native": {
+          "relative_rmse": 0.0068896009706017605,
+          "max_abs": 0.0001332610845565796
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.0017384221940532792,
+          "max_abs": 0.00041825336086527467
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.0017384224970155406,
+          "max_abs": 0.00041825324296951294
+        }
+      },
+      {
+        "steps": 8,
+        "output_vs_native": {
+          "relative_rmse": 0.006999966028708063,
+          "max_abs": 0.00018605589866638184
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.0023506688831402968,
+          "max_abs": 0.0009728734429112441
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.002350669231842589,
+          "max_abs": 0.0009728739969432354
+        }
+      },
+      {
+        "steps": 32,
+        "output_vs_native": {
+          "relative_rmse": 0.006421727708738672,
+          "max_abs": 0.00028637051582336426
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.004957880921702944,
+          "max_abs": 0.0019072487442634255
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.004957878679353529,
+          "max_abs": 0.001907247118651867
+        }
+      }
+    ],
+    "artifact": {
+      "name": "native.evaluation.S16.D31.static_sat.npz",
+      "bytes": 771309,
+      "sha256": "85e28858807ebb1e34431d00a606415048c545d0add4e3ee6ffaaadf1244f54e"
+    },
+    "transaction_trace": {
+      "name": "native.evaluation.S16.D31.static_sat.json",
+      "bytes": 87281,
+      "sha256": "56c3eb3979cc7b91de272a2a2f11771c43ea2dc4469033871bdf97744b1289a4"
+    },
+    "quality_accepted": false,
+    "hardware_implemented": false
+  },
+  {
+    "id": "native.evaluation.S16.D31.static_guard",
+    "role": "native",
+    "source_id": "evaluation.S16.D31",
+    "source_artifact": {
+      "name": "evaluation.S16.D31.npz",
+      "bytes": 13126301,
+      "sha256": "74e21715831524fd8fee924ac8e7596cd597791d7fab2cb26ee8c27183fb0456"
+    },
+    "format": {
+      "window": "evaluation",
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b",
+      "head_slots": [
+        0,
+        1
+      ],
+      "source_input_sha256": "37f9d8e8fa5aa803925fbdfaca580b54ea493efa3489929505a8fd2de5599dc4",
+      "format_epoch": 0,
+      "state_bits": 16,
+      "state_unit": [
+        -12,
+        -12
+      ],
+      "value_unit": [
+        -11,
+        -10
+      ],
+      "QK_unit": -15,
+      "beta_unit": -15,
+      "decay_fraction": 31,
+      "stage_contract": "decay RNE at declared fraction; prediction/beta/outer/output RNE15; state-only final saturation"
+    },
+    "policy": "static_guard",
+    "protocol_version": "causal-range/1",
+    "max_rescale_retries": 8,
+    "original_initial_bridge_code_clips": 0,
+    "original_operand_bridge_clips": {
+      "q": 0,
+      "k": 0,
+      "v": 0,
+      "beta": 0,
+      "decay": 0
+    },
+    "original_saturations": 0,
+    "original_scale_source": "declared external calibration windows only; 2x perhead maxima, fixed across evaluation; state floor=-26",
+    "original_conservative_format_proofs": [
+      {
+        "absolute_bounds": {
+          "decay_product": 70368744177664,
+          "prediction_dot": 137434759168,
+          "prediction_state_unit": 4194176,
+          "aligned_value": 65534,
+          "residual": 4259710,
+          "beta_product": 139582177280,
+          "correction_state_unit": 4259710,
+          "outer_product": 139577917570,
+          "state_sum": 4292349,
+          "output_dot": 137434759168
+        },
+        "signed_bits": {
+          "decay_product": 48,
+          "prediction_dot": 38,
+          "prediction_state_unit": 23,
+          "aligned_value": 17,
+          "residual": 24,
+          "beta_product": 39,
+          "correction_state_unit": 24,
+          "outer_product": 39,
+          "state_sum": 24,
+          "output_dot": 38
+        }
+      },
+      {
+        "absolute_bounds": {
+          "decay_product": 70368744177664,
+          "prediction_dot": 137434759168,
+          "prediction_state_unit": 4194176,
+          "aligned_value": 131068,
+          "residual": 4325244,
+          "beta_product": 141729595392,
+          "correction_state_unit": 4325244,
+          "outer_product": 141725270148,
+          "state_sum": 4357881,
+          "output_dot": 137434759168
+        },
+        "signed_bits": {
+          "decay_product": 48,
+          "prediction_dot": 38,
+          "prediction_state_unit": 23,
+          "aligned_value": 18,
+          "residual": 24,
+          "beta_product": 39,
+          "correction_state_unit": 24,
+          "outer_product": 39,
+          "state_sum": 24,
+          "output_dot": 38
+        }
+      }
+    ],
+    "original_role": "independent evaluation",
+    "original_position_source": "actual captured positions; candidate epoch0 is a new encoding epoch",
+    "requested_tokens": 32,
+    "committed_tokens": 32,
+    "status": "EXECUTED",
+    "rejection": null,
+    "saturations_published": 0,
+    "rescale_waves": 0,
+    "rescaled_head_events": 0,
+    "final": {
+      "state_sha256": "c742c1378360abbe386a5be4c9d921e4ce70ef15191cb1cbfe9fea58814a303a",
+      "units": [
+        -12,
+        -12
+      ],
+      "epoch": 0,
+      "version": 32,
+      "position": 160,
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b"
+    },
+    "observed_signed_bits": {
+      "decay_product": 46,
+      "decayed_state": 15,
+      "prediction_dot": 30,
+      "prediction": 15,
+      "aligned_value": 17,
+      "residual": 17,
+      "beta_product": 32,
+      "correction": 17,
+      "outer_product": 31,
+      "state_sum": 16,
+      "output_dot": 26
+    },
+    "cost": {
+      "state_bytes": 65536,
+      "minimum_old_new_atomic_payload_bytes": 131072,
+      "software_trial_copy_not_free_hardware": true,
+      "guard_scan_elements": 1048576,
+      "integer_products_executed": {
+        "decay": 1048576,
+        "prediction": 1048576,
+        "beta": 8192,
+        "outer": 1048576,
+        "output": 1048576
+      },
+      "width_rejected_attempts_cost_unqualified": 0,
+      "rescale_scan_elements": 0,
+      "rescale_RNE_elements": 0,
+      "rescale_state_read_bytes": 0,
+      "rescale_state_write_bytes": 0,
+      "rescale_scale_epoch_write_bytes": 0,
+      "commit_metadata_candidate_bytes_per_token": 70,
+      "attempts": 32,
+      "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified"
+    },
+    "static_original_bitexact": false,
+    "error_by_length": [
+      {
+        "steps": 1,
+        "output_vs_native": {
+          "relative_rmse": 0.0068896009706017605,
+          "max_abs": 0.0001332610845565796
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.0017384221940532792,
+          "max_abs": 0.00041825336086527467
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.0017384224970155406,
+          "max_abs": 0.00041825324296951294
+        }
+      },
+      {
+        "steps": 8,
+        "output_vs_native": {
+          "relative_rmse": 0.006999966028708063,
+          "max_abs": 0.00018605589866638184
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.0023506688831402968,
+          "max_abs": 0.0009728734429112441
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.002350669231842589,
+          "max_abs": 0.0009728739969432354
+        }
+      },
+      {
+        "steps": 32,
+        "output_vs_native": {
+          "relative_rmse": 0.006421727708738672,
+          "max_abs": 0.00028637051582336426
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.004957880921702944,
+          "max_abs": 0.0019072487442634255
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.004957878679353529,
+          "max_abs": 0.001907247118651867
+        }
+      }
+    ],
+    "artifact": {
+      "name": "native.evaluation.S16.D31.static_guard.npz",
+      "bytes": 771309,
+      "sha256": "85e28858807ebb1e34431d00a606415048c545d0add4e3ee6ffaaadf1244f54e"
+    },
+    "transaction_trace": {
+      "name": "native.evaluation.S16.D31.static_guard.json",
+      "bytes": 87283,
+      "sha256": "cf5b12e88971482f288e96802eae7c1b2076880272ed4f74b79b81f6e2617317"
+    },
+    "quality_accepted": false,
+    "hardware_implemented": false
+  },
+  {
+    "id": "native.evaluation.S16.D31.guard_rescale",
+    "role": "native",
+    "source_id": "evaluation.S16.D31",
+    "source_artifact": {
+      "name": "evaluation.S16.D31.npz",
+      "bytes": 13126301,
+      "sha256": "74e21715831524fd8fee924ac8e7596cd597791d7fab2cb26ee8c27183fb0456"
+    },
+    "format": {
+      "window": "evaluation",
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b",
+      "head_slots": [
+        0,
+        1
+      ],
+      "source_input_sha256": "37f9d8e8fa5aa803925fbdfaca580b54ea493efa3489929505a8fd2de5599dc4",
+      "format_epoch": 0,
+      "state_bits": 16,
+      "state_unit": [
+        -12,
+        -12
+      ],
+      "value_unit": [
+        -11,
+        -10
+      ],
+      "QK_unit": -15,
+      "beta_unit": -15,
+      "decay_fraction": 31,
+      "stage_contract": "decay RNE at declared fraction; prediction/beta/outer/output RNE15; state-only final saturation"
+    },
+    "policy": "guard_rescale",
+    "protocol_version": "causal-range/1",
+    "max_rescale_retries": 8,
+    "original_initial_bridge_code_clips": 0,
+    "original_operand_bridge_clips": {
+      "q": 0,
+      "k": 0,
+      "v": 0,
+      "beta": 0,
+      "decay": 0
+    },
+    "original_saturations": 0,
+    "original_scale_source": "declared external calibration windows only; 2x perhead maxima, fixed across evaluation; state floor=-26",
+    "original_conservative_format_proofs": [
+      {
+        "absolute_bounds": {
+          "decay_product": 70368744177664,
+          "prediction_dot": 137434759168,
+          "prediction_state_unit": 4194176,
+          "aligned_value": 65534,
+          "residual": 4259710,
+          "beta_product": 139582177280,
+          "correction_state_unit": 4259710,
+          "outer_product": 139577917570,
+          "state_sum": 4292349,
+          "output_dot": 137434759168
+        },
+        "signed_bits": {
+          "decay_product": 48,
+          "prediction_dot": 38,
+          "prediction_state_unit": 23,
+          "aligned_value": 17,
+          "residual": 24,
+          "beta_product": 39,
+          "correction_state_unit": 24,
+          "outer_product": 39,
+          "state_sum": 24,
+          "output_dot": 38
+        }
+      },
+      {
+        "absolute_bounds": {
+          "decay_product": 70368744177664,
+          "prediction_dot": 137434759168,
+          "prediction_state_unit": 4194176,
+          "aligned_value": 131068,
+          "residual": 4325244,
+          "beta_product": 141729595392,
+          "correction_state_unit": 4325244,
+          "outer_product": 141725270148,
+          "state_sum": 4357881,
+          "output_dot": 137434759168
+        },
+        "signed_bits": {
+          "decay_product": 48,
+          "prediction_dot": 38,
+          "prediction_state_unit": 23,
+          "aligned_value": 18,
+          "residual": 24,
+          "beta_product": 39,
+          "correction_state_unit": 24,
+          "outer_product": 39,
+          "state_sum": 24,
+          "output_dot": 38
+        }
+      }
+    ],
+    "original_role": "independent evaluation",
+    "original_position_source": "actual captured positions; candidate epoch0 is a new encoding epoch",
+    "requested_tokens": 32,
+    "committed_tokens": 32,
+    "status": "EXECUTED",
+    "rejection": null,
+    "saturations_published": 0,
+    "rescale_waves": 0,
+    "rescaled_head_events": 0,
+    "final": {
+      "state_sha256": "c742c1378360abbe386a5be4c9d921e4ce70ef15191cb1cbfe9fea58814a303a",
+      "units": [
+        -12,
+        -12
+      ],
+      "epoch": 0,
+      "version": 32,
+      "position": 160,
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b"
+    },
+    "observed_signed_bits": {
+      "decay_product": 46,
+      "decayed_state": 15,
+      "prediction_dot": 30,
+      "prediction": 15,
+      "aligned_value": 17,
+      "residual": 17,
+      "beta_product": 32,
+      "correction": 17,
+      "outer_product": 31,
+      "state_sum": 16,
+      "output_dot": 26
+    },
+    "cost": {
+      "state_bytes": 65536,
+      "minimum_old_new_atomic_payload_bytes": 131072,
+      "software_trial_copy_not_free_hardware": true,
+      "guard_scan_elements": 1048576,
+      "integer_products_executed": {
+        "decay": 1048576,
+        "prediction": 1048576,
+        "beta": 8192,
+        "outer": 1048576,
+        "output": 1048576
+      },
+      "width_rejected_attempts_cost_unqualified": 0,
+      "rescale_scan_elements": 0,
+      "rescale_RNE_elements": 0,
+      "rescale_state_read_bytes": 0,
+      "rescale_state_write_bytes": 0,
+      "rescale_scale_epoch_write_bytes": 0,
+      "commit_metadata_candidate_bytes_per_token": 70,
+      "attempts": 32,
+      "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified"
+    },
+    "static_original_bitexact": false,
+    "error_by_length": [
+      {
+        "steps": 1,
+        "output_vs_native": {
+          "relative_rmse": 0.0068896009706017605,
+          "max_abs": 0.0001332610845565796
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.0017384221940532792,
+          "max_abs": 0.00041825336086527467
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.0017384224970155406,
+          "max_abs": 0.00041825324296951294
+        }
+      },
+      {
+        "steps": 8,
+        "output_vs_native": {
+          "relative_rmse": 0.006999966028708063,
+          "max_abs": 0.00018605589866638184
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.0023506688831402968,
+          "max_abs": 0.0009728734429112441
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.002350669231842589,
+          "max_abs": 0.0009728739969432354
+        }
+      },
+      {
+        "steps": 32,
+        "output_vs_native": {
+          "relative_rmse": 0.006421727708738672,
+          "max_abs": 0.00028637051582336426
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.004957880921702944,
+          "max_abs": 0.0019072487442634255
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.004957878679353529,
+          "max_abs": 0.001907247118651867
+        }
+      }
+    ],
+    "artifact": {
+      "name": "native.evaluation.S16.D31.guard_rescale.npz",
+      "bytes": 771309,
+      "sha256": "85e28858807ebb1e34431d00a606415048c545d0add4e3ee6ffaaadf1244f54e"
+    },
+    "transaction_trace": {
+      "name": "native.evaluation.S16.D31.guard_rescale.json",
+      "bytes": 87284,
+      "sha256": "6e70398f0517a188dd3e28d8ae9b3a3e041cea42468e2bb15e9d947de76b4a98"
+    },
+    "quality_accepted": false,
+    "hardware_implemented": false
+  },
+  {
+    "id": "native.evaluation.S32.D15.static_sat",
+    "role": "native",
+    "source_id": "evaluation.S32.D15",
+    "source_artifact": {
+      "name": "evaluation.S32.D15.npz",
+      "bytes": 15925963,
+      "sha256": "9e85b6deb26696208ff8e8f9280de29f12ad880526afc6a3e5798481010401c7"
+    },
+    "format": {
+      "window": "evaluation",
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b",
+      "head_slots": [
+        0,
+        1
+      ],
+      "source_input_sha256": "37f9d8e8fa5aa803925fbdfaca580b54ea493efa3489929505a8fd2de5599dc4",
+      "format_epoch": 0,
+      "state_bits": 32,
+      "state_unit": [
+        -28,
+        -28
+      ],
+      "value_unit": [
+        -11,
+        -10
+      ],
+      "QK_unit": -15,
+      "beta_unit": -15,
+      "decay_fraction": 15,
+      "stage_contract": "decay RNE at declared fraction; prediction/beta/outer/output RNE15; state-only final saturation"
+    },
+    "policy": "static_sat",
+    "protocol_version": "causal-range/1",
+    "max_rescale_retries": 8,
+    "original_initial_bridge_code_clips": 0,
+    "original_operand_bridge_clips": {
+      "q": 0,
+      "k": 0,
+      "v": 0,
+      "beta": 0,
+      "decay": 0
+    },
+    "original_saturations": 0,
+    "original_scale_source": "declared external calibration windows only; 2x perhead maxima, fixed across evaluation; state floor=-26",
+    "original_conservative_format_proofs": [
+      {
+        "absolute_bounds": {
+          "decay_product": 70368744177664,
+          "prediction_dot": 9006924376834048,
+          "prediction_state_unit": 274869518336,
+          "aligned_value": 4294836224,
+          "residual": 279164354560,
+          "beta_product": 9147657570222080,
+          "correction_state_unit": 279164354560,
+          "outer_product": 9147378405867520,
+          "state_sum": 281303318788,
+          "output_dot": 9006924376834048
+        },
+        "signed_bits": {
+          "decay_product": 48,
+          "prediction_dot": 54,
+          "prediction_state_unit": 39,
+          "aligned_value": 33,
+          "residual": 40,
+          "beta_product": 55,
+          "correction_state_unit": 40,
+          "outer_product": 55,
+          "state_sum": 40,
+          "output_dot": 54
+        }
+      },
+      {
+        "absolute_bounds": {
+          "decay_product": 70368744177664,
+          "prediction_dot": 9006924376834048,
+          "prediction_state_unit": 274869518336,
+          "aligned_value": 8589672448,
+          "residual": 283459190784,
+          "beta_product": 9288390763610112,
+          "correction_state_unit": 283459190784,
+          "outer_product": 9288107304419328,
+          "state_sum": 285598023944,
+          "output_dot": 9006924376834048
+        },
+        "signed_bits": {
+          "decay_product": 48,
+          "prediction_dot": 54,
+          "prediction_state_unit": 39,
+          "aligned_value": 34,
+          "residual": 40,
+          "beta_product": 55,
+          "correction_state_unit": 40,
+          "outer_product": 55,
+          "state_sum": 40,
+          "output_dot": 54
+        }
+      }
+    ],
+    "original_role": "independent evaluation",
+    "original_position_source": "actual captured positions; candidate epoch0 is a new encoding epoch",
+    "requested_tokens": 32,
+    "committed_tokens": 32,
+    "status": "EXECUTED",
+    "rejection": null,
+    "saturations_published": 0,
+    "rescale_waves": 0,
+    "rescaled_head_events": 0,
+    "final": {
+      "state_sha256": "e61bbefc054caf19662ac984e213cf66f5e30ed9fcf86558e7529b8919642da1",
+      "units": [
+        -28,
+        -28
+      ],
+      "epoch": 0,
+      "version": 32,
+      "position": 160,
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b"
+    },
+    "observed_signed_bits": {
+      "decay_product": 46,
+      "decayed_state": 31,
+      "prediction_dot": 46,
+      "prediction": 31,
+      "aligned_value": 33,
+      "residual": 33,
+      "beta_product": 48,
+      "correction": 33,
+      "outer_product": 47,
+      "state_sum": 32,
+      "output_dot": 42
+    },
+    "cost": {
+      "state_bytes": 131072,
+      "minimum_old_new_atomic_payload_bytes": 262144,
+      "software_trial_copy_not_free_hardware": true,
+      "guard_scan_elements": 1048576,
+      "integer_products_executed": {
+        "decay": 1048576,
+        "prediction": 1048576,
+        "beta": 8192,
+        "outer": 1048576,
+        "output": 1048576
+      },
+      "width_rejected_attempts_cost_unqualified": 0,
+      "rescale_scan_elements": 0,
+      "rescale_RNE_elements": 0,
+      "rescale_state_read_bytes": 0,
+      "rescale_state_write_bytes": 0,
+      "rescale_scale_epoch_write_bytes": 0,
+      "commit_metadata_candidate_bytes_per_token": 70,
+      "attempts": 32,
+      "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified"
+    },
+    "static_original_bitexact": true,
+    "error_by_length": [
+      {
+        "steps": 1,
+        "output_vs_native": {
+          "relative_rmse": 0.00036614206275802525,
+          "max_abs": 4.667043685913086e-05
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.00032307275009428295,
+          "max_abs": 0.00023693570287167207
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.0003230734158892231,
+          "max_abs": 0.00023693544790148735
+        }
+      },
+      {
+        "steps": 8,
+        "output_vs_native": {
+          "relative_rmse": 0.000621368942565457,
+          "max_abs": 0.00012634694576263428
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.00029776928967719616,
+          "max_abs": 0.00027431227107253754
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.0002977686078214646,
+          "max_abs": 0.00027431227499619126
+        }
+      },
+      {
+        "steps": 32,
+        "output_vs_native": {
+          "relative_rmse": 0.0005666454508788965,
+          "max_abs": 0.00014668703079223633
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.00027742244103640123,
+          "max_abs": 0.00019357587594091906
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.00027742984094491607,
+          "max_abs": 0.0001935757463797927
+        }
+      }
+    ],
+    "artifact": {
+      "name": "native.evaluation.S32.D15.static_sat.npz",
+      "bytes": 3489348,
+      "sha256": "18fc4709f4936d2705bff4a34cf13deedb0342bfab69d30d64285ba1ed8ccd89"
+    },
+    "transaction_trace": {
+      "name": "native.evaluation.S32.D15.static_sat.json",
+      "bytes": 88853,
+      "sha256": "0fe1b0b80efad11cf89a49ec75b7cf1b7d12920093338a2e978c049ee5e6bfa5"
+    },
+    "quality_accepted": false,
+    "hardware_implemented": false
+  },
+  {
+    "id": "native.evaluation.S32.D15.static_guard",
+    "role": "native",
+    "source_id": "evaluation.S32.D15",
+    "source_artifact": {
+      "name": "evaluation.S32.D15.npz",
+      "bytes": 15925963,
+      "sha256": "9e85b6deb26696208ff8e8f9280de29f12ad880526afc6a3e5798481010401c7"
+    },
+    "format": {
+      "window": "evaluation",
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b",
+      "head_slots": [
+        0,
+        1
+      ],
+      "source_input_sha256": "37f9d8e8fa5aa803925fbdfaca580b54ea493efa3489929505a8fd2de5599dc4",
+      "format_epoch": 0,
+      "state_bits": 32,
+      "state_unit": [
+        -28,
+        -28
+      ],
+      "value_unit": [
+        -11,
+        -10
+      ],
+      "QK_unit": -15,
+      "beta_unit": -15,
+      "decay_fraction": 15,
+      "stage_contract": "decay RNE at declared fraction; prediction/beta/outer/output RNE15; state-only final saturation"
+    },
+    "policy": "static_guard",
+    "protocol_version": "causal-range/1",
+    "max_rescale_retries": 8,
+    "original_initial_bridge_code_clips": 0,
+    "original_operand_bridge_clips": {
+      "q": 0,
+      "k": 0,
+      "v": 0,
+      "beta": 0,
+      "decay": 0
+    },
+    "original_saturations": 0,
+    "original_scale_source": "declared external calibration windows only; 2x perhead maxima, fixed across evaluation; state floor=-26",
+    "original_conservative_format_proofs": [
+      {
+        "absolute_bounds": {
+          "decay_product": 70368744177664,
+          "prediction_dot": 9006924376834048,
+          "prediction_state_unit": 274869518336,
+          "aligned_value": 4294836224,
+          "residual": 279164354560,
+          "beta_product": 9147657570222080,
+          "correction_state_unit": 279164354560,
+          "outer_product": 9147378405867520,
+          "state_sum": 281303318788,
+          "output_dot": 9006924376834048
+        },
+        "signed_bits": {
+          "decay_product": 48,
+          "prediction_dot": 54,
+          "prediction_state_unit": 39,
+          "aligned_value": 33,
+          "residual": 40,
+          "beta_product": 55,
+          "correction_state_unit": 40,
+          "outer_product": 55,
+          "state_sum": 40,
+          "output_dot": 54
+        }
+      },
+      {
+        "absolute_bounds": {
+          "decay_product": 70368744177664,
+          "prediction_dot": 9006924376834048,
+          "prediction_state_unit": 274869518336,
+          "aligned_value": 8589672448,
+          "residual": 283459190784,
+          "beta_product": 9288390763610112,
+          "correction_state_unit": 283459190784,
+          "outer_product": 9288107304419328,
+          "state_sum": 285598023944,
+          "output_dot": 9006924376834048
+        },
+        "signed_bits": {
+          "decay_product": 48,
+          "prediction_dot": 54,
+          "prediction_state_unit": 39,
+          "aligned_value": 34,
+          "residual": 40,
+          "beta_product": 55,
+          "correction_state_unit": 40,
+          "outer_product": 55,
+          "state_sum": 40,
+          "output_dot": 54
+        }
+      }
+    ],
+    "original_role": "independent evaluation",
+    "original_position_source": "actual captured positions; candidate epoch0 is a new encoding epoch",
+    "requested_tokens": 32,
+    "committed_tokens": 32,
+    "status": "EXECUTED",
+    "rejection": null,
+    "saturations_published": 0,
+    "rescale_waves": 0,
+    "rescaled_head_events": 0,
+    "final": {
+      "state_sha256": "e61bbefc054caf19662ac984e213cf66f5e30ed9fcf86558e7529b8919642da1",
+      "units": [
+        -28,
+        -28
+      ],
+      "epoch": 0,
+      "version": 32,
+      "position": 160,
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b"
+    },
+    "observed_signed_bits": {
+      "decay_product": 46,
+      "decayed_state": 31,
+      "prediction_dot": 46,
+      "prediction": 31,
+      "aligned_value": 33,
+      "residual": 33,
+      "beta_product": 48,
+      "correction": 33,
+      "outer_product": 47,
+      "state_sum": 32,
+      "output_dot": 42
+    },
+    "cost": {
+      "state_bytes": 131072,
+      "minimum_old_new_atomic_payload_bytes": 262144,
+      "software_trial_copy_not_free_hardware": true,
+      "guard_scan_elements": 1048576,
+      "integer_products_executed": {
+        "decay": 1048576,
+        "prediction": 1048576,
+        "beta": 8192,
+        "outer": 1048576,
+        "output": 1048576
+      },
+      "width_rejected_attempts_cost_unqualified": 0,
+      "rescale_scan_elements": 0,
+      "rescale_RNE_elements": 0,
+      "rescale_state_read_bytes": 0,
+      "rescale_state_write_bytes": 0,
+      "rescale_scale_epoch_write_bytes": 0,
+      "commit_metadata_candidate_bytes_per_token": 70,
+      "attempts": 32,
+      "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified"
+    },
+    "static_original_bitexact": false,
+    "error_by_length": [
+      {
+        "steps": 1,
+        "output_vs_native": {
+          "relative_rmse": 0.00036614206275802525,
+          "max_abs": 4.667043685913086e-05
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.00032307275009428295,
+          "max_abs": 0.00023693570287167207
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.0003230734158892231,
+          "max_abs": 0.00023693544790148735
+        }
+      },
+      {
+        "steps": 8,
+        "output_vs_native": {
+          "relative_rmse": 0.000621368942565457,
+          "max_abs": 0.00012634694576263428
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.00029776928967719616,
+          "max_abs": 0.00027431227107253754
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.0002977686078214646,
+          "max_abs": 0.00027431227499619126
+        }
+      },
+      {
+        "steps": 32,
+        "output_vs_native": {
+          "relative_rmse": 0.0005666454508788965,
+          "max_abs": 0.00014668703079223633
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.00027742244103640123,
+          "max_abs": 0.00019357587594091906
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.00027742984094491607,
+          "max_abs": 0.0001935757463797927
+        }
+      }
+    ],
+    "artifact": {
+      "name": "native.evaluation.S32.D15.static_guard.npz",
+      "bytes": 3489348,
+      "sha256": "18fc4709f4936d2705bff4a34cf13deedb0342bfab69d30d64285ba1ed8ccd89"
+    },
+    "transaction_trace": {
+      "name": "native.evaluation.S32.D15.static_guard.json",
+      "bytes": 88855,
+      "sha256": "fab7f5838e4be4040b6c1d1b0ebb7ff054553363e8551a06ff13184b420d771d"
+    },
+    "quality_accepted": false,
+    "hardware_implemented": false
+  },
+  {
+    "id": "native.evaluation.S32.D15.guard_rescale",
+    "role": "native",
+    "source_id": "evaluation.S32.D15",
+    "source_artifact": {
+      "name": "evaluation.S32.D15.npz",
+      "bytes": 15925963,
+      "sha256": "9e85b6deb26696208ff8e8f9280de29f12ad880526afc6a3e5798481010401c7"
+    },
+    "format": {
+      "window": "evaluation",
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b",
+      "head_slots": [
+        0,
+        1
+      ],
+      "source_input_sha256": "37f9d8e8fa5aa803925fbdfaca580b54ea493efa3489929505a8fd2de5599dc4",
+      "format_epoch": 0,
+      "state_bits": 32,
+      "state_unit": [
+        -28,
+        -28
+      ],
+      "value_unit": [
+        -11,
+        -10
+      ],
+      "QK_unit": -15,
+      "beta_unit": -15,
+      "decay_fraction": 15,
+      "stage_contract": "decay RNE at declared fraction; prediction/beta/outer/output RNE15; state-only final saturation"
+    },
+    "policy": "guard_rescale",
+    "protocol_version": "causal-range/1",
+    "max_rescale_retries": 8,
+    "original_initial_bridge_code_clips": 0,
+    "original_operand_bridge_clips": {
+      "q": 0,
+      "k": 0,
+      "v": 0,
+      "beta": 0,
+      "decay": 0
+    },
+    "original_saturations": 0,
+    "original_scale_source": "declared external calibration windows only; 2x perhead maxima, fixed across evaluation; state floor=-26",
+    "original_conservative_format_proofs": [
+      {
+        "absolute_bounds": {
+          "decay_product": 70368744177664,
+          "prediction_dot": 9006924376834048,
+          "prediction_state_unit": 274869518336,
+          "aligned_value": 4294836224,
+          "residual": 279164354560,
+          "beta_product": 9147657570222080,
+          "correction_state_unit": 279164354560,
+          "outer_product": 9147378405867520,
+          "state_sum": 281303318788,
+          "output_dot": 9006924376834048
+        },
+        "signed_bits": {
+          "decay_product": 48,
+          "prediction_dot": 54,
+          "prediction_state_unit": 39,
+          "aligned_value": 33,
+          "residual": 40,
+          "beta_product": 55,
+          "correction_state_unit": 40,
+          "outer_product": 55,
+          "state_sum": 40,
+          "output_dot": 54
+        }
+      },
+      {
+        "absolute_bounds": {
+          "decay_product": 70368744177664,
+          "prediction_dot": 9006924376834048,
+          "prediction_state_unit": 274869518336,
+          "aligned_value": 8589672448,
+          "residual": 283459190784,
+          "beta_product": 9288390763610112,
+          "correction_state_unit": 283459190784,
+          "outer_product": 9288107304419328,
+          "state_sum": 285598023944,
+          "output_dot": 9006924376834048
+        },
+        "signed_bits": {
+          "decay_product": 48,
+          "prediction_dot": 54,
+          "prediction_state_unit": 39,
+          "aligned_value": 34,
+          "residual": 40,
+          "beta_product": 55,
+          "correction_state_unit": 40,
+          "outer_product": 55,
+          "state_sum": 40,
+          "output_dot": 54
+        }
+      }
+    ],
+    "original_role": "independent evaluation",
+    "original_position_source": "actual captured positions; candidate epoch0 is a new encoding epoch",
+    "requested_tokens": 32,
+    "committed_tokens": 32,
+    "status": "EXECUTED",
+    "rejection": null,
+    "saturations_published": 0,
+    "rescale_waves": 0,
+    "rescaled_head_events": 0,
+    "final": {
+      "state_sha256": "e61bbefc054caf19662ac984e213cf66f5e30ed9fcf86558e7529b8919642da1",
+      "units": [
+        -28,
+        -28
+      ],
+      "epoch": 0,
+      "version": 32,
+      "position": 160,
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b"
+    },
+    "observed_signed_bits": {
+      "decay_product": 46,
+      "decayed_state": 31,
+      "prediction_dot": 46,
+      "prediction": 31,
+      "aligned_value": 33,
+      "residual": 33,
+      "beta_product": 48,
+      "correction": 33,
+      "outer_product": 47,
+      "state_sum": 32,
+      "output_dot": 42
+    },
+    "cost": {
+      "state_bytes": 131072,
+      "minimum_old_new_atomic_payload_bytes": 262144,
+      "software_trial_copy_not_free_hardware": true,
+      "guard_scan_elements": 1048576,
+      "integer_products_executed": {
+        "decay": 1048576,
+        "prediction": 1048576,
+        "beta": 8192,
+        "outer": 1048576,
+        "output": 1048576
+      },
+      "width_rejected_attempts_cost_unqualified": 0,
+      "rescale_scan_elements": 0,
+      "rescale_RNE_elements": 0,
+      "rescale_state_read_bytes": 0,
+      "rescale_state_write_bytes": 0,
+      "rescale_scale_epoch_write_bytes": 0,
+      "commit_metadata_candidate_bytes_per_token": 70,
+      "attempts": 32,
+      "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified"
+    },
+    "static_original_bitexact": false,
+    "error_by_length": [
+      {
+        "steps": 1,
+        "output_vs_native": {
+          "relative_rmse": 0.00036614206275802525,
+          "max_abs": 4.667043685913086e-05
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.00032307275009428295,
+          "max_abs": 0.00023693570287167207
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.0003230734158892231,
+          "max_abs": 0.00023693544790148735
+        }
+      },
+      {
+        "steps": 8,
+        "output_vs_native": {
+          "relative_rmse": 0.000621368942565457,
+          "max_abs": 0.00012634694576263428
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.00029776928967719616,
+          "max_abs": 0.00027431227107253754
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.0002977686078214646,
+          "max_abs": 0.00027431227499619126
+        }
+      },
+      {
+        "steps": 32,
+        "output_vs_native": {
+          "relative_rmse": 0.0005666454508788965,
+          "max_abs": 0.00014668703079223633
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.00027742244103640123,
+          "max_abs": 0.00019357587594091906
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.00027742984094491607,
+          "max_abs": 0.0001935757463797927
+        }
+      }
+    ],
+    "artifact": {
+      "name": "native.evaluation.S32.D15.guard_rescale.npz",
+      "bytes": 3489348,
+      "sha256": "18fc4709f4936d2705bff4a34cf13deedb0342bfab69d30d64285ba1ed8ccd89"
+    },
+    "transaction_trace": {
+      "name": "native.evaluation.S32.D15.guard_rescale.json",
+      "bytes": 88856,
+      "sha256": "b82ab5405dbd652e66869b48987b6a6f6c238b32805e22c462a7115eb5697285"
+    },
+    "quality_accepted": false,
+    "hardware_implemented": false
+  },
+  {
+    "id": "native.evaluation.S32.D31.static_sat",
+    "role": "native",
+    "source_id": "evaluation.S32.D31",
+    "source_artifact": {
+      "name": "evaluation.S32.D31.npz",
+      "bytes": 15926068,
+      "sha256": "a590053c5ff559d8d73c501bc5362216d1b79fc7b8d9b5209603adac67cb9b1d"
+    },
+    "format": {
+      "window": "evaluation",
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b",
+      "head_slots": [
+        0,
+        1
+      ],
+      "source_input_sha256": "37f9d8e8fa5aa803925fbdfaca580b54ea493efa3489929505a8fd2de5599dc4",
+      "format_epoch": 0,
+      "state_bits": 32,
+      "state_unit": [
+        -28,
+        -28
+      ],
+      "value_unit": [
+        -11,
+        -10
+      ],
+      "QK_unit": -15,
+      "beta_unit": -15,
+      "decay_fraction": 31,
+      "stage_contract": "decay RNE at declared fraction; prediction/beta/outer/output RNE15; state-only final saturation"
+    },
+    "policy": "static_sat",
+    "protocol_version": "causal-range/1",
+    "max_rescale_retries": 8,
+    "original_initial_bridge_code_clips": 0,
+    "original_operand_bridge_clips": {
+      "q": 0,
+      "k": 0,
+      "v": 0,
+      "beta": 0,
+      "decay": 0
+    },
+    "original_saturations": 0,
+    "original_scale_source": "declared external calibration windows only; 2x perhead maxima, fixed across evaluation; state floor=-26",
+    "original_conservative_format_proofs": [
+      {
+        "absolute_bounds": {
+          "decay_product": 4611686018427387904,
+          "prediction_dot": 9006924376834048,
+          "prediction_state_unit": 274869518336,
+          "aligned_value": 4294836224,
+          "residual": 279164354560,
+          "beta_product": 9147657570222080,
+          "correction_state_unit": 279164354560,
+          "outer_product": 9147378405867520,
+          "state_sum": 281303318788,
+          "output_dot": 9006924376834048
+        },
+        "signed_bits": {
+          "decay_product": 64,
+          "prediction_dot": 54,
+          "prediction_state_unit": 39,
+          "aligned_value": 33,
+          "residual": 40,
+          "beta_product": 55,
+          "correction_state_unit": 40,
+          "outer_product": 55,
+          "state_sum": 40,
+          "output_dot": 54
+        }
+      },
+      {
+        "absolute_bounds": {
+          "decay_product": 4611686018427387904,
+          "prediction_dot": 9006924376834048,
+          "prediction_state_unit": 274869518336,
+          "aligned_value": 8589672448,
+          "residual": 283459190784,
+          "beta_product": 9288390763610112,
+          "correction_state_unit": 283459190784,
+          "outer_product": 9288107304419328,
+          "state_sum": 285598023944,
+          "output_dot": 9006924376834048
+        },
+        "signed_bits": {
+          "decay_product": 64,
+          "prediction_dot": 54,
+          "prediction_state_unit": 39,
+          "aligned_value": 34,
+          "residual": 40,
+          "beta_product": 55,
+          "correction_state_unit": 40,
+          "outer_product": 55,
+          "state_sum": 40,
+          "output_dot": 54
+        }
+      }
+    ],
+    "original_role": "independent evaluation",
+    "original_position_source": "actual captured positions; candidate epoch0 is a new encoding epoch",
+    "requested_tokens": 32,
+    "committed_tokens": 32,
+    "status": "EXECUTED",
+    "rejection": null,
+    "saturations_published": 0,
+    "rescale_waves": 0,
+    "rescaled_head_events": 0,
+    "final": {
+      "state_sha256": "483f883b9381d58336417eafa598a735aab9a608d4a7f07291fb2c800e0e7350",
+      "units": [
+        -28,
+        -28
+      ],
+      "epoch": 0,
+      "version": 32,
+      "position": 160,
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b"
+    },
+    "observed_signed_bits": {
+      "decay_product": 62,
+      "decayed_state": 31,
+      "prediction_dot": 46,
+      "prediction": 31,
+      "aligned_value": 33,
+      "residual": 33,
+      "beta_product": 48,
+      "correction": 33,
+      "outer_product": 47,
+      "state_sum": 32,
+      "output_dot": 42
+    },
+    "cost": {
+      "state_bytes": 131072,
+      "minimum_old_new_atomic_payload_bytes": 262144,
+      "software_trial_copy_not_free_hardware": true,
+      "guard_scan_elements": 1048576,
+      "integer_products_executed": {
+        "decay": 1048576,
+        "prediction": 1048576,
+        "beta": 8192,
+        "outer": 1048576,
+        "output": 1048576
+      },
+      "width_rejected_attempts_cost_unqualified": 0,
+      "rescale_scan_elements": 0,
+      "rescale_RNE_elements": 0,
+      "rescale_state_read_bytes": 0,
+      "rescale_state_write_bytes": 0,
+      "rescale_scale_epoch_write_bytes": 0,
+      "commit_metadata_candidate_bytes_per_token": 70,
+      "attempts": 32,
+      "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified"
+    },
+    "static_original_bitexact": true,
+    "error_by_length": [
+      {
+        "steps": 1,
+        "output_vs_native": {
+          "relative_rmse": 0.00036565984601241236,
+          "max_abs": 4.6581029891967773e-05
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.0003230666865924327,
+          "max_abs": 0.00023693570287167207
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.0003230673441699735,
+          "max_abs": 0.00023693544790148735
+        }
+      },
+      {
+        "steps": 8,
+        "output_vs_native": {
+          "relative_rmse": 0.0006196195441792056,
+          "max_abs": 0.0001255124807357788
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.00029765767496496586,
+          "max_abs": 0.0002743085457822391
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.000297657336520392,
+          "max_abs": 0.0002743085497058928
+        }
+      },
+      {
+        "steps": 32,
+        "output_vs_native": {
+          "relative_rmse": 0.0005666939032009644,
+          "max_abs": 0.00014802813529968262
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.0002766964334783416,
+          "max_abs": 0.0001936019529730083
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.00027669800817884483,
+          "max_abs": 0.00019360182341188192
+        }
+      }
+    ],
+    "artifact": {
+      "name": "native.evaluation.S32.D31.static_sat.npz",
+      "bytes": 3489326,
+      "sha256": "e4cae74289649897ca496636f80b5dd5e2b31c4f7a3f96082c40a945117aaa4f"
+    },
+    "transaction_trace": {
+      "name": "native.evaluation.S32.D31.static_sat.json",
+      "bytes": 89018,
+      "sha256": "cff82ea94aa420192b549fe34507772d91acc6b5f6a12ed8b644ab78a468b393"
+    },
+    "quality_accepted": false,
+    "hardware_implemented": false
+  },
+  {
+    "id": "native.evaluation.S32.D31.static_guard",
+    "role": "native",
+    "source_id": "evaluation.S32.D31",
+    "source_artifact": {
+      "name": "evaluation.S32.D31.npz",
+      "bytes": 15926068,
+      "sha256": "a590053c5ff559d8d73c501bc5362216d1b79fc7b8d9b5209603adac67cb9b1d"
+    },
+    "format": {
+      "window": "evaluation",
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b",
+      "head_slots": [
+        0,
+        1
+      ],
+      "source_input_sha256": "37f9d8e8fa5aa803925fbdfaca580b54ea493efa3489929505a8fd2de5599dc4",
+      "format_epoch": 0,
+      "state_bits": 32,
+      "state_unit": [
+        -28,
+        -28
+      ],
+      "value_unit": [
+        -11,
+        -10
+      ],
+      "QK_unit": -15,
+      "beta_unit": -15,
+      "decay_fraction": 31,
+      "stage_contract": "decay RNE at declared fraction; prediction/beta/outer/output RNE15; state-only final saturation"
+    },
+    "policy": "static_guard",
+    "protocol_version": "causal-range/1",
+    "max_rescale_retries": 8,
+    "original_initial_bridge_code_clips": 0,
+    "original_operand_bridge_clips": {
+      "q": 0,
+      "k": 0,
+      "v": 0,
+      "beta": 0,
+      "decay": 0
+    },
+    "original_saturations": 0,
+    "original_scale_source": "declared external calibration windows only; 2x perhead maxima, fixed across evaluation; state floor=-26",
+    "original_conservative_format_proofs": [
+      {
+        "absolute_bounds": {
+          "decay_product": 4611686018427387904,
+          "prediction_dot": 9006924376834048,
+          "prediction_state_unit": 274869518336,
+          "aligned_value": 4294836224,
+          "residual": 279164354560,
+          "beta_product": 9147657570222080,
+          "correction_state_unit": 279164354560,
+          "outer_product": 9147378405867520,
+          "state_sum": 281303318788,
+          "output_dot": 9006924376834048
+        },
+        "signed_bits": {
+          "decay_product": 64,
+          "prediction_dot": 54,
+          "prediction_state_unit": 39,
+          "aligned_value": 33,
+          "residual": 40,
+          "beta_product": 55,
+          "correction_state_unit": 40,
+          "outer_product": 55,
+          "state_sum": 40,
+          "output_dot": 54
+        }
+      },
+      {
+        "absolute_bounds": {
+          "decay_product": 4611686018427387904,
+          "prediction_dot": 9006924376834048,
+          "prediction_state_unit": 274869518336,
+          "aligned_value": 8589672448,
+          "residual": 283459190784,
+          "beta_product": 9288390763610112,
+          "correction_state_unit": 283459190784,
+          "outer_product": 9288107304419328,
+          "state_sum": 285598023944,
+          "output_dot": 9006924376834048
+        },
+        "signed_bits": {
+          "decay_product": 64,
+          "prediction_dot": 54,
+          "prediction_state_unit": 39,
+          "aligned_value": 34,
+          "residual": 40,
+          "beta_product": 55,
+          "correction_state_unit": 40,
+          "outer_product": 55,
+          "state_sum": 40,
+          "output_dot": 54
+        }
+      }
+    ],
+    "original_role": "independent evaluation",
+    "original_position_source": "actual captured positions; candidate epoch0 is a new encoding epoch",
+    "requested_tokens": 32,
+    "committed_tokens": 32,
+    "status": "EXECUTED",
+    "rejection": null,
+    "saturations_published": 0,
+    "rescale_waves": 0,
+    "rescaled_head_events": 0,
+    "final": {
+      "state_sha256": "483f883b9381d58336417eafa598a735aab9a608d4a7f07291fb2c800e0e7350",
+      "units": [
+        -28,
+        -28
+      ],
+      "epoch": 0,
+      "version": 32,
+      "position": 160,
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b"
+    },
+    "observed_signed_bits": {
+      "decay_product": 62,
+      "decayed_state": 31,
+      "prediction_dot": 46,
+      "prediction": 31,
+      "aligned_value": 33,
+      "residual": 33,
+      "beta_product": 48,
+      "correction": 33,
+      "outer_product": 47,
+      "state_sum": 32,
+      "output_dot": 42
+    },
+    "cost": {
+      "state_bytes": 131072,
+      "minimum_old_new_atomic_payload_bytes": 262144,
+      "software_trial_copy_not_free_hardware": true,
+      "guard_scan_elements": 1048576,
+      "integer_products_executed": {
+        "decay": 1048576,
+        "prediction": 1048576,
+        "beta": 8192,
+        "outer": 1048576,
+        "output": 1048576
+      },
+      "width_rejected_attempts_cost_unqualified": 0,
+      "rescale_scan_elements": 0,
+      "rescale_RNE_elements": 0,
+      "rescale_state_read_bytes": 0,
+      "rescale_state_write_bytes": 0,
+      "rescale_scale_epoch_write_bytes": 0,
+      "commit_metadata_candidate_bytes_per_token": 70,
+      "attempts": 32,
+      "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified"
+    },
+    "static_original_bitexact": false,
+    "error_by_length": [
+      {
+        "steps": 1,
+        "output_vs_native": {
+          "relative_rmse": 0.00036565984601241236,
+          "max_abs": 4.6581029891967773e-05
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.0003230666865924327,
+          "max_abs": 0.00023693570287167207
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.0003230673441699735,
+          "max_abs": 0.00023693544790148735
+        }
+      },
+      {
+        "steps": 8,
+        "output_vs_native": {
+          "relative_rmse": 0.0006196195441792056,
+          "max_abs": 0.0001255124807357788
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.00029765767496496586,
+          "max_abs": 0.0002743085457822391
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.000297657336520392,
+          "max_abs": 0.0002743085497058928
+        }
+      },
+      {
+        "steps": 32,
+        "output_vs_native": {
+          "relative_rmse": 0.0005666939032009644,
+          "max_abs": 0.00014802813529968262
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.0002766964334783416,
+          "max_abs": 0.0001936019529730083
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.00027669800817884483,
+          "max_abs": 0.00019360182341188192
+        }
+      }
+    ],
+    "artifact": {
+      "name": "native.evaluation.S32.D31.static_guard.npz",
+      "bytes": 3489326,
+      "sha256": "e4cae74289649897ca496636f80b5dd5e2b31c4f7a3f96082c40a945117aaa4f"
+    },
+    "transaction_trace": {
+      "name": "native.evaluation.S32.D31.static_guard.json",
+      "bytes": 89020,
+      "sha256": "df9d0690c46a12a52a84b1d2f7850a4122dd283e0f92e12f2b6b2748f969b8e8"
+    },
+    "quality_accepted": false,
+    "hardware_implemented": false
+  },
+  {
+    "id": "native.evaluation.S32.D31.guard_rescale",
+    "role": "native",
+    "source_id": "evaluation.S32.D31",
+    "source_artifact": {
+      "name": "evaluation.S32.D31.npz",
+      "bytes": 15926068,
+      "sha256": "a590053c5ff559d8d73c501bc5362216d1b79fc7b8d9b5209603adac67cb9b1d"
+    },
+    "format": {
+      "window": "evaluation",
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b",
+      "head_slots": [
+        0,
+        1
+      ],
+      "source_input_sha256": "37f9d8e8fa5aa803925fbdfaca580b54ea493efa3489929505a8fd2de5599dc4",
+      "format_epoch": 0,
+      "state_bits": 32,
+      "state_unit": [
+        -28,
+        -28
+      ],
+      "value_unit": [
+        -11,
+        -10
+      ],
+      "QK_unit": -15,
+      "beta_unit": -15,
+      "decay_fraction": 31,
+      "stage_contract": "decay RNE at declared fraction; prediction/beta/outer/output RNE15; state-only final saturation"
+    },
+    "policy": "guard_rescale",
+    "protocol_version": "causal-range/1",
+    "max_rescale_retries": 8,
+    "original_initial_bridge_code_clips": 0,
+    "original_operand_bridge_clips": {
+      "q": 0,
+      "k": 0,
+      "v": 0,
+      "beta": 0,
+      "decay": 0
+    },
+    "original_saturations": 0,
+    "original_scale_source": "declared external calibration windows only; 2x perhead maxima, fixed across evaluation; state floor=-26",
+    "original_conservative_format_proofs": [
+      {
+        "absolute_bounds": {
+          "decay_product": 4611686018427387904,
+          "prediction_dot": 9006924376834048,
+          "prediction_state_unit": 274869518336,
+          "aligned_value": 4294836224,
+          "residual": 279164354560,
+          "beta_product": 9147657570222080,
+          "correction_state_unit": 279164354560,
+          "outer_product": 9147378405867520,
+          "state_sum": 281303318788,
+          "output_dot": 9006924376834048
+        },
+        "signed_bits": {
+          "decay_product": 64,
+          "prediction_dot": 54,
+          "prediction_state_unit": 39,
+          "aligned_value": 33,
+          "residual": 40,
+          "beta_product": 55,
+          "correction_state_unit": 40,
+          "outer_product": 55,
+          "state_sum": 40,
+          "output_dot": 54
+        }
+      },
+      {
+        "absolute_bounds": {
+          "decay_product": 4611686018427387904,
+          "prediction_dot": 9006924376834048,
+          "prediction_state_unit": 274869518336,
+          "aligned_value": 8589672448,
+          "residual": 283459190784,
+          "beta_product": 9288390763610112,
+          "correction_state_unit": 283459190784,
+          "outer_product": 9288107304419328,
+          "state_sum": 285598023944,
+          "output_dot": 9006924376834048
+        },
+        "signed_bits": {
+          "decay_product": 64,
+          "prediction_dot": 54,
+          "prediction_state_unit": 39,
+          "aligned_value": 34,
+          "residual": 40,
+          "beta_product": 55,
+          "correction_state_unit": 40,
+          "outer_product": 55,
+          "state_sum": 40,
+          "output_dot": 54
+        }
+      }
+    ],
+    "original_role": "independent evaluation",
+    "original_position_source": "actual captured positions; candidate epoch0 is a new encoding epoch",
+    "requested_tokens": 32,
+    "committed_tokens": 32,
+    "status": "EXECUTED",
+    "rejection": null,
+    "saturations_published": 0,
+    "rescale_waves": 0,
+    "rescaled_head_events": 0,
+    "final": {
+      "state_sha256": "483f883b9381d58336417eafa598a735aab9a608d4a7f07291fb2c800e0e7350",
+      "units": [
+        -28,
+        -28
+      ],
+      "epoch": 0,
+      "version": 32,
+      "position": 160,
+      "sequence": "80fdb15ac625b8fc3485437ca2ae572cf55d8e46fdac9fc5408fdecd1e3f181b"
+    },
+    "observed_signed_bits": {
+      "decay_product": 62,
+      "decayed_state": 31,
+      "prediction_dot": 46,
+      "prediction": 31,
+      "aligned_value": 33,
+      "residual": 33,
+      "beta_product": 48,
+      "correction": 33,
+      "outer_product": 47,
+      "state_sum": 32,
+      "output_dot": 42
+    },
+    "cost": {
+      "state_bytes": 131072,
+      "minimum_old_new_atomic_payload_bytes": 262144,
+      "software_trial_copy_not_free_hardware": true,
+      "guard_scan_elements": 1048576,
+      "integer_products_executed": {
+        "decay": 1048576,
+        "prediction": 1048576,
+        "beta": 8192,
+        "outer": 1048576,
+        "output": 1048576
+      },
+      "width_rejected_attempts_cost_unqualified": 0,
+      "rescale_scan_elements": 0,
+      "rescale_RNE_elements": 0,
+      "rescale_state_read_bytes": 0,
+      "rescale_state_write_bytes": 0,
+      "rescale_scale_epoch_write_bytes": 0,
+      "commit_metadata_candidate_bytes_per_token": 70,
+      "attempts": 32,
+      "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified"
+    },
+    "static_original_bitexact": false,
+    "error_by_length": [
+      {
+        "steps": 1,
+        "output_vs_native": {
+          "relative_rmse": 0.00036565984601241236,
+          "max_abs": 4.6581029891967773e-05
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.0003230666865924327,
+          "max_abs": 0.00023693570287167207
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.0003230673441699735,
+          "max_abs": 0.00023693544790148735
+        }
+      },
+      {
+        "steps": 8,
+        "output_vs_native": {
+          "relative_rmse": 0.0006196195441792056,
+          "max_abs": 0.0001255124807357788
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.00029765767496496586,
+          "max_abs": 0.0002743085457822391
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.000297657336520392,
+          "max_abs": 0.0002743085497058928
+        }
+      },
+      {
+        "steps": 32,
+        "output_vs_native": {
+          "relative_rmse": 0.0005666939032009644,
+          "max_abs": 0.00014802813529968262
+        },
+        "state_vs_FP64_replay": {
+          "relative_rmse": 0.0002766964334783416,
+          "max_abs": 0.0001936019529730083
+        },
+        "state_vs_native_capture": {
+          "relative_rmse": 0.00027669800817884483,
+          "max_abs": 0.00019360182341188192
+        }
+      }
+    ],
+    "artifact": {
+      "name": "native.evaluation.S32.D31.guard_rescale.npz",
+      "bytes": 3489326,
+      "sha256": "e4cae74289649897ca496636f80b5dd5e2b31c4f7a3f96082c40a945117aaa4f"
+    },
+    "transaction_trace": {
+      "name": "native.evaluation.S32.D31.guard_rescale.json",
+      "bytes": 89021,
+      "sha256": "236814f53509d2bf8b6e3f937a4a20d8cdd32d33aba554144a3e1fa5e4737589"
+    },
+    "quality_accepted": false,
+    "hardware_implemented": false
+  }
+]

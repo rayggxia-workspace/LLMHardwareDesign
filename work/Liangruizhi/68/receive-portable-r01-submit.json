@@ -1,0 +1,30 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase11/project/experiments/range_service/portable_r.py",
+    "verify",
+    "--bundle",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/portable-r01/portable-r.zip",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-portable-r01.json",
+    "--negative"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase11/project/experiments/range_service/portable_r.py verify --bundle /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/portable-r01/portable-r.zip --out /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-portable-r01.json --negative",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i68-receive-portable-r01",
+    "--partition=c96",
+    "--cpus-per-task=1",
+    "--time=00:30:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-portable-r01-%j.log",
+    "--dependency=afterok:90138",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase11/project/experiments/range_service/portable_r.py verify --bundle /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/portable-r01/portable-r.zip --out /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-portable-r01.json --negative"
+  ],
+  "stdout": "90139",
+  "phase": "phase11",
+  "binding_sha256": "02740253d4730a278c34550768b9f3de05a768b9ba78f906d06dd88cd55808d5"
+}

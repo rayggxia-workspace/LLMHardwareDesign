@@ -137,3 +137,9 @@ project/experiments/qwen3_trace/使用独立D盘环境（torch2.10.0+cpu、trans
 ## Issue61服务器四模型与独立接收
 
 正式目录project/experiments/server_models；[README](../project/experiments/server_models/README.md)记录原始阶段commit、模型revision/协议、隔离环境、Slurm及不覆盖输出的恢复命令。先python -B scripts/check_project.py，再使用已有torch2.10CPU环境运行 -B -m unittest discover -s project/experiments/server_models -p 'test_*.py' -v（17项）；项目check_research.py五套业务回归已通过。精选包用receive_bundle.py核7.27MB SHA/117成员/27原commit源码，再review_samples.py离线重放4GQA/6整数case。完整420条件/浮点校准输入需按results/issue-61/index.json取得授权服务器primary-model-data01.zip，Phi独立封存不得调参。conditional-bounds02为全PV32条件核，causal-cost01逐token打包；均非GPU测量/新算术RTL/整图周期或PPA。完整报告docs/experiments/issue-61-server-models.md。
+
+## Issue68 R范围与有限V/R/S服务
+
+正式工具为`project/experiments/range_service/`，[README](../project/experiments/range_service/README.md)、RANGE/SERVICE/AUDIT/PORTABLE说明冻结profile和独立接收。先`python -B scripts/check_project.py`，再在已有NumPy环境执行`python -B -m unittest discover -s project/experiments/range_service -p "test_*.py"`（本批69项）；TEMP/TMP置D盘独立任务目录。全部真实数值/服务和完整接收已在本人CPU服务器Slurm并行执行，无新模型。
+
+精选R包：`python -B project/experiments/range_service/portable_r.py verify --bundle project/experiments/range_service/results/issue-68/portable-r.zip --out <新D盘receipt.json> --negative`。精选服务：`python -B project/experiments/range_service/service_selected.py verify --index project/experiments/range_service/results/issue-68/service-selected/index.json --out <新D盘receipt.json>`；仅验所列调度/容量/元数据，不重做原NPZ算术。完整复跑所需旧Issue66数据、逐phase源码/配置/SHA及Slurm命令见新统一索引和work68，现有输出不得覆盖。

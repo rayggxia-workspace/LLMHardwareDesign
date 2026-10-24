@@ -1,0 +1,34 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase10/project/experiments/range_service/aggregate.py",
+    "--root",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024",
+    "--suite",
+    "native",
+    "--round",
+    "2",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/service-native02",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase10/binding.json"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase10/project/experiments/range_service/aggregate.py --root /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024 --suite native --round 2 --out /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/service-native02 --binding /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase10/binding.json",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i68-aggregate-native02",
+    "--partition=c96",
+    "--cpus-per-task=1",
+    "--time=00:30:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/aggregate-native02-%j.log",
+    "--dependency=afterok:90111:90112:90113:90114:90115:90116:90117",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase10/project/experiments/range_service/aggregate.py --root /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024 --suite native --round 2 --out /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/service-native02 --binding /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase10/binding.json"
+  ],
+  "stdout": "90133",
+  "phase": "phase10",
+  "binding_sha256": "0927299da4c63116585391434fd828fc1b674f18de69ae35e7cb944a07c314c4"
+}

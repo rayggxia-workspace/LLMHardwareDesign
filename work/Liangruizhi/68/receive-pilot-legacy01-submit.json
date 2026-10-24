@@ -1,0 +1,36 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase7/project/experiments/range_service/receive_service.py",
+    "--integer",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/pilot-legacy01",
+    "--repeat",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/pilot-legacy02",
+    "--root",
+    "/public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024",
+    "--range",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-legacy01",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-pilot-legacy01",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase7/binding.json"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase7/project/experiments/range_service/receive_service.py --integer /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/pilot-legacy01 --repeat /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/pilot-legacy02 --root /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024 --range /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-legacy01 --out /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-pilot-legacy01 --binding /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase7/binding.json",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i68-receive-pilot-legacy01",
+    "--partition=c96",
+    "--cpus-per-task=1",
+    "--time=00:30:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-pilot-legacy01-%j.log",
+    "--dependency=afterok:90095:90096",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase7/project/experiments/range_service/receive_service.py --integer /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/pilot-legacy01 --repeat /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/pilot-legacy02 --root /public/home/yuzelu/RuizhiLiang/issue66-scale-state-20261024 --range /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/range-legacy01 --out /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/receive-pilot-legacy01 --binding /public/home/yuzelu/RuizhiLiang/issue68-range-service-20261024/phase7/binding.json"
+  ],
+  "stdout": "90097",
+  "phase": "phase7",
+  "binding_sha256": "b01bb428084c5f48ef2c2757f41e5a20fdb47f7c87f07a1cea42c2e9e26e3f2e"
+}
