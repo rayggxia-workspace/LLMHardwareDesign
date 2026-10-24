@@ -566,15 +566,21 @@ def audit(w):
     return dict(status="PASS", resource_high_water=high, resident_bytes=dict(memory))
 
 
-def verify_manifest(root):
+def verify_manifest(root, names=None):
     root = Path(root)
     p = root / "manifest.json"
     m = load_json(p)
-    for name, desc in m.get("artifacts", {}).items():
-        if isinstance(desc, dict) and "sha256" in desc:
-            f = root / name
-            if not f.is_file() or descriptor(f) != {k: desc[k] for k in ("bytes", "sha256")}:
-                raise ValueError("artifact mismatch: " + str(f))
+    artifacts = m.get("artifacts", {})
+    selected = list(artifacts) if names is None else list(names)
+    for name in selected:
+        if Path(name).name != name:
+            raise ValueError("unsafe artifact name")
+        desc = artifacts.get(name)
+        if not isinstance(desc, dict) or not {"bytes", "sha256"} <= set(desc):
+            raise ValueError("unindexed artifact: " + name)
+        f = root / name
+        if not f.is_file() or descriptor(f) != {k: desc[k] for k in ("bytes", "sha256")}:
+            raise ValueError("artifact mismatch: " + str(f))
     return m, descriptor(p)
 
 
@@ -582,12 +588,17 @@ def inputs(root, range_root=None, norm_stage="norm03"):
     root = Path(root)
     # Numeric NPZ arrays are not replayed by a timing service. Actual producer
     # manifests and records are SHA-bound, not treated as mathematical oracles.
-    _, sm = verify_manifest(root / "state01")
-    _, nm = verify_manifest(root / norm_stage)
+    smeta, sm = verify_manifest(root / "state01", ["state-results.json"])
+    nmeta, nm = verify_manifest(root / norm_stage, ["norm.json"])
     ss = load_json(root / "state01" / "state-results.json")
     ns = load_json(root / norm_stage / "norm.json")
     s = next(x for x in ss if x["id"] == "evaluation.S32.D31")
     n = next(x for x in ns if x["id"] == "decode.tile16_delta_ACT8")
+    sa = s["artifact"]
+    if {k: sa[k] for k in ("bytes", "sha256")} != smeta["artifacts"].get(sa["name"]):
+        raise ValueError("state record/manifest mismatch")
+    verify_manifest(root / "state01", [sa["name"]])
+    verify_manifest(root / norm_stage, [n["id"] + ".npz", "constants.npz"])
     steps = s["integer_steps"]
     task = dict(id="native32.S32D31.static", precision=s["format"],
                 R_input_manifest=sm, norm_input_manifest=nm,
@@ -604,7 +615,7 @@ def inputs(root, range_root=None, norm_stage="norm03"):
         # The exact event schema is versioned. Never silently infer attempts
         # from a producer error metric or from a different numeric profile.
         rr = Path(range_root)
-        rm, rmd = verify_manifest(rr)
+        rm, rmd = verify_manifest(rr, ["range-results.json"])
         if rm.get("schema") != "issue68-range/1" or rm.get("status") != "PASS":
             raise ValueError("unsupported range source")
         rp = rr / "range-results.json"
@@ -617,6 +628,11 @@ def inputs(root, range_root=None, norm_stage="norm03"):
             if f["state_bits"] != 32 or f["decay_fraction"] != 31:
                 raise ValueError("range precision mismatch")
             td = record["transaction_trace"]
+            art = record["artifact"]
+            for d in (td, art):
+                if {k: d[k] for k in ("bytes", "sha256")} != rm["artifacts"].get(d["name"]):
+                    raise ValueError("range record/manifest mismatch")
+            verify_manifest(rr, [td["name"], art["name"]])
             tp = rr / td["name"]
             if descriptor(tp) != {k: td[k] for k in ("bytes", "sha256")}:
                 raise ValueError("range trace mismatch")
@@ -708,6 +724,7 @@ def run(root, out, binding, range_root=None, ext_profiles=(1, 16), task_ids=None
     manifest = dict(schema=SCHEMA, source=binding, config=dict(ext_profiles=list(ext_profiles), lane_profiles=organizations,
                                                             tiles=tiles, norm_routes=routes, strategies=strategies),
                     environment={"python": sys.version, "platform": platform.platform()}, artifacts=artifacts,
+                    input_validation="SHA of manifests/metrics, baseline S32D31 NPZ, selected norm NPZ/constants, selected range NPZ/transaction; unrelated conditions not rehashed; full numeric input audit separate",
                     input_root=str(root), range_root=str(range_root) if range_root else None)
     (out / "manifest.json").write_bytes(canonical(manifest))
     return metrics

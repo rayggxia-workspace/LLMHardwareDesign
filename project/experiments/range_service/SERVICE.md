@@ -74,3 +74,9 @@ binding必须含真实`commit`与`service_sha256`。`--norm-stage`默认norm03�
 默认1和16；根目录、输入manifest、单记录fingerprint、原units/epoch/commit和每个结果
 SHA均记录。不覆盖已存在out。原state/range饱和、quality_accepted=false和浮点入口桥
 不会因服务调度成功变成数值/模型/硬件验收通过。
+
+每服务shard重新核manifest、原metrics、选中S32D31 NPZ、norm选中profile NPZ/
+constants以及实际选中的range NPZ/事务trace，核record与manifest描述一致。无关条件
+不在每shard重复完整哈希；完整输入包和数值证据由原intake、range与独立接收回执负责。
+`--organization`、`--tile`、`--norm-route`、`--strategy`可限定pilot或独立shard，
+manifest只记录实际执行子集，未执行组织不能由默认配置推断为完成。
