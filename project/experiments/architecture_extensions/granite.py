@@ -470,8 +470,11 @@ def numeric(args):
                         'input_scale_fp64':8,'return_scale_fp64_per_coordinate':8*1536*8,
                         'RQ_Q31mult_uint32_shift_int16_per_coordinate':8*1536*6,
                         'common_unit_int16':2},
-                    'expert_W8_read_per_unique_no_residency_assumption':int(np.count_nonzero(local_counts))*(1024*1536+1536*512),
-                    'expert_Wscale_fp64_per_unique':int(np.count_nonzero(local_counts))*(1024+1536)*8,
+                    'expert_W8_unique_payload_lower_bound':int(np.count_nonzero(local_counts))*(1024*1536+1536*512),
+                    'expert_W8_payload_no_reuse_each_access':32*(1024*1536+1536*512),
+                    'expert_Wscale_fp64_per_unique_lower_bound':int(np.count_nonzero(local_counts))*(1024+1536)*8,
+                    'matrix_MACs':{'router':4*1536*40,'experts':32*(1024*1536+1536*512)},
+                    'weight_reuse_qualification':'unique lower bound needs grouping/residency; no realized cache traffic claimed',
                     'physical_transport':'unmeasured; header/padding/packing/multicast implementation not included'})
     if len(witnesses['dots']) != 32 or len(witnesses['requants']) != 32:
         raise ValueError('incomplete witness set')
