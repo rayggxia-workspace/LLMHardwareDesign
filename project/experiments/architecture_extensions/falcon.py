@@ -177,7 +177,7 @@ def _cache_snapshot(cache):
     for src, dst in (("keys", "kv_key"), ("values", "kv_value"),
                      ("conv_states", "conv"), ("recurrent_states", "ssm")):
         value = getattr(layer, src)
-        if isinstance(value, (tuple, list)):
+        if isinstance(value, (tuple, list, dict)):
             value = value[0]
         if value is not None:
             result[dst] = _np(value)
