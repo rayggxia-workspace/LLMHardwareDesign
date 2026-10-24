@@ -95,5 +95,27 @@ class IntegerBoundary(unittest.TestCase):
         d=resume.complete_checkpoint(state,units,history,2,4,contract)
         restored=resume.restore(d,state,units,history,4,contract);self.assertEqual(restored[-1],2)
         negative=resume.corrupted_checkpoint_negatives(d,state,units,history,4,contract);self.assertEqual(len(negative),8);self.assertTrue(all(x['rejected'] for x in negative))
+    def test_consumer_failure_keeps_conv_and_state_atomic_then_recovers(self):
+        import falcon_resume as resume
+        spec={'inner':4,'heads':2,'state_size':3,'head_dim':2};channels=10
+        wc=np.zeros((channels,4),np.int32);wc[:,-1]=1<<20
+        const={'conv_weight_q20':wc,'conv_bias_q12':np.zeros(channels,np.int32),'silu_lut_q12':np.arange(16385,dtype=np.int32),'dt_bias_q12':np.zeros(2,np.int32),'dt_lut_q20':np.full((2,16385),1<<20,np.int32),'alpha_lut_q31':np.full((2,16385),1<<30,np.uint32),'skip_q20':np.zeros(2,np.int32)}
+        contract={'bits':16,'heads':2,'dim':2,'n':3,'compiled_manifest_sha256':'tiny','policy':'guard_rescale'}
+        state=np.zeros((2,2,3),np.int16);units=np.zeros(2,np.int16);history=np.zeros((channels,4),np.int32)
+        def project(x,c,s,o):
+            p=np.full((1,16),(4<<12)+int(x[0,0]),np.int32);return p,{'projected_q12':p}
+        def consumer_ok(*args):return {'next_norm_q12':np.array([[1,2]],np.int32)}
+        def consumer_bad(*args):raise OverflowError('injected final nextnorm guard')
+        first=resume.complete_token(state,units,history,0,0,np.array([[0,0]],np.int32),np.zeros((1,2),np.int32),const,spec,16,'guard_rescale',contract,project_fn=project,consumer_fn=consumer_ok)
+        self.assertIsNone(first['rejection']);self.assertTrue(first['tx']['branch_published']);self.assertTrue(np.any(first['history']))
+        args=(first['state'],first['units'],first['history'],first['epoch'],first['position'],np.array([[1,0]],np.int32),np.zeros((1,2),np.int32),const,spec,16,'guard_rescale',contract)
+        saved=[a.copy() for a in args[:3]];failed=resume.complete_token(*args,project_fn=project,consumer_fn=consumer_bad)
+        self.assertEqual(failed['rejection']['reason'],'consumer_guard');self.assertEqual(failed['tx']['after'],failed['tx']['before']);self.assertFalse(failed['tx']['branch_published'])
+        self.assertTrue(failed['tx']['private_R_transactions'][0]['committed'])
+        for original,old in zip(args[:3],saved):np.testing.assert_array_equal(original,old)
+        recovered=resume.complete_token(*args,project_fn=project,consumer_fn=consumer_ok);baseline=resume.complete_token(*args,project_fn=project,consumer_fn=consumer_ok)
+        for k in ('state','units','history'):np.testing.assert_array_equal(recovered[k],baseline[k])
+        self.assertEqual(recovered['tx']['after'],baseline['tx']['after']);self.assertEqual(recovered['position'],2)
 if __name__=='__main__':unittest.main()
+
 

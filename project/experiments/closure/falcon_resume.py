@@ -54,6 +54,35 @@ def consumers(raw,gate,x,attention,const,spec,ops,counts):
     joined=fi.cast_i32(fi.checked_add(fi.checked_add(x,mamba,ops),attn,ops));trace['join_q12']=joined;trace['next_norm_q12']=fi.rmsnorm(joined,const['next_gamma_q20'],spec['epsilon_q24'],ops)
     return trace
 
+
+def complete_token(state,units,history,epoch,position,x,attention,const,spec,bits,policy,contract,*,project_fn=project_row,consumer_fn=consumers):
+    """One full branch transaction. Old published arrays are never mutated."""
+    before=complete_checkpoint(state,units,history,epoch,position,contract);ops=fi.Ops();counts={};tr={}
+    tx={'token':position,'before':before,'private_R_scope':'R local commits are private until branch_published true below','private_R_transactions':[],'private_R_rescale_events':[],'branch_published':False}
+    def rejected(reason,detail):
+        tx['after']=complete_checkpoint(state,units,history,epoch,position,contract)
+        if tx['after']!=before:raise AssertionError('failed branch changed committed state/conv/units')
+        return {'state':state,'units':units,'history':history,'epoch':epoch,'position':position,'trace':{},'tx':tx,'ops':ops.values,'counts':counts,'published_saturations':0,'rejection':{'token':position,'reason':reason,'detail':detail}}
+    try:
+        p,tr=project_fn(x,const,spec,ops)
+        coeff=fi.coefficients(p,const,spec,ops,initial_history=history)
+        counts.update(coeff['counts'])
+    except (OverflowError,ValueError) as exc:return rejected('input_or_conv_guard',str(exc))
+    r_contract={'bits':bits,'policy':policy,'heads':spec['heads'],'dim':spec['head_dim'],'n':spec['state_size'],'injection':'dt20*B12_RNE12_then_x12_RNE(32+state_exp)','maximum_retries':8}
+    resume={'state':state,'units':units,'epoch':epoch,'position':position,'checkpoint':fi.checkpoint(state,units,epoch,position,r_contract)}
+    scan=fi.scan(coeff,units,const['skip_q20'],bits,policy,ops,chunk=0,resume=resume)
+    ops.add('continuous_conv_trial_read_bytes',history.nbytes);ops.add('continuous_conv_trial_write_bytes',history.nbytes);ops.add('resume_state_read_bytes',state.nbytes);ops.add('resume_state_write_bytes',state.nbytes)
+    tx['private_R_transactions']=scan['transactions'];tx['private_R_rescale_events']=scan['rescale_events']
+    if scan['committed']!=1:return rejected('private_R_rejected',scan['rejection'])
+    try:downstream=consumer_fn(scan['output_q12'],coeff['gate_q12'],x,attention,const,spec,ops,counts)
+    except (OverflowError,ValueError) as exc:return rejected('consumer_guard',str(exc))
+    candidate_state=scan['final_state'];candidate_units=scan['units_trace'][-1].astype(np.int16);candidate_history=coeff['conv_history_final_q12'];candidate_epoch=scan['epoch']
+    tr.update(downstream);tr['scan_q12']=scan['output_q12']
+    for k,v in coeff.items():
+        if k not in ('counts','conv_history_final_q12'):tr[k]=v
+    tx['branch_published']=True;tx['after']=complete_checkpoint(candidate_state,candidate_units,candidate_history,candidate_epoch,position+1,contract)
+    return {'state':candidate_state,'units':candidate_units,'history':candidate_history,'epoch':candidate_epoch,'position':position+1,'trace':tr,'tx':tx,'ops':ops.values,'counts':counts,'published_saturations':scan['saturations'],'rejection':None}
+
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
     for k in ('compiled','baseline','binding','out'):ap.add_argument('--'+k,required=True)
@@ -73,33 +102,17 @@ def main():
     if a.schedule=='chunk16':boundaries.update(range(16,73,16))
     if a.schedule=='prefill64decode1':boundaries.update(range(64,73))
     for ti in range(72):
-        before=complete_checkpoint(state,units,history,epoch,position,contract);private_ops=fi.Ops()
-        p,tr=project_row(x[ti:ti+1],const,spec,private_ops)
-        # Full conv history is a private candidate. Nothing is published until
-        # R state AND every consumer through nextnorm have succeeded.
-        coeff=fi.coefficients(p,const,spec,private_ops,initial_history=history)
-        for k,v in coeff['counts'].items():counts[k]=counts.get(k,0)+v
-        r_contract={'bits':bit,'policy':policy,'heads':spec['heads'],'dim':spec['head_dim'],'n':spec['state_size'],'injection':'dt20*B12_RNE12_then_x12_RNE(32+state_exp)','maximum_retries':8}
-        resume={'state':state,'units':units,'epoch':epoch,'position':position,'checkpoint':fi.checkpoint(state,units,epoch,position,r_contract)}
-        scan=fi.scan(coeff,units,const['skip_q20'],bit,policy,private_ops,chunk=0,resume=resume)
-        private_ops.add('continuous_conv_trial_read_bytes',history.nbytes);private_ops.add('continuous_conv_trial_write_bytes',history.nbytes)
-        private_ops.add('resume_state_read_bytes',state.nbytes);private_ops.add('resume_state_write_bytes',state.nbytes)
-        tx={'token':ti,'before':before,'private_R_scope':'R local commits are private until branch_published true below','private_R_transactions':scan['transactions'],'private_R_rescale_events':scan['rescale_events'],'branch_published':False}
-        if scan['committed']!=1:
-            rejection={'token':ti,'reason':'private_R_rejected','detail':scan['rejection']};tx['after']=before;transactions.append(tx);ops.merge(private_ops.values);break
-        try:
-            downstream=consumers(scan['output_q12'],coeff['gate_q12'],x[ti:ti+1],attention[ti:ti+1],const,spec,private_ops,counts)
-        except (OverflowError,ValueError) as exc:
-            rejection={'token':ti,'reason':'consumer_guard','detail':str(exc)};tx['after']=before;transactions.append(tx);ops.merge(private_ops.values);break
-        state=scan['final_state'];units=scan['units_trace'][-1].astype(np.int16);history=coeff['conv_history_final_q12'];epoch=scan['epoch'];position+=1;published_sat+=scan['saturations']
-        units_trace.append(units.copy());states_sha.append(fi.array_sha(state));tr.update(downstream);tr['scan_q12']=scan['output_q12']
-        for k,v in coeff.items():
-            if k not in ('counts','conv_history_final_q12'):tr[k]=v
-        for k,v in tr.items():pieces.setdefault(k,[]).append(v)
-        tx['branch_published']=True;tx['after']=complete_checkpoint(state,units,history,epoch,position,contract);transactions.append(tx);ops.merge(private_ops.values)
+        result=complete_token(state,units,history,epoch,position,x[ti:ti+1],attention[ti:ti+1],const,spec,bit,policy,contract)
+        transactions.append(result['tx']);ops.merge(result['ops'])
+        for k,v in result['counts'].items():counts[k]=counts.get(k,0)+v
+        if result['rejection'] is not None:
+            rejection=result['rejection'];break
+        state=result['state'];units=result['units'];history=result['history'];epoch=result['epoch'];position=result['position'];published_sat+=result['published_saturations']
+        units_trace.append(units.copy());states_sha.append(fi.array_sha(state))
+        for k,v in result['trace'].items():pieces.setdefault(k,[]).append(v)
         ops.add('atomic_branch_descriptor_bytes',64+units.nbytes);ops.add('conv_publish_bytes',history.nbytes)
         if position in boundaries:
-            desc=tx['after'];checkpoints.append(desc);checkpoint_arrays['at%d.state'%position]=state.copy();checkpoint_arrays['at%d.units'%position]=units.copy();checkpoint_arrays['at%d.conv'%position]=history.copy()
+            desc=result['tx']['after'];checkpoints.append(desc);checkpoint_arrays['at%d.state'%position]=state.copy();checkpoint_arrays['at%d.units'%position]=units.copy();checkpoint_arrays['at%d.conv'%position]=history.copy()
             state,units,history,epoch=restore(desc,state,units,history,position,contract)
             # Serialization SHA/copies are qualification observers, not claimed
             # mandatory product cycles. Persistent state inventory is mandatory.
