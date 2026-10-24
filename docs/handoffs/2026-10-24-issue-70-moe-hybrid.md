@@ -9,3 +9,5 @@
 实际验证：check_project、80边界测试、git diff --check通过；服务器32dot/32RQ/4merge、128profile-layer路由归因及23Falcon原生门、完整FP64 head/2304投影dot/编码、24COPY配置双轮和真实重写SHA负例均独立接收。Granite仍为FAIL/PARTIAL；Falcon S16/S32各4sat、FP64更新桥；COPY-only非RTL/PPA或E2E。原报告差错见FALCON_ERRATA.md，修正源码未重写历史NPZ。
 
 恢复第一步：以Liangruizhi认证重新读最新AGENTS/Skill、Issue70/PR71及成员55/63进展，核review/merge和数据SHA，再决定新Issue范围。真正后续为Granite高精度路由合同/参数因式分解驻留、Falcon因果range与完整W8消费者链、真实端点/布局资格；不自动扩大模型或启动其他机器。处理人Liangruizhi，审查人待指定。登记management-hub PR5 pending；无board.json/Projects能力，看板unverified/同步pending需管理员确认配置/权限；不能称远端看板已完成。PR未审查合并不标done。
+
+远端读回：PR71已ready，Issue70标签in_review，仍open/unmerged；f7f058c报告/索引远端字节与本地相同，Project structure两次CI成功，记录work/Liangruizhi/70/github-readback-f7f058c.json。为清理本任务冗余中转，服务器权重全SHA复核后移除本机临时四个safetensors共12,896,468,256B；官方元数据/回执/源码/精选和服务器权重/结果保留，未删除既有Qwen/Llama或用户其他任务数据。
