@@ -18,7 +18,7 @@
 
 服务还计：digit提取18/26 byteops；每term常数shift64/128构造14/22 byteops（包括byte填充/符号、交界SHL/SHR/OR和固定控制上界），以及所有digit/16bit积/宽partial/累计product真实bank/BUS流。首term直接初始化product，无额外add；其后24/44次完整carry相加。32/64累加digit/Q31的实际功能由独立wide probe和三g数学接收约束，费用为明确候选微实现，不宣称RTL速度。
 
-最终RNE64/128另106/170 byteops：abs、byte shift、sticky/half/tie、increment、sign restore、I32 guard和控制各项在RQ_RECIPES内；随后bias add/guard另计。packet/BUS不是这些lane操作的替代。VR8工作输入最大bundle320/576B，借既有2KiB FIFO；未赠另一套宽寄存器。新scratch和所有宽临时都已占bank容量。
+最终RNE64/128另106/182 byteops：abs、byte shift、sticky/half/tie、increment、sign restore、I32 guard和控制各项在RQ_RECIPES内；随后bias add/guard另计。packet/BUS不是这些lane操作的替代。VR8工作输入最大bundle320/576B，借既有2KiB FIFO；未赠另一套宽寄存器。新scratch和所有宽临时都已占bank容量。
 
 ## CLI/证据
 
@@ -29,3 +29,5 @@ python -B project/experiments/moe_grouped/grouped_service.py --base-service OLD_
 binding需commit、grouped_service_sha256、closure_service_sha256（只读helper依赖）。manifest/summary/splice/witness冻结源码、所有源产物/receipt SHA、实际分组函数、完整库存和费用。witness沿用旧压缩loop/affine地址schema，新增engine_access叶含单operand/bytes/offset、BANK/BUS资源、FIFO和读写计数；独立接收从bytes重新推导。splice记录旧event身份/canonical SHA和唯一删除cut，不准拿旧whole-row suffix数值冒充新g数值。
 
 所有事件保守串行，prefill也无batch；不称优化调度、真实时钟或PPA。新wide数据准备更详细，绝不能直接将新whole-row绝对slots与旧简化kernel当硬件进步比较；有效比较只在本批同g、同配方、同资源、同数值轨迹的两个驻留政策之间。label应逐byte零差。
+
+S32 partial→S64符号扩展按11 byteops（8字节复制/填符号+符号提取1+控制2）；四字节partial动态左移到I64按18 byteops，不套用只含两字节S8乘积的常数shift64=14。I128到I32 guard扫描12个高字节，按32而非I64 guard20计。

@@ -13,13 +13,13 @@ base=importlib.util.module_from_spec(_spec);_spec.loader.exec_module(base)
 
 # Byte-ALU schedule assumptions, explicitly separated from inherited primitives.
 WIDE_COST={'digit_byte_op':1,'wide_s8_product':1,'constant_shift64':14,'constant_shift128':22,
-           'wide_add64':10,'wide_add128':18,'rq_rne64_complete':106,'rq_rne128_complete':170,
-           'signextend_i32_i64':8,'alignment_shift64':14}
+           'wide_add64':10,'wide_add128':18,'rq_rne64_complete':106,'rq_rne128_complete':182,
+           'signextend_i32_i64':11,'alignment_shift64':18}
 RQ_RECIPES={
  '64':{'operand_digits':[5,5],'digit_extraction_byte_ops':18,'products':25,'constant_shift_byte_ops':14,'wide_adds':24,'wide_add_byte_ops':10,'RNE_byte_ops':106,
        'RNE_breakdown':{'abs':10,'byte_shift':24,'sticky':16,'half_tie':4,'increment':10,'sign_restore':10,'i32_guard':20,'control':12}},
- '128':{'operand_digits':[9,5],'digit_extraction_byte_ops':26,'products':45,'constant_shift_byte_ops':22,'wide_adds':44,'wide_add_byte_ops':18,'RNE_byte_ops':170,
-        'RNE_breakdown':{'abs':18,'byte_shift':48,'sticky':32,'half_tie':4,'increment':18,'sign_restore':18,'i32_guard':20,'control':12}}}
+ '128':{'operand_digits':[9,5],'digit_extraction_byte_ops':26,'products':45,'constant_shift_byte_ops':22,'wide_adds':44,'wide_add_byte_ops':18,'RNE_byte_ops':182,
+        'RNE_breakdown':{'abs':18,'byte_shift':48,'sticky':32,'half_tie':4,'increment':18,'sign_restore':18,'i32_guard':32,'control':12}}}
 REMOVED={'out.A8_absmax','out.A8_minimal_shift','out.A8_encode','out.matrix_fullK_RQ'}
 
 def sha(path):return base.sha(path)
