@@ -129,6 +129,7 @@ def fixture(root):
                          'numeric_row_hashes_sha256': C.canonical(rows), 'integer_profile_sha256': C.canonical(C.integer_profile(c)),
                          'inventory_sha256': C.canonical(s['inventory']), 'allocations_sha256': C.canonical(a), 'peak_bytes': high,
                          'phase_lifetime_checked': True, 'fullH_s64_merge_bytes': 12288, 'source': receiver,
+                         'packet_retiming_checked': True, 'packet_retiming_policy': 'serial_one_packet_source_BUS_destination_RMW', 'max_FIFO_bytes': 2048,
                          'full8S32_V_rejection': {'bytes': 49152, 'capacity': 16384, 'status': 'REJECTED'},
                          'negative_status': 'PASS_ACTUAL_SHA_REWRITE', 'negative_tests': [{'name': n, 'status': 'REJECTED_AFTER_SHA_REWRITE'} for n in sorted(C.NEGATIVES)]}
                     for field in ('numeric_manifest', 'compiled_manifest', 'packed_manifest', 'calibration_manifest', 'numeric_receipt', 'packed_receipt', 'calibration_receipt'):
@@ -183,6 +184,11 @@ class CompareServiceTests(unittest.TestCase):
     def test_full8S32_counterexample_must_remain_rejected(self):
         rp = self.root/'audit-service-l0-t128-near_m-split01/receipt.json'; r = C.load(rp); r['full8S32_V_rejection']['status'] = 'PASS'; write(rp, r)
         with self.assertRaisesRegex(ValueError, 'capacity negative'): C.compare(self.root)
+
+    def test_old_same_counts_without_packet_proof_cannot_rank(self):
+        rp = self.root/'audit-service-l0-t128-near_m-split01/receipt.json'; r = C.load(rp)
+        r['packet_retiming_checked'] = False; write(rp, r)
+        with self.assertRaisesRegex(ValueError, 'per-packet FIFO/retiming'): C.compare(self.root)
 
     def test_missing_formal_negative_rejects(self):
         rp = self.root/'audit-service-l0-t128-near_m-split01/receipt.json'; r = C.load(rp); r['negative_tests'].pop(); write(rp, r)

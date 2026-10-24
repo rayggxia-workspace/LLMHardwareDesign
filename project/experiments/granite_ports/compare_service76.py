@@ -33,7 +33,8 @@ LIMITS = [
     'Scalar carry dependencies never divide by8; frame initialization, result extraction, byte-store and caller IO remain in service counts.',
     'Same-function placement and window comparisons keep numeric trajectory/precision/resources fixed; labels are byte-identical controls.',
     'Complete1536 S64 merge may be feasible by phase reuse and streaming O16 output; the old49152B full8xS32-in-V proposal remains capacity rejected.',
-    'Byte/micro traffic is already included in total wire; derived subsets must not be added again.'
+    'Byte/micro traffic is already included in total wire; derived subsets must not be added again.',
+    'Unchanged aggregate counts do not prove FIFO legality: formal PASS requires independently checked per-packet source/BUS/destination/RMW retiming and resource envelopes.'
 ]
 
 
@@ -157,6 +158,9 @@ def read_case(root, layer, tile, placement, label, suffix):
     need({'summary.json', 'row_hashes.json', 'witness.jsonl.gz'} <= set(artifacts), 'complete service artifacts')
     r = load(receipt_path); s = load(folder/'summary.json'); t = s['task']; cfg = s['config']; c = s['counts']
     need(r['schema'] == 'granite-service-independent76-v1' and r['status'] == 'PASS_FINITE_SERVICE', 'independent finite-service PASS '+name)
+    need(r['packet_retiming_checked'] is True
+         and r['packet_retiming_policy'] == 'serial_one_packet_source_BUS_destination_RMW'
+         and integer(r['max_FIFO_bytes'], 'actual retimed FIFO peak') <= 2048, 'formal per-packet FIFO/retiming qualification')
     need(r['producer_manifest'] == desc(folder/'manifest.json') and r['artifacts'] == artifacts, 'exact independent receipt/artifact binding')
     need(s['schema'] == 'granite-service76-v1' and t['layer'] == layer and cfg['tile'] == tile
          and cfg['placement'] == placement and cfg['label'] == label, 'declared condition/path scope')
@@ -287,7 +291,9 @@ def metrics(case):
             'non_micro_wire_bytes': c['wire_bytes']-48*frame,
             'micro_bank_beats_subset_including_RMW': c['micro_frame_read_bytes']+2*c['micro_frame_write_bytes'],
             'micro_service_slots_subset_ALU_candidate_dispatch_and_IO': c['micro_alu_cycles']+c['micro_dispatch_cycles']+4*c['micro_frame_read_bytes']+5*c['micro_frame_write_bytes'],
-            'full_integer_stages': len(case['row_hashes']['stages']), 'counts': c, 'capacity': s['capacity'],
+            'full_integer_stages': len(case['row_hashes']['stages']),
+            'packet_retiming_policy': r['packet_retiming_policy'], 'actual_FIFO_peak_bytes': r['max_FIFO_bytes'],
+            'counts': c, 'capacity': s['capacity'],
             'allocation_proof': case['allocation'], 'integer_profile_sha256': r['integer_profile_sha256'],
             'numeric_trajectory_sha256': s['task']['numeric_trajectory_sha256'],
             'numeric_row_hashes_sha256': r['numeric_row_hashes_sha256']}
