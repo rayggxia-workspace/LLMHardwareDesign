@@ -124,3 +124,15 @@ python -B -m unittest discover -s project/analysis/llm_resources -v
 ```
 
 `--output <新文件.json>`可保存报告，拒绝覆盖。非法配置返回2；合法配置即使有预算缺口也返回0，并在报告列出缺口和未确定项。CI的“LLM resource accounting”仅测试解析记账/CLI；不证明完整图映射、数值质量或物理可行性。
+
+## Block v2 两图离线接续（offline/pending）
+
+[字段对照](BLOCK_V2_FIELD_MAPPING.md)与[固定两图](../project/analysis/block_v2_offline/README.md)基于独立worktree中的旧估算器基线，仅读指定v2 commit的合同文档。新目录`project/analysis/block_v2_offline/`提供独立input/expected、标准库重放/guard/提交协议和unittest；没有覆盖旧Block v1快照或实现Issue #63通用适配器。复核顺序：
+
+```powershell
+python -B scripts/check_project.py
+python -B -m unittest discover -s project/analysis/block_v2_offline -v
+python -B -m unittest discover -s project/analysis/llm_resources -v
+```
+
+两个`replay.py`命令及全新输出目录的验证回执入口见新目录README。只证明合成数学/协议/指定通信与静态保留容量，不证明真实模型、全码域宽算术、RTL原子性或物理/PPA资格。本批本地成果与远端commit绑定明确分开，交接见[本次pending记录](handoffs/2026-10-24-pending-block-v2-offline-prep.md)。

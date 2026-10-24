@@ -12,3 +12,12 @@
 - 并行任务：[PR26/#25](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/26)为功能benchmark；[PR45/#42](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/45)为控制锥检查；[PR46/#43](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/46)为资源调研。本PR仅增加#48交付；并行个人进度文件合并时保留各任务记录，不覆盖其他分支。
 - 协作回执：rayggxia-project-collab1.0.0；project_id=llm-hardware-design，认证身份huangpingyang04-lgtm。登记沿用[management-hub PR5](https://github.com/rayggxia-workspace/management-hub/pull/5) pending；本轮无模型/训练/GPU/远程/EDA作业、无软件安装或权重下载。
 - 看板交接：仓库无board.json、当前工具无Projects字段读写，实际条目unverified/同步pending，不推断账号权限。具能力/权限管理员待指定：确认组织看板#1受众/字段，复用或加入Issue48，设置Project ID=llm-hardware-design、提交后Status=In review，核对assignee并读回条目ID/状态/时间；Priority/日期待指定。恢复先读Issue48、PR及本文件。
+
+## 2026-10-25 Block v2 字段与合成图 Draft PR
+
+- 用户明确授权将此前离线成果总结并提交Draft PR，并指定使用`huangpingyang04-lgtm`成员身份；Git凭据账户列表、Git作者配置及浏览器GitHub用户菜单均与之匹配。原10月24日离线禁push/PR为历史范围，当前只开放本批发布，服务器/EDA/模型/合并仍不执行。
+- 分支`codex/block-v2-offline-prep`，基线`b06d85a801a87c07f9745ccae6950dc7e4cbd0d2`；远端读取确认PR50基础分支`task/48-int8-resource-estimator`仍指向该基线，main仍为0cc36f3。拟以该基础分支为PR base，避免混入PR50既有17文件改动；不合并或重写依赖分支。
+- 成果：[字段对照](../../docs/BLOCK_V2_FIELD_MAPPING.md)、[两图输入/独立expected/标准库验证器](../../project/analysis/block_v2_offline/README.md)。图1完整归约/RQ/残差，图2guard/shadow/原子提交/失败重试/保存恢复，含通信与proposal/metadata存储账。固定v2源88e9c4b不替换，旧估算器/快照不修改。
+- 离线证据run01/run02保留原字节和当时未提交状态；本次发布前重跑见后续新增回执。32新测试、31旧回归先前实际通过；不据此宣称真实模型、全整数硬件或PPA通过。
+- 本批没有新Issue；Refs [#63](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/63)只作为接续，未关闭/接管通用适配器。Draft PR链接与提交身份以[本批交接发布追加节](../../docs/handoffs/2026-10-24-pending-block-v2-offline-prep.md)为准；待指定审查人，未合并/未done。
+- 登记沿用management-hub PR5 pending，最新登记事实未重读；无board.json，实际Projects条目unverified、同步pending，管理员待指定。GitHub连接器仍Unknown tool，发布使用已核身份的Git HTTPS及浏览器回退；未修改全局账号/作者设置或其他成员已有进度。

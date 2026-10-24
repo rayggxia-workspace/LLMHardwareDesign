@@ -1,0 +1,189 @@
+{
+  "contract_version": "block-v2-offline/1",
+  "source_commit": "88e9c4b2c3bb1b93b7155ba87ad11853e6c15512",
+  "graph_id": "graph2_state_commit",
+  "nodes": [
+    {
+      "id": "s_read",
+      "block": "S",
+      "op": "READ_INPUT",
+      "depends_on": []
+    },
+    {
+      "id": "r_proposal",
+      "block": "R",
+      "op": "ADD32",
+      "depends_on": [
+        "s_read",
+        "previous_commit"
+      ]
+    },
+    {
+      "id": "r_guard",
+      "block": "R",
+      "op": "EXACT_INT16_GUARD",
+      "depends_on": [
+        "r_proposal"
+      ]
+    },
+    {
+      "id": "r_shadow",
+      "block": "R",
+      "op": "PRIVATE_SHADOW16",
+      "depends_on": [
+        "r_guard"
+      ]
+    },
+    {
+      "id": "r_commit",
+      "block": "R",
+      "op": "ATOMIC_COMMIT",
+      "depends_on": [
+        "r_shadow"
+      ]
+    },
+    {
+      "id": "s_write",
+      "block": "S",
+      "op": "READ_ONLY_SNAPSHOT",
+      "depends_on": [
+        "r_commit"
+      ]
+    }
+  ],
+  "edges": [
+    [
+      "s_read",
+      "r_proposal"
+    ],
+    [
+      "r_proposal",
+      "r_guard"
+    ],
+    [
+      "r_guard",
+      "r_shadow"
+    ],
+    [
+      "r_shadow",
+      "r_commit"
+    ],
+    [
+      "r_commit",
+      "s_write"
+    ],
+    [
+      "r_commit",
+      "next_step.r_proposal"
+    ]
+  ],
+  "link": {
+    "bits": 128,
+    "header_bytes": 64,
+    "payload_alignment_bytes": 64,
+    "max_packet_bytes": 2048,
+    "hops": 1,
+    "metadata_in_header": true
+  },
+  "initial_residency": {
+    "R": [
+      "s0"
+    ],
+    "S": [
+      "s0_read_only_copy",
+      "u1",
+      "u2",
+      "u3"
+    ],
+    "runtime_setup_charged": false
+  },
+  "resources": {
+    "instances": {
+      "R": 1,
+      "S": 1
+    },
+    "private_bytes": {
+      "R": 52,
+      "S": 44
+    },
+    "endpoint_fifo_bytes": 128,
+    "max_inflight_messages": 1,
+    "clock_hz": null,
+    "service_rate": null
+  },
+  "protocol": {
+    "owner": "R",
+    "snapshot_owner": "S",
+    "unit": 1,
+    "epoch": 0,
+    "initial_version": 0,
+    "proposal_dtype": "INT32",
+    "commit": "atomic",
+    "overflow": "reject",
+    "s_port": "1RW",
+    "chunk_policy": "preserve",
+    "failure_policy": "abort_retry_same_step"
+  },
+  "data": {
+    "s0": {
+      "dtype": "INT16",
+      "logical_bits": 16,
+      "storage_bits": 16,
+      "signedness": "signed",
+      "unit": 1,
+      "shape": [
+        2
+      ],
+      "layout": "state_lane",
+      "values": [
+        1,
+        -1
+      ]
+    },
+    "input_format": {
+      "dtype": "INT16",
+      "logical_bits": 16,
+      "storage_bits": 16,
+      "signedness": "signed",
+      "shape": [
+        2
+      ],
+      "layout": "state_lane"
+    },
+    "steps": [
+      {
+        "step": 1,
+        "owner": "R",
+        "unit": 1,
+        "epoch": 0,
+        "expected_version": 0,
+        "values": [
+          2,
+          1
+        ]
+      },
+      {
+        "step": 2,
+        "owner": "R",
+        "unit": 1,
+        "epoch": 0,
+        "expected_version": 1,
+        "values": [
+          -1,
+          4
+        ]
+      },
+      {
+        "step": 3,
+        "owner": "R",
+        "unit": 1,
+        "epoch": 0,
+        "expected_version": 2,
+        "values": [
+          3,
+          -2
+        ]
+      }
+    ]
+  }
+}
