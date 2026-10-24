@@ -1,7 +1,11 @@
 """Finite-bank and independent COPY calendar boundary tests, no model execution."""
 import importlib.util
+import json
 from pathlib import Path
+from types import SimpleNamespace
+import tempfile
 import unittest
+import numpy as np
 
 spec=importlib.util.spec_from_file_location('transport',Path(__file__).with_name('transport.py'))
 t=importlib.util.module_from_spec(spec);spec.loader.exec_module(t)
@@ -85,6 +89,47 @@ class TransportTests(unittest.TestCase):
         nodes[1]['start']=nodes[0]['start'];nodes[1]['end']=nodes[1]['start']+nodes[1]['duration']
         with self.assertRaises(AssertionError):
             verify(nodes,t.capacities())
+
+    def test_end_to_end_source_schema_and_all_24_copy_profiles(self):
+        # Synthetic source-bound IO fixture, not model/numerical evidence.
+        temp_root=Path('D:/Projects/Codex/moe-hybrid-20261024-1419/transport-tests')
+        temp_root.mkdir(parents=True,exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=temp_root) as tmp:
+            base=Path(tmp); gran=base/'granite'; falcon=base/'falcon'
+            gran.mkdir();falcon.mkdir()
+            t.save(gran/'metrics.json',{'cases':[{'activation':'dynamic_row','route':'route_recomputed',
+                'logical_payload_per_token':{'expert_return_S32':49152}}]})
+            def art(folder,name):
+                return {'path':name,'sha256':t.sha(folder/name),'bytes':(folder/name).stat().st_size}
+            t.save(gran/'manifest.json',{'kind':'granite_numeric','status':'EXECUTED',
+                'artifacts':[art(gran,'metrics.json')]})
+            cfg={'mamba_d_state':256,'mamba_d_head':128,'mamba_n_heads':32,'mamba_d_ssm':4096,
+                 'hidden_size':2560,'num_hidden_layers':32}
+            t.save(falcon/'config.json',cfg)
+            t.save(falcon/'report.json',{'gated_norm':{'elements':4096},'inventory':[]})
+            arrays={'full.final.ssm':np.zeros((1,32,128,256),dtype=np.float32),
+                    'full.final.conv':np.zeros((1,4608,4),dtype=np.float32),
+                    'full.final.kv_key':np.zeros((1,2,72,128),dtype=np.float32),
+                    'full.final.kv_value':np.zeros((1,2,72,128),dtype=np.float32),
+                    'evaluation.attention':np.zeros((72,2560),dtype=np.float32),
+                    'evaluation.mamba':np.zeros((72,2560),dtype=np.float32),
+                    'evaluation.raw_scan':np.zeros((72,4096),dtype=np.float32),
+                    'weight.gated_norm_gamma':np.ones(4096,dtype=np.float32)}
+            np.savez_compressed(falcon/'capture.npz',**arrays)
+            t.save(falcon/'manifest.json',{'schema':'falcon-h1-bounded-v1','status':'EXECUTED',
+                'artifacts':[art(falcon,k) for k in ('config.json','report.json','capture.npz')]})
+            binding=base/'binding.json'
+            t.save(binding,{'commit':'synthetic-unit-test-only','transport_sha256':t.sha(t.__file__),
+                            'interval_checker_sha256':t.sha(checker_path)})
+            t.run(SimpleNamespace(granite=gran,falcon=falcon,binding=binding,out=base/'result'))
+            result=json.loads((base/'result'/'metrics.json').read_text())
+            self.assertEqual(len(result['copy_calendars']),24)
+            backing=[c for c in result['capacity_certificates'] if c['label'].startswith('Falcon all-layer')]
+            self.assertEqual([c['status'] for c in backing],['REJECT_CAPACITY','FITS_CAPACITY_ONLY'])
+            # A source mutation must be rejected before creating a second result.
+            (gran/'metrics.json').write_text('{}')
+            with self.assertRaises(ValueError):
+                t.run(SimpleNamespace(granite=gran,falcon=falcon,binding=binding,out=base/'bad'))
 
 
 if __name__=='__main__':
