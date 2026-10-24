@@ -5,7 +5,7 @@
 ## 格式与算法
 
 - 输入、权重分别对称S8/S16，范围[-127,127]、[-32767,32767]，RNE后显式饱和，零点0。权重per-output，激活是独立calibration.full的per-layer固定最大值，或当前row最大值。scale为2的整数幂，INT16 exponent，epoch0为此不可变payload格式，无未来数据/评价误差调参。
-- 完整K1536 dot为INT64软件oracle。S8最坏24,774,144可INT32；S16最坏1,649,166,534,144需42个带符号位(41位幅度)，不能声称INT32。
+- 完整K1536 dot为INT64软件oracle。S8最坏24,774,144可INT32；S16最坏1,649,166,779,904需42个带符号位(41位幅度)，不能声称INT32。
 - S16经符号×绝对值base128三digit表示，每digit在[-127,127]。3×3=9份全K S8 dot，每份INT32，然后7(i+j)位左移、宽合并。每个profile冻结first/last/最小FP64 margin三类行有实际9份dot见证，与软件宽dot逐位核对；其余dot仍明确为INT64 oracle，不称整个矩阵真实S8 lowering执行。
 - per-output乘积unit不同，先对齐到该row最细的乘积power2 unit，再以整数实际比较全部40logits、重选top8。只有整数分数相等时expert ID升序。共同logit最多S64候选，溢出拒绝，未偷偷以FP比较。
 - top8消费者：delta×log2(e)的Q30常数1549082005，RNE到base2 Q7，范围[-16,0]，2049项uint32 Q24 exp2 LUT，随后精确整数除法RNE生成uint16 Q0.15，独立舍入的和差分配给第一名，使总和32768。LUT源用离线FP64 compiler生成；运行时核不调用浮点exp/div。LUT8,196B，必须和输入/结果/控制一起占库存，不能假设免费。

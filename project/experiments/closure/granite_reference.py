@@ -107,6 +107,34 @@ def high_precision_router(module, hidden_states):
     return ids, weights, logits
 
 
+def explicit_eager_experts(module, hidden_states, top_k_index, top_k_weights):
+    """Source-equivalent direct linear expert math, no grouped-mm dtype fallback.
+
+    Preserve the installed Python expert forward's expert/within-expert ordering.
+    FP64 stays FP64. Native32-eager separately checks same-input original backend.
+    """
+    import torch
+    import torch.nn.functional as F
+    result=torch.zeros_like(hidden_states)
+    mask=F.one_hot(top_k_index,num_classes=module.num_experts+1).permute(2,1,0)
+    hit=torch.greater(mask.sum(dim=(-1,-2)),0).nonzero()
+    for idx in hit:
+        idx=idx[0]
+        if idx==module.num_experts:continue
+        rank,token=torch.where(mask[idx])
+        gate,up=F.linear(hidden_states[token],module.gate_up_proj[idx]).chunk(2,dim=-1)
+        current=F.linear(module.act_fn(gate)*up,module.down_proj[idx])
+        current=current*top_k_weights[token,rank,None]
+        result.index_add_(0,token,current.to(result.dtype))
+    if hasattr(module,'_issue72_original_forward') and not hasattr(module,'_issue72_backend_control'):
+        native=module._issue72_original_forward(hidden_states,top_k_index,top_k_weights)
+        module._issue72_backend_control={
+            'metric':metric(result.detach().cpu().numpy(),native.detach().cpu().numpy()),
+            'native':native.detach().cpu().numpy().copy(),
+            'eager':result.detach().cpu().numpy().copy()}
+    return result
+
+
 def run(args):
     import torch
     import transformers
@@ -163,7 +191,7 @@ def run(args):
         (args.out/'granitemoe-implementation.py').write_bytes(impl.read_bytes())
         manifest['implementation'] = {'sha256': sha(impl), 'source_path': str(impl)}
         manifest['precision'] = {'parameter_dtype': str(dtype),
-            'router': 'native FP32 linear then float32 logits/softmax; native topk' if args.precision == 'native32'
+            'router': 'native FP32 linear then float32 logits/softmax; native topk' if args.precision in ('native32','native32_eager')
                 else 'FP64 linear/logits/softmax; stable descending exact-score sort; weights returned in hidden dtype',
             'framework_internal_casts_unchanged': {
                 'GraniteMoeRMSNorm': 'input/variance/rsqrt FP32, return input dtype then weight multiply',
@@ -174,8 +202,19 @@ def run(args):
         for i, layer in enumerate(layers):
             router = layer.block_sparse_moe.router
             arrays['router_weight.'+str(i)] = router.weight.detach().cpu().numpy().copy()
-            if args.precision != 'native32':
+            if args.precision in ('router64','model64'):
                 router.forward = types.MethodType(high_precision_router, router)
+        if args.precision in ('native32_eager','model64'):
+            for layer in layers:
+                experts=layer.block_sparse_moe.experts
+                if args.precision=='native32_eager':
+                    experts._issue72_original_forward=experts.forward
+                experts.forward=types.MethodType(explicit_eager_experts,experts)
+        manifest['expert_backend']={
+            'implementation':'Issue72 explicit eager linear/SiLU/down/weighted index_add' if args.precision in ('native32_eager','model64') else 'unchanged installed framework dispatcher',
+            'source_basis':'installed GraniteMoeExperts.forward Python body; implementation copy SHA recorded',
+            'reason':'installed grouped_mm rejects Double; no dtype downgrade or environment modification',
+            'control':'native32_eager compares first calibration full call of every layer with original dispatcher on identical current hidden/routes/gates' if args.precision=='native32_eager' else 'separate native32_eager control required; model64 alone cannot isolate backend from precision'}
         cases = {}
         for case in ('calibration', 'evaluation'):
             token_ids = original['cases'][case]['tokens']
@@ -233,7 +272,7 @@ def run(args):
                     arrays[base+key] = np.concatenate(values, axis=0)
                 case_report['runs'][profile] = {'cache_spans': spans(profile),
                     'router_observed_dtypes': router_dtypes,
-                    'exact_tie_rule': 'framework native torch.topk, no forced expert order' if args.precision=='native32'
+                    'exact_tie_rule': 'framework native torch.topk, no forced expert order' if args.precision in ('native32','native32_eager')
                         else 'descending actual FP64 score; exact ties expert index ascending only',
                     'router_summaries': {str(i): routing_summary(arrays[base+str(i)+'.logits'], arrays[base+str(i)+'.ids'])
                         for i in range(32)}}
@@ -254,6 +293,16 @@ def run(args):
                     'passes_unchanged_gate': e['relative_l2']<=GATE['relative_l2_max'] and e['max_abs']<=GATE['max_abs_max'],
                     'total_layer_token_set_changes': sum(r['set_changed_tokens'] for r in records), 'layers': records}
             cases[case] = case_report
+        if args.precision=='native32_eager':
+            controls={}
+            for i,layer in enumerate(layers):
+                control=layer.block_sparse_moe.experts._issue72_backend_control
+                e=control['metric']
+                controls[str(i)]={'error':e,'passes_same_math_control':e['relative_l2']<=2e-5 and e['max_abs']<=2e-3}
+                arrays['backend_control.'+str(i)+'.native']=control['native']
+                arrays['backend_control.'+str(i)+'.eager']=control['eager']
+            manifest['expert_backend']['same_input_controls']=controls
+            manifest['expert_backend']['all_same_math_controls_pass']=all(x['passes_same_math_control'] for x in controls.values())
         qualified = all(c['passes_unchanged_gate'] for x in cases.values() for c in x['comparisons'].values())
         report = {'precision_variant': args.precision, 'unchanged_gate': GATE, 'cases': cases,
             'reference_self_consistency': 'PASS' if qualified else 'FAIL',
@@ -283,7 +332,7 @@ def main():
     p.add_argument('--binding', type=Path, required=True)
     p.add_argument('--out', type=Path, required=True)
     p.add_argument('--threads', type=int, default=8)
-    p.add_argument('--precision', choices=('native32', 'router64', 'model64'), required=True)
+    p.add_argument('--precision', choices=('native32', 'native32_eager', 'router64', 'model64'), required=True)
     run(p.parse_args())
 
 

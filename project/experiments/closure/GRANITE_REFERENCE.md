@@ -17,3 +17,10 @@ router64/model64分别替换precision并使用独立目录与job。binding必须
 验收分叉：native32失败重现而router64通过，支持高精router是短参考候选；router64仍失败而model64通过，说明上游扰动也需考虑；三者都失败则不能把提高router精度当解决。分层route差异及margin用于解释，误差门对每种精度保持原定义。任何通过都不能反向改写native32 FAIL。
 
 后续W8A8/W16A16/选择性宽router严格使用独立cal冻结scale；只在真实冻结router输入上测算术误差与路由变化，不能将固定hidden诊断冒称全模型量化。S16乘法需要base128三digit×三digit共9个S8产品，以及完整K部分和/重组宽累加，额外算术/状态/metadata/端口都入账。
+
+
+## 首轮真实失败与显式backend修复
+
+服务器首轮native32原chunk16失败重现；router64使chunk16过原门但cached64失败，不能认为提高router精度已经解决。model64在安装framework grouped_mm拒绝Double处报错，未产生数值验收。保留该失败和原输出，新source/新目录增加显式eager expert实现：与已记录安装source的Python body保持expert排序、同F.linear→SiLU→down→gate→index_add语义，FP64不降格，不改环境/framework。
+
+model64使用此eager backend，同时增加native32_eager独立variant，原native32 router完全不变，运行同六profile。native32_eager每层首次calibration.full对同一当前hidden/routes/gates额外调用原dispatcher，保存完整native/eager输出及误差见证，原同math门relativeL2≤2e-5且maxabs≤2e-3。此控制检查backend数学，不能让model64单独代表仅精度变化；全模型分块误差照旧单列。新增两个小Torch合成测试核验double不降格和near/exact tie差别；未在本机加载真实权重。

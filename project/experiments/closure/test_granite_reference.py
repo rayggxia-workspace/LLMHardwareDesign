@@ -53,4 +53,37 @@ class ReferenceTests(unittest.TestCase):
         for a,b in (([np.inf],[1.]),([1.],[1.,2.]),([],[])):
             with self.assertRaises(ValueError):g.metric(a,b)
 
+    def test_fp64_experts_stay_double_and_match_direct_sum(self):
+        import torch
+        import torch.nn.functional as F
+        from types import SimpleNamespace
+        wup=torch.arange(2*4*3,dtype=torch.float64).reshape(2,4,3)/100
+        wdown=torch.arange(2*3*2,dtype=torch.float64).reshape(2,3,2)/50
+        x=torch.tensor([[1.,-1.,2.],[2.,1.,-3.]],dtype=torch.float64)
+        ids=torch.tensor([[0,1],[1,0]])
+        gate=torch.tensor([[.25,.75],[.5,.5]],dtype=torch.float64)
+        e=SimpleNamespace(num_experts=2,gate_up_proj=wup,down_proj=wdown,act_fn=F.silu)
+        expected=torch.zeros_like(x)
+        for row in range(2):
+            for rank in range(2):
+                i=int(ids[row,rank]);a,b=F.linear(x[row],wup[i]).chunk(2,dim=-1)
+                expected[row]+=F.linear(F.silu(a)*b,wdown[i])*gate[row,rank]
+        actual=g.explicit_eager_experts(e,x,ids,gate)
+        self.assertEqual(actual.dtype,torch.float64)
+        torch.testing.assert_close(actual,expected,rtol=1e-14,atol=1e-14)
+
+    def test_fp64_top8_retains_distinct_near_tie(self):
+        import torch
+        from types import SimpleNamespace
+        w=torch.arange(40,dtype=torch.float64)[:,None]
+        w[31]=w[32]-2.0**-30
+        module=SimpleNamespace(weight=w,top_k=8)
+        ids,weights,logits=g.high_precision_router(module,torch.ones((1,1),dtype=torch.float64))
+        self.assertEqual(logits.dtype,torch.float64)
+        self.assertEqual(ids[0,-1].item(),32)
+        self.assertNotIn(31,ids[0].tolist())
+        w[31]=w[32]
+        ids,_,_=g.high_precision_router(module,torch.ones((1,1),dtype=torch.float64))
+        self.assertEqual(ids[0,-1].item(),31)
+
 if __name__=='__main__':unittest.main()

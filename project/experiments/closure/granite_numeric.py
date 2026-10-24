@@ -303,7 +303,7 @@ def run(args):
                 'activation_dynamic':'per-current-row power2; fixed hidden source only, no future/reference-error fit',
                 'metadata':'signed INT16 power2 exponent, implicit zero point=0, format epoch=0, immutable per result'},
             'arithmetic_contract':{'input_rounding':'nearest ties to even then symmetric saturation [-Qmax,Qmax]',
-                'dot':'INT64 software oracle, full K1536; W8 INT32 bound checked; W16 worst41bits',
+                'dot':'INT64 software oracle, full K1536; W8 INT32 bound checked; W16 worst42 signed bits',
                 'W16_lowering':'signed base128 three digits each, 9 S8 dot products full K, each INT32 then exact 7(i+j) shift + signed-wide recombination',
                 'gate':'log2e Q30=1549082005, base2 argument Q7 RNE, clamp [-16,0], 2049-entry uint32 Q24 exp2 LUT; exact integer division RNE Q15; residual assigned to first top expert',
                 'saturation':'FP-to-int at boundary explicit; LUT domain clips explicit; no silent INT32 wrapping'},
