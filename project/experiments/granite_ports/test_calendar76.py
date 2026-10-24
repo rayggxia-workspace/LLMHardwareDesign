@@ -2,7 +2,7 @@
 import copy
 import unittest
 
-from calendar76 import Calendar, invariant_packets, packets_with_rmw, partial_edges
+from calendar76 import Calendar, invariant_packets, packets_with_rmw, partial_edges, serial_certificate
 
 
 class CalendarPrimitiveTests(unittest.TestCase):
@@ -61,10 +61,7 @@ class CalendarPrimitiveTests(unittest.TestCase):
                            "bytes": 8192, "partial_write": "endpoint RMW"},
                 "accesses": [{"object": name, "offset": 0, "bytes": 8192, "mode": mode,
                               "repeat": 1, "stride": 0, "index_strides": []} for name, mode in (("source", "read"), ("destination", "write"))],
-                "serial_packet_retiming_certificate": {"kind": "bounded_serial_packet_retiming", "max_payload_bytes": 1984,
-                    "header_bytes": 32, "per_packet_order": "source reads -> BUS -> destination RMW/read/write",
-                    "resident_payload_only_one_packet": True, "all_endpoint_state_within_FIFO": True,
-                    "duration_formula": "sum(src_beats + wire_beats + dst_beats + dst_rmw_beats)"}}
+                "serial_packet_retiming_certificate": serial_certificate(0, 0, audit.objects["source"], audit.objects["destination"], 8192, 0, 0, [], [])}
         self.assertEqual(audit.leaf(node, [], 0), counts)
         old = copy.deepcopy(node); del old["serial_packet_retiming_certificate"]
         old["resources"] = [{"name": "bank.EXT", "start": 0, "end": 512},
@@ -72,6 +69,7 @@ class CalendarPrimitiveTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "explicit bounded serial"):
             audit.leaf(old, [], 0)
         alias = copy.deepcopy(node); audit.objects["destination"]["bank"] = "EXT"
+        alias["serial_packet_retiming_certificate"] = serial_certificate(0, 0, audit.objects["source"], audit.objects["destination"], 8192, 0, 0, [], [])
         with self.assertRaisesRegex(ValueError, "alias across affine"):
             audit.leaf(alias, [], 0)
 

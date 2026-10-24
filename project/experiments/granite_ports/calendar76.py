@@ -46,7 +46,8 @@ def packets_with_rmw(source, destination, length):
         payload = min(1984, length-done)
         old_lines = partial_edges(destination+done, payload)
         result["dst_rmw_beats"] += old_lines
-        peak = max(peak, 32+16*((payload+15)//16)+16*old_lines)
+        source_lines = (source+done+payload-1)//16-(source+done)//16+1
+        peak = max(peak, 32+16*source_lines, 32+16*((payload+15)//16)+16*old_lines)
         done += payload
     return result, peak
 
@@ -58,6 +59,38 @@ def invariant_packets(source, destination, length, source_axes, destination_axes
             value, maximum = packets_with_rmw(left, right, length)
             need(value == expected and maximum == peak, "invariant affine packet beats/RMW/FIFO across all leading offsets")
     return expected, peak
+
+
+def serial_certificate(source, destination, source_object, destination_object, length, source_offset, destination_offset, source_axes, destination_axes):
+    """Reconstruct every single-packet credit epoch and its causal subcalendar."""
+    packets, done, clock = [], 0, 0
+    while done < length:
+        payload = min(1984, length-done)
+        sa, da = source+done, destination+done
+        source_lines = (sa+payload-1)//16-sa//16+1
+        target_lines = (da+payload-1)//16-da//16+1
+        old_lines = partial_edges(da, payload)
+        wire = (32+16*((payload+15)//16))//16
+        credit = max(32+16*source_lines, 32+16*((payload+15)//16)+16*old_lines)
+        end = clock+source_lines+wire+old_lines+target_lines
+        need(credit <= 2048, "single packet physical source/payload/RMW FIFO credit")
+        packets.append({"index": len(packets), "src_offset": source_offset+done, "dst_offset": destination_offset+done,
+                        "payload_bytes": payload, "src_absolute_offset": sa, "dst_absolute_offset": da,
+                        "src_beats": source_lines, "dst_beats": target_lines, "dst_rmw_beats": old_lines,
+                        "wire_beats": wire, "start": clock, "end": end, "FIFO_peak_bytes": credit,
+                        "steps": [{"resource": "bank."+source_object["bank"], "start": clock, "end": clock+source_lines},
+                                  {"resource": "BUS", "start": clock+source_lines, "end": clock+source_lines+wire},
+                                  {"resource": "bank."+destination_object["bank"], "start": clock+source_lines+wire, "end": end,
+                                   "operation": "destination old-line RMW reads then writes"}]})
+        done += payload; clock = end
+    return {"kind": "bounded_serial_packet_retiming", "max_payload_bytes": 1984, "header_bytes": 32,
+            "per_packet_order": "source reads -> BUS -> destination RMW/read/write",
+            "resident_payload_only_one_packet": True, "all_endpoint_state_within_FIFO": True,
+            "duration_formula": "sum(src_beats + wire_beats + dst_beats + dst_rmw_beats)",
+            "FIFO_peak_rule": "max(32+16*source_physical_beats,32+16*ceil(payload/16)+16*destination_partial_beats)",
+            "packet_times_relative_to_leaf": True, "source_index_strides": source_axes, "destination_index_strides": destination_axes,
+            "resource_reservation": "unique bank/BUS resources reserved for whole leaf; explicit packet steps fit inside, global serial policy",
+            "packets": packets}
 
 
 class Calendar:
@@ -140,10 +173,8 @@ class Calendar:
                 packet = node["packet"]
                 need(packet == {"src": left["object"], "dst": right["object"], "src_offset": left["offset"], "dst_offset": right["offset"], "bytes": left["bytes"], "partial_write": "endpoint RMW"}, "actual packet address metadata")
                 certificate = node.get("serial_packet_retiming_certificate", {})
-                need(certificate == {"kind": "bounded_serial_packet_retiming", "max_payload_bytes": 1984, "header_bytes": 32,
-                                     "per_packet_order": "source reads -> BUS -> destination RMW/read/write",
-                                     "resident_payload_only_one_packet": True, "all_endpoint_state_within_FIFO": True,
-                                     "duration_formula": "sum(src_beats + wire_beats + dst_beats + dst_rmw_beats)"},
+                wanted = serial_certificate(source, destination, objects[0], objects[1], left["bytes"], left["offset"], right["offset"], left["index_strides"], right["index_strides"])
+                need(certificate == wanted,
                      "explicit bounded serial packet retiming certificate")
                 if objects[0]["bank"] == objects[1]["bank"]:
                     sl, sh = affine_bounds(left, loops); dl, dh = affine_bounds(right, loops)
