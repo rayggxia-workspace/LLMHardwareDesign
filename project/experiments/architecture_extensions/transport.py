@@ -374,11 +374,12 @@ def run(args):
             raise ValueError('actual complete gatednorm raw/gate source width')
         for bits,tile_d in ((32,8),(16,16)):
             b=bits//8;head=n*d*b;full=head*heads
-            certs.append(certificate('Falcon complete head S'+str(bits),'R',{'state':head}))
-            certs.append(aggregate_s_certificate('Falcon full32head two generations S'+str(bits),{'old_and_new':full*2}))
-            certs.append(certificate('Falcon tiled old/new S'+str(bits),'R',{'old':n*tile_d*b,'new':n*tile_d*b,'aux':8192}))
+            state_format='FP32' if bits==32 else 'S16-candidate'
+            certs.append(certificate('Falcon complete head '+state_format,'R',{'state':head}))
+            certs.append(aggregate_s_certificate('Falcon full32head two generations '+state_format,{'old_and_new':full*2}))
+            certs.append(certificate('Falcon tiled old/new '+state_format,'R',{'old':n*tile_d*b,'new':n*tile_d*b,'aux':8192}))
             for layout in ('roundrobin','all_one'):
-                specs.append(('falcon-state-S'+str(bits),tile_d,layout,state_graph(n,d,bits,tile_d,layout),
+                specs.append(('falcon-state-'+state_format,tile_d,layout,state_graph(n,d,bits,tile_d,layout),
                     {'state_precision':'captured FP32' if bits==32 else 'S16 STORAGE CANDIDATE ONLY; numeric quality not proven',
                      'trace_scope':'one COMPLETE captured head; full32head capacity/byte ledger separate, no cycle extrapolation'}))
         certs.append(certificate('Falcon gatednorm all planes','V',{'x':norm_h*4,'gate':norm_h*4,'gamma':norm_h*4,'output':norm_h*4,'reduction':8}))
@@ -401,7 +402,8 @@ def run(args):
                     value*=v
                 return value
             layers=int(cfg['num_hidden_layers'])
-            certs.append(certificate('Falcon all-layer persistent backing S'+str(bits)+' plus actual FP32 KV/conv','EXT',
+            state_format='FP32' if bits==32 else 'S16-candidate'
+            certs.append(certificate('Falcon all-layer persistent backing '+state_format+' plus actual FP32 KV/conv','EXT',
                 {'state':layers*heads*d*n*(bits//8),'conv':layers*elems('full.final.conv')*4,
                  'KV':layers*(elems('full.final.kv_key')+elems('full.final.kv_value'))*4,
                  'owner_version_position':layers*24,'units':layers*heads*2 if bits==16 else 0}))
