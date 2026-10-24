@@ -8,6 +8,8 @@ S32降低短误差仍未解除长窗Sat184/193；D31不是既定必需；tileδ 
 
 下一步R范围/重定标epoch与V/R/S同资源有限端口服务、width/布局/RTL物理资格；不再重复模型矩阵。源码版本按各phase而非文档HEAD；[完整交接](../../docs/handoffs/2026-10-24-issue-66-scale-state.md)。交付in_review、待指定审查人/合并，非done；登记PR5 pending，无board.json/Projects能力，看板unverified/同步pending待管理员。
 
+2026-10-24 12:30（UTC+08:00）补充：[团队版阶段总结](../../docs/reports/2026-10-24-operator-block-partition-summary.md)明确已完成架构级算子/Block分区、算子映射、状态/接口合同及预连线候选；物理宏边界与端到端收益仍待验证。复用Issue66/PR67交付，仅整理已有证据，不新增实验或改变原失败。
+
 ## 2026-10-24（UTC+08:00）Issue64综合方案与最小分叉交付
 
 [Issue64](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/64)/[PR65](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/65)，task/64-block-v2，D:/Projects/LLMHardwareDesign-blockv2，base PR62@30fcd63。独立子树B/C模块由root核验整合，未触其他任务分支。本人服务器issue64-block-v2-20261024目录实际lrz-*并行：90048/49输出180×6条件、各410112 Fraction；90050/51 attention56条件、各7106560QK/1474560PV；90055独立全接收；90056/57服务576调度/96配对；90058归档，均COMPLETED0:0。90052/53/54启动错误保留，修复后同源重试。

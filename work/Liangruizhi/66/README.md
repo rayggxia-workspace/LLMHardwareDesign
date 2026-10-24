@@ -21,3 +21,7 @@
 rayggxia-project-collab1.0.0；project_id=llm-hardware-design。源码/报告/索引/精选及个人进度经任务分支PR交付，待指定审查人/合并，Issue in_review而非done；最终远端head/CI以PR读回为准。登记management-hub PR5仍pending；无board.json/Projects能力，看板unverified、同步pending，管理员待指定。未代他人审查/合并或改Issue55/63。
 
 下一步先定义R范围guard/rescale epoch及V有限调度合同，再建立相同精度/库存/辅助流量的V/R/S服务配对。报告不承诺整图加速；仍有FP桥、真实端口/时序/物理资格未验证。所有恢复先读最新AGENTS/Skill/Issue/PR/成员/交接，核现有作业及结果SHA，已完成作业不重发。
+
+## 2026-10-24 12:30阶段总结补充
+
+新增[可转发团队的Markdown](../../../docs/reports/2026-10-24-operator-block-partition-summary.md)，说明已完成架构级算子/Block分区与接口合同，保留物理宏、完整模型和PPA未验边界。沿用Issue66/PR67，不新建重复任务，仅整理现有证据；结构检查与文档/科学核对见milestone-summary-check.json。原164+59测试未为纯文档重复运行，历史结果保持。登记pending/看板unverified同步pending及审查状态未被本报告改变。
