@@ -1,5 +1,9 @@
 # AI 协作约定
 
+## 2026-10-24 Issue72定稿关键接续
+
+用户授权只读复用Granite/Falcon权重和70证据，在本人新Issue72 CPU服务器Slurm lrz-*并行验证路由精度/因果状态范围与完整整数R消费者，再做同精度同资源边界。原生FP32失败、固定ID反事实、FP64桥与COPY限定原样保留；新高精参考不能改写旧结果，runtime封闭整数段不得混入未声明FP。offline编译只用cal/static参数，online不读未来native。完整32head/4096norm/三输入join及private trial/epoch/恢复/宽算术/元数据/端口真实记账。未校准条件服务非RTL/PPA。无新模型、其他机器、Phi解封或成员55/63接管；独立子worktree，新out/source/input/output SHA，当前协议见project/experiments/closure/PROTOCOL.md。
+
 ## 2026-10-24 新增架构最小实验（Issue70）
 
 用户明确授权新增IBM Granite-3.1-3B-A800M-Instruct与TII Falcon-H1-3B-Instruct，仅这两模型的短CPU参考/真实层采集/数值与资源实验在本人服务器新Issue70目录Slurm lrz-*并行；服务器外网不可用时可用本机D盘作权重校验中转，服务器复核后只读加载，不在本机运行这两模型。此前无新模型限制对本范围放开，其他模型/机器不增加，Phi仍封存。先冻结决策和最小实验，校准/评价分离，官方revision/配置/实现/权重SHA完整；MoE真实重路由与固定路由诊断分开，Mamba2不能冒称GDN整数实现。精度、回退、算术/状态/元数据/1RW/FIFO/通信按实际计价；条件周期非RTL/PPA或模型质量验收。独立子worktree，保留旧证据及他人Issue55/63范围。
