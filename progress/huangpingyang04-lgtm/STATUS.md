@@ -38,3 +38,8 @@
 - 代码/说明/精选receipt见work/huangpingyang04-lgtm/63；CI和最终远端head待本次push读回。软件in_review，不标done、不合并；审查人待指定。看板unverified/同步pending。
 
 #63最新正式复跑：源fee9ca211fcfa1440a2a4f2a3607762129957e00，197 tests/0skip，10场景独立重放，旧科学结果SHA不变。PR79持续交付，CI基线修复后的run40114765442通过，最终head CI读回见PR；本机/上传/CI与未审查/未合并状态区分。A/B选定范围pass，C仍blocked，Issue in_review，不done。
+
+
+2026-10-25 生命周期复核：干净源 `10cd3d97d3b8ca9cbb242b1eee0078c2d708f577` 在全新 `.local/runs/formal-04` 实际通过 **200 tests / 0 skip**（原32+31、适配器137，其中核心48），10场景独立源码副本/进程重放，科学SHA仍为 `f2ec30e28966be33888cf314bd5e93a0bb24378d4147d79cbdd9ad9971efbbdc`。修复显式复制后源槽复用的误拒绝，按实际驻留字节范围处理部分覆盖与多个view复制；独立consumer采用另一个范围覆盖算法，并重查alias/接口宽度/FIFO。新增3个合法/非法成对回归；最初负例因残留旧transfer源导致错误提前触发，保留本机失败和修正记录，未改原fixture。旧正式回执不覆盖，最新见 `work/huangpingyang04-lgtm/63/formal-04/receipt.json`。A/B选定范围pass、C仍blocked；软件in_review。
+
+用户再次明确要求重试SSH后，仅执行一次BatchMode连接，结果为 `Connection closed by 10.129.166.172 port 22`，未建立远程会话、未读取或修改服务器文件；未改网络配置。旧服务器版本仍未比较，后续只读比较后在新目录整合，不能覆盖原件。

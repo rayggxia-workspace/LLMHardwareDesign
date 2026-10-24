@@ -46,3 +46,8 @@ C缺同版完整实例/放置/朝向、固定M8 escape/landing、冻结底座及
 首次CI run40114649385在fixed-dependency-diff返回128，因浅克隆没有固定PR78基线commit。原失败保留work/.../63/ci_first_failure.json及GitHub job日志；获取步骤加入该精确commit，原Git差异审计门槛不变。整体CI仍待后续真实终态，不能用本机通过替代。
 
 最新正式资格为 `.local/runs/formal-03`，执行源 `fee9ca211fcfa1440a2a4f2a3607762129957e00`：197项（32原小图+31原估算器+134适配器），0跳过，10场景独立副本/进程重放。新增反例覆盖输出重新hash后的类型/事件错误；科学摘要仍为f2ec30e28966be33888cf314bd5e93a0bb24378d4147d79cbdd9ad9971efbbdc，与195项旧回执逐字节相同，旧receipt不覆盖。见[最新receipt](../../work/huangpingyang04-lgtm/63/formal-03/receipt.json)。CI基线获取修复后run40114765442已真实success；最终发布head的CI与待审查状态以PR79实际读回为准。登记PR5仍open/unmerged/pending；Projects无配置/工具，unverified/同步pending。
+
+
+2026-10-25 生命周期复核：干净源 `10cd3d97d3b8ca9cbb242b1eee0078c2d708f577` 在全新 `.local/runs/formal-04` 实际通过 **200 tests / 0 skip**（原32+31、适配器137，其中核心48），10场景独立源码副本/进程重放，科学SHA仍为 `f2ec30e28966be33888cf314bd5e93a0bb24378d4147d79cbdd9ad9971efbbdc`。修复显式复制后源槽复用的误拒绝，按实际驻留字节范围处理部分覆盖与多个view复制；独立consumer采用另一个范围覆盖算法，并重查alias/接口宽度/FIFO。新增3个合法/非法成对回归；最初负例因残留旧transfer源导致错误提前触发，保留本机失败和修正记录，未改原fixture。旧正式回执不覆盖，最新见 `work/huangpingyang04-lgtm/63/formal-04/receipt.json`。A/B选定范围pass、C仍blocked；软件in_review。
+
+用户再次明确要求重试SSH后，仅执行一次BatchMode连接，结果为 `Connection closed by 10.129.166.172 port 22`，未建立远程会话、未读取或修改服务器文件；未改网络配置。旧服务器版本仍未比较，后续只读比较后在新目录整合，不能覆盖原件。

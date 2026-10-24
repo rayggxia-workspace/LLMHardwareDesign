@@ -159,7 +159,7 @@
       "module": "project/analysis/workload_mapping/consumer.py",
       "obtained_from": "original chat text recovery plus local integration",
       "actual_location": "project/analysis/workload_mapping/consumer.py",
-      "sha256": "d922e23d1f0e2ef934aebab9d24237a45583064f326f5971fa7551f091f2f229",
+      "sha256": "7b1d147952cce0c96379140fd799b50caed5f40c8f6e0f9116c71e6544fad621",
       "historical_chat_sha256": null,
       "server_original_bytes_acquired": false,
       "server_byte_comparison": false,
@@ -169,7 +169,7 @@
       "module": "project/analysis/workload_mapping/core.py",
       "obtained_from": "original chat text recovery plus local integration",
       "actual_location": "project/analysis/workload_mapping/core.py",
-      "sha256": "8e13aa37cbeeec9aad0759fdf684a08d7e371f7d5e1d57df87e6aa704157ca18",
+      "sha256": "56904906c630b27f21453547af3a1214b16bcb7ccef85313d5b61d06945ed2fc",
       "historical_chat_sha256": null,
       "server_original_bytes_acquired": false,
       "server_byte_comparison": false,
@@ -389,7 +389,7 @@
       "module": "project/analysis/workload_mapping/test_core.py",
       "obtained_from": "original chat text recovery plus local integration",
       "actual_location": "project/analysis/workload_mapping/test_core.py",
-      "sha256": "563ed9dee3b005652da1ec1fa3521d493ec582a26e560ba741d121292a044473",
+      "sha256": "be0ab2551c5a23dcd9c7fae33cfebf8e56d6a81eca8fc4155d5f5a65d4bf724a",
       "historical_chat_sha256": "9b190698e61798cf9a1d8eba218bad127cc3d6ff7ac67e46f407f33819e8fff0",
       "server_original_bytes_acquired": false,
       "server_byte_comparison": false,
@@ -481,11 +481,17 @@
   },
   "local_hardening": "Independent output reader checks exact integer/bool types and event enums, and refuses materialized shadow after failed guard. Late abort remains supported. New counterexamples retained.",
   "latest_clean_execution": {
-    "source_commit": "fee9ca211fcfa1440a2a4f2a3607762129957e00",
-    "receipt": "formal-03/receipt.json",
-    "tests": 197,
+    "source_commit": "10cd3d97d3b8ca9cbb242b1eee0078c2d708f577",
+    "receipt": "formal-04/receipt.json",
+    "tests": 200,
     "skipped": 0,
     "independent_source_copy_cases": 10
   },
-  "initial_baseline_temp_routing": "Initial upstream baseline invocation did not explicitly redirect temporary variables; it is not the formal frozen qualification. All complete qualification runs explicitly set TMP/TEMP/TMPDIR to their task-local directory."
+  "initial_baseline_temp_routing": "Initial upstream baseline invocation did not explicitly redirect temporary variables; it is not the formal frozen qualification. All complete qualification runs explicitly set TMP/TEMP/TMPDIR to their task-local directory.",
+  "lifecycle_hardening": "Per-storage/root byte intervals preserve surviving slices and explicit copies after source reuse; producer and independent consumer use different coverage algorithms. Three new regression tests.",
+  "lifecycle_first_failure": {
+    "path": ".local/runs/lifecycle-first-failure/record.json",
+    "preserved": true,
+    "cause": "old negative fixture changed allocation but left transfer source inconsistent; fixture corrected to test actual later overwrite consumption"
+  }
 }
