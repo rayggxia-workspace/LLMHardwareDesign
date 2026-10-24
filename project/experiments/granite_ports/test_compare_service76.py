@@ -60,7 +60,7 @@ def calibration(root):
 
 def inventory():
     caps = {'M': 32768, 'V': 16384, 'R': 32768, 'EXT': 134217728, 'ROM': 4260100, **{'S'+str(i): 32768 for i in range(8)}}
-    return {'capacities': caps, 'banks': {b: {'bits': 128, 'kind': '1RW'} for b in caps if b != 'ROM'},
+    return {'capacities': caps, 'banks': {b: {'bits': 128, 'kind': '1RW', 'partial_write': '128bit endpoint RMW, no assumed byte mask'} for b in caps if b != 'ROM'},
             'matrix': {'S8_PEs': 256, 'shape': [16, 16], 'effective_B1_PEs': 16, 'Ktile': 512, 'weight_bytes': 8192},
             'vector': {'byte_lanes': 8}, 'SFU': {'count': 1, 'borrows': 'VR8 lane0', 'extra_byte_ALU': False},
             'ROM': {'capacity': 4260100, 'return_bits': 32, 'ports': 1, 'latency': 2, 'II': 1, 'synchronous_candidate': True},
@@ -100,7 +100,11 @@ def fixture(root):
                             'source_bound_numeric_status': 'PASS', 'source_bound_micro_status': 'PASS', 'numeric_trajectory_sha256': h(('trajectory', layer)), **cal}
                     for field in ('numeric_manifest', 'numeric_receipt', 'packed_manifest', 'packed_receipt'): task[field+'_sha256'] = h((field, layer))
                     task['compiled_manifest_sha256'] = h('compiled')
-                    rows = {'complete_all_integer_stages': ['layer'+str(layer)+'hash']}; write(folder/'row_hashes.json', rows)
+                    essential = {'router.ids', 'router.gate_q15', 'norm_q12', 'expert_input_a8', 'expert_input_delta', 'gate_up_acc32', 'gate_up_RQ_product64', 'gate_up_q12', 'expert_silu_q12', 'mid_product64', 'expert_mid_q12', 'mid_a8', 'mid_delta', 'down_acc32', 'down_RQ_product64', 'down_q12', 'merge_product64', 'merge_prefix64', 'moe_q12', 'scaled_moe_q12', 'layer_output_q12', 'next_norm_q12'}
+                    shapes = {'router.ids': [72, 8], 'router.gate_q15': [72, 8], 'norm_q12': [72, 1536], 'expert_mid_q12': [72, 8, 512], 'down_q12': [72, 8, 1536], 'merge_prefix64': [72, 8, 1536], 'layer_output_q12': [72, 1536], 'next_norm_q12': [72, 1536]}
+                    stages = {k: {'dtype': 'int32', 'shape': shapes.get(k, [72]), 'array_sha256': h((layer, k)), 'token_axis': 0, 'token_rows_sha256': [h((layer, k, t)) for t in range(72)]} for k in sorted(essential | {'synthetic'+str(i) for i in range(43-len(essential))})}
+                    rows = {'schema': 'granite-service-rowhashes76-v1', 'layer': layer, 'source_manifest_sha256': task['numeric_manifest_sha256'], 'stages': stages}
+                    task['numeric_trajectory_sha256'] = C.canonical(rows); write(folder/'row_hashes.json', rows)
                     task['row_hashes_sha256'] = C.sha(folder/'row_hashes.json')
                     (folder/'witness.jsonl.gz').write_bytes(f'synthetic calendar l{layer}/t{tile}/{p}'.encode())
                     a, high, phase = allocation(tile, p)
@@ -111,7 +115,7 @@ def fixture(root):
                              micro_frame_read_bytes=sum(v['costs']['byte_store_reads']+v['costs']['result_read_bytes'] for v in table['ops'].values()),
                              micro_frame_write_bytes=sum(v['costs']['byte_store_writes']+v['costs']['input_load_bytes'] for v in table['ops'].values()))
                     wire = 1000000000+tile*16+(10000 if p == 'shared_v' else 0)
-                    c.update(wire_bytes=wire, wire_beats=wire//16, bank_beats=999)
+                    c.update(wire_bytes=wire, wire_beats=wire//16, bank_beats=999, micro_frame_write_RMW_read_beats=c['micro_frame_write_bytes'])
                     capacity = {'full8S32_return_bytes': 49152, 'full_H_merge64_bytes': 12288, 'no_full_Q12_return_co_resident': True, 'owner_physical_RQ_elements': 16}
                     s = {'schema': 'granite-service76-v1', 'task': task, 'config': {'tile': tile, 'placement': p, 'label': label, 'policy': 'synthetic serial'},
                          'inventory': inventory(), 'allocations': a, 'used_bytes': high, 'phase_peak_bytes': phase, 'capacity': capacity,
@@ -192,8 +196,12 @@ class CompareServiceTests(unittest.TestCase):
 
     def test_missing_micro_initialization_fee_rejected(self):
         for label in C.LABELS:
-            rewrite(self.root, f'service-l0-t128-near_m-{label}01', lambda s: s['counts'].update(micro_frame_write_bytes=s['counts']['micro_frame_write_bytes']-1))
+            rewrite(self.root, f'service-l0-t128-near_m-{label}01', lambda s: s['counts'].update(micro_frame_write_bytes=s['counts']['micro_frame_write_bytes']-1, micro_frame_write_RMW_read_beats=s['counts']['micro_frame_write_RMW_read_beats']-1))
         with self.assertRaisesRegex(ValueError, 'complete eighteen-key weighted'): C.compare(self.root)
+
+    def test_partial_frame_write_cannot_assume_free_mask(self):
+        rewrite(self.root, 'service-l0-t128-near_m-split01', lambda s: s['counts'].update(micro_frame_write_RMW_read_beats=0))
+        with self.assertRaisesRegex(ValueError, 'endpoint RMW'): C.compare(self.root)
 
     def test_MV_math_change_cannot_be_called_placement(self):
         for label in C.LABELS:

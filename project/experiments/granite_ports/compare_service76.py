@@ -132,7 +132,7 @@ def inventory_proof(inv):
     caps = inv['capacities']; expected = {'M': 32768, 'V': 16384, 'R': 32768, 'EXT': 134217728, 'ROM': 4260100,
                                         **{'S'+str(i): 32768 for i in range(8)}}
     need(caps == expected, 'fixed macro capacities')
-    need(set(inv['banks']) == set(caps)-{'ROM'} and all(p == {'bits': 128, 'kind': '1RW'} for p in inv['banks'].values()), 'fixed128bit1RW banks')
+    need(set(inv['banks']) == set(caps)-{'ROM'} and all(p == {'bits': 128, 'kind': '1RW', 'partial_write': '128bit endpoint RMW, no assumed byte mask'} for p in inv['banks'].values()), 'fixed128bit1RW banks')
     matrix = inv['matrix']
     need(matrix['S8_PEs'] == 256 and matrix['shape'] == [16, 16] and matrix['effective_B1_PEs'] == 16
          and matrix['Ktile'] == 512 and matrix['weight_bytes'] == 8192, 'fixed M256 physical16x512 service')
@@ -172,7 +172,30 @@ def read_case(root, layer, tile, placement, label, suffix):
     need(all(k[3:] in OPS for k in c if k.startswith('op.')), 'no unpriced typed arithmetic')
     frame_bytes = c['micro_frame_read_bytes']+c['micro_frame_write_bytes']
     need(48*frame_bytes <= c['wire_bytes'], 'micro traffic already included in total wire')
+    need(c['micro_frame_write_RMW_read_beats'] == c['micro_frame_write_bytes']
+         and c['micro_frame_read_bytes']+2*c['micro_frame_write_bytes'] <= c['bank_beats'], 'all partial frame writes include endpoint RMW')
     row_hashes = load(folder/'row_hashes.json')
+    need(row_hashes['schema'] == 'granite-service-rowhashes76-v1' and row_hashes['layer'] == layer
+         and row_hashes['source_manifest_sha256'] == t['numeric_manifest_sha256']
+         and t['numeric_trajectory_sha256'] == canonical(row_hashes), 'complete original integer trajectory binding')
+    required_stages = {'router.ids', 'router.gate_q15', 'norm_q12', 'expert_input_a8', 'expert_input_delta',
+                       'gate_up_acc32', 'gate_up_RQ_product64', 'gate_up_q12', 'expert_silu_q12',
+                       'mid_product64', 'expert_mid_q12', 'mid_a8', 'mid_delta', 'down_acc32',
+                       'down_RQ_product64', 'down_q12', 'merge_product64', 'merge_prefix64',
+                       'moe_q12', 'scaled_moe_q12', 'layer_output_q12', 'next_norm_q12'}
+    stages = row_hashes['stages']
+    need(len(stages) >= 43 and required_stages <= set(stages), 'complete actual integer expert/merge/consumer stages')
+    for key, value in stages.items():
+        hash_string(value['array_sha256'], 'stage array '+key)
+        need(re.fullmatch('u?int(8|16|32|64)', value['dtype']), 'integer stage dtype')
+        axis = value['token_axis']
+        need(axis is None or type(axis) is int and axis in (0, 1) and value['shape'][axis] == 72, 'actual token axis')
+        need(len(value['token_rows_sha256']) == (72 if axis is not None else 0), 'complete token row hash coverage')
+        for digest in value['token_rows_sha256']: hash_string(digest, 'stage token '+key)
+    for key, shape in {'router.ids': [72, 8], 'router.gate_q15': [72, 8], 'norm_q12': [72, 1536],
+                       'expert_mid_q12': [72, 8, 512], 'down_q12': [72, 8, 1536], 'merge_prefix64': [72, 8, 1536],
+                       'layer_output_q12': [72, 1536], 'next_norm_q12': [72, 1536]}.items():
+        need(stages[key]['shape'] == shape, 'full original consumer shape '+key)
     need(t['row_hashes_sha256'] == sha(folder/'row_hashes.json')
          and r['numeric_row_hashes_sha256'] == canonical(row_hashes)
          and r['integer_profile_sha256'] == canonical(integer_profile(c))
@@ -261,7 +284,10 @@ def metrics(case):
     s, r = case['summary'], case['receipt']; c = s['counts']; frame = c['micro_frame_read_bytes']+c['micro_frame_write_bytes']
     return {'case': case['name'], 'layer': s['task']['layer'], 'config': s['config'], 'end_slots': s['end_slot'],
             'wire_bytes_total': c['wire_bytes'], 'micro_wire_bytes_subset_already_in_total': 48*frame,
-            'non_micro_wire_bytes': c['wire_bytes']-48*frame, 'counts': c, 'capacity': s['capacity'],
+            'non_micro_wire_bytes': c['wire_bytes']-48*frame,
+            'micro_bank_beats_subset_including_RMW': c['micro_frame_read_bytes']+2*c['micro_frame_write_bytes'],
+            'micro_service_slots_subset_ALU_candidate_dispatch_and_IO': c['micro_alu_cycles']+c['micro_dispatch_cycles']+4*c['micro_frame_read_bytes']+5*c['micro_frame_write_bytes'],
+            'full_integer_stages': len(case['row_hashes']['stages']), 'counts': c, 'capacity': s['capacity'],
             'allocation_proof': case['allocation'], 'integer_profile_sha256': r['integer_profile_sha256'],
             'numeric_trajectory_sha256': s['task']['numeric_trajectory_sha256'],
             'numeric_row_hashes_sha256': r['numeric_row_hashes_sha256']}
