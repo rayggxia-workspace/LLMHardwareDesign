@@ -1,0 +1,34 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase3/project/experiments/architecture_extensions/falcon.py",
+    "--weights",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models/falcon",
+    "--revision",
+    "01087ec4c132d7f186908716b3530ea187f062a1",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/capture-falcon01",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase3/binding.json",
+    "--threads",
+    "8"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase3/project/experiments/architecture_extensions/falcon.py --weights /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models/falcon --revision 01087ec4c132d7f186908716b3530ea187f062a1 --out /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/capture-falcon01 --binding /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase3/binding.json --threads 8",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i70-capture-falcon01",
+    "--partition=c96",
+    "--cpus-per-task=8",
+    "--time=00:45:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/capture-falcon01-%j.log",
+    "--dependency=afterok:90153",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase3/project/experiments/architecture_extensions/falcon.py --weights /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models/falcon --revision 01087ec4c132d7f186908716b3530ea187f062a1 --out /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/capture-falcon01 --binding /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase3/binding.json --threads 8"
+  ],
+  "stdout": "90155",
+  "phase": "phase3",
+  "binding_sha256": "e862a5b4d1d8ffe51b99c0e088e7ee0b00f7e4a1d9f07296bafffc3d586bc26b"
+}

@@ -1,0 +1,31 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase8/project/experiments/architecture_extensions/transport.py",
+    "--granite",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/numeric-granite02",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase8/binding.json",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-granite02",
+    "--diagnostic-failed-chunk"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase8/project/experiments/architecture_extensions/transport.py --granite /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/numeric-granite02 --binding /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase8/binding.json --out /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-granite02 --diagnostic-failed-chunk",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i70-transport-granite02",
+    "--partition=c96",
+    "--cpus-per-task=2",
+    "--time=00:10:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-granite02-%j.log",
+    "--dependency=afterok:90170",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase8/project/experiments/architecture_extensions/transport.py --granite /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/numeric-granite02 --binding /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase8/binding.json --out /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-granite02 --diagnostic-failed-chunk"
+  ],
+  "stdout": "90172",
+  "phase": "phase8",
+  "binding_sha256": "5198c621c41fad8fae21843a1accbbe1789cc874317e8a6b0c0b6393b4a97f05"
+}

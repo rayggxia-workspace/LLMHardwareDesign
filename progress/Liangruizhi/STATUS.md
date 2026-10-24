@@ -1,5 +1,12 @@
 # Liangruizhi 的进度
 
+## 2026-10-24（UTC+08:00）Issue70小MoE/并行混合架构（待审查合并）
+
+[Issue70](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/70)/[PR71](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/71)，task/70-moe-hybrid，根D:/Projects/LLMHardwareDesign-moe-hybrid，base PR69@ab2edaa。两模型固定官方BF16权重全SHA及server复核通过，本机D盘仅中转，无本机模型计算；本人服务器node13 Slurm最小集、独立数值/路由归因/端口负例及双轮接收已执行。Granite原chunk16 FAIL保留，layer13/token42极小路由边界，局部32dot/32RQ/4merge为PARTIAL/mathPASS；Falcon23参考门通过，但S16/S32均4sat且FP64更新。24 COPY-only配置双轮/独立核，非E2E/PPA；六逻辑Block保留，动态路由/宽merge、参数化state tile、完整gatednorm及三输入join合同新增。
+
+80边界测试、check_project、diffcheck通过；966025542B完整证据留授权服务器、3137707B精选43成员D盘字节独立核验；原下载/路径/接收失败和取消替代均保留。逐模型验收、11phase源码、实际命令、SHA见[索引](../../project/experiments/architecture_extensions/results/issue-70/index.json)与[报告](../../docs/experiments/issue-70-moe-hybrid.md)。下一步为Granite高精度路由/参数驻留、Falcon因果range与完整整数消费者链、真实物理资格；本批最小集结束，无新模型/其他机器/Phi解封，成员55/63未动。交付待审查合并，非done；登记PR5 pending、无board.json/Projects能力，看板unverified/同步pending待管理员，审查人待指定。
+
+
 ## 2026-10-24（UTC+08:00）Issue68 R范围/有限服务交付
 
 [Issue68](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/68)/[PR69](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/69)，task/68-range-service，D:/Projects/LLMHardwareDesign-range-service，base PR67@8bde3bf。独立worktree整合；所有实际计算本人新服务器目录lrz-i68-*并行，无新下载/Phi解封/他人任务中断。

@@ -1,0 +1,2432 @@
+{
+  "schema": "falcon-h1-bounded-v1",
+  "architecture": "parallel Attention + Mamba2 (not GDN)",
+  "model": "tiiuae/Falcon-H1-3B-Instruct",
+  "model_revision": "01087ec4c132d7f186908716b3530ea187f062a1",
+  "source_safetensors": [
+    {
+      "file": "model-00001-of-00002.safetensors",
+      "bytes": 4971004584,
+      "header_sha256": "3f06402692574f514c755556c39d23b4325450189d8969d5dfa84678c2d82d2c",
+      "tensor_dtypes": [
+        "BF16"
+      ]
+    },
+    {
+      "file": "model-00002-of-00002.safetensors",
+      "bytes": 1327841504,
+      "header_sha256": "47e9967713afa68b047864359439b5d2ba4367c9e1f269cc864f865a5148da39",
+      "tensor_dtypes": [
+        "BF16"
+      ]
+    }
+  ],
+  "reference_dtype": "float32",
+  "source_weights_path": "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models-relay/falcon",
+  "input": {
+    "seed": 7002,
+    "calibration_tokens": 16,
+    "evaluation_tokens": 72,
+    "prefill": 64,
+    "decode": 8,
+    "batch": 1,
+    "kind": "fixed disjoint random token IDs; structural diagnostics, not text quality"
+  },
+  "native_continuity": {
+    "last_logits": {
+      "max_abs": 1.52587890625e-05,
+      "relative_l2": 1.234292836847585e-06
+    },
+    "cache": {
+      "kv_key": {
+        "max_abs": 2.682209014892578e-07,
+        "relative_l2": 2.468903360885058e-07
+      },
+      "kv_value": {
+        "max_abs": 1.9073486328125e-06,
+        "relative_l2": 3.085520166581071e-07
+      },
+      "conv": {
+        "max_abs": 4.172325134277344e-07,
+        "relative_l2": 3.495917510119807e-07
+      },
+      "ssm": {
+        "max_abs": 2.6702880859375e-05,
+        "relative_l2": 6.264115328970141e-07
+      }
+    }
+  },
+  "hybrid_join": {
+    "max_abs": 1.9073486328125e-06,
+    "relative_l2": 4.5521034734382666e-08
+  },
+  "chunk_continuity": {
+    "1": {
+      "output_vs_tokenwise": {
+        "max_abs": 0.0,
+        "relative_l2": 0.0
+      },
+      "output_vs_full_layer": {
+        "max_abs": 9.5367431640625e-06,
+        "relative_l2": 3.5058957841761437e-07
+      },
+      "final_vs_tokenwise": {
+        "kv_key": {
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "kv_value": {
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "conv": {
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "ssm": {
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        }
+      },
+      "checkpoints": [
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 1,
+          "epoch": 0,
+          "version": 1,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            1,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 2,
+          "epoch": 0,
+          "version": 2,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            2,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 3,
+          "epoch": 0,
+          "version": 3,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            3,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 4,
+          "epoch": 0,
+          "version": 4,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            4,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 5,
+          "epoch": 0,
+          "version": 5,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            5,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 6,
+          "epoch": 0,
+          "version": 6,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            6,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 7,
+          "epoch": 0,
+          "version": 7,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            7,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 8,
+          "epoch": 0,
+          "version": 8,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            8,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 9,
+          "epoch": 0,
+          "version": 9,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            9,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 10,
+          "epoch": 0,
+          "version": 10,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            10,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 11,
+          "epoch": 0,
+          "version": 11,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            11,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 12,
+          "epoch": 0,
+          "version": 12,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            12,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 13,
+          "epoch": 0,
+          "version": 13,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            13,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 14,
+          "epoch": 0,
+          "version": 14,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            14,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 15,
+          "epoch": 0,
+          "version": 15,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            15,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 16,
+          "epoch": 0,
+          "version": 16,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            16,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 17,
+          "epoch": 0,
+          "version": 17,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            17,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 18,
+          "epoch": 0,
+          "version": 18,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            18,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 19,
+          "epoch": 0,
+          "version": 19,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            19,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 20,
+          "epoch": 0,
+          "version": 20,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            20,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 21,
+          "epoch": 0,
+          "version": 21,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            21,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 22,
+          "epoch": 0,
+          "version": 22,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            22,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 23,
+          "epoch": 0,
+          "version": 23,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            23,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 24,
+          "epoch": 0,
+          "version": 24,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            24,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 25,
+          "epoch": 0,
+          "version": 25,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            25,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 26,
+          "epoch": 0,
+          "version": 26,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            26,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 27,
+          "epoch": 0,
+          "version": 27,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            27,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 28,
+          "epoch": 0,
+          "version": 28,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            28,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 29,
+          "epoch": 0,
+          "version": 29,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            29,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 30,
+          "epoch": 0,
+          "version": 30,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            30,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 31,
+          "epoch": 0,
+          "version": 31,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            31,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 32,
+          "epoch": 0,
+          "version": 32,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            32,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 33,
+          "epoch": 0,
+          "version": 33,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            33,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 34,
+          "epoch": 0,
+          "version": 34,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            34,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 35,
+          "epoch": 0,
+          "version": 35,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            35,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 36,
+          "epoch": 0,
+          "version": 36,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            36,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 37,
+          "epoch": 0,
+          "version": 37,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            37,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 38,
+          "epoch": 0,
+          "version": 38,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            38,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 39,
+          "epoch": 0,
+          "version": 39,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            39,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 40,
+          "epoch": 0,
+          "version": 40,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            40,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 41,
+          "epoch": 0,
+          "version": 41,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            41,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 42,
+          "epoch": 0,
+          "version": 42,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            42,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 43,
+          "epoch": 0,
+          "version": 43,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            43,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 44,
+          "epoch": 0,
+          "version": 44,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            44,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 45,
+          "epoch": 0,
+          "version": 45,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            45,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 46,
+          "epoch": 0,
+          "version": 46,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            46,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 47,
+          "epoch": 0,
+          "version": 47,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            47,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 48,
+          "epoch": 0,
+          "version": 48,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            48,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 49,
+          "epoch": 0,
+          "version": 49,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            49,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 50,
+          "epoch": 0,
+          "version": 50,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            50,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 51,
+          "epoch": 0,
+          "version": 51,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            51,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 52,
+          "epoch": 0,
+          "version": 52,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            52,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 53,
+          "epoch": 0,
+          "version": 53,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            53,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 54,
+          "epoch": 0,
+          "version": 54,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            54,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 55,
+          "epoch": 0,
+          "version": 55,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            55,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 56,
+          "epoch": 0,
+          "version": 56,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            56,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 57,
+          "epoch": 0,
+          "version": 57,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            57,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 58,
+          "epoch": 0,
+          "version": 58,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            58,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 59,
+          "epoch": 0,
+          "version": 59,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            59,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 60,
+          "epoch": 0,
+          "version": 60,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            60,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 61,
+          "epoch": 0,
+          "version": 61,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            61,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 62,
+          "epoch": 0,
+          "version": 62,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            62,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 63,
+          "epoch": 0,
+          "version": 63,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            63,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 64,
+          "epoch": 0,
+          "version": 64,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            64,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 65,
+          "epoch": 0,
+          "version": 65,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            65,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 66,
+          "epoch": 0,
+          "version": 66,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            66,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 67,
+          "epoch": 0,
+          "version": 67,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            67,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 68,
+          "epoch": 0,
+          "version": 68,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            68,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 69,
+          "epoch": 0,
+          "version": 69,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            69,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 70,
+          "epoch": 0,
+          "version": 70,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            70,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 71,
+          "epoch": 0,
+          "version": 71,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            71,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 72,
+          "epoch": 0,
+          "version": 72,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            72,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        }
+      ]
+    },
+    "8": {
+      "output_vs_tokenwise": {
+        "max_abs": 3.814697265625e-06,
+        "relative_l2": 1.9331985761003318e-07
+      },
+      "output_vs_full_layer": {
+        "max_abs": 9.5367431640625e-06,
+        "relative_l2": 3.460013869420266e-07
+      },
+      "final_vs_tokenwise": {
+        "kv_key": {
+          "max_abs": 1.1920928955078125e-07,
+          "relative_l2": 9.774739469722095e-08
+        },
+        "kv_value": {
+          "max_abs": 9.5367431640625e-07,
+          "relative_l2": 9.896833358444112e-08
+        },
+        "conv": {
+          "max_abs": 1.7881393432617188e-07,
+          "relative_l2": 1.008289671333796e-07
+        },
+        "ssm": {
+          "max_abs": 7.62939453125e-06,
+          "relative_l2": 1.7350963422527817e-07
+        }
+      },
+      "checkpoints": [
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 8,
+          "epoch": 0,
+          "version": 8,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            8,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 16,
+          "epoch": 0,
+          "version": 16,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            16,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 24,
+          "epoch": 0,
+          "version": 24,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            24,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 32,
+          "epoch": 0,
+          "version": 32,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            32,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 40,
+          "epoch": 0,
+          "version": 40,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            40,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 48,
+          "epoch": 0,
+          "version": 48,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            48,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 56,
+          "epoch": 0,
+          "version": 56,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            56,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 64,
+          "epoch": 0,
+          "version": 64,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            64,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 72,
+          "epoch": 0,
+          "version": 72,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            72,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        }
+      ]
+    },
+    "16": {
+      "output_vs_tokenwise": {
+        "max_abs": 1.1444091796875e-05,
+        "relative_l2": 3.4373925908457374e-07
+      },
+      "output_vs_full_layer": {
+        "max_abs": 8.58306884765625e-06,
+        "relative_l2": 3.096315604052322e-07
+      },
+      "final_vs_tokenwise": {
+        "kv_key": {
+          "max_abs": 2.682209014892578e-07,
+          "relative_l2": 2.606951749040837e-07
+        },
+        "kv_value": {
+          "max_abs": 2.384185791015625e-06,
+          "relative_l2": 3.1577073887410434e-07
+        },
+        "conv": {
+          "max_abs": 1.7881393432617188e-07,
+          "relative_l2": 1.008289671333796e-07
+        },
+        "ssm": {
+          "max_abs": 7.62939453125e-06,
+          "relative_l2": 1.9380451866157099e-07
+        }
+      },
+      "checkpoints": [
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 16,
+          "epoch": 0,
+          "version": 16,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            16,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 32,
+          "epoch": 0,
+          "version": 32,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            32,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 48,
+          "epoch": 0,
+          "version": 48,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            48,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 64,
+          "epoch": 0,
+          "version": 64,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            64,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        },
+        {
+          "owner": "layer0.hybrid",
+          "next_position": 72,
+          "epoch": 0,
+          "version": 72,
+          "descriptor_is_analysis_metadata_not_native_epoch_enforcement": true,
+          "kv_shape": [
+            1,
+            2,
+            72,
+            128
+          ],
+          "conv_shape": [
+            1,
+            4608,
+            4
+          ],
+          "ssm_shape": [
+            1,
+            32,
+            128,
+            256
+          ]
+        }
+      ]
+    }
+  },
+  "negative_reset": {
+    "chunk": 8,
+    "output_error_vs_continuous": {
+      "max_abs": 16.323750972747803,
+      "relative_l2": 0.16812760458282047
+    },
+    "detected": true
+  },
+  "state_fp64_vs_native_tokenwise": {
+    "max_abs": 6.108776444690989e-06,
+    "relative_l2": 4.099527928597864e-07
+  },
+  "output_fp64_vs_native_tokenwise": {
+    "max_abs": 5.532686706999357e-05,
+    "relative_l2": 3.1527964785313285e-07
+  },
+  "gated_norm": {
+    "norm_before_gate": false,
+    "groups": 1,
+    "elements": 4096,
+    "raw_gate_gamma_bytes_fp32": 49152,
+    "fp64_reference_vs_native": {
+      "max_abs": 3.610637236306502e-05,
+      "relative_l2": 6.744400919454e-08
+    },
+    "bridge": "FP64 SiLU, multiply, whole-group sum/sqrt/divide/gamma; native FP32 reference; not integer path"
+  },
+  "state_storage_candidates": [
+    {
+      "storage_bits": 16,
+      "unit": 0.000244140625,
+      "unit_exponent": -12,
+      "unit_source": "calibration16_only",
+      "saturations": 4,
+      "candidate_unit_format": "signed INT16 power-of-two exponent,2 bytes/head; NPZ uses int64 witness",
+      "output_error_vs_fp64": {
+        "max_abs": 7.03256993777201,
+        "relative_l2": 0.006061939338378224
+      },
+      "final_state_error_vs_fp64": {
+        "max_abs": 0.00018891284311290876,
+        "relative_l2": 0.0009770712015980054
+      },
+      "bridge": "FP64 conv/SiLU/softplus/exp and coefficient multiplications; integer storage only"
+    },
+    {
+      "storage_bits": 32,
+      "unit": 3.725290298461914e-09,
+      "unit_exponent": -28,
+      "unit_source": "calibration16_only",
+      "saturations": 4,
+      "candidate_unit_format": "signed INT16 power-of-two exponent,2 bytes/head; NPZ uses int64 witness",
+      "output_error_vs_fp64": {
+        "max_abs": 7.0330085769046065,
+        "relative_l2": 0.006060375786761227
+      },
+      "final_state_error_vs_fp64": {
+        "max_abs": 4.284720544063536e-05,
+        "relative_l2": 3.5885492765082736e-06
+      },
+      "bridge": "FP64 conv/SiLU/softplus/exp and coefficient multiplications; integer storage only"
+    }
+  ],
+  "projection_w8a8": [
+    {
+      "scheme": "cal_static_tensor",
+      "activation_saturations": 3,
+      "error": {
+        "max_abs": 0.05111398567327108,
+        "relative_l2": 0.027194313867358613
+      },
+      "K": 2560,
+      "outputs": 16,
+      "int32_worst_case_abs_bound": 41290240,
+      "max_actual_accumulator_abs": 65669,
+      "weight_scale_bytes": 128,
+      "activation_scale_bytes": 576,
+      "qualification": "Software INT32 dot reference; floating scale/dequant; no INT8 throughput claim."
+    },
+    {
+      "scheme": "eval_dynamic_row",
+      "activation_saturations": 0,
+      "error": {
+        "max_abs": 0.04498602846285915,
+        "relative_l2": 0.017483165980706143
+      },
+      "K": 2560,
+      "outputs": 16,
+      "int32_worst_case_abs_bound": 41290240,
+      "max_actual_accumulator_abs": 169826,
+      "weight_scale_bytes": 128,
+      "activation_scale_bytes": 576,
+      "qualification": "Software INT32 dot reference; floating scale/dequant; no INT8 throughput claim."
+    }
+  ],
+  "projection_outputs": {
+    "indices": [
+      0,
+      1,
+      2,
+      3,
+      4096,
+      4097,
+      4098,
+      4099,
+      8192,
+      8193,
+      8194,
+      8195,
+      8704,
+      8705,
+      8706,
+      8707
+    ],
+    "sections": [
+      "gate_first4",
+      "x_first4",
+      "B_first4",
+      "dt_first4"
+    ]
+  },
+  "inventory": [
+    {
+      "state_bits": 32,
+      "state_format": "FP32",
+      "conv_bits": 32,
+      "kv_bits": 32,
+      "state_elements_per_layer": 1048576,
+      "state_payload_per_layer": 4194304,
+      "state_units_per_layer": 0,
+      "owner_epoch_version_position_per_layer": 24,
+      "state_payload_all_layers": 134217728,
+      "conv_payload_per_layer": 73728,
+      "kv_payload_per_layer": 147456,
+      "kv_append_payload_per_layer_token": 2048,
+      "head0_state_payload": 131072,
+      "state_rmw_payload_per_layer_token": 8388608,
+      "head0_state_rmw_128bit_beats": 16384,
+      "hybrid_norm_fanout_payload_per_layer_token_fp32": 20480,
+      "hybrid_branch_join_read_payload_per_layer_token_fp32": 20480,
+      "hybrid_join_write_payload_per_layer_token_fp32": 10240,
+      "mamba_gated_norm_vector_elements": 4096,
+      "mamba_gated_norm_raw_gate_gamma_payload_fp32": 49152,
+      "mamba_gated_norm_group_reduction_elements": 4096,
+      "qualification": "Logical payload; independent format candidates, not all-integer or physical timing. Owner descriptor is a declared 24-byte record, endpoint/link packing remains separate."
+    },
+    {
+      "state_bits": 16,
+      "state_format": "S16",
+      "conv_bits": 32,
+      "kv_bits": 32,
+      "state_elements_per_layer": 1048576,
+      "state_payload_per_layer": 2097152,
+      "state_units_per_layer": 64,
+      "owner_epoch_version_position_per_layer": 24,
+      "state_payload_all_layers": 67108864,
+      "conv_payload_per_layer": 73728,
+      "kv_payload_per_layer": 147456,
+      "kv_append_payload_per_layer_token": 2048,
+      "head0_state_payload": 65536,
+      "state_rmw_payload_per_layer_token": 4194304,
+      "head0_state_rmw_128bit_beats": 8192,
+      "hybrid_norm_fanout_payload_per_layer_token_fp32": 20480,
+      "hybrid_branch_join_read_payload_per_layer_token_fp32": 20480,
+      "hybrid_join_write_payload_per_layer_token_fp32": 10240,
+      "mamba_gated_norm_vector_elements": 4096,
+      "mamba_gated_norm_raw_gate_gamma_payload_fp32": 49152,
+      "mamba_gated_norm_group_reduction_elements": 4096,
+      "qualification": "Logical payload; independent format candidates, not all-integer or physical timing. Owner descriptor is a declared 24-byte record, endpoint/link packing remains separate."
+    },
+    {
+      "state_bits": 32,
+      "state_format": "S32",
+      "conv_bits": 32,
+      "kv_bits": 32,
+      "state_elements_per_layer": 1048576,
+      "state_payload_per_layer": 4194304,
+      "state_units_per_layer": 64,
+      "owner_epoch_version_position_per_layer": 24,
+      "state_payload_all_layers": 134217728,
+      "conv_payload_per_layer": 73728,
+      "kv_payload_per_layer": 147456,
+      "kv_append_payload_per_layer_token": 2048,
+      "head0_state_payload": 131072,
+      "state_rmw_payload_per_layer_token": 8388608,
+      "head0_state_rmw_128bit_beats": 16384,
+      "hybrid_norm_fanout_payload_per_layer_token_fp32": 20480,
+      "hybrid_branch_join_read_payload_per_layer_token_fp32": 20480,
+      "hybrid_join_write_payload_per_layer_token_fp32": 10240,
+      "mamba_gated_norm_vector_elements": 4096,
+      "mamba_gated_norm_raw_gate_gamma_payload_fp32": 49152,
+      "mamba_gated_norm_group_reduction_elements": 4096,
+      "qualification": "Logical payload; independent format candidates, not all-integer or physical timing. Owner descriptor is a declared 24-byte record, endpoint/link packing remains separate."
+    }
+  ],
+  "limits": [
+    "One actual complete head0 D128xN256; B/C shared by all32 heads. Full-layer initial/final state and complete hybrid branches retained.",
+    "No all-integer nonlinear/recurrence or target timing/PPA proof; state-storage candidates retain FP64 bridges.",
+    "Short B1 diagnostic with calibration/evaluation separation; no application-quality or long-context acceptance.",
+    "Port figures are logical payload/128-bit beats, not a physical schedule; packet headers, scale transport and allocator behavior require a separate matched-resource model."
+  ],
+  "environment": {
+    "python": "3.12.7",
+    "numpy": "2.2.6",
+    "torch": "2.10.0+cpu",
+    "transformers": "5.20.2",
+    "threads": 8,
+    "device": "cpu",
+    "attention": "eager",
+    "modeling_source_sha256": "8f3ea7bd30d2f4407ffc2791104b13acd4ac5d54798423f20da1e235fc847f38",
+    "cache_source_sha256": "17b4aff340ca287cd248d179819db77e775f857678f17088528f1e14227773c2"
+  },
+  "elapsed_seconds": 7.700517654418945
+}

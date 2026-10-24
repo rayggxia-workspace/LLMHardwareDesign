@@ -1,0 +1,35 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase9/project/experiments/architecture_extensions/receive.py",
+    "--model",
+    "transport",
+    "--result",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-falcon01",
+    "--repeat",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-falcon02",
+    "--producer-source",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase6/project/experiments/architecture_extensions/transport.py",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase9/binding.json",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/audit-transport-falcon01"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase9/project/experiments/architecture_extensions/receive.py --model transport --result /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-falcon01 --repeat /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-falcon02 --producer-source /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase6/project/experiments/architecture_extensions/transport.py --binding /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase9/binding.json --out /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/audit-transport-falcon01",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i70-receive-transport-falcon01",
+    "--partition=c96",
+    "--cpus-per-task=2",
+    "--time=00:15:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/receive-transport-falcon01-%j.log",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase9/project/experiments/architecture_extensions/receive.py --model transport --result /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-falcon01 --repeat /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-falcon02 --producer-source /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase6/project/experiments/architecture_extensions/transport.py --binding /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase9/binding.json --out /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/audit-transport-falcon01"
+  ],
+  "stdout": "90175",
+  "phase": "phase9",
+  "binding_sha256": "d8dd73df221d213c8f16f5ba65f004e27d54fe891815db795db9805730c5ed8b"
+}

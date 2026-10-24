@@ -1,0 +1,31 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase2/project/experiments/architecture_extensions/granite.py",
+    "numeric",
+    "--capture",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/capture-granite03",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/numeric-granite01",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase2/binding.json"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase2/project/experiments/architecture_extensions/granite.py numeric --capture /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/capture-granite03 --out /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/numeric-granite01 --binding /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase2/binding.json",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i70-numeric-granite01",
+    "--partition=c96",
+    "--cpus-per-task=2",
+    "--time=00:30:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/numeric-granite01-%j.log",
+    "--dependency=afterok:90161",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase2/project/experiments/architecture_extensions/granite.py numeric --capture /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/capture-granite03 --out /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/numeric-granite01 --binding /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase2/binding.json"
+  ],
+  "stdout": "90162",
+  "phase": "phase2",
+  "binding_sha256": "6cf8a27c31c705b29c8983d67535933454030f8d1b8cc1b3fe34fa8d43cff4f5"
+}

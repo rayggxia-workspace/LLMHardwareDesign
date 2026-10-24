@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "kind": "granite_numeric",
+  "status": "PARTIAL_DIAGNOSTIC",
+  "reference_qualification": {
+    "capture_status": "FAIL",
+    "failed_checks": [
+      {
+        "check": "evaluation.chunk16",
+        "actual": {
+          "relative_l2": 0.005823341780697408,
+          "max_abs": 1.1829700469970703
+        }
+      }
+    ],
+    "allowed_scope": "captured layer0 local numerical/structural diagnostics only",
+    "quality_accepted": false,
+    "chunk_reference_accepted": false,
+    "original_correctness_gate": {
+      "relative_l2_max": 0.0002,
+      "max_abs_max": 0.002,
+      "passed": false
+    },
+    "original_case_checks": {
+      "calibration": {
+        "cached": {
+          "relative_l2": 4.4898182397156684e-07,
+          "max_abs": 2.574920654296875e-05
+        },
+        "chunk16": {
+          "relative_l2": 4.860637128642333e-07,
+          "max_abs": 3.2901763916015625e-05
+        },
+        "moe_replay": {
+          "relative_l2": 6.654871720387743e-08,
+          "max_abs": 4.76837158203125e-07
+        },
+        "passed": true
+      },
+      "evaluation": {
+        "cached": {
+          "relative_l2": 5.833917947267969e-07,
+          "max_abs": 2.810359001159668e-05
+        },
+        "chunk16": {
+          "relative_l2": 0.005823341780697408,
+          "max_abs": 1.1829700469970703
+        },
+        "moe_replay": {
+          "relative_l2": 6.660252867765487e-08,
+          "max_abs": 4.76837158203125e-07
+        },
+        "passed": false
+      }
+    }
+  },
+  "diagnostic_failed_chunk_explicit": true,
+  "source": {
+    "commit": "4482a6503267bd5220086c702fd80d9d02013e7c",
+    "granite_sha256": "ad460bd84732bfe555d0747e351ff79428e9730101dc34b01f215255dd9399fb",
+    "binding_sha256": "5198c621c41fad8fae21843a1accbbe1789cc874317e8a6b0c0b6393b4a97f05",
+    "capture_manifest_sha256": "dc249f9e883a3c9ec321e05629959916899d5f4e86353506fbc994e0cf648a74",
+    "capture_source": {
+      "commit": "ac9d3f3d4785e3d855045744a8608d2b1885d643",
+      "granite_sha256": "7593b9ee24d5dac95776ad2f36c96b2bac6906279c651bc225ae69f129dcf2ef",
+      "binding_sha256": "6cf8a27c31c705b29c8983d67535933454030f8d1b8cc1b3fe34fa8d43cff4f5"
+    }
+  },
+  "capture": "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/capture-granite03",
+  "model_revision": "a02780686e08a03fe0d2679a293b5c74a90efa89",
+  "host": "node13",
+  "numpy": "2.2.6",
+  "seconds": 3.0696195201016963,
+  "artifacts": [
+    {
+      "path": "metrics.json",
+      "sha256": "2c615ac728a43abaad11de0def21501628b4644fdb206b65c70fb4185f474918",
+      "bytes": 26891,
+      "kind": "structured_metrics"
+    },
+    {
+      "path": "witnesses.json",
+      "sha256": "bea49d8f2602ec7d9f1cbdc8dc9771380f9f1a460d536d29649752be4ddf5e0b",
+      "bytes": 17415,
+      "kind": "independent_schema"
+    },
+    {
+      "path": "witnesses.npz",
+      "sha256": "062eba6715df21314aacfb0336c1f9babfa83cbe7b67c23321dbcc09d9983780",
+      "bytes": 1211346,
+      "kind": "actual_integer_witnesses"
+    }
+  ],
+  "acceptance": "software integer references executed; application quality/hardware qualification not accepted"
+}

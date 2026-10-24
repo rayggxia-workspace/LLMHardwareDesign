@@ -1,0 +1,33 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase11/work/Liangruizhi/70/compare_scientific_pairs.py",
+    "--pair",
+    "falcon-copy",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-falcon01",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-falcon02",
+    "--pair",
+    "granite-copy",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-granite01",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-granite02",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/scientific-pairs01.json"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase11/work/Liangruizhi/70/compare_scientific_pairs.py --pair falcon-copy /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-falcon01 /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-falcon02 --pair granite-copy /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-granite01 /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-granite02 --out /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/scientific-pairs01.json",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i70-compare-pairs01",
+    "--partition=c96",
+    "--cpus-per-task=1",
+    "--time=00:05:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/compare-pairs01-%j.log",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase11/work/Liangruizhi/70/compare_scientific_pairs.py --pair falcon-copy /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-falcon01 /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-falcon02 --pair granite-copy /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-granite01 /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/transport-granite02 --out /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/scientific-pairs01.json"
+  ],
+  "stdout": "90179",
+  "phase": "phase11",
+  "binding_sha256": "ed24826530aa7d5935d9644c2e36171165353c2a20739c99a7864eb5143372cd"
+}

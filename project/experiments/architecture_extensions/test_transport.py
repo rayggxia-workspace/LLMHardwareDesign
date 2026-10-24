@@ -1,0 +1,189 @@
+"""Finite-bank and independent COPY calendar boundary tests, no model execution."""
+import importlib.util
+import json
+from pathlib import Path
+from types import SimpleNamespace
+import tempfile
+import unittest
+import numpy as np
+
+spec=importlib.util.spec_from_file_location('transport',Path(__file__).with_name('transport.py'))
+t=importlib.util.module_from_spec(spec);spec.loader.exec_module(t)
+checker_path=Path(__file__).parents[1]/'range_service'/'receive_service.py'
+verify=t.independent_checker(checker_path)
+
+
+class TransportTests(unittest.TestCase):
+    def test_granite_full_returns_rejected(self):
+        c=t.certificate('full','V',{'returns':8*1536*4})
+        self.assertEqual(c['status'],'REJECT_CAPACITY')
+        self.assertEqual(c['required_bytes'],49152)
+        c=t.certificate('single','V',{'S64acc':1536*8,'S32return':1536*4})
+        self.assertEqual(c['excess_bytes'],2048)
+
+    def test_tiled_metadata_not_free(self):
+        c=t.certificate('tile512','V',{'acc':512*8,'return':512*4,'RQ':512*6,'metadata':98})
+        self.assertEqual(c['required_bytes'],9314)
+        self.assertEqual(c['status'],'FITS_CAPACITY_ONLY')
+
+    def test_falcon_whole_head_not_fit(self):
+        for bits in (16,32):
+            c=t.certificate('head','R',{'state':128*256*(bits//8)})
+            self.assertEqual(c['status'],'REJECT_CAPACITY')
+        c=t.aggregate_s_certificate('full32',{'state':32*128*256*4})
+        self.assertEqual(c['capacity_bytes'],262144)
+        self.assertEqual(c['status'],'REJECT_CAPACITY')
+
+    def test_packet_boundary_header_padding(self):
+        g=t.CopyGraph();g.copy('S0','V',1985,[],'explicit logical object packetization')
+        self.assertEqual([n['meta']['payload_bytes'] for n in g.nodes],[1984,1])
+        self.assertEqual([n['meta']['wire_bytes'] for n in g.nodes],[2016,48])
+        for strategy in ('fifo','critical'):
+            nodes=t.schedule(g,strategy);t.check_packet_formula(nodes)
+            self.assertGreater(verify(nodes,t.capacities())['makespan'],0)
+
+    def test_illegal_bank_object_not_silently_tiled(self):
+        g=t.CopyGraph()
+        with self.assertRaises(ValueError):
+            g.copy('S0','V',49152,[],'cannot fit')
+        with self.assertRaises(ValueError):
+            g.copy('S0','S0',16,[],'same bank')
+
+    def test_address_bound(self):
+        g=t.CopyGraph()
+        with self.assertRaises(ValueError):
+            g.copy('S0','V',1024,[],'overflow slot',dst_base=16000)
+
+    def test_unaligned_word_transactions_are_charged(self):
+        self.assertEqual(t.access_beats(15,3),2)
+        self.assertEqual(t.access_beats(16,3),1)
+        self.assertEqual(t.access_beats(15,0),0)
+        g=t.CopyGraph()
+        g.io('V',6,0,[],'separate small descriptors',[
+            {'direction':'read','offset':0,'bytes':3},
+            {'direction':'read','offset':15,'bytes':3}])
+        self.assertEqual(g.nodes[0]['duration'],3)
+        g=t.CopyGraph();g.copy('S0','V',16,[],'unaligned packet',src_base=1,dst_base=15)
+        n=g.nodes[0]
+        self.assertEqual(n['duration'],2+3+2)
+        self.assertEqual([(r['offset'],r['duration']) for r in n['reservations'][:3]],[(0,2),(2,3),(5,2)])
+        verify(t.schedule(g,'fifo'),t.capacities())
+
+    def test_actual_granite_graph_both_orderings(self):
+        for layout in ('roundrobin','all_one'):
+            g=t.granite_graph(1536,512,layout)
+            for strategy in ('fifo','critical'):
+                nodes=t.schedule(g,strategy);t.check_packet_formula(nodes)
+                out=verify(nodes,t.capacities())
+                self.assertGreaterEqual(out['makespan'],out['lower_bound'])
+            payload=sum(n['meta']['payload_bytes'] for n in g.nodes if n['kind']=='packet')
+            # Returns stage twice, RQ stage twice, final merged S32 once, metadata once.
+            self.assertEqual(payload,2*8*1536*4+2*8*1536*6+1536*4+98)
+
+    def test_falcon_complete_head_copy(self):
+        for bits,tile in ((32,8),(16,16)):
+            g=t.state_graph(256,128,bits,tile,'roundrobin')
+            nodes=t.schedule(g,'critical');t.check_packet_formula(nodes)
+            verify(nodes,t.capacities())
+            payload=sum(n['meta']['payload_bytes'] for n in nodes if n['kind']=='packet')
+            # Four old/proposal transfers and two output-readback transfers, plus descriptor.
+            self.assertEqual(payload,6*256*128*(bits//8)+2*(24+(2 if bits==16 else 0)))
+
+    def test_falcon_norm_is_full_scan_then_second_read(self):
+        g=t.norm_join_graph(4096,2560,512,'roundrobin')
+        nodes=t.schedule(g,'critical');t.check_packet_formula(nodes)
+        verify(nodes,t.capacities())
+        scans=[n for n in nodes if n['kind']=='local_io' and n['meta']['label'].startswith('global reduction')]
+        second=[n for n in nodes if n['kind']=='packet' and n['meta']['label'].startswith('gatednorm x second')]
+        self.assertEqual(len(scans),8)
+        self.assertGreaterEqual(min(n['start'] for n in second),max(n['end'] for n in scans))
+        gate_first=[n for n in nodes if n['kind']=='packet' and n['meta']['label']=='gatednorm first-scan gate backing->S']
+        self.assertEqual(sum(n['meta']['payload_bytes'] for n in gate_first),4096*4)
+        # Complete external boundary: raw+gate first scan, raw+gate+gamma second scan,
+        # one norm output; residual+A+R inputs and joined output; matching metadata.
+        boundary=sum(n['meta']['payload_bytes'] for n in nodes if n['kind']=='packet'
+                     and (n['meta']['src']=='EXT' or n['meta']['dst']=='EXT'))
+        self.assertEqual(boundary,6*4096*4+4*2560*4+64)
+        joins=[n for n in nodes if n['kind']=='local_io' and n['meta']['label'].startswith('residual+A/R join')]
+        self.assertEqual(sum(n['meta']['read_bytes'] for n in joins),3*2560*4)
+        self.assertEqual(sum(n['meta']['write_bytes'] for n in joins),2560*4)
+
+    def test_norm_before_gate_conditional_first_scan(self):
+        after=t.norm_join_graph(4096,2560,512,'roundrobin',norm_before_gate=False)
+        before=t.norm_join_graph(4096,2560,512,'roundrobin',norm_before_gate=True)
+        def payload(g):
+            return sum(n['meta']['payload_bytes'] for n in g.nodes if n['kind']=='packet')
+        # Gate first-scan EXT->S and S->V exist only for norm_before_gate=false.
+        self.assertEqual(payload(after)-payload(before),2*4096*4)
+
+    def test_independent_overlap_negative(self):
+        g=t.CopyGraph();g.copy('S0','V',64,[],'a');g.copy('S0','V',64,[],'b')
+        nodes=t.schedule(g,'fifo')
+        nodes[1]['start']=nodes[0]['start'];nodes[1]['end']=nodes[1]['start']+nodes[1]['duration']
+        with self.assertRaises(AssertionError):
+            verify(nodes,t.capacities())
+
+    def test_end_to_end_source_schema_and_all_24_copy_profiles(self):
+        # Synthetic source-bound IO fixture, not model/numerical evidence.
+        temp_root=Path('D:/Projects/Codex/moe-hybrid-20261024-1419/transport-tests')
+        temp_root.mkdir(parents=True,exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=temp_root) as tmp:
+            base=Path(tmp); gran=base/'granite'; falcon=base/'falcon'
+            gran.mkdir();falcon.mkdir()
+            t.save(gran/'metrics.json',{'cases':[{'activation':'dynamic_row','route':'route_recomputed',
+                'logical_payload_per_token':{'expert_return_S32':49152}}]})
+            def art(folder,name):
+                return {'path':name,'sha256':t.sha(folder/name),'bytes':(folder/name).stat().st_size}
+            t.save(gran/'manifest.json',{'kind':'granite_numeric','status':'EXECUTED',
+                'artifacts':[art(gran,'metrics.json')]})
+            cfg={'mamba_d_state':256,'mamba_d_head':128,'mamba_n_heads':32,'mamba_d_ssm':4096,
+                 'hidden_size':2560,'num_hidden_layers':32,'mamba_norm_before_gate':False}
+            t.save(falcon/'config.json',cfg)
+            t.save(falcon/'report.json',{'gated_norm':{'elements':4096},'inventory':[]})
+            arrays={'full.final.ssm':np.zeros((1,32,128,256),dtype=np.float32),
+                    'full.final.conv':np.zeros((1,4608,4),dtype=np.float32),
+                    'full.final.kv_key':np.zeros((1,2,72,128),dtype=np.float32),
+                    'full.final.kv_value':np.zeros((1,2,72,128),dtype=np.float32),
+                    'evaluation.input':np.zeros((72,2560),dtype=np.float32),
+                    'evaluation.attention':np.zeros((72,2560),dtype=np.float32),
+                    'evaluation.mamba':np.zeros((72,2560),dtype=np.float32),
+                    'evaluation.projected':np.zeros((72,8736),dtype=np.float32),
+                    'evaluation.raw_scan':np.zeros((72,4096),dtype=np.float32),
+                    'weight.gated_norm_gamma':np.ones(4096,dtype=np.float32)}
+            np.savez_compressed(falcon/'capture.npz',**arrays)
+            t.save(falcon/'manifest.json',{'schema':'falcon-h1-bounded-v1','status':'EXECUTED',
+                'artifacts':[art(falcon,k) for k in ('config.json','report.json','capture.npz')]})
+            binding=base/'binding.json'
+            t.save(binding,{'commit':'synthetic-unit-test-only','transport_sha256':t.sha(t.__file__),
+                            'interval_checker_sha256':t.sha(checker_path)})
+            t.run(SimpleNamespace(granite=gran,falcon=falcon,binding=binding,out=base/'result'))
+            result=json.loads((base/'result'/'metrics.json').read_text())
+            self.assertEqual(len(result['copy_calendars']),24)
+            backing=[c for c in result['capacity_certificates'] if c['label'].startswith('Falcon all-layer')]
+            self.assertEqual([c['status'] for c in backing],['REJECT_CAPACITY','FITS_CAPACITY_ONLY'])
+            self.assertEqual(result['ledgers']['falcon']['norm_minimum_logical_FP32_source_and_output_bytes'],98304)
+            self.assertEqual(result['ledgers']['falcon']['join_logical_FP32_input_and_output_bytes'],40960)
+            full_join=[c for c in result['capacity_certificates'] if c['label']=='Falcon residual+A/R full join'][0]
+            self.assertEqual(full_join['required_bytes'],41024)
+            # A source mutation must be rejected before creating a second result.
+            (gran/'metrics.json').write_text('{}')
+            with self.assertRaises(ValueError):
+                t.run(SimpleNamespace(granite=gran,falcon=falcon,binding=binding,out=base/'bad'))
+
+    def test_partial_source_requires_explicit_and_retains_original_fail(self):
+        root=Path('D:/Projects/Codex/moe-hybrid-20261024-1419/transport-tests')
+        root.mkdir(parents=True,exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=root) as tmp:
+            folder=Path(tmp)
+            q={'capture_status':'FAIL','chunk_reference_accepted':False,'quality_accepted':False,
+               'failed_checks':[{'check':'evaluation.chunk16','actual':{'relative_l2':.0058,'max_abs':1.18}}]}
+            t.save(folder/'manifest.json',{'kind':'granite_numeric','status':'PARTIAL_DIAGNOSTIC',
+                'reference_qualification':q,'artifacts':[]})
+            with self.assertRaises(ValueError):t.load_source(folder,'granite_numeric')
+            manifest,receipt=t.load_source(folder,'granite_numeric',diagnostic_failed_chunk=True)
+            self.assertEqual(receipt['status'],'PARTIAL_DIAGNOSTIC')
+            self.assertEqual(receipt['reference_qualification']['capture_status'],'FAIL')
+
+
+if __name__=='__main__':
+    unittest.main()

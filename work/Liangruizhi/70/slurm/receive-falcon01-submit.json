@@ -1,0 +1,33 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase4/project/experiments/architecture_extensions/receive.py",
+    "--model",
+    "falcon",
+    "--result",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/capture-falcon03",
+    "--producer-source",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase3/project/experiments/architecture_extensions/falcon.py",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase4/binding.json",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/audit-falcon01"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase4/project/experiments/architecture_extensions/receive.py --model falcon --result /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/capture-falcon03 --producer-source /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase3/project/experiments/architecture_extensions/falcon.py --binding /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase4/binding.json --out /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/audit-falcon01",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i70-receive-falcon01",
+    "--partition=c96",
+    "--cpus-per-task=2",
+    "--time=00:20:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/receive-falcon01-%j.log",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase4/project/experiments/architecture_extensions/receive.py --model falcon --result /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/capture-falcon03 --producer-source /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase3/project/experiments/architecture_extensions/falcon.py --binding /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase4/binding.json --out /public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/audit-falcon01"
+  ],
+  "stdout": "90165",
+  "phase": "phase4",
+  "binding_sha256": "ccbf3fdc102181f2672f5bd4028e468533f3255d23c968d3b6062e6e4d9101f0"
+}

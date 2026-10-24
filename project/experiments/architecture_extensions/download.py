@@ -1,0 +1,79 @@
+"""Download only Issue70's two authorized public BF16 checkpoints, pinned official metadata.
+No credentials or remote model code are used. Large files stay on the authorized server.
+"""
+import argparse,concurrent.futures,hashlib,json,os,time,urllib.request,urllib.parse
+from pathlib import Path
+MODELS={'granite':'ibm-granite/granite-3.1-3b-a800m-instruct','falcon':'tiiuae/Falcon-H1-3B-Instruct'}
+SMALL={'config.json','generation_config.json','tokenizer.json','tokenizer_config.json','special_tokens_map.json','added_tokens.json','tokenizer.model','sentencepiece.bpe.model','vocab.json','merges.txt','README.md','LICENSE','LICENSE.txt','model.safetensors.index.json'}
+def sha(p):
+ h=hashlib.sha256()
+ with p.open('rb')as f:
+  for b in iter(lambda:f.read(8<<20),b''):h.update(b)
+ return h.hexdigest()
+def save(p,x):p.write_text(json.dumps(x,indent=2,sort_keys=True)+'\n')
+def verify(p,row):
+ size=p.stat().st_size;digest=sha(p);lfs=row.get('lfs')
+ if lfs:
+  assert size==lfs['size']and digest==lfs['sha256'],('LFS size/SHA',p.name)
+ elif row.get('blobId'):
+  content=p.read_bytes();git=hashlib.sha1(b'blob '+str(len(content)).encode()+b'\0'+content).hexdigest()
+  assert git==row['blobId'],('official Git blob',p.name)
+ return {'bytes':size,'sha256':digest,'official_lfs':lfs,'official_git_blob':row.get('blobId')}
+def one(out,model,revision,row,endpoints):
+ name=row['rfilename'];p=out/name
+ if p.exists():return name,dict(verify(p,row),reused_verified=True)
+ part=out/(name+'.part');errors=[]
+ for endpoint in endpoints:
+  url=endpoint+'/'+model+'/resolve/'+revision+'/'+urllib.parse.quote(name)+'?download=true'
+  for attempt in range(2):
+   try:
+    headers={'User-Agent':'LLMHardwareDesign-Issue70','Cache-Control':'no-cache'}
+    have=part.stat().st_size if part.exists()else 0
+    if have:headers['Range']='bytes='+str(have)+'-'
+    req=urllib.request.Request(url+'&issue70='+str(time.time_ns()),headers=headers)
+    with urllib.request.urlopen(req,timeout=60)as r:
+     append=have and r.status==206
+     with part.open('ab'if append else'wb')as f:
+      for b in iter(lambda:r.read(4<<20),b''):f.write(b)
+    result=verify(part,row)
+    if p.exists():raise FileExistsError(p)
+    part.rename(p)
+    print(json.dumps({'file':name,'bytes':result['bytes'],'endpoint':endpoint,'status':'VERIFIED'}),flush=True)
+    return name,dict(result,endpoint=endpoint,public_url=url)
+   except Exception as e:
+    # Do not log redirected signed URLs or response bodies.
+    errors.append({'endpoint':endpoint,'attempt':attempt,'type':type(e).__name__,'http_code':getattr(e,'code',None)})
+ raise RuntimeError(json.dumps({'file':name,'errors':errors}))
+def header_dtypes(p):
+ import struct
+ with p.open('rb')as f:
+  n=struct.unpack('<Q',f.read(8))[0]
+  if n>32<<20:raise ValueError('safetensors header size')
+  x=json.loads(f.read(n))
+ counts={}
+ for name,v in x.items():
+  if name!='__metadata__':counts[v['dtype']]=counts.get(v['dtype'],0)+1
+ return counts
+def main():
+ p=argparse.ArgumentParser(description=__doc__)
+ p.add_argument('--model',choices=MODELS,required=True);p.add_argument('--metadata',type=Path,required=True)
+ p.add_argument('--metadata-sha256',required=True);p.add_argument('--out',type=Path,required=True)
+ p.add_argument('--binding',type=Path,required=True);p.add_argument('--resume',action='store_true')
+ a=p.parse_args();assert sha(a.metadata)==a.metadata_sha256
+ b=json.loads(a.binding.read_text());assert b['download_sha256']==sha(Path(__file__))and b['commit']
+ m=json.loads(a.metadata.read_text());model=MODELS[a.model];assert m['id']==model and len(m['sha'])==40
+ if a.out.exists()and not a.resume:raise FileExistsError(a.out)
+ a.out.mkdir(parents=True,exist_ok=a.resume)
+ rows=[r for r in m['siblings']if'/'not in r['rfilename']and(r['rfilename']in SMALL or r['rfilename'].endswith('.safetensors'))]
+ assert any(r['rfilename']=='config.json'for r in rows)
+ assert any(r['rfilename'].endswith('.safetensors')for r in rows)
+ for row in rows:
+  if row['rfilename'].endswith('.safetensors'):assert row.get('lfs',{}).get('sha256'),'missing official LFS SHA'
+ endpoints=['https://huggingface.co','https://hf-mirror.com']
+ save(a.out/'SOURCE_METADATA.json',m)
+ with concurrent.futures.ThreadPoolExecutor(max_workers=2)as ex:
+  files=dict(ex.map(lambda row:one(a.out,model,m['sha'],row,endpoints),rows))
+ dtypes={r['rfilename']:header_dtypes(a.out/r['rfilename'])for r in rows if r['rfilename'].endswith('.safetensors')}
+ receipt={'status':'PASS_DOWNLOAD_AND_SOURCE_HASH_ONLY','model':model,'revision':m['sha'],'metadata_sha256':a.metadata_sha256,'metadata_source':'official Hugging Face API captured on local PC; raw bytes SHA pinned before server execution','source':b,'files':files,'safetensors_header_tensor_dtypes':dtypes,'bytes':sum(v['bytes']for v in files.values()),'job':os.environ.get('SLURM_JOB_ID'),'inference_passed':False,'integer_qualified':False,'hardware_implemented':False}
+ save(a.out/'download_receipt.json',receipt);print(json.dumps({'status':receipt['status'],'model':model,'revision':m['sha'],'bytes':receipt['bytes']}),flush=True)
+if __name__=='__main__':main()

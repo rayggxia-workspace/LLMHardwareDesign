@@ -1,0 +1,138 @@
+{
+  "checks": {
+    "artifacts_checked": 5,
+    "capture_manifest_sha256": "dc249f9e883a3c9ec321e05629959916899d5f4e86353506fbc994e0cf648a74",
+    "dots": 32,
+    "merges": [
+      {
+        "common_unit_exp": -20,
+        "experts": 8,
+        "final_values": 1536,
+        "hidden": 1536,
+        "rq_values": 12288
+      },
+      {
+        "common_unit_exp": -20,
+        "experts": 8,
+        "final_values": 1536,
+        "hidden": 1536,
+        "rq_values": 12288
+      },
+      {
+        "common_unit_exp": -20,
+        "experts": 8,
+        "final_values": 1536,
+        "hidden": 1536,
+        "rq_values": 12288
+      },
+      {
+        "common_unit_exp": -20,
+        "experts": 8,
+        "final_values": 1536,
+        "hidden": 1536,
+        "rq_values": 12288
+      }
+    ],
+    "model": "Granite-3.1-3B-A800M-Instruct",
+    "partial_diagnostic": true,
+    "qualification": "32 full-K dots and 4 complete top8/H1536 merges; not all layer dots or full-model quality; FP softmax/SiLU/scale bridges remain",
+    "reference_qualification": {
+      "allowed_scope": "captured layer0 local numerical/structural diagnostics only",
+      "capture_status": "FAIL",
+      "chunk_reference_accepted": false,
+      "failed_checks": [
+        {
+          "actual": {
+            "max_abs": 1.1829700469970703,
+            "relative_l2": 0.005823341780697408
+          },
+          "check": "evaluation.chunk16"
+        }
+      ],
+      "original_case_checks": {
+        "calibration": {
+          "cached": {
+            "max_abs": 2.574920654296875e-05,
+            "relative_l2": 4.4898182397156684e-07
+          },
+          "chunk16": {
+            "max_abs": 3.2901763916015625e-05,
+            "relative_l2": 4.860637128642333e-07
+          },
+          "moe_replay": {
+            "max_abs": 4.76837158203125e-07,
+            "relative_l2": 6.654871720387743e-08
+          },
+          "passed": true
+        },
+        "evaluation": {
+          "cached": {
+            "max_abs": 2.810359001159668e-05,
+            "relative_l2": 5.833917947267969e-07
+          },
+          "chunk16": {
+            "max_abs": 1.1829700469970703,
+            "relative_l2": 0.005823341780697408
+          },
+          "moe_replay": {
+            "max_abs": 4.76837158203125e-07,
+            "relative_l2": 6.660252867765487e-08
+          },
+          "passed": false
+        }
+      },
+      "original_correctness_gate": {
+        "max_abs_max": 0.002,
+        "passed": false,
+        "relative_l2_max": 0.0002
+      },
+      "quality_accepted": false
+    },
+    "requants": 32,
+    "result_manifest_sha256": "0f8dec8500ae6a295daff9961fd780ea1a0da1f5c3d3334ace76a877d19967d4",
+    "revision": "a02780686e08a03fe0d2679a293b5c74a90efa89",
+    "routing": [
+      {
+        "coefficient_generation": "FP64 softmax bridge; not integer exp/div qualification",
+        "rows": 8,
+        "top8_set_flips": 0
+      },
+      {
+        "coefficient_generation": "FP64 softmax bridge; not integer exp/div qualification",
+        "rows": 8,
+        "top8_set_flips": 1
+      }
+    ],
+    "source_commit": "4482a6503267bd5220086c702fd80d9d02013e7c"
+  },
+  "mathematical_reception": "PASS",
+  "model": "granite",
+  "negatives": [
+    {
+      "label": "code",
+      "manifest_sha256": "501e6e3153b4c9055bef93b58cf2f1a75c0f512fe802414d5e91da734d3c9468",
+      "reason": "independent dot code",
+      "status": "REJECTED"
+    },
+    {
+      "label": "route",
+      "manifest_sha256": "e43071b3da92bca5ab70dce0ce7b64edbf89f0a199e4b6dd461ee2910a66ebdd",
+      "reason": "quant top8 must be recomputed",
+      "status": "REJECTED"
+    }
+  ],
+  "producer_source_checked": "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/phase8/project/experiments/architecture_extensions/granite.py",
+  "qualification": "bounded mathematical/source reception, not application quality or target hardware acceptance",
+  "receiver_sha256": "d8fee79eadd62e240b9ef2e0206b758ba5685a7a10ed42224447901057887420",
+  "schema": "issue70-independent-receiver-v1",
+  "source": {
+    "commit": "a7b0fdef512f1fba5c251a50404d1e315c4fc7f0",
+    "receive_sha256": "d8fee79eadd62e240b9ef2e0206b758ba5685a7a10ed42224447901057887420",
+    "sources": {
+      "project/experiments/architecture_extensions/receive.py": "d8fee79eadd62e240b9ef2e0206b758ba5685a7a10ed42224447901057887420",
+      "project/experiments/architecture_extensions/verify_diagnose.py": "7d9400808e21d5500fe5b104538bb29b54cf567d42ec259c22917c11db977fdd"
+    },
+    "verify_diagnose_sha256": "7d9400808e21d5500fe5b104538bb29b54cf567d42ec259c22917c11db977fdd"
+  },
+  "status": "PARTIAL_DIAGNOSTIC"
+}

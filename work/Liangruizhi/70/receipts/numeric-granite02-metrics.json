@@ -1,0 +1,1272 @@
+{
+  "schema_version": 1,
+  "reference_qualification": {
+    "capture_status": "FAIL",
+    "failed_checks": [
+      {
+        "check": "evaluation.chunk16",
+        "actual": {
+          "relative_l2": 0.005823341780697408,
+          "max_abs": 1.1829700469970703
+        }
+      }
+    ],
+    "allowed_scope": "captured layer0 local numerical/structural diagnostics only",
+    "quality_accepted": false,
+    "chunk_reference_accepted": false,
+    "original_correctness_gate": {
+      "relative_l2_max": 0.0002,
+      "max_abs_max": 0.002,
+      "passed": false
+    },
+    "original_case_checks": {
+      "calibration": {
+        "cached": {
+          "relative_l2": 4.4898182397156684e-07,
+          "max_abs": 2.574920654296875e-05
+        },
+        "chunk16": {
+          "relative_l2": 4.860637128642333e-07,
+          "max_abs": 3.2901763916015625e-05
+        },
+        "moe_replay": {
+          "relative_l2": 6.654871720387743e-08,
+          "max_abs": 4.76837158203125e-07
+        },
+        "passed": true
+      },
+      "evaluation": {
+        "cached": {
+          "relative_l2": 5.833917947267969e-07,
+          "max_abs": 2.810359001159668e-05
+        },
+        "chunk16": {
+          "relative_l2": 0.005823341780697408,
+          "max_abs": 1.1829700469970703
+        },
+        "moe_replay": {
+          "relative_l2": 6.660252867765487e-08,
+          "max_abs": 4.76837158203125e-07
+        },
+        "passed": false
+      }
+    }
+  },
+  "cases": [
+    {
+      "activation": "dynamic_row",
+      "route": "route_fixed_diagnostic",
+      "phase": "prefill",
+      "positions": [
+        60,
+        61,
+        62,
+        63
+      ],
+      "tokens": 4,
+      "selected_experts": [
+        [
+          30,
+          22,
+          1,
+          17,
+          39,
+          21,
+          19,
+          4
+        ],
+        [
+          5,
+          35,
+          30,
+          37,
+          3,
+          1,
+          0,
+          21
+        ],
+        [
+          1,
+          13,
+          30,
+          14,
+          17,
+          4,
+          8,
+          21
+        ],
+        [
+          32,
+          15,
+          33,
+          2,
+          30,
+          28,
+          8,
+          37
+        ]
+      ],
+      "expert_accesses": [
+        1,
+        3,
+        1,
+        1,
+        2,
+        1,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        2,
+        0,
+        1,
+        0,
+        3,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        4,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        2,
+        0,
+        1
+      ],
+      "unique_experts": 21,
+      "router_replaced_experts_per_token": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "router_changed_tokens": 0,
+      "fp_bridge_error": {
+        "relative_l2": 0.044897287537637075,
+        "max_abs": 0.1583919159332321
+      },
+      "common_s32_error": {
+        "relative_l2": 0.04489844613155332,
+        "max_abs": 0.158388152718544
+      },
+      "common_vs_fp_bridge": {
+        "relative_l2": 4.502245709415985e-05,
+        "max_abs": 0.00018784327180254579
+      },
+      "input_saturation_total_8tokens": 0,
+      "intermediate_saturation_total_8tokens": 0,
+      "rq_saturation_total_8tokens": 0,
+      "merge_saturation_total_8tokens": 0,
+      "max_abs_matrix_acc_total_8tokens": 323779,
+      "route_weight_q15_sum_error": [
+        -2,
+        0,
+        1,
+        0
+      ],
+      "logical_payload_per_token": {
+        "input_once_A8": 1536,
+        "input_duplicated_8_A8": 12288,
+        "expert_return_S32": 49152,
+        "merged_S32": 6144,
+        "route_ids_uint8": 8,
+        "route_weights_Q15_uint16": 16,
+        "input_scale_fp64": 8,
+        "return_scale_fp64_per_coordinate": 98304,
+        "RQ_Q31mult_uint32_shift_int16_per_coordinate": 73728,
+        "common_unit_int16": 2
+      },
+      "expert_W8_unique_payload_lower_bound": 49545216,
+      "expert_W8_payload_no_reuse_each_access": 75497472,
+      "expert_Wscale_fp64_per_unique_lower_bound": 430080,
+      "matrix_MACs": {
+        "router": 245760,
+        "experts": 75497472
+      },
+      "weight_reuse_qualification": "unique lower bound needs grouping/residency; no realized cache traffic claimed",
+      "physical_transport": "unmeasured; header/padding/packing/multicast implementation not included"
+    },
+    {
+      "activation": "dynamic_row",
+      "route": "route_fixed_diagnostic",
+      "phase": "decode",
+      "positions": [
+        64,
+        65,
+        66,
+        67
+      ],
+      "tokens": 4,
+      "selected_experts": [
+        [
+          25,
+          5,
+          33,
+          18,
+          27,
+          23,
+          28,
+          6
+        ],
+        [
+          17,
+          13,
+          1,
+          8,
+          19,
+          14,
+          21,
+          22
+        ],
+        [
+          1,
+          30,
+          17,
+          13,
+          8,
+          14,
+          22,
+          21
+        ],
+        [
+          1,
+          17,
+          14,
+          30,
+          8,
+          13,
+          22,
+          21
+        ]
+      ],
+      "expert_accesses": [
+        0,
+        3,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        3,
+        3,
+        0,
+        0,
+        3,
+        1,
+        1,
+        0,
+        3,
+        3,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        2,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique_experts": 17,
+      "router_replaced_experts_per_token": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "router_changed_tokens": 0,
+      "fp_bridge_error": {
+        "relative_l2": 0.05145823226456618,
+        "max_abs": 0.18325138191813828
+      },
+      "common_s32_error": {
+        "relative_l2": 0.051461570057674426,
+        "max_abs": 0.18331378698349
+      },
+      "common_vs_fp_bridge": {
+        "relative_l2": 5.5300836696000985e-05,
+        "max_abs": 0.00022015871616920535
+      },
+      "input_saturation_total_8tokens": 0,
+      "intermediate_saturation_total_8tokens": 0,
+      "rq_saturation_total_8tokens": 0,
+      "merge_saturation_total_8tokens": 0,
+      "max_abs_matrix_acc_total_8tokens": 323779,
+      "route_weight_q15_sum_error": [
+        2,
+        1,
+        2,
+        1
+      ],
+      "logical_payload_per_token": {
+        "input_once_A8": 1536,
+        "input_duplicated_8_A8": 12288,
+        "expert_return_S32": 49152,
+        "merged_S32": 6144,
+        "route_ids_uint8": 8,
+        "route_weights_Q15_uint16": 16,
+        "input_scale_fp64": 8,
+        "return_scale_fp64_per_coordinate": 98304,
+        "RQ_Q31mult_uint32_shift_int16_per_coordinate": 73728,
+        "common_unit_int16": 2
+      },
+      "expert_W8_unique_payload_lower_bound": 40108032,
+      "expert_W8_payload_no_reuse_each_access": 75497472,
+      "expert_Wscale_fp64_per_unique_lower_bound": 348160,
+      "matrix_MACs": {
+        "router": 245760,
+        "experts": 75497472
+      },
+      "weight_reuse_qualification": "unique lower bound needs grouping/residency; no realized cache traffic claimed",
+      "physical_transport": "unmeasured; header/padding/packing/multicast implementation not included"
+    },
+    {
+      "activation": "dynamic_row",
+      "route": "route_recomputed",
+      "phase": "prefill",
+      "positions": [
+        60,
+        61,
+        62,
+        63
+      ],
+      "tokens": 4,
+      "selected_experts": [
+        [
+          30,
+          22,
+          1,
+          17,
+          39,
+          21,
+          4,
+          19
+        ],
+        [
+          5,
+          35,
+          30,
+          37,
+          3,
+          1,
+          0,
+          21
+        ],
+        [
+          1,
+          13,
+          30,
+          14,
+          17,
+          4,
+          8,
+          21
+        ],
+        [
+          32,
+          15,
+          33,
+          2,
+          30,
+          28,
+          8,
+          37
+        ]
+      ],
+      "expert_accesses": [
+        1,
+        3,
+        1,
+        1,
+        2,
+        1,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        2,
+        0,
+        1,
+        0,
+        3,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        4,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        2,
+        0,
+        1
+      ],
+      "unique_experts": 21,
+      "router_replaced_experts_per_token": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "router_changed_tokens": 0,
+      "fp_bridge_error": {
+        "relative_l2": 0.04500255780280902,
+        "max_abs": 0.15866006995594545
+      },
+      "common_s32_error": {
+        "relative_l2": 0.045003328109695935,
+        "max_abs": 0.15865899622440338
+      },
+      "common_vs_fp_bridge": {
+        "relative_l2": 3.3976899393733075e-05,
+        "max_abs": 0.00016272682455187315
+      },
+      "input_saturation_total_8tokens": 0,
+      "intermediate_saturation_total_8tokens": 0,
+      "rq_saturation_total_8tokens": 0,
+      "merge_saturation_total_8tokens": 0,
+      "max_abs_matrix_acc_total_8tokens": 323779,
+      "route_weight_q15_sum_error": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "logical_payload_per_token": {
+        "input_once_A8": 1536,
+        "input_duplicated_8_A8": 12288,
+        "expert_return_S32": 49152,
+        "merged_S32": 6144,
+        "route_ids_uint8": 8,
+        "route_weights_Q15_uint16": 16,
+        "input_scale_fp64": 8,
+        "return_scale_fp64_per_coordinate": 98304,
+        "RQ_Q31mult_uint32_shift_int16_per_coordinate": 73728,
+        "common_unit_int16": 2
+      },
+      "expert_W8_unique_payload_lower_bound": 49545216,
+      "expert_W8_payload_no_reuse_each_access": 75497472,
+      "expert_Wscale_fp64_per_unique_lower_bound": 430080,
+      "matrix_MACs": {
+        "router": 245760,
+        "experts": 75497472
+      },
+      "weight_reuse_qualification": "unique lower bound needs grouping/residency; no realized cache traffic claimed",
+      "physical_transport": "unmeasured; header/padding/packing/multicast implementation not included"
+    },
+    {
+      "activation": "dynamic_row",
+      "route": "route_recomputed",
+      "phase": "decode",
+      "positions": [
+        64,
+        65,
+        66,
+        67
+      ],
+      "tokens": 4,
+      "selected_experts": [
+        [
+          25,
+          5,
+          33,
+          18,
+          27,
+          23,
+          28,
+          6
+        ],
+        [
+          13,
+          17,
+          1,
+          8,
+          19,
+          14,
+          21,
+          22
+        ],
+        [
+          1,
+          30,
+          17,
+          13,
+          8,
+          14,
+          22,
+          21
+        ],
+        [
+          1,
+          17,
+          30,
+          14,
+          8,
+          13,
+          22,
+          21
+        ]
+      ],
+      "expert_accesses": [
+        0,
+        3,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        3,
+        3,
+        0,
+        0,
+        3,
+        1,
+        1,
+        0,
+        3,
+        3,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        2,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique_experts": 17,
+      "router_replaced_experts_per_token": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "router_changed_tokens": 0,
+      "fp_bridge_error": {
+        "relative_l2": 0.05206516490986443,
+        "max_abs": 0.18853580301370965
+      },
+      "common_s32_error": {
+        "relative_l2": 0.052062817571370316,
+        "max_abs": 0.18853992223739624
+      },
+      "common_vs_fp_bridge": {
+        "relative_l2": 3.777330394584079e-05,
+        "max_abs": 0.00018308431503055722
+      },
+      "input_saturation_total_8tokens": 0,
+      "intermediate_saturation_total_8tokens": 0,
+      "rq_saturation_total_8tokens": 0,
+      "merge_saturation_total_8tokens": 0,
+      "max_abs_matrix_acc_total_8tokens": 323779,
+      "route_weight_q15_sum_error": [
+        0,
+        -1,
+        0,
+        0
+      ],
+      "logical_payload_per_token": {
+        "input_once_A8": 1536,
+        "input_duplicated_8_A8": 12288,
+        "expert_return_S32": 49152,
+        "merged_S32": 6144,
+        "route_ids_uint8": 8,
+        "route_weights_Q15_uint16": 16,
+        "input_scale_fp64": 8,
+        "return_scale_fp64_per_coordinate": 98304,
+        "RQ_Q31mult_uint32_shift_int16_per_coordinate": 73728,
+        "common_unit_int16": 2
+      },
+      "expert_W8_unique_payload_lower_bound": 40108032,
+      "expert_W8_payload_no_reuse_each_access": 75497472,
+      "expert_Wscale_fp64_per_unique_lower_bound": 348160,
+      "matrix_MACs": {
+        "router": 245760,
+        "experts": 75497472
+      },
+      "weight_reuse_qualification": "unique lower bound needs grouping/residency; no realized cache traffic claimed",
+      "physical_transport": "unmeasured; header/padding/packing/multicast implementation not included"
+    },
+    {
+      "activation": "calibration_tensor",
+      "route": "route_fixed_diagnostic",
+      "phase": "prefill",
+      "positions": [
+        60,
+        61,
+        62,
+        63
+      ],
+      "tokens": 4,
+      "selected_experts": [
+        [
+          30,
+          22,
+          1,
+          17,
+          39,
+          21,
+          19,
+          4
+        ],
+        [
+          5,
+          35,
+          30,
+          37,
+          3,
+          1,
+          0,
+          21
+        ],
+        [
+          1,
+          13,
+          30,
+          14,
+          17,
+          4,
+          8,
+          21
+        ],
+        [
+          32,
+          15,
+          33,
+          2,
+          30,
+          28,
+          8,
+          37
+        ]
+      ],
+      "expert_accesses": [
+        1,
+        3,
+        1,
+        1,
+        2,
+        1,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        2,
+        0,
+        1,
+        0,
+        3,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        4,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        2,
+        0,
+        1
+      ],
+      "unique_experts": 21,
+      "router_replaced_experts_per_token": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "router_changed_tokens": 1,
+      "fp_bridge_error": {
+        "relative_l2": 0.09808346211958169,
+        "max_abs": 0.34871159964519793
+      },
+      "common_s32_error": {
+        "relative_l2": 0.09808136823577658,
+        "max_abs": 0.34879159927368164
+      },
+      "common_vs_fp_bridge": {
+        "relative_l2": 4.6168048467484186e-05,
+        "max_abs": 0.00019071986697882792
+      },
+      "input_saturation_total_8tokens": 0,
+      "intermediate_saturation_total_8tokens": 0,
+      "rq_saturation_total_8tokens": 0,
+      "merge_saturation_total_8tokens": 0,
+      "max_abs_matrix_acc_total_8tokens": 268949,
+      "route_weight_q15_sum_error": [
+        -2,
+        0,
+        1,
+        0
+      ],
+      "logical_payload_per_token": {
+        "input_once_A8": 1536,
+        "input_duplicated_8_A8": 12288,
+        "expert_return_S32": 49152,
+        "merged_S32": 6144,
+        "route_ids_uint8": 8,
+        "route_weights_Q15_uint16": 16,
+        "input_scale_fp64": 8,
+        "return_scale_fp64_per_coordinate": 98304,
+        "RQ_Q31mult_uint32_shift_int16_per_coordinate": 73728,
+        "common_unit_int16": 2
+      },
+      "expert_W8_unique_payload_lower_bound": 49545216,
+      "expert_W8_payload_no_reuse_each_access": 75497472,
+      "expert_Wscale_fp64_per_unique_lower_bound": 430080,
+      "matrix_MACs": {
+        "router": 245760,
+        "experts": 75497472
+      },
+      "weight_reuse_qualification": "unique lower bound needs grouping/residency; no realized cache traffic claimed",
+      "physical_transport": "unmeasured; header/padding/packing/multicast implementation not included"
+    },
+    {
+      "activation": "calibration_tensor",
+      "route": "route_fixed_diagnostic",
+      "phase": "decode",
+      "positions": [
+        64,
+        65,
+        66,
+        67
+      ],
+      "tokens": 4,
+      "selected_experts": [
+        [
+          25,
+          5,
+          33,
+          18,
+          27,
+          23,
+          28,
+          6
+        ],
+        [
+          17,
+          13,
+          1,
+          8,
+          19,
+          14,
+          21,
+          22
+        ],
+        [
+          1,
+          30,
+          17,
+          13,
+          8,
+          14,
+          22,
+          21
+        ],
+        [
+          1,
+          17,
+          14,
+          30,
+          8,
+          13,
+          22,
+          21
+        ]
+      ],
+      "expert_accesses": [
+        0,
+        3,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        3,
+        3,
+        0,
+        0,
+        3,
+        1,
+        1,
+        0,
+        3,
+        3,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        2,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique_experts": 17,
+      "router_replaced_experts_per_token": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "router_changed_tokens": 0,
+      "fp_bridge_error": {
+        "relative_l2": 0.11075526042003718,
+        "max_abs": 0.45609559655828913
+      },
+      "common_s32_error": {
+        "relative_l2": 0.11075663738634932,
+        "max_abs": 0.45619308948516846
+      },
+      "common_vs_fp_bridge": {
+        "relative_l2": 5.559365434542351e-05,
+        "max_abs": 0.00021205893128506403
+      },
+      "input_saturation_total_8tokens": 0,
+      "intermediate_saturation_total_8tokens": 0,
+      "rq_saturation_total_8tokens": 0,
+      "merge_saturation_total_8tokens": 0,
+      "max_abs_matrix_acc_total_8tokens": 268949,
+      "route_weight_q15_sum_error": [
+        2,
+        1,
+        2,
+        1
+      ],
+      "logical_payload_per_token": {
+        "input_once_A8": 1536,
+        "input_duplicated_8_A8": 12288,
+        "expert_return_S32": 49152,
+        "merged_S32": 6144,
+        "route_ids_uint8": 8,
+        "route_weights_Q15_uint16": 16,
+        "input_scale_fp64": 8,
+        "return_scale_fp64_per_coordinate": 98304,
+        "RQ_Q31mult_uint32_shift_int16_per_coordinate": 73728,
+        "common_unit_int16": 2
+      },
+      "expert_W8_unique_payload_lower_bound": 40108032,
+      "expert_W8_payload_no_reuse_each_access": 75497472,
+      "expert_Wscale_fp64_per_unique_lower_bound": 348160,
+      "matrix_MACs": {
+        "router": 245760,
+        "experts": 75497472
+      },
+      "weight_reuse_qualification": "unique lower bound needs grouping/residency; no realized cache traffic claimed",
+      "physical_transport": "unmeasured; header/padding/packing/multicast implementation not included"
+    },
+    {
+      "activation": "calibration_tensor",
+      "route": "route_recomputed",
+      "phase": "prefill",
+      "positions": [
+        60,
+        61,
+        62,
+        63
+      ],
+      "tokens": 4,
+      "selected_experts": [
+        [
+          22,
+          30,
+          1,
+          17,
+          39,
+          21,
+          19,
+          4
+        ],
+        [
+          5,
+          35,
+          30,
+          37,
+          3,
+          1,
+          0,
+          21
+        ],
+        [
+          1,
+          13,
+          14,
+          17,
+          30,
+          4,
+          8,
+          21
+        ],
+        [
+          32,
+          15,
+          33,
+          2,
+          30,
+          28,
+          6,
+          8
+        ]
+      ],
+      "expert_accesses": [
+        1,
+        3,
+        1,
+        1,
+        2,
+        1,
+        1,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        2,
+        0,
+        1,
+        0,
+        3,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        4,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "unique_experts": 22,
+      "router_replaced_experts_per_token": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "router_changed_tokens": 1,
+      "fp_bridge_error": {
+        "relative_l2": 0.0980626951532973,
+        "max_abs": 0.34807743780181954
+      },
+      "common_s32_error": {
+        "relative_l2": 0.09806719211247708,
+        "max_abs": 0.3480514883995056
+      },
+      "common_vs_fp_bridge": {
+        "relative_l2": 3.4401406795182214e-05,
+        "max_abs": 0.00017686166481434284
+      },
+      "input_saturation_total_8tokens": 0,
+      "intermediate_saturation_total_8tokens": 0,
+      "rq_saturation_total_8tokens": 0,
+      "merge_saturation_total_8tokens": 0,
+      "max_abs_matrix_acc_total_8tokens": 268949,
+      "route_weight_q15_sum_error": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "logical_payload_per_token": {
+        "input_once_A8": 1536,
+        "input_duplicated_8_A8": 12288,
+        "expert_return_S32": 49152,
+        "merged_S32": 6144,
+        "route_ids_uint8": 8,
+        "route_weights_Q15_uint16": 16,
+        "input_scale_fp64": 8,
+        "return_scale_fp64_per_coordinate": 98304,
+        "RQ_Q31mult_uint32_shift_int16_per_coordinate": 73728,
+        "common_unit_int16": 2
+      },
+      "expert_W8_unique_payload_lower_bound": 51904512,
+      "expert_W8_payload_no_reuse_each_access": 75497472,
+      "expert_Wscale_fp64_per_unique_lower_bound": 450560,
+      "matrix_MACs": {
+        "router": 245760,
+        "experts": 75497472
+      },
+      "weight_reuse_qualification": "unique lower bound needs grouping/residency; no realized cache traffic claimed",
+      "physical_transport": "unmeasured; header/padding/packing/multicast implementation not included"
+    },
+    {
+      "activation": "calibration_tensor",
+      "route": "route_recomputed",
+      "phase": "decode",
+      "positions": [
+        64,
+        65,
+        66,
+        67
+      ],
+      "tokens": 4,
+      "selected_experts": [
+        [
+          25,
+          5,
+          33,
+          18,
+          27,
+          23,
+          28,
+          6
+        ],
+        [
+          17,
+          13,
+          1,
+          19,
+          8,
+          14,
+          21,
+          22
+        ],
+        [
+          30,
+          1,
+          17,
+          13,
+          8,
+          14,
+          22,
+          21
+        ],
+        [
+          1,
+          17,
+          30,
+          14,
+          8,
+          13,
+          22,
+          21
+        ]
+      ],
+      "expert_accesses": [
+        0,
+        3,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        3,
+        3,
+        0,
+        0,
+        3,
+        1,
+        1,
+        0,
+        3,
+        3,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        2,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique_experts": 17,
+      "router_replaced_experts_per_token": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "router_changed_tokens": 0,
+      "fp_bridge_error": {
+        "relative_l2": 0.11102992964015061,
+        "max_abs": 0.4559264287954905
+      },
+      "common_s32_error": {
+        "relative_l2": 0.1110276890877921,
+        "max_abs": 0.4560157060623169
+      },
+      "common_vs_fp_bridge": {
+        "relative_l2": 4.6780338751908024e-05,
+        "max_abs": 0.00019663658610591384
+      },
+      "input_saturation_total_8tokens": 0,
+      "intermediate_saturation_total_8tokens": 0,
+      "rq_saturation_total_8tokens": 0,
+      "merge_saturation_total_8tokens": 0,
+      "max_abs_matrix_acc_total_8tokens": 268949,
+      "route_weight_q15_sum_error": [
+        0,
+        -1,
+        -1,
+        0
+      ],
+      "logical_payload_per_token": {
+        "input_once_A8": 1536,
+        "input_duplicated_8_A8": 12288,
+        "expert_return_S32": 49152,
+        "merged_S32": 6144,
+        "route_ids_uint8": 8,
+        "route_weights_Q15_uint16": 16,
+        "input_scale_fp64": 8,
+        "return_scale_fp64_per_coordinate": 98304,
+        "RQ_Q31mult_uint32_shift_int16_per_coordinate": 73728,
+        "common_unit_int16": 2
+      },
+      "expert_W8_unique_payload_lower_bound": 40108032,
+      "expert_W8_payload_no_reuse_each_access": 75497472,
+      "expert_Wscale_fp64_per_unique_lower_bound": 348160,
+      "matrix_MACs": {
+        "router": 245760,
+        "experts": 75497472
+      },
+      "weight_reuse_qualification": "unique lower bound needs grouping/residency; no realized cache traffic claimed",
+      "physical_transport": "unmeasured; header/padding/packing/multicast implementation not included"
+    }
+  ],
+  "calibration": {
+    "tokens": 64,
+    "source": "calibration first64 only; no evaluation quality selection",
+    "input_static_scale": 0.35072314645361713,
+    "intermediate_static_scale": 1.9300254076845818,
+    "common_unit_exp": -20,
+    "common_S32_calibration_target_bits": 23
+  },
+  "contract": {
+    "matrix": "symmetric W8A8 [-127,127], no zero point; INT32 bound checked before dot",
+    "weight_scales": "dynamic offline maxabs/per expert/per output row, FP64 metadata",
+    "activation_scales": "dynamic per token row or separate calibration tensor static",
+    "rounding": "RNE ties-even, saturation explicit; INT32 dots computed using int64 NumPy software",
+    "router": "W8A8 logits -> FP64 scale bridge -> stable top8 -> FP64 softmax",
+    "nonlinear": "FP64 SiLU and elementwise gate*up bridge, then A8 RNE/saturation",
+    "merge": "S32 common power2 units, Q31 multiplier+int16 shift RQ; Q0.15 gates; checked S64 products/sum; RNE15/S32sat",
+    "fallbacks": [
+      "softmax",
+      "SiLU",
+      "activation scale selection/division",
+      "Q31 parameter synthesis"
+    ],
+    "cost_unqualified": [
+      "target wide multiply lowering",
+      "division/exp/SFU",
+      "physical ports/banks/fabric",
+      "end-to-end quality/PPA"
+    ],
+    "witnesses": "32 full-K actual dots,32 RQs,4 full-H1536 eight-expert merges; independent receiver required"
+  },
+  "decision_scope": "route_fixed is diagnostic, not dynamic MoE claim; no full-model quality or hardware speed claim"
+}

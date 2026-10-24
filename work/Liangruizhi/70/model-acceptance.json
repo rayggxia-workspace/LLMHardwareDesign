@@ -1,0 +1,101 @@
+{
+  "issue": 70,
+  "pr": 71,
+  "models": [
+    {
+      "model": "ibm-granite/granite-3.1-3b-a800m-instruct",
+      "revision": "a02780686e08a03fe0d2679a293b5c74a90efa89",
+      "owner": "Liangruizhi",
+      "scope": "B1 pre64/decode8; full layer0 top8 MoE; 8 bounded numerical tokens; all-layer chunk diagnosis",
+      "items": [
+        {
+          "item": "source BF16 official bytes/server rehash",
+          "status": "可复用",
+          "outcome": "PASS",
+          "evidence": "granite-server-source-receipt.json"
+        },
+        {
+          "item": "full/cached reference and full layer0 replay",
+          "status": "已执行",
+          "outcome": "PASS_BOUNDED",
+          "evidence": "granite-failed-capture-manifest.json"
+        },
+        {
+          "item": "native evaluation chunk16",
+          "status": "失败",
+          "outcome": "FAIL_RETAINED",
+          "evidence": "granite-failed-capture-manifest.json"
+        },
+        {
+          "item": "route-discontinuity counterfactual localization",
+          "status": "已执行",
+          "outcome": "DIAGNOSTIC_WITNESS_VERIFIED_NOT_REFERENCE",
+          "evidence": "audit-diagnose-granite01.json"
+        },
+        {
+          "item": "W8A8/RQ/top8 merge",
+          "status": "已执行",
+          "outcome": "PARTIAL_DIAGNOSTIC_MATHEMATICS_PASS",
+          "evidence": "audit-granite01.json"
+        },
+        {
+          "item": "8 COPY-only profiles double round",
+          "status": "已执行",
+          "outcome": "PARTIAL_DIAGNOSTIC_COPY_AUDIT_PASS",
+          "evidence": "audit-transport-granite01.json"
+        },
+        {
+          "item": "full-model INT8 quality/RTL/long context",
+          "status": "未执行",
+          "outcome": "OUTSIDE_THIS_MINIMAL_PROTOCOL"
+        }
+      ],
+      "next": "Define high-precision routing/stability contract and RQ parameter factoring/residency in a subsequent task; do not relabel original chunk FAIL."
+    },
+    {
+      "model": "tiiuae/Falcon-H1-3B-Instruct",
+      "revision": "01087ec4c132d7f186908716b3530ea187f062a1",
+      "owner": "Liangruizhi",
+      "scope": "B1 cal16/eval72; full layer0 hybrid; native1/8/16; complete head0 D128N256; 16 projection outputs",
+      "items": [
+        {
+          "item": "source BF16 official bytes/server rehash",
+          "status": "可复用",
+          "outcome": "PASS",
+          "evidence": "falcon-server-source-receipt.json"
+        },
+        {
+          "item": "23 FP32-native/FP64 reference gates",
+          "status": "已执行",
+          "outcome": "PASS_BOUNDED",
+          "evidence": "audit-falcon03.json"
+        },
+        {
+          "item": "fixed S16/S32 state storage",
+          "status": "已执行",
+          "outcome": "FAIL_RANGE_4_SATURATIONS_EACH_FP64_UPDATE_BRIDGE",
+          "evidence": "falcon-report.json"
+        },
+        {
+          "item": "representative W8A8 projection",
+          "status": "已执行",
+          "outcome": "SOFTWARE_INTEGER_MATH_PASS_NOT_QUALITY_ACCEPTANCE",
+          "evidence": "audit-falcon03.json"
+        },
+        {
+          "item": "16 COPY-only profiles double round",
+          "status": "已执行",
+          "outcome": "PASS_COPY_ONLY",
+          "evidence": "audit-transport-falcon01.json"
+        },
+        {
+          "item": "integer full consumer chain/causal rescale/RTL/long context",
+          "status": "未执行",
+          "outcome": "OUTSIDE_THIS_MINIMAL_PROTOCOL"
+        }
+      ],
+      "next": "Mamba2-specific causal range/epoch contract and end-to-end integer consumer qualification; independent R macro remains unresolved."
+    }
+  ],
+  "status_qualification": "experiment execution and candidate acceptance are separate; no done/merge or hardware claim"
+}
