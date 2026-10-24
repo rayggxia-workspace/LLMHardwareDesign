@@ -238,6 +238,7 @@ def verify(result, numeric, compiled, math_receipt, producer_source):
     with np.load(numeric / "runtime.npz", allow_pickle=False) as run:
         deltas = {which: run[which + "_a8_delta"].copy() for which in ("in", "out")}
     totals, stages, proposals, readouts, guards, recodes = Counter(), {}, set(), set(), set(), set()
+    terms, wide_guards, readout_products, readout_guards = set(), set(), set(), set()
     previous_end = 0
     event_count = 0
     matrix_outputs = 0
@@ -255,9 +256,24 @@ def verify(result, numeric, compiled, math_receipt, producer_source):
             subtotal = verify_tree(event["body"], event["end"] - event["start"], objects, inventory)
             totals.update(subtotal)
             previous_end, event_count = event["end"], event_count + 1
-            if stage == "state.proposal_guard_head":
+            if stage == "state.terms":
+                key = (token, meta["attempt"], meta["head"])
+                need(key not in terms and meta["head"] in range(32), "unique complete state terms")
+                source = tx["tokens"][token]["attempts"][meta["attempt"]]
+                need(meta["unit"] == source["trial_units"][meta["head"]] and meta["epoch"] == source["trial_epoch"]
+                     and meta["source_stage_hashes"] == source["stage_hashes"] and meta["D"] == 128
+                     and meta["N"] == 256 and meta["bits"] == task["bits"], "complete true decay/injection terms")
+                terms.add(key)
+            elif stage == "state.full_I64_add_guard":
+                key = (token, meta["attempt"])
+                need(key not in wide_guards and all((token, meta["attempt"], h) in terms for h in range(32))
+                     and meta["all_heads"] == 32 and meta["elements"] == 32 * 128 * 256
+                     and meta["maxabs_decay_plus_maxabs_injection"] is True, "global actual I64 bound before proposal add")
+                wide_guards.add(key)
+            elif stage == "state.proposal_guard_head":
                 key = (token, meta["attempt"], meta["head"])
                 need(key not in proposals and meta["head"] in range(32), "complete unique head proposal")
+                need((token, meta["attempt"]) in wide_guards, "wide guard before complete proposal")
                 source = tx["tokens"][token]["attempts"][meta["attempt"]]
                 need(meta["unit"] == source["trial_units"][meta["head"]] and meta["epoch"] == source["trial_epoch"]
                      and meta["Dpage"] == config["Dpage"] and meta["N"] == 256 and meta["D"] == 128
@@ -273,10 +289,22 @@ def verify(result, numeric, compiled, math_receipt, producer_source):
                      and meta["range_violations"] == source["range_violations"] and meta["published"] is False,
                      "full group guard before consuming proposal")
                 guards.add(key)
-            elif stage == "state.readout_to_unpublished_generation":
+            elif stage == "state.readout_products_guard":
                 key = (token, meta["head"])
                 source = tx["tokens"][token]["attempts"][-1]
-                need(key not in readouts and (token, source["attempt"]) in guards
+                need(key not in readout_products and (token, source["attempt"]) in guards
+                     and source["result"] == "COMMIT" and meta["unit"] == source["trial_units"][meta["head"]]
+                     and meta["epoch"] == source["trial_epoch"] and meta["N"] == 256
+                     and meta["actual_I64_maxproduct_guard"] is True, "complete actual readout products before full-N sum")
+                readout_products.add(key)
+            elif stage == "state.allhead_readout_I64_guard_barrier":
+                need(token not in readout_guards and all((token, h) in readout_products for h in range(32))
+                     and meta["all_heads"] == 32, "global actual readout I64 guard")
+                readout_guards.add(token)
+            elif stage == "state.readout_complete_N":
+                key = (token, meta["head"])
+                source = tx["tokens"][token]["attempts"][-1]
+                need(key not in readouts and token in readout_guards and (token, source["attempt"]) in guards
                      and source["result"] == "COMMIT" and meta["unit"] == source["trial_units"][meta["head"]]
                      and meta["epoch"] == source["trial_epoch"] and meta["N"] == 256
                      and meta["complete_N_before_RNE"] is True, "accepted complete-N readout")
@@ -326,7 +354,23 @@ def verify(result, numeric, compiled, math_receipt, producer_source):
                      and meta["epoch"] == source["epoch"] and meta["position"] == source["position"]
                      and meta["version"] == source["version"] and meta["units"] == source["units"]
                      and meta["published_state_sha256"] == source["state_sha256"], "same final atomic publication")
+                need(meta["state_object"] == ("ext.new" if token % 2 == 0 else "ext.state")
+                     and meta["history_object"] == ("ext.history_trial" if token % 2 == 0 else "ext.history")
+                     and meta["units_object"] == ("ext.units1" if token % 2 == 0 else "ext.units0")
+                     and meta["atomic_descriptor_bytes"] == 16, "complete private-generation pointer publication")
                 publish_ids[token] = index
+            if token is not None:
+                protected = {"ext.state" if token % 2 == 0 else "ext.new",
+                             "ext.history" if token % 2 == 0 else "ext.history_trial",
+                             "ext.units0" if token % 2 == 0 else "ext.units1"}
+                for _, leaf in tree_leaves(event["body"]):
+                    for access in leaf.get("accesses", []):
+                        if access["mode"] == "write":
+                            need(access["object"] not in protected,
+                                 "published generation must remain immutable during token")
+                            if access["object"] == "ext.descriptor":
+                                need(stage == "atomic_publish_after_complete_consumer",
+                                     "no descriptor visibility before complete consumers")
     need(event_count == summary["events"] and previous_end == summary["end_slot"], "complete actual macro calendar")
     expanded = totals.pop("expanded_leaves", 0)
     need(dict(totals) == summary["counts"], "independent closed-form complete operation/IO inventory")
@@ -334,12 +378,20 @@ def verify(result, numeric, compiled, math_receipt, producer_source):
     wanted_proposals = {(t, a["attempt"], h) for t, row in enumerate(tx["tokens"]) for a in row["attempts"] for h in range(32)}
     wanted_guards = {(t, a["attempt"]) for t, row in enumerate(tx["tokens"]) for a in row["attempts"]}
     wanted_recodes = {(t, a["attempt"]) for t, row in enumerate(tx["tokens"]) for a in row["attempts"] if a["result"] == "ABORT"}
-    need(proposals == wanted_proposals and guards == wanted_guards and recodes == wanted_recodes
-         and readouts == {(t, h) for t in range(72) for h in range(32)}, "all actual recurrence/retry tasks")
+    wanted_readouts = {(t, h) for t in range(72) for h in range(32)}
+    need(terms == proposals == wanted_proposals and wide_guards == guards == wanted_guards and recodes == wanted_recodes
+         and readout_products == readouts == wanted_readouts and readout_guards == set(range(72)),
+         "all actual recurrence/retry tasks")
     for token in range(72):
         for norm in ("input_norm", "gated_norm", "next_norm"):
             ids = [stages[(token, norm + suffix)] for suffix in (".reduce", ".full_group_barrier", ".emit")]
             need(ids == sorted(ids), "complete norm two-scan consumer dependency")
+        need((token, "private_history_units_clone") in stages
+             and stages[(token, "private_history_units_clone")] < stages[(token, "conv4_continuous_silu")],
+             "conv/private metadata clone before persistent update")
+    need((None, "setup_zero_state_history_units") in stages
+         and stages[(None, "setup_zero_state_history_units")] == 0,
+         "initial state/history/unit materialization")
     need(totals["matrix_mac"] == report["ops"]["mul_8x8"]
          and totals["mul32"] >= report["ops"]["mul_32x32"]
          and totals["division_iterations"] == report["ops"]["division_restoring_iterations"]
