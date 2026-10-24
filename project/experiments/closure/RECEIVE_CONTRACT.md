@@ -56,3 +56,19 @@ binding为真实commit、`receive_falcon_sha256`、`audit_io_sha256`和
 `integer_oracle_sha256`。默认runtime code、commit epoch、initial unit三个
 真实artifact改写并重写SHA的负例；后者更新compiler manifest并同步run的输入
 manifest指针，避免仅靠旧hash检测。`--skip-negatives`标PARTIAL_NO_NEGATIVES。
+
+## Granite整数router接收
+
+`receive_numeric.py`独立重算全部768条件、192选择性fallback：精确有理数确定
+power2 scale边界、完整K1536 dot/共同unit、真实40选8、Fraction RNE gate、
+Decimal70位exp2 LUT编译、严格量化误差证书与逐profile预定S16九份S8完整K
+partial。权重/输入FP编码是明确compiler桥；所得整数gate尚未通过expert/down/
+merge，此接收不证明完整MoE整数链或模型质量。报告source FAIL资格原样保留。
+
+```text
+python -B project/experiments/closure/receive_numeric.py --result <numeric> --reference <typed-reference> --producer-source <frozen-granite_numeric.py> --binding <JSON> --out <new-receipt>
+```
+
+binding为真实commit、`receive_numeric_sha256`、`audit_io_sha256`和
+`integer_oracle_sha256`。默认code、LUT、gate和fallback四个实际NPZ篡改及SHA
+重写负例；`--skip-negatives`标PARTIAL_NO_NEGATIVES。
