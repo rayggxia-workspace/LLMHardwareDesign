@@ -72,3 +72,20 @@ python -B project/experiments/closure/receive_numeric.py --result <numeric> --re
 binding为真实commit、`receive_numeric_sha256`、`audit_io_sha256`和
 `integer_oracle_sha256`。默认code、LUT、gate和fallback四个实际NPZ篡改及SHA
 重写负例；`--skip-negatives`标PARTIAL_NO_NEGATIVES。
+
+## 完整branch连续性独立接收
+
+`receive_continuity.py`严格依赖已PASS的独立全数学baseline receipt并核其全部
+artifact与compiled指针，再核新chunk/decode所有整数stage逐码相等、73个
+state/units/完整conv descriptor、每privateR attempt/recode、所有实体checkpoint
+state/units/history与基线数学hash及因果4-tap窗口一致。不会为每个相同chunk策略
+重复大矩阵数学；这是有来源绑定的传递证明。旧guard前缀的full72预处理history
+不是已提交history，不作为这类完整branch checkpoint证明。
+
+```text
+python -B project/experiments/closure/receive_continuity.py --result <resume-run> --baseline <math-baseline> --baseline-receipt <verified-receipt.json> --compiled <compiled> --producer-source <frozen-falcon_resume.py> --int-source <resume-phase-falcon_int.py> --binding <JSON> --out <new-receipt>
+```
+
+binding包含真实commit及`receive_continuity`/`receive_falcon`/`audit_io`/
+`integer_oracle`四个`_sha256`。默认checkpoint state、conv、重新计算checksum的
+owner和private unit四个真实SHA重写负例，分别核语义拒绝。
