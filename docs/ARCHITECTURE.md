@@ -156,3 +156,10 @@ project/experiments/qwen3_trace/使用独立D盘环境（torch2.10.0+cpu、trans
 正式目录project/experiments/closure，[README](../project/experiments/closure/README.md)列出精度/接收合同与原phase复跑规则。先python -B scripts/check_project.py；已有NumPy环境运行 -B -m unittest discover -s project/experiments/closure -p "test_*.py"（90项），以及architecture_extensions原80项。本机TEMP/TMP只D盘本任务目录；所有实际模型/张量/服务只服务器。
 
 精选字节验收：python -B project/experiments/closure/verify_delivery.py --index project/experiments/closure/results/issue-72/delivery-index.json --archive project/experiments/closure/results/issue-72/selected.zip --out <新D盘receipt.json>。它核286 metadata成员，不替代服务器真实数学；完整9.90GB/1096成员与原Issue70外部输入按统一索引取得。15phase/43原Git源、实际Slurm/失败/负例见work72与结果；完整math/continuity/outproj/service使用对应冻结源码和新out，不用最新HEAD覆盖绑定。条件服务不是RTL/PPA，物理宏未定。
+
+
+## Issue74 完整MoE与分组端口
+
+正式工具project/experiments/moe_grouped；[README](../project/experiments/moe_grouped/README.md)给出合同、恢复/接收命令及服务器边界。先python -B scripts/check_project.py，再已有NumPy环境执行 -B -m unittest discover -s project/experiments/moe_grouped -p test_*.py（63项），相关closure90和architecture_extensions80回归本批通过。真实模型/数值/服务仅本人CPU Slurm，PC只微合成/元数据/字节接收，TEMP/TMP仅D盘当前任务。
+
+精选接收复用closure/verify_delivery.py --index project/experiments/moe_grouped/results/issue-74/delivery-index.json --archive project/experiments/moe_grouped/results/issue-74/selected.zip --out NEW.json；核153 metadata成员，不替代完整数学。work74/verify_sources.py核10phase/20原Git源字节。全部原命令、20源绑定、51实际作业和2.10GB完整输入位置/SHA见results/issue-74/index.json及work74，复跑需原phase/新out，不拿最新HEAD冒充旧执行源。Granite grouped服务/全模型质量/目标RTL/PPA未验收。

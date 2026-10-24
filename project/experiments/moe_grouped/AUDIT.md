@@ -35,8 +35,8 @@ python -B project/experiments/moe_grouped/receive_grouped_service.py --result RU
 
 接收binding需实际Git commit、对应receiver文件SHA与audit_io74.py SHA。默认做实际磁盘artifact变更、重新写manifest SHA后进入数学/服务层拒绝；--skip-negatives必须记NOT_EXECUTED。编译与运行分phase源码不同时可用--compiler-source分别绑定，不能将新HEAD冒充旧运行源。
 
-18项本机小型合成测试和项目结构检查通过；没有在本机加载真实模型/张量。
+独立接收20项本机小型合成测试和项目结构检查通过；没有在本机加载真实模型/张量。
 
 Granite服务器8条件的独立数学接收已执行，本机回读8份receipt均PASS、每份43整数stage/576完整专家路径、3项真实SHA重写负例通过；4项R16各25920个真实全行S8partial输出已核。合计4608完整被选专家路径，不是4608独立样本或全模型质量验收。回执目录为本人任务临时目录moe-grouped-20261024-01/audit/audit-granite-*，正式索引与服务器位置由root共同报告登记。真实数组保留服务器，本机只读JSON元数据。
 
-Falcon grouped服务独立接收工具已完成小型测试；真实服务接收仍待服务器执行，不将producer完成等同于接收通过。仓库/Issue/PR/看板由root核验与同步；本子任务未进行远端读写。
+Falcon grouped真实12服务已在服务器全量独立接收PASS，每例4项真实SHA重写负例；90331独立配对PASS，6组label逐字节零差。只覆盖Falcon固定gatedinput的三函数分别M/V驻留，Granite grouped服务未执行；engine wire已含总wire，费用/时隙不是RTL/PPA。仓库/Issue/PR/看板由root核验同步，接收子任务未远端读写。

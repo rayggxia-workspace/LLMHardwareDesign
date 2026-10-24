@@ -1,8 +1,12 @@
 # Liangruizhi 的进度
 
-## 2026-10-24 UTC+08 Issue74完整MoE与分组边界（进行中）
+## 2026-10-24 UTC+08 Issue74交付（待审查合并）
 
-[Issue74](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/74)/[PR75](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/75)，task/74-moe-grouped，根D:/Projects/LLMHardwareDesign-moe-grouped，base PR73@88e9c4b，三独立子worktree。本人新CPU服务器采集Granite两层真实cut并与原参考0差；8完整router→8expert→Q12merge/残差/norm条件全量独立接收PASS，R16多数路由恢复但专家局部误差仍显著，原失败/FP边界保留。552960真实宽RQ产品S8/字节carry全量通过；同g同资源M/V服务首例完成/待独立审，完整12配置与mid归因随后。无新模型/其他机器/Phi解封/55或63接管。[进行中报告](../../docs/experiments/issue-74-moe-grouped.md)及work74实际source/command。未审查合并非done；登记pending、看板unverified/同步pending，管理员/审查人待指定。
+[Issue74](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/74)/[PR75](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/75)，task/74-moe-grouped，D:/Projects/LLMHardwareDesign-moe-grouped，base PR73@88e9c4b。本人CPU服务器51作业全COMPLETED：Granite两层真实cut参考0差、8完整整数MoE独立PASS/24实际负例；552960宽RQ产品S8/字节carry精确；Falcon三g12同函数M/V服务独立PASS/48负例、6label零差。近M条件完整链slots仅省0.001007%–0.016005%，保留物理映射；posthoc否定mid末次Q12 RNE主导，不追加F20。非整模型质量/RTL/PPA，Granite grouped服务尚未执行。
+
+完整2,102,954,908B/505成员留授权服务器，精选8,170,748B/153 metadata入仓库，两包服务器及精选PC逐成员核字节，10phase/20原Git源已核。新63/旧90+80测试、管理结构通过，提交前diffcheck另记录。[报告](../../docs/experiments/issue-74-moe-grouped.md)、[索引](../../project/experiments/moe_grouped/results/issue-74/index.json)、[交接](../../docs/handoffs/2026-10-24-issue-74-moe-grouped.md)。通过同一PR交付后待审查合并，非done；登记PR5 pending、看板unverified/同步pending，管理员/审查人待指定。
+
+用户最新要求继续Granite expert→merge有限容量端口/缓冲、宽算术/SFU/ROM校准，作为下一明确任务接续，先核最新任务不重复开工。无新模型/其他机器/Phi解封，成员55/63保持独立。
 
 ## 2026-10-24 UTC+08 Issue72闭环交付（待审查合并）
 
