@@ -87,6 +87,23 @@ def allocation(tile, placement):
     return rows, high, phase
 
 
+def decoder_fixture(task, rows):
+    operations = {}
+    for which, outsize in (('gate_up', 1024), ('down', 1536)):
+        n = 72*8*outsize; token_rows = [[h((task['layer'], which, t, rank)) for rank in range(8)] for t in range(72)]
+        operations[which] = {'shape': [72, 8, outsize], 'actual_outputs': n, 'negative_count': 0,
+            'raw_histogram': {'31': n}, 'decoded_histogram': {'31': n}, 'raw_minimum': 31, 'raw_maximum': 31,
+            'decoded_minimum': 31, 'decoded_maximum': 31, 'changed_count': 0, 'unchanged_positions_identical_shift': n,
+            'source_product_key': which+'_RQ_product64', 'source_published_key': which+'_q12',
+            'source_product_array_sha256': rows['stages'][which+'_RQ_product64']['array_sha256'],
+            'source_published_array_sha256': rows['stages'][which+'_q12']['array_sha256'],
+            'raw_array_sha256': h((which, 'raw')), 'decoded_array_sha256': h((which, 'raw')),
+            'raw_token_rank_sha256': token_rows, 'decoded_token_rank_sha256': token_rows, 'changed_positions': []}
+    return {'schema': 'granite-rq-decoder76-v1', 'fee_version': C.DECODER_VERSION,
+            'source': {k: task[k] for k in ('layer', 'numeric_manifest_sha256', 'compiled_manifest_sha256', 'numeric_receipt_sha256')},
+            'operations': operations}
+
+
 def fixture(root):
     cal, table = calibration(root)
     source = {'commit': '2'*40, 'service_sha256': h('service')}; receiver = {'commit': '3'*40, 'receiver_sha256': h('receiver')}
@@ -105,17 +122,20 @@ def fixture(root):
                     stages = {k: {'dtype': 'int32', 'shape': shapes.get(k, [72]), 'array_sha256': h((layer, k)), 'token_axis': 0, 'token_rows_sha256': [h((layer, k, t)) for t in range(72)]} for k in sorted(essential | {'synthetic'+str(i) for i in range(43-len(essential))})}
                     rows = {'schema': 'granite-service-rowhashes76-v1', 'layer': layer, 'source_manifest_sha256': task['numeric_manifest_sha256'], 'stages': stages}
                     task['numeric_trajectory_sha256'] = C.canonical(rows); write(folder/'row_hashes.json', rows)
+                    decoder = decoder_fixture(task, rows); write(folder/'rq_decoder.json', decoder)
+                    task['rq_decoder_sha256'] = C.sha(folder/'rq_decoder.json'); task['rq_decoder_fee_version'] = C.DECODER_VERSION
                     task['row_hashes_sha256'] = C.sha(folder/'row_hashes.json')
                     (folder/'witness.jsonl.gz').write_bytes(f'synthetic calendar l{layer}/t{tile}/{p}'.encode())
                     a, high, phase = allocation(tile, p)
                     c = {'matrix_S8_MACs': 72*8*(1024*1536+1536*512), 'matrix_issued_cycles': 72*8*(1024*1536+1536*512)//16,
                          'matrix_resets': 72*8*(1024+1536)//16, 'ROM_word32_reads': 72*8*512, **{'op.'+op: 1 for op in C.OPS}}
-                    c.update(micro_alu_cycles=sum(v['costs']['scalar_ALU_dependency_cycles'] for v in table['ops'].values()),
-                             micro_dispatch_cycles=sum(v['costs']['software_controller_dispatches'] for v in table['ops'].values()),
-                             micro_frame_read_bytes=sum(v['costs']['byte_store_reads']+v['costs']['result_read_bytes'] for v in table['ops'].values()),
-                             micro_frame_write_bytes=sum(v['costs']['byte_store_writes']+v['costs']['input_load_bytes'] for v in table['ops'].values()))
-                    wire = 1000000000+tile*16+(10000 if p == 'shared_v' else 0)
-                    c.update(wire_bytes=wire, wire_beats=wire//16, bank_beats=999, micro_frame_write_RMW_read_beats=c['micro_frame_write_bytes'])
+                    c.update({'op.sub_s64': 4*C.RQ_OUTPUTS, 'op.cmp_s64': C.RQ_OUTPUTS+1, 'op.max_s64': C.RQ_OUTPUTS+1, 'rq_shift_guard_controller_slots': C.RQ_OUTPUTS})
+                    c.update(micro_alu_cycles=sum(c['op.'+op]*v['costs']['scalar_ALU_dependency_cycles'] for op, v in table['ops'].items()),
+                             micro_dispatch_cycles=sum(c['op.'+op]*v['costs']['software_controller_dispatches'] for op, v in table['ops'].items()),
+                             micro_frame_read_bytes=sum(c['op.'+op]*(v['costs']['byte_store_reads']+v['costs']['result_read_bytes']) for op, v in table['ops'].items()),
+                             micro_frame_write_bytes=sum(c['op.'+op]*(v['costs']['byte_store_writes']+v['costs']['input_load_bytes']) for op, v in table['ops'].items()))
+                    wire = 1000000000+48*(c['micro_frame_read_bytes']+c['micro_frame_write_bytes'])+tile*16+(10000 if p == 'shared_v' else 0)
+                    c.update(wire_bytes=wire, wire_beats=wire//16, bank_beats=c['micro_frame_read_bytes']+2*c['micro_frame_write_bytes']+999, micro_frame_write_RMW_read_beats=c['micro_frame_write_bytes'])
                     capacity = {'full8S32_return_bytes': 49152, 'full_H_merge64_bytes': 12288, 'no_full_Q12_return_co_resident': True, 'owner_physical_RQ_elements': 16}
                     s = {'schema': 'granite-service76-v1', 'task': task, 'config': {'tile': tile, 'placement': p, 'label': label, 'policy': 'synthetic serial'},
                          'inventory': inventory(), 'allocations': a, 'used_bytes': high, 'phase_peak_bytes': phase, 'capacity': capacity,
@@ -125,7 +145,9 @@ def fixture(root):
                     write(folder/'summary.json', s); aa = seal(folder, 'granite-service-run76-v1', 'EXECUTED_CONDITIONAL_SERVICE', source)
                     r = {'schema': 'granite-service-independent76-v1', 'status': 'PASS_FINITE_SERVICE',
                          'producer_manifest': C.desc(folder/'manifest.json'), 'artifacts': aa,
-                         'config': {'layer': layer, 'tile': tile, 'placement': p, 'label': label}, 'counts': c, 'end_time': s['end_slot'],
+                         'config': {'layer': layer, 'tile': tile, 'placement': p, 'label': label}, 'counts': c,
+                         'rq_decoder': C.desc(folder/'rq_decoder.json'), 'rq_decoder_canonical_sha256': C.canonical(decoder), 'rq_decoder_checked': True,
+                         'rq_decoder_fee_version': C.DECODER_VERSION, 'RQ_decoded_outputs_checked': C.RQ_OUTPUTS, 'end_time': s['end_slot'],
                          'numeric_row_hashes_sha256': C.canonical(rows), 'integer_profile_sha256': C.canonical(C.integer_profile(c)),
                          'inventory_sha256': C.canonical(s['inventory']), 'allocations_sha256': C.canonical(a), 'peak_bytes': high,
                          'phase_lifetime_checked': True, 'fullH_s64_merge_bytes': 12288, 'source': receiver,
@@ -192,7 +214,7 @@ class CompareServiceTests(unittest.TestCase):
 
     def test_missing_formal_negative_rejects(self):
         rp = self.root/'audit-service-l0-t128-near_m-split01/receipt.json'; r = C.load(rp); r['negative_tests'].pop(); write(rp, r)
-        with self.assertRaisesRegex(ValueError, 'five real semantic'): C.compare(self.root)
+        with self.assertRaisesRegex(ValueError, 'six real semantic'): C.compare(self.root)
 
     def test_missing_case_and_stale_raw_artifact_fail(self):
         p = self.root/'service-l0-t128-near_m-split01/witness.jsonl.gz'; p.write_bytes(b'stale')
@@ -255,6 +277,32 @@ class CompareServiceTests(unittest.TestCase):
         # Even an old-root replacement cannot silently substitute the formal receipt.
         write(self.root/name/'receipt.json', {'status': 'PASS_FINITE_SERVICE'})
         with self.assertRaises(FileNotFoundError): C.compare(self.root, receipt_root=selected)
+
+    def test_changed_large_shift_is_exact_but_changed_published_code_rejects(self):
+        folder = self.root/'service-l0-t128-near_m-split01'; s = C.load(folder/'summary.json')
+        r = C.load(self.root/'audit-service-l0-t128-near_m-split01/receipt.json'); rows = C.load(folder/'row_hashes.json')
+        d = C.load(folder/'rq_decoder.json'); item = d['operations']['gate_up']; n = item['actual_outputs']
+        item.update(raw_histogram={'31': n-1, '131': 1}, decoded_histogram={'31': n-1, '128': 1},
+                    raw_maximum=131, decoded_maximum=128, changed_count=1, unchanged_positions_identical_shift=n-1,
+                    changed_positions=[{'token': 0, 'rank': 0, 'expert': 0, 'output': 0, 'raw_shift': 131,
+                                        'decoded_shift': 128, 'weight_exponent_I16': -100, 'activation_delta_I16': 0,
+                                        'RQ_product_S64': 127, 'original_RNE': 0, 'decoded_RNE': 0, 'published_Q12': 0}])
+        write(folder/'rq_decoder.json', d); s['task']['rq_decoder_sha256'] = C.sha(folder/'rq_decoder.json')
+        r.update(rq_decoder=C.desc(folder/'rq_decoder.json'), rq_decoder_canonical_sha256=C.canonical(d))
+        proof = C.decoder_proof(folder, s, r, rows); self.assertEqual(proof['operations']['gate_up']['changed_outputs'], 1)
+        item['changed_positions'][0]['published_Q12'] = 1; write(folder/'rq_decoder.json', d)
+        s['task']['rq_decoder_sha256'] = C.sha(folder/'rq_decoder.json'); r.update(rq_decoder=C.desc(folder/'rq_decoder.json'), rq_decoder_canonical_sha256=C.canonical(d))
+        with self.assertRaisesRegex(ValueError, 'no changed published code'): C.decoder_proof(folder, s, r, rows)
+
+    def test_old_decoder_fee_version_cannot_mix_with_new_batch(self):
+        rp = self.root/'audit-service-l0-t128-near_m-split01/receipt.json'; r = C.load(rp)
+        r['rq_decoder_fee_version'] = 'old_128_only'; write(rp, r)
+        with self.assertRaisesRegex(ValueError, 'decoder fee version'): C.compare(self.root)
+
+    def test_all_outputs_must_pay_guard_even_when_no_shift_changes(self):
+        for label in C.LABELS:
+            rewrite(self.root, f'service-l0-t128-near_m-{label}01', lambda s: s['counts'].update(rq_shift_guard_controller_slots=0))
+        with self.assertRaisesRegex(ValueError, 'all outputs pay decoder'): C.compare(self.root)
 
     def test_compare_output_exclusive_and_manifest_bound(self):
         out = self.root/'result'; C.run(self.root, out, '4'*40)

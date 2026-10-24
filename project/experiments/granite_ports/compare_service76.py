@@ -22,9 +22,11 @@ OPS = {'mul_s32_s32', 'mul_s64_s32', 'mul_s32_u16', 'add_s64', 'sub_s64', 'add_u
        'shl_s64_s128', 'shl_u128', 'rne_s64_i32', 'rne_s128_i32',
        'udiv_u128', 'isqrt_u128', 'div_rne_s128_u64_i32'}
 INSTRUCTIONS = {'COPY', 'ADD', 'SUB', 'MULS8', 'SHL', 'SHR', 'OR', 'AND', 'XOR', 'CMP', 'MUX', 'CTRL'}
-PROFILE_COUNTS = {'matrix_S8_MACs', 'matrix_issued_cycles', 'matrix_resets', 'ROM_word32_reads'}
+PROFILE_COUNTS = {'matrix_S8_MACs', 'matrix_issued_cycles', 'matrix_resets', 'ROM_word32_reads', 'rq_shift_guard_controller_slots'}
+DECODER_VERSION = 'NONNEGATIVE_MIN128_FOUR_TYPED_PLUS_FLAG_TEST76_V1'
+RQ_OUTPUTS = 72*8*(1024+1536)
 QUALIFICATION = 'CONDITIONAL_MICROPROGRAM_SERVICE_NOT_FULL_RTL_OR_PPA'
-NEGATIVES = {'port', 'capacity', 'numeric', 'widthfee', 'ROM'}
+NEGATIVES = {'port', 'capacity', 'numeric', 'widthfee', 'ROM', 'rq_decoder'}
 LIMITS = [
     'Comparison PASS inherits the exact independent numeric/physical/micro receipts; this tool does not rerun tensor or calendar arithmetic.',
     'All denominators are the frozen norm/router-cut to complete nextnorm service, not an entire model or real cached-decode schedule.',
@@ -103,6 +105,64 @@ def active_phases(a):
     return set(life['phases'])
 
 
+
+def decoder_proof(folder, summary, receipt, row_hashes):
+    task, counts = summary['task'], summary['counts']; path = Path(folder)/'rq_decoder.json'; d = load(path)
+    need(task['rq_decoder_fee_version'] == DECODER_VERSION and receipt['rq_decoder_fee_version'] == DECODER_VERSION
+         and d['fee_version'] == DECODER_VERSION and d['schema'] == 'granite-rq-decoder76-v1'
+         and receipt['rq_decoder_checked'] is True and receipt['RQ_decoded_outputs_checked'] == RQ_OUTPUTS,
+         'uniform nonnegative/min128 decoder fee version and qualification')
+    need(task['rq_decoder_sha256'] == sha(path) and receipt['rq_decoder'] == desc(path)
+         and receipt['rq_decoder_canonical_sha256'] == canonical(d), 'exact actual decoder evidence binding')
+    for key in ('layer', 'numeric_manifest_sha256', 'compiled_manifest_sha256', 'numeric_receipt_sha256'):
+        need(d['source'][key] == task[key], 'decoder original-source binding '+key)
+    need(set(d['operations']) == {'gate_up', 'down'}, 'both complete RQ operators')
+    operations = {}
+    for which, output_size in (('gate_up', 1024), ('down', 1536)):
+        item = d['operations'][which]; n = 72*8*output_size
+        need(item['shape'] == [72, 8, output_size] and item['actual_outputs'] == n and item['negative_count'] == 0,
+             'all real output metadata, nonnegative guard scope')
+        raw = item['raw_histogram']; decoded = item['decoded_histogram']; expected = {}
+        need(raw and all(str(int(k)) == k and int(k) >= 0 and type(v) is int and v > 0 for k, v in raw.items()), 'canonical nonnegative raw-shift histogram')
+        for k, value in raw.items():
+            key = str(min(int(k), 128)); expected[key] = expected.get(key, 0)+value
+        changed = sum(v for k, v in raw.items() if int(k) > 128)
+        need(sum(raw.values()) == n and decoded == expected and sum(decoded.values()) == n
+             and item['raw_minimum'] == min(map(int, raw)) and item['raw_maximum'] == max(map(int, raw))
+             and item['decoded_minimum'] == min(map(int, decoded)) and item['decoded_maximum'] == max(map(int, decoded))
+             and item['changed_count'] == changed and item['unchanged_positions_identical_shift'] == n-changed,
+             'complete min128 histogram and unchanged-position conservation')
+        pkey, qkey = which+'_RQ_product64', which+'_q12'
+        need(item['source_product_key'] == pkey and item['source_published_key'] == qkey
+             and item['source_product_array_sha256'] == row_hashes['stages'][pkey]['array_sha256']
+             and item['source_published_array_sha256'] == row_hashes['stages'][qkey]['array_sha256'], 'decoder keeps original product and published code trajectory')
+        for key in ('raw_array_sha256', 'decoded_array_sha256'): hash_string(item[key], 'decoder '+key)
+        for key in ('raw_token_rank_sha256', 'decoded_token_rank_sha256'):
+            need(len(item[key]) == 72 and all(len(row) == 8 for row in item[key]), 'all token/rank scale rows')
+            for row in item[key]:
+                for value in row: hash_string(value, 'decoder token/rank')
+        seen = set()
+        for position in item['changed_positions']:
+            t, rank, output = position['token'], position['rank'], position['output']; identity = (t, rank, output)
+            need(all(type(v) is int for v in identity) and 0 <= t < 72 and 0 <= rank < 8 and 0 <= output < output_size
+                 and identity not in seen and 0 <= position['expert'] < 40, 'unique changed actual metadata position'); seen.add(identity)
+            raw_shift = position['raw_shift']; product = position['RQ_product_S64']
+            need(raw_shift > 128 and position['decoded_shift'] == 128
+                 and raw_shift == 31-position['weight_exponent_I16']-position['activation_delta_I16']
+                 and -(1 << 15) <= position['weight_exponent_I16'] < 1 << 15
+                 and 0 <= position['activation_delta_I16'] <= 128 and -(1 << 63) <= product < 1 << 63
+                 and position['original_RNE'] == position['decoded_RNE'] == position['published_Q12'] == 0,
+                 'S64 large-shift RNE equivalence, no changed published code')
+        need(len(seen) == changed, 'every changed position has an exact witness')
+        operations[which] = {'outputs': n, 'raw_minimum': item['raw_minimum'], 'raw_maximum': item['raw_maximum'], 'changed_outputs': changed}
+    need(counts['rq_shift_guard_controller_slots'] == RQ_OUTPUTS
+         and counts.get('op.cmp_s64', 0) >= RQ_OUTPUTS and counts.get('op.max_s64', 0) >= RQ_OUTPUTS
+         and counts.get('op.sub_s64', 0) == 4*RQ_OUTPUTS, 'all outputs pay decoder and original scale arithmetic, not only changed32')
+    return {'fee_version': DECODER_VERSION, 'decoded_outputs': RQ_OUTPUTS, 'guard_controller_slots': counts['rq_shift_guard_controller_slots'],
+            'operations': operations, 'file': desc(path), 'canonical_sha256': canonical(d),
+            'typed_decoder_counts': {'cmp_s64': RQ_OUTPUTS, 'sub_s64': 2*RQ_OUTPUTS, 'max_s64': RQ_OUTPUTS},
+            'scope': 'current frozen raw shifts nonnegative; large S64 right shifts map to128 exactly; negative shift requires separate fault/left policy'}
+
 def allocation_proof(summary):
     caps = summary['inventory']['capacities']; regions = {}; highs = {}; phase = {}
     names = set()
@@ -156,7 +216,7 @@ def read_case(root, layer, tile, placement, label, suffix, receipt_root=None):
     folder = Path(root)/name
     receipt_path = Path(root if receipt_root is None else receipt_root)/('audit-'+name)/'receipt.json'
     m, artifacts = verify_manifest(folder, 'granite-service-run76-v1', 'EXECUTED_CONDITIONAL_SERVICE')
-    need({'summary.json', 'row_hashes.json', 'witness.jsonl.gz'} <= set(artifacts), 'complete service artifacts')
+    need({'summary.json', 'row_hashes.json', 'rq_decoder.json', 'witness.jsonl.gz'} <= set(artifacts), 'complete service artifacts')
     r = load(receipt_path); s = load(folder/'summary.json'); t = s['task']; cfg = s['config']; c = s['counts']
     need(r['schema'] == 'granite-service-independent76-v1' and r['status'] == 'PASS_FINITE_SERVICE', 'independent finite-service PASS '+name)
     need(r['packet_retiming_checked'] is True
@@ -213,19 +273,20 @@ def read_case(root, layer, tile, placement, label, suffix, receipt_root=None):
     need(capacity['full8S32_return_bytes'] == 49152 and capacity['full_H_merge64_bytes'] == 12288
          and capacity['no_full_Q12_return_co_resident'] is True and capacity['owner_physical_RQ_elements'] == 16, 'streamed physical O16 return versus logical merge')
     need(r['full8S32_V_rejection'] == {'bytes': 49152, 'capacity': 16384, 'status': 'REJECTED'}, 'old full8S32 capacity negative')
-    need(r['negative_status'] == 'PASS_ACTUAL_SHA_REWRITE' and len(r['negative_tests']) == 5
+    need(r['negative_status'] == 'PASS_ACTUAL_SHA_REWRITE' and len(r['negative_tests']) == 6
          and {v['name'] for v in r['negative_tests']} == NEGATIVES
-         and all(v['status'] == 'REJECTED_AFTER_SHA_REWRITE' for v in r['negative_tests']), 'five real semantic negatives required')
+         and all(v['status'] == 'REJECTED_AFTER_SHA_REWRITE' for v in r['negative_tests']), 'six real semantic negatives required')
     for field in ('numeric_manifest', 'compiled_manifest', 'packed_manifest', 'calibration_manifest',
                   'numeric_receipt', 'packed_receipt', 'calibration_receipt'):
         hash_string(t[field+'_sha256'], 'task.'+field)
         need(r[field]['sha256'] == t[field+'_sha256'], 'source descriptor '+field)
     hash_string(t['numeric_trajectory_sha256'], 'numeric trajectory')
+    decoder = decoder_proof(folder, s, r, row_hashes)
     source = m['source']; need(re.fullmatch('[0-9a-f]{40}', source['commit']) and source['service_sha256'] == m['producer_sha256'], 'frozen service source')
     evidence = {'case': name, 'manifest': desc(folder/'manifest.json'), 'receipt': desc(receipt_path), 'receipt_path': str(receipt_path),
                 'artifacts': artifacts, 'producer_source': source, 'receiver_source': r['source']}
     return {'name': name, 'folder': folder, 'summary': s, 'receipt': r, 'manifest': m, 'artifacts': artifacts,
-            'row_hashes': row_hashes, 'allocation': allocation, 'evidence': evidence}
+            'row_hashes': row_hashes, 'decoder': decoder, 'allocation': allocation, 'evidence': evidence}
 
 
 def find_bound(root, basename, wanted_sha):
@@ -292,7 +353,7 @@ def metrics(case):
             'non_micro_wire_bytes': c['wire_bytes']-48*frame,
             'micro_bank_beats_subset_including_RMW': c['micro_frame_read_bytes']+2*c['micro_frame_write_bytes'],
             'micro_service_slots_subset_ALU_candidate_dispatch_and_IO': c['micro_alu_cycles']+c['micro_dispatch_cycles']+4*c['micro_frame_read_bytes']+5*c['micro_frame_write_bytes'],
-            'full_integer_stages': len(case['row_hashes']['stages']),
+            'full_integer_stages': len(case['row_hashes']['stages']), 'RQ_decoder': case['decoder'],
             'packet_retiming_policy': r['packet_retiming_policy'], 'actual_FIFO_peak_bytes': r['max_FIFO_bytes'],
             'counts': c, 'capacity': s['capacity'],
             'allocation_proof': case['allocation'], 'integer_profile_sha256': r['integer_profile_sha256'],
@@ -324,7 +385,7 @@ def compare(root, suffix='01', receipt_root=None):
             for p in PLACEMENTS:
                 a, b = (cases[(layer, tile, p, label)] for label in LABELS)
                 need(scientific(a['summary']) == scientific(b['summary'])
-                     and all(a['artifacts'][k] == b['artifacts'][k] for k in ('witness.jsonl.gz', 'row_hashes.json')), 'label cannot change scientific payload/calendar')
+                     and all(a['artifacts'][k] == b['artifacts'][k] for k in ('witness.jsonl.gz', 'row_hashes.json', 'rq_decoder.json')), 'label cannot change scientific payload/calendar')
                 labels.append({'layer': layer, 'tile': tile, 'placement': p, 'status': 'BYTE_IDENTICAL_WITNESS_AND_NUMERIC_ROWS',
                                'end_slot_delta': b['summary']['end_slot']-a['summary']['end_slot'],
                                'scientific_summary_sha256': canonical(scientific(a['summary']))})
@@ -347,7 +408,7 @@ def compare(root, suffix='01', receipt_root=None):
                             'relative_to_tile128': [{'tile': tile, 'end_slot_delta': cases[(layer, tile, p, 'split')]['summary']['end_slot']-base['end_slot'],
                                                     'end_slot_percent': 100*(cases[(layer, tile, p, 'split')]['summary']['end_slot']-base['end_slot'])/base['end_slot']} for tile in TILES]})
     return {'schema': 'granite-service-comparison76-v1', 'status': 'PASS_BOUND_FINITE_SERVICE_COMPARISON',
-            'case_suffix': suffix, 'service_receipt_root': str(Path(root if receipt_root is None else receipt_root)), 'conditions_expected': 24, 'independent_receipts_pass': 24,
+            'case_suffix': suffix, 'rq_decoder_fee_version': DECODER_VERSION, 'service_receipt_root': str(Path(root if receipt_root is None else receipt_root)), 'conditions_expected': 24, 'independent_receipts_pass': 24,
             'calibration': calibration, 'label_controls': labels, 'paired_placements': pairs, 'window_comparisons': windows,
             'full1536_merge': [metrics(cases[(layer, 1536, p, label)]) for layer in LAYERS for p in PLACEMENTS for label in LABELS],
             'old_full8S32_in_V': {'status': 'REJECTED', 'bytes': 49152, 'capacity': 16384},
