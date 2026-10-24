@@ -727,6 +727,26 @@ def mutate_witness(witness, mutation):
         target["meta"]["scale_epoch"] += 1
         return changed, "causal task unit/epoch transition"
     if mutation == "overlap":
+        # Every organization has the same EXT 1RW port. Initial norm gamma
+        # and R metadata depend only on start, so move the delayed packet to
+        # its dependency-ready time. This works in a single split-only shard
+        # as well as in a shared8 shard, without changing operation formulas.
+        initial = [n for n in nodes if n["kind"] == "packet" and n["meta"]["object_offset"] == 0
+                   and n["meta"].get("operation") in ("initial_gamma", "initial_QKV_gate_metadata")]
+        by_id = {n["id"]: n for n in nodes}
+        for target in initial:
+            ready = max((by_id[d]["end"] for d in target["deps"]), default=0)
+            port = next(r for r in target["reservations"] if r["resource"] == "PORT:EXT")
+            for other in initial:
+                if other is target:
+                    continue
+                other_port = next(r for r in other["reservations"] if r["resource"] == "PORT:EXT")
+                lo, hi = ready + port["offset"], ready + port["offset"] + port["duration"]
+                ol = other["start"] + other_port["offset"]
+                oh = ol + other_port["duration"]
+                if ready < target["start"] and max(lo, ol) < min(hi, oh):
+                    target["start"], target["end"] = ready, ready + target["duration"]
+                    return changed, "resource overlap/capacity"
         # Move an operation earlier while retaining every dependency and its
         # exact duration/reservations; overlap a ready operation of the other stream.
         by_id = {n["id"]: n for n in nodes}
@@ -829,10 +849,11 @@ def execute(integer, repeat, root, range_root, out, binding=None, norm_stage="no
                 value = dict(cycles=check["makespan"], nodes_sha256=json_hash(witness["nodes"]),
                              allocations_sha256=json_hash(witness["allocations"]), inventory_sha256=json_hash(witness["inventory"]))
                 if key in fairness:
-                    require(fairness[key] == value, "shared/split label-only exact zero difference")
+                    require(fairness[key]["signature"] == value, "shared/split label-only exact zero difference")
+                    fairness[key]["organizations"].add(c["organization"])
                 else:
-                    fairness[key] = value
-            elif chosen_negative is None:
+                    fairness[key] = dict(signature=value, organizations={c["organization"]})
+            if chosen_negative is None:
                 chosen_negative = name
         best = min(row["strategies"], key=lambda s: (s["cycles"], s["strategy"]))
         require(row["best"] == best, "minimum within two fixed strategies")
@@ -851,10 +872,12 @@ def execute(integer, repeat, root, range_root, out, binding=None, norm_stage="no
             groups.append(dict(task=task_id, commit_contract=tasks[task_id]["commit_contract"], ext_ii=ext,
                                candidates=len(group), winner=winner["witness"], cycles=winner["cycles"],
                                claim="minimum only within recorded finite grid, includes granularity variants; no global optimum or physical merge benefit"))
+    pairs = sum(len(value["organizations"]) == 2 for value in fairness.values())
     result = dict(status="PASS_INDEPENDENT_SERVICE", source=source, seconds=time.monotonic() - begin,
         cases=cases, finite_groups=groups, negative_checks=negatives, complete_witnesses=len(cases),
         two_rounds=dict(all_scientific_SHA_identical=True, artifacts=len(checked), arithmetic_schedules_independent=1),
-        shared_split_label_only_pairs=len(fairness), shared_split_label_only_cycles_difference=0,
+        shared_split_label_only_pairs=pairs, shared_split_label_only_cycles_difference=0 if pairs else None,
+        shared_split_signatures=[dict(key=list(key), signature=value["signature"], organizations=sorted(value["organizations"])) for key, value in fairness.items()],
         declared_source_root=str(root), norm_stage=norm_stage, range_root=str(range_root) if range_root else None,
         validation="Every witness independent operation/payload/address/epoch/dependency/calendar/FIFO/slot/lower-bound replay; original numeric source SHA checked, not redoing arithmetic",
         quality_accepted=False, hardware_implemented=False,
