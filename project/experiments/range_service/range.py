@@ -74,11 +74,31 @@ def stamp(s,units,epoch,version,position,sequence):
             'epoch':int(epoch),'version':int(version),'position':int(position),'sequence':str(sequence)}
 
 
+def resume_contract(bits,df,value_units,policy):
+    return {'state_bits':int(bits),'decay_fraction':int(df),'value_units':np.asarray(value_units).astype(int).tolist(),'policy':str(policy)}
+
+
+def checkpoint(snapshot,contract):
+    """Integrity witness, not authentication or a hardware checkpoint engine."""
+    body={'snapshot':copy.deepcopy(snapshot),'contract':copy.deepcopy(contract)}
+    return dict(body,checkpoint_sha256=old.stable_hash(body))
+
+
 class RangeLease:
     """Atomic software witness. Every state/output/scale/epoch publication binds."""
-    def __init__(self,state,units,position=0,sequence='synthetic'):
+    def __init__(self,state,units,position=0,sequence='synthetic',resume=None,contract=None):
         self.state=np.asarray(state,dtype=np.int64).copy();self.units=np.asarray(units,dtype=np.int16).copy()
         self.epoch=0;self.version=0;self.position=int(position);self.sequence=str(sequence)
+        if resume is not None:
+            if set(resume)!={'snapshot','contract','checkpoint_sha256'}:raise ValueError('checkpoint fields')
+            body={k:resume[k] for k in ('snapshot','contract')}
+            if old.stable_hash(body)!=resume['checkpoint_sha256']:raise ValueError('checkpoint integrity')
+            if resume['contract']!=contract:raise ValueError('checkpoint format/value units/policy contract')
+            s=resume['snapshot']
+            if set(s)!=set(self.snapshot()) or type(s['epoch']) is not int or type(s['version']) is not int:raise ValueError('checkpoint snapshot fields')
+            if not 0<=s['epoch']<(1<<32) or not 0<=s['version']<(1<<64):raise ValueError('checkpoint epoch/version domain')
+            self.epoch=s['epoch'];self.version=s['version']
+            if self.snapshot()!=s:raise ValueError('checkpoint state/units/position/sequence data mismatch')
 
     def snapshot(self):return stamp(self.state,self.units,self.epoch,self.version,self.position,self.sequence)
 
@@ -104,9 +124,10 @@ class RangeLease:
         return {'old':p['old'],'new':self.snapshot(),'output_sha256':p['output_sha256'],'publication':'state/output/units/epoch one token commit'}
 
 
-def run(encoded,initial,units,value_units,bits,df,policy,position=0,sequence='synthetic'):
+def run(encoded,initial,units,value_units,bits,df,policy,position=0,sequence='synthetic',resume=None):
     if policy not in POLICIES:raise ValueError('unknown range policy')
-    lease=RangeLease(initial,units,position,sequence);states=[lease.state.copy()];u=[lease.units.copy()];epochs=[0]
+    lease=RangeLease(initial,units,position,sequence,resume,resume_contract(bits,df,value_units,policy))
+    states=[lease.state.copy()];u=[lease.units.copy()];epochs=[lease.epoch]
     outputs=[];ou=[];tokens=[];events=[];maxima={};total_saturations=0;reject=None
     h,dim,width=initial.shape;cells=dim*width;payload_bytes=cells*(bits//8)
     for t in range(len(encoded['q'])):

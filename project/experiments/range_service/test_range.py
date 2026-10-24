@@ -140,5 +140,44 @@ class CausalRange(unittest.TestCase):
             with self.assertRaises(ValueError):r.receive(p)
             with self.assertRaises(ValueError):r.execute(p,p,p)
 
+    def test_checkpoint_resume_preserves_nonzero_epoch_version_and_format(self):
+        e,s,su,vu=operands(t=17,width=2,vu=3);e['v'][:,:,1]=0;s[0,0,1]=5
+        full,stats=r.run(e,s,su,vu,16,15,'guard_rescale',128,'resume-sequence')
+        cut=8;first={k:v[:cut] for k,v in e.items()};second={k:v[cut:] for k,v in e.items()}
+        a,m=r.run(first,s,su,vu,16,15,'guard_rescale',128,'resume-sequence')
+        cp=r.checkpoint(m['final'],r.resume_contract(16,15,vu,'guard_rescale'))
+        b,n=r.run(second,a['state_trace'][-1],a['state_units_trace'][-1],vu,16,15,'guard_rescale',136,'resume-sequence',cp)
+        self.assertGreater(int(a['epoch_trace'][-1]),0);self.assertEqual(n['final'],stats['final'])
+        for key in ('state_trace','state_units_trace','epoch_trace'):
+            np.testing.assert_array_equal(np.concatenate([a[key],b[key][1:]]),full[key])
+        for key in ('output_codes','output_units'):np.testing.assert_array_equal(np.concatenate([a[key],b[key]]),full[key])
+        for field in ('epoch','units','position'):
+            bad=copy.deepcopy(cp)
+            if field=='units':bad['snapshot'][field][0]+=1
+            else:bad['snapshot'][field]+=1
+            with self.assertRaises(ValueError):r.run(second,a['state_trace'][-1],a['state_units_trace'][-1],vu,16,15,'guard_rescale',136,'resume-sequence',bad)
+        # A valid checksum cannot excuse changed payload/position/sequence/format.
+        for changed in ('position','sequence','state','units','value_units','bits','policy'):
+            state=a['state_trace'][-1].copy();units=a['state_units_trace'][-1].copy();vunits=vu.copy();position=136;sequence='resume-sequence';bits=16;policy='guard_rescale'
+            if changed=='position':position+=1
+            if changed=='sequence':sequence='foreign'
+            if changed=='state':state.flat[0]+=1
+            if changed=='units':units[0]+=1
+            if changed=='value_units':vunits[0]+=1
+            if changed=='bits':bits=32
+            if changed=='policy':policy='static_sat'
+            with self.assertRaises(ValueError):r.run(second,state,units,vunits,bits,15,policy,position,sequence,cp)
+
+    def test_chunk_checker_compares_actual_rescale_and_all_commits(self):
+        cs=importlib.util.spec_from_file_location('chunk_test',Path(__file__).with_name('chunk_check.py'))
+        checker=importlib.util.module_from_spec(cs);cs.loader.exec_module(checker)
+        e,s,su,vu=operands(t=17,width=2,vu=3);e['decay']=np.full((17,1),1<<31,dtype=np.uint32);e['v'][:,:,1]=0;s[0,0,1]=5
+        full,trace=r.run(e,s,su,vu,16,31,'guard_rescale',128,'synthetic')
+        for boundaries in ([8,16],[16],[1]):
+            report=checker.compare_chunks(e,s,su,vu,16,31,128,'synthetic',full,trace,boundaries)
+            self.assertTrue(report['complete_bitexact']);self.assertTrue(report['transaction_events_bitexact'])
+        negatives=checker.negative_checks(e,s,su,vu,16,31,128,'synthetic',full)
+        self.assertEqual(len(negatives),6);self.assertTrue(all(x['rejected'] for x in negatives))
+
 
 if __name__=='__main__':unittest.main()

@@ -36,3 +36,13 @@ binding包含 `commit`、`range_sha256`、`state_sha256`。原模块路径固定
 计入每attempt真实decay/prediction/beta/outer/output乘积、guard扫描、每个完整head的重编码扫描/RNE/状态读写、scale/epoch和commit元数据。Python完整旧/试算/新状态副本**不是免费硬件shadow**；真实SRAM容量、端口、读改写、shadow/backing和多周期宽乘由同资源服务实验定价。materialize/recompute是替代调度，不叠加两者成本。
 
 范围扩张降低每LSB精度；adaptive与static不能被当作同一数值函数直接宣称placement收益。必须在**同一policy/format/实际轨迹**下配对比较物理组织，并同时报告质量与服务。max8重试/I8/I64限制可能拒绝；被拒绝条件不能删除或事后挑选样本。端到端质量、量化非线性、长期跨窗口范围保证、RTL/PPA仍未由本工具证明。
+
+## checkpoint/chunk接续资格（兼容扩展）
+
+后续`range.run(..., resume=None)`默认数值与输出schema保持不变。接续时显式携入上次已提交state码、units，并提供 `checkpoint(final_snapshot, resume_contract(bits,df,value_units,policy))`。checkpoint包含完整state SHA、units、epoch、version、position、sequence及格式/value单位/policy合同，整体有软件checksum。恢复核对所有字段及实际数据后才开始下一token；epoch/version不清零，state不从native重置。checksum只验证软件完整性，不是认证或硬件代价承诺。
+
+```text
+python -B project/experiments/range_service/chunk_check.py --native <issue66/state01> --legacy <issue66/long-state01> --range-native <issue68/range-native01> --range-legacy <issue68/range-legacy01> --out <新receipt.json> --binding <binding.json>
+```
+
+该资格固定evaluation与layer0-end8192的S16/S32 D31 guard_rescale四条件，按8/16及实际重定标token的前/后边界分chunk，携state/units/epoch/version逐段运行，逐码、事件及最终见证比较扩展前冻结fullrun。错epoch/units/position descriptor、错state/units实际数据及错position参数都必须拒绝。此为同producer接续资格，不替代独立算术接收；不重复全84条件，不拼接不同真实窗口。binding另需`chunk_check_sha256`，并明确新接续源码与旧fullrun源码SHA不同。
