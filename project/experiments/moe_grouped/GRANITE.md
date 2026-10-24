@@ -27,3 +27,19 @@ SiLU复用[-32,32]、step2^-8、I32Q12，负域外0/正域外identity，域外�
 要记录native/同当前integer输入FP64两类route差异，分开输入norm误差与router量化。归一化完整分母/平方和、所有dot/RQ、gate/mid/down码与delta、8路prefix merge都需可独立逐位重算，改SHA后的负例必须拒绝。应用质量没有预定整体误差预算，局部数字不宣布quality PASS。
 
 容量提示：单层expert W8=94,371,840B；两层不能免费同驻EXT128MiB。当前mid512维动态scale须2KiB I32缓存或重读。8路S32输出49,152B、S64整merge12,288B+一份output6,144B超过V16KiB，必须tile/stream并计端口，数字闭合不代表物理划分定稿。
+
+
+## 编译与运行命令（来源绑定）
+
+~~~sh
+python -B project/experiments/moe_grouped/granite_chain.py compile --capture CAPTURE74 --binding PHASE.json --out NEW_COMPILED
+python -B project/experiments/moe_grouped/granite_chain.py run --compiled COMPILED --layer 0 --router-bits 8 --split evaluation --binding PHASE.json --out NEW_RUNTIME
+~~~
+
+binding含commit和granite_chain_sha256。layer0/13、router-bits8/16、split calibration/evaluation共8条件。完整compile只从静态原参数产生scale/LUT；cal/eval residual都仅按预先固定I32Q12编码。静态参数Q20、epsQ24，routerW perout power2，expertW perexpert/perout maxabs/127→Q31/I16；无bias专家不能凭空加bias。
+
+runtime.npz保留全72row实际norm平方和/variance高低U64 limb及denom；router输入codes/delta、全40dot、R16全部9份真实S8 partial、共同logits/exp、top8/Q15/LUT index；同一norm的expert A8/delta；完整gate/up/down dot32和Q31 product64、所有中间Q12、mid A8/delta、8路merge products/prefix64、最终MoE/scaled/residual/nextnorm。所有数组为整数；所有float参考文件在完整runtime文件写完后才打开。
+
+两种route差异分别对原model64 native IDs及“同当前integer norm解码输入的FP64 router”计算，后者纯事后诊断。下游中间误差只对同token相同expert ID的native路径匹配，禁止不同expert按rank硬对比。全MoE/join/nextnorm向量误差直接报告，并分prefill64/decode8，不设置事后质量门。
+
+格式宽度实际检查：gate为U16 Q15，可等于32768，不误认signed16；operand逐个检查32/16位域后再宽乘。router exponent先I64计算/界检再castI16，避免wrap。R16 signed-magnitude3digit全行lower9次，S8partial全K INT32、重组S64；log2e乘积受signedI128候选guard并记录实际幅度，不免费64×32。norm signedI128分子、U128平方和/radicand及所有I64/I32输出守卫明确。失败不clip掩盖，不退回float。
