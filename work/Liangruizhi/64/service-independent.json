@@ -1,0 +1,75 @@
+{
+  "status": "PASS",
+  "independent": true,
+  "auditor_sha256": "0c5c1d65908ee99b3a983942e828617535b8287d97ee80039576521cdd97e51a",
+  "source_commit": "24336c45e2e1622fd86de29a9a788a9e032d42d4",
+  "source_snapshot_verification": "binding/source SHA fields checked for consistency; original frozen code snapshot verification remains a separate intake check",
+  "case_rows_checked": 576,
+  "reconstructed_policy_pairs": 96,
+  "rounds_byte_identical_files": 6,
+  "manifests": [
+    {
+      "path": "D:\\Projects\\Codex\\issue64-block-v2-20261024\\review01\\service01\\manifest.json",
+      "sha256": "b8a45032fc2cda465d073911640fd7705205698a70dce7edff2ebcce0a7773b2"
+    },
+    {
+      "path": "D:\\Projects\\Codex\\issue64-block-v2-20261024\\review01\\service02\\manifest.json",
+      "sha256": "b8a45032fc2cda465d073911640fd7705205698a70dce7edff2ebcce0a7773b2"
+    }
+  ],
+  "witnesses": {
+    "witness-split.json": {
+      "nodes": 5165,
+      "packets": 1250,
+      "streams": 0,
+      "leases": 2,
+      "status": "PASS",
+      "statistics_matching_policies": [
+        "critical"
+      ],
+      "policy_identified_uniquely_from_statistics": true,
+      "policy_scope": "case statistics compatibility; no policy field exists in the trace, so this does not authenticate the scheduling algorithm"
+    },
+    "witness-colocated_control.json": {
+      "nodes": 5165,
+      "packets": 1250,
+      "streams": 0,
+      "leases": 2,
+      "status": "PASS",
+      "statistics_matching_policies": [
+        "critical"
+      ],
+      "policy_identified_uniquely_from_statistics": true,
+      "policy_scope": "case statistics compatibility; no policy field exists in the trace, so this does not authenticate the scheduling algorithm"
+    },
+    "witness-colocated_stream.json": {
+      "nodes": 5165,
+      "packets": 898,
+      "streams": 352,
+      "leases": 2,
+      "status": "PASS",
+      "statistics_matching_policies": [
+        "critical"
+      ],
+      "policy_identified_uniquely_from_statistics": true,
+      "policy_scope": "case statistics compatibility; no policy field exists in the trace, so this does not authenticate the scheduling algorithm"
+    }
+  },
+  "negative_mutations": {
+    "memory_dependency": "REJECTED: memory lacks producer/dependency",
+    "packet_payload": "REJECTED: packet byte spans",
+    "remove_bus": "REJECTED: busy counters",
+    "score_byte_record": "REJECTED: witness expected shape/work"
+  },
+  "synthetic_self_test": {
+    "positive_packet": "PASS",
+    "negative_mutations_rejected": 3,
+    "missing_policy_ambiguity_retained": [
+      "fifo",
+      "critical"
+    ]
+  },
+  "evidence_boundary": "Independent Issue64 service receipt; no producer import or scheduling.\n\nThese are conditional feasible portable-PV64/O16 service schedules, not B's\nPV32 numeric qualification, native FP outputs, an optimum or physical speedup.\n",
+  "hardware_performance_accepted": false,
+  "numeric_quality_accepted": false
+}

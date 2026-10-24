@@ -1,8 +1,12 @@
 # Liangruizhi 的进度
 
-## 2026-10-24（UTC+08:00）Issue64综合方案与最小分叉
+## 2026-10-24（UTC+08:00）Issue64综合方案与最小分叉交付
 
-[Issue64](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/64)/[草稿PR65](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/65)，task/64-block-v2，D:/Projects/LLMHardwareDesign-blockv2，base PR62。独立子工作树attention/service只写自己模块；root cherry-pick审查后统一冻结。本人服务器issue64-block-v2-20261024目录，新lrz-*作业复用既有数据，不触Phi。输出46c0b46两轮90048/49完成1080条件/410112 Fraction码；独立回执通过，Llama旧诊断5.39%→row/tile delta4.93%但后继K16/K128对齐仍待验。attention源码de63c7a及冻结commit3a6416d，两轮90050/51完成56条件、7106560QK与1474560PV I32对I64。实现后整数闭包不代表宽乘/div/LUT硬件存在；Psum/scale约束与硬件成本明确。服务条件对照及完整接收继续，详见v2方案，未验收/未done；登记PR5 pending，看板unverified/同步pending待管理员，审查人待指定。
+[Issue64](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/64)/[PR65](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/65)，task/64-block-v2，D:/Projects/LLMHardwareDesign-blockv2，base PR62@30fcd63。独立子树B/C模块由root核验整合，未触其他任务分支。本人服务器issue64-block-v2-20261024目录实际lrz-*并行：90048/49输出180×6条件、各410112 Fraction；90050/51 attention56条件、各7106560QK/1474560PV；90055独立全接收；90056/57服务576调度/96配对；90058归档，均COMPLETED0:0。90052/53/54启动错误保留，修复后同源重试。
+
+[v2](../../docs/BLOCK_PARTITION_V2.md)/[报告](../../docs/experiments/issue-64-block-v2.md)决定单位/完整归约/共享owner/epoch等合同，保留ACT16/带tile scale ACT8，未固定M+A/R物理归属。Llama同旧诊断动态Y8约4.93%但后继K16未验证；M/A只省header收益0.083%–0.167%是条件服务而非硬件。原失败/FP证据保持，Phi不调参。执行源46c0b46/3a6416d/24336c4，collection c003817；数值/范围/端口轨迹/原Git源/精选两NPZ独立核验通过。精选包10.08MB在仓库、完整240.39MB在服务器，本轮接收与输入SHA索引完整。
+
+下一步只做真实后继scale、连续R定点及同库存归属、布局/SFU/物理资格；不重复模型下载/Issue55/63。交付in_review、待指定审查人/合并而非done；登记PR5 pending，看板缺board.json/Projects能力，unverified/同步pending待管理员。恢复入口[交接](../../docs/handoffs/2026-10-24-issue-64-block-v2.md)。
 
 ## 2026-10-23（UTC+08:00）Issue61服务器批次交付
 

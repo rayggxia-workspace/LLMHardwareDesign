@@ -1,0 +1,30 @@
+{
+  "launch_failures": [
+    {
+      "jobs": [
+        90052,
+        90053,
+        90054
+      ],
+      "state": "FAILED127:0",
+      "scope": "before interpreter; no experiment output directories",
+      "reason": "unsafe wrap string concatenation emitted literal +check+cmd+",
+      "fix": "Python shlex.quote on exact wrap command; same immutable source/data",
+      "recovery_jobs": [
+        90055,
+        90056,
+        90057
+      ]
+    }
+  ],
+  "receiver_development": [
+    {
+      "attempt": "service-audit01",
+      "error": "KeyError: scheduled.policy absent",
+      "scope": "receiver metadata assumption; original service outputs unchanged",
+      "fix": "match all same-config candidates by independently recomputed cycles/busy/traffic/operations; preserve ambiguity if both policies match",
+      "recovered_in": "service-audit02.json"
+    }
+  ],
+  "source_corrections": "service score16/expQ24 draft corrected to score32Q12/expQ30 and explicit index cost BEFORE any server execution; old Git commits retained, no draft output reused"
+}

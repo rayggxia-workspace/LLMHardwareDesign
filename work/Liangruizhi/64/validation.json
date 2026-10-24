@@ -1,0 +1,55 @@
+{
+  "status": "PASS",
+  "interpreter": "D:/Projects/Codex/qwen3-inference-20261022/environment/.venv/Scripts/python.exe",
+  "scope": "management,164 existing research tests,26 decision boundary tests, independent receiver self-tests, repository archive/source intake; arithmetic/full traces accepted separately in referenced receipts",
+  "checks": [
+    {
+      "id": "management",
+      "command": "python -B scripts/check_project.py",
+      "exit_code": 0,
+      "log": "validation-management.log"
+    },
+    {
+      "id": "research",
+      "command": "& D:/Projects/Codex/qwen3-inference-20261022/environment/.venv/Scripts/python.exe -B scripts/check_research.py",
+      "exit_code": 0,
+      "log": "validation-research.log"
+    },
+    {
+      "id": "decisions",
+      "command": "& D:/Projects/Codex/qwen3-inference-20261022/environment/.venv/Scripts/python.exe -B -m unittest discover -s project/experiments/block_decisions -p 'test_*.py' -v",
+      "exit_code": 0,
+      "log": "validation-decisions.log"
+    },
+    {
+      "id": "attention_self",
+      "command": "& D:/Projects/Codex/qwen3-inference-20261022/environment/.venv/Scripts/python.exe -B project/experiments/block_decisions/receive_attention.py --self-test",
+      "exit_code": 0,
+      "log": "validation-attention_self.log"
+    },
+    {
+      "id": "service_self",
+      "command": "& D:/Projects/Codex/qwen3-inference-20261022/environment/.venv/Scripts/python.exe -B work/Liangruizhi/64/audit_service.py --self-test",
+      "exit_code": 0,
+      "log": "validation-service_self.log"
+    },
+    {
+      "id": "intake",
+      "command": "& D:/Projects/Codex/qwen3-inference-20261022/environment/.venv/Scripts/python.exe -B work/Liangruizhi/64/verify_delivery.py --archive project/experiments/block_decisions/results/issue-64/selected-evidence01.zip --sha256 2feae3548b4343a92975480778686e6fc14909c017d260e5419410d0994a86ab --repo . --extract D:/Projects/Codex/issue64-block-v2-20261024/intake-final01 --out D:/Projects/Codex/issue64-block-v2-20261024/intake-final01.json",
+      "exit_code": 0,
+      "log": "validation-intake.log"
+    }
+  ],
+  "independent_receipts": [
+    "output-independent-portable.json",
+    "attention-independent.json",
+    "attention-selected-independent.json",
+    "service-independent.json"
+  ],
+  "not_executed": [
+    "complete integer-model quality",
+    "target hardware speed or PPA",
+    "integer continuous R state",
+    "full hidden next-consumer scale propagation"
+  ]
+}

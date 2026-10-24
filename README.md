@@ -14,6 +14,8 @@
 
 ## 当前工作方式
 
+[有证据的Block方案v2](docs/BLOCK_PARTITION_V2.md)已综合Llama/Qwen及服务器主测，并完成[Issue64三组最小服务器实验](docs/experiments/issue-64-block-v2.md)：输出格式、整数attention闭包和同库存完整GQA条件服务。单位/完整归约/共享状态合同可以确定；M+A合宏、R独立、RQ位置和端到端收益仍待验证。10.08MB精选包与独立接收可复查，原失败保留，PR65待审查。
+
 [服务器四模型补齐批次](docs/experiments/issue-61-server-models.md)已完成本轮CPU参考/采集、三主测420线性/56注意力整数探针与独立接收，Phi封存。动态K组scale、概率/KV分离精度及有条件INT32范围证明细化了候选边界；失败保留，尚非整图/硬件/PPA验收。详见[候选决策](docs/decisions/2026-10-23-invariant-preserving-block-boundaries.md)和[两日团队汇报](docs/reports/2026-10-23-two-day-progress.md)。
 
 [Llama down_proj校准与scale粒度](docs/experiments/issue-59-llama-down-scale.md)已完成本机24候选/144数值、1152服务两轮；改K组scale需显式对齐归约/metadata/guard，仍无最终硬件或完整质量结论。

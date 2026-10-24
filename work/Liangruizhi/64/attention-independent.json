@@ -1,0 +1,2101 @@
+{
+  "status": "PASS",
+  "receiver_source_sha256": "5ac33027fcd6fb4c68005ad1c1bb8f3847265447a335ad3402d5e2986058bed7",
+  "scope": "Independent Issue64 integer-attention receiver; no producer imports.\n\nChecks captured integer-path arithmetic and diagnostics, not model quality,\ntarget implementation, cycle performance, RTL or PPA.\n",
+  "environment": {
+    "python": "3.12.7",
+    "numpy": "2.2.6"
+  },
+  "root": "/public/home/yuzelu/RuizhiLiang/issue64-block-v2-20261024",
+  "code_root": "/public/home/yuzelu/RuizhiLiang/issue64-block-v2-20261024/phase2/project/experiments",
+  "input_rounds": {
+    "attention01": {
+      "manifest_sha256": "b89833c3f433ca8a12913282848eae42f6156cc37e273c6005074928decc9cee",
+      "source": {
+        "commit": "3a6416dffe932ea47e2e0141c7ff1006e7769b7e",
+        "files": {
+          "attention.py": "efae923f2bd71a737ec77296a37826c9325d7aea075df4f6fc34759d35c851ca",
+          "server_models/bounds.py": "45ce1f64cd782f8210e648ff5778622c0eed4b5249ecbdefb7733712ccebceb9"
+        },
+        "binding_sha256": "81b5256269037de11e4af0668637cfca77ef69b33c72aba65858b037178b6d7c",
+        "binding_supplied": true
+      },
+      "input_captures": {
+        "gemma": {
+          "manifest_sha256": "f1209a433810e8cc890c06bfb6ccd535d5925f64192788a18610851d2d682311",
+          "model": {
+            "id": "google/gemma-3-4b-it",
+            "revision": "093f9f388b31de276ce2de164bdc2081324b9767"
+          },
+          "artifacts": {
+            "selected-raw.npz": {
+              "bytes": 267293179,
+              "sha256": "2dca116bd7cf013ad7686e85372a20f4d933576acb75ab602ee15c5e49a0922b"
+            }
+          }
+        },
+        "qwen25": {
+          "manifest_sha256": "165e8109f8025c8bfafc9079d5a9e40e688897162cf6e9ca48d337efd5c3b5e5",
+          "model": {
+            "id": "Qwen/Qwen2.5-3B",
+            "revision": "5defd2796acd3cb2051bb4c787eddc7f8f35e113",
+            "reference_manifest_commit": "2ada6cf6a61f5acff4b6052e81e15d20070dc0f3"
+          },
+          "artifacts": {
+            "selected-raw.npz": {
+              "bytes": 34851938,
+              "sha256": "e7b8162bae2e8e85962de5e46a32b656ff3e51095149810ea81a779820cf0d10"
+            }
+          }
+        },
+        "qwen35": {
+          "manifest_sha256": "20101ece55df9845aede7fd3674419e973f74e3a41d61531a53ac9964be6dbe5",
+          "model": {
+            "id": "Qwen/Qwen3.5-4B",
+            "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+            "reference_manifest_commit": "2ada6cf6a61f5acff4b6052e81e15d20070dc0f3"
+          },
+          "artifacts": {
+            "selected-raw.npz": {
+              "bytes": 57326601,
+              "sha256": "ba1018985162a6308d2d984969505d35f93614ff401af30e91fa2e4205c3ba7b"
+            }
+          }
+        }
+      },
+      "artifacts": {
+        "attention.json": {
+          "bytes": 327496,
+          "sha256": "3162bc5ebc442a6b195e8f96da0bb2adbcdeb1147c5f43726a294ed5f8f5cfbf"
+        },
+        "exp-grid128.u32le.bin": {
+          "bytes": 8196,
+          "sha256": "659e0c81ddb592f49e27443dcfe89b9cf88439512cfba613dcd161950e5b6f80"
+        },
+        "exp-grid256.u32le.bin": {
+          "bytes": 16388,
+          "sha256": "0b330c5527eaa94e06557cd254485b23e514267b995030f6e7938ebf1a26c886"
+        },
+        "gemma.prefix1023.l0.kv16.lut128.npz": {
+          "bytes": 1827269,
+          "sha256": "9a7d4ae29a9575846a249732c24e323747ece8c2240a34254c5c41c8ca1dfb94"
+        },
+        "gemma.prefix1023.l0.kv16.lut256.npz": {
+          "bytes": 1840690,
+          "sha256": "5be12a3fda5248b7141e31e94b4bcf213b476f61c5ceb741424006b3ae31552c"
+        },
+        "gemma.prefix1023.l0.kv8.lut128.npz": {
+          "bytes": 1061556,
+          "sha256": "f36a6adb8819b44364a77b42a6d943f034bd198778465cf022fcd73edc38defe"
+        },
+        "gemma.prefix1023.l0.kv8.lut256.npz": {
+          "bytes": 1074699,
+          "sha256": "63a34769ced4f42a9b3decc614ae9c3c3ca268e881b7fd4ce0bd3947661be14c"
+        },
+        "gemma.prefix1023.l5.kv16.lut128.npz": {
+          "bytes": 1898537,
+          "sha256": "63513e359714cb170b7ba66ec5db7f2ffd57ffc8a71efc8aee8326dc1c0bd02c"
+        },
+        "gemma.prefix1023.l5.kv16.lut256.npz": {
+          "bytes": 1907910,
+          "sha256": "28d50c05f157cb9d706f78ce08a6fd3b4df367e71d5c7a43b0b923d6bed183e0"
+        },
+        "gemma.prefix1023.l5.kv8.lut128.npz": {
+          "bytes": 1043605,
+          "sha256": "95dd704abce6d02628e4830e56a6a9a43b2225bf3802482fdd45474e954b8a7a"
+        },
+        "gemma.prefix1023.l5.kv8.lut256.npz": {
+          "bytes": 1053071,
+          "sha256": "02f623110b09d51e3bb425c0bd47421d4415f1d6176d382511edd87b4aa1467f"
+        },
+        "gemma.prefix1024.l0.kv16.lut128.npz": {
+          "bytes": 1828758,
+          "sha256": "977b6b3d08c0f9b1b2f2f909dac4cffc48694c5fbfbfe1582a4682a074b323a9"
+        },
+        "gemma.prefix1024.l0.kv16.lut256.npz": {
+          "bytes": 1842150,
+          "sha256": "ca7683924d89647cdabfd01a3daf13eeee5ca6118e22e526c3d64baffad2ba71"
+        },
+        "gemma.prefix1024.l0.kv8.lut128.npz": {
+          "bytes": 1061690,
+          "sha256": "87163ef69bf9c90a5b00a41bbb83a130bea9fd21cba2aa9aa5fb95eab86c6105"
+        },
+        "gemma.prefix1024.l0.kv8.lut256.npz": {
+          "bytes": 1074809,
+          "sha256": "f792dae848c2ee920a26d365bcfff631c4a02d6022f2d65367408ba6df3f3674"
+        },
+        "gemma.prefix1024.l5.kv16.lut128.npz": {
+          "bytes": 1899013,
+          "sha256": "eaf2a74769654e0f42d3deef8be47c7e5829cd69f50a47260af346ba58059cba"
+        },
+        "gemma.prefix1024.l5.kv16.lut256.npz": {
+          "bytes": 1908318,
+          "sha256": "452d67cf931acc82b1d875e0e0218f62aee99440f975f023faa817c5a61d175b"
+        },
+        "gemma.prefix1024.l5.kv8.lut128.npz": {
+          "bytes": 1043396,
+          "sha256": "5164cce5982e2e7d9daf54a4c36a45d26de962255a097308d185a23f2b921913"
+        },
+        "gemma.prefix1024.l5.kv8.lut256.npz": {
+          "bytes": 1052840,
+          "sha256": "99cae4d8a3f54d7d62907665383c4fe7a2a5b470832c65d48a7ab71cc19521b3"
+        },
+        "gemma.prefix1025.l0.kv16.lut128.npz": {
+          "bytes": 1830170,
+          "sha256": "be744777335cfdfd3b39341f13fec9f639a1973efbf82781e3a9f4499df87cc9"
+        },
+        "gemma.prefix1025.l0.kv16.lut256.npz": {
+          "bytes": 1843492,
+          "sha256": "e260539c8d8ac1860160ff7633d663bf062cadcbfc962caab9d5062d4a59f878"
+        },
+        "gemma.prefix1025.l0.kv8.lut128.npz": {
+          "bytes": 1062223,
+          "sha256": "100ffa5b0ec5652319731bc0f27cb192d08ad4814640464288bc79f05313e3f0"
+        },
+        "gemma.prefix1025.l0.kv8.lut256.npz": {
+          "bytes": 1075195,
+          "sha256": "fcaaab061a23e61ea245eaf7d4379dfdbd5867ea75b79506f49f8572498216b1"
+        },
+        "gemma.prefix1025.l5.kv16.lut128.npz": {
+          "bytes": 1902007,
+          "sha256": "f0e2cc7bb2a1e5436ee04cef8684f3549056bf0e5419fd015e02d469caefe20d"
+        },
+        "gemma.prefix1025.l5.kv16.lut256.npz": {
+          "bytes": 1911364,
+          "sha256": "74ecbf69706c596c01d1bc8978b72a327b2bc559c7d2896dbd3dc5ac4f4e10fb"
+        },
+        "gemma.prefix1025.l5.kv8.lut128.npz": {
+          "bytes": 1045424,
+          "sha256": "6094eb0499b293b3bcde869b98d5147d9bba05e29096c81150533be57bada3c8"
+        },
+        "gemma.prefix1025.l5.kv8.lut256.npz": {
+          "bytes": 1054973,
+          "sha256": "0ff02c8ad3015d62be1fb4ce73ca6f5c08317a3d3d1b8d2e76314f619133ae03"
+        },
+        "gemma.prefix128.l0.kv16.lut128.npz": {
+          "bytes": 514959,
+          "sha256": "a9be3e152d834f3837eed207df031621d6acb6aa00d472017eb037f495cd0fce"
+        },
+        "gemma.prefix128.l0.kv16.lut256.npz": {
+          "bytes": 517848,
+          "sha256": "aac545303fba038cbfcb1de0024449a181cb3cfa8fa3029b806fccf97bddecc9"
+        },
+        "gemma.prefix128.l0.kv8.lut128.npz": {
+          "bytes": 373771,
+          "sha256": "78ff93dbe170c20baea93c19fc3854aa8fe5ee91c39fdddfdd295083cbb89448"
+        },
+        "gemma.prefix128.l0.kv8.lut256.npz": {
+          "bytes": 376645,
+          "sha256": "43ba7dd8db56b81a20ec8422fefda7710d38b73728a52f1e7ac77c762d7c38d0"
+        },
+        "gemma.prefix128.l5.kv16.lut128.npz": {
+          "bytes": 525877,
+          "sha256": "51d40c6201113d14f57a1091e4d7a9bfbfc671b460ba57c7ff7e4409c79f7cb0"
+        },
+        "gemma.prefix128.l5.kv16.lut256.npz": {
+          "bytes": 527933,
+          "sha256": "07b42ebefac5bc5e5b439cae2edf8215856865e754e43525191a44603408c7d8"
+        },
+        "gemma.prefix128.l5.kv8.lut128.npz": {
+          "bytes": 377048,
+          "sha256": "6bf2b9598f47dec3aead110a126fc2d318887deeacd5c9e617d4b59f8eb10d70"
+        },
+        "gemma.prefix128.l5.kv8.lut256.npz": {
+          "bytes": 379202,
+          "sha256": "ad0cdc449e8c79591ae67756fce793f4c25b6028897f214adbed686bc83b8eb8"
+        },
+        "gemma.prefix4096.l0.kv16.lut128.npz": {
+          "bytes": 5565113,
+          "sha256": "51c8ce8bccf54d37bcb51516813c411dbd02a640b3fe14112c64de9fc7089183"
+        },
+        "gemma.prefix4096.l0.kv16.lut256.npz": {
+          "bytes": 5594127,
+          "sha256": "5c3534b54181283375f3c191e7e97b567adc0e68b783d3ca7a2ff3c45d2ce2ed"
+        },
+        "gemma.prefix4096.l0.kv8.lut128.npz": {
+          "bytes": 2626494,
+          "sha256": "055d77f819f294f1e11bb5d698b860802786d79f3a9a50139ef2ed982db98d6e"
+        },
+        "gemma.prefix4096.l0.kv8.lut256.npz": {
+          "bytes": 2654369,
+          "sha256": "eea2fed98c2762eadbc4250c2c52c995a96143e01ba2dec504abdcb355f4044b"
+        },
+        "gemma.prefix4096.l5.kv16.lut128.npz": {
+          "bytes": 6396257,
+          "sha256": "52824f6390fae86d8bfb52d2086d180060d75514fa077bc5ee10db1e72535a40"
+        },
+        "gemma.prefix4096.l5.kv16.lut256.npz": {
+          "bytes": 6420773,
+          "sha256": "378ff2da44f09f7f8ced27f7bea4fe915f05cf01938b13b68822f07fb110aa2f"
+        },
+        "gemma.prefix4096.l5.kv8.lut128.npz": {
+          "bytes": 2591867,
+          "sha256": "f7a48fffeedca2e3b84326ecf9c99635565dc85972d83540018fa0042abce544"
+        },
+        "gemma.prefix4096.l5.kv8.lut256.npz": {
+          "bytes": 2616989,
+          "sha256": "cb205ee00280925cddd620544029625ac3a2e2d37a862f957cfc9a1085bd1574"
+        },
+        "qwen25.prefix1024.l0.kv16.lut128.npz": {
+          "bytes": 3610716,
+          "sha256": "6e754f21cc42f222f109436ab7fd1f41c7349d7600586865aa3fe4edc8d313b1"
+        },
+        "qwen25.prefix1024.l0.kv16.lut256.npz": {
+          "bytes": 3663503,
+          "sha256": "d5698088c407532b677ad4e2cc4439a6fb64e929c8407d116fee74878d901496"
+        },
+        "qwen25.prefix1024.l0.kv8.lut128.npz": {
+          "bytes": 2892794,
+          "sha256": "6bd555707cb85c99f3552ac1fee16e12b6b86a3e9d1f245fdda26ed8832d2fda"
+        },
+        "qwen25.prefix1024.l0.kv8.lut256.npz": {
+          "bytes": 2931328,
+          "sha256": "87231650df620b63f0acae9d4ff821d91fff375de16c094f99d59c14f9f70f38"
+        },
+        "qwen25.prefix128.l0.kv16.lut128.npz": {
+          "bytes": 1072826,
+          "sha256": "2e28133afc3be46c15ca07d5d85f447127b8c1f938adf181e4aba430689d8ee4"
+        },
+        "qwen25.prefix128.l0.kv16.lut256.npz": {
+          "bytes": 1084072,
+          "sha256": "69f84a28e4b7301dba7f7301753e6a62f665da69f167dbf184226bb8d3bead82"
+        },
+        "qwen25.prefix128.l0.kv8.lut128.npz": {
+          "bytes": 898324,
+          "sha256": "2df69ecd465d34a0f67ed36aca0f093366bc6de748090625d34917122cd4b588"
+        },
+        "qwen25.prefix128.l0.kv8.lut256.npz": {
+          "bytes": 906722,
+          "sha256": "8519b17fde15e6ca9b0f134956433daed1787bb2c092ef931c4e18493e2583b9"
+        },
+        "qwen35.prefix1024.l3.kv16.lut128.npz": {
+          "bytes": 3082566,
+          "sha256": "c82ab28f0ceae64628441c6b6b40685d56ac57b873100d74e9456f70a03a3d48"
+        },
+        "qwen35.prefix1024.l3.kv16.lut256.npz": {
+          "bytes": 3111773,
+          "sha256": "68a3eb2255022dcd3471ba37fd3ac8f3af449c420d8c08723aa75f546336a27e"
+        },
+        "qwen35.prefix1024.l3.kv8.lut128.npz": {
+          "bytes": 2119856,
+          "sha256": "9b528e792f7602db4f0d354857c5098dbb1fe36a36c896a17c76325f08744a37"
+        },
+        "qwen35.prefix1024.l3.kv8.lut256.npz": {
+          "bytes": 2149267,
+          "sha256": "126c85ee23916d02a3cb306f2b00be87bc2c2eadf1d31d657b5a914f90f18b77"
+        },
+        "qwen35.prefix128.l3.kv16.lut128.npz": {
+          "bytes": 935745,
+          "sha256": "0295427ef84cd7a62011aea47b732dddb98f8ac4297b278bb193c9148ef6369f"
+        },
+        "qwen35.prefix128.l3.kv16.lut256.npz": {
+          "bytes": 940704,
+          "sha256": "cec2aba05871fb498c1dfbb1d098ba950c4bdd4947e82f3bae1dc28125131fc9"
+        },
+        "qwen35.prefix128.l3.kv8.lut128.npz": {
+          "bytes": 741009,
+          "sha256": "21215a6d2b8477bf021d8f3407894e2ee25fa02ad981524a60dcae68c32ed7c5"
+        },
+        "qwen35.prefix128.l3.kv8.lut256.npz": {
+          "bytes": 745864,
+          "sha256": "8786744b18231e85afe16124d9266bdf0b1bfc2a569dcbd1aa6b4c494ba79d9c"
+        }
+      }
+    },
+    "attention02": {
+      "manifest_sha256": "04e618cb71afab6b0dd3d3b6b3ed10578fa0d8948039375efb17385011d154bf",
+      "source": {
+        "commit": "3a6416dffe932ea47e2e0141c7ff1006e7769b7e",
+        "files": {
+          "attention.py": "efae923f2bd71a737ec77296a37826c9325d7aea075df4f6fc34759d35c851ca",
+          "server_models/bounds.py": "45ce1f64cd782f8210e648ff5778622c0eed4b5249ecbdefb7733712ccebceb9"
+        },
+        "binding_sha256": "81b5256269037de11e4af0668637cfca77ef69b33c72aba65858b037178b6d7c",
+        "binding_supplied": true
+      },
+      "input_captures": {
+        "gemma": {
+          "manifest_sha256": "f1209a433810e8cc890c06bfb6ccd535d5925f64192788a18610851d2d682311",
+          "model": {
+            "id": "google/gemma-3-4b-it",
+            "revision": "093f9f388b31de276ce2de164bdc2081324b9767"
+          },
+          "artifacts": {
+            "selected-raw.npz": {
+              "bytes": 267293179,
+              "sha256": "2dca116bd7cf013ad7686e85372a20f4d933576acb75ab602ee15c5e49a0922b"
+            }
+          }
+        },
+        "qwen25": {
+          "manifest_sha256": "165e8109f8025c8bfafc9079d5a9e40e688897162cf6e9ca48d337efd5c3b5e5",
+          "model": {
+            "id": "Qwen/Qwen2.5-3B",
+            "revision": "5defd2796acd3cb2051bb4c787eddc7f8f35e113",
+            "reference_manifest_commit": "2ada6cf6a61f5acff4b6052e81e15d20070dc0f3"
+          },
+          "artifacts": {
+            "selected-raw.npz": {
+              "bytes": 34851938,
+              "sha256": "e7b8162bae2e8e85962de5e46a32b656ff3e51095149810ea81a779820cf0d10"
+            }
+          }
+        },
+        "qwen35": {
+          "manifest_sha256": "20101ece55df9845aede7fd3674419e973f74e3a41d61531a53ac9964be6dbe5",
+          "model": {
+            "id": "Qwen/Qwen3.5-4B",
+            "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+            "reference_manifest_commit": "2ada6cf6a61f5acff4b6052e81e15d20070dc0f3"
+          },
+          "artifacts": {
+            "selected-raw.npz": {
+              "bytes": 57326601,
+              "sha256": "ba1018985162a6308d2d984969505d35f93614ff401af30e91fa2e4205c3ba7b"
+            }
+          }
+        }
+      },
+      "artifacts": {
+        "attention.json": {
+          "bytes": 327496,
+          "sha256": "3162bc5ebc442a6b195e8f96da0bb2adbcdeb1147c5f43726a294ed5f8f5cfbf"
+        },
+        "exp-grid128.u32le.bin": {
+          "bytes": 8196,
+          "sha256": "659e0c81ddb592f49e27443dcfe89b9cf88439512cfba613dcd161950e5b6f80"
+        },
+        "exp-grid256.u32le.bin": {
+          "bytes": 16388,
+          "sha256": "0b330c5527eaa94e06557cd254485b23e514267b995030f6e7938ebf1a26c886"
+        },
+        "gemma.prefix1023.l0.kv16.lut128.npz": {
+          "bytes": 1827269,
+          "sha256": "9a7d4ae29a9575846a249732c24e323747ece8c2240a34254c5c41c8ca1dfb94"
+        },
+        "gemma.prefix1023.l0.kv16.lut256.npz": {
+          "bytes": 1840690,
+          "sha256": "5be12a3fda5248b7141e31e94b4bcf213b476f61c5ceb741424006b3ae31552c"
+        },
+        "gemma.prefix1023.l0.kv8.lut128.npz": {
+          "bytes": 1061556,
+          "sha256": "f36a6adb8819b44364a77b42a6d943f034bd198778465cf022fcd73edc38defe"
+        },
+        "gemma.prefix1023.l0.kv8.lut256.npz": {
+          "bytes": 1074699,
+          "sha256": "63a34769ced4f42a9b3decc614ae9c3c3ca268e881b7fd4ce0bd3947661be14c"
+        },
+        "gemma.prefix1023.l5.kv16.lut128.npz": {
+          "bytes": 1898537,
+          "sha256": "63513e359714cb170b7ba66ec5db7f2ffd57ffc8a71efc8aee8326dc1c0bd02c"
+        },
+        "gemma.prefix1023.l5.kv16.lut256.npz": {
+          "bytes": 1907910,
+          "sha256": "28d50c05f157cb9d706f78ce08a6fd3b4df367e71d5c7a43b0b923d6bed183e0"
+        },
+        "gemma.prefix1023.l5.kv8.lut128.npz": {
+          "bytes": 1043605,
+          "sha256": "95dd704abce6d02628e4830e56a6a9a43b2225bf3802482fdd45474e954b8a7a"
+        },
+        "gemma.prefix1023.l5.kv8.lut256.npz": {
+          "bytes": 1053071,
+          "sha256": "02f623110b09d51e3bb425c0bd47421d4415f1d6176d382511edd87b4aa1467f"
+        },
+        "gemma.prefix1024.l0.kv16.lut128.npz": {
+          "bytes": 1828758,
+          "sha256": "977b6b3d08c0f9b1b2f2f909dac4cffc48694c5fbfbfe1582a4682a074b323a9"
+        },
+        "gemma.prefix1024.l0.kv16.lut256.npz": {
+          "bytes": 1842150,
+          "sha256": "ca7683924d89647cdabfd01a3daf13eeee5ca6118e22e526c3d64baffad2ba71"
+        },
+        "gemma.prefix1024.l0.kv8.lut128.npz": {
+          "bytes": 1061690,
+          "sha256": "87163ef69bf9c90a5b00a41bbb83a130bea9fd21cba2aa9aa5fb95eab86c6105"
+        },
+        "gemma.prefix1024.l0.kv8.lut256.npz": {
+          "bytes": 1074809,
+          "sha256": "f792dae848c2ee920a26d365bcfff631c4a02d6022f2d65367408ba6df3f3674"
+        },
+        "gemma.prefix1024.l5.kv16.lut128.npz": {
+          "bytes": 1899013,
+          "sha256": "eaf2a74769654e0f42d3deef8be47c7e5829cd69f50a47260af346ba58059cba"
+        },
+        "gemma.prefix1024.l5.kv16.lut256.npz": {
+          "bytes": 1908318,
+          "sha256": "452d67cf931acc82b1d875e0e0218f62aee99440f975f023faa817c5a61d175b"
+        },
+        "gemma.prefix1024.l5.kv8.lut128.npz": {
+          "bytes": 1043396,
+          "sha256": "5164cce5982e2e7d9daf54a4c36a45d26de962255a097308d185a23f2b921913"
+        },
+        "gemma.prefix1024.l5.kv8.lut256.npz": {
+          "bytes": 1052840,
+          "sha256": "99cae4d8a3f54d7d62907665383c4fe7a2a5b470832c65d48a7ab71cc19521b3"
+        },
+        "gemma.prefix1025.l0.kv16.lut128.npz": {
+          "bytes": 1830170,
+          "sha256": "be744777335cfdfd3b39341f13fec9f639a1973efbf82781e3a9f4499df87cc9"
+        },
+        "gemma.prefix1025.l0.kv16.lut256.npz": {
+          "bytes": 1843492,
+          "sha256": "e260539c8d8ac1860160ff7633d663bf062cadcbfc962caab9d5062d4a59f878"
+        },
+        "gemma.prefix1025.l0.kv8.lut128.npz": {
+          "bytes": 1062223,
+          "sha256": "100ffa5b0ec5652319731bc0f27cb192d08ad4814640464288bc79f05313e3f0"
+        },
+        "gemma.prefix1025.l0.kv8.lut256.npz": {
+          "bytes": 1075195,
+          "sha256": "fcaaab061a23e61ea245eaf7d4379dfdbd5867ea75b79506f49f8572498216b1"
+        },
+        "gemma.prefix1025.l5.kv16.lut128.npz": {
+          "bytes": 1902007,
+          "sha256": "f0e2cc7bb2a1e5436ee04cef8684f3549056bf0e5419fd015e02d469caefe20d"
+        },
+        "gemma.prefix1025.l5.kv16.lut256.npz": {
+          "bytes": 1911364,
+          "sha256": "74ecbf69706c596c01d1bc8978b72a327b2bc559c7d2896dbd3dc5ac4f4e10fb"
+        },
+        "gemma.prefix1025.l5.kv8.lut128.npz": {
+          "bytes": 1045424,
+          "sha256": "6094eb0499b293b3bcde869b98d5147d9bba05e29096c81150533be57bada3c8"
+        },
+        "gemma.prefix1025.l5.kv8.lut256.npz": {
+          "bytes": 1054973,
+          "sha256": "0ff02c8ad3015d62be1fb4ce73ca6f5c08317a3d3d1b8d2e76314f619133ae03"
+        },
+        "gemma.prefix128.l0.kv16.lut128.npz": {
+          "bytes": 514959,
+          "sha256": "a9be3e152d834f3837eed207df031621d6acb6aa00d472017eb037f495cd0fce"
+        },
+        "gemma.prefix128.l0.kv16.lut256.npz": {
+          "bytes": 517848,
+          "sha256": "aac545303fba038cbfcb1de0024449a181cb3cfa8fa3029b806fccf97bddecc9"
+        },
+        "gemma.prefix128.l0.kv8.lut128.npz": {
+          "bytes": 373771,
+          "sha256": "78ff93dbe170c20baea93c19fc3854aa8fe5ee91c39fdddfdd295083cbb89448"
+        },
+        "gemma.prefix128.l0.kv8.lut256.npz": {
+          "bytes": 376645,
+          "sha256": "43ba7dd8db56b81a20ec8422fefda7710d38b73728a52f1e7ac77c762d7c38d0"
+        },
+        "gemma.prefix128.l5.kv16.lut128.npz": {
+          "bytes": 525877,
+          "sha256": "51d40c6201113d14f57a1091e4d7a9bfbfc671b460ba57c7ff7e4409c79f7cb0"
+        },
+        "gemma.prefix128.l5.kv16.lut256.npz": {
+          "bytes": 527933,
+          "sha256": "07b42ebefac5bc5e5b439cae2edf8215856865e754e43525191a44603408c7d8"
+        },
+        "gemma.prefix128.l5.kv8.lut128.npz": {
+          "bytes": 377048,
+          "sha256": "6bf2b9598f47dec3aead110a126fc2d318887deeacd5c9e617d4b59f8eb10d70"
+        },
+        "gemma.prefix128.l5.kv8.lut256.npz": {
+          "bytes": 379202,
+          "sha256": "ad0cdc449e8c79591ae67756fce793f4c25b6028897f214adbed686bc83b8eb8"
+        },
+        "gemma.prefix4096.l0.kv16.lut128.npz": {
+          "bytes": 5565113,
+          "sha256": "51c8ce8bccf54d37bcb51516813c411dbd02a640b3fe14112c64de9fc7089183"
+        },
+        "gemma.prefix4096.l0.kv16.lut256.npz": {
+          "bytes": 5594127,
+          "sha256": "5c3534b54181283375f3c191e7e97b567adc0e68b783d3ca7a2ff3c45d2ce2ed"
+        },
+        "gemma.prefix4096.l0.kv8.lut128.npz": {
+          "bytes": 2626494,
+          "sha256": "055d77f819f294f1e11bb5d698b860802786d79f3a9a50139ef2ed982db98d6e"
+        },
+        "gemma.prefix4096.l0.kv8.lut256.npz": {
+          "bytes": 2654369,
+          "sha256": "eea2fed98c2762eadbc4250c2c52c995a96143e01ba2dec504abdcb355f4044b"
+        },
+        "gemma.prefix4096.l5.kv16.lut128.npz": {
+          "bytes": 6396257,
+          "sha256": "52824f6390fae86d8bfb52d2086d180060d75514fa077bc5ee10db1e72535a40"
+        },
+        "gemma.prefix4096.l5.kv16.lut256.npz": {
+          "bytes": 6420773,
+          "sha256": "378ff2da44f09f7f8ced27f7bea4fe915f05cf01938b13b68822f07fb110aa2f"
+        },
+        "gemma.prefix4096.l5.kv8.lut128.npz": {
+          "bytes": 2591867,
+          "sha256": "f7a48fffeedca2e3b84326ecf9c99635565dc85972d83540018fa0042abce544"
+        },
+        "gemma.prefix4096.l5.kv8.lut256.npz": {
+          "bytes": 2616989,
+          "sha256": "cb205ee00280925cddd620544029625ac3a2e2d37a862f957cfc9a1085bd1574"
+        },
+        "qwen25.prefix1024.l0.kv16.lut128.npz": {
+          "bytes": 3610716,
+          "sha256": "6e754f21cc42f222f109436ab7fd1f41c7349d7600586865aa3fe4edc8d313b1"
+        },
+        "qwen25.prefix1024.l0.kv16.lut256.npz": {
+          "bytes": 3663503,
+          "sha256": "d5698088c407532b677ad4e2cc4439a6fb64e929c8407d116fee74878d901496"
+        },
+        "qwen25.prefix1024.l0.kv8.lut128.npz": {
+          "bytes": 2892794,
+          "sha256": "6bd555707cb85c99f3552ac1fee16e12b6b86a3e9d1f245fdda26ed8832d2fda"
+        },
+        "qwen25.prefix1024.l0.kv8.lut256.npz": {
+          "bytes": 2931328,
+          "sha256": "87231650df620b63f0acae9d4ff821d91fff375de16c094f99d59c14f9f70f38"
+        },
+        "qwen25.prefix128.l0.kv16.lut128.npz": {
+          "bytes": 1072826,
+          "sha256": "2e28133afc3be46c15ca07d5d85f447127b8c1f938adf181e4aba430689d8ee4"
+        },
+        "qwen25.prefix128.l0.kv16.lut256.npz": {
+          "bytes": 1084072,
+          "sha256": "69f84a28e4b7301dba7f7301753e6a62f665da69f167dbf184226bb8d3bead82"
+        },
+        "qwen25.prefix128.l0.kv8.lut128.npz": {
+          "bytes": 898324,
+          "sha256": "2df69ecd465d34a0f67ed36aca0f093366bc6de748090625d34917122cd4b588"
+        },
+        "qwen25.prefix128.l0.kv8.lut256.npz": {
+          "bytes": 906722,
+          "sha256": "8519b17fde15e6ca9b0f134956433daed1787bb2c092ef931c4e18493e2583b9"
+        },
+        "qwen35.prefix1024.l3.kv16.lut128.npz": {
+          "bytes": 3082566,
+          "sha256": "c82ab28f0ceae64628441c6b6b40685d56ac57b873100d74e9456f70a03a3d48"
+        },
+        "qwen35.prefix1024.l3.kv16.lut256.npz": {
+          "bytes": 3111773,
+          "sha256": "68a3eb2255022dcd3471ba37fd3ac8f3af449c420d8c08723aa75f546336a27e"
+        },
+        "qwen35.prefix1024.l3.kv8.lut128.npz": {
+          "bytes": 2119856,
+          "sha256": "9b528e792f7602db4f0d354857c5098dbb1fe36a36c896a17c76325f08744a37"
+        },
+        "qwen35.prefix1024.l3.kv8.lut256.npz": {
+          "bytes": 2149267,
+          "sha256": "126c85ee23916d02a3cb306f2b00be87bc2c2eadf1d31d657b5a914f90f18b77"
+        },
+        "qwen35.prefix128.l3.kv16.lut128.npz": {
+          "bytes": 935745,
+          "sha256": "0295427ef84cd7a62011aea47b732dddb98f8ac4297b278bb193c9148ef6369f"
+        },
+        "qwen35.prefix128.l3.kv16.lut256.npz": {
+          "bytes": 940704,
+          "sha256": "cec2aba05871fb498c1dfbb1d098ba950c4bdd4947e82f3bae1dc28125131fc9"
+        },
+        "qwen35.prefix128.l3.kv8.lut128.npz": {
+          "bytes": 741009,
+          "sha256": "21215a6d2b8477bf021d8f3407894e2ee25fa02ad981524a60dcae68c32ed7c5"
+        },
+        "qwen35.prefix128.l3.kv8.lut256.npz": {
+          "bytes": 745864,
+          "sha256": "8786744b18231e85afe16124d9266bdf0b1bfc2a569dcbd1aa6b4c494ba79d9c"
+        }
+      }
+    }
+  },
+  "Decimal50_LUTs": {
+    "128": {
+      "entries": 2049,
+      "sha256": "659e0c81ddb592f49e27443dcfe89b9cf88439512cfba613dcd161950e5b6f80",
+      "mismatches": 0
+    },
+    "256": {
+      "entries": 4097,
+      "sha256": "0b330c5527eaa94e06557cd254485b23e514267b995030f6e7938ebf1a26c886",
+      "mismatches": 0
+    }
+  },
+  "cases": [
+    {
+      "id": "gemma.prefix128.l0.kv8.lut128",
+      "status": "PASS",
+      "QK_values": 12800,
+      "P15_values": 12800,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 400,
+      "maximum_Psum": 32775,
+      "maximum_Psum_budget": 32849,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.03525249331687998,
+          "max_abs": 1.8337383270263672
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.03524838961137231,
+          "max_abs": 1.8345928192138672
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00038100092035201985,
+          "max_abs": 0.04010009765625
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix128.l0.kv8.lut256",
+      "status": "PASS",
+      "QK_values": 12800,
+      "P15_values": 12800,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 400,
+      "maximum_Psum": 32777,
+      "maximum_Psum_budget": 32849,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.03524686422567691,
+          "max_abs": 1.8304424285888672
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.03524838961137231,
+          "max_abs": 1.8345928192138672
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00025349709818044087,
+          "max_abs": 0.03155517578125
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix128.l0.kv16.lut128",
+      "status": "PASS",
+      "QK_values": 12800,
+      "P15_values": 12800,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 400,
+      "maximum_Psum": 32778,
+      "maximum_Psum_budget": 32849,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.004968148777384115,
+          "max_abs": 0.520688533782959
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.004995000712388624,
+          "max_abs": 0.5507233142852783
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.000373789919385778,
+          "max_abs": 0.04681658744812012
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix128.l0.kv16.lut256",
+      "status": "PASS",
+      "QK_values": 12800,
+      "P15_values": 12800,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 400,
+      "maximum_Psum": 32777,
+      "maximum_Psum_budget": 32849,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.005003303203251627,
+          "max_abs": 0.5677103996276855
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.004995000712388624,
+          "max_abs": 0.5507233142852783
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00024436743992667896,
+          "max_abs": 0.024317264556884766
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix128.l5.kv8.lut128",
+      "status": "PASS",
+      "QK_values": 12800,
+      "P15_values": 12800,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32774,
+      "maximum_Psum_budget": 32849,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.04481690613214681,
+          "max_abs": 0.36371171474456787
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.044850648507831097,
+          "max_abs": 0.36350953578948975
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00027653145626276937,
+          "max_abs": 0.003398895263671875
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix128.l5.kv8.lut256",
+      "status": "PASS",
+      "QK_values": 12800,
+      "P15_values": 12800,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32774,
+      "maximum_Psum_budget": 32849,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.04484809422395609,
+          "max_abs": 0.36350953578948975
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.044850648507831097,
+          "max_abs": 0.36350953578948975
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 9.038212188572858e-05,
+          "max_abs": 0.002414703369140625
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix128.l5.kv16.lut128",
+      "status": "PASS",
+      "QK_values": 12800,
+      "P15_values": 12800,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32772,
+      "maximum_Psum_budget": 32849,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.0174124704493833,
+          "max_abs": 0.28370659053325653
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.017394696117979395,
+          "max_abs": 0.2818104773759842
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00027322300990814923,
+          "max_abs": 0.0033750534057617188
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix128.l5.kv16.lut256",
+      "status": "PASS",
+      "QK_values": 12800,
+      "P15_values": 12800,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32774,
+      "maximum_Psum_budget": 32849,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.017397420596932084,
+          "max_abs": 0.2815166860818863
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.017394696117979395,
+          "max_abs": 0.2818104773759842
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00012684307186952104,
+          "max_abs": 0.0014665424823760986
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1023.l0.kv8.lut128",
+      "status": "PASS",
+      "QK_values": 84400,
+      "P15_values": 84400,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 400,
+      "maximum_Psum": 32801,
+      "maximum_Psum_budget": 33281,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.033704657905249735,
+          "max_abs": 1.6457557678222656
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.03369310324448443,
+          "max_abs": 1.6416053771972656
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0003764640972779712,
+          "max_abs": 0.04327392578125
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1023.l0.kv8.lut256",
+      "status": "PASS",
+      "QK_values": 84400,
+      "P15_values": 84400,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 400,
+      "maximum_Psum": 32795,
+      "maximum_Psum_budget": 33281,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.03369594532037101,
+          "max_abs": 1.6461830139160156
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.03369310324448443,
+          "max_abs": 1.6416053771972656
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00027199441291142815,
+          "max_abs": 0.03155517578125
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1023.l0.kv16.lut128",
+      "status": "PASS",
+      "QK_values": 84400,
+      "P15_values": 84400,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 400,
+      "maximum_Psum": 32788,
+      "maximum_Psum_budget": 33281,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.004117098987541616,
+          "max_abs": 0.520698070526123
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.004130916534918136,
+          "max_abs": 0.5507328510284424
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00039402955558859136,
+          "max_abs": 0.03791236877441406
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1023.l0.kv16.lut256",
+      "status": "PASS",
+      "QK_values": 84400,
+      "P15_values": 84400,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 400,
+      "maximum_Psum": 32787,
+      "maximum_Psum_budget": 33281,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.0041675737773612855,
+          "max_abs": 0.5677199363708496
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.004130916534918136,
+          "max_abs": 0.5507328510284424
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00024716702558180703,
+          "max_abs": 0.027942657470703125
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1023.l5.kv8.lut128",
+      "status": "PASS",
+      "QK_values": 84400,
+      "P15_values": 84400,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32769,
+      "maximum_Psum_budget": 33297,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.03254840279793858,
+          "max_abs": 0.579899787902832
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.032570745411172025,
+          "max_abs": 0.5813608169555664
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0002337805331347101,
+          "max_abs": 0.00453948974609375
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1023.l5.kv8.lut256",
+      "status": "PASS",
+      "QK_values": 84400,
+      "P15_values": 84400,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32769,
+      "maximum_Psum_budget": 33297,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.03257608368206253,
+          "max_abs": 0.5813608169555664
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.032570745411172025,
+          "max_abs": 0.5813608169555664
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00010808617995573566,
+          "max_abs": 0.004497528076171875
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1023.l5.kv16.lut128",
+      "status": "PASS",
+      "QK_values": 84400,
+      "P15_values": 84400,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32769,
+      "maximum_Psum_budget": 33297,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.014775463795877106,
+          "max_abs": 0.38915444910526276
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.014753679230874048,
+          "max_abs": 0.38877010345458984
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00020110913617241505,
+          "max_abs": 0.0054122209548950195
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1023.l5.kv16.lut256",
+      "status": "PASS",
+      "QK_values": 84400,
+      "P15_values": 84400,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32768,
+      "maximum_Psum_budget": 33297,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.01475584354387089,
+          "max_abs": 0.3886803388595581
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.014753679230874048,
+          "max_abs": 0.38877010345458984
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00010361925848940268,
+          "max_abs": 0.00180855393409729
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1024.l0.kv8.lut128",
+      "status": "PASS",
+      "QK_values": 84480,
+      "P15_values": 84480,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 398,
+      "maximum_Psum": 32801,
+      "maximum_Psum_budget": 33281,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.03382132918755684,
+          "max_abs": 1.6457557678222656
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.033810107784811194,
+          "max_abs": 1.6416053771972656
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00038322559253816887,
+          "max_abs": 0.04327392578125
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1024.l0.kv8.lut256",
+      "status": "PASS",
+      "QK_values": 84480,
+      "P15_values": 84480,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 398,
+      "maximum_Psum": 32795,
+      "maximum_Psum_budget": 33281,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.03381284206764303,
+          "max_abs": 1.6461830139160156
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.033810107784811194,
+          "max_abs": 1.6416053771972656
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00027462426162009885,
+          "max_abs": 0.03155517578125
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1024.l0.kv16.lut128",
+      "status": "PASS",
+      "QK_values": 84480,
+      "P15_values": 84480,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 398,
+      "maximum_Psum": 32788,
+      "maximum_Psum_budget": 33281,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.004229108817082744,
+          "max_abs": 0.520698070526123
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.004246976394456765,
+          "max_abs": 0.5507328510284424
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00039297242245372365,
+          "max_abs": 0.03791236877441406
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1024.l0.kv16.lut256",
+      "status": "PASS",
+      "QK_values": 84480,
+      "P15_values": 84480,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 398,
+      "maximum_Psum": 32787,
+      "maximum_Psum_budget": 33281,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.004285140136203038,
+          "max_abs": 0.5677199363708496
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.004246976394456765,
+          "max_abs": 0.5507328510284424
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.000248557950012037,
+          "max_abs": 0.027942657470703125
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1024.l5.kv8.lut128",
+      "status": "PASS",
+      "QK_values": 84480,
+      "P15_values": 84480,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32769,
+      "maximum_Psum_budget": 33297,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.03452280028207685,
+          "max_abs": 0.5798993110656738
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.0345311895734834,
+          "max_abs": 0.5813603401184082
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00023789524527615424,
+          "max_abs": 0.00453948974609375
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1024.l5.kv8.lut256",
+      "status": "PASS",
+      "QK_values": 84480,
+      "P15_values": 84480,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32769,
+      "maximum_Psum_budget": 33297,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.0345355527705971,
+          "max_abs": 0.5813603401184082
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.0345311895734834,
+          "max_abs": 0.5813603401184082
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00010721924475596626,
+          "max_abs": 0.004497528076171875
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1024.l5.kv16.lut128",
+      "status": "PASS",
+      "QK_values": 84480,
+      "P15_values": 84480,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32769,
+      "maximum_Psum_budget": 33297,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.015475110320525495,
+          "max_abs": 0.3891529142856598
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.0154399388306873,
+          "max_abs": 0.38876858353614807
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00020533624880854403,
+          "max_abs": 0.005669504404067993
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1024.l5.kv16.lut256",
+      "status": "PASS",
+      "QK_values": 84480,
+      "P15_values": 84480,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32768,
+      "maximum_Psum_budget": 33297,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.01544104536792566,
+          "max_abs": 0.38867881894111633
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.0154399388306873,
+          "max_abs": 0.38876858353614807
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00010269848600519873,
+          "max_abs": 0.0020658373832702637
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1025.l0.kv8.lut128",
+      "status": "PASS",
+      "QK_values": 84560,
+      "P15_values": 84560,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32801,
+      "maximum_Psum_budget": 33281,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.033756356732099174,
+          "max_abs": 1.6457595825195312
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.03374357871039956,
+          "max_abs": 1.6416091918945312
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0003872490324063993,
+          "max_abs": 0.04327392578125
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1025.l0.kv8.lut256",
+      "status": "PASS",
+      "QK_values": 84560,
+      "P15_values": 84560,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32795,
+      "maximum_Psum_budget": 33281,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.03374635498340928,
+          "max_abs": 1.6461868286132812
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.03374357871039956,
+          "max_abs": 1.6416091918945312
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0002767451636991933,
+          "max_abs": 0.03155517578125
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1025.l0.kv16.lut128",
+      "status": "PASS",
+      "QK_values": 84560,
+      "P15_values": 84560,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32788,
+      "maximum_Psum_budget": 33281,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.00422741783060467,
+          "max_abs": 0.520698070526123
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.004251674452706746,
+          "max_abs": 0.5507328510284424
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0003966165812460554,
+          "max_abs": 0.03791236877441406
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1025.l0.kv16.lut256",
+      "status": "PASS",
+      "QK_values": 84560,
+      "P15_values": 84560,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32787,
+      "maximum_Psum_budget": 33281,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.004288494474869245,
+          "max_abs": 0.5677199363708496
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.004251674452706746,
+          "max_abs": 0.5507328510284424
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0002487393483717734,
+          "max_abs": 0.027942657470703125
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1025.l5.kv8.lut128",
+      "status": "PASS",
+      "QK_values": 84560,
+      "P15_values": 84560,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32769,
+      "maximum_Psum_budget": 33298,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.03476200110560364,
+          "max_abs": 0.5799016952514648
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.03476781382570506,
+          "max_abs": 0.5813627243041992
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0002412080601261038,
+          "max_abs": 0.00453948974609375
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1025.l5.kv8.lut256",
+      "status": "PASS",
+      "QK_values": 84560,
+      "P15_values": 84560,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32769,
+      "maximum_Psum_budget": 33298,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.034772292731687644,
+          "max_abs": 0.5813627243041992
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.03476781382570506,
+          "max_abs": 0.5813627243041992
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00010799137175850281,
+          "max_abs": 0.004497528076171875
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1025.l5.kv16.lut128",
+      "status": "PASS",
+      "QK_values": 84560,
+      "P15_values": 84560,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32769,
+      "maximum_Psum_budget": 33298,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.015558232014188298,
+          "max_abs": 0.389155313372612
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.015521960833813943,
+          "max_abs": 0.3887709826231003
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.000202214727731221,
+          "max_abs": 0.005669504404067993
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix1025.l5.kv16.lut256",
+      "status": "PASS",
+      "QK_values": 84560,
+      "P15_values": 84560,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32768,
+      "maximum_Psum_budget": 33298,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.015525403024763485,
+          "max_abs": 0.38868121802806854
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.015521960833813943,
+          "max_abs": 0.3887709826231003
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00010642532524367798,
+          "max_abs": 0.0020658373832702637
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix4096.l0.kv8.lut128",
+      "status": "PASS",
+      "QK_values": 330240,
+      "P15_values": 330240,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 400,
+      "maximum_Psum": 32788,
+      "maximum_Psum_budget": 33281,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.03330706189708752,
+          "max_abs": 2.0757675170898438
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.03329681411030413,
+          "max_abs": 2.0757064819335938
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00039076056896708073,
+          "max_abs": 0.03662109375
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix4096.l0.kv8.lut256",
+      "status": "PASS",
+      "QK_values": 330240,
+      "P15_values": 330240,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 400,
+      "maximum_Psum": 32789,
+      "maximum_Psum_budget": 33281,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.033303571920895246,
+          "max_abs": 2.0773544311523438
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.03329681411030413,
+          "max_abs": 2.0757064819335938
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0002649737741552473,
+          "max_abs": 0.03155517578125
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix4096.l0.kv16.lut128",
+      "status": "PASS",
+      "QK_values": 330240,
+      "P15_values": 330240,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 400,
+      "maximum_Psum": 32795,
+      "maximum_Psum_budget": 33281,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.004240804574266425,
+          "max_abs": 0.520698070526123
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.004302151499578573,
+          "max_abs": 0.5507328510284424
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.000372363322835745,
+          "max_abs": 0.039806365966796875
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix4096.l0.kv16.lut256",
+      "status": "PASS",
+      "QK_values": 330240,
+      "P15_values": 330240,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 400,
+      "maximum_Psum": 32785,
+      "maximum_Psum_budget": 33281,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.004320834675625824,
+          "max_abs": 0.5677199363708496
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.004302151499578573,
+          "max_abs": 0.5507328510284424
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0002316851340545383,
+          "max_abs": 0.020744800567626953
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix4096.l5.kv8.lut128",
+      "status": "PASS",
+      "QK_values": 330240,
+      "P15_values": 330240,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32770,
+      "maximum_Psum_budget": 34833,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.0339574094039413,
+          "max_abs": 0.5649418830871582
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.033982463369440025,
+          "max_abs": 0.5645222663879395
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0002198357683462983,
+          "max_abs": 0.002994537353515625
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix4096.l5.kv8.lut256",
+      "status": "PASS",
+      "QK_values": 330240,
+      "P15_values": 330240,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32769,
+      "maximum_Psum_budget": 34833,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.03398364343525946,
+          "max_abs": 0.5645222663879395
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.033982463369440025,
+          "max_abs": 0.5645222663879395
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 5.901905562571846e-05,
+          "max_abs": 0.001529693603515625
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix4096.l5.kv16.lut128",
+      "status": "PASS",
+      "QK_values": 330240,
+      "P15_values": 330240,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32775,
+      "maximum_Psum_budget": 34833,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.012930285564370241,
+          "max_abs": 0.324889674782753
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.012908478964960397,
+          "max_abs": 0.3249042332172394
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0001733132245080514,
+          "max_abs": 0.0018712133169174194
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "gemma.prefix4096.l5.kv16.lut256",
+      "status": "PASS",
+      "QK_values": 330240,
+      "P15_values": 330240,
+      "PV_values": 20480,
+      "Fraction_score_witnesses": 399,
+      "maximum_Psum": 32768,
+      "maximum_Psum_budget": 34833,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.012910601410298364,
+          "max_abs": 0.3246396481990814
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.012908478964960397,
+          "max_abs": 0.3249042332172394
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00010891720200939076,
+          "max_abs": 0.0011895149946212769
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "qwen25.prefix128.l0.kv8.lut128",
+      "status": "PASS",
+      "QK_values": 51200,
+      "P15_values": 51200,
+      "PV_values": 40960,
+      "Fraction_score_witnesses": 1589,
+      "maximum_Psum": 32776,
+      "maximum_Psum_budget": 32849,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.10639107977941219,
+          "max_abs": 0.354969322681427
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.1063732156333259,
+          "max_abs": 0.35471946001052856
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00048072430499931647,
+          "max_abs": 0.0009403228759765625
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "qwen25.prefix128.l0.kv8.lut256",
+      "status": "PASS",
+      "QK_values": 51200,
+      "P15_values": 51200,
+      "PV_values": 40960,
+      "Fraction_score_witnesses": 1589,
+      "maximum_Psum": 32775,
+      "maximum_Psum_budget": 32849,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.10639578181968845,
+          "max_abs": 0.3549655079841614
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.1063732156333259,
+          "max_abs": 0.35471946001052856
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00026169564278151567,
+          "max_abs": 0.000774383544921875
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "qwen25.prefix128.l0.kv16.lut128",
+      "status": "PASS",
+      "QK_values": 51200,
+      "P15_values": 51200,
+      "PV_values": 40960,
+      "Fraction_score_witnesses": 1587,
+      "maximum_Psum": 32776,
+      "maximum_Psum_budget": 32849,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.005388399935631397,
+          "max_abs": 0.028175748884677887
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.005385028275665201,
+          "max_abs": 0.027843378484249115
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00046700590914837165,
+          "max_abs": 0.001053977757692337
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "qwen25.prefix128.l0.kv16.lut256",
+      "status": "PASS",
+      "QK_values": 51200,
+      "P15_values": 51200,
+      "PV_values": 40960,
+      "Fraction_score_witnesses": 1587,
+      "maximum_Psum": 32777,
+      "maximum_Psum_budget": 32849,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.0053863625727946915,
+          "max_abs": 0.028175748884677887
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.005385028275665201,
+          "max_abs": 0.027843378484249115
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00026356011200918527,
+          "max_abs": 0.000498555600643158
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "qwen25.prefix1024.l0.kv8.lut128",
+      "status": "PASS",
+      "QK_values": 337920,
+      "P15_values": 337920,
+      "PV_values": 40960,
+      "Fraction_score_witnesses": 1588,
+      "maximum_Psum": 32787,
+      "maximum_Psum_budget": 33297,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.1250236757198923,
+          "max_abs": 0.431201696395874
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.12503424196873156,
+          "max_abs": 0.430405855178833
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0004787485472412417,
+          "max_abs": 0.001129150390625
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "qwen25.prefix1024.l0.kv8.lut256",
+      "status": "PASS",
+      "QK_values": 337920,
+      "P15_values": 337920,
+      "PV_values": 40960,
+      "Fraction_score_witnesses": 1588,
+      "maximum_Psum": 32784,
+      "maximum_Psum_budget": 33297,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.125009727280248,
+          "max_abs": 0.42996716499328613
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.12503424196873156,
+          "max_abs": 0.430405855178833
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00026428020347345546,
+          "max_abs": 0.000774383544921875
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "qwen25.prefix1024.l0.kv16.lut128",
+      "status": "PASS",
+      "QK_values": 337920,
+      "P15_values": 337920,
+      "PV_values": 40960,
+      "Fraction_score_witnesses": 1589,
+      "maximum_Psum": 32789,
+      "maximum_Psum_budget": 33297,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.005771433432727793,
+          "max_abs": 0.028175033628940582
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.005758889704864735,
+          "max_abs": 0.02784266322851181
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0004197034199048437,
+          "max_abs": 0.001053977757692337
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "qwen25.prefix1024.l0.kv16.lut256",
+      "status": "PASS",
+      "QK_values": 337920,
+      "P15_values": 337920,
+      "PV_values": 40960,
+      "Fraction_score_witnesses": 1589,
+      "maximum_Psum": 32792,
+      "maximum_Psum_budget": 33297,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.00575038143147704,
+          "max_abs": 0.028175033628940582
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.005758889704864735,
+          "max_abs": 0.02784266322851181
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00024640485323808054,
+          "max_abs": 0.0005768761038780212
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "qwen35.prefix128.l3.kv8.lut128",
+      "status": "PASS",
+      "QK_values": 25600,
+      "P15_values": 25600,
+      "PV_values": 40960,
+      "Fraction_score_witnesses": 790,
+      "maximum_Psum": 32779,
+      "maximum_Psum_budget": 32849,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.028818511746198466,
+          "max_abs": 0.07803183794021606
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.028807877212082094,
+          "max_abs": 0.07805091142654419
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0007401161493225128,
+          "max_abs": 0.0023288726806640625
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "qwen35.prefix128.l3.kv8.lut256",
+      "status": "PASS",
+      "QK_values": 25600,
+      "P15_values": 25600,
+      "PV_values": 40960,
+      "Fraction_score_witnesses": 790,
+      "maximum_Psum": 32777,
+      "maximum_Psum_budget": 32849,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.028814592210689688,
+          "max_abs": 0.07779723405838013
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.028807877212082094,
+          "max_abs": 0.07805091142654419
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0004355353364695536,
+          "max_abs": 0.00142669677734375
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "qwen35.prefix128.l3.kv16.lut128",
+      "status": "PASS",
+      "QK_values": 25600,
+      "P15_values": 25600,
+      "PV_values": 40960,
+      "Fraction_score_witnesses": 790,
+      "maximum_Psum": 32778,
+      "maximum_Psum_budget": 32849,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.00934186511399173,
+          "max_abs": 0.04011978209018707
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.009299603646756143,
+          "max_abs": 0.03881491720676422
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0007461308405445062,
+          "max_abs": 0.002266496419906616
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "qwen35.prefix128.l3.kv16.lut256",
+      "status": "PASS",
+      "QK_values": 25600,
+      "P15_values": 25600,
+      "PV_values": 40960,
+      "Fraction_score_witnesses": 790,
+      "maximum_Psum": 32777,
+      "maximum_Psum_budget": 32849,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.009304679187588894,
+          "max_abs": 0.03851282596588135
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.009299603646756143,
+          "max_abs": 0.03881491720676422
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0004220911422862728,
+          "max_abs": 0.001450568437576294
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "qwen35.prefix1024.l3.kv8.lut128",
+      "status": "PASS",
+      "QK_values": 168960,
+      "P15_values": 168960,
+      "PV_values": 40960,
+      "Fraction_score_witnesses": 789,
+      "maximum_Psum": 32791,
+      "maximum_Psum_budget": 33297,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.02724074900013119,
+          "max_abs": 0.07412093877792358
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.027255902118550543,
+          "max_abs": 0.07370132207870483
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00066315221007892,
+          "max_abs": 0.0023288726806640625
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "qwen35.prefix1024.l3.kv8.lut256",
+      "status": "PASS",
+      "QK_values": 168960,
+      "P15_values": 168960,
+      "PV_values": 40960,
+      "Fraction_score_witnesses": 789,
+      "maximum_Psum": 32794,
+      "maximum_Psum_budget": 33297,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.027265040336015352,
+          "max_abs": 0.07473510503768921
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.027255902118550543,
+          "max_abs": 0.07370132207870483
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00041143287808782927,
+          "max_abs": 0.00142669677734375
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "qwen35.prefix1024.l3.kv16.lut128",
+      "status": "PASS",
+      "QK_values": 168960,
+      "P15_values": 168960,
+      "PV_values": 40960,
+      "Fraction_score_witnesses": 789,
+      "maximum_Psum": 32790,
+      "maximum_Psum_budget": 33297,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.00953296407427219,
+          "max_abs": 0.03161115199327469
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.009496674838396316,
+          "max_abs": 0.03178304433822632
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.0006524785354048125,
+          "max_abs": 0.002041064202785492
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    },
+    {
+      "id": "qwen35.prefix1024.l3.kv16.lut256",
+      "status": "PASS",
+      "QK_values": 168960,
+      "P15_values": 168960,
+      "PV_values": 40960,
+      "Fraction_score_witnesses": 789,
+      "maximum_Psum": 32792,
+      "maximum_Psum_budget": 33297,
+      "native_and_FP64_diagnostics": {
+        "integer_output_vs_native": {
+          "relative_rmse": 0.009476998042509892,
+          "max_abs": 0.03193940222263336
+        },
+        "FP64_same_encoded_KV_P15_output_vs_native": {
+          "relative_rmse": 0.009496674838396316,
+          "max_abs": 0.03178304433822632
+        },
+        "integer_output_vs_FP64_same_encoded_KV_P15": {
+          "relative_rmse": 0.00040215761823600866,
+          "max_abs": 0.001450568437576294
+        }
+      },
+      "in_memory_P_code_mutation_rejected": true,
+      "negative_scope": "in-memory code-only mutation, not a rehashed file or full-model adversarial experiment"
+    }
+  ],
+  "counts": {
+    "QK_I64_values": 7106560,
+    "score_integer_values": 7106560,
+    "score_Fraction_witnesses": 34990,
+    "exp_and_P15_values": 7106560,
+    "PV_I64_values": 1474560,
+    "diagnostic_metrics": 392
+  },
+  "upstream_scope": "Input capture SHA bindings are recorded, not a reproof of original FP32 capture, KV calibration, full model, or hardware.",
+  "two_rounds_all_artifacts_byte_identical": true,
+  "two_rounds_manifest_equal_except_seconds": true,
+  "producer_binding_sha256": "81b5256269037de11e4af0668637cfca77ef69b33c72aba65858b037178b6d7c",
+  "samples": {
+    "exp-grid128.u32le.bin": {
+      "bytes": 8196,
+      "sha256": "659e0c81ddb592f49e27443dcfe89b9cf88439512cfba613dcd161950e5b6f80"
+    },
+    "exp-grid256.u32le.bin": {
+      "bytes": 16388,
+      "sha256": "0b330c5527eaa94e06557cd254485b23e514267b995030f6e7938ebf1a26c886"
+    },
+    "gemma.prefix4096.l0.kv16.lut128.npz": {
+      "bytes": 5565113,
+      "sha256": "51c8ce8bccf54d37bcb51516813c411dbd02a640b3fe14112c64de9fc7089183"
+    },
+    "qwen25.prefix128.l0.kv16.lut128.npz": {
+      "bytes": 1072826,
+      "sha256": "2e28133afc3be46c15ca07d5d85f447127b8c1f938adf181e4aba430689d8ee4"
+    }
+  },
+  "arithmetic_replayed_round": "attention01; attention02 complete artifact byte identity verified",
+  "seconds": 13.478381716180593
+}
