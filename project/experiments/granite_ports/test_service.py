@@ -8,6 +8,35 @@ spec=importlib.util.spec_from_file_location('granite_service76',Path(__file__).w
 m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 
 
+def calibration():
+    keys=('mul_s32_s32','mul_s64_s32','mul_s32_u16','add_s64','sub_s64','max_s64','add_u128',
+        'abs_s64','cmp_s64','align_s32_i64','shl_s64_s128','shl_u128','rne_s64_i32','rne_s128_i32',
+        'udiv_u128','isqrt_u128','div_rne_s128_u64_i32','signextend_s16_i64')
+    costs={'SIMD8_qualified':False,'frame_capacity_bytes':512,'scratch_peak_bytes':40,
+        'scalar_ALU_dependency_cycles':1,'software_controller_dispatches':1,'conservative_scalar_cycles_ALU_plus_dispatch':2,
+        'byte_store_reads':2,'byte_store_writes':1,'input_load_bytes':1,'result_read_bytes':1}
+    return {'source':{'micro_sha256':'a'*64},'ops':{k:{'costs':dict(costs),'proof':{'kind':'fixed_loops_exhaustive_shift_domain'}} for k in keys}}
+
+
+def check_ranges(builder):
+    def walk(nodes,loops):
+        for node in nodes:
+            if node['kind']=='loop':
+                assert node['end']-node['start']==node['count']*node['period']
+                walk(node['body'],loops+[node['count']])
+            else:
+                assert node.get('FIFO_peak_bytes',0)<=2048
+                for a in node.get('accesses',[]):
+                    obj=builder.alloc[a['object']]
+                    if 'address_class' in a:
+                        cls=a['address_class'];assert 0<=cls['minimum']<=cls['maximum']<obj['bytes'];continue
+                    strides=a['index_strides'];assert len(strides)<=len(loops)
+                    tail=loops[len(loops)-len(strides):] if strides else []
+                    end=a['offset']+a['bytes']+(a['repeat']-1)*a['stride']+sum((n-1)*s for n,s in zip(tail,strides))
+                    assert 0<=a['offset'] and end<=obj['bytes'],(node['kind'],a,loops,end,obj)
+    for e in builder.events:walk(e['body'],[])
+
+
 class Tests(unittest.TestCase):
     def test_exact_packed_inverse_and_address(self):
         w=(np.arange(2*32*48,dtype=np.int64)%255-127).astype(np.int8).reshape(2,32,48)
@@ -37,13 +66,46 @@ class Tests(unittest.TestCase):
         b=m.Builder(128,'M',{'ops':{}})
         with self.assertRaisesRegex(ValueError,'unknown/unqualified'):b.compute([],'native_mul128')
 
-    def test_scalar_SFU_reserves_shared_lane(self):
-        op={'status':'PASS','scalar_dependency_cycles':19,'scratch_peak_bytes':48,'uses_SFU':True,'microprogram_sha256':'a'*64}
-        b=m.Builder(128,'M',{'ops':{'udiv_u128':op}});body=[]
+    def test_scalar_SFU_reserves_shared_lane_and_frame_RMW(self):
+        b=m.Builder(128,'M',calibration());m.allocate(b);body=[]
         e=b.compute(body,'udiv_u128',3)
-        self.assertEqual(e['end'],57)
-        self.assertEqual(e['resources'],[{'name':'VR8','start':0,'end':57},{'name':'SFU','start':0,'end':57}])
+        self.assertEqual(e['end'],72)
+        self.assertEqual({r['name'] for r in e['resources']},{'VR8','bank.V','BUS','SFU'})
+        self.assertTrue(all(r['start']==0 and r['end']==72 for r in e['resources']))
+        self.assertEqual(e['counts']['bank_beats'],21)
         self.assertEqual(e['count'],3)
+
+    def test_fullmerge_fits_with_real_phase_lifetimes(self):
+        b=m.Builder(1536,'V',calibration());cap=m.allocate(b)
+        self.assertLessEqual(b.used['V'],16384)
+        self.assertEqual(b.alloc['down.merge64']['bytes'],12288)
+        self.assertEqual(b.alloc['front.gateup']['offset'],b.alloc['down.merge64']['offset'])
+        self.assertEqual(b.used['ROM'],131072)
+        self.assertEqual(b.alloc['V.byte_regs']['bytes'],40)
+        self.assertEqual(b.alloc['V.microframe']['bytes'],512)
+        self.assertEqual(cap['owner_physical_RQ_elements'],16)
+
+    def test_lasttoken_complete_pipeline_affine_ranges_and_MACs(self):
+        b=m.Builder(1536,'V',calibration());m.allocate(b)
+        trace={'expert_input_delta':np.zeros(72,np.int16),'router.ids':np.tile(np.arange(8,dtype=np.uint8),(72,1)),
+            'mid_delta':np.zeros((72,8),np.int16)}
+        m.front(b,71,trace);m.downstream(b,71,trace);m.nextnorm(b,71)
+        check_ranges(b)
+        self.assertEqual(b.counts['matrix_S8_MACs'],8*(1024*1536+1536*512))
+        self.assertEqual(b.counts['ROM_word32_reads'],8*512)
+        phases=[e['meta']['phase'] for e in b.events]
+        self.assertEqual(phases,sorted(phases,key={'front':0,'down':1,'norm':2}.get))
+        self.assertEqual(b.events[-1]['stage'],'norm.publish_after_complete_consumer')
+        self.assertTrue(all(e['meta']['token']==71 for e in b.events))
+
+    def test_partial_write_has_endpoint_RMW_and_fits_FIFO(self):
+        self.assertEqual(m.partial_write_beats(0,16),0)
+        self.assertEqual(m.partial_write_beats(15,2),2)
+        b=m.Builder(128,'M',calibration());m.allocate(b);body=[]
+        e=b.transfer(body,'cut.norm','V.x32',2,0,15)
+        self.assertEqual(e['counts']['dst_rmw_beats'],2)
+        self.assertEqual(e['FIFO_peak_bytes'],80)
+
 
 
 if __name__=='__main__':unittest.main()
