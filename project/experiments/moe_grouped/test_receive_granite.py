@@ -1,10 +1,13 @@
 """Small independent mathematical tests, not real Granite tensors."""
 from fractions import Fraction
 import math
+from pathlib import Path
+import tempfile
 import unittest
 import numpy as np
 
-from receive_granite import IntegerMath, i32
+from audit_io74 import descriptor, save_json
+from receive_granite import IntegerMath, fixed_encode, i32, negatives, runtime_matches
 
 
 class GraniteIntegerMathTests(unittest.TestCase):
@@ -67,6 +70,30 @@ class GraniteIntegerMathTests(unittest.TestCase):
         self.assertEqual(trace["ids"][0, :2].tolist(), [0, 1])
         self.assertTrue(np.array_equal(trace["gate_q15"].astype(np.int64).sum(axis=1), [32768, 32768]))
         self.assertEqual(trace["input_delta"][1], 1)
+
+    def test_fixed_compiler_checks_after_rounding_boundary(self):
+        values = np.asarray([(1 << 31)-0.6, -(1 << 31)-0.4], np.float64)
+        self.assertTrue(np.array_equal(fixed_encode(values, 0), [(1 << 31)-1, -(1 << 31)]))
+        with self.assertRaises(ValueError):
+            fixed_encode(np.asarray([(1 << 31)-0.4]), 0)
+
+    def test_all_three_real_npz_sha_rewrites_reach_mathematical_check(self):
+        with tempfile.TemporaryDirectory(prefix="issue74-granite-negative-") as folder:
+            root = Path(folder)
+            run, out = root/"run", root/"out"
+            run.mkdir()
+            out.mkdir()
+            expected = {"router.ids": np.arange(8, dtype=np.uint8)[None],
+                        "expert_mid_q12": np.zeros((1, 8, 2), np.int32),
+                        "merge_prefix64": np.zeros((1, 8, 2), np.int64)}
+            np.savez_compressed(run/"runtime.npz", **expected)
+            save_json(run/"manifest.json", {"schema": "granite-moe-run74-v1", "status": "EXECUTED_COMPLETE",
+                      "artifacts": {"runtime.npz": descriptor(run/"runtime.npz")}})
+            runtime_matches(run, expected)
+            records = negatives(run, expected, out)
+            self.assertEqual(len(records), 3)
+            self.assertTrue(all(r["status"] == "REJECTED_AFTER_SHA_REWRITE" for r in records))
+            self.assertTrue(all(r["reason"].startswith("integer stage ") for r in records))
 
 
 if __name__ == "__main__":
