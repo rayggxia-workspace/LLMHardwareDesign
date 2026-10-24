@@ -17,7 +17,7 @@ Attention是明确外部I32Q12切口，MLP在闭包外；不能声称整模型�
 - gamma、MuP、D、conv weight：I32Q20；bias/输入dt：I32Q12。conv四项宽I64积/和，RNE20一次到Q12，再SiLU。
 - SiLU LUT：[-32,32]、step2^-8、16385×I32Q12；输入索引RNE、负域外0、正域外identity，所有域外次数保留。
 - 联合dt/alpha LUT：每head同[-32,32]网格；dt I32Q20、alpha U32Q0.31，dt先按原配置limit离线计算。域外clip且计数；这是有界候选，不掩盖失配。总LUT payload约4MiB，必须计入只读ROM/backing及真实访问，不免费放进16KiB V。
-- 状态：每head S16/S32码+I16 power2 exponent，仅cal16真实native全部32head状态最大值决定初始unit。两位宽从相同物理范围起点开始；评价/native误差不参与在线范围选择。
+- 状态：每head S16/S32码+I16 power2 exponent，仅cal16真实native全部32head状态最大值决定初始unit。两位宽各自按完整signed码域和cal最大值选power2 unit，通常exponent相差16、约相同物理span，但端点并非Issue68刻意同端点合同；评价/native误差不参与在线范围选择。
 - 递推：decay=RNE31(S×alpha31)；dtB20=RNE12(dt20×B12)，必须I32；inj=RNE(32+state_exp)(dtB20×x12)；proposal=decay+inj。这是明确的两阶段RNE，不冒称和一次三乘精确舍入相同。输出先完整N256做checked I64 C12×new_state码归约，再按state_exp对齐Q12，加RNE20(D20×x12)。
 - 所有乘/加/shift先检查I64候选，norm明确U128 sumsq、variance floor division、isqrt(variance<<40)和signed RNE division到Q12；Python整数/isqrt只是软件定义。硬件候选restoring division固定128迭代、isqrt64迭代。S8 lowering为radix128低digit[0,127]、最高signed8，width<=8用1digit，否则1+ceil((width-8)/7)；每digit积、宽shift/add都计数，未声称RTL已实现。
 
@@ -55,3 +55,12 @@ python -B project/experiments/closure/falcon_resume.py --compiled COMPILED --bas
 ~~~
 
 binding还需falcon_resume_sha256；falcon_chain_sha256、falcon_int_sha256按本phase新源重新绑定。fi.scan兼容resume=None默认旧语义；旧已冻结结果仍保留，不能用新source覆盖原run绑定。接续功能的真实资格以服务器逐stage逐码比较和独立接收为准。
+
+
+## 不能遗漏的宽度与原phase历史限定
+
+完整S32状态码×C32经N256归约的通用最坏绝对界为2^70，保证全码域约需71signed bits；当前候选只是实际max-product×N满足I64时执行，超界拒绝，不能宣传I64对任意合法S32/C32永不溢出。alpha UQ31×S32积界2^62可I64；dtB20有独立I32 guard，再乘x32。S16只是状态存储较窄，本候选计算先widenS32，不能自动将其宽乘服务减半。
+
+原phase的conv_history_final_q12属于全72预处理历史；static_guard拒绝后它不是已提交前缀cache，不允许恢复。原phase只核算子整数链和R发布，不核完整历史事务；完整guard-rescale72基准的最终历史可与新phase逐码对照。原失败/字段/manifest不覆盖，新phase的atomic branch接续才有完整历史资格。
+
+同资源服务若统一每token串行加载完整权重，只能称同一保守服务协议。prefill64可做权重tile多row复用而decode不同；72×W8字节不是不可避免下界，不得将未搜索batch/复用的服务称端到端最优。
