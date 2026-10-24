@@ -30,3 +30,9 @@
 ## 正式服务执行前的唯一范围修订
 
 在工具探测/静态pack阶段、正式service尚未执行时增加fullH1536累加窗口。原因：12288B完整S64 merge与完整6144B Q12输出不一定同时live；先完成全部expert mid缓存S0，释放front向量临时，down保持物理O16输出/RQ且即merge，最后分片直接EXT后nextnorm，可使完整acc合法驻V16KiB。必须由独立生命周期/offset/1RW检查给结论，不能用静态总和人为拒绝，也不能把8路49152B返回变成合法。物理M/RQ tile16、全部精度/库存/函数不变。其余128/256控制保留，只扩这一真正影响边界的分叉，不扫更多tile；原执行前初版16配置作为历史，正式最小集24。
+
+## 真实失败后的控制域修订（不改原数值函数）
+
+Suffix02的L0真实RQ域失败保留。服务器只读诊断90396证实：两层全部2,949,120输出无负shift；L0 gate/up中32输出需s130/131，其原S64 product非零，其他移位在既有0..128校准域。原S64对称RNE在s>=64恒0（含最负数在s64的tie-even），因此可以收费实现非负guard与min(s,128)，不改变原Q12码。
+
+统一suffix03全部1,474,560 RQ输出逐一支付cmp/sub/max/sub、flags32B/O16真实写读和16候选controller test槽。128常数部署于既有96B常数区+64，不新增资源；移位原位使用既有S64 cache。原exp/delta、raw/decoded完整摘要、每路径SHA及32处原RNE/decoded/published零码等价另有rq_decoder.json。负shift需独立左移/溢出策略，不能用本修订免费clamp。接收/比较必须核查唯一费用版本，不把旧L13/02与新03混排；原43stage数值轨迹不改。此为失败后有据修订，不冒充执行前初版协议。
