@@ -117,5 +117,3 @@ class IntegerBoundary(unittest.TestCase):
         for k in ('state','units','history'):np.testing.assert_array_equal(recovered[k],baseline[k])
         self.assertEqual(recovered['tx']['after'],baseline['tx']['after']);self.assertEqual(recovered['position'],2)
 if __name__=='__main__':unittest.main()
-
-

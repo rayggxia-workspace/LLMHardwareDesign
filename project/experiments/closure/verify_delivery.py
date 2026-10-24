@@ -58,7 +58,7 @@ def main():
     if args.out.exists():
         raise ValueError("refuse receipt overwrite")
     receipt = verify(args.index, args.archive)
-    with args.out.open("x", encoding="utf-8") as stream:
+    with args.out.open("x", encoding="utf-8", newline="\n") as stream:
         stream.write(json.dumps(receipt, indent=2) + "\n")
     print(receipt["status"], receipt["members_checked"])
 
