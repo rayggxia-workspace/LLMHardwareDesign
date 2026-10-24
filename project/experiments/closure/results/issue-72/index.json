@@ -1,0 +1,69 @@
+{
+  "schema": "issue72-closure-evidence-v1",
+  "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/72",
+  "pr": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/73",
+  "owner": "Liangruizhi",
+  "branch": "task/72-numeric-closure",
+  "base": "f4d2c4643ef683336bf583739bf117cca8013118",
+  "server_root": "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024",
+  "source_commit": "844825b1cfd1e00d6a297705977f3a1b3386951e",
+  "source_gitreception": "source-git-verification.json",
+  "source_files_verified": 43,
+  "delivery_index": {
+    "path": "delivery-index.json",
+    "sha256": "1d9aeccc171ff501848212f27ff3084872044a7fe5eca4d2fc283db6eeaf7a2e"
+  },
+  "archives": [
+    {
+      "path": "delivery01/full-results.zip",
+      "bytes": 9898974561,
+      "sha256": "80e0b598039256f576bc6280d1f677713df5d5b36b8ff8ec1e22f35ee7c60197",
+      "members": 1096,
+      "server_path": "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/delivery01/full-results.zip",
+      "repository_path": null,
+      "reception": "full-results-reception.json",
+      "members_verified": 1096
+    },
+    {
+      "path": "delivery01/selected.zip",
+      "bytes": 2480138,
+      "sha256": "165d57d6050e0ef0e8775d7d081175d35e8bb85fffcc163db3f08d6bb547c883",
+      "members": 286,
+      "server_path": "/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/delivery01/selected.zip",
+      "repository_path": "project/experiments/closure/results/issue-72/selected.zip",
+      "reception": "selected-reception.json",
+      "members_verified": 286
+    }
+  ],
+  "actual_jobs": {
+    "path": "final-slurm.json",
+    "jobs": 103,
+    "COMPLETED": 100,
+    "FAILED": [
+      90182,
+      90201,
+      90238
+    ],
+    "submission_rejected": "work/Liangruizhi/72/slurm/compare-service01-submission-rejected.log"
+  },
+  "acceptance": {
+    "granite_reference": "model64 condition PASS, old native32/router64 FAIL preserved; contains framework FP32 internals",
+    "granite_integer": "768 records independent PASS, 192 selective profiles all fallback; integer gates not propagated through full experts",
+    "falcon_integer": "12 conditions independent mathematical PASS including recorded saturation/rejection; full guard-rescale 72 complete zero-published-state-saturation",
+    "falcon_complete_continuity": "6 outputs independent PASS, 4 actual semantic negatives per output",
+    "falcon_outprojection": "3 group sizes independent PASS, all partials/I64 alignment/I128 products/consumers checked; no application quality gate",
+    "service": "20 configurations independent PASS and 10 exact label controls; same precision/resources within pairs; conservative conditional slots only"
+  },
+  "evidence_scope": "All actual model/tensor/service execution CPU Slurm node13/node14. PC source/tiny synthetic tests, metadata and byte reception only. No new weights, no other machine tasks, Phi sealed.",
+  "limits": [
+    "No whole-model INT8 execution/quality, native kernel latency, RTL or PPA acceptance.",
+    "No dedicated R or V/R macro placement conclusion; deployed tile/bank differences below0.02% in current serialized policy.",
+    "No group outproj latency comparison; those are different numerical tasks from whole-row service.",
+    "All old failures and unmerged review state remain; no self merge."
+  ],
+  "management": {
+    "registration": "pending management-hub PR5",
+    "board": "unverified: no board.json or Projects capability; synchronization pending administrator",
+    "reviewer": "待指定"
+  }
+}

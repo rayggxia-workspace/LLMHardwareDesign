@@ -150,3 +150,9 @@ project/experiments/qwen3_trace/使用独立D盘环境（torch2.10.0+cpu、trans
 正式工具project/experiments/architecture_extensions，详见其README及GRANITE/FALCON/TRANSPORT/AUDIT/FALCON_ERRATA。先运行 python -B scripts/check_project.py，再用已有NumPy环境运行 python -B -m unittest discover -s project/experiments/architecture_extensions -p "test_*.py"；本机TEMP/TMP指向D盘任务目录。实际模型/数值/端口/完整接收均仅本人服务器Slurm新Issue70目录执行，逐phase源码绑定/实际命令见work/Liangruizhi/70及results/issue-70/index.json。
 
 原Granite capture FAIL默认拒绝；显式 --diagnostic-failed-chunk 仅在严格收窄条件下给PARTIAL_DIAGNOSTIC，receiver/transport透传。granite_diagnose.py与独立verify_diagnose.py保留原失败/固定ID反事实限定。receive.py --model falcon 独立验码、连续性和状态存储；--model transport --repeat 第二轮目录 核字节/资源。所有out均须新目录，复跑使用原来源胶囊源码而非新HEAD。COPY时隙和FP桥非硬件性能。归档命令见work/Liangruizhi/70/COLLECT.md，权重不进仓库。
+
+## Issue72 路由、完整整数R与同资源服务
+
+正式目录project/experiments/closure，[README](../project/experiments/closure/README.md)列出精度/接收合同与原phase复跑规则。先python -B scripts/check_project.py；已有NumPy环境运行 -B -m unittest discover -s project/experiments/closure -p "test_*.py"（89项），以及architecture_extensions原80项。本机TEMP/TMP只D盘本任务目录；所有实际模型/张量/服务只服务器。
+
+精选字节验收：python -B project/experiments/closure/verify_delivery.py --index project/experiments/closure/results/issue-72/delivery-index.json --archive project/experiments/closure/results/issue-72/selected.zip --out <新D盘receipt.json>。它核286 metadata成员，不替代服务器真实数学；完整9.90GB/1096成员与原Issue70外部输入按统一索引取得。15phase/43原Git源、实际Slurm/失败/负例见work72与结果；完整math/continuity/outproj/service使用对应冻结源码和新out，不用最新HEAD覆盖绑定。条件服务不是RTL/PPA，物理宏未定。

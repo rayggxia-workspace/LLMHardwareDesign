@@ -9,11 +9,11 @@
 1. Granite较高精度参考在原门限下自洽，但不是部署必须FP64，也不是所有算子均FP64。W8动态router仍频繁改变top8，W16大幅降低但未消除；当前保守选择性证书导致所有行回退，不能按“稀少重算”设计便宜路由。
 2. Falcon完整整数R分支可在当前72步以因果重标完成且零发布状态饱和。它覆盖真实输入归一化、完整投影、持续卷积、全部32head递推和完整4096维消费者，Attention运算和MLP仍在明确切口之外。S16/S32误差接近，不支持仅增加state位宽解决当前数值误差。
 3. 完整conv+R checkpoint/续接已独立接收，包含消费者失败后不发布的协议候选。数值正确不等于硬件原子性或模型质量通过。
-4. 同精度、同资源服务比较尚在推进；不得用旧COPY日历替代完整计算、宽乘、LUT、缓冲及端口。
+4. 20配置完整compute条件服务和10对标签零差对照已独立通过。真实部署的时隙差小于0.02%，不足以支持独立R或V/R合宏；不得用旧COPY日历替代完整算术服务。
 
 ## 冻结条件和已有成果复用
 
-已核本人GitHub Liangruizhi/182389313、目标origin和写权限，读取最新任务/PR/评论/未合并交接。成员55/63范围不接管；只读复用Issue70权重/真实输入，无新模型或其他机器任务，Phi封存。全部模型、实际张量、数值和服务执行均在本人CPU服务器 node13/c96，目录 /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024，Slurm前缀 lrz-i72-。本机仅源码、小合成测试、元数据整理和传输。其他成员89448/node3未中断。
+已核本人GitHub Liangruizhi/182389313、目标origin和写权限，读取最新任务/PR/评论/未合并交接。成员55/63范围不接管；只读复用Issue70权重/真实输入，无新模型或其他机器任务，Phi封存。全部模型、实际张量、数值和服务执行均在本人CPU服务器 node13/node14 的 c96 分区，目录 /public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024，Slurm前缀 lrz-i72-。本机仅源码、小合成测试、元数据整理和传输。其他成员89448/node3未中断。
 
 | 模型 | 固定revision | 本轮范围 | 验收 |
 | --- | --- | --- | --- |
@@ -73,12 +73,57 @@ dtB先RNE12为I32Q20，再与x乘并按state unit重标；不能合成一次三�
 
 旧批量static_guard的conv_history_final来自全72因果预处理，虽然只提交1个R token，不能将该field当已提交前缀cache；原记录保留，新完整resume才具备共同历史资格。90182和90201（接收端B1 token shape断言错误）失败目录/日志均保留。
 
-## 同精度、同资源边界比较
+## 输出投影的唯一受控粒度分叉
 
-进行中。冻结M256 S8 PE、V/R合计8 lane、单SFU/ROM端口、V16KiB/R32KiB/M32KiB/S8×32KiB、EXT128MiB、各128bit 1RW与单总线/FIFO。先做仅标签变化零差对照，再在相同数值/资源下比较合法R本地tile与V小tile/较大S spill；不赠完整shadow、免费权重重读或跨token decode矩阵并行。未有真实witness/独立审计前不填收益数字。详见SERVICE_CONTRACT.md。
+在上述full S32 guard-rescale的同一gatednorm输入上，仅改out_proj A8的K粒度；W8、静态Q31和exponent SHA完全相同，无评价误差拟合。三条件90231–90236实际执行及独立接收PASS，各184,320个宽RQ产品（hi/lo码）、完整K部分和/单位对齐/后继norm核验，各3个SHA重写负例拒绝。whole-row八项逐码重现原baseline。
 
-## 交付和恢复
+| A8粒度 | out_linear局部L2 | next_norm局部L2 | 全72步partial wire B | 动态scale wire B |
+| --- | ---: | ---: | ---: | ---: |
+| 整row K4096 | 6.7257% | 3.0289% | 751104 | 3456 |
+| K512（8组） | 4.3136% | 1.8675% | 6008832 | 3456 |
+| K256（16组） | 3.9044% | 1.6733% | 12017664 | 4608 |
 
-本轮协议与详细数值定义在 project/experiments/closure/。逐phase冻结commit/源码SHA、实际命令/Slurm、输入/输出索引在 work/Liangruizhi/72；完整数组留授权服务器，大文件不进Git。51项服务器作业中49 COMPLETED、2失败保留，截至90230；后续服务作业另续记录。
+局部L2改善不构成全面误差支配：K256 out_linear最大绝对误差2.9690高于K512的2.8235；decode nextnorm maxabs由baseline约0.2502升至K256约0.2930。FP参考误差用实值，vs_integer_baseline.max_abs另用Q12码差，不混单位。
 
-已执行本机67项小边界测试、python -B scripts/check_project.py、git diff --check，通过；这些不替代上述服务器实际数学/接收。PR73仍draft/进行中，未审查合并或正式验收。登记管理中心PR5 pending；无board.json/Projects能力，看板unverified、同步pending待管理员；审查人待指定。下一步完成服务及out_proj受控分叉、归档并更新同一PR，不重开Issue或重复模型。
+完整K先I64对齐/累加，再一次checked I128 Q31乘/RNE；每组提前RQ再相加是另一函数。实际样本最大aligned幅值20/21位、RQ产品51位都可容I64；通用I32输入合同的乘积界约82位，故I128是保守候选能力，不是本样本必须有I128物理乘法器。分组scale按组I16、静态每output 6B，因式分解后不复制G份Q31。上表wire依声明的partial流协议计header/beat，不是不可避免流量下界；output tile/局部对齐可另调度，但必须计缓冲/端口。支持保留M/V mixed-unit归约接口，不能直接据此固定近M重标。
+
+## 同精度、同资源完整compute比较
+
+20个配置均独立接收PASS，各4个真实SHA重写负例（端口、head/unit、norm、RAM）拒绝；10对split/shared label的完整witness SHA、算术/IO/资源/时隙完全相同。source-bound任务要求相同code/unit/epoch/重试轨迹，完整K/32head/4096norm及末提交。压缩loop由独立实现闭式归纳、affine对象范围和mod16余数集合证明物理拍，不靠展开过亿leaf或import producer。此接收不是逐字节内容模拟器或RTL。
+
+库存：M256 16×16但B1仅16有效PE；V/R合计8 S8 lane；单SFU、4,260,100B单128bit 1RW LUT ROM；V16KiB/R32KiB/M32KiB/S8×32KiB、EXT128MiB；各bank 128bit 1RW、单128bit BUS、header32B/beat16B/payload1984B/FIFO2KiB。ROM容量单列，不免费塞进V或既有EXT。VR工作寄存器512B/SFU48B均从aux8KiB扣，未给予额外RAM/端口。
+
+采用保守B1单token串行policy，prefill64也不跨token batch；M输出tile16、Ktile512含权重转置/实际16PE操作。矩阵权重每token重读、全I64 decay/injection/proposal/readout-product各8MiB EXT、全域guard、完整conv/state旧新代、两次clone和失败重试、全部RQ/元数据/ROM请求响应/除法开方计价；不收费observer SHA。入场的常量/LUT/外部encoded cuts已在声明存储就位，setup另计state/history清零和初始units。此不是优化调度或性能下界，不能把条件slot称真实时钟周期。
+
+| 固定精度（wide factor1） | 部署 | 条件slots | 相对同精度R8 | wire B |
+| --- | --- | ---: | ---: | ---: |
+| S16 | R32KiB D8 | 15815908351 | 基准 | 17650716160 |
+| S16 | V16KiB D2 | 15817871039 | +0.012410% | 17674172928 |
+| S16 | R32KiB D16 + S spill | 15815596703 | -0.001970% | 17646524416 |
+| S32 | R32KiB D8 | 15970826051 | 基准 | 18360320576 |
+| S32 | V16KiB D2 | 15972993923 | +0.013574% | 18387060288 |
+| S32 | R32KiB D16 + S spill | 15970514403 | -0.001951% | 18356128832 |
+
+R8占R32768B；V2占V14336B；R16占R24576B+S0 32768B，其他库存相同。S16按声明先widen32再算，仅state存储/IO减少，不是S16天生无窄算术收益。EXT S16/S32实际76,905,024/85,293,632B，单layer均合法，不代表全32层可部署。D16 spill轻微更快的反例保留，不能先定R8必胜。
+
+相同宽算术延迟假设统一factor2/4时，S32 R8/V2差异缩至0.007919%/0.004320%；宽度成本变化远超当前部署差异。2,365,194,240个矩阵S8 MAC及284,955,136个mul32等三部署完全相同。没有证据由这些微小条件差异推出独立R宏、V/R合宏或真实PPA。新K分组out_proj是另一数值函数，未纳入本whole-row服务，禁止套用本表周期给它排名。
+
+旧pilot 90237是未补norm I128 shift/除法RNE成本的版本，90238接收端把合法4B/8B stride过度限制为16B整倍而FAIL；保留原目录/日志，仅新版90239之后配置入比较。修正后按实际余数证明物理拍，没有放宽容量或接受坏访问。
+
+## 可确定的合同与下一步
+
+- 保留六逻辑模板，固定完整K mixed-unit归约/RQ顺序、完整共享norm/归约barrier、状态owner/unit/epoch/version、guard/重试和共同历史恢复义务。
+- Granite精度/回退资源须继续验证；不按已观察expert固定连接，不把W8集合改变直接等同质量失败，亦不称W16已质量通过。完整MoE整数gate→expert down/merge尚未闭合。
+- 当前Falcon bounded R分支整数数学/连续性闭合；模型Attention/MLP、完整应用质量、长序列稳定性和全码域宽度均未验收。
+- M/V/R/S物理宏归属保持候选。优先校准真实宽算术/SFU/ROM及同精度grouped-RQ微实现，再联合合法M预填批处理和state分页重新比较；不再盲加模型。
+- 物理工具/库/工艺资格由相关工程任务接续，不接管成员55/63，不把普通分层或抽象时隙当PPA。
+
+## 归档、实际验证与交付
+
+[统一索引](../../project/experiments/closure/results/issue-72/index.json)含逐phase源commit/SHA、实际Slurm和接收路径。103个本人服务器作业：100 COMPLETED，3 FAIL保留（90182 Double kernel、90201 token shape、90238 stride checker）；另一次Slurm依赖提交拒绝无job，检查20份已完成接收后无依赖重新提交90280成功。
+
+完整包9,898,974,561B/1096成员仅授权服务器：/public/home/yuzelu/RuizhiLiang/issue72-numeric-closure-20261024/delivery01/full-results.zip，SHA-256 80e0b598039256f576bc6280d1f677713df5d5b36b8ff8ec1e22f35ee7c60197。精选2,480,138B/286成员在仓库（metadata-only），SHA 165d57d6050e0ef0e8775d7d081175d35e8bb85fffcc163db3f08d6bb547c883。两包在服务器逐成员字节验收，精选在本机再次逐成员验收；这不替代独立服务器数学。43个phase源blob逐一对原Git commit SHA通过。完整包含执行产物/负例和归档前日志；collector/验包后续收据另在统一索引，不伪称在自身快照内。原Issue70数据/权重属明确外部输入，解包本批不能省略其SHA复核。
+
+本机89项新边界测试、80项原architecture_extensions回归、python -B scripts/check_project.py及git diff --check通过。没有本机模型/真实张量数学或其他机器任务。命令、接收与恢复详见[交接](../handoffs/2026-10-24-issue-72-numeric-closure.md)和closure/README.md。
+
+本地与服务器成果已整理，使用同一PR73交付待审查合并，不自行合并或提前done。登记management-hub PR5 pending；无board.json/Projects能力，看板unverified、同步pending待管理员；审查人待指定。以上是架构合同进一步收敛，物理宏与端到端收益尚未定稿。

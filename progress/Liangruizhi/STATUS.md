@@ -1,8 +1,12 @@
 # Liangruizhi 的进度
 
-## 2026-10-24 UTC+08 Issue72定稿关键接续（进行中）
+## 2026-10-24 UTC+08 Issue72闭环交付（待审查合并）
 
-Issue72，task/72-numeric-closure，根D:/Projects/LLMHardwareDesign-numeric-closure，承接PR71@f4d2c46；三个独立子worktree。已核本人账号、最新Issue/PR/评论/成员55/63与服务器资源，无重复活动；本人新server issue72目录Slurm并行。Granite native32原FAIL复现，router64把失败移到cached，model64显式eager新参考初步自洽/待完整独立接收；FP64 grouped kernel失败保留。Falcon全32head完整整数R分支12条件执行，因果重标零发布sat/局部nextnorm约3.03%，schema接收修复/完整conv+R恢复及独立数学进行中；768router诊断已提交。同资源compute/通信比较随后，未提前冻结边界或称模型质量/RTL/PPA通过。[当前报告](../../docs/experiments/issue-72-numeric-closure.md)，source/命令在work/Liangruizhi/72；无新模型/其他机器/Phi解封。登记pending/看板unverified同步pending，审查待指定。
+[Issue72](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/72)/[PR73](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/73)，task/72-numeric-closure，D:/Projects/LLMHardwareDesign-numeric-closure，base PR71@f4d2c46。本人身份/最新任务及成员55/63已核，三个独立子worktree；全部真实模型/张量/服务本人c96 node13/node14新目录Slurm，无新下载/其他机器/Phi解封。
+
+Granite新model64条件原门自洽、768整数router/gate独立通过，旧FAIL/内部FP32明示；eval动态W8集合变720/6912，W16 6/6912，全部选择性宽回退。Falcon12整数条件、6完整conv/R续接、3输出投影粒度独立接收；full S16/S32 GU72步零发布sat/51head事件/25epoch，nextnorm约3.03%，K512/K256降至1.87%/1.67%局部L2但partial wire增8/16倍，非完整模型质量。20完整算术服务独立PASS/10label零差；部署差<0.02%，不冻结独立R/V-R合宏。
+
+103服务器job100完成/3FAIL保留，43原Git源核验；9.90GB完整1096成员服务器/2.48MB精选286 metadata成员本机逐字节验收。89新边界/80旧模块/管理结构/diffcheck通过。[报告](../../docs/experiments/issue-72-numeric-closure.md)、[索引](../../project/experiments/closure/results/issue-72/index.json)、[交接](../../docs/handoffs/2026-10-24-issue-72-numeric-closure.md)。下一步真实wide/SFU/ROM/RQ、同函数grouped服务与prefill/权重复用，Granite全MoE/整模型质量/物理资格仍待验。交付in_review而非done，登记PR5 pending、看板unverified/同步pending待管理员、审查人待指定。
 
 ## 2026-10-24（UTC+08:00）Issue70小MoE/并行混合架构（待审查合并）
 

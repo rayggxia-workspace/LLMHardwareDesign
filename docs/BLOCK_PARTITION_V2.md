@@ -142,3 +142,5 @@ Falcon新增软件整数闭包覆盖完整R分支和4096维共享消费者。S16
 M/V重新量化边界须保留实际K组单位与宽ALIGN_REDUCE。whole-row/K512/K256输出投影受控分叉保持相同输入/W8/scale与完整消费者，只改A8粒度；不能先将各组RQ成同一窄输出再加，改舍入顺序会改变函数。额外partial、I16 scale、宽乘/加/移位、全归约和缓冲须进入同精度同资源比较后才决定近M或共享V。局部L2改善不是整模型质量通过，也不能把不同粒度当placement收益。
 
 制造前当前更稳妥的候选固定项是局部MAC累加反馈、受控tile循环、完整group归约协议、范围检查与代际提交控制。M↔V/R↔S的数据端点、宽部分和、带单位/epoch状态、双代缓冲/背压与广播保留产品映射自由；具体实例数、tile、共享SFU、R是否独立宏、近M重标与资源分配仍等服务/RTL/布线/时序资格。旧COPY日历和CPU时间不作PPA或端到端收益。
+
+Issue72本批补完后的结论：20个完整compute配置独立接收，10个split/shared标签对照完整日历SHA零差；同S16/S32分别比较R32-D8、V16-D2、R32-D16/Sspill，保守串行时隙差均<0.02%，D16spill轻微更快反例保留。因此不能据本批冻结独立R或V/R合宏。固定同gatedinput的K512/K256输出A8让后继局部L2由3.03%降到1.87%/1.67%，但partial wire增8/16倍、部分maxabs变坏；该新数值函数未纳入whole-row服务，仍需真实width/SFU/ROM/RQ和同函数端口校准。应保留接口/单位/归约/代际义务及物理映射自由，下一步优化合法prefill复用与宽算术，不重复加模型。详见[决策](decisions/2026-10-24-routing-integer-closure-and-boundaries.md)。

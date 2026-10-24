@@ -1,5 +1,8 @@
 # 当前状态
 
+- 2026-10-24 [Issue72/PR73](experiments/issue-72-numeric-closure.md)：Granite条件参考/768整数路由、Falcon12完整整数R条件/6连续恢复/3输出粒度及20完整compute服务独立接收；10对标签零差，真实部署差<0.02%，继续保留物理宏映射自由。因果重标72步零发布sat，局部误差与完整模型质量分列。103作业100完成/3失败保留，9.90GB完整/2.48MB精选和43原源SHA已验；89新/80旧测试通过。待审查合并非done；登记pending、看板unverified/同步pending。
+
+
 - 2026-10-24 [Issue70/PR71](experiments/issue-70-moe-hybrid.md)：Granite/Falcon服务器最小集已执行。Falcon23项原生/FP64门与独立接收通过，S16/S32固定范围均4sat；Granite eval chunk16失败定位至layer13/token42路由放大，原FAIL保留，32dot/32RQ/4merge仅PARTIAL_DIAGNOSTIC。24配置COPY-only双轮/独立接收完成，非完整算术或PPA。保留六逻辑模板，新增动态路由/宽merge、二维state tile、4096跨head norm及三输入join义务；物理归属未冻结。966MB完整证据在授权服务器，3.14MB精选43成员已核SHA；待审查合并非done；登记pending、看板unverified/同步pending。
 
 - 2026-10-24 [Issue68/PR69](experiments/issue-68-range-service.md)：服务器完成R每轮native12/legacy72条件、12个精选条件独立数学接收、4checkpoint；旧24源中guard_rescale全部完整/零发布sat，static_guard有8个停止，保留原1508sat诊断。28个服务分片完成，两套各56配置/112witness、双轮SHA一致、全部独立接收；每套48轨迹级标签对照0差。tile16本地shadow作为条件工作基线，完整clone/retry/单位预扫/端口/缓冲已计价；wide lowering仍是条件假设，不冻结独立R宏或V/R合宏。69项新增边界测试和原164研究回归通过；精选可离线核验，完整数据留授权服务器。待审查合并，非done；登记pending、看板unverified/同步pending。
