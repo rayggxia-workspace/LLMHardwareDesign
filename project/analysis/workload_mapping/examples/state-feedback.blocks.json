@@ -1,0 +1,81 @@
+{
+  "schema_version": "workload-blocks/1",
+  "id": "state-feedback-blocks",
+  "evidence": {
+    "kind": "synthetic",
+    "source": "Synthetic declared hardware; no RTL, capacity or timing measurement",
+    "status": "assumed"
+  },
+  "resources": [
+    {
+      "id": "state",
+      "kind": "compute",
+      "capacity_bytes": 1073741824,
+      "capabilities": [
+        {
+          "semantic": "convolution",
+          "status": "declared",
+          "source": "Synthetic functional requirement; implementation unverified"
+        },
+        {
+          "semantic": "convolution_history_update",
+          "status": "declared",
+          "source": "Synthetic functional requirement; implementation unverified"
+        },
+        {
+          "semantic": "recurrent_update",
+          "status": "declared",
+          "source": "Synthetic functional requirement; implementation unverified"
+        }
+      ],
+      "ports": [
+        {
+          "id": "state_in",
+          "direction": "input",
+          "protocol": "ready_valid",
+          "width_bits": 128,
+          "fifo_bytes": 2048
+        },
+        {
+          "id": "state_out",
+          "direction": "output",
+          "protocol": "ready_valid",
+          "width_bits": 128,
+          "fifo_bytes": 2048
+        }
+      ]
+    },
+    {
+      "id": "host",
+      "kind": "host",
+      "capacity_bytes": 1073741824,
+      "capabilities": [],
+      "ports": [
+        {
+          "id": "host_in",
+          "direction": "input",
+          "protocol": "ready_valid",
+          "width_bits": 128,
+          "fifo_bytes": 2048
+        },
+        {
+          "id": "host_out",
+          "direction": "output",
+          "protocol": "ready_valid",
+          "width_bits": 128,
+          "fifo_bytes": 2048
+        }
+      ]
+    }
+  ],
+  "links": [
+    {
+      "id": "l_host_to_state",
+      "source": "host",
+      "source_port": "host_out",
+      "destination": "state",
+      "destination_port": "state_in",
+      "protocol": "ready_valid"
+    }
+  ]
+}

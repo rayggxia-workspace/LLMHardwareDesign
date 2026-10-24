@@ -21,3 +21,11 @@
 - 离线证据run01/run02保留原字节和当时未提交状态；本次发布前run04-pr-preflight再次实际通过管理检查、32新测试、31旧回归及两图确定性/保护检查。run03行尾检查失败及修复记录保留；最终暂存差异检查通过，固定fixture/来源字节与Git索引一致。不据此宣称真实模型、全整数硬件或PPA通过。
 - 本批没有新Issue；Refs [#63](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/63)只作为接续，API读回其仍open/status:blocked、负责人本人，不改变其状态。实现提交`3b1fc28fb6b733e0bcf3decc0aae20ba21196f1c`已推送并由[PR78](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/78)交付；PR后续HEAD/发布回执以[交接追加节](../../docs/handoffs/2026-10-24-pending-block-v2-offline-prep.md)及线上记录为准。待指定审查人，未合并/未done。
 - 登记沿用management-hub PR5 pending，最新登记事实未重读；无board.json，Issue63页面无Projects关联，适用看板/条目unverified、同步pending，管理员待指定。GitHub连接器仍Unknown tool，最终以现有Git凭据管理器认证的GitHub API发布，/user读回本人`huangpingyang04-lgtm`、ID239819021，仓库push权限true；不写盘/输出凭据，未修改全局账号/作者设置或其他成员已有进度。
+
+## Issue #63 — 本机适配器续接（2026-10-25 Asia/Shanghai）
+
+- Issue: https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/63；状态in_progress，PR首阶段准备中。
+- 独立目录LLMHardwareDesign-workload-adapter-63，分支task/63-workload-layout-adapter；接续PR78固定a5ff0c5，服务器未访问/未比较/未修改。
+- 已恢复通用core/CLI/consumer/resource bridge和例子；本轮32上游小图+31估算器+42核心+23资源桥通过，最小build/verify通过。
+- 下一步：同一Draft PR持续接入v2两图、真实端口、完整独立复跑。C缺M8固定接入/同版冻结底座保持blocked。
+- 登记pending、Projects unverified/同步pending，审查人待指定；不标done。

@@ -136,3 +136,7 @@ python -B -m unittest discover -s project/analysis/llm_resources -v
 ```
 
 两个`replay.py`命令及全新输出目录的验证回执入口见新目录README。只证明合成数学/协议/指定通信与静态保留容量，不证明真实模型、全码域宽算术、RTL原子性或物理/PPA资格。本批本地成果与远端commit绑定明确分开，交接见[本次pending记录](handoffs/2026-10-24-pending-block-v2-offline-prep.md)。
+
+## Issue #63：工作负载通信输入适配器
+
+正式入口`project/analysis/workload_mapping/`，合同、范围和离线命令见[主要说明](WORKLOAD_MAPPING_INPUT.md)。执行`python -B -m project.analysis.workload_mapping --help`；本机续接不连接服务器。

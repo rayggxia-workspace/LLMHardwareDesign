@@ -1,0 +1,241 @@
+{
+  "schema_version": "workload-mapping/1",
+  "id": "minimal",
+  "evidence": {
+    "kind": "synthetic",
+    "source": "Hand-built contract fixture; no measured trace",
+    "status": "assumed"
+  },
+  "scope": "Synthetic two-call dependency and explicit transfer example.",
+  "nodes": [
+    {
+      "id": "n_matmul",
+      "semantic": "matrix",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_requant",
+      "semantic": "requantize",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    }
+  ],
+  "calls": [
+    {
+      "id": "c_matmul",
+      "node": "n_matmul",
+      "resource": "matrix",
+      "reads": [
+        "t_input",
+        "t_weight"
+      ],
+      "writes": [
+        "t_matmul"
+      ]
+    },
+    {
+      "id": "c_requant",
+      "node": "n_requant",
+      "resource": "vector",
+      "reads": [
+        "t_matmul"
+      ],
+      "writes": [
+        "t_requant"
+      ]
+    }
+  ],
+  "tensors": [
+    {
+      "id": "t_input",
+      "shape": [
+        1,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_input",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_matmul"
+      ],
+      "role": "activation",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_weight",
+      "shape": [
+        4,
+        2
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_weight",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_matmul"
+      ],
+      "role": "weight",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_matmul",
+      "shape": [
+        1,
+        2
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_matmul",
+      "offset_bytes": 0,
+      "producer": "c_matmul",
+      "consumers": [
+        "c_requant"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_requant",
+      "shape": [
+        1,
+        2
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_requant",
+      "offset_bytes": 0,
+      "producer": "c_requant",
+      "consumers": [],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    }
+  ],
+  "storages": [
+    {
+      "id": "s_input",
+      "resource": "host",
+      "size_bytes": 4,
+      "begin": "e_tr_t_input_to_matrix",
+      "end": "e_c_requant"
+    },
+    {
+      "id": "s_weight",
+      "resource": "matrix",
+      "size_bytes": 8,
+      "begin": "e_tr_t_input_to_matrix",
+      "end": "e_c_requant"
+    },
+    {
+      "id": "s_copy_t_input_to_matrix",
+      "resource": "matrix",
+      "size_bytes": 4,
+      "begin": "e_tr_t_input_to_matrix",
+      "end": "e_c_requant"
+    },
+    {
+      "id": "s_matmul",
+      "resource": "matrix",
+      "size_bytes": 8,
+      "begin": "e_tr_t_input_to_matrix",
+      "end": "e_c_requant"
+    },
+    {
+      "id": "s_copy_t_matmul_to_vector",
+      "resource": "vector",
+      "size_bytes": 8,
+      "begin": "e_tr_t_input_to_matrix",
+      "end": "e_c_requant"
+    },
+    {
+      "id": "s_requant",
+      "resource": "vector",
+      "size_bytes": 2,
+      "begin": "e_tr_t_input_to_matrix",
+      "end": "e_c_requant"
+    }
+  ],
+  "states": [],
+  "events": [
+    {
+      "id": "e_tr_t_input_to_matrix",
+      "kind": "transfer",
+      "ref": "tr_t_input_to_matrix",
+      "step": 0,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_matmul",
+      "kind": "call",
+      "ref": "c_matmul",
+      "step": 1,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_matmul_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_matmul_to_vector",
+      "step": 2,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_requant",
+      "kind": "call",
+      "ref": "c_requant",
+      "step": 3,
+      "phase": "prefill"
+    }
+  ],
+  "transfers": [
+    {
+      "id": "tr_t_input_to_matrix",
+      "tensor": "t_input",
+      "source_storage": "s_input",
+      "destination_storage": "s_copy_t_input_to_matrix",
+      "path": [
+        "l_host_to_matrix"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_matmul_to_vector",
+      "tensor": "t_matmul",
+      "source_storage": "s_matmul",
+      "destination_storage": "s_copy_t_matmul_to_vector",
+      "path": [
+        "l_matrix_to_vector"
+      ],
+      "messages": 1
+    }
+  ],
+  "resource_input": null
+}

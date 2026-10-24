@@ -1,0 +1,154 @@
+{
+  "schema_version": "workload-blocks/1",
+  "id": "alias-copy-transport-blocks",
+  "evidence": {
+    "kind": "synthetic",
+    "source": "Synthetic declared hardware; no RTL, capacity or timing measurement",
+    "status": "assumed"
+  },
+  "resources": [
+    {
+      "id": "matrix",
+      "kind": "compute",
+      "capacity_bytes": 1073741824,
+      "capabilities": [
+        {
+          "semantic": "wide_reduce",
+          "status": "declared",
+          "source": "Synthetic functional requirement; implementation unverified"
+        },
+        {
+          "semantic": "route",
+          "status": "declared",
+          "source": "Synthetic shared-port mux/arbiter/forwarder for fanin or fanout; serialized reference TX, not implementation proof"
+        }
+      ],
+      "ports": [
+        {
+          "id": "matrix_in",
+          "direction": "input",
+          "protocol": "ready_valid",
+          "width_bits": 128,
+          "fifo_bytes": 2048
+        },
+        {
+          "id": "matrix_out",
+          "direction": "output",
+          "protocol": "ready_valid",
+          "width_bits": 128,
+          "fifo_bytes": 2048
+        }
+      ]
+    },
+    {
+      "id": "vector_left",
+      "kind": "compute",
+      "capacity_bytes": 1073741824,
+      "capabilities": [
+        {
+          "semantic": "wide_reduce",
+          "status": "declared",
+          "source": "Synthetic functional requirement; implementation unverified"
+        }
+      ],
+      "ports": [
+        {
+          "id": "vector_left_in",
+          "direction": "input",
+          "protocol": "ready_valid",
+          "width_bits": 128,
+          "fifo_bytes": 2048
+        },
+        {
+          "id": "vector_left_out",
+          "direction": "output",
+          "protocol": "ready_valid",
+          "width_bits": 128,
+          "fifo_bytes": 2048
+        }
+      ]
+    },
+    {
+      "id": "vector_right",
+      "kind": "compute",
+      "capacity_bytes": 1073741824,
+      "capabilities": [
+        {
+          "semantic": "wide_reduce",
+          "status": "declared",
+          "source": "Synthetic functional requirement; implementation unverified"
+        }
+      ],
+      "ports": [
+        {
+          "id": "vector_right_in",
+          "direction": "input",
+          "protocol": "ready_valid",
+          "width_bits": 128,
+          "fifo_bytes": 2048
+        },
+        {
+          "id": "vector_right_out",
+          "direction": "output",
+          "protocol": "ready_valid",
+          "width_bits": 128,
+          "fifo_bytes": 2048
+        }
+      ]
+    },
+    {
+      "id": "forwarder",
+      "kind": "adapter",
+      "capacity_bytes": 1073741824,
+      "capabilities": [
+        {
+          "semantic": "route",
+          "status": "declared",
+          "source": "Synthetic intermediate forwarder; no physical routing or hardware proof"
+        }
+      ],
+      "ports": [
+        {
+          "id": "forwarder_in",
+          "direction": "input",
+          "protocol": "ready_valid",
+          "width_bits": 128,
+          "fifo_bytes": 2048
+        },
+        {
+          "id": "forwarder_out",
+          "direction": "output",
+          "protocol": "ready_valid",
+          "width_bits": 128,
+          "fifo_bytes": 2048
+        }
+      ]
+    }
+  ],
+  "links": [
+    {
+      "id": "l_matrix_to_vector_right",
+      "source": "matrix",
+      "source_port": "matrix_out",
+      "destination": "vector_right",
+      "destination_port": "vector_right_in",
+      "protocol": "ready_valid"
+    },
+    {
+      "id": "l_matrix_to_forwarder",
+      "source": "matrix",
+      "source_port": "matrix_out",
+      "destination": "forwarder",
+      "destination_port": "forwarder_in",
+      "protocol": "ready_valid"
+    },
+    {
+      "id": "l_forwarder_to_vector_left",
+      "source": "forwarder",
+      "source_port": "forwarder_out",
+      "destination": "vector_left",
+      "destination_port": "vector_left_in",
+      "protocol": "ready_valid"
+    }
+  ]
+}

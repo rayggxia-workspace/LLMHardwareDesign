@@ -1,0 +1,375 @@
+{
+  "schema_version": "workload-mapping/1",
+  "id": "reuse",
+  "evidence": {
+    "kind": "synthetic",
+    "source": "Hand-built contract fixture; no measured trace",
+    "status": "assumed"
+  },
+  "scope": "Synthetic reuse of the same matrix resource across two calls.",
+  "nodes": [
+    {
+      "id": "n_matrix_first",
+      "semantic": "matrix",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_rq_first",
+      "semantic": "requantize",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_matrix_second",
+      "semantic": "matrix",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_rq_second",
+      "semantic": "requantize",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    }
+  ],
+  "calls": [
+    {
+      "id": "c_matrix_first",
+      "node": "n_matrix_first",
+      "resource": "matrix",
+      "reads": [
+        "t_input",
+        "t_weight"
+      ],
+      "writes": [
+        "t_matrix_first"
+      ]
+    },
+    {
+      "id": "c_rq_first",
+      "node": "n_rq_first",
+      "resource": "vector",
+      "reads": [
+        "t_matrix_first"
+      ],
+      "writes": [
+        "t_rq_first"
+      ]
+    },
+    {
+      "id": "c_matrix_second",
+      "node": "n_matrix_second",
+      "resource": "matrix",
+      "reads": [
+        "t_rq_first",
+        "t_weight"
+      ],
+      "writes": [
+        "t_matrix_second"
+      ]
+    },
+    {
+      "id": "c_rq_second",
+      "node": "n_rq_second",
+      "resource": "vector",
+      "reads": [
+        "t_matrix_second"
+      ],
+      "writes": [
+        "t_rq_second"
+      ]
+    }
+  ],
+  "tensors": [
+    {
+      "id": "t_input",
+      "shape": [
+        1,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_input",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_matrix_first"
+      ],
+      "role": "activation",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_weight",
+      "shape": [
+        4,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_weight",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_matrix_first",
+        "c_matrix_second"
+      ],
+      "role": "weight",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_matrix_first",
+      "shape": [
+        1,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_matrix_first",
+      "offset_bytes": 0,
+      "producer": "c_matrix_first",
+      "consumers": [
+        "c_rq_first"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_rq_first",
+      "shape": [
+        1,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_rq_first",
+      "offset_bytes": 0,
+      "producer": "c_rq_first",
+      "consumers": [
+        "c_matrix_second"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_matrix_second",
+      "shape": [
+        1,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_matrix_second",
+      "offset_bytes": 0,
+      "producer": "c_matrix_second",
+      "consumers": [
+        "c_rq_second"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_rq_second",
+      "shape": [
+        1,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_rq_second",
+      "offset_bytes": 0,
+      "producer": "c_rq_second",
+      "consumers": [],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    }
+  ],
+  "storages": [
+    {
+      "id": "s_input",
+      "resource": "matrix",
+      "size_bytes": 4,
+      "begin": "e_c_matrix_first",
+      "end": "e_c_rq_second"
+    },
+    {
+      "id": "s_weight",
+      "resource": "matrix",
+      "size_bytes": 16,
+      "begin": "e_c_matrix_first",
+      "end": "e_c_rq_second"
+    },
+    {
+      "id": "s_matrix_first",
+      "resource": "matrix",
+      "size_bytes": 16,
+      "begin": "e_c_matrix_first",
+      "end": "e_c_rq_second"
+    },
+    {
+      "id": "s_copy_t_matrix_first_to_vector",
+      "resource": "vector",
+      "size_bytes": 16,
+      "begin": "e_c_matrix_first",
+      "end": "e_c_rq_second"
+    },
+    {
+      "id": "s_rq_first",
+      "resource": "vector",
+      "size_bytes": 4,
+      "begin": "e_c_matrix_first",
+      "end": "e_c_rq_second"
+    },
+    {
+      "id": "s_copy_t_rq_first_to_matrix",
+      "resource": "matrix",
+      "size_bytes": 4,
+      "begin": "e_c_matrix_first",
+      "end": "e_c_rq_second"
+    },
+    {
+      "id": "s_matrix_second",
+      "resource": "matrix",
+      "size_bytes": 16,
+      "begin": "e_c_matrix_first",
+      "end": "e_c_rq_second"
+    },
+    {
+      "id": "s_copy_t_matrix_second_to_vector",
+      "resource": "vector",
+      "size_bytes": 16,
+      "begin": "e_c_matrix_first",
+      "end": "e_c_rq_second"
+    },
+    {
+      "id": "s_rq_second",
+      "resource": "vector",
+      "size_bytes": 4,
+      "begin": "e_c_matrix_first",
+      "end": "e_c_rq_second"
+    }
+  ],
+  "states": [],
+  "events": [
+    {
+      "id": "e_c_matrix_first",
+      "kind": "call",
+      "ref": "c_matrix_first",
+      "step": 0,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_matrix_first_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_matrix_first_to_vector",
+      "step": 1,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_rq_first",
+      "kind": "call",
+      "ref": "c_rq_first",
+      "step": 2,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_rq_first_to_matrix",
+      "kind": "transfer",
+      "ref": "tr_t_rq_first_to_matrix",
+      "step": 3,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_matrix_second",
+      "kind": "call",
+      "ref": "c_matrix_second",
+      "step": 4,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_matrix_second_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_matrix_second_to_vector",
+      "step": 5,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_rq_second",
+      "kind": "call",
+      "ref": "c_rq_second",
+      "step": 6,
+      "phase": "prefill"
+    }
+  ],
+  "transfers": [
+    {
+      "id": "tr_t_matrix_first_to_vector",
+      "tensor": "t_matrix_first",
+      "source_storage": "s_matrix_first",
+      "destination_storage": "s_copy_t_matrix_first_to_vector",
+      "path": [
+        "l_matrix_to_vector"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_rq_first_to_matrix",
+      "tensor": "t_rq_first",
+      "source_storage": "s_rq_first",
+      "destination_storage": "s_copy_t_rq_first_to_matrix",
+      "path": [
+        "l_vector_to_matrix"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_matrix_second_to_vector",
+      "tensor": "t_matrix_second",
+      "source_storage": "s_matrix_second",
+      "destination_storage": "s_copy_t_matrix_second_to_vector",
+      "path": [
+        "l_matrix_to_vector"
+      ],
+      "messages": 1
+    }
+  ],
+  "resource_input": null
+}
