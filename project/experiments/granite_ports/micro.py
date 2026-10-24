@@ -371,7 +371,7 @@ def equal_bytes(m, a, b, valid_out=None):
 def execute(op, a, b=0, shift=0, stream=None, case='tiny'):
     if op not in OP_SPECS: raise ValueError('unregistered operation')
     m = Machine(stream, case)
-    publish = m.alloc('publish_valid', 1); m.op('COPY', ONE, dst=publish[0])
+    publish = m.alloc('publish_valid', 1, [1])
     valid = True
     if op.startswith('mul_'):
         abits = 64 if op == 'mul_s64_s32' else 32
