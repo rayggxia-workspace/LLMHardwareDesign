@@ -1,0 +1,528 @@
+{
+  "conditions_SHA_checked": 12,
+  "hardware_implemented": false,
+  "integer_manifest_sha256": "1acd45dc924467996f878a24b83b6a5c227ea84fb399e71db384a9afbe9eb35d",
+  "limitation": "Software integer arithmetic and causal transaction evidence, no RTL/PPA, no whole-model quality or throughput; Issue66 source encodings reused without requalifying source floating bridges",
+  "negative_checks": [
+    {
+      "artifact_SHA_passed": true,
+      "error": "integer output oracle",
+      "mutation": "output",
+      "status": "REJECTED_INDEPENDENT_SEMANTICS"
+    },
+    {
+      "artifact_SHA_passed": true,
+      "error": "committed state/output unit epoch oracle",
+      "mutation": "epoch",
+      "status": "REJECTED_INDEPENDENT_SEMANTICS"
+    }
+  ],
+  "quality_accepted": false,
+  "seconds": 19.069501370657235,
+  "selected_conditions": [
+    {
+      "abort_preserves_published_state_unit_epoch": true,
+      "committed_tokens": 32,
+      "complete_K_Pythonint_oracle": true,
+      "cost": {
+        "attempts": 32,
+        "commit_metadata_candidate_bytes_per_token": 70,
+        "guard_scan_elements": 1048576,
+        "integer_products_executed": {
+          "beta": 8192,
+          "decay": 1048576,
+          "outer": 1048576,
+          "output": 1048576,
+          "prediction": 1048576
+        },
+        "minimum_old_new_atomic_payload_bytes": 131072,
+        "rescale_RNE_elements": 0,
+        "rescale_scale_epoch_write_bytes": 0,
+        "rescale_scan_elements": 0,
+        "rescale_state_read_bytes": 0,
+        "rescale_state_write_bytes": 0,
+        "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified",
+        "software_trial_copy_not_free_hardware": true,
+        "state_bytes": 65536,
+        "width_rejected_attempts_cost_unqualified": 0
+      },
+      "error_by_length": [
+        {
+          "output_vs_native": {
+            "max_abs": 0.0001332610845565796,
+            "relative_rmse": 0.0068896009706017605
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.00041825336086527467,
+            "relative_rmse": 0.0017384221940532792
+          },
+          "state_vs_native_capture": {
+            "max_abs": 0.00041825324296951294,
+            "relative_rmse": 0.0017384224970155406
+          },
+          "steps": 1
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.00018605589866638184,
+            "relative_rmse": 0.006999966028708063
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0009728734429112441,
+            "relative_rmse": 0.0023506688831402968
+          },
+          "state_vs_native_capture": {
+            "max_abs": 0.0009728739969432354,
+            "relative_rmse": 0.002350669231842589
+          },
+          "steps": 8
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.00028637051582336426,
+            "relative_rmse": 0.006421727708738672
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0019072487442634255,
+            "relative_rmse": 0.004957880921702944
+          },
+          "state_vs_native_capture": {
+            "max_abs": 0.001907247118651867,
+            "relative_rmse": 0.004957878679353529
+          },
+          "steps": 32
+        }
+      ],
+      "execution_pass": true,
+      "hardware_implemented": false,
+      "id": "native.evaluation.S16.D31.static_sat",
+      "quality_accepted": false,
+      "range_pass": true,
+      "requested_tokens": 32,
+      "rescale_waves": 0,
+      "saturations_published": 0
+    },
+    {
+      "abort_preserves_published_state_unit_epoch": true,
+      "committed_tokens": 32,
+      "complete_K_Pythonint_oracle": true,
+      "cost": {
+        "attempts": 32,
+        "commit_metadata_candidate_bytes_per_token": 70,
+        "guard_scan_elements": 1048576,
+        "integer_products_executed": {
+          "beta": 8192,
+          "decay": 1048576,
+          "outer": 1048576,
+          "output": 1048576,
+          "prediction": 1048576
+        },
+        "minimum_old_new_atomic_payload_bytes": 131072,
+        "rescale_RNE_elements": 0,
+        "rescale_scale_epoch_write_bytes": 0,
+        "rescale_scan_elements": 0,
+        "rescale_state_read_bytes": 0,
+        "rescale_state_write_bytes": 0,
+        "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified",
+        "software_trial_copy_not_free_hardware": true,
+        "state_bytes": 65536,
+        "width_rejected_attempts_cost_unqualified": 0
+      },
+      "error_by_length": [
+        {
+          "output_vs_native": {
+            "max_abs": 0.0001332610845565796,
+            "relative_rmse": 0.0068896009706017605
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.00041825336086527467,
+            "relative_rmse": 0.0017384221940532792
+          },
+          "state_vs_native_capture": {
+            "max_abs": 0.00041825324296951294,
+            "relative_rmse": 0.0017384224970155406
+          },
+          "steps": 1
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.00018605589866638184,
+            "relative_rmse": 0.006999966028708063
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0009728734429112441,
+            "relative_rmse": 0.0023506688831402968
+          },
+          "state_vs_native_capture": {
+            "max_abs": 0.0009728739969432354,
+            "relative_rmse": 0.002350669231842589
+          },
+          "steps": 8
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.00028637051582336426,
+            "relative_rmse": 0.006421727708738672
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0019072487442634255,
+            "relative_rmse": 0.004957880921702944
+          },
+          "state_vs_native_capture": {
+            "max_abs": 0.001907247118651867,
+            "relative_rmse": 0.004957878679353529
+          },
+          "steps": 32
+        }
+      ],
+      "execution_pass": true,
+      "hardware_implemented": false,
+      "id": "native.evaluation.S16.D31.static_guard",
+      "quality_accepted": false,
+      "range_pass": true,
+      "requested_tokens": 32,
+      "rescale_waves": 0,
+      "saturations_published": 0
+    },
+    {
+      "abort_preserves_published_state_unit_epoch": true,
+      "committed_tokens": 32,
+      "complete_K_Pythonint_oracle": true,
+      "cost": {
+        "attempts": 32,
+        "commit_metadata_candidate_bytes_per_token": 70,
+        "guard_scan_elements": 1048576,
+        "integer_products_executed": {
+          "beta": 8192,
+          "decay": 1048576,
+          "outer": 1048576,
+          "output": 1048576,
+          "prediction": 1048576
+        },
+        "minimum_old_new_atomic_payload_bytes": 131072,
+        "rescale_RNE_elements": 0,
+        "rescale_scale_epoch_write_bytes": 0,
+        "rescale_scan_elements": 0,
+        "rescale_state_read_bytes": 0,
+        "rescale_state_write_bytes": 0,
+        "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified",
+        "software_trial_copy_not_free_hardware": true,
+        "state_bytes": 65536,
+        "width_rejected_attempts_cost_unqualified": 0
+      },
+      "error_by_length": [
+        {
+          "output_vs_native": {
+            "max_abs": 0.0001332610845565796,
+            "relative_rmse": 0.0068896009706017605
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.00041825336086527467,
+            "relative_rmse": 0.0017384221940532792
+          },
+          "state_vs_native_capture": {
+            "max_abs": 0.00041825324296951294,
+            "relative_rmse": 0.0017384224970155406
+          },
+          "steps": 1
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.00018605589866638184,
+            "relative_rmse": 0.006999966028708063
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0009728734429112441,
+            "relative_rmse": 0.0023506688831402968
+          },
+          "state_vs_native_capture": {
+            "max_abs": 0.0009728739969432354,
+            "relative_rmse": 0.002350669231842589
+          },
+          "steps": 8
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.00028637051582336426,
+            "relative_rmse": 0.006421727708738672
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0019072487442634255,
+            "relative_rmse": 0.004957880921702944
+          },
+          "state_vs_native_capture": {
+            "max_abs": 0.001907247118651867,
+            "relative_rmse": 0.004957878679353529
+          },
+          "steps": 32
+        }
+      ],
+      "execution_pass": true,
+      "hardware_implemented": false,
+      "id": "native.evaluation.S16.D31.guard_rescale",
+      "quality_accepted": false,
+      "range_pass": true,
+      "requested_tokens": 32,
+      "rescale_waves": 0,
+      "saturations_published": 0
+    },
+    {
+      "abort_preserves_published_state_unit_epoch": true,
+      "committed_tokens": 32,
+      "complete_K_Pythonint_oracle": true,
+      "cost": {
+        "attempts": 32,
+        "commit_metadata_candidate_bytes_per_token": 70,
+        "guard_scan_elements": 1048576,
+        "integer_products_executed": {
+          "beta": 8192,
+          "decay": 1048576,
+          "outer": 1048576,
+          "output": 1048576,
+          "prediction": 1048576
+        },
+        "minimum_old_new_atomic_payload_bytes": 262144,
+        "rescale_RNE_elements": 0,
+        "rescale_scale_epoch_write_bytes": 0,
+        "rescale_scan_elements": 0,
+        "rescale_state_read_bytes": 0,
+        "rescale_state_write_bytes": 0,
+        "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified",
+        "software_trial_copy_not_free_hardware": true,
+        "state_bytes": 131072,
+        "width_rejected_attempts_cost_unqualified": 0
+      },
+      "error_by_length": [
+        {
+          "output_vs_native": {
+            "max_abs": 4.6581029891967773e-05,
+            "relative_rmse": 0.00036565984601241236
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.00023693570287167207,
+            "relative_rmse": 0.0003230666865924327
+          },
+          "state_vs_native_capture": {
+            "max_abs": 0.00023693544790148735,
+            "relative_rmse": 0.0003230673441699735
+          },
+          "steps": 1
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.0001255124807357788,
+            "relative_rmse": 0.0006196195441792056
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0002743085457822391,
+            "relative_rmse": 0.00029765767496496586
+          },
+          "state_vs_native_capture": {
+            "max_abs": 0.0002743085497058928,
+            "relative_rmse": 0.000297657336520392
+          },
+          "steps": 8
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.00014802813529968262,
+            "relative_rmse": 0.0005666939032009644
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0001936019529730083,
+            "relative_rmse": 0.0002766964334783416
+          },
+          "state_vs_native_capture": {
+            "max_abs": 0.00019360182341188192,
+            "relative_rmse": 0.00027669800817884483
+          },
+          "steps": 32
+        }
+      ],
+      "execution_pass": true,
+      "hardware_implemented": false,
+      "id": "native.evaluation.S32.D31.static_sat",
+      "quality_accepted": false,
+      "range_pass": true,
+      "requested_tokens": 32,
+      "rescale_waves": 0,
+      "saturations_published": 0
+    },
+    {
+      "abort_preserves_published_state_unit_epoch": true,
+      "committed_tokens": 32,
+      "complete_K_Pythonint_oracle": true,
+      "cost": {
+        "attempts": 32,
+        "commit_metadata_candidate_bytes_per_token": 70,
+        "guard_scan_elements": 1048576,
+        "integer_products_executed": {
+          "beta": 8192,
+          "decay": 1048576,
+          "outer": 1048576,
+          "output": 1048576,
+          "prediction": 1048576
+        },
+        "minimum_old_new_atomic_payload_bytes": 262144,
+        "rescale_RNE_elements": 0,
+        "rescale_scale_epoch_write_bytes": 0,
+        "rescale_scan_elements": 0,
+        "rescale_state_read_bytes": 0,
+        "rescale_state_write_bytes": 0,
+        "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified",
+        "software_trial_copy_not_free_hardware": true,
+        "state_bytes": 131072,
+        "width_rejected_attempts_cost_unqualified": 0
+      },
+      "error_by_length": [
+        {
+          "output_vs_native": {
+            "max_abs": 4.6581029891967773e-05,
+            "relative_rmse": 0.00036565984601241236
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.00023693570287167207,
+            "relative_rmse": 0.0003230666865924327
+          },
+          "state_vs_native_capture": {
+            "max_abs": 0.00023693544790148735,
+            "relative_rmse": 0.0003230673441699735
+          },
+          "steps": 1
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.0001255124807357788,
+            "relative_rmse": 0.0006196195441792056
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0002743085457822391,
+            "relative_rmse": 0.00029765767496496586
+          },
+          "state_vs_native_capture": {
+            "max_abs": 0.0002743085497058928,
+            "relative_rmse": 0.000297657336520392
+          },
+          "steps": 8
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.00014802813529968262,
+            "relative_rmse": 0.0005666939032009644
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0001936019529730083,
+            "relative_rmse": 0.0002766964334783416
+          },
+          "state_vs_native_capture": {
+            "max_abs": 0.00019360182341188192,
+            "relative_rmse": 0.00027669800817884483
+          },
+          "steps": 32
+        }
+      ],
+      "execution_pass": true,
+      "hardware_implemented": false,
+      "id": "native.evaluation.S32.D31.static_guard",
+      "quality_accepted": false,
+      "range_pass": true,
+      "requested_tokens": 32,
+      "rescale_waves": 0,
+      "saturations_published": 0
+    },
+    {
+      "abort_preserves_published_state_unit_epoch": true,
+      "committed_tokens": 32,
+      "complete_K_Pythonint_oracle": true,
+      "cost": {
+        "attempts": 32,
+        "commit_metadata_candidate_bytes_per_token": 70,
+        "guard_scan_elements": 1048576,
+        "integer_products_executed": {
+          "beta": 8192,
+          "decay": 1048576,
+          "outer": 1048576,
+          "output": 1048576,
+          "prediction": 1048576
+        },
+        "minimum_old_new_atomic_payload_bytes": 262144,
+        "rescale_RNE_elements": 0,
+        "rescale_scale_epoch_write_bytes": 0,
+        "rescale_scan_elements": 0,
+        "rescale_state_read_bytes": 0,
+        "rescale_state_write_bytes": 0,
+        "schedule_scope": "logical stage/product/event counts only; materialize/recompute and real ports/shadow supplied by service experiment; rejected width attempts unqualified",
+        "software_trial_copy_not_free_hardware": true,
+        "state_bytes": 131072,
+        "width_rejected_attempts_cost_unqualified": 0
+      },
+      "error_by_length": [
+        {
+          "output_vs_native": {
+            "max_abs": 4.6581029891967773e-05,
+            "relative_rmse": 0.00036565984601241236
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.00023693570287167207,
+            "relative_rmse": 0.0003230666865924327
+          },
+          "state_vs_native_capture": {
+            "max_abs": 0.00023693544790148735,
+            "relative_rmse": 0.0003230673441699735
+          },
+          "steps": 1
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.0001255124807357788,
+            "relative_rmse": 0.0006196195441792056
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0002743085457822391,
+            "relative_rmse": 0.00029765767496496586
+          },
+          "state_vs_native_capture": {
+            "max_abs": 0.0002743085497058928,
+            "relative_rmse": 0.000297657336520392
+          },
+          "steps": 8
+        },
+        {
+          "output_vs_native": {
+            "max_abs": 0.00014802813529968262,
+            "relative_rmse": 0.0005666939032009644
+          },
+          "state_vs_FP64_replay": {
+            "max_abs": 0.0001936019529730083,
+            "relative_rmse": 0.0002766964334783416
+          },
+          "state_vs_native_capture": {
+            "max_abs": 0.00019360182341188192,
+            "relative_rmse": 0.00027669800817884483
+          },
+          "steps": 32
+        }
+      ],
+      "execution_pass": true,
+      "hardware_implemented": false,
+      "id": "native.evaluation.S32.D31.guard_rescale",
+      "quality_accepted": false,
+      "range_pass": true,
+      "requested_tokens": 32,
+      "rescale_waves": 0,
+      "saturations_published": 0
+    }
+  ],
+  "selection": "native evaluation S16/S32 D31 full32 and legacy layer0/end8192 S16/S32 D31 full256, allthree causal profiles; other conditions SHA only",
+  "source": {
+    "binding_sha256": "f40c101633eb59bbc3b355525e82a6ff5f72b59b1ff9d9f95f7a6a93c47780f3",
+    "commit": "7ea68a4b1d4702c102148f1b3a2b9c9b40d41a07",
+    "receive_range_sha256": "e1f4feac39c582dc06574894fcea88bd52dd6451d62de0bca1490b758d599ace"
+  },
+  "status": "PASS_INDEPENDENT_ARITHMETIC",
+  "two_rounds": {
+    "all_scientific_SHA_identical": true,
+    "arithmetic_rounds": 1,
+    "artifacts": 25
+  }
+}

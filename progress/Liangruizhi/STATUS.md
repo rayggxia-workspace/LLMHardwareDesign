@@ -1,5 +1,12 @@
 # Liangruizhi 的进度
 
+## 2026-10-24（UTC+08:00）Issue68范围协议与同资源服务（进行中）
+
+[Issue68](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/68)/[草稿PR69](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/69)，task/68-range-service，D:/Projects/LLMHardwareDesign-range-service，base PR67@8bde3bf。range/service/audit独立子worktree，root整合与所有远端操作。90084/85原生各12、90087/88旧256步各72条件两轮已完成；90086/89各6预先固定条件独立数学接收PASS，其余SHA；90091四条件checkpoint PASS。90083输入脚本语法启动失败原样保留，修正90090通过后数值才启动。因果重定标在受检长24源格式中全执行、无发布sat；原1508sat及guard的8个中止保留，未当质量通过。
+
+当前V/R/S服务仍在源/接收方法冻结阶段，下一步在服务器同资源分片并行，计重试/代际shadow/全unit扫描和两plane打包；不凭逻辑成功决定R独立或PPA。原模型只读、无新下载/Phi调优、他人55/63和89448不动。完整中间证据见work68，最终源/结果/索引/交接待服务结果回填。登记pending/看板unverified同步pending，待指定审查人，Issue in_progress而非done。
+
+
 ## 2026-10-24（UTC+08:00）Issue66完整消费者与连续整数状态
 
 [Issue66](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/66)/[PR67](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/67)，task/66-scale-state，D:/Projects/LLMHardwareDesign-scale-state，base PR65@ec3008c。本人服务器90059–90082实际24作业全COMPLETED0:0，独立输出/干净冻结commit及源码/输入/成果SHA；完整H消费者8profile、整数input RMS8、conv4、native R8、coupled2、旧32/1与256/1各48诊断双轮。主receiver全量验算及真实重写SHA负例通过；扩展仅3个完整256见证独立数学重放，全部48二轮SHA，界限明确。15capsule/21Git源核验，小精选本机2R+2consumer实重放PASS。
