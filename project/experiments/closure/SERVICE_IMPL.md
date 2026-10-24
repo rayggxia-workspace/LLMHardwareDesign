@@ -23,3 +23,6 @@ python -B project/experiments/closure/service.py --numeric FULL_GUARD_RESULT --c
 ~~~
 
 对r32_d8/v16_d2/r32_d16_spill、label split/shared和factor1/2/4分独立Slurm/输出。label不传入builder，仅summary描述，witness科学SHA应完全相同；同配置双轮也应同SHA。binding要求commit和service_sha256。7个本机小合成测试检查offset逐包、实际容量、矩阵完整K、ROM对齐、FIFO padding、stream tail、宽算术和SFU；本机未构建真实模型service。
+
+
+补充精度义务：norm的(v32×gamma32)<<12用显式18byte-slot I128 shift，signed RNE division在128 restoring步骤之外再付64byte-slot的remainder-shift/compare/parity/carry/sign finalize；SFU固定48B内部状态从aux8192预算中保留，denominator每emit窗口经声明16B bank read加载后保持，不能复制出第二SFU。私有96B descriptor首16B本身规定为self_ptr_u64/epoch_u32/version_u32，其余80B放state/history/units地址、owner、position、format；所以最后一次16B transfer是完整原子pointer record，不声称96B原子写。

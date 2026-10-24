@@ -21,7 +21,7 @@ MIB=1024*1024
 VARIANTS={'r32_d8':('R',8,False),'v16_d2':('V',2,False),'r32_d16_spill':('R',16,True)}
 # Explicit bytewise candidate costs; no native wide ALU is gifted.
 BYTE_COST={'mul32':25+24*10,'add64':10,'rne64':10,'abs64':10,'compare64':10,
-    'reduce_flag':1,'normadd128':18,'copy_byte':1,'scalar_control':10,'cast_i32_guard':20}
+    'reduce_flag':1,'normadd128':18,'shift128':18,'rne_div128_finalize':64,'copy_byte':1,'scalar_control':10,'cast_i32_guard':20}
 
 
 def sha(p):
@@ -72,7 +72,7 @@ class Builder:
         self.inventory={'capacities':self.cap,'ports':{k:{'kind':'1RW','bits':128} for k in self.cap},
             'matrix':{'resource':'M256','S8_PEs':256,'shape':[16,16],'effective_PEs_single_row':16},
             'lanes':{'resource':'VR8','S8_lanes':8},'alu_slots64':10,'alu_slots128':18,
-            'SFUiterations':{'division128':128,'isqrt128':64},'LUTport':{'resource':'bank.ROM','bits':128,'one_access_per_lookup':True},
+            'SFUiterations':{'division128':128,'isqrt128':64},'SFU_fixed_state':{'bytes':48,'charged_within_aux_reserve':True,'contents':'128bit numerator/denominator/result-remainder state; all operands loaded through declared bank IO'},'LUTport':{'resource':'bank.ROM','bits':128,'one_access_per_lookup':True},
             'packet':{'header_bytes':32,'beat_bytes':16,'max_payload':1984,'FIFO_bytes':2048,'BUS_count':1,'BUS_bits':128},
             'byte_cost':BYTE_COST,'wide_factor':wide_factor,
             'policy':'strict serialized single token; prefill64 and decode8 never batched; no optimality or RTL claim'}
@@ -236,7 +236,7 @@ class Builder:
         self.memory(barrier,[self.access('local.Vaux',6384,16,'write')])
         self.macro(stage+'.full_group_barrier',barrier,{'group':n,'complete_reduction':True,'epsilon_add128':1,'radicand_shift':40,'denominator_aux_offset':6384},token)
         self.stream(stage+'.emit',n,[(source,0),(gamma,0)],[(dest,0)],
-            {'mul32':lambda s:s,'division_iterations':lambda s:s*128,'cast_i32_guard':lambda s:s},token)
+            {'mul32':lambda s:s,'shift128':lambda s:s,'division_iterations':lambda s:s*128,'rne_div128_finalize':lambda s:s,'cast_i32_guard':lambda s:s},token)
 
     def dynamic(self,which,n,source,dest,delta,token):
         self.stream(which+'.A8_absmax',n,[(source,0)],[],{'abs64':lambda s:s,'compare64':lambda s:s},token)
@@ -535,7 +535,7 @@ def build(args):
         B.transfer(body,B.aux,'ext.descriptor',16) # single 128bit descriptor publication after all private data/consumer completion
         B.macro('atomic_publish_after_complete_consumer',body,{'epoch':txn['after']['epoch'],'position':txn['after']['position'],
             'version':txn['after']['version'],'units':txn['after']['units'],'nextnorm_precedes_publish':True,
-            'published_state_sha256':txn['after']['state_sha256'],'state_object':B.state_next,'history_object':B.hist_trial,'units_object':B.units_trial,'atomic_descriptor_bytes':16},t)
+            'published_state_sha256':txn['after']['state_sha256'],'state_object':B.state_next,'history_object':B.hist_trial,'units_object':B.units_trial,'atomic_descriptor_bytes':16,'descriptor_layout':{'private_bytes':96,'first16':'self_ptr_u64,epoch_u32,version_u32','remaining80':'state/history/units addresses,owner,position,format; first16 is also public pointer record','private_address':B.alloc[private_desc]['offset']}},t)
         if (t+1)%8==0:
             body=[];B.transfer(body,B.state_next,'ext.old',E*b);B.transfer(body,'ext.old',B.state_next,E*b)
             B.macro('chunk_checkpoint_state_reload',body,{'position':t+1,'observer_checksums_excluded':True,'state_and_descriptor_persist':True},t)
