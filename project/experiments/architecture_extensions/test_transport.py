@@ -54,6 +54,21 @@ class TransportTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             g.copy('S0','V',1024,[],'overflow slot',dst_base=16000)
 
+    def test_unaligned_word_transactions_are_charged(self):
+        self.assertEqual(t.access_beats(15,3),2)
+        self.assertEqual(t.access_beats(16,3),1)
+        self.assertEqual(t.access_beats(15,0),0)
+        g=t.CopyGraph()
+        g.io('V',6,0,[],'separate small descriptors',[
+            {'direction':'read','offset':0,'bytes':3},
+            {'direction':'read','offset':15,'bytes':3}])
+        self.assertEqual(g.nodes[0]['duration'],3)
+        g=t.CopyGraph();g.copy('S0','V',16,[],'unaligned packet',src_base=1,dst_base=15)
+        n=g.nodes[0]
+        self.assertEqual(n['duration'],2+3+2)
+        self.assertEqual([(r['offset'],r['duration']) for r in n['reservations'][:3]],[(0,2),(2,3),(5,2)])
+        verify(t.schedule(g,'fifo'),t.capacities())
+
     def test_actual_granite_graph_both_orderings(self):
         for layout in ('roundrobin','all_one'):
             g=t.granite_graph(1536,512,layout)

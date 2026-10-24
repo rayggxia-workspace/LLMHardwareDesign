@@ -10,6 +10,8 @@ python -B transport.py --granite GRANITE_NUMERIC_DIR --falcon FALCON_CAPTURE_DIR
 
 固定库存沿用Issue68：V16KiB、R32KiB、M32KiB、S八bank各32KiB、EXT128MiB，各一共享1RW128bit端口；单128bit BUS，32B包头、16Bbeat、每packet最多1984B payload、每端TX/RX各2KiB FIFO。EXT端口II1为未测敏感性假设。每packet显式source read→BUS→dest write，完整依赖、地址、资源保留和FIFO credits保存在gzip witness；独立`receive_service.verify_intervals`对全图扫资源、依赖、容量及下界。没有引用生产scheduler作接收。每个bank的TX/RX endpoint独占保守限制仍保留。
 
+每个明确地址访问分别支付`ceil(((offset mod16)+bytes)/16)`拍，不将不同地址的小读取免费拼到一拍；packet的source和destination也各按自己的未对齐地址计端口拍，BUS按payload+32B header打包。比如offset15的3B descriptor占两拍；如将来实现word读取并驻留/复用，须另给缓冲与生命周期证明，本轮不赠该优化。
+
 Granite保持S32八专家返回、S64合并、Q31 multiplier/int16 shift、Q15权重，输出共同S32。48KiB整返回物化于V16KiB拒绝；12KiB S64累加器加6KiB单专家完整返回也拒绝。tile512/256明确给incoming、RQ参数、S64累加器和98B路由/scale描述符分槽；RQ参数先EXT→M→V逐tile加载，不免费驻留。专家权重/weight-scale/matrix计算未在COPY子图调度，实际unique payload下界和完全无复用字节从真实metrics一并展示；不能据省略这些项的COPY日历宣称完整流水线可行。source/staging/return、RQ参数、输出均有BUS和端口服务；local IO仅列必需读写，不提供免费算术吞吐。规范化元数据布局的打包/地址生成尚未定价。
 
 Falcon完整head为D128×N256：FP32为128KiB、S16候选64KiB，都超R32KiB。全部32heads为4MiB/2MiB，整层old/new超八bank总256KiB。对一个实际完整head保留完整N归约，只沿D分tile，old/new各8KiB+aux8KiB分槽。COPY包括old EXT→S→R、new R→S→EXT及发布屏障后的完整new readback EXT→S→R；guard/发布/状态更新和输出收缩算术均未计时。S16仅storage候选，不代表所有heads整数质量通过。所有32heads/全层容量与逻辑payload单列，不将单head周期直接乘32宣称整层时间；全模型所有层的state、真实conv/KV持久容量另与EXT128MiB比较。

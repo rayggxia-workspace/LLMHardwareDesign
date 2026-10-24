@@ -41,6 +41,12 @@ def ceildiv(x,y):
     return (x+y-1)//y
 
 
+def access_beats(offset,size):
+    if type(offset) is not int or type(size) is not int or offset<0 or size<0:
+        raise ValueError('physical access domain')
+    return ceildiv(offset%16+size,16) if size else 0
+
+
 def res(resource,offset,duration,amount=1):
     return {'resource':resource,'offset':offset,'duration':duration,'amount':amount}
 
@@ -82,7 +88,10 @@ class CopyGraph:
         """Required bank read/write service only; no math or free register accumulator."""
         if read<0 or write<0 or not read+write:
             raise ValueError('local IO amount')
-        duration=ceildiv(read,16)+ceildiv(write,16)
+        # Independent addresses cannot silently share a physical word transaction.
+        # A 3-byte descriptor at byte15 crosses two 128bit words.
+        duration=(sum(access_beats(a['offset'],a['bytes']) for a in accesses)
+                  if accesses else ceildiv(read,16)+ceildiv(write,16))
         n={'id':len(self.nodes),'kind':'local_io','deps':list(dict.fromkeys(deps)),
            'duration':duration,'reservations':[res('PORT:'+bank,0,duration)],
            'meta':{'bank':bank,'read_bytes':read,'write_bytes':write,'label':label,'accesses':accesses or [],
@@ -98,7 +107,9 @@ class CopyGraph:
         previous=list(deps); result=[]
         for offset in range(0,size,1984):
             payload=min(1984,size-offset)
-            rd=ceildiv(payload,16); wire=ceildiv(payload+32,16); wr=rd
+            rd=access_beats(src_base+offset,payload)
+            wire=ceildiv(payload+32,16)
+            wr=access_beats(dst_base+offset,payload)
             duration=rd+wire+wr
             rr=[res('PORT:'+src,0,rd),res('BUS',rd,wire),res('PORT:'+dst,rd+wire,wr)]
             for bank,direction in ((src,'TX'),(dst,'RX')):
