@@ -47,5 +47,33 @@ class CalendarPrimitiveTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "independently derived"):
             audit.leaf(bad, [], 0)
 
+    def test_eight_kib_copy_needs_packet_retiming_not_aggregate_fifo(self):
+        audit = Calendar.__new__(Calendar)
+        audit.macros = [{"meta": {"token": 0, "phase": p}} for p in ("front", "down", "norm")]
+        audit.phases = {(0, i): (i, i+1) for i in range(3)}; audit.peak_fifo = 0
+        audit.objects = {name: {"object": name, "bank": bank, "offset": 0, "bytes": 8192,
+                               "lifetime": ["task_start", "task_end"]} for name, bank in (("source", "EXT"), ("destination", "M"))}
+        counts, peak = packets_with_rmw(0, 0, 8192); counts["bank_beats"] = 1024
+        node = {"kind": "transfer", "start": 0, "end": 1546,
+                "resources": [{"name": name, "start": 0, "end": 1546} for name in ("bank.EXT", "BUS", "bank.M")],
+                "counts": counts, "FIFO_peak_bytes": peak,
+                "packet": {"src": "source", "dst": "destination", "src_offset": 0, "dst_offset": 0,
+                           "bytes": 8192, "partial_write": "endpoint RMW"},
+                "accesses": [{"object": name, "offset": 0, "bytes": 8192, "mode": mode,
+                              "repeat": 1, "stride": 0, "index_strides": []} for name, mode in (("source", "read"), ("destination", "write"))],
+                "serial_packet_retiming_certificate": {"kind": "bounded_serial_packet_retiming", "max_payload_bytes": 1984,
+                    "header_bytes": 32, "per_packet_order": "source reads -> BUS -> destination RMW/read/write",
+                    "resident_payload_only_one_packet": True, "all_endpoint_state_within_FIFO": True,
+                    "duration_formula": "sum(src_beats + wire_beats + dst_beats + dst_rmw_beats)"}}
+        self.assertEqual(audit.leaf(node, [], 0), counts)
+        old = copy.deepcopy(node); del old["serial_packet_retiming_certificate"]
+        old["resources"] = [{"name": "bank.EXT", "start": 0, "end": 512},
+                            {"name": "BUS", "start": 512, "end": 1034}, {"name": "bank.M", "start": 1034, "end": 1546}]
+        with self.assertRaisesRegex(ValueError, "explicit bounded serial"):
+            audit.leaf(old, [], 0)
+        alias = copy.deepcopy(node); audit.objects["destination"]["bank"] = "EXT"
+        with self.assertRaisesRegex(ValueError, "alias across affine"):
+            audit.leaf(alias, [], 0)
+
 
 if __name__ == "__main__": unittest.main()

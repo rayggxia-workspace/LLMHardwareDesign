@@ -2,7 +2,7 @@
 from collections import Counter
 
 from audit_io76 import need
-from physical76 import (CAPACITIES, beat_residues, check_access, check_regions,
+from physical76 import (CAPACITIES, affine_bounds, beat_residues, check_access, check_regions,
                         local_beats, packet_segments, phase_intervals)
 
 
@@ -80,6 +80,15 @@ class Calendar:
         self.macros = macros
         self.phases = phase_intervals(macros)
         self.objects, self.high = check_regions(CAPACITIES, allocations, len(macros), macros)
+        for name, obj in self.objects.items():
+            if name.startswith(("M.", "V.", "S0.")): expected_bank = name.split(".", 1)[0]
+            elif name.startswith(("cut.", "ext.")): expected_bank = "EXT"
+            elif name in ("const.silu", "const.router_exp2", "ROM.padding"): expected_bank = "ROM"
+            elif name.startswith("const."): expected_bank = "EXT"
+            elif name.startswith("front.") or name.startswith("down.") and name != "down.merge64": expected_bank = "V"
+            elif name == "down.merge64": continue  # selected M/V owner is independently checked against config
+            else: raise ValueError("unrecognized concrete deployment object "+name)
+            need(obj["bank"] == expected_bank, "actual physical deployment bank "+name)
         self.cal = calibration
         need(inventory["calibrated_byte_core"] == calibration["inventory"]
              and inventory["VR8_operand_register_total_bytes"] == 40
@@ -130,6 +139,17 @@ class Calendar:
                 resources = [("bank."+objects[0]["bank"], expected["src_beats"]), ("BUS", expected["wire_beats"]), ("bank."+objects[1]["bank"], expected["dst_beats"]+expected["dst_rmw_beats"])]
                 packet = node["packet"]
                 need(packet == {"src": left["object"], "dst": right["object"], "src_offset": left["offset"], "dst_offset": right["offset"], "bytes": left["bytes"], "partial_write": "endpoint RMW"}, "actual packet address metadata")
+                certificate = node.get("serial_packet_retiming_certificate", {})
+                need(certificate == {"kind": "bounded_serial_packet_retiming", "max_payload_bytes": 1984, "header_bytes": 32,
+                                     "per_packet_order": "source reads -> BUS -> destination RMW/read/write",
+                                     "resident_payload_only_one_packet": True, "all_endpoint_state_within_FIFO": True,
+                                     "duration_formula": "sum(src_beats + wire_beats + dst_beats + dst_rmw_beats)"},
+                     "explicit bounded serial packet retiming certificate")
+                if objects[0]["bank"] == objects[1]["bank"]:
+                    sl, sh = affine_bounds(left, loops); dl, dh = affine_bounds(right, loops)
+                    sl += objects[0]["offset"]; sh += objects[0]["offset"]
+                    dl += objects[1]["offset"]; dh += objects[1]["offset"]
+                    need(sh <= dl or dh <= sl, "serial packet source/destination alias across affine iterations")
             else:
                 a, obj = accesses[0], objects[0]
                 address = obj["offset"]+a["offset"]
@@ -141,7 +161,16 @@ class Calendar:
                 if a["mode"] == "write": resources.reverse()
                 if a["mode"] == "read": peak -= 16*partial_edges(0, a["bytes"])  # engine staging endpoint has no SRAM RMW
             need(fifo == peak, "packet actual FIFO payload+header peak")
-            sequential_resources(node, resources)
+            if kind == "transfer":
+                # Reconstruct source -> wire -> destination for each packet. The
+                # unique resource envelopes reserve all possible intervals; no
+                # next packet starts before the prior destination commits.
+                duration = sum(number for _, number in resources)
+                names = list(dict.fromkeys(name for name, _ in resources))
+                simultaneous_resources(node, names, duration)
+            else:
+                need(expected["packets"] == 1, "multi-packet engine call requires bounded retiming certificate")
+                sequential_resources(node, resources)
         elif kind == "micro":
             op, count = node["op"], node["count"]
             need(op in self.cal["ops"] and type(count) is int and count > 0, "every width fee typed and calibrated")
@@ -212,4 +241,5 @@ class Calendar:
             need(event["end"] == clock+duration, "macro body exact duration")
             self.counts.update(counts); self.per_macro.append(counts); clock = event["end"]
         return {"end_time": clock, "counts": dict(self.counts), "peak_bytes": self.high,
-                "macro_count": len(self.macros), "leaf_templates": self.templates, "max_FIFO_bytes": self.peak_fifo}
+                "macro_count": len(self.macros), "leaf_templates": self.templates, "max_FIFO_bytes": self.peak_fifo,
+                "packet_retiming_checked": True, "packet_retiming_policy": "serial_one_packet_source_BUS_destination_RMW"}
