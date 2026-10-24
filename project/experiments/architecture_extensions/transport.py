@@ -236,7 +236,7 @@ def state_graph(n,d,bits,tile_d,layout,heads=32):
     return g
 
 
-def norm_join_graph(norm_h,hidden,tile,layout):
+def norm_join_graph(norm_h,hidden,tile,layout,norm_before_gate=False):
     g=CopyGraph();scan=[]
     last=g.io('V',0,8,[],'initialize full-row reduction accumulator',
               [{'direction':'write','offset':tile*16,'bytes':8}])
@@ -244,8 +244,16 @@ def norm_join_graph(norm_h,hidden,tile,layout):
         amount=min(tile,norm_h-offset)*4;bank=bank_for(i,layout)
         a=g.copy('EXT',bank,amount,last,'gatednorm full-row reduction scan',src_base=offset*4)
         a=g.copy(bank,'V',amount,a,'gatednorm scan staging->V')
-        last=g.io('V',amount+8,8,a,'global reduction minimum IO; square/sum omitted',
-                  [{'direction':'read','offset':0,'bytes':amount},
+        if not norm_before_gate:
+            # Native norm-before-gate=false reduces (raw * SiLU(gate))**2.
+            # Without a separately paid pre-gated materialization, gate is read here too.
+            a=g.copy('EXT',bank,amount,a,'gatednorm first-scan gate backing->S',src_base=norm_h*4+offset*4)
+            a=g.copy(bank,'V',amount,a,'gatednorm first-scan gate staging->V',dst_base=tile*4)
+        first_reads=[{'direction':'read','offset':0,'bytes':amount}]
+        if not norm_before_gate:
+            first_reads.append({'direction':'read','offset':tile*4,'bytes':amount})
+        last=g.io('V',amount*(1 if norm_before_gate else 2)+8,8,a,'global reduction minimum IO; gate/square/sum omitted',
+                  first_reads+[
                    {'direction':'read','offset':tile*16,'bytes':8},
                    {'direction':'write','offset':tile*16,'bytes':8}])
         scan.extend(last)
@@ -262,9 +270,9 @@ def norm_join_graph(norm_h,hidden,tile,layout):
             [{'direction':'write','offset':tile*12,'bytes':amount}])
         last=g.copy('V','EXT',amount,last,'gatednorm FP32 output',src_base=tile*12,dst_base=norm_h*12+offset*4)
     last=g.copy('EXT','V',64,last,'A/R sequence token valid-length precision epoch descriptors',
-                src_base=norm_h*16+hidden*12,dst_base=tile*12)
+                src_base=norm_h*16+hidden*16,dst_base=tile*16)
     last=g.io('V',64,0,last,'A/R descriptor matching minimum IO; comparison compute omitted',
-              [{'direction':'read','offset':tile*12,'bytes':64}])
+              [{'direction':'read','offset':tile*16,'bytes':64}])
     branch=[]
     for i,offset in enumerate(range(0,hidden,tile)):
         amount=min(tile,hidden-offset)*4;bank=bank_for(i,layout)
@@ -272,10 +280,12 @@ def norm_join_graph(norm_h,hidden,tile,layout):
         a=g.copy(bank,'V',amount,a,'A branch staging->join')
         b=g.copy('EXT','R',amount,last,'R branch output',src_base=norm_h*16+hidden*4+offset*4)
         b=g.copy('R','V',amount,b,'R branch->join',dst_base=tile*4)
-        last=g.io('V',amount*2,amount,a+b,'A/R join minimum IO; multiply/add omitted',
-            [{'direction':'read','offset':p*tile*4,'bytes':amount} for p in range(2)]+
-            [{'direction':'write','offset':tile*8,'bytes':amount}])
-        last=g.copy('V','EXT',amount,last,'A/R FP32 joined output',src_base=tile*8,dst_base=norm_h*16+hidden*8+offset*4);branch.extend(last)
+        c=g.copy('EXT',bank,amount,a+b,'residual hidden input',src_base=norm_h*16+hidden*8+offset*4)
+        c=g.copy(bank,'V',amount,c,'residual staging->join',dst_base=tile*8)
+        last=g.io('V',amount*3,amount,c,'residual+A/R join minimum IO; multipliers/add omitted',
+            [{'direction':'read','offset':p*tile*4,'bytes':amount} for p in range(3)]+
+            [{'direction':'write','offset':tile*12,'bytes':amount}])
+        last=g.copy('V','EXT',amount,last,'residual+A/R FP32 joined output',src_base=tile*12,dst_base=norm_h*16+hidden*12+offset*4);branch.extend(last)
     return g
 
 
@@ -352,13 +362,16 @@ def run(args):
             raise ValueError('unreviewed Falcon complete state/norm configuration')
         headers={key:npz_header(args.falcon/'capture.npz',key) for key in
                  ('full.final.ssm','full.final.conv','full.final.kv_key','full.final.kv_value',
-                  'evaluation.attention','evaluation.mamba','evaluation.raw_scan','weight.gated_norm_gamma')}
+                  'evaluation.input','evaluation.attention','evaluation.mamba','evaluation.projected',
+                  'evaluation.raw_scan','weight.gated_norm_gamma')}
         if headers['full.final.ssm']['shape']!=[1,heads,d,n] or headers['full.final.ssm']['dtype']!='<f4':
             raise ValueError('actual captured complete FP32 state shape')
         if headers['weight.gated_norm_gamma']['shape']!=[norm_h] or report['gated_norm']['elements']!=norm_h:
             raise ValueError('actual complete gatednorm shape')
-        if any(headers[k]['shape'][-1]!=hidden for k in ('evaluation.attention','evaluation.mamba')):
+        if any(headers[k]['shape'][-1]!=hidden for k in ('evaluation.input','evaluation.attention','evaluation.mamba')):
             raise ValueError('actual complete branch width')
+        if headers['evaluation.raw_scan']['shape'][-1]!=norm_h or headers['evaluation.projected']['shape'][-1]<norm_h:
+            raise ValueError('actual complete gatednorm raw/gate source width')
         for bits,tile_d in ((32,8),(16,16)):
             b=bits//8;head=n*d*b;full=head*heads
             certs.append(certificate('Falcon complete head S'+str(bits),'R',{'state':head}))
@@ -369,13 +382,15 @@ def run(args):
                     {'state_precision':'captured FP32' if bits==32 else 'S16 STORAGE CANDIDATE ONLY; numeric quality not proven',
                      'trace_scope':'one COMPLETE captured head; full32head capacity/byte ledger separate, no cycle extrapolation'}))
         certs.append(certificate('Falcon gatednorm all planes','V',{'x':norm_h*4,'gate':norm_h*4,'gamma':norm_h*4,'output':norm_h*4,'reduction':8}))
-        certs.append(certificate('Falcon A/R full join','V',{'A':hidden*4,'R':hidden*4,'joined':hidden*4,'descriptors':64}))
+        certs.append(certificate('Falcon residual+A/R full join','V',{'residual':hidden*4,'A':hidden*4,'R':hidden*4,'joined':hidden*4,'descriptors':64}))
         ledgers['falcon']={'state_shape':[1,heads,d,n],'full32head_state_bytes':{'FP32':heads*d*n*4,'S16_candidate':heads*d*n*2},
             'actual_capture_headers':headers,'native_report_inventory':report['inventory'],
             'full_model_single_generation_state_FP32':int(cfg['num_hidden_layers'])*heads*d*n*4,
-            'norm_width':norm_h,'norm_minimum_logical_FP32_source_and_output_bytes':norm_h*4*5,
-            'norm_global_dependency':'full first-row scan before second read/gate/gamma/output; no tilewise independent norm',
-            'join_width':hidden,'join_descriptors_bytes':64,
+            'norm_width':norm_h,'norm_before_gate':bool(cfg['mamba_norm_before_gate']),
+            'norm_minimum_logical_FP32_source_and_output_bytes':norm_h*4*(5 if cfg['mamba_norm_before_gate'] else 6),
+            'norm_global_dependency':'full first-row scan including gate when norm_before_gate=false; then second raw/gate/gamma read/output; no tilewise independent norm',
+            'join_width':hidden,'join_input_planes':['residual','attention','mamba'],'join_output_planes':1,
+            'join_logical_FP32_input_and_output_bytes':hidden*4*4,'join_descriptors_bytes':64,
             'KV':'actual full model cache storage must remain separately charged; not a state=KV alias',
             'excluded':'compute, nonlinear arithmetic, cache/weight loads, KV update, atomic guard latency; no full-model service claim'}
         for bits in (32,16):
@@ -392,8 +407,11 @@ def run(args):
                  'owner_version_position':layers*24,'units':layers*heads*2 if bits==16 else 0}))
         for tile in (256,512):
             certs.append(certificate('Falcon norm tile'+str(tile),'V',{'x':tile*4,'gate':tile*4,'gamma':tile*4,'output':tile*4,'reduction':8}))
+            certs.append(certificate('Falcon residual+A/R join tile'+str(tile),'V',{'residual':tile*4,
+                'A':tile*4,'R':tile*4,'joined':tile*4,'descriptors':64}))
             for layout in ('roundrobin','all_one'):
-                specs.append(('falcon-norm-join',tile,layout,norm_join_graph(norm_h,hidden,tile,layout),{'data':'captured FP32'}))
+                specs.append(('falcon-norm-join',tile,layout,norm_join_graph(norm_h,hidden,tile,layout,
+                    norm_before_gate=bool(cfg['mamba_norm_before_gate'])),{'data':'captured FP32'}))
     if not specs:
         raise ValueError('at least one actual source required')
     args.out.mkdir(parents=True)

@@ -14,6 +14,6 @@ Granite保持S32八专家返回、S64合并、Q31 multiplier/int16 shift、Q15�
 
 Falcon完整head为D128×N256：FP32为128KiB、S16候选64KiB，都超R32KiB。全部32heads为4MiB/2MiB，整层old/new超八bank总256KiB。对一个实际完整head保留完整N归约，只沿D分tile，old/new各8KiB+aux8KiB分槽。COPY包括old EXT→S→R、new R→S→EXT及发布屏障后的完整new readback EXT→S→R；guard/发布/状态更新和输出收缩算术均未计时。S16仅storage候选，不代表所有heads整数质量通过。所有32heads/全层容量与逻辑payload单列，不将单head周期直接乘32宣称整层时间；全模型所有层的state、真实conv/KV持久容量另与EXT128MiB比较。
 
-4096宽gatednorm必须完成整行first scan，再执行x second read/gate/gamma与输出；不会把分tile独立norm当正确算法。实际hidden宽从捕获读取（3B为2560），A/R两branch与输出和64B sequence/position/precision/epoch描述符均计价；全宽同时物化和256/512tile容量分别列。join只算读写，完整norm/branch compute未计时。
+4096宽gatednorm必须完成整行first scan。原生3B的`norm_before_gate=false`，平方和归约输入是`raw×SiLU(gate)`，首扫同时读取raw与gate；不赠预门控物化。随后second scan重读raw/gate/gamma并写输出，共六个FP32行面98,304B（仅EXT边界逻辑流量，staging链路另计）。`norm_before_gate=true`才是五面，按实际配置分支。不会把分tile独立norm当正确算法。实际hidden宽从捕获读取（3B为2560），完整hybrid join读取residual、Attention、Mamba三面，再写一面输出，共40,960B，另计64B sequence/position/precision/epoch描述符；完整V物化41,024B拒绝，256/512tile容量分别列。join只算读写，完整norm/branch compute、倍率乘法和加法均未计时。
 
 受控比较为相同precision和payload下tile256/512、roundrobin/all-one bank mapping、fifo/critical两个既定COPY顺序。若保守依赖及共享BUS令两layout相同，照实保留0收益；不添加免费bank或更强端口制造优势。超容量物化候选只给拒绝证书，无虚构周期。每项结果注明逻辑payload、wire含头/打包字节、端口/BUS资源下界。最终物理宏边界仍需包含真实compute、权重驻留、定点实现、时序与布局布线的后续同资源验证。
