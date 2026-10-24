@@ -1,5 +1,9 @@
 # Liangruizhi 的进度
 
+## 2026-10-24 UTC+08 Issue74完整MoE与分组边界（进行中）
+
+[Issue74](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/74)/[PR75](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/75)，task/74-moe-grouped，根D:/Projects/LLMHardwareDesign-moe-grouped，base PR73@88e9c4b，三独立子worktree。本人新CPU服务器采集Granite两层真实cut并与原参考0差；8完整router→8expert→Q12merge/残差/norm条件全量独立接收PASS，R16多数路由恢复但专家局部误差仍显著，原失败/FP边界保留。552960真实宽RQ产品S8/字节carry全量通过；同g同资源M/V服务首例完成/待独立审，完整12配置与mid归因随后。无新模型/其他机器/Phi解封/55或63接管。[进行中报告](../../docs/experiments/issue-74-moe-grouped.md)及work74实际source/command。未审查合并非done；登记pending、看板unverified/同步pending，管理员/审查人待指定。
+
 ## 2026-10-24 UTC+08 Issue72闭环交付（待审查合并）
 
 [Issue72](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/72)/[PR73](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/73)，task/72-numeric-closure，D:/Projects/LLMHardwareDesign-numeric-closure，base PR71@f4d2c46。本人身份/最新任务及成员55/63已核，三个独立子worktree；全部真实模型/张量/服务本人c96 node13/node14新目录Slurm，无新下载/其他机器/Phi解封。

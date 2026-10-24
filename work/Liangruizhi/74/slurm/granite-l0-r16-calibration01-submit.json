@@ -1,0 +1,36 @@
+{
+  "command": [
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+    "-u",
+    "-B",
+    "/public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/phase3/project/experiments/moe_grouped/granite_chain.py",
+    "run",
+    "--compiled",
+    "/public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/granite-compiled01",
+    "--layer",
+    "0",
+    "--router-bits",
+    "16",
+    "--split",
+    "calibration",
+    "--binding",
+    "/public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/phase3/binding.json",
+    "--out",
+    "/public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/granite-l0-r16-calibration01"
+  ],
+  "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/phase3/project/experiments/moe_grouped/granite_chain.py run --compiled /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/granite-compiled01 --layer 0 --router-bits 16 --split calibration --binding /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/phase3/binding.json --out /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/granite-l0-r16-calibration01",
+  "slurm_argv": [
+    "sbatch",
+    "--parsable",
+    "--job-name=lrz-i74-granite-l0-r16-calibration01",
+    "--partition=c96",
+    "--cpus-per-task=2",
+    "--time=00:30:00",
+    "--output=/public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/granite-l0-r16-calibration01-%j.log",
+    "--wrap",
+    "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/phase3/project/experiments/moe_grouped/granite_chain.py run --compiled /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/granite-compiled01 --layer 0 --router-bits 16 --split calibration --binding /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/phase3/binding.json --out /public/home/yuzelu/RuizhiLiang/issue74-moe-grouped-20261024/granite-l0-r16-calibration01"
+  ],
+  "stdout": "90291",
+  "phase": "phase3",
+  "binding_sha256": "2214aaa6bebac399cd1b29ba68070d848e02313940ac3696ea0dae8726708c28"
+}
