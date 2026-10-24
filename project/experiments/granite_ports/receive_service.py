@@ -149,7 +149,8 @@ def main():
     receipt["negative_status"] = "NOT_EXECUTED" if args.skip_negatives else "PASS_ACTUAL_SHA_REWRITE"
     receipt["source"] = binding
     save_json(args.out/"receipt.json", receipt)
-    print(receipt["status"], receipt["layer"], flush=True)
+    layer = receipt["layer"] if args.command == "pack" else receipt["config"]["layer"]
+    print(receipt["status"], layer, flush=True)
 
 
 if __name__ == "__main__":
