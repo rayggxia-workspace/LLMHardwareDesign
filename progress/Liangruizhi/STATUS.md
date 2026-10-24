@@ -1,5 +1,15 @@
 # Liangruizhi 的进度
 
+## 2026-10-24 UTC+08 Issue76交付（待审查合并）
+
+[Issue76](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/76)/[PR77](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/77)，task/76-granite-ports，D:/Projects/LLMHardwareDesign-granite-ports，base PR75@ce2d08f。已核Liangruizhi/182389313本人认证、项目/依赖及成员55(in_progress)/63(blocked)/PR58，无重复范围；三独立子worktree。所有实际pack/数组/微核RTL/有限服务/独立接收均仅本人CPU Slurm，PC源码/微合成/JSON/字节，无新模型/其他机器/Phi解封或成员接管。
+
+两层W8 pack完整接收；micro03 18key/807case/1,082,106真实byte RTL动作/132真实码和69ROM请求独立PASS；24新版03有限完整expert→merge/nextnorm全独立PASS/144实际重SHA负例，6同函数驻留对和12标签零差。完整merge V峰14,224B<=16KiB，原全8返回49,152B仍拒绝；近M仅省0.0008405%条件slots，公共byteframe wire约99.75%、micro整体slots约99.46%，不足以冻结融合。32处RQ超域原失败保留，有费等价译码后全部24同版重跑；3,976大右移零码与32控制变化分列。
+
+114实际作业89COMPLETED/13FAILED/12仅自有依赖取消，失败原样归档。完整8,735,106,471B/2,526成员服务器、精选5,199,361B/394 metadata入仓库，两包服务器/精选PC逐成员SHA，19phase66原Git源字节核验通过。新69/相关63微合成、结构检查通过，最终diff另留回执。完整wideFSM/RF/STA/PPA/整模型质量未验收；下一步同资源局部frame/完整controller校准，保留M/V/A/R/S/D逻辑模板及物理映射选择。
+
+[报告](../../docs/experiments/issue-76-granite-ports.md)、[索引](../../project/experiments/granite_ports/results/issue-76/index.json)、[交接](../../docs/handoffs/2026-10-24-issue-76-granite-ports.md)。PR交付后待审查合并，非done；登记PR5 pending、board404/无Projects能力，看板unverified/同步pending，管理员/审查人待指定。
+
 ## 2026-10-24 UTC+08 Issue74交付（待审查合并）
 
 [Issue74](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/74)/[PR75](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/75)，task/74-moe-grouped，D:/Projects/LLMHardwareDesign-moe-grouped，base PR73@88e9c4b。本人CPU服务器51作业全COMPLETED：Granite两层真实cut参考0差、8完整整数MoE独立PASS/24实际负例；552960宽RQ产品S8/字节carry精确；Falcon三g12同函数M/V服务独立PASS/48负例、6label零差。近M条件完整链slots仅省0.001007%–0.016005%，保留物理映射；posthoc否定mid末次Q12 RNE主导，不追加F20。非整模型质量/RTL/PPA，Granite grouped服务尚未执行。

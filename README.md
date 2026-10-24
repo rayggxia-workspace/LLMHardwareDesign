@@ -2,7 +2,9 @@
 
 本项目研究面向多个计算图的预制计算底座：预先确定计算 Block 和部分物理资源，再通过有限的金属／通孔层定制跨 Block 互联。当前处于**架构定义与研究方案整理阶段**；具体工艺、Block 库、定制层集合和实现工具链仍待确定。性能、能耗和成本优势是待验证目标，不是已有结论。
 
-[最新完整MoE与分组边界验证](docs/experiments/issue-74-moe-grouped.md)已完成服务器8整数MoE条件和12同资源分组服务；宽算术/元数据/端口计价后仍保留M/V物理映射选择。原失败及整模型/物理验证限制保留，详见[Block v2第13节](docs/BLOCK_PARTITION_V2.md)。
+[完整MoE与分组边界验证](docs/experiments/issue-74-moe-grouped.md)已完成服务器8整数MoE条件和12同资源分组服务；宽算术/元数据/端口计价后仍保留M/V物理映射选择。原失败及整模型/物理验证限制保留，详见[Block v2第13节](docs/BLOCK_PARTITION_V2.md)。
+
+[最新有限Granite端口与宽成本实验](docs/experiments/issue-76-granite-ports.md)24配置全部独立通过：完整merge可在V16KiB内，近M仅省约0.00084%条件slots。保留M/V物理选择，优先校准宽算术局部暂存与预连线；见[Block v2第14节](docs/BLOCK_PARTITION_V2.md)，完整FSM/STA/PPA与整模型质量仍未验收。
 
 ## 从哪里开始
 
