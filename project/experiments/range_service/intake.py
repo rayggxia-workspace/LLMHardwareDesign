@@ -33,7 +33,7 @@ def main():
  failures=[]
  for row in old:
   if row['id'].startswith(('layer0-end2048.','layer0-end8192.')):
-   sat=row['execution']['saturations'];expected=184 if row['id'].startswith('layer0-end2048.')else193
+   sat=row['execution']['saturations'];expected=184 if row['id'].startswith('layer0-end2048.')else 193
    if sat!=expected:raise ValueError('preserved saturation '+row['id'])
    failures.append({'id':row['id'],'state_saturations':sat,'quality_accepted':row['quality_accepted']})
  header={}
