@@ -1,5 +1,10 @@
 # AI 协作约定
 
+## 2026-10-24 新增架构最小实验（Issue70）
+
+用户明确授权新增IBM Granite-3.1-3B-A800M-Instruct与TII Falcon-H1-3B-Instruct，仅这两模型的下载/短CPU参考/真实层采集/数值与资源实验在本人服务器新Issue70目录Slurm lrz-*并行。此前无新模型限制对本范围放开，其他模型/机器不增加，Phi仍封存。先冻结决策和最小实验，校准/评价分离，官方revision/配置/实现/权重SHA完整；MoE真实重路由与固定路由诊断分开，Mamba2不能冒称GDN整数实现。精度、回退、算术/状态/元数据/1RW/FIFO/通信按实际计价；条件周期非RTL/PPA或模型质量验收。独立子worktree，保留旧证据及他人Issue55/63范围。
+
+
 ## 2026-10-24范围/重定标与同资源服务（Issue68）
 
 用户授权按既有划分在本人CPU服务器并行接续R范围/因果重定标、V/R/S有限端口缓冲验证。复用Issue66已编码真实输入与norm/状态轨迹；不新增下载/完整模型加载，不解封Phi、不接管Issue55/63。在线scale选择只读当前整数状态/输入及guard，不能看未来原生状态或评价误差；重编码/重试/epoch与原子发布成本显式。placement配对必须同数值任务/精度/单位轨迹/提交恢复语义、同算术和银行/链路/FIFO/外部backing库存，不赠SFU/带宽/内存；不同失败语义方案单列。每phase干净commit和源码/input/result SHA，所有真实计算本人新Issue68目录Slurm lrz-*。条件服务周期不称RTL/PPA或整图LLM性能，原clip/sat和FP桥保留。
