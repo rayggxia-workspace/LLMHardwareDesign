@@ -642,13 +642,19 @@ def inputs(root, range_root=None, norm_stage="norm03"):
     return tasks
 
 
-def run(root, out, binding, range_root=None, ext_profiles=(1, 16), task_ids=None, norm_stage="norm03"):
+def run(root, out, binding, range_root=None, ext_profiles=(1, 16), task_ids=None, norm_stage="norm03",
+        organizations=None, tiles=None, routes=None, strategies=None):
     out = Path(out)
     out.mkdir(parents=True, exist_ok=False)
     actual = sha(__file__)
     if binding.get("service_sha256") != actual or not binding.get("commit"):
         raise ValueError("source binding mismatch")
     tasks = inputs(root, range_root, norm_stage)
+    organizations = list(organizations or LANES)
+    tiles, routes = list(tiles or (16, 32)), list(routes or ("reread", "spill"))
+    strategies = list(strategies or ("fifo", "critical"))
+    if any(len(set(x)) != len(x) for x in (organizations, tiles, routes, strategies, ext_profiles)):
+        raise ValueError("duplicate configuration")
     if task_ids:
         tasks = [t for t in tasks if t["id"] in task_ids]
         if len(tasks) != len(task_ids):
@@ -657,11 +663,11 @@ def run(root, out, binding, range_root=None, ext_profiles=(1, 16), task_ids=None
     artifacts = {}
     for ti, task in enumerate(tasks):
         for ext in ext_profiles:
-            for org in LANES:
-                for tile in (16, 32):
-                    for route in ("reread", "spill"):
+            for org in organizations:
+                for tile in tiles:
+                    for route in routes:
                         candidates = []
-                        for strategy in ("fifo", "critical"):
+                        for strategy in strategies:
                             c = config(org, tile, route, ext, strategy)
                             g = graph(task, c)
                             w = schedule(g)
@@ -687,8 +693,8 @@ def run(root, out, binding, range_root=None, ext_profiles=(1, 16), task_ids=None
                    source=binding)
     (out / "metrics.json").write_bytes(canonical(metrics))
     artifacts["metrics.json"] = descriptor(out / "metrics.json")
-    manifest = dict(schema=SCHEMA, source=binding, config=dict(ext_profiles=list(ext_profiles), lane_profiles=list(LANES),
-                                                            tiles=[16, 32], norm_routes=["reread", "spill"], strategies=["fifo", "critical"]),
+    manifest = dict(schema=SCHEMA, source=binding, config=dict(ext_profiles=list(ext_profiles), lane_profiles=organizations,
+                                                            tiles=tiles, norm_routes=routes, strategies=strategies),
                     environment={"python": sys.version, "platform": platform.platform()}, artifacts=artifacts,
                     input_root=str(root), range_root=str(range_root) if range_root else None)
     (out / "manifest.json").write_bytes(canonical(manifest))
@@ -704,8 +710,13 @@ def main():
     p.add_argument("--ext-ii", type=int, nargs="+", default=[1, 16], choices=[1, 16])
     p.add_argument("--task", action="append")
     p.add_argument("--norm-stage", default="norm03")
+    p.add_argument("--organization", action="append", choices=list(LANES))
+    p.add_argument("--tile", action="append", type=int, choices=[16, 32])
+    p.add_argument("--norm-route", action="append", choices=["reread", "spill"])
+    p.add_argument("--strategy", action="append", choices=["fifo", "critical"])
     a = p.parse_args()
-    r = run(a.root, a.out, load_json(a.binding), a.range, tuple(a.ext_ii), a.task, a.norm_stage)
+    r = run(a.root, a.out, load_json(a.binding), a.range, tuple(a.ext_ii), a.task, a.norm_stage,
+            a.organization, a.tile, a.norm_route, a.strategy)
     print(json.dumps({"status": r["status"], "configurations": len(r["results"])}))
 
 
