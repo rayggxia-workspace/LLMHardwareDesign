@@ -10,3 +10,13 @@ Issue70；此页记录生产协议，实际执行与结果须以manifest/作业�
 官方参考：[模型config](https://huggingface.co/ibm-granite/granite-3.1-3b-a800m-instruct/raw/main/config.json)、[HF实现](https://github.com/huggingface/transformers/blob/main/src/transformers/models/granitemoe/modeling_granitemoe.py)。运行时实现以manifest SHA为准，不能把动态网页main当固定版本证据。布局只支持两种明确形式并以完整MoE输出重放确认。
 
 参考完整/cached/chunk门：relative L2≤2e-4且max abs≤2e-3；仅参考一致性，非语言能力、全模型量化或目标硬件接受标准。性能测量未执行。
+
+`granite.py numeric --capture CAPTURE_DIR --binding NUMERIC_BINDING.json --out NEW`
+
+数值最小集为评价prefill位置60–63、decode位置64–67，每token完整top8路径；两种激活scale（独立calibration前64token固定的tensor scale、动态token-row scale），两种路由（FP固定仅诊断、W8A8 router重算top8）。W为每expert每output行maxabs对称INT8、A为对称INT8[-127,127]；RNE ties-even，实际饱和单列；完整K的INT32最坏界先检查，软件用NumPy INT64算dot以便检查，不称原生INT8内核。H1536 dot上界127²×1536=24,774,144；专家down K512更小。未分K则不能将不同单位的partial sum直接相加。
+
+完整专家gate/up和down均做整数dot；中间dequant/SiLU/门乘/重新选A scale、router scale转换/softmax仍是显式FP64桥。不能据此称全整数MoE。动态与静态激活都保存其scale来源、溢出、饱和与真实路由翻转。
+
+增加共同单位合并候选：仅根据校准MoE输出最大值，选power-of-two unit，使校准值约占23bits；各expert down的S32结果以Q31 multiplier和int16 shift转换为共同S32（饱和/RNE明确），路由权重Q0.15；S64权重乘积/8路求和，RNE15及S32饱和得到输出。该方案对宽乘和64bit合并有需求，尚未提供8bit单元lowering周期，不能当成已支持硬件。Q31参数生成和scale选择仍用浮点，元数据/运算成本明确待资格验证。
+
+输出`metrics.json`（8个phase候选、误差/负载/逻辑字节）、`witnesses.npz/json`（32实际完整K dot、32实际RQ、每4个候选一个token完整8×1536共同单位合并）。独立receiver验证后才可称见证通过；不从小样本或零饱和推断全模型质量通过。逻辑数据量分别列A8、S32、route id/weight、FP64 scale与Q31/shift；未测header/物理beat、权重驻留和多播，不能将其当硬件端口/周期结论。完整40专家层权重原FP32约377MB，大文件仅授权服务器存储，仓库保存位置/SHA。
