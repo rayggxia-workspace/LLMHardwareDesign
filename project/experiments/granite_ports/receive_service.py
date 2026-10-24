@@ -123,13 +123,29 @@ def main():
     for key in ("packed", "compiled", "producer-source", "binding", "out"):
         pack.add_argument("--"+key, type=Path, required=True)
     pack.add_argument("--skip-negatives", action="store_true")
+    service = sub.add_parser("service")
+    for key in ("run", "result", "compiled", "numeric-receipt", "packed", "packed-receipt", "calibration", "calibration-receipt", "producer-source", "binding", "out"):
+        service.add_argument("--"+key, type=Path, required=True)
+    service.add_argument("--skip-negatives", action="store_true")
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=False)
     binding = load_json(args.binding)
     need(binding.get("receive_service_sha256") == sha(__file__)
          and binding.get("audit_io76_sha256") == sha(Path(__file__).with_name("audit_io76.py")), "independent source binding")
-    receipt = verify_pack(args.packed, args.compiled, args.producer_source)
-    receipt["negative_tests"] = [] if args.skip_negatives else [negative_pack(args.packed, args.compiled, args.producer_source, args.out)]
+    if args.command == "pack":
+        receipt = verify_pack(args.packed, args.compiled, args.producer_source)
+        receipt["negative_tests"] = [] if args.skip_negatives else [negative_pack(args.packed, args.compiled, args.producer_source, args.out)]
+    else:
+        from finite_receive76 import finite_negatives, verify_finite
+        for name in ("finite_receive76", "calendar76", "physical76"):
+            need(binding.get(name+"_sha256") == sha(Path(__file__).with_name(name+".py")), "independent finite helper binding "+name)
+        try:
+            receipt = verify_finite(args.run, args.result, args.compiled, args.numeric_receipt, args.packed, args.packed_receipt,
+                                    args.calibration, args.calibration_receipt, args.producer_source)
+            receipt["negative_tests"] = [] if args.skip_negatives else finite_negatives(args)
+        except Exception as error:
+            save_json(args.out/"failure.json", {"status": "REJECTED", "type": type(error).__name__, "reason": str(error), "source": binding})
+            raise
     receipt["negative_status"] = "NOT_EXECUTED" if args.skip_negatives else "PASS_ACTUAL_SHA_REWRITE"
     receipt["source"] = binding
     save_json(args.out/"receipt.json", receipt)

@@ -14,7 +14,7 @@
 - 当前层全40专家W8 94,371,840B、static scale614,400B都占有限EXT；其他层不免费驻留。router是已发布外部cut时不计重复运算，但其来源/格式明确，两表payload73,736B和真实ROM对齐/地址仍占库存。
 - 每个源、缓存、权重rowpack/transpose、INT32 partial、宽product/prefix、static scale、mid/delta/descriptor和norm临时值有实际对象/偏移/字节/生命周期。复用必须先证明生命周期不交叠，不能只减总和。寄存器和多操作数暂存也要有固定库存。
 - V不能容纳完整8×1536×4=49,152B专家返回。该旧策略必须实质容量拒绝；合法路线通过流式merge tile、显式S/backing或者重计算，并计重读、搬运和同步。
-- 完整H的S64 merge仅12,288B。若front已释放、8midA8缓存S0、每次只有O16的down/RQ临时且最终Q12直接EXT，则允许完整merge驻V：常驻1408+merge12288+RQ480=14176B；nearM对应M10320+merge12288=22608B。该容量判断依赖真实front/down/norm/nexttoken屏障及访问生命周期；不能强行与完整6144B输出并存以人为拒绝。
+- 完整H的S64 merge仅12,288B。若front已释放、8midA8缓存S0、每次只有O16的down/RQ临时且最终Q12直接EXT，则允许完整merge驻V。加入固定8lane×5B操作数寄存器并扣除V空间后，预期V峰14224B；nearM对应M10320+merge12288=22608B。该容量判断最终按实际offset、完整front/down/norm/nexttoken屏障及访问生命周期核验，不能强行与完整6144B输出并存以人为拒绝。
 - 全512 mid scan屏障先于其新A8/down；全1536 norm统计先于emit。末消费者完成前不得丢弃仍需的residual、merge或scale。K/专家/输出tile、真实ID和版本必须可追踪。
 
 独立接收从每次实际offset推导packet头、16B打包、源/目的leading beat、ROM单口、BUS/FIFO、资源区间与affine loop闭式范围，不直接相信producer totals。
@@ -41,3 +41,7 @@
 `receive_micro76.py --run <calibrationdir> --producer-dir <frozen-source-dir> --compiled <74compiled> --granite <L0R16eval> --granite <L13R16eval> --binding <json> --out <newdir>`从实际live-store重放全部byte动作，对每个RTL输出/最终O发布值、独立整数数学、真实Granite来源码、完整shift域费用和ROM实际连续latency2/II1请求逐一验收。正式需18个typed key；17key仅可加`--allow-17-key-pilot`明确限定，不能代表正式费用覆盖。旧01的首ALU后初始化输入应加`--expect-reject`实际保存语义拒绝，不能因producer给PASS而复用成本。
 
 micro绑定必须有`receive_micro76_sha256`、`micro_audit76_sha256`、`audit_io76_sha256`和真实commit。软件控制器/寻址与有限frame并非完整宽RTL FSM/RF，额外dispatch费用是候选；回执不声称RTL时序或PPA。
+
+`receive_service.py service --run <service> --result <74R16eval> --numeric-receipt <74mathreceipt> --compiled <74compiled> --packed <pack> --packed-receipt <packreceipt> --calibration <micro03> --calibration-receipt <microreceipt> --producer-source <frozen service.py> --binding <json> --out <newdir>`接收完整finite服务。绑定包含`receive_service_sha256`、`audit_io76_sha256`、`finite_receive76_sha256`、`calendar76_sha256`、`physical76_sha256`。默认五种实际artifact重写SHA负例：port、capacity、numeric、widthfee、ROM；`--skip-negatives`只能得到明确未执行的负例状态，不供正式比较。
+
+正式银行不假定支持byte mask。1B micro写按128bit RMW读旧行+写共2银行拍，BUS新字节包仍48B；单标量费用为ALU+候选dispatch+4×frame读取+5×frame写入。partial包目标端和4B ROM回复也付旧行读拍与有限FIFO暂存；完整16B对齐写不额外RMW。active ROM73736B与实际核reservation131072B以及全局池4260100B分别记录。所有receipt的profile/row/inventory/alloc摘要SHA使用排序key、紧凑分隔符的canonical JSON；文件SHA另列，避免混淆。
