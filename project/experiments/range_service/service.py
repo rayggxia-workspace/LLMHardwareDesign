@@ -610,8 +610,14 @@ def inputs(root, range_root=None, norm_stage="norm03"):
                 tokens.append(dict(attempts=attempts, source_before=token["before"],
                                    source_commit=token.get("commit"), outcome=token["outcome"]))
             y = copy.deepcopy(task)
+            # A legacy R window must not inherit the native32 source label.
+            # Keep the independent norm stream, replace every R provenance.
+            y.pop("R_input_manifest")
+            y.pop("state_record_sha256")
             y.update(id=record["id"], tokens=tokens, precision=f,
                      range_events=descriptor(rp), range_manifest=rmd, range_transaction=td,
+                     R_original_source_artifact=record["source_artifact"],
+                     R_original_source_id=record["source_id"], R_role=record["role"],
                      range_record_sha256=hashlib.sha256(canonical(record)).hexdigest(),
                      source_range_cost=record["cost"],
                      commit_contract="causal guard/rescale, no failed-token publication, atomic state/output/units/epoch/version commit",
