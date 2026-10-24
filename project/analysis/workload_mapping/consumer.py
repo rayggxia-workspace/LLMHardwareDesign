@@ -42,6 +42,9 @@ def verify_mapping(m):
         check(pair[0]["width_bits"] is None or pair[1]["width_bits"] is None or pair[0]["width_bits"] == pair[1]["width_bits"], "port width mismatch")
     graph = m["logical_graph"]
     check(hashlib.sha256(canonical(graph)).hexdigest() == m["graph_sha256"], "graph provenance digest")
+    block_spec = m["block_specification"]
+    check(hashlib.sha256(canonical(block_spec)).hexdigest() == m["blocks_sha256"], "block provenance digest")
+    check(block_spec["resources"] == m["resources"] and block_spec["links"] == m["links"], "block/version output mismatch")
     check(graph["events"] == m["events"] and graph["storages"] == m["storage"]["allocations"], "graph/output lifecycle mismatch")
     tensors = {t["id"]: t for t in graph["tensors"]}
     calls = {c["id"]: c for c in graph["calls"]}
@@ -125,10 +128,30 @@ def verify_mapping(m):
             check(v["tensor"] in calls[v["writer"]]["writes"], "state writer")
             old = v["tensor"]
     check(emitted == [c["id"] for c in m["communication"]], "communication coverage/order")
+    channels = [dict(link, message_ids=[c["id"] for c in m["communication"] if link["id"] in c["links"]]) for link in m["links"]]
+    check(m["logical_channels"] == channels, "logical channels/message reuse mismatch")
+    layout = m["layout_requirements"]
+    check(layout["connection_ids"] == list(links) and layout["physical_qualified"] is False, "layout connection or qualification")
+    check([i["id"] for i in layout["instances"]] == list(resources), "layout instance references")
+    for inst in layout["instances"]:
+        check(inst["logical_ports"] == [p["id"] for p in resources[inst["id"]]["ports"]], "layout endpoint refs")
+        check(all(inst[k] is None for k in ("master","width_um","height_um","position_um","orientation")), "invented physical binding")
+    event_by_ref = {e["ref"]:e["id"] for e in m["events"]}
+    expected_lifetimes = []
+    for tid,t in tensors.items():
+        uses = [event_by_ref[c] for c in t["consumers"]]
+        uses += [event_by_ref[tr["id"]] for tr in transfers.values() if tr["tensor"] == tid]
+        expected_lifetimes.append({"tensor":tid,"produced_event":event_by_ref.get(t["producer"]),
+            "use_events":sorted(set(uses),key=positions.get),
+            "last_use_event":max(uses,key=positions.get) if uses else None,
+            "reserved_storage_release_event":allocations[t["storage"]]["end"],
+            "scope":"value use and static reservation are distinct; no automatic deallocation"})
+    check(m["value_lifetimes"] == expected_lifetimes, "value lifetime/slot reservation mismatch")
     accounting_inputs = []
     for c in m["communication"]:
         tr, t = transfers[c["id"]], tensors[c["tensor"]]
         check(c["tensor"] == tr["tensor"] and c["messages"] == tr["messages"] and type(c["messages"]) is int and c["messages"] > 0, "communication count/reference")
+        check(c["send_complete_event"] == c["event"] and c["destination_release_event"] == allocations[c["destination_storage"]]["end"], "send/release dependency")
         check(c["payload_bits"] == math.prod(t["shape"])*t["logical_bits"] and c["container_bytes"] == math.prod(t["shape"])*t["storage_bits"]//8, "payload/container units")
         for field in ("shape", "logical_bits", "storage_bits", "metadata_bytes"):
             check(c[field] == t[field], "communication format")
@@ -152,5 +175,6 @@ def verify_mapping(m):
     check(policy["physical_wires"] == "unknown", "logical messages do not establish physical wires")
     if "semantics" in m:
         from .semantics import consume_semantics
-        consume_semantics(m["semantics"], graph, m["semantic_report"])
+        check(hashlib.sha256(canonical(m["semantics"])).hexdigest() == m["semantics_sha256"], "semantics source digest")
+        consume_semantics(m["semantics"], graph, m["semantic_report"], m["resources"])
     return {"status":"pass", "scope":"independent proposed-contract graph, lifetime, format, path and byte reader", "physical":"not_executed", "communications":len(emitted)}

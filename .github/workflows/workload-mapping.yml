@@ -1,0 +1,46 @@
+name: Workload mapping offline
+on:
+  pull_request:
+    paths:
+      - 'project/analysis/workload_mapping/**'
+      - 'project/analysis/llm_resources/**'
+      - 'project/analysis/block_v2_offline/**'
+      - '.github/workflows/workload-mapping.yml'
+  push:
+    branches: ['task/63-workload-layout-adapter']
+    paths:
+      - 'project/analysis/workload_mapping/**'
+      - '.github/workflows/workload-mapping.yml'
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .agents
+            .github
+            config
+            docs
+            scripts
+            progress
+            work
+            project/analysis/workload_mapping
+            project/analysis/llm_resources
+            project/analysis/block_v2_offline
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Acquire only pinned reference archives over HTTPS
+        run: |
+          git config remote.origin.promisor true
+          git config remote.origin.partialclonefilter blob:none
+          git fetch --no-tags --depth=1 --filter=blob:none origin 19c4b829211678d1a6fefa61bc0a23e68e4f13e1 cce235975b7be6d77247c9c9c7b09ea15608e2cf
+          python -B project/analysis/workload_mapping/assets/acquire_reference_assets.py --allow-git-object-fetch --output-dir .local/dependencies/reference_assets
+      - name: Offline tests, original acceptance and independent replay
+        env:
+          GIT_NO_LAZY_FETCH: '1'
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python -B -m project.analysis.workload_mapping.validate_delivery --output-dir .local/runs/ci

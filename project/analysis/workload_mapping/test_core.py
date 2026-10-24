@@ -83,7 +83,7 @@ class MappingTests(unittest.TestCase):
         self.assertEqual((wide["payload_bits"], wide["container_bytes"], wide["metadata_bytes"]),
                          (132, 32, 8))
         self.assertEqual(wide["transport"]["payload_bytes"], 40)
-        # Fixed #41 reference profile: 64-byte header, 128-byte frame alignment.
+        # Fixed #41 reference profile: 64-byte header and 64-byte beat alignment.
         self.assertEqual(wide["transport"]["wire_bytes"], 128)
         self.assertEqual(wide["transport"]["hop_summed_wire_bytes_per_step"], 256)
         self.assertEqual(result["transport"]["shared_TX"]["matrix"]["accounted_wire_bytes_per_step"], 512)

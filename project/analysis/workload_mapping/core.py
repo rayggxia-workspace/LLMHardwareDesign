@@ -16,6 +16,10 @@ class InputError(ValueError):
     pass
 
 
+class MissingInformation(InputError):
+    """A legal declaration whose requested check lacks necessary information."""
+
+
 def require(ok, message):
     if not ok:
         raise InputError(message)
@@ -394,13 +398,38 @@ def build(graph, blocks):
             t["transport"] = {"wire_bytes": 0, "packets": 0, "scope": "explicit local copy"}
     mapping = dict(schema_version="mapping-request/1", contract_status="proposed downstream input; no #55 reader",
         id=graph["id"], evidence=graph["evidence"], graph_sha256=digest(graph), blocks_sha256=digest(blocks),
-        logical_graph=copy.deepcopy(graph),
+        logical_graph=copy.deepcopy(graph), block_specification=copy.deepcopy(blocks),
         resources=copy.deepcopy(blocks["resources"]), links=copy.deepcopy(blocks["links"]),
         events=copy.deepcopy(graph["events"]), communication=checked["communication"], storage=checked["storage"],
         transport=dict(edges=ledger["edges"], shared_TX=ledger["shared_TX"]), assumptions=checked["unresolved"],
         physical_policy=dict(fixed_layers=["M"+str(i) for i in range(1,9)], custom_layers=["M9","M10"],
             custom_vias=["M8-M9","M9-M10"], fallback_layers=["M11","M12"],
             technical_via_permission="unknown", physical_wires="unknown"))
+    # Messages reuse named channels. No tensor creates a new physical net.
+    mapping["logical_channels"] = [dict(link, message_ids=[t["id"] for t in checked["communication"] if link["id"] in t["links"]])
+                                    for link in blocks["links"]]
+    mapping["layout_requirements"] = {
+        "scope":"proposed logical instance/endpoint constraints; physical data unknown",
+        "instances":[{"id":r["id"], "master":None, "width_um":None, "height_um":None,
+                      "position_um":None, "orientation":None,
+                      "logical_ports":[p["id"] for p in r["ports"]]} for r in blocks["resources"]],
+        "connection_ids":[link["id"] for link in blocks["links"]], "physical_qualified":False}
+    event_for = {e["ref"]:e["id"] for e in graph["events"]}
+    stores = {s["id"]:s for s in graph["storages"]}
+    positions = {e["id"]:i for i,e in enumerate(graph["events"])}
+    mapping["value_lifetimes"] = []
+    for t in graph["tensors"]:
+        uses = [event_for[c] for c in t["consumers"]]
+        uses += [event_for[tr["id"]] for tr in graph["transfers"] if tr["tensor"] == t["id"]]
+        mapping["value_lifetimes"].append({"tensor":t["id"],
+            "produced_event":event_for.get(t["producer"]),
+            "use_events":sorted(set(uses),key=positions.get),
+            "last_use_event":max(uses,key=positions.get) if uses else None,
+            "reserved_storage_release_event":stores[t["storage"]]["end"],
+            "scope":"value use and static reservation are distinct; no automatic deallocation"})
+    for c in mapping["communication"]:
+        c["send_complete_event"] = c["event"]
+        c["destination_release_event"] = stores[c["destination_storage"]]["end"]
     summary = dict(schema_version="workload-summary/1", logical={"status":"pass", "scope":checked["scope"]},
         reference_assets={"status":"not_executed"}, physical={"status":"not_executed", "missing":[
             "same-version instances and ports", "real fixed M8 access routes", "frozen base and technology via evidence"]},
@@ -408,5 +437,8 @@ def build(graph, blocks):
             "status":"pass" if ledger["resource_input"] is not None else "not_executed",
             "full_graph_compatible":False, "incompatibilities":ledger["incompatibilities"],
             "omitted_semantics":["event order", "state versions", "alias/lifetime", "instance/port identity", "physical bindings"]})
+    missing = [reason for reason in checked["unresolved"] if any(k in reason for k in ("metadata unknown", "packet cost blocked", "protocol unknown", "fifo_bytes unknown", "width_bits unknown"))]
+    summary["communication"] = {"status":"blocked" if missing else "pass", "missing":missing,
+        "scope":"listed known messages and interface declarations; no bandwidth/time or physical qualification"}
     return dict(mapping_request=mapping, resource_input=ledger["resource_input"],
                 resource_report=ledger["resource_report"], summary=summary)
