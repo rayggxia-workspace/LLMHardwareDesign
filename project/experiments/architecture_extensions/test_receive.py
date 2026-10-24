@@ -26,7 +26,7 @@ def granite_fixture(root):
     cap, numeric = root / "capture", root / "numeric"
     cap.mkdir(); numeric.mkdir()
     np.savez_compressed(cap / "capture.npz", tokens=np.arange(4))
-    save_manifest(cap, kind="granite_capture", extra={"model_revision": "b" * 40})
+    save_manifest(cap, kind="granite_capture", extra={"model_revision": "b" * 40,"status":"PASS"})
     z = {"common_unit_exp": np.asarray(-8, np.int16)}
     w = dict(dots=[], requants=[], routing=[], merges=[])
     for i in range(32):
@@ -72,6 +72,86 @@ def granite_fixture(root):
     save_manifest(numeric, kind="granite_numeric", extra={"model_revision":"b"*40,
                   "source":{"commit":"a"*40, "capture_manifest_sha256":r.sha(cap/"manifest.json")}})
     return numeric, cap
+
+
+def synthetic_copy_witness(objects, tag="synthetic"):
+    nodes=[];end=0
+    capacities={"BUS":1}
+    for bank in r.TRANSPORT_SIZES:
+        capacities["PORT:"+bank]=1
+        for d in ("TX","RX"):
+            capacities["EP:"+bank+":"+d]=1;capacities["FIFO:"+bank+":"+d]=2048
+    for src,dst,size,label,base_src,base_dst in objects:
+        for off in range(0,size,1984):
+            amount=min(1984,size-off)
+            rd=(base_src+off)%16;rd=(rd+amount+15)//16
+            wr=((base_dst+off)%16+amount+15)//16;wb=(amount+47)//16;duration=rd+wb+wr
+            reservations=[dict(resource="PORT:"+src,offset=0,duration=rd,amount=1),
+                          dict(resource="BUS",offset=rd,duration=wb,amount=1),
+                          dict(resource="PORT:"+dst,offset=rd+wb,duration=wr,amount=1)]
+            for bank,d in ((src,"TX"),(dst,"RX")):
+                reservations.extend([dict(resource="EP:"+bank+":"+d,offset=0,duration=duration,amount=1),
+                                     dict(resource="FIFO:"+bank+":"+d,offset=0,duration=duration,amount=amount)])
+            n=dict(id=len(nodes),kind="packet",deps=[] if not nodes else [len(nodes)-1],duration=duration,
+                   start=end,end=end+duration,reservations=reservations,
+                   meta=dict(src=src,dst=dst,payload_bytes=amount,wire_bytes=wb*16,object_bytes=size,object_offset=off,
+                             src_address=base_src+off,dst_address=base_dst+off,label=label))
+            nodes.append(n);end+=duration
+    return dict(tag=tag,precision={"return":"S32","accumulator":"S64"},inventory_bytes=r.TRANSPORT_SIZES,
+                wire_contract=dict(beat_bytes=16,header_bytes=32,max_payload=1984,fifo_bytes=2048,external_port_ii=1),
+                capacities=capacities,nodes=nodes)
+
+
+def transport_fixture(root):
+    source=root/"source";source.mkdir();(source/"payload.txt").write_text("synthetic input")
+    save_manifest(source)
+    result=root/"transport";result.mkdir();rows=[]
+    for layout in ("roundrobin","all_one"):
+        for strategy in ("fifo","critical"):
+            objects=[("EXT","V",98,"token route IDs/Q15/input/down scales/common unit",0,4608)]
+            for t in range(6):
+                for e in range(8):
+                    bank="S"+str(e if layout=="roundrobin" else 0)
+                    objects.extend([("EXT",bank,1024,"expert S32 return backing->staging",0,0),
+                                    ("EXT","M",1536,"actual Q31 multiplier/int16 shift backing->M",0,0),
+                                    ("M","V",1536,"RQ parameters M->V",0,1024),
+                                    (bank,"V",1024,"expert S32 return staging->V",0,0)])
+                objects.append(("V","EXT",1024,"merged S32 tile store",0,0))
+            tag="granite-t256-"+layout+"-"+strategy
+            w=synthetic_copy_witness(objects,tag)
+            got,_=r.transport_nodes(w)
+            (result/(tag+".json.gz")).write_bytes(__import__("gzip").compress(json.dumps(w,sort_keys=True).encode(),mtime=0))
+            rows.append(dict(tag=tag,suite="granite",tile=256,layout=layout,strategy=strategy,precision=w["precision"],
+                             logical_transmitted_bytes=got["payload_bytes"],wire_bytes=got["wire_bytes"],
+                             header_and_padding_bytes=got["wire_bytes"]-got["payload_bytes"],packets=got["packets"],
+                             route_payload_bytes=got["route_payload_bytes"]))
+    r.write_json(result/"metrics.json",dict(capacity_certificates=[],ledgers={"granite":{}},copy_calendars=rows))
+    save_manifest(result,kind="architecture_transport",extra={"sources":{"granite":{"path":str(source),
+                     "manifest_sha256":r.sha(source/"manifest.json")}}})
+    return result
+
+
+def partial_granite_fixture(root):
+    result,cap=granite_fixture(root)
+    good=dict(relative_l2=1e-7,max_abs=1e-4)
+    cases={name:dict(batch=1,prefill=64,decode=8,tokens=list(range(72)),cached=good.copy(),
+                     chunk16=good.copy(),moe_replay=good.copy(),passed=name=="calibration")
+           for name in ("calibration","evaluation")}
+    cases["evaluation"]["chunk16"]=dict(relative_l2=.001,max_abs=.01)
+    cm=r.read_json(cap/"manifest.json");cm.update(status="FAIL",cases=cases,
+                        correctness_gate=dict(relative_l2_max=2e-4,max_abs_max=2e-3,passed=False))
+    r.write_json(cap/"manifest.json",cm)
+    q=dict(capture_status="FAIL",quality_accepted=False,chunk_reference_accepted=False,
+           failed_checks=[dict(check="evaluation.chunk16",actual=cases["evaluation"]["chunk16"])],
+           original_correctness_gate=cm["correctness_gate"],
+           original_case_checks={name:{k:cases[name][k] for k in ("cached","chunk16","moe_replay","passed")}
+                                 for name in cases})
+    m=r.read_json(result/"manifest.json");m.update(status="PARTIAL_DIAGNOSTIC",reference_qualification=q,capture=str(cap))
+    m["source"]["capture_manifest_sha256"]=r.sha(cap/"manifest.json")
+    r.write_json(result/"manifest.json",m)
+    metrics=r.read_json(result/"metrics.json");metrics["reference_qualification"]=q
+    r.write_json(result/"metrics.json",metrics);r.rewrite_artifact_manifest(result,"metrics.json")
+    return result,cap,q
 
 
 class ReceiverTests(unittest.TestCase):
@@ -250,6 +330,61 @@ class ReceiverTests(unittest.TestCase):
         row=r.float_gate(np.array([1.1]),np.array([1.]),2e-4,1e-2)
         self.assertFalse(row["passed"])
         self.assertGreater(row["relative_l2"],row["relative_limit"])
+
+    def test_physical_metadata_crosses_bank_word(self):
+        self.assertEqual(r.beat_count(15,3),2)
+        self.assertEqual(r.beat_count(16,3),1)
+        with self.assertRaises(ValueError):r.beat_count(0,0)
+
+    def test_transport_full_fragment_and_unaligned_access(self):
+        w=synthetic_copy_witness([("EXT","V",4000,"test",15,0)])
+        got,_=r.transport_nodes(w)
+        self.assertEqual(got["packets"],3)
+        self.assertEqual(got["wire_bytes"],4096)
+        self.assertEqual(w["nodes"][0]["duration"],125+126+124)
+        w["nodes"][0]["meta"]["src_address"]=r.TRANSPORT_SIZES["EXT"]
+        with self.assertRaisesRegex(ValueError,"physical address capacity"):r.transport_nodes(w)
+
+    def test_transport_independent_overlap_sweep(self):
+        w=synthetic_copy_witness([("EXT","V",16,"a",0,0),("EXT","V",16,"b",0,0)])
+        w["nodes"][1]["deps"]=[];w["nodes"][1]["start"]=0;w["nodes"][1]["end"]=w["nodes"][1]["duration"]
+        with self.assertRaisesRegex(ValueError,"resource overlap"):r.transport_nodes(w)
+
+    def test_transport_actual_rehashed_wire_and_ledger_negatives(self):
+        result=transport_fixture(self.root)
+        self.assertEqual(r.transport(result)["profiles"],4)
+        neg=r.negatives("transport",result,None,self.root/"neg")
+        self.assertEqual([x["status"] for x in neg],["REJECTED","REJECTED"])
+        self.assertIn("packet/header/physical-beat",neg[0]["reason"])
+        self.assertIn("whole calendar byte ledger",neg[1]["reason"])
+
+    def test_partial_reference_requires_explicit_scope_and_preserves_fail(self):
+        result,cap,q=partial_granite_fixture(self.root)
+        with self.assertRaisesRegex(ValueError,"not complete"):r.granite(result,cap)
+        received=r.granite(result,cap,diagnostic=True)
+        self.assertTrue(received["partial_diagnostic"])
+        self.assertEqual(received["reference_qualification"]["capture_status"],"FAIL")
+        q["quality_accepted"]=True
+        with self.assertRaisesRegex(ValueError,"FAIL qualification"):r.granite_qualification(r.read_json(cap/"manifest.json"),q,diagnostic=True)
+
+    def test_partial_scope_never_accepts_cached_failure(self):
+        result,cap,q=partial_granite_fixture(self.root)
+        cm=r.read_json(cap/"manifest.json");cm["cases"]["evaluation"]["cached"]["max_abs"]=1.
+        with self.assertRaisesRegex(ValueError,"requires cached"):r.granite_qualification(cm,q,diagnostic=True)
+
+    def test_partial_transport_retains_original_reference_chain(self):
+        folder=self.root/"model";folder.mkdir()
+        result,cap,q=partial_granite_fixture(folder)
+        trans=transport_fixture(self.root)
+        m=r.read_json(trans/"manifest.json")
+        m.update(status="PARTIAL_DIAGNOSTIC",diagnostic_failed_chunk_explicit=True,reference_qualifications={"granite":q},
+                 sources={"granite":dict(path=str(result),manifest_sha256=r.sha(result/"manifest.json"),
+                                          status="PARTIAL_DIAGNOSTIC",reference_qualification=q)})
+        r.write_json(trans/"manifest.json",m)
+        metrics=r.read_json(trans/"metrics.json");metrics["reference_qualifications"]={"granite":q}
+        r.write_json(trans/"metrics.json",metrics);r.rewrite_artifact_manifest(trans,"metrics.json")
+        with self.assertRaisesRegex(ValueError,"not complete"):r.transport(trans)
+        self.assertTrue(r.transport(trans,diagnostic=True)["partial_diagnostic"])
 
 
 if __name__ == "__main__":

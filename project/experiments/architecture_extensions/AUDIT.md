@@ -5,6 +5,7 @@
 ```text
 python -B receive.py --model granite --result NUMERIC --capture CAPTURE --producer-source FROZEN/granite.py --binding RECEIVE_BINDING.json --out NEW_AUDIT
 python -B receive.py --model falcon --result FALCON --producer-source FROZEN/falcon.py --binding RECEIVE_BINDING.json --out NEW_AUDIT
+python -B receive.py --model transport --result TRANSPORT01 --repeat TRANSPORT02 --producer-source FROZEN/transport.py --binding RECEIVE_BINDING.json --out NEW_AUDIT
 ```
 
 `RECEIVE_BINDING.json` 至少含真实 `commit` 和本文件 `receive_sha256`。`--producer-source` 对照实际冻结 producer 文件；省略时回执明确记为未执行，只核 manifest 中 SHA 格式。输出目录必须不存在。默认创建实际改写文件并重算 manifest SHA 的负例；`--skip-negatives` 只能产生 `PARTIAL`。
@@ -19,6 +20,8 @@ python -B receive.py --model falcon --result FALCON --producer-source FROZEN/fal
 - 实际负例：改写完整 dot 的保存累加值、改写量化路由选择；重新生成 NPZ 和 manifest SHA 后仍须由数学/语义检查拒绝。原始文件保持不变。
 
 softmax、SiLU、scale 选择、除法和 Q31 系数生成仍有浮点桥；这些不获得整数 SFU、宽乘硬件或端到端质量资格。
+
+原始 reference 失败时默认拒收。仅在显式 `--diagnostic-failed-chunk` 下，允许原门限不变、cal/eval cached 与完整 MoE replay 都过、cal chunk 过且**唯一 evaluation.chunk16 失败**的有限局部诊断。接收独立核原 manifest 与 qualification 链；数学见证通过仍输出 `PARTIAL_DIAGNOSTIC`，不会把原始 FAIL 改成整模型参考 PASS。transport 同样需要此开关并完整透传失败链。
 
 ## Falcon 决策见证
 
@@ -35,8 +38,18 @@ softmax、SiLU、scale 选择、除法和 Q31 系数生成仍有浮点桥；这�
 
 原生门限（不根据结果放宽）：full/cached 末 logits、layer0 chunks 输出/完整 cache 的 relL2 ≤ `2e-4` 且 maxabs ≤ `1e-2`；并行汇合 ≤ `2e-6` / `1e-3`；FP64 head state/y 相对原生 ≤ `2e-4` / `1e-3`。
 
+投影的浮点编码桥有明确求值 dtype：原始 norm×MuP 输入为 FP32，保存时无损转成 FP64；dynamic max/127 与输入除法仍在 FP32，static Python-float scale 和输入除法为 FP64。接收按这些实际规则重建，严格等值检查 scale、codes 与 dots，不能把文件保存 dtype 当作另一种量化器。旧接收将 dynamic scale 按 FP64 重建所致的失败应保留，修接收后仅重跑审计。
+
+## COPY/PORT-IO 独立接收
+
+transport 接收不导入 producer 或 producer 调用的 checker。它重新核所有实际来源 manifest/artifacts、完整日历 gzip、每个分包的 header/padding、连续对象与银行地址、每次访问的 128-bit 拍数，以及依赖和资源容量事件扫描。不同地址不能免费拼接：例如 offset=15 的 3-byte 元数据须两拍。每个已声明 suite/tile 都有相同两种 staging layout 与两种策略预算，配置数从实际清单推导。
+
+完整消费者义务另外检查：Granite top8 的所有返回/RQ 参数两跳路径；Falcon 先 gate 后 norm 的首遍 raw+gate、完整4096归约屏障和第二遍 raw/gate/gamma；residual+A+R 三输入与一输出；完整 head state 所有 proposal 写入先于 published-state 读取。FP32 搬运和 S16 存储候选分列，不能将 FP32 图改称 S32/INT8 递推性能。
+
+实际负例改写 wire 字段和消费者字节账，并更新 gzip/JSON 及 manifest SHA；必须由独立公式或消费者检查拒绝。此接收只证明 COPY/PORT-IO 下界合同，没有添加算术、宽乘、非线性、原子 guard 的零成本假设，也没有把该下界称整图服务或物理周期。
+
 ## 执行状态与边界
 
-2026-10-24 在本机运行 `python scripts/check_project.py` 通过，随后在任务专用 D 盘 TEMP 下运行 `python -B -m unittest discover -s project/experiments/architecture_extensions -p test_receive.py -v`，20 个小合成边界检查通过。包含完整 8×1536 合成 merge、实际重写 SHA 的 dot/route 负例、小 Mamba2 状态与 epoch 描述拒绝。
+2026-10-24 在本机运行 `python scripts/check_project.py` 通过，随后在任务专用 D 盘 TEMP 下运行 `python -B -m unittest discover -s project/experiments/architecture_extensions -p test_receive.py -v`，28 个小合成边界检查通过。包含完整 8×1536 合成 merge、实际重写 SHA 的 dot/route/wire/ledger 负例、小 Mamba2 状态与 epoch 描述拒绝、FP32 编码桥差异及显式 PARTIAL 失败链约束。
 
 这不是服务器真实模型接收回执。真实接收必须由服务器对实际输出执行以上 CLI，保存 `audit.json`、源码 commit/文件 SHA、运行命令和 Slurm 作业证据后才能记录。接收通过仅表示此有界数据/数学合同通过；没有全模型 W8A8 质量、真实 INT8 性能、无浮点硬件、RTL/PPA 或最终物理边界验收。

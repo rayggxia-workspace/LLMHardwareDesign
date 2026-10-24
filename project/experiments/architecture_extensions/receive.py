@@ -4,6 +4,8 @@ Producer modules are never imported. Python integers are the dot/RNE oracle;
 FP64/Decimal state bridges are explicitly separate from integer execution.
 """
 import argparse
+from collections import defaultdict
+import gzip
 import hashlib
 import json
 import math
@@ -52,11 +54,11 @@ def artifact(path):
     return dict(bytes=Path(path).stat().st_size, sha256=sha(path))
 
 
-def manifest(folder):
+def manifest(folder, *, allowed_statuses=()):
     """Hash every indexed artifact, not only tensors selected by the oracle."""
     folder = Path(folder)
     m = read_json(folder / "manifest.json")
-    require(m.get("status") in ("PASS", "EXECUTED"), "execution manifest not complete")
+    require(m.get("status") in ("PASS", "EXECUTED") + tuple(allowed_statuses), "execution manifest not complete")
     entries = m.get("artifacts", {})
     if isinstance(entries, list):
         require(len({x["path"] for x in entries}) == len(entries), "duplicate artifacts")
@@ -267,9 +269,43 @@ def check_capture_binding(result, capture):
     require(wanted == sha(Path(capture) / "manifest.json"), "capture manifest binding")
 
 
-def granite(result, capture):
-    m, files = manifest(result)
-    cm, cf = manifest(capture)
+def granite_qualification(cm, q, *, diagnostic=False):
+    if cm.get("status")=="PASS":
+        require(not q or q.get("capture_status")=="PASS","Granite reference status chain")
+        return False
+    require(diagnostic and cm.get("status")=="FAIL" and cm.get("kind")=="granite_capture",
+            "retained reference FAIL requires explicit diagnostic scope")
+    gate=cm.get("correctness_gate",{})
+    require(gate==dict(relative_l2_max=2e-4,max_abs_max=2e-3,passed=False),"original failed reference gate unchanged")
+    require(set(cm.get("cases",{}))=={"calibration","evaluation"},"failed reference exact cases")
+    def passes(value,relative=2e-4,absolute=2e-3):
+        a,b=float(value["relative_l2"]),float(value["max_abs"])
+        require(math.isfinite(a) and math.isfinite(b) and a>=0 and b>=0,"finite original reference metrics")
+        return a<=relative and b<=absolute
+    for name in ("calibration","evaluation"):
+        row=cm["cases"][name]
+        require((row["batch"],row["prefill"],row["decode"],len(row["tokens"]))==(1,64,8,72),
+                "original failed reference token protocol")
+        require(passes(row["cached"]) and passes(row["moe_replay"],2e-5,2e-3),
+                "partial scope requires cached and complete MoE replay")
+    cal,ev=cm["cases"]["calibration"],cm["cases"]["evaluation"]
+    require(passes(cal["chunk16"]) and not passes(ev["chunk16"])
+            and cal["passed"] is True and ev["passed"] is False,"only evaluation.chunk16 may fail")
+    expected_checks={name:{k:cm["cases"][name][k] for k in ("cached","chunk16","moe_replay","passed")}
+                     for name in ("calibration","evaluation")}
+    require(q.get("capture_status")=="FAIL" and q.get("quality_accepted") is False
+            and q.get("chunk_reference_accepted") is False
+            and q.get("failed_checks")==[dict(check="evaluation.chunk16",actual=ev["chunk16"])]
+            and q.get("original_correctness_gate")==gate and q.get("original_case_checks")==expected_checks,
+            "retained reference FAIL qualification chain")
+    return True
+
+
+def granite(result, capture, *, diagnostic=False):
+    m, files = manifest(result,allowed_statuses=("PARTIAL_DIAGNOSTIC",) if diagnostic else ())
+    cm, cf = manifest(capture,allowed_statuses=("FAIL",) if diagnostic else ())
+    partial=granite_qualification(cm,m.get("reference_qualification",{}),diagnostic=diagnostic)
+    require(not partial or m["status"]=="PARTIAL_DIAGNOSTIC","failed reference never promoted to EXECUTED/PASS")
     source_commit(m); source_commit(cm)
     check_capture_binding(m, capture)
     require(m.get("kind") == "granite_numeric" and cm.get("kind") == "granite_capture",
@@ -291,6 +327,8 @@ def granite(result, capture):
         expected = np.rint(z[key][0] * 32768).astype(np.int64)
         require(np.array_equal(expected, z[row["gate_q15"]]), "selected-route gate binding")
     metrics = read_json(Path(result) / "metrics.json")
+    require(not partial or metrics.get("reference_qualification")==m["reference_qualification"],
+            "Granite metrics retained FAIL chain")
     cases = metrics["cases"]
     require(len(cases) == 8 and {x["route"] for x in cases} ==
             {"route_fixed_diagnostic", "route_recomputed"}, "Granite route controls")
@@ -308,6 +346,7 @@ def granite(result, capture):
                 capture_manifest_sha256=sha(Path(capture)/"manifest.json"),
                 artifacts_checked=len(files) + len(cf), dots=verify_dots(z, w["dots"]),
                 requants=verify_requants(z, w["requants"]), routing=rows, merges=merges,
+                partial_diagnostic=partial,reference_qualification=m.get("reference_qualification"),
                 qualification="32 full-K dots and 4 complete top8/H1536 merges; not all layer dots or full-model quality; FP softmax/SiLU/scale bridges remain")
 
 
@@ -573,6 +612,254 @@ def falcon(result):
                 qualification="Mamba2 FP64/update with fixed integer state storage; not GDN or all-integer recurrence; canonical descriptors are analysis metadata")
 
 
+TRANSPORT_SIZES = dict(V=16384, R=32768, M=32768,
+                       **{"S"+str(i):32768 for i in range(8)}, EXT=128*1024*1024)
+
+
+def beat_count(offset, amount):
+    require(type(offset) is int and type(amount) is int and offset >= 0 and amount > 0,
+            "physical access domain")
+    return (offset % 16 + amount + 15) // 16
+
+
+def transport_nodes(witness):
+    """Independent packet/address/access formula and capacity event sweep."""
+    require(witness["inventory_bytes"] == TRANSPORT_SIZES, "matched finite transport inventory")
+    wire = witness["wire_contract"]
+    require(all(wire[k] == v for k,v in dict(beat_bytes=16,header_bytes=32,
+                max_payload=1984,fifo_bytes=2048,external_port_ii=1).items()), "fixed transport wire contract")
+    nodes = witness["nodes"]
+    require(len(nodes) > 0, "nonempty transport trace")
+    capacities = {"BUS":1}
+    for bank in TRANSPORT_SIZES:
+        capacities["PORT:"+bank]=1
+        for d in ("TX","RX"):
+            capacities["EP:"+bank+":"+d]=1
+            capacities["FIFO:"+bank+":"+d]=2048
+    require(witness["capacities"] == capacities, "matched transport port/FIFO capacities")
+    events = defaultdict(lambda: defaultdict(int))
+    ancestors = []
+    payload = wire_bytes = packets = io_beats = 0
+    routes, labels = defaultdict(int), defaultdict(int)
+    object_pending = None
+    for i,n in enumerate(nodes):
+        require(n["id"] == i and type(n["duration"]) is int and n["duration"] > 0,
+                "transport unique node/duration")
+        require(type(n["start"]) is int and n["start"] >= 0
+                and n["end"] == n["start"] + n["duration"], "transport calendar interval")
+        deps = n["deps"]
+        require(len(set(deps)) == len(deps) and all(type(d) is int and 0 <= d < i for d in deps),
+                "transport dependency domain")
+        require(all(nodes[d]["end"] <= n["start"] for d in deps), "transport dependency timing")
+        mask = 0
+        for d in deps:
+            mask |= ancestors[d] | (1 << d)
+        ancestors.append(mask)
+        m=n["meta"]
+        if n["kind"] == "packet":
+            src,dst,p = m["src"],m["dst"],m["payload_bytes"]
+            require(src in TRANSPORT_SIZES and dst in TRANSPORT_SIZES and src != dst
+                    and type(p) is int and 0 < p <= 1984, "transport packet endpoint/payload")
+            require(type(m["object_bytes"]) is int and type(m["object_offset"]) is int
+                    and 0 <= m["object_offset"] < m["object_bytes"]
+                    and m["object_offset"] + p <= m["object_bytes"], "transport packet object bounds")
+            require(p == min(1984,m["object_bytes"]-m["object_offset"]), "complete packet fragmentation")
+            for direction,bank in (("src",src),("dst",dst)):
+                address=m[direction+"_address"]
+                require(type(address) is int and address >= 0 and address + p <= TRANSPORT_SIZES[bank],
+                        "transport physical address capacity")
+            signature=(src,dst,m["object_bytes"],m["src_address"]-m["object_offset"],
+                       m["dst_address"]-m["object_offset"],m["label"])
+            if m["object_offset"] == 0:
+                require(object_pending is None, "incomplete previous copy object")
+            else:
+                require(object_pending == (signature,m["object_offset"]), "copy contiguous object address/offset")
+            object_pending = None if m["object_offset"]+p == m["object_bytes"] else (signature,m["object_offset"]+p)
+            rd,wr=beat_count(m["src_address"],p),beat_count(m["dst_address"],p)
+            wb=(p+32+15)//16
+            require(m["wire_bytes"] == wb*16 and n["duration"] == rd+wb+wr,
+                    "transport independent packet/header/physical-beat formula")
+            expected=[dict(resource="PORT:"+src,offset=0,duration=rd,amount=1),
+                      dict(resource="BUS",offset=rd,duration=wb,amount=1),
+                      dict(resource="PORT:"+dst,offset=rd+wb,duration=wr,amount=1)]
+            for bank,d in ((src,"TX"),(dst,"RX")):
+                expected.extend([dict(resource="EP:"+bank+":"+d,offset=0,duration=n["duration"],amount=1),
+                                 dict(resource="FIFO:"+bank+":"+d,offset=0,duration=n["duration"],amount=p)])
+            payload+=p;wire_bytes+=wb*16;packets+=1
+            routes[src+"->"+dst]+=p;labels[m["label"]]+=p
+        elif n["kind"] == "local_io":
+            require(object_pending is None, "copy fragments interrupted by IO")
+            bank=m["bank"]
+            require(bank in TRANSPORT_SIZES and len(m["accesses"])>0, "explicit physical local IO accesses")
+            totals=dict(read=0,write=0);beats=0
+            for access in m["accesses"]:
+                direction,offset,amount=access["direction"],access["offset"],access["bytes"]
+                require(direction in totals and type(amount) is int and amount>0 and type(offset) is int
+                        and offset>=0 and offset+amount<=TRANSPORT_SIZES[bank], "local IO physical address")
+                totals[direction]+=amount;beats+=beat_count(offset,amount)
+            require(totals["read"] == m["read_bytes"] and totals["write"] == m["write_bytes"]
+                    and n["duration"] == beats, "per-access bank word service, no free byte concatenation")
+            expected=[dict(resource="PORT:"+bank,offset=0,duration=beats,amount=1)]
+            io_beats+=beats
+        else:
+            raise ValueError("unknown transport node kind")
+        canonical=lambda x:json.dumps(x,sort_keys=True,separators=(",",":"))
+        require(sorted(map(canonical,n["reservations"])) == sorted(map(canonical,expected)),
+                "transport exact reservations")
+        for item in n["reservations"]:
+            resource,amount,duration=item["resource"],item["amount"],item["duration"]
+            start=n["start"]+item["offset"]
+            require(resource in capacities and duration>0 and amount>0 and item["offset"]>=0
+                    and item["offset"]+duration<=n["duration"], "transport reservation domain")
+            events[resource][start]+=amount;events[resource][start+duration]-=amount
+    require(object_pending is None, "final copy object complete")
+    for resource,calendar in events.items():
+        used=0
+        for t,delta in sorted(calendar.items()):
+            used+=delta
+            require(0<=used<=capacities[resource], "independent transport resource overlap "+resource)
+        require(used==0,"closed transport calendar")
+    return dict(nodes=len(nodes),packets=packets,payload_bytes=payload,wire_bytes=wire_bytes,
+                local_io_physical_beats=io_beats,route_payload_bytes=dict(routes),label_payload_bytes=dict(labels),
+                makespan=max(n["end"] for n in nodes)), ancestors
+
+
+def transport_consumer(witness, row, metrics, ancestors):
+    nodes=witness["nodes"];suite=row["suite"]
+    require(row["tag"]==suite+"-t"+str(row["tile"])+"-"+row["layout"]+"-"+row["strategy"],
+            "transport profile parameter tag")
+    labels=defaultdict(int)
+    for n in nodes:
+        if n["kind"]=="packet":labels[n["meta"]["label"]]+=n["meta"]["payload_bytes"]
+    if suite == "granite":
+        H=1536
+        require(labels["expert S32 return backing->staging"]==8*H*4
+                and labels["actual Q31 multiplier/int16 shift backing->M"]==8*H*6
+                and labels["merged S32 tile store"]==H*4,"Granite complete top8 physical payload")
+        require(labels["token route IDs/Q15/input/down scales/common unit"]==98,
+                "Granite route/scale metadata payload")
+        require(labels["expert S32 return staging->V"]==8*H*4
+                and labels["RQ parameters M->V"]==8*H*6,"Granite full staging paths")
+    elif suite == "falcon-norm-join":
+        ledger=metrics["ledgers"]["falcon"];H=ledger["norm_width"];D=ledger["join_width"]
+        require(H==4096 and D==2560,"actual Falcon complete consumer widths")
+        first_gate=0 if ledger["norm_before_gate"] else H*4
+        require(labels["gatednorm first-scan gate backing->S"]==first_gate,
+                "gatednorm first-pass gate physical read")
+        for label in ("gatednorm full-row reduction scan","gatednorm x second read backing->S",
+                      "gatednorm gate backing->S","gatednorm gamma backing->S","gatednorm FP32 output"):
+            require(labels[label]==H*4,"complete gatednorm plane "+label)
+        for label in ("gatednorm scan staging->V","gatednorm x second read staging->V",
+                      "gatednorm gate staging->V","gatednorm gamma staging->V"):
+            require(labels[label]==H*4,"complete gatednorm staging plane "+label)
+        require(labels["gatednorm first-scan gate staging->V"]==first_gate,"gatednorm first-pass gate staging")
+        require(ledger["norm_minimum_logical_FP32_source_and_output_bytes"]==H*4*(5 if ledger["norm_before_gate"] else 6),
+                "complete gatednorm ledger planes")
+        for label in ("A branch output","R branch output","residual hidden input","residual+A/R FP32 joined output"):
+            require(labels[label]==D*4,"complete residual/A/R physical join "+label)
+        for label in ("A branch staging->join","R branch->join","residual staging->join"):
+            require(labels[label]==D*4,"complete residual/A/R staging path "+label)
+        require(ledger["join_logical_FP32_input_and_output_bytes"]==D*4*4
+                and ledger["join_descriptors_bytes"]==64,"complete residual join ledger")
+        reduction=[n["id"] for n in nodes if n["kind"]=="local_io" and n["meta"]["label"].startswith("global reduction minimum IO")]
+        second=[n["id"] for n in nodes if n["kind"]=="local_io" and n["meta"]["label"].startswith("gatednorm complete-row dependency")]
+        require(reduction and second and all(all(ancestors[j]&(1<<i) for i in reduction) for j in second),
+                "full4096 reduction barrier before every tile consumer")
+    elif suite in ("falcon-state-FP32","falcon-state-S16-candidate"):
+        bits=32 if suite.endswith("FP32") else 16
+        amount=128*256*(bits//8)
+        for label in ("committed head state tile backing->S","proposal state backing write",
+                      "published state output readback backing->S"):
+            require(labels[label]==amount,"complete Falcon head state "+label)
+        for label in ("committed complete-N tile S->R","proposal complete-N tile R->S","published complete-N state S->R"):
+            require(labels[label]==amount,"complete Falcon state staging path "+label)
+        proposals=[n["id"] for n in nodes if n["kind"]=="packet" and n["meta"]["label"]=="proposal state backing write"]
+        outputs=[n["id"] for n in nodes if n["kind"]=="packet" and n["meta"]["label"]=="published state output readback backing->S"]
+        require(proposals and outputs and all(all(ancestors[j]&(1<<i) for i in proposals) for j in outputs),
+                "whole state proposal barrier before readback")
+        precision=row["precision"]["state_precision"]
+        require((bits==32 and precision=="captured FP32") or
+                (bits==16 and "STORAGE CANDIDATE ONLY" in precision),"state format bridge qualification")
+    else:
+        raise ValueError("unreviewed transport suite")
+    if suite=="granite":
+        stage_labels=("expert S32 return backing->staging",)
+    elif suite=="falcon-norm-join":
+        stage_labels=("gatednorm full-row reduction scan","gatednorm first-scan gate backing->S",
+                      "gatednorm x second read backing->S","gatednorm gate backing->S",
+                      "gatednorm gamma backing->S","A branch output","residual hidden input")
+    else:
+        stage_labels=("committed head state tile backing->S","published state output readback backing->S")
+    for label in stage_labels:
+        copies=[n["meta"] for n in nodes if n["kind"]=="packet" and n["meta"]["label"]==label
+                and n["meta"]["object_offset"]==0]
+        for index,m in enumerate(copies):
+            expected="S"+str(index%8 if row["layout"]=="roundrobin" else 0)
+            require(m["dst"]==expected,"declared staging placement "+label)
+
+
+def transport(result, *, repeat=None, diagnostic=False):
+    allowed=("PARTIAL_DIAGNOSTIC",) if diagnostic else ()
+    m,files=manifest(result,allowed_statuses=allowed);source_commit(m)
+    require(m.get("kind")=="architecture_transport","transport execution kind")
+    metrics=read_json(Path(result)/"metrics.json")
+    sources={}
+    for name,source in m["sources"].items():
+        directory=Path(source["path"])
+        sm,checked=manifest(directory,allowed_statuses=allowed)
+        require(sha(directory/"manifest.json")==source["manifest_sha256"],"transport source manifest binding")
+        if sm["status"]=="PARTIAL_DIAGNOSTIC":
+            require(name=="granite" and source.get("status")=="PARTIAL_DIAGNOSTIC",
+                    "only explicit Granite diagnostic transport source")
+            cm,_=manifest(Path(sm["capture"]),allowed_statuses=("FAIL",))
+            check_capture_binding(sm,Path(sm["capture"]))
+            granite_qualification(cm,sm.get("reference_qualification",{}),diagnostic=diagnostic)
+            require(source.get("reference_qualification")==sm["reference_qualification"],"transport source qualification chain")
+        sources[name]=dict(manifest_sha256=source["manifest_sha256"],artifacts=len(checked),status=sm["status"],
+                           reference_qualification=sm.get("reference_qualification"))
+    require(sources,"actual transport sources")
+    partial=any(v["status"]=="PARTIAL_DIAGNOSTIC" for v in sources.values())
+    if partial:
+        qualifications={k:v["reference_qualification"] for k,v in sources.items() if v.get("reference_qualification")}
+        require(m["status"]=="PARTIAL_DIAGNOSTIC" and m.get("diagnostic_failed_chunk_explicit") is True
+                and m.get("reference_qualifications")==qualifications
+                and metrics.get("reference_qualifications")==qualifications,"transport retained reference FAIL chain")
+    for cert in metrics["capacity_certificates"]:
+        bank=cert["bank"]
+        capacity=8*32768 if bank=="S_ALL" else TRANSPORT_SIZES[bank]
+        require(all(type(v) is int and v>=0 for v in cert["objects"].values()),"certificate integer objects")
+        amount=sum(cert["objects"].values())
+        require(cert["required_bytes"]==amount and cert["capacity_bytes"]==capacity
+                and cert["excess_bytes"]==max(0,amount-capacity)
+                and cert["status"]==("FITS_CAPACITY_ONLY" if amount<=capacity else "REJECT_CAPACITY"),
+                "independent finite capacity certificate")
+    rows=metrics["copy_calendars"];require(rows,"nonempty transport profiles")
+    require(len({row["tag"] for row in rows})==len(rows),"unique transport profiles")
+    expected_files={"metrics.json"}|{r["tag"]+".json.gz" for r in rows}
+    require(set(files)==expected_files,"all transport profiles indexed, no unexamined calendars")
+    checks=[];groups=defaultdict(set)
+    for row in rows:
+        path=Path(result)/(row["tag"]+".json.gz")
+        w=json.loads(gzip.decompress(path.read_bytes()))
+        require(w["tag"]==row["tag"] and w["precision"]==row["precision"],"transport profile binding")
+        got,ancestors=transport_nodes(w)
+        require(got["payload_bytes"]==row["logical_transmitted_bytes"] and got["wire_bytes"]==row["wire_bytes"]
+                and got["wire_bytes"]-got["payload_bytes"]==row["header_and_padding_bytes"]
+                and got["packets"]==row["packets"] and got["route_payload_bytes"]==row["route_payload_bytes"],
+                "independent whole calendar byte ledger")
+        transport_consumer(w,row,metrics,ancestors)
+        checks.append(dict(tag=row["tag"],**{k:v for k,v in got.items() if k!="label_payload_bytes"}))
+        groups[(row["suite"],row["tile"])].add((row["layout"],row["strategy"]))
+    require(all(v=={(l,s) for l in ("roundrobin","all_one") for s in ("fifo","critical")} for v in groups.values()),
+            "equal layout and strategy budgets within every declared suite/tile")
+    if repeat:
+        rm,rf=manifest(repeat,allowed_statuses=allowed)
+        require(set(rf)==set(files) and all(rf[n]==files[n] for n in files),"transport repeated scientific artifact SHA")
+    return dict(profiles=len(rows),sources=sources,artifacts_checked=len(files),partial_diagnostic=partial,
+                certificates=len(metrics["capacity_certificates"]),calendars=checks,
+                qualification="source-bound COPY/PORT-IO lower bound; no arithmetic, full-model service, integer recurrence, or physical timing acceptance")
+
+
 def rewrite_artifact_manifest(folder, name):
     path = Path(folder) / "manifest.json"
     m = read_json(path)
@@ -614,14 +901,33 @@ def replace_npz(folder, name, z):
     rewrite_artifact_manifest(folder, name)
 
 
-def negatives(model, result, capture, out):
+def negatives(model, result, capture, out, *, diagnostic=False):
     """Real edited artifacts with fresh SHA, rejected by math/semantic checks."""
     records = []
     original_sha = sha(Path(result) / "manifest.json")
-    for label in ("code", "route" if model == "granite" else "epoch"):
+    labels=("wire","consumer") if model=="transport" else ("code", "route" if model == "granite" else "epoch")
+    for label in labels:
         dest = Path(out) / label
         negative_folder(result, dest)
-        if model == "granite":
+        if model == "transport":
+            metrics=read_json(dest/"metrics.json")
+            if label=="wire":
+                name=metrics["copy_calendars"][0]["tag"]+".json.gz"
+                w=json.loads(gzip.decompress((dest/name).read_bytes()))
+                first=next(n for n in w["nodes"] if n["kind"]=="packet")
+                first["meta"]["wire_bytes"]+=16
+                temp=(dest/name).with_suffix(".rewrite.gz")
+                temp.write_bytes(gzip.compress(json.dumps(w,sort_keys=True,separators=(",",":"),allow_nan=False).encode(),mtime=0))
+                temp.replace(dest/name)
+                rewrite_artifact_manifest(dest,name)
+            else:
+                if "falcon" in metrics["ledgers"]:
+                    metrics["ledgers"]["falcon"]["norm_minimum_logical_FP32_source_and_output_bytes"]-=16384
+                else:
+                    metrics["copy_calendars"][0]["logical_transmitted_bytes"]-=1
+                temp=dest/"metrics.rewrite.json";write_json(temp,metrics);temp.replace(dest/"metrics.json")
+                rewrite_artifact_manifest(dest,"metrics.json")
+        elif model == "granite":
             z = load_npz(dest / "witnesses.npz")
             if label == "code":
                 z["acc_0"] = z["acc_0"] + np.int64(1)
@@ -644,9 +950,11 @@ def negatives(model, result, capture, out):
             temp.replace(dest / "report.json")
             rewrite_artifact_manifest(dest, "report.json")
         # Demonstrate that these are semantic failures, not stale-SHA failures.
-        manifest(dest)
+        manifest(dest,allowed_statuses=("PARTIAL_DIAGNOSTIC",) if diagnostic else ())
         try:
-            granite(dest, capture) if model == "granite" else falcon(dest)
+            if model=="granite":granite(dest,capture,diagnostic=diagnostic)
+            elif model=="falcon":falcon(dest)
+            else:transport(dest,diagnostic=diagnostic)
         except ValueError as e:
             require("artifact SHA/size" not in str(e), "negative must pass hashes")
             records.append(dict(label=label, status="REJECTED", reason=str(e),
@@ -654,19 +962,22 @@ def negatives(model, result, capture, out):
         else:
             raise ValueError("actual rehashed negative was accepted: " + label)
     require(sha(Path(result) / "manifest.json") == original_sha, "producer manifest was mutated")
-    manifest(result)
+    manifest(result,allowed_statuses=("PARTIAL_DIAGNOSTIC",) if diagnostic else ())
     return records
 
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--model", choices=("granite", "falcon"), required=True)
+    p.add_argument("--model", choices=("granite", "falcon", "transport"), required=True)
     p.add_argument("--result", type=Path, required=True)
     p.add_argument("--capture", type=Path)
+    p.add_argument("--repeat", type=Path, help="transport second round scientific artifact SHA comparison")
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--binding", type=Path)
     p.add_argument("--producer-source", type=Path,
                    help="frozen producer source file to verify the manifest source hash")
+    p.add_argument("--diagnostic-failed-chunk",action="store_true",
+                   help="explicit local diagnostics with the original Granite evaluation.chunk16 FAIL retained")
     p.add_argument("--skip-negatives", action="store_true",
                    help="explicit partial receipt only; standard acceptance includes edited artifacts")
     a = p.parse_args()
@@ -683,20 +994,24 @@ def main():
             require(expected == sha(__file__), "receiver source hash binding")
             receipt["source"] = b
         pm = read_json(a.result / "manifest.json")
-        producer_sha = pm.get("producer_sha256") if a.model == "falcon" else pm.get("source", {}).get("granite_sha256")
+        producer_sha = (pm.get("producer_sha256") if a.model == "falcon" else
+                        pm.get("source", {}).get("transport_sha256" if a.model=="transport" else "granite_sha256"))
         require(re.fullmatch("[0-9a-f]{64}", producer_sha or "") is not None, "producer source SHA receipt")
         if a.producer_source:
             require(sha(a.producer_source) == producer_sha, "frozen producer source SHA mismatch")
             receipt["producer_source_checked"] = str(a.producer_source)
         else:
             receipt["producer_source_checked"] = "NOT_EXECUTED; manifest SHA syntax only, source capsule must be checked externally"
-        receipt["checks"] = granite(a.result, a.capture) if a.model == "granite" else falcon(a.result)
+        if a.model=="granite":receipt["checks"]=granite(a.result,a.capture,diagnostic=a.diagnostic_failed_chunk)
+        elif a.model=="falcon":receipt["checks"]=falcon(a.result)
+        else:receipt["checks"]=transport(a.result,repeat=a.repeat,diagnostic=a.diagnostic_failed_chunk)
         if a.skip_negatives:
             receipt["status"] = "PARTIAL"
             receipt["negatives"] = "NOT_EXECUTED"
         else:
-            receipt["negatives"] = negatives(a.model, a.result, a.capture, a.out / "negatives")
-            receipt["status"] = "PASS"
+            receipt["negatives"] = negatives(a.model, a.result, a.capture, a.out / "negatives",diagnostic=a.diagnostic_failed_chunk)
+            receipt["status"] = "PARTIAL_DIAGNOSTIC" if receipt["checks"].get("partial_diagnostic") else "PASS"
+            receipt["mathematical_reception"]="PASS"
     except Exception as e:
         receipt["error"] = type(e).__name__ + ": " + str(e)
         write_json(a.out / "audit.json", receipt)
