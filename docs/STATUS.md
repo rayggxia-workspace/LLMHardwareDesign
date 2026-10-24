@@ -1,5 +1,7 @@
 # 当前状态
 
+- 2026-10-24 [Issue70/PR71](experiments/issue-70-moe-hybrid.md)：Granite/Falcon服务器最小集已执行。Falcon23项原生/FP64门与独立接收通过，S16/S32固定范围均4sat；Granite eval chunk16失败定位至layer13/token42路由放大，原FAIL保留，32dot/32RQ/4merge仅PARTIAL_DIAGNOSTIC。24配置COPY-only双轮/独立接收完成，非完整算术或PPA。保留六逻辑模板，新增动态路由/宽merge、二维state tile、4096跨head norm及三输入join义务；物理归属未冻结。SHA归档/交付整理中；待审查合并非done；登记pending、看板unverified/同步pending。
+
 - 2026-10-24 [Issue68/PR69](experiments/issue-68-range-service.md)：服务器完成R每轮native12/legacy72条件、12个精选条件独立数学接收、4checkpoint；旧24源中guard_rescale全部完整/零发布sat，static_guard有8个停止，保留原1508sat诊断。28个服务分片完成，两套各56配置/112witness、双轮SHA一致、全部独立接收；每套48轨迹级标签对照0差。tile16本地shadow作为条件工作基线，完整clone/retry/单位预扫/端口/缓冲已计价；wide lowering仍是条件假设，不冻结独立R宏或V/R合宏。69项新增边界测试和原164研究回归通过；精选可离线核验，完整数据留授权服务器。待审查合并，非done；登记pending、看板unverified/同步pending。
 
 - 2026-10-24 [Issue66/PR67](experiments/issue-66-scale-state.md)：服务器90059–90082共24作业实际完成，补完整H2560消费者/下一16输出、整数RMSNorm、连续conv/R及真实256步范围诊断，科学双轮与主接收/精选重放通过。S32短32步输出约0.057%对S16约0.64%，但长窗同范围仍Sat184/193；早转K128省128B/row却增加norm/未最终RQ的next16误差；V整行超16KiB必须重读/spill。修订[Block v2第8/9节](BLOCK_PARTITION_V2.md)，固定单位/归约/owner/epoch/range义务，保留物理归属候选。19.58MB精选在仓库、5.21GB全量在授权服务器有SHA；Phi封存，无新模型下载。剩余有限V/R/S服务、R范围/重定标、FP桥和物理资格；待审查合并，非整图/硬件验收，登记pending/看板unverified同步pending。

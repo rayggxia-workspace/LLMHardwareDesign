@@ -121,3 +121,12 @@ D15把真实近1 decay中106/512编码成1，D31消除了这一分辨率损失�
 V完整H2560 mixed sum+unit为25600B，超过16KiB。服务先付原SoA到K128 blocked打包，再完整5120B单位预扫，随后比较两遍源读或aligned spill，gamma与新A8/Ae另计。不能把选了finest unit后的对齐当免费，也不能把旧6084/6404B每行下界说成已经含本次新增预扫/布局成本。
 
 两套各56配置/112完整调度均已双轮及独立接收，每套48对同lane/路由标签对照为零差。tile16本地shadow在两个EXT条件下作为下一轮工作基线；tile32/S侧shadow线上流量更大，norm spill有多字节却同周期的反例。shared8是另一发射粒度，不把其较短周期归成合宏收益。当前S8宽算术假设下R lane接近饱和、BUS较空，下一步先校准宽算术/合法M阵列复用及真实端口，不据此冻结独立R宏或V/R合宏。保留完整guard、两代分页、试算副本、单位/epoch和原子发布义务；不赠整状态SRAM或无回退的原位更新。
+
+
+## 11. Issue70：小MoE与并行Attention/SSM
+
+[Granite/Falcon服务器最小集及独立接收](experiments/issue-70-moe-hybrid.md)新增两类架构。Granite cached/MoE重放过门，但eval chunk16在layer13/token42跨极小top8边界，整参考保留FAIL；局部W8A8/共同S32+Q31/Q15/S64合并仅PARTIAL_DIAGNOSTIC，不能列质量通过。需动态expert ID/dispatch、显式unit与宽merge接口，不能固定所见专家或免费驻留全部权重。48KiB返回、18KiB全acc+一partial超V16KiB，tile256/512为容量候选；逐坐标RQ参数73728B/token使参数因式分解/epoch驻留也是位置决策因素，未固化近M。
+
+Falcon FP32/FP64连续性23门及完整层/head见证通过独立接收；S16/S32范围均约±8、均4sat，0.606%为FP64更新+整数存储诊断。单head128KiB/64KiB均超R32KiB，tile按D/N参数化，旧GDN tile16不可直接搬。gate后4096单group norm需跨head完整归约，residual+A+R三输入join显式；不能全驻V16KiB。全模型FP32 SSM单独128MiB，旧EXT加conv/KV即拒绝。
+
+六逻辑模板保留，动态路由、R连续/range/epoch与V完整消费者更有依据。24种COPY-only配置双轮/独立端口接收仅提供同库存搬运/容量证据，不含算术/全权重/KV，不决定独立R/V-R合宏、真实芯片周期或E2E。Falcon Mamba2专属因果重定标及完整整数链、Granite高精度路由合同/参数驻留待后续验证；Phi封存、成员55/63不变。

@@ -143,3 +143,10 @@ project/experiments/qwen3_trace/使用独立D盘环境（torch2.10.0+cpu、trans
 正式工具为`project/experiments/range_service/`，[README](../project/experiments/range_service/README.md)、RANGE/SERVICE/AUDIT/PORTABLE说明冻结profile和独立接收。先`python -B scripts/check_project.py`，再在已有NumPy环境执行`python -B -m unittest discover -s project/experiments/range_service -p "test_*.py"`（本批69项）；TEMP/TMP置D盘独立任务目录。全部真实数值/服务和完整接收已在本人CPU服务器Slurm并行执行，无新模型。
 
 精选R包：`python -B project/experiments/range_service/portable_r.py verify --bundle project/experiments/range_service/results/issue-68/portable-r.zip --out <新D盘receipt.json> --negative`。精选服务：`python -B project/experiments/range_service/service_selected.py verify --index project/experiments/range_service/results/issue-68/service-selected/index.json --out <新D盘receipt.json>`；仅验所列调度/容量/元数据，不重做原NPZ算术。完整复跑所需旧Issue66数据、逐phase源码/配置/SHA及Slurm命令见新统一索引和work68，现有输出不得覆盖。
+
+
+## Issue70 小MoE与并行Attention/SSM
+
+正式工具project/experiments/architecture_extensions，详见其README及GRANITE/FALCON/TRANSPORT/AUDIT/FALCON_ERRATA。先运行 python -B scripts/check_project.py，再用已有NumPy环境运行 python -B -m unittest discover -s project/experiments/architecture_extensions -p "test_*.py"；本机TEMP/TMP指向D盘任务目录。实际模型/数值/端口/完整接收均仅本人服务器Slurm新Issue70目录执行，逐phase源码绑定/实际命令见work/Liangruizhi/70及results/issue-70/index.json。
+
+原Granite capture FAIL默认拒绝；显式 --diagnostic-failed-chunk 仅在严格收窄条件下给PARTIAL_DIAGNOSTIC，receiver/transport透传。granite_diagnose.py与独立verify_diagnose.py保留原失败/固定ID反事实限定。receive.py --model falcon 独立验码、连续性和状态存储；--model transport --repeat 第二轮目录 核字节/资源。所有out均须新目录，复跑使用原来源胶囊源码而非新HEAD。COPY时隙和FP桥非硬件性能。归档命令见work/Liangruizhi/70/COLLECT.md，权重不进仓库。
