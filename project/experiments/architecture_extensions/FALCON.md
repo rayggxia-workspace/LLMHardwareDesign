@@ -85,3 +85,7 @@ Tests: `python -B -m unittest discover -s project/experiments/architecture_exten
 They exercise scalar recurrence, RNE/saturation, chunk/reset/epoch/unit/position
 errors, causal prefix, complete-K INT32 and bit-specific capacity accounting.
 They are boundary tests, not actual model execution or hardware tests.
+
+The first actual server capture has a preserved accounting correction in
+[FALCON_ERRATA.md](FALCON_ERRATA.md). Its original report and numerical arrays
+remain immutable; current source corrects join reads and labels scale witnesses.

@@ -158,7 +158,8 @@ def costs(config, length, *, state_bits=32, conv_bits=32, kv_bits=32, scale_bits
             "state_rmw_payload_per_layer_token": 2 * state_payload,
             "head0_state_rmw_128bit_beats": 2 * math.ceil(d * n * state_bits / 128),
             "hybrid_norm_fanout_payload_per_layer_token_fp32": 2 * hidden * 4,
-            "hybrid_branch_join_read_payload_per_layer_token_fp32": 2 * hidden * 4,
+            "hybrid_branch_join_read_payload_per_layer_token_fp32": 3 * hidden * 4,
+            "hybrid_branch_join_read_components": ["residual", "attention_branch", "mamba_branch"],
             "hybrid_join_write_payload_per_layer_token_fp32": hidden * 4,
             "mamba_gated_norm_vector_elements": inner,
             "mamba_gated_norm_raw_gate_gamma_payload_fp32": 3 * inner * 4,
@@ -230,11 +231,16 @@ def _w8a8(cal_x, eval_x, weight):
         key = name + "_"
         arrays.update({key + "input_code": qx, key + "input_scale": scale,
                        key + "accumulator": acc.astype(np.int32), key + "dequant": dequant})
+        serialized_bytes = int(scale.size * 8)
+        minimum_unique_bytes = 8 if name == "cal_static_tensor" else serialized_bytes
         results.append({"scheme": name, "activation_saturations": int(np.count_nonzero(np.abs(unclip) > 127)),
                         "error": metric(dequant, eval_x @ w.T), "K": w.shape[1], "outputs": w.shape[0],
                         "int32_worst_case_abs_bound": int(w.shape[1] * 127 * 127),
                         "max_actual_accumulator_abs": int(np.max(np.abs(acc))),
-                        "weight_scale_bytes": int(ws.size * 8), "activation_scale_bytes": int(scale.size * 8),
+                        "weight_scale_bytes": int(ws.size * 8), "activation_scale_bytes": serialized_bytes,
+                        "serialized_activation_scale_metadata_bytes": serialized_bytes,
+                        "minimum_unique_activation_scale_parameter_bytes_fp64": minimum_unique_bytes,
+                        "scale_metadata_qualification": "activation_scale_bytes is the serialized per-row FP64 witness array, not minimum physical transport. Static tensor scale is one unique8B scalar; dynamic row scale is8B/row. Broadcast/residency, descriptor/packet overhead, format conversion and port service require an explicit transport contract.",
                         "qualification": "Software INT32 dot reference; floating scale/dequant; no INT8 throughput claim."})
     return results, arrays
 
