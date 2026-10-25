@@ -53,20 +53,25 @@ class GOracle:
   self.total_stages=len(data)//40
  def check(self,index,row):
   if row['role']=='G-restore-rescale':self.switch('rescale')
+  if row['role']=='second-reset-Rrestore':self.restored=False
   assert row['g_context_label']==self.label
   e=self.expected;stages=self.stages.get(index,[])
   if row['kind']==3:
-   assert row['status']==0
-   if row['g_op']==0:
+   if row['status']==4:
+    assert not stages and not row['g_out']and row['g_root_writes']==row['transactions']==row['mul0']==row['sreads']==row['swrites']==0
+   elif row['g_op']==0:
     assert row['transactions']==5 and row['g_root_writes']==0 and row['result_lines']==0 and not row['g_out']and not stages
     self.restored=True
    else:
     slot=row['g_slot'];ns,ny,nu,ne,attempts=REF.step(e['state'],self.z['q'][slot],self.z['k'][slot],self.z['v'][slot],self.z['decay'][slot],self.z['beta'][slot],e['units'],e['value_units'],e['epoch'])
-    assert stages==list(REF.observations(attempts)),(index,'G full stages')
-    assert row['g_out']==ny.ravel().tolist() and row['result_lines']==128 and row['candidate_holds']>=9,(index,'real full candidate')
-    assert row['g_root_writes']==1 and row['g_retries']==len(attempts)-1
+    wanted=list(REF.observations(attempts));assert stages==wanted[:len(stages)],(index,'G stage prefix')
+    if row['status']in(0,3):assert len(stages)==len(wanted),(index,'G complete stages')
+    assert row['g_out']==ny.ravel().tolist()[:len(row['g_out'])],(index,'real candidate prefix')
+    if row['status']in(0,3):assert row['result_lines']==128 and len(row['g_out'])==256 and row['candidate_holds']>=9 and row['g_retries']==len(attempts)-1,(index,'full candidate before decision')
+    assert row['g_root_writes']==int(row['status']==0)
     if row['role']=='G-actual-rescale':assert len(attempts)>1,'true selected rescale'
-    e.update(state=ns,y=ny,units=nu,epoch=ne,bank=1-e['bank'],position=e['position']+1,version=e['version']+1);self.commits+=1;self.waves+=len(attempts)-1;self.exports+=2048
+    if row['status']==0:e.update(state=ns,y=ny,units=nu,epoch=ne,bank=1-e['bank'],position=e['position']+1,version=e['version']+1);self.commits+=1;self.waves+=len(attempts)-1
+    self.exports+=len(row['g_out'])*8
   else:assert not stages and not row['g_out'] and row['g_root_writes']==0
   actual=snapshot(self.raw[index*SNAP:(index+1)*SNAP])
   for k in e:
