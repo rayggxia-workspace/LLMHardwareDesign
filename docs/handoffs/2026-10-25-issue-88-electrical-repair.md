@@ -2,7 +2,7 @@
 
 仓库：https://github.com/rayggxia-workspace/LLMHardwareDesign；负责人Liangruizhi（认证ID182389313/email2663955430@qq.com）；分支task/88-electrical-repair；工作目录D:/Projects/LLMHardwareDesign-electrical-repair；基于Issue86 e3a8fee。主会话统一push/PR/Issue/看板/个人与共享进度，本子任务未推送、未开PR、未合并。正式提交号以交付git HEAD为准；源码冻结修复+gate phase7@835f330，最终STA/独立接收phase10@e98a16f，工具链/归档phase11@c85c993。
 
-四个原Issue84变体的8次完整消费者门级执行通过，all03独立整数/原全部cell-pin及端口连接证书通过；原DFF未变，两档负载下内部slew/cap、全非恒定setup/hold端点均无违例。静态source条件、所有新增BUF/tie、上游input负载和排除项详见docs/experiments/issue-88-electrical-repair.md。8条最终+4条中间gate实际执行；57自有Slurm作业全部结束（51完成、2失败、4取消）；不存在本任务未结束作业。未修改85/92运行时逻辑、其他成员55/63、参考资料包。
+四个原Issue84变体的8次完整消费者门级执行通过，all03独立整数/原全部cell-pin及端口连接证书通过；原DFF未变，两档负载下内部slew/cap、全非恒定setup/hold端点均无违例。静态source条件、所有新增BUF/tie及原单元2589/2015/2569/2013次drive-strength变更、上游input负载和排除项详见docs/experiments/issue-88-electrical-repair.md。8条最终+4条中间gate实际执行；57自有Slurm作业全部结束（51完成、2失败、4取消）；不存在本任务未结束作业。未修改85/92运行时逻辑、其他成员55/63、参考资料包。
 
 成果：project/experiments/electrical_repair/results/issue-88，包含receipt、逐输入负载、结构证书、库单位、工具环境、精选归档、delivery-index、服务器双包byte回执、本机byte和原Git源回执。work/Liangruizhi/88/execution.json记录完整参数、11phase、57作业及资源。完整包128079530字节/851成员，SHA c9ae7a88887a3a987f25a499f6cdd940f41164fe9705c594eb2b969457627c25；精选5378081字节/738成员，SHA b8e5775d469ab787f412ad93329a1238ce9c4f2becfe2f9ecfffa53845cffefd。服务器根/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01。完整包留此授权共享存储。
 
