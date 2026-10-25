@@ -133,7 +133,7 @@ module r99(input wire clk,reset,cmd,input wire [1:0] command,input wire [4:0] he
  DT2:rr(product,16'sd12,DT3);
  DT3:begin if(round_bad||!fit32(round_out))bad<=1;pack[n[1:0]*32+:32]<=round_out[31:0];state<=DT4;end
  DT4:if(n[1:0]==3)ss(1,10'd162+{2'b0,n[7:2]},pack,PN8);else begin n<=n+1;state<=DT0;end
- PN8:if(n==255)begin if(bad)state<=CHECK;else state<=PD0;endelse begin n<=n+1;state<=DT0;end
+ PN8:if(n==255)begin if(bad)state<=CHECK;else state<=PD0;end else begin n<=n+1;state<=DT0;end
  PD0:ss(0,10'd2+{3'b0,d[6:2]},0,PD1);
  PD1:begin xvalue<=line_data[d[1:0]*32+:32];rowline<=0;state<=PL0;end
  PL0:ex(0,TRIAL+{d,10'b0}+{rowline,4'b0},0,PL1);
