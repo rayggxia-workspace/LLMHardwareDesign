@@ -224,3 +224,12 @@ project/experiments/epoch_boundary/README.md与PROTOCOL.md记录冻结源重放�
 ## Issue106：真实共享服务银行
 
 [协议](../project/experiments/shared_services/PROTOCOL.md)、[报告](experiments/issue-106-shared-services.md)及work106/execution列实际argv。先`python -B scripts/check_project.py`；所有原始整数/RTL/map/gate/数学接收在本人服务器。统一RTL4ec4bcf，完整混合phase3，最终恢复driver ee770a1/phase6，库存门级phase4与分析归档phase7。PC用work106/verify_delivery.py接收完整或精选归档，再verify_sources.py `--expected-phases 7`核原Gitblob，只做字节不做数学；所有恢复用新输出目录，不覆盖旧阶段。实际唯一服务L2不是宏/时序/制造后定制完成。
+
+## Issue104 完整两头 GDN / exact wide lowerer
+
+见 [README](../project/experiments/gdn_state/README.md)、[协议](../project/experiments/gdn_state/PROTOCOL.md)、[报告](experiments/issue-104-gdn-state.md)。PC先 `python -B scripts/check_project.py`，再 `project/experiments/gdn_state/verify_archive.py --kind selected` 只核字节。实际 native32/portable12、bigint、RTL/map/rawgate 仅本人服务器 issue104-gdn-state-20261025；work104/execution.json 保存精确参数。build02/phase3连续及map01，phase4实际gate导出，phase5/6 gate，phase6严格receiver，phase7 cost01，phase8归档。新输出目录且原结果只读；全两头事务不等于完整gatednorm、共享106或STA。
+
+
+## Issue109：四profile真实共享GDN
+
+[协议](../project/experiments/shared_gdn/PROTOCOL.md)、[复现入口](../project/experiments/shared_gdn/README.md)、[报告](experiments/issue-109-shared-gdn.md)。先`python -B scripts/check_project.py`。实际完整整数/RTL/map/rawgate仅本人服务器；正常RTL4b69d43、44cmd恢复fe14c02，最终receiver phase6、库存phase7、一次延长6000s gate与归档phase8@33f7a46。实际argv/Slurm与失败见work109/execution.json，所有复现用新输出目录。PC用work109/verify_delivery.py接收sealed index/selected.zip，再verify_sources.py `--expected-phases 8`核原Git字节；不运行模型或数学。GDN两头原子发布和共享2048B导出不等于输出gated norm或物理签核，元数据/外部sink及原子fabric义务见合同。

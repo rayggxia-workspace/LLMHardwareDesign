@@ -1,0 +1,173 @@
+{
+  "actual_sha256": "5bfe48e2f0be84e3e9069407a7d9df0cd5989151ca13a5c52577c6ea939d5866",
+  "cases": [
+    {
+      "case": 0,
+      "external_unchanged": true,
+      "restore_status": 9,
+      "step_status": 4
+    },
+    {
+      "case": 1,
+      "external_unchanged": true,
+      "restore_status": 9,
+      "step_status": 4
+    },
+    {
+      "case": 2,
+      "external_unchanged": true,
+      "restore_status": 9,
+      "step_status": 4
+    },
+    {
+      "case": 3,
+      "external_unchanged": true,
+      "restore_status": 9,
+      "step_status": 4
+    },
+    {
+      "case": 4,
+      "external_unchanged": true,
+      "restore_status": 9,
+      "step_status": 4
+    },
+    {
+      "case": 5,
+      "external_unchanged": true,
+      "restore_status": 9,
+      "step_status": 4
+    },
+    {
+      "case": 6,
+      "external_unchanged": true,
+      "restore_status": 9,
+      "step_status": 4
+    },
+    {
+      "case": 7,
+      "external_unchanged": true,
+      "restore_status": 9,
+      "step_status": 4
+    },
+    {
+      "case": 8,
+      "external_unchanged": true,
+      "restore_status": 9,
+      "step_status": 4
+    },
+    {
+      "case": 9,
+      "external_unchanged": true,
+      "restore_status": 9,
+      "step_status": 4
+    },
+    {
+      "case": 10,
+      "external_unchanged": true,
+      "restore_status": 9,
+      "step_status": 4
+    },
+    {
+      "case": 11,
+      "external_unchanged": true,
+      "restore_status": 9,
+      "step_status": 4
+    },
+    {
+      "case": 12,
+      "injected": 4294967294,
+      "kind": "generation_terminal_RTL_output_register_injection",
+      "observed": 4294967295,
+      "rejected_cycles": 11,
+      "stale_drained": 1
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--bind",
+        "/public/home/yuzelu/opt/eda:/eda:ro",
+        "--pwd",
+        "/public/home/yuzelu/RuizhiLiang/issue104-gdn-state-20261025/control01",
+        "/public/home/yuzelu/opt/eda/containers/orfs-26Q1-repacked.sif",
+        "/eda/verilator-5.042/bin/verilator",
+        "--cc",
+        "--exe",
+        "--build",
+        "-j",
+        "2",
+        "-Wno-fatal",
+        "--top-module",
+        "gdn104",
+        "--prefix",
+        "Vgdn104",
+        "--Mdir",
+        "/public/home/yuzelu/RuizhiLiang/issue104-gdn-state-20261025/control01/obj",
+        "-CFLAGS",
+        "-std=c++17 -O2",
+        "/public/home/yuzelu/RuizhiLiang/issue104-gdn-state-20261025/phase6/project/rtl/gdn_state/gdn104.sv",
+        "/public/home/yuzelu/RuizhiLiang/issue104-gdn-state-20261025/phase6/project/rtl/gdn_state/wide104.sv",
+        "/public/home/yuzelu/RuizhiLiang/issue104-gdn-state-20261025/phase6/project/rtl/runtime_cache/mul84.sv",
+        "/public/home/yuzelu/RuizhiLiang/issue104-gdn-state-20261025/phase6/project/rtl/norm_service/store82.sv",
+        "/public/home/yuzelu/RuizhiLiang/issue104-gdn-state-20261025/phase6/project/rtl/wide_service/memory_link.sv",
+        "/public/home/yuzelu/RuizhiLiang/issue104-gdn-state-20261025/phase6/project/experiments/gdn_state/control_sim.cpp"
+      ],
+      "exit": 0,
+      "seconds": 4.70387226017192
+    },
+    {
+      "argv": [
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--bind",
+        "/public/home/yuzelu/opt/eda:/eda:ro",
+        "--pwd",
+        "/public/home/yuzelu/RuizhiLiang/issue104-gdn-state-20261025/control01",
+        "/public/home/yuzelu/opt/eda/containers/orfs-26Q1-repacked.sif",
+        "/public/home/yuzelu/RuizhiLiang/issue104-gdn-state-20261025/control01/obj/Vgdn104",
+        "/public/home/yuzelu/RuizhiLiang/issue104-gdn-state-20261025/input-native3201/image.bin",
+        "/public/home/yuzelu/RuizhiLiang/issue104-gdn-state-20261025/control01"
+      ],
+      "exit": 0,
+      "seconds": 0.1786748399026692
+    }
+  ],
+  "control_sha256": "2e48611aaa09b89ddcb82ce6cb8ee75214462831da64b9091029dadca1db1951",
+  "input_manifest_sha256": "8d28b7d47d4b9989183581f10b509cfc387563dd8c1373a5420f428085b76539",
+  "limits": [
+    "terminal uses RTL register injection; not raw gate proof",
+    "invalid metadata is rejected; no authenticity claimed"
+  ],
+  "rows_sha256": "1242a954704fcff74fd12d238df4cdeb9b7854ff544e1cb204bb3745c020ee6d",
+  "schema": "gdn104-control-v1",
+  "source": {
+    "commit": "2b5bba488d16a2ef213de29b401af684da101323",
+    "sources": {
+      "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+      "project/experiments/gdn_state/PROTOCOL.md": "f989fdc7a13ba583d2fd0ca8ae3ef936a6a55ab96a3016c1ea7b38f9923edfde",
+      "project/experiments/gdn_state/contracts.py": "3ca93b254e48f470fad29afd3a4e1e98cd03dbbaad6549b65915b7bbfc504990",
+      "project/experiments/gdn_state/control_sim.cpp": "b2d2579997c64306471715076ae0a013cb118d94ae0380ed2d34c2a72cba8ad8",
+      "project/experiments/gdn_state/control_test.py": "12793bde8019b016d62cd2c3e7dae27a11b5d5221185a2f333b4e9f9edbf26a2",
+      "project/experiments/gdn_state/fixture_batch.py": "c127930e52a66317a0b8351edb5f8a62975ef3a315a2e5f4a9bbfcae3914063d",
+      "project/experiments/gdn_state/fixtures.py": "898e9ac4feba3b2353f62fc2a69a3ea00391bdc8ca2aeccac1194edd3fbece00",
+      "project/experiments/gdn_state/gate.py": "2fc43668cdf130d8e0e51cf13272341d3e0e3ea542a572bbe4a487521e063650",
+      "project/experiments/gdn_state/gdn_sim.cpp": "8bbb20077e0b8abd18d0ad478476c7a9ecca217934a55ebde8471d6ae76572d4",
+      "project/experiments/gdn_state/inputs.py": "a1bd15fbaec5c4fc05824c8dfe8761521cfffc891c31225bd557ffc8eed1d1b7",
+      "project/experiments/gdn_state/negative.py": "b6797eba5ffa22c8c14fff152f7db9367aabe03919898f013e204b33c5b60228",
+      "project/experiments/gdn_state/reference.py": "cd7bfd7a488e655dc7cb809df95d4388c80829089e7b5ff12f010f3d34108c2e",
+      "project/experiments/gdn_state/run.py": "67fea82172a4f57c5388104da42a080f2dd53c7c078a3de8b0ab086381887851",
+      "project/experiments/gdn_state/verify.py": "2e9982f4531bada205036c82108eb5ed9a8cc79e05c476920d9aba29ceec7ca3",
+      "project/experiments/gdn_state/wide_sim.cpp": "cabe65b1741c3cdc78b71db1da2edd300b1f6db2a1bb550eb494dfe1306d6e74",
+      "project/experiments/gdn_state/wide_test.py": "67865b136d665731e2839b6a8441cf0bd6f515382d7c81f00a70eca280543a31",
+      "project/experiments/gdn_state/wide_test104.sv": "21d43740ffb6816e31037a5ee3c1d3c682f81cc2242a12f789cacc3c1134a2ad",
+      "project/rtl/gdn_state/gdn104.sv": "06defa55ef52d84b519a3c32ded94f204bbd38ba3fe81ad622682a50e5e43d47",
+      "project/rtl/gdn_state/wide104.sv": "c623eb27ec992af1ae4411261ed75fccf886100fc294cf280f6a00c15905c890",
+      "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+      "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+      "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a"
+    }
+  },
+  "status": "PASS_INVALID_RESTORE_AND_TRANSPORT_TERMINAL"
+}
