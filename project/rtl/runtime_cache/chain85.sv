@@ -1,4 +1,4 @@
-module chain85(input wire clk,reset,abort,cmd,cache_mode,mem_hold,mul_hold,output wire cmd_ready,cmd_accept,
+module chain85(input wire clk,reset,soft_abort,cmd,cache_mode,mem_hold,mul_hold,output wire cmd_ready,cmd_accept,
  output reg [31:0] epoch,stale_responses,aborts,output wire [31:0] ext_epoch,input wire [31:0] ext_response_epoch,output wire mem_request,mul_request,
  input wire [31:0] epsilon,coefficient,output wire busy,done,input wire ack,output reg [7:0] status,
  input wire cfg,cfg_wr,input wire [9:0] cfg_addr,input wire [127:0] cfg_din,output wire cfg_ready,cfg_valid,input wire cfg_take,output wire [127:0] cfg_dout,
@@ -8,17 +8,17 @@ module chain85(input wire clk,reset,abort,cmd,cache_mode,mem_hold,mul_hold,outpu
  output wire mwrite,output wire [9:0] maddr,output wire [127:0] mdata,output wire [7:0] debug_state,
  output wire [31:0] cache_reads,cache_writes,mul_grants0,mul_grants1,mul_wait0,mul_wait1,mul_contested,
  output reg [31:0] port_wait_m,port_wait_n,output wire [4:0] mdebug,output wire [7:0] ndebug);
- wire core_reset=reset||abort;
+ wire core_reset=reset||soft_abort;
  reg [2:0] state;reg pending;reg [31:0] saved_epsilon,saved_coefficient;wire mdone,ndone,nbusy;wire [7:0] ms,ns;wire mreq,mready,mvalid,mtake;wire [31:0] m_address;wire [127:0] mreply;
  wire sr,sw,st,sready,svalid;wire nr,nw,nready,nvalid,nt;wire [9:0] na;wire [127:0] ni,sd;
  wire [7:0] normdebug;assign ndebug=normdebug;wire rready,rvalid;wire [127:0] rd;wire usecfg=!busy&&cfg;
- assign cmd_ready=!reset&&!abort&&state==0&&!pending&&!cfg&&epoch!=32'hffffffff;assign cmd_accept=cmd&&cmd_ready;
+ assign cmd_ready=!reset&&!soft_abort&&state==0&&!pending&&!cfg&&epoch!=32'hffffffff;assign cmd_accept=cmd&&cmd_ready;
  assign ext_epoch=epoch;wire link_take;wire response_match=ext_response_epoch==epoch;
  assign ext_take=response_match?link_take:1'b1;
  always @(posedge clk)begin
  if(reset)begin epoch<=0;stale_responses<=0;aborts<=0;end else begin
- if((abort||cmd_accept)&&epoch!=32'hffffffff)epoch<=epoch+1;
- if(abort)aborts<=aborts+1;
+ if((soft_abort||cmd_accept)&&epoch!=32'hffffffff)epoch<=epoch+1;
+ if(soft_abort)aborts<=aborts+1;
  if(ext_valid&&ext_take&&!response_match)stale_responses<=stale_responses+1;
  end end
  assign busy=state!=0;assign done=state==5;assign cfg_ready=!busy&&!pending&&rready;assign cfg_valid=pending&&rvalid;assign cfg_dout=rd;assign debug_state={5'b0,state};

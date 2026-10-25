@@ -20,7 +20,7 @@ static E step(){
  E e{bool(d.cfg&&d.cfg_ready),bool(d.cfg_valid&&d.cfg_take),bool(d.cmd_accept),{d.cfg_dout[0],d.cfg_dout[1],d.cfg_dout[2],d.cfg_dout[3]}};
  d.clk=1;d.eval();d.clk=0;d.eval();ticks++;
  if(d.reset){fifo.clear();extserial=0;}else{for(auto& f:fifo)if(f.delay>0)f.delay--;if(retire)fifo.pop_front();if(accept){need(address%16==0&&address+16<=payload.size(),"physical request address");W w{};for(int j=0;j<16;j++)w[j/4]|=uint32_t(payload[address+j])<<(8*(j%4));fifo.push_back({epoch,stall?1+int(extserial++%5):1,w});}}
- if(d.abort){seen=mulseen=false;waits=mulwait=0;serial=mulserial=0;}
+ if(d.soft_abort){seen=mulseen=false;waits=mulwait=0;serial=mulserial=0;}
  if(mulwait>0)mulwait--;if(!d.mul_request)mulseen=false;if(waits>0)waits--;if(!d.mem_request)seen=false;return e;
 }
 static W cfg(bool wr,int addr,W w={}){d.cfg=1;d.cfg_wr=wr;d.cfg_addr=addr;d.cfg_take=1;for(int i=0;i<4;i++)d.cfg_din[i]=w[i];int n=0;while(!step().cfg_req)need(++n<100,"cfg ready");d.cfg=0;for(n=0;n<100;n++){auto e=step();if(e.cfg_rsp)return e.data;}throw std::runtime_error("cfg response");}
@@ -38,12 +38,12 @@ static void start(bool collision=false){auto epoch=d.epoch;d.cmd=1;
  int n=0;while(!step().command)need(++n<20,"command ready handshake");need(d.epoch==epoch+1,"epoch advances per accept");command_count++;d.cmd=0;d.cache_mode^=1;d.epsilon=0;d.coefficient=0;
 }
 static void wait_done(){auto st=ticks;bool bad_pulse=false;while(!d.done){if(ticks-st==20){d.cmd=1;bad_pulse=true;}auto e=step();need(!e.command,"busy command unaccepted");if(bad_pulse)d.cmd=0;need(ticks-st<30000000,"whole chain watchdog");need(!d.cfg_ready,"busy blocks cfg");}}
-static void ack(){auto status=d.status,epoch=d.epoch;for(int j=0;j<4;j++){need(d.done&&!d.cmd_ready&&d.status==status&&d.epoch==epoch,"held done status");step();held_done++;}d.ack=1;step();d.ack=0;need(!d.busy,"ack idle");}
+static void ack(){unsigned status=d.status;auto epoch=d.epoch;for(int j=0;j<4;j++){need(d.done&&!d.cmd_ready&&d.status==status&&d.epoch==epoch,"held done status");step();held_done++;}d.ack=1;step();d.ack=0;need(!d.busy,"ack idle");}
 static void finish(const Case& c,int mode,const std::string& role){wait_done();need(d.status==0,"whole chain status");need(accs.size()==12288&&downs.size()==12288&&joins.size()==1536,"all internal observations");auto cy=d.cycles,ncy=d.norm_cycles;auto epoch=d.epoch;auto r=d.reads,w=d.writes,p=d.packets,mac=d.macs,mw=d.mwrites,cr=d.cache_reads,cw=d.cache_writes;auto beats=d.wire_beats-b0,tx=d.transactions-t0,mg0=d.mul_grants0-g0,mg1=d.mul_grants1-g1;ack();auto begin=ticks;std::vector<int32_t>result;for(int j=0;j<384;j++){auto ws=cfg(false,j);for(int k=0;k<4;k++)result.push_back(int32_t(ws[k]));}
  auto array=[&](auto&v){out<<"[";for(size_t i=0;i<v.size();i++){if(i)out<<",";out<<v[i];}out<<"]";};
  out<<"{\"name\":\""<<c.name<<"\",\"role\":\""<<role<<"\",\"cache\":"<<mode<<",\"epoch\":"<<epoch<<",\"status\":0,\"cycles\":"<<cy<<",\"norm_cycles\":"<<ncy<<",\"reads\":"<<r<<",\"writes\":"<<w<<",\"M_packets\":"<<p<<",\"M_MACs\":"<<mac<<",\"M_store_lines\":"<<mw<<",\"wire_beats\":"<<beats<<",\"transactions\":"<<tx<<",\"cache_reads\":"<<cr<<",\"cache_writes\":"<<cw<<",\"mul_grants0\":"<<mg0<<",\"mul_grants1\":"<<mg1<<",\"setup_edges\":"<<setup<<",\"result_edges\":"<<ticks-begin<<",\"acc\":";array(accs);out<<",\"down\":";array(downs);out<<",\"joined\":";array(joins);out<<",\"out\":";array(result);out<<"}\n";
 }
-static void abort_now(){auto e=d.epoch;d.abort=1;step();d.abort=0;need(!d.busy&&!d.done&&d.epoch==e+1,"abort clears pipeline and changes epoch");d.cmd=0;}
+static void abort_now(){auto e=d.epoch;d.soft_abort=1;step();d.soft_abort=0;need(!d.busy&&!d.done&&d.epoch==e+1,"abort clears pipeline and changes epoch");d.cmd=0;}
 int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);need(argc==4,"vectors output stall");stall=std::stoi(argv[3]);d.reset=1;step();step();d.reset=0;step();std::ifstream in(argv[1]);out.open(argv[2]);need(bool(in)&&bool(out),"files");std::vector<Case> cases;Case c;while(in>>c.name>>c.p0>>c.p1>>c.g>>c.coefficient)cases.push_back(c);need(cases.size()==6,"six cases");
  for(int i=0;i<6;i++)for(int m=0;m<2;m++){int mode=(i%2)?1-m:m;prepare(cases[i],mode);start(true);finish(cases[i],mode,"mixed");}
  c=cases[0];unsigned aborttests=0,errors=0;std::vector<std::pair<int,int>> stages={{1,15},{1,17},{1,5},{1,6},{1,21},{0,5},{2,4},{2,6},{2,8},{2,16}};
