@@ -10,12 +10,12 @@
 #include <stdexcept>
 using W=std::array<uint32_t,4>;static Vchain97 d;static uint64_t ticks=0;static int stall=0;static unsigned serial=0,mserial=0,eserial=0;static int swait=0,mwait=0;static bool sseen=false,mseen=false,hold_external=false;static unsigned high_water=0,accepted=0,aborted=0;
 struct Reply{uint32_t epoch;int delay;W data;};static std::deque<Reply> fifo;
-struct Case{std::string name,gu,records,gamma,lut;uint32_t coefficient;};static std::vector<uint8_t> gu,records,gamma,lut;static std::vector<int32_t> mids,acodes,accs,downs,joins;static std::ofstream out;
+struct Case{std::string name,gu,records,gamma_bytes,lut;uint32_t coefficient;};static std::vector<uint8_t> gu,records,gamma_bytes,lut;static std::vector<int32_t> mids,acodes,accs,downs,joins;static std::ofstream out;
 static void need(bool b,const char*s){if(!b)throw std::runtime_error(s);}
 static W memory(uint32_t a){const std::vector<uint8_t>*p=nullptr;uint32_t off=0;
  if(a>=0x04000000&&uint64_t(a)<0x04000000ull+gu.size()){p=&gu;off=a-0x04000000;}
  else if(a>=0x04100000&&uint64_t(a)<0x04100000ull+records.size()){p=&records;off=a-0x04100000;}
- else if(a>=0x04800000&&uint64_t(a)<0x04800000ull+gamma.size()){p=&gamma;off=a-0x04800000;}
+ else if(a>=0x04800000&&uint64_t(a)<0x04800000ull+gamma_bytes.size()){p=&gamma_bytes;off=a-0x04800000;}
  else if(a>=0x02000000&&uint64_t(a)<0x02000000ull+lut.size()){p=&lut;off=a-0x02000000;}
  need(p&&a%16==0&&off+16<=p->size(),"legal external byte read");W w{};for(int j=0;j<16;j++)w[j/4]|=uint32_t((*p)[off+j])<<(8*(j%4));return w;
 }
@@ -34,7 +34,7 @@ static E step(){d.clk=0;d.ext_ready=fifo.size()<2;d.ext_valid=!fifo.empty()&&!ho
 static W config(bool wr,int addr,W w={}){d.cfg=1;d.cfg_wr=wr;d.cfg_addr=addr;d.cfg_take=1;for(int i=0;i<4;i++)d.cfg_din[i]=w[i];int n=0;while(!step().cfg_req)need(++n<100,"cfg ready");d.cfg=0;for(n=0;n<100;n++){auto e=step();if(e.cfg_rsp)return e.data;}throw std::runtime_error("cfg response");}
 static void readfile(std::string p,std::vector<uint8_t>&v){std::ifstream f(p,std::ios::binary);need(bool(f),"source file");v.assign(std::istreambuf_iterator<char>(f),{});}
 static uint32_t b0,t0,g0,g1;static uint64_t before;
-static void prepare(const Case&c,bool only=false){readfile(c.gu,gu);readfile(c.records,records);readfile(c.gamma,gamma);readfile(c.lut,lut);need(gu.size()==32768&&records.size()==6488064&&gamma.size()==6144&&lut.size()==131072,"exact physical input sizes");
+static void prepare(const Case&c,bool only=false){readfile(c.gu,gu);readfile(c.records,records);readfile(c.gamma_bytes,gamma_bytes);readfile(c.lut,lut);need(gu.size()==32768&&records.size()==6488064&&gamma_bytes.size()==6144&&lut.size()==131072,"exact physical input sizes");
  config(true,512,{0xa5a5a5a5,0x12345678,0xdeadbeef,0x87654321});config(true,767,{0xa5a5a5a5,0,0,0});mids.clear();acodes.clear();accs.clear();downs.clear();joins.clear();serial=mserial=eserial=0;sseen=mseen=false;swait=mwait=0;
  d.gateup_address=0x04000000;d.records_address=0x04100000;d.gamma_address=0x04800000;d.owner=0x1234;d.input_version=100+accepted;d.epsilon=17;d.coefficient=c.coefficient;d.prep_only=only;b0=d.wire_beats;t0=d.transactions;g0=d.mul_grants0;g1=d.mul_grants1;before=ticks;
 }
@@ -50,7 +50,7 @@ static void finish(const Case&c,const std::string&role,bool only=false){wait_don
  need(config(false,512)[0]==0xa5a5a5a5&&config(false,767)[0]==0xa5a5a5a5,"unleased SRAM canaries retained");
  out<<"{\"name\":\""<<c.name<<"\",\"role\":\""<<role<<"\",\"prep_only\":"<<(only?"true":"false")<<",\"epoch\":"<<ep<<",\"status\":0,\"cycles\":"<<cy<<",\"v_cycles\":"<<vc<<",\"norm_cycles\":"<<nc<<",\"gate_reads\":"<<gr<<",\"up_reads\":"<<ur<<",\"lut_reads\":"<<ll<<",\"v_sreads\":"<<vsr<<",\"v_swrites\":"<<vsw<<",\"norm_reads\":"<<nr<<",\"norm_writes\":"<<nw<<",\"gamma_loads\":"<<gl<<",\"gamma_stores\":"<<gs<<",\"den_events\":"<<de<<",\"M_packets\":"<<packets<<",\"M_MACs\":"<<macs<<",\"M_writes\":"<<mwrites<<",\"cache_reads\":"<<cr<<",\"cache_writes\":"<<cw<<",\"wire_beats\":"<<beats<<",\"transactions\":"<<tx<<",\"mul_grants0\":"<<mg0<<",\"mul_grants1\":"<<mg1<<",\"sum_hex\":\""<<sum<<"\",\"den_hex\":\""<<den<<"\",\"mid\":";array(out,mids);out<<",\"A8\":";array(out,codes);out<<",\"delta\":";array(out,ds);out<<",\"acc\":";array(out,accs);out<<",\"down\":";array(out,downs);out<<",\"joined\":";array(out,joins);out<<",\"out\":";array(out,output);out<<"}\n";
 }
-int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);need(argc==5,"vectors output stall pilot");stall=std::stoi(argv[3]);bool pilot=std::stoi(argv[4]);d.reset=1;step();d.reset=0;step();std::ifstream f(argv[1]);out.open(argv[2]);need(bool(f)&&bool(out),"files");std::vector<Case>cases;Case c;while(f>>c.name>>c.gu>>c.records>>c.gamma>>c.lut>>c.coefficient)cases.push_back(c);need(cases.size()==6,"six bound inputs");
+int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);need(argc==5,"vectors output stall pilot");stall=std::stoi(argv[3]);bool pilot=std::stoi(argv[4]);d.reset=1;step();d.reset=0;step();std::ifstream f(argv[1]);out.open(argv[2]);need(bool(f)&&bool(out),"files");std::vector<Case>cases;Case c;while(f>>c.name>>c.gu>>c.records>>c.gamma_bytes>>c.lut>>c.coefficient)cases.push_back(c);need(cases.size()==6,"six bound inputs");
  if(pilot){prepare(cases[0],true);start();finish(cases[0],"prep-pilot",true);prepare(cases[0]);start();finish(cases[0],"chain-pilot");}else for(auto&x:cases){prepare(x);start();finish(x,"mixed");}
  std::ofstream p(std::string(argv[2])+".protocol.json");p<<"{\"schema\":\"v97-protocol-pilot-v1\",\"accepted\":"<<accepted<<",\"same_core_no_per_case_reset\":true,\"held_done\":true,\"latched_parameters\":true,\"fabric_high_water\":"<<high_water<<"}\n";std::cout<<"PASS_ACTUAL_V_M_NORM_EXECUTION\n";return 0;
  }catch(const std::exception&e){std::cerr<<e.what()<<" phase="<<unsigned(d.debug_state)<<" V="<<unsigned(d.vdebug)<<" M="<<unsigned(d.mdebug)<<" N="<<unsigned(d.ndebug)<<" status="<<unsigned(d.status)<<" ticks="<<ticks<<"\n";return 1;}}
