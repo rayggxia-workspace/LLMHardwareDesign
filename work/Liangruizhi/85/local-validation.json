@@ -1,0 +1,30 @@
+{
+  "time": "2026-10-25T12:16:38.309198+08:00",
+  "checks": [
+    {
+      "command": [
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\.venv\\Scripts\\python.exe",
+        "-B",
+        "scripts/check_project.py"
+      ],
+      "exit": 0,
+      "stdout": "PASS: Project management structure is valid (schema 1).\nNOTE: This does not validate product behavior, permissions, or live GitHub settings.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "AST parse runtime_cache/*.py",
+      "exit": 0,
+      "scope": "syntax only; formal numeric and RTL checks on server"
+    }
+  ]
+}

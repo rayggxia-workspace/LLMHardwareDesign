@@ -243,3 +243,7 @@ PR待审查/合并，审查人/管理员待指定，未done；后续在已有授
 ## 89838最终状态
 
 通用Yosys作业89838于2026-10-23 09:55:54 CST达到20分钟时限，Slurm最终TIMEOUT（elapsed20:28，batch0:15）。日志确认已进入PROC_MUX，未完成后续memory_collect/check/stat/JSON；未证明综合通过，也不能把工具超时解释为RTL功能错误。原始日志和SHA索引已保存work/Liangruizhi/29/audits/synth-timeout01/。 下一步保留同一源码，使用单配置-defer与RTLIL检查点分开前端和proc成本；该后续检查尚未执行。先前运行中快照仅代表其采集时刻。
+
+## 2026-10-25T12:16:13.088516+08:00 Issue85运行时缓存与恢复
+
+[Issue85](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/85) / [PR89](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/89)；task/85-runtime-cache。服务器正式60完整输出/22真实soft-abort/12错误/2迟到丢弃通过，模式选择同一个M核心，显式命令握手；logic-only+1.52715%/+97寄存bit，相同核心cycles。全包74.46MB/精选0.588MB与5phase86源已核。报告docs/experiments/issue-85-runtime-cache.md，交接docs/handoffs/2026-10-25-issue-85-runtime-cache.md。已上传PR89，Issue为in_review；审查/合并未完成，不done。下一步真实tag/总线、epoch边界、宏/STA；外部测试两响应槽未计core面积。登记/看板仍待处理。

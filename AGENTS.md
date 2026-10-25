@@ -1,5 +1,9 @@
 # AI 协作约定
 
+## 2026-10-25 Issue85运行时缓存及恢复
+
+本人服务器lrz-i85-*验证同一M核心运行时cache锁存、显式cmd_ready/accept、共享S32、单16KiB1RW和带epoch软中止；原84数据只读，源/input/output逐SHA。额外epoch接口和外部测试双响应槽单列成本，不能把核心面积称全fabric/宏/STA。结果与限制见project/experiments/runtime_cache/PROTOCOL.md；当前代理只本地提交，主会话统一上传/PR，不自合并或done。
+
 ## 2026-10-25 Issue84 缓存与算术共享
 
 只本人服务器lrz-i84-*并行，固定Issue82整数函数、16KiB单1RW、128bit五beat协议；比较A缓存与S32乘法器共享。缓存使用既有4KiB余量，新增寄存器/仲裁/装载/缓冲/端口均计价；同精度容量非同面积，非宏/STA/PPA。协议project/experiments/cache_share/PROTOCOL.md；无新模型/其他机器/成员55和63接管。

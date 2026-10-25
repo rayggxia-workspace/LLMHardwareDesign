@@ -186,3 +186,7 @@ project/experiments/qwen3_trace/使用独立D盘环境（torch2.10.0+cpu、trans
 RTL project/rtl/norm_service，工具project/experiments/norm_circuit；[README](../project/experiments/norm_circuit/README.md)、[报告](experiments/issue-82-norm-circuit.md)、[索引](../project/experiments/norm_circuit/results/issue-82/index.json)。本机先python -B scripts/check_project.py，再python -B -m unittest discover -s project/experiments/norm_circuit -p "test_*.py"和相关block_circuit同名检查；仅24小合成，TEMP/TMP置D盘任务目录。
 
 所有真实提取/矩阵/RTL/综合/独立数学在本人新CPU服务器lrz-i82-*；实际argv和8phase来源在work/Liangruizhi/82/execution.json。正式norm=phase1，RNE边界=phase6，最终M raw-unit批03/map04=phase7，发布源码phase8。已有输出不得覆盖。PC精选用closure/verify_delivery.py且archive basename必须selected.zip；原Git核验用work82/verify_sources.py --expected-phases 8，只核字节，不称完整数学重跑。实际payload、完整原码和构建/综合数据见服务器delivery03。
+
+## Issue85 runtime cache replay
+
+project/experiments/runtime_cache/README.md记录本人服务器新out的build/sim/strict verify/map命令。source/input/output逐SHA，formal modes share one executable; cpp只喂bytes、观测输出与握手，数学接收独立。字节命令：python -B work/Liangruizhi/85/verify_delivery.py --index <final/index.json> --archive <selected.zip> --out <new-receipt.json>；原Git字节：python -B work/Liangruizhi/85/verify_sources.py --repository <repo> --index <index> --selected <selected.zip> --expected-phases 5 --out <new-source-receipt.json>。完整数组重算仍仅本人授权服务器；勿把字节接收当RTL/STA签核。
