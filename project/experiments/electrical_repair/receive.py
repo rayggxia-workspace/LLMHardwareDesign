@@ -51,6 +51,11 @@ def audit(a,v,lib):
  except ValueError:pass
  else:raise ValueError('constant output mutation accepted')
  cert['negative_netlist_sha256']=sha(path);cert['prepared_manifest_sha256']=sha(prep/'manifest.json')
+ bad=copy.deepcopy(after);ff=next(n for n,c in bad['cells'].items()if c['type'].startswith('DFF'));oldbit=bad['cells'][ff]['connections']['D'][0];bad['cells'][ff]['connections']['D'][0]='1'if oldbit=='0'else'0';nf=a.out/f'negative-dff-v{v}.json';put(nf,bad)
+ try:certificate(before,load(nf),lib)
+ except ValueError:pass
+ else:raise ValueError('DFF data connection mutation accepted')
+ cert['negative_DFF_connection_sha256']=sha(nf)
  loads={'before':input_loads(before,lib),'after':input_loads(after,lib),'external_load_assumptions_fF':[1,10],'capacitance_policy':'nominal pin capacitance plus separate max(nominal,rise,fall); no wires; output aliases multiply each declared external load','upstream_driver_impedance':'not modeled; fixed input waveform and ideal clock do not qualify upstream or clock tree'}
  put(a.out/f'inputs-v{v}.json',loads);put(a.out/f'structure-v{v}.json',cert)
  return cert,pm
@@ -76,7 +81,15 @@ def timing(a,v,cert):
 def main():
  p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--variants',default='0,1,2,3');p.add_argument('--structure-only',action='store_true');a=p.parse_args();a.out.mkdir(exist_ok=False);bd=load(ROOT/'binding.json')
  for n,h in bd['sources'].items():need(sha(ROOT/n)==h,'receiver source SHA')
- lib=library(LIB);need(bool(re.search(r'DATABASE\s+MICRONS\s+\d+',TECH.read_text())),'LEF database unit declared')
+ lib=library(LIB);tech=TECH.read_text();lef=LEF.read_text();db=re.search(r'DATABASE\s+MICRONS\s+(\d+)',tech);need(bool(db),'LEF database unit declared')
+ macros={}
+ for match in re.finditer(r'(?m)^MACRO\s+(\S+)',lef):
+  n=match.group(1);body=lef[match.end():];end=re.search(r'(?m)^END\s+'+re.escape(n)+r'\s*$',body);need(bool(end),'LEF macro termination');body=body[:end.start()];size=re.search(r'SIZE\s+([0-9.]+)\s+BY\s+([0-9.]+)',body)
+  if size:macros[n]=Decimal(size.group(1))*Decimal(size.group(2))
+ used=set()
+ for v in map(int,a.variants.split(',')):used.update(c['type']for c in load(a.root/f'prepare-v{v}04/cut.json')['modules']['chain84']['cells'].values())
+ for n in used:need(n in macros and macros[n]==lib[n]['area'],'Liberty/LEF cell area agreement '+n)
+ put(a.out/'view-units.json',{'liberty_time_unit':'ns','liberty_capacitance_unit':'fF','LEF_size_unit':'um','LEF_database_units_per_micron':int(db.group(1)),'all_used_cell_LEF_and_Liberty_areas_equal':True,'used_cell_types':len(used),'library_sha256':sha(LIB),'tech_lef_sha256':sha(TECH),'cell_lef_sha256':sha(LEF)})
  im=artifacts(R84/'input01');case=load(R84/'input01/cases.json')[0];refs={}if a.structure_only else{c:reference(R84/'input01',case,c)for c in(0,1)}
  if refs:need(refs[0]==refs[1],'cache packing invariant function')
  rows=[]
