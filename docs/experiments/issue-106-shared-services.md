@@ -73,3 +73,6 @@ INIT继承99的**破坏性空白配置**，不能把INIT中止称STEP式旧状�
 [结果索引](../../project/experiments/shared_services/results/issue-106/index.json)、[汇总](../../project/experiments/shared_services/results/issue-106/summary.json)、[门级回执](../../project/experiments/shared_services/results/issue-106/gate-receipt.json)提供精确绑定。完整包留授权服务器delivery01/full-results.zip：41,646,013B/439成员，SHA-256 `e0b0b81d0b34eedfd332cf39d6585c918c06710d97aa0f46e486856fd39e4009`；精选163,973B/91成员，SHA-256 `febc28393354fa6f05c5d9e5f17ceb75a4c2cc80f2d2ac6398938082c1c00e9b`，随仓库交付。精选不能替代完整原输入/日志数学重放。
 
 管理结构、源码静态语法及累计diff检查见work106最终local-checks。本地已整理；主会话负责push/PR与在线状态，当前不称远端已上传、已审查、已合并或done。登记PR5 pending，看板配置/read:project缺项unverified/同步pending；按既定管理员交接。
+
+
+发布回执（2026-10-25）：[PR108](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/108)已上传；Issue106 in_review，待独立审查，未合并/done。报告、索引、门级回执和库验收表与原Git字节读回一致，见work/Liangruizhi/106/remote-readback.json；登记PR5 pending、看板unverified/同步pending。共享服务/宏/物理仍未完成。

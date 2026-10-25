@@ -9,3 +9,6 @@
 重要限制：GDN104尚未整合106；旧98物理不继承；M/A/R是不同真实工作负载交替，不是整模型数据链。M/A结果前缀在成功DONE前provisional，环境接收器最大6KiB暂存非core，真实下游事务提交/撤销尚未实现。R INIT破坏性只空白配置，STEP/拒绝/abort保护旧发布；当前top仅协调空闲硬reset后RESTORE，不称任意mid-commit故障资格。原子128bit根/ACK effect-once是fabric义务。A caller committed prefix不证明append。通用ISA/GEMM、online/KV append、宏/时序/制造后定制均未验收。
 
 恢复第一步：核最新AGENTS/Issue106/PR/104/98/成员55/63和git status，不重复启动41个已结束作业；运行check_project，再核原包SHA。主会话发布本分支、请求审查并更新Issue/有权看板；登记PR5 pending，看板缺config/read:project，状态unverified/同步pending，管理员待指定。下一技术项是按104实际交付另立有界接入任务，复用唯一服务而非新增隐藏资源；同时按面积主项决定宽算术/控制复用，不放宽旧预算求通过。
+
+
+发布回执（2026-10-25）：[PR108](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/108)已上传；Issue106 in_review，待独立审查，未合并/done。报告、索引、门级回执和库验收表与原Git字节读回一致，见work/Liangruizhi/106/remote-readback.json；登记PR5 pending、看板unverified/同步pending。共享服务/宏/物理仍未完成。
