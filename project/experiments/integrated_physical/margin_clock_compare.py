@@ -3,11 +3,12 @@ import argparse,re,csv,sys,collections
 from decimal import Decimal,ROUND_CEILING
 from common import *
 from receive_physical import library,block,def_name
+from route_audit import incidence
 sys.path.insert(0,str(ROOT/'project/experiments/electrical_repair'))
 from structure import signature_graph
 p=argparse.ArgumentParser();p.add_argument('--target',type=int,choices=[93,97],required=True);p.add_argument('--before',type=Path,required=True);p.add_argument('--after',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(exist_ok=False);lib=library(LIB);runs=[]
 for stage in(a.before,a.after):
- artifacts(stage);net=load(stage/'final.json')['modules']['chain'+str(a.target)];canon=signature_graph(net,lib);clock=canon(net['ports']['clk']['bits'][0])[0];names={n for n,v in net['netnames'].items()if len(v['bits'])==1 and canon(v['bits'][0])[0]==clock};cells={n for n,c in net['cells'].items()if any(c['port_directions'][pn]=='output'and canon(bs[0])[0]==clock for pn,bs in c['connections'].items())};text=(stage/'placed.def').read_text();loc={def_name(n):(typ,x,y,orient)for n,typ,x,y,orient in re.findall(r'(?s)-\s+(\S+)\s+(\S+)\s+.*?\+ (?:PLACED|FIXED) \(\s*(\d+) (\d+) \) (\S+)',block(text,'COMPONENTS ','END COMPONENTS').split(';',1)[1])};segs={}
+ artifacts(stage);net=load(stage/'final.json')['modules']['chain'+str(a.target)];canon=signature_graph(net,lib);clock=canon(net['ports']['clk']['bits'][0])[0];refs,_,_=incidence(net);names={n for n,v in net['netnames'].items()if len(v['bits'])==1 and v['bits'][0]in refs and canon(v['bits'][0])[0]==clock};cells={n for n,c in net['cells'].items()if any(c['port_directions'][pn]=='output'and canon(bs[0])[0]==clock for pn,bs in c['connections'].items())};text=(stage/'placed.def').read_text();loc={def_name(n):(typ,x,y,orient)for n,typ,x,y,orient in re.findall(r'(?s)-\s+(\S+)\s+(\S+)\s+.*?\+ (?:PLACED|FIXED) \(\s*(\d+) (\d+) \) (\S+)',block(text,'COMPONENTS ','END COMPONENTS').split(';',1)[1])};segs={}
  for m in re.finditer(r'(?ms)^(\S+)\n\(\n(.*?)^\)\s*$',(stage/'route.segments').read_text()):
   n=re.sub(r'\\(.)',r'\1',m[1])
   if n in names:segs[n]=sorted(x.strip()for x in m[2].strip().splitlines())
