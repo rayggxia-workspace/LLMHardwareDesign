@@ -175,3 +175,9 @@ project/experiments/qwen3_trace/使用独立D盘环境（torch2.10.0+cpu、trans
 正式 RTL 为 project/rtl/wide_service，工具/独立参考为 project/experiments/block_circuit；[入口](../project/experiments/block_circuit/README.md)、[规格](BLOCK_CIRCUIT_SPEC_V1.md)、[报告](experiments/issue-80-block-circuit.md)、[索引](../project/experiments/block_circuit/results/issue-80/index.json)。先 python -B scripts/check_project.py；本机仅 python -B -m unittest discover -s project/experiments/block_circuit -p "test_*.py"（16个小合成）和相关 granite_ports 69检查，TEMP/TMP指向D盘任务目录。
 
 实际输入/RTL/综合/独立数学只本人CPU服务器Slurm新Issue80目录，精确argv/资源申请见work/Liangruizhi/80/execution.json及八phase source binding。最终895×4功能批由phase5执行，generic资源来自phase4，研究库logic-only映射来自phase7，phase8接收/归档；原输出不得覆盖。PC接收使用既有closure/verify_delivery.py与work80/verify_sources.py（--expected-phases 8），只核字节/原Git，不把metadata包当数学重跑。完整命令和两个组织的公平限制见实验README。
+
+## Issue82：精确Norm及真实M完整消费者
+
+RTL project/rtl/norm_service，工具project/experiments/norm_circuit；[README](../project/experiments/norm_circuit/README.md)、[报告](experiments/issue-82-norm-circuit.md)、[索引](../project/experiments/norm_circuit/results/issue-82/index.json)。本机先python -B scripts/check_project.py，再python -B -m unittest discover -s project/experiments/norm_circuit -p "test_*.py"和相关block_circuit同名检查；仅24小合成，TEMP/TMP置D盘任务目录。
+
+所有真实提取/矩阵/RTL/综合/独立数学在本人新CPU服务器lrz-i82-*；实际argv和8phase来源在work/Liangruizhi/82/execution.json。正式norm=phase1，RNE边界=phase6，最终M raw-unit批03/map04=phase7，发布源码phase8。已有输出不得覆盖。PC精选用closure/verify_delivery.py且archive basename必须selected.zip；原Git核验用work82/verify_sources.py --expected-phases 8，只核字节，不称完整数学重跑。实际payload、完整原码和构建/综合数据见服务器delivery03。

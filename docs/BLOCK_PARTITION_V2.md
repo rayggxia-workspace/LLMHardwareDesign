@@ -207,3 +207,18 @@ micro03有807case/1,082,106实际byte RTL动作、132真实Granite码及69ROM请
 同库存 generic 综合8个实际S8乘法器、2138非memory寄存位、1052800 memory位均相同；generic cell910/915不是面积。固定Nangate45非制造研究库逻辑映射24374.112/24412.416µm²，LOCAL增加0.157%，两侧共同frame/ROM完整wrapper均排除；未验SRAM/ROM宏、门级功能等价、STA/物理PPA。norm8仍平均5787401 LOCAL cycles，下一轮要优化绝对代价，不能把该任务集组织收益外推整模型。
 
 [索引](../project/experiments/block_circuit/results/issue-80/index.json)保存118.98MB服务器完整包/0.709MB精选及SHA，八phase/123原Git源与字节核验通过；原编译/注释接收失败、缺ROM pilot和早期非配对背压结果均保留。Issue80/PR81待审查合并，不能据此宣布最终物理边界完成。
+
+## 16. Issue82：精确归一化与真实 M 消费者电路收敛
+
+[实际报告](experiments/issue-82-norm-circuit.md)补齐三种同数值/16KiB单口norm电路、原始scale传播和真实K512/8expert/H1536 M→RQ→merge→residual→完整norm。正式174命令独立PASS；原72条前序M按版本保留，8phase150源码绑定及原始数据/结果SHA可接收。S32Q12/Q20、U128统计/isqrt及RNE不变，无FP或host中间数学。
+
+|边界|进一步收敛|仍保留|
+|---|---|---|
+|M局部反馈|8条真实S8 MAC/INT32完整K后消费；raw exp/delta由RTL推导RQ shift，命令epsilon/比例锁存|通用外部partial接口、其它K/H和最终阵列规模，M32KiB宏尚未实现|
+|Norm↔S|完整统计屏障后二遍输出，X与Y原位、gamma独区，H1536高水12288B/16KiB；单1RW真实RMW/line buffer|H2560/一般规模、通用V共存、多context、真实macro及仲裁|
+|宽算术/SFU|P0/P1/P2 norm258244/209092/61492 cycles，真实area计价；P0也含宽加减/比较/SFU|4步展开的时序/功耗与制造版本选择，不是产品后互联免费改硬件|
+|M→完整消费者|全部acc/down/joined/norm逐码对独立参考；M线上每条件63897600B，重复A/metadata完整计价|物理M/V合宏、跨宏typed连接与布线；当前同top不等于已放置|
+
+当前完整消费者P0/P2为9084871/8888119 cycles（同等待10684231/10487479），只降2.166%/1.842%，研究库logic-only面积49342.468/62387.640µm²，增加26.44%，整个共同16KiB wrapper排除。共享时钟降低约2%即可抹去全链cycle收益，不能据孤立norm76.19%下降冻结SFU4。目标STA/存储宏、全模型质量、独立fabric复位仍未验。
+
+下一最小集优先同容量/端口A-cache减少重复喂数，以及复用公共RQ乘法器到norm，付清控制/接口成本；当前4096B余量并非所有模型都有。通用18函数V/ROM没有被norm专项电路替代，整合库存需重新验证。六逻辑模板和跨模板产品定制仍保留，详见[决策](decisions/2026-10-25-exact-norm-and-m-consumer.md)。Issue82/PR83待审查合并，非最终物理定稿。

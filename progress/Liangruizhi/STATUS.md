@@ -1,5 +1,15 @@
 # Liangruizhi 的进度
 
+## 2026-10-25 UTC+08 Issue82 归一化与真实M电路交付（待审查合并）
+
+[Issue82](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/82)/[PR83](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/83)，task/82-norm-circuit，D:/Projects/LLMHardwareDesign-norm-circuit，base PR81@7ad23a7。已核本人Liangruizhi/182389313及repo push，成员55/63/PR79进度保持独立。所有实际数据/RTL/综合/接收仅本人新CPU服务器lrz-i82-*，无新模型/其他机器/软件安装/Phi或成员接管。
+
+正式174命令（84norm+54数值边界+36真实M全链）独立PASS，前序72条M分版本保留。实际K512、8专家、H1536从S8 MAC/INT32到raw单位RQ、完整merge/真实residual/norm，无host中间结果。norm258244→61492 cycles，完整消费者9084871→8888119仅2.166%/有等待1.842%，logic-only面积增26.44%，不设SFU4默认，不外推整模型。下一实验优先A-cache/共享RQ乘法器，真实宏/STA及通用V/ROM整合仍待验。
+
+100本人Slurm作业97COMPLETED/3FAILED（三个top入口错误已新out修复），全部结束；原失败/初版/数据源留档。493855753B完整/1253成员留授权服务器，3283478B精选/708成员入仓库；服务器全包和精选、PC精选及8phase150条原Git源码绑定PASS。8新/16相关检查和结构检查通过。
+
+[报告](../../docs/experiments/issue-82-norm-circuit.md)、[索引](../../project/experiments/norm_circuit/results/issue-82/index.json)、[交接](../../docs/handoffs/2026-10-25-issue-82-norm-circuit.md)。Issue交付in_review，PR待指定独立审查/合并，不done不自合并；登记PR5 pending、board404/缺read:project，看板unverified/同步pending，管理员待指定。
+
 ## 2026-10-25 UTC+08 Issue80 首轮电路交付（待审查合并）
 
 [Issue80](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/80) / [PR81](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/81)，task/80-block-circuit，D:/Projects/LLMHardwareDesign-block-circuit，base PR77@889ca42。本人 Liangruizhi/182389313 认证和 repo push 已核；最新成员55仍 in_progress/PR58 draft，63已 in_review/PR79 ready，物理绑定仍待资格；不重复接管。

@@ -1,0 +1,34 @@
+{
+  "commands": [
+    {
+      "command": "python -B scripts/check_project.py",
+      "result": "PASS"
+    },
+    {
+      "command": "python -B -m unittest discover -s project/experiments/norm_circuit -p \"test_*.py\"",
+      "tests": 8,
+      "result": "PASS"
+    },
+    {
+      "command": "python -B -m unittest discover -s project/experiments/block_circuit -p \"test_*.py\"",
+      "tests": 16,
+      "result": "PASS"
+    },
+    {
+      "command": "closure/verify_delivery.py --index release-index.json --archive release-reception/selected.zip",
+      "members": 708,
+      "result": "PASS_BYTE_RECEPTION"
+    },
+    {
+      "command": "work82/verify_sources.py --expected-phases 8",
+      "bindings": 150,
+      "result": "PASS"
+    }
+  ],
+  "scope": "PC small synthetic/JSON/byte checks only; full math and RTL are source-bound server receipts.",
+  "final_diff_check": {
+    "command": "git diff --check; git diff --cached --check",
+    "result": "PASS",
+    "scope": "Only explicit task paths; experimental RTL unchanged after accepted snapshot."
+  }
+}

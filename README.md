@@ -8,6 +8,8 @@
 
 [首轮 Block 电路验证](docs/experiments/issue-80-block-circuit.md)已补齐实际宽控制器、有限 frame 和单 ROM 服务。895×4 个命令独立通过；同库存局部连接使本批执行周期减少 42.5%—44.0%，研究库逻辑面积增加约 0.16%（不含共同 memory wrapper）。纯 byte norm 仍代价高，完整 M/A/R、SRAM/ROM 宏和 STA/PPA 未验；见[电路规格](docs/BLOCK_CIRCUIT_SPEC_V1.md)与[Block v2 第15节](docs/BLOCK_PARTITION_V2.md)。
 
+[归一化专用化与真实 M 消费者](docs/experiments/issue-82-norm-circuit.md)已在服务器完成174条正式RTL命令独立核验。H1536 norm从258244降至61492 cycles，但完整M消费者仅降2.17%，logic-only面积增26.44%；下一步优先减少重复喂数和算术共享，4步SFU尚待时序资格。见[Blockv2第16节](docs/BLOCK_PARTITION_V2.md)，非整模型或最终制造PPA。
+
 ## 从哪里开始
 
 1. [项目说明 v1.0](预制计算底座项目说明_v1.0.md)：研究问题、已确认边界、候选方案和待决策清单。

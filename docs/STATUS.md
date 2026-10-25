@@ -1,5 +1,7 @@
 # 当前状态
 
+- 2026-10-25 [Issue82/PR83](experiments/issue-82-norm-circuit.md)：服务器完成三种精确norm和真实K512/8expert/H1536 M全消费者、raw单位传播与参数锁存，正式174命令/重SHA负例独立PASS。norm快76.19%而整条消费者只快2.166%/1.842%，logic-only面积增26.44%，优先A喂数/乘法器复用，SFU4不冻结默认。100作业97完成/3失败留档、24轻量检查、493.86MB全包/3.28MB精选与8phase150原源字节核验通过；宏/STA/通用V整合/整模型未验。待审查合并非done，登记pending、看板缺配置/read:project待同步。
+
 - 2026-10-25 [Issue80/PR81](experiments/issue-80-block-circuit.md)：用户批准首轮1—3已交付真实宽控制器/取指/512B单口frame/单ROM与六模板规格。本人CPU服务器895×4数值/协议独立PASS，五实际状态reset；同库存局部反馈减少42.476%—44.029%任务集cycles，研究库逻辑面积增0.157%（不含共同frame/ROM wrapper）。纯byte norm8仍约579万cycles，优先受限专用化与真实M消费者/宏时序，不外推E2E或冻结M/V合宏。48作业45完成/3失败保留，118.98MB完整/0.709MB精选、8phase123源SHA已验；16新/69相关测试通过。待审查合并非done，登记pending/看板unverified同步pending。
 
 - 2026-10-24 [Issue76/PR77](experiments/issue-76-granite-ports.md)：服务器完成两层W8 pack、18typed微核/ROM功能校准及24完整expert→merge/consumer有限服务独立接收，6驻留对/12标签零差。生命周期使fullmerge V峰14,224B合法，旧全8返回49,152B仍拒绝；原32处RQ超域失败保留、有费等价译码后统一重跑。近M仅省0.0008405%条件slots，公共microframe费用主导，继续保留物理映射并优先局部frame/完整controller校准。完整FSM/RF/STA/PPA/整模型质量未验收；待审查合并非done，登记pending/看板unverified同步pending。
