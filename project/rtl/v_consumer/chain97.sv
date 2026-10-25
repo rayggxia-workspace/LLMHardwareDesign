@@ -10,7 +10,7 @@ module chain97(input wire clk,reset,soft_abort,cmd,prep_only,mem_hold,mul_hold,i
  output wire [31:0] mul_grants0,mul_grants1,mul_wait0,mul_wait1,mul_contested,
  output wire obs_mid_valid,obs_a_valid,output wire [11:0] obs_index,output wire signed [31:0] obs_mid,output wire signed [7:0] obs_a,
  output wire obs_valid,output wire [10:0] obs_row,output wire [2:0] obs_rank,output wire signed [31:0] obs_acc,obs_down,
- output wire swrite_event,output wire [9:0] swrite_addr,output wire [127:0] swrite_data,output wire [7:0] vdebug,ndebug,output wire [4:0] mdebug);
+ output wire mem_request,mul_request,output wire swrite_event,output wire [9:0] swrite_addr,output wire [127:0] swrite_data,output wire [7:0] vdebug,ndebug,output wire [4:0] mdebug);
  localparam IDLE=0,VSTART=1,VACTIVE=2,VDRAIN=3,MSTART=4,MACTIVE=5,MDRAIN=6,NSTART=7,NACTIVE=8,DONE=9;
  reg [3:0] state;reg pending,only_prep;reg [31:0] saved_gu,saved_records,saved_gamma,saved_owner,saved_version,saved_eps,saved_coef;
  wire core_reset=reset||soft_abort;wire va=state==VACTIVE,ma=state==MACTIVE,na=state==NACTIVE;
@@ -60,6 +60,7 @@ module chain97(input wire clk,reset,soft_abort,cmd,prep_only,mem_hold,mul_hold,i
  assign lt=va?vet:ma?met:na?net:1'b0;
  memory_link link(clk,core_reset,(va&&ve)||(ma&&me)||(na&&ne),1'b0,va?vea:ma?mea:nea,128'b0,lr,lv,lt,ld,ext_req,unused_wr,ext_addr,unused_data,ext_ready,ext_valid&&!drop_response,link_take,ext_data,wire_valid,wire_data,wire_beats,transactions);
  wire service_req=(va&&vr)||(ma&&mr)||(na&&nr);wire service_wr=va?vw:ma?mw:nw;wire [9:0] service_addr=va?vad:ma?mad:nad;wire [127:0] service_data=va?vdin:ma?mdin:ndin;
+ assign mem_request=service_req;assign mul_request=(va&&vmr)||(ma&&mmr)||(na&&nmr);
  assign swrite_event=!core_reset&&!pending&&!mem_hold&&service_req&&service_wr&&sr;assign swrite_addr=service_addr;assign swrite_data=service_data;
  store82 frame(clk,core_reset,cfg_select?cfg:(!pending&&!mem_hold&&service_req),cfg_select?cfg_wr:service_wr,cfg_select?cfg_addr:service_addr,cfg_select?cfg_din:service_data,sr,sv,pending?cfg_take:va?vt:ma?mt:na?nt:1'b0,sd);
 endmodule
