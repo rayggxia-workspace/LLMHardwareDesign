@@ -1,10 +1,12 @@
 # Liangruizhi 的进度
 
-## 2026-10-25 UTC+08 Issue98 实际整合核布局与 CTS（进行中）
+## 2026-10-25 UTC+08 Issue98 实际整合核布局、CTS、GRT（进行中）
 
-[Issue98](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/98)，task/98-integrated-physical，D:/Projects/LLMHardwareDesign-integrated-physical；仅本人服务器 lrz-i98-*。原93完整整数消费者与实际映射已绑定，97 raw gate独立结果待接入，不复用旧84时序。四边全2369pin/285行与完整功能pin/4019FF均独立通过；有限布局RC修复使area56325.500um²、两负载setup/hold/electrical全零，仍理想clock。实际CTS增至56766.794um²，传播clock产生1057hold违例，最差−0.208368ns，一次既定有限修复正在执行。原raw与修复后各两种完整51记录gate长跑并行，未完成不宣称qualification。
+[Issue98](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/98)，task/98-integrated-physical，D:/Projects/LLMHardwareDesign-integrated-physical；仅本人服务器 lrz-i98-*。93 和 97 的实际源码/映射分别绑定，未继承旧 84 时序。全部几何、pin/FF、双负载完整端点独立核验。93 C3 在固定 10 ns/min0/同面积预算下 CTS 后全约束闭合；97 C3 仍有 store_dout[98]→FF 一条 -0.489ps hold，失败保留。C3 修订依据准确工具累计端点预算，非放宽目标。
 
-[阶段报告](../../docs/experiments/issue-98-integrated-physical.md)。Nangate研究库、store82整wrapper cut、估计RC/无PG，不可制造；M2–M10和M5/M6pin也不等于55/63的固定层/定制层候选。保留全部工具/容量/hold失败与修改理由。分支未由根会话上传PR，Issue已登记进展；归档/跨机SHA与看板仍待实际交付，不能标done。恢复先读自有Slurm终态及依赖收据，勿重复长跑。
+93 纯 GRT 已完成，网表字节不变、41,303 nets、各层拥塞溢出零；但路由 RC 新增 12 条 hold，最差 -6.039ps，仍未物理通过。精确 RC/每网类/每层成本接收及有界后续方案继续。97 布局和 C3 精确门级各 4 次/8 完整输出独立 PASS，包含真实负例；50-command RTL 内部注入范围不冒充 gate。93 raw/布局后/C3 后各两种 51 记录门级长跑继续，未终态不宣称通过。
+
+[阶段报告](../../docs/experiments/issue-98-integrated-physical.md)。Nangate 研究库、store82 整 wrapper cut，无真实宏/PG/LVS，不可制造；M2–M10 与 M5/M6 pin 也不等于55/63的固定层候选。所有失败保留。Issue 已同步，分支尚未由根会话发布 PR；最终归档/跨机 SHA/看板仍待交付，不标 done。恢复先读自有 Slurm 及 receipts，勿重复活跃长跑。
 
 ## 2026-10-25 UTC+08 Issue86门级与逻辑时序交付
 
