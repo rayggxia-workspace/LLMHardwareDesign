@@ -1,8 +1,10 @@
 # Liangruizhi 的进度
 
-## 2026-10-25 Issue106真实共享服务实施中
+## 2026-10-25 UTC+08 Issue106共享服务本地交付待PR
 
-Issue106 / task/106-shared-services / D:/Projects/LLMHardwareDesign-shared-services 已认领并合入99/102已发布基线。正在抽离唯一16KiB、8S8、S32、SFU、link及实际结果导出/取消排空；数学边界保留，尚未运行或验收。104 GDN/98物理独立进行；本任务不扩通用ISA/GEMM/KV append。认领回执work106、预登记协议project/experiments/shared_services/PROTOCOL.md；root最终发布，登记PR5 pending，看板待管理员。
+[Issue106](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/106)，task/106-shared-services，D:/Projects/LLMHardwareDesign-shared-services；已合入99 PR103/102 PR105发布基线。唯一16KiB1RW/8S8/S32/SFU/link实际实例，双路各7混合+27恢复与独立原整数oracle通过，选定门级两路各4完整命令逐字段/数学PASS，10实际重SHA负例拒绝。logic-only125,966.694µm²，不含宏/物理、真实下游事务缓冲；GDN104未接入，非完整库完成。
+
+41本人Slurm全COMPLETED，完整41,646,013B/439成员服务器、精选163,973B/91成员入仓；服务器双包/PC精选与7phase168原Git源字节PASS。[报告](../../docs/experiments/issue-106-shared-services.md)、[交接](../../docs/handoffs/2026-10-25-issue-106-shared-services.md)。本地已整理，主会话待push/PR/Issue状态；未合并非done，登记PR5 pending，看板unverified/同步pending。下一步接独立104 GDN并按真实面积定位资源复用，保留同精度/容量/端口与全部控制成本。
 
 ## 2026-10-25 Issue102完整GQA本地交付待PR
 

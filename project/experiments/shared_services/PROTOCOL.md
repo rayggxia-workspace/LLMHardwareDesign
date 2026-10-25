@@ -37,3 +37,5 @@ R保持99 abort排空及原子root写义务；candidate完整export后才允许a
 正式phase3两路7命令混合、两路23命令恢复已独立通过；补充phase5再验证M已接受S32响应、A已接受内部store ACK取消，恢复扩为27命令/6abort。RTL和正常sim driver字节不变；build/run/receiver只校验实际编译依赖（所有RTL+sim，qualification二进制另加qualification），不把未被编译的旁支driver变更当成原二进制变化。`compute_cycles`是继承的controller active计数，R包含OFFER等待导出/决定，不能与export_cycles相加；统一端到端本切片使用D cycles，非模型端到端。
 
 生命周期补充：INIT继承99的破坏性空白状态配置语义，INIT中止不保证已有published bank；本批只在授权空白image INIT一次，后继STEP/reject/abort保全，硬reset后RESTORE。资格driver从full源切实际cached源显式提升version3，再回full源version4，不假定两来源快照已有KV字节恒同；正常混合full1→cached2原已正确。原阶段保持，最终27命令在修订driver上重跑，RTL不变。
+
+交付说明（不改冻结实验）：M/A导出前缀在status0 DONE前为provisional，abort时sink必须丢弃该lease前缀；R为candidate再accept。当前测试sink完整向量M6144B/A4096B/R512B是环境存储，最大6144B不计作额外片内容量或core面积。未来真实下游事务buffer/commit或可撤销流式机制未实现、未物理计价；本任务不宣称外部下一消费者硬件闭包。该说明对应已有部分导出可取消接口，不修改任何数值或服务账本。

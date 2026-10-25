@@ -220,3 +220,7 @@ project/experiments/epoch_boundary/README.md与PROTOCOL.md记录冻结源重放�
 ## Issue99 完整head R状态单元
 
 参见[工具README](../project/experiments/r_state/README.md)、[报告](experiments/issue-99-r-state.md)、[协议](../project/experiments/r_state/PROTOCOL.md)。PC先运行`python -B scripts/check_project.py`，再`project/experiments/r_state/verify_archive.py`仅做selected.zip/index.json字节接收。实际inputs/bigint/RTL/map/rawgate仅服务器：正式phase7六路05批次、map04、4真实checkpoint gate、phase8 gate-schema01；完整argv在work99/execution.json。复现必须新输出目录，不覆盖已有结果。单head/单16KiB/单S32并不等于与M/V资源已整合或物理签核。
+
+## Issue106：真实共享服务银行
+
+[协议](../project/experiments/shared_services/PROTOCOL.md)、[报告](experiments/issue-106-shared-services.md)及work106/execution列实际argv。先`python -B scripts/check_project.py`；所有原始整数/RTL/map/gate/数学接收在本人服务器。统一RTL4ec4bcf，完整混合phase3，最终恢复driver ee770a1/phase6，库存门级phase4与分析归档phase7。PC用work106/verify_delivery.py接收完整或精选归档，再verify_sources.py `--expected-phases 7`核原Gitblob，只做字节不做数学；所有恢复用新输出目录，不覆盖旧阶段。实际唯一服务L2不是宏/时序/制造后定制完成。

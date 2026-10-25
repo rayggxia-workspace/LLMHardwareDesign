@@ -1,0 +1,43 @@
+{
+  "schema": "issue106-final-local-checks/1",
+  "checks": [
+    {
+      "argv": [
+        "D:/Projects/Codex/qwen3-inference-20261022/environment/.venv/Scripts/python.exe",
+        "-B",
+        "scripts/check_project.py"
+      ],
+      "returncode": 0,
+      "stdout": "PASS: Project management structure is valid (schema 1).\nNOTE: This does not validate product behavior, permissions, or live GitHub settings.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "a62cffbf3a0ea1b87b4ad1fbb9d1633e89e7052c"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "python_ast_files": 12,
+  "utf8_lf_task_files": 48,
+  "status": "PASS_STRUCTURAL_AST_UTF8_LF_AND_DIFF",
+  "limits": [
+    "All array math/RTL/map/gate tests executed and received on server; PC checks are metadata/source only.",
+    "Final formatting and report bytes are additions; original scientific hashes stay preserved."
+  ]
+}

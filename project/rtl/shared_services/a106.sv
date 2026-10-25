@@ -36,7 +36,7 @@ module a106(input wire clk,reset,soft_abort,cmd,mem_hold,mul_hold,input wire [10
  wire drained=lr&&!lv&&sr&&!sv&&mready&&!mvalid&&fready&&!fvalid;
  always @(posedge clk)begin
   if(reset)begin stale_responses<=0;aborts<=0;end else begin
-   
+
    if(soft_abort)aborts<=aborts+1;
    if(ext_valid&&ext_take&&drop_response)stale_responses<=stale_responses+1;
   end

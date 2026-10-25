@@ -12,7 +12,7 @@
 
 [A缓存与算术共享](docs/experiments/issue-84-cache-share.md)已完成84条完整消费者命令及严格独立接收。保持16KiB/128bit单口，缓存减少34.68%周期、49.20%外部线传输；共享使缓存版本logic-only面积减少12.44%。SRAM额外等待约8拍时缓存收益消失，故保留运行时旁路；其实现与门级/时序资格分别由Issue85/86接续，不能将逻辑面积视为物理实现已完成。
 
-[当前电路证据入口](docs/BLOCK_LIBRARY_ACCEPTANCE.md)：93流式gamma与97原始SiLU→整512量化→驻留A→实际M→norm有界消费者已获独立RTL/选定raw门级证据；102另补完整materialized GQA切片及selected raw gate；通用V ISA、在线/append、R与共享服务和新物理资格仍分层推进，未宣称六Block全部完成。
+[当前电路证据入口](docs/BLOCK_LIBRARY_ACCEPTANCE.md)：93流式gamma与97原始SiLU→整512量化→驻留A→实际M→norm有界消费者已获独立RTL/选定raw门级证据；102另补完整materialized GQA切片及selected raw gate；99补单head Falcon R，106已补M/A/Falcon R真实唯一服务银行及恢复L2及选定raw门级；通用V ISA、在线/append、GDN共享和新物理资格仍分层推进，未宣称六Block全部完成。
 
 ## 从哪里开始
 
