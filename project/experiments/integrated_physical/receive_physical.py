@@ -82,9 +82,9 @@ def clock_inventory(net,lib):
   for pin,bs in c['connections'].items():
    if c['port_directions'][pin]=='input':
     for b in bs:
-     if canonical(b)==target:fanout[str(b)]+=1
+     if canonical(b)[0]==target[0]:fanout[str(b)]+=1
   t=lib[c['type']]['transparent']
-  if t and t[0]=='buf'and canonical(c['connections'][t[2]][0])==target:clock_cells[n]=c['type']
+  if t and t[0]=='wire'and canonical(c['connections'][t[2]][0])[0]==target[0]:clock_cells[n]=c['type']
  for n,c in ff:
   need('CK'in c['connections']and len(c['connections']['CK'])==1 and canonical(c['connections']['CK'][0])==target,'every actual FF clock rooted at same noninverted external clock');clock_sinks.append(n+'/CK')
  return {'actual_FF_clock_pins':len(clock_sinks),'clock_pin_names':sorted(clock_sinks),'clock_transparent_cells':clock_cells,'clock_cell_histogram':dict(collections.Counter(clock_cells.values())),'clock_cell_area_um2':str(sum((lib[t]['area']for t in clock_cells.values()),Decimal(0))),'clock_net_direct_sink_max':max(fanout.values()),'macro_clock_sink_excluded':True,'external_driver_impedance_modeled':False}
