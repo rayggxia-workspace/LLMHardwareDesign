@@ -41,6 +41,10 @@ def step(state,q,k,v,d,b,units,value_units,epoch):
  require(all(-128<=int(x)<=127 for x in(*units,*value_units)),'I8')
  units=list(map(int,units));attempts=[]
  for attempt in range(9):
+  # New contract: any head outside the aligned RNE upper domain rejects
+  # before either head can request numeric WIDTH rescaling. Group priority
+  # is independent of head iteration order; preserve earlier attempts.
+  if any(units[h]-int(value_units[h])>62 for h in range(2)):raise Refusal(12,attempts)
   stages={};bad=[True,True]
   try:
    for h in range(2):fmt(units[h],value_units[h])
