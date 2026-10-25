@@ -1,5 +1,7 @@
 # 当前状态
 
+- 2026-10-25 [Issue80/PR81](experiments/issue-80-block-circuit.md)：用户批准首轮1—3已交付真实宽控制器/取指/512B单口frame/单ROM与六模板规格。本人CPU服务器895×4数值/协议独立PASS，五实际状态reset；同库存局部反馈减少42.476%—44.029%任务集cycles，研究库逻辑面积增0.157%（不含共同frame/ROM wrapper）。纯byte norm8仍约579万cycles，优先受限专用化与真实M消费者/宏时序，不外推E2E或冻结M/V合宏。48作业45完成/3失败保留，118.98MB完整/0.709MB精选、8phase123源SHA已验；16新/69相关测试通过。待审查合并非done，登记pending/看板unverified同步pending。
+
 - 2026-10-24 [Issue76/PR77](experiments/issue-76-granite-ports.md)：服务器完成两层W8 pack、18typed微核/ROM功能校准及24完整expert→merge/consumer有限服务独立接收，6驻留对/12标签零差。生命周期使fullmerge V峰14,224B合法，旧全8返回49,152B仍拒绝；原32处RQ超域失败保留、有费等价译码后统一重跑。近M仅省0.0008405%条件slots，公共microframe费用主导，继续保留物理映射并优先局部frame/完整controller校准。完整FSM/RF/STA/PPA/整模型质量未验收；待审查合并非done，登记pending/看板unverified同步pending。
 
 - 2026-10-24 [Issue74/PR75](experiments/issue-74-moe-grouped.md)：Granite真实两层cut完整整数router→8expert→merge/consumer独立PASS，Falcon分组同函数M/V服务12配置/6label零差；计全宽算术/对齐/元数据/端口后近M条件时隙收益仅0.001%–0.016%，保留物理映射自由。51服务器作业全完成、10phase20源/2.10GB完整与8.17MB精选逐字节核验；63新/90+80旧检查通过。Granite grouped服务/整模型质量/RTL/PPA未验收；下一步有限expert/merge调度与宽算术/SFU/ROM校准。待审查合并非done；登记pending、看板unverified/同步pending。

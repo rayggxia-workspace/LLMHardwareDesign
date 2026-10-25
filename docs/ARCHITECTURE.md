@@ -169,3 +169,9 @@ project/experiments/qwen3_trace/使用独立D盘环境（torch2.10.0+cpu、trans
 正式目录project/experiments/granite_ports，[README](../project/experiments/granite_ports/README.md)和PROTOCOL/SERVICE/MICRO/AUDIT约束原函数与有限库存。先python -B scripts/check_project.py，再用已有NumPy环境运行 -B -m unittest discover -s project/experiments/granite_ports -p 'test_*.py'（69项）；相关moe_grouped原63项本批通过。本机只微合成/JSON/字节，TEMP/TMP指向D盘当前任务。所有实际pack/RTL微核/数组/服务与完整接收均本人CPU Slurm。
 
 精选接收：python -B project/experiments/closure/verify_delivery.py --index project/experiments/granite_ports/results/issue-76/delivery-index.json --archive project/experiments/granite_ports/results/issue-76/selected.zip --out NEW.json；核394 metadata，不重算目标服务。源码接收：python -B work/Liangruizhi/76/verify_sources.py --repository REPO --index DELIVERY_INDEX --selected SELECTED_ZIP --expected-phases 19 --out NEW.json；核19phase66原Git blob。完整8.74GB/2526成员留授权服务器，两包及精选本机逐字节核过，SHA/实际命令/114Slurm见结果索引与work76。恢复用原phase源码/新out，保留失败/取消和fee版本，不以新HEAD替代。24正式03服务/6驻留对/12label已接收；完整wide/address FSM/RF/STA/PPA、局部frame优化及整模型质量未验收。
+
+## Issue80：Block 首轮电路验证
+
+正式 RTL 为 project/rtl/wide_service，工具/独立参考为 project/experiments/block_circuit；[入口](../project/experiments/block_circuit/README.md)、[规格](BLOCK_CIRCUIT_SPEC_V1.md)、[报告](experiments/issue-80-block-circuit.md)、[索引](../project/experiments/block_circuit/results/issue-80/index.json)。先 python -B scripts/check_project.py；本机仅 python -B -m unittest discover -s project/experiments/block_circuit -p "test_*.py"（16个小合成）和相关 granite_ports 69检查，TEMP/TMP指向D盘任务目录。
+
+实际输入/RTL/综合/独立数学只本人CPU服务器Slurm新Issue80目录，精确argv/资源申请见work/Liangruizhi/80/execution.json及八phase source binding。最终895×4功能批由phase5执行，generic资源来自phase4，研究库logic-only映射来自phase7，phase8接收/归档；原输出不得覆盖。PC接收使用既有closure/verify_delivery.py与work80/verify_sources.py（--expected-phases 8），只核字节/原Git，不把metadata包当数学重跑。完整命令和两个组织的公平限制见实验README。

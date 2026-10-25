@@ -1,0 +1,37 @@
+{
+  "scope": "PC source/tiny-synthetic/JSON/byte reception only; full RTL and math receipts are separate server records.",
+  "commands": [
+    {
+      "command": "python -B scripts/check_project.py",
+      "result": "PASS"
+    },
+    {
+      "command": "python -B -m unittest discover -s project/experiments/block_circuit -p \"test_*.py\"",
+      "tests": 16,
+      "seconds": 0.566,
+      "result": "PASS"
+    },
+    {
+      "command": "python -B -m unittest discover -s project/experiments/granite_ports -p \"test_*.py\"",
+      "tests": 69,
+      "seconds": 26.406,
+      "result": "PASS"
+    },
+    {
+      "command": "python -B project/experiments/closure/verify_delivery.py --index delivery-index.json --archive selected.zip --out pc-byte-receipt.json",
+      "members": 271,
+      "result": "PASS_BYTE_RECEPTION"
+    },
+    {
+      "command": "python -B work/Liangruizhi/80/verify_sources.py --repository . --index delivery-index.json --selected selected.zip --expected-phases 8 --out pc-source-receipt.json",
+      "phases": 8,
+      "source_blobs": 123,
+      "result": "PASS"
+    }
+  ],
+  "final_diff_check": {
+    "command": "git diff --check; git diff --cached --check",
+    "result": "PASS",
+    "scope": "Only explicit Issue80 staged paths; no source behavior changed after the qualified server snapshot."
+  }
+}

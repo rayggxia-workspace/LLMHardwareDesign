@@ -40,3 +40,9 @@ LOCAL与BUS frame共用相同算法、程序、512B/1RW、8lane、单LUT。两�
 正式协议和工具在project/experiments/block_circuit。最小矩阵为两组织×静默/固定种子外存背压；比较同函数、同输入/程序和资源，实际cycle/边沿/访问/吞吐分开。关键链覆盖动态scale译码、完整8expert单坐标merge/真实残差以及8元素缩小完整norm；不冒充真实1536hidden/fullK矩阵或全模型质量。
 
 Yosys的行为memory结构及通用cell不是SRAM/ROM宏面积；内部read/write两个逻辑信号不授权同时访问。后续物理比较前必须冻结目标工艺、Liberty/LEF、宏容量/端口/mask/latency、PVT/RC/频率、端点/固定层与定制层。团队55工程与63资产适配需按其commit/交接接入，不复制造另一套。额外宽ALU、多端口RF、专用SFU或更大FIFO须作为另一个资源配置，不能与此基线假称同面积。
+
+## 5. 首轮实际资格与下一阶段入口
+
+[Issue80实际报告](experiments/issue-80-block-circuit.md)和[Blockv2第15节](BLOCK_PARTITION_V2.md)已补齐上述宽服务controller/有限frame/ROM：最终895×4命令和五活动状态reset独立通过，generic资源及固定研究库logic-only映射亦有独立接收。对该已实现子集，不再沿用Issue76“完整wide FSM仍在软件”的旧限制；完整M/A/R、外部状态原子发布、商业memory宏、门级等价/STA/物理PPA限制仍成立。
+
+首选局部frame反馈使本批cycles少42.476%—44.029%，逻辑面积增约0.157%（排除共同memory wrapper）。norm8仍平均约579万cycles，程序1.93MB，因此此版是正确性与成本基线，不是最终高吞吐单元。下一轮要以相同数值合同、实际端口/缓冲和新增面积比较宽算术/SFU/RF专用化，再接真实M完整消费者及物理宏。跨模板融合和产品端点继续留待证据决定。

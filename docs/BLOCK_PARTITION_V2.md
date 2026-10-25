@@ -189,3 +189,21 @@ micro03有807case/1,082,106实际byte RTL动作、132真实Granite码及69ROM请
 实际L0有32处RQ shift130/131，原02失败保留；新03统一每个输出cmp/sub/max/sub+guard标志读写/控制，以s>=64的S64 RNE恒0证明min(s,128)不改原码。3,976是全部大右移零码检查数，不能当32处控制改变数。原scale/43stage及全部配置精度一致。
 
 6对nearM都仅少774,144条件slots/5,308,416wire B（55,296个64B partial包），占完整cut服务约0.0008405%；完整merge相对128少709,632slots。当前约99.75% wire来自逐byte frame流量，约99.46% slots来自micro的ALU+候选dispatch+frameIO子集。因此优先校准同8lane/512B/有限端口的局部frame与完整controller，保留既有保守BUS基线，再判物理宏/预连线；不据极小驻留差或巨大保守绝对值冻结融合，也不外推整模型收益。
+
+## 15. Issue80：完整宽控制器与局部 frame 电路证据（2026-10-25）
+
+[电路规格](BLOCK_CIRCUIT_SPEC_V1.md)、[参考映射](BLOCK_CIRCUIT_REFERENCES.md)、[实际报告](experiments/issue-80-block-circuit.md)补齐第14节的 PC/取指/寻址/宽算术 controller 缺项。单 context、8 条 S8 byte lane、512B 单 1RW frame、16B 指令 cache、4 深返回栈和单 128KiB ROM 都有实际 RTL；host 仅加载初始输入和只读程序，不能逐 byte 调度或注入中间结果。此实现是可复用 V/S/D 底座，不是完整 M/A/R 加速器。
+
+|边界|可据新证据推进的设计|仍待验证|
+|---|---|---|
+|V↔有限局部 S|同函数/精度/存储/端口下，局部 RMW 反馈优于把每次 byte 临时访问绕跨 Block 桥；优先固定本地反馈、单口仲裁、busy/完成/错误。|真实宏容量/mask/延迟与同工艺布线、时序，不能把局部端口变成免费 RF。|
+|宽算术/控制/ROM|PC/cache/CALL/RET/flag/guard/LUT 写回已实际执行，程序镜像和取指均付费；不得再把此基线的 controller 写成纯软件假设。|纯 byte lowering 吞吐较低；专用宽算术/SFU/RF 是新增资源候选，须公平对照。|
+|M→V|维持同单位 INT32 fullK 内留、完整/partial 标签、RQ/宽对齐和旁路。|本轮 42%—44% 属于共同 frame 组织，不是 M/V 融合；M 阵列/完整 hidden 消费者尚未接新 RTL。|
+|A/R↔S/D|保留完整归约、KV/连续 state、unit/owner/epoch/range 和两代原子发布。|新内核 reset 只取消私有 scratch 命令，未实现外部 R rollback/commit，不能替代旧状态合同。|
+|跨模板/产品互联|保留动态 dispatch、bank/backing、M/V/A/R 旁路端点和队列/credit 合同。|六模板数目、相邻布局、合宏及固定金属层仍未冻结，沿团队55/63同版本接口接入。|
+
+895 命令×四配置全部独立通过，含807原 typed 样本/132真实码、69 ROM、7负例、4 RQ链、6真实八专家单坐标merge和2合成norm8；每配置另有五状态实际reset。静默 BUS/LOCAL 为69215400/38740445 cycles，同外部事务等待为71746249/41271294；都恰好少7×4353565 frame事务。caller写/读64+64边沿及完成保持另计，程序1928832B/120552个16B行部署下界也独立列出，不能把控制存储当免费。
+
+同库存 generic 综合8个实际S8乘法器、2138非memory寄存位、1052800 memory位均相同；generic cell910/915不是面积。固定Nangate45非制造研究库逻辑映射24374.112/24412.416µm²，LOCAL增加0.157%，两侧共同frame/ROM完整wrapper均排除；未验SRAM/ROM宏、门级功能等价、STA/物理PPA。norm8仍平均5787401 LOCAL cycles，下一轮要优化绝对代价，不能把该任务集组织收益外推整模型。
+
+[索引](../project/experiments/block_circuit/results/issue-80/index.json)保存118.98MB服务器完整包/0.709MB精选及SHA，八phase/123原Git源与字节核验通过；原编译/注释接收失败、缺ROM pilot和早期非配对背压结果均保留。Issue80/PR81待审查合并，不能据此宣布最终物理边界完成。

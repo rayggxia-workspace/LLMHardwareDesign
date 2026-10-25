@@ -1,5 +1,15 @@
 # Liangruizhi 的进度
 
+## 2026-10-25 UTC+08 Issue80 首轮电路交付（待审查合并）
+
+[Issue80](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/80) / [PR81](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/81)，task/80-block-circuit，D:/Projects/LLMHardwareDesign-block-circuit，base PR77@889ca42。本人 Liangruizhi/182389313 认证和 repo push 已核；最新成员55仍 in_progress/PR58 draft，63已 in_review/PR79 ready，物理绑定仍待资格；不重复接管。
+
+已落实批准计划1—3：参考电路/六模板规格、完整可综合宽算术控制器、有限单口 frame/ROM，以及同库存 BUS/LOCAL 对照。所有实际数据提取/RTL/综合/独立接收仅本人服务器 lrz-i80-*；没有新模型、其他机器、软件安装或成员任务改动。895×4 个命令和五状态实际 reset 独立通过，局部反馈降低42.476%—44.029%本批cycles；非整模型收益。Nangate45研究库逻辑面积多0.157%，不含两侧共同frame/ROM wrapper，非目标PPA。
+
+48作业45COMPLETED/3FAILED，失败与缺ROM早期pilot保留并排除正式排名；118979927B完整包600成员留授权服务器，708937B精选271成员入仓库；服务器全包/精选、PC精选及8phase123原Git源逐字节PASS。16新/69相关边界测试、管理结构通过，最终提交diff回执另存。
+
+[报告](../../docs/experiments/issue-80-block-circuit.md)、[索引](../../project/experiments/block_circuit/results/issue-80/index.json)、[交接](../../docs/handoffs/2026-10-25-issue-80-block-circuit.md)。关键限制是纯byte norm8约579万cycles/任务与1.93MB程序，下一步受限宽算术/SFU/RF同精度成本对照、真实M完整消费者、合法memory宏/布局/STA。完整M/A/R、整模型质量和物理宏未完成，不自行合并或标done；登记PR5 pending，看板404/缺read:project/unverified、同步pending，管理员和审查人待指定。
+
 ## 2026-10-24 UTC+08 Issue76交付（待审查合并）
 
 [Issue76](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/76)/[PR77](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/77)，task/76-granite-ports，D:/Projects/LLMHardwareDesign-granite-ports，base PR75@ce2d08f。已核Liangruizhi/182389313本人认证、项目/依赖及成员55(in_progress)/63(blocked)/PR58，无重复范围；三独立子worktree。所有实际pack/数组/微核RTL/有限服务/独立接收均仅本人CPU Slurm，PC源码/微合成/JSON/字节，无新模型/其他机器/Phi解封或成员接管。

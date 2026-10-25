@@ -13,9 +13,13 @@
 |openTPU TMEM/ACT_RAM|共享存储/旁路、激活与scale联合保存、多读组织|TMEM逻辑64KiB、复制物理192KiB；多读不能免费，ACT_RAM不是激活运算器；共享线路不能重复累计收益|
 |本项目Issue29|1RW仲裁、有限response FIFO、反压/同址验证范式|512bit/64KiB原库存不直接挪为128bit/512B，真实端口和mask合同另实现；不称完整算术RTL|
 |本项目Issue76|18typed S8/byte算法、807case/132真实码、原LUT和独立oracle|原wide/address控制器与frame在软件，本轮新RTL补齐；旧slot/费用与新cycle不混排|
-|NVDLA SDP/LUT/precision文档|缩放转换与查表非线性的数据路组织|只借鉴组织，不将CNN算子/原舍入直接视为LLM本合同；https://nvdla.org/hwarch ，https://nvdla.org/hw/v1/ias/precision.html|
+|NVDLA SDP/LUT/precision文档|缩放转换与查表非线性的数据路组织|只借鉴组织，不将CNN算子/原舍入直接视为LLM本合同；https://nvdla.org/hw/v1/hwarch.html ，https://nvdla.org/hw/v1/ias/precision.html|
 |VTA官方设计介绍|load/compute/store模块、FIFO及局部SRAM解耦|组织参考，不导入新ISA或FPGA资源换算；https://tvm.apache.org/2018/07/12/vta-release-announcement.html|
 
 原参考包没有完整工程、ODB/DEF/GDS、全量网表或完整环境；其LEC/STA状态只是源分析记录，非本项目重跑。Gemmini ASAP7与openTPU/llaccel Nangate45不跨工艺排名，线长总和不直接当时延/功耗。复用完整外部RTL前须核对官方revision、许可/依赖和数值规范；本轮仅组织借鉴，实际微码源为本仓库76固定版本，未新增第三方RTL复制。
 
 R状态没有可直接照搬的参考引擎。应从本项目Qwen/Falcon范围、两代状态、完整归约/guard、epoch/owner/原子提交规格出发，待V/S/D可复用底座真实闭环后实现。阶段1的M/V/A/R/S/D规格见BLOCK_CIRCUIT_SPEC_V1.md；完整六硬宏、时钟树/门控、布线与工艺资格仍属后续。
+
+2026-10-25补核官方原文：[NVDLA精度规范](https://nvdla.org/hw/v1/ias/precision.html)的整数转换含offset、scale、shift及饱和，舍入采用half away from zero；本项目RNE为ties-to-even，不能直接替换其数值实现。[NVDLA架构](https://nvdla.org/hw/v1/hwarch.html)可借鉴缩放/LUT后处理的参数化组织。[VTA官方设计说明](https://tvm.apache.org/2018/07/12/vta-release-announcement.html)明确以FIFO、单写/单读SRAM和micro-op cache解耦执行，并用两层ISA保持表达力及代码紧凑；这是下一轮减少本核1.93MB展开微码及取指开销的组织候选，不能把其额外并行端口或ISA循环能力当成本核已经实现。
+
+逻辑校准仅使用[OpenROAD-flow-scripts固定版本的Nangate45说明](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/cca3a717920067d8f6e085ce886fe4ecdc876614/flow/platforms/nangate45/README.md)及同版typical.lib；该库明确是非制造研究模型。原文件/许可/来源SHA在work80及完整证据包，未使用fakeram或把其结果当目标工艺PPA。
