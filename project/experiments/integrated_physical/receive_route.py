@@ -18,6 +18,10 @@ r=audit(a.stage,a.prepared,a.out,a.gate,None if pure else a.postgate);net=load(a
 if sm.get('incremental_only')is True:
  from incremental_audit import audit_incremental
  r['incremental_change_audit']=audit_incremental(a.stage,previous,a.out)
+if sm.get('candidate')=='incremental-joint-fourcap-50ps93':
+ from cap_audit import audit_cap
+ from receive_physical import geometry_connectivity
+ mid=load(a.stage/'capisolated.json')['modules']['chain93'];before=load(previous/'final.json')['modules']['chain93'];r['exact_intermediate_four_cap_isolation']=audit_cap(a.stage,previous,before,mid,library(LIB));r['intermediate_cap_geometry']=geometry_connectivity((a.stage/'capisolated.def').read_text(),mid,library(LIB),before)
 if sm['stage']=='caprepair':
  from cap_audit import audit_cap
  r['explicit_cap_buffer_certificate']=audit_cap(a.stage,previous,load(previous/'final.json')['modules']['chain'+str(a.target)],net,library(LIB))
