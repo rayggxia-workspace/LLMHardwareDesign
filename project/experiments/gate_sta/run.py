@@ -18,6 +18,7 @@ def main():
   if sha(ROOT/n)!=h:raise ValueError('source SHA '+n)
  a.out.mkdir(parents=True,exist_ok=False);m={'status':'ERROR','source':binding,'task':a.task,'variant':a.variant,'stall':a.stall,'library_sha256':sha(LIB)}
  def cmd(name,argv,seconds=900):
+  if str(argv[0])==str(STA):argv=[ORFS.parent/'lib64/ld-linux-x86-64.so.2','--library-path',ORFS.parent/'usr/lib/x86_64-linux-gnu',*argv]
   args=[*PREFIX,'--pwd',str(a.out),SIF,*map(str,argv)];start=time.monotonic()
   with (a.out/(name+'.log')).open('w')as f:r=subprocess.run(args,stdout=f,stderr=subprocess.STDOUT,stdin=subprocess.DEVNULL,timeout=seconds)
   put(a.out/(name+'-command.json'),{'argv':args,'exit':r.returncode,'seconds':time.monotonic()-start})
@@ -60,7 +61,7 @@ def main():
    m['baseline_output_sha256']=sha(R84/f'rtl-v{a.variant}s{a.stall}02'/'actual.jsonl');m['build_manifest_sha256']=sha(a.build/'manifest.json');m['row_name']=row['name'];m['cycles']=row['cycles'];m['status']='PASS_GATE_REPLAY_ALL_OBSERVABLES_AND_RESET'
   else:
    from timing import timing
-   m['timing']=timing(a,cmd,STA,LIB,put,load,sha);m['status']='DECLARED_CUT_LOGIC_TIMING_EXECUTED'
+   cmd('sta-version',[STA,'-version']);m['sta_loader_sha256']=sha(ORFS.parent/'lib64/ld-linux-x86-64.so.2');m['timing']=timing(a,cmd,STA,LIB,put,load,sha);m['status']='DECLARED_CUT_LOGIC_TIMING_EXECUTED'
  except Exception as e:m['error']=str(e);m['traceback']=traceback.format_exc();raise
  finally:
   m['artifacts']=[{'path':q.name,'bytes':q.stat().st_size,'sha256':sha(q)}for q in a.out.iterdir()if q.is_file()and q.name!='manifest.json'];put(a.out/'manifest.json',m)
