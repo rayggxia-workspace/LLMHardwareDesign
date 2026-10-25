@@ -224,3 +224,14 @@ project/experiments/epoch_boundary/README.md与PROTOCOL.md记录冻结源重放�
 ## Issue106：真实共享服务银行
 
 [协议](../project/experiments/shared_services/PROTOCOL.md)、[报告](experiments/issue-106-shared-services.md)及work106/execution列实际argv。先`python -B scripts/check_project.py`；所有原始整数/RTL/map/gate/数学接收在本人服务器。统一RTL4ec4bcf，完整混合phase3，最终恢复driver ee770a1/phase6，库存门级phase4与分析归档phase7。PC用work106/verify_delivery.py接收完整或精选归档，再verify_sources.py `--expected-phases 7`核原Gitblob，只做字节不做数学；所有恢复用新输出目录，不覆盖旧阶段。实际唯一服务L2不是宏/时序/制造后定制完成。
+
+### Issue110注意力移位/位宽比较复现
+
+先在仓库执行 `python -B scripts/check_project.py`。真实张量、SAT、RTL/map/gate仅本人服务器；冻结根为 `/public/home/yuzelu/RuizhiLiang/issue110-attention-width-20261025`，phase1..5源码以binding.json和原Git字节回执为准。精确工具/输入/命令/CPU/输出见work/Liangruizhi/110/execution.json，不覆盖已有输出。
+
+- phase1/project/experiments/attention_width/prove.py：真实proc锥和FF不变量。
+- phase2/.../run.py：`build|sim|map --family 102|106 --style 0|1|2 --out <fresh>`；suite/stall/input/build以实际execution为准。102全79查询含实际cached，106原完整混合与恢复。
+- phase3/4的receive.py/proof_receive.py与原整数oracle、phase4 analyze.py/gate_receive.py/negative.py、phase5 qualify.py全部保存实际接收回执，禁止只重跑一个脚本就称完整验收。
+- 仅字节接收可在PC执行：`python -B work/Liangruizhi/110/verify_delivery.py --index <index.json> --archive <selected.zip> --out <fresh.json>`；`verify_sources.py --repository <repo> --index <index.json> --selected <selected.zip> --expected-phases 5 --out <fresh.json>`。
+
+选定raw门级是零延迟库功能和行为SRAM；宏/STA/物理与制造后定制没有在110执行。科学结论门槛是同精度、库存下所有输出/周期/物理事务和协议字段严格配对一致，而不是面积数字单独下降。

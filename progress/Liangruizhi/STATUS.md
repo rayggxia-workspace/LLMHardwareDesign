@@ -1,8 +1,10 @@
 # Liangruizhi 的进度
 
-## 2026-10-25 Issue110 A宽度比较实施中
+## 2026-10-25 UTC+08 Issue110注意力位宽本地交付待PR
 
-Issue110 / task/110-attention-width / D:/Projects/LLMHardwareDesign-attention-width，PR108@7a9fece基线。先原106等价、全域组合证明及真实FSM不变量，再三变体完整GQA/共享恢复/门级同精度与资源比较；尚未验证。109独立不改。根发布，看板/登记缺项保持交接。
+[Issue110](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/110)，task/110-attention-width，D:/Projects/LLMHardwareDesign-attention-width。原106→STYLE0及真实FF limb归纳/全域SAT与独立重证通过；3变体×两模式完整102 79query/恢复及106 7混合/27恢复共24套，所有输出、周期、端口物理事务及protocol逐字段一致。34负例/反例、三变体六路selected actual raw gate与唯一库存通过。STYLE0/1/2逻辑126029.470/125300.098/125009.626µm²，STYLE2仅省0.80921%、无加速；历史106面积不作本批baseline，未做STA/宏/物理。
+
+106本人作业104完成、2个零秒调度失败留档；完整87,834,705B服务器、精选1,299,697B入仓，服务器双包/PC精选/5phase320原Git源字节PASS。[报告](../../docs/experiments/issue-110-attention-width.md)、[交接](../../docs/handoffs/2026-10-25-issue-110-attention-width.md)、[逐周期配对](../../project/experiments/attention_width/results/issue-110/paired-receipt.json)。本地已整理，root统一push/PR/Issue，未done。未修改106/109；后续新任务按实际整合图接STYLE2再核资源。登记PR5 pending、看板unverified/同步pending；完整六Block库仍未验收。
 
 ## 2026-10-25 UTC+08 Issue106共享服务本地交付待PR
 
