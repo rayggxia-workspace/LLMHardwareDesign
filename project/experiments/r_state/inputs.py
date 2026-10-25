@@ -21,7 +21,7 @@ def main():
   assert v['state_initial'].shape==(32,128,256) and not v['state_initial'].any();assert np.array_equal(v['state_units_trace'][0],u)
   heads=[0];changed=np.flatnonzero(v['state_units_trace'][-1]!=u)
   if 0 not in changed and len(changed):heads.append(int(changed[0]))
-  events=json.loads((old/'transactions.json').read_text());wide=[{'token':tx['token'],'attempt':at['attempt'],'error':at['wide_error']} for tx in events['transactions'] for at in tx['attempts'] if at['wide_error'] is not None]
+  events=json.loads((old/'transactions.json').read_text());wide=[{'token':tx['token'],'attempt':at['attempt'],'error':at['wide_error']} for tx in events['tokens'] for at in tx['attempts'] if at['wide_error'] is not None]
   assert not wide,'cross-head wide guard must be reconciled explicitly'
   details=[]
   for h in heads:
