@@ -50,7 +50,7 @@ def main():
    for k in totals:totals[k]+=row[k]
   if rm['mode']=='protocol':
    from verify_boundary import receive_protocol
-   receipt['protocol']=receive_protocol(a.run,rows);check(completed==2 and len(rows)==29,'protocol coverage')
+   receipt['protocol']=receive_protocol(a.run,rows);check(completed==2 and len(rows)==31,'protocol coverage')
   if rm['mode']=='real':check(all(v['aborts']==0 and v['stale']==0 for v in rows),'real protocol counters');check(completed==72 and len(rows)==82,'all72 plus9restore+init');check(np.array_equal(np.array(state,np.int32).reshape(128,256),old['final']),'original72 final state');check(epoch==head['rescale_events_from_original_unit_trace'],'head local epoch')
   receipt.update(status='PASS_FULL_HEAD_RTL_BIGINT',run_manifest_sha256=sha(a.run/'manifest.json'),input_manifest_sha256=sha(a.input/'manifest.json'),rows=len(rows),committed_steps=completed,head_local_numeric_epoch=epoch,original32head_epoch=im['old_global_epoch'],retries=retries,totals=totals,external_payload_bytes=totals['transactions']*16,external_wire_bytes=totals['transactions']*5*16,transport_sideband='32bit generation request and response; serialization unspecified, excluded from 5beats',all_state_codes_compared=len(rows)*32768,all_readout_codes_compared=len(rows)*128,mode=rm['mode'],stall=rm['stall'],contract=CONTRACT,run_source=rm['source'])
  except Exception as e:receipt.update(error=str(e),traceback=traceback.format_exc());raise

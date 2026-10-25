@@ -40,7 +40,8 @@ def receive_boundary(run,inp,rm,im):
  check(len(seen)==19 and set(seen)==set(cases),'all fixed boundary fixtures');check(len(rows)==36,'boundary complete command count')
  return {'schema':'r99-receipt-v1','status':'PASS_FULL_HEAD_RTL_BOUNDARIES','mode':'boundary','rows':len(rows),'fixtures':results,'counts':counts,'totals':total,'all_state_codes_compared':len(rows)*32768,'all_readout_codes_compared':len(rows)*128,'external_payload_bytes':total['transactions']*16,'external_wire_bytes':total['transactions']*80}
 def receive_protocol(run,rows):
- events=[json.loads(x)for x in(run/'protocol.jsonl').read_text().splitlines()];d={x['test']:x for x in events};check(len(d)==len(events)==8,'protocol event coverage')
+ events=[json.loads(x)for x in(run/'protocol.jsonl').read_text().splitlines()];d={x['test']:x for x in events};check(len(d)==len(events)==9,'protocol event coverage')
+ check(d['peer_held_across_R_offer_reject_restore']=={'test':'peer_held_across_R_offer_reject_restore','returned_once':True},'peer response ownership independent of R commit')
  check(d['cfg_pending']=={'test':'cfg_pending','held_cycles':9},'cfg pending actual test');check(d['stale_response']=={'test':'stale_response','injected':1,'observed':1},'actual stale tag')
  for name in ['abort1000','abort1002','commit-drain']:check(d[name]=={'test':name,'write_applied_before_ack':True,'abort_was_accepted':name!='commit-drain'},'late write/commit test')
  for name,pos in [('hardreset-private',0),('hardreset-commit',1)]:
