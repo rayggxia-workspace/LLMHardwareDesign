@@ -71,3 +71,6 @@ SRAM仍行为wrapper，LUT仍外部128KiB；没有真实SRAM宏、STA/CTS/RC/PVT
 项目结构实际PASS仅管理结构。root统一上传PR/读回；当前未push，Issue仍in_progress、非done；登记management-hub PR5 pending，Projects缺配置/read:project，unverified/同步pending，审查人/管理员待指定。
 
 恢复先核最新Issue/PR及本地clean HEAD，已有43作业全部结束，无需重启；root发布后读回report/index/cost/gate四份关键文件。后续按电路候选v2的真实消费者buffer、宏/drive/PG/PVT和新top物理门槛继续。109物理资格不继承98或旧86/88。
+
+
+发布回执（2026-10-25）：[PR113](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/113)已上传，Issue109为in_review；源快照ded5bdd95348ad048ecacb77f5b5c9d3b27b8276的关键证据与原Git blob逐字节读回一致，见work/Liangruizhi/109/remote-readback.json。待独立审查/合并，未done。登记PR5 pending；看板unverified/同步pending，缺配置/read:project，管理员/审查人待指定。

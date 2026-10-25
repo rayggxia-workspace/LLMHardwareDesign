@@ -35,3 +35,6 @@ Parent/root owns final upload/PR, Issue and board synchronization. RegistryPR5 p
 All actual arrays/oracles/RTL/map/gate run only on the authorized server. PC performs source, AST, project structure and archive byte checks. No new model download, license action, Phi unseal, install or other-machine task. Read original106/104 input dirs only. Unrelated member55/63 physical/adapter tasks and Issue110 width optimization are not modified.
 
 Next substantive gaps: same-profile dataflow consumers and provisional sink implementation; generalized M/V and online/append attention; controller-scale/ports and physical memory/timing. Candidate logical Block boundaries are supported, final physical manufacturing boundaries are not signed off by logic area or gate replay.
+
+
+发布回执（2026-10-25）：[PR113](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/113)已上传，Issue109为in_review；源快照ded5bdd95348ad048ecacb77f5b5c9d3b27b8276的关键证据与原Git blob逐字节读回一致，见work/Liangruizhi/109/remote-readback.json。待独立审查/合并，未done。登记PR5 pending；看板unverified/同步pending，缺配置/read:project，管理员/审查人待指定。
