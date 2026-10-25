@@ -152,3 +152,14 @@ newcell set exactly matches the frozen list. No clock-net buffer insertion.
 Keep10ns/min0/dual-load/allports/area79600.5 and 20min/1100s limits. Every actual
 changed final netlist requires its own exact gate. Failure is retained, not
 silently followed by another cap candidate.
+
+
+The installed `insert_buffer` API treats `-buffer_name` and `-net_name` as base
+names and appends its database counter (observed93 suffix3371..3382,97 4216..4220).
+First strict reception rejected the name mismatch; no experiment is overwritten.
+Normalize only one actual instance matching each frozen base plus decimal suffix,
+require exact new-cell set and every driver/sink certificate, and retain both
+requested base and actual name. This is metadata normalization, not permission
+to add or remove any cell. Actual93 candidate2 reports no remaining violations;
+actual97 still has a newly routed cap violation and remains failed pending the
+fully independent current receiver. Do not start additional candidate silently.

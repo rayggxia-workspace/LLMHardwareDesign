@@ -107,7 +107,10 @@ def audit(folder,prepared,out,gate=None,postgate=None):
   logk=block(log,'BEGIN_SCENARIO_'+str(k),'END_SCENARIO_'+str(k));check=block(logk,'BEGIN_CHECK_SETUP','END_CHECK_SETUP');need(check.strip()=='','no unexplained unconstrained/no-clock endpoints');er=block(logk,'BEGIN_ELECTRICAL_REPORT','END_ELECTRICAL_REPORT');block(logk,'BEGIN_UNCONSTRAINED','END_UNCONSTRAINED')
   need('Error:'not in logk and'Warning:'not in logk,'scenario tool warning/error')
   by={n:rows(folder/f'{n}-load{k}.tsv')for n in('r2r','setup','hold')}
-  for n,es in [('r2r',ff),('setup',expected),('hold',expected)]:names=[r['endpoint']for r in by[n]];need(len(names)==len(set(names))and set(names)==es,'complete exact '+n+' endpoint set')
+  ffstarts={cn+'/'+pn for cn,c in after['cells'].items()if any(lib[c['type']]['sequential'].values())for pn in c['connections']if c['port_directions'][pn]=='output'};instarts={bracket_name(pn,p,i)for pn,p in after['ports'].items()if p['direction']=='input'for i in range(len(p['bits']))}
+  for n,es in [('r2r',ff),('setup',expected),('hold',expected)]:
+   names=[r['endpoint']for r in by[n]];need(len(names)==len(set(names))and set(names)==es,'complete exact '+n+' endpoint set')
+   need(all(Decimal(r['slack']).is_finite()and r['startpoint']in(ffstarts if n=='r2r'else ffstarts|instarts)for r in by[n]),'finite slack and actual FF/input startpoint for every '+n+' path')
   violations={}
   for n in('max slew','max capacitance','max fanout'):
    m=re.search(r'(?m)^'+n+r'\s*$',er);tail=er[m.end():]if m else'';end=re.search(r'(?m)^(max slew|max capacitance|max fanout|max delay/setup|min delay/hold)\s*$',tail);tail=tail[:end.start()]if end else tail;violations[n]=tail.count('(VIOLATED)')
