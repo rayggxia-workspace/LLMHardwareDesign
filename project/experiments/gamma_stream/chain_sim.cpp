@@ -10,7 +10,7 @@
 using W=std::array<uint32_t,4>;static Vchain93 d;static uint64_t ticks=0;static int stall=0,waits=0,mulwait=0;static bool seen=false,mulseen=false;static uint64_t serial=0,mulserial=0,extserial=0;static bool hold_external=false;
 static void need(bool b,const char*s){if(!b)throw std::runtime_error(s);}
 static constexpr uint32_t GBASE=0x01000000;
-struct Reply{uint32_t epoch;int delay;W words;};static unsigned fabric_high_water=0;static std::deque<Reply> fifo;static std::vector<uint8_t> payload,gamma;
+struct Reply{uint32_t epoch;int delay;W words;};static unsigned fabric_high_water=0;static std::deque<Reply> fifo;static std::vector<uint8_t> payload,gamma_payload;
 static std::vector<int32_t> accs,downs,joins,gamma_words;static std::vector<uint32_t> gamma_addresses,external_gamma_addresses;
 static bool track=false;static int active_h=0,active_kind=0,active_stream=0,gamma_fault=0;static unsigned sum_barrier_checks=0,canary_checks=0;
 struct E{bool cfg_req,cfg_rsp,command;W data;};
@@ -29,7 +29,7 @@ static E step(){
  }
  E e{bool(d.cfg&&d.cfg_ready),bool(d.cfg_valid&&d.cfg_take),bool(d.cmd_accept),{d.cfg_dout[0],d.cfg_dout[1],d.cfg_dout[2],d.cfg_dout[3]}};
  d.clk=1;d.eval();d.clk=0;d.eval();ticks++;
- if(d.reset){fifo.clear();extserial=0;}else{for(auto&f:fifo)if(f.delay>0)f.delay--;if(retire)fifo.pop_front();if(accept){W w{};need(address%16==0,"external alignment");if(address>=GBASE){uint32_t off=address-GBASE;need(off+16<=gamma.size(),"gamma external bounds");if(track)external_gamma_addresses.push_back(address);if(gamma_fault==1)off=(off+1024)%gamma.size();if(gamma_fault==2)off%=1024;for(int j=0;j<16;j++)w[j/4]|=uint32_t(gamma[off+j])<<(8*(j%4));}else{need(address+16<=payload.size(),"M external bounds");for(int j=0;j<16;j++)w[j/4]|=uint32_t(payload[address+j])<<(8*(j%4));}fifo.push_back({epoch,stall?1+int(extserial++%5):1,w});if(fifo.size()>fabric_high_water)fabric_high_water=fifo.size();}}
+ if(d.reset){fifo.clear();extserial=0;}else{for(auto&f:fifo)if(f.delay>0)f.delay--;if(retire)fifo.pop_front();if(accept){W w{};need(address%16==0,"external alignment");if(address>=GBASE){uint32_t off=address-GBASE;need(off+16<=gamma_payload.size(),"gamma external bounds");if(track)external_gamma_addresses.push_back(address);if(gamma_fault==1)off=(off+1024)%gamma_payload.size();if(gamma_fault==2)off%=1024;for(int j=0;j<16;j++)w[j/4]|=uint32_t(gamma_payload[off+j])<<(8*(j%4));}else{need(address+16<=payload.size(),"M external bounds");for(int j=0;j<16;j++)w[j/4]|=uint32_t(payload[address+j])<<(8*(j%4));}fifo.push_back({epoch,stall?1+int(extserial++%5):1,w});if(fifo.size()>fabric_high_water)fabric_high_water=fifo.size();}}
  if(d.soft_abort){seen=mulseen=false;waits=mulwait=0;serial=mulserial=0;}if(mulwait>0)mulwait--;if(!d.mul_request)mulseen=false;if(waits>0)waits--;if(!d.mem_request)seen=false;return e;
 }
 static W cfg(bool wr,int addr,W w={}){d.cfg=1;d.cfg_wr=wr;d.cfg_addr=addr;d.cfg_take=1;for(int i=0;i<4;i++)d.cfg_din[i]=w[i];int n=0;while(!step().cfg_req)need(++n<100,"cfg ready");d.cfg=0;for(n=0;n<100;n++){auto e=step();if(e.cfg_rsp)return e.data;}throw std::runtime_error("cfg response");}
@@ -39,9 +39,9 @@ static void load_at(const std::vector<uint8_t>&a,int base){need(a.size()%16==0,"
 struct Case{std::string name,p0,p1,g,x;uint32_t epsilon,coefficient;int kind,h;};static std::ofstream out;static unsigned commands=0,blocked_edges=0,held_done=0,aborts_tested=0,errors=0,parameter_mutations=0,control_conflicts=0,terminal_rejects=0,negative_runs=0,records_written=0;
 static uint32_t b0,t0,g0,g1;static uint64_t setup,guard_setup,command_edges,accepted_tick;static std::vector<unsigned>guard_lines;
 static W canary(unsigned i){return{0x91c00000u+i,0x91c10000u+i,0x91c20000u+i,0x91c30000u+i};}
-static void prepare(const Case&c,int cache,int stream,int fault=0){track=false;gamma_fault=fault;active_h=c.h;active_kind=c.kind;active_stream=stream;payload.clear();if(!c.kind){std::ifstream f(cache?c.p1:c.p0,std::ios::binary);payload.assign(std::istreambuf_iterator<char>(f),{});need(payload.size()==size_t(cache?6492160:12779520),"original fullM payload");}gamma=unhex(c.g);need(gamma.size()==size_t(c.h*4),"complete gamma");
- auto st=ticks;guard_lines.clear();if(stream)for(unsigned i=c.h/4+64;i<768;i++)guard_lines.push_back(i);if(c.kind)for(unsigned i=768;i<1024;i++)guard_lines.push_back(i);for(auto i:guard_lines)cfg(true,i,canary(i));guard_setup=ticks-st;
- st=ticks;if(c.kind)load_at(unhex(c.x),0);if(!stream)load_at(gamma,384);setup=ticks-st;
+static void prepare(const Case&c,int cache,int stream,int fault=0){track=false;gamma_fault=fault;active_h=c.h;active_kind=c.kind;active_stream=stream;payload.clear();if(!c.kind){std::ifstream f(cache?c.p1:c.p0,std::ios::binary);payload.assign(std::istreambuf_iterator<char>(f),{});need(payload.size()==size_t(cache?6492160:12779520),"original fullM payload");}gamma_payload=unhex(c.g);need(gamma_payload.size()==size_t(c.h*4),"complete gamma");
+ auto st=ticks;guard_lines.clear();if(stream)for(unsigned i=c.h/4+64;i<768;i++)guard_lines.push_back(i);if(c.kind||!cache)for(unsigned i=768;i<1024;i++)guard_lines.push_back(i);for(auto i:guard_lines)cfg(true,i,canary(i));guard_setup=ticks-st;
+ st=ticks;if(c.kind)load_at(unhex(c.x),0);if(!stream)load_at(gamma_payload,384);setup=ticks-st;
  accs.clear();downs.clear();joins.clear();gamma_words.clear();gamma_addresses.clear();external_gamma_addresses.clear();serial=mulserial=extserial=0;seen=mulseen=false;waits=mulwait=0;b0=d.wire_beats;t0=d.transactions;g0=d.mul_grants0;g1=d.mul_grants1;
  d.cache_mode=cache;d.norm_only=c.kind;d.h=c.h;d.gamma_stream=stream;d.gamma_address=GBASE;d.epsilon=c.epsilon;d.coefficient=c.coefficient;track=true;
 }
