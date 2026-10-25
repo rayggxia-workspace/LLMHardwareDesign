@@ -1,0 +1,36 @@
+{
+  "schema": "r99-local-checks-v1",
+  "source_head": "b32136000cb4aab0690374866767f307151b567b",
+  "base": "f660e3538be9c07ff4ee1f105db0cfee5f0bfcab",
+  "identity": {
+    "login": "Liangruizhi",
+    "id": 182389313,
+    "verified": "GitHub authenticated query before local delivery"
+  },
+  "checks": [
+    {
+      "command": "python -B scripts/check_project.py",
+      "result": "PASS: Project management structure is valid (schema 1).",
+      "scope": "management only"
+    },
+    {
+      "command": "ast.parse for project/experiments/r_state/*.py",
+      "result": "PASS",
+      "files": 13,
+      "scope": "syntax only, no numerical execution on PC"
+    },
+    {
+      "command": "reject CRLF in all task changed text paths",
+      "result": "PASS",
+      "files": 48
+    },
+    {
+      "command": "git diff --check f660e3538be9c07ff4ee1f105db0cfee5f0bfcab",
+      "result": "PASS",
+      "scope": "base to working tree before delivery commit"
+    }
+  ],
+  "scientific_execution": "Server only; see scientific receipts and execution.json. No model/RTL/numeric arrays executed on PC.",
+  "archive_bytes_receipt": "project/experiments/r_state/results/issue-99/local-byte-receipt.json",
+  "pending": "Post-commit base..HEAD diff and clean worktree captured by parent delivery message."
+}

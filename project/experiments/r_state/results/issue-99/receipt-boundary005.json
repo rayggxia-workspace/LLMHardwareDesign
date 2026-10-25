@@ -1,0 +1,239 @@
+{
+  "all_readout_codes_compared": 4608,
+  "all_state_codes_compared": 1179648,
+  "contract": {
+    "D": 128,
+    "N": 256,
+    "add_guard": "maxabs(decay)+maxabs(injection)<=I64_MAX over complete head",
+    "alpha": "U32 Q31 inclusive 2**31",
+    "descriptor_atomic_bits": 128,
+    "dt_skip": "I32 Q20",
+    "external_bytes": 1048576,
+    "generation_sideband": "32bit request and 32bit response outside five beats",
+    "head_domain": [
+      0,
+      31
+    ],
+    "injection": "RNE(32+unit)(x*I32guard(RNE12(dt*B)))",
+    "owner": 0,
+    "position_domain": [
+      0,
+      72
+    ],
+    "products": "one shared signed32x32->signed64; alpha1 explicit identity",
+    "profile": 1,
+    "publication": "consumer accept begins irreversible commit; external ACK completes; fabric atomicity assumed",
+    "read_wire_beats": 5,
+    "readout_guard": "complete head maxabs(state*C)*256<=I64_MAX",
+    "retry": "whole-head RNE1,unit+1,local_epoch+1; max8; no future data",
+    "rounding": "signed nearest ties even; no success saturation",
+    "schema": "r99-integer-fullhead-v1",
+    "scratch_bytes": 16384,
+    "scratch_read_write_ports": 1,
+    "scratch_width": 128,
+    "state": "S32 power2 exponent I16/head",
+    "steps": 72,
+    "unit_domain": [
+      -127,
+      127
+    ],
+    "version": "alias position",
+    "wire_bits_per_beat": 128,
+    "write_wire_beats": 5,
+    "x_B_C": "I32 Q12"
+  },
+  "counts": {
+    "aborted": 1,
+    "accepted": 6,
+    "rejected": 9
+  },
+  "external_payload_bytes": 21010800,
+  "external_wire_bytes": 105054000,
+  "fixtures": [
+    {
+      "alpha_bypass": 32768,
+      "epoch": 0,
+      "name": "alpha_one",
+      "retries": 0,
+      "status": 0,
+      "unit": 0
+    },
+    {
+      "alpha_bypass": 0,
+      "epoch": 0,
+      "name": "alpha_half_ties",
+      "retries": 0,
+      "status": 0,
+      "unit": 0
+    },
+    {
+      "alpha_bypass": 0,
+      "epoch": 0,
+      "name": "alpha_zero",
+      "retries": 0,
+      "status": 0,
+      "unit": 0
+    },
+    {
+      "alpha_bypass": 0,
+      "epoch": 0,
+      "name": "negative_shift",
+      "retries": 0,
+      "status": 0,
+      "unit": -33
+    },
+    {
+      "alpha_bypass": 65536,
+      "epoch": 1,
+      "name": "whole_head_range",
+      "retries": 1,
+      "status": 0,
+      "unit": -31
+    },
+    {
+      "alpha_bypass": 0,
+      "epoch": 0,
+      "name": "dtb_retry_limit",
+      "retries": 8,
+      "status": 5,
+      "unit": 0
+    },
+    {
+      "alpha_bypass": 0,
+      "epoch": 0,
+      "name": "unit_limit",
+      "retries": 0,
+      "status": 6,
+      "unit": 127
+    },
+    {
+      "alpha_bypass": 32768,
+      "epoch": 4294967295,
+      "name": "epoch_limit",
+      "retries": 0,
+      "status": 7,
+      "unit": -32
+    },
+    {
+      "alpha_bypass": 0,
+      "epoch": 0,
+      "name": "left_retry_limit",
+      "retries": 8,
+      "status": 5,
+      "unit": -127
+    },
+    {
+      "alpha_bypass": 32768,
+      "epoch": 0,
+      "name": "readout_guard",
+      "retries": 0,
+      "status": 8,
+      "unit": 0
+    },
+    {
+      "alpha_bypass": 0,
+      "epoch": 0,
+      "name": "output_guard",
+      "retries": 0,
+      "status": 8,
+      "unit": 0
+    },
+    {
+      "alpha_bypass": 0,
+      "epoch": 0,
+      "name": "invalid_alpha",
+      "retries": 0,
+      "status": 4,
+      "unit": 0
+    },
+    {
+      "alpha_bypass": 0,
+      "epoch": 0,
+      "name": "position_full",
+      "retries": 0,
+      "status": 4,
+      "unit": 0
+    },
+    {
+      "alpha_bypass": 0,
+      "epoch": 0,
+      "name": "invalid_header",
+      "retries": 0,
+      "status": 4,
+      "unit": 0
+    },
+    {
+      "alpha_bypass": 0,
+      "epoch": 2,
+      "name": "signed_min_range",
+      "retries": 2,
+      "status": 0,
+      "unit": -32
+    }
+  ],
+  "input_manifest_sha256": "96b14c080d4a22d79ddd8b3ec63f8f31be48ac4c8005a30ebf72ba821fd768ad",
+  "mode": "boundary",
+  "rows": 36,
+  "run_manifest_sha256": "10097d5a579ceb3c1f768582873bb7f4d60723d8e92bbff765a0cefe3144bba0",
+  "run_source": {
+    "commit": "af2f7fb171ad04158ed861c72c87133dfc5454d4",
+    "sources": {
+      "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+      "project/experiments/r_state/PROTOCOL.md": "b0c6d604a435c955c0c4a78fe816592d03ca9d40b1ab75a06521cfca8f651c62",
+      "project/experiments/r_state/analyze.py": "35024aeb78f8869ccc9da4df31e303526055035208dc3ba8916656f836871734",
+      "project/experiments/r_state/checkpoint_sim.cpp": "38094dfa9ecf301b28a12ad0e8d3515598ac2e3b5dcab0f8f671889ba2b83fec",
+      "project/experiments/r_state/contracts.py": "4c566e4d30f2f4772d84cbcfe96c20f1d183afa11bc2a66b7739ce52be699d5f",
+      "project/experiments/r_state/fixtures.py": "f8594129d7a31be25df25e680c8819a54db5540127f99bf87f65dc6e298e4613",
+      "project/experiments/r_state/gate.py": "ab1bc4bd984c98ebaae0dc305efefc7e88f4964603fa5b546b21acddd931aab5",
+      "project/experiments/r_state/inputs.py": "ccfd57c48c760c246c6f31d12dc63f6d8df3c6757a9a60186f0da29bf2862d25",
+      "project/experiments/r_state/negative.py": "fd8bc58e0bc5d710d8ea0db4b8ba73d843d1c768d296112a2acd7593a0310ced",
+      "project/experiments/r_state/r_sim.cpp": "988eae28632026c9a12d2cee99af41b42d4d390f265a9d1153362da23f5dcb77",
+      "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+      "project/experiments/r_state/run.py": "5f24b0aed18f7e323a81f5dcd70e59431525524f3a510f980c6231b6b773fb32",
+      "project/experiments/r_state/verify.py": "f153cab5876360a64aa6f292d4dbaab924671bb08c37df977cee610ec1769b5f",
+      "project/experiments/r_state/verify_boundary.py": "ce71e86b441fe895bf61261840ea6bc57b08b09d90d4b5e4233109f83c56870c",
+      "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+      "project/rtl/r_state/r99.sv": "5c8481c1db635ed3fb22335b605a211be7646726ff4d8c81c3c49fc111aa9113",
+      "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+      "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a"
+    }
+  },
+  "schema": "r99-receipt-v1",
+  "seconds": 0.47190538328140974,
+  "source": {
+    "commit": "af2f7fb171ad04158ed861c72c87133dfc5454d4",
+    "sources": {
+      "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+      "project/experiments/r_state/PROTOCOL.md": "b0c6d604a435c955c0c4a78fe816592d03ca9d40b1ab75a06521cfca8f651c62",
+      "project/experiments/r_state/analyze.py": "35024aeb78f8869ccc9da4df31e303526055035208dc3ba8916656f836871734",
+      "project/experiments/r_state/checkpoint_sim.cpp": "38094dfa9ecf301b28a12ad0e8d3515598ac2e3b5dcab0f8f671889ba2b83fec",
+      "project/experiments/r_state/contracts.py": "4c566e4d30f2f4772d84cbcfe96c20f1d183afa11bc2a66b7739ce52be699d5f",
+      "project/experiments/r_state/fixtures.py": "f8594129d7a31be25df25e680c8819a54db5540127f99bf87f65dc6e298e4613",
+      "project/experiments/r_state/gate.py": "ab1bc4bd984c98ebaae0dc305efefc7e88f4964603fa5b546b21acddd931aab5",
+      "project/experiments/r_state/inputs.py": "ccfd57c48c760c246c6f31d12dc63f6d8df3c6757a9a60186f0da29bf2862d25",
+      "project/experiments/r_state/negative.py": "fd8bc58e0bc5d710d8ea0db4b8ba73d843d1c768d296112a2acd7593a0310ced",
+      "project/experiments/r_state/r_sim.cpp": "988eae28632026c9a12d2cee99af41b42d4d390f265a9d1153362da23f5dcb77",
+      "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+      "project/experiments/r_state/run.py": "5f24b0aed18f7e323a81f5dcd70e59431525524f3a510f980c6231b6b773fb32",
+      "project/experiments/r_state/verify.py": "f153cab5876360a64aa6f292d4dbaab924671bb08c37df977cee610ec1769b5f",
+      "project/experiments/r_state/verify_boundary.py": "ce71e86b441fe895bf61261840ea6bc57b08b09d90d4b5e4233109f83c56870c",
+      "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+      "project/rtl/r_state/r99.sv": "5c8481c1db635ed3fb22335b605a211be7646726ff4d8c81c3c49fc111aa9113",
+      "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+      "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a"
+    }
+  },
+  "stall": 0,
+  "status": "PASS_FULL_HEAD_RTL_BOUNDARIES",
+  "totals": {
+    "alpha_bypass": 196608,
+    "beats": 6565875,
+    "cycles": 36087891,
+    "mul": 1451010,
+    "reads": 624849,
+    "s_reads": 2207748,
+    "s_writes": 594299,
+    "transactions": 1313175,
+    "writes": 688326
+  }
+}

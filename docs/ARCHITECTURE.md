@@ -216,3 +216,7 @@ project/experiments/epoch_boundary/README.md与PROTOCOL.md记录冻结源重放�
 ## Issue102：完整GQA注意力RTL
 
 [合同](../project/experiments/attention_rtl/PROTOCOL.md)、[复现](../project/experiments/attention_rtl/README.md)、[报告](experiments/issue-102-attention-rtl.md)。先`python -B scripts/check_project.py`。实际张量/RTL/map/gate/数学仅本人服务器；正式a6961b7 RTL、3b5743f driver、b84f0b2 receiver、phase10归档；完整argv及Slurm在work102/execution.json。PC用work102/verify_delivery.py接收selected.zip，再verify_sources.py --expected-phases 10，输出D盘新目录。两路full03/qualification02与gatep1/2s0/1范围见合同，不称online/append或物理共享。
+
+## Issue99 完整head R状态单元
+
+参见[工具README](../project/experiments/r_state/README.md)、[报告](experiments/issue-99-r-state.md)、[协议](../project/experiments/r_state/PROTOCOL.md)。PC先运行`python -B scripts/check_project.py`，再`project/experiments/r_state/verify_archive.py`仅做selected.zip/index.json字节接收。实际inputs/bigint/RTL/map/rawgate仅服务器：正式phase7六路05批次、map04、4真实checkpoint gate、phase8 gate-schema01；完整argv在work99/execution.json。复现必须新输出目录，不覆盖已有结果。单head/单16KiB/单S32并不等于与M/V资源已整合或物理签核。

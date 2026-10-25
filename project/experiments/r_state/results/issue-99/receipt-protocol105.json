@@ -1,0 +1,147 @@
+{
+  "all_readout_codes_compared": 3968,
+  "all_state_codes_compared": 1015808,
+  "committed_steps": 2,
+  "contract": {
+    "D": 128,
+    "N": 256,
+    "add_guard": "maxabs(decay)+maxabs(injection)<=I64_MAX over complete head",
+    "alpha": "U32 Q31 inclusive 2**31",
+    "descriptor_atomic_bits": 128,
+    "dt_skip": "I32 Q20",
+    "external_bytes": 1048576,
+    "generation_sideband": "32bit request and 32bit response outside five beats",
+    "head_domain": [
+      0,
+      31
+    ],
+    "injection": "RNE(32+unit)(x*I32guard(RNE12(dt*B)))",
+    "owner": 0,
+    "position_domain": [
+      0,
+      72
+    ],
+    "products": "one shared signed32x32->signed64; alpha1 explicit identity",
+    "profile": 1,
+    "publication": "consumer accept begins irreversible commit; external ACK completes; fabric atomicity assumed",
+    "read_wire_beats": 5,
+    "readout_guard": "complete head maxabs(state*C)*256<=I64_MAX",
+    "retry": "whole-head RNE1,unit+1,local_epoch+1; max8; no future data",
+    "rounding": "signed nearest ties even; no success saturation",
+    "schema": "r99-integer-fullhead-v1",
+    "scratch_bytes": 16384,
+    "scratch_read_write_ports": 1,
+    "scratch_width": 128,
+    "state": "S32 power2 exponent I16/head",
+    "steps": 72,
+    "unit_domain": [
+      -127,
+      127
+    ],
+    "version": "alias position",
+    "wire_bits_per_beat": 128,
+    "write_wire_beats": 5,
+    "x_B_C": "I32 Q12"
+  },
+  "external_payload_bytes": 8428288,
+  "external_wire_bytes": 42141440,
+  "head_local_numeric_epoch": 0,
+  "input_manifest_sha256": "96b14c080d4a22d79ddd8b3ec63f8f31be48ac4c8005a30ebf72ba821fd768ad",
+  "mode": "protocol",
+  "original32head_epoch": 25,
+  "protocol": {
+    "events": 9,
+    "generation_terminal_scope": "RTL register injection, not gate-level proof",
+    "hard_reset_applied_write_cases": 2,
+    "reset_partial_costs": [
+      {
+        "applied_address": 67371008,
+        "cycles": 3315,
+        "descriptor_position_after_apply": 0,
+        "fabric_barrier_drained": true,
+        "generation": 28,
+        "reads": 163,
+        "test": "hardreset-private",
+        "write_ack_not_delivered": true,
+        "writes": 1
+      },
+      {
+        "applied_address": 67765248,
+        "cycles": 2417075,
+        "descriptor_position_after_apply": 1,
+        "fabric_barrier_drained": true,
+        "generation": 2,
+        "reads": 41122,
+        "test": "hardreset-commit",
+        "write_ack_not_delivered": true,
+        "writes": 32801
+      }
+    ],
+    "soft_abort_commands": 11
+  },
+  "retries": 0,
+  "rows": 31,
+  "run_manifest_sha256": "3487114bf2049a2d6b1fc8594a54614305b00ae18567f9984cc07e1699451787",
+  "run_source": {
+    "commit": "af2f7fb171ad04158ed861c72c87133dfc5454d4",
+    "sources": {
+      "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+      "project/experiments/r_state/PROTOCOL.md": "b0c6d604a435c955c0c4a78fe816592d03ca9d40b1ab75a06521cfca8f651c62",
+      "project/experiments/r_state/analyze.py": "35024aeb78f8869ccc9da4df31e303526055035208dc3ba8916656f836871734",
+      "project/experiments/r_state/checkpoint_sim.cpp": "38094dfa9ecf301b28a12ad0e8d3515598ac2e3b5dcab0f8f671889ba2b83fec",
+      "project/experiments/r_state/contracts.py": "4c566e4d30f2f4772d84cbcfe96c20f1d183afa11bc2a66b7739ce52be699d5f",
+      "project/experiments/r_state/fixtures.py": "f8594129d7a31be25df25e680c8819a54db5540127f99bf87f65dc6e298e4613",
+      "project/experiments/r_state/gate.py": "ab1bc4bd984c98ebaae0dc305efefc7e88f4964603fa5b546b21acddd931aab5",
+      "project/experiments/r_state/inputs.py": "ccfd57c48c760c246c6f31d12dc63f6d8df3c6757a9a60186f0da29bf2862d25",
+      "project/experiments/r_state/negative.py": "fd8bc58e0bc5d710d8ea0db4b8ba73d843d1c768d296112a2acd7593a0310ced",
+      "project/experiments/r_state/r_sim.cpp": "988eae28632026c9a12d2cee99af41b42d4d390f265a9d1153362da23f5dcb77",
+      "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+      "project/experiments/r_state/run.py": "5f24b0aed18f7e323a81f5dcd70e59431525524f3a510f980c6231b6b773fb32",
+      "project/experiments/r_state/verify.py": "f153cab5876360a64aa6f292d4dbaab924671bb08c37df977cee610ec1769b5f",
+      "project/experiments/r_state/verify_boundary.py": "ce71e86b441fe895bf61261840ea6bc57b08b09d90d4b5e4233109f83c56870c",
+      "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+      "project/rtl/r_state/r99.sv": "5c8481c1db635ed3fb22335b605a211be7646726ff4d8c81c3c49fc111aa9113",
+      "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+      "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a"
+    }
+  },
+  "schema": "r99-receipt-v1",
+  "seconds": 0.0908648488111794,
+  "source": {
+    "commit": "af2f7fb171ad04158ed861c72c87133dfc5454d4",
+    "sources": {
+      "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+      "project/experiments/r_state/PROTOCOL.md": "b0c6d604a435c955c0c4a78fe816592d03ca9d40b1ab75a06521cfca8f651c62",
+      "project/experiments/r_state/analyze.py": "35024aeb78f8869ccc9da4df31e303526055035208dc3ba8916656f836871734",
+      "project/experiments/r_state/checkpoint_sim.cpp": "38094dfa9ecf301b28a12ad0e8d3515598ac2e3b5dcab0f8f671889ba2b83fec",
+      "project/experiments/r_state/contracts.py": "4c566e4d30f2f4772d84cbcfe96c20f1d183afa11bc2a66b7739ce52be699d5f",
+      "project/experiments/r_state/fixtures.py": "f8594129d7a31be25df25e680c8819a54db5540127f99bf87f65dc6e298e4613",
+      "project/experiments/r_state/gate.py": "ab1bc4bd984c98ebaae0dc305efefc7e88f4964603fa5b546b21acddd931aab5",
+      "project/experiments/r_state/inputs.py": "ccfd57c48c760c246c6f31d12dc63f6d8df3c6757a9a60186f0da29bf2862d25",
+      "project/experiments/r_state/negative.py": "fd8bc58e0bc5d710d8ea0db4b8ba73d843d1c768d296112a2acd7593a0310ced",
+      "project/experiments/r_state/r_sim.cpp": "988eae28632026c9a12d2cee99af41b42d4d390f265a9d1153362da23f5dcb77",
+      "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+      "project/experiments/r_state/run.py": "5f24b0aed18f7e323a81f5dcd70e59431525524f3a510f980c6231b6b773fb32",
+      "project/experiments/r_state/verify.py": "f153cab5876360a64aa6f292d4dbaab924671bb08c37df977cee610ec1769b5f",
+      "project/experiments/r_state/verify_boundary.py": "ce71e86b441fe895bf61261840ea6bc57b08b09d90d4b5e4233109f83c56870c",
+      "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+      "project/rtl/r_state/r99.sv": "5c8481c1db635ed3fb22335b605a211be7646726ff4d8c81c3c49fc111aa9113",
+      "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+      "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a"
+    }
+  },
+  "stall": 1,
+  "status": "PASS_FULL_HEAD_RTL_BIGINT",
+  "totals": {
+    "alpha_bypass": 0,
+    "beats": 2633840,
+    "cycles": 15856330,
+    "mul": 592642,
+    "reads": 272652,
+    "s_reads": 839301,
+    "s_writes": 207802,
+    "transactions": 526768,
+    "writes": 254116
+  },
+  "transport_sideband": "32bit generation request and response; serialization unspecified, excluded from 5beats"
+}
