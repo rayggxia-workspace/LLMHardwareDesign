@@ -256,3 +256,6 @@ PR待审查/合并，审查人/管理员待指定，未done；后续在已有授
 [Issue88](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/88)，负责人Liangruizhi。四原84静态变体通过8次完整门级消费者、原全部cell/pin结构与两档负载全受检setup/hold及内部slew/cap检查；所有BUF/tie/drive-strength成本计入，面积63947.730/55713.966/65404.878/57432.858µm²。58个作业结束，服务器双包、本机738成员及11phase98源字节通过。仍是Nangate45、零线RC、理想时钟和store切分，不能扩展到85/92新硬件或全Block制造资格。
 
 分支task/88-electrical-repair，工作目录D:/Projects/LLMHardwareDesign-electrical-repair。实验源commit按索引冻结，文档/依赖合并不改实验源。主会话正上传PR，最终链接另附；待审查合并而非done。登记management-hub PR5 pending；board.json缺失/实际projectItems缺read:project，在线状态unverified、同步pending，管理员/审查人待指定。下一步#93流式gamma与完整V/S消费者及新网表物理资格，M/V/A/R/S/D整体仍未完成。
+
+
+发布回执（2026-10-25）：[PR95](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/95)已上传；Issue88为in_review，待独立审查/合并，未done。远端读回commit 7d1e7dd95533c1860df62fbf4b97616c85148acf的报告、索引、接收报告均与原Git blob逐字节相同，详见work/Liangruizhi/88/remote-readback.json。后续文档提交不改冻结实验source。登记PR5 pending；看板board.json404且实际条目查询缺read:project，状态unverified、同步pending。审查人/管理员待指定。

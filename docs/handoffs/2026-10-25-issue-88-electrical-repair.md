@@ -16,3 +16,6 @@
 
 
 主会话接收：已核验本人身份与最新成员55/63、PR58/79；本分支同步最新父分支task/86-gate-sta。旧实验的source binding/原始包未改变；PR待提交后的实际读回记录，不把子任务“未push”历史解释为当前最终状态。
+
+
+发布回执（2026-10-25）：[PR95](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/95)已上传；Issue88为in_review，待独立审查/合并，未done。远端读回commit 7d1e7dd95533c1860df62fbf4b97616c85148acf的报告、索引、接收报告均与原Git blob逐字节相同，详见work/Liangruizhi/88/remote-readback.json。后续文档提交不改冻结实验source。登记PR5 pending；看板board.json404且实际条目查询缺read:project，状态unverified、同步pending。审查人/管理员待指定。

@@ -59,3 +59,6 @@ Issue86 的原始标准单元网表已通过选定完整整数消费者，却存
 完整/精选包服务器逐成员校验通过；精选包本机738成员字节核验通过。完整包128.08MB留授权服务器，5.38MB精选包进入仓库；后者含数学接收、真实输出、时序/负载/源绑定，不能替代原始完整数据重跑。
 
 补充面积拆分：服务器90842直接复用已冻结phase10原Liberty解析器与all03完整库存，逐项断言“新增BUF/tie面积+原单元resize增量=总面积增量”，不重跑或改写原gate/STA。v0..3分别为5176.360+1167.740、4606.056+977.284、5323.724+1120.126、4809.014+996.702um²。补充收据cost-split.json的SHA-256为ee9e3b3871522468577fa339703192902a61cf3ab962594d8ecc67e95db5b214，源绑定与主归档phase10完全相同，实际inline命令另存work88/cost-split-command.json；它是主归档之后的单独补充文件，原两个zip保持不变。
+
+
+发布回执（2026-10-25）：[PR95](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/95)已上传；Issue88为in_review，待独立审查/合并，未done。远端读回commit 7d1e7dd95533c1860df62fbf4b97616c85148acf的报告、索引、接收报告均与原Git blob逐字节相同，详见work/Liangruizhi/88/remote-readback.json。后续文档提交不改冻结实验source。登记PR5 pending；看板board.json404且实际条目查询缺read:project，状态unverified、同步pending。审查人/管理员待指定。
