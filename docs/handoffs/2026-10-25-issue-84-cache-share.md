@@ -13,3 +13,5 @@
 协作：任务交付in_review，待独立审查/合并，非done、不自合并；父PR83未合并。成员55/63及PR79保持各自范围。登记management-hub PR5 pending；board.json404，Projects查询缺read:project，看板状态unverified、同步pending，处理管理员/审查人待指定。没有改用他人认证或提高权限。
 
 恢复第一步：核最新AGENTS/Skill、Issue84/85/86及PR83、成员55/63/PR79和未合并交接；按索引接收selected.zip，再核7phase原Git SHA，勿重复正确RTL。接收命令见project/experiments/cache_share/README.md及execution.json；实际数组重放只能服务器。接收新版85/86后方可把其结论纳入当前方案，不将本地文件完成说成远端验收。
+
+远端交付：[PR87](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/87)已上传，Issue84为in_review；待指定独立审查与合并，未done。已按不可变commit读回报告/交接/个人进度，与原Git blob逐字节相同；后续仅文档同步，不改变实验源码和结果SHA。

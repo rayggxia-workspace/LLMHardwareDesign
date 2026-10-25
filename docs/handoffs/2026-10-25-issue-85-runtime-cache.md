@@ -24,3 +24,5 @@ full/selected均逐字节核验PASS；5phase86原Git源blob与冻结SHA/index一
 新增32bit epoch接口的实际NoC打包/线网未定；恢复环境2槽至少320bit payload/tag加控制未计core面积。Global reset需fabric共同复位；soft_abort允许迟到带tag响应。会话epoch禁止wrap，溢出注入未执行。宏/STA/门级等价/CDC/多context/更大H/K/通用V/完整M阵列和整模型质量未验收，不能说Block电路全部签核。86结果不可自动变成85时序资格。
 
 下一位先核最新Issue85、父84/并行86、PR与成员55/63记录，确认branch/HEAD和真实认证Liangruizhi；读final/index和两份字节/原Git接收。可先沿明确cmd_ready/accept和tagged软中止接口推进总线集成，补epoch边界/真实tag费用，然后在目标宏/PVT/STA约束可用时处理物理资格，不重复加载模型。无须继续旧已完成Slurm作业。未上传/PR状态由主会话完成；登记management-hub PR5 pending、看板配置/read:project权限沿父任务记录未解决，管理员/审查人待指定。
+
+远端交付：[PR89](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/89)已上传，Issue85为in_review；待指定独立审查与合并，未done。已按不可变commit读回报告/交接/个人进度，与原Git blob逐字节相同；后续仅文档同步，不改变实验源码和结果SHA。

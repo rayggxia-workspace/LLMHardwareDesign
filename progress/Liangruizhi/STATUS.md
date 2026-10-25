@@ -2,7 +2,7 @@
 
 ## 2026-10-25 UTC+08 Issue84缓存/共享交付
 
-[Issue84](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/84)，task/84-cache-share，D:/Projects/LLMHardwareDesign-cache-share，base PR83@7e9ec409。本人Liangruizhi/182389313及push已核，成员55/63继续独立。仅本人服务器lrz-i84-*，无新模型/其他机器/软件安装。84完整真实消费者命令及8192独立仲裁产品通过；14份严格接收拒绝实际重SHA改码。16KiB/128bit1RW不增加端口，缓存周期减少34.68%、外部线字节减少49.20%；共享缓存比专用缓存逻辑面积少12.44%。额外8拍SRAM等待出现负收益，不能冻结总物理边界。
+[Issue84](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/84) / [PR87](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/87)，task/84-cache-share，D:/Projects/LLMHardwareDesign-cache-share，base PR83@7e9ec409。本人Liangruizhi/182389313及push已核，成员55/63继续独立。仅本人服务器lrz-i84-*，无新模型/其他机器/软件安装。84完整真实消费者命令及8192独立仲裁产品通过；14份严格接收拒绝实际重SHA改码。16KiB/128bit1RW不增加端口，缓存周期减少34.68%、外部线字节减少49.20%；共享缓存比专用缓存逻辑面积少12.44%。额外8拍SRAM等待出现负收益，不能冻结总物理边界。
 
 93个本人Slurm作业62完成/4原构建失败/27仅自有取消，全部终态；原失败/挂起恢复保留。完整279763633B/799成员留服务器，精选2900792B/300成员入仓；两包服务器、精选PC和7phase126原Git源SHA核验PASS。12轻量边界/结构/AST检查通过，实际数值和RTL只在服务器。
 
@@ -246,8 +246,7 @@ PR待审查/合并，审查人/管理员待指定，未done；后续在已有授
 
 ## 2026-10-25T12:16:13.088516+08:00 Issue85运行时缓存与恢复
 
-Issue85：https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/85；task/85-runtime-cache。服务器正式60完整输出/22真实soft-abort/12错误/2迟到丢弃通过，模式选择同一个M核心，显式命令握手；logic-only+1.52715%/+97寄存bit，相同核心cycles。全包74.46MB/精选0.588MB与5phase86源已核。报告docs/experiments/issue-85-runtime-cache.md，交接docs/handoffs/2026-10-25-issue-85-runtime-cache.md。主会话待push/PR，代理未上传；审查/合并未完成，不done。下一步真实tag/总线、epoch边界、宏/STA；外部测试两响应槽未计core面积。登记/看板仍待处理。
-
+[Issue85](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/85) / [PR89](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/89)；task/85-runtime-cache。服务器正式60完整输出/22真实soft-abort/12错误/2迟到丢弃通过，模式选择同一个M核心，显式命令握手；logic-only+1.52715%/+97寄存bit，相同核心cycles。全包74.46MB/精选0.588MB与5phase86源已核。报告docs/experiments/issue-85-runtime-cache.md，交接docs/handoffs/2026-10-25-issue-85-runtime-cache.md。已上传PR89，Issue为in_review；审查/合并未完成，不done。下一步真实tag/总线、epoch边界、宏/STA；外部测试两响应槽未计core面积。登记/看板仍待处理。
 
 ## 2026-10-25 UTC+08 — Issue91 V/S整合合同（本地交付待根发布）
 
