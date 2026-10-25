@@ -51,7 +51,7 @@ def main():
    slew=log.split('max slew\n',1)[1].split('max capacitance\n',1)[0];caps=log.split('max capacitance\n',1)[1];counts={'max_slew_violations':slew.count('(VIOLATED)'),'max_capacitance_violations':caps.count('(VIOLATED)')}
    where={}
    for role in('startpoint','endpoint'):
-    cell=sc['worst_r2r_path'][role].split('/')[0];bits=set(orig['cells'][cell]['connections'].get('Q',[]));where[role]=sorted(n for n,w in orig['netnames'].items()if bits.intersection(w['bits'])and not n.startswith('$'))[:20]
+    where[role]={'emitted_verilog_pin':sc['worst_r2r_path'][role],'original_RTL_name':'not_resolved: Yosys write_verilog renames internal instances; do not infer semantic owner from generated names'}
    timings.append({'variant':v,**sc,**counts,'unconstrained_or_no_clock_endpoints_reported':0,'mapped_register_context':where,'acceptance':'DIAGNOSTIC_ONLY_ELECTRICAL_VIOLATIONS_NOT_CLOSED','status':'PASS_DECLARED_LOGIC_CUT_COVERAGE'})
  bad_cases=[]
  for key in ('gate','build','prepared'):

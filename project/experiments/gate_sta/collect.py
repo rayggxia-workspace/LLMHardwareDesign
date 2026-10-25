@@ -11,7 +11,7 @@ def main():
  p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();root=a.root.resolve();out=a.out.resolve()
  if not str(root).startswith('/public/home/yuzelu/RuizhiLiang/issue86-gate-sta-')or out.parent!=root:raise ValueError('own root only')
  if out.exists():raise ValueError('new delivery only')
- if json.loads((root/'receive02/receipt.json').read_text())['status']!='PASS_GATE_MATH_AND_DECLARED_TIMING_RECEPTION':raise ValueError('independent receipt required')
+ if json.loads((root/'receive03/receipt.json').read_text())['status']!='PASS_GATE_MATH_AND_DECLARED_TIMING_RECEPTION':raise ValueError('independent receipt required')
  files=[]
  for q in sorted(root.rglob('*')):
   if q.is_symlink():raise ValueError('no symlinks')
@@ -30,6 +30,6 @@ def main():
    for n in names:z.write(root/n,n)
   archives.append({'path':str(path),'bytes':path.stat().st_size,'sha256':sha(path),'members':len(names)})
  binding=json.loads((Path(__file__).resolve().parents[3]/'binding.json').read_text())
- index={'schema':'issue86-server-delivery-v1','source_commit':binding['commit'],'files':records,'selected_paths':selected,'archives':archives,'dependencies':{'issue84_root':'/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025','input_manifest_sha256':json.loads((root/'receive02/receipt.json').read_text())['input_manifest_sha256'],'mapping':'Original map-v{0..3}03 are byte-reused; exact copies in prepare mapped.json. Input physical payload remains original input01, not duplicated here.'},'limits':['Selected archive includes actual gate outputs and timing evidence; no SRAM macro or physical closure.','Full archive excludes compiler intermediate objects; gate binaries included. Exact external input dependencies remain authorized server read-only.']}
+ index={'schema':'issue86-server-delivery-v1','source_commit':binding['commit'],'files':records,'selected_paths':selected,'archives':archives,'dependencies':{'issue84_root':'/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025','input_manifest_sha256':json.loads((root/'receive03/receipt.json').read_text())['input_manifest_sha256'],'mapping':'Original map-v{0..3}03 are byte-reused; exact copies in prepare mapped.json. Input physical payload remains original input01, not duplicated here.'},'limits':['Selected archive includes actual gate outputs and timing evidence; no SRAM macro or physical closure.','Full archive excludes compiler intermediate objects; gate binaries included. Exact external input dependencies remain authorized server read-only.']}
  (out/'index.json').write_text(json.dumps(index,indent=2)+'\n');print(json.dumps(archives))
 if __name__=='__main__':main()
