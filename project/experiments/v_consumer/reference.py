@@ -52,6 +52,11 @@ def reference(root,c):
   ref.update(acc=acc.T.reshape(-1).tolist(),down=down.T.reshape(-1).tolist(),joined=joined,out=output,sum_hex=f'{sumsq:032x}',den_hex=f'{den:032x}');return ref
 
 def check(row,ref):
+ arrays={'mid','A8','delta','acc','down','joined','out'};strings={'name','role','sum_hex','den_hex'};numbers={'epoch','status','cycles','v_cycles','norm_cycles','gate_reads','up_reads','lut_reads','v_sreads','v_swrites','norm_reads','norm_writes','gamma_loads','gamma_stores','den_events','M_packets','M_MACs','M_writes','cache_reads','cache_writes','wire_beats','transactions','mul_grants0','mul_grants1'}
+ require(set(row)==arrays|strings|numbers|{'prep_only'},'exact numeric row fields');require(type(row['prep_only'])is bool,'actual bool prep scope')
+ for k in strings:require(type(row[k])is str,'typed string '+k)
+ for k in numbers:require(type(row[k])is int and row[k]>=0,'typed nonnegative count '+k)
+ for k in arrays:require(type(row[k])is list and all(type(x)is int for x in row[k]),'typed integer array '+k)
  for k in ('mid','A8','delta'):
   require(type(row[k])is list and all(type(x)is int for x in row[k]),'integer typed '+k)
   require(row[k]==ref[k],'actual RTL '+k)
