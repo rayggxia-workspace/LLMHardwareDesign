@@ -1,0 +1,3715 @@
+{
+  "issue": 88,
+  "repository": "https://github.com/rayggxia-workspace/LLMHardwareDesign",
+  "branch": "task/88-electrical-repair",
+  "github_actor": "Liangruizhi",
+  "github_user_id": 182389313,
+  "server_root": "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025",
+  "commands": [
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase1/project/experiments/electrical_repair/probe.py",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/probe01"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase1/project/experiments/electrical_repair/probe.py --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/probe01",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-probe01",
+        "--partition=c96",
+        "--cpus-per-task=1",
+        "--time=00:05:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/probe01-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase1/project/experiments/electrical_repair/probe.py --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/probe01"
+      ],
+      "stdout": "90752",
+      "phase": "phase1",
+      "binding_sha256": "cb420e5dd77b06e1b0ef00325e7367efe1118addc85b24fdffd26275957f06c7",
+      "record": "probe01-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase2/project/experiments/electrical_repair/repair.py",
+        "--variant",
+        "3",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v301"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase2/project/experiments/electrical_repair/repair.py --variant 3 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v301",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-pilot-v301",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:12:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v301-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase2/project/experiments/electrical_repair/repair.py --variant 3 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v301"
+      ],
+      "stdout": "90753",
+      "phase": "phase2",
+      "binding_sha256": "80a0b654ef045942176c3874ad01d0926db06d975fcebfa7475b5affbebbeb0a",
+      "record": "pilot-v301-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase3/project/experiments/electrical_repair/run.py",
+        "prepare",
+        "--variant",
+        "3",
+        "--repair",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v301",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v301"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase3/project/experiments/electrical_repair/run.py prepare --variant 3 --repair /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v301 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v301",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-prepare-v301",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:08:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v301-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase3/project/experiments/electrical_repair/run.py prepare --variant 3 --repair /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v301 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v301"
+      ],
+      "stdout": "90754",
+      "phase": "phase3",
+      "binding_sha256": "8c65e1e45fb37ab82d79cde24f2d188d0f8856574a62348d6eb6ed7d810b12ee",
+      "record": "prepare-v301-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase3/project/experiments/electrical_repair/run.py",
+        "build",
+        "--variant",
+        "3",
+        "--prepared",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v301",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v301"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase3/project/experiments/electrical_repair/run.py build --variant 3 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v301 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v301",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-build-v301",
+        "--partition=c96",
+        "--cpus-per-task=4",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v301-%j.log",
+        "--dependency=afterok:90754",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase3/project/experiments/electrical_repair/run.py build --variant 3 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v301 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v301"
+      ],
+      "stdout": "90755",
+      "phase": "phase3",
+      "binding_sha256": "8c65e1e45fb37ab82d79cde24f2d188d0f8856574a62348d6eb6ed7d810b12ee",
+      "record": "build-v301-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase3/project/experiments/electrical_repair/run.py",
+        "sta",
+        "--variant",
+        "3",
+        "--prepared",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v301",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v301"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase3/project/experiments/electrical_repair/run.py sta --variant 3 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v301 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v301",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-sta-v301",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:08:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v301-%j.log",
+        "--dependency=afterok:90754",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase3/project/experiments/electrical_repair/run.py sta --variant 3 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v301 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v301"
+      ],
+      "stdout": "90756",
+      "phase": "phase3",
+      "binding_sha256": "8c65e1e45fb37ab82d79cde24f2d188d0f8856574a62348d6eb6ed7d810b12ee",
+      "record": "sta-v301-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase3/project/experiments/electrical_repair/run.py",
+        "sim",
+        "--variant",
+        "3",
+        "--stall",
+        "0",
+        "--build",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v301",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s001"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase3/project/experiments/electrical_repair/run.py sim --variant 3 --stall 0 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v301 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s001",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-gate-v3s001",
+        "--partition=c96",
+        "--cpus-per-task=1",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s001-%j.log",
+        "--dependency=afterok:90755",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase3/project/experiments/electrical_repair/run.py sim --variant 3 --stall 0 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v301 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s001"
+      ],
+      "stdout": "90757",
+      "phase": "phase3",
+      "binding_sha256": "8c65e1e45fb37ab82d79cde24f2d188d0f8856574a62348d6eb6ed7d810b12ee",
+      "record": "gate-v3s001-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase3/project/experiments/electrical_repair/run.py",
+        "sim",
+        "--variant",
+        "3",
+        "--stall",
+        "1",
+        "--build",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v301",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s101"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase3/project/experiments/electrical_repair/run.py sim --variant 3 --stall 1 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v301 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s101",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-gate-v3s101",
+        "--partition=c96",
+        "--cpus-per-task=1",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s101-%j.log",
+        "--dependency=afterok:90755",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase3/project/experiments/electrical_repair/run.py sim --variant 3 --stall 1 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v301 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s101"
+      ],
+      "stdout": "90758",
+      "phase": "phase3",
+      "binding_sha256": "8c65e1e45fb37ab82d79cde24f2d188d0f8856574a62348d6eb6ed7d810b12ee",
+      "record": "gate-v3s101-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase4/project/experiments/electrical_repair/probe.py",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/probe02"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase4/project/experiments/electrical_repair/probe.py --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/probe02",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-probe02",
+        "--partition=c96",
+        "--cpus-per-task=1",
+        "--time=00:05:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/probe02-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase4/project/experiments/electrical_repair/probe.py --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/probe02"
+      ],
+      "stdout": "90759",
+      "phase": "phase4",
+      "binding_sha256": "720a1dfc1be3c3a8d40290e4d1dd7c460335f25e221e058644da397ea0813065",
+      "record": "probe02-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase5/project/experiments/electrical_repair/repair.py",
+        "--variant",
+        "3",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v302"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase5/project/experiments/electrical_repair/repair.py --variant 3 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v302",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-pilot-v302",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:15:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v302-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase5/project/experiments/electrical_repair/repair.py --variant 3 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v302"
+      ],
+      "stdout": "90760",
+      "phase": "phase5",
+      "binding_sha256": "0139f4c94c03417da043c8ff34fedf29eaa798384267691f9e0625ac10703f7c",
+      "record": "pilot-v302-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase5/project/experiments/electrical_repair/run.py",
+        "prepare",
+        "--variant",
+        "3",
+        "--repair",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v302",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v302"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase5/project/experiments/electrical_repair/run.py prepare --variant 3 --repair /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v302 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v302",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-prepare-v302",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v302-%j.log",
+        "--dependency=afterok:90760",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase5/project/experiments/electrical_repair/run.py prepare --variant 3 --repair /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v302 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v302"
+      ],
+      "stdout": "90761",
+      "phase": "phase5",
+      "binding_sha256": "0139f4c94c03417da043c8ff34fedf29eaa798384267691f9e0625ac10703f7c",
+      "record": "prepare-v302-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase5/project/experiments/electrical_repair/run.py",
+        "sta",
+        "--variant",
+        "3",
+        "--prepared",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v302",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v302"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase5/project/experiments/electrical_repair/run.py sta --variant 3 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v302 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v302",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-sta-v302",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v302-%j.log",
+        "--dependency=afterok:90761",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase5/project/experiments/electrical_repair/run.py sta --variant 3 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v302 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v302"
+      ],
+      "stdout": "90762",
+      "phase": "phase5",
+      "binding_sha256": "0139f4c94c03417da043c8ff34fedf29eaa798384267691f9e0625ac10703f7c",
+      "record": "sta-v302-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase5/project/experiments/electrical_repair/run.py",
+        "build",
+        "--variant",
+        "3",
+        "--prepared",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v302",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v302"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase5/project/experiments/electrical_repair/run.py build --variant 3 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v302 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v302",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-build-v302",
+        "--partition=c96",
+        "--cpus-per-task=4",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v302-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase5/project/experiments/electrical_repair/run.py build --variant 3 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v302 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v302"
+      ],
+      "stdout": "90763",
+      "phase": "phase5",
+      "binding_sha256": "0139f4c94c03417da043c8ff34fedf29eaa798384267691f9e0625ac10703f7c",
+      "record": "build-v302-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase5/project/experiments/electrical_repair/run.py",
+        "sim",
+        "--variant",
+        "3",
+        "--stall",
+        "0",
+        "--build",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v302",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s002"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase5/project/experiments/electrical_repair/run.py sim --variant 3 --stall 0 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v302 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s002",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-gate-v3s002",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s002-%j.log",
+        "--dependency=afterok:90763",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase5/project/experiments/electrical_repair/run.py sim --variant 3 --stall 0 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v302 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s002"
+      ],
+      "stdout": "90764",
+      "phase": "phase5",
+      "binding_sha256": "0139f4c94c03417da043c8ff34fedf29eaa798384267691f9e0625ac10703f7c",
+      "record": "gate-v3s002-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase5/project/experiments/electrical_repair/run.py",
+        "sim",
+        "--variant",
+        "3",
+        "--stall",
+        "1",
+        "--build",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v302",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s102"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase5/project/experiments/electrical_repair/run.py sim --variant 3 --stall 1 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v302 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s102",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-gate-v3s102",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s102-%j.log",
+        "--dependency=afterok:90763",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase5/project/experiments/electrical_repair/run.py sim --variant 3 --stall 1 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v302 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s102"
+      ],
+      "stdout": "90765",
+      "phase": "phase5",
+      "binding_sha256": "0139f4c94c03417da043c8ff34fedf29eaa798384267691f9e0625ac10703f7c",
+      "record": "gate-v3s102-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase6/project/experiments/electrical_repair/repair.py",
+        "--variant",
+        "3",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v303"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase6/project/experiments/electrical_repair/repair.py --variant 3 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v303",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-pilot-v303",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:15:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v303-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase6/project/experiments/electrical_repair/repair.py --variant 3 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v303"
+      ],
+      "stdout": "90766",
+      "phase": "phase6",
+      "binding_sha256": "9f21633bd4974a7f590af9419adf8c48de1509831dcd70acc956a25a4f5ce3cb",
+      "record": "pilot-v303-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase6/project/experiments/electrical_repair/run.py",
+        "prepare",
+        "--variant",
+        "3",
+        "--repair",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v303",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v303"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase6/project/experiments/electrical_repair/run.py prepare --variant 3 --repair /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v303 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v303",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-prepare-v303",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v303-%j.log",
+        "--dependency=afterok:90766",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase6/project/experiments/electrical_repair/run.py prepare --variant 3 --repair /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v303 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v303"
+      ],
+      "stdout": "90767",
+      "phase": "phase6",
+      "binding_sha256": "9f21633bd4974a7f590af9419adf8c48de1509831dcd70acc956a25a4f5ce3cb",
+      "record": "prepare-v303-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase6/project/experiments/electrical_repair/run.py",
+        "sta",
+        "--variant",
+        "3",
+        "--prepared",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v303",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v303"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase6/project/experiments/electrical_repair/run.py sta --variant 3 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v303 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v303",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-sta-v303",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v303-%j.log",
+        "--dependency=afterok:90767",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase6/project/experiments/electrical_repair/run.py sta --variant 3 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v303 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v303"
+      ],
+      "stdout": "90768",
+      "phase": "phase6",
+      "binding_sha256": "9f21633bd4974a7f590af9419adf8c48de1509831dcd70acc956a25a4f5ce3cb",
+      "record": "sta-v303-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase6/project/experiments/electrical_repair/run.py",
+        "build",
+        "--variant",
+        "3",
+        "--prepared",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v303",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v303"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase6/project/experiments/electrical_repair/run.py build --variant 3 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v303 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v303",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-build-v303",
+        "--partition=c96",
+        "--cpus-per-task=4",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v303-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase6/project/experiments/electrical_repair/run.py build --variant 3 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v303 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v303"
+      ],
+      "stdout": "90769",
+      "phase": "phase6",
+      "binding_sha256": "9f21633bd4974a7f590af9419adf8c48de1509831dcd70acc956a25a4f5ce3cb",
+      "record": "build-v303-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase6/project/experiments/electrical_repair/run.py",
+        "sim",
+        "--variant",
+        "3",
+        "--stall",
+        "0",
+        "--build",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v303",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s003"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase6/project/experiments/electrical_repair/run.py sim --variant 3 --stall 0 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v303 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s003",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-gate-v3s003",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s003-%j.log",
+        "--dependency=afterok:90769",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase6/project/experiments/electrical_repair/run.py sim --variant 3 --stall 0 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v303 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s003"
+      ],
+      "stdout": "90770",
+      "phase": "phase6",
+      "binding_sha256": "9f21633bd4974a7f590af9419adf8c48de1509831dcd70acc956a25a4f5ce3cb",
+      "record": "gate-v3s003-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase6/project/experiments/electrical_repair/run.py",
+        "sim",
+        "--variant",
+        "3",
+        "--stall",
+        "1",
+        "--build",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v303",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s103"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase6/project/experiments/electrical_repair/run.py sim --variant 3 --stall 1 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v303 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s103",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-gate-v3s103",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s103-%j.log",
+        "--dependency=afterok:90769",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase6/project/experiments/electrical_repair/run.py sim --variant 3 --stall 1 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v303 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s103"
+      ],
+      "stdout": "90771",
+      "phase": "phase6",
+      "binding_sha256": "9f21633bd4974a7f590af9419adf8c48de1509831dcd70acc956a25a4f5ce3cb",
+      "record": "gate-v3s103-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/repair.py",
+        "--variant",
+        "3",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v304"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/repair.py --variant 3 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v304",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-pilot-v304",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:15:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v304-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/repair.py --variant 3 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v304"
+      ],
+      "stdout": "90772",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "pilot-v304-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "prepare",
+        "--variant",
+        "3",
+        "--repair",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v304",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v304"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py prepare --variant 3 --repair /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v304 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v304",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-prepare-v304",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v304-%j.log",
+        "--dependency=afterok:90772",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py prepare --variant 3 --repair /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/pilot-v304 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v304"
+      ],
+      "stdout": "90773",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "prepare-v304-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "sta",
+        "--variant",
+        "3",
+        "--prepared",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v304",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v304"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sta --variant 3 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v304 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v304",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-sta-v304",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v304-%j.log",
+        "--dependency=afterok:90773",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sta --variant 3 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v304 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v304"
+      ],
+      "stdout": "90774",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "sta-v304-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "build",
+        "--variant",
+        "3",
+        "--prepared",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v304",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v304"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py build --variant 3 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v304 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v304",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-build-v304",
+        "--partition=c96",
+        "--cpus-per-task=4",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v304-%j.log",
+        "--dependency=afterok:90773",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py build --variant 3 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v304 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v304"
+      ],
+      "stdout": "90775",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "build-v304-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "sim",
+        "--variant",
+        "3",
+        "--stall",
+        "0",
+        "--build",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v304",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s004"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sim --variant 3 --stall 0 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v304 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s004",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-gate-v3s004",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s004-%j.log",
+        "--dependency=afterok:90775",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sim --variant 3 --stall 0 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v304 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s004"
+      ],
+      "stdout": "90776",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "gate-v3s004-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "sim",
+        "--variant",
+        "3",
+        "--stall",
+        "1",
+        "--build",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v304",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s104"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sim --variant 3 --stall 1 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v304 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s104",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-gate-v3s104",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s104-%j.log",
+        "--dependency=afterok:90775",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sim --variant 3 --stall 1 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v304 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v3s104"
+      ],
+      "stdout": "90777",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "gate-v3s104-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase8/project/experiments/electrical_repair/receive.py",
+        "--root",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025",
+        "--variants",
+        "3",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-pilot04"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase8/project/experiments/electrical_repair/receive.py --root /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025 --variants 3 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-pilot04",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-receive-pilot04",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-pilot04-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase8/project/experiments/electrical_repair/receive.py --root /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025 --variants 3 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-pilot04"
+      ],
+      "stdout": "90778",
+      "phase": "phase8",
+      "binding_sha256": "7c26c066fa01bb0165a04d75842794ec24cd267b7a2c5419667ae5144a027976",
+      "record": "receive-pilot04-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase8/project/experiments/electrical_repair/receive.py",
+        "--root",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025",
+        "--variants",
+        "3",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-pilot05"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase8/project/experiments/electrical_repair/receive.py --root /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025 --variants 3 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-pilot05",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-receive-pilot05",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-pilot05-%j.log",
+        "--dependency=afterok:90776:90777",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase8/project/experiments/electrical_repair/receive.py --root /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025 --variants 3 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-pilot05"
+      ],
+      "stdout": "90779",
+      "phase": "phase8",
+      "binding_sha256": "7c26c066fa01bb0165a04d75842794ec24cd267b7a2c5419667ae5144a027976",
+      "record": "receive-pilot05-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/repair.py",
+        "--variant",
+        "0",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v004"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/repair.py --variant 0 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v004",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-repair-v004",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:15:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v004-%j.log",
+        "--dependency=afterok:90779",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/repair.py --variant 0 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v004"
+      ],
+      "stdout": "90780",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "repair-v004-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "prepare",
+        "--variant",
+        "0",
+        "--repair",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v004",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v004"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py prepare --variant 0 --repair /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v004 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v004",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-prepare-v004",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v004-%j.log",
+        "--dependency=afterok:90780",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py prepare --variant 0 --repair /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v004 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v004"
+      ],
+      "stdout": "90781",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "prepare-v004-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "sta",
+        "--variant",
+        "0",
+        "--prepared",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v004",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v004"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sta --variant 0 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v004 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v004",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-sta-v004",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v004-%j.log",
+        "--dependency=afterok:90781",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sta --variant 0 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v004 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v004"
+      ],
+      "stdout": "90782",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "sta-v004-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "build",
+        "--variant",
+        "0",
+        "--prepared",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v004",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v004"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py build --variant 0 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v004 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v004",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-build-v004",
+        "--partition=c96",
+        "--cpus-per-task=4",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v004-%j.log",
+        "--dependency=afterok:90781",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py build --variant 0 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v004 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v004"
+      ],
+      "stdout": "90783",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "build-v004-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "sim",
+        "--variant",
+        "0",
+        "--stall",
+        "0",
+        "--build",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v004",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v0s004"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sim --variant 0 --stall 0 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v004 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v0s004",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-gate-v0s004",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v0s004-%j.log",
+        "--dependency=afterok:90783",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sim --variant 0 --stall 0 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v004 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v0s004"
+      ],
+      "stdout": "90784",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "gate-v0s004-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "sim",
+        "--variant",
+        "0",
+        "--stall",
+        "1",
+        "--build",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v004",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v0s104"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sim --variant 0 --stall 1 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v004 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v0s104",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-gate-v0s104",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v0s104-%j.log",
+        "--dependency=afterok:90783",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sim --variant 0 --stall 1 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v004 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v0s104"
+      ],
+      "stdout": "90785",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "gate-v0s104-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/repair.py",
+        "--variant",
+        "1",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v104"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/repair.py --variant 1 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v104",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-repair-v104",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:15:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v104-%j.log",
+        "--dependency=afterok:90779",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/repair.py --variant 1 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v104"
+      ],
+      "stdout": "90786",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "repair-v104-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "prepare",
+        "--variant",
+        "1",
+        "--repair",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v104",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v104"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py prepare --variant 1 --repair /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v104 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v104",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-prepare-v104",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v104-%j.log",
+        "--dependency=afterok:90786",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py prepare --variant 1 --repair /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v104 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v104"
+      ],
+      "stdout": "90787",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "prepare-v104-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "sta",
+        "--variant",
+        "1",
+        "--prepared",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v104",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v104"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sta --variant 1 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v104 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v104",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-sta-v104",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v104-%j.log",
+        "--dependency=afterok:90787",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sta --variant 1 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v104 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v104"
+      ],
+      "stdout": "90788",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "sta-v104-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "build",
+        "--variant",
+        "1",
+        "--prepared",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v104",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v104"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py build --variant 1 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v104 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v104",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-build-v104",
+        "--partition=c96",
+        "--cpus-per-task=4",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v104-%j.log",
+        "--dependency=afterok:90787",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py build --variant 1 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v104 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v104"
+      ],
+      "stdout": "90789",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "build-v104-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "sim",
+        "--variant",
+        "1",
+        "--stall",
+        "0",
+        "--build",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v104",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v1s004"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sim --variant 1 --stall 0 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v104 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v1s004",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-gate-v1s004",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v1s004-%j.log",
+        "--dependency=afterok:90789",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sim --variant 1 --stall 0 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v104 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v1s004"
+      ],
+      "stdout": "90790",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "gate-v1s004-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "sim",
+        "--variant",
+        "1",
+        "--stall",
+        "1",
+        "--build",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v104",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v1s104"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sim --variant 1 --stall 1 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v104 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v1s104",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-gate-v1s104",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v1s104-%j.log",
+        "--dependency=afterok:90789",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sim --variant 1 --stall 1 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v104 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v1s104"
+      ],
+      "stdout": "90791",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "gate-v1s104-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/repair.py",
+        "--variant",
+        "2",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v204"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/repair.py --variant 2 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v204",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-repair-v204",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:15:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v204-%j.log",
+        "--dependency=afterok:90779",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/repair.py --variant 2 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v204"
+      ],
+      "stdout": "90792",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "repair-v204-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "prepare",
+        "--variant",
+        "2",
+        "--repair",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v204",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v204"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py prepare --variant 2 --repair /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v204 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v204",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-prepare-v204",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v204-%j.log",
+        "--dependency=afterok:90792",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py prepare --variant 2 --repair /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/repair-v204 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v204"
+      ],
+      "stdout": "90793",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "prepare-v204-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "sta",
+        "--variant",
+        "2",
+        "--prepared",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v204",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v204"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sta --variant 2 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v204 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v204",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-sta-v204",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v204-%j.log",
+        "--dependency=afterok:90793",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sta --variant 2 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v204 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v204"
+      ],
+      "stdout": "90794",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "sta-v204-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "build",
+        "--variant",
+        "2",
+        "--prepared",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v204",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v204"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py build --variant 2 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v204 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v204",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-build-v204",
+        "--partition=c96",
+        "--cpus-per-task=4",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v204-%j.log",
+        "--dependency=afterok:90793",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py build --variant 2 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v204 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v204"
+      ],
+      "stdout": "90795",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "build-v204-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "sim",
+        "--variant",
+        "2",
+        "--stall",
+        "0",
+        "--build",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v204",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v2s004"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sim --variant 2 --stall 0 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v204 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v2s004",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-gate-v2s004",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v2s004-%j.log",
+        "--dependency=afterok:90795",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sim --variant 2 --stall 0 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v204 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v2s004"
+      ],
+      "stdout": "90796",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "gate-v2s004-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py",
+        "sim",
+        "--variant",
+        "2",
+        "--stall",
+        "1",
+        "--build",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v204",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v2s104"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sim --variant 2 --stall 1 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v204 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v2s104",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-gate-v2s104",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:28:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v2s104-%j.log",
+        "--dependency=afterok:90795",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase7/project/experiments/electrical_repair/run.py sim --variant 2 --stall 1 --build /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/build-v204 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/gate-v2s104"
+      ],
+      "stdout": "90797",
+      "phase": "phase7",
+      "binding_sha256": "3b11dd835717a00024a84266156a5fefbb46645fd7021f4169519e776b242603",
+      "record": "gate-v2s104-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase8/project/experiments/electrical_repair/receive.py",
+        "--root",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-all01"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase8/project/experiments/electrical_repair/receive.py --root /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-all01",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-receive-all01",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:15:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-all01-%j.log",
+        "--dependency=afterok:90784:90785:90790:90791:90796:90797",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase8/project/experiments/electrical_repair/receive.py --root /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-all01"
+      ],
+      "stdout": "90798",
+      "phase": "phase8",
+      "binding_sha256": "7c26c066fa01bb0165a04d75842794ec24cd267b7a2c5419667ae5144a027976",
+      "record": "receive-all01-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase9/project/experiments/electrical_repair/receive.py",
+        "--root",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-all02"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase9/project/experiments/electrical_repair/receive.py --root /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-all02",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-receive-all02",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:15:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-all02-%j.log",
+        "--dependency=afterok:90784:90785:90790:90791:90796:90797:90782:90788:90794",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase9/project/experiments/electrical_repair/receive.py --root /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-all02"
+      ],
+      "stdout": "90812",
+      "phase": "phase9",
+      "binding_sha256": "144bfc1f606771899691e657738a9637d7011318bc807b14385748d20319800b",
+      "record": "receive-all02-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase10/project/experiments/electrical_repair/run.py",
+        "sta",
+        "--variant",
+        "0",
+        "--prepared",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v004",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v005"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase10/project/experiments/electrical_repair/run.py sta --variant 0 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v004 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v005",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-sta-v005",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v005-%j.log",
+        "--dependency=afterok:90781",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase10/project/experiments/electrical_repair/run.py sta --variant 0 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v004 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v005"
+      ],
+      "stdout": "90813",
+      "phase": "phase10",
+      "binding_sha256": "62e333b01dca713099a22bd22ac89a6e61d5f9cc3132a7f6f15ffa5b5f2758a9",
+      "record": "sta-v005-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase10/project/experiments/electrical_repair/run.py",
+        "sta",
+        "--variant",
+        "1",
+        "--prepared",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v104",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v105"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase10/project/experiments/electrical_repair/run.py sta --variant 1 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v104 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v105",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-sta-v105",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v105-%j.log",
+        "--dependency=afterok:90787",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase10/project/experiments/electrical_repair/run.py sta --variant 1 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v104 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v105"
+      ],
+      "stdout": "90814",
+      "phase": "phase10",
+      "binding_sha256": "62e333b01dca713099a22bd22ac89a6e61d5f9cc3132a7f6f15ffa5b5f2758a9",
+      "record": "sta-v105-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase10/project/experiments/electrical_repair/run.py",
+        "sta",
+        "--variant",
+        "2",
+        "--prepared",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v204",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v205"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase10/project/experiments/electrical_repair/run.py sta --variant 2 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v204 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v205",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-sta-v205",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v205-%j.log",
+        "--dependency=afterok:90793",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase10/project/experiments/electrical_repair/run.py sta --variant 2 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v204 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v205"
+      ],
+      "stdout": "90815",
+      "phase": "phase10",
+      "binding_sha256": "62e333b01dca713099a22bd22ac89a6e61d5f9cc3132a7f6f15ffa5b5f2758a9",
+      "record": "sta-v205-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase10/project/experiments/electrical_repair/run.py",
+        "sta",
+        "--variant",
+        "3",
+        "--prepared",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v304",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v305"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase10/project/experiments/electrical_repair/run.py sta --variant 3 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v304 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v305",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-sta-v305",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v305-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase10/project/experiments/electrical_repair/run.py sta --variant 3 --prepared /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/prepare-v304 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/sta-v305"
+      ],
+      "stdout": "90816",
+      "phase": "phase10",
+      "binding_sha256": "62e333b01dca713099a22bd22ac89a6e61d5f9cc3132a7f6f15ffa5b5f2758a9",
+      "record": "sta-v305-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase10/project/experiments/electrical_repair/receive.py",
+        "--root",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-all03"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase10/project/experiments/electrical_repair/receive.py --root /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-all03",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-receive-all03",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:15:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-all03-%j.log",
+        "--dependency=afterok:90813:90814:90815:90816:90784:90785:90790:90791:90796:90797",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase10/project/experiments/electrical_repair/receive.py --root /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/receive-all03"
+      ],
+      "stdout": "90817",
+      "phase": "phase10",
+      "binding_sha256": "62e333b01dca713099a22bd22ac89a6e61d5f9cc3132a7f6f15ffa5b5f2758a9",
+      "record": "receive-all03-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase11/project/experiments/electrical_repair/environment.py",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/environment01"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase11/project/experiments/electrical_repair/environment.py --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/environment01",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-environment01",
+        "--partition=c96",
+        "--cpus-per-task=1",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/environment01-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase11/project/experiments/electrical_repair/environment.py --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/environment01"
+      ],
+      "stdout": "90821",
+      "phase": "phase11",
+      "binding_sha256": "1e1e02f41b709ed543b72fdc53d6d3254ac35479a333cfb479bc0f7f8634ffa8",
+      "record": "environment01-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase11/project/experiments/electrical_repair/collect.py",
+        "--root",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025",
+        "--receipt",
+        "receive-all03",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase11/project/experiments/electrical_repair/collect.py --root /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025 --receipt receive-all03 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-collect01",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:20:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/collect01-%j.log",
+        "--dependency=afterok:90798:90812:90817:90821",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase11/project/experiments/electrical_repair/collect.py --root /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025 --receipt receive-all03 --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01"
+      ],
+      "stdout": "90836",
+      "phase": "phase11",
+      "binding_sha256": "1e1e02f41b709ed543b72fdc53d6d3254ac35479a333cfb479bc0f7f8634ffa8",
+      "record": "collect01-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase11/project/experiments/closure/verify_delivery.py",
+        "--index",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/index.json",
+        "--archive",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/full-results.zip",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/byte-full01.json"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase11/project/experiments/closure/verify_delivery.py --index /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/index.json --archive /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/full-results.zip --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/byte-full01.json",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-byte-full01",
+        "--partition=c96",
+        "--cpus-per-task=1",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/byte-full01-%j.log",
+        "--dependency=afterok:90836",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase11/project/experiments/closure/verify_delivery.py --index /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/index.json --archive /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/full-results.zip --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/byte-full01.json"
+      ],
+      "stdout": "90837",
+      "phase": "phase11",
+      "binding_sha256": "1e1e02f41b709ed543b72fdc53d6d3254ac35479a333cfb479bc0f7f8634ffa8",
+      "record": "byte-full01-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase11/project/experiments/closure/verify_delivery.py",
+        "--index",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/index.json",
+        "--archive",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/selected.zip",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/byte-selected01.json"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase11/project/experiments/closure/verify_delivery.py --index /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/index.json --archive /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/selected.zip --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/byte-selected01.json",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-byte-selected01",
+        "--partition=c96",
+        "--cpus-per-task=1",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/byte-selected01-%j.log",
+        "--dependency=afterok:90836",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/phase11/project/experiments/closure/verify_delivery.py --index /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/index.json --archive /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/selected.zip --out /public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/byte-selected01.json"
+      ],
+      "stdout": "90838",
+      "phase": "phase11",
+      "binding_sha256": "1e1e02f41b709ed543b72fdc53d6d3254ac35479a333cfb479bc0f7f8634ffa8",
+      "record": "byte-selected01-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "-c",
+        "import sys,json,hashlib,pathlib,decimal\nroot=pathlib.Path(\"/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025\")\nphase=root/\"phase10\"\nsys.path.insert(0,str(phase/\"project/experiments/electrical_repair\"))\nfrom structure import library\nfrom probe import LIB,sha\nbd=json.load(open(phase/\"binding.json\"))\nfor n,h in bd[\"sources\"].items():\n assert sha(phase/n)==h\nreceipt=root/\"receive-all03/receipt.json\"\nx=json.load(open(receipt));lib=library(LIB);rows=[]\nfor v in x[\"variants\"]:\n c=v[\"structure\"];added=sum((lib[n][\"area\"]*count for n,count in c[\"added_histogram\"].items()),decimal.Decimal(0));resized=sum((lib[r[\"after\"]][\"area\"]-lib[r[\"before\"]][\"area\"]for r in c[\"resized\"]),decimal.Decimal(0));total=decimal.Decimal(c[\"after_area_um2\"])-decimal.Decimal(c[\"before_area_um2\"]);assert added+resized==total\n rows.append({\"variant\":v[\"variant\"],\"new_BUF_tie_area_um2\":str(added),\"resized_original_cell_increment_um2\":str(resized),\"total_increment_um2\":str(total),\"resized_original_cells\":len(c[\"resized\"])})\nout=root/\"cost-split01\";out.mkdir(exist_ok=False)\n(out/\"receipt.json\").write_text(json.dumps({\"status\":\"PASS_INDEPENDENT_AREA_DECOMPOSITION\",\"source_binding\":bd,\"input_receipt_sha256\":sha(receipt),\"library_sha256\":sha(LIB),\"variants\":rows},indent=2)+\"\\n\")\nprint(\"PASS_INDEPENDENT_AREA_DECOMPOSITION\")\n"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B -c 'import sys,json,hashlib,pathlib,decimal\nroot=pathlib.Path(\"/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025\")\nphase=root/\"phase10\"\nsys.path.insert(0,str(phase/\"project/experiments/electrical_repair\"))\nfrom structure import library\nfrom probe import LIB,sha\nbd=json.load(open(phase/\"binding.json\"))\nfor n,h in bd[\"sources\"].items():\n assert sha(phase/n)==h\nreceipt=root/\"receive-all03/receipt.json\"\nx=json.load(open(receipt));lib=library(LIB);rows=[]\nfor v in x[\"variants\"]:\n c=v[\"structure\"];added=sum((lib[n][\"area\"]*count for n,count in c[\"added_histogram\"].items()),decimal.Decimal(0));resized=sum((lib[r[\"after\"]][\"area\"]-lib[r[\"before\"]][\"area\"]for r in c[\"resized\"]),decimal.Decimal(0));total=decimal.Decimal(c[\"after_area_um2\"])-decimal.Decimal(c[\"before_area_um2\"]);assert added+resized==total\n rows.append({\"variant\":v[\"variant\"],\"new_BUF_tie_area_um2\":str(added),\"resized_original_cell_increment_um2\":str(resized),\"total_increment_um2\":str(total),\"resized_original_cells\":len(c[\"resized\"])})\nout=root/\"cost-split01\";out.mkdir(exist_ok=False)\n(out/\"receipt.json\").write_text(json.dumps({\"status\":\"PASS_INDEPENDENT_AREA_DECOMPOSITION\",\"source_binding\":bd,\"input_receipt_sha256\":sha(receipt),\"library_sha256\":sha(LIB),\"variants\":rows},indent=2)+\"\\n\")\nprint(\"PASS_INDEPENDENT_AREA_DECOMPOSITION\")\n'",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-cost-split01",
+        "--partition=c96",
+        "--cpus-per-task=1",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/cost-split01-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B -c 'import sys,json,hashlib,pathlib,decimal\nroot=pathlib.Path(\"/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025\")\nphase=root/\"phase10\"\nsys.path.insert(0,str(phase/\"project/experiments/electrical_repair\"))\nfrom structure import library\nfrom probe import LIB,sha\nbd=json.load(open(phase/\"binding.json\"))\nfor n,h in bd[\"sources\"].items():\n assert sha(phase/n)==h\nreceipt=root/\"receive-all03/receipt.json\"\nx=json.load(open(receipt));lib=library(LIB);rows=[]\nfor v in x[\"variants\"]:\n c=v[\"structure\"];added=sum((lib[n][\"area\"]*count for n,count in c[\"added_histogram\"].items()),decimal.Decimal(0));resized=sum((lib[r[\"after\"]][\"area\"]-lib[r[\"before\"]][\"area\"]for r in c[\"resized\"]),decimal.Decimal(0));total=decimal.Decimal(c[\"after_area_um2\"])-decimal.Decimal(c[\"before_area_um2\"]);assert added+resized==total\n rows.append({\"variant\":v[\"variant\"],\"new_BUF_tie_area_um2\":str(added),\"resized_original_cell_increment_um2\":str(resized),\"total_increment_um2\":str(total),\"resized_original_cells\":len(c[\"resized\"])})\nout=root/\"cost-split01\";out.mkdir(exist_ok=False)\n(out/\"receipt.json\").write_text(json.dumps({\"status\":\"PASS_INDEPENDENT_AREA_DECOMPOSITION\",\"source_binding\":bd,\"input_receipt_sha256\":sha(receipt),\"library_sha256\":sha(LIB),\"variants\":rows},indent=2)+\"\\n\")\nprint(\"PASS_INDEPENDENT_AREA_DECOMPOSITION\")\n'"
+      ],
+      "stdout": "90842",
+      "phase": "phase10",
+      "binding_sha256": "62e333b01dca713099a22bd22ac89a6e61d5f9cc3132a7f6f15ffa5b5f2758a9",
+      "meaning": "Post-archive metadata arithmetic using existing frozen Liberty parser and fully received inventory; exact inline expression preserved here.",
+      "record": "cost-split01-submit.json"
+    }
+  ],
+  "phases": {
+    "phase1": {
+      "commit": "bb6320b6de2ba8a3c0cfe92c13b7ae1dc5c3cf5e",
+      "archive_bytes": 4699,
+      "archive_sha256": "5b9ccd967aea1b0e59df33d0b306ad663e61191af3e1e976251f0eea858984c4",
+      "binding": {
+        "commit": "bb6320b6de2ba8a3c0cfe92c13b7ae1dc5c3cf5e",
+        "sources": {
+          "project/experiments/electrical_repair/probe.py": "d7ee94ca62685081db2069b61d05a23262e33d1b7c173fb29e5b8da9ebff5405",
+          "project/experiments/electrical_repair/PROTOCOL.md": "d4914a7fe70220a228059629ed8685d9ad220f57d62b7bebb06bbd4b3b194efc"
+        },
+        "issue": 88,
+        "scope": "probe exact installed repair commands"
+      }
+    },
+    "phase10": {
+      "commit": "e98a16f8c66f7d10b28bbd94c9ec817f50a9f3a9",
+      "archive_bytes": 75767,
+      "archive_sha256": "f65d028912e1cd8bb54f11b45819f916645f1742413dca1b092491dbc936ca22",
+      "binding": {
+        "commit": "e98a16f8c66f7d10b28bbd94c9ec817f50a9f3a9",
+        "sources": {
+          "project/experiments/electrical_repair/run.py": "31b4265f8178e4a8b582ccc52fbf9aa029a5a5f17c79cd8c462e4b83498b4ef6",
+          "project/experiments/electrical_repair/repair.py": "ce095544fbf97d83225bc7407b3cce3d84db2f68eb6d67d63a8c5638c8e5ec40",
+          "project/experiments/electrical_repair/probe.py": "355d15c113995a8075b68c4534ba3ce3ec09fcc2e3e6b134b1a0a9dac115f042",
+          "project/experiments/electrical_repair/timing.py": "6e7ea267e37dd8501c62b8c6b5301f26148873586442da99d2f5c891047f6c50",
+          "project/experiments/electrical_repair/structure.py": "00ebb2a6f285a08def081199bb91b0533615ed0f86c61d7dbdfab1c78d2b1026",
+          "project/experiments/electrical_repair/receive.py": "38c13f0418d272b9d07ddc40db82173bf2e4fa152681bff3ad1b633029a5d612",
+          "project/experiments/electrical_repair/collect.py": "4f7eb49fa7af267c7a4104c44b6037a8c1510d10713d6ab8300c6cf80e79bfea",
+          "project/experiments/electrical_repair/README.md": "8fc884fa9824c69ad8239528cb874f87a00c1b57255ce69ff0e78c210f574bf7",
+          "project/experiments/electrical_repair/PROTOCOL.md": "1f7e9852f011d067a38b1ad663f50c0c5037674400b1a125079bd4f68328304e",
+          "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+          "project/experiments/cache_share/chain_sim.cpp": "a0c7fdf9e0d22eea8a8cba254cfdfbb0bd0e4ea2e2436a7a31f0a93a1b156b5d",
+          "project/experiments/cache_share/verify.py": "66c423df81f5be00dd1fb6583ad0c90ef1ddf5257c2d306cec55b8773ee43d54",
+          "project/experiments/cache_share/norm_reference.py": "15588c9198769a5358b3a453b6d0032d79dff02b00c39be04659b4d8552f6172",
+          "project/experiments/closure/verify_delivery.py": "e17ce0324d17920ed89137025e952321345d5627e3525a5d2c6fe75d6eacb9f2",
+          "work/Liangruizhi/82/verify_sources.py": "8a82dc27e16806536753eb05007444973f52c8a229d47349ef8f16f1a3335442"
+        }
+      }
+    },
+    "phase11": {
+      "commit": "c85c993755a09cdb081b961f293f25c5c0e844bc",
+      "archive_bytes": 78407,
+      "archive_sha256": "a3a1c4f3bf45cdc636a1341f77d100adbe4d77ea3b8b82ed7b202674442bdef6",
+      "binding": {
+        "commit": "c85c993755a09cdb081b961f293f25c5c0e844bc",
+        "sources": {
+          "project/experiments/electrical_repair/run.py": "31b4265f8178e4a8b582ccc52fbf9aa029a5a5f17c79cd8c462e4b83498b4ef6",
+          "project/experiments/electrical_repair/repair.py": "ce095544fbf97d83225bc7407b3cce3d84db2f68eb6d67d63a8c5638c8e5ec40",
+          "project/experiments/electrical_repair/probe.py": "355d15c113995a8075b68c4534ba3ce3ec09fcc2e3e6b134b1a0a9dac115f042",
+          "project/experiments/electrical_repair/timing.py": "6e7ea267e37dd8501c62b8c6b5301f26148873586442da99d2f5c891047f6c50",
+          "project/experiments/electrical_repair/structure.py": "00ebb2a6f285a08def081199bb91b0533615ed0f86c61d7dbdfab1c78d2b1026",
+          "project/experiments/electrical_repair/receive.py": "38c13f0418d272b9d07ddc40db82173bf2e4fa152681bff3ad1b633029a5d612",
+          "project/experiments/electrical_repair/collect.py": "c3f6bc13086c3942dfe152d36eefb1ad06f680a687a2891027ad79b5fc87fb8c",
+          "project/experiments/electrical_repair/environment.py": "09abe494190acb2f72d9ab3dae669e8de14886fe8c1f366f42fc6eaf39304694",
+          "project/experiments/electrical_repair/README.md": "8fc884fa9824c69ad8239528cb874f87a00c1b57255ce69ff0e78c210f574bf7",
+          "project/experiments/electrical_repair/PROTOCOL.md": "1f7e9852f011d067a38b1ad663f50c0c5037674400b1a125079bd4f68328304e",
+          "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+          "project/experiments/cache_share/chain_sim.cpp": "a0c7fdf9e0d22eea8a8cba254cfdfbb0bd0e4ea2e2436a7a31f0a93a1b156b5d",
+          "project/experiments/cache_share/verify.py": "66c423df81f5be00dd1fb6583ad0c90ef1ddf5257c2d306cec55b8773ee43d54",
+          "project/experiments/cache_share/norm_reference.py": "15588c9198769a5358b3a453b6d0032d79dff02b00c39be04659b4d8552f6172",
+          "project/experiments/closure/verify_delivery.py": "e17ce0324d17920ed89137025e952321345d5627e3525a5d2c6fe75d6eacb9f2",
+          "work/Liangruizhi/82/verify_sources.py": "8a82dc27e16806536753eb05007444973f52c8a229d47349ef8f16f1a3335442"
+        }
+      }
+    },
+    "phase2": {
+      "commit": "86342ee212bfa7483aee224f4b4cd67342bd2f14",
+      "archive_bytes": 9626,
+      "archive_sha256": "de3b02955a5881db7d341fd896f866aeac40976c810f21da8326a166e3022562",
+      "binding": {
+        "commit": "86342ee212bfa7483aee224f4b4cd67342bd2f14",
+        "sources": {
+          "project/experiments/electrical_repair/probe.py": "d7ee94ca62685081db2069b61d05a23262e33d1b7c173fb29e5b8da9ebff5405",
+          "project/experiments/electrical_repair/repair.py": "781e8e643169ecf3b3745d4bf87e26bbc2e6fa06d7fa2c9c6e50a3c9dd14b98e",
+          "project/experiments/electrical_repair/PROTOCOL.md": "23dfff84548ab1c2bc7fc65e92c733372ed1d821c25b42c107e6743d36d65bb6"
+        },
+        "issue": 88,
+        "scope": "one-pass variant3 pilot"
+      }
+    },
+    "phase3": {
+      "commit": "4ab994e3c3aa0eba4045370afc8a5dd7f365842e",
+      "archive_bytes": 28458,
+      "archive_sha256": "b67b6b75c07051a5c2a559c51f1fd76daa5d4aa9e7b6056ab609177737753ed9",
+      "binding": {
+        "commit": "4ab994e3c3aa0eba4045370afc8a5dd7f365842e",
+        "sources": {
+          "project/experiments/electrical_repair/probe.py": "d7ee94ca62685081db2069b61d05a23262e33d1b7c173fb29e5b8da9ebff5405",
+          "project/experiments/electrical_repair/repair.py": "781e8e643169ecf3b3745d4bf87e26bbc2e6fa06d7fa2c9c6e50a3c9dd14b98e",
+          "project/experiments/electrical_repair/run.py": "31b4265f8178e4a8b582ccc52fbf9aa029a5a5f17c79cd8c462e4b83498b4ef6",
+          "project/experiments/electrical_repair/timing.py": "8959107bfaa2aff6f09bf6f3e8d11b1583a76401f2904ef6eaead86c51304656",
+          "project/experiments/electrical_repair/PROTOCOL.md": "23dfff84548ab1c2bc7fc65e92c733372ed1d821c25b42c107e6743d36d65bb6",
+          "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+          "project/experiments/cache_share/chain_sim.cpp": "a0c7fdf9e0d22eea8a8cba254cfdfbb0bd0e4ea2e2436a7a31f0a93a1b156b5d"
+        },
+        "issue": 88,
+        "scope": "pilot exact repaired gate and independent STA"
+      }
+    },
+    "phase4": {
+      "commit": "9655907d86d42cd64ac622ca7a7477554c126c9b",
+      "archive_bytes": 28464,
+      "archive_sha256": "a7e35ba6a4ee079db58e11b895db30992d09118077cb30ad4a233c40bcfa5c02",
+      "binding": {
+        "commit": "9655907d86d42cd64ac622ca7a7477554c126c9b",
+        "sources": {
+          "project/experiments/electrical_repair/probe.py": "355d15c113995a8075b68c4534ba3ce3ec09fcc2e3e6b134b1a0a9dac115f042",
+          "project/experiments/electrical_repair/repair.py": "781e8e643169ecf3b3745d4bf87e26bbc2e6fa06d7fa2c9c6e50a3c9dd14b98e",
+          "project/experiments/electrical_repair/run.py": "31b4265f8178e4a8b582ccc52fbf9aa029a5a5f17c79cd8c462e4b83498b4ef6",
+          "project/experiments/electrical_repair/timing.py": "8959107bfaa2aff6f09bf6f3e8d11b1583a76401f2904ef6eaead86c51304656",
+          "project/experiments/electrical_repair/PROTOCOL.md": "23dfff84548ab1c2bc7fc65e92c733372ed1d821c25b42c107e6743d36d65bb6",
+          "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+          "project/experiments/cache_share/chain_sim.cpp": "a0c7fdf9e0d22eea8a8cba254cfdfbb0bd0e4ea2e2436a7a31f0a93a1b156b5d"
+        },
+        "issue": 88,
+        "scope": "diagnose constant output export"
+      }
+    },
+    "phase5": {
+      "commit": "db38122908adedbe2d82016a9fc939a5cc6b3a3f",
+      "archive_bytes": 31133,
+      "archive_sha256": "cdc3af4d30e4b5be0cf6779f5f76af2612d78d49e17829d90e23743c90d240b0",
+      "binding": {
+        "commit": "db38122908adedbe2d82016a9fc939a5cc6b3a3f",
+        "sources": {
+          "project/experiments/electrical_repair/run.py": "31b4265f8178e4a8b582ccc52fbf9aa029a5a5f17c79cd8c462e4b83498b4ef6",
+          "project/experiments/electrical_repair/repair.py": "3c3384a128dedd0d71b2bc71a206ac84bb8498a8436d2a946255b54007763ece",
+          "project/experiments/electrical_repair/probe.py": "355d15c113995a8075b68c4534ba3ce3ec09fcc2e3e6b134b1a0a9dac115f042",
+          "project/experiments/electrical_repair/timing.py": "612da483c07b62bfb144c8dade63de89c7e77a57c7f315173d398bc7164fd903",
+          "project/experiments/electrical_repair/PROTOCOL.md": "70dc774e3e213c7e3c38770fcc1586b0e18a2e2cc9ec7315f987d0baad8c61da",
+          "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+          "project/experiments/cache_share/chain_sim.cpp": "a0c7fdf9e0d22eea8a8cba254cfdfbb0bd0e4ea2e2436a7a31f0a93a1b156b5d"
+        }
+      }
+    },
+    "phase6": {
+      "commit": "8d7f295bd8baa90530450777f50605e4dbe81ae7",
+      "archive_bytes": 32049,
+      "archive_sha256": "5b016e52a0f92810e06e896a2de585490ad1f0c049b1316c2d415457c2cb11d5",
+      "binding": {
+        "commit": "8d7f295bd8baa90530450777f50605e4dbe81ae7",
+        "sources": {
+          "project/experiments/electrical_repair/run.py": "31b4265f8178e4a8b582ccc52fbf9aa029a5a5f17c79cd8c462e4b83498b4ef6",
+          "project/experiments/electrical_repair/repair.py": "a48c47195d3bfcb9010c5fe83abab9c5966d8f3e315dacfae1940875399f9810",
+          "project/experiments/electrical_repair/probe.py": "355d15c113995a8075b68c4534ba3ce3ec09fcc2e3e6b134b1a0a9dac115f042",
+          "project/experiments/electrical_repair/timing.py": "612da483c07b62bfb144c8dade63de89c7e77a57c7f315173d398bc7164fd903",
+          "project/experiments/electrical_repair/PROTOCOL.md": "3e2ee3665024b544a8d8747f288a16cbf578ee75586aee2a6b3d14bd8f6604bf",
+          "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+          "project/experiments/cache_share/chain_sim.cpp": "a0c7fdf9e0d22eea8a8cba254cfdfbb0bd0e4ea2e2436a7a31f0a93a1b156b5d"
+        }
+      }
+    },
+    "phase7": {
+      "commit": "835f330fbd13d1cd66c253b9e21a267160866cbb",
+      "archive_bytes": 40685,
+      "archive_sha256": "80638e8c12f9e5aacd36e70af0648bd7fc96d661df0d5339664d899e96d6b7e0",
+      "binding": {
+        "commit": "835f330fbd13d1cd66c253b9e21a267160866cbb",
+        "sources": {
+          "project/experiments/electrical_repair/run.py": "31b4265f8178e4a8b582ccc52fbf9aa029a5a5f17c79cd8c462e4b83498b4ef6",
+          "project/experiments/electrical_repair/repair.py": "ce095544fbf97d83225bc7407b3cce3d84db2f68eb6d67d63a8c5638c8e5ec40",
+          "project/experiments/electrical_repair/probe.py": "355d15c113995a8075b68c4534ba3ce3ec09fcc2e3e6b134b1a0a9dac115f042",
+          "project/experiments/electrical_repair/timing.py": "612da483c07b62bfb144c8dade63de89c7e77a57c7f315173d398bc7164fd903",
+          "project/experiments/electrical_repair/structure.py": "00ebb2a6f285a08def081199bb91b0533615ed0f86c61d7dbdfab1c78d2b1026",
+          "project/experiments/electrical_repair/PROTOCOL.md": "1f7e9852f011d067a38b1ad663f50c0c5037674400b1a125079bd4f68328304e",
+          "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+          "project/experiments/cache_share/chain_sim.cpp": "a0c7fdf9e0d22eea8a8cba254cfdfbb0bd0e4ea2e2436a7a31f0a93a1b156b5d"
+        }
+      }
+    },
+    "phase8": {
+      "commit": "a35dbacdac877801a8fa2c25481f947383a3b5a9",
+      "archive_bytes": 60868,
+      "archive_sha256": "19908fe086910ffdae033c84a8a4dec78bbae2721c917a29c4ddbdc42f4add63",
+      "binding": {
+        "commit": "a35dbacdac877801a8fa2c25481f947383a3b5a9",
+        "sources": {
+          "project/experiments/electrical_repair/run.py": "31b4265f8178e4a8b582ccc52fbf9aa029a5a5f17c79cd8c462e4b83498b4ef6",
+          "project/experiments/electrical_repair/repair.py": "ce095544fbf97d83225bc7407b3cce3d84db2f68eb6d67d63a8c5638c8e5ec40",
+          "project/experiments/electrical_repair/probe.py": "355d15c113995a8075b68c4534ba3ce3ec09fcc2e3e6b134b1a0a9dac115f042",
+          "project/experiments/electrical_repair/timing.py": "612da483c07b62bfb144c8dade63de89c7e77a57c7f315173d398bc7164fd903",
+          "project/experiments/electrical_repair/structure.py": "00ebb2a6f285a08def081199bb91b0533615ed0f86c61d7dbdfab1c78d2b1026",
+          "project/experiments/electrical_repair/receive.py": "42e023dd77dbfc33d6331554499b26e58a353cfcca05b3578a9478eade7cad40",
+          "project/experiments/electrical_repair/PROTOCOL.md": "1f7e9852f011d067a38b1ad663f50c0c5037674400b1a125079bd4f68328304e",
+          "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+          "project/experiments/cache_share/chain_sim.cpp": "a0c7fdf9e0d22eea8a8cba254cfdfbb0bd0e4ea2e2436a7a31f0a93a1b156b5d",
+          "project/experiments/cache_share/verify.py": "66c423df81f5be00dd1fb6583ad0c90ef1ddf5257c2d306cec55b8773ee43d54",
+          "project/experiments/cache_share/norm_reference.py": "15588c9198769a5358b3a453b6d0032d79dff02b00c39be04659b4d8552f6172"
+        }
+      }
+    },
+    "phase9": {
+      "commit": "9a012307a053c3d70f55a84ae0183e83c4ba3762",
+      "archive_bytes": 75015,
+      "archive_sha256": "20b4bff2f2ab6e8ab944f796f181ba7e7fd59077cdfb3cf395cfd3b5a53ba263",
+      "binding": {
+        "commit": "9a012307a053c3d70f55a84ae0183e83c4ba3762",
+        "sources": {
+          "project/experiments/electrical_repair/run.py": "31b4265f8178e4a8b582ccc52fbf9aa029a5a5f17c79cd8c462e4b83498b4ef6",
+          "project/experiments/electrical_repair/repair.py": "ce095544fbf97d83225bc7407b3cce3d84db2f68eb6d67d63a8c5638c8e5ec40",
+          "project/experiments/electrical_repair/probe.py": "355d15c113995a8075b68c4534ba3ce3ec09fcc2e3e6b134b1a0a9dac115f042",
+          "project/experiments/electrical_repair/timing.py": "612da483c07b62bfb144c8dade63de89c7e77a57c7f315173d398bc7164fd903",
+          "project/experiments/electrical_repair/structure.py": "00ebb2a6f285a08def081199bb91b0533615ed0f86c61d7dbdfab1c78d2b1026",
+          "project/experiments/electrical_repair/receive.py": "172098f13cc4b97b1085d8f59c0178ee7ec4a46c3e23fb753e5be01f57c52c43",
+          "project/experiments/electrical_repair/collect.py": "4f7eb49fa7af267c7a4104c44b6037a8c1510d10713d6ab8300c6cf80e79bfea",
+          "project/experiments/electrical_repair/README.md": "8fc884fa9824c69ad8239528cb874f87a00c1b57255ce69ff0e78c210f574bf7",
+          "project/experiments/electrical_repair/PROTOCOL.md": "1f7e9852f011d067a38b1ad663f50c0c5037674400b1a125079bd4f68328304e",
+          "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+          "project/experiments/cache_share/chain_sim.cpp": "a0c7fdf9e0d22eea8a8cba254cfdfbb0bd0e4ea2e2436a7a31f0a93a1b156b5d",
+          "project/experiments/cache_share/verify.py": "66c423df81f5be00dd1fb6583ad0c90ef1ddf5257c2d306cec55b8773ee43d54",
+          "project/experiments/cache_share/norm_reference.py": "15588c9198769a5358b3a453b6d0032d79dff02b00c39be04659b4d8552f6172",
+          "project/experiments/closure/verify_delivery.py": "e17ce0324d17920ed89137025e952321345d5627e3525a5d2c6fe75d6eacb9f2",
+          "work/Liangruizhi/82/verify_sources.py": "8a82dc27e16806536753eb05007444973f52c8a229d47349ef8f16f1a3335442"
+        }
+      }
+    }
+  },
+  "phase_gate_repair": 7,
+  "phase_final_sta_and_receiver": 10,
+  "phase_toolchain_and_archive": 11,
+  "note": "Actual numerical/EDA jobs on server only; exact commands retained including failed pilot/receiver and canceled dependent jobs.",
+  "final_accounting": [
+    {
+      "JobID": "90752",
+      "JobName": "lrz-i88-probe01",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:10",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90752.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:10",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90752.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:10",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90753",
+      "JobName": "lrz-i88-pilot-v301",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:07",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90753.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:07",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90753.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:07",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90754",
+      "JobName": "lrz-i88-prepare-v301",
+      "State": "FAILED",
+      "Elapsed": "00:00:03",
+      "ExitCode": "1:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90754.batch",
+      "JobName": "batch",
+      "State": "FAILED",
+      "Elapsed": "00:00:03",
+      "ExitCode": "1:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90754.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:03",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90755",
+      "JobName": "lrz-i88-build-v301",
+      "State": "CANCELLED by 10011",
+      "Elapsed": "00:00:00",
+      "ExitCode": "0:0",
+      "AllocCPUS": "0",
+      "MaxRSS": "",
+      "NodeList": "None assigned"
+    },
+    {
+      "JobID": "90756",
+      "JobName": "lrz-i88-sta-v301",
+      "State": "CANCELLED by 10011",
+      "Elapsed": "00:00:00",
+      "ExitCode": "0:0",
+      "AllocCPUS": "0",
+      "MaxRSS": "",
+      "NodeList": "None assigned"
+    },
+    {
+      "JobID": "90757",
+      "JobName": "lrz-i88-gate-v3s001",
+      "State": "CANCELLED by 10011",
+      "Elapsed": "00:00:00",
+      "ExitCode": "0:0",
+      "AllocCPUS": "0",
+      "MaxRSS": "",
+      "NodeList": "None assigned"
+    },
+    {
+      "JobID": "90758",
+      "JobName": "lrz-i88-gate-v3s101",
+      "State": "CANCELLED by 10011",
+      "Elapsed": "00:00:00",
+      "ExitCode": "0:0",
+      "AllocCPUS": "0",
+      "MaxRSS": "",
+      "NodeList": "None assigned"
+    },
+    {
+      "JobID": "90759",
+      "JobName": "lrz-i88-probe02",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:01",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90759.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:01",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90759.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:01",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90760",
+      "JobName": "lrz-i88-pilot-v302",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:12",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90760.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:12",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90760.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:12",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90761",
+      "JobName": "lrz-i88-prepare-v302",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:03",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90761.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:03",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90761.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:03",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90762",
+      "JobName": "lrz-i88-sta-v302",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:05",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90762.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:05",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90762.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:05",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90763",
+      "JobName": "lrz-i88-build-v302",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:30",
+      "ExitCode": "0:0",
+      "AllocCPUS": "4",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90763.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:30",
+      "ExitCode": "0:0",
+      "AllocCPUS": "4",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90763.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:30",
+      "ExitCode": "0:0",
+      "AllocCPUS": "4",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90764",
+      "JobName": "lrz-i88-gate-v3s002",
+      "State": "COMPLETED",
+      "Elapsed": "00:02:39",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90764.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:02:39",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "28316K",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90764.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:02:39",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90765",
+      "JobName": "lrz-i88-gate-v3s102",
+      "State": "COMPLETED",
+      "Elapsed": "00:03:13",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90765.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:03:13",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "27424K",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90765.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:03:13",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90766",
+      "JobName": "lrz-i88-pilot-v303",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:12",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90766.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:12",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90766.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:12",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90767",
+      "JobName": "lrz-i88-prepare-v303",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:03",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90767.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:03",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90767.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:03",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90768",
+      "JobName": "lrz-i88-sta-v303",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:05",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90768.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:05",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90768.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:05",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90769",
+      "JobName": "lrz-i88-build-v303",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:28",
+      "ExitCode": "0:0",
+      "AllocCPUS": "4",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90769.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:28",
+      "ExitCode": "0:0",
+      "AllocCPUS": "4",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90769.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:28",
+      "ExitCode": "0:0",
+      "AllocCPUS": "4",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90770",
+      "JobName": "lrz-i88-gate-v3s003",
+      "State": "COMPLETED",
+      "Elapsed": "00:02:39",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90770.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:02:39",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "26712K",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90770.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:02:39",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90771",
+      "JobName": "lrz-i88-gate-v3s103",
+      "State": "COMPLETED",
+      "Elapsed": "00:03:12",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90771.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:03:12",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "27384K",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90771.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:03:12",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90772",
+      "JobName": "lrz-i88-pilot-v304",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:18",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90772.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:18",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90772.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:18",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90773",
+      "JobName": "lrz-i88-prepare-v304",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:03",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90773.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:03",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90773.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:03",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90774",
+      "JobName": "lrz-i88-sta-v304",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:06",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90774.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:06",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90774.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:06",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90775",
+      "JobName": "lrz-i88-build-v304",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:30",
+      "ExitCode": "0:0",
+      "AllocCPUS": "4",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90775.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:30",
+      "ExitCode": "0:0",
+      "AllocCPUS": "4",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90775.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:30",
+      "ExitCode": "0:0",
+      "AllocCPUS": "4",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90776",
+      "JobName": "lrz-i88-gate-v3s004",
+      "State": "COMPLETED",
+      "Elapsed": "00:02:39",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90776.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:02:39",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "26908K",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90776.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:02:39",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90777",
+      "JobName": "lrz-i88-gate-v3s104",
+      "State": "COMPLETED",
+      "Elapsed": "00:03:12",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90777.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:03:12",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "33540K",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90777.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:03:12",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90778",
+      "JobName": "lrz-i88-receive-pilot04",
+      "State": "FAILED",
+      "Elapsed": "00:00:09",
+      "ExitCode": "1:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90778.batch",
+      "JobName": "batch",
+      "State": "FAILED",
+      "Elapsed": "00:00:09",
+      "ExitCode": "1:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90778.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:09",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90779",
+      "JobName": "lrz-i88-receive-pilot05",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:08",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90779.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:08",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90779.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:08",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90780",
+      "JobName": "lrz-i88-repair-v004",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:21",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90780.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:21",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90780.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:21",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90781",
+      "JobName": "lrz-i88-prepare-v004",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:03",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90781.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:03",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90781.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:03",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90782",
+      "JobName": "lrz-i88-sta-v004",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:07",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90782.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:07",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90782.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:07",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90783",
+      "JobName": "lrz-i88-build-v004",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:38",
+      "ExitCode": "0:0",
+      "AllocCPUS": "4",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90783.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:38",
+      "ExitCode": "0:0",
+      "AllocCPUS": "4",
+      "MaxRSS": "629492K",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90783.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:38",
+      "ExitCode": "0:0",
+      "AllocCPUS": "4",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90784",
+      "JobName": "lrz-i88-gate-v0s004",
+      "State": "COMPLETED",
+      "Elapsed": "00:04:12",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90784.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:04:12",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "32396K",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90784.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:04:12",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90785",
+      "JobName": "lrz-i88-gate-v0s104",
+      "State": "COMPLETED",
+      "Elapsed": "00:04:57",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90785.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:04:57",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "35060K",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90785.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:04:57",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90786",
+      "JobName": "lrz-i88-repair-v104",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:18",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90786.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:18",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90786.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:18",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90787",
+      "JobName": "lrz-i88-prepare-v104",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:03",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90787.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:03",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90787.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:03",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90788",
+      "JobName": "lrz-i88-sta-v104",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:06",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90788.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:06",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90788.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:06",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90789",
+      "JobName": "lrz-i88-build-v104",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:29",
+      "ExitCode": "0:0",
+      "AllocCPUS": "4",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90789.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:29",
+      "ExitCode": "0:0",
+      "AllocCPUS": "4",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90789.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:29",
+      "ExitCode": "0:0",
+      "AllocCPUS": "4",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90790",
+      "JobName": "lrz-i88-gate-v1s004",
+      "State": "COMPLETED",
+      "Elapsed": "00:03:51",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90790.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:03:51",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "30440K",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90790.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:03:51",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90791",
+      "JobName": "lrz-i88-gate-v1s104",
+      "State": "COMPLETED",
+      "Elapsed": "00:04:33",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90791.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:04:33",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "33108K",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90791.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:04:33",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90792",
+      "JobName": "lrz-i88-repair-v204",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:21",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90792.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:21",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90792.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:21",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90793",
+      "JobName": "lrz-i88-prepare-v204",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:04",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90793.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:04",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90793.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:04",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90794",
+      "JobName": "lrz-i88-sta-v204",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:06",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90794.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:06",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90794.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:06",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90795",
+      "JobName": "lrz-i88-build-v204",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:43",
+      "ExitCode": "0:0",
+      "AllocCPUS": "4",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90795.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:43",
+      "ExitCode": "0:0",
+      "AllocCPUS": "4",
+      "MaxRSS": "533372K",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90795.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:43",
+      "ExitCode": "0:0",
+      "AllocCPUS": "4",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90796",
+      "JobName": "lrz-i88-gate-v2s004",
+      "State": "COMPLETED",
+      "Elapsed": "00:02:54",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90796.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:02:54",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "25632K",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90796.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:02:54",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90797",
+      "JobName": "lrz-i88-gate-v2s104",
+      "State": "COMPLETED",
+      "Elapsed": "00:03:29",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90797.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:03:29",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "28748K",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90797.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:03:29",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90798",
+      "JobName": "lrz-i88-receive-all01",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:32",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90798.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:32",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "447256K",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90798.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:32",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90812",
+      "JobName": "lrz-i88-receive-all02",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:42",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90812.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:42",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "609784K",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90812.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:42",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90813",
+      "JobName": "lrz-i88-sta-v005",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:07",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90813.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:07",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90813.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:07",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90814",
+      "JobName": "lrz-i88-sta-v105",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:06",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90814.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:06",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90814.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:06",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90815",
+      "JobName": "lrz-i88-sta-v205",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:06",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90815.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:06",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90815.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:06",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90816",
+      "JobName": "lrz-i88-sta-v305",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:06",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90816.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:06",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90816.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:06",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90817",
+      "JobName": "lrz-i88-receive-all03",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:42",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90817.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:42",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "615248K",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90817.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:42",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90821",
+      "JobName": "lrz-i88-environment01",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:02",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90821.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:02",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90821.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:02",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90836",
+      "JobName": "lrz-i88-collect01",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:23",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90836.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:23",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90836.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:23",
+      "ExitCode": "0:0",
+      "AllocCPUS": "2",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90837",
+      "JobName": "lrz-i88-byte-full01",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:04",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90837.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:04",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90837.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:04",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90838",
+      "JobName": "lrz-i88-byte-selected01",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:00",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90838.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:00",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90838.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:00",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90842",
+      "JobName": "lrz-i88-cost-split01",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:02",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90842.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:02",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90842.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:02",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    }
+  ],
+  "job_state_counts": {
+    "COMPLETED": 52,
+    "FAILED": 2,
+    "CANCELLED": 4
+  }
+}
