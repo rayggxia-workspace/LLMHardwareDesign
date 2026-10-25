@@ -1,5 +1,5 @@
 """Independent server-only bigint/full-K receiver; imports no producer or RTL driver."""
-import argparse,copy,hashlib,json,math
+import argparse,copy,hashlib,json,math,re
 from pathlib import Path
 import numpy as np
 ROOT=Path(__file__).resolve().parents[3]
@@ -80,6 +80,11 @@ def protocol(p,rows):
  need(type(p['parameter_toggle_edges'])is int and p['parameter_toggle_edges']>=sum(r['active_edges']for r in rows),'actual every-busy-edge parameter mutation')
  for k,v in expected.items():need(type(p[k])is type(v)and p[k]==v,'measured protocol '+k)
 
+def bridge_contract():
+ source=ROOT/'project/rtl/wide_service/memory_link.sv';s=source.read_text();m=re.search(r'output wire \[(\d+):0\] wire_data',s);need(m is not None,'actual bridge serialized-data declaration');bits=int(m.group(1))+1
+ need(bits==128 and 'state==1||state==2||state==3||state==6||state==7||state==8' in s and 'state<=sr_wr?3:4' in s and 'if(ep_wr)begin dout<=0;state<=9;end else state<=8' in s,'known read five-beat state graph')
+ return {'source_sha256':sha(source),'wire_bits_per_beat':bits,'read_header_beats':4,'read_payload_beats':1,'read_wire_bytes':5*bits//8,'read_payload_bytes':bits//8,'epoch_sideband_bits':32,'epoch_serialized_in_fivebeat':False,'cfg_header_protocol':'not modeled; cfg128 data and request/response edges reported separately'}
+
 def main():
  p=argparse.ArgumentParser();p.add_argument('--input',type=Path,required=True);p.add_argument('--run',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();need(not a.out.exists(),'new receiver output');bd=load(ROOT/'binding.json')
  for n,h in bd['sources'].items():need(sha(ROOT/n)==h,'receiver source SHA')
@@ -100,6 +105,7 @@ def main():
  refs={}
  for c in cases:
   for cache in(0,1):refs[c['name'],cache]=matrix_reference(old,c,cache)if c['kind']=='chain'else{'x':ints(bytes.fromhex(c['x'])),'gamma':ints(bytes.fromhex(c['gamma']))}
+ bridge=bridge_contract()
  rows=[json.loads(s)for s in(a.run/'actual.jsonl').read_text().splitlines()];need(len(rows)==51,'all primary/recovery/negative commands')
  seen=set();summary=[];primary=set();negative_count=0
  for row in rows:
@@ -107,7 +113,7 @@ def main():
   c=lookup[row['name']];identity=(row['name'],row['cache'],row.get('gamma_stream'),row.get('role'));need(identity not in seen,'no duplicate records');seen.add(identity)
   res=check(row,c,refs[row['name'],row['cache']]);negative_count+=res['status']=='REJECTED_BAD_TRANSPORT'
   if row['role']=='primary':primary.add((row['name'],row['cache'],row['gamma_stream']))
-  summary.append({**{k:v for k,v in row.items()if k not in ARRAYS},'verdict':res['status']})
+  summary.append({**{k:v for k,v in row.items()if k not in ARRAYS},'verdict':res['status'],'external_wire_bytes':row['wire_beats']*bridge['wire_bits_per_beat']//8,'external_response_payload_bytes':row['transactions']*bridge['read_payload_bytes']})
  expected={(c['name'],cache,g)for c in cases for cache in((0,1)if c['kind']=='chain'else(1,))for g in((0,1)if c['kind']=='chain'else(1,))};need(primary==expected and negative_count==2,'complete primary grid and corrupted transport exclusions')
  roles={'primary','mixed-return-fullM','mixed-return-norm','restart-stale-gamma','restart-hard-reset','last-legal-epoch','negative-shifted-gamma','negative-stale-gamma'}|{'restart-stage-'+str(s)for s in(4,8,20,21,22,23,11,15,17)}|{'restart-error-'+str(s)for s in range(5)};need({r['role']for r in rows}==roles,'all required recovery modes')
  proto=load(a.run/'actual.jsonl.protocol.json');protocol(proto,rows)
@@ -126,6 +132,6 @@ def main():
   try:protocol(bad,rows)
   except ValueError:pass
   else:raise ValueError('protocol corruption accepted')
- result={'schema':'gamma93-receipt-v1','status':'PASS_GAMMA_INTEGER_AND_PROTOCOL','source':bd,'run_source':rm['source'],'input_manifest_sha256':sha(a.input/'manifest.json'),'run_manifest_sha256':sha(a.run/'manifest.json'),'stall':rm['stall'],'records':51,'bit_exact_success_outputs':48,'expected_zero_den_records':1,'actual_bad_transport_runs_rejected':2,'protocol':proto,'rows':summary,'gemma_quality':quality,'receiver_negative_cases':negatives,'protocol_negative_cases':4}
+ result={'schema':'gamma93-receipt-v1','status':'PASS_GAMMA_INTEGER_AND_PROTOCOL','source':bd,'run_source':rm['source'],'input_manifest_sha256':sha(a.input/'manifest.json'),'run_manifest_sha256':sha(a.run/'manifest.json'),'stall':rm['stall'],'records':51,'bit_exact_success_outputs':48,'expected_zero_den_records':1,'actual_bad_transport_runs_rejected':2,'protocol':proto,'bridge_contract':bridge,'rows':summary,'gemma_quality':quality,'receiver_negative_cases':negatives,'protocol_negative_cases':4}
  a.out.write_text(json.dumps(result,indent=2,sort_keys=True)+'\n');print(result['status']);print(json.dumps(quality))
 if __name__=='__main__':main()
