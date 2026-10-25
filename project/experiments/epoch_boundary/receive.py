@@ -73,7 +73,7 @@ def main():
   need(pm['source']['sources']['project/rtl/runtime_cache/chain85.sv']==bm['source']['sources']['project/rtl/runtime_cache/chain85.sv'],'proved and executed fixed RTL binding')
   need(pm['source']['sources']['project/experiments/epoch_boundary/baseline-chain85.sv']=='aa1b0f6db0133dfa0db18e748ee8b69ce1e846300c31fcdb630502d051bbc8d0','original exact85 RTL bytes')
   proofs.append({'which':which,'combinational_cells':count,'manifest_sha256':sha(pr/'manifest.json'),'status':status})
- # Metadata and cone corruption are saved actual files, not only conceptual negative cases.
+ # Metadata corruption is saved as actual files, not only conceptual negative cases.
  for i,bad in enumerate(({},dict(bp,no_wrap=1),dict(bp,final_epoch=0),dict(bp,extra=True))):
   nf=a.out/f'negative-protocol-{i}.json';nf.write_text(json.dumps(bad)+'\n')
   try:boundary(load(nf))

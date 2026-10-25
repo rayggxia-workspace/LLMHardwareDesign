@@ -1,5 +1,11 @@
 # Liangruizhi 的进度
 
+## 2026-10-25 Issue92 epoch边界交付待同步
+
+[Issue92](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/92)，task/92-epoch-boundary。本人服务器33作业均结束；同版60完整恢复+4终止边界输出和10条实际门锥安全性质通过，补reset/abort cfg/done取消优先。旧RTL迟到max-tag反例保留；无新增状态，logic-only52387.902µm²，宏/tag布线/STA/整核liveness未验。96.41MB全包留服务器、0.550MB精选/158成员及5phase92原Git源已核。
+
+[报告](../../docs/experiments/issue-92-epoch-boundary.md)/[交接](../../docs/handoffs/2026-10-25-issue-92-epoch-boundary.md)。本地已整理、远端任务分支/PR由主会话待同步；未合并未done，看板待权限/管理员，不将84/88时序借作92资格。
+
 ## 2026-10-25 UTC+08 Issue84缓存/共享交付
 
 [Issue84](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/84) / [PR87](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/87)，task/84-cache-share，D:/Projects/LLMHardwareDesign-cache-share，base PR83@7e9ec409。本人Liangruizhi/182389313及push已核，成员55/63继续独立。仅本人服务器lrz-i84-*，无新模型/其他机器/软件安装。84完整真实消费者命令及8192独立仲裁产品通过；14份严格接收拒绝实际重SHA改码。16KiB/128bit1RW不增加端口，缓存周期减少34.68%、外部线字节减少49.20%；共享缓存比专用缓存逻辑面积少12.44%。额外8拍SRAM等待出现负收益，不能冻结总物理边界。

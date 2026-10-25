@@ -1,0 +1,73 @@
+{
+  "schema": "issue92-summary-v1",
+  "issue": 92,
+  "status": "EXECUTED_AND_RECEIVED_PENDING_REVIEW",
+  "rtl_and_formal_source_commit": "71824cc8bbe0fe53b0b770abacd1b74e6f1b942c",
+  "delivery_source_commit": "8d65e1a448c38bb065bde8d0263fc377ad6796a5",
+  "server_root": "/public/home/yuzelu/RuizhiLiang/issue92-epoch-boundary-20261025",
+  "final_stages": {
+    "normal": [
+      "rtl-s002",
+      "rtl-s102"
+    ],
+    "boundary": [
+      "boundary-s002",
+      "boundary-s102"
+    ],
+    "proof": [
+      "proof-fixed03",
+      "proof-original03"
+    ],
+    "resources": "map02",
+    "receiver": "analysis02"
+  },
+  "files": [
+    {
+      "path": "collect-config.json",
+      "bytes": 2243,
+      "sha256": "82233b9305ae022d08a6f89d9c2313312b74edac38f8b4c93343647c8b6b7281"
+    },
+    {
+      "path": "delivery-index.json",
+      "bytes": 82088,
+      "sha256": "4f201176a5f3b165f100f8f2ce2cb55a853b74b5a8bfc09c56e0fa589c1b55ea"
+    },
+    {
+      "path": "pc-byte-receipt.json",
+      "bytes": 466,
+      "sha256": "9af93db5377ccc478eadea5d12b6400a88627a5a9e4e30bf6ff3efd3844669d7"
+    },
+    {
+      "path": "report.json",
+      "bytes": 17994,
+      "sha256": "efd55e8681641062635b278f7b078775b88664d0281befd71b6e2be20eb44ebc"
+    },
+    {
+      "path": "selected.zip",
+      "bytes": 549889,
+      "sha256": "c4269b53815504a138a84374298e95f9db71fc5edcdae42257ccd97c599bad85"
+    },
+    {
+      "path": "server-full-byte-receipt.json",
+      "bytes": 472,
+      "sha256": "0cf12b8ac2b2420d886f33da664557a16ebc9704dccc1a1b101837a2037f3c98"
+    },
+    {
+      "path": "server-selected-byte-receipt.json",
+      "bytes": 466,
+      "sha256": "9af93db5377ccc478eadea5d12b6400a88627a5a9e4e30bf6ff3efd3844669d7"
+    },
+    {
+      "path": "source-byte-receipt.json",
+      "bytes": 24421,
+      "sha256": "4ceb5e1fa8bf347a2cb0296a52e2f661a8e0bd2e99039a4cafdfd03307fbc50c"
+    }
+  ],
+  "limits": [
+    "One-step universal combinational safety with arbitrary current state, not whole-core reachable-state or liveness proof.",
+    "Epoch-only backdoor injection is verification-only, not a production register write port; real32bit datapath and full consumers executed.",
+    "No epoch wrap or new command at max; only coordinated fabric hard reset restarts.",
+    "Existing2slot external queue at least320bits payload+tag plus control and32bit metadata wires are outside core logic area.",
+    "Store82 wrapper excluded from area. No gate/STA/macro/route qualification inherited from86/88, no CDC/arbitrary reordering/multi-context/whole-model claim."
+  ]
+}

@@ -190,3 +190,8 @@ RTL project/rtl/norm_service，工具project/experiments/norm_circuit；[README]
 ## Issue85 runtime cache replay
 
 project/experiments/runtime_cache/README.md记录本人服务器新out的build/sim/strict verify/map命令。source/input/output逐SHA，formal modes share one executable; cpp只喂bytes、观测输出与握手，数学接收独立。字节命令：python -B work/Liangruizhi/85/verify_delivery.py --index <final/index.json> --archive <selected.zip> --out <new-receipt.json>；原Git字节：python -B work/Liangruizhi/85/verify_sources.py --repository <repo> --index <index> --selected <selected.zip> --expected-phases 5 --out <new-source-receipt.json>。完整数组重算仍仅本人授权服务器；勿把字节接收当RTL/STA签核。
+
+
+## Issue92 epoch终止态与接口reset优先
+
+project/experiments/epoch_boundary/README.md与PROTOCOL.md记录冻结源重放、真实32位门锥抽取、边界注入和声明的证明边界。先python -B scripts/check_project.py；实际RTL/NumPy/bigint/Yosys SAT/map全部服务器。PC字节用work/Liangruizhi/92/verify_delivery.py，原Git用verify_sources.py --expected-phases 5，均输出新D盘路径。完整argv/Slurm见work92/execution.json；不能以精选metadata代替数学，不能沿用86/88时序到修复后的92。
