@@ -10,7 +10,7 @@ int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);d.reset=1;ed
  int sent[2]={},retired[2]={};bool outstanding[2]={};int64_t answer[2]={};int both=0,denied=0,held=0;uint32_t rnd=0x91537;
  for(int t=0;t<50000&&(retired[0]<2048||retired[1]<2048);t++){
   d.r0=!outstanding[0]&&sent[0]<2048;d.r1=!outstanding[1]&&sent[1]<2048;d.take0=t%7==0;d.take1=t%11==0;d.hold=t%13==0;
-  auto val=[&](int k){if(sent[k]%4==0)return INT32_MIN;if(sent[k]%4==1)return INT32_MAX;rnd=rnd*1664525+1013904223;return int32_t(rnd);};
+  auto val=[&](int k){if(sent[k]%4==0)return INT32_MIN;if(sent[k]%4==1)return INT32_MAX;return int32_t(uint32_t(sent[k])*1664525u+1013904223u+uint32_t(k)*7919u);};
   d.a0=val(0);d.b0=(sent[0]%3)?-2147483647:-1;d.a1=val(1);d.b1=(sent[1]%3)?INT32_MIN:1;d.eval();
   if(d.r0&&d.r1)both++;if((d.r0&&!d.ready0)||(d.r1&&!d.ready1))denied++;
   bool req[2]={bool(d.r0&&d.ready0),bool(d.r1&&d.ready1)},v[2]={bool(d.v0),bool(d.v1)},take[2]={bool(d.take0),bool(d.take1)};
