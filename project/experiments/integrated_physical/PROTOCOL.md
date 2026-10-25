@@ -212,3 +212,24 @@ this exact reference after proving GROUND,zero ITerm/BTerm,Wire=NULL,noSWire.
 All actual tie outputs and electrical pin classes must remain identical; no
 functional net, physical PG or constant source is removed. Same frozen pilot
 then runs in a fresh directory, with explicit normalization marker and inventory.
+
+
+## GRT SPEF transport limitation and mandatory replay
+
+Exact installed OpenROAD63ed2e0fe5 SpefWriter.cc writes D_NET from the whole
+parasitic network but emits ground CAP only for non-pin nodes. MakeWireParasitics
+assigns half of each pin-access-wire capacitance to its pin node. Thus original
+GRT SPEF omits this wire portion; its D_NET need not equal written CAP sum within
+roundoff, and readback is not numerically identical to original GRT estimate.
+This is not corrected by silently increasing tolerance or inventing capacitors.
+Official source Git blobs/SHA are recorded. Current GRT STA uses actual in-memory
+estimate from original segments, never substitutes the lossy exported file.
+
+Final GRT qualification additionally requires a separate same-tool replay from
+exact ODB/segments/SDC and actual same library/setRC, reproducing original SPEF
+bytes and independently counting maxslew/cap/fanout under both loads. This proves
+repeatability/binding, not independent RC physics. Keep every net's D_NET-CAP
+sum discrepancy in a separate artifact and never call it a conservation pass.
+Original electrical reports may legally contain Group/Slack/No paths found with
+no maxcheck headers. A deleted entire report must fail; erased nonzero sections
+must disagree with independently re-executed actual count and fail as well.
