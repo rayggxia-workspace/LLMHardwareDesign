@@ -1,5 +1,11 @@
 # Liangruizhi 的进度
 
+## 2026-10-25 UTC+08 Issue110注意力位宽本地交付待PR
+
+[Issue110](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/110)，task/110-attention-width，D:/Projects/LLMHardwareDesign-attention-width。原106→STYLE0及真实FF limb归纳/全域SAT与独立重证通过；3变体×两模式完整102 79query/恢复及106 7混合/27恢复共24套，所有输出、周期、端口物理事务及protocol逐字段一致。34负例/反例、三变体六路selected actual raw gate与唯一库存通过。STYLE0/1/2逻辑126029.470/125300.098/125009.626µm²，STYLE2仅省0.80921%、无加速；历史106面积不作本批baseline，未做STA/宏/物理。
+
+106本人作业104完成、2个零秒调度失败留档；完整87,834,705B服务器、精选1,299,697B入仓，服务器双包/PC精选/5phase320原Git源字节PASS。[报告](../../docs/experiments/issue-110-attention-width.md)、[交接](../../docs/handoffs/2026-10-25-issue-110-attention-width.md)、[逐周期配对](../../project/experiments/attention_width/results/issue-110/paired-receipt.json)。本地已整理，root统一push/PR/Issue，未done。未修改106/109；后续新任务按实际整合图接STYLE2再核资源。登记PR5 pending、看板unverified/同步pending；完整六Block库仍未验收。
+
 ## 2026-10-25 UTC+08 Issue106共享服务本地交付待PR
 
 [Issue106](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/106)，task/106-shared-services，D:/Projects/LLMHardwareDesign-shared-services；已合入99 PR103/102 PR105发布基线。唯一16KiB1RW/8S8/S32/SFU/link实际实例，双路各7混合+27恢复与独立原整数oracle通过，选定门级两路各4完整命令逐字段/数学PASS，10实际重SHA负例拒绝。logic-only125,966.694µm²，不含宏/物理、真实下游事务缓冲；GDN104未接入，非完整库完成。
@@ -318,3 +324,6 @@ PR待审查/合并，审查人/管理员待指定，未done；后续在已有授
 
 
 发布回执（2026-10-25）：[PR108](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/108)已上传；Issue106 in_review，待独立审查，未合并/done。报告、索引、门级回执和库验收表与原Git字节读回一致，见work/Liangruizhi/106/remote-readback.json；登记PR5 pending、看板unverified/同步pending。共享服务/宏/物理仍未完成。
+
+
+发布回执（2026-10-25）：[PR112](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/112)已上传，Issue110为in_review；源快照3565e6c0afc4ddd9a6bf82026b0efe6c9a5634cb的关键证据与原Git blob逐字节读回一致，见work/Liangruizhi/110/remote-readback.json。待独立审查/合并，未done。登记PR5 pending；看板unverified/同步pending，缺配置/read:project，管理员/审查人待指定。

@@ -43,3 +43,9 @@
 下一版边界比较须同时固定：数值合同、算术单元及频率约束、容量/端口/物理传输粒度、scale/状态元数据、所有程序与LUT流量、输入输出及重读成本。分别报告数值通过、功能RTL通过、资源映射、STA、电气、布局布线和完整验收状态；任何一个失败不能被其它指标的收益抵消。
 
 当前有界顺序：[V/S合同](V_S_INTEGRATION_CONTRACT_V1.md)→93流式gamma→97专用SiLU完整消费者已形成证据；[Issue98](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/98)对新93/97网表推进受限物理，[Issue99](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/99)并行补R，102完整materialized A已通过；99有界Falcon R已交付，104 GDN与98物理为独立任务，其结果不自动授予106资格。106唯一S/8S8/S32/SFU/link已获L2及严格恢复接收，选定raw gate通过；125,966.694µm²仅logic area，超旧98预算，online/append仍缺。通用V ISA、GDN共享接入、真实下游提交缓冲、宏/PVT和产品定制资格均未完成。项目仍在研究与电路实现推进中。
+
+## Issue110：A limb位宽已证明优化，完整库门槛不变
+
+[Issue110报告](experiments/issue-110-attention-width.md)在106唯一服务银行基线上比较64动态、64常量选择、QK34/PV45。实际原106→STYLE0与真实FF归纳/独立SAT通过，原102完整79查询/恢复和106混合/恢复共24套全部逐周期、实际物理事务及协议一致；六路选定真实门级及34负例/反例通过。9,397DFF、16KiB/8S8/S32/SFU/link库存相同，逻辑面积126,029.470→125,009.626µm²，有限收益0.80921%、无周期加速。
+
+推荐STYLE2作为有reset/limb不变量的后续整合候选，尚未改106/109。不是通用A、online/KV append、完整端到端库或物理宏边界定稿；无STA/宏/RC/频率/功耗资格，旧98物理不可继承。三变体mapped逻辑仍超旧79,600.5µm²约束，未放宽预算。现有M/V/R/D合同和环境下游暂存义务全部保留。109的GDN接入与98物理各以独立交付验收，不由本分支旧状态推断其最新结果。
