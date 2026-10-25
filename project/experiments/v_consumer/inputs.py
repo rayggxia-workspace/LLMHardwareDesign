@@ -22,5 +22,15 @@ def main():
       for rank in range(8):records[row,rank,0]=np.frombuffer(struct.pack('<ihhHiH',int(mant[rank,row]),int(exps[rank,row]),0,int(z['router.gate_q15'][t,rank]),int(z['residual_q12'][t,row]),0),np.uint8)
      gup=np.stack([z['expert_gate_q12'][t],z['expert_up_q12'][t]],axis=1).astype('<i4');assert gup.shape==(8,2,512);(a.out/(name+'-gateup.bin')).write_bytes(gup.tobytes());(a.out/(name+'-records.bin')).write_bytes(records.tobytes());(a.out/(name+'-gamma.bin')).write_bytes(const[f'L{L}.next_gamma_q20'].astype('<i4').tobytes())
      cases.append({'name':name,'layer':L,'token':t,'runtime':str(folder),'runtime_sha256':sha(folder/'runtime.npz'),'compiled':str(compiled),'compiled_manifest_sha256':sha(compiled/'manifest.json'),'ids':ids.astype(int).tolist(),'coefficient':int(const['residual_multiplier_q20']),'gateup':name+'-gateup.bin','records':name+'-records.bin','gamma':name+'-gamma.bin','revision':'a02780686e08a03fe0d2679a293b5c74a90efa89'})
+ boundary=[]
+ pairs=[(-131073,2147483647),(-131072,4096),(-131064,4096),(-131048,-4096),(-8,4096),(0,4096),(8,4096),(24,-4096),(131064,4096),(131072,4096),(131073,2048),(131073,6144),(131073,-2048),(131073,-6144),(1048576,-8388608),(1048576,8388607)]
+ for name in ('numerical-edges','scale-jumps'):
+  a32=np.zeros((8,2,512),dtype='<i4')
+  for rank in range(8):
+   for k in range(512):
+    g,u=pairs[(k+rank)%len(pairs)] if name=='numerical-edges' else (131072,[0,1,3,4,254,255,65534,65535][rank])
+    a32[rank,0,k]=g;a32[rank,1,k]=u
+  (a.out/(name+'-gateup.bin')).write_bytes(a32.tobytes());base=cases[0];boundary.append(dict(base,name=name,gateup=name+'-gateup.bin',source='synthetic-original-gateup-boundaries'))
+ (a.out/'boundaries.json').write_text(json.dumps(boundary,indent=2)+'\n');(a.out/'boundaries.tsv').write_text(''.join(' '.join([c['name'],*[str(a.out/c[k])for k in('gateup','records','gamma')],str(a.out/'lut.bin'),str(c['coefficient'])])+'\n'for c in boundary))
  (a.out/'cases.json').write_text(json.dumps(cases,indent=2)+'\n');(a.out/'vectors.tsv').write_text(''.join(' '.join([c['name'],*[str(a.out/c[k])for k in('gateup','records','gamma')],str(a.out/'lut.bin'),str(c['coefficient'])])+'\n'for c in cases));bd=json.loads((ROOT/'binding.json').read_text());fs=[f for f in a.out.iterdir()if f.is_file()];(a.out/'manifest.json').write_text(json.dumps({'status':'PACKED_ORIGINAL_GATEUP_NO_MID_A8_DELTA','source':bd,'external_sources':sources,'artifacts':[{'path':f.name,'bytes':f.stat().st_size,'sha256':sha(f)}for f in fs]},indent=2)+'\n');print('PACKED_ORIGINAL_GATEUP_NO_MID_A8_DELTA')
 if __name__=='__main__':main()

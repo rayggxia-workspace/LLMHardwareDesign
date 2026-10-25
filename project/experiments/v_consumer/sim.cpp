@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <filesystem>
 #include <stdexcept>
 using W=std::array<uint32_t,4>;static Vchain97 d;static uint64_t ticks=0;static int stall=0;static unsigned serial=0,mserial=0,eserial=0;static int swait=0,mwait=0;static bool sseen=false,mseen=false,hold_external=false;static unsigned high_water=0,accepted=0,aborted=0;
 struct Reply{uint32_t epoch;int delay;W data;};static std::deque<Reply> fifo;
@@ -22,6 +23,7 @@ static W memory(uint32_t a){const std::vector<uint8_t>*p=nullptr;uint32_t off=0;
 struct E{bool command,cfg_req,cfg_rsp;W data;};
 static E step(){d.clk=0;d.ext_ready=fifo.size()<2;d.ext_valid=!fifo.empty()&&!hold_external&&fifo.front().delay==0;d.ext_response_epoch=fifo.empty()?0:fifo.front().epoch;for(int j=0;j<4;j++)d.ext_data[j]=fifo.empty()?0:fifo.front().data[j];d.eval();
  if(d.mem_request&&!sseen){sseen=true;swait=stall?serial++%3:0;}if(d.mul_request&&!mseen){mseen=true;mwait=stall?mserial++%3:0;}d.mem_hold=swait>0;d.mul_hold=mwait>0;d.eval();
+ if(d.a_valid&&d.busy)need(acodes.size()==4096,"no premature A publication");
  bool ext_accept=d.ext_req&&d.ext_ready,ext_retire=d.ext_valid&&d.ext_take;auto address=d.ext_addr,ep=d.ext_epoch;
  if(d.obs_mid_valid){need(d.obs_index==mids.size(),"ordered actual MID");mids.push_back(d.obs_mid);}if(d.obs_a_valid){need(d.obs_index==acodes.size(),"ordered actual A8");acodes.push_back(int8_t(d.obs_a));}
  if(d.obs_valid){need(unsigned(d.obs_row)*8+d.obs_rank==accs.size(),"ordered actual fullK M");accs.push_back(d.obs_acc);downs.push_back(d.obs_down);}

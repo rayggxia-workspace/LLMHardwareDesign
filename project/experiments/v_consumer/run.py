@@ -5,10 +5,10 @@ ROOT=Path(__file__).resolve().parents[3];HERE=Path(__file__).resolve().parent;RT
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def put(p,x):p.write_text(json.dumps(x,indent=2)+'\n')
 def main():
- p=argparse.ArgumentParser();p.add_argument('task',choices=['build','sim','map']);p.add_argument('--binding',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--profile',type=int,default=0);p.add_argument('--stall',type=int,default=0);p.add_argument('--pilot',type=int,default=0);p.add_argument('--input',type=Path);p.add_argument('--build',type=Path);p.add_argument('--prefix',required=True);p.add_argument('--library',type=Path);a=p.parse_args();bd=json.loads(a.binding.read_text())
+ p=argparse.ArgumentParser();p.add_argument('task',choices=['build','sim','map']);p.add_argument('--binding',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--profile',type=int,default=0);p.add_argument('--stall',type=int,default=0);p.add_argument('--pilot',type=int,default=0);p.add_argument('--suite',choices=['pilot','qualification'],default='pilot');p.add_argument('--input',type=Path);p.add_argument('--build',type=Path);p.add_argument('--prefix',required=True);p.add_argument('--library',type=Path);a=p.parse_args();bd=json.loads(a.binding.read_text())
  for n,h in bd['sources'].items():
   if sha(ROOT/n)!=h:raise ValueError('exact source '+n)
- a.out.mkdir(exist_ok=False,parents=True);m={'status':'ERROR','source':bd,'profile':a.profile,'stall':a.stall,'task':a.task,'pilot':a.pilot};prefix=json.loads(a.prefix);prefix=prefix[:-1]+['--pwd',str(a.out),prefix[-1]]
+ a.out.mkdir(exist_ok=False,parents=True);m={'status':'ERROR','source':bd,'profile':a.profile,'stall':a.stall,'task':a.task,'pilot':a.pilot,'suite':a.suite};prefix=json.loads(a.prefix);prefix=prefix[:-1]+['--pwd',str(a.out),prefix[-1]]
  def cmd(name,args):
   start=time.monotonic()
   with (a.out/(name+'.log')).open('w')as log:r=subprocess.run([*prefix,*map(str,args)],cwd=a.out,text=True,stdout=log,stderr=subprocess.STDOUT,stdin=subprocess.DEVNULL,timeout=300 if a.task=='map'else 600)
@@ -17,12 +17,12 @@ def main():
  sv=[RTL/n for n in('vprep97.sv','mfront97.sv','chain97.sv')]+[ROOT/'project/rtl/runtime_cache/sfu84.sv',ROOT/'project/rtl/runtime_cache/mul84.sv',ROOT/'project/rtl/gamma_stream/norm93.sv',ROOT/'project/rtl/wide_service/memory_link.sv',ROOT/'project/rtl/norm_service/store82.sv']
  try:
   if a.task=='build':
-   cmd('build',['/eda/verilator-5.042/bin/verilator','--cc','--exe','--build','-j','2','-Wno-fatal','--top-module','chain97','--prefix','Vchain97','--Mdir',a.out/'obj','-CFLAGS','-std=c++17 -O2',*sv,HERE/'sim.cpp']);m['binary_sha256']=sha(a.out/'obj/Vchain97');m['status']='BUILT_NOT_EXECUTED'
+   cmd('build',['/eda/verilator-5.042/bin/verilator','--cc','--exe','--build','-j','2','-Wno-fatal','--top-module','chain97','--prefix','Vchain97','--Mdir',a.out/'obj','-CFLAGS','-std=c++17 -O2',*sv,HERE/('qualification.cpp'if a.suite=='qualification'else 'sim.cpp')]);m['binary_sha256']=sha(a.out/'obj/Vchain97');m['status']='BUILT_NOT_EXECUTED'
   elif a.task=='sim':
    b=json.loads((a.build/'manifest.json').read_text());im=json.loads((a.input/'manifest.json').read_text())
-   if b['status']!='BUILT_NOT_EXECUTED'or b['profile']!=a.profile or sha(a.build/'obj/Vchain97')!=b['binary_sha256']:raise ValueError('exact build')
+   if b['status']!='BUILT_NOT_EXECUTED'or b['profile']!=a.profile or b.get('suite')!=a.suite or sha(a.build/'obj/Vchain97')!=b['binary_sha256']:raise ValueError('exact build')
    for n,h in bd['sources'].items():
-    if n.startswith('project/rtl/')or n.endswith('/sim.cpp'):
+    if n.startswith('project/rtl/')or n.endswith(('/sim.cpp','/qualification.cpp')):
      if b['source']['sources'].get(n)!=h:raise ValueError('build source mismatch')
    for e in im['artifacts']:
     if sha(a.input/e['path'])!=e['sha256']:raise ValueError('input SHA')
