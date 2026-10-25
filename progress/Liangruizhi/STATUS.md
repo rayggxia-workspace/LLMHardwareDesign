@@ -286,3 +286,6 @@ PR待审查/合并，审查人/管理员待指定，未done；后续在已有授
 [Issue93](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/93)，task/93-gamma-stream，独立D:/Projects/LLMHardwareDesign-gamma-stream。服务器正式两路51记录/每路48正确、1零分母、2坏gamma被独立数学拒绝，6Granite完整M与2Gemma H2560整行norm；单16KiB保留4KiB A+512B frame，generic寄存+180，paired logic面积+4.20291%（不是总PPA）。参数每忙拍变动、模式切换、cfg/abort/stale/reset/epoch已测。桥每read5×128bit，cost01按32bit记账已修正为final/cost02，原失败保留。
 
 [报告](../../docs/experiments/issue-93-gamma-stream.md)/[交接](../../docs/handoffs/2026-10-25-issue-93-gamma-stream.md)。主包78.63MB/276成员、精选200022B/88成员、7phase108原Git源/6字节负例通过；根审阅追加2项完整文件重SHA数值负例已由冻结完整receiver正确拒绝，11.22MB补充包/37.6KB精选和8phase112原Git字节亦通过。下一步97 V/M与98实际网表物理资格。本地已整理，尚未push/PR；主会话负责发布和读回，不done。登记PR5 pending，看板unverified同步pending，管理员待指定。
+
+
+发布回执（2026-10-25）：[PR100](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/100)已上传；Issue93为in_review，待独立审查合并，未done。远端读回58dc6278623d779b548d2b664aabb10a49762c35的报告/最终索引/cost02/语义负例回执与原Git blob逐字节相同，见work93/remote-readback.json。登记PR5 pending；board配置与read:project缺项，状态unverified/同步pending，管理员/审查人待指定。当前仍继续97/98/99，不把本任务完成等同Block库全部完成。

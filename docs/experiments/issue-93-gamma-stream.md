@@ -84,3 +84,6 @@ cost01曾将beat按4B换算，实际是16B。cost01和初包保留并标记失�
 源码冻结、实际命令、输入版本、Slurm、完整输出和失败记录见`work/Liangruizhi/93`、`project/experiments/gamma_stream/results/issue-93/final`及交接。全包服务器、精选入仓，独立字节与原Git SHA接收分开。发布由主会话执行；本地已验证不代表远端PR已上传/已审查合并，当前不得标done。
 
 补充验收：根审阅要求的两个真实文件语义负例已完成（phase8/Slurm90920）。复制正式rtl-s003，实际改首个输出码或全局den，重写JSONL和manifest内artifact size/SHA；冻结phase7完整receiver main先通过所有字节检查，再分别以`independent full row integer output`、`one entireH sum/den`拒绝，returncode均1，无PASS文件。补充全量11,221,672B/145成员、精选37,566B/32成员独立字节PASS，8phase112原Git源核验PASS。根据此复查的不是单独内存check函数。路径/SHA在交接与semantic-supplement/index.json。
+
+
+发布回执（2026-10-25）：[PR100](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/100)已上传；Issue93为in_review，待独立审查合并，未done。远端读回58dc6278623d779b548d2b664aabb10a49762c35的报告/最终索引/cost02/语义负例回执与原Git blob逐字节相同，见work93/remote-readback.json。登记PR5 pending；board配置与read:project缺项，状态unverified/同步pending，管理员/审查人待指定。当前仍继续97/98/99，不把本任务完成等同Block库全部完成。
