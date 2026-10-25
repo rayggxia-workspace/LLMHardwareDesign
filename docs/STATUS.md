@@ -1,5 +1,7 @@
 # 当前状态
 
+- 2026-10-25 [Issue92](experiments/issue-92-epoch-boundary.md)：修复实际32位epoch耗尽后的同tag迟到排空，并屏蔽reset/abort时cfg/done假握手。60正常完整消费者、4边界完整输出、8配置冲突、2完成冲突及10实际门锥SAT性质通过；33服务器作业结束，双包/精选158成员及5phase92源字节通过。原缺陷反例保留；52387.902µm²仅logic-only，不继承88电气资格。 成果待独立PR审查，未done；下一步#93及实际整合网表，不把旧电气资格移植到新电路。
+
 - 2026-10-25 [Issue92](experiments/issue-92-epoch-boundary.md)：32位max终止排空与reset/abort cfg/done优先修复在本人服务器完成；60+4完整输出独立接收、10条真实下一状态门锥安全性质通过，原RTL有效响应反例保留。33作业已结束、96.41MB全包/0.550MB精选及5phase92原源字节通过。待主会话上传PR与审查，非整核liveness/门级/STA或全部Block完成；重新开始仍要求协调fabric硬复位。
 
 - 2026-10-25 [Issue84](experiments/issue-84-cache-share.md)：84条同函数完整M消费者、8192仲裁乘法和14份严格独立接收通过；同16KiB/128bit1RW缓存减少34.68%周期，cache+share逻辑面积比基线少10.38%，非总芯片PPA。额外约8拍SRAM等待会抵消缓存收益，运行时旁路/中止恢复与门级/受限STA由Issue85/86独立推进。279.76MB完整包服务器、2.90MB精选及7phase126条原Git源字节核验通过。任务PR待审查合并，登记/看板pending，不是六类Block设计全部完成。
