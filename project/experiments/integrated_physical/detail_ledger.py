@@ -13,7 +13,7 @@ def audit_ledger(stage,net):
  for m in re.finditer(r'(?ms)^VIA (\S+)(?: DEFAULT)?\s*\n(.*?)^END \1\s*$',tech):
   layers=re.findall(r'\bLAYER (\S+) ;',m[2]);metals=sorted((x for x in layers if re.fullmatch(r'metal(?:[1-9]|10)',x)),key=lambda x:int(x[5:]));need(len(layers)==3 and len(metals)==2 and int(metals[1][5:])-int(metals[0][5:])==1,'complete adjacent technology via');vias[m[1]]=metals
  need(vias,'actual technology via definitions');refs,dirs,cells=incidence(net);lookup={r:b for b,rs in refs.items()for r in rs};canon=signature_graph(net,library(LIB));clock=canon(net['ports']['clk']['bits'][0])[0]
- mm=re.search(r'(?ms)^NETS (\d+) ;\n(.*?)^END NETS\s*$',text);need(mm,'one complete routed NETS section');body=mm[2];records=re.findall(r'(?ms)^\s*- (\S+) (.*?);',body);need(len(records)==int(mm[1]),'all physical DEF net records accounted');need(not re.sub(r'(?ms)^\s*- (\S+) (.*?);','',body).strip(),'no unparsed DEF net material');seen=set();wire={k:collections.Counter()for k in('signal','clock')};via={k:collections.Counter()for k in('signal','clock')};by_master=collections.Counter();routes=collections.Counter();unused=[];empty=[]
+ mm=re.search(r'(?ms)^NETS (\d+) ;\n(.*?)^END NETS\s*$',text);need(mm,'one complete routed NETS section');body=mm[2];records=re.findall(r'(?ms)^\s*- (\S+) (.*?);',body);need(len(records)==int(mm[1]),'all physical DEF net records accounted');need(not re.sub(r'(?ms)^\s*- (\S+) (.*?);','',body).strip(),'no unparsed DEF net material');seen=set();wire={k:collections.Counter()for k in('signal','clock')};via={k:collections.Counter()for k in('signal','clock')};by_master=collections.Counter();routes=collections.Counter();unused=[];empty=[];zero_extensions=0
  for name,entry in records:
   # DEF native escaped names use the same actual port/cell spelling after unescape.
   parts=entry.split('+',2);need(len(parts)>=2,'every net declares USE');connect=parts[0];use=parts[1].strip();need(use in('USE SIGNAL','USE CLOCK','USE GROUND','USE POWER'),'known net use');pins=re.findall(r'\( (\S+) (\S+) \)',connect);need(not re.sub(r'\( (\S+) (\S+) \)','',connect).strip(),'complete connection grammar');found=set()
@@ -31,7 +31,8 @@ def audit_ledger(stage,net):
     if tokens[i]=='(':
      j=i+1
      while j<len(tokens)and tokens[j]!=')':j+=1
-     need(j<len(tokens)and j-i==3,'exact XY-only frozen coordinate grammar');raw=tokens[i+1:j];xy=[]
+     need(j<len(tokens)and j-i in(3,4),'exact XY with optional zero end extension');raw=tokens[i+1:i+3];xy=[]
+     if j-i==4:need(tokens[i+3]=='0','only actual zero end extension, no uncounted geometry');zero_extensions+=1
      for axis,v in enumerate(raw):
       if v=='*':need(last is not None,'relative coordinate after initial point');xy.append(last[axis])
       else:need(re.fullmatch(r'-?\d+',v),'integer routed coordinate');xy.append(int(v))
@@ -42,4 +43,8 @@ def audit_ledger(stage,net):
      v=tokens[i];need(last is not None and v in vias,'known real via record, reject unparsed routing feature '+v);need(layer in vias[v],'via touches current physical layer');via[kind]['-'.join(vias[v])]+=1;by_master[v]+=1;layer=next(x for x in vias[v]if x!=layer);i+=1
  need(seen==set(refs),'all actual electrical classes represented by full DEF')
  log=(stage/'flow.log').read_text();dr=block(log,'BEGIN_DETAILED_ROUTE','END_DETAILED_ROUTE');counts=re.findall(r'(?m)^.*(?:Number of vias|Total number of vias)\s*[:=]\s*(\d+)',dr)
- return {'status':'PASS_FULL_DEF_PIN_CLASSES_ROUTING_GRAMMAR_AND_LAYER_LEDGER','net_records':len(records),'electrical_classes':len(seen),'routed_nets':dict(routes),'unrouted_singletons':len(unused),'empty_metadata_nets':empty,'wirelength_um':{k:{'metal'+str(i):str(Decimal(d['metal'+str(i)])/2000)for i in range(1,11)}for k,d in wire.items()},'via_layer_pairs':{k:dict(d)for k,d in via.items()},'via_masters':dict(by_master),'total_vias':sum(by_master.values()),'total_centerline_um':str(sum(sum(v.values())for v in wire.values())/Decimal(2000)),'PG':'absent; no supply routing, tap/fill, power integrity or manufacturing qualification','measurement':'Actual DEF centerline Manhattan lengths; via rectangles/enclosures separate and not added to wire length; no independent electromagnetic RC solution.'}
+ return {'status':'PASS_FULL_DEF_PIN_CLASSES_ROUTING_GRAMMAR_AND_LAYER_LEDGER','net_records':len(records),'electrical_classes':len(seen),'routed_nets':dict(routes),'unrouted_singletons':len(unused),'empty_metadata_nets':empty,'wirelength_um':{k:{'metal'+str(i):str(Decimal(d['metal'+str(i)])/2000)for i in range(1,11)}for k,d in wire.items()},'via_layer_pairs':{k:dict(d)for k,d in via.items()},'via_masters':dict(by_master),'total_vias':sum(by_master.values()),'explicit_zero_end_extensions':zero_extensions,'total_centerline_um':str(sum(sum(v.values())for v in wire.values())/Decimal(2000)),'PG':'absent; no supply routing, tap/fill, power integrity or manufacturing qualification','measurement':'Actual DEF centerline Manhattan lengths; via rectangles/enclosures separate and not added to wire length; no independent electromagnetic RC solution.'}
+
+if __name__=='__main__':
+ import argparse
+ p=argparse.ArgumentParser();p.add_argument('--stage',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(exist_ok=False);artifacts(a.stage);mods=load(a.stage/'final.json')['modules'];net=mods[next(x for x in mods if x in('chain93','chain97'))];put(a.out/'receipt.json',audit_ledger(a.stage,net));print('PASS_FULL_DEF_LAYER_LEDGER')
