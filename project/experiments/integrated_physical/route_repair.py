@@ -1,0 +1,24 @@
+"""One bounded actual routed-RC electrical/hold/electrical repair recipe."""
+import argparse,traceback
+from common import *
+from flow import timing_reports
+p=argparse.ArgumentParser();p.add_argument('--target',type=int,choices=[93,97],required=True);p.add_argument('--prepared',type=Path,required=True);p.add_argument('--previous',type=Path,required=True);p.add_argument('--previous-receipt',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(exist_ok=False);m={'status':'ERROR','stage':'routerepair','source':sources(),'resources':resource_snapshot(),'provisional_gate_pending':True}
+try:
+ if a.target==93:from admission93 import admit
+ else:from admission97 import admit
+ ad=admit();pm=artifacts(a.prepared);prev=artifacts(a.previous);pr=load(a.previous_receipt/'receipt.json');top='chain'+str(a.target);need(prev['stage']=='grt'and prev['status']=='ACTUAL'+str(a.target)+'_GRT_EXECUTED_NOT_RECEIVED'and prev['prepared_manifest_sha256']==sha(a.prepared/'manifest.json'),'exact initial GRT only, no repeated tail');need(pr['status']=='PASS_RECEPTION_OF_ROUTE_EVIDENCE_NOT_AUTOMATIC_CLOSURE'and pr['result']['stage_manifest_sha256']==sha(a.previous/'manifest.json')and pr['result']['routing']['unexplained_unannotated']==0,'received exact actual routed RC coverage')
+ net=load(a.prepared/'cut.json')['modules'][top];m.update(admission=ad,prepared_directory=str(a.prepared),prepared_manifest_sha256=sha(a.prepared/'manifest.json'),previous_directory=str(a.previous),previous_manifest_sha256=sha(a.previous/'manifest.json'),previous_receipt_sha256=sha(a.previous_receipt/'receipt.json'),config_sha256=sha(HERE/'config.json'),views={str(q):sha(q)for q in(LIB,TECH,LEF,P/'setRC.tcl',P/'make_tracks.tcl',P/'fastroute.tcl')},PG_tap_fill_inserted=False,retiming=False,remove_buffers=False,automatic_repairs=True,pin_policy='exact original pinmap preserved',routing=prev['routing'],repair_hold_margin_ns='0.02',repair_max_passes=4096,repair_max_iterations=4096,repair_max_buffer_percent=10,recipe='exactly electrical/hold/final-electrical, incremental global route and refreshed actual route RC after each')
+ lines=['set_thread_count 8',f'read_liberty {{{LIB}}}',f'read_db {{{a.previous}/final.odb}}',f'read_sdc {{{a.previous}/final.sdc}}',f'source {{{P}/setRC.tcl}}','set ::env(MAX_ROUTING_LAYER) metal10','set ::env(MIN_ROUTING_LAYER) metal2','set ::env(MIN_CLK_ROUTING_LAYER) metal4',f'source {{{P}/fastroute.tcl}}',f'read_global_route_segments {{{a.previous}/route.segments}}','estimate_parasitics -global_routing']
+ steps=['repair_design -max_utilization 50 -slew_margin 0 -cap_margin 0 -verbose','repair_timing -hold -hold_margin 0.02 -max_passes 4096 -max_iterations 4096 -max_buffer_percent 10 -max_utilization 50 -verbose','repair_design -max_utilization 50 -slew_margin 0 -cap_margin 0 -verbose']
+ for i,step in enumerate(steps,1):
+  lines += [f'puts "BEGIN_ROUTE_REPAIR_PASS_{i}"','global_route -start_incremental -congestion_iterations 50',step,'detailed_placement -max_displacement {5 1}','global_route -end_incremental -congestion_iterations 50 -verbose','estimate_parasitics -global_routing','report_design_area','report_check_types -max_slew -max_capacitance -max_delay -min_delay -violators -digits 9',f'puts "END_ROUTE_REPAIR_PASS_{i}"']
+ lines += ['puts "BEGIN_GLOBAL_ROUTE"',f'global_route -congestion_iterations 50 -guide_file {{{a.out}/route.guide}} -congestion_report_file {{{a.out}/congestion.rpt}} -verbose','puts "END_GLOBAL_ROUTE"',f'write_global_route_segments {{{a.out}/route.segments}}',f'report_wire_length -net * -global_route -file {{{a.out}/wirelength.csv}}','report_wire_length -global_route -summary','puts "BEGIN_GLOBAL_RC"',f'estimate_parasitics -global_routing -spef_file {{{a.out}/route.spef}}','report_parasitic_annotation -report_unannotated','puts "END_GLOBAL_RC"','puts "BEGIN_CHECK_PLACEMENT"',f'check_placement -verbose -report_file_name {{{a.out}/placement-check.json}}','puts "END_CHECK_PLACEMENT"',f'write_def {{{a.out}/placed.def}}',f'write_db {{{a.out}/placed.odb}}']
+ for k in(1,10):
+  for n,v in net['ports'].items():
+   if v['direction']=='output':lines += [f'set_load {k} [get_ports {{{n}}}]']
+  lines += timing_reports(a.out,k)
+ lines += [f'write_verilog {{{a.out}/final.v}}',f'write_db {{{a.out}/final.odb}}',f'write_sdc -no_timestamp {{{a.out}/final.sdc}}','puts "FLOW_EXECUTION_COMPLETE"'];s=a.out/'flow.tcl';s.write_text(tcl_script(lines));command(a.out,'flow',[OR,'-exit',s],1100)
+ ys=a.out/'reparse.ys';ys.write_text(f'read_liberty -lib {LIB}\nread_verilog {a.out}/final.v\nhierarchy -top {top}\ncheck -assert\nwrite_json {a.out}/final.json\ntee -o {a.out}/stat.json stat -liberty {LIB} -json\n');command(a.out,'reparse',['yosys','-s',ys],300);m['status']='ACTUAL'+str(a.target)+'_ROUTEREPAIR_EXECUTED_NOT_RECEIVED'
+except Exception as e:m.update(error=str(e),traceback=traceback.format_exc());raise
+finally:manifest(a.out,m)
+print(m['status'])

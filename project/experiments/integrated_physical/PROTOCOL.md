@@ -121,3 +121,16 @@ length or a via-length convention. The independent receiver derives tile size
 from actual DEF GCELLGRID and reports raw segment length, via counts and tool
 metric separately; exact official source SHA is retained. A prior strict
 comparison that treated the tool metric as planar length failed and is retained.
+
+
+93 routed attempt1 is now received: 12 input-to-FF hold failures and42 cap failures,
+zero setup/slew failures; exact original segments replay reproduces STA while
+SPEF text readback has a small nonidentical estimate and is diagnostic only.
+Freeze post-route candidate1: exactly electrical -> hold20ps/budget4096 ->
+electrical, each with incremental global routing, legal placement and refreshed
+actual GRT RC, followed by one final full route with the same50-iteration/layer
+policy. No fourth repair. The final route can expose residuals; preserve them.
+All changed cells/area/port input load and final endpoint sets are counted, with
+a newly bound exact gate. Initial20min/1100s ceiling and no hidden tuning remain.
+97 C4 may first take the identical pure GRT candidate only if actually received
+all-constraint closure. Its GRT/repair/gate results are independent of93.
