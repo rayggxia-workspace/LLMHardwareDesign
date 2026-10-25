@@ -25,3 +25,7 @@ Portable12 uses `input-portable1201` / `--steps 12`; protocol uses native input,
 Final build02 (RTL d1297fe), real/map phase3, gate prepare/build phase4, actual gate phase5/6, strict receive phase6/7, archive phase8. `gate.py prepare` requires actual map plus accepted continuous portable12 receipt; it derives actual before-state for normal/rescale checkpoint. Gate wrapper uses original store82 behavior with mapped logic. 1200s per checkpoint limit; generation injection exists only in separate control_test.py RTL test.
 
 Formal receipts: strict-{native32,portable12,protocol}-s{0,1}-01; strict-{rtl,gate}-{first,rescale}-s{0,1}-01; cost01 includes re-received14×2 boundaries. Wide01/control01/negative01 supplement function and receiver checks. Full raw large package remains authorized server; selected.zip is metadata/source evidence, not a replacement numerical run.
+
+## Mixed-domain priority supplement
+
+Use current reference (5539590+): any head shift>62 rejects E_FORMAT before either numeric WIDTH rescale, at every attempt. Two complete nonzero checkpoints with shifts[63,-33]/[-33,63] were executed quiet/held against unchanged build02 and independently received; no publication or retry. Main frozen archive intentionally retains old reference; receive additional `results/issue-104/priority-supplement` using `work/Liangruizhi/104/verify_priority_archive.py --kind selected`. Full supplement remains server priority-delivery01, scientific source phase9/e664827; no unaffected gate rerun.

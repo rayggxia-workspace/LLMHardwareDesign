@@ -83,3 +83,20 @@ Vpair2反复读取四码外部行，proposal物化、两头 retry 和 shadow cop
 全部数字/真实张量/bigint/RTL/map/gate仅本人服务器 `/public/home/yuzelu/RuizhiLiang/issue104-gdn-state-20261025`。完整包 `delivery01/full.zip`：59168676B，SHA-256 `dfcd406c50153fbc5e3fcee2575b3dd68d95b915c9ea91ccad21c2dede6f0c87`；精选入仓 `selected.zip`：1337983B，SHA-256 `0c3294def7285a88da14e166c884a906ab384e9c357734245c89de082d420c25`。
 
 完整818成员/348嵌套artifact/8阶段134原Git源码字节已在服务器独立核验；精选147成员/25源码字节在本机独立核验。见[索引](../../project/experiments/gdn_state/results/issue-104/index.json)、[成本](../../project/experiments/gdn_state/results/issue-104/cost.json)及[交接](../handoffs/2026-10-25-issue-104-gdn-state.md)。下载/字节核验与数学/门级接收分列。远端Issue仍in_progress；本分支未push/未开PR，由主会话最终交付，登记/看板限制继承原项目实际状态，不写成已同步。
+
+## 发布前补充：两头交叉非法域优先级
+
+主包归档后独立审阅发现：RTL 在每个 ATTEMPT 先统一检查任一head的 `eS-eV>62`，但旧独立参考先逐head计算保守 fmt；当一头>62、另一头<-32时，旧参考可能先做一次两头 WIDTH 重标，再抛格式错误。这是独立参考对**新合同非法域优先级**的缺口；真实 native32/portable12 的全部单位范围远离该域，既有真实轨迹、RTL、映射与门级结果不受影响。主归档保持原字节，未改写旧结果。
+
+提交5539590将独立参考改为每次attempt开始先检查两头任一shift>62，立即 E_FORMAT，再进入其他保守 WIDTH 判断。补充使用非零32768状态码及非零256个I64旧输出，两头shift分别[63,-33]与[-33,63]，quiet/背压共4次真实完整RESTORE→STEP；复用同build02/driver，RTL无修改。
+
+| 交叉边界 | stall | shift两头 | 实际status | retry | STEP周期 |
+|---|---:|---|---:|---:|---:|
+| mixed_shift_high_low | 0 | [63, -33] | 12 | 0 | 189,887 |
+| mixed_shift_low_high | 0 | [-33, 63] | 12 | 0 | 189,887 |
+| mixed_shift_high_low | 1 | [63, -33] | 12 | 0 | 260,030 |
+| mixed_shift_low_high | 1 | [-33, 63] | 12 | 0 | 260,030 |
+
+全部 E_FORMAT=12、retry=0、mul=0、wide_calls=0、offer=0、stage流为空；独立reference Refusal(12,attempts=[])。每例实际root+metadata+完整state+完整Y共133200B在拒绝前后逐字节不变，不以零状态掩盖误清空。STEP已完整clone/验证state，但未发布或重标。
+
+补充e664827独立保存于服务器 `priority-delivery01/full.zip`：628816B，SHA `64abc061bf3615fbde4c02d730e5d9d9f1239f0aec2d5131ed35e077dcac92ae`；精选105816B，SHA `5b7f98481e3713b18b8ce9b7f65cdc4962ba9bb59fe07651ca25a4a38f419a5a`。完整80/精选63成员、27原Git源码字节通过，完整另核28嵌套artifact；[补充索引](../../project/experiments/gdn_state/results/issue-104/priority-supplement/index.json)、[数值回执](../../project/experiments/gdn_state/results/issue-104/priority-supplement/receipt.json)与双byte回执在仓库。既有门级不重跑；后续复用应使用补丁后的reference并同时接收主包与补充。

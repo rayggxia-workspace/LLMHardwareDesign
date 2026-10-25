@@ -4,8 +4,8 @@
   "repository": "https://github.com/rayggxia-workspace/LLMHardwareDesign.git",
   "base": "8c51f5df74ff5658ee159ee463f13dea6f691237",
   "branch": "task/104-gdn-state",
-  "before_report_commit": "5891d47d5e547f2124a36adbe2f5a9a65d7fd078",
-  "python_AST_files": 14,
+  "before_report_commit": "1b10b745673c1179ad0a36160288abf2a414bb7c",
+  "python_AST_files": 15,
   "LF_checked_files": [
     "docs/ARCHITECTURE.md",
     "docs/STATUS.md",
@@ -26,12 +26,17 @@
     "project/experiments/gdn_state/gdn_sim.cpp",
     "project/experiments/gdn_state/inputs.py",
     "project/experiments/gdn_state/negative.py",
+    "project/experiments/gdn_state/priority_supplement.py",
     "project/experiments/gdn_state/reference.py",
     "project/experiments/gdn_state/results/issue-104/control-receipt.json",
     "project/experiments/gdn_state/results/issue-104/cost.json",
     "project/experiments/gdn_state/results/issue-104/full-byte-receipt.json",
     "project/experiments/gdn_state/results/issue-104/index.json",
     "project/experiments/gdn_state/results/issue-104/negative-receipt.json",
+    "project/experiments/gdn_state/results/issue-104/priority-supplement/full-byte-receipt.json",
+    "project/experiments/gdn_state/results/issue-104/priority-supplement/index.json",
+    "project/experiments/gdn_state/results/issue-104/priority-supplement/receipt.json",
+    "project/experiments/gdn_state/results/issue-104/priority-supplement/selected-byte-receipt.json",
     "project/experiments/gdn_state/results/issue-104/selected-byte-receipt.json",
     "project/experiments/gdn_state/results/issue-104/wide-receipt.json",
     "project/experiments/gdn_state/run.py",
@@ -43,7 +48,9 @@
     "project/rtl/gdn_state/gdn104.sv",
     "project/rtl/gdn_state/wide104.sv",
     "work/Liangruizhi/104/README.md",
-    "work/Liangruizhi/104/execution.json"
+    "work/Liangruizhi/104/execution.json",
+    "work/Liangruizhi/104/final-checks.json",
+    "work/Liangruizhi/104/verify_priority_archive.py"
   ],
   "commands": [
     {
@@ -85,7 +92,7 @@
         "8c51f5df74ff5658ee159ee463f13dea6f691237"
       ],
       "exit": 0,
-      "stdout": "docs/ARCHITECTURE.md\ndocs/STATUS.md\nprogress/Liangruizhi/STATUS.md\nproject/experiments/gdn_state/PROTOCOL.md\nproject/experiments/gdn_state/analyze.py\nproject/experiments/gdn_state/collect.py\nproject/experiments/gdn_state/contracts.py\nproject/experiments/gdn_state/control_sim.cpp\nproject/experiments/gdn_state/control_test.py\nproject/experiments/gdn_state/fixture_batch.py\nproject/experiments/gdn_state/fixtures.py\nproject/experiments/gdn_state/gate.py\nproject/experiments/gdn_state/gdn_sim.cpp\nproject/experiments/gdn_state/inputs.py\nproject/experiments/gdn_state/negative.py\nproject/experiments/gdn_state/reference.py\nproject/experiments/gdn_state/run.py\nproject/experiments/gdn_state/verify.py\nproject/experiments/gdn_state/verify_archive.py\nproject/experiments/gdn_state/wide_sim.cpp\nproject/experiments/gdn_state/wide_test.py\nproject/experiments/gdn_state/wide_test104.sv\nproject/rtl/gdn_state/gdn104.sv\nproject/rtl/gdn_state/wide104.sv\nwork/Liangruizhi/104/README.md\n",
+      "stdout": "docs/ARCHITECTURE.md\ndocs/STATUS.md\ndocs/decisions/2026-10-25-gdn-group-atomic-wide.md\ndocs/experiments/issue-104-gdn-state.md\ndocs/handoffs/2026-10-25-issue-104-gdn-state.md\nprogress/Liangruizhi/STATUS.md\nproject/experiments/gdn_state/PROTOCOL.md\nproject/experiments/gdn_state/README.md\nproject/experiments/gdn_state/analyze.py\nproject/experiments/gdn_state/collect.py\nproject/experiments/gdn_state/contracts.py\nproject/experiments/gdn_state/control_sim.cpp\nproject/experiments/gdn_state/control_test.py\nproject/experiments/gdn_state/fixture_batch.py\nproject/experiments/gdn_state/fixtures.py\nproject/experiments/gdn_state/gate.py\nproject/experiments/gdn_state/gdn_sim.cpp\nproject/experiments/gdn_state/inputs.py\nproject/experiments/gdn_state/negative.py\nproject/experiments/gdn_state/priority_supplement.py\nproject/experiments/gdn_state/reference.py\nproject/experiments/gdn_state/results/issue-104/control-receipt.json\nproject/experiments/gdn_state/results/issue-104/cost.json\nproject/experiments/gdn_state/results/issue-104/full-byte-receipt.json\nproject/experiments/gdn_state/results/issue-104/index.json\nproject/experiments/gdn_state/results/issue-104/negative-receipt.json\nproject/experiments/gdn_state/results/issue-104/selected-byte-receipt.json\nproject/experiments/gdn_state/results/issue-104/selected.zip\nproject/experiments/gdn_state/results/issue-104/wide-receipt.json\nproject/experiments/gdn_state/run.py\nproject/experiments/gdn_state/verify.py\nproject/experiments/gdn_state/verify_archive.py\nproject/experiments/gdn_state/wide_sim.cpp\nproject/experiments/gdn_state/wide_test.py\nproject/experiments/gdn_state/wide_test104.sv\nproject/rtl/gdn_state/gdn104.sv\nproject/rtl/gdn_state/wide104.sv\nwork/Liangruizhi/104/README.md\nwork/Liangruizhi/104/execution.json\nwork/Liangruizhi/104/final-checks.json\nwork/Liangruizhi/104/verify_priority_archive.py\n",
       "stderr": ""
     },
     {
@@ -96,7 +103,7 @@
         "--exclude-standard"
       ],
       "exit": 0,
-      "stdout": "docs/decisions/2026-10-25-gdn-group-atomic-wide.md\ndocs/experiments/issue-104-gdn-state.md\ndocs/handoffs/2026-10-25-issue-104-gdn-state.md\nproject/experiments/gdn_state/README.md\nproject/experiments/gdn_state/results/issue-104/control-receipt.json\nproject/experiments/gdn_state/results/issue-104/cost.json\nproject/experiments/gdn_state/results/issue-104/full-byte-receipt.json\nproject/experiments/gdn_state/results/issue-104/index.json\nproject/experiments/gdn_state/results/issue-104/negative-receipt.json\nproject/experiments/gdn_state/results/issue-104/selected-byte-receipt.json\nproject/experiments/gdn_state/results/issue-104/selected.zip\nproject/experiments/gdn_state/results/issue-104/wide-receipt.json\nwork/Liangruizhi/104/execution.json\n",
+      "stdout": "project/experiments/gdn_state/results/issue-104/priority-supplement/full-byte-receipt.json\nproject/experiments/gdn_state/results/issue-104/priority-supplement/index.json\nproject/experiments/gdn_state/results/issue-104/priority-supplement/receipt.json\nproject/experiments/gdn_state/results/issue-104/priority-supplement/selected-byte-receipt.json\nproject/experiments/gdn_state/results/issue-104/priority-supplement/selected.zip\n",
       "stderr": ""
     },
     {
@@ -106,7 +113,7 @@
         "HEAD"
       ],
       "exit": 0,
-      "stdout": "5891d47d5e547f2124a36adbe2f5a9a65d7fd078\n",
+      "stdout": "1b10b745673c1179ad0a36160288abf2a414bb7c\n",
       "stderr": ""
     }
   ],
