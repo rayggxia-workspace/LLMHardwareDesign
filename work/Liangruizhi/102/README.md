@@ -1,5 +1,5 @@
-# Issue102
+# Issue102个人辅助资料
 
-负责人Liangruizhi；task/102-attention-rtl；D:/Projects/LLMHardwareDesign-attention-rtl；base PR101@5820c223c41327e154869616339dded900609007。服务器独立issue102-attention-rtl-20261025，Slurm lrz-i102-*。root最终发布PR，不自行push/合并/done。原始输入/源码/运行及接收证据在正式实验目录。
+负责人Liangruizhi；[Issue102](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/102)，task/102-attention-rtl。start/final-audit核身份、任务与成员进度；execution/slurm记录本人服务器实际作业；collect/verify_delivery/verify_sources是归档/逐成员/原Git字节接收，不替代数学。
 
-已核指定身份、102/97/98/99/55/63及PR101/100/79/58；不重复其他成员任务。登记PR5 pending，缺board配置/read:project，看板unverified、同步pending待管理员。
+正式代码project/rtl/attention，工具project/experiments/attention_rtl；报告docs/experiments/issue-102-attention-rtl.md；结果同工具results/issue-102。完整包仅授权服务器，精选metadata入仓。root负责push/PR/Issue与看板受限交接，不自行标done。

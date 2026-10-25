@@ -1,8 +1,10 @@
 # Liangruizhi 的进度
 
-## 2026-10-25 Issue102完整GQA RTL in_progress
+## 2026-10-25 Issue102完整GQA本地交付待PR
 
-Issue102独立task/102-attention-rtl，D:/Projects/LLMHardwareDesign-attention-rtl，base PR101@5820c22。指定身份及最新97/98/99/55/63已核，已登记本人server lrz-i102-*；冻结64 full和61真实cached分列输入、76真实query全8头、16KiB单1RW/8S8/1S32/SFU。准备实际QK→三遍score整数softmax→PV及恢复/独立接收，尚未执行不预判通过；非online/append/M-A物理共享。98与99并行互不修改。root最终PR，登记PR5 pending、看板缺配置/read:project待管理员。
+[Issue102](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/102)，task/102-attention-rtl，D:/Projects/LLMHardwareDesign-attention-rtl；身份Liangruizhi/182389313及最新102/98/99/55/63/PR已核。两路79query632head全值、两路71cmd恢复独立PASS；原map门级18query144head同RTL+独立oracle，4真实文件负例拒绝。3/9limb、128iter SFU及全部宽控制计入53187.764µm²逻辑图；单16KiB/8S8/1S32。76真实query含61 actual cached，不以64full代替。单owner/version单调修复、caller committed prefix范围明确。
+
+全部数学/RTL/map/gate在本人服务器，双包/精选/10phase原Git字节接收通过；[报告](../../docs/experiments/issue-102-attention-rtl.md)、[索引](../../project/experiments/attention_rtl/results/issue-102/index.json)、[交接](../../docs/handoffs/2026-10-25-issue-102-attention-rtl.md)。root负责push/PR/Issue状态，尚未远端上传或done。登记PR5 pending、看板缺配置/read:project待管理员。下一步与97/99真正共享服务，不重复模型；online/append/宏/物理/完整库仍未验。
 
 ## 2026-10-25 UTC+08 Issue97专用V完整消费者交付待同步
 

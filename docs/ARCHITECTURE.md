@@ -212,3 +212,7 @@ project/experiments/epoch_boundary/README.md与PROTOCOL.md记录冻结源重放�
 ## Issue97：专用V到真实M完整消费者
 
 [RTL合同](../project/rtl/v_consumer/README.md)、[复现入口](../project/experiments/v_consumer/README.md)、[报告](experiments/issue-97-v-consumer.md)。先 `python -B scripts/check_project.py`；原始张量、RTL/门级/map/整数接收仅本人服务器。正式RTL phase8，严格接收phase9，汇总/归档phase10；源码提交与所有argv在work/Liangruizhi/97/execution.json。PC精选用work97/verify_delivery.py，原Git用verify_sources.py --expected-phases 10，均新输出至D盘。六真输入两模式每路50命令/29输出；selected gate四运行八输出无Q注入，与同driver RTL逐字段一致。范围是专用V/固定K512-H1536 M，不是通用ISA/GEMM或真实宏/STA验收。
+
+## Issue102：完整GQA注意力RTL
+
+[合同](../project/experiments/attention_rtl/PROTOCOL.md)、[复现](../project/experiments/attention_rtl/README.md)、[报告](experiments/issue-102-attention-rtl.md)。先`python -B scripts/check_project.py`。实际张量/RTL/map/gate/数学仅本人服务器；正式a6961b7 RTL、3b5743f driver、b84f0b2 receiver、phase10归档；完整argv及Slurm在work102/execution.json。PC用work102/verify_delivery.py接收selected.zip，再verify_sources.py --expected-phases 10，输出D盘新目录。两路full03/qualification02与gatep1/2s0/1范围见合同，不称online/append或物理共享。

@@ -1,5 +1,7 @@
 # 当前状态
 
+- 2026-10-25 [Issue102](experiments/issue-102-attention-rtl.md)：完整GQA8头Q8/KV16→QK→三遍整数softmax→PV32，full/实际cached分列；两路79query/632head与71cmd同core恢复、selected raw gate18query独立PASS。严格8S8/1S32/单16KiB，logic-only53,187.764µm²；非online/append/M-A物理共享/宏STA。全部来源、失败与字节回执留档，本地交付待root PR审查，不done；下一步共享真实服务，见[分层验收](BLOCK_LIBRARY_ACCEPTANCE.md)。
+
 - 2026-10-25 [Issue97](experiments/issue-97-v-consumer.md)：原始gate/up→SiLU/MID→整512 δ/A8→驻留真实M→流式norm有界L2及选定raw gate独立PASS；两路50命令/29输出，门级4路8输出。单16KiB/8S8+1S32，logic-only70,102.970µm²；通用80 V ISA、完整A/R与宏/STA未完成。750.46MB全包/0.221MB精选、10phase153源已接收；本地交付待父会话PR同步，不done。98新物理/99 R继续独立，详见[分层验收](BLOCK_LIBRARY_ACCEPTANCE.md)。
 
 - 2026-10-25 [Issue93](experiments/issue-93-gamma-stream.md)：流式gamma在单16KiB/同8S8+1S32上保留6Granite完整链，新增2Gemma H2560全行norm并保留4KiB A/512B frame；两路独立整数接收与有限恢复PASS，paired logic-only+4.20291%，非同I/O加速或物理资格。cost02已从真实128bit桥纠正传输字节，主包/精选/7phase108原Git字节通过；补充2项文件重SHA完整receiver语义负例及补充包独立通过。主会话尚待PR交付，不done，后续97/98独立推进。
