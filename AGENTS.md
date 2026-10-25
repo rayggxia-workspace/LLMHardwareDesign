@@ -1,5 +1,10 @@
 # AI 协作约定
 
+## 2026-10-25 Issue84 缓存与算术共享
+
+只本人服务器lrz-i84-*并行，固定Issue82整数函数、16KiB单1RW、128bit五beat协议；比较A缓存与S32乘法器共享。缓存使用既有4KiB余量，新增寄存器/仲裁/装载/缓冲/端口均计价；同精度容量非同面积，非宏/STA/PPA。协议project/experiments/cache_share/PROTOCOL.md；无新模型/其他机器/成员55和63接管。
+
+
 ## 2026-10-25 Issue82 归一化与真实 M 消费者
 
 本轮只本人CPU服务器lrz-i82-*并行验证精确RMSNorm宽算术/SFU、raw scale传播和真实K512/8expert/H1536 M完整消费者。协议project/experiments/norm_circuit/PROTOCOL.md；保持原数值，增加的宽算术/端口/存储/控制必须实际计价。旧74/80数据只读，PC仅源码/小合成/metadata/字节，无新模型/软件/其他机器/成员55和63接管。任务同精度不代表同面积；研究库logic-only/RTL cycles不代表macro/STA/全模型或冻结制造边界。完整记录来源、失败、独立接收和交接，独立Issue/分支/目录，不自合并。
