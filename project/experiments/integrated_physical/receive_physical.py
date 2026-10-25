@@ -55,7 +55,7 @@ def geometry_connectivity(text,net,lib):
  need(area<=Decimal('79600.5'),'frozen cell budget')
  return {'status':'PASS_INDEPENDENT_SITE_BOUNDS_NO_OVERLAP_AND_ALL_SIGNAL_CONNECTIONS','core_um2':'159201','legal_rows':285,'row_site_count':598500,'functional_clock_repair_area_um2':str(area),'functional_area_budget_um2':'79600.5','DEF_database_units_per_um':unit,'signal_pin_connections':len(seen),'physical_only_cells_inserted':0,'PG_tap_fill_and_real_macro':'not inserted in initial logic-island placement; no manufacturing legality claim'}
 
-def audit(folder,prepared,out):
+def audit(folder,prepared,out,gate=None):
  fm=artifacts(folder);pm=artifacts(prepared);ad=admit();need(pm['status']=='EXACT_ACCEPTED93_GATE_EXPORT_AND_DECLARED_MEMORY_CUT'and pm['admission_sha256']==sha(prepared/'admission.json')and load(prepared/'admission.json')==ad and fm['admission']==ad,'independent exact upstream admission');need(fm['stage']in('zero','place')and fm['status']=='ACTUAL93_'+fm['stage'].upper()+'_EXECUTED_NOT_RECEIVED','actual stage complete');need(fm['prepared_manifest_sha256']==sha(prepared/'manifest.json'),'precise stage input')
  need(fm['config_sha256']==sha(HERE/'config.json'),'frozen physical config')
  for p in(LIB,TECH,LEF,P/'setRC.tcl',P/'make_tracks.tcl',P/'fastroute.tcl'):need(fm['views'][str(p)]==sha(p),'exact physical input view')
@@ -75,11 +75,15 @@ def audit(folder,prepared,out):
    m=re.search(r'(?m)^'+n+r'\s*$',er);tail=er[m.end():]if m else'';end=re.search(r'(?m)^(max slew|max capacitance|max fanout|max delay/setup|min delay/hold)\s*$',tail);tail=tail[:end.start()]if end else tail;violations[n]=tail.count('(VIOLATED)')
   violations.update(setup=sum(Decimal(r['slack'])<0 for r in by['setup']),hold=sum(Decimal(r['slack'])<0 for r in by['hold']))
   scenarios.append({'load_fF':k,'violations':violations,'R2R_endpoints':len(ff),'all_setup_hold_endpoints':len(expected),'constant_output_exclusions':sorted(exclude),'unexplained_unconstrained':0,'fanout_scope':'Only explicitly present Liberty/SDC limits; no invented target maximum. Actual per-input fanout reported separately.','worst_setup_ns':str(min(Decimal(r['slack'])for r in by['setup'])),'worst_hold_ns':str(min(Decimal(r['slack'])for r in by['hold'])),'closed':not any(violations.values())})
- geo=None
+ geo=None;gate_status='NOT_REQUIRED_ZERO_DIAGNOSTIC';gate_sha=None
+ if fm['stage']=='place':
+  gate_status='PENDING_RAW_GATE_PROVISIONAL_ONLY'
+  if gate is not None:
+   gr=load(gate/'receipt.json');need(gr['status']=='PASS_ACTUAL93_COMPLETE_GATES_AND_DECLARED_EPOCH_EXCEPTION'and gr['admission']==ad and gr['prepared_manifest_sha256']==sha(prepared/'manifest.json'),'independent same exact complete raw gate');gate_status='PASS_COMPLETE_RAW_GATE';gate_sha=sha(gate/'receipt.json')
  if fm['stage']=='place':block(log,'BEGIN_CHECK_PLACEMENT','END_CHECK_PLACEMENT');geo=geometry_connectivity((folder/'placed.def').read_text(),after,lib)
- return {'stage':fm['stage'],'stage_manifest_sha256':sha(folder/'manifest.json'),'structure':cert,'input_sink_costs':input_loads(after,lib),'scenarios':scenarios,'physical_geometry':geo,'all_declared_internal_timing_electrical_closed':all(s['closed']for s in scenarios),'physical_stage_accepted':fm['stage']=='place'and all(s['closed']for s in scenarios),'macro_clock_load_qualified':False,'upstream_drive_qualified':False,'manufacturable':False}
+ return {'stage':fm['stage'],'stage_manifest_sha256':sha(folder/'manifest.json'),'structure':cert,'input_sink_costs':input_loads(after,lib),'scenarios':scenarios,'physical_geometry':geo,'all_declared_internal_timing_electrical_closed':all(s['closed']for s in scenarios),'raw_gate_status':gate_status,'gate_receipt_sha256':gate_sha,'physical_stage_accepted':fm['stage']=='place'and gate_status=='PASS_COMPLETE_RAW_GATE'and all(s['closed']for s in scenarios),'macro_clock_load_qualified':False,'upstream_drive_qualified':False,'manufacturable':False}
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--prepared',type=Path,required=True);p.add_argument('--stage',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(exist_ok=False);bd=sources();r=audit(a.stage,a.prepared,a.out)
+ p=argparse.ArgumentParser();p.add_argument('--prepared',type=Path,required=True);p.add_argument('--stage',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--gate',type=Path);a=p.parse_args();a.out.mkdir(exist_ok=False);bd=sources();r=audit(a.stage,a.prepared,a.out,a.gate)
  put(a.out/'receipt.json',{'schema':'physical98-receipt-v1','status':'PASS_RECEPTION_OF_EXECUTED_PHYSICAL_STAGE_NOT_AUTOMATIC_CLOSURE','source':bd,'result':r,'limits':['Research Nangate typical only; explicitly non-manufacturable.','Whole store82 cut excludes real SRAM timing/area and macro clock load; core_reset retained at store_reset output.','Placement is logic island without PG/tap/fill or actual macro; zero wire/placement estimates are not detailed route SPEF.']});print('PASS_RECEPTION_OF_EXECUTED_PHYSICAL_STAGE_NOT_AUTOMATIC_CLOSURE')
 if __name__=='__main__':main()

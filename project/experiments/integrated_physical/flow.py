@@ -18,11 +18,14 @@ def timing_reports(out,k):
  return x
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('stage',choices=['zero','place']);p.add_argument('--prepared',type=Path,required=True);p.add_argument('--gate',type=Path);p.add_argument('--out',type=Path,required=True);p.add_argument('--seconds',type=int,default=1100);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False);m={'status':'ERROR','stage':a.stage,'source':sources(),'resources':resource_snapshot()}
+ p=argparse.ArgumentParser();p.add_argument('stage',choices=['zero','place']);p.add_argument('--prepared',type=Path,required=True);p.add_argument('--gate',type=Path);p.add_argument('--provisional',action='store_true');p.add_argument('--out',type=Path,required=True);p.add_argument('--seconds',type=int,default=1100);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False);m={'status':'ERROR','stage':a.stage,'source':sources(),'resources':resource_snapshot()}
  try:
   pm=artifacts(a.prepared);ad=admit();need(pm['status']=='EXACT_ACCEPTED93_GATE_EXPORT_AND_DECLARED_MEMORY_CUT'and load(a.prepared/'admission.json')==ad,'precise actual source for physical stage');net=load(a.prepared/'cut.json')['modules']['chain93'];config=load(HERE/'config.json')
   if a.stage=='place':
-   need(a.gate is not None,'placement requires completed gate qualification');g=load(a.gate/'receipt.json');need(g['status']=='PASS_ACTUAL93_COMPLETE_GATES_AND_DECLARED_EPOCH_EXCEPTION'and g['admission']==ad and g['prepared_manifest_sha256']==sha(a.prepared/'manifest.json'),'exact complete gate dependency');m['gate_receipt_sha256']=sha(a.gate/'receipt.json')
+   if a.provisional:
+    need(a.gate is None,'provisional scheduling explicitly lacks final gate receipt');m['provisional_gate_pending']=True
+   else:
+    need(a.gate is not None,'qualified placement requires completed gate qualification');g=load(a.gate/'receipt.json');need(g['status']=='PASS_ACTUAL93_COMPLETE_GATES_AND_DECLARED_EPOCH_EXCEPTION'and g['admission']==ad and g['prepared_manifest_sha256']==sha(a.prepared/'manifest.json'),'exact complete gate dependency');m['gate_receipt_sha256']=sha(a.gate/'receipt.json');m['provisional_gate_pending']=False
   m.update(admission=ad,prepared_manifest_sha256=sha(a.prepared/'manifest.json'),prepared_directory=str(a.prepared),config_sha256=sha(HERE/'config.json'),views={str(q):sha(q)for q in(LIB,TECH,LEF,P/'setRC.tcl',P/'make_tracks.tcl',P/'fastroute.tcl')},automatic_repairs=False,retiming=False,remove_buffers=False,PG_tap_fill_inserted=False)
   lines=['set_thread_count 8',f'read_lef {{{TECH}}}',f'read_lef {{{LEF}}}',f'read_liberty {{{LIB}}}',f'read_verilog {{{a.prepared}/cut.v}}','link_design chain93','initialize_floorplan -die_area {0 0 448 448} -core_area {24.51 25.2 423.51 424.2} -site FreePDK45_38x28_10R_NP_162NW_34O',f'source {{{P}/make_tracks.tcl}}']
   (a.out/'constraints-load10.sdc').write_text('\n'.join(constraints(net,10))+'\n');lines += [f'read_sdc {{{a.out}/constraints-load10.sdc}}']
