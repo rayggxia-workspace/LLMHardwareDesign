@@ -208,3 +208,7 @@ project/experiments/epoch_boundary/README.md与PROTOCOL.md记录冻结源重放�
 真实命令见[工具README](../project/experiments/gamma_stream/README.md)、[报告](experiments/issue-93-gamma-stream.md)和work93 execution。正式run为build03/rtl-s003/s103，最终接收phase7 receipt-s005/s105/cost02；PC首先`python -B scripts/check_project.py`，再work93/verify_delivery.py接收final/selected.zip与verify_sources.py `--expected-phases 7`。全实际数组/RTL/map仅本人服务器；本机只字节。cost01因128bit beat误按32bit换算已标记，恢复须使用final/cost02。
 
 93补充文件级语义验收仅服务器运行：`python -B work/Liangruizhi/93/semantic_negative.py --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/NEW_NEGATIVE`，明确复用phase7完整receiver。其完整变异包留服务器semantic-delivery01，PC可接收semantic-supplement/selected.zip及`verify_sources.py --expected-phases 8`，不运行数组计算。
+
+## Issue99 完整head R状态单元
+
+参见[工具README](../project/experiments/r_state/README.md)、[报告](experiments/issue-99-r-state.md)、[协议](../project/experiments/r_state/PROTOCOL.md)。PC先运行`python -B scripts/check_project.py`，再`project/experiments/r_state/verify_archive.py`仅做selected.zip/index.json字节接收。实际inputs/bigint/RTL/map/rawgate仅服务器：正式phase7六路05批次、map04、4真实checkpoint gate、phase8 gate-schema01；完整argv在work99/execution.json。复现必须新输出目录，不覆盖已有结果。单head/单16KiB/单S32并不等于与M/V资源已整合或物理签核。

@@ -112,3 +112,7 @@
 通用Yosys作业89838于2026-10-23 09:55:54 CST达到20分钟时限，Slurm最终TIMEOUT（elapsed20:28，batch0:15）。日志确认已进入PROC_MUX，未完成后续memory_collect/check/stat/JSON；未证明综合通过，也不能把工具超时解释为RTL功能错误。原始日志和SHA索引已保存work/Liangruizhi/29/audits/synth-timeout01/。 下一步保留同一源码，使用单配置-defer与RTLIL检查点分开前端和proc成本；该后续检查尚未执行。先前运行中快照仅代表其采集时刻。
 
 - 2026-10-25 [Issue85运行时缓存及恢复](experiments/issue-85-runtime-cache.md)：同一M核心两模式，60正式完整输出及22实际soft-abort/12错误/2迟到丢弃独立通过；周期保持84对应shared静态值，logic-only+1.52715%/+97bit。全包/精选与5phase86源字节已核。额外32bit tag/外部恢复双槽单列，宏/STA/CDC仍未验；PR89已上传待审查，不done。
+
+## 2026-10-25 Issue99 R状态单元证据
+
+本人服务器完整head72连续S32 RTL、有限事务/恢复/19边界与2真实checkpoint×两条件rawgate通过；归档/原Git字节已验，主会话待发布审查。[报告](experiments/issue-99-r-state.md)。R保持完整head数值/提交责任，Dtile不独立重标；16KiB外的128KiB状态及trial/proposal/shadow明确计库存/流量。与M/V/其它head、4096消费者及物理实现仍未整合，不将本单元结果写成整个Block库完成。
