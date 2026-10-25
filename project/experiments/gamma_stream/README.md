@@ -23,7 +23,7 @@ PC 只做管理检查与证据字节接收：
 ```sh
 python -B scripts/check_project.py
 python -B work/Liangruizhi/93/verify_delivery.py --index INDEX.json --archive selected.zip --out NEW_BYTE_RECEIPT.json
-python -B work/Liangruizhi/93/verify_sources.py --repository REPO --index INDEX.json --selected selected.zip --expected-phases 6 --out NEW_GIT_RECEIPT.json
+python -B work/Liangruizhi/93/verify_sources.py --repository REPO --index INDEX.json --selected selected.zip --expected-phases 7 --out NEW_GIT_RECEIPT.json
 ```
 
 具体实际 argv、Slurm、冻结 commit、报告/限制和原始 SHA 在 `work/Liangruizhi/93`、`results/issue-93` 及交接中。通用 V、H2560 完整 M、同外存入口速度比较与宏/STA/PPA 尚不属于本轮验收。
