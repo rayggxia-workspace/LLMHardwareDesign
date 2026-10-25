@@ -10,20 +10,23 @@
 using W=std::array<uint32_t,4>;
 static Vwide_block d; static std::vector<uint8_t> code;static uint64_t tickno=0;static int stall=0;
 static bool pending=false;static int delay=0;static W response{};
+static uint64_t ext_serial=0;static int request_wait=0;static bool request_seen=false;
 static bool old_blocked=false;static uint32_t old_addr=0;static bool old_wr=false;static W old_wdata{};
 static void require(bool b,const char*s){if(!b)throw std::runtime_error(s);}
 template<class T>static W get(const T&v){return {v[0],v[1],v[2],v[3]};}
 template<class T>static void set(T&v,const W&a){for(int i=0;i<4;i++)v[i]=a[i];}
 struct Event{bool cfg=false,cfg_rsp=false;W cfgdata{};};
 static Event step(){
- d.clk=0;d.ext_ready=!pending&&(!stall||tickno%7!=0);d.ext_valid=pending&&delay==0;set(d.ext_rdata,response);d.eval();
+ d.clk=0;
+ if(!pending&&d.ext_req&&!request_seen){request_wait=stall?int(ext_serial%3):0;request_seen=true;}
+ d.ext_ready=!pending&&request_wait==0;d.ext_valid=pending&&delay==0;set(d.ext_rdata,response);d.eval();
  Event e{bool(d.cfg_valid&&d.cfg_ready),bool(d.cfg_response&&d.cfg_take),get(d.cfg_result)};
  bool accept=d.ext_req&&d.ext_ready, retire=d.ext_valid&&d.ext_take;uint32_t addr=d.ext_addr;bool wr=d.ext_write;W wd=get(d.ext_wdata);
  if(old_blocked)require(d.ext_req&&addr==old_addr&&wr==old_wr&&wd==old_wdata,"unstable external request under backpressure");
  old_blocked=d.ext_req&&!d.ext_ready;old_addr=addr;old_wr=wr;old_wdata=wd;
  d.clk=1;d.eval();d.clk=0;d.eval();tickno++;
- if(d.reset){pending=false;delay=0;old_blocked=false;}
- else {if(pending&&delay>0)delay--;if(retire)pending=false;if(accept){require(!wr,"program memory is read-only");require((addr&15)==0&&addr<code.size(),"external program read bounds");require(!pending,"one outstanding external read");response={};for(int j=0;j<16;j++)if(addr+j<code.size())response[j/4]|=uint32_t(code[addr+j])<<(8*(j%4));pending=true;delay=stall?1+int(tickno%5):1;}}
+ if(d.reset){pending=false;delay=0;old_blocked=false;request_wait=0;request_seen=false;ext_serial=0;}
+ else {if(!pending&&request_seen&&request_wait>0)request_wait--;if(pending&&delay>0)delay--;if(retire)pending=false;if(accept){require(!wr,"program memory is read-only");require((addr&15)==0&&addr<code.size(),"external program read bounds");require(!pending,"one outstanding external read");response={};for(int j=0;j<16;j++)if(addr+j<code.size())response[j/4]|=uint32_t(code[addr+j])<<(8*(j%4));pending=true;request_seen=false;ext_serial++;delay=stall?1+int(ext_serial%5):1;}}
  return e;
 }
 static W cfg(bool wr,int addr,const W&data={}){
@@ -44,15 +47,15 @@ int main(int argc,char**argv){
  d.cmd_valid=0;d.done_ready=0;d.cfg_valid=0;d.cfg_take=0;d.reset=1;step();step();d.reset=0;step();
  std::string name,in;uint32_t pc;int lane,status;unsigned count=0;int limit=argc>5?std::stoi(argv[5]):100000;
  uint32_t firstpc=0,rompc=0;std::vector<uint8_t> firstinput,rominput;
- while(vectors>>name>>pc>>lane>>status>>in){if(int(count)>=limit)break;auto input=unhex(in);if(count==0){firstpc=pc;firstinput=input;}if(name=="rom0"){rompc=pc;rominput=input;}load(input);
+ while(vectors>>name>>pc>>lane>>status>>in){if(int(count)>=limit)break;auto input=unhex(in);if(count==0){firstpc=pc;firstinput=input;}if(name=="rom0"){rompc=pc;rominput=input;}uint64_t setup_begin=tickno;load(input);uint64_t setup_edges=tickno-setup_begin;
  uint64_t begin=tickno;uint32_t b0=d.wire_beats,t0=d.transactions;command(pc,lane,100+count);unsigned n=0;
  while(!d.done){step();require(++n<64000100,"execution timeout");require(!d.cfg_ready,"busy cfg forbidden");}
  uint64_t elapsed=tickno-begin;auto status0=d.status;auto tag0=d.tag;require(status0==status,"expected command status");require(tag0==100+count,"completion tag");
  uint64_t cycles=d.cycles;uint32_t actions=d.actions,fetches=d.fetches,reads=d.frame_reads,writes=d.frame_writes,rom=d.rom_reads,beats=d.wire_beats-b0,transactions=d.transactions-t0;
  d.cfg_valid=1;for(int h=0;h<3;h++){step();require(d.done&&d.status==status0&&d.tag==tag0&&!d.cfg_ready,"completion/status stable under backpressure");}d.cfg_valid=0;
- d.done_ready=1;step();d.done_ready=0;auto actual=dump();
+ d.done_ready=1;step();d.done_ready=0;uint64_t result_begin=tickno;auto actual=dump();uint64_t result_edges=tickno-result_begin;
  require(beats==5*transactions,"all serialized requests and responses charged five128bit beats");
- out<<"{\"name\":\""<<name<<"\",\"status\":"<<unsigned(status0)<<",\"tag\":"<<tag0<<",\"cycles\":"<<cycles<<",\"observed_active_edges\":"<<elapsed<<",\"actions\":"<<actions<<",\"fetch_lines\":"<<fetches<<",\"frame_read_lines\":"<<reads<<",\"frame_write_lines\":"<<writes<<",\"rom_requests\":"<<rom<<",\"link_transactions\":"<<transactions<<",\"wire_beats\":"<<beats<<",\"caller_setup_write_lines\":32,\"caller_result_read_lines\":32,\"frame\":\""<<hex(actual)<<"\"}\n";
+ out<<"{\"caller_setup_edges\":"<<setup_edges<<",\"caller_result_edges\":"<<result_edges<<",\"completion_hold_and_ack_edges\":4,\"name\":\""<<name<<"\",\"status\":"<<unsigned(status0)<<",\"tag\":"<<tag0<<",\"cycles\":"<<cycles<<",\"observed_active_edges\":"<<elapsed<<",\"actions\":"<<actions<<",\"fetch_lines\":"<<fetches<<",\"frame_read_lines\":"<<reads<<",\"frame_write_lines\":"<<writes<<",\"rom_requests\":"<<rom<<",\"link_transactions\":"<<transactions<<",\"wire_beats\":"<<beats<<",\"caller_setup_write_lines\":32,\"caller_result_read_lines\":32,\"frame\":\""<<hex(actual)<<"\"}\n";
  count++;
  }
  std::ofstream protocol(std::string(argv[3])+".protocol.json");protocol<<"[";int scenarios=0;

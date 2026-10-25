@@ -47,12 +47,13 @@ def expected(v):
  return {}
 def check(vectors,rows):
  need(len(rows)==len(vectors),'all declared RTL cases executed');byname={r['name']:r for r in rows};need(len(byname)==len(rows),'unique received case')
- groups={};total={k:0 for k in('cycles','actions','fetch_lines','frame_read_lines','frame_write_lines','rom_requests','link_transactions','wire_beats')}
+ groups={};total={k:0 for k in('cycles','actions','fetch_lines','frame_read_lines','frame_write_lines','rom_requests','link_transactions','wire_beats','caller_setup_edges','caller_result_edges','completion_hold_and_ack_edges','observed_active_edges')}
  for i,v in enumerate(vectors):
   r=byname[v['name']];need(r['status']==v['expected_status'],'actual RTL error/guard status '+v['name']);need(r['tag']==100+i,'completion tag')
   f=bytes.fromhex(r['frame']);need(len(f)==512,'finite published frame')
   need(r['wire_beats']==5*r['link_transactions'],'all request/response serialized beats')
   need(r['caller_setup_write_lines']==32 and r['caller_result_read_lines']==32,'explicit caller setup/extract, not free IO')
+  need(r['caller_setup_edges']==64 and r['caller_result_edges']==64 and r['completion_hold_and_ack_edges']==4,'measured caller 1RW setup/extract and held completion')
   if v['expected_status']==0:
    want=expected(v)
    for key,value in want.items():
@@ -70,6 +71,9 @@ def main():
   for d in m['artifacts']:need(sha(root/d['path'])==d['sha256']and(root/d['path']).stat().st_size==d['bytes'],'actual artifact SHA')
  need(rm['status']=='RTL_EXECUTED','actual successful simulation');need(rm['input_manifest_sha256']==sha(a.input/'manifest.json'),'input bound to exact simulation')
  vectors=json.loads((a.input/'vectors.json').read_text());rows=[json.loads(x)for x in(a.run/'actual.jsonl').read_text().splitlines()];vectors=vectors[:a.limit] if a.limit is not None else vectors;result=check(vectors,rows)
+ protocol=json.loads((a.run/'actual.jsonl.protocol.json').read_text());need([x['target_state']for x in protocol]==[12,13,9,14,15],'all five specific abort states')
+ need(all(x['observed']and x['no_stale_completion']and x['SRAM_marker_retained']for x in protocol),'state-specific reset/abort semantics');result['state_specific_abort_tests']=protocol
+ result['total_case_edges_including_setup_result_and_held_done']=sum(result['totals'][k]for k in('observed_active_edges','caller_setup_edges','caller_result_edges','completion_hold_and_ack_edges'))
  negatives=[]
  if a.negative:
   bad=copy.deepcopy(rows);v=vectors[0];r=bad[0];f=bytearray.fromhex(r['frame']);f[v['outputs']['value']['refs'][0]]^=1;r['frame']=f.hex()

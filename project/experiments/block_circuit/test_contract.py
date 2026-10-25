@@ -18,4 +18,27 @@ class Contract(unittest.TestCase):
  def test_reserved_frame_half(self):
   for op in('mul_s32_s32','rne_s128_i32','isqrt_u128'):
    self.assertTrue(all(max(t['refs'])<256 for t in A.template(op)['outputs'].values()))
+class Reception(unittest.TestCase):
+ def fixture(self):
+  v={'name':'synthetic','kind':'primitive','op':'signextend_s16_i64','a':-1,'b':0,'shift':0,'expected_status':0,'outputs':{'value':{'refs':list(range(8)),'signed':True},'valid':{'refs':[8],'signed':False}}}
+  frame=bytes([255]*8+[1]+[0]*503)
+  r={'name':'synthetic','status':0,'tag':100,'frame':frame.hex(),'cycles':10,'observed_active_edges':11,'actions':1,'fetch_lines':1,'frame_read_lines':1,'frame_write_lines':1,'rom_requests':0,'link_transactions':1,'wire_beats':5,'caller_setup_write_lines':32,'caller_result_read_lines':32,'caller_setup_edges':64,'caller_result_edges':64,'completion_hold_and_ack_edges':4}
+  return v,r
+ def test_independent_signed_output(self):
+  v,r=self.fixture();self.assertEqual(V.check([v],[r])['cases'],1)
+ def test_semantic_modified_result(self):
+  v,r=self.fixture();r['frame']='00'+r['frame'][2:]
+  with self.assertRaises(ValueError):V.check([v],[r])
+ def test_missing_execution(self):
+  v,r=self.fixture()
+  with self.assertRaises(ValueError):V.check([v],[])
+ def test_unpaid_transport(self):
+  v,r=self.fixture();r['wire_beats']=4
+  with self.assertRaises(ValueError):V.check([v],[r])
+ def test_wrong_completion_tag(self):
+  v,r=self.fixture();r['tag']=101
+  with self.assertRaises(ValueError):V.check([v],[r])
+ def test_missing_caller_cost(self):
+  v,r=self.fixture();r['caller_setup_edges']=0
+  with self.assertRaises(ValueError):V.check([v],[r])
 if __name__=='__main__':unittest.main()
