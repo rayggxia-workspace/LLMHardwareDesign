@@ -1,0 +1,487 @@
+{
+  "identity": {
+    "login": "Liangruizhi",
+    "id": 182389313
+  },
+  "repository": "rayggxia-workspace/LLMHardwareDesign",
+  "permissions": {
+    "admin": false,
+    "maintain": false,
+    "push": true,
+    "triage": true,
+    "pull": true
+  },
+  "issues": {
+    "98": {
+      "body": "负责人Liangruizhi。对#93实际gamma流式核、随后#97实际完整V/M核建立研究库物理资格。依赖两者各自L2固定RTL及数值接收；不以旧84/88结果替代，不重复成员55/63或维护ref-project。当前可先独立冻结flow/接收器，正式EDA输入必须对应实际通过的版本。\n\n固定研究条件：Nangate45 TT1.1V/25C、16KiB128bit1RW切分、8S8+1S32+U128SFU；所有新增控制/ALU/桥/响应槽/clock/buffer/tie/resize列完整库存，memory cut不计免费宏。合法site核心399×399µm、die448×448µm、core[24.51,25.2,423.51,424.2]，最终功能/时钟/修复cell预算79600.5µm²；PG/tap/fill占用单列且扣可用站点。该floorplan不同88名义400×400无布局，不沿用旧面积预算假称完全同条件。固定10ns、IO max0.1/min0、slew0.05ns、负载1/10fF；CTS前理想后传播clock分列。signal M2-M10/clock M4-M10及平台RC/容量调整固定，所有版本同pinmap/约束/工具线程，不临时加层或改period。\n\n阶段：P0精确新网表/存储cut/完整gate及零RC；P1固定floorplan/引脚/global+detailed placement/合法性/placement RC；P2前级证据成立后CTS+globalroute RC；P3具备条件才detailroute/OpenRCX/SPEF。首次不修复基线保存，必要时每阶段只允许预冻结一套electrical→hold→electrical，所有失败保留。stock remove_buffers/flop-cloning/隐藏repair/auto-period/RCXfallback必须禁用或显式独立证明，不能静默改变接受标准。\n\n接收：源码/输入/库/工具/SDC/网表/DEF/ODB/SPEF SHA；原cell逐pin等价/BUF-INV-tie透明变换、所有FF/非恒IO/cut端点setup/hold与电气coverage、恒常量独立核验；实际门级完整消费者与bigint参考；clock sinks/skew/insertion、上游input cap、面积/可用容量、HPWL/拥塞/全部未布线/DRC/antenna明确记录。缺端点/浮空/多driver/功能变化/负slack/残留电气/非法placement/routing/extraction覆盖缺失均对应fail，不靠采样或未执行日志过关。写盘重SHA负例验证接收器拒绝。\n\n物理输入来自现有授权工具，不安装、不拷贝版权GDS/宏进仓。平台README明确purposely non-manufacturable；缺真实匹配SRAM宏、多PVT/目标driver/clock预算及LVS deck。即使研究route通过也不是可制造芯片、整Block宏或M/V/A/R/S/D完整库验收。目标制造条件为独立待团队提供，不阻塞有界研究。\n\n仅本人CPU服务器独立issue目录/lrz作业，8CPU固定，20分钟有界阶段（确需新阶段/更长需预先记录理由），不影响成员作业。独立分支/worktree/日志，root最终PR及状态同步。完整包授权server，仓库索引/适量样本、失败原件和SHA。登记PR5 pending、看板配置/read:project缺项保持可查；不自行合并/done。\n",
+      "title": "实际整合核研究库物理资格：固定布局、时钟与线网RC验证",
+      "state": "open",
+      "labels": [
+        "type:task",
+        "priority:p1",
+        "status:ready"
+      ],
+      "assignees": [
+        "Liangruizhi"
+      ],
+      "updated_at": "2026-10-25T05:03:52Z",
+      "comments": []
+    },
+    "93": {
+      "body": "负责人Liangruizhi。依据#91具体候选和独立容量复核；实现须纳入#92最终恢复合同。现有16KiB/128bit1RW无法同时保留H2560整X+gamma，首选保留X10KiB+gamma256项1KiB+Vframe512B+A4KiB（15872B），无额外bank/端口。\n\n范围：实现全H统一sum/den后gamma按tile流入的真实RTL、有限外部读信用/响应、S地址和原位输出控制；H1536按同实现回归现六例真实完整M消费者；H2560用已有合法数据或明确标合成的整数边界完成全行norm，不假称H2560 M或模型完整推理已实现。不新下载模型，不同时改精度/SiLU/通用V程序，旧失败保留。\n\n口径：同一8S8/1S32/一SFU/16KiB库存，gamma DMA/描述符/scale/tag/hold和IO重读全部单列；原gamma caller预装与新stream主动读取的时间范围分开，报告含配置/输入/输出的公平总成本，不能只比较active cycle。共享外部桥新增仲裁/输入mux/控制按实际综合计价；同源SRAM端口单在途。512B Vframe只是保留，不声称通用V执行。\n\n验收：全部X只产生一个全H den、所有gamma/Y与独立bigint逐位一致，实际tile错位/旧slot/alias/反压/abort-restart/复位冲突负例；有限holder/credit与S canary；至少quiet/held两路，非4倍数H明确拒绝或真实tail支持；完整数值和来源commit/config/input/output SHA。实际RTL/张量/map接收只本人服务器新目录Slurm，程序主机不注入中间算术或每tile den。报告源/命令、cycle与交易分项、mapping新增面积/寄存、未继承的STA/宏资格、归档/PR/交接。",
+      "title": "流式gamma RTL：16KiB内H1536/H2560全行归一化与消费者回归",
+      "state": "open",
+      "labels": [
+        "type:task",
+        "status:in_progress",
+        "priority:p1"
+      ],
+      "assignees": [
+        "Liangruizhi"
+      ],
+      "updated_at": "2026-10-25T04:56:51Z",
+      "comments": [
+        {
+          "id": 6393663903,
+          "body": "开始接续，负责人 Liangruizhi（认证用户182389313）。基线 task/92-epoch-boundary@abb4aa3016a8a28447e04dc5e16259e016e150c5，含Issue91合同与92 reset/epoch修复。独立 task/93-gamma-stream；本机 D:/Projects/LLMHardwareDesign-gamma-stream；临时 D:/Projects/Codex/gamma-stream-20261025-01；本人服务器 /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025，仅 lrz-i93-*，其它目录只读复用。先冻结单16KiB1RW/8S8+1S32/SFU和512B预留frame的gamma streaming，H1536六实际完整M链与H2560 norm分列。Gemma有效gamma必须1+raw_weight并核原capture implementation SHA；只复用旧61/84授权输入，不新增下载/Phi或其它机器任务。先验证真实输入与资源，再并行独立RTL/数值接收/映射；未执行项不报完成。按分工代码/证据由根会话统一push/PR。登记PR5 pending；本项目board.json缺失，Projects待核/同步pending，暂不宣称看板已同步。",
+          "user": "Liangruizhi",
+          "updated_at": "2026-10-25T04:56:51Z"
+        }
+      ]
+    },
+    "97": {
+      "body": "负责人Liangruizhi。接续#91/#92/#93及#74真实整数资料，为当前M/V/S候选补足“SiLU×up→整K动态A8/scale→真实M→merge/residual→整行norm”实际RTL闭包。该任务与93仅gamma流式不重复；不接管55/63，不增模型或Phi开封。\n\n范围：\n1. 从74既有layer0/13 token0/64/71的expert_gate_q12/up_q12开始；RTL自行产生SiLU、MID512、完整专家absmax、最小δ和A8，8专家A4KiB驻留。host不得输入mid/A8/δ冒充完整消费者。\n2. 保持K512/8expert/H1536有界M，不称通用GEMM；新增resident-A入口绕过冷装载，读取RTL δ（8×S16额外128bit计费）与静态weight scale计算RQ。原冷装载回归保留。\n3. 同16KiB128bit单1RW、8S8＋1S32＋已有normSFU。不复制80的8乘法器/私有frame/128KiBROM。通用V取指/512Bframe/byte非乘ALU、S32扩展、LUT桥、tile coordinator/仲裁/缓冲须实际实现计费。允许明确记录受限专用化取舍，不能漏算宽逻辑或假称通用程序执行。程序/LUT用91 C0外部窗口，实际部署字节/取指/查表/128bit物理事务计全。\n4. 阶段Vprep→M→norm独占共享端口，阶段切换先排空所有S/mul/link响应；Vframe可租用MID旁临时512B，M开始前释放，A768..1023行保留；接入93实际gamma流式，避免两孤立核冒充整合。\n5. SiLU原±32Q12表、RNE索引；S32×S32→S64、RNE12、I32溢出拒绝；abs(INT_MIN)能表示2^31。每专家整512最小δ（≤25）且A∈[-127,127]，不得以饱和掩盖错误；校核原74合同。\n\n验收：一个完整专家联调→单token8专家完整闭包→6真实输入×quiet/held-response；独立oracle从原gate/up重算，核4096A8/8δ/12288acc与down/1536join与norm；旧host A8/δ仅对照不作为新链输入。关键边界含LUT端点/域外、ties/INT_MIN/δ跳变/MID溢出、错误owner/version/epoch/残留headerδ/未排空发布、地址alias/越界、reset/abort迟到/最大epoch；实际改码重SHA负例拒绝。实际映射完整新增控制/ALU/bridge/metadata，明确memory/physical排除，不沿用88/92STA。全输入/源码/环境/配置/日志/成果SHA并存，失败保留，归档/源byte独立接收。\n\n所有实际数值、RTL、映射只本人授权服务器新issue目录和lrz作业，Slurm资源有界并行、只读复用权重/输入。本机仅源码/结构/字节接收。分支/目录创建后评论登记；最终PR/独立审查，无自合并/done。登记management-hub PR5 pending；看板config与read:project缺项记录、管理员待指定。\n",
+      "title": "完整V/M消费者：SiLU与整K动态量化RTL、驻留A及真实scale传播",
+      "state": "open",
+      "labels": [
+        "type:task",
+        "status:in_progress",
+        "priority:p1"
+      ],
+      "assignees": [
+        "Liangruizhi"
+      ],
+      "updated_at": "2026-10-25T05:04:00Z",
+      "comments": [
+        {
+          "id": 6393721365,
+          "body": "已按Liangruizhi/182389313核验认证和目标权限，读取97/93/92/91/88及成员55/63最新任务。独立task/97-v-consumer，D:/Projects/LLMHardwareDesign-v-consumer，从92已发布66aa279；临时D:/Projects/Codex/issue97-v-consumer-20261025-01。服务器/public/home/yuzelu/RuizhiLiang/issue97-v-consumer-20261025，lrz-i97-*。本轮明确采用受限专用V前处理，不复制旧80乘法器/ROM/私有RAM，不声称通用ISA；宽比较/RNE/shift/lookup/地址控制均综合计费。先原74真实gate/up生成整512尺度和A8，再驻留A→真实M→接93流式gamma norm。所有实际数值/RTL/map仅本人server，新out且不干扰93/88。登记PR5 pending；本仓缺board.json、既有read:project缺权限，看板未核/同步pending，管理员待指定。",
+          "user": "Liangruizhi",
+          "updated_at": "2026-10-25T05:03:59Z"
+        }
+      ]
+    },
+    "88": {
+      "body": "负责人Liangruizhi。接续#84/#86发现的大量slew/cap违例；#85运行时核心不继承旧网表时序。目标是在现有授权服务器、既有只读工具和研究库下，判断受限消费者核电气约束能否以可解释增量代价修复。\n\n范围：先核现有Liberty/LEF/techLEF/RC可用性。冻结同算法、同precision/存储cut/边界驱动负载/时钟及版本；最多四84候选的有界buffer/resize试验，保留原失败。不得false-path关键数据、删除真实接口、免费增加容量/端口或产品确定后有源器件。所有新增buffer、cell大小、寄存及线网假设明确计价；修复后门级功能必须复查。若缺必要资料，记录精确缺项，继续不依赖它的分析。\n\n验收：源与输入/工具/约束SHA；原始及修复后的面积、slew/cap/setup/hold、覆盖及残余违例；实际新增库存；同函数重放/等价证据；运行命令、日志、失败、大包位置及SHA。未布线/无真实SRAM宏不可称目标芯片Fmax/PPA。只用本人新Slurm目录独立分支，不接管成员55/63、不新增模型或工具安装。\n\n交付Issue/PR/个人进度及可恢复交接；状态in_review待审查，不能把此cut资格等同完整M/V/A/R/S/D或制造后定制完成。\n\n2026-10-25配方修订（原因记录）：v3第二次hold修复消除465个hold违例，却新增一个1147fF高负载节点导致slew/cap各1项。统一允许至多三遍electrical→hold→final electrical修复，先pilot再四变体同版执行；原二遍失败保留。第三遍仍冲突即报告残余，不无限追逐、不隐藏接口、不挑有利变体。",
+      "title": "研究库电气修复：同约束缓冲/驱动调整及代价核验",
+      "state": "open",
+      "labels": [
+        "type:task",
+        "priority:p1",
+        "status:in_review"
+      ],
+      "assignees": [
+        "Liangruizhi"
+      ],
+      "updated_at": "2026-10-25T04:57:50Z",
+      "comments": [
+        {
+          "id": 6393671444,
+          "body": "交付 https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/95，head 7d1e7dd95533c1860df62fbf4b97616c85148acf。8次完整消费者门级输出、原全部cell/pin/port连接证书、两档负载全受检setup/hold及内部slew/cap通过。最终面积63947.730/55713.966/65404.878/57432.858µm²。58作业52完成/2失败/4取消，失败保留；服务器全/精选包、本机738成员、11phase98原Git源逐字节通过。 限制：仅原84设计、典型研究库、理想clock、零线RC、store82切分；不是85/92新硬件的资格，也非目标工艺/真实存储宏/CTS/布线或整个Block库验收。 登记PR5 pending；看板配置/权限缺项，在线状态unverified、同步pending；待独立审查合并，非done。",
+          "user": "Liangruizhi",
+          "updated_at": "2026-10-25T04:57:50Z"
+        }
+      ]
+    },
+    "91": {
+      "body": "负责人Liangruizhi。接续#80/#82/#84/#85/#86；#88独立做电气修复，本任务只做可实施的整合合同与轻量地址/容量检查，不宣称新RTL完成。\n\n背景：现有Granite消费者是受限M/V/S/D cut，通用18函数V/ROM与专用norm尚未整合；H1536 X+gamma+A-cache已占满16KiB，H2560仅X+gamma就超16KiB。不能简单叠加旧512B frame/128KiB ROM/微码容量或偷偷增加端口。\n\n范围/验收：读最新source/protocol，给出M/V/A/R/S/D分层完成门槛与缺项；冻结至少一个可实施V/S整合候选的地址、live range、格式、scale、取指/ROM/共享宽算术仲裁、typed命令及完成/错误义务；对H1536与H2560给出合法/拒绝/分块重读策略和精确容量/传输计价；设计最小后续RTL消费者实验，不新下载模型，不代做成员55/63。\n\n所有未实现能力标候选，微码程序与ROM数据容量分开核实。可在本机执行小型纯结构/地址验证，真实张量/RTL只能本人服务器新目录。独立Issue分支/工作目录，保留原因、输入/sourceSHA、可恢复交接及PR；验收后in_review，非全Block物理设计完成。",
+      "title": "通用V与共享存储整合合同：Block电路库验收和生命周期闭合",
+      "state": "open",
+      "labels": [
+        "type:task",
+        "priority:p1",
+        "status:in_review"
+      ],
+      "assignees": [
+        "Liangruizhi"
+      ],
+      "updated_at": "2026-10-25T04:45:09Z",
+      "comments": [
+        {
+          "id": 6393571824,
+          "body": "结构合同交付 https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/94，head 034fe463ebdae85361bdd8e7cf473548c92e6b8a；8布局/4trace/23测试及原Git源通过，未执行新RTL/模型/PPA。H2560候选容量15872B，#93接续真实RTL；#92控制边界需入基线。待独立审查合并，非done；登记PR5与看板同步仍pending。",
+          "user": "Liangruizhi",
+          "updated_at": "2026-10-25T04:45:09Z"
+        }
+      ]
+    },
+    "92": {
+      "body": "负责人Liangruizhi，接续#85/PR89，不覆盖原证据。独立审查发现最后命令使用0xffffffff后soft_abort时epoch无法增加，旧响应同tag且link回到IDLE，旧ext_take可能不排空；禁止新命令避免误消费，但终止态恢复需明确。\n\n范围：给出32bit终止态/协调reset合同，优先让终止状态能丢弃已失效的迟到响应，同时绝不回卷或再接命令；新增控制/寄存/mux费用据实。使用真实RTL边界注入或Yosys实际next-state锥SAT，覆盖fffffffe接受最后命令、最大值成功/abort/迟到响应、保持/复位，不能独立重写模型后自证。必要时补完整consumer回归并核与85数值一致；所有实际RTL/证明/综合只本人服务器。\n\n验收：实际source/input/tool SHA；证明/反例及范围；终止路径不接新cmd、不中间发布、不误消费且可排空；协调硬reset才能重启明示；恢复协议边界、面积/资源差、已有数值不变。保留原测试/失败，不称任意CDC/乱序或全Block设计验收。独立分支/服务器根、Issue/PR/交接，由主会话统一上传。\n\n独立复核扩展同一控制边界：cfg_ready/cfg_valid/usecfg及done在reset/soft_abort同拍缺少显式屏蔽，可能显示握手而内部复位优先取消。纳入本任务最小组合mask修复与冲突测试，不增加队列/状态；统一新phase重跑完整消费者/证明/资源比较，保留第一版结果，不混用不同RTL版本。",
+      "title": "运行时epoch耗尽边界：终止态排空与实际RTL证明",
+      "state": "open",
+      "labels": [
+        "type:task",
+        "priority:p1",
+        "status:in_review"
+      ],
+      "assignees": [
+        "Liangruizhi"
+      ],
+      "updated_at": "2026-10-25T04:58:02Z",
+      "comments": [
+        {
+          "id": 6393673136,
+          "body": "交付 https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/96，head 66aa2795b4d03cc074f0df09396252c9b00d8f2a。服务器60条正常消费者/恢复、4条边界完整输出、8配置冲突及2完成冲突通过；真实32位下一状态门锥10条SAT安全性质通过。33作业结束，服务器双包、本机158成员与5phase92原Git源字节通过。8S8+1S32/16KiB/generic4309bit不变；最终logic-only52387.902µm²。 限制：SAT为明确自由当前Q下的一周期安全性质，不是整核可达/不死锁/CDC证明；epoch耗尽仍需fabric协调硬复位。新增硬件不继承88门级/STA。父PR94合同和PR89均未合并。 登记PR5 pending；看板配置/权限缺项，在线状态unverified、同步pending；待独立审查合并，非done。",
+          "user": "Liangruizhi",
+          "updated_at": "2026-10-25T04:58:02Z"
+        }
+      ]
+    }
+  },
+  "pulls": [
+    {
+      "number": 96,
+      "title": "运行时控制：修复epoch终止排空与reset配置/完成优先级",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/96",
+      "updated_at": "2026-10-25T04:57:57Z",
+      "branch": "task/92-epoch-boundary",
+      "base": "task/91-v-integration"
+    },
+    {
+      "number": 95,
+      "title": "电气修复：计全缓冲及驱动成本后的门级与受限STA验收",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/95",
+      "updated_at": "2026-10-25T04:57:46Z",
+      "branch": "task/88-electrical-repair",
+      "base": "task/86-gate-sta"
+    },
+    {
+      "number": 94,
+      "title": "V/S整合合同：H2560流式gamma与Block库分层验收",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/94",
+      "updated_at": "2026-10-25T04:58:48Z",
+      "branch": "task/91-v-integration",
+      "base": "task/85-runtime-cache"
+    },
+    {
+      "number": 90,
+      "title": "四变体门级重放与STA诊断：保留未收敛电气约束",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/90",
+      "updated_at": "2026-10-25T04:26:10Z",
+      "branch": "task/86-gate-sta",
+      "base": "task/84-cache-share"
+    },
+    {
+      "number": 89,
+      "title": "运行时A缓存旁路与epoch恢复：单核完整整数验证",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/89",
+      "updated_at": "2026-10-25T04:26:01Z",
+      "branch": "task/85-runtime-cache",
+      "base": "task/84-cache-share"
+    },
+    {
+      "number": 87,
+      "title": "A缓存与重定标乘法器共享：完整消费者RTL及同端口成本",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/87",
+      "updated_at": "2026-10-25T04:25:12Z",
+      "branch": "task/84-cache-share",
+      "base": "task/82-norm-circuit"
+    },
+    {
+      "number": 83,
+      "title": "精确归一化与真实M消费者：SFU局部提速及完整链成本",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/83",
+      "updated_at": "2026-10-25T03:25:12Z",
+      "branch": "task/82-norm-circuit",
+      "base": "task/80-block-circuit"
+    },
+    {
+      "number": 81,
+      "title": "Block宽控制器与局部frame：同库存RTL对照和成本校准",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/81",
+      "updated_at": "2026-10-25T02:14:49Z",
+      "branch": "task/80-block-circuit",
+      "base": "task/76-granite-ports"
+    },
+    {
+      "number": 79,
+      "title": "工作负载通信适配器：显式图、v2事务与真实端口离线验证",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/79",
+      "updated_at": "2026-10-24T17:41:03Z",
+      "branch": "task/63-workload-layout-adapter",
+      "base": "codex/block-v2-offline-prep"
+    },
+    {
+      "number": 78,
+      "title": "补充 Block v2 字段对照与两图离线验证基准",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/78",
+      "updated_at": "2026-10-24T16:21:55Z",
+      "branch": "codex/block-v2-offline-prep",
+      "base": "task/48-int8-resource-estimator"
+    },
+    {
+      "number": 77,
+      "title": "校准Granite有限merge与宽微核成本，保留M/V物理映射",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/77",
+      "updated_at": "2026-10-24T15:44:41Z",
+      "branch": "task/76-granite-ports",
+      "base": "task/74-moe-grouped"
+    },
+    {
+      "number": 75,
+      "title": "验证完整整数MoE与同资源分组驻留，保留M/V物理映射",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/75",
+      "updated_at": "2026-10-24T13:26:52Z",
+      "branch": "task/74-moe-grouped",
+      "base": "task/72-numeric-closure"
+    },
+    {
+      "number": 73,
+      "title": "验证路由精度与完整整数R分支，约束Block物理边界",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/73",
+      "updated_at": "2026-10-24T11:35:20Z",
+      "branch": "task/72-numeric-closure",
+      "base": "task/70-moe-hybrid"
+    },
+    {
+      "number": 71,
+      "title": "Granite MoE / Falcon hybrid：服务器最小实验与 Block 合同收敛",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/71",
+      "updated_at": "2026-10-24T09:22:11Z",
+      "branch": "task/70-moe-hybrid",
+      "base": "task/68-range-service"
+    },
+    {
+      "number": 69,
+      "title": "R因果重定标与V/R/S同资源端口成本：实验与Block修订",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/69",
+      "updated_at": "2026-10-24T05:41:34Z",
+      "branch": "task/68-range-service",
+      "base": "task/66-scale-state"
+    },
+    {
+      "number": 67,
+      "title": "完整消费者整数归一化与连续状态证据：收敛Block数值及资源边界",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/67",
+      "updated_at": "2026-10-24T04:35:54Z",
+      "branch": "task/66-scale-state",
+      "base": "task/64-block-v2"
+    },
+    {
+      "number": 65,
+      "title": "Block方案v2：多模型数值证据与同库存注意力边界对照",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/65",
+      "updated_at": "2026-10-24T02:53:50Z",
+      "branch": "task/64-block-v2",
+      "base": "task/61-server-models"
+    },
+    {
+      "number": 62,
+      "title": "服务器补齐批次：Qwen证据接收、Gemma窗口/GQA与Phi封存验证",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/62",
+      "updated_at": "2026-10-23T15:34:37Z",
+      "branch": "task/61-server-models",
+      "base": "task/59-down-scale"
+    },
+    {
+      "number": 60,
+      "title": "以Llama down_proj验证scale粒度，区分32bit范围守卫与宽归约成本",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/60",
+      "updated_at": "2026-10-23T12:32:52Z",
+      "branch": "task/59-down-scale",
+      "base": "task/56-llama-cross-model"
+    },
+    {
+      "number": 58,
+      "title": "完整案例共同底座：阶段一清单与基准，集成和布线继续推进",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/58",
+      "updated_at": "2026-10-23T11:45:05Z",
+      "branch": "task/55-full-block-integration",
+      "base": "main"
+    },
+    {
+      "number": 57,
+      "title": "以本机Llama验证GQA，暴露FFN静态量化与容量边界",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/57",
+      "updated_at": "2026-10-23T11:22:47Z",
+      "branch": "task/56-llama-cross-model",
+      "base": "task/53-cpu-model-pilot"
+    },
+    {
+      "number": 54,
+      "title": "验证CPU服务器FP32迁移，记录可重复的BF16线程敏感失败",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/54",
+      "updated_at": "2026-10-23T10:44:33Z",
+      "branch": "task/53-cpu-model-pilot",
+      "base": "task/51-rq-placement"
+    },
+    {
+      "number": 52,
+      "title": "用同资源端口模型检验重新量化位置，并完成8核服务器并行重放",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/52",
+      "updated_at": "2026-10-23T10:06:12Z",
+      "branch": "task/51-rq-placement",
+      "base": "task/47-primitive-stream"
+    },
+    {
+      "number": 50,
+      "title": "实现≤4B INT8输入规范与可配置Block资源估算器",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/50",
+      "updated_at": "2026-10-23T09:16:34Z",
+      "branch": "task/48-int8-resource-estimator",
+      "base": "main"
+    },
+    {
+      "number": 49,
+      "title": "验证固定校准的GQA共享与因果KV，补全P1–P15能力边界",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/49",
+      "updated_at": "2026-10-23T09:15:47Z",
+      "branch": "task/47-primitive-stream",
+      "base": "task/41-block-candidate-v1"
+    },
+    {
+      "number": 46,
+      "title": "调研五个开源加速器的模型规模、资源与Block库存约束",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/46",
+      "updated_at": "2026-10-23T08:22:42Z",
+      "branch": "task/43-accelerator-capacity",
+      "base": "main"
+    },
+    {
+      "number": 45,
+      "title": "提炼固定底座两控制锥的物理/功能验证算法与重放入口",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/45",
+      "updated_at": "2026-10-23T07:54:44Z",
+      "branch": "task/42-control-cone-closure",
+      "base": "main"
+    },
+    {
+      "number": 44,
+      "title": "给出六类Block具体候选、接口预连线与最小决策实验",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/44",
+      "updated_at": "2026-10-23T07:57:25Z",
+      "branch": "task/41-block-candidate-v1",
+      "base": "task/39-kv-scale-boundary"
+    },
+    {
+      "number": 40,
+      "title": "验证块级KV整数归约和bias位宽，提供师兄GPU实验文案",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/40",
+      "updated_at": "2026-10-23T07:14:14Z",
+      "branch": "task/39-kv-scale-boundary",
+      "base": "task/37-gemma-phi-protocol"
+    },
+    {
+      "number": 38,
+      "title": "先审查17个模型变体架构，再筛选主测与保留验证实验",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/38",
+      "updated_at": "2026-10-23T06:39:57Z",
+      "branch": "task/37-gemma-phi-protocol",
+      "base": "task/33-int8-contract"
+    },
+    {
+      "number": 36,
+      "title": "Qwen真实GPU证据：固定语义拆分、INT8部分和与状态/通信预算",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/36",
+      "updated_at": "2026-10-23T08:02:39Z",
+      "branch": "task/32-gpu-model-evidence",
+      "base": "main"
+    },
+    {
+      "number": 35,
+      "title": "验证 openTPU H2 冻结资源与 M8–M10 受限层回装",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/35",
+      "updated_at": "2026-10-23T05:28:28Z",
+      "branch": "task/31-opentpu-h2",
+      "base": "main"
+    },
+    {
+      "number": 34,
+      "title": "交付W8A8候选合同、本机整数验证与量化Block记账",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/34",
+      "updated_at": "2026-10-23T05:03:10Z",
+      "branch": "task/33-int8-contract",
+      "base": "task/29-port-rtl"
+    },
+    {
+      "number": 30,
+      "title": "以逐周期有限缓冲RTL检验状态放置与静态连接",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/30",
+      "updated_at": "2026-10-23T10:50:22Z",
+      "branch": "task/29-port-rtl",
+      "base": "task/27-state-port-model"
+    },
+    {
+      "number": 28,
+      "title": "以真实 attention 输入检验固定端口下的状态归属与静态连接",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/28",
+      "updated_at": "2026-10-22T13:49:31Z",
+      "branch": "task/27-state-port-model",
+      "base": "task/23-qwen3-trace"
+    },
+    {
+      "number": 26,
+      "title": "定义 INT8 LLM 通用功能模块与并列覆盖基准",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/26",
+      "updated_at": "2026-10-22T13:04:12Z",
+      "branch": "task/25-llm-benchmark",
+      "base": "main"
+    },
+    {
+      "number": 24,
+      "title": "用真实 Qwen3 权重验证缓存状态与算子边界，区分临时存储和持久 KV",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/24",
+      "updated_at": "2026-10-22T13:09:51Z",
+      "branch": "task/23-qwen3-trace",
+      "base": "task/21-operator-partition"
+    },
+    {
+      "number": 22,
+      "title": "建立模型驱动 Block 划分方法并验证存储与通信的权衡",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/22",
+      "updated_at": "2026-10-22T13:32:04Z",
+      "branch": "task/21-operator-partition",
+      "base": "task/19-interface-contract"
+    },
+    {
+      "number": 20,
+      "title": "核验 ACT/MXU 三视图接口与 685-bit 合同，记录原始模型缺陷",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/20",
+      "updated_at": "2026-10-22T10:03:51Z",
+      "branch": "task/19-interface-contract",
+      "base": "task/16-macro-endpoints"
+    },
+    {
+      "number": 18,
+      "title": "冻结真实普通 LEF 并导出保留 PORT/PG/OBS 的端点几何库存",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/18",
+      "updated_at": "2026-10-22T08:54:49Z",
+      "branch": "task/16-macro-endpoints",
+      "base": "task/13-endpoint-ablation"
+    },
+    {
+      "number": 14,
+      "title": "验证固定库存下端点接入与容量限制的配对消融",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/14",
+      "updated_at": "2026-10-22T07:57:35Z",
+      "branch": "task/13-endpoint-ablation",
+      "base": "task/11-frozen-routing-pilot"
+    },
+    {
+      "number": 12,
+      "title": "建立冻结互联合法性验证、多图实验与 DAC 研究路线",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/12",
+      "updated_at": "2026-10-22T03:53:14Z",
+      "branch": "task/11-frozen-routing-pilot",
+      "base": "main"
+    },
+    {
+      "number": 6,
+      "title": "完善协作规则并绑定 Liangruizhi 项目身份",
+      "html_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/6",
+      "updated_at": "2026-10-20T12:29:44Z",
+      "branch": "task/5-collaboration-rules",
+      "base": "main"
+    }
+  ]
+}
