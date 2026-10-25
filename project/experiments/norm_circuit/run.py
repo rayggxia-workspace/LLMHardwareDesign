@@ -20,7 +20,7 @@ def main():
    b=json.loads((a.build/'manifest.json').read_text());im=json.loads((a.input/'manifest.json').read_text())
    if b['status']!='BUILT_NOT_EXECUTED'or b['profile']!=a.profile or sha(a.build/'obj/Vblock82')!=b['binary_sha256']:raise ValueError('exact build')
    for n,h in bd['sources'].items():
-    if n.startswith('project/rtl/')or n.endswith('/sim.cpp'):
+    if n in {v.relative_to(ROOT).as_posix()for v in sv} or n.endswith('/sim.cpp'):
      if b['source']['sources'].get(n)!=h:raise ValueError('build source mismatch')
    for e in im['artifacts']:
     if sha(a.input/e['path'])!=e['sha256']:raise ValueError('input SHA')
