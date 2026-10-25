@@ -15,11 +15,12 @@ def sources():
  return b
 
 def artifacts(folder):
- folder=Path(folder);m=load(folder/'manifest.json');seen=set()
+ folder=Path(folder);need(not folder.is_symlink(),'no symlink artifact folder');m=load(folder/'manifest.json');seen=set()
  need(type(m.get('artifacts'))is list and len(m['artifacts'])>0,'artifact inventory')
  for e in m['artifacts']:
-  q=folder/e['path'];need(q.parent==folder and q.is_file()and e['path']not in seen,'direct unique artifact');seen.add(e['path'])
+  q=folder/e['path'];need(q.parent==folder and q.is_file()and not q.is_symlink()and e['path']not in seen,'direct unique artifact');seen.add(e['path'])
   need(type(e['bytes'])is int and q.stat().st_size==e['bytes']and sha(q)==e['sha256'],'artifact bytes/SHA')
+ need(seen=={q.name for q in folder.iterdir()if q.is_file()and q.name!='manifest.json'},'all direct artifact files inventoried')
  return m
 
 def manifest(out,m):
