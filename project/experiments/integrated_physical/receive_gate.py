@@ -22,7 +22,7 @@ def main():
   need(before['cells'][n]==after['cells'][n]and before['cells'][n]['connections']=={}and before['cells'][n]['port_directions']=={}and before['cells'][n]['parameters']=={'TYPE':'module'},'only matching empty hierarchy metadata omitted');del before['cells'][n];del after['cells'][n]
  cert=post_cert if post is not None else certificate(before,after,lib);need(float(cert['after_area_um2'])<=79600.5,'actual98 area ceiling');put(a.out/'structure.json',cert);put(a.out/'input-loads.json',input_loads(after,lib));results=[];neg=[]
  for stall,run in enumerate(a.runs):
-  rm=artifacts(run);need(rm['status']==run_statusand type(rm['stall'])is int and rm['stall']==stall and rm['build_manifest_sha256']==sha(a.build/'manifest.json'),'strict gate run/stall/binary')
+  rm=artifacts(run);need(rm['status']==run_status and type(rm['stall'])is int and rm['stall']==stall and rm['build_manifest_sha256']==sha(a.build/'manifest.json'),'strict gate run/stall/binary')
   need(rm['prepared_manifest_sha256']==sha(dependency_prepared/'manifest.json')and rm['input_manifest_sha256']==sha(INPUT/'manifest.json')and rm['admission']==ad,'same full source and input contract')
   rows=[load_line(s)for s in(run/'actual.jsonl').read_text().splitlines()];gold=[load_line(s)for s in(R93/f'rtl-s{stall}03/actual.jsonl').read_text().splitlines()];need(len(rows)==len(gold)==51,'all complete consumer/recovery rows')
   outcomes=[];exceptions=0
