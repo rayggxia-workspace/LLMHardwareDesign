@@ -58,7 +58,9 @@ def main():
    proto=load(a.out/'actual.jsonl.protocol.json')
    if not all(proto.values()):raise ValueError('protocol failed')
    m['baseline_output_sha256']=sha(R84/f'rtl-v{a.variant}s{a.stall}02'/'actual.jsonl');m['build_manifest_sha256']=sha(a.build/'manifest.json');m['row_name']=row['name'];m['cycles']=row['cycles'];m['status']='PASS_GATE_REPLAY_ALL_OBSERVABLES_AND_RESET'
-  else:raise ValueError('STA runner added after tool probe')
+  else:
+   from timing import timing
+   m['timing']=timing(a,cmd,STA,LIB,put,load,sha);m['status']='DECLARED_CUT_LOGIC_TIMING_EXECUTED'
  except Exception as e:m['error']=str(e);m['traceback']=traceback.format_exc();raise
  finally:
   m['artifacts']=[{'path':q.name,'bytes':q.stat().st_size,'sha256':sha(q)}for q in a.out.iterdir()if q.is_file()and q.name!='manifest.json'];put(a.out/'manifest.json',m)
