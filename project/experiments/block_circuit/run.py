@@ -37,7 +37,7 @@ def main():
    m['status']='RTL_EXECUTED'
   else:
    (a.out/'rom.hex').write_bytes((a.input/'rom.hex').read_bytes())
-   script='read_verilog -sv '+' '.join(map(str,sv))+'\nhierarchy -top wide_block -chparam LOCAL '+str(a.mode)+'\nproc\nopt\nmemory_collect\nopt_clean\ncheck -assert\ntee -o '+str(a.out/'stat.json')+' stat -json\nwrite_json '+str(a.out/'netlist.json')+'\n'
+   script='read_verilog -sv '+' '.join(map(str,sv))+'\nhierarchy -top wide_block -chparam LOCAL '+str(a.mode)+'\nproc\nopt\nwreduce\nmemory_dff\nmemory_share\nmemory_collect\nopt_clean\ncheck -assert\ntee -o '+str(a.out/'stat.json')+' stat -json\nwrite_json '+str(a.out/'netlist.json')+'\n'
    (a.out/'synth.ys').write_text(script,encoding='utf-8');command(a.out,'synthesis',['yosys','-s',a.out/'synth.ys'],prefix,cwd=a.out);m['status']='GENERIC_SYNTHESIZED_NOT_MACRO_OR_PPA'
    m['input_manifest_sha256']=sha(a.input/'manifest.json')
  except Exception as e:m['error']={'type':type(e).__name__,'message':str(e),'traceback':traceback.format_exc()};raise

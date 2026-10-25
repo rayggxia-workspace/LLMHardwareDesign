@@ -43,7 +43,8 @@ int main(int argc,char**argv){
  std::ifstream vectors(argv[2]);std::ofstream out(argv[3]);require(bool(vectors)&&bool(out),"files");
  d.cmd_valid=0;d.done_ready=0;d.cfg_valid=0;d.cfg_take=0;d.reset=1;step();step();d.reset=0;step();
  std::string name,in;uint32_t pc;int lane,status;unsigned count=0;int limit=argc>5?std::stoi(argv[5]):100000;
- while(vectors>>name>>pc>>lane>>status>>in){if(int(count)>=limit)break;auto input=unhex(in);load(input);
+ uint32_t firstpc=0,rompc=0;std::vector<uint8_t> firstinput,rominput;
+ while(vectors>>name>>pc>>lane>>status>>in){if(int(count)>=limit)break;auto input=unhex(in);if(count==0){firstpc=pc;firstinput=input;}if(name=="rom0"){rompc=pc;rominput=input;}load(input);
  uint64_t begin=tickno;uint32_t b0=d.wire_beats,t0=d.transactions;command(pc,lane,100+count);unsigned n=0;
  while(!d.done){step();require(++n<64000100,"execution timeout");require(!d.cfg_ready,"busy cfg forbidden");}
  uint64_t elapsed=tickno-begin;auto status0=d.status;auto tag0=d.tag;require(status0==status,"expected command status");require(tag0==100+count,"completion tag");
@@ -54,8 +55,18 @@ int main(int argc,char**argv){
  out<<"{\"name\":\""<<name<<"\",\"status\":"<<unsigned(status0)<<",\"tag\":"<<tag0<<",\"cycles\":"<<cycles<<",\"observed_active_edges\":"<<elapsed<<",\"actions\":"<<actions<<",\"fetch_lines\":"<<fetches<<",\"frame_read_lines\":"<<reads<<",\"frame_write_lines\":"<<writes<<",\"rom_requests\":"<<rom<<",\"link_transactions\":"<<transactions<<",\"wire_beats\":"<<beats<<",\"caller_setup_write_lines\":32,\"caller_result_read_lines\":32,\"frame\":\""<<hex(actual)<<"\"}\n";
  count++;
  }
- // Interrupt a real executing program: no stale completion; untouched SRAM marker retained.
- if(count){std::vector<uint8_t> x(512);for(int i=480;i<496;i++)x[i]=0xa5;load(x);command(pc,0,65000);for(int i=0;i<20&&!d.done;i++)step();d.reset=1;step();d.reset=0;for(int i=0;i<20;i++){step();require(!d.done,"no completion after reset abort");}auto line=cfg(false,30);for(int i=0;i<4;i++)require(line[i]==0xa5a5a5a5,"reset preserves SRAM data");}
+ std::ofstream protocol(std::string(argv[3])+".protocol.json");protocol<<"[";int scenarios=0;
+ // Reset actual executing states, including in-flight requests, RMW and ROM.
+ auto abort_at=[&](uint32_t entry,std::vector<uint8_t> x,int target){
+  for(int i=480;i<496;i++)x[i]=0xa5;load(x);command(entry,0,65000);unsigned edges=0;
+  while(d.debug_state!=target&&!d.done){step();require(++edges<200000,"target abort state reachable");}
+  require(d.debug_state==target,"abort occurs at declared active state");d.reset=1;step();d.reset=0;
+  for(int i=0;i<20;i++){step();require(!d.done,"no stale completion after reset abort");}
+  auto marker=cfg(false,30);for(int i=0;i<4;i++)require(marker[i]==0xa5a5a5a5,"reset preserves untouched SRAM row");
+  if(scenarios)protocol<<",";protocol<<"{\"target_state\":"<<target<<",\"edges_to_reach\":"<<edges<<",\"observed\":true,\"no_stale_completion\":true,\"SRAM_marker_retained\":true}";scenarios++;
+ };
+ if(count){for(int target:{12,13,9,14})abort_at(firstpc,firstinput,target);if(!rominput.empty())abort_at(rompc,rominput,15);}
+ protocol<<"]\n";
  std::cout<<"PASS_WIDE_RTL cases="<<count<<" wall_edges="<<tickno<<" backpressure="<<stall<<" reset_preservation=PASS\n";
  return 0;
  }catch(const std::exception&e){std::cerr<<"FAIL: "<<e.what()<<" edge="<<tickno<<" state="<<unsigned(d.debug_state)<<" status="<<unsigned(d.status)<<"\n";return 1;}

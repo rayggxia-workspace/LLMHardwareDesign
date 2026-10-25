@@ -96,6 +96,9 @@ def collect(primary,out,binding,granite=()):
  f=bytearray(512);f[496]=129;vectors.append({'name':'shift129_reject','kind':'protocol_negative','pc':C.wrappers['rne_s64_i32'],'lane':0,'expected_status':4,'input':f.hex(),'outputs':{}})
  for name,address in [('rom_oob',32768)]:
   f=bytearray(512);f[256]=address&255;f[257]=address>>8;pc=C.allocate([13|operand(256)<<4|operand(257)<<14|272<<34,15]);vectors.append({'name':name,'kind':'protocol_negative','pc':pc,'lane':0,'expected_status':5,'input':f.hex(),'outputs':{}})
+ table=C.allocate([0]);recursive=C.allocate([call(table),15]);C.words[table]=recursive
+ vectors.append({'name':'stack_overflow','kind':'protocol_negative','pc':recursive,'lane':0,'expected_status':3,'input':bytes(512).hex(),'outputs':{}})
+ vectors.append({'name':'pc_oob','kind':'protocol_negative','pc':0xffffffff,'lane':0,'expected_status':1,'input':bytes(512).hex(),'outputs':{}})
  chains(C,vectors,granite)
  program=C.save(out);put(out/'vectors.json',vectors)
  with(out/'vectors.tsv').open('x',encoding='ascii',newline='\n')as stream:
