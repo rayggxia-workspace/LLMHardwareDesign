@@ -324,3 +324,6 @@ PR待审查/合并，审查人/管理员待指定，未done；后续在已有授
 
 
 发布回执（2026-10-25）：[PR108](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/108)已上传；Issue106 in_review，待独立审查，未合并/done。报告、索引、门级回执和库验收表与原Git字节读回一致，见work/Liangruizhi/106/remote-readback.json；登记PR5 pending、看板unverified/同步pending。共享服务/宏/物理仍未完成。
+
+
+发布回执（2026-10-25）：[PR112](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/112)已上传，Issue110为in_review；源快照3565e6c0afc4ddd9a6bf82026b0efe6c9a5634cb的关键证据与原Git blob逐字节读回一致，见work/Liangruizhi/110/remote-readback.json。待独立审查/合并，未done。登记PR5 pending；看板unverified/同步pending，缺配置/read:project，管理员/审查人待指定。

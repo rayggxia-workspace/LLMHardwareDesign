@@ -9,3 +9,6 @@
 四个建议远端字节读回入口：docs/experiments/issue-110-attention-width.md；project/experiments/attention_width/results/issue-110/index.json；同目录proof-receipt.json；同目录gate-receipt.json。主要比较门槛同目录paired-receipt.json也请读回。PR正文在work/Liangruizhi/110/pr-body.md。
 
 恢复第一步：核最新AGENTS/Issue110/109/98/PR和成员55/63，不重复启动已结束106项作业；核git status和成果SHA、运行check_project。root审查后推本任务分支/PR并置in_review。登记PR5 pending，看板缺配置/read:project unverified/同步pending，管理员待指定。后续仅在新任务接入STYLE2并重新验证实际整合图；保留显式reset/limb不变量和原精度/错误合同。当前A仍materialized/caller committed snapshot；append/online、完整库/物理/产品定制仍未验。
+
+
+发布回执（2026-10-25）：[PR112](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/112)已上传，Issue110为in_review；源快照3565e6c0afc4ddd9a6bf82026b0efe6c9a5634cb的关键证据与原Git blob逐字节读回一致，见work/Liangruizhi/110/remote-readback.json。待独立审查/合并，未done。登记PR5 pending；看板unverified/同步pending，缺配置/read:project，管理员/审查人待指定。

@@ -72,3 +72,6 @@ STYLE2可作为后续整合候选，但总逻辑面积仅降低约0.81%，没有
 - 精选包1,299,697B / 540成员，SHA-256 `ea3f7b9560389c264e15036c9ff1d525aa8e777ee13ddc8810fe7a72b8f42206`，随仓库保存。服务器双包、PC精选与5阶段320个原Git源条目字节接收均PASS。
 
 本地科学交付已整理；root统一发布PR和同步Issue，未自行上传/合并/done。当前报告中的“通过”仅限上述实际功能、证明、库存和门级范围。
+
+
+发布回执（2026-10-25）：[PR112](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/112)已上传，Issue110为in_review；源快照3565e6c0afc4ddd9a6bf82026b0efe6c9a5634cb的关键证据与原Git blob逐字节读回一致，见work/Liangruizhi/110/remote-readback.json。待独立审查/合并，未done。登记PR5 pending；看板unverified/同步pending，缺配置/read:project，管理员/审查人待指定。
