@@ -1,5 +1,7 @@
 # 当前状态
 
+- 2026-10-25 [Issue109](experiments/issue-109-shared-gdn.md)：在106真实唯一16KiB/8S8/S32/SFU/link上接入Qwen3.5完整两head GDN。两路13混合/44恢复全值接收、8文件重SHA负例与3库存负例通过；native3连续步跨lease及真实重标checkpoint，2048B候选共享桥导出和不可取消root提交全部计费。logic-only163901.220µm²，非宏/物理。selected raw gate两路各8完整命令/真实重标逐字节与独立数学PASS，首轮2400s超时保留；43作业全终态，104.92MB全包/356685B精选及8phase233原Git字节通过。[电路候选v2](BLOCK_CIRCUIT_CANDIDATE_V2.md)固定数值/事务合同，宏/真实消费者与新top物理仍待验。Issue仍in_progress，待root发布，未push/PR，不done。
+
 - 2026-10-25 [Issue106](experiments/issue-106-shared-services.md)：M/A/Falcon R真正共用唯一16KiB/8S8/S32/SFU/link，双路各7混合及27恢复完整整数接收，实际端口/结果导出/原子root/版本生命周期有证据；10类文件重SHA负例拒绝。logic-only125,966.694µm²，宏/物理未验，selected raw gate两路各4完整命令逐字段/独立数学PASS。41本人作业全部终态，完整41,646,013B留服务器、精选163,973B及7phase168原Git字节PASS。GDN104未接入；本地交付待主会话PR，不done。
 
 - 2026-10-25 [Issue102](experiments/issue-102-attention-rtl.md)：完整GQA8头Q8/KV16→QK→三遍整数softmax→PV32，full/实际cached分列；两路79query/632head与71cmd同core恢复、selected raw gate18query独立PASS。严格8S8/1S32/单16KiB，logic-only53,187.764µm²；非online/append/M-A物理共享/宏STA。全部来源、失败与字节回执留档，本地交付待root PR审查，不done；下一步共享真实服务，见[分层验收](BLOCK_LIBRARY_ACCEPTANCE.md)。

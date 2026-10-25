@@ -1,6 +1,6 @@
 # LLMHardwareDesign：预制计算底座研究
 
-本项目研究面向多个计算图的预制计算底座：预先确定计算 Block 和部分物理资源，再通过有限的金属／通孔层定制跨 Block 互联。当前处于**架构定义与研究方案整理阶段**；具体工艺、Block 库、定制层集合和实现工具链仍待确定。性能、能耗和成本优势是待验证目标，不是已有结论。
+本项目研究面向多个计算图的预制计算底座：预先确定计算 Block 和部分物理资源，再通过有限的金属／通孔层定制跨 Block 互联。当前正在推进**有界整数切片 RTL 与 Block 电路、互联验证**，已形成完整消费者、有限共享服务及部分研究库物理实现证据。完整 Block 库、真实存储宏、目标工艺与产品金属定制仍待验收；端到端性能、能耗和成本优势仍需在这些约束下验证。
 
 [完整MoE与分组边界验证](docs/experiments/issue-74-moe-grouped.md)已完成服务器8整数MoE条件和12同资源分组服务；宽算术/元数据/端口计价后仍保留M/V物理映射选择。原失败及整模型/物理验证限制保留，详见[Block v2第13节](docs/BLOCK_PARTITION_V2.md)。
 
@@ -12,7 +12,9 @@
 
 [A缓存与算术共享](docs/experiments/issue-84-cache-share.md)已完成84条完整消费者命令及严格独立接收。保持16KiB/128bit单口，缓存减少34.68%周期、49.20%外部线传输；共享使缓存版本logic-only面积减少12.44%。SRAM额外等待约8拍时缓存收益消失，故保留运行时旁路；其实现与门级/时序资格分别由Issue85/86接续，不能将逻辑面积视为物理实现已完成。
 
-[当前电路证据入口](docs/BLOCK_LIBRARY_ACCEPTANCE.md)：93流式gamma与97原始SiLU→整512量化→驻留A→实际M→norm有界消费者已获独立RTL/选定raw门级证据；102另补完整materialized GQA切片及selected raw gate；99补单head Falcon R，106已补M/A/Falcon R真实唯一服务银行及恢复L2及选定raw门级；通用V ISA、在线/append、GDN共享和新物理资格仍分层推进，未宣称六Block全部完成。
+[当前电路证据入口](docs/BLOCK_LIBRARY_ACCEPTANCE.md)：93流式gamma、97专用SiLU→整512量化→驻留A→实际M→norm、102完整materialized GQA、99单head Falcon R和104两head GDN已有有界整数/RTL证据；106真实唯一服务银行已接M/A/Falcon，109再接GDN，完整混合/恢复已验，两路selected raw gate各8完整命令及真实重标已独立接收。[Issue98 / PR111](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/111)已验97在明确store切口和I/O条件下的Nangate研究logic-island布局、CTS、布线、RCX及时序/严格电气与精确网表门级；该资格不继承给109。真实宏、上游驱动、供电网、固定M1–M8/产品后定制及完整库仍缺；通用V ISA、在线/append和完整模型消费者继续分层推进。
+
+[电路候选v2与物理边界收敛](docs/BLOCK_CIRCUIT_CANDIDATE_V2.md)明确完整归约、整head事务、共享资源预连线和有限缓冲，并限定下一最小门槛为真实消费者、宏/drive/PG/PVT和新top物理，未冻结制造拓扑。
 
 ## 从哪里开始
 

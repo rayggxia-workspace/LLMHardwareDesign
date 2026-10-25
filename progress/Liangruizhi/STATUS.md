@@ -322,3 +322,10 @@ PR待审查/合并，审查人/管理员待指定，未done；后续在已有授
 
 发布回执（2026-10-25）：[PR108](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/108)已上传；Issue106 in_review，待独立审查，未合并/done。报告、索引、门级回执和库验收表与原Git字节读回一致，见work/Liangruizhi/106/remote-readback.json；登记PR5 pending、看板unverified/同步pending。共享服务/宏/物理仍未完成。
 发布回执（2026-10-25）：[PR107](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/107)已上传；Issue104 in_review，待独立审查，未合并/done。报告、主索引、成本和补充数值回执与原Git字节读回一致，见work/Liangruizhi/104/remote-readback.json；登记PR5 pending、看板unverified/同步pending。共享服务/宏/物理仍未完成。
+
+
+## 2026-10-25 Issue109四profile共享服务（本地证据闭合、待root发布）
+
+负责人Liangruizhi，独立task/109-shared-gdn / D:/Projects/LLMHardwareDesign-shared-gdn，Issue109已认领in_progress。原106/104只读合并，不接管55/63/98/110。真实RTL4b69d43，同instance两路13完整混合与两路44恢复独立通过；GDN完整两head状态/候选真实2048B共享桥导出、3native连续+真实重标1checkpoint。8完整文件重SHA语义负例、3实际库存负例通过；logic-only163901.220µm²，唯一16KiB/8S8/S32/SFU/link，非物理。
+
+selected raw gate首轮2400s两路各7/8命令后超时，FAILED保留；唯一一次6000s同binary重放91453/91455已41:43/50:46完成，两路各8完整命令/真实重标与RTL逐字节和独立数学PASS。43作业全终态（39COMPLETED/2FAILED/2CANCELLED），104917869B全包/356685B精选、8phase233原Git源接收PASS；104/106原源与工件保持原字节。报告docs/experiments/issue-109-shared-gdn.md、电路候选docs/BLOCK_CIRCUIT_CANDIDATE_V2.md，交接与work109/execution已列完整命令和恢复入口。没有新模型/安装，仅本人服务器。下一步root发布PR/读回，随后真实消费者缓冲及宏/drive/PG/PVT/newtop物理；未push/PR，登记pending、看板unverified/同步pending，不done或提前in_review。
