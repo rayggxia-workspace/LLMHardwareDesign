@@ -3,14 +3,14 @@ import re
 from decimal import Decimal
 from common import need
 
-def audit_sdc(text,ports,propagated=False):
+def audit_sdc(text,ports,propagated=False,design='chain93'):
  def names(direction):
   return {n if len(p['bits'])==1 else n+'['+str(p.get('offset',0)+i)+']' for n,p in ports.items()if p['direction']==direction for i in range(len(p['bits']))}
  ins=names('input')-{'clk'};outs=names('output');seen={k:{} for k in('input_delay','output_delay','input_transition','load')};single={};commands=0
  for line in text.splitlines():
   if not line.strip()or line.lstrip().startswith('#'):continue
   commands+=1
-  if line=='current_design chain93':need('design'not in single,'one design');single['design']=True;continue
+  if line=='current_design '+design:need('design'not in single,'one design');single['design']=True;continue
   m=re.fullmatch(r'create_clock -name core -period ([0-9.]+) \[get_ports \{clk\}\]',line)
   if m:need('clock'not in single and Decimal(m[1])==10,'one exact10ns clock');single['clock']=True;continue
   if line=='set_propagated_clock [get_clocks {core}]':need(propagated and 'propagated'not in single,'one declared propagated clock');single['propagated']=True;continue
