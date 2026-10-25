@@ -3,7 +3,7 @@ import copy,re
 from decimal import Decimal
 from common import *
 from route_audit import incidence,same_wiring
-from structure import signature_graph
+from structure import signature_graph,groups,attr
 from receive_physical import block
 
 def audit_cap(stage,previous,before,after,lib):
@@ -14,7 +14,10 @@ def audit_cap(stage,previous,before,after,lib):
  names=set(actual_names.values());need(not names&set(before['cells'])and len({q['new_net_name']for q in plan['plan']})==len(plan['plan'])and not {q['new_net_name']for q in plan['plan']}&set(before['netnames']),'new instance and net names collision-free');need(len(names)==plan['buffer_count']and 0<len(names)<=(502 if plan.get('candidate')==4 else 64) and set(after['cells'])-set(before['cells'])==names and set(before['cells'])<=set(after['cells']),'exact added buffer set, no deleted cells')
  for n in before['cells']:need(oldmeta[n]==newmeta[n],'no resize/function/parameter/width change to any prior cell')
  if plan.get('candidate')==4:
-  need(plan['contract_sha256']==sha(HERE/'margin_contract.json'),'same full batch contract');frozen=load(HERE/'margin_contract.json')['targets'][str(plan['target'])];need(plan['stage_manifest_sha256']==frozen['stage_manifest_sha256'],'fixed batch source');d=Path(plan['distribution_directory']);artifacts(d);need(sha(d/'distribution.json')==plan['distribution_sha256']==frozen['distribution_sha256'],'frozen full cap source');selected=sorted([x['pin']for x in load(d/'distribution.json')['records']if Decimal(x['ratio'])>=Decimal('.80')]);need(selected==[x['pin']for x in frozen['drivers']]==sorted(q['driver_pin']for q in plan['plan']),'all and only .80 batch');need({q['driver_pin']:q['new_cell']for q in plan['plan']}=={q['pin']:q['cell']for q in frozen['drivers']},'frozen X4/X8 assignment')
+  need(plan['contract_sha256']==sha(HERE/'margin_contract.json'),'same full batch contract');frozen=load(HERE/'margin_contract.json')['targets'][str(plan['target'])];need(plan['stage_manifest_sha256']==frozen['stage_manifest_sha256'],'fixed batch source');d=Path(plan['distribution_directory']);artifacts(d);need(sha(d/'distribution.json')==plan['distribution_sha256']==frozen['distribution_sha256'],'frozen full cap source');selected=sorted([x['pin']for x in load(d/'distribution.json')['records']if Decimal(x['ratio'])>=Decimal('.80')]);need(selected==[x['pin']for x in frozen['drivers']]==sorted(q['driver_pin']for q in plan['plan']),'all and only .80 batch');need({q['driver_pin']:q['new_cell']for q in plan['plan']}=={q['pin']:q['cell']for q in frozen['drivers']},'frozen X4/X8 assignment');need(sha(Path(sm['plan_directory'])/'plan.json')==sm['plan_sha256'],'original executed plan payload');body=dict(groups(LIB.read_text(),'cell'))
+  for q in plan['plan']:
+   n,pn=q['driver_pin'].rsplit('/',1);master=before['cells'][n]['type'];oldlim=Decimal(attr(dict(groups(body[master],'pin'))[pn],'max_capacitance'));newlim=Decimal(attr(dict(groups(body[q['new_cell']],'pin'))['Z'],'max_capacitance'));incap=max(lib[q['new_cell']]['pins']['A']['cap'].values());need(incap<=Decimal('.8')*oldlim and Decimal(q['observed_cap_fF'])<=Decimal('.8')*newlim,'independent actual Liberty input and observed output margin');need(incap==Decimal(q['new_input_cap_fF'])and oldlim==Decimal(q['old_limit_fF'])and newlim==Decimal(q['new_limit_fF']),'exact priced library quantities')
+  previous_def=(previous/'placed.def').read_text();expected_wires=len(re.findall(r'\+ ROUTED ',previous_def));clear=block((stage/'flow.log').read_text(),'BEGIN_OLD_ROUTE_CLEAR','END_OLD_ROUTE_CLEAR');need(clear.strip()=='CLEARED_OLD_REGULAR_WIRES='+str(expected_wires),'only prior actual regular routing geometry cleared, counted independently')
  else:
   log=(previous/'flow.log').read_text();part=block(block(log,'BEGIN_SCENARIO_10','END_SCENARIO_10'),'BEGIN_ELECTRICAL_REPORT','END_ELECTRICAL_REPORT').split('max capacitance',1)[1];drivers=set(re.findall(r'(?m)^(\S+)\s+[0-9.]+\s+[0-9.]+\s+-[0-9.]+\s+\(VIOLATED\)',part));need(drivers=={q['driver_pin']for q in plan['plan']},'all and only actual previous cap violations')
 
