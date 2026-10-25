@@ -14,12 +14,15 @@ module chain85(input wire clk,reset,soft_abort,cmd,cache_mode,mem_hold,mul_hold,
  wire [7:0] normdebug;assign ndebug=normdebug;wire rready,rvalid;wire [127:0] rd;wire usecfg=!busy&&cfg;
  assign cmd_ready=!reset&&!soft_abort&&state==0&&!pending&&!cfg&&epoch!=32'hffffffff;assign cmd_accept=cmd&&cmd_ready;
  assign ext_epoch=epoch;wire link_take;wire response_match=ext_response_epoch==epoch;
- assign ext_take=response_match?link_take:1'b1;
+ // At exhausted idle or abort, the final epoch is invalidated without wrapping.
+ wire terminal_discard=(epoch==32'hffffffff)&&(soft_abort||state==0);
+ wire drop_response=!response_match||terminal_discard;
+ assign ext_take=drop_response?1'b1:link_take;
  always @(posedge clk)begin
  if(reset)begin epoch<=0;stale_responses<=0;aborts<=0;end else begin
  if((soft_abort||cmd_accept)&&epoch!=32'hffffffff)epoch<=epoch+1;
  if(soft_abort)aborts<=aborts+1;
- if(ext_valid&&ext_take&&!response_match)stale_responses<=stale_responses+1;
+ if(ext_valid&&ext_take&&drop_response)stale_responses<=stale_responses+1;
  end end
  assign busy=state!=0;assign done=state==5;assign cfg_ready=!busy&&!pending&&rready;assign cfg_valid=pending&&rvalid;assign cfg_dout=rd;assign debug_state={5'b0,state};
  assign mem_request=state==1?sr:nr;
@@ -45,7 +48,7 @@ module chain85(input wire clk,reset,soft_abort,cmd,cache_mode,mem_hold,mul_hold,
  mul84 #(1) multipliers(clk,core_reset,mul_hold,mr0,ma0,mb0,mready0,mv0,1'b1,my0,mr1,ma1,mb1,mready1,mv1,1'b1,my1,mul_grants0,mul_grants1,mul_wait0,mul_wait1,mul_contested);
  mfront85 m(clk,core_reset,cmd_accept,state==1&&mdone,cache_mode,saved_coefficient,mdone,ms,mreq,m_address,mready,mvalid,mtake,mreply,sr,sw,maddr,mdata,sready,svalid,st,rd,packets,macs,mwrites,obs_valid,obs_row,obs_rank,obs_acc,obs_down,mr0,ma0,mb0,mready0,mv0,my0,cache_reads,cache_writes,mdebug);
  wire unused_wr;wire [127:0] unused_wdata;wire wire_valid;wire [127:0] wire_data;
- memory_link link(clk,core_reset,mreq,1'b0,m_address,128'b0,mready,mvalid,mtake,mreply,ext_req,unused_wr,ext_addr,unused_wdata,ext_ready,ext_valid&&response_match,link_take,ext_data,wire_valid,wire_data,wire_beats,transactions);
+ memory_link link(clk,core_reset,mreq,1'b0,m_address,128'b0,mready,mvalid,mtake,mreply,ext_req,unused_wr,ext_addr,unused_wdata,ext_ready,ext_valid&&!drop_response,link_take,ext_data,wire_valid,wire_data,wire_beats,transactions);
  norm84 #(1) n(clk,core_reset,state==2,12'd1536,saved_epsilon,nbusy,ndone,state==5&&ack,ns,nr,nw,na,ni,nready,nvalid,nt,rd,norm_cycles,reads,writes,normdebug,mr1,ma1,mb1,mready1,mv1,my1);
  assign sready=rready&&!pending&&!mem_hold&&state==1;assign svalid=rvalid&&!pending&&state==1;
  assign nready=rready&&!pending&&!mem_hold&&state==3;assign nvalid=rvalid&&!pending&&state==3;
