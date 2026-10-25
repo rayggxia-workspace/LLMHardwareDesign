@@ -98,6 +98,11 @@ def receive(run,inp,oracle,expected_status='RTL_EXECUTED_NOT_RECEIVED'):
  binding=json.loads((ROOT/'binding.json').read_text())
  for n,h in binding['sources'].items():
   if n.startswith('project/rtl/')or n.endswith('/'+('qualification.cpp'if m['suite']=='qualification'else'sim.cpp')):need(m['source']['sources'].get(n)==h,'actual RTL/driver byte binding '+n)
+ command=json.loads((run/'simulation-command.json').read_text());need(type(command['exit'])is int and command['exit']==0,'actual command successful exit');argv=command['argv'];need(type(argv)is list and len(argv)>=5,'actual command argv');binary=Path(argv[-5]);build=binary.parent.parent;bm=json.loads((build/'manifest.json').read_text());artifacts(build,bm)
+ need(binary.name=='Vchain102'and binary.parent.name=='obj'and build.parent==inp.parent,'actual binary inside task root');need(bm['status']==('GATE102_BUILT_NOT_EXECUTED'if expected_status.startswith('GATE')else'BUILT_NOT_EXECUTED')and sha(binary)==bm['binary_sha256'],'actual build/binary binding')
+ need(argv[-4]==str(inp/'vectors.tsv')and Path(argv[-3]).name=='actual.jsonl'and Path(argv[-3]).parent.parent==inp.parent and argv[-2:]==[str(m['stall']),str(m['pilot'])],'actual execution arguments')
+ for n,h in binding['sources'].items():
+  if n.startswith('project/rtl/')or n.endswith('/'+('qualification.cpp'if m['suite']=='qualification'else'sim.cpp')):need(bm['source']['sources'].get(n)==h,'actual build RTL/driver '+n)
  records=[json.loads(line)for line in(run/'actual.jsonl').read_text().splitlines()];need(records,'actual rows')
  qualification=m['suite']=='qualification'
  selected=[r['name']for r in oracle.rows]
@@ -134,7 +139,7 @@ def receive(run,inp,oracle,expected_status='RTL_EXECUTED_NOT_RECEIVED'):
   for k in('same_core_no_per_case_reset','held_done','latched_parameters'):need(p[k]is True,'exact protocol bool '+k)
   for k in('accepted','canary_bytes','fabric_high_water','external_accepted'):integer(p[k],0,(1<<32)-1,'protocol uint '+k)
   need(p['accepted']==len(records)and p['canary_bytes']==64 and p['fabric_high_water']==1 and p['external_accepted']==sum(r['transactions']for r in records),'actual protocol counts')
- return {'status':'PASS_COMPLETE_GQA_INTEGER_AND_FINITE_PORTS','counts':counts,'source':m['source'],'actual_sha256':sha(run/'actual.jsonl'),'protocol_sha256':sha(run/'actual.jsonl.protocol.json'),'input_manifest_sha256':sha(inp/'manifest.json'),'limits':['full and actual cached inputs distinct; cached final-prefix replay not append','not online, whole model quality, integrated M/A bank, SRAM/ROM macro or physical signoff']}
+ return {'status':'PASS_COMPLETE_GQA_INTEGER_AND_FINITE_PORTS','counts':counts,'source':m['source'],'actual_sha256':sha(run/'actual.jsonl'),'build_manifest_sha256':sha(build/'manifest.json'),'binary_sha256':sha(binary),'protocol_sha256':sha(run/'actual.jsonl.protocol.json'),'input_manifest_sha256':sha(inp/'manifest.json'),'limits':['full and actual cached inputs distinct; cached final-prefix replay not append','not online, whole model quality, integrated M/A bank, SRAM/ROM macro or physical signoff']}
 def main():
  p=argparse.ArgumentParser();p.add_argument('--run',type=Path,required=True);p.add_argument('--input',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--negative',action='store_true');a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
  binding=json.loads((ROOT/'binding.json').read_text())
