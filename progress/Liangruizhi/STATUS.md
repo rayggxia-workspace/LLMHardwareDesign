@@ -253,3 +253,11 @@ PR待审查/合并，审查人/管理员待指定，未done；后续在已有授
 ## 2026-10-25T12:16:13.088516+08:00 Issue85运行时缓存与恢复
 
 [Issue85](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/85) / [PR89](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/89)；task/85-runtime-cache。服务器正式60完整输出/22真实soft-abort/12错误/2迟到丢弃通过，模式选择同一个M核心，显式命令握手；logic-only+1.52715%/+97寄存bit，相同核心cycles。全包74.46MB/精选0.588MB与5phase86源已核。报告docs/experiments/issue-85-runtime-cache.md，交接docs/handoffs/2026-10-25-issue-85-runtime-cache.md。已上传PR89，Issue为in_review；审查/合并未完成，不done。下一步真实tag/总线、epoch边界、宏/STA；外部测试两响应槽未计core面积。登记/看板仍待处理。
+
+## 2026-10-25 UTC+08 — Issue91 V/S整合合同（本地交付待根发布）
+
+[Issue91](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/91)，负责人Liangruizhi；task/91-v-integration；独立D:/Projects/LLMHardwareDesign-v-integration。已核本人182389313身份、最新Issue91/88/92、PR89/90与成员55/63进度，未重复其工作。
+
+完成具体地址/生命周期/程序-LUT/scale/有限仲裁/错误合同及六Block分层缺项；纯结构4trace/8布局、23检查及18原Git源接收PASS，4交付负例拒绝。H2560保留X/Y10KiB+gamma1KiB+frame512B+A4KiB合法（余512B），相对X也流式少640外部行和640 S写入。源码8fa5dde，report SHA145956d188d24b05b96fdd1c08008c3c5abc337c716e286ea9b0c1da898c1efc。只为结构候选，无新真实数组、RTL、STA或服务器作业。
+
+[报告](../../docs/experiments/issue-91-v-integration.md)/[交接](../../docs/handoffs/2026-10-25-issue-91-v-integration.md)。下一步独立Issue先gamma streaming+H1536回归/H2560全行den，再SiLU完整链；新增byte ALU/mux/程序/LUT/metadata及端口成本必须计费。根会话统一push/PR和状态，当前本地完成、远端待上传；不合并/不done，登记pending、Projects unverified/同步pending。
