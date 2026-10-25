@@ -5,9 +5,9 @@ from inventory import resources,need,sha,load
 p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--library',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(exist_ok=False)
 rs=[];source=None
 for s in(0,1):
- root=a.root/f'rtl-s{s}02';m=load(root/'manifest.json');r=load(a.root/f'receipt-s{s}02.json');need(m['stall']==s and r['stall']==s and m['profile']==0,'runtime exact configuration');need(r['status']=='PASS_RUNTIME_MODES_RECOVERY'and r['commands']==30 and r['run_manifest_sha256']==sha(root/'manifest.json'),'full receipt')
+ root=a.root/f'rtl-s{s}02';m=load(root/'manifest.json');r=load(a.root/f'receipt-s{s}03.json');need(m['stall']==s and r['stall']==s and m['profile']==0,'runtime exact configuration');need(r['status']=='PASS_RUNTIME_MODES_RECOVERY'and r['commands']==30 and r['run_manifest_sha256']==sha(root/'manifest.json'),'full receipt')
  for ent in m['artifacts']:need(sha(root/ent['path'])==ent['sha256'],'actual output binding')
- need(sha(a.root/f'receipt-s{s}02-negative.json')==r['semantic_negative_sha256'],'semantic negative bytes');rs.append(r);source=m['source']
+ need(sha(a.root/f'receipt-s{s}03-negative.json')==r['semantic_negative_sha256'],'semantic negative bytes');rs.append(r);source=m['source']
 mp=resources(a.root/'map02','chain85',a.library)
 for n,h in source['sources'].items():
  if n.startswith('project/rtl/'):need(mp['source']['sources'].get(n)==h,'identical mapped/executed RTL')

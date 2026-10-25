@@ -42,17 +42,19 @@ def check(row,ref,cache=0):
 
 def protocol_check(p):
  keys=('mode_parameter_latching','cfg_command_competition','held_done_response','stage_abort_restart','error_recovery','stale_epoch_discard','coordinated_reset_restart')
- if p.get('schema')!='runtime85-protocol-v1' or any(p.get(k) is not True for k in keys):raise ValueError('protocol required typed fields')
+ if not isinstance(p,dict) or set(p)!=set(keys)|{'schema','commands_accepted','abort_stages','error_conditions','blocked_command_edges','held_done_edges','full_output_commands'} or p.get('schema')!='runtime85-protocol-v1' or any(p.get(k) is not True for k in keys):raise ValueError('protocol required typed fields')
  expected={'commands_accepted':47,'abort_stages':10,'error_conditions':6,'blocked_command_edges':36,'held_done_edges':144,'full_output_commands':30}
  for k,v in expected.items():
   if type(p.get(k)) is not int or p[k]!=v:raise ValueError('protocol counts '+k)
 def main():
  p=argparse.ArgumentParser();p.add_argument('--input',type=Path,required=True);p.add_argument('--run',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();m=json.loads((a.run/'manifest.json').read_text());im=json.loads((a.input/'manifest.json').read_text())
- if m['status']!='RTL_EXECUTED_NOT_RECEIVED' or m['input_manifest_sha256']!=sha(a.input/'manifest.json') or m['profile']!=0 or m['stall']not in(0,1):raise ValueError('run binding')
+ if m['status']!='RTL_EXECUTED_NOT_RECEIVED' or m['input_manifest_sha256']!=sha(a.input/'manifest.json') or type(m['profile'])is not int or m['profile']!=0 or type(m['stall'])is not int or m['stall']not in(0,1):raise ValueError('run binding')
  for root,mf in((a.run,m),(a.input,im)):
   for ent in mf['artifacts']:
    if sha(root/ent['path'])!=ent['sha256']:raise ValueError('actual artifact SHA')
- old=Path(im['old_root']);om=json.loads((old/'manifest.json').read_text())
+ old=Path(im['old_root']);
+ if old!=Path('/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/input01'):raise ValueError('explicit reused84 root')
+ om=json.loads((old/'manifest.json').read_text())
  if sha(old/'manifest.json')!=im['old_manifest_sha256']:raise ValueError('reused84 binding')
  for ent in om['artifacts']:
   if sha(old/ent['path'])!=ent['sha256']:raise ValueError('original physical payload SHA')
@@ -74,11 +76,11 @@ def main():
  try:check(json.loads(np.read_text()),refs[neg['name'],neg['cache']],neg['cache'])
  except ValueError:pass
  else:raise ValueError('semantic corruption accepted')
- negatives=[{},dict(protocol,mode_parameter_latching='true'),{k:v for k,v in protocol.items()if k!='stage_abort_restart'},dict(protocol,commands_accepted=46)]
+ negatives=[{},dict(protocol,mode_parameter_latching='true'),{k:v for k,v in protocol.items()if k!='stage_abort_restart'},dict(protocol,commands_accepted=46),dict(protocol,unknown=True)]
  for bad in negatives:
   try:protocol_check(bad)
   except ValueError:pass
   else:raise ValueError('bad protocol accepted')
  if a.out.exists():raise ValueError('new receipt only')
- a.out.write_text(json.dumps({'status':'PASS_RUNTIME_MODES_RECOVERY','commands':30,'source':m['source'],'run_manifest_sha256':sha(a.run/'manifest.json'),'input_manifest_sha256':sha(a.input/'manifest.json'),'stall':m['stall'],'protocol':protocol,'rows':summaries,'semantic_negative_sha256':sha(np),'metadata_negative_cases':4},indent=2)+'\n');print('PASS_RUNTIME_MODES_RECOVERY')
+ a.out.write_text(json.dumps({'status':'PASS_RUNTIME_MODES_RECOVERY','commands':30,'source':m['source'],'run_manifest_sha256':sha(a.run/'manifest.json'),'input_manifest_sha256':sha(a.input/'manifest.json'),'stall':m['stall'],'protocol':protocol,'rows':summaries,'semantic_negative_sha256':sha(np),'metadata_negative_cases':5},indent=2)+'\n');print('PASS_RUNTIME_MODES_RECOVERY')
 if __name__=='__main__':main()
