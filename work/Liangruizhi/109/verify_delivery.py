@@ -42,7 +42,22 @@ def verify(index_path, archive_path):
             entry = expected[item.filename]
             if item.file_size != entry["bytes"] or member_hash != entry["sha256"]:
                 raise ValueError("member bytes/SHA mismatch: " + item.filename)
-    return {"schema": "issue109-byte-reception-v1", "status": "PASS_BYTE_RECEPTION",
+    nested = 0
+    with zipfile.ZipFile(archive_path) as archive:
+        for name in archive.namelist():
+            if not name.endswith('/manifest.json'):
+                continue
+            manifest = json.loads(archive.read(name))
+            for entry in manifest.get('artifacts', []):
+                path = (PurePosixPath(name).parent / entry['path']).as_posix()
+                if path not in expected:
+                    # Build obj intermediates are intentionally excluded; top-level artifacts are not.
+                    raise ValueError('nested artifact missing from sealed index: '+path)
+                real = expected[path]
+                if real['sha256'] != entry['sha256'] or ('bytes' in entry and real['bytes'] != entry['bytes']):
+                    raise ValueError('nested manifest/index mismatch: '+path)
+                nested += 1
+    return {"schema": "issue109-byte-reception-v1", "nested_artifacts_checked": nested, "status": "PASS_BYTE_RECEPTION",
             "archive": archive_path.name, "bytes": record["bytes"], "sha256": actual_hash,
             "members_checked": len(required), "source_commit": index["source_commit"],
             "limits": ["Byte reception only; see separately bound server mathematical receipts.",

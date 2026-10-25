@@ -31,8 +31,8 @@ def main():
   if top=='local-audit':return True
   if top.startswith('phase'):
    return p.name=='binding.json'or(top==ROOT.name and p.name!='source.zip')
-  if top=='analysis01'or top.startswith('final-receive-')or top in ['negative01']:return p.name in ['receipt.json','summary.json']
-  if len(p.parts)==1:return p.name=='cost01.json'
+  if top=='analysis01'or top.startswith('final-receive-')or top in ['negative01','inventory-negative01']:return p.name in ['receipt.json','summary.json']
+  if len(p.parts)==1:return p.name in ['cost01.json','cost02.json']
   if top in ['input01','map01','build01','qual-build02','gateprepare01','gatebuild01','mixed001','mixed101','qual002','qual102','gate001','gate101','rtl-pilot001','rtl-pilot101']:return p.suffix=='.json'and 'obj'not in p.parts and p.name not in ['generic.json','mapped.json','stat.json']
   return False
  with zipfile.ZipFile(a.out/'full-results.zip','x',compression=zipfile.ZIP_DEFLATED,compresslevel=4)as z,zipfile.ZipFile(a.out/'selected.zip','x',compression=zipfile.ZIP_DEFLATED,compresslevel=6)as q:
