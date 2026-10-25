@@ -11,7 +11,7 @@ module chain85(input wire clk,reset,soft_abort,cmd,cache_mode,mem_hold,mul_hold,
  wire core_reset=reset||soft_abort;
  reg [2:0] state;reg pending;reg [31:0] saved_epsilon,saved_coefficient;wire mdone,ndone,nbusy;wire [7:0] ms,ns;wire mreq,mready,mvalid,mtake;wire [31:0] m_address;wire [127:0] mreply;
  wire sr,sw,st,sready,svalid;wire nr,nw,nready,nvalid,nt;wire [9:0] na;wire [127:0] ni,sd;
- wire [7:0] normdebug;assign ndebug=normdebug;wire rready,rvalid;wire [127:0] rd;wire usecfg=!busy&&cfg;
+ wire [7:0] normdebug;assign ndebug=normdebug;wire rready,rvalid;wire [127:0] rd;wire usecfg=!core_reset&&!busy&&cfg;
  assign cmd_ready=!reset&&!soft_abort&&state==0&&!pending&&!cfg&&epoch!=32'hffffffff;assign cmd_accept=cmd&&cmd_ready;
  assign ext_epoch=epoch;wire link_take;wire response_match=ext_response_epoch==epoch;
  // At exhausted idle or abort, the final epoch is invalidated without wrapping.
@@ -24,7 +24,7 @@ module chain85(input wire clk,reset,soft_abort,cmd,cache_mode,mem_hold,mul_hold,
  if(soft_abort)aborts<=aborts+1;
  if(ext_valid&&ext_take&&drop_response)stale_responses<=stale_responses+1;
  end end
- assign busy=state!=0;assign done=state==5;assign cfg_ready=!busy&&!pending&&rready;assign cfg_valid=pending&&rvalid;assign cfg_dout=rd;assign debug_state={5'b0,state};
+ assign busy=state!=0;assign done=!core_reset&&state==5;assign cfg_ready=!core_reset&&!busy&&!pending&&rready;assign cfg_valid=!core_reset&&pending&&rvalid;assign cfg_dout=rd;assign debug_state={5'b0,state};
  assign mem_request=state==1?sr:nr;
  always @(posedge clk)begin
   if(core_reset)begin port_wait_m<=0;port_wait_n<=0;state<=0;status<=0;cycles<=0;pending<=0;saved_epsilon<=0;saved_coefficient<=0;end
