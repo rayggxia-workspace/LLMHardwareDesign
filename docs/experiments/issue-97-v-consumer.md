@@ -67,3 +67,6 @@ C0 LUT占用外部常量窗 `0x02000000`，预留128KiB。逻辑SiLU65540B，exp
 归档后7个97文本只将末尾CRLF规范为LF，旧Git/SHA与新SHA及非换行字节相等记录在 `work/Liangruizhi/97/line-ending-receipt.json`。原实验包及153源绑定未被改写，不能把规范后的当前HEAD冒充新科学执行版本。93主会话修订通过合并保留原erratum。
 
 [执行索引](../../project/experiments/v_consumer/results/issue-97/index.json)、[交接](../handoffs/2026-10-25-issue-97-v-consumer.md)、[实际命令](../../work/Liangruizhi/97/execution.json)。指定Liangruizhi/182389313认证、origin和分支已复核。此交付本地已整理、主会话负责推送/PR和Issue状态；没有自行合并或标done。登记PR5 pending，看板缺配置/read:project，未核/未同步待管理员，不能写成远端已完成。
+
+
+发布回执（2026-10-25）：[PR101](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/101)已上传；Issue97为in_review，待独立审查合并，未done。远端读回1ae1dc1d101ec9e8415ab49dfc2979e108c2eba3报告/结果索引/门级接收/库验收表与原Git blob逐字节相同，见work97/remote-readback.json。登记PR5 pending；board配置与read:project缺项，状态unverified/同步pending，管理员/审查人待指定。98/99与A后续继续，不把本任务完成等同Block库完成。

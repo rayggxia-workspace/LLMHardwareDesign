@@ -289,3 +289,6 @@ PR待审查/合并，审查人/管理员待指定，未done；后续在已有授
 
 
 发布回执（2026-10-25）：[PR100](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/100)已上传；Issue93为in_review，待独立审查合并，未done。远端读回58dc6278623d779b548d2b664aabb10a49762c35的报告/最终索引/cost02/语义负例回执与原Git blob逐字节相同，见work93/remote-readback.json。登记PR5 pending；board配置与read:project缺项，状态unverified/同步pending，管理员/审查人待指定。当前仍继续97/98/99，不把本任务完成等同Block库全部完成。
+
+
+发布回执（2026-10-25）：[PR101](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/101)已上传；Issue97为in_review，待独立审查合并，未done。远端读回1ae1dc1d101ec9e8415ab49dfc2979e108c2eba3报告/结果索引/门级接收/库验收表与原Git blob逐字节相同，见work97/remote-readback.json。登记PR5 pending；board配置与read:project缺项，状态unverified/同步pending，管理员/审查人待指定。98/99与A后续继续，不把本任务完成等同Block库完成。

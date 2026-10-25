@@ -11,3 +11,6 @@
 - 恢复第一步：指定Liangruizhi身份读最新AGENTS/Issue97/98/99、PR和成员55/63；核results/issue-97/index.json、selected.zip、source-byte-receipt，再按原phase源码新out恢复。源码/元数据在本机，实际张量/RTL/map接收仅本人服务器；无需下载模型或动其他机器。
 - 交付状态：本地已整理、主会话待push/PR与Issue in_review同步。PR尚未由本分代理创建；不自合并、不done。登记PR5 pending；board配置/read:project缺失，未核/待管理员同步。主会话发PR后补实际链接/读回，不把本地完成称远端完成。
 - 暂停时无未归档运行作业；当前有用临时文件保留D:/Projects/Codex/issue97-v-consumer-20261025-01供复查。最终改动和检查见work97/local-validation.json及最终commit。
+
+
+发布回执（2026-10-25）：[PR101](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/101)已上传；Issue97为in_review，待独立审查合并，未done。远端读回1ae1dc1d101ec9e8415ab49dfc2979e108c2eba3报告/结果索引/门级接收/库验收表与原Git blob逐字节相同，见work97/remote-readback.json。登记PR5 pending；board配置与read:project缺项，状态unverified/同步pending，管理员/审查人待指定。98/99与A后续继续，不把本任务完成等同Block库完成。
