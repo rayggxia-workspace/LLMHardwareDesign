@@ -104,7 +104,7 @@ Norm继续旧精确整数合同：X/Y I32Q12；gamma I32Q20；epsilon U32Q24=17�
 
 1. **H1536回归与H2560流式gamma**：同一16KiB/8S8/1S32/SFU库存，使用原85六例H1536完整消费者，新增H2560只取既有合法边界数据或合成整数边界；没有匹配真实H2560 trace时标合成，不能改名为模型测量。对比全局bigint oracle的sum/den/Y每码；错tile den、gamma错位/末tile陈旧值、输入alias为负例。记录descriptor加载、S/外部交易、所有状态等待及面积，分别计norm kernel与input/output开销。
 2. **一个实际会争用资源的V非线性消费者**：复用74封存的gate/up/LUT，先完整一个专家512值的SiLU×up→mid。Vframecaller半可放gate16×I32=64B、up64B、mid64B、metadata64B，leaf另256B；中间MID512×I32=2048B写S。必须全512完成后得到一个动态scale，再第二遍量化A8。不能用每16值scale替代原专家512粒度。M/S32争用需真实有限端口压力，不以串行无冲突证明任意并行公平性。
-3. **接回真实M的最小闭包**：逐8专家重复上一步，A8写4KiB，保留8个S16 delta共128bit显式元数据。全部完成后drain/release MID与frame，给M新增resident-A入口，核 `(owner,input_version,epoch,format,valid)` 后才消费；旧85只冷加载/运行时cache开关不自动支持这一入口。随后旧全K512/8expert merge→residual→norm，独立oracle从原gate/up开始，不给RTL喂host算好的mid/A8。结果不通过则保留失败，不声称完整消费者完成。
+3. **接回真实M的最小闭包**：逐8专家重复上一步，A8写4KiB，保留8个S16 delta共128bit显式元数据。全部完成后drain/release MID与frame，给M新增resident-A入口，核 `(owner,input_version,epoch,format,valid)` 后才消费；旧85只冷加载/运行时cache开关不自动支持这一入口。M现header[63:48]是动态delta：resident-A入口必须从本轮RTL生成的8×S16元数据选择对应rank的delta，校验/拒绝host头不一致，不能继续喂原先捕获的delta冒充scale传播已闭合。随后旧全K512/8expert merge→residual→norm，独立oracle从原gate/up开始，不给RTL喂host算好的mid/A8。结果不通过则保留失败，不声称完整消费者完成。
 4. **协议最小矩阵**：无背压/确定性held-response两模式；每个阶段reset/abort/restart，跨mode参数突变、busy cfg/重复cmd、LUT/PC越界、frame/A重叠、数值异常、epoch终止、旧响应迟到；按实际DUT事件计数。前后S canary、A owner/version、response最大占用证明有限容量。phase切换必须排空所有在途事务，不只看M busy=0。
 5. **库存与电气门槛**：C0外部LUT和C1片内ROM分别给完整库存/带宽，不能当同资源二选一性能图。每个内部布局对比再固定同精度、容量、端口和算术，记录新增ALU/mux/控制/metadata/缓冲/宏。继承Issue88电气修复的方法重新跑实际整合netlist；85、88或80通过不自动覆盖新组合。逻辑面积、cycle数、初步STA均不等于制造就绪。
 
