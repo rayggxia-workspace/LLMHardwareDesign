@@ -1,5 +1,13 @@
 # Liangruizhi 的进度
 
+## 2026-10-25 UTC+08 Issue98：97研究物理闭合，93最终门级继续
+
+[Issue98](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/98)，task/98-integrated-physical，独立D:/Projects/LLMHardwareDesign-integrated-physical，仅本人服务器lrz-i98-*。97有限候选6实际完成精确最终4×2门级、DRT/RCX/独立SPEF读回、所有7465端点与双loads全cap/slew，physical_stage_accepted=true（研究库与声明切口范围）。面积76964.174µm²，setup+3.680569/hold+0.036780ns；完整接收SHA465bf3e283ddb47e2c0b4ac54db39691d544c904f1db3c8158be00fcc8ab13d6。最终DRC0/天线0/未解释未约束0。没有用native1fF容差放行。
+
+93最终detail9303物理检查通过；quiet91391已正常51条并guardSKIP。held91392真实10500s timeout，20完整前缀独立通过只为诊断；91580唯一同源16000s/280min续跑正在执行，91581/82完整gate和DRT接收pending。原91393失效依赖已核本人后取消，93仍未accepted。不得直接复用旧网表gate。93旧CTS和cap候选2精确51×2门级均已完成，旧cap物理失败仍保留。
+
+checkpoint3的7原文件/5042877B跨机SHA通过，74phase/3650原Git引用/224blob源码字节通过。入口四种真实重SHA负例通过。完整报告与原97接收见[报告](../../docs/experiments/issue-98-integrated-physical.md)。持续草稿[PR111](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/111)已发布8449e0e，补充待root更新。97冻结部分5451成员/9.31GB原始归档已PC逐成员SHA通过；phase78补齐slew全集与双load同删负例，新97接收SHA4691173d1376bba0af92be2b4de6ac4abcfc644848b85163e3a8963c74220ec8仍accepted。93终态/整项归档/看板仍pending，不done。真实宏/PG/LVS/目标工艺/上游driver未具备；研究M2–M10与55/63固定层底座不同。恢复先查91391/92/93与现有receipts，禁止重复长跑。
+
 ## 2026-10-25 UTC+08 Issue86门级与逻辑时序交付
 
 [Issue86](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/86) / [PR90](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/90)，task/86-gate-sta，D:/Projects/LLMHardwareDesign-gate-sta；base Issue84/PR87。本人Liangruizhi/182389313；实际只服务器lrz-i86-*，旧84只读。四变体共8完整门级消费者严格独立接收，完整整数和原RTL计数/cycles一致；数千slew/cap违规保留，不能报告合格Fmax/物理完成。全部DFF端点已覆盖，真实存储宏/RC/CTS仍在cut外。

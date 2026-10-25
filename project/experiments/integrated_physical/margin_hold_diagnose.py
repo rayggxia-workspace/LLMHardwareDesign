@@ -1,0 +1,14 @@
+"""All new hold failures, same endpoints before/after, actual respective RC."""
+import argparse,csv,collections
+from decimal import Decimal
+from common import *
+p=argparse.ArgumentParser();p.add_argument('--target',type=int,choices=[93,97],required=True);p.add_argument('--stage',type=Path,required=True);p.add_argument('--receipt',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(exist_ok=False);sm=artifacts(a.stage);r=load(a.receipt/'receipt.json');need(r['result']['stage_manifest_sha256']==sha(a.stage/'manifest.json'),'exact received candidate');previous=Path(sm['previous_directory']);artifacts(previous);net=load(a.stage/'final.json')['modules']['chain'+str(a.target)];ports={n if len(p['bits'])==1 else n+'['+str(i+p.get('offset',0))+']':p['direction']for n,p in net['ports'].items()for i in range(len(p['bits']))};rr=list(csv.DictReader((a.stage/'hold-load10.tsv').read_text().splitlines(),delimiter='\t'));bad=sorted([x for x in rr if Decimal(x['slack'])<0],key=lambda x:Decimal(x['slack']));need(bad and len(bad)<=100,'bounded complete current failing endpoint cohort');classes=collections.Counter();starts=collections.Counter()
+for x in bad:classes[('input'if ports.get(x['startpoint'])=='input'else'FF')+'->'+('output'if ports.get(x['endpoint'])=='output'else'FF')]+=1;starts[x['startpoint'].split('[')[0]]+=1
+for label,stage in [('previous',previous),('current',a.stage)]:
+ m=artifacts(stage);lines=['set_thread_count 8',f'read_liberty {{{LIB}}}',f'read_db {{{stage}/final.odb}}',f'read_sdc {{{stage}/final.sdc}}']
+ if m['stage']=='drt':lines += [f'read_spef -coupling_reduction_factor 1.0 {{{stage}/route.spef}}']
+ else:lines += [f'source {{{P}/setRC.tcl}}',f'read_global_route_segments {{{stage}/route.segments}}','estimate_parasitics -global_routing']
+ for x in bad:
+  ep=x['endpoint'];obj='get_ports'if ep in ports else'get_pins';lines += [f'puts "BEGIN_ENDPOINT {ep}"',f'report_checks -to [{obj} {{{ep}}}] -path_delay min -group_path_count 1 -format full_clock_expanded -fields {{capacitance slew fanout input}} -digits 9',f'puts "END_ENDPOINT {ep}"']
+ script=a.out/(label+'.tcl');script.write_text(tcl_script(lines));command(a.out,label,[OR,'-exit',script],300)
+put(a.out/'diagnosis.json',{'status':'READONLY_COMPLETE_NEW_HOLD_COHORT_AND_SAME_ENDPOINT_BEFORE_AFTER','source':sources(),'stage_manifest_sha256':sha(a.stage/'manifest.json'),'previous_manifest_sha256':sha(previous/'manifest.json'),'path_classes':dict(classes),'start_counts':dict(starts),'failures':bad,'RC_scope':'each actual own source model;93previous detailedRCX,currentGRT;97bothGRT, not a pure geometry attribution across RC models'});manifest(a.out,{'status':'ACTUAL_ALL_NEW_HOLD_PATHS_DIAGNOSED_NOT_REPAIRED','source':sources(),'stage_manifest_sha256':sha(a.stage/'manifest.json')});print('ACTUAL_ALL_NEW_HOLD_PATHS_DIAGNOSED_NOT_REPAIRED')

@@ -1,0 +1,6 @@
+"""Read-only existing OpenSTA electrical API and all-check report semantics."""
+import argparse
+from common import *
+p=argparse.ArgumentParser();p.add_argument('--stage',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(exist_ok=False);artifacts(a.stage)
+lines=['set_thread_count 8','puts "BEGIN_ELECTRICAL_API"','puts [lsort [info commands sta::*cap*]]','puts [lsort [info commands sta::*slew*]]','puts [lsort [info commands sta::*fanout*]]','puts [info body report_check_types]','puts "END_ELECTRICAL_API"',f'read_liberty {{{LIB}}}',f'read_db {{{a.stage}/final.odb}}',f'read_sdc {{{a.stage}/final.sdc}}',f'source {{{P}/setRC.tcl}}',f'read_global_route_segments {{{a.stage}/route.segments}}','estimate_parasitics -global_routing','puts "BEGIN_ALL_CHECKS"','report_check_types -max_slew -max_capacitance -max_fanout -digits 9','puts "END_ALL_CHECKS"']
+s=a.out/'probe.tcl';s.write_text(tcl_script(lines));command(a.out,'probe',[OR,'-exit',s],300);manifest(a.out,{'status':'READONLY_ELECTRICAL_API_AND_DEFAULT_REPORT','source':sources(),'resources':resource_snapshot(),'stage_manifest_sha256':sha(a.stage/'manifest.json')});print('READONLY_ELECTRICAL_API_AND_DEFAULT_REPORT')

@@ -1,5 +1,7 @@
 # 当前状态
 
+- 2026-10-25 [Issue98 / PR111](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/111)：97实际V→M→norm在Nangate研究库、整store切口及固定I/O下通过布局/CTS/DRT/真实RCX和精确4×2正常gate；76964.174µm²，7465全端点setup/hold和双load全cap/slew通过。93最终物理检查通过，完整51×2gate继续、未accepted。97归档5451成员独立字节通过；真实宏/PG/LVS/上游驱动/固定层制造资格仍缺，任务in_progress，非全Block设计完成。
+
 - 2026-10-25 [Issue88](experiments/issue-88-electrical-repair.md)：四原84静态变体通过8次完整门级消费者、原全部cell/pin结构与两档负载全受检setup/hold及内部slew/cap检查；所有BUF/tie/drive-strength成本计入，面积63947.730/55713.966/65404.878/57432.858µm²。58个作业结束，服务器双包、本机738成员及11phase98源字节通过。仍是Nangate45、零线RC、理想时钟和store切分，不能扩展到85/92新硬件或全Block制造资格。 成果待独立PR审查，未done；下一步#93及实际整合网表，不把旧电气资格移植到新电路。
 
 - 2026-10-25 [Issue86门级/时序](experiments/issue-86-gate-sta.md)：四旧84变体×安静/背压共8条完整门级消费者，严格独立整数及原RTL输出/周期一致；全部DFF R2R覆盖。实际STA却有数千slew/cap违例，不能接受Fmax/物理面积排名；由Issue88继续有界buffer/resize并核新增成本。真实宏/RC/CTS未包含，85新网表不继承资格。全包19.16MB/精选1.97MB和8phase57源码字节接收通过，交付待审查。
