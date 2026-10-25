@@ -6,9 +6,13 @@ sys.path.insert(0,str(ROOT/'project/experiments/electrical_repair'))
 from structure import library,certificate,input_loads
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--prepared',type=Path,required=True);p.add_argument('--build',type=Path,required=True);p.add_argument('--runs',type=Path,nargs=2,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(exist_ok=False);bd=sources();ad=admit();pm=artifacts(a.prepared);bm=artifacts(a.build)
+ p=argparse.ArgumentParser();p.add_argument('--prepared',type=Path,required=True);p.add_argument('--build',type=Path,required=True);p.add_argument('--runs',type=Path,nargs=2,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--post-prepared',type=Path);a=p.parse_args();a.out.mkdir(exist_ok=False);bd=sources();ad=admit();pm=artifacts(a.prepared);bm=artifacts(a.build)
  need(pm['status']=='EXACT_ACCEPTED93_GATE_EXPORT_AND_DECLARED_MEMORY_CUT'and load(a.prepared/'admission.json')==ad,'exact original gate input')
- need(bm['status']=='ACCEPTED93_GATE_BUILT_NOT_EXECUTED'and bm['prepared_manifest_sha256']==sha(a.prepared/'manifest.json')and sha(a.build/'obj/Vchain93')==bm['binary_sha256'],'exact executed gate binary')
+ post=None;post_cert=None;dependency_prepared=a.prepared;build_status='ACCEPTED93_GATE_BUILT_NOT_EXECUTED';run_status='ACCEPTED93_GATE_EXECUTED_NOT_RECEIVED'
+ if a.post_prepared is not None:
+  from post_audit import audit_post
+  post_pm,post_cert,post=audit_post(a.prepared,a.post_prepared,a.out/'post-wrapper',ad);dependency_prepared=a.post_prepared;build_status='POSTPHYSICAL93_GATE_BUILT_NOT_EXECUTED';run_status='POSTPHYSICAL93_GATE_EXECUTED_NOT_RECEIVED';need(bm['original_prepared_manifest_sha256']==sha(a.prepared/'manifest.json'),'same postphysical original prepared')
+ need(bm['status']==build_status and bm['prepared_manifest_sha256']==sha(dependency_prepared/'manifest.json')and sha(a.build/'obj/Vchain93')==bm['binary_sha256'],'exact executed gate binary')
  spec=importlib.util.spec_from_file_location('independent93',SOURCE/'project/experiments/gamma_stream/verify.py');ref=importlib.util.module_from_spec(spec);spec.loader.exec_module(ref)
  cases=load(INPUT/'cases.json');lookup={c['name']:c for c in cases};old=Path(load(INPUT/'manifest.json')['old_root']);refs={}
  for c in cases:
@@ -16,10 +20,10 @@ def main():
  lib=library(LIB);before=load(a.prepared/'cut-source.json')['modules']['chain93'];after=load(a.prepared/'cut.json')['modules']['chain93'];scope=[n for n,c in before['cells'].items()if c['type']=='$scopeinfo'];need(len(scope)==5,'exact original hierarchy metadata');
  for n in scope:
   need(before['cells'][n]==after['cells'][n]and before['cells'][n]['connections']=={}and before['cells'][n]['port_directions']=={}and before['cells'][n]['parameters']=={'TYPE':'module'},'only matching empty hierarchy metadata omitted');del before['cells'][n];del after['cells'][n]
- cert=certificate(before,after,lib);need(float(cert['after_area_um2'])<=79600.5,'actual98 area ceiling');put(a.out/'structure.json',cert);put(a.out/'input-loads.json',input_loads(after,lib));results=[];neg=[]
+ cert=post_cert if post is not None else certificate(before,after,lib);need(float(cert['after_area_um2'])<=79600.5,'actual98 area ceiling');put(a.out/'structure.json',cert);put(a.out/'input-loads.json',input_loads(after,lib));results=[];neg=[]
  for stall,run in enumerate(a.runs):
-  rm=artifacts(run);need(rm['status']=='ACCEPTED93_GATE_EXECUTED_NOT_RECEIVED'and type(rm['stall'])is int and rm['stall']==stall and rm['build_manifest_sha256']==sha(a.build/'manifest.json'),'strict gate run/stall/binary')
-  need(rm['prepared_manifest_sha256']==sha(a.prepared/'manifest.json')and rm['input_manifest_sha256']==sha(INPUT/'manifest.json')and rm['admission']==ad,'same full source and input contract')
+  rm=artifacts(run);need(rm['status']==run_statusand type(rm['stall'])is int and rm['stall']==stall and rm['build_manifest_sha256']==sha(a.build/'manifest.json'),'strict gate run/stall/binary')
+  need(rm['prepared_manifest_sha256']==sha(dependency_prepared/'manifest.json')and rm['input_manifest_sha256']==sha(INPUT/'manifest.json')and rm['admission']==ad,'same full source and input contract')
   rows=[load_line(s)for s in(run/'actual.jsonl').read_text().splitlines()];gold=[load_line(s)for s in(R93/f'rtl-s{stall}03/actual.jsonl').read_text().splitlines()];need(len(rows)==len(gold)==51,'all complete consumer/recovery rows')
   outcomes=[];exceptions=0
   for row,g in zip(rows,gold):
@@ -40,7 +44,7 @@ def main():
    except ValueError:neg.append({'path':nf.name,'sha256':sha(nf)})
    else:raise ValueError('persisted malformed gate accepted '+label)
   results.append({'stall':stall,'records':51,'status':'PASS_ALL_COMPLETE_GATE_INTEGER_OUTPUTS_AND_DECLARED_PROTOCOL','outcomes':outcomes,'protocol':proto,'gate_terminal_injection_tested':False,'run_manifest_sha256':sha(run/'manifest.json'),'full_observable_exception':{'role':'gate-last-normal-command','epoch':2,'terminal_rejected_edges':0,'preserved_idle_clock_cadence':True}})
- put(a.out/'receipt.json',{'schema':'gate98-receipt-v1','status':'PASS_ACTUAL93_COMPLETE_GATES_AND_DECLARED_EPOCH_EXCEPTION','source':bd,'admission':ad,'prepared_manifest_sha256':sha(a.prepared/'manifest.json'),'build_manifest_sha256':sha(a.build/'manifest.json'),'results':results,'structure':cert,'file_negatives':neg,'limits':['Zero-delay gate simulation and exact original pin certificate, not analog/PVT/CDC signoff.','Gate does not seed epoch DFFs to max; only real93 RTL terminal test and prior92 local control properties remain separate evidence. No inherited full formal93 proof.','store82 is behavioral in simulation; no real SRAM macro or SRAM timing qualification.']})
- print('PASS_ACTUAL93_COMPLETE_GATES_AND_DECLARED_EPOCH_EXCEPTION')
+ put(a.out/'receipt.json',{'schema':'gate98-receipt-v1','status':'PASS_POSTPHYSICAL93_COMPLETE_GATES_AND_DECLARED_EPOCH_EXCEPTION'if post is not None else'PASS_ACTUAL93_COMPLETE_GATES_AND_DECLARED_EPOCH_EXCEPTION','postphysical':post,'source':bd,'admission':ad,'prepared_manifest_sha256':sha(a.prepared/'manifest.json'),'build_manifest_sha256':sha(a.build/'manifest.json'),'results':results,'structure':cert,'file_negatives':neg,'limits':['Zero-delay gate simulation and exact original pin certificate, not analog/PVT/CDC signoff.','Gate does not seed epoch DFFs to max; only real93 RTL terminal test and prior92 local control properties remain separate evidence. No inherited full formal93 proof.','store82 is behavioral in simulation; no real SRAM macro or SRAM timing qualification.']})
+ print('PASS_POSTPHYSICAL93_COMPLETE_GATES_AND_DECLARED_EPOCH_EXCEPTION'if post is not None else'PASS_ACTUAL93_COMPLETE_GATES_AND_DECLARED_EPOCH_EXCEPTION')
 def load_line(s):return __import__('json').loads(s)
 if __name__=='__main__':main()
