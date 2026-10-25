@@ -15,6 +15,9 @@ else:
  rawpass='PASS97_SELECTED_RAW_GATE';postpass='PASS97_SELECTED_POSTPHYSICAL_GATE';postcheck=checked_post97
  if a.gate is None:a.gate=R97/'gatereceive02'
 r=audit(a.stage,a.prepared,a.out,a.gate,None if pure else a.postgate);net=load(a.stage/'final.json')['modules']['chain'+str(a.target)];r['routing']=route_audit(a.stage,previous,net,library(LIB),pure)
+if sm.get('incremental_only')is True:
+ from incremental_audit import audit_incremental
+ r['incremental_change_audit']=audit_incremental(a.stage,previous,a.out)
 if sm['stage']=='caprepair':
  from cap_audit import audit_cap
  r['explicit_cap_buffer_certificate']=audit_cap(a.stage,previous,load(previous/'final.json')['modules']['chain'+str(a.target)],net,library(LIB))
