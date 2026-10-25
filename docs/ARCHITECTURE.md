@@ -190,3 +190,10 @@ RTL project/rtl/norm_service，工具project/experiments/norm_circuit；[README]
 ## Issue85 runtime cache replay
 
 project/experiments/runtime_cache/README.md记录本人服务器新out的build/sim/strict verify/map命令。source/input/output逐SHA，formal modes share one executable; cpp只喂bytes、观测输出与握手，数学接收独立。字节命令：python -B work/Liangruizhi/85/verify_delivery.py --index <final/index.json> --archive <selected.zip> --out <new-receipt.json>；原Git字节：python -B work/Liangruizhi/85/verify_sources.py --repository <repo> --index <index> --selected <selected.zip> --expected-phases 5 --out <new-source-receipt.json>。完整数组重算仍仅本人授权服务器；勿把字节接收当RTL/STA签核。
+
+
+## Issue91：有界 V/S 整合合同与结构验收
+
+[合同](V_S_INTEGRATION_CONTRACT_V1.md)、[Block库分层验收](BLOCK_LIBRARY_ACCEPTANCE.md)、[报告](experiments/issue-91-v-integration.md)。工具`project/experiments/v_integration`只做地址/live-range/符号行事务；本机可以运行，真实张量/RTL仍只本人服务器。先`python -B scripts/check_project.py`，再`python -B -m unittest discover -s project/experiments/v_integration -p "test_*.py" -v`（23项）。
+
+接收`python -B project/experiments/v_integration/verify.py --folder project/experiments/v_integration/results/issue-91 --out NEW_RECEIPT.json`，核18原Git源/4trace/8布局；`python -B work/Liangruizhi/91/replay_negatives.py --source project/experiments/v_integration/results/issue-91 --out NEW_DIR`重放4负例。所有新out在D盘本任务目录。结构计数不证明数值/RTL/cycle/面积/STA；program外存、LUT、frame及新增byte ALU成本不可混写，后续gamma streaming见合同。

@@ -1,0 +1,380 @@
+{
+  "schema": "v-integration91-contract-v1",
+  "issue": 91,
+  "kind": "structural_candidate_not_RTL",
+  "base_commit": "d60fac795ba6341df2e48804df564afd3e4e9818",
+  "store_bytes": 16384,
+  "line_bytes": 16,
+  "external_transaction_beats": 5,
+  "external_beat_bytes": 16,
+  "norm": {
+    "x": "I32Q12",
+    "gamma": "I32Q20",
+    "y": "I32Q12",
+    "stats": "U128",
+    "epsilon": "U32Q24",
+    "epsilon_frozen": 17,
+    "rounding": "floor sum/H; isqrt((mean+epsilon)<<40); signed ties-to-even division",
+    "minimum_h": 4,
+    "maximum_h": 2560,
+    "h_multiple": 4,
+    "tile_multiple": 4
+  },
+  "external_windows": {
+    "program": {
+      "start": 0,
+      "bytes": 33554432,
+      "active_bytes": 1928832,
+      "sha256": "37c08d589f73a8ae8c65ef32c5351c5d756af02ea9a8ca7e5b65e5ab7efc1393"
+    },
+    "lut": {
+      "start": 33554432,
+      "bytes": 131072,
+      "active_bytes": 73736,
+      "silu_offset": 0,
+      "silu_bytes": 65540,
+      "exp2_offset": 65540,
+      "exp2_bytes": 8196
+    },
+    "data": {
+      "start": 67108864,
+      "bytes": 67108864
+    }
+  },
+  "structural_input_addresses": {
+    "X": 67108864,
+    "G": 68157440,
+    "Y": 69206016
+  },
+  "profiles": [
+    {
+      "id": "h1536_resident_existing",
+      "h": 1536,
+      "mode": "resident",
+      "tile": 1536,
+      "frame_active": false,
+      "regions": [
+        {
+          "name": "XY",
+          "start": 0,
+          "bytes": 6144,
+          "live": [
+            "norm"
+          ]
+        },
+        {
+          "name": "G",
+          "start": 6144,
+          "bytes": 6144,
+          "live": [
+            "norm"
+          ]
+        },
+        {
+          "name": "A",
+          "start": 12288,
+          "bytes": 4096,
+          "live": [
+            "norm"
+          ]
+        }
+      ],
+      "expect_valid": true
+    },
+    {
+      "id": "h1536_stream_gamma",
+      "h": 1536,
+      "mode": "resident",
+      "tile": 256,
+      "frame_active": true,
+      "regions": [
+        {
+          "name": "XY",
+          "start": 0,
+          "bytes": 6144,
+          "live": [
+            "norm"
+          ]
+        },
+        {
+          "name": "G",
+          "start": 6144,
+          "bytes": 1024,
+          "live": [
+            "norm"
+          ]
+        },
+        {
+          "name": "V",
+          "start": 7168,
+          "bytes": 512,
+          "live": [
+            "norm"
+          ]
+        },
+        {
+          "name": "A",
+          "start": 12288,
+          "bytes": 4096,
+          "live": [
+            "norm"
+          ]
+        }
+      ],
+      "expect_valid": true
+    },
+    {
+      "id": "h2560_stream_gamma",
+      "h": 2560,
+      "mode": "resident",
+      "tile": 256,
+      "frame_active": true,
+      "regions": [
+        {
+          "name": "XY",
+          "start": 0,
+          "bytes": 10240,
+          "live": [
+            "norm"
+          ]
+        },
+        {
+          "name": "G",
+          "start": 10240,
+          "bytes": 1024,
+          "live": [
+            "norm"
+          ]
+        },
+        {
+          "name": "V",
+          "start": 11264,
+          "bytes": 512,
+          "live": [
+            "norm"
+          ]
+        },
+        {
+          "name": "A",
+          "start": 12288,
+          "bytes": 4096,
+          "live": [
+            "norm"
+          ]
+        }
+      ],
+      "expect_valid": true
+    },
+    {
+      "id": "h2560_stream_xy_gamma",
+      "h": 2560,
+      "mode": "stream",
+      "tile": 1408,
+      "frame_active": true,
+      "regions": [
+        {
+          "name": "XY",
+          "start": 0,
+          "bytes": 5632,
+          "live": [
+            "norm"
+          ]
+        },
+        {
+          "name": "G",
+          "start": 5632,
+          "bytes": 5632,
+          "live": [
+            "norm"
+          ]
+        },
+        {
+          "name": "V",
+          "start": 11264,
+          "bytes": 512,
+          "live": [
+            "norm"
+          ]
+        },
+        {
+          "name": "A",
+          "start": 12288,
+          "bytes": 4096,
+          "live": [
+            "norm"
+          ]
+        }
+      ],
+      "expect_valid": true
+    },
+    {
+      "id": "h1536_naive_add_frame",
+      "regions": [
+        {
+          "name": "XY",
+          "start": 0,
+          "bytes": 6144,
+          "live": [
+            "norm"
+          ]
+        },
+        {
+          "name": "G",
+          "start": 6144,
+          "bytes": 6144,
+          "live": [
+            "norm"
+          ]
+        },
+        {
+          "name": "A",
+          "start": 12288,
+          "bytes": 4096,
+          "live": [
+            "norm"
+          ]
+        },
+        {
+          "name": "V",
+          "start": 12288,
+          "bytes": 512,
+          "live": [
+            "norm"
+          ]
+        }
+      ],
+      "expect_valid": false
+    },
+    {
+      "id": "h2560_naive_full_gamma",
+      "regions": [
+        {
+          "name": "XY",
+          "start": 0,
+          "bytes": 10240,
+          "live": [
+            "norm"
+          ]
+        },
+        {
+          "name": "G",
+          "start": 10240,
+          "bytes": 10240,
+          "live": [
+            "norm"
+          ]
+        },
+        {
+          "name": "V",
+          "start": 20480,
+          "bytes": 512,
+          "live": [
+            "norm"
+          ]
+        }
+      ],
+      "expect_valid": false
+    },
+    {
+      "id": "h1536_post_m_overlay",
+      "regions": [
+        {
+          "name": "XY",
+          "start": 0,
+          "bytes": 6144,
+          "live": [
+            "m",
+            "v"
+          ]
+        },
+        {
+          "name": "G",
+          "start": 6144,
+          "bytes": 6144,
+          "live": [
+            "m",
+            "v"
+          ]
+        },
+        {
+          "name": "A",
+          "start": 12288,
+          "bytes": 4096,
+          "live": [
+            "m"
+          ]
+        },
+        {
+          "name": "V",
+          "start": 12288,
+          "bytes": 512,
+          "live": [
+            "v"
+          ]
+        }
+      ],
+      "expect_valid": true
+    },
+    {
+      "id": "silu_pre_m",
+      "regions": [
+        {
+          "name": "MID",
+          "start": 0,
+          "bytes": 2048,
+          "live": [
+            "silu"
+          ]
+        },
+        {
+          "name": "V",
+          "start": 2048,
+          "bytes": 512,
+          "live": [
+            "silu"
+          ]
+        },
+        {
+          "name": "G",
+          "start": 6144,
+          "bytes": 6144,
+          "live": [
+            "silu",
+            "m"
+          ]
+        },
+        {
+          "name": "A",
+          "start": 12288,
+          "bytes": 4096,
+          "live": [
+            "silu",
+            "m"
+          ]
+        },
+        {
+          "name": "XY",
+          "start": 0,
+          "bytes": 6144,
+          "live": [
+            "m"
+          ]
+        }
+      ],
+      "expect_valid": true
+    }
+  ],
+  "explicit_logic_obligations_bits": {
+    "command_payload_latch": 512,
+    "expert_delta8_s16": 128,
+    "gamma_tile_control": 112,
+    "response_routing_tags": 68
+  },
+  "notes": [
+    "No payload values, numerical arithmetic, clocks or measured hardware in structural traces.",
+    "Logical metadata widths are candidate obligations, not measured FF or additive area. Existing register reuse must be proven by liveness and synthesis.",
+    "Gamma control112 = logical_first12 + valid_count12 + consumed_count12 + physical_base10 + state2 + input_version32 + epoch32.",
+    "Routing68 = external client2+epoch32 and S client2+epoch32; response payloads use existing128bit holder subject to RTL proof.",
+    "Source X/G initially external. All output Y is drained. M-producer spill/packing, microcode/LUT/frame traffic, descriptors, metadata tags and response handshakes are excluded from these norm-only counts and must be added by future RTL."
+  ]
+}

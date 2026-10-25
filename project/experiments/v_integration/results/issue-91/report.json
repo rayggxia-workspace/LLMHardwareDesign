@@ -1,0 +1,240 @@
+{
+  "contract_sha256": "a2abcf1f767fb5148995af22437445d054275b2c7c08354270922faae87164fd",
+  "exclusions": [
+    "No payload values, numerical arithmetic, clocks or measured hardware in structural traces.",
+    "Logical metadata widths are candidate obligations, not measured FF or additive area. Existing register reuse must be proven by liveness and synthesis.",
+    "Gamma control112 = logical_first12 + valid_count12 + consumed_count12 + physical_base10 + state2 + input_version32 + epoch32.",
+    "Routing68 = external client2+epoch32 and S client2+epoch32; response payloads use existing128bit holder subject to RTL proof.",
+    "Source X/G initially external. All output Y is drained. M-producer spill/packing, microcode/LUT/frame traffic, descriptors, metadata tags and response handshakes are excluded from these norm-only counts and must be added by future RTL."
+  ],
+  "layouts": {
+    "h1536_naive_add_frame": {
+      "active_bytes_by_phase": {
+        "norm": 16896
+      },
+      "errors": [
+        "live overlap: A/V"
+      ],
+      "valid": false
+    },
+    "h1536_post_m_overlay": {
+      "active_bytes_by_phase": {
+        "m": 16384,
+        "v": 12800
+      },
+      "errors": [],
+      "valid": true
+    },
+    "h1536_resident_existing": {
+      "active_bytes_by_phase": {
+        "norm": 16384
+      },
+      "errors": [],
+      "valid": true
+    },
+    "h1536_stream_gamma": {
+      "active_bytes_by_phase": {
+        "norm": 11776
+      },
+      "errors": [],
+      "valid": true
+    },
+    "h2560_naive_full_gamma": {
+      "active_bytes_by_phase": {
+        "norm": 20992
+      },
+      "errors": [
+        "out of bounds: G",
+        "out of bounds: V"
+      ],
+      "valid": false
+    },
+    "h2560_stream_gamma": {
+      "active_bytes_by_phase": {
+        "norm": 15872
+      },
+      "errors": [],
+      "valid": true
+    },
+    "h2560_stream_xy_gamma": {
+      "active_bytes_by_phase": {
+        "norm": 15872
+      },
+      "errors": [],
+      "valid": true
+    },
+    "silu_pre_m": {
+      "active_bytes_by_phase": {
+        "m": 16384,
+        "silu": 12800
+      },
+      "errors": [],
+      "valid": true
+    }
+  },
+  "schema": "v-integration91-structure-v1",
+  "source_commit": "8fa5dde64dc26802087cd618d8a8d95bc8dd268a",
+  "sources": [
+    {
+      "bytes": 9034,
+      "path": "project/experiments/block_circuit/assemble.py",
+      "sha256": "52e4c2164f53eba58e18cb19870879e7d187ca9912fbf3c0b6a09e81d0570fff"
+    },
+    {
+      "bytes": 14045,
+      "path": "project/experiments/block_circuit/results/issue-80/comparison.json",
+      "sha256": "e5118fb63228ead7cf0227104dcd769752825e617e06f68146776685a9d07b24"
+    },
+    {
+      "bytes": 20899,
+      "path": "project/experiments/granite_ports/run_server.py",
+      "sha256": "1a134e9f1c859851e1c06742f6f2d96e9db9d7d9e49785587d3c161d65871610"
+    },
+    {
+      "bytes": 27589,
+      "path": "project/experiments/moe_grouped/granite_chain.py",
+      "sha256": "2211d213e55b29ce35c38f9e95e2d48c7fa12d3c743c23b933ec1777c17a2bd5"
+    },
+    {
+      "bytes": 7866,
+      "path": "project/experiments/v_integration/contract.json",
+      "sha256": "a2abcf1f767fb5148995af22437445d054275b2c7c08354270922faae87164fd"
+    },
+    {
+      "bytes": 7340,
+      "path": "project/experiments/v_integration/layout.py",
+      "sha256": "3becfb4256cd0cb21a3fdaa576b33132e93adcda48ac05f0ea421eaa85c8fd1e"
+    },
+    {
+      "bytes": 5579,
+      "path": "project/experiments/v_integration/test_contract.py",
+      "sha256": "5dbf52feb44e080fd1f726cabd638cb07c36d40bbc6ceee8681ba9de5f0c27f5"
+    },
+    {
+      "bytes": 12212,
+      "path": "project/experiments/v_integration/verify.py",
+      "sha256": "18a01d8b8d756300a4529d83e196e53f94790bcd1ea9969f0acd773092f5a247"
+    },
+    {
+      "bytes": 432,
+      "path": "project/rtl/norm_service/store82.sv",
+      "sha256": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70"
+    },
+    {
+      "bytes": 4728,
+      "path": "project/rtl/runtime_cache/chain85.sv",
+      "sha256": "aa1b0f6db0133dfa0db18e748ee8b69ce1e846300c31fcdb630502d051bbc8d0"
+    },
+    {
+      "bytes": 5734,
+      "path": "project/rtl/runtime_cache/mfront85.sv",
+      "sha256": "04391b2eaed06f8dda19c33ddbeee30c49ad6ce233fe874ad26f712bef7014eb"
+    },
+    {
+      "bytes": 1401,
+      "path": "project/rtl/runtime_cache/mul84.sv",
+      "sha256": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c"
+    },
+    {
+      "bytes": 4010,
+      "path": "project/rtl/runtime_cache/norm84.sv",
+      "sha256": "cd6532b9eaabe193e11d19829bf069bcf514bc7fb32b674dbb429fe262ea6e4b"
+    },
+    {
+      "bytes": 2175,
+      "path": "project/rtl/runtime_cache/sfu84.sv",
+      "sha256": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834"
+    },
+    {
+      "bytes": 1435,
+      "path": "project/rtl/wide_service/byte_alu.sv",
+      "sha256": "84d0e38f4cb57358669dade9c1ee214b4d610e25f3173d5a871966f9518ddd2f"
+    },
+    {
+      "bytes": 927,
+      "path": "project/rtl/wide_service/ram128.sv",
+      "sha256": "c5f63ce2a60bb7614c052b711c1c82c736022c74f9f620c93969be56decbafa7"
+    },
+    {
+      "bytes": 3194,
+      "path": "project/rtl/wide_service/wide_block.sv",
+      "sha256": "b4279a6a156ce3203b4a2dc13e7c0ee62e2db97e8767876b3b811d7567d12354"
+    },
+    {
+      "bytes": 7441,
+      "path": "project/rtl/wide_service/wide_engine.sv",
+      "sha256": "5bf1d2dc69be5d8cd24ba166f7a267848c3a4a3f5b34382ad974e398f1c26f98"
+    }
+  ],
+  "status": "STRUCTURAL_ONLY_NOT_RTL",
+  "traces": {
+    "h1536_resident_existing": {
+      "bytes": 20813,
+      "counters": {
+        "E_R": 768,
+        "E_W": 384,
+        "S_R": 1536,
+        "S_W": 1152,
+        "external_payload_bytes": 18432,
+        "external_transactions": 1152,
+        "prototype_wire_bytes": 92160,
+        "store_line_bytes": 43008,
+        "store_operations": 2688
+      },
+      "events": 4227,
+      "path": "h1536_resident_existing.jsonl.gz",
+      "sha256": "5e36178555f536d58b1e9205124d5e8279264bc449bcf6b7811bca70c9a6b68c"
+    },
+    "h1536_stream_gamma": {
+      "bytes": 20044,
+      "counters": {
+        "E_R": 768,
+        "E_W": 384,
+        "S_R": 1536,
+        "S_W": 1152,
+        "external_payload_bytes": 18432,
+        "external_transactions": 1152,
+        "prototype_wire_bytes": 92160,
+        "store_line_bytes": 43008,
+        "store_operations": 2688
+      },
+      "events": 4232,
+      "path": "h1536_stream_gamma.jsonl.gz",
+      "sha256": "fc2116d45a4e98cce9091a2f76a96facfa0e6e0ec44e59f2803dcd6669d7f958"
+    },
+    "h2560_stream_gamma": {
+      "bytes": 33707,
+      "counters": {
+        "E_R": 1280,
+        "E_W": 640,
+        "S_R": 2560,
+        "S_W": 1920,
+        "external_payload_bytes": 30720,
+        "external_transactions": 1920,
+        "prototype_wire_bytes": 153600,
+        "store_line_bytes": 71680,
+        "store_operations": 4480
+      },
+      "events": 7052,
+      "path": "h2560_stream_gamma.jsonl.gz",
+      "sha256": "2572e708134c9ca752df59e7837458ab6542b66781f8bf0b1bc2909873674aaf"
+    },
+    "h2560_stream_xy_gamma": {
+      "bytes": 41898,
+      "counters": {
+        "E_R": 1920,
+        "E_W": 640,
+        "S_R": 2560,
+        "S_W": 2560,
+        "external_payload_bytes": 40960,
+        "external_transactions": 2560,
+        "prototype_wire_bytes": 204800,
+        "store_line_bytes": 81920,
+        "store_operations": 5120
+      },
+      "events": 8324,
+      "path": "h2560_stream_xy_gamma.jsonl.gz",
+      "sha256": "fcecc81dfa6e56792d048c3d5a454b1e3a3f7a037de3a9194d095d78b2907582"
+    }
+  }
+}
