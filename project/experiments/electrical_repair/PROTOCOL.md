@@ -1,0 +1,7 @@
+# Issue88 bounded electrical repair
+
+Owner Liangruizhi. Base Issue86 e3a8fee; only own server issue88-electrical-repair-20261025/lrz-i88-*; existing tools and research Nangate45 views read-only. No downloads, tool install, task55/63 changes or Issue85 timing inheritance.
+
+Freeze the four exact Issue84 mapped logic variants and Issue86 store82 interface cut. Keep identical integer function, existing registers, cut pins, 10ns ideal clock, 0 uncertainty, 0.05ns input/clock transition, max IO delay0.1ns/min0, output loads1fF and10fF. No false paths, deleted interfaces, retiming, new free memory/ports. At most two declared buffer/resize passes per variant after one pilot; same rule and area limits for all variants. All added cells and changed drive strengths are inventory and area, not cost-free platform wiring. A research floorplan/estimated RC, if needed by the tool, must be declared and compared with matching unmodified baseline; never mix no-RC baseline and RC repair. No post-manufacturing added active devices claim.
+
+Accept only actual complete consumer gate replay on repaired mapped cells plus the same behavioral store82 wrapper, independent original integer reference and configuration/SHA checks. Measure setup/hold, max slew/cap, all DFF/cut/IO coverage, cell histogram/area and net changes. Residual violations and rejected/tool failures remain visible. No target SRAM, physical routing, target Fmax or full Block signoff implied. New directories only. Main chat handles remote delivery after clean local commits.
