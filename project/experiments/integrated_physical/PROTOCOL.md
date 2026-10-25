@@ -134,3 +134,21 @@ All changed cells/area/port input load and final endpoint sets are counted, with
 a newly bound exact gate. Initial20min/1100s ceiling and no hidden tuning remain.
 97 C4 may first take the identical pure GRT candidate only if actually received
 all-constraint closure. Its GRT/repair/gate results are independent of93.
+
+
+## Explicit local cap candidate2 (one attempt per actual core)
+
+First routed repair is received but fails cap: actual93 has12 residual driver
+nets and actual97 has5. Freeze each own `cap-plan*02/plan.json` SHA/driver set,
+BUF_X4 only, original driver location then legalize, one complete GRT50 and full
+RC/dual-load endpoint checks. No further automatic repair in this candidate.
+Actual library BUF_X4 area1.862 um2, output maxcap242.31fF, input max3.401892fF;
+93 adds22.344um2,97 adds9.310um2 before any geometry influence. Existing reported
+loads are feasibility inputs, not post-buffer qualification. All original driver
+pins must drive only the new BUF.A; BUF.Z must carry exactly all original sinks.
+All prior cells/types/ports/FF and their collapsed pin classes must remain;
+newcell set exactly matches the frozen list. No clock-net buffer insertion.
+64 cells is an explicit abort ceiling, not permission to search additional nets.
+Keep10ns/min0/dual-load/allports/area79600.5 and 20min/1100s limits. Every actual
+changed final netlist requires its own exact gate. Failure is retained, not
+silently followed by another cap candidate.
