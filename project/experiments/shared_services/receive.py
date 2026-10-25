@@ -66,7 +66,7 @@ def inspect(inp,run,oracle):
     n=spec['length'];need(row['transactions']==256*n+2*eligible and row['mul0']==8*n and row['mul1']==0 and row['fgrants']==eligible,'A shared traffic');need(row['result_lines']==256,'A full export');need(row['sreads']==384*n+16*((n+3)//4)+128*((n+7)//8)+256*((n+15)//16-1)+256 and row['swrites']==256*n+8*((n+3)//4)+8*((n+7)//8)+256*((n+15)//16),'A actual S includes result export')
    if status==17:need(row['transactions']==row['mul0']==row['mul1']==row['fgrants']==row['sreads']==row['swrites']==row['result_lines']==0,'metadata rejection no service effects')
    if status!=17:
-    reg_version=(3 if role in('recover-stale','terminal-max')else 1 if role in('initial-A','mixed-Afull','after-reset-A')else 2);reg_length=spec['length']
+    reg_version=(4 if role in('recover-stale','terminal-max')else 3 if role=='later-Acached'else 1 if role in('initial-A','mixed-Afull','after-reset-A')else 2);reg_length=spec['length']
   else:
    need(kind==2 and row['name']=='head0','exact R head');need(not any(row[k]for k in ['mid','A8','delta','acc','down','joined','qk','score','exp','sum','P']),'R exact observation domain')
    if role=='init':need(row['transactions']==8225 and row['root_writes']==1 and row['result_lines']==0,'actual full state INIT')
