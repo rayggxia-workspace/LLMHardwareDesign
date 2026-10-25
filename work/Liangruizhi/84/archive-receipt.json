@@ -1,0 +1,96 @@
+{
+  "submissions": [
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/phase7/work/Liangruizhi/84/collect.py",
+        "--root",
+        "/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025",
+        "--config",
+        "/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/collect-config.json",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/delivery01"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/phase7/work/Liangruizhi/84/collect.py --root /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025 --config /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/collect-config.json --out /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/delivery01",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i84-collect01",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:20:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/collect01-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/phase7/work/Liangruizhi/84/collect.py --root /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025 --config /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/collect-config.json --out /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/delivery01"
+      ],
+      "stdout": "90729",
+      "phase": "phase7",
+      "binding_sha256": "1d225b71ead41b61697f3b5ca59a5c9a06458e289372286824da234290eaf400"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/phase7/project/experiments/closure/verify_delivery.py",
+        "--index",
+        "/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/delivery01/index.json",
+        "--archive",
+        "/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/delivery01/full-results.zip",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/receipt-byte-full-results01.json"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/phase7/project/experiments/closure/verify_delivery.py --index /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/delivery01/index.json --archive /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/delivery01/full-results.zip --out /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/receipt-byte-full-results01.json",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i84-byte-full-results01",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:20:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/byte-full-results01-%j.log",
+        "--dependency=afterok:90729",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/phase7/project/experiments/closure/verify_delivery.py --index /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/delivery01/index.json --archive /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/delivery01/full-results.zip --out /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/receipt-byte-full-results01.json"
+      ],
+      "stdout": "90730",
+      "phase": "phase7",
+      "binding_sha256": "1d225b71ead41b61697f3b5ca59a5c9a06458e289372286824da234290eaf400"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/phase7/project/experiments/closure/verify_delivery.py",
+        "--index",
+        "/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/delivery01/index.json",
+        "--archive",
+        "/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/delivery01/selected.zip",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/receipt-byte-selected01.json"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/phase7/project/experiments/closure/verify_delivery.py --index /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/delivery01/index.json --archive /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/delivery01/selected.zip --out /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/receipt-byte-selected01.json",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i84-byte-selected01",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:20:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/byte-selected01-%j.log",
+        "--dependency=afterok:90729",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/phase7/project/experiments/closure/verify_delivery.py --index /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/delivery01/index.json --archive /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/delivery01/selected.zip --out /public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/receipt-byte-selected01.json"
+      ],
+      "stdout": "90731",
+      "phase": "phase7",
+      "binding_sha256": "1d225b71ead41b61697f3b5ca59a5c9a06458e289372286824da234290eaf400"
+    }
+  ],
+  "slurm": "90729|COMPLETED|0:0\n90730|COMPLETED|0:0\n90731|COMPLETED|0:0\n{\n  \"schema\": \"issue72-byte-reception-v1\",\n  \"status\": \"PASS_BYTE_RECEPTION\",\n  \"archive\": \"full-results.zip\",\n  \"bytes\": 279763633,\n  \"sha256\": \"290113c6ed0b35ce801fbbc3a417b743a55934cea0ebef1754a00b6326603f69\",\n  \"members_checked\": 799,\n  \"source_commit\": \"302f18a2c719e37f49716d43c78de6ed19067e75\",\n  \"limits\": [\n    \"Byte reception only; see separately bound server mathematical receipts.\",\n    \"No application quality, native INT8 speed, RTL or PPA acceptance.\"\n  ]\n}\n{\n  \"schema\": \"issue72-byte-reception-v1\",\n  \"status\": \"PASS_BYTE_RECEPTION\",\n  \"archive\": \"selected.zip\",\n  \"bytes\": 2900792,\n  \"sha256\": \"1af3d45efe541e15dbe116089eb32281d9bec4252ab3661d82315716c1001e4a\",\n  \"members_checked\": 300,\n  \"source_commit\": \"302f18a2c719e37f49716d43c78de6ed19067e75\",\n  \"limits\": [\n    \"Byte reception only; see separately bound server mathematical receipts.\",\n    \"No application quality, native INT8 speed, RTL or PPA acceptance.\"\n  ]\n}\n",
+  "index_sha256": "36b76d173dde2fab6cd35744d8aa47b2231af61f714f0b0d97e0ca748b9aa1c2",
+  "comparison_sha256": "873fbd5b435ffbb93e73e782ee62d72407053143553a4be8dd7f577ff56cc0cc"
+}

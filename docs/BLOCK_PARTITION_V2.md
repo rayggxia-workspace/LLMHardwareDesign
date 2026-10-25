@@ -222,3 +222,14 @@ micro03有807case/1,082,106实际byte RTL动作、132真实Granite码及69ROM请
 当前完整消费者P0/P2为9084871/8888119 cycles（同等待10684231/10487479），只降2.166%/1.842%，研究库logic-only面积49342.468/62387.640µm²，增加26.44%，整个共同16KiB wrapper排除。共享时钟降低约2%即可抹去全链cycle收益，不能据孤立norm76.19%下降冻结SFU4。目标STA/存储宏、全模型质量、独立fabric复位仍未验。
 
 下一最小集优先同容量/端口A-cache减少重复喂数，以及复用公共RQ乘法器到norm，付清控制/接口成本；当前4096B余量并非所有模型都有。通用18函数V/ROM没有被norm专项电路替代，整合库存需重新验证。六逻辑模板和跨模板产品定制仍保留，详见[决策](decisions/2026-10-25-exact-norm-and-m-consumer.md)。Issue82/PR83待审查合并，非最终物理定稿。
+
+
+## 17. Issue84：有条件A缓存与宽乘法共享
+
+[同精度/容量/端口RTL报告](experiments/issue-84-cache-share.md)补84条真实完整M消费者命令：全部acc/down/join/norm逐位一致；固定16KiB单1RW及128bit物理协议，A缓存使安静/背压cycles减少34.68%/33.07%，外部线传输减少49.20%。cache＋一个共享S32服务的logic-only面积相对本轮双乘法器无缓存基线减少10.38%，额外line/response/FSM/counter均计。共享同数值、不同乘法器数量，不称同算术库存/同面积。
+
+边界进一步收敛：M内部应有可明确归属的A复用状态、全K32累加和打包/重用连接；低频宽RQ与Norm可候选同一有限S32服务，保留逻辑角色和握手，不强制物理合宏。单独的宽服务/1step SFU比立即追加4step SFU更值得当前验证。
+
+反例限制固定决策：cache占8expert×512=4096B现有余量；shared frame其余12288B为X/Y和gamma，未增加SRAM端口。缓存多393472片内操作，固定额外8拍/操作已略慢、12拍慢17.38%，阈值约7.987拍；因此保留旁路/端口预算。当前CACHE是编译参数，运行时旁路未实现。M/Norm串行零仲裁冲突；独立并发RTL压力通过不等于重叠流零成本。
+
+H2560/multi-context、真实bank/长线/STA/宏/功耗、在线router/SiLU及全模型质量均未验，16KiB能容纳此Granite不能推广全部模型。父Issue82结论及旧失败保留。[决策](decisions/2026-10-25-cache-and-shared-multiplier.md)和源码/数据/失败SHA索引随PR交付，待审查合并，非done。
