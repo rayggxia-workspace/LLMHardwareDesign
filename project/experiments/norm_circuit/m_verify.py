@@ -17,8 +17,8 @@ def reference(root,c):
  for row in range(1536):
   total=0
   for rank in range(8):
-   h=head[row,rank].tobytes();mant=int.from_bytes(h[:4],'little',signed=True);shift=int.from_bytes(h[4:6],'little',signed=True);gate=int.from_bytes(h[6:8],'little');down[row,rank]=rne(int(acc[row,rank])*mant,shift);total+=int(down[row,rank])*gate
-  h=head[row,0].tobytes();res=int.from_bytes(h[8:12],'little',signed=True);scale=int.from_bytes(h[12:16],'little',signed=True);joined.append(rne(rne(total,15)*scale,20)+res)
+   h=head[row,rank].tobytes();mant=int.from_bytes(h[:4],'little',signed=True);shift=31-int.from_bytes(h[4:6],'little',signed=True)-int.from_bytes(h[6:8],'little',signed=True);gate=int.from_bytes(h[8:10],'little');down[row,rank]=rne(int(acc[row,rank])*mant,shift);total+=int(down[row,rank])*gate
+  h=head[row,0].tobytes();res=int.from_bytes(h[10:14],'little',signed=True);scale=c['coefficient'];joined.append(rne(rne(total,15)*scale,20)+res)
  gamma=np.frombuffer(bytes.fromhex(c['gamma']),dtype='<i4').astype(int).tolist();st,out=oracle({'h':1536,'x':joined,'gamma':gamma,'epsilon':17})
  if st:raise ValueError('independent norm failed')
  original=json.loads((root/c['original']).read_text())

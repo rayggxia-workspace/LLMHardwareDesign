@@ -26,9 +26,9 @@ static W cfg(bool wr,int addr,W w={}){d.cfg=1;d.cfg_wr=wr;d.cfg_addr=addr;d.cfg_
 static std::vector<uint8_t> unhex(std::string s){std::vector<uint8_t>r;if(s=="-")return r;for(size_t i=0;i<s.size();i+=2)r.push_back(std::stoul(s.substr(i,2),nullptr,16));return r;}
 static void load(std::string s,int base){auto a=unhex(s);for(size_t j=0;j<a.size();j+=16){W w{};for(int i=0;i<16;i++)w[i/4]|=uint32_t(a[j+i])<<(8*(i%4));cfg(true,base+j/16,w);}}
 int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);need(argc==4,"vectors output stall");stall=std::stoi(argv[3]);d.reset=1;step();step();d.reset=0;step();
- std::ifstream in(argv[1]);std::ofstream out(argv[2]);need(bool(in)&&bool(out),"files");std::string name,file,g;int count=0;
+ std::ifstream in(argv[1]);std::ofstream out(argv[2]);need(bool(in)&&bool(out),"files");std::string name,file,g;unsigned coefficient;int count=0;
  auto array=[&](const std::vector<int32_t>&v){out<<"[";for(size_t i=0;i<v.size();i++){if(i)out<<",";out<<v[i];}out<<"]";};
- while(in>>name>>file>>g){std::ifstream bin(file,std::ios::binary);payload.assign(std::istreambuf_iterator<char>(bin),{});need(payload.size()==12779520,"finite actual M payload");accs.clear();downs.clear();joins.clear();serial=0;seen=false;waits=0;ext_serial=0;auto start=ticks;load(g,384);auto setup=ticks-start;auto b0=d.wire_beats,t0=d.transactions;d.epsilon=17;d.cmd=1;step();d.cmd=0;d.epsilon=0;start=ticks;
+ while(in>>name>>file>>g>>coefficient){std::ifstream bin(file,std::ios::binary);payload.assign(std::istreambuf_iterator<char>(bin),{});need(payload.size()==12779520,"finite actual M payload");accs.clear();downs.clear();joins.clear();serial=0;seen=false;waits=0;ext_serial=0;auto start=ticks;load(g,384);auto setup=ticks-start;auto b0=d.wire_beats,t0=d.transactions;d.epsilon=17;d.coefficient=coefficient;d.cmd=1;step();d.cmd=0;d.epsilon=0;d.coefficient=0;start=ticks;
  while(!d.done){step();need(ticks-start<30000000,"chain watchdog");need(!d.cfg_ready,"busy blocks cfg");}
  auto cy=d.cycles,ncy=d.norm_cycles;auto r=d.reads,w=d.writes;auto packets=d.packets,macs=d.macs,mw=d.mwrites;auto beats=d.wire_beats-b0,transactions=d.transactions-t0;unsigned st=d.status;
  need(st==0,"M/full norm status");need(accs.size()==12288&&downs.size()==12288&&joins.size()==1536,"full M observation counts");need(beats==transactions*5,"all serialized link beats");

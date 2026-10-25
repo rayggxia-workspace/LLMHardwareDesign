@@ -38,7 +38,7 @@ def resources(folder,top,library):
 def main():
  p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--library',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(exist_ok=False)
  rows=[];rs={};evidence=[]
- for kind,suffix,top in(('norm','01','block82'),('M','02','chain82')):
+ for kind,suffix,top in(('norm','01','block82'),('M','03','chain82')):
   for profile in range(3):
    for stall in range(2):
     tag=(''if kind=='norm'else'M-')+f'rtl-p{profile}s{stall}{suffix}';receipt=a.root/('receipt-'+tag+'.json');m=load(receipt);run=a.root/tag
@@ -50,7 +50,7 @@ def main():
     actual=[load_line for load_line in map(json.loads,(run/'actual.jsonl').read_text().splitlines())]
     rs[kind,profile,stall]=actual
     evidence.append({'run':tag,'receipt_sha256':sha(receipt),'run_manifest_sha256':sha(run/'manifest.json')})
-   mapping=a.root/(f'map-p{profile}01'if kind=='norm'else f'M-map-p{profile}03');r=resources(mapping,top,a.library)
+   mapping=a.root/(f'map-p{profile}01'if kind=='norm'else f'M-map-p{profile}04');r=resources(mapping,top,a.library)
    func=load(a.root/('receipt-'+(''if kind=='norm'else'M-')+f'rtl-p{profile}s0{suffix}'+'.json'))
    for n,d in func['source']['sources'].items():
     if n.startswith('project/rtl/')and n.endswith('.sv'):need(r['source']['sources'].get(n)==d,'mapped RTL exact functional source')
@@ -68,6 +68,6 @@ def main():
   for kind in('norm','M'):
    values=[next(x for x in rs[kind,p,s]if x['name']=='L0T0')for p in range(3)]
    c=[x['cycles']for x in values];metrics.append({'kind':kind,'stall':s,'representative':'L0T0','cycles':c,'P2_vs_P0_cycle_reduction_percent':100*(c[0]-c[2])/c[0],'P2_vs_P0_equal_time_min_clock_ratio':c[2]/c[0],'P2_vs_P1_equal_time_min_clock_ratio':c[2]/c[1],'rows':[{k:v for k,v in x.items()if k not in('out','acc','down','joined')}for x in values]})
- result={'status':'PASS_SOURCE_FUNCTION_RESOURCE_AREA_COMPARISON','formal_norm_commands':84,'formal_M_commands':36,'resources':rows,'metrics':metrics,'evidence':evidence,'limits':['Only this finite full-K matrix consumer, not full model. Prior36 M commands retained as precursor, not extra distinct inputs.','Exact native wide add/sub/compare/shift and iterative SFU hardware are included even PROFILE0 is not byte-only hardware.','Same memory/precision/ports, different arithmetic area; no same-area claim or clock/STA/PPA qualification.','Entire common16KiB store82 wrapper excluded from logic-only mapping; actual memory bits and generic flops separate.','Standalone norm specialization does not replace the general18function V/ROM. Whole-system integration and arbitration costs remain to be validated.','M feed uses repeated A/W paired beats and fixed128bit serialization; packing CPU latency, real DMA/native model throughput and postroute timing are outside cycles.']}
+ result={'status':'PASS_SOURCE_FUNCTION_RESOURCE_AREA_COMPARISON','formal_norm_commands':84,'formal_M_commands':36,'resources':rows,'metrics':metrics,'evidence':evidence,'limits':['Only this finite full-K matrix consumer, not full model. Prior72 M commands retained as precursors, not extra distinct inputs.','Exact native wide add/sub/compare/shift and iterative SFU hardware are included even PROFILE0 is not byte-only hardware.','Same memory/precision/ports, different arithmetic area; no same-area claim or clock/STA/PPA qualification.','Entire common16KiB store82 wrapper excluded from logic-only mapping; actual memory bits and generic flops separate.','Standalone norm specialization does not replace the general18function V/ROM. Whole-system integration and arbitration costs remain to be validated.','M feed uses repeated A/W paired beats and fixed128bit serialization; packing CPU latency, real DMA/native model throughput and postroute timing are outside cycles.']}
  (a.out/'report.json').write_text(json.dumps(result,indent=2)+'\n');print(result['status'])
 if __name__=='__main__':main()

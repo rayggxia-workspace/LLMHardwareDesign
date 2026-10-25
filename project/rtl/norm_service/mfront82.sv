@@ -1,5 +1,5 @@
 // Full K512, all8 selected experts, H1536. No host intermediate arithmetic.
-module mfront82(input wire clk,reset,start,ack,output wire done,output reg [7:0] status,
+module mfront82(input wire clk,reset,start,ack,input wire [31:0] coefficient,output wire done,output reg [7:0] status,
  output wire req,output wire [31:0] addr,input wire ready,valid,output wire take,input wire [127:0] data,
  output wire sreq,output wire [9:0] saddr,output wire [127:0] sdata,input wire sready,svalid,output wire stake,
  output reg [31:0] packets,macs,store_lines,output reg obs_valid,output reg [10:0] obs_row,output reg [2:0] obs_rank,output reg signed [31:0] obs_acc,obs_down);
@@ -11,6 +11,7 @@ module mfront82(input wire clk,reset,start,ack,output wire done,output reg [7:0]
  assign p[j]=$signed(blockdata[8*j+:8])*$signed(blockdata[64+8*j+:8]);end endgenerate
  wire signed [31:0] part={{16{p[0][15]}},p[0]}+{{16{p[1][15]}},p[1]}+{{16{p[2][15]}},p[2]}+{{16{p[3][15]}},p[3]}+{{16{p[4][15]}},p[4]}+{{16{p[5][15]}},p[5]}+{{16{p[6][15]}},p[6]}+{{16{p[7][15]}},p[7]};
  wire signed [63:0] mp=ma*mb;
+ wire signed [17:0] unit_shift=18'sd31-$signed({{2{data[47]}},data[47:32]})-$signed({{2{data[63]}},data[63:48]});
  function signed [63:0] rne(input signed [63:0] v,input [15:0] s);
  reg [63:0] mag,q,r,half;
  begin mag=v[63]?-v:v;if(s==0)rne=v;else if(s>=64)rne=0;else begin q=mag>>s;r=mag-(q<<s);half=64'd1<<(s-1);if(r>half||(r==half&&q[0]))q=q+1; rne=v[63]?-$signed(q):$signed(q);end end endfunction
@@ -24,8 +25,8 @@ module mfront82(input wire clk,reset,start,ack,output wire done,output reg [7:0]
   else begin obs_valid<=0;case(state)
    IDLE:if(start)begin state<=HR;status<=0;row<=0;rank<=0;pointer<=0;merge<=0;packets<=0;macs<=0;store_lines<=0;end
    HR:if(ready)begin state<=HW;packets<=packets+1;end
-   HW:if(valid)begin mant<=data[31:0];shift<=data[47:32];gate<=data[63:48];residual<=data[95:64];scale<=data[127:96];chunk<=0;accum<=0;pointer<=pointer+1;
-    if(data[47])begin status<=1;state<=DONE;end else state<=DR;end
+   HW:if(valid)begin mant<=data[31:0];shift<=unit_shift>=64?16'd64:unit_shift[15:0];gate<=data[79:64];residual<=data[111:80];scale<=coefficient;chunk<=0;accum<=0;pointer<=pointer+1;
+    if(unit_shift<0||data[127:112]!=0)begin status<=1;state<=DONE;end else state<=DR;end
    DR:if(ready)begin state<=DW;packets<=packets+1;end
    DW:if(valid)begin blockdata<=data;pointer<=pointer+1;state<=MAC;end
    MAC:begin macs<=macs+8;accum<=accum+part;if(chunk==63)begin ma<=accum+part;mb<=mant;state<=PM;end else begin chunk<=chunk+1;state<=DR;end end
