@@ -4,6 +4,7 @@ from decimal import Decimal
 from common import *
 from admission93 import admit,MAP
 from canonical import canonical_cut
+from constraints_audit import audit_sdc
 sys.path.insert(0,str(ROOT/'project/experiments/electrical_repair'))
 from structure import library,certificate,input_loads
 
@@ -65,6 +66,7 @@ def audit(folder,prepared,out,gate=None):
  need(original==before,'independent original mapped source cut all cells ports and nets');before=canonical_cut(prepared,out/'canonical');after=load(folder/'final.json')['modules']['chain93'];cert=certificate(before,after,lib);need(Decimal(cert['after_area_um2'])<=Decimal('79600.5'),'98 cell budget');
  if fm['stage']in('zero','place'):need(cert['added_histogram']=={}and cert['resized']==[],'no implicit buffer/resize in baseline')
  need(Decimal(str(load(folder/'stat.json')['design']['area']))==Decimal(cert['after_area_um2']),'independent exact library area')
+ sdc=audit_sdc((folder/'final.sdc').read_text(),after['ports'])
  ff={n+'/D'for n,c in after['cells'].items()if any(lib[c['type']]['sequential'].values())};outs={bracket_name(n,p,i)for n,p in after['ports'].items()if p['direction']=='output'for i in range(len(p['bits']))};exclude={bracket_name(e['port'],after['ports'][e['port']],e['bit'])for e in cert['constant_output_bits']};expected=ff|(outs-exclude)
  log=(folder/'flow.log').read_text();need(log.count('FLOW_EXECUTION_COMPLETE')==1,'actual tool completion marker');scenarios=[]
  for k in (1,10):
@@ -83,7 +85,7 @@ def audit(folder,prepared,out,gate=None):
   if gate is not None:
    gr=load(gate/'receipt.json');need(gr['status']=='PASS_ACTUAL93_COMPLETE_GATES_AND_DECLARED_EPOCH_EXCEPTION'and gr['admission']==ad and gr['prepared_manifest_sha256']==sha(prepared/'manifest.json'),'independent same exact complete raw gate');gate_status='PASS_COMPLETE_RAW_GATE';gate_sha=sha(gate/'receipt.json')
  if fm['stage']in('place','repair'):block(log,'BEGIN_CHECK_PLACEMENT','END_CHECK_PLACEMENT');geo=geometry_connectivity((folder/'placed.def').read_text(),after,lib)
- return {'stage':fm['stage'],'stage_manifest_sha256':sha(folder/'manifest.json'),'structure':cert,'input_sink_costs':input_loads(after,lib),'scenarios':scenarios,'physical_geometry':geo,'all_declared_internal_timing_electrical_closed':all(s['closed']for s in scenarios),'raw_gate_status':gate_status,'gate_receipt_sha256':gate_sha,'physical_stage_accepted':fm['stage']in('place','repair')and gate_status=='PASS_COMPLETE_RAW_GATE'and all(s['closed']for s in scenarios),'macro_clock_load_qualified':False,'upstream_drive_qualified':False,'manufacturable':False}
+ return {'stage':fm['stage'],'stage_manifest_sha256':sha(folder/'manifest.json'),'structure':cert,'actual_constraints':sdc,'input_sink_costs':input_loads(after,lib),'scenarios':scenarios,'physical_geometry':geo,'all_declared_internal_timing_electrical_closed':all(s['closed']for s in scenarios),'raw_gate_status':gate_status,'gate_receipt_sha256':gate_sha,'physical_stage_accepted':fm['stage']in('place','repair')and gate_status=='PASS_COMPLETE_RAW_GATE'and all(s['closed']for s in scenarios),'macro_clock_load_qualified':False,'upstream_drive_qualified':False,'manufacturable':False}
 
 def main():
  p=argparse.ArgumentParser();p.add_argument('--prepared',type=Path,required=True);p.add_argument('--stage',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--gate',type=Path);a=p.parse_args();a.out.mkdir(exist_ok=False);bd=sources();r=audit(a.stage,a.prepared,a.out,a.gate)
