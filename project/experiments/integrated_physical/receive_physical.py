@@ -7,6 +7,7 @@ from canonical import canonical_cut
 from constraints_audit import audit_sdc
 sys.path.insert(0,str(ROOT/'project/experiments/electrical_repair'))
 from structure import library,certificate,input_loads
+from physical_structure import certify_physical
 
 def bracket_name(n,p,i):return n if len(p['bits'])==1 else n+'['+str(p.get('offset',0)+i)+']'
 def rows(p):return list(csv.DictReader(p.read_text().splitlines(),delimiter='\t'))
@@ -81,7 +82,7 @@ def audit(folder,prepared,out,gate=None):
  lib=library(LIB);before=load(prepared/'cut-source.json')['modules']['chain93'];original=copy.deepcopy(load(MAP/'mapped.json')['modules']['chain93']);stores=[(n,c)for n,c in original['cells'].items()if c['type']=='store82'];need(len(stores)==1,'original single store');sn,sc=stores[0];del original['cells'][sn]
  for pn,bs in sc['connections'].items():
   if pn!='clk':original['ports']['store_'+pn]={'direction':'input'if sc['port_directions'][pn]=='output'else'output','bits':bs}
- need(original==before,'independent original mapped source cut all cells ports and nets');before=canonical_cut(prepared,out/'canonical');after=load(folder/'final.json')['modules']['chain93'];cert=certificate(before,after,lib);need(Decimal(cert['after_area_um2'])<=Decimal('79600.5'),'98 cell budget');
+ need(original==before,'independent original mapped source cut all cells ports and nets');before=canonical_cut(prepared,out/'canonical');after=load(folder/'final.json')['modules']['chain93'];cert=certify_physical(before,after,lib);need(Decimal(cert['after_area_um2'])<=Decimal('79600.5'),'98 cell budget');
  if fm['stage']in('zero','place'):need(cert['added_histogram']=={}and cert['resized']==[],'no implicit buffer/resize in baseline')
  need(Decimal(str(load(folder/'stat.json')['design']['area']))==Decimal(cert['after_area_um2']),'independent exact library area')
  sdc=audit_sdc((folder/'final.sdc').read_text(),after['ports'])
