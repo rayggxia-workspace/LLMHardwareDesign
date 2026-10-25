@@ -269,3 +269,23 @@ is stricter. All actual cell input load, area, geometry, fullstrictcap/slew,
 setup/hold and final source-bound gate required. Fanout limit remains absent.
 Every failure retained; report result before any new candidate. Original active
 gates continue untouched. New final netlist always gets new exact gate.
+
+
+## Sole joint incremental hold candidate after failed margin batch
+
+Observed margin9301/9701 have6/68 hold failures, all input-to-FF; the worst97
+path became70.409ps faster while clock arrival changed only0.252ps. Load
+isolation accelerated old hold buffers. Both failures and all cap limits remain.
+Freeze these exact source manifest SHAs in incremental_hold.py. One hold repair
+with50ps internal target,4096 cumulative endpoint budget,10% addedbufferlimit,
+50%utilization and79600.5um2 actualarea cap. All original10ns/min0/loads/ports
+and capacity stay fixed. No extra cap batch, resize/electrical pass or full
+reroute tail. One global_route start_incremental interval contains repair and
+detailed_placement5sites/1row, then end_incremental writes guides directly.
+GRT incr debug2 captures all internal dirty batches; independent audit must
+compare all net pin classes, moved instances, all segment changes including
+congestion neighbors and unchanged grid segments with changed pin access.
+Reestimate full RC, not only changednets; strict fullcap/slew, all endpoints,
+new exactgate and eventual detailedRCX remain hard requirements. Native zero
+is insufficient.93existing4strictcap failures receive no separate repair here.
+Both20min/1100s jobs are single bounded candidates, no automatic follow-on.
