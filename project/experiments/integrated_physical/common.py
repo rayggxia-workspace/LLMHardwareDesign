@@ -30,10 +30,12 @@ def command(out,name,args,seconds=900,eda=True):
  if args[0]in(str(OR),str(STA)):args=[str(D/'lib64/ld-linux-x86-64.so.2'),'--library-path',str(D/'usr/lib/x86_64-linux-gnu'),*args]
  if eda:args=['/public/software/singularity-ce-4.3.4/bin/singularity','exec','--bind',str(EDA)+':/eda:ro','--pwd',str(out),str(EDA/'containers/orfs-26Q1-repacked.sif'),*args]
  start=time.monotonic();r=None;err=None
+ def limits():
+  cap=load(HERE/'config.json')['max_functional_virtual_memory_bytes'];resource.setrlimit(resource.RLIMIT_AS,(cap,cap))
  try:
-  with(out/(name+'.log')).open('w')as f:r=subprocess.run(args,cwd=out,stdout=f,stderr=subprocess.STDOUT,stdin=subprocess.DEVNULL,timeout=seconds)
+  with(out/(name+'.log')).open('w')as f:r=subprocess.run(args,cwd=out,stdout=f,stderr=subprocess.STDOUT,stdin=subprocess.DEVNULL,timeout=seconds,preexec_fn=limits)
  except Exception as e:err=repr(e);raise
- finally:put(out/(name+'-command.json'),{'argv':args,'exit':None if r is None else r.returncode,'seconds':time.monotonic()-start,'timeout_seconds':seconds,'error':err})
+ finally:put(out/(name+'-command.json'),{'argv':args,'exit':None if r is None else r.returncode,'seconds':time.monotonic()-start,'timeout_seconds':seconds,'error':err,'child_address_space_limit_bytes':load(HERE/'config.json')['max_functional_virtual_memory_bytes']})
  need(r.returncode==0,'command failed '+name)
 
 def resource_snapshot():

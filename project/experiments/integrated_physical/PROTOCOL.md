@@ -13,3 +13,9 @@ Alltiming endpoint sets independently reconstructed from precisefinalnetlist;R2R
 Everyphase has clean source commit,binding/input/library/SDC/netlist/DEF/ODB/SPEF SHA,logs,command status,Slurm resources,failures,independentreceipt. Serveronlyactualcalculations;PC source/metadata/bytes. Initialcapability/prep steps <=20min,8CPU actualallocation; no --mem32G because Slurm RealMemory=1MB while observedfreeRAM~500GB,DefMem/MaxMem UNLIMITED. No exclusiveRAMreservation promised; recordactualcgroup/limits/peak. Longerphysicalstages need pre-record exact reason/estimate/once-only cap inIssue/protocol, noautomaticextension.
 
 Library explicitly purposelynonmanufacturable;no matching realSRAMmacros,multiPVT,targetIO/clock/LVSdeck. Route/DRC pass would remainresearchlogicisland,notfullphysicalsignoff,L3complete,L4orallM/V/A/R/S/D. RootpublishesPR andstatus;boardunverified/configmissing,registrationPR5pending;no selfmerge/done.
+
+## Phase2 exact93 admission and gate scope
+
+Final strict93 L2 receipts-s004/s104 andcost01@4815ed6 admitted by pinned SHA,actualRTL/run@cc8f5c2 andmappedRTL@a41daea identical perfile. Map exported without re-synthesis. Original93 driver directly injects top-level RTL epoch register; mapped output assignment is not FF injection. Gate fixture therefore replaces only that terminal-state injection/drain segment with samefullnumeric lastnorm command role gate-last-normal-command andhardreset,terminal_rejected_edges0. All51 numeric/recovery/negative rows retained; strictgate receiver must comparefullbigint andRTL,with only this namedrole/epoch andterminalcounter exception. No mappedterminalinjection claim;93RTL/92formal evidence remainsseparate.
+
+Each tool child RLIMIT_AS32GiB is explicit process bound,not schedulerreservation. Initialprepare/build/sim each20min; partialtimeout retained. P1 no-repair baseline may diagnose residual electrical/timing and cannot qualify P2; samephase optionalfixedrepair mustproveclosurebeforeP2.
