@@ -100,3 +100,24 @@ including clocks. Receipt explicitly names the earlier executed netlist. Any
 buffer/cell/clock/connection change requires a newly bound replay. Same cell count
 alone is insufficient. GRT-derived parasitics are not detailed-route extraction.
 This M2-M10 research island is not the team's M1-M8-fixed/M9-M10-customizable base.
+
+
+## C4 placement-RC margin and one post-route closure attempt
+
+97 C3's optimizer finishes at +5 ps before legalization; actual legalization and
+RC refresh create one -0.489178 ps path. 93 actual GRT creates 12 input-to-FF hold
+failures, worst -6.039 ps, despite previous C3 closure. Preserve all failures.
+97 candidate4 restarts the original CTS, using the identical 3-step recipe and
+4096 endpoint budgets, except a fixed internal hold target0.02 ns. The acceptance
+criterion remains hold>=0, same 10 ns/min0/allports/dual-load/10%buffer/79600.5 area.
+This is a design margin for observed estimate changes, not relaxed timing.
+Every changed netlist requires its own exact post gate. 93 may separately use
+one bounded post-route repair with that same20 ps target, after all routed paths
+are diagnosed and the exact routed RC evidence is received; no unbounded retry.
+
+Installed GRT source at63ed2e0fe5 defines reported wirelength as Manhattan segment
+length plus one grid tile for each positive planar segment. It is not raw metal
+length or a via-length convention. The independent receiver derives tile size
+from actual DEF GCELLGRID and reports raw segment length, via counts and tool
+metric separately; exact official source SHA is retained. A prior strict
+comparison that treated the tool metric as planar length failed and is retained.
