@@ -2,7 +2,7 @@
 
 ## 2026-10-25 UTC+08 Issue86门级与逻辑时序交付
 
-[Issue86](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/86)，task/86-gate-sta，D:/Projects/LLMHardwareDesign-gate-sta；base Issue84/PR87。本人Liangruizhi/182389313；实际只服务器lrz-i86-*，旧84只读。四变体共8完整门级消费者严格独立接收，完整整数和原RTL计数/cycles一致；数千slew/cap违规保留，不能报告合格Fmax/物理完成。全部DFF端点已覆盖，真实存储宏/RC/CTS仍在cut外。
+[Issue86](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/86) / [PR90](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/90)，task/86-gate-sta，D:/Projects/LLMHardwareDesign-gate-sta；base Issue84/PR87。本人Liangruizhi/182389313；实际只服务器lrz-i86-*，旧84只读。四变体共8完整门级消费者严格独立接收，完整整数和原RTL计数/cycles一致；数千slew/cap违规保留，不能报告合格Fmax/物理完成。全部DFF端点已覆盖，真实存储宏/RC/CTS仍在cut外。
 
 34本人作业24COMPLETED/9FAILED/1CANCELLED均终态，恢复日志留档；完整19158542B/434成员、精选1966113B/402成员及8phase57原Git源码字节通过。[报告](../../docs/experiments/issue-86-gate-sta.md)、[索引](../../project/experiments/gate_sta/results/issue-86/index.json)、[交接](../../docs/handoffs/2026-10-25-issue-86-gate-sta.md)。Issue88继续修复并重放；85新增控制不继承84STA。任务in_review待审查合并，不done；登记PR5 pending，board404/缺read:project，在线同步pending；审查/管理员待指定，成员55/63不接管。
 

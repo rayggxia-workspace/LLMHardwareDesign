@@ -42,3 +42,5 @@
 完整包 `/public/home/yuzelu/RuizhiLiang/issue86-gate-sta-20261025/delivery01/full-results.zip`，19158542B、434成员，SHA256 `823e96231f7d35fde8625bc4583d8fd2d8ee13f0cd000b1dcc4ba9973ea8f129`；精选1966113B、402成员，SHA256 `a6790d059ea326246551ac536a7bb717e136718a3bf663bd7292769abdb199df`。服务器两包逐成员字节接收、PC精选接收、8phase/57条原Git blob源码绑定全部PASS。精选含实际完整gate输出/STA日志/接口和源绑定；编译中间对象不打包，完整包保留gate二进制。原84 `input01`物理输入作为授权服务器只读依赖，由index和receipt记录manifest SHA，没有声称当前包独立包含全部原始数据。
 
 后续优先进行**同资源约束下的高扇出缓冲/尺寸修复**，重算新增面积、端口接口与周期，再对新网表重放。之后才接合法SRAM/ROM宏、真实floorplan/RC/clock和成员55/63同版M8接入合同。一般M/A/R、通用V/ROM、整模型质量及最终物理边界仍未完成，不因本轮门级PASS或无缺约束将这些项目标done。
+
+远端交付：[PR90](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/90)已上传，Issue86为in_review，待指定独立审查与合并；按不可变commit读回报告/交接/个人进度与原Git blob一致，后续仅文档同步。
