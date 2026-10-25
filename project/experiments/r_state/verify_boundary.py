@@ -45,7 +45,7 @@ def receive_protocol(run,rows):
  for name in ['abort1000','abort1002','commit-drain']:check(d[name]=={'test':name,'write_applied_before_ack':True,'abort_was_accepted':name!='commit-drain'},'late write/commit test')
  for name,pos in [('hardreset-private',0),('hardreset-commit',1)]:
   e=d[name];check(set(e)=={'test','applied_address','cycles','reads','writes','generation','descriptor_position_after_apply','write_ack_not_delivered','fabric_barrier_drained'},'reset event schema');check(e['write_ack_not_delivered']is True and e['fabric_barrier_drained']is True and e['descriptor_position_after_apply']==pos,'reset actual descriptor');check(e['cycles']>0 and e['reads']>0 and e['writes']>0,'partial reset cost')
- check(d['generation_terminal_RTL_register_injection']=={'test':'generation_terminal_RTL_register_injection','injected':4294967294,'observed':4294967295,'rejected_cycles':11},'terminal generation')
+ check(d['generation_terminal_RTL_register_injection']=={'test':'generation_terminal_RTL_register_injection','injected':4294967294,'observed':4294967295,'rejected_cycles':11,'terminal_stale_drained':1},'terminal generation')
  aborts=0;stale=0
  for row in rows:
   if row['label'].startswith('restore-hard'):aborts=0;stale=0

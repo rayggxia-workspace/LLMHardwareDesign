@@ -15,13 +15,13 @@ struct Sim {
  Sim(const char* image,const char* dir,bool hold,int h):mem(1<<20),stall(hold),head(h),out(dir){std::ifstream f(image,std::ios::binary);f.read((char*)mem.data(),mem.size());need(f.gcount()==(long)mem.size(),"image size");rows.open(out+"/actual.jsonl");raw.open(out+"/actual.bin",std::ios::binary);events.open(out+"/protocol.jsonl");d.clk=0;d.reset=0;d.cmd=0;d.ack=0;d.abort_request=0;d.accept_candidate=0;d.reject_candidate=0;d.cfg=0;d.cfg_take=0;d.peer_req=0;d.peer_take=1;d.ext_valid=0;d.ext_ready=0;d.response_generation=0;}
  Line get(uint32_t a){need(a>=0x04000000&&a<0x04100000&&!(a&15),"external address");Line x;memcpy(x.data(),mem.data()+a-0x04000000,16);return x;}
  void set(uint32_t a,Line x){get(a);memcpy(mem.data()+a-0x04000000,x.data(),16);}
- void apply(){if(pw&&!applied){auto desc=get(0x040a0400);bool valid=(desc[3]>>22)&1;int bank=(desc[3]>>16)&1;if(valid&&!init){uint32_t st=0x04000000+bank*0x20000,ys=0x040a0000+bank*512;need(!(pa>=st&&pa<st+0x20000)&&!(pa>=ys&&pa<ys+512),"published data overwritten");}set(pa,pdata);applied=true;}}
+ void apply(){if(pw&&!applied){need(pa<0x040a0410,"write outside declared mutable region");auto desc=get(0x040a0400);bool valid=(desc[3]>>22)&1;int bank=(desc[3]>>16)&1;if(valid&&!init){uint32_t st=0x04000000+bank*0x20000,ys=0x040a0000+bank*512;need(!(pa>=st&&pa<st+0x20000)&&!(pa>=ys&&pa<ys+512),"published data overwritten");}set(pa,pdata);applied=true;}}
  void tick(){
  d.mem_hold=stall&&(t%11==3||t%11==4);d.mul_hold=stall&&t%13==5;
  d.ext_ready=!pending&&(!stall||t%7!=2);d.ext_valid=pending&&t>=due;bool badtag=inject_stale&&d.ext_valid&&stale_injected==0;d.response_generation=badtag?(pg^0x80000000u):pg;
  if(d.ext_valid){apply();auto x=pw?Line{}:get(pa);for(int j=0;j<4;j++)d.ext_rdata[j]=x[j];}
  d.peer_take=!stall||t%17<9;d.peer_req=!d.reset&&stall&&!peer_pending&&t%31==4;d.peer_a=(int32_t)(t%2003)-1001;d.peer_b=(int32_t)(t%307)-153;
- d.clk=0;d.eval();bool req=d.ext_req&&d.ext_ready,resp=d.ext_valid&&d.ext_take;bool pr=d.peer_req&&d.peer_ready,pv=d.peer_valid&&d.peer_take;
+ d.clk=0;d.eval();if(d.reset)need(!d.ext_req&&!d.cmd_ready&&!d.abort_ready&&!d.cfg_ready&&!d.offer&&!d.done&&!d.peer_ready&&!d.peer_valid,"reset phantom handshake");bool req=d.ext_req&&d.ext_ready,resp=d.ext_valid&&d.ext_take;bool pr=d.peer_req&&d.peer_ready,pv=d.peer_valid&&d.peer_take;
  if(pv){need(peer_pending&&(int64_t)d.peer_y==peer_expected,"shared multiply peer");peer_pending=false;peer_checks++;}
  if(pr){need(!peer_pending,"peer overwrite");peer_pending=true;peer_expected=(int64_t)(int32_t)d.peer_a*(int32_t)d.peer_b;}
  uint32_t ra=d.ext_addr,rg=d.ext_generation;bool rw=d.ext_wr;Line data{};for(int j=0;j<4;j++)data[j]=d.ext_wdata[j];
@@ -57,7 +57,7 @@ struct Sim {
  // Coordinated fabric barrier: accepted write has actually applied; stale ACK is discarded before reset release.
  pending=false;reset();finish(commit?"restore-hardcommit":"restore-hardprivate",2,0);
  }
- void terminal(){need(!pending,"terminal pending");d.generation=0xfffffffe;finish("terminal-restore",2,0);need(d.generation==0xffffffff&&!d.cmd_ready,"generation terminal wrap");d.cmd=1;d.command=2;for(int i=0;i<11;i++){need(!d.cmd_ready&&!d.cmd_accept,"terminal accepted command");tick();}d.cmd=0;events<<"{\"test\":\"generation_terminal_RTL_register_injection\",\"injected\":4294967294,\"observed\":4294967295,\"rejected_cycles\":11}\n";}
+ void terminal(){need(!pending,"terminal pending");d.generation=0xfffffffe;finish("terminal-restore",2,0);need(d.generation==0xffffffff&&!d.cmd_ready,"generation terminal wrap");d.cmd=1;d.command=2;for(int i=0;i<11;i++){need(!d.cmd_ready&&!d.cmd_accept,"terminal accepted command");tick();}d.cmd=0;need(!pending,"terminal fabric pending");pending=true;pw=false;pa=0x040a0400;pg=0xffffffff;due=t;applied=false;tick();need(!pending&&d.stale==1,"terminal matching stale response blocked");events<<"{\"test\":\"generation_terminal_RTL_register_injection\",\"injected\":4294967294,\"observed\":4294967295,\"rejected_cycles\":11,\"terminal_stale_drained\":1}\n";}
 
 };
 int main(int argc,char**argv){try{need(argc==7,"args image out stall head unit mode");bool stall=std::stoi(argv[3]);int head=std::stoi(argv[4]),unit=std::stoi(argv[5]);Sim s(argv[1],argv[2],stall,head);std::string mode=argv[6];

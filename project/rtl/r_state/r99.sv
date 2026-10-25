@@ -47,10 +47,11 @@ module r99(input wire clk,reset,cmd,input wire [1:0] command,input wire [4:0] he
  wire sreq=safe&&((cfg_use)||(state==SR&&issuing&&!mem_hold));
  store82 scratch(clk,reset,sreq,cfg_use?cfg_wr:s_wr,cfg_use?cfg_addr:s_addr,cfg_use?cfg_din:s_data,srdy,sv,cfg_pending?cfg_take:state==SW,sd);
  wire mlreq=safe&&state==ER&&issuing;wire lt;wire lr, lw;wire [31:0] la;wire [127:0] ld;
- wire matching=response_generation==generation;wire wv;wire [127:0] wd;
- memory_link link(clk,reset,mlreq,e_wr,e_addr,e_data,erdy,ev,state==EW,ed,lr,lw,la,ld,ext_ready&&safe,ext_valid&&matching&&safe,lt,ext_rdata,wv,wd,beats,transactions);
- assign ext_req=safe&&lr;assign ext_wr=lw;assign ext_addr=la;assign ext_wdata=ld;assign ext_take=safe&&(!matching||lt);assign ext_generation=generation;
- mul84 #(1) service(clk,reset,mul_hold,safe&&state==MR&&issuing,ma,mb,mrdy,mv,state==MW,my,safe&&peer_req,peer_a,peer_b,peer_ready,peer_valid,peer_take,peer_y,mul_grants,peer_grants,unused0,unused1,contested);
+ wire matching=response_generation==generation;wire drop_response=!matching||(generation==32'hffffffff&&state==IDLE);wire wv;wire [127:0] wd;
+ memory_link link(clk,reset,mlreq,e_wr,e_addr,e_data,erdy,ev,state==EW,ed,lr,lw,la,ld,ext_ready&&safe,ext_valid&&!drop_response&&safe,lt,ext_rdata,wv,wd,beats,transactions);
+ assign ext_req=safe&&lr;assign ext_wr=lw;assign ext_addr=la;assign ext_wdata=ld;assign ext_take=safe&&(drop_response||lt);assign ext_generation=generation;
+ wire peer_ready_raw,peer_valid_raw;assign peer_ready=safe&&peer_ready_raw;assign peer_valid=safe&&peer_valid_raw;
+ mul84 #(1) service(clk,reset,mul_hold,safe&&state==MR&&issuing,ma,mb,mrdy,mv,state==MW,my,safe&&peer_req,peer_a,peer_b,peer_ready_raw,peer_valid_raw,peer_take,peer_y,mul_grants,peer_grants,unused0,unused1,contested);
  function [63:0] mag(input signed [63:0] v);begin mag=v[63]?-v:v;end endfunction
  function fit32(input signed [63:0] v);begin fit32=(v>=-64'sd2147483648&&v<=64'sd2147483647);end endfunction
  // One explicitly shared round/shift datapath; 65th bit is failure, never saturation.
@@ -86,7 +87,7 @@ module r99(input wire clk,reset,cmd,input wire [1:0] command,input wire [4:0] he
  end else begin
  if(cfg&&cfg_ready)cfg_pending<=1;else if(cfg_valid&&cfg_take)cfg_pending<=0;
  if(state!=IDLE&&state!=DONE)cycles<=cycles+1;
- if(ext_valid&&ext_take&&!matching)stale<=stale+1;
+ if(ext_valid&&ext_take&&drop_response)stale<=stale+1;
  if(state==ER&&mlreq&&erdy)begin if(e_wr)ext_writes<=ext_writes+1;else ext_reads<=ext_reads+1;end
  if(state==SR&&sreq&&srdy)begin if(s_wr)s_writes<=s_writes+1;else s_reads<=s_reads+1;end
  if(abort_accept)begin abort_pending<=1;aborts<=aborts+1;if((state!=EW&&state!=SW&&state!=MW)||(state==EW&&ev)||(state==SW&&sv)||(state==MW&&mv))state<=ABORTED;end

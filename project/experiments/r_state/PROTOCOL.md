@@ -54,11 +54,11 @@ state/trial/proposal/Y/descriptor有效容量656400B，再加coeff186624B=843024
 
 一个128bit字：bits31:0 magic0x52393901；63:32 position32；95:64 local_numeric_epoch32；111:96 unit signed16；112 bank；117:113 head_id5；118 valid；122:119 profile4（固定1=S32guard-rescale）；127:123 owner5（固定0=layer0 R）。version明确alias position，无第二独立version字段。模型/形状/精度合同由magic+固定profile界定；不是任意模型身份或安全认证。
 
-INIT、STEP、RESTORE三类显式cmd_ready/cmd_accept命令，所有参数锁存，busy与配置pending禁止命令丢弃。INIT只用于调用者明确授权的新context，RTL实际清零bank0与Y0并最终写初始descriptor，初unit来自既有cal。真实主测host不初始化计算state。STEP校验caller expected_position与published position，读取对应coeff，产生private状态和Y。RESTORE仅在协调fabric屏障后读取真实descriptor并校验magic/owner/head/profile/valid/unit；不能用host猜测old/new。状态完整性SHA只在观察者接收，不冒充片上SHA引擎。
+INIT、STEP、RESTORE三类显式cmd_ready/cmd_accept命令，所有参数锁存，busy与配置pending禁止命令丢弃。INIT只用于调用者明确授权丢弃旧context/建立新context，RTL实际清零bank0与Y0并最终写初始descriptor；INIT中途abort不保证既有旧context内容，因为调用者已授权丢弃，不能把该场景混入STEP旧态保护结论，初unit来自既有cal。真实主测host不初始化计算state。STEP校验caller expected_position与published position，读取对应coeff，产生private状态和Y。RESTORE仅在协调fabric屏障后读取真实descriptor并校验magic/owner/head/profile/valid/unit；不能用host猜测old/new。状态完整性SHA只在观察者接收，不冒充片上SHA引擎。
 
-consumer_offer保持候选unit/localepoch/position/bank与Y稳定；accept/reject同时出现以reject优先。任何numeric error/reject在descriptor提交前保持published字及旧state/Y全部不变。只有所有S/mul/外部write响应排空后才offer。
+consumer_offer直接公开candidate_unit、candidate_epoch；candidate position由稳定的published position+1导出，candidate bank由!published bank导出，owner固定0，profile固定1，head由调用者在cmd_accept时锁存的head输入提供（独立消费者至少需5bit context/tag存储，未包含在本DUT面积）。DUT内部owner_head已锁存但没有公开candidate_head口；不得把这些派生字段称为已有独立输出端口。外部候选Y的位置为YBASE+candidate bank*512，内容在offer期间稳定；accept/reject同时出现以reject优先。任何numeric error/reject在descriptor提交前保持published字及旧state/Y全部不变。只有所有S/mul/外部write响应排空后才offer。
 
-consumer_accept之后发布单128bit descriptor写。该写被外部接受后进入**不可撤销commit-drain**：abort_ready=0，不得先回“取消成功”；ACK后更新内部published镜像，响应committed。之后再响应新的abort。128bit外部写原子是接口要求，未证明宏物理原子性；若fabric不支持，需另议shadow descriptor+最终指针并全计成本。
+consumer_accept即逻辑提交开始，下一拍COMMIT0起即拒绝abort（早于外部descriptor请求被接受），随后发布单128bit descriptor写并进入**不可撤销commit-drain**：abort_ready=0，不得先回“取消成功”；ACK后更新内部published镜像，响应committed。之后再响应新的abort。128bit外部写原子是接口要求，未证明宏物理原子性；若fabric不支持，需另议shadow descriptor+最终指针并全计成本。
 
 此前soft_abort只有abort_ready/abort_accept成立才被接收，停止新IO但保留已接受IO的credit，等实际write ACK/read响应消费后才完成abort并恢复cmd_ready。仅改epoch不能撤销已发写。transport generation不wrap，耗尽必须协调fabric/reset；local_numeric_epoch只有range retry推进，publish拒绝不改变旧数字epoch。
 
@@ -71,3 +71,9 @@ consumer_accept之后发布单128bit descriptor写。该写被外部接受后进
 合成边界：alpha0/2^31、正负ties/INT_MIN、dtB溢出、合法负shift/左移溢出、全head重标/重试耗尽/unit/epoch耗尽、完整N readout guard/I32输出guard；错误owner/profile/position/descriptor、late write ACK、consumer reject/双响应、多阶段abort恢复、hardreset未ACK后实际restore。合成初始checkpoint可显式提供测试码域，但不能用于替代真实72由RTL递推产生的状态。
 
 真实修改state/unit/protocol文件并重SHA，调用冻结完整receiver拒绝；独立source/input/results SHA与all artifacts，保留失败。映射真实新增FSM/宽shift/add/metadata/接口，单S32乘法服务候选单列，不声称已接97或继承98STA。root最终发布PR、不自合并/done；登记PR5 pending、看板权限缺项保留。
+
+## 6. 首版实现补充
+
+checked_add严格采用完整head的max(abs(decay))+max(abs(injection))<=I64_MAX。原72的任何head wide_guard可能使全部head重标；输入接收先核其tokens/attempts wide_error，本轮须为零，否则停止单head逐位一致结论并另行解释。合法position范围0..72，STEP只允许0..71；RESTORE position>72（含UINT32_MAX）拒绝，不能通过32bit加一wrap。transport generation耗尽后拒绝命令并在idle排空同tag迟到响应；所有对外ready/valid请求含共享乘法peer在reset屏蔽。
+
+私有proposal可暂存已失败算术的占位/截断值，仅完整head guard通过后才允许shadow转换、readout和发布；这不构成饱和成功。非工作scratch区域[8224,16384)按canary检查。合成19项输入直接声明码域，不计模型质量。正式数据组还记录中止/复位前已实际花费的周期与读写，不能因计数器硬reset清零而丢弃成本。

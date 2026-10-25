@@ -3,6 +3,7 @@ import argparse,hashlib,json,struct
 from pathlib import Path
 import numpy as np
 from fixtures import fixtures
+from contracts import CONTRACT
 ROOT=Path(__file__).resolve().parents[3]
 sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def put(p,x):Path(p).write_text(json.dumps(x,sort_keys=True,indent=2)+"\n",newline="\n")
@@ -36,5 +37,5 @@ def main():
    np.savez_compressed(a.out/f'head{h}-old.npz',scan=v['scan_q12'].reshape(72,32,128)[:,h,:],final=v['state_final'][h],units=v['state_units_trace'][:,h])
    details.append({'head':h,'initial_unit':int(u[h]),'steps':72,'rescale_events_from_original_unit_trace':int(v['state_units_trace'][-1,h]-u[h]),'source_state_sha256':hashlib.sha256(v['state_final'][h].astype('<i4').tobytes()).hexdigest()})
  synthetics=fixtures(a.out)
- m={'synthetic_fixtures':synthetics,'original_cross_head_wide_guard_events':wide,'schema':'r99-input-v1','status':'VERIFIED_COEFFICIENTS_NOT_RTL','source':json.loads((ROOT/'binding.json').read_text()),'old_manifest_sha256':sha(old/'manifest.json'),'compiled_manifest_sha256':sha(comp/'manifest.json'),'old_source':om['source'],'heads':details,'selection':'head0; if no original unit growth add smallest head with original unit growth, before new errors','old_global_epoch':report['final_epoch'],'head_local_epoch_is_not_global':True,'artifacts':[{'path':q.name,'bytes':q.stat().st_size,'sha256':sha(q)} for q in sorted(a.out.iterdir())]};put(a.out/'manifest.json',m);print(json.dumps(details))
+ m={'contract':CONTRACT,'synthetic_fixtures':synthetics,'original_cross_head_wide_guard_events':wide,'schema':'r99-input-v1','status':'VERIFIED_COEFFICIENTS_NOT_RTL','source':json.loads((ROOT/'binding.json').read_text()),'old_manifest_sha256':sha(old/'manifest.json'),'compiled_manifest_sha256':sha(comp/'manifest.json'),'old_source':om['source'],'heads':details,'selection':'head0; if no original unit growth add smallest head with original unit growth, before new errors','old_global_epoch':report['final_epoch'],'head_local_epoch_is_not_global':True,'artifacts':[{'path':q.name,'bytes':q.stat().st_size,'sha256':sha(q)} for q in sorted(a.out.iterdir())]};put(a.out/'manifest.json',m);print(json.dumps(details))
 if __name__=='__main__':main()

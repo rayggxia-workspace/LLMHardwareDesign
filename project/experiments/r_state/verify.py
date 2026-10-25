@@ -3,6 +3,7 @@ import argparse,hashlib,json,struct,time,traceback
 from pathlib import Path
 import numpy as np
 from reference import step,Guard
+from contracts import CONTRACT
 ROOT=Path(__file__).resolve().parents[3]
 sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def put(p,x):Path(p).write_text(json.dumps(x,indent=2,sort_keys=True)+'\n',newline='\n')
@@ -22,13 +23,13 @@ def main():
  p=argparse.ArgumentParser();p.add_argument('--run',type=Path,required=True);p.add_argument('--input',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();started=time.monotonic();receipt={'schema':'r99-receipt-v1','status':'REJECTED','source':json.loads((ROOT/'binding.json').read_text())}
  try:
   for n,h in receipt['source']['sources'].items():check(sha(ROOT/n)==h,'receiver source '+n)
-  rm=json.loads((a.run/'manifest.json').read_text());im=json.loads((a.input/'manifest.json').read_text());check(rm['schema']=='r99-run-v1'and rm['task']=='sim'and rm['status']=='RTL_EXECUTED_NOT_RECEIVED','run contract');check(im['schema']=='r99-input-v1'and im['status']=='VERIFIED_COEFFICIENTS_NOT_RTL','input contract');check(rm['input_manifest_sha256']==sha(a.input/'manifest.json'),'input binding');artifacts(a.input,im);artifacts(a.run,rm)
+  rm=json.loads((a.run/'manifest.json').read_text());im=json.loads((a.input/'manifest.json').read_text());check(rm['schema']=='r99-run-v1'and rm['task']=='sim'and rm['status']=='RTL_EXECUTED_NOT_RECEIVED','run contract');check(im['schema']=='r99-input-v1'and im['status']=='VERIFIED_COEFFICIENTS_NOT_RTL','input contract');check(rm['input_manifest_sha256']==sha(a.input/'manifest.json'),'input binding');artifacts(a.input,im);artifacts(a.run,rm);check(rm['contract']==CONTRACT and im['contract']==CONTRACT,'precision/IO profile contract');check(im['original_cross_head_wide_guard_events']==[],'cross-head wide guard source')
   for n,h in receipt['source']['sources'].items():
    if n.startswith('project/rtl/')or n.endswith(('/r_sim.cpp','/PROTOCOL.md')):check(rm['source']['sources'].get(n)==h,'executed source '+n)
   check(im['source']['sources']['project/experiments/r_state/inputs.py']==receipt['source']['sources']['project/experiments/r_state/inputs.py'],'input extraction source')
   if rm['mode']=='boundary':
    from verify_boundary import receive_boundary
-   receipt.update(receive_boundary(a.run,a.input,rm,im));receipt.update(run_manifest_sha256=sha(a.run/'manifest.json'),input_manifest_sha256=sha(a.input/'manifest.json'));return
+   receipt.update(receive_boundary(a.run,a.input,rm,im));receipt.update(stall=rm['stall'],contract=CONTRACT,run_source=rm['source']);receipt.update(run_manifest_sha256=sha(a.run/'manifest.json'),input_manifest_sha256=sha(a.input/'manifest.json'));return
   h=rm['head'];head=next(x for x in im['heads']if x['head']==h);image=(a.input/f'head{h}.bin').read_bytes();check(len(image)==1<<20,'input size');old=np.load(a.input/f'head{h}-old.npz',allow_pickle=False)
   rows=[json.loads(s)for s in(a.run/'actual.jsonl').read_text().splitlines()];raw=(a.run/'actual.bin').read_bytes();check(len(raw)==len(rows)*(16+32768*4+128*4),'complete snapshots');state=[0]*32768;y=[0]*128;unit=head['initial_unit'];epoch=0;position=0;bank=0;completed=0;retries=0;totals={k:0 for k in ['cycles','reads','writes','s_reads','s_writes','transactions','beats','mul','alpha_bypass']}
   for i,row in enumerate(rows):
@@ -50,8 +51,8 @@ def main():
   if rm['mode']=='protocol':
    from verify_boundary import receive_protocol
    receipt['protocol']=receive_protocol(a.run,rows);check(completed==2 and len(rows)==29,'protocol coverage')
-  if rm['mode']=='real':check(completed==72 and len(rows)==82,'all72 plus9restore+init');check(np.array_equal(np.array(state,np.int32).reshape(128,256),old['final']),'original72 final state');check(epoch==head['rescale_events_from_original_unit_trace'],'head local epoch')
-  receipt.update(status='PASS_FULL_HEAD_RTL_BIGINT',run_manifest_sha256=sha(a.run/'manifest.json'),input_manifest_sha256=sha(a.input/'manifest.json'),rows=len(rows),committed_steps=completed,head_local_numeric_epoch=epoch,original32head_epoch=im['old_global_epoch'],retries=retries,totals=totals,external_payload_bytes=totals['transactions']*16,external_wire_bytes=totals['transactions']*5*16,transport_sideband='32bit generation request and response; serialization unspecified, excluded from 5beats',all_state_codes_compared=len(rows)*32768,all_readout_codes_compared=len(rows)*128,mode=rm['mode'])
+  if rm['mode']=='real':check(all(v['aborts']==0 and v['stale']==0 for v in rows),'real protocol counters');check(completed==72 and len(rows)==82,'all72 plus9restore+init');check(np.array_equal(np.array(state,np.int32).reshape(128,256),old['final']),'original72 final state');check(epoch==head['rescale_events_from_original_unit_trace'],'head local epoch')
+  receipt.update(status='PASS_FULL_HEAD_RTL_BIGINT',run_manifest_sha256=sha(a.run/'manifest.json'),input_manifest_sha256=sha(a.input/'manifest.json'),rows=len(rows),committed_steps=completed,head_local_numeric_epoch=epoch,original32head_epoch=im['old_global_epoch'],retries=retries,totals=totals,external_payload_bytes=totals['transactions']*16,external_wire_bytes=totals['transactions']*5*16,transport_sideband='32bit generation request and response; serialization unspecified, excluded from 5beats',all_state_codes_compared=len(rows)*32768,all_readout_codes_compared=len(rows)*128,mode=rm['mode'],stall=rm['stall'],contract=CONTRACT,run_source=rm['source'])
  except Exception as e:receipt.update(error=str(e),traceback=traceback.format_exc());raise
  finally:receipt['seconds']=time.monotonic()-started;put(a.out,receipt)
  print(receipt['status'])
