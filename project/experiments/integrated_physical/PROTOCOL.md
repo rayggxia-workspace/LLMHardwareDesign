@@ -71,3 +71,32 @@ Candidate1 remainsFAILED closure:238remainingnegativehold endpoints,allactualpri
 Exactinstalledtool63ed2e0fe5 officialRepairHold.cc SHA256abbbfd4758fdbc32d7e19cad3dc060b2bffae03efb6c1d6e704ba28ce57619c3 wasreadforalgorithm diagnosis only(noinstall/build). Lines407-409 boundouterwhilebybothmax_passesandmax_iterations;lines508-519processwholeviolatingcohortand incrementpassperendpoint. Therefore1(and2or4)permitsonlyfirstcohortwhen1079endpointsalreadyvisited. C1/C2 exactext_data[79]→_70796_/D pathidentical:hold771/772/773,dataarrival0.140675396ns,clockarrival0.241822347ns,required0.252273023ns,slack-0.111597620ns. LargerC2margin added975FF-only buffersandothercost withoutchangingthispath. Neither10%buffer nor50%area limit triggeredRSZ60/50.
 
 BeforeexecutionfreezeC3fromeachoriginalCTSbaseline(notC1/C2tail),sameelectrical/hold/finalelectrical3steps,restoreC1holdtarget0.005ns,onlymax_passes=max_iterations=4096. Thisisfinite cumulativeendpointbudget checkedbetweenfullcohorts,NOT4096fullrounds;finalcohortmayovershootthecounterlimitbeforethenextoutercheck. 10%buffer limit,79600.5um2,8CPU/1100s child/20minSlurm andunchanged10ns/IOmin0/max0.1/slew/loads/pins constrainexecution additionally. CompareC1→C3 asrepairbudgeteffect,nottopology/Blockpartitionbenefit. Reportactualendpointpasses/buffers/area/clock/inputcostandtermination. Ifstillfailingorhittinglimit,noautomaticfurthercandidate. Actual97usesthesamefixedC3fromitsowncts9701.
+
+
+## Pure global-route candidate 1 and concurrent scheduling (2026-10-25)
+
+C3 post-transformation gates remain running. A pure global-route attempt may run
+concurrently on a C3 netlist whose received placement-RC setup/hold/electrical
+checks are all closed. This changes scheduling only. Final acceptance still
+requires the exact raw gate, exact post-transform gate, all cell/pin and clock
+connection proofs, complete endpoints, and both-load routed-RC closure. A failed
+pre-route stage remains failed; 97 C3's single -0.000489 ns hold path is not rounded
+away and is diagnosed before its route gate is considered.
+
+Freeze one attempt: 8 allocated CPUs, 20 minute Slurm / 1100 second tool ceiling;
+50 congestion iterations; actual platform fastroute adjustment M2-M3=0.5,
+M4-M10=0.25; signal M2-M10, clock M4-M10; existing placement, all ports and pin map,
+399 x 399 core, 448 x 448 die, 79600.5 um2 cell cap, propagated 10 ns clock,
+input min0/max0.1 ns, input slew0.05 ns, output1/10 fF remain unchanged.
+No repair, resize, added buffer, retiming, clock reconstruction, antenna repair,
+infinite capacity, omitted high-fanout nets or allow_congestion. Save guide,
+actual segments, net wire length, estimated SPEF, ODB/DEF, all timing/electrical
+reports. Derive layer signal/clock usage independently; PG is absent and has no
+reserved capacity, not a fabricated claim of zero PG cost.
+
+Pure routing may reuse a prior executed gate only with exact final Verilog bytes
+or a rigorous identity of every cell, function, port and electrical pin class,
+including clocks. Receipt explicitly names the earlier executed netlist. Any
+buffer/cell/clock/connection change requires a newly bound replay. Same cell count
+alone is insufficient. GRT-derived parasitics are not detailed-route extraction.
+This M2-M10 research island is not the team's M1-M8-fixed/M9-M10-customizable base.
