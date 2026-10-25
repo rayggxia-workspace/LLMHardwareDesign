@@ -36,3 +36,13 @@
 phase79@973dec0已冻结并排队：91581 final93-receive02依赖91579/91580，输出完整gate在final93-receive02/gate；91582 detail-receive9305依赖91581，复用同detail9303/原RCX但强制该精确完整gate和最新slew覆盖。实际argv/phaseSHA见work/Liangruizhi/98/final93-conditional-schedule.json。排队不等于执行通过。
 
 phase75–79的510条源码引用/110个不同Git blob共625091B，已逐一核服务器真实文件与原Git blob；接续此前phase1–74证明。源码证明不代替尚未完成的93数值实验。
+
+## 当前93实际运行与恢复入口
+
+quiet91391在2h53m28正常完成全部51记录/194658699周期，guard91579已读真实成功并SKIP，不重复quiet；最终独立完整接收尚未执行。
+
+held91392真实10500.0149s TimeoutExpired，原ERROR manifest、日志及截断输出保留。91580在20条完整前缀独立整数参考/原RTL全字段一致后，启动唯一同源网表/binary/完整51driver/input的jointpost93s102，16000s child、280min Slurm。1条截断行明确忽略；前缀PASS只是已完成部分诊断，不是完整功能或协议验收。91580仍在运行，没有允许第二次延时。
+
+91581 final93-receive02依赖实际成功guard选择，必须完整51×2整数/协议接收；91582 detail-receive9305再绑定该精确gate及原detail9303/RCX、最新slew全集，二者当前pending，93仍未accepted。原91393已因DependencyNeverSatisfied，核本人job名称/目录及真实原timeout后取消，sacct CANCELLED且0执行时间；新链不动。
+
+恢复第一步：读91580/91581/91582状态、final93-budget-s0/s1/guard.json和已有输出，按真实终态接收；不重复quiet、不覆盖原目录，不重提唯一续跑。全部timeout/SKIP/prefix/旧依赖取消4份原文件共21835B已跨机SHA核验，存于checkpoint4/final93-*；终态后再补最终归档和同PR111，不把运行或排队写成已通过。
