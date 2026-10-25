@@ -1,0 +1,25 @@
+[
+  {
+    "command": [
+      "scripts/check_project.py"
+    ],
+    "exit": 0,
+    "stdout": "PASS: Project management structure is valid (schema 1).\nNOTE: This does not validate product behavior, permissions, or live GitHub settings.\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "project/experiments/cache_share",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_complete_protocol (test_contracts.StrictEvidence.test_complete_protocol) ... ok\ntest_exact_variant (test_contracts.StrictEvidence.test_exact_variant) ... ok\ntest_missing_protocol (test_contracts.StrictEvidence.test_missing_protocol) ... ok\ntest_wrong_variant (test_contracts.StrictEvidence.test_wrong_variant) ... ok\ntest_bad_h (test_reference.ReferenceTests.test_bad_h) ... ok\ntest_min_square_sign (test_reference.ReferenceTests.test_min_square_sign) ... ok\ntest_missing_execution (test_reference.ReferenceTests.test_missing_execution) ... ok\ntest_negative_gamma (test_reference.ReferenceTests.test_negative_gamma) ... ok\ntest_negative_shift (test_reference.ReferenceTests.test_negative_shift) ... ok\ntest_ties (test_reference.ReferenceTests.test_ties) ... ok\ntest_wide_shift (test_reference.ReferenceTests.test_wide_shift) ... ok\ntest_zero_den (test_reference.ReferenceTests.test_zero_den) ... ok\n\n----------------------------------------------------------------------\nRan 12 tests in 0.000s\n\nOK\n"
+  }
+]

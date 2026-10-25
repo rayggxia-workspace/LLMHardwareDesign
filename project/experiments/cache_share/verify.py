@@ -3,6 +3,7 @@ import argparse,copy,json,hashlib
 from pathlib import Path
 import numpy as np
 from norm_reference import oracle
+from contracts import protocol as check_protocol
 
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def rne(n,s):
@@ -47,7 +48,7 @@ def main():
   for e in mf['artifacts']:
    if sha(root/e['path'])!=e['sha256']:raise ValueError('actual artifact SHA')
  protocol=json.loads((a.run/'actual.jsonl.protocol.json').read_text())
- if not all(protocol.values()):raise ValueError('actual M reset')
+ check_protocol(protocol)
  cases=json.loads((a.input/'cases.json').read_text());rows=[json.loads(s)for s in(a.run/'actual.jsonl').read_text().splitlines()]
  if len(rows)!=6 or len(cases)!=6:raise ValueError('all declared cases')
  summaries=[]

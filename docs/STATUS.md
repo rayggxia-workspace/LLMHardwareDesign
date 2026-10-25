@@ -1,5 +1,6 @@
 # 当前状态
 
+- 2026-10-25 [Issue84](experiments/issue-84-cache-share.md)：84条同函数完整M消费者、8192仲裁乘法和14份严格独立接收通过；同16KiB/128bit1RW缓存减少34.68%周期，cache+share逻辑面积比基线少10.38%，非总芯片PPA。额外约8拍SRAM等待会抵消缓存收益，运行时旁路/中止恢复与门级/受限STA由Issue85/86独立推进。279.76MB完整包服务器、2.90MB精选及7phase126条原Git源字节核验通过。任务PR待审查合并，登记/看板pending，不是六类Block设计全部完成。
 - 2026-10-25 [Issue82/PR83](experiments/issue-82-norm-circuit.md)：服务器完成三种精确norm和真实K512/8expert/H1536 M全消费者、raw单位传播与参数锁存，正式174命令/重SHA负例独立PASS。norm快76.19%而整条消费者只快2.166%/1.842%，logic-only面积增26.44%，优先A喂数/乘法器复用，SFU4不冻结默认。100作业97完成/3失败留档、24轻量检查、493.86MB全包/3.28MB精选与8phase150原源字节核验通过；宏/STA/通用V整合/整模型未验。待审查合并非done，登记pending、看板缺配置/read:project待同步。
 
 - 2026-10-25 [Issue80/PR81](experiments/issue-80-block-circuit.md)：用户批准首轮1—3已交付真实宽控制器/取指/512B单口frame/单ROM与六模板规格。本人CPU服务器895×4数值/协议独立PASS，五实际状态reset；同库存局部反馈减少42.476%—44.029%任务集cycles，研究库逻辑面积增0.157%（不含共同frame/ROM wrapper）。纯byte norm8仍约579万cycles，优先受限专用化与真实M消费者/宏时序，不外推E2E或冻结M/V合宏。48作业45完成/3失败保留，118.98MB完整/0.709MB精选、8phase123源SHA已验；16新/69相关测试通过。待审查合并非done，登记pending/看板unverified同步pending。
