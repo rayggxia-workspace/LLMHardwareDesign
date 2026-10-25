@@ -26,7 +26,7 @@ H1536原fullX/fullgamma/A外加frame、H2560 fullX/fullgamma/frame两种非法�
 - `scripts/check_project.py` PASS；仅管理结构。
 - 23个结构/协议语义单元检查 PASS：容量、对齐、活跃区重叠、非法免费frame、全行stats、错误gamma、有限response、完整consumer/egress、不能读未写数据、不能写A/guard、完成前后顺序等。
 - 8布局（6合法/2预期拒绝）、4完整符号行trace，独立重建每条line的来源、生命期和闭式事务数量；18个代码/配置/旧实际源逐字节匹配原Git blob。
-- 入仓副本再接收 PASS；四个交付负例实际拒绝：删除gamma-release后重签SHA、伪造计数字段为bool、伪造原源码SHA、添加未知“RTL_PASS”字段。未只依赖文件hash验收。
+- 入仓副本再接收 PASS；四个交付负例实际拒绝：删除gamma-release后重签SHA、伪造计数字段为bool、伪造原源码SHA、添加未知“RTL_PASS”字段。未只依赖文件hash验收。最终归档时原Windows CRLF负例receipt与强制LF重放的逐字节断言失败，四个语义结果均一致；保留serialization-erratum.json及原Git版本，统一最终LF并更新索引，两个干净重放的receipt逐字节相同，trace/report和所有计数未改。
 - [统一结果索引](../../project/experiments/v_integration/results/issue-91/index.json)、[报告](../../project/experiments/v_integration/results/issue-91/report.json)、[独立接收](../../project/experiments/v_integration/results/issue-91/receiver.json)、[实际命令/日志](../../work/Liangruizhi/91/execution.json)。report SHA-256：`145956d188d24b05b96fdd1c08008c3c5abc337c716e286ea9b0c1da898c1efc`。
 
 以上是结构证据，接收器没有计算任何tensor值，也未验证ready/valid逐周期仲裁、RMW原子性、SFU算术、实际gamma控制RTL或PPA。把这些写成已实现属于证据越界。
