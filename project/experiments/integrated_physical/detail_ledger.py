@@ -20,7 +20,7 @@ def audit_ledger(stage,net):
   for cell,pin in pins:
    cell=re.sub(r'\\(.)',r'\1',cell);pin=re.sub(r'\\(.)',r'\1',pin);ref=('PORT:'+pin)if cell=='PIN'else(cell+':'+pin);need(ref in lookup and ref not in found,'exact routed net pin/port');found.add(ref)
   if not found:
-   need(len(parts)==2 and use in('USE GROUND','USE POWER'),'only empty unrouted power metadata');empty.append({'net':name,'use':use});continue
+   need(len(parts)==2 and use in('USE SIGNAL','USE GROUND','USE POWER'),'only explicitly empty unrouted metadata, no physical terminals or segments');empty.append({'net':name,'use':use});continue
   bs={lookup[x]for x in found};need(len(bs)==1,'one electrical class per DEF net');b=next(iter(bs));need(found==refs[b]and b not in seen,'complete unique DEF electrical class');seen.add(b);kind='clock'if canon(b)[0]==clock else'signal';need(use not in('USE POWER','USE GROUND'),'no actual PG network silently classified as signal')
   if len(parts)==2:need(len(found)==1,'unrouted class only unused single driver');unused.append(name);continue
   route=parts[2].strip()
@@ -45,7 +45,8 @@ def audit_ledger(stage,net):
     else:
      v=tokens[i];need(last is not None and v in vias,'known real via record, reject unparsed routing feature '+v);need(layer in vias[v],'via touches current physical layer');via[kind]['-'.join(vias[v])]+=1;by_master[v]+=1;layer=next(x for x in vias[v]if x!=layer);i+=1
  need(seen==set(refs),'all actual electrical classes represented by full DEF')
- log=(stage/'flow.log').read_text();dr=block(log,'BEGIN_DETAILED_ROUTE','END_DETAILED_ROUTE');counts=re.findall(r'(?m)^.*(?:Number of vias|Total number of vias)\s*[:=]\s*(\d+)',dr)
+ log=(stage/'flow.log').read_text();dr=block(log,'BEGIN_DETAILED_ROUTE','END_DETAILED_ROUTE');counts=re.findall(r'Total number of vias = (\d+)\.',dr);need(counts and int(counts[-1])==sum(by_master.values()),'independent actual DEF via count equals final DRT report');native_layers=re.findall(r'Total wire length on LAYER (metal\d+) = (\d+) um\.',dr)[-10:];need(len(native_layers)==10 and len({l for l,v in native_layers})==10,'complete final native layer report')
+ for l,v in native_layers:need(abs(sum(Decimal(wire[k][l])for k in wire)/2000-Decimal(v))<=1,'independent DEF layer length agrees with whole-um native report '+l)
  return {'status':'PASS_FULL_DEF_PIN_CLASSES_ROUTING_GRAMMAR_AND_LAYER_LEDGER','net_records':len(records),'clock_NDR_nets':ndr_nets,'clock_NDR_layers_dbu':[{'layer':l,'width':int(w),'spacing':int(sp)}for l,w,sp in ndr_rows],'electrical_classes':len(seen),'routed_nets':dict(routes),'unrouted_singletons':len(unused),'empty_metadata_nets':empty,'wirelength_um':{k:{'metal'+str(i):str(Decimal(d['metal'+str(i)])/2000)for i in range(1,11)}for k,d in wire.items()},'via_layer_pairs':{k:dict(d)for k,d in via.items()},'via_masters':dict(by_master),'total_vias':sum(by_master.values()),'explicit_zero_end_extensions':zero_extensions,'total_centerline_um':str(sum(sum(v.values())for v in wire.values())/Decimal(2000)),'PG':'absent; no supply routing, tap/fill, power integrity or manufacturing qualification','measurement':'Actual DEF centerline Manhattan lengths; via rectangles/enclosures separate and not added to wire length; no independent electromagnetic RC solution.'}
 
 if __name__=='__main__':
