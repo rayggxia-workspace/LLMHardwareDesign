@@ -13,3 +13,6 @@ Next technical work is explicit controller service extraction/owner lease integr
 Outstanding: shared M/V/A/R/S/D complete prototype, real downstream gated norm/consumer Y DMA, offline projection/L2norm/gate bridges, whole-model integer quality, SRAM/fabric atomicity implementation, STA/RC/power/manufacturing metal choices; full256 not executed. Assignees main chat/new tasks, physical/member55/63 remain their owners. GitHub branch upload/PR/review, management-hub registration and Projects synchronization pending root's actual authorized delivery; no local result is reported as already uploaded.
 
 发布前优先级补充：参考5539590修复两头混合非法shift的 E_FORMAT 优先级（每attempt先全group>62，再WIDTH）。主RTL/门级无改。服务器91330–91333完成两fixture×quiet/背压，非零完整state/Y的133200B发布快照不动，status12/retry0，无算术/offer。独立priority-delivery01 full628816B SHA64abc061bf3615fbde4c02d730e5d9d9f1239f0aec2d5131ed35e077dcac92ae，selected105816B SHA5b7f98481e3713b18b8ce9b7f65cdc4962ba9bb59fe07651ca25a4a38f419a5a；80/63成员、27原Git源/28nested全PASS。后续用修正版reference，主包仍保留旧源码，须联合[补充索引](../../project/experiments/gdn_state/results/issue-104/priority-supplement/index.json)接收。
+
+
+发布回执（2026-10-25）：[PR107](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/107)已上传；Issue104 in_review，待独立审查，未合并/done。报告、主索引、成本和补充数值回执与原Git字节读回一致，见work/Liangruizhi/104/remote-readback.json；登记PR5 pending、看板unverified/同步pending。共享服务/宏/物理仍未完成。

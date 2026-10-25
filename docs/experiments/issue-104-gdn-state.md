@@ -100,3 +100,6 @@ Vpair2反复读取四码外部行，proposal物化、两头 retry 和 shadow cop
 全部 E_FORMAT=12、retry=0、mul=0、wide_calls=0、offer=0、stage流为空；独立reference Refusal(12,attempts=[])。每例实际root+metadata+完整state+完整Y共133200B在拒绝前后逐字节不变，不以零状态掩盖误清空。STEP已完整clone/验证state，但未发布或重标。
 
 补充e664827独立保存于服务器 `priority-delivery01/full.zip`：628816B，SHA `64abc061bf3615fbde4c02d730e5d9d9f1239f0aec2d5131ed35e077dcac92ae`；精选105816B，SHA `5b7f98481e3713b18b8ce9b7f65cdc4962ba9bb59fe07651ca25a4a38f419a5a`。完整80/精选63成员、27原Git源码字节通过，完整另核28嵌套artifact；[补充索引](../../project/experiments/gdn_state/results/issue-104/priority-supplement/index.json)、[数值回执](../../project/experiments/gdn_state/results/issue-104/priority-supplement/receipt.json)与双byte回执在仓库。既有门级不重跑；后续复用应使用补丁后的reference并同时接收主包与补充。
+
+
+发布回执（2026-10-25）：[PR107](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/107)已上传；Issue104 in_review，待独立审查，未合并/done。报告、主索引、成本和补充数值回执与原Git字节读回一致，见work/Liangruizhi/104/remote-readback.json；登记PR5 pending、看板unverified/同步pending。共享服务/宏/物理仍未完成。
