@@ -186,3 +186,7 @@ project/experiments/qwen3_trace/使用独立D盘环境（torch2.10.0+cpu、trans
 RTL project/rtl/norm_service，工具project/experiments/norm_circuit；[README](../project/experiments/norm_circuit/README.md)、[报告](experiments/issue-82-norm-circuit.md)、[索引](../project/experiments/norm_circuit/results/issue-82/index.json)。本机先python -B scripts/check_project.py，再python -B -m unittest discover -s project/experiments/norm_circuit -p "test_*.py"和相关block_circuit同名检查；仅24小合成，TEMP/TMP置D盘任务目录。
 
 所有真实提取/矩阵/RTL/综合/独立数学在本人新CPU服务器lrz-i82-*；实际argv和8phase来源在work/Liangruizhi/82/execution.json。正式norm=phase1，RNE边界=phase6，最终M raw-unit批03/map04=phase7，发布源码phase8。已有输出不得覆盖。PC精选用closure/verify_delivery.py且archive basename必须selected.zip；原Git核验用work82/verify_sources.py --expected-phases 8，只核字节，不称完整数学重跑。实际payload、完整原码和构建/综合数据见服务器delivery03。
+
+## Issue86 门级接收与受限逻辑时序
+
+入口 `project/experiments/gate_sta/README.md` / `PROTOCOL.md`，实际冻结命令见 `work/Liangruizhi/86/execution.json`。只在本人服务器执行精确映射的 prepare/build/sim/sta 与 `receive.py --root <issue86-root> --prior <issue84-root> --out <new-dir>`；PC只执行既有 verify_delivery.py 与原Git源字节接收（README列完整参数）。四变体选定门级输入已通过，store82切分后的OpenSTA覆盖完整DFF，但slew/cap违规未闭合；不将其作为全核/85新增硬件的物理资格。
