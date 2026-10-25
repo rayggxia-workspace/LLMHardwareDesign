@@ -1,5 +1,9 @@
 # Liangruizhi 的进度
 
+## 2026-10-25 Issue102完整GQA RTL in_progress
+
+Issue102独立task/102-attention-rtl，D:/Projects/LLMHardwareDesign-attention-rtl，base PR101@5820c22。指定身份及最新97/98/99/55/63已核，已登记本人server lrz-i102-*；冻结64 full和61真实cached分列输入、76真实query全8头、16KiB单1RW/8S8/1S32/SFU。准备实际QK→三遍score整数softmax→PV及恢复/独立接收，尚未执行不预判通过；非online/append/M-A物理共享。98与99并行互不修改。root最终PR，登记PR5 pending、看板缺配置/read:project待管理员。
+
 ## 2026-10-25 UTC+08 Issue97专用V完整消费者交付待同步
 
 [Issue97](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/97)，task/97-v-consumer，D:/Projects/LLMHardwareDesign-v-consumer。指定身份/最新55/63/93/98/99已核。原gate/up由RTL生成SiLU/MID/整512 δ/A8，再真实M→merge/residual→93流式norm；两路各50cmd/29输出与22实际重SHA负例独立PASS，4路raw gate8输出及4重SHA负例PASS。单16KiB/8S8+1S32，新增宽控制全部映射70,102.970µm²，不含宏/物理，非通用80 V ISA或六Block完成。
