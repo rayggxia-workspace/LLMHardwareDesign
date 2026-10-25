@@ -28,6 +28,8 @@ def v_reference(g,u,lut):
   aa=[rne(x,delta)for x in row];require(all(-127<=x<=127 for x in aa),'symmetric A8');mid+=row;codes+=aa;deltas.append(delta)
  return {'mid':mid,'A8':codes,'delta':deltas,'lut_reads':lookups}
 def reference(root,c):
+ if c.get('source')=='synthetic-original-gateup-boundaries':
+  gu=np.frombuffer((root/c['gateup']).read_bytes(),dtype='<i4').reshape(8,2,512);lut=np.frombuffer((root/'lut.bin').read_bytes()[:65540],dtype='<i4');return v_reference(gu[:,0],gu[:,1],lut)
  compiled=Path(c['compiled']);runtime=Path(c['runtime']);bound(compiled);bound(runtime)
  require(sha(runtime/'runtime.npz')==c['runtime_sha256'],'bound original runtime');require(sha(compiled/'manifest.json')==c['compiled_manifest_sha256'],'bound original constants')
  with np.load(compiled/'constants.npz',allow_pickle=False)as const,np.load(runtime/'runtime.npz',allow_pickle=False)as z:
@@ -51,6 +53,7 @@ def reference(root,c):
 
 def check(row,ref):
  for k in ('mid','A8','delta'):
+  require(type(row[k])is list and all(type(x)is int for x in row[k]),'integer typed '+k)
   require(row[k]==ref[k],'actual RTL '+k)
  counts={'gate_reads':1024,'up_reads':1024,'lut_reads':ref['lut_reads'],'v_sreads':1024,'v_swrites':1280}
  if not row['prep_only']:
