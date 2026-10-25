@@ -1,0 +1,106 @@
+{
+  "status": "PASS102_EXACT_RAW_GATE_AND_INDEPENDENT_GQA",
+  "source": {
+    "commit": "b84f0b21666120f778309a7c91708ab86ec23c7d",
+    "sources": {
+      "project/experiments/attention_rtl/PROTOCOL.md": "92b7e0c90e3c34e2be5cb6aefe026ac7038e1aa9de0d51deadb4acf53a04a8ed",
+      "project/experiments/attention_rtl/inputs.py": "a9d7fefcd76da0445f0be3ed60f2c994ff74f78d24b380cf710df0b0d3d4ffd2",
+      "project/experiments/attention_rtl/sim.cpp": "361cd47a621c3e38bd3b0af7be1270278849c23f0bc731f889a3cd55a37e9242",
+      "project/experiments/attention_rtl/run.py": "307c060fce181450136536f482bb47423054787fa9559979bc7fb17f2b2d10ab",
+      "project/rtl/attention/attention102.sv": "8da224cfb042c4d6a2307e94311c4fcaf4034243261d7ef9f009929aca1a8939",
+      "project/rtl/attention/chain102.sv": "82ffb19a743a3f189dd4e8e7457436899e2cdca555338aa95df648e18045dd70",
+      "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+      "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+      "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+      "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+      "project/experiments/attention_rtl/receive.py": "ad04114b0b5c3b9d6bfbbd59b9a7db5721eac312879ae51887fa0ebaaa60d9ec",
+      "project/experiments/attention_rtl/cost.py": "79a788d281760a05f2af2e3903c5ce0490a2a90515938904a7eb2bb76334000f",
+      "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+      "project/experiments/block_decisions/attention.py": "efae923f2bd71a737ec77296a37826c9325d7aea075df4f6fc34759d35c851ca",
+      "project/experiments/server_models/bounds.py": "45ce1f64cd782f8210e648ff5778622c0eed4b5249ecbdefb7733712ccebceb9",
+      "project/experiments/attention_rtl/qualification.cpp": "eb20e28518fd23674fc272fbda51874fb2b63f38ce657677b5efcfa01cfecfc9",
+      "project/experiments/attention_rtl/gate.py": "961b057d12879467af1e6b919014c5917dbd80e5e7aacb232cb49ac1da292015",
+      "project/experiments/attention_rtl/gate_receive.py": "f0d21664351df686130a2d4b33c6d16729f1ce5326c7119af70475cdabd272e1",
+      "project/experiments/attention_rtl/analyze.py": "dc6f5d7d2948df1321debfe95aed34c6bf5ca8d734d9e733ade05fcff16a4717"
+    }
+  },
+  "mapping_manifest_sha256": "fb7c5c63c1b6aebbf2968e5a2c37c0a4baa7c650acde54e901ff716f1c6fd4cf",
+  "prepared_manifest_sha256": "dd5d34e44bade6bffc4d3f7dcd8fccdf24a7fcc8b8bd57a17467ebbc70135c44",
+  "build_manifest_sha256": "d6660885c2909c063b6d019cea4342fc33c605fdf6d76fc7885ac12fa773a8f9",
+  "runs": [
+    {
+      "pilot": 1,
+      "stall": 0,
+      "counts": {
+        "queries": 6,
+        "heads": 48,
+        "QK_values": 3400,
+        "PV_values": 6144
+      },
+      "gate_manifest_sha256": "bfd317eea166d518b3b0e8607864fb77348f74664a4daf7ca32c35bf3586a55c",
+      "RTL_manifest_sha256": "93846d6d80a7e43980b1a72b586631b62f232461e248afe7a0ba703fb68dd99d"
+    },
+    {
+      "pilot": 1,
+      "stall": 1,
+      "counts": {
+        "queries": 6,
+        "heads": 48,
+        "QK_values": 3400,
+        "PV_values": 6144
+      },
+      "gate_manifest_sha256": "b50858d38dd7884e033accb1f3ad2f7cda6b01ef7cf901f65667b756748ab10f",
+      "RTL_manifest_sha256": "ac73580b260bae4db013e4c7960c6fcbf9fff7464df18544e2b11300074e1fd7"
+    },
+    {
+      "pilot": 2,
+      "stall": 0,
+      "counts": {
+        "queries": 3,
+        "heads": 24,
+        "QK_values": 25088,
+        "PV_values": 3072
+      },
+      "gate_manifest_sha256": "64e14b57a8d43fe985d2f133dabffbadad7adb9c77ade948cf593dab123664e9",
+      "RTL_manifest_sha256": "b5e8eacdfbc64913805142cbdbd1e0eaaa4d0097c576176d57e7a600506515fe"
+    },
+    {
+      "pilot": 2,
+      "stall": 1,
+      "counts": {
+        "queries": 3,
+        "heads": 24,
+        "QK_values": 25088,
+        "PV_values": 3072
+      },
+      "gate_manifest_sha256": "1c5ba50f135b92e7fcb306a0c1a8a13ae1a9af913ccaa59a3b68fd5f95383d14",
+      "RTL_manifest_sha256": "9aa3989f1bb928e06c6adc9783a1d0d53c1212ce1e3412191a08d985254616fb"
+    }
+  ],
+  "negatives": [
+    {
+      "status": "REJECTED_ACTUAL_REHASHED_GATE_OUTPUT",
+      "reason": "all numeric/cycle/protocol result fields gate equals RTL",
+      "manifest_sha256": "c2ad15d5021d30333b53817d0dabec4a215d116003c698a34c4f6b7ed4d23f1a"
+    },
+    {
+      "status": "REJECTED_ACTUAL_REHASHED_GATE_OUTPUT",
+      "reason": "all numeric/cycle/protocol result fields gate equals RTL",
+      "manifest_sha256": "ccd04163daa573615f026276eca0f52c6c0e43f43e43cfdd9b5ff75c5a56d1a7"
+    },
+    {
+      "status": "REJECTED_ACTUAL_REHASHED_GATE_OUTPUT",
+      "reason": "all numeric/cycle/protocol result fields gate equals RTL",
+      "manifest_sha256": "fd5dd0c1aead968bd7804e6cd6ac3c9d5c897b077ed6fafc55df13500c945104"
+    },
+    {
+      "status": "REJECTED_ACTUAL_REHASHED_GATE_OUTPUT",
+      "reason": "all numeric/cycle/protocol result fields gate equals RTL",
+      "manifest_sha256": "9c0fd08e6ea8416c2d7a091bdb77b1f7db999f18062253ea66b74dae0d51e472"
+    }
+  ],
+  "limits": [
+    "Selected normal complete8head actual full/cached and synthetic queries only; zero-delay mapped cells with original behavioral store82.",
+    "No gate fault/epoch injection, abort/error qualification, universal equivalence, SRAM/ROM macro, STA or physical signoff."
+  ]
+}
