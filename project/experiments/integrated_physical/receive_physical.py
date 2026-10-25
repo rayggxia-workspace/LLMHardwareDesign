@@ -5,6 +5,7 @@ from common import *
 from admission93 import admit,MAP
 from canonical import canonical_cut
 from constraints_audit import audit_sdc
+from gate_dependency import checked_gate
 sys.path.insert(0,str(ROOT/'project/experiments/electrical_repair'))
 from structure import library,certificate,input_loads
 from physical_structure import certify_physical
@@ -116,10 +117,10 @@ def audit(folder,prepared,out,gate=None,postgate=None):
  if fm['stage']in('place','repair','cts','ctsrepair'):
   gate_status='PENDING_RAW_GATE_PROVISIONAL_ONLY'
   if gate is not None:
-   gr=load(gate/'receipt.json');need(gr['status']=='PASS_ACTUAL93_COMPLETE_GATES_AND_DECLARED_EPOCH_EXCEPTION'and gr['admission']==ad and gr['prepared_manifest_sha256']==sha(prepared/'manifest.json'),'independent same exact complete raw gate');gate_status='PASS_COMPLETE_RAW_GATE';gate_sha=sha(gate/'receipt.json')
+   gr=checked_gate(gate,prepared,ad);need(gr['status']=='PASS_ACTUAL93_COMPLETE_GATES_AND_DECLARED_EPOCH_EXCEPTION'and gr['admission']==ad and gr['prepared_manifest_sha256']==sha(prepared/'manifest.json'),'independent same exact complete raw gate');gate_status='PASS_COMPLETE_RAW_GATE';gate_sha=sha(gate/'receipt.json')
  if fm['stage']in('place','repair','cts','ctsrepair'):block(log,'BEGIN_CHECK_PLACEMENT','END_CHECK_PLACEMENT');geo=geometry_connectivity((folder/'placed.def').read_text(),after,lib,before)
  if postgate is not None:
-  pg=load(postgate/'receipt.json');need(pg['status']=='PASS_POSTPHYSICAL93_COMPLETE_GATES_AND_DECLARED_EPOCH_EXCEPTION'and pg['admission']==ad and pg['prepared_manifest_sha256']==sha(prepared/'manifest.json')and pg['postphysical']['physical_stage_manifest_sha256']==sha(folder/'manifest.json')and pg['postphysical']['physical_final_verilog_sha256']==sha(folder/'final.v'),'complete gate replay of this actual physical netlist');post_status='PASS_COMPLETE_POSTPHYSICAL_GATE';post_sha=sha(postgate/'receipt.json')
+  pg=checked_gate(postgate,prepared,ad,folder);need(pg['status']=='PASS_POSTPHYSICAL93_COMPLETE_GATES_AND_DECLARED_EPOCH_EXCEPTION'and pg['admission']==ad and pg['prepared_manifest_sha256']==sha(prepared/'manifest.json')and pg['postphysical']['physical_stage_manifest_sha256']==sha(folder/'manifest.json')and pg['postphysical']['physical_final_verilog_sha256']==sha(folder/'final.v'),'complete gate replay of this actual physical netlist');post_status='PASS_COMPLETE_POSTPHYSICAL_GATE';post_sha=sha(postgate/'receipt.json')
  if fm['stage']in('repair','cts','ctsrepair'):
   prev=Path(fm['previous_directory']);need(fm['previous_manifest_sha256']==sha(prev/'manifest.json'),'preceding actual physical stage binding');old_geo=geometry_connectivity((prev/'placed.def').read_text(),load(prev/'final.json')['modules']['chain93'],lib,before);need(old_geo['pin_geometry']==geo['pin_geometry'],'exact frozen external pinmap through physical transformations')
  return {'stage':fm['stage'],'stage_manifest_sha256':sha(folder/'manifest.json'),'structure':cert,'actual_constraints':sdc,'clock_inventory':clock_inventory(after,lib),'input_sink_costs':input_loads(after,lib),'scenarios':scenarios,'physical_geometry':geo,'all_declared_internal_timing_electrical_closed':all(s['closed']for s in scenarios),'postphysical_gate_status':post_status,'postphysical_gate_receipt_sha256':post_sha,'raw_gate_status':gate_status,'gate_receipt_sha256':gate_sha,'physical_stage_accepted':fm['stage']in('place','repair','cts','ctsrepair')and gate_status=='PASS_COMPLETE_RAW_GATE'and post_status=='PASS_COMPLETE_POSTPHYSICAL_GATE'and all(s['closed']for s in scenarios),'macro_clock_load_qualified':False,'upstream_drive_qualified':False,'manufacturable':False}
