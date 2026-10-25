@@ -1,5 +1,11 @@
 # Liangruizhi 的进度
 
+## 2026-10-25 UTC+08 Issue98 实际整合核布局与 CTS（进行中）
+
+[Issue98](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/98)，task/98-integrated-physical，D:/Projects/LLMHardwareDesign-integrated-physical；仅本人服务器 lrz-i98-*。原93完整整数消费者与实际映射已绑定，97 raw gate独立结果待接入，不复用旧84时序。四边全2369pin/285行与完整功能pin/4019FF均独立通过；有限布局RC修复使area56325.500um²、两负载setup/hold/electrical全零，仍理想clock。实际CTS增至56766.794um²，传播clock产生1057hold违例，最差−0.208368ns，一次既定有限修复正在执行。原raw与修复后各两种完整51记录gate长跑并行，未完成不宣称qualification。
+
+[阶段报告](../../docs/experiments/issue-98-integrated-physical.md)。Nangate研究库、store82整wrapper cut、估计RC/无PG，不可制造；M2–M10和M5/M6pin也不等于55/63的固定层/定制层候选。保留全部工具/容量/hold失败与修改理由。分支未由根会话上传PR，Issue已登记进展；归档/跨机SHA与看板仍待实际交付，不能标done。恢复先读自有Slurm终态及依赖收据，勿重复长跑。
+
 ## 2026-10-25 UTC+08 Issue86门级与逻辑时序交付
 
 [Issue86](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/86) / [PR90](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/90)，task/86-gate-sta，D:/Projects/LLMHardwareDesign-gate-sta；base Issue84/PR87。本人Liangruizhi/182389313；实际只服务器lrz-i86-*，旧84只读。四变体共8完整门级消费者严格独立接收，完整整数和原RTL计数/cycles一致；数千slew/cap违规保留，不能报告合格Fmax/物理完成。全部DFF端点已覆盖，真实存储宏/RC/CTS仍在cut外。
