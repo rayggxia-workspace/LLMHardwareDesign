@@ -212,3 +212,8 @@ project/experiments/epoch_boundary/README.md与PROTOCOL.md记录冻结源重放�
 ## Issue99 完整head R状态单元
 
 参见[工具README](../project/experiments/r_state/README.md)、[报告](experiments/issue-99-r-state.md)、[协议](../project/experiments/r_state/PROTOCOL.md)。PC先运行`python -B scripts/check_project.py`，再`project/experiments/r_state/verify_archive.py`仅做selected.zip/index.json字节接收。实际inputs/bigint/RTL/map/rawgate仅服务器：正式phase7六路05批次、map04、4真实checkpoint gate、phase8 gate-schema01；完整argv在work99/execution.json。复现必须新输出目录，不覆盖已有结果。单head/单16KiB/单S32并不等于与M/V资源已整合或物理签核。
+
+
+## Issue104 完整两头 GDN / exact wide lowerer
+
+见 [README](../project/experiments/gdn_state/README.md)、[协议](../project/experiments/gdn_state/PROTOCOL.md)、[报告](experiments/issue-104-gdn-state.md)。PC先 `python -B scripts/check_project.py`，再 `project/experiments/gdn_state/verify_archive.py --kind selected` 只核字节。实际 native32/portable12、bigint、RTL/map/rawgate 仅本人服务器 issue104-gdn-state-20261025；work104/execution.json 保存精确参数。build02/phase3连续及map01，phase4实际gate导出，phase5/6 gate，phase6严格receiver，phase7 cost01，phase8归档。新输出目录且原结果只读；全两头事务不等于完整gatednorm、共享106或STA。
