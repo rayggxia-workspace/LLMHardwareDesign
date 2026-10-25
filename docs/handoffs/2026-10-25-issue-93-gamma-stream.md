@@ -39,3 +39,6 @@ cost02 SHA `249757b86326f9cb85ff1737eb9bc823b9f5c04f45d29dccd551260e094924eb`；
 源工具phase8@8017ebe调用不变phase7 receiver；服务器semantic-negative01及semantic-delivery01。完整补充11,221,672B/145成员，SHA `72986069253b1147048fa9b2b26e67fdc8a2695b6a7ac0907937c9ae438408a3`；精选37,566B/32成员，SHA `8fe1d4a065eddaafef4f5b71d1af130a5ec66bd2f867704e54d33aa403649647`，仓库`results/issue-93/semantic-supplement`。index SHA `2759f504c032240b42818adb50449471776859ade6641dbc8f0253ad845ce07a`；数学拒绝回执 SHA `b1fadead7213fc3ec30036294230084474bbaec7e10fb3a6e8bb64e64eaafab4`。
 
 独立全包/精选字节通过，8phase112原Git源通过（包含主包7phase108，不相加冒充220个不同源）。两次完整receiver main返回1，错误分别是`independent full row integer output`、`one entireH sum/den`；不会产生假PASS receipt。所有作业最终状态见work93/slurm-final.txt，失败和取消均有原因，未遗留运行任务。
+
+
+发布回执（2026-10-25）：[PR100](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/100)已上传；Issue93为in_review，待独立审查合并，未done。远端读回58dc6278623d779b548d2b664aabb10a49762c35的报告/最终索引/cost02/语义负例回执与原Git blob逐字节相同，见work93/remote-readback.json。登记PR5 pending；board配置与read:project缺项，状态unverified/同步pending，管理员/审查人待指定。当前仍继续97/98/99，不把本任务完成等同Block库全部完成。
