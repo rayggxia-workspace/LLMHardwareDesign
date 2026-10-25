@@ -26,9 +26,9 @@ def main():
     if sha(a.input/e['path'])!=e['sha256']:raise ValueError('input SHA')
    cmd('simulation',[a.build/'obj/Vchain82',a.input/'vectors.tsv',a.out/'actual.jsonl',a.stall]);m['input_manifest_sha256']=sha(a.input/'manifest.json');m['status']='RTL_EXECUTED_NOT_RECEIVED'
   else:
-   script='read_verilog -sv '+' '.join(map(str,sv))+'\nhierarchy -top block82 -chparam PROFILE '+str(a.profile)+'\nproc\nopt\nwreduce\nmemory_dff\nmemory_collect\nopt_clean\ncheck -assert\nwrite_json '+str(a.out/'generic.json')+'\n'
+   script='read_verilog -sv '+' '.join(map(str,sv))+'\nhierarchy -top chain82 -chparam PROFILE '+str(a.profile)+'\nproc\nopt\nwreduce\nmemory_dff\nmemory_collect\nopt_clean\ncheck -assert\nwrite_json '+str(a.out/'generic.json')+'\n'
    (a.out/'generic.ys').write_text(script);cmd('generic',['yosys','-s',a.out/'generic.ys'])
-   lib=a.library;script='read_liberty -lib '+str(lib)+'\nread_verilog -sv '+' '.join(map(str,sv))+'\nhierarchy -top block82 -chparam PROFILE '+str(a.profile)+'\nblackbox store82\nsynth -top block82 -flatten\ndfflibmap -liberty '+str(lib)+'\nabc -liberty '+str(lib)+'\nclean\ncheck -assert\ntee -o '+str(a.out/'stat.json')+' stat -liberty '+str(lib)+' -json\nwrite_json '+str(a.out/'mapped.json')+'\n'
+   lib=a.library;script='read_liberty -lib '+str(lib)+'\nread_verilog -sv '+' '.join(map(str,sv))+'\nhierarchy -top chain82 -chparam PROFILE '+str(a.profile)+'\nblackbox store82\nsynth -top chain82 -flatten\ndfflibmap -liberty '+str(lib)+'\nabc -liberty '+str(lib)+'\nclean\ncheck -assert\ntee -o '+str(a.out/'stat.json')+' stat -liberty '+str(lib)+' -json\nwrite_json '+str(a.out/'mapped.json')+'\n'
    (a.out/'map.ys').write_text(script);cmd('map',['yosys','-s',a.out/'map.ys']);m['library_sha256']=sha(lib);m['status']='LOGIC_ONLY_MAPPED_NOT_PPA'
  except Exception as e:m['error']=str(e);m['traceback']=traceback.format_exc();raise
  finally:
