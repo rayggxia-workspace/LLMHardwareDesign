@@ -261,3 +261,10 @@ PR待审查/合并，审查人/管理员待指定，未done；后续在已有授
 完成具体地址/生命周期/程序-LUT/scale/有限仲裁/错误合同及六Block分层缺项；纯结构4trace/8布局、23检查及18原Git源接收PASS，4交付负例拒绝。H2560保留X/Y10KiB+gamma1KiB+frame512B+A4KiB合法（余512B），相对X也流式少640外部行和640 S写入。源码8fa5dde，report SHA145956d188d24b05b96fdd1c08008c3c5abc337c716e286ea9b0c1da898c1efc。只为结构候选，无新真实数组、RTL、STA或服务器作业。
 
 [报告](../../docs/experiments/issue-91-v-integration.md)/[交接](../../docs/handoffs/2026-10-25-issue-91-v-integration.md)。下一步独立Issue先gamma streaming+H1536回归/H2560全行den，再SiLU完整链；新增byte ALU/mux/程序/LUT/metadata及端口成本必须计费。根会话统一push/PR和状态，当前本地完成、远端待上传；不合并/不done，登记pending、Projects unverified/同步pending。
+
+
+## 2026-10-25 Issue92主会话接收与交付
+
+[Issue92](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/92)，负责人Liangruizhi。修复实际32位epoch耗尽后的同tag迟到排空，并屏蔽reset/abort时cfg/done假握手。60正常完整消费者、4边界完整输出、8配置冲突、2完成冲突及10实际门锥SAT性质通过；33服务器作业结束，双包/精选158成员及5phase92源字节通过。原缺陷反例保留；52387.902µm²仅logic-only，不继承88电气资格。
+
+分支task/92-epoch-boundary，工作目录D:/Projects/LLMHardwareDesign-epoch-boundary。实验源commit按索引冻结，文档/依赖合并不改实验源。主会话正上传PR，最终链接另附；待审查合并而非done。登记management-hub PR5 pending；board.json缺失/实际projectItems缺read:project，在线状态unverified、同步pending，管理员/审查人待指定。下一步#93流式gamma与完整V/S消费者及新网表物理资格，M/V/A/R/S/D整体仍未完成。

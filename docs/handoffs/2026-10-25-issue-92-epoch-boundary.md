@@ -18,3 +18,6 @@
 恢复第一步：核最新Issue92/85/88/91、PR/成员55/63与GitHub身份，核以上索引与byte/source回执，使用冻结phase4而非随意最新HEAD，在新的授权服务器输出目录重放。命令见实验README及work92/execution.json。新reset/abort合同要求控制器取消pending cfg；epoch耗尽后仍需协调fabric hard reset，不能仅清零核心代际。未验：整核liveness/CDC/乱序/多context、实际tag传输成本、92门级/STA、SRAM/ROM宏与整机/制造后定制资格。
 
 本子任务已本地整理验证/服务器归档，未自行push或开PR；主会话负责上传任务分支、PR、Issue in_review和远端读回。登记management-hub PR5仍pending；沿父任务看板404/缺read:project，未宣称在线已同步，管理员/审查人待指定。不自行合并、不标done。无需等待新模型或其他机器。
+
+
+主会话接收：已核验本人身份与最新成员55/63、PR58/79；本分支同步最新父分支task/91-v-integration。旧实验的source binding/原始包未改变；PR待提交后的实际读回记录，不把子任务“未push”历史解释为当前最终状态。
