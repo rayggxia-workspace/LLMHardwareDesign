@@ -16,10 +16,12 @@ def artifacts(p):
   q=p/e['path'];need(q.parent==p and q.is_file(),'direct artifact');need(q.stat().st_size==e['bytes']and sha(q)==e['sha256'],'artifact bytes SHA '+str(q))
  return m
 
+def same_int(x,y):return type(x)is int and x==y
 def protocol(p):need(isinstance(p,dict)and set(p)=={'actual_M_active_reset','no_stale_completion','SRAM_retained'}and all(type(v)is bool and v for v in p.values()),'complete typed protocol')
 def csvrows(p):return list(csv.DictReader(p.read_text().splitlines(),delimiter='\t'))
 def electrical(log):
- ans={}
+ need(log.count('BEGIN_ELECTRICAL_REPORT')==1 and log.count('END_ELECTRICAL_REPORT')==1,'actual unique report execution markers')
+ log=log.split('BEGIN_ELECTRICAL_REPORT')[1].split('END_ELECTRICAL_REPORT')[0];ans={}
  for section,nextsection,key in(('max slew','max capacitance','slew'),('max capacitance','END_NOT_PRESENT','cap')):
   match=re.search(r'(?m)^'+section+r'\s*$',log)
   block=log[match.end():]if match else''
@@ -31,7 +33,7 @@ def electrical(log):
 def audit(a,v,lib):
  repair=a.root/(f'pilot-v{v}04'if v==3 else f'repair-v{v}04');prep=a.root/f'prepare-v{v}04';old=R86/f'prepare-v{v}01'
  rm=artifacts(repair);pm=artifacts(prep);om=artifacts(old)
- need(rm['variant']==v and pm['variant']==v and rm['status']=='REPAIR_EXECUTED_NOT_RECEIVED'and pm['status']=='EXACT_MAPPED_NETLIST_EXPORTED_WITH_DECLARED_STORE_CUT','repair/prep typed variant and status')
+ need(same_int(rm['variant'],v) and same_int(pm['variant'],v) and rm['status']=='REPAIR_EXECUTED_NOT_RECEIVED'and pm['status']=='EXACT_MAPPED_NETLIST_EXPORTED_WITH_DECLARED_STORE_CUT','repair/prep typed variant and status')
  need(rm['prior_prepared_manifest_sha256']==pm['prior_prepared_manifest_sha256']==sha(old/'manifest.json'),'original source manifest binding')
  need(pm['repair_manifest_sha256']==sha(repair/'manifest.json')and pm['repair_directory']==str(repair),'actual repaired source binding')
  for p in(LIB,TECH,LEF):need(rm['inputs'][str(p)]==sha(p),'exact unchanged research view')
@@ -61,7 +63,7 @@ def audit(a,v,lib):
  return cert,pm
 
 def timing(a,v,cert):
- folder=a.root/f'sta-v{v}04';tm=artifacts(folder);sm=load(folder/'timing-summary.json');need(tm['variant']==v and tm['status']=='DECLARED_CUT_LOGIC_TIMING_EXECUTED','STA actual variant/status');need(sm['prepared_manifest_sha256']==cert['prepared_manifest_sha256']and sm['library_sha256']==sha(LIB),'STA exact repaired input')
+ folder=a.root/f'sta-v{v}05';tm=artifacts(folder);sm=load(folder/'timing-summary.json');need(same_int(tm['variant'],v) and tm['status']=='DECLARED_CUT_LOGIC_TIMING_EXECUTED','STA actual variant/status');need(sm['prepared_manifest_sha256']==cert['prepared_manifest_sha256']and sm['library_sha256']==sha(LIB),'STA exact repaired input')
  net=load(a.root/f'prepare-v{v}04/cut.json')['modules']['chain84'];dffs={n+'/D'for n,c in net['cells'].items()if c['type'].startswith('DFF')};outs=set()
  for n,p in net['ports'].items():
   if p['direction']=='output':outs.update(n if len(p['bits'])==1 else n+'['+str(i)+']'for i in range(len(p['bits'])))
@@ -96,11 +98,11 @@ def main():
  for v in map(int,a.variants.split(',')):
   cert,pm=audit(a,v,lib);ts=timing(a,v,cert);gates=[]
   if not a.structure_only:
-   bm=artifacts(a.root/f'build-v{v}04');need(bm['status']=='GATE_BINARY_BUILT_NOT_EXECUTED'and bm['variant']==v and bm['prepared_manifest_sha256']==cert['prepared_manifest_sha256'],'actual build binding');need(sha(a.root/f'build-v{v}04/obj/Vchain84')==bm['binary_sha256'],'actual binary')
+   bm=artifacts(a.root/f'build-v{v}04');need(bm['status']=='GATE_BINARY_BUILT_NOT_EXECUTED'and same_int(bm['variant'],v) and bm['prepared_manifest_sha256']==cert['prepared_manifest_sha256'],'actual build binding');need(sha(a.root/f'build-v{v}04/obj/Vchain84')==bm['binary_sha256'],'actual binary')
    for stall in(0,1):
-    f=a.root/f'gate-v{v}s{stall}04';gm=artifacts(f);need(gm['status']=='PASS_GATE_REPLAY_ALL_OBSERVABLES_AND_RESET'and gm['variant']==v and gm['stall']==stall and gm['build_manifest_sha256']==sha(a.root/f'build-v{v}04/manifest.json'),'gate complete dependency variant/stall')
+    f=a.root/f'gate-v{v}s{stall}04';gm=artifacts(f);need(gm['status']=='PASS_GATE_REPLAY_ALL_OBSERVABLES_AND_RESET'and same_int(gm['variant'],v) and same_int(gm['stall'],stall) and gm['build_manifest_sha256']==sha(a.root/f'build-v{v}04/manifest.json'),'gate complete dependency variant/stall')
     actual=[json.loads(s)for s in(f/'actual.jsonl').read_text().splitlines()];need(len(actual)==1 and actual[0]['name']==case['name'],'selected complete case');row=actual[0];check(row,refs[v//2],v//2)
-    goldroot=R84/f'rtl-v{v}s{stall}02';goldm=artifacts(goldroot);need(goldm['profile']==v and goldm['stall']==stall and goldm['input_manifest_sha256']==sha(R84/'input01/manifest.json'),'original config/input binding');need(row==json.loads((goldroot/'actual.jsonl').read_text().splitlines()[0]),'all original RTL observables')
+    goldroot=R84/f'rtl-v{v}s{stall}02';goldm=artifacts(goldroot);need(same_int(goldm['profile'],v) and same_int(goldm['stall'],stall) and goldm['input_manifest_sha256']==sha(R84/'input01/manifest.json'),'original config/input binding');need(row==json.loads((goldroot/'actual.jsonl').read_text().splitlines()[0]),'all original RTL observables')
     src=R84/'input01'/f'vectors-c{v//2}.tsv';need((f/'vectors.tsv').read_text()==src.read_text().splitlines()[0]+'\n'and gm['vectors_source_sha256']==sha(src),'exact original input vector bytes');need(gm['baseline_output_sha256']==sha(goldroot/'actual.jsonl'),'baseline SHA');protocol(load(f/'actual.jsonl.protocol.json'))
     neg=copy.deepcopy(row);neg['out'][0]^=1;nf=a.out/f'negative-gate-v{v}s{stall}.json';put(nf,neg)
     try:check(load(nf),refs[v//2],v//2)
@@ -113,6 +115,7 @@ def main():
   try:protocol(load(nf))
   except ValueError:pass
   else:raise ValueError('protocol mutation accepted')
- result={'status':'PASS_STRUCTURE_AND_TIMING_RECEPTION_ONLY'if a.structure_only else'PASS_REPAIRED_GRAPH_GATE_MATH_AND_DECLARED_TIMING_RECEPTION','source':bd,'input_manifest_sha256':sha(R84/'input01/manifest.json'),'views':{str(p):sha(p)for p in(LIB,TECH,LEF)},'variants':rows,'limits':['Typical research library only; ideal clock and no wire parasitics or placement/routing.','Entire store82 timing cut; behavioral memory only in gate replay. No target SRAM/ROM qualification.','Fixed input waveform, no upstream driving cell or source impedance. Full input sink costs reported separately.','Zero-delay selected gate replay plus all original cell-pin/port structural function certificate; not transistor/PVT or CDC signoff.','Tie Boolean models/cell area exist; tie timing/maximum load not specified by these Liberty cells.','Only original Issue84 hardware; Issue85/92 runtime epoch hardware excluded.']}
+ config_negatives=[True,False,'0',0.0,None,-1,99];nf=a.out/'negative-config-types.json';put(nf,config_negatives);need(all(not same_int(x,0)for x in load(nf)),'strict configuration integer rejection')
+ result={'all_variants_internal_electrical_setup_hold_closed':all(t['acceptance']=='PASS_DECLARED_INTERNAL_ELECTRICAL_SETUP_HOLD'for row in rows for t in row['timing']),'status':'PASS_STRUCTURE_AND_TIMING_RECEPTION_ONLY'if a.structure_only else'PASS_REPAIRED_GRAPH_GATE_MATH_AND_DECLARED_TIMING_RECEPTION','source':bd,'input_manifest_sha256':sha(R84/'input01/manifest.json'),'views':{str(p):sha(p)for p in(LIB,TECH,LEF)},'variants':rows,'limits':['Typical research library only; ideal clock and no wire parasitics or placement/routing.','Entire store82 timing cut; behavioral memory only in gate replay. No target SRAM/ROM qualification.','Fixed input waveform, no upstream driving cell or source impedance. Full input sink costs reported separately.','Zero-delay selected gate replay plus all original cell-pin/port structural function certificate; not transistor/PVT or CDC signoff.','Tie Boolean models/cell area exist; tie timing/maximum load not specified by these Liberty cells.','Only original Issue84 hardware; Issue85/92 runtime epoch hardware excluded.']}
  put(a.out/'receipt.json',result);print(result['status'])
 if __name__=='__main__':main()
