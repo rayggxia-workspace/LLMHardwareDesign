@@ -1,6 +1,5 @@
 {
   "schema": "gamma93-execution-v1",
-  "source_final": "5a3ab1ffe7322bcb27b61eadac2f562c1cd325b1",
   "jobs": [
     {
       "command": [
@@ -85,6 +84,124 @@
         "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
         "-u",
         "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase6/work/Liangruizhi/93/verify_delivery.py",
+        "--index",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery01/index.json",
+        "--archive",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery01/full-results.zip",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery01/server-full-byte-receipt.json"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase6/work/Liangruizhi/93/verify_delivery.py --index /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery01/index.json --archive /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery01/full-results.zip --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery01/server-full-byte-receipt.json",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i93-bytes01",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:20:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/bytes01-%j.log",
+        "--dependency=afterok:90872",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase6/work/Liangruizhi/93/verify_delivery.py --index /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery01/index.json --archive /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery01/full-results.zip --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery01/server-full-byte-receipt.json"
+      ],
+      "stdout": "90873",
+      "phase": "phase6",
+      "binding_sha256": "48b7dc110713d0c4fcc816585c2418ea1ce365ae9a8934c2c4022a20e94269c8"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase7/work/Liangruizhi/93/verify_delivery.py",
+        "--index",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery02/index.json",
+        "--archive",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery02/full-results.zip",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery02/server-full-byte-receipt.json"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase7/work/Liangruizhi/93/verify_delivery.py --index /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery02/index.json --archive /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery02/full-results.zip --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery02/server-full-byte-receipt.json",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i93-bytes02",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:20:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/bytes02-%j.log",
+        "--dependency=afterok:90904",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase7/work/Liangruizhi/93/verify_delivery.py --index /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery02/index.json --archive /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery02/full-results.zip --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery02/server-full-byte-receipt.json"
+      ],
+      "stdout": "90905",
+      "phase": "phase7",
+      "binding_sha256": "28e30cba4167b69969fc4e0774a174474f440ca979429040a611fd5e7183fa4f"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase6/work/Liangruizhi/93/collect.py",
+        "--root",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025",
+        "--config",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/archive-config01.json",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery01"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase6/work/Liangruizhi/93/collect.py --root /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025 --config /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/archive-config01.json --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery01",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i93-collect01",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:20:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/collect01-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase6/work/Liangruizhi/93/collect.py --root /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025 --config /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/archive-config01.json --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery01"
+      ],
+      "stdout": "90872",
+      "phase": "phase6",
+      "binding_sha256": "48b7dc110713d0c4fcc816585c2418ea1ce365ae9a8934c2c4022a20e94269c8"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase7/work/Liangruizhi/93/collect.py",
+        "--root",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025",
+        "--config",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/archive-config02.json",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery02"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase7/work/Liangruizhi/93/collect.py --root /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025 --config /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/archive-config02.json --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery02",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i93-collect02",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:20:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/collect02-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase7/work/Liangruizhi/93/collect.py --root /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025 --config /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/archive-config02.json --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/delivery02"
+      ],
+      "stdout": "90904",
+      "phase": "phase7",
+      "binding_sha256": "28e30cba4167b69969fc4e0774a174474f440ca979429040a611fd5e7183fa4f"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
         "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase5/project/experiments/gamma_stream/analyze.py",
         "--receipt",
         "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/receipt-s004.json",
@@ -114,6 +231,41 @@
       "stdout": "90869",
       "phase": "phase5",
       "binding_sha256": "f93f7f7329fca535c4ff140967751eb50e1244b4d92ffc665ad8bb87900dd86f"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase7/project/experiments/gamma_stream/analyze.py",
+        "--receipt",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/receipt-s005.json",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/receipt-s105.json",
+        "--map",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/map-b001",
+        "--baseline",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/map-b101",
+        "--library",
+        "/public/home/yuzelu/RuizhiLiang/issue80-block-circuit-20261025/nangate45-reference/NangateOpenCellLibrary_typical.lib",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/cost02.json"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase7/project/experiments/gamma_stream/analyze.py --receipt /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/receipt-s005.json /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/receipt-s105.json --map /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/map-b001 --baseline /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/map-b101 --library /public/home/yuzelu/RuizhiLiang/issue80-block-circuit-20261025/nangate45-reference/NangateOpenCellLibrary_typical.lib --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/cost02.json",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i93-cost02",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:20:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/cost02-%j.log",
+        "--dependency=afterok:90901:90902",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase7/project/experiments/gamma_stream/analyze.py --receipt /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/receipt-s005.json /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/receipt-s105.json --map /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/map-b001 --baseline /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/map-b101 --library /public/home/yuzelu/RuizhiLiang/issue80-block-circuit-20261025/nangate45-reference/NangateOpenCellLibrary_typical.lib --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/cost02.json"
+      ],
+      "stdout": "90903",
+      "phase": "phase7",
+      "binding_sha256": "28e30cba4167b69969fc4e0774a174474f440ca979429040a611fd5e7183fa4f"
     },
     {
       "command": [
@@ -294,6 +446,35 @@
         "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
         "-u",
         "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase7/project/experiments/gamma_stream/verify.py",
+        "--input",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/input02",
+        "--run",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/rtl-s003",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/receipt-s005.json"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase7/project/experiments/gamma_stream/verify.py --input /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/input02 --run /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/rtl-s003 --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/receipt-s005.json",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i93-recv-s005",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:20:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/recv-s005-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase7/project/experiments/gamma_stream/verify.py --input /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/input02 --run /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/rtl-s003 --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/receipt-s005.json"
+      ],
+      "stdout": "90901",
+      "phase": "phase7",
+      "binding_sha256": "28e30cba4167b69969fc4e0774a174474f440ca979429040a611fd5e7183fa4f"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
         "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase4/project/experiments/gamma_stream/verify.py",
         "--input",
         "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/input02",
@@ -347,6 +528,35 @@
       "stdout": "90868",
       "phase": "phase5",
       "binding_sha256": "f93f7f7329fca535c4ff140967751eb50e1244b4d92ffc665ad8bb87900dd86f"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase7/project/experiments/gamma_stream/verify.py",
+        "--input",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/input02",
+        "--run",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/rtl-s103",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/receipt-s105.json"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase7/project/experiments/gamma_stream/verify.py --input /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/input02 --run /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/rtl-s103 --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/receipt-s105.json",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i93-recv-s105",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:20:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/recv-s105-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase7/project/experiments/gamma_stream/verify.py --input /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/input02 --run /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/rtl-s103 --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/receipt-s105.json"
+      ],
+      "stdout": "90902",
+      "phase": "phase7",
+      "binding_sha256": "28e30cba4167b69969fc4e0774a174474f440ca979429040a611fd5e7183fa4f"
     },
     {
       "command": [
@@ -545,6 +755,91 @@
       "stdout": "90857",
       "phase": "phase4",
       "binding_sha256": "d81f167c20356cdbcaaef9d42489b5b1bd5a39e5f009b79772be6288e204ea16"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase8/work/Liangruizhi/93/verify_delivery.py",
+        "--index",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-delivery01/index.json",
+        "--archive",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-delivery01/full-results.zip",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-delivery01/server-full-byte-receipt.json"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase8/work/Liangruizhi/93/verify_delivery.py --index /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-delivery01/index.json --archive /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-delivery01/full-results.zip --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-delivery01/server-full-byte-receipt.json",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i93-sem-bytes01",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:20:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/sem-bytes01-%j.log",
+        "--dependency=afterok:90921",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase8/work/Liangruizhi/93/verify_delivery.py --index /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-delivery01/index.json --archive /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-delivery01/full-results.zip --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-delivery01/server-full-byte-receipt.json"
+      ],
+      "stdout": "90922",
+      "phase": "phase8",
+      "binding_sha256": "e45aecf21c1bde7f2c989bc1cef4c6049169aefb8ed92dcc2489813258611bfc"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase8/work/Liangruizhi/93/collect.py",
+        "--root",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025",
+        "--config",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-config01.json",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-delivery01"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase8/work/Liangruizhi/93/collect.py --root /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025 --config /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-config01.json --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-delivery01",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i93-sem-collect01",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:20:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/sem-collect01-%j.log",
+        "--dependency=afterok:90920",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase8/work/Liangruizhi/93/collect.py --root /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025 --config /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-config01.json --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-delivery01"
+      ],
+      "stdout": "90921",
+      "phase": "phase8",
+      "binding_sha256": "e45aecf21c1bde7f2c989bc1cef4c6049169aefb8ed92dcc2489813258611bfc"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase8/work/Liangruizhi/93/semantic_negative.py",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-negative01"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase8/work/Liangruizhi/93/semantic_negative.py --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-negative01",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i93-semantic01",
+        "--partition=c96",
+        "--cpus-per-task=2",
+        "--time=00:20:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic01-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase8/work/Liangruizhi/93/semantic_negative.py --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-negative01"
+      ],
+      "stdout": "90920",
+      "phase": "phase8",
+      "binding_sha256": "e45aecf21c1bde7f2c989bc1cef4c6049169aefb8ed92dcc2489813258611bfc"
     }
   ],
   "staging": [
@@ -700,11 +995,57 @@
           "project/experiments/gamma_stream/README.md": "41596b13bf2fdec156eaa12a34effa1f8215974b42ab461afc7f99a29fd2f734"
         }
       }
+    },
+    {
+      "commit": "5895c7a242907db07b77bc93a7361878dff7b7fd",
+      "archive_bytes": 108239,
+      "archive_sha256": "00a621fb6dd86251d2b285df76dff46f26d25b484af3388a51976df622b81a57",
+      "binding": {
+        "commit": "5895c7a242907db07b77bc93a7361878dff7b7fd",
+        "sources": {
+          "project/rtl/gamma_stream/chain93.sv": "39f03a636376b81668ec480b8356916e5c0e97b949e526990cd46a78541ee4c9",
+          "project/rtl/gamma_stream/norm93.sv": "a42bb0f74a097eb14297820eaca6fe14350f233139d47153eb20dd47218aea5d",
+          "project/experiments/gamma_stream/chain_sim.cpp": "a7587d5dbc573c2468771c9cb4e6327303ea1c5a34073f4b72cf16cb1792033a",
+          "project/experiments/gamma_stream/inputs.py": "412adf1803a632b16e9f63eed36d840503424d891b3546e03f536c8ac70f8825",
+          "project/experiments/gamma_stream/PROTOCOL.md": "605ec48a0ea6fa599695a2aacd48347e50f3f54948a017b099e2bdc35fc841d9",
+          "project/experiments/gamma_stream/run.py": "ff37e78158b6fe5372fe181d3cc01fc98d1d02ec471641f5e0caf93e619ad63a",
+          "project/rtl/runtime_cache/mfront85.sv": "04391b2eaed06f8dda19c33ddbeee30c49ad6ce233fe874ad26f712bef7014eb",
+          "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+          "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+          "project/rtl/runtime_cache/chain85.sv": "f89ace7f2dc5f3b0aa47dcccccb84e33104b69938f886bb33a2e0d52799c1b1e",
+          "project/rtl/runtime_cache/norm84.sv": "cd6532b9eaabe193e11d19829bf069bcf514bc7fb32b674dbb429fe262ea6e4b",
+          "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+          "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+          "project/experiments/gamma_stream/verify.py": "314e301ec0ec67823ae8b6df00464e197b1505d9dcf996c6aa7a75a665992760",
+          "project/experiments/gamma_stream/analyze.py": "5f52f28161e71422b4e34f47fcca8ef285db96ecddfe299c03b7193032fd2bea",
+          "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+          "work/Liangruizhi/93/collect.py": "7bedab78b12ae3db4186b643ac2d7cbbf667a01d48dd4cd51e547fdea4f7f2d2",
+          "work/Liangruizhi/93/verify_delivery.py": "b0b4a9266447cc93431d40536cc545e5cb9ab268aea617f5f31ee4c713ba9ff6",
+          "work/Liangruizhi/93/verify_sources.py": "f8ded04c1b794ee12d623f4424c1a31f59344094135d965e0888007b9088bd6c",
+          "project/experiments/gamma_stream/README.md": "f36ff40ba1be3777eac7472c6cc9284d74aefaced8b9c99c0e881c852fd23b8d",
+          "work/Liangruizhi/93/byte_negative_checks.py": "dc6607d4eb1b516ae7d1f3dd185434cbda7e9b55fcf281c6ec2d400f1f7edab0"
+        }
+      }
+    },
+    {
+      "commit": "8017ebe1c6ebdbe67ec4a3d09659e32df6696d8e",
+      "archive_bytes": 14953,
+      "archive_sha256": "9650bc442c5d33b9c6d8395ffcdb7ffef5acccfbcdefc39b66f14949dd413a70",
+      "binding": {
+        "commit": "8017ebe1c6ebdbe67ec4a3d09659e32df6696d8e",
+        "sources": {
+          "work/Liangruizhi/93/semantic_negative.py": "895ead7ad0280e131966ccf46e88ab872b0a5438195fba186a2f28f16c3a6a3a",
+          "work/Liangruizhi/93/collect.py": "7bedab78b12ae3db4186b643ac2d7cbbf667a01d48dd4cd51e547fdea4f7f2d2",
+          "work/Liangruizhi/93/verify_delivery.py": "b0b4a9266447cc93431d40536cc545e5cb9ab268aea617f5f31ee4c713ba9ff6",
+          "work/Liangruizhi/93/verify_sources.py": "f8ded04c1b794ee12d623f4424c1a31f59344094135d965e0888007b9088bd6c"
+        }
+      }
     }
   ],
+  "formal": "rtl-s003/s103; final receipt-s005/s105+cost02; extra semantic-negative01 uses unchanged phase7 receiver on real mutated/rehashed files",
   "limits": [
-    "wallclock Slurm duration is tool runtime, not circuit performance",
-    "failed inputs01 and build01 preserved; own pending dependent rtl-s001/s101 cancelled after parent failure",
-    "formal accepted runs rtl-s003/s103; earlier executed rtl-s002/s102 retained as superseded driver data"
+    "tool wallclock is not hardware latency",
+    "superseded cost01 had wrong wire_bytes; corrected by independent source width/state graph contract",
+    "no shared external task interrupted; only own afterfailed dependencies90848/49 cancelled"
   ]
 }

@@ -82,3 +82,5 @@ H2560两真实行quiet active356038、总358604；背压active365636、总368202
 cost01曾将beat按4B换算，实际是16B。cost01和初包保留并标记失效成本字段；**最终只用final/cost02.json及receipt-s005/s105**。phase7独立接收从真实memory_link声明读出128bit，并断言read状态图、5beat和payload，成本工具再次独立断言384×5×16/384×16。整数输出、cycle、RTL与mapped inventory未改动，不靠“工具报告PASS”掩盖原记账错误。
 
 源码冻结、实际命令、输入版本、Slurm、完整输出和失败记录见`work/Liangruizhi/93`、`project/experiments/gamma_stream/results/issue-93/final`及交接。全包服务器、精选入仓，独立字节与原Git SHA接收分开。发布由主会话执行；本地已验证不代表远端PR已上传/已审查合并，当前不得标done。
+
+补充验收：根审阅要求的两个真实文件语义负例已完成（phase8/Slurm90920）。复制正式rtl-s003，实际改首个输出码或全局den，重写JSONL和manifest内artifact size/SHA；冻结phase7完整receiver main先通过所有字节检查，再分别以`independent full row integer output`、`one entireH sum/den`拒绝，returncode均1，无PASS文件。补充全量11,221,672B/145成员、精选37,566B/32成员独立字节PASS，8phase112原Git源核验PASS。根据此复查的不是单独内存check函数。路径/SHA在交接与semantic-supplement/index.json。

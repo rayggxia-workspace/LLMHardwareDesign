@@ -279,4 +279,4 @@ PR待审查/合并，审查人/管理员待指定，未done；后续在已有授
 
 [Issue93](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/93)，task/93-gamma-stream，独立D:/Projects/LLMHardwareDesign-gamma-stream。服务器正式两路51记录/每路48正确、1零分母、2坏gamma被独立数学拒绝，6Granite完整M与2Gemma H2560整行norm；单16KiB保留4KiB A+512B frame，generic寄存+180，paired logic面积+4.20291%（不是总PPA）。参数每忙拍变动、模式切换、cfg/abort/stale/reset/epoch已测。桥每read5×128bit，cost01按32bit记账已修正为final/cost02，原失败保留。
 
-[报告](../../docs/experiments/issue-93-gamma-stream.md)/[交接](../../docs/handoffs/2026-10-25-issue-93-gamma-stream.md)。主包78.63MB/276成员、精选200022B/88成员、7phase108原Git源/6字节负例通过；根审阅追加2项完整文件重SHA数值负例待服务器执行。下一步97 V/M与98实际网表物理资格。本地已整理，尚未push/PR；主会话负责发布和读回，不done。登记PR5 pending，看板unverified同步pending，管理员待指定。
+[报告](../../docs/experiments/issue-93-gamma-stream.md)/[交接](../../docs/handoffs/2026-10-25-issue-93-gamma-stream.md)。主包78.63MB/276成员、精选200022B/88成员、7phase108原Git源/6字节负例通过；根审阅追加2项完整文件重SHA数值负例已由冻结完整receiver正确拒绝，11.22MB补充包/37.6KB精选和8phase112原Git字节亦通过。下一步97 V/M与98实际网表物理资格。本地已整理，尚未push/PR；主会话负责发布和读回，不done。登记PR5 pending，看板unverified同步pending，管理员待指定。

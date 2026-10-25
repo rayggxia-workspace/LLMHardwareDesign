@@ -25,11 +25,17 @@ cost02 SHA `249757b86326f9cb85ff1737eb9bc823b9f5c04f45d29dccd551260e094924eb`；
 
 ## 下一步/阻塞
 
-本轮已完成容量/功能/有费逻辑候选；根审阅要求补充真正修改JSONL并重写SHA的两项完整receiver语义负例，脚本已冻结、服务器补充验收待执行，不能将内存check函数负例替代它。
+本轮已完成容量/功能/有费逻辑候选及根审阅追加的文件级语义负例。真实复制正式run并修改输出码/global_den、重写所有artifact SHA后，由冻结phase7完整receiver main分别因独立输出不符和全行sum/den不符退出1；不是hash失败。Slurm90920通过，完整变异文件及stderr保留。
 
 1. Issue97复用norm93 direct接口，先完成专用SiLU→全K δ/A8→residentM→norm；512B frame为预留，不是已集成V；新V/IO/地址搬迁必须单独计费。
 2. Issue98对实际93/97网表继续物理资格；不得继承88/86，也不能把RTL输出epoch赋值当门级FF注入。
 3. H2560完整M、H1536独立norm、同外存入口resident预取、任意队列重排/CDC、目标SRAM/LUT/工艺、完整A/R/D以及制造前端点/金属定制仍未验收，分别由后续Issue与成员55/63接续；无原则性用户阻塞。
 4. 根会话交付前核身份Liangruizhi/id182389313、origin、base及文件范围，push任务分支开/更PR、Issue同步/读回；不能自行合并。
 
-恢复第一步：读Issue93/97/98与最新PR及成员进度，核server final/cost02、receiver与SHA；如只是继续97集成无需为文档合并重跑未变RTL。先完成两项补充语义负例并归档，再正式PR交付。
+恢复第一步：读Issue93/97/98与最新PR及成员进度，核server final/cost02、receiver与SHA；如只是继续97集成无需为文档合并重跑未变RTL。两项补充语义负例与归档均已通过；根会话可正式PR交付。
+
+## 文件级语义负例补充包
+
+源工具phase8@8017ebe调用不变phase7 receiver；服务器semantic-negative01及semantic-delivery01。完整补充11,221,672B/145成员，SHA `72986069253b1147048fa9b2b26e67fdc8a2695b6a7ac0907937c9ae438408a3`；精选37,566B/32成员，SHA `8fe1d4a065eddaafef4f5b71d1af130a5ec66bd2f867704e54d33aa403649647`，仓库`results/issue-93/semantic-supplement`。index SHA `2759f504c032240b42818adb50449471776859ade6641dbc8f0253ad845ce07a`；数学拒绝回执 SHA `b1fadead7213fc3ec30036294230084474bbaec7e10fb3a6e8bb64e64eaafab4`。
+
+独立全包/精选字节通过，8phase112原Git源通过（包含主包7phase108，不相加冒充220个不同源）。两次完整receiver main返回1，错误分别是`independent full row integer output`、`one entireH sum/den`；不会产生假PASS receipt。所有作业最终状态见work93/slurm-final.txt，失败和取消均有原因，未遗留运行任务。
