@@ -16,6 +16,8 @@
 
 检查勘误：先前git diff --check PASS指当时工作区，并非累计分支。累计默认检查把冻结JSON原CRLF视作空白而失败；没有全局LF规则，不改来源字节。实际 `git -c core.whitespace=cr-at-eol diff --check task/88-electrical-repair...8449e0ead2057b7245128886e7ed4242cb1a39bd` 通过；默认失败与限定通过分别记录。
 
+phase75–79新增510条原Git引用、110独立blob共625091B已逐字节核对服务器源码；见[来源回执](../../work/Liangruizhi/98/phase75-79-original-git-byte-receipt.json)。最终93完整接收91581与物理接收91582已按成功依赖排队，排队不代表已执行。
+
 ## checkpoint3：97研究物理资格已闭合，93等待最终门级
 
 | 最终候选 |93 joint9302 → detail9303|97 joint9701 → detail9702|
