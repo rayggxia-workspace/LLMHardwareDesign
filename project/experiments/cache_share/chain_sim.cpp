@@ -14,13 +14,13 @@ static E step(){
  d.clk=0;d.ext_ready=!pending_ext;d.ext_valid=pending_ext&&response_wait==0;for(int j=0;j<4;j++)d.ext_data[j]=response_data[j];d.eval();
  bool accept=d.ext_req&&d.ext_ready,retire=d.ext_valid&&d.ext_take;auto address=d.ext_addr;
  if(d.obs_valid){accs.push_back(d.obs_acc);downs.push_back(d.obs_down);}
- if(d.mem_request&&!seen){seen=true;waits=stall?serial%3:0;serial++;}d.mem_hold=waits>0;
- if(d.mul_request&&!mulseen){mulseen=true;mulwait=stall?mulserial%3:0;mulserial++;}d.mul_hold=mulwait>0;d.eval();
+ if(d.mem_request&&!seen){seen=true;waits=stall==1?serial%3:stall>=2?(stall==2?4:stall==3?8:12):0;serial++;}d.mem_hold=waits>0;
+ if(d.mul_request&&!mulseen){mulseen=true;mulwait=stall==1?mulserial%3:0;mulserial++;}d.mul_hold=mulwait>0;d.eval();
  if(d.mwrite)for(int j=0;j<4;j++)joins.push_back(d.mdata[j]);
  E e{bool(d.cfg&&d.cfg_ready),bool(d.cfg_valid&&d.cfg_take),{d.cfg_dout[0],d.cfg_dout[1],d.cfg_dout[2],d.cfg_dout[3]}};
  d.clk=1;d.eval();d.clk=0;d.eval();ticks++;
  if(d.reset){pending_ext=false;response_wait=0;ext_serial=0;}
- else {if(response_wait>0)response_wait--;if(retire)pending_ext=false;if(accept){need(address%16==0&&address+16<=payload.size(),"actual M input address");response_data={};for(int j=0;j<16;j++)response_data[j/4]|=uint32_t(payload[address+j])<<(8*(j%4));pending_ext=true;response_wait=stall?1+(ext_serial++%5):1;}}
+ else {if(response_wait>0)response_wait--;if(retire)pending_ext=false;if(accept){need(address%16==0&&address+16<=payload.size(),"actual M input address");response_data={};for(int j=0;j<16;j++)response_data[j/4]|=uint32_t(payload[address+j])<<(8*(j%4));pending_ext=true;response_wait=stall==1?1+(ext_serial++%5):1;}}
  if(mulwait>0)mulwait--;if(!d.mul_request)mulseen=false;
  if(waits>0)waits--;if(!d.mem_request)seen=false;return e;
 }
