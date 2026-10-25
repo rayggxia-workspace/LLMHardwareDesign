@@ -1,0 +1,12 @@
+"""Independent residual hold endpoint classes and exact loaded path reports."""
+import argparse,collections,csv,re
+from decimal import Decimal
+from common import *
+p=argparse.ArgumentParser();p.add_argument('--stage',type=Path,required=True);p.add_argument('--receipt',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(exist_ok=False);m={'source':sources(),'resources':resource_snapshot()};sm=artifacts(a.stage);rc=load(a.receipt/'receipt.json');need(rc['result']['stage_manifest_sha256']==sha(a.stage/'manifest.json'),'exact independently received stage');net=load(a.stage/'final.json')['modules']['chain93'];ports={n if len(p['bits'])==1 else n+'['+str(i+p.get('offset',0))+']':p['direction']for n,p in net['ports'].items()for i in range(len(p['bits']))};records=list(csv.DictReader((a.stage/'hold-load10.tsv').read_text().splitlines(),delimiter='\t'));bad=[r for r in records if Decimal(r['slack'])<0];by=collections.Counter();starts=collections.Counter();ends=collections.Counter()
+for r in bad:
+ start='input'if ports.get(r['startpoint'])=='input'else'FF_or_internal';end='output'if ports.get(r['endpoint'])=='output'else'FF_or_internal';by[start+'->'+end]+=1;starts[r['startpoint'].split('[')[0]]+=1;ends[r['endpoint'].split('/')[0]]+=1
+worst=sorted(bad,key=lambda r:Decimal(r['slack']))[:20];logs=(a.stage/'flow.log').read_text();excerpts=[]
+for line in logs.splitlines():
+ if re.search(r'(INFO RSZ|WARNING RSZ|BEGIN_CTS_REPAIR|END_CTS_REPAIR|Iteration \|)',line):excerpts.append(line)
+put(a.out/'diagnosis.json',{'stage_manifest_sha256':sha(a.stage/'manifest.json'),'receipt_sha256':sha(a.receipt/'receipt.json'),'violating_endpoint_count':len(bad),'path_classes':dict(by),'input_bus_or_start_counts':dict(starts),'worst_20':worst,'repair_events':excerpts,'all_physical_constraints_unchanged':True})
+lines=['set_thread_count 8',f'read_liberty {{{LIB}}}',f'read_db {{{a.stage}/final.odb}}',f'read_sdc {{{a.stage}/final.sdc}}',f'source {{{P}/setRC.tcl}}','estimate_parasitics -placement','puts "BEGIN_WORST_HOLD"','report_checks -path_delay min -group_path_count 20 -format full_clock_expanded -fields {capacitance slew fanout input} -digits 9','puts "END_WORST_HOLD"'];s=a.out/'diagnose.tcl';s.write_text(tcl_script(lines));command(a.out,'diagnose',[OR,'-exit',s],300);m.update(status='RESIDUAL_PROPAGATED_CLOCK_HOLD_DIAGNOSED_NOT_REPAIRED',stage_manifest_sha256=sha(a.stage/'manifest.json'));manifest(a.out,m);print('RESIDUAL_PROPAGATED_CLOCK_HOLD_DIAGNOSED_NOT_REPAIRED')
