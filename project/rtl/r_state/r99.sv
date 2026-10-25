@@ -89,7 +89,7 @@ module r99(input wire clk,reset,cmd,input wire [1:0] command,input wire [4:0] he
  if(ext_valid&&ext_take&&!matching)stale<=stale+1;
  if(state==ER&&mlreq&&erdy)begin if(e_wr)ext_writes<=ext_writes+1;else ext_reads<=ext_reads+1;end
  if(state==SR&&sreq&&srdy)begin if(s_wr)s_writes<=s_writes+1;else s_reads<=s_reads+1;end
- if(abort_accept)begin abort_pending<=1;aborts<=aborts+1;if(state!=EW&&state!=SW&&state!=MW)state<=ABORTED;end
+ if(abort_accept)begin abort_pending<=1;aborts<=aborts+1;if((state!=EW&&state!=SW&&state!=MW)||(state==EW&&ev)||(state==SW&&sv)||(state==MW&&mv))state<=ABORTED;end
  else if(abort_pending)begin
  if(state==ABORTED)begin abort_pending<=0;fail(2);end
  else if((state==EW&&ev)||(state==SW&&sv)||(state==MW&&mv))state<=ABORTED;

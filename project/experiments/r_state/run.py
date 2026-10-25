@@ -5,7 +5,7 @@ ROOT=Path(__file__).resolve().parents[3];HERE=Path(__file__).resolve().parent
 sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def put(p,x):Path(p).write_text(json.dumps(x,indent=2,sort_keys=True)+'\n',newline='\n')
 def main():
- p=argparse.ArgumentParser();p.add_argument('task',choices=['build','sim','map']);p.add_argument('--out',type=Path,required=True);p.add_argument('--input',type=Path);p.add_argument('--build',type=Path);p.add_argument('--stall',type=int,choices=[0,1],default=0);p.add_argument('--head',type=int,default=0);p.add_argument('--unit',type=int,default=-29);p.add_argument('--mode',choices=['real','protocol'],default='real');p.add_argument('--library',type=Path);a=p.parse_args();bd=json.loads((ROOT/'binding.json').read_text())
+ p=argparse.ArgumentParser();p.add_argument('task',choices=['build','sim','map']);p.add_argument('--out',type=Path,required=True);p.add_argument('--input',type=Path);p.add_argument('--build',type=Path);p.add_argument('--stall',type=int,choices=[0,1],default=0);p.add_argument('--head',type=int,default=0);p.add_argument('--unit',type=int,default=-29);p.add_argument('--mode',choices=['real','protocol','boundary'],default='real');p.add_argument('--library',type=Path);a=p.parse_args();bd=json.loads((ROOT/'binding.json').read_text())
  for n,h in bd['sources'].items():assert sha(ROOT/n)==h,n
  a.out.mkdir(parents=True,exist_ok=False);m={'schema':'r99-run-v1','status':'ERROR','source':bd,'task':a.task,'stall':a.stall,'head':a.head,'mode':a.mode}
  prefix=['/public/software/singularity-ce-4.3.4/bin/singularity','exec','--bind','/public/home/yuzelu/opt/eda:/eda:ro','--pwd',str(a.out),'/public/home/yuzelu/opt/eda/containers/orfs-26Q1-repacked.sif']
