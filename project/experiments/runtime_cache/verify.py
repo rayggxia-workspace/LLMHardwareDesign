@@ -42,10 +42,11 @@ def check(row,ref,cache=0):
 
 def protocol_check(p):
  keys=('mode_parameter_latching','cfg_command_competition','held_done_response','stage_abort_restart','error_recovery','stale_epoch_discard','coordinated_reset_restart')
- if not isinstance(p,dict) or set(p)!=set(keys)|{'schema','commands_accepted','abort_stages','error_conditions','blocked_command_edges','held_done_edges','full_output_commands'} or p.get('schema')!='runtime85-protocol-v1' or any(p.get(k) is not True for k in keys):raise ValueError('protocol required typed fields')
- expected={'commands_accepted':47,'abort_stages':10,'error_conditions':6,'blocked_command_edges':36,'held_done_edges':144,'full_output_commands':30}
+ if not isinstance(p,dict) or set(p)!=set(keys)|{'schema','commands_accepted','abort_stages','error_conditions','blocked_command_edges','held_done_edges','full_output_commands','soft_aborts_actual','stale_responses_actual','fabric_response_high_water'} or p.get('schema')!='runtime85-protocol-v1' or any(p.get(k) is not True for k in keys):raise ValueError('protocol required typed fields')
+ expected={'commands_accepted':47,'abort_stages':10,'error_conditions':6,'blocked_command_edges':36,'held_done_edges':144,'full_output_commands':30,'soft_aborts_actual':11,'fabric_response_high_water':2}
  for k,v in expected.items():
   if type(p.get(k)) is not int or p[k]!=v:raise ValueError('protocol counts '+k)
+ if type(p.get('stale_responses_actual'))is not int or p['stale_responses_actual']<1:raise ValueError('actual tagged stale response dropped')
 def main():
  p=argparse.ArgumentParser();p.add_argument('--input',type=Path,required=True);p.add_argument('--run',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();m=json.loads((a.run/'manifest.json').read_text());im=json.loads((a.input/'manifest.json').read_text())
  if m['status']!='RTL_EXECUTED_NOT_RECEIVED' or m['input_manifest_sha256']!=sha(a.input/'manifest.json') or type(m['profile'])is not int or m['profile']!=0 or type(m['stall'])is not int or m['stall']not in(0,1):raise ValueError('run binding')

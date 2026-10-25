@@ -8,7 +8,7 @@
 #include <stdexcept>
 using W=std::array<uint32_t,4>;static Vchain85 d;static uint64_t ticks=0;static int stall=0,waits=0,mulwait=0;static bool seen=false,mulseen=false;static uint64_t serial=0,mulserial=0,extserial=0;static bool hold_external=false;
 static void need(bool b,const char*s){if(!b)throw std::runtime_error(s);}
-struct Reply{uint32_t epoch;int delay;W words;};static std::deque<Reply> fifo;static std::vector<uint8_t> payload;static std::vector<int32_t> accs,downs,joins;
+struct Reply{uint32_t epoch;int delay;W words;};static unsigned fabric_high_water=0;static std::deque<Reply> fifo;static std::vector<uint8_t> payload;static std::vector<int32_t> accs,downs,joins;
 struct E{bool cfg_req,cfg_rsp,command;W data;};
 static E step(){
  d.clk=0;d.ext_ready=fifo.size()<2;d.ext_valid=!fifo.empty()&&!hold_external&&fifo.front().delay==0;d.ext_response_epoch=fifo.empty()?0:fifo.front().epoch;for(int j=0;j<4;j++)d.ext_data[j]=fifo.empty()?0:fifo.front().words[j];d.eval();
@@ -19,7 +19,7 @@ static E step(){
  if(d.mwrite)for(int j=0;j<4;j++)joins.push_back(d.mdata[j]);
  E e{bool(d.cfg&&d.cfg_ready),bool(d.cfg_valid&&d.cfg_take),bool(d.cmd_accept),{d.cfg_dout[0],d.cfg_dout[1],d.cfg_dout[2],d.cfg_dout[3]}};
  d.clk=1;d.eval();d.clk=0;d.eval();ticks++;
- if(d.reset){fifo.clear();extserial=0;}else{for(auto& f:fifo)if(f.delay>0)f.delay--;if(retire)fifo.pop_front();if(accept){need(address%16==0&&address+16<=payload.size(),"physical request address");W w{};for(int j=0;j<16;j++)w[j/4]|=uint32_t(payload[address+j])<<(8*(j%4));fifo.push_back({epoch,stall?1+int(extserial++%5):1,w});}}
+ if(d.reset){fifo.clear();extserial=0;}else{for(auto& f:fifo)if(f.delay>0)f.delay--;if(retire)fifo.pop_front();if(accept){need(address%16==0&&address+16<=payload.size(),"physical request address");W w{};for(int j=0;j<16;j++)w[j/4]|=uint32_t(payload[address+j])<<(8*(j%4));fifo.push_back({epoch,stall?1+int(extserial++%5):1,w});if(fifo.size()>fabric_high_water)fabric_high_water=fifo.size();}}
  if(d.soft_abort){seen=mulseen=false;waits=mulwait=0;serial=mulserial=0;}
  if(mulwait>0)mulwait--;if(!d.mul_request)mulseen=false;if(waits>0)waits--;if(!d.mem_request)seen=false;return e;
 }
@@ -52,7 +52,7 @@ int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);need(argc==4
  for(int mode=0;mode<2;mode++)for(int fault=1;fault<=3;fault++){prepare(c,mode,fault);start();wait_done();need(d.status==(fault==3?2:1),"fault status exact");ack();errors++;prepare(c,mode);start();finish(c,mode,"restart-error-"+std::to_string(mode)+"-"+std::to_string(fault));}
  // Keep an accepted old response in an explicit finite two-slot fabric queue across soft abort.
  prepare(c,1);hold_external=true;start();auto begin=ticks;while(fifo.empty()){step();need(ticks-begin<100,"old external request issued");}auto old_epoch=d.epoch;abort_now();prepare(c,0);start();need(d.epoch!=old_epoch,"new generation");begin=ticks;while(fifo.size()<2){step();need(ticks-begin<100,"new request queued behind stale reply");}hold_external=false;finish(c,0,"restart-stale-epoch");need(d.stale_responses>=1&&fifo.empty(),"late old response discarded");
- auto before=d.epoch;cfg(true,400,{0xa5a5a5a5,0xa5a5a5a5,0xa5a5a5a5,0xa5a5a5a5});d.reset=1;step();d.reset=0;step();need(d.epoch==0&&!d.busy&&!d.done&&cfg(false,400)[0]==0xa5a5a5a5,"coordinated hard reset retains SRAM");prepare(c,1);start();finish(c,1,"restart-hard-reset");
- std::ofstream p(std::string(argv[2])+".protocol.json");p<<"{\"schema\":\"runtime85-protocol-v1\",\"mode_parameter_latching\":true,\"cfg_command_competition\":true,\"held_done_response\":true,\"stage_abort_restart\":true,\"error_recovery\":true,\"stale_epoch_discard\":true,\"coordinated_reset_restart\":true,\"commands_accepted\":"<<command_count<<",\"abort_stages\":"<<aborttests<<",\"error_conditions\":"<<errors<<",\"blocked_command_edges\":"<<blocked_edges<<",\"held_done_edges\":"<<held_done<<",\"full_output_commands\":30}\n";
+ unsigned actual_abort_count=d.aborts,actual_stale_count=d.stale_responses;auto before=d.epoch;cfg(true,400,{0xa5a5a5a5,0xa5a5a5a5,0xa5a5a5a5,0xa5a5a5a5});d.reset=1;step();d.reset=0;step();need(d.epoch==0&&!d.busy&&!d.done&&cfg(false,400)[0]==0xa5a5a5a5,"coordinated hard reset retains SRAM");prepare(c,1);start();finish(c,1,"restart-hard-reset");
+ std::ofstream p(std::string(argv[2])+".protocol.json");p<<"{\"soft_aborts_actual\":"<<actual_abort_count<<",\"stale_responses_actual\":"<<actual_stale_count<<",\"fabric_response_high_water\":"<<fabric_high_water<<",\"schema\":\"runtime85-protocol-v1\",\"mode_parameter_latching\":true,\"cfg_command_competition\":true,\"held_done_response\":true,\"stage_abort_restart\":true,\"error_recovery\":true,\"stale_epoch_discard\":true,\"coordinated_reset_restart\":true,\"commands_accepted\":"<<command_count<<",\"abort_stages\":"<<aborttests<<",\"error_conditions\":"<<errors<<",\"blocked_command_edges\":"<<blocked_edges<<",\"held_done_edges\":"<<held_done<<",\"full_output_commands\":30}\n";
  std::cout<<"PASS_RUNTIME_EXECUTION 30 full commands plus abort/error cases\n";return 0;
  }catch(const std::exception&e){std::cerr<<e.what()<<" state="<<unsigned(d.debug_state)<<" M="<<unsigned(d.mdebug)<<" N="<<unsigned(d.ndebug)<<" status="<<unsigned(d.status)<<"\n";return 1;}}
