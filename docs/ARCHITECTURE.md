@@ -195,3 +195,14 @@ RTL project/rtl/norm_service，工具project/experiments/norm_circuit；[README]
 ## Issue88 有界电气修复
 
 入口 `project/experiments/electrical_repair/README.md` / `PROTOCOL.md`，报告 `docs/experiments/issue-88-electrical-repair.md`。先 `python -B scripts/check_project.py`；实际修复、门级完整消费者、独立连接证书/数学/STA全部在本人服务器独立lrz-i88-*目录执行，精确参数与阶段见work88/execution.json和source bindings。最终接收为 `receive.py --root <issue88-root> --out <new-dir>`，明确原四变体、1/10fF、零线RC、理想clk和store82切分。PC仅用 `closure/verify_delivery.py --index <delivery-index.json> --archive <selected.zip> --out <new.json>` 及 `work/Liangruizhi/82/verify_sources.py --repository <repo> --index <index> --selected <zip> --expected-phases 11 --out <new.json>` 核字节/原Git；不将其说成重新进行数学或物理验收。
+
+
+## Issue98 实际整合核研究库物理验证
+
+入口 [integrated_physical/README](../project/experiments/integrated_physical/README.md)、[冻结协议](../project/experiments/integrated_physical/PROTOCOL.md)和[实际阶段报告](experiments/issue-98-integrated-physical.md)。先 `python -B scripts/check_project.py`。所有真实准备、gate、布局/CTS/GRT/DRT/RCX和独立接收仅本人服务器8CPU Slurm；使用原phase `binding.json`及新输出目录，不能将当前HEAD冒充历史执行源。
+
+原映射93接收入口为 `receive_gate.py`，变换后93为 `postgate.py`/`receive_gate.py --postphysical`（完整参数以原实际command JSON为准）；97为 `postgate97.py`/`receive_post97.py`，范围固定4运行8正常输出。GRT联合接收 `receive_route.py --target 93|97 --prepared ORIGINAL --stage STAGE --rc-replay REPLAY --strict-electrical FULL --gate RAW_RECEIPT --postgate EXACT_POST_RECEIPT --out NEW`：完整graph/FF/所有端口、实际geometry、全RC/全endpoint、非过滤严格电气、精确gate缺一不可accepted；不把单项PASS叫物理闭合。
+
+详细阶段依次 `detail_flow.py`、`detail_spef.py`、`detail_ledger.py`、`detail_readback.py`、`strict_electrical.py`、`receive_detail.py`，实际seed42/max8和全部工具/库/RC来源冻结。增量hold候选由 `incremental_hold.py` 执行一次，`incremental_audit.py`保留dirty全并集/全部改网/同grid新pin-access证据。真实重SHA破坏负例在negative_route/negative_rc_replay/negative_detail/negative_strict_electrical/negative_incremental，各有独立结果；不能仅AST通过替代业务验证。
+
+首个精选快照 `project/experiments/integrated_physical/results/issue-98/checkpoint1/`含真实raw93收据、7原收据跨机字节索引及精选指标。大文件/原ODB/DEF/SPEF/gate outputs在授权服务器issue98目录；最终完整归档仍进行中。GRT导出SPEF省略pin节点cap，须原segments同工具重放；详细RCX另核ground/coupling守恒和真实读回。库nonmanufacturable、整store82 wrapper cut、无PG/LVS/目标SRAM，不声称制造或固定M1–M8底座资格。
