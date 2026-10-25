@@ -57,3 +57,6 @@ Yosys proc从实际chain85.sv生成原始网表；提取真实32位epoch $dff的
 33个本任务Slurm均COMPLETED；其中原版本仿真退出1/SAT反例是预期缺陷见证，封装作业通过表示成功复现，不表示旧RTL通过。初版/正式运行、失败见证、负例和5phase来源均留档。完整96,406,212B/443成员在授权服务器，精选549,889B/158成员入仓，服务器两包、PC精选及5phase92条原Git源码字节全部核验通过。
 
 统一[索引](../../project/experiments/epoch_boundary/results/issue-92/index.json)、[接收报告](../../project/experiments/epoch_boundary/results/issue-92/report.json)、[交接](../handoffs/2026-10-25-issue-92-epoch-boundary.md)。最小下一步由集成方沿新reset取消/终止排空合同接入共享V/S；如要发布92时序/门级资格，必须对92的实际网表另行执行，不能直接引用84/88。通用V/ROM整合、真实存储/互联/制造后定制、全模型数值与六类Block整机验收仍未完成。
+
+
+发布回执（2026-10-25）：[PR96](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/96)已上传；Issue92为in_review，待独立审查/合并，未done。远端读回commit 66aa2795b4d03cc074f0df09396252c9b00d8f2a的报告、索引、接收报告均与原Git blob逐字节相同，详见work/Liangruizhi/92/remote-readback.json。后续文档提交不改冻结实验source。登记PR5 pending；看板board.json404且实际条目查询缺read:project，状态unverified、同步pending。审查人/管理员待指定。

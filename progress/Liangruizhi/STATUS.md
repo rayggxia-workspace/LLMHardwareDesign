@@ -268,3 +268,6 @@ PR待审查/合并，审查人/管理员待指定，未done；后续在已有授
 [Issue92](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/92)，负责人Liangruizhi。修复实际32位epoch耗尽后的同tag迟到排空，并屏蔽reset/abort时cfg/done假握手。60正常完整消费者、4边界完整输出、8配置冲突、2完成冲突及10实际门锥SAT性质通过；33服务器作业结束，双包/精选158成员及5phase92源字节通过。原缺陷反例保留；52387.902µm²仅logic-only，不继承88电气资格。
 
 分支task/92-epoch-boundary，工作目录D:/Projects/LLMHardwareDesign-epoch-boundary。实验源commit按索引冻结，文档/依赖合并不改实验源。主会话正上传PR，最终链接另附；待审查合并而非done。登记management-hub PR5 pending；board.json缺失/实际projectItems缺read:project，在线状态unverified、同步pending，管理员/审查人待指定。下一步#93流式gamma与完整V/S消费者及新网表物理资格，M/V/A/R/S/D整体仍未完成。
+
+
+发布回执（2026-10-25）：[PR96](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/96)已上传；Issue92为in_review，待独立审查/合并，未done。远端读回commit 66aa2795b4d03cc074f0df09396252c9b00d8f2a的报告、索引、接收报告均与原Git blob逐字节相同，详见work/Liangruizhi/92/remote-readback.json。后续文档提交不改冻结实验source。登记PR5 pending；看板board.json404且实际条目查询缺read:project，状态unverified、同步pending。审查人/管理员待指定。
