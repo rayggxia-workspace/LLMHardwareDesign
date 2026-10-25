@@ -77,3 +77,6 @@
 [实际执行命令](../../work/Liangruizhi/99/execution.json)、[工具说明](../../project/experiments/r_state/README.md)、[交接](../handoffs/2026-10-25-issue-99-r-state.md)。inputs01共享B/C形状读取错误、inputs03旧JSON键名错误、build01/map01语法错误和六个仅本人DependencyNeverSatisfied取消记录均保留；没有改写失败为通过。常规结构检查和本机字节接收完成，全部实际数值/RTL/map/gate在服务器。
 
 本地结果已整理；远端任务分支、PR与看板由主会话统一交付，本子任务没有push、开PR、自合并或将Issue标done。登记PR5 pending与Projects权限限制仍须按主会话最新回执处理。不得把本地完成写成远端合并/正式验收。
+
+
+发布回执（2026-10-25）：[PR103](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/103)已上传；Issue99为in_review，待独立审查合并，未done。远端读回798739afbe1a738c64043e85b741229a748409f5报告/索引/cost02/严格门级行回执与原Git blob逐字节一致，见work99/remote-readback.json。已合父93最新发布回执，实验RTL/原源绑定不改。登记PR5 pending；board配置/read:project缺项，状态unverified/同步pending，管理员及审查人待指定。后续Q35 GDN和共享服务仍缺，不把本有界任务完成写成Block库全部完成。

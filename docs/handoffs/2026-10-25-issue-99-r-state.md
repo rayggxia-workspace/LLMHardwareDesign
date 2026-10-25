@@ -43,3 +43,6 @@ consumer accept是不可撤销点，descriptor ACK才committed。硬reset之前�
 ## 协作回执
 
 规则版本 rayggxia-project-collab 1.0.0。科学实验与本地交付有证据；远端任务分支/PR待主会话发布。登记 pending（既有PR5）；看板 unverified，动作 pending（现有配置/read:project缺项）。Issue当前 in_progress，要求的PR审查/合并未完成。结构与最终差异检查见 work/Liangruizhi/99/local-checks.json；本文件不得被解释成已经远端交付或整个R/Block库完成。
+
+
+发布回执（2026-10-25）：[PR103](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/103)已上传；Issue99为in_review，待独立审查合并，未done。远端读回798739afbe1a738c64043e85b741229a748409f5报告/索引/cost02/严格门级行回执与原Git blob逐字节一致，见work99/remote-readback.json。已合父93最新发布回执，实验RTL/原源绑定不改。登记PR5 pending；board配置/read:project缺项，状态unverified/同步pending，管理员及审查人待指定。后续Q35 GDN和共享服务仍缺，不把本有界任务完成写成Block库全部完成。
