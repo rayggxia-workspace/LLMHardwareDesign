@@ -40,7 +40,7 @@ static void prepare(const Case&c,bool only=false){readfile(c.gu,gu);readfile(c.r
 }
 static void start(){auto epoch=d.epoch;d.cmd=1;int n=0;while(!step().command)need(++n<20,"command handshake");need(d.epoch==epoch+1,"epoch per command");accepted++;d.cmd=0;d.gateup_address=d.records_address=d.gamma_address=0xffffffff;d.owner=0;d.input_version=0;d.epsilon=0;d.coefficient=0;d.prep_only^=1;}
 static void wait_done(){auto begin=ticks;while(!d.done){step();need(ticks-begin<30000000,"complete chain watchdog");need(!d.cfg_ready&&!d.cmd_ready,"busy protects resources");}}
-static void ack(){auto status=d.status,epoch=d.epoch;for(int j=0;j<4;j++){need(d.done&&d.status==status&&d.epoch==epoch&&!d.cmd_ready,"done held until ack");step();}d.ack=1;step();d.ack=0;need(!d.busy,"ack idle");}
+static void ack(){unsigned status=d.status,epoch=d.epoch;for(int j=0;j<4;j++){need(d.done&&d.status==status&&d.epoch==epoch&&!d.cmd_ready,"done held until ack");step();}d.ack=1;step();d.ack=0;need(!d.busy,"ack idle");}
 static std::string hex128(const VlWide<4>&v){std::ostringstream s;s<<std::hex<<std::setfill('0');for(int j=3;j>=0;j--)s<<std::setw(8)<<v[j];return s.str();}
 static void array(std::ostream&o,const std::vector<int32_t>&v){o<<'[';for(size_t i=0;i<v.size();i++){if(i)o<<',';o<<v[i];}o<<']';}
 static void finish(const Case&c,const std::string&role,bool only=false){wait_done();need(d.status==0,"complete chain status");need(mids.size()==4096&&acodes.size()==4096&&d.a_valid&&d.expert_valid==255,"all8 original V results published");need(only||(accs.size()==12288&&downs.size()==12288&&joins.size()==1536),"complete real M consumer");need(d.a_owner==0x1234&&d.a_version==99+accepted&&d.a_epoch==d.epoch,"owner/version/epoch latched");
