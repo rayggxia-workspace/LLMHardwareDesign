@@ -251,3 +251,21 @@ Read-only .75/.80/.85/.90 headroom tables use93actualRCX and97GRT separately.
 They do not authorize a new candidate. If chosen, the full batch must be frozen
 before execution with exact source/driver list, BUF_X4/X8 inventory, input load,
 area/hard count budget; full reroute can change capacitance and still fail.
+
+
+## Sole frozen full headroom batch candidate4
+
+Approved once: actual cap/maxcap>=0.80, exact margin_contract.json source hashes
+and driver lists.93uses current detailed RCX,227drivers with8highloadBUF_X8 and
+219BUF_X4;97uses currentGRT,502drivers with17BUF_X8 and485BUF_X4. Each new input
+cap must be<=0.8*original driver maxcap before insertion; reject entire candidate
+if any fails. Observed original load must be<=0.8*chosenbuffer maxcap. Prepriced
+extra435.442/961.856um2 is independently recalculated, not assumed finalarea.
+Same399core/448die/79600.5budget/10ns/min0/dual loads/allports/no extra capacity.
+Clear only prior regular routing geometry, preserve every electrical cellpin/port
+class; insertexactfrozenbatch,legalize,onecompleteGRT thenDRTseed42/max8/RCX.
+No resize/othercells/secondthreshold. Explicit maxnew502, exact each targetcount
+is stricter. All actual cell input load, area, geometry, fullstrictcap/slew,
+setup/hold and final source-bound gate required. Fanout limit remains absent.
+Every failure retained; report result before any new candidate. Original active
+gates continue untouched. New final netlist always gets new exact gate.
