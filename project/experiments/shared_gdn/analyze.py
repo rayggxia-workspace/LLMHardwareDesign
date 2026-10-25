@@ -12,7 +12,7 @@ def main():
  pairs=[]
  for stall in (0,1):
   pair={}
-  for impl,name in [('gate',f'gate{stall}01'),('rtl',f'rtl-pilot{stall}01')]:
+  for impl,name in [('gate',f'gate{stall}02'),('rtl',f'rtl-pilot{stall}01')]:
    path=a.root/('final-receive-'+name)/'receipt.json';r=json.loads(path.read_text());assert r['status']=='PASS_FOUR_PROFILE_COMPLETE_INTEGER_AND_PROTOCOL'and len(r['rows'])==8 and r['G']['complete_twohead_commits']==2 and r['G']['range_waves']==1
    pair[impl]={n:sha(a.root/name/n)for n in('actual.jsonl','actual.jsonl.g-snapshots.bin','actual.jsonl.g-stages.bin','actual.jsonl.protocol.json')}
   assert pair['gate']==pair['rtl'],('raw gate exact complete rows/stages/snapshots/protocol',stall);pairs.append({'stall':stall,'same_all_raw_bytes':True,'sha256':pair['gate']})

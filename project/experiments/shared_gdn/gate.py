@@ -15,13 +15,13 @@ def bound(p,status):
   if sha(p/e['path'])!=e['sha256']:raise ValueError('artifact SHA '+e['path'])
  return m
 def main():
- p=argparse.ArgumentParser();p.add_argument('task',choices=['prepare','build','sim']);p.add_argument('--out',type=Path,required=True);p.add_argument('--map',type=Path);p.add_argument('--prepared',type=Path);p.add_argument('--build',type=Path);p.add_argument('--input',type=Path);p.add_argument('--stall',type=int,default=0);p.add_argument('--pilot',type=int,default=1);a=p.parse_args();b=load(ROOT/'binding.json')
+ p=argparse.ArgumentParser();p.add_argument('task',choices=['prepare','build','sim']);p.add_argument('--out',type=Path,required=True);p.add_argument('--map',type=Path);p.add_argument('--prepared',type=Path);p.add_argument('--build',type=Path);p.add_argument('--input',type=Path);p.add_argument('--stall',type=int,default=0);p.add_argument('--pilot',type=int,default=1);p.add_argument('--walltime',type=int,default=2400);a=p.parse_args();b=load(ROOT/'binding.json')
  for n,h in b['sources'].items():
   if sha(ROOT/n)!=h:raise ValueError('source SHA')
- a.out.mkdir(exist_ok=False);m={'status':'ERROR','source':b,'task':a.task,'suite':'pilot','stall':a.stall,'pilot':a.pilot,'library_sha256':sha(LIB)}
+ assert 1<=a.walltime<=6000; a.out.mkdir(exist_ok=False);m={'status':'ERROR','source':b,'task':a.task,'suite':'pilot','stall':a.stall,'pilot':a.pilot,'walltime_seconds':a.walltime,'library_sha256':sha(LIB)}
  def cmd(name,args):
   argv=[*PREFIX,'--pwd',str(a.out),SIF,*map(str,args)];start=time.monotonic()
-  with(a.out/(name+'.log')).open('w')as f:r=subprocess.run(argv,stdout=f,stderr=subprocess.STDOUT,stdin=subprocess.DEVNULL,timeout=2400)
+  with(a.out/(name+'.log')).open('w')as f:r=subprocess.run(argv,stdout=f,stderr=subprocess.STDOUT,stdin=subprocess.DEVNULL,timeout=a.walltime)
   put(a.out/(name+'-command.json'),{'argv':argv,'exit':r.returncode,'seconds':time.monotonic()-start})
   if r.returncode:raise ValueError('failed '+name)
  try:

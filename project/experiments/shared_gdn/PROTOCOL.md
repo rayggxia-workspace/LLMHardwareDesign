@@ -27,3 +27,9 @@ accept进入G原COMMIT不可撤销，即使root请求尚未fabric接受；root12
 新顶层执行两模式完整四profile序列，独立97/102/99/104 bigint全值及G全stage/state/Y/metadata接收；重标checkpoint原SHA、原前序state与非零Y绑定。补G外部/S/S32/wide/candidate读取在途abort、heldresponse、reject、不可取消root、cfg冲突、旧tag/末值/协调reset-restore；每次失败保留实际文件，语义负例重SHA后完整receiver拒绝。唯一库存通过generic层级/flatten乘法数量和实际mapped库计价；selected raw gate逐字段/周期/IO同driver RTL并独立oracle。实际CPU/日志/sourceSHA/输入版本/工具/有限fabric队列独立记录。
 
 G每成功候选额外128外部读、640×128bit线拍=10240B（payload2048B），另request/response32bitgeneration sideband；cfg128物理协议另列。G计算debug cycles包含OFFER等待，不能与D export_cycles直接相加；命令accept至DONE使用D cycles。旧独立核面积之和非同资源对照；本轮logic mapping不代表宏/STA/布局布线/制造后定制通过。
+
+## 门级墙时pilot结论与一次有界续跑
+
+首轮actual mapped两路各2400s到限：均完整7/8命令，quiet最后rescale已观察27794/33664阶段对，held3604/33664；39:53 CPU、每路约40MiB RSS，无数值不一致消息。状态为FAILED/timeout，不能验收为门级通过。完整原RTL周期见逐命令rows，不由阶段对比推断所有剩余周期。按已测CPU运行成本，预登记同一网表/同一binary/同一输入一次6000s上限、Slurm105min，两路独立新gate002/gate102输出；不用Q注入，保持完整八命令。若仍到限保留阻塞而不无限续跑。首次依赖失败的接收91447/91448已取消，原输出不改。
+
+selected gate中的A为原p128-full-t0的有效KV前缀1（完整8个query head/d128），主13命令另含真实cached有效前缀129；不得把selected A门级写为128个有效KV。非同模型端到端数据链。
