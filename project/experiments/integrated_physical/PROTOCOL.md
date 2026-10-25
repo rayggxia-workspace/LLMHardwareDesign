@@ -233,3 +233,21 @@ sum discrepancy in a separate artifact and never call it a conservation pass.
 Original electrical reports may legally contain Group/Slack/No paths found with
 no maxcheck headers. A deleted entire report must fail; erased nonzero sections
 must disagree with independently re-executed actual count and fail as well.
+
+
+## Strict complete electrical limits supersede native filtered counts
+
+Exact installed OpenSTA CheckCapacitances/Fuzzy uses an absolute1e-15F fuzzy
+comparison to zero when selecting violators. Native-zero summaries are not proof
+of strict actual<=maxcap. Keep historical reports/receipts, but final route/DRT
+acceptance now requires independent full nonfiltered maxslew/cap/fanout reports,
+strict finite actual>limit tests and all connected library-limited driver coverage.
+Both dual-load scenarios are required. Empty fanout report means no fanout bound
+only when exact library/SDC prove absent limits; never claim constraint closure.
+Every original setup/hold endpoint, structural graph and exact final gate remains
+required. 93DRT/97C3 each have20 strict cap exceedances, versus7/3 native filters.
+
+Read-only .75/.80/.85/.90 headroom tables use93actualRCX and97GRT separately.
+They do not authorize a new candidate. If chosen, the full batch must be frozen
+before execution with exact source/driver list, BUF_X4/X8 inventory, input load,
+area/hard count budget; full reroute can change capacitance and still fail.
