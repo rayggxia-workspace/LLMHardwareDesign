@@ -6,7 +6,7 @@ from receive_physical import block,def_name
 from route_audit import incidence
 p=argparse.ArgumentParser();p.add_argument('--stages',nargs='+',type=Path,required=True);p.add_argument('--driver',required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(exist_ok=False);inst,pin=a.driver.rsplit('/',1);rows=[]
 for stage in a.stages:
- sm=artifacts(stage);mods=load(stage/'final.json')['modules'];need(len(mods)==1,'single integrated cut');net=next(iter(mods.values()));c=net['cells'][inst];need(c['port_directions'][pin]=='output'and len(c['connections'][pin])==1,'scalar driver');refs,_,_=incidence(net);b=c['connections'][pin][0]
+ sm=artifacts(stage);mods=load(stage/'final.json')['modules'];tops=[k for k in mods if k in ('chain93','chain97')];need(len(tops)==1,'single integrated cut among library models');net=mods[tops[0]];c=net['cells'][inst];need(c['port_directions'][pin]=='output'and len(c['connections'][pin])==1,'scalar driver');refs,_,_=incidence(net);b=c['connections'][pin][0]
  dn=None
  for name,body in re.findall(r'(?s)-\s+(\S+)\s+(.*?);',block((stage/'placed.def').read_text(),'\nNETS ','END NETS').split(';',1)[1]):
   ps={(def_name(n),def_name(q))for n,q in re.findall(r'\(\s*(\S+)\s+(\S+)\s*\)',body.split('+',1)[0])}
