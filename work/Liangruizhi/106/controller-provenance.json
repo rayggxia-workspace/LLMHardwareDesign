@@ -1,0 +1,50 @@
+{
+  "schema": "controller-extraction/1",
+  "rows": [
+    {
+      "derivative": "project/rtl/shared_services/m106.sv",
+      "derivative_sha256": "c901ee8f01a45c3a1b9a917279bdcd3e305d899475abb5754a3c2ddbd0a97ed3",
+      "reference": "project/rtl/v_consumer/chain97.sv",
+      "reference_sha256": "940e6793bdaff3963c4ac048a9405c5fe0c89b376e887963984f560787f7a01e"
+    },
+    {
+      "derivative": "project/rtl/shared_services/mfront106.sv",
+      "derivative_sha256": "bb918aad183e4da39aeace350ae654ee2280e85a03275c954c0cb0d926cec84e",
+      "reference": "project/rtl/v_consumer/mfront97.sv",
+      "reference_sha256": "76627bea68b9d2b93bc3e387133f9e91da4d468614b6cc15e72b3c9d146ffbaf"
+    },
+    {
+      "derivative": "project/rtl/shared_services/norm106.sv",
+      "derivative_sha256": "be7ba8053341ae1e8eb3f17e4666116ca56c45e54db7c415f2e6e9ed1fc9ff1d",
+      "reference": "project/rtl/gamma_stream/norm93.sv",
+      "reference_sha256": "a42bb0f74a097eb14297820eaca6fe14350f233139d47153eb20dd47218aea5d"
+    },
+    {
+      "derivative": "project/rtl/shared_services/a106.sv",
+      "derivative_sha256": "4ed5e2f03a134e3301a90b2f9eadc28c39bbec32218a5e0a9f9da2ee69b72cb1",
+      "reference": "project/rtl/attention/chain102.sv",
+      "reference_sha256": "82ffb19a743a3f189dd4e8e7457436899e2cdca555338aa95df648e18045dd70"
+    },
+    {
+      "derivative": "project/rtl/shared_services/attention106.sv",
+      "derivative_sha256": "a3adef94747a334849a2053e42a23d3dc0ce864273bba16367c1d4d0623259fa",
+      "reference": "project/rtl/attention/attention102.sv",
+      "reference_sha256": "8da224cfb042c4d6a2307e94311c4fcaf4034243261d7ef9f009929aca1a8939"
+    },
+    {
+      "derivative": "project/rtl/shared_services/r106.sv",
+      "derivative_sha256": "84e5f85042f2fa4c9091ea7e508a77f01b90843146cb36ac0b635d04a4d2eb7f",
+      "reference": "project/rtl/r_state/r99.sv",
+      "reference_sha256": "5c8481c1db635ed3fb22335b605a211be7646726ff4d8c81c3c49fc111aa9113"
+    }
+  ],
+  "changes": [
+    "Expose physical service request/response ports; existing numeric control state and arithmetic expressions retained.",
+    "Move eight signed8 multiplications from M and A to shared top; retain sums/reduction and range guards in controller.",
+    "Move norm SFU service outside; do not duplicate SFU inside M.",
+    "Transport epoch owned by shared top; M A-provenance epoch uses same current lease, abort drains before local reset; A registry hard-reset only.",
+    "Restrict M DATA upper boundary04c and A05..052; relocate R constants040..041 to060..061, same payload offsets.",
+    "Legacy per-wrapper service counters are tied zero and unused outputs pruned; actual shared service counters live once at top."
+  ],
+  "not_claimed": "textual identity of entire modules, universal formal equivalence, shared GDN or physical signoff"
+}
