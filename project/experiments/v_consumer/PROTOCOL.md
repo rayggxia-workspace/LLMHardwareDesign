@@ -1,0 +1,13 @@
+# Issue97 frozen execution contract
+
+Actual RTL/integers/map only own issue97-v-consumer-20261025 CPU Slurm. Base92@66aa279, independent93 gamma module integrated after source freeze. No model download, other machine or member55/63 change.
+
+Select a bounded dedicated V frontend, NOT old80 universal byte ISA. No program memory/fetch, byte ALU or private frame/ROM instantiated. Its signed comparisons, absolute value, shift/RNE, LUT address/control, counters and response registers are real new logic and must all be mapped. Same8S8 + one sharedS32 + norm SFU +16KiB128bit1RW. External LUT C0 at0x02000000; data only0x04000000..0x08000000. No implicit program/data namespace overlap. All data reads and lookup physical128bit requests/5beat bridge traffic charged, no LUT cache.
+
+Inputs are74 bound evaluation gate/up I32Q12, static W8/Q31/exponent, gatesQ15, residualQ12/gammaQ20; runtime receives no MID/A8/delta. New packed M header reserves olddelta bits63:48 zero and rejects nonzero; real generated8S16 deltas drive RQ. FullK512/8experts/H1536 remains bounded Granite consumer, not general GEMM.
+
+V sequentially builds each512 MID at S0..2047, derives minimum nonnegative delta such that RNE(full512 absmax,delta)<=127, then rereads MID and emits512A8 at S12288+rank*512. No per16 scale, no saturating success. Every A write ack precedes delta/expert-valid publication; eight experts/phase drain before M resident-A. S2048..2559 reserved scratch lease unused by dedicated profile; no free extra FIFO claimed. M output coversS0..6143 only after V is idle; norm93 gamma tileS6144..7167. A remainsS12288..16383. Descriptor is explicit latched top ports, not91's still-candidate64B fetch command.
+
+SiLU original semantics: outside+-32Q12 negative0/positiveidentity, inside LUT indexRNE((x+32Q12)/16) from frozen16385I32Q12 words. S32 multiply givesS64, RNE12, I32 overflow rejects. Abs(INT_MIN) exact2^31; full-row minimum delta0..25, A[-127,127]. Matmul INT32 fullK then raw weightQ31/exponent/generateddelta RNE; merge/residual/fullnorm unchanged. No FP path. C++ only loads original bytes and observes/interfaces, oracle separate Python integer fromgate/up.
+
+Single top command/phase, config idle only. Stage switch requires external bridge,S,multiplier responses drained. Tagged92 abort/max terminal rules preserved, all visiblecfg/done masked underreset. Owner/version/epoch latch and invalidate onabort; only coordinated hardreset restarts exhaustedepoch. Errors hold untilack, partly changed S is not a valid result. Input bases aligned/disjoint/in explicitdatawindow, LUTindexguard, headers/format checks. No claimed arbitraryparallel fairness, CDC, generalM/V, atomicR or physicalSTA acceptance.
