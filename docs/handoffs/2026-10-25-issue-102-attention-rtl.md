@@ -9,3 +9,6 @@
 本地交付已经整理，root负责最终复核范围、push任务分支、创建Refs #102 PR、状态in_review、读回；不能自行merge或done。登记management-hub PR5 pending；board配置/read:project缺项，管理员/审查人待指定。98/99独立工作不在本分支补写结论，root合并对应交付后更新总表。
 
 恢复第一步：核指定GitHub身份、最新AGENTS/Issue102/关联PR及成员进度和本分支HEAD；先字节接收，再需要时在本人服务器新out重放完整argv，禁止覆盖旧输出。没有挂起本任务实验。下一科学步骤应抽离M/A/R控制器的真实S/8S8/S32/SFU/link服务，核owner lease/drain/R commit及S生命周期；当前102的8S8仍内嵌，不能免费共享。online softmax、KV append/淘汰、投影/RoPE/整模型、宏/STA/制造后定制仍未完成。
+
+
+发布回执（2026-10-25）：[PR105](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/105)已上传；Issue102 in_review，待独立审查，未合并/done。报告、索引、门级回执和库验收表与原Git字节读回一致，见work/Liangruizhi/102/remote-readback.json；登记PR5 pending、看板unverified/同步pending。共享服务/宏/物理仍未完成。

@@ -74,3 +74,6 @@ SRAM/ROM宏、clock/CTS/RC/STA、电气/物理均未验。外部FIFO最低2×(12
 完整包677,232,014B/1743成员留授权服务器 `issue102-attention-rtl-20261025/delivery02/full-results.zip`，SHA `7a1e38f9c8fa2905aee499c5e8f99953385bc4d8694f14c0a2e55c05d1dcd53d`。精选365,258B/209成员入仓，SHA `5dd1661a55fc44ed8141fb5dc5935864b78ae26763588822ffbb6959558eb9d1`；双包服务器逐成员、精选PC逐成员、10phase/149原Git源字节核验PASS。原61完整capture/64参考只留来源SHA，未重复上传模型权重。
 
 [结果索引](../../project/experiments/attention_rtl/results/issue-102/index.json)、[实际执行](../../work/Liangruizhi/102/execution.json)、[交接](../handoffs/2026-10-25-issue-102-attention-rtl.md)。指定账号/仓库/成员进度和权限复核；本地已整理、root负责推送/PR与Issue状态，不自行合并或标done。登记PR5 pending；board配置/read:project缺项仍unverified/待管理员，不把本地交付描述为远端已完成。
+
+
+发布回执（2026-10-25）：[PR105](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/105)已上传；Issue102 in_review，待独立审查，未合并/done。报告、索引、门级回执和库验收表与原Git字节读回一致，见work/Liangruizhi/102/remote-readback.json；登记PR5 pending、看板unverified/同步pending。共享服务/宏/物理仍未完成。
