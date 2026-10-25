@@ -35,17 +35,17 @@ def route_audit(stage,previous,net,lib,pure=True):
  for unit in ('*T_UNIT 1 NS','*C_UNIT 1 FF','*R_UNIT 1 KOHM'):need(text.count(unit)==1,'exact declared SPEF unit '+unit)
  expected={b for b,rs in refs.items()if len(rs)>1};seen=set();names={};cap=Decimal(0);res_count=0;cap_count=0
  for m in re.finditer(r'(?ms)^\*D_NET (\S+) (\S+)\n(.*?)^\*END\s*$',text):
-  name,total,body=m.groups();b=named_bit(name);need(b not in seen and name not in names,'unique annotated electrical class');seen.add(b);names[name]=b;need(Decimal(total)>=0,'nonnegative total cap');cap+=Decimal(total)
+  name,total,body=m.groups();b=named_bit(name);need(b not in seen and name not in names,'unique annotated electrical class');seen.add(b);names[name]=b;need(Decimal(total).is_finite()and Decimal(total)>=0,'finite nonnegative total cap');cap+=Decimal(total)
   con=body.split('*CONN\n',1)[1].split('*CAP\n',1)[0];found=set()
   for line in con.strip().splitlines():
    tok=line.split();need(tok[0]in('*I','*P')and len(tok)>=3,'complete SPEF connection record');ref=('PORT:'if tok[0]=='*P'else'')+tok[1];need(ref in lookup and lookup[ref]==b and ref not in found,'every SPEF pin exact class');found.add(ref);kind,direction,typ=dirs[ref];need(tok[2]==('I'if direction=='input'else'O'),'SPEF pin direction')
    if kind=='cell':need(tok[3:]==['*D',typ],'actual SPEF cell master')
   need(found==refs[b],'all pin/port RC coverage')
-  cb=body.split('*CAP\n',1)[1].split('*RES\n',1)[0];rb=body.split('*RES\n',1)[1];nodes=set();graph=collections.defaultdict(set)
+  cb=body.split('*CAP\n',1)[1].split('*RES\n',1)[0];rb=body.split('*RES\n',1)[1];nodes=set();graph=collections.defaultdict(set);rids=set();cids=set()
   for line in rb.strip().splitlines():
-   t=line.split();need(len(t)==4 and Decimal(t[3])>=0,'finite nonnegative resistance');graph[t[1]].add(t[2]);graph[t[2]].add(t[1]);nodes|={t[1],t[2]};res_count+=1
+   t=line.split();need(len(t)==4 and t[0].isdigit()and t[0]not in rids and Decimal(t[3]).is_finite()and Decimal(t[3])>=0,'uniqueID finite nonnegative resistance');rids.add(t[0]);graph[t[1]].add(t[2]);graph[t[2]].add(t[1]);nodes|={t[1],t[2]};res_count+=1
   for line in cb.strip().splitlines():
-   t=line.split();need(len(t)==3 and Decimal(t[2])>=0,'ground capacitance only and nonnegative');need(t[1]in nodes,'capacitor connected to RC graph');cap_count+=1
+   t=line.split();need(len(t)==3 and t[0].isdigit()and t[0]not in cids and Decimal(t[2]).is_finite()and Decimal(t[2])>=0,'uniqueID finite nonnegative ground capacitance');cids.add(t[0]);need(t[1]in nodes,'capacitor connected to RC graph');cap_count+=1
   cn={x.removeprefix('PORT:')for x in found};need(cn<=nodes,'all logical pins present in RC network');visited=set();todo=[next(iter(nodes))]
   while todo:
    q=todo.pop()
@@ -69,5 +69,5 @@ def route_audit(stage,previous,net,lib,pure=True):
  lines=(stage/'wirelength.csv').read_text().splitlines();need(lines[0].split()==['tool','net','total_wl','#pins'],'known actual net wirelength format');wn=set()
  for line in lines[1:]:
   t=line.split();need(len(t)==4 and t[0]=='grt:'and t[1]in names and t[1]not in wn,'exact wirelength net');wn.add(t[1]);need(abs(Decimal(t[2])-Decimal(metric[t[1]])/unit)<=Decimal('.005'),'independent per-net wirelength matches report precision');need(int(t[3])==len(refs[names[t[1]]]),'wirelength physical terminal count')
- need(wn==set(names),'complete wirelength net inventory');gr=block(log,'BEGIN_GLOBAL_ROUTE','END_GLOBAL_ROUTE');cong=gr.split('Final congestion report:',1)[1];layerrows=re.findall(r'(?m)^(metal\d+)\s+(\d+)\s+(\d+)\s+([\d.]+)%\s+(\d+) /\s*(\d+) /\s*(\d+)\s*$',cong);need(len(layerrows)==10 and all(int(x[4])==int(x[5])==int(x[6])==0 for x in layerrows),'all actual route layer overflows zero')
+ need(wn==set(names),'complete wirelength net inventory');gr=block(log,'BEGIN_GLOBAL_ROUTE','END_GLOBAL_ROUTE');cong=gr.split('Final congestion report:',1)[1];layerrows=re.findall(r'(?m)^(metal\d+)\s+(\d+)\s+(\d+)\s+([\d.]+)%\s+(\d+) /\s*(\d+) /\s*(\d+)\s*$',cong);need(len(layerrows)==10 and {q[0]for q in layerrows}=={'metal'+str(i)for i in range(1,11)}and all(int(x[4])==int(x[5])==int(x[6])==0 for x in layerrows),'all actual route layer overflows zero')
  return {'status':'PASS_EXACT_ROUTE_GRAPH_RC_COVERAGE_AND_LAYER_LEDGER','graph_identity':identical,'annotated_net_classes':len(seen),'RC_resistors':res_count,'RC_ground_caps':cap_count,'reported_net_total_cap_fF':str(cap),'unannotated_unused_driver_count':len(ul),'unannotated_unused_driver_names':unbound,'unexplained_unannotated':0,'partially_unannotated':0,'layer_wirelength_um':{k:{l:str(Decimal(v)/unit)for l,v in sorted(ls.items(),key=lambda q:int(q[0][5:]))}for k,ls in by.items()},'layer_vias':{k:dict(v)for k,v in via.items()},'congestion_layers':[{'layer':n,'resource':int(r),'demand':int(d),'reported_percent':pct,'H_overflow':int(h),'V_overflow':int(v),'total_overflow':int(t)}for n,r,d,pct,h,v,t in layerrows],'PG':'absent; no capacity reservation, power network or physical closure claim','pin_access':'Actual standard-cell pin access includes M1 vias and clock M2/M3 segments despite configured M4 minimum clock trunk; all are counted. No claim all clock metal is M4 or higher.','fixed_base_qualification':False,'global_route_tile_dbu':tile,'wirelength_metric_rule':'Installed GlobalRouter.cpp computeNetWirelength sums segment Manhattan length plus one grid tile for each positive planar segment. Physical planar length and tool metric remain separate; vias separately counted.','tool_metric_sum_um':str(sum(metric.values())/unit),'raw_planar_sum_um':str(sum(wire.values())/unit),'RC_scope':'global routing estimated RC, not detailed extracted parasitics'}
