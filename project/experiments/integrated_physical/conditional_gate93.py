@@ -28,6 +28,6 @@ try:
   argv=['postgate.py','sim','--original',str(R/'prepare9302'),'--prepared',str(prepared),'--build',str(build),'--stall',str(a.stall),'--seconds','16000','--out',str(retry)];put(out/'retry-command.json',{'argv':argv,'existing_binary_sha256':cfg['binary_sha256'],'no_rebuild_or_input_change':True});sys.argv=argv
   import postgate
   postgate.main();rm=artifacts(retry);need(rm['status']=='POSTPHYSICAL93_GATE_EXECUTED_NOT_RECEIVED'and rm['build_manifest_sha256']==cfg['build_manifest_sha256'],'same exact retry completed');m.update(status='SOLE_EXACT_RETRY_EXECUTED_NOT_YET_GATE_ACCEPTANCE',retry_manifest_sha256=sha(retry/'manifest.json'))
-except Exception as e:m.update(error=str(e),traceback=traceback.format_exc());raise
+except Exception as e:m.update(previous_status=m['status'],status='ERROR_GUARD_OR_RETRY_NOT_ACCEPTED',error=str(e),traceback=traceback.format_exc());raise
 finally:put(out/'guard.json',m)
 print(m['status'])
