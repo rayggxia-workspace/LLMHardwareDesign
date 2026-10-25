@@ -49,7 +49,8 @@ def check_cone(original,cone,cuts,outs):
    if c['port_directions'][p]=='input':pending.extend(bs)
  need(cone['cells']=={n:original['cells'][n]for n in selected},'exact original cells/parameters/ports, no substitute model')
 
-def audit(proof):
+def audit(proof,execution_root=None):
+ execution_root=proof if execution_root is None else execution_root
  m=json.loads((proof/'manifest.json').read_text());artifacts(proof,m);need(m['status']=='PASS_ACTUAL_RTL_ALL_DOMAIN_AND_INDUCTIVE_LIMBS','proof status')
  for n,h in m['source']['sources'].items():need(sha(ROOT/n)==h,'proof source '+n)
  binding=json.loads((proof/'extraction.json').read_text());math=json.loads((proof/'math-cones.json').read_text())['modules']; invs={}
@@ -67,11 +68,11 @@ def audit(proof):
     if key in ['limb','plimb','vlimb']:iouts['next_'+key]=c['connections']['D']
   need(len(iouts)==3,'all real limb FFs');check_cone(raw,inv,icuts,iouts);invs['inv_'+tag]=inv
   source=ROOT/('project/rtl/shared_services/attention106.sv'if v=='original'else'project/rtl/attention_width/attention110.sv')
-  expected='read_verilog -sv '+str(source)+'\n'+('chparam -set STYLE '+str(v)+' '+top+'\n'if v!='original'else'')+'hierarchy -top '+top+'\nproc\nopt_expr\nopt_clean\nwrite_json '+str(proof/(tag+'-proc.json'))+'\n'
+  expected='read_verilog -sv '+str(source)+'\n'+('chparam -set STYLE '+str(v)+' '+top+'\n'if v!='original'else'')+'hierarchy -top '+top+'\nproc\nopt_expr\nopt_clean\nwrite_json '+str(execution_root/(tag+'-proc.json'))+'\n'
   # The historical phase has its own root; allow precisely that immutable phase prefix.
   recorded=(proof/(tag+'-proc.ys')).read_text();oldroot=recorded.split('read_verilog -sv ',1)[1].split('/project/',1)[0]
   need(recorded==expected.replace(str(ROOT),oldroot),'exact synthesis command, no source replacement')
-  cmd=json.loads((proof/(tag+'-proc-command.json')).read_text());need(type(cmd['exit'])is int and cmd['exit']==0 and cmd['argv'][-3:]==['yosys','-s',str(proof/(tag+'-proc.ys'))],'actual proc execution')
+  cmd=json.loads((proof/(tag+'-proc-command.json')).read_text());need(type(cmd['exit'])is int and cmd['exit']==0 and cmd['argv'][-3:]==['yosys','-s',str(execution_root/(tag+'-proc.ys'))],'actual proc execution')
  return math,invs,m
 
 def check_text(modules,kind):
