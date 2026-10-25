@@ -2,6 +2,20 @@
 
 2026-10-25，负责人 Liangruizhi，实验继续进行。**97整合核已在本次Nangate研究库、整store82切口及固定I/O约束下完成布局/CTS/详细布线/真实RCX/全端点时序与严格电气验收，并通过精确最终网表4×2正常消费者链门级。93最终详细物理检查也已通过，精确51×2门级仍在原作业中运行。** 这是有限研究逻辑岛资格；真实SRAM、供电网、目标工艺制造验收仍未具备，不能写成完整芯片或固定层底座已验收。
 
+## checkpoint4：slew全集、归档和远端草稿
+
+持续草稿 [PR111](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/111) 已发布checkpoint3 `8449e0ead2057b7245128886e7ed4242cb1a39bd` 并读回原Git字节；本节为后续补充，远端交付以实际PR head为准。Issue98仍in_progress，未done。
+
+原电气表逐行检查之外，接收器现在独立推导全部输出驱动脚集合。固定OpenSTA `83e1f9b77f35a953dbd3c01dba431a789a981803` 的CheckSlews::findLimit明确default_max_transition仅适用于output；实际Liberty只有0.198535ns默认值，无pin override，SDC无额外最大transition/driving-cell规则。每个库output（含clock、tie、未使用QN）核同一限值及精确集合：93为45147=41567已连接+3580未使用，97为58359=53762已连接+4597未使用。551/665顶层理想输入没有该driver限制，不能宣称上游驱动闭合；fanout仍无上限。来源见[源码回执](../../work/Liangruizhi/98/slew-source-receipt.json)。
+
+91576/91577实际对两种load同时删除同一真实slew行，或替成同一虚构pin，并修改receipt/hash；两核四负例均被拒。91578以原网表/RCX/gate重接收，97仍physical_stage_accepted=true；[新完整收据](../../project/experiments/integrated_physical/results/issue-98/checkpoint4/final97-detail-receipt.json) SHA `4691173d1376bba0af92be2b4de6ac4abcfc644848b85163e3a8963c74220ec8`。没有重跑DRT/gate，原数值不变。3份补充原文件共1389661B跨机SHA通过。
+
+97冻结部分归档在服务器`delivery97-01/`，PC在`D:/Projects/Codex/integrated-physical-20261025-01/delivery97-01-received/`。5451成员原始9312602381B，压缩844691935B；archive SHA `4a1f9e3449abceeaafb7e3e176b3de010bf3ccc5c10aac510c00456db1dc05f1`，index SHA `0fb5486c21d092e48766de9b0e668d85e84b0cf64642f3fccb3596f28c1f07d5`。PC独立流式核所有成员字节/SHA，不解压执行。冻结选择含源phase1–76、97历史失败/最终成功/实际binary；可再生obj中间件逐项排除。**不是整Issue最终归档：活跃93输出和后续phase77/78补充未在该包**。新精选在checkpoint4；上游输入/工具仍引用授权服务器位置与SHA，非离线工具安装包。
+
+93原91391/91392继续；仅真实10500s TimeoutExpired且全部完整前缀独立数值/原RTL逐字段通过，才允许同源/binary/完整51driver/input一次16000s新out。91553/91554在未运行且无输出时取消，修正异常状态版本phase78@baa5f8e替为91579/91580；原长跑不动。异常写ERROR_GUARD_OR_RETRY_NOT_ACCEPTED，保留previous_status。成功选择后仍需完整51×2gate和新的精确DRT接收；前缀/guard均不等于完整验收。
+
+检查勘误：先前git diff --check PASS指当时工作区，并非累计分支。累计默认检查把冻结JSON原CRLF视作空白而失败；没有全局LF规则，不改来源字节。实际 `git -c core.whitespace=cr-at-eol diff --check task/88-electrical-repair...8449e0ead2057b7245128886e7ed4242cb1a39bd` 通过；默认失败与限定通过分别记录。
+
 ## checkpoint3：97研究物理资格已闭合，93等待最终门级
 
 | 最终候选 |93 joint9302 → detail9303|97 joint9701 → detail9702|

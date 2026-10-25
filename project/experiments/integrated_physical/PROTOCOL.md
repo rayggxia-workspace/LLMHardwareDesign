@@ -342,3 +342,17 @@ outputs, terminal exception or acceptance gates. This is execution budget only,
 not target clock relaxation or another physical repair candidate. No second
 extension is authorized. Final reception remains all51 records and complete
 protocol on each condition, plus exact gate dependency and full physical checks.
+
+## Exact slew coverage and selected completed-gate reception
+
+Receiver derives all scalar library output pins from exact final.json, including
+unused QN/tie/propagated-clock drivers. Both tables must equal that set and actual
+default_max_transition. Unsupported library pin overrides/SDC driver limits reject.
+Fixed-waveform top sources have no applicable driver maximum; upstream closure is
+excluded. Two-load same-pin deletion/substitution with updated receipt/SHA must
+reject. This strengthens reception without repeating DRT/gate simulation.
+
+Pending phase77 guards were replaced before execution by phase78 explicit error
+status. Original running gate jobs and all frozen functional inputs stay identical.
+After both guards succeed, receive_guarded93 selects only original or sole-retry
+paths and runs the complete51x2 independent receiver. Prefix/guard is not acceptance.

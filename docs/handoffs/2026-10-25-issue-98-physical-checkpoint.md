@@ -24,3 +24,11 @@
 已准备package_results.py/verify_bundle.py，最终归档必须等声明范围活跃输出静止，包含原失败/所有源码/实际binary，排除可再生obj中间文件并明列；独立byte receiver逐成员验证，不解压执行。74phase来源已通过原Git批量核验。源码phase74=7ead034候选6/接收修复，phase75=9cede8c归档与只读预算/摘要工具。候选6入口negative-entry01真实通过。
 
 当前唯一耗时项93final gate保留原10500s/10800s边界。根已批准仅当真实超时且没有数值失败时，对同精确源/binary/51driver/input预登记一次16000s child/280min新out；不得更改原job或缩短记录。所有普通改动和提交仍由本worker完成，root负责精确snapshot发布PR，不写活动目录；未审查合并不done。
+
+## checkpoint4 接续
+
+持续草稿 https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/111 已发布8449e0e，root保存远端字节回执。97新slew全集接收detail-receive9703/receipt SHA4691173d1376bba0af92be2b4de6ac4abcfc644848b85163e3a8963c74220ec8；没有改变原物理结论。两核四个双load重SHA负例拒绝。97冻结部分delivery97-01在服务器和D盘均有5451成员独立SHA通过，压缩SHA4a1f9e3449abceeaafb7e3e176b3de010bf3ccc5c10aac510c00456db1dc05f1；非整个Issue最终包。
+
+恢复先查91391/91392与条件保护91579/91580（原91553/91554未运行即取消），读final93-budget-s0/s1/guard.json。仅ORIGINAL_FINISHED或SOLE_EXACT_RETRY_EXECUTED可送完整接收，ERROR/RUNNING/prefix不可升级。唯一新out jointpost93s002/s102；receive_guarded93.py选择后仍调用原51×2独立接收，新receive_detail绑定精确gate，无第二次预算延长。失败与未执行依赖保留。
+
+累计默认diff检查因原冻结CRLF失败，工作区检查及显式core.whitespace=cr-at-eol累计检查通过，不能混淆；不改写冻结源/JSON。Issue in_progress，登记PR5 pending，缺看板配置/权限交root读回，未done。
