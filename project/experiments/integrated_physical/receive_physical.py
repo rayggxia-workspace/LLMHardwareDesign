@@ -3,6 +3,7 @@ import argparse,collections,copy,csv,re,sys
 from decimal import Decimal
 from common import *
 from admission93 import admit,MAP
+from canonical import canonical_cut
 sys.path.insert(0,str(ROOT/'project/experiments/electrical_repair'))
 from structure import library,certificate,input_loads
 
@@ -54,14 +55,14 @@ def geometry_connectivity(text,net,lib):
  need(area<=Decimal('79600.5'),'frozen cell budget')
  return {'status':'PASS_INDEPENDENT_SITE_BOUNDS_NO_OVERLAP_AND_ALL_SIGNAL_CONNECTIONS','core_um2':'159201','legal_rows':285,'row_site_count':598500,'functional_clock_repair_area_um2':str(area),'functional_area_budget_um2':'79600.5','DEF_database_units_per_um':unit,'signal_pin_connections':len(seen),'physical_only_cells_inserted':0,'PG_tap_fill_and_real_macro':'not inserted in initial logic-island placement; no manufacturing legality claim'}
 
-def audit(folder,prepared):
+def audit(folder,prepared,out):
  fm=artifacts(folder);pm=artifacts(prepared);ad=admit();need(pm['status']=='EXACT_ACCEPTED93_GATE_EXPORT_AND_DECLARED_MEMORY_CUT'and pm['admission_sha256']==sha(prepared/'admission.json')and load(prepared/'admission.json')==ad and fm['admission']==ad,'independent exact upstream admission');need(fm['stage']in('zero','place')and fm['status']=='ACTUAL93_'+fm['stage'].upper()+'_EXECUTED_NOT_RECEIVED','actual stage complete');need(fm['prepared_manifest_sha256']==sha(prepared/'manifest.json'),'precise stage input')
  need(fm['config_sha256']==sha(HERE/'config.json'),'frozen physical config')
  for p in(LIB,TECH,LEF,P/'setRC.tcl',P/'make_tracks.tcl',P/'fastroute.tcl'):need(fm['views'][str(p)]==sha(p),'exact physical input view')
  lib=library(LIB);before=load(prepared/'cut-source.json')['modules']['chain93'];original=copy.deepcopy(load(MAP/'mapped.json')['modules']['chain93']);stores=[(n,c)for n,c in original['cells'].items()if c['type']=='store82'];need(len(stores)==1,'original single store');sn,sc=stores[0];del original['cells'][sn]
  for pn,bs in sc['connections'].items():
   if pn!='clk':original['ports']['store_'+pn]={'direction':'input'if sc['port_directions'][pn]=='output'else'output','bits':bs}
- need(original==before,'independent original mapped source cut all cells ports and nets');after=load(folder/'final.json')['modules']['chain93'];cert=certificate(before,after,lib);need(Decimal(cert['after_area_um2'])<=Decimal('79600.5'),'98 cell budget');need(Decimal(str(load(folder/'stat.json')['design']['area']))==Decimal(cert['after_area_um2']),'independent exact library area')
+ need(original==before,'independent original mapped source cut all cells ports and nets');before=canonical_cut(prepared,out/'canonical');after=load(folder/'final.json')['modules']['chain93'];cert=certificate(before,after,lib);need(Decimal(cert['after_area_um2'])<=Decimal('79600.5'),'98 cell budget');need(Decimal(str(load(folder/'stat.json')['design']['area']))==Decimal(cert['after_area_um2']),'independent exact library area')
  ff={n+'/D'for n,c in after['cells'].items()if any(lib[c['type']]['sequential'].values())};outs={bracket_name(n,p,i)for n,p in after['ports'].items()if p['direction']=='output'for i in range(len(p['bits']))};exclude={bracket_name(e['port'],after['ports'][e['port']],e['bit'])for e in cert['constant_output_bits']};expected=ff|(outs-exclude)
  log=(folder/'flow.log').read_text();need(log.count('FLOW_EXECUTION_COMPLETE')==1,'actual tool completion marker');scenarios=[]
  for k in (1,10):
@@ -79,6 +80,6 @@ def audit(folder,prepared):
  return {'stage':fm['stage'],'stage_manifest_sha256':sha(folder/'manifest.json'),'structure':cert,'input_sink_costs':input_loads(after,lib),'scenarios':scenarios,'physical_geometry':geo,'all_declared_internal_timing_electrical_closed':all(s['closed']for s in scenarios),'physical_stage_accepted':fm['stage']=='place'and all(s['closed']for s in scenarios),'macro_clock_load_qualified':False,'upstream_drive_qualified':False,'manufacturable':False}
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--prepared',type=Path,required=True);p.add_argument('--stage',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(exist_ok=False);bd=sources();r=audit(a.stage,a.prepared)
+ p=argparse.ArgumentParser();p.add_argument('--prepared',type=Path,required=True);p.add_argument('--stage',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(exist_ok=False);bd=sources();r=audit(a.stage,a.prepared,a.out)
  put(a.out/'receipt.json',{'schema':'physical98-receipt-v1','status':'PASS_RECEPTION_OF_EXECUTED_PHYSICAL_STAGE_NOT_AUTOMATIC_CLOSURE','source':bd,'result':r,'limits':['Research Nangate typical only; explicitly non-manufacturable.','Whole store82 cut excludes real SRAM timing/area and macro clock load; core_reset retained at store_reset output.','Placement is logic island without PG/tap/fill or actual macro; zero wire/placement estimates are not detailed route SPEF.']});print('PASS_RECEPTION_OF_EXECUTED_PHYSICAL_STAGE_NOT_AUTOMATIC_CLOSURE')
 if __name__=='__main__':main()

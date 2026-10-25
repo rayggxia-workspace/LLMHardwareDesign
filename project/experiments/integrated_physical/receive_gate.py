@@ -13,7 +13,10 @@ def main():
  cases=load(INPUT/'cases.json');lookup={c['name']:c for c in cases};old=Path(load(INPUT/'manifest.json')['old_root']);refs={}
  for c in cases:
   for cache in (0,1):refs[c['name'],cache]=ref.matrix_reference(old,c,cache)if c['kind']=='chain'else{'x':ref.ints(bytes.fromhex(c['x'])),'gamma':ref.ints(bytes.fromhex(c['gamma']))}
- lib=library(LIB);before=load(a.prepared/'cut-source.json')['modules']['chain93'];after=load(a.prepared/'cut.json')['modules']['chain93'];cert=certificate(before,after,lib);need(float(cert['after_area_um2'])<=79600.5,'actual98 area ceiling');put(a.out/'structure.json',cert);put(a.out/'input-loads.json',input_loads(after,lib));results=[];neg=[]
+ lib=library(LIB);before=load(a.prepared/'cut-source.json')['modules']['chain93'];after=load(a.prepared/'cut.json')['modules']['chain93'];scope=[n for n,c in before['cells'].items()if c['type']=='$scopeinfo'];need(len(scope)==5,'exact original hierarchy metadata');
+ for n in scope:
+  need(before['cells'][n]==after['cells'][n]and before['cells'][n]['connections']=={}and before['cells'][n]['port_directions']=={}and before['cells'][n]['parameters']=={'TYPE':'module'},'only matching empty hierarchy metadata omitted');del before['cells'][n];del after['cells'][n]
+ cert=certificate(before,after,lib);need(float(cert['after_area_um2'])<=79600.5,'actual98 area ceiling');put(a.out/'structure.json',cert);put(a.out/'input-loads.json',input_loads(after,lib));results=[];neg=[]
  for stall,run in enumerate(a.runs):
   rm=artifacts(run);need(rm['status']=='ACCEPTED93_GATE_EXECUTED_NOT_RECEIVED'and type(rm['stall'])is int and rm['stall']==stall and rm['build_manifest_sha256']==sha(a.build/'manifest.json'),'strict gate run/stall/binary')
   need(rm['prepared_manifest_sha256']==sha(a.prepared/'manifest.json')and rm['input_manifest_sha256']==sha(INPUT/'manifest.json')and rm['admission']==ad,'same full source and input contract')
