@@ -1,5 +1,11 @@
 # Liangruizhi 的进度
 
+## 2026-10-25 UTC+08 Issue86门级与逻辑时序交付
+
+[Issue86](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/86)，task/86-gate-sta，D:/Projects/LLMHardwareDesign-gate-sta；base Issue84/PR87。本人Liangruizhi/182389313；实际只服务器lrz-i86-*，旧84只读。四变体共8完整门级消费者严格独立接收，完整整数和原RTL计数/cycles一致；数千slew/cap违规保留，不能报告合格Fmax/物理完成。全部DFF端点已覆盖，真实存储宏/RC/CTS仍在cut外。
+
+34本人作业24COMPLETED/9FAILED/1CANCELLED均终态，恢复日志留档；完整19158542B/434成员、精选1966113B/402成员及8phase57原Git源码字节通过。[报告](../../docs/experiments/issue-86-gate-sta.md)、[索引](../../project/experiments/gate_sta/results/issue-86/index.json)、[交接](../../docs/handoffs/2026-10-25-issue-86-gate-sta.md)。Issue88继续修复并重放；85新增控制不继承84STA。任务in_review待审查合并，不done；登记PR5 pending，board404/缺read:project，在线同步pending；审查/管理员待指定，成员55/63不接管。
+
 ## 2026-10-25 UTC+08 Issue84缓存/共享交付
 
 [Issue84](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/84)，task/84-cache-share，D:/Projects/LLMHardwareDesign-cache-share，base PR83@7e9ec409。本人Liangruizhi/182389313及push已核，成员55/63继续独立。仅本人服务器lrz-i84-*，无新模型/其他机器/软件安装。84完整真实消费者命令及8192独立仲裁产品通过；14份严格接收拒绝实际重SHA改码。16KiB/128bit1RW不增加端口，缓存周期减少34.68%、外部线字节减少49.20%；共享缓存比专用缓存逻辑面积少12.44%。额外8拍SRAM等待出现负收益，不能冻结总物理边界。
