@@ -4,9 +4,10 @@ from common import *
 from route_audit import same_wiring
 from detail_spef import audit_spef
 from detail_ledger import audit_ledger
+from strict_electrical_audit import receive_strict
 from gate_dependency import checked_gate,checked_post97
 from receive_physical import block,rows
-p=argparse.ArgumentParser();p.add_argument('--target',type=int,choices=[93,97],required=True);p.add_argument('--prepared',type=Path,required=True);p.add_argument('--stage',type=Path,required=True);p.add_argument('--readback',type=Path);p.add_argument('--gate',type=Path);p.add_argument('--postgate',type=Path);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(exist_ok=False);sm=artifacts(a.stage);need(sm['stage']=='drt'and sm['detail_seed']==42 and sm['detail_iterations']==8 and sm['detail_child_seconds']==1100,'fixed detailed pilot');previous=Path(sm['previous_directory']);artifacts(previous)
+p=argparse.ArgumentParser();p.add_argument('--target',type=int,choices=[93,97],required=True);p.add_argument('--prepared',type=Path,required=True);p.add_argument('--stage',type=Path,required=True);p.add_argument('--readback',type=Path);p.add_argument('--strict-electrical',type=Path);p.add_argument('--gate',type=Path);p.add_argument('--postgate',type=Path);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(exist_ok=False);sm=artifacts(a.stage);need(sm['stage']=='drt'and sm['detail_seed']==42 and sm['detail_iterations']==8 and sm['detail_child_seconds']==1100,'fixed detailed pilot');previous=Path(sm['previous_directory']);artifacts(previous)
 if a.target==93:
  from receive_physical import audit
  from admission93 import admit
@@ -30,5 +31,7 @@ if a.readback is not None:
   for label,key in [('max slew','max_slew'),('max capacitance','max_capacitance'),('max fanout','max_fanout')]:need(c[key].isdigit()and int(c[key])==scenario['violations'][label],'actual separate readback count matches report '+label)
  r['detailed_readback_status']='PASS_EXACT_FULL_ENDPOINTS_AND_ELECTRICAL_COUNTS';r['detailed_readback_manifest_sha256']=sha(a.readback/'manifest.json')
 if a.postgate is not None:postcheck(a.postgate,a.prepared,admit(),previous);r['postphysical_gate_status']=postpass+'_REUSED_EXACT_UNCHANGED_ROUTED_GRAPH';r['postphysical_gate_receipt_sha256']=sha(a.postgate/'receipt.json')
-r['physical_stage_accepted']=False # Strict complete driver cap/slew checks and exact gate are mandatory before closure.
+r['strict_electrical_status']='NOT_EXECUTED'
+if a.strict_electrical is not None:r['strict_electrical']=receive_strict(a.stage,a.strict_electrical);r['strict_electrical_status']=r['strict_electrical']['status']
+r['physical_stage_accepted']=bool(a.strict_electrical is not None and r['strict_electrical']['all_electrical_maxima_met'] and a.postgate is not None and r['detailed_readback_status']=='PASS_EXACT_FULL_ENDPOINTS_AND_ELECTRICAL_COUNTS' and r.get('raw_gate_status')==rawpass and all(s['violations'][k]==0 for s in r['scenarios']for k in('setup','hold')))
 put(a.out/'receipt.json',{'schema':'physical98-detail-receipt-v1','status':'PASS_RECEPTION_OF_DETAILED_EVIDENCE_NOT_AUTOMATIC_CLOSURE','source':sources(),'result':r,'limits':['Actual detailed RCX with explicit PF/OHM units and coupling reduction1; not manufacturing-qualified extraction.','Whole store82 remains cut; no actual macro, PG/tap/fill/LVS, upstream drive or fixed-base qualification.']});print('PASS_RECEPTION_OF_DETAILED_EVIDENCE_NOT_AUTOMATIC_CLOSURE')
