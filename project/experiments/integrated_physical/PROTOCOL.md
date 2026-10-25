@@ -204,3 +204,11 @@ Candidate3 adds oneBUF_X4(+1.862um2), originaldriver location then legalize and
 onefullGRT50, identicalconstraints/resources. PriorC2 remains failed. Noother
 net is included; a new residual stops this candidate for diagnosis. Fullpin/FF/
 function/inventory/RC/allendpoint checks and a newly bound exactgate are required.
+
+
+DRT firstpilot rejects the preexisting empty GROUND label`zero_` in regular NETS
+before routing(DRT-0305). Preserve the failure. Input normalization may remove only
+this exact reference after proving GROUND,zero ITerm/BTerm,Wire=NULL,noSWire.
+All actual tie outputs and electrical pin classes must remain identical; no
+functional net, physical PG or constant source is removed. Same frozen pilot
+then runs in a fresh directory, with explicit normalization marker and inventory.
