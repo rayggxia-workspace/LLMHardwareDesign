@@ -1,10 +1,11 @@
 """Immutable whole-task artifact index and archive; never labels experiments accepted."""
 import argparse,os,tarfile,time
 from common import *
-p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();root=a.root.resolve();need(str(root)=='/public/home/yuzelu/RuizhiLiang/issue98-integrated-physical-20261025','only own fixed experiment root');need(a.out.parent.resolve()==root,'direct own-root archive');a.out.mkdir(exist_ok=False);src=sources();resources=resource_snapshot();current_log=os.environ['SLURM_JOB_NAME'].removeprefix('lrz-i98-')+'-'+os.environ['SLURM_JOB_ID']+'.log';included=[];excluded=[];inodes={}
+p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--selection',type=Path);a=p.parse_args();selection=None if a.selection is None else load(a.selection);root=a.root.resolve();need(str(root)=='/public/home/yuzelu/RuizhiLiang/issue98-integrated-physical-20261025','only own fixed experiment root');need(a.out.parent.resolve()==root,'direct own-root archive');a.out.mkdir(exist_ok=False);src=sources();resources=resource_snapshot();current_log=os.environ['SLURM_JOB_NAME'].removeprefix('lrz-i98-')+'-'+os.environ['SLURM_JOB_ID']+'.log';included=[];excluded=[];inodes={}
 for f in sorted(root.rglob('*')):
  if f==a.out or a.out in f.parents:continue
  rel=f.relative_to(root);parts=rel.parts
+ if selection is not None and parts[0]not in selection['top_level_members']:continue
  if 'tmp'in parts or '__pycache__'in parts:continue
  need(not f.is_symlink(),'no symbolic links in declared artifact package '+str(rel))
  if not f.is_file():continue
@@ -16,7 +17,7 @@ for f in sorted(root.rglob('*')):
  h=inodes.get(inode)
  if h is None:h=sha(f);inodes[inode]=h
  need((st.st_size,st.st_mtime_ns)==(f.stat().st_size,f.stat().st_mtime_ns),'immutable source while hashing '+str(rel));included.append({'path':rel.as_posix(),'bytes':st.st_size,'sha256':h,'mtime_ns':st.st_mtime_ns})
-index={'schema':'physical98-whole-task-artifact-index-v1','status':'EXACT_BYTES_ARCHIVED_NOT_EXPERIMENT_ACCEPTANCE','source':src,'resources':resources,'source_root':str(root),'included':included,'excluded_build_intermediates':excluded,'excluded_scope':['own tmp/cache, archive directory and current packaging log','No source/result/output/log exclusions beyond regenerable build intermediates and temporary cache; original failures retained.'],'total_file_bytes':sum(x['bytes']for x in included)};put(a.out/'index.json',index)
+index={'schema':'physical98-whole-task-artifact-index-v1','status':'EXACT_BYTES_ARCHIVED_NOT_EXPERIMENT_ACCEPTANCE','source':src,'resources':resources,'source_root':str(root),'selection':selection,'selection_sha256':None if a.selection is None else sha(a.selection),'included':included,'excluded_build_intermediates':excluded,'excluded_scope':['own tmp/cache, archive directory and current packaging log','When selection is provided, only its frozen top-level members are included; other task output is outside this delivery. Within selected members original failures are retained.'],'total_file_bytes':sum(x['bytes']for x in included)};put(a.out/'index.json',index)
 with tarfile.open(a.out/'artifacts.tar.gz','w:gz',compresslevel=3)as t:
  for q in included:
   f=root/q['path'];need(f.stat().st_size==q['bytes'] and f.stat().st_mtime_ns==q['mtime_ns'],'still immutable before archive '+q['path']);t.add(f,arcname=q['path'],recursive=False)
