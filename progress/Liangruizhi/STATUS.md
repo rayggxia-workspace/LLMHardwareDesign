@@ -1,5 +1,9 @@
 # Liangruizhi 的进度
 
+## 2026-10-25 Issue110 A宽度比较实施中
+
+Issue110 / task/110-attention-width / D:/Projects/LLMHardwareDesign-attention-width，PR108@7a9fece基线。先原106等价、全域组合证明及真实FSM不变量，再三变体完整GQA/共享恢复/门级同精度与资源比较；尚未验证。109独立不改。根发布，看板/登记缺项保持交接。
+
 ## 2026-10-25 UTC+08 Issue106共享服务本地交付待PR
 
 [Issue106](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/106)，task/106-shared-services，D:/Projects/LLMHardwareDesign-shared-services；已合入99 PR103/102 PR105发布基线。唯一16KiB1RW/8S8/S32/SFU/link实际实例，双路各7混合+27恢复与独立原整数oracle通过，选定门级两路各4完整命令逐字段/数学PASS，10实际重SHA负例拒绝。logic-only125,966.694µm²，不含宏/物理、真实下游事务缓冲；GDN104未接入，非完整库完成。
