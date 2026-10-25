@@ -21,7 +21,7 @@ def lef_sizes(text):
  return out
 
 def def_name(n):return re.sub(r'\\(.)',r'\1',n)
-def geometry_connectivity(text,net,lib):
+def geometry_connectivity(text,net,lib,original=None):
  u=re.search(r'UNITS DISTANCE MICRONS (\d+)\s*;',text);need(u is not None,'DEF units');unit=int(u.group(1));num=lambda x:int(Decimal(x)*unit)
  core=tuple(map(num,['24.51','25.2','423.51','424.2']));die=re.search(r'DIEAREA\s*\(\s*(\d+)\s+(\d+)\s*\)\s*\(\s*(\d+)\s+(\d+)\s*\)',text);need(die is not None and tuple(map(int,die.groups()))==(0,0,num('448'),num('448')),'frozen die')
  rr=re.findall(r'ROW\s+\S+\s+(\S+)\s+(-?\d+)\s+(-?\d+)\s+(\S+)\s+DO\s+(\d+)\s+BY\s+(\d+)\s+STEP\s+(\d+)\s+(\d+)\s*;',text);need(len(rr)==285,'exact285 legal rows')
@@ -53,7 +53,10 @@ def geometry_connectivity(text,net,lib):
    if bb is None:bb=actual
    need(key not in seen and bb==actual,'DEF pin connectivity equal exact netlist');seen.add(key)
   if bb is None:
-   need(def_name(n)=='zero_'and re.fullmatch(r'\s*\+ USE GROUND\s*',body)is not None,'only explicitly empty zero_ ground reference may lack pins');empty_reference_nets.append({'name':def_name(n),'use':'GROUND','connections':0});continue
+   use=re.fullmatch(r'\s*\+ USE (GROUND|SIGNAL)\s*',body);need(use is not None,'empty DEF label has no routing or other physical objects')
+   if use[1]=='GROUND':need(def_name(n)=='zero_','explicit empty ground reference')
+   else:bit(n,(original or net)['netnames'])
+   empty_reference_nets.append({'name':def_name(n),'use':use[1],'connections':0,'scope':'empty reference/alias label only; all actual cell and port connections remain required'});continue
   need(bb not in bitnets and def_name(n)not in netbits,'all electrical netlist bit classes not split '+n);netbits[def_name(n)]=bb;bitnets[bb]=def_name(n)
  expected={('cell',n,p)for n,c in net['cells'].items()for p,b in c['connections'].items()if b}|{('port',bracket_name(n,p,i))for n,p in net['ports'].items()for i in range(len(p['bits']))}
  need(seen==expected,'all cell and IO DEF connection coverage')
@@ -99,9 +102,9 @@ def audit(folder,prepared,out,gate=None):
   gate_status='PENDING_RAW_GATE_PROVISIONAL_ONLY'
   if gate is not None:
    gr=load(gate/'receipt.json');need(gr['status']=='PASS_ACTUAL93_COMPLETE_GATES_AND_DECLARED_EPOCH_EXCEPTION'and gr['admission']==ad and gr['prepared_manifest_sha256']==sha(prepared/'manifest.json'),'independent same exact complete raw gate');gate_status='PASS_COMPLETE_RAW_GATE';gate_sha=sha(gate/'receipt.json')
- if fm['stage']in('place','repair'):block(log,'BEGIN_CHECK_PLACEMENT','END_CHECK_PLACEMENT');geo=geometry_connectivity((folder/'placed.def').read_text(),after,lib)
+ if fm['stage']in('place','repair'):block(log,'BEGIN_CHECK_PLACEMENT','END_CHECK_PLACEMENT');geo=geometry_connectivity((folder/'placed.def').read_text(),after,lib,before)
  if fm['stage']=='repair':
-  prev=Path(fm['previous_directory']);need(fm['previous_manifest_sha256']==sha(prev/'manifest.json'),'repair original placement binding');old_geo=geometry_connectivity((prev/'placed.def').read_text(),load(prev/'final.json')['modules']['chain93'],lib);need(old_geo['pin_geometry']==geo['pin_geometry'],'exact frozen external pinmap through repair')
+  prev=Path(fm['previous_directory']);need(fm['previous_manifest_sha256']==sha(prev/'manifest.json'),'repair original placement binding');old_geo=geometry_connectivity((prev/'placed.def').read_text(),load(prev/'final.json')['modules']['chain93'],lib,before);need(old_geo['pin_geometry']==geo['pin_geometry'],'exact frozen external pinmap through repair')
  return {'stage':fm['stage'],'stage_manifest_sha256':sha(folder/'manifest.json'),'structure':cert,'actual_constraints':sdc,'input_sink_costs':input_loads(after,lib),'scenarios':scenarios,'physical_geometry':geo,'all_declared_internal_timing_electrical_closed':all(s['closed']for s in scenarios),'raw_gate_status':gate_status,'gate_receipt_sha256':gate_sha,'physical_stage_accepted':fm['stage']in('place','repair')and gate_status=='PASS_COMPLETE_RAW_GATE'and all(s['closed']for s in scenarios),'macro_clock_load_qualified':False,'upstream_drive_qualified':False,'manufacturable':False}
 
 def main():
