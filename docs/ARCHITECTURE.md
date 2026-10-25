@@ -201,7 +201,7 @@ RTL project/rtl/norm_service，工具project/experiments/norm_circuit；[README]
 
 入口 [integrated_physical/README](../project/experiments/integrated_physical/README.md)、[冻结协议](../project/experiments/integrated_physical/PROTOCOL.md)和[实际阶段报告](experiments/issue-98-integrated-physical.md)。先 `python -B scripts/check_project.py`。所有真实准备、gate、布局/CTS/GRT/DRT/RCX和独立接收仅本人服务器8CPU Slurm；使用原phase `binding.json`及新输出目录，不能将当前HEAD冒充历史执行源。
 
-原映射93接收入口为 `receive_gate.py`，变换后93为 `postgate.py`/`receive_gate.py --postphysical`（完整参数以原实际command JSON为准）；97为 `postgate97.py`/`receive_post97.py`，范围固定4运行8正常输出。GRT联合接收 `receive_route.py --target 93|97 --prepared ORIGINAL --stage STAGE --rc-replay REPLAY --strict-electrical FULL --gate RAW_RECEIPT --postgate EXACT_POST_RECEIPT --out NEW`：完整graph/FF/所有端口、实际geometry、全RC/全endpoint、非过滤严格电气、精确gate缺一不可accepted；不把单项PASS叫物理闭合。
+原映射93接收入口为 `receive_gate.py`，变换后93为 `postgate.py`/`receive_gate.py --post-prepared POST_PREPARED`（完整参数以原实际command JSON为准）；97为 `postgate97.py`/`receive_post97.py`，范围固定4运行8正常输出。GRT联合接收 `receive_route.py --target 93|97 --prepared ORIGINAL --stage STAGE --rc-replay REPLAY --strict-electrical FULL --gate RAW_RECEIPT --postgate EXACT_POST_RECEIPT --out NEW`：完整graph/FF/所有端口、实际geometry、全RC/全endpoint、非过滤严格电气、精确gate缺一不可accepted；不把单项PASS叫物理闭合。
 
 详细阶段依次 `detail_flow.py`、`detail_spef.py`、`detail_ledger.py`、`detail_readback.py`、`strict_electrical.py`、`receive_detail.py`，实际seed42/max8和全部工具/库/RC来源冻结。增量hold候选由 `incremental_hold.py` 执行一次，`incremental_audit.py`保留dirty全并集/全部改网/同grid新pin-access证据。真实重SHA破坏负例在negative_route/negative_rc_replay/negative_detail/negative_strict_electrical/negative_incremental，各有独立结果；不能仅AST通过替代业务验证。
 
