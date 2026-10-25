@@ -23,10 +23,10 @@ ARRAYS=set('mid A8 delta acc down joined qk score exp sum P out state committed_
 STRINGS=set('name role sum_hex den_hex r_descriptor'.split())
 NUMBERS=set('kind status epoch cycles elapsed compute_cycles export_cycles drain_cycles sreads swrites mul0 mul1 fgrants transactions wire_beats result_lines root_writes cache_owner cache_version cache_length r_position r_unit r_epoch r_bank r_retries'.split())
 QUAL_ROLES=['init','initial-A','abort-M-link','recover-M','abort-M-S32','recover-M-S32','same-version-scale','recover-scale','abort-A-store','recover-A-store','abort-A-SFU','recover-A-SFU','abort-A-export','recover-A-export','abort-R-write','old-version-after-R','owner-after-R','recover-registry','reject-R','irreversible-R0','later-M','later-Acached','continued-R1','recover-stale','terminal-max','after-reset-restore','after-reset-A']
-GQUAL=['G-restore-native','abort-G-store','G-native0','abort-G-wide','abort-G-link','abort-G-write','reject-G','abort-G-export-link','abort-G-export-result','G-irreversible1','G-bad-version','G-bad-position','G-bad-owner','G-native2-stale','second-reset-Rrestore','G-after-reset-restore']
+GQUAL=['G-restore-native','abort-G-store','G-native0','abort-G-wide','abort-G-link','abort-G-write','reject-G','abort-G-export-link','abort-G-export-result','G-irreversible1','G-bad-version','G-bad-position','G-bad-owner','G-native2-stale','G-terminal-max','second-reset-Rrestore','G-after-reset-restore']
 QUAL_ROLES+=GQUAL
 CHECKS=['cfg-write-ACK-collision','cfg-read-response-collision','M-inflight-link-drain','M-inflight-S32-drain','A-accepted-store-ACK-drain','A-inflight-SFU-drain','A-export-drain','R-write-drain-old-root','A-registry-across-M-R-abort','R-candidate-reject','R-irreversible-root-ACK','old-tag-under-current-credit','max-no-wrap-and-late-drain']
-CHECKS+=['G-accepted-S-ACK-drain','G-wide-S32-drain','G-link-held-read-drain','G-private-write-effect-once','G-full-candidate-reject','G-D-export-link-drain','G-candidate-result-revoke','G-root-ACK-irrevocable','G-context-position-version-reject','G-old-tag-under-current-credit','G-shared-reset-root-restore']
+CHECKS+=['G-accepted-S-ACK-drain','G-wide-S32-drain','G-link-held-read-drain','G-private-write-effect-once','G-full-candidate-reject','G-D-export-link-drain','G-candidate-result-revoke','G-root-ACK-irrevocable','G-context-position-version-reject','G-old-tag-under-current-credit','G-terminal-last-lease-and-late','G-shared-reset-root-restore']
 class Oracle:
  def __init__(self,inp):
   self.newim=bound(inp);need(self.newim['schema']=='shared109-input/1','new input type');self.g=GOracle(inp,self.newim)
@@ -58,7 +58,7 @@ def inspect(inp,run,oracle):
   for k in ARRAYS|GARRAYS:need(type(row[k])is list and all(type(v)is int for v in row[k]),'integer array '+k)
   role=row['role'];kind=row['kind'];status=row['status'];expected_status=2 if role.startswith('abort-')else 17 if role in('same-version-scale','old-version-after-R','owner-after-R')else 3 if role in('reject-R','reject-G')else 4 if role.startswith('G-bad-')else 0
   need(status==expected_status,'expected status');need(row['wire_beats']==row['transactions']*5,'actual five128bit beats');need(row['result_lines']*(2 if row['kind']==3 else 4)==len(row['g_out']if row['kind']==3 else row['out']),'actual export all words');need(row['cycles']+1==row['elapsed'],'command to held done elapsed');need(row['cycles']>=row['export_cycles']+row['drain_cycles'],'disjoint D phases')
-  expected_transport=0xffffffff if role=='terminal-max'else 1 if role in('after-reset-restore','second-reset-Rrestore')else prev_transport+1;need(row['epoch']==expected_transport,'actual no-wrap epoch sequence');prev_transport=expected_transport
+  expected_transport=0xffffffff if role in('terminal-max','G-terminal-max')else 1 if role in('after-reset-restore','second-reset-Rrestore')else prev_transport+1;need(row['epoch']==expected_transport,'actual no-wrap epoch sequence');prev_transport=expected_transport
   if role in('after-reset-restore','second-reset-Rrestore'):reg_version=reg_length=0
   if kind==0:
    need(row['name']in oracle.m,'selected original M');ref=oracle.m[row['name']]
@@ -98,7 +98,7 @@ def inspect(inp,run,oracle):
  proto=json.loads((run/'actual.jsonl.protocol.json').read_text())
  if qual:
   need(set(proto)==set('schema accepted declared_epoch_Q_injection_RTL_only cfg_collisions actual_aborts_before_reset actual_stale_before_reset terminal_rejected_edges fabric_high_water root_writes g_aborts_before_second_reset g_stale_before_second_reset g_root_writes checks'.split()),'qualification keys');need(proto['schema']=='shared109-qualification/1'and proto['declared_epoch_Q_injection_RTL_only']is True and proto['checks']==CHECKS,'qualification declarations')
-  for k,v in {'accepted':43,'g_aborts_before_second_reset':6,'g_stale_before_second_reset':1,'g_root_writes':3,'cfg_collisions':2,'actual_aborts_before_reset':6,'actual_stale_before_reset':2,'terminal_rejected_edges':12,'fabric_high_water':2,'root_writes':3}.items():need(type(proto[k])is int and proto[k]==v,'qualification actual '+k)
+  for k,v in {'accepted':44,'g_aborts_before_second_reset':6,'g_stale_before_second_reset':2,'g_root_writes':3,'cfg_collisions':2,'actual_aborts_before_reset':6,'actual_stale_before_reset':2,'terminal_rejected_edges':24,'fabric_high_water':2,'root_writes':3}.items():need(type(proto[k])is int and proto[k]==v,'qualification actual '+k)
  else:
   need(set(proto)==set('schema accepted leases same_core_no_per_case_reset held_done latched_parameters fabric_high_water external_accepted root_writes g_root_writes aborts stale'.split()),'mixed protocol keys');need(proto['schema']=='shared109-mixed/1','mixed schema')
   for k in ['same_core_no_per_case_reset','held_done','latched_parameters']:need(proto[k]is True,'actual bool '+k)
