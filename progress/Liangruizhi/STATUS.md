@@ -255,3 +255,6 @@ PR待审查/合并，审查人/管理员待指定，未done；后续在已有授
 完成具体地址/生命周期/程序-LUT/scale/有限仲裁/错误合同及六Block分层缺项；纯结构4trace/8布局、23检查及18原Git源接收PASS，4交付负例拒绝。H2560保留X/Y10KiB+gamma1KiB+frame512B+A4KiB合法（余512B），相对X也流式少640外部行和640 S写入。源码8fa5dde，report SHA145956d188d24b05b96fdd1c08008c3c5abc337c716e286ea9b0c1da898c1efc。只为结构候选，无新真实数组、RTL、STA或服务器作业。
 
 [报告](../../docs/experiments/issue-91-v-integration.md)/[交接](../../docs/handoffs/2026-10-25-issue-91-v-integration.md)。下一步独立Issue先gamma streaming+H1536回归/H2560全行den，再SiLU完整链；新增byte ALU/mux/程序/LUT/metadata及端口成本必须计费。根会话统一push/PR和状态，当前本地完成、远端待上传；不合并/不done，登记pending、Projects unverified/同步pending。
+
+
+发布回执（2026-10-25）：[PR94](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/94)已上传；Issue91为in_review，待独立审查/合并，未done。远端读回commit 034fe463ebdae85361bdd8e7cf473548c92e6b8a的报告、索引、接收报告均与原Git blob逐字节相同，详见work/Liangruizhi/91/remote-readback.json。后续文档提交不改冻结实验source。登记PR5 pending；看板board.json404且实际条目查询缺read:project，状态unverified、同步pending。审查人/管理员待指定。
