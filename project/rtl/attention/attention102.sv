@@ -1,7 +1,7 @@
 // Issue102 bounded complete8-head GQA. Three score passes, then PV; NOT online.
 // Q8, K/V symmetricS16, QK/PV checkedI32, expQ30, P15. One physical8S8 bank.
 module attention102(input wire clk,reset,start,ack,input wire [10:0] length,
- input wire [63:0] query_units,input wire signed [7:0] key_unit,input wire [31:0] key_address,value_address,
+ input wire [63:0] query_units,input wire signed [7:0] key_unit,input wire [31:0] key_address,value_address,score_multiplier,
  output wire done,output reg [7:0] status,output wire [7:0] debug_state,
  output wire ereq,output wire [31:0] eaddr,input wire eready,evalid,output wire etake,input wire [127:0] edata,
  output wire sreq,swr,output wire [9:0] saddr,output wire [127:0] sdata,input wire sready,svalid,output wire stake,input wire [127:0] sdout,
@@ -66,7 +66,7 @@ module attention102(input wire clk,reset,start,ack,input wire [10:0] length,
  assign sdata=state==LSTORE?loadbuf:state==SWRITE?scoreline:state==PWRITE?probline:
   half?{vacc[7],vacc[6],vacc[5],vacc[4]}:{vacc[3],vacc[2],vacc[1],vacc[0]};
  assign stake=state==LSWAIT||state==QWAIT||state==KWAIT||state==SWWAIT||state==SMWAIT||state==PWWAIT||state==ORWAIT||state==PRWAIT||state==VRWAIT||state==OWWAIT;
- assign mreq=state==MREQ;assign ma=accum;assign mb=32'sd94906266;assign mtake=state==MWAIT;
+ assign mreq=state==MREQ;assign ma=accum;assign mb=$signed(score_multiplier);assign mtake=state==MWAIT;
  assign freq=state==DREQ;assign fa={81'b0,expcode,15'b0};assign fb={64'b0,total};assign ftake=state==DWAIT;
  integer j;
  always @(posedge clk)begin

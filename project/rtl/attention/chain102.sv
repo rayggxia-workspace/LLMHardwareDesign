@@ -10,7 +10,7 @@ module chain102(input wire clk,reset,soft_abort,cmd,mem_hold,mul_hold,input wire
  output wire mem_request,mul_request,output wire swrite_event,output wire [9:0] swrite_addr);
  reg [2:0] state;localparam IDLE=0,START=1,ACTIVE=2,DRAIN=3,DONE=4;
  reg pending,cache_registered;reg [31:0] last_owner,last_version,last_k,last_v;reg signed [7:0] last_ke,last_ve;
- reg [10:0] len;reg [63:0] qe;reg signed [7:0] ke;reg [31:0] ka,va;
+ reg [10:0] len;reg [63:0] qe;reg signed [7:0] ke;reg [31:0] ka,va,multiplier;
  wire core_reset=reset||soft_abort,active=state==ACTIVE;
  wire ar,aw,at,sr,sv,er,et,lr,lv,lt,mr,mt,mready,mvalid,fr,ft,fready,fvalid,ferror,ad;
  wire [9:0] aa;wire [127:0] ai,sd,ld,fa,fb,fvalue,fremainder;wire [31:0] ea;wire signed [31:0] ma,mb;wire signed [63:0] mv;wire [7:0] ast;
@@ -34,11 +34,11 @@ module chain102(input wire clk,reset,soft_abort,cmd,mem_hold,mul_hold,input wire
    if(ext_valid&&ext_take&&drop_response)stale_responses<=stale_responses+1;
   end
   if(reset)begin cache_registered<=0;last_owner<=0;last_version<=0;last_k<=0;last_v<=0;last_ke<=0;last_ve<=0;end
-  if(core_reset)begin state<=IDLE;pending<=0;len<=0;qe<=0;ke<=0;ka<=0;va<=0;status<=0;end
+  if(core_reset)begin state<=IDLE;pending<=0;len<=0;qe<=0;ke<=0;ka<=0;va<=0;multiplier<=0;status<=0;end
   else begin
    if(cfg&&cfg_ready)pending<=1;else if(cfg_valid&&cfg_take)pending<=0;
    case(state)
-    IDLE:if(cmd_accept)begin status<=0;len<=length;qe<=query_units;ke<=key_unit;ka<=key_address;va<=value_address;
+    IDLE:if(cmd_accept)begin status<=0;len<=length;qe<=query_units;ke<=key_unit;ka<=key_address;va<=value_address;multiplier<=score_multiplier;
      if(invalid)begin status<=16;state<=DONE;end else if(same_cache&&metadata_changed)begin status<=17;state<=DONE;end
      else begin cache_registered<=1;last_owner<=owner;last_version<=input_version;last_k<=key_address;last_v<=value_address;last_ke<=key_unit;last_ve<=value_unit;state<=START;end end
     START:state<=ACTIVE;
@@ -49,7 +49,7 @@ module chain102(input wire clk,reset,soft_abort,cmd,mem_hold,mul_hold,input wire
    endcase
   end
  end
- attention102 a(clk,core_reset,state==START,state==DONE&&ack,len,qe,ke,ka,va,ad,ast,adebug,
+ attention102 a(clk,core_reset,state==START,state==DONE&&ack,len,qe,ke,ka,va,multiplier,ad,ast,adebug,
  er,ea,active&&lr,active&&lv,et,ld,ar,aw,aa,ai,active&&sr&&!mem_hold,active&&sv,at,sd,
  mr,ma,mb,active&&mready,active&&mvalid,mt,mv,fr,fa,fb,active&&fready,active&&fvalid,ft,fvalue,fremainder,ferror,
  cycles,macs,sreads,swrites,kloads,vloads,lut_reads,divides,score_products,obs_valid,obs_kind,obs_head,obs_key,obs_x,obs_y,obs_sum);
