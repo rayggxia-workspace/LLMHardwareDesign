@@ -1,5 +1,5 @@
 """Independent strict complete-command, full-state/output and stage receiver."""
-import argparse,hashlib,json,struct
+import argparse,hashlib,json,struct,re
 from pathlib import Path
 import numpy as np
 from contracts import CONTRACT
@@ -11,6 +11,7 @@ SNAP=16+64+131072+2048
 def check_artifacts(root,m):
  seen=set()
  for x in m['artifacts']:
+  assert type(x.get('bytes'))is int and x['bytes']>=0 and isinstance(x.get('sha256'),str)and re.fullmatch('[0-9a-f]{64}',x['sha256']),'artifact typed descriptor'
   assert set(x)=={'path','sha256','bytes'}and isinstance(x['path'],str)and Path(x['path']).name==x['path']and x['path']not in seen,'artifact schema/path'
   seen.add(x['path']);p=root/x['path'];assert p.stat().st_size==x['bytes']and sha(p)==x['sha256'],'artifact bytes/hash'
  return seen
@@ -31,10 +32,24 @@ def snapshot(data):
 
 def main():
  p=argparse.ArgumentParser();p.add_argument('--run',type=Path,required=True);p.add_argument('--input',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
- rm=json.loads((a.run/'manifest.json').read_text());im=json.loads((a.input/'manifest.json').read_text());assert rm['schema']=='gdn104-run-v1'and rm['status']in('RTL_EXECUTED_NOT_RECEIVED','GATE_EXECUTED_NOT_RECEIVED')and rm['contract']==im['contract']==CONTRACT
+ rm=json.loads((a.run/'manifest.json').read_text());im=json.loads((a.input/'manifest.json').read_text());assert rm['schema']=='gdn104-run-v1'and rm['status']in('RTL_EXECUTED_NOT_RECEIVED','GATE_EXECUTED_NOT_RECEIVED')and json.dumps(rm['contract'],sort_keys=True)==json.dumps(im['contract'],sort_keys=True)==json.dumps(CONTRACT,sort_keys=True)
+ assert set(rm)==({'contract','schema','status','source','task','stall','steps','first_slot','mode','input_manifest_sha256','build_manifest_sha256','artifacts'}|({'implementation','prepared_manifest_sha256','case'}if rm['status']=='GATE_EXECUTED_NOT_RECEIVED'else set())),'exact run schema'
+ assert set(rm['source'])=={'commit','sources'}and re.fullmatch('[0-9a-f]{40}',rm['source']['commit']),'source binding schema'
+ assert all(isinstance(n,str)and re.fullmatch('[0-9a-f]{64}',h)for n,h in rm['source']['sources'].items()),'source SHA'
+ assert all(type(rm[k])is int for k in ('stall','steps','first_slot'))and rm['stall']in(0,1)and 0<rm['steps']<=32 and 0<=rm['first_slot']<32,'typed run bounds'
+ assert rm['task']=='sim'and rm['mode']in('real','protocol','fixture','checkpoint'),'run task/mode'
+ if rm['status']=='GATE_EXECUTED_NOT_RECEIVED':assert rm['implementation']=='gate'and rm['mode']=='checkpoint','gate scope'
  assert im['schema']=='gdn104-input-v1'and im['status']=='VERIFIED_COEFFICIENTS_NOT_RTL'and sha(a.input/'manifest.json')==rm['input_manifest_sha256']
  assert {'actual.bin','actual.jsonl','stages.bin','protocol.jsonl'}<=check_artifacts(a.run,rm);check_artifacts(a.input,im)
  with np.load(a.input/'coefficients.npz',allow_pickle=False)as n:z={k:n[k].copy()for k in n.files}
+ image=(a.input/'image.bin').read_bytes();assert len(image)==1<<20,'finite image'
+ initial_bank=im.get('bank',0);assert initial_bank in(0,1)
+ initial=snapshot(image[0xa1080:0xa1090]+image[0xa1000+initial_bank*64:0xa1040+initial_bank*64]+image[initial_bank*131072:(initial_bank+1)*131072]+image[0xa0000+initial_bank*2048:0xa0800+initial_bank*2048])
+ assert np.array_equal(initial['state'],z['state_initial'])and initial['units']==list(map(int,z['state_units']))and initial['value_units']==list(map(int,z['value_units']))and initial['position']==im['position']and initial['version']==im['version']and initial['epoch']==im['epoch'],'image checkpoint semantic binding'
+ for slot_index in range(len(z['q'])):
+  off=0xb0000+slot_index*1568;rawslot=image[off:off+1568];assert struct.unpack_from('<II',rawslot)==(0x47444331,slot_index),'slot identity'
+  assert list(struct.unpack_from('<IIHHI',rawslot,16))==[*map(int,z['decay'][slot_index]),*map(int,z['beta'][slot_index]),0],'gate image binding'
+  for j,key in enumerate(('q','k','v')):assert np.array_equal(np.frombuffer(rawslot[32+j*512:32+(j+1)*512],dtype='<i2').reshape(2,128),z[key][slot_index]),'coefficient image binding'
  rows=[json.loads(x)for x in(a.run/'actual.jsonl').read_text().splitlines()];raw=(a.run/'actual.bin').read_bytes();stage_data=(a.run/'stages.bin').read_bytes();assert len(raw)==len(rows)*SNAP and len(stage_data)%40==0
  stage_rows={};stage_count=0
  for off in range(0,len(stage_data),40):
@@ -44,6 +59,7 @@ def main():
   assert set(row)==ROW and row['schema']=='gdn104-row-v1'and row['index']==index,'row schema/index'
   for k in ROW-{'schema','label','abort_injected'}:assert type(row[k])is int and row[k]>=0,(k,'integer type')
   assert type(row['label'])is str and type(row['abort_injected'])is bool
+  assert row['op']in(0,1)and row['bank']in(0,1)and row['state_validated']in(0,1)and row['units_raw']<65536 and row['epoch']<1<<32 and row['generation']<1<<32 and row['position']<1<<64 and row['version']<1<<64,'row ranges'
   assert row['transactions']==row['reads']+row['writes']and row['beats']==row['transactions']*5,'physical link contract'
   assert row['status']in(0,2,3,4,6,7,8,9,10,11,12),'status'
   status_counts[str(row['status'])]=status_counts.get(str(row['status']),0)+1
@@ -78,7 +94,12 @@ def main():
  if rm['mode']=='fixture':assert len(rows)==2 and rows[0]['status']==0 and rows[1]['status']==im['expected_status'],'fixture coverage'
  if rm['mode']=='checkpoint':assert commits==1 and len(rows)==2 and [x['op']for x in rows]==[0,1]and all(x['status']==0 for x in rows),'complete checkpoint'
  if rm['mode']=='real':assert commits==rm['steps']==im['steps']and all(x['status']==0 for x in rows),'complete profile'
- if rm['mode']=='protocol':assert status_counts.get('2')==14 and status_counts.get('3')==1 and commits==2,'complete recovery count'
+ if rm['mode']=='protocol':
+  phases=[20,23,30,40,50,9,10,60,80,90,102,104,1000,1002];labels=['restore','peer-held-reject','peer-held-restore','restore-stale']+sum(([f'abort{x}',f'restore-abort{x}']for x in phases),[])+['restore-hardprivate','restore-hardcommit','commit-drain']
+  assert [r['label']for r in rows]==labels and status_counts.get('2')==14 and status_counts.get('3')==1 and commits==2,'complete recovery labels/count'
+  for j,phase in enumerate(phases):assert rows[4+2*j]['status']==2 and rows[4+2*j]['abort_injected']is True and rows[4+2*j]['aborts']==j+1,'actual abort counter'
+  assert rows[3]['stale']==1 and rows[1]['status']==3 and rows[1]['offer_hold']>=8,'actual stale/reject'
+  events=[json.loads(x)for x in(a.run/'protocol.jsonl').read_text().splitlines()];assert [x['test']for x in events]==['cfg_pending','abort1000','abort1002','hardreset-private','hardreset-commit','commit-drain'],'write/reset coverage'
  receipt={'schema':'gdn104-receipt-v1','status':'PASS_COMPLETE_INTEGER_GATE_NOT_PPA'if rm.get('implementation')=='gate'else'PASS_COMPLETE_INTEGER_RTL_NOT_PPA','contract':CONTRACT,'run_manifest_sha256':sha(a.run/'manifest.json'),'input_manifest_sha256':sha(a.input/'manifest.json'),'receiver_sha256':sha(__file__),'reference_sha256':sha(Path(__file__).with_name('reference.py')),'source':rm['source'],'profile':im['profile'],'mode':rm['mode'],'stall':rm['stall'],'commands':len(rows),'commits':commits,'range_waves':retry_count,'complete_state_cells_checked':len(rows)*32768,'complete_output_codes_checked':len(rows)*256,'stage_pairs_checked':checked_stages,'status_counts':status_counts,'totals':totals,'final':{'position':pos,'version':ver,'units':units,'epoch':ep,'bank':bank},'limits':['standalone GDN; no shared M/A/V integration','no physical macro/PPA','consumer accept external contract; no full gated norm','32 finite coefficient slots; not full256']}
  assert checked_stages==stage_count
  (a.out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n',encoding='utf8',newline='\n');print(json.dumps(receipt))
