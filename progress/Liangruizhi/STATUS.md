@@ -1,5 +1,13 @@
 # Liangruizhi 的进度
 
+## 2026-10-25 UTC+08 Issue84缓存/共享交付
+
+[Issue84](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/84) / [PR87](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/87)，task/84-cache-share，D:/Projects/LLMHardwareDesign-cache-share，base PR83@7e9ec409。本人Liangruizhi/182389313及push已核，成员55/63继续独立。仅本人服务器lrz-i84-*，无新模型/其他机器/软件安装。84完整真实消费者命令及8192独立仲裁产品通过；14份严格接收拒绝实际重SHA改码。16KiB/128bit1RW不增加端口，缓存周期减少34.68%、外部线字节减少49.20%；共享缓存比专用缓存逻辑面积少12.44%。额外8拍SRAM等待出现负收益，不能冻结总物理边界。
+
+93个本人Slurm作业62完成/4原构建失败/27仅自有取消，全部终态；原失败/挂起恢复保留。完整279763633B/799成员留服务器，精选2900792B/300成员入仓；两包服务器、精选PC和7phase126原Git源SHA核验PASS。12轻量边界/结构/AST检查通过，实际数值和RTL只在服务器。
+
+[报告](../../docs/experiments/issue-84-cache-share.md)、[索引](../../project/experiments/cache_share/results/issue-84/index.json)、[交接](../../docs/handoffs/2026-10-25-issue-84-cache-share.md)。任务交付in_review/待审查，不done不自合并；登记PR5 pending、board404/缺read:project，在线同步pending，管理员/审查人待指定。Issue85接续运行时缓存/epoch恢复、Issue86接续门级/受限STA，两独立目录并行，不将其未接收结果混作84验收。
+
 ## 2026-10-25 UTC+08 Issue82 归一化与真实M电路交付（待审查合并）
 
 [Issue82](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/82)/[PR83](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/83)，task/82-norm-circuit，D:/Projects/LLMHardwareDesign-norm-circuit，base PR81@7ad23a7。已核本人Liangruizhi/182389313及repo push，成员55/63/PR79进度保持独立。所有实际数据/RTL/综合/接收仅本人新CPU服务器lrz-i82-*，无新模型/其他机器/软件安装/Phi或成员接管。

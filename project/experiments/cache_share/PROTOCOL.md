@@ -1,0 +1,19 @@
+# Issue84 frozen comparison v1
+
+Owner Liangruizhi; Issue84, base PR83@7e9ec409d90478a05547b555071d21c22ba260d7. All execution and numerical reception on own CPU Slurm, never PC. No new models.
+
+Four variants CACHE0/1 x SHARE0/1, fixed one-step exact SFU, signed32 multiply and identical numerical cut to Issue82 final M-input02. 6 cases layer0/13 tokens0/64/71; no/with deterministic external,store and multiplier request waits. Fixed single store82 1024x128 1RW; cache addresses768..1023 uses4096B of existing16KiB. X/Y6144B and gamma6144B persist; no additional SRAM/ports. Added128bit A line buffer and multiplier response/control registers count as logic/FF. Baseline core uses same multiply request/response contract, so compare within Issue84 not legacy unwrapped Issue82 cycles.
+
+CACHE0 physical payload stays original798720x16; CACHE1 starts256 A128 packets, then1536x8*(1header+32 W128). Every A vector must match across all output rows before pack. New bytes must reconstruct original complete A8/W8/header data exactly. All initial fetch/store, finite cache read/response, join writes, metadata and5beats per serialized memory_link read counted. CPU repack cost outside RTL cycles explicitly. No implicit prefetch or second bank.
+
+SHARE0 two signed32 multiplication datapaths; SHARE1 one round-robin multiplexed datapath with two64bit response slots and held valid until take. No bypass or host math. M/N phases exclusive in full chain, so full workload cannot prove multi-client contention; independent RTL stress must cover both active, delayed takes, request denial, reset and fairness. Commands latch epsilon/coefficient, rounding identical; S64 merge and native128bit SFU/add/shift resources remain.
+
+Acceptance: all48 real commands exact acc/down/join/norm vs independent physical-payload bigint/NumPy and original codes, actual rehashed corruption rejected; reset/done hold; mapping each variant same Nangate Liberty, one blackboxed store wrapper, no hidden divide/memory; area independently summed. Report measured cycles, packet/wire bytes, cache/port/multiply waits, grant count, storage/register/mux cost. Same capacity/precision/ports is not same area. SRAM macros/STA/PVT/route/power and real DMA bandwidth not accepted. Outputs and sourceSHA archived; old failures retained.
+
+## Controlled port sensitivity v2
+
+After exact primary48 commands, keep SHARE1 and compare CACHE0/1 with fixed extra4/8/12 grant-wait edges per every store operation. External reply and multiply grant stay quiet. Rebuild driver with these additional modes; same RTL bytes. Six original cases each gives36 more accepted commands. This tests bypass necessity under single-port pressure; no independent extra-memory or overlap claim. Original results and driver source remain bound in phase2.
+
+## Mapping recovery v3
+
+Default installed Yosys/ABC reused-server interface stalled (parent read, child select on stdin; no productive CPU). Retain stalled01/02 logs and cancellation evidence. Four formal map03 use the same ABC binary via alternate literal path /usr/local/bin/../bin/yosys-abc to select file invocation, without install/change. Explicit synth -noabc then abc -fast and opt -fast preserves generic optimization passes before common dfflibmap and library ABC. All four get identical recipe, streamed logs and300s subprocess cap. Sources: https://github.com/YosysHQ/yosys/blob/70a11c6bf/passes/techmap/abc.cc and https://github.com/YosysHQ/yosys/blob/70a11c6bf/techlibs/common/synth.cc ; is_yosys_abc compares executable strings and selects reusable process, synth normally ends fine with abc -fast/opt -fast. Root cause beyond observed protocol wait remains unproven. Do not compare recovered area with old tasks as identical recipe evidence.
