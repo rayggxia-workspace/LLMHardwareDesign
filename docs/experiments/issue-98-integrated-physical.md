@@ -30,7 +30,7 @@
 
 | 核/阶段 | 单元面积 | 最差setup | 最差hold | native cap | 严格资格说明 |
 |---|---:|---:|---:|---:|---|
-|93原映射+2tie|54811.694|-224.91|-0.002429|196|控制树超载，非算术固有Fmax|
+|93原映射+2tie|54811.694|-224.910370|-0.002434|196|控制树超载，非算术固有Fmax|
 |93布局修复|56325.500|+3.427134|+0.013908|0|理想时钟/估计RC；严格cap待独立完整重查|
 |93 CTS基线|56766.794|+3.414859|-0.208368|0|1057个hold失败|
 |93 C1：5ps/1端点预算|57918.840|+3.414859|-0.111598|0|238个hold失败|
@@ -48,7 +48,7 @@
 |97 C3|75270.020|+3.657172|-0.000489|0|1hold失败，不以舍入通过|
 |97 C4：20ps修复目标|75477.500|+3.657172|+0.012626|0|精确post-gate正常范围已PASS|
 |97首次GRT|75477.500|+3.489845|+0.002318|46|cap失败|
-|97有限route repair|75608.904|待索引读回|待索引读回|5|cap失败|
+|97有限route repair|75608.904|+3.485171|+0.016043|5|cap失败|
 |97 cap候选2：5BUF_X4|75618.214|+3.486056|+0.016718|1|原5条消除后真实重布线新增失败|
 |97 cap候选3：再1BUF_X4|75620.076|+3.484627|+0.016695|3|**完整表20cap失败**；停止逐网追补|
 
@@ -110,6 +110,6 @@ PG真实缺失，没有预留供电拥塞成本。当前M5/M6 pin未按团队55/
 
 - Issue https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/98；branch `task/98-integrated-physical`；PC `D:/Projects/LLMHardwareDesign-integrated-physical`。
 - 服务器 `/public/home/yuzelu/RuizhiLiang/issue98-integrated-physical-20261025`；实际每phase的binding、每job argv/log、manifest与输入/库/结果SHA均保存；结果目录不可覆盖。
-- 当前完整层账`detail-ledger9303`，严格全表`strict-electrical9302/strict-electrical9702`，RCX独立读回`detail-readback9301`；完整联合接收`detail-receive9303`及负例正在运行，以最终收据为准。
+- 当前完整层账`detail-ledger9303`，严格全表`strict-electrical9302/strict-electrical9702`，RCX独立读回`detail-readback9301`；完整联合接收`detail-receive9303`实际通过数据接收并保持physical_stage_accepted=false；`negative-detail01`四种实际重SHA的RC/几何破坏均拒绝。
 - 暂未完成最终归档/跨机器字节接收/任务PR发布/看板读回。根会话统一交付，不自合并或标done。成员55/63保持独立。
 - 恢复第一步：核本人Slurm活动jobs和已有receipt，不重复长跑；优先完成一次性margin候选、全严格电气/图/RC/精确gate，再冻结最终证据包。
