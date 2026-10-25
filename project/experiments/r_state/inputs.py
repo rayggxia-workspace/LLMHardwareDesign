@@ -22,7 +22,7 @@ def main():
   if 0 not in changed and len(changed):heads.append(int(changed[0]))
   details=[]
   for h in heads:
-   x=v['x_q12'][:,h,:];b=v['b_q12'][:,h,:];cc=v['c_q12'][:,h,:];dt=v['dt_q20'][:,h];alpha=v['alpha_q31'][:,h]
+   x=v['x_q12'][:,h,:];b=v['b_q12'];cc=v['c_q12'];dt=v['dt_q20'][:,h];alpha=v['alpha_q31'][:,h]
    assert x.shape==(72,128) and b.shape==cc.shape==(72,256) and dt.shape==alpha.shape==(72,)
    image=bytearray(1<<20)
    for t in range(72):
