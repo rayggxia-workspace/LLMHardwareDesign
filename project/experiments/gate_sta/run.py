@@ -28,7 +28,7 @@ def main():
    source=R84/f'map-v{a.variant}03';mm=load(source/'manifest.json')
    for e in mm['artifacts']:
     if sha(source/e['path'])!=e['sha256']:raise ValueError('prior map SHA')
-   if mm['library_sha256']!=sha(LIB):raise ValueError('library mismatch')
+   if mm['library_sha256']!=sha(LIB) or mm['profile']!=a.variant or mm['status']!='LOGIC_ONLY_MAPPED_NOT_PPA':raise ValueError('library/variant/status mismatch')
    m['mapping_manifest_sha256']=sha(source/'manifest.json');m['mapping_source']=mm['source'];(a.out/'mapped.json').write_bytes((source/'mapped.json').read_bytes())
    script=f'read_json {a.out}/mapped.json\nwrite_verilog -noattr -noexpr {a.out}/mapped.v\ndesign -reset\nread_liberty -ignore_miss_func -ignore_miss_dir {LIB}\nwrite_verilog -noattr {a.out}/cells.v\n'
    (a.out/'export.ys').write_text(script);cmd('export',['yosys','-s',a.out/'export.ys'])
@@ -44,20 +44,21 @@ def main():
    m['sta_binary_sha256']=sha(STA);m['status']='EXACT_MAPPED_NETLIST_EXPORTED_WITH_DECLARED_STORE_CUT'
   elif a.task=='build':
    prep=load(a.prepared/'manifest.json')
+   if prep['variant']!=a.variant or prep['status']!='EXACT_MAPPED_NETLIST_EXPORTED_WITH_DECLARED_STORE_CUT':raise ValueError('prepared variant/status')
    for e in prep['artifacts']:
     if sha(a.prepared/e['path'])!=e['sha256']:raise ValueError('prepared artifact')
    cmd('compile',['/eda/verilator-5.042/bin/verilator','--cc','--exe','--build','-j','4','-Wno-fatal','--top-module','chain84','--prefix','Vchain84','--Mdir',a.out/'obj','--output-split','15000','--output-split-cfuncs','200','-CFLAGS',f'-std=c++17 -O2 -DCACHE_MODE={a.variant//2}',a.prepared/'mapped.v',a.prepared/'cells.v',ROOT/'project/rtl/norm_service/store82.sv',ROOT/'project/experiments/cache_share/chain_sim.cpp'],1500)
    m['prepared_manifest_sha256']=sha(a.prepared/'manifest.json');m['binary_sha256']=sha(a.out/'obj/Vchain84');m['status']='GATE_BINARY_BUILT_NOT_EXECUTED'
   elif a.task=='sim':
    bm=load(a.build/'manifest.json')
-   if sha(a.build/'obj/Vchain84')!=bm['binary_sha256']:raise ValueError('binary SHA')
+   if bm['variant']!=a.variant or bm['status']!='GATE_BINARY_BUILT_NOT_EXECUTED' or sha(a.build/'obj/Vchain84')!=bm['binary_sha256']:raise ValueError('binary SHA')
    src=R84/'input01'/f'vectors-c{a.variant//2}.tsv'
    (a.out/'vectors.tsv').write_text(src.read_text().splitlines()[0]+'\n');m['vectors_source_sha256']=sha(src)
    cmd('replay',[a.build/'obj/Vchain84',a.out/'vectors.tsv',a.out/'actual.jsonl',a.stall],1500)
    row=load_jsonl(a.out/'actual.jsonl')[0];gold=load_jsonl(R84/f'rtl-v{a.variant}s{a.stall}02'/'actual.jsonl')[0]
    if row!=gold:raise ValueError('mapped replay differs from original RTL row')
    proto=load(a.out/'actual.jsonl.protocol.json')
-   if not all(proto.values()):raise ValueError('protocol failed')
+   if set(proto)!={'actual_M_active_reset','no_stale_completion','SRAM_retained'} or any(type(v) is not bool or not v for v in proto.values()):raise ValueError('protocol failed')
    m['baseline_output_sha256']=sha(R84/f'rtl-v{a.variant}s{a.stall}02'/'actual.jsonl');m['build_manifest_sha256']=sha(a.build/'manifest.json');m['row_name']=row['name'];m['cycles']=row['cycles'];m['status']='PASS_GATE_REPLAY_ALL_OBSERVABLES_AND_RESET'
   else:
    from timing import timing
