@@ -289,3 +289,16 @@ Reestimate full RC, not only changednets; strict fullcap/slew, all endpoints,
 new exactgate and eventual detailedRCX remain hard requirements. Native zero
 is insufficient.93existing4strictcap failures receive no separate repair here.
 Both20min/1100s jobs are single bounded candidates, no automatic follow-on.
+
+
+## Sole93 four-driver joint incremental candidate5
+
+After97 incremental reception passes,93 source manifestc99f0fbfe94de9f6153791148ea00451caae682337938d0baeba715393c2cc87
+is frozen. Strict residual drivers only _72214_/Q,_72242_/Q,_38550_/Z,_38466_/Z.
+Exactly4 BUF_X4, inputcap<=.8*originalmaxcap and currentload<=.8*BUFmaxcap.
+Insert/onelegalize/incrementalroute, save exact intermediate capisolatedV/ODB/DEF
+for all-originalsink isolation proof; then exactlyone50ps/4096/10%/50% holdrepair
+and secondlegalize/incrementalroute. No fulltail, no expanded capset/otherrepair.
+Originalbudget79600.5/10ns/min0/allports remain; countall4plusactualhold/resize.
+All dirty batches and completefinalRC/strictcap/slew/endpoints/newgate remain
+mandatory. One20min1100s candidate; failure preserved, no automatic recurrence.
