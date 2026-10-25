@@ -1,6 +1,6 @@
 # Issue85：运行时A缓存旁路、命令握手与中止恢复
 
-2026-10-25 UTC+08，负责人Liangruizhi。[Issue85](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/85)，独立task/85-runtime-cache，基于Issue84源码049a8a663013b7edb3a99a43e2ca9b702def82dc。PR由主会话统一发布，未审查合并不done。实际整数接收、RTL、映射与全包检查仅本人服务器lrz-i85-*，未下载模型。
+2026-10-25 UTC+08，负责人Liangruizhi。[Issue85](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/85)，独立task/85-runtime-cache，基于Issue84源码049a8a663013b7edb3a99a43e2ca9b702def82dc。PR89已上传，未审查合并不done。实际整数接收、RTL、映射与全包检查仅本人服务器lrz-i85-*，未下载模型。
 
 ## 电路增量
 
@@ -40,3 +40,5 @@ soft_abort同步清除流水/有限响应，保留SRAM并推进32bit epoch；请
 未完成：epoch溢出边界的可执行注入、独立fabric/CDC、真实tag打包/互联费用、自动模式策略、更多H/K和多context、SRAM/ROM宏/STA/route、通用V/完整M阵列及整模型质量。可收敛为可选择A驻留＋显式命令/代际合同的单核心候选，保留M/V物理映射自由。
 
 最终实际遥测：两路RTL共22次soft-abort、2个迟到响应丢弃，外部测试FIFO峰各2槽。主60完整输出/94接收命令、12输入错误均有独立接收；全量74,455,001B/255成员、精选588,490B/98成员以及5阶段86个原Git源字节均通过独立检查。具体SHA见交接。
+
+远端交付：[PR89](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/89)已上传，Issue85为in_review；待指定独立审查与合并，未done。已按不可变commit读回报告/交接/个人进度，与原Git blob逐字节相同；后续仅文档同步，不改变实验源码和结果SHA。
