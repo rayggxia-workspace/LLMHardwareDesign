@@ -3,7 +3,7 @@ import argparse,hashlib,json,struct
 from pathlib import Path
 import numpy as np
 from contracts import CONTRACT
-from reference import step,observations
+from reference import step,observations,Refusal
 sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
 ROW=set('schema index label op slot status position version units_raw epoch bank generation state_validated aborts stale retries cycles reads writes s_reads s_writes beats transactions mul wide_calls peer_grants peer_checked contested alpha_bypass offer_hold abort_injected'.split())
 SNAP=16+64+131072+2048
@@ -31,7 +31,7 @@ def snapshot(data):
 
 def main():
  p=argparse.ArgumentParser();p.add_argument('--run',type=Path,required=True);p.add_argument('--input',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
- rm=json.loads((a.run/'manifest.json').read_text());im=json.loads((a.input/'manifest.json').read_text());assert rm['schema']=='gdn104-run-v1'and rm['status']=='RTL_EXECUTED_NOT_RECEIVED'and rm['contract']==im['contract']==CONTRACT
+ rm=json.loads((a.run/'manifest.json').read_text());im=json.loads((a.input/'manifest.json').read_text());assert rm['schema']=='gdn104-run-v1'and rm['status']in('RTL_EXECUTED_NOT_RECEIVED','GATE_EXECUTED_NOT_RECEIVED')and rm['contract']==im['contract']==CONTRACT
  assert im['schema']=='gdn104-input-v1'and im['status']=='VERIFIED_COEFFICIENTS_NOT_RTL'and sha(a.input/'manifest.json')==rm['input_manifest_sha256']
  assert {'actual.bin','actual.jsonl','stages.bin','protocol.jsonl'}<=check_artifacts(a.run,rm);check_artifacts(a.input,im)
  with np.load(a.input/'coefficients.npz',allow_pickle=False)as n:z={k:n[k].copy()for k in n.files}
@@ -39,7 +39,7 @@ def main():
  stage_rows={};stage_count=0
  for off in range(0,len(stage_data),40):
   record,*rest=struct.unpack_from('<6I2q',stage_data,off);assert record<len(rows),'stage command';stage_rows.setdefault(record,[]).append(tuple(rest));stage_count+=1
- state=z['state_initial'].copy();y=np.zeros((2,128),dtype=np.int64);units=list(map(int,z['state_units']));vu=list(map(int,z['value_units']));ep=im['epoch'];pos=im['position'];ver=im['version'];bank=0;commits=0;totals={k:0 for k in('cycles','reads','writes','s_reads','s_writes','beats','transactions','mul','wide_calls','alpha_bypass')};retry_count=0;checked_stages=0;status_counts={}
+ state=z['state_initial'].copy();y=z.get('initial_output',np.zeros((2,128),dtype=np.int64));units=list(map(int,z['state_units']));vu=list(map(int,z['value_units']));ep=im['epoch'];pos=im['position'];ver=im['version'];bank=im.get('bank',0);commits=0;totals={k:0 for k in('cycles','reads','writes','s_reads','s_writes','beats','transactions','mul','wide_calls','alpha_bypass')};retry_count=0;checked_stages=0;status_counts={}
  for index,row in enumerate(rows):
   assert set(row)==ROW and row['schema']=='gdn104-row-v1'and row['index']==index,'row schema/index'
   for k in ROW-{'schema','label','abort_injected'}:assert type(row[k])is int and row[k]>=0,(k,'integer type')
@@ -48,6 +48,17 @@ def main():
   assert row['status']in(0,2,3,4,6,7,8,9,10,11,12),'status'
   status_counts[str(row['status'])]=status_counts.get(str(row['status']),0)+1
   slot=row['slot'];committed=row['op']==1 and row['status']==0 or row['label']=='restore-hardcommit'
+  fixture_reject=rm['mode']=='fixture'and row['op']==1 and row['status']!=0
+  if fixture_reject:
+   expected_code=None;attempts=[]
+   if pos==(1<<64)-1 or ver==(1<<64)-1:expected_code=4
+   else:
+    try:step(state,z['q'][slot],z['k'][slot],z['v'][slot],z['decay'][slot],z['beta'][slot],units,vu,ep)
+    except Refusal as e:expected_code=e.code;attempts=e.attempts
+    except ValueError as e:
+     expected_code={'E_STATE':11,'QKV symmetric S16':10,'gates':10,'E_FORMAT shift':12}.get(str(e));assert expected_code is not None,('unknown refusal',str(e))
+   assert expected_code==row['status'],('independent refusal',expected_code,row['status'])
+   actual=stage_rows.get(index,[]);assert actual==list(observations(attempts)),('refusal stage mismatch',index);checked_stages+=len(actual)
   has_calc=row['op']==1 and row['status']in(0,2,3)or row['label']=='restore-hardcommit'
   if row['label']=='restore-hardcommit':slot=ver-im['version']
   if has_calc:
@@ -58,15 +69,17 @@ def main():
    checked_stages+=len(actual)
    if committed or row['status']==3:assert next(wanted,None)is None,(index,'missing stage')
    if committed:state,y,units,ep=ns,ny,nu,ne;pos+=1;ver+=1;bank=1-bank;commits+=1;retry_count+=len(attempts)-1
-  else:assert not stage_rows.get(index),('unexpected stages',index)
+  elif not fixture_reject:assert not stage_rows.get(index),('unexpected stages',index)
   sn=snapshot(raw[index*SNAP:(index+1)*SNAP]);assert np.array_equal(sn['state'],state)and np.array_equal(sn['y'],y),(index,'independent numerical mismatch')
   for k,v in [('units',units),('value_units',vu),('epoch',ep),('position',pos),('version',ver),('bank',bank)]:assert sn[k]==v,(index,k,sn[k],v)
   assert(row['position'],row['version'],row['epoch'],row['units_raw'],row['bank'])==(pos,ver,ep,(units[0]&255)|((units[1]&255)<<8),bank),'DUT published metadata'
   if row['op']==1 and row['status']==0:assert row['retries']==len(attempts)-1 and row['offer_hold']>=8 and row['state_validated']==1,'commit protocol'
   for k in totals:totals[k]+=row[k]
+ if rm['mode']=='fixture':assert len(rows)==2 and rows[0]['status']==0 and rows[1]['status']==im['expected_status'],'fixture coverage'
+ if rm['mode']=='checkpoint':assert commits==1 and len(rows)==2 and [x['op']for x in rows]==[0,1]and all(x['status']==0 for x in rows),'complete checkpoint'
  if rm['mode']=='real':assert commits==rm['steps']==im['steps']and all(x['status']==0 for x in rows),'complete profile'
  if rm['mode']=='protocol':assert status_counts.get('2')==14 and status_counts.get('3')==1 and commits==2,'complete recovery count'
- receipt={'schema':'gdn104-receipt-v1','status':'PASS_COMPLETE_INTEGER_RTL_NOT_PPA','contract':CONTRACT,'run_manifest_sha256':sha(a.run/'manifest.json'),'input_manifest_sha256':sha(a.input/'manifest.json'),'receiver_sha256':sha(__file__),'reference_sha256':sha(Path(__file__).with_name('reference.py')),'source':rm['source'],'profile':im['profile'],'mode':rm['mode'],'stall':rm['stall'],'commands':len(rows),'commits':commits,'range_waves':retry_count,'complete_state_cells_checked':len(rows)*32768,'complete_output_codes_checked':len(rows)*256,'stage_pairs_checked':checked_stages,'status_counts':status_counts,'totals':totals,'final':{'position':pos,'version':ver,'units':units,'epoch':ep,'bank':bank},'limits':['standalone GDN; no shared M/A/V integration','no physical macro/PPA','consumer accept external contract; no full gated norm','32 finite coefficient slots; not full256']}
+ receipt={'schema':'gdn104-receipt-v1','status':'PASS_COMPLETE_INTEGER_GATE_NOT_PPA'if rm.get('implementation')=='gate'else'PASS_COMPLETE_INTEGER_RTL_NOT_PPA','contract':CONTRACT,'run_manifest_sha256':sha(a.run/'manifest.json'),'input_manifest_sha256':sha(a.input/'manifest.json'),'receiver_sha256':sha(__file__),'reference_sha256':sha(Path(__file__).with_name('reference.py')),'source':rm['source'],'profile':im['profile'],'mode':rm['mode'],'stall':rm['stall'],'commands':len(rows),'commits':commits,'range_waves':retry_count,'complete_state_cells_checked':len(rows)*32768,'complete_output_codes_checked':len(rows)*256,'stage_pairs_checked':checked_stages,'status_counts':status_counts,'totals':totals,'final':{'position':pos,'version':ver,'units':units,'epoch':ep,'bank':bank},'limits':['standalone GDN; no shared M/A/V integration','no physical macro/PPA','consumer accept external contract; no full gated norm','32 finite coefficient slots; not full256']}
  assert checked_stages==stage_count
  (a.out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n',encoding='utf8',newline='\n');print(json.dumps(receipt))
 if __name__=='__main__':main()

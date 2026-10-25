@@ -1,5 +1,7 @@
 """Independent exact Python integers; no producer/RTL import, clipping, partial RNE."""
 import numpy as np
+class Refusal(ValueError):
+ def __init__(self,code,attempts):super().__init__('refused '+str(code));self.code=code;self.attempts=attempts
 MAX=(1<<63)-1;LO=-(1<<31);HI=32767<<16
 
 def absolute(a):return max((abs(int(x))for x in np.asarray(a,dtype=object).flat),default=0)
@@ -58,9 +60,9 @@ def step(state,q,k,v,d,b,units,value_units,epoch):
     return np.asarray(proposed,dtype=np.int32),np.asarray(y,dtype=np.int64),units,epoch,attempts
    attempts.append({'attempt':attempt,'bad':bad,'stages':stages,'width':False})
   except OverflowError as e:attempts.append({'attempt':attempt,'bad':[True,True],'stages':stages,'width':True,'reason':str(e)});bad=[True,True]
-  if attempt==8:raise ValueError('E_RETRIES')
-  if any(bad[h]and units[h]==127 for h in range(2)):raise ValueError('E_UNIT')
-  if epoch==(1<<32)-1:raise ValueError('E_EPOCH')
+  if attempt==8:raise Refusal(6,attempts)
+  if any(bad[h]and units[h]==127 for h in range(2)):raise Refusal(7,attempts)
+  if epoch==(1<<32)-1:raise Refusal(8,attempts)
   for h in range(2):
    if bad[h]:s[h]=rne(s[h],1);units[h]+=1
   epoch+=1
