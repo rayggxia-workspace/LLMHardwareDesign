@@ -7,7 +7,9 @@ module chain102(input wire clk,reset,soft_abort,cmd,mem_hold,mul_hold,input wire
  input wire cfg,cfg_wr,input wire [9:0] cfg_addr,input wire [127:0] cfg_din,output wire cfg_ready,cfg_valid,input wire cfg_take,output wire [127:0] cfg_dout,
  output wire [63:0] cycles,output wire [31:0] macs,sreads,swrites,kloads,vloads,lut_reads,divides,score_products,wire_beats,transactions,mul_grants,
  output wire obs_valid,output wire [1:0] obs_kind,output wire [2:0] obs_head,output wire [10:0] obs_key,output wire signed [31:0] obs_x,obs_y,output wire [63:0] obs_sum,
+ output wire [31:0] cache_owner,cache_version,output wire [10:0] cache_length,output wire signed [7:0] cache_key_unit,cache_value_unit,
  output wire mem_request,mul_request,output wire swrite_event,output wire [9:0] swrite_addr);
+ reg [10:0] last_length;assign cache_owner=last_owner;assign cache_version=last_version;assign cache_length=last_length;assign cache_key_unit=last_ke;assign cache_value_unit=last_ve;
  reg [2:0] state;localparam IDLE=0,START=1,ACTIVE=2,DRAIN=3,DONE=4;
  reg pending,cache_registered;reg [31:0] last_owner,last_version,last_k,last_v;reg signed [7:0] last_ke,last_ve;
  reg [10:0] len;reg [63:0] qe;reg signed [7:0] ke;reg [31:0] ka,va,multiplier;
@@ -23,9 +25,10 @@ module chain102(input wire clk,reset,soft_abort,cmd,mem_hold,mul_hold,input wire
  wire [31:0] bytes={21'b0,length}<<8;
  function legal(input [31:0] a,n);begin legal=a[3:0]==0&&a>=32'h04000000&&({1'b0,a}+{1'b0,n})<=33'h008000000;end endfunction
  wire alias_kv=({1'b0,key_address}<{1'b0,value_address}+{1'b0,bytes})&&({1'b0,value_address}<{1'b0,key_address}+{1'b0,bytes});
+ wire context_bad=cache_registered&&(owner!=last_owner||input_version<last_version);
  wire same_cache=cache_registered&&owner==last_owner&&input_version==last_version;
  wire metadata_changed=key_address!=last_k||value_address!=last_v||key_unit!=last_ke||value_unit!=last_ve;
- wire invalid=length==0||length>1056||position+12'd1!={1'b0,length}||window!=0||score_multiplier!=94906266||!legal(key_address,bytes)||!legal(value_address,bytes)||alias_kv;
+ wire invalid=input_version==0||length==0||length>1056||position+12'd1!={1'b0,length}||window!=0||score_multiplier!=94906266||!legal(key_address,bytes)||!legal(value_address,bytes)||alias_kv;
  wire drained=lr&&!lv&&sr&&!sv&&mready&&!mvalid&&fready&&!fvalid;
  always @(posedge clk)begin
   if(reset)begin epoch<=0;stale_responses<=0;aborts<=0;end else begin
@@ -33,14 +36,14 @@ module chain102(input wire clk,reset,soft_abort,cmd,mem_hold,mul_hold,input wire
    if(soft_abort)aborts<=aborts+1;
    if(ext_valid&&ext_take&&drop_response)stale_responses<=stale_responses+1;
   end
-  if(reset)begin cache_registered<=0;last_owner<=0;last_version<=0;last_k<=0;last_v<=0;last_ke<=0;last_ve<=0;end
+  if(reset)begin cache_registered<=0;last_owner<=0;last_version<=0;last_k<=0;last_v<=0;last_ke<=0;last_ve<=0;last_length<=0;end
   if(core_reset)begin state<=IDLE;pending<=0;len<=0;qe<=0;ke<=0;ka<=0;va<=0;multiplier<=0;status<=0;end
   else begin
    if(cfg&&cfg_ready)pending<=1;else if(cfg_valid&&cfg_take)pending<=0;
    case(state)
     IDLE:if(cmd_accept)begin status<=0;len<=length;qe<=query_units;ke<=key_unit;ka<=key_address;va<=value_address;multiplier<=score_multiplier;
-     if(invalid)begin status<=16;state<=DONE;end else if(same_cache&&metadata_changed)begin status<=17;state<=DONE;end
-     else begin cache_registered<=1;last_owner<=owner;last_version<=input_version;last_k<=key_address;last_v<=value_address;last_ke<=key_unit;last_ve<=value_unit;state<=START;end end
+     if(invalid)begin status<=16;state<=DONE;end else if(context_bad||(same_cache&&(metadata_changed||length<last_length)))begin status<=17;state<=DONE;end
+     else begin cache_registered<=1;last_owner<=owner;last_version<=input_version;last_k<=key_address;last_v<=value_address;last_ke<=key_unit;last_ve<=value_unit;last_length<=length;state<=START;end end
     START:state<=ACTIVE;
     ACTIVE:if(ad)begin status<=ast;state<=DRAIN;end
     DRAIN:if(drained)state<=DONE;

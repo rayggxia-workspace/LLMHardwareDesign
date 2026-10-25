@@ -29,3 +29,11 @@ C0 LUT128KiB：保留97原SiLU/exp2字节，新增expQ30对象offset0x12010，81
 每case不硬reset；连续不同token、参数pin突变、busy冲突、阶段abort/恢复、迟到旧响应、错误后恢复、terminal边界、canary均实际核验。无等待/确定性等待两路；大epoch后门边界若采用必须声明RTL-only且读真实边沿，不推到gate。门级只选正常完整8头，独立数学oracle与对应RTL记录逐项比较。
 
 独立receiver不import本输入producer，参考64独立receiver与bigint/Fraction；重新从捕获检查编码，重算有效QK/score/exp/P/PV，严格键/类型/源SHA/输入域。真实写盘修改JSONL并重SHA必须拒绝，不以纯SHA失败替代语义负例。实际库存/逻辑面积、cycles、S操作、LUT、payload/5×128bit packet/header、等待、元数据分别报告。无宏/STA/RC/CTS/PVT资格，非完整六Block设计完成。
+
+## 审阅修订：单注册缓存与调用者提交边界
+
+2026-10-25根审查发现只记最近owner/version不能防A→B→A旧版本重用。正式版冻结一个owner，首次合法命令后到协调hardreset前不得改变；input_version必须非零、单调不回卷，旧版本拒绝。同版本K/V地址与scale不可变、committed length不倒退；softabort保留该注册记录。更大version显式替换缓存，旧版本失效，不能恢复旧标签。合成三例version修订为1000/1001/1002，原input01中100+length会逆序；仅标签改变，所有张量/编码/LUT字节保持并留input01失败/旧运行证据。
+
+length是调用者承诺已完成写入的有效KV前缀；RTL核范围、position+1、同版本单调及访问域，**不**自主验证外部写应答或append完成。没有KV写接口；不宣称硬件append/淘汰或全cache coherence。
+
+库存接收首版发现动态索引vacc造成generic memory对象；正式版使用8个显式固定下标I32累加寄存器，避免将256bit寄存误称第二SRAM。radix shift用固定case0/7/14/21/28译码，新增mux/宽移位仍计入实际映射，不靠generic乘法器数量宽松判定。

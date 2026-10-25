@@ -47,7 +47,7 @@ def main():
     assert dot==0
   name='synthetic-'+label
   for suffix,arr in [('q',q),('k',k),('v',v)]:(a.out/(name+'-'+suffix+'.bin')).write_bytes(arr.tobytes())
-  rows.append({'name':name,'source':'synthetic','prefix':None,'mode':label,'position':n-1,'length':n,'q':name+'-q.bin','k':name+'-k.bin','v':name+'-v.bin','Qe':units,'Ke':0,'Ve':-14,'version':100+n,'original_npz':None,'original_capture_manifest':None,'old64_reference':None})
+  rows.append({'name':name,'source':'synthetic','prefix':None,'mode':label,'position':n-1,'length':n,'q':name+'-q.bin','k':name+'-k.bin','v':name+'-v.bin','Qe':units,'Ke':0,'Ve':-14,'version':1000+['one','capacity','lut-ties'].index(label),'original_npz':None,'original_capture_manifest':None,'old64_reference':None})
  save(a.out/'cases.json',rows)
  lines=[]
  for r in rows:

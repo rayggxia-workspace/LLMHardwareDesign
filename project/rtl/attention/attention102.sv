@@ -27,17 +27,18 @@ module attention102(input wire clk,reset,start,ack,input wire [10:0] length,
  function signed [7:0] digit16(input signed [15:0] x,input [1:0] which);
   reg signed [31:0] rest,d;integer n;begin rest=x;d=0;for(n=0;n<3;n=n+1)begin d=$signed({1'b0,rest[6:0]});if(d>=64)d=d-128;if(n==which)digit16=d[7:0];rest=(rest-d)>>>7;end end
  endfunction
+ function [4:0] shift7(input [2:0] v);begin case(v)0:shift7=0;1:shift7=7;2:shift7=14;3:shift7=21;default:shift7=28;endcase end endfunction
  wire signed [7:0] aa[0:7],bb[0:7];wire signed [15:0] pp[0:7];genvar g;
  generate for(g=0;g<8;g=g+1)begin:BYTE
-  assign aa[g]=state==PMAC?$signed((pcode>>(7*plimb))&16'd127):$signed(qline[(dim[0]?64:0)+8*g+:8]);
+  assign aa[g]=state==PMAC?$signed((pcode>>(shift7({1'b0,plimb})))&16'd127):$signed(qline[(dim[0]?64:0)+8*g+:8]);
   assign bb[g]=digit16($signed(kvline[16*g+:16]),state==PMAC?vlimb:limb);
   assign pp[g]=aa[g]*bb[g];
  end endgenerate
  wire signed [31:0] part={{16{pp[0][15]}},pp[0]}+{{16{pp[1][15]}},pp[1]}+{{16{pp[2][15]}},pp[2]}+{{16{pp[3][15]}},pp[3]}+{{16{pp[4][15]}},pp[4]}+{{16{pp[5][15]}},pp[5]}+{{16{pp[6][15]}},pp[6]}+{{16{pp[7][15]}},pp[7]};
- wire signed [63:0] dotnext={{32{accum[31]}},accum}+($signed({{32{part[31]}},part})<<<(7*limb));
+ wire signed [63:0] dotnext={{32{accum[31]}},accum}+($signed({{32{part[31]}},part})<<<(shift7({1'b0,limb})));
  wire signed [63:0] pvnext[0:7];wire [7:0] pvbad;
  generate for(g=0;g<8;g=g+1)begin:ADD
-  assign pvnext[g]=$signed({{32{vacc[g][31]}},vacc[g]})+($signed({{48{pp[g][15]}},pp[g]})<<<(7*(plimb+{1'b0,vlimb})));
+  assign pvnext[g]=$signed({{32{vacc[g][31]}},vacc[g]})+($signed({{48{pp[g][15]}},pp[g]})<<<(shift7(plimb+{1'b0,vlimb})));
   assign pvbad[g]=pvnext[g]>64'sd2147483647||pvnext[g]< -64'sd2147483648;
  end endgenerate
  reg [63:0] mag,rounded,rem,halfway;reg signed [63:0] converted;reg conversion_bad;reg [10:0] leftshift;
@@ -119,7 +120,7 @@ module attention102(input wire clk,reset,start,ack,input wire [10:0] length,
     GUARD:if(psum>32'd32769+(({21'b0,length}+1)>>1))begin status<=36;state<=DONE;end else state<=PVINIT;
     PVINIT:begin tile<=0;loadline<=0;loading_v<=1;group<=0;half<=0;state<=LOAD;end
     OREAD:if(sready)state<=ORWAIT;
-    ORWAIT:if(svalid)begin for(j=0;j<4;j=j+1)vacc[half*4+j]<=sdout[32*j+:32];if(!half)begin half<=1;state<=OREAD;end else begin half<=0;state<=PREAD;end end
+    ORWAIT:if(svalid)begin for(j=0;j<8;j=j+1)if((half&&j>=4)||(!half&&j<4))vacc[j]<=sdout[32*(j%4)+:32];if(!half)begin half<=1;state<=OREAD;end else begin half<=0;state<=PREAD;end end
     PREAD:if(sready)state<=PRWAIT;
     PRWAIT:if(svalid)begin preadline<=sdout;pcode<=sdout[16*key[2:0]+:16];state<=VREAD;end
     VREAD:if(sready)state<=VRWAIT;
