@@ -15,7 +15,7 @@ def main():
     need(x['mul_grants0']==26112 and x['mul_grants1']==3072 and x['mul_contested']==0,'serial phase workload actual multiply inventory');need(x['port_wait_m']==0 and x['port_wait_n']==0 if s==0 else x['port_wait_m']>0 and x['port_wait_n']>0,'actual common port grant waits')
    proof.append({'run':run.name,'receipt_sha256':sha(receipt),'run_manifest_sha256':sha(run/'manifest.json')})
    metrics.append({'variant':v,'CACHE':v//2,'SHARE':v%2,'stall':s,'rows':r['rows']})
-  mp=resources(a.root/f'map-v{v}02','chain84',a.library);mp.update(variant=v,CACHE=v//2,SHARE=v%2)
+  mp=resources(a.root/f'map-v{v}03','chain84',a.library);mp.update(variant=v,CACHE=v//2,SHARE=v%2)
   for n,h in r['source']['sources'].items():
    if n.startswith('project/rtl/'):need(mp['source']['sources'].get(n)==h,'same RTL mapped and simulated')
   wide=[x for x in mp['multipliers']if x['A_WIDTH']>8 or x['B_WIDTH']>8]

@@ -13,3 +13,7 @@ Acceptance: all48 real commands exact acc/down/join/norm vs independent physical
 ## Controlled port sensitivity v2
 
 After exact primary48 commands, keep SHARE1 and compare CACHE0/1 with fixed extra4/8/12 grant-wait edges per every store operation. External reply and multiply grant stay quiet. Rebuild driver with these additional modes; same RTL bytes. Six original cases each gives36 more accepted commands. This tests bypass necessity under single-port pressure; no independent extra-memory or overlap claim. Original results and driver source remain bound in phase2.
+
+## Mapping recovery v3
+
+Default installed Yosys/ABC reused-server interface stalled (parent read, child select on stdin; no productive CPU). Retain stalled01/02 logs and cancellation evidence. Four formal map03 use the same ABC binary via alternate literal path /usr/local/bin/../bin/yosys-abc to select file invocation, without install/change. Explicit synth -noabc then abc -fast and opt -fast preserves generic optimization passes before common dfflibmap and library ABC. All four get identical recipe, streamed logs and300s subprocess cap. Sources: https://github.com/YosysHQ/yosys/blob/70a11c6bf/passes/techmap/abc.cc and https://github.com/YosysHQ/yosys/blob/70a11c6bf/techlibs/common/synth.cc ; is_yosys_abc compares executable strings and selects reusable process, synth normally ends fine with abc -fast/opt -fast. Root cause beyond observed protocol wait remains unproven. Do not compare recovered area with old tasks as identical recipe evidence.

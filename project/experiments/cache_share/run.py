@@ -10,7 +10,9 @@ def main():
   if sha(ROOT/n)!=h:raise ValueError('exact source '+n)
  a.out.mkdir(exist_ok=False,parents=True);m={'status':'ERROR','source':bd,'profile':a.profile,'stall':a.stall,'task':a.task};prefix=json.loads(a.prefix);prefix=prefix[:-1]+['--pwd',str(a.out),prefix[-1]]
  def cmd(name,args):
-  start=time.monotonic();r=subprocess.run([*prefix,*map(str,args)],cwd=a.out,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT);(a.out/(name+'.log')).write_text(r.stdout);put(a.out/(name+'-command.json'),{'argv':[*prefix,*map(str,args)],'exit':r.returncode,'seconds':time.monotonic()-start})
+  start=time.monotonic()
+  with (a.out/(name+'.log')).open('w')as log:r=subprocess.run([*prefix,*map(str,args)],cwd=a.out,text=True,stdout=log,stderr=subprocess.STDOUT,stdin=subprocess.DEVNULL,timeout=300 if a.task=='map'else 600)
+  put(a.out/(name+'-command.json'),{'argv':[*prefix,*map(str,args)],'exit':r.returncode,'seconds':time.monotonic()-start})
   if r.returncode:raise ValueError('failed '+name)
  sv=[RTL/n for n in('sfu84.sv','mul84.sv','norm84.sv','mfront84.sv','chain84.sv')]+[ROOT/'project/rtl/wide_service/memory_link.sv',ROOT/'project/rtl/norm_service/store82.sv']
  try:
@@ -28,7 +30,7 @@ def main():
   else:
    script='read_verilog -sv '+' '.join(map(str,sv))+'\nhierarchy -top chain84 -chparam CACHE '+str(a.profile//2)+' -chparam SHARE '+str(a.profile%2)+'\nproc\nopt\nwreduce\nmemory_dff\nmemory_collect\nopt_clean\ncheck -assert\nwrite_json '+str(a.out/'generic.json')+'\n'
    (a.out/'generic.ys').write_text(script);cmd('generic',['yosys','-s',a.out/'generic.ys'])
-   lib=a.library;script='read_liberty -lib '+str(lib)+'\nread_verilog -sv '+' '.join(map(str,sv))+'\nhierarchy -top chain84 -chparam CACHE '+str(a.profile//2)+' -chparam SHARE '+str(a.profile%2)+'\nblackbox store82\nsynth -top chain84 -flatten\ndfflibmap -liberty '+str(lib)+'\nabc -liberty '+str(lib)+'\nclean\ncheck -assert\ntee -o '+str(a.out/'stat.json')+' stat -liberty '+str(lib)+' -json\nwrite_json '+str(a.out/'mapped.json')+'\n'
+   lib=a.library;script='read_liberty -lib '+str(lib)+'\nread_verilog -sv '+' '.join(map(str,sv))+'\nhierarchy -top chain84 -chparam CACHE '+str(a.profile//2)+' -chparam SHARE '+str(a.profile%2)+'\nblackbox store82\nsynth -top chain84 -flatten -noabc\nabc -fast -exe /usr/local/bin/../bin/yosys-abc\nopt -fast\ndfflibmap -liberty '+str(lib)+'\nabc -exe /usr/local/bin/../bin/yosys-abc -liberty '+str(lib)+'\nclean\ncheck -assert\ntee -o '+str(a.out/'stat.json')+' stat -liberty '+str(lib)+' -json\nwrite_json '+str(a.out/'mapped.json')+'\n'
    (a.out/'map.ys').write_text(script);cmd('map',['yosys','-s',a.out/'map.ys']);m['library_sha256']=sha(lib);m['status']='LOGIC_ONLY_MAPPED_NOT_PPA'
  except Exception as e:m['error']=str(e);m['traceback']=traceback.format_exc();raise
  finally:

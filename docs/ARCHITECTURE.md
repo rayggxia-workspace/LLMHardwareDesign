@@ -1,5 +1,10 @@
 # 架构与运行
 
+## Issue84：同容量A缓存与乘法器共享
+
+[代码/复现](../project/experiments/cache_share/README.md)、[冻结协议](../project/experiments/cache_share/PROTOCOL.md)。仅本人服务器新Slurm目录，主2×2同数值/容量/端口对照和单端口压力，实际运行/接收/合成命令见work/Liangruizhi/84/execution.json；管理检查先行，真实数组/RTL/综合与全结果独立接收不在PC执行。PC仅源码/小边界/metadata和字节/原Git源核验；宏/STA/整模型资格分开。
+
+
 ## Issue66：完整消费者与连续整数状态
 
 [报告](experiments/issue-66-scale-state.md)与[代码/复现](../project/experiments/scale_state/README.md)覆盖完整H2560消费者、整数input RMSNorm、连续conv/R和真实256步诊断；下一投影只16/8192，FP SiLU/QK L2norm/gates明确。先python -B scripts/check_project.py；再scripts/check_research.py及unittest discover -s project/experiments/scale_state -p "test_*.py" -v。精选SHA/源码安全接收和selected_review实际重放命令见模块README，所有原始Slurm命令/binding/版本见work66。新整数函数不等于硬件资格；V16KiB重读、R shadow/范围/epoch与同资源有限端口仍需后续服务证据。
