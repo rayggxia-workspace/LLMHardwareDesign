@@ -22,7 +22,7 @@ for k in(1,10):
    need(pin not in seen,'unique full-check pin');seen.add(pin);v=list(map(Decimal,(lim,actual,slack)));need(all(x.is_finite()for x in v)and v[0]>0 and v[1]>=0,'finite full-check quantities');
    if v[1]>v[0]:bad.append({'pin':pin,'limit':lim,'actual':actual,'slack':slack,'native_row_status':status})
   if check!='max_fanout':need(len(rows)>0,'nonempty complete maxslew/maxcap report')
-  else:need(rows or'No paths found.'in section,'explicit no fanout check semantics')
+  else:need(rows or((not section.strip()or'No paths found.'in section)and not re.search(r'\b(?:default_)?max_fanout\b',LIB.read_text())and'set_max_fanout'not in(a.stage/'final.sdc').read_text()),'empty report only with no actual fanout limit in bound Liberty/SDC')
   checks[check]={'checked_pins':len(rows),'strict_exceedances':bad,'strict_count':len(bad),'report_sha256':__import__('hashlib').sha256(section.encode()).hexdigest()}
  scenarios.append({'load_fF':k,'checks':checks})
 for check in('max_slew','max_capacitance','max_fanout'):need(scenarios[0]['checks'][check]['checked_pins']==scenarios[1]['checks'][check]['checked_pins'],'same full check coverage both loads')
