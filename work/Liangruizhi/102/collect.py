@@ -28,7 +28,7 @@ def main():
   f=(root/relative).resolve()
   if f.parent!=root or not f.is_file():raise ValueError('non-task log '+relative)
   files.add(f)
- if any('models' in str(f.relative_to(root)) or f.suffix=='.safetensors' for f in files):raise ValueError('weight/cache exclusion')
+ if any(any(part in ('models','weights','huggingface','hub')for part in f.relative_to(root).parts) or f.suffix=='.safetensors' for f in files):raise ValueError('weight/cache exclusion')
  out.mkdir()
  entries=[desc(f,root) for f in sorted(files)]
  # Exact frozen source archives remain in primary bundle. Select only metadata,
