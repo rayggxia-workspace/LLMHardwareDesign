@@ -87,3 +87,5 @@ M每命令26,112个S32乘法请求（两次/专家坐标＋一次/坐标），No
 严格接收/分析phase7=302f18a2c719e37f49716d43c78de6ed19067e75，analysis05与analysis04的数值报告字节一致（接收算法收紧，原输出未改变）。14份正式接收各含1个实际重SHA改码负例，共14个；8份主对照＋6份端口压力。93个Slurm作业62COMPLETED、4FAILED、27CANCELLED，归档/接收作业90729—90731均完成。原90个实验作业逐项终态见精选slurm90.json，另外3个归档/接收终态见工作目录归档回执。
 
 完整包delivery01/full-results.zip：279763633B、799成员，SHA256 290113c6ed0b35ce801fbbc3a417b743a55934cea0ebef1754a00b6326603f69；精选selected.zip：2900792B、300成员，SHA256 1af3d45efe541e15dbe116089eb32281d9bec4252ab3661d82315716c1001e4a。服务器两包、PC精选逐成员字节及7phase126份原Git源绑定通过。PC没有重跑实际张量或RTL。恢复命令、限制和审查状态见交接。
+
+远端交付：[PR87](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/87)已上传，Issue84为in_review；待指定独立审查与合并，未done。已按不可变commit读回报告/交接/个人进度，与原Git blob逐字节相同；后续仅文档同步，不改变实验源码和结果SHA。
