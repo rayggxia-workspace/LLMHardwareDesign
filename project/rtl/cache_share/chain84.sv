@@ -1,4 +1,4 @@
-module chain84 #(parameter CACHE=0,SHARE=0)(input wire clk,reset,cmd,mem_hold,mul_hold,output wire mem_request,
+module chain84 #(parameter CACHE=0,SHARE=0)(input wire clk,reset,cmd,mem_hold,mul_hold,output wire mem_request,mul_request,
  input wire [31:0] epsilon,coefficient,output wire busy,done,input wire ack,output reg [7:0] status,
  input wire cfg,cfg_wr,input wire [9:0] cfg_addr,input wire [127:0] cfg_din,output wire cfg_ready,cfg_valid,input wire cfg_take,output wire [127:0] cfg_dout,
  output reg [63:0] cycles,output wire [63:0] norm_cycles,output wire [31:0] reads,writes,packets,macs,mwrites,
@@ -30,6 +30,7 @@ module chain84 #(parameter CACHE=0,SHARE=0)(input wire clk,reset,cmd,mem_hold,mu
   end
  end
  wire mr0,mr1,mready0,mready1,mv0,mv1;wire signed [31:0] ma0,mb0,ma1,mb1;wire signed [63:0] my0,my1;
+ assign mul_request=mr0||mr1;
  mul84 #(SHARE) multipliers(clk,reset,mul_hold,mr0,ma0,mb0,mready0,mv0,1'b1,my0,mr1,ma1,mb1,mready1,mv1,1'b1,my1,mul_grants0,mul_grants1,mul_wait0,mul_wait1,mul_contested);
  mfront84 #(CACHE) m(clk,reset,cmd&&!busy&&!pending&&!cfg,state==1&&mdone,saved_coefficient,mdone,ms,mreq,m_address,mready,mvalid,mtake,mreply,sr,sw,maddr,mdata,sready,svalid,st,rd,packets,macs,mwrites,obs_valid,obs_row,obs_rank,obs_acc,obs_down,mr0,ma0,mb0,mready0,mv0,my0,cache_reads,cache_writes);
  wire unused_wr;wire [127:0] unused_wdata;wire wire_valid;wire [127:0] wire_data;
