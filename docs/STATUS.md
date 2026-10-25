@@ -1,5 +1,7 @@
 # 当前状态
 
+- 2026-10-25 [Issue106](experiments/issue-106-shared-services.md)：M/A/Falcon R真正共用唯一16KiB/8S8/S32/SFU/link，双路各7混合及27恢复完整整数接收，实际端口/结果导出/原子root/版本生命周期有证据；10类文件重SHA负例拒绝。logic-only125,966.694µm²，宏/物理未验，selected raw gate两路各4完整命令逐字段/独立数学PASS。41本人作业全部终态，完整41,646,013B留服务器、精选163,973B及7phase168原Git字节PASS。GDN104未接入；本地交付待主会话PR，不done。
+
 - 2026-10-25 [Issue102](experiments/issue-102-attention-rtl.md)：完整GQA8头Q8/KV16→QK→三遍整数softmax→PV32，full/实际cached分列；两路79query/632head与71cmd同core恢复、selected raw gate18query独立PASS。严格8S8/1S32/单16KiB，logic-only53,187.764µm²；非online/append/M-A物理共享/宏STA。全部来源、失败与字节回执留档，本地交付待root PR审查，不done；下一步共享真实服务，见[分层验收](BLOCK_LIBRARY_ACCEPTANCE.md)。
 
 - 2026-10-25 [Issue97](experiments/issue-97-v-consumer.md)：原始gate/up→SiLU/MID→整512 δ/A8→驻留真实M→流式norm有界L2及选定raw gate独立PASS；两路50命令/29输出，门级4路8输出。单16KiB/8S8+1S32，logic-only70,102.970µm²；通用80 V ISA、完整A/R与宏/STA未完成。750.46MB全包/0.221MB精选、10phase153源已接收；本地交付待父会话PR同步，不done。98新物理/99 R继续独立，详见[分层验收](BLOCK_LIBRARY_ACCEPTANCE.md)。
@@ -116,3 +118,7 @@
 通用Yosys作业89838于2026-10-23 09:55:54 CST达到20分钟时限，Slurm最终TIMEOUT（elapsed20:28，batch0:15）。日志确认已进入PROC_MUX，未完成后续memory_collect/check/stat/JSON；未证明综合通过，也不能把工具超时解释为RTL功能错误。原始日志和SHA索引已保存work/Liangruizhi/29/audits/synth-timeout01/。 下一步保留同一源码，使用单配置-defer与RTLIL检查点分开前端和proc成本；该后续检查尚未执行。先前运行中快照仅代表其采集时刻。
 
 - 2026-10-25 [Issue85运行时缓存及恢复](experiments/issue-85-runtime-cache.md)：同一M核心两模式，60正式完整输出及22实际soft-abort/12错误/2迟到丢弃独立通过；周期保持84对应shared静态值，logic-only+1.52715%/+97bit。全包/精选与5phase86源字节已核。额外32bit tag/外部恢复双槽单列，宏/STA/CDC仍未验；PR89已上传待审查，不done。
+
+## 2026-10-25 Issue99 R状态单元证据
+
+本人服务器完整head72连续S32 RTL、有限事务/恢复/19边界与2真实checkpoint×两条件rawgate通过；归档/原Git字节已验，主会话待发布审查。[报告](experiments/issue-99-r-state.md)。R保持完整head数值/提交责任，Dtile不独立重标；16KiB外的128KiB状态及trial/proposal/shadow明确计库存/流量。与M/V/其它head、4096消费者及物理实现仍未整合，不将本单元结果写成整个Block库完成。

@@ -1,0 +1,381 @@
+{
+  "artifacts": [
+    {
+      "bytes": 1048576,
+      "path": "alpha_half_ties.bin",
+      "sha256": "c52f53ccfb2016b1dcc932140ec763939852afd9f81e9ac67def03ec08b224be"
+    },
+    {
+      "bytes": 1048576,
+      "path": "alpha_one.bin",
+      "sha256": "789340b193a2a15be5e4ca04b53b48333762bd79cff3cd829daadd0c5f5c91bd"
+    },
+    {
+      "bytes": 1048576,
+      "path": "alpha_zero.bin",
+      "sha256": "1f97bd2da881e66303b6300d20c704d110b07707d0a66bf3eb8e48dacc7c170e"
+    },
+    {
+      "bytes": 1048576,
+      "path": "dtb_retry_limit.bin",
+      "sha256": "1072c862dee7b9a53e3e537298ab0ae310577e7c851d253bd94b9bb6e64bde8c"
+    },
+    {
+      "bytes": 1048576,
+      "path": "epoch_limit.bin",
+      "sha256": "4e3e98b96f4032a8a18b7b184a43160e45eb8ea75fcd6a65d872ab0255c2066f"
+    },
+    {
+      "bytes": 311,
+      "path": "fixtures.tsv",
+      "sha256": "b87ddc49963ed5929cbb6ea47f8126c79d8c166b8582e6a4ff49925ade65cbaf"
+    },
+    {
+      "bytes": 142377,
+      "path": "head0-old.npz",
+      "sha256": "cdf5d8c28b8b49f91f64a2d1c2f18011c918da00f16c7d64314653d4d418e109"
+    },
+    {
+      "bytes": 1048576,
+      "path": "head0.bin",
+      "sha256": "b4bc2f8685cf6ccc731f99ca3377e9582d5e266ddd5a6a3a4a62cdb2e0c388d2"
+    },
+    {
+      "bytes": 1048576,
+      "path": "invalid_alpha.bin",
+      "sha256": "32d3f098090d2e4c80a1ed6c36d0ee38af52c1f74015acb1b4c5324c423113ca"
+    },
+    {
+      "bytes": 1048576,
+      "path": "invalid_header.bin",
+      "sha256": "3cd6feb79ef835372578438919a37c5367354514e8a24435bef228f9f21335ab"
+    },
+    {
+      "bytes": 1048576,
+      "path": "invalid_owner.bin",
+      "sha256": "7aab60c7d8e1a83b3a9947f5fabb72ac33497fd04efff92554f54c264aa810d6"
+    },
+    {
+      "bytes": 1048576,
+      "path": "invalid_profile.bin",
+      "sha256": "ef67aac9b1bc2f5df13250828acc8202a5b73309c2bc3a270283e968058152aa"
+    },
+    {
+      "bytes": 1048576,
+      "path": "invalid_unit.bin",
+      "sha256": "6e258ddeafb0ce6337001cece98dc5a0db6232d41b46bfa56581705ff56b4fdc"
+    },
+    {
+      "bytes": 1048576,
+      "path": "left_retry_limit.bin",
+      "sha256": "5cab992a820c4669d1cd3960312ed802e1c05c11f129de38c3af5aa0e42b70ae"
+    },
+    {
+      "bytes": 1048576,
+      "path": "negative_shift.bin",
+      "sha256": "c2ca6eaa683ca569ba0e097ea365f6534533748aed659bc1c4f37f0712473053"
+    },
+    {
+      "bytes": 1048576,
+      "path": "output_guard.bin",
+      "sha256": "ceade4581a1b3dc280a69d398a82e9f3883273847029b54ddb9ac3e3c8ebbc9d"
+    },
+    {
+      "bytes": 1048576,
+      "path": "position_full.bin",
+      "sha256": "847f6c064d09ac9b5afd74dc411344cb5143bdbdbda498ed0ea02bf2790486b0"
+    },
+    {
+      "bytes": 1048576,
+      "path": "position_overflow.bin",
+      "sha256": "a5a3d7c66f0dcce4f56ba96b4880d8a36e0d6ffa2fe339f21a0ccbd12dc6a7ef"
+    },
+    {
+      "bytes": 1048576,
+      "path": "readout_guard.bin",
+      "sha256": "1d42ea843846e6ff09aa0db32694dc7b17f36fcdcec449c91ad9f0c99a1f7ead"
+    },
+    {
+      "bytes": 1048576,
+      "path": "signed_min_range.bin",
+      "sha256": "17ace7ec467521d10b3f678f05493e7d289238b9c07089b46bfb2a5298ac7514"
+    },
+    {
+      "bytes": 1048576,
+      "path": "unit_limit.bin",
+      "sha256": "2bb314818904e25e13ff512b0d836da2c28bd65ef994042c59fc65a6e09fe06c"
+    },
+    {
+      "bytes": 1048576,
+      "path": "whole_head_range.bin",
+      "sha256": "69ad05e2abeb7c53f54f86f7a97e9623b30ca59e00777cca28c1873c295cd0aa"
+    }
+  ],
+  "compiled_manifest_sha256": "5f9bd4f5cf2374f54180164d9d24ae1214c4142b10776854335cb66377ad4089",
+  "contract": {
+    "D": 128,
+    "N": 256,
+    "add_guard": "maxabs(decay)+maxabs(injection)<=I64_MAX over complete head",
+    "alpha": "U32 Q31 inclusive 2**31",
+    "descriptor_atomic_bits": 128,
+    "dt_skip": "I32 Q20",
+    "external_bytes": 1048576,
+    "generation_sideband": "32bit request and 32bit response outside five beats",
+    "head_domain": [
+      0,
+      31
+    ],
+    "injection": "RNE(32+unit)(x*I32guard(RNE12(dt*B)))",
+    "owner": 0,
+    "position_domain": [
+      0,
+      72
+    ],
+    "products": "one shared signed32x32->signed64; alpha1 explicit identity",
+    "profile": 1,
+    "publication": "consumer accept begins irreversible commit; external ACK completes; fabric atomicity assumed",
+    "read_wire_beats": 5,
+    "readout_guard": "complete head maxabs(state*C)*256<=I64_MAX",
+    "retry": "whole-head RNE1,unit+1,local_epoch+1; max8; no future data",
+    "rounding": "signed nearest ties even; no success saturation",
+    "schema": "r99-integer-fullhead-v1",
+    "scratch_bytes": 16384,
+    "scratch_read_write_ports": 1,
+    "scratch_width": 128,
+    "state": "S32 power2 exponent I16/head",
+    "steps": 72,
+    "unit_domain": [
+      -127,
+      127
+    ],
+    "version": "alias position",
+    "wire_bits_per_beat": 128,
+    "write_wire_beats": 5,
+    "x_B_C": "I32 Q12"
+  },
+  "head_local_epoch_is_not_global": true,
+  "heads": [
+    {
+      "head": 0,
+      "initial_unit": -28,
+      "rescale_events_from_original_unit_trace": 1,
+      "source_state_sha256": "74fc37997691a090d8cf2df4326672bc43d9d8c9ea6345a4669d318b3a97d6dd",
+      "steps": 72
+    }
+  ],
+  "old_global_epoch": 25,
+  "old_manifest_sha256": "db07a03c2dc50f77110f4abe8946b534233c378e61485ef19fed090f9d85ce4b",
+  "old_source": {
+    "commit": "a98d917db9b86d95f65e3e08729debd58ba936a4",
+    "falcon_chain_sha256": "f4949c61ed8d33cc56d1b7b992f80d692e1494467cea2e6c33c79e0caad253ca",
+    "falcon_int_sha256": "48816eaae87bd8f15044e9c48afd1316975fdf0fa7a8efdd5953831f6b780305",
+    "granite_numeric_sha256": "4c6766fd25e96fa5bd27dc187677f97c338c7fcdda356bfaf4f6d29e6bd133b0",
+    "granite_reference_sha256": "0c95172fe1a17e34714af15cf4d45a2d0c23ded934ad7a1a04675c373f52ae49",
+    "sources": {
+      "project/experiments/closure/falcon_chain.py": "f4949c61ed8d33cc56d1b7b992f80d692e1494467cea2e6c33c79e0caad253ca",
+      "project/experiments/closure/falcon_int.py": "48816eaae87bd8f15044e9c48afd1316975fdf0fa7a8efdd5953831f6b780305",
+      "project/experiments/closure/granite_numeric.py": "4c6766fd25e96fa5bd27dc187677f97c338c7fcdda356bfaf4f6d29e6bd133b0",
+      "project/experiments/closure/granite_reference.py": "0c95172fe1a17e34714af15cf4d45a2d0c23ded934ad7a1a04675c373f52ae49"
+    }
+  },
+  "original_cross_head_wide_guard_events": [],
+  "schema": "r99-input-v1",
+  "selection": "head0; if no original unit growth add smallest head with original unit growth, before new errors",
+  "source": {
+    "commit": "af2f7fb171ad04158ed861c72c87133dfc5454d4",
+    "sources": {
+      "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+      "project/experiments/r_state/PROTOCOL.md": "b0c6d604a435c955c0c4a78fe816592d03ca9d40b1ab75a06521cfca8f651c62",
+      "project/experiments/r_state/analyze.py": "35024aeb78f8869ccc9da4df31e303526055035208dc3ba8916656f836871734",
+      "project/experiments/r_state/checkpoint_sim.cpp": "38094dfa9ecf301b28a12ad0e8d3515598ac2e3b5dcab0f8f671889ba2b83fec",
+      "project/experiments/r_state/contracts.py": "4c566e4d30f2f4772d84cbcfe96c20f1d183afa11bc2a66b7739ce52be699d5f",
+      "project/experiments/r_state/fixtures.py": "f8594129d7a31be25df25e680c8819a54db5540127f99bf87f65dc6e298e4613",
+      "project/experiments/r_state/gate.py": "ab1bc4bd984c98ebaae0dc305efefc7e88f4964603fa5b546b21acddd931aab5",
+      "project/experiments/r_state/inputs.py": "ccfd57c48c760c246c6f31d12dc63f6d8df3c6757a9a60186f0da29bf2862d25",
+      "project/experiments/r_state/negative.py": "fd8bc58e0bc5d710d8ea0db4b8ba73d843d1c768d296112a2acd7593a0310ced",
+      "project/experiments/r_state/r_sim.cpp": "988eae28632026c9a12d2cee99af41b42d4d390f265a9d1153362da23f5dcb77",
+      "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+      "project/experiments/r_state/run.py": "5f24b0aed18f7e323a81f5dcd70e59431525524f3a510f980c6231b6b773fb32",
+      "project/experiments/r_state/verify.py": "f153cab5876360a64aa6f292d4dbaab924671bb08c37df977cee610ec1769b5f",
+      "project/experiments/r_state/verify_boundary.py": "ce71e86b441fe895bf61261840ea6bc57b08b09d90d4b5e4233109f83c56870c",
+      "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+      "project/rtl/r_state/r99.sv": "5c8481c1db635ed3fb22335b605a211be7646726ff4d8c81c3c49fc111aa9113",
+      "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+      "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a"
+    }
+  },
+  "status": "VERIFIED_COEFFICIENTS_NOT_RTL",
+  "synthetic_fixtures": [
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 0,
+      "initial_position": 0,
+      "initial_unit": 0,
+      "name": "alpha_one",
+      "path": "alpha_one.bin",
+      "run_step": true
+    },
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 0,
+      "initial_position": 0,
+      "initial_unit": 0,
+      "name": "alpha_half_ties",
+      "path": "alpha_half_ties.bin",
+      "run_step": true
+    },
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 0,
+      "initial_position": 0,
+      "initial_unit": 0,
+      "name": "alpha_zero",
+      "path": "alpha_zero.bin",
+      "run_step": true
+    },
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 0,
+      "initial_position": 0,
+      "initial_unit": -33,
+      "name": "negative_shift",
+      "path": "negative_shift.bin",
+      "run_step": true
+    },
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 0,
+      "initial_position": 0,
+      "initial_unit": -32,
+      "name": "whole_head_range",
+      "path": "whole_head_range.bin",
+      "run_step": true
+    },
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 0,
+      "initial_position": 0,
+      "initial_unit": 0,
+      "name": "dtb_retry_limit",
+      "path": "dtb_retry_limit.bin",
+      "run_step": true
+    },
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 0,
+      "initial_position": 0,
+      "initial_unit": 127,
+      "name": "unit_limit",
+      "path": "unit_limit.bin",
+      "run_step": true
+    },
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 4294967295,
+      "initial_position": 0,
+      "initial_unit": -32,
+      "name": "epoch_limit",
+      "path": "epoch_limit.bin",
+      "run_step": true
+    },
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 0,
+      "initial_position": 0,
+      "initial_unit": -127,
+      "name": "left_retry_limit",
+      "path": "left_retry_limit.bin",
+      "run_step": true
+    },
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 0,
+      "initial_position": 0,
+      "initial_unit": 0,
+      "name": "readout_guard",
+      "path": "readout_guard.bin",
+      "run_step": true
+    },
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 0,
+      "initial_position": 0,
+      "initial_unit": 0,
+      "name": "output_guard",
+      "path": "output_guard.bin",
+      "run_step": true
+    },
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 0,
+      "initial_position": 0,
+      "initial_unit": 0,
+      "name": "invalid_alpha",
+      "path": "invalid_alpha.bin",
+      "run_step": true
+    },
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 0,
+      "initial_position": 72,
+      "initial_unit": 0,
+      "name": "position_full",
+      "path": "position_full.bin",
+      "run_step": true
+    },
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 0,
+      "initial_position": 4294967295,
+      "initial_unit": 0,
+      "name": "position_overflow",
+      "path": "position_overflow.bin",
+      "run_step": false
+    },
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 0,
+      "initial_position": 0,
+      "initial_unit": 0,
+      "name": "invalid_owner",
+      "path": "invalid_owner.bin",
+      "run_step": false
+    },
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 0,
+      "initial_position": 0,
+      "initial_unit": 0,
+      "name": "invalid_profile",
+      "path": "invalid_profile.bin",
+      "run_step": false
+    },
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 0,
+      "initial_position": 0,
+      "initial_unit": 128,
+      "name": "invalid_unit",
+      "path": "invalid_unit.bin",
+      "run_step": false
+    },
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 0,
+      "initial_position": 0,
+      "initial_unit": 0,
+      "name": "invalid_header",
+      "path": "invalid_header.bin",
+      "run_step": true
+    },
+    {
+      "domain": "declared synthetic integer codes, not model quality",
+      "initial_epoch": 0,
+      "initial_position": 0,
+      "initial_unit": -34,
+      "name": "signed_min_range",
+      "path": "signed_min_range.bin",
+      "run_step": true
+    }
+  ]
+}

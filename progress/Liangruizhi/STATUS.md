@@ -1,5 +1,11 @@
 # Liangruizhi 的进度
 
+## 2026-10-25 UTC+08 Issue106共享服务本地交付待PR
+
+[Issue106](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/106)，task/106-shared-services，D:/Projects/LLMHardwareDesign-shared-services；已合入99 PR103/102 PR105发布基线。唯一16KiB1RW/8S8/S32/SFU/link实际实例，双路各7混合+27恢复与独立原整数oracle通过，选定门级两路各4完整命令逐字段/数学PASS，10实际重SHA负例拒绝。logic-only125,966.694µm²，不含宏/物理、真实下游事务缓冲；GDN104未接入，非完整库完成。
+
+41本人Slurm全COMPLETED，完整41,646,013B/439成员服务器、精选163,973B/91成员入仓；服务器双包/PC精选与7phase168原Git源字节PASS。[报告](../../docs/experiments/issue-106-shared-services.md)、[交接](../../docs/handoffs/2026-10-25-issue-106-shared-services.md)。本地已整理，主会话待push/PR/Issue状态；未合并非done，登记PR5 pending，看板unverified/同步pending。下一步接独立104 GDN并按真实面积定位资源复用，保留同精度/容量/端口与全部控制成本。
+
 ## 2026-10-25 Issue102完整GQA本地交付待PR
 
 [Issue102](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/102)，task/102-attention-rtl，D:/Projects/LLMHardwareDesign-attention-rtl；身份Liangruizhi/182389313及最新102/98/99/55/63/PR已核。两路79query632head全值、两路71cmd恢复独立PASS；原map门级18query144head同RTL+独立oracle，4真实文件负例拒绝。3/9limb、128iter SFU及全部宽控制计入53187.764µm²逻辑图；单16KiB/8S8/1S32。76真实query含61 actual cached，不以64full代替。单owner/version单调修复、caller committed prefix范围明确。
@@ -11,6 +17,12 @@
 [Issue97](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/97)，task/97-v-consumer，D:/Projects/LLMHardwareDesign-v-consumer。指定身份/最新55/63/93/98/99已核。原gate/up由RTL生成SiLU/MID/整512 δ/A8，再真实M→merge/residual→93流式norm；两路各50cmd/29输出与22实际重SHA负例独立PASS，4路raw gate8输出及4重SHA负例PASS。单16KiB/8S8+1S32，新增宽控制全部映射70,102.970µm²，不含宏/物理，非通用80 V ISA或六Block完成。
 
 50本人Slurm全部终态40完成/5失败保留/5自有取消；完整750458058B服务器，精选220674B/178及10phase153原Git字节PASS。[报告](../../docs/experiments/issue-97-v-consumer.md)/[交接](../../docs/handoffs/2026-10-25-issue-97-v-consumer.md)。本地已整理，父会话待push/PR/Issue状态，未合并非done；登记PR5 pending、看板缺配置/read:project待管理员。98新网表物理、99 R并行，在线GQA A与通用库仍缺，继续真实证据推进。
+
+## 2026-10-25 Issue99 R状态单元待主会话发布
+
+[Issue99](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/99)，task/99-r-state，D:/Projects/LLMHardwareDesign-r-state。仅本人服务器完成单head D128×N256连续72步S32 RTL，两路各82记录与独立bigint/原72一致；真实position27重标。两路各31恢复协议记录及19固定边界通过；4真实rawgate检查点与同driverRTL逐码/周期/IO一致，无门级Qpoke。实际一S32、一16KiB1RW，logic-only41708.534µm²，外部库存/5beat协议/peer holder/复位前费用全列。3个文件级重SHA负例拒绝。
+
+全包125298753B留服务器，精选1183475B入仓，675/226成员和8phase101原Git源核验；服务器双包及PC精选字节PASS。[报告](../../docs/experiments/issue-99-r-state.md)/[交接](../../docs/handoffs/2026-10-25-issue-99-r-state.md)。本地已整理，主会话待push/PR/状态同步，本子任务未上传未合并不done；单head状态单元不等于完整R/32head/4096norm或物理签核。下一步相同精度资源优化重读/spill并接M/V仲裁；看板/登记按主会话处理。
 
 ## 2026-10-25 Issue92 epoch边界交付待同步
 
@@ -301,3 +313,8 @@ PR待审查/合并，审查人/管理员待指定，未done；后续在已有授
 
 
 发布回执（2026-10-25）：[PR105](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/105)已上传；Issue102 in_review，待独立审查，未合并/done。报告、索引、门级回执和库验收表与原Git字节读回一致，见work/Liangruizhi/102/remote-readback.json；登记PR5 pending、看板unverified/同步pending。共享服务/宏/物理仍未完成。
+
+发布回执（2026-10-25）：[PR103](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/103)已上传；Issue99为in_review，待独立审查合并，未done。远端读回798739afbe1a738c64043e85b741229a748409f5报告/索引/cost02/严格门级行回执与原Git blob逐字节一致，见work99/remote-readback.json。已合父93最新发布回执，实验RTL/原源绑定不改。登记PR5 pending；board配置/read:project缺项，状态unverified/同步pending，管理员及审查人待指定。后续Q35 GDN和共享服务仍缺，不把本有界任务完成写成Block库全部完成。
+
+
+发布回执（2026-10-25）：[PR108](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/108)已上传；Issue106 in_review，待独立审查，未合并/done。报告、索引、门级回执和库验收表与原Git字节读回一致，见work/Liangruizhi/106/remote-readback.json；登记PR5 pending、看板unverified/同步pending。共享服务/宏/物理仍未完成。
