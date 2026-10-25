@@ -1,0 +1,461 @@
+{
+  "status": "PASS_EPOCH_TERMINAL_REPAIR_RECEIVED",
+  "source": {
+    "commit": "71824cc8bbe0fe53b0b770abacd1b74e6f1b942c",
+    "sources": {
+      "project/rtl/runtime_cache/chain85.sv": "f89ace7f2dc5f3b0aa47dcccccb84e33104b69938f886bb33a2e0d52799c1b1e",
+      "project/rtl/runtime_cache/mfront85.sv": "04391b2eaed06f8dda19c33ddbeee30c49ad6ce233fe874ad26f712bef7014eb",
+      "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+      "project/rtl/runtime_cache/norm84.sv": "cd6532b9eaabe193e11d19829bf069bcf514bc7fb32b674dbb429fe262ea6e4b",
+      "project/rtl/runtime_cache/README.md": "cc31e6d5bb5760d990fbb9a5df7c1af7ba809f998d67f820a7cf2a157d308a80",
+      "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+      "project/experiments/runtime_cache/analyze.py": "3c7dc526900a2935f48a81622113299595959bf80c224535749e025e88abd9d0",
+      "project/experiments/runtime_cache/chain_sim.cpp": "d2dff510e2c4231f062803555dc623188f481456d84775de628890776ad19490",
+      "project/experiments/runtime_cache/inputs.py": "82430b98bae5eacc97b3c96890bc741ac5a3acbba03aef62a39e38267af3fbbc",
+      "project/experiments/runtime_cache/norm_reference.py": "15588c9198769a5358b3a453b6d0032d79dff02b00c39be04659b4d8552f6172",
+      "project/experiments/runtime_cache/PROTOCOL.md": "b1d6181e93264e9a444eb76da9f3df1bc78670fbb9fd5107d2b9032f12bc2c57",
+      "project/experiments/runtime_cache/README.md": "6c15f6e220e9c49f011669ab2e6c72c6d783f5cf81e4421bda6e19eb869ef1e5",
+      "project/experiments/runtime_cache/run.py": "469b6f7a3e7dfb32c2feb5ad8bb49e7285ba94f9427dc4265c4828dd1083bd94",
+      "project/experiments/runtime_cache/verify.py": "131156e4569c9132afa3fda92a65b5a57c350a28d09285391cfe821e54aabca4",
+      "project/experiments/epoch_boundary/baseline-chain85.sv": "aa1b0f6db0133dfa0db18e748ee8b69ce1e846300c31fcdb630502d051bbc8d0",
+      "project/experiments/epoch_boundary/boundary.cpp": "6349dc47b96039a02e832216acc8aaa56f9443646df6e386aad0c42648ff466a",
+      "project/experiments/epoch_boundary/boundary_run.py": "f93f2ef23cb6ed214c43ce7ca1f8f45ba14415eff1c96de74ab21bfd7afb4b32",
+      "project/experiments/epoch_boundary/PROTOCOL.md": "753c1e56f73162a202c70fe2e4ac661102c7569bdae3af31f281a386476f839c",
+      "project/experiments/epoch_boundary/prove.py": "38d8d857624765bae846a277c9365799021a15b9cdfb69e5952be8b32382a511",
+      "project/experiments/epoch_boundary/receive.py": "bb3a11b09277305b5696085f459c440ff48cf3752b7bff300efd488c58cf3ff6",
+      "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+      "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+      "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445"
+    },
+    "issue": 92,
+    "protocol": "max32 terminal discard; actual full-core and boundary tests"
+  },
+  "full_regression": [
+    {
+      "stall": 0,
+      "receipt_sha256": "cdbaa719296db3ede241617bc53ad27a571bf78e632113c5d7852259b4febba9",
+      "commands": 30,
+      "protocol": {
+        "soft_aborts_actual": 11,
+        "stale_responses_actual": 1,
+        "fabric_response_high_water": 2,
+        "schema": "runtime85-protocol-v1",
+        "mode_parameter_latching": true,
+        "cfg_command_competition": true,
+        "held_done_response": true,
+        "stage_abort_restart": true,
+        "error_recovery": true,
+        "stale_epoch_discard": true,
+        "coordinated_reset_restart": true,
+        "commands_accepted": 47,
+        "abort_stages": 10,
+        "error_conditions": 6,
+        "blocked_command_edges": 36,
+        "held_done_edges": 144,
+        "full_output_commands": 30
+      }
+    },
+    {
+      "stall": 1,
+      "receipt_sha256": "abb925efda8ec9adbba5b5b4f46784d8ea6d0aca45750d9727b812f39d07dbf0",
+      "commands": 30,
+      "protocol": {
+        "soft_aborts_actual": 11,
+        "stale_responses_actual": 1,
+        "fabric_response_high_water": 2,
+        "schema": "runtime85-protocol-v1",
+        "mode_parameter_latching": true,
+        "cfg_command_competition": true,
+        "held_done_response": true,
+        "stage_abort_restart": true,
+        "error_recovery": true,
+        "stale_epoch_discard": true,
+        "coordinated_reset_restart": true,
+        "commands_accepted": 47,
+        "abort_stages": 10,
+        "error_conditions": 6,
+        "blocked_command_edges": 36,
+        "held_done_edges": 144,
+        "full_output_commands": 30
+      }
+    }
+  ],
+  "boundary": [
+    {
+      "stall": 0,
+      "protocol": {
+        "schema": "epoch92-boundary-v1",
+        "injections": 4,
+        "blocked_terminal_edges": 48,
+        "discarded_terminal_responses": 5,
+        "terminal_aborts": 2,
+        "control_reset_conflicts": 4,
+        "done_abort_conflicts": 1,
+        "full_commands": 2,
+        "final_epoch": 1,
+        "no_wrap": true,
+        "final_active_reply_preserved": true,
+        "coordinated_reset_restart": true
+      },
+      "rows": [
+        {
+          "name": "L0T0",
+          "role": "last-legal-max",
+          "cache": 0,
+          "epoch": 4294967295,
+          "status": 0,
+          "cycles": 9061831,
+          "norm_cycles": 209092,
+          "reads": 1152,
+          "writes": 384,
+          "M_packets": 798720,
+          "M_MACs": 6291456,
+          "M_store_lines": 384,
+          "wire_beats": 3993600,
+          "transactions": 798720,
+          "cache_reads": 0,
+          "cache_writes": 0,
+          "mul_grants0": 26112,
+          "mul_grants1": 3072,
+          "setup_edges": 768,
+          "result_edges": 768
+        },
+        {
+          "name": "L0T0",
+          "role": "after-terminal-reset",
+          "cache": 1,
+          "epoch": 1,
+          "status": 0,
+          "cycles": 5919175,
+          "norm_cycles": 209092,
+          "reads": 1152,
+          "writes": 384,
+          "M_packets": 405760,
+          "M_MACs": 6291456,
+          "M_store_lines": 384,
+          "wire_beats": 2028800,
+          "transactions": 405760,
+          "cache_reads": 393216,
+          "cache_writes": 256,
+          "mul_grants0": 26112,
+          "mul_grants1": 3072,
+          "setup_edges": 768,
+          "result_edges": 768
+        }
+      ],
+      "manifest_sha256": "f1d71fe427319c7fb9ab4dfeb4a93c4f44d7225faf90939991428aaca73aba31"
+    },
+    {
+      "stall": 1,
+      "protocol": {
+        "schema": "epoch92-boundary-v1",
+        "injections": 4,
+        "blocked_terminal_edges": 48,
+        "discarded_terminal_responses": 5,
+        "terminal_aborts": 2,
+        "control_reset_conflicts": 4,
+        "done_abort_conflicts": 1,
+        "full_commands": 2,
+        "final_epoch": 1,
+        "no_wrap": true,
+        "final_active_reply_preserved": true,
+        "coordinated_reset_restart": true
+      },
+      "rows": [
+        {
+          "name": "L0T0",
+          "role": "last-legal-max",
+          "cache": 0,
+          "epoch": 4294967295,
+          "status": 0,
+          "cycles": 10690375,
+          "norm_cycles": 213700,
+          "reads": 1152,
+          "writes": 384,
+          "M_packets": 798720,
+          "M_MACs": 6291456,
+          "M_store_lines": 384,
+          "wire_beats": 3993600,
+          "transactions": 798720,
+          "cache_reads": 0,
+          "cache_writes": 0,
+          "mul_grants0": 26112,
+          "mul_grants1": 3072,
+          "setup_edges": 768,
+          "result_edges": 768
+        },
+        {
+          "name": "L0T0",
+          "role": "after-terminal-reset",
+          "cache": 1,
+          "epoch": 1,
+          "status": 0,
+          "cycles": 7155270,
+          "norm_cycles": 213700,
+          "reads": 1152,
+          "writes": 384,
+          "M_packets": 405760,
+          "M_MACs": 6291456,
+          "M_store_lines": 384,
+          "wire_beats": 2028800,
+          "transactions": 405760,
+          "cache_reads": 393216,
+          "cache_writes": 256,
+          "mul_grants0": 26112,
+          "mul_grants1": 3072,
+          "setup_edges": 768,
+          "result_edges": 768
+        }
+      ],
+      "manifest_sha256": "18c2fae1d88ce108e3298fd9993aa03561cca381d4119ab7a5d8b139dddae5cf"
+    }
+  ],
+  "proofs": [
+    {
+      "which": "fixed",
+      "combinational_cells": 46,
+      "manifest_sha256": "a803ae03de08387a9d0c170a37f3a1ff7b23089473c2e45fa0f8ba71daf57956",
+      "status": "PASS_ACTUAL_NEXTSTATE_CONE_UNIVERSAL_SAFETY"
+    },
+    {
+      "which": "original",
+      "combinational_cells": 30,
+      "manifest_sha256": "8062275403cb3834ba0606a6e9d9270dd04dfb3d709672f70fdc8480b0a04af4",
+      "status": "EXPECTED_ORIGINAL_NEXTSTATE_COUNTEREXAMPLE"
+    }
+  ],
+  "cost": {
+    "before_logic_area_um2": 52415.566,
+    "after_logic_area_um2": 52387.902,
+    "delta_logic_area_um2": -27.66399999999703,
+    "before_cells": 35422,
+    "after_cells": 35568,
+    "before_DFF": 3823,
+    "after_DFF": 3823,
+    "generic_register_bits": 4309,
+    "memory_bits": 131072
+  },
+  "resources": {
+    "area_um2_logic_only": 52387.902,
+    "mapped_cells": 35568,
+    "DFF_X1": 3823,
+    "generic_register_bits_including_frame_wrapper": 4309,
+    "memory_cells": [
+      {
+        "WIDTH": 128,
+        "SIZE": 1024,
+        "RD_PORTS": 1,
+        "WR_PORTS": 1
+      }
+    ],
+    "memory_bits": 131072,
+    "multipliers": [
+      {
+        "A_WIDTH": 8,
+        "B_WIDTH": 8,
+        "Y_WIDTH": 16,
+        "A_SIGNED": 1,
+        "B_SIGNED": 1
+      },
+      {
+        "A_WIDTH": 8,
+        "B_WIDTH": 8,
+        "Y_WIDTH": 16,
+        "A_SIGNED": 1,
+        "B_SIGNED": 1
+      },
+      {
+        "A_WIDTH": 8,
+        "B_WIDTH": 8,
+        "Y_WIDTH": 16,
+        "A_SIGNED": 1,
+        "B_SIGNED": 1
+      },
+      {
+        "A_WIDTH": 8,
+        "B_WIDTH": 8,
+        "Y_WIDTH": 16,
+        "A_SIGNED": 1,
+        "B_SIGNED": 1
+      },
+      {
+        "A_WIDTH": 8,
+        "B_WIDTH": 8,
+        "Y_WIDTH": 16,
+        "A_SIGNED": 1,
+        "B_SIGNED": 1
+      },
+      {
+        "A_WIDTH": 8,
+        "B_WIDTH": 8,
+        "Y_WIDTH": 16,
+        "A_SIGNED": 1,
+        "B_SIGNED": 1
+      },
+      {
+        "A_WIDTH": 8,
+        "B_WIDTH": 8,
+        "Y_WIDTH": 16,
+        "A_SIGNED": 1,
+        "B_SIGNED": 1
+      },
+      {
+        "A_WIDTH": 8,
+        "B_WIDTH": 8,
+        "Y_WIDTH": 16,
+        "A_SIGNED": 1,
+        "B_SIGNED": 1
+      },
+      {
+        "A_WIDTH": 32,
+        "B_WIDTH": 32,
+        "Y_WIDTH": 64,
+        "A_SIGNED": 1,
+        "B_SIGNED": 1
+      }
+    ],
+    "source": {
+      "commit": "71824cc8bbe0fe53b0b770abacd1b74e6f1b942c",
+      "sources": {
+        "project/rtl/runtime_cache/chain85.sv": "f89ace7f2dc5f3b0aa47dcccccb84e33104b69938f886bb33a2e0d52799c1b1e",
+        "project/rtl/runtime_cache/mfront85.sv": "04391b2eaed06f8dda19c33ddbeee30c49ad6ce233fe874ad26f712bef7014eb",
+        "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+        "project/rtl/runtime_cache/norm84.sv": "cd6532b9eaabe193e11d19829bf069bcf514bc7fb32b674dbb429fe262ea6e4b",
+        "project/rtl/runtime_cache/README.md": "cc31e6d5bb5760d990fbb9a5df7c1af7ba809f998d67f820a7cf2a157d308a80",
+        "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+        "project/experiments/runtime_cache/analyze.py": "3c7dc526900a2935f48a81622113299595959bf80c224535749e025e88abd9d0",
+        "project/experiments/runtime_cache/chain_sim.cpp": "d2dff510e2c4231f062803555dc623188f481456d84775de628890776ad19490",
+        "project/experiments/runtime_cache/inputs.py": "82430b98bae5eacc97b3c96890bc741ac5a3acbba03aef62a39e38267af3fbbc",
+        "project/experiments/runtime_cache/norm_reference.py": "15588c9198769a5358b3a453b6d0032d79dff02b00c39be04659b4d8552f6172",
+        "project/experiments/runtime_cache/PROTOCOL.md": "b1d6181e93264e9a444eb76da9f3df1bc78670fbb9fd5107d2b9032f12bc2c57",
+        "project/experiments/runtime_cache/README.md": "6c15f6e220e9c49f011669ab2e6c72c6d783f5cf81e4421bda6e19eb869ef1e5",
+        "project/experiments/runtime_cache/run.py": "469b6f7a3e7dfb32c2feb5ad8bb49e7285ba94f9427dc4265c4828dd1083bd94",
+        "project/experiments/runtime_cache/verify.py": "131156e4569c9132afa3fda92a65b5a57c350a28d09285391cfe821e54aabca4",
+        "project/experiments/epoch_boundary/baseline-chain85.sv": "aa1b0f6db0133dfa0db18e748ee8b69ce1e846300c31fcdb630502d051bbc8d0",
+        "project/experiments/epoch_boundary/boundary.cpp": "6349dc47b96039a02e832216acc8aaa56f9443646df6e386aad0c42648ff466a",
+        "project/experiments/epoch_boundary/boundary_run.py": "f93f2ef23cb6ed214c43ce7ca1f8f45ba14415eff1c96de74ab21bfd7afb4b32",
+        "project/experiments/epoch_boundary/PROTOCOL.md": "753c1e56f73162a202c70fe2e4ac661102c7569bdae3af31f281a386476f839c",
+        "project/experiments/epoch_boundary/prove.py": "38d8d857624765bae846a277c9365799021a15b9cdfb69e5952be8b32382a511",
+        "project/experiments/epoch_boundary/receive.py": "bb3a11b09277305b5696085f459c440ff48cf3752b7bff300efd488c58cf3ff6",
+        "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+        "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+        "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445"
+      },
+      "issue": 92,
+      "protocol": "max32 terminal discard; actual full-core and boundary tests"
+    },
+    "manifest_sha256": "2cf370db0388ec2feeaa09f555dee7b4ccebfb7bfd45ef17c2bb88846b393bd1",
+    "scope_annotations": 5
+  },
+  "baseline_resources": {
+    "area_um2_logic_only": 52415.566,
+    "mapped_cells": 35422,
+    "DFF_X1": 3823,
+    "generic_register_bits_including_frame_wrapper": 4309,
+    "memory_cells": [
+      {
+        "WIDTH": 128,
+        "SIZE": 1024,
+        "RD_PORTS": 1,
+        "WR_PORTS": 1
+      }
+    ],
+    "memory_bits": 131072,
+    "multipliers": [
+      {
+        "A_WIDTH": 8,
+        "B_WIDTH": 8,
+        "Y_WIDTH": 16,
+        "A_SIGNED": 1,
+        "B_SIGNED": 1
+      },
+      {
+        "A_WIDTH": 8,
+        "B_WIDTH": 8,
+        "Y_WIDTH": 16,
+        "A_SIGNED": 1,
+        "B_SIGNED": 1
+      },
+      {
+        "A_WIDTH": 8,
+        "B_WIDTH": 8,
+        "Y_WIDTH": 16,
+        "A_SIGNED": 1,
+        "B_SIGNED": 1
+      },
+      {
+        "A_WIDTH": 8,
+        "B_WIDTH": 8,
+        "Y_WIDTH": 16,
+        "A_SIGNED": 1,
+        "B_SIGNED": 1
+      },
+      {
+        "A_WIDTH": 8,
+        "B_WIDTH": 8,
+        "Y_WIDTH": 16,
+        "A_SIGNED": 1,
+        "B_SIGNED": 1
+      },
+      {
+        "A_WIDTH": 8,
+        "B_WIDTH": 8,
+        "Y_WIDTH": 16,
+        "A_SIGNED": 1,
+        "B_SIGNED": 1
+      },
+      {
+        "A_WIDTH": 8,
+        "B_WIDTH": 8,
+        "Y_WIDTH": 16,
+        "A_SIGNED": 1,
+        "B_SIGNED": 1
+      },
+      {
+        "A_WIDTH": 8,
+        "B_WIDTH": 8,
+        "Y_WIDTH": 16,
+        "A_SIGNED": 1,
+        "B_SIGNED": 1
+      },
+      {
+        "A_WIDTH": 32,
+        "B_WIDTH": 32,
+        "Y_WIDTH": 64,
+        "A_SIGNED": 1,
+        "B_SIGNED": 1
+      }
+    ],
+    "source": {
+      "commit": "588f61c781ecf3be7fca626c8aae4819b775adfd",
+      "sources": {
+        "project/rtl/runtime_cache/chain85.sv": "aa1b0f6db0133dfa0db18e748ee8b69ce1e846300c31fcdb630502d051bbc8d0",
+        "project/rtl/runtime_cache/mfront85.sv": "04391b2eaed06f8dda19c33ddbeee30c49ad6ce233fe874ad26f712bef7014eb",
+        "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+        "project/rtl/runtime_cache/norm84.sv": "cd6532b9eaabe193e11d19829bf069bcf514bc7fb32b674dbb429fe262ea6e4b",
+        "project/rtl/runtime_cache/README.md": "cc31e6d5bb5760d990fbb9a5df7c1af7ba809f998d67f820a7cf2a157d308a80",
+        "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+        "project/experiments/runtime_cache/chain_sim.cpp": "b0152d3d48741304fc782db035c74dfc06bcb8013295f3641a25925926e33e95",
+        "project/experiments/runtime_cache/inputs.py": "82430b98bae5eacc97b3c96890bc741ac5a3acbba03aef62a39e38267af3fbbc",
+        "project/experiments/runtime_cache/norm_reference.py": "15588c9198769a5358b3a453b6d0032d79dff02b00c39be04659b4d8552f6172",
+        "project/experiments/runtime_cache/PROTOCOL.md": "ddf860a44a451d8696891557a069a8d46c4886ba7f871360193cf9553bd26988",
+        "project/experiments/runtime_cache/run.py": "469b6f7a3e7dfb32c2feb5ad8bb49e7285ba94f9427dc4265c4828dd1083bd94",
+        "project/experiments/runtime_cache/verify.py": "9d61df2440012d7c51b12df513a35d1a947867784303cb4855251fef5bd04505",
+        "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+        "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a"
+      },
+      "issue": 85,
+      "fix": "Verilator abort reserved name and C++auto width"
+    },
+    "manifest_sha256": "fe810f503fd4cca0fe1b8e08eab6308562922dc906c2759ce0688ec13d730b21",
+    "scope_annotations": 5
+  },
+  "original_failure_manifest_sha256": "a3e0dfc491fd178ed5baa080cfe9cf18a0b1ba41f5acb750efc0734192e98622",
+  "limits": [
+    "One-step universal combinational safety with arbitrary current state, not whole-core reachable-state or liveness proof.",
+    "Epoch-only backdoor injection is verification-only, not a production register write port; real32bit datapath and full consumers executed.",
+    "No epoch wrap or new command at max; only coordinated fabric hard reset restarts.",
+    "Existing2slot external queue at least320bits payload+tag plus control and32bit metadata wires are outside core logic area.",
+    "Store82 wrapper excluded from area. No gate/STA/macro/route qualification inherited from86/88, no CDC/arbitrary reordering/multi-context/whole-model claim."
+  ]
+}
