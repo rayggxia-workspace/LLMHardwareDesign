@@ -1,5 +1,9 @@
 # Liangruizhi 的进度
 
+## 2026-10-25 Issue106真实共享服务实施中
+
+Issue106 / task/106-shared-services / D:/Projects/LLMHardwareDesign-shared-services 已认领并合入99/102已发布基线。正在抽离唯一16KiB、8S8、S32、SFU、link及实际结果导出/取消排空；数学边界保留，尚未运行或验收。104 GDN/98物理独立进行；本任务不扩通用ISA/GEMM/KV append。认领回执work106、预登记协议project/experiments/shared_services/PROTOCOL.md；root最终发布，登记PR5 pending，看板待管理员。
+
 ## 2026-10-25 Issue102完整GQA本地交付待PR
 
 [Issue102](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/102)，task/102-attention-rtl，D:/Projects/LLMHardwareDesign-attention-rtl；身份Liangruizhi/182389313及最新102/98/99/55/63/PR已核。两路79query632head全值、两路71cmd恢复独立PASS；原map门级18query144head同RTL+独立oracle，4真实文件负例拒绝。3/9limb、128iter SFU及全部宽控制计入53187.764µm²逻辑图；单16KiB/8S8/1S32。76真实query含61 actual cached，不以64full代替。单owner/version单调修复、caller committed prefix范围明确。
