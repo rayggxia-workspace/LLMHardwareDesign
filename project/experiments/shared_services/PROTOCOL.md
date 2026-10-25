@@ -33,3 +33,5 @@ R保持99 abort排空及原子root写义务；candidate完整export后才允许a
 ## 首轮审查修订（首次正式统一版前）
 
 根审查发现cfg_pending响应遇soft_abort时公开valid为0而原内部take仍可消费，已修复为同资格门控；service_accept在硬reset时亦屏蔽。旧phase1/2保留为原型，正式混合和恢复重跑同一修订RTL。新增读/写ACK各4拍冲突、保持响应恢复唯一握手，完整后继命令确认。32位末值通过实际top epoch Q边界注入，资格仅RTL，不传播到门级。
+
+正式phase3两路7命令混合、两路23命令恢复已独立通过；补充phase5再验证M已接受S32响应、A已接受内部store ACK取消，恢复扩为27命令/6abort。RTL和正常sim driver字节不变；build/run/receiver只校验实际编译依赖（所有RTL+sim，qualification二进制另加qualification），不把未被编译的旁支driver变更当成原二进制变化。`compute_cycles`是继承的controller active计数，R包含OFFER等待导出/决定，不能与export_cycles相加；统一端到端本切片使用D cycles，非模型端到端。
