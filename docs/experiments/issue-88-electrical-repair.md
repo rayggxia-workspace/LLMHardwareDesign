@@ -51,9 +51,11 @@ Issue86 的原始标准单元网表已通过选定完整整数消费者，却存
 
 源码、命令、Slurm资源、工具版本/SHA、输入版本、失败日志与结果位置以work/Liangruizhi/88/execution.json、11个冻结phase binding和delivery-index.json为准。精确source/reception/工具链commit由索引给出，不能拿最新HEAD替代旧执行版本。所有输出目录要求新建，不覆盖既有结果。主会话统一push/PR/Issue/看板；本子任务未推送、未开PR、未自行合并。
 
-最终57个自有作业全部结束：51 COMPLETED、2 FAILED、4 CANCELLED。失败为原导出常量缺失和一次过早接收；4取消均是原失败准备步骤的未执行依赖。最终独立接收为phase10@e98a16f，工具/归档为phase11@c85c993；11阶段98份原Git源码均逐字节核验通过。
+主归档覆盖57个自有作业；另增加1个独立面积拆分元数据作业90842，合计58个全部结束：52 COMPLETED、2 FAILED、4 CANCELLED。失败为原导出常量缺失和一次过早接收；4取消均是原失败准备步骤的未执行依赖。最终独立接收为phase10@e98a16f，工具/归档为phase11@c85c993；11阶段98份原Git源码均逐字节核验通过。
 
 - `full-results.zip`：128079530字节，851成员，SHA-256 `c9ae7a88887a3a987f25a499f6cdd940f41164fe9705c594eb2b969457627c25`；服务器位置 `/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/full-results.zip`。
 - `selected.zip`：5378081字节，738成员，SHA-256 `b8e5775d469ab787f412ad93329a1238ce9c4f2becfe2f9ecfffa53845cffefd`；服务器位置 `/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/delivery01/selected.zip`。
 
 完整/精选包服务器逐成员校验通过；精选包本机738成员字节核验通过。完整包128.08MB留授权服务器，5.38MB精选包进入仓库；后者含数学接收、真实输出、时序/负载/源绑定，不能替代原始完整数据重跑。
+
+补充面积拆分：服务器90842直接复用已冻结phase10原Liberty解析器与all03完整库存，逐项断言“新增BUF/tie面积+原单元resize增量=总面积增量”，不重跑或改写原gate/STA。v0..3分别为5176.360+1167.740、4606.056+977.284、5323.724+1120.126、4809.014+996.702um²。补充收据cost-split.json的SHA-256为ee9e3b3871522468577fa339703192902a61cf3ab962594d8ecc67e95db5b214，源绑定与主归档phase10完全相同，实际inline命令另存work88/cost-split-command.json；它是主归档之后的单独补充文件，原两个zip保持不变。

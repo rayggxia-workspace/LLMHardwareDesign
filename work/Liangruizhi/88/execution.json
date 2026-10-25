@@ -1795,6 +1795,32 @@
       "phase": "phase11",
       "binding_sha256": "1e1e02f41b709ed543b72fdc53d6d3254ac35479a333cfb479bc0f7f8634ffa8",
       "record": "byte-selected01-submit.json"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-u",
+        "-B",
+        "-c",
+        "import sys,json,hashlib,pathlib,decimal\nroot=pathlib.Path(\"/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025\")\nphase=root/\"phase10\"\nsys.path.insert(0,str(phase/\"project/experiments/electrical_repair\"))\nfrom structure import library\nfrom probe import LIB,sha\nbd=json.load(open(phase/\"binding.json\"))\nfor n,h in bd[\"sources\"].items():\n assert sha(phase/n)==h\nreceipt=root/\"receive-all03/receipt.json\"\nx=json.load(open(receipt));lib=library(LIB);rows=[]\nfor v in x[\"variants\"]:\n c=v[\"structure\"];added=sum((lib[n][\"area\"]*count for n,count in c[\"added_histogram\"].items()),decimal.Decimal(0));resized=sum((lib[r[\"after\"]][\"area\"]-lib[r[\"before\"]][\"area\"]for r in c[\"resized\"]),decimal.Decimal(0));total=decimal.Decimal(c[\"after_area_um2\"])-decimal.Decimal(c[\"before_area_um2\"]);assert added+resized==total\n rows.append({\"variant\":v[\"variant\"],\"new_BUF_tie_area_um2\":str(added),\"resized_original_cell_increment_um2\":str(resized),\"total_increment_um2\":str(total),\"resized_original_cells\":len(c[\"resized\"])})\nout=root/\"cost-split01\";out.mkdir(exist_ok=False)\n(out/\"receipt.json\").write_text(json.dumps({\"status\":\"PASS_INDEPENDENT_AREA_DECOMPOSITION\",\"source_binding\":bd,\"input_receipt_sha256\":sha(receipt),\"library_sha256\":sha(LIB),\"variants\":rows},indent=2)+\"\\n\")\nprint(\"PASS_INDEPENDENT_AREA_DECOMPOSITION\")\n"
+      ],
+      "wrap": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B -c 'import sys,json,hashlib,pathlib,decimal\nroot=pathlib.Path(\"/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025\")\nphase=root/\"phase10\"\nsys.path.insert(0,str(phase/\"project/experiments/electrical_repair\"))\nfrom structure import library\nfrom probe import LIB,sha\nbd=json.load(open(phase/\"binding.json\"))\nfor n,h in bd[\"sources\"].items():\n assert sha(phase/n)==h\nreceipt=root/\"receive-all03/receipt.json\"\nx=json.load(open(receipt));lib=library(LIB);rows=[]\nfor v in x[\"variants\"]:\n c=v[\"structure\"];added=sum((lib[n][\"area\"]*count for n,count in c[\"added_histogram\"].items()),decimal.Decimal(0));resized=sum((lib[r[\"after\"]][\"area\"]-lib[r[\"before\"]][\"area\"]for r in c[\"resized\"]),decimal.Decimal(0));total=decimal.Decimal(c[\"after_area_um2\"])-decimal.Decimal(c[\"before_area_um2\"]);assert added+resized==total\n rows.append({\"variant\":v[\"variant\"],\"new_BUF_tie_area_um2\":str(added),\"resized_original_cell_increment_um2\":str(resized),\"total_increment_um2\":str(total),\"resized_original_cells\":len(c[\"resized\"])})\nout=root/\"cost-split01\";out.mkdir(exist_ok=False)\n(out/\"receipt.json\").write_text(json.dumps({\"status\":\"PASS_INDEPENDENT_AREA_DECOMPOSITION\",\"source_binding\":bd,\"input_receipt_sha256\":sha(receipt),\"library_sha256\":sha(LIB),\"variants\":rows},indent=2)+\"\\n\")\nprint(\"PASS_INDEPENDENT_AREA_DECOMPOSITION\")\n'",
+      "slurm_argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name=lrz-i88-cost-split01",
+        "--partition=c96",
+        "--cpus-per-task=1",
+        "--time=00:10:00",
+        "--output=/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025/cost-split01-%j.log",
+        "--wrap",
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -u -B -c 'import sys,json,hashlib,pathlib,decimal\nroot=pathlib.Path(\"/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025\")\nphase=root/\"phase10\"\nsys.path.insert(0,str(phase/\"project/experiments/electrical_repair\"))\nfrom structure import library\nfrom probe import LIB,sha\nbd=json.load(open(phase/\"binding.json\"))\nfor n,h in bd[\"sources\"].items():\n assert sha(phase/n)==h\nreceipt=root/\"receive-all03/receipt.json\"\nx=json.load(open(receipt));lib=library(LIB);rows=[]\nfor v in x[\"variants\"]:\n c=v[\"structure\"];added=sum((lib[n][\"area\"]*count for n,count in c[\"added_histogram\"].items()),decimal.Decimal(0));resized=sum((lib[r[\"after\"]][\"area\"]-lib[r[\"before\"]][\"area\"]for r in c[\"resized\"]),decimal.Decimal(0));total=decimal.Decimal(c[\"after_area_um2\"])-decimal.Decimal(c[\"before_area_um2\"]);assert added+resized==total\n rows.append({\"variant\":v[\"variant\"],\"new_BUF_tie_area_um2\":str(added),\"resized_original_cell_increment_um2\":str(resized),\"total_increment_um2\":str(total),\"resized_original_cells\":len(c[\"resized\"])})\nout=root/\"cost-split01\";out.mkdir(exist_ok=False)\n(out/\"receipt.json\").write_text(json.dumps({\"status\":\"PASS_INDEPENDENT_AREA_DECOMPOSITION\",\"source_binding\":bd,\"input_receipt_sha256\":sha(receipt),\"library_sha256\":sha(LIB),\"variants\":rows},indent=2)+\"\\n\")\nprint(\"PASS_INDEPENDENT_AREA_DECOMPOSITION\")\n'"
+      ],
+      "stdout": "90842",
+      "phase": "phase10",
+      "binding_sha256": "62e333b01dca713099a22bd22ac89a6e61d5f9cc3132a7f6f15ffa5b5f2758a9",
+      "meaning": "Post-archive metadata arithmetic using existing frozen Liberty parser and fully received inventory; exact inline expression preserved here.",
+      "record": "cost-split01-submit.json"
     }
   ],
   "phases": {
@@ -3649,10 +3675,40 @@
       "AllocCPUS": "1",
       "MaxRSS": "0",
       "NodeList": "node13"
+    },
+    {
+      "JobID": "90842",
+      "JobName": "lrz-i88-cost-split01",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:02",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90842.batch",
+      "JobName": "batch",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:02",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "0",
+      "NodeList": "node13"
+    },
+    {
+      "JobID": "90842.extern",
+      "JobName": "extern",
+      "State": "COMPLETED",
+      "Elapsed": "00:00:02",
+      "ExitCode": "0:0",
+      "AllocCPUS": "1",
+      "MaxRSS": "0",
+      "NodeList": "node13"
     }
   ],
   "job_state_counts": {
-    "COMPLETED": 51,
+    "COMPLETED": 52,
     "FAILED": 2,
     "CANCELLED": 4
   }
