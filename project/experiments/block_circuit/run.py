@@ -25,6 +25,9 @@ def main():
   elif a.task=='simulate':
    im=json.loads((a.input/'manifest.json').read_text());bm=json.loads((a.build/'manifest.json').read_text())
    if bm['status']!='BUILT_NOT_EXECUTED'or bm['mode']!=a.mode or sha(a.build/bm['binary']['path'])!=bm['binary']['sha256']:raise ValueError('exact built mode/binary')
+   for path,digest in binding['sources'].items():
+    if path.startswith('project/rtl/')or path.endswith('/sim.cpp'):
+     if bm['source']['sources'].get(path)!=digest:raise ValueError('built RTL/testbench differs from frozen execution source')
    for entry in im['artifacts']:
     if sha(a.input/entry['path'])!=entry['sha256']:raise ValueError('exact input artifact')
    (a.out/'rom.hex').write_bytes((a.input/'rom.hex').read_bytes());m['input_manifest_sha256']=sha(a.input/'manifest.json');m['build_manifest_sha256']=sha(a.build/'manifest.json')

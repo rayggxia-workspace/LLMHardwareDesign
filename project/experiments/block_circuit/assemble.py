@@ -63,6 +63,7 @@ class Catalog:
   if guard:out.append(byte(11,0,check=True))
   return t['outputs']
  def save(self,out):
+  if len(self.words)%2:self.words.append(15)
   data=b''.join(struct.pack('<Q',x)for x in self.words)
   if len(data)>32<<20:raise ValueError('bounded program deployment32MiB within EXT128MiB')
   (out/'program.bin').write_bytes(data)
@@ -76,14 +77,14 @@ def collect(primary,out,binding,granite=()):
  if old['source']['micro_sha256']!=sha(BASE):raise ValueError('baseline exact source')
  records=json.loads((primary/'cases.json').read_text());C=Catalog().build();vectors=[]
  for i,r in enumerate(records):
-  op=r['op'];shift=int(r['shift']);t=C.templates[(op,shift)];actual=template(op,shift,int(r['a']),int(r['b']))
+  op=r['op'];original_shift=int(r['shift']);shift=original_shift if C.tables[op][1]>1 else 0;t=C.templates[(op,shift)];actual=template(op,original_shift,int(r['a']),int(r['b']))
   if actual['words']!=t['words']or actual['topology']!=r['topology_sha256']:raise ValueError('input-independent source topology '+r['case'])
   f=bytearray(512)
   for key,src,val in [('input_a',256,r['a']),('input_b',288,r['b'])]:
    if key in t['fields']:
     n=t['fields'][key][1];encode_at(f,src,int(val),n,not(op=='add_u128'or op=='udiv_u128'or op=='shl_u128'or op=='isqrt_u128'or(op=='mul_s32_u16'and key=='input_b')or(op=='div_rne_s128_u64_i32'and key=='input_b')))
   f[496]=shift
-  vectors.append({'name':r['case'],'kind':'primitive','op':op,'a':r['a'],'b':r['b'],'shift':shift,'source':r['source'],'source_expected':r.get('source_expected'),'pc':C.wrappers[op],'lane':i%8,'expected_status':0,'input':f.hex(),'outputs':t['outputs'],'source_result':r['result']})
+  vectors.append({'name':r['case'],'kind':'primitive','op':op,'a':r['a'],'b':r['b'],'shift':original_shift,'hardware_shift_selector':shift,'source':r['source'],'source_expected':r.get('source_expected'),'pc':C.wrappers[op],'lane':i%8,'expected_status':0,'input':f.hex(),'outputs':t['outputs'],'source_result':r['result']})
  # ROM words are read by RTL memory, not supplied as host-computed results.
  for i,line in enumerate((primary/'rom.requests').read_text().splitlines()):
   address,value=map(int,line.split());f=bytearray(512);f[256]=address&255;f[257]=address>>8
