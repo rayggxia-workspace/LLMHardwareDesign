@@ -1,5 +1,9 @@
 # Liangruizhi 的进度
 
+## 2026-10-25 Issue104 完整双head GDN待主会话交付
+
+[Issue104](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/104)，task/104-gdn-state，D:/Projects/LLMHardwareDesign-gdn-state。本人服务器完成native32/portable12两路完整双头连续RTL、真实2次重标、两路35恢复命令、28完整边界、4177宽乘及控制/重SHA负例；4真实rawgate与4同驱动RTL全部state/Y/stage/row/cycle相等。单S16KiB1RW、一动态S32+constant49地址逻辑，logic-only53065.404µm²，外部709776B active/1MiB库存显式记账。全包59.17MB/818成员、精选1.34MB/147成员及8phase134原Git源码字节已核。[报告](../../docs/experiments/issue-104-gdn-state.md)/[交接](../../docs/handoffs/2026-10-25-issue-104-gdn-state.md)。本地已整理、尚未push/PR，主会话统一交付，不done；106共享整合/消费者/宏STA仍待验，登记/看板pending。
+
 ## 2026-10-25 Issue99 R状态单元待主会话发布
 
 [Issue99](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/99)，task/99-r-state，D:/Projects/LLMHardwareDesign-r-state。仅本人服务器完成单head D128×N256连续72步S32 RTL，两路各82记录与独立bigint/原72一致；真实position27重标。两路各31恢复协议记录及19固定边界通过；4真实rawgate检查点与同driverRTL逐码/周期/IO一致，无门级Qpoke。实际一S32、一16KiB1RW，logic-only41708.534µm²，外部库存/5beat协议/peer holder/复位前费用全列。3个文件级重SHA负例拒绝。

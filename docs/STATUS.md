@@ -1,5 +1,7 @@
 # 当前状态
 
+- 2026-10-25 [Issue104](experiments/issue-104-gdn-state.md)：Qwen3.5完整双head GDN native32/portable12×quiet/背压、真实2次重标和恢复/宽乘/完整边界已通过；4实际rawgate与同驱动RTL逐位等周期。单16KiB1RW/一S32宽分解，logic-only53065.404µm²，1MiB外存有限trial/proposal/双metadata+root全部计价。59.17MB完整包/1.34MB精选/134原Git字节已验；待主会话PR/审查，不done、不等于106共享整合/物理签核或完整模型整数质量。
+
 - 2026-10-25 [Issue93](experiments/issue-93-gamma-stream.md)：流式gamma在单16KiB/同8S8+1S32上保留6Granite完整链，新增2Gemma H2560全行norm并保留4KiB A/512B frame；两路独立整数接收与有限恢复PASS，paired logic-only+4.20291%，非同I/O加速或物理资格。cost02已从真实128bit桥纠正传输字节，主包/精选/7phase108原Git字节通过；补充2项文件重SHA完整receiver语义负例及补充包独立通过。主会话尚待PR交付，不done，后续97/98独立推进。
 
 - 2026-10-25 [Issue92](experiments/issue-92-epoch-boundary.md)：修复实际32位epoch耗尽后的同tag迟到排空，并屏蔽reset/abort时cfg/done假握手。60正常完整消费者、4边界完整输出、8配置冲突、2完成冲突及10实际门锥SAT性质通过；33服务器作业结束，双包/精选158成员及5phase92源字节通过。原缺陷反例保留；52387.902µm²仅logic-only，不继承88电气资格。 成果待独立PR审查，未done；下一步#93及实际整合网表，不把旧电气资格移植到新电路。
