@@ -249,3 +249,10 @@ PR待审查/合并，审查人/管理员待指定，未done；后续在已有授
 ## 89838最终状态
 
 通用Yosys作业89838于2026-10-23 09:55:54 CST达到20分钟时限，Slurm最终TIMEOUT（elapsed20:28，batch0:15）。日志确认已进入PROC_MUX，未完成后续memory_collect/check/stat/JSON；未证明综合通过，也不能把工具超时解释为RTL功能错误。原始日志和SHA索引已保存work/Liangruizhi/29/audits/synth-timeout01/。 下一步保留同一源码，使用单配置-defer与RTLIL检查点分开前端和proc成本；该后续检查尚未执行。先前运行中快照仅代表其采集时刻。
+
+
+## 2026-10-25 Issue88主会话接收与交付
+
+[Issue88](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/88)，负责人Liangruizhi。四原84静态变体通过8次完整门级消费者、原全部cell/pin结构与两档负载全受检setup/hold及内部slew/cap检查；所有BUF/tie/drive-strength成本计入，面积63947.730/55713.966/65404.878/57432.858µm²。58个作业结束，服务器双包、本机738成员及11phase98源字节通过。仍是Nangate45、零线RC、理想时钟和store切分，不能扩展到85/92新硬件或全Block制造资格。
+
+分支task/88-electrical-repair，工作目录D:/Projects/LLMHardwareDesign-electrical-repair。实验源commit按索引冻结，文档/依赖合并不改实验源。主会话正上传PR，最终链接另附；待审查合并而非done。登记management-hub PR5 pending；board.json缺失/实际projectItems缺read:project，在线状态unverified、同步pending，管理员/审查人待指定。下一步#93流式gamma与完整V/S消费者及新网表物理资格，M/V/A/R/S/D整体仍未完成。

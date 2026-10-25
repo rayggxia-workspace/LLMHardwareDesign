@@ -1,5 +1,7 @@
 # 当前状态
 
+- 2026-10-25 [Issue88](experiments/issue-88-electrical-repair.md)：四原84静态变体通过8次完整门级消费者、原全部cell/pin结构与两档负载全受检setup/hold及内部slew/cap检查；所有BUF/tie/drive-strength成本计入，面积63947.730/55713.966/65404.878/57432.858µm²。58个作业结束，服务器双包、本机738成员及11phase98源字节通过。仍是Nangate45、零线RC、理想时钟和store切分，不能扩展到85/92新硬件或全Block制造资格。 成果待独立PR审查，未done；下一步#93及实际整合网表，不把旧电气资格移植到新电路。
+
 - 2026-10-25 [Issue86门级/时序](experiments/issue-86-gate-sta.md)：四旧84变体×安静/背压共8条完整门级消费者，严格独立整数及原RTL输出/周期一致；全部DFF R2R覆盖。实际STA却有数千slew/cap违例，不能接受Fmax/物理面积排名；由Issue88继续有界buffer/resize并核新增成本。真实宏/RC/CTS未包含，85新网表不继承资格。全包19.16MB/精选1.97MB和8phase57源码字节接收通过，交付待审查。
 - 2026-10-25 [Issue84](experiments/issue-84-cache-share.md)：84条同函数完整M消费者、8192仲裁乘法和14份严格独立接收通过；同16KiB/128bit1RW缓存减少34.68%周期，cache+share逻辑面积比基线少10.38%，非总芯片PPA。额外约8拍SRAM等待会抵消缓存收益，运行时旁路/中止恢复与门级/受限STA由Issue85/86独立推进。279.76MB完整包服务器、2.90MB精选及7phase126条原Git源字节核验通过。任务PR待审查合并，登记/看板pending，不是六类Block设计全部完成。
 - 2026-10-25 [Issue82/PR83](experiments/issue-82-norm-circuit.md)：服务器完成三种精确norm和真实K512/8expert/H1536 M全消费者、raw单位传播与参数锁存，正式174命令/重SHA负例独立PASS。norm快76.19%而整条消费者只快2.166%/1.842%，logic-only面积增26.44%，优先A喂数/乘法器复用，SFU4不冻结默认。100作业97完成/3失败留档、24轻量检查、493.86MB全包/3.28MB精选与8phase150原源字节核验通过；宏/STA/通用V整合/整模型未验。待审查合并非done，登记pending、看板缺配置/read:project待同步。

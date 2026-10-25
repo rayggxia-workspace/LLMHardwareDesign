@@ -13,3 +13,6 @@
 恢复第一步：核最新AGENTS/Skill、Issue88/85/92及关联PR/成员进度；接收当前index和原源SHA，再在新独立Issue/目录基于准确目标硬件版本开展同cut/同负载的placement/估计线RC，或先接入85/92新硬件重新综合/电气/门级验证。现有工具均可只读复用，不安装：Nangate45研究Liberty位于issue80-block-circuit-20261025/nangate45-reference/NangateOpenCellLibrary_typical.lib；LEF/techLEF位于现有bazel-repacked Docker的OpenROAD-flow-scripts/flow/platforms/nangate45/lef；准确完整路径、SHA、OpenROAD/OpenSTA启动loader和SIF见environment.json及原命令。所有输出必须新目录。原则性宏/目标条件由团队提供，不能擅造；独立logic-only研究可继续但需持续标清限制。
 
 追加的cost-split.json为归档后的独立服务器元数据拆分，SHA ee9e3b3871522468577fa339703192902a61cf3ab962594d8ecc67e95db5b214，输入all03与已核验phase10绑定。原主包/精选zip不变；准确命令、独立byte与输入绑定收据见work88/cost-split-command.json和results/issue-88/cost-split-bytes.json。
+
+
+主会话接收：已核验本人身份与最新成员55/63、PR58/79；本分支同步最新父分支task/86-gate-sta。旧实验的source binding/原始包未改变；PR待提交后的实际读回记录，不把子任务“未push”历史解释为当前最终状态。
