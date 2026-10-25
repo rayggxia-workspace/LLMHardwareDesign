@@ -1,5 +1,11 @@
 # Liangruizhi 的进度
 
+## 2026-10-25 UTC+08 Issue97专用V完整消费者交付待同步
+
+[Issue97](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/97)，task/97-v-consumer，D:/Projects/LLMHardwareDesign-v-consumer。指定身份/最新55/63/93/98/99已核。原gate/up由RTL生成SiLU/MID/整512 δ/A8，再真实M→merge/residual→93流式norm；两路各50cmd/29输出与22实际重SHA负例独立PASS，4路raw gate8输出及4重SHA负例PASS。单16KiB/8S8+1S32，新增宽控制全部映射70,102.970µm²，不含宏/物理，非通用80 V ISA或六Block完成。
+
+50本人Slurm全部终态40完成/5失败保留/5自有取消；完整750458058B服务器，精选220674B/178及10phase153原Git字节PASS。[报告](../../docs/experiments/issue-97-v-consumer.md)/[交接](../../docs/handoffs/2026-10-25-issue-97-v-consumer.md)。本地已整理，父会话待push/PR/Issue状态，未合并非done；登记PR5 pending、看板缺配置/read:project待管理员。98新网表物理、99 R并行，在线GQA A与通用库仍缺，继续真实证据推进。
+
 ## 2026-10-25 Issue92 epoch边界交付待同步
 
 [Issue92](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/92)，task/92-epoch-boundary。本人服务器33作业均结束；同版60完整恢复+4终止边界输出和10条实际门锥安全性质通过，补reset/abort cfg/done取消优先。旧RTL迟到max-tag反例保留；无新增状态，logic-only52387.902µm²，宏/tag布线/STA/整核liveness未验。96.41MB全包留服务器、0.550MB精选/158成员及5phase92原Git源已核。
