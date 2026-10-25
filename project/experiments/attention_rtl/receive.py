@@ -76,19 +76,39 @@ class Oracle:
     for key,computed in [('QK32',dot),('scoreQ12',scores),('expQ30',exps),('P15',p)]:need(np.array_equal(computed,z[key][:,idx,:n]),'original64 valid-prefix '+key)
     need(np.array_equal(pv,z['PV32'][:,idx]),'original64 full PV')
   answer={'qk':dot.reshape(-1).tolist(),'score':scores.reshape(-1).tolist(),'exp':exps.reshape(-1).tolist(),'sum':sums.tolist(),'P':p.reshape(-1).tolist(),'out':pv.reshape(-1).tolist()};self.answers[name]=(r,answer,int(eligible.sum()));return self.answers[name]
+
+def qualification_plan():
+ e=0;accepted=0;rows=[];errors=[];aborts=[]
+ def good(role,name='synthetic-one'):
+  nonlocal e,accepted
+  e+=1;accepted+=1;rows.append((name,role,e))
+ good('initial-first','p128-full-t0');good('initial-prefill-last','p128-full-t127');good('initial-decode-last','p128-full-t159')
+ specs=[('length-zero',16,0),('length-over',16,0),('position',16,0),('window',16,0),('multiplier',16,0),('misalign',16,0),('alias',16,0),('address-end',16,0),('version-zero',16,0),('owner-change',17,0),('old-version',17,0),('same-version-scale',17,0),('same-version-address',17,0),('same-version-length',17,0),('Q-minus128',30,16),('K-minus32768',30,16),('V-minus32768',30,34),('score-overflow',32,256),('LUT-zero',34,17),('Psum-corruption',36,106)]
+ for role,status,tx in specs:
+  if role=='same-version-length':good('setup-length','p128-full-t127')
+  e+=1;accepted+=1;errors.append({'role':role,'status':status,'epoch':e,'transactions':tx,'zero_external_required':tx==0});good('recover-'+role)
+ good('cache-A');good('cache-B');e+=1;accepted+=1;errors.append({'role':'A-B-A','status':17,'epoch':e,'transactions':0,'zero_external_required':True});good('recover-A-B-A')
+ for target in(3,10,12,22,25,27,38,41):
+  e+=1;accepted+=1;old=e;e+=1;aborts.append({'stage':target,'observed':True,'old_epoch':old,'new_epoch':e});good('recover-stage-'+str(target))
+ e+=2;accepted+=1;good('recover-stale-response');e+=2;good('recover-cfg-priority');e+=2;accepted+=1;good('recover-done-cancel');e=0xfffffffe;good('terminal-last');e=0;good('after-coordinated-reset')
+ return rows,errors,aborts,accepted
+
 def receive(run,inp,oracle,expected=None):
  m=json.loads((run/'manifest.json').read_text());artifacts(run,m);need(m['status']=='RTL_EXECUTED_NOT_RECEIVED','executed status');need(m['input_manifest_sha256']==sha(inp/'manifest.json'),'input manifest exact')
  binding=json.loads((ROOT/'binding.json').read_text())
  for n,h in binding['sources'].items():
-  if n.startswith('project/rtl/')or n.endswith('/sim.cpp'):need(m['source']['sources'].get(n)==h,'actual RTL/driver byte binding '+n)
+  if n.startswith('project/rtl/')or n.endswith('/'+('qualification.cpp'if m['suite']=='qualification'else'sim.cpp')):need(m['source']['sources'].get(n)==h,'actual RTL/driver byte binding '+n)
  records=[json.loads(line)for line in(run/'actual.jsonl').read_text().splitlines()];need(records,'actual rows')
+ qualification=m['suite']=='qualification'
  selected=[r['name']for r in oracle.rows]
- if m['pilot']==1:selected=[selected[i]for i in(0,7,8,39,76,78)]
+ if qualification:
+  planned,errors,aborts,accepted=qualification_plan();selected=[r[0]for r in planned]
+ elif m['pilot']==1:selected=[selected[i]for i in(0,7,8,39,76,78)]
  elif m['pilot']==2:selected=[selected[i]for i in(72,75,77)]
  need([r['name']for r in records]==selected,'exact preregistered rows/order')
  epochs=[];counts={'queries':len(records),'heads':8*len(records),'QK_values':0,'PV_values':0}
  for x in records:
-  need(set(x)==KEYS,'exact result keyset');r,want,eligible=oracle.answer(x['name']);n=r['length'];integer(x['status'],0,0,'exact success int');need(x['role']==('pilot'if m['pilot']else'complete'),'role')
+  need(set(x)==KEYS,'exact result keyset');r,want,eligible=oracle.answer(x['name']);n=r['length'];integer(x['status'],0,0,'exact success int');need(x['role']==(planned[len(epochs)][1]if qualification else 'pilot'if m['pilot']else'complete'),'role')
   for key in KEYS-{'name','role','qk','score','exp','sum','P','out'}:integer(x[key],0,(1<<64)-1,'exact uint '+key)
   need(x['length']==n,'length');epochs.append(x['epoch'])
   for key,values in want.items():need(type(x[key])is list and len(x[key])==len(values)and all(type(v)is int for v in x[key])and x[key]==values,'independent all-value '+key)
@@ -96,11 +116,24 @@ def receive(run,inp,oracle,expected=None):
   for key,value in expected_counts.items():need(x[key]==value,'derived finite-port count '+key)
   need(x['cycles']>=x['macs']//8+128*x['divides'],'actual serial arithmetic lower bound')
   counts['QK_values']+=8*n;counts['PV_values']+=1024
- need(epochs==list(range(1,len(records)+1)),'same-core epochs')
- p=json.loads((run/'actual.jsonl.protocol.json').read_text());need(set(p)==set('schema accepted same_core_no_per_case_reset held_done latched_parameters canary_bytes fabric_high_water external_accepted'.split()),'protocol keys');need(p['schema']=='a102-protocol/1','protocol version')
- for k in('same_core_no_per_case_reset','held_done','latched_parameters'):need(p[k]is True,'exact protocol bool '+k)
- for k in('accepted','canary_bytes','fabric_high_water','external_accepted'):integer(p[k],0,(1<<32)-1,'protocol uint '+k)
- need(p['accepted']==len(records)and p['canary_bytes']==64 and p['fabric_high_water']==1 and p['external_accepted']==sum(r['transactions']for r in records),'actual protocol counts')
+ need(epochs==([r[2]for r in planned]if qualification else list(range(1,len(records)+1))),'same-core epochs')
+ p=json.loads((run/'actual.jsonl.protocol.json').read_text())
+ if qualification:
+  keys=set('schema accepted errors stage_aborts actual_soft_aborts_before_reset actual_stale_before_reset coordinated_resets same_core_no_per_case_reset held_done latched_parameters cfg_abort_priority done_abort_priority terminal_injected_RTL_only terminal_no_wrap canary_bytes fabric_high_water success_roles error_records abort_records'.split());need(set(p)==keys,'qualification exact keys');need(p['schema']=='a102-qualification/1','qualification version')
+  for key in('same_core_no_per_case_reset','held_done','latched_parameters','cfg_abort_priority','done_abort_priority','terminal_injected_RTL_only','terminal_no_wrap'):need(p[key]is True,'qualification exact bool '+key)
+  for key,value in {'accepted':accepted,'errors':21,'stage_aborts':8,'actual_soft_aborts_before_reset':13,'actual_stale_before_reset':2,'coordinated_resets':2,'canary_bytes':64,'fabric_high_water':2}.items():need(type(p[key])is int and p[key]==value,'actual qualification count '+key)
+  need(p['success_roles']==[r[1]for r in planned],'qualification success roles');need(p['error_records']==errors and p['abort_records']==aborts,'actual error/abort records')
+  for row in p['error_records']:
+   need(set(row)==set(errors[0])and type(row['zero_external_required'])is bool,'error exact bool/keys')
+   for key in('status','epoch','transactions'):integer(row[key],0,(1<<32)-1,'error integer '+key)
+  for row in p['abort_records']:
+   need(set(row)==set(aborts[0])and row['observed']is True,'abort exact bool/keys')
+   for key in('stage','old_epoch','new_epoch'):integer(row[key],0,(1<<32)-1,'abort integer '+key)
+ else:
+  need(set(p)==set('schema accepted same_core_no_per_case_reset held_done latched_parameters canary_bytes fabric_high_water external_accepted'.split()),'protocol keys');need(p['schema']=='a102-protocol/1','protocol version')
+  for k in('same_core_no_per_case_reset','held_done','latched_parameters'):need(p[k]is True,'exact protocol bool '+k)
+  for k in('accepted','canary_bytes','fabric_high_water','external_accepted'):integer(p[k],0,(1<<32)-1,'protocol uint '+k)
+  need(p['accepted']==len(records)and p['canary_bytes']==64 and p['fabric_high_water']==1 and p['external_accepted']==sum(r['transactions']for r in records),'actual protocol counts')
  return {'status':'PASS_COMPLETE_GQA_INTEGER_AND_FINITE_PORTS','counts':counts,'source':m['source'],'actual_sha256':sha(run/'actual.jsonl'),'protocol_sha256':sha(run/'actual.jsonl.protocol.json'),'input_manifest_sha256':sha(inp/'manifest.json'),'limits':['full and actual cached inputs distinct; cached final-prefix replay not append','not online, whole model quality, integrated M/A bank, SRAM/ROM macro or physical signoff']}
 def main():
  p=argparse.ArgumentParser();p.add_argument('--run',type=Path,required=True);p.add_argument('--input',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--negative',action='store_true');a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
