@@ -11,7 +11,7 @@
 using W=std::array<uint32_t,4>;static Vchain102 d;static uint64_t ticks=0;static int stall=0;static unsigned serial=0,mserial=0,eserial=0;static int swait=0,mwait=0;static bool sseen=false,mseen=false,hold_external=false;static unsigned high_water=0,accepted=0,accepted_reads=0;
 struct Reply{uint32_t epoch;int delay;W data;};static std::deque<Reply> fifo;
 struct Case{std::string name,q,k,v,lut;unsigned length;int ke,ve;uint64_t qe;unsigned version;};static Case current;
-static std::vector<uint8_t> qbytes,kbytes,vbytes,lut;static std::vector<int32_t> qk,score,exp1,exp2,prob;static std::vector<uint64_t> sums;static std::ofstream out;
+static std::vector<uint8_t> qbytes,kbytes,vbytes,lut;static std::vector<int32_t> qk,score,exp1,exp_again,prob;static std::vector<uint64_t> sums;static std::ofstream out;
 static void need(bool b,const char*s){if(!b)throw std::runtime_error(s);}
 static W memory(uint32_t a){const std::vector<uint8_t>*p=nullptr;uint32_t off=0;
  if(a>=0x04000000&&uint64_t(a)<0x04000000ull+current.length*256){p=&kbytes;off=a-0x04000000;}
@@ -27,7 +27,7 @@ static E step(){d.clk=0;d.ext_ready=fifo.size()<2;d.ext_valid=!fifo.empty()&&!ho
  if(d.obs_valid){unsigned index=unsigned(d.obs_head)*current.length+d.obs_key;
   if(d.obs_kind==0){need(index==qk.size(),"QK sequence");qk.push_back(d.obs_x);score.push_back(d.obs_y);}
   else if(d.obs_kind==1){need(index==exp1.size(),"SUM sequence");exp1.push_back(d.obs_x);if(d.obs_key+1==current.length)sums.push_back(d.obs_sum);}
-  else if(d.obs_kind==2){need(index==prob.size(),"P sequence");prob.push_back(d.obs_x);exp2.push_back(d.obs_y);}
+  else if(d.obs_kind==2){need(index==prob.size(),"P sequence");prob.push_back(d.obs_x);exp_again.push_back(d.obs_y);}
   else need(false,"unexpected observer kind");
  }
  if(d.swrite_event)need(d.swrite_addr>=80&&d.swrite_addr<988,"runtime bounded SRAM write lease");
@@ -42,7 +42,7 @@ static uint32_t b0,t0,g0;static uint64_t before;
 static void prepare(const Case&c){current=c;readfile(c.q,qbytes);readfile(c.k,kbytes);readfile(c.v,vbytes);readfile(c.lut,lut);need(qbytes.size()==1024&&kbytes.size()>=c.length*256&&vbytes.size()==kbytes.size()&&lut.size()==131072,"physical input sizes");
  for(int i=0;i<64;i++){W w{};for(int j=0;j<16;j++)w[j/4]|=uint32_t(qbytes[16*i+j])<<(8*(j%4));config(true,i,w);}
  for(int i=1020;i<1024;i++)config(true,i,{0xa5a5a5a5,0x12345678,0xdeadbeef,0x87654321});
- qk.clear();score.clear();exp1.clear();exp2.clear();prob.clear();sums.clear();serial=mserial=eserial=0;sseen=mseen=false;swait=mwait=0;
+ qk.clear();score.clear();exp1.clear();exp_again.clear();prob.clear();sums.clear();serial=mserial=eserial=0;sseen=mseen=false;swait=mwait=0;
  d.key_address=0x04000000;d.value_address=0x04100000;d.owner=0x1234;d.input_version=c.version;d.score_multiplier=94906266;d.length=c.length;d.position=c.length-1;d.window=0;d.key_unit=c.ke;d.value_unit=c.ve;d.query_units=c.qe;b0=d.wire_beats;t0=d.transactions;g0=d.mul_grants;before=ticks;
 }
 static void start(){auto epoch=d.epoch;d.cmd=1;int n=0;while(!step().command)need(++n<20,"command handshake");need(d.epoch==epoch+1,"epoch per command");accepted++;d.cmd=0;
@@ -51,7 +51,7 @@ static void start(){auto epoch=d.epoch;d.cmd=1;int n=0;while(!step().command)nee
 static void wait_done(){auto begin=ticks;while(!d.done){step();need(ticks-begin<30000000,"complete chain watchdog");need(!d.cfg_ready&&!d.cmd_ready,"busy protects resources");}}
 static void ack(){unsigned status=d.status,epoch=d.epoch;for(int j=0;j<4;j++){need(d.done&&d.status==status&&d.epoch==epoch&&!d.cmd_ready,"done held until ack");step();}d.ack=1;step();d.ack=0;need(!d.busy,"ack idle");}
 template<class T>static void array(std::ostream&o,const std::vector<T>&v){o<<'[';for(size_t i=0;i<v.size();i++){if(i)o<<',';o<<v[i];}o<<']';}
-static void finish(const Case&c,const std::string&role){wait_done();need(d.status==0,"complete chain status");need(qk.size()==8*c.length&&score.size()==qk.size()&&exp1.size()==qk.size()&&exp2.size()==qk.size()&&prob.size()==qk.size()&&sums.size()==8,"all8 complete integer attention");need(exp1==exp2,"readonly LUT consistent across passes");
+static void finish(const Case&c,const std::string&role){wait_done();need(d.status==0,"complete chain status");need(qk.size()==8*c.length&&score.size()==qk.size()&&exp1.size()==qk.size()&&exp_again.size()==qk.size()&&prob.size()==qk.size()&&sums.size()==8,"all8 complete integer attention");need(exp1==exp_again,"readonly LUT consistent across passes");
  auto cy=d.cycles;auto macs=d.macs,sr=d.sreads,sw=d.swrites,kl=d.kloads,vl=d.vloads,ll=d.lut_reads,di=d.divides,sp=d.score_products,beats=d.wire_beats-b0,tx=d.transactions-t0,mg=d.mul_grants-g0,ep=d.epoch;ack();std::vector<int32_t> output;
  for(int i=0;i<256;i++){auto w=config(false,732+i);for(int j=0;j<4;j++)output.push_back(int32_t(w[j]));}
  for(int i=1020;i<1024;i++)need(config(false,i)==W{0xa5a5a5a5,0x12345678,0xdeadbeef,0x87654321},"64B canary retained");
