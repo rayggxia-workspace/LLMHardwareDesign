@@ -8,7 +8,7 @@ def sha(p):
   for b in iter(lambda:f.read(8<<20),b''):h.update(b)
  return h.hexdigest()
 def main():
- p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--receipt',default='receive-all02');a=p.parse_args();root=a.root.resolve();out=a.out.resolve()
+ p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--receipt',default='receive-all03');a=p.parse_args();root=a.root.resolve();out=a.out.resolve()
  if str(root)!='/public/home/yuzelu/RuizhiLiang/issue88-electrical-repair-20261025'or out.parent!=root:raise ValueError('own root only')
  if out.exists():raise ValueError('new delivery only')
  receipt=json.loads((root/a.receipt/'receipt.json').read_text())
