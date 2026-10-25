@@ -93,8 +93,8 @@ def qualification_plan():
  e+=2;accepted+=1;good('recover-stale-response');e+=2;good('recover-cfg-priority');e+=2;accepted+=1;good('recover-done-cancel');e=0xfffffffe;good('terminal-last');e=0;good('after-coordinated-reset')
  return rows,errors,aborts,accepted
 
-def receive(run,inp,oracle,expected=None):
- m=json.loads((run/'manifest.json').read_text());artifacts(run,m);need(m['status']=='RTL_EXECUTED_NOT_RECEIVED','executed status');need(m['input_manifest_sha256']==sha(inp/'manifest.json'),'input manifest exact')
+def receive(run,inp,oracle,expected_status='RTL_EXECUTED_NOT_RECEIVED'):
+ m=json.loads((run/'manifest.json').read_text());artifacts(run,m);need(m['status']==expected_status,'executed status');need(m['input_manifest_sha256']==sha(inp/'manifest.json'),'input manifest exact')
  binding=json.loads((ROOT/'binding.json').read_text())
  for n,h in binding['sources'].items():
   if n.startswith('project/rtl/')or n.endswith('/'+('qualification.cpp'if m['suite']=='qualification'else'sim.cpp')):need(m['source']['sources'].get(n)==h,'actual RTL/driver byte binding '+n)
@@ -143,11 +143,19 @@ def main():
   oracle=Oracle(a.input);receipt=receive(a.run,a.input,oracle);receipt['receiver_source']=binding;neg=[]
   if a.negative:
    mutations=['out','qk','score','exp','sum','P','macs','sreads','lut_reads','status','missing','extra']
+   if json.loads((a.run/'manifest.json').read_text())['suite']=='qualification':mutations+=['protocol-aborts','protocol-terminal','protocol-error','protocol-stage']
    for name in mutations:
     dest=a.out/('negative-'+name);dest.mkdir();m=json.loads((a.run/'manifest.json').read_text())
     for f in m['artifacts']:shutil.copyfile(a.run/f['path'],dest/f['path'])
     rows=[json.loads(x)for x in(dest/'actual.jsonl').read_text().splitlines()];x=rows[0]
-    if name in('out','qk','score','exp','sum','P'):x[name][0]+=1
+    if name.startswith('protocol-'):
+     pp=json.loads((dest/'actual.jsonl.protocol.json').read_text())
+     if name=='protocol-aborts':pp['actual_soft_aborts_before_reset']-=1
+     elif name=='protocol-terminal':pp['terminal_no_wrap']='true'
+     elif name=='protocol-error':pp['error_records'][0]['status']=True
+     else:pp['abort_records'][0]['stage']=True
+     put(dest/'actual.jsonl.protocol.json',pp)
+    elif name in('out','qk','score','exp','sum','P'):x[name][0]+=1
     elif name in('macs','sreads','lut_reads'):x[name]+=1
     elif name=='status':x['status']=True
     elif name=='missing':del x['score']
