@@ -75,6 +75,20 @@ def geometry_connectivity(text,net,lib,original=None):
  need(set(pinmap)==set(port_lookup),'every port physical geometry');need(area<=Decimal('79600.5'),'frozen cell budget')
  return {'status':'PASS_INDEPENDENT_SITE_BOUNDS_NO_OVERLAP_AND_ALL_SIGNAL_CONNECTIONS','core_um2':'159201','legal_rows':285,'row_site_count':598500,'functional_clock_repair_area_um2':str(area),'functional_area_budget_um2':'79600.5','DEF_database_units_per_um':unit,'signal_pin_connections':len(seen),'signal_net_equivalence_classes':len(netbits),'empty_non_electrical_reference_nets':empty_reference_nets,'pin_geometry':pinmap,'pin_edge_counts':{layer+'/'+edge:len(coords)for(layer,edge),coords in edge_positions.items()},'physical_only_cells_inserted':0,'PG_tap_fill_and_real_macro':'not inserted in initial logic-island placement; no manufacturing legality claim'}
 
+def clock_inventory(net,lib):
+ from structure import signature_graph
+ canonical=signature_graph(net,lib);clock=net['ports']['clk']['bits'][0];target=canonical(clock);ff=[(n,c)for n,c in net['cells'].items()if any(lib[c['type']]['sequential'].values())];clock_cells={};fanout=collections.Counter();clock_sinks=[]
+ for n,c in net['cells'].items():
+  for pin,bs in c['connections'].items():
+   if c['port_directions'][pin]=='input':
+    for b in bs:
+     if canonical(b)==target:fanout[str(b)]+=1
+  t=lib[c['type']]['transparent']
+  if t and t[0]=='buf'and canonical(c['connections'][t[2]][0])==target:clock_cells[n]=c['type']
+ for n,c in ff:
+  need('CK'in c['connections']and len(c['connections']['CK'])==1 and canonical(c['connections']['CK'][0])==target,'every actual FF clock rooted at same noninverted external clock');clock_sinks.append(n+'/CK')
+ return {'actual_FF_clock_pins':len(clock_sinks),'clock_pin_names':sorted(clock_sinks),'clock_transparent_cells':clock_cells,'clock_cell_histogram':dict(collections.Counter(clock_cells.values())),'clock_cell_area_um2':str(sum((lib[t]['area']for t in clock_cells.values()),Decimal(0))),'clock_net_direct_sink_max':max(fanout.values()),'macro_clock_sink_excluded':True,'external_driver_impedance_modeled':False}
+
 def audit(folder,prepared,out,gate=None,postgate=None):
  fm=artifacts(folder);pm=artifacts(prepared);ad=admit();need(pm['status']=='EXACT_ACCEPTED93_GATE_EXPORT_AND_DECLARED_MEMORY_CUT'and pm['admission_sha256']==sha(prepared/'admission.json')and load(prepared/'admission.json')==ad and fm['admission']==ad,'independent exact upstream admission');need(fm['stage']in('zero','place','repair','cts','ctsrepair')and fm['status']=='ACTUAL93_'+fm['stage'].upper()+'_EXECUTED_NOT_RECEIVED','actual stage complete');need(fm['prepared_manifest_sha256']==sha(prepared/'manifest.json'),'precise stage input')
  need(fm['config_sha256']==sha(HERE/'config.json'),'frozen physical config')
@@ -108,7 +122,7 @@ def audit(folder,prepared,out,gate=None,postgate=None):
   pg=load(postgate/'receipt.json');need(pg['status']=='PASS_POSTPHYSICAL93_COMPLETE_GATES_AND_DECLARED_EPOCH_EXCEPTION'and pg['admission']==ad and pg['prepared_manifest_sha256']==sha(prepared/'manifest.json')and pg['postphysical']['physical_stage_manifest_sha256']==sha(folder/'manifest.json')and pg['postphysical']['physical_final_verilog_sha256']==sha(folder/'final.v'),'complete gate replay of this actual physical netlist');post_status='PASS_COMPLETE_POSTPHYSICAL_GATE';post_sha=sha(postgate/'receipt.json')
  if fm['stage']in('repair','cts','ctsrepair'):
   prev=Path(fm['previous_directory']);need(fm['previous_manifest_sha256']==sha(prev/'manifest.json'),'preceding actual physical stage binding');old_geo=geometry_connectivity((prev/'placed.def').read_text(),load(prev/'final.json')['modules']['chain93'],lib,before);need(old_geo['pin_geometry']==geo['pin_geometry'],'exact frozen external pinmap through physical transformations')
- return {'stage':fm['stage'],'stage_manifest_sha256':sha(folder/'manifest.json'),'structure':cert,'actual_constraints':sdc,'input_sink_costs':input_loads(after,lib),'scenarios':scenarios,'physical_geometry':geo,'all_declared_internal_timing_electrical_closed':all(s['closed']for s in scenarios),'postphysical_gate_status':post_status,'postphysical_gate_receipt_sha256':post_sha,'raw_gate_status':gate_status,'gate_receipt_sha256':gate_sha,'physical_stage_accepted':fm['stage']in('place','repair','cts','ctsrepair')and gate_status=='PASS_COMPLETE_RAW_GATE'and post_status=='PASS_COMPLETE_POSTPHYSICAL_GATE'and all(s['closed']for s in scenarios),'macro_clock_load_qualified':False,'upstream_drive_qualified':False,'manufacturable':False}
+ return {'stage':fm['stage'],'stage_manifest_sha256':sha(folder/'manifest.json'),'structure':cert,'actual_constraints':sdc,'clock_inventory':clock_inventory(after,lib),'input_sink_costs':input_loads(after,lib),'scenarios':scenarios,'physical_geometry':geo,'all_declared_internal_timing_electrical_closed':all(s['closed']for s in scenarios),'postphysical_gate_status':post_status,'postphysical_gate_receipt_sha256':post_sha,'raw_gate_status':gate_status,'gate_receipt_sha256':gate_sha,'physical_stage_accepted':fm['stage']in('place','repair','cts','ctsrepair')and gate_status=='PASS_COMPLETE_RAW_GATE'and post_status=='PASS_COMPLETE_POSTPHYSICAL_GATE'and all(s['closed']for s in scenarios),'macro_clock_load_qualified':False,'upstream_drive_qualified':False,'manufacturable':False}
 
 def main():
  p=argparse.ArgumentParser();p.add_argument('--prepared',type=Path,required=True);p.add_argument('--stage',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--gate',type=Path);p.add_argument('--postgate',type=Path);a=p.parse_args();a.out.mkdir(exist_ok=False);bd=sources();r=audit(a.stage,a.prepared,a.out,a.gate,a.postgate)
