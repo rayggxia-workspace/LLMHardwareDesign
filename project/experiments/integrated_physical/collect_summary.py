@@ -1,0 +1,13 @@
+"""Read-only compact evidence index; preserve acceptance versus execution status."""
+import argparse
+from common import *
+p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(exist_ok=False)
+choices=[('zero9301','zero-receive04'),('place9303','place-receive06'),('repair9302','repair-receive03'),('cts9301','cts-receive02'),('ctsrepair9301','ctsrepair93-receive01'),('ctsrepair9302','ctsrepair93-receive02'),('ctsrepair9303','ctsrepair93-receive03'),('grt9301','grt93-receive02'),('routerepair9301','routerepair93-receive01'),('caprepair9301','caprepair93-receive02'),('zero9701','zero97-receive01'),('place9701','place97-receive01'),('repair9701','repair97-receive01'),('cts9701','cts97-receive01'),('ctsrepair9701','ctsrepair97-receive01'),('ctsrepair9702','ctsrepair97-receive02'),('ctsrepair9703','ctsrepair97-receive03'),('ctsrepair9704','ctsrepair97-receive04'),('grt9701','grt97-receive01'),('routerepair9701','routerepair97-receive01'),('caprepair9701','caprepair97-receive02')]
+rows=[]
+for stage,receipt in choices:
+ d=a.root/stage;q=a.root/receipt/'receipt.json';row={'stage':stage,'receipt':receipt}
+ if not q.exists():row.update(status='RECEIPT_PATH_NOT_FOUND');rows.append(row);continue
+ m=artifacts(d);j=load(q);r=j['result'];need(r['stage_manifest_sha256']==sha(d/'manifest.json'),'exact same result stage');row.update(status=j['status'],receipt_sha256=sha(q),stage_manifest_sha256=sha(d/'manifest.json'),source_commit=m['source']['commit'],all_constraints_closed=r['all_declared_internal_timing_electrical_closed'],physical_stage_accepted=r['physical_stage_accepted'],raw_gate_status=r['raw_gate_status'],postphysical_gate_status=r['postphysical_gate_status'],area_um2=r['structure']['after_area_um2'],scenarios=r['scenarios'],clock_area_um2=r['clock_inventory']['clock_cell_area_um2'],clock_cells=r['clock_inventory']['clock_cell_histogram'],final_cells=r['structure']['final_cells'],original_sequential_cells=r['structure']['sequential_cells_preserved_with_all_pins'])
+ if 'routing'in r:row['routing']={k:v for k,v in r['routing'].items()if k!='unannotated_unused_driver_names'}
+ rows.append(row)
+put(a.out/'summary.json',{'status':'COMPACT_ACTUAL_EVIDENCE_INDEX_NOT_NEW_ACCEPTANCE','source':sources(),'resources':resource_snapshot(),'rows':rows,'limits':['Each source stage retains its executed configuration and exact receipt; no cross-stage acceptance transfer.','Raw/post gates still running remain pending. Research library, absent actual SRAM/PG/LVS remain nonmanufacturable.']});print('COMPACT_ACTUAL_EVIDENCE_INDEX_NOT_NEW_ACCEPTANCE')

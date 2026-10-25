@@ -163,3 +163,32 @@ requested base and actual name. This is metadata normalization, not permission
 to add or remove any cell. Actual93 candidate2 reports no remaining violations;
 actual97 still has a newly routed cap violation and remains failed pending the
 fully independent current receiver. Do not start additional candidate silently.
+
+
+## Prepared pure detailed-route/RCX pilot
+
+Candidate script is prepared; execution requires a received all-constraint closed
+own GRT stage. As with earlier provisional scheduling, final physical acceptance
+still requires both exact original and final graph gate evidence, no bypass.
+Freeze once-per-core pilot: original GRT guides and exact placement/pinmap,
+8 allocated CPUs, 20-minute Slurm /1100-second child, seed42, at most8 DRT iterations.
+Same signalM2-M10/clockM4-M10,399x399 core/448die,79600.5um2,10ns/min0/dual loads.
+No resize, automatic repair, antenna diode insertion, PG/tap/fill, layer or port
+change. Record original DRT DRC output, routed-connectivity and antenna checks,
+actual detailed DEF/ODB/wires and cell/pin identity. Zero global overflow is not
+zero detailed DRC. Any residual route/antenna/timing condition remains failed.
+
+Existing RCX uses fixed rcx_patterns.rules SHA, ext-model-index0,corner_count1,
+max_res50ohm,coupling_threshold0.1fF,cc_model10,context_depth5,version1.0.
+Write actual extracted SPEF then read it into STA with coupling reduction factor1;
+pin capacitance is not asserted included. Independent reception must decode SPEF
+name maps and units, all logical pin classes, connected resistor networks and
+finite ground/coupling capacitances, complete unannotated/excluded driver counts.
+Every actual route layer/via and clock/signal usage remains accounted; no PG cost
+or realistic manufacturing/SRAM qualification is inferred. Detailed RCX can break
+GRT closure, so rerun full setup/hold/electrical endpoints under both loads.
+
+Installed API confirms old bottom/top-routing-layer DRT flags error as deprecated;
+use the already frozen set_routing_layers. Antenna checks run read-only. The pilot
+is not silently repeated or given an unlimited timeout; a later bounded attempt
+must record observed runtime/residuals and unchanged acceptance constraints first.
