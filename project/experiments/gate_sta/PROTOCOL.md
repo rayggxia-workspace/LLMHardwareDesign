@@ -1,0 +1,9 @@
+# Issue86 gate replay and cut logic timing
+
+Owner Liangruizhi; source base Issue84 049a8a663013b7edb3a99a43e2ca9b702def82dc. Only own CPU server lrz-i86-*; no tool install, no new models, no changes to Issue84/55/63.
+
+Four exact Issue84 map-v{0..3}03 mapped JSONs, original Nangate45 typical Liberty SHA 8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1. Export cells from original Liberty functions via Yosys; mapped gate simulation uses the exact existing store82 behavioral wrapper and passive chain driver. One original complete L0/T0 case per variant per selected backpressure condition; compare every observable code/count with archived RTL, and actual active reset/done hold. This is selected zero-delay gate replay, not a formal equivalence proof or SRAM gate implementation.
+
+Timing removes exactly the one store82 cell and exposes all its data/control pins as top-level cut ports; original store clock/reset pins are outside the analyzed logic. Preserve all mapped standard cells. Analyze explicit ideal-clock, no-wire-parasitic Nangate45 typical scenarios and report register-to-register coverage, IO/cut assumptions and all warnings/unconstrained endpoints. No SRAM macro/delay or full-chip Fmax/physical signoff claim. Do not hide unknown timing behind false paths. Macro area, power, placement, RC, CTS and final target PVT/clock remain missing.
+
+Acceptance: exact original input/map/library/source SHA, actual tool versions/logs; all accepted gate outputs equal prior independently verified RTL; negative checks reject changed output. Timing must link every retained cell and report analyzed/cut path coverage, cells/FF unchanged and relative period sensitivity; failed tool/coverage checks remain visible. Large netlists/logs stay own authorized server with SHA indices; selected small evidence goes to Git. Final delivery via parent, no self push/PR/merge.
