@@ -84,9 +84,16 @@ def main():
  p=argparse.ArgumentParser();p.add_argument('--input',type=Path,required=True);p.add_argument('--run',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();need(not a.out.exists(),'new receiver output');bd=load(ROOT/'binding.json')
  for n,h in bd['sources'].items():need(sha(ROOT/n)==h,'receiver source SHA')
  im=load(a.input/'manifest.json');rm=load(a.run/'manifest.json');need(rm['schema']=='gamma93-run-v1'and rm['status']=='RTL_EXECUTED_NOT_RECEIVED'and rm['baseline']is False and type(rm['stall'])is int and rm['stall']in(0,1),'actual run qualification')
+ need(rm['task']=='sim'and rm['source']['commit']and im['source']['commit'],'actual simulation/source provenance')
+ for n,h in bd['sources'].items():
+  if n.startswith('project/rtl/')or n.endswith('/chain_sim.cpp'):need(rm['source']['sources'].get(n)==h,'receiver exact run source '+n)
+ need(im['source']['sources'].get('project/experiments/gamma_stream/inputs.py')==bd['sources']['project/experiments/gamma_stream/inputs.py'],'input producer source binding')
  need(rm['input_manifest_sha256']==sha(a.input/'manifest.json')and im['schema']=='gamma93-input-v1'and im['status']=='PASS_VERIFIED_INPUTS_NOT_RTL','input protocol binding')
  for root,mf in((a.input,im),(a.run,rm)):
-  for e in mf['artifacts']:need(sha(root/e['path'])==e['sha256']and(root/e['path']).stat().st_size==e['bytes'],'actual input/run bytes')
+  need(type(mf['artifacts'])is list and len({e['path']for e in mf['artifacts']})==len(mf['artifacts']),'unique artifact paths')
+  for e in mf['artifacts']:
+   need(set(e)=={'path','bytes','sha256'}and type(e['bytes'])is int and e['bytes']>=0 and Path(e['path']).name==e['path'],'typed root-only artifact schema')
+   need(sha(root/e['path'])==e['sha256']and(root/e['path']).stat().st_size==e['bytes'],'actual input/run bytes')
  old=Path(im['old_root']);need(str(old)=='/public/home/yuzelu/RuizhiLiang/issue84-cache-share-20261025/input01'and sha(old/'manifest.json')==im['old_manifest_sha256'],'explicit old input root/SHA')
  for e in load(old/'manifest.json')['artifacts']:need(sha(old/e['path'])==e['sha256'],'every original physical input')
  cases=load(a.input/'cases.json');lookup={c['name']:c for c in cases};need(len(cases)==12 and len(lookup)==12,'exact source cohort')
