@@ -29,3 +29,7 @@ R保持99 abort排空及原子root写义务；candidate完整export后才允许a
 先服务器build/pilot；正式同core混合、两等待、参数忙时扰动、export背压、M/A各服务在途abort、R不可取消commit/abort/reject、registry A→其他lease→A负例、迟到tag、32bit末值边界和协调reset恢复。实际RTL边界注入须明示，mapped gate禁止top输出赋值冒充DFF注入。门级只选无注入真实完整M/8头A/完整R消费者，和同driver RTL逐字段比较。
 
 独立oracle从97原参考、102原捕获编码/数学、99原bigint重放完整state/Y，每种结果必须全值比较；旧结果可配对但不能独自充当独立真值。改真实文件且重SHA的数值/owner/协议/库存负例应被完整receiver拒绝。记录实际服务接受/响应/导出/换手、R root每次发布及不可变旧bank；所有源码commit、输入/manifest/SHA、binary/log、失败和取消均存档。分别报告compute/调度/export/abort成本；独立三核面积之和是库存不同的参考，不当同资源性能对照。相同数学/容量/端口的顺序切换基线和共享开销分列。logic area非宏/STA/PPA；通用V ISA/GEMM、KV append/online、完整GDN、全模型及制造后定制未覆盖。
+
+## 首轮审查修订（首次正式统一版前）
+
+根审查发现cfg_pending响应遇soft_abort时公开valid为0而原内部take仍可消费，已修复为同资格门控；service_accept在硬reset时亦屏蔽。旧phase1/2保留为原型，正式混合和恢复重跑同一修订RTL。新增读/写ACK各4拍冲突、保持响应恢复唯一握手，完整后继命令确认。32位末值通过实际top epoch Q边界注入，资格仅RTL，不传播到门级。

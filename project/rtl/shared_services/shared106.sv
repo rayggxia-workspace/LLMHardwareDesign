@@ -42,7 +42,7 @@ module shared106(input wire clk,reset,cmd,input wire [1:0] command_kind,
  wire s_write=cfg_use?cfg_wr:exp_req?1'b0:sw[owner];
  wire [9:0] s_address=cfg_use?cfg_addr:exp_req?export_base+export_index:sa[owner];
  wire [127:0] s_input=cfg_use?cfg_din:si[owner];
- wire s_take=cfg_pending?cfg_take:aborted||state==R_CANCEL?1'b1:state==EXPORT_WAIT?(result_take&&!abort_accept):route_s?st[owner]:1'b0;
+ wire s_take=cfg_pending?(!reset&&!soft_abort&&cfg_take):aborted||state==R_CANCEL?1'b1:state==EXPORT_WAIT?(result_take&&!abort_accept):route_s?st[owner]:1'b0;
  assign cmd_ready=!reset&&!soft_abort&&state==IDLE&&!cfg_pending&&!cfg&&epoch!=32'hffffffff&&(command_kind==3||crdy[command_kind]);
  assign cmd_accept=cmd&&cmd_ready;assign busy=state!=IDLE;assign done=!reset&&state==DONE;assign debug_state={4'b0,state};
  assign abort_ready=!reset&&((owner!=2&&(state==RUN||exporting))||(owner==2&&(state==RUN||exporting||state==DECIDE)&&r_abort_ready));
@@ -55,7 +55,7 @@ module shared106(input wire clk,reset,cmd,input wire [1:0] command_kind,
  wire take0=aborted?1'b1:allow_ctrl?mt0[owner]:1'b0,take1=aborted?1'b1:allow_ctrl?mt1[owner]:1'b0;
  wire takef=aborted?1'b1:allow_ctrl?ft[owner]:1'b0,takee=aborted?1'b1:allow_ctrl?et[owner]:1'b0;
  assign services_drained=sr&&!sv&&!mv0&&!mv1&&fr&&!fv&&er&&!ev;
- assign service_accept={sel_eq&&er,sel_fq&&fr,sel_mq1&&mr1,sel_mq0&&mr0,s_request&&sr};
+ assign service_accept=reset?5'b0:{sel_eq&&er,sel_fq&&fr,sel_mq1&&mr1,sel_mq0&&mr0,s_request&&sr};
  assign swrite_event=!reset&&s_request&&sr&&s_write;assign swrite_addr=s_address;assign swrite_data=s_input;
  wire raw_req,raw_wr,raw_take,wire_valid;wire [31:0] raw_addr;wire [127:0] raw_data,wire_data;
  wire drop_response=response_epoch!=epoch||state==IDLE||state==DONE;
