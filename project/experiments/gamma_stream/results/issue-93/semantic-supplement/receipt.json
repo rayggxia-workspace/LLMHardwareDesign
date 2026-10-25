@@ -1,0 +1,150 @@
+{
+  "schema": "gamma93-rehashed-semantic-negatives-v1",
+  "status": "PASS_BOTH_COMPLETE_RECEIVER_REJECTIONS",
+  "receiver_binding": {
+    "commit": "5895c7a242907db07b77bc93a7361878dff7b7fd",
+    "sources": {
+      "project/rtl/gamma_stream/chain93.sv": "39f03a636376b81668ec480b8356916e5c0e97b949e526990cd46a78541ee4c9",
+      "project/rtl/gamma_stream/norm93.sv": "a42bb0f74a097eb14297820eaca6fe14350f233139d47153eb20dd47218aea5d",
+      "project/experiments/gamma_stream/chain_sim.cpp": "a7587d5dbc573c2468771c9cb4e6327303ea1c5a34073f4b72cf16cb1792033a",
+      "project/experiments/gamma_stream/inputs.py": "412adf1803a632b16e9f63eed36d840503424d891b3546e03f536c8ac70f8825",
+      "project/experiments/gamma_stream/PROTOCOL.md": "605ec48a0ea6fa599695a2aacd48347e50f3f54948a017b099e2bdc35fc841d9",
+      "project/experiments/gamma_stream/run.py": "ff37e78158b6fe5372fe181d3cc01fc98d1d02ec471641f5e0caf93e619ad63a",
+      "project/rtl/runtime_cache/mfront85.sv": "04391b2eaed06f8dda19c33ddbeee30c49ad6ce233fe874ad26f712bef7014eb",
+      "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+      "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+      "project/rtl/runtime_cache/chain85.sv": "f89ace7f2dc5f3b0aa47dcccccb84e33104b69938f886bb33a2e0d52799c1b1e",
+      "project/rtl/runtime_cache/norm84.sv": "cd6532b9eaabe193e11d19829bf069bcf514bc7fb32b674dbb429fe262ea6e4b",
+      "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+      "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+      "project/experiments/gamma_stream/verify.py": "314e301ec0ec67823ae8b6df00464e197b1505d9dcf996c6aa7a75a665992760",
+      "project/experiments/gamma_stream/analyze.py": "5f52f28161e71422b4e34f47fcca8ef285db96ecddfe299c03b7193032fd2bea",
+      "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+      "work/Liangruizhi/93/collect.py": "7bedab78b12ae3db4186b643ac2d7cbbf667a01d48dd4cd51e547fdea4f7f2d2",
+      "work/Liangruizhi/93/verify_delivery.py": "b0b4a9266447cc93431d40536cc545e5cb9ab268aea617f5f31ee4c713ba9ff6",
+      "work/Liangruizhi/93/verify_sources.py": "f8ded04c1b794ee12d623f4424c1a31f59344094135d965e0888007b9088bd6c",
+      "project/experiments/gamma_stream/README.md": "f36ff40ba1be3777eac7472c6cc9284d74aefaced8b9c99c0e881c852fd23b8d",
+      "work/Liangruizhi/93/byte_negative_checks.py": "dc6607d4eb1b516ae7d1f3dd185434cbda7e9b55fcf281c6ec2d400f1f7edab0"
+    }
+  },
+  "receiver_sha256": "314e301ec0ec67823ae8b6df00464e197b1505d9dcf996c6aa7a75a665992760",
+  "helper_sha256": "895ead7ad0280e131966ccf46e88ab872b0a5438195fba186a2f28f16c3a6a3a",
+  "original_run_manifest_sha256": "7742ea2f91331dd13671d72de39044172dfa18b5537b498ef3429a7a65d2376b",
+  "input_manifest_sha256": "adfe98a7990e16a5a776401ce040fcaf0499c47f5761f67c949928b82386a3c1",
+  "tests": [
+    {
+      "case": "changed_output",
+      "status": "REJECTED_INDEPENDENT_MATH_AFTER_VALID_REHASH",
+      "argv": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase7/project/experiments/gamma_stream/verify.py",
+        "--input",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/input02",
+        "--run",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-negative01/changed_output",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-negative01/changed_output/unexpected-pass.json"
+      ],
+      "returncode": 1,
+      "expected_error": "independent full row integer output",
+      "old_value": 1,
+      "new_value": 0,
+      "mutated_manifest_sha256": "7237398f347caa759c10bad9d3994bd72bb73df2ef32f83b46bfd8a1d0948b0f",
+      "actual_jsonl_sha256": "8e71858b328350abf97073f6fea55da2695d75b4f95df51cd535c772e9bfeb2f"
+    },
+    {
+      "case": "changed_global_den",
+      "status": "REJECTED_INDEPENDENT_MATH_AFTER_VALID_REHASH",
+      "argv": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "-B",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/phase7/project/experiments/gamma_stream/verify.py",
+        "--input",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/input02",
+        "--run",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-negative01/changed_global_den",
+        "--out",
+        "/public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/semantic-negative01/changed_global_den/unexpected-pass.json"
+      ],
+      "returncode": 1,
+      "expected_error": "one entireH sum/den",
+      "old_value": 663090644,
+      "new_value": 663090645,
+      "mutated_manifest_sha256": "6c8c10d8ed14fad4e506958e7f2dad4a4531e5d729b8aa834f1bcefff40fdd59",
+      "actual_jsonl_sha256": "6d25e81fdebbea3f0c2984391a37180130b77b986b130a9be541e4746cfa5437"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "changed_global_den/actual.jsonl",
+      "bytes": 5024933,
+      "sha256": "6d25e81fdebbea3f0c2984391a37180130b77b986b130a9be541e4746cfa5437"
+    },
+    {
+      "path": "changed_global_den/actual.jsonl.protocol.json",
+      "bytes": 460,
+      "sha256": "233f4a4f62fd1676d6bb6b18a5ce5b3acc5d3d49d904c7f0779b5ffb5364b445"
+    },
+    {
+      "path": "changed_global_den/manifest.json",
+      "bytes": 2881,
+      "sha256": "6c8c10d8ed14fad4e506958e7f2dad4a4531e5d729b8aa834f1bcefff40fdd59"
+    },
+    {
+      "path": "changed_global_den/receiver.stderr.log",
+      "bytes": 1098,
+      "sha256": "910ca1187ca2a3ef00f6dc961c317d37e1068631e3a02914ee324101295199c4"
+    },
+    {
+      "path": "changed_global_den/receiver.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "changed_global_den/simulation-command.json",
+      "bytes": 635,
+      "sha256": "d12fab7a283d077563028e170cb4aebb81fc5df0e1bb9ba6b791495c6ce3eeb4"
+    },
+    {
+      "path": "changed_global_den/simulation.log",
+      "bytes": 36,
+      "sha256": "7c74a6bccbb595e171ebb5c380442729b13a733eefba81fa8642c474f5d0c9d2"
+    },
+    {
+      "path": "changed_output/actual.jsonl",
+      "bytes": 5024933,
+      "sha256": "8e71858b328350abf97073f6fea55da2695d75b4f95df51cd535c772e9bfeb2f"
+    },
+    {
+      "path": "changed_output/actual.jsonl.protocol.json",
+      "bytes": 460,
+      "sha256": "233f4a4f62fd1676d6bb6b18a5ce5b3acc5d3d49d904c7f0779b5ffb5364b445"
+    },
+    {
+      "path": "changed_output/manifest.json",
+      "bytes": 2859,
+      "sha256": "7237398f347caa759c10bad9d3994bd72bb73df2ef32f83b46bfd8a1d0948b0f"
+    },
+    {
+      "path": "changed_output/receiver.stderr.log",
+      "bytes": 1217,
+      "sha256": "82b55e0760fd9cdd429baa69a71f1781f2d9e4b8926817b1b7f84d5aa2bda364"
+    },
+    {
+      "path": "changed_output/receiver.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "changed_output/simulation-command.json",
+      "bytes": 635,
+      "sha256": "d12fab7a283d077563028e170cb4aebb81fc5df0e1bb9ba6b791495c6ce3eeb4"
+    },
+    {
+      "path": "changed_output/simulation.log",
+      "bytes": 36,
+      "sha256": "7c74a6bccbb595e171ebb5c380442729b13a733eefba81fa8642c474f5d0c9d2"
+    }
+  ]
+}

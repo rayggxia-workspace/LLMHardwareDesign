@@ -201,3 +201,10 @@ project/experiments/runtime_cache/README.md记录本人服务器新out的build/s
 ## Issue92 epoch终止态与接口reset优先
 
 project/experiments/epoch_boundary/README.md与PROTOCOL.md记录冻结源重放、真实32位门锥抽取、边界注入和声明的证明边界。先python -B scripts/check_project.py；实际RTL/NumPy/bigint/Yosys SAT/map全部服务器。PC字节用work/Liangruizhi/92/verify_delivery.py，原Git用verify_sources.py --expected-phases 5，均输出新D盘路径。完整argv/Slurm见work92/execution.json；不能以精选metadata代替数学，不能沿用86/88时序到修复后的92。
+
+
+## Issue93 streaming gamma
+
+真实命令见[工具README](../project/experiments/gamma_stream/README.md)、[报告](experiments/issue-93-gamma-stream.md)和work93 execution。正式run为build03/rtl-s003/s103，最终接收phase7 receipt-s005/s105/cost02；PC首先`python -B scripts/check_project.py`，再work93/verify_delivery.py接收final/selected.zip与verify_sources.py `--expected-phases 7`。全实际数组/RTL/map仅本人服务器；本机只字节。cost01因128bit beat误按32bit换算已标记，恢复须使用final/cost02。
+
+93补充文件级语义验收仅服务器运行：`python -B work/Liangruizhi/93/semantic_negative.py --out /public/home/yuzelu/RuizhiLiang/issue93-gamma-stream-20261025/NEW_NEGATIVE`，明确复用phase7完整receiver。其完整变异包留服务器semantic-delivery01，PC可接收semantic-supplement/selected.zip及`verify_sources.py --expected-phases 8`，不运行数组计算。

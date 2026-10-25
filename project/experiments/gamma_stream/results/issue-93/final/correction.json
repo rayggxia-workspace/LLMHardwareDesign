@@ -1,0 +1,14 @@
+{
+  "schema": "gamma93-accounting-correction-v1",
+  "invalid_cost": "cost01.json",
+  "invalid_cost_sha256": "b938eb3efc1567d7b0f5dff5cd37a202c008a219b4d005923a4d95e77c40661b",
+  "correct_cost": "cost02.json",
+  "correct_cost_sha256": "249757b86326f9cb85ff1737eb9bc823b9f5c04f45d29dccd551260e094924eb",
+  "issue": "Old conversion used 4 bytes per beat; actual memory_link declares128bit wire_data with five beats per read. Correct 16bytes per beat.",
+  "unchanged": [
+    "actual RTL/cycle/full numeric outputs",
+    "logic inventory and map"
+  ],
+  "independent_check": "phase7 verifier parses actual RTL wire_data width and asserts read-state graph; receives wire_bytes and payload separately; cost02 independently asserts expected gamma delta.",
+  "epoch": "32bit sideband excluded from measured5x128beat packet; external configuration header not modeled"
+}

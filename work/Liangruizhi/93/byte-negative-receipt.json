@@ -1,0 +1,37 @@
+{
+  "schema": "gamma93-byte-negatives-v1",
+  "status": "PASS_ALL_SIX_REJECTED",
+  "tests": [
+    {
+      "case": "schema",
+      "status": "REJECTED",
+      "error": "explicit93 delivery/root binding"
+    },
+    {
+      "case": "root",
+      "status": "REJECTED",
+      "error": "explicit93 delivery/root binding"
+    },
+    {
+      "case": "member_hash",
+      "status": "REJECTED",
+      "error": "member bytes/SHA mismatch: build01/build-command.json"
+    },
+    {
+      "case": "duplicate_entry",
+      "status": "REJECTED",
+      "error": "duplicate index entries"
+    },
+    {
+      "case": "archive_changed_byte",
+      "status": "REJECTED",
+      "error": "archive bytes/SHA mismatch"
+    },
+    {
+      "case": "original_git_byte_hash",
+      "status": "REJECTED",
+      "error": "original Git blob differs: phase6/project/rtl/gamma_stream/norm93.sv"
+    }
+  ],
+  "scope": "bytes/schema/original Git only, separate from server mathematical and RTL negative tests"
+}
