@@ -16,8 +16,24 @@ def read_graph(folder):
   n=def_name(m[1]);need(n not in seg and n in refs,'unique routed electrical net');seg[n]=sorted(x.strip()for x in m[2].strip().splitlines())
  return refs,loc,seg
 
+INCREMENTAL_CANDIDATES=('incremental-hold-50ps-on-margin4','incremental-joint-fourcap-50ps93','incremental-joint-onecap-50ps97')
+def require_incremental(stage,previous):
+ m=artifacts(stage);old=artifacts(previous);candidate=m.get('candidate')
+ required=candidate in INCREMENTAL_CANDIDATES
+ if not required:
+  need(m.get('incremental_only') in (None,False),'unknown incremental candidate')
+  return False
+ need(m.get('incremental_only') is True,'known incremental candidate requires strict true flag')
+ target=93 if m['status']=='ACTUAL93_ROUTEREPAIR_EXECUTED_NOT_RECEIVED' else 97 if m['status']=='ACTUAL97_ROUTEREPAIR_EXECUTED_NOT_RECEIVED' else None
+ need(target is not None and m['stage']=='routerepair','actual incremental stage status')
+ frozen={'incremental-hold-50ps-on-margin4':{93:'588267ebeb961a3092d16954051130776b2897af51cc5e8d5f8bd8fcbc669dd3',97:'bdaf3422413ab0bcc28b1700316e9f8d825a490f411707ecd86f9c562be1ca95'},'incremental-joint-fourcap-50ps93':{93:'c99f0fbfe94de9f6153791148ea00451caae682337938d0baeba715393c2cc87'},'incremental-joint-onecap-50ps97':{97:'419c8194d84a9b8d272dd41d6461ae241e8f2b8212b3f14c311a4df7b3d6b9db'}}
+ expected_stage='caprepair' if candidate==INCREMENTAL_CANDIDATES[0] else 'routerepair'
+ need(target in frozen[candidate] and sha(previous/'manifest.json')==frozen[candidate][target]==m['previous_manifest_sha256'],'exact frozen incremental source SHA')
+ need(old['stage']==expected_stage and old['status']=='ACTUAL'+str(target)+'_'+expected_stage.upper()+'_EXECUTED_NOT_RECEIVED' and old['prepared_manifest_sha256']==m['prepared_manifest_sha256'],'frozen predecessor status and prepared identity')
+ return True
+
 def audit_incremental(stage,previous,out):
- m=artifacts(stage);old=artifacts(previous);joint=m.get('candidate')=='incremental-joint-fourcap-50ps93';need(m.get('incremental_only')is True and m.get('candidate')in('incremental-hold-50ps-on-margin4','incremental-joint-fourcap-50ps93'),'sole frozen candidates');need((not joint and type(old.get('candidate'))is int and old['candidate']==4)or(joint and sha(previous/'manifest.json')=='c99f0fbfe94de9f6153791148ea00451caae682337938d0baeba715393c2cc87'),'exact source for each candidate');need(m['repair_hold_margin_ns']=='0.05'and type(m['repair_max_passes'])is int and m['repair_max_passes']==4096 and type(m['repair_max_iterations'])is int and m['repair_max_iterations']==4096 and type(m['repair_max_buffer_percent'])is int and m['repair_max_buffer_percent']==10,'fixed bounded recipe')
+ need(require_incremental(stage,previous),'declared incremental candidate');m=artifacts(stage);old=artifacts(previous);joint=m['candidate'] in INCREMENTAL_CANDIDATES[1:];need(m['repair_hold_margin_ns']=='0.05'and type(m['repair_max_passes'])is int and m['repair_max_passes']==4096 and type(m['repair_max_iterations'])is int and m['repair_max_iterations']==4096 and type(m['repair_max_buffer_percent'])is int and m['repair_max_buffer_percent']==10,'fixed bounded recipe')
  if joint:
   init=(stage/'initialization.def').read_text();orig=(previous/'placed.def').read_text()
   for start,end in [('COMPONENTS ','END COMPONENTS'),('\nPINS ','END PINS'),('\nNETS ','END NETS')]:need(block(init,start,end)==block(orig,start,end),'DPL initialization leaves all exact cell geometry/pins/net connections unchanged')

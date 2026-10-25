@@ -302,3 +302,26 @@ and secondlegalize/incrementalroute. No fulltail, no expanded capset/otherrepair
 Originalbudget79600.5/10ns/min0/allports remain; countall4plusactualhold/resize.
 All dirty batches and completefinalRC/strictcap/slew/endpoints/newgate remain
 mandatory. One20min1100s candidate; failure preserved, no automatic recurrence.
+
+
+## Sole97 one-driver RCX joint candidate6
+
+Actual detailed9701 RCX has one strict residual: _73496_/ZN OAI21_X1,
+26.169408798fF >26.054399490fF. Preserve failure; native fuzzy zero is not closure.
+Freeze inchold9701 manifest419c8194d84a9b8d272dd41d6461ae241e8f2b8212b3f14c311a4df7b3d6b9db,
+and exact same-netlist detail9701 evidence e91f8d13c81a189f56ebbdfaa28c13a29f21304354929706d0e07cb45469e271.
+Exactly one BUF_X4, original driver drives only its input and all original sinks
+move to its output. Independently check new input<=.8 old maxcap; preliminary
+addedarea1.862um2, actual hold/buffer/resize inventory also counts. One cap
+incremental interval then one50ps/4096/10%/50% hold interval, nonmutating DPLinit,
+no fullroute tail. Same399core/448die/79600.5area/10ns/min0/allports/dual loads.
+One20min/1100s candidate; no automatic expanding nets/thresholds. Fullstrict
+cap/slew, all endpoints, actual GRT/DRTseed42max8/RCX/readback and new exact gate
+required. Previous fullgate applies only to old netlist.
+
+Reception derives mandatory incremental audit from known candidate, not a
+potentially mistyped boolean. Flag must be strict True and predecessor exact
+frozen SHA/status/prepared. Real receive_route entry negatives cover integer,
+False, missing flag and rehashed alternate source. Existing original valid
+receipts stay preserved; pending extra inchold-receive9703 was not submitted
+because automatic approval infrastructure timed out twice (no job created).
