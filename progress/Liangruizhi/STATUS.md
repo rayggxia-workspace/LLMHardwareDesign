@@ -263,6 +263,8 @@ PR待审查/合并，审查人/管理员待指定，未done；后续在已有授
 [报告](../../docs/experiments/issue-91-v-integration.md)/[交接](../../docs/handoffs/2026-10-25-issue-91-v-integration.md)。下一步独立Issue先gamma streaming+H1536回归/H2560全行den，再SiLU完整链；新增byte ALU/mux/程序/LUT/metadata及端口成本必须计费。根会话统一push/PR和状态，当前本地完成、远端待上传；不合并/不done，登记pending、Projects unverified/同步pending。
 
 
+发布回执（2026-10-25）：[PR94](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/94)已上传；Issue91为in_review，待独立审查/合并，未done。远端读回commit 034fe463ebdae85361bdd8e7cf473548c92e6b8a的报告、索引、接收报告均与原Git blob逐字节相同，详见work/Liangruizhi/91/remote-readback.json。后续文档提交不改冻结实验source。登记PR5 pending；看板board.json404且实际条目查询缺read:project，状态unverified、同步pending。审查人/管理员待指定。
+
 ## 2026-10-25 Issue92主会话接收与交付
 
 [Issue92](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/92)，负责人Liangruizhi。修复实际32位epoch耗尽后的同tag迟到排空，并屏蔽reset/abort时cfg/done假握手。60正常完整消费者、4边界完整输出、8配置冲突、2完成冲突及10实际门锥SAT性质通过；33服务器作业结束，双包/精选158成员及5phase92源字节通过。原缺陷反例保留；52387.902µm²仅logic-only，不继承88电气资格。

@@ -38,3 +38,6 @@ python -B work/Liangruizhi/91/replay_negatives.py --source project/experiments/v
 - source X/G initially external是本结构比较的共同初态，M已在S的X不能重复加载记益；流式对照必须另计可能的spill。
 - 登记沿用management-hub PR5 pending；本工作树无config/board.json，Projects未核实/同步pending。根会话需读实际权限并补同步或留准确缺项；没有宣称看板已更新。审查人待指定；根的只读候选审阅不等于正式PR批准。
 - 未改85工作区，未接管55/63；本地提交仅91文件及本人进度/架构入口，最终无未提交改动后交根接收。
+
+
+发布回执（2026-10-25）：[PR94](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/94)已上传；Issue91为in_review，待独立审查/合并，未done。远端读回commit 034fe463ebdae85361bdd8e7cf473548c92e6b8a的报告、索引、接收报告均与原Git blob逐字节相同，详见work/Liangruizhi/91/remote-readback.json。后续文档提交不改冻结实验source。登记PR5 pending；看板board.json404且实际条目查询缺read:project，状态unverified、同步pending。审查人/管理员待指定。
