@@ -6,6 +6,8 @@
 
 [最新有限Granite端口与宽成本实验](docs/experiments/issue-76-granite-ports.md)24配置全部独立通过：完整merge可在V16KiB内，近M仅省约0.00084%条件slots。保留M/V物理选择，优先校准宽算术局部暂存与预连线；见[Block v2第14节](docs/BLOCK_PARTITION_V2.md)，完整FSM/STA/PPA与整模型质量仍未验收。
 
+[首轮 Block 电路验证](docs/experiments/issue-80-block-circuit.md)已补齐实际宽控制器、有限 frame 和单 ROM 服务。895×4 个命令独立通过；同库存局部连接使本批执行周期减少 42.5%—44.0%，研究库逻辑面积增加约 0.16%（不含共同 memory wrapper）。纯 byte norm 仍代价高，完整 M/A/R、SRAM/ROM 宏和 STA/PPA 未验；见[电路规格](docs/BLOCK_CIRCUIT_SPEC_V1.md)与[Block v2 第15节](docs/BLOCK_PARTITION_V2.md)。
+
 ## 从哪里开始
 
 1. [项目说明 v1.0](预制计算底座项目说明_v1.0.md)：研究问题、已确认边界、候选方案和待决策清单。

@@ -1,0 +1,365 @@
+{
+  "schema": "block-circuit-comparison80-v1",
+  "status": "PASS_BOUND_RTL_COMPARISON",
+  "source": "independent result and netlist checker, no host per-byte arithmetic driver",
+  "input_manifest_sha256": "ed0cd0210dfe5fb6824e56be04c25152fd8307a762d58c40499b15f2d6e40b2b",
+  "input_program": {
+    "bytes": 1928832,
+    "external_capacity_budget_bytes": 134217728,
+    "fetch_cache_bytes": 16,
+    "note": "not a free internal microcode ROM; all external instruction/table reads use actual RTL bridge",
+    "program_budget_bytes": 33554432,
+    "sha256": "37c08d589f73a8ae8c65ef32c5351c5d756af02ea9a8ca7e5b65e5ab7efc1393",
+    "words": 241104
+  },
+  "cases_each": 895,
+  "pairs": [
+    {
+      "external_backpressure": 0,
+      "BUS": {
+        "cycles": 69215400,
+        "actions": 1679162,
+        "fetch_lines": 842566,
+        "frame_read_lines": 3080018,
+        "frame_write_lines": 1273547,
+        "rom_requests": 69,
+        "link_transactions": 5197182,
+        "wire_beats": 25985910,
+        "caller_setup_edges": 57280,
+        "caller_result_edges": 57280,
+        "completion_hold_and_ack_edges": 3580,
+        "observed_active_edges": 69216295
+      },
+      "LOCAL": {
+        "cycles": 38740445,
+        "actions": 1679162,
+        "fetch_lines": 842566,
+        "frame_read_lines": 3080018,
+        "frame_write_lines": 1273547,
+        "rom_requests": 69,
+        "link_transactions": 843617,
+        "wire_beats": 4218085,
+        "caller_setup_edges": 57280,
+        "caller_result_edges": 57280,
+        "completion_hold_and_ack_edges": 3580,
+        "observed_active_edges": 38741340
+      },
+      "BUS_total_edges_including_caller_IO": 69334435,
+      "LOCAL_total_edges_including_caller_IO": 38859480,
+      "cycles_saved": 30474955,
+      "execution_cycle_reduction_percent": 44.029153916613936,
+      "wire_beats_saved": 21767825,
+      "groups": {
+        "primitive": {
+          "cases": 807,
+          "bus_cycles": 44793258,
+          "local_cycles": 25127654
+        },
+        "ROM": {
+          "cases": 69,
+          "bus_cycles": 9660,
+          "local_cycles": 4830
+        },
+        "protocol_negative": {
+          "cases": 7,
+          "bus_cycles": 565,
+          "local_cycles": 376
+        },
+        "rq_chain": {
+          "cases": 4,
+          "bus_cycles": 391955,
+          "local_cycles": 222709
+        },
+        "merge8_chain": {
+          "cases": 6,
+          "bus_cycles": 3175998,
+          "local_cycles": 1810074
+        },
+        "norm8_chain": {
+          "cases": 2,
+          "bus_cycles": 20843964,
+          "local_cycles": 11574802
+        }
+      },
+      "denominator": "this895-command serialized microengine corpus, not an LLM or complete1536hidden layer"
+    },
+    {
+      "external_backpressure": 1,
+      "BUS": {
+        "cycles": 71746249,
+        "actions": 1679162,
+        "fetch_lines": 842566,
+        "frame_read_lines": 3080018,
+        "frame_write_lines": 1273547,
+        "rom_requests": 69,
+        "link_transactions": 5197182,
+        "wire_beats": 25985910,
+        "caller_setup_edges": 57280,
+        "caller_result_edges": 57280,
+        "completion_hold_and_ack_edges": 3580,
+        "observed_active_edges": 71747144
+      },
+      "LOCAL": {
+        "cycles": 41271294,
+        "actions": 1679162,
+        "fetch_lines": 842566,
+        "frame_read_lines": 3080018,
+        "frame_write_lines": 1273547,
+        "rom_requests": 69,
+        "link_transactions": 843617,
+        "wire_beats": 4218085,
+        "caller_setup_edges": 57280,
+        "caller_result_edges": 57280,
+        "completion_hold_and_ack_edges": 3580,
+        "observed_active_edges": 41272189
+      },
+      "BUS_total_edges_including_caller_IO": 71865284,
+      "LOCAL_total_edges_including_caller_IO": 41390329,
+      "cycles_saved": 30474955,
+      "execution_cycle_reduction_percent": 42.47602547138039,
+      "wire_beats_saved": 21767825,
+      "groups": {
+        "primitive": {
+          "cases": 807,
+          "bus_cycles": 46440635,
+          "local_cycles": 26775031
+        },
+        "ROM": {
+          "cases": 69,
+          "bus_cycles": 10077,
+          "local_cycles": 5247
+        },
+        "protocol_negative": {
+          "cases": 7,
+          "bus_cycles": 604,
+          "local_cycles": 415
+        },
+        "rq_chain": {
+          "cases": 4,
+          "bus_cycles": 406801,
+          "local_cycles": 237555
+        },
+        "merge8_chain": {
+          "cases": 6,
+          "bus_cycles": 3296923,
+          "local_cycles": 1930999
+        },
+        "norm8_chain": {
+          "cases": 2,
+          "bus_cycles": 21591209,
+          "local_cycles": 12322047
+        }
+      },
+      "denominator": "this895-command serialized microengine corpus, not an LLM or complete1536hidden layer"
+    }
+  ],
+  "structures": {
+    "0": {
+      "netlist_sha256": "598f9bbe91ac6c3e27d80eca2ffdbf173c492c56d4e627508a14f2283ddc1481",
+      "manifest_sha256": "e16222f838c9f0d58d116fc61eef1174cd768194b54cdc5ee54610d6924b1eec",
+      "generic_leaf_cells": 910,
+      "cell_types": {
+        "$sdffe": 66,
+        "$reduce_bool": 25,
+        "$logic_and": 34,
+        "$logic_not": 21,
+        "$mux": 249,
+        "$add": 38,
+        "$and": 13,
+        "$sdff": 7,
+        "$ne": 93,
+        "$not": 9,
+        "$reduce_and": 34,
+        "$reduce_or": 11,
+        "$eq": 130,
+        "$ge": 9,
+        "$gt": 3,
+        "$le": 1,
+        "$logic_or": 13,
+        "$lt": 25,
+        "$neg": 3,
+        "$or": 16,
+        "$pmux": 41,
+        "$shift": 7,
+        "$shiftx": 8,
+        "$shl": 9,
+        "$sub": 18,
+        "$mul": 8,
+        "$shr": 8,
+        "$xor": 8,
+        "$mem_v2": 3
+      },
+      "register_bits_excluding_memory_cells": 2138,
+      "memory_cells": [
+        {
+          "module": "$paramod\\wide_engine\\LOCAL=32'00000000000000000000000000000000",
+          "WIDTH": 32,
+          "SIZE": 4,
+          "RD_PORTS": 1,
+          "WR_PORTS": 1,
+          "RD_CLK_ENABLE": "0"
+        },
+        {
+          "module": "ram128",
+          "WIDTH": 128,
+          "SIZE": 32,
+          "RD_PORTS": 1,
+          "WR_PORTS": 1,
+          "RD_CLK_ENABLE": "0"
+        },
+        {
+          "module": "lut32",
+          "WIDTH": 32,
+          "SIZE": 32768,
+          "RD_PORTS": 1,
+          "WR_PORTS": 0,
+          "RD_CLK_ENABLE": "1"
+        }
+      ],
+      "memory_bits_including_return_stack": 1052800,
+      "S8_multipliers": 8,
+      "source": {
+        "commit": "8786d55df3979924aec7e29ec1f94448c1ba7ab4",
+        "sources": {
+          "docs/BLOCK_CIRCUIT_REFERENCES.md": "9509fd718856c5aa074f703549e40a4aa59d34debcfb10dd7f4dc282ef3510f3",
+          "docs/BLOCK_CIRCUIT_SPEC_V1.md": "889058ef39efce82b5fd687f780e4988e374794521d0dd2d03674aa0586c8cd5",
+          "project/experiments/block_circuit/PROTOCOL.md": "2f855306990b02c9efa9cf69b80c1060a270a33107bb4b02545bf0d298aa598c",
+          "project/experiments/block_circuit/assemble.py": "52e4c2164f53eba58e18cb19870879e7d187ca9912fbf3c0b6a09e81d0570fff",
+          "project/experiments/block_circuit/graphs.py": "973478d5100ec3e4b92bcc03aaddd205eb3bcafef0e11215d201391d398ea879",
+          "project/experiments/block_circuit/run.py": "59cbbde82e19bdfa9b1d05826cd5e3ccad171079eeb375f0b3f459a1ab7656a8",
+          "project/experiments/block_circuit/sim.cpp": "426cbd7806a3a12cf7349c053abe190b32a458a27aaac60aa483cfbb3041c2e7",
+          "project/experiments/block_circuit/verify.py": "e0aec2d7feaf1a6a20bf3e715f91a1381f96aebb91529751ba4bad41f97d905d",
+          "project/experiments/granite_ports/micro.py": "e4a91833f1abca5f03022b766c42793c2326bf47b3618cdec7f800195f156941",
+          "project/rtl/wide_service/byte_alu.sv": "84d0e38f4cb57358669dade9c1ee214b4d610e25f3173d5a871966f9518ddd2f",
+          "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+          "project/rtl/wide_service/ram128.sv": "c5f63ce2a60bb7614c052b711c1c82c736022c74f9f620c93969be56decbafa7",
+          "project/rtl/wide_service/wide_block.sv": "b4279a6a156ce3203b4a2dc13e7c0ee62e2db97e8767876b3b811d7567d12354",
+          "project/rtl/wide_service/wide_engine.sv": "5bf1d2dc69be5d8cd24ba166f7a267848c3a4a3f5b34382ad974e398f1c26f98"
+        }
+      },
+      "limits": [
+        "Generic cell count is not standard-cell area or physical PPA.",
+        "Frame/stack inferred read array plus registered wrapper, not an already mapped synchronous SRAM macro; read/write are mutually exclusive at the single RTL request interface.",
+        "Library/macro/STA/clock/wire timing remains unaccepted. Debug counters and actual controller/bridge registers are included."
+      ]
+    },
+    "1": {
+      "netlist_sha256": "8bae8d9c0ba306815fbeb3aad948dac9396e75a7795b4fd4089725555ee4feeb",
+      "manifest_sha256": "66df71f37bb90d7d8de20bdee60e81f474b6bd710174d9358f727031be4520da",
+      "generic_leaf_cells": 915,
+      "cell_types": {
+        "$sdffe": 66,
+        "$reduce_bool": 25,
+        "$logic_and": 35,
+        "$logic_not": 22,
+        "$mux": 252,
+        "$add": 38,
+        "$and": 13,
+        "$sdff": 7,
+        "$ne": 93,
+        "$not": 9,
+        "$reduce_and": 34,
+        "$reduce_or": 11,
+        "$eq": 130,
+        "$ge": 9,
+        "$gt": 3,
+        "$le": 1,
+        "$logic_or": 13,
+        "$lt": 25,
+        "$neg": 3,
+        "$or": 16,
+        "$pmux": 41,
+        "$shift": 7,
+        "$shiftx": 8,
+        "$shl": 9,
+        "$sub": 18,
+        "$mul": 8,
+        "$shr": 8,
+        "$xor": 8,
+        "$mem_v2": 3
+      },
+      "register_bits_excluding_memory_cells": 2138,
+      "memory_cells": [
+        {
+          "module": "$paramod\\wide_engine\\LOCAL=32'00000000000000000000000000000001",
+          "WIDTH": 32,
+          "SIZE": 4,
+          "RD_PORTS": 1,
+          "WR_PORTS": 1,
+          "RD_CLK_ENABLE": "0"
+        },
+        {
+          "module": "ram128",
+          "WIDTH": 128,
+          "SIZE": 32,
+          "RD_PORTS": 1,
+          "WR_PORTS": 1,
+          "RD_CLK_ENABLE": "0"
+        },
+        {
+          "module": "lut32",
+          "WIDTH": 32,
+          "SIZE": 32768,
+          "RD_PORTS": 1,
+          "WR_PORTS": 0,
+          "RD_CLK_ENABLE": "1"
+        }
+      ],
+      "memory_bits_including_return_stack": 1052800,
+      "S8_multipliers": 8,
+      "source": {
+        "commit": "8786d55df3979924aec7e29ec1f94448c1ba7ab4",
+        "sources": {
+          "docs/BLOCK_CIRCUIT_REFERENCES.md": "9509fd718856c5aa074f703549e40a4aa59d34debcfb10dd7f4dc282ef3510f3",
+          "docs/BLOCK_CIRCUIT_SPEC_V1.md": "889058ef39efce82b5fd687f780e4988e374794521d0dd2d03674aa0586c8cd5",
+          "project/experiments/block_circuit/PROTOCOL.md": "2f855306990b02c9efa9cf69b80c1060a270a33107bb4b02545bf0d298aa598c",
+          "project/experiments/block_circuit/assemble.py": "52e4c2164f53eba58e18cb19870879e7d187ca9912fbf3c0b6a09e81d0570fff",
+          "project/experiments/block_circuit/graphs.py": "973478d5100ec3e4b92bcc03aaddd205eb3bcafef0e11215d201391d398ea879",
+          "project/experiments/block_circuit/run.py": "59cbbde82e19bdfa9b1d05826cd5e3ccad171079eeb375f0b3f459a1ab7656a8",
+          "project/experiments/block_circuit/sim.cpp": "426cbd7806a3a12cf7349c053abe190b32a458a27aaac60aa483cfbb3041c2e7",
+          "project/experiments/block_circuit/verify.py": "e0aec2d7feaf1a6a20bf3e715f91a1381f96aebb91529751ba4bad41f97d905d",
+          "project/experiments/granite_ports/micro.py": "e4a91833f1abca5f03022b766c42793c2326bf47b3618cdec7f800195f156941",
+          "project/rtl/wide_service/byte_alu.sv": "84d0e38f4cb57358669dade9c1ee214b4d610e25f3173d5a871966f9518ddd2f",
+          "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+          "project/rtl/wide_service/ram128.sv": "c5f63ce2a60bb7614c052b711c1c82c736022c74f9f620c93969be56decbafa7",
+          "project/rtl/wide_service/wide_block.sv": "b4279a6a156ce3203b4a2dc13e7c0ee62e2db97e8767876b3b811d7567d12354",
+          "project/rtl/wide_service/wide_engine.sv": "5bf1d2dc69be5d8cd24ba166f7a267848c3a4a3f5b34382ad974e398f1c26f98"
+        }
+      },
+      "limits": [
+        "Generic cell count is not standard-cell area or physical PPA.",
+        "Frame/stack inferred read array plus registered wrapper, not an already mapped synchronous SRAM macro; read/write are mutually exclusive at the single RTL request interface.",
+        "Library/macro/STA/clock/wire timing remains unaccepted. Debug counters and actual controller/bridge registers are included."
+      ]
+    }
+  },
+  "exact_entire_frame_controls": 4,
+  "evidence": [
+    {
+      "run": "rtl-m0-s003",
+      "run_manifest_sha256": "3191e31a14945ddd9eeca65459b614fb3fb63c931dba017acddcf8af04dc922c",
+      "receipt_sha256": "21b35956a9a24a7b78a64e7269bd8df88fb295bbf90ae1d3ffc8b1a76281c37f"
+    },
+    {
+      "run": "rtl-m0-s103",
+      "run_manifest_sha256": "272f6b59ba2fd25f4275793bf808dfa06e8f97e883f0fc6e6dfd55a457c32a7e",
+      "receipt_sha256": "ec2b4e8f2aee20d99b8b60a5c239134ca83ffe0d15dd194a520da5a7ebcf5cc2"
+    },
+    {
+      "run": "rtl-m1-s003",
+      "run_manifest_sha256": "96b4f92f0019cfa9861a4a1f63b212ca95000dd8de42fd8c8605bfc494a3690d",
+      "receipt_sha256": "a805d60dbea4fa9f73a2af7374e061b20db7ab2dd7f4036b6087607ae7ff2610"
+    },
+    {
+      "run": "rtl-m1-s103",
+      "run_manifest_sha256": "2bad78ddad9c5f76226ba1c6aad427b69a0d4af8bdd9cab9a7488aad183a23f7",
+      "receipt_sha256": "060853f092053579fdf5b31b2da41d8c85a94eec1eb7a6d6a85d2b864fe27fc3"
+    }
+  ],
+  "limits": [
+    "Same arithmetic/storage/port inventory does not prove same cell area.",
+    "Measured seven-edge bridge latency reduction is this actual RTL organisation, not a physical wire-delay claim.",
+    "Program bytes, external fetches, 128 caller setup/extract edges and held completion edges are explicit. No whole-model throughput/quality or SRAM/ROM macro/STA/PPA conclusion.",
+    "Initial global-clock-phase backpressure batches01/02 retained but excluded from this per-transaction matched comparison."
+  ]
+}
