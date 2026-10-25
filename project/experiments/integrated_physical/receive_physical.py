@@ -42,7 +42,7 @@ def geometry_connectivity(text,net,lib):
   n=def_name(n)
   if n in table:need(len(table[n]['bits'])==1,'scalar named net');return table[n]['bits'][0]
   m=re.fullmatch(r'(.+)\[(\d+)\]',n);need(m is not None and m.group(1)in table,'named bit '+n);p=table[m.group(1)];i=int(m.group(2))-p.get('offset',0);need(0<=i<len(p['bits']),'busbit range');return p['bits'][i]
- nets=block(text,'\nNETS ','END NETS');parts=nets.split(';',1);nr=re.findall(r'(?s)-\s+(\S+)\s+(.*?);',parts[1]);need(len(nr)==int(parts[0].strip()),'DEF net count');seen=set();netbits={};bitnets={}
+ nets=block(text,'\nNETS ','END NETS');parts=nets.split(';',1);nr=re.findall(r'(?s)-\s+(\S+)\s+(.*?);',parts[1]);need(len(nr)==int(parts[0].strip()),'DEF net count');seen=set();netbits={};bitnets={};empty_reference_nets=[]
  for n,body in nr:
   bb=None;conn=body.split('+',1)[0]
   for owner,pin in re.findall(r'\(\s*(\S+)\s+(\S+)\s*\)',conn):
@@ -52,7 +52,9 @@ def geometry_connectivity(text,net,lib):
     need(owner in net['cells']and pin in net['cells'][owner]['connections'],'known DEF instance pin');bs=net['cells'][owner]['connections'][pin];need(len(bs)==1,'scalar DEF cellpin');actual=bs[0];key=('cell',owner,pin)
    if bb is None:bb=actual
    need(key not in seen and bb==actual,'DEF pin connectivity equal exact netlist');seen.add(key)
-  need(bb is not None and bb not in bitnets and def_name(n)not in netbits,'all DEF nets are nonempty and netlist bit classes not split');netbits[def_name(n)]=bb;bitnets[bb]=def_name(n)
+  if bb is None:
+   need(def_name(n)=='zero_'and re.fullmatch(r'\s*\+ USE GROUND\s*',body)is not None,'only explicitly empty zero_ ground reference may lack pins');empty_reference_nets.append({'name':def_name(n),'use':'GROUND','connections':0});continue
+  need(bb not in bitnets and def_name(n)not in netbits,'all electrical netlist bit classes not split '+n);netbits[def_name(n)]=bb;bitnets[bb]=def_name(n)
  expected={('cell',n,p)for n,c in net['cells'].items()for p,b in c['connections'].items()if b}|{('port',bracket_name(n,p,i))for n,p in net['ports'].items()for i in range(len(p['bits']))}
  need(seen==expected,'all cell and IO DEF connection coverage')
  # Pin metal rectangles, all boundary sites and two-track spacing are independent of renamed internal net labels.
@@ -67,7 +69,7 @@ def geometry_connectivity(text,net,lib):
  for (layer,edge),coords in edge_positions.items():
   coords.sort();step=tracks[(layer,'Y'if layer=='metal5'else'X')][2];need(all(b-a>=2*step for a,b in zip(coords,coords[1:])),'same layer edge two-track pin spacing')
  need(set(pinmap)==set(port_lookup),'every port physical geometry');need(area<=Decimal('79600.5'),'frozen cell budget')
- return {'status':'PASS_INDEPENDENT_SITE_BOUNDS_NO_OVERLAP_AND_ALL_SIGNAL_CONNECTIONS','core_um2':'159201','legal_rows':285,'row_site_count':598500,'functional_clock_repair_area_um2':str(area),'functional_area_budget_um2':'79600.5','DEF_database_units_per_um':unit,'signal_pin_connections':len(seen),'signal_net_equivalence_classes':len(netbits),'pin_geometry':pinmap,'pin_edge_counts':{layer+'/'+edge:len(coords)for(layer,edge),coords in edge_positions.items()},'physical_only_cells_inserted':0,'PG_tap_fill_and_real_macro':'not inserted in initial logic-island placement; no manufacturing legality claim'}
+ return {'status':'PASS_INDEPENDENT_SITE_BOUNDS_NO_OVERLAP_AND_ALL_SIGNAL_CONNECTIONS','core_um2':'159201','legal_rows':285,'row_site_count':598500,'functional_clock_repair_area_um2':str(area),'functional_area_budget_um2':'79600.5','DEF_database_units_per_um':unit,'signal_pin_connections':len(seen),'signal_net_equivalence_classes':len(netbits),'empty_non_electrical_reference_nets':empty_reference_nets,'pin_geometry':pinmap,'pin_edge_counts':{layer+'/'+edge:len(coords)for(layer,edge),coords in edge_positions.items()},'physical_only_cells_inserted':0,'PG_tap_fill_and_real_macro':'not inserted in initial logic-island placement; no manufacturing legality claim'}
 
 def audit(folder,prepared,out,gate=None):
  fm=artifacts(folder);pm=artifacts(prepared);ad=admit();need(pm['status']=='EXACT_ACCEPTED93_GATE_EXPORT_AND_DECLARED_MEMORY_CUT'and pm['admission_sha256']==sha(prepared/'admission.json')and load(prepared/'admission.json')==ad and fm['admission']==ad,'independent exact upstream admission');need(fm['stage']in('zero','place','repair')and fm['status']=='ACTUAL93_'+fm['stage'].upper()+'_EXECUTED_NOT_RECEIVED','actual stage complete');need(fm['prepared_manifest_sha256']==sha(prepared/'manifest.json'),'precise stage input')
