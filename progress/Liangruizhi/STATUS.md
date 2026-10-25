@@ -1,12 +1,12 @@
 # Liangruizhi 的进度
 
-## 2026-10-25 UTC+08 Issue98 实际整合核物理验证（持续进行）
+## 2026-10-25 UTC+08 Issue98：97研究物理闭合，93最终门级继续
 
-[Issue98](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/98)，task/98-integrated-physical，独立D:/Projects/LLMHardwareDesign-integrated-physical，仅本人服务器lrz-i98-*。93原映射51记录×两条件完整门级实际PASS（67命令/路），精确post-physical长跑继续；97已验gate各4运行/8正常输出，不含RTL内部注入。
+[Issue98](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/98)，task/98-integrated-physical，独立D:/Projects/LLMHardwareDesign-integrated-physical，仅本人服务器lrz-i98-*。97有限候选6实际完成精确最终4×2门级、DRT/RCX/独立SPEF读回、所有7465端点与双loads全cap/slew，physical_stage_accepted=true（研究库与声明切口范围）。面积76964.174µm²，setup+3.680569/hold+0.036780ns；完整接收SHA465bf3e283ddb47e2c0b4ac54db39691d544c904f1db3c8158be00fcc8ab13d6。最终DRC0/天线0/未解释未约束0。没有用native1fF容差放行。
 
-93真实DRT曾DRC0/routed1/天线0、RCX setup/hold通过，但完整表20cap超限；同版本STA过滤小于1fF负cap裕量，严格验收现核非过滤全表/全driver，不以native0放行。唯一0.80批量候选实际面积59356.304/76581.932：93剩4cap/6hold，97cap0但68hold失败，均input→FF。主要原因是负载隔离使原hold缓冲路径加速；已执行唯一50ps/4096增量hold并独立接收：93/97面积59611.664/76950.342，原hold均消除。93再固定4driver X4+1hold buffer，总59619.910，GRT全部严格电气和时序通过，新精确51×2gate/DRT继续；97新4×2gate已PASS，实际DRT DRC0/RCX setup与hold通过，但尚有1条0.115fF cap超限，保持失败。原79600.5预算/10ns/min0/全部端口不变，不用native1fF容差放行。
+93最终detail9303同样真实DRC0、严格cap/slew0、5826端点时序通过（59619.910µm²，+3.488219/+0.037797ns），但jointpost93s001/s101的51记录×2精确gate仍在91391/92执行，未accepted。原预算保持；实测吞吐有超时风险，若真实超时只允许已预登记一次同源16000s/280min新out。不得直接复用旧网表gate。93旧CTS和cap候选2精确51×2门级均已完成，旧cap物理失败仍保留。
 
-详细SPEF/DEF全图、873242.54µm/286850via和独立读回已有证据；GRT writer遗漏pin-access cap，用精确segments重放，不称独立RC求解。所有失败保留。阶段checkpoint1的7份及checkpoint2的8份原文件跨机SHA通过，精选成果已入[报告](../../docs/experiments/issue-98-integrated-physical.md)和checkpoint1；最终归档/根统一PR/看板仍pending。研究库无真实宏/PG/LVS/上游驱动资格，M2–M10/M5–M6pin不等于55/63固定层底座；物理尚未闭合，不done。恢复先核现有作业，禁止重复长跑。
+checkpoint3的7原文件/5042877B跨机SHA通过，74phase/3650原Git引用/224blob源码字节通过。入口四种真实重SHA负例通过。完整报告与原97接收见[报告](../../docs/experiments/issue-98-integrated-physical.md)。本地待根统一发布持续草稿PR；全量archive/93终态/最终看板读回仍pending，不done。真实宏/PG/LVS/目标工艺/上游driver未具备；研究M2–M10与55/63固定层底座不同。恢复先查91391/92/93与现有receipts，禁止重复长跑。
 
 ## 2026-10-25 UTC+08 Issue86门级与逻辑时序交付
 

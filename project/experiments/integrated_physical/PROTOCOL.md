@@ -325,3 +325,20 @@ frozen SHA/status/prepared. Real receive_route entry negatives cover integer,
 False, missing flag and rehashed alternate source. Existing original valid
 receipts stay preserved; pending extra inchold-receive9703 was not submitted
 because automatic approval infrastructure timed out twice (no job created).
+
+
+## Conditional sole final93 exact-gate timeout extension
+
+Do not stop or modify active91391/91392. Actual prefix91457 at6941s completed
+119884912/194658699 and128494926/230528560 cycles; conservative total11270/12453s,
+above initial10500s child budget. If and only if original actually times out,
+preserve the failure, validate every complete prefix record with independent
+numeric reference/original RTL and verify no numeric failure. Then one new output
+per failed stall may execute exactly the same frozen binary/driver/input for
+16000s child,280min Slurm (about28% over measured worst forecast). Exact hashes
+and one-retry limit are in final93_extension.json. A completed original is reused
+and never repeated; no changes to netlist, input/51 records, cadence, expected
+outputs, terminal exception or acceptance gates. This is execution budget only,
+not target clock relaxation or another physical repair candidate. No second
+extension is authorized. Final reception remains all51 records and complete
+protocol on each condition, plus exact gate dependency and full physical checks.

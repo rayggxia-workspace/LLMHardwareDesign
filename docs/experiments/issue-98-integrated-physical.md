@@ -1,8 +1,34 @@
 # Issue98：实际整合核布局、时钟树、布线与严格电气验证
 
-2026-10-25，负责人 Liangruizhi，实验继续进行。**尚未达到完整物理闭合或制造验收。** 93 已真实完成详细布线、DRC=0、routed=1、天线检查0，真实RCX后setup/hold通过，但完整电容表仍有20条超限；97有限GRT候选同样有20条电容超限。93原映射完整门级51记录×两条件已通过独立接收，布局修复后精确双条件也通过；一次性0.80裕量候选失败后有界联合修复已有新证据，最终精确gate/详细RCX和归档继续；不能把已执行或接收数据写成设计已通过。
+2026-10-25，负责人 Liangruizhi，实验继续进行。**97整合核已在本次Nangate研究库、整store82切口及固定I/O约束下完成布局/CTS/详细布线/真实RCX/全端点时序与严格电气验收，并通过精确最终网表4×2正常消费者链门级。93最终详细物理检查也已通过，精确51×2门级仍在原作业中运行。** 这是有限研究逻辑岛资格；真实SRAM、供电网、目标工艺制造验收仍未具备，不能写成完整芯片或固定层底座已验收。
 
-## 最新有界结果（此前失败均保留）
+## checkpoint3：97研究物理资格已闭合，93等待最终门级
+
+| 最终候选 |93 joint9302 → detail9303|97 joint9701 → detail9702|
+|---|---:|---:|
+|实际单元面积µm²|59619.910|76964.174|
+|原79600.5µm²预算余额|19980.590|2636.326|
+|真实RCX最差setup ns|+3.488219|+3.680569|
+|真实RCX最差hold ns（双load取最小）|+0.037797|+0.036780|
+|完整setup/hold端点|5826|7465|
+|完整cap / slew检查（每种负载）|45136 /45147|58346 /58359|
+|严格cap / slew超限|0 /0|0 /0|
+|实际DRC迭代终态|7700→…→0|13977→…→0|
+|原图相同/全部FF函数/端口/RCX读回|通过|通过|
+|精确最终gate|51×2正在运行；尚未接收|4×2正常完整链PASS|
+|physical_stage_accepted|false，仅缺该网表完整gate|true，在声明的研究切口范围内|
+
+97候选6只对实际RCX残余 `_73496_/ZN` 增加1枚X4，后续固定50ps增量hold实际再加15枚CLKBUF_X1：总增加13.832µm²，未放宽原10ns/min0、全部端口和容量。独立中间图证明旧driver仅驱新BUF输入、新输出承接全部且仅原sinks；18dirty批次、208唯一网、16新网完整计账。详细route固定seed42/8迭代，实际7m14s，DRC序列13977/4983/4083/321/64/5/5/0；无resize/repair/antenna插入，最终电气图与新gate绑定网表相同。实际7,465端点双loads全检，未解释未约束端点0，58346cap和58359slew全表均严格无超限；无fanout限制仍明确未限定。
+
+97实际最终gate接收[原收据](../../project/experiments/integrated_physical/results/issue-98/checkpoint3/final97-gate-receipt.json) SHA `ade8d55632682139c5fd7a438ee474be33a2ea16e91cee7b378b09e8be0db452`；[完整物理接收](../../project/experiments/integrated_physical/results/issue-98/checkpoint3/final97-detail-receipt.json) SHA `465bf3e283ddb47e2c0b4ac54db39691d544c904f1db3c8158be00fcc8ab13d6`。接收器 `receive_detail.py` + `gate_dependency.py` 强制精确stage/final.v/所有cell-pin等价类、全端点及实际SPEF读回、电气全表和postgate；旧raw或旧网表gate不可替代。97 gate范围仍仅4×2正常消费者，不扩大为RTL50命令内部注入/恢复或全状态formal证明。
+
+最终层账：93实际876835.685µm中心线/289659via，42118完整RC网；97为1223763.660µm/383536via、54427完整RC网。93本候选最高signal至M7，97仍用M8/M9/M10（3583.2/802.4/203.2µm），全clock/signal/PG及各via层对见收据。两者PG均缺失，边界仍M5/M6且没有按55/63要求引到M8，不能移植成固定M1–M8/后定制M9–M10资格。93与97功能不同，面积差不是同功能Block划分收益，10ns下slack也不等于签核Fmax。
+
+错误拒绝能力补齐：known incremental候选不得用1/False/缺字段跳过入口审计，所有前序SHA/status/prepared必须匹配冻结合同；joint5/6接收器独立限制BUF_X4。真实 `receive_route` 入口四种重SHA破坏均已在服务器拒绝，见[原负例收据](../../project/experiments/integrated_physical/results/issue-98/checkpoint3/entry-negative-receipt.json)。这修复接收代码漏洞，未发现先前真实结果被错误放行；先前native小cap失败仍完整保留。
+
+[checkpoint3字节收据](../../project/experiments/integrated_physical/results/issue-98/checkpoint3/independent-byte-receipt.json)：7份原始文件共5042877B已跨机SHA接收；另有74服务器phase、3650原Git引用、224独立blob共1774531B通过原Git字节核验。全量最终archive待93终态后保存。93当前完整门级保留原10500s child/10800s作业上限；实测6941s完成119884912/194658699与128494926/230528560周期，保守估总11270/12453s，存在预算超时风险。若真实超时仅按已批准的同源网表/binary/完整51driver/input一次延长新out执行，原失败保留；不可缩减记录或直接升级accepted。
+
+## checkpoint2历史有界结果（失败及当时状态原样保留）
 
 - 93唯一50ps增量hold消除原6条保持失败，面积59611.664。后续只固定4个cap driver各加X4、再一次50ps hold，最终增加4X4+1CLKBUF_X1=8.246µm²，总59619.910；完整5826端点setup+3.316442ns/hold+0.050006ns、双load全cap/slew严格0。中间四driver分别只驱新X4且全旧sink保留；原全部FF/函数/接口、几何和全RC证书通过。该精确新网表完整51×2门级与DRT正在执行，尚未最终accepted。
 - 97唯一50ps增量hold面积76950.342，7465端点setup+3.546201ns/hold+0.039329ns，58330 cap/58343 slew检查严格0，精确4×2正常门级已独立PASS。随后实际DRT耗6m28s，DRC依次13258/4525/4047/269/39/3/0，全部DEF/RCX/SPEF读回通过；实际setup+3.665755ns/hold+0.034158ns，但 `_73496_/ZN` cap26.169408798>26.054399490fF，**仍失败**，不能用1fF原生过滤容差放行。
@@ -51,7 +77,7 @@
 |93首次GRT|58659.384|+3.222259|-0.006039|42|12个hold失败|
 |93有限route repair|58898.518|+3.222326|+0.011129|12|cap失败保留|
 |93 cap候选2：12BUF_X4|58920.862|+3.238300|+0.011564|0|GRT native0，不能据此跳过严格完整表|
-|93实际DRT+RCX|58920.862|+3.413180|+0.005351|7|**完整表20cap失败**；精确该网表gate尚未完成|
+|93实际DRT+RCX|58920.862|+3.413180|+0.005351|7|**完整表20cap失败**；精确该网表gate现已PASS，但严格cap失败保留|
 |93批量0.80裕量|59356.304|+3.316442|-0.012740|1|**完整表4cap失败、6hold失败**|
 |97原映射+2tie|70104.034|-528.77|-0.002429|未在此表摘录|独立实际网表|
 |97布局修复|72580.494|+3.645788|+0.008617|0|理想时钟/估计RC|
@@ -91,7 +117,7 @@ C3的4096是工具跨端点累计修复预算，不是4096轮全设计优化；C
 |M9|131.200|0|
 |M10|0|0|
 
-PG真实缺失，没有预留供电拥塞成本。当前M5/M6 pin未按团队55/63方案引出M8，且signal实际用到M9；不能把本研究logic island当作M1–M8固定/M9–M10后定制的同底座资格。
+PG真实缺失，没有预留供电拥塞成本。该历史stage的M5/M6 pin未按团队55/63方案引出M8，且signal实际用到M9；不能把本研究logic island当作M1–M8固定/M9–M10后定制的同底座资格。
 
 ## GRT SPEF不是完整RC传输格式
 
