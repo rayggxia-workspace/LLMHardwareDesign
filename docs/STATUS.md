@@ -1,5 +1,7 @@
 # 当前状态
 
+- 2026-10-25 [Issue93](experiments/issue-93-gamma-stream.md)：流式gamma在单16KiB/同8S8+1S32上保留6Granite完整链，新增2Gemma H2560全行norm并保留4KiB A/512B frame；两路独立整数接收与有限恢复PASS，paired logic-only+4.20291%，非同I/O加速或物理资格。cost02已从真实128bit桥纠正传输字节，主包/精选/7phase108原Git字节通过；补充2项文件重SHA完整receiver语义负例及补充包独立通过。主会话尚待PR交付，不done，后续97/98独立推进。
+
 - 2026-10-25 [Issue92](experiments/issue-92-epoch-boundary.md)：修复实际32位epoch耗尽后的同tag迟到排空，并屏蔽reset/abort时cfg/done假握手。60正常完整消费者、4边界完整输出、8配置冲突、2完成冲突及10实际门锥SAT性质通过；33服务器作业结束，双包/精选158成员及5phase92源字节通过。原缺陷反例保留；52387.902µm²仅logic-only，不继承88电气资格。 成果待独立PR审查，未done；下一步#93及实际整合网表，不把旧电气资格移植到新电路。
 
 - 2026-10-25 [Issue92](experiments/issue-92-epoch-boundary.md)：32位max终止排空与reset/abort cfg/done优先修复在本人服务器完成；60+4完整输出独立接收、10条真实下一状态门锥安全性质通过，原RTL有效响应反例保留。33作业已结束、96.41MB全包/0.550MB精选及5phase92原源字节通过。待主会话上传PR与审查，非整核liveness/门级/STA或全部Block完成；重新开始仍要求协调fabric硬复位。

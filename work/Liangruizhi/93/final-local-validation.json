@@ -1,0 +1,72 @@
+{
+  "schema": "gamma93-pc-validation-v1",
+  "kind": "bytes only; no actual tensor or RTL execution on PC",
+  "commands": [
+    {
+      "argv": [
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\.venv\\Scripts\\python.exe",
+        "-B",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\work\\Liangruizhi\\93\\verify_delivery.py",
+        "--index",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\project\\experiments\\gamma_stream\\results\\issue-93\\final\\index.json",
+        "--archive",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\project\\experiments\\gamma_stream\\results\\issue-93\\final\\selected.zip",
+        "--out",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\project\\experiments\\gamma_stream\\results\\issue-93\\final\\local-byte-receipt.json"
+      ],
+      "exit": 0,
+      "stdout": "PASS_BYTE_RECEPTION 88\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\.venv\\Scripts\\python.exe",
+        "-B",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\work\\Liangruizhi\\93\\verify_sources.py",
+        "--repository",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream",
+        "--index",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\project\\experiments\\gamma_stream\\results\\issue-93\\final\\index.json",
+        "--selected",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\project\\experiments\\gamma_stream\\results\\issue-93\\final\\selected.zip",
+        "--expected-phases",
+        "7",
+        "--out",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\project\\experiments\\gamma_stream\\results\\issue-93\\final\\git-source-receipt.json"
+      ],
+      "exit": 0,
+      "stdout": "PASS 7 108\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\.venv\\Scripts\\python.exe",
+        "-B",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\work\\Liangruizhi\\93\\byte_negative_checks.py",
+        "--repository",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream",
+        "--index",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\project\\experiments\\gamma_stream\\results\\issue-93\\final\\index.json",
+        "--selected",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\project\\experiments\\gamma_stream\\results\\issue-93\\final\\selected.zip",
+        "--expected-phases",
+        "7",
+        "--out",
+        "D:\\Projects\\Codex\\gamma-stream-20261025-01\\byte-negative02"
+      ],
+      "exit": 0,
+      "stdout": "PASS_ALL_SIX_REJECTED\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\.venv\\Scripts\\python.exe",
+        "-B",
+        "scripts/check_project.py"
+      ],
+      "exit": 0,
+      "stdout": "PASS: Project management structure is valid (schema 1).\nNOTE: This does not validate product behavior, permissions, or live GitHub settings.\n",
+      "stderr": ""
+    }
+  ]
+}

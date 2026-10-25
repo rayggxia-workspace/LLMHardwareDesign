@@ -33,7 +33,7 @@ def main():
  with np.load(npz,allow_pickle=False)as z:
   selected=[]
   for layer in (0,5):
-   prefix=f'evaluation.norm.layer{layer}.input_layernorm'
+   prefix=f'prefix128.norm.layer{layer}.input_layernorm'
    if prefix+'.input'not in z:raise ValueError('explicit evaluation source key '+prefix)
    xx=z[prefix+'.input'];yy=z[prefix+'.output'];raw=z[f'norm_weight.layer{layer}.input_layernorm'];positions=z[prefix+'.rows_within_call']
    if xx.shape[1:]!=(2560,)or yy.shape!=xx.shape or raw.shape!=(2560,):raise ValueError('full hidden axis')

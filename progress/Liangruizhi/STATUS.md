@@ -263,8 +263,20 @@ PR待审查/合并，审查人/管理员待指定，未done；后续在已有授
 [报告](../../docs/experiments/issue-91-v-integration.md)/[交接](../../docs/handoffs/2026-10-25-issue-91-v-integration.md)。下一步独立Issue先gamma streaming+H1536回归/H2560全行den，再SiLU完整链；新增byte ALU/mux/程序/LUT/metadata及端口成本必须计费。根会话统一push/PR和状态，当前本地完成、远端待上传；不合并/不done，登记pending、Projects unverified/同步pending。
 
 
+发布回执（2026-10-25）：[PR94](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/94)已上传；Issue91为in_review，待独立审查/合并，未done。远端读回commit 034fe463ebdae85361bdd8e7cf473548c92e6b8a的报告、索引、接收报告均与原Git blob逐字节相同，详见work/Liangruizhi/91/remote-readback.json。后续文档提交不改冻结实验source。登记PR5 pending；看板board.json404且实际条目查询缺read:project，状态unverified、同步pending。审查人/管理员待指定。
+
 ## 2026-10-25 Issue92主会话接收与交付
 
 [Issue92](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/92)，负责人Liangruizhi。修复实际32位epoch耗尽后的同tag迟到排空，并屏蔽reset/abort时cfg/done假握手。60正常完整消费者、4边界完整输出、8配置冲突、2完成冲突及10实际门锥SAT性质通过；33服务器作业结束，双包/精选158成员及5phase92源字节通过。原缺陷反例保留；52387.902µm²仅logic-only，不继承88电气资格。
 
 分支task/92-epoch-boundary，工作目录D:/Projects/LLMHardwareDesign-epoch-boundary。实验源commit按索引冻结，文档/依赖合并不改实验源。主会话正上传PR，最终链接另附；待审查合并而非done。登记management-hub PR5 pending；board.json缺失/实际projectItems缺read:project，在线状态unverified、同步pending，管理员/审查人待指定。下一步#93流式gamma与完整V/S消费者及新网表物理资格，M/V/A/R/S/D整体仍未完成。
+
+
+发布回执（2026-10-25）：[PR96](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/96)已上传；Issue92为in_review，待独立审查/合并，未done。远端读回commit 66aa2795b4d03cc074f0df09396252c9b00d8f2a的报告、索引、接收报告均与原Git blob逐字节相同，详见work/Liangruizhi/92/remote-readback.json。后续文档提交不改冻结实验source。登记PR5 pending；看板board.json404且实际条目查询缺read:project，状态unverified、同步pending。审查人/管理员待指定。
+
+
+## 2026-10-25 Issue93 流式gamma
+
+[Issue93](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/93)，task/93-gamma-stream，独立D:/Projects/LLMHardwareDesign-gamma-stream。服务器正式两路51记录/每路48正确、1零分母、2坏gamma被独立数学拒绝，6Granite完整M与2Gemma H2560整行norm；单16KiB保留4KiB A+512B frame，generic寄存+180，paired logic面积+4.20291%（不是总PPA）。参数每忙拍变动、模式切换、cfg/abort/stale/reset/epoch已测。桥每read5×128bit，cost01按32bit记账已修正为final/cost02，原失败保留。
+
+[报告](../../docs/experiments/issue-93-gamma-stream.md)/[交接](../../docs/handoffs/2026-10-25-issue-93-gamma-stream.md)。主包78.63MB/276成员、精选200022B/88成员、7phase108原Git源/6字节负例通过；根审阅追加2项完整文件重SHA数值负例已由冻结完整receiver正确拒绝，11.22MB补充包/37.6KB精选和8phase112原Git字节亦通过。下一步97 V/M与98实际网表物理资格。本地已整理，尚未push/PR；主会话负责发布和读回，不done。登记PR5 pending，看板unverified同步pending，管理员待指定。

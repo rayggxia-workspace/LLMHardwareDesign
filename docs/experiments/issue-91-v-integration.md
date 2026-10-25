@@ -39,3 +39,6 @@ H1536原fullX/fullgamma/A外加frame、H2560 fullX/fullgamma/frame两种非法�
 4. **下一实现只先做gamma streaming。** 保持精确整数norm合同，闭合H1536回归/H2560全行den、gamma credit与恢复。随后复用旧74真实gate/up，加SiLU→全512 scale→A8→真实M，8个delta来自RTL而非继续引用原捕获header，最后才做综合/电气与同资源周期比较。
 
 本阶段Issue91本地可交付，远端发布/PR/看板由根会话统一处理；不合并、不done。没有新增模型或其它机器任务；所有未完成RTL/物理项保留在合同和交接。
+
+
+发布回执（2026-10-25）：[PR94](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/94)已上传；Issue91为in_review，待独立审查/合并，未done。远端读回commit 034fe463ebdae85361bdd8e7cf473548c92e6b8a的报告、索引、接收报告均与原Git blob逐字节相同，详见work/Liangruizhi/91/remote-readback.json。后续文档提交不改冻结实验source。登记PR5 pending；看板board.json404且实际条目查询缺read:project，状态unverified、同步pending。审查人/管理员待指定。

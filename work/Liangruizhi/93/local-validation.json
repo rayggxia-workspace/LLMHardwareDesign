@@ -1,0 +1,42 @@
+{
+  "schema": "gamma93-pc-validation-v1",
+  "kind": "bytes only; no actual tensor or RTL execution on PC",
+  "commands": [
+    {
+      "argv": [
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\.venv\\Scripts\\python.exe",
+        "-B",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\work\\Liangruizhi\\93\\verify_delivery.py",
+        "--index",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\project\\experiments\\gamma_stream\\results\\issue-93\\index.json",
+        "--archive",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\project\\experiments\\gamma_stream\\results\\issue-93\\selected.zip",
+        "--out",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\project\\experiments\\gamma_stream\\results\\issue-93\\local-byte-receipt.json"
+      ],
+      "exit": 0,
+      "stdout": "PASS_BYTE_RECEPTION 73\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "D:\\Projects\\Codex\\qwen3-inference-20261022\\environment\\.venv\\Scripts\\python.exe",
+        "-B",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\work\\Liangruizhi\\93\\verify_sources.py",
+        "--repository",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream",
+        "--index",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\project\\experiments\\gamma_stream\\results\\issue-93\\index.json",
+        "--selected",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\project\\experiments\\gamma_stream\\results\\issue-93\\selected.zip",
+        "--expected-phases",
+        "6",
+        "--out",
+        "D:\\Projects\\LLMHardwareDesign-gamma-stream\\project\\experiments\\gamma_stream\\results\\issue-93\\git-source-receipt.json"
+      ],
+      "exit": 0,
+      "stdout": "PASS 6 87\n",
+      "stderr": ""
+    }
+  ]
+}
