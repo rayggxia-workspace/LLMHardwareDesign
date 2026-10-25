@@ -1,4 +1,4 @@
-"""Issue86 server-only gate replay and explicitly cut logic timing."""
+"""Issue88 repaired-gate replay and explicitly cut logic timing."""
 import argparse,hashlib,json,subprocess,time,traceback
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[3]

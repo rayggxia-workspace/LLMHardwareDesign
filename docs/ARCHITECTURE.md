@@ -190,3 +190,8 @@ RTL project/rtl/norm_service，工具project/experiments/norm_circuit；[README]
 ## Issue86 门级接收与受限逻辑时序
 
 入口 `project/experiments/gate_sta/README.md` / `PROTOCOL.md`，实际冻结命令见 `work/Liangruizhi/86/execution.json`。只在本人服务器执行精确映射的 prepare/build/sim/sta 与 `receive.py --root <issue86-root> --prior <issue84-root> --out <new-dir>`；PC只执行既有 verify_delivery.py 与原Git源字节接收（README列完整参数）。四变体选定门级输入已通过，store82切分后的OpenSTA覆盖完整DFF，但slew/cap违规未闭合；不将其作为全核/85新增硬件的物理资格。
+
+
+## Issue88 有界电气修复
+
+入口 `project/experiments/electrical_repair/README.md` / `PROTOCOL.md`，报告 `docs/experiments/issue-88-electrical-repair.md`。先 `python -B scripts/check_project.py`；实际修复、门级完整消费者、独立连接证书/数学/STA全部在本人服务器独立lrz-i88-*目录执行，精确参数与阶段见work88/execution.json和source bindings。最终接收为 `receive.py --root <issue88-root> --out <new-dir>`，明确原四变体、1/10fF、零线RC、理想clk和store82切分。PC仅用 `closure/verify_delivery.py --index <delivery-index.json> --archive <selected.zip> --out <new.json>` 及 `work/Liangruizhi/82/verify_sources.py --repository <repo> --index <index> --selected <zip> --expected-phases 11 --out <new.json>` 核字节/原Git；不将其说成重新进行数学或物理验收。
