@@ -61,6 +61,7 @@ def main():
         hist = {}
         for cell in cells.values():
             t = cell['type']; hist[t] = hist.get(t, 0)+1
+        m['non_hardware_scope_annotations'] = hist.pop('$scopeinfo', 0)
         if {t: n for t, n in hist.items() if t not in areas} != {'ram128': 1, 'lut32': 1}:
             raise ValueError('unmapped logic or missing/duplicated memory blackboxes')
         m['mapped_cells'] = {t: n for t, n in hist.items() if t in areas}
