@@ -1,6 +1,18 @@
 # Issue98：实际整合核布局、时钟树、布线与严格电气验证
 
-2026-10-25，负责人 Liangruizhi，实验继续进行。**尚未达到完整物理闭合或制造验收。** 93 已真实完成详细布线、DRC=0、routed=1、天线检查0，真实RCX后setup/hold通过，但完整电容表仍有20条超限；97有限GRT候选同样有20条电容超限。93原映射完整门级51记录×两条件已通过独立接收；一次性0.80裕量候选实际失败，联合保持时间修复和最终归档继续；不能把已执行或接收数据写成设计已通过。
+2026-10-25，负责人 Liangruizhi，实验继续进行。**尚未达到完整物理闭合或制造验收。** 93 已真实完成详细布线、DRC=0、routed=1、天线检查0，真实RCX后setup/hold通过，但完整电容表仍有20条超限；97有限GRT候选同样有20条电容超限。93原映射完整门级51记录×两条件已通过独立接收，布局修复后精确双条件也通过；一次性0.80裕量候选失败后有界联合修复已有新证据，最终精确gate/详细RCX和归档继续；不能把已执行或接收数据写成设计已通过。
+
+## 最新有界结果（此前失败均保留）
+
+- 93唯一50ps增量hold消除原6条保持失败，面积59611.664。后续只固定4个cap driver各加X4、再一次50ps hold，最终增加4X4+1CLKBUF_X1=8.246µm²，总59619.910；完整5826端点setup+3.316442ns/hold+0.050006ns、双load全cap/slew严格0。中间四driver分别只驱新X4且全旧sink保留；原全部FF/函数/接口、几何和全RC证书通过。该精确新网表完整51×2门级与DRT正在执行，尚未最终accepted。
+- 97唯一50ps增量hold面积76950.342，7465端点setup+3.546201ns/hold+0.039329ns，58330 cap/58343 slew检查严格0，精确4×2正常门级已独立PASS。随后实际DRT耗6m28s，DRC依次13258/4525/4047/269/39/3/0，全部DEF/RCX/SPEF读回通过；实际setup+3.665755ns/hold+0.034158ns，但 `_73496_/ZN` cap26.169408798>26.054399490fF，**仍失败**，不能用1fF原生过滤容差放行。
+- 97此driver为OAI21_X1，仅驱1个AOI21_X1/A，原0.80选集源ratio0.7711所以未选；最新GRT总cap22.03515625，详细RCX变26.169408798。电气连接、完整final.v逐字节相同，RCX网电容24.5431fF包含ground9.173904和coupling15.369152；不将跨RC模型差异全部归因单一线长。原失败及只读诊断留存，尚未自动追加修复。
+
+增量独立账：93/97分别321/463 dirty批次、1046/1835唯一网；新320/461网全部覆盖。工具按grid pin位置选择更新，93/97有7/15个换sink但主段不变的网，全部要求真实新SPEF pin RC变化且全图连通；97一个实际空批留存，不把空批改写成漏记录。4种实际重SHA破坏（删新网dirty、追加full reroute、bool类型伪造、复用旧pin RC）均拒绝。93四网联合最终仅5新网、12移动cell、16原网主段变化。
+
+四网联合首次91377因直接routed insert_buffer未初始化DPL grid而Signal8，失败保留；精确源证实先check_placement可importDb/initGrid且不回写cell。恢复新out前后COMPONENTS/PINS/NETS必须逐块一致，再执行同一候选，不增加优化步骤或放宽限制。
+
+[checkpoint2](../../project/experiments/integrated_physical/results/issue-98/checkpoint2/independent-byte-receipt.json)的8原文件共6126541B已服务器与PC独立字节SHA接收；精确gate、负例、诊断与精选阶段指标可复查。全量最终归档仍进行中。
 
 ## 研究对象和约束
 
@@ -110,7 +122,7 @@ PG真实缺失，没有预留供电拥塞成本。当前M5/M6 pin未按团队55/
 
 93仪器化接口2369bit（551in/1818out），纯观测1468out占80.75%；原单侧1818输出超过796槽位失败保留。四边完整pin候选通过，M5左/右600/569、M6下/上600/600。97独立2799bit（665/2134）。不能把观测膨胀当算术Block必然不可布，未来CSR/串行观测须另立实际硬件计成本。
 
-93原映射完整门级51记录×quiet/heldreply已独立PASS（90940/90941分别1h34m37s/1h52m31s，91304接收）；每路67条接受命令。收据SHA78e43e09196115d943f92ec746e70e104751e2ae55fd6ed6154e767a506ae613，见[已校验原收据](../../project/experiments/integrated_physical/results/issue-98/checkpoint1/raw93-gate-receipt.json)。精确post-physical长跑尚未全部接收。唯一预登记驱动适配是末次直接epoch寄存器注入替换为`gate-last-normal-command`；门级不把top输出赋值冒充FF注入，不宣称覆盖该terminal边界。97各精确已验布局/C3/C4网表是4运行/8正常完整输出，来自原74整数oracle和原RTL/gate；50-command RTL错误恢复/内部注入另列，不扩大gate范围。
+93原映射完整门级51记录×quiet/heldreply已独立PASS（90940/90941分别1h34m37s/1h52m31s，91304接收）；每路67条接受命令。收据SHA78e43e09196115d943f92ec746e70e104751e2ae55fd6ed6154e767a506ae613，见[已校验原收据](../../project/experiments/integrated_physical/results/issue-98/checkpoint1/raw93-gate-receipt.json)。精确布局修复repair9302的双条件post-gate已PASS（90990/90991耗1h33m37s/1h50m49s，91305接收）；更晚CTS/route/joint网表独立长跑继续，不能移植。唯一预登记驱动适配是末次直接epoch寄存器注入替换为`gate-last-normal-command`；门级不把top输出赋值冒充FF注入，不宣称覆盖该terminal边界。97各精确已验布局/C3/C4网表是4运行/8正常完整输出，来自原74整数oracle和原RTL/gate；50-command RTL错误恢复/内部注入另列，不扩大gate范围。
 
 ## 成果和接续
 

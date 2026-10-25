@@ -4,9 +4,9 @@
 
 [Issue98](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/98)，task/98-integrated-physical，独立D:/Projects/LLMHardwareDesign-integrated-physical，仅本人服务器lrz-i98-*。93原映射51记录×两条件完整门级实际PASS（67命令/路），精确post-physical长跑继续；97已验gate各4运行/8正常输出，不含RTL内部注入。
 
-93真实DRT曾DRC0/routed1/天线0、RCX setup/hold通过，但完整表20cap超限；同版本STA过滤小于1fF负cap裕量，严格验收现核非过滤全表/全driver，不以native0放行。唯一0.80批量候选实际面积59356.304/76581.932：93剩4cap/6hold，97cap0但68hold失败，均input→FF。主要原因是负载隔离使原hold缓冲路径加速；已冻结一次50ps/4096的增量hold修复，保持原79600.5预算/10ns/min0/全部端口，不追加全图重布线，完整RC/新gate后继续验。
+93真实DRT曾DRC0/routed1/天线0、RCX setup/hold通过，但完整表20cap超限；同版本STA过滤小于1fF负cap裕量，严格验收现核非过滤全表/全driver，不以native0放行。唯一0.80批量候选实际面积59356.304/76581.932：93剩4cap/6hold，97cap0但68hold失败，均input→FF。主要原因是负载隔离使原hold缓冲路径加速；已执行唯一50ps/4096增量hold并独立接收：93/97面积59611.664/76950.342，原hold均消除。93再固定4driver X4+1hold buffer，总59619.910，GRT全部严格电气和时序通过，新精确51×2gate/DRT继续；97新4×2gate已PASS，实际DRT DRC0/RCX setup与hold通过，但尚有1条0.115fF cap超限，保持失败。原79600.5预算/10ns/min0/全部端口不变，不用native1fF容差放行。
 
-详细SPEF/DEF全图、873242.54µm/286850via和独立读回已有证据；GRT writer遗漏pin-access cap，用精确segments重放，不称独立RC求解。所有失败保留。阶段7份收据跨机SHA通过，精选成果已入[报告](../../docs/experiments/issue-98-integrated-physical.md)和checkpoint1；最终归档/根统一PR/看板仍pending。研究库无真实宏/PG/LVS/上游驱动资格，M2–M10/M5–M6pin不等于55/63固定层底座；物理尚未闭合，不done。恢复先核现有作业，禁止重复长跑。
+详细SPEF/DEF全图、873242.54µm/286850via和独立读回已有证据；GRT writer遗漏pin-access cap，用精确segments重放，不称独立RC求解。所有失败保留。阶段checkpoint1的7份及checkpoint2的8份原文件跨机SHA通过，精选成果已入[报告](../../docs/experiments/issue-98-integrated-physical.md)和checkpoint1；最终归档/根统一PR/看板仍pending。研究库无真实宏/PG/LVS/上游驱动资格，M2–M10/M5–M6pin不等于55/63固定层底座；物理尚未闭合，不done。恢复先核现有作业，禁止重复长跑。
 
 ## 2026-10-25 UTC+08 Issue86门级与逻辑时序交付
 
