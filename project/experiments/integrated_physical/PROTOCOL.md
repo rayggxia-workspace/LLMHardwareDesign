@@ -192,3 +192,15 @@ Installed API confirms old bottom/top-routing-layer DRT flags error as deprecate
 use the already frozen set_routing_layers. Antenna checks run read-only. The pilot
 is not silently repeated or given an unlimited timeout; a later bounded attempt
 must record observed runtime/residuals and unchanged acceptance constraints first.
+
+
+## One finite97 cap candidate3
+
+Actual97 C2 removes the frozen5 failures but reroutes net604 from219.45 to247.95um,
+via count10 unchanged. AOI211_X2 `_50541_/ZN` still drives only`wire604:A`,
+actual load32.064598fF now exceeds max28.991697fF. Freeze exactly this one driver
+from failedC2 manifest927d6e77d0b72c327f5a09b0493a07ae2ae06908c1b2f66b4fec30ecd56b39d4.
+Candidate3 adds oneBUF_X4(+1.862um2), originaldriver location then legalize and
+onefullGRT50, identicalconstraints/resources. PriorC2 remains failed. Noother
+net is included; a new residual stops this candidate for diagnosis. Fullpin/FF/
+function/inventory/RC/allendpoint checks and a newly bound exactgate are required.
