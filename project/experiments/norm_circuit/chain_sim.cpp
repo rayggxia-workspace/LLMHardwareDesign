@@ -36,5 +36,7 @@ int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);need(argc==4
  for(int j=0;j<384;j++){auto words=cfg(false,j);for(int k=0;k<4;k++)result.push_back(int32_t(words[k]));}
  out<<"{\"name\":\""<<name<<"\",\"status\":"<<st<<",\"cycles\":"<<cy<<",\"norm_cycles\":"<<ncy<<",\"reads\":"<<r<<",\"writes\":"<<w<<",\"M_packets\":"<<packets<<",\"M_MACs\":"<<macs<<",\"M_store_lines\":"<<mw<<",\"wire_beats\":"<<beats<<",\"transactions\":"<<transactions<<",\"setup_edges\":"<<setup<<",\"result_edges\":"<<ticks-begin<<",\"acc\":";array(accs);out<<",\"down\":";array(downs);out<<",\"joined\":";array(joins);out<<",\"out\":";array(result);out<<"}\n";count++;
  }
+ cfg(true,900,{0xa5a5a5a5,0xa5a5a5a5,0xa5a5a5a5,0xa5a5a5a5});d.cmd=1;step();d.cmd=0;int abort_wait=0;while(d.macs<64){step();need(++abort_wait<10000,"active M reset reached");}d.reset=1;step();d.reset=0;for(int j=0;j<20;j++){step();need(!d.done,"no stale M completion");}need(cfg(false,900)[0]==0xa5a5a5a5,"M reset SRAM retention");
+ std::ofstream proto(std::string(argv[2])+".protocol.json");proto<<"{\"actual_M_active_reset\":true,\"no_stale_completion\":true,\"SRAM_retained\":true}\n";
  std::cout<<"FULL_M_CONSUMER_RTL_EXECUTED "<<count<<"\n";return 0;
  }catch(const std::exception&e){std::cerr<<e.what()<<" state="<<unsigned(d.debug_state)<<" status="<<unsigned(d.status)<<"\n";return 1;}}

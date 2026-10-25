@@ -39,6 +39,8 @@ def main():
  for root,mf in((a.run,m),(a.input,im)):
   for e in mf['artifacts']:
    if sha(root/e['path'])!=e['sha256']:raise ValueError('actual artifact SHA')
+ protocol=json.loads((a.run/'actual.jsonl.protocol.json').read_text())
+ if not all(protocol.values()):raise ValueError('actual M reset')
  cases=json.loads((a.input/'cases.json').read_text());rows=[json.loads(s)for s in(a.run/'actual.jsonl').read_text().splitlines()]
  if len(rows)!=6 or len(cases)!=6:raise ValueError('all declared cases')
  summaries=[]
@@ -50,5 +52,5 @@ def main():
  except ValueError:pass
  else:raise ValueError('rehash semantic negative trusted')
  if a.out.exists():raise ValueError('new out')
- a.out.write_text(json.dumps({'status':'PASS_REAL_M_COMPLETE_CONSUMER','profile':m['profile'],'stall':m['stall'],'cases':6,'source':m['source'],'run_manifest_sha256':sha(a.run/'manifest.json'),'input_manifest_sha256':sha(a.input/'manifest.json'),'rows':summaries,'negative':{'sha256':sha(neg),'status':'REJECTED_AFTER_REHASH'},'scope':'Actual fullK512/all8expert/H1536 down matrix -> RQ -> merge -> residual -> full RMSNorm. Mid-A8, dynamic selectedIDs/gates and earlier model are the frozen external cut. No whole-model or target-PPA claim.'},indent=2)+'\n');print('PASS_REAL_M_COMPLETE_CONSUMER')
+ a.out.write_text(json.dumps({'status':'PASS_REAL_M_COMPLETE_CONSUMER','profile':m['profile'],'stall':m['stall'],'cases':6,'protocol':protocol,'source':m['source'],'run_manifest_sha256':sha(a.run/'manifest.json'),'input_manifest_sha256':sha(a.input/'manifest.json'),'rows':summaries,'negative':{'sha256':sha(neg),'status':'REJECTED_AFTER_REHASH'},'scope':'Actual fullK512/all8expert/H1536 down matrix -> RQ -> merge -> residual -> full RMSNorm. Mid-A8, dynamic selectedIDs/gates and earlier model are the frozen external cut. No whole-model or target-PPA claim.'},indent=2)+'\n');print('PASS_REAL_M_COMPLETE_CONSUMER')
 if __name__=='__main__':main()
