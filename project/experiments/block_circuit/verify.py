@@ -64,12 +64,12 @@ def check(vectors,rows):
   groups[v['kind']]=groups.get(v['kind'],0)+1
  return {'cases':len(rows),'groups':groups,'totals':total,'caller_IO_per_case':{'setup_full128bit_writes':32,'result_full128bit_reads':32},'eight_lane_parallel_throughput':'not implemented; one context chooses one of8physical lanes'}
 def main():
- p=argparse.ArgumentParser();p.add_argument('--input',type=Path,required=True);p.add_argument('--run',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--negative',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('--input',type=Path,required=True);p.add_argument('--run',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--negative',action='store_true');p.add_argument('--limit',type=int);a=p.parse_args()
  need(not a.out.exists(),'new receipt only');im=json.loads((a.input/'manifest.json').read_text());rm=json.loads((a.run/'manifest.json').read_text())
  for root,m in((a.input,im),(a.run,rm)):
   for d in m['artifacts']:need(sha(root/d['path'])==d['sha256']and(root/d['path']).stat().st_size==d['bytes'],'actual artifact SHA')
  need(rm['status']=='RTL_EXECUTED','actual successful simulation');need(rm['input_manifest_sha256']==sha(a.input/'manifest.json'),'input bound to exact simulation')
- vectors=json.loads((a.input/'vectors.json').read_text());rows=[json.loads(x)for x in(a.run/'actual.jsonl').read_text().splitlines()];result=check(vectors,rows)
+ vectors=json.loads((a.input/'vectors.json').read_text());rows=[json.loads(x)for x in(a.run/'actual.jsonl').read_text().splitlines()];vectors=vectors[:a.limit] if a.limit is not None else vectors;result=check(vectors,rows)
  negatives=[]
  if a.negative:
   bad=copy.deepcopy(rows);v=vectors[0];r=bad[0];f=bytearray.fromhex(r['frame']);f[v['outputs']['value']['refs'][0]]^=1;r['frame']=f.hex()
@@ -78,6 +78,6 @@ def main():
   try:check(vectors,mutated)
   except ValueError as e:negatives.append({'kind':'actual_numeric_rewrite','sha256':sha(path),'status':'REJECTED_AFTER_REHASH','reason':str(e)})
   else:raise ValueError('numeric semantic negative accepted')
- result.update(schema='block-circuit-independent80-v1',status='PASS_RTL_NUMERIC_PROTOCOL',source=rm['source'],input_manifest_sha256=sha(a.input/'manifest.json'),run_manifest_sha256=sha(a.run/'manifest.json'),mode=rm['mode'],stall=rm['stall'],semantic_negatives=negatives,limits=['Cycle measurements for this actual serialized RTL and external memory response model only; not entire LLM or process timing.','Program deployment and caller setup/result IO are separate explicit costs; no free control memory.','Generic synthesis/behavioral memories do not establish SRAM/ROM macro, STA or physical area/power.'])
+ result.update(schema='block-circuit-independent80-v1',status='PASS_RTL_NUMERIC_PROTOCOL' if a.limit is None else 'PASS_PARTIAL_RTL_NUMERIC_PROTOCOL',source=rm['source'],input_manifest_sha256=sha(a.input/'manifest.json'),run_manifest_sha256=sha(a.run/'manifest.json'),mode=rm['mode'],stall=rm['stall'],semantic_negatives=negatives,limits=['Cycle measurements for this actual serialized RTL and external memory response model only; not entire LLM or process timing.','Program deployment and caller setup/result IO are separate explicit costs; no free control memory.','Generic synthesis/behavioral memories do not establish SRAM/ROM macro, STA or physical area/power.'])
  a.out.write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8');print(result['status'],result['cases'])
 if __name__=='__main__':main()

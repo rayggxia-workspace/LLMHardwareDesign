@@ -6,6 +6,7 @@ RTL=ROOT/'project/rtl/wide_service'
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def put(p,x):p.write_text(json.dumps(x,indent=2,sort_keys=True)+'\n',encoding='utf-8')
 def command(out,name,args,prefix,cwd=None):
+ prefix=prefix[:-1]+['--pwd',str(cwd),prefix[-1]] if cwd is not None and prefix else prefix
  start=time.monotonic();r=subprocess.run([*prefix,*map(str,args)],cwd=cwd,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
  (out/(name+'.log')).write_text(r.stdout,encoding='utf-8');record={'argv':[*prefix,*map(str,args)],'cwd':str(cwd),'exit_code':r.returncode,'elapsed_seconds':time.monotonic()-start};put(out/(name+'-command.json'),record)
  if r.returncode:raise ValueError(name+' failed; original log preserved')
@@ -32,6 +33,7 @@ def main():
     if sha(a.input/entry['path'])!=entry['sha256']:raise ValueError('exact input artifact')
    (a.out/'rom.hex').write_bytes((a.input/'rom.hex').read_bytes());m['input_manifest_sha256']=sha(a.input/'manifest.json');m['build_manifest_sha256']=sha(a.build/'manifest.json')
    command(a.out,'simulation',[a.build/bm['binary']['path'],a.input/'program.bin',a.input/'vectors.tsv',a.out/'actual.jsonl',str(a.stall),str(a.limit)],prefix,cwd=a.out)
+   if '%Warning' in(a.out/'simulation.log').read_text():raise ValueError('simulation warnings require qualification; no silent missing ROM')
    m['status']='RTL_EXECUTED'
   else:
    (a.out/'rom.hex').write_bytes((a.input/'rom.hex').read_bytes())
