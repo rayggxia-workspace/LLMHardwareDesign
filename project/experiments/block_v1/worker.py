@@ -135,6 +135,18 @@ try:
     elif MODE=='native-boundary-audit':
         from native_boundary import verify
         verify(ROOT,OUT)
+    elif MODE=='native-physical-control':
+        source=OUT.parents[2]/'block-v1-20261027-063/tasks/native-sta-control'
+        prior=json.loads((source/'receipt.json').read_text());assert prior['passed']is True
+        path=source/'positive/probe.odb'
+        assert hashlib.sha256(path.read_bytes()).hexdigest()==prior['outputs']['positive/probe.odb']
+        (OUT/'physical-control.tcl').write_text('set ::env(BV1_ODB) {'+str(path)+'}\nsource {'+str(ROOT/'project/experiments/block_v1/native_physical.tcl')+'}\n')
+        run(['openroad','-no_init','-exit','physical-control.tcl'],'physical-control.log')
+        values={line.split('\t')[0]:line.split('\t')[1:]for line in(OUT/'physical-summary.tsv').read_text().splitlines()}
+        assert values['unplaced']==['1']and int(values['incorrect_pg_iterms'][0])>0
+        assert values['pg_VDD']==values['pg_VSS']==['0']
+        (OUT/'native-physical-control.json').write_text(json.dumps(dict(passed=True,actual_summary=values,
+            scope='Unplaced real DFF with disconnected PG rejected by physical receiver; complete native candidates remain unqualified'),indent=2)+'\n')
     elif MODE.startswith('native-receive-'):
         from native_receive import verify
         _,_,top,policy=MODE.split('-')

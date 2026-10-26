@@ -61,7 +61,7 @@ def inspect(folder):
 
 def fixture(root,out,run):
     """Real DFF/STA/SPEF controls exercise the receiver, without PPA claims."""
-    def one(name,load_ff,period):
+    def one(name,load_ff,period,omit=None):
         folder=out/name;folder.mkdir()
         (folder/'probe.v').write_text('module sta_probe(input clk,d,output q); DFF_X1 u0(.CK(clk),.D(d),.Q(q)); endmodule\n')
         (folder/'probe.sdc').write_text('set_cmd_units -time ns -capacitance fF -resistance kOhm -distance um\n'
@@ -73,6 +73,7 @@ def fixture(root,out,run):
         spef='*SPEF "IEEE 1481-1998"\n*DESIGN "sta_probe"\n*DATE "2026-10-27"\n*VENDOR "LLMHardwareDesign"\n*PROGRAM "receiver-control"\n*VERSION "1"\n'
         spef+='*DESIGN_FLOW "PIN_CAP NONE"\n*DIVIDER /\n*DELIMITER :\n*BUS_DELIMITER [ ]\n*T_UNIT 1 NS\n*C_UNIT 1 FF\n*R_UNIT 1 OHM\n*L_UNIT 1 UH\n*PORTS\nclk I\nd I\nq O\n'
         for net,pin,direction,cap in [('clk','CK','I',1),('d','D','I',1),('q','Q','O',1)]:
+            if net==omit:continue
             external='O'if net=='q'else'I'
             spef+='\n*D_NET %s %g\n*CONN\n*P %s %s\n*I u0:%s %s\n*CAP\n1 %s %g\n2 u0:%s %g\n*RES\n1 %s u0:%s .1\n*END\n'%(net,cap,net,external,pin,direction,net,cap/2,pin,cap/2,net,pin)
         (folder/'probe.spef').write_text(spef)
@@ -97,6 +98,10 @@ def fixture(root,out,run):
     positive=one('positive',2,10)
     cap=one('bad-capacitance',1000,10)
     clock=one('bad-setup',2,.1)
+    one('missing-d-rc',2,10,omit='d')
+    from native_annotation import inspect as coverage
+    annotation=dict(positive=coverage(out/'positive'),missing_input_rc=coverage(out/'missing-d-rc'))
+    assert annotation['positive']['passed']and not annotation['missing_input_rc']['passed']
     # Copy only the actual positive report into new audit-control directories.
     # The original physical/native files remain immutable. These exercise the
     # unused-output exception and precision independently of real violations.
@@ -117,7 +122,7 @@ def fixture(root,out,run):
         faults[name]=inspect(folder)
         assert not faults[name]['passed'],'Receiver accepted '+name
     record=dict(schema='block-v1-native-sta-receiver-control/1',positive=positive,
-        bad_capacitance=cap,bad_setup=clock,report_fault_controls=faults,
+        bad_capacitance=cap,bad_setup=clock,report_fault_controls=faults,annotation=annotation,
         scope='Actual native DFF/STA and explicit test SPEF; receiver controls only, no routed physical qualification')
     (out/'native-sta-control.json').write_text(json.dumps(record,indent=2)+'\n')
     assert positive['passed'],'Native positive STA control failed; inspect all actual margins'

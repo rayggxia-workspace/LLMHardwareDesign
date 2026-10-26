@@ -16,6 +16,7 @@ foreach reached [get_fanout -from $clock_ports -flat -pin_levels 2 -trace_arcs a
 if {$clock_fanout==0} {error "Native fanout API failed its connected-clock positive control"}
 write_sdc constraints-readback.sdc
 report_parasitic_annotation -report_unannotated > annotation.rpt
+source [file join [file dirname [info script]] native_annotation.tcl]
 set stream [open endpoints.tsv w]
 foreach pin [sta::endpoints] {
   set maximum [get_property $pin slack_max]
