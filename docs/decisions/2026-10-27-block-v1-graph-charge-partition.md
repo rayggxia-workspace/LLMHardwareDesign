@@ -32,3 +32,10 @@
 API参照[OpenDB dbCapNode](https://openroad.readthedocs.io/en/latest/doxygen_output/html/classodb_1_1dbCapNode.html)与[dbRSeg](https://openroad.readthedocs.io/en/latest/doxygen_output/html/classodb_1_1dbRSeg.html)，具体安装版本尚未执行验证，不能把当前文档/API存在当成实测通过。合成TSV正例及六种故障控制（含保总量换值、缺节点、重复边与非有限数）通过，只证明接收器。一般多网capture-node耦合、真实长路由局部FV、窗口所有权、新旧层拼接和全Block资格仍未完成。
 
 097源8581c37d463846e115af195a171207ad7f01e562、归档66fa0965b99907ac613209449345c384644ae800773000ea92a4815a231751bc（113成员、788480字节）已部署，8CPU，依赖096实测成功。尚无Slurm作业。合成负例的非有限观测值在索引中标记为字符串，原TSV中的inf及拒绝结论保留；不把非法JSON数值当正常电容。
+
+
+## 07:54 实际路由测量与原生读回修复
+
+096/92133真实路由8节点电荷测量完成55秒，六项锁定门槛全部通过；最后offset的总C约13.2813 fF，仍仅单个隔离网络起点电荷，不是完整分布式RC。097/92134实际SPEF导入失败，已定位安装版Tcl SWIG不接受显式uint32_t corner参数；源码改用官方同义默认corner=0无参接口，不放宽逐节点/逐边检查，重跑待部署。093边缘T6KA修复已提交92135；094内部T6KC独立官方DRC仍运行，095继续等待其全部通过。
+
+原096六门槛为正总量、局部符号、统计精度、逐列守恒、offset收敛、与原051总量一致。八节点C来自场解起点分桶，七边R保留原DC图。失败097导入已实际读入7个resistor/8个ground cap，随后getCapacitance 0被SWIG拒绝；原日志和回执保留在run097-first-native。使用getCapacitance()的默认corner=0语义见[官方API](https://openroad.readthedocs.io/en/latest/doxygen_output/html/classodb_1_1dbCapNode.html)。该修复尚未在安装版执行，不能报告节点/边回装通过。

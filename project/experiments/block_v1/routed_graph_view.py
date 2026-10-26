@@ -44,12 +44,14 @@ proc node_key {node} {
 set net [[ord::get_db_block] findNet link]
 set stream [open nodes.tsv w]
 foreach node [$net getCapNodes] {
-  puts $stream "[node_key $node]\t[$node getCapacitance 0]"
+  # Installed Tcl SWIG rejects uint32_t's explicit integer overload. The
+  # documented no-argument overload selects the same default corner zero.
+  puts $stream "[node_key $node]\t[$node getCapacitance]"
 }
 close $stream
 set stream [open edges.tsv w]
 foreach edge [$net getRSegs] {
-  puts $stream "[node_key [$edge getSourceCapNode]]\t[node_key [$edge getTargetCapNode]]\t[$edge getResistance 0]"
+  puts $stream "[node_key [$edge getSourceCapNode]]\t[node_key [$edge getTargetCapNode]]\t[$edge getResistance]"
 }
 close $stream
 set stream [open totals.tsv w]
