@@ -139,6 +139,14 @@ try:
                 target.parent.mkdir(parents=True,exist_ok=True)
                 shutil.copyfile(path,target)
         (OUT/'extraction-tool-info.json').write_text(json.dumps(probe,indent=2)+'\n')
+    elif MODE=='geometry-reader-probe':
+        prior=OUT.parents[2]/'block-v1-20261027-036/tasks/direct-view-5'
+        bound=json.loads((prior/'receipt.json').read_text());assert bound['passed']is True
+        path=prior/'actual.odb'
+        assert hashlib.sha256(path.read_bytes()).hexdigest()==bound['outputs']['actual.odb']
+        script='read_db {'+str(path)+'}\nsource {'+str(ROOT/'project/experiments/block_v1/odb_geometry.tcl')+'}\nbvgeom::export geometry.tsv\n'
+        (OUT/'geometry-reader.tcl').write_text(script)
+        run(['openroad','-no_init','-exit','geometry-reader.tcl'],'geometry-reader.log')
     elif MODE=='geometry-api-probe':
         # Determine the installed immutable binary's read-only geometry API
         # before choosing a full-design direct-field reader.
