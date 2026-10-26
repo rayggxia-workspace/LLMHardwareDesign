@@ -1,5 +1,12 @@
 # YUZE-LU 的进度
 
+## 2026-10-27 04:59 CST：Issue121 增量
+
+- 原生十层4候选P&R继续：C8布局、T6K详细布线；新完整映射并行回归92062/32CPU/UNLIMITED编译中，合计6节点。原91903时限延长被Slurm拒绝，保留独立调度记录。
+- 真实STA/寄生覆盖正负例和物理断PG负例通过，完整最终物理接收器待候选完成；16μm窗口拒绝、64/128μm窗口诊断通过，分布式RC/新旧层拼接仍未资格。
+- [Issue121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121) 持续实施；[草稿PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122) 未合并。原计划不改。登记pending、看板unverified/同步pending；处理人待指定。下一步独立接收最终候选并继续十二层资格。
+
+
 ## 2026-10-27 Block v1 十二层实施
 
 - 最新快照：2026-10-27 04:17 CST。run052精确映射结构兼容导出与负例通过；run055四个实际原生导入/固定M10坐标通过；run056完整STA写回的IO、驱动及每输出2fF审计通过。run057的92045–92048已在node14–node17各32CPU/UNLIMITED开始原生候选P&R，覆盖C8/T6K × A/C；91903映射门级在node13继续。run043/044八方向实例pin与原生/新增PG导体的独立GDS集合核对通过。十二层完整分布式RC仍未验收，不发布合格Block。详见[输入决策](../../docs/decisions/2026-10-27-block-v1-native-candidate-inputs.md)。以下时间标记保留早期事实，以本条为当前状态。

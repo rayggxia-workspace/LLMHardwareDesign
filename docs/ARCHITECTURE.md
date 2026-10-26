@@ -133,3 +133,6 @@ python project/experiments/block_v1/collect.py block-v1-20261027-057 .local/issu
 ```
 
 该采集不是合格接收器。原生候选成功后仍须精确最终文件的功能、全端点STA/电气、PG/连接/独立几何、RC覆盖和完整资源计价；十二层研究RC与共同底座/两产品另行验收。兼容和单位修正的失败历史见[输入决策](decisions/2026-10-27-block-v1-native-candidate-inputs.md)。
+
+
+Block v1 独立最终物理入口为 `native-receive-<shared109|transaction6k>-<A|C>`，从 `native_pipeline.json` 的057源候选读封存回执，并要求066真实STA/漏RC控制通过。必须通过dispatcher的对应 `after_runs` 依赖，不能在源作业结束前读最终文件。通过 `worker.sh <只读源码根> <模式>` 在32CPU allocation中运行；源码由 `python project/experiments/block_v1/bundle.py <新归档>` 精确打包。完整门级的 `mapped-parallel-suite` 保持同004网表/单元模型/13命令/两背压接收，32CPU内同时两模型各16线程，非缩减测试。轻量索引新增STA/物理/窗口结果名，原历史索引不覆盖。
