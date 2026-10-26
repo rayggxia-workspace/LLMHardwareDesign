@@ -23,7 +23,7 @@ if (root/'source.tar').exists():
  assert result['source_archive_sha256']==manifest['source_archive_sha256']
 ids=[x['job_id'] for x in state['tasks'].values() if x.get('job_id')]
 assert all(x.isdigit()for x in ids)
-result['sacct']=subprocess.check_output(['sacct','-n','-P','-j',','.join(ids),'--format=JobIDRaw,State,ExitCode,Elapsed,TotalCPU,MaxRSS,AllocCPUS,NodeList'],universal_newlines=True)
+result['sacct']=subprocess.check_output(['sacct','-n','-P','-j',','.join(ids),'--format=JobIDRaw,State,ExitCode,Elapsed,TotalCPU,MaxRSS,AllocCPUS,NodeList'],universal_newlines=True) if ids else ''
 for task in manifest['tasks']:
  p=root/'tasks'/task['id']
  data={'job_id':state['tasks'].get(task['id'],{}).get('job_id'),'artifacts':{}}

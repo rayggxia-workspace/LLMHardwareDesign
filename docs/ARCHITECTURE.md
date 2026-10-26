@@ -142,3 +142,6 @@ Block v1 独立最终物理入口为 `native-receive-<shared109|transaction6k>-<
 
 
 当前原生链已更新为077准备/078四组floorplan/079边界/080原生P&R；075/076失败链与旧057运行保留。078的实际DEF轨道和全部pin精确对齐验证已通过，076的`%g`序列化偏差不得以容差豁免。最终独立接收器读取当前080且必须等对应源回执通过；源数据库不能在接收期间改变。074外部节点对局部通量/FV探针11项门槛通过，仍不是完整分布式RC资格。
+
+
+`partial-geometry-group`在96CPU allocation内通过两个独立worker各48CPU并行`partial-branch-fv`/`partial-via-fv`，生成`partial-geometry-group.json`绑定所有子回执与结果；双方都通过才组通过。084为当前待调度版本，082/083未提交、不再调度。仍通过同一dispatcher，不能额外绕过节点预算。`collect.py`在没有job ID时保留空sacct，不以空`-j`查询其他作业。
