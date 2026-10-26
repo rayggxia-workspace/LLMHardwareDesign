@@ -66,7 +66,7 @@ def prepare(root, out):
             for pin in plan['pins']:
                 name = tcl_string(pin['pin']); x, y = pin['xy_um']; w, h = pin['size_um']
                 script += 'dict set planned_pins '+name+' 1\n'
-                script += 'place_pin -pin_name '+name+' -layer metal10 -location {%g %g} -pin_size {%g %g}\n' % (x,y,w,h)
+                script += 'place_pin -pin_name '+name+' -layer metal10 -location {%.9f %.9f} -pin_size {%.9f %.9f}\n' % (x,y,w,h)
             script += r'''
 set actual_pins {}
 foreach pin [[ord::get_db_block] getBTerms] {
