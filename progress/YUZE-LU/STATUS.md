@@ -1,5 +1,13 @@
 # YUZE-LU 的进度
 
+## 2026-10-27 Block v1 十二层实施
+
+- 任务：[Issue #121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)，独立 `task/121-block-v1-twelve-layer`，P0/P1进行中，PR尚未创建；不接管原#116。
+- 已完成：授权计划封存；33份原科学源码与发布Git blob均校验；服务器探针91865失败/PATH原因保留，91866成功核实实际工具及原生十层平台。
+- 已实现待验收：真实6144B事务壳、C8集成wrapper、独立协议scoreboard、研究十二层几何生成、统一六基础/八上限跨run调度入口。完整数学/门级/P&R/新层RCX/DRC未完成。
+- 下一步：并行运行事务协议、完整存储/新顶层综合、原基线构建和新wrapper lint、十二层读回与原冻结数据导入；凭实际回执推进P1/P2，不提前宣告硬核合格。
+- 证据：[work121](../../work/YUZE-LU/121/README.md)、[运行入口](../../project/experiments/block_v1/README.md)。登记pending；看板unverified/同步pending，管理员待指定。
+
 ## 2026-10-26 模型实验分析报告
 
 - 任务：[Issue #114](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/114)，负责人及实际账号 YUZE-LU。

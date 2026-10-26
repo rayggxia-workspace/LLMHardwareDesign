@@ -111,4 +111,15 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 
 ## 数据与外部依赖
 
+### Block v1 原生十层预制与新增两层互联（Issue 121）
+
+授权计划见 [实施计划](plans/block-v1-nangate45-m11-m12.md)，当前执行证据见 [work121](../work/YUZE-LU/121/README.md)。正式入口为 [block_v1](../project/experiments/block_v1/README.md)：
+
+```powershell
+python scripts/check_project.py
+python project/experiments/block_v1/make_wrapper.py --check
+```
+
+`project/rtl/block_v1/transaction6k.sv`为真实有限事务壳，`shared121.sv`将其与四profile C8集成，结果端口改为已提交数据流，旧provisional driver必须适配后才可用于新顶层验收。服务器worker的transaction、完整存储映射、core-build、overlay、fixtures模式通过同一dispatcher在获授权目录运行，命令/资源/输入输出SHA与失败均保留。几何overlay和early RC不是十二层提取/DRC资格；尚未完成部分不得表述为已硬化Block库。
+
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
