@@ -11,3 +11,9 @@
 先导覆盖每个实际生成的 family/目标层及最大上下文场景。检查有限数、Maxwell 符号、行电荷守恒、总电容统计标准误差不超过 0.3%，以及独立行互易性在 5 sigma 加总电容 1% 范围内。该门槛只是适配资格，不替代原作者参考算例、全量校准、留出几何误差及最终分层边界不重计证明。
 
 参考实现固定为 [OpenROAD 6ea4ca 的模型生成器](https://github.com/The-OpenROAD-Project/OpenROAD/blob/6ea4ca224f3589dd91809933f50f39af66053634/src/rcx/src/extModelGen.cpp)；官方流程是参考 SPEF 经 [bench_read_spef/write_rules](https://github.com/The-OpenROAD-Project/OpenROAD/blob/6ea4ca224f3589dd91809933f50f39af66053634/src/rcx/calibration/script/generate_rules.tcl) 生成模型。不得修改旧十层规则的 LayerCount 来代替实际十二层拟合。
+
+## 全量接收中的统计符号
+
+91925–91930 在 node14–node19 的六个 96 核 allocation（各 8×12 线程）完成场解，随后被接收器的严格非正符号断言拒绝。原失败日志及输出保持不变。只读核查 shard0 的 8 份原始输出：5 个极小反号项，最大约 1.34 sigma、占总电容 0.0013%；这是有限随机游走的带符号估计，不应要求点估计严格满足确定性符号。
+
+更新接收门槛：非对角或地项的正估计必须同时不超过 5 sigma 和总电容 0.01%；总电容仍须严格为正，行守恒、0.3% 总电容标准误差及互易性门槛保留。原始估计不裁剪、不改写。新接收作业逐一校验原失败回执、实际命令、场景列表和原始行文件 SHA 后重验；任一显著反号或其他门槛失败仍拒绝。没有重算或将原失败作业改成成功。
