@@ -63,17 +63,8 @@ def prepare(root,out,cpus,run,compatible=False):
                 bits.append(dict(port=name,index=index+port.get('offset',0),direction=port['direction'],net_bit=bit))
         for bit in bits:bit['role']='clock'if bit['port']=='clk'else'data_or_control'
         ports_path=out/(top+'-ports.json');ports_path.write_text(json.dumps(bits,indent=2)+'\n')
-        sdc='create_clock -name core -period %g [get_ports clk]\n'%budget['clock_ns']
-        sdc+='set_clock_uncertainty %g [get_clocks core]\n'%budget['uncertainty_ns']
-        sdc+='set_clock_transition %g [get_clocks core]\n'%budget['clock_transition_ns']
-        sdc+=('set data_inputs {}\nset clock_port [lindex [get_ports clk] 0]\nforeach port [all_inputs] { if {$port ne $clock_port} { lappend data_inputs $port } }\n'
-              if compatible else 'set data_inputs [remove_from_collection [all_inputs] [get_ports clk]]\n')
-        sdc+='set_input_delay -clock core -max %g $data_inputs\n'%budget['input_delay_max_ns']
-        sdc+='set_input_delay -clock core -min %g $data_inputs\n'%budget['input_delay_min_ns']
-        sdc+='set_output_delay -clock core -max %g [all_outputs]\n'%budget['output_delay_max_ns']
-        sdc+='set_output_delay -clock core -min %g [all_outputs]\n'%budget['output_delay_min_ns']
-        sdc+='set_driving_cell -lib_cell %s -pin %s $data_inputs\n'%(budget['input_driver']['cell'],budget['input_driver']['pin'])
-        sdc+='set_load %g [all_outputs]\n'%budget['output_load_pf']
+        from constraints import generate as constraints
+        sdc=constraints(budget)
         (out/(top+'.sdc')).write_text(sdc)
         return dict(top=top,port_bits=len(bits),inputs=sum(p['direction']=='input'for p in bits),
                     outputs=sum(p['direction']=='output'for p in bits),netlist_sha256=hashlib.sha256((out/(top+'.v')).read_bytes()).hexdigest(),

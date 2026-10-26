@@ -123,3 +123,13 @@ python project/experiments/block_v1/make_wrapper.py --check
 `project/rtl/block_v1/transaction6k.sv`为真实有限事务壳，`shared121.sv`将其与四profile C8集成，结果端口改为已提交数据流，旧provisional driver必须适配后才可用于新顶层验收。服务器worker的transaction、完整存储映射、core-build、overlay、fixtures模式通过同一dispatcher在获授权目录运行，命令/资源/输入输出SHA与失败均保留。几何overlay和early RC不是十二层提取/DRC资格；尚未完成部分不得表述为已硬化Block库。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
+
+Block v1 原生候选入口为 `native-prepare`、`native-floorplan-<shared109|transaction6k>-<A|C>`、`native-boundary-audit`、`native-run-<shared109|transaction6k>-<A|C>`，经 `worker.sh <只读源码根> <模式>` 在实际Slurm allocation内运行。来源由 `native_pipeline.json` 指定不可变052/054/055/056链，必须先核对每段回执/SHA。054采用052同构证明的结构网表，生成实际ns/fF/kOhm的完整SDC；055只做导入和未放置几何检查；056独立核对STA写回。057依序运行ORFS显式do阶段，保存原生平台实际变量、只读独立输入及逐阶段SHA，不触发普通目标的RTL重综合依赖。配置、节点/CPU/UNLIMITED、源码bundle SHA见 `work/YUZE-LU/121/stage53-manifest.json`。
+
+只读采集示例（输出目录必须全新，旧索引不覆盖）：
+
+```powershell
+python project/experiments/block_v1/collect.py block-v1-20261027-057 .local/issue121/observations/run057-new
+```
+
+该采集不是合格接收器。原生候选成功后仍须精确最终文件的功能、全端点STA/电气、PG/连接/独立几何、RC覆盖和完整资源计价；十二层研究RC与共同底座/两产品另行验收。兼容和单位修正的失败历史见[输入决策](decisions/2026-10-27-block-v1-native-candidate-inputs.md)。

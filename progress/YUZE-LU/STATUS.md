@@ -2,6 +2,7 @@
 
 ## 2026-10-27 Block v1 十二层实施
 
+- 最新快照：2026-10-27 04:17 CST。run052精确映射结构兼容导出与负例通过；run055四个实际原生导入/固定M10坐标通过；run056完整STA写回的IO、驱动及每输出2fF审计通过。run057的92045–92048已在node14–node17各32CPU/UNLIMITED开始原生候选P&R，覆盖C8/T6K × A/C；91903映射门级在node13继续。run043/044八方向实例pin与原生/新增PG导体的独立GDS集合核对通过。十二层完整分布式RC仍未验收，不发布合格Block。详见[输入决策](../../docs/decisions/2026-10-27-block-v1-native-candidate-inputs.md)。以下时间标记保留早期事实，以本条为当前状态。
 - 任务：[Issue #121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)，独立 `task/121-block-v1-twelve-layer`，P0/P1及P2功能资格进行中，[草稿PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)；不接管原#116。
 - 已完成：授权计划封存；33份原科学源码与发布Git blob均校验；服务器探针91865失败/PATH原因保留，91866成功核实实际工具及原生十层平台。
 - 实际通过：T6K随机242事务；完整四profile13命令及44条恢复命令、两种等待模式的独立整数接收；91901完整库存642253单元／1538342.904 μm²（真实S16K＋T6K）；91905内部M10接点经新层连通，原生27条SAMENET与新层EOL数据库核实；91899官方固定场求解器2D/3D参考与线程/介质缩放检查。
