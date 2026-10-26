@@ -1,0 +1,793 @@
+{
+  "schema_version": "workload-mapping/1",
+  "id": "state-feedback",
+  "evidence": {
+    "kind": "synthetic",
+    "source": "Hand-built contract fixture; no measured trace",
+    "status": "assumed"
+  },
+  "scope": "Synthetic three-step convolution and recurrent state lineage.",
+  "nodes": [
+    {
+      "id": "n_convolution1",
+      "semantic": "convolution",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_history1",
+      "semantic": "convolution_history_update",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_recurrent1",
+      "semantic": "recurrent_update",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_convolution2",
+      "semantic": "convolution",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_history2",
+      "semantic": "convolution_history_update",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_recurrent2",
+      "semantic": "recurrent_update",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_convolution3",
+      "semantic": "convolution",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_history3",
+      "semantic": "convolution_history_update",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_recurrent3",
+      "semantic": "recurrent_update",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    }
+  ],
+  "calls": [
+    {
+      "id": "c_convolution1",
+      "node": "n_convolution1",
+      "resource": "state",
+      "reads": [
+        "t_history0",
+        "t_input0"
+      ],
+      "writes": [
+        "t_convolution1"
+      ]
+    },
+    {
+      "id": "c_history1",
+      "node": "n_history1",
+      "resource": "state",
+      "reads": [
+        "t_history0",
+        "t_input0"
+      ],
+      "writes": [
+        "t_history1"
+      ]
+    },
+    {
+      "id": "c_recurrent1",
+      "node": "n_recurrent1",
+      "resource": "state",
+      "reads": [
+        "t_recurrent0",
+        "t_convolution1"
+      ],
+      "writes": [
+        "t_recurrent1"
+      ]
+    },
+    {
+      "id": "c_convolution2",
+      "node": "n_convolution2",
+      "resource": "state",
+      "reads": [
+        "t_history1",
+        "t_input1"
+      ],
+      "writes": [
+        "t_convolution2"
+      ]
+    },
+    {
+      "id": "c_history2",
+      "node": "n_history2",
+      "resource": "state",
+      "reads": [
+        "t_history1",
+        "t_input1"
+      ],
+      "writes": [
+        "t_history2"
+      ]
+    },
+    {
+      "id": "c_recurrent2",
+      "node": "n_recurrent2",
+      "resource": "state",
+      "reads": [
+        "t_recurrent1",
+        "t_convolution2"
+      ],
+      "writes": [
+        "t_recurrent2"
+      ]
+    },
+    {
+      "id": "c_convolution3",
+      "node": "n_convolution3",
+      "resource": "state",
+      "reads": [
+        "t_history2",
+        "t_input2"
+      ],
+      "writes": [
+        "t_convolution3"
+      ]
+    },
+    {
+      "id": "c_history3",
+      "node": "n_history3",
+      "resource": "state",
+      "reads": [
+        "t_history2",
+        "t_input2"
+      ],
+      "writes": [
+        "t_history3"
+      ]
+    },
+    {
+      "id": "c_recurrent3",
+      "node": "n_recurrent3",
+      "resource": "state",
+      "reads": [
+        "t_recurrent2",
+        "t_convolution3"
+      ],
+      "writes": [
+        "t_recurrent3"
+      ]
+    }
+  ],
+  "tensors": [
+    {
+      "id": "t_history0",
+      "shape": [
+        2,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_history0",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_convolution1",
+        "c_history1"
+      ],
+      "role": "state",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_recurrent0",
+      "shape": [
+        4,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_recurrent0",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_recurrent1"
+      ],
+      "role": "state",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_input0",
+      "shape": [
+        1,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_input0",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_convolution1",
+        "c_history1"
+      ],
+      "role": "activation",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_convolution1",
+      "shape": [
+        1,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_convolution1",
+      "offset_bytes": 0,
+      "producer": "c_convolution1",
+      "consumers": [
+        "c_recurrent1"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_history1",
+      "shape": [
+        2,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_history1",
+      "offset_bytes": 0,
+      "producer": "c_history1",
+      "consumers": [
+        "c_convolution2",
+        "c_history2"
+      ],
+      "role": "state",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_recurrent1",
+      "shape": [
+        4,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_recurrent1",
+      "offset_bytes": 0,
+      "producer": "c_recurrent1",
+      "consumers": [
+        "c_recurrent2"
+      ],
+      "role": "state",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_input1",
+      "shape": [
+        1,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_input1",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_convolution2",
+        "c_history2"
+      ],
+      "role": "activation",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_convolution2",
+      "shape": [
+        1,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_convolution2",
+      "offset_bytes": 0,
+      "producer": "c_convolution2",
+      "consumers": [
+        "c_recurrent2"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_history2",
+      "shape": [
+        2,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_history2",
+      "offset_bytes": 0,
+      "producer": "c_history2",
+      "consumers": [
+        "c_convolution3",
+        "c_history3"
+      ],
+      "role": "state",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_recurrent2",
+      "shape": [
+        4,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_recurrent2",
+      "offset_bytes": 0,
+      "producer": "c_recurrent2",
+      "consumers": [
+        "c_recurrent3"
+      ],
+      "role": "state",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_input2",
+      "shape": [
+        1,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_input2",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_convolution3",
+        "c_history3"
+      ],
+      "role": "activation",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_convolution3",
+      "shape": [
+        1,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_convolution3",
+      "offset_bytes": 0,
+      "producer": "c_convolution3",
+      "consumers": [
+        "c_recurrent3"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_history3",
+      "shape": [
+        2,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_history3",
+      "offset_bytes": 0,
+      "producer": "c_history3",
+      "consumers": [],
+      "role": "state",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_recurrent3",
+      "shape": [
+        4,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_recurrent3",
+      "offset_bytes": 0,
+      "producer": "c_recurrent3",
+      "consumers": [],
+      "role": "state",
+      "initial": false,
+      "alias_of": null
+    }
+  ],
+  "storages": [
+    {
+      "id": "s_history0",
+      "resource": "state",
+      "size_bytes": 8,
+      "begin": "e_tr_t_input0_to_state",
+      "end": "e_c_recurrent3"
+    },
+    {
+      "id": "s_recurrent0",
+      "resource": "state",
+      "size_bytes": 64,
+      "begin": "e_tr_t_input0_to_state",
+      "end": "e_c_recurrent3"
+    },
+    {
+      "id": "s_input0",
+      "resource": "host",
+      "size_bytes": 4,
+      "begin": "e_tr_t_input0_to_state",
+      "end": "e_c_recurrent3"
+    },
+    {
+      "id": "s_copy_t_input0_to_state",
+      "resource": "state",
+      "size_bytes": 4,
+      "begin": "e_tr_t_input0_to_state",
+      "end": "e_c_recurrent3"
+    },
+    {
+      "id": "s_convolution1",
+      "resource": "state",
+      "size_bytes": 4,
+      "begin": "e_tr_t_input0_to_state",
+      "end": "e_c_recurrent3"
+    },
+    {
+      "id": "s_history1",
+      "resource": "state",
+      "size_bytes": 8,
+      "begin": "e_tr_t_input0_to_state",
+      "end": "e_c_recurrent3"
+    },
+    {
+      "id": "s_recurrent1",
+      "resource": "state",
+      "size_bytes": 64,
+      "begin": "e_tr_t_input0_to_state",
+      "end": "e_c_recurrent3"
+    },
+    {
+      "id": "s_input1",
+      "resource": "host",
+      "size_bytes": 4,
+      "begin": "e_tr_t_input0_to_state",
+      "end": "e_c_recurrent3"
+    },
+    {
+      "id": "s_copy_t_input1_to_state",
+      "resource": "state",
+      "size_bytes": 4,
+      "begin": "e_tr_t_input0_to_state",
+      "end": "e_c_recurrent3"
+    },
+    {
+      "id": "s_convolution2",
+      "resource": "state",
+      "size_bytes": 4,
+      "begin": "e_tr_t_input0_to_state",
+      "end": "e_c_recurrent3"
+    },
+    {
+      "id": "s_history2",
+      "resource": "state",
+      "size_bytes": 8,
+      "begin": "e_tr_t_input0_to_state",
+      "end": "e_c_recurrent3"
+    },
+    {
+      "id": "s_recurrent2",
+      "resource": "state",
+      "size_bytes": 64,
+      "begin": "e_tr_t_input0_to_state",
+      "end": "e_c_recurrent3"
+    },
+    {
+      "id": "s_input2",
+      "resource": "host",
+      "size_bytes": 4,
+      "begin": "e_tr_t_input0_to_state",
+      "end": "e_c_recurrent3"
+    },
+    {
+      "id": "s_copy_t_input2_to_state",
+      "resource": "state",
+      "size_bytes": 4,
+      "begin": "e_tr_t_input0_to_state",
+      "end": "e_c_recurrent3"
+    },
+    {
+      "id": "s_convolution3",
+      "resource": "state",
+      "size_bytes": 4,
+      "begin": "e_tr_t_input0_to_state",
+      "end": "e_c_recurrent3"
+    },
+    {
+      "id": "s_history3",
+      "resource": "state",
+      "size_bytes": 8,
+      "begin": "e_tr_t_input0_to_state",
+      "end": "e_c_recurrent3"
+    },
+    {
+      "id": "s_recurrent3",
+      "resource": "state",
+      "size_bytes": 64,
+      "begin": "e_tr_t_input0_to_state",
+      "end": "e_c_recurrent3"
+    }
+  ],
+  "states": [
+    {
+      "id": "state_history",
+      "kind": "convolution_history",
+      "initial": "t_history0",
+      "versions": [
+        {
+          "tensor": "t_history1",
+          "writer": "c_history1",
+          "previous": "t_history0"
+        },
+        {
+          "tensor": "t_history2",
+          "writer": "c_history2",
+          "previous": "t_history1"
+        },
+        {
+          "tensor": "t_history3",
+          "writer": "c_history3",
+          "previous": "t_history2"
+        }
+      ]
+    },
+    {
+      "id": "state_recurrent",
+      "kind": "recurrent",
+      "initial": "t_recurrent0",
+      "versions": [
+        {
+          "tensor": "t_recurrent1",
+          "writer": "c_recurrent1",
+          "previous": "t_recurrent0"
+        },
+        {
+          "tensor": "t_recurrent2",
+          "writer": "c_recurrent2",
+          "previous": "t_recurrent1"
+        },
+        {
+          "tensor": "t_recurrent3",
+          "writer": "c_recurrent3",
+          "previous": "t_recurrent2"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "e_tr_t_input0_to_state",
+      "kind": "transfer",
+      "ref": "tr_t_input0_to_state",
+      "step": 0,
+      "phase": "iteration"
+    },
+    {
+      "id": "e_c_convolution1",
+      "kind": "call",
+      "ref": "c_convolution1",
+      "step": 1,
+      "phase": "iteration"
+    },
+    {
+      "id": "e_c_history1",
+      "kind": "call",
+      "ref": "c_history1",
+      "step": 2,
+      "phase": "iteration"
+    },
+    {
+      "id": "e_c_recurrent1",
+      "kind": "call",
+      "ref": "c_recurrent1",
+      "step": 3,
+      "phase": "iteration"
+    },
+    {
+      "id": "e_tr_t_input1_to_state",
+      "kind": "transfer",
+      "ref": "tr_t_input1_to_state",
+      "step": 4,
+      "phase": "iteration"
+    },
+    {
+      "id": "e_c_convolution2",
+      "kind": "call",
+      "ref": "c_convolution2",
+      "step": 5,
+      "phase": "iteration"
+    },
+    {
+      "id": "e_c_history2",
+      "kind": "call",
+      "ref": "c_history2",
+      "step": 6,
+      "phase": "iteration"
+    },
+    {
+      "id": "e_c_recurrent2",
+      "kind": "call",
+      "ref": "c_recurrent2",
+      "step": 7,
+      "phase": "iteration"
+    },
+    {
+      "id": "e_tr_t_input2_to_state",
+      "kind": "transfer",
+      "ref": "tr_t_input2_to_state",
+      "step": 8,
+      "phase": "iteration"
+    },
+    {
+      "id": "e_c_convolution3",
+      "kind": "call",
+      "ref": "c_convolution3",
+      "step": 9,
+      "phase": "iteration"
+    },
+    {
+      "id": "e_c_history3",
+      "kind": "call",
+      "ref": "c_history3",
+      "step": 10,
+      "phase": "iteration"
+    },
+    {
+      "id": "e_c_recurrent3",
+      "kind": "call",
+      "ref": "c_recurrent3",
+      "step": 11,
+      "phase": "iteration"
+    }
+  ],
+  "transfers": [
+    {
+      "id": "tr_t_input0_to_state",
+      "tensor": "t_input0",
+      "source_storage": "s_input0",
+      "destination_storage": "s_copy_t_input0_to_state",
+      "path": [
+        "l_host_to_state"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_input1_to_state",
+      "tensor": "t_input1",
+      "source_storage": "s_input1",
+      "destination_storage": "s_copy_t_input1_to_state",
+      "path": [
+        "l_host_to_state"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_input2_to_state",
+      "tensor": "t_input2",
+      "source_storage": "s_input2",
+      "destination_storage": "s_copy_t_input2_to_state",
+      "path": [
+        "l_host_to_state"
+      ],
+      "messages": 1
+    }
+  ],
+  "resource_input": null
+}

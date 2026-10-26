@@ -1,0 +1,59 @@
+name: Workload mapping offline
+on:
+  pull_request:
+    paths:
+      - 'project/analysis/workload_mapping/**'
+      - 'project/analysis/llm_resources/**'
+      - 'project/analysis/block_v2_offline/**'
+      - '.github/workflows/workload-mapping.yml'
+      - 'work/huangpingyang04-lgtm/63/**'
+      - 'docs/WORKLOAD_MAPPING_INPUT.md'
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .agents
+            .github
+            config
+            docs
+            scripts
+            progress
+            work
+            project/analysis/workload_mapping
+            project/analysis/llm_resources
+            project/analysis/block_v2_offline
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Acquire only pinned reference archives over HTTPS
+        run: |
+          git config remote.origin.promisor true
+          git config remote.origin.partialclonefilter blob:none
+          git fetch --no-tags --depth=1 --filter=blob:none origin a5ff0c5af973ffeafa441712cd3f6e491da5a2fd 19c4b829211678d1a6fefa61bc0a23e68e4f13e1 cce235975b7be6d77247c9c9c7b09ea15608e2cf
+          python -B project/analysis/workload_mapping/assets/acquire_reference_assets.py --allow-git-object-fetch --output-dir .local/dependencies/reference_assets
+      - name: Offline tests, original acceptance and independent replay
+        env:
+          GIT_NO_LAZY_FETCH: '1'
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python -B -m project.analysis.workload_mapping.validate_delivery --output-dir .local/runs/ci
+      - name: Optimization smoke and public adapter roundtrip
+        env:
+          GIT_NO_LAZY_FETCH: '1'
+        run: python -B -m project.analysis.workload_mapping.search_experiment --suite smoke --export --output-dir .local/runs/search-smoke
+      - name: Keep selected CI receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: workload-mapping-receipts
+          path: |
+            .local/runs/ci/receipt.json
+            .local/runs/ci/science.json
+            .local/runs/ci/failure.json
+            .local/runs/search-smoke/receipt.json
+            .local/runs/search-smoke/science.json
+          if-no-files-found: warn

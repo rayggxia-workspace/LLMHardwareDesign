@@ -1,0 +1,85 @@
+{
+  "schema_version": "workload-blocks/1",
+  "id": "reuse-blocks",
+  "evidence": {
+    "kind": "synthetic",
+    "source": "Synthetic declared hardware; no RTL, capacity or timing measurement",
+    "status": "assumed"
+  },
+  "resources": [
+    {
+      "id": "matrix",
+      "kind": "compute",
+      "capacity_bytes": 1073741824,
+      "capabilities": [
+        {
+          "semantic": "matrix",
+          "status": "declared",
+          "source": "Synthetic functional requirement; implementation unverified"
+        }
+      ],
+      "ports": [
+        {
+          "id": "matrix_in",
+          "direction": "input",
+          "protocol": "ready_valid",
+          "width_bits": 128,
+          "fifo_bytes": 2048
+        },
+        {
+          "id": "matrix_out",
+          "direction": "output",
+          "protocol": "ready_valid",
+          "width_bits": 128,
+          "fifo_bytes": 2048
+        }
+      ]
+    },
+    {
+      "id": "vector",
+      "kind": "compute",
+      "capacity_bytes": 1073741824,
+      "capabilities": [
+        {
+          "semantic": "requantize",
+          "status": "declared",
+          "source": "Synthetic functional requirement; implementation unverified"
+        }
+      ],
+      "ports": [
+        {
+          "id": "vector_in",
+          "direction": "input",
+          "protocol": "ready_valid",
+          "width_bits": 128,
+          "fifo_bytes": 2048
+        },
+        {
+          "id": "vector_out",
+          "direction": "output",
+          "protocol": "ready_valid",
+          "width_bits": 128,
+          "fifo_bytes": 2048
+        }
+      ]
+    }
+  ],
+  "links": [
+    {
+      "id": "l_matrix_to_vector",
+      "source": "matrix",
+      "source_port": "matrix_out",
+      "destination": "vector",
+      "destination_port": "vector_in",
+      "protocol": "ready_valid"
+    },
+    {
+      "id": "l_vector_to_matrix",
+      "source": "vector",
+      "source_port": "vector_out",
+      "destination": "matrix",
+      "destination_port": "matrix_in",
+      "protocol": "ready_valid"
+    }
+  ]
+}

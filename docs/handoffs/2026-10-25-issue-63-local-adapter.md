@@ -1,0 +1,75 @@
+# Issue #63 本机续接与物理接入交接
+
+仓库：https://github.com/rayggxia-workspace/LLMHardwareDesign；负责人huangpingyang04-lgtm。
+持续PR：https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/79，Refs #63，base为PR78的codex/block-v2-offline-prep。
+分支task/63-workload-layout-adapter。本机独立目录：C:/Users/86188/Documents/ChatGPT/2026DAC/LLMHardwareDesign-workload-adapter-63。
+
+## 恢复与来源边界
+
+旧任务目录仅为历史记录：`/public/home/yuzelu/PingyangHuang/issue-63/workload-layout-adapter-20261023T134541Z/`。
+本轮没有SSH/SCP/SFTP/Slurm或任何服务器命令，也没有VPN/路由/防火墙/SSH配置变更。
+此前已写core.py、consumer.py、CLI、resource_bridge、部分测试和固定依赖的服务器版本没有读取、比较或覆盖。
+
+聊天工具store已失效。core/consumer/CLI依据原聊天完整文本在本机续接，未声称字节等同；examples/test_core和assets/test_assets的恢复字节与聊天记录的历史SHA核对一致，但同样没有与服务器比较。resource bridge恢复并补已准备的hardening，改为复用现有llm_resources，未再次复制估算器。新v2桥/typed sidecar/消费端加强/完整复跑为本机续接实现。逐文件当前SHA、来源和验证见work/huangpingyang04-lgtm/63/source_inventory.json。
+
+PR78依赖固定a5ff0c5af973ffeafa441712cd3f6e491da5a2fd，文档基准88e9c4b2c3bb1b93b7155ba87ad11853e6c15512，原fixture/expected/sources和历史记录不改写。服务器版本只有历史功能记录，本机未取得其原文件；同名函数不构成来源同一证明。
+
+## 运行与验证
+
+正式代码project/analysis/workload_mapping；主要合同docs/WORKLOAD_MAPPING_INPUT.md。
+完整入口：`python -B -m project.analysis.workload_mapping.validate_delivery --output-dir .local/runs/formal-new --reference-root .local/dependencies/reference_assets`。
+本机原ZIP/LEF在.local/dependencies/reference_assets，原始stdout/stderr、开发失败、全部输出和独立源码复制留.local/runs；仓库只保留精选science/receipt索引。
+
+首阶段commit f8d2dcdaab21b9aec243d53f43fea6f11ff205a3已由本人Git HTTPS上传；后续源码冻结commit、正式运行及最终提交身份以精选receipt和PR head实际读回为准。开发预检195项、10场景独立进程/独立源码目录重放通过，source_clean=false明确不当正式冻结验收；正式干净源码复跑另存新目录，不覆盖该预检。
+
+第一轮discovery相对import错误已保留可取得的截断输出/摘要，修复后通过。没有伪造未保存的完整日志。缺信息返回blocked，负例被拒绝不表示被拒映射通过。
+
+## A/B/C与准确缺项
+
+A为选定静态图/有限事件的声明条件检查，typed unit/group/owner/epoch/version/guard/abort/commit、分域容量、FIFO和串行bank访问检查；不证明任意LLM、通用宽算术或最优调度。
+B实际取得PR18三宏LEF：ACT860、MXU2172、GEMM3753信号pin，PG/PORT/OBS/DBU保留。PR20原ZIP本轮已取得并独立核对3032位Yosys/CSV/旧LEF，不能再称未取得。一个真实ACT clk引用已检查；真实协议、完整RTL/Liberty timing、其他块和GEMM逻辑bit顺序没有资格证据。
+C缺同版完整实例/放置/朝向、固定M8 escape/landing、冻结底座及source hash、技术合法via和固定PG/clock连通性，保持blocked。主方案M1–M8固定，M9/M10及技术允许的8↔9/9↔10定制，M11/M12另列后备。M5/M6 pin不构成M8接入。
+
+#55当前固定PR58@09f1876dd8eaaf0cb77005a4c094527d9ed5d9b0的flow只是阶段执行；无mapping_request读入口。本任务consumer是拟议布局合同独立读取，不是实际布线联调。任何将来新增physical checker需独立证据，不接受caller的true代替原始资格。
+
+## 后续接续
+
+服务器操作必须另获授权；第一步只读比较旧目录源码与输入SHA，明确差异后在全新目录整合，保护旧未提交代码、失败和输入。不能自动把本机版本覆盖旧服务器，也不能接管#55。
+物理任务/资产提供方（具体处理人待指定）需提供同版冻结实例/端口/固定M8引出/技术via/PG与clock资格。收到后先固定commit和SHA，再实现明确的物理绑定合同检查。
+
+看板未配置config/board.json，当前工具没有Projects能力：实际条目unverified、同步pending。管理员待指定，需要核验本Issue条目、Project ID=llm-hardware-design、实际Status/Priority并读回，不创建新看板或扩大权限。登记沿用management-hub PR5 pending，最终以读回为准。审查人待指定；PR不合并，Issue不提前done或关闭。
+
+## 2026-10-25 正式本机复跑回执
+
+干净执行源 `aa6f096695af45e9898090ce4f8006b8c9265029`，实际195项测试（32原小图、31原估算器、132适配器），0跳过；10个场景在独立源码副本/新进程/新cwd中重放，四个科学JSON逐字节及SHA一致。原fixture/expected/来源快照前后不变。真实导入/3032bit audit与bind/verify/replay独立重放一致，显式physical请求退出3。科学摘要SHA `f2ec30e28966be33888cf314bd5e93a0bb24378d4147d79cbdd9ad9971efbbdc`。原始日志和完整结果为 `.local/runs/formal-01/`；精选[回执](../../work/huangpingyang04-lgtm/63/receipt.json)与[科学摘要](../../work/huangpingyang04-lgtm/63/science.json)。C保持blocked，远端上传/CI/审查/看板另行核验。
+
+首次CI run40114649385在fixed-dependency-diff返回128，因浅克隆没有固定PR78基线commit。原失败保留work/.../63/ci_first_failure.json及GitHub job日志；获取步骤加入该精确commit，原Git差异审计门槛不变。整体CI仍待后续真实终态，不能用本机通过替代。
+
+最新正式资格为 `.local/runs/formal-03`，执行源 `fee9ca211fcfa1440a2a4f2a3607762129957e00`：197项（32原小图+31原估算器+134适配器），0跳过，10场景独立副本/进程重放。新增反例覆盖输出重新hash后的类型/事件错误；科学摘要仍为f2ec30e28966be33888cf314bd5e93a0bb24378d4147d79cbdd9ad9971efbbdc，与195项旧回执逐字节相同，旧receipt不覆盖。见[最新receipt](../../work/huangpingyang04-lgtm/63/formal-03/receipt.json)。CI基线获取修复后run40114765442已真实success；最终发布head的CI与待审查状态以PR79实际读回为准。登记PR5仍open/unmerged/pending；Projects无配置/工具，unverified/同步pending。
+
+
+2026-10-25 生命周期复核：干净源 `10cd3d97d3b8ca9cbb242b1eee0078c2d708f577` 在全新 `.local/runs/formal-04` 实际通过 **200 tests / 0 skip**（原32+31、适配器137，其中核心48），10场景独立源码副本/进程重放，科学SHA仍为 `f2ec30e28966be33888cf314bd5e93a0bb24378d4147d79cbdd9ad9971efbbdc`。修复显式复制后源槽复用的误拒绝，按实际驻留字节范围处理部分覆盖与多个view复制；独立consumer采用另一个范围覆盖算法，并重查alias/接口宽度/FIFO。新增3个合法/非法成对回归；最初负例因残留旧transfer源导致错误提前触发，保留本机失败和修正记录，未改原fixture。旧正式回执不覆盖，最新见 `work/huangpingyang04-lgtm/63/formal-04/receipt.json`。A/B选定范围pass、C仍blocked；软件in_review。
+
+用户再次明确要求重试SSH后，仅执行一次BatchMode连接，结果为 `Connection closed by 10.129.166.172 port 22`，未建立远程会话、未读取或修改服务器文件；未改网络配置。旧服务器版本仍未比较，后续只读比较后在新目录整合，不能覆盖原件。
+
+
+## 2026-10-26 服务器验收补充
+
+用户重新授权服务器操作后，已只读比较旧目录8文件：core/resource_bridge/test_resource_bridge与发布版SHA不同；5个vendor资料仍保留，当前发布版改用固定的兄弟llm_resources。旧目录实际上缺少consumer.py、cli.py、__init__.py；旧记录的“曾实存CLI/consumer”未由本次观察支持。旧目录未修改、未移动或覆盖。
+
+在全新 `/public/home/yuzelu/PingyangHuang/issue-63/server-validation-20261026T0100/repo` 核验发布源 `d07abaeef16049da199f0efa96acffc95bd487dd`，通过Slurm作业91622（hpy-adapter63、debug/node27、1CPU、23秒、COMPLETED/0:0）实际200项/0skip、10场景独立源码与新进程重放通过；科学SHA仍f2ec30e28966be33888cf314bd5e93a0bb24378d4147d79cbdd9ad9971efbbdc，与Windows逐字节相同。仅传输本任务Git对象、固定参考输入；未传凭据/配置/环境，未读#55活动文件或干扰作业。最初2G内存请求被Slurm拒绝（节点公布内存1MB），保留失败，命令覆盖--mem=0后提交成功，未改集群配置。
+
+精选证据在 `work/huangpingyang04-lgtm/63/server-20261026/`；原始日志与完整输出留新服务器目录。receipt中的server_access=false表示离线验收器自身不发SSH，不代表本轮未在服务器执行，执行平台由execution.json和Slurm记录明确区分。A/B选定范围pass；C仍缺同版实例/真实M8引出/冻结底座等证据。软件实现、离线验证与服务器复跑均完成；正式结项仍待PR79审查/合并，当前零reviews、Issue in_review，不能宣称done。看板仍unverified/同步pending。
+
+
+### 2026-10-26 优化实验完成回执
+
+Slurm91643（debug/node27、4CPU、22:44）和91646（c64/node3、2CPU、4:18）均COMPLETED/0:0。主实验19格（12主表+4分块+3搜索消融）及更强贪心追加12格，各在独立源码工作区/新进程完整跑两轮，science逐字节相同。最大13,120任务；12个6任务小图穷举给出真实最优差距，保留beam退化。最终223项/0skip，原两图/expected/来源和原#48字节不变，旧10场景独立复跑通过。
+
+12主表格的线上字节总量：fixed10,119,300,544；greedy9,135,129,664（减少9.7257%）；beam9,012,513,536（减少10.9374%，较greedy再少1.3422%，7胜5负）。发现greedy在tie时总选M0后，追加相同12格的live-eviction tie策略：8,673,527,488（比fixed少14.2873%，比beam少3.7613%），不能将原较弱tie偏差包装成束搜索优势。推荐显式使用solve_tie，保留原solve(method='greedy')基线不变。收益主要来自减少权重重读、保护未来驻留、利用已存在M1；不增加硬件数量。主表beam权重加载下降11.5193%，非权重加载（含scale）增加5.7622%，所有方法输出写回payload相同。
+
+束宽/深度更大不保证更优：第一格width4/depth3比greedy差0.1628%；去掉初始值未来读取下界时差2.0545%。长prefill512、1MiB案例beam比greedy多7.1658%线上字节。row64/col128在512KiB时必要工作集631,328B超过524,288B，明确infeasible。主表第一轮算法walltime中位数fixed0.890s、greedy5.113s、beam127.961s（同node27四worker下观测，非芯片时间）；更强贪心在不同node3/两worker单列，禁止据跨节点秒数推断CPU加速。
+
+主表源38bd3094afeda09c5219f4bfa22068b1ecc35ac3；追加及223回归源b68f060ca5212bfc35d6beb58080d83007ad2427。主科学SHA d7f6c3d847e3865493fff01a10b2f459f86f328e6f46bc5df93d7616efcdc14c，追加SHA b0219fc13eb1b3410d430a5aa40be4ac0683a410dc9ae7776c1fd43a1cbdccb6。精选证据work/huangpingyang04-lgtm/63/search-20261026；大DAG/计划/日志仅留search-20261026-v1和search-20261026-tie新服务器目录。未触碰#55及旧版本。主模型/搜索/checker/driver当前字节与已验收源一致。
+
+本轮是形状DAG与合成资源上的串行通信优化，不是完整Qwen数值执行、真实Block功能、并行吞吐或PPA证明；真实实例还需确定RQ位置，不能把合成fused kernel当已实现M/V。C依然blocked。软件/研究交付in_review，PR79持续更新，审查人待指定，不合并、不关闭、不done；登记pending、看板unverified/同步pending。

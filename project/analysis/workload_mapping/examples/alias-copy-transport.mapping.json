@@ -1,0 +1,368 @@
+{
+  "schema_version": "workload-mapping/1",
+  "id": "alias-copy-transport",
+  "evidence": {
+    "kind": "synthetic",
+    "source": "Hand-built contract fixture; no measured trace",
+    "status": "assumed"
+  },
+  "scope": "Synthetic wide values and explicit scale tensor; one local alias consumer, two remote consumers, one two-hop route and shared source output. Metadata describes a separate eight-byte envelope, not duplicate scale data.",
+  "nodes": [
+    {
+      "id": "n_local_reduce",
+      "semantic": "wide_reduce",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_remote_left",
+      "semantic": "wide_reduce",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_remote_right",
+      "semantic": "wide_reduce",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    }
+  ],
+  "calls": [
+    {
+      "id": "c_local_reduce",
+      "node": "n_local_reduce",
+      "resource": "matrix",
+      "reads": [
+        "t_wide_view",
+        "t_scale"
+      ],
+      "writes": [
+        "t_local_reduce"
+      ]
+    },
+    {
+      "id": "c_remote_left",
+      "node": "n_remote_left",
+      "resource": "vector_left",
+      "reads": [
+        "t_wide_view",
+        "t_scale"
+      ],
+      "writes": [
+        "t_remote_left"
+      ]
+    },
+    {
+      "id": "c_remote_right",
+      "node": "n_remote_right",
+      "resource": "vector_right",
+      "reads": [
+        "t_wide_input",
+        "t_scale"
+      ],
+      "writes": [
+        "t_remote_right"
+      ]
+    }
+  ],
+  "tensors": [
+    {
+      "id": "t_wide_input",
+      "shape": [
+        1,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 33,
+      "storage_bits": 64,
+      "metadata_bytes": 8,
+      "storage": "s_wide_input",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_remote_right"
+      ],
+      "role": "activation",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_wide_view",
+      "shape": [
+        1,
+        4
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 33,
+      "storage_bits": 64,
+      "metadata_bytes": 8,
+      "storage": "s_wide_input",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_local_reduce",
+        "c_remote_left"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": "t_wide_input"
+    },
+    {
+      "id": "t_scale",
+      "shape": [
+        1
+      ],
+      "axes": [
+        "d0"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_scale",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_local_reduce",
+        "c_remote_left",
+        "c_remote_right"
+      ],
+      "role": "scale",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_local_reduce",
+      "shape": [
+        1,
+        1
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 33,
+      "storage_bits": 64,
+      "metadata_bytes": 0,
+      "storage": "s_local_reduce",
+      "offset_bytes": 0,
+      "producer": "c_local_reduce",
+      "consumers": [],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_remote_left",
+      "shape": [
+        1,
+        1
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 33,
+      "storage_bits": 64,
+      "metadata_bytes": 0,
+      "storage": "s_remote_left",
+      "offset_bytes": 0,
+      "producer": "c_remote_left",
+      "consumers": [],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_remote_right",
+      "shape": [
+        1,
+        1
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 33,
+      "storage_bits": 64,
+      "metadata_bytes": 0,
+      "storage": "s_remote_right",
+      "offset_bytes": 0,
+      "producer": "c_remote_right",
+      "consumers": [],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    }
+  ],
+  "storages": [
+    {
+      "id": "s_wide_input",
+      "resource": "matrix",
+      "size_bytes": 40,
+      "begin": "e_c_local_reduce",
+      "end": "e_c_remote_right"
+    },
+    {
+      "id": "s_scale",
+      "resource": "matrix",
+      "size_bytes": 4,
+      "begin": "e_c_local_reduce",
+      "end": "e_c_remote_right"
+    },
+    {
+      "id": "s_local_reduce",
+      "resource": "matrix",
+      "size_bytes": 8,
+      "begin": "e_c_local_reduce",
+      "end": "e_c_remote_right"
+    },
+    {
+      "id": "s_copy_t_wide_view_to_vector_left",
+      "resource": "vector_left",
+      "size_bytes": 40,
+      "begin": "e_c_local_reduce",
+      "end": "e_c_remote_right"
+    },
+    {
+      "id": "s_copy_t_scale_to_vector_left",
+      "resource": "vector_left",
+      "size_bytes": 4,
+      "begin": "e_c_local_reduce",
+      "end": "e_c_remote_right"
+    },
+    {
+      "id": "s_remote_left",
+      "resource": "vector_left",
+      "size_bytes": 8,
+      "begin": "e_c_local_reduce",
+      "end": "e_c_remote_right"
+    },
+    {
+      "id": "s_copy_t_wide_input_to_vector_right",
+      "resource": "vector_right",
+      "size_bytes": 40,
+      "begin": "e_c_local_reduce",
+      "end": "e_c_remote_right"
+    },
+    {
+      "id": "s_copy_t_scale_to_vector_right",
+      "resource": "vector_right",
+      "size_bytes": 4,
+      "begin": "e_c_local_reduce",
+      "end": "e_c_remote_right"
+    },
+    {
+      "id": "s_remote_right",
+      "resource": "vector_right",
+      "size_bytes": 8,
+      "begin": "e_c_local_reduce",
+      "end": "e_c_remote_right"
+    }
+  ],
+  "states": [],
+  "events": [
+    {
+      "id": "e_c_local_reduce",
+      "kind": "call",
+      "ref": "c_local_reduce",
+      "step": 0,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_wide_view_to_vector_left",
+      "kind": "transfer",
+      "ref": "tr_t_wide_view_to_vector_left",
+      "step": 1,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_scale_to_vector_left",
+      "kind": "transfer",
+      "ref": "tr_t_scale_to_vector_left",
+      "step": 2,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_remote_left",
+      "kind": "call",
+      "ref": "c_remote_left",
+      "step": 3,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_wide_input_to_vector_right",
+      "kind": "transfer",
+      "ref": "tr_t_wide_input_to_vector_right",
+      "step": 4,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_scale_to_vector_right",
+      "kind": "transfer",
+      "ref": "tr_t_scale_to_vector_right",
+      "step": 5,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_remote_right",
+      "kind": "call",
+      "ref": "c_remote_right",
+      "step": 6,
+      "phase": "prefill"
+    }
+  ],
+  "transfers": [
+    {
+      "id": "tr_t_wide_view_to_vector_left",
+      "tensor": "t_wide_view",
+      "source_storage": "s_wide_input",
+      "destination_storage": "s_copy_t_wide_view_to_vector_left",
+      "path": [
+        "l_matrix_to_forwarder",
+        "l_forwarder_to_vector_left"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_scale_to_vector_left",
+      "tensor": "t_scale",
+      "source_storage": "s_scale",
+      "destination_storage": "s_copy_t_scale_to_vector_left",
+      "path": [
+        "l_matrix_to_forwarder",
+        "l_forwarder_to_vector_left"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_wide_input_to_vector_right",
+      "tensor": "t_wide_input",
+      "source_storage": "s_wide_input",
+      "destination_storage": "s_copy_t_wide_input_to_vector_right",
+      "path": [
+        "l_matrix_to_vector_right"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_scale_to_vector_right",
+      "tensor": "t_scale",
+      "source_storage": "s_scale",
+      "destination_storage": "s_copy_t_scale_to_vector_right",
+      "path": [
+        "l_matrix_to_vector_right"
+      ],
+      "messages": 1
+    }
+  ],
+  "resource_input": null
+}

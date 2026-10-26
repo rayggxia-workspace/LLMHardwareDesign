@@ -1,0 +1,90 @@
+{
+  "schema": "issue63-search-delivery/1",
+  "checked_date": "2026-10-26 Asia/Shanghai",
+  "primary_source_commit": "38bd3094afeda09c5219f4bfa22068b1ecc35ac3",
+  "supplemental_source_commit": "b68f060ca5212bfc35d6beb58080d83007ad2427",
+  "primary_job": {
+    "id": 91643,
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": "00:22:44",
+    "cpus": 4,
+    "node": "node27",
+    "partition": "debug",
+    "directory": "/public/home/yuzelu/PingyangHuang/issue-63/search-20261026-v1"
+  },
+  "supplemental_job": {
+    "id": 91646,
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": "00:04:18",
+    "cpus": 2,
+    "node": "node3",
+    "partition": "c64",
+    "directory": "/public/home/yuzelu/PingyangHuang/issue-63/search-20261026-tie"
+  },
+  "regression": {
+    "tests": 223,
+    "skipped": 0,
+    "original_v2": 32,
+    "original_resource": 31,
+    "adapter": 160,
+    "old_example_independent_replays": 10,
+    "fixed_inputs_unchanged": true
+  },
+  "experiments": {
+    "primary_cells": 19,
+    "main_cells": 12,
+    "tiling_cells": 4,
+    "search_ablations": 3,
+    "legal_primary_cells": 18,
+    "infeasible_cells": 1,
+    "exhaustive_micro_instances": 12,
+    "max_tasks_per_graph": 13120,
+    "supplemental_cells": 12,
+    "complete_source_copy_runs_per_suite": 2
+  },
+  "aggregate_wire_bytes": {
+    "beam": 9012513536,
+    "fixed": 10119300544,
+    "greedy": 9135129664,
+    "strong_greedy": 8673527488
+  },
+  "reductions_percent": {
+    "beam_vs_fixed": 10.937386464484872,
+    "beam_vs_greedy": 1.3422483589172183,
+    "greedy_vs_fixed": 9.725680897812062,
+    "strong_greedy_vs_fixed": 14.287282502516806,
+    "strong_greedy_vs_beam": 3.7612819847197843
+  },
+  "stronger_greedy_wins_vs_beam": 10,
+  "recommendation": "Use solve_tie(workload, hardware) as preferred inexpensive policy for this benchmark; retain explicit greedy baseline and optional beam. Not a global optimum or hardware performance claim.",
+  "main_beam_wins_vs_original_greedy": 7,
+  "main_beam_losses_vs_original_greedy": 5,
+  "interpretation": "Primary reduction is reusable weight residency and utilization of the already present M1, not uniformly beneficial wider search. Supplemental tie audit was added after discovering first-instance bias; original primary table is retained unchanged.",
+  "timing_limit": "Algorithm wall times are separate from science. Primary methods share node27/4 workers; supplemental runs use node3/2 workers. Do not compare cross-node seconds as controlled speedups; no chip latency inferred.",
+  "physical": "blocked",
+  "numerical_model_execution": false,
+  "old_server_directory": "retained; not accessed during new research",
+  "issue_state": "in_review",
+  "reviewer": "unassigned",
+  "board": "unverified; sync pending",
+  "evidence_sha256": {
+    "comparison.csv": "dd6434e1a45cc11d32d8837368f26b887ecfd028b2d68926baabe09d265e2c52",
+    "development_failures.json": "fc049124eb5f7e9b54a1ba834b1695bd0385b633c684f2fa8a032f28b0f07b03",
+    "primary_regression_receipt.json": "36ef16c8729ffdafc47e1d9b5fd208bcef44131ce0fc1ad05d5477e9e78055af",
+    "receipt.json": "3a09ac6396adfe44029a388177cb35836d34d636fea80f3cd5a89bea708beac3",
+    "regression_receipt.json": "0b3ffa4268651ffd0b6ff20f3f047d422c3ae367a2b22b22660f7f4d279e4d82",
+    "replay_receipt.json": "3a09ac6396adfe44029a388177cb35836d34d636fea80f3cd5a89bea708beac3",
+    "run.sbatch": "ac10cd771be9d357cf2b7dd9d102adc38d74435d6c4a01604a43013b9f83f7a2",
+    "runtime01.json": "fe0b7b681f0b4fb0494fdac4f4df6a05a673971951eb716fb253253c09258501",
+    "runtime02.json": "94c07d5fe461ca866c0a73ad94848e110e3650c3de43548df7b9c57847c3bd24",
+    "science.json": "d7f6c3d847e3865493fff01a10b2f459f86f328e6f46bc5df93d7616efcdc14c",
+    "stronger_greedy.csv": "deb31dd64f47fee10ae182e15eef335d760e3f7ac315f611e137aaafc934cc58",
+    "tie.sbatch": "b38a77ee4af0280136a4241b8590d1f01639c083b9d782bfa9cd091f05594a33",
+    "tie_runtime01.json": "b0e3e9a0605a3552c3740cf538a8901c3ceb53705f39684bb140b26ff013ebe0",
+    "tie_runtime02.json": "9d038838c84ffcebd1a6568856dbea1346bfa23963397e47461563a28b974eb4",
+    "tie_science.json": "b0219fc13eb1b3410d430a5aa40be4ac0683a410dc9ae7776c1fd43a1cbdccb6"
+  },
+  "artifact_line_endings": "LF enforced in this new evidence directory; metadata SHA values checked against Git blob bytes"
+}

@@ -1,0 +1,3793 @@
+{
+  "schema_version": "workload-mapping/1",
+  "id": "qwen-config",
+  "evidence": {
+    "kind": "config_derived",
+    "source": "PR50@b06d85a801a87c07f9745ccae6950dc7e4cbd0d2 config-only Qwen dimensions H1024/I3072/Q16/KV8/head128; schedule, formats, placement and Blocks synthetic",
+    "status": "derived"
+  },
+  "scope": "One selected layer, prefill2/decode1, explicit Q/K/V/O, KV versions, gate/up/down and two residuals; no checkpoint, inference or captured numerical trace.",
+  "nodes": [
+    {
+      "id": "n_prefill_norm1",
+      "semantic": "normalization",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_q_acc",
+      "semantic": "matrix",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_q",
+      "semantic": "requantize",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_k_acc",
+      "semantic": "matrix",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_k",
+      "semantic": "requantize",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_v_acc",
+      "semantic": "matrix",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_v",
+      "semantic": "requantize",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_q_rope",
+      "semantic": "rotary_position",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_k_rope",
+      "semantic": "rotary_position",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_v_layout",
+      "semantic": "reshape",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_attention",
+      "semantic": "grouped_query_attention",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_o_acc",
+      "semantic": "matrix",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_o",
+      "semantic": "requantize",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_residual1",
+      "semantic": "residual_add",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_norm2",
+      "semantic": "normalization",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_gate_acc",
+      "semantic": "matrix",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_gate",
+      "semantic": "requantize",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_up_acc",
+      "semantic": "matrix",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_up",
+      "semantic": "requantize",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_gate_up",
+      "semantic": "gated_activation",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_down_acc",
+      "semantic": "matrix",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_down",
+      "semantic": "requantize",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_prefill_residual2",
+      "semantic": "residual_add",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_norm1",
+      "semantic": "normalization",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_q_acc",
+      "semantic": "matrix",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_q",
+      "semantic": "requantize",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_k_acc",
+      "semantic": "matrix",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_k",
+      "semantic": "requantize",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_v_acc",
+      "semantic": "matrix",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_v",
+      "semantic": "requantize",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_q_rope",
+      "semantic": "rotary_position",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_k_rope",
+      "semantic": "rotary_position",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_v_layout",
+      "semantic": "reshape",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_k_append",
+      "semantic": "kv_append",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_v_append",
+      "semantic": "kv_append",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_attention",
+      "semantic": "grouped_query_attention",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_o_acc",
+      "semantic": "matrix",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_o",
+      "semantic": "requantize",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_residual1",
+      "semantic": "residual_add",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_norm2",
+      "semantic": "normalization",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_gate_acc",
+      "semantic": "matrix",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_gate",
+      "semantic": "requantize",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_up_acc",
+      "semantic": "matrix",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_up",
+      "semantic": "requantize",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_gate_up",
+      "semantic": "gated_activation",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_down_acc",
+      "semantic": "matrix",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_down",
+      "semantic": "requantize",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    },
+    {
+      "id": "n_decode_residual2",
+      "semantic": "residual_add",
+      "contract": "Illustrative explicit shapes/formats; no numeric, rounding, saturation or timing verification"
+    }
+  ],
+  "calls": [
+    {
+      "id": "c_prefill_norm1",
+      "node": "n_prefill_norm1",
+      "resource": "vector",
+      "reads": [
+        "t_prefill_input"
+      ],
+      "writes": [
+        "t_prefill_norm1"
+      ]
+    },
+    {
+      "id": "c_prefill_q_acc",
+      "node": "n_prefill_q_acc",
+      "resource": "matrix",
+      "reads": [
+        "t_prefill_norm1",
+        "t_w_q"
+      ],
+      "writes": [
+        "t_prefill_q_acc"
+      ]
+    },
+    {
+      "id": "c_prefill_q",
+      "node": "n_prefill_q",
+      "resource": "vector",
+      "reads": [
+        "t_prefill_q_acc"
+      ],
+      "writes": [
+        "t_prefill_q"
+      ]
+    },
+    {
+      "id": "c_prefill_k_acc",
+      "node": "n_prefill_k_acc",
+      "resource": "matrix",
+      "reads": [
+        "t_prefill_norm1",
+        "t_w_k"
+      ],
+      "writes": [
+        "t_prefill_k_acc"
+      ]
+    },
+    {
+      "id": "c_prefill_k",
+      "node": "n_prefill_k",
+      "resource": "vector",
+      "reads": [
+        "t_prefill_k_acc"
+      ],
+      "writes": [
+        "t_prefill_k"
+      ]
+    },
+    {
+      "id": "c_prefill_v_acc",
+      "node": "n_prefill_v_acc",
+      "resource": "matrix",
+      "reads": [
+        "t_prefill_norm1",
+        "t_w_v"
+      ],
+      "writes": [
+        "t_prefill_v_acc"
+      ]
+    },
+    {
+      "id": "c_prefill_v",
+      "node": "n_prefill_v",
+      "resource": "vector",
+      "reads": [
+        "t_prefill_v_acc"
+      ],
+      "writes": [
+        "t_prefill_v"
+      ]
+    },
+    {
+      "id": "c_prefill_q_rope",
+      "node": "n_prefill_q_rope",
+      "resource": "vector",
+      "reads": [
+        "t_prefill_q"
+      ],
+      "writes": [
+        "t_prefill_q_rope"
+      ]
+    },
+    {
+      "id": "c_prefill_k_rope",
+      "node": "n_prefill_k_rope",
+      "resource": "vector",
+      "reads": [
+        "t_prefill_k"
+      ],
+      "writes": [
+        "t_prefill_k_rope"
+      ]
+    },
+    {
+      "id": "c_prefill_v_layout",
+      "node": "n_prefill_v_layout",
+      "resource": "vector",
+      "reads": [
+        "t_prefill_v"
+      ],
+      "writes": [
+        "t_prefill_v_layout"
+      ]
+    },
+    {
+      "id": "c_prefill_attention",
+      "node": "n_prefill_attention",
+      "resource": "attention",
+      "reads": [
+        "t_prefill_q_rope",
+        "t_prefill_k_rope",
+        "t_prefill_v_layout"
+      ],
+      "writes": [
+        "t_prefill_attention"
+      ]
+    },
+    {
+      "id": "c_prefill_o_acc",
+      "node": "n_prefill_o_acc",
+      "resource": "matrix",
+      "reads": [
+        "t_prefill_attention",
+        "t_w_o"
+      ],
+      "writes": [
+        "t_prefill_o_acc"
+      ]
+    },
+    {
+      "id": "c_prefill_o",
+      "node": "n_prefill_o",
+      "resource": "vector",
+      "reads": [
+        "t_prefill_o_acc"
+      ],
+      "writes": [
+        "t_prefill_o"
+      ]
+    },
+    {
+      "id": "c_prefill_residual1",
+      "node": "n_prefill_residual1",
+      "resource": "vector",
+      "reads": [
+        "t_prefill_input",
+        "t_prefill_o"
+      ],
+      "writes": [
+        "t_prefill_residual1"
+      ]
+    },
+    {
+      "id": "c_prefill_norm2",
+      "node": "n_prefill_norm2",
+      "resource": "vector",
+      "reads": [
+        "t_prefill_residual1"
+      ],
+      "writes": [
+        "t_prefill_norm2"
+      ]
+    },
+    {
+      "id": "c_prefill_gate_acc",
+      "node": "n_prefill_gate_acc",
+      "resource": "matrix",
+      "reads": [
+        "t_prefill_norm2",
+        "t_w_gate"
+      ],
+      "writes": [
+        "t_prefill_gate_acc"
+      ]
+    },
+    {
+      "id": "c_prefill_gate",
+      "node": "n_prefill_gate",
+      "resource": "vector",
+      "reads": [
+        "t_prefill_gate_acc"
+      ],
+      "writes": [
+        "t_prefill_gate"
+      ]
+    },
+    {
+      "id": "c_prefill_up_acc",
+      "node": "n_prefill_up_acc",
+      "resource": "matrix",
+      "reads": [
+        "t_prefill_norm2",
+        "t_w_up"
+      ],
+      "writes": [
+        "t_prefill_up_acc"
+      ]
+    },
+    {
+      "id": "c_prefill_up",
+      "node": "n_prefill_up",
+      "resource": "vector",
+      "reads": [
+        "t_prefill_up_acc"
+      ],
+      "writes": [
+        "t_prefill_up"
+      ]
+    },
+    {
+      "id": "c_prefill_gate_up",
+      "node": "n_prefill_gate_up",
+      "resource": "vector",
+      "reads": [
+        "t_prefill_gate",
+        "t_prefill_up"
+      ],
+      "writes": [
+        "t_prefill_gate_up"
+      ]
+    },
+    {
+      "id": "c_prefill_down_acc",
+      "node": "n_prefill_down_acc",
+      "resource": "matrix",
+      "reads": [
+        "t_prefill_gate_up",
+        "t_w_down"
+      ],
+      "writes": [
+        "t_prefill_down_acc"
+      ]
+    },
+    {
+      "id": "c_prefill_down",
+      "node": "n_prefill_down",
+      "resource": "vector",
+      "reads": [
+        "t_prefill_down_acc"
+      ],
+      "writes": [
+        "t_prefill_down"
+      ]
+    },
+    {
+      "id": "c_prefill_residual2",
+      "node": "n_prefill_residual2",
+      "resource": "vector",
+      "reads": [
+        "t_prefill_residual1",
+        "t_prefill_down"
+      ],
+      "writes": [
+        "t_prefill_residual2"
+      ]
+    },
+    {
+      "id": "c_decode_norm1",
+      "node": "n_decode_norm1",
+      "resource": "vector",
+      "reads": [
+        "t_decode_input"
+      ],
+      "writes": [
+        "t_decode_norm1"
+      ]
+    },
+    {
+      "id": "c_decode_q_acc",
+      "node": "n_decode_q_acc",
+      "resource": "matrix",
+      "reads": [
+        "t_decode_norm1",
+        "t_w_q"
+      ],
+      "writes": [
+        "t_decode_q_acc"
+      ]
+    },
+    {
+      "id": "c_decode_q",
+      "node": "n_decode_q",
+      "resource": "vector",
+      "reads": [
+        "t_decode_q_acc"
+      ],
+      "writes": [
+        "t_decode_q"
+      ]
+    },
+    {
+      "id": "c_decode_k_acc",
+      "node": "n_decode_k_acc",
+      "resource": "matrix",
+      "reads": [
+        "t_decode_norm1",
+        "t_w_k"
+      ],
+      "writes": [
+        "t_decode_k_acc"
+      ]
+    },
+    {
+      "id": "c_decode_k",
+      "node": "n_decode_k",
+      "resource": "vector",
+      "reads": [
+        "t_decode_k_acc"
+      ],
+      "writes": [
+        "t_decode_k"
+      ]
+    },
+    {
+      "id": "c_decode_v_acc",
+      "node": "n_decode_v_acc",
+      "resource": "matrix",
+      "reads": [
+        "t_decode_norm1",
+        "t_w_v"
+      ],
+      "writes": [
+        "t_decode_v_acc"
+      ]
+    },
+    {
+      "id": "c_decode_v",
+      "node": "n_decode_v",
+      "resource": "vector",
+      "reads": [
+        "t_decode_v_acc"
+      ],
+      "writes": [
+        "t_decode_v"
+      ]
+    },
+    {
+      "id": "c_decode_q_rope",
+      "node": "n_decode_q_rope",
+      "resource": "vector",
+      "reads": [
+        "t_decode_q"
+      ],
+      "writes": [
+        "t_decode_q_rope"
+      ]
+    },
+    {
+      "id": "c_decode_k_rope",
+      "node": "n_decode_k_rope",
+      "resource": "vector",
+      "reads": [
+        "t_decode_k"
+      ],
+      "writes": [
+        "t_decode_k_rope"
+      ]
+    },
+    {
+      "id": "c_decode_v_layout",
+      "node": "n_decode_v_layout",
+      "resource": "vector",
+      "reads": [
+        "t_decode_v"
+      ],
+      "writes": [
+        "t_decode_v_layout"
+      ]
+    },
+    {
+      "id": "c_decode_k_append",
+      "node": "n_decode_k_append",
+      "resource": "state",
+      "reads": [
+        "t_prefill_k_rope",
+        "t_decode_k_rope"
+      ],
+      "writes": [
+        "t_decode_k_append"
+      ]
+    },
+    {
+      "id": "c_decode_v_append",
+      "node": "n_decode_v_append",
+      "resource": "state",
+      "reads": [
+        "t_prefill_v_layout",
+        "t_decode_v_layout"
+      ],
+      "writes": [
+        "t_decode_v_append"
+      ]
+    },
+    {
+      "id": "c_decode_attention",
+      "node": "n_decode_attention",
+      "resource": "attention",
+      "reads": [
+        "t_decode_q_rope",
+        "t_decode_k_append",
+        "t_decode_v_append"
+      ],
+      "writes": [
+        "t_decode_attention"
+      ]
+    },
+    {
+      "id": "c_decode_o_acc",
+      "node": "n_decode_o_acc",
+      "resource": "matrix",
+      "reads": [
+        "t_decode_attention",
+        "t_w_o"
+      ],
+      "writes": [
+        "t_decode_o_acc"
+      ]
+    },
+    {
+      "id": "c_decode_o",
+      "node": "n_decode_o",
+      "resource": "vector",
+      "reads": [
+        "t_decode_o_acc"
+      ],
+      "writes": [
+        "t_decode_o"
+      ]
+    },
+    {
+      "id": "c_decode_residual1",
+      "node": "n_decode_residual1",
+      "resource": "vector",
+      "reads": [
+        "t_decode_input",
+        "t_decode_o"
+      ],
+      "writes": [
+        "t_decode_residual1"
+      ]
+    },
+    {
+      "id": "c_decode_norm2",
+      "node": "n_decode_norm2",
+      "resource": "vector",
+      "reads": [
+        "t_decode_residual1"
+      ],
+      "writes": [
+        "t_decode_norm2"
+      ]
+    },
+    {
+      "id": "c_decode_gate_acc",
+      "node": "n_decode_gate_acc",
+      "resource": "matrix",
+      "reads": [
+        "t_decode_norm2",
+        "t_w_gate"
+      ],
+      "writes": [
+        "t_decode_gate_acc"
+      ]
+    },
+    {
+      "id": "c_decode_gate",
+      "node": "n_decode_gate",
+      "resource": "vector",
+      "reads": [
+        "t_decode_gate_acc"
+      ],
+      "writes": [
+        "t_decode_gate"
+      ]
+    },
+    {
+      "id": "c_decode_up_acc",
+      "node": "n_decode_up_acc",
+      "resource": "matrix",
+      "reads": [
+        "t_decode_norm2",
+        "t_w_up"
+      ],
+      "writes": [
+        "t_decode_up_acc"
+      ]
+    },
+    {
+      "id": "c_decode_up",
+      "node": "n_decode_up",
+      "resource": "vector",
+      "reads": [
+        "t_decode_up_acc"
+      ],
+      "writes": [
+        "t_decode_up"
+      ]
+    },
+    {
+      "id": "c_decode_gate_up",
+      "node": "n_decode_gate_up",
+      "resource": "vector",
+      "reads": [
+        "t_decode_gate",
+        "t_decode_up"
+      ],
+      "writes": [
+        "t_decode_gate_up"
+      ]
+    },
+    {
+      "id": "c_decode_down_acc",
+      "node": "n_decode_down_acc",
+      "resource": "matrix",
+      "reads": [
+        "t_decode_gate_up",
+        "t_w_down"
+      ],
+      "writes": [
+        "t_decode_down_acc"
+      ]
+    },
+    {
+      "id": "c_decode_down",
+      "node": "n_decode_down",
+      "resource": "vector",
+      "reads": [
+        "t_decode_down_acc"
+      ],
+      "writes": [
+        "t_decode_down"
+      ]
+    },
+    {
+      "id": "c_decode_residual2",
+      "node": "n_decode_residual2",
+      "resource": "vector",
+      "reads": [
+        "t_decode_residual1",
+        "t_decode_down"
+      ],
+      "writes": [
+        "t_decode_residual2"
+      ]
+    }
+  ],
+  "tensors": [
+    {
+      "id": "t_w_q",
+      "shape": [
+        1024,
+        2048
+      ],
+      "axes": [
+        "input",
+        "output"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_w_q",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_prefill_q_acc",
+        "c_decode_q_acc"
+      ],
+      "role": "weight",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_w_k",
+      "shape": [
+        1024,
+        1024
+      ],
+      "axes": [
+        "input",
+        "output"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_w_k",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_prefill_k_acc",
+        "c_decode_k_acc"
+      ],
+      "role": "weight",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_w_v",
+      "shape": [
+        1024,
+        1024
+      ],
+      "axes": [
+        "input",
+        "output"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_w_v",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_prefill_v_acc",
+        "c_decode_v_acc"
+      ],
+      "role": "weight",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_w_o",
+      "shape": [
+        2048,
+        1024
+      ],
+      "axes": [
+        "input",
+        "output"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_w_o",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_prefill_o_acc",
+        "c_decode_o_acc"
+      ],
+      "role": "weight",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_w_gate",
+      "shape": [
+        1024,
+        3072
+      ],
+      "axes": [
+        "input",
+        "output"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_w_gate",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_prefill_gate_acc",
+        "c_decode_gate_acc"
+      ],
+      "role": "weight",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_w_up",
+      "shape": [
+        1024,
+        3072
+      ],
+      "axes": [
+        "input",
+        "output"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_w_up",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_prefill_up_acc",
+        "c_decode_up_acc"
+      ],
+      "role": "weight",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_w_down",
+      "shape": [
+        3072,
+        1024
+      ],
+      "axes": [
+        "input",
+        "output"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_w_down",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_prefill_down_acc",
+        "c_decode_down_acc"
+      ],
+      "role": "weight",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_input",
+      "shape": [
+        2,
+        1024
+      ],
+      "axes": [
+        "token",
+        "hidden"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_input",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_prefill_norm1",
+        "c_prefill_residual1"
+      ],
+      "role": "activation",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_norm1",
+      "shape": [
+        2,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_norm1",
+      "offset_bytes": 0,
+      "producer": "c_prefill_norm1",
+      "consumers": [
+        "c_prefill_q_acc",
+        "c_prefill_k_acc",
+        "c_prefill_v_acc"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_q_acc",
+      "shape": [
+        2,
+        2048
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_q_acc",
+      "offset_bytes": 0,
+      "producer": "c_prefill_q_acc",
+      "consumers": [
+        "c_prefill_q"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_q",
+      "shape": [
+        2,
+        2048
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_q",
+      "offset_bytes": 0,
+      "producer": "c_prefill_q",
+      "consumers": [
+        "c_prefill_q_rope"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_k_acc",
+      "shape": [
+        2,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_k_acc",
+      "offset_bytes": 0,
+      "producer": "c_prefill_k_acc",
+      "consumers": [
+        "c_prefill_k"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_k",
+      "shape": [
+        2,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_k",
+      "offset_bytes": 0,
+      "producer": "c_prefill_k",
+      "consumers": [
+        "c_prefill_k_rope"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_v_acc",
+      "shape": [
+        2,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_v_acc",
+      "offset_bytes": 0,
+      "producer": "c_prefill_v_acc",
+      "consumers": [
+        "c_prefill_v"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_v",
+      "shape": [
+        2,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_v",
+      "offset_bytes": 0,
+      "producer": "c_prefill_v",
+      "consumers": [
+        "c_prefill_v_layout"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_q_rope",
+      "shape": [
+        2,
+        16,
+        128
+      ],
+      "axes": [
+        "token",
+        "q_head",
+        "head_dim"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_q_rope",
+      "offset_bytes": 0,
+      "producer": "c_prefill_q_rope",
+      "consumers": [
+        "c_prefill_attention"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_k_rope",
+      "shape": [
+        2,
+        8,
+        128
+      ],
+      "axes": [
+        "token",
+        "kv_head",
+        "head_dim"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_k_rope",
+      "offset_bytes": 0,
+      "producer": "c_prefill_k_rope",
+      "consumers": [
+        "c_prefill_attention",
+        "c_decode_k_append"
+      ],
+      "role": "state",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_v_layout",
+      "shape": [
+        2,
+        8,
+        128
+      ],
+      "axes": [
+        "token",
+        "kv_head",
+        "head_dim"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_v_layout",
+      "offset_bytes": 0,
+      "producer": "c_prefill_v_layout",
+      "consumers": [
+        "c_prefill_attention",
+        "c_decode_v_append"
+      ],
+      "role": "state",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_attention",
+      "shape": [
+        2,
+        2048
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_attention",
+      "offset_bytes": 0,
+      "producer": "c_prefill_attention",
+      "consumers": [
+        "c_prefill_o_acc"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_o_acc",
+      "shape": [
+        2,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_o_acc",
+      "offset_bytes": 0,
+      "producer": "c_prefill_o_acc",
+      "consumers": [
+        "c_prefill_o"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_o",
+      "shape": [
+        2,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_o",
+      "offset_bytes": 0,
+      "producer": "c_prefill_o",
+      "consumers": [
+        "c_prefill_residual1"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_residual1",
+      "shape": [
+        2,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_residual1",
+      "offset_bytes": 0,
+      "producer": "c_prefill_residual1",
+      "consumers": [
+        "c_prefill_norm2",
+        "c_prefill_residual2"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_norm2",
+      "shape": [
+        2,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_norm2",
+      "offset_bytes": 0,
+      "producer": "c_prefill_norm2",
+      "consumers": [
+        "c_prefill_gate_acc",
+        "c_prefill_up_acc"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_gate_acc",
+      "shape": [
+        2,
+        3072
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_gate_acc",
+      "offset_bytes": 0,
+      "producer": "c_prefill_gate_acc",
+      "consumers": [
+        "c_prefill_gate"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_gate",
+      "shape": [
+        2,
+        3072
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_gate",
+      "offset_bytes": 0,
+      "producer": "c_prefill_gate",
+      "consumers": [
+        "c_prefill_gate_up"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_up_acc",
+      "shape": [
+        2,
+        3072
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_up_acc",
+      "offset_bytes": 0,
+      "producer": "c_prefill_up_acc",
+      "consumers": [
+        "c_prefill_up"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_up",
+      "shape": [
+        2,
+        3072
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_up",
+      "offset_bytes": 0,
+      "producer": "c_prefill_up",
+      "consumers": [
+        "c_prefill_gate_up"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_gate_up",
+      "shape": [
+        2,
+        3072
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_gate_up",
+      "offset_bytes": 0,
+      "producer": "c_prefill_gate_up",
+      "consumers": [
+        "c_prefill_down_acc"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_down_acc",
+      "shape": [
+        2,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_down_acc",
+      "offset_bytes": 0,
+      "producer": "c_prefill_down_acc",
+      "consumers": [
+        "c_prefill_down"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_down",
+      "shape": [
+        2,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_down",
+      "offset_bytes": 0,
+      "producer": "c_prefill_down",
+      "consumers": [
+        "c_prefill_residual2"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_prefill_residual2",
+      "shape": [
+        2,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_prefill_residual2",
+      "offset_bytes": 0,
+      "producer": "c_prefill_residual2",
+      "consumers": [],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_input",
+      "shape": [
+        1,
+        1024
+      ],
+      "axes": [
+        "token",
+        "hidden"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_input",
+      "offset_bytes": 0,
+      "producer": null,
+      "consumers": [
+        "c_decode_norm1",
+        "c_decode_residual1"
+      ],
+      "role": "activation",
+      "initial": true,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_norm1",
+      "shape": [
+        1,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_norm1",
+      "offset_bytes": 0,
+      "producer": "c_decode_norm1",
+      "consumers": [
+        "c_decode_q_acc",
+        "c_decode_k_acc",
+        "c_decode_v_acc"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_q_acc",
+      "shape": [
+        1,
+        2048
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_decode_q_acc",
+      "offset_bytes": 0,
+      "producer": "c_decode_q_acc",
+      "consumers": [
+        "c_decode_q"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_q",
+      "shape": [
+        1,
+        2048
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_q",
+      "offset_bytes": 0,
+      "producer": "c_decode_q",
+      "consumers": [
+        "c_decode_q_rope"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_k_acc",
+      "shape": [
+        1,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_decode_k_acc",
+      "offset_bytes": 0,
+      "producer": "c_decode_k_acc",
+      "consumers": [
+        "c_decode_k"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_k",
+      "shape": [
+        1,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_k",
+      "offset_bytes": 0,
+      "producer": "c_decode_k",
+      "consumers": [
+        "c_decode_k_rope"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_v_acc",
+      "shape": [
+        1,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_decode_v_acc",
+      "offset_bytes": 0,
+      "producer": "c_decode_v_acc",
+      "consumers": [
+        "c_decode_v"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_v",
+      "shape": [
+        1,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_v",
+      "offset_bytes": 0,
+      "producer": "c_decode_v",
+      "consumers": [
+        "c_decode_v_layout"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_q_rope",
+      "shape": [
+        1,
+        16,
+        128
+      ],
+      "axes": [
+        "token",
+        "q_head",
+        "head_dim"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_q_rope",
+      "offset_bytes": 0,
+      "producer": "c_decode_q_rope",
+      "consumers": [
+        "c_decode_attention"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_k_rope",
+      "shape": [
+        1,
+        8,
+        128
+      ],
+      "axes": [
+        "token",
+        "kv_head",
+        "head_dim"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_k_rope",
+      "offset_bytes": 0,
+      "producer": "c_decode_k_rope",
+      "consumers": [
+        "c_decode_k_append"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_v_layout",
+      "shape": [
+        1,
+        8,
+        128
+      ],
+      "axes": [
+        "token",
+        "kv_head",
+        "head_dim"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_v_layout",
+      "offset_bytes": 0,
+      "producer": "c_decode_v_layout",
+      "consumers": [
+        "c_decode_v_append"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_k_append",
+      "shape": [
+        3,
+        8,
+        128
+      ],
+      "axes": [
+        "d0",
+        "d1",
+        "d2"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_k_append",
+      "offset_bytes": 0,
+      "producer": "c_decode_k_append",
+      "consumers": [
+        "c_decode_attention"
+      ],
+      "role": "state",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_v_append",
+      "shape": [
+        3,
+        8,
+        128
+      ],
+      "axes": [
+        "d0",
+        "d1",
+        "d2"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_v_append",
+      "offset_bytes": 0,
+      "producer": "c_decode_v_append",
+      "consumers": [
+        "c_decode_attention"
+      ],
+      "role": "state",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_attention",
+      "shape": [
+        1,
+        2048
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_attention",
+      "offset_bytes": 0,
+      "producer": "c_decode_attention",
+      "consumers": [
+        "c_decode_o_acc"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_o_acc",
+      "shape": [
+        1,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_decode_o_acc",
+      "offset_bytes": 0,
+      "producer": "c_decode_o_acc",
+      "consumers": [
+        "c_decode_o"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_o",
+      "shape": [
+        1,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_o",
+      "offset_bytes": 0,
+      "producer": "c_decode_o",
+      "consumers": [
+        "c_decode_residual1"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_residual1",
+      "shape": [
+        1,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_residual1",
+      "offset_bytes": 0,
+      "producer": "c_decode_residual1",
+      "consumers": [
+        "c_decode_norm2",
+        "c_decode_residual2"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_norm2",
+      "shape": [
+        1,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_norm2",
+      "offset_bytes": 0,
+      "producer": "c_decode_norm2",
+      "consumers": [
+        "c_decode_gate_acc",
+        "c_decode_up_acc"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_gate_acc",
+      "shape": [
+        1,
+        3072
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_decode_gate_acc",
+      "offset_bytes": 0,
+      "producer": "c_decode_gate_acc",
+      "consumers": [
+        "c_decode_gate"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_gate",
+      "shape": [
+        1,
+        3072
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_gate",
+      "offset_bytes": 0,
+      "producer": "c_decode_gate",
+      "consumers": [
+        "c_decode_gate_up"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_up_acc",
+      "shape": [
+        1,
+        3072
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_decode_up_acc",
+      "offset_bytes": 0,
+      "producer": "c_decode_up_acc",
+      "consumers": [
+        "c_decode_up"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_up",
+      "shape": [
+        1,
+        3072
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_up",
+      "offset_bytes": 0,
+      "producer": "c_decode_up",
+      "consumers": [
+        "c_decode_gate_up"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_gate_up",
+      "shape": [
+        1,
+        3072
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_gate_up",
+      "offset_bytes": 0,
+      "producer": "c_decode_gate_up",
+      "consumers": [
+        "c_decode_down_acc"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_down_acc",
+      "shape": [
+        1,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "storage": "s_decode_down_acc",
+      "offset_bytes": 0,
+      "producer": "c_decode_down_acc",
+      "consumers": [
+        "c_decode_down"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_down",
+      "shape": [
+        1,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_down",
+      "offset_bytes": 0,
+      "producer": "c_decode_down",
+      "consumers": [
+        "c_decode_residual2"
+      ],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    },
+    {
+      "id": "t_decode_residual2",
+      "shape": [
+        1,
+        1024
+      ],
+      "axes": [
+        "d0",
+        "d1"
+      ],
+      "layout": "row_major",
+      "logical_bits": 8,
+      "storage_bits": 8,
+      "metadata_bytes": 0,
+      "storage": "s_decode_residual2",
+      "offset_bytes": 0,
+      "producer": "c_decode_residual2",
+      "consumers": [],
+      "role": "activation",
+      "initial": false,
+      "alias_of": null
+    }
+  ],
+  "storages": [
+    {
+      "id": "s_w_q",
+      "resource": "matrix",
+      "size_bytes": 2097152,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_w_k",
+      "resource": "matrix",
+      "size_bytes": 1048576,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_w_v",
+      "resource": "matrix",
+      "size_bytes": 1048576,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_w_o",
+      "resource": "matrix",
+      "size_bytes": 2097152,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_w_gate",
+      "resource": "matrix",
+      "size_bytes": 3145728,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_w_up",
+      "resource": "matrix",
+      "size_bytes": 3145728,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_w_down",
+      "resource": "matrix",
+      "size_bytes": 3145728,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_input",
+      "resource": "host",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_prefill_input_to_vector",
+      "resource": "vector",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_norm1",
+      "resource": "vector",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_prefill_norm1_to_matrix",
+      "resource": "matrix",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_q_acc",
+      "resource": "matrix",
+      "size_bytes": 16384,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_prefill_q_acc_to_vector",
+      "resource": "vector",
+      "size_bytes": 16384,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_q",
+      "resource": "vector",
+      "size_bytes": 4096,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_k_acc",
+      "resource": "matrix",
+      "size_bytes": 8192,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_prefill_k_acc_to_vector",
+      "resource": "vector",
+      "size_bytes": 8192,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_k",
+      "resource": "vector",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_v_acc",
+      "resource": "matrix",
+      "size_bytes": 8192,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_prefill_v_acc_to_vector",
+      "resource": "vector",
+      "size_bytes": 8192,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_v",
+      "resource": "vector",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_q_rope",
+      "resource": "vector",
+      "size_bytes": 4096,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_k_rope",
+      "resource": "vector",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_v_layout",
+      "resource": "vector",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_prefill_q_rope_to_attention",
+      "resource": "attention",
+      "size_bytes": 4096,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_prefill_k_rope_to_attention",
+      "resource": "attention",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_prefill_v_layout_to_attention",
+      "resource": "attention",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_attention",
+      "resource": "attention",
+      "size_bytes": 4096,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_prefill_attention_to_matrix",
+      "resource": "matrix",
+      "size_bytes": 4096,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_o_acc",
+      "resource": "matrix",
+      "size_bytes": 8192,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_prefill_o_acc_to_vector",
+      "resource": "vector",
+      "size_bytes": 8192,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_o",
+      "resource": "vector",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_residual1",
+      "resource": "vector",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_norm2",
+      "resource": "vector",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_prefill_norm2_to_matrix",
+      "resource": "matrix",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_gate_acc",
+      "resource": "matrix",
+      "size_bytes": 24576,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_prefill_gate_acc_to_vector",
+      "resource": "vector",
+      "size_bytes": 24576,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_gate",
+      "resource": "vector",
+      "size_bytes": 6144,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_up_acc",
+      "resource": "matrix",
+      "size_bytes": 24576,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_prefill_up_acc_to_vector",
+      "resource": "vector",
+      "size_bytes": 24576,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_up",
+      "resource": "vector",
+      "size_bytes": 6144,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_gate_up",
+      "resource": "vector",
+      "size_bytes": 6144,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_prefill_gate_up_to_matrix",
+      "resource": "matrix",
+      "size_bytes": 6144,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_down_acc",
+      "resource": "matrix",
+      "size_bytes": 8192,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_prefill_down_acc_to_vector",
+      "resource": "vector",
+      "size_bytes": 8192,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_down",
+      "resource": "vector",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_prefill_residual2",
+      "resource": "vector",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_input",
+      "resource": "host",
+      "size_bytes": 1024,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_decode_input_to_vector",
+      "resource": "vector",
+      "size_bytes": 1024,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_norm1",
+      "resource": "vector",
+      "size_bytes": 1024,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_decode_norm1_to_matrix",
+      "resource": "matrix",
+      "size_bytes": 1024,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_q_acc",
+      "resource": "matrix",
+      "size_bytes": 8192,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_decode_q_acc_to_vector",
+      "resource": "vector",
+      "size_bytes": 8192,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_q",
+      "resource": "vector",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_k_acc",
+      "resource": "matrix",
+      "size_bytes": 4096,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_decode_k_acc_to_vector",
+      "resource": "vector",
+      "size_bytes": 4096,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_k",
+      "resource": "vector",
+      "size_bytes": 1024,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_v_acc",
+      "resource": "matrix",
+      "size_bytes": 4096,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_decode_v_acc_to_vector",
+      "resource": "vector",
+      "size_bytes": 4096,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_v",
+      "resource": "vector",
+      "size_bytes": 1024,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_q_rope",
+      "resource": "vector",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_k_rope",
+      "resource": "vector",
+      "size_bytes": 1024,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_v_layout",
+      "resource": "vector",
+      "size_bytes": 1024,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_prefill_k_rope_to_state",
+      "resource": "state",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_decode_k_rope_to_state",
+      "resource": "state",
+      "size_bytes": 1024,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_k_append",
+      "resource": "state",
+      "size_bytes": 3072,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_prefill_v_layout_to_state",
+      "resource": "state",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_decode_v_layout_to_state",
+      "resource": "state",
+      "size_bytes": 1024,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_v_append",
+      "resource": "state",
+      "size_bytes": 3072,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_decode_q_rope_to_attention",
+      "resource": "attention",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_decode_k_append_to_attention",
+      "resource": "attention",
+      "size_bytes": 3072,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_decode_v_append_to_attention",
+      "resource": "attention",
+      "size_bytes": 3072,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_attention",
+      "resource": "attention",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_decode_attention_to_matrix",
+      "resource": "matrix",
+      "size_bytes": 2048,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_o_acc",
+      "resource": "matrix",
+      "size_bytes": 4096,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_decode_o_acc_to_vector",
+      "resource": "vector",
+      "size_bytes": 4096,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_o",
+      "resource": "vector",
+      "size_bytes": 1024,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_residual1",
+      "resource": "vector",
+      "size_bytes": 1024,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_norm2",
+      "resource": "vector",
+      "size_bytes": 1024,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_decode_norm2_to_matrix",
+      "resource": "matrix",
+      "size_bytes": 1024,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_gate_acc",
+      "resource": "matrix",
+      "size_bytes": 12288,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_decode_gate_acc_to_vector",
+      "resource": "vector",
+      "size_bytes": 12288,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_gate",
+      "resource": "vector",
+      "size_bytes": 3072,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_up_acc",
+      "resource": "matrix",
+      "size_bytes": 12288,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_decode_up_acc_to_vector",
+      "resource": "vector",
+      "size_bytes": 12288,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_up",
+      "resource": "vector",
+      "size_bytes": 3072,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_gate_up",
+      "resource": "vector",
+      "size_bytes": 3072,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_decode_gate_up_to_matrix",
+      "resource": "matrix",
+      "size_bytes": 3072,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_down_acc",
+      "resource": "matrix",
+      "size_bytes": 4096,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_copy_t_decode_down_acc_to_vector",
+      "resource": "vector",
+      "size_bytes": 4096,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_down",
+      "resource": "vector",
+      "size_bytes": 1024,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    },
+    {
+      "id": "s_decode_residual2",
+      "resource": "vector",
+      "size_bytes": 1024,
+      "begin": "e_tr_t_prefill_input_to_vector",
+      "end": "e_c_decode_residual2"
+    }
+  ],
+  "states": [
+    {
+      "id": "state_kv_key",
+      "kind": "kv",
+      "initial": "t_prefill_k_rope",
+      "versions": [
+        {
+          "tensor": "t_decode_k_append",
+          "writer": "c_decode_k_append",
+          "previous": "t_prefill_k_rope"
+        }
+      ]
+    },
+    {
+      "id": "state_kv_value",
+      "kind": "kv",
+      "initial": "t_prefill_v_layout",
+      "versions": [
+        {
+          "tensor": "t_decode_v_append",
+          "writer": "c_decode_v_append",
+          "previous": "t_prefill_v_layout"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "e_tr_t_prefill_input_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_prefill_input_to_vector",
+      "step": 0,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_norm1",
+      "kind": "call",
+      "ref": "c_prefill_norm1",
+      "step": 1,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_prefill_norm1_to_matrix",
+      "kind": "transfer",
+      "ref": "tr_t_prefill_norm1_to_matrix",
+      "step": 2,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_q_acc",
+      "kind": "call",
+      "ref": "c_prefill_q_acc",
+      "step": 3,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_prefill_q_acc_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_prefill_q_acc_to_vector",
+      "step": 4,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_q",
+      "kind": "call",
+      "ref": "c_prefill_q",
+      "step": 5,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_k_acc",
+      "kind": "call",
+      "ref": "c_prefill_k_acc",
+      "step": 6,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_prefill_k_acc_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_prefill_k_acc_to_vector",
+      "step": 7,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_k",
+      "kind": "call",
+      "ref": "c_prefill_k",
+      "step": 8,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_v_acc",
+      "kind": "call",
+      "ref": "c_prefill_v_acc",
+      "step": 9,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_prefill_v_acc_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_prefill_v_acc_to_vector",
+      "step": 10,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_v",
+      "kind": "call",
+      "ref": "c_prefill_v",
+      "step": 11,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_q_rope",
+      "kind": "call",
+      "ref": "c_prefill_q_rope",
+      "step": 12,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_k_rope",
+      "kind": "call",
+      "ref": "c_prefill_k_rope",
+      "step": 13,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_v_layout",
+      "kind": "call",
+      "ref": "c_prefill_v_layout",
+      "step": 14,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_prefill_q_rope_to_attention",
+      "kind": "transfer",
+      "ref": "tr_t_prefill_q_rope_to_attention",
+      "step": 15,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_prefill_k_rope_to_attention",
+      "kind": "transfer",
+      "ref": "tr_t_prefill_k_rope_to_attention",
+      "step": 16,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_prefill_v_layout_to_attention",
+      "kind": "transfer",
+      "ref": "tr_t_prefill_v_layout_to_attention",
+      "step": 17,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_attention",
+      "kind": "call",
+      "ref": "c_prefill_attention",
+      "step": 18,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_prefill_attention_to_matrix",
+      "kind": "transfer",
+      "ref": "tr_t_prefill_attention_to_matrix",
+      "step": 19,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_o_acc",
+      "kind": "call",
+      "ref": "c_prefill_o_acc",
+      "step": 20,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_prefill_o_acc_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_prefill_o_acc_to_vector",
+      "step": 21,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_o",
+      "kind": "call",
+      "ref": "c_prefill_o",
+      "step": 22,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_residual1",
+      "kind": "call",
+      "ref": "c_prefill_residual1",
+      "step": 23,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_norm2",
+      "kind": "call",
+      "ref": "c_prefill_norm2",
+      "step": 24,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_prefill_norm2_to_matrix",
+      "kind": "transfer",
+      "ref": "tr_t_prefill_norm2_to_matrix",
+      "step": 25,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_gate_acc",
+      "kind": "call",
+      "ref": "c_prefill_gate_acc",
+      "step": 26,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_prefill_gate_acc_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_prefill_gate_acc_to_vector",
+      "step": 27,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_gate",
+      "kind": "call",
+      "ref": "c_prefill_gate",
+      "step": 28,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_up_acc",
+      "kind": "call",
+      "ref": "c_prefill_up_acc",
+      "step": 29,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_prefill_up_acc_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_prefill_up_acc_to_vector",
+      "step": 30,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_up",
+      "kind": "call",
+      "ref": "c_prefill_up",
+      "step": 31,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_gate_up",
+      "kind": "call",
+      "ref": "c_prefill_gate_up",
+      "step": 32,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_prefill_gate_up_to_matrix",
+      "kind": "transfer",
+      "ref": "tr_t_prefill_gate_up_to_matrix",
+      "step": 33,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_down_acc",
+      "kind": "call",
+      "ref": "c_prefill_down_acc",
+      "step": 34,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_prefill_down_acc_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_prefill_down_acc_to_vector",
+      "step": 35,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_down",
+      "kind": "call",
+      "ref": "c_prefill_down",
+      "step": 36,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_c_prefill_residual2",
+      "kind": "call",
+      "ref": "c_prefill_residual2",
+      "step": 37,
+      "phase": "prefill"
+    },
+    {
+      "id": "e_tr_t_decode_input_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_decode_input_to_vector",
+      "step": 38,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_norm1",
+      "kind": "call",
+      "ref": "c_decode_norm1",
+      "step": 39,
+      "phase": "decode"
+    },
+    {
+      "id": "e_tr_t_decode_norm1_to_matrix",
+      "kind": "transfer",
+      "ref": "tr_t_decode_norm1_to_matrix",
+      "step": 40,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_q_acc",
+      "kind": "call",
+      "ref": "c_decode_q_acc",
+      "step": 41,
+      "phase": "decode"
+    },
+    {
+      "id": "e_tr_t_decode_q_acc_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_decode_q_acc_to_vector",
+      "step": 42,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_q",
+      "kind": "call",
+      "ref": "c_decode_q",
+      "step": 43,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_k_acc",
+      "kind": "call",
+      "ref": "c_decode_k_acc",
+      "step": 44,
+      "phase": "decode"
+    },
+    {
+      "id": "e_tr_t_decode_k_acc_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_decode_k_acc_to_vector",
+      "step": 45,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_k",
+      "kind": "call",
+      "ref": "c_decode_k",
+      "step": 46,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_v_acc",
+      "kind": "call",
+      "ref": "c_decode_v_acc",
+      "step": 47,
+      "phase": "decode"
+    },
+    {
+      "id": "e_tr_t_decode_v_acc_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_decode_v_acc_to_vector",
+      "step": 48,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_v",
+      "kind": "call",
+      "ref": "c_decode_v",
+      "step": 49,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_q_rope",
+      "kind": "call",
+      "ref": "c_decode_q_rope",
+      "step": 50,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_k_rope",
+      "kind": "call",
+      "ref": "c_decode_k_rope",
+      "step": 51,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_v_layout",
+      "kind": "call",
+      "ref": "c_decode_v_layout",
+      "step": 52,
+      "phase": "decode"
+    },
+    {
+      "id": "e_tr_t_prefill_k_rope_to_state",
+      "kind": "transfer",
+      "ref": "tr_t_prefill_k_rope_to_state",
+      "step": 53,
+      "phase": "decode"
+    },
+    {
+      "id": "e_tr_t_decode_k_rope_to_state",
+      "kind": "transfer",
+      "ref": "tr_t_decode_k_rope_to_state",
+      "step": 54,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_k_append",
+      "kind": "call",
+      "ref": "c_decode_k_append",
+      "step": 55,
+      "phase": "decode"
+    },
+    {
+      "id": "e_tr_t_prefill_v_layout_to_state",
+      "kind": "transfer",
+      "ref": "tr_t_prefill_v_layout_to_state",
+      "step": 56,
+      "phase": "decode"
+    },
+    {
+      "id": "e_tr_t_decode_v_layout_to_state",
+      "kind": "transfer",
+      "ref": "tr_t_decode_v_layout_to_state",
+      "step": 57,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_v_append",
+      "kind": "call",
+      "ref": "c_decode_v_append",
+      "step": 58,
+      "phase": "decode"
+    },
+    {
+      "id": "e_tr_t_decode_q_rope_to_attention",
+      "kind": "transfer",
+      "ref": "tr_t_decode_q_rope_to_attention",
+      "step": 59,
+      "phase": "decode"
+    },
+    {
+      "id": "e_tr_t_decode_k_append_to_attention",
+      "kind": "transfer",
+      "ref": "tr_t_decode_k_append_to_attention",
+      "step": 60,
+      "phase": "decode"
+    },
+    {
+      "id": "e_tr_t_decode_v_append_to_attention",
+      "kind": "transfer",
+      "ref": "tr_t_decode_v_append_to_attention",
+      "step": 61,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_attention",
+      "kind": "call",
+      "ref": "c_decode_attention",
+      "step": 62,
+      "phase": "decode"
+    },
+    {
+      "id": "e_tr_t_decode_attention_to_matrix",
+      "kind": "transfer",
+      "ref": "tr_t_decode_attention_to_matrix",
+      "step": 63,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_o_acc",
+      "kind": "call",
+      "ref": "c_decode_o_acc",
+      "step": 64,
+      "phase": "decode"
+    },
+    {
+      "id": "e_tr_t_decode_o_acc_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_decode_o_acc_to_vector",
+      "step": 65,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_o",
+      "kind": "call",
+      "ref": "c_decode_o",
+      "step": 66,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_residual1",
+      "kind": "call",
+      "ref": "c_decode_residual1",
+      "step": 67,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_norm2",
+      "kind": "call",
+      "ref": "c_decode_norm2",
+      "step": 68,
+      "phase": "decode"
+    },
+    {
+      "id": "e_tr_t_decode_norm2_to_matrix",
+      "kind": "transfer",
+      "ref": "tr_t_decode_norm2_to_matrix",
+      "step": 69,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_gate_acc",
+      "kind": "call",
+      "ref": "c_decode_gate_acc",
+      "step": 70,
+      "phase": "decode"
+    },
+    {
+      "id": "e_tr_t_decode_gate_acc_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_decode_gate_acc_to_vector",
+      "step": 71,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_gate",
+      "kind": "call",
+      "ref": "c_decode_gate",
+      "step": 72,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_up_acc",
+      "kind": "call",
+      "ref": "c_decode_up_acc",
+      "step": 73,
+      "phase": "decode"
+    },
+    {
+      "id": "e_tr_t_decode_up_acc_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_decode_up_acc_to_vector",
+      "step": 74,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_up",
+      "kind": "call",
+      "ref": "c_decode_up",
+      "step": 75,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_gate_up",
+      "kind": "call",
+      "ref": "c_decode_gate_up",
+      "step": 76,
+      "phase": "decode"
+    },
+    {
+      "id": "e_tr_t_decode_gate_up_to_matrix",
+      "kind": "transfer",
+      "ref": "tr_t_decode_gate_up_to_matrix",
+      "step": 77,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_down_acc",
+      "kind": "call",
+      "ref": "c_decode_down_acc",
+      "step": 78,
+      "phase": "decode"
+    },
+    {
+      "id": "e_tr_t_decode_down_acc_to_vector",
+      "kind": "transfer",
+      "ref": "tr_t_decode_down_acc_to_vector",
+      "step": 79,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_down",
+      "kind": "call",
+      "ref": "c_decode_down",
+      "step": 80,
+      "phase": "decode"
+    },
+    {
+      "id": "e_c_decode_residual2",
+      "kind": "call",
+      "ref": "c_decode_residual2",
+      "step": 81,
+      "phase": "decode"
+    }
+  ],
+  "transfers": [
+    {
+      "id": "tr_t_prefill_input_to_vector",
+      "tensor": "t_prefill_input",
+      "source_storage": "s_prefill_input",
+      "destination_storage": "s_copy_t_prefill_input_to_vector",
+      "path": [
+        "l_host_to_vector"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_prefill_norm1_to_matrix",
+      "tensor": "t_prefill_norm1",
+      "source_storage": "s_prefill_norm1",
+      "destination_storage": "s_copy_t_prefill_norm1_to_matrix",
+      "path": [
+        "l_vector_to_matrix"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_prefill_q_acc_to_vector",
+      "tensor": "t_prefill_q_acc",
+      "source_storage": "s_prefill_q_acc",
+      "destination_storage": "s_copy_t_prefill_q_acc_to_vector",
+      "path": [
+        "l_matrix_to_vector"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_prefill_k_acc_to_vector",
+      "tensor": "t_prefill_k_acc",
+      "source_storage": "s_prefill_k_acc",
+      "destination_storage": "s_copy_t_prefill_k_acc_to_vector",
+      "path": [
+        "l_matrix_to_vector"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_prefill_v_acc_to_vector",
+      "tensor": "t_prefill_v_acc",
+      "source_storage": "s_prefill_v_acc",
+      "destination_storage": "s_copy_t_prefill_v_acc_to_vector",
+      "path": [
+        "l_matrix_to_vector"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_prefill_q_rope_to_attention",
+      "tensor": "t_prefill_q_rope",
+      "source_storage": "s_prefill_q_rope",
+      "destination_storage": "s_copy_t_prefill_q_rope_to_attention",
+      "path": [
+        "l_vector_to_attention"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_prefill_k_rope_to_attention",
+      "tensor": "t_prefill_k_rope",
+      "source_storage": "s_prefill_k_rope",
+      "destination_storage": "s_copy_t_prefill_k_rope_to_attention",
+      "path": [
+        "l_vector_to_attention"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_prefill_v_layout_to_attention",
+      "tensor": "t_prefill_v_layout",
+      "source_storage": "s_prefill_v_layout",
+      "destination_storage": "s_copy_t_prefill_v_layout_to_attention",
+      "path": [
+        "l_vector_to_attention"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_prefill_attention_to_matrix",
+      "tensor": "t_prefill_attention",
+      "source_storage": "s_prefill_attention",
+      "destination_storage": "s_copy_t_prefill_attention_to_matrix",
+      "path": [
+        "l_attention_to_matrix"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_prefill_o_acc_to_vector",
+      "tensor": "t_prefill_o_acc",
+      "source_storage": "s_prefill_o_acc",
+      "destination_storage": "s_copy_t_prefill_o_acc_to_vector",
+      "path": [
+        "l_matrix_to_vector"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_prefill_norm2_to_matrix",
+      "tensor": "t_prefill_norm2",
+      "source_storage": "s_prefill_norm2",
+      "destination_storage": "s_copy_t_prefill_norm2_to_matrix",
+      "path": [
+        "l_vector_to_matrix"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_prefill_gate_acc_to_vector",
+      "tensor": "t_prefill_gate_acc",
+      "source_storage": "s_prefill_gate_acc",
+      "destination_storage": "s_copy_t_prefill_gate_acc_to_vector",
+      "path": [
+        "l_matrix_to_vector"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_prefill_up_acc_to_vector",
+      "tensor": "t_prefill_up_acc",
+      "source_storage": "s_prefill_up_acc",
+      "destination_storage": "s_copy_t_prefill_up_acc_to_vector",
+      "path": [
+        "l_matrix_to_vector"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_prefill_gate_up_to_matrix",
+      "tensor": "t_prefill_gate_up",
+      "source_storage": "s_prefill_gate_up",
+      "destination_storage": "s_copy_t_prefill_gate_up_to_matrix",
+      "path": [
+        "l_vector_to_matrix"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_prefill_down_acc_to_vector",
+      "tensor": "t_prefill_down_acc",
+      "source_storage": "s_prefill_down_acc",
+      "destination_storage": "s_copy_t_prefill_down_acc_to_vector",
+      "path": [
+        "l_matrix_to_vector"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_decode_input_to_vector",
+      "tensor": "t_decode_input",
+      "source_storage": "s_decode_input",
+      "destination_storage": "s_copy_t_decode_input_to_vector",
+      "path": [
+        "l_host_to_vector"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_decode_norm1_to_matrix",
+      "tensor": "t_decode_norm1",
+      "source_storage": "s_decode_norm1",
+      "destination_storage": "s_copy_t_decode_norm1_to_matrix",
+      "path": [
+        "l_vector_to_matrix"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_decode_q_acc_to_vector",
+      "tensor": "t_decode_q_acc",
+      "source_storage": "s_decode_q_acc",
+      "destination_storage": "s_copy_t_decode_q_acc_to_vector",
+      "path": [
+        "l_matrix_to_vector"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_decode_k_acc_to_vector",
+      "tensor": "t_decode_k_acc",
+      "source_storage": "s_decode_k_acc",
+      "destination_storage": "s_copy_t_decode_k_acc_to_vector",
+      "path": [
+        "l_matrix_to_vector"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_decode_v_acc_to_vector",
+      "tensor": "t_decode_v_acc",
+      "source_storage": "s_decode_v_acc",
+      "destination_storage": "s_copy_t_decode_v_acc_to_vector",
+      "path": [
+        "l_matrix_to_vector"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_prefill_k_rope_to_state",
+      "tensor": "t_prefill_k_rope",
+      "source_storage": "s_prefill_k_rope",
+      "destination_storage": "s_copy_t_prefill_k_rope_to_state",
+      "path": [
+        "l_vector_to_state"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_decode_k_rope_to_state",
+      "tensor": "t_decode_k_rope",
+      "source_storage": "s_decode_k_rope",
+      "destination_storage": "s_copy_t_decode_k_rope_to_state",
+      "path": [
+        "l_vector_to_state"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_prefill_v_layout_to_state",
+      "tensor": "t_prefill_v_layout",
+      "source_storage": "s_prefill_v_layout",
+      "destination_storage": "s_copy_t_prefill_v_layout_to_state",
+      "path": [
+        "l_vector_to_state"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_decode_v_layout_to_state",
+      "tensor": "t_decode_v_layout",
+      "source_storage": "s_decode_v_layout",
+      "destination_storage": "s_copy_t_decode_v_layout_to_state",
+      "path": [
+        "l_vector_to_state"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_decode_q_rope_to_attention",
+      "tensor": "t_decode_q_rope",
+      "source_storage": "s_decode_q_rope",
+      "destination_storage": "s_copy_t_decode_q_rope_to_attention",
+      "path": [
+        "l_vector_to_attention"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_decode_k_append_to_attention",
+      "tensor": "t_decode_k_append",
+      "source_storage": "s_decode_k_append",
+      "destination_storage": "s_copy_t_decode_k_append_to_attention",
+      "path": [
+        "l_state_to_attention"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_decode_v_append_to_attention",
+      "tensor": "t_decode_v_append",
+      "source_storage": "s_decode_v_append",
+      "destination_storage": "s_copy_t_decode_v_append_to_attention",
+      "path": [
+        "l_state_to_attention"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_decode_attention_to_matrix",
+      "tensor": "t_decode_attention",
+      "source_storage": "s_decode_attention",
+      "destination_storage": "s_copy_t_decode_attention_to_matrix",
+      "path": [
+        "l_attention_to_matrix"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_decode_o_acc_to_vector",
+      "tensor": "t_decode_o_acc",
+      "source_storage": "s_decode_o_acc",
+      "destination_storage": "s_copy_t_decode_o_acc_to_vector",
+      "path": [
+        "l_matrix_to_vector"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_decode_norm2_to_matrix",
+      "tensor": "t_decode_norm2",
+      "source_storage": "s_decode_norm2",
+      "destination_storage": "s_copy_t_decode_norm2_to_matrix",
+      "path": [
+        "l_vector_to_matrix"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_decode_gate_acc_to_vector",
+      "tensor": "t_decode_gate_acc",
+      "source_storage": "s_decode_gate_acc",
+      "destination_storage": "s_copy_t_decode_gate_acc_to_vector",
+      "path": [
+        "l_matrix_to_vector"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_decode_up_acc_to_vector",
+      "tensor": "t_decode_up_acc",
+      "source_storage": "s_decode_up_acc",
+      "destination_storage": "s_copy_t_decode_up_acc_to_vector",
+      "path": [
+        "l_matrix_to_vector"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_decode_gate_up_to_matrix",
+      "tensor": "t_decode_gate_up",
+      "source_storage": "s_decode_gate_up",
+      "destination_storage": "s_copy_t_decode_gate_up_to_matrix",
+      "path": [
+        "l_vector_to_matrix"
+      ],
+      "messages": 1
+    },
+    {
+      "id": "tr_t_decode_down_acc_to_vector",
+      "tensor": "t_decode_down_acc",
+      "source_storage": "s_decode_down_acc",
+      "destination_storage": "s_copy_t_decode_down_acc_to_vector",
+      "path": [
+        "l_matrix_to_vector"
+      ],
+      "messages": 1
+    }
+  ],
+  "resource_input": null
+}

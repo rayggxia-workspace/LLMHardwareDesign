@@ -1,0 +1,48 @@
+{
+  "schema": "workload-assets-validation/1",
+  "execution": "local continuation authorized by user; no server access",
+  "management_check": {
+    "command": "python -B scripts/check_project.py",
+    "status": "pass",
+    "scope": "management structure only"
+  },
+  "unit_tests": {
+    "command": "python -B -m unittest discover -s project/analysis/workload_mapping -p test_assets.py -v",
+    "WORKLOAD_ASSET_ROOT": ".local/dependencies/reference_assets",
+    "tests_run": 32,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "status": "pass",
+    "log_path": ".local/runs/assets-validation-02/unittest.log",
+    "log_sha256": "21b8b46a2a59274395b46d9061f123553435574526a03193a74cf1ca7419cfae",
+    "test_source_sha256": "c0356eb73ed2e586c4de0166bac73092f8f8c05bac40cb40006ede3d84bce76f"
+  },
+  "real_import": {
+    "command": "python -B project/analysis/workload_mapping/assets/replay_reference_import.py --reference-root .local/dependencies/reference_assets --output .local/runs/assets-import-02",
+    "reference_import": "pass",
+    "pr20_bit_rows_checked": 3032,
+    "protocol_check": "blocked",
+    "physical_binding": "blocked",
+    "summary_sha256": "06fb92791685f7aa5a2592e648a244312aba04aa559183d3806b9dc8de06bc3e",
+    "repeat_summary_matches_previous": true,
+    "repeat_scope": "Same fixed sources in a fresh output directory; not the main task independent checkout replay"
+  },
+  "limits": [
+    "Three selected reference macros, not two full cases or final Blocks",
+    "No original entire PR18/PR20 pipeline replay claim",
+    "No EDA, actual #55 integration, physical access or routing qualification"
+  ],
+  "initial_restored_29_tests": {
+    "command": "python -B -m unittest discover -s project/analysis/workload_mapping -p test_assets.py -v",
+    "WORKLOAD_ASSET_ROOT": ".local/dependencies/reference_assets",
+    "tests_run": 29,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "status": "pass",
+    "log_path": ".local/runs/assets-validation-01/unittest.log",
+    "log_sha256": "454ab54c9a2324bc6ddc077e5c7bb41446edadcea7c23774e20a3982830b7a15",
+    "test_source_sha256": "83e7a1c02a6985a929d0091a284b9bc3bdb3f3139dfa2348f1d2cec7b7be3594"
+  }
+}

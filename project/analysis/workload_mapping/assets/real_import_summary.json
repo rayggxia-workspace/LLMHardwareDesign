@@ -1,0 +1,250 @@
+{
+  "cases": [
+    {
+      "case_id": "ACT20",
+      "coordinate_system": "macro_local",
+      "dbu_per_micron": 2000,
+      "evidence": "observed",
+      "identity": {
+        "case_id": "ACT20",
+        "file_sha256": "f74ca8e0ff35b5900979aa0d5d6b4356da943fdf1f3d8af92c7ab4647d5c955a",
+        "master": "llhd_opentpu_act",
+        "project": "openTPU",
+        "run_version": "wave2-06-ordinary-lef-snapshot-v1",
+        "source_commit": "19c4b829211678d1a6fefa61bc0a23e68e4f13e1"
+      },
+      "obstruction_rectangles": 10,
+      "origin_explicit": false,
+      "pin_rectangles": 881,
+      "project": "openTPU",
+      "qualified_hard_macro": false,
+      "signal_pins": 860,
+      "size_um": [
+        "326.205",
+        "326.205"
+      ],
+      "status": "pass",
+      "symmetry": null,
+      "synthetic": false,
+      "total_pins": 862
+    },
+    {
+      "case_id": "MXU20",
+      "coordinate_system": "macro_local",
+      "dbu_per_micron": 2000,
+      "evidence": "observed",
+      "identity": {
+        "case_id": "MXU20",
+        "file_sha256": "774ff58156636631d2764bbb7ed72c525180110b8f1fd56bdbe12869e9e42bd3",
+        "master": "llhd_opentpu_mxu",
+        "project": "openTPU",
+        "run_version": "wave2-06-ordinary-lef-snapshot-v1",
+        "source_commit": "19c4b829211678d1a6fefa61bc0a23e68e4f13e1"
+      },
+      "obstruction_rectangles": 10,
+      "origin_explicit": false,
+      "pin_rectangles": 2245,
+      "project": "openTPU",
+      "qualified_hard_macro": false,
+      "signal_pins": 2172,
+      "size_um": [
+        "1100.455",
+        "1100.455"
+      ],
+      "status": "pass",
+      "symmetry": null,
+      "synthetic": false,
+      "total_pins": 2174
+    },
+    {
+      "case_id": "GEMM20",
+      "coordinate_system": "macro_local",
+      "dbu_per_micron": 2000,
+      "evidence": "observed",
+      "identity": {
+        "case_id": "GEMM20",
+        "file_sha256": "6bf8b0359c406e2ebc83ffa0e3c0b39c91ade98837e088ce1efd7c7de611dd7b",
+        "master": "gemm_engine",
+        "project": "llaccel",
+        "run_version": "wave2-06-ordinary-lef-snapshot-v1",
+        "source_commit": "19c4b829211678d1a6fefa61bc0a23e68e4f13e1"
+      },
+      "obstruction_rectangles": 10,
+      "origin_explicit": false,
+      "pin_rectangles": 3830,
+      "project": "llaccel",
+      "qualified_hard_macro": false,
+      "signal_pins": 3753,
+      "size_um": [
+        "1157.32",
+        "1157.32"
+      ],
+      "status": "pass",
+      "symmetry": null,
+      "synthetic": false,
+      "total_pins": 3755
+    }
+  ],
+  "catalog_validation": {
+    "checks": [
+      {
+        "asset_id": "reference-wave2-06-ACT20",
+        "reason": "fixed source SHA and complete reparsed geometry match",
+        "status": "pass",
+        "synthetic": false
+      },
+      {
+        "asset_id": "reference-wave2-06-MXU20",
+        "reason": "fixed source SHA and complete reparsed geometry match",
+        "status": "pass",
+        "synthetic": false
+      },
+      {
+        "asset_id": "reference-wave2-06-GEMM20",
+        "reason": "fixed source SHA and complete reparsed geometry match",
+        "status": "pass",
+        "synthetic": false
+      }
+    ],
+    "scope": "catalog schema, identity and reference geometry",
+    "status": "pass"
+  },
+  "pr20_selected_bit_audit": {
+    "archive_sha256": "2d2047b761323ba22e3c209d83a25a89fc77e901beae166103908df72de986d7",
+    "bits": 3032,
+    "cases": [
+      {
+        "case_id": "ACT20",
+        "logical_ports": 19,
+        "protocol": "unknown",
+        "scope": "Yosys ordered bit indices/IDs, exported CSV and same-version LEF names/directions",
+        "signal_bits": 860,
+        "status": "pass"
+      },
+      {
+        "case_id": "MXU20",
+        "logical_ports": 37,
+        "protocol": "unknown",
+        "scope": "Yosys ordered bit indices/IDs, exported CSV and same-version LEF names/directions",
+        "signal_bits": 2172,
+        "status": "pass"
+      }
+    ],
+    "checked_members": [
+      {
+        "bytes": 287579,
+        "path": "bits.csv",
+        "sha256": "2c792674a528217e6f277aac92318a2d87fbd9fa6303593ad4775b2ae9844057"
+      },
+      {
+        "bytes": 132447,
+        "path": "inputs/ACT20.lef",
+        "sha256": "f74ca8e0ff35b5900979aa0d5d6b4356da943fdf1f3d8af92c7ab4647d5c955a"
+      },
+      {
+        "bytes": 534461,
+        "path": "inputs/ACT20/elab.json",
+        "sha256": "8a7576130366ec349bc52d9c90ad76018a265faf1a5cfa9a7f42fbb173cfe151"
+      },
+      {
+        "bytes": 338311,
+        "path": "inputs/MXU20.lef",
+        "sha256": "774ff58156636631d2764bbb7ed72c525180110b8f1fd56bdbe12869e9e42bd3"
+      },
+      {
+        "bytes": 4622438,
+        "path": "inputs/MXU20/elab.json",
+        "sha256": "2464a112bd16d02df7a43c4d414c525ff367e3c7b89943934bda7fe8b9dfa24a"
+      }
+    ],
+    "not_verified": [
+      "Liberty syntax/timing",
+      "full RTL equivalence",
+      "protocol semantics",
+      "physical access",
+      "complete original PR20 pipeline replay"
+    ],
+    "source_commit": "cce235975b7be6d77247c9c9c7b09ea15608e2cf",
+    "status": "pass"
+  },
+  "reference_binding": {
+    "physical_binding": {
+      "checks": [
+        {
+          "reason": "same-version frozen base manifest and its source hashes",
+          "status": "blocked"
+        },
+        {
+          "reason": "real placed instance locations/orientations and global coordinate transform",
+          "status": "blocked"
+        },
+        {
+          "reason": "validated fixed M8 escape routes and landing/access IDs",
+          "status": "blocked"
+        },
+        {
+          "reason": "technology-qualified M8-M9 and M9-M10 via rules",
+          "status": "blocked"
+        },
+        {
+          "reason": "fixed M1-M8 geometry/PG/clock integrity and connectivity evidence",
+          "status": "blocked"
+        }
+      ],
+      "scope": "M1-M8 fixed; M9/M10 custom; M11/M12 separate fallback",
+      "status": "blocked"
+    },
+    "protocol_check": {
+      "checks": [
+        {
+          "binding_id": "act-clk-reference",
+          "reason": "no published logical bit order, protocol or format contract for this asset version",
+          "status": "blocked"
+        }
+      ],
+      "scope": "declared logical protocol and order compatibility",
+      "status": "blocked"
+    },
+    "reference_port_check": {
+      "checks": [
+        {
+          "binding_id": "act-clk-reference",
+          "scope": "physical pin names, bit coverage and declared direction",
+          "status": "pass"
+        }
+      ],
+      "scope": "reference identity, pin, direction and explicit pair checks",
+      "status": "pass"
+    },
+    "rows": [
+      {
+        "asset_id": "reference-wave2-06-ACT20",
+        "binding_id": "act-clk-reference",
+        "evidence": "observed",
+        "identity": {
+          "case_id": "ACT20",
+          "file_sha256": "f74ca8e0ff35b5900979aa0d5d6b4356da943fdf1f3d8af92c7ab4647d5c955a",
+          "master": "llhd_opentpu_act",
+          "project": "openTPU",
+          "run_version": "wave2-06-ordinary-lef-snapshot-v1",
+          "source_commit": "19c4b829211678d1a6fefa61bc0a23e68e4f13e1"
+        },
+        "instance_id": "reference-act-instance",
+        "pins": [
+          "clk"
+        ],
+        "scope": "reference port check only",
+        "status": "pass",
+        "synthetic": false
+      }
+    ],
+    "schema": "workload-binding-report/1",
+    "scope": "Explicit reference port binding; no capability or hardware functionality inference",
+    "status": "blocked"
+  },
+  "reference_import": "pass",
+  "schema": "workload-reference-import-summary/1",
+  "scope": "Three selected old macro LEFs; not two full designs or final Blocks",
+  "server_access": false,
+  "source_commit": "19c4b829211678d1a6fefa61bc0a23e68e4f13e1"
+}
