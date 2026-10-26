@@ -1,8 +1,8 @@
-"""Straight-wire local charge pilot; preserve every failed scientific gate.
+"""Plane-bin and 3D graph-origin pilots; preserve every failed scientific gate.
 
 FV instrumentation reports the original conductor-face flux, without changing
 the Laplace matrix/solver. Gaussian bins must converge toward that flux.
-This pilot cannot qualify branches, pairwise node coupling or whole blocks.
+Fixture acceptance cannot qualify arbitrary capture-node coupling or whole blocks.
 """
 import concurrent.futures
 import hashlib
@@ -199,7 +199,8 @@ def verify(root,out,cpus,run,pair=False,geometry='straight',graph=False):
         scene_sha256=sha(scene),partial_binary_sha256=sha(binary),
         fsv_build_receipt_sha256=sha(solver/'receipt.json'),fv_runtime_sha256=sha(runtime_file),
         fv_instrumentation_sha256=sha(out/'research-fv-partial.py'),grids=grids,field_rows=rows,
-        reference_partial_ff=reference.tolist(),node_pair_control=pair_control,node_pair_pilot=pair,full_total_ff=total,extrapolation_over_total=grid_step,
+        reference_partial_ff=reference.tolist(),node_pair_control=pair_control,node_pair_pilot=pair and not graph,
+        node_to_net_graph_pilot=graph,full_total_ff=total,extrapolation_over_total=grid_step,
         refinement_over_total=refinement,far_change_over_total=far,
         declared_gates=dict(fv_extrapolation=.02,fv_refinement=.02,fv_far=.005,offset_change=.01,
             local_comparison=.03,external_pair_relative=.05 if pair else None,external_pair_over_total=.005 if pair else None,
