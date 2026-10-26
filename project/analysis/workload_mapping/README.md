@@ -32,3 +32,6 @@ The two fixed graphs call the existing `block_v2_offline` numerical/protocol
 oracles; the generic core has no fixture IDs or expected numbers. #48 accounting
 is reused unchanged. Generic schemas, unknowns, actual asset limitations, and
 server-version protection are explained in the main document.
+
+
+新增通信优化实验命令：`python -B -m project.analysis.workload_mapping.search_experiment --suite full --workers 4 --export --output-dir .local/runs/search-new`。原两图不变；方法、串行通信优化边界、主表/消融及实验回执见[主要合同](../../../docs/WORKLOAD_MAPPING_INPUT.md)。这是新增研究模块，不是原CLI自动推断映射，也没有真实芯片时延结论。

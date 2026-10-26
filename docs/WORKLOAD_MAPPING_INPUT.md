@@ -130,3 +130,30 @@ python -B -m project.analysis.workload_mapping.validate_delivery --output-dir .l
 在全新 `/public/home/yuzelu/PingyangHuang/issue-63/server-validation-20261026T0100/repo` 核验发布源 `d07abaeef16049da199f0efa96acffc95bd487dd`，通过Slurm作业91622（hpy-adapter63、debug/node27、1CPU、23秒、COMPLETED/0:0）实际200项/0skip、10场景独立源码与新进程重放通过；科学SHA仍f2ec30e28966be33888cf314bd5e93a0bb24378d4147d79cbdd9ad9971efbbdc，与Windows逐字节相同。仅传输本任务Git对象、固定参考输入；未传凭据/配置/环境，未读#55活动文件或干扰作业。最初2G内存请求被Slurm拒绝（节点公布内存1MB），保留失败，命令覆盖--mem=0后提交成功，未改集群配置。
 
 精选证据在 `work/huangpingyang04-lgtm/63/server-20261026/`；原始日志与完整输出留新服务器目录。receipt中的server_access=false表示离线验收器自身不发SSH，不代表本轮未在服务器执行，执行平台由execution.json和Slurm记录明确区分。A/B选定范围pass；C仍缺同版实例/真实M8引出/冻结底座等证据。软件实现、离线验证与服务器复跑均完成；正式结项仍待PR79审查/合并，当前零reviews、Issue in_review，不能宣称done。看板仍unverified/同步pending。
+
+
+## 通信优化研究扩展（2026-10-26）
+
+新增 `search_model.py`（参数化DAG）、`search.py`（固定顺序/贪心/有限束搜索）、`search_check.py`（独立计划回放与正式合同导出）和 `search_experiment.py`（实验）。原两图、独立expected、原估算器不改写。原适配器仍接收显式映射；新增搜索器产生这类输入，不把两个固定小图计算器改造成通用编译器。
+
+**问题与固定边界。** 对同一纯函数形状DAG和合成资源库存，最小化有包头/对齐/分片的线上字节。两个matrix池M0/M1各有独立受限RAM，一个vector池V0有独立RAM；外部存储S持有不可变初始值，所有结果强制写回S且收费。缓存是干净副本，采用相同LRU策略，可在容量允许时保留；不赠送peer直传、广播、重计算或免费spill。每个任务同时固定全部输入、输出、32B控制和显式工作区，FIFO每端口2048B另计，不能借RAM。任务和传输串行化，共享S.TX停等；因此本实验优化通信量，**没有宣称并行调度、拥塞/背压性能、死锁或端到端时延优化**。真实时钟/服务率/完成时间均null。
+
+**计算图。** 来源为PR50固定Qwen配置的H1024、I3072、16个Q头、8个KV头、head_dim128。实现所选1/4层、prefill128/512和逐token decode16/64；显式norm、Q/K/V投影、RoPE、按head的causal GQA、O、残差、gate/up、SiLU乘法、down和残差。每个GEMM任务覆盖一个token行tile和输出列tile的完整K，32bit累加工作区在最终RQ前保留；有真实搬运成本的32bit per-column scale输入。权重跨token共享身份，层间独立。KV使用不可变历史tile，每次decode读已有前缀，不每步初始化；所有prefill最终输出完成后才能decode，随后每个token依赖上一token完成。没有模型权重或真实trace，norm/attention/量化等为合成纯函数能力声明，不是运行Qwen数值质量、真实Block能力或RTL证明。causal mask属于内核合同，按矩形tile保留workspace/计算上界；改变row tile时线性MAC不变，但attention矩形计算上界可变化。
+
+**算法。** fixed按生成顺序取最早ready任务、放在第一个合法实例；它仍享有与其他方法相同的LRU缓存，不是强制清空的弱基线。greedy从候选ready集合选本步新增线上字节最少的(task,instance)。beam进行滚动有限宽度/深度搜索，再执行首个动作；分数为已付通信加剩余必需写回下界和未驻留初始数据至少一次读取下界。后者只计一次，忽略将来再次驱逐/实例位置，不冒称完整未来代价。默认width3/depth2；候选集合为按ID最早4个ready任务，加当前驻留值的前两个ready使用者；frontier4并非总候选上限。不同方法的真实expanded数量均记录。所有tie按taskID/实例ID确定；不保证全局最优，也不强制回退到greedy来掩盖退化。分块在外层枚举若干固定row/column配置；**没有实现逐任务混合分块的联合最优搜索**。
+
+**实验与审计。** 主表4种工作负载×3种matrix容量（512/1024/2048KiB），每格对比三方法；另有4个分块格及3个搜索估计/预算消融。V0固定512KiB。分块格中若某任务必要工作集已超容量，保留明确infeasible见证，不从报告隐去。12个固定种子、每个6任务的小图穷举最优解，逐项报告greedy/beam最优差距，包括beam变差的例子。每个合法计划都由不调用advance/solve的独立回放器检查生产消费、依赖、每次load/evict/last-use、能力/容量/工作区与强制写回；每条消息交原#48 API重算，另有独立字面分包oracle边界测试。小尺寸GEMM用不同循环次序/分块验证完整K后一次RNE/SAT与独立Fraction答案一致；这不代替真实模型数值验收。主表第一格beam另导出正式workload-mapping/1，由已有producer和独立consumer重验并对照通信总量。
+
+两轮完整实验使用独立源码工作区和新进程，在全新输出目录执行，比较science.json逐字节与SHA；算法耗时单列runtime.json，不混入科学摘要。原始DAG、计划和大mapping_request仅留服务器，仓库精选science/receipt与来源索引。聚合改善率为同一主表格集合的sum(wire)之比，分块格和消融不混进主表，正负结果均保留。
+
+```bash
+python3.11 -B -m project.analysis.workload_mapping.search_experiment --suite full --workers 4 --export --output-dir .local/runs/search-new
+```
+
+命令从已提交且干净的任务repo运行，输出目录须全新。服务器需按REMOTE_RULES经Slurm分配至少4CPU，workers不得超过分配；本任务脚本名hpy-search63，不访问#55。CI只运行tiny smoke和全部单元测试，不能把CI smoke当成服务器大规模主表。初次开发发现packet返回键名误用、导出phase枚举错误及CLI打印flush位置错误，均有原聊天工具输出；首轮完整smoke产物保留.local/runs/search-smoke-01，后两项修复由正式合同roundtrip和真实CLI退出码测试覆盖，不伪造原stdout日志。
+
+
+束搜索下界可复核为 `f(s)=已收费线上字节 + 未执行任务的必需输出写回 + 未驻留且仍有使用者的初始值至少一次读取`。每个未执行任务必须写回一次；初始值若所有计算实例均无副本，未来至少一次收费加载，所以这是当前固定策略的乐观下界。驻留在错误实例也暂视为可用、忽略后续驱逐和中间结果重读，只会使下界更小，不构成全局最优保证；有限深度、候选剪枝和束宽仍会丢掉最优路径。代码省去当前根节点所有候选相同的输出常数，等价减去本次前缀已完成输出的wire。`no-future-bound`消融去掉初始值读取项，用来区分收益来自多步展开还是驻留估计。
+
+
+控制边界说明：搜索DAG中的显式Task.dependencies（含decode前prefill屏障及逐token控制依赖）由search_check逐项检查，保存在workload.json；正式workload-mapping/1导出保留所选事件顺序、数据生产消费、传输和存储区间，但不新增旧schema没有的控制边字段。后续消费者若要重新调度，必须同时读取本研究DAG的依赖，不能仅凭导出通信表重排；本次roundtrip不宣称旧schema独立表达了所有新控制约束。

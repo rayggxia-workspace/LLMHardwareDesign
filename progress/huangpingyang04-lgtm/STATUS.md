@@ -52,3 +52,11 @@
 在全新 `/public/home/yuzelu/PingyangHuang/issue-63/server-validation-20261026T0100/repo` 核验发布源 `d07abaeef16049da199f0efa96acffc95bd487dd`，通过Slurm作业91622（hpy-adapter63、debug/node27、1CPU、23秒、COMPLETED/0:0）实际200项/0skip、10场景独立源码与新进程重放通过；科学SHA仍f2ec30e28966be33888cf314bd5e93a0bb24378d4147d79cbdd9ad9971efbbdc，与Windows逐字节相同。仅传输本任务Git对象、固定参考输入；未传凭据/配置/环境，未读#55活动文件或干扰作业。最初2G内存请求被Slurm拒绝（节点公布内存1MB），保留失败，命令覆盖--mem=0后提交成功，未改集群配置。
 
 精选证据在 `work/huangpingyang04-lgtm/63/server-20261026/`；原始日志与完整输出留新服务器目录。receipt中的server_access=false表示离线验收器自身不发SSH，不代表本轮未在服务器执行，执行平台由execution.json和Slurm记录明确区分。A/B选定范围pass；C仍缺同版实例/真实M8引出/冻结底座等证据。软件实现、离线验证与服务器复跑均完成；正式结项仍待PR79审查/合并，当前零reviews、Issue in_review，不能宣称done。看板仍unverified/同步pending。
+
+
+### #63 通信优化研究扩展（2026-10-26 Asia/Shanghai）
+
+- 用户授权新增较大图、greedy/beam和服务器对比；保留原两图/expected和#48依赖，继续同一PR79。冻结源38bd3094afeda09c5219f4bfa22068b1ecc35ac3。
+- 新增形状DAG、容量约束搜索、独立回放及正式合同导出。仅合成资源下的串行通信优化，不冒称真实Block能力/模型质量/端到端性能。
+- 独立服务器 `/public/home/yuzelu/PingyangHuang/issue-63/search-20261026-v1/`，Slurm91643/hpy-search63/4CPU；221回归和CI smoke已过，19格全实验及独立源码副本重放运行中。#55活动文件/作业未访问或改动。
+- 软件扩展in_progress，C保持blocked；登记pending、看板unverified/同步pending，最终结果与交付head待正式双轮完成后追加。
