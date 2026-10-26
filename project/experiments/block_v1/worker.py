@@ -17,8 +17,16 @@ OUT = Path.cwd()
 TOOLS = Path('/OpenROAD-flow-scripts/flow/platforms/nangate45')
 VERILATOR = Path('/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator')
 INPUTS = sorted(p for p in ROOT.rglob('*') if p.is_file())
+bundle = json.loads((ROOT/'bundle-manifest.json').read_text())
+for entry in bundle['files']:
+    assert hashlib.sha256((ROOT/entry['path']).read_bytes()).hexdigest()==entry['sha256'], 'source bundle hash mismatch'
 receipt = {'mode':MODE, 'cpus':CPUS, 'started':time.time(), 'commands':[],
+           'source_commit':bundle['source_commit'],
            'inputs':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in INPUTS}}
+receipt['tool_hashes']={}
+for tool in [shutil.which('yosys'),shutil.which('openroad'),str(VERILATOR),str(VERILATOR.parent/'verilator_bin')]:
+    if tool and Path(tool).is_file():
+        receipt['tool_hashes'][tool]=hashlib.sha256(Path(tool).read_bytes()).hexdigest()
 
 
 def run(argv, log):

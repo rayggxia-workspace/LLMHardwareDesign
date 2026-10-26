@@ -14,6 +14,7 @@
 - `shared121.sv`：保留C8控制器/观察接口，内部接真实T6K，只有core DONE成功后发布payload；候选接收后等待root提交完成；DONE ACK等消费者release。基线数学/外存桥/单一S16K不改。新顶层回归尚未验收。
 - `technology.json`/`overlay.py`：十二层几何研究起点，M10 landing不需后增补；原生字节精确保留。early RC明确仅估算，完整RCX/耦合校准和新层DRC尚未完成。
 - 单dispatcher跨本Issue各run共用预算锁；六基础/八上限，排队及未知提交计槽，节点内线程显式分配。只轮询本任务jobID，不改其他作业。
+- 003批91872–91877全部在启动时失败（exit2）：Git archive受Windows core.autocrlf影响导出CRLF，未进入业务计算。blob实为LF，新增bundle.py直接逐Git blob打包、shell LF负检查及worker逐文件SHA验证，另开新run，不改旧日志。
 
 服务器成果根：`/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/`。
 `block-v1-20261027-001`/`002`为以上两个探针；后续各run以不可变manifest和状态记录。

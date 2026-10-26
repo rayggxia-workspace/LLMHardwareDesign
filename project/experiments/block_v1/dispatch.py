@@ -63,7 +63,12 @@ def refresh(state):
         if not item.get("job_id"):
             raise RuntimeError("Uncertain sbatch outcome for %s; inspect Slurm comment %s before recovery" % (item["id"], item["token"]))
         job = item["job_id"]
-        live = output(["squeue", "--noheader", "--jobs", job, "--format=%i|%T"])
+        try:
+            live = output(["squeue", "--noheader", "--jobs", job, "--format=%i|%T"])
+        except subprocess.CalledProcessError:
+            # A job purged from squeue is still resolved through sacct; it is
+            # never treated as terminal solely because observation failed.
+            live = ""
         rows = [r.split("|", 1) for r in live.splitlines() if r]
         exact = [r for r in rows if r[0] == job]
         if exact:
