@@ -12,7 +12,11 @@ config.lef_pins_suffix='.PIN'
 config.produce_obstructions=false
 config.dbu=0.0005
 options.lefdef_config=config
-mapping={'metal10'=>[29,0],'via10'=>[210,0],'metal11'=>[211,0],'via11'=>[212,0],'metal12'=>[213,0]}
+mapping={}
+File.read($lyt).scan(/'([^']+)\s+:\s+(\d+)\/(\d+)'/).each do |name,layer,datatype|
+  mapping[name]=[layer.to_i,datatype.to_i] if name.match?(/\A(?:metal|via)\d+\z/)
+end
+raise 'Incomplete technology mapping' unless (1..12).all? { |i| mapping.key?("metal#{i}") } && (1..11).all? { |i| mapping.key?("via#{i}") }
 results={}
 %w[R0 R90 R180 R270 MX MY MXR90 MYR90].each do |orient|
   layout=RBA::Layout.new

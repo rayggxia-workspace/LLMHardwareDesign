@@ -139,13 +139,31 @@ try:
                 target.parent.mkdir(parents=True,exist_ok=True)
                 shutil.copyfile(path,target)
         (OUT/'extraction-tool-info.json').write_text(json.dumps(probe,indent=2)+'\n')
-    elif MODE=='geometry-reader-full':
+    elif MODE in ('geometry-reader-full','geometry-reader-pg'):
         from klayout_overlay import generate
         prior=OUT.parents[2]/'block-v1-20261027-009/tasks/route-probe'
         bound=json.loads((prior/'receipt.json').read_text());assert bound['passed']is True
         for name in ['probe/routed.odb','overlay/research12.tech.lef','probe/landing.lef']:
             assert hashlib.sha256((prior/name).read_bytes()).hexdigest()==bound['outputs'][name]
-        script='read_db {'+str(prior/'probe/routed.odb')+'}\nsource {'+str(ROOT/'project/experiments/block_v1/odb_geometry.tcl')+'}\n'
+        if MODE=='geometry-reader-pg':
+            import re
+            technology=(prior/'overlay/research12.tech.lef').read_text()
+            vias=[name for name,body in re.findall(r'(?ms)^VIA\s+(\S+)(.*?)^END\s+\1\s*$',technology)
+                  if set(re.findall(r'\bLAYER\s+(\w+)\s*;',body))=={'metal1','via1','metal2'}]
+            assert vias,'Native M1/M2 via missing'
+            text=(prior/'probe/routed.def').read_text()
+            special='SPECIALNETS 1 ;\n- VDD + USE POWER\n + ROUTED metal1 400 ( 20000 20000 ) ( 30000 20000 ) '+vias[0]
+            special+=' NEW metal2 400 ( 30000 20000 ) ( 30000 30000 )\n'
+            special+=' NEW metal10 1600 ( 20000 100000 ) ( 30000 100000 ) BV1_via10\n'
+            special+=' NEW metal11 1600 ( 30000 100000 ) ( 40000 100000 ) BV1_via11\n'
+            special+=' NEW metal12 1600 ( 40000 100000 ) ( 40000 110000 ) ;\nEND SPECIALNETS\n'
+            assert re.search(r'(?m)^NETS ',text)
+            text=re.sub(r'(?m)^NETS ',lambda m:special+m.group(0),text,count=1)
+            (OUT/'special-fixture.def').write_text(text)
+            script='read_lef {'+str(prior/'overlay/research12.tech.lef')+'}\nread_lef {'+str(prior/'probe/landing.lef')+'}\nread_def special-fixture.def\n'
+        else:
+            script='read_db {'+str(prior/'probe/routed.odb')+'}\n'
+        script+='source {'+str(ROOT/'project/experiments/block_v1/odb_geometry.tcl')+'}\n'
         script+=r'''
 set inst [lindex [[ord::get_db_block] getInsts] 0]
 $inst setPlacementStatus PLACED
