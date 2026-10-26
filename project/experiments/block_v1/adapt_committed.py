@@ -18,12 +18,12 @@ def driver(root):
     text=path.read_text(encoding='utf-8')
     text=text.replace('Vshared109','Vshared121')
     text=once(text,'static Vshared121 d;',
-              'static Vshared121 d;static unsigned consumer_lines=0,consumer_releases=0,blocked_acks=0;static uint64_t sink_drain_cycles=0;')
+              'static Vshared121 d;static unsigned consumer_lines=0,consumer_releases=0,blocked_acks=0,start_consumer_lines=0;static uint64_t sink_drain_cycles=0;')
     text=once(text,'need(d.result_candidate==(d.owner>=2),"candidate result type");',
               'need(!d.result_candidate&&d.done&&d.status==0&&d.transaction_committed,"only committed successful output");'
               'need(d.result_owner==d.owner&&d.result_generation==d.epoch,"consumer owner/generation");'
               'need(!d.transaction_error,"transaction protocol integrity");consumer_lines++;')
-    text=once(text,'static void clear(){','static void clear(){sink_drain_cycles=0;')
+    text=once(text,'static void clear(){','static void clear(){sink_drain_cycles=0;start_consumer_lines=consumer_lines;')
     a=text.index('static void waitdone(')
     b=text.index('template<class T>static void array',a)
     text=text[:a]+'''static void waitdone(bool reject=false){
@@ -63,11 +63,38 @@ static void release(){
 }
 ''' + text[b:]
     text=once(text,'out<<"}\\n";out.flush();release();',
-              'out<<",\\\"sink_drain_cycles\\\":"<<sink_drain_cycles;out<<"}\\n";out.flush();release();')
+              'out<<",\\\"sink_drain_cycles\\\":"<<sink_drain_cycles<<",\\\"sink_result_lines\\\":"<<consumer_lines-start_consumer_lines;out<<"}\\n";out.flush();release();')
     text=once(text,'shared109-mixed/1','shared121-mixed/1')
     text=once(text,'<<d.stale_responses<<"}\\n";',
               '<<d.stale_responses<<",\\\"consumer_lines\\\":"<<consumer_lines<<",\\\"consumer_releases\\\":"<<consumer_releases<<",\\\"blocked_acks\\\":"<<blocked_acks<<"}\\n";')
     return '// Derived from pinned sim.cpp SHA256 '+hashlib.sha256(path.read_bytes()).hexdigest()+'\n'+text
+
+
+def qualification(root):
+    path=root/'project/experiments/shared_gdn/qualification.cpp'
+    text=path.read_text(encoding='utf-8')
+    text=once(text,'#include "sim.cpp"','#include "committed_sim.cpp"')
+    before='while(!d.result_valid){step();need(!d.done,"real result before done");}W held{d.result_data[0],d.result_data[1],d.result_data[2],d.result_data[3]};for(int j=0;j<5;j++){step();need(d.result_valid&&W{d.result_data[0],d.result_data[1],d.result_data[2],d.result_data[3]}==held&&!d.cmd_ready,"export held stable");}'
+    after='while(!d.transaction_busy||d.result_lines==start_lines){step();need(!d.done,"partial T fill before DONE");}for(int j=0;j<5;j++){step();need(d.transaction_busy&&!d.result_valid&&!d.done,"provisional A stays private");}'
+    text=once(text,before,after)
+    text=once(text,'need(outputs.size()==128,"candidate before commit");',
+              'need(d.transaction_sealed&&outputs.empty(),"R candidate privately sealed before commit");')
+    text=once(text,'while(!d.result_valid){step();need(ticks-gt<40000000,"G held result reached");}for(int j=0;j<9;j++)step();',
+              'while(!d.transaction_busy||d.result_lines==start_lines){step();need(ticks-gt<40000000,"G partial T export reached");}for(int j=0;j<9;j++){step();need(!d.result_valid&&!d.done,"provisional G stays private");}')
+    text=once(text,'need(goutputs.size()==256,"G real candidate before commit");',
+              'need(d.transaction_sealed&&goutputs.empty(),"G candidate privately sealed before commit");')
+    text=once(text,'shared109-qualification/1','shared121-qualification/1')
+    text=once(text,'<<g_root_writes<<",\\\"checks\\\":[";',
+              '<<g_root_writes<<",\\\"consumer_lines\\\":"<<consumer_lines<<",\\\"consumer_releases\\\":"<<consumer_releases<<",\\\"blocked_acks\\\":"<<blocked_acks<<",\\\"checks\\\":[";')
+    return '// Derived recovery driver SHA256 '+hashlib.sha256(path.read_bytes()).hexdigest()+'\n'+text
+
+
+def g_receiver(root):
+    path=root/'project/experiments/shared_gdn/gverify.py'
+    text=path.read_text(encoding='utf-8')
+    text=once(text,"row['result_lines']==128 and len(row['g_out'])==256",
+              "row['result_lines']==128 and len(row['g_out'])==(256 if row['status']==0 else 0)")
+    return '# Derived independent G receiver SHA256 '+hashlib.sha256(path.read_bytes()).hexdigest()+'\n'+text
 
 
 def receiver(root):
@@ -75,28 +102,37 @@ def receiver(root):
     old=path.read_text(encoding='utf-8')
     body=old[old.index(' rows=[json.loads'):old.index('\ndef main():')]
     body=once(body,"row['cycles']+1==row['elapsed']","row['cycles']+1+row['sink_drain_cycles']==row['elapsed']")
+    body=once(body,"row['result_lines']*(2 if row['kind']==3 else 4)==len", "row['sink_result_lines']*(2 if row['kind']==3 else 4)==len")
+    body=once(body,"row['out']==yy and row['result_lines']==32", "not row['out'] and row['sink_result_lines']==0 and row['result_lines']==32")
+    body=once(body,"qual=m['suite']=='qualification'", "qual=m['suite']=='qualification-committed'")
     body=once(body,'external_accepted root_writes g_root_writes aborts stale',
               'external_accepted root_writes g_root_writes aborts stale consumer_lines consumer_releases blocked_acks')
     body=once(body,'shared109-mixed/1','shared121-mixed/1')
+    body=once(body,'g_stale_before_second_reset g_root_writes checks',
+              'g_stale_before_second_reset g_root_writes checks consumer_lines consumer_releases blocked_acks')
+    body=once(body,'shared109-qualification/1','shared121-qualification/1')
     prefix='''"""Independent complete integer receiver; mathematical checks derived unchanged except elapsed T drain."""
 import argparse,hashlib,importlib.util,json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[3]
 sys.path.insert(0,str(ROOT/'project/experiments/shared_gdn'))
 import receive as upstream
-from gverify import GNUMBERS,GSTRINGS,GARRAYS
-Oracle=upstream.Oracle
+from gverify121 import GOracle,GNUMBERS,GSTRINGS,GARRAYS
+class Oracle(upstream.Oracle):
+ def __init__(self,inp):
+  super().__init__(inp)
+  self.g=GOracle(inp,self.newim)
 need=upstream.need
 sha=upstream.sha
 ARRAYS=upstream.ARRAYS
 STRINGS=upstream.STRINGS
-NUMBERS=upstream.NUMBERS|{'sink_drain_cycles'}
+NUMBERS=upstream.NUMBERS|{'sink_drain_cycles','sink_result_lines'}
 QUAL_ROLES=upstream.QUAL_ROLES
 CHECKS=upstream.CHECKS
 
 def inspect(inp,run,oracle):
  m=json.loads((run/'manifest.json').read_text())
- need(m['schema']=='shared121-committed-run/1' and m['suite']=='mixed-committed','new top actual run')
+ need(m['schema']=='shared121-committed-run/1' and m['suite'] in ('mixed-committed','qualification-committed'),'new top actual run')
  source_bundle=json.loads((ROOT/'bundle-manifest.json').read_text())
  need(m['source_commit']==source_bundle['source_commit'] and m['source_bundle_sha256']==sha(ROOT/'bundle-manifest.json'),'exact source bundle')
  for e in source_bundle['files']:need(sha(ROOT/e['path'])==e['sha256'],'receiver/driver/RTL scientific source')
@@ -119,10 +155,12 @@ def main():
  result=inspect(a.input,a.run,oracle)
  rows=[json.loads(x)for x in(a.run/'actual.jsonl').read_text().splitlines()]
  proto=result['protocol']
- need(proto['consumer_lines']==sum(r['result_lines']for r in rows),'every committed beat consumed exactly once')
- need(proto['consumer_releases']==sum(r['result_lines']>0 for r in rows),'each consumer lease explicitly released')
+ need(proto['consumer_lines']==sum(r['sink_result_lines']for r in rows),'every committed beat consumed exactly once')
+ need(proto['consumer_releases']==sum(r['sink_result_lines']>0 for r in rows),'each consumer lease explicitly released')
+ for key in ('consumer_lines','consumer_releases','blocked_acks'):need(type(proto[key]) is int and proto[key]>=0,'typed consumer counters')
  need(proto['blocked_acks']>0,'early ACK attempts exercised')
- result.update(status='PASS_SHARED121_COMPLETE_INTEGER_COMMITTED_MIXED',receiver_sha256=sha(__file__),run_manifest_sha256=sha(a.run/'manifest.json'))
+ status='PASS_SHARED121_COMPLETE_INTEGER_COMMITTED_RECOVERY' if len(rows)==44 else 'PASS_SHARED121_COMPLETE_INTEGER_COMMITTED_MIXED'
+ result.update(status=status,receiver_sha256=sha(__file__),run_manifest_sha256=sha(a.run/'manifest.json'))
  upstream.put(a.out/'receipt.json',result)
  print(result['status'])
 if __name__=='__main__':main()
@@ -135,7 +173,8 @@ if __name__=='__main__':
     p.add_argument('--root',type=Path,default=Path(__file__).resolve().parents[3])
     p.add_argument('--check',action='store_true')
     a=p.parse_args()
-    for name,data in [('committed_sim.cpp',driver(a.root)),('receive121.py',receiver(a.root))]:
+    for name,data in [('committed_sim.cpp',driver(a.root)),('committed_qualification.cpp',qualification(a.root)),
+                      ('gverify121.py',g_receiver(a.root)),('receive121.py',receiver(a.root))]:
         target=a.root/'project/experiments/block_v1'/name
         if a.check:
             assert target.read_bytes()==data.encode('utf-8'), name+' generation differs'

@@ -1,0 +1,59 @@
+"""Read only this issue's explicit run and save an immutable local evidence index."""
+import argparse
+import datetime
+import hashlib
+import json
+from pathlib import Path
+import re
+import shlex
+import subprocess
+
+REMOTE = r'''
+import hashlib,json,subprocess,sys
+from pathlib import Path
+root=Path(sys.argv[1]).resolve()
+base=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121')
+assert root.parent==base and root.name.startswith('block-v1-')
+manifest=json.loads((root/'manifest.json').read_text())
+state=json.loads((root/'dispatch-state.json').read_text())
+assert manifest['run_id']==state['run_id']==root.name
+result=dict(remote_root=str(root),manifest=manifest,manifest_sha256=hashlib.sha256((root/'manifest.json').read_bytes()).hexdigest(),state=state,tasks={})
+if (root/'source.tar').exists():
+ result['source_archive_sha256']=hashlib.sha256((root/'source.tar').read_bytes()).hexdigest()
+ assert result['source_archive_sha256']==manifest['source_archive_sha256']
+ids=[x['job_id'] for x in state['tasks'].values() if x.get('job_id')]
+assert all(x.isdigit()for x in ids)
+result['sacct']=subprocess.check_output(['sacct','-n','-P','-j',','.join(ids),'--format=JobIDRaw,State,ExitCode,Elapsed,TotalCPU,MaxRSS,AllocCPUS,NodeList'],universal_newlines=True)
+for task in manifest['tasks']:
+ p=root/'tasks'/task['id']
+ data={'job_id':state['tasks'].get(task['id'],{}).get('job_id'),'artifacts':{}}
+ for relative in ['receipt.json','test.json','database.json','capabilities.json','build.json','mixed0/received/receipt.json','mixed1/received/receipt.json']:
+  file=p/relative
+  if file.is_file():
+   raw=file.read_bytes()
+   try: content=json.loads(raw.decode())
+   except (ValueError,UnicodeError): content={'unparsed_tail':raw.decode(errors='replace')[-3000:]}
+   data['artifacts'][relative]=dict(bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest(),content=content)
+ if (p/'job.log').exists():
+  raw=(p/'job.log').read_bytes()
+  data['job_log']=dict(bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest(),tail=raw.decode(errors='replace')[-3000:])
+ result['tasks'][task['id']]=data
+print(json.dumps(result))
+'''
+
+
+if __name__=='__main__':
+    p=argparse.ArgumentParser(__doc__)
+    p.add_argument('run_id')
+    p.add_argument('out',type=Path)
+    a=p.parse_args()
+    assert re.fullmatch(r'block-v1-[0-9]{8}-[0-9]{3}',a.run_id)
+    root='/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/'+a.run_id
+    command='python3 -c '+shlex.quote(REMOTE)+' '+shlex.quote(root)
+    data=subprocess.check_output(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=12','yuzelu@10.129.166.172',command])
+    result=json.loads(data)
+    result['collected_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
+    a.out.mkdir(parents=True,exist_ok=False)
+    (a.out/'index.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
+    print(json.dumps({'run_id':a.run_id,'saved':str(a.out/'index.json'),'sacct':result['sacct'],
+                      'passed_receipts':{name:item['artifacts'].get('receipt.json',{}).get('content',{}).get('passed')for name,item in result['tasks'].items()}},indent=2))

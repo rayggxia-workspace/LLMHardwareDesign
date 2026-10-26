@@ -81,10 +81,11 @@ try:
         mapped('transaction6k',[str(ROOT/'project/rtl/block_v1/transaction6k.sv')])
     elif MODE=='map-c8-full':
         mapped('shared121',rtl())
-    elif MODE=='committed-suite':
+    elif MODE in ('committed-suite','recovery-suite'):
+        driver='committed_qualification.cpp' if MODE=='recovery-suite' else 'committed_sim.cpp'
         run([str(VERILATOR),'--cc','--exe','--build','-j',str(CPUS),'-Wno-fatal',
              '--top-module','shared121','--prefix','Vshared121','--Mdir',str(OUT/'obj'),
-             '-CFLAGS','-std=c++17 -O2',*rtl(),str(ROOT/'project/experiments/block_v1/committed_sim.cpp')],'build.log')
+             '-CFLAGS','-std=c++17 -O2',*rtl(),str(ROOT/'project/experiments/block_v1'/driver)],'build.log')
         binary=OUT/'obj/Vshared121'
         binary_sha=hashlib.sha256(binary.read_bytes()).hexdigest()
         receipt['binary_sha256']=binary_sha
@@ -103,7 +104,7 @@ try:
                 result=subprocess.run(argv,stdout=log,stderr=subprocess.STDOUT)
             command=dict(argv=argv,exit=result.returncode,seconds=time.time()-start)
             (destination/'simulation-command.json').write_text(json.dumps(command,indent=2)+'\n')
-            m=dict(schema='shared121-committed-run/1',suite='mixed-committed',stall=stall,pilot=0,
+            m=dict(schema='shared121-committed-run/1',suite='qualification-committed' if MODE=='recovery-suite' else 'mixed-committed',stall=stall,pilot=0,
                    binary_sha256=binary_sha,build_path=str(OUT/'build.json'),build_sha256=hashlib.sha256((OUT/'build.json').read_bytes()).hexdigest(),
                    source_commit=build['source_commit'],source_bundle_sha256=build['source_bundle_sha256'],
                    input_manifest_sha256=hashlib.sha256((inp/'manifest.json').read_bytes()).hexdigest())
@@ -144,23 +145,7 @@ try:
         (OUT/'read.tcl').write_text('read_lef overlay/research12.tech.lef\nwrite_db overlay.odb\n'
                                   'help bench_wires\nhelp gen_rcx_model\nhelp extract_parasitics\n')
         run(['openroad','-no_init','-exit','read.tcl'],'openroad.log')
-        (OUT/'inspect.py').write_text('''import odb,json
-db=odb.dbDatabase.create()
-odb.read_db(db,"overlay.odb")
-tech=db.getTech()
-layers=[(x.getName(),x.getRoutingLevel()) for x in tech.getLayers() if x.getRoutingLevel()>0]
-assert [x[0] for x in layers]==["metal%d"%i for i in range(1,13)]
-vias=[]
-for name in ["BV1_via10","BV1_via11"]:
- v=tech.findVia(name)
- assert v is not None
- boxes=[(b.getTechLayer().getName(),b.xMin(),b.yMin(),b.xMax(),b.yMax()) for b in v.getBoxes()]
- assert len(boxes)==3
- vias.append(dict(name=name,boxes=boxes,resistance=v.getResistance()))
- assert v.getResistance()>0
-print(json.dumps(dict(routing_layers=layers,vias=vias,dbu_per_um=tech.getDbUnitsPerMicron()),indent=2))
-''')
-        run(['openroad','-python','-no_init','-exit','inspect.py'],'database.json')
+        run(['openroad','-no_init','-exit',str(ROOT/'project/experiments/block_v1/inspect_overlay.tcl')],'database-read.log')
     else:
         raise ValueError('unsupported mode '+MODE)
     receipt['passed']=True

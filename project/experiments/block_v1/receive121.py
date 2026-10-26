@@ -5,19 +5,22 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[3]
 sys.path.insert(0,str(ROOT/'project/experiments/shared_gdn'))
 import receive as upstream
-from gverify import GNUMBERS,GSTRINGS,GARRAYS
-Oracle=upstream.Oracle
+from gverify121 import GOracle,GNUMBERS,GSTRINGS,GARRAYS
+class Oracle(upstream.Oracle):
+ def __init__(self,inp):
+  super().__init__(inp)
+  self.g=GOracle(inp,self.newim)
 need=upstream.need
 sha=upstream.sha
 ARRAYS=upstream.ARRAYS
 STRINGS=upstream.STRINGS
-NUMBERS=upstream.NUMBERS|{'sink_drain_cycles'}
+NUMBERS=upstream.NUMBERS|{'sink_drain_cycles','sink_result_lines'}
 QUAL_ROLES=upstream.QUAL_ROLES
 CHECKS=upstream.CHECKS
 
 def inspect(inp,run,oracle):
  m=json.loads((run/'manifest.json').read_text())
- need(m['schema']=='shared121-committed-run/1' and m['suite']=='mixed-committed','new top actual run')
+ need(m['schema']=='shared121-committed-run/1' and m['suite'] in ('mixed-committed','qualification-committed'),'new top actual run')
  source_bundle=json.loads((ROOT/'bundle-manifest.json').read_text())
  need(m['source_commit']==source_bundle['source_commit'] and m['source_bundle_sha256']==sha(ROOT/'bundle-manifest.json'),'exact source bundle')
  for e in source_bundle['files']:need(sha(ROOT/e['path'])==e['sha256'],'receiver/driver/RTL scientific source')
@@ -31,7 +34,7 @@ def inspect(inp,run,oracle):
  for artifact in m['artifacts']:
   p=(run/artifact['path']).resolve()
   need(p.is_relative_to(run.resolve()) and p.stat().st_size==artifact['bytes'] and sha(p)==artifact['sha256'],'run actual artifact')
- rows=[json.loads(x)for x in(run/'actual.jsonl').read_text().splitlines()];qual=m['suite']=='qualification';roles=QUAL_ROLES if qual else ['init','G-restore-native','mixed-M0','G-native0','mixed-Afull','mixed-R0']+([]if m['pilot']else['G-native1','mixed-Acached','mixed-M5','mixed-R1','G-native2'])+['G-restore-rescale','G-actual-rescale'];need([x['role']for x in rows]==roles,'exact predeclared order')
+ rows=[json.loads(x)for x in(run/'actual.jsonl').read_text().splitlines()];qual=m['suite']=='qualification-committed';roles=QUAL_ROLES if qual else ['init','G-restore-native','mixed-M0','G-native0','mixed-Afull','mixed-R0']+([]if m['pilot']else['G-native1','mixed-Acached','mixed-M5','mixed-R1','G-native2'])+['G-restore-rescale','G-actual-rescale'];need([x['role']for x in rows]==roles,'exact predeclared order')
  state=[0]*32768;y=[0]*128;unit=oracle.unit;epoch=0;pos=0;bank=0;reg_version=0;reg_length=0;prev_transport=0;summary=[]
  oracle.g.prepare(run,rows)
  for index,row in enumerate(rows):
@@ -40,7 +43,7 @@ def inspect(inp,run,oracle):
   for k in STRINGS|GSTRINGS:need(type(row[k])is str,'typed string '+k)
   for k in ARRAYS|GARRAYS:need(type(row[k])is list and all(type(v)is int for v in row[k]),'integer array '+k)
   role=row['role'];kind=row['kind'];status=row['status'];expected_status=2 if role.startswith('abort-')else 17 if role in('same-version-scale','old-version-after-R','owner-after-R')else 3 if role in('reject-R','reject-G')else 4 if role.startswith('G-bad-')else 0
-  need(status==expected_status,'expected status');need(row['wire_beats']==row['transactions']*5,'actual five128bit beats');need(row['result_lines']*(2 if row['kind']==3 else 4)==len(row['g_out']if row['kind']==3 else row['out']),'actual export all words');need(row['cycles']+1+row['sink_drain_cycles']==row['elapsed'],'command to held done elapsed');need(row['cycles']>=row['export_cycles']+row['drain_cycles'],'disjoint D phases')
+  need(status==expected_status,'expected status');need(row['wire_beats']==row['transactions']*5,'actual five128bit beats');need(row['sink_result_lines']*(2 if row['kind']==3 else 4)==len(row['g_out']if row['kind']==3 else row['out']),'actual export all words');need(row['cycles']+1+row['sink_drain_cycles']==row['elapsed'],'command to held done elapsed');need(row['cycles']>=row['export_cycles']+row['drain_cycles'],'disjoint D phases')
   expected_transport=0xffffffff if role in('terminal-max','G-terminal-max')else 1 if role in('after-reset-restore','second-reset-Rrestore')else prev_transport+1;need(row['epoch']==expected_transport,'actual no-wrap epoch sequence');prev_transport=expected_transport
   if role in('after-reset-restore','second-reset-Rrestore'):reg_version=reg_length=0
   if kind==0:
@@ -68,7 +71,7 @@ def inspect(inp,run,oracle):
     need(row['out']==y and row['r_retries']==retries,'full R candidate');need(row['transactions']==73923+40960*retries and row['mul0']==(98688 if alpha!=(1<<31)else 65920)+retries*(65792 if alpha!=(1<<31)else 33024)and row['mul1']==0,'R shared traffic');need(row['root_writes']==1 and row['result_lines']==32,'one R atomic root commit');need(row['sreads']==148000+82304*retries and row['swrites']==33026+24640*retries,'R full state/proposal/consumer finite S traffic')
    else:
     need(row['root_writes']==0,'failed R never publishes root')
-    if status==3:(trial,yy,uu,ee,retries),alpha=oracle.rstep(state,unit,epoch,pos);need(row['out']==yy and row['result_lines']==32,'rejected true candidate')
+    if status==3:(trial,yy,uu,ee,retries),alpha=oracle.rstep(state,unit,epoch,pos);need(not row['out'] and row['sink_result_lines']==0 and row['result_lines']==32,'rejected true candidate')
    need(row['state']==state and row['committed_y']==y,'full32768 state and128Y independent')
   else:
    need(kind==3 and row['name']in('native','rescale'),'G kind/name');need(not any(row[k]for k in ARRAYS),'G exact observation domain');need(row['mul1']==row['fgrants']==0,'G no hidden peer/SFU');need(row['root_writes']==0,'G cannot write Falcon root')
@@ -80,7 +83,7 @@ def inspect(inp,run,oracle):
   summary.append({k:v for k,v in row.items()if k not in ARRAYS|GARRAYS})
  proto=json.loads((run/'actual.jsonl.protocol.json').read_text())
  if qual:
-  need(set(proto)==set('schema accepted declared_epoch_Q_injection_RTL_only cfg_collisions actual_aborts_before_reset actual_stale_before_reset terminal_rejected_edges fabric_high_water root_writes g_aborts_before_second_reset g_stale_before_second_reset g_root_writes checks'.split()),'qualification keys');need(proto['schema']=='shared109-qualification/1'and proto['declared_epoch_Q_injection_RTL_only']is True and proto['checks']==CHECKS,'qualification declarations')
+  need(set(proto)==set('schema accepted declared_epoch_Q_injection_RTL_only cfg_collisions actual_aborts_before_reset actual_stale_before_reset terminal_rejected_edges fabric_high_water root_writes g_aborts_before_second_reset g_stale_before_second_reset g_root_writes checks consumer_lines consumer_releases blocked_acks'.split()),'qualification keys');need(proto['schema']=='shared121-qualification/1'and proto['declared_epoch_Q_injection_RTL_only']is True and proto['checks']==CHECKS,'qualification declarations')
   for k,v in {'accepted':44,'g_aborts_before_second_reset':6,'g_stale_before_second_reset':2,'g_root_writes':3,'cfg_collisions':2,'actual_aborts_before_reset':6,'actual_stale_before_reset':2,'terminal_rejected_edges':24,'fabric_high_water':2,'root_writes':3}.items():need(type(proto[k])is int and proto[k]==v,'qualification actual '+k)
  else:
   need(set(proto)==set('schema accepted leases same_core_no_per_case_reset held_done latched_parameters fabric_high_water external_accepted root_writes g_root_writes aborts stale consumer_lines consumer_releases blocked_acks'.split()),'mixed protocol keys');need(proto['schema']=='shared121-mixed/1','mixed schema')
@@ -95,10 +98,12 @@ def main():
  result=inspect(a.input,a.run,oracle)
  rows=[json.loads(x)for x in(a.run/'actual.jsonl').read_text().splitlines()]
  proto=result['protocol']
- need(proto['consumer_lines']==sum(r['result_lines']for r in rows),'every committed beat consumed exactly once')
- need(proto['consumer_releases']==sum(r['result_lines']>0 for r in rows),'each consumer lease explicitly released')
+ need(proto['consumer_lines']==sum(r['sink_result_lines']for r in rows),'every committed beat consumed exactly once')
+ need(proto['consumer_releases']==sum(r['sink_result_lines']>0 for r in rows),'each consumer lease explicitly released')
+ for key in ('consumer_lines','consumer_releases','blocked_acks'):need(type(proto[key]) is int and proto[key]>=0,'typed consumer counters')
  need(proto['blocked_acks']>0,'early ACK attempts exercised')
- result.update(status='PASS_SHARED121_COMPLETE_INTEGER_COMMITTED_MIXED',receiver_sha256=sha(__file__),run_manifest_sha256=sha(a.run/'manifest.json'))
+ status='PASS_SHARED121_COMPLETE_INTEGER_COMMITTED_RECOVERY' if len(rows)==44 else 'PASS_SHARED121_COMPLETE_INTEGER_COMMITTED_MIXED'
+ result.update(status=status,receiver_sha256=sha(__file__),run_manifest_sha256=sha(a.run/'manifest.json'))
  upstream.put(a.out/'receipt.json',result)
  print(result['status'])
 if __name__=='__main__':main()
