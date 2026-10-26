@@ -81,6 +81,43 @@ try:
         mapped('transaction6k',[str(ROOT/'project/rtl/block_v1/transaction6k.sv')])
     elif MODE=='map-c8-full':
         mapped('shared121',rtl())
+    elif MODE=='committed-suite':
+        run([str(VERILATOR),'--cc','--exe','--build','-j',str(CPUS),'-Wno-fatal',
+             '--top-module','shared121','--prefix','Vshared121','--Mdir',str(OUT/'obj'),
+             '-CFLAGS','-std=c++17 -O2',*rtl(),str(ROOT/'project/experiments/block_v1/committed_sim.cpp')],'build.log')
+        binary=OUT/'obj/Vshared121'
+        binary_sha=hashlib.sha256(binary.read_bytes()).hexdigest()
+        receipt['binary_sha256']=binary_sha
+        build=dict(top='shared121',binary=str(binary),binary_sha256=binary_sha,source_commit=bundle['source_commit'],
+                   source_bundle_sha256=hashlib.sha256((ROOT/'bundle-manifest.json').read_bytes()).hexdigest(),
+                   command=receipt['commands'][0])
+        (OUT/'build.json').write_text(json.dumps(build,indent=2)+'\n')
+        inp=OUT.parents[2]/'block-v1-20261027-004/tasks/fixtures/upstream/input01'
+        assert inp.is_dir(), str(inp)
+        def simulate(stall):
+            destination=OUT/('mixed%d'%stall)
+            destination.mkdir()
+            argv=[str(binary),str(inp/'vectors.tsv'),str(destination/'actual.jsonl'),str(stall),'0']
+            start=time.time()
+            with (destination/'simulation.log').open('w') as log:
+                result=subprocess.run(argv,stdout=log,stderr=subprocess.STDOUT)
+            command=dict(argv=argv,exit=result.returncode,seconds=time.time()-start)
+            (destination/'simulation-command.json').write_text(json.dumps(command,indent=2)+'\n')
+            m=dict(schema='shared121-committed-run/1',suite='mixed-committed',stall=stall,pilot=0,
+                   binary_sha256=binary_sha,build_path=str(OUT/'build.json'),build_sha256=hashlib.sha256((OUT/'build.json').read_bytes()).hexdigest(),
+                   source_commit=build['source_commit'],source_bundle_sha256=build['source_bundle_sha256'],
+                   input_manifest_sha256=hashlib.sha256((inp/'manifest.json').read_bytes()).hexdigest())
+            m['artifacts']=[dict(path=p.name,bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest())for p in destination.iterdir()if p.is_file()]
+            (destination/'manifest.json').write_text(json.dumps(m,indent=2)+'\n')
+            if result.returncode:
+                raise RuntimeError('committed simulation failed: '+str(destination))
+            run(['python3',str(ROOT/'project/experiments/block_v1/receive121.py'),'--input',str(inp),
+                 '--run',str(destination),'--out',str(destination/'received')],'receive%d.log'%stall)
+        assert CPUS>=2
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+            jobs=[pool.submit(simulate,stall)for stall in [0,1]]
+            for job in jobs:
+                job.result()
     elif MODE=='core-build':
         run([str(VERILATOR),'--cc','--exe','--build','-j',str(CPUS),'-Wno-fatal',
              '--top-module','shared109','--prefix','Vshared109','--Mdir',str(OUT/'obj'),
