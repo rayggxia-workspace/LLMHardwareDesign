@@ -108,6 +108,20 @@ try:
     elif MODE=='physical-inputs':
         from physical_inputs import prepare
         prepare(ROOT,OUT,CPUS,run)
+    elif MODE=='technology-audit':
+        selected=[]
+        for path in sorted(TOOLS.rglob('*')):
+            if path.is_file() and (path.suffix in ('.map','.lyp','.lyt','.lydrc') or path.name=='config.mk'):
+                assert path.stat().st_size<2*1024*1024
+                relative=path.relative_to(TOOLS)
+                target=OUT/'native-config'/relative
+                target.parent.mkdir(parents=True,exist_ok=True)
+                shutil.copyfile(path,target)
+                selected.append(dict(path=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
+        assert selected
+        (OUT/'native-config-index.json').write_text(json.dumps(selected,indent=2)+'\n')
+        run(['klayout','-b','-r',str(ROOT/'project/experiments/block_v1/inspect_native_gds.rb'),
+             '-rd','platform='+str(TOOLS),'-rd','report='+str(OUT/'native-gds-layers.json')],'native-gds.log')
     elif MODE in ('committed-suite','recovery-suite','mapped-suite'):
         driver='committed_qualification.cpp' if MODE=='recovery-suite' else 'committed_sim.cpp'
         sources=rtl()
