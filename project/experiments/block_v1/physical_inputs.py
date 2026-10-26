@@ -34,7 +34,24 @@ def prepare(root,out,cpus,run,compatible=False):
         modules=json.loads((out/(top+'.json')).read_text())['modules']
         if compatible:
             from structural_view import compare
-            result=compare({'modules':modules},json.loads((out/(top+'-reparsed.json')).read_text()))
+            observed=json.loads((out/(top+'-reparsed.json')).read_text())
+            result=compare({'modules':modules},observed)
+            changed=False
+            for module in observed['modules'].values():
+                if module.get('attributes',{}).get('blackbox'):continue
+                for cell in module.get('cells',{}).values():
+                    bits=next((v for v in cell['connections'].values()if v),None)
+                    if bits:
+                        previous=bits[0];bits[0]='1'if previous!='1'else'0'
+                        try:
+                            try:compare({'modules':modules},observed)
+                            except AssertionError:changed=True
+                        finally:bits[0]=previous
+                        assert changed,'Structural receiver accepted an altered cell-pin bit'
+                        break
+                if changed:break
+            assert changed
+            result['single_pin_bit_negative_rejected']=True
             (out/(top+'-structural-proof.json')).write_text(json.dumps(result,indent=2)+'\n')
         ports=modules[top]['ports']
         assert ports['clk']['direction']=='input' and len(ports['clk']['bits'])==1

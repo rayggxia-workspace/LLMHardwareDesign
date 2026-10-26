@@ -30,28 +30,40 @@ def unsigned(data):
 def compare(expected, observed):
     gold={n:m for n,m in expected['modules'].items()if not m.get('attributes',{}).get('blackbox')}
     gate={n:m for n,m in observed['modules'].items()if not m.get('attributes',{}).get('blackbox')}
-    assert gold.keys()==gate.keys(),('Module inventory mismatch',gold.keys()-gate.keys(),gate.keys()-gold.keys())
+    def align(a,b,context,complete=True):
+        mapping={};used=set()
+        for key in a:
+            choices=[k for k in [key,'\\'+key if key.startswith('$')else key]if k in b]
+            choices=list(dict.fromkeys(choices))
+            if not choices and not complete:continue
+            assert len(choices)==1,(context,'Missing or ambiguous escaped identifier',key,choices)
+            target=choices[0];assert target not in used,(context,'Identifier collision',key,target)
+            mapping[key]=target;used.add(target)
+        if complete:assert used==set(b),(context,'Unexpected identifiers',set(b)-used)
+        return mapping
+    module_names=align(gold,gate,'modules')
     result={}
     for name,a in gold.items():
-        b=gate[name];forward={};reverse={}
+        b=gate[module_names[name]];forward={};reverse={}
         def bind(x,y):
             if isinstance(x,str)or isinstance(y,str):
                 assert x==y,(name,'Constant differs',x,y);return
             assert forward.setdefault(x,y)==y and reverse.setdefault(y,x)==x,(name,'Bit alias differs',x,y)
-        assert a['ports'].keys()==b['ports'].keys(),(name,'Ports differ')
+        port_names=align(a['ports'],b['ports'],(name,'ports'))
         for port,entry in a['ports'].items():
-            other=b['ports'][port]
+            other=b['ports'][port_names[port]]
             assert entry['direction']==other['direction']and len(entry['bits'])==len(other['bits'])
             for x,y in zip(entry['bits'],other['bits']):bind(x,y)
-        for wire in a['netnames'].keys()&b['netnames'].keys():
-            av=a['netnames'][wire]['bits'];bv=b['netnames'][wire]['bits']
+        wire_names=align(a['netnames'],b['netnames'],(name,'wires'),complete=False)
+        for wire,target in wire_names.items():
+            av=a['netnames'][wire]['bits'];bv=b['netnames'][target]['bits']
             assert len(av)==len(bv),(name,wire,'Width differs')
             for x,y in zip(av,bv):bind(x,y)
-        assert a.get('cells',{}).keys()==b.get('cells',{}).keys(),(name,'Cells differ')
+        cell_names=align(a.get('cells',{}),b.get('cells',{}),(name,'cells'))
         checked=0
         for cell,entry in a.get('cells',{}).items():
-            other=b['cells'][cell]
-            assert entry['type']==other['type'],(name,cell,'Type differs')
+            other=b['cells'][cell_names[cell]]
+            assert module_names.get(entry['type'],entry['type'])==other['type'],(name,cell,'Type differs')
             assert entry.get('parameters',{})==other.get('parameters',{}),(name,cell,'Parameters differ')
             assert entry['connections'].keys()==other['connections'].keys(),(name,cell,'Pins differ')
             for pin,bits in entry['connections'].items():
@@ -60,4 +72,5 @@ def compare(expected, observed):
                     assert (x if isinstance(x,str)else forward[x])==y,(name,cell,pin,'Connection differs')
                     checked+=1
         result[name]=dict(cells=len(a.get('cells',{})),cell_pin_bits_checked=checked,bit_id_bijection=len(forward))
-    return dict(schema='block-v1-structural-view-proof/1',passed=True,modules=result)
+    return dict(schema='block-v1-structural-view-proof/1',passed=True,modules=result,
+                escaped_module_identifiers={a:b for a,b in module_names.items()if a!=b})
