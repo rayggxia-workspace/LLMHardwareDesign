@@ -135,6 +135,9 @@ try:
     elif MODE=='native-boundary-audit':
         from native_boundary import verify
         verify(ROOT,OUT)
+    elif MODE=='field-window':
+        from window_field import verify
+        verify(ROOT,OUT,CPUS)
     elif MODE=='native-sta-control':
         from native_sta import fixture
         fixture(ROOT,OUT,run)
