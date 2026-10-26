@@ -69,12 +69,14 @@ def verify(root,out,cpus,run,top,policy):
     boundary=boundary_audit((out/'constraints-readback.sdc').read_text(),pins,budget)
     layers=summary['routing_layers'][0].split(',')
     die=list(map(int,summary['die']));w,h=leaf['die_um']
+    core=list(map(int,summary['core']))
     checks=dict(timing=timing['passed'],rc_coverage=coverage['passed'],unplaced_zero=summary['unplaced']==['0'],
         all_pg_iterms_correct=summary['incorrect_pg_iterms']==['0']and int(summary['pg_iterm_count'][0])>0,
         pg_vdd=summary['pg_VDD']==['1'],pg_vss=summary['pg_VSS']==['1'],
         open_signal_inputs_zero=summary['open_signal_inputs']==['0'],exact_prefabricated_m10_pins=pins_equal,
         exact_native_layers=layers==['metal%d'%i for i in range(1,11)],
         same_die=die==[0,0,round(w*scale),round(h*scale)],
+        core_inside_die=die[0]<core[0]<core[2]<die[2]and die[1]<core[1]<core[3]<die[3],
         active_cell_area_within_cap=0<active<=leaf['max_stdcell_area_um2'])
     # Build GDS in a new output tree using explicit do-targets only. Source
     # final DEF and all previous-run files stay unchanged.
@@ -97,6 +99,7 @@ def verify(root,out,cpus,run,top,policy):
         timing=timing,rc_coverage=coverage,boundary=boundary,source=str(source),source_receipt_sha256=file_sha(source/'receipt.json'),
         active_cell_count=active_count,active_area_um2=active,physical_only_cell_count=physical_count,physical_only_area_um2=physical,
         all_instance_area_um2=active+physical,die_area_um2=w*h,masters=masters,
+        core_bbox_dbu=core,core_area_um2=(core[2]-core[0])*(core[3]-core[1])/scale**2,
         independent_drc_items=len(items),native_deck_sha256=file_sha(deck),gds_sha256=file_sha(gds),
         rc_coverage_qualified=coverage['passed'],exact_final_function_qualified=False,twelve_layer_qualified=False,
         qualified_hard_macro=False,scope='Native final ODB/SDC/SPEF physical gates; RC coverage, final function, macro views and twelve-layer research qualification remain separate')

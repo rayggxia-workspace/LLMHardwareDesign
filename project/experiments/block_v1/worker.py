@@ -141,7 +141,7 @@ try:
     elif MODE=='fsv-partial-build':
         from fsv_build import build
         build(ROOT,OUT,CPUS,run,partial=True)
-    elif MODE=='native-physical-control':
+    elif MODE in ('native-physical-control','native-physical-view-info'):
         source=OUT.parents[2]/'block-v1-20261027-063/tasks/native-sta-control'
         prior=json.loads((source/'receipt.json').read_text());assert prior['passed']is True
         path=source/'positive/probe.odb'
@@ -151,6 +151,14 @@ try:
         values={line.split('\t')[0]:line.split('\t')[1:]for line in(OUT/'physical-summary.tsv').read_text().splitlines()}
         assert values['unplaced']==['1']and int(values['incorrect_pg_iterms'][0])>0
         assert values['pg_VDD']==values['pg_VSS']==['0']
+        if MODE=='native-physical-view-info':
+            assert values['core']==['0','0','0','0']
+            flow=Path('/OpenROAD-flow-scripts/flow')
+            for name in ['scripts/formal_check.tcl','scripts/final_outputs.tcl','scripts/generate_abstract.tcl','scripts/klayout.tcl','Makefile']:
+                target=OUT/'view-source'/name;target.parent.mkdir(parents=True,exist_ok=True)
+                shutil.copyfile(flow/name,target)
+            (OUT/'view-api.tcl').write_text('help write_timing_model\nhelp write_abstract_lef\n')
+            run(['openroad','-no_init','-exit','view-api.tcl'],'view-api.log')
         (OUT/'native-physical-control.json').write_text(json.dumps(dict(passed=True,actual_summary=values,
             scope='Unplaced real DFF with disconnected PG rejected by physical receiver; complete native candidates remain unqualified'),indent=2)+'\n')
     elif MODE.startswith('native-receive-'):

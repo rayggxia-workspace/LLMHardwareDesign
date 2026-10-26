@@ -1,4 +1,4 @@
-"""Build the pinned unmodified standalone solver; test against its FD goldens.
+"""Build the pinned solver, or an explicitly recorded research variant.
 
 Invoked only inside an allocated compute worker. No downloaded build scripts run.
 """

@@ -6,6 +6,8 @@ set stream [open physical-summary.tsv w]
 puts $stream "dbu\t[$block getDbUnitsPerMicron]"
 set die [$block getDieArea]
 puts $stream "die\t[$die xMin]\t[$die yMin]\t[$die xMax]\t[$die yMax]"
+set core [$block getCoreArea]
+puts $stream "core\t[$core xMin]\t[$core yMin]\t[$core xMax]\t[$core yMax]"
 set masters [dict create]
 set unplaced 0
 set incorrect_pg 0
