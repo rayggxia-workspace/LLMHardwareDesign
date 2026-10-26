@@ -1,0 +1,76 @@
+ACT_byte_association
+
+/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/act-cap20/source/rtl/mem/otpu_actram.sv
+
+lines 29-36
+  input  logic                   clk,
+  input  logic [LANES-1:0]       we,          // lane l writes byte w_idx + l
+  input  logic [7:0]             w_row,
+  input  logic [31:0]            w_idx,       // byte index within the row: block*D + i
+  input  logic [LANES-1:0][7:0]  w_data,
+  input  logic                   w_dup,
+  input  logic [7:0]             w_off,
+  input  logic                   swe,
+
+
+lines 127-136
+      sg_n[j] = sgrp(j, s_row_h, w_off_h);
+    end
+  always_ff @(posedge clk) begin
+    wbe <= '0;
+    wd <= '0;
+    for (int l = 0; l < LANES; l++) begin
+      wbe[w_idx_h[DW-1:0] + DW'(l)] <= we_h[l];
+      wd[8 * (w_idx_h[DW-1:0] + DW'(l)) +: 8] <= w_data_h[l];
+    end
+    ssel <= ssel_n;
+
+
+GEMM_write_definition
+
+/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/source/rtl/gemm_engine.sv
+
+lines 615-632
+  // ---- write port: one 32-B (i16) / 16-B (i8) write per row, split in two 16-B
+  //      pieces when a 32-B write would cross the 256-B line ----
+  assign wr_addr  = out_out[OUT_W-1 -: 24];
+  assign wr_data  = out_out[255:0];
+  assign wr_cross = !out_i8 && (wr_addr[7:4] == 4'hF);
+  assign out_pop  = gemm_wr_grant && (!wr_cross || wr_ph);
+
+  always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n)            wr_ph <= 1'b0;
+    else if (gemm_wr_grant) wr_ph <= wr_cross && !wr_ph;
+  end
+
+  assign gemm_wr_valid    = !out_empty;
+  assign gemm_wr_req.addr = wr_addr + (wr_ph ? 24'd16 : 24'd0);
+  assign gemm_wr_req.size = (out_i8 || wr_cross) ? SZ_16 : SZ_32;
+  assign gemm_wr_wdata    = wr_ph ? {384'd0, wr_data[255:128]} : {256'd0, wr_data};
+  assign gemm_wr_wstrb    = (out_i8 || wr_cross) ? 64'h0000_0000_0000_FFFF : 64'h0000_0000_FFFF_FFFF;
+
+
+
+GEMM_byte_lane_transport
+
+/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/source/rtl/sram_xbar.sv
+
+lines 164-181
+  always_comb begin
+    for (int unsigned b = 0; b < NBANKS; b++) begin
+      bank_en[b]    = 1'b0;
+      bank_we[b]    = '0;
+      bank_addr[b]  = '0;
+      bank_wdata[b] = '0;
+      for (int unsigned p = 0; p < NP; p++) begin
+        // chunk index of bank b within the (at most 64-B) write data; 256-B
+        // requests are reads, so two bits suffice
+        logic [1:0] chunk;
+        chunk = 2'(4'(b) - r[p].addr[7:4]);
+        if (g[p] && mask[p][b]) begin
+          bank_en[b]    = 1'b1;
+          bank_addr[b]  = r[p].addr[SRAM_AW-1:8];
+          bank_we[b]    = IS_WRITE[p] ? ws[p][16*chunk +: 16] : '0;
+          bank_wdata[b] = wd[p][128*chunk +: 128];
+        end
+      end
