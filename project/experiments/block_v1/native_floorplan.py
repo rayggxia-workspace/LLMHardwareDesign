@@ -14,7 +14,8 @@ def sha(path):
 
 def prepare(root,out,run,top,policy):
     assert top in ('shared109','transaction6k') and policy in ('A','C')
-    source=out.parents[2]/'block-v1-20261027-047/tasks/native-prepare'
+    config=json.loads((root/'project/experiments/block_v1/native_pipeline.json').read_text())
+    source=out.parents[2]/config['preparation_run']/'tasks/native-prepare'
     receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed']is True
     path=source/'native-preparation.json';assert sha(path)==receipt['outputs'][path.name]
     data=json.loads(path.read_text())
@@ -28,7 +29,7 @@ def prepare(root,out,run,top,policy):
     for name in ['NangateOpenCellLibrary.tech.lef','NangateOpenCellLibrary.macro.mod.lef']:
         script+='read_lef {'+str(platform/'lef'/name)+'}\n'
     script+='read_verilog {'+str(inputs/(top+'.v'))+'}\nlink_design '+top+'\n'
-    script+='read_sdc {'+str(inputs/(top+'.sdc'))+'}\n'
+    script+='read_sdc {'+str(inputs/(top+'.sdc'))+'}\nreport_units\nwrite_sdc constraints-readback.sdc\n'
     script+='initialize_floorplan -die_area {0 0 %g %g} -core_area {%g %g %g %g} -site FreePDK45_38x28_10R_NP_162NW_34O\n'%(w,h,m,m,w-m,h-m)
     script+='source {'+str(platform/'make_tracks.tcl')+'}\nsource {'+str(folder/'pins.tcl')+'}\n'
     script+=r'''

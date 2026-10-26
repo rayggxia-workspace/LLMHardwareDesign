@@ -13,7 +13,8 @@ def sha(path):
 
 def prepare(root, out):
     base = out.parents[2]
-    source = base/'block-v1-20261027-010/tasks/physical-inputs'
+    config=json.loads((root/'project/experiments/block_v1/native_pipeline.json').read_text())
+    source = base/config['physical_inputs_run']/'tasks'/config['physical_inputs_task']
     receipt = json.loads((source/'receipt.json').read_text())
     assert receipt['passed'] is True
     budget = json.loads((root/'project/experiments/block_v1/physical-budget.json').read_text())
@@ -31,6 +32,13 @@ def prepare(root, out):
             name = top+suffix
             assert sha(source/name) == receipt['outputs'][name]
             shutil.copyfile(source/name, inputs/name)
+        proof=source/(top+'-structural-proof.json')
+        assert sha(proof)==receipt['outputs'][proof.name]
+        checked=json.loads(proof.read_text())
+        assert checked['passed']is True and checked['single_pin_bit_negative_rejected']is True
+        from constraints import generate as constraints
+        previous_sdc_sha256=sha(inputs/(top+'.sdc'))
+        (inputs/(top+'.sdc')).write_text(constraints(budget))
         bits = json.loads((inputs/(top+'-ports.json')).read_text())
         for policy in ['A', 'C']:
             folder = out/(top+'-'+policy)
@@ -67,11 +75,16 @@ if {[lsort $actual_pins] ne [lsort [dict keys $planned_pins]]} {
             # Standard ORFS manual-footprint path: place fixed pins after
             # floorplan initialization; the ordinary IO placer copies them.
             config += 'export FOOTPRINT_TCL = '+str(folder/'pins.tcl')+'\n'
-            config += 'export MIN_ROUTING_LAYER = metal1\nexport MAX_ROUTING_LAYER = metal10\n'
+            config += 'override export MIN_ROUTING_LAYER = metal1\noverride export MAX_ROUTING_LAYER = metal10\n'
+            # The stock IO step checks FOOTPRINT_TCL after stage filtering.
+            # Preserve the configured manual footprint across those stages.
+            config += 'export KEEP_VARS = 1\n'
             (folder/'config.mk').write_text(config)
             candidates.append(dict(top=top,policy=policy,ports=plan['ports'],internal_ports=plan['internal_ports'],
                 folder=str(folder),config_sha256=sha(folder/'config.mk'),pins_sha256=sha(folder/'pins.json'),
                 netlist_sha256=sha(inputs/(top+'.v')),sdc_sha256=sha(inputs/(top+'.sdc')),
+                original_sdc_sha256=previous_sdc_sha256,structural_proof_sha256=sha(proof),
+                command_capacitance_unit='fF',output_load_ff=budget['output_load_pf']*1000,
                 budget=leaf,physical_implementation_started=False))
     (out/'native-preparation.json').write_text(json.dumps(dict(schema='block-v1-native-preparation/1',
         candidates=candidates,source_receipt_sha256=sha(source/'receipt.json'),native_tech_sha256=sha(native),
