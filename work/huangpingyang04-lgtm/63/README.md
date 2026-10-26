@@ -31,3 +31,6 @@ A is selected logical/software scope; B is selected old real macro import/pin ch
 在全新 `/public/home/yuzelu/PingyangHuang/issue-63/server-validation-20261026T0100/repo` 核验发布源 `d07abaeef16049da199f0efa96acffc95bd487dd`，通过Slurm作业91622（hpy-adapter63、debug/node27、1CPU、23秒、COMPLETED/0:0）实际200项/0skip、10场景独立源码与新进程重放通过；科学SHA仍f2ec30e28966be33888cf314bd5e93a0bb24378d4147d79cbdd9ad9971efbbdc，与Windows逐字节相同。仅传输本任务Git对象、固定参考输入；未传凭据/配置/环境，未读#55活动文件或干扰作业。最初2G内存请求被Slurm拒绝（节点公布内存1MB），保留失败，命令覆盖--mem=0后提交成功，未改集群配置。
 
 精选证据在 `work/huangpingyang04-lgtm/63/server-20261026/`；原始日志与完整输出留新服务器目录。receipt中的server_access=false表示离线验收器自身不发SSH，不代表本轮未在服务器执行，执行平台由execution.json和Slurm记录明确区分。A/B选定范围pass；C仍缺同版实例/真实M8引出/冻结底座等证据。软件实现、离线验证与服务器复跑均完成；正式结项仍待PR79审查/合并，当前零reviews、Issue in_review，不能宣称done。看板仍unverified/同步pending。
+
+
+2026-10-26通信优化实际结果及复跑命令见[研究交付](search-20261026/README.md)。19格主/消融实验及12格强化贪心各双轮独立源码复跑一致，223回归通过。相同合成资源下，强化贪心相对固定顺序线上字节减少14.2873%，beam减少10.9374%；保留更强基线和负面结果，不宣称真实芯片速度提升。

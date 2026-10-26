@@ -60,3 +60,16 @@
 - 新增形状DAG、容量约束搜索、独立回放及正式合同导出。仅合成资源下的串行通信优化，不冒称真实Block能力/模型质量/端到端性能。
 - 独立服务器 `/public/home/yuzelu/PingyangHuang/issue-63/search-20261026-v1/`，Slurm91643/hpy-search63/4CPU；221回归和CI smoke已过，19格全实验及独立源码副本重放运行中。#55活动文件/作业未访问或改动。
 - 软件扩展in_progress，C保持blocked；登记pending、看板unverified/同步pending，最终结果与交付head待正式双轮完成后追加。
+
+
+### 2026-10-26 优化实验完成回执
+
+Slurm91643（debug/node27、4CPU、22:44）和91646（c64/node3、2CPU、4:18）均COMPLETED/0:0。主实验19格（12主表+4分块+3搜索消融）及更强贪心追加12格，各在独立源码工作区/新进程完整跑两轮，science逐字节相同。最大13,120任务；12个6任务小图穷举给出真实最优差距，保留beam退化。最终223项/0skip，原两图/expected/来源和原#48字节不变，旧10场景独立复跑通过。
+
+12主表格的线上字节总量：fixed10,119,300,544；greedy9,135,129,664（减少9.7257%）；beam9,012,513,536（减少10.9374%，较greedy再少1.3422%，7胜5负）。发现greedy在tie时总选M0后，追加相同12格的live-eviction tie策略：8,673,527,488（比fixed少14.2873%，比beam少3.7613%），不能将原较弱tie偏差包装成束搜索优势。推荐显式使用solve_tie，保留原solve(method='greedy')基线不变。收益主要来自减少权重重读、保护未来驻留、利用已存在M1；不增加硬件数量。主表beam权重加载下降11.5193%，非权重加载（含scale）增加5.7622%，所有方法输出写回payload相同。
+
+束宽/深度更大不保证更优：第一格width4/depth3比greedy差0.1628%；去掉初始值未来读取下界时差2.0545%。长prefill512、1MiB案例beam比greedy多7.1658%线上字节。row64/col128在512KiB时必要工作集631,328B超过524,288B，明确infeasible。主表第一轮算法walltime中位数fixed0.890s、greedy5.113s、beam127.961s（同node27四worker下观测，非芯片时间）；更强贪心在不同node3/两worker单列，禁止据跨节点秒数推断CPU加速。
+
+主表源38bd3094afeda09c5219f4bfa22068b1ecc35ac3；追加及223回归源b68f060ca5212bfc35d6beb58080d83007ad2427。主科学SHA d7f6c3d847e3865493fff01a10b2f459f86f328e6f46bc5df93d7616efcdc14c，追加SHA b0219fc13eb1b3410d430a5aa40be4ac0683a410dc9ae7776c1fd43a1cbdccb6。精选证据work/huangpingyang04-lgtm/63/search-20261026；大DAG/计划/日志仅留search-20261026-v1和search-20261026-tie新服务器目录。未触碰#55及旧版本。主模型/搜索/checker/driver当前字节与已验收源一致。
+
+本轮是形状DAG与合成资源上的串行通信优化，不是完整Qwen数值执行、真实Block功能、并行吞吐或PPA证明；真实实例还需确定RQ位置，不能把合成fused kernel当已实现M/V。C依然blocked。软件/研究交付in_review，PR79持续更新，审查人待指定，不合并、不关闭、不done；登记pending、看板unverified/同步pending。

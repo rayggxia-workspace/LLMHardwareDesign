@@ -329,7 +329,7 @@
       "module": "project/analysis/workload_mapping/README.md",
       "obtained_from": "original chat text recovery plus local integration",
       "actual_location": "project/analysis/workload_mapping/README.md",
-      "sha256": "5aeceda4f994d11bc44240095e538c603ecc76a371c6ca3ae55868df2fcc6cfd",
+      "sha256": "6d3ddc7f5af10260e8bee459f17174b38f7a91dcac44d5fb8542768003fcdb8b",
       "historical_chat_sha256": null,
       "server_original_bytes_acquired": false,
       "server_byte_comparison": false,
@@ -481,11 +481,12 @@
   },
   "local_hardening": "Independent output reader checks exact integer/bool types and event enums, and refuses materialized shadow after failed guard. Late abort remains supported. New counterexamples retained.",
   "latest_clean_execution": {
-    "source_commit": "10cd3d97d3b8ca9cbb242b1eee0078c2d708f577",
-    "receipt": "formal-04/receipt.json",
-    "tests": 200,
+    "source_commit": "b68f060ca5212bfc35d6beb58080d83007ad2427",
+    "receipt": "search-20261026/regression_receipt.json",
+    "tests": 223,
     "skipped": 0,
-    "independent_source_copy_cases": 10
+    "independent_source_copy_cases": 10,
+    "platform": "server Slurm91646"
   },
   "initial_baseline_temp_routing": "Initial upstream baseline invocation did not explicitly redirect temporary variables; it is not the formal frozen qualification. All complete qualification runs explicitly set TMP/TEMP/TMPDIR to their task-local directory.",
   "lifecycle_hardening": "Per-storage/root byte intervals preserve surviving slices and explicit copies after source reuse; producer and independent consumer use different coverage algorithms. Three new regression tests.",
@@ -500,5 +501,36 @@
     "original_CLI_consumer_present": false,
     "old_files_preserved": true,
     "historical_acquisition_fields": "describe prior local freeze; this later server-only hash comparison does not claim original files were downloaded"
+  },
+  "search_research": {
+    "primary_commit": "38bd3094afeda09c5219f4bfa22068b1ecc35ac3",
+    "supplemental_commit": "b68f060ca5212bfc35d6beb58080d83007ad2427",
+    "receipt": "search-20261026/receipt.json",
+    "index": "search-20261026/delivery.json",
+    "new_modules": [
+      "search_model.py",
+      "search.py",
+      "search_check.py",
+      "search_experiment.py",
+      "search_tie_audit.py",
+      "test_search.py"
+    ],
+    "old_fixed_fixtures_modified": false,
+    "post_discovery_audit": "Same full 12 main cells; no primary results rewritten; supplemental baseline explicitly separate",
+    "current_module_sha256": {
+      "search_model.py": "82fc34af9e08eb9789de2b4713ebd885246b1b1c2486cceacc063b88730649ec",
+      "search.py": "5c9ac38d940a23f37252c4af4eec5eae39c2a756b57343c233eaab2834d6a719",
+      "search_check.py": "b14dad7a7f3a9e591234da0711f20b99bbdda816075155315161b1b7b8187a36",
+      "search_experiment.py": "8dd278f0639d47f6ca7c46854e9bd30354f41d7f71433100fd5b820aaaf176cb",
+      "search_tie_audit.py": "30930a2f5a03d79146e436b3860f3a9db17992f2baa21c07697593d4825f1651",
+      "test_search.py": "c116418f19ea7596b7386cb28178e041668013e80c21951d2e930324cbc2f2da"
+    }
+  },
+  "previous_clean_execution": {
+    "source_commit": "10cd3d97d3b8ca9cbb242b1eee0078c2d708f577",
+    "receipt": "formal-04/receipt.json",
+    "tests": 200,
+    "skipped": 0,
+    "independent_source_copy_cases": 10
   }
 }

@@ -140,3 +140,6 @@ python -B -m unittest discover -s project/analysis/llm_resources -v
 ## Issue #63：工作负载通信输入适配器
 
 正式入口`project/analysis/workload_mapping/`，合同、范围和离线命令见[主要说明](WORKLOAD_MAPPING_INPUT.md)。执行`python -B -m project.analysis.workload_mapping --help`；本机续接不连接服务器。
+
+
+#63新增通信优化研究模块search_model/search/search_check/search_experiment/search_tie_audit，含较大静态DAG、固定/greedy/beam及更强tie基线。方法与边界、实际结果见[主要说明](WORKLOAD_MAPPING_INPUT.md)。复跑：`python -B -m project.analysis.workload_mapping.search_experiment --suite full --workers 4 --export --output-dir .local/runs/search-new`；经Slurm分配CPU，目录须新。推荐更强贪心：`python -B -m project.analysis.workload_mapping.search_tie_audit --workers 2 --output-dir .local/runs/tie-new`。
