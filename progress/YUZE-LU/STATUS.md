@@ -1,5 +1,13 @@
 # YUZE-LU 的进度
 
+## 2026-10-27 05:35 CST：Issue121 输入修正与资格探针
+
+- 原生M10实际轨道偏移0.095/0.07、via9中心距≥1.68已核实；旧0.8偏移及1.6相邻轨道规划不能作为已验证接入。保持旧057继续，另开075准备通过/076导入在跑/077约束审计与078P&R待执行，同映射、外框及预算。
+- 070局部电容独立FV与offset/网格/远边界/负例通过；074节点对探针48CPU进行中。073实际LEC正负例与完整边界接收控制通过，尚无完整候选验收。
+- 91903原门级回归继续（时限延长被Slurm拒绝），067同网表双16线程编译中。本任务最多8allocation，重I/O两路；不改其他任务。
+- [Issue121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121) in_progress、[PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122) 草稿；十二层完整提取、宏模型、共同底座及两产品未验收。登记pending、看板unverified/同步pending；管理员/审查人待指定。
+
+
 ## 2026-10-27 04:59 CST：Issue121 增量
 
 - 原生十层4候选P&R继续：C8布局、T6K详细布线；新完整映射并行回归92062/32CPU/UNLIMITED编译中，合计6节点。原91903时限延长被Slurm拒绝，保留独立调度记录。

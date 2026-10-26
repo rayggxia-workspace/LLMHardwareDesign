@@ -1,7 +1,7 @@
 # 当前状态
 
 - 2026-10-27增量里程碑（[Issue121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)，[草稿PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)，未合并）：明确原生全部M1–M10预制、自建M11/M12定制的v1路线。真实T6K与四profile完整整数/恢复回归通过，完整标准单元存储计价为1.538 mm²；内部M10接入小例子已连通。仍在P0/P1/P2资格阶段，十二层RCX/独立DRC与正式物理Block库尚未验收；不覆盖其他H2任务的独立状态。入口见[执行记录](../work/YUZE-LU/121/README.md)。
-- 2026-10-27 04:17 CST：#121四个原生十层候选开始独立P&R（92045–92048，node14–node17各32CPU、UNLIMITED），覆盖C8/T6K的A边缘与C内部M10接入。精确网表结构同构、实际M10坐标与STA完整IO/2fF负载审计已通过。91903完整映射门级回归继续。十二层跨层耦合查表模型仍失败；直接场解的小几何/八种实例方向/PG导体集合验证通过，完整Block分布式RC仍待解决，不能发布合格宏。见[输入决策](decisions/2026-10-27-block-v1-native-candidate-inputs.md)与[场解决策](decisions/2026-10-27-block-v1-direct-field-extraction.md)。
+- 2026-10-27 05:35 CST：#121旧057四个原生候选继续P&R，精确映射门级/同网表多线程编译并行；发现pin偏移/相邻via9规划假设错误，075–078新输入链保持同外框/资源/时序预算重新验证，075准备通过、076开始，尚未重跑P&R。局部通量070独立FV与完整LEC正负例073通过，仍未得到合格Block或完整十二层提取。见[输入决策](decisions/2026-10-27-block-v1-native-candidate-inputs.md)与[场解决策](decisions/2026-10-27-block-v1-direct-field-extraction.md)。
 
 - 更新日期：2026-10-23（中国标准时间）
 - 当前阶段：H1同资源分块／合并物理对照已完成，主线、并发成果及HTML按用户授权整合；H2在独立工作树推进，尚未验收
