@@ -150,7 +150,7 @@ set inst [lindex [[ord::get_db_block] getInsts] 0]
 foreach orient {R0 R90 R180 R270 MX MY MXR90 MYR90} {
   $inst setOrient $orient
   set transform [$inst getTransform]
-  set point [odb::Point 1000 2000]
+  set point [odb::new_Point 1000 2000]
   set status [catch {$transform apply $point} result]
   puts "TRANSFORM $orient [$inst getOrigin] $status $result [$point getX] [$point getY]"
   odb::delete_Point $point
