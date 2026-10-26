@@ -41,6 +41,10 @@ jobs:
           GIT_NO_LAZY_FETCH: '1'
           PYTHONDONTWRITEBYTECODE: '1'
         run: python -B -m project.analysis.workload_mapping.validate_delivery --output-dir .local/runs/ci
+      - name: Optimization smoke and public adapter roundtrip
+        env:
+          GIT_NO_LAZY_FETCH: '1'
+        run: python -B -m project.analysis.workload_mapping.search_experiment --suite smoke --export --output-dir .local/runs/search-smoke
       - name: Keep selected CI receipts
         if: always()
         uses: actions/upload-artifact@v4
@@ -53,7 +57,3 @@ jobs:
             .local/runs/search-smoke/receipt.json
             .local/runs/search-smoke/science.json
           if-no-files-found: warn
-      - name: Optimization smoke and public adapter roundtrip
-        env:
-          GIT_NO_LAZY_FETCH: '1'
-        run: python -B -m project.analysis.workload_mapping.search_experiment --suite smoke --export --output-dir .local/runs/search-smoke

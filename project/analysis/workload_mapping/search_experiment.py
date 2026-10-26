@@ -141,7 +141,7 @@ def run(output,suite='full',workers=1,export_contract=False):
         checked_cases=len(configs),exact_cases=12,independent_replay='every legal algorithm plan',
         original_fixture_policy='unchanged; run existing validate_delivery separately',network='no acquisition or SSH in research code'))
     print(json.dumps(dict(status='pass',cases=len(configs),aggregate=science['aggregate'],
-                          science_sha256=hashlib.sha256((out/'science.json').read_bytes()).hexdigest()),flush=True))
+                          science_sha256=hashlib.sha256((out/'science.json').read_bytes()).hexdigest())),flush=True)
     return science
 
 

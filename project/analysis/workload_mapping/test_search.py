@@ -3,6 +3,11 @@ import copy
 from fractions import Fraction
 import random
 import unittest
+import json
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
 
 from project.analysis.workload_mapping.search import Hardware, Infeasible, exact, solve, wire
 from project.analysis.workload_mapping.search_model import transformer, trap, Workload
@@ -22,6 +27,17 @@ def micro(seed):
 
 
 class SearchTests(unittest.TestCase):
+    def test_actual_smoke_cli_exit_and_scientific_receipt(self):
+        root=Path(__file__).resolve().parents[3]
+        local=root/'.local';local.mkdir(exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=local) as tmp:
+            out=Path(tmp)/'cli-smoke'
+            run=subprocess.run([sys.executable,'-B','-m','project.analysis.workload_mapping.search_experiment',
+                                '--suite','smoke','--output-dir',str(out)],cwd=root,capture_output=True,text=True)
+            self.assertEqual(run.returncode,0,run.stdout+run.stderr)
+            self.assertEqual(json.loads(run.stdout)['status'],'pass')
+            self.assertEqual(json.loads((out/'receipt.json').read_text())['checked_cases'],1)
+
     def setUp(self):
         self.w=transformer(8,2,1,4,4,True)
         self.h=Hardware(capacity=1024,vector_capacity=1024)
