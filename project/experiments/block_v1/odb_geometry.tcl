@@ -53,9 +53,9 @@ proc export {destination} {
   set block [ord::get_db_block]
   set output [open $destination w]
   puts $output "# block-v1-odb-geometry/1 dbu_per_um=[$block getDbUnitsPerMicron]"
-  set itr [odb::dbWirePathItr]
-  set path [odb::dbWirePath]
-  set element [odb::dbWirePathShape]
+  set itr [odb::new_dbWirePathItr]
+  set path [odb::new_dbWirePath]
+  set element [odb::new_dbWirePathShape]
   foreach net [$block getNets] {
     set alias n[$net getId]
     puts $output "# NET $alias [binary encode hex [encoding convertto utf-8 [$net getName]]]"
