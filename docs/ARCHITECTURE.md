@@ -158,3 +158,6 @@ Block v1 独立最终物理入口为 `native-receive-<shared109|transaction6k>-<
 `routed-graph-field`严格绑定run051原真实接入路由的DC图、run043导体mask、run090图节点二进制与run091两几何科学资格，三档offset各33554432 walks、三路线程总和不超过allocation。输出`routed-graph-field.json`，只接续单隔离网络origin-node电荷；尚无该长路由独立局部FV、一般capture-node耦合、新旧层拼接或全Block资格。
 
 `routed-graph-view`依赖run096真实测量成功，逐节点/边原生OpenDB读回SPEF，并以实际导入的单位错误、保总量节点电荷/边电阻调换作负例；输出`routed-graph-view.json`。当前仅本地合成读回接收控制通过，实际工具与测量回装未执行。
+
+
+实际捕获节点研究：`fsv-capture-build`在固定原作者源码、partial及graph补丁后应用`capture_field_patch.py`，重跑默认goldens/原node-to-net和新终点节点的线程、边际、非法输入与真实短路控制。099使用16CPU、全局8allocation内调度，当前尚未运行；`capture_field_verify.fv_source`导出独立FV真实导体面Dirichlet基函数的双向联合矩阵，本地精确LU变换控制见`work/YUZE-LU/121/capture-reference-transform-controls.json`，不代替科学收敛。见[捕获节点边界](decisions/2026-10-27-block-v1-terminal-node-charge.md)。
