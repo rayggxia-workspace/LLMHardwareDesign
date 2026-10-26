@@ -143,7 +143,8 @@ write_db received.odb
             error=abs(a-b)/max(1,abs(a));max_errors[index]=max(max_errors[index],error)
             assert error<2e-5,(name,index,a,b,error)
     (out/'model.tcl').write_text('read_db {'+str(patterns/'patterns.odb')+'}\n'
-                               'bench_read_spef reference.spef\nwrite_rules -file research12.rules\n')
+        'gen_rcx_model -spef_file_list {reference.spef} -corner_list {research} '
+        '-out_file research12.rules -version 1.2 -comment {Measured twelve-layer research calibration}\n')
     run(['openroad','-no_init','-exit','model.tcl'],'model-fit.log')
     model=out/'research12.rules';text=model.read_text()
     assert re.search(r'(?m)^LayerCount 12\s*$',text)
