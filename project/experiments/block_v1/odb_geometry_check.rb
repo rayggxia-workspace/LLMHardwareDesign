@@ -9,7 +9,7 @@ config.macro_resolution_mode=1
 config.produce_lef_pins=true
 config.lef_pins_datatype=0
 config.lef_pins_suffix='.PIN'
-config.produce_lef_obstructions=false
+config.produce_obstructions=false
 config.dbu=0.0005
 options.lefdef_config=config
 mapping={'metal10'=>[29,0],'via10'=>[210,0],'metal11'=>[211,0],'via11'=>[212,0],'metal12'=>[213,0]}
