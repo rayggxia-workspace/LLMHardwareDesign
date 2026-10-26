@@ -16,6 +16,11 @@
   "output_delay_min_ns": 0.2,
   "input_driver": {"cell": "BUF_X2", "pin": "Z"},
   "output_load_pf": 0.002,
+  "area_accounting": {
+    "stdcell_cap": "All instances whose master has any non-PG terminal, including storage, combinational logic, ties, CTS, sizing, hold and antenna repairs",
+    "physical_only": "Masters with only PG terminals (or none) are counted and priced separately by actual ODB dimensions; they do not become free area",
+    "macro_cost": "Report full fixed die/core footprint, active cell area and physical-only area separately; compare A/C on the same full die budget, never active area as macro footprint"
+  },
   "observe_ports": "All original debug/observation ports retained and loaded; no cost-free observation cut",
   "leaves": {
     "shared109": {"role": "C8 including S16K", "die_um": [2000, 2000], "core_margin_um": 20, "max_stdcell_area_um2": 1350000},

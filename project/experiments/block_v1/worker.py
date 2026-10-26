@@ -135,6 +135,10 @@ try:
     elif MODE=='native-boundary-audit':
         from native_boundary import verify
         verify(ROOT,OUT)
+    elif MODE.startswith('native-receive-'):
+        from native_receive import verify
+        _,_,top,policy=MODE.split('-')
+        verify(ROOT,OUT,CPUS,run,top,policy)
     elif MODE=='field-window':
         from window_field import verify
         verify(ROOT,OUT,CPUS)
