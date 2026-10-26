@@ -14,7 +14,7 @@ from rc_pipeline import configuration
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def verify(root,out,cpus,run):
+def verify(root,out,cpus,run,version=1.0):
     assert cpus>=8
     base=out.parents[2]
     config=configuration(root)
@@ -75,7 +75,8 @@ def verify(root,out,cpus,run):
     # The low coupling threshold is explicit: retain relevant small couplings
     # instead of folding them to ground to improve agreement artificially.
     script='read_lef {'+str(tech)+'}\nread_def heldout.def\n'
-    script+='define_process_corner -ext_model_index 0 research\nextract_parasitics -ext_model_file {'+str(model)+'} -coupling_threshold 0.000001 -context_depth 3\n'
+    assert version in (1.0,2.0,2.2,2.3)
+    script+='define_process_corner -ext_model_index 0 research\nextract_parasitics -ext_model_file {'+str(model)+'} -coupling_threshold 0.000001 -context_depth 3 -version '+str(version)+'\n'
     script+=r'''
 set output [open extracted.tsv w]
 set ccoutput [open coupling.tsv w]
@@ -154,6 +155,7 @@ write_db extracted.odb
                             total_relative_error=t_error,ground_error_over_total=g_error,
                             coupling_error_over_total=c_error,coupling_pairs=pairs,checks=checks))
     record=dict(schema='block-v1-heldout-rc/1',passed=passed,cases=cases,model_sha256=sha(model),binary_sha256=sha(binary),
+                extraction_version=version,
                 declared_gates=dict(resistance_relative=.02,total_relative=.10,ground_error_over_total=.10,
                                     coupling_sum_error_over_total=.10,additional_total_sigma=5,
                                     significant_pair_min_fraction=.05,significant_pair_relative=.20,

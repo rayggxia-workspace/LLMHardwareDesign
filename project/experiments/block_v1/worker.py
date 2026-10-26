@@ -109,6 +109,9 @@ try:
     elif MODE=='heldout-rc':
         from heldout_rc import verify
         verify(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('heldout-rc-v'):
+        from heldout_rc import verify
+        verify(ROOT,OUT,CPUS,run,float(MODE.removeprefix('heldout-rc-v')))
     elif MODE.startswith('reference-shard-'):
         from reference_run import pilot
         pilot(ROOT,OUT,CPUS,int(MODE.rsplit('-',1)[1]))
