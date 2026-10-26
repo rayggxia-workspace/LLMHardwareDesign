@@ -145,3 +145,6 @@ Block v1 独立最终物理入口为 `native-receive-<shared109|transaction6k>-<
 
 
 `partial-geometry-group`在96CPU allocation内通过两个独立worker各48CPU并行`partial-branch-fv`/`partial-via-fv`，生成`partial-geometry-group.json`绑定所有子回执与结果；双方都通过才组通过。084为当前待调度版本，082/083未提交、不再调度。仍通过同一dispatcher，不能额外绕过节点预算。`collect.py`在没有job ID时保留空sacct，不以空`-j`查询其他作业。
+
+
+当前场解合并运行是087，已成功封存；084同082/083从未提交，不再调度。原生080 T6KC仍有8个电容违例，新增 `native_pipeline_cap20.json` 的088/089独立修复链，使用 `native-cap20-run-<top>-<A|C>` / `native-cap20-receive-...` / `native-cap20-view-...`。从封存080 CTS只重跑标准route/final，配置严格原077加CAP_MARGIN=20，预算和电气限值不变。详见[电容修复决策](decisions/2026-10-27-block-v1-native-cap-margin.md)。默认080/085/086链和历史057/081不改；接收及宏视图按明确pipeline/source绑定，不能混用。
