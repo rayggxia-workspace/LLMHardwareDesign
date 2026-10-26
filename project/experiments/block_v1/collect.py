@@ -27,9 +27,24 @@ result['sacct']=subprocess.check_output(['sacct','-n','-P','-j',','.join(ids),'-
 for task in manifest['tasks']:
  p=root/'tasks'/task['id']
  data={'job_id':state['tasks'].get(task['id'],{}).get('job_id'),'artifacts':{}}
- for relative in ['receipt.json','test.json','database.json','capabilities.json','build.json','inventory.json','fsv-qualified.json','native-rule-check.json','probe/route-check.json','negative/receipt.json','physical-inputs.json','native-gds-layers.json','native-config-index.json','geometry-check.json','klayout/mapping.json','reference-patterns/manifest.json','reference-pilot.json','reference-shard.json','reference-fit.json','heldout-inputs.json','heldout-rc.json','mixed0/received/receipt.json','mixed1/received/receipt.json']:
+ for relative in ['receipt.json','test.json','database.json','capabilities.json','build.json','inventory.json','fsv-qualified.json','fv-runtime.json','fv-case.json','direct-field-view.json','primitive-geometry.json','extraction-tool-info.json','native-rule-check.json','probe/route-check.json','negative/receipt.json','physical-inputs.json','native-gds-layers.json','native-config-index.json','geometry-check.json','klayout/mapping.json','reference-patterns/manifest.json','reference-pilot.json','reference-shard.json','reference-fit.json','heldout-inputs.json','heldout-rc.json','mixed0/received/receipt.json','mixed1/received/receipt.json']:
   file=p/relative
   if file.is_file():
+   if relative=='reference-patterns/manifest.json' and file.stat().st_size>256*1024:
+    # Summary fields precede the very large cases array in the writer's
+    # schema. Hash the complete immutable file with bounded login-node RAM.
+    digest=hashlib.sha256();prefix=b'';marker=b'  "cases": ['
+    with file.open('rb')as stream:
+     for chunk in iter(lambda:stream.read(1024*1024),b''):
+      digest.update(chunk)
+      if marker not in prefix:
+       prefix+=chunk
+       assert len(prefix)<=2*1024*1024,'summary prefix missing'
+    assert marker in prefix
+    content=json.loads(prefix.split(marker,1)[0].rstrip().rstrip(b',')+b'\n}')
+    content['large_case_array_and_trailing_fields_omitted_from_index']=True
+    data['artifacts'][relative]=dict(bytes=file.stat().st_size,sha256=digest.hexdigest(),content=content)
+    continue
    raw=file.read_bytes()
    try:
     content=json.loads(raw.decode())

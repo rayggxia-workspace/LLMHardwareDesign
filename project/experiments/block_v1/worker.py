@@ -112,6 +112,9 @@ try:
     elif MODE.startswith('fv-case-'):
         from fv_reference import verify
         verify(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]))
+    elif MODE.startswith('direct-view-'):
+        from direct_field_view import verify
+        verify(ROOT,OUT,run,int(MODE.rsplit('-',1)[1]))
     elif MODE=='heldout-rc':
         from heldout_rc import verify
         verify(ROOT,OUT,CPUS,run)
@@ -136,6 +139,34 @@ try:
                 target.parent.mkdir(parents=True,exist_ok=True)
                 shutil.copyfile(path,target)
         (OUT/'extraction-tool-info.json').write_text(json.dumps(probe,indent=2)+'\n')
+    elif MODE=='geometry-api-probe':
+        # Determine the installed immutable binary's read-only geometry API
+        # before choosing a full-design direct-field reader.
+        binary=shutil.which('openroad')
+        nm=shutil.which('nm')
+        if nm:
+            result=subprocess.run([nm,'-D','--defined-only',binary],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+            selected=[line for line in result.stdout.splitlines()if any(name in line for name in ['dbWireShapeItr','dbShape','dbBlock','Tcl_Init'])]
+            (OUT/'geometry-symbols.txt').write_text('returncode=%d\n'%result.returncode+'\n'.join(selected)+'\n')
+        probe=OUT.parents[2]/'block-v1-20261027-009/tasks/route-probe'
+        prior=json.loads((probe/'receipt.json').read_text());assert prior['passed']is True
+        path=probe/'probe/routed.odb';assert hashlib.sha256(path.read_bytes()).hexdigest()==prior['outputs']['probe/routed.odb']
+        script='read_db {'+str(path)+'}\n'
+        script+=r'''
+foreach pattern {odb::*Wire* odb::*Shape* odb::*Transform*} { puts "API $pattern [info commands $pattern]" }
+set net [[ord::get_db_block] findNet link]
+set wire [$net getWire]
+catch {$wire __probe_methods} message
+puts "WIRE_METHODS $message"
+foreach constructor {odb::dbWireShapeItr odb::new_dbWireShapeItr odb::dbShape odb::new_dbShape} {
+  if {[llength [info commands $constructor]]} {
+    set code [catch {$constructor} value]
+    puts "CONSTRUCTOR $constructor $code $value"
+  }
+}
+'''
+        (OUT/'geometry-api.tcl').write_text(script)
+        run(['openroad','-no_init','-exit','geometry-api.tcl'],'geometry-api.log')
     elif MODE.startswith('heldout-rc-v'):
         from heldout_rc import verify
         verify(ROOT,OUT,CPUS,run,float(MODE.removeprefix('heldout-rc-v')))
