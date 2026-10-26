@@ -122,7 +122,7 @@ while {[gets $input line]>=0} {
   set name [lindex [split $line "\t"] 0]
   set net [[ord::get_db_block] findNet $name]
   if {$net eq "NULL" || $net eq ""} { error "Missing reference net $name" }
-  puts $output "$name\t[$net getTotalResistance 0]\t[$net getTotalCapacitance 0 false]\t[$net getTotalCouplingCap 0]"
+  puts $output "$name\t[$net getTotalResistance]\t[$net getTotalCapacitance]\t[$net getTotalCouplingCap]"
 }
 close $input
 close $output
