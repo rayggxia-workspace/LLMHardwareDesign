@@ -118,6 +118,10 @@ try:
     elif MODE=='heldout-rc':
         from heldout_rc import verify
         verify(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('native-floorplan-'):
+        from native_floorplan import prepare
+        top,policy=MODE.removeprefix('native-floorplan-').rsplit('-',1)
+        prepare(ROOT,OUT,run,top,policy)
     elif MODE=='native-prepare':
         from native_prepare import prepare
         prepare(ROOT,OUT)
