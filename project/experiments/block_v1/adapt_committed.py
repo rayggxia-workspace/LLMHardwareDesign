@@ -139,6 +139,14 @@ def inspect(inp,run,oracle):
  need(sha(m['build_path'])==m['build_sha256'],'actual build identity')
  build=json.loads(Path(m['build_path']).read_text())
  need(build['top']=='shared121' and build['binary_sha256']==m['binary_sha256'] and build['source_commit']==m['source_commit'],'correct top and compiled source')
+ if build.get('mapped_binding'):
+  mb=build['mapped_binding'];need(mb['flow']=='full-mapped-zero-delay','exact full mapped flow')
+  for path_key in ('mapping_receipt','mapped_json','library'):need(sha(mb[path_key])==mb[path_key+'_sha256'],'mapped source binding '+path_key)
+  original=json.loads(Path(mb['mapping_receipt']).read_text());need(original['passed'] is True and original['outputs']['mapped.json']==mb['mapped_json_sha256'],'actual completed mapping')
+  for e in source_bundle['files']:
+   if e['path'].startswith('project/rtl/'):need(original['inputs'][e['path']]==e['sha256'],'mapped production RTL identity')
+  for path,expected in mb['exported_models'].items():need(sha(path)==expected,'exact exported mapped models')
+  need(set(mb['exported_models']).issubset(set(build['command']['argv'])),'compiled mapped models')
  command=json.loads((run/'simulation-command.json').read_text())
  need(command['exit']==0 and sha(command['argv'][0])==m['binary_sha256'],'exact executed new binary')
  need(command['argv'][1:]==[str(inp/'vectors.tsv'),str(run/'actual.jsonl'),str(m['stall']),str(m['pilot'])],'exact input and wait mode')

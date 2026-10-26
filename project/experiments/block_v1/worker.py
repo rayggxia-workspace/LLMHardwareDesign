@@ -100,17 +100,42 @@ try:
     elif MODE=='fsv-build':
         from fsv_build import build
         build(ROOT,OUT,CPUS,run)
-    elif MODE in ('committed-suite','recovery-suite'):
+    elif MODE in ('committed-suite','recovery-suite','mapped-suite'):
         driver='committed_qualification.cpp' if MODE=='recovery-suite' else 'committed_sim.cpp'
+        sources=rtl()
+        mapped_binding=None
+        split=[]
+        if MODE=='mapped-suite':
+            original=OUT.parents[2]/'block-v1-20261027-004/tasks/map-c8-full'
+            old=json.loads((original/'receipt.json').read_text())
+            assert old['passed'] is True
+            for entry in bundle['files']:
+                if entry['path'].startswith('project/rtl/'):
+                    assert old['inputs'][entry['path']]==entry['sha256']
+            for name in ['mapped.json','mapped.v']:
+                assert hashlib.sha256((original/name).read_bytes()).hexdigest()==old['outputs'][name]
+            library=TOOLS/'lib/NangateOpenCellLibrary_typical.lib'
+            script='read_json '+str(original/'mapped.json')+'\nwrite_verilog -noattr -noexpr mapped.v\n'
+            script+='design -reset\nread_liberty -ignore_miss_func -ignore_miss_dir '+str(library)+'\nwrite_verilog -noattr cells.v\n'
+            (OUT/'export.ys').write_text(script)
+            run(['yosys','-s','export.ys'],'export.log')
+            sources=[str(OUT/'mapped.v'),str(OUT/'cells.v')]
+            split=['--output-split','12000','--output-split-cfuncs','150']
+            mapped_binding=dict(flow='full-mapped-zero-delay',mapping_receipt=str(original/'receipt.json'),
+                mapping_receipt_sha256=hashlib.sha256((original/'receipt.json').read_bytes()).hexdigest(),
+                mapped_json=str(original/'mapped.json'),mapped_json_sha256=old['outputs']['mapped.json'],
+                library=str(library),library_sha256=hashlib.sha256(library.read_bytes()).hexdigest(),
+                exported_models={p:hashlib.sha256(Path(p).read_bytes()).hexdigest()for p in sources},
+                qualification='Both S16K and T6K remain mapped cells; no behavioral memory substitution; no delay/STA claim')
         run([str(VERILATOR),'--cc','--exe','--build','-j',str(CPUS),'-Wno-fatal',
              '--top-module','shared121','--prefix','Vshared121','--Mdir',str(OUT/'obj'),
-             '-CFLAGS','-std=c++17 -O2',*rtl(),str(ROOT/'project/experiments/block_v1'/driver)],'build.log')
+             *split,'-CFLAGS','-std=c++17 -O2',*sources,str(ROOT/'project/experiments/block_v1'/driver)],'build.log')
         binary=OUT/'obj/Vshared121'
         binary_sha=hashlib.sha256(binary.read_bytes()).hexdigest()
         receipt['binary_sha256']=binary_sha
         build=dict(top='shared121',binary=str(binary),binary_sha256=binary_sha,source_commit=bundle['source_commit'],
                    source_bundle_sha256=hashlib.sha256((ROOT/'bundle-manifest.json').read_bytes()).hexdigest(),
-                   command=receipt['commands'][0])
+                   command=receipt['commands'][-1],mapped_binding=mapped_binding)
         (OUT/'build.json').write_text(json.dumps(build,indent=2)+'\n')
         inp=OUT.parents[2]/'block-v1-20261027-004/tasks/fixtures/upstream/input01'
         assert inp.is_dir(), str(inp)
@@ -157,7 +182,7 @@ try:
             zf.extractall(OUT/'upstream')
             receipt['upstream_archive_members']=zf.namelist()
         receipt['upstream_archive_sha256']=hashlib.sha256(raw).hexdigest()
-    elif MODE=='overlay':
+    elif MODE in ('overlay','route-probe'):
         run(['python3',str(ROOT/'project/experiments/block_v1/overlay.py'),
              str(TOOLS/'lef/NangateOpenCellLibrary.tech.lef'),
              str(ROOT/'project/experiments/block_v1/technology.json'),str(OUT/'overlay')],'overlay.log')
@@ -165,6 +190,10 @@ try:
                                   'help bench_wires\nhelp gen_rcx_model\nhelp extract_parasitics\n')
         run(['openroad','-no_init','-exit','read.tcl'],'openroad.log')
         run(['openroad','-no_init','-exit',str(ROOT/'project/experiments/block_v1/inspect_overlay.tcl')],'database-read.log')
+        if MODE=='route-probe':
+            run(['python3',str(ROOT/'project/experiments/block_v1/route_probe.py'),'generate',str(OUT/'probe'),'--cpus',str(CPUS)],'probe-generate.log')
+            run(['openroad','-no_init','-exit',str(OUT/'probe/route.tcl')],'route.log')
+            run(['python3',str(ROOT/'project/experiments/block_v1/route_probe.py'),'audit',str(OUT/'probe')],'probe-audit.log')
     else:
         raise ValueError('unsupported mode '+MODE)
     receipt['passed']=True

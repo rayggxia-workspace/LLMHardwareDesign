@@ -41,10 +41,21 @@ def audit(generic,mapped,library,out):
                 memories.append(dict(instance=where,**{k:number(p[k])for k in ('WIDTH','SIZE','RD_PORTS','WR_PORTS')}))
             if t=='$mul':
                 dynamic=all(any(isinstance(bit,int)for bit in c['connections'][port])for port in ('A','B'))
-                multipliers.append(dict(instance=where,dynamic=dynamic,**{k:number(p[k])for k in ('A_WIDTH','B_WIDTH','Y_WIDTH','A_SIGNED','B_SIGNED')}))
+                effective={}
+                for port in ('A','B'):
+                    bits=list(c['connections'][port])
+                    # Frontends extend signed operands to the result width.
+                    # Prove the extension is repeated sign wiring, rather than
+                    # classifying the nominal width as a larger multiplier.
+                    if number(p[port+'_SIGNED']):
+                        while len(bits)>1 and bits[-1]==bits[-2]:bits.pop()
+                    else:
+                        while len(bits)>1 and bits[-1]=='0':bits.pop()
+                    effective[port+'_EFFECTIVE_WIDTH']=len(bits)
+                multipliers.append(dict(instance=where,dynamic=dynamic,**effective,**{k:number(p[k])for k in ('A_WIDTH','B_WIDTH','Y_WIDTH','A_SIGNED','B_SIGNED')}))
     generic_walk('shared121','shared121',[])
     need(Counter((m['WIDTH'],m['SIZE'],m['RD_PORTS'],m['WR_PORTS'])for m in memories)==Counter({(128,1024,1,1):1,(128,384,1,1):1}),'one true S16K plus one true T6K')
-    dynamic=Counter((m['A_WIDTH'],m['B_WIDTH'])for m in multipliers if m['dynamic'])
+    dynamic=Counter((m['A_EFFECTIVE_WIDTH'],m['B_EFFECTIVE_WIDTH'])for m in multipliers if m['dynamic'])
     need(dynamic==Counter({(8,8):8,(32,32):1}),'exact 8 S8 lanes and one shared S32 multiplier')
     def mapped_walk(name,stack):
         nonlocal annotations
