@@ -14,7 +14,8 @@ ARCHIVE_SHA='b2eaefce378aba09cccb966b3c56486412f1958e0a83ff3fb313fd35b3dfe2a7'
 COMMIT='6ea4ca224f3589dd91809933f50f39af66053634'
 
 
-def build(root,out,cpus,run,partial=False,graph=False):
+def build(root,out,cpus,run,partial=False,graph=False,capture=False):
+    graph=graph or capture
     partial=partial or graph
     archive=root.parent/'fsv-source.tar'
     assert hashlib.sha256(archive.read_bytes()).hexdigest()==ARCHIVE_SHA
@@ -40,6 +41,10 @@ def build(root,out,cpus,run,partial=False,graph=False):
     if graph:
         from graph_field_patch import patch as graph_patch
         graph_instrumentation=graph_patch(prefix,out)
+    capture_instrumentation=None
+    if capture:
+        from capture_field_patch import patch as capture_patch
+        capture_instrumentation=capture_patch(prefix,out)
     compiler=Path(shutil.which('g++')).resolve()
     compiler_sha=hashlib.sha256(compiler.read_bytes()).hexdigest()
     run([str(compiler),'--version'],'compiler.log')
@@ -98,6 +103,44 @@ def build(root,out,cpus,run,partial=False,graph=False):
             assert result.returncode!=0
             controls[name]=dict(returncode=result.returncode,log_sha256=hashlib.sha256((out/(name+'.log')).read_bytes()).hexdigest())
         (out/'graph-build-controls.json').write_text(json.dumps(dict(passed=True,controls=controls),indent=2)+'\n')
+    capture_binary=None
+    if capture:
+        obj=compile(root/'project/experiments/block_v1/capture_field_client.cpp')
+        capture_binary=prefix/'llhd-capture-field'
+        run([str(compiler),'-pthread',*[str(p)for p in objects if p.stem!='fsv_client'],str(obj),'-o',str(capture_binary)],'link-capture.log')
+        scene=out/'capture-control.txt'
+        scene.write_text('background 3.9\nmaster target\nbox target -3.2 -.4 12.89 3.2 .4 14.89\n'
+                         'box near -3.2 -.4 15.69 4.8 .4 17.69\n')
+        capture_nodes=out/'capture-nodes.txt'
+        capture_nodes.write_text('near left -2 0 16.69\nnear right 3 0 16.69\n')
+        for threads,name in [(1,'capture-one'),(cpus,'capture-many')]:
+            run([str(capture_binary),str(threads),'.5','32768',str(scene),str(nodes),str(capture_nodes)],name+'.json')
+        assert (out/'capture-one.json').read_bytes()==(out/'capture-many.json').read_bytes()
+        joint=json.loads((out/'capture-one.json').read_text())
+        assert len(joint['captures'])==4 and joint['nodes']==['left','right']
+        run([str(graph_binary),str(cpus),'.5','32768',str(scene),str(nodes)],'capture-net-baseline.json')
+        baseline=json.loads((out/'capture-net-baseline.json').read_text())
+        assert joint['entries']==baseline['entries'],'Terminal bins changed upstream net estimates'
+        controls={}
+        for name,text in [('duplicate-id','near left -2 0 16.69\nnear left 3 0 16.69\n'),
+                          ('duplicate-position','near left -2 0 16.69\nnear right -2 0 16.69\n'),
+                          ('outside','near left -2 0 16.69\nnear right 3 0 30\n'),
+                          ('wrong-net','target left -2 0 13.89\n'),
+                          ('missing',''),('nonfinite','near left inf 0 16.69\n')]:
+            path=out/('capture-'+name+'.txt');path.write_text(text)
+            log=out/('capture-'+name+'.log')
+            with log.open('w')as stream:
+                result=subprocess.run([str(capture_binary),'1','.5','32768',str(scene),str(nodes),str(path)],stdout=stream,stderr=subprocess.STDOUT)
+            assert result.returncode!=0
+            controls[name]=dict(returncode=result.returncode,log_sha256=hashlib.sha256(log.read_bytes()).hexdigest())
+        short_scene=out/'capture-short-scene.txt'
+        short_scene.write_text(scene.read_text().replace('15.69','14.89'))
+        log=out/'capture-short.log'
+        with log.open('w')as stream:
+            result=subprocess.run([str(capture_binary),'1','.5','32768',str(short_scene),str(nodes),str(capture_nodes)],stdout=stream,stderr=subprocess.STDOUT)
+        assert result.returncode!=0 and 'distinct conductor nets touch or overlap'in log.read_text()
+        controls['touching-nets']=dict(returncode=result.returncode,log_sha256=hashlib.sha256(log.read_bytes()).hexdigest())
+        (out/'capture-build-controls.json').write_text(json.dumps(dict(passed=True,controls=controls),indent=2)+'\n')
     record=dict(schema='block-v1-fsv-qualified/1',upstream_commit=COMMIT,
                 upstream_archive_sha256=ARCHIVE_SHA,compiler=str(compiler),compiler_sha256=compiler_sha,
                 flags=flags,binary=str(binary),binary_sha256=hashlib.sha256(binary.read_bytes()).hexdigest(),
@@ -114,5 +157,9 @@ def build(root,out,cpus,run,partial=False,graph=False):
         record.update(graph_instrumentation=graph_instrumentation,graph_binary=str(graph_binary),
             graph_binary_sha256=hashlib.sha256(graph_binary.read_bytes()).hexdigest(),
             scope='Default goldens, existing plane controls, graph thread/conservation and invalid-node controls only; local conductor charge and distributed RC require independent scientific acceptance')
+    if capture:
+        record.update(capture_instrumentation=capture_instrumentation,capture_binary=str(capture_binary),
+            capture_binary_sha256=hashlib.sha256(capture_binary.read_bytes()).hexdigest(),
+            scope='Default/plane/graph controls plus actual-terminal joint-bin conservation/thread/invalid-input controls; scientific local coupling, full-block extraction and stitching remain unqualified')
     (out/'fsv-qualified.json').write_text(json.dumps(record,indent=2)+'\n')
 
