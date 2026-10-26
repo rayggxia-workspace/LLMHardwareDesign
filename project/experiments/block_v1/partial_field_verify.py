@@ -68,7 +68,36 @@ def grid(spec_path):
     Path(spec['output']).write_text(json.dumps(result,indent=2)+'\n')
 
 
-def verify(root,out,cpus,run,pair=False):
+def fixture(geometry,pair):
+    """Continuous target with an x=0 partition, never an exposed cut face.
+
+    All target boxes have one electrical identity. Touching neighbor labels
+    are both held at zero during the target solve, resolving their capture
+    columns without introducing a dielectric gap or exciting adjacent parts.
+    """
+    assert geometry in ('straight','branch','via')
+    target=[('target',[-3.2,-.4,12.89,0,.4,14.89]),
+            ('target',[0,-.4,12.89,3.2,.4,14.89])]
+    if geometry=='branch':
+        assert pair
+        target += [('target',[-.4,.4,12.89,0,3.2,14.89]),
+                   ('target',[0,.4,12.89,.4,3.2,14.89])]
+    elif geometry=='via':
+        assert pair
+        # Exact native M10 height/thickness, via10 dielectric gap, and M11.
+        # The whole vertical junction lies in the right half of x=0.
+        target=[('target',[-3.2,-.4,10.09,0,.4,12.09]),
+                ('target',[0,-.4,10.09,3.2,.4,12.09]),
+                ('target',[1.2,-.4,12.09,2.,.4,12.89]),
+                ('target',[1.2,-.4,12.89,2.,3.2,14.89])]
+    other=[('near',[-3.2,-.4,15.69,0,.4,17.69])]
+    if pair:
+        other=[('near_left',[-1.6,-.4,15.69,0,.4,17.69]),
+               ('near_right',[0,-.4,15.69,4.8,.4,17.69])]
+    return target+other
+
+
+def verify(root,out,cpus,run,pair=False,geometry='straight'):
     assert cpus>=16
     base=out.parents[2];solver=base/'block-v1-20261027-069/tasks/fsv-partial-build'
     receipt=json.loads((solver/'receipt.json').read_text());assert receipt['passed']is True
@@ -83,16 +112,7 @@ def verify(root,out,cpus,run,pair=False):
     # inserts the cut into FV grid lines without creating an artificial gap.
     # In this straight fixture no exposed x-normal target face lies at the
     # cut, so adjacent free-cell x selects the exact conductor-face half.
-    boxes=[('target',[-3.2,-.4,12.89,0,.4,14.89]),
-           ('target',[0,-.4,12.89,3.2,.4,14.89]),
-           ('near',[-3.2,-.4,15.69,0,.4,17.69])]
-    if pair:
-        # The two other-wire labels share one exact touching conductor
-        # geometry and are both at zero during the target solve. Their
-        # separate capture columns resolve external-node coupling; no gap
-        # or independent excitation of touching target pieces is introduced.
-        boxes=boxes[:2]+[('near_left',[-1.6,-.4,15.69,0,.4,17.69]),
-                         ('near_right',[0,-.4,15.69,4.8,.4,17.69])]
+    boxes=fixture(geometry,pair)
     scene=out/'scene.txt';scene.write_text('background 3.9\nmaster target\n'+
         ''.join('box '+name+' '+' '.join(map(str,box))+'\n'for name,box in boxes))
     source=prefix/'source/fv3d_golden.py'
@@ -156,7 +176,7 @@ def verify(root,out,cpus,run,pair=False):
         gates['rewire_control_preserves_physical_signs_and_marginals']=pair_control['all_couplings_negative']and pair_control['marginals_preserved']
         gates['physical_partial_signs']=bool((last[0]>0).all()and(last[1:]<0).all())
     result=dict(schema='block-v1-partial-field-fv/1',passed=all(gates.values()),gates=gates,
-        boxes=boxes,cut_axis='x',cut_um=0,scene_sha256=sha(scene),partial_binary_sha256=sha(binary),
+        boxes=boxes,fixture=geometry,cut_axis='x',cut_um=0,scene_sha256=sha(scene),partial_binary_sha256=sha(binary),
         fsv_build_receipt_sha256=sha(solver/'receipt.json'),fv_runtime_sha256=sha(runtime_file),
         fv_instrumentation_sha256=sha(out/'research-fv-partial.py'),grids=grids,field_rows=rows,
         reference_partial_ff=reference.tolist(),node_pair_control=pair_control,node_pair_pilot=pair,full_total_ff=total,extrapolation_over_total=grid_step,
@@ -165,7 +185,7 @@ def verify(root,out,cpus,run,pair=False):
             local_comparison=.03,external_pair_relative=.05 if pair else None,external_pair_over_total=.005 if pair else None,
             partial_sigma=.001 if pair else .003,sigma_factor=5,walks_per_offset=walks,offsets=offsets),
         qualified_full_block=False,qualified_node_pair_coupling=False,
-        scope='Straight-wire local/pair charge pilot only; finite-offset Gaussian flux must pass FV/convergence. Branches, general distributed extraction and native/new-layer stitching remain unqualified')
+        scope='Single x-plane local/pair charge fixture only; finite-offset Gaussian flux must pass FV/convergence. General graph partitions, distributed extraction and native/new-layer stitching remain unqualified')
     (out/'partial-field-fv.json').write_text(json.dumps(result,indent=2)+'\n')
     assert result['passed'],'Locked local-charge pilot gate failed; preserve all outputs'
 

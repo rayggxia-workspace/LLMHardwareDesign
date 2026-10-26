@@ -13,8 +13,10 @@ from native_annotation import inspect as annotation_audit
 from native_formal import receive as formal_audit
 
 
-def verify(root,out,cpus,run,top,policy):
-    config=json.loads((root/'project/experiments/block_v1/native_pipeline.json').read_text())
+def verify(root,out,cpus,run,top,policy,historical=False):
+    pipeline='native_pipeline_057.json' if historical else 'native_pipeline.json'
+    config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
+    assert bool(config.get('historical_input_contract',False))==historical
     base=out.parents[2];source=base/config['candidate_run']/('tasks/native-run-'+top+'-'+policy.lower())
     receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed']is True
     proof=base/'block-v1-20261027-066/tasks/native-sta-control'
@@ -104,6 +106,7 @@ def verify(root,out,cpus,run,top,policy):
         core_bbox_dbu=core,core_area_um2=(core[2]-core[0])*(core[3]-core[1])/scale**2,
         independent_drc_items=len(items),native_deck_sha256=file_sha(deck),gds_sha256=file_sha(gds),
         rc_coverage_qualified=coverage['passed'],exact_final_function_qualified=False,twelve_layer_qualified=False,
+        historical_input_contract=historical,pipeline=pipeline,
         qualified_hard_macro=False,scope='Native final ODB/SDC/SPEF physical gates; RC coverage, final function, macro views and twelve-layer research qualification remain separate')
     (out/'native-physical-receiver.json').write_text(json.dumps(result,indent=2)+'\n')
     assert result['passed'],'Independent native physical gate failed; preserve candidate and reports'

@@ -135,9 +135,10 @@ try:
     elif MODE=='native-boundary-audit':
         from native_boundary import verify
         verify(ROOT,OUT)
-    elif MODE in ('partial-field-fv','partial-pair-fv'):
+    elif MODE in ('partial-field-fv','partial-pair-fv','partial-branch-fv','partial-via-fv'):
         from partial_field_verify import verify
-        verify(ROOT,OUT,CPUS,run,pair=MODE=='partial-pair-fv')
+        geometry={'partial-branch-fv':'branch','partial-via-fv':'via'}.get(MODE,'straight')
+        verify(ROOT,OUT,CPUS,run,pair=MODE!='partial-field-fv',geometry=geometry)
     elif MODE=='fsv-partial-build':
         from fsv_build import build
         build(ROOT,OUT,CPUS,run,partial=True)
@@ -164,6 +165,10 @@ try:
         if MODE=='native-formal-control':
             from native_formal import fixture
             fixture(ROOT,OUT,run)
+    elif MODE.startswith('native-history-receive-'):
+        from native_receive import verify
+        top,policy=MODE.removeprefix('native-history-receive-').rsplit('-',1)
+        verify(ROOT,OUT,CPUS,run,top,policy,historical=True)
     elif MODE.startswith('native-receive-'):
         from native_receive import verify
         _,_,top,policy=MODE.split('-')
