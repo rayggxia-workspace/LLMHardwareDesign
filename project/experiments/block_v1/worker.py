@@ -135,6 +135,9 @@ try:
     elif MODE=='native-boundary-audit':
         from native_boundary import verify
         verify(ROOT,OUT)
+    elif MODE=='fsv-partial-build':
+        from fsv_build import build
+        build(ROOT,OUT,CPUS,run,partial=True)
     elif MODE=='native-physical-control':
         source=OUT.parents[2]/'block-v1-20261027-063/tasks/native-sta-control'
         prior=json.loads((source/'receipt.json').read_text());assert prior['passed']is True

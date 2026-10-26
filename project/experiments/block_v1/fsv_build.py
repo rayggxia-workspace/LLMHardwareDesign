@@ -14,7 +14,7 @@ ARCHIVE_SHA='b2eaefce378aba09cccb966b3c56486412f1958e0a83ff3fb313fd35b3dfe2a7'
 COMMIT='6ea4ca224f3589dd91809933f50f39af66053634'
 
 
-def build(root,out,cpus,run):
+def build(root,out,cpus,run,partial=False):
     archive=root.parent/'fsv-source.tar'
     assert hashlib.sha256(archive.read_bytes()).hexdigest()==ARCHIVE_SHA
     prefix=Path('/public/home/yuzelu/opt/eda')/('llhd-fsv-i121-'+root.parent.name)
@@ -31,6 +31,10 @@ def build(root,out,cpus,run):
     for entry in manifest['files']:
         data=(prefix/entry['path']).read_bytes()
         assert len(data)==entry['bytes'] and hashlib.sha256(data).hexdigest()==entry['sha256']
+    instrumentation=None
+    if partial:
+        from partial_field_patch import patch
+        instrumentation=patch(prefix,out)
     compiler=Path(shutil.which('g++')).resolve()
     compiler_sha=hashlib.sha256(compiler.read_bytes()).hexdigest()
     run([str(compiler),'--version'],'compiler.log')
@@ -57,6 +61,18 @@ def build(root,out,cpus,run):
                  for mode in ['golden2d','golden3d']]
         for future in futures:future.result()
     run([str(binary),'determinism',str(cpus)],'determinism.jsonl')
+    partial_binary=None
+    if partial:
+        client=root/'project/experiments/block_v1/partial_field_client.cpp'
+        obj=compile(client)
+        partial_binary=prefix/'llhd-partial-field'
+        run([str(compiler),'-pthread',*[str(p)for p in objects if p.stem!='fsv_client'],str(obj),'-o',str(partial_binary)],'link-partial.log')
+        scene=out/'partial-control.txt'
+        scene.write_text('background 3.9\nmaster target\nbox target -3.2 -.4 12.89 3.2 .4 14.89\n'
+                         'box near -3.2 -.4 15.69 0 .4 17.69\n')
+        for threads,name in [(1,'partial-one'),(cpus,'partial-many')]:
+            run([str(partial_binary),str(threads),'.5','32768',str(scene),'0','0'],name+'.json')
+        assert (out/'partial-one.json').read_bytes()==(out/'partial-many.json').read_bytes(),'Partial bins depend on thread count'
     record=dict(schema='block-v1-fsv-qualified/1',upstream_commit=COMMIT,
                 upstream_archive_sha256=ARCHIVE_SHA,compiler=str(compiler),compiler_sha256=compiler_sha,
                 flags=flags,binary=str(binary),binary_sha256=hashlib.sha256(binary.read_bytes()).hexdigest(),
@@ -64,5 +80,10 @@ def build(root,out,cpus,run):
                        '6 3D master rows: upstream crossing/end FD reference bounds',
                        'fixed walks: thread invariance and epsilon linear scaling'],
                 scope='Standalone reference solver subset; not integrated OpenROAD extraction or process signoff')
+    if partial:
+        record.update(source_variant='Explicit research flux-bin instrumentation of pinned upstream; default goldens rerun',
+            instrumentation=instrumentation,partial_binary=str(partial_binary),
+            partial_binary_sha256=hashlib.sha256(partial_binary.read_bytes()).hexdigest(),
+            scope='Default upstream golden controls and partial-bin thread/conservation controls only; conductor-local charge and distributed RC remain unqualified')
     (out/'fsv-qualified.json').write_text(json.dumps(record,indent=2)+'\n')
 
