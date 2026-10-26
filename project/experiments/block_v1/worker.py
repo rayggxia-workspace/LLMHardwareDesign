@@ -103,6 +103,9 @@ try:
     elif MODE=='reference-pilot':
         from reference_run import pilot
         pilot(ROOT,OUT,CPUS)
+    elif MODE=='reference-fit':
+        from reference_fit import fit
+        fit(ROOT,OUT,run)
     elif MODE.startswith('reference-shard-'):
         from reference_run import pilot
         pilot(ROOT,OUT,CPUS,int(MODE.rsplit('-',1)[1]))
