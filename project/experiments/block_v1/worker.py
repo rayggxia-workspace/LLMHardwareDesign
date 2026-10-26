@@ -122,6 +122,9 @@ try:
         from native_floorplan import prepare
         top,policy=MODE.removeprefix('native-floorplan-').rsplit('-',1)
         prepare(ROOT,OUT,run,top,policy)
+    elif MODE=='routed-field':
+        from routed_field import verify
+        verify(ROOT,OUT,CPUS,run)
     elif MODE=='physical-inputs-compatible':
         from physical_inputs import prepare
         prepare(ROOT,OUT,CPUS,run,compatible=True)
