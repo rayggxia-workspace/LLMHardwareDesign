@@ -135,6 +135,9 @@ try:
     elif MODE=='native-boundary-audit':
         from native_boundary import verify
         verify(ROOT,OUT)
+    elif MODE=='native-sta-control':
+        from native_sta import fixture
+        fixture(ROOT,OUT,run)
     elif MODE=='native-acceptance-info':
         flow=Path('/OpenROAD-flow-scripts/flow')
         names=['scripts/final_outputs.tcl','scripts/final_connect.tcl','scripts/generate_abstract.tcl','scripts/report_metrics.tcl',
