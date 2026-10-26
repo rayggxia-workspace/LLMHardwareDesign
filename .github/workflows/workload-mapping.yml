@@ -50,4 +50,10 @@ jobs:
             .local/runs/ci/receipt.json
             .local/runs/ci/science.json
             .local/runs/ci/failure.json
+            .local/runs/search-smoke/receipt.json
+            .local/runs/search-smoke/science.json
           if-no-files-found: warn
+      - name: Optimization smoke and public adapter roundtrip
+        env:
+          GIT_NO_LAZY_FETCH: '1'
+        run: python -B -m project.analysis.workload_mapping.search_experiment --suite smoke --export --output-dir .local/runs/search-smoke
