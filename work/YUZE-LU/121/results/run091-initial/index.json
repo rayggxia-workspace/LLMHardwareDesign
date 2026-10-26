@@ -1,0 +1,78 @@
+{
+  "remote_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-091",
+  "manifest": {
+    "run_id": "block-v1-20261027-091",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": true,
+    "source_commit": "f59e926925bc11f84dbb42d11100fd6ea0731894",
+    "source_archive_sha256": "5fcce24c2595df25aac79664fba7e588ef05cc4656a22804b4ac095303782573",
+    "tasks": [
+      {
+        "id": "graph-geometry-group",
+        "partition": "c96",
+        "cpus": 96,
+        "memory": "0",
+        "minutes": 0,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-091/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-091/src",
+          "graph-geometry-group"
+        ],
+        "node": "node21",
+        "after_runs": [
+          "block-v1-20261027-090:fsv-graph-build"
+        ]
+      }
+    ]
+  },
+  "manifest_sha256": "74f5fe4786ab7de4b6ce5638d2f23ed8c5e9189e3d8fa59b22ab24cfa947ffec",
+  "state": {
+    "created_utc": "2026-10-26T22:51:51.015635+00:00",
+    "manifest_sha256": "74f5fe4786ab7de4b6ce5638d2f23ed8c5e9189e3d8fa59b22ab24cfa947ffec",
+    "run_id": "block-v1-20261027-091",
+    "tasks": {
+      "graph-geometry-group": {
+        "id": "graph-geometry-group",
+        "job_id": "92117",
+        "observed_utc": "2026-10-26T23:09:45.004037+00:00",
+        "reserved_utc": "2026-10-26T23:09:31.526763+00:00",
+        "state": "RUNNING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodelist=node21",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=96",
+          "--partition=c96",
+          "--time=0",
+          "--mem=0",
+          "--job-name=yzl-bv1-graph-geometry-group",
+          "--comment=yzl-bv1:block-v1-20261027-091:graph-geometry-group",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-091/tasks/graph-geometry-group",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-091/tasks/graph-geometry-group/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-091/tasks/graph-geometry-group/job.sh"
+        ],
+        "submitted_utc": "2026-10-26T23:09:31.609409+00:00",
+        "token": "yzl-bv1:block-v1-20261027-091:graph-geometry-group"
+      }
+    }
+  },
+  "tasks": {
+    "graph-geometry-group": {
+      "job_id": "92117",
+      "artifacts": {},
+      "job_log": {
+        "bytes": 48,
+        "sha256": "76a333f96e9d42017d377819cd2fc7f91d9cd517dc6453f081e170fd58342070",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\n"
+      }
+    }
+  },
+  "source_archive_sha256": "5fcce24c2595df25aac79664fba7e588ef05cc4656a22804b4ac095303782573",
+  "sacct": "92117|RUNNING|0:0|00:00:16|00:00:00||96|node21\n92117.batch|RUNNING|0:0|00:00:16|00:00:00||96|node21\n92117.extern|RUNNING|0:0|00:00:16|00:00:00||96|node21\n",
+  "collected_utc": "2026-10-26T23:09:47.872418+00:00"
+}

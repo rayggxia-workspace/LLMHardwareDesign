@@ -1,0 +1,965 @@
+{
+  "remote_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-090",
+  "manifest": {
+    "run_id": "block-v1-20261027-090",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": true,
+    "source_commit": "fb92af8e1fd18c50fc20e0dbb9c5875ca40e44dc",
+    "source_archive_sha256": "06550f291d16c469f27848f29a7e67e643aa00ce992b498501da4c49e156100e",
+    "tasks": [
+      {
+        "id": "fsv-graph-build",
+        "partition": "c96",
+        "node": "node21",
+        "cpus": 16,
+        "memory": "0",
+        "minutes": 0,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-090/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-090/src",
+          "fsv-graph-build"
+        ]
+      }
+    ]
+  },
+  "manifest_sha256": "bb5231d58e446536d2953a16ef1f5bd6be3768121261cee0aa40d785f6698c91",
+  "state": {
+    "created_utc": "2026-10-26T22:49:17.482568+00:00",
+    "manifest_sha256": "bb5231d58e446536d2953a16ef1f5bd6be3768121261cee0aa40d785f6698c91",
+    "run_id": "block-v1-20261027-090",
+    "tasks": {
+      "fsv-graph-build": {
+        "exit_code": "0:0",
+        "id": "fsv-graph-build",
+        "job_id": "92114",
+        "observed_utc": "2026-10-26T23:07:47.961497+00:00",
+        "reserved_utc": "2026-10-26T23:04:39.453366+00:00",
+        "state": "COMPLETED",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodelist=node21",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=16",
+          "--partition=c96",
+          "--time=0",
+          "--mem=0",
+          "--job-name=yzl-bv1-fsv-graph-build",
+          "--comment=yzl-bv1:block-v1-20261027-090:fsv-graph-build",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-090/tasks/fsv-graph-build",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-090/tasks/fsv-graph-build/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-090/tasks/fsv-graph-build/job.sh"
+        ],
+        "submitted_utc": "2026-10-26T23:04:39.552397+00:00",
+        "token": "yzl-bv1:block-v1-20261027-090:fsv-graph-build"
+      }
+    }
+  },
+  "tasks": {
+    "fsv-graph-build": {
+      "job_id": "92114",
+      "artifacts": {
+        "receipt.json": {
+          "bytes": 44001,
+          "sha256": "fdfc314911282d4f2d570adb5ce2eacff21db11334d98d33ec10b0be9ebd92b4",
+          "content": {
+            "mode": "fsv-graph-build",
+            "cpus": 16,
+            "started": 1793055925.770202,
+            "commands": [
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "--version"
+                ],
+                "log": "compiler.log",
+                "started": 1793055930.9314835,
+                "returncode": 0,
+                "finished": 1793055930.9653337
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src/AliasTable.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/AliasTable.o"
+                ],
+                "log": "compile-AliasTable.log",
+                "started": 1793055930.981989,
+                "returncode": 0,
+                "finished": 1793055931.6463308
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src/CubeGreens.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/CubeGreens.o"
+                ],
+                "log": "compile-CubeGreens.log",
+                "started": 1793055930.9824445,
+                "returncode": 0,
+                "finished": 1793055932.0889745
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src/CubePanels.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/CubePanels.o"
+                ],
+                "log": "compile-CubePanels.log",
+                "started": 1793055930.982758,
+                "returncode": 0,
+                "finished": 1793055931.6702266
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src/Dielectric.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Dielectric.o"
+                ],
+                "log": "compile-Dielectric.log",
+                "started": 1793055930.9830592,
+                "returncode": 0,
+                "finished": 1793055932.0454254
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src/GaussianSurface.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/GaussianSurface.o"
+                ],
+                "log": "compile-GaussianSurface.log",
+                "started": 1793055930.9833465,
+                "returncode": 0,
+                "finished": 1793055932.918676
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src/Geometry.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Geometry.o"
+                ],
+                "log": "compile-Geometry.log",
+                "started": 1793055930.983639,
+                "returncode": 0,
+                "finished": 1793055931.7709646
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src/Itf.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Itf.o"
+                ],
+                "log": "compile-Itf.log",
+                "started": 1793055930.9839342,
+                "returncode": 0,
+                "finished": 1793055933.133242
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src/LayerModes.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/LayerModes.o"
+                ],
+                "log": "compile-LayerModes.log",
+                "started": 1793055930.9842222,
+                "returncode": 0,
+                "finished": 1793055931.54587
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src/LayeredCubeGreens.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/LayeredCubeGreens.o"
+                ],
+                "log": "compile-LayeredCubeGreens.log",
+                "started": 1793055930.9845238,
+                "returncode": 0,
+                "finished": 1793055932.2102735
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src/LayeredSquareGreens.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/LayeredSquareGreens.o"
+                ],
+                "log": "compile-LayeredSquareGreens.log",
+                "started": 1793055930.9848409,
+                "returncode": 0,
+                "finished": 1793055932.144976
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src/Scene.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Scene.o"
+                ],
+                "log": "compile-Scene.log",
+                "started": 1793055930.985141,
+                "returncode": 0,
+                "finished": 1793055932.5751824
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src/Solver.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Solver.o"
+                ],
+                "log": "compile-Solver.log",
+                "started": 1793055930.9854183,
+                "returncode": 0,
+                "finished": 1793055933.5103316
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src/SpatialIndex.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/SpatialIndex.o"
+                ],
+                "log": "compile-SpatialIndex.log",
+                "started": 1793055930.9857123,
+                "returncode": 0,
+                "finished": 1793055932.005499
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src/SquareGreens.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/SquareGreens.o"
+                ],
+                "log": "compile-SquareGreens.log",
+                "started": 1793055930.9858706,
+                "returncode": 0,
+                "finished": 1793055932.0476623
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src/Stack.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Stack.o"
+                ],
+                "log": "compile-Stack.log",
+                "started": 1793055930.986151,
+                "returncode": 0,
+                "finished": 1793055931.5440173
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src/WorkerPool.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/WorkerPool.o"
+                ],
+                "log": "compile-WorkerPool.log",
+                "started": 1793055930.9865358,
+                "returncode": 0,
+                "finished": 1793055931.8589773
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp/Structures.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Structures.o"
+                ],
+                "log": "compile-Structures.log",
+                "started": 1793055931.5441165,
+                "returncode": 0,
+                "finished": 1793055932.3718374
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-090/src/project/experiments/block_v1/fsv_client.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/fsv_client.o"
+                ],
+                "log": "compile-fsv_client.log",
+                "started": 1793055931.5459752,
+                "returncode": 0,
+                "finished": 1793055933.313601
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-pthread",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/AliasTable.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/CubeGreens.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/CubePanels.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Dielectric.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/GaussianSurface.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Geometry.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Itf.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/LayerModes.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/LayeredCubeGreens.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/LayeredSquareGreens.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Scene.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Solver.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/SpatialIndex.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/SquareGreens.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Stack.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/WorkerPool.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Structures.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/fsv_client.o",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/llhd-fsv"
+                ],
+                "log": "link.log",
+                "started": 1793055933.5118983,
+                "returncode": 0,
+                "finished": 1793055933.8275578
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/llhd-fsv",
+                  "golden2d",
+                  "8"
+                ],
+                "log": "golden2d.jsonl",
+                "started": 1793055934.4984818,
+                "returncode": 0,
+                "finished": 1793055979.4858313
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/llhd-fsv",
+                  "golden3d",
+                  "8"
+                ],
+                "log": "golden3d.jsonl",
+                "started": 1793055934.4986205,
+                "returncode": 0,
+                "finished": 1793055969.532934
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/llhd-fsv",
+                  "determinism",
+                  "16"
+                ],
+                "log": "determinism.jsonl",
+                "started": 1793055979.4860759,
+                "returncode": 0,
+                "finished": 1793055979.5238695
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-090/src/project/experiments/block_v1/partial_field_client.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/partial_field_client.o"
+                ],
+                "log": "compile-partial_field_client.log",
+                "started": 1793055979.5239205,
+                "returncode": 0,
+                "finished": 1793055980.4221716
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-pthread",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/AliasTable.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/CubeGreens.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/CubePanels.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Dielectric.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/GaussianSurface.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Geometry.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Itf.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/LayerModes.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/LayeredCubeGreens.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/LayeredSquareGreens.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Scene.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Solver.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/SpatialIndex.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/SquareGreens.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Stack.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/WorkerPool.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Structures.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/partial_field_client.o",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/llhd-partial-field"
+                ],
+                "log": "link-partial.log",
+                "started": 1793055980.4222553,
+                "returncode": 0,
+                "finished": 1793055980.704134
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/llhd-partial-field",
+                  "1",
+                  ".5",
+                  "32768",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-090/tasks/fsv-graph-build/partial-control.txt",
+                  "0",
+                  "0"
+                ],
+                "log": "partial-one.json",
+                "started": 1793055980.7243683,
+                "returncode": 0,
+                "finished": 1793055980.7742324
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/llhd-partial-field",
+                  "16",
+                  ".5",
+                  "32768",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-090/tasks/fsv-graph-build/partial-control.txt",
+                  "0",
+                  "0"
+                ],
+                "log": "partial-many.json",
+                "started": 1793055980.774245,
+                "returncode": 0,
+                "finished": 1793055980.8038487
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-090/src/project/experiments/block_v1/graph_field_client.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/graph_field_client.o"
+                ],
+                "log": "compile-graph_field_client.log",
+                "started": 1793055980.8107555,
+                "returncode": 0,
+                "finished": 1793055981.832963
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-pthread",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/AliasTable.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/CubeGreens.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/CubePanels.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Dielectric.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/GaussianSurface.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Geometry.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Itf.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/LayerModes.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/LayeredCubeGreens.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/LayeredSquareGreens.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Scene.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Solver.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/SpatialIndex.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/SquareGreens.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Stack.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/WorkerPool.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/Structures.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/graph_field_client.o",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/llhd-graph-field"
+                ],
+                "log": "link-graph.log",
+                "started": 1793055981.833052,
+                "returncode": 0,
+                "finished": 1793055982.084891
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/llhd-graph-field",
+                  "1",
+                  ".5",
+                  "32768",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-090/tasks/fsv-graph-build/partial-control.txt",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-090/tasks/fsv-graph-build/graph-nodes.txt"
+                ],
+                "log": "graph-one.json",
+                "started": 1793055982.1061323,
+                "returncode": 0,
+                "finished": 1793055982.1575904
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/llhd-graph-field",
+                  "16",
+                  ".5",
+                  "32768",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-090/tasks/fsv-graph-build/partial-control.txt",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-090/tasks/fsv-graph-build/graph-nodes.txt"
+                ],
+                "log": "graph-many.json",
+                "started": 1793055982.1576033,
+                "returncode": 0,
+                "finished": 1793055982.183635
+              }
+            ],
+            "source_commit": "fb92af8e1fd18c50fc20e0dbb9c5875ca40e44dc",
+            "inputs": {
+              "bundle-manifest.json": "5759a43c83a3fc2ce79ae00ed8706512b15ded365c6ec17d94ef2a4d30e36fdb",
+              "project/experiments/attention_rtl/receive.py": "ad04114b0b5c3b9d6bfbbd59b9a7db5721eac312879ae51887fa0ebaaa60d9ec",
+              "project/experiments/block_v1/README.md": "20b84747d8bb79643431107dfe669d7861bf53ab8937ca4008c619e6efb896ae",
+              "project/experiments/block_v1/adapt_committed.py": "0b24bf13c6ff9ed8acf4788907a1f516249895556448ecd2dbb6bff11dcf37d2",
+              "project/experiments/block_v1/bundle.py": "cdcb7869da894d6665a773376e3391d5f55cf4f30d5826f09e1ca6946fe554d1",
+              "project/experiments/block_v1/collect.py": "3a675789ee4b37c10436cf817d17dd8adc12e42a2329707d51223c69c4e82165",
+              "project/experiments/block_v1/committed_qualification.cpp": "e67cf27daa0c5d4764f6086d8a927a799668bf2f305757a342c8b13c50bf8870",
+              "project/experiments/block_v1/committed_sim.cpp": "ababe0b37ce8fc93075ef6d863903c9b788852c2f4016ee64d465c59a6491f13",
+              "project/experiments/block_v1/constraint_readback.py": "8c0c2bab0757dbd764fc5e5bd7267aa0a6ffc2a46be08c7ae4a950bebd0d95be",
+              "project/experiments/block_v1/constraints.py": "9fb38f12380f179d7e79e842a8b7ec516cf6a2de5a0a2095354c007693352460",
+              "project/experiments/block_v1/direct_field_view.py": "e995f6dee326e6f907cf01abb831365f667169c931cefb49e023f29d7d0de0bb",
+              "project/experiments/block_v1/dispatch.py": "e8385cb7223ae3a3655baafb7d139145e211b8f308c59bf4ee72d403e9e7f9af",
+              "project/experiments/block_v1/fetch_fsv.py": "c24c51a160f49c8cf5d77e48637bd05ae824192694ab1f45d2be04348f0ee75b",
+              "project/experiments/block_v1/fsv_build.py": "479dba018bedf587275f5915718bc27097b8a4c335841651da896aed1e6f76ee",
+              "project/experiments/block_v1/fsv_client.cpp": "948929e56cf4272c72248353aa93625a496c81914f84b94d2a41fac2384194ba",
+              "project/experiments/block_v1/fv_reference.py": "7310d7560f610d1bf42677b1d1b8573d89069072d3974cd349f781ef3ce51059",
+              "project/experiments/block_v1/graph_field_client.cpp": "9a1b961b3a0a85e85bcff5256685dcb82bff0d722fdb26805db3449c934ec643",
+              "project/experiments/block_v1/graph_field_patch.py": "6e8d89acd2abf1ba743ce5a6e1fc23ffe97609da6d5328497b1801138e01d3dc",
+              "project/experiments/block_v1/gverify121.py": "77f22a3d9f699e411ab33ce2512cd7a041ab8fb9832294a2d2c51ba8c06fb15d",
+              "project/experiments/block_v1/heldout_rc.py": "cd614546b37b6537c77c9ab78cc4514a1362833a2493791e15e4c32806fdf137",
+              "project/experiments/block_v1/import_sources.py": "48f634fead3cb583bbd6017e4206169582b901469d84fcc104af69cfd7f5bb57",
+              "project/experiments/block_v1/inspect_native_gds.rb": "306dbfe313e167bcf9e3c4b5f5a3149c8dc3f38a61414e9ef3a67bc4b491943b",
+              "project/experiments/block_v1/inspect_overlay.tcl": "0684947b17abe0f8e2d5ccda44b522a0bd883b30a502f5367252b2f4670e116f",
+              "project/experiments/block_v1/inventory121.py": "f2c5fa7aa18a86104f7b0ac50a857664b711748f1818621d08a5c0b395099900",
+              "project/experiments/block_v1/io_slots.py": "e4c7ab88f5f45e9eeaf87f11f76286c067382da43023bec08cfbf695f30b933d",
+              "project/experiments/block_v1/klayout_overlay.py": "17f0e57e9138ffeeaa04226e71281a78209dab27b406192a62415642ca4e598d",
+              "project/experiments/block_v1/make_wrapper.py": "a23dd9e51675d5b829f432f039ae7b70e9602b998aca663c09e84d9a2f8e8070",
+              "project/experiments/block_v1/model_coverage.py": "c9aeabce1939efecd7235c3c2cf4b73682abe48c155fcec2f0bb67b0961784fd",
+              "project/experiments/block_v1/native_acceptance_info.tcl": "0ada675d449c2ee18cce36b3cd508e1055eccc0962c517f02149d6ac56f80f61",
+              "project/experiments/block_v1/native_annotation.py": "19c1da7d508db105ea5d6117de099989a8fa2e6295f87bfe51f6763b641b361c",
+              "project/experiments/block_v1/native_annotation.tcl": "07c090608e024986b49b4a9124071d4e8220e5d1f378df3c83c49bdbd3fb527a",
+              "project/experiments/block_v1/native_boundary.py": "991965779c9b6ddcdb30151443164e4e9fd39e4a98a105192d82d6073a95d23b",
+              "project/experiments/block_v1/native_floorplan.py": "211099063143f2720a1813aeaf3fa2782a5c3360f26865bddd1dc5cde37a9042",
+              "project/experiments/block_v1/native_formal.py": "c447fd9b18d57ae41b1b3e7f5a406e3f1a07e8af65da8bba35091f52fd68a828",
+              "project/experiments/block_v1/native_physical.tcl": "6e7887715c11372344e99b1e5949ca670b32ea9ad1e547db4a12f496abc71177",
+              "project/experiments/block_v1/native_pipeline.json": "ca1657650f5d800038b0dcc28ff8f5fd0d1a82f4f154701a4877066044e7380e",
+              "project/experiments/block_v1/native_pipeline_057.json": "980c1a59a7e5b82f2a0e13d039db51079c034a4d14971b2540571ddc5711f51c",
+              "project/experiments/block_v1/native_pipeline_cap20.json": "04740dd67cecff74066b9d5e8c5966a81bd10fde1e1583fb5b174e675af67d92",
+              "project/experiments/block_v1/native_prepare.py": "147011ab3ff112d1c4552a6f200315d4b4975840d4617cb92ed57b1f06799b6a",
+              "project/experiments/block_v1/native_receive.py": "6f8c4b6b6b686b7147495bb7fda6b54acf977addcfa32f0825eb022833e1dfa1",
+              "project/experiments/block_v1/native_reroute.py": "7ded4e391223035b80a992b4df3f63c3a2e3094646d2fbc7d3041bd24f5b13b0",
+              "project/experiments/block_v1/native_run.py": "4ae6e452c8b9a2e718466364cf93fa161299646462dd26f5bab706c130924c07",
+              "project/experiments/block_v1/native_sta.py": "c15b58d24194d31cad7e6d2fc1f7c7efbe81fc861b49ba85f05d9658a9c6ac5c",
+              "project/experiments/block_v1/native_sta.tcl": "1fe95cac7c2fd9e253e434806c33eb059740ef2cb4c36da10cd75b9bb26cea8e",
+              "project/experiments/block_v1/native_views.py": "f9e64be888112226f2a3cb9a4530b29856830f732536189cce1a769103872c8b",
+              "project/experiments/block_v1/native_views.tcl": "2987abd1a1f858ff365ddd53ddc210fd3cb1ce899d568667439aa5dd9691ad9c",
+              "project/experiments/block_v1/odb_geometry.tcl": "c63203ef734d90a549ac3b81311c4678edf35c76b340b96c3ac174007d70f67b",
+              "project/experiments/block_v1/odb_geometry_check.rb": "b89e917d9b75d081ab384485f72632ce928617913606067115fac56d42c929bb",
+              "project/experiments/block_v1/overlay.py": "4d63c0d1fd1d8c398221c24030b68f782106352f1f8702cd4f16c67a474d0865",
+              "project/experiments/block_v1/partial_field_client.cpp": "a33ce421a81ff3090a307d22b04c7ebb03bd89c693bd4b9734ffb70c5a595f63",
+              "project/experiments/block_v1/partial_field_patch.py": "8e0b24bb32453cf79283bfc0d4359639eaf24c7b2cc76fb3c0594b2b797c59ae",
+              "project/experiments/block_v1/partial_field_verify.py": "d72d4d011be454b12e5a58c82c78fb7e870d4764e6c4728e0b54baf55e19da5a",
+              "project/experiments/block_v1/partial_group.py": "dd64b7e1d011f37040c3619fbad4518cc8fcca94f7e80a125d2b4a096d958f6c",
+              "project/experiments/block_v1/pattern_prepare.py": "6fb19a4a25a7a361aceec2d62d305ae9f7bb7cf249eb858d01f6d0b6db8e3eea",
+              "project/experiments/block_v1/physical-budget.json": "b7e9108ad18f40b88f6fd897a838bf04b48764390766955520eeac4a87d91a19",
+              "project/experiments/block_v1/physical_inputs.py": "2b5135425526748c1b0358d24074187c440264b321b202b659a7714a698d10f7",
+              "project/experiments/block_v1/pin_plan.py": "b2de8b111e4d0136f4c2f85ba203ed340208b51f2c0b0c381a049ea46f60ae61",
+              "project/experiments/block_v1/primitive_geometry.rb": "fafc4e50e9c72c6562675a88f64be8611a6e1081d2b7cbec883483dba00000f0",
+              "project/experiments/block_v1/probe.sh": "743d53a5b4c39d4918d0528b9a84df35c2807b47067bac3dbffcc361fd352548",
+              "project/experiments/block_v1/probe_geometry.rb": "ad81441ad234094e07ffb1ad92293cfc7dc56f7876bfcb59bd2f171641fd72a6",
+              "project/experiments/block_v1/rc_calibration.json": "a4db2b58b556fceef70a3f7ba1263ee14b2f780575c9550881aadaaa772432fc",
+              "project/experiments/block_v1/rc_pipeline.py": "ca635760217cb540031540ec626ca0f7fd5cb978b2284b2fb91ca8904b6752f2",
+              "project/experiments/block_v1/receive121.py": "13dfa60435b10fefcbbdfc1d00b1f7c3c28e707f04c0b6c2b01008b6feb375d6",
+              "project/experiments/block_v1/reference_fit.py": "394ee3543aa14ed436179a073d29763787ed65095a3258df1e5319e9a2fa9d29",
+              "project/experiments/block_v1/reference_run.py": "3fc5dc9ca55b95cdecb291214256a8f8034862a3b734649baf9ee5feac04a2b5",
+              "project/experiments/block_v1/route_probe.py": "8fbba7b328c9d052c7506fbd646f45286c0694e654a7b3d33985867195f777b6",
+              "project/experiments/block_v1/routed_field.py": "cae152e2c5812e29b8633a95e769626792775cb527012771348a47db49e7493c",
+              "project/experiments/block_v1/semantic_negative.py": "a080f7365354a414a1647cea5c8234c7aedbfb9fa9a0b46fe5262b938f88b39f",
+              "project/experiments/block_v1/structural_view.py": "6c506af6b9ed5c6878afc2842799f738b88556f7d32c976753b55b7aebbd4f2e",
+              "project/experiments/block_v1/technology.json": "5b1fac19e4120b44684371adbc45438e9ac7653fc5efd6026a5126b5b5b86c39",
+              "project/experiments/block_v1/test_transaction.cpp": "bbfbe18907783eae87aae3dcaede35f1ada28a6e6f2a4f1cf0348ccf6392458a",
+              "project/experiments/block_v1/window_field.py": "13ba8283e3c3f6ab188d8be09e4278a9993aea06ed418cca49021b8ea884d0ab",
+              "project/experiments/block_v1/worker.py": "f5ad3f040efa1954a25ee8ca2eeca41ef0e452ef4cceb5f94c1fd0efa5303b5b",
+              "project/experiments/block_v1/worker.sh": "ae4cf1820fd00a3f0ffa3a42bdf235bf3f4a17518bcb0c75cfd8bbcede06be05",
+              "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+              "project/experiments/gdn_state/reference.py": "e8add3d9ba6941aa5dc7484f190406854e0a870ae8b2029a8d0eba20b595daa5",
+              "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+              "project/experiments/shared_gdn/PROTOCOL.md": "3002060a69744fc46121aeba8c15d1c42fb9ce952b67e47a281548dfe9bdb221",
+              "project/experiments/shared_gdn/analyze.py": "6f63248270a1419d0157c2657d069605d77639b427a98503812c77901e253290",
+              "project/experiments/shared_gdn/collect.py": "6ca5c15718e41998bc05137e4f53385bbeb03c7b4fde7b610a8a82a9fa3d4d01",
+              "project/experiments/shared_gdn/cost.py": "d920e359bb1d65b5847d31089d8210394e5675eda586789a2e8938e44bd5e8a1",
+              "project/experiments/shared_gdn/gate.py": "c0f8d4c38b36736459947bf4efb50a7a68cdfb3a7509638a01175dfbe2931f9c",
+              "project/experiments/shared_gdn/gverify.py": "c698ba20d0d037a1d4396dfc82e69f432bc1b942a38b9eb5aa3ad42d03e8907f",
+              "project/experiments/shared_gdn/inputs.py": "431109179969566b4cb97fe3615ed1bb82356a07edebdd259c2bc77cbbd3949c",
+              "project/experiments/shared_gdn/inventory_negative.py": "7fb03bd0af0077922d1ca9d0c579f915c9cda877bbd563678755a989a8f852f2",
+              "project/experiments/shared_gdn/negative.py": "a2e0ea6a09eda99740f8fe527e2321b741fcbcf6ad84626bf727b95117e6d2f1",
+              "project/experiments/shared_gdn/qualification.cpp": "f7ae0706b98258e9adc156b388f002f03e60bb8b59f3a0f1a98e834a138038b8",
+              "project/experiments/shared_gdn/receive.py": "8d851d68649108e69c2233dbb89d568a5a04e14bc91f1e42e8e25c01102ef1ec",
+              "project/experiments/shared_gdn/run.py": "d0cb68e98d3ca85bb15d56239f3aeeb7865b9697841e7e6ace0f8fb2b31f4016",
+              "project/experiments/shared_gdn/sim.cpp": "ace54074760bbcca1a491f04d0a1faab8075330a175cf7ff51954b0c16ce7cb3",
+              "project/experiments/v_consumer/reference.py": "b3133796572b25d7241affb9fad44b0765603d267e83c18946a821703fd95f09",
+              "project/rtl/block_v1/shared121.sv": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+              "project/rtl/block_v1/transaction6k.sv": "0491dc05357b61855a3fadd9598ac738bdf305a8c8306499ac8b6c184fa4b0b5",
+              "project/rtl/gdn_state/wide104.sv": "c623eb27ec992af1ae4411261ed75fccf886100fc294cf280f6a00c15905c890",
+              "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+              "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+              "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+              "project/rtl/shared_gdn/gdn109.sv": "b329550d0a85e1357627cf6ec03391b08f43765c8f8737a8524f94376ea3f424",
+              "project/rtl/shared_gdn/shared109.sv": "b890b351c2cd2c3cec5a988c7f28d345f8319f85a50fbcb2d72917cfd537d555",
+              "project/rtl/shared_services/a106.sv": "c692d5405e8afa9ca0a13ff7919d6092213335445ed15057f3b8345c51139011",
+              "project/rtl/shared_services/attention106.sv": "a3adef94747a334849a2053e42a23d3dc0ce864273bba16367c1d4d0623259fa",
+              "project/rtl/shared_services/m106.sv": "c901ee8f01a45c3a1b9a917279bdcd3e305d899475abb5754a3c2ddbd0a97ed3",
+              "project/rtl/shared_services/mfront106.sv": "bb918aad183e4da39aeace350ae654ee2280e85a03275c954c0cb0d926cec84e",
+              "project/rtl/shared_services/norm106.sv": "be7ba8053341ae1e8eb3f17e4666116ca56c45e54db7c415f2e6e9ed1fc9ff1d",
+              "project/rtl/shared_services/r106.sv": "84e5f85042f2fa4c9091ea7e508a77f01b90843146cb36ac0b635d04a4d2eb7f",
+              "project/rtl/shared_services/shared106.sv": "1756a68d178305b6603ad6a6b0f95bd8df7fe38ed6c40bfd8d16790ebd8fca86",
+              "project/rtl/v_consumer/vprep97.sv": "755621fd19cbfd38c3c52df889a045867c64a56bb6e024a6f75c65d83dd32ee7",
+              "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+              "work/YUZE-LU/121/source-manifest.json": "7958c8f0c2d7ca3c886dcb16fb841d81ff315162d1fc041fb9485430b08cc6cb"
+            },
+            "tool_hashes": {
+              "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys": "c2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b",
+              "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+              "/usr/bin/klayout": "fee1214ef5c63033057626a9dab0deb0664fecb69184d1c3fd43dc9c0dc1eba5",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator_bin": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd"
+            },
+            "passed": true,
+            "finished": 1793055982.4152675,
+            "outputs": {
+              "compile-Itf.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "graph-field-patch.json": "8fadfcbda507c734ffd4a04d3e72479a3dbd9b0f5f3f3d5e0a2ea39801fca053",
+              "compile-Solver.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compile-fsv_client.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compile-graph_field_client.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compiler.log": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+              "determinism.jsonl": "9d3b8ee630a0f76ff091d280472c522524161fefcd4217321a3bfe37ba8f7be9",
+              "graph-build-controls.json": "a75957340535346c8c038182dac7f0dc84caba8ee8c98fc88168a56d8fc4aa90",
+              "partial-one.json": "872fe5f38cdb2ebae95fe7cab633692bcc15aef70139d70e71b1250b6af1be73",
+              "golden3d.jsonl": "6cf8365627abae05d7ed59f6c0ccc60bd43a73824bca2e012adbc5053f59d7c5",
+              "compile-CubePanels.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "started.txt": "00661b43069a71f26e691f508b106243cf9592de6cf2de407eff0bc8afddc29d",
+              "duplicate-id.txt": "09199e5dc9426627529e51f259fae42a7910f5d700e917e133dff3d3b44349c2",
+              "compile-CubeGreens.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "link-graph.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "link.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "graph-many.json": "be75e09ae152395b200da5a3e577e66838219eb5e1e53c15563c697664129ece",
+              "compile-Dielectric.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "duplicate-position.log": "d7c972e689127f29c47a3e14624560a7ea521c26c314d8a637ac9d8852823f2d",
+              "compile-LayerModes.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "fsv-qualified.json": "2facf2603ae50b230733dd55dd2931422b93f832470ed38bc9727ca220543c83",
+              "compile-LayeredSquareGreens.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "job.sh": "5d06b2cc9cfaa29b136523414af5a0bdf470631cf1052308b32c6252a30b8748",
+              "compile-Scene.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compile-AliasTable.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "golden2d.jsonl": "b68923550faa64d418ccd3a9f4e6de191ef0de308ef33934ab824d19bfc4bb28",
+              "partial-many.json": "872fe5f38cdb2ebae95fe7cab633692bcc15aef70139d70e71b1250b6af1be73",
+              "duplicate-position.txt": "02c4d52615f5f7eca79d316d36078150fcf97fc77db9cab09fb3409060b0f4ec",
+              "compile-GaussianSurface.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "partial-control.txt": "7d73faea9602d49468f17560dc03b0afd7e2511cee4c43cfdd3d80f82e6a823a",
+              "compile-LayeredCubeGreens.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compile-partial_field_client.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "outside.txt": "6f6528becf999ca1f71c6466e2c2e6b247f5720f2641040301b2d8c8c6d9d223",
+              "image.sha256": "563ca95c74250c02398332ac6ea8dcffa20e7257021e043a80655a42bb50edee",
+              "compile-Geometry.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compile-SquareGreens.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compile-Stack.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "allocation.txt": "e2e681636502a31fa5ec3570228f09764b32596d96cdce55368199f27a307c8e",
+              "graph-one.json": "be75e09ae152395b200da5a3e577e66838219eb5e1e53c15563c697664129ece",
+              "compile-WorkerPool.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "partial-field-patch.json": "ea605a1ba0eb5476788a97719a9ab5b334c934bbb6ec77c6b119edadaf59d31b",
+              "compile-Structures.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "link-partial.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compile-SpatialIndex.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "duplicate-id.log": "a132de69edc04559726cac53fe8fe90c14d2773325c5074e82dfc3d6a52c336c",
+              "graph-nodes.txt": "e4599a6875adabca68096e467cb44084a3027069005fec6476d14034d663619c",
+              "outside.log": "09dd8ce37b728dae116d291b1dabc8432e343c2d33cfa38e1da940dc66a3b178",
+              "src/fsv/test/golden/conformal_crossing.txt": "9799e89c46d97de568b5b157d697c84712c62b07fb8d4e01130e4b7420dca4c6",
+              "src/fsv/test/golden/merged_conformal.txt": "6ec6c861435d350f278c63513e6337c5f3cb02f8ddf89e31bb5a9a9b2d1e6a3b",
+              "src/fsv/test/golden/cross_section.txt": "3743af3431007091897d5cfcf4d405e1aa9f4a432315072955362a70e250085d",
+              "src/fsv/test/golden/nested_conformal.txt": "ceffc94794a70341619f5316c3aac89f0b1b7148e312bd31452694e21b45119d",
+              "src/fsv/test/golden/box_3d.txt": "975dc29019c2538f4800f76384776ddbfd1981f1e4a67a9337dfbf722573092c",
+              "src/fsv/test/golden/etch_stop_pair.txt": "e49a2433eaf6842a51b1c610182c26ba56ee01360a990e58c6cce3082033de3e",
+              "src/fsv/test/golden/crossing.txt": "1b64ba4d9968acf5bcf461e58562f581a086e1c07aea2fff8b7dfcb66eb9a0cc",
+              "src/fsv/test/golden/conformal_pair.txt": "9e983e1da895af7d1461dbe4b2a7658aa7063989cdefeddf8c00c77c9e35e90f",
+              "src/fsv/test/golden/three_wires.txt": "22e2d8a4492d9c2b1683690818a9b94fa014c0e0433713227562db821531b24c",
+              "src/fsv/test/golden/conformal_line_ends.txt": "741c8a8b774ef9ccb1458637e1a3425729653a893acf1bad9d40ab8cefbbfc6b",
+              "src/fsv/test/golden/sky130_met1_pair.txt": "fb6aaee5728e71ea2138f745c2b58f940a9eaaaa1b9b9d735195d4b56ba22b6a"
+            }
+          }
+        },
+        "fsv-qualified.json": {
+          "bytes": 3260,
+          "sha256": "2facf2603ae50b230733dd55dd2931422b93f832470ed38bc9727ca220543c83",
+          "content": {
+            "schema": "block-v1-fsv-qualified/1",
+            "upstream_commit": "6ea4ca224f3589dd91809933f50f39af66053634",
+            "upstream_archive_sha256": "b2eaefce378aba09cccb966b3c56486412f1958e0a83ff3fb313fd35b3dfe2a7",
+            "compiler": "/usr/local/bin/wrapped-cc/g++",
+            "compiler_sha256": "619839b3698923a1e50059604fff2686cd65faf913bb1b13844a3714560ce6d0",
+            "flags": [
+              "-std=c++20",
+              "-O3",
+              "-pthread",
+              "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/include",
+              "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/src",
+              "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/src/fsv/test/cpp"
+            ],
+            "binary": "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/llhd-fsv",
+            "binary_sha256": "aaf87b6767712cbc3167d707852b9265c769d3d059452109e338bf1aa75e26ef",
+            "tests": [
+              "9 2D master rows: upstream planar/conformal FD reference bounds",
+              "6 3D master rows: upstream crossing/end FD reference bounds",
+              "fixed walks: thread invariance and epsilon linear scaling"
+            ],
+            "scope": "Default goldens, existing plane controls, graph thread/conservation and invalid-node controls only; local conductor charge and distributed RC require independent scientific acceptance",
+            "source_variant": "Explicit research flux-bin instrumentation of pinned upstream; default goldens rerun",
+            "instrumentation": {
+              "schema": "block-v1-research-partial-field-patch/1",
+              "changes": [
+                {
+                  "path": "src/fsv/include/fsv/Solver.h",
+                  "before_sha256": "839723e5f0488c7b3502b11f348b2d9341c19b5456b19ea756e96736ed15d560",
+                  "after_sha256": "9ddf0090bd0e0a5f9076d762eda935e89e2c787d6182eb891fae1e7f8f27c819"
+                },
+                {
+                  "path": "src/fsv/src/Solver.cpp",
+                  "before_sha256": "46e52e796e11334903287cc172b658303ee2cf8ddb043987f801e6fa44a764bb",
+                  "after_sha256": "d63c1224e7a23bdec6974276766619a871d339e658f026da8a4af73dd25d21d6"
+                }
+              ],
+              "scope": "Origin-position Gaussian flux bins only; no qualification of conductor charge, distributed RC or twelve-layer stitching"
+            },
+            "partial_binary": "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/llhd-partial-field",
+            "partial_binary_sha256": "e1f918aa1b6365b67e93e4512b34443b994747243be8399e11df15d3b71cb484",
+            "graph_instrumentation": {
+              "schema": "block-v1-research-graph-field-patch/1",
+              "changes": [
+                {
+                  "path": "src/fsv/include/fsv/Solver.h",
+                  "before_sha256": "9ddf0090bd0e0a5f9076d762eda935e89e2c787d6182eb891fae1e7f8f27c819",
+                  "after_sha256": "4ed30db049fcc4c2fdf792e7f11ab818bfa7dbd2a4e21b3d4c1578e178cdca2d"
+                },
+                {
+                  "path": "src/fsv/src/Solver.cpp",
+                  "before_sha256": "d63c1224e7a23bdec6974276766619a871d339e658f026da8a4af73dd25d21d6",
+                  "after_sha256": "6185a560577b2e93e402696a6871fe83f3ce633ae2f2c84259a002aeb9b9a707"
+                }
+              ],
+              "scope": "Nearest 3D origin-node Gaussian flux bins only; net capture is unchanged, general node-pair capacitance and distributed RC remain unqualified"
+            },
+            "graph_binary": "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-090/llhd-graph-field",
+            "graph_binary_sha256": "cd9c1b677dc58e417d538718011c3dc563a93bbd71956aa2e424691a4a117fa2"
+          }
+        },
+        "partial-field-patch.json": {
+          "bytes": 683,
+          "sha256": "ea605a1ba0eb5476788a97719a9ab5b334c934bbb6ec77c6b119edadaf59d31b",
+          "content": {
+            "schema": "block-v1-research-partial-field-patch/1",
+            "changes": [
+              {
+                "path": "src/fsv/include/fsv/Solver.h",
+                "before_sha256": "839723e5f0488c7b3502b11f348b2d9341c19b5456b19ea756e96736ed15d560",
+                "after_sha256": "9ddf0090bd0e0a5f9076d762eda935e89e2c787d6182eb891fae1e7f8f27c819"
+              },
+              {
+                "path": "src/fsv/src/Solver.cpp",
+                "before_sha256": "46e52e796e11334903287cc172b658303ee2cf8ddb043987f801e6fa44a764bb",
+                "after_sha256": "d63c1224e7a23bdec6974276766619a871d339e658f026da8a4af73dd25d21d6"
+              }
+            ],
+            "scope": "Origin-position Gaussian flux bins only; no qualification of conductor charge, distributed RC or twelve-layer stitching"
+          }
+        },
+        "graph-field-patch.json": {
+          "bytes": 703,
+          "sha256": "8fadfcbda507c734ffd4a04d3e72479a3dbd9b0f5f3f3d5e0a2ea39801fca053",
+          "content": {
+            "schema": "block-v1-research-graph-field-patch/1",
+            "changes": [
+              {
+                "path": "src/fsv/include/fsv/Solver.h",
+                "before_sha256": "9ddf0090bd0e0a5f9076d762eda935e89e2c787d6182eb891fae1e7f8f27c819",
+                "after_sha256": "4ed30db049fcc4c2fdf792e7f11ab818bfa7dbd2a4e21b3d4c1578e178cdca2d"
+              },
+              {
+                "path": "src/fsv/src/Solver.cpp",
+                "before_sha256": "d63c1224e7a23bdec6974276766619a871d339e658f026da8a4af73dd25d21d6",
+                "after_sha256": "6185a560577b2e93e402696a6871fe83f3ce633ae2f2c84259a002aeb9b9a707"
+              }
+            ],
+            "scope": "Nearest 3D origin-node Gaussian flux bins only; net capture is unchanged, general node-pair capacitance and distributed RC remain unqualified"
+          }
+        },
+        "graph-build-controls.json": {
+          "bytes": 459,
+          "sha256": "a75957340535346c8c038182dac7f0dc84caba8ee8c98fc88168a56d8fc4aa90",
+          "content": {
+            "passed": true,
+            "controls": {
+              "duplicate-id": {
+                "returncode": 1,
+                "log_sha256": "a132de69edc04559726cac53fe8fe90c14d2773325c5074e82dfc3d6a52c336c"
+              },
+              "duplicate-position": {
+                "returncode": 1,
+                "log_sha256": "d7c972e689127f29c47a3e14624560a7ea521c26c314d8a637ac9d8852823f2d"
+              },
+              "outside": {
+                "returncode": 1,
+                "log_sha256": "09dd8ce37b728dae116d291b1dabc8432e343c2d33cfa38e1da940dc66a3b178"
+              }
+            }
+          }
+        }
+      },
+      "job_log": {
+        "bytes": 48,
+        "sha256": "76a333f96e9d42017d377819cd2fc7f91d9cd517dc6453f081e170fd58342070",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\n"
+      }
+    }
+  },
+  "source_archive_sha256": "06550f291d16c469f27848f29a7e67e643aa00ce992b498501da4c49e156100e",
+  "sacct": "92114|COMPLETED|0:0|00:01:43|10:41.197||16|node21\n92114.batch|COMPLETED|0:0|00:01:43|10:41.196|42808K|16|node21\n92114.extern|COMPLETED|0:0|00:01:43|00:00:00|0|16|node21\n",
+  "collected_utc": "2026-10-26T23:09:23.677004+00:00"
+}

@@ -1,5 +1,13 @@
 # YUZE-LU 的进度
 
+## 2026-10-27 07:13 CST：Issue121 图节点对照与电气残留
+
+- 088 T6KC/92106完成22:45，原生max-cap从080的8降为1，最差−1.059973598 fF，setup/hold计数0，仍不能冻结。残留OAI211_X1 ZN限值25.558500290 fF、由slack推得负载26.618473887 fF；原因未证实。093采用有界追加CAP_MARGIN=40标准重布线，92115/node20/32CPU运行；94/95接收及视图链已部署未提交。预算、负载、时钟及Liberty限值不变，不做无限margin扫描。
+- 081与089自然失败在独立do-gds缺少日志目录，不是完整物理通过；GDS接收器已补齐自身logs/reports/objects，失败原件保留。092依赖失败的089不会启动。40档配置正例和六种负例（含跨pipeline替换）通过，仅配置规则资格。
+- 090/92114构建完成1:43：原作者goldens、平面控制、图节点线程/全局守恒及非法节点控制通过。091/92117在node21/96CPU以两路48CPU开始四/五节点科学对照，结果未出。独立FV导体面改动在本地直接稀疏LU检查保持原矩阵响应至2.3e−16 fF，全部146/156面落在对应导体表面，偏移负例拒绝；不代替服务器PyAMG/field收敛。仍是node-to-net，完整分布式RC未资格。
+- 91903被Slurm原6h时限终止（TIMEOUT，6:00:27），未完整接收，已保存终态；此前延期申请遭拒记录保留。067完整双16线程UNLIMITED回归持续，不替换RAM或缩减测试。080 T6KA/92118已在node22/32CPU开始，C8A仍待空位；C8C及旧057继续。当前8个allocation均运行，选择现有manifest任务的--only过滤仍受统一全局预算/依赖/查重控制，其余任务保持待执行。
+- [Issue121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121) in_progress、[PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)草稿。登记pending，看板unverified/同步pending，管理员与独立审查人待指定；尚无合格宏/共同底座/两产品。
+
 ## 2026-10-27 06:56 CST：Issue121 三维图节点电荷资格链
 
 - 新增090研究构建与091三维节点科学对照，均已部署、尚无Slurm作业，等全局8allocation内空位。起点通量按最近三维图节点分桶，默认上游/平面路径保留；独立FV读取实际导体面坐标，分别对照四节点T分支和五节点跨层via，沿用原074/087门槛并要求局部分配及保边际错误重连负例。源码补丁精确转换和Python/生成FV编译检查通过；C++构建及科学门槛尚待实际运行。
