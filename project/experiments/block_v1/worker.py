@@ -109,6 +109,27 @@ try:
     elif MODE=='heldout-rc':
         from heldout_rc import verify
         verify(ROOT,OUT,CPUS,run)
+    elif MODE=='extraction-tool-info':
+        import importlib.util
+        probe=dict(python_packages={name:importlib.util.find_spec(name)is not None
+                    for name in ['numpy','scipy','pyamg']},paths={})
+        for name in ['/OpenROAD-flow-scripts/tools/OpenROAD',
+                     '/OpenROAD-flow-scripts/tools/OpenROAD/build',
+                     '/OpenROAD-flow-scripts/tools/install/OpenROAD/lib',
+                     '/OpenROAD-flow-scripts/tools/install/OpenROAD/include']:
+            path=Path(name)
+            probe['paths'][name]=dict(exists=path.exists(),
+                entries=sorted(p.name for p in path.iterdir())if path.is_dir()else [])
+        # Read only exact relevant source/build files, without a recursive
+        # tool-tree scan or a build on the login node.
+        for relative in ['.git/HEAD','CMakeLists.txt','build/CMakeCache.txt',
+                         'src/rcx/include/rcx/extMeasureRC.h','src/fsv/CMakeLists.txt']:
+            path=Path('/OpenROAD-flow-scripts/tools/OpenROAD')/relative
+            if path.is_file():
+                target=OUT/'tool-source'/relative
+                target.parent.mkdir(parents=True,exist_ok=True)
+                shutil.copyfile(path,target)
+        (OUT/'extraction-tool-info.json').write_text(json.dumps(probe,indent=2)+'\n')
     elif MODE.startswith('heldout-rc-v'):
         from heldout_rc import verify
         verify(ROOT,OUT,CPUS,run,float(MODE.removeprefix('heldout-rc-v')))
