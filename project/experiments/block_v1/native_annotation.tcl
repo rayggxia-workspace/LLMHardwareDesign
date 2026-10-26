@@ -2,14 +2,25 @@
 set stream [open annotation.rpt r]
 set annotation_text [read $stream]
 close $stream
-if {![regexp {(?s)Found ([0-9]+) unannotated drivers\.\n(.*?)Found ([0-9]+) partially unannotated drivers\.} $annotation_text -> count body partial]} {
-  error "Missing complete native parasitic annotation report"
-}
 set names {}
-foreach line [split $body \n] {
+set phase before
+foreach line [split $annotation_text \n] {
   set name [string trim $line]
-  if {$name ne ""} {lappend names $name}
+  if {$name eq ""} {continue}
+  if {[regexp {^Found ([0-9]+) unannotated drivers\.$} $name -> value]} {
+    if {$phase ne "before"} {error "Duplicate or unordered annotation header"}
+    set count $value
+    set phase drivers
+  } elseif {[regexp {^Found ([0-9]+) partially unannotated drivers\.$} $name -> value]} {
+    if {$phase ne "drivers"} {error "Duplicate or unordered annotation footer"}
+    set partial $value
+    set phase done
+  } else {
+    if {$phase ne "drivers" || [string match {Found *} $name]} {error "Malformed annotation report"}
+    lappend names $name
+  }
 }
+if {$phase ne "done"} {error "Missing complete native parasitic annotation report"}
 if {[llength $names]!=$count} {error "Annotation driver list/count mismatch"}
 set stream [open annotation-connectivity.tsv w]
 foreach name $names {
