@@ -92,10 +92,13 @@ def main():
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument("manifest", type=Path)
     parser.add_argument("--submit", action="store_true", help="one scheduling pass, otherwise read-only status")
+    parser.add_argument("--only",nargs='+',help="Submit only these existing tasks; preserve all other manifest tasks")
     args = parser.parse_args()
     raw = args.manifest.read_bytes()
     spec = json.loads(raw.decode("utf-8"))
     validate(spec)
+    if args.only:
+        assert args.submit and set(args.only)<={t['id']for t in spec['tasks']}
     root = args.manifest.resolve().parent
     # All run directories for this issue share one budget and submit lock.
     lock = (root.parent / "block-v1-dispatch.lock").open("a+")
@@ -126,6 +129,8 @@ def main():
                 break
             if task["id"] in state["tasks"]:
                 continue
+            if args.only and task['id']not in args.only:
+                continue
             dependencies = [state["tasks"].get(key, {}) for key in task.get("after", [])]
             dependencies += [external.get(key,{})for key in task.get("after_runs",[])]
             if not all(x.get("state") == "COMPLETED" and x.get("exit_code") == "0:0" for x in dependencies):
@@ -142,6 +147,7 @@ def main():
                               "%s\n" % (task["cpus"], command))
             token = "yzl-bv1:%s:%s" % (spec["run_id"], task["id"])
             item = dict(id=task["id"], token=token, state="SUBMITTING", reserved_utc=utc())
+            item['dispatcher_source_sha256']=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
             state["tasks"][task["id"]] = item
             save(path, state)  # Reserve before sbatch; a crash cannot silently duplicate the job.
             argv = ["sbatch", "--parsable", "--nodes=1", "--ntasks=1", "--cpus-per-task=%d" % task["cpus"],

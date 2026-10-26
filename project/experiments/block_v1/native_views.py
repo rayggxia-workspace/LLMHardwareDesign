@@ -56,7 +56,7 @@ def interface(folder,pins,leaf,top,library):
 def generate(root,out,cpus,run,top,policy,pipeline='native_pipeline.json'):
     from io_slots import file_sha,slot
     assert top in ('shared109','transaction6k')and policy in ('A','C')and cpus>=8
-    assert pipeline in ('native_pipeline.json','native_pipeline_cap20.json')
+    assert pipeline in ('native_pipeline.json','native_pipeline_cap20.json','native_pipeline_cap40.json')
     base=out.parents[2];config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
     api=base/'block-v1-20261027-073/tasks/native-formal-control'
     control=json.loads((api/'receipt.json').read_text());assert control['passed']is True

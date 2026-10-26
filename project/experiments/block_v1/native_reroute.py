@@ -14,25 +14,33 @@ PIPELINE = 'native_pipeline_cap20.json'
 SUFFIX = '\nexport CAP_MARGIN = 20\n'
 
 
-def checked_config(source, receipt, original):
+def config_suffix(margin):
+    assert margin in (20,40)
+    return '\nexport CAP_MARGIN = %d\n'%margin
+
+
+def checked_config(source, receipt, original,margin=20):
     """Bind the actual reroute configuration to the original plus one target."""
     path = source / 'config.mk'
     assert file_sha(path) == receipt['outputs']['config.mk']
-    assert path.read_bytes() == original.read_bytes() + SUFFIX.encode()
+    assert path.read_bytes() == original.read_bytes() + config_suffix(margin).encode()
     record = source / 'native-candidate.json'
     assert file_sha(record) == receipt['outputs'][record.name]
     candidate = json.loads(record.read_text())
-    assert candidate['repair_variant'] == 'cap-margin-20-from-sealed-cts'
-    assert candidate['actual_variables']['CAP_MARGIN'] == '20'
+    assert candidate['repair_variant'] == 'cap-margin-%d-from-sealed-cts'%margin
+    assert candidate['actual_variables']['CAP_MARGIN'] == str(margin)
     assert candidate['actual_variables']['LEC_CHECK'] == '1'
     assert candidate['actual_variables']['SEC_CHECK'] == '0'
     assert candidate['actual_config_sha256'] == file_sha(path)
     return path
 
 
-def implement(root, out, cpus, run, top, policy):
+def implement(root, out, cpus, run, top, policy,pipeline=PIPELINE):
     assert top in ('shared109', 'transaction6k') and policy in ('A', 'C') and cpus >= 16
-    config = json.loads((root / 'project/experiments/block_v1' / PIPELINE).read_text())
+    assert pipeline in ('native_pipeline_cap20.json','native_pipeline_cap40.json')
+    config = json.loads((root / 'project/experiments/block_v1' / pipeline).read_text())
+    margin=config.get('cap_margin',20)
+    assert margin==(40 if pipeline=='native_pipeline_cap40.json'else 20)
     base = out.parents[2]
     source = base / config['source_candidate_run'] / ('tasks/native-run-' + top + '-' + policy.lower())
     receipt = json.loads((source / 'receipt.json').read_text())
@@ -48,7 +56,7 @@ def implement(root, out, cpus, run, top, policy):
     assert file_sha(original_config) == accepted['outputs'][str(original_config.relative_to(prep))]
     assert original_record['inputs_receipt_sha256'] == file_sha(prep / 'receipt.json')
     folder = out / 'config.mk'
-    folder.write_bytes(original_config.read_bytes() + SUFFIX.encode())
+    folder.write_bytes(original_config.read_bytes() + config_suffix(margin).encode())
     nickname = 'bv1_' + top + '_' + policy
     relative = Path('flow/results/nangate45') / nickname / 'base'
     results = out / relative
@@ -70,7 +78,7 @@ def implement(root, out, cpus, run, top, policy):
         inputs_source=str(prep), inputs_receipt_sha256=file_sha(prep / 'receipt.json'),
         source=str(source), source_receipt_sha256=file_sha(source / 'receipt.json'),
         source_candidate_sha256=file_sha(record_path), copied_checkpoint_files=copied,
-        repair_variant='cap-margin-20-from-sealed-cts',
+        repair_variant='cap-margin-%d-from-sealed-cts'%margin,
         actual_config=str(folder), actual_config_sha256=file_sha(folder), stages=[],
         qualified_hard_macro=False,
         scope='Native prefabrication route/final repair; all original electrical limits, area budgets and independent gates still apply')
@@ -82,7 +90,7 @@ def implement(root, out, cpus, run, top, policy):
     wanted = dict(TECH_LEF='/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef',
         MAX_ROUTING_LAYER='metal10', MIN_ROUTING_LAYER='metal1',
         RCX_RULES='/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules',
-        KEEP_VARS='1', LEC_CHECK='1', SEC_CHECK='0', CAP_MARGIN='20')
+        KEEP_VARS='1', LEC_CHECK='1', SEC_CHECK='0', CAP_MARGIN=str(margin))
     record['actual_variables'] = {}
     for name, expected in wanted.items():
         run(command + ['print-' + name], 'variable-' + name + '.log')
