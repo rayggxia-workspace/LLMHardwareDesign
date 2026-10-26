@@ -128,6 +128,11 @@ try:
     elif MODE=='physical-inputs-compatible':
         from physical_inputs import prepare
         prepare(ROOT,OUT,CPUS,run,compatible=True)
+    elif MODE=='native-unit-info':
+        script='read_liberty {'+str(TOOLS/'lib/NangateOpenCellLibrary_typical.lib')+'}\nreport_units\nhelp set_units\nhelp set_cmd_units\n'
+        script+='set_units -time ns -capacitance pF\nreport_units\n'
+        (OUT/'units.tcl').write_text(script)
+        run(['openroad','-no_init','-exit','units.tcl'],'native-units.log')
     elif MODE=='native-format-info':
         run(['yosys','-Q','-T','-p','help write_verilog'],'write-verilog-help.log')
     elif MODE=='native-prepare':
