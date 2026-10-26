@@ -12,7 +12,16 @@ write_sdc constraints-readback.sdc
 report_parasitic_annotation -report_unannotated > annotation.rpt
 set stream [open endpoints.tsv w]
 foreach pin [sta::endpoints] {
-  puts $stream "[get_full_name $pin]\t[get_property $pin slack_max]\t[get_property $pin slack_min]"
+  set maximum [get_property $pin slack_max]
+  set minimum [get_property $pin slack_min]
+  set unused_fanout -1
+  if {$maximum in {INF -INF} && $minimum in {INF -INF}} {
+    set unused_fanout 0
+    foreach reached [get_fanout -from [list $pin] -flat -pin_levels 2 -trace_arcs all] {
+      if {$reached ne $pin} {incr unused_fanout}
+    }
+  }
+  puts $stream "[get_full_name $pin]\t$maximum\t$minimum\t[get_property $pin is_port]\t[string tolower [get_property $pin direction]]\t$unused_fanout"
 }
 close $stream
 set stream [open timing-summary.tsv w]

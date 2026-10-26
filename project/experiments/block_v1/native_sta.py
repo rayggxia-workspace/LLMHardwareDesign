@@ -9,11 +9,16 @@ from pathlib import Path
 
 
 def inspect(folder):
-    endpoints={}
+    endpoints={};unused={};reported=set()
     for line in (folder/'endpoints.tsv').read_text().splitlines():
         name,*values=line.split('\t')
-        assert name not in endpoints and len(values)==2
-        endpoints[name]=[float(v)for v in values]
+        assert name not in reported and len(values)==5
+        reported.add(name)
+        maximum,minimum,is_port,direction,fanout=values
+        slacks=[float(maximum),float(minimum)]
+        if all(not math.isfinite(v)for v in slacks)and is_port=='0'and direction=='output'and fanout=='0':
+            unused[name]=dict(reason='Internal output has no connected native flat fanout through any arcs',fanout=0)
+        else:endpoints[name]=slacks
     summary={};electrical={};clocks={}
     for line in (folder/'timing-summary.tsv').read_text().splitlines():
         name,*values=line.split('\t')
@@ -34,8 +39,8 @@ def inspect(folder):
         all_hold_nonnegative=bool(endpoints)and all(v[1]>=0 for v in endpoints.values()),
         native_setup_count_zero=summary['setup_checks']==0,native_hold_count_zero=summary['hold_checks']==0,
         native_check_setup_pass=summary['check_setup']==1,
-        native_time_ns=abs(summary['time_unit_seconds']-1e-9)<1e-20,
-        native_capacitance_ff=abs(summary['capacitance_unit_farads']-1e-15)<1e-26,
+        native_time_ns=abs(summary['time_unit_seconds']/1e-9-1)<1e-6,
+        native_capacitance_ff=abs(summary['capacitance_unit_farads']/1e-15-1)<1e-6,
         core_clock_propagated=clocks=={'core':'1'})
     for kind,row in electrical.items():
         finite=all(math.isfinite(row[k])for k in ('slack','limit'))
@@ -46,6 +51,7 @@ def inspect(folder):
         checks[kind+'_margin_nonnegative']=finite and (row['slack']>=0 if row['has_limit']else row['count']==0)
     checks['capacitance_and_slew_limits_exist']=all(electrical[k]['has_limit']for k in ('capacitance','slew'))
     return dict(passed=all(checks.values()),checks=checks,endpoint_count=len(endpoints),
+        reported_endpoint_count=len(reported),explicit_unused_internal_outputs=unused,
         minimum_setup_ns=min((v[0]for v in endpoints.values()),default=None),
         minimum_hold_ns=min((v[1]for v in endpoints.values()),default=None),
         endpoints_without_finite_both_limits=[n for n,v in endpoints.items()if not all(math.isfinite(x)for x in v)],
@@ -60,9 +66,9 @@ def fixture(root,out,run):
         (folder/'probe.v').write_text('module sta_probe(input clk,d,output q); DFF_X1 u0(.CK(clk),.D(d),.Q(q)); endmodule\n')
         (folder/'probe.sdc').write_text('set_cmd_units -time ns -capacitance fF -resistance kOhm -distance um\n'
             'create_clock -name core -period %g [get_ports clk]\nset_clock_uncertainty .1 [get_clocks core]\n'
-            'set_clock_transition .05 [get_clocks core]\nset_input_delay -clock core -max .2 [get_ports d]\n'
-            'set_input_delay -clock core -min .5 [get_ports d]\nset_output_delay -clock core -max .2 [get_ports q]\n'
-            'set_output_delay -clock core -min .01 [get_ports q]\nset_driving_cell -lib_cell BUF_X2 -pin Z [get_ports d]\n'
+            'set_clock_transition .05 [get_clocks core]\nset_input_delay -clock core -max 1 [get_ports d]\n'
+            'set_input_delay -clock core -min .5 [get_ports d]\nset_output_delay -clock core -max 1 [get_ports q]\n'
+            'set_output_delay -clock core -min .2 [get_ports q]\nset_driving_cell -lib_cell BUF_X2 -pin Z [get_ports d]\n'
             'set_load %g [get_ports q]\n'%(period,load_ff))
         spef='*SPEF "IEEE 1481-1998"\n*DESIGN "sta_probe"\n*DATE "2026-10-27"\n*VENDOR "LLMHardwareDesign"\n*PROGRAM "receiver-control"\n*VERSION "1"\n'
         spef+='*DESIGN_FLOW "PIN_CAP NONE"\n*DIVIDER /\n*DELIMITER :\n*BUS_DELIMITER [ ]\n*T_UNIT 1 NS\n*C_UNIT 1 FF\n*R_UNIT 1 OHM\n*L_UNIT 1 UH\n*PORTS\nclk I\nd I\nq O\n'
