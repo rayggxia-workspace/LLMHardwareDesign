@@ -72,6 +72,7 @@ def audit(generic,mapped,library,out):
             else:raise ValueError('unmapped or unknown hardware '+t)
         return cells
     physical=mapped_walk('shared121',[])
+    top_annotations=annotations
     cost=sum((areas[t]*count for t,count in physical.items()),Decimal(0))
     subcost={name:str(sum((areas[t]*n for t,n in mapped_walk(name,[]).items()),Decimal(0)))
              for name in mm if name not in areas and not number(mm[name].get('attributes',{}).get('blackbox',0))}
@@ -79,7 +80,7 @@ def audit(generic,mapped,library,out):
                 top='shared121',memories=memories,memory_bits=sum(m['WIDTH']*m['SIZE']for m in memories),
                 generic_register_bits_excluding_memories=register_bits,generic_types=dict(types),multipliers=multipliers,
                 physical_cells=dict(physical),physical_cell_count=sum(physical.values()),area_um2=str(cost),
-                module_instance_area_um2=subcost,ignored_scope_annotations=annotations,
+                module_instance_area_um2=subcost,ignored_scope_annotations=top_annotations,
                 qualification='Full stdcell mapped cost including both real stores; no PPA/STA qualification')
     out.write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(dict(area_um2=str(cost),physical_cell_count=sum(physical.values()),memories=memories,dynamic_multipliers=dict((str(k),v)for k,v in dynamic.items()))))

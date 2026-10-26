@@ -27,11 +27,15 @@ result['sacct']=subprocess.check_output(['sacct','-n','-P','-j',','.join(ids),'-
 for task in manifest['tasks']:
  p=root/'tasks'/task['id']
  data={'job_id':state['tasks'].get(task['id'],{}).get('job_id'),'artifacts':{}}
- for relative in ['receipt.json','test.json','database.json','capabilities.json','build.json','inventory.json','fsv-qualified.json','native-rule-check.json','probe/route-check.json','negative/receipt.json','physical-inputs.json','mixed0/received/receipt.json','mixed1/received/receipt.json']:
+ for relative in ['receipt.json','test.json','database.json','capabilities.json','build.json','inventory.json','fsv-qualified.json','native-rule-check.json','probe/route-check.json','negative/receipt.json','physical-inputs.json','native-gds-layers.json','native-config-index.json','geometry-check.json','klayout/mapping.json','reference-patterns/manifest.json','mixed0/received/receipt.json','mixed1/received/receipt.json']:
   file=p/relative
   if file.is_file():
    raw=file.read_bytes()
-   try: content=json.loads(raw.decode())
+   try:
+    content=json.loads(raw.decode())
+    if len(raw)>256*1024 and relative=='reference-patterns/manifest.json':
+     content={key:value for key,value in content.items() if key!='cases'}
+     content['large_case_array_omitted_from_index']=True
    except (ValueError,UnicodeError): content={'unparsed_tail':raw.decode(errors='replace')[-3000:]}
    data['artifacts'][relative]=dict(bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest(),content=content)
  if (p/'job.log').exists():

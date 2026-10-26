@@ -24,7 +24,7 @@ receipt = {'mode':MODE, 'cpus':CPUS, 'started':time.time(), 'commands':[],
            'source_commit':bundle['source_commit'],
            'inputs':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in INPUTS}}
 receipt['tool_hashes']={}
-for tool in [shutil.which('yosys'),shutil.which('openroad'),str(VERILATOR),str(VERILATOR.parent/'verilator_bin')]:
+for tool in [shutil.which('yosys'),shutil.which('openroad'),shutil.which('klayout'),str(VERILATOR),str(VERILATOR.parent/'verilator_bin')]:
     if tool and Path(tool).is_file():
         receipt['tool_hashes'][tool]=hashlib.sha256(Path(tool).read_bytes()).hexdigest()
 
@@ -122,6 +122,49 @@ try:
         (OUT/'native-config-index.json').write_text(json.dumps(selected,indent=2)+'\n')
         run(['klayout','-b','-r',str(ROOT/'project/experiments/block_v1/inspect_native_gds.rb'),
              '-rd','platform='+str(TOOLS),'-rd','report='+str(OUT/'native-gds-layers.json')],'native-gds.log')
+    elif MODE=='probe-geometry':
+        from klayout_overlay import generate
+        generate(TOOLS,json.loads((ROOT/'project/experiments/block_v1/technology.json').read_text()),OUT/'klayout')
+        probe=OUT.parents[2]/'block-v1-20261027-009/tasks/route-probe'
+        prior=json.loads((probe/'receipt.json').read_text())
+        assert prior['passed'] is True
+        for name in ['probe/routed.def','probe/unrouted.def','probe/landing.lef','overlay/research12.tech.lef']:
+            assert hashlib.sha256((probe/name).read_bytes()).hexdigest()==prior['outputs'][name]
+        arguments=dict(lyt=OUT/'klayout/research12.lyt',tech_lef=probe/'overlay/research12.tech.lef',
+                       landing_lef=probe/'probe/landing.lef',unrouted=probe/'probe/unrouted.def',routed=probe/'probe/routed.def',out=OUT)
+        argv=['klayout','-b','-r',str(ROOT/'project/experiments/block_v1/probe_geometry.rb')]
+        for key,value in arguments.items():argv+=['-rd',key+'='+str(value)]
+        run(argv,'geometry.log')
+    elif MODE=='pattern-prepare':
+        from pattern_prepare import prepare
+        folder=OUT.parents[2]/'block-v1-20261027-010/tasks/rcx-classic-patterns'
+        prior=json.loads((folder/'receipt.json').read_text());assert prior['passed'] is True
+        for name in ['patterns.odb','patterns.def','overlay/research12.tech.lef']:
+            assert hashlib.sha256((folder/name).read_bytes()).hexdigest()==prior['outputs'][name]
+        script='read_db {'+str(folder/'patterns.odb')+'}\n'+r'''
+set tech [ord::get_db_tech]
+set stream [open pattern-ndr.json w]
+puts $stream "{\"dbu_per_um\":[$tech getDbUnitsPerMicron],\"rules\":\{"
+set separator ""
+foreach rule [$tech getNonDefaultRules] {
+  puts -nonewline $stream "$separator\"[$rule getName]\":\{"
+  set inner ""
+  foreach layer [$tech getLayers] {
+    set entry [$rule getLayerRule $layer]
+    if {$entry ne "NULL" && $entry ne ""} {
+      puts -nonewline $stream "$inner\"[$layer getName]\":{\"width_dbu\":[$entry getWidth],\"spacing_dbu\":[$entry getSpacing]}"
+      set inner ","
+    }
+  }
+  puts -nonewline $stream "\}"
+  set separator ","
+}
+puts $stream "\}\}"
+close $stream
+'''
+        (OUT/'pattern-ndr.tcl').write_text(script)
+        run(['openroad','-no_init','-exit','pattern-ndr.tcl'],'pattern-ndr.log')
+        prepare(folder,OUT/'pattern-ndr.json',OUT/'reference-patterns')
     elif MODE in ('committed-suite','recovery-suite','mapped-suite'):
         driver='committed_qualification.cpp' if MODE=='recovery-suite' else 'committed_sim.cpp'
         sources=rtl()
