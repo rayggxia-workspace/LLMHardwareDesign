@@ -122,6 +122,8 @@ try:
         from native_floorplan import prepare
         top,policy=MODE.removeprefix('native-floorplan-').rsplit('-',1)
         prepare(ROOT,OUT,run,top,policy)
+    elif MODE=='native-format-info':
+        run(['yosys','-Q','-T','-p','help write_verilog'],'write-verilog-help.log')
     elif MODE=='native-prepare':
         from native_prepare import prepare
         prepare(ROOT,OUT)
