@@ -106,6 +106,9 @@ try:
     elif MODE=='reference-fit':
         from reference_fit import fit
         fit(ROOT,OUT,run)
+    elif MODE=='heldout-rc':
+        from heldout_rc import verify
+        verify(ROOT,OUT,CPUS,run)
     elif MODE.startswith('reference-shard-'):
         from reference_run import pilot
         pilot(ROOT,OUT,CPUS,int(MODE.rsplit('-',1)[1]))
