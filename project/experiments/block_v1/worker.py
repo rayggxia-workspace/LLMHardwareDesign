@@ -128,6 +128,10 @@ try:
     elif MODE=='physical-inputs-compatible':
         from physical_inputs import prepare
         prepare(ROOT,OUT,CPUS,run,compatible=True)
+    elif MODE.startswith('native-run-'):
+        from native_run import implement
+        top,policy=MODE.removeprefix('native-run-').rsplit('-',1)
+        implement(ROOT,OUT,CPUS,run,top,policy)
     elif MODE=='native-boundary-audit':
         from native_boundary import verify
         verify(ROOT,OUT)
