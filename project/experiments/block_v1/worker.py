@@ -147,6 +147,7 @@ try:
         script='read_db {'+str(path)+'}\n'
         script+=r'''
 set inst [lindex [[ord::get_db_block] getInsts] 0]
+$inst setPlacementStatus PLACED
 foreach orient {R0 R90 R180 R270 MX MY MXR90 MYR90} {
   $inst setOrient $orient
   set transform [$inst getTransform]

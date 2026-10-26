@@ -33,3 +33,6 @@ worker模式：transaction（独立队列scoreboard）、map-s16k/map-t6k/map-c8
 early RC文件是显式参数估算，**不是**覆盖12层的OpenRCX规则。未完成提取校准和全层几何检查前，P1技术验收保持未完成。
 
 校准场景的 `pattern-prepare` 模式逐路径读取真实 DEF 和 ODB NDR 宽度；信号及 cntxM 上下文同场保留。`reference-pilot` 在已验证独立求解器上并发求解每个 family/目标层和最大上下文，保存选定 master 的完整 Maxwell 行及统计误差并检查互易性；该先导不替代全量校准或正式模型。具体范围见 `docs/decisions/2026-10-27-block-v1-calibration-scenes.md`。
+
+
+2026-10-27增量：完整上下文候选拟合后实际留出仍有跨层耦合缺失，版本2.0/2.2/2.3均未合格。`fv-install`、`fv-case-N`、`direct-view-N`另验证直接场解路径：六种小几何经独立有限体积、SPEF读回及GDS核对全部通过，完整Block分布式提取尚待完成。依据和严格适用范围见 `docs/decisions/2026-10-27-block-v1-direct-field-extraction.md`。`odb_geometry.tcl`按实际路径/过孔导出导体，不将OBS当金属；尚未支持的实例pin/特殊线显式拒绝。
