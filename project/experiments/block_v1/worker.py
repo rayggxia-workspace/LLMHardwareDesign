@@ -128,6 +128,9 @@ try:
     elif MODE=='physical-inputs-compatible':
         from physical_inputs import prepare
         prepare(ROOT,OUT,CPUS,run,compatible=True)
+    elif MODE=='native-boundary-audit':
+        from native_boundary import verify
+        verify(ROOT,OUT)
     elif MODE=='native-unit-info':
         script='read_liberty {'+str(TOOLS/'lib/NangateOpenCellLibrary_typical.lib')+'}\nreport_units\nhelp set_units\nhelp set_cmd_units\n'
         script+='set_units -time ns -capacitance pF\nreport_units\n'
