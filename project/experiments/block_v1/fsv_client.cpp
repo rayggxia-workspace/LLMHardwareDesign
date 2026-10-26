@@ -32,7 +32,8 @@ int netIndex(const fsv::Geometry& geometry,const std::string& name){
 }
 void emit(const std::string& name,const std::string& dimension,const fsv::Geometry& g,const fsv::CapRow& row){
   std::cout<<"{\"schema\":\"block-v1-fsv-row/1\",\"case\":\""<<name<<"\",\"dimension\":\""<<dimension
-           <<"\",\"master\":\""<<g.netName(row.master)<<"\",\"walks\":"<<row.walks<<",\"hops\":"<<row.hops<<",\"entries\":[";
+           <<"\",\"master\":\""<<g.netName(row.master)<<"\",\"walks\":"<<row.walks<<",\"hops\":"<<row.hops
+           <<",\"window_recorded\":"<<(g.window()?"true":"false")<<",\"window_leakage\":"<<row.window_leakage<<",\"entries\":[";
   for(int i=0;i<=g.netCount();++i){
     if(i)std::cout<<',';
     std::cout<<"{\"net\":\""<<(i==g.netCount()?"ground":g.netName(i))<<"\",\"cap\":"
@@ -88,19 +89,27 @@ void determinism(int threads){
 // the author's planar/conformal dielectric implementation unchanged.
 void scene(fsv::Solver& solver,bool three,const std::string& path){
   std::ifstream in(path);require(in.good(),"missing scene");fsv::Geometry g;
-  std::map<std::string,int> nets;std::vector<std::string> masters;std::string line;double eps=0;
+  std::map<std::string,int> nets;std::vector<std::string> masters,grounded;std::string line;double eps=0;
+  std::optional<fsv::AlignedBox<2>> window;
   while(std::getline(in,line)){
     std::istringstream row(line.substr(0,line.find('#')));std::string kind;if(!(row>>kind))continue;
     if(kind=="background"){require(bool(row>>eps)&&eps>0,"bad epsilon");continue;}
     if(kind=="master"){std::string name;require(bool(row>>name),"bad master");masters.push_back(name);continue;}
+    if(kind=="ground"){std::string name;require(bool(row>>name),"bad ground");grounded.push_back(name);continue;}
+    if(kind=="window"){
+      require(three && !window,"window requires one explicit 3D boundary");fsv::AlignedBox<2> xy;
+      require(bool(row>>xy.lo[0]>>xy.lo[1]>>xy.hi[0]>>xy.hi[1]),"bad window");window=xy;continue;
+    }
     require(kind=="box","unsupported scene directive "+kind);std::string name;fsv::Box box;
     require(bool(row>>name>>box.lo[0]>>box.lo[1]>>box.lo[2]>>box.hi[0]>>box.hi[1]>>box.hi[2]),"bad box");
     require(name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-")==std::string::npos,"bad net name");
     if(!nets.contains(name))nets[name]=g.addNet(name);g.addBox(nets.at(name),box);
   }
   require(eps>0 && g.netCount()>0,"empty scene");
+  if(window)g.setWindow(*window);
+  for(const auto& name:grounded)g.setGrounded(netIndex(g,name));
   fsv::SolveOptions options;options.tol_total=.002;options.tol_coupling=.002;
-  if(masters.empty())for(int i=0;i<g.netCount();++i)masters.push_back(g.netName(i));
+  if(masters.empty())for(int i=0;i<g.netCount();++i)if(!g.grounded(i))masters.push_back(g.netName(i));
   if(three){
     fsv::Scene prepared(g,eps);
     for(const auto& master:masters)emit(std::filesystem::path(path).stem().string(),"3D",g,

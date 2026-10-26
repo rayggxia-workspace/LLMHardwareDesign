@@ -8,6 +8,12 @@ report_units
 read_spef $::env(BV1_SPEF)
 set_propagated_clock [all_clocks]
 sta::find_timing
+set clock_fanout 0
+set clock_ports [get_ports clk]
+foreach reached [get_fanout -from $clock_ports -flat -pin_levels 2 -trace_arcs all] {
+  if {[lsearch -exact $clock_ports $reached]<0} {incr clock_fanout}
+}
+if {$clock_fanout==0} {error "Native fanout API failed its connected-clock positive control"}
 write_sdc constraints-readback.sdc
 report_parasitic_annotation -report_unannotated > annotation.rpt
 set stream [open endpoints.tsv w]
@@ -27,6 +33,7 @@ close $stream
 set stream [open timing-summary.tsv w]
 puts $stream "setup_checks\t[sta::endpoint_violation_count max]"
 puts $stream "hold_checks\t[sta::endpoint_violation_count min]"
+puts $stream "connected_clock_fanout\t$clock_fanout"
 puts $stream "check_setup\t[check_setup -verbose]"
 puts $stream "time_unit_seconds\t[sta::time_ui_sta 1]"
 puts $stream "capacitance_unit_farads\t[sta::capacitance_ui_sta 1]"

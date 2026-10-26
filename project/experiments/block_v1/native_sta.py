@@ -33,7 +33,7 @@ def inspect(folder):
             assert name not in summary and len(values)==1
             summary[name]=float(values[0])
     assert set(electrical)=={'capacitance','slew','fanout'}
-    assert set(summary)=={'setup_checks','hold_checks','check_setup','time_unit_seconds','capacitance_unit_farads'}
+    assert set(summary)=={'setup_checks','hold_checks','check_setup','time_unit_seconds','capacitance_unit_farads','connected_clock_fanout'}
     checks=dict(endpoint_set_nonempty=bool(endpoints),all_endpoint_slacks_finite=bool(endpoints)and all(math.isfinite(v)for row in endpoints.values()for v in row),
         all_setup_nonnegative=bool(endpoints)and all(v[0]>=0 for v in endpoints.values()),
         all_hold_nonnegative=bool(endpoints)and all(v[1]>=0 for v in endpoints.values()),
@@ -41,7 +41,7 @@ def inspect(folder):
         native_check_setup_pass=summary['check_setup']==1,
         native_time_ns=abs(summary['time_unit_seconds']/1e-9-1)<1e-6,
         native_capacitance_ff=abs(summary['capacitance_unit_farads']/1e-15-1)<1e-6,
-        core_clock_propagated=clocks=={'core':'1'})
+        core_clock_propagated=clocks=={'core':'1'},connected_clock_positive_control=summary['connected_clock_fanout']>0)
     for kind,row in electrical.items():
         finite=all(math.isfinite(row[k])for k in ('slack','limit'))
         # The native API uses a large infinity sentinel for no limit. Preserve
@@ -97,8 +97,28 @@ def fixture(root,out,run):
     positive=one('positive',2,10)
     cap=one('bad-capacitance',1000,10)
     clock=one('bad-setup',2,.1)
+    # Copy only the actual positive report into new audit-control directories.
+    # The original physical/native files remain immutable. These exercise the
+    # unused-output exception and precision independently of real violations.
+    rows=[line.split('\t')for line in(out/'positive/endpoints.tsv').read_text().splitlines()]
+    faults={}
+    for name,target in [('unconstrained-port','q'),('unconstrained-register','u0/D'),('connected-unused','u0/QN'),('tiny-negative','q')]:
+        altered=[row[:]for row in rows];found=False
+        for row in altered:
+            if row[0]==target:
+                found=True
+                if name=='connected-unused':row[-1]='1'
+                elif name=='tiny-negative':row[1]='-0.000000000001'
+                else:row[1:3]=['INF','INF'];row[-1]='0'
+        assert found
+        folder=out/name;folder.mkdir()
+        (folder/'endpoints.tsv').write_text(''.join('\t'.join(row)+'\n'for row in altered))
+        (folder/'timing-summary.tsv').write_bytes((out/'positive/timing-summary.tsv').read_bytes())
+        faults[name]=inspect(folder)
+        assert not faults[name]['passed'],'Receiver accepted '+name
     record=dict(schema='block-v1-native-sta-receiver-control/1',positive=positive,
-        bad_capacitance=cap,bad_setup=clock,scope='Actual native DFF/STA and explicit test SPEF; receiver controls only, no routed physical qualification')
+        bad_capacitance=cap,bad_setup=clock,report_fault_controls=faults,
+        scope='Actual native DFF/STA and explicit test SPEF; receiver controls only, no routed physical qualification')
     (out/'native-sta-control.json').write_text(json.dumps(record,indent=2)+'\n')
     assert positive['passed'],'Native positive STA control failed; inspect all actual margins'
     assert not cap['passed']and cap['electrical']['capacitance']['count']>0
