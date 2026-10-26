@@ -42,9 +42,9 @@ def validate(spec):
         assert task["partition"] in ("c64", "c96", "debug")
         ceiling = 64 if task["partition"] == "c64" else 96
         assert 0 < task["cpus"] <= ceiling
-        assert task["minutes"] > 0
+        assert task["minutes"] >= 0
         if task["partition"] == "debug":
-            assert task["minutes"] <= 30
+            assert 0 < task["minutes"] <= 30
         assert task["memory"] == "0", "Cluster RealMemory=1 placeholder: reserve actual node RAM"
         assert set(task.get("after", [])) <= ids - {task["id"]}
         assert task["argv"] and all(isinstance(x, str) for x in task["argv"])

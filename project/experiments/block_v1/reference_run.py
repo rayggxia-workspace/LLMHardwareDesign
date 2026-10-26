@@ -44,7 +44,7 @@ def check_rows(case, rows):
             assert delta<=tolerance,(a,b,delta,tolerance)
 
 
-def pilot(root,out,cpus):
+def pilot(root,out,cpus,shard=None):
     base=out.parents[2]
     source=base/'block-v1-20261027-013/tasks/pattern-prepare'
     source_receipt=json.loads((source/'receipt.json').read_text())
@@ -67,13 +67,26 @@ def pilot(root,out,cpus):
         target=int(signal[0]['layer'][5:])
         key=(case['name'].split('_',1)[0],target)
         buckets.setdefault(key,[]).append(case)
-    selected={}
-    for key,cases in buckets.items():
-        # Include largest context to catch shielding/grouping failures, plus
-        # a minimum-width/minimum-spacing case for the same family/layer.
-        for case in [cases[0],max(cases,key=lambda c:len(c['nets']))]:
-            selected[case['id']]=case
-    cases=sorted(selected.values(),key=lambda c:c['id'])
+    if shard is None:
+        selected={}
+        for key,cases in buckets.items():
+            # Include largest context to catch shielding/grouping failures,
+            # plus the first deterministic width/spacing case.
+            for case in [cases[0],max(cases,key=lambda c:len(c['nets']))]:
+                selected[case['id']]=case
+        cases=sorted(selected.values(),key=lambda c:c['id'])
+    else:
+        assert 0<=shard<6 and cpus==96
+        passed=base/'block-v1-20261027-014/tasks/reference-pilot'
+        prior=json.loads((passed/'receipt.json').read_text());assert prior['passed'] is True
+        assert sha(passed/'reference-pilot.json')==prior['outputs']['reference-pilot.json']
+        qualification=json.loads((passed/'reference-pilot.json').read_text())
+        assert qualification['manifest_sha256']==sha(manifest_path)
+        assert qualification['binary_sha256']==sha(binary)
+        # R6 contributes only R to the official model. Its DC R is the actual
+        # DEF length/width times the declared sheet resistance; computing C
+        # would add no fitted data. Keep the complete R6 geometry in manifest.
+        cases=[c for c in manifest['cases']if not c['name'].startswith('R6_')and c['id']%6==shard]
     workers=min(8,cpus//4);assert workers>0
     threads=cpus//workers
     shards=[cases[i::workers]for i in range(workers)]
@@ -102,11 +115,12 @@ def pilot(root,out,cpus):
     with concurrent.futures.ThreadPoolExecutor(max_workers=workers)as pool:
         futures=[pool.submit(solve,i,shard)for i,shard in enumerate(shards)if shard]
         for future in futures:records.append(future.result())
-    record=dict(schema='block-v1-reference-pilot/1',manifest=str(manifest_path),manifest_sha256=sha(manifest_path),
+    record=dict(schema='block-v1-reference-pilot/1'if shard is None else'block-v1-reference-shard/1',
+                manifest=str(manifest_path),manifest_sha256=sha(manifest_path),shard=shard,
                 qualified_solver=str(qualified),qualified_solver_sha256=sha(qualified),binary_sha256=sha(binary),
                 cases=[dict(id=c['id'],name=c['name'],conductors=len(c['nets']),masters=c['masters'])for c in cases],
                 family_target_layers=[list(key)for key in sorted(buckets)],workers=workers,threads_each=threads,commands=records,
                 checks=['all scene conductors retained','finite Maxwell rows and sign','row charge conservation',
                         'total statistical uncertainty <=0.3%','independent-row reciprocity within 5 sigma +1% total'],
-                qualification='Pilot reference rows only; full calibration, model fit and held-out validation pending')
-    (out/'reference-pilot.json').write_text(json.dumps(record,indent=2)+'\n')
+                qualification='Selected physical Maxwell rows; model fit and held-out validation pending')
+    (out/('reference-pilot.json'if shard is None else'reference-shard.json')).write_text(json.dumps(record,indent=2)+'\n')

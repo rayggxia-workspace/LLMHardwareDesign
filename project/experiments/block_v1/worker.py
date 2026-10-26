@@ -103,6 +103,9 @@ try:
     elif MODE=='reference-pilot':
         from reference_run import pilot
         pilot(ROOT,OUT,CPUS)
+    elif MODE.startswith('reference-shard-'):
+        from reference_run import pilot
+        pilot(ROOT,OUT,CPUS,int(MODE.rsplit('-',1)[1]))
     elif MODE=='semantic-negative':
         qualified=OUT.parents[2]/'block-v1-20261027-006'
         inp=OUT.parents[2]/'block-v1-20261027-004/tasks/fixtures/upstream/input01'
