@@ -6,6 +6,9 @@ metal, extra SRAM, relaxed constraints or disabled default checks are added.
 import hashlib
 import json
 from pathlib import Path
+import re
+import shutil
+from io_slots import slot
 
 
 def sha(path):
@@ -32,9 +35,14 @@ def implement(root,out,cpus,run,top,policy):
     nickname='bv1_'+top+'_'+policy
     results=out/'flow/results/nangate45'/nickname/'base';results.mkdir(parents=True)
     # do-1_synth imports these mapped files through OpenROAD synth_odb.tcl;
-    # it does not invoke Yosys. Links keep immutable large input files shared.
-    (results/'1_2_yosys.v').symlink_to(inputs/(top+'.v'))
-    (results/'1_2_yosys.sdc').symlink_to(inputs/(top+'.sdc'))
+    # it does not invoke Yosys. Independent read-only copies prevent any
+    # unexpected downstream write from reaching the frozen source files.
+    copied={}
+    with slot(base):
+        for suffix in ['v','sdc']:
+            path=results/('1_2_yosys.'+suffix)
+            shutil.copyfile(inputs/(top+'.'+suffix),path)
+            path.chmod(0o444);copied[path]=sha(path)
     command=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(folder/'config.mk'),
              'WORK_HOME='+str(out/'flow'),'NUM_CORES='+str(cpus)]
     record=dict(schema='block-v1-native-candidate/1',top=top,policy=policy,cpus=cpus,
@@ -46,10 +54,17 @@ def implement(root,out,cpus,run,top,policy):
     save()
     for variable in ['TECH_LEF','MAX_ROUTING_LAYER','MIN_ROUTING_LAYER','RCX_RULES','KEEP_VARS','LEC_CHECK','SEC_CHECK']:
         run(command+['print-'+variable],'variable-'+variable+'.log')
-    assert 'metal10' in(out/'variable-MAX_ROUTING_LAYER.log').read_text()
-    assert 'metal1' in(out/'variable-MIN_ROUTING_LAYER.log').read_text()
+    def value(name):
+        return re.search(r'(?m)^'+name+r': (.+)$',(out/('variable-'+name+'.log')).read_text()).group(1).strip()
+    assert value('MAX_ROUTING_LAYER')=='metal10' and value('MIN_ROUTING_LAYER')=='metal1'
+    assert value('TECH_LEF')=='/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef'
+    assert value('RCX_RULES')=='/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules'
+    assert value('KEEP_VARS')=='1'
+    record['actual_variables']={name:value(name)for name in ['TECH_LEF','MIN_ROUTING_LAYER','MAX_ROUTING_LAYER','RCX_RULES','KEEP_VARS','LEC_CHECK','SEC_CHECK']}
     for index,stage in enumerate(['do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish']):
         run(command+[stage],'%02d-%s.log'%(index,stage))
+        with slot(base):
+            assert all(sha(path)==digest for path,digest in copied.items()),'Mapped inputs unexpectedly changed'
         record['stages'].append(stage);save()
     record['pipeline_completed']=True
     record['final_files']={path.name:dict(path=str(path),sha256=sha(path))for path in results.glob('6_final.*')if path.is_file()}

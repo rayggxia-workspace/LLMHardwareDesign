@@ -474,7 +474,9 @@ except BaseException as exc:
     raise
 finally:
     receipt['finished']=time.time()
-    receipt['outputs']={str(p.relative_to(OUT)):hashlib.sha256(p.read_bytes()).hexdigest()
-                        for p in OUT.rglob('*') if p.is_file() and p.name not in ('receipt.json','job.log')
-                        and 'obj' not in p.relative_to(OUT).parts}
+    from io_slots import slot,file_sha
+    with slot(OUT.parents[2]):
+        receipt['outputs']={str(p.relative_to(OUT)):file_sha(p)
+                            for p in OUT.rglob('*') if p.is_file() and p.name not in ('receipt.json','job.log')
+                            and 'obj' not in p.relative_to(OUT).parts}
     (OUT/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
