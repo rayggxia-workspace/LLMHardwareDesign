@@ -397,12 +397,12 @@ close $stream
         (OUT/'pattern-ndr.tcl').write_text(script)
         run(['openroad','-no_init','-exit','pattern-ndr.tcl'],'pattern-ndr.log')
         prepare(folder,OUT/'pattern-ndr.json',OUT/'reference-patterns')
-    elif MODE in ('committed-suite','recovery-suite','mapped-suite'):
+    elif MODE in ('committed-suite','recovery-suite','mapped-suite','mapped-parallel-suite'):
         driver='committed_qualification.cpp' if MODE=='recovery-suite' else 'committed_sim.cpp'
         sources=rtl()
         mapped_binding=None
         split=[]
-        if MODE=='mapped-suite':
+        if MODE in ('mapped-suite','mapped-parallel-suite'):
             original=OUT.parents[2]/'block-v1-20261027-004/tasks/map-c8-full'
             old=json.loads((original/'receipt.json').read_text())
             assert old['passed'] is True
@@ -418,11 +418,19 @@ close $stream
             run(['yosys','-s','export.ys'],'export.log')
             sources=[str(OUT/'mapped.v'),str(OUT/'cells.v')]
             split=['--output-split','12000','--output-split-cfuncs','150']
+            model_threads=1
+            if MODE=='mapped-parallel-suite':
+                assert CPUS>=4 and CPUS%2==0
+                model_threads=CPUS//2
+                split+=['--threads',str(model_threads)]
+            receipt['runtime_parallelism']=dict(simultaneous_models=2,threads_per_model=model_threads,
+                maximum_model_threads=2*model_threads,allocation_cpus=CPUS)
             mapped_binding=dict(flow='full-mapped-zero-delay',mapping_receipt=str(original/'receipt.json'),
                 mapping_receipt_sha256=hashlib.sha256((original/'receipt.json').read_bytes()).hexdigest(),
                 mapped_json=str(original/'mapped.json'),mapped_json_sha256=old['outputs']['mapped.json'],
                 library=str(library),library_sha256=hashlib.sha256(library.read_bytes()).hexdigest(),
                 exported_models={p:hashlib.sha256(Path(p).read_bytes()).hexdigest()for p in sources},
+                model_threads=model_threads,
                 qualification='Both S16K and T6K remain mapped cells; no behavioral memory substitution; no delay/STA claim')
         run([str(VERILATOR),'--cc','--exe','--build','-j',str(CPUS),'-Wno-fatal',
              '--top-module','shared121','--prefix','Vshared121','--Mdir',str(OUT/'obj'),

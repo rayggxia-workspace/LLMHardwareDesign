@@ -16,12 +16,13 @@ def verify(root,out,cpus,run,top,policy):
     config=json.loads((root/'project/experiments/block_v1/native_pipeline.json').read_text())
     base=out.parents[2];source=base/config['candidate_run']/('tasks/native-run-'+top+'-'+policy.lower())
     receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed']is True
-    proof=base/'block-v1-20261027-063/tasks/native-sta-control'
+    proof=base/'block-v1-20261027-066/tasks/native-sta-control'
     control=json.loads((proof/'receipt.json').read_text());assert control['passed']is True
     assert file_sha(proof/'native-sta-control.json')==control['outputs']['native-sta-control.json']
     accepted=json.loads((proof/'native-sta-control.json').read_text())
     assert accepted['positive']['passed']and not accepted['bad_capacitance']['passed']and not accepted['bad_setup']['passed']
     assert len(accepted['report_fault_controls'])==4 and all(not r['passed']for r in accepted['report_fault_controls'].values())
+    assert accepted['annotation']['positive']['passed']and not accepted['annotation']['missing_input_rc']['passed']
     relative=Path('flow/results/nangate45')/('bv1_'+top+'_'+policy)/'base'
     results=source/relative;inputs={}
     with slot(base):
@@ -54,6 +55,8 @@ def verify(root,out,cpus,run,top,policy):
     prep=base/config['preparation_run']/'tasks/native-prepare'
     bound=json.loads((prep/'receipt.json').read_text());assert bound['passed']is True
     pins_path=prep/(top+'-'+policy)/'pins.json'
+    flow_config=prep/(top+'-'+policy)/'config.mk'
+    assert file_sha(flow_config)==bound['outputs'][str(flow_config.relative_to(prep))]
     assert file_sha(pins_path)==bound['outputs'][str(pins_path.relative_to(prep))]
     pins=json.loads(pins_path.read_text())['pins'];wanted={p['pin']:p for p in pins};got={}
     for line in(out/'physical-pins.tsv').read_text().splitlines():
