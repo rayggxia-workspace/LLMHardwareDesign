@@ -66,24 +66,40 @@ def fit(root,out,run):
     # Mapping includes actual external terminals so coupling targets need no
     # fabricated D_NET for unmeasured context/self-capacitance rows.
     names=sorted(nets);ports=[p for name in names for p in nets[name]['ports']]
-    assert len(set(names+ports))==len(names)+len(ports)
-    identifiers={name:i+1 for i,name in enumerate(names+ports)}
+    assert len(set(ports))==len(ports)
+    # Benchmark output BTerms legitimately share their net's name. SPEF's
+    # name map maps strings, so the same atom serves both references.
+    identifiers={name:i+1 for i,name in enumerate(dict.fromkeys(names+ports))}
+    directions={};design=None
+    patterns=Path(manifest['source_folder'])
+    assert sha(patterns/'patterns.def')==manifest['def_sha256']
+    with(patterns/'patterns.def').open()as stream:
+        for line in stream:
+            match=re.fullmatch(r'DESIGN (\S+) ;\s*',line)
+            if match:design=match.group(1)
+            match=re.match(r'\s*- (\S+) \+ NET (\S+) \+ DIRECTION (INPUT|OUTPUT) \+ USE SIGNAL',line)
+            if match:
+                pin,net,direction=match.groups();assert pin in nets[net]['ports']and pin not in directions
+                directions[pin]=direction[0]
+            if line.startswith('END PINS'):break
+    assert design and set(directions)==set(ports)
     selected=sorted(expected|dc)
     totals={name:ground[name]+sum(cap for other,cap in adjacency[name])for name in expected}
     def port(name,end=0):return '*%d'%identifiers[nets[name]['ports'][end]]
+    def direction(name,end=0):return directions[nets[name]['ports'][end]]
     spef=out/'reference.spef'
     with spef.open('w')as stream:
-        stream.write('*SPEF "IEEE 1481-1998"\n*DESIGN "bench"\n*DATE "2026-10-27"\n'
+        stream.write('*SPEF "IEEE 1481-1998"\n*DESIGN "'+design+'"\n*DATE "2026-10-27"\n'
                      '*VENDOR "LLMHardwareDesign"\n*PROGRAM "block-v1-reference"\n*VERSION "1"\n'
                      '*DESIGN_FLOW "PARTIAL_CALIBRATION_MASTER_ROWS"\n*DIVIDER /\n*DELIMITER :\n'
                      '*BUS_DELIMITER [ ]\n*T_UNIT 1 NS\n*C_UNIT 1 FF\n*R_UNIT 1 OHM\n*L_UNIT 1 UH\n\n*NAME_MAP\n')
         for name,identifier in identifiers.items():stream.write('*%d %s\n'%(identifier,name))
         stream.write('\n*PORTS\n')
         for name in names:
-            stream.write(port(name)+' I\n'+port(name,1)+' O\n')
+            stream.write(port(name)+' '+direction(name)+'\n'+port(name,1)+' '+direction(name,1)+'\n')
         for name in selected:
-            stream.write('\n*D_NET *%d %.17g\n*CONN\n*P %s I\n*P %s O\n*CAP\n'%
-                         (identifiers[name],totals.get(name,0),port(name),port(name,1)))
+            stream.write('\n*D_NET *%d %.17g\n*CONN\n*P %s %s\n*P %s %s\n*CAP\n'%
+                         (identifiers[name],totals.get(name,0),port(name),direction(name),port(name,1),direction(name,1)))
             count=0
             if name in expected:
                 count+=1;stream.write('%d %s %.17g\n'%(count,port(name),ground[name]))
