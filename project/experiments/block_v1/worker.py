@@ -128,6 +128,18 @@ try:
     elif MODE=='physical-inputs-compatible':
         from physical_inputs import prepare
         prepare(ROOT,OUT,CPUS,run,compatible=True)
+    elif MODE.startswith('native-cap20-run-'):
+        from native_reroute import implement
+        top,policy=MODE.removeprefix('native-cap20-run-').rsplit('-',1)
+        implement(ROOT,OUT,CPUS,run,top,policy)
+    elif MODE.startswith('native-cap20-receive-'):
+        from native_receive import verify
+        top,policy=MODE.removeprefix('native-cap20-receive-').rsplit('-',1)
+        verify(ROOT,OUT,CPUS,run,top,policy,pipeline='native_pipeline_cap20.json')
+    elif MODE.startswith('native-cap20-view-'):
+        from native_views import generate
+        top,policy=MODE.removeprefix('native-cap20-view-').rsplit('-',1)
+        generate(ROOT,OUT,CPUS,run,top,policy,pipeline='native_pipeline_cap20.json')
     elif MODE.startswith('native-run-'):
         from native_run import implement
         top,policy=MODE.removeprefix('native-run-').rsplit('-',1)

@@ -53,18 +53,20 @@ def interface(folder,pins,leaf,top,library):
         supply_pins=pg,obstruction_layers=sorted(obs))
 
 
-def generate(root,out,cpus,run,top,policy):
+def generate(root,out,cpus,run,top,policy,pipeline='native_pipeline.json'):
     from io_slots import file_sha,slot
     assert top in ('shared109','transaction6k')and policy in ('A','C')and cpus>=8
-    base=out.parents[2];config=json.loads((root/'project/experiments/block_v1/native_pipeline.json').read_text())
+    assert pipeline in ('native_pipeline.json','native_pipeline_cap20.json')
+    base=out.parents[2];config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
     api=base/'block-v1-20261027-073/tasks/native-formal-control'
     control=json.loads((api/'receipt.json').read_text());assert control['passed']is True
     assert file_sha(api/'view-api.log')==control['outputs']['view-api.log']
-    receiver=base/config['receiver_run']/('tasks/native-receive-'+top+'-'+policy.lower())
+    receiver=base/config['receiver_run']/('tasks/'+config.get('receiver_task_prefix','native-receive-')+top+'-'+policy.lower())
     accepted=json.loads((receiver/'receipt.json').read_text());assert accepted['passed']is True
     proof=receiver/'native-physical-receiver.json';assert file_sha(proof)==accepted['outputs'][proof.name]
     physical=json.loads(proof.read_text());assert physical['passed']is True and not physical['historical_input_contract']
-    source=base/config['candidate_run']/('tasks/native-run-'+top+'-'+policy.lower())
+    source=base/config['candidate_run']/('tasks/'+config.get('candidate_task_prefix','native-run-')+top+'-'+policy.lower())
+    assert physical['pipeline']==pipeline
     assert physical['source']==str(source)and file_sha(source/'receipt.json')==physical['source_receipt_sha256']
     receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed']is True
     relative=Path('flow/results/nangate45')/('bv1_'+top+'_'+policy)/'base';results=source/relative

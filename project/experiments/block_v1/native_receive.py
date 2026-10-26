@@ -13,11 +13,12 @@ from native_annotation import inspect as annotation_audit
 from native_formal import receive as formal_audit
 
 
-def verify(root,out,cpus,run,top,policy,historical=False):
-    pipeline='native_pipeline_057.json' if historical else 'native_pipeline.json'
+def verify(root,out,cpus,run,top,policy,historical=False,pipeline=None):
+    pipeline=pipeline or ('native_pipeline_057.json' if historical else 'native_pipeline.json')
+    assert pipeline in ('native_pipeline.json','native_pipeline_057.json','native_pipeline_cap20.json')
     config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
     assert bool(config.get('historical_input_contract',False))==historical
-    base=out.parents[2];source=base/config['candidate_run']/('tasks/native-run-'+top+'-'+policy.lower())
+    base=out.parents[2];source=base/config['candidate_run']/('tasks/'+config.get('candidate_task_prefix','native-run-')+top+'-'+policy.lower())
     receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed']is True
     proof=base/'block-v1-20261027-066/tasks/native-sta-control'
     control=json.loads((proof/'receipt.json').read_text());assert control['passed']is True
@@ -60,6 +61,9 @@ def verify(root,out,cpus,run,top,policy,historical=False):
     pins_path=prep/(top+'-'+policy)/'pins.json'
     flow_config=prep/(top+'-'+policy)/'config.mk'
     assert file_sha(flow_config)==bound['outputs'][str(flow_config.relative_to(prep))]
+    if config.get('repair_variant'):
+        from native_reroute import checked_config
+        flow_config=checked_config(source,receipt,flow_config)
     assert file_sha(pins_path)==bound['outputs'][str(pins_path.relative_to(prep))]
     pins=json.loads(pins_path.read_text())['pins'];wanted={p['pin']:p for p in pins};got={}
     for line in(out/'physical-pins.tsv').read_text().splitlines():
@@ -86,7 +90,7 @@ def verify(root,out,cpus,run,top,policy,historical=False):
     # final DEF and all previous-run files stay unchanged.
     folder=out/'gds-flow/results/nangate45'/('bv1_'+top+'_'+policy)/'base';folder.mkdir(parents=True)
     with slot(base):shutil.copyfile(results/'6_final.def',folder/'6_final.def')
-    command=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(prep/(top+'-'+policy)/'config.mk'),
+    command=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(flow_config),
              'WORK_HOME='+str(out/'gds-flow'),'NUM_CORES='+str(cpus),'do-gds']
     run(command,'independent-gds.log')
     gds=folder/'6_final.gds';assert gds.is_file()
