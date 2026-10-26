@@ -11,8 +11,12 @@ from io_slots import file_sha
 
 
 def inspect(text):
+    # Kepler emits an early input summary and a second one during explicit
+    # normalization. Receive exactly the normalization block, not both dumps.
+    blocks=text.split('normalizeInputs: starting')
+    normalized=blocks[-1]if len(blocks)==2 else ''
     def count(pattern):
-        matches=re.findall(pattern+r'\s*$',text,re.M)
+        matches=re.findall(pattern+r'\s*$',normalized,re.M)
         return int(matches[0])if len(matches)==1 else None
     counts={kind:count(r'size of '+kind+r': (\d+)')for kind in
         ['common inputs','diff0 inputs','diff1 inputs','common outputs','diff0 outputs','diff1 outputs']}
@@ -21,6 +25,7 @@ def inspect(text):
     checks=dict(explicit_unsat=len(re.findall(r'SAT solver finished: UNSAT\s*$',text,re.M))==1,
         explicit_identical=len(re.findall(r'Circuits are IDENTICAL\s*$',text,re.M))==1,
         no_difference='Found difference'not in text,
+        one_normalization_block=len(blocks)==2 and normalized.count('normalizeOutputs: starting')==1,
         complete_counts=all(v is not None for v in counts.values()))
     checks['positive_inputs']=counts['common inputs']is not None and counts['common inputs']>0
     checks['positive_outputs']=counts['common outputs']is not None and counts['common outputs']>0
@@ -64,7 +69,8 @@ def fixture(root,out,run):
         ('missing-unsat',positive.replace('SAT solver finished: UNSAT','SAT solver finished: UNKNOWN')),
         ('missing-identical',positive.replace('Circuits are IDENTICAL','No verdict')),
         ('zero-outputs',re.sub(r'size of common outputs: \d+','size of common outputs: 0',positive)),
-        ('unmatched-input',positive.replace('size of diff1 inputs: 0','size of diff1 inputs: 1'))]:
+        ('unmatched-input',positive.replace('size of diff1 inputs: 0','size of diff1 inputs: 1')),
+        ('missing-normalization',positive.replace('normalizeInputs: starting','normalization absent'))]:
         assert modified!=positive
         faults[name]=inspect(modified);assert not faults[name]['passed']
     record=dict(schema='block-v1-native-lec-control/1',passed=True,results=results,report_faults=faults,
@@ -75,7 +81,7 @@ def fixture(root,out,run):
 
 def receive(source,receipt,results,top,prep):
     base=source.parents[2]
-    control=base/'block-v1-20261027-072/tasks/native-formal-control'
+    control=base/'block-v1-20261027-073/tasks/native-formal-control'
     accepted=json.loads((control/'receipt.json').read_text());assert accepted['passed']is True
     path=control/'native-formal-control.json';assert file_sha(path)==accepted['outputs'][path.name]
     positive=json.loads(path.read_text());assert positive['passed']is True
