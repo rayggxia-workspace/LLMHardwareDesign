@@ -61,11 +61,11 @@ def fixture(root,out,run):
         (folder/'probe.sdc').write_text('set_cmd_units -time ns -capacitance fF -resistance kOhm -distance um\n'
             'create_clock -name core -period %g [get_ports clk]\nset_clock_uncertainty .1 [get_clocks core]\n'
             'set_clock_transition .05 [get_clocks core]\nset_input_delay -clock core -max .2 [get_ports d]\n'
-            'set_input_delay -clock core -min .1 [get_ports d]\nset_output_delay -clock core -max .2 [get_ports q]\n'
+            'set_input_delay -clock core -min .5 [get_ports d]\nset_output_delay -clock core -max .2 [get_ports q]\n'
             'set_output_delay -clock core -min .01 [get_ports q]\nset_driving_cell -lib_cell BUF_X2 -pin Z [get_ports d]\n'
             'set_load %g [get_ports q]\n'%(period,load_ff))
         spef='*SPEF "IEEE 1481-1998"\n*DESIGN "sta_probe"\n*DATE "2026-10-27"\n*VENDOR "LLMHardwareDesign"\n*PROGRAM "receiver-control"\n*VERSION "1"\n'
-        spef+='*DIVIDER /\n*DELIMITER :\n*BUS_DELIMITER [ ]\n*T_UNIT 1 NS\n*C_UNIT 1 FF\n*R_UNIT 1 OHM\n*L_UNIT 1 UH\n*PORTS\nclk I\nd I\nq O\n'
+        spef+='*DESIGN_FLOW "PIN_CAP NONE"\n*DIVIDER /\n*DELIMITER :\n*BUS_DELIMITER [ ]\n*T_UNIT 1 NS\n*C_UNIT 1 FF\n*R_UNIT 1 OHM\n*L_UNIT 1 UH\n*PORTS\nclk I\nd I\nq O\n'
         for net,pin,direction,cap in [('clk','CK','I',1),('d','D','I',1),('q','Q','O',1)]:
             external='O'if net=='q'else'I'
             spef+='\n*D_NET %s %g\n*CONN\n*P %s %s\n*I u0:%s %s\n*CAP\n1 %s %g\n2 u0:%s %g\n*RES\n1 %s u0:%s .1\n*END\n'%(net,cap,net,external,pin,direction,net,cap/2,pin,cap/2,net,pin)
