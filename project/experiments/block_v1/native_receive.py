@@ -10,6 +10,7 @@ from constraint_readback import audit as boundary_audit
 from io_slots import slot,file_sha
 from native_sta import inspect as sta_audit
 from native_annotation import inspect as annotation_audit
+from native_formal import receive as formal_audit
 
 
 def verify(root,out,cpus,run,top,policy):
@@ -67,10 +68,11 @@ def verify(root,out,cpus,run,top,policy):
         expected=[round(v*scale)for v in [x-w/2,y-h/2,x+w/2,y+h/2]]
         pins_equal &= got.get(name)==('metal10',expected)
     boundary=boundary_audit((out/'constraints-readback.sdc').read_text(),pins,budget)
+    formal=formal_audit(source,receipt,results,top,prep)
     layers=summary['routing_layers'][0].split(',')
     die=list(map(int,summary['die']));w,h=leaf['die_um']
     core=list(map(int,summary['core']))
-    checks=dict(timing=timing['passed'],rc_coverage=coverage['passed'],unplaced_zero=summary['unplaced']==['0'],
+    checks=dict(timing=timing['passed'],rc_coverage=coverage['passed'],mapped_to_final_lec=formal['passed'],unplaced_zero=summary['unplaced']==['0'],
         all_pg_iterms_correct=summary['incorrect_pg_iterms']==['0']and int(summary['pg_iterm_count'][0])>0,
         pg_vdd=summary['pg_VDD']==['1'],pg_vss=summary['pg_VSS']==['1'],
         open_signal_inputs_zero=summary['open_signal_inputs']==['0'],exact_prefabricated_m10_pins=pins_equal,
@@ -96,7 +98,7 @@ def verify(root,out,cpus,run,top,policy):
     # Every source input is checked again after independent readers finish.
     with slot(base):assert all(file_sha(Path(p))==digest for p,digest in inputs.items())
     result=dict(schema='block-v1-native-physical-receiver/1',passed=all(checks.values()),checks=checks,top=top,policy=policy,
-        timing=timing,rc_coverage=coverage,boundary=boundary,source=str(source),source_receipt_sha256=file_sha(source/'receipt.json'),
+        timing=timing,rc_coverage=coverage,boundary=boundary,mapped_to_final_lec=formal,source=str(source),source_receipt_sha256=file_sha(source/'receipt.json'),
         active_cell_count=active_count,active_area_um2=active,physical_only_cell_count=physical_count,physical_only_area_um2=physical,
         all_instance_area_um2=active+physical,die_area_um2=w*h,masters=masters,
         core_bbox_dbu=core,core_area_um2=(core[2]-core[0])*(core[3]-core[1])/scale**2,
