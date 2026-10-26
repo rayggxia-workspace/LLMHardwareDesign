@@ -8,6 +8,29 @@ foreach layer [$tech getLayers] {
   if {[$layer getRoutingLevel] > 0} { lappend layers [$layer getName] }
 }
 if {$layers ne $expected} { error "routing stack mismatch: $layers" }
+# Raising the native LEF grammar to 5.8 can discard all legacy SAMENET
+# constraints. Check actual database rules, including stacked cut exceptions.
+set source [open overlay/native.tech.lef r]
+set checked 0
+while {[gets $source line] >= 0} {
+  if {[regexp {^\s*SAMENET\s+(\S+)\s+(\S+)\s+([0-9.]+)\s*(STACK)?\s*;} $line -> first second spacing stack]} {
+    set rule [$tech findSameNetRule [$tech findLayer $first] [$tech findLayer $second]]
+    if {$rule eq "NULL" || $rule eq ""} {error "native SAMENET lost: $first $second"}
+    set dbu [$tech getDbUnitsPerMicron]
+    if {[$rule getSpacing] != round($spacing*$dbu)} {error "native SAMENET spacing changed"}
+    if {[$rule getAllowStackedVias] != [expr {$stack eq "STACK"}]} {error "native STACK changed"}
+    incr checked
+  }
+}
+close $source
+if {$checked != 27} {error "native SAMENET input count $checked != 27"}
+foreach name {metal11 metal12} {
+  set layer [$tech findLayer $name]
+  if {[llength [$layer getTechLayerSpacingEolRules]] != 1} {error "new-layer EOL constraint not parsed: $name"}
+}
+set stream [open native-rule-check.json w]
+puts $stream "{\"native_samenet_rules_preserved\":$checked,\"new_layer_eol_rules\":2}"
+close $stream
 set stream [open database.json w]
 puts $stream "{\"routing_layers\":\[\"[join $layers {","}]\"\],"
 puts $stream "\"dbu_per_um\":[$tech getDbUnitsPerMicron],\"vias\":\["

@@ -1,0 +1,52 @@
+{
+  "run_id": "block-v1-20261027-008",
+  "base_nodes": 6,
+  "max_nodes": 8,
+  "elastic": false,
+  "source_commit": "4894adb8f23205afa7023c313b651936cad32a2b",
+  "source_archive_sha256": "a221dd26d7f9f5a801a17852e33bc36af4d9f06c5514038801e8fb657d0e730a",
+  "tasks": [
+    {
+      "id": "inventory",
+      "partition": "c96",
+      "cpus": 1,
+      "memory": "0",
+      "minutes": 30,
+      "after": [],
+      "argv": [
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/experiments/block_v1/worker.sh",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src",
+        "inventory"
+      ]
+    },
+    {
+      "id": "route-probe",
+      "partition": "c96",
+      "cpus": 8,
+      "memory": "0",
+      "minutes": 30,
+      "after": [],
+      "argv": [
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/experiments/block_v1/worker.sh",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src",
+        "route-probe"
+      ]
+    },
+    {
+      "id": "mapped-suite",
+      "partition": "c96",
+      "cpus": 32,
+      "memory": "0",
+      "minutes": 360,
+      "after": [],
+      "argv": [
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/experiments/block_v1/worker.sh",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src",
+        "mapped-suite"
+      ]
+    }
+  ]
+}

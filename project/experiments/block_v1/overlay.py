@@ -76,8 +76,11 @@ END BV1_via{cut}_array
     point = text.index("END metal10") + len("END metal10")
     emitted = text[:point] + "\n" + extension + text[point:]
     assert emitted.count('VERSION 5.6 ;') == 1
-    emitted = emitted.replace('VERSION 5.6 ;','VERSION 5.8 ;\n'+PROPERTIES,1)
-    restored=emitted.replace('VERSION 5.8 ;\n'+PROPERTIES,'VERSION 5.6 ;',1)
+    # Preserve the native grammar version: upgrading to 5.8 causes the LEF
+    # parser to silently discard the platform's legacy SAMENET section.
+    # LEF58 extension properties are independently parsed by OpenDB/drt.
+    emitted = emitted.replace('VERSION 5.6 ;','VERSION 5.6 ;\n'+PROPERTIES,1)
+    restored=emitted.replace('VERSION 5.6 ;\n'+PROPERTIES,'VERSION 5.6 ;',1)
     assert restored.replace("\n"+extension, "", 1).encode() == raw
     out.mkdir(parents=True, exist_ok=False)
     (out / "native.tech.lef").write_bytes(raw)
@@ -96,7 +99,7 @@ END BV1_via{cut}_array
     (out / "gds-map.json").write_text(json.dumps(spec["gds"],indent=2)+"\n")
     audit = dict(native_sha256=hashlib.sha256(raw).hexdigest(),
                  overlay_sha256=hashlib.sha256(emitted.encode()).hexdigest(), native_bytes_preserved=True,
-                 version_header_override={'native':'5.6','compiled_overlay':'5.8'},
+                 version_header_override={'native':'5.6','compiled_overlay':'5.6'},
                  geometry_only=True, full_12_layer_rcx_qualified=False, full_drc_qualified=False)
     (out / "generation.json").write_text(json.dumps(audit,indent=2)+"\n")
     return audit

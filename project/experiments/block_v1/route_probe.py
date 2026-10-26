@@ -60,10 +60,25 @@ write_def probe/routed.def
 
 def audit(out):
     text=(out/'routed.def').read_text()
-    # Fail closed if the router creates any native-layer routed path. Via
-    # enclosures must subsequently be checked against the existing landing.
-    layers=re.findall(r'(?:ROUTED|NEW)\s+(metal\d+)\b',text)
-    assert layers and set(layers)=={'metal11','metal12'},'native-layer route or missing new-layer coverage: '+repr(layers)
+    # DEF encodes a via10-only path starting on M10. This is legal only if its
+    # fixed enclosure is entirely inside the existing prefabricated landing.
+    # A second point/segment or any native-metal patch is forbidden.
+    nets=re.search(r'(?m)^NETS\s+1\s*;\s*(.*?)^END NETS',text,re.S).group(1)
+    paths=re.split(r'\b(?:ROUTED|NEW)\s+',nets)[1:]
+    layers=[];landings=[]
+    for part in paths:
+        layer=re.match(r'(metal\d+)\s+',part).group(1)
+        if layer=='metal10':
+            match=re.fullmatch(r'metal10\s+\(\s*(\d+)\s+(\d+)\s*\)\s+BV1_via10\s*;?\s*',part)
+            assert match,'new native-metal wire/patch: '+part
+            landings.append(tuple(map(int,match.groups())))
+        else:
+            assert layer in ('metal11','metal12'),'native route layer '+layer
+            layers.append(layer)
+    assert set(layers)=={'metal11','metal12'},'missing new-layer route coverage'
+    assert sorted(landings)==[(68800,68800),(273600,273600)],'exact existing internal M10 pin centers'
+    # Existing 0.8um pins and the via10 lower rectangles both have 0.4um half
+    # width: the native mask union stays identical, without a landing patch.
     sections=[]
     for name in ['COMPONENTS','PINS']:
         def section(path):
@@ -76,7 +91,8 @@ def audit(out):
     drc=(out/'drc.rpt').read_text()if(out/'drc.rpt').exists()else None
     assert drc is not None and not drc.strip(),'router DRC violations or no report'
     (out/'route-check.json').write_text(json.dumps(dict(schema='block-v1-route-probe/1',
-        router_native_path_count=0,routed_path_layers=layers,fixed_sections_compared=sections,
+        router_native_wire_or_patch_count=0,via10_existing_landing_centers_dbu=landings,
+        via10_lower_enclosure_half_width_dbu=800,routed_path_layers=layers,fixed_sections_compared=sections,
         router_drc_empty=True,independent_geometry_qualification=False,rc_extraction_qualified=False),indent=2)+'\n')
 
 

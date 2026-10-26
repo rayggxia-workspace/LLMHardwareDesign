@@ -100,6 +100,11 @@ try:
     elif MODE=='fsv-build':
         from fsv_build import build
         build(ROOT,OUT,CPUS,run)
+    elif MODE=='semantic-negative':
+        qualified=OUT.parents[2]/'block-v1-20261027-006'
+        inp=OUT.parents[2]/'block-v1-20261027-004/tasks/fixtures/upstream/input01'
+        run(['python3',str(ROOT/'project/experiments/block_v1/semantic_negative.py'),str(qualified/'src'),
+             str(inp),str(qualified/'tasks/committed-suite/mixed0'),str(OUT/'negative')],'negative.log')
     elif MODE in ('committed-suite','recovery-suite','mapped-suite'):
         driver='committed_qualification.cpp' if MODE=='recovery-suite' else 'committed_sim.cpp'
         sources=rtl()
@@ -182,7 +187,7 @@ try:
             zf.extractall(OUT/'upstream')
             receipt['upstream_archive_members']=zf.namelist()
         receipt['upstream_archive_sha256']=hashlib.sha256(raw).hexdigest()
-    elif MODE in ('overlay','route-probe'):
+    elif MODE in ('overlay','route-probe','rcx-patterns'):
         run(['python3',str(ROOT/'project/experiments/block_v1/overlay.py'),
              str(TOOLS/'lef/NangateOpenCellLibrary.tech.lef'),
              str(ROOT/'project/experiments/block_v1/technology.json'),str(OUT/'overlay')],'overlay.log')
@@ -194,6 +199,12 @@ try:
             run(['python3',str(ROOT/'project/experiments/block_v1/route_probe.py'),'generate',str(OUT/'probe'),'--cpus',str(CPUS)],'probe-generate.log')
             run(['openroad','-no_init','-exit',str(OUT/'probe/route.tcl')],'route.log')
             run(['python3',str(ROOT/'project/experiments/block_v1/route_probe.py'),'audit',str(OUT/'probe')],'probe-audit.log')
+        if MODE=='rcx-patterns':
+            (OUT/'patterns.tcl').write_text('read_lef overlay/research12.tech.lef\n'
+                 'bench_wires -v1 -len 100 -cnt 5 -w_list {1 2} -s_list {1 2 4 8} -all -over_dist 3 -under_dist 3\n'
+                 'write_db patterns.odb\nwrite_def patterns.def\nbench_verilog patterns.v\n'
+                 'help bench_read_spef\nhelp write_rules\nhelp gen_rcx_model\n')
+            run(['openroad','-no_init','-exit','patterns.tcl'],'patterns.log')
     else:
         raise ValueError('unsupported mode '+MODE)
     receipt['passed']=True
