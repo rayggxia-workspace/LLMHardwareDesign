@@ -30,3 +30,5 @@
 新增`routed-graph-view`：仅在096原真实路由测量回执通过后，将8个实测node-to-ground电荷和7条原DC边写入SPEF；新OpenROAD进程读取原009 ODB与新SPEF，按ITerm身份/内部node号导出每节点电容、每边电阻和总量。实际工具导入负例包括错误FF/PF、交换最大/最小节点电荷、交换最大/最小边电阻。后二者保持总C/总R，必须由局部身份检查拒绝。每种变体使用独立读入进程和目录，原ODB不改。
 
 API参照[OpenDB dbCapNode](https://openroad.readthedocs.io/en/latest/doxygen_output/html/classodb_1_1dbCapNode.html)与[dbRSeg](https://openroad.readthedocs.io/en/latest/doxygen_output/html/classodb_1_1dbRSeg.html)，具体安装版本尚未执行验证，不能把当前文档/API存在当成实测通过。合成TSV正例及六种故障控制（含保总量换值、缺节点、重复边与非有限数）通过，只证明接收器。一般多网capture-node耦合、真实长路由局部FV、窗口所有权、新旧层拼接和全Block资格仍未完成。
+
+097源8581c37d463846e115af195a171207ad7f01e562、归档66fa0965b99907ac613209449345c384644ae800773000ea92a4815a231751bc（113成员、788480字节）已部署，8CPU，依赖096实测成功。尚无Slurm作业。合成负例的非有限观测值在索引中标记为字符串，原TSV中的inf及拒绝结论保留；不把非法JSON数值当正常电容。
