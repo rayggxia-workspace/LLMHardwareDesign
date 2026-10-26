@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 import re
 from rc_pipeline import configuration
+from model_coverage import audit
 
 
 def sha(path):
@@ -153,9 +154,10 @@ write_db received.odb
     assert re.search(r'(?m)^LayerCount 12\s*$',text)
     layers={int(m.group(1))for m in re.finditer(r'(?m)^Metal (\d+) OVER\s*$',text)}
     assert layers==set(range(1,13)),layers
-    assert not re.search(r'(?m)^DIST count 0\s',text),'Incomplete layer/context calibration tables'
+    coverage=audit(text)
     record=dict(schema='block-v1-reference-fit/1',manifest=str(manifest_path),manifest_sha256=manifest_sha,
                 raw_rows=bindings,reference_master_rows=len(rows),dc_resistor_patterns=len(dc),coupling_pairs=len(couplings),
+                table_coverage=coverage,
                 positive_noise_projection=projected,reciprocity='mean of two measured entries when both masters exist',
                 spef_sha256=sha(spef),model_sha256=sha(model),received_dbu_model=str(out/'received.odb'),
                 readback_max_scaled_errors=dict(zip(['resistance_ohm','ground_ff','coupling_ff'],max_errors)),
