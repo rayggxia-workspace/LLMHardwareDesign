@@ -135,6 +135,19 @@ try:
     elif MODE=='native-boundary-audit':
         from native_boundary import verify
         verify(ROOT,OUT)
+    elif MODE=='native-acceptance-info':
+        flow=Path('/OpenROAD-flow-scripts/flow')
+        names=['scripts/final_outputs.tcl','scripts/final_connect.tcl','scripts/generate_abstract.tcl',
+               'scripts/klayout.tcl','scripts/klayout/gds_merge.py','platforms/nangate45/drc/FreePDK45.lydrc']
+        record={}
+        for name in names:
+            source=flow/name
+            if source.is_file():
+                target=OUT/'flow-source'/name;target.parent.mkdir(parents=True,exist_ok=True)
+                shutil.copyfile(source,target)
+                record[name]=hashlib.sha256(source.read_bytes()).hexdigest()
+        (OUT/'acceptance-source.json').write_text(json.dumps(record,indent=2)+'\n')
+        run(['openroad','-no_init','-exit',str(ROOT/'project/experiments/block_v1/native_acceptance_info.tcl')],'acceptance-api.log')
     elif MODE=='native-unit-info':
         script='read_liberty {'+str(TOOLS/'lib/NangateOpenCellLibrary_typical.lib')+'}\nreport_units\nhelp set_units\nhelp set_cmd_units\n'
         script+='set_units -time ns -capacitance pF\nreport_units\n'
