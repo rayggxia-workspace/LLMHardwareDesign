@@ -118,6 +118,9 @@ try:
     elif MODE=='heldout-rc':
         from heldout_rc import verify
         verify(ROOT,OUT,CPUS,run)
+    elif MODE=='native-prepare':
+        from native_prepare import prepare
+        prepare(ROOT,OUT)
     elif MODE=='native-flow-info':
         flow=Path('/OpenROAD-flow-scripts/flow')
         selected=['Makefile','scripts/variables.mk','scripts/variables.yaml',
