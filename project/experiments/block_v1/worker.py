@@ -137,7 +137,7 @@ try:
         verify(ROOT,OUT)
     elif MODE=='native-acceptance-info':
         flow=Path('/OpenROAD-flow-scripts/flow')
-        names=['scripts/final_outputs.tcl','scripts/final_connect.tcl','scripts/generate_abstract.tcl',
+        names=['scripts/final_outputs.tcl','scripts/final_connect.tcl','scripts/generate_abstract.tcl','scripts/report_metrics.tcl',
                'scripts/klayout.tcl','scripts/klayout/gds_merge.py','platforms/nangate45/drc/FreePDK45.lydrc']
         record={}
         for name in names:
