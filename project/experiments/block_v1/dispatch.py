@@ -50,6 +50,8 @@ def validate(spec):
             match=re.fullmatch(r"node([1-9]|1[0-9]|2[0-6])",task["node"])
             assert match and task["partition"]==("c64"if int(match.group(1))<=12 else"c96")
         assert set(task.get("after", [])) <= ids - {task["id"]}
+        for dependency in task.get("after_runs",[]):
+            assert re.fullmatch(r"block-v1-[0-9]{8}-[0-9]{3}:[a-z0-9-]{1,40}",dependency)
         assert task["argv"] and all(isinstance(x, str) for x in task["argv"])
     remaining, done = list(tasks), set()
     while remaining:
@@ -106,6 +108,7 @@ def main():
     refresh(state)
     save(path, state)
     active = sum(x["state"] not in TERMINAL for x in state["tasks"].values())
+    external={root.name+":"+key:item for key,item in state["tasks"].items()}
     for other in root.parent.glob("block-v1-*/dispatch-state.json"):
         if other.resolve() == path.resolve():
             continue
@@ -114,6 +117,7 @@ def main():
         refresh(other_state)
         save(other, other_state)
         active += sum(x["state"] not in TERMINAL for x in other_state["tasks"].values())
+        external.update({other_state["run_id"]+":"+key:item for key,item in other_state["tasks"].items()})
     limit = spec["max_nodes"] if spec.get("elastic", False) else spec["base_nodes"]
     assert active <= spec["max_nodes"]
     if args.submit:
@@ -123,6 +127,7 @@ def main():
             if task["id"] in state["tasks"]:
                 continue
             dependencies = [state["tasks"].get(key, {}) for key in task.get("after", [])]
+            dependencies += [external.get(key,{})for key in task.get("after_runs",[])]
             if not all(x.get("state") == "COMPLETED" and x.get("exit_code") == "0:0" for x in dependencies):
                 continue
             taskroot = root / "tasks" / task["id"]
