@@ -154,6 +154,9 @@ try:
         from partial_field_verify import verify
         geometry={'partial-branch-fv':'branch','partial-via-fv':'via'}.get(MODE,'straight')
         verify(ROOT,OUT,CPUS,run,pair=MODE!='partial-field-fv',geometry=geometry)
+    elif MODE=='fsv-graph-build':
+        from fsv_build import build
+        build(ROOT,OUT,CPUS,run,graph=True)
     elif MODE=='fsv-partial-build':
         from fsv_build import build
         build(ROOT,OUT,CPUS,run,partial=True)

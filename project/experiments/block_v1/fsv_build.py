@@ -14,7 +14,8 @@ ARCHIVE_SHA='b2eaefce378aba09cccb966b3c56486412f1958e0a83ff3fb313fd35b3dfe2a7'
 COMMIT='6ea4ca224f3589dd91809933f50f39af66053634'
 
 
-def build(root,out,cpus,run,partial=False):
+def build(root,out,cpus,run,partial=False,graph=False):
+    partial=partial or graph
     archive=root.parent/'fsv-source.tar'
     assert hashlib.sha256(archive.read_bytes()).hexdigest()==ARCHIVE_SHA
     prefix=Path('/public/home/yuzelu/opt/eda')/('llhd-fsv-i121-'+root.parent.name)
@@ -35,6 +36,10 @@ def build(root,out,cpus,run,partial=False):
     if partial:
         from partial_field_patch import patch
         instrumentation=patch(prefix,out)
+    graph_instrumentation=None
+    if graph:
+        from graph_field_patch import patch as graph_patch
+        graph_instrumentation=graph_patch(prefix,out)
     compiler=Path(shutil.which('g++')).resolve()
     compiler_sha=hashlib.sha256(compiler.read_bytes()).hexdigest()
     run([str(compiler),'--version'],'compiler.log')
@@ -73,6 +78,26 @@ def build(root,out,cpus,run,partial=False):
         for threads,name in [(1,'partial-one'),(cpus,'partial-many')]:
             run([str(partial_binary),str(threads),'.5','32768',str(scene),'0','0'],name+'.json')
         assert (out/'partial-one.json').read_bytes()==(out/'partial-many.json').read_bytes(),'Partial bins depend on thread count'
+    graph_binary=None
+    if graph:
+        obj=compile(root/'project/experiments/block_v1/graph_field_client.cpp')
+        graph_binary=prefix/'llhd-graph-field'
+        run([str(compiler),'-pthread',*[str(p)for p in objects if p.stem!='fsv_client'],str(obj),'-o',str(graph_binary)],'link-graph.log')
+        nodes=out/'graph-nodes.txt';nodes.write_text('left -2 0 13.89\nright 2 0 13.89\n')
+        for threads,name in [(1,'graph-one'),(cpus,'graph-many')]:
+            run([str(graph_binary),str(threads),'.5','32768',str(scene),str(nodes)],name+'.json')
+        assert (out/'graph-one.json').read_bytes()==(out/'graph-many.json').read_bytes()
+        import subprocess
+        controls={}
+        for name,text in [('duplicate-id','left -2 0 13.89\nleft 2 0 13.89\n'),
+                          ('duplicate-position','left -2 0 13.89\nright -2 0 13.89\n'),
+                          ('outside','left -2 0 13.89\nright 2 0 30\n')]:
+            path=out/(name+'.txt');path.write_text(text)
+            with(out/(name+'.log')).open('w')as stream:
+                result=subprocess.run([str(graph_binary),'1','.5','32768',str(scene),str(path)],stdout=stream,stderr=subprocess.STDOUT)
+            assert result.returncode!=0
+            controls[name]=dict(returncode=result.returncode,log_sha256=hashlib.sha256((out/(name+'.log')).read_bytes()).hexdigest())
+        (out/'graph-build-controls.json').write_text(json.dumps(dict(passed=True,controls=controls),indent=2)+'\n')
     record=dict(schema='block-v1-fsv-qualified/1',upstream_commit=COMMIT,
                 upstream_archive_sha256=ARCHIVE_SHA,compiler=str(compiler),compiler_sha256=compiler_sha,
                 flags=flags,binary=str(binary),binary_sha256=hashlib.sha256(binary.read_bytes()).hexdigest(),
@@ -85,5 +110,9 @@ def build(root,out,cpus,run,partial=False):
             instrumentation=instrumentation,partial_binary=str(partial_binary),
             partial_binary_sha256=hashlib.sha256(partial_binary.read_bytes()).hexdigest(),
             scope='Default upstream golden controls and partial-bin thread/conservation controls only; conductor-local charge and distributed RC remain unqualified')
+    if graph:
+        record.update(graph_instrumentation=graph_instrumentation,graph_binary=str(graph_binary),
+            graph_binary_sha256=hashlib.sha256(graph_binary.read_bytes()).hexdigest(),
+            scope='Default goldens, existing plane controls, graph thread/conservation and invalid-node controls only; local conductor charge and distributed RC require independent scientific acceptance')
     (out/'fsv-qualified.json').write_text(json.dumps(record,indent=2)+'\n')
 
