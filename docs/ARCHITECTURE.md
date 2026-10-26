@@ -148,3 +148,6 @@ Block v1 独立最终物理入口为 `native-receive-<shared109|transaction6k>-<
 
 
 当前场解合并运行是087，已成功封存；084同082/083从未提交，不再调度。原生080 T6KC仍有8个电容违例，新增 `native_pipeline_cap20.json` 的088/089独立修复链，使用 `native-cap20-run-<top>-<A|C>` / `native-cap20-receive-...` / `native-cap20-view-...`。从封存080 CTS只重跑标准route/final，配置严格原077加CAP_MARGIN=20，预算和电气限值不变。详见[电容修复决策](decisions/2026-10-27-block-v1-native-cap-margin.md)。默认080/085/086链和历史057/081不改；接收及宏视图按明确pipeline/source绑定，不能混用。
+
+
+三维图节点资格链：090模式`fsv-graph-build`从同一固定原作者源码包构建明确记录的研究patch，重跑默认goldens/平面与线程/非法节点控制。091 `graph-geometry-group`在一个96CPU allocation内两路48CPU运行`graph-branch-fv`/`graph-via-fv`，依赖090成功；独立FV按真实导体面位置分桶，保持原矩阵/边界/求解器和锁定阈值。当前均只部署未提交；具体限制见[图节点电荷决策](decisions/2026-10-27-block-v1-graph-charge-partition.md)。collector保存graph patch/build control/FV及合并回执，不能把构建通过当作局部科学或完整分布式RC资格。

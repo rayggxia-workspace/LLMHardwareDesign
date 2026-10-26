@@ -1,5 +1,11 @@
 # YUZE-LU 的进度
 
+## 2026-10-27 06:56 CST：Issue121 三维图节点电荷资格链
+
+- 新增090研究构建与091三维节点科学对照，均已部署、尚无Slurm作业，等全局8allocation内空位。起点通量按最近三维图节点分桶，默认上游/平面路径保留；独立FV读取实际导体面坐标，分别对照四节点T分支和五节点跨层via，沿用原074/087门槛并要求局部分配及保边际错误重连负例。源码补丁精确转换和Python/生成FV编译检查通过；C++构建及科学门槛尚待实际运行。
+- 此阶段是node-to-net起点电荷，不是一般capture-node耦合或完整分布式RC；真实路由图绑定、窗口所有权、新旧层拼接与规模仍未完成。088 T6KC已完成详细布线并进入final；仍无最终独立验收。其他物理与完整门级继续，不按耗时取消，不修改其他成员任务。
+- [Issue121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121) in_progress、[PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)草稿。登记pending，看板unverified/同步pending；管理员和独立审查人待指定，未自行合并。
+
 ## 2026-10-27 06:42 CST：Issue121 分支/via场解与预制电容修复
 
 - 080 T6KC/92089自然完成39:39，但最终原生报告仍有8个max-cap违例、最差−4.763801575 fF（setup/hold计数0），不能冻结。新增088从对应080封存CTS重跑标准route/final，只有CAP_MARGIN=20这一更严格修复目标；Liberty限值、时钟、负载、预算及检查不变。92106/node20/32CPU正在运行，其他三候选等依赖/空位；089独立接收已部署但尚无作业。配置正例与缺margin、额外限值、LEC关闭、错误读回、旧哈希五种负例已通过。
