@@ -8,6 +8,7 @@ from pathlib import Path
 import argparse
 from concurrent.futures import ProcessPoolExecutor
 import json
+import os
 import subprocess
 import time
 
@@ -49,9 +50,12 @@ def cell(config):
 
 def run(output,workers=1):
     from .search_experiment import cases
-    if not 1<=workers<=4:raise ValueError('1..4 workers')
+    if not 1<=workers<=min(4,int(os.environ.get('SLURM_CPUS_PER_TASK','4'))):
+        raise ValueError('workers exceed CPU allocation')
     out=new_output(REPO,output)
     source=code_hashes()
+    if subprocess.check_output(['git','status','--porcelain','--','project/analysis/workload_mapping'],cwd=REPO,text=True).strip():
+        raise ValueError('commit clean research source before qualification')
     configs=[c for c in cases('full') if c['category']=='main']
     if workers==1:results=list(map(cell,configs))
     else:
