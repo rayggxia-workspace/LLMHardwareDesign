@@ -139,6 +139,25 @@ try:
                 target.parent.mkdir(parents=True,exist_ok=True)
                 shutil.copyfile(path,target)
         (OUT/'extraction-tool-info.json').write_text(json.dumps(probe,indent=2)+'\n')
+    elif MODE=='geometry-transform-probe':
+        prior=OUT.parents[2]/'block-v1-20261027-009/tasks/route-probe'
+        bound=json.loads((prior/'receipt.json').read_text());assert bound['passed']is True
+        path=prior/'probe/routed.odb'
+        assert hashlib.sha256(path.read_bytes()).hexdigest()==bound['outputs']['probe/routed.odb']
+        script='read_db {'+str(path)+'}\n'
+        script+=r'''
+set inst [lindex [[ord::get_db_block] getInsts] 0]
+foreach orient {R0 R90 R180 R270 MX MY MXR90 MYR90} {
+  $inst setOrient $orient
+  set transform [$inst getTransform]
+  set point [odb::Point 1000 2000]
+  set status [catch {$transform apply $point} result]
+  puts "TRANSFORM $orient [$inst getOrigin] $status $result [$point getX] [$point getY]"
+  odb::delete_Point $point
+}
+'''
+        (OUT/'geometry-transform.tcl').write_text(script)
+        run(['openroad','-no_init','-exit','geometry-transform.tcl'],'geometry-transform.log')
     elif MODE=='geometry-reader-probe':
         prior=OUT.parents[2]/'block-v1-20261027-036/tasks/direct-view-5'
         bound=json.loads((prior/'receipt.json').read_text());assert bound['passed']is True
