@@ -118,6 +118,28 @@ try:
     elif MODE=='heldout-rc':
         from heldout_rc import verify
         verify(ROOT,OUT,CPUS,run)
+    elif MODE=='native-flow-info':
+        flow=Path('/OpenROAD-flow-scripts/flow')
+        selected=['Makefile','variables.yaml','scripts/floorplan.tcl','scripts/io_placement.tcl',
+                  'scripts/load.tcl','scripts/global_place.tcl','scripts/detail_place.tcl',
+                  'scripts/pdn.tcl','scripts/cts.tcl','scripts/global_route.tcl','scripts/detail_route.tcl',
+                  'scripts/rcx.tcl','scripts/final_report.tcl','scripts/util.tcl',
+                  'platforms/nangate45/config.mk','platforms/nangate45/setRC.tcl',
+                  'platforms/nangate45/pdn/block_grid.tcl']
+        info={}
+        for relative in selected:
+            path=flow/relative
+            info[relative]={'exists':path.exists()}
+            if path.is_file():
+                assert path.stat().st_size<2*1024*1024
+                target=OUT/'flow-source'/relative;target.parent.mkdir(parents=True,exist_ok=True)
+                shutil.copyfile(path,target)
+                info[relative]['sha256']=hashlib.sha256(path.read_bytes()).hexdigest()
+        (OUT/'native-flow-info.json').write_text(json.dumps(info,indent=2)+'\n')
+        (OUT/'native-help.tcl').write_text('\n'.join('help '+cmd for cmd in
+            ['initialize_floorplan','place_pin','place_pins','set_io_pin_constraint','set_pin_length',
+             'set_routing_layers','make_tracks','check_power_grid'])+'\n')
+        run(['openroad','-no_init','-exit','native-help.tcl'],'native-help.log')
     elif MODE=='extraction-tool-info':
         import importlib.util
         probe=dict(python_packages={name:importlib.util.find_spec(name)is not None
