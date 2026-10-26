@@ -11,6 +11,7 @@ import math
 from pathlib import Path
 import subprocess
 import time
+from rc_pipeline import configuration
 
 
 def sha(path):
@@ -51,14 +52,15 @@ def check_rows(case, rows):
 
 def pilot(root,out,cpus,shard=None,receive=False):
     base=out.parents[2]
-    source=base/'block-v1-20261027-013/tasks/pattern-prepare'
+    config=configuration(root)
+    source=base/config['prepare_run']/'tasks/pattern-prepare'
     source_receipt=json.loads((source/'receipt.json').read_text())
     assert source_receipt['passed'] is True
     manifest_path=source/'reference-patterns/manifest.json'
     assert sha(manifest_path)==source_receipt['outputs']['reference-patterns/manifest.json']
     manifest=json.loads(manifest_path.read_text())
     assert manifest['schema']=='block-v1-reference-patterns/2'
-    build=base/'block-v1-20261027-013/tasks/fsv-build'
+    build=base/config['solver_run']/'tasks/fsv-build'
     build_receipt=json.loads((build/'receipt.json').read_text())
     assert build_receipt['passed'] is True
     qualified=build/'fsv-qualified.json'
@@ -82,7 +84,7 @@ def pilot(root,out,cpus,shard=None,receive=False):
         cases=sorted(selected.values(),key=lambda c:c['id'])
     else:
         assert 0<=shard<6 and (receive or cpus==96)
-        passed=base/'block-v1-20261027-014/tasks/reference-pilot'
+        passed=base/config['pilot_run']/'tasks/reference-pilot'
         prior=json.loads((passed/'receipt.json').read_text());assert prior['passed'] is True
         assert sha(passed/'reference-pilot.json')==prior['outputs']['reference-pilot.json']
         qualification=json.loads((passed/'reference-pilot.json').read_text())
@@ -98,10 +100,11 @@ def pilot(root,out,cpus,shard=None,receive=False):
     records=[]
     old=None
     if receive:
-        old=base/('block-v1-20261027-015/tasks/reference-shard-%d'%shard)
+        old=base/config['reference_run']/('tasks/reference-shard-%d'%shard)
         old_receipt=json.loads((old/'receipt.json').read_text())
         assert old_receipt['passed'] is False and old_receipt['error']=='AssertionError()'
-        assert old_receipt['source_commit']=='a00bba4b31873eae05ad26a414906a6e7421a6c2'
+        original_manifest=json.loads((old.parent.parent/'manifest.json').read_text())
+        assert old_receipt['source_commit']==original_manifest['source_commit']
     def solve(index,shard):
         listing=out/('scenes-%02d.txt'%index)
         for case in shard:

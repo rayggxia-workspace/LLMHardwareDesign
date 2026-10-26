@@ -152,7 +152,8 @@ try:
         run(argv,'geometry.log')
     elif MODE=='pattern-prepare':
         from pattern_prepare import prepare
-        folder=OUT.parents[2]/'block-v1-20261027-010/tasks/rcx-classic-patterns'
+        from rc_pipeline import configuration
+        folder=OUT.parents[2]/configuration(ROOT)['patterns_run']/'tasks/rcx-complete-patterns'
         prior=json.loads((folder/'receipt.json').read_text());assert prior['passed'] is True
         for name in ['patterns.odb','patterns.def','overlay/research12.tech.lef']:
             assert hashlib.sha256((folder/name).read_bytes()).hexdigest()==prior['outputs'][name]
@@ -262,7 +263,7 @@ close $stream
             zf.extractall(OUT/'upstream')
             receipt['upstream_archive_members']=zf.namelist()
         receipt['upstream_archive_sha256']=hashlib.sha256(raw).hexdigest()
-    elif MODE in ('overlay','route-probe','rcx-patterns','rcx-classic-patterns'):
+    elif MODE in ('overlay','route-probe','rcx-patterns','rcx-classic-patterns','rcx-complete-patterns'):
         run(['python3',str(ROOT/'project/experiments/block_v1/overlay.py'),
              str(TOOLS/'lef/NangateOpenCellLibrary.tech.lef'),
              str(ROOT/'project/experiments/block_v1/technology.json'),str(OUT/'overlay')],'overlay.log')
@@ -274,10 +275,12 @@ close $stream
             run(['python3',str(ROOT/'project/experiments/block_v1/route_probe.py'),'generate',str(OUT/'probe'),'--cpus',str(CPUS)],'probe-generate.log')
             run(['openroad','-no_init','-exit',str(OUT/'probe/route.tcl')],'route.log')
             run(['python3',str(ROOT/'project/experiments/block_v1/route_probe.py'),'audit',str(OUT/'probe')],'probe-audit.log')
-        if MODE in ('rcx-patterns','rcx-classic-patterns'):
+        if MODE in ('rcx-patterns','rcx-classic-patterns','rcx-complete-patterns'):
             arguments='-v1'if MODE=='rcx-patterns'else'-met_cnt 12'
+            context_distance=12 if MODE=='rcx-complete-patterns'else 3
             (OUT/'patterns.tcl').write_text('read_lef overlay/research12.tech.lef\n'
-                 'bench_wires '+arguments+' -len 100 -cnt 5 -w_list {1 2} -s_list {1 2 4 8} -all -over_dist 3 -under_dist 3\n'
+                 'bench_wires '+arguments+' -len 100 -cnt 5 -w_list {1 2} -s_list {1 2 4 8} -all '
+                 '-over_dist '+str(context_distance)+' -under_dist '+str(context_distance)+'\n'
                  'write_db patterns.odb\nwrite_def patterns.def\nbench_verilog patterns.v\n'
                  'help bench_read_spef\nhelp write_rules\nhelp gen_rcx_model\n')
             run(['openroad','-no_init','-exit','patterns.tcl'],'patterns.log')

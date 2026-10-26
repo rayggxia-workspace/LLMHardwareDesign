@@ -10,6 +10,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+from rc_pipeline import configuration
 
 
 def sha(path):
@@ -18,12 +19,14 @@ def sha(path):
 
 def fit(root,out,run):
     base=out.parents[2]
+    config=configuration(root)
     bindings=[];seen=set();rows={};manifest_path=None;manifest_sha=None
     for index in range(6):
-        folder=base/('block-v1-20261027-016/tasks/reference-receive-%d'%index)
+        folder=base/config['reference_run']/('tasks/%s-%d'%(config['reference_task_prefix'],index))
         receipt=json.loads((folder/'receipt.json').read_text());assert receipt['passed'] is True
         path=folder/'reference-shard.json';assert sha(path)==receipt['outputs'][path.name]
-        record=json.loads(path.read_text());assert record['shard']==index and record['receive_only']is True
+        record=json.loads(path.read_text());assert record['shard']==index
+        assert record['receive_only']==(config['reference_task_prefix']=='reference-receive')
         if manifest_path is None:
             manifest_path=Path(record['manifest']);manifest_sha=record['manifest_sha256']
         assert record['manifest']==str(manifest_path)and record['manifest_sha256']==manifest_sha
@@ -150,6 +153,7 @@ write_db received.odb
     assert re.search(r'(?m)^LayerCount 12\s*$',text)
     layers={int(m.group(1))for m in re.finditer(r'(?m)^Metal (\d+) OVER\s*$',text)}
     assert layers==set(range(1,13)),layers
+    assert not re.search(r'(?m)^DIST count 0\s',text),'Incomplete layer/context calibration tables'
     record=dict(schema='block-v1-reference-fit/1',manifest=str(manifest_path),manifest_sha256=manifest_sha,
                 raw_rows=bindings,reference_master_rows=len(rows),dc_resistor_patterns=len(dc),coupling_pairs=len(couplings),
                 positive_noise_projection=projected,reciprocity='mean of two measured entries when both masters exist',

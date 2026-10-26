@@ -8,6 +8,7 @@ import hashlib
 import json
 from pathlib import Path
 import subprocess
+from rc_pipeline import configuration
 
 
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -16,16 +17,17 @@ def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 def verify(root,out,cpus,run):
     assert cpus>=8
     base=out.parents[2]
-    fit=base/'block-v1-20261027-021/tasks/reference-fit'
+    config=configuration(root)
+    fit=base/config['fit_run']/'tasks/reference-fit'
     receipt=json.loads((fit/'receipt.json').read_text());assert receipt['passed']is True
     model=fit/'research12.rules';assert sha(model)==receipt['outputs'][model.name]
     fit_record=json.loads((fit/'reference-fit.json').read_text())
     manifest_path=Path(fit_record['manifest']);assert sha(manifest_path)==fit_record['manifest_sha256']
     layers=json.loads(manifest_path.read_text())['layers']
-    tech=base/'block-v1-20261027-010/tasks/rcx-classic-patterns/overlay/research12.tech.lef'
+    tech=Path(json.loads(manifest_path.read_text())['source_folder'])/'overlay/research12.tech.lef'
     prior=json.loads((tech.parent.parent/'receipt.json').read_text())
     assert sha(tech)==prior['outputs']['overlay/research12.tech.lef']
-    qualified=base/'block-v1-20261027-013/tasks/fsv-build/fsv-qualified.json'
+    qualified=base/config['solver_run']/'tasks/fsv-build/fsv-qualified.json'
     tool=json.loads(qualified.read_text());binary=Path(tool['binary']);assert sha(binary)==tool['binary_sha256']
     cases=[];nets=[];masters=[]
     def add_case(name, layer_numbers, orientations):
@@ -69,6 +71,7 @@ def verify(root,out,cpus,run):
         'COMPONENTS 0 ;\nEND COMPONENTS\nPINS %d ;\n'%len(pins)+'\n'.join(pins)+'\nEND PINS\nNETS %d ;\n'%len(nets)+
         '\n'.join(routes)+'\nEND NETS\nEND DESIGN\n')
     (out/'masters.txt').write_text('\n'.join(masters)+'\n')
+    (out/'heldout-inputs.json').write_text(json.dumps(dict(cases=cases,model_sha256=sha(model)),indent=2)+'\n')
     # The low coupling threshold is explicit: retain relevant small couplings
     # instead of folding them to ground to improve agreement artificially.
     script='read_lef {'+str(tech)+'}\nread_def heldout.def\n'
