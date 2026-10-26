@@ -120,12 +120,15 @@ try:
         verify(ROOT,OUT,CPUS,run)
     elif MODE=='native-flow-info':
         flow=Path('/OpenROAD-flow-scripts/flow')
-        selected=['Makefile','variables.yaml','scripts/floorplan.tcl','scripts/io_placement.tcl',
+        selected=['Makefile','scripts/variables.mk','scripts/variables.yaml',
+                  'scripts/synth_odb.tcl','scripts/flow.sh','scripts/floorplan.tcl','scripts/io_placement.tcl',
                   'scripts/load.tcl','scripts/global_place.tcl','scripts/detail_place.tcl',
                   'scripts/pdn.tcl','scripts/cts.tcl','scripts/global_route.tcl','scripts/detail_route.tcl',
                   'scripts/rcx.tcl','scripts/final_report.tcl','scripts/util.tcl',
                   'platforms/nangate45/config.mk','platforms/nangate45/setRC.tcl',
-                  'platforms/nangate45/pdn/block_grid.tcl']
+                  'platforms/nangate45/fastroute.tcl','platforms/nangate45/make_tracks.tcl',
+                  'platforms/nangate45/grid_strategy-M1-M4-M7.tcl','platforms/nangate45/tapcell.tcl',
+                  'platforms/nangate45/drc/FreePDK45.lydrc']
         info={}
         for relative in selected:
             path=flow/relative
