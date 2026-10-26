@@ -147,6 +147,12 @@ try:
     elif MODE=='native-boundary-audit':
         from native_boundary import verify
         verify(ROOT,OUT)
+    elif MODE=='graph-geometry-group':
+        from partial_group import verify
+        verify(ROOT,OUT,CPUS,run,graph=True)
+    elif MODE in ('graph-branch-fv','graph-via-fv'):
+        from partial_field_verify import verify
+        verify(ROOT,OUT,CPUS,run,pair=True,geometry='branch'if MODE=='graph-branch-fv'else 'via',graph=True)
     elif MODE=='partial-geometry-group':
         from partial_group import verify
         verify(ROOT,OUT,CPUS,run)

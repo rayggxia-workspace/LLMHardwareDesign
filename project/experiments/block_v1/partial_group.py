@@ -9,9 +9,10 @@ import sys
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def verify(root,out,cpus,run):
+def verify(root,out,cpus,run,graph=False):
     assert cpus==96
-    modes=['partial-branch-fv','partial-via-fv']
+    modes=['graph-branch-fv','graph-via-fv']if graph else ['partial-branch-fv','partial-via-fv']
+    filename='graph-field-fv.json'if graph else 'partial-field-fv.json'
     child_code='''import os,sys
 root,mode,cpus,destination=sys.argv[1:]
 os.chdir(destination)
@@ -25,18 +26,21 @@ os.execv(sys.executable,[sys.executable,root+'/project/experiments/block_v1/work
         try:run(command,mode+'.log')
         except RuntimeError:command_ok=False
         result=dict(mode=mode,cpus=48,directory=str(folder),command_ok=command_ok)
-        for name in ['receipt.json','partial-field-fv.json']:
+        for name in ['receipt.json',filename]:
             path=folder/name
             if path.is_file():result[name]=dict(sha256=sha(path),content=json.loads(path.read_text()))
         receipt=result.get('receipt.json',{}).get('content',{})
-        evidence=result.get('partial-field-fv.json',{})
+        evidence=result.get(filename,{})
         result['passed']=bool(command_ok and receipt.get('passed')is True and evidence.get('content',{}).get('passed')is True
-            and receipt.get('outputs',{}).get('partial-field-fv.json')==evidence.get('sha256'))
+            and receipt.get('outputs',{}).get(filename)==evidence.get('sha256'))
         return result
     with concurrent.futures.ThreadPoolExecutor(max_workers=2)as pool:
         results=list(pool.map(launch,modes))
     record=dict(schema='block-v1-partial-geometry-group/1',passed=all(r['passed']for r in results),
         allocated_cpus=cpus,max_child_cpus=96,children=results,
         scope='Two independent local charge fixtures; general graph extraction and native/new-layer stitching remain unqualified')
-    (out/'partial-geometry-group.json').write_text(json.dumps(record,indent=2)+'\n')
+    if graph:
+        record['schema']='block-v1-graph-geometry-group/1'
+        record['scope']='Independent 3D graph-node origin charge fixtures only; general capture-node coupling and native/new-layer stitching remain unqualified'
+    (out/('graph-geometry-group.json'if graph else 'partial-geometry-group.json')).write_text(json.dumps(record,indent=2)+'\n')
     assert record['passed'],'At least one locked local field fixture failed; preserve both child outputs'
