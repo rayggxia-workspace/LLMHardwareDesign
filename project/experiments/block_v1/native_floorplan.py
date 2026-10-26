@@ -15,7 +15,8 @@ def sha(path):
 def prepare(root,out,run,top,policy):
     assert top in ('shared109','transaction6k') and policy in ('A','C')
     config=json.loads((root/'project/experiments/block_v1/native_pipeline.json').read_text())
-    source=out.parents[2]/config['preparation_run']/'tasks/native-prepare'
+    base=out.parents[2]
+    source=base/config['preparation_run']/'tasks/native-prepare'
     receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed']is True
     path=source/'native-preparation.json';assert sha(path)==receipt['outputs'][path.name]
     data=json.loads(path.read_text())
@@ -69,10 +70,40 @@ write_def prepared.def
         layer,box=got[name];x,y=pin['xy_um'];pw,ph=pin['size_um']
         expected=[round(v*2000)for v in [x-pw/2,y-ph/2,x+pw/2,y+ph/2]]
         assert layer=='metal10' and box==expected,(name,box,expected)
+    # Independently inspect the actual exported database track grammar.
+    # Stop after NETS begins; do not load the complete large DEF into RAM.
+    tracks={}
+    import re
+    with(out/'prepared.def').open()as stream:
+        for line in stream:
+            line=line.strip()
+            if line.startswith('NETS '):break
+            if not line.startswith('TRACKS '):continue
+            match=re.fullmatch(r'TRACKS ([XY]) (\d+) DO (\d+) STEP (\d+) LAYER (\S+) ;\s*',line)
+            assert match,('Unrecognized actual DEF track',line)
+            axis,origin,number,step,layer=match.groups()
+            if layer not in ('metal9','metal10'):continue
+            assert (layer,axis)not in tracks
+            tracks[layer,axis]=tuple(map(int,[origin,number,step]))
+    assert set(tracks)=={(m,a)for m in ['metal9','metal10']for a in ['X','Y']}
+    def aligned(pins):
+        for p in pins:
+            for axis,coordinate in zip(['X','Y'],p['xy_um']):
+                center=round(coordinate*2000);origin,number,step=tracks['metal10',axis]
+                if (center-origin)%step or not 0<=(center-origin)//step<number:return False
+        return True
+    assert aligned(list(wanted.values())),'Planned pin misses actual native DB track grid'
+    old=base/'block-v1-20261027-054/tasks/native-prepare'
+    old_receipt=json.loads((old/'receipt.json').read_text());assert old_receipt['passed']is True
+    old_path=old/(top+'-'+policy)/'pins.json'
+    assert sha(old_path)==old_receipt['outputs'][str(old_path.relative_to(old))]
+    assert not aligned(json.loads(old_path.read_text())['pins']),'Old .8-offset negative unexpectedly aligned'
     count,area=(out/'initial-inventory.tsv').read_text().split()
     assert int(count)>0 and 0<float(area)<=budget['max_stdcell_area_um2']
     (out/'native-floorplan-input.json').write_text(json.dumps(dict(schema='block-v1-native-floorplan-input/1',
         top=top,policy=policy,ports=len(wanted),exact_m10_boxes=True,
         initial_mapped_cells=int(count),initial_area_um2=float(area),source=str(source),
+        actual_native_tracks={m+':'+a:v for (m,a),v in tracks.items()},all_pins_track_aligned=True,
+        old_offset_negative_rejected=True,
         source_receipt_sha256=sha(source/'receipt.json'),passed=True,
         qualification='Input import, unplaced cell inventory, die/core rows and exact fixed pin boxes only; PG/placement/CTS/route/STA/RC unqualified'),indent=2)+'\n')

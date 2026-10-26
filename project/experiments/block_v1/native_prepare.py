@@ -24,6 +24,19 @@ def prepare(root, out):
     m10 = re.search(r'(?ms)^LAYER metal10\s*\n(.*?)^END metal10\s*$', native.read_text()).group(1)
     for key, value in [('WIDTH', .8), ('PITCH', 1.6)]:
         assert float(re.search(r'(?m)^\s*'+key+r'\s+([\d.]+)\s*;', m10).group(1)) == value
+    trackfile=native.parents[1]/'make_tracks.tcl'
+    tracks={}
+    for metal in ['metal9','metal10']:
+        line=re.search(r'(?m)^make_tracks '+metal+r' (.+)$',trackfile.read_text()).group(1)
+        values=line.split();assert len(values)==8
+        tracks[metal]={values[i]:float(values[i+1])for i in range(0,len(values),2)}
+    assert tracks['metal9']==tracks['metal10'],'Via access needs explicit two-layer track-grid intersection'
+    via9=re.search(r'(?ms)^LAYER via9\s*\n(.*?)^END via9\s*$',native.read_text()).group(1)
+    def cut(key):return float(re.search(r'(?m)^\s*'+key+r'\s+([\d.]+)\s*;',via9).group(1))
+    grid=dict(pitch_x=tracks['metal10']['-x_pitch'],pitch_y=tracks['metal10']['-y_pitch'],
+        offset_x=tracks['metal10']['-x_offset'],offset_y=tracks['metal10']['-y_offset'],
+        width=.8,cut_width=cut('WIDTH'),cut_spacing=cut('SPACING'),
+        track_file_sha256=sha(trackfile),native_tech_sha256=sha(native))
     candidates = []
     for top, leaf in budget['leaves'].items():
         inputs = out/'inputs'/top
@@ -43,7 +56,7 @@ def prepare(root, out):
         for policy in ['A', 'C']:
             folder = out/(top+'-'+policy)
             folder.mkdir()
-            plan = generate(bits, leaf, policy)
+            plan = generate(bits, leaf, policy,grid)
             (folder/'pins.json').write_text(json.dumps(plan, indent=2)+'\n')
             def tcl_string(s):
                 assert not any(c in s for c in '{}\\\n\r')

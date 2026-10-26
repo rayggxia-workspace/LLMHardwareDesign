@@ -7,7 +7,6 @@ actual data, clock and output connections of the real Liberty DFF model.
 import json
 from pathlib import Path
 import re
-from io_slots import file_sha
 
 
 def inspect(text):
@@ -37,6 +36,7 @@ def inspect(text):
 
 
 def fixture(root,out,run):
+    from io_slots import file_sha
     binary=Path('/OpenROAD-flow-scripts/tools/install/kepler-formal/bin/kepler-formal')
     assert binary.is_file()
     lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
@@ -80,6 +80,7 @@ def fixture(root,out,run):
 
 
 def receive(source,receipt,results,top,prep):
+    from io_slots import file_sha
     base=source.parents[2]
     control=base/'block-v1-20261027-073/tasks/native-formal-control'
     accepted=json.loads((control/'receipt.json').read_text());assert accepted['passed']is True

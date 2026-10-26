@@ -68,7 +68,7 @@ def grid(spec_path):
     Path(spec['output']).write_text(json.dumps(result,indent=2)+'\n')
 
 
-def verify(root,out,cpus,run):
+def verify(root,out,cpus,run,pair=False):
     assert cpus>=16
     base=out.parents[2];solver=base/'block-v1-20261027-069/tasks/fsv-partial-build'
     receipt=json.loads((solver/'receipt.json').read_text());assert receipt['passed']is True
@@ -86,6 +86,13 @@ def verify(root,out,cpus,run):
     boxes=[('target',[-3.2,-.4,12.89,0,.4,14.89]),
            ('target',[0,-.4,12.89,3.2,.4,14.89]),
            ('near',[-3.2,-.4,15.69,0,.4,17.69])]
+    if pair:
+        # The two other-wire labels share one exact touching conductor
+        # geometry and are both at zero during the target solve. Their
+        # separate capture columns resolve external-node coupling; no gap
+        # or independent excitation of touching target pieces is introduced.
+        boxes=boxes[:2]+[('near_left',[-1.6,-.4,15.69,0,.4,17.69]),
+                         ('near_right',[0,-.4,15.69,4.8,.4,17.69])]
     scene=out/'scene.txt';scene.write_text('background 3.9\nmaster target\n'+
         ''.join('box '+name+' '+' '.join(map(str,box))+'\n'for name,box in boxes))
     source=prefix/'source/fv3d_golden.py'
@@ -99,9 +106,10 @@ def verify(root,out,cpus,run):
         run(['env','OMP_NUM_THREADS=1','OPENBLAS_NUM_THREADS=1','MKL_NUM_THREADS=1','python3',
              str(Path(__file__)),'grid',str(path)],path.stem+'.log')
     offsets=[.5,.25,.125]
+    walks=33554432 if pair else 2097152
     def solve_field(offset):
         name='offset-'+str(offset)
-        run([str(binary),str((cpus-4)//3),str(offset),'2097152',str(scene),'0','0'],name+'.json')
+        run([str(binary),str((cpus-4)//3),str(offset),str(walks),str(scene),'0','0'],name+'.json')
     with concurrent.futures.ThreadPoolExecutor(max_workers=7)as pool:
         futures=[pool.submit(solve_grid,path)for path in gridspecs]
         futures += [pool.submit(solve_field,offset)for offset in offsets]
@@ -110,7 +118,7 @@ def verify(root,out,cpus,run):
     import numpy as np
     from fv2d_golden import extrapolate
     grids=[json.loads((out/(name+'.json')).read_text())for name in ['coarse','medium','fine','far']]
-    names=grids[0]['names'];assert names==['target','near']and all(g['names']==names for g in grids)
+    names=grids[0]['names'];assert names==list(dict.fromkeys(n for n,b in boxes))and all(g['names']==names for g in grids)
     partial=np.array([g['partial_ff'][0]for g in grids[:3]])
     reference=np.array([[extrapolate(partial[:,i,b])for b in range(2)]for i in range(len(names)+1)])
     total=float(reference[0].sum());assert total>0
@@ -124,25 +132,40 @@ def verify(root,out,cpus,run):
     last=array(rows[-1],'partial');sigma=array(rows[-1],'partial_sigma')
     before=array(rows[-2],'partial');before_sigma=array(rows[-2],'partial_sigma')
     allowances=.03*total+5*sigma
+    if pair:allowances[1:-1]=.05*np.abs(reference[1:-1])+.005*total+5*sigma[1:-1]
     comparison=bool((np.abs(last-reference)<=allowances).all())
     swapped=last[:,::-1]
     swap_accepted=bool((np.abs(swapped-reference)<=allowances[:,::-1]).all())
     gates=dict(fv_extrapolation=grid_step<=.02,fv_refinement=refinement<=.02,
         fv_far_boundary=far<=.005,
         offset_convergence=bool((np.abs(last-before)<=.01*total+5*np.hypot(sigma,before_sigma)).all()),
-        partial_statistical_precision=bool((sigma<=.003*total).all()),
+        partial_statistical_precision=bool((sigma<=(.001 if pair else .003)*total).all()),
         independent_local_charge_comparison=comparison,swapped_halves_rejected=not swap_accepted,
         exact_global_row_conservation=all(abs(sum(e['partial'])-e['cap'])<=1e-10*max(1,abs(e['cap']))for row in rows for e in row['entries']))
+    pair_control=None
+    if pair:
+        original=last[1:-1];assert original.shape==(2,2)
+        delta=.8*min(-original[0,0],-original[1,1]);assert delta>0
+        changed=original+delta*np.array([[1,-1],[-1,1]])
+        pair_control=dict(delta_ff=float(delta),changed_ff=changed.tolist(),original_ff=original.tolist(),
+            all_couplings_negative=bool((changed<0).all()),
+            marginals_preserved=bool(np.allclose(original.sum(axis=0),changed.sum(axis=0),rtol=0,atol=1e-12)
+                and np.allclose(original.sum(axis=1),changed.sum(axis=1),rtol=0,atol=1e-12)),
+            rejected=not bool((np.abs(changed-reference[1:-1])<=allowances[1:-1]).all()))
+        gates['node_pair_rewire_rejected']=pair_control['rejected']
+        gates['rewire_control_preserves_physical_signs_and_marginals']=pair_control['all_couplings_negative']and pair_control['marginals_preserved']
+        gates['physical_partial_signs']=bool((last[0]>0).all()and(last[1:]<0).all())
     result=dict(schema='block-v1-partial-field-fv/1',passed=all(gates.values()),gates=gates,
         boxes=boxes,cut_axis='x',cut_um=0,scene_sha256=sha(scene),partial_binary_sha256=sha(binary),
         fsv_build_receipt_sha256=sha(solver/'receipt.json'),fv_runtime_sha256=sha(runtime_file),
         fv_instrumentation_sha256=sha(out/'research-fv-partial.py'),grids=grids,field_rows=rows,
-        reference_partial_ff=reference.tolist(),full_total_ff=total,extrapolation_over_total=grid_step,
+        reference_partial_ff=reference.tolist(),node_pair_control=pair_control,node_pair_pilot=pair,full_total_ff=total,extrapolation_over_total=grid_step,
         refinement_over_total=refinement,far_change_over_total=far,
         declared_gates=dict(fv_extrapolation=.02,fv_refinement=.02,fv_far=.005,offset_change=.01,
-            local_comparison=.03,partial_sigma=.003,sigma_factor=5,walks_per_offset=2097152,offsets=offsets),
+            local_comparison=.03,external_pair_relative=.05 if pair else None,external_pair_over_total=.005 if pair else None,
+            partial_sigma=.001 if pair else .003,sigma_factor=5,walks_per_offset=walks,offsets=offsets),
         qualified_full_block=False,qualified_node_pair_coupling=False,
-        scope='Straight-wire half-surface charge pilot only; finite-offset Gaussian flux must pass FV/convergence. Branches, distributed node-pair coupling and native/new-layer stitching remain unqualified')
+        scope='Straight-wire local/pair charge pilot only; finite-offset Gaussian flux must pass FV/convergence. Branches, general distributed extraction and native/new-layer stitching remain unqualified')
     (out/'partial-field-fv.json').write_text(json.dumps(result,indent=2)+'\n')
     assert result['passed'],'Locked local-charge pilot gate failed; preserve all outputs'
 

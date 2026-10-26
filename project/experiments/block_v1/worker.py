@@ -135,9 +135,9 @@ try:
     elif MODE=='native-boundary-audit':
         from native_boundary import verify
         verify(ROOT,OUT)
-    elif MODE=='partial-field-fv':
+    elif MODE in ('partial-field-fv','partial-pair-fv'):
         from partial_field_verify import verify
-        verify(ROOT,OUT,CPUS,run)
+        verify(ROOT,OUT,CPUS,run,pair=MODE=='partial-pair-fv')
     elif MODE=='fsv-partial-build':
         from fsv_build import build
         build(ROOT,OUT,CPUS,run,partial=True)
