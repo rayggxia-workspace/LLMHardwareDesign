@@ -168,6 +168,10 @@ try:
         if MODE=='native-formal-control':
             from native_formal import fixture
             fixture(ROOT,OUT,run)
+    elif MODE.startswith('native-view-'):
+        from native_views import generate
+        top,policy=MODE.removeprefix('native-view-').rsplit('-',1)
+        generate(ROOT,OUT,CPUS,run,top,policy)
     elif MODE.startswith('native-history-receive-'):
         from native_receive import verify
         top,policy=MODE.removeprefix('native-history-receive-').rsplit('-',1)
