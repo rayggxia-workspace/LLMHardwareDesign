@@ -139,6 +139,28 @@ try:
                 target.parent.mkdir(parents=True,exist_ok=True)
                 shutil.copyfile(path,target)
         (OUT/'extraction-tool-info.json').write_text(json.dumps(probe,indent=2)+'\n')
+    elif MODE=='geometry-reader-full':
+        from klayout_overlay import generate
+        prior=OUT.parents[2]/'block-v1-20261027-009/tasks/route-probe'
+        bound=json.loads((prior/'receipt.json').read_text());assert bound['passed']is True
+        for name in ['probe/routed.odb','overlay/research12.tech.lef','probe/landing.lef']:
+            assert hashlib.sha256((prior/name).read_bytes()).hexdigest()==bound['outputs'][name]
+        script='read_db {'+str(prior/'probe/routed.odb')+'}\nsource {'+str(ROOT/'project/experiments/block_v1/odb_geometry.tcl')+'}\n'
+        script+=r'''
+set inst [lindex [[ord::get_db_block] getInsts] 0]
+$inst setPlacementStatus PLACED
+foreach orient {R0 R90 R180 R270 MX MY MXR90 MYR90} {
+  $inst setOrient $orient
+  bvgeom::export geometry-$orient.tsv
+  write_def geometry-$orient.def
+}
+'''
+        (OUT/'geometry-reader.tcl').write_text(script)
+        run(['openroad','-no_init','-exit','geometry-reader.tcl'],'geometry-reader.log')
+        generate(TOOLS,json.loads((ROOT/'project/experiments/block_v1/technology.json').read_text()),OUT/'klayout')
+        run(['klayout','-b','-r',str(ROOT/'project/experiments/block_v1/odb_geometry_check.rb'),
+             '-rd','lyt='+str(OUT/'klayout/research12.lyt'),'-rd','tech='+str(prior/'overlay/research12.tech.lef'),
+             '-rd','macro='+str(prior/'probe/landing.lef'),'-rd','report='+str(OUT/'odb-geometry.json')],'geometry-mask.log')
     elif MODE=='geometry-transform-probe':
         prior=OUT.parents[2]/'block-v1-20261027-009/tasks/route-probe'
         bound=json.loads((prior/'receipt.json').read_text());assert bound['passed']is True
