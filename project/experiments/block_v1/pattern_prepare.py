@@ -40,7 +40,7 @@ def prepare(folder,metadata,out):
                 name,first,second=m.groups();ports=[first,second];continue
             if not line.strip():continue
             assert name is not None,'unknown net line '+line
-            m=re.fullmatch(r'\s*\+ ROUTED (metal\d+)(?: TAPERRULE (\S+))?\s+\(\s*([0-9*]+)\s+([0-9*]+)(?:\s+(\d+))?\s*\)\s+\(\s*([0-9*]+)\s+([0-9*]+)(?:\s+(\d+))?\s*\)\s*;\s*',line)
+            m=re.fullmatch(r'\s*\+ ROUTED (metal\d+)(?: TAPERRULE (\S+))?\s+\(\s*([-0-9*]+)\s+([-0-9*]+)(?:\s+(\d+))?\s*\)\s+\(\s*([-0-9*]+)\s+([-0-9*]+)(?:\s+(\d+))?\s*\)\s*;\s*',line)
             assert m,'unsupported actual benchmark path '+line
             layer,rule,x0,y0,e0,x1,y1,e1=m.groups()
             assert '*'not in (x0,y0)

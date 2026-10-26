@@ -3,6 +3,7 @@
 // Coordinates: um; capacitance: fF (3D), fF/um (2D).
 #include <cmath>
 #include <fstream>
+#include <filesystem>
 #include <iomanip>
 #include <iostream>
 #include <map>
@@ -85,7 +86,7 @@ void determinism(int threads){
 }
 // Explicit homogeneous study inputs. Reference goldens additionally exercise
 // the author's planar/conformal dielectric implementation unchanged.
-void scene(int threads,bool three,const std::string& path){
+void scene(fsv::Solver& solver,bool three,const std::string& path){
   std::ifstream in(path);require(in.good(),"missing scene");fsv::Geometry g;
   std::map<std::string,int> nets;std::string line;double eps=0;
   while(std::getline(in,line)){
@@ -96,11 +97,11 @@ void scene(int threads,bool three,const std::string& path){
     require(name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-")==std::string::npos,"bad net name");
     if(!nets.contains(name))nets[name]=g.addNet(name);g.addBox(nets.at(name),box);
   }
-  require(eps>0 && g.netCount()>0,"empty scene");fsv::Solver solver({.threads=threads});
+  require(eps>0 && g.netCount()>0,"empty scene");
   fsv::SolveOptions options;options.tol_total=.002;options.tol_coupling=.002;
   for(int i=0;i<g.netCount();++i){
     auto result=three?solver.solve(fsv::Scene(g,eps),i,options):solver.solve(fsv::Scene2D(fsv::crossSection(g),eps),i,options);
-    emit("research-scene",three?"3D":"2D",g,result);
+    emit(std::filesystem::path(path).stem().string(),three?"3D":"2D",g,result);
   }
 }
 int main(int argc,char**argv){
@@ -109,7 +110,16 @@ int main(int argc,char**argv){
     require(threads>0 && threads<=96,"bad thread budget");std::string mode=argv[1];
     if(mode=="golden2d"||mode=="golden3d")runGolden(threads,mode=="golden3d");
     else if(mode=="determinism")determinism(threads);
-    else if((mode=="scene2d"||mode=="scene3d")&&argc==4)scene(threads,mode=="scene3d",argv[3]);
+    else if((mode=="scene2d"||mode=="scene3d")&&argc==4){
+      fsv::Solver solver({.threads=threads});scene(solver,mode=="scene3d",argv[3]);
+    }else if(mode=="scenelist3d"&&argc==4){
+      std::ifstream list(argv[3]);require(list.good(),"missing scene list");std::string path;
+      fsv::Solver solver({.threads=threads});
+      while(std::getline(list,path)){
+        require(!path.empty(),"empty scene list entry");std::cerr<<"SOLVING "<<path<<std::endl;
+        scene(solver,true,path);
+      }
+    }
     else throw std::runtime_error("bad mode");
     std::cout<<"{\"status\":\"PASS\",\"mode\":\""<<mode<<"\"}"<<std::endl;return 0;
   }catch(const std::exception& e){std::cerr<<e.what()<<std::endl;return 1;}

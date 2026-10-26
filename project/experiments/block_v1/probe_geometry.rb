@@ -4,7 +4,17 @@ require 'json'
 technology = RBA::Technology.new
 technology.load($lyt)
 options = technology.load_layout_options
-options.lefdef_config.lef_files = [$tech_lef, $landing_lef]
+config = options.lefdef_config
+config.lef_files = [$tech_lef, $landing_lef]
+config.read_lef_with_def = false
+# The fixture's LEF deliberately has FOREIGN names, but no external GDS macro.
+# Import its actual declared pin geometry instead of empty foreign cells.
+config.macro_resolution_mode = 1
+config.produce_lef_pins = true
+config.lef_pins_suffix = '.PIN'
+config.lef_pins_datatype = 0
+config.dbu = 0.0005
+options.lefdef_config = config
 def load_regions(path, options, gds)
   layout = RBA::Layout.new
   layout.read(path, options)
@@ -22,6 +32,10 @@ end
 dbu, reference = load_regions($unrouted, options, $out+'/unrouted.gds')
 dbu_after, original = load_regions($routed, options, $out+'/routed.gds')
 raise 'Readback units changed' unless dbu == dbu_after
+File.write($out+'/readback-areas.json',JSON.pretty_generate({'dbu_um'=>dbu,
+  'unrouted_area_dbu2'=>reference.transform_values { |region| region.area },
+  'routed_area_dbu2'=>original.transform_values { |region| region.area }})+"\n")
+raise 'Missing or changed original LEF landing geometry' unless reference['metal10'].area == 2*(0.8/dbu).round**2
 unit = lambda { |um| (um/dbu).round }
 point = lambda { |x,y| RBA::Point.new(unit.call(x),unit.call(y)) }
 labels = {'link'=>[['metal10',point.call(34.4,34.4)],['metal10',point.call(136.8,136.8)]]}
