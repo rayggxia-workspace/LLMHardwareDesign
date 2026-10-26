@@ -139,3 +139,6 @@ Block v1 独立最终物理入口为 `native-receive-<shared109|transaction6k>-<
 
 
 原生候选当前版本转向 `native_pipeline.json` 的075准备/076导入/077边界/078 P&R链。054–057为保留的历史输入/运行，不能因其pin坐标与旧计划一致便当作实际track资格。新planner读取原生M9/M10 make_tracks与via9 cut规则，实际DEF track读回及旧偏移负例属于076门槛。完整状态看对应回执，不能按run编号推断已执行。`native-formal-control` 的073版本通过真实DFF buffer/drive-strength正例、D/CK/输出变化及五类报告负例；最终接收严格要求完整归一化的非空PI/PO、零差集和显式UNSAT/IDENTICAL，不以grep无报错代替证明。
+
+
+当前原生链已更新为077准备/078四组floorplan/079边界/080原生P&R；075/076失败链与旧057运行保留。078的实际DEF轨道和全部pin精确对齐验证已通过，076的`%g`序列化偏差不得以容差豁免。最终独立接收器读取当前080且必须等对应源回执通过；源数据库不能在接收期间改变。074外部节点对局部通量/FV探针11项门槛通过，仍不是完整分布式RC资格。
