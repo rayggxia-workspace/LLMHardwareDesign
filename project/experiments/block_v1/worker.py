@@ -100,6 +100,9 @@ try:
     elif MODE=='fsv-build':
         from fsv_build import build
         build(ROOT,OUT,CPUS,run)
+    elif MODE=='reference-pilot':
+        from reference_run import pilot
+        pilot(ROOT,OUT,CPUS)
     elif MODE=='semantic-negative':
         qualified=OUT.parents[2]/'block-v1-20261027-006'
         inp=OUT.parents[2]/'block-v1-20261027-004/tasks/fixtures/upstream/input01'

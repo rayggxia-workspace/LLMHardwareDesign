@@ -88,10 +88,11 @@ void determinism(int threads){
 // the author's planar/conformal dielectric implementation unchanged.
 void scene(fsv::Solver& solver,bool three,const std::string& path){
   std::ifstream in(path);require(in.good(),"missing scene");fsv::Geometry g;
-  std::map<std::string,int> nets;std::string line;double eps=0;
+  std::map<std::string,int> nets;std::vector<std::string> masters;std::string line;double eps=0;
   while(std::getline(in,line)){
     std::istringstream row(line.substr(0,line.find('#')));std::string kind;if(!(row>>kind))continue;
     if(kind=="background"){require(bool(row>>eps)&&eps>0,"bad epsilon");continue;}
+    if(kind=="master"){std::string name;require(bool(row>>name),"bad master");masters.push_back(name);continue;}
     require(kind=="box","unsupported scene directive "+kind);std::string name;fsv::Box box;
     require(bool(row>>name>>box.lo[0]>>box.lo[1]>>box.lo[2]>>box.hi[0]>>box.hi[1]>>box.hi[2]),"bad box");
     require(name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-")==std::string::npos,"bad net name");
@@ -99,9 +100,15 @@ void scene(fsv::Solver& solver,bool three,const std::string& path){
   }
   require(eps>0 && g.netCount()>0,"empty scene");
   fsv::SolveOptions options;options.tol_total=.002;options.tol_coupling=.002;
-  for(int i=0;i<g.netCount();++i){
-    auto result=three?solver.solve(fsv::Scene(g,eps),i,options):solver.solve(fsv::Scene2D(fsv::crossSection(g),eps),i,options);
-    emit(std::filesystem::path(path).stem().string(),three?"3D":"2D",g,result);
+  if(masters.empty())for(int i=0;i<g.netCount();++i)masters.push_back(g.netName(i));
+  if(three){
+    fsv::Scene prepared(g,eps);
+    for(const auto& master:masters)emit(std::filesystem::path(path).stem().string(),"3D",g,
+      solver.solve(prepared,netIndex(g,master),options));
+  }else{
+    auto section=fsv::crossSection(g);fsv::Scene2D prepared(section,eps);
+    for(const auto& master:masters)emit(std::filesystem::path(path).stem().string(),"2D",g,
+      solver.solve(prepared,netIndex(g,master),options));
   }
 }
 int main(int argc,char**argv){

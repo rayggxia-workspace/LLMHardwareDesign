@@ -58,11 +58,14 @@ def prepare(folder,metadata,out):
             else:
                 assert y1>y0
                 box=[x0-width/2,y0-extension0,spec['height'],x0+width/2,y1+extension1,spec['height']+spec['thickness']]
-            match=re.fullmatch(r'(.+)_(\d+)',name)
+            # Context conductors belong to the SAME electrostatic experiment.
+            # Splitting cntxM into separate scenes removes shielding/coupling.
+            match=re.fullmatch(r'(.+?)(?:_cntxM\d+)?_(\d+)',name)
             assert match,'unclassified benchmark group '+name
             group,index=match.groups()
             groups.setdefault(group,[]).append(dict(name=name,index=int(index),layer=layer,ports=ports,box_um=box,
-                  resistance_ohm=spec['rsheet']*(abs(x1-x0)+abs(y1-y0))/width,width_um=width,ndr=rule))
+                  resistance_ohm=spec['rsheet']*(abs(x1-x0)+abs(y1-y0))/width,width_um=width,ndr=rule,
+                  context='_cntxM' in name))
             counts[layer]+=1;families[group.split('_',1)[0]]+=1;name=None
     assert name is None and sum(counts.values())==declared,'benchmark inventory incomplete'
     assert set(counts)==set(layers),'benchmark omitted actual routing layers'
@@ -70,19 +73,21 @@ def prepare(folder,metadata,out):
     cases=[]
     for index,(name,nets)in enumerate(sorted(groups.items())):
         assert len({n['name']for n in nets})==len(nets)
+        masters=[n['name']for n in nets if not n['context'] and n['index'] in (1,2,3)]
+        assert masters and any(n['index']==3 and not n['context']for n in nets),name
         # Numerical translation only; no stretching, net omission or geometry relabeling.
         ox=min(n['box_um'][0]for n in nets);oy=min(n['box_um'][1]for n in nets)
-        scene='background 3.9\n'
+        scene='background 3.9\n'+''.join('master '+name+'\n'for name in masters)
         for n in nets:
             x0,y0,z0,x1,y1,z1=n['box_um']
             scene+='box %s %.12g %.12g %.12g %.12g %.12g %.12g\n'%(n['name'],x0-ox,y0-oy,z0,x1-ox,y1-oy,z1)
         path=out/('%06d.txt'%index);path.write_text(scene)
-        cases.append(dict(id=index,name=name,nets=nets,scene=str(path),scene_sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
-    manifest=dict(schema='block-v1-reference-patterns/1',def_sha256=hashlib.sha256((folder/'patterns.def').read_bytes()).hexdigest(),
+        cases.append(dict(id=index,name=name,nets=nets,masters=masters,scene=str(path),scene_sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
+    manifest=dict(schema='block-v1-reference-patterns/2',def_sha256=hashlib.sha256((folder/'patterns.def').read_bytes()).hexdigest(),
         source_folder=str(folder),ndr_metadata_sha256=hashlib.sha256(metadata.read_bytes()).hexdigest(),def_units_per_um=scale,
         layers=layers,net_count=declared,groups=len(groups),family_nets=dict(families),layer_nets=dict(counts),
         group_size_histogram=dict(Counter(len(nets)for nets in groups.values())),cases=cases,
-        qualification='Geometry only; all actual twelve layers decoded; field solution/model qualification pending')
+        qualification='Geometry only; each scene includes signal AND context boxes; selected model master rows 1/2/3; field/model qualification pending')
     (out/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     print(json.dumps({k:v for k,v in manifest.items()if k not in ('cases','layers')},indent=2))
 

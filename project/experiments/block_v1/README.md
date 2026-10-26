@@ -31,3 +31,5 @@ shared121将原result接口改为**已提交**数据流；原软件driver需要�
 worker模式：transaction（独立队列scoreboard）、map-s16k/map-t6k/map-c8-full（存储完整映射，不blackbox）、core-build（原基线binary构建＋新wrapper lint）、overlay（几何生成及OpenROAD/ODB读回）。每模式保留命令、输入输出SHA、日志、失败和returncode；最后三项并不替代新顶层完整数学回归/DRC/提取。
 
 early RC文件是显式参数估算，**不是**覆盖12层的OpenRCX规则。未完成提取校准和全层几何检查前，P1技术验收保持未完成。
+
+校准场景的 `pattern-prepare` 模式逐路径读取真实 DEF 和 ODB NDR 宽度；信号及 cntxM 上下文同场保留。`reference-pilot` 在已验证独立求解器上并发求解每个 family/目标层和最大上下文，保存选定 master 的完整 Maxwell 行及统计误差并检查互易性；该先导不替代全量校准或正式模型。具体范围见 `docs/decisions/2026-10-27-block-v1-calibration-scenes.md`。
