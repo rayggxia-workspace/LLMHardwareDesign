@@ -16,7 +16,7 @@ def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 def verify(root,out,cpus,run):
     assert cpus>=8
     base=out.parents[2]
-    fit=base/'block-v1-20261027-019/tasks/reference-fit'
+    fit=base/'block-v1-20261027-021/tasks/reference-fit'
     receipt=json.loads((fit/'receipt.json').read_text());assert receipt['passed']is True
     model=fit/'research12.rules';assert sha(model)==receipt['outputs'][model.name]
     fit_record=json.loads((fit/'reference-fit.json').read_text())
@@ -131,12 +131,17 @@ write_db extracted.odb
         checks=dict(resistance=r_error<=.02,total=t_error<=.10+uncertainty,
                     ground=g_error<=.10+uncertainty,coupling_sum=c_error<=.10+uncertainty)
         pairs=[]
+        cross_layer_coverage=True
         for other,entry in entries.items():
-            if other in (name,'ground')or -entry['cap']<.05*total:continue
+            if other in (name,'ground'):continue
             actual=coupled.get(tuple(sorted((name,other))),0)
+            if lookup[other]['layer']!=lookup[name]['layer']and -entry['cap']>=.0001*total:
+                cross_layer_coverage &= actual>0
+            if -entry['cap']<.05*total:continue
             error=abs(actual+entry['cap']);ok=error<=.20*(-entry['cap'])+5*entry['sigma']
             pairs.append(dict(net=other,reference_ff=-entry['cap'],extracted_ff=actual,passed=ok))
         checks['significant_coupling_pairs']=all(pair['passed']for pair in pairs)
+        checks['cross_layer_coupling_present']=cross_layer_coverage
         passed &= all(checks.values())
         results.append(dict(master=name,reference_total_ff=total,reference_ground_ff=ref_g,
                             extracted_total_ff=actual_g+actual_c,extracted_ground_ff=actual_g,
@@ -145,7 +150,9 @@ write_db extracted.odb
                             coupling_error_over_total=c_error,coupling_pairs=pairs,checks=checks))
     record=dict(schema='block-v1-heldout-rc/1',passed=passed,cases=cases,model_sha256=sha(model),binary_sha256=sha(binary),
                 declared_gates=dict(resistance_relative=.02,total_relative=.10,ground_error_over_total=.10,
-                                    coupling_sum_error_over_total=.10,additional_total_sigma=5),results=results,
+                                    coupling_sum_error_over_total=.10,additional_total_sigma=5,
+                                    significant_pair_min_fraction=.05,significant_pair_relative=.20,
+                                    cross_layer_nonzero_min_fraction=.0001),results=results,
                 scope='Held-out primitive wires; access-via R/C and full hierarchy boundary validation remain separate')
     (out/'heldout-rc.json').write_text(json.dumps(record,indent=2)+'\n')
     assert passed,'Held-out extraction/reference disagreement; inspect heldout-rc.json'
