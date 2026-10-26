@@ -31,4 +31,4 @@
 
 ## 发布记录
 
-本地内容与来源核对已完成；任务分支上传、PR、CI、最终读回事实将在实际执行后追加，当前不虚填PR号或完成状态。
+已上传[PR118](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/118)，base=main，未合并；正文/来源源commit `d31acfe62a35d54f2cd7ccdead8c00b4ea04d5ec`。该commit的27文件已从远端Git blob逐字节读回通过，含完整全文/来源索引/原文zip。创建PR的插件传输失败后，先查无重复，再由同一已核账号REST创建；没有换身份。最终metadata与CI由最后发布回执核验，不能据此标done。

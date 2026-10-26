@@ -12,7 +12,8 @@
 - `audit_handbook.py`：独立核zip/Git blob/SHA、章节/链接/显式锚点、83组来源片段、12格CSV聚合和教学数例，不执行模型/RTL/EDA。
 - `validation.json`：最终实际文档检查回执；不是原模型实验复现。
 - `collaboration-readback.json`：本次账号/仓库、登记PR5和看板权限的真实核验。
-- `remote-readback.json`：上传后固定commit的实际字节回读（发布后补齐）。
+- `remote-readback.json`：正文源commit全部27文件的实际Git字节回读；最终metadata以PR最后发布回执为准，不自包含后续改写。
+- `pr-body.md`：实际PR文案，提供阅读入口、范围、验证与协作回执。
 
 命令从仓库根执行：
 
