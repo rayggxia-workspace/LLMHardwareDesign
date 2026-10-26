@@ -46,6 +46,9 @@ def validate(spec):
         if task["partition"] == "debug":
             assert 0 < task["minutes"] <= 30
         assert task["memory"] == "0", "Cluster RealMemory=1 placeholder: reserve actual node RAM"
+        if task.get("node"):
+            match=re.fullmatch(r"node([1-9]|1[0-9]|2[0-6])",task["node"])
+            assert match and task["partition"]==("c64"if int(match.group(1))<=12 else"c96")
         assert set(task.get("after", [])) <= ids - {task["id"]}
         assert task["argv"] and all(isinstance(x, str) for x in task["argv"])
     remaining, done = list(tasks), set()
@@ -140,6 +143,7 @@ def main():
                     "--partition=" + task["partition"], "--time=%d" % task["minutes"], "--mem=" + task["memory"],
                     "--job-name=yzl-bv1-" + task["id"], "--comment=" + token,
                     "--chdir=" + str(taskroot), "--output=" + str(taskroot / "job.log"), str(script)]
+            if task.get("node"):argv.insert(2,"--nodelist="+task["node"])
             item["submission_argv"] = argv
             save(path, state)
             job = output(argv).split(";")[0]

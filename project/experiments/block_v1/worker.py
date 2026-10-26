@@ -106,6 +106,12 @@ try:
     elif MODE=='reference-fit':
         from reference_fit import fit
         fit(ROOT,OUT,run)
+    elif MODE=='fv-install':
+        from fv_reference import install
+        install(ROOT,OUT,run)
+    elif MODE.startswith('fv-case-'):
+        from fv_reference import verify
+        verify(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]))
     elif MODE=='heldout-rc':
         from heldout_rc import verify
         verify(ROOT,OUT,CPUS,run)
