@@ -81,6 +81,25 @@ try:
         mapped('transaction6k',[str(ROOT/'project/rtl/block_v1/transaction6k.sv')])
     elif MODE=='map-c8-full':
         mapped('shared121',rtl())
+    elif MODE=='inventory':
+        script='read_verilog -sv '+ ' '.join(rtl())+'\nhierarchy -check -top shared121\n'
+        script+='proc\nopt\nmemory_dff\nopt\nmemory_collect\nopt_clean\nstat\nwrite_json generic.json\n'
+        (OUT/'generic.ys').write_text(script)
+        run(['yosys','-s','generic.ys'],'generic.log')
+        # This maps identical production RTL bytes. The old mapped artifact is
+        # separately bound rather than silently re-synthesized as a new result.
+        old=OUT.parents[2]/'block-v1-20261027-004/tasks/map-c8-full'
+        old_sources=json.loads((old/'receipt.json').read_text())['inputs']
+        for entry in bundle['files']:
+            if entry['path'].startswith('project/rtl/'):
+                assert old_sources[entry['path']]==entry['sha256']
+        run(['python3',str(ROOT/'project/experiments/block_v1/inventory121.py'),
+             '--generic',str(OUT/'generic.json'),'--mapped',str(old/'mapped.json'),
+             '--library',str(TOOLS/'lib/NangateOpenCellLibrary_typical.lib'),
+             '--out',str(OUT/'inventory.json')],'inventory.log')
+    elif MODE=='fsv-build':
+        from fsv_build import build
+        build(ROOT,OUT,CPUS,run)
     elif MODE in ('committed-suite','recovery-suite'):
         driver='committed_qualification.cpp' if MODE=='recovery-suite' else 'committed_sim.cpp'
         run([str(VERILATOR),'--cc','--exe','--build','-j',str(CPUS),'-Wno-fatal',
