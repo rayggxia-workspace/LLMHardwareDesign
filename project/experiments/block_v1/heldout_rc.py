@@ -98,7 +98,6 @@ write_spef extracted.spef
 write_db extracted.odb
 '''
     (out/'extract.tcl').write_text(script)
-    run(['openroad','-no_init','-exit','extract.tcl'],'extraction.log')
     workers=min(4,cpus//2);threads=cpus//workers
     def solve(case):
         target=out/('reference-%02d.jsonl'%case['id'])
@@ -111,6 +110,9 @@ write_db extracted.odb
         return rows[:-1]
     with concurrent.futures.ThreadPoolExecutor(max_workers=workers)as pool:
         rows=[row for values in pool.map(solve,cases)for row in values]
+    # Preserve independent held-out references even if this candidate's
+    # extraction reader/solver fails. No dependency on fitted RCX results.
+    run(['openroad','-no_init','-exit','extract.tcl'],'extraction.log')
     extracted={}
     for line in(out/'extracted.tsv').read_text().splitlines():
         name,*values=line.split('\t');assert name not in extracted;extracted[name]=list(map(float,values))

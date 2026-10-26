@@ -33,6 +33,12 @@ for task in manifest['tasks']:
    raw=file.read_bytes()
    try:
     content=json.loads(raw.decode())
+    if relative=='receipt.json' and len(content.get('outputs',{}))>1000:
+     outputs=content['outputs']
+     content['outputs']={name:digest for name,digest in outputs.items()
+                        if not name.startswith('reference-patterns/') or name=='reference-patterns/manifest.json'}
+     content['individual_scene_hashes_omitted_from_index']=len(outputs)-len(content['outputs'])
+     content['full_receipt_binding']='Original server receipt retained; outer bytes/SHA bind the complete unchanged file'
     if len(raw)>256*1024 and relative=='reference-patterns/manifest.json':
      content={key:value for key,value in content.items() if key!='cases'}
      content['large_case_array_omitted_from_index']=True
