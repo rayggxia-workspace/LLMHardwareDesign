@@ -12,6 +12,7 @@ import tempfile
 from project.analysis.workload_mapping.search import Hardware, Infeasible, exact, solve, wire
 from project.analysis.workload_mapping.search_model import transformer, trap, Workload
 from project.analysis.workload_mapping.search_check import replay, export
+from project.analysis.workload_mapping.search_tie_audit import solve_tie
 
 
 def micro(seed):
@@ -27,6 +28,16 @@ def micro(seed):
 
 
 class SearchTests(unittest.TestCase):
+    def test_stronger_greedy_uses_same_independent_validator(self):
+        r=solve_tie(self.w,self.h)
+        replay(self.w,self.h,r)
+
+    def test_stronger_greedy_exact_gap_is_not_hidden(self):
+        w=micro(6);h=Hardware(capacity=1024,matrices=1)
+        r=solve_tie(w,h)
+        self.assertGreaterEqual(r['wire_bytes'],exact(w,h))
+        replay(w,h,r,False)
+
     def test_actual_smoke_cli_exit_and_scientific_receipt(self):
         root=Path(__file__).resolve().parents[3]
         local=root/'.local';local.mkdir(exist_ok=True)
