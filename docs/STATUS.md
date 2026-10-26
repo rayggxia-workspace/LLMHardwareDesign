@@ -1,5 +1,7 @@
 # 当前状态
 
+- 2026-10-27增量里程碑（[Issue121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)，[草稿PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)，未合并）：明确原生全部M1–M10预制、自建M11/M12定制的v1路线。真实T6K与四profile完整整数/恢复回归通过，完整标准单元存储计价为1.538 mm²；内部M10接入小例子已连通。仍在P0/P1/P2资格阶段，十二层RCX/独立DRC与正式物理Block库尚未验收；不覆盖其他H2任务的独立状态。入口见[执行记录](../work/YUZE-LU/121/README.md)。
+
 - 更新日期：2026-10-23（中国标准时间）
 - 当前阶段：H1同资源分块／合并物理对照已完成，主线、并发成果及HTML按用户授权整合；H2在独立工作树推进，尚未验收
 - 当前工程：[Issue #15](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15) 已完成openTPU ACT/MXU同功能／资源的块内及父层对照。三块和两父层、六类证明共十一份封存来源严格通过；拆分叶面积+0.412%、总信号线+7.142%、通孔+2.974%，完整setup／hold两组均满足2.5ns／0.5ns预算。[中文结果与三类图表](experiments/issue-15-opentpu-results.html)已生成并目视核验，详见[实验记录](experiments/issue-15-opentpu-comparison.md)。独立全量重布线21亦已自然完成并通过十一项来源／证明对照；本次整合不启动、终止或改写既有远程作业。

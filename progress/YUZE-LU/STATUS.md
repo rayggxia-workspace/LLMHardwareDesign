@@ -2,10 +2,11 @@
 
 ## 2026-10-27 Block v1 十二层实施
 
-- 任务：[Issue #121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)，独立 `task/121-block-v1-twelve-layer`，P0/P1进行中，PR尚未创建；不接管原#116。
+- 任务：[Issue #121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)，独立 `task/121-block-v1-twelve-layer`，P0/P1及P2功能资格进行中，[草稿PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)；不接管原#116。
 - 已完成：授权计划封存；33份原科学源码与发布Git blob均校验；服务器探针91865失败/PATH原因保留，91866成功核实实际工具及原生十层平台。
-- 已实现待验收：真实6144B事务壳、C8集成wrapper、独立协议scoreboard、研究十二层几何生成、统一六基础/八上限跨run调度入口。完整数学/门级/P&R/新层RCX/DRC未完成。
-- 下一步：并行运行事务协议、完整存储/新顶层综合、原基线构建和新wrapper lint、十二层读回与原冻结数据导入；凭实际回执推进P1/P2，不提前宣告硬核合格。
+- 实际通过：T6K随机242事务；完整四profile13命令及44条恢复命令、两种等待模式的独立整数接收；91901完整库存642253单元／1538342.904 μm²（真实S16K＋T6K）；91905内部M10接点经新层连通，原生27条SAMENET与新层EOL数据库核实；91899官方固定场求解器2D/3D参考与线程/介质缩放检查。
+- 进行中：91903精确完整映射网表构建（两份存储不替换）；91907数学/协议语义负例。十二层RCX实际校准、全层独立DRC/寄生边界、完整物理均尚未验收。
+- 下一步：准备已选定标准单元S16K内置C8、T6K独立叶块的同源物理输入；验证校准图形确实覆盖12层，完成独立新层几何负例；资格满足后再正式硬化。物理预算见[决策](../../docs/decisions/2026-10-27-block-v1-physical-inputs.md)，不沿用旧逻辑面积预算。
 - 证据：[work121](../../work/YUZE-LU/121/README.md)、[运行入口](../../project/experiments/block_v1/README.md)。登记pending；看板unverified/同步pending，管理员待指定。
 
 ## 2026-10-26 模型实验分析报告

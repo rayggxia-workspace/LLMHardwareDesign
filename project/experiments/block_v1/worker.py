@@ -105,6 +105,9 @@ try:
         inp=OUT.parents[2]/'block-v1-20261027-004/tasks/fixtures/upstream/input01'
         run(['python3',str(ROOT/'project/experiments/block_v1/semantic_negative.py'),str(qualified/'src'),
              str(inp),str(qualified/'tasks/committed-suite/mixed0'),str(OUT/'negative')],'negative.log')
+    elif MODE=='physical-inputs':
+        from physical_inputs import prepare
+        prepare(ROOT,OUT,CPUS,run)
     elif MODE in ('committed-suite','recovery-suite','mapped-suite'):
         driver='committed_qualification.cpp' if MODE=='recovery-suite' else 'committed_sim.cpp'
         sources=rtl()
@@ -187,7 +190,7 @@ try:
             zf.extractall(OUT/'upstream')
             receipt['upstream_archive_members']=zf.namelist()
         receipt['upstream_archive_sha256']=hashlib.sha256(raw).hexdigest()
-    elif MODE in ('overlay','route-probe','rcx-patterns'):
+    elif MODE in ('overlay','route-probe','rcx-patterns','rcx-classic-patterns'):
         run(['python3',str(ROOT/'project/experiments/block_v1/overlay.py'),
              str(TOOLS/'lef/NangateOpenCellLibrary.tech.lef'),
              str(ROOT/'project/experiments/block_v1/technology.json'),str(OUT/'overlay')],'overlay.log')
@@ -199,9 +202,10 @@ try:
             run(['python3',str(ROOT/'project/experiments/block_v1/route_probe.py'),'generate',str(OUT/'probe'),'--cpus',str(CPUS)],'probe-generate.log')
             run(['openroad','-no_init','-exit',str(OUT/'probe/route.tcl')],'route.log')
             run(['python3',str(ROOT/'project/experiments/block_v1/route_probe.py'),'audit',str(OUT/'probe')],'probe-audit.log')
-        if MODE=='rcx-patterns':
+        if MODE in ('rcx-patterns','rcx-classic-patterns'):
+            arguments='-v1'if MODE=='rcx-patterns'else'-met_cnt 12'
             (OUT/'patterns.tcl').write_text('read_lef overlay/research12.tech.lef\n'
-                 'bench_wires -v1 -len 100 -cnt 5 -w_list {1 2} -s_list {1 2 4 8} -all -over_dist 3 -under_dist 3\n'
+                 'bench_wires '+arguments+' -len 100 -cnt 5 -w_list {1 2} -s_list {1 2 4 8} -all -over_dist 3 -under_dist 3\n'
                  'write_db patterns.odb\nwrite_def patterns.def\nbench_verilog patterns.v\n'
                  'help bench_read_spef\nhelp write_rules\nhelp gen_rcx_model\n')
             run(['openroad','-no_init','-exit','patterns.tcl'],'patterns.log')
