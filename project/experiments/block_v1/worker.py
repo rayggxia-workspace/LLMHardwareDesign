@@ -135,6 +135,9 @@ try:
     elif MODE=='native-boundary-audit':
         from native_boundary import verify
         verify(ROOT,OUT)
+    elif MODE=='partial-geometry-group':
+        from partial_group import verify
+        verify(ROOT,OUT,CPUS,run)
     elif MODE in ('partial-field-fv','partial-pair-fv','partial-branch-fv','partial-via-fv'):
         from partial_field_verify import verify
         geometry={'partial-branch-fv':'branch','partial-via-fv':'via'}.get(MODE,'straight')
