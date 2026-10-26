@@ -28,6 +28,17 @@
       "error": "clean-source gate rejected uncommitted module README",
       "fix": "commit documentation; same 23 tests then passed, gate retained",
       "raw_evidence": "original chat tool output"
+    },
+    {
+      "source_commit": "b61e20406b8e9d88bc259725f9cdbb382ae20a6f",
+      "stage": "final Git/raw artifact SHA audit",
+      "error": "3 locally generated summary hashes used CRLF while Git blobs normalized LF",
+      "affected": [
+        "comparison.csv",
+        "development_failures.json",
+        "stronger_greedy.csv"
+      ],
+      "fix": "Own new evidence directory forces LF; recompute manifest against exact committed bytes; raw scientific outputs and server receipts unchanged"
     }
   ]
 }
