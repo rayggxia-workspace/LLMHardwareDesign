@@ -35,13 +35,19 @@ def rtl():
     return sorted(str(p) for p in (ROOT/'project/rtl').rglob('*.sv'))
 
 
-def mapped(top, sources):
+def mapped(top, sources, destination=OUT):
     script = 'read_liberty -lib {lib}\nread_verilog -sv {sources}\nhierarchy -check -top {top}\n'
     script += 'synth -top {top} -noabc\ndfflibmap -liberty {lib}\nabc -liberty {lib}\nclean\nstat -liberty {lib}\n'
     script += 'write_verilog -noattr mapped.v\nwrite_json mapped.json\n'
     script = script.format(lib=TOOLS/'lib/NangateOpenCellLibrary_typical.lib',sources=' '.join(sources),top=top)
-    (OUT/'map.ys').write_text(script)
-    run(['yosys','-s','map.ys'],'map.log')
+    (destination/'map.ys').write_text(script)
+    record=dict(argv=['yosys','-s',str(destination/'map.ys')],log=str(destination/'map.log'),started=time.time())
+    receipt['commands'].append(record)
+    with (destination/'map.log').open('w') as stream:
+        result=subprocess.run(record['argv'],cwd=destination,stdout=stream,stderr=subprocess.STDOUT)
+    record.update(returncode=result.returncode,finished=time.time())
+    if result.returncode:
+        raise RuntimeError('mapping failed: '+top)
 
 
 try:
@@ -51,6 +57,16 @@ try:
              str(ROOT/'project/rtl/block_v1/transaction6k.sv'),
              str(ROOT/'project/experiments/block_v1/test_transaction.cpp')],'build.log')
         run([str(OUT/'obj/Vtransaction6k')],'test.json')
+    elif MODE=='map-stores':
+        assert CPUS>=2
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+            jobs=[]
+            for top,relative in [('store82','norm_service/store82.sv'),('transaction6k','block_v1/transaction6k.sv')]:
+                destination=OUT/top
+                destination.mkdir()
+                jobs.append(pool.submit(mapped,top,[str(ROOT/'project/rtl'/relative)],destination))
+            for job in jobs:
+                job.result()
     elif MODE=='map-s16k':
         mapped('store82',[str(ROOT/'project/rtl/norm_service/store82.sv')])
     elif MODE=='map-t6k':
