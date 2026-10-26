@@ -24,3 +24,9 @@
 下一步096严格绑定051原真实M10接入路由、043 mask对照和090图节点二进制，读取已有8节点/7边DC图并按导体真实偏移转换三维坐标，运行三档offset，各33554432 walks；不按线长伪造局部电荷。局部坐标正例及电阻不一致、重复边、错误端点、错移导体/场景、错误网络六类负例通过。单隔离网络无跨网耦合，其局部电荷尚无该长路由独立FV对照；窗口所有权、新旧层拼接、尺度和完整分布式RC仍未资格。
 
 096源282d3a32175fc6aa5337fa171541a6ba1a71d1fe、归档bdc53f5a809da2c9a5ebe20f886735dcadcca9dfb0b598beb4d1fe831304e5f4（112成员、778240字节）已部署。24 CPU三路各8线程；依赖051/090/091真实成功回执，当前全局8槽已满，未提交Slurm。首次接入只能证明实测字段绑定，不宣称局部FV或SPEF节点读回已经通过。
+
+## 逐节点SPEF接续，禁止仅以总量接收
+
+新增`routed-graph-view`：仅在096原真实路由测量回执通过后，将8个实测node-to-ground电荷和7条原DC边写入SPEF；新OpenROAD进程读取原009 ODB与新SPEF，按ITerm身份/内部node号导出每节点电容、每边电阻和总量。实际工具导入负例包括错误FF/PF、交换最大/最小节点电荷、交换最大/最小边电阻。后二者保持总C/总R，必须由局部身份检查拒绝。每种变体使用独立读入进程和目录，原ODB不改。
+
+API参照[OpenDB dbCapNode](https://openroad.readthedocs.io/en/latest/doxygen_output/html/classodb_1_1dbCapNode.html)与[dbRSeg](https://openroad.readthedocs.io/en/latest/doxygen_output/html/classodb_1_1dbRSeg.html)，具体安装版本尚未执行验证，不能把当前文档/API存在当成实测通过。合成TSV正例及六种故障控制（含保总量换值、缺节点、重复边与非有限数）通过，只证明接收器。一般多网capture-node耦合、真实长路由局部FV、窗口所有权、新旧层拼接和全Block资格仍未完成。

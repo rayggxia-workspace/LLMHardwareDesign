@@ -128,6 +128,9 @@ try:
     elif MODE=='routed-graph-field':
         from routed_graph_field import verify
         verify(ROOT,OUT,CPUS,run)
+    elif MODE=='routed-graph-view':
+        from routed_graph_view import verify
+        verify(ROOT,OUT,CPUS,run)
     elif MODE=='physical-inputs-compatible':
         from physical_inputs import prepare
         prepare(ROOT,OUT,CPUS,run,compatible=True)

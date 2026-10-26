@@ -156,3 +156,5 @@ Block v1 独立最终物理入口为 `native-receive-<shared109|transaction6k>-<
 088封存结果仍有1个cap违例，093/094/095是有限CAP_MARGIN=40候选/接收/视图链，入口`native-cap40-run-...`、`native-cap40-receive-...`、`native-cap40-view-...`。20和40档均绑定原080 CTS、原077配置加唯一margin行，保留原限值及LEC/预算；GDS显式do-target先在独立输出树准备logs/reports/objects。`dispatch.py MANIFEST --submit --only EXISTING_TASK_ID ...`只选择现有任务，不改manifest/依赖/8节点上限，记录实际dispatcher源码SHA；080 T6KA已经用该过滤启动，C8A保持待执行以避免与node21科学任务争用。
 
 `routed-graph-field`严格绑定run051原真实接入路由的DC图、run043导体mask、run090图节点二进制与run091两几何科学资格，三档offset各33554432 walks、三路线程总和不超过allocation。输出`routed-graph-field.json`，只接续单隔离网络origin-node电荷；尚无该长路由独立局部FV、一般capture-node耦合、新旧层拼接或全Block资格。
+
+`routed-graph-view`依赖run096真实测量成功，逐节点/边原生OpenDB读回SPEF，并以实际导入的单位错误、保总量节点电荷/边电阻调换作负例；输出`routed-graph-view.json`。当前仅本地合成读回接收控制通过，实际工具与测量回装未执行。
