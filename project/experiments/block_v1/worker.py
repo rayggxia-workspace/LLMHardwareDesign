@@ -60,7 +60,13 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-typed-view-group':
+    if MODE=='native-qa-occupancy-group':
+        from native_qa_occupancy import group
+        group(ROOT,OUT,CPUS)
+    elif MODE in ('native-qa-occupancy-a','native-qa-occupancy-c'):
+        from native_qa_occupancy import export
+        export(ROOT,OUT,CPUS,run,MODE[-1].upper())
+    elif MODE=='native-typed-view-group':
         from native_view_group import verify
         verify(ROOT,OUT,CPUS,escape_only=True,typed_pg=True)
     elif MODE in ('native-typed-view-transaction6k-a','native-typed-view-transaction6k-c'):
