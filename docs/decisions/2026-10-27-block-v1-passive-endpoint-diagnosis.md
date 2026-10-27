@@ -22,4 +22,10 @@
 
 2026-10-27 13:18 CST：135/92222完整资格组已终态FAILED，48:10、TotalCPU4:55:06、MaxRSS73373228K。A独立DRC18项（M10间距16/M9间距2），C独立DRC2项（M10间距2）；原生DRT均0，全部其他接收门均通过，A/C最终功能三初态通过。两路不能冻结为合格宏。原始失败及全量DRC索引已保存，147依赖失败且从未提交job，停用；新148准备以一个16CPU c96 allocation内A/C两路8CPU只读定位，不修改ODB、pin或任何DRC规则。135按64CPU分配的整体CPU利用约9.6%，仅代表此批（含串行DRC等待段）；后续分阶段并发，并保留实际内存/CPU证据。128 C8两路进入详细布线；134/141继续等待128完整成功，当前6个本任务allocation，最多8个。
 
-完整终态在 `work/YUZE-LU/121/results/run135-group-terminal/index.json`、`run135a-physical-terminal/index.json`、`run135c-physical-terminal/index.json`。先前两份功能终态仍独立保留。所有间距条目、精确坐标、来源哈希和19项通过的接收门均保留，不能将原生DRT 0当作独立DRC 0。定位器仅增加显式 `native_pipeline_viaonly.json` 的A/C来源选择；仍严格要求失败接收回执与成功源回执、原始DRC、ODB及input-sha256对应，扫描后再核源未变。148两路独立日志/回执、总线程上限16、48GiB可用内存不足则串行，失败一路不取消另一条。实际部署与终态另行保存。完整宏、父层物理、一般十二层RC/拼接、共同冻结底座与两产品仍未验收。
+完整终态在 `work/YUZE-LU/121/results/run135-group-terminal/index.json`、`run135a-physical-terminal/index.json`、`run135c-physical-terminal/index.json`。先前两份功能终态仍独立保留。所有间距条目、精确坐标、来源哈希和17项通过的接收门均保留，不能将原生DRT 0当作独立DRC 0。定位器仅增加显式 `native_pipeline_viaonly.json` 的A/C来源选择；仍严格要求失败接收回执与成功源回执、原始DRC、ODB及input-sha256对应，扫描后再核源未变。148两路独立日志/回执、总线程上限16、48GiB可用内存不足则串行，失败一路不取消另一条。实际部署与终态另行保存。完整宏、父层物理、一般十二层RC/拼接、共同冻结底座与两产品仍未验收。
+
+## 148 实际终态
+
+2026-10-27 13:24 CST：148/92231同节点A/C各8核只读定位通过，1:11、TotalCPU54.043秒、MaxRSS1299772K；两路实际重叠约26.75秒。A扫描5743302形状/83命中，C扫描5738655形状/8命中，18+2标记零遗漏。M10标记均涉及相邻边缘接口异网，A的两项M9标记涉及read_data[43]同网凹口，仍未修复。147已读回确认无job/空state，因135失败停用；134/141继续等待128完整成功，当前6个本任务allocation。安装原生DRC脚本固定threads(4)，已新增节点内并行决策，按实际阶段CPU/内存配置并发；全部验收门保留。
+
+源码a153b97d974f14a41a9bcce6a5d92214cafa3baa，归档078e2dd061a9dfc9484b4b00d0a06b474670de04c400f97bf2b3e3dda8d591e5，156成员/1054720字节。组及A/C全部终态索引保留在 `run148-group-terminal`、`run148a-locate-terminal`、`run148c-locate-terminal`；原失败仍为135，每路18项接收门中的17项通过，独立DRC门失败。定位包围盒候选与原始edge-pair共同支持上述诊断，不能将定位通过当作路由修复；进一步接入路径/路由器行为仍待有限实际探针确认。

@@ -35,3 +35,5 @@ python project/experiments/block_v1/native_view_control.py <全新控制JSON路�
 正式两条新管线的视图入口现在还要求145完整成功组/子回执、全部实际接口门槛、同SHA共享脚本、逐成员bus表和同SHA实际OpenROAD程序。146将以当前新源码部署四视图组，等待134/135/145整组成功；此时146尚未部署。`view-controls-146.json`再次通过13来源反例及4种真实stub编排。145只证明实际模型导出和接口可读，不证明flat/abstract时序精度；标量输入约束、输入线阻、完整时序边界和一般十二层RC仍未通过。
 
 2026-10-27 13:03 CST：正式四视图当前部署入口为147/node20/32CPU，依赖134/135/145整组成功，尚无Slurm job；源码0e65b27d5a57732a60a2c5ef42ab3b68da71eebe、归档SHA256 df998dd76f17b0e06b31507b32047a446fd37d33efa078582062239357b07d44（156成员/1054720字节），部署索引`run147-deployment`、stage143 manifest。146曾以完全相同归档部署到node21，同样无job，因141完整组合也固定使用node21且每个allocation申请整节点RAM，为避免等待其长任务而停用146，保留不可变索引`run146-deployment`；没有取消任何Slurm作业。147使用独立node20，后续可与141/node21及134/node23并行，仍由统一dispatcher计入最多8个本任务allocation。142/146都不再调度，不能把空部署写成运行或验收通过。最终计划文件SHA重新核验不变。
+
+2026-10-27 13:24 CST：135整组物理失败（A18/C2间距），147依赖不可满足。已读回147空dispatch state/无job，索引 `run147-retired-nojob`，停用且不再在调度优先列表中。145接口控制通过仍有效，但不能绕过完整物理失败来生成正式合格视图；未来修复采用新候选/接收/视图归档。
