@@ -273,4 +273,3 @@ RAW_LIB_FOLDER需提供已按164收据封存的candidate164-a.lib/c.lib。只读
 业务任务由 `project/experiments/block_v1/worker.py` 调用：`five-macro-matrix-test` / `five-macro-matrix-map` / `five-macro-store-test` / `five-macro-store-map` / `five-macro-t-pins` / `five-macro-t-layout`，各16CPU；前两对各自通过后 `five-macro-route-m/s` 独立补位。以 `bundle.py` 从精确Git对象生成不可变输入、`native_node_queue.py` 管理96CPU的6×16动态队列，`dispatch.py` 统一限制本任务6～8allocation；独立全deck/STA/PG/最终网表接收不能省略。实际结果由每任务 receipt 和业务JSON判定，不以命令列存在当已通过。
 
 管理检查：`python scripts/check_project.py`；Python语法：`python -m py_compile project/experiments/block_v1/five_macro.py project/experiments/block_v1/five_macro_physical.py project/experiments/block_v1/five_macro_delivery.py`。数值/RTL与P&R实际执行在授权EDA容器的Slurm计算节点，不能在登录节点运行重EDA。
-
