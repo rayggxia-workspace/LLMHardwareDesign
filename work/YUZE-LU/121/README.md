@@ -11,7 +11,7 @@
 
 ## 当前执行快照：2026-10-27 CST
 
-当前快照为2026-10-27 08:52 CST：新增原生DRC只读定位与严格5ps hold修复入口：真实61标记解析/五坏输入、Linux实际源码的配置正例/八负例通过，未替代物理接收。103定位已部署（源码5449132、归档c41fffa3946f15c1ccaa18cd225fe358668285f86f7230204e39fba1e88c7bd5，8CPU/node24）；105边缘T6KA修复与106独立接收已部署（源码a504854、归档d932b5930e7e1e61bfe4108612088be5a6be5d49f811436602c57d4df8372a17，各32CPU/node20和node24），均121成员/849920字节，当前无Slurm job，依统一八槽预算等待。104在预检发现小写策略不兼容后停选，实际未提交，未覆盖原manifest。080 C8C进入最终LEC，中间日志有两个diff1 outputs，严格完整对应门槛保留；094A仍在完整DRC、100双48CPU科学验证仍运行。 仍无合格原生物理Block，十二层RC/拼接、宏边界、完整共同底座、两产品和参数库未验收。登记PR5实际open/unmerged为pending；无board.json/Projects工具，看板unverified、同步pending，管理员及独立审查人待指定。
+当前快照为2026-10-27 09:04 CST：100/92147双向joint-node科学验证通过：31:20、MaxRSS7392852K、96CPU内两48CPU；分支与via两方向的细化/外推/远边界/offset/统计/局部电容/互易/保边际错误重连全部通过。103/92154只读原生定位通过：33秒、MaxRSS685692K，扫描220361网/5734869形状、236次命中，61个标记无遗漏。M10三间距项对应read_index[7]/[8]，间距0.13um对0.8um规则；58天线项经原正交多边形精确面积筛选全部单网候选，marker42排除begin_words[5]、保留begin_words[6]，共53个输入网络。105/92157严格5ps边缘T6KA修复在node20/32CPU运行，106独立接收已部署、尚无job。094A完整DRC仍活跃；080 C8C进入RCX，但LEC日志两个未匹配输出边界仍需严格接收。 仍无合格物理宏；任意真实路由的多网分布式RC、新旧层拼接、完整宏/共同底座/两产品和参数库未完成，目标不缩小。登记PR5 pending，看板unverified/同步pending，独立审查人及管理员待指定。
 
 - run069/070：研究通量分片变体保留源文件前后SHA，原作者参考和线程一致性通过；直线左右电容与独立FV、三网格/远边界/offset及交换负例全部通过。不是完整分布式RC资格。run074节点对耦合探针node19/48CPU/UNLIMITED完成7:48；独立FV和保持行列边际的重连负例通过，仍不覆盖一般分支或完整提取。
 - run073：真实DFF buffer/强度调整正例、D/CK/输出三种真实负例及五个报告故障控制通过；原071脚本名、072日志重复摘要失败保留。最终接收器要求显式UNSAT/IDENTICAL、完整且非空边界相等，并另报core面积。
@@ -87,3 +87,10 @@
 证据：`results/native-drc-location-controls.json`、`results/native-hold5-config-controls.json`、`results/run103-initial/`、`results/run104-not-submitted/`、`results/run105-initial/`、`results/run106-initial/`、`results/live-105.json`；部署manifest为stage99–stage102。live-105中100 children路径为组目录下观察，空列表不能证明其真实任务目录缺文件，实际子任务另在tasks/capture-branch-fv及tasks/capture-via-fv。
 
 恢复先读Slurm真实状态，按103→105→106优先调度，104不再选择；保留所有活跃作业，不因耗时终止。103命中仅用于确定实际网络，再决定M10间距及天线预制修复；105必须通过严格独立接收和实际最终网表功能，不能用配置控制充当时序修复。
+
+
+## 2026-10-27 09:04 CST 科学对照及实际DRC定位终态
+
+100/92147双向joint-node科学验证通过：31:20、MaxRSS7392852K、96CPU内两48CPU；分支与via两方向的细化/外推/远边界/offset/统计/局部电容/互易/保边际错误重连全部通过。103/92154只读原生定位通过：33秒、MaxRSS685692K，扫描220361网/5734869形状、236次命中，61个标记无遗漏。M10三间距项对应read_index[7]/[8]，间距0.13um对0.8um规则；58天线项经原正交多边形精确面积筛选全部单网候选，marker42排除begin_words[5]、保留begin_words[6]，共53个输入网络。105/92157严格5ps边缘T6KA修复在node20/32CPU运行，106独立接收已部署、尚无job。094A完整DRC仍活跃；080 C8C进入RCX，但LEC日志两个未匹配输出边界仍需严格接收。
+
+证据：`results/run100-terminal/`、`results/capture-node-scientific-summary.json`、`results/run103-first-native/`、`results/native-drc-polygon-diagnosis.json`、`results/native-drc-polygon-controls.json`、`results/run105-first-native/`、`results/live-107.json`。未改动原报告、数据库、原门面积或300比值；全部原生失败仍需完整重跑，不把定位或局部RC通过当作宏签核。下一步核实际库GDS的输入门/扩散连通与可用修复单元，明确M10接入重路由方案，同时接收105与080新终态。

@@ -173,3 +173,11 @@ Block v1 独立最终物理入口为 `native-receive-<shared109|transaction6k>-<
 ## 原生 Block 修复入口补充（Issue121）
 
 `project/experiments/block_v1/native_pipeline_hold5.json` 定义从封存 CTS 增加 5 ps 严格 hold 目标的有限分支；`native_drc_locate.py/.tcl` 只读定位独立 DRC marker。配置、定位负例和资格边界见[修复决策](decisions/2026-10-27-block-v1-native-hold-and-drc-repair.md)。运行由既有 `worker.sh` 和统一 `dispatch.py` 的 manifest 入口完成；未通过完整接收不能生成合格宏。
+
+原生扫描后，正交多边形与原矩形的精确相交面积可在本地重算：
+
+```powershell
+python project/experiments/block_v1/native_drc_geometry.py work/YUZE-LU/121/results/run103-first-native/index.json work/YUZE-LU/121/results/run094-terminal/native-drc-summary.json work/YUZE-LU/121/results/local-polygon-diagnosis.json
+```
+
+输出须使用尚不存在的路径。该步骤保留原包围盒候选，消除凹多边形空白区导致的误命中；面积命中仍不能替代 GDS 电气连通或 DRC 清零。
