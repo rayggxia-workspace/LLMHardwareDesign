@@ -60,7 +60,13 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-composed-group':
+    if MODE=='native-escape-probe-group':
+        from native_escape_probe import group
+        group(ROOT,OUT,CPUS)
+    elif MODE in ('native-escape-probe-a','native-escape-probe-c'):
+        from native_escape_probe import verify
+        verify(ROOT,OUT,CPUS,run,MODE[-1].upper())
+    elif MODE=='native-composed-group':
         from native_composed_group import verify
         verify(ROOT,OUT,CPUS)
     elif MODE=='native-composed-init-control':
