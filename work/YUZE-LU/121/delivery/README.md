@@ -1,13 +1,13 @@
 # 五种基础宏交付入口
 
-更新时间：2026-10-28 04:13 CST。Refs [Issue #121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)、[PR #122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)。**M、T 已有通过独立接收的单块结果；V、R、S 继续执行，五宏整体尚未交付完成。** 每种仅一个基础实现；当前修复只处理实测缺陷，没有另设裕量版本。
+更新时间：2026-10-28 04:18 CST。Refs [Issue #121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)、[PR #122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)。**M、T 已有通过独立接收的单块结果；V、R、S 继续执行，五宏整体尚未交付完成。** 每种仅一个基础实现；当前修复只处理实测缺陷，没有另设裕量版本。
 
 | 宏 | 基础资源与功能 | 外框 µm | 当前有效结果及剩余项 |
 | --- | --- | --- | --- |
 | M | 64个S8基础乘法器；8路局部归约/S64累加；S16分解、S128跨组合并；操作数缓冲与RNE/饱和 | 560×560 | [最终文件、接点及版图](M/README.md)：同源四门通过，待项目审查 |
 | V | 8路逐元素/统计；2路独立函数流水线；U128组级单元；2KiB回放；有限TopK | 1210×1210 | 228/92533在node25重新详细布线。相同RTL/外框/接口，仅修实测7BUF及1DFF驱动，PG连接放在保护前；必须fresh final/RCX并重验全部四门 |
 | R | 8路共享GDN/SSM通路；8KiB活动+8KiB影子状态；四抽头卷积与历史 | 1870×1870 | 196/92462完成详细布线主过程，原生收尾/流程内LEC继续；须最终回执通过后独立接收 |
-| S | 16KiB、1024×128bit、单1RW标准单元工作存储 | 1610×1610 | 三个M10接入网的几何修正通过原生DRC/连通控制；225/92526流程内LEC通过、fresh RCX继续，随后同源四门重验 |
+| S | 16KiB、1024×128bit、单1RW标准单元工作存储 | 1610×1610 | 三个M10接入网的几何修正通过原生DRC/连通控制；225/92526原生全流程及fresh RCX通过；已三路并行独立物理/完整GDS DRC/三初态最终功能，严格LEC依最终功能等待。仍未最终验收 |
 | T | 6KiB、384×128bit标准单元结果交接；所有权/背压/提交/撤销/消费释放 | 1120×1120 | [既有C叶块最终文件、接点及版图](T/README.md)：沿用选定单块接收，完整原生几何已齐 |
 
 功能、格式、并行度、局部缓冲、端口见[五宏规格](../../../../docs/BLOCK_LIBRARY_V1.md)，命令与实测逻辑周期见[接口合同](../../../../docs/BLOCK_V1_COMMANDS.md)。S/T均为标准单元存储，不能称SRAM宏；R的16KiB状态和外部S是不同存储实体。
