@@ -60,7 +60,13 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='five-macro-matrix-test':
+    if MODE=='five-macro-recurrent-test':
+        from five_macro import recurrent_test
+        recurrent_test(ROOT,OUT,CPUS,run)
+    elif MODE=='five-macro-recurrent-map':
+        from five_macro import map_matrix
+        map_matrix(ROOT,OUT,CPUS,run,'block_v1_r')
+    elif MODE=='five-macro-matrix-test':
         from five_macro import matrix_test
         matrix_test(ROOT,OUT,CPUS,run)
     elif MODE=='five-macro-matrix-map':

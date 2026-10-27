@@ -3,6 +3,20 @@ import json
 from pathlib import Path
 
 
+def recurrent_test(root,out,cpus,run):
+    from io_slots import file_sha
+    assert cpus==16
+    rtl=root/'project/rtl/block_library_v1/block_v1_r.sv'
+    bench=root/'project/experiments/block_v1/test_recurrent_macro.cpp'
+    run(['/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator','--cc','--exe','--build','-j',str(cpus),'-Wno-fatal',
+         '--top-module','block_v1_r','-Mdir',str(out/'obj'),str(rtl),str(bench)],'recurrent-build.log')
+    run([str(out/'obj/Vblock_v1_r')],'recurrent-result.json')
+    result=json.loads((out/'recurrent-result.json').read_text())
+    assert result['passed'] and result['random_recurrent_cases']==240 and result['conv_cases']==100
+    result.update(source_sha256=file_sha(rtl),bench_sha256=file_sha(bench),physical_implementation_completed=False,final_netlist_verified=False)
+    (out/'five-macro-recurrent-test.json').write_text(json.dumps(result,indent=2)+'\n')
+
+
 def matrix_test(root, out, cpus, run):
     from io_slots import file_sha
     assert cpus == 16
@@ -22,7 +36,7 @@ def matrix_test(root, out, cpus, run):
 def map_matrix(root, out, cpus, run, top='block_v1_m'):
     from io_slots import file_sha
     assert cpus == 16
-    assert top in ('block_v1_m','block_v1_s16k')
+    assert top in ('block_v1_m','block_v1_s16k','block_v1_r')
     rtl=root/('project/rtl/block_library_v1/'+top+'.sv')
     lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
     # Yosys scripts have their own tokenizer: Tcl braces are literal filename
@@ -43,7 +57,8 @@ def map_matrix(root, out, cpus, run, top='block_v1_m'):
                 mapped_sha256=file_sha(out/'mapped.v'),cells=cells,cell_count=sum(cells.values()),
                 ports={k:dict(direction=v['direction'],bits=len(v['bits'])) for k,v in module['ports'].items()},
                 physical_implementation_completed=False,functional_equivalence_qualified=False)
-    (out/('five-macro-'+('matrix' if top=='block_v1_m' else 'store')+'-map.json')).write_text(json.dumps(result,indent=2)+'\n')
+    label={'block_v1_m':'matrix','block_v1_s16k':'store','block_v1_r':'recurrent'}[top]
+    (out/('five-macro-'+label+'-map.json')).write_text(json.dumps(result,indent=2)+'\n')
 
 
 def flatten_store(root,out,cpus,run):
