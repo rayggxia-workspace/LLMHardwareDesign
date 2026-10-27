@@ -1,3 +1,5 @@
+2026-10-28 03:43 CST：V222最终原生flow已通过，最终V/SDC/DEF/ODB/SPEF齐；立即三路并行物理、完整GDS DRC、三初态最终功能，实际16CPU掩码0–15/16–31/32–47不相交，进程CPU均增长。S225/92526 node13已实际从223证明过的edited.odb接续，当前native最终LEC进行中；实际kepler16线程限0–15且CPU增长。R196 node26详细布线第1轮优化继续（迭代中违规数不是最终接收结果）。本任务四baseline+196+222+225共七allocation；224三R独立门已暂存但依真实196最终回执仍未ready，未sbatch。M/T已接收，S/V/R仍未最终交付；225新源不得沿用190或203旧资格。
+
 2026-10-28 03:39 CST：S223三网几何修正实际通过：全片native DRC0；567102网仅addr[7]/din[43]/din[55]变化，其余567099网/全部非NETS/信号网表/全部via/BPin/其他层保持，真实连通、跨网短路及0.8um基础间距检查通过。随后脚本漏导入Path导致自然FAILED，未进入final/RCX；补import并准备225只接续已封存edited.odb，全部独立门仍须新源重验，不重跑布局布线。223实际输出路径生成误写block-s1，已留不可变记录和显式目录链接；后续225回到规范block-v1路径，不复用错误旧queue。209旧V完整GDS deck0但native2处M2违规，故原203仍失败；209已自然结束，R三项独立门均未领取。224已暂存三R门，未sbatch，须待196真实native回执ready再提交。当前四旧baseline+R196+V222共六allocation；225准备提交至≤8。V222原生最终LEC仍运行，S/V/R未验收。
 
 2026-10-28 03:31 CST：222/92523已实际在node17接续V收尾（原生fillcell、route别名及SDC完成，最终LEC/RCX进行中），S只读定位已通过。S实际三个M10 U形接入addr[7]/din[43]/din[55]准备缩为1/1/2条直连，BPin与全部via/其他层/逻辑保持；真实190 DEF正例roundtrip通过，坐标改2DBU的源被拒。223准备从原190最终库内修三网并原生全片DRC/几何连通检查，再fresh final/RCX及全部四门重验；不是已修复通过。新几何队列同属223，依S223、V222、R208真实最终delivery，替代未提交的221。当前七allocation，223若提交仍受总上限8；六槽16CPU即完即补，S原生收尾含LEC按实际140.3GiB组峰值预留192GiB及1.2裕量/16GiBguard。
@@ -103,3 +105,5 @@
 ## 提交和协作未完成项
 
 已执行`python scripts/check_project.py`、相关Python编译、`git diff --check`；硬件结果以原生回执为准。M只完成本块接收，V/R/S未完成，整个五宏任务保持in_progress。管理中心登记PR5未合并为pending；无config/board.json和Projects能力，实际看板unverified/同步pending，管理员和独立审查人待指定。不得描述为登记/看板已完成、不得自审/自合并/关闭。
+
+后续恢复约束：旧207/209/215/223均不得重新提交。224未sbatch，196真实native receipt passed后且allocation≤8再用224 dispatch --submit；它只领取从未创建的207 R DRC/function/formal CWD，207共享历史state里R三项均无claim。222负责208新R physical/delivery；若222在R ready前park，使用新bound peer继续同一222不可变queue/state，不重复业务CWD。225负责S全四门/delivery以及S/V/R最终geometry；若225先park，真实delivery ready后新bound peer继续原queue/state。221只暂存且源/路径过时，绝不提交；223 Path失败与输出拼写历史均保留，225全为规范路径。92507.2 CANCELLED为只读Makefile cat探针超时，不是EDA取消；旧V fullDRC本身自然完成并实际native两项失败。
