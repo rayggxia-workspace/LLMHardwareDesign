@@ -32,4 +32,6 @@ M/S/T完整原生wire/via/PG/pin/OBS与M10底部几何合同见[M](M/native-geom
 
 R交付接续：旧222控制allocation已自然释放，R物理208通过，交付尚未领取；[231暂存证据](../results/r-delivery-resume-staged-052218/index.json)复用原222不可变队列和claim锁，仅等207三门真实通过后提交，目前零新allocation。它不改变任何宏实现，也不把旧V失败转移为R失败。
 
+R几何接续：[232实际暂存证据](../results/r-geometry-resume-staged-063043/index.json)确认92526自然COMPLETED/0:0，复用225原样队列、源归档和state/claim锁；S几何已通过，R几何尚未领取。232当前未提交、零新allocation，只在208最终交付真实通过后接续；231/232各有幂等依赖观察器，不能因等待重启旧任务。
+
 当前恢复入口及历史失败证据见[接续记录](../../../../docs/handoffs/2026-10-28-issue-121-five-macro.md)。原V203/222和S190的失败不能由新结果反向抹去，也不能将旧功能/LEC资格转移给新最终文件。阵列、多实例系统与上层M11/M12布线留下一轮。
