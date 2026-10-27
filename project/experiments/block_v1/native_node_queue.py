@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import time
 
@@ -116,7 +117,12 @@ def execute(t,base):
     folder=Path(t['cwd']);folder.parent.mkdir(parents=True,exist_ok=True);folder.mkdir(exist_ok=False)
     source=Path(t['source']);allocated=t['cpus'];started=time.time()
     env=dict(os.environ,OMP_NUM_THREADS=str(allocated),OPENBLAS_NUM_THREADS='1',MKL_NUM_THREADS='1')
-    command=['python3',str(source/'project/experiments/block_v1/worker.py'),str(source),t['mode'],str(allocated)]
+    affinity=t['cpu_affinity']
+    assert len(affinity)==len(set(affinity))==allocated
+    assert set(affinity)<=os.sched_getaffinity(0)
+    taskset=shutil.which('taskset');assert taskset,'A hard CPU-affinity launcher is required'
+    command=[taskset,'--cpu-list',','.join(map(str,affinity)),
+             'python3',str(source/'project/experiments/block_v1/worker.py'),str(source),t['mode'],str(allocated)]
     with(folder/'node-queue-child.log').open('w')as stream:
         process=subprocess.Popen(command,cwd=folder,env=env,stdout=stream,stderr=subprocess.STDOUT)
         peaks={};peak_tree=0;samples=0
@@ -139,6 +145,7 @@ def execute(t,base):
     if passed:passed=sha(report)==r['outputs'][t['report']]and json.loads(report.read_text())['passed']is True
     return dict(passed=passed,returncode=code,started=started,finished=time.time(),argv=command,
         receipt_sha256=sha(receipt)if receipt.exists()else None,report_sha256=sha(report)if report.exists()else None,
+        cpu_affinity=affinity,affinity_launcher=taskset,
         sampled_peak_tree_rss_bytes=peak_tree,sampled_process_vm_hwm_bytes=peaks,memory_samples=samples,
         memory_measurement_scope='500ms process-tree RSS sum and per-process VmHWM; samples may miss short peaks and shared pages may be counted more than once')
 
@@ -146,6 +153,8 @@ def execute(t,base):
 def schedule(spec,digest,out,owner,memory_snapshot,execute_task=execute):
     """Identical admission/refill path for production and isolated controls."""
     cpus=spec['node_cpus'];base=out.parents[2]
+    allowed=sorted(os.sched_getaffinity(0));assert len(allowed)>=cpus
+    allowed=allowed[:cpus]
     store=Store(spec['state_path'],digest);futures={};completed=[];maximum_cpus=0;maximum_tasks=0;last=0;parked=False
     with concurrent.futures.ThreadPoolExecutor(max_workers=96)as pool:
         while True:
@@ -160,12 +169,17 @@ def schedule(spec,digest,out,owner,memory_snapshot,execute_task=execute):
             free_memory=min(memory['MemAvailable']-spec['memory_guard_gib']*1024**3,memory['MemTotal']-spec['memory_guard_gib']*1024**3-reserved)
             t,done,blocked=store.claim(spec['tasks'],owner,cpus-active_cpus,max(0,free_memory))
             if t is not None:
+                used={cpu for active in futures.values()for cpu in active['cpu_affinity']}
+                free=[cpu for cpu in allowed if cpu not in used]
+                assert len(free)>=t['cpus']
+                t=dict(t,cpu_affinity=free[:t['cpus']])
                 futures[pool.submit(execute_task,t,base)]=t
                 maximum_cpus=max(maximum_cpus,active_cpus+t['cpus']);maximum_tasks=max(maximum_tasks,len(futures))
                 continue
             if time.time()-last>=30:
                 save(out/'queue-live.json',dict(time=time.time(),owner=owner,active=list(t['id']for t in futures.values()),
                     active_cpu_ceilings=active_cpus,maximum_tasks=maximum_tasks,memory=memory,reserved_memory_with_margin_bytes=reserved,
+                    cpu_affinities={t['id']:t['cpu_affinity']for t in futures.values()},
                     admission_blocked=blocked,manifest_sha256=digest));last=time.time()
             if done and not futures:break
             if not futures:
