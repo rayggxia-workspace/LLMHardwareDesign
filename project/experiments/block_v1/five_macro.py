@@ -16,6 +16,27 @@ def vector_component(root,out,cpus,run,component):
     (out/('five-macro-vector-'+component+'.json')).write_text(json.dumps(result,indent=2)+'\n')
 
 
+def vector_latency(root,out,cpus,run):
+    from io_slots import file_sha
+    assert cpus==16
+    original=out.parents[2]/'block-v1-20261027-196/tasks/five-macro-vector-test'
+    receipt=json.loads((original/'receipt.json').read_text());assert receipt['passed'] is True
+    proof=original/'five-macro-vector-test.json';assert file_sha(proof)==receipt['outputs'][proof.name]
+    tested=json.loads(proof.read_text());assert tested['passed']
+    folder=root/'project/rtl/block_library_v1'
+    assert all(file_sha(folder/name)==digest for name,digest in tested['source_sha256'].items())
+    bench=root/'project/experiments/block_v1/test_vector_latency.cpp'
+    driver=bench.with_name('test_vector_macro.cpp');assert file_sha(driver)==tested['bench_sha256']
+    sources=[folder/name for name in ('block_v1_v.sv','block_v1_v_group.sv','block_v1_v_function.sv')]
+    run(['/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator','--cc','--exe','--build','-j','16','-Wno-fatal',
+         '--top-module','block_v1_v','-I'+str(folder),'-Mdir',str(out/'obj')]+list(map(str,sources))+[str(bench)],'latency-build.log')
+    run([str(out/'obj/Vblock_v1_v')],'latency-result.json')
+    result=json.loads((out/'latency-result.json').read_text());assert result['passed']
+    result.update(source_sha256=tested['source_sha256'],scoreboard_receipt_sha256=file_sha(original/'receipt.json'),
+                  driver_sha256=file_sha(driver),bench_sha256=file_sha(bench),physical_clock_qualified=False)
+    (out/'five-macro-vector-latency.json').write_text(json.dumps(result,indent=2)+'\n')
+
+
 def vector_test(root,out,cpus,run):
     from io_slots import file_sha
     assert cpus==16

@@ -1,6 +1,6 @@
 # 首版宏命令接口
 
-Refs #121。功能/容量与数值范围见[五宏规格](BLOCK_LIBRARY_V1.md)。下述合同对应当前RTL；R已通过原始RTL测试，V仍等待封存服务器回归。逻辑周期不等于布线后的频率。
+Refs #121。功能/容量与数值范围见[五宏规格](BLOCK_LIBRARY_V1.md)。下述合同对应当前RTL；R195与V196均已通过服务器原样RTL回归。逻辑周期不等于布线后的频率。
 
 M/V/R共有 `clk/reset`、`cmd_valid/ready`、`cmd_op[3:0]`、`cmd_index`、`cmd_data[127:0]` 与持有型响应 `rsp_valid/ready/data[127:0]/error`。M/V另有`saturated`。一份命令/响应所有权；响应未消费不接下一命令。非法命令返回错误，不静默执行。`reset`清控制/有效性，不清整份数据存储；未装载的数据不可当作零。
 

@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE in ('five-macro-vector-group','five-macro-vector-function'):
+    if MODE=='five-macro-vector-latency':
+        from five_macro import vector_latency
+        vector_latency(ROOT,OUT,CPUS,run)
+    elif MODE in ('five-macro-vector-group','five-macro-vector-function'):
         from five_macro import vector_component
         vector_component(ROOT,OUT,CPUS,run,MODE.rsplit('-',1)[1])
     elif MODE=='five-macro-vector-test':
