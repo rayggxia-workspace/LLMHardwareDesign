@@ -13,7 +13,7 @@ ACT8pin试验r02、原XY重布线控制r03；GEMM r01及重布线控制r04；MXU
 ACT完整740-pin C对照fullC-r01采用相同C可移动cohort，B也是该740-pin子集，不能称为完整B859-pin方案。
 
 恢复第一步：读取AGENTS/Skill/远程规则和Issue/PR最新head，核对squeue/sacct，仅收集本任务作业，不碰Issue55/121或他人任务。
-用 `collect_trial_snapshot.py` 创建全新snapshot名、下载后 `make_physical_summary.py` 汇总；先确认所用whole-connectivity的source ODB SHA与试验checked.odb一致。
+用 `collect_trial_snapshot.py` 创建全新snapshot名、下载后 `make_physical_summary.py` 汇总；先确认所用whole-connectivity的source ODB SHA与提取前routed.odb（A为原始ODB）一致，不能使用RCX后checked.odb。
 全块几何连通可用 `full_connect_job.sh <case> <revision> A C` 对实际终态独立检查，必须使用新输出目录；旧API失败不是通过证据。
 完整原父层handoff/实际层序还未知；逻辑对端和对端原pin层已补齐但不能替代该证据。完整工艺规则/GDS/LVS及系统边界RC/STA/电气仍待验证。
 
@@ -21,3 +21,5 @@ ACT完整740-pin C对照fullC-r01采用相同C可移动cohort，B也是该740-pi
 本记录用于持续执行与审查，不表示任务完成、暂停或已验收。新的结果在同一Issue/PR增量更新，所有失败与基线未通过项保留。
 
 在线交付：[Draft PR129](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/129)，首次发布fbac83836ecc7767a929639265b67b31d74902db；图表已上传。ACT740完整C的独立clean DRC/全块几何连通通过；新增四块制造网格r02已修订、8pin重试grid-r05。旧RCX后ODB重读失败保留，物理母本统一从提取前routed ODB生成。当前运行/后续独立检查按最新execution与Slurm读回，不根据旧snapshot猜终态。
+
+本轮C局部验证现已六块全部完成：ACT740完整C、其余5块各8pin；独立clean native DRC均0，全块多端OpenDB几何连通均通过。RC/STA当前模型：ACT/GEMM/MXU预算满足；VECTOR及两个SYSTEM失败，不能资格化。最终收集snapshot milestone-r05，独立检查92344–92347均COMPLETED 0:0 / UNLIMITED。仍需逐项完成真实父层目标/可达、GDS/LVS/完整规则、完整系统模型及其余全C实现，不能关闭Issue。旧LL辅助边界试验若仍在运行让其自然完成，不取消/覆盖。

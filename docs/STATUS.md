@@ -21,5 +21,5 @@
 
 [Issue126](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/126)进行中：[PR120](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/120)未合并head4f91e098为起点，复用Issue55完整SYSTEM包装，补齐两系统六块、18项功能归属和全部接口连接矩阵。
 六块24,767原始信号pin、74,301行A/B/C候选覆盖通过；其他四块对照图、端点依据、实际金属/PG/OBS筛查和逐pin数据已生成。
-ACT局部8pin实际GRT/DRT、fresh native DRC、RCX及独立边界STA已执行，原始与C试验全块多端信号/时钟几何连通通过；其他块及完整740-pin ACT对照继续执行，失败与待验证独立记录。
+六块C已实际接入：ACT完整740pin，其余五块各8pin局部；独立clean native DRC=0、全块多端OpenDB几何连通均通过。VECTOR与两个SYSTEM独立边界时序/电气失败保留。ACT同组C相对原XY重布线线长−6.40%、via−1.70%，setup略差，外框未变。其他五块完整C进入独立尝试，失败与待验证独立记录。
 完整父层接入/目标层、完整规则/GDS/LVS、系统RC/STA及电气资格尚未完成，不能把候选覆盖写成物理全部完成。详见[中文入口](experiments/issue-126-full-pin.md)。原参考包、PR120工作树、Issue55/121活动任务不修改。
