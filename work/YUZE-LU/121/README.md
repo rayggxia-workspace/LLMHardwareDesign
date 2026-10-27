@@ -1,5 +1,7 @@
 # Issue 121 执行记录
 
+2026-10-27 12:59 CST：145实际组/两子通过，51秒/3108328K，索引`run145-group-terminal`、`run145a-terminal`、`run145c-terminal`及stage141 manifest；真实386 signal bit和11bus容器/成员一致。正式视图新增145成功证明/共享脚本/实际工具SHA门槛，146待部署并等待134/135/145，`view-controls-146.json`再次通过13来源反例及4stub控制。143/144失败和142无job停用原样保留，宏边界/一般RC/共同底座与两产品未资格。
+
 2026-10-27 12:54 CST：144实际49秒严格失败，组/两子索引`run144-group-terminal`、`run144a-terminal`、`run144c-terminal`保留，stage140 manifest对应实际144。真实386signal bit无缺失/错方向，但限定查询另有11个bus容器；已补对象类型/成员逐项证明，待145实际诊断。146保留正式视图编号；142无job停用，不覆盖旧输入或回执。
 
 2026-10-27 12:49 CST：143/92226自然FAILED/51秒，MaxRSS3002100K；组与A/C子任务失败索引为`run143-group-terminal`、`run143a-terminal`、`run143c-terminal`，旧局部pin/全名前缀不兼容原因与共享限定查询修复见同源视图决策。`view-controls-144.json`再次通过来源/编排控制。142未提交停用，144/145拟采用新不可变源码，尚未运行；原失败与部署不覆盖。

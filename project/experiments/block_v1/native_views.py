@@ -26,6 +26,42 @@ def received_contract(physical,source,source_receipt_sha256,pipeline,top,policy)
     assert physical['mapped_to_final_lec']['passed']is True
 
 
+def library_interface_control(root,base):
+    """Bind the actual installed-tool scope/bus proof, not timing accuracy."""
+    from io_slots import file_sha
+    control=base/'block-v1-20261027-145/tasks/native-timing-model-probe-group'
+    bound=json.loads((control/'receipt.json').read_text())
+    assert bound['passed']is True and bound['mode']=='native-timing-model-probe-group'and bound['cpus']==16
+    path=control/'native-timing-model-probe-group.json'
+    assert file_sha(path)==bound['outputs'][path.name]
+    group=json.loads(path.read_text());assert group['passed']is True
+    assert len(group['children'])==2 and all(c['passed']is True and c['returncode']==0 for c in group['children'])
+    assert {c['mode']for c in group['children']}=={'native-timing-model-probe-a','native-timing-model-probe-c'}
+    script='project/experiments/block_v1/native_lib_pins.tcl';digest=file_sha(root/script)
+    assert bound['inputs'][script]==digest
+    tools={p:h for p,h in bound['tool_hashes'].items()if Path(p).name=='openroad'}
+    assert len(tools)==1 and all(file_sha(Path(p))==h for p,h in tools.items())
+    reports={}
+    for child in group['children']:
+        folder=control.parent/child['mode'];receipt=folder/'receipt.json'
+        assert file_sha(receipt)==child['receipt_sha256']
+        accepted=json.loads(receipt.read_text())
+        assert accepted['passed']is True and accepted['mode']==child['mode']and accepted['cpus']==8
+        assert accepted['inputs'][script]==digest
+        report=folder/'native-timing-model-probe.json'
+        assert file_sha(report)==child['proof_sha256']==accepted['outputs'][report.name]
+        result=json.loads(report.read_text())
+        assert result['passed']is True and all(v is True for v in result['checks'].values())
+        assert result['policy']==child['mode'][-1].upper()and result['lib_interface_script_sha256']==digest
+        assert result['observed_signal_pin_count']==result['pin_count']and result['typed_bus_count']>0
+        assert not result['missing_pins']and not result['extra_pins']and not result['wrong_directions']
+        assert file_sha(folder/'lib-buses.tsv')==result['typed_bus_metadata_sha256']
+        reports[result['policy']]=dict(receipt_sha256=file_sha(receipt),report_sha256=file_sha(report))
+    return dict(group_receipt_sha256=file_sha(control/'receipt.json'),group_report_sha256=file_sha(path),
+                lib_interface_script_sha256=digest,actual_openroad_sha256=tools,children=reports,
+                scope='Actual installed-tool scoped lib-pin and typed bus readback only; no boundary accuracy qualification')
+
+
 def interface(folder,pins,leaf,top,library):
     """Inspect native-tool readback of the actual generated Liberty and LEF."""
     expected={p['pin']:p for p in pins};terms={};boxes={};pg={};lib={};summary={};obs=set();seen=set();lib_seen=set()
@@ -79,6 +115,7 @@ def generate(root,out,cpus,run,top,policy,pipeline='native_pipeline.json'):
     if pipeline=='native_pipeline_const_protected.json':assert top=='shared109'
     if pipeline=='native_pipeline_viaonly.json':assert top=='transaction6k'
     base=out.parents[2];config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
+    interface_control=library_interface_control(root,base)if pipeline in ('native_pipeline_const_protected.json','native_pipeline_viaonly.json')else None
     api=base/'block-v1-20261027-073/tasks/native-formal-control'
     control=json.loads((api/'receipt.json').read_text());assert control['passed']is True
     assert file_sha(api/'view-api.log')==control['outputs']['view-api.log']
@@ -137,7 +174,7 @@ close $stream
         pipeline_file_sha256=file_sha(root/'project/experiments/block_v1'/pipeline),
         generator_sha256=file_sha(Path(__file__)),readback_script_sha256=file_sha(root/'project/experiments/block_v1/native_views.tcl'),
         lib_interface_script_sha256=file_sha(root/'project/experiments/block_v1/native_lib_pins.tcl'),
-        typed_bus_metadata_sha256=file_sha(out/'lib-buses.tsv'),inputs=inputs,
+        typed_bus_metadata_sha256=file_sha(out/'lib-buses.tsv'),library_interface_control=interface_control,inputs=inputs,
         actual_model_api_help_sha256=file_sha(api/'view-api.log'),
         views={name:dict(path=str(out/name),sha256=file_sha(out/name))for name in ['candidate.lib','candidate.lef']},
         native_gds=dict(path=str(gds),sha256=file_sha(gds)),flat_abstract_boundary_qualified=False,

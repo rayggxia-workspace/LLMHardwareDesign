@@ -29,3 +29,7 @@ python project/experiments/block_v1/native_view_control.py <全新控制JSON路�
 2026-10-27 12:54 CST：144/92227两路再次严格失败49秒，TotalCPU2:41.247、MaxRSS3184988K。限定库/cell及错库/错cell控制实际通过，386个真实signal bit全部存在且方向一致；额外查询对象为11个Liberty bus容器与VDD/VSS。原接收已区分PG，但尚未区分bus容器，故接口检查仍失败，原回执保留。模型分别360706/360660字节；均有31 combinational、195 rising_edge、189 setup_rising、189 hold_rising、各1 min/max_clock_tree_path，数量仅描述导出结果，不证明时序覆盖或边界精度。
 
 共享脚本现按实际Liberty对象的`is_bus`与`member_iterator`区分bus容器，逐项证明所有成员也存在于同一限定查询且方向一致；容器及全成员表另存`lib-buses.tsv`，信号bit仍要求与全部原386端点精确对应，未知额外scalar pin继续拒绝。API参考[OpenSTA的bus成员展开](https://github.com/The-OpenROAD-Project/OpenSTA/blob/master/sdc/Sdc.tcl)（2026-10-27读取）；当前容器上的实际执行另由新145诊断验证，不假定上游当前源码等于安装版本。编号用途更新：145用于此项修复后的双路实际诊断，146用于后续正式四视图；尚未部署，不复用144失败或142旧部署。
+
+2026-10-27 12:59 CST：145/92228两路实际诊断全部通过，51秒、TotalCPU2:40.345、MaxRSS3108328K；一个16CPU allocation内A/C各8CPU。源码fb39b8cd33bb9ca5b3973a6677dd6a9fa0878e77、归档SHA256 ef2588f61d4f6d6dc3d8410b318fc9e3db262a0381ff438d858f08e0c9564d8d（156成员/1044480字节）。每路386信号bit完全对应、11个真实bus容器及全部成员保留；无缺失/额外scalar/方向错误，错库/错cell查询为空。共同脚本SHA256 cfa6c21cbb7351c02f184ea8bc0373d4ebbe9562be3eec6f492091186e0107ba。组与子回执见`run145-group-terminal`、`run145a-terminal`、`run145c-terminal`；143/144失败不改写。
+
+正式两条新管线的视图入口现在还要求145完整成功组/子回执、全部实际接口门槛、同SHA共享脚本、逐成员bus表和同SHA实际OpenROAD程序。146将以当前新源码部署四视图组，等待134/135/145整组成功；此时146尚未部署。`view-controls-146.json`再次通过13来源反例及4种真实stub编排。145只证明实际模型导出和接口可读，不证明flat/abstract时序精度；标量输入约束、输入线阻、完整时序边界和一般十二层RC仍未通过。
