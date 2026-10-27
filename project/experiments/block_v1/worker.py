@@ -59,7 +59,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-cell-gate-probe':
+    if MODE=='native-antenna-fixture':
+        from native_antenna_fixture import verify
+        verify(ROOT,OUT,CPUS,run)
+    elif MODE=='native-cell-gate-probe':
         from native_cell_gate import verify
         verify(ROOT,OUT,CPUS,run)
     elif MODE=='native-drc-locate-c':
