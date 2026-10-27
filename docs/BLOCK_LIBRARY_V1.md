@@ -74,3 +74,5 @@ T6K A：有源面积414678.306μm²；C：415495.990μm²；二者die均1254400�
 2026-10-27重新阅读openTPU固定 [91df410 的otpu_mxu](https://github.com/FeSens/openTPU/blob/91df41092f612361c5bc22f83b31d23382ffabb0/rtl/mxu/otpu_mxu.sv)及授权服务器llaccel固定f7db8a2的gemm_engine.sv。前者将分组乘积、列端累加与有限结果FIFO局部闭合，后者采用16×16乘法阵列/加法树、i32累加、双缓冲与输出背压。由此得到的设计建议是检查“局部乘加闭合、宽数据尽量不反复过边界”，**这不是它们已经证明当前四种边界最优**。
 
 当前只借鉴边界、存储时序与背压方法；尚未复制这些上游RTL。openTPU的48bit整数后转fp32 epilogue、llaccel的分块及requant数值并不直接等价于当前四profile一次RNE/完整K合同。需要采用源代码时核对该固定版本许可证、数值范围、尾块、容量和实际单块P&R，不因开源项目通过就免除本版验证。更多已读来源与SHA见 [计算复用记录](decisions/2026-10-27-block-v1-compute-reuse.md)。
+
+2026-10-27 21:01 CST增量：选取T6K C为首版单块结果来源。相同1120×1120die下，其hold最小slack0.016969ns高于A的0.005335ns，有源面积增加817.684μm²也保留计价。重新对160/161/168实际源码/回执及10份网表、ODB/DEF/GDS、SPEF/SDC、LEF/Lib、完整timing view做只读SHA核对通过，见[最终产物索引](../work/YUZE-LU/121/library-v1-t6k-C-20261027.json)。这次未重跑STA；Lib层次边界资格仍false，版图图和统一交付包继续补齐。其他三块不借T6K资格。

@@ -71,7 +71,8 @@ def generate(root=BASE, check=False):
     for name, text in files.items():
         path = folder/name
         if check: assert path.read_text(encoding='utf-8') == text, name
-        else: path.write_text(text, encoding='utf-8', newline='\n')
+        else:
+            with path.open('w', encoding='utf-8', newline='\n') as stream: stream.write(text)
         records[name] = hashlib.sha256(text.encode()).hexdigest()
     return dict(passed=True, inverse_shared109_source_exact=True,
         original_sha256=hashlib.sha256(original.encode()).hexdigest(), generated_sha256=records,
