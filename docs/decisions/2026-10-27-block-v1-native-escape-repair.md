@@ -96,3 +96,11 @@ python project/experiments/block_v1/native_escape_control.py NEW_CONTROL.json
 160/92259两路16CPU已启动；161完整物理/最终功能四8CPU组已不可变部署，空state无job，等待160完整实际成功。不能把159的12门扩展为完整物理/宏资格。
 
 128 C8 A/C原生全流程虽成功，旧route阶段的native DRT报告仍不能替代对最终ODB的新全片检查，157已给出反例。因此新增162独立只读C8最终全片DRC门，直接绑定128 A/C成功回执与最终ODB SHA，同一16CPU allocation内两路各8CPU调用实际编译入口的零box全片检查；检查前后DEF必须字节相同，源SHA必须不变，新报告必须空。失败先写分类/完整报告与proof再断言，独立peer继续。它补充134完整物理与141完整组合，不能替代任何一门。按128实际最大约177GiB，预算每路200GiB+20%余量，可用内存不足480GiB时串行，峰值用核不超16。162在本源码提交时尚未部署/运行；下一次冻结与宏视图必须显式包含此新门。
+
+## 160新全片真实通过与162 C8真实失败
+
+160/92259实际COMPLETED/8:54、TotalCPU34:45.937、MaxRSS41580320KiB。A/C各重新生成原生最终输出与寄生、LEC成功，最终全部DEF网络/NETS外、完整物理Verilog/原SDC均与159接受源一致，原生全片checker前后DEF字节相同，新全片native DRC报告两路0；所有源SHA保持。组与两子terminal索引已保留。161/92264已提交node20/32CPU四路8CPU完整物理/实际最终功能，尚无完整资格，不得冻结或交给#127宣布宏合格。
+
+162/92261实际FAILED/4:22、TotalCPU46:08.830、MaxRSS18331828KiB；A49条（Cut Spacing5、Metal Spacing37、Short7），C37条（2、30、5）。两路源ODB SHA及checker前后完整DEF都相等，报告完整内容、分类、来源/工具/脚本SHA在各子proof/终态索引保存。不能依据128成功、旧route报告0或134其他接收门通过，跳过这个新发现；C8仍须实际定位和预制前修复，再完整重验。完整目标保持。
+
+独立Issue127已在线核验，分摊宏视图/寄生时序边界QA，使用独立macro_boundary_qa目录/工作树，不接管主线native_views、硬化、worker/dispatch或任何活动输出。主线仍负责完整物理/功能与正式来源发布/视图导出/总体集成，正式QA等待全部合格来源。该分工不豁免原P0–P6，不给支线额外节点配额，当前不为支线保留空闲节点。
