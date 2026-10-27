@@ -1,0 +1,35 @@
+{
+  "model": "falcon",
+  "started": 1792996894.6311972,
+  "source_sha256": "9143c395876f6e662ba6ba20cedc91e111751e3bdbc9c61a6b2fe05e3390d8d0",
+  "status": "failed",
+  "scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+  "implementation_file": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/lib/python3.12/site-packages/transformers/models/falcon_h1/modeling_falcon_h1.py",
+  "implementation_sha256": "8f3ea7bd30d2f4407ffc2791104b13acd4ac5d54798423f20da1e235fc847f38",
+  "versions": {
+    "torch": "2.10.0+cpu",
+    "transformers": "5.20.2"
+  },
+  "weights": {
+    "loaded": true,
+    "matched_tensors": 17,
+    "missing": [],
+    "unexpected": [],
+    "files": [
+      {
+        "path": "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models-relay/falcon/model-00001-of-00002.safetensors",
+        "size": 4971004584
+      }
+    ],
+    "tensor_sha256": "45cba37ff7b8837a8d4e7fa1e4b81d5b626a307023678c92ea55c724c87cb8de"
+  },
+  "error": "AttributeError(\"'FalconH1Mixer' object has no attribute 'mup_vector'\")",
+  "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/sources/native_export.py\", line 90, in main\n    with torch.no_grad():expected=wrapped(*inputs).numpy()\n                                  ^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/RuizhiLiang/issue53-cpu-pilot-20261023/venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1776, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/RuizhiLiang/issue53-cpu-pilot-20261023/venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1787, in _call_impl\n    return forward_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/sources/native_export.py\", line 62, in forward\n    y=self.layer(**kw)\n      ^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/lib/python3.12/site-packages/transformers/modeling_layers.py\", line 111, in __call__\n    return super().__call__(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/RuizhiLiang/issue53-cpu-pilot-20261023/venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1776, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/RuizhiLiang/issue53-cpu-pilot-20261023/venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1787, in _call_impl\n    return forward_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/lib/python3.12/site-packages/transformers/models/falcon_h1/modeling_falcon_h1.py\", line 913, in forward\n    mamba_hidden_states = self.mamba(\n                          ^^^^^^^^^^^\n  File \"/public/home/yuzelu/RuizhiLiang/issue53-cpu-pilot-20261023/venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1776, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/RuizhiLiang/issue53-cpu-pilot-20261023/venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1787, in _call_impl\n    return forward_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/lib/python3.12/site-packages/transformers/integrations/accelerate.py\", line 1010, in wrapped\n    output = forward_func(self, *args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/lib/python3.12/site-packages/transformers/models/falcon_h1/modeling_falcon_h1.py\", line 682, in forward\n    projected_states = projected_states * self.mup_vector\n                                          ^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/RuizhiLiang/issue53-cpu-pilot-20261023/venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1965, in __getattr__\n    raise AttributeError(\nAttributeError: 'FalconH1Mixer' object has no attribute 'mup_vector'\n",
+  "finished": 1792996913.181031,
+  "artifacts": {
+    "config.json": {
+      "bytes": 2045,
+      "sha256": "637de670361e52af584b4245e40d52e81364990510027d0ef2ad3908618282cc"
+    }
+  }
+}

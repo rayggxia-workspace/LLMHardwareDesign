@@ -1,0 +1,75 @@
+{
+  "model": "qwen35_linear",
+  "started": 1792997084.565793,
+  "source_sha256": "e6e7babe938d63e5f95ab63b1f1174d3379ef27e7424f89de689f2c74a5f043b",
+  "status": "pass",
+  "scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+  "implementation_file": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/lib/python3.12/site-packages/transformers/models/qwen3_5/modeling_qwen3_5.py",
+  "implementation_sha256": "b4b17fe08d8d54da34a0fce78639666279ae7fd0a9e4ec06fce6602774707ca3",
+  "versions": {
+    "torch": "2.10.0+cpu",
+    "transformers": "5.20.2"
+  },
+  "weights": {
+    "loaded": true,
+    "matched_tensors": 14,
+    "missing": [],
+    "unexpected": [],
+    "files": [
+      {
+        "path": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/models/qwen35-4b-851bf6e8/model.safetensors-00002-of-00002.safetensors",
+        "size": 3990429408
+      }
+    ],
+    "tensor_sha256": "add35af86a97ce9ecb827d9452b05300db636af34a0f9d6b1113e731534b505f"
+  },
+  "native_seconds": 0.018143653869628906,
+  "export_adapter": "Native chunked prefill uses unsupported linalg_solve_triangular; export only replaces delta-rule core with the official token-recurrent equivalent. Native references still use the original chunk algorithm.",
+  "adapter_native_maxabs": 1.601874828338623e-07,
+  "raw_nodes": 374,
+  "raw_native_maxabs": 5.364418029785156e-07,
+  "onnxsim_version": "v0.8.1",
+  "onnxsim_check": true,
+  "onnxsim_check_note": "Internal random execution disabled to respect allocated thread count; explicit ORT checks below use 3 seeds and bounded threads.",
+  "simplified_nodes": 132,
+  "validation": [
+    {
+      "seed": 17,
+      "raw_native_maxabs": 2.7418136596679688e-06,
+      "sim_raw_maxabs": 1.1920928955078125e-07
+    },
+    {
+      "seed": 31,
+      "raw_native_maxabs": 8.344650268554688e-07,
+      "sim_raw_maxabs": 2.384185791015625e-07
+    },
+    {
+      "seed": 73,
+      "raw_native_maxabs": 2.682209014892578e-07,
+      "sim_raw_maxabs": 6.705522537231445e-08
+    }
+  ],
+  "finished": 1792997096.9379392,
+  "artifacts": {
+    "raw.graph.json": {
+      "bytes": 217703,
+      "sha256": "dc31c95f29e2273445491dde1710cd8aa5e5851ea24e39b4972c0c09f1040994"
+    },
+    "config.json": {
+      "bytes": 2231,
+      "sha256": "1daf5de67b2900ad20e1e84e084e4e70ec505a7ec885cf406c524bc448339185"
+    },
+    "simplified.onnx": {
+      "bytes": 453858478,
+      "sha256": "1e7ed9ece3477e47ec84435dd12bedf7948840e6cb089ec852395d3c6d81bf55"
+    },
+    "simplified.graph.json": {
+      "bytes": 81141,
+      "sha256": "49eb020672ef6b8c4fd44a677e40ce44d3e92c28864c09956de24e2c92c13dc6"
+    },
+    "raw.onnx": {
+      "bytes": 453895815,
+      "sha256": "57d8ce9b8c6d977f2e309b2c8da20dc2eb2b10b0e696197d0bb60ae9eee9e7ab"
+    }
+  }
+}

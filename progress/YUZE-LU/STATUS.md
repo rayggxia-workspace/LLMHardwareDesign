@@ -1,3 +1,5 @@
+2026-10-28 05:50 CST：将main 6a681d6632e7f7be537ff96eae1827df834bcfe8合入任务分支以消除四份共同文档冲突，保留模型分析/阶段冻结及本任务历史记录，README/架构入口转向当前五宏清单和最终交付索引。没有修改封存RTL、block_v1实验代码、物理配置或服务器源；原183份模型归档SHA/40 SVG/10成功回执及236本地引用通过原校验。全量相对旧父的diff --check报告来自主线原样归档的CRLF/历史日志空格，未改写证据；四份冲突解决文档及新V回执的差分检查单独通过。S/V完整DRC及R两门继续；整体in_progress、PR122草稿，登记pending、看板unverified/同步pending，审查待指定。
+
 2026-10-28 05:48 CST：V228新最终源严格LEC通过，43776输入/43765输出全部匹配、UNSAT/IDENTICAL；回执91a09580b988f127229f8840b003c9bed1fedb85da58e45ca8ecd0775bf0b8f8，精确绑定228 native与三初态最终功能回执，见work/YUZE-LU/121/results/v-formal-054725/index.json。S/V均仅余完整GDS DRC；R230继续DRC/最终网表功能，待功能通过后即补严格LEC。05:46逐进程/全部线程掩码与CPU增长确认各任务仍实际计算，未重启或取消EDA；231仍真实等待R三门。另以git merge-tree只读确认任务分支与main存在四份共同文档冲突，准备保留双方内容合入main到本任务分支；不改变任何封存RTL/配置/服务器源。整体仍in_progress、PR122草稿，登记pending、看板unverified/同步pending，审查待指定。
 
 2026-10-28 05:43 CST：V228实际最终网表功能回归通过，三种初态各416344检查/310231周期（800逐元素、1250函数、270组合、100TopK用例），回执38d8bc6883bc033f4e45f8f4405ff1420fe78d844451af760e4e0121ce2b1773，精确绑定228 native回执2309320c…和最终ODB 42804986…；证据work/YUZE-LU/121/results/v-final-function-053914/index.json。严格LEC已自动补位，与完整GDS DRC并行；不能沿用旧222资格。S225只余完整DRC，R230继续DRC/最终功能编译；全部五块已有最终布局布线与通过的独立物理门，M/T已接收，S/V/R尚未最终交付。六allocation及原6×16队列保持，231观察器等待真实R门，不增加虚假任务占满CPU。Issue121=in_progress、PR122草稿，登记pending、看板unverified/同步pending、审查待指定。
@@ -257,10 +259,29 @@ R首版真实RTL测试195通过240组GDN/SSM和100组四抽头卷积，397971检
 - 03:27 CST增量：完整上下文候选已实际提取，跨层耦合仍失败，2.0/2.2/2.3亦未解决。直接场解另经node14–node19六台机器、六种几何、三网格和远边界独立有限体积校验全部通过；六例真实SPEF/OpenDB/GDS与单位/耦合负例通过。详见[决策](../../docs/decisions/2026-10-27-block-v1-direct-field-extraction.md)。完整分布式提取尚未合格，正式P&R尚未开始；91903已编译、混合回归运行中。
 - 证据：[work121](../../work/YUZE-LU/121/README.md)、[运行入口](../../project/experiments/block_v1/README.md)。登记pending；看板unverified/同步pending，管理员待指定。
 
+## 2026-10-26 模型分析与计算图归档
+
+- 更新时间：2026-10-27 14:25 CST，用户已明确授权提交到 main。
+- 任务：[Issue #116](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/116)，负责人及实际账号 YUZE-LU；分支 `task/116-model-analysis-docs`。
+- 本地成果：[模型分析目录](../../docs/model-analysis/README.md)，集中提供精简字符算子图、完整图册和原 PR #115 的实验分析报告；旧报告路径保留跳转，README 与导读更新入口。
+- 原始图册、图结构、配置和回执按 SHA 原样复制；新说明明确 Falcon 旧手工图的已知差异。没有重新运行模型/ONNX、修改历史 Issue #114 的证据或接触服务器作业。
+- 验证与导入清单：[work116](../../work/YUZE-LU/116/README.md)。本轮重验183份导入文件、196处本地引用、40张SVG、10组成功回执及原报告正文迁移均通过；正在通过任务分支和PR交付，实际PR/CI/合并回执保存在Issue #116，未合并前不标done。未重跑模型或物理实验。
+- 接入：无 `config/board.json`，连接器未提供 Projects 条目能力，条目未核实、同步 pending；管理员待指定。现有登记和项目里程碑不变。
+
+## 2026-10-27 共同文档阶段边界澄清
+
+- 任务：[Issue #123](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/123)，负责人及实际账号 YUZE-LU。
+- 成果：[决策 0004](../../docs/decisions/0004-block-library-base-freeze.md)，同步 README、项目简介、项目说明和共同状态。
+- 已确认：Nangate45 原生十层预制与新增两层定制；叶块、共同底座与任务定制分别验收。同类实例/裕量版本组合、排布和固定预连线在底座阶段确定；共同底座冻结后不得按任务改变固定资源。
+- 边界：保留 Issue #121 / PR #122 的既有范围与验收状态；本次没有修改实现工作树、RTL、实验配置或服务器任务。
+- 验证与集成：[PR #124](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/124) 交付本次澄清；管理结构、44 处本地链接、3 张表格及暂存差分检查通过，PR CI/最终合并以 Issue #123 的读回回执为准。用户明确授权经 PR 正常合入 main，不代替独立审查或绕过保护。
+- 接入：本次读回既有登记 management-hub PR #5 仍 open/未合并（pending）；无 config/board.json，当前工具无 Projects 能力，条目/字段 unverified、同步 pending，管理员待指定。此缺项不改变文档业务验收。
+- 下一步：完成文档检查、PR/CI 与 main 内容读回；后续物理实现继续由原任务跟踪。
+
 ## 2026-10-26 模型实验分析报告
 
 - 任务：[Issue #114](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/114)，负责人及实际账号 YUZE-LU。
-- 成果：[阶段性分析报告](../../docs/MODEL_EXPERIMENT_ANALYSIS.md)，补充 README 与研究资料导读入口；来源与检查见 [work114](../../work/YUZE-LU/114/README.md)。
+- 成果：[阶段性分析报告](../../docs/model-analysis/MODEL_EXPERIMENT_ANALYSIS.md)，补充 README 与研究资料导读入口；来源与检查见 [work114](../../work/YUZE-LU/114/README.md)。
 - 已完成：读取九份固定版本报告及十个来源 PR 的状态，梳理八个模型的目的、范围、结果、失败和能力/接口约束；读取后续 #102/#106/#109/#110 的范围，避免将旧批次限制误写为当前无 RTL。
 - 集成：用户明确要求合入 main；本次通过独立文档 PR 交付，最终 PR/commit/CI 以 Issue #114 的读回回执为准。不合并其他实验 PR，不冒充独立审查批准。
 - 验证：文档检查与管理结构的实际结果见 validation.json；未重跑模型、原始数值接收、RTL 或物理。

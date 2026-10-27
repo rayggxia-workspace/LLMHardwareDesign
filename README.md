@@ -1,8 +1,10 @@
 # LLMHardwareDesign：预制计算底座研究
 
-当前第一版计算积木为 **M/V/R/S/T五个物理宏，每种一个基础实现**；逐块最终M1–M10布局布线是本轮交付。见[规格](docs/BLOCK_LIBRARY_V1.md)与[逐块计划](docs/plans/block-v1-library-implementation.md)。M新最终物理/功能已通过部分接收但原生M2 DRC未过，R实际RTL已通过，V新实现待实际回归，S独立route中，T沿用已接收C叶块；不能以旧M8/VS四边界替代这五块。下方历史实验保留原证据范围。
+当前第一版计算积木为 **M/V/R/S/T五个物理宏，每种一个基础实现**；本轮交付是逐块最终M1–M10布局布线与同源验收。见[五宏规格](docs/BLOCK_LIBRARY_V1.md)、[实施计划](docs/plans/block-v1-library-implementation.md)及[当前交付索引](work/YUZE-LU/121/delivery/README.md)。五块均已有原生最终布局布线并通过独立物理检查，M/T完整接收，S/V仅余完整GDS DRC，R继续最终验收；整体尚未完成。阵列、多实例、跨块预连及产品留下一轮，裕量版本暂不做。下方既有共同边界和历史证据保留各自范围。
 
-本项目研究面向多个计算图的预制计算底座：预先确定计算 Block 和部分物理资源，再通过有限的金属／通孔层定制跨 Block 互联。当前处于**架构定义与研究方案整理阶段**；具体工艺、Block 库、定制层集合和实现工具链仍待确定。性能、能耗和成本优势是待验证目标，不是已有结论。
+本项目研究面向多个计算图的预制计算底座：预先确定计算 Block 和部分物理资源，再通过有限的金属／通孔层定制跨 Block 互联。第一版采用 **Nangate45 原生 M1–M10、via1–via9 预制，自建研究层 M11/M12、via10/via11 后定制**；Block 实现与表征正在推进，方案确定不等于实现已验收。性能、能耗和成本优势仍待验证。
+
+**当前阶段提示：叶块冻结不等于共同底座冻结。** 首轮先形成可用 Block 与接口；同类实例数量、不同裕量物理版本的组合、排布和固定预连线由共同底座阶段确定。共同底座冻结后，不同产品只改变声明允许的定制图形。详见[当前实施边界与分阶段冻结](docs/decisions/0004-block-library-base-freeze.md)；具体实现范围和验收状态以 [Issue #121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121) / [PR #122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122) 为准。
 
 ## 从哪里开始
 
@@ -17,7 +19,9 @@
 
 ## 真实模型实验与 Block 分析
 
-[阶段性分析报告](docs/MODEL_EXPERIMENT_ANALYSIS.md)汇总八个具体模型的运行目的、实际范围、关键结果与失败，并将证据对应到 P1–P15 能力和 M/V/A/R/S/D 逻辑域。原实验以固定 commit 链接追溯；本报告集成不等于来源 PR 或整模型硬件验收。
+[阶段性分析报告](docs/model-analysis/MODEL_EXPERIMENT_ANALYSIS.md)汇总八个具体模型的运行目的、实际范围、关键结果与失败，并将证据对应到 P1–P15 能力和 M/V/A/R/S/D 逻辑域。原实验以固定 commit 链接追溯；本报告集成不等于来源 PR 或整模型硬件验收。
+
+模型资料统一归档在 [docs/model-analysis](docs/model-analysis/README.md)：可阅读[精简字符算子图](docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md)，或通过[完整图册说明](docs/model-analysis/COMPUTATION_GRAPHS_FULL.md)查看手工、原始 ONNX 与 onnxsim 图及验证边界。
 
 ## 当前工作方式
 

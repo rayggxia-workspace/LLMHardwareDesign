@@ -1,0 +1,1729 @@
+{
+  "id": "gemma_global-prefill",
+  "nodes": [
+    {
+      "id": "m0000",
+      "op": "Input",
+      "name": "hidden input X",
+      "inputs": [],
+      "outputs": [
+        "m0000"
+      ]
+    },
+    {
+      "id": "m0001",
+      "op": "Mul",
+      "name": "input norm: square",
+      "inputs": [
+        "m0000",
+        "m0000"
+      ],
+      "outputs": [
+        "m0001"
+      ]
+    },
+    {
+      "id": "m0002",
+      "op": "ReduceMean",
+      "name": "input norm: reduce last axis",
+      "inputs": [
+        "m0001"
+      ],
+      "outputs": [
+        "m0002"
+      ]
+    },
+    {
+      "id": "m0003",
+      "op": "Add",
+      "name": "input norm: + epsilon",
+      "inputs": [
+        "m0002"
+      ],
+      "outputs": [
+        "m0003"
+      ]
+    },
+    {
+      "id": "m0004",
+      "op": "Rsqrt",
+      "name": "input norm: inverse sqrt",
+      "inputs": [
+        "m0003"
+      ],
+      "outputs": [
+        "m0004"
+      ]
+    },
+    {
+      "id": "m0005",
+      "op": "Mul",
+      "name": "input norm: normalize",
+      "inputs": [
+        "m0000",
+        "m0004"
+      ],
+      "outputs": [
+        "m0005"
+      ]
+    },
+    {
+      "id": "m0006",
+      "op": "Add",
+      "name": "input norm: gamma = 1 + weight",
+      "inputs": [],
+      "outputs": [
+        "m0006"
+      ]
+    },
+    {
+      "id": "m0007",
+      "op": "Mul",
+      "name": "input norm: scale gamma",
+      "inputs": [
+        "m0005",
+        "m0006"
+      ],
+      "outputs": [
+        "m0007"
+      ]
+    },
+    {
+      "id": "m0008",
+      "op": "Input",
+      "name": "cos",
+      "inputs": [],
+      "outputs": [
+        "m0008"
+      ]
+    },
+    {
+      "id": "m0009",
+      "op": "Input",
+      "name": "sin",
+      "inputs": [],
+      "outputs": [
+        "m0009"
+      ]
+    },
+    {
+      "id": "m0010",
+      "op": "Input",
+      "name": "causal/window additive mask",
+      "inputs": [],
+      "outputs": [
+        "m0010"
+      ]
+    },
+    {
+      "id": "m0011",
+      "op": "MatMul",
+      "name": "Q projection",
+      "inputs": [
+        "m0007"
+      ],
+      "outputs": [
+        "m0011"
+      ]
+    },
+    {
+      "id": "m0012",
+      "op": "MatMul",
+      "name": "K projection",
+      "inputs": [
+        "m0007"
+      ],
+      "outputs": [
+        "m0012"
+      ]
+    },
+    {
+      "id": "m0013",
+      "op": "MatMul",
+      "name": "V projection",
+      "inputs": [
+        "m0007"
+      ],
+      "outputs": [
+        "m0013"
+      ]
+    },
+    {
+      "id": "m0014",
+      "op": "Reshape",
+      "name": "Q head axes",
+      "inputs": [
+        "m0011"
+      ],
+      "outputs": [
+        "m0014"
+      ]
+    },
+    {
+      "id": "m0015",
+      "op": "Reshape",
+      "name": "K head axes",
+      "inputs": [
+        "m0012"
+      ],
+      "outputs": [
+        "m0015"
+      ]
+    },
+    {
+      "id": "m0016",
+      "op": "Reshape",
+      "name": "V head axes",
+      "inputs": [
+        "m0013"
+      ],
+      "outputs": [
+        "m0016"
+      ]
+    },
+    {
+      "id": "m0017",
+      "op": "Mul",
+      "name": "Q head norm: square",
+      "inputs": [
+        "m0014",
+        "m0014"
+      ],
+      "outputs": [
+        "m0017"
+      ]
+    },
+    {
+      "id": "m0018",
+      "op": "ReduceMean",
+      "name": "Q head norm: reduce last axis",
+      "inputs": [
+        "m0017"
+      ],
+      "outputs": [
+        "m0018"
+      ]
+    },
+    {
+      "id": "m0019",
+      "op": "Add",
+      "name": "Q head norm: + epsilon",
+      "inputs": [
+        "m0018"
+      ],
+      "outputs": [
+        "m0019"
+      ]
+    },
+    {
+      "id": "m0020",
+      "op": "Rsqrt",
+      "name": "Q head norm: inverse sqrt",
+      "inputs": [
+        "m0019"
+      ],
+      "outputs": [
+        "m0020"
+      ]
+    },
+    {
+      "id": "m0021",
+      "op": "Mul",
+      "name": "Q head norm: normalize",
+      "inputs": [
+        "m0014",
+        "m0020"
+      ],
+      "outputs": [
+        "m0021"
+      ]
+    },
+    {
+      "id": "m0022",
+      "op": "Add",
+      "name": "Q head norm: gamma = 1 + weight",
+      "inputs": [],
+      "outputs": [
+        "m0022"
+      ]
+    },
+    {
+      "id": "m0023",
+      "op": "Mul",
+      "name": "Q head norm: scale gamma",
+      "inputs": [
+        "m0021",
+        "m0022"
+      ],
+      "outputs": [
+        "m0023"
+      ]
+    },
+    {
+      "id": "m0024",
+      "op": "Mul",
+      "name": "K head norm: square",
+      "inputs": [
+        "m0015",
+        "m0015"
+      ],
+      "outputs": [
+        "m0024"
+      ]
+    },
+    {
+      "id": "m0025",
+      "op": "ReduceMean",
+      "name": "K head norm: reduce last axis",
+      "inputs": [
+        "m0024"
+      ],
+      "outputs": [
+        "m0025"
+      ]
+    },
+    {
+      "id": "m0026",
+      "op": "Add",
+      "name": "K head norm: + epsilon",
+      "inputs": [
+        "m0025"
+      ],
+      "outputs": [
+        "m0026"
+      ]
+    },
+    {
+      "id": "m0027",
+      "op": "Rsqrt",
+      "name": "K head norm: inverse sqrt",
+      "inputs": [
+        "m0026"
+      ],
+      "outputs": [
+        "m0027"
+      ]
+    },
+    {
+      "id": "m0028",
+      "op": "Mul",
+      "name": "K head norm: normalize",
+      "inputs": [
+        "m0015",
+        "m0027"
+      ],
+      "outputs": [
+        "m0028"
+      ]
+    },
+    {
+      "id": "m0029",
+      "op": "Add",
+      "name": "K head norm: gamma = 1 + weight",
+      "inputs": [],
+      "outputs": [
+        "m0029"
+      ]
+    },
+    {
+      "id": "m0030",
+      "op": "Mul",
+      "name": "K head norm: scale gamma",
+      "inputs": [
+        "m0028",
+        "m0029"
+      ],
+      "outputs": [
+        "m0030"
+      ]
+    },
+    {
+      "id": "m0031",
+      "op": "Transpose",
+      "name": "Q B,H,S,D",
+      "inputs": [
+        "m0023"
+      ],
+      "outputs": [
+        "m0031"
+      ]
+    },
+    {
+      "id": "m0032",
+      "op": "Transpose",
+      "name": "K B,H,S,D",
+      "inputs": [
+        "m0030"
+      ],
+      "outputs": [
+        "m0032"
+      ]
+    },
+    {
+      "id": "m0033",
+      "op": "Transpose",
+      "name": "V B,H,S,D",
+      "inputs": [
+        "m0016"
+      ],
+      "outputs": [
+        "m0033"
+      ]
+    },
+    {
+      "id": "m0034",
+      "op": "Slice",
+      "name": "Q RoPE: first half",
+      "inputs": [
+        "m0031"
+      ],
+      "outputs": [
+        "m0034"
+      ]
+    },
+    {
+      "id": "m0035",
+      "op": "Slice",
+      "name": "Q RoPE: second half",
+      "inputs": [
+        "m0031"
+      ],
+      "outputs": [
+        "m0035"
+      ]
+    },
+    {
+      "id": "m0036",
+      "op": "Neg",
+      "name": "Q RoPE: negate second half",
+      "inputs": [
+        "m0035"
+      ],
+      "outputs": [
+        "m0036"
+      ]
+    },
+    {
+      "id": "m0037",
+      "op": "Concat",
+      "name": "Q RoPE: rotated vector",
+      "inputs": [
+        "m0036",
+        "m0034"
+      ],
+      "outputs": [
+        "m0037"
+      ]
+    },
+    {
+      "id": "m0038",
+      "op": "Mul",
+      "name": "Q RoPE: cosine product",
+      "inputs": [
+        "m0031",
+        "m0008"
+      ],
+      "outputs": [
+        "m0038"
+      ]
+    },
+    {
+      "id": "m0039",
+      "op": "Mul",
+      "name": "Q RoPE: sine product",
+      "inputs": [
+        "m0037",
+        "m0009"
+      ],
+      "outputs": [
+        "m0039"
+      ]
+    },
+    {
+      "id": "m0040",
+      "op": "Add",
+      "name": "Q RoPE: rotate sum",
+      "inputs": [
+        "m0038",
+        "m0039"
+      ],
+      "outputs": [
+        "m0040"
+      ]
+    },
+    {
+      "id": "m0041",
+      "op": "Slice",
+      "name": "K RoPE: first half",
+      "inputs": [
+        "m0032"
+      ],
+      "outputs": [
+        "m0041"
+      ]
+    },
+    {
+      "id": "m0042",
+      "op": "Slice",
+      "name": "K RoPE: second half",
+      "inputs": [
+        "m0032"
+      ],
+      "outputs": [
+        "m0042"
+      ]
+    },
+    {
+      "id": "m0043",
+      "op": "Neg",
+      "name": "K RoPE: negate second half",
+      "inputs": [
+        "m0042"
+      ],
+      "outputs": [
+        "m0043"
+      ]
+    },
+    {
+      "id": "m0044",
+      "op": "Concat",
+      "name": "K RoPE: rotated vector",
+      "inputs": [
+        "m0043",
+        "m0041"
+      ],
+      "outputs": [
+        "m0044"
+      ]
+    },
+    {
+      "id": "m0045",
+      "op": "Mul",
+      "name": "K RoPE: cosine product",
+      "inputs": [
+        "m0032",
+        "m0008"
+      ],
+      "outputs": [
+        "m0045"
+      ]
+    },
+    {
+      "id": "m0046",
+      "op": "Mul",
+      "name": "K RoPE: sine product",
+      "inputs": [
+        "m0044",
+        "m0009"
+      ],
+      "outputs": [
+        "m0046"
+      ]
+    },
+    {
+      "id": "m0047",
+      "op": "Add",
+      "name": "K RoPE: rotate sum",
+      "inputs": [
+        "m0045",
+        "m0046"
+      ],
+      "outputs": [
+        "m0047"
+      ]
+    },
+    {
+      "id": "m0048",
+      "op": "StateWrite",
+      "name": "new K cache",
+      "inputs": [
+        "m0047"
+      ],
+      "outputs": [
+        "m0048"
+      ]
+    },
+    {
+      "id": "m0049",
+      "op": "StateWrite",
+      "name": "new V cache",
+      "inputs": [
+        "m0033"
+      ],
+      "outputs": [
+        "m0049"
+      ]
+    },
+    {
+      "id": "m0050",
+      "op": "Expand",
+      "name": "GQA shared K",
+      "inputs": [
+        "m0047"
+      ],
+      "outputs": [
+        "m0050"
+      ]
+    },
+    {
+      "id": "m0051",
+      "op": "Reshape",
+      "name": "K query-head view",
+      "inputs": [
+        "m0050"
+      ],
+      "outputs": [
+        "m0051"
+      ]
+    },
+    {
+      "id": "m0052",
+      "op": "Expand",
+      "name": "GQA shared V",
+      "inputs": [
+        "m0033"
+      ],
+      "outputs": [
+        "m0052"
+      ]
+    },
+    {
+      "id": "m0053",
+      "op": "Reshape",
+      "name": "V query-head view",
+      "inputs": [
+        "m0052"
+      ],
+      "outputs": [
+        "m0053"
+      ]
+    },
+    {
+      "id": "m0054",
+      "op": "Transpose",
+      "name": "K last two axes",
+      "inputs": [
+        "m0051"
+      ],
+      "outputs": [
+        "m0054"
+      ]
+    },
+    {
+      "id": "m0055",
+      "op": "MatMul",
+      "name": "QK scores",
+      "inputs": [
+        "m0040",
+        "m0054"
+      ],
+      "outputs": [
+        "m0055"
+      ]
+    },
+    {
+      "id": "m0056",
+      "op": "Mul",
+      "name": "attention scale",
+      "inputs": [
+        "m0055"
+      ],
+      "outputs": [
+        "m0056"
+      ]
+    },
+    {
+      "id": "m0057",
+      "op": "Add",
+      "name": "apply mask",
+      "inputs": [
+        "m0056",
+        "m0010"
+      ],
+      "outputs": [
+        "m0057"
+      ]
+    },
+    {
+      "id": "m0058",
+      "op": "Softmax",
+      "name": "probabilities over keys",
+      "inputs": [
+        "m0057"
+      ],
+      "outputs": [
+        "m0058"
+      ]
+    },
+    {
+      "id": "m0059",
+      "op": "MatMul",
+      "name": "PV context",
+      "inputs": [
+        "m0058",
+        "m0053"
+      ],
+      "outputs": [
+        "m0059"
+      ]
+    },
+    {
+      "id": "m0060",
+      "op": "Transpose",
+      "name": "context B,S,H,D",
+      "inputs": [
+        "m0059"
+      ],
+      "outputs": [
+        "m0060"
+      ]
+    },
+    {
+      "id": "m0061",
+      "op": "Reshape",
+      "name": "merge head axes",
+      "inputs": [
+        "m0060"
+      ],
+      "outputs": [
+        "m0061"
+      ]
+    },
+    {
+      "id": "m0062",
+      "op": "MatMul",
+      "name": "O projection",
+      "inputs": [
+        "m0061"
+      ],
+      "outputs": [
+        "m0062"
+      ]
+    },
+    {
+      "id": "m0063",
+      "op": "Mul",
+      "name": "post-attention norm: square",
+      "inputs": [
+        "m0062",
+        "m0062"
+      ],
+      "outputs": [
+        "m0063"
+      ]
+    },
+    {
+      "id": "m0064",
+      "op": "ReduceMean",
+      "name": "post-attention norm: reduce last axis",
+      "inputs": [
+        "m0063"
+      ],
+      "outputs": [
+        "m0064"
+      ]
+    },
+    {
+      "id": "m0065",
+      "op": "Add",
+      "name": "post-attention norm: + epsilon",
+      "inputs": [
+        "m0064"
+      ],
+      "outputs": [
+        "m0065"
+      ]
+    },
+    {
+      "id": "m0066",
+      "op": "Rsqrt",
+      "name": "post-attention norm: inverse sqrt",
+      "inputs": [
+        "m0065"
+      ],
+      "outputs": [
+        "m0066"
+      ]
+    },
+    {
+      "id": "m0067",
+      "op": "Mul",
+      "name": "post-attention norm: normalize",
+      "inputs": [
+        "m0062",
+        "m0066"
+      ],
+      "outputs": [
+        "m0067"
+      ]
+    },
+    {
+      "id": "m0068",
+      "op": "Add",
+      "name": "post-attention norm: gamma = 1 + weight",
+      "inputs": [],
+      "outputs": [
+        "m0068"
+      ]
+    },
+    {
+      "id": "m0069",
+      "op": "Mul",
+      "name": "post-attention norm: scale gamma",
+      "inputs": [
+        "m0067",
+        "m0068"
+      ],
+      "outputs": [
+        "m0069"
+      ]
+    },
+    {
+      "id": "m0070",
+      "op": "Add",
+      "name": "attention/mixer residual",
+      "inputs": [
+        "m0000",
+        "m0069"
+      ],
+      "outputs": [
+        "m0070"
+      ]
+    },
+    {
+      "id": "m0071",
+      "op": "Mul",
+      "name": "pre-FFN norm: square",
+      "inputs": [
+        "m0070",
+        "m0070"
+      ],
+      "outputs": [
+        "m0071"
+      ]
+    },
+    {
+      "id": "m0072",
+      "op": "ReduceMean",
+      "name": "pre-FFN norm: reduce last axis",
+      "inputs": [
+        "m0071"
+      ],
+      "outputs": [
+        "m0072"
+      ]
+    },
+    {
+      "id": "m0073",
+      "op": "Add",
+      "name": "pre-FFN norm: + epsilon",
+      "inputs": [
+        "m0072"
+      ],
+      "outputs": [
+        "m0073"
+      ]
+    },
+    {
+      "id": "m0074",
+      "op": "Rsqrt",
+      "name": "pre-FFN norm: inverse sqrt",
+      "inputs": [
+        "m0073"
+      ],
+      "outputs": [
+        "m0074"
+      ]
+    },
+    {
+      "id": "m0075",
+      "op": "Mul",
+      "name": "pre-FFN norm: normalize",
+      "inputs": [
+        "m0070",
+        "m0074"
+      ],
+      "outputs": [
+        "m0075"
+      ]
+    },
+    {
+      "id": "m0076",
+      "op": "Add",
+      "name": "pre-FFN norm: gamma = 1 + weight",
+      "inputs": [],
+      "outputs": [
+        "m0076"
+      ]
+    },
+    {
+      "id": "m0077",
+      "op": "Mul",
+      "name": "pre-FFN norm: scale gamma",
+      "inputs": [
+        "m0075",
+        "m0076"
+      ],
+      "outputs": [
+        "m0077"
+      ]
+    },
+    {
+      "id": "m0078",
+      "op": "MatMul",
+      "name": "gate projection",
+      "inputs": [
+        "m0077"
+      ],
+      "outputs": [
+        "m0078"
+      ]
+    },
+    {
+      "id": "m0079",
+      "op": "MatMul",
+      "name": "up projection",
+      "inputs": [
+        "m0077"
+      ],
+      "outputs": [
+        "m0079"
+      ]
+    },
+    {
+      "id": "m0080",
+      "op": "Pow",
+      "name": "gate cubed",
+      "inputs": [
+        "m0078"
+      ],
+      "outputs": [
+        "m0080"
+      ]
+    },
+    {
+      "id": "m0081",
+      "op": "Mul",
+      "name": "multiply 0.044715",
+      "inputs": [
+        "m0080"
+      ],
+      "outputs": [
+        "m0081"
+      ]
+    },
+    {
+      "id": "m0082",
+      "op": "Add",
+      "name": "GELU polynomial",
+      "inputs": [
+        "m0078",
+        "m0081"
+      ],
+      "outputs": [
+        "m0082"
+      ]
+    },
+    {
+      "id": "m0083",
+      "op": "Mul",
+      "name": "multiply sqrt(2/pi)",
+      "inputs": [
+        "m0082"
+      ],
+      "outputs": [
+        "m0083"
+      ]
+    },
+    {
+      "id": "m0084",
+      "op": "Tanh",
+      "name": "Tanh",
+      "inputs": [
+        "m0083"
+      ],
+      "outputs": [
+        "m0084"
+      ]
+    },
+    {
+      "id": "m0085",
+      "op": "Add",
+      "name": "add 1",
+      "inputs": [
+        "m0084"
+      ],
+      "outputs": [
+        "m0085"
+      ]
+    },
+    {
+      "id": "m0086",
+      "op": "Mul",
+      "name": "multiply 0.5",
+      "inputs": [
+        "m0078"
+      ],
+      "outputs": [
+        "m0086"
+      ]
+    },
+    {
+      "id": "m0087",
+      "op": "Mul",
+      "name": "tanh GELU",
+      "inputs": [
+        "m0086",
+        "m0085"
+      ],
+      "outputs": [
+        "m0087"
+      ]
+    },
+    {
+      "id": "m0088",
+      "op": "Mul",
+      "name": "gated intermediate",
+      "inputs": [
+        "m0087",
+        "m0079"
+      ],
+      "outputs": [
+        "m0088"
+      ]
+    },
+    {
+      "id": "m0089",
+      "op": "MatMul",
+      "name": "down projection",
+      "inputs": [
+        "m0088"
+      ],
+      "outputs": [
+        "m0089"
+      ]
+    },
+    {
+      "id": "m0090",
+      "op": "Mul",
+      "name": "post-FFN norm: square",
+      "inputs": [
+        "m0089",
+        "m0089"
+      ],
+      "outputs": [
+        "m0090"
+      ]
+    },
+    {
+      "id": "m0091",
+      "op": "ReduceMean",
+      "name": "post-FFN norm: reduce last axis",
+      "inputs": [
+        "m0090"
+      ],
+      "outputs": [
+        "m0091"
+      ]
+    },
+    {
+      "id": "m0092",
+      "op": "Add",
+      "name": "post-FFN norm: + epsilon",
+      "inputs": [
+        "m0091"
+      ],
+      "outputs": [
+        "m0092"
+      ]
+    },
+    {
+      "id": "m0093",
+      "op": "Rsqrt",
+      "name": "post-FFN norm: inverse sqrt",
+      "inputs": [
+        "m0092"
+      ],
+      "outputs": [
+        "m0093"
+      ]
+    },
+    {
+      "id": "m0094",
+      "op": "Mul",
+      "name": "post-FFN norm: normalize",
+      "inputs": [
+        "m0089",
+        "m0093"
+      ],
+      "outputs": [
+        "m0094"
+      ]
+    },
+    {
+      "id": "m0095",
+      "op": "Add",
+      "name": "post-FFN norm: gamma = 1 + weight",
+      "inputs": [],
+      "outputs": [
+        "m0095"
+      ]
+    },
+    {
+      "id": "m0096",
+      "op": "Mul",
+      "name": "post-FFN norm: scale gamma",
+      "inputs": [
+        "m0094",
+        "m0095"
+      ],
+      "outputs": [
+        "m0096"
+      ]
+    },
+    {
+      "id": "m0097",
+      "op": "Add",
+      "name": "FFN residual",
+      "inputs": [
+        "m0070",
+        "m0096"
+      ],
+      "outputs": [
+        "m0097"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "m0000",
+      "target": "m0001",
+      "tensor": "m0000"
+    },
+    {
+      "source": "m0000",
+      "target": "m0001",
+      "tensor": "m0000"
+    },
+    {
+      "source": "m0001",
+      "target": "m0002",
+      "tensor": "m0001"
+    },
+    {
+      "source": "m0002",
+      "target": "m0003",
+      "tensor": "m0002"
+    },
+    {
+      "source": "m0003",
+      "target": "m0004",
+      "tensor": "m0003"
+    },
+    {
+      "source": "m0000",
+      "target": "m0005",
+      "tensor": "m0000"
+    },
+    {
+      "source": "m0004",
+      "target": "m0005",
+      "tensor": "m0004"
+    },
+    {
+      "source": "m0005",
+      "target": "m0007",
+      "tensor": "m0005"
+    },
+    {
+      "source": "m0006",
+      "target": "m0007",
+      "tensor": "m0006"
+    },
+    {
+      "source": "m0007",
+      "target": "m0011",
+      "tensor": "m0007"
+    },
+    {
+      "source": "m0007",
+      "target": "m0012",
+      "tensor": "m0007"
+    },
+    {
+      "source": "m0007",
+      "target": "m0013",
+      "tensor": "m0007"
+    },
+    {
+      "source": "m0011",
+      "target": "m0014",
+      "tensor": "m0011"
+    },
+    {
+      "source": "m0012",
+      "target": "m0015",
+      "tensor": "m0012"
+    },
+    {
+      "source": "m0013",
+      "target": "m0016",
+      "tensor": "m0013"
+    },
+    {
+      "source": "m0014",
+      "target": "m0017",
+      "tensor": "m0014"
+    },
+    {
+      "source": "m0014",
+      "target": "m0017",
+      "tensor": "m0014"
+    },
+    {
+      "source": "m0017",
+      "target": "m0018",
+      "tensor": "m0017"
+    },
+    {
+      "source": "m0018",
+      "target": "m0019",
+      "tensor": "m0018"
+    },
+    {
+      "source": "m0019",
+      "target": "m0020",
+      "tensor": "m0019"
+    },
+    {
+      "source": "m0014",
+      "target": "m0021",
+      "tensor": "m0014"
+    },
+    {
+      "source": "m0020",
+      "target": "m0021",
+      "tensor": "m0020"
+    },
+    {
+      "source": "m0021",
+      "target": "m0023",
+      "tensor": "m0021"
+    },
+    {
+      "source": "m0022",
+      "target": "m0023",
+      "tensor": "m0022"
+    },
+    {
+      "source": "m0015",
+      "target": "m0024",
+      "tensor": "m0015"
+    },
+    {
+      "source": "m0015",
+      "target": "m0024",
+      "tensor": "m0015"
+    },
+    {
+      "source": "m0024",
+      "target": "m0025",
+      "tensor": "m0024"
+    },
+    {
+      "source": "m0025",
+      "target": "m0026",
+      "tensor": "m0025"
+    },
+    {
+      "source": "m0026",
+      "target": "m0027",
+      "tensor": "m0026"
+    },
+    {
+      "source": "m0015",
+      "target": "m0028",
+      "tensor": "m0015"
+    },
+    {
+      "source": "m0027",
+      "target": "m0028",
+      "tensor": "m0027"
+    },
+    {
+      "source": "m0028",
+      "target": "m0030",
+      "tensor": "m0028"
+    },
+    {
+      "source": "m0029",
+      "target": "m0030",
+      "tensor": "m0029"
+    },
+    {
+      "source": "m0023",
+      "target": "m0031",
+      "tensor": "m0023"
+    },
+    {
+      "source": "m0030",
+      "target": "m0032",
+      "tensor": "m0030"
+    },
+    {
+      "source": "m0016",
+      "target": "m0033",
+      "tensor": "m0016"
+    },
+    {
+      "source": "m0031",
+      "target": "m0034",
+      "tensor": "m0031"
+    },
+    {
+      "source": "m0031",
+      "target": "m0035",
+      "tensor": "m0031"
+    },
+    {
+      "source": "m0035",
+      "target": "m0036",
+      "tensor": "m0035"
+    },
+    {
+      "source": "m0036",
+      "target": "m0037",
+      "tensor": "m0036"
+    },
+    {
+      "source": "m0034",
+      "target": "m0037",
+      "tensor": "m0034"
+    },
+    {
+      "source": "m0031",
+      "target": "m0038",
+      "tensor": "m0031"
+    },
+    {
+      "source": "m0008",
+      "target": "m0038",
+      "tensor": "m0008"
+    },
+    {
+      "source": "m0037",
+      "target": "m0039",
+      "tensor": "m0037"
+    },
+    {
+      "source": "m0009",
+      "target": "m0039",
+      "tensor": "m0009"
+    },
+    {
+      "source": "m0038",
+      "target": "m0040",
+      "tensor": "m0038"
+    },
+    {
+      "source": "m0039",
+      "target": "m0040",
+      "tensor": "m0039"
+    },
+    {
+      "source": "m0032",
+      "target": "m0041",
+      "tensor": "m0032"
+    },
+    {
+      "source": "m0032",
+      "target": "m0042",
+      "tensor": "m0032"
+    },
+    {
+      "source": "m0042",
+      "target": "m0043",
+      "tensor": "m0042"
+    },
+    {
+      "source": "m0043",
+      "target": "m0044",
+      "tensor": "m0043"
+    },
+    {
+      "source": "m0041",
+      "target": "m0044",
+      "tensor": "m0041"
+    },
+    {
+      "source": "m0032",
+      "target": "m0045",
+      "tensor": "m0032"
+    },
+    {
+      "source": "m0008",
+      "target": "m0045",
+      "tensor": "m0008"
+    },
+    {
+      "source": "m0044",
+      "target": "m0046",
+      "tensor": "m0044"
+    },
+    {
+      "source": "m0009",
+      "target": "m0046",
+      "tensor": "m0009"
+    },
+    {
+      "source": "m0045",
+      "target": "m0047",
+      "tensor": "m0045"
+    },
+    {
+      "source": "m0046",
+      "target": "m0047",
+      "tensor": "m0046"
+    },
+    {
+      "source": "m0047",
+      "target": "m0048",
+      "tensor": "m0047"
+    },
+    {
+      "source": "m0033",
+      "target": "m0049",
+      "tensor": "m0033"
+    },
+    {
+      "source": "m0047",
+      "target": "m0050",
+      "tensor": "m0047"
+    },
+    {
+      "source": "m0050",
+      "target": "m0051",
+      "tensor": "m0050"
+    },
+    {
+      "source": "m0033",
+      "target": "m0052",
+      "tensor": "m0033"
+    },
+    {
+      "source": "m0052",
+      "target": "m0053",
+      "tensor": "m0052"
+    },
+    {
+      "source": "m0051",
+      "target": "m0054",
+      "tensor": "m0051"
+    },
+    {
+      "source": "m0040",
+      "target": "m0055",
+      "tensor": "m0040"
+    },
+    {
+      "source": "m0054",
+      "target": "m0055",
+      "tensor": "m0054"
+    },
+    {
+      "source": "m0055",
+      "target": "m0056",
+      "tensor": "m0055"
+    },
+    {
+      "source": "m0056",
+      "target": "m0057",
+      "tensor": "m0056"
+    },
+    {
+      "source": "m0010",
+      "target": "m0057",
+      "tensor": "m0010"
+    },
+    {
+      "source": "m0057",
+      "target": "m0058",
+      "tensor": "m0057"
+    },
+    {
+      "source": "m0058",
+      "target": "m0059",
+      "tensor": "m0058"
+    },
+    {
+      "source": "m0053",
+      "target": "m0059",
+      "tensor": "m0053"
+    },
+    {
+      "source": "m0059",
+      "target": "m0060",
+      "tensor": "m0059"
+    },
+    {
+      "source": "m0060",
+      "target": "m0061",
+      "tensor": "m0060"
+    },
+    {
+      "source": "m0061",
+      "target": "m0062",
+      "tensor": "m0061"
+    },
+    {
+      "source": "m0062",
+      "target": "m0063",
+      "tensor": "m0062"
+    },
+    {
+      "source": "m0062",
+      "target": "m0063",
+      "tensor": "m0062"
+    },
+    {
+      "source": "m0063",
+      "target": "m0064",
+      "tensor": "m0063"
+    },
+    {
+      "source": "m0064",
+      "target": "m0065",
+      "tensor": "m0064"
+    },
+    {
+      "source": "m0065",
+      "target": "m0066",
+      "tensor": "m0065"
+    },
+    {
+      "source": "m0062",
+      "target": "m0067",
+      "tensor": "m0062"
+    },
+    {
+      "source": "m0066",
+      "target": "m0067",
+      "tensor": "m0066"
+    },
+    {
+      "source": "m0067",
+      "target": "m0069",
+      "tensor": "m0067"
+    },
+    {
+      "source": "m0068",
+      "target": "m0069",
+      "tensor": "m0068"
+    },
+    {
+      "source": "m0000",
+      "target": "m0070",
+      "tensor": "m0000"
+    },
+    {
+      "source": "m0069",
+      "target": "m0070",
+      "tensor": "m0069"
+    },
+    {
+      "source": "m0070",
+      "target": "m0071",
+      "tensor": "m0070"
+    },
+    {
+      "source": "m0070",
+      "target": "m0071",
+      "tensor": "m0070"
+    },
+    {
+      "source": "m0071",
+      "target": "m0072",
+      "tensor": "m0071"
+    },
+    {
+      "source": "m0072",
+      "target": "m0073",
+      "tensor": "m0072"
+    },
+    {
+      "source": "m0073",
+      "target": "m0074",
+      "tensor": "m0073"
+    },
+    {
+      "source": "m0070",
+      "target": "m0075",
+      "tensor": "m0070"
+    },
+    {
+      "source": "m0074",
+      "target": "m0075",
+      "tensor": "m0074"
+    },
+    {
+      "source": "m0075",
+      "target": "m0077",
+      "tensor": "m0075"
+    },
+    {
+      "source": "m0076",
+      "target": "m0077",
+      "tensor": "m0076"
+    },
+    {
+      "source": "m0077",
+      "target": "m0078",
+      "tensor": "m0077"
+    },
+    {
+      "source": "m0077",
+      "target": "m0079",
+      "tensor": "m0077"
+    },
+    {
+      "source": "m0078",
+      "target": "m0080",
+      "tensor": "m0078"
+    },
+    {
+      "source": "m0080",
+      "target": "m0081",
+      "tensor": "m0080"
+    },
+    {
+      "source": "m0078",
+      "target": "m0082",
+      "tensor": "m0078"
+    },
+    {
+      "source": "m0081",
+      "target": "m0082",
+      "tensor": "m0081"
+    },
+    {
+      "source": "m0082",
+      "target": "m0083",
+      "tensor": "m0082"
+    },
+    {
+      "source": "m0083",
+      "target": "m0084",
+      "tensor": "m0083"
+    },
+    {
+      "source": "m0084",
+      "target": "m0085",
+      "tensor": "m0084"
+    },
+    {
+      "source": "m0078",
+      "target": "m0086",
+      "tensor": "m0078"
+    },
+    {
+      "source": "m0086",
+      "target": "m0087",
+      "tensor": "m0086"
+    },
+    {
+      "source": "m0085",
+      "target": "m0087",
+      "tensor": "m0085"
+    },
+    {
+      "source": "m0087",
+      "target": "m0088",
+      "tensor": "m0087"
+    },
+    {
+      "source": "m0079",
+      "target": "m0088",
+      "tensor": "m0079"
+    },
+    {
+      "source": "m0088",
+      "target": "m0089",
+      "tensor": "m0088"
+    },
+    {
+      "source": "m0089",
+      "target": "m0090",
+      "tensor": "m0089"
+    },
+    {
+      "source": "m0089",
+      "target": "m0090",
+      "tensor": "m0089"
+    },
+    {
+      "source": "m0090",
+      "target": "m0091",
+      "tensor": "m0090"
+    },
+    {
+      "source": "m0091",
+      "target": "m0092",
+      "tensor": "m0091"
+    },
+    {
+      "source": "m0092",
+      "target": "m0093",
+      "tensor": "m0092"
+    },
+    {
+      "source": "m0089",
+      "target": "m0094",
+      "tensor": "m0089"
+    },
+    {
+      "source": "m0093",
+      "target": "m0094",
+      "tensor": "m0093"
+    },
+    {
+      "source": "m0094",
+      "target": "m0096",
+      "tensor": "m0094"
+    },
+    {
+      "source": "m0095",
+      "target": "m0096",
+      "tensor": "m0095"
+    },
+    {
+      "source": "m0070",
+      "target": "m0097",
+      "tensor": "m0070"
+    },
+    {
+      "source": "m0096",
+      "target": "m0097",
+      "tensor": "m0096"
+    }
+  ],
+  "output": "m0097",
+  "op_histogram": {
+    "Input": 4,
+    "Mul": 28,
+    "ReduceMean": 6,
+    "Add": 19,
+    "Rsqrt": 6,
+    "MatMul": 9,
+    "Reshape": 6,
+    "Transpose": 5,
+    "Slice": 4,
+    "Neg": 2,
+    "Concat": 2,
+    "StateWrite": 2,
+    "Expand": 2,
+    "Softmax": 1,
+    "Pow": 1,
+    "Tanh": 1
+  },
+  "evidence": "Manually specified before native ONNX comparison; tensor semantics, not a runtime trace."
+}

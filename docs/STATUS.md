@@ -1,3 +1,5 @@
+2026-10-28 05:50 CST：将main 6a681d6632e7f7be537ff96eae1827df834bcfe8合入任务分支以消除四份共同文档冲突，保留模型分析/阶段冻结及本任务历史记录，README/架构入口转向当前五宏清单和最终交付索引。没有修改封存RTL、block_v1实验代码、物理配置或服务器源；原183份模型归档SHA/40 SVG/10成功回执及236本地引用通过原校验。全量相对旧父的diff --check报告来自主线原样归档的CRLF/历史日志空格，未改写证据；四份冲突解决文档及新V回执的差分检查单独通过。S/V完整DRC及R两门继续；整体in_progress、PR122草稿，登记pending、看板unverified/同步pending，审查待指定。
+
 2026-10-28 05:48 CST：V228新最终源严格LEC通过，43776输入/43765输出全部匹配、UNSAT/IDENTICAL；回执91a09580b988f127229f8840b003c9bed1fedb85da58e45ca8ecd0775bf0b8f8，精确绑定228 native与三初态最终功能回执，见work/YUZE-LU/121/results/v-formal-054725/index.json。S/V均仅余完整GDS DRC；R230继续DRC/最终网表功能，待功能通过后即补严格LEC。05:46逐进程/全部线程掩码与CPU增长确认各任务仍实际计算，未重启或取消EDA；231仍真实等待R三门。另以git merge-tree只读确认任务分支与main存在四份共同文档冲突，准备保留双方内容合入main到本任务分支；不改变任何封存RTL/配置/服务器源。整体仍in_progress、PR122草稿，登记pending、看板unverified/同步pending，审查待指定。
 
 2026-10-28 05:43 CST：V228实际最终网表功能回归通过，三种初态各416344检查/310231周期（800逐元素、1250函数、270组合、100TopK用例），回执38d8bc6883bc033f4e45f8f4405ff1420fe78d844451af760e4e0121ce2b1773，精确绑定228 native回执2309320c…和最终ODB 42804986…；证据work/YUZE-LU/121/results/v-final-function-053914/index.json。严格LEC已自动补位，与完整GDS DRC并行；不能沿用旧222资格。S225只余完整DRC，R230继续DRC/最终功能编译；全部五块已有最终布局布线与通过的独立物理门，M/T已接收，S/V/R尚未最终交付。六allocation及原6×16队列保持，231观察器等待真实R门，不增加虚假任务占满CPU。Issue121=in_progress、PR122草稿，登记pending、看板unverified/同步pending、审查待指定。
@@ -178,11 +180,16 @@ R首版真实RTL测试195通过240组GDN/SSM和100组四抽头卷积，397971检
 - 更新日期：2026-10-23（中国标准时间）
 - 当前阶段：H1同资源分块／合并物理对照已完成，主线、并发成果及HTML按用户授权整合；H2在独立工作树推进，尚未验收
 - 当前工程：[Issue #15](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15) 已完成openTPU ACT/MXU同功能／资源的块内及父层对照。三块和两父层、六类证明共十一份封存来源严格通过；拆分叶面积+0.412%、总信号线+7.142%、通孔+2.974%，完整setup／hold两组均满足2.5ns／0.5ns预算。[中文结果与三类图表](experiments/issue-15-opentpu-results.html)已生成并目视核验，详见[实验记录](experiments/issue-15-opentpu-comparison.md)。独立全量重布线21亦已自然完成并通过十一项来源／证明对照；本次整合不启动、终止或改写既有远程作业。
+
+- 更新日期：2026-10-27（中国标准时间；本次更新共同边界，不重跑物理实验）
+- 当前阶段：首轮 Block 实现与表征推进；共同底座和任务定制分阶段验证。具体实现状态以 [Issue #121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121) / [PR #122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122) 为准；历史 H1/H2 证据保留如下。
+- 本次共同文档澄清：[Issue #123](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/123) 记录[当前实施边界与分阶段冻结](decisions/0004-block-library-base-freeze.md)：首轮叶块不要求同时确定多实例、不同裕量物理版本组合或预连拓扑；这些在共同底座阶段确定并统一冻结。原实施任务的多阶段范围和验收状态不因此缩减。
+- 历史 H1 工程：[Issue #15](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15) 已完成openTPU ACT/MXU同功能／资源的块内及父层对照。三块和两父层、六类证明共十一份封存来源严格通过；拆分叶面积+0.412%、总信号线+7.142%、通孔+2.974%，完整setup／hold两组均满足2.5ns／0.5ns预算。[中文结果与三类图表](experiments/issue-15-opentpu-results.html)已生成并目视核验，详见[实验记录](experiments/issue-15-opentpu-comparison.md)。独立全量重布线21亦已自然完成并通过十一项来源／证明对照；本次整合不启动、终止或改写既有远程作业。
 - 资料接入：[Issue #1：初始化项目并导入初期资料](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/1)；资料已进入 `main`，[PR #2](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/2) 已合并
 - 当前资料：项目说明 v1.0、专题研究文档、来源笔记，以及五个参考项目七个案例的布线分析包；三份 HTML 报告、llaccel 引擎内部分析及远程服务器规则已通过 [PR #4](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/4) 合入 `main`；工艺互连资料的逐层资源评估补充已一并提交
-- 已确认边界：研究对象和主要问题已写入项目说明；具体工艺、Block 资源、定制层集合和工具链未冻结
+- 已确认边界：第一版采用 Nangate45 原生 M1–M10、via1–via9 预制，新增研究 M11/M12、via10/via11 后定制；叶块冻结与共同底座冻结分别验收。技术模型、完整宏、共同底座及多产品结果须按实际证据接收，不能将本次文档更新视为实现完成。
 - 关键限制：现有布线结果包含少量 RTL 片段，不含完整源工程、物理数据库、工具环境和日志，不能单靠本仓库复跑物理实现
-- 最新工程里程碑（2026-10-23 04:37 CST）：拆分89829自然完成全部严格物理、PG及完整STA，功能89831／RC覆盖89832／五个完整ODB成本复核89833也全部通过。快照f65688a957f13ef70216e923891ef6ff539adfc6f81c3e29a74ba5d10332720d，主对照不随实时采集变化。全量DRT21／89826及功能89827／覆盖89828／完整ODB89835也全部自然通过；补充快照独立保存，不改写主报告。全部作业UNLIMITED，无耗时取消。
+- 历史 H1 工程里程碑（2026-10-23 04:37 CST）：拆分89829自然完成全部严格物理、PG及完整STA，功能89831／RC覆盖89832／五个完整ODB成本复核89833也全部通过。快照f65688a957f13ef70216e923891ef6ff539adfc6f81c3e29a74ba5d10332720d，主对照不随实时采集变化。全量DRT21／89826及功能89827／覆盖89828／完整ODB89835也全部自然通过；补充快照独立保存，不改写主报告。全部作业UNLIMITED，无耗时取消。
 - 整合交付：PR #8、#10 已合入 main，H1 完整整合树通过本地核验并由 PR #17 交付，其最终 CI／合并状态以在线记录为准。后续 H2 由[Issue #31](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/31)独立推进，本次不修改其工作树或运行任务。项目登记及看板权限仍待管理员处理，详见[整合回执](handoffs/2026-10-23-h1-html-integration.md)。
 
 - 首轮结果：完整 VECTOR 已完成详细布线并导出最终寄生／宏模型，DRT错误0；3 ns setup及电容检查未通过。修复宏PG接入后，89472完整顶层 `COMPLETED 0:0`，DRT错误0、最终双网PSM和2246位接口检查通过，89475最终只读审计通过；父级仍有3个setup违例。历次失败保留，这些工程结果不构成合格硬核或系统签核

@@ -1,0 +1,109 @@
+{
+  "errors": [],
+  "checks": [
+    {
+      "name": "Qwen2.5-3B",
+      "svgs": 3,
+      "nodes": [
+        65,
+        237,
+        72
+      ],
+      "text": "Q/K/V 三个带偏置的线性投影，简化后由 MatMul + Add 合为 3 个 Gemm。GQA 的 Expand/Reshape 仍存在。"
+    },
+    {
+      "name": "Qwen3-0.6B",
+      "svgs": 3,
+      "nodes": [
+        74,
+        258,
+        85
+      ],
+      "text": "Q、K 各有头内 RMSNorm。head_dim=128，不能用 hidden_size / Q头数推断成64。简化后仍有4组归一化。"
+    },
+    {
+      "name": "Llama-3.2-1B",
+      "svgs": 3,
+      "nodes": [
+        62,
+        235,
+        69
+      ],
+      "text": "标准 GQA + SwiGLU；没有 Q/K 头内归一化。本机/服务器没有找到原检查点，本轮为报告配置重建 + 固定种子随机参数，不能作为原权重模型验证。"
+    },
+    {
+      "name": "Gemma-3-4B · 局部层",
+      "svgs": 3,
+      "nodes": [
+        98,
+        305,
+        115
+      ],
+      "text": "额外的注意力后、FFN后归一化和 tanh-GELU 都已展开。局部窗口1024；本轮S=2，窗口没有截断任何位置，且掩码、RoPE cos/sin从层外输入，因此图拓扑与全局层相同。不能据此说两者长序列访存相同。"
+    },
+    {
+      "name": "Gemma-3-4B · 全局层",
+      "svgs": 3,
+      "nodes": [
+        98,
+        305,
+        115
+      ],
+      "text": "全局层取第5层，局部层取第0层，两者分别加载实际权重。本次相同节点数来自共同算子结构和S=2的边界，窗口、位置频率与长序列缓存差异未由本轮ONNX验证。"
+    },
+    {
+      "name": "Phi-4-mini",
+      "svgs": 3,
+      "nodes": [
+        70,
+        310,
+        79
+      ],
+      "text": "QKV 合并投影后 Slice，gate/up 也合并投影后拆分；partial RoPE 需要额外的 Slice/Concat。不能把这几个投影当成三条完全独立的数据通路。"
+    },
+    {
+      "name": "Qwen3.5-4B · 全局层",
+      "svgs": 3,
+      "nodes": [
+        89,
+        340,
+        100
+      ],
+      "text": "Q投影同时产出Q和输出门；PV结果之后有 Sigmoid × context，再进入O投影。部分RoPE与Q/K归一化均保留。"
+    },
+    {
+      "name": "Qwen3.5-4B · 递推层",
+      "svgs": 3,
+      "nodes": [
+        101,
+        376,
+        134
+      ],
+      "text": "原生分块prefill导出因 linalg_solve_triangular 不受支持而失败。成功图仅将递推核替换为Transformers官方逐token等价实现；前向参考仍用原生分块实现。ScatterND对应输出缓冲区写入，不代表跨Block通信。本轮没有导出cached decode。"
+    },
+    {
+      "name": "Granite-3.3B · MoE",
+      "svgs": 3,
+      "nodes": [
+        77,
+        290,
+        89
+      ],
+      "text": "40专家、每token top8。手工图画了分组分派/ScatterAdd；导出适配采用动态TopK→Gather专家权重→批量MatMul→ReduceSum。两者是同一数学计算的不同分派实现，不能逐节点硬配。原生路由仍用于三组参考核对。"
+    },
+    {
+      "name": "Falcon-H1-3B · 混合层",
+      "svgs": 3,
+      "nodes": [
+        140,
+        1003,
+        178
+      ],
+      "text": "注意力与SSM从同一归一化输入并行分支，再相加。SSM先门乘再做共享4096通道归一化。原生prefill图有Pad、CumSum、Einsum等分块扫描算子，手工图采用两步递推，因而结构显著不同。导出器的负数Transpose轴已按rank取模合法化；原始产物保留。"
+    }
+  ],
+  "search": true,
+  "node_inspector": true,
+  "zoom": true,
+  "decode_scope_warning": true
+}

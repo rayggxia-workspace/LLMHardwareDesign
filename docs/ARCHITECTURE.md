@@ -28,6 +28,7 @@ Block v1 新预制候选的同源候选视图入口为 `native-prefab-view-<shar
 | --- | --- |
 | `README.md`、`研究资料导读.md`、`预制计算底座项目说明_v1.0.md` | 项目入口、阅读导引与初版研究定义 |
 | `docs/` | 当前项目简介、架构、状态，以及专题研究文档和重要决策 |
+| `docs/model-analysis/` | 八模型实验分析、精简字符算子图、完整图册及轻量导出证据；不保存权重 ONNX |
 | `sources/` | 手写笔记、讨论澄清和原始研究资料 |
 | `project/experiments/block_hierarchy/` | Issue #7 的隔离实验运行器、配置生成与运行说明；不放大体积物理输出 |
 | `docs/experiments/` | 实验设计、结果摘要与证据边界 |
@@ -129,7 +130,7 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 
 ### Block v1 原生十层预制与新增两层互联（Issue 121）
 
-授权计划见 [实施计划](plans/block-v1-nangate45-m11-m12.md)，当前执行证据见 [work121](../work/YUZE-LU/121/README.md)。正式入口为 [block_v1](../project/experiments/block_v1/README.md)：
+当前授权范围为[五宏逐块实施计划](plans/block-v1-library-implementation.md)：M/V/R/S/T，每种一个基础实现，完成各块最终M1–M10布局布线与接收。[五宏规格](BLOCK_LIBRARY_V1.md)、[命令合同](BLOCK_V1_COMMANDS.md)及[当前最终交付索引](../work/YUZE-LU/121/delivery/README.md)是当前入口；[原多阶段计划](plans/block-v1-nangate45-m11-m12.md)和以下C8/overlay流程保留为历史工程基础，不将其全部系统目标追加到本轮。执行代码见 [block_v1](../project/experiments/block_v1/README.md)：
 
 ```powershell
 python scripts/check_project.py
@@ -137,6 +138,8 @@ python project/experiments/block_v1/make_wrapper.py --check
 ```
 
 `project/rtl/block_v1/transaction6k.sv`为真实有限事务壳，`shared121.sv`将其与四profile C8集成，结果端口改为已提交数据流，旧provisional driver必须适配后才可用于新顶层验收。服务器worker的transaction、完整存储映射、core-build、overlay、fixtures模式通过同一dispatcher在获授权目录运行，命令/资源/输入输出SHA与失败均保留。几何overlay和early RC不是十二层提取/DRC资格；尚未完成部分不得表述为已硬化Block库。
+
+模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
 

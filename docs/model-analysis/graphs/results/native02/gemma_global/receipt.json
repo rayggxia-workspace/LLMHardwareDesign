@@ -1,0 +1,22 @@
+{
+  "model": "gemma_global",
+  "started": 1792996837.8850846,
+  "source_sha256": "9143c395876f6e662ba6ba20cedc91e111751e3bdbc9c61a6b2fe05e3390d8d0",
+  "status": "failed",
+  "scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+  "implementation_file": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/lib/python3.12/site-packages/transformers/models/gemma3/modeling_gemma3.py",
+  "implementation_sha256": "8ca9a7ad9c0eafb222dfdd34e5ecb86d608e678b22db6391ce5a44e5281db6ae",
+  "versions": {
+    "torch": "2.10.0+cpu",
+    "transformers": "5.20.2"
+  },
+  "error": "RuntimeError('Error(s) in loading state_dict for Gemma3DecoderLayer:\\n\\tsize mismatch for self_attn.q_proj.weight: copying a param with shape torch.Size([1152, 1152]) from checkpoint, the shape in current model is torch.Size([2048, 2560]).\\n\\tsize mismatch for self_attn.k_proj.weight: copying a param with shape torch.Size([1152, 1152]) from checkpoint, the shape in current model is torch.Size([1024, 2560]).\\n\\tsize mismatch for self_attn.v_proj.weight: copying a param with shape torch.Size([1152, 1152]) from checkpoint, the shape in current model is torch.Size([1024, 2560]).')",
+  "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/sources/native_export.py\", line 85, in main\n    receipt['weights']=load_layer_weights(layer,p,idx);wrapped=Wrapped(layer,args.model).eval()\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/sources/native_export.py\", line 51, in load_layer_weights\n    missing,unexpected=layer.load_state_dict(state,strict=False)\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/RuizhiLiang/issue53-cpu-pilot-20261023/venv/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 2635, in load_state_dict\n    raise RuntimeError(\nRuntimeError: Error(s) in loading state_dict for Gemma3DecoderLayer:\n\tsize mismatch for self_attn.q_proj.weight: copying a param with shape torch.Size([1152, 1152]) from checkpoint, the shape in current model is torch.Size([2048, 2560]).\n\tsize mismatch for self_attn.k_proj.weight: copying a param with shape torch.Size([1152, 1152]) from checkpoint, the shape in current model is torch.Size([1024, 2560]).\n\tsize mismatch for self_attn.v_proj.weight: copying a param with shape torch.Size([1152, 1152]) from checkpoint, the shape in current model is torch.Size([1024, 2560]).\n",
+  "finished": 1792996856.0698614,
+  "artifacts": {
+    "config.json": {
+      "bytes": 2194,
+      "sha256": "91c828cb8dca1e3bca1c134284164a6af0b122b28e1e11ab2638e56eb4b2bbf0"
+    }
+  }
+}
