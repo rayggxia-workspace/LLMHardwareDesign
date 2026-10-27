@@ -9,10 +9,10 @@ import sys
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def verify(root,out,cpus,run,graph=False):
+def verify(root,out,cpus,run,graph=False,capture=False):
     assert cpus==96
-    modes=['graph-branch-fv','graph-via-fv']if graph else ['partial-branch-fv','partial-via-fv']
-    filename='graph-field-fv.json'if graph else 'partial-field-fv.json'
+    modes=['capture-branch-fv','capture-via-fv']if capture else (['graph-branch-fv','graph-via-fv']if graph else ['partial-branch-fv','partial-via-fv'])
+    filename='capture-field-fv.json'if capture else ('graph-field-fv.json'if graph else 'partial-field-fv.json')
     child_code='''import os,sys
 root,mode,cpus,destination=sys.argv[1:]
 os.chdir(destination)
@@ -42,5 +42,9 @@ os.execv(sys.executable,[sys.executable,root+'/project/experiments/block_v1/work
     if graph:
         record['schema']='block-v1-graph-geometry-group/1'
         record['scope']='Independent 3D graph-node origin charge fixtures only; general capture-node coupling and native/new-layer stitching remain unqualified'
-    (out/('graph-geometry-group.json'if graph else 'partial-geometry-group.json')).write_text(json.dumps(record,indent=2)+'\n')
+    if capture:
+        record['schema']='block-v1-capture-geometry-group/1'
+        record['scope']='Two-conductor joint-node branch/via scientific fixtures only; arbitrary routed multi-net extraction, window ownership and stitching remain unqualified'
+    filename='capture-geometry-group.json'if capture else ('graph-geometry-group.json'if graph else 'partial-geometry-group.json')
+    (out/filename).write_text(json.dumps(record,indent=2)+'\n')
     assert record['passed'],'At least one locked local field fixture failed; preserve both child outputs'
