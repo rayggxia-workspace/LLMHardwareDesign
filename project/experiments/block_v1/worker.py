@@ -59,10 +59,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-diode-full-receive-transaction6k-a':
+    if MODE=='native-diode2-receive-transaction6k-a':
         from native_receive import verify
         verify(ROOT,OUT,CPUS,run,'transaction6k','A',pipeline='native_pipeline_diode_full.json')
-    elif MODE=='native-diode-full-final-t6k-a':
+    elif MODE=='native-diode2-final-t6k-a':
         from native_final_function import verify
         verify(ROOT,OUT,CPUS,run,'A',pipeline='native_pipeline_diode_full.json')
     elif MODE=='native-constant-control':
