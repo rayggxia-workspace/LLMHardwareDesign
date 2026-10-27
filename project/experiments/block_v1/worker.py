@@ -60,7 +60,13 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-c8-probe-group':
+    if MODE=='native-c8-formal-diagnosis-group':
+        from native_c8_formal_diagnosis import group
+        group(ROOT,OUT,CPUS)
+    elif MODE in ('native-c8-formal-diagnose-a','native-c8-formal-diagnose-c'):
+        from native_c8_formal_diagnosis import verify
+        verify(ROOT,OUT,CPUS,MODE[-1].upper())
+    elif MODE=='native-c8-probe-group':
         from native_c8_probe import group
         group(ROOT,OUT,CPUS)
     elif MODE in ('native-c8-probe-a','native-c8-probe-c'):
