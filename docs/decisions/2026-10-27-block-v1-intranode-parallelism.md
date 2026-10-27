@@ -37,3 +37,10 @@
 165/92314实际C8 A/C探针全部11门通过，4:36、TotalCPU7:29.230、MaxRSS4128260K，node25同allocation双2CPU。A45/C29网改动，其中15/4处via9落点；原生upper诊断合并标记A37/C25降至0，完整upper接触0、固定低层/其他网/完整V及源SHA保持。这不是162原raw49/37项的完整GDS接收。166/92326只读严格LEC诊断双1CPU实际通过，0:50、CPU1:20.266、MaxRSS71428K；A/C时序实例143988逐名相同，无新增/删除，A501/C277处DFF_X1变DFF_X2，无字面x/z输入，但尚未证明原生未匹配PI对应，不豁免严格门。141/92256实际FAILED/1:40:06/CPU3:20:52/MaxRSS358556384K，同样被严格C8 LEC拒绝，未完成组合功能。新167准备从实际165接受ODB重新原生最终输出/默认flow LEC/RCX及全片DRT，c96双8CPU，200GiB/路加20%余量；本次提交时尚未运行。T6K161完整接收和164视图通过仍不等于宏边界资格；164 Liberty PG及完整flat timing源另以新版本修正。17:25本任务4个RUNNING allocation（057三路、067）；统一预算基础6/上限8，含PENDING/未知；其他成员未操作。完整P0–P6未完成。
 
 证据：results/run165-group-terminal、run165a/c-terminal、run166-group-terminal、run166a/c-terminal和run141-group/a/c-terminal（均位于work/YUZE-LU/121/）。167采用native_pipeline_c8_escape.json、native-c8-finish-group / native-c8-run-shared109-a/c，保持严格状态边界LEC未通过标志；不启动已知依赖失败的完整接收。
+
+
+## 2026-10-27 17:44 CST 实际执行
+
+168/92335实际T6K两路typed PG与完整flat timing网表交付通过，0:58、TotalCPU2:54.816、MaxRSS3193048K，node21双8CPU。原始模型保留，VDD/VSS仅转换pg_pin，精确逆变换证明全部其他模型字节不变；实际原生读回power/ground及is_pwr_gnd全部通过。candidate-timing.v严格复制161实际ODB完整信号导出，两路各保留189保护单元并绑定完整proof，旧6_final.v继续保留但不能充当full-SPEF flat源。169/92336用PR128固定5eda23a源只读导出实际ODB占用，node22双1CPU，2:47、CPU4:07.617、MaxRSS3592768K；A453227实例/2229968个master OBS、C451330/2232347；完整占用666023293/664926056字节保留服务器并封存SHA。仅导出通过，独立覆盖/边界资格仍待#127。167/92333仍RUNNING，node20双8CPU，不能先称C8新RC/全片DRC通过。新170准备补查严格C8前后完整图的无驱动使用bit及未使用输出，不改图/日志/严格门，本次提交尚未运行。完整P0–P6及宏冻结/两个新增层产品未完成；登记pending、看板unverified/同步pending、待独立审查。
+
+168/169 group与全部peer终态索引均位于work/YUZE-LU/121/results/run168-*及run169-*；同源交接inventory为t6k-qa127-handoff-168.json，每路30角色，仅索引，独立pack仍需前后hash。

@@ -237,3 +237,12 @@ python project/experiments/block_v1/native_escape_relocate_control.py work/YUZE-
 C8最终数据库新增全片原生DRC：`native-whole-drc-group`（16CPU）在同一allocation内启动`native-whole-drc-c8-a/c`（各8CPU），绑定128成功源并要求实际新全片报告0、检查前后完整DEF及源SHA不变。`native_whole_drc.py`先保存失败报告再断言，不能仅采用route阶段0报告；仍须134完整物理、141完整组合及全部宏/十二层门。
 
 C8最终原生全片失败的只读定位：`native-c8-locate-group`（4CPU）在一个allocation内启动`native-c8-locate-a/c`各2CPU；绑定128最终成功源及162真实失败，输出`native-c8-location.json`、完整源DEF/几何和实际固定port、逐标记命中/未匹配、固定via文本提案及不支持列表。不编辑ODB，不替代完整物理资格。
+
+
+T6K完整接收后的供电/时序交付入口为`native-typed-view-group`（16CPU）、`native-typed-view-transaction6k-a/c`（各8CPU）。保留candidate-raw.lib，candidate.lib只转换两个经严格验证的PG伪输入，原生native_pg_pins.tcl独立检查power/ground类型。candidate-timing.v为161物理接收完整ODB信号Verilog的SHA副本；完整SPEF的flat对照不可使用过滤保护单元的6_final.v。实际控制命令：
+
+```powershell
+python project/experiments/block_v1/native_view_pg_control.py RAW_LIB_FOLDER work/YUZE-LU/121/results NEW_CONTROL.json
+```
+
+RAW_LIB_FOLDER需提供已按164收据封存的candidate164-a.lib/c.lib。只读占用入口`native-qa-occupancy-group`（2CPU）、`native-qa-occupancy-a/c`（各1CPU），使用qa127_pinned/source_occupancy.tcl固定PR128/5eda23a字节与原odb_geometry.tcl，在独立目录导出actual wires/special wires/transformed pin/master OBS/NET→PORT。新170`native-c8-graph-inputs-group`（2CPU）及a/c各1CPU从134失败后的完整图补查driver/use，诊断通过与LEC资格分开。

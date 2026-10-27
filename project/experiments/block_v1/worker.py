@@ -60,7 +60,13 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-qa-occupancy-group':
+    if MODE=='native-c8-graph-inputs-group':
+        from native_c8_formal_diagnosis import group
+        group(ROOT,OUT,CPUS,graph_inputs=True)
+    elif MODE in ('native-c8-graph-inputs-a','native-c8-graph-inputs-c'):
+        from native_c8_graph_inputs import verify
+        verify(ROOT,OUT,CPUS,MODE[-1].upper())
+    elif MODE=='native-qa-occupancy-group':
         from native_qa_occupancy import group
         group(ROOT,OUT,CPUS)
     elif MODE in ('native-qa-occupancy-a','native-qa-occupancy-c'):
