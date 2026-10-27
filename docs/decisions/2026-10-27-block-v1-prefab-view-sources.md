@@ -17,3 +17,7 @@ python project/experiments/block_v1/native_view_control.py <全新控制JSON路�
 已执行 1 个显式合成来源正例、13 个坏来源/坏门槛反例，以及实际 stub 子进程四路/两路/串行/单路失败四种控制。反例全部拒绝，子进程实测重叠与声明并发一致，失败分支的其他三路回执保留。证据为 `work/YUZE-LU/121/view-controls-142.json`。这些是来源校验和编排控制，不能作为真实 EDA 或 CPU 利用率证据。
 
 目前真实四视图尚未执行。即使生成与读回通过，产物仍为候选视图：原生 OpenSTA `write_timing_model` 的标量输入 setup/hold 及省略输入线阻问题尚需完整 flat/abstract 边界验证，不能用接口一致代替时序等价。记录继续显式保持 `flat_abstract_boundary_qualified`、`exact_final_function_qualified`、`twelve_layer_qualified`、`qualified_hard_macro` 为 false。父层所有真实 glue 的物理成本、完整恢复/epoch、一般十二层分布 RC/拼接、共同底座和两个产品仍有独立验收责任。
+
+142已在2026-10-27 12:41 CST不可变部署，源码67afb20ebf672369314075279101497410ebf7bc、归档SHA256 c9e73f013304d5f5ac39bfe8b6cdabd3e4e37d9182149dbdd435146f99da06ee，154成员/1034240字节；dispatcher状态为空，无Slurm job，等待134/135整组成功。部署不是视图生成通过。
+
+另设 `native-timing-model-probe-group`，在一个16CPU allocation内A/C各8CPU对133实际封存的最终T6K做只读模型导出和原生工具接口读回，先验证当前安装工具能否处理实际规模。该诊断可在独立物理接收尚未结束时执行，但逐文件核验生产者完整回执和最终五文件/准备pin来源，结束后重新检查源未变。其输出只叫`diagnostic.lib`，结果明确不具有物理/边界/功能/十二层/宏资格；正式视图入口不读取此文件。143拟用于这项实际诊断，尚未运行；是否得到完整接口与何种timing arc以真实回执为准，不能把准备代码当结果。

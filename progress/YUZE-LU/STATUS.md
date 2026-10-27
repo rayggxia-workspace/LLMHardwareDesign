@@ -1,6 +1,8 @@
 # YUZE-LU 的进度
 
-2026-10-27 12:44 CST：已核远端PR122精确head d560bb7，Issue121/PR描述已同步12:33实际快照。新增128/134 C8与133/135 T6K同源视图入口及单allocation四路8CPU组，生成前要求全部真实物理资格；13坏来源反例和4种实际stub并发/失败保留控制通过，实际视图尚未部署/运行。128仍route，135四路完整资格继续；134/141无job，完整宏/边界/一般RC、恢复/epoch、父层及两产品仍待验收。[Issue121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121) in_progress，[PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)草稿；登记pending、看板unverified/同步pending、审查人待指定。下一步先封存来源/部署依赖，再接收实际终态。
+2026-10-27 12:43 CST：135两个最终T6K完整功能子任务均已通过，三初态各242事务/264051周期/3295817检查，物理子任务仍DRC，整组尚未完成。142四路候选视图已部署（源码67afb20、归档c9e73f013304d5f5ac39bfe8b6cdabd3e4e37d9182149dbdd435146f99da06ee，154成员/1034240字节），等待134/135整组成功，无job。新增143两路实际封存T6K时序模型导出/接口诊断入口，尚未运行；诊断产物不能作为正式宏视图。当前7allocation；下一步部署独立诊断并收集实际终态。
+
+2026-10-27 12:41 CST：已核远端PR122精确head d560bb7，Issue121/PR描述已同步12:33实际快照。新增128/134 C8与133/135 T6K同源视图入口及单allocation四路8CPU组，生成前要求全部真实物理资格；13坏来源反例和4种实际stub并发/失败保留控制通过，实际视图尚未部署/运行。128仍route，135四路完整资格继续；134/141无job，完整宏/边界/一般RC、恢复/epoch、父层及两产品仍待验收。[Issue121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121) in_progress，[PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)草稿；登记pending、看板unverified/同步pending、审查人待指定。下一步先封存来源/部署依赖，再接收实际终态。
 
 2026-10-27 12:26 CST：133双路普通route/final成功，135/92222同node22四路各16CPU完整资格正在运行。140实际初态控制通过，141两候选各六次最终叶+glue完整混合组合已不可变部署，源码3497286/归档096948bd6526b239f1d13928fe89c03f9ab879794beb3c8dadcdca9c4c6dfb27，尚无job，待128；138探针因同D被合并失败原样保留，139无job停用。当前7个allocation，134仍待128。源码编译/管理结构/diff及137/140实际证据已保存；尚未跑完整组合、恢复/epoch、父层物理、宏/一般RC、共同底座与两产品。[Issue121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)保持in_progress、[PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)草稿；登记pending、看板unverified/同步pending、审查人待指定。下一步接收135并按128终态调度134/141。
 

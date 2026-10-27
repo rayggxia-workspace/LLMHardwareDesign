@@ -252,6 +252,12 @@ try:
         variant=MODE.split('-')[1]
         top,policy=MODE.removeprefix('native-'+variant+'-receive-').rsplit('-',1)
         verify(ROOT,OUT,CPUS,run,top,policy.upper(),pipeline='native_pipeline_'+variant+'.json')
+    elif MODE=='native-timing-model-probe-group':
+        from native_model_probe import group
+        group(ROOT,OUT,CPUS)
+    elif MODE in ('native-timing-model-probe-a','native-timing-model-probe-c'):
+        from native_model_probe import probe
+        probe(ROOT,OUT,CPUS,run,MODE[-1].upper())
     elif MODE=='native-prefab-view-group':
         from native_view_group import verify
         verify(ROOT,OUT,CPUS)

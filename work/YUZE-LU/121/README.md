@@ -1,6 +1,8 @@
 # Issue 121 执行记录
 
-2026-10-27 12:44 CST：新增严格绑定128/134与133/135的四路同源视图组，尚未部署/执行；`view-controls-142.json`仅为13坏来源反例与4种实际stub编排控制，不是EDA资格。生成LEF/Liberty仍保留所有宏边界/功能/十二层标志false。参见[来源决策](../../../docs/decisions/2026-10-27-block-v1-prefab-view-sources.md)。线上已核PR122 head d560bb7与Issue/PR描述一致，完整目标仍未完成。
+2026-10-27 12:43 CST：142四视图组已不可变部署无job，依赖134/135完整成功，部署索引`results/run142-deployment`和stage138 manifest；135最终功能A/C子任务均成功，各三初态完整242事务，整组物理DRC继续，索引`run135a-final-terminal`、`run135c-final-terminal`绑定父allocation仍RUNNING而非冒称整组终态。另准备143实际封存T6K时序模型双路诊断，尚未运行，不是正式宏视图。
+
+2026-10-27 12:41 CST：新增严格绑定128/134与133/135的四路同源视图组，尚未部署/执行；`view-controls-142.json`仅为13坏来源反例与4种实际stub编排控制，不是EDA资格。生成LEF/Liberty仍保留所有宏边界/功能/十二层标志false。参见[来源决策](../../../docs/decisions/2026-10-27-block-v1-prefab-view-sources.md)。线上已核PR122 head d560bb7与Issue/PR描述一致，完整目标仍未完成。
 
 2026-10-27 12:26 CST：133完成，135四路资格实际运行；140初态实测通过，141完整最终叶+映射glue组合已部署但尚无job。证据见`results/run133-group-terminal`、`run133a-terminal`、`run133c-terminal`、`run135-group-first`及四子快照、`run140-first`、`run141-deployment`。阶段136/137 manifest对应140/141，旧139无job并停用。当前完整P0–P6目标未完成，当前7allocation；保持8槽与真实内存/线程约束，其他成员未动。详细初态数值、所有失败与资格边界见[组合决策](../../../docs/decisions/2026-10-27-block-v1-final-composition.md)。
 
