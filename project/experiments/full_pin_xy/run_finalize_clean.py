@@ -15,7 +15,7 @@ def one(case,rev,plan):
     env=dict(item.split('=',1) for item in j['command'][j['command'].index('--env')+1].split(','))
     relocations=env['PINXY_RELOCATIONS'];before=sha(src)
     en='PINXY_ODB={},PINXY_FINAL_OUT={},PINXY_RELOCATIONS={},PINXY_DRIVER={}'.format(src,out,relocations,DRIVER)
-    common=['singularity','exec','--cleanenv','--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro','--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro','--home',str(ROOT/'home'),'--pwd',str(out)]
+    common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro','--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro','--home',str(ROOT/'home'),'--pwd',str(out)]
     with (out/'export.log').open('x') as f:r=subprocess.run(common+['--env',en,IMAGE,BIN,'-threads','1','-exit',str(DRIVER/'finalize_clean.tcl')],stdout=f,stderr=subprocess.STDOUT)
     rec={'case':case,'revision':rev,'plan':plan,'source_pre_RCX_odb':str(src),'source_sha256':before,'source_unchanged':before==sha(src),'export_returncode':r.returncode,
         'scheduler_job':os.environ['SLURM_JOB_ID'],'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),

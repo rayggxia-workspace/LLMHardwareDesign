@@ -10,7 +10,8 @@ import pandas as pd
 
 def prepare(root,out):
     root=Path(root);out=Path(out);out.mkdir(parents=True,exist_ok=False)
-    prior=root/'trial_receipts/milestone-r06/trials/full-other-r01/gemm-C'
+    matches=sorted((root/'trial_receipts').glob('*/trials/full-other-r01/gemm-C'));assert matches,'Original full-C failure receipts required'
+    prior=matches[-1]
     checks=(prior/'timing.checks.txt').read_text();assert 'max capacitance' in checks
     failures=[s for s in checks.splitlines() if '(VIOLATED)' in s];assert len(failures)==2
     access=json.loads((prior/'access.json').read_text());assert access['pass']
@@ -37,8 +38,10 @@ def prepare(root,out):
     cohort=sorted(c[c.moved].index);assert len(cohort)==3039 and restore<=set(cohort)
     c['previous_PR120_C_x_um']=c.x_um;c['previous_PR120_C_y_um']=c.y_um
     for pin in restore:
-        for k in ['x_um','y_um','x0_um','y0_um','x1_um','y1_um']:c.loc[pin,k]=a.loc[pin,k]
-        c.loc[pin,'moved']=False
+        # Reuse the actual A geometry metrics at the restored A coordinate,
+        # rather than leaving C distances/risks attached to the new position.
+        for k in a.columns:c.loc[pin,k]=a.loc[pin,k]
+        c.loc[pin,'plan']='C';c.loc[pin,'moved']=False
     c['incremental_revision']='C_electrical_r03';c['revision_reason']='Unchanged PR120 C coordinates'
     c.loc[sorted(restore),'revision_reason']='Restore complete real write byte29/30 to original boundary after actual max-capacitance failure; no drive/buffer/cell changes'
     assert len(c)==3753 and int(c.moved.sum())==3021

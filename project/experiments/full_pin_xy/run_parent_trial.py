@@ -52,7 +52,7 @@ def one(inputs,rev,plan):
       'historical_handoff':'STILL_UNKNOWN','scheduler_job':os.environ['SLURM_JOB_ID'],'allocated_cpus':os.environ['SLURM_CPUS_PER_TASK'],
       'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'input_contract_sha256':sha(inputs/'contract.json'),'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()}
     (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
-    common=['singularity','exec','--cleanenv','--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro','--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro','--home',str(ROOT/'home'),'--pwd',str(out)]
+    common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro','--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro','--home',str(ROOT/'home'),'--pwd',str(out)]
     views={};commands=[]
     if plan=='A':
         commands += ['read_lef /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef','read_lef /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.mod.lef']

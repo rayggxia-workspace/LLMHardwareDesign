@@ -22,14 +22,17 @@ def run(name):
     logs=out/'logs';logs.mkdir()
     for p in (ROOT/'connectivity').glob('*/*/*.json'):
         dest=out/'connectivity'/p.relative_to(ROOT/'connectivity');dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(p,dest)
-    for area in ['finalized','independent_drc','isolation']:
+    for area in ['finalized','independent_drc','isolation','parents']:
         for p in (ROOT/area).glob('*/*/*'):
             if not p.is_file():continue
-            if p.name in ['execution.json','technology.tsv','selected_access.json','whole_access.json','pins.tsv','selected_access.tsv.gz'] or p.suffix in ['.log','.drc']:
+            parent_evidence=area=='parents' and (p.name in ['driver_failure.json','stages.tsv','before.instances.tsv','after.instances.tsv','before.endpoints.tsv','after.endpoints.tsv','before.pins.tsv','after.pins.tsv','pre_model.graph_check.json'] or p.name.endswith(('.detail-contract.json','-pg-access-selection.json')))
+            if parent_evidence or p.name in ['execution.json','technology.tsv','selected_access.json','whole_access.json','pins.tsv','selected_access.tsv.gz'] or p.suffix in ['.log','.drc']:
                 dest=out/area/p.relative_to(ROOT/area);dest.parent.mkdir(parents=True,exist_ok=True)
                 if p.suffix in ['.log','.drc','.tsv']:
                     with (dest.parent/(dest.name+'.gz')).open('xb') as raw,gzip.GzipFile(filename='',mode='wb',fileobj=raw,mtime=0) as f:f.write(p.read_bytes())
                 else:shutil.copyfile(p,dest)
+    for p in (ROOT/'stage_failure_actions').glob('*.json'):
+        dest=out/'stage_failure_actions'/p.name;dest.parent.mkdir(exist_ok=True);shutil.copyfile(p,dest)
     for p in (ROOT/'logs').glob('*.log'):
         with (logs/(p.name+'.gz')).open('xb') as raw,gzip.GzipFile(filename='',mode='wb',fileobj=raw,mtime=0) as f:f.write(p.read_bytes())
     (out/'snapshot.json').write_text(json.dumps({'created_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'source_root':str(ROOT),

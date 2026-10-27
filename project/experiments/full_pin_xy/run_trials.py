@@ -45,7 +45,7 @@ def one(case,plan,revision):
        'parent_handoff_target_layer':'UNKNOWN; this experiment cannot qualify parent access'}
     env='PINXY_OUTPUT={},PINXY_ODB={},PINXY_SDC={},PINXY_LIBS_TCL={},PINXY_RELOCATIONS={},PINXY_PLAN={},PINXY_TOP_LAYER={},PINXY_DRIVER={},PINXY_ACCESS_OUT={},OMP_NUM_THREADS=4'.format(
         out,src,sdc,libtcl,inputs/(case+'-'+plan+'.tcl'),plan,8 if case.endswith('_aux') else 10,DRIVER,out/'access.tsv')
-    cmd=['singularity','exec','--cleanenv','--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
+    cmd=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
          '--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro',
          '--home',str(ROOT/'home'),'--pwd',str(out),'--env',env,IMAGE,BIN,'-threads','4','-no_init','-exit',str(DRIVER/'physical_trial.tcl')]
     receipt['command']=cmd

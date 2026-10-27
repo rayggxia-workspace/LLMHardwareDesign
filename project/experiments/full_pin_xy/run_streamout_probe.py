@@ -19,7 +19,7 @@ for plan,source in [('A',ROOT/'finalized'/baseline_rev/(case+'-A')),('C',ROOT/'f
     lefs=[platform+'/lef/NangateOpenCellLibrary.tech.lef',platform+'/lef/NangateOpenCellLibrary.macro.mod.lef']+values.get('ADDITIONAL_LEFS','').split()
     deffile=source/'clean.def';top=re.search(r'^DESIGN\s+(\S+)\s*;',deffile.read_text(),re.M).group(1)
     (out/'input.json').write_text(json.dumps({'def':str(deffile),'top':top,'lefs':lefs,'source_clean_execution':str(source/'execution.json')},indent=2)+'\n')
-    common=['singularity','exec','--cleanenv','--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro','--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro','--home',str(ROOT/'home'),'--pwd',str(out)]
+    common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro','--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro','--home',str(ROOT/'home'),'--pwd',str(out)]
     cmd=common+['--env','PINXY_STREAM_OUT='+str(out),IMAGE,'klayout','-b','-r',str(DRIVER/'streamout_probe.py')]
     rec={'plan':plan,'case':case,'source_clean_execution':str(source/'execution.json'),'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID'],'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'merge_command':cmd,'source_clean_execution_sha256':sha(source/'execution.json')}
     with (out/'merge.log').open('x') as f:r=subprocess.run(cmd,stdout=f,stderr=subprocess.STDOUT)

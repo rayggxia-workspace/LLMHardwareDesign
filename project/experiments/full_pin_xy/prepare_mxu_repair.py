@@ -13,7 +13,8 @@ import expand_candidates as expand
 
 def prepare(root,out):
     root=Path(root);out=Path(out);out.mkdir(parents=True,exist_ok=False)
-    prior=root/'trial_receipts/milestone-r07/trials/full-other-r01/mxu-C'
+    matches=sorted((root/'trial_receipts').glob('*/trials/full-other-r01/mxu-C'));assert matches,'Original full-C failure receipts required'
+    prior=matches[-1]
     text=(prior/'timing.checks.txt').read_text();assert 'max capacitance' in text
     violations=[s for s in text.splitlines() if '(VIOLATED)' in s];assert len(violations)==5
     access=json.loads((prior/'access.json').read_text());assert access['pass']
