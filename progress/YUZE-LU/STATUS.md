@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-10-27 14:22 CST：152实际FAILED证据与绑定诊断已存，源合并mask条数A6/C1不等原18/2；A改后3条via9 spacing，C改后诊断0仍不资格。153固定全部via原坐标，M9树最近投影接原via9/M10确定性L，真实13记录dry-run A改8/C改1且长度不增、via身份/坐标不变；合成控制通过。新增完整原GDS mask XOR及原GDS源标记复现门，尚未实际运行153。6allocation保留，128最终输出未终态；Issue121 in_progress、PR122草稿，登记pending、看板unverified/同步pending、审查人待指定。下一步实际153后重新生成寄生及全门接收，完整目标继续。
+
 2026-10-27 14:12 CST：151实际失败因FLOORPLAN导入后的端点序列化换序，10/1网路由已导入；失败回执与原输出保留。152严格比较完整端点身份集合/USE，未知语法和额外属性拒绝，原DEF范围/所有路径/Verilog字节及几何门槛保留；新增换序正例与六类连接身份反例控制通过，尚未部署实际152。节点内继续A/C各2CPU/4CPU allocation。Issue121 in_progress、PR122草稿、完整目标未验收，登记pending/看板unverified同步pending/审查人待指定。下一步新源运行152，接收128终态并继续完整物理与全目标。
 
 2026-10-27 14:07 CST：149提交前因16G内存格式保护拒绝，原部署无job；150/92236两路实际FAILED/1:14，严格DEF读回发现INCREMENTAL未导入路由，失败组/两子和原输出哈希保留。151仅修正既有网络导入为FLOORPLAN，不预删wire；所有原范围/低层/其他网/短路/连通/DRC门槛不变。编译/管理检查通过，实际151尚未部署；同c96 allocation内A/C各2CPU、memory=0及内存预检。14:07本任务6allocation继续，128两路最终输出未终态，134/141等完整依赖。Issue121 in_progress、PR122草稿；登记pending、看板unverified/同步pending，管理员/审查人待指定，尚无合格物理宏。下一步提交新源并运行151，再继续完整资格与全部剩余目标。

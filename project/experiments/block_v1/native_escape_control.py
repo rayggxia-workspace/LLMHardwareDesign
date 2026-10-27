@@ -30,7 +30,8 @@ def verify(destination):
  NEW metal9 ( 160 80 ) via9_0 ;
 '''
     edited2,p2=simplify(tree,(0,0))
-    assert p2['kind']=='existing-m9-root-via-and-tree-prune'and p2['final_length_dbu']==dict(metal9=320,metal10=0)
+    assert p2['kind']=='existing-m9-tree-prune-fixed-via9'and p2['final_length_dbu']==dict(metal9=400,metal10=240)
+    assert p2['final_via9_dbu']==p2['original_via9_dbu']==(160,80)
     faults=dict(branch=u.replace(' NEW metal9 ( 160 0 ) ( 320 0 )',' NEW metal10 ( 0 120 ) ( -80 120 )\n NEW metal9 ( 160 0 ) ( 320 0 )'),
         duplicate_via=u.replace('via9_0 ;','via9_0\n NEW metal9 ( 0 0 ) via9_0 ;'),
         wrong_via_layer=u.replace('NEW metal9 ( 160 0 ) via9_0','NEW metal8 ( 160 0 ) via9_0'),

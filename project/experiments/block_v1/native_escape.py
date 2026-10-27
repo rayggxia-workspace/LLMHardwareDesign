@@ -1,8 +1,8 @@
 """Bounded prefabrication escape simplification; no post-freeze metal editing.
 
 Only a simple M10 path from one fixed BPin to one existing via9 is supported.
-Its endpoint identities are preserved. If M9 already crosses the BPin centre,
-the via can move there and unanchored M9 tree leaves can be removed. Every
+Its endpoint identities and every via location are preserved. If M9 already
+crosses the BPin centre, unanchored M9 tree detours can be simplified. Every
 other layer/path and all logical connections are retained. Actual geometry,
 shorts, native DRC, regenerated RC/STA and final function remain separate gates.
 """
@@ -119,18 +119,28 @@ def simplify(text,pin):
             while p!=pin:p,i=parent[p];keep.add(i)
         assert keep
         remove.update(set(nine)-keep)
-        paths[vi]['points']=[(*pin,None)]
-        kind='existing-m9-root-via-and-tree-prune'
-    else:
-        bend=(anchor[0],pin[1]);points=[pin,bend,anchor]
+        projections=[]
+        for i in keep:
+            a,b=[p[:2]for p in paths[i]['points']]
+            point=(min(max(anchor[0],min(a[0],b[0])),max(a[0],b[0])),
+                   min(max(anchor[1],min(a[1],b[1])),max(a[1],b[1])))
+            projections.append((abs(point[0]-anchor[0])+abs(point[1]-anchor[1]),point))
+        attach=min(projections)[1]
+        points=[attach,(anchor[0],attach[1]),anchor]
         points=[p for i,p in enumerate(points)if i==0 or p!=points[i-1]]
         for a,b in zip(points,points[1:]):
-            replacement.append(dict(layer='metal10',points=[(*a,0 if a==pin else None),(*b,None)],via=None))
+            replacement.append(dict(layer='metal9',points=[(*a,None),(*b,None)],via=None))
+        kind='existing-m9-tree-prune-fixed-via9'
+    bend=(anchor[0],pin[1]);points=[pin,bend,anchor]
+    points=[p for i,p in enumerate(points)if i==0 or p!=points[i-1]]
+    for a,b in zip(points,points[1:]):
+        replacement.append(dict(layer='metal10',points=[(*a,0 if a==pin else None),(*b,None)],via=None))
     result=[p for i,p in enumerate(paths)if i not in remove]+replacement
     for layer in ['metal9','metal10']:
         assert path_length(result,layer)<=path_length(original,layer)
     assert [p for p in result if int(p['layer'][5:])<=8]==[p for p in original if int(p['layer'][5:])<=8]
     assert collections.Counter(p['via']for p in result if p['via'])==collections.Counter(p['via']for p in original if p['via'])
+    assert signature([p for p in result if p['via']])==signature([p for p in original if p['via']])
     changed=signature(result)!=signature(original)
     if not changed:result=original
     return (emit(header,result)if changed else text),dict(changed=changed,kind=kind,pin_dbu=pin,original_via9_dbu=anchor,
