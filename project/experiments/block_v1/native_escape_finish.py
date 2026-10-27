@@ -60,7 +60,9 @@ def implement(root,out,cpus,run,policy):
     child=next(r for r in g['children']if r['policy']==policy.lower());assert child['passed']is True and child['receipt_sha256']==file_sha(probe/'receipt.json')
     pp=probe/'native-escape-probe.json';assert file_sha(pp)==pr['outputs'][pp.name]==child['proof_sha256']
     p=json.loads(pp.read_text());assert p['passed']is True and p['policy']==policy and all(p['checks'].values())
-    for name in ['native_escape.py','native_escape_audit.py','native_escape_geometry.tcl','native_escape_gds.rb','native_escape_probe.py']:
+    helpers=['native_escape.py','native_escape_audit.py','native_escape_geometry.tcl','native_escape_gds.rb','native_escape_probe.py']
+    if config.get('escape_short_repair'):helpers.append('native_escape_relocate.py')
+    for name in helpers:
         path=root/'project/experiments/block_v1'/name
         assert file_sha(path)==pr['inputs'][str(path.relative_to(root))]
     for name in ['edited.odb','after.def','after.v','after-geometry.tsv']:

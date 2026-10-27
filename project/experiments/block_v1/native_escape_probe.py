@@ -13,7 +13,7 @@ from io_slots import file_sha
 from native_allocation_group import memory_snapshot
 from native_drc import summarize
 from native_escape import parse,simplify,records
-from native_escape_audit import geometry,physical,connectivity,readback
+from native_escape_audit import geometry,physical,connectivity,readback,upper_shorts
 
 
 def verify(root,out,cpus,run,policy):
@@ -39,6 +39,18 @@ def verify(root,out,cpus,run,policy):
     location=json.loads(path.read_text());assert location['source_odb_sha256']==hashes[str(files[0])]
     assert location['failed_receipt_sha256']==file_sha(failed/'receipt.json')and not location['unmatched_markers']
     names=sorted({name for row in location['markers']for name in row['candidate_nets']})
+    short_sources=[]
+    configuration=json.loads((root/'project/experiments/block_v1/native_pipeline_escape.json').read_text())
+    extended=configuration.get('escape_short_repair',False)
+    if extended:
+        actual=base/'block-v1-20261027-157/tasks'/('native-escape-run-transaction6k-'+suffix)
+        ar=json.loads((actual/'receipt.json').read_text());assert ar['passed']is False
+        report=actual/'native-router-drc.rpt';assert file_sha(report)==ar['outputs'][report.name]
+        text=report.read_text();assert text.count('violation type:')==(4 if policy=='A'else 1)
+        assert set(re.findall(r'violation type: ([^\n]+)',text))<=set(['Short','Cut Short'])
+        extra=set(re.findall(r'net:([^\s]+)',text));assert extra==({'write_data[54]','write_data[55]','read_data[77]','read_data[78]'}if policy=='A'else{'word_count[1]','word_count[2]'})
+        names=sorted(set(names)|extra)
+        short_sources=[dict(path=str(actual),receipt_sha256=file_sha(actual/'receipt.json'),report_sha256=file_sha(report),report=text)]
     assert names and all(re.fullmatch(r'[A-Za-z0-9_]+(?:\[\d+\])?',n)for n in names)
     prep=base/'block-v1-20261027-077/tasks/native-prepare';pr=json.loads((prep/'receipt.json').read_text());assert pr['passed']is True
     pins_path=prep/('transaction6k-'+policy)/'pins.json'
@@ -49,7 +61,16 @@ def verify(root,out,cpus,run,policy):
     assert set(paths)==set(names)
     plans={};rewritten={}
     for name in names:
-        text,plan=simplify(paths[name],pins[name])
+        if extended and policy=='A'and name in ('write_data[54]','write_data[55]'):
+            from native_escape_relocate import relocate
+            pin=pins[name]
+            # Existing write_data[53] via9 y=1958540, native cut width
+            # 1600 DBU + spacing 1760 DBU => y=1961900. The next via is
+            # at its own pin centre. These two fixed, explicit landings
+            # are tested against all actual conductors and native rules.
+            assert pin==((3390,1961740)if name=='write_data[54]'else(3390,1968140))
+            text,plan=relocate(paths[name],pin,(pin[0],pin[1]+160)if name=='write_data[54]'else pin)
+        else:text,plan=simplify(paths[name],pins[name])
         if plan['changed']:
             plan['header']=parse(paths[name])[0];plans[name]=plan;rewritten[name]=text
     assert plans
@@ -80,6 +101,7 @@ def verify(root,out,cpus,run,policy):
     for name in plans:
         assert sorted(r for r in before[name]if r[0]not in ('metal9','metal10','via9'))==sorted(r for r in after[name]if r[0]not in ('metal9','metal10','via9'))
     original=physical(before,names);modified=physical(after,names)
+    global_before=upper_shorts(before);global_after=upper_shorts(after)
     controls={}
     for name in plans:
         cut=[r for r in after[name]if r[0]!='via9']
@@ -116,11 +138,15 @@ def verify(root,out,cpus,run,policy):
         exact_full_native_upper_mask_identity=True,
         edited_geometry=modified['passed'],missing_cut_controls=all(not x['passed']for x in controls.values()),
         real_cross_net_short_rejected=not short_control['passed'],native_upper_drc_zero=reports['after']['total_items']==0)
+    if extended:
+        checks['all_upper_nets_cross_net_short_free']=global_after['passed']
+        checks['actual_native_short_pairs_reproduced']=set(tuple(sorted((r['net'],r['other'])))for r in global_before['shorts'])==set([('read_data[77]','read_data[78]'),('write_data[54]','write_data[55]')])if policy=='A'else set(tuple(sorted((r['net'],r['other'])))for r in global_before['shorts'])=={('word_count[1]','word_count[2]')}
     assert all(file_sha(Path(p))==v for p,v in hashes.items())and file_sha(native_gds)==gates['gds_sha256'],'Sealed source changed'
     result=dict(schema='block-v1-native-escape-probe/1',passed=all(checks.values()),checks=checks,policy=policy,
         source=str(source),source_receipt_sha256=file_sha(source/'receipt.json'),failed_receiver_receipt_sha256=file_sha(failed/'receipt.json'),
         locator_receipt_sha256=file_sha(located/'receipt.json'),source_files=hashes,plans=plans,def_readback=diff,
         original_physical=original,edited_physical=modified,missing_cut_controls=controls,
+        actual_native_short_sources=short_sources,all_upper_original=global_before,all_upper_modified=global_after,
         actual_cross_net_short_count=len(short_control['cross_net_shorts']),native_subset_reports=reports,
         original_full_native_gds=str(native_gds),original_full_native_gds_sha256=gates['gds_sha256'],
         mask_readback=json.loads((out/'upper-mask-readback.json').read_text()),

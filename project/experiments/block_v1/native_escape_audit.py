@@ -28,6 +28,20 @@ def overlap(a,b):return min(a[2],b[2])>max(a[0],b[0])and min(a[3],b[3])>max(a[1]
 def touching(a,b):return min(a[2],b[2])>=max(a[0],b[0])and min(a[3],b[3])>=max(a[1],b[1])
 
 
+def upper_shorts(by_net):
+    """Complete upper-layer inter-net audit, including untouched nets and PG."""
+    rows=sorted((box[0],box[2],name,layer,kind,box)for name,items in by_net.items()
+                for layer,kind,box in items if layer in ('metal9','metal10','via9'))
+    active=[];shorts=[]
+    for x1,x2,name,layer,kind,box in rows:
+        active=[r for r in active if r[0]>=x1]
+        for right,other,other_layer,other_kind,other_box in active:
+            if name!=other and connected_layers(layer,other_layer)and touching(box,other_box):
+                shorts.append(dict(net=name,other=other,layer=layer,other_layer=other_layer,box=box,other_box=other_box))
+        active.append((x2,name,layer,kind,box))
+    return dict(passed=not shorts,shape_count=len(rows),net_count=len(by_net),shorts=shorts)
+
+
 def connectivity(rows):
     parent=list(range(len(rows)))
     def find(i):

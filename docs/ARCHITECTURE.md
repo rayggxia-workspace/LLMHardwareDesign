@@ -219,3 +219,9 @@ python project/experiments/block_v1/native_drc_geometry.py work/YUZE-LU/121/resu
 152实际因源合并mask报告条数不等原完整GDS而失败，并发现A新增3条VIA9.2；失败均保留。153严格保持全部via身份/原坐标，只简化M9树枝和M10折返；新增完整原GDS upper-mask XOR，并直接在原GDS复现18/2源标记，after诊断仍需0。153声明合成控制通过、实际EDA未执行。完整物理接收与新寄生/功能仍独立必需，详见同一有限修复决策。
 
 154实际有限探针两路10门全部通过，仍不等于完整宏。155 `native-escape-finish-group`以同一32CPU allocation内A/C各16CPU重新运行原生do-6_report/RCX/LEC，严格保持154接受副本全部几何/网表/SDC，并在实际最终ODB上重跑原生全片check_drc；156 `native-escape-qualification-group`在155完整成功后组织两物理/两最终功能各8CPU、共32CPU的四路完整接收。`native_pipeline_escape.json`统一绑定源、接收和154探针，`native_escape_finish.checked_config`拒绝未绑定/变化的配置、probe、脚本或实际DRC。实际155/156本源码提交时尚未运行；所有完整接收门保留，细节见有限修复决策。
+
+159有限via9修复的声明控制（输出必须不存在）：
+```powershell
+python project/experiments/block_v1/native_escape_relocate_control.py work/YUZE-LU/121/native-escape-157-routes.json NEW_CONTROL.json
+```
+实际159探针与160/161全片/完整接收仍分别运行；声明控制不是物理资格。

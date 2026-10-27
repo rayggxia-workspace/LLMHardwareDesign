@@ -76,3 +76,15 @@ python project/experiments/block_v1/native_escape_control.py NEW_CONTROL.json
 实际容器二进制`/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad`的只读字符串检查确认存在编译命令`drt::check_drc_cmd drc_file x1 y1 x2 y2 marker_name`及其SWIG包装；镜像没有对应源文件。上游零box全片语义仍只是固定源码依据，实际安装入口必须由运行证据验证。157在昂贵do-6_report前先检查实际命令存在，并以无参数调用保留运行时完整六参数usage；新最终ODB调用`drt::check_drc_cmd native-router-drc.rpt 0 0 0 0 native_escape_drc`，使用与上游公开wrapper相同的编译入口和全片box，报告必须零，检查前后完整DEF字节相同，所有原几何/网表/约束/新RC/独立接收门保持。不会把缺失命令当作空报告，不复制旧DRT报告。
 
 157生产者仍32CPU allocation内两路16CPU，158资格仍32CPU内四路8CPU并行，按实际内存限制并发。158依赖157完整成功；本源码提交时157/158均尚未部署/执行。实际运行若入口、签名或任何资格失败均保留失败并继续处理，不放宽检查。
+
+## 157实际全片短接与159有限预制修复
+
+157/92253实际FAILED/8:50、TotalCPU34:56.338、MaxRSS41813472KiB。安装版运行时命令表实际包含`::drt::check_drc`及`::drt::check_drc_cmd`，全局`check_drc`缺失；底层六参数调用实际执行整个2240000×2240000 DBU Block。新最终DEF全部NETS/NETS外、完整物理Verilog、原SDC和检查前后DEF均相同，随后零DRC门拒绝A4/C1条。A为write_data[54]/[55]的M9/M10 Short及via9 Cut Short，还有read_data[77]/[78]的M10 Short；C为word_count[1]/[2]的M10 Short。这些网络在154未修改，其几何本来就存在于133，不以旧route阶段报告0覆盖新全片发现。158无job、空state，因157失败停用。原报告/日志/回执SHA和完整DEF命中网/pin分别在157-diagnosis、157-routes及组/两子terminal索引保留；初次诊断的空routes字段由另一个明确按缩进解析的routes文件补充，未覆盖原文件。
+
+原独立GDS间距检查不能识别合并mask内部不同网络的短接。159继续使用133不可变源及135原完整GDS18/2复现、全mask精确XOR、全部原几何/连接/DRC门，并额外绑定157真实失败回执/报告的全部短接网络。read_data/word_count命中折返沿用固定via的最短L；A的write_data[54]/[55]不能保持重叠via9，故只对这两网使用显式新函数，其他全部via及所有M1–M8路径严格逐项相同。
+
+唯一预定落点：write_data[54]的via9到(3390,1961900) DBU，即其原pin上方160 DBU；write_data[55]的via9到其原pin(3390,1968140)。前者与实际write_data[53]原via9中心1958540相隔3360 DBU，等于原1600 DBU cut宽+1760 DBU间距；后者使原write_data[54]未移动via8在M9上的包围与新via9保持1600 DBU金属间距。两网原via8身份/坐标与所有下层保持，新增M9回接、M10接原pin，M9+M10总中心线长度不增。没有扫描种子/偏移或移动pin；这些推导只是候选，所有实际规则、全片检查、重新RC/STA及功能仍需通过。
+
+新增`upper_shorts`按x方向活动集合检查**所有**实际M9/M10/via9导体含PG、端口和未修改网；不仅检查选中网。原完整上层短接pair必须准确复现157三对/A2+C1，after必须全为零。逐网完整连接、原全部GDS复现、实际修改scope、原子网表字节、missing-cut/跨网短接反例及原生规则保持。控制以实际失败DEF验证两有限重定位和低层保持，并实际拒绝缺via8/额外via9；全局审计的边接触/跨层cut及隔层无cut正例通过。这些声明控制不能替代159实际EDA。
+
+159仍一个c96 allocation内两路2CPU；后继160原生新最终输出两路16CPU及161四路8CPU完整资格必须依次以实际成功为依赖。本源码提交时159/160/161均未部署/执行。全部共同冻结、宏边界、父层物理、一般多网分布十二层RC/拼接/窗口和两产品/敏感性/参数库目标保持。
