@@ -10,5 +10,6 @@ source_root=$1
 mode=$2
 singularity exec --cleanenv --bind /public/home/yuzelu --pwd "$PWD" \
   --env OMP_NUM_THREADS="$SLURM_CPUS_PER_TASK" --env OPENBLAS_NUM_THREADS=1 \
+  --env SLURM_JOB_ID="$SLURM_JOB_ID" --env SLURM_CPUS_PER_TASK="$SLURM_CPUS_PER_TASK" \
   "$image" bash -c 'set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; python3 "$1/project/experiments/block_v1/worker.py" "$1" "$2" "$3"' \
   bash "$source_root" "$mode" "$SLURM_CPUS_PER_TASK"

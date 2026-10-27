@@ -60,7 +60,13 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-composed-controls-group':
+    if MODE=='native-node-queue':
+        from native_node_queue import serve
+        serve(ROOT,OUT,CPUS)
+    elif MODE in ('native-c8-edit-full-drc-a','native-c8-edit-full-drc-c'):
+        from native_c8_edit_drc import verify
+        verify(ROOT,OUT,CPUS,run,MODE[-1].upper())
+    elif MODE=='native-composed-controls-group':
         from native_composed_controls import group
         group(ROOT,OUT,CPUS)
     elif MODE=='native-composed-physical-control':

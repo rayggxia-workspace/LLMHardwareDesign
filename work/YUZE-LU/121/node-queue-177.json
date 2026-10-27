@@ -1,0 +1,197 @@
+{
+  "schema": "block-v1-node-queue/1",
+  "node_cpus": 96,
+  "default_task_cpus": 16,
+  "memory_guard_gib": 16,
+  "state_path": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-177\\node-queue-state.json",
+  "tasks": [
+    {
+      "id": "c8-a-edit-drc",
+      "mode": "native-c8-edit-full-drc-a",
+      "cwd": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-177\\tasks\\native-c8-edit-full-drc-a",
+      "source": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-177\\src",
+      "cpus": 4,
+      "memory_gib": 70,
+      "memory_basis": "Admission estimate from run161 four-child qualification batch MaxRSS 72319928 KiB (~69 GiB); aggregate older workload, not measured C8 DRC child peak. New per-process samples required.",
+      "report": "native-c8-edit-full-drc.json",
+      "after": [],
+      "receipts": [
+        {
+          "path": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-165\\tasks\\native-c8-probe-a\\receipt.json",
+          "mode": "native-c8-probe-a",
+          "reports": [
+            "native-c8-probe.json"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c8-c-edit-drc",
+      "mode": "native-c8-edit-full-drc-c",
+      "cwd": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-177\\tasks\\native-c8-edit-full-drc-c",
+      "source": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-177\\src",
+      "cpus": 4,
+      "memory_gib": 70,
+      "memory_basis": "Admission estimate from run161 four-child qualification batch MaxRSS 72319928 KiB (~69 GiB); aggregate older workload, not measured C8 DRC child peak. New per-process samples required.",
+      "report": "native-c8-edit-full-drc.json",
+      "after": [],
+      "receipts": [
+        {
+          "path": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-165\\tasks\\native-c8-probe-c\\receipt.json",
+          "mode": "native-c8-probe-c",
+          "reports": [
+            "native-c8-probe.json"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c8-a-receive",
+      "mode": "native-c8-receive-shared109-a",
+      "cwd": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-174\\tasks\\native-c8-receive-shared109-a",
+      "source": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-174\\src",
+      "cpus": 16,
+      "memory_gib": 200,
+      "memory_basis": "Admission estimate, based on actual run128 C8 single-candidate MaxRSS A183436004/C185234252 KiB (~175/177 GiB); different phase, not current receiver peak. Additional20% margin. Run172 batch observed271600160 KiB is aggregate, not per-child.",
+      "report": "native-physical-receiver.json",
+      "after": [],
+      "receipts": [
+        {
+          "path": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-167\\tasks\\native-c8-run-shared109-a\\receipt.json",
+          "mode": "native-c8-run-shared109-a",
+          "reports": [
+            "native-escape-finish.json"
+          ],
+          "producer_state": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-167\\dispatch-state.json",
+          "producer_task": "native-c8-finish-group"
+        },
+        {
+          "path": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-172\\tasks\\native-c8-tie-lec-group\\receipt.json",
+          "mode": "native-c8-tie-lec-group",
+          "reports": [
+            "native-c8-tie-lec-group.json"
+          ],
+          "producer_state": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-172\\dispatch-state.json",
+          "producer_task": "native-c8-tie-lec-group"
+        },
+        {
+          "path": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-173\\tasks\\native-projection-control-group\\receipt.json",
+          "mode": "native-projection-control-group",
+          "reports": [
+            "native-projection-control-group.json"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c8-c-receive",
+      "mode": "native-c8-receive-shared109-c",
+      "cwd": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-174\\tasks\\native-c8-receive-shared109-c",
+      "source": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-174\\src",
+      "cpus": 16,
+      "memory_gib": 200,
+      "memory_basis": "Admission estimate, based on actual run128 C8 single-candidate MaxRSS A183436004/C185234252 KiB (~175/177 GiB); different phase, not current receiver peak. Additional20% margin. Run172 batch observed271600160 KiB is aggregate, not per-child.",
+      "report": "native-physical-receiver.json",
+      "after": [],
+      "receipts": [
+        {
+          "path": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-167\\tasks\\native-c8-run-shared109-c\\receipt.json",
+          "mode": "native-c8-run-shared109-c",
+          "reports": [
+            "native-escape-finish.json"
+          ],
+          "producer_state": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-167\\dispatch-state.json",
+          "producer_task": "native-c8-finish-group"
+        },
+        {
+          "path": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-172\\tasks\\native-c8-tie-lec-group\\receipt.json",
+          "mode": "native-c8-tie-lec-group",
+          "reports": [
+            "native-c8-tie-lec-group.json"
+          ],
+          "producer_state": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-172\\dispatch-state.json",
+          "producer_task": "native-c8-tie-lec-group"
+        },
+        {
+          "path": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-173\\tasks\\native-projection-control-group\\receipt.json",
+          "mode": "native-projection-control-group",
+          "reports": [
+            "native-projection-control-group.json"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mixed-a",
+      "mode": "native-repaired-composed-a",
+      "cwd": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-176\\tasks\\native-repaired-composed-a",
+      "source": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-176\\src",
+      "cpus": 12,
+      "memory_gib": 200,
+      "memory_basis": "Provisional admission estimate from historical complete mixed run141 two-child batch MaxRSS358556384 KiB (~342 GiB); group aggregate, not per-child. Current build/simulation tree samples required.",
+      "report": "native-composed-function.json",
+      "after": [
+        "c8-a-receive"
+      ],
+      "receipts": [
+        {
+          "path": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-175\\tasks\\native-composed-controls-group\\receipt.json",
+          "mode": "native-composed-controls-group",
+          "reports": [
+            "native-composed-controls-group.json"
+          ]
+        },
+        {
+          "path": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-161\\tasks\\native-escape-receive-transaction6k-a\\receipt.json",
+          "mode": "native-escape-receive-transaction6k-a",
+          "reports": [
+            "native-physical-receiver.json"
+          ]
+        },
+        {
+          "path": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-137\\tasks\\native-glue-map\\receipt.json",
+          "mode": "native-glue-map",
+          "reports": [
+            "native-glue.json"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mixed-c",
+      "mode": "native-repaired-composed-c",
+      "cwd": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-176\\tasks\\native-repaired-composed-c",
+      "source": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-176\\src",
+      "cpus": 12,
+      "memory_gib": 200,
+      "memory_basis": "Provisional admission estimate from historical complete mixed run141 two-child batch MaxRSS358556384 KiB (~342 GiB); group aggregate, not per-child. Current build/simulation tree samples required.",
+      "report": "native-composed-function.json",
+      "after": [
+        "c8-c-receive"
+      ],
+      "receipts": [
+        {
+          "path": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-175\\tasks\\native-composed-controls-group\\receipt.json",
+          "mode": "native-composed-controls-group",
+          "reports": [
+            "native-composed-controls-group.json"
+          ]
+        },
+        {
+          "path": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-161\\tasks\\native-escape-receive-transaction6k-c\\receipt.json",
+          "mode": "native-escape-receive-transaction6k-c",
+          "reports": [
+            "native-physical-receiver.json"
+          ]
+        },
+        {
+          "path": "\\public\\home\\yuzelu\\project-circuit\\LLMHardwareDesign\\issue-121\\block-v1-20261027-137\\tasks\\native-glue-map\\receipt.json",
+          "mode": "native-glue-map",
+          "reports": [
+            "native-glue.json"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,10 @@
 # Issue121 当前运行与继续入口
 
+2026-10-27 19:04 CST：按用户纠正改为本任务6～8节点、c96实际96CPU队列默认6×16、完成即补位；只有内存不足或真实依赖才降并发并记录具体依据。原计划第9.2节已修订并保留审查原版。新增共享claim/CPU装箱/独立分支失败隔离/依赖等待释放节点调度，真实生产路径的六任务计时控制通过，非EDA加速比。175/92352初始化与38个物理来源合同破坏控制实际通过（57秒/CPU8.623秒/MaxRSS16756K为组数据）；176已部署无job。未提交174/176旧小分组停止后续调度，计划由177整节点队列直接运行其各自leaf，保留旧manifest。177代码及六工作项准备，尚未部署。167/172仍待实际终态，完整P0–P6/宏/两产品未完成。
+
+当前资源规则以[节点内队列决策](../decisions/2026-10-27-block-v1-intranode-parallelism.md)顶部为准。不得提交174/176旧group；177共享queue按候选直接运行174完整接收leaf、176完整组合leaf。各leaf的实际父job以node-queue-state.json的owner为准，不伪称旧group有Slurm job。队列无本地活跃项且只等外部依赖时保存未领取项并释放节点；以后继allocation恢复同一不可变队列，不占96CPU空等。
+
+
 2026-10-27 18:22 CST。目标仍为批准的完整P0–P6，不是只交单个探针。仓库rayggxia-workspace/LLMHardwareDesign，Issue121、草稿PR122，分支task/121-block-v1-twelve-layer。172生产源码5614eff28472bf2bf54329c4f40b59c200ae7dfe；173/174源码2937f9c90bc4d55772b2a477407e254f3738efaf，archive26c12abad3caf6dc77e56f259458e12babd512a82e725b45057ea2a7b8136def。全部有源资源/位置/PG/CTS及M1–M10先冻结，后续两产品只改变M11/M12/via10/via11。当前没有冻结宏。
 
 ## 恢复先读实际作业
@@ -16,7 +21,7 @@
 
 173/92348实际组合控制双1CPU通过，16秒、CPU9.489秒，MaxRSS=0无有效采样。保护单元投影与常量编码衔接后，真实两种常量正例严格4输入/4输出全匹配、UNSAT/IDENTICAL，错tie/clock均SAT拒绝；实际实例化master的statetable/state_function需拒绝。原inspect AST保持逐项相同。组及两路完整终态位于results/run173-*。
 
-若167和172成功：对已部署174在根目录运行`python3 src/project/experiments/block_v1/dispatch.py manifest.json --submit`，继续由统一dispatcher核预算/依赖。174 group native-c8-qualification-group，node22/16CPU内双8CPU，200GiB/路加20%RAM余量；重新读167最终源，重新严格全状态/接口LEC、全部STA/电气/RC、PG/驱动/连接和完整独立GDS/DRC，不能把172旧图证明当新源证明。精确最终四profile+C8/S16K/T6K/glue完整组合功能还需后继接收；当前native_composed仍指旧源/旧init控制，不能盲目复用141。不能改旧回执或只沿用原route DRC0。
+若167和172成功：读取177共享队列实际就绪项与Slurm预算，以新的96CPU allocation恢复同一队列；不要提交旧174 group。A/C各自对167新源做全部完整物理门，并各自接续176完整组合接收；不依赖对侧候选的无关完成屏障，也不借旧图结果资格新源。175新控制已实际通过；旧140/141结果保持。
 
 当前宏Lib仍有独立min/max边界问题。已读[固定OpenSTA源码](https://github.com/The-OpenROAD-Project/OpenSTA/blob/bc7af6f02679074eaf43657488ca117c05f98eed/search/MakeTimingModel.cc#L76)，构造选择max；原生单套输出表不得未经min/hold实测就当作同时准确的min/max模型。#127正在做独立短/长路径反例及有效工作域，主线保持168为候选。可考虑经明确控制的分离min/max导出或可证明安全包络；本轮尚未实施，不通过放宽误差或吞掉warning来冻结。
 
