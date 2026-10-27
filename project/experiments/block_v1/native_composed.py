@@ -42,8 +42,8 @@ def initialization_control(root, out, cpus, run):
     library = Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
     (out/'export.ys').write_text('read_liberty -ignore_miss_func -ignore_miss_dir '+str(library)+'\nwrite_verilog -noattr cells.v\n')
     run(['yosys', '-s', 'export.ys'], 'export.log')
-    (out/'initial.v').write_text('module shared121(input clk,din,output [127:0] result_data);\n'+
-        ''.join('DFF_X1 f%d(.CK(clk),.D(din),.Q(result_data[%d]));\n' % (i, i) for i in range(128))+'endmodule\n')
+    (out/'initial.v').write_text('module shared121(input clk,input [127:0] din,output [127:0] result_data);\n'+
+        ''.join('DFF_X1 f%d(.CK(clk),.D(din[%d]),.Q(result_data[%d]));\n' % (i, i, i) for i in range(128))+'endmodule\n')
     fixture = '''#include "Vshared121.h"
 #include "verilated.h"
 #include <iostream>
@@ -51,7 +51,7 @@ def initialization_control(root, out, cpus, run):
 static Vshared121 d;
 static void need(bool b,const char*s){if(!b)throw std::runtime_error(s);}
 int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);need(argc==5,"vectors output stall pilot");
-d.clk=0;d.din=0;d.eval();std::cout<<"{\\"words\\":[";
+d.clk=0;for(int i=0;i<4;i++)d.din[i]=0;d.eval();std::cout<<"{\\"words\\":[";
 for(int i=0;i<4;i++){if(i)std::cout<<',';std::cout<<d.result_data[i];}std::cout<<"]}\\n";return 0;
 }catch(const std::exception&e){std::cerr<<e.what();return 1;}}
 '''
@@ -81,6 +81,7 @@ for(int i=0;i<4;i++){if(i)std::cout<<',';std::cout<<d.result_data[i];}std::cout<
                   library_sha256=file_sha(library), module_sha256=file_sha(Path(__file__)),
                   original_mixed_driver_sha256=file_sha(root/'project/experiments/block_v1/committed_sim.cpp'),
                   generated_control_driver_sha256=file_sha(out/'initial.cpp'), binary_sha256=file_sha(binary),
+                  probe_netlist_sha256=file_sha(out/'initial.v'), independently_connected_dff_inputs=128,
                   missing_initialization_rejected=dict(argv=missing_argv, returncode=missing,
                       log_sha256=file_sha(out/'missing-initialization.log')),
                   allocated_cpus=cpus, simultaneous_models=3, model_threads=2,
@@ -150,7 +151,7 @@ def verify(root, out, cpus, run, policy):
     from native_allocation_group import memory_snapshot
     assert cpus == 24 and policy in ('A', 'C')
     base = out.parents[2]; inputs = {}; leaves = {}; models = []
-    control = base/'block-v1-20261027-138/tasks/native-composed-init-control'
+    control = base/'block-v1-20261027-140/tasks/native-composed-init-control'
     bound = json.loads((control/'receipt.json').read_text()); assert bound['passed'] is True
     path = control/'native-composed-initialization.json'; assert file_sha(path) == bound['outputs'][path.name]
     initialization = json.loads(path.read_text()); assert initialization['passed'] is True
