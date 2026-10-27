@@ -60,7 +60,13 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE in ('native-escape-finish-group','native-escape-qualification-group'):
+    if MODE=='native-whole-drc-group':
+        from native_whole_drc import group
+        group(ROOT,OUT,CPUS)
+    elif MODE in ('native-whole-drc-c8-a','native-whole-drc-c8-c'):
+        from native_whole_drc import verify
+        verify(ROOT,OUT,CPUS,run,MODE[-1].upper())
+    elif MODE in ('native-escape-finish-group','native-escape-qualification-group'):
         from native_escape_finish import group
         group(ROOT,OUT,CPUS,qualify=MODE=='native-escape-qualification-group')
     elif MODE in ('native-escape-run-transaction6k-a','native-escape-run-transaction6k-c'):

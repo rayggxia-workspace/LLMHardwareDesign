@@ -225,3 +225,5 @@ python project/experiments/block_v1/native_drc_geometry.py work/YUZE-LU/121/resu
 python project/experiments/block_v1/native_escape_relocate_control.py work/YUZE-LU/121/native-escape-157-routes.json NEW_CONTROL.json
 ```
 实际159探针与160/161全片/完整接收仍分别运行；声明控制不是物理资格。
+
+C8最终数据库新增全片原生DRC：`native-whole-drc-group`（16CPU）在同一allocation内启动`native-whole-drc-c8-a/c`（各8CPU），绑定128成功源并要求实际新全片报告0、检查前后完整DEF及源SHA不变。`native_whole_drc.py`先保存失败报告再断言，不能仅采用route阶段0报告；仍须134完整物理、141完整组合及全部宏/十二层门。
