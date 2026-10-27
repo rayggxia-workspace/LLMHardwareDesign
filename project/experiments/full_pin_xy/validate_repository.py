@@ -61,8 +61,8 @@ def main():
         if link.startswith(('http','#','data:')):continue
         assert (OUT/link.split('#')[0]).exists(),link
     for p in (OUT/'assets').glob('*.svg'):ET.parse(p)
-    assert len(list((OUT/'assets').glob('*.png')))==13
-    assert len(list((OUT/'assets').glob('*.svg')))==13
+    assert len(list((OUT/'assets').glob('*.png')))==14
+    assert len(list((OUT/'assets').glob('*.svg')))==14
     assert all(x not in text for x in ['__PINS__','__PHYSICAL__','__TOTAL__'])
     print('PASS_REPOSITORY_CANDIDATE_EVIDENCE',len(EXPECTED),'blocks',sum(EXPECTED.values()),'original pins',total,'ABC rows',len(index),'file hashes',len(parser.links),'links; NOT physical qualification')
 if __name__=='__main__':main()

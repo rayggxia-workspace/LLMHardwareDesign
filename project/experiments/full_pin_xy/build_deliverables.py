@@ -107,8 +107,10 @@ def build(root,out):
             if p.suffix=='.gz':shutil.copy2(p,data)
             else:compress(p,data/(p.name+'.gz'))
     cfg=json.loads((HERE/'sources.json').read_text());dump(data/'sources.json',cfg)
+    from plot_actual_access import draw
+    draw(root,out)
     summary=json.loads((root/'inventory/partition_summary.json').read_text());bindings=json.loads((root/'inventory/binding_summary.json').read_text())
-    physical=root/'physical_summary.json';pstat=json.loads(physical.read_text()) if physical.exists() else {}
+    physical=root/'physical_summary.json';pstat=json.loads(physical.read_text(encoding='utf-8')) if physical.exists() else {}
     dump(data/'physical_summary.json',pstat)
     metrics={c:json.loads((root/f'{c}_metrics.json').read_text()) for c in ORDER}
     totals=[];htmlparts=[];pins=[]
@@ -132,7 +134,7 @@ def build(root,out):
         stages.append({'block':TITLES[c],'划分/接口':'完成；物理port逐bit匹配','候选/几何':'全pin A/B/C覆盖','实际接入':p.get('route_status','未执行/尚未收集'),'DRC/连通':p.get('drc_status','候选不代表通过'),'RC/STA/电气':p.get('sta_status','尚未收集'),'父层接入':'原始handoff/实际层序未知'})
     rawpins=json.dumps(pins,ensure_ascii=False,separators=(',',':')).replace('</','<\\/')
     report='''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>全功能分块与二维pin布局研究 · Issue126</title>
-<style>body{font:16px/1.75 "Microsoft YaHei",sans-serif;color:#17283c;background:#f1f4f8;margin:0}main{max-width:1560px;margin:auto;padding:32px}h1{font-size:32px}h2{border-bottom:2px solid #d9e3ed;padding-bottom:12px}article,.card{background:white;border:1px solid #dce4ed;border-radius:12px;padding:24px;margin:24px 0}.warn{background:#fff3df;border-left:5px solid #c8892b;padding:18px}img{max-width:100%;height:auto}.scroll{overflow:auto}table{border-collapse:collapse;font-size:13px;width:100%}th,td{border:1px solid #dce4ed;padding:8px;text-align:left}th{background:#edf3f8}a{color:#0072b2}code{overflow-wrap:anywhere}input,select{font:inherit;padding:8px;margin:4px}small{color:#56677d}details{margin:18px 0}nav a{margin-right:18px}footer{font-size:13px;color:#56677d}</style>
+<style>body{font:16px/1.75 "Microsoft YaHei",sans-serif;color:#17283c;background:#f1f4f8;margin:0}main{max-width:1560px;margin:auto;padding:32px}h1{font-size:32px}h2{border-bottom:2px solid #d9e3ed;padding-bottom:12px}article,.card{background:white;border:1px solid #dce4ed;border-radius:12px;padding:24px;margin:24px 0}.warn{background:#fff3df;border-left:5px solid #c8892b;padding:18px}img{max-width:100%;height:auto}.scroll{overflow:auto}table{border-collapse:collapse;font-size:13px;width:100%}th,td{border:1px solid #dce4ed;padding:8px;text-align:left}th{background:#edf3f8}a{color:#0072b2}code{overflow-wrap:anywhere}input,select{font:inherit;padding:8px;margin:4px}small{color:#56677d}details{margin:18px 0}nav a{margin-right:18px}footer{font-size:13px;color:#56677d}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:600px;overflow:auto;font-size:12px}</style>
 <main><h1>openTPU / llaccel 完整功能分块与二维 pin 研究</h1><p>Issue126 · Nangate45 · 2026-10-27 · PR120 增量扩展。固定功能与连接语义，保留原 M5/M6 pin 层、矩形尺寸、外框和允许布线层集合。M1–M10 是固定底座研究背景；本轮不增加 M11/M12，也不重指派目标层。</p>
 <div class="warn"><b>阶段边界：</b>全六块候选覆盖已完成，24,767个原始信号pin，74,301行 A/B/C 坐标。候选、局部接入试验与完整物理资格分开记录；不宣称已完成全C重硬化、父层接入、完整DRC/RC/STA，也不从几何L1推断时序或面积节省。</div>
 <nav><a href="#partition">完整划分</a><a href="#coverage">覆盖</a><a href="#physical">实际物理阶段</a><a href="#query">逐pin查询</a>__NAV__</nav>
@@ -149,7 +151,7 @@ def build(root,out):
 <p>几何筛查包括逐层原pin矩形异网相交、基础间距、PG、OBS、宏bbox和候选间距；未在这个阶段验证实际新接入的轨道、via cut/enclosure、完整LEF58规则或父层可访问性。M6/M8/M10通孔堆叠仅作明确假设的敏感性比较，尺寸与间距来自各块导出的tech/vias，不统一套用最高层间距；两个SYSTEM允许顶层为M8，M10敏感性列明确非法且不用于方案资格。</p>
 <p>父层逐pin逻辑连接已补齐，对端原始M5/M6层可以核对；原始父层真实handoff层、实际穿层序列仍全部未知，不能把对端M5/M6等同于父层M8接入。连接语义没有改变，未知目标保持未知，后续需要版本匹配的父层数据库。</p></section>
 __BLOCKS__
-<section class="card" id="physical"><h2>独立物理验证阶段</h2><div class="scroll">__STAGES__</div><p>小区域对照固定同一8个pin，其余pin保持原始位置；A读取原始边界，Aopt只在相同边/相同层的原有8个边界槽位内做分配优化，B/C采用相应候选坐标。Aopt使用C中心作端点导向代理成本，不能称为全局最优边界。place_pin真实写入ODB并核对中心和原层/尺寸；只清除相关网络原dbWire，然后实际global_route/detail_route。保留原单元与宏位置、规格、CTS和PDN，不删OBS、不修驱动掩盖XY成本。</p>
+<section class="card" id="physical"><h2>独立物理验证阶段</h2><div class="scroll">__STAGES__</div><p>小区域对照固定同一8个pin，其余pin保持原始位置；A读取原始边界，Aopt只在相同边/相同层的原有8个边界槽位内做分配优化，B/C采用相应候选坐标。Aopt使用C中心作端点导向代理成本，不能称为全局最优边界。place_pin真实写入ODB并核对中心和原层/尺寸；只清除相关网络原dbWire，然后实际global_route/detail_route。保留原单元与宏位置、规格、CTS和PDN，不删OBS、不修驱动掩盖XY成本。</p><p>A_replay保持原XY但重新接同一组网络，区分重跑布线本身影响。后续ACT完整740-pin C的独立对照另用fullC-r01记录，B只取同一740-pin cohort，不能冒充完整859-pin B；其实际阶段以回执为准。</p><img loading="lazy" src="assets/act_actual_access.png"><p><a href="assets/act_actual_access.svg">实际接入SVG</a> · <a href="data/act_actual_access_via_geometry.csv">实际via cut层尺寸/数量</a>；尺寸来自实际路由数据库，不是最大层通用间距假设。</p>
 <p>DRT完成、fresh native DRC、ODB连通、PDN、OpenRCX、setup/hold/电气检查分别记录；命令执行成功不等于各规则通过。继承baseline未通过项继续保留。精确阶段、失败与工具输出见<a href="data/physical_summary.json">物理回执</a>；原始大型ODB/DEF/SPEF留在授权独立远程目录，输出SHA索引见execution.json。</p><pre>__PHYSICAL__</pre>
 <p>物理底座使用原Nangate45平台：signal M2–M10/clock M4–M10；两个SYSTEM保持其原上限M8。没有M11/M12扩展。OpenROAD显示版本unknown，采用可执行文件SHA0a4cdf08…锁定；原研究宏Liberty不是生产SRAM时序签核库。块外框未缩小，不报告block面积节省；没有真实缩小通道/总体边界也不报告系统面积收益。</p></section>
 <section class="card" id="query"><h2>逐pin查询（完整数据，显示上限100行）</h2><select id="case"><option value="">全部block</option>__OPTIONS__</select><input id="search" placeholder="pin / bus / 类别 / 保留理由"><p id="count"></p><div class="scroll"><table><thead><tr><th>block</th><th>pin</th><th>bus</th><th>类别</th><th>方向</th><th>层</th><th>A XY μm</th><th>B XY μm</th><th>C XY μm</th><th>C依据</th></tr></thead><tbody id="rows"></tbody></table></div></section>

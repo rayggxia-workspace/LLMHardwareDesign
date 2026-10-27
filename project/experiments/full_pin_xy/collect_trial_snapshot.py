@@ -13,7 +13,7 @@ def run(name):
             # No ODB, DEF, netlist, SPEF, full path JSON or huge fingerprints in Git.
             if p.name in ['execution.json','driver_failure.json','stages.tsv','access.json','independent-access.json','fresh_route.drc','route.drc','timing.setup.txt','timing.hold.txt','timing.setup_tns.txt','timing.hold_tns.txt','timing.checks.txt','timing.constraint_coverage.txt','timing.parasitic_coverage.txt'] or p.suffix=='.error.txt':
                 shutil.copyfile(p,dest/p.name)
-            elif p.name=='openroad.log' or p.name.endswith('.pdn.rpt') or p.name.startswith('timing.selected_') or p.name in ['before.pins.tsv','after.pins.tsv']:
+            elif p.name=='openroad.log' or p.name.endswith('.pdn.rpt') or p.name.startswith('timing.selected_') or p.name in ['before.pins.tsv','after.pins.tsv'] or (p.name in ['access.tsv','independent-access.tsv'] and p.stat().st_size<10000000):
                 with (dest/(p.name+'.gz')).open('xb') as raw,gzip.GzipFile(filename='',mode='wb',fileobj=raw,mtime=0) as f:f.write(p.read_bytes())
     logs=out/'logs';logs.mkdir()
     for p in (ROOT/'connectivity').glob('*/*/*.json'):
