@@ -4,7 +4,9 @@ import os,sys,subprocess,json,re
 from run_exports import ROOT,CFG,IMAGE,BIN,sha
 DRIVER=Path(__file__).resolve().parent
 def one(case,rev,plan):
-    src=Path(CFG['physical_blocks'][case]['odb']) if plan=='SOURCE' else ROOT/'trials'/rev/(case+'-'+plan)/'checked.odb'
+    parts=plan.split('@');base=parts[0];view=parts[1] if len(parts)>1 else 'checked.odb'
+    assert view in ['checked.odb','routed.odb','moved.odb','global.odb']
+    src=Path(CFG['physical_blocks'][case]['odb']) if base=='SOURCE' else ROOT/'trials'/rev/(case+'-'+base)/view
     if not src.exists():print('NOT_READY',src,flush=True);return
     before=sha(src);out=ROOT/'independent_drc'/rev/(case+'-'+plan);out.mkdir(parents=True,exist_ok=False)
     env='PINXY_DRC_ODB={},PINXY_TOP_LAYER={},PINXY_DRC_OUT={}'.format(src,8 if case.endswith('_aux') else 10,out/'independent.drc')

@@ -6,7 +6,7 @@ proc checkpoint {stage} {
   set f [open $out/$stage.tech.tsv w]
   foreach l [[ord::get_db_tech] getLayers] {puts $f [list [$l getName] [$l getWidth] [$l getSpacing] [$l getPitchX] [$l getPitchY]]};close $f
   set ::env(PINXY_ACCESS_OUT) $out/$stage.access.tsv
-  if {[catch {source $::env(PINXY_DRIVER)/export_access.tcl} message]} {puts "ACCESS_EXPORT_FAIL $stage $message"}
+  if {[catch {uplevel #0 [list source $::env(PINXY_DRIVER)/export_access.tcl]} message]} {puts "ACCESS_EXPORT_FAIL $stage $message"}
   puts "ISOLATION_CHECKPOINT $stage"
 }
 if {$::env(PINXY_ISOLATION_MODE) eq "NO_LIB"} {
