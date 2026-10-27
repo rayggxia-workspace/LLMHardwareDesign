@@ -14,8 +14,11 @@ def windows(summary):
     result=[]
     number=r'[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?'
     for i,item in enumerate(summary['items']):
-        match=re.fullmatch(r'METAL(\d+)(?:\.\d+|_ANTENNA)',item['category'])
-        assert match and 1<=int(match.group(1))<=10
+        match=re.fullmatch(r'(METAL|VIA)(\d+)(?:\.\d+|_ANTENNA)',item['category'])
+        assert match
+        kind,level=match.group(1),int(match.group(2))
+        assert 1<=level<=(10 if kind=='METAL'else 9)
+        assert kind=='METAL'or not item['category'].endswith('_ANTENNA')
         shapes=[s for s in item['values']if s.startswith(('polygon: ','edge-pair: '))]
         assert len(shapes)==1
         tokens=list(filter(None,re.split(r'[(),;|\s]+',shapes[0].split(': ',1)[1])))
@@ -27,27 +30,28 @@ def windows(summary):
         box=[math.floor(min(p[k]for p in points)*2000)-1 for k in (0,1)]
         box += [math.ceil(max(p[k]for p in points)*2000)+1 for k in (0,1)]
         assert box[0]<box[2]and box[1]<box[3]
-        result.append(dict(index=i,category=item['category'],layer='metal'+match.group(1),
+        result.append(dict(index=i,category=item['category'],layer=kind.lower()+str(level),
                            bbox_dbu=box,original_geometry=shapes[0]))
     return result
 
 
-def verify(root,out,cpus,run):
+def verify(root,out,cpus,run,policy='C'):
     from io_slots import file_sha
     from native_drc import summarize
     base=out.parents[2]
-    failed=base/'block-v1-20261027-094/tasks/native-cap40-receive-transaction6k-c'
+    assert policy in ('A','C')
+    failed=base/('block-v1-20261027-094/tasks/native-cap40-receive-transaction6k-'+policy.lower())
     receipt=json.loads((failed/'receipt.json').read_text());assert receipt['passed']is False
     report=failed/'native-drc.lyrdb'
     assert file_sha(report)==receipt['outputs'][report.name]
     proof=failed/'native-physical-receiver.json'
     assert file_sha(proof)==receipt['outputs'][proof.name]
     physical=json.loads(proof.read_text());assert not physical['passed']
-    source=base/'block-v1-20261027-093/tasks/native-cap40-run-transaction6k-c'
+    source=base/('block-v1-20261027-093/tasks/native-cap40-run-transaction6k-'+policy.lower())
     assert physical['source']==str(source)
     bound=json.loads((source/'receipt.json').read_text());assert bound['passed']is True
     assert file_sha(source/'receipt.json')==physical['source_receipt_sha256']
-    odb=source/'flow/results/nangate45/bv1_transaction6k_C/base/6_final.odb'
+    odb=source/('flow/results/nangate45/bv1_transaction6k_'+policy+'/base/6_final.odb')
     assert file_sha(odb)==bound['outputs'][str(odb.relative_to(source))]
     assert file_sha(failed/'input-sha256.json')==receipt['outputs']['input-sha256.json']
     inputs=json.loads((failed/'input-sha256.json').read_text())
@@ -83,7 +87,7 @@ def verify(root,out,cpus,run):
     assert file_sha(odb)==bound['outputs'][str(odb.relative_to(source))]
     assert file_sha(report)==receipt['outputs'][report.name]
     rows=[dict(marker=m,hits=matches[m['index']],candidate_nets=sorted({r['net']for r in matches[m['index']]}))for m in markers]
-    result=dict(schema='block-v1-native-drc-location/1',passed=True,
+    result=dict(schema='block-v1-native-drc-location/1',passed=True,policy=policy,
         report_sha256=file_sha(report),source_odb_sha256=file_sha(odb),
         source_receipt_sha256=file_sha(source/'receipt.json'),failed_receipt_sha256=file_sha(failed/'receipt.json'),
         native_geometry_exporter_sha256=file_sha(root/'project/experiments/block_v1/odb_geometry.tcl'),
