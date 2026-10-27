@@ -1,0 +1,648 @@
+{
+  "schema": "block-v1-qa127-native-diagnostic-summary/1",
+  "recorded_at": "2026-10-27T17:26:26.213809+08:00",
+  "qualified_hard_macro": false,
+  "flat_abstract_boundary_qualified": false,
+  "toolchain": {
+    "openroad_reference": "6ea4ca",
+    "opensta_submodule_commit": "bc7af6f02679074eaf43657488ca117c05f98eed",
+    "opensta_binary_sha256": "e7c62c8568b816ddd99f8545132d0eb3222e7435764a3416589ae789ea4e6887",
+    "nangate_liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+    "openroad_submodule_reference_sha256": "100380834d5f798b8101622d4da7248e57444d454e68cc79a8ff4e96ebf4ec24",
+    "environment": "Ubuntu-22.04 WSL, private build, no global install, no server compute jobs"
+  },
+  "native_controls": [
+    {
+      "local_evidence": ".local/qa127/native-control-007-original",
+      "summary_sha256": "fbdfa86c3bc8681388bb508f528e997cd57f4639ae5f10709a51e86d5417882b",
+      "mode": "original-sdc",
+      "completed": true,
+      "cases": [
+        {
+          "resistance_ohm": 1,
+          "measurement_driver": "BUF_X2",
+          "diagnostic_passed": false,
+          "mismatches": 4,
+          "max_slack_difference_ns": 0.004322063540396215,
+          "receipt_sha256": "5c2c26dea98001df2c3be42f2b4a33eb8e38251de1cc812005268d7726be21bc",
+          "measurement_binding_passed": true
+        },
+        {
+          "resistance_ohm": 1,
+          "measurement_driver": "BUF_X1",
+          "diagnostic_passed": false,
+          "mismatches": 4,
+          "max_slack_difference_ns": 0.005321069973529546,
+          "receipt_sha256": "45c85f1610fa5f508943048134f62ea3b235235c88698b271fb6de0972ba8a2b",
+          "measurement_binding_passed": true
+        },
+        {
+          "resistance_ohm": 20000,
+          "measurement_driver": "BUF_X2",
+          "diagnostic_passed": false,
+          "mismatches": 6,
+          "max_slack_difference_ns": 0.004323430502495285,
+          "receipt_sha256": "7bc755fd9cdb368a731bbd79f8bf28e518bdceaad96bb7fe56e75b653e5999c6",
+          "measurement_binding_passed": true
+        },
+        {
+          "resistance_ohm": 20000,
+          "measurement_driver": "BUF_X1",
+          "diagnostic_passed": false,
+          "mismatches": 8,
+          "max_slack_difference_ns": 0.006019171272519941,
+          "receipt_sha256": "6f3ee1c1ca9bbb21a0d8da170a9d31f86e5c3490d94594558d7227018a5f17b3",
+          "measurement_binding_passed": true
+        }
+      ],
+      "exact_flat_rereads": [
+        {
+          "name": "low-r",
+          "passed": true,
+          "receipt_sha256": "bbc47c5e05fac55301114912f8b3a5e07e99a9886ed22e53eb3d4019c297a2c9"
+        },
+        {
+          "name": "high-r",
+          "passed": true,
+          "receipt_sha256": "5ad6dd992b2ad4204bc6f0fb5932b97da08700ec1bb239c7d4aaf7e44c6bf24e"
+        }
+      ]
+    },
+    {
+      "local_evidence": ".local/qa127/native-control-008-matched",
+      "summary_sha256": "90314ede3b162e5071c843ee7289b6c446c1c5b2fa0c5e440e236c8a65e6fe83",
+      "mode": "matched-transition",
+      "completed": true,
+      "cases": [
+        {
+          "resistance_ohm": 1,
+          "measurement_driver": "BUF_X2",
+          "diagnostic_passed": true,
+          "mismatches": 0,
+          "max_slack_difference_ns": 8.881784197001252e-05,
+          "receipt_sha256": "5739fc85ee63ca4f5f534ec3716bd734d217ac54a6168a29957aee4ea725cfd0",
+          "measurement_binding_passed": true
+        },
+        {
+          "resistance_ohm": 1,
+          "measurement_driver": "BUF_X1",
+          "diagnostic_passed": false,
+          "mismatches": 1,
+          "max_slack_difference_ns": 0.001001067284622792,
+          "receipt_sha256": "962163b7891e30bc9eeaebc6b03c7635619724d5a48a33c7b83219561438e31f",
+          "measurement_binding_passed": true
+        },
+        {
+          "resistance_ohm": 20000,
+          "measurement_driver": "BUF_X2",
+          "diagnostic_passed": false,
+          "mismatches": 4,
+          "max_slack_difference_ns": 0.0024309443347192428,
+          "receipt_sha256": "d136fa5520cd57837c93ca001bd62cffec3d511f90599bc8045f40276bd97343",
+          "measurement_binding_passed": true
+        },
+        {
+          "resistance_ohm": 20000,
+          "measurement_driver": "BUF_X1",
+          "diagnostic_passed": false,
+          "mismatches": 8,
+          "max_slack_difference_ns": 0.003086420008457935,
+          "receipt_sha256": "41f8d5e39fb2f9258cb193571549ddf5ccc561c7a7535f4d4258c711cfbb3ecc",
+          "measurement_binding_passed": true
+        }
+      ],
+      "exact_flat_rereads": [
+        {
+          "name": "low-r",
+          "passed": true,
+          "receipt_sha256": "1406ed7c5247f459cd27e7743617d80d1c4bebf181196326422ae63d7c2b32a3"
+        },
+        {
+          "name": "high-r",
+          "passed": true,
+          "receipt_sha256": "3a4a450ba94c228c187eae4d73af7f160d78a5cb5e7228b09f67a0f674f606c2"
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "top": "transaction6k",
+      "policy": "A",
+      "local_bundle": "D:/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-a",
+      "local_measurement": ".local/qa127/t6k-native164-a-002",
+      "bundle_index_sha256": "39607e28e53ccab2b2493cd14122adbdbd296699341e56a3b901be5dd06833bc",
+      "source": {
+        "passed": true,
+        "stage_commits": {
+          "source_receipt": "8b62c2cf21f4d1b44e9a1f18e44713e0a73bec4d",
+          "physical_receipt": "8b62c2cf21f4d1b44e9a1f18e44713e0a73bec4d",
+          "view_receipt": "5ee50116145f0c17aa87664b9bcc71fadbdf435b",
+          "prepare_receipt": "0a0ca833adb40a3ec20f0b9ec10920ba63bcad49"
+        },
+        "budget_provenance": "bound through exporter receipt input inventory",
+        "final_function_evidence_binding": {
+          "verified": true,
+          "scope": "Same-source native final-function receipt/proof binding; no independent functional replay"
+        },
+        "receipt_authenticity": "trusted input receipts; hashes are not signatures"
+      },
+      "interface": {
+        "passed": false,
+        "error": "Liberty PG direction"
+      },
+      "source_files": {
+        "source_receipt": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-160/tasks/native-escape-run-transaction6k-a/receipt.json",
+          "sha256": "26f382af3e99f3f4cde073ad7ddcdfe522216f70dd3634376f9dd64f5200c295"
+        },
+        "physical_receipt": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-161/tasks/native-escape-receive-transaction6k-a/receipt.json",
+          "sha256": "2cd64b304fbd4ce80b7180e15e2e3dadb3f98a97739729af79e7fb35f443bed2"
+        },
+        "physical_report": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-161/tasks/native-escape-receive-transaction6k-a/native-physical-receiver.json",
+          "sha256": "a1c4a1096db538013e9949be00f655f98d338eab9edae926512eaa8aa345f811"
+        },
+        "view_receipt": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/tasks/native-escape-view-transaction6k-a/receipt.json",
+          "sha256": "03cbbc806864090b04a39cbe3d6467c19b11aba58d103186bca7cd1e497c92bd"
+        },
+        "prepare_receipt": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare/receipt.json",
+          "sha256": "bc1db15fe91cf39ea2159a3ce42bd6203893399a135cd0ed76d7acc53933223a"
+        },
+        "pins": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare/transaction6k-A/pins.json",
+          "sha256": "aa124f3578632a2edf0b29a2b2cf4bac5e1a56f14bf5f8e8b4fbdf42e129cdec"
+        },
+        "pipeline": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/src/project/experiments/block_v1/native_pipeline_escape.json",
+          "sha256": "e16f4e393ffbac06eb29b1744f2a5e7e00f46eb29374fad86b0353ba1d1adf78"
+        },
+        "budget": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/src/project/experiments/block_v1/physical-budget.json",
+          "sha256": "b7e9108ad18f40b88f6fd897a838bf04b48764390766955520eeac4a87d91a19"
+        },
+        "gds": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-161/tasks/native-escape-receive-transaction6k-a/gds-flow/results/nangate45/bv1_transaction6k_A/base/6_final.gds",
+          "sha256": "b2d6b42a8a27f94e8bc90cb64f819e0df15f091016ad2b52a5d523e30d78bbb6"
+        },
+        "view_report": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/tasks/native-escape-view-transaction6k-a/native-view-generation.json",
+          "sha256": "e8d31b0271a7afdbbec8a568a6c8f8113f2d368277a7cc6428ca741653164840"
+        },
+        "lib": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/tasks/native-escape-view-transaction6k-a/candidate.lib",
+          "sha256": "2afe1dcbe70595c1614f5e03bf00ac0509a4705bed91640d6a58d98f73f47ce1"
+        },
+        "lef": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/tasks/native-escape-view-transaction6k-a/candidate.lef",
+          "sha256": "bca4a5f3dac676dda64d3bcfbde5bedac1c37dfd028b8ff74a82ea88db94d84d"
+        },
+        "lef_interface": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/tasks/native-escape-view-transaction6k-a/lef-interface.tsv",
+          "sha256": "c5918ba6de60f6e257589dcb26aa6a9dedda72392565e5f432069d6a34e0db3a"
+        },
+        "lib_interface": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/tasks/native-escape-view-transaction6k-a/lib-interface.tsv",
+          "sha256": "88193af6d4c233172ae7b909ee7bd20dc8a1b1c05b91effd10721e0cbfcd41fa"
+        },
+        "lib_buses": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/tasks/native-escape-view-transaction6k-a/lib-buses.tsv",
+          "sha256": "5735704c756c8e28165a7125d95fe46adb755dc8a2b909941530304f4c75ffe2"
+        },
+        "source_pg": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/tasks/native-escape-view-transaction6k-a/source-pg-pins.tsv",
+          "sha256": "b357dca74531ac1e6876a3db07897bd5e8d501d29676c7cc4ce46ffde2d35096"
+        },
+        "final_odb": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-160/tasks/native-escape-run-transaction6k-a/flow/results/nangate45/bv1_transaction6k_A/base/6_final.odb",
+          "sha256": "ca4eeacc11117f3f309cd68c3036db6dd90a4cefb9fff2487f0a72ebbf17c61b"
+        },
+        "final_sdc": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-160/tasks/native-escape-run-transaction6k-a/flow/results/nangate45/bv1_transaction6k_A/base/6_final.sdc",
+          "sha256": "e19a29586b4bd41466fd2cc22804dc9665b465c7e74d096c5a98d6313df266f7"
+        },
+        "final_spef": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-160/tasks/native-escape-run-transaction6k-a/flow/results/nangate45/bv1_transaction6k_A/base/6_final.spef",
+          "sha256": "ff99cbff37077720db80cacd2b8a78b3c2d9dd14e9b70347aff7237cc1bf62dd"
+        },
+        "final_v": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-160/tasks/native-escape-run-transaction6k-a/flow/results/nangate45/bv1_transaction6k_A/base/6_final.v",
+          "sha256": "b4d120e94960ae6509a1ddbe6d532c2061c2d703999210ec4e063e0a6c885890"
+        },
+        "final_def": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-160/tasks/native-escape-run-transaction6k-a/flow/results/nangate45/bv1_transaction6k_A/base/6_final.def",
+          "sha256": "4cc573a24e6e72f2d824a9a23aaf2dcaff74bfe90c530ad3dc7c42169031901e"
+        },
+        "function_receipt": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-161/tasks/native-escape-final-transaction6k-a/receipt.json",
+          "sha256": "abf0aad29f1d11c7f350848757b4d8c9b610a2e8c0bbcdae20b747d86bdb2850"
+        },
+        "function_report": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-161/tasks/native-escape-final-transaction6k-a/native-final-function.json",
+          "sha256": "4a78f84d542e7ab01384260fa79f3f322a63c5c79f49c4affc5d92c9c74853cc"
+        }
+      },
+      "native_receipt_sha256": "33de3e0dd42cf616a338ba44267047fc0f57047376dacd3cd030237b36bfc770",
+      "native_pair_report_sha256": "5c3f338d748d02edd05b78df6bd5433587a3e9e1390201258de92b41174ae253",
+      "native_request_sha256": "6b007648324511fdbd8d6f6df38b77f466c148f86e4d68e158cec7274e47d162",
+      "source_rc": {
+        "total_counts": {
+          "nets": 170536,
+          "resistors": 873929,
+          "capacitors": 5367619
+        },
+        "ports": 386,
+        "input_nets": 190,
+        "retained_nets": "input-boundary-only"
+      },
+      "comparison": {
+        "passed": false,
+        "measurement_context_accepted": false,
+        "mismatch_count": 966,
+        "mismatches_by_metric": {
+          "slack_ns": 794,
+          "slew_0": 75,
+          "slew_1": 11,
+          "slew_2": 75,
+          "slew_3": 11
+        },
+        "worst_boundary_slack_difference": {
+          "key": [
+            "output",
+            "busy",
+            "rise",
+            "min"
+          ],
+          "slack_absolute_difference_ns": 0.10727441157598605
+        },
+        "time_tolerance_ns": 0.001,
+        "slew_tolerance_ns": 0.001,
+        "tolerance_scope": "predeclared diagnostic only, not reviewed macro qualification"
+      },
+      "native_views": {
+        "flat": {
+          "endpoints": 104356,
+          "boundary_observations": 1540,
+          "all_native_endpoint_slacks_finite": false,
+          "summary": {
+            "time_unit_seconds": 9.999999717180685e-10,
+            "capacitance_unit_farads": 1.0000000036274937e-15,
+            "check_setup": 1.0,
+            "setup_violations": 0.0,
+            "hold_violations": 0.0,
+            "endpoint_count": 104356.0,
+            "observation_count": 1540.0
+          },
+          "electrical": {
+            "capacitance": {
+              "violations": 0,
+              "slack_native": 4.455377101898193,
+              "limit_native": 16.021699905395508,
+              "has_limit": true
+            },
+            "slew": {
+              "violations": 0,
+              "slack_native": 0.10190487653017044,
+              "limit_native": 0.1985349953174591,
+              "has_limit": true
+            },
+            "fanout": {
+              "violations": 0,
+              "slack_native": 1.0000000150474662e+30,
+              "limit_native": 1.0000000150474662e+30,
+              "has_limit": false
+            }
+          },
+          "native_log_diagnostics": {
+            "message_counts": {
+              "Warning 1650": 980,
+              "Warning 1648": 189
+            },
+            "examples": [
+              "Warning 1650: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-a/final_spef line 1175482, net bv1_input_diode_188 not found.",
+              "Warning 1650: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-a/final_spef line 2393843, net bv1_input_diode_20 not found.",
+              "Warning 1650: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-a/final_spef line 2440630, net bv1_input_diode_61 not found.",
+              "Warning 1650: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-a/final_spef line 2440639, net bv1_input_diode_46 not found.",
+              "Warning 1650: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-a/final_spef line 2440756, net bv1_input_diode_155 not found.",
+              "Warning 1648: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-a/final_spef line 2447643, instance bv1_input_diode_0:A not found.",
+              "Warning 1650: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-a/final_spef line 2447648, net bv1_input_diode_0 not found.",
+              "Warning 1650: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-a/final_spef line 2447654, net bv1_input_diode_0 not found.",
+              "Warning 1648: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-a/final_spef line 2447661, instance bv1_input_diode_1:A not found.",
+              "Warning 1650: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-a/final_spef line 2447666, net bv1_input_diode_1 not found."
+            ],
+            "native_error_count": 0,
+            "missing_spef_instance_or_net_messages": 1169,
+            "exact_source_annotation_binding_accepted": false,
+            "scope": "Native log diagnostics; zero missing-name messages does not prove full active-net annotation"
+          }
+        },
+        "abstract": {
+          "endpoints": 385,
+          "boundary_observations": 1540,
+          "all_native_endpoint_slacks_finite": true,
+          "summary": {
+            "time_unit_seconds": 9.999999717180685e-10,
+            "capacitance_unit_farads": 1.0000000036274937e-15,
+            "check_setup": 1.0,
+            "setup_violations": 0.0,
+            "hold_violations": 0.0,
+            "endpoint_count": 385.0,
+            "observation_count": 1540.0
+          },
+          "electrical": {
+            "capacitance": {
+              "violations": 0,
+              "slack_native": 21.708194732666016,
+              "limit_native": 60.653995513916016,
+              "has_limit": true
+            },
+            "slew": {
+              "violations": 0,
+              "slack_native": 0.10734478384256363,
+              "limit_native": 0.19900000095367432,
+              "has_limit": true
+            },
+            "fanout": {
+              "violations": 0,
+              "slack_native": 1.0000000150474662e+30,
+              "limit_native": 1.0000000150474662e+30,
+              "has_limit": false
+            }
+          },
+          "native_log_diagnostics": {
+            "message_counts": {},
+            "examples": [],
+            "native_error_count": 0,
+            "missing_spef_instance_or_net_messages": 0,
+            "exact_source_annotation_binding_accepted": true,
+            "scope": "Native log diagnostics; zero missing-name messages does not prove full active-net annotation"
+          }
+        }
+      },
+      "occupancy_coverage": "pending native ODB export in main-coordinated allocation",
+      "qualified_hard_macro": false
+    },
+    {
+      "top": "transaction6k",
+      "policy": "C",
+      "local_bundle": "D:/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-c",
+      "local_measurement": ".local/qa127/t6k-native164-c-002",
+      "bundle_index_sha256": "d6da92d4a0133b868f0de79515ad95db58754261f9dc8681dcb7dc54cd57b218",
+      "source": {
+        "passed": true,
+        "stage_commits": {
+          "source_receipt": "8b62c2cf21f4d1b44e9a1f18e44713e0a73bec4d",
+          "physical_receipt": "8b62c2cf21f4d1b44e9a1f18e44713e0a73bec4d",
+          "view_receipt": "5ee50116145f0c17aa87664b9bcc71fadbdf435b",
+          "prepare_receipt": "0a0ca833adb40a3ec20f0b9ec10920ba63bcad49"
+        },
+        "budget_provenance": "bound through exporter receipt input inventory",
+        "final_function_evidence_binding": {
+          "verified": true,
+          "scope": "Same-source native final-function receipt/proof binding; no independent functional replay"
+        },
+        "receipt_authenticity": "trusted input receipts; hashes are not signatures"
+      },
+      "interface": {
+        "passed": false,
+        "error": "Liberty PG direction"
+      },
+      "source_files": {
+        "source_receipt": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-160/tasks/native-escape-run-transaction6k-c/receipt.json",
+          "sha256": "aa99f8694aa9f0f78ddcad6edbcd02ad7e54357f440f7a5a0e9775952b643ed3"
+        },
+        "physical_receipt": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-161/tasks/native-escape-receive-transaction6k-c/receipt.json",
+          "sha256": "518f58785d5fd752ca58042e9ca76254627ed4aab06b5ad02ac6bf7725c97dec"
+        },
+        "physical_report": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-161/tasks/native-escape-receive-transaction6k-c/native-physical-receiver.json",
+          "sha256": "44d20c4e2ace6ff91dc9da898540f90dfd758c367ea64a990fb119bae976b129"
+        },
+        "view_receipt": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/tasks/native-escape-view-transaction6k-c/receipt.json",
+          "sha256": "01335150999eb821c30c1a94161cdc5c08b929d30003d1c44c4e7a79e1821bd5"
+        },
+        "prepare_receipt": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare/receipt.json",
+          "sha256": "bc1db15fe91cf39ea2159a3ce42bd6203893399a135cd0ed76d7acc53933223a"
+        },
+        "pins": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare/transaction6k-C/pins.json",
+          "sha256": "e1e32a864935c79ec4ede23168987e3209ae0f5a41429c97c306eb7d9fc7ab37"
+        },
+        "pipeline": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/src/project/experiments/block_v1/native_pipeline_escape.json",
+          "sha256": "e16f4e393ffbac06eb29b1744f2a5e7e00f46eb29374fad86b0353ba1d1adf78"
+        },
+        "budget": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/src/project/experiments/block_v1/physical-budget.json",
+          "sha256": "b7e9108ad18f40b88f6fd897a838bf04b48764390766955520eeac4a87d91a19"
+        },
+        "gds": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-161/tasks/native-escape-receive-transaction6k-c/gds-flow/results/nangate45/bv1_transaction6k_C/base/6_final.gds",
+          "sha256": "664cc327e0192c224e44ce2d0508d5796920c6b1fe31486f98692feab13c5e59"
+        },
+        "view_report": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/tasks/native-escape-view-transaction6k-c/native-view-generation.json",
+          "sha256": "c56720a6f87458a770ebede0ac0694a7867a28f8f114537e3c6057bd53989db1"
+        },
+        "lib": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/tasks/native-escape-view-transaction6k-c/candidate.lib",
+          "sha256": "fa1fa3387b8c0de2bebfc81b9b4b3fb2d1b45652fc8c5e3e1f67e16b422b8324"
+        },
+        "lef": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/tasks/native-escape-view-transaction6k-c/candidate.lef",
+          "sha256": "7adf127f5835cce82faa439bb31dfe2f43fa92defd4db6f0d861ae1985050722"
+        },
+        "lef_interface": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/tasks/native-escape-view-transaction6k-c/lef-interface.tsv",
+          "sha256": "0c0492d84034809b0c206ffa58b2e77adeee6c1cdcce13a9d8641fe458f8d43f"
+        },
+        "lib_interface": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/tasks/native-escape-view-transaction6k-c/lib-interface.tsv",
+          "sha256": "e41d812abd827a966afca3f56a937a45935ae795a76e89253ce62c12030f2e4e"
+        },
+        "lib_buses": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/tasks/native-escape-view-transaction6k-c/lib-buses.tsv",
+          "sha256": "4e73ebe113e577af6e349708f78464490b57b98f4943164e31789bba562944ac"
+        },
+        "source_pg": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-164/tasks/native-escape-view-transaction6k-c/source-pg-pins.tsv",
+          "sha256": "b357dca74531ac1e6876a3db07897bd5e8d501d29676c7cc4ce46ffde2d35096"
+        },
+        "final_odb": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-160/tasks/native-escape-run-transaction6k-c/flow/results/nangate45/bv1_transaction6k_C/base/6_final.odb",
+          "sha256": "edd6c87c5a3dd7447953d185a1bd769c3e719135ec390cb764d5468799e45463"
+        },
+        "final_sdc": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-160/tasks/native-escape-run-transaction6k-c/flow/results/nangate45/bv1_transaction6k_C/base/6_final.sdc",
+          "sha256": "e19a29586b4bd41466fd2cc22804dc9665b465c7e74d096c5a98d6313df266f7"
+        },
+        "final_spef": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-160/tasks/native-escape-run-transaction6k-c/flow/results/nangate45/bv1_transaction6k_C/base/6_final.spef",
+          "sha256": "b01815a00538683b098fcd0f713413a7132e755d67aa59ca2b5b9eacce3cc248"
+        },
+        "final_v": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-160/tasks/native-escape-run-transaction6k-c/flow/results/nangate45/bv1_transaction6k_C/base/6_final.v",
+          "sha256": "64f2ba3691486261fcef535d00bb39d5c9fed0a2e6196a98a3f1e62d7cb3e64a"
+        },
+        "final_def": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-160/tasks/native-escape-run-transaction6k-c/flow/results/nangate45/bv1_transaction6k_C/base/6_final.def",
+          "sha256": "4f473eafe65eaefb7251ee1e2c8653db543b3b53fafc4d47ad715a3c03fb251e"
+        },
+        "function_receipt": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-161/tasks/native-escape-final-transaction6k-c/receipt.json",
+          "sha256": "36dc50b9839de5902b60335b22374aacc67b38b20ea0c495fc0a93ed3ebd3123"
+        },
+        "function_report": {
+          "origin": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-161/tasks/native-escape-final-transaction6k-c/native-final-function.json",
+          "sha256": "1c7aeafee35bda4e25eb419cdf165e425d326490be289c5ecaedb328abcd31c1"
+        }
+      },
+      "native_receipt_sha256": "7f94b974d472331aa84e02b28ac71eb7db30a30222170d91ad3bd08450463af7",
+      "native_pair_report_sha256": "be5cb9a8115570772cbd2b54847bf505368b9353e5f0d998c18552320480cd2c",
+      "native_request_sha256": "990609680c4cea842920e3aa5c908e55b441878606e4e9d98c2641e64d453874",
+      "source_rc": {
+        "total_counts": {
+          "nets": 171055,
+          "resistors": 869624,
+          "capacitors": 5356991
+        },
+        "ports": 386,
+        "input_nets": 190,
+        "retained_nets": "input-boundary-only"
+      },
+      "comparison": {
+        "passed": false,
+        "measurement_context_accepted": false,
+        "mismatch_count": 900,
+        "mismatches_by_metric": {
+          "slack_ns": 794,
+          "slew_0": 52,
+          "slew_2": 52,
+          "slew_1": 1,
+          "slew_3": 1
+        },
+        "worst_boundary_slack_difference": {
+          "key": [
+            "output",
+            "release_ready",
+            "fall",
+            "min"
+          ],
+          "slack_absolute_difference_ns": 0.06040218325509272
+        },
+        "time_tolerance_ns": 0.001,
+        "slew_tolerance_ns": 0.001,
+        "tolerance_scope": "predeclared diagnostic only, not reviewed macro qualification"
+      },
+      "native_views": {
+        "flat": {
+          "endpoints": 104428,
+          "boundary_observations": 1540,
+          "all_native_endpoint_slacks_finite": false,
+          "summary": {
+            "time_unit_seconds": 9.999999717180685e-10,
+            "capacitance_unit_farads": 1.0000000036274937e-15,
+            "check_setup": 1.0,
+            "setup_violations": 0.0,
+            "hold_violations": 0.0,
+            "endpoint_count": 104428.0,
+            "observation_count": 1540.0
+          },
+          "electrical": {
+            "capacitance": {
+              "violations": 0,
+              "slack_native": 3.9093120098114014,
+              "limit_native": 16.021699905395508,
+              "has_limit": true
+            },
+            "slew": {
+              "violations": 0,
+              "slack_native": 0.09831440448760986,
+              "limit_native": 0.1985349953174591,
+              "has_limit": true
+            },
+            "fanout": {
+              "violations": 0,
+              "slack_native": 1.0000000150474662e+30,
+              "limit_native": 1.0000000150474662e+30,
+              "has_limit": false
+            }
+          },
+          "native_log_diagnostics": {
+            "message_counts": {
+              "Warning 1650": 1870,
+              "Warning 1648": 189
+            },
+            "examples": [
+              "Warning 1650: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-c/final_spef line 675672, net bv1_input_diode_37 not found.",
+              "Warning 1650: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-c/final_spef line 675693, net bv1_input_diode_7 not found.",
+              "Warning 1650: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-c/final_spef line 675694, net bv1_input_diode_36 not found.",
+              "Warning 1650: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-c/final_spef line 1051720, net bv1_input_diode_56 not found.",
+              "Warning 1650: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-c/final_spef line 1051895, net bv1_input_diode_57 not found.",
+              "Warning 1650: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-c/final_spef line 1055520, net bv1_input_diode_62 not found.",
+              "Warning 1650: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-c/final_spef line 1057436, net bv1_input_diode_51 not found.",
+              "Warning 1650: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-c/final_spef line 1057437, net bv1_input_diode_152 not found.",
+              "Warning 1650: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-c/final_spef line 1057438, net bv1_input_diode_165 not found.",
+              "Warning 1650: /mnt/d/Data/电路实验/LLMHardwareDesign-worktrees/issue-127-macro-boundary-qa/.local/qa127/t6k-bundle164-c/final_spef line 1061279, net bv1_input_diode_88 not found."
+            ],
+            "native_error_count": 0,
+            "missing_spef_instance_or_net_messages": 2059,
+            "exact_source_annotation_binding_accepted": false,
+            "scope": "Native log diagnostics; zero missing-name messages does not prove full active-net annotation"
+          }
+        },
+        "abstract": {
+          "endpoints": 385,
+          "boundary_observations": 1540,
+          "all_native_endpoint_slacks_finite": true,
+          "summary": {
+            "time_unit_seconds": 9.999999717180685e-10,
+            "capacitance_unit_farads": 1.0000000036274937e-15,
+            "check_setup": 1.0,
+            "setup_violations": 0.0,
+            "hold_violations": 0.0,
+            "endpoint_count": 385.0,
+            "observation_count": 1540.0
+          },
+          "electrical": {
+            "capacitance": {
+              "violations": 0,
+              "slack_native": 30.09769630432129,
+              "limit_native": 60.653995513916016,
+              "has_limit": true
+            },
+            "slew": {
+              "violations": 0,
+              "slack_native": 0.12649640440940857,
+              "limit_native": 0.19900000095367432,
+              "has_limit": true
+            },
+            "fanout": {
+              "violations": 0,
+              "slack_native": 1.0000000150474662e+30,
+              "limit_native": 1.0000000150474662e+30,
+              "has_limit": false
+            }
+          },
+          "native_log_diagnostics": {
+            "message_counts": {},
+            "examples": [],
+            "native_error_count": 0,
+            "missing_spef_instance_or_net_messages": 0,
+            "exact_source_annotation_binding_accepted": true,
+            "scope": "Native log diagnostics; zero missing-name messages does not prove full active-net annotation"
+          }
+        }
+      },
+      "occupancy_coverage": "pending native ODB export in main-coordinated allocation",
+      "qualified_hard_macro": false
+    }
+  ]
+}

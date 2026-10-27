@@ -1,6 +1,6 @@
-# Block v1 宏边界独立核验（#127，首批诊断工具）
+# Block v1 宏边界独立核验（#127）
 
-本目录服务 [Issue #127](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/127)，独立消费 #121 / PR #122 导出的文件，不导入、不修改主线 exporter/receiver。运行只需要 Python 3.10+ 标准库。当前只交付诊断接收器、便携数据包和反例；尚未交付真实候选的 flat/abstract 原生测量适配器或正式宏边界资格。
+本目录服务 [Issue #127](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/127)，独立消费 #121 / PR #122 导出的文件，不导入、不修改主线 exporter/receiver。Python 部分只需要 Python 3.10+ 标准库；原生测量另需指定 OpenSTA/OpenROAD。第二批已实现原生 STA 对照、实际 SPEF 图清单、精确矩形并集 OBS 检查和最终功能证明的来源绑定。真实候选与控制实验的实际结果见 `work/YUZE-LU/127/`；仍不签发正式宏边界资格。
 
 `passed: true` 只表示本次已执行的来源/接口/可选数值合同检查通过。缺少对照时 `comparison.status` 明确为 pending；无论 synthetic/native、是否包含对照，`flat_abstract_boundary_qualified` 与 `qualified_hard_macro` 都固定为 false。本工具不会签发物理、功能、十二层或冻结资格。
 
@@ -101,4 +101,40 @@ spec schema 是 `block-v1-boundary-comparison-spec/1`：
 
 然后共同冻结场景与容差，在同一个环境运行 flat 和 macro-wrapper 原生 STA，独立提取完整端点/弧/电气测量与边界寄生归属，验证输入线阻没有消失。若现有 Liberty 抽象无法表达同等效应，应报告失败并反馈主线；不私自改导出器，也不以 scalar setup/hold 或 readback 成功替代对照。
 
-OBS 全几何覆盖、测量覆盖、寄生 derivation、native comparison producer、真实候选结果仍待完成。#127 保持开放，主线控制综合/P&R、物理修复、功能接收、正式资格、冻结与全任务节点预算。
+本节是首批完整资格的验收要求。第二批增加的原生诊断如下；诊断覆盖仍不等于上面的全部资格要求。#127 保持开放，主线控制综合/P&R、物理修复、功能接收、正式资格、冻结与全任务节点预算。
+
+## 6. 第二批原生对照与源码绑定
+
+`native_control.py` 使用一个真实 DFF、显式分布 SPEF，先提取 timing model，再在两个输入电阻和两个驱动条件下用独立进程比较。`--export-drive matched-transition` 另在新进程捕获原驱动下的端口 slew，生成固定 transition 的诊断导出场景；它不修改主线导出器。每个电阻场景另做 exact-flat-reread 正控制，不能把该控制称为抽象等价通过。
+
+```bash
+python3 -B project/experiments/block_v1/macro_boundary_qa/native_control.py \
+  --executable /approved/tools/sta --library /approved/libs/NangateOpenCellLibrary_typical.lib \
+  --output /approved/qa127/NEW-control --parallel 2 --export-drive matched-transition
+```
+
+`native_pair.py` 的两个进程读入同一封存 SDC，每进程一线程，`--parallel 1|2` 控制同时进程数。记录命令、输入/工具/采集脚本哈希、日志、原始 TSV、SDC 读回和寄生 annotation 报告。`native_pair.verify(folder, request)` 根据绑定的原始 TSV 与实际 SPEF 重算；不信任保存的结果 JSON 自报成功。
+
+覆盖：完整原生端点身份及四项 slack 清单；每个非 clk 输入和每个输出的 rise/fall × max/min 最差路径聚合；端口四项 slew；clock 与电气限制/违例统计。端点名在宏折叠后不同，因此分别保存两侧清单，不做虚假的同名匹配。**这不是所有 pin-to-pin 弧、例外、corner 或电气约束等价证明。** 端点表与 slew 目前通过原生 `get_property` 输出，有六位小数格式化；边界 slack/arrival/required 通过 PathEnd 数值接口获取，不使用该字符串格式化。`NO_PATH`、缺覆盖和非有限边界值拒收；非有限端点值另行明确标记。
+
+`spef_inventory.py` 直接解析 explicit distributed SPEF，换算单位，保存实际 R/C ID、节点和源行号，检查全部输入端口的电阻图、sink 与悬空部分。大候选只保留输入边界网络的详细记录，其余网络仍逐条解析、计数并检查重复名，避免一次保留数百万 Python 对象。R 求和只是清单值，不是等效电阻；耦合记录也不声称跨网络去重或等效延迟。
+
+真实候选先执行来源审计，再生成诊断请求：
+
+```bash
+python3 -B project/experiments/block_v1/macro_boundary_qa/candidate_request.py \
+  /approved/bundle/index.json /approved/libs/NangateOpenCellLibrary_typical.lib /approved/NEW-request
+python3 -B project/experiments/block_v1/macro_boundary_qa/native_pair.py \
+  /approved/NEW-request/request.json --output /approved/NEW-measurement \
+  --executable /approved/tools/sta --parallel 1
+```
+
+生成器仅支持 write_verilog 的简单非 ANSI 声明，逐位检查源网表、pins 与 Liberty 的**有序**总线映射。两侧共享的诊断 SDC 只把一条 `current_design <原顶层>` 换成无参查询，使不同 parent 顶层名能读入完全相同的其余时序命令；保留原 SDC 哈希和变换声明。若 timing model 有普通 VDD/VSS 输入，诊断 parent 明确接常量，并报告其表示缺口；这不撤销 `audit.py` 的 PG 接口失败，也不修复候选 Lib。
+
+默认 1 ps 仅用于本批问题定位，预先写入请求；不是经审查的项目合格容差，不因测量失败而放宽。原生工具打印 Warning/Error 即使 exit=0 也必须检查，尤其 SPEF instance/net not found：有数值输出不能证明完整 annotation。
+
+## 7. OBS 精确覆盖诊断
+
+`native_occupancy.py` 用指定 OpenROAD 只读 final ODB，`source_occupancy.tcl` 使用固定哈希的项目 `odb_geometry.tcl` 导出几何，再附加每个 instance 变换后的 master OBS 及真实 NET→PORT 归属。这里复用几何生产器，**不复用主线验收器**。
+
+`obstruction_coverage.py` 对每个源金属矩形做整数坐标的矩形并集覆盖检查；仅同 net、同层实际端口窗口可豁免。面积相等、矩形相交或层清单齐全都不能代替覆盖。via cut 只计数，由相邻金属 keepout 提供正常 route/via 限制；隐藏 transistor/GDS 几何与原生 DRC 不在该诊断的资格范围内。必须实际运行 ODB 导出并保存收据后，才能报告候选覆盖结果。

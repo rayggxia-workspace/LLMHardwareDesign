@@ -208,9 +208,50 @@ def audit_source(bundle):
             and physical["rc_coverage_qualified"] is True
             and physical["mapped_to_final_lec"]["passed"] is True
             and physical["independent_drc_items"] == 0, "physical prerequisite failed")
+    function_binding = {"verified": False, "status": "not claimed by view producer"}
+    if view.get("exact_final_function_qualified") is True:
+        function_binding = audit_function_binding(bundle, view)
     return {"passed": True, "stage_commits": commits,
             "budget_provenance": "bound through exporter receipt input inventory",
+            "final_function_evidence_binding": function_binding,
             "receipt_authenticity": "trusted input receipts; hashes are not signatures"}
+
+
+def audit_function_binding(bundle, view):
+    """Receive the versioned T6K final-function dependency, never re-run LEC."""
+    control = view["final_function_control"]
+    receipt, proof = bundle.obj("function_receipt"), bundle.obj("function_report")
+    require(bundle.identity("function_receipt").parent == origin(control["path"])
+            and bundle.digest("function_receipt") == control["receipt_sha256"]
+            and bundle.digest("function_report") == control["proof_sha256"], "function control binding")
+    bundle.owned("function_report", "function_receipt", "native-final-function.json")
+    require(receipt["passed"] is True and proof["schema"] == "block-v1-native-final-function/1"
+            and proof["passed"] is True, "failed final function evidence")
+    require(proof["top"] == bundle.index["top"] == "transaction6k"
+            and proof["policy"] == bundle.index["policy"]
+            and proof["pipeline"] == view["pipeline"] == "native_pipeline_escape.json", "function candidate identity")
+    require(origin(proof["source"]) == bundle.identity("source_receipt").parent
+            and proof["source_receipt_sha256"] == bundle.digest("source_receipt")
+            and proof["original_flow_netlist_sha256"] == bundle.digest("final_v"), "function source binding")
+    formal = proof["formal"]
+    require(formal["passed"] is True and formal["checks"]
+            and all(value is True for value in formal["checks"].values())
+            and formal["full_final_netlist_sha256"] == bundle.digest("final_v")
+            and formal["physical_functional_view"]["full_view_sha256"] == proof["final_netlist_sha256"], "function formal binding")
+    require(receipt["inputs"].get("project/experiments/block_v1/test_transaction.cpp") == proof["driver_sha256"], "function test driver binding")
+    runs = proof["initial_state_runs"]
+    require(set(runs) == {"all-ones", "random-121", "random-122"}, "function initial-state coverage")
+    scoreboards = []
+    for name, mode, seed in (("all-ones", 1, 121), ("random-121", 2, 121), ("random-122", 2, 122)):
+        row = runs[name]
+        result = row["scoreboard"]
+        require(row["initial_mode"] == mode and row["runtime_seed"] == seed
+                and result["passed"] is True and result["seed"] == 1212026102
+                and result["transactions"] == 242
+                and all(type(result[k]) is int and result[k] > 0 for k in ("cycles", "assertions")), "function scoreboard contract")
+        scoreboards.append(result)
+    require(all(row == scoreboards[0] for row in scoreboards), "function scoreboard disagreement")
+    return {"verified": True, "scope": "Same-source native final-function receipt/proof binding; no independent functional replay"}
 
 
 def rectangle(fields):

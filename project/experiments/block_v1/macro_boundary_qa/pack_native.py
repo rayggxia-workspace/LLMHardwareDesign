@@ -26,6 +26,9 @@ def native_paths(views, prepare, budget, pipeline):
              "pipeline": Path(pipeline).absolute(), "gds": physical / f"gds-{prefix}/6_final.gds"}
     paths.update({role: views / relative for role, relative in VIEW_OUTPUTS.items()})
     paths.update({role: source / f"{prefix}/6_final.{suffix}" for role, suffix in FINALS.items()})
+    if report.get("exact_final_function_qualified") is True:
+        function = Path(report["final_function_control"]["path"])
+        paths.update(function_receipt=function / "receipt.json", function_report=function / "native-final-function.json")
     return top, policy, paths
 
 
