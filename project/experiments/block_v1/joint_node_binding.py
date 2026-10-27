@@ -70,14 +70,23 @@ def verify(root,out,cpus,run,geometry):
     model=json.loads(measured.read_text());_,instances,native=emit_spef(model)
     first=instances['target/left'];last=instances['target/right'];assert first!=last
     variants=dict(actual='',shift='''set inst [[ord::get_db_block] findInst %s]
+set status [$inst getPlacementStatus]
+$inst setPlacementStatus PLACED
 lassign [$inst getLocation] x y
 $inst setLocation [expr {$x+2}] $y
+$inst setPlacementStatus $status
 '''%first,swap='''set a [[ord::get_db_block] findInst %s]
 set b [[ord::get_db_block] findInst %s]
+set ast [$a getPlacementStatus]
+set bst [$b getPlacementStatus]
+$a setPlacementStatus PLACED
+$b setPlacementStatus PLACED
 lassign [$a getLocation] ax ay
 lassign [$b getLocation] bx by
 $a setLocation $bx $by
 $b setLocation $ax $ay
+$a setPlacementStatus $ast
+$b setPlacementStatus $bst
 '''%(first,last))
     tech=Path(next(p for p in prior['inputs']if p.endswith('/research12.tech.lef')))
     assert file_sha(tech)==prior['inputs'][str(tech)];inputs[str(tech)]=file_sha(tech)
