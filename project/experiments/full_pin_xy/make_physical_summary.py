@@ -23,7 +23,7 @@ def summarize(root):
         j=json.loads(p.read_text());completed=bool(j.get('finished_utc'));log=read(d/'openroad.log.gz')
         stages=list(csv.DictReader(read(d/'stages.tsv').splitlines(),delimiter='\t'))
         bystage={r['stage']:r['status'] for r in stages}
-        c={'state':j.get('status','RUNNING_OR_RECEIPT_INCOMPLETE'),'completed':completed,'plan':plan,'scheduler_job':j['scheduler_job'],'source_sha256':j['source_sha256'],
+        c={'state':j.get('status','RUNNING_OR_RECEIPT_INCOMPLETE'),'completed':completed,'plan':plan,'selected_pin_count':j.get('selected_pin_count',8),'scheduler_job':j['scheduler_job'],'source_sha256':j['source_sha256'],
            'driver_commit':j['driver_commit'],'source_unchanged':j.get('source_unchanged',False),'failed_stages':[r for r in stages if r['status']=='FAIL'],
            'routed':bystage.get('detailed_route')=='EXECUTED','RCX_executed':bystage.get('extract_rc',bystage.get('baseline_rc'))=='EXECUTED',
            'setup_worst_slack_ns':slack(d,'setup'),'hold_worst_slack_ns':slack(d,'hold'),'raw_receipt':str(p.relative_to(base)),
@@ -51,7 +51,7 @@ def summarize(root):
                 q=br[pin];assert row[:5]==q[:5],(case,key,pin,'function/dir/use/net/layer changed')
                 rr=list(map(int,row[5:9]));ss=list(map(int,q[5:9]));assert rr[2]-rr[0]==ss[2]-ss[0] and rr[3]-rr[1]==ss[3]-ss[1],(case,key,pin,'size changed')
                 if rr!=ss:moved.append(pin)
-            assert len(moved)<=8,(case,key,'unexpected changed pins')
+            assert len(moved)<=j.get('selected_pin_count',8),(case,key,'unexpected changed pins')
             # All PG rectangles also identical, independently of the SWire fingerprint.
             assert Counter(r for r in aa if r[2] in ['POWER','GROUND'])==Counter(r for r in bb if r[2] in ['POWER','GROUND'])
             c['actual_all_pin_contract_check']={'original_signals':len(ar),'moved_count':len(moved),'moved_pins':moved,'lost_extra_layer_direction_net_use_size_changes':0,'all_PG_pin_rectangles_unchanged':True}
@@ -65,7 +65,8 @@ def summarize(root):
     for case,s in summary.items():
         done=[t for t in s['trials'].values() if t.get('completed')];candidates=[t for t in done if t.get('plan')=='C']
         if candidates:
-            t=candidates[-1];s['route_status']='8pin C实际重接完成；全C未实现' if t['routed'] else 'C实际试验失败/未完成，见回执'
+            t=candidates[-1];n=t['selected_pin_count'];s['route_status']=f'{n}pin C实际重接完成；完整资格未验证' if t['routed'] else 'C实际试验失败/未完成，见回执'
+            s['full_C_migration_routed']=bool(case=='act' and n==740 and t['routed'])
             full=t.get('whole_multi_terminal_signal_clock_geometry',{}).get('pass','待验证')
             s['drc_status']='fresh native DRC {}; selected-net连通 {}; 全块几何连通 {}；父层未验证'.format(t['fresh_native_DRC_count'],t.get('selected_access_all_terminals_pass','待补查'),full)
             s['sta_status']='RCX {}; setup {}ns / hold {}ns；电气违例行{}；系统边界不完整'.format(t['RCX_executed'],t['setup_worst_slack_ns'],t['hold_worst_slack_ns'],t['reported_timing_electrical_violator_rows'])
