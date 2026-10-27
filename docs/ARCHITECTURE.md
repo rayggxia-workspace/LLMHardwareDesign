@@ -207,3 +207,6 @@ python project/experiments/block_v1/native_drc_geometry.py work/YUZE-LU/121/resu
 
 
 `native-via-qualification-group`组织A/C完整独立物理接收与A/C实际最终网表三初态功能回归，共四路各16CPU、同一64CPU allocation。依赖133完整候选成功；按实际可用RAM选择4/2/1路，不缩减每路门槛。可复算编排控制：`python project/experiments/block_v1/native_via_group_control.py NEW_CONTROL.json`（输出须不存在）。当前三个实际stub控制通过，仅证明并发/失败独立/内存降级，实际EDA资格另由135产生。
+
+
+135完整资格终态失败：A18/C2独立间距标记，原生DRT均0；功能通过不替代物理。148 `native-viaonly-diagnosis-group` 在同一16CPU allocation内两路8CPU只读定位，绑定133/135不可变源及全套哈希；147依赖失败且无job停用。详见[保护负载与间距诊断](decisions/2026-10-27-block-v1-passive-endpoint-diagnosis.md)。

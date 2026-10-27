@@ -8,10 +8,11 @@ import time
 from native_allocation_group import file_sha,memory_snapshot
 
 
-def verify(root,out,cpus):
+def verify(root,out,cpus,viaonly=False):
     assert cpus==16
-    specs=[('native-diode2-drc-locate-a','native-drc-location.json'),
-           ('native-passive-endpoint-probe','native-passive-endpoint-probe.json')]
+    specs=([('native-viaonly-drc-locate-'+p,'native-drc-location.json')for p in ['a','c']]
+           if viaonly else [('native-diode2-drc-locate-a','native-drc-location.json'),
+                            ('native-passive-endpoint-probe','native-passive-endpoint-probe.json')])
     memory=memory_snapshot();parallel=2 if memory['MemAvailable']>=48*1024**3 else 1
     def execute(spec):
         mode,proof=spec;folder=out.parent/mode;folder.mkdir(exist_ok=False)
@@ -33,6 +34,8 @@ def verify(root,out,cpus):
     with concurrent.futures.ThreadPoolExecutor(max_workers=parallel)as pool:children=list(pool.map(execute,specs))
     result=dict(schema='block-v1-native-diagnosis-group/1',passed=all(row['passed']for row in children),
                 allocated_cpus=cpus,maximum_concurrent_cpu_ceilings=parallel*8,memory_preflight=memory,
-                children=children,scope='Parallel actual read-only DRC location and STA endpoint typing; no physical candidate repair or macro qualification')
+                children=children,scope=('Parallel actual read-only A/C via-only DRC location'if viaonly else
+                    'Parallel actual read-only DRC location and STA endpoint typing')+
+                    '; no physical candidate repair or macro qualification')
     (out/'native-diagnosis-group.json').write_text(json.dumps(result,indent=2)+'\n')
     assert result['passed'],'Diagnostic child failed; independent peer completed and evidence preserved'

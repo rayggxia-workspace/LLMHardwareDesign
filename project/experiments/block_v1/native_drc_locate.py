@@ -44,7 +44,8 @@ def verify(root,out,cpus,run,policy='C',pipeline=None):
         config=dict(receiver_run='block-v1-20261027-094',receiver_task_prefix='native-cap40-receive-',
                     candidate_run='block-v1-20261027-093',candidate_task_prefix='native-cap40-run-')
     else:
-        assert pipeline=='native_pipeline_diode_full.json' and policy=='A'
+        assert pipeline in ('native_pipeline_diode_full.json','native_pipeline_viaonly.json')
+        if pipeline=='native_pipeline_diode_full.json':assert policy=='A'
         config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
     failed=base/config['receiver_run']/('tasks/'+config['receiver_task_prefix']+'transaction6k-'+policy.lower())
     receipt=json.loads((failed/'receipt.json').read_text());assert receipt['passed']is False

@@ -93,6 +93,12 @@ try:
     elif MODE=='native-diagnosis-group':
         from native_diagnosis_group import verify
         verify(ROOT,OUT,CPUS)
+    elif MODE=='native-viaonly-diagnosis-group':
+        from native_diagnosis_group import verify
+        verify(ROOT,OUT,CPUS,viaonly=True)
+    elif MODE in ('native-viaonly-drc-locate-a','native-viaonly-drc-locate-c'):
+        from native_drc_locate import verify
+        verify(ROOT,OUT,CPUS,run,policy=MODE[-1].upper(),pipeline='native_pipeline_viaonly.json')
     elif MODE=='native-passive-endpoint-probe':
         from native_passive_endpoint import verify
         verify(ROOT,OUT,CPUS,run)

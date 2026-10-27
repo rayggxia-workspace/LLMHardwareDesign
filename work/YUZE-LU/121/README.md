@@ -1,5 +1,8 @@
 # Issue 121 执行记录
 
+
+2026-10-27 13:18 CST：135/92222完整资格组已终态FAILED，48:10、TotalCPU4:55:06、MaxRSS73373228K。A独立DRC18项（M10间距16/M9间距2），C独立DRC2项（M10间距2）；原生DRT均0，全部其他接收门均通过，A/C最终功能三初态通过。两路不能冻结为合格宏。原始失败及全量DRC索引已保存，147依赖失败且从未提交job，停用；新148准备以一个16CPU c96 allocation内A/C两路8CPU只读定位，不修改ODB、pin或任何DRC规则。135按64CPU分配的整体CPU利用约9.6%，仅代表此批（含串行DRC等待段）；后续分阶段并发，并保留实际内存/CPU证据。128 C8两路进入详细布线；134/141继续等待128完整成功，当前6个本任务allocation，最多8个。
+
 2026-10-27 13:03 CST：当前正式四视图入口147/node20/32CPU，已部署无job，见`results/run147-deployment`及stage143 manifest，源码0e65b27/归档df998dd76f17b0e06b31507b32047a446fd37d33efa078582062239357b07d44。146同归档node21部署也无job，见`run146-deployment`/stage142；因141整RAM占同节点，已停用146而以147独立node20承接，不取消任何任务。后续统一dispatcher只调度134/141/147及当前有效依赖，不再调度142/146。计划文件SHA重新核验仍为2ef18149c806cfbda996bbc91b69c84b31781ad9553e7093630d1f7a2ddc20cf。完整目标仍未完成。
 
 2026-10-27 12:59 CST：145实际组/两子通过，51秒/3108328K，索引`run145-group-terminal`、`run145a-terminal`、`run145c-terminal`及stage141 manifest；真实386 signal bit和11bus容器/成员一致。正式视图新增145成功证明/共享脚本/实际工具SHA门槛，146待部署并等待134/135/145，`view-controls-146.json`再次通过13来源反例及4stub控制。143/144失败和142无job停用原样保留，宏边界/一般RC/共同底座与两产品未资格。

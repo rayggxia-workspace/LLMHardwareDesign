@@ -17,3 +17,9 @@
 实际数据见 `work/YUZE-LU/121/results/run131-group-terminal/index.json`、`run131-locate-terminal/index.json`、`run131-sta-terminal/index.json`。新接收保留原始 `endpoints.tsv`，将精确类型报告另写 `passive-endpoint-audit.json`；其他端点原行逐字保留，原全部时钟/电气/count与无用输出判定完全相同。134尚未部署或执行，不报告完整Block通过。
 
 下一有限探针核实际封存CTS的强制via接入可行性，同时读取安装版ORFS脚本与原生LEF；不改变原pin XY/几何或源ODB。官方[详细布线文档](https://openroad.readthedocs.io/en/latest/main/src/drt/README.html)区分via-in-pin包围限制与via-access层限制；[ORFS变量文档](https://openroad-flow-scripts.readthedocs.io/en/latest/user/FlowVariables.html)列出DETAILED_ROUTE_ARGS。安装版是否支持及真实接入结果仍须实际工具验证，不能据最新版文档宣布有效修复。
+
+## Via-only 完整资格失败与并行只读定位
+
+2026-10-27 13:18 CST：135/92222完整资格组已终态FAILED，48:10、TotalCPU4:55:06、MaxRSS73373228K。A独立DRC18项（M10间距16/M9间距2），C独立DRC2项（M10间距2）；原生DRT均0，全部其他接收门均通过，A/C最终功能三初态通过。两路不能冻结为合格宏。原始失败及全量DRC索引已保存，147依赖失败且从未提交job，停用；新148准备以一个16CPU c96 allocation内A/C两路8CPU只读定位，不修改ODB、pin或任何DRC规则。135按64CPU分配的整体CPU利用约9.6%，仅代表此批（含串行DRC等待段）；后续分阶段并发，并保留实际内存/CPU证据。128 C8两路进入详细布线；134/141继续等待128完整成功，当前6个本任务allocation，最多8个。
+
+完整终态在 `work/YUZE-LU/121/results/run135-group-terminal/index.json`、`run135a-physical-terminal/index.json`、`run135c-physical-terminal/index.json`。先前两份功能终态仍独立保留。所有间距条目、精确坐标、来源哈希和19项通过的接收门均保留，不能将原生DRT 0当作独立DRC 0。定位器仅增加显式 `native_pipeline_viaonly.json` 的A/C来源选择；仍严格要求失败接收回执与成功源回执、原始DRC、ODB及input-sha256对应，扫描后再核源未变。148两路独立日志/回执、总线程上限16、48GiB可用内存不足则串行，失败一路不取消另一条。实际部署与终态另行保存。完整宏、父层物理、一般十二层RC/拼接、共同冻结底座与两产品仍未验收。
