@@ -5,8 +5,16 @@ result = {}
 native = RBA::Layout.new
 native.read($source_gds)
 raise 'Ambiguous native top cell' unless native.top_cells.size == 1
-scale = native.dbu / 0.0005
-raise 'Native mask cannot scale exactly to probe DBU' unless (scale-scale.round).abs < 1e-9 && scale >= 1
+ratio = native.dbu / 0.0005
+if ratio >= 1 && (ratio-ratio.round).abs < 1e-9
+  native_scale = ratio.round
+  probe_scale = 1
+elsif ratio > 0 && ((1/ratio)-(1/ratio).round).abs < 1e-9
+  native_scale = 1
+  probe_scale = (1/ratio).round
+else
+  raise 'Native/probe DBU require non-integer geometry scaling'
+end
 %w[before after].each do |stage|
   layout = RBA::Layout.new
   layout.dbu = 0.0005
@@ -33,12 +41,14 @@ raise 'Native mask cannot scale exactly to probe DBU' unless (scale-scale.round)
     if stage == 'before'
       source_index = native.find_layer(mapping[name],0)
       source_mask = source_index.nil? ? RBA::Region.new : RBA::Region.new(native.top_cell.begin_shapes_rec(source_index))
-      source_mask = source_mask.transformed(RBA::ICplxTrans.new(scale,0,false,0,0)).merged
-      raise 'Actual ODB upper mask differs from full native GDS: '+name unless (source_mask ^ region.merged).is_empty?
+      source_mask = source_mask.transformed(RBA::ICplxTrans.new(native_scale,0,false,0,0)).merged
+      probe_mask = region.transformed(RBA::ICplxTrans.new(probe_scale,0,false,0,0)).merged
+      raise 'Actual ODB upper mask differs from full native GDS: '+name unless (source_mask ^ probe_mask).is_empty?
     end
   end
   result[stage] = {'exact_union_readback'=>true,'areas_dbu2'=>areas,'path'=>path}
   result[stage]['exact_full_native_upper_mask_xor_zero'] = true if stage == 'before'
 end
-result['native_source'] = {'path'=>$source_gds,'dbu_um'=>native.dbu,'probe_dbu_um'=>0.0005,'exact_integer_scale'=>scale.round}
+result['native_source'] = {'path'=>$source_gds,'dbu_um'=>native.dbu,'probe_dbu_um'=>0.0005,
+  'common_dbu_um'=>native.dbu/native_scale,'exact_native_integer_scale'=>native_scale,'exact_probe_integer_scale'=>probe_scale}
 File.write($out+'/upper-mask-readback.json',JSON.pretty_generate(result)+"\n")
