@@ -33,6 +33,8 @@ git diff --check
 
 ## 未完成与下一步
 
+按用户继续监视/代跑要求，已在本机接续显式输出RC原生实验，无新增服务器allocation。已知DFF在两档R/三档load下完成12个whole/core model pair与2个exact reread；core+显式RC六个输出场景最大slack/slew差0.005330/0.004ps，whole高R高load时129.995570/178.927ps。已封存复核411个输出文件SHA，首个目录隔离拒绝失败也保留；控制115项。见《显式输出RC对照报告.md》及 `explicit-output-rc-summary.json` / `explicit-output-rc-index.json`。core输出参考面在RC前，不能直接替换现有M10物理pin模型；仍需主线审查真实集成/工作域，输入失败与正式资格false保持。
+
 最新输入残差分解已绑定原 probe/pair/SDC 并真实复算：A/C各756项输入slack差由源/父层驱动分量差解释后，最大残差0.006171/0.006513ps；未校正原验收。slew分开核对后，A输入/输出17/146项、C输入/输出0/106项超差。另以原始工具实际完成输出1Ω/20kΩ八个model pair、四个exact reread，20kΩ输出slew差44.883ps、setup乐观差25.454305ps。控制增至112，详见《输入残差分解与输出线阻控制报告.md》及 `input-output-residual-summary.json`；不能只修输入而忽略输出模型工作域。
 
 1. 原生 driver 归属已有改善证据；主线审查可维护的 min/max 与 driver 去嵌入合同。支线继续核对高R/不同驱动、Ceff/电容近似和port slew有效工作域，保留完整 V/SPEF/ODB flat 参考，不平行修改主线 exporter。
@@ -41,7 +43,7 @@ git diff --check
 4. 合格 C8 A/C 完整来源交付后逐一接收，继续补真实寄生归属与完整适用覆盖。不能把读回成功、无 active-net 判断的 annotation 清单或自报 ledger 当作完整证明。
 5. 主线负责生产、物理/功能接收与正式冻结，支线交付可复算的通过或失败报告。#127 不关闭、不标 done；本批 PR 审查不代替整体完成。
 
-恢复第一步：读取 #127 最新 Issue/PR 回执、《输入残差分解与输出线阻控制报告.md》及《原生驱动分量去嵌入报告.md》，保留先前原型与负结果；核对 run160/161、run168/169 的来源/接口/OBS，再复算最新probe或接收主线新模型/C8。无需重新派生分支或接管主线活动作业。
+恢复第一步：读取 #127 最新 Issue/PR 回执、《显式输出RC对照报告.md》、《输入残差分解与输出线阻控制报告.md》及《原生驱动分量去嵌入报告.md》，保留先前原型与负结果；核对 run160/161、run168/169 的来源/接口/OBS，再复算最新probe或接收主线新模型/C8。无需重新派生分支或接管主线活动作业。
 
 ## 协作接入回执
 

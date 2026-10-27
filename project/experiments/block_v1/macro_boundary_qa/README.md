@@ -188,3 +188,9 @@ run168 的新合同显式增加 raw/corrected Lib、supply correction、typed PG
 `input_driver_residual.py --probe PROBE_DIR --measured MEASURED_DIR --output NEW_JSON` 复验同源 probe 输入/输出、原候选、原始 pair TSV/SPEF 和加载绑定，再用源 driver 分量与父层实际 input arrival−原 SDC input delay 解释输入 slack 差。只支持当前 canonical 单时钟 T6K SDC、理想父层与此原型，两份导出日志上下文必须相同；缺项、重复、不同源或不支持语法拒绝。它不修改观察值、模型或验收结果。实际 A/C 各756项输入观测，解释后最大残差0.006171/0.006513ps。
 
 `native_control.py --output-resistance-ohm N` 独立改变输出 SPEF 电阻，默认1Ω。实际1Ω/20kΩ共八个model pair、四个exact reread；后者输出 slew 差44.883ps、setup乐观差25.454305ps。T6K C的106个slew超差全部来自输出，不以输入改善豁免。控制总数112，详见 `work/YUZE-LU/127/输入残差分解与输出线阻控制报告.md` 与 `input-output-residual-summary.json`。
+
+## 14. 显式输出 RC 的有限原生对照
+
+`explicit_output_rc.py --executable ORIGINAL_STA --library ORIGINAL_LIB --output NEW_DIR` 对已知 DFF 小例比较 whole 与 core+显式输出SPEF。精确保留两个输出电容/电阻/全部连接，core输出wire RC及导出load置零，clock/data网络不变；重复电容、错误父层连接、未知拓扑拒绝。两档R×三档输出load×两种表示，共12个model pair和2个exact reread，均实际执行与复算。
+
+显式RC的六个输出场景最大slack差0.005330ps、slew差0.004ps；whole高R/load10fF时为129.995570/178.927ps。输入失败继续保留，整模资格false。core参考面在RC前，不能直接替换现有M10物理pin Lib；真实集成需另审查公开M10pin与层次timing/RC视图的对应，不是移动pin或自动处理任意实际block。控制总数115。报告和411个输出文件的SHA封存索引见 `work/YUZE-LU/127/显式输出RC对照报告.md`、`explicit-output-rc-summary.json`、`explicit-output-rc-index.json`。
