@@ -59,7 +59,19 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-pin-access-probe':
+    if MODE=='native-via-route-group':
+        from native_via_route_group import verify
+        verify(ROOT,OUT,CPUS)
+    elif MODE in ('native-viaonly-run-transaction6k-a','native-viaonly-run-transaction6k-c'):
+        from native_reroute import implement
+        implement(ROOT,OUT,CPUS,run,'transaction6k',MODE[-1].upper(),pipeline='native_pipeline_viaonly.json')
+    elif MODE in ('native-viaonly-receive-transaction6k-a','native-viaonly-receive-transaction6k-c'):
+        from native_receive import verify
+        verify(ROOT,OUT,CPUS,run,'transaction6k',MODE[-1].upper(),pipeline='native_pipeline_viaonly.json')
+    elif MODE in ('native-viaonly-final-transaction6k-a','native-viaonly-final-transaction6k-c'):
+        from native_final_function import verify
+        verify(ROOT,OUT,CPUS,run,MODE[-1].upper(),pipeline='native_pipeline_viaonly.json')
+    elif MODE=='native-pin-access-probe':
         from native_pin_access_probe import verify
         verify(ROOT,OUT,CPUS)
     elif MODE=='native-diagnosis-group':

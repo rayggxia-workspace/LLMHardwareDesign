@@ -190,3 +190,6 @@ python project/experiments/block_v1/native_drc_geometry.py work/YUZE-LU/121/resu
 
 
 131同节点DRC/STA诊断实际通过；新 `native_receive` 的保护输入分类严格绑定其实际控制回执、同SHA库/分类模块和实际ODB精确清单，原始STA报告及全部物理负载保留。见[保护端点诊断与实证](decisions/2026-10-27-block-v1-passive-endpoint-diagnosis.md)。原120仍因23项DRC失败，不能冻结宏。
+
+
+有限via-only原生修复由 `native_pipeline_viaonly.json`、`native_via_route_group.py` 和 `native-via-route-group` 入口执行；实际输入绑定与覆盖参数风险见[接入证据及完整布线门槛](decisions/2026-10-27-block-v1-via-only-route.md)。两个叶任务目录仍为tasks/native-viaonly-run-transaction6k-a/c，独立回执，父组仅合并，不代替后续完整接收。
