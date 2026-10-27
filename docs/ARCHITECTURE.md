@@ -255,3 +255,6 @@ RAW_LIB_FOLDER需提供已按164收据封存的candidate164-a.lib/c.lib。只读
 
 
 180实际接收已通过：`results/run180-native-node-queue-terminal`及两joint-rc-native peer索引；fixture科学资格与纯组装/原生读回分开记录。完整原生输出/SPEF/ODB仍为宏时序参考；固定PR128 cb3a089输入残差已逐项复算，输出RC反例及输出slew超差未被修正或豁免，详细来源`work/YUZE-LU/121/macro-qa128-update-cb3a089.json`。
+
+
+新增`joint-routed-branch` / `joint-routed-via`：真实wire/via/pin三维导体并集逐体元匹配封存场几何，再在routed ODB原生导入六个SPEF正反例。九个纯几何控制通过，实际运行尚待182。via为单独科学fixture假设，无生产/完整DRC/一般提取/拼接资格。合同见docs/decisions/2026-10-27-block-v1-joint-routed-source.md。
