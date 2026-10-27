@@ -1,0 +1,3724 @@
+{
+  "nodes": [
+    {
+      "id": "n00000",
+      "name": "Constant_0",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/linear_attn/Pow_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Pow_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00001",
+      "name": "Constant_1",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/input_layernorm/Add_1_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Add_1_output_0": [
+          2560
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00002",
+      "name": "/layer/input_layernorm/Constant_3",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/input_layernorm/Constant_3_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Constant_3_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00003",
+      "name": "/layer/input_layernorm/Constant_4",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/input_layernorm/Constant_4_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Constant_4_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00004",
+      "name": "/layer/linear_attn/Constant_36",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/linear_attn/Constant_36_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Constant_36_output_0": [
+          1,
+          32,
+          2,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00005",
+      "name": "/layer/linear_attn/Constant_39",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/linear_attn/Constant_39_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Constant_39_output_0": [
+          1,
+          32,
+          128,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00006",
+      "name": "/layer/input_layernorm/Constant_1",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/input_layernorm/Constant_1_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Constant_1_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00007",
+      "name": "Constant_2",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/post_attention_layernorm/Add_1_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/Add_1_output_0": [
+          2560
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00008",
+      "name": "Constant_3",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/linear_attn/Concat_8_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Concat_8_output_0": [
+          1,
+          32,
+          1,
+          3
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00009",
+      "name": "Constant_4",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/linear_attn/Concat_6_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Concat_6_output_0": [
+          1,
+          32,
+          1,
+          3
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00010",
+      "name": "/layer/input_layernorm/Pow",
+      "op": "Pow",
+      "domain": "",
+      "inputs": [
+        "x",
+        "/layer/input_layernorm/Constant_1_output_0"
+      ],
+      "outputs": [
+        "/layer/input_layernorm/Pow_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Pow_output_0": [
+          1,
+          2,
+          2560
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00011",
+      "name": "/layer/input_layernorm/ReduceMean",
+      "op": "ReduceMean",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Pow_output_0"
+      ],
+      "outputs": [
+        "/layer/input_layernorm/ReduceMean_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/ReduceMean_output_0": [
+          1,
+          2,
+          1
+        ]
+      },
+      "attributes": {
+        "axes": "[-1]",
+        "keepdims": "1"
+      }
+    },
+    {
+      "id": "n00012",
+      "name": "/layer/input_layernorm/Add",
+      "op": "Add",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/ReduceMean_output_0",
+        "/layer/input_layernorm/Constant_3_output_0"
+      ],
+      "outputs": [
+        "/layer/input_layernorm/Add_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Add_output_0": [
+          1,
+          2,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00013",
+      "name": "/layer/input_layernorm/Sqrt",
+      "op": "Sqrt",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Add_output_0"
+      ],
+      "outputs": [
+        "/layer/input_layernorm/Sqrt_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Sqrt_output_0": [
+          1,
+          2,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00014",
+      "name": "/layer/input_layernorm/Div",
+      "op": "Div",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Constant_4_output_0",
+        "/layer/input_layernorm/Sqrt_output_0"
+      ],
+      "outputs": [
+        "/layer/input_layernorm/Div_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Div_output_0": [
+          1,
+          2,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00015",
+      "name": "/layer/input_layernorm/Mul",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "x",
+        "/layer/input_layernorm/Div_output_0"
+      ],
+      "outputs": [
+        "/layer/input_layernorm/Mul_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Mul_output_0": [
+          1,
+          2,
+          2560
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00016",
+      "name": "/layer/input_layernorm/Mul_1",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Mul_output_0",
+        "/layer/input_layernorm/Add_1_output_0"
+      ],
+      "outputs": [
+        "/layer/input_layernorm/Mul_1_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Mul_1_output_0": [
+          1,
+          2,
+          2560
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00017",
+      "name": "/layer/linear_attn/in_proj_qkv/MatMul",
+      "op": "MatMul",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Mul_1_output_0",
+        "/layer/linear_attn/in_proj_qkv/Transpose_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/in_proj_qkv/MatMul_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/in_proj_qkv/MatMul_output_0": [
+          1,
+          2,
+          8192
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00018",
+      "name": "/layer/linear_attn/Transpose",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/in_proj_qkv/MatMul_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Transpose_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Transpose_output_0": [
+          1,
+          8192,
+          2
+        ]
+      },
+      "attributes": {
+        "perm": "[0, 2, 1]"
+      }
+    },
+    {
+      "id": "n00019",
+      "name": "/layer/linear_attn/in_proj_z/MatMul",
+      "op": "MatMul",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Mul_1_output_0",
+        "/layer/linear_attn/in_proj_z/Transpose_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/in_proj_z/MatMul_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/in_proj_z/MatMul_output_0": [
+          1,
+          2,
+          4096
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00020",
+      "name": "/layer/linear_attn/in_proj_b/MatMul",
+      "op": "MatMul",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Mul_1_output_0",
+        "/layer/linear_attn/in_proj_b/Transpose_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/in_proj_b/MatMul_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/in_proj_b/MatMul_output_0": [
+          1,
+          2,
+          32
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00021",
+      "name": "/layer/linear_attn/Conv",
+      "op": "Conv",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Transpose_output_0",
+        "layer.linear_attn.conv1d.weight"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Conv_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Conv_output_0": [
+          1,
+          8192,
+          5
+        ]
+      },
+      "attributes": {
+        "dilations": "[1]",
+        "group": "8192",
+        "kernel_shape": "[4]",
+        "pads": "[3, 3]",
+        "strides": "[1]"
+      }
+    },
+    {
+      "id": "n00022",
+      "name": "/layer/linear_attn/Slice",
+      "op": "Slice",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Conv_output_0",
+        "_v_434",
+        "_v_429",
+        "_v_429",
+        "_v_428"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Slice_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Slice_output_0": [
+          1,
+          8192,
+          2
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00023",
+      "name": "/layer/linear_attn/Sigmoid",
+      "op": "Sigmoid",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Slice_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Sigmoid_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Sigmoid_output_0": [
+          1,
+          8192,
+          2
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00024",
+      "name": "/layer/linear_attn/Mul",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Slice_output_0",
+        "/layer/linear_attn/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Mul_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Mul_output_0": [
+          1,
+          8192,
+          2
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00025",
+      "name": "/layer/linear_attn/Transpose_1",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Mul_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Transpose_1_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Transpose_1_output_0": [
+          1,
+          2,
+          8192
+        ]
+      },
+      "attributes": {
+        "perm": "[0, 2, 1]"
+      }
+    },
+    {
+      "id": "n00026",
+      "name": "/layer/linear_attn/Split",
+      "op": "Split",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Transpose_1_output_0",
+        "_v_435"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Split_output_0",
+        "/layer/linear_attn/Split_output_1",
+        "/layer/linear_attn/Split_output_2"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Split_output_0": [
+          1,
+          2,
+          2048
+        ],
+        "/layer/linear_attn/Split_output_1": [
+          1,
+          2,
+          2048
+        ],
+        "/layer/linear_attn/Split_output_2": [
+          1,
+          2,
+          4096
+        ]
+      },
+      "attributes": {
+        "axis": "-1"
+      }
+    },
+    {
+      "id": "n00027",
+      "name": "/layer/linear_attn/Reshape_3",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Split_output_2",
+        "_v_432"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Reshape_3_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Reshape_3_output_0": [
+          1,
+          2,
+          32,
+          128
+        ]
+      },
+      "attributes": {
+        "allowzero": "0"
+      }
+    },
+    {
+      "id": "n00028",
+      "name": "/layer/linear_attn/Sigmoid_1",
+      "op": "Sigmoid",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/in_proj_b/MatMul_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Sigmoid_1_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Sigmoid_1_output_0": [
+          1,
+          2,
+          32
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00029",
+      "name": "Reshape_5",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Mul_1_output_0",
+        "_v_508"
+      ],
+      "outputs": [
+        "_v_507"
+      ],
+      "shapes": {
+        "_v_507": [
+          2,
+          2560
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00030",
+      "name": "Gemm_6",
+      "op": "Gemm",
+      "domain": "",
+      "inputs": [
+        "_v_507",
+        "/layer/linear_attn/in_proj_a/Transpose_output_0",
+        "layer.linear_attn.dt_bias"
+      ],
+      "outputs": [
+        "_v_765"
+      ],
+      "shapes": {
+        "_v_765": [
+          2,
+          32
+        ]
+      },
+      "attributes": {
+        "alpha": "1.0",
+        "beta": "1.0",
+        "transA": "0",
+        "transB": "0"
+      }
+    },
+    {
+      "id": "n00031",
+      "name": "Reshape_7",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "_v_765",
+        "_v_509"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Add_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Add_output_0": [
+          1,
+          2,
+          32
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00032",
+      "name": "/layer/linear_attn/Softplus",
+      "op": "Softplus",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Add_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Softplus_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Softplus_output_0": [
+          1,
+          2,
+          32
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00033",
+      "name": "/layer/linear_attn/Mul_1",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Neg_output_0",
+        "/layer/linear_attn/Softplus_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Mul_1_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Mul_1_output_0": [
+          1,
+          2,
+          32
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00034",
+      "name": "Reshape_8",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Split_output_0",
+        "_v_501"
+      ],
+      "outputs": [
+        "_v_503"
+      ],
+      "shapes": {
+        "_v_503": [
+          1,
+          2,
+          16,
+          1,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00035",
+      "name": "/layer/linear_attn/Tile",
+      "op": "Tile",
+      "domain": "",
+      "inputs": [
+        "_v_503",
+        "_v_437"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Tile_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Tile_output_0": [
+          1,
+          2,
+          16,
+          2,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00036",
+      "name": "/layer/linear_attn/Reshape_4",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Tile_output_0",
+        "_v_432"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Reshape_4_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Reshape_4_output_0": [
+          1,
+          2,
+          32,
+          128
+        ]
+      },
+      "attributes": {
+        "allowzero": "0"
+      }
+    },
+    {
+      "id": "n00037",
+      "name": "Reshape_9",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Split_output_1",
+        "_v_501"
+      ],
+      "outputs": [
+        "_v_506"
+      ],
+      "shapes": {
+        "_v_506": [
+          1,
+          2,
+          16,
+          1,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00038",
+      "name": "/layer/linear_attn/Tile_1",
+      "op": "Tile",
+      "domain": "",
+      "inputs": [
+        "_v_506",
+        "_v_437"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Tile_1_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Tile_1_output_0": [
+          1,
+          2,
+          16,
+          2,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00039",
+      "name": "/layer/linear_attn/Reshape_5",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Tile_1_output_0",
+        "_v_432"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Reshape_5_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Reshape_5_output_0": [
+          1,
+          2,
+          32,
+          128
+        ]
+      },
+      "attributes": {
+        "allowzero": "0"
+      }
+    },
+    {
+      "id": "n00040",
+      "name": "/layer/linear_attn/Transpose_2",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Reshape_4_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Transpose_2_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Transpose_2_output_0": [
+          1,
+          32,
+          2,
+          128
+        ]
+      },
+      "attributes": {
+        "perm": "[0, 2, 1, 3]"
+      }
+    },
+    {
+      "id": "n00041",
+      "name": "/layer/linear_attn/Transpose_3",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Reshape_5_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Transpose_3_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Transpose_3_output_0": [
+          1,
+          32,
+          2,
+          128
+        ]
+      },
+      "attributes": {
+        "perm": "[0, 2, 1, 3]"
+      }
+    },
+    {
+      "id": "n00042",
+      "name": "/layer/linear_attn/Transpose_4",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Reshape_3_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Transpose_4_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Transpose_4_output_0": [
+          1,
+          32,
+          2,
+          128
+        ]
+      },
+      "attributes": {
+        "perm": "[0, 2, 1, 3]"
+      }
+    },
+    {
+      "id": "n00043",
+      "name": "/layer/linear_attn/Transpose_5",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Sigmoid_1_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Transpose_5_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Transpose_5_output_0": [
+          1,
+          32,
+          2
+        ]
+      },
+      "attributes": {
+        "perm": "[0, 2, 1]"
+      }
+    },
+    {
+      "id": "n00044",
+      "name": "/layer/linear_attn/Transpose_6",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Mul_1_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Transpose_6_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Transpose_6_output_0": [
+          1,
+          32,
+          2
+        ]
+      },
+      "attributes": {
+        "perm": "[0, 2, 1]"
+      }
+    },
+    {
+      "id": "n00045",
+      "name": "/layer/linear_attn/Mul_2",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Transpose_2_output_0",
+        "/layer/linear_attn/Transpose_2_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Mul_2_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Mul_2_output_0": [
+          1,
+          32,
+          2,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00046",
+      "name": "/layer/linear_attn/ReduceSum",
+      "op": "ReduceSum",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Mul_2_output_0",
+        "_v_423"
+      ],
+      "outputs": [
+        "/layer/linear_attn/ReduceSum_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/ReduceSum_output_0": [
+          1,
+          32,
+          2,
+          1
+        ]
+      },
+      "attributes": {
+        "keepdims": "1"
+      }
+    },
+    {
+      "id": "n00047",
+      "name": "/layer/linear_attn/Add_1",
+      "op": "Add",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/ReduceSum_output_0",
+        "/layer/input_layernorm/Constant_3_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Add_1_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Add_1_output_0": [
+          1,
+          32,
+          2,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00048",
+      "name": "/layer/linear_attn/Sqrt",
+      "op": "Sqrt",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Add_1_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Sqrt_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Sqrt_output_0": [
+          1,
+          32,
+          2,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00049",
+      "name": "/layer/linear_attn/Div",
+      "op": "Div",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Constant_4_output_0",
+        "/layer/linear_attn/Sqrt_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Div_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Div_output_0": [
+          1,
+          32,
+          2,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00050",
+      "name": "/layer/linear_attn/Mul_3",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Transpose_2_output_0",
+        "/layer/linear_attn/Div_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Mul_3_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Mul_3_output_0": [
+          1,
+          32,
+          2,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00051",
+      "name": "/layer/linear_attn/Mul_4",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Transpose_3_output_0",
+        "/layer/linear_attn/Transpose_3_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Mul_4_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Mul_4_output_0": [
+          1,
+          32,
+          2,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00052",
+      "name": "/layer/linear_attn/ReduceSum_1",
+      "op": "ReduceSum",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Mul_4_output_0",
+        "_v_423"
+      ],
+      "outputs": [
+        "/layer/linear_attn/ReduceSum_1_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/ReduceSum_1_output_0": [
+          1,
+          32,
+          2,
+          1
+        ]
+      },
+      "attributes": {
+        "keepdims": "1"
+      }
+    },
+    {
+      "id": "n00053",
+      "name": "/layer/linear_attn/Add_2",
+      "op": "Add",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/ReduceSum_1_output_0",
+        "/layer/input_layernorm/Constant_3_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Add_2_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Add_2_output_0": [
+          1,
+          32,
+          2,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00054",
+      "name": "/layer/linear_attn/Sqrt_1",
+      "op": "Sqrt",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Add_2_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Sqrt_1_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Sqrt_1_output_0": [
+          1,
+          32,
+          2,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00055",
+      "name": "/layer/linear_attn/Div_1",
+      "op": "Div",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Constant_4_output_0",
+        "/layer/linear_attn/Sqrt_1_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Div_1_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Div_1_output_0": [
+          1,
+          32,
+          2,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00056",
+      "name": "/layer/linear_attn/Mul_5",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Transpose_3_output_0",
+        "/layer/linear_attn/Div_1_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Mul_5_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Mul_5_output_0": [
+          1,
+          32,
+          2,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00057",
+      "name": "/layer/linear_attn/Div_2",
+      "op": "Div",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Mul_3_output_0",
+        "/layer/linear_attn/Pow_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Div_2_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Div_2_output_0": [
+          1,
+          32,
+          2,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00058",
+      "name": "/layer/linear_attn/Gather",
+      "op": "Gather",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Div_2_output_0",
+        "_v_425"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Gather_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Gather_output_0": [
+          1,
+          32,
+          128
+        ]
+      },
+      "attributes": {
+        "axis": "2"
+      }
+    },
+    {
+      "id": "n00059",
+      "name": "/layer/linear_attn/Gather_1",
+      "op": "Gather",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Mul_5_output_0",
+        "_v_425"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Gather_1_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Gather_1_output_0": [
+          1,
+          32,
+          128
+        ]
+      },
+      "attributes": {
+        "axis": "2"
+      }
+    },
+    {
+      "id": "n00060",
+      "name": "/layer/linear_attn/Gather_2",
+      "op": "Gather",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Transpose_4_output_0",
+        "_v_425"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Gather_2_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Gather_2_output_0": [
+          1,
+          32,
+          128
+        ]
+      },
+      "attributes": {
+        "axis": "2"
+      }
+    },
+    {
+      "id": "n00061",
+      "name": "/layer/linear_attn/Gather_3",
+      "op": "Gather",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Transpose_6_output_0",
+        "_v_425"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Gather_3_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Gather_3_output_0": [
+          1,
+          32
+        ]
+      },
+      "attributes": {
+        "axis": "2"
+      }
+    },
+    {
+      "id": "n00062",
+      "name": "/layer/linear_attn/Exp_1",
+      "op": "Exp",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Gather_3_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Exp_1_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Exp_1_output_0": [
+          1,
+          32
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00063",
+      "name": "/layer/linear_attn/Unsqueeze_24",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Exp_1_output_0",
+        "_v_397"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Unsqueeze_24_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Unsqueeze_24_output_0": [
+          1,
+          32,
+          1,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00064",
+      "name": "/layer/linear_attn/Mul_6",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Constant_39_output_0",
+        "/layer/linear_attn/Unsqueeze_24_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Mul_6_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Mul_6_output_0": [
+          1,
+          32,
+          128,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00065",
+      "name": "/layer/linear_attn/Gather_4",
+      "op": "Gather",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Transpose_5_output_0",
+        "_v_425"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Gather_4_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Gather_4_output_0": [
+          1,
+          32
+        ]
+      },
+      "attributes": {
+        "axis": "2"
+      }
+    },
+    {
+      "id": "n00066",
+      "name": "/layer/linear_attn/Unsqueeze_25",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Gather_4_output_0",
+        "_v_423"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Unsqueeze_25_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Unsqueeze_25_output_0": [
+          1,
+          32,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00067",
+      "name": "/layer/linear_attn/Unsqueeze_26",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Gather_1_output_0",
+        "_v_423"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Unsqueeze_26_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Unsqueeze_26_output_0": [
+          1,
+          32,
+          128,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00068",
+      "name": "/layer/linear_attn/Mul_7",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Mul_6_output_0",
+        "/layer/linear_attn/Unsqueeze_26_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Mul_7_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Mul_7_output_0": [
+          1,
+          32,
+          128,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00069",
+      "name": "/layer/linear_attn/ReduceSum_2",
+      "op": "ReduceSum",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Mul_7_output_0",
+        "_v_446"
+      ],
+      "outputs": [
+        "/layer/linear_attn/ReduceSum_2_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/ReduceSum_2_output_0": [
+          1,
+          32,
+          128
+        ]
+      },
+      "attributes": {
+        "keepdims": "0"
+      }
+    },
+    {
+      "id": "n00070",
+      "name": "/layer/linear_attn/Sub",
+      "op": "Sub",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Gather_2_output_0",
+        "/layer/linear_attn/ReduceSum_2_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Sub_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Sub_output_0": [
+          1,
+          32,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00071",
+      "name": "/layer/linear_attn/Mul_8",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Sub_output_0",
+        "/layer/linear_attn/Unsqueeze_25_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Mul_8_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Mul_8_output_0": [
+          1,
+          32,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00072",
+      "name": "/layer/linear_attn/Unsqueeze_27",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Mul_8_output_0",
+        "_v_446"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Unsqueeze_27_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Unsqueeze_27_output_0": [
+          1,
+          32,
+          1,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00073",
+      "name": "/layer/linear_attn/Mul_9",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Unsqueeze_26_output_0",
+        "/layer/linear_attn/Unsqueeze_27_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Mul_9_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Mul_9_output_0": [
+          1,
+          32,
+          128,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00074",
+      "name": "/layer/linear_attn/Add_3",
+      "op": "Add",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Mul_6_output_0",
+        "/layer/linear_attn/Mul_9_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Add_3_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Add_3_output_0": [
+          1,
+          32,
+          128,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00075",
+      "name": "/layer/linear_attn/Unsqueeze_28",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Gather_output_0",
+        "_v_423"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Unsqueeze_28_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Unsqueeze_28_output_0": [
+          1,
+          32,
+          128,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00076",
+      "name": "/layer/linear_attn/Mul_10",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Add_3_output_0",
+        "/layer/linear_attn/Unsqueeze_28_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Mul_10_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Mul_10_output_0": [
+          1,
+          32,
+          128,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00077",
+      "name": "/layer/linear_attn/ReduceSum_3",
+      "op": "ReduceSum",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Mul_10_output_0",
+        "_v_446"
+      ],
+      "outputs": [
+        "/layer/linear_attn/ReduceSum_3_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/ReduceSum_3_output_0": [
+          1,
+          32,
+          128
+        ]
+      },
+      "attributes": {
+        "keepdims": "0"
+      }
+    },
+    {
+      "id": "n00078",
+      "name": "/layer/linear_attn/Reshape_6",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/ReduceSum_3_output_0",
+        "_v_417"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Reshape_6_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Reshape_6_output_0": [
+          1,
+          32,
+          1,
+          128
+        ]
+      },
+      "attributes": {
+        "allowzero": "0"
+      }
+    },
+    {
+      "id": "n00079",
+      "name": "/layer/linear_attn/ScatterND",
+      "op": "ScatterND",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Constant_36_output_0",
+        "/layer/linear_attn/Concat_6_output_0",
+        "/layer/linear_attn/Reshape_6_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/ScatterND_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/ScatterND_output_0": [
+          1,
+          32,
+          2,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00080",
+      "name": "/layer/linear_attn/Gather_5",
+      "op": "Gather",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Div_2_output_0",
+        "_v_424"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Gather_5_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Gather_5_output_0": [
+          1,
+          32,
+          128
+        ]
+      },
+      "attributes": {
+        "axis": "2"
+      }
+    },
+    {
+      "id": "n00081",
+      "name": "/layer/linear_attn/Gather_6",
+      "op": "Gather",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Mul_5_output_0",
+        "_v_424"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Gather_6_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Gather_6_output_0": [
+          1,
+          32,
+          128
+        ]
+      },
+      "attributes": {
+        "axis": "2"
+      }
+    },
+    {
+      "id": "n00082",
+      "name": "/layer/linear_attn/Gather_7",
+      "op": "Gather",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Transpose_4_output_0",
+        "_v_424"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Gather_7_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Gather_7_output_0": [
+          1,
+          32,
+          128
+        ]
+      },
+      "attributes": {
+        "axis": "2"
+      }
+    },
+    {
+      "id": "n00083",
+      "name": "/layer/linear_attn/Gather_8",
+      "op": "Gather",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Transpose_6_output_0",
+        "_v_424"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Gather_8_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Gather_8_output_0": [
+          1,
+          32
+        ]
+      },
+      "attributes": {
+        "axis": "2"
+      }
+    },
+    {
+      "id": "n00084",
+      "name": "/layer/linear_attn/Exp_2",
+      "op": "Exp",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Gather_8_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Exp_2_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Exp_2_output_0": [
+          1,
+          32
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00085",
+      "name": "/layer/linear_attn/Unsqueeze_33",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Exp_2_output_0",
+        "_v_397"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Unsqueeze_33_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Unsqueeze_33_output_0": [
+          1,
+          32,
+          1,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00086",
+      "name": "/layer/linear_attn/Mul_14",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Add_3_output_0",
+        "/layer/linear_attn/Unsqueeze_33_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Mul_14_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Mul_14_output_0": [
+          1,
+          32,
+          128,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00087",
+      "name": "/layer/linear_attn/Gather_9",
+      "op": "Gather",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Transpose_5_output_0",
+        "_v_424"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Gather_9_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Gather_9_output_0": [
+          1,
+          32
+        ]
+      },
+      "attributes": {
+        "axis": "2"
+      }
+    },
+    {
+      "id": "n00088",
+      "name": "/layer/linear_attn/Unsqueeze_34",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Gather_9_output_0",
+        "_v_423"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Unsqueeze_34_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Unsqueeze_34_output_0": [
+          1,
+          32,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00089",
+      "name": "/layer/linear_attn/Unsqueeze_35",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Gather_6_output_0",
+        "_v_423"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Unsqueeze_35_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Unsqueeze_35_output_0": [
+          1,
+          32,
+          128,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00090",
+      "name": "/layer/linear_attn/Mul_15",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Mul_14_output_0",
+        "/layer/linear_attn/Unsqueeze_35_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Mul_15_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Mul_15_output_0": [
+          1,
+          32,
+          128,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00091",
+      "name": "/layer/linear_attn/ReduceSum_4",
+      "op": "ReduceSum",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Mul_15_output_0",
+        "_v_446"
+      ],
+      "outputs": [
+        "/layer/linear_attn/ReduceSum_4_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/ReduceSum_4_output_0": [
+          1,
+          32,
+          128
+        ]
+      },
+      "attributes": {
+        "keepdims": "0"
+      }
+    },
+    {
+      "id": "n00092",
+      "name": "/layer/linear_attn/Sub_1",
+      "op": "Sub",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Gather_7_output_0",
+        "/layer/linear_attn/ReduceSum_4_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Sub_1_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Sub_1_output_0": [
+          1,
+          32,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00093",
+      "name": "/layer/linear_attn/Mul_16",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Sub_1_output_0",
+        "/layer/linear_attn/Unsqueeze_34_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Mul_16_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Mul_16_output_0": [
+          1,
+          32,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00094",
+      "name": "/layer/linear_attn/Unsqueeze_36",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Mul_16_output_0",
+        "_v_446"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Unsqueeze_36_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Unsqueeze_36_output_0": [
+          1,
+          32,
+          1,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00095",
+      "name": "/layer/linear_attn/Mul_17",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Unsqueeze_35_output_0",
+        "/layer/linear_attn/Unsqueeze_36_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Mul_17_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Mul_17_output_0": [
+          1,
+          32,
+          128,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00096",
+      "name": "/layer/linear_attn/Add_6",
+      "op": "Add",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Mul_14_output_0",
+        "/layer/linear_attn/Mul_17_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Add_6_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Add_6_output_0": [
+          1,
+          32,
+          128,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00097",
+      "name": "/layer/linear_attn/Unsqueeze_37",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Gather_5_output_0",
+        "_v_423"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Unsqueeze_37_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Unsqueeze_37_output_0": [
+          1,
+          32,
+          128,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00098",
+      "name": "/layer/linear_attn/Mul_18",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Add_6_output_0",
+        "/layer/linear_attn/Unsqueeze_37_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Mul_18_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Mul_18_output_0": [
+          1,
+          32,
+          128,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00099",
+      "name": "/layer/linear_attn/ReduceSum_5",
+      "op": "ReduceSum",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Mul_18_output_0",
+        "_v_446"
+      ],
+      "outputs": [
+        "/layer/linear_attn/ReduceSum_5_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/ReduceSum_5_output_0": [
+          1,
+          32,
+          128
+        ]
+      },
+      "attributes": {
+        "keepdims": "0"
+      }
+    },
+    {
+      "id": "n00100",
+      "name": "/layer/linear_attn/Reshape_7",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/ReduceSum_5_output_0",
+        "_v_417"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Reshape_7_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Reshape_7_output_0": [
+          1,
+          32,
+          1,
+          128
+        ]
+      },
+      "attributes": {
+        "allowzero": "0"
+      }
+    },
+    {
+      "id": "n00101",
+      "name": "/layer/linear_attn/ScatterND_1",
+      "op": "ScatterND",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/ScatterND_output_0",
+        "/layer/linear_attn/Concat_8_output_0",
+        "/layer/linear_attn/Reshape_7_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/ScatterND_1_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/ScatterND_1_output_0": [
+          1,
+          32,
+          2,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00102",
+      "name": "/layer/linear_attn/Transpose_7",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/ScatterND_1_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Transpose_7_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Transpose_7_output_0": [
+          1,
+          2,
+          32,
+          128
+        ]
+      },
+      "attributes": {
+        "perm": "[0, 2, 1, 3]"
+      }
+    },
+    {
+      "id": "n00103",
+      "name": "/layer/linear_attn/Reshape_8",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Transpose_7_output_0",
+        "_v_450"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Reshape_8_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Reshape_8_output_0": [
+          64,
+          128
+        ]
+      },
+      "attributes": {
+        "allowzero": "0"
+      }
+    },
+    {
+      "id": "n00104",
+      "name": "/layer/linear_attn/Reshape_9",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/in_proj_z/MatMul_output_0",
+        "_v_450"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Reshape_9_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Reshape_9_output_0": [
+          64,
+          128
+        ]
+      },
+      "attributes": {
+        "allowzero": "0"
+      }
+    },
+    {
+      "id": "n00105",
+      "name": "/layer/linear_attn/norm/Pow",
+      "op": "Pow",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Reshape_8_output_0",
+        "/layer/input_layernorm/Constant_1_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/norm/Pow_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/norm/Pow_output_0": [
+          64,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00106",
+      "name": "/layer/linear_attn/norm/ReduceMean",
+      "op": "ReduceMean",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/norm/Pow_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/norm/ReduceMean_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/norm/ReduceMean_output_0": [
+          64,
+          1
+        ]
+      },
+      "attributes": {
+        "axes": "[-1]",
+        "keepdims": "1"
+      }
+    },
+    {
+      "id": "n00107",
+      "name": "/layer/linear_attn/norm/Add",
+      "op": "Add",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/norm/ReduceMean_output_0",
+        "/layer/input_layernorm/Constant_3_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/norm/Add_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/norm/Add_output_0": [
+          64,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00108",
+      "name": "/layer/linear_attn/norm/Sqrt",
+      "op": "Sqrt",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/norm/Add_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/norm/Sqrt_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/norm/Sqrt_output_0": [
+          64,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00109",
+      "name": "/layer/linear_attn/norm/Div",
+      "op": "Div",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Constant_4_output_0",
+        "/layer/linear_attn/norm/Sqrt_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/norm/Div_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/norm/Div_output_0": [
+          64,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00110",
+      "name": "/layer/linear_attn/norm/Mul",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Reshape_8_output_0",
+        "/layer/linear_attn/norm/Div_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/norm/Mul_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/norm/Mul_output_0": [
+          64,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00111",
+      "name": "/layer/linear_attn/norm/Mul_1",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "layer.linear_attn.norm.weight",
+        "/layer/linear_attn/norm/Mul_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/norm/Mul_1_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/norm/Mul_1_output_0": [
+          64,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00112",
+      "name": "/layer/linear_attn/norm/Sigmoid",
+      "op": "Sigmoid",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Reshape_9_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/norm/Sigmoid_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/norm/Sigmoid_output_0": [
+          64,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00113",
+      "name": "/layer/linear_attn/norm/Mul_2",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Reshape_9_output_0",
+        "/layer/linear_attn/norm/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/norm/Mul_2_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/norm/Mul_2_output_0": [
+          64,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00114",
+      "name": "/layer/linear_attn/norm/Mul_3",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/norm/Mul_1_output_0",
+        "/layer/linear_attn/norm/Mul_2_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/norm/Mul_3_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/norm/Mul_3_output_0": [
+          64,
+          128
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00115",
+      "name": "/layer/linear_attn/Reshape_10",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/norm/Mul_3_output_0",
+        "_v_451"
+      ],
+      "outputs": [
+        "/layer/linear_attn/Reshape_10_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/Reshape_10_output_0": [
+          1,
+          2,
+          4096
+        ]
+      },
+      "attributes": {
+        "allowzero": "0"
+      }
+    },
+    {
+      "id": "n00116",
+      "name": "/layer/linear_attn/out_proj/MatMul",
+      "op": "MatMul",
+      "domain": "",
+      "inputs": [
+        "/layer/linear_attn/Reshape_10_output_0",
+        "/layer/linear_attn/out_proj/Transpose_output_0"
+      ],
+      "outputs": [
+        "/layer/linear_attn/out_proj/MatMul_output_0"
+      ],
+      "shapes": {
+        "/layer/linear_attn/out_proj/MatMul_output_0": [
+          1,
+          2,
+          2560
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00117",
+      "name": "/layer/Add",
+      "op": "Add",
+      "domain": "",
+      "inputs": [
+        "x",
+        "/layer/linear_attn/out_proj/MatMul_output_0"
+      ],
+      "outputs": [
+        "/layer/Add_output_0"
+      ],
+      "shapes": {
+        "/layer/Add_output_0": [
+          1,
+          2,
+          2560
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00118",
+      "name": "/layer/post_attention_layernorm/Pow",
+      "op": "Pow",
+      "domain": "",
+      "inputs": [
+        "/layer/Add_output_0",
+        "/layer/input_layernorm/Constant_1_output_0"
+      ],
+      "outputs": [
+        "/layer/post_attention_layernorm/Pow_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/Pow_output_0": [
+          1,
+          2,
+          2560
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00119",
+      "name": "/layer/post_attention_layernorm/ReduceMean",
+      "op": "ReduceMean",
+      "domain": "",
+      "inputs": [
+        "/layer/post_attention_layernorm/Pow_output_0"
+      ],
+      "outputs": [
+        "/layer/post_attention_layernorm/ReduceMean_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/ReduceMean_output_0": [
+          1,
+          2,
+          1
+        ]
+      },
+      "attributes": {
+        "axes": "[-1]",
+        "keepdims": "1"
+      }
+    },
+    {
+      "id": "n00120",
+      "name": "/layer/post_attention_layernorm/Add",
+      "op": "Add",
+      "domain": "",
+      "inputs": [
+        "/layer/post_attention_layernorm/ReduceMean_output_0",
+        "/layer/input_layernorm/Constant_3_output_0"
+      ],
+      "outputs": [
+        "/layer/post_attention_layernorm/Add_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/Add_output_0": [
+          1,
+          2,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00121",
+      "name": "/layer/post_attention_layernorm/Sqrt",
+      "op": "Sqrt",
+      "domain": "",
+      "inputs": [
+        "/layer/post_attention_layernorm/Add_output_0"
+      ],
+      "outputs": [
+        "/layer/post_attention_layernorm/Sqrt_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/Sqrt_output_0": [
+          1,
+          2,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00122",
+      "name": "/layer/post_attention_layernorm/Div",
+      "op": "Div",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Constant_4_output_0",
+        "/layer/post_attention_layernorm/Sqrt_output_0"
+      ],
+      "outputs": [
+        "/layer/post_attention_layernorm/Div_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/Div_output_0": [
+          1,
+          2,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00123",
+      "name": "/layer/post_attention_layernorm/Mul",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/Add_output_0",
+        "/layer/post_attention_layernorm/Div_output_0"
+      ],
+      "outputs": [
+        "/layer/post_attention_layernorm/Mul_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/Mul_output_0": [
+          1,
+          2,
+          2560
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00124",
+      "name": "/layer/post_attention_layernorm/Mul_1",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/post_attention_layernorm/Mul_output_0",
+        "/layer/post_attention_layernorm/Add_1_output_0"
+      ],
+      "outputs": [
+        "/layer/post_attention_layernorm/Mul_1_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/Mul_1_output_0": [
+          1,
+          2,
+          2560
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00125",
+      "name": "/layer/mlp/gate_proj/MatMul",
+      "op": "MatMul",
+      "domain": "",
+      "inputs": [
+        "/layer/post_attention_layernorm/Mul_1_output_0",
+        "/layer/mlp/gate_proj/Transpose_output_0"
+      ],
+      "outputs": [
+        "/layer/mlp/gate_proj/MatMul_output_0"
+      ],
+      "shapes": {
+        "/layer/mlp/gate_proj/MatMul_output_0": [
+          1,
+          2,
+          9216
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00126",
+      "name": "/layer/mlp/act_fn/Sigmoid",
+      "op": "Sigmoid",
+      "domain": "",
+      "inputs": [
+        "/layer/mlp/gate_proj/MatMul_output_0"
+      ],
+      "outputs": [
+        "/layer/mlp/act_fn/Sigmoid_output_0"
+      ],
+      "shapes": {
+        "/layer/mlp/act_fn/Sigmoid_output_0": [
+          1,
+          2,
+          9216
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00127",
+      "name": "/layer/mlp/act_fn/Mul",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/mlp/gate_proj/MatMul_output_0",
+        "/layer/mlp/act_fn/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/layer/mlp/act_fn/Mul_output_0"
+      ],
+      "shapes": {
+        "/layer/mlp/act_fn/Mul_output_0": [
+          1,
+          2,
+          9216
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00128",
+      "name": "/layer/mlp/up_proj/MatMul",
+      "op": "MatMul",
+      "domain": "",
+      "inputs": [
+        "/layer/post_attention_layernorm/Mul_1_output_0",
+        "/layer/mlp/up_proj/Transpose_output_0"
+      ],
+      "outputs": [
+        "/layer/mlp/up_proj/MatMul_output_0"
+      ],
+      "shapes": {
+        "/layer/mlp/up_proj/MatMul_output_0": [
+          1,
+          2,
+          9216
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00129",
+      "name": "/layer/mlp/Mul",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/mlp/act_fn/Mul_output_0",
+        "/layer/mlp/up_proj/MatMul_output_0"
+      ],
+      "outputs": [
+        "/layer/mlp/Mul_output_0"
+      ],
+      "shapes": {
+        "/layer/mlp/Mul_output_0": [
+          1,
+          2,
+          9216
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00130",
+      "name": "/layer/mlp/down_proj/MatMul",
+      "op": "MatMul",
+      "domain": "",
+      "inputs": [
+        "/layer/mlp/Mul_output_0",
+        "/layer/mlp/down_proj/Transpose_output_0"
+      ],
+      "outputs": [
+        "/layer/mlp/down_proj/MatMul_output_0"
+      ],
+      "shapes": {
+        "/layer/mlp/down_proj/MatMul_output_0": [
+          1,
+          2,
+          2560
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00131",
+      "name": "/layer/Add_1",
+      "op": "Add",
+      "domain": "",
+      "inputs": [
+        "/layer/Add_output_0",
+        "/layer/mlp/down_proj/MatMul_output_0"
+      ],
+      "outputs": [
+        "y"
+      ],
+      "shapes": {
+        "y": [
+          1,
+          2,
+          2560
+        ]
+      },
+      "attributes": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "n00006",
+      "target": "n00010",
+      "tensor": "/layer/input_layernorm/Constant_1_output_0"
+    },
+    {
+      "source": "n00010",
+      "target": "n00011",
+      "tensor": "/layer/input_layernorm/Pow_output_0"
+    },
+    {
+      "source": "n00011",
+      "target": "n00012",
+      "tensor": "/layer/input_layernorm/ReduceMean_output_0"
+    },
+    {
+      "source": "n00002",
+      "target": "n00012",
+      "tensor": "/layer/input_layernorm/Constant_3_output_0"
+    },
+    {
+      "source": "n00012",
+      "target": "n00013",
+      "tensor": "/layer/input_layernorm/Add_output_0"
+    },
+    {
+      "source": "n00003",
+      "target": "n00014",
+      "tensor": "/layer/input_layernorm/Constant_4_output_0"
+    },
+    {
+      "source": "n00013",
+      "target": "n00014",
+      "tensor": "/layer/input_layernorm/Sqrt_output_0"
+    },
+    {
+      "source": "n00014",
+      "target": "n00015",
+      "tensor": "/layer/input_layernorm/Div_output_0"
+    },
+    {
+      "source": "n00015",
+      "target": "n00016",
+      "tensor": "/layer/input_layernorm/Mul_output_0"
+    },
+    {
+      "source": "n00001",
+      "target": "n00016",
+      "tensor": "/layer/input_layernorm/Add_1_output_0"
+    },
+    {
+      "source": "n00016",
+      "target": "n00017",
+      "tensor": "/layer/input_layernorm/Mul_1_output_0"
+    },
+    {
+      "source": "n00017",
+      "target": "n00018",
+      "tensor": "/layer/linear_attn/in_proj_qkv/MatMul_output_0"
+    },
+    {
+      "source": "n00016",
+      "target": "n00019",
+      "tensor": "/layer/input_layernorm/Mul_1_output_0"
+    },
+    {
+      "source": "n00016",
+      "target": "n00020",
+      "tensor": "/layer/input_layernorm/Mul_1_output_0"
+    },
+    {
+      "source": "n00018",
+      "target": "n00021",
+      "tensor": "/layer/linear_attn/Transpose_output_0"
+    },
+    {
+      "source": "n00021",
+      "target": "n00022",
+      "tensor": "/layer/linear_attn/Conv_output_0"
+    },
+    {
+      "source": "n00022",
+      "target": "n00023",
+      "tensor": "/layer/linear_attn/Slice_output_0"
+    },
+    {
+      "source": "n00022",
+      "target": "n00024",
+      "tensor": "/layer/linear_attn/Slice_output_0"
+    },
+    {
+      "source": "n00023",
+      "target": "n00024",
+      "tensor": "/layer/linear_attn/Sigmoid_output_0"
+    },
+    {
+      "source": "n00024",
+      "target": "n00025",
+      "tensor": "/layer/linear_attn/Mul_output_0"
+    },
+    {
+      "source": "n00025",
+      "target": "n00026",
+      "tensor": "/layer/linear_attn/Transpose_1_output_0"
+    },
+    {
+      "source": "n00026",
+      "target": "n00027",
+      "tensor": "/layer/linear_attn/Split_output_2"
+    },
+    {
+      "source": "n00020",
+      "target": "n00028",
+      "tensor": "/layer/linear_attn/in_proj_b/MatMul_output_0"
+    },
+    {
+      "source": "n00016",
+      "target": "n00029",
+      "tensor": "/layer/input_layernorm/Mul_1_output_0"
+    },
+    {
+      "source": "n00029",
+      "target": "n00030",
+      "tensor": "_v_507"
+    },
+    {
+      "source": "n00030",
+      "target": "n00031",
+      "tensor": "_v_765"
+    },
+    {
+      "source": "n00031",
+      "target": "n00032",
+      "tensor": "/layer/linear_attn/Add_output_0"
+    },
+    {
+      "source": "n00032",
+      "target": "n00033",
+      "tensor": "/layer/linear_attn/Softplus_output_0"
+    },
+    {
+      "source": "n00026",
+      "target": "n00034",
+      "tensor": "/layer/linear_attn/Split_output_0"
+    },
+    {
+      "source": "n00034",
+      "target": "n00035",
+      "tensor": "_v_503"
+    },
+    {
+      "source": "n00035",
+      "target": "n00036",
+      "tensor": "/layer/linear_attn/Tile_output_0"
+    },
+    {
+      "source": "n00026",
+      "target": "n00037",
+      "tensor": "/layer/linear_attn/Split_output_1"
+    },
+    {
+      "source": "n00037",
+      "target": "n00038",
+      "tensor": "_v_506"
+    },
+    {
+      "source": "n00038",
+      "target": "n00039",
+      "tensor": "/layer/linear_attn/Tile_1_output_0"
+    },
+    {
+      "source": "n00036",
+      "target": "n00040",
+      "tensor": "/layer/linear_attn/Reshape_4_output_0"
+    },
+    {
+      "source": "n00039",
+      "target": "n00041",
+      "tensor": "/layer/linear_attn/Reshape_5_output_0"
+    },
+    {
+      "source": "n00027",
+      "target": "n00042",
+      "tensor": "/layer/linear_attn/Reshape_3_output_0"
+    },
+    {
+      "source": "n00028",
+      "target": "n00043",
+      "tensor": "/layer/linear_attn/Sigmoid_1_output_0"
+    },
+    {
+      "source": "n00033",
+      "target": "n00044",
+      "tensor": "/layer/linear_attn/Mul_1_output_0"
+    },
+    {
+      "source": "n00040",
+      "target": "n00045",
+      "tensor": "/layer/linear_attn/Transpose_2_output_0"
+    },
+    {
+      "source": "n00040",
+      "target": "n00045",
+      "tensor": "/layer/linear_attn/Transpose_2_output_0"
+    },
+    {
+      "source": "n00045",
+      "target": "n00046",
+      "tensor": "/layer/linear_attn/Mul_2_output_0"
+    },
+    {
+      "source": "n00046",
+      "target": "n00047",
+      "tensor": "/layer/linear_attn/ReduceSum_output_0"
+    },
+    {
+      "source": "n00002",
+      "target": "n00047",
+      "tensor": "/layer/input_layernorm/Constant_3_output_0"
+    },
+    {
+      "source": "n00047",
+      "target": "n00048",
+      "tensor": "/layer/linear_attn/Add_1_output_0"
+    },
+    {
+      "source": "n00003",
+      "target": "n00049",
+      "tensor": "/layer/input_layernorm/Constant_4_output_0"
+    },
+    {
+      "source": "n00048",
+      "target": "n00049",
+      "tensor": "/layer/linear_attn/Sqrt_output_0"
+    },
+    {
+      "source": "n00040",
+      "target": "n00050",
+      "tensor": "/layer/linear_attn/Transpose_2_output_0"
+    },
+    {
+      "source": "n00049",
+      "target": "n00050",
+      "tensor": "/layer/linear_attn/Div_output_0"
+    },
+    {
+      "source": "n00041",
+      "target": "n00051",
+      "tensor": "/layer/linear_attn/Transpose_3_output_0"
+    },
+    {
+      "source": "n00041",
+      "target": "n00051",
+      "tensor": "/layer/linear_attn/Transpose_3_output_0"
+    },
+    {
+      "source": "n00051",
+      "target": "n00052",
+      "tensor": "/layer/linear_attn/Mul_4_output_0"
+    },
+    {
+      "source": "n00052",
+      "target": "n00053",
+      "tensor": "/layer/linear_attn/ReduceSum_1_output_0"
+    },
+    {
+      "source": "n00002",
+      "target": "n00053",
+      "tensor": "/layer/input_layernorm/Constant_3_output_0"
+    },
+    {
+      "source": "n00053",
+      "target": "n00054",
+      "tensor": "/layer/linear_attn/Add_2_output_0"
+    },
+    {
+      "source": "n00003",
+      "target": "n00055",
+      "tensor": "/layer/input_layernorm/Constant_4_output_0"
+    },
+    {
+      "source": "n00054",
+      "target": "n00055",
+      "tensor": "/layer/linear_attn/Sqrt_1_output_0"
+    },
+    {
+      "source": "n00041",
+      "target": "n00056",
+      "tensor": "/layer/linear_attn/Transpose_3_output_0"
+    },
+    {
+      "source": "n00055",
+      "target": "n00056",
+      "tensor": "/layer/linear_attn/Div_1_output_0"
+    },
+    {
+      "source": "n00050",
+      "target": "n00057",
+      "tensor": "/layer/linear_attn/Mul_3_output_0"
+    },
+    {
+      "source": "n00000",
+      "target": "n00057",
+      "tensor": "/layer/linear_attn/Pow_output_0"
+    },
+    {
+      "source": "n00057",
+      "target": "n00058",
+      "tensor": "/layer/linear_attn/Div_2_output_0"
+    },
+    {
+      "source": "n00056",
+      "target": "n00059",
+      "tensor": "/layer/linear_attn/Mul_5_output_0"
+    },
+    {
+      "source": "n00042",
+      "target": "n00060",
+      "tensor": "/layer/linear_attn/Transpose_4_output_0"
+    },
+    {
+      "source": "n00044",
+      "target": "n00061",
+      "tensor": "/layer/linear_attn/Transpose_6_output_0"
+    },
+    {
+      "source": "n00061",
+      "target": "n00062",
+      "tensor": "/layer/linear_attn/Gather_3_output_0"
+    },
+    {
+      "source": "n00062",
+      "target": "n00063",
+      "tensor": "/layer/linear_attn/Exp_1_output_0"
+    },
+    {
+      "source": "n00005",
+      "target": "n00064",
+      "tensor": "/layer/linear_attn/Constant_39_output_0"
+    },
+    {
+      "source": "n00063",
+      "target": "n00064",
+      "tensor": "/layer/linear_attn/Unsqueeze_24_output_0"
+    },
+    {
+      "source": "n00043",
+      "target": "n00065",
+      "tensor": "/layer/linear_attn/Transpose_5_output_0"
+    },
+    {
+      "source": "n00065",
+      "target": "n00066",
+      "tensor": "/layer/linear_attn/Gather_4_output_0"
+    },
+    {
+      "source": "n00059",
+      "target": "n00067",
+      "tensor": "/layer/linear_attn/Gather_1_output_0"
+    },
+    {
+      "source": "n00064",
+      "target": "n00068",
+      "tensor": "/layer/linear_attn/Mul_6_output_0"
+    },
+    {
+      "source": "n00067",
+      "target": "n00068",
+      "tensor": "/layer/linear_attn/Unsqueeze_26_output_0"
+    },
+    {
+      "source": "n00068",
+      "target": "n00069",
+      "tensor": "/layer/linear_attn/Mul_7_output_0"
+    },
+    {
+      "source": "n00060",
+      "target": "n00070",
+      "tensor": "/layer/linear_attn/Gather_2_output_0"
+    },
+    {
+      "source": "n00069",
+      "target": "n00070",
+      "tensor": "/layer/linear_attn/ReduceSum_2_output_0"
+    },
+    {
+      "source": "n00070",
+      "target": "n00071",
+      "tensor": "/layer/linear_attn/Sub_output_0"
+    },
+    {
+      "source": "n00066",
+      "target": "n00071",
+      "tensor": "/layer/linear_attn/Unsqueeze_25_output_0"
+    },
+    {
+      "source": "n00071",
+      "target": "n00072",
+      "tensor": "/layer/linear_attn/Mul_8_output_0"
+    },
+    {
+      "source": "n00067",
+      "target": "n00073",
+      "tensor": "/layer/linear_attn/Unsqueeze_26_output_0"
+    },
+    {
+      "source": "n00072",
+      "target": "n00073",
+      "tensor": "/layer/linear_attn/Unsqueeze_27_output_0"
+    },
+    {
+      "source": "n00064",
+      "target": "n00074",
+      "tensor": "/layer/linear_attn/Mul_6_output_0"
+    },
+    {
+      "source": "n00073",
+      "target": "n00074",
+      "tensor": "/layer/linear_attn/Mul_9_output_0"
+    },
+    {
+      "source": "n00058",
+      "target": "n00075",
+      "tensor": "/layer/linear_attn/Gather_output_0"
+    },
+    {
+      "source": "n00074",
+      "target": "n00076",
+      "tensor": "/layer/linear_attn/Add_3_output_0"
+    },
+    {
+      "source": "n00075",
+      "target": "n00076",
+      "tensor": "/layer/linear_attn/Unsqueeze_28_output_0"
+    },
+    {
+      "source": "n00076",
+      "target": "n00077",
+      "tensor": "/layer/linear_attn/Mul_10_output_0"
+    },
+    {
+      "source": "n00077",
+      "target": "n00078",
+      "tensor": "/layer/linear_attn/ReduceSum_3_output_0"
+    },
+    {
+      "source": "n00004",
+      "target": "n00079",
+      "tensor": "/layer/linear_attn/Constant_36_output_0"
+    },
+    {
+      "source": "n00009",
+      "target": "n00079",
+      "tensor": "/layer/linear_attn/Concat_6_output_0"
+    },
+    {
+      "source": "n00078",
+      "target": "n00079",
+      "tensor": "/layer/linear_attn/Reshape_6_output_0"
+    },
+    {
+      "source": "n00057",
+      "target": "n00080",
+      "tensor": "/layer/linear_attn/Div_2_output_0"
+    },
+    {
+      "source": "n00056",
+      "target": "n00081",
+      "tensor": "/layer/linear_attn/Mul_5_output_0"
+    },
+    {
+      "source": "n00042",
+      "target": "n00082",
+      "tensor": "/layer/linear_attn/Transpose_4_output_0"
+    },
+    {
+      "source": "n00044",
+      "target": "n00083",
+      "tensor": "/layer/linear_attn/Transpose_6_output_0"
+    },
+    {
+      "source": "n00083",
+      "target": "n00084",
+      "tensor": "/layer/linear_attn/Gather_8_output_0"
+    },
+    {
+      "source": "n00084",
+      "target": "n00085",
+      "tensor": "/layer/linear_attn/Exp_2_output_0"
+    },
+    {
+      "source": "n00074",
+      "target": "n00086",
+      "tensor": "/layer/linear_attn/Add_3_output_0"
+    },
+    {
+      "source": "n00085",
+      "target": "n00086",
+      "tensor": "/layer/linear_attn/Unsqueeze_33_output_0"
+    },
+    {
+      "source": "n00043",
+      "target": "n00087",
+      "tensor": "/layer/linear_attn/Transpose_5_output_0"
+    },
+    {
+      "source": "n00087",
+      "target": "n00088",
+      "tensor": "/layer/linear_attn/Gather_9_output_0"
+    },
+    {
+      "source": "n00081",
+      "target": "n00089",
+      "tensor": "/layer/linear_attn/Gather_6_output_0"
+    },
+    {
+      "source": "n00086",
+      "target": "n00090",
+      "tensor": "/layer/linear_attn/Mul_14_output_0"
+    },
+    {
+      "source": "n00089",
+      "target": "n00090",
+      "tensor": "/layer/linear_attn/Unsqueeze_35_output_0"
+    },
+    {
+      "source": "n00090",
+      "target": "n00091",
+      "tensor": "/layer/linear_attn/Mul_15_output_0"
+    },
+    {
+      "source": "n00082",
+      "target": "n00092",
+      "tensor": "/layer/linear_attn/Gather_7_output_0"
+    },
+    {
+      "source": "n00091",
+      "target": "n00092",
+      "tensor": "/layer/linear_attn/ReduceSum_4_output_0"
+    },
+    {
+      "source": "n00092",
+      "target": "n00093",
+      "tensor": "/layer/linear_attn/Sub_1_output_0"
+    },
+    {
+      "source": "n00088",
+      "target": "n00093",
+      "tensor": "/layer/linear_attn/Unsqueeze_34_output_0"
+    },
+    {
+      "source": "n00093",
+      "target": "n00094",
+      "tensor": "/layer/linear_attn/Mul_16_output_0"
+    },
+    {
+      "source": "n00089",
+      "target": "n00095",
+      "tensor": "/layer/linear_attn/Unsqueeze_35_output_0"
+    },
+    {
+      "source": "n00094",
+      "target": "n00095",
+      "tensor": "/layer/linear_attn/Unsqueeze_36_output_0"
+    },
+    {
+      "source": "n00086",
+      "target": "n00096",
+      "tensor": "/layer/linear_attn/Mul_14_output_0"
+    },
+    {
+      "source": "n00095",
+      "target": "n00096",
+      "tensor": "/layer/linear_attn/Mul_17_output_0"
+    },
+    {
+      "source": "n00080",
+      "target": "n00097",
+      "tensor": "/layer/linear_attn/Gather_5_output_0"
+    },
+    {
+      "source": "n00096",
+      "target": "n00098",
+      "tensor": "/layer/linear_attn/Add_6_output_0"
+    },
+    {
+      "source": "n00097",
+      "target": "n00098",
+      "tensor": "/layer/linear_attn/Unsqueeze_37_output_0"
+    },
+    {
+      "source": "n00098",
+      "target": "n00099",
+      "tensor": "/layer/linear_attn/Mul_18_output_0"
+    },
+    {
+      "source": "n00099",
+      "target": "n00100",
+      "tensor": "/layer/linear_attn/ReduceSum_5_output_0"
+    },
+    {
+      "source": "n00079",
+      "target": "n00101",
+      "tensor": "/layer/linear_attn/ScatterND_output_0"
+    },
+    {
+      "source": "n00008",
+      "target": "n00101",
+      "tensor": "/layer/linear_attn/Concat_8_output_0"
+    },
+    {
+      "source": "n00100",
+      "target": "n00101",
+      "tensor": "/layer/linear_attn/Reshape_7_output_0"
+    },
+    {
+      "source": "n00101",
+      "target": "n00102",
+      "tensor": "/layer/linear_attn/ScatterND_1_output_0"
+    },
+    {
+      "source": "n00102",
+      "target": "n00103",
+      "tensor": "/layer/linear_attn/Transpose_7_output_0"
+    },
+    {
+      "source": "n00019",
+      "target": "n00104",
+      "tensor": "/layer/linear_attn/in_proj_z/MatMul_output_0"
+    },
+    {
+      "source": "n00103",
+      "target": "n00105",
+      "tensor": "/layer/linear_attn/Reshape_8_output_0"
+    },
+    {
+      "source": "n00006",
+      "target": "n00105",
+      "tensor": "/layer/input_layernorm/Constant_1_output_0"
+    },
+    {
+      "source": "n00105",
+      "target": "n00106",
+      "tensor": "/layer/linear_attn/norm/Pow_output_0"
+    },
+    {
+      "source": "n00106",
+      "target": "n00107",
+      "tensor": "/layer/linear_attn/norm/ReduceMean_output_0"
+    },
+    {
+      "source": "n00002",
+      "target": "n00107",
+      "tensor": "/layer/input_layernorm/Constant_3_output_0"
+    },
+    {
+      "source": "n00107",
+      "target": "n00108",
+      "tensor": "/layer/linear_attn/norm/Add_output_0"
+    },
+    {
+      "source": "n00003",
+      "target": "n00109",
+      "tensor": "/layer/input_layernorm/Constant_4_output_0"
+    },
+    {
+      "source": "n00108",
+      "target": "n00109",
+      "tensor": "/layer/linear_attn/norm/Sqrt_output_0"
+    },
+    {
+      "source": "n00103",
+      "target": "n00110",
+      "tensor": "/layer/linear_attn/Reshape_8_output_0"
+    },
+    {
+      "source": "n00109",
+      "target": "n00110",
+      "tensor": "/layer/linear_attn/norm/Div_output_0"
+    },
+    {
+      "source": "n00110",
+      "target": "n00111",
+      "tensor": "/layer/linear_attn/norm/Mul_output_0"
+    },
+    {
+      "source": "n00104",
+      "target": "n00112",
+      "tensor": "/layer/linear_attn/Reshape_9_output_0"
+    },
+    {
+      "source": "n00104",
+      "target": "n00113",
+      "tensor": "/layer/linear_attn/Reshape_9_output_0"
+    },
+    {
+      "source": "n00112",
+      "target": "n00113",
+      "tensor": "/layer/linear_attn/norm/Sigmoid_output_0"
+    },
+    {
+      "source": "n00111",
+      "target": "n00114",
+      "tensor": "/layer/linear_attn/norm/Mul_1_output_0"
+    },
+    {
+      "source": "n00113",
+      "target": "n00114",
+      "tensor": "/layer/linear_attn/norm/Mul_2_output_0"
+    },
+    {
+      "source": "n00114",
+      "target": "n00115",
+      "tensor": "/layer/linear_attn/norm/Mul_3_output_0"
+    },
+    {
+      "source": "n00115",
+      "target": "n00116",
+      "tensor": "/layer/linear_attn/Reshape_10_output_0"
+    },
+    {
+      "source": "n00116",
+      "target": "n00117",
+      "tensor": "/layer/linear_attn/out_proj/MatMul_output_0"
+    },
+    {
+      "source": "n00117",
+      "target": "n00118",
+      "tensor": "/layer/Add_output_0"
+    },
+    {
+      "source": "n00006",
+      "target": "n00118",
+      "tensor": "/layer/input_layernorm/Constant_1_output_0"
+    },
+    {
+      "source": "n00118",
+      "target": "n00119",
+      "tensor": "/layer/post_attention_layernorm/Pow_output_0"
+    },
+    {
+      "source": "n00119",
+      "target": "n00120",
+      "tensor": "/layer/post_attention_layernorm/ReduceMean_output_0"
+    },
+    {
+      "source": "n00002",
+      "target": "n00120",
+      "tensor": "/layer/input_layernorm/Constant_3_output_0"
+    },
+    {
+      "source": "n00120",
+      "target": "n00121",
+      "tensor": "/layer/post_attention_layernorm/Add_output_0"
+    },
+    {
+      "source": "n00003",
+      "target": "n00122",
+      "tensor": "/layer/input_layernorm/Constant_4_output_0"
+    },
+    {
+      "source": "n00121",
+      "target": "n00122",
+      "tensor": "/layer/post_attention_layernorm/Sqrt_output_0"
+    },
+    {
+      "source": "n00117",
+      "target": "n00123",
+      "tensor": "/layer/Add_output_0"
+    },
+    {
+      "source": "n00122",
+      "target": "n00123",
+      "tensor": "/layer/post_attention_layernorm/Div_output_0"
+    },
+    {
+      "source": "n00123",
+      "target": "n00124",
+      "tensor": "/layer/post_attention_layernorm/Mul_output_0"
+    },
+    {
+      "source": "n00007",
+      "target": "n00124",
+      "tensor": "/layer/post_attention_layernorm/Add_1_output_0"
+    },
+    {
+      "source": "n00124",
+      "target": "n00125",
+      "tensor": "/layer/post_attention_layernorm/Mul_1_output_0"
+    },
+    {
+      "source": "n00125",
+      "target": "n00126",
+      "tensor": "/layer/mlp/gate_proj/MatMul_output_0"
+    },
+    {
+      "source": "n00125",
+      "target": "n00127",
+      "tensor": "/layer/mlp/gate_proj/MatMul_output_0"
+    },
+    {
+      "source": "n00126",
+      "target": "n00127",
+      "tensor": "/layer/mlp/act_fn/Sigmoid_output_0"
+    },
+    {
+      "source": "n00124",
+      "target": "n00128",
+      "tensor": "/layer/post_attention_layernorm/Mul_1_output_0"
+    },
+    {
+      "source": "n00127",
+      "target": "n00129",
+      "tensor": "/layer/mlp/act_fn/Mul_output_0"
+    },
+    {
+      "source": "n00128",
+      "target": "n00129",
+      "tensor": "/layer/mlp/up_proj/MatMul_output_0"
+    },
+    {
+      "source": "n00129",
+      "target": "n00130",
+      "tensor": "/layer/mlp/Mul_output_0"
+    },
+    {
+      "source": "n00117",
+      "target": "n00131",
+      "tensor": "/layer/Add_output_0"
+    },
+    {
+      "source": "n00130",
+      "target": "n00131",
+      "tensor": "/layer/mlp/down_proj/MatMul_output_0"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        2560
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "y",
+      "shape": [
+        1,
+        2,
+        2560
+      ]
+    }
+  ],
+  "initializer_count": 29,
+  "op_histogram": {
+    "Constant": 10,
+    "Pow": 3,
+    "ReduceMean": 3,
+    "Add": 9,
+    "Sqrt": 5,
+    "Div": 6,
+    "Mul": 26,
+    "MatMul": 7,
+    "Transpose": 8,
+    "Conv": 1,
+    "Slice": 1,
+    "Sigmoid": 4,
+    "Split": 1,
+    "Reshape": 12,
+    "Gemm": 1,
+    "Softplus": 1,
+    "Tile": 2,
+    "ReduceSum": 6,
+    "Gather": 10,
+    "Exp": 2,
+    "Unsqueeze": 10,
+    "Sub": 2,
+    "ScatterND": 2
+  }
+}

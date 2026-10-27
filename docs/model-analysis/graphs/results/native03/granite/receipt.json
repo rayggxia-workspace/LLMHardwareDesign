@@ -1,0 +1,75 @@
+{
+  "model": "granite",
+  "started": 1792996988.0716138,
+  "source_sha256": "57f93f461f63bf859ed1725603b908428e934e9ca10e58c897832e1e3aa17126",
+  "status": "pass",
+  "scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+  "implementation_file": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/lib/python3.12/site-packages/transformers/models/granitemoe/modeling_granitemoe.py",
+  "implementation_sha256": "493ad75906ef3b72deaa614cd887f0546bd9338abd1883197744634c4cd40ef3",
+  "versions": {
+    "torch": "2.10.0+cpu",
+    "transformers": "5.20.2"
+  },
+  "weights": {
+    "loaded": true,
+    "matched_tensors": 9,
+    "missing": [],
+    "unexpected": [],
+    "files": [
+      {
+        "path": "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models-relay/granite/model-00001-of-00002.safetensors",
+        "size": 4998548704
+      }
+    ],
+    "tensor_sha256": "1d95e3b09a0ba6d23fe33fe3da75e6a59ea1aff98a071e4d867962ae5ce22c33"
+  },
+  "native_seconds": 0.03108835220336914,
+  "export_adapter": "Replaced expert Python dispatch with dynamic Gather of all checkpoint expert weights and batched MatMul; TopK indices remain live tensors, not frozen selected branches. Native references use original expert implementation.",
+  "adapter_native_maxabs": 2.384185791015625e-07,
+  "raw_nodes": 285,
+  "raw_native_maxabs": 7.748603820800781e-07,
+  "onnxsim_version": "v0.8.1",
+  "onnxsim_check": true,
+  "onnxsim_check_note": "Internal random execution disabled to respect allocated thread count; explicit ORT checks below use 3 seeds and bounded threads.",
+  "simplified_nodes": 84,
+  "validation": [
+    {
+      "seed": 17,
+      "raw_native_maxabs": 5.960464477539062e-07,
+      "sim_raw_maxabs": 0.0
+    },
+    {
+      "seed": 31,
+      "raw_native_maxabs": 1.2516975402832031e-06,
+      "sim_raw_maxabs": 0.0
+    },
+    {
+      "seed": 73,
+      "raw_native_maxabs": 6.854534149169922e-07,
+      "sim_raw_maxabs": 0.0
+    }
+  ],
+  "finished": 1792997011.9147184,
+  "artifacts": {
+    "raw.graph.json": {
+      "bytes": 163830,
+      "sha256": "f7565734903892ac836046cd113495be825844faba40d2032f98531142279a9f"
+    },
+    "config.json": {
+      "bytes": 1308,
+      "sha256": "36fe87f1ba8220f2cd02fe5853e134976973ce734c744fc438d7caae12329ff4"
+    },
+    "simplified.onnx": {
+      "bytes": 402934515,
+      "sha256": "1650bbcd08c840053ef72000f6e7ec5182e1efb2ef3b373f7282a061abe157b1"
+    },
+    "simplified.graph.json": {
+      "bytes": 52746,
+      "sha256": "34ffabe294b2bdf1a4d7275d70c63ebbd27158354157950e1bd70c0990534a16"
+    },
+    "raw.onnx": {
+      "bytes": 402952454,
+      "sha256": "caf9e3cc5bfd52b52d657583272e2fbfb042b3f075f8d7ff2452ee03d723cb8e"
+    }
+  }
+}

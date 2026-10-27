@@ -1,0 +1,98 @@
+{
+  "model": "falcon",
+  "started": 1792997099.4916646,
+  "source_sha256": "e6e7babe938d63e5f95ab63b1f1174d3379ef27e7424f89de689f2c74a5f043b",
+  "status": "pass",
+  "scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+  "implementation_file": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/lib/python3.12/site-packages/transformers/models/falcon_h1/modeling_falcon_h1.py",
+  "implementation_sha256": "8f3ea7bd30d2f4407ffc2791104b13acd4ac5d54798423f20da1e235fc847f38",
+  "versions": {
+    "torch": "2.10.0+cpu",
+    "transformers": "5.20.2"
+  },
+  "model_level_setup": "Registered nonpersistent mup_vector using the original FalconH1Model setup function.",
+  "weights": {
+    "loaded": true,
+    "matched_tensors": 17,
+    "missing": [],
+    "unexpected": [],
+    "files": [
+      {
+        "path": "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models-relay/falcon/model-00001-of-00002.safetensors",
+        "size": 4971004584
+      }
+    ],
+    "tensor_sha256": "45cba37ff7b8837a8d4e7fa1e4b81d5b626a307023678c92ea55c724c87cb8de"
+  },
+  "native_seconds": 0.01482081413269043,
+  "exporter_legalization": {
+    "reason": "Exporter emitted negative Transpose perm axes; normalize modulo known rank. Unmodified exporter artifact preserved.",
+    "changes": [
+      {
+        "node": "/layer/mamba/Transpose_9",
+        "before": [
+          0,
+          -2,
+          -1,
+          1
+        ],
+        "after": [
+          0,
+          2,
+          3,
+          1
+        ]
+      }
+    ]
+  },
+  "raw_nodes": 998,
+  "raw_native_maxabs": 7.62939453125e-06,
+  "onnxsim_version": "v0.8.1",
+  "onnxsim_check": true,
+  "onnxsim_check_note": "Internal random execution disabled to respect allocated thread count; explicit ORT checks below use 3 seeds and bounded threads.",
+  "simplified_nodes": 173,
+  "validation": [
+    {
+      "seed": 17,
+      "raw_native_maxabs": 1.239776611328125e-05,
+      "sim_raw_maxabs": 0.0
+    },
+    {
+      "seed": 31,
+      "raw_native_maxabs": 1.52587890625e-05,
+      "sim_raw_maxabs": 0.0
+    },
+    {
+      "seed": 73,
+      "raw_native_maxabs": 2.86102294921875e-05,
+      "sim_raw_maxabs": 0.0
+    }
+  ],
+  "finished": 1792997109.9715333,
+  "artifacts": {
+    "raw.graph.json": {
+      "bytes": 540557,
+      "sha256": "074628cbc685b283c428055d3254576da4e442bfffd0e924174466861300caec"
+    },
+    "config.json": {
+      "bytes": 2045,
+      "sha256": "637de670361e52af584b4245e40d52e81364990510027d0ef2ad3908618282cc"
+    },
+    "exporter-unlegalized.onnx": {
+      "bytes": 351890514,
+      "sha256": "9c5544880e30f3b32cd19452a39bd4365833c83357d8f244ee7be62de773799a"
+    },
+    "simplified.onnx": {
+      "bytes": 356030535,
+      "sha256": "a45ab62cb142eef6929bba20eb0c3f8e03115624999a5a8807b2f769ab19cd8f"
+    },
+    "simplified.graph.json": {
+      "bytes": 103757,
+      "sha256": "3ab98080d1abc821691753cdf8def1ed42342bbd904b9d947a56077ab76c1cf6"
+    },
+    "raw.onnx": {
+      "bytes": 351890495,
+      "sha256": "edf50ed2563af36ca41d5b90ccaa0c7f48d3eae9077d18e3f5374201cba9e05a"
+    }
+  }
+}

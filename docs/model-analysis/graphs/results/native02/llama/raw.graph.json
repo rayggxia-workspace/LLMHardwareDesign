@@ -1,0 +1,5781 @@
+{
+  "nodes": [
+    {
+      "id": "n00000",
+      "name": "Identity_85",
+      "op": "Identity",
+      "domain": "",
+      "inputs": [
+        "layer.input_layernorm.weight"
+      ],
+      "outputs": [
+        "layer.post_attention_layernorm.weight"
+      ],
+      "shapes": {
+        "layer.post_attention_layernorm.weight": [
+          2048
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00001",
+      "name": "/layer/input_layernorm/Cast",
+      "op": "Cast",
+      "domain": "",
+      "inputs": [
+        "x"
+      ],
+      "outputs": [
+        "/layer/input_layernorm/Cast_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Cast_output_0": [
+          1,
+          2,
+          2048
+        ]
+      },
+      "attributes": {
+        "to": "1"
+      }
+    },
+    {
+      "id": "n00002",
+      "name": "/layer/input_layernorm/Constant",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/input_layernorm/Constant_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Constant_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00003",
+      "name": "/layer/input_layernorm/Pow",
+      "op": "Pow",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Cast_output_0",
+        "/layer/input_layernorm/Constant_output_0"
+      ],
+      "outputs": [
+        "/layer/input_layernorm/Pow_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Pow_output_0": [
+          1,
+          2,
+          2048
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00004",
+      "name": "/layer/input_layernorm/ReduceMean",
+      "op": "ReduceMean",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Pow_output_0"
+      ],
+      "outputs": [
+        "/layer/input_layernorm/ReduceMean_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/ReduceMean_output_0": [
+          1,
+          2,
+          1
+        ]
+      },
+      "attributes": {
+        "axes": "[-1]",
+        "keepdims": "1"
+      }
+    },
+    {
+      "id": "n00005",
+      "name": "/layer/input_layernorm/Constant_1",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/input_layernorm/Constant_1_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Constant_1_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00006",
+      "name": "/layer/input_layernorm/Constant_2",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/input_layernorm/Constant_2_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Constant_2_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00007",
+      "name": "/layer/input_layernorm/Add",
+      "op": "Add",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/ReduceMean_output_0",
+        "/layer/input_layernorm/Constant_2_output_0"
+      ],
+      "outputs": [
+        "/layer/input_layernorm/Add_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Add_output_0": [
+          1,
+          2,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00008",
+      "name": "/layer/input_layernorm/Sqrt",
+      "op": "Sqrt",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Add_output_0"
+      ],
+      "outputs": [
+        "/layer/input_layernorm/Sqrt_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Sqrt_output_0": [
+          1,
+          2,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00009",
+      "name": "/layer/input_layernorm/Constant_3",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/input_layernorm/Constant_3_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Constant_3_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00010",
+      "name": "/layer/input_layernorm/Div",
+      "op": "Div",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Constant_3_output_0",
+        "/layer/input_layernorm/Sqrt_output_0"
+      ],
+      "outputs": [
+        "/layer/input_layernorm/Div_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Div_output_0": [
+          1,
+          2,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00011",
+      "name": "/layer/input_layernorm/Mul",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Cast_output_0",
+        "/layer/input_layernorm/Div_output_0"
+      ],
+      "outputs": [
+        "/layer/input_layernorm/Mul_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Mul_output_0": [
+          1,
+          2,
+          2048
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00012",
+      "name": "/layer/input_layernorm/Cast_1",
+      "op": "Cast",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Mul_output_0"
+      ],
+      "outputs": [
+        "/layer/input_layernorm/Cast_1_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Cast_1_output_0": [
+          1,
+          2,
+          2048
+        ]
+      },
+      "attributes": {
+        "to": "1"
+      }
+    },
+    {
+      "id": "n00013",
+      "name": "/layer/input_layernorm/Mul_1",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "layer.input_layernorm.weight",
+        "/layer/input_layernorm/Cast_1_output_0"
+      ],
+      "outputs": [
+        "/layer/input_layernorm/Mul_1_output_0"
+      ],
+      "shapes": {
+        "/layer/input_layernorm/Mul_1_output_0": [
+          1,
+          2,
+          2048
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00014",
+      "name": "/layer/self_attn/Constant",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00015",
+      "name": "/layer/self_attn/Constant_1",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_1_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_1_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00016",
+      "name": "/layer/self_attn/Constant_2",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_2_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_2_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00017",
+      "name": "/layer/self_attn/q_proj/Transpose",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "layer.self_attn.q_proj.weight"
+      ],
+      "outputs": [
+        "/layer/self_attn/q_proj/Transpose_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/q_proj/Transpose_output_0": [
+          2048,
+          2048
+        ]
+      },
+      "attributes": {
+        "perm": "[1, 0]"
+      }
+    },
+    {
+      "id": "n00018",
+      "name": "/layer/self_attn/q_proj/MatMul",
+      "op": "MatMul",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Mul_1_output_0",
+        "/layer/self_attn/q_proj/Transpose_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/q_proj/MatMul_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/q_proj/MatMul_output_0": [
+          1,
+          2,
+          2048
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00019",
+      "name": "/layer/self_attn/Constant_3",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_3_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_3_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00020",
+      "name": "/layer/self_attn/Constant_4",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_4_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_4_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00021",
+      "name": "Constant_106",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_33"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_33": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00022",
+      "name": "/layer/self_attn/Unsqueeze",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_1_output_0",
+        "onnx::Unsqueeze_33"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00023",
+      "name": "Constant_108",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_35"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_35": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00024",
+      "name": "/layer/self_attn/Unsqueeze_1",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_2_output_0",
+        "onnx::Unsqueeze_35"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_1_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_1_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00025",
+      "name": "Constant_110",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_37"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_37": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00026",
+      "name": "/layer/self_attn/Unsqueeze_2",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_3_output_0",
+        "onnx::Unsqueeze_37"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_2_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_2_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00027",
+      "name": "Constant_112",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_39"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_39": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00028",
+      "name": "/layer/self_attn/Unsqueeze_3",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_4_output_0",
+        "onnx::Unsqueeze_39"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_3_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_3_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00029",
+      "name": "/layer/self_attn/Concat",
+      "op": "Concat",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Unsqueeze_output_0",
+        "/layer/self_attn/Unsqueeze_1_output_0",
+        "/layer/self_attn/Unsqueeze_2_output_0",
+        "/layer/self_attn/Unsqueeze_3_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Concat_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Concat_output_0": [
+          4
+        ]
+      },
+      "attributes": {
+        "axis": "0"
+      }
+    },
+    {
+      "id": "n00030",
+      "name": "Constant_115",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_42"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_42": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00031",
+      "name": "/layer/self_attn/Unsqueeze_4",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_1_output_0",
+        "onnx::Unsqueeze_42"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_4_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_4_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00032",
+      "name": "Constant_117",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_44"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_44": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00033",
+      "name": "/layer/self_attn/Unsqueeze_5",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_2_output_0",
+        "onnx::Unsqueeze_44"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_5_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_5_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00034",
+      "name": "Constant_119",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_46"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_46": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00035",
+      "name": "/layer/self_attn/Unsqueeze_6",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_3_output_0",
+        "onnx::Unsqueeze_46"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_6_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_6_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00036",
+      "name": "Constant_121",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_48"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_48": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00037",
+      "name": "/layer/self_attn/Unsqueeze_7",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_4_output_0",
+        "onnx::Unsqueeze_48"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_7_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_7_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00038",
+      "name": "/layer/self_attn/Concat_1",
+      "op": "Concat",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Unsqueeze_4_output_0",
+        "/layer/self_attn/Unsqueeze_5_output_0",
+        "/layer/self_attn/Unsqueeze_6_output_0",
+        "/layer/self_attn/Unsqueeze_7_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Concat_1_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Concat_1_output_0": [
+          4
+        ]
+      },
+      "attributes": {
+        "axis": "0"
+      }
+    },
+    {
+      "id": "n00039",
+      "name": "Constant_124",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_51"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_51": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00040",
+      "name": "/layer/self_attn/Unsqueeze_8",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_1_output_0",
+        "onnx::Unsqueeze_51"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_8_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_8_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00041",
+      "name": "Constant_126",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_53"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_53": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00042",
+      "name": "/layer/self_attn/Unsqueeze_9",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_2_output_0",
+        "onnx::Unsqueeze_53"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_9_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_9_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00043",
+      "name": "Constant_128",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_55"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_55": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00044",
+      "name": "/layer/self_attn/Unsqueeze_10",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_3_output_0",
+        "onnx::Unsqueeze_55"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_10_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_10_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00045",
+      "name": "Constant_130",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_57"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_57": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00046",
+      "name": "/layer/self_attn/Unsqueeze_11",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_4_output_0",
+        "onnx::Unsqueeze_57"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_11_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_11_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00047",
+      "name": "/layer/self_attn/Concat_2",
+      "op": "Concat",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Unsqueeze_8_output_0",
+        "/layer/self_attn/Unsqueeze_9_output_0",
+        "/layer/self_attn/Unsqueeze_10_output_0",
+        "/layer/self_attn/Unsqueeze_11_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Concat_2_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Concat_2_output_0": [
+          4
+        ]
+      },
+      "attributes": {
+        "axis": "0"
+      }
+    },
+    {
+      "id": "n00048",
+      "name": "/layer/self_attn/Reshape",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/q_proj/MatMul_output_0",
+        "/layer/self_attn/Concat_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Reshape_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Reshape_output_0": [
+          "unk__0",
+          "unk__1",
+          "unk__2",
+          "unk__3"
+        ]
+      },
+      "attributes": {
+        "allowzero": "0"
+      }
+    },
+    {
+      "id": "n00049",
+      "name": "/layer/self_attn/Transpose",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Reshape_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Transpose_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Transpose_output_0": [
+          "unk__0",
+          "unk__2",
+          "unk__1",
+          "unk__3"
+        ]
+      },
+      "attributes": {
+        "perm": "[0, 2, 1, 3]"
+      }
+    },
+    {
+      "id": "n00050",
+      "name": "/layer/self_attn/k_proj/Transpose",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "layer.self_attn.k_proj.weight"
+      ],
+      "outputs": [
+        "/layer/self_attn/k_proj/Transpose_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/k_proj/Transpose_output_0": [
+          2048,
+          512
+        ]
+      },
+      "attributes": {
+        "perm": "[1, 0]"
+      }
+    },
+    {
+      "id": "n00051",
+      "name": "/layer/self_attn/k_proj/MatMul",
+      "op": "MatMul",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Mul_1_output_0",
+        "/layer/self_attn/k_proj/Transpose_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/k_proj/MatMul_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/k_proj/MatMul_output_0": [
+          1,
+          2,
+          512
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00052",
+      "name": "/layer/self_attn/Reshape_1",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/k_proj/MatMul_output_0",
+        "/layer/self_attn/Concat_1_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Reshape_1_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Reshape_1_output_0": [
+          "unk__4",
+          "unk__5",
+          "unk__6",
+          "unk__7"
+        ]
+      },
+      "attributes": {
+        "allowzero": "0"
+      }
+    },
+    {
+      "id": "n00053",
+      "name": "/layer/self_attn/Transpose_1",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Reshape_1_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Transpose_1_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Transpose_1_output_0": [
+          "unk__4",
+          "unk__6",
+          "unk__5",
+          "unk__7"
+        ]
+      },
+      "attributes": {
+        "perm": "[0, 2, 1, 3]"
+      }
+    },
+    {
+      "id": "n00054",
+      "name": "/layer/self_attn/v_proj/Transpose",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "layer.self_attn.v_proj.weight"
+      ],
+      "outputs": [
+        "/layer/self_attn/v_proj/Transpose_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/v_proj/Transpose_output_0": [
+          2048,
+          512
+        ]
+      },
+      "attributes": {
+        "perm": "[1, 0]"
+      }
+    },
+    {
+      "id": "n00055",
+      "name": "/layer/self_attn/v_proj/MatMul",
+      "op": "MatMul",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Mul_1_output_0",
+        "/layer/self_attn/v_proj/Transpose_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/v_proj/MatMul_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/v_proj/MatMul_output_0": [
+          1,
+          2,
+          512
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00056",
+      "name": "/layer/self_attn/Reshape_2",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/v_proj/MatMul_output_0",
+        "/layer/self_attn/Concat_2_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Reshape_2_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Reshape_2_output_0": [
+          "unk__8",
+          "unk__9",
+          "unk__10",
+          "unk__11"
+        ]
+      },
+      "attributes": {
+        "allowzero": "0"
+      }
+    },
+    {
+      "id": "n00057",
+      "name": "/layer/self_attn/Transpose_2",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Reshape_2_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Transpose_2_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Transpose_2_output_0": [
+          "unk__8",
+          "unk__10",
+          "unk__9",
+          "unk__11"
+        ]
+      },
+      "attributes": {
+        "perm": "[0, 2, 1, 3]"
+      }
+    },
+    {
+      "id": "n00058",
+      "name": "/layer/self_attn/Constant_5",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_5_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_5_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00059",
+      "name": "/layer/self_attn/Unsqueeze_12",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "cos",
+        "/layer/self_attn/Constant_5_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_12_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_12_output_0": [
+          1,
+          1,
+          2,
+          64
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00060",
+      "name": "/layer/self_attn/Constant_6",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_6_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_6_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00061",
+      "name": "/layer/self_attn/Unsqueeze_13",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "sin",
+        "/layer/self_attn/Constant_6_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_13_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_13_output_0": [
+          1,
+          1,
+          2,
+          64
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00062",
+      "name": "/layer/self_attn/Mul",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Transpose_output_0",
+        "/layer/self_attn/Unsqueeze_12_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Mul_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Mul_output_0": [
+          "unk__0",
+          "unk__2",
+          2,
+          64
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00063",
+      "name": "/layer/self_attn/Constant_7",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_7_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_7_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00064",
+      "name": "/layer/self_attn/Constant_8",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_8_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_8_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00065",
+      "name": "/layer/self_attn/Constant_9",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_9_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_9_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00066",
+      "name": "/layer/self_attn/Unsqueeze_14",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_7_output_0",
+        "/layer/self_attn/Constant_9_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_14_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_14_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00067",
+      "name": "/layer/self_attn/Constant_10",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_10_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_10_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00068",
+      "name": "/layer/self_attn/Unsqueeze_15",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_output_0",
+        "/layer/self_attn/Constant_10_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_15_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_15_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00069",
+      "name": "/layer/self_attn/Constant_11",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_11_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_11_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00070",
+      "name": "/layer/self_attn/Unsqueeze_16",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_8_output_0",
+        "/layer/self_attn/Constant_11_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_16_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_16_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00071",
+      "name": "/layer/self_attn/Constant_12",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_12_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_12_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00072",
+      "name": "/layer/self_attn/Unsqueeze_17",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Constant_1_output_0",
+        "/layer/self_attn/Constant_12_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_17_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_17_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00073",
+      "name": "/layer/self_attn/Slice",
+      "op": "Slice",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Transpose_output_0",
+        "/layer/self_attn/Unsqueeze_15_output_0",
+        "/layer/self_attn/Unsqueeze_16_output_0",
+        "/layer/self_attn/Unsqueeze_14_output_0",
+        "/layer/self_attn/Unsqueeze_17_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Slice_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Slice_output_0": [
+          "unk__12",
+          "unk__13",
+          "unk__14",
+          "unk__15"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00074",
+      "name": "/layer/self_attn/Constant_13",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_13_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_13_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00075",
+      "name": "/layer/self_attn/Constant_14",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_14_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_14_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00076",
+      "name": "/layer/self_attn/Unsqueeze_18",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_7_output_0",
+        "/layer/self_attn/Constant_14_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_18_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_18_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00077",
+      "name": "/layer/self_attn/Constant_15",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_15_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_15_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00078",
+      "name": "/layer/self_attn/Unsqueeze_19",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_8_output_0",
+        "/layer/self_attn/Constant_15_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_19_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_19_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00079",
+      "name": "/layer/self_attn/Constant_16",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_16_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_16_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00080",
+      "name": "/layer/self_attn/Unsqueeze_20",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_13_output_0",
+        "/layer/self_attn/Constant_16_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_20_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_20_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00081",
+      "name": "/layer/self_attn/Constant_17",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_17_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_17_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00082",
+      "name": "/layer/self_attn/Unsqueeze_21",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Constant_1_output_0",
+        "/layer/self_attn/Constant_17_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_21_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_21_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00083",
+      "name": "/layer/self_attn/Slice_1",
+      "op": "Slice",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Transpose_output_0",
+        "/layer/self_attn/Unsqueeze_19_output_0",
+        "/layer/self_attn/Unsqueeze_20_output_0",
+        "/layer/self_attn/Unsqueeze_18_output_0",
+        "/layer/self_attn/Unsqueeze_21_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Slice_1_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Slice_1_output_0": [
+          "unk__16",
+          "unk__17",
+          "unk__18",
+          "unk__19"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00084",
+      "name": "/layer/self_attn/Neg",
+      "op": "Neg",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Slice_1_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Neg_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Neg_output_0": [
+          "unk__16",
+          "unk__17",
+          "unk__18",
+          "unk__19"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00085",
+      "name": "/layer/self_attn/Concat_3",
+      "op": "Concat",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Neg_output_0",
+        "/layer/self_attn/Slice_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Concat_3_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Concat_3_output_0": [
+          "unk__16",
+          "unk__17",
+          "unk__18",
+          "unk__20"
+        ]
+      },
+      "attributes": {
+        "axis": "-1"
+      }
+    },
+    {
+      "id": "n00086",
+      "name": "/layer/self_attn/Mul_1",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Concat_3_output_0",
+        "/layer/self_attn/Unsqueeze_13_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Mul_1_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Mul_1_output_0": [
+          "unk__16",
+          "unk__17",
+          2,
+          64
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00087",
+      "name": "/layer/self_attn/Add",
+      "op": "Add",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Mul_output_0",
+        "/layer/self_attn/Mul_1_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Add_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Add_output_0": [
+          "unk__21",
+          "unk__22",
+          2,
+          64
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00088",
+      "name": "/layer/self_attn/Mul_2",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Transpose_1_output_0",
+        "/layer/self_attn/Unsqueeze_12_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Mul_2_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Mul_2_output_0": [
+          "unk__4",
+          "unk__6",
+          2,
+          64
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00089",
+      "name": "/layer/self_attn/Constant_18",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_18_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_18_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00090",
+      "name": "/layer/self_attn/Constant_19",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_19_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_19_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00091",
+      "name": "/layer/self_attn/Unsqueeze_22",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_7_output_0",
+        "/layer/self_attn/Constant_19_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_22_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_22_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00092",
+      "name": "/layer/self_attn/Constant_20",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_20_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_20_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00093",
+      "name": "/layer/self_attn/Unsqueeze_23",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_output_0",
+        "/layer/self_attn/Constant_20_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_23_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_23_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00094",
+      "name": "/layer/self_attn/Constant_21",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_21_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_21_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00095",
+      "name": "/layer/self_attn/Unsqueeze_24",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_18_output_0",
+        "/layer/self_attn/Constant_21_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_24_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_24_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00096",
+      "name": "/layer/self_attn/Constant_22",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_22_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_22_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00097",
+      "name": "/layer/self_attn/Unsqueeze_25",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Constant_1_output_0",
+        "/layer/self_attn/Constant_22_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_25_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_25_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00098",
+      "name": "/layer/self_attn/Slice_2",
+      "op": "Slice",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Transpose_1_output_0",
+        "/layer/self_attn/Unsqueeze_23_output_0",
+        "/layer/self_attn/Unsqueeze_24_output_0",
+        "/layer/self_attn/Unsqueeze_22_output_0",
+        "/layer/self_attn/Unsqueeze_25_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Slice_2_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Slice_2_output_0": [
+          "unk__23",
+          "unk__24",
+          "unk__25",
+          "unk__26"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00099",
+      "name": "/layer/self_attn/Constant_23",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_23_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_23_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00100",
+      "name": "/layer/self_attn/Unsqueeze_26",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_7_output_0",
+        "/layer/self_attn/Constant_23_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_26_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_26_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00101",
+      "name": "/layer/self_attn/Constant_24",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_24_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_24_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00102",
+      "name": "/layer/self_attn/Unsqueeze_27",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_18_output_0",
+        "/layer/self_attn/Constant_24_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_27_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_27_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00103",
+      "name": "/layer/self_attn/Constant_25",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_25_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_25_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00104",
+      "name": "/layer/self_attn/Unsqueeze_28",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_13_output_0",
+        "/layer/self_attn/Constant_25_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_28_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_28_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00105",
+      "name": "/layer/self_attn/Constant_26",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_26_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_26_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00106",
+      "name": "/layer/self_attn/Unsqueeze_29",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Constant_1_output_0",
+        "/layer/self_attn/Constant_26_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_29_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_29_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00107",
+      "name": "/layer/self_attn/Slice_3",
+      "op": "Slice",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Transpose_1_output_0",
+        "/layer/self_attn/Unsqueeze_27_output_0",
+        "/layer/self_attn/Unsqueeze_28_output_0",
+        "/layer/self_attn/Unsqueeze_26_output_0",
+        "/layer/self_attn/Unsqueeze_29_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Slice_3_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Slice_3_output_0": [
+          "unk__27",
+          "unk__28",
+          "unk__29",
+          "unk__30"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00108",
+      "name": "/layer/self_attn/Neg_1",
+      "op": "Neg",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Slice_3_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Neg_1_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Neg_1_output_0": [
+          "unk__27",
+          "unk__28",
+          "unk__29",
+          "unk__30"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00109",
+      "name": "/layer/self_attn/Concat_4",
+      "op": "Concat",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Neg_1_output_0",
+        "/layer/self_attn/Slice_2_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Concat_4_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Concat_4_output_0": [
+          "unk__27",
+          "unk__28",
+          "unk__29",
+          "unk__31"
+        ]
+      },
+      "attributes": {
+        "axis": "-1"
+      }
+    },
+    {
+      "id": "n00110",
+      "name": "/layer/self_attn/Mul_3",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Concat_4_output_0",
+        "/layer/self_attn/Unsqueeze_13_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Mul_3_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Mul_3_output_0": [
+          "unk__27",
+          "unk__28",
+          2,
+          64
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00111",
+      "name": "/layer/self_attn/Add_1",
+      "op": "Add",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Mul_2_output_0",
+        "/layer/self_attn/Mul_3_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Add_1_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Add_1_output_0": [
+          "unk__32",
+          "unk__33",
+          2,
+          64
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00112",
+      "name": "/layer/self_attn/Constant_27",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_27_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_27_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00113",
+      "name": "/layer/self_attn/Constant_28",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_28_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_28_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00114",
+      "name": "/layer/self_attn/Constant_29",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_29_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_29_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00115",
+      "name": "/layer/self_attn/Constant_30",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_30_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_30_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00116",
+      "name": "/layer/self_attn/Constant_31",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_31_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_31_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00117",
+      "name": "/layer/self_attn/Unsqueeze_30",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Add_1_output_0",
+        "/layer/self_attn/Constant_31_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_30_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_30_output_0": [
+          "unk__32",
+          "unk__33",
+          1,
+          2,
+          64
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00118",
+      "name": "/layer/self_attn/Constant_32",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_32_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_32_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00119",
+      "name": "/layer/self_attn/Constant_33",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_33_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_33_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00120",
+      "name": "/layer/self_attn/Unsqueeze_31",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_27_output_0",
+        "/layer/self_attn/Constant_33_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_31_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_31_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00121",
+      "name": "/layer/self_attn/Constant_34",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_34_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_34_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00122",
+      "name": "/layer/self_attn/Unsqueeze_32",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_28_output_0",
+        "/layer/self_attn/Constant_34_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_32_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_32_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00123",
+      "name": "/layer/self_attn/Constant_35",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_35_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_35_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00124",
+      "name": "/layer/self_attn/Unsqueeze_33",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_32_output_0",
+        "/layer/self_attn/Constant_35_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_33_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_33_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00125",
+      "name": "/layer/self_attn/Constant_36",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_36_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_36_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00126",
+      "name": "/layer/self_attn/Unsqueeze_34",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_29_output_0",
+        "/layer/self_attn/Constant_36_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_34_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_34_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00127",
+      "name": "/layer/self_attn/Constant_37",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_37_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_37_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00128",
+      "name": "/layer/self_attn/Unsqueeze_35",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_30_output_0",
+        "/layer/self_attn/Constant_37_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_35_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_35_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00129",
+      "name": "/layer/self_attn/Concat_5",
+      "op": "Concat",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Unsqueeze_31_output_0",
+        "/layer/self_attn/Unsqueeze_32_output_0",
+        "/layer/self_attn/Unsqueeze_33_output_0",
+        "/layer/self_attn/Unsqueeze_34_output_0",
+        "/layer/self_attn/Unsqueeze_35_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Concat_5_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Concat_5_output_0": [
+          5
+        ]
+      },
+      "attributes": {
+        "axis": "0"
+      }
+    },
+    {
+      "id": "n00130",
+      "name": "/layer/self_attn/Constant_38",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_38_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_38_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00131",
+      "name": "/layer/self_attn/Reshape_3",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Concat_5_output_0",
+        "/layer/self_attn/Constant_38_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Reshape_3_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Reshape_3_output_0": [
+          5
+        ]
+      },
+      "attributes": {
+        "allowzero": "0"
+      }
+    },
+    {
+      "id": "n00132",
+      "name": "/layer/self_attn/Shape",
+      "op": "Shape",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Reshape_3_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Shape_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Shape_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00133",
+      "name": "/layer/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Shape_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/ConstantOfShape_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/ConstantOfShape_output_0": [
+          "unk__34"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00134",
+      "name": "/layer/self_attn/Constant_39",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_39_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_39_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00135",
+      "name": "/layer/self_attn/Mul_4",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/ConstantOfShape_output_0",
+        "/layer/self_attn/Constant_39_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Mul_4_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Mul_4_output_0": [
+          "unk__34"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00136",
+      "name": "/layer/self_attn/Equal",
+      "op": "Equal",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Reshape_3_output_0",
+        "/layer/self_attn/Mul_4_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Equal_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Equal_output_0": [
+          5
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00137",
+      "name": "/layer/self_attn/Where",
+      "op": "Where",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Equal_output_0",
+        "/layer/self_attn/ConstantOfShape_output_0",
+        "/layer/self_attn/Reshape_3_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Where_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Where_output_0": [
+          5
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00138",
+      "name": "/layer/self_attn/Expand",
+      "op": "Expand",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Unsqueeze_30_output_0",
+        "/layer/self_attn/Where_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Expand_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Expand_output_0": [
+          "unk__35",
+          "unk__36",
+          "unk__37",
+          2,
+          64
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00139",
+      "name": "/layer/self_attn/Constant_40",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_40_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_40_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00140",
+      "name": "Constant_225",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_152"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_152": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00141",
+      "name": "/layer/self_attn/Unsqueeze_36",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_27_output_0",
+        "onnx::Unsqueeze_152"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_36_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_36_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00142",
+      "name": "Constant_227",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_154"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_154": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00143",
+      "name": "/layer/self_attn/Unsqueeze_37",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_40_output_0",
+        "onnx::Unsqueeze_154"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_37_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_37_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00144",
+      "name": "Constant_229",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_156"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_156": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00145",
+      "name": "/layer/self_attn/Unsqueeze_38",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_29_output_0",
+        "onnx::Unsqueeze_156"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_38_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_38_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00146",
+      "name": "Constant_231",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_158"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_158": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00147",
+      "name": "/layer/self_attn/Unsqueeze_39",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_30_output_0",
+        "onnx::Unsqueeze_158"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_39_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_39_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00148",
+      "name": "/layer/self_attn/Concat_6",
+      "op": "Concat",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Unsqueeze_36_output_0",
+        "/layer/self_attn/Unsqueeze_37_output_0",
+        "/layer/self_attn/Unsqueeze_38_output_0",
+        "/layer/self_attn/Unsqueeze_39_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Concat_6_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Concat_6_output_0": [
+          4
+        ]
+      },
+      "attributes": {
+        "axis": "0"
+      }
+    },
+    {
+      "id": "n00149",
+      "name": "/layer/self_attn/Reshape_4",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Expand_output_0",
+        "/layer/self_attn/Concat_6_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Reshape_4_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Reshape_4_output_0": [
+          "unk__38",
+          "unk__39",
+          "unk__40",
+          "unk__41"
+        ]
+      },
+      "attributes": {
+        "allowzero": "0"
+      }
+    },
+    {
+      "id": "n00150",
+      "name": "/layer/self_attn/Constant_41",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_41_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_41_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00151",
+      "name": "/layer/self_attn/Constant_42",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_42_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_42_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00152",
+      "name": "/layer/self_attn/Constant_43",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_43_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_43_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00153",
+      "name": "/layer/self_attn/Constant_44",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_44_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_44_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00154",
+      "name": "/layer/self_attn/Constant_45",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_45_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_45_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00155",
+      "name": "/layer/self_attn/Unsqueeze_40",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Transpose_2_output_0",
+        "/layer/self_attn/Constant_45_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_40_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_40_output_0": [
+          "unk__8",
+          "unk__10",
+          1,
+          "unk__9",
+          "unk__11"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00156",
+      "name": "/layer/self_attn/Constant_46",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_46_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_46_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00157",
+      "name": "/layer/self_attn/Unsqueeze_41",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_41_output_0",
+        "/layer/self_attn/Constant_46_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_41_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_41_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00158",
+      "name": "/layer/self_attn/Constant_47",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_47_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_47_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00159",
+      "name": "/layer/self_attn/Unsqueeze_42",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_42_output_0",
+        "/layer/self_attn/Constant_47_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_42_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_42_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00160",
+      "name": "/layer/self_attn/Constant_48",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_48_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_48_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00161",
+      "name": "/layer/self_attn/Unsqueeze_43",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_32_output_0",
+        "/layer/self_attn/Constant_48_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_43_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_43_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00162",
+      "name": "/layer/self_attn/Constant_49",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_49_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_49_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00163",
+      "name": "/layer/self_attn/Unsqueeze_44",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_43_output_0",
+        "/layer/self_attn/Constant_49_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_44_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_44_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00164",
+      "name": "/layer/self_attn/Constant_50",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_50_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_50_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00165",
+      "name": "/layer/self_attn/Unsqueeze_45",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_44_output_0",
+        "/layer/self_attn/Constant_50_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_45_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_45_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00166",
+      "name": "/layer/self_attn/Concat_7",
+      "op": "Concat",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Unsqueeze_41_output_0",
+        "/layer/self_attn/Unsqueeze_42_output_0",
+        "/layer/self_attn/Unsqueeze_43_output_0",
+        "/layer/self_attn/Unsqueeze_44_output_0",
+        "/layer/self_attn/Unsqueeze_45_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Concat_7_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Concat_7_output_0": [
+          5
+        ]
+      },
+      "attributes": {
+        "axis": "0"
+      }
+    },
+    {
+      "id": "n00167",
+      "name": "/layer/self_attn/Constant_51",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_51_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_51_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00168",
+      "name": "/layer/self_attn/Reshape_5",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Concat_7_output_0",
+        "/layer/self_attn/Constant_51_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Reshape_5_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Reshape_5_output_0": [
+          5
+        ]
+      },
+      "attributes": {
+        "allowzero": "0"
+      }
+    },
+    {
+      "id": "n00169",
+      "name": "/layer/self_attn/Shape_1",
+      "op": "Shape",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Reshape_5_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Shape_1_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Shape_1_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00170",
+      "name": "/layer/self_attn/ConstantOfShape_1",
+      "op": "ConstantOfShape",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Shape_1_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/ConstantOfShape_1_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/ConstantOfShape_1_output_0": [
+          "unk__42"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00171",
+      "name": "/layer/self_attn/Constant_52",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_52_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_52_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00172",
+      "name": "/layer/self_attn/Mul_5",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/ConstantOfShape_1_output_0",
+        "/layer/self_attn/Constant_52_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Mul_5_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Mul_5_output_0": [
+          "unk__42"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00173",
+      "name": "/layer/self_attn/Equal_1",
+      "op": "Equal",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Reshape_5_output_0",
+        "/layer/self_attn/Mul_5_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Equal_1_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Equal_1_output_0": [
+          5
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00174",
+      "name": "/layer/self_attn/Where_1",
+      "op": "Where",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Equal_1_output_0",
+        "/layer/self_attn/ConstantOfShape_1_output_0",
+        "/layer/self_attn/Reshape_5_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Where_1_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Where_1_output_0": [
+          5
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00175",
+      "name": "/layer/self_attn/Expand_1",
+      "op": "Expand",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Unsqueeze_40_output_0",
+        "/layer/self_attn/Where_1_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Expand_1_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Expand_1_output_0": [
+          "unk__43",
+          "unk__44",
+          "unk__45",
+          "unk__46",
+          "unk__47"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00176",
+      "name": "/layer/self_attn/Constant_53",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_53_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_53_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00177",
+      "name": "Constant_262",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_189"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_189": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00178",
+      "name": "/layer/self_attn/Unsqueeze_46",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_41_output_0",
+        "onnx::Unsqueeze_189"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_46_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_46_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00179",
+      "name": "Constant_264",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_191"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_191": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00180",
+      "name": "/layer/self_attn/Unsqueeze_47",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_53_output_0",
+        "onnx::Unsqueeze_191"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_47_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_47_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00181",
+      "name": "Constant_266",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_193"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_193": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00182",
+      "name": "/layer/self_attn/Unsqueeze_48",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_43_output_0",
+        "onnx::Unsqueeze_193"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_48_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_48_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00183",
+      "name": "Constant_268",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_195"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_195": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00184",
+      "name": "/layer/self_attn/Unsqueeze_49",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_44_output_0",
+        "onnx::Unsqueeze_195"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_49_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_49_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00185",
+      "name": "/layer/self_attn/Concat_8",
+      "op": "Concat",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Unsqueeze_46_output_0",
+        "/layer/self_attn/Unsqueeze_47_output_0",
+        "/layer/self_attn/Unsqueeze_48_output_0",
+        "/layer/self_attn/Unsqueeze_49_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Concat_8_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Concat_8_output_0": [
+          4
+        ]
+      },
+      "attributes": {
+        "axis": "0"
+      }
+    },
+    {
+      "id": "n00186",
+      "name": "/layer/self_attn/Reshape_6",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Expand_1_output_0",
+        "/layer/self_attn/Concat_8_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Reshape_6_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Reshape_6_output_0": [
+          "unk__48",
+          "unk__49",
+          "unk__50",
+          "unk__51"
+        ]
+      },
+      "attributes": {
+        "allowzero": "0"
+      }
+    },
+    {
+      "id": "n00187",
+      "name": "/layer/self_attn/Transpose_3",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Reshape_4_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Transpose_3_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Transpose_3_output_0": [
+          "unk__38",
+          "unk__39",
+          "unk__41",
+          "unk__40"
+        ]
+      },
+      "attributes": {
+        "perm": "[0, 1, 3, 2]"
+      }
+    },
+    {
+      "id": "n00188",
+      "name": "/layer/self_attn/MatMul",
+      "op": "MatMul",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Add_output_0",
+        "/layer/self_attn/Transpose_3_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/MatMul_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/MatMul_output_0": [
+          "unk__52",
+          "unk__53",
+          2,
+          "unk__40"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00189",
+      "name": "/layer/self_attn/Constant_54",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/self_attn/Constant_54_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Constant_54_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00190",
+      "name": "/layer/self_attn/Mul_6",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/MatMul_output_0",
+        "/layer/self_attn/Constant_54_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Mul_6_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Mul_6_output_0": [
+          "unk__52",
+          "unk__53",
+          2,
+          "unk__40"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00191",
+      "name": "/layer/self_attn/Add_2",
+      "op": "Add",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Mul_6_output_0",
+        "mask"
+      ],
+      "outputs": [
+        "/layer/self_attn/Add_2_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Add_2_output_0": [
+          "unk__52",
+          "unk__53",
+          2,
+          2
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00192",
+      "name": "/layer/self_attn/Softmax",
+      "op": "Softmax",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Add_2_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Softmax_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Softmax_output_0": [
+          "unk__52",
+          "unk__53",
+          2,
+          2
+        ]
+      },
+      "attributes": {
+        "axis": "-1"
+      }
+    },
+    {
+      "id": "n00193",
+      "name": "/layer/self_attn/Cast",
+      "op": "Cast",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Softmax_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Cast_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Cast_output_0": [
+          "unk__52",
+          "unk__53",
+          2,
+          2
+        ]
+      },
+      "attributes": {
+        "to": "1"
+      }
+    },
+    {
+      "id": "n00194",
+      "name": "/layer/self_attn/Cast_1",
+      "op": "Cast",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Cast_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Cast_1_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Cast_1_output_0": [
+          "unk__52",
+          "unk__53",
+          2,
+          2
+        ]
+      },
+      "attributes": {
+        "to": "1"
+      }
+    },
+    {
+      "id": "n00195",
+      "name": "/layer/self_attn/MatMul_1",
+      "op": "MatMul",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Cast_1_output_0",
+        "/layer/self_attn/Reshape_6_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/MatMul_1_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/MatMul_1_output_0": [
+          "unk__54",
+          "unk__55",
+          2,
+          "unk__51"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00196",
+      "name": "/layer/self_attn/Transpose_4",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/MatMul_1_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Transpose_4_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Transpose_4_output_0": [
+          "unk__54",
+          2,
+          "unk__55",
+          "unk__51"
+        ]
+      },
+      "attributes": {
+        "perm": "[0, 2, 1, 3]"
+      }
+    },
+    {
+      "id": "n00197",
+      "name": "Constant_282",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_209"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_209": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00198",
+      "name": "/layer/self_attn/Unsqueeze_50",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_1_output_0",
+        "onnx::Unsqueeze_209"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_50_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_50_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00199",
+      "name": "Constant_284",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_211"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_211": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00200",
+      "name": "/layer/self_attn/Unsqueeze_51",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_2_output_0",
+        "onnx::Unsqueeze_211"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_51_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_51_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00201",
+      "name": "Constant_286",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "onnx::Unsqueeze_213"
+      ],
+      "shapes": {
+        "onnx::Unsqueeze_213": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00202",
+      "name": "/layer/self_attn/Unsqueeze_52",
+      "op": "Unsqueeze",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Constant_3_output_0",
+        "onnx::Unsqueeze_213"
+      ],
+      "outputs": [
+        "/layer/self_attn/Unsqueeze_52_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Unsqueeze_52_output_0": [
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00203",
+      "name": "/layer/self_attn/Concat_9",
+      "op": "Concat",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Unsqueeze_50_output_0",
+        "/layer/self_attn/Unsqueeze_51_output_0",
+        "/layer/self_attn/Unsqueeze_52_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Concat_9_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Concat_9_output_0": [
+          3
+        ]
+      },
+      "attributes": {
+        "axis": "0"
+      }
+    },
+    {
+      "id": "n00204",
+      "name": "/layer/self_attn/Reshape_7",
+      "op": "Reshape",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Transpose_4_output_0",
+        "/layer/self_attn/Concat_9_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/Reshape_7_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/Reshape_7_output_0": [
+          "unk__56",
+          "unk__57",
+          "unk__58"
+        ]
+      },
+      "attributes": {
+        "allowzero": "0"
+      }
+    },
+    {
+      "id": "n00205",
+      "name": "/layer/self_attn/o_proj/Transpose",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "layer.self_attn.o_proj.weight"
+      ],
+      "outputs": [
+        "/layer/self_attn/o_proj/Transpose_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/o_proj/Transpose_output_0": [
+          2048,
+          2048
+        ]
+      },
+      "attributes": {
+        "perm": "[1, 0]"
+      }
+    },
+    {
+      "id": "n00206",
+      "name": "/layer/self_attn/o_proj/MatMul",
+      "op": "MatMul",
+      "domain": "",
+      "inputs": [
+        "/layer/self_attn/Reshape_7_output_0",
+        "/layer/self_attn/o_proj/Transpose_output_0"
+      ],
+      "outputs": [
+        "/layer/self_attn/o_proj/MatMul_output_0"
+      ],
+      "shapes": {
+        "/layer/self_attn/o_proj/MatMul_output_0": [
+          "unk__56",
+          "unk__57",
+          2048
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00207",
+      "name": "/layer/Add",
+      "op": "Add",
+      "domain": "",
+      "inputs": [
+        "/layer/input_layernorm/Cast_output_0",
+        "/layer/self_attn/o_proj/MatMul_output_0"
+      ],
+      "outputs": [
+        "/layer/Add_output_0"
+      ],
+      "shapes": {
+        "/layer/Add_output_0": [
+          "unk__56",
+          2,
+          2048
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00208",
+      "name": "/layer/post_attention_layernorm/Cast",
+      "op": "Cast",
+      "domain": "",
+      "inputs": [
+        "/layer/Add_output_0"
+      ],
+      "outputs": [
+        "/layer/post_attention_layernorm/Cast_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/Cast_output_0": [
+          "unk__56",
+          2,
+          2048
+        ]
+      },
+      "attributes": {
+        "to": "1"
+      }
+    },
+    {
+      "id": "n00209",
+      "name": "/layer/post_attention_layernorm/Constant",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/post_attention_layernorm/Constant_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/Constant_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00210",
+      "name": "/layer/post_attention_layernorm/Pow",
+      "op": "Pow",
+      "domain": "",
+      "inputs": [
+        "/layer/post_attention_layernorm/Cast_output_0",
+        "/layer/post_attention_layernorm/Constant_output_0"
+      ],
+      "outputs": [
+        "/layer/post_attention_layernorm/Pow_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/Pow_output_0": [
+          "unk__56",
+          2,
+          2048
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00211",
+      "name": "/layer/post_attention_layernorm/ReduceMean",
+      "op": "ReduceMean",
+      "domain": "",
+      "inputs": [
+        "/layer/post_attention_layernorm/Pow_output_0"
+      ],
+      "outputs": [
+        "/layer/post_attention_layernorm/ReduceMean_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/ReduceMean_output_0": [
+          "unk__56",
+          2,
+          1
+        ]
+      },
+      "attributes": {
+        "axes": "[-1]",
+        "keepdims": "1"
+      }
+    },
+    {
+      "id": "n00212",
+      "name": "/layer/post_attention_layernorm/Constant_1",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/post_attention_layernorm/Constant_1_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/Constant_1_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00213",
+      "name": "/layer/post_attention_layernorm/Add",
+      "op": "Add",
+      "domain": "",
+      "inputs": [
+        "/layer/post_attention_layernorm/ReduceMean_output_0",
+        "/layer/post_attention_layernorm/Constant_1_output_0"
+      ],
+      "outputs": [
+        "/layer/post_attention_layernorm/Add_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/Add_output_0": [
+          "unk__56",
+          2,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00214",
+      "name": "/layer/post_attention_layernorm/Sqrt",
+      "op": "Sqrt",
+      "domain": "",
+      "inputs": [
+        "/layer/post_attention_layernorm/Add_output_0"
+      ],
+      "outputs": [
+        "/layer/post_attention_layernorm/Sqrt_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/Sqrt_output_0": [
+          "unk__56",
+          2,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00215",
+      "name": "/layer/post_attention_layernorm/Constant_2",
+      "op": "Constant",
+      "domain": "",
+      "inputs": [],
+      "outputs": [
+        "/layer/post_attention_layernorm/Constant_2_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/Constant_2_output_0": []
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00216",
+      "name": "/layer/post_attention_layernorm/Div",
+      "op": "Div",
+      "domain": "",
+      "inputs": [
+        "/layer/post_attention_layernorm/Constant_2_output_0",
+        "/layer/post_attention_layernorm/Sqrt_output_0"
+      ],
+      "outputs": [
+        "/layer/post_attention_layernorm/Div_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/Div_output_0": [
+          "unk__56",
+          2,
+          1
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00217",
+      "name": "/layer/post_attention_layernorm/Mul",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/post_attention_layernorm/Cast_output_0",
+        "/layer/post_attention_layernorm/Div_output_0"
+      ],
+      "outputs": [
+        "/layer/post_attention_layernorm/Mul_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/Mul_output_0": [
+          "unk__56",
+          2,
+          2048
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00218",
+      "name": "/layer/post_attention_layernorm/Cast_1",
+      "op": "Cast",
+      "domain": "",
+      "inputs": [
+        "/layer/post_attention_layernorm/Mul_output_0"
+      ],
+      "outputs": [
+        "/layer/post_attention_layernorm/Cast_1_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/Cast_1_output_0": [
+          "unk__56",
+          2,
+          2048
+        ]
+      },
+      "attributes": {
+        "to": "1"
+      }
+    },
+    {
+      "id": "n00219",
+      "name": "/layer/post_attention_layernorm/Mul_1",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "layer.post_attention_layernorm.weight",
+        "/layer/post_attention_layernorm/Cast_1_output_0"
+      ],
+      "outputs": [
+        "/layer/post_attention_layernorm/Mul_1_output_0"
+      ],
+      "shapes": {
+        "/layer/post_attention_layernorm/Mul_1_output_0": [
+          "unk__56",
+          2,
+          2048
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00220",
+      "name": "/layer/mlp/gate_proj/Transpose",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "layer.mlp.gate_proj.weight"
+      ],
+      "outputs": [
+        "/layer/mlp/gate_proj/Transpose_output_0"
+      ],
+      "shapes": {
+        "/layer/mlp/gate_proj/Transpose_output_0": [
+          2048,
+          8192
+        ]
+      },
+      "attributes": {
+        "perm": "[1, 0]"
+      }
+    },
+    {
+      "id": "n00221",
+      "name": "/layer/mlp/gate_proj/MatMul",
+      "op": "MatMul",
+      "domain": "",
+      "inputs": [
+        "/layer/post_attention_layernorm/Mul_1_output_0",
+        "/layer/mlp/gate_proj/Transpose_output_0"
+      ],
+      "outputs": [
+        "/layer/mlp/gate_proj/MatMul_output_0"
+      ],
+      "shapes": {
+        "/layer/mlp/gate_proj/MatMul_output_0": [
+          "unk__56",
+          2,
+          8192
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00222",
+      "name": "/layer/mlp/act_fn/Sigmoid",
+      "op": "Sigmoid",
+      "domain": "",
+      "inputs": [
+        "/layer/mlp/gate_proj/MatMul_output_0"
+      ],
+      "outputs": [
+        "/layer/mlp/act_fn/Sigmoid_output_0"
+      ],
+      "shapes": {
+        "/layer/mlp/act_fn/Sigmoid_output_0": [
+          "unk__56",
+          2,
+          8192
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00223",
+      "name": "/layer/mlp/act_fn/Mul",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/mlp/gate_proj/MatMul_output_0",
+        "/layer/mlp/act_fn/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/layer/mlp/act_fn/Mul_output_0"
+      ],
+      "shapes": {
+        "/layer/mlp/act_fn/Mul_output_0": [
+          "unk__56",
+          2,
+          8192
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00224",
+      "name": "/layer/mlp/up_proj/Transpose",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "layer.mlp.up_proj.weight"
+      ],
+      "outputs": [
+        "/layer/mlp/up_proj/Transpose_output_0"
+      ],
+      "shapes": {
+        "/layer/mlp/up_proj/Transpose_output_0": [
+          2048,
+          8192
+        ]
+      },
+      "attributes": {
+        "perm": "[1, 0]"
+      }
+    },
+    {
+      "id": "n00225",
+      "name": "/layer/mlp/up_proj/MatMul",
+      "op": "MatMul",
+      "domain": "",
+      "inputs": [
+        "/layer/post_attention_layernorm/Mul_1_output_0",
+        "/layer/mlp/up_proj/Transpose_output_0"
+      ],
+      "outputs": [
+        "/layer/mlp/up_proj/MatMul_output_0"
+      ],
+      "shapes": {
+        "/layer/mlp/up_proj/MatMul_output_0": [
+          "unk__56",
+          2,
+          8192
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00226",
+      "name": "/layer/mlp/Mul",
+      "op": "Mul",
+      "domain": "",
+      "inputs": [
+        "/layer/mlp/act_fn/Mul_output_0",
+        "/layer/mlp/up_proj/MatMul_output_0"
+      ],
+      "outputs": [
+        "/layer/mlp/Mul_output_0"
+      ],
+      "shapes": {
+        "/layer/mlp/Mul_output_0": [
+          "unk__56",
+          2,
+          8192
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00227",
+      "name": "/layer/mlp/down_proj/Transpose",
+      "op": "Transpose",
+      "domain": "",
+      "inputs": [
+        "layer.mlp.down_proj.weight"
+      ],
+      "outputs": [
+        "/layer/mlp/down_proj/Transpose_output_0"
+      ],
+      "shapes": {
+        "/layer/mlp/down_proj/Transpose_output_0": [
+          8192,
+          2048
+        ]
+      },
+      "attributes": {
+        "perm": "[1, 0]"
+      }
+    },
+    {
+      "id": "n00228",
+      "name": "/layer/mlp/down_proj/MatMul",
+      "op": "MatMul",
+      "domain": "",
+      "inputs": [
+        "/layer/mlp/Mul_output_0",
+        "/layer/mlp/down_proj/Transpose_output_0"
+      ],
+      "outputs": [
+        "/layer/mlp/down_proj/MatMul_output_0"
+      ],
+      "shapes": {
+        "/layer/mlp/down_proj/MatMul_output_0": [
+          "unk__56",
+          2,
+          2048
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "n00229",
+      "name": "/layer/Add_1",
+      "op": "Add",
+      "domain": "",
+      "inputs": [
+        "/layer/post_attention_layernorm/Cast_output_0",
+        "/layer/mlp/down_proj/MatMul_output_0"
+      ],
+      "outputs": [
+        "y"
+      ],
+      "shapes": {
+        "y": [
+          1,
+          2,
+          2048
+        ]
+      },
+      "attributes": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "n00001",
+      "target": "n00003",
+      "tensor": "/layer/input_layernorm/Cast_output_0"
+    },
+    {
+      "source": "n00002",
+      "target": "n00003",
+      "tensor": "/layer/input_layernorm/Constant_output_0"
+    },
+    {
+      "source": "n00003",
+      "target": "n00004",
+      "tensor": "/layer/input_layernorm/Pow_output_0"
+    },
+    {
+      "source": "n00004",
+      "target": "n00007",
+      "tensor": "/layer/input_layernorm/ReduceMean_output_0"
+    },
+    {
+      "source": "n00006",
+      "target": "n00007",
+      "tensor": "/layer/input_layernorm/Constant_2_output_0"
+    },
+    {
+      "source": "n00007",
+      "target": "n00008",
+      "tensor": "/layer/input_layernorm/Add_output_0"
+    },
+    {
+      "source": "n00009",
+      "target": "n00010",
+      "tensor": "/layer/input_layernorm/Constant_3_output_0"
+    },
+    {
+      "source": "n00008",
+      "target": "n00010",
+      "tensor": "/layer/input_layernorm/Sqrt_output_0"
+    },
+    {
+      "source": "n00001",
+      "target": "n00011",
+      "tensor": "/layer/input_layernorm/Cast_output_0"
+    },
+    {
+      "source": "n00010",
+      "target": "n00011",
+      "tensor": "/layer/input_layernorm/Div_output_0"
+    },
+    {
+      "source": "n00011",
+      "target": "n00012",
+      "tensor": "/layer/input_layernorm/Mul_output_0"
+    },
+    {
+      "source": "n00012",
+      "target": "n00013",
+      "tensor": "/layer/input_layernorm/Cast_1_output_0"
+    },
+    {
+      "source": "n00013",
+      "target": "n00018",
+      "tensor": "/layer/input_layernorm/Mul_1_output_0"
+    },
+    {
+      "source": "n00017",
+      "target": "n00018",
+      "tensor": "/layer/self_attn/q_proj/Transpose_output_0"
+    },
+    {
+      "source": "n00015",
+      "target": "n00022",
+      "tensor": "/layer/self_attn/Constant_1_output_0"
+    },
+    {
+      "source": "n00021",
+      "target": "n00022",
+      "tensor": "onnx::Unsqueeze_33"
+    },
+    {
+      "source": "n00016",
+      "target": "n00024",
+      "tensor": "/layer/self_attn/Constant_2_output_0"
+    },
+    {
+      "source": "n00023",
+      "target": "n00024",
+      "tensor": "onnx::Unsqueeze_35"
+    },
+    {
+      "source": "n00019",
+      "target": "n00026",
+      "tensor": "/layer/self_attn/Constant_3_output_0"
+    },
+    {
+      "source": "n00025",
+      "target": "n00026",
+      "tensor": "onnx::Unsqueeze_37"
+    },
+    {
+      "source": "n00020",
+      "target": "n00028",
+      "tensor": "/layer/self_attn/Constant_4_output_0"
+    },
+    {
+      "source": "n00027",
+      "target": "n00028",
+      "tensor": "onnx::Unsqueeze_39"
+    },
+    {
+      "source": "n00022",
+      "target": "n00029",
+      "tensor": "/layer/self_attn/Unsqueeze_output_0"
+    },
+    {
+      "source": "n00024",
+      "target": "n00029",
+      "tensor": "/layer/self_attn/Unsqueeze_1_output_0"
+    },
+    {
+      "source": "n00026",
+      "target": "n00029",
+      "tensor": "/layer/self_attn/Unsqueeze_2_output_0"
+    },
+    {
+      "source": "n00028",
+      "target": "n00029",
+      "tensor": "/layer/self_attn/Unsqueeze_3_output_0"
+    },
+    {
+      "source": "n00015",
+      "target": "n00031",
+      "tensor": "/layer/self_attn/Constant_1_output_0"
+    },
+    {
+      "source": "n00030",
+      "target": "n00031",
+      "tensor": "onnx::Unsqueeze_42"
+    },
+    {
+      "source": "n00016",
+      "target": "n00033",
+      "tensor": "/layer/self_attn/Constant_2_output_0"
+    },
+    {
+      "source": "n00032",
+      "target": "n00033",
+      "tensor": "onnx::Unsqueeze_44"
+    },
+    {
+      "source": "n00019",
+      "target": "n00035",
+      "tensor": "/layer/self_attn/Constant_3_output_0"
+    },
+    {
+      "source": "n00034",
+      "target": "n00035",
+      "tensor": "onnx::Unsqueeze_46"
+    },
+    {
+      "source": "n00020",
+      "target": "n00037",
+      "tensor": "/layer/self_attn/Constant_4_output_0"
+    },
+    {
+      "source": "n00036",
+      "target": "n00037",
+      "tensor": "onnx::Unsqueeze_48"
+    },
+    {
+      "source": "n00031",
+      "target": "n00038",
+      "tensor": "/layer/self_attn/Unsqueeze_4_output_0"
+    },
+    {
+      "source": "n00033",
+      "target": "n00038",
+      "tensor": "/layer/self_attn/Unsqueeze_5_output_0"
+    },
+    {
+      "source": "n00035",
+      "target": "n00038",
+      "tensor": "/layer/self_attn/Unsqueeze_6_output_0"
+    },
+    {
+      "source": "n00037",
+      "target": "n00038",
+      "tensor": "/layer/self_attn/Unsqueeze_7_output_0"
+    },
+    {
+      "source": "n00015",
+      "target": "n00040",
+      "tensor": "/layer/self_attn/Constant_1_output_0"
+    },
+    {
+      "source": "n00039",
+      "target": "n00040",
+      "tensor": "onnx::Unsqueeze_51"
+    },
+    {
+      "source": "n00016",
+      "target": "n00042",
+      "tensor": "/layer/self_attn/Constant_2_output_0"
+    },
+    {
+      "source": "n00041",
+      "target": "n00042",
+      "tensor": "onnx::Unsqueeze_53"
+    },
+    {
+      "source": "n00019",
+      "target": "n00044",
+      "tensor": "/layer/self_attn/Constant_3_output_0"
+    },
+    {
+      "source": "n00043",
+      "target": "n00044",
+      "tensor": "onnx::Unsqueeze_55"
+    },
+    {
+      "source": "n00020",
+      "target": "n00046",
+      "tensor": "/layer/self_attn/Constant_4_output_0"
+    },
+    {
+      "source": "n00045",
+      "target": "n00046",
+      "tensor": "onnx::Unsqueeze_57"
+    },
+    {
+      "source": "n00040",
+      "target": "n00047",
+      "tensor": "/layer/self_attn/Unsqueeze_8_output_0"
+    },
+    {
+      "source": "n00042",
+      "target": "n00047",
+      "tensor": "/layer/self_attn/Unsqueeze_9_output_0"
+    },
+    {
+      "source": "n00044",
+      "target": "n00047",
+      "tensor": "/layer/self_attn/Unsqueeze_10_output_0"
+    },
+    {
+      "source": "n00046",
+      "target": "n00047",
+      "tensor": "/layer/self_attn/Unsqueeze_11_output_0"
+    },
+    {
+      "source": "n00018",
+      "target": "n00048",
+      "tensor": "/layer/self_attn/q_proj/MatMul_output_0"
+    },
+    {
+      "source": "n00029",
+      "target": "n00048",
+      "tensor": "/layer/self_attn/Concat_output_0"
+    },
+    {
+      "source": "n00048",
+      "target": "n00049",
+      "tensor": "/layer/self_attn/Reshape_output_0"
+    },
+    {
+      "source": "n00013",
+      "target": "n00051",
+      "tensor": "/layer/input_layernorm/Mul_1_output_0"
+    },
+    {
+      "source": "n00050",
+      "target": "n00051",
+      "tensor": "/layer/self_attn/k_proj/Transpose_output_0"
+    },
+    {
+      "source": "n00051",
+      "target": "n00052",
+      "tensor": "/layer/self_attn/k_proj/MatMul_output_0"
+    },
+    {
+      "source": "n00038",
+      "target": "n00052",
+      "tensor": "/layer/self_attn/Concat_1_output_0"
+    },
+    {
+      "source": "n00052",
+      "target": "n00053",
+      "tensor": "/layer/self_attn/Reshape_1_output_0"
+    },
+    {
+      "source": "n00013",
+      "target": "n00055",
+      "tensor": "/layer/input_layernorm/Mul_1_output_0"
+    },
+    {
+      "source": "n00054",
+      "target": "n00055",
+      "tensor": "/layer/self_attn/v_proj/Transpose_output_0"
+    },
+    {
+      "source": "n00055",
+      "target": "n00056",
+      "tensor": "/layer/self_attn/v_proj/MatMul_output_0"
+    },
+    {
+      "source": "n00047",
+      "target": "n00056",
+      "tensor": "/layer/self_attn/Concat_2_output_0"
+    },
+    {
+      "source": "n00056",
+      "target": "n00057",
+      "tensor": "/layer/self_attn/Reshape_2_output_0"
+    },
+    {
+      "source": "n00058",
+      "target": "n00059",
+      "tensor": "/layer/self_attn/Constant_5_output_0"
+    },
+    {
+      "source": "n00060",
+      "target": "n00061",
+      "tensor": "/layer/self_attn/Constant_6_output_0"
+    },
+    {
+      "source": "n00049",
+      "target": "n00062",
+      "tensor": "/layer/self_attn/Transpose_output_0"
+    },
+    {
+      "source": "n00059",
+      "target": "n00062",
+      "tensor": "/layer/self_attn/Unsqueeze_12_output_0"
+    },
+    {
+      "source": "n00063",
+      "target": "n00066",
+      "tensor": "/layer/self_attn/Constant_7_output_0"
+    },
+    {
+      "source": "n00065",
+      "target": "n00066",
+      "tensor": "/layer/self_attn/Constant_9_output_0"
+    },
+    {
+      "source": "n00014",
+      "target": "n00068",
+      "tensor": "/layer/self_attn/Constant_output_0"
+    },
+    {
+      "source": "n00067",
+      "target": "n00068",
+      "tensor": "/layer/self_attn/Constant_10_output_0"
+    },
+    {
+      "source": "n00064",
+      "target": "n00070",
+      "tensor": "/layer/self_attn/Constant_8_output_0"
+    },
+    {
+      "source": "n00069",
+      "target": "n00070",
+      "tensor": "/layer/self_attn/Constant_11_output_0"
+    },
+    {
+      "source": "n00005",
+      "target": "n00072",
+      "tensor": "/layer/input_layernorm/Constant_1_output_0"
+    },
+    {
+      "source": "n00071",
+      "target": "n00072",
+      "tensor": "/layer/self_attn/Constant_12_output_0"
+    },
+    {
+      "source": "n00049",
+      "target": "n00073",
+      "tensor": "/layer/self_attn/Transpose_output_0"
+    },
+    {
+      "source": "n00068",
+      "target": "n00073",
+      "tensor": "/layer/self_attn/Unsqueeze_15_output_0"
+    },
+    {
+      "source": "n00070",
+      "target": "n00073",
+      "tensor": "/layer/self_attn/Unsqueeze_16_output_0"
+    },
+    {
+      "source": "n00066",
+      "target": "n00073",
+      "tensor": "/layer/self_attn/Unsqueeze_14_output_0"
+    },
+    {
+      "source": "n00072",
+      "target": "n00073",
+      "tensor": "/layer/self_attn/Unsqueeze_17_output_0"
+    },
+    {
+      "source": "n00063",
+      "target": "n00076",
+      "tensor": "/layer/self_attn/Constant_7_output_0"
+    },
+    {
+      "source": "n00075",
+      "target": "n00076",
+      "tensor": "/layer/self_attn/Constant_14_output_0"
+    },
+    {
+      "source": "n00064",
+      "target": "n00078",
+      "tensor": "/layer/self_attn/Constant_8_output_0"
+    },
+    {
+      "source": "n00077",
+      "target": "n00078",
+      "tensor": "/layer/self_attn/Constant_15_output_0"
+    },
+    {
+      "source": "n00074",
+      "target": "n00080",
+      "tensor": "/layer/self_attn/Constant_13_output_0"
+    },
+    {
+      "source": "n00079",
+      "target": "n00080",
+      "tensor": "/layer/self_attn/Constant_16_output_0"
+    },
+    {
+      "source": "n00005",
+      "target": "n00082",
+      "tensor": "/layer/input_layernorm/Constant_1_output_0"
+    },
+    {
+      "source": "n00081",
+      "target": "n00082",
+      "tensor": "/layer/self_attn/Constant_17_output_0"
+    },
+    {
+      "source": "n00049",
+      "target": "n00083",
+      "tensor": "/layer/self_attn/Transpose_output_0"
+    },
+    {
+      "source": "n00078",
+      "target": "n00083",
+      "tensor": "/layer/self_attn/Unsqueeze_19_output_0"
+    },
+    {
+      "source": "n00080",
+      "target": "n00083",
+      "tensor": "/layer/self_attn/Unsqueeze_20_output_0"
+    },
+    {
+      "source": "n00076",
+      "target": "n00083",
+      "tensor": "/layer/self_attn/Unsqueeze_18_output_0"
+    },
+    {
+      "source": "n00082",
+      "target": "n00083",
+      "tensor": "/layer/self_attn/Unsqueeze_21_output_0"
+    },
+    {
+      "source": "n00083",
+      "target": "n00084",
+      "tensor": "/layer/self_attn/Slice_1_output_0"
+    },
+    {
+      "source": "n00084",
+      "target": "n00085",
+      "tensor": "/layer/self_attn/Neg_output_0"
+    },
+    {
+      "source": "n00073",
+      "target": "n00085",
+      "tensor": "/layer/self_attn/Slice_output_0"
+    },
+    {
+      "source": "n00085",
+      "target": "n00086",
+      "tensor": "/layer/self_attn/Concat_3_output_0"
+    },
+    {
+      "source": "n00061",
+      "target": "n00086",
+      "tensor": "/layer/self_attn/Unsqueeze_13_output_0"
+    },
+    {
+      "source": "n00062",
+      "target": "n00087",
+      "tensor": "/layer/self_attn/Mul_output_0"
+    },
+    {
+      "source": "n00086",
+      "target": "n00087",
+      "tensor": "/layer/self_attn/Mul_1_output_0"
+    },
+    {
+      "source": "n00053",
+      "target": "n00088",
+      "tensor": "/layer/self_attn/Transpose_1_output_0"
+    },
+    {
+      "source": "n00059",
+      "target": "n00088",
+      "tensor": "/layer/self_attn/Unsqueeze_12_output_0"
+    },
+    {
+      "source": "n00063",
+      "target": "n00091",
+      "tensor": "/layer/self_attn/Constant_7_output_0"
+    },
+    {
+      "source": "n00090",
+      "target": "n00091",
+      "tensor": "/layer/self_attn/Constant_19_output_0"
+    },
+    {
+      "source": "n00014",
+      "target": "n00093",
+      "tensor": "/layer/self_attn/Constant_output_0"
+    },
+    {
+      "source": "n00092",
+      "target": "n00093",
+      "tensor": "/layer/self_attn/Constant_20_output_0"
+    },
+    {
+      "source": "n00089",
+      "target": "n00095",
+      "tensor": "/layer/self_attn/Constant_18_output_0"
+    },
+    {
+      "source": "n00094",
+      "target": "n00095",
+      "tensor": "/layer/self_attn/Constant_21_output_0"
+    },
+    {
+      "source": "n00005",
+      "target": "n00097",
+      "tensor": "/layer/input_layernorm/Constant_1_output_0"
+    },
+    {
+      "source": "n00096",
+      "target": "n00097",
+      "tensor": "/layer/self_attn/Constant_22_output_0"
+    },
+    {
+      "source": "n00053",
+      "target": "n00098",
+      "tensor": "/layer/self_attn/Transpose_1_output_0"
+    },
+    {
+      "source": "n00093",
+      "target": "n00098",
+      "tensor": "/layer/self_attn/Unsqueeze_23_output_0"
+    },
+    {
+      "source": "n00095",
+      "target": "n00098",
+      "tensor": "/layer/self_attn/Unsqueeze_24_output_0"
+    },
+    {
+      "source": "n00091",
+      "target": "n00098",
+      "tensor": "/layer/self_attn/Unsqueeze_22_output_0"
+    },
+    {
+      "source": "n00097",
+      "target": "n00098",
+      "tensor": "/layer/self_attn/Unsqueeze_25_output_0"
+    },
+    {
+      "source": "n00063",
+      "target": "n00100",
+      "tensor": "/layer/self_attn/Constant_7_output_0"
+    },
+    {
+      "source": "n00099",
+      "target": "n00100",
+      "tensor": "/layer/self_attn/Constant_23_output_0"
+    },
+    {
+      "source": "n00089",
+      "target": "n00102",
+      "tensor": "/layer/self_attn/Constant_18_output_0"
+    },
+    {
+      "source": "n00101",
+      "target": "n00102",
+      "tensor": "/layer/self_attn/Constant_24_output_0"
+    },
+    {
+      "source": "n00074",
+      "target": "n00104",
+      "tensor": "/layer/self_attn/Constant_13_output_0"
+    },
+    {
+      "source": "n00103",
+      "target": "n00104",
+      "tensor": "/layer/self_attn/Constant_25_output_0"
+    },
+    {
+      "source": "n00005",
+      "target": "n00106",
+      "tensor": "/layer/input_layernorm/Constant_1_output_0"
+    },
+    {
+      "source": "n00105",
+      "target": "n00106",
+      "tensor": "/layer/self_attn/Constant_26_output_0"
+    },
+    {
+      "source": "n00053",
+      "target": "n00107",
+      "tensor": "/layer/self_attn/Transpose_1_output_0"
+    },
+    {
+      "source": "n00102",
+      "target": "n00107",
+      "tensor": "/layer/self_attn/Unsqueeze_27_output_0"
+    },
+    {
+      "source": "n00104",
+      "target": "n00107",
+      "tensor": "/layer/self_attn/Unsqueeze_28_output_0"
+    },
+    {
+      "source": "n00100",
+      "target": "n00107",
+      "tensor": "/layer/self_attn/Unsqueeze_26_output_0"
+    },
+    {
+      "source": "n00106",
+      "target": "n00107",
+      "tensor": "/layer/self_attn/Unsqueeze_29_output_0"
+    },
+    {
+      "source": "n00107",
+      "target": "n00108",
+      "tensor": "/layer/self_attn/Slice_3_output_0"
+    },
+    {
+      "source": "n00108",
+      "target": "n00109",
+      "tensor": "/layer/self_attn/Neg_1_output_0"
+    },
+    {
+      "source": "n00098",
+      "target": "n00109",
+      "tensor": "/layer/self_attn/Slice_2_output_0"
+    },
+    {
+      "source": "n00109",
+      "target": "n00110",
+      "tensor": "/layer/self_attn/Concat_4_output_0"
+    },
+    {
+      "source": "n00061",
+      "target": "n00110",
+      "tensor": "/layer/self_attn/Unsqueeze_13_output_0"
+    },
+    {
+      "source": "n00088",
+      "target": "n00111",
+      "tensor": "/layer/self_attn/Mul_2_output_0"
+    },
+    {
+      "source": "n00110",
+      "target": "n00111",
+      "tensor": "/layer/self_attn/Mul_3_output_0"
+    },
+    {
+      "source": "n00111",
+      "target": "n00117",
+      "tensor": "/layer/self_attn/Add_1_output_0"
+    },
+    {
+      "source": "n00116",
+      "target": "n00117",
+      "tensor": "/layer/self_attn/Constant_31_output_0"
+    },
+    {
+      "source": "n00112",
+      "target": "n00120",
+      "tensor": "/layer/self_attn/Constant_27_output_0"
+    },
+    {
+      "source": "n00119",
+      "target": "n00120",
+      "tensor": "/layer/self_attn/Constant_33_output_0"
+    },
+    {
+      "source": "n00113",
+      "target": "n00122",
+      "tensor": "/layer/self_attn/Constant_28_output_0"
+    },
+    {
+      "source": "n00121",
+      "target": "n00122",
+      "tensor": "/layer/self_attn/Constant_34_output_0"
+    },
+    {
+      "source": "n00118",
+      "target": "n00124",
+      "tensor": "/layer/self_attn/Constant_32_output_0"
+    },
+    {
+      "source": "n00123",
+      "target": "n00124",
+      "tensor": "/layer/self_attn/Constant_35_output_0"
+    },
+    {
+      "source": "n00114",
+      "target": "n00126",
+      "tensor": "/layer/self_attn/Constant_29_output_0"
+    },
+    {
+      "source": "n00125",
+      "target": "n00126",
+      "tensor": "/layer/self_attn/Constant_36_output_0"
+    },
+    {
+      "source": "n00115",
+      "target": "n00128",
+      "tensor": "/layer/self_attn/Constant_30_output_0"
+    },
+    {
+      "source": "n00127",
+      "target": "n00128",
+      "tensor": "/layer/self_attn/Constant_37_output_0"
+    },
+    {
+      "source": "n00120",
+      "target": "n00129",
+      "tensor": "/layer/self_attn/Unsqueeze_31_output_0"
+    },
+    {
+      "source": "n00122",
+      "target": "n00129",
+      "tensor": "/layer/self_attn/Unsqueeze_32_output_0"
+    },
+    {
+      "source": "n00124",
+      "target": "n00129",
+      "tensor": "/layer/self_attn/Unsqueeze_33_output_0"
+    },
+    {
+      "source": "n00126",
+      "target": "n00129",
+      "tensor": "/layer/self_attn/Unsqueeze_34_output_0"
+    },
+    {
+      "source": "n00128",
+      "target": "n00129",
+      "tensor": "/layer/self_attn/Unsqueeze_35_output_0"
+    },
+    {
+      "source": "n00129",
+      "target": "n00131",
+      "tensor": "/layer/self_attn/Concat_5_output_0"
+    },
+    {
+      "source": "n00130",
+      "target": "n00131",
+      "tensor": "/layer/self_attn/Constant_38_output_0"
+    },
+    {
+      "source": "n00131",
+      "target": "n00132",
+      "tensor": "/layer/self_attn/Reshape_3_output_0"
+    },
+    {
+      "source": "n00132",
+      "target": "n00133",
+      "tensor": "/layer/self_attn/Shape_output_0"
+    },
+    {
+      "source": "n00133",
+      "target": "n00135",
+      "tensor": "/layer/self_attn/ConstantOfShape_output_0"
+    },
+    {
+      "source": "n00134",
+      "target": "n00135",
+      "tensor": "/layer/self_attn/Constant_39_output_0"
+    },
+    {
+      "source": "n00131",
+      "target": "n00136",
+      "tensor": "/layer/self_attn/Reshape_3_output_0"
+    },
+    {
+      "source": "n00135",
+      "target": "n00136",
+      "tensor": "/layer/self_attn/Mul_4_output_0"
+    },
+    {
+      "source": "n00136",
+      "target": "n00137",
+      "tensor": "/layer/self_attn/Equal_output_0"
+    },
+    {
+      "source": "n00133",
+      "target": "n00137",
+      "tensor": "/layer/self_attn/ConstantOfShape_output_0"
+    },
+    {
+      "source": "n00131",
+      "target": "n00137",
+      "tensor": "/layer/self_attn/Reshape_3_output_0"
+    },
+    {
+      "source": "n00117",
+      "target": "n00138",
+      "tensor": "/layer/self_attn/Unsqueeze_30_output_0"
+    },
+    {
+      "source": "n00137",
+      "target": "n00138",
+      "tensor": "/layer/self_attn/Where_output_0"
+    },
+    {
+      "source": "n00112",
+      "target": "n00141",
+      "tensor": "/layer/self_attn/Constant_27_output_0"
+    },
+    {
+      "source": "n00140",
+      "target": "n00141",
+      "tensor": "onnx::Unsqueeze_152"
+    },
+    {
+      "source": "n00139",
+      "target": "n00143",
+      "tensor": "/layer/self_attn/Constant_40_output_0"
+    },
+    {
+      "source": "n00142",
+      "target": "n00143",
+      "tensor": "onnx::Unsqueeze_154"
+    },
+    {
+      "source": "n00114",
+      "target": "n00145",
+      "tensor": "/layer/self_attn/Constant_29_output_0"
+    },
+    {
+      "source": "n00144",
+      "target": "n00145",
+      "tensor": "onnx::Unsqueeze_156"
+    },
+    {
+      "source": "n00115",
+      "target": "n00147",
+      "tensor": "/layer/self_attn/Constant_30_output_0"
+    },
+    {
+      "source": "n00146",
+      "target": "n00147",
+      "tensor": "onnx::Unsqueeze_158"
+    },
+    {
+      "source": "n00141",
+      "target": "n00148",
+      "tensor": "/layer/self_attn/Unsqueeze_36_output_0"
+    },
+    {
+      "source": "n00143",
+      "target": "n00148",
+      "tensor": "/layer/self_attn/Unsqueeze_37_output_0"
+    },
+    {
+      "source": "n00145",
+      "target": "n00148",
+      "tensor": "/layer/self_attn/Unsqueeze_38_output_0"
+    },
+    {
+      "source": "n00147",
+      "target": "n00148",
+      "tensor": "/layer/self_attn/Unsqueeze_39_output_0"
+    },
+    {
+      "source": "n00138",
+      "target": "n00149",
+      "tensor": "/layer/self_attn/Expand_output_0"
+    },
+    {
+      "source": "n00148",
+      "target": "n00149",
+      "tensor": "/layer/self_attn/Concat_6_output_0"
+    },
+    {
+      "source": "n00057",
+      "target": "n00155",
+      "tensor": "/layer/self_attn/Transpose_2_output_0"
+    },
+    {
+      "source": "n00154",
+      "target": "n00155",
+      "tensor": "/layer/self_attn/Constant_45_output_0"
+    },
+    {
+      "source": "n00150",
+      "target": "n00157",
+      "tensor": "/layer/self_attn/Constant_41_output_0"
+    },
+    {
+      "source": "n00156",
+      "target": "n00157",
+      "tensor": "/layer/self_attn/Constant_46_output_0"
+    },
+    {
+      "source": "n00151",
+      "target": "n00159",
+      "tensor": "/layer/self_attn/Constant_42_output_0"
+    },
+    {
+      "source": "n00158",
+      "target": "n00159",
+      "tensor": "/layer/self_attn/Constant_47_output_0"
+    },
+    {
+      "source": "n00118",
+      "target": "n00161",
+      "tensor": "/layer/self_attn/Constant_32_output_0"
+    },
+    {
+      "source": "n00160",
+      "target": "n00161",
+      "tensor": "/layer/self_attn/Constant_48_output_0"
+    },
+    {
+      "source": "n00152",
+      "target": "n00163",
+      "tensor": "/layer/self_attn/Constant_43_output_0"
+    },
+    {
+      "source": "n00162",
+      "target": "n00163",
+      "tensor": "/layer/self_attn/Constant_49_output_0"
+    },
+    {
+      "source": "n00153",
+      "target": "n00165",
+      "tensor": "/layer/self_attn/Constant_44_output_0"
+    },
+    {
+      "source": "n00164",
+      "target": "n00165",
+      "tensor": "/layer/self_attn/Constant_50_output_0"
+    },
+    {
+      "source": "n00157",
+      "target": "n00166",
+      "tensor": "/layer/self_attn/Unsqueeze_41_output_0"
+    },
+    {
+      "source": "n00159",
+      "target": "n00166",
+      "tensor": "/layer/self_attn/Unsqueeze_42_output_0"
+    },
+    {
+      "source": "n00161",
+      "target": "n00166",
+      "tensor": "/layer/self_attn/Unsqueeze_43_output_0"
+    },
+    {
+      "source": "n00163",
+      "target": "n00166",
+      "tensor": "/layer/self_attn/Unsqueeze_44_output_0"
+    },
+    {
+      "source": "n00165",
+      "target": "n00166",
+      "tensor": "/layer/self_attn/Unsqueeze_45_output_0"
+    },
+    {
+      "source": "n00166",
+      "target": "n00168",
+      "tensor": "/layer/self_attn/Concat_7_output_0"
+    },
+    {
+      "source": "n00167",
+      "target": "n00168",
+      "tensor": "/layer/self_attn/Constant_51_output_0"
+    },
+    {
+      "source": "n00168",
+      "target": "n00169",
+      "tensor": "/layer/self_attn/Reshape_5_output_0"
+    },
+    {
+      "source": "n00169",
+      "target": "n00170",
+      "tensor": "/layer/self_attn/Shape_1_output_0"
+    },
+    {
+      "source": "n00170",
+      "target": "n00172",
+      "tensor": "/layer/self_attn/ConstantOfShape_1_output_0"
+    },
+    {
+      "source": "n00171",
+      "target": "n00172",
+      "tensor": "/layer/self_attn/Constant_52_output_0"
+    },
+    {
+      "source": "n00168",
+      "target": "n00173",
+      "tensor": "/layer/self_attn/Reshape_5_output_0"
+    },
+    {
+      "source": "n00172",
+      "target": "n00173",
+      "tensor": "/layer/self_attn/Mul_5_output_0"
+    },
+    {
+      "source": "n00173",
+      "target": "n00174",
+      "tensor": "/layer/self_attn/Equal_1_output_0"
+    },
+    {
+      "source": "n00170",
+      "target": "n00174",
+      "tensor": "/layer/self_attn/ConstantOfShape_1_output_0"
+    },
+    {
+      "source": "n00168",
+      "target": "n00174",
+      "tensor": "/layer/self_attn/Reshape_5_output_0"
+    },
+    {
+      "source": "n00155",
+      "target": "n00175",
+      "tensor": "/layer/self_attn/Unsqueeze_40_output_0"
+    },
+    {
+      "source": "n00174",
+      "target": "n00175",
+      "tensor": "/layer/self_attn/Where_1_output_0"
+    },
+    {
+      "source": "n00150",
+      "target": "n00178",
+      "tensor": "/layer/self_attn/Constant_41_output_0"
+    },
+    {
+      "source": "n00177",
+      "target": "n00178",
+      "tensor": "onnx::Unsqueeze_189"
+    },
+    {
+      "source": "n00176",
+      "target": "n00180",
+      "tensor": "/layer/self_attn/Constant_53_output_0"
+    },
+    {
+      "source": "n00179",
+      "target": "n00180",
+      "tensor": "onnx::Unsqueeze_191"
+    },
+    {
+      "source": "n00152",
+      "target": "n00182",
+      "tensor": "/layer/self_attn/Constant_43_output_0"
+    },
+    {
+      "source": "n00181",
+      "target": "n00182",
+      "tensor": "onnx::Unsqueeze_193"
+    },
+    {
+      "source": "n00153",
+      "target": "n00184",
+      "tensor": "/layer/self_attn/Constant_44_output_0"
+    },
+    {
+      "source": "n00183",
+      "target": "n00184",
+      "tensor": "onnx::Unsqueeze_195"
+    },
+    {
+      "source": "n00178",
+      "target": "n00185",
+      "tensor": "/layer/self_attn/Unsqueeze_46_output_0"
+    },
+    {
+      "source": "n00180",
+      "target": "n00185",
+      "tensor": "/layer/self_attn/Unsqueeze_47_output_0"
+    },
+    {
+      "source": "n00182",
+      "target": "n00185",
+      "tensor": "/layer/self_attn/Unsqueeze_48_output_0"
+    },
+    {
+      "source": "n00184",
+      "target": "n00185",
+      "tensor": "/layer/self_attn/Unsqueeze_49_output_0"
+    },
+    {
+      "source": "n00175",
+      "target": "n00186",
+      "tensor": "/layer/self_attn/Expand_1_output_0"
+    },
+    {
+      "source": "n00185",
+      "target": "n00186",
+      "tensor": "/layer/self_attn/Concat_8_output_0"
+    },
+    {
+      "source": "n00149",
+      "target": "n00187",
+      "tensor": "/layer/self_attn/Reshape_4_output_0"
+    },
+    {
+      "source": "n00087",
+      "target": "n00188",
+      "tensor": "/layer/self_attn/Add_output_0"
+    },
+    {
+      "source": "n00187",
+      "target": "n00188",
+      "tensor": "/layer/self_attn/Transpose_3_output_0"
+    },
+    {
+      "source": "n00188",
+      "target": "n00190",
+      "tensor": "/layer/self_attn/MatMul_output_0"
+    },
+    {
+      "source": "n00189",
+      "target": "n00190",
+      "tensor": "/layer/self_attn/Constant_54_output_0"
+    },
+    {
+      "source": "n00190",
+      "target": "n00191",
+      "tensor": "/layer/self_attn/Mul_6_output_0"
+    },
+    {
+      "source": "n00191",
+      "target": "n00192",
+      "tensor": "/layer/self_attn/Add_2_output_0"
+    },
+    {
+      "source": "n00192",
+      "target": "n00193",
+      "tensor": "/layer/self_attn/Softmax_output_0"
+    },
+    {
+      "source": "n00193",
+      "target": "n00194",
+      "tensor": "/layer/self_attn/Cast_output_0"
+    },
+    {
+      "source": "n00194",
+      "target": "n00195",
+      "tensor": "/layer/self_attn/Cast_1_output_0"
+    },
+    {
+      "source": "n00186",
+      "target": "n00195",
+      "tensor": "/layer/self_attn/Reshape_6_output_0"
+    },
+    {
+      "source": "n00195",
+      "target": "n00196",
+      "tensor": "/layer/self_attn/MatMul_1_output_0"
+    },
+    {
+      "source": "n00015",
+      "target": "n00198",
+      "tensor": "/layer/self_attn/Constant_1_output_0"
+    },
+    {
+      "source": "n00197",
+      "target": "n00198",
+      "tensor": "onnx::Unsqueeze_209"
+    },
+    {
+      "source": "n00016",
+      "target": "n00200",
+      "tensor": "/layer/self_attn/Constant_2_output_0"
+    },
+    {
+      "source": "n00199",
+      "target": "n00200",
+      "tensor": "onnx::Unsqueeze_211"
+    },
+    {
+      "source": "n00019",
+      "target": "n00202",
+      "tensor": "/layer/self_attn/Constant_3_output_0"
+    },
+    {
+      "source": "n00201",
+      "target": "n00202",
+      "tensor": "onnx::Unsqueeze_213"
+    },
+    {
+      "source": "n00198",
+      "target": "n00203",
+      "tensor": "/layer/self_attn/Unsqueeze_50_output_0"
+    },
+    {
+      "source": "n00200",
+      "target": "n00203",
+      "tensor": "/layer/self_attn/Unsqueeze_51_output_0"
+    },
+    {
+      "source": "n00202",
+      "target": "n00203",
+      "tensor": "/layer/self_attn/Unsqueeze_52_output_0"
+    },
+    {
+      "source": "n00196",
+      "target": "n00204",
+      "tensor": "/layer/self_attn/Transpose_4_output_0"
+    },
+    {
+      "source": "n00203",
+      "target": "n00204",
+      "tensor": "/layer/self_attn/Concat_9_output_0"
+    },
+    {
+      "source": "n00204",
+      "target": "n00206",
+      "tensor": "/layer/self_attn/Reshape_7_output_0"
+    },
+    {
+      "source": "n00205",
+      "target": "n00206",
+      "tensor": "/layer/self_attn/o_proj/Transpose_output_0"
+    },
+    {
+      "source": "n00001",
+      "target": "n00207",
+      "tensor": "/layer/input_layernorm/Cast_output_0"
+    },
+    {
+      "source": "n00206",
+      "target": "n00207",
+      "tensor": "/layer/self_attn/o_proj/MatMul_output_0"
+    },
+    {
+      "source": "n00207",
+      "target": "n00208",
+      "tensor": "/layer/Add_output_0"
+    },
+    {
+      "source": "n00208",
+      "target": "n00210",
+      "tensor": "/layer/post_attention_layernorm/Cast_output_0"
+    },
+    {
+      "source": "n00209",
+      "target": "n00210",
+      "tensor": "/layer/post_attention_layernorm/Constant_output_0"
+    },
+    {
+      "source": "n00210",
+      "target": "n00211",
+      "tensor": "/layer/post_attention_layernorm/Pow_output_0"
+    },
+    {
+      "source": "n00211",
+      "target": "n00213",
+      "tensor": "/layer/post_attention_layernorm/ReduceMean_output_0"
+    },
+    {
+      "source": "n00212",
+      "target": "n00213",
+      "tensor": "/layer/post_attention_layernorm/Constant_1_output_0"
+    },
+    {
+      "source": "n00213",
+      "target": "n00214",
+      "tensor": "/layer/post_attention_layernorm/Add_output_0"
+    },
+    {
+      "source": "n00215",
+      "target": "n00216",
+      "tensor": "/layer/post_attention_layernorm/Constant_2_output_0"
+    },
+    {
+      "source": "n00214",
+      "target": "n00216",
+      "tensor": "/layer/post_attention_layernorm/Sqrt_output_0"
+    },
+    {
+      "source": "n00208",
+      "target": "n00217",
+      "tensor": "/layer/post_attention_layernorm/Cast_output_0"
+    },
+    {
+      "source": "n00216",
+      "target": "n00217",
+      "tensor": "/layer/post_attention_layernorm/Div_output_0"
+    },
+    {
+      "source": "n00217",
+      "target": "n00218",
+      "tensor": "/layer/post_attention_layernorm/Mul_output_0"
+    },
+    {
+      "source": "n00000",
+      "target": "n00219",
+      "tensor": "layer.post_attention_layernorm.weight"
+    },
+    {
+      "source": "n00218",
+      "target": "n00219",
+      "tensor": "/layer/post_attention_layernorm/Cast_1_output_0"
+    },
+    {
+      "source": "n00219",
+      "target": "n00221",
+      "tensor": "/layer/post_attention_layernorm/Mul_1_output_0"
+    },
+    {
+      "source": "n00220",
+      "target": "n00221",
+      "tensor": "/layer/mlp/gate_proj/Transpose_output_0"
+    },
+    {
+      "source": "n00221",
+      "target": "n00222",
+      "tensor": "/layer/mlp/gate_proj/MatMul_output_0"
+    },
+    {
+      "source": "n00221",
+      "target": "n00223",
+      "tensor": "/layer/mlp/gate_proj/MatMul_output_0"
+    },
+    {
+      "source": "n00222",
+      "target": "n00223",
+      "tensor": "/layer/mlp/act_fn/Sigmoid_output_0"
+    },
+    {
+      "source": "n00219",
+      "target": "n00225",
+      "tensor": "/layer/post_attention_layernorm/Mul_1_output_0"
+    },
+    {
+      "source": "n00224",
+      "target": "n00225",
+      "tensor": "/layer/mlp/up_proj/Transpose_output_0"
+    },
+    {
+      "source": "n00223",
+      "target": "n00226",
+      "tensor": "/layer/mlp/act_fn/Mul_output_0"
+    },
+    {
+      "source": "n00225",
+      "target": "n00226",
+      "tensor": "/layer/mlp/up_proj/MatMul_output_0"
+    },
+    {
+      "source": "n00226",
+      "target": "n00228",
+      "tensor": "/layer/mlp/Mul_output_0"
+    },
+    {
+      "source": "n00227",
+      "target": "n00228",
+      "tensor": "/layer/mlp/down_proj/Transpose_output_0"
+    },
+    {
+      "source": "n00208",
+      "target": "n00229",
+      "tensor": "/layer/post_attention_layernorm/Cast_output_0"
+    },
+    {
+      "source": "n00228",
+      "target": "n00229",
+      "tensor": "/layer/mlp/down_proj/MatMul_output_0"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        2048
+      ]
+    },
+    {
+      "name": "mask",
+      "shape": [
+        1,
+        1,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "cos",
+      "shape": [
+        1,
+        2,
+        64
+      ]
+    },
+    {
+      "name": "sin",
+      "shape": [
+        1,
+        2,
+        64
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "y",
+      "shape": [
+        1,
+        2,
+        2048
+      ]
+    }
+  ],
+  "initializer_count": 8,
+  "op_histogram": {
+    "Identity": 1,
+    "Cast": 6,
+    "Constant": 85,
+    "Pow": 2,
+    "ReduceMean": 2,
+    "Add": 7,
+    "Sqrt": 2,
+    "Div": 2,
+    "Mul": 13,
+    "Transpose": 12,
+    "MatMul": 9,
+    "Unsqueeze": 53,
+    "Concat": 10,
+    "Reshape": 8,
+    "Slice": 4,
+    "Neg": 2,
+    "Shape": 2,
+    "ConstantOfShape": 2,
+    "Equal": 2,
+    "Where": 2,
+    "Expand": 2,
+    "Softmax": 1,
+    "Sigmoid": 1
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "model": "granite",
+  "started": 1792996891.914616,
+  "source_sha256": "9143c395876f6e662ba6ba20cedc91e111751e3bdbc9c61a6b2fe05e3390d8d0",
+  "status": "failed",
+  "scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+  "implementation_file": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/lib/python3.12/site-packages/transformers/models/granitemoe/modeling_granitemoe.py",
+  "implementation_sha256": "493ad75906ef3b72deaa614cd887f0546bd9338abd1883197744634c4cd40ef3",
+  "versions": {
+    "torch": "2.10.0+cpu",
+    "transformers": "5.20.2"
+  },
+  "weights": {
+    "loaded": true,
+    "matched_tensors": 6,
+    "missing": [
+      "block_sparse_moe.router.weight",
+      "block_sparse_moe.experts.gate_up_proj",
+      "block_sparse_moe.experts.down_proj"
+    ],
+    "unexpected": [],
+    "files": [
+      {
+        "path": "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models-relay/granite/model-00001-of-00002.safetensors",
+        "size": 4998548704
+      }
+    ],
+    "tensor_sha256": "c31f49191e38e058c287951ebfb526a4e08dd357e69fd40fc35a86b7be4bb7ce"
+  },
+  "error": "ValueError('Native reference contains nonfinite output')",
+  "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/sources/native_export.py\", line 91, in main\n    if not np.isfinite(expected).all():raise ValueError('Native reference contains nonfinite output')\n                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: Native reference contains nonfinite output\n",
+  "finished": 1792996892.8782773,
+  "artifacts": {
+    "config.json": {
+      "bytes": 1308,
+      "sha256": "36fe87f1ba8220f2cd02fe5853e134976973ce734c744fc438d7caae12329ff4"
+    }
+  }
+}
