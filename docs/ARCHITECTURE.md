@@ -164,3 +164,6 @@ Block v1 独立最终物理入口为 `native-receive-<shared109|transaction6k>-<
 
 
 `capture-geometry-group`在96CPU内两子worker各48CPU执行`capture-branch-fv`/`capture-via-fv`；每子任务4网格单线程与6场解各7线程，均绑定099构建和033FV安装回执。独立FV真实面基函数返回双向joint矩阵；接收器检查锁定收敛/局部/互易与保边际错误重连，合成控制不代替实际科学运行。collector保存子回执/组回执及输出SHA。当前源码待部署，实际尚未运行。
+
+
+最终物理网表行为：`native-final-t6k-a`/`native-final-t6k-c`绑定cap40封存源093的6_final.v和原073 LEC控制/077输入，直接用实际网表与同一Liberty导出的单元行为构建Verilator，不替换RAM、不重新综合网表。每allocation16CPU，三模型各最多4线程并行，运行完整242事务队列scoreboard，全1及两个随机初态；结果要求完整计数且三个初态响应一致。该零延迟检查不代替STA/四态、宏边界、C8最终功能或共同底座回装。当前代码未部署执行。

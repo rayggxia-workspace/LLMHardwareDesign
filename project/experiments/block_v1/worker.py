@@ -59,7 +59,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='transaction':
+    if MODE in ('native-final-t6k-a','native-final-t6k-c'):
+        from native_final_function import verify
+        verify(ROOT,OUT,CPUS,run,policy=MODE[-1].upper())
+    elif MODE=='transaction':
         run([str(VERILATOR),'--cc','--exe','--build','-j',str(CPUS),'-Wno-fatal',
              '--top-module','transaction6k','--Mdir',str(OUT/'obj'),'-CFLAGS','-std=c++17 -O2',
              str(ROOT/'project/rtl/block_v1/transaction6k.sv'),
