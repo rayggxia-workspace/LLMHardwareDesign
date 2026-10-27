@@ -91,7 +91,7 @@ def repair(root,out,cpus,run):
     from io_slots import file_sha,slot
     assert cpus==16
     original,r,old,results=source(out,'v',original=True)
-    probe=out.parent/'five-macro-probe-v-drive';pr=json.loads((probe/'receipt.json').read_text());assert pr['passed']
+    probe=out.parents[2]/'block-v1-20261027-214/tasks/five-macro-probe-v-drive';pr=json.loads((probe/'receipt.json').read_text());assert pr['passed']
     p=probe/'five-macro-probe-v-drive.json';assert file_sha(p)==pr['outputs'][p.name]
     proof=json.loads(p.read_text());assert proof['passed']and proof['source_receipt_sha256']==file_sha(original/'receipt.json')
     assert proof['targets']=={k:list(v)for k,v in TARGETS.items()}
@@ -108,12 +108,6 @@ def repair(root,out,cpus,run):
     hook='global_route -start_incremental\n'+swap_script()
     for name in TARGETS:hook+='set_dont_touch [get_cells {'+name+'}]\n'
     hook+='''detailed_placement_helper
-check_placement -verbose
-global_route -end_incremental
-estimate_parasitics -global_routing
-repair_timing_helper
-global_route -start_incremental
-detailed_placement_helper
 check_placement -verbose
 global_route -end_incremental
 estimate_parasitics -global_routing

@@ -1,3 +1,5 @@
+2026-10-28 02:28 CST：214/92510实际在node17启动，7个BUF原生swapMaster/pin-net/真实Liberty容量控制通过，原203未改。repair在合法化（0illegal）后的额外repair_timing_helper因GRT-0232拥塞报错，未进入详细布线；保留失败，不降验收。215只去掉这轮额外的时序优化和重复合法化，依旧执行7BUF替换、合法化/check、增量GRT、详细布线/final/RCX及全套独立检查，任何最终setup/hold/cap/slew失败仍拒绝。215复用214已通过的独立probe回执，默认V最终源显式215。S严格LEC实际通过（262545输入/262532输出全部匹配，UNSAT/IDENTICAL），回执f1103e50f6a62783c6207af1f0d4f05fddd655b3db4ed51c2c6fd4010a7a3519；S仅完整GDS DRC待完成。R原生仍继续。213未sbatch的DAG拒绝发生约02:25，前一条02:28为记录时间误写。
+
 2026-10-28 02:28 CST：213部署前Linux DAG检查拒绝：复制S交付任务时仍保留s-physical内部依赖，但该已通过任务未列入213；因此未sbatch、未启动EDA，原213输入保持。新214队列将此依赖改为208实际physical回执（仍须准确报告SHA和passed），S/R源/CWD均不变；新V最终源明确214。未放宽任何门。213无job，不计第八allocation；214需重新验证才提交。
 
 2026-10-28 02:24 CST：已准备213不可变修复队列，尚未提交/通过。V以原203封存GRT为起点，仅对实测七个BUF增强驱动，保持RTL/1210µm外框/M10接口；先以可丢弃ODB实际验证swapMaster、全部pin/net与Liberty容量，再普通详细布线/RCX及同源四门重验。新receiver区分原203和候选最终213，旧V资格不沿用。213默认六组硬绑定16CPU、即完即补；真实依赖限制并发，S/R剩余独立项复用208源/未领取CWD和207实际回执。02:23仍七allocation，S DRC/formal、R global route继续；不恢复旧207/203/210。准备不是修复成功，五宏仍in_progress。
