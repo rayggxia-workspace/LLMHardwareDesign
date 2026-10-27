@@ -6,14 +6,18 @@ Missing boundary models, minimum-period arcs and baseline failures stay visible.
 """
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
-import csv,datetime,json,os,re,subprocess,sys,traceback
+import argparse,csv,datetime,json,os,re,subprocess,sys,traceback
 from run_exports import ROOT,IMAGE,BIN,sha
 from run_parent_trial import BASE,C_REVISION,tcl
 
 DRIVER=Path(__file__).resolve().parent
 
 def one(case,variant,revision):
-    rev,plan=(BASE[case],'A') if variant=='A' else (('grid-r05','C') if case=='llaccel_aux' else (C_REVISION[case],'C'))
+    if variant=='A':rev,plan=BASE[case],'A'
+    elif variant=='C':rev,plan=('grid-r05','C') if case=='llaccel_aux' else (C_REVISION[case],'C')
+    elif variant=='A_child_replay':rev,plan=('fullC-r01','A_replay') if case=='act' else ('full-controls-r04','A_replay')
+    elif variant=='B':rev,plan=('fullBcohort-r01','B') if case=='act' else ('full-controls-r04','B')
+    else:assert variant=='Aopt';rev,plan='full-controls-r04','Aopt'
     clean=ROOT/'finalized'/rev/(case+'-'+plan);proof=json.loads((clean/'execution.json').read_text())
     assert proof['independent_DRC_count']==0 and proof['whole_access']['pass'] and proof['clean_byte_identical_to_pre_RCX_source']
     trial=Path(proof['legacy_RC_STA_receipt']);j=json.loads(trial.read_text());odb=clean/'clean.odb';spef=trial.parent/'extracted.spef';sdc=Path(j['source_sdc'])
@@ -95,8 +99,9 @@ def safe(args):
 
 if __name__=='__main__':
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=8
-    rev=sys.argv[1];cases=sys.argv[2:] or ['act','gemm','mxu','vector','opentpu_aux','llaccel_aux']
+    p=argparse.ArgumentParser();p.add_argument('revision');p.add_argument('cases',nargs='*');p.add_argument('--variants',nargs='+',choices=['A','A_child_replay','Aopt','B','C'],default=['A','C']);a=p.parse_args()
+    rev=a.revision;cases=a.cases or ['act','gemm','mxu','vector','opentpu_aux','llaccel_aux']
     results=[]
     for case in cases:
-        with ThreadPoolExecutor(max_workers=2) as pool:results.extend(pool.map(safe,[(case,p,rev) for p in ['A','C']]))
+        with ThreadPoolExecutor(max_workers=2) as pool:results.extend(pool.map(safe,[(case,p,rev) for p in a.variants]))
     sys.exit(0 if all(q and q['status']=='NATIVE_EXTRACTED_MODEL_EXPORTED_NOT_QUALIFIED' for q in results) else 1)

@@ -38,11 +38,15 @@ def one(parent_rev,design,focus,plan,revision):
     views=dict(baseline['child_views']);views.update(p['child_views'])
     models={};commands=['read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib']
     for case,view in views.items():
-        variant='C' if case==focus and plan=='C' else 'A'
-        if case==focus and plan not in ['A','A_replay','C']:
+        matches=[]
+        for path in (ROOT/'leaf_timing_models').glob('*/'+case+'-*/execution.json'):
+            candidate=json.loads(path.read_text())
+            if candidate.get('status')=='NATIVE_EXTRACTED_MODEL_EXPORTED_NOT_QUALIFIED' and candidate.get('clean_odb_sha256')==view['source_clean_odb_sha256'] and candidate.get('source_clean_receipt_sha256')==view['source_clean_receipt_sha256']:
+                matches.append((candidate.get('finished_utc',''),path,candidate))
+        if not matches:
             rec.update({'status':'RC_STA_NOT_EXECUTED_MATCHING_CHANGED_CHILD_MODEL_NOT_EXPORTED','missing_model_for_plan':plan,'finished_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()})
             (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n');return False
-        directory=ROOT/'leaf_timing_models/r02'/(case+'-'+variant);model=json.loads((directory/'execution.json').read_text())
+        _,model_path,model=max(matches,key=lambda q:q[0]);directory=model_path.parent
         assert model['status']=='NATIVE_EXTRACTED_MODEL_EXPORTED_NOT_QUALIFIED' and model['exact_all_signal_pin_direction_match'] and model['SPEF_replay_matches_recorded_trial_1e_minus5_ns']
         assert model['model_has_timing_groups'] and model['clean_odb_sha256']==view['source_clean_odb_sha256']
         assert sha(directory/'timing.lib')==model['generated_library_sha256']
