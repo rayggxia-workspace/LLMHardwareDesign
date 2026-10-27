@@ -36,7 +36,8 @@ def one(case,plan,revision):
     inputs=ROOT/'inputs'/os.environ.get('PINXY_INPUT_SET','trial-inputs-r03')
     if plan=='A_replay' and not (inputs/(case+'-'+plan+'.tcl')).exists():
         raise RuntimeError('A_replay needs explicitly frozen A coordinates')
-    receipt={'case':case,'plan':plan,'stage_scope':'8 selected pins; all remaining pins stay original; pure XY, no buffering/resizing',
+    selected_count=sum(line.startswith('lappend relocations ') for line in (inputs/(case+'-'+plan+'.tcl')).read_text().splitlines())
+    receipt={'case':case,'plan':plan,'selected_pin_count':selected_count,'stage_scope':'{} selected pins; all remaining pins stay original; pure XY, no buffering/resizing'.format(selected_count),
        'source_odb':str(src),'source_sha256':observed,'source_config':str(source_config),'source_sdc':str(sdc),'libs':libs,
        'input_sha256':{str(p):sha(p) for p in [src,sdc,source_config,inputs/(case+'-'+plan+'.tcl'),DRIVER/'physical_trial.tcl']+list(map(Path,libs[1:]))},
        'scheduler_job':os.environ['SLURM_JOB_ID'],'allocated_cpus':os.environ['SLURM_CPUS_PER_TASK'],'openroad_threads':4,

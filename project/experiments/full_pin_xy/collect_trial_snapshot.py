@@ -16,6 +16,8 @@ def run(name):
             elif p.name=='openroad.log' or p.name.endswith('.pdn.rpt') or p.name.startswith('timing.selected_') or p.name in ['before.pins.tsv','after.pins.tsv']:
                 with (dest/(p.name+'.gz')).open('xb') as raw,gzip.GzipFile(filename='',mode='wb',fileobj=raw,mtime=0) as f:f.write(p.read_bytes())
     logs=out/'logs';logs.mkdir()
+    for p in (ROOT/'connectivity').glob('*/*/*.json'):
+        dest=out/'connectivity'/p.relative_to(ROOT/'connectivity');dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(p,dest)
     for p in (ROOT/'logs').glob('*.log'):
         with (logs/(p.name+'.gz')).open('xb') as raw,gzip.GzipFile(filename='',mode='wb',fileobj=raw,mtime=0) as f:f.write(p.read_bytes())
     (out/'snapshot.json').write_text(json.dumps({'created_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'source_root':str(ROOT),

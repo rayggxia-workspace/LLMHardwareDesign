@@ -56,11 +56,18 @@ def summarize(root):
             assert Counter(r for r in aa if r[2] in ['POWER','GROUND'])==Counter(r for r in bb if r[2] in ['POWER','GROUND'])
             c['actual_all_pin_contract_check']={'original_signals':len(ar),'moved_count':len(moved),'moved_pins':moved,'lost_extra_layer_direction_net_use_size_changes':0,'all_PG_pin_rectangles_unchanged':True}
         summary[case]['trials'][key]=c
+    for p in sorted(base.glob('*/connectivity/*/*/execution.json')):
+        rec=json.loads(p.read_text());src=Path(rec['source_odb']);case=next(c for c in sorted(EXPECTED,key=len,reverse=True) if src.parent.name.startswith(c+'-'))
+        key=src.parent.parent.name+'/'+src.parent.name[len(case)+1:];t=summary[case]['trials'].get(key)
+        if t and rec.get('result'):
+            raw=base/t['raw_receipt'];j=json.loads(raw.read_text());assert j['outputs']['checked.odb']['sha256']==rec['source_sha256'],'Whole connectivity/source mismatch'
+            t['whole_multi_terminal_signal_clock_geometry']=rec['result'];t['whole_geometry_receipt']=str(p.relative_to(base))
     for case,s in summary.items():
         done=[t for t in s['trials'].values() if t.get('completed')];candidates=[t for t in done if t.get('plan')=='C']
         if candidates:
             t=candidates[-1];s['route_status']='8pin C实际重接完成；全C未实现' if t['routed'] else 'C实际试验失败/未完成，见回执'
-            s['drc_status']='fresh native DRC {}; selected-net连通 {}; 全块/父层未验证'.format(t['fresh_native_DRC_count'],t.get('selected_access_all_terminals_pass','待补查'))
+            full=t.get('whole_multi_terminal_signal_clock_geometry',{}).get('pass','待验证')
+            s['drc_status']='fresh native DRC {}; selected-net连通 {}; 全块几何连通 {}；父层未验证'.format(t['fresh_native_DRC_count'],t.get('selected_access_all_terminals_pass','待补查'),full)
             s['sta_status']='RCX {}; setup {}ns / hold {}ns；电气违例行{}；系统边界不完整'.format(t['RCX_executed'],t['setup_worst_slack_ns'],t['hold_worst_slack_ns'],t['reported_timing_electrical_violator_rows'])
         else:s['route_status']='试验运行/驱动失败；未报告C通过';s['drc_status']='尚未完成';s['sta_status']='尚未完成'
     (root/'physical_summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
