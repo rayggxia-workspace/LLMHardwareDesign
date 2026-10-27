@@ -1,6 +1,6 @@
 # 五种基础宏交付入口
 
-补充验证：230 队列已暂存同一 V RTL 的成对 RoPE 命令组合及完整统计域边界用例，尚未运行；与三项未领取的 R 独立验收共用队列，替代未提交的 224。原语回归不冒充这项组合用例已经通过，既有 P&R 不重启。
+补充验证：[230 原样 RTL 命令组合回执](../results/v-composition-044706/index.json)已通过320个成对RoPE tile、65535元素跨命令统计与三项错误保持检查，共93091检查/68868周期。使用既有92523节点永久空余的80–95 CPU、约25秒，无新allocation；生产队列Store记录v-composition=PASSED。R三项未领取独立验收仍等待196最终回执及节点容量，230后续恢复会跳过这项已通过补测，224仍不提交。补测不是最终网表实测或模型质量结论，V228仍须完整同源验收。
 
 更新时间：2026-10-28 04:18 CST。Refs [Issue #121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)、[PR #122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)。**M、T 已有通过独立接收的单块结果；V、R、S 继续执行，五宏整体尚未交付完成。** 每种仅一个基础实现；当前修复只处理实测缺陷，没有另设裕量版本。
 
