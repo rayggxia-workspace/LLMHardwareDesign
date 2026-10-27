@@ -64,9 +64,9 @@ shadow通过范围检查后才允许提交，失败不改活动state和活动his
 
 ## S/T 的沿用边界
 
-S采用原store82单1RW：1024×128bit，地址10bit，无byte mask；ready=!valid，请求接受后一拍valid，take前保持，旧响应占用时不接新请求。写也有响应；复位清控制不清存储，读前必须写入。标准单元实现，**不称SRAM宏**。独立顶层不含VS，无第二份隐藏存储；S190原生全流程及S208完整物理门已通过：1610×1610µm、273个M10接点，10ns/2fF约束下最小setup/hold裕量5.995658/0.008125ns；完整DRC、最终功能和严格LEC仍待207完成，尚未最终验收。
+S采用原store82单1RW：1024×128bit，地址10bit，无byte mask；ready=!valid，请求在接受边沿写入响应寄存器，边沿后valid=1，take前保持，旧响应占用及消费边沿都不接新请求。按本文接受边沿后的完整周期计数为0，不是组合透传；无背压时请求最短间隔2拍。写也有响应；复位清控制不清存储，读前必须写入。reset优先于请求，reset期间即使组合ready=1也不构成有效事务。标准单元实现，**不称SRAM宏**。独立顶层不含VS，无第二份隐藏存储；最终物理、功能、DRC和严格LEC状态以[五宏交付入口](../work/YUZE-LU/121/delivery/README.md)的同源回执为准，不沿用旧190/207资格。
 
-T采用原transaction6k，384×128bit=6144B，begin 1..384words、连续写、完整后SEALED/commit、commit前可revoke、同步读持有、最后消费后release。已选既有C：die1120×1120um，有源415495.990um²，10ns/2fF条件下setup/hold最小slack5.228821/0.016969ns，完整deck DRC0及三初态最终网表功能通过；未重跑这些结果。完整文件及SHA见 [T最终索引](../work/YUZE-LU/121/library-v1-t6k-C-20261027.json)，层次Lib资格仍false。
+T采用原transaction6k，384×128bit=6144B，begin 1..384words、连续写、最后一字接受后自动进入SEALED（没有独立seal输入）、commit前可revoke、同步读持有、最后消费后release。提交后1拍形成首个read_valid，无背压读出最多每2拍一字；未释放前不接受下一批。owner为2bit、generation为32bit记录标签，commit/revoke/release没有独立身份字段，不能把单租约协议描述成通用标签鉴权。具体端口、逐拍合同和吞吐边界见[命令合同](BLOCK_V1_COMMANDS.md#t结果交接协议)。已选既有C的最终物理、严格LEC及三初态功能见[T交付入口](../work/YUZE-LU/121/delivery/T/README.md)，本次未重跑这些结果；层次Lib资格仍false。
 
 ## 物理交付与证据状态
 

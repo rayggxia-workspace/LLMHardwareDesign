@@ -69,8 +69,44 @@ op2字段：算术op[3:0]、RNE右移[10:4]、有效lane数[14:11]、广播B开�
 
 2KiB回放最多256个S32输入及同量输出，128bit口每次四元素；N=256需64次装载与64次读回命令。响应被背压时执行结果保持，下一命令须等待消费。上述数值不得写成“每拍接收8元素”或“EXP宏每拍接受新命令”。
 
-## M、S、T
+## M
 
 M的LOAD_A/LOAD_B/MAC/READ_PARTIAL/MERGE/READ_FINAL/RESET_CONTEXT及格式、3/9步分解、延迟详见[主规格M节](BLOCK_LIBRARY_V1.md#m完整矩阵乘加)与`block_v1_m.sv`顶注释。
 
-S为store82的明确单1RW包装：1024×128bit，无byte mask，读前必须写；响应保持时不能接受新请求。T采用选定的`transaction6k`协议，384×128bit，有begin/write/seal/commit/revoke/read/release及完整结果所有权。二者均是标准单元存储实现；接口及原始RTL来源见[五宏规格S/T](BLOCK_LIBRARY_V1.md#st-的沿用边界)。
+## S：工作存储协议
+
+`block_v1_s16k`仅包装原`store82`：1024×128bit、10bit地址、单1RW、无byte mask。输入`req/wr/addr[9:0]/din[127:0]`，输出`ready/valid/dout[127:0]`，由输入`take`消费响应。reset只清响应控制和dout，不清payload；未写地址不得当作零读取。
+
+在reset=0且`req && ready`的上升沿接受一次请求，边沿后即有寄存响应`valid=1`，读返回该地址数据，写返回0。按本文件从接受边沿起的完整周期计数为0，数据经过响应寄存器，不存在组合读透传。等待take期间响应保持；消费边沿只清valid，即使req同时为1也不接收下一请求。无背压时请求间隔最少2拍，读写合计上界为128bit/2拍=8B/拍。该逐拍行为已由225最终网表的原样`test_store_macro.cpp`回归覆盖。
+
+`ready=!valid`没有独立reset屏蔽，reset逻辑优先于req/take；因此reset期间ready电平不表示事务被接受。调用者须在复位解除后发请求。
+
+## T：结果交接协议
+
+`transaction6k`为384×128bit结果缓冲，单批次、单租约。下表对应已选C的封存RTL及最终网表；操作按各自valid/ready握手，不使用M/V/R的cmd口。
+
+| 通道 | 字段与语义 |
+| --- | --- |
+| begin | `begin_valid/ready`；`begin_words[9:0]=1..384`、`begin_owner[1:0]`、`begin_generation[31:0]`。仅空闲时接收一批 |
+| write | `write_valid/ready`、`write_index[9:0]`、`write_data[127:0]`。必须从0连续写，最后一字接受后自动sealed，没有seal请求端口 |
+| commit / revoke | 各自valid/ready；commit仅完整sealed后接受，revoke仅FILL或SEALED接受，同拍竞争时revoke优先。提交后不能撤销 |
+| read | 输出`read_valid/read_index[9:0]/read_data[127:0]/read_last`，输入`read_take`。顺序逐字读，背压时数据、索引及last保持 |
+| release | `release_valid/ready`；只有最后一个读响应已经被take后才能释放并接受下一批 |
+| 状态与错误 | 输出`owner/generation/word_count[9:0]`、`busy/sealed/committed`、sticky `protocol_error`及`debug_state[2:0]`。busy期间标签保持；空闲时的非法begin长度、FILL中且未撤销时的错误写索引置protocol_error，reset清除 |
+
+owner/generation是begin时记录的标签，commit/revoke/release没有身份字段；外部控制器负责将操作关联到当前租约。ready=0时valid不构成操作，不能承诺每次这种输入都会置错。debug_state只作观测，不作为跨宏控制接口。
+
+下面以握手发生的上升沿为c，说明边沿后的寄存状态。它们是封存RTL状态机的逐拍合同；既有161最终网表回归验证数据/租约/有界同步响应/背压，未新增峰值吞吐实测。
+
+| 操作 | 最早可见结果与后继操作 |
+| --- | --- |
+| begin | c后进入FILL，下一上升沿可接受第一字 |
+| 连续write | 每拍最多一字；最后一字接受的边沿后sealed/commit_ready有效，下一沿才可commit |
+| commit | c+1沿后首个read_valid有效，首字最早在c+2沿被take |
+| 非末字take | c后进入下一字读取阶段，c+1沿后下一字valid，最早c+2沿再次take；读出上界每2拍一字 |
+| 末字take / release | 末字在c被消费后release_ready有效；最早c+1沿release，c+2沿接受新begin |
+| revoke | 接受沿后变为空闲，下一沿可begin；不清payload，不再发布被撤销批次 |
+
+T无停顿写入上界16B/拍，读出上界8B/拍；整批还有begin、commit、release及完整写完再读的控制开销，不能将两项上界同时报成端到端吞吐。S/T的上述上界只按协议推导；在本轮已通过的10ns时钟条件下分别对应0.8GB/s与T写1.6GB/s/读0.8GB/s，使用十进制GB，仍不表示模型或M11/M12系统实测带宽。
+
+T的reset清控制/held和标签而不清payload，消费者或互联同时复位时须协调硬复位；旧标签、无valid的数据不能当成当前批次。二者均是标准单元存储实现；原始RTL及容量见[五宏规格S/T](BLOCK_LIBRARY_V1.md#st-的沿用边界)。
