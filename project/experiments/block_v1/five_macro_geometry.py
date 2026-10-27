@@ -130,6 +130,11 @@ write_abstract_lef -bloat_occupied_layers candidate.lef
     (out/'export.tcl').write_text(script)
     with slot(out.parents[2]):
         run(['openroad','-no_init','-exit',str(out/'export.tcl')],'export.log')
+    from native_rect_completion import complement
+    source_def=Path(index['final_files']['6_final.def']['path'])
+    assert file_sha(source_def)==index['final_files']['6_final.def']['sha256']
+    rects=complement(out/'source-occupancy.tsv',source_def,kind)
+    (out/'native-rect-completion.json').write_text(json.dumps(rects,indent=2)+'\n')
     summary=dict(line.split('\t',1)for line in(out/'native-summary.tsv').read_text().splitlines())
     dbu=int(summary['dbu']);assert dbu==2000
     assert list(map(int,summary['die'].split('\t')))==[0,0,int(die[0]*dbu),int(die[1]*dbu)]
@@ -176,13 +181,14 @@ write_abstract_lef -bloat_occupied_layers candidate.lef
     assert file_sha(odb)==before
     assert accepted(root,out,kind)[1]==odb
     files={}
-    for name in ('source-occupancy.tsv','native-pins.tsv','occupancy-summary.tsv','m10-access.json','candidate.lef'):
+    for name in ('source-occupancy.tsv','native-pins.tsv','occupancy-summary.tsv','m10-access.json','candidate.lef','native-rect-completion.json'):
         p=out/name;assert p.stat().st_size>0
         files[name]=dict(path=str(p),sha256=file_sha(p),bytes=p.stat().st_size)
     result=dict(passed=True,macro=kind.upper(),top=summary['top'],source_odb=str(odb),source_odb_sha256=before,
                 provenance=provenance,geometry_helper_sha256=file_sha(helper),die_um=die,signal_bits=count,
                 native_geometry_counts=dict(counts),native_layer_counts=dict(layers),files=files,
-                original_odb_unchanged=True,abstract_coverage_qualified=False,hierarchical_lib_qualified=False,
+                original_odb_unchanged=True,native_def_rect_complete=True,rect_completion=rects,
+                abstract_coverage_qualified=False,hierarchical_lib_qualified=False,
                 m11_m12_system_qualified=False,
                 scope='Complete read-only native wire/via/PG/instance-pin/master-and-block-OBS export and geometric via10 bottom fit. Candidate LEF only; no abstract coverage, hierarchical timing or upper-layer routing qualification.')
     (out/'five-macro-geometry.json').write_text(json.dumps(result,indent=2)+'\n')

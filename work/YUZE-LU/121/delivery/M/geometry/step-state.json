@@ -1,0 +1,172 @@
+{
+  "started": 1793126872.7416854,
+  "job_id": "92511",
+  "new_allocation": false,
+  "cpus": 16,
+  "cpu_affinity": [
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95
+  ],
+  "slurm_step_cpu_envelope": 96,
+  "parent_live": {
+    "time": 1793126858.2368746,
+    "owner": {
+      "job_id": "92511",
+      "node": "node17",
+      "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-215/tasks/native-node-queue",
+      "pid": 3137448
+    },
+    "active": [
+      "v-repair"
+    ],
+    "active_cpu_ceilings": 16,
+    "maximum_tasks": 1,
+    "memory": {
+      "MemTotal": 540677349376,
+      "MemAvailable": 516248469504
+    },
+    "reserved_memory_with_margin_bytes": 82463372083,
+    "cpu_affinities": {
+      "v-repair": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ]
+    },
+    "admission_blocked": {
+      "v-physical": {
+        "reason": "dependency",
+        "prerequisites": [
+          "v-repair"
+        ]
+      },
+      "v-drc": {
+        "reason": "dependency",
+        "prerequisites": [
+          "v-repair"
+        ]
+      },
+      "v-final-function": {
+        "reason": "dependency",
+        "prerequisites": [
+          "v-repair"
+        ]
+      },
+      "v-formal": {
+        "reason": "dependency",
+        "prerequisites": [
+          "v-repair",
+          "v-final-function"
+        ]
+      },
+      "v-delivery": {
+        "reason": "dependency",
+        "prerequisites": [
+          "v-physical",
+          "v-drc",
+          "v-final-function",
+          "v-formal"
+        ]
+      },
+      "s-delivery": {
+        "reason": "dependency",
+        "prerequisites": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-drc-s/receipt.json"
+        ]
+      },
+      "r-physical": {
+        "reason": "dependency",
+        "prerequisites": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-196/tasks/five-macro-route-r/receipt.json"
+        ]
+      },
+      "r-delivery": {
+        "reason": "dependency",
+        "prerequisites": [
+          "r-physical",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-drc-r/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-final-function-r/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-formal-r/receipt.json"
+        ]
+      }
+    },
+    "manifest_sha256": "8ec28fcd32ba482649b2db1bde1b5ea286493eb6cd6ed4e9b1499c80a7a963a5"
+  },
+  "parent_queue_sha256": "8ec28fcd32ba482649b2db1bde1b5ea286493eb6cd6ed4e9b1499c80a7a963a5",
+  "scheduler_sha256": "c86a7f27bb4ba74a1509d601d4daf39ebb201e6ed75bfa019e5f3c601ae6632f",
+  "maximum_independent_queue_tasks": 5,
+  "maximum_antichain": [
+    "v-physical",
+    "v-drc",
+    "v-final-function",
+    "s-delivery",
+    "r-physical"
+  ],
+  "source_commit": "06722bc04a09fd3fe88be34f4ad7ddd264aa2c78",
+  "source_archive_sha256": "4ae4caea3e4d8c928e4bb134aa53ab6eca158e845b1dc9e0e6682a2bc0ffc8bf",
+  "timeout_seconds": 180,
+  "scope": "Bounded read-only final geometry export. Proven immutable215 DAG antichain<=5 and pinned lowest-free-CPU allocator leave80-95 unused for the whole queue, including future refill. One diagnostic only; no extra allocation, no original ODB edits or existing EDA signals.",
+  "finished": 1793126936.0337918,
+  "returncode": 0,
+  "passed": true,
+  "argv": [
+    "srun",
+    "--jobid=92511",
+    "--overlap",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=96",
+    "--cpu-bind=none",
+    "--time=4",
+    "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-216/tasks/five-macro-geometry-m",
+    "python3",
+    "-c",
+    "\nfrom pathlib import Path\nimport os,sys\np=Path('/proc')/sys.argv[1]\nassert 'job_92511'in(p/'cgroup').read_text()\ns=dict(l.split(':',1)for l in(p/'status').read_text().splitlines()if ':'in l)\nassert int(s['Uid'].split()[0])==os.getuid()\nassert s['Cpus_allowed_list'].strip()=='0-95'\nassert set(range(80,96))<=os.sched_getaffinity(0)\nos.execvp(sys.argv[2],sys.argv[2:])\n",
+    "3137448",
+    "timeout",
+    "--kill-after=10s",
+    "180s",
+    "taskset",
+    "--cpu-list",
+    "80-95",
+    "/public/software/singularity-ce-4.3.4/bin/singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu",
+    "--pwd",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-216/tasks/five-macro-geometry-m",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "bash",
+    "-c",
+    "source /OpenROAD-flow-scripts/env.sh; export OMP_NUM_THREADS=16 OPENBLAS_NUM_THREADS=16 MKL_NUM_THREADS=16; python3 /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-216/src/project/experiments/block_v1/worker.py /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-216/src five-macro-geometry-m 16"
+  ],
+  "receipt_sha256": "8fbf461f27c88dbfdaea778b0ded028bce4beb736ba286655deb0e40903256ee"
+}

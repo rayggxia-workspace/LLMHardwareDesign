@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('five-macro-geometry-'):
+    if MODE.startswith('five-macro-geometry-complete-'):
+        from native_rect_completion import complete
+        complete(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE.startswith('five-macro-geometry-'):
         from five_macro_geometry import export
         export(ROOT,OUT,CPUS,run,MODE[-1])
     elif MODE in ('five-macro-probe-v-drive','five-macro-repair-v-drive'):
