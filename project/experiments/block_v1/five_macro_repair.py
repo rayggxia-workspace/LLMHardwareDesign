@@ -10,7 +10,8 @@ def patch_metal2(root,out,cpus,run):
     from io_slots import file_sha
     from five_macro_receive import source
     from native_escape import records
-    from native_escape_audit import geometry,def_inventory,connectivity
+    import re
+    from native_escape_audit import geometry,def_inventory,connectivity,header_identity
     assert cpus==16
     folder,r,flow,results=source(out,'m')
     located=out.parents[2]/'block-v1-20261027-196/tasks/five-macro-locate-m'
@@ -28,13 +29,13 @@ def patch_metal2(root,out,cpus,run):
     (out/'before.tcl').write_text(setup+body);run(['openroad','-no_init','-exit',str(out/'before.tcl')],'before.log')
     before_records={s.lstrip().split()[1]:s for s in records(out/'before.def')}
     old=before_records[name];assert old.rstrip().endswith(';')
-    # Two overlapping default-width (140DBU) vertical segments have exactly
-    # the selected190x560DBU rectangular union. Use ordinary wire segments:
-    # measured197's DEF RECT reached native DRC but the installed path-shape
-    # iterator omitted it. Do not waive that missing-conductor proof.
-    added=[('metal2','wire',(282460,530600,282600,531160)),
-           ('metal2','wire',(282510,530600,282650,531160))]
-    new=old.rstrip()[:-1].rstrip()+'\n      NEW metal2 ( 282530 530670 ) ( * 531090 )\n      NEW metal2 ( 282580 530670 ) ( * 531090 ) ;\n'
+    # Installed dbWirePathItr omits DEF RECT (measured197); ordinary parallel
+    # segments with the same union still fail native DRC (measured201).
+    # Retain the real patch-wire representation and ADD independent exact
+    # native DEF plus complete GDS polygon proof. Never count the iterator
+    # alone as evidence that RECT was retained or omitted from fabrication.
+    patch_path='NEW metal2 ( 282580 531020 ) RECT ( -120 -420 70 140 )'
+    new=old.rstrip()[:-1].rstrip()+'\n      '+patch_path+' ;\n'
     patch='VERSION 5.8 ;\nDIVIDERCHAR "/" ;\nBUSBITCHARS "[]" ;\nDESIGN '+flow['top']+' ;\nUNITS DISTANCE MICRONS 2000 ;\nNETS 1 ;\n'+new+'END NETS\nEND DESIGN\n'
     (out/'patch.def').write_text(patch)
     body='read_def -floorplan_initialize {'+str(out/'patch.def')+'}\nwrite_def after.def\nwrite_db edited.odb\nwrite_verilog after.v\nescape_geometry after-geometry.tsv {'+name+'}\n'
@@ -50,15 +51,43 @@ def patch_metal2(root,out,cpus,run):
     for net in before:
         a=collections.Counter(before[net]);b=collections.Counter(after[net])
         assert not a-b,'A conductor was removed'
-        if net==name:assert b-a==collections.Counter(added)
-        else:assert a==b,'Another net changed'
-    connected=connectivity(after[name]);assert connected['passed']
+        assert a==b,'An original iterator-visible conductor changed'
+    # Fresh native DEF writer reads RECT back from the edited ODB, with exact
+    # coordinates; only connection serialization order may differ.
+    old_header,old_route=old.split('+ ROUTED',1)
+    new_header,new_route=after_records[name].split('+ ROUTED',1)
+    assert header_identity(old_header)==header_identity(new_header)
+    normalized=lambda s:' '.join(s.split())
+    assert normalized(new_route)==normalized(old_route.rstrip().removesuffix(';')+patch_path+' ;')
+    augmented=list(after[name])+[('metal2','wire',tuple(box))]
+    connected=connectivity(augmented);assert connected['passed']
+    # Source full GDS was independently exported in193, even though its two
+    # native routing markers prevented qualification. Bind raw input hashes;
+    # do not treat that failed DRC receipt as an accepted macro.
+    failed=out.parents[2]/'block-v1-20261027-193/tasks/five-macro-drc-m'
+    dr=json.loads((failed/'receipt.json').read_text());assert dr['passed'] is False
+    dp=failed/'five-macro-drc.json';assert file_sha(dp)==dr['outputs'][dp.name]
+    d=json.loads(dp.read_text());assert d['source_receipt_sha256']==file_sha(folder/'receipt.json')
+    original_gds=Path(d['gds']['path']);assert file_sha(original_gds)==d['gds']['sha256']==dr['outputs'][str(original_gds.relative_to(failed))]
+    nickname='bv1_'+flow['top'];target=out/'gds-flow/results/nangate45'/nickname/'base';target.mkdir(parents=True)
+    for category in ('logs','reports','objects'):(out/'gds-flow'/category/'nangate45'/nickname/'base').mkdir(parents=True)
+    shutil.copyfile(out/'after.def',target/'6_final.def')
+    run(['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(folder/'config.mk'),
+         'WORK_HOME='+str(out/'gds-flow'),'NUM_CORES=16','do-gds'],'gds.log')
+    gds=target/'6_final.gds'
+    tech=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/FreePDK45.lyt')
+    assert "'metal2 : 13/0'" in tech.read_text()
+    run(['klayout','-b','-rd','before_gds='+str(original_gds),'-rd','after_gds='+str(gds),'-rd','out='+str(out),
+         '-r',str(helper/'native_patch_mask.rb')],'patch-mask.log')
+    mask=json.loads((out/'patch-mask-readback.json').read_text());assert mask['passed']
     report=(out/'native-whole-drc.rpt').read_text()
     result=dict(passed=not report.strip(),source_receipt_sha256=file_sha(folder/'receipt.json'),
                 location_receipt_sha256=file_sha(located/'receipt.json'),net=name,added_metal2_box_dbu=box,
                 source_unchanged=source(out,'m')[1]==r,unchanged_full_signal_netlist=True,
                 all_other_routes_unchanged=True,no_original_conductors_removed=True,
-                non_net_geometry_unchanged=True,added_exact_wire_boxes_dbu=[list(v[2]) for v in added],
+                non_net_geometry_unchanged=True,exact_native_def_rect_readback=True,complete_gds_mask=mask,
+                source_gds_sha256=file_sha(original_gds),edited_gds_sha256=file_sha(gds),
+                native_layer_mapping_sha256=file_sha(tech),
                 target_net_connectivity=connected,
                 native_full_chip_drc_report=report,edited_odb_sha256=file_sha(out/'edited.odb'),
                 edited_def_sha256=file_sha(out/'after.def'),qualified_hard_macro=False,
