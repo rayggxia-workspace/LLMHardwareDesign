@@ -19,7 +19,7 @@ RECOMMEND={
  'vector':'本轮推荐优化原边界。B/C 的端点 L1 都增加，迁移价值有限；即使内部窗口几何可放，也不能据此主张收益。',
  'llaccel_aux':'先优化边界并按真实 bank/事务局部试验。全 C 的4731个直接金属相交 pin、6700个基础间距风险提示拥塞可能向内部转移；不建议整体采用。'}
 
-def dump(p,v):p.write_text(json.dumps(v,ensure_ascii=False,indent=2,allow_nan=False)+'\n',encoding='utf-8')
+def dump(p,v):p.write_text(json.dumps(v,ensure_ascii=False,indent=2,allow_nan=False)+'\n',encoding='utf-8',newline='\n')
 def compress(src,dst):
     with dst.open('wb') as raw,gzip.GzipFile(filename='',mode='wb',fileobj=raw,mtime=0) as f:f.write(src.read_bytes())
 def table(df):return df.to_html(index=False,escape=True,border=0,classes='stats')
@@ -105,6 +105,13 @@ def build(root,out,keep_figures=False):
                 assert published.resolve() in prior.resolve().parents
                 shutil.rmtree(prior)  # only duplicated generated publication copies; originals retained
         shutil.copytree(latest,published/latest.name,ignore=shutil.ignore_patterns('timing.selected_*.txt.gz'))
+        # Tool text is losslessly compressed; preserve exact report bytes and
+        # avoid whitespace normalization of evidence during Git publication.
+        for p in published.rglob('*'):
+            if p.is_file() and p.suffix in ['.drc','.txt','.tsv']:
+                compress(p,p.with_name(p.name+'.gz'))
+                assert published.resolve() in p.resolve().parents
+                p.unlink()
     shutil.copy2(root/'coverage_gate.json',data)
     shutil.copytree(root/'pin-use-r01',data/'pin-use-r01',dirs_exist_ok=True)
     shutil.copy2(root/'pin_use_correction.json',data)
@@ -173,6 +180,11 @@ __BLOCKS__
     replacements={'NAV':''.join(f'<a href="#{c}">{TITLES[c]}</a>' for c in ORDER),'OWN':table(own),'MATRIX':table(matrix),'TOTAL':table(pd.DataFrame(totals)),'BLOCKS':'\n'.join(htmlparts),'STAGES':table(pd.DataFrame(stages)),'PHYSICAL':html.escape(json.dumps(pstat,ensure_ascii=False,indent=2)),'OPTIONS':''.join(f'<option>{c}</option>' for c in ORDER),'PINS':rawpins}
     for k,v in replacements.items():report=report.replace('__'+k+'__',v)
     (out/'report.html').write_text(report,encoding='utf-8')
+    for p in out.rglob('*'):
+        if p.is_file() and p.suffix in ['.svg','.html','.json','.csv']:
+            # Normalize only text representation of generated/publication data.
+            # Native tool text is preserved byte-exact in gzip above.
+            s=p.read_text(encoding='utf-8');p.write_text('\n'.join(line.rstrip() for line in s.splitlines())+'\n',encoding='utf-8',newline='\n')
     dump(data/'artifact_index.json',{str(p.relative_to(out)):{'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(out.rglob('*')) if p.is_file() and p.name!='artifact_index.json'})
     print('REPORT_COMPLETE',out,'original_pins',len(pins),'rows',3*len(pins))
 

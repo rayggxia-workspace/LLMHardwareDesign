@@ -1,0 +1,182 @@
+{
+  "case": "gemm",
+  "plan": "A",
+  "stage_scope": "8 selected pins; all remaining pins stay original; pure XY, no buffering/resizing",
+  "source_odb": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/6_final.odb",
+  "source_sha256": "57dc48d9e5e5e4e332601cee4489c8619215cd93126c8449caedaa50c1a45571",
+  "source_config": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/config.mk",
+  "source_sdc": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/6_final.sdc",
+  "libs": [
+    "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib"
+  ],
+  "input_sha256": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/6_final.odb": "57dc48d9e5e5e4e332601cee4489c8619215cd93126c8449caedaa50c1a45571",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/6_final.sdc": "7e7228dce3ef76286673e76330ca124074495fb28caf8a685afc9b0d2ff51ac4",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/config.mk": "c1f7f39b030393872298067f0956f1d484159ae546414545520668906cccf5cf",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/inputs/trial-inputs-r03/gemm-A.tcl": "c0cc7bfd27af4816037a60e5c423325928b7a1c218611dc43a9a5dc0cec5e822",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/code/physical_trial.tcl": "5bf23c163facb8cc7c03aecf26445a0e37a27ef3aee1b21cb38e02b8151bf1ab"
+  },
+  "scheduler_job": "92278",
+  "allocated_cpus": "8",
+  "openroad_threads": 4,
+  "started_utc": "2026-10-27T08:16:28.771305+00:00",
+  "driver_commit": "2b8a9d246bca9cd9ed1e13b53d007d3ca9b56d48",
+  "parent_handoff_target_layer": "UNKNOWN; this experiment cannot qualify parent access",
+  "command": [
+    "singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro",
+    "--bind",
+    "/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro",
+    "--home",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/home",
+    "--pwd",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/r01/gemm-A",
+    "--env",
+    "PINXY_OUTPUT=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/r01/gemm-A,PINXY_ODB=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/6_final.odb,PINXY_SDC=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/6_final.sdc,PINXY_LIBS_TCL=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/r01/gemm-A/libs.tcl,PINXY_RELOCATIONS=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/inputs/trial-inputs-r03/gemm-A.tcl,PINXY_PLAN=A,PINXY_TOP_LAYER=10,OMP_NUM_THREADS=4",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad",
+    "-threads",
+    "4",
+    "-no_init",
+    "-exit",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/code/physical_trial.tcl"
+  ],
+  "returncode": 0,
+  "finished_utc": "2026-10-27T08:23:29.983233+00:00",
+  "source_unchanged": true,
+  "fingerprint_checks": {
+    "cells": {
+      "before_sha256": "1b35cb45822189a76be60d1aad870b04eb93c91eb97997f21a30e387daff5171",
+      "after_sha256": "1b35cb45822189a76be60d1aad870b04eb93c91eb97997f21a30e387daff5171",
+      "exact_equal": true
+    },
+    "pdn": {
+      "before_sha256": "f6ac6d9efc25e1e24e378c1bba14169f0f4d5d65f584cfa497dbc9a7489d675c",
+      "after_sha256": "f6ac6d9efc25e1e24e378c1bba14169f0f4d5d65f584cfa497dbc9a7489d675c",
+      "exact_equal": true
+    },
+    "die": {
+      "before_sha256": "6e57c1e99b562930db4af3b920da2fc1d2257aca6971d80c92e59c020a5be464",
+      "after_sha256": "6e57c1e99b562930db4af3b920da2fc1d2257aca6971d80c92e59c020a5be464",
+      "exact_equal": true
+    }
+  },
+  "outputs": {
+    "checked.odb": {
+      "bytes": 468912097,
+      "sha256": "d0bc201628e075b15e141284812739225b1931a4570f2959cd154adb4f991b45"
+    },
+    "odb_route_connectivity.error.txt": {
+      "bytes": 202,
+      "sha256": "2741ddd6f2abdcde269eb87a4974de25568d488c15912c16292a3877d89b4db1"
+    },
+    "checked.def": {
+      "bytes": 123258209,
+      "sha256": "860865d4c79b43c41ea658924bbd3ba530d80043191ccd5a69652e0aaaa6bf21"
+    },
+    "timing.hold_tns.txt": {
+      "bytes": 17,
+      "sha256": "d2cd5ac33c7e5ae94363b6f4cee3f294aa0852daa624c390b572ee0b5ed6f5db"
+    },
+    "after.die.tsv": {
+      "bytes": 20,
+      "sha256": "6e57c1e99b562930db4af3b920da2fc1d2257aca6971d80c92e59c020a5be464"
+    },
+    "after.cells.tsv": {
+      "bytes": 75036299,
+      "sha256": "1b35cb45822189a76be60d1aad870b04eb93c91eb97997f21a30e387daff5171"
+    },
+    "libs.tcl": {
+      "bytes": 102,
+      "sha256": "a547de45fee1d9160cbd4558639ff396a9b83515b4b3f6fb57fda5c25389d68d"
+    },
+    "timing.hold.txt": {
+      "bytes": 25,
+      "sha256": "bda28c416b5b1f000d9b437c9b4602594fce6f75b4d51e086b636c1ef8bff636"
+    },
+    "timing.setup_tns.txt": {
+      "bytes": 17,
+      "sha256": "44f23fe41be6907ffbb46685b3ddca75e2346eb1009578f7dcf1a0c5a4bdc1d5"
+    },
+    "after.pins.tsv": {
+      "bytes": 316357,
+      "sha256": "378349c4c1978414835bbfc0266824c678af7ef54d9a4ac02a3bcdce2e18cd57"
+    },
+    "openroad.log": {
+      "bytes": 6575,
+      "sha256": "1e4a87a3a3100bf55eab6e255c6a714871e58ac1368fbe86344f74a84f3abc4e"
+    },
+    "before.die.tsv": {
+      "bytes": 20,
+      "sha256": "6e57c1e99b562930db4af3b920da2fc1d2257aca6971d80c92e59c020a5be464"
+    },
+    "timing.paths.json": {
+      "bytes": 710280695,
+      "sha256": "03073331f810211542eae9ebe9c1d96b0610f28f13ea84af69f5f8655391db3e"
+    },
+    "extracted.spef": {
+      "bytes": 272993323,
+      "sha256": "49d31442729cb0b7888a4b31a6dc74cd3b2cbbb63625ca4db39d8fbbcd985b75"
+    },
+    "stages.tsv": {
+      "bytes": 312,
+      "sha256": "7c7d8e8034e4c2a4dfce18b3d108fa8ea35336e44c19ae97161a7011986250b9"
+    },
+    "checked.sdc": {
+      "bytes": 343905,
+      "sha256": "e4f6672da3ecf49d0a7c8f61c1bbd3e68860d04a0f692272740a4038505772d7"
+    },
+    "before.pdn.tsv": {
+      "bytes": 2080002,
+      "sha256": "f6ac6d9efc25e1e24e378c1bba14169f0f4d5d65f584cfa497dbc9a7489d675c"
+    },
+    "timing.parasitic_coverage.txt": {
+      "bytes": 729527,
+      "sha256": "4cb947ff31fa7c0df86b22668eaf41f1a16b41c63e5b0e10d0b82c4e58654878"
+    },
+    "before.pins.tsv": {
+      "bytes": 316357,
+      "sha256": "378349c4c1978414835bbfc0266824c678af7ef54d9a4ac02a3bcdce2e18cd57"
+    },
+    "checked.v": {
+      "bytes": 36441131,
+      "sha256": "936ab10c4c3032a9de2c183685497a0c1bb7c72b47e029e52ecc8c6e88573e49"
+    },
+    "fresh_route.drc": {
+      "bytes": 2575964,
+      "sha256": "ce6fb8b938e90fcfa934340e2cd832bbe1e0af49380a86a09e7f1e6b58137936"
+    },
+    "timing.checks.txt": {
+      "bytes": 115,
+      "sha256": "6c335d259728dcb345b7e1e2717292b60a51184dbd499a3b4763be9fd2de1381"
+    },
+    "abstract.lef": {
+      "bytes": 1897078,
+      "sha256": "c2f0e897af062eb401fba5fd6d3486d4627fa5b434f1f8895b8e25d331351ea7"
+    },
+    "before.cells.tsv": {
+      "bytes": 75036299,
+      "sha256": "1b35cb45822189a76be60d1aad870b04eb93c91eb97997f21a30e387daff5171"
+    },
+    "timing.constraint_coverage.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "wire_length.csv": {
+      "bytes": 25,
+      "sha256": "5faad33e59663a14f8e6bc570fbb9f6a62386445fb4f420d578adbc7f172551a"
+    },
+    "timing.setup.txt": {
+      "bytes": 25,
+      "sha256": "22531d6cba63705437ef308293d2f40abda02e70da1014e4a3fff251b4d307ee"
+    },
+    "after.pdn.tsv": {
+      "bytes": 2080002,
+      "sha256": "f6ac6d9efc25e1e24e378c1bba14169f0f4d5d65f584cfa497dbc9a7489d675c"
+    }
+  },
+  "status": "STAGES_EXECUTED_NOT_QUALIFIED"
+}

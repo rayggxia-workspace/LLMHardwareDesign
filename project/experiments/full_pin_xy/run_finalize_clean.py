@@ -26,7 +26,7 @@ def one(case,rev,plan):
         assert expected==before,'Routed source lineage mismatch'
         den='PINXY_DRC_ODB={},PINXY_TOP_LAYER={},PINXY_DRC_OUT={}'.format(out/'clean.odb',8 if case.endswith('_aux') else 10,out/'independent.drc')
         with (out/'drc.log').open('x') as f:d=subprocess.run(common+['--env',den,IMAGE,BIN,'-threads','1','-exit',str(DRIVER/'independent_drc.tcl')],stdout=f,stderr=subprocess.STDOUT)
-        drc=out/'independent.drc';rec['independent_DRC_returncode']=d.returncode;rec['independent_DRC_count']=len(re.findall(r'^violation type:',drc.read_text(),re.M)) if drc.exists() else None
+        drc=out/'independent.drc';rec['independent_DRC_returncode']=d.returncode;rec['independent_DRC_count']=len(re.findall(r'^violation type:',drc.read_text(),re.M)) if d.returncode==0 and drc.exists() else None
     for name,whole in [('selected_access',False),('whole_access',True)]:
         if r.returncode==0:
             result=check(out/(name+'.tsv.gz'),whole);(out/(name+'.json')).write_text(json.dumps(result,indent=2)+'\n');rec[name]=result
