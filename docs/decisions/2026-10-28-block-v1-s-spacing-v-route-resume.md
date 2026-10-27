@@ -7,3 +7,5 @@ V215详细布线0违规，但do-finish缺5_route.odb失败。安装原生Makefil
 旧207父为主动排空后的FAILED，209仍承载共享队列；215依父终态将R delivery提前BLOCKED，实际R还在196详细布线。新队列在核215已终态且208业务CWD未创建后，复用从未领取的R physical/delivery，依真实子回执，不改215历史或重复领取。
 
 每任务16CPU硬绑定、六槽即完即补；222新增实际ready的V finish与S locator可并行。旧任务自然收尾，无时间取消。新geometry需匹配真正最终源，221仅暂存不提交。
+
+223具体S修正：addr[7]在y=86540DBU直接连接原pin与原via；din[43]在y=1596940DBU直接连接原pin与原via；din[55]保留原via方向竖线、在y=1603340DBU直接连pin。原4/4/5段M10绕路缩为1/1/2段，全部via不动。仅接受定位过的精确原路径；真实DEF parse/emit往返及改2DBU拒绝控制通过。实际native DEF回读、除三网外全部NETS/非NETS哈希、完整信号网表、其他层/全部via/port几何、真实连通/上层间距、全片native DRC必须全部通过，随后生成final/RCX并做全部独立验收。没有降低规则或时序要求。

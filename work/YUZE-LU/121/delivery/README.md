@@ -1,3 +1,5 @@
+2026-10-28 03:31 CST：222/92523已实际在node17接续V收尾（原生fillcell、route别名及SDC完成，最终LEC/RCX进行中），S只读定位已通过。S实际三个M10 U形接入addr[7]/din[43]/din[55]准备缩为1/1/2条直连，BPin与全部via/其他层/逻辑保持；真实190 DEF正例roundtrip通过，坐标改2DBU的源被拒。223准备从原190最终库内修三网并原生全片DRC/几何连通检查，再fresh final/RCX及全部四门重验；不是已修复通过。新几何队列同属223，依S223、V222、R208真实最终delivery，替代未提交的221。当前七allocation，223若提交仍受总上限8；六槽16CPU即完即补，S原生收尾含LEC按实际140.3GiB组峰值预留192GiB及1.2裕量/16GiBguard。
+
 2026-10-28 03:25 CST：新终态已读回：S207完整GDS deck实际10项METAL10.2，原生7标记（addr[6]/addr[7]、din[31]/din[43]间距及din[55] NS Metal），不再记DRC运行。V215详细布线自然完成且router报告0，但随后do-finish缺5_route.odb失败；查安装原生Makefile确认漏do-5_3_fillcell/do-5_route/do-5_route.sdc，保留失败，222从封存5_2_route.odb接续这三步及完整final/RCX，全部独立门重验。222仅准备未提交，同时只读定位S及接续从未领取的208 R物理/交付；R交付只依实际207子回执，不依已排空FAILED父。03:18本任务六allocation，R196详细布线与209旧V DRC仍继续、其他成员未动。M/T已交付，五宏整体仍未完成。221几何队列未提交，V依赖旧215交付路径已过时；后继必须另建匹配新最终交付的几何队列，不覆盖221历史。
 
 # 五种基础宏交付入口

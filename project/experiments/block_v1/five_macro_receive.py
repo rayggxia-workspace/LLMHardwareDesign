@@ -8,10 +8,11 @@ import shutil
 def source(out,kind,original=False,repaired=False):
     from io_slots import file_sha
     assert kind in ('m','s','r','v')
-    assert not (original or repaired) or kind=='m' or (kind=='v' and original and not repaired)
+    assert not (original or repaired) or kind=='m' or (kind in ('v','s') and original and not repaired)
     number=(('189' if original else '193' if repaired else '205') if kind=='m'
-            else dict(s='190',r='196',v='203' if original else '222')[kind])
+            else dict(s='190' if original else '223',r='196',v='203' if original else '222')[kind])
     task=(('five-macro-route-m' if original else 'five-macro-repair-m-hold' if repaired else 'five-macro-finish-m-patch') if kind=='m'
+          else 'five-macro-finish-s-spacing' if kind=='s' and not original
           else 'five-macro-finish-v-drive' if kind=='v' and not original else 'five-macro-route-'+kind)
     folder=out.parents[2]/('block-v1-20261027-'+number+'/tasks/'+task)
     receipt=json.loads((folder/'receipt.json').read_text());assert receipt['passed'] is True
