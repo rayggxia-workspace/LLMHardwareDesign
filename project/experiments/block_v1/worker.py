@@ -60,7 +60,13 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-c8-graph-inputs-group':
+    if MODE=='native-tie-formal-control-group':
+        from native_tie_formal_control import group
+        group(ROOT,OUT,CPUS)
+    elif MODE in ('native-tie-formal-control-0','native-tie-formal-control-1'):
+        from native_tie_formal_control import verify
+        verify(ROOT,OUT,CPUS,run,int(MODE[-1]))
+    elif MODE=='native-c8-graph-inputs-group':
         from native_c8_formal_diagnosis import group
         group(ROOT,OUT,CPUS,graph_inputs=True)
     elif MODE in ('native-c8-graph-inputs-a','native-c8-graph-inputs-c'):

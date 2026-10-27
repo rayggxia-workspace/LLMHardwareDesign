@@ -1,0 +1,9 @@
+# 严格C8等价检查的常量单元前端对照
+
+170/92338实际双1CPU图诊断通过，27秒、TotalCPU35.644秒；Slurm MaxRSS返回0，视作无有效采样而不宣称真实内存为0。前后全部已用integer bit和顶层输出均有驱动。A/C未使用DFF QN总数各保持141482，DFF实例无增删；因此没有证据把未匹配PI当作真实电气浮空。
+
+166封存图中before的LOGIC0_X1=995、LOGIC1_X1=9，总数1004；after为1020、12，总数1032，A/C相同。全部原生未匹配标签后缀均79.0.，数量恰好与tie输出对应。这是常量前端处理问题的候选解释，尚未证明具体Naja ID映射；不能因此直接豁免输入匹配门。
+
+新171小例子将分别用真实Nangate Liberty的LOGIC0_X1/LOGIC1_X1、改名tie和resize DFF构造原生对照。native_tie_projection只允许实际库明确单Z输出、function恰好0/1、无输入和时序状态的两种master；必须没有参数、额外pin或多driver。Boolean view删除这些常量单元、将其唯一被驱动bit全部替换为已核明literal；逐位置记录及全部cell原件必须精确逆变换为原图，其他硬件/状态/连线保持。physical Verilog、ODB、PG、时序和功能仿真均保留真实tie资源。
+
+本地用实际Liberty SHA8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1和声明小图检查精确逆变换；错误function/时序状态/pin/参数/多driver五反例拒绝。171尚未运行。实际原生对照必须在保留原始日志的同时，看到literal后严格全部正向边界对应/UNSAT/IDENTICAL通过，改变真实tie极性和DFF时钟均明确拒绝；之后才能考虑完整C8同源重验。该编码不更改native_formal.inspect验收门，也不把任何小例通过当作完整宏资格。
