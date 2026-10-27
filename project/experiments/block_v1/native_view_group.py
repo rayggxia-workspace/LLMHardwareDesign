@@ -13,9 +13,10 @@ import time
 from native_allocation_group import file_sha,memory_snapshot
 
 
-def verify(root,out,cpus,escape_only=False):
+def verify(root,out,cpus,escape_only=False,typed_pg=False):
+    assert not typed_pg or escape_only
     assert cpus==(16 if escape_only else 32)
-    specs=[(('native-escape-view-'if escape_only else'native-prefab-view-')+top+'-'+policy,top,policy.upper())
+    specs=[(('native-typed-view-'if typed_pg else'native-escape-view-'if escape_only else'native-prefab-view-')+top+'-'+policy,top,policy.upper())
            for top in (['transaction6k']if escape_only else['shared109','transaction6k'])for policy in ['a','c']]
     memory=memory_snapshot()
     # Deliberately use the observed ~172GiB full C8 peak for every child.

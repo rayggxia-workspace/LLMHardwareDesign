@@ -126,7 +126,7 @@ def interface(folder,pins,leaf,top,library):
         supply_pins=pg,obstruction_layers=sorted(obs))
 
 
-def generate(root,out,cpus,run,top,policy,pipeline='native_pipeline.json'):
+def generate(root,out,cpus,run,top,policy,pipeline='native_pipeline.json',typed_pg=False):
     from io_slots import file_sha,slot
     assert top in ('shared109','transaction6k')and policy in ('A','C')and cpus>=8
     assert pipeline in ('native_pipeline.json','native_pipeline_cap20.json','native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json',
@@ -145,6 +145,7 @@ def generate(root,out,cpus,run,top,policy,pipeline='native_pipeline.json'):
     source=base/config['candidate_run']/('tasks/'+config.get('candidate_task_prefix','native-run-')+top+'-'+policy.lower())
     receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed']is True
     received_contract(physical,source,file_sha(source/'receipt.json'),pipeline,top,policy)
+    assert not typed_pg or (pipeline=='native_pipeline_escape.json'and top=='transaction6k')
     relative=Path('flow/results/nangate45')/('bv1_'+top+'_'+policy)/'base';results=source/relative
     inputs={}
     with slot(base):
@@ -184,16 +185,43 @@ close $stream
     text+='write_abstract_lef -bloat_occupied_layers candidate.lef\n'
     (out/'generate-views.tcl').write_text(text)
     run(['openroad','-no_init','-exit','generate-views.tcl'],'generate-views.log')
+    supply_correction=None;timing_view=None
+    if typed_pg:
+        from native_view_pg import convert,checked_timing_view
+        import shutil
+        raw=out/'candidate-raw.lib';shutil.copyfile(out/'candidate.lib',raw)
+        corrected,supply_correction=convert(raw.read_text())
+        assert supply_correction['original_sha256']==file_sha(raw)
+        (out/'candidate.lib').write_text(corrected)
+        (out/'supply-model-correction.json').write_text(json.dumps(supply_correction,indent=2)+'\n')
+        full=checked_timing_view(physical,accepted)
+        full_path=receiver/'physical-functional.v';full_proof=receiver/'physical-functional-proof.json'
+        assert str(full_path)==full['full_view']
+        assert file_sha(full_path)==full['full_view_sha256']
+        assert file_sha(full_proof)==accepted['outputs'][full_proof.name]
+        assert json.loads(full_proof.read_text())==full
+        with slot(base):shutil.copyfile(full_path,out/'candidate-timing.v')
+        assert file_sha(out/'candidate-timing.v')==full['full_view_sha256']
+        inputs[str(full_path)]=file_sha(full_path);inputs[str(full_proof)]=file_sha(full_proof)
+        timing_view=dict(path=str(out/'candidate-timing.v'),sha256=full['full_view_sha256'],
+            source_path=str(full_path),source_proof=str(full_proof),source_proof_sha256=file_sha(full_proof),
+            retained_protection_cells=full['input_only_projection']['removed_count'],
+            scope='Received complete signal-bearing ODB export including real protection loads; exact copy, original filtered flow Verilog remains separate')
     text='read_liberty candidate.lib\nread_lef {'+platform+'/lef/NangateOpenCellLibrary.tech.lef}\nread_lef candidate.lef\n'
     text+='set wanted_master {'+top+'}\nset wanted_library {'+library+'}\n'
     text+='set lib_interface_script {'+str(root/'project/experiments/block_v1/native_lib_pins.tcl')+'}\n'
     text+='source {'+str(root/'project/experiments/block_v1/native_views.tcl')+'}\n'
+    if typed_pg:text+='source {'+str(root/'project/experiments/block_v1/native_pg_pins.tcl')+'}\n'
     (out/'readback-views.tcl').write_text(text)
     run(['openroad','-no_init','-exit','readback-views.tcl'],'readback-views.log')
     prep=base/config['preparation_run']/'tasks/native-prepare';bound=json.loads((prep/'receipt.json').read_text());assert bound['passed']is True
     path=prep/(top+'-'+policy)/'pins.json';assert file_sha(path)==bound['outputs'][str(path.relative_to(prep))]
     pins=json.loads(path.read_text())['pins'];budget=json.loads((root/'project/experiments/block_v1/physical-budget.json').read_text())
     received=interface(out,pins,budget['leaves'][top],top,library)
+    if typed_pg:
+        pg=(out/'lib-pg-interface.tsv').read_text().splitlines()
+        received['checks']['typed_liberty_supply_pins']=pg==['VDD\tpower\t1','VSS\tground\t1']
+        received['passed']=all(received['checks'].values())
     gds=receiver/'gds-flow/results/nangate45'/('bv1_'+top+'_'+policy)/'base/6_final.gds'
     assert file_sha(gds)==physical['gds_sha256']==accepted['outputs'][str(gds.relative_to(receiver))]
     with slot(base):assert all(file_sha(Path(path))==digest for path,digest in inputs.items())
@@ -209,6 +237,7 @@ close $stream
         views={name:dict(path=str(out/name),sha256=file_sha(out/name))for name in ['candidate.lib','candidate.lef']},
         native_gds=dict(path=str(gds),sha256=file_sha(gds)),flat_abstract_boundary_qualified=False,
         exact_final_function_qualified=function_control is not None,final_function_control=function_control,
+        supply_model_correction=supply_correction,flat_timing_view=timing_view,
         twelve_layer_qualified=False,qualified_hard_macro=False,
         scope='Same-source candidate view generation and native-tool interface readback only; full boundary, function and twelve-layer qualification remain required')
     (out/'native-view-generation.json').write_text(json.dumps(record,indent=2)+'\n')
