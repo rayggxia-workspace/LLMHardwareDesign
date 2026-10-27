@@ -35,19 +35,25 @@ def windows(summary):
     return result
 
 
-def verify(root,out,cpus,run,policy='C'):
+def verify(root,out,cpus,run,policy='C',pipeline=None):
     from io_slots import file_sha
     from native_drc import summarize
     base=out.parents[2]
     assert policy in ('A','C')
-    failed=base/('block-v1-20261027-094/tasks/native-cap40-receive-transaction6k-'+policy.lower())
+    if pipeline is None:
+        config=dict(receiver_run='block-v1-20261027-094',receiver_task_prefix='native-cap40-receive-',
+                    candidate_run='block-v1-20261027-093',candidate_task_prefix='native-cap40-run-')
+    else:
+        assert pipeline=='native_pipeline_diode_full.json' and policy=='A'
+        config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
+    failed=base/config['receiver_run']/('tasks/'+config['receiver_task_prefix']+'transaction6k-'+policy.lower())
     receipt=json.loads((failed/'receipt.json').read_text());assert receipt['passed']is False
     report=failed/'native-drc.lyrdb'
     assert file_sha(report)==receipt['outputs'][report.name]
     proof=failed/'native-physical-receiver.json'
     assert file_sha(proof)==receipt['outputs'][proof.name]
     physical=json.loads(proof.read_text());assert not physical['passed']
-    source=base/('block-v1-20261027-093/tasks/native-cap40-run-transaction6k-'+policy.lower())
+    source=base/config['candidate_run']/('tasks/'+config['candidate_task_prefix']+'transaction6k-'+policy.lower())
     assert physical['source']==str(source)
     bound=json.loads((source/'receipt.json').read_text());assert bound['passed']is True
     assert file_sha(source/'receipt.json')==physical['source_receipt_sha256']
@@ -87,7 +93,7 @@ def verify(root,out,cpus,run,policy='C'):
     assert file_sha(odb)==bound['outputs'][str(odb.relative_to(source))]
     assert file_sha(report)==receipt['outputs'][report.name]
     rows=[dict(marker=m,hits=matches[m['index']],candidate_nets=sorted({r['net']for r in matches[m['index']]}))for m in markers]
-    result=dict(schema='block-v1-native-drc-location/1',passed=True,policy=policy,
+    result=dict(schema='block-v1-native-drc-location/1',passed=True,policy=policy,pipeline=pipeline,
         report_sha256=file_sha(report),source_odb_sha256=file_sha(odb),
         source_receipt_sha256=file_sha(source/'receipt.json'),failed_receipt_sha256=file_sha(failed/'receipt.json'),
         native_geometry_exporter_sha256=file_sha(root/'project/experiments/block_v1/odb_geometry.tcl'),

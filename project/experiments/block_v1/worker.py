@@ -59,7 +59,16 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-const-receiver-group':
+    if MODE=='native-diagnosis-group':
+        from native_diagnosis_group import verify
+        verify(ROOT,OUT,CPUS)
+    elif MODE=='native-passive-endpoint-probe':
+        from native_passive_endpoint import verify
+        verify(ROOT,OUT,CPUS,run)
+    elif MODE=='native-diode2-drc-locate-a':
+        from native_drc_locate import verify
+        verify(ROOT,OUT,CPUS,run,policy='A',pipeline='native_pipeline_diode_full.json')
+    elif MODE=='native-const-receiver-group':
         from native_allocation_group import receive_pair
         receive_pair(ROOT,OUT,CPUS)
     elif MODE.startswith('native-const-protected-run-'):
