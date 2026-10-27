@@ -68,3 +68,11 @@ python project/experiments/block_v1/native_escape_control.py NEW_CONTROL.json
 155/156在本源码提交时**尚未部署/执行**。宏边界、C8完整组合/恢复epoch、父层物理、一般多网节点分布十二层RC/拼接/窗口、共同冻结与两产品/敏感性/参数库仍需继续完成。
 
 即使149探针通过，仍须从修改后的真实ODB重新生成完整原生GDS、寄生、SDC与网表，并重跑完整DRC、全部端点STA/电气、PG/连接/LEC和实际最终功能；不能复用133旧SPEF充当新路由寄生。正式同源宏视图、flat/abstract边界、父层glue、完整恢复/epoch、一般多网分布十二层RC与原生/新层拼接、共同冻结父层、两产品和敏感性仍是独立门槛。探针的四个完整资格标志保持false。
+
+## 155实际API失败与157/158后继
+
+155/92248实际FAILED，8:05、TotalCPU19:39.463、MaxRSS41807612KiB。A/C原生do-6_report完成，但新OpenROAD进程发现安装版没有公开`check_drc` Tcl命令；原native-final-check.log及全部失败索引保留，不能把新最终文件或RCX产生视为完整接收成功。156已读回空dispatch-state/tasks、没有Slurm作业，依赖155失败停用，不修改原不可变部署。
+
+实际容器二进制`/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad`的只读字符串检查确认存在编译命令`drt::check_drc_cmd drc_file x1 y1 x2 y2 marker_name`及其SWIG包装；镜像没有对应源文件。上游零box全片语义仍只是固定源码依据，实际安装入口必须由运行证据验证。157在昂贵do-6_report前先检查实际命令存在，并以无参数调用保留运行时完整六参数usage；新最终ODB调用`drt::check_drc_cmd native-router-drc.rpt 0 0 0 0 native_escape_drc`，使用与上游公开wrapper相同的编译入口和全片box，报告必须零，检查前后完整DEF字节相同，所有原几何/网表/约束/新RC/独立接收门保持。不会把缺失命令当作空报告，不复制旧DRT报告。
+
+157生产者仍32CPU allocation内两路16CPU，158资格仍32CPU内四路8CPU并行，按实际内存限制并发。158依赖157完整成功；本源码提交时157/158均尚未部署/执行。实际运行若入口、签名或任何资格失败均保留失败并继续处理，不放宽检查。

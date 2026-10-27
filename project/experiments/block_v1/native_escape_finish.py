@@ -104,16 +104,23 @@ def implement(root,out,cpus,run,policy):
         inputs_source=str(prep),inputs_receipt_sha256=file_sha(prep/'receipt.json'),source=str(original),source_receipt_sha256=file_sha(original/'receipt.json'),
         escape_probe=str(probe),escape_probe_receipt_sha256=file_sha(probe/'receipt.json'),qualified_hard_macro=False)
     def save():(out/'native-candidate.json').write_text(json.dumps(record,indent=2)+'\n')
+    # This image exposes the compiled six-argument native entry point but not
+    # the newer public Tcl wrapper. Verify the installed API before RCX/LEC.
+    preflight='if {[llength [info commands ::drt::check_drc_cmd]] != 1} {error "Missing compiled native full-chip DRC checker"}\n'
+    preflight+='set stream [open native-checker-api.txt w]\nputs $stream [info commands ::drt::*drc*]\n'
+    preflight+='if {![catch {drt::check_drc_cmd} usage]} {error "Native DRC arity probe unexpectedly succeeded"}\nputs $stream $usage\nclose $stream\n'
+    (out/'native-checker-preflight.tcl').write_text(preflight)
+    run(['openroad','-no_init','-exit','native-checker-preflight.tcl'],'native-checker-preflight.log')
+    assert 'drc_file x1 y1 x2 y2 marker_name'in(out/'native-checker-api.txt').read_text(),'Unexpected installed native DRC signature'
     save();run(command+['do-6_report'],'do-6_report.log');record['stages'].append('do-6_report');save()
     # A fresh process checks the actual regenerated final database. The
-    # installed command body and complete DEF before/after check are retained.
+    # compiled API signature and complete DEF before/after check are retained.
     script='set_thread_count 16\nread_db {%s}\nwrite_def final-readback.def\nwrite_verilog final-all.v\n'% (results/'6_final.odb')
-    script+='if {[llength [info commands check_drc]] != 1} {error "Missing actual native full-chip DRC checker"}\n'
-    script+='set stream [open native-checker-body.tcl w]\nputs $stream [info body check_drc]\nclose $stream\n'
-    script+='check_drc -output_file native-router-drc.rpt\nwrite_def checked-readback.def\n'
+    script+='if {[llength [info commands ::drt::check_drc_cmd]] != 1} {error "Missing compiled native full-chip DRC checker"}\n'
+    # Same compiled entry point and whole-block zero box used by the upstream
+    # public wrapper; no route repair, clipping, or suppression is requested.
+    script+='drt::check_drc_cmd native-router-drc.rpt 0 0 0 0 native_escape_drc\nwrite_def checked-readback.def\n'
     (out/'native-final-check.tcl').write_text(script);run(['openroad','-no_init','-exit','native-final-check.tcl'],'native-final-check.log')
-    assert 'drt::check_drc_cmd'in(out/'native-checker-body.tcl').read_text()
-    assert re.search(r'set box\s+\{\s*0\s+0\s+0\s+0\s*\}',(out/'native-checker-body.tcl').read_text())
     a,ah=def_inventory(probe/'after.def');b,bh=def_inventory(out/'final-readback.def')
     assert a==b and ah==bh,'Final reporting changed accepted native geometry or hardware'
     assert file_sha(out/'final-readback.def')==file_sha(out/'checked-readback.def'),'Native DRC checker changed geometry'
@@ -129,7 +136,7 @@ def implement(root,out,cpus,run,policy):
     proof=dict(schema='block-v1-native-escape-finish/1',passed=all(checks.values()),checks=checks,policy=policy,
         probe=str(probe),probe_receipt_sha256=file_sha(probe/'receipt.json'),probe_report_sha256=file_sha(pp),accepted_edit_odb_sha256=p['edited_odb_sha256'],
         actual_flow_scripts=FLOW_HASHES,regenerated_rc=True,native_router_drc_sha256=file_sha(out/'native-router-drc.rpt'),
-        native_checker_body_sha256=file_sha(out/'native-checker-body.tcl'),copied_input_hashes=copied,
+        native_checker_api_sha256=file_sha(out/'native-checker-api.txt'),native_checker_command='drt::check_drc_cmd native-router-drc.rpt 0 0 0 0 native_escape_drc',copied_input_hashes=copied,
         full_independent_drc_qualified=False,exact_final_function_qualified=False,qualified_hard_macro=False,
         scope='Ordinary native final outputs/LEC/RCX regenerated from accepted fixed-via edit, exact geometry/hardware/constraints readback and actual whole-chip native router DRC; independent full GDS/DRC/STA/function/macro gates remain required')
     (out/'native-escape-finish.json').write_text(json.dumps(proof,indent=2)+'\n')

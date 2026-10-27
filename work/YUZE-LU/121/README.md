@@ -1,5 +1,7 @@
 # Issue 121 执行记录
 
+2026-10-27 15:12 CST：155/92248实际FAILED/8:05、TotalCPU19:39.463、MaxRSS41807612K；两路原生do-6_report完成，随后因安装版缺少公开check_drc Tcl命令而失败，尚未实际执行新全片DRC/几何与功能接收。156已读回空state/无job，依赖失败停用。原失败不改写。157改用实际二进制存在的六参数drt::check_drc_cmd，在重提取前先核对实际命令/参数签名，零box全片检查、全部原读回与资格门保持；158完整物理/最终功能仍须等待157全部成功。本源码提交时157/158尚未部署。15:03当前5个本任务allocation，128 C已完成，A仍最终输出；134/141仍等两路完整成功。完整P0–P6未完成。
+
 2026-10-27 14:36 CST：154实际有限探针通过，stage150；组/两子终态索引`run154-group-terminal`、`run154a-terminal`、`run154c-terminal`。源e1beb5821428bf57e8cbe02e06a6260f161cb22c，归档4c2b48a868c38970690e16322ee4f490611e6b51966a09c8e21a6e0cd92dc4d9（162成员/1095680字节）。92243/1:43/TotalCPU3:01.781/MaxRSS1897412K，A/C各10门通过，完整源18/2复现、upper mask XOR0、after upper0、所有via身份/坐标保持；并非完整宏资格。155/156后继全门代码已准备尚未部署，见正式有限修复决策；14:36现有6allocation保留，128无终态。
 
 2026-10-27 14:27 CST：153源码2533cff07db1210c1870197bb798c4dbf77ae9b9，归档3b6fc298071931b1ed2fb1524c493ceaaf8c2fd53ffa39ecfe270e5fb1b28c68（162成员/1095680字节），stage149。92241实际FAILED/1:20/TotalCPU2:21.279/MaxRSS1322944K，组/两子终态索引`run153-group-terminal`、`run153a-terminal`、`run153c-terminal`；`run153-initial`采集时已终态。原GDS DBU0.0001µm与probe0.0005µm的单向换算保护拒绝，尚未XOR/DRC。154仅改为共同细网格整数放大，物理候选不变，实际尚未运行。
