@@ -19,7 +19,7 @@ def one(case,rev,plan):
     with (out/'export.log').open('x') as f:r=subprocess.run(common+['--env',en,IMAGE,BIN,'-threads','1','-exit',str(DRIVER/'finalize_clean.tcl')],stdout=f,stderr=subprocess.STDOUT)
     rec={'case':case,'revision':rev,'plan':plan,'source_pre_RCX_odb':str(src),'source_sha256':before,'source_unchanged':before==sha(src),'export_returncode':r.returncode,
         'scheduler_job':os.environ['SLURM_JOB_ID'],'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),
-        'rejected_post_RCX_geometry_odb':str(original/'checked.odb'),'legacy_RC_STA_receipt':str(trial),'RC_STA_scope':'Existing SPEF/STA executed from this same pre-RCX source; post-RCX DB rejected as physical master. System boundary models incomplete.'}
+        'rejected_post_RCX_geometry_odb':str(original/('analysis_after_RCX.odb' if (original/'analysis_after_RCX.odb').exists() else 'checked.odb')),'legacy_RC_STA_receipt':str(trial),'RC_STA_scope':'Existing SPEF/STA executed from this same pre-RCX source; post-RCX DB rejected as physical master. System boundary models incomplete.'}
     if (out/'clean.odb').exists():
         rec['clean_odb_sha256']=sha(out/'clean.odb');rec['clean_byte_identical_to_pre_RCX_source']=rec['clean_odb_sha256']==before
         expected=j.get('outputs',{}).get('routed.odb',{}).get('sha256') if plan!='A' else CFG['physical_blocks'][case]['expected_sha256']

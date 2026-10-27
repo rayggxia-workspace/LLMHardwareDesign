@@ -106,13 +106,15 @@ if {$::env(PINXY_PLAN) eq "A"} {
     read_spef $out/extracted.spef
   }
 }
-stage fresh_native_drc {drt::check_drc -output_file $out/fresh_route.drc}
+# Retain this diagnostic; an independent clean-process check is mandatory.
+# Current RCX changes serialized route state, so this process is analysis-only.
+stage in_analysis_drc_diagnostic {drt::check_drc -output_file $out/analysis_in_memory.drc}
 stage selected_access_export {source $::env(PINXY_DRIVER)/export_access.tcl}
 stage placement {check_placement -verbose}
 foreach net {VDD VSS} {stage pdn_$net {check_power_grid -net $net -error_file $out/$net.pdn.rpt}}
 stage wire_statistics {report_wire_length -detailed_route -summary -file $out/wire_length.csv}
 stage sta {timing $out/timing}
-stage abstract {write_abstract_lef $out/abstract.lef}
-stage final {fingerprint $out/after;write_db $out/checked.odb;write_def $out/checked.def;write_verilog $out/checked.v;write_sdc $out/checked.sdc}
+stage analysis_abstract_diagnostic {write_abstract_lef $out/analysis.abstract.lef}
+stage final {fingerprint $out/after;write_db $out/analysis_after_RCX.odb;write_sdc $out/analysis.sdc}
 close $stages
 puts "TRIAL_STAGES_FINISHED_SEE_SEPARATE_GATES"
