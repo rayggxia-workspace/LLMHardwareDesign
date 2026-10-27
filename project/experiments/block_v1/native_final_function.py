@@ -23,12 +23,13 @@ def receive_test(text):
     return result
 
 
-def verify(root,out,cpus,run,policy):
+def verify(root,out,cpus,run,policy,pipeline='native_pipeline_cap40.json'):
     from io_slots import file_sha,slot
     from native_formal import receive
     assert policy in ('A','C')and cpus>=8
     base=out.parents[2]
-    config=json.loads((root/'project/experiments/block_v1/native_pipeline_cap40.json').read_text())
+    assert pipeline in ('native_pipeline_cap40.json','native_pipeline_hold5.json')
+    config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
     top='transaction6k'
     source=base/config['candidate_run']/('tasks/'+config['candidate_task_prefix']+top+'-'+policy.lower())
     receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed']is True
@@ -61,7 +62,7 @@ def verify(root,out,cpus,run,policy):
     assert all(row['scoreboard']==observed['all-ones']['scoreboard']for row in observed.values())
     with slot(base):
         assert file_sha(netlist)==receipt['outputs'][str(netlist.relative_to(source))]
-    record=dict(schema='block-v1-native-final-function/1',passed=True,top=top,policy=policy,
+    record=dict(schema='block-v1-native-final-function/1',passed=True,top=top,policy=policy,pipeline=pipeline,
         source=str(source),source_receipt_sha256=file_sha(source/'receipt.json'),
         final_netlist=str(netlist),final_netlist_sha256=file_sha(netlist),formal=formal,
         liberty_sha256=file_sha(library),cell_models_sha256=file_sha(out/'cells.v'),

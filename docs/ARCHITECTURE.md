@@ -170,3 +170,6 @@ Block v1 独立最终物理入口为 `native-receive-<shared109|transaction6k>-<
 
 
 独立DRC分类：`python project/experiments/block_v1/native_drc.py <native-drc.lyrdb> <new-summary.json>`保留所有项、数值、原报告SHA及分类，不过滤天线/间距。native_receive后续run自动绑定summary SHA；本次实际094失败已原样保存，不能用DRT零项替代。098内部节点collapse修复参见节点电荷决策，102重跑仍须实际执行。101已实际部署并启动92144，前述“未部署”保留为提交时快照。
+## 原生 Block 修复入口补充（Issue121）
+
+`project/experiments/block_v1/native_pipeline_hold5.json` 定义从封存 CTS 增加 5 ps 严格 hold 目标的有限分支；`native_drc_locate.py/.tcl` 只读定位独立 DRC marker。配置、定位负例和资格边界见[修复决策](decisions/2026-10-27-block-v1-native-hold-and-drc-repair.md)。运行由既有 `worker.sh` 和统一 `dispatch.py` 的 manifest 入口完成；未通过完整接收不能生成合格宏。
