@@ -61,8 +61,8 @@ module block_v1_v(
    if(function_sent+j<function_length)begin
     if(composing)begin
      difference=$signed({input_mem[function_sent+j][31],input_mem[function_sent+j]})-$signed({maximum[31],maximum});
-     if(j==0)fx0=difference< -33'sd1048576?-32'sd1048576:difference[31:0];
-     else fx1=difference< -33'sd1048576?-32'sd1048576:difference[31:0];
+     if(j==0)fx0=difference< -33'sd1048576 ? -32'sd1048576:difference[31:0];
+     else fx1=difference< -33'sd1048576 ? -32'sd1048576:difference[31:0];
     end else if(j==0)fx0=a[function_sent+j];else fx1=a[function_sent+j];
    end
   end

@@ -4,6 +4,44 @@ from pathlib import Path
 import shutil
 
 
+def locate(root,out,cpus,run):
+    """Localize every measured193 native marker without changing geometry."""
+    from decimal import Decimal
+    import re
+    from io_slots import file_sha
+    from five_macro_receive import source
+    assert cpus==16
+    folder,r,flow,results=source(out,'m')
+    failed=out.parents[2]/'block-v1-20261027-193/tasks/five-macro-drc-m'
+    fr=json.loads((failed/'receipt.json').read_text());assert fr['passed'] is False
+    p=failed/'five-macro-drc.json';assert file_sha(p)==fr['outputs'][p.name]
+    report=json.loads(p.read_text());assert not report['passed']
+    assert report['source_receipt_sha256']==file_sha(folder/'receipt.json')
+    text=report['native_report'];expression=r'violation type: ([^\n]+)\n\s*srcs: ([^\n]+)\n\s*bbox = \(([^,]+), ([^)]+)\) - \(([^,]+), ([^)]+)\) on Layer (\w+)\n'
+    rows=[];cursor=0
+    for match in re.finditer(expression,text):
+        assert not text[cursor:match.start()].strip();cursor=match.end()
+        category,names,*values,layer=match.groups();values=[Decimal(v)*2000 for v in values]
+        assert all(v==int(v) for v in values);box=list(map(int,values))
+        rows.append(dict(category=category,names=names,layer=layer,reported_box_dbu=box,
+                         context_box_dbu=[box[0]-200,box[1]-200,box[2]+200,box[3]+200]))
+    assert len(rows)==2 and not text[cursor:].strip()
+    helper=root/'project/experiments/block_v1'
+    script='set_thread_count 16\nread_db {'+str(results/'6_final.odb')+'}\nsource {'+str(helper/'odb_geometry.tcl')+'}\n'
+    script+='namespace eval bvgeom {variable markers [dict create]}\n'
+    for i,row in enumerate(rows):script+='dict lappend bvgeom::markers '+row['layer']+' {'+str(i)+' '+' '.join(map(str,row['context_box_dbu']))+'}\n'
+    script+='source {'+str(helper/'native_drc_locate.tcl')+'}\n'
+    (out/'locate.tcl').write_text(script);run(['openroad','-no_init','-exit',str(out/'locate.tcl')],'locate.log')
+    hits=[]
+    for line in (out/'marker-shapes.tsv').read_text().splitlines():
+        index,name,layer,kind,*box=line.split('\t')
+        hits.append(dict(marker=int(index),net=bytes.fromhex(name).decode(),layer=layer,kind=kind,box_dbu=list(map(int,box))))
+    assert hits and any(h['net']=='$abc$226431$new_n33888' for h in hits)
+    result=dict(passed=True,read_only=True,source_receipt_sha256=file_sha(folder/'receipt.json'),
+                measured_failure_sha256=file_sha(p),markers=rows,hits=hits,qualified_hard_macro=False)
+    (out/'five-macro-locate-m.json').write_text(json.dumps(result,indent=2)+'\n')
+
+
 def matrix_hold(root,out,cpus,run):
     from five_macro_receive import source
     from io_slots import file_sha,slot

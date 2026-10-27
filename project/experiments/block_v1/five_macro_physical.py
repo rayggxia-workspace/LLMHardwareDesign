@@ -11,21 +11,25 @@ def implement(root,out,cpus,run,kind):
     from pin_plan import generate
     from constraints import generate as constraints
     from native_reroute import config_suffix
-    assert cpus==16 and kind in ('m','s')
+    assert cpus==16 and kind in ('m','s','v','r')
     base=out.parents[2]
-    top='block_v1_m' if kind=='m' else 'block_v1_s16k'
-    label='matrix' if kind=='m' else 'store'
+    top='block_v1_s16k' if kind=='s' else 'block_v1_'+kind
+    label=dict(m='matrix',s='store',r='recurrent',v='vector')[kind]
     task_root=out.parent
     mapped=(base/'block-v1-20261027-187/tasks/five-macro-matrix-map' if kind=='m'
-            else task_root/'five-macro-store-flatten')
-    tested=base/'block-v1-20261027-186/tasks'/('five-macro-'+label+'-test')
+            else task_root/'five-macro-store-flatten' if kind=='s'
+            else base/('block-v1-20261027-'+('195' if kind=='r' else '196')+'/tasks/five-macro-'+label+'-map'))
+    tested=base/('block-v1-20261027-'+('186' if kind in ('m','s') else '195' if kind=='r' else '196')+'/tasks/five-macro-'+label+'-test')
     for source,name in [(mapped,'five-macro-'+label+'-map.json'),(tested,'five-macro-'+label+'-test.json')]:
         receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed'] is True
         assert file_sha(source/name)==receipt['outputs'][name]
         assert json.loads((source/name).read_text())['passed'] is True
     original=json.loads((tested/('five-macro-'+label+'-test.json')).read_text())
     rtl=root/('project/rtl/block_library_v1/'+top+'.sv')
-    assert file_sha(rtl)==(original['source_sha256'] if kind=='m' else original['source_sha256'][str(rtl.relative_to(root))])
+    if kind in ('m','r'):assert file_sha(rtl)==original['source_sha256']
+    elif kind=='s':assert file_sha(rtl)==original['source_sha256'][str(rtl.relative_to(root))]
+    else:
+        for name,digest in original['source_sha256'].items():assert file_sha(rtl.parent/name)==digest
     if kind=='s':assert file_sha(root/'project/rtl/norm_service/store82.sv')==original['source_sha256']['project/rtl/norm_service/store82.sv']
     mapping=json.loads((mapped/('five-macro-'+label+'-map.json')).read_text())
     assert file_sha(mapped/'mapped.v')==mapping['mapped_sha256']
@@ -34,7 +38,7 @@ def implement(root,out,cpus,run,kind):
     lib=platform/'lib/NangateOpenCellLibrary_typical.lib'
     assert file_sha(lib)==mapping['liberty_sha256']
     structural_source=mapped/'mapped.v'
-    if kind=='m':
+    if kind!='s':
         # Reuse the existing signed-metadata adapter. OpenSTA's gate reader
         # rejects `wire signed`; do not change any cell or pin connection.
         import copy
@@ -108,15 +112,19 @@ def implement(root,out,cpus,run,kind):
     config+='export DIE_AREA = 0 0 %g %g\nexport CORE_AREA = 20 20 %g %g\n'%(side,side,side-20,side-20)
     config+='export PLACE_DENSITY = 0.45\nexport FOOTPRINT_TCL = '+str(out/'pins.tcl')+'\nexport KEEP_VARS = 1\n'
     config+='override export MIN_ROUTING_LAYER = metal1\noverride export MAX_ROUTING_LAYER = metal10\n'
-    shutil.copyfile(root/'project/experiments/block_v1/native_input_diodes.tcl',out/'input-diodes.tcl')
+    hook=(root/'project/experiments/block_v1/native_input_diodes.tcl').read_text()
+    if kind in ('r','v'):
+        skip='  if {[$port getName] eq "clk"} {continue}\n';assert hook.count(skip)==1;hook=hook.replace(skip,'')
+    (out/'input-diodes.tcl').write_text(hook)
     config+=config_suffix(40,.005,out/'input-diodes.tcl','metal10')
+    if kind in ('r','v'):config+='\nexport HOLD_SLACK_MARGIN = 0.020\n'
     (out/'config.mk').write_text(config)
     results=out/'flow/results/nangate45'/nickname/'base';results.mkdir(parents=True)
     for suffix in ('v','sdc'):
         p=results/('1_2_yosys.'+suffix);shutil.copyfile(out/('input.'+suffix),p);p.chmod(0o444)
     command=['make','-C',str(flow),'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES='+str(cpus)]
     expected=dict(MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',KEEP_VARS='1',LEC_CHECK='1',SEC_CHECK='0',
-                  TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN='0.005')
+                  TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN='0.020' if kind in ('r','v') else '0.005')
     actual={}
     for key,value in expected.items():
         log='variable-'+key+'.log';run(command+['print-'+key],log)

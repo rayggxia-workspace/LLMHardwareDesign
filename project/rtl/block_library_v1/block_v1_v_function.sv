@@ -31,12 +31,12 @@ module block_v1_v_function(
      else if(xv>=0)begin lo=32'sd65536;hi=lo;end
      else begin offset=$signed({xv[31],xv})+33'sd1048576;index=offset>>9;frac={2'b0,offset[8:0]};lo=v_lut(fn,index);hi=v_lut(fn,index+1'b1);end
     end else if(fn<=3)begin
-     if(xv<=-32'sd524288)begin lo=xv==-32'sd524288?v_lut(fn,0):32'sd0;hi=lo;end
-     else if(xv>=32'sd524288)begin lo=xv==32'sd524288?v_lut(fn,12'd512):(fn==1?32'sd65536:xv);hi=lo;end
+     if(xv<=-32'sd524288)begin lo=xv==-32'sd524288 ? v_lut(fn,0):32'sd0;hi=lo;end
+     else if(xv>=32'sd524288)begin lo=xv==32'sd524288 ? v_lut(fn,12'd512):(fn==1?32'sd65536:xv);hi=lo;end
      else begin offset=$signed({xv[31],xv})+33'sd524288;index=offset>>11;frac=offset[10:0];lo=v_lut(fn,index);hi=v_lut(fn,index+1'b1);end
     end else if(fn==4)begin
-     if(xv<=-32'sd1048576)begin lo=xv==-32'sd1048576?v_lut(fn,0):32'sd0;hi=lo;end
-     else if(xv>=32'sd1048576)begin lo=xv==32'sd1048576?v_lut(fn,12'd1024):xv;hi=lo;end
+     if(xv<=-32'sd1048576)begin lo=xv==-32'sd1048576 ? v_lut(fn,0):32'sd0;hi=lo;end
+     else if(xv>=32'sd1048576)begin lo=xv==32'sd1048576 ? v_lut(fn,12'd1024):xv;hi=lo;end
      else begin offset=$signed({xv[31],xv})+33'sd1048576;index=offset>>11;frac=offset[10:0];lo=v_lut(fn,index);hi=v_lut(fn,index+1'b1);end
     end
     base1[l]<=lo;delta1[l]<=$signed({hi[31],hi})-$signed({lo[31],lo});frac1[l]<=frac;

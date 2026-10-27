@@ -93,7 +93,7 @@ try:
     elif MODE=='five-macro-store-flatten':
         from five_macro import flatten_store
         flatten_store(ROOT,OUT,CPUS,run)
-    elif MODE in ('five-macro-route-m','five-macro-route-s'):
+    elif MODE in ('five-macro-route-m','five-macro-route-s','five-macro-route-r','five-macro-route-v'):
         from five_macro_physical import implement
         implement(ROOT,OUT,CPUS,run,MODE[-1])
     elif MODE=='five-macro-t-pins':
@@ -114,6 +114,9 @@ try:
     elif MODE.startswith('five-macro-formal-'):
         from five_macro_receive import formal
         formal(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE=='five-macro-locate-m':
+        from five_macro_repair import locate
+        locate(ROOT,OUT,CPUS,run)
     elif MODE=='five-macro-repair-m-hold':
         from five_macro_repair import matrix_hold
         matrix_hold(ROOT,OUT,CPUS,run)
