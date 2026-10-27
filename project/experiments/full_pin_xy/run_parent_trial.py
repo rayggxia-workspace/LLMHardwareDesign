@@ -12,6 +12,7 @@ from lef_view_contract import verify as verify_lef_view
 from verify_parent_graph import validate_graph
 DRIVER=Path(__file__).resolve().parent
 BASE={'act':'r02','gemm':'r01','mxu':'r03','vector':'r04','opentpu_aux':'r03','llaccel_aux':'r03'}
+C_REVISION={'act':'fullC-r02','gemm':'electrical-r03','mxu':'mxu-repair-r03','vector':'full-other-r01','opentpu_aux':'full-other-r01','llaccel_aux':'full-other-r01'}
 
 def tcl(value):
     assert not any(c in str(value) for c in '{}\n\r'),value
@@ -20,7 +21,7 @@ def tcl(value):
 def child_source(case,plan):
     if plan in ['A','A_replay']:rev,p=BASE[case],'A'
     elif case=='act':rev,p={'A_child_replay':('fullC-r01','A_replay'),'Aopt':('full-controls-r04','Aopt'),'B':('fullBcohort-r01','B'),'C':('fullC-r02','C')}[plan]
-    else:rev,p=('full-other-r01','C') if plan=='C' else ('full-controls-r04','A_replay' if plan=='A_child_replay' else plan)
+    else:rev,p=(C_REVISION[case],'C') if plan=='C' else ('full-controls-r04','A_replay' if plan=='A_child_replay' else plan)
     directory=ROOT/'finalized'/rev/(case+'-'+p);j=json.loads((directory/'execution.json').read_text())
     assert j['independent_DRC_count']==0 and j['whole_access']['pass'] and j['clean_byte_identical_to_pre_RCX_source'],('Unverified child geometry',case,plan)
     lef=directory/'abstract.lef';assert sha(lef)==j['files']['abstract.lef']['sha256']
