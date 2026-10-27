@@ -1,17 +1,19 @@
 # 五种基础宏交付入口
 
-2026-10-28 02:31 CST，Refs [Issue121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)，[PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)仍为草稿。每种只有一个基础实现；本轮必须交付全部五块的原生Nangate45 M1–M10最终布局布线。**目前两块已有单块接收结果，另外三块尚在执行；整套任务未完成。**
+2026-10-28 03:11 CST，Refs [Issue121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)，[PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)仍为草稿。每种只有一个基础实现；本轮必须交付全部五块的原生Nangate45 M1–M10最终布局布线。**目前两块已有单块接收结果，另外三块尚在执行；整套任务未完成。**
 
 | 宏 | 已确定的基础实现 | 当前外框 µm | 实际交付状态 |
 | --- | --- | --- | --- |
 | M | 64个S8基础乘法器、8路局部归约/S64累加、S16分解与S128组间合并、操作数缓冲与RNE/饱和 | 560×560 | [最终文件、接点及版图](M/README.md)；完整独立接收通过，待项目审查 |
 | V | 8路逐元素/统计、2路独立函数流水线、U128组级单元、2KiB回放、有限TopK | 1210×1210 | 203原生完成但7处cap/1处slew不合格；215已实际增强7BUF、合法化后进入详细布线，四门必须重验；无最终交付 |
-| R | 8路共享GDN/SSM数据通路、8KiB活动+8KiB影子状态、四抽头卷积与历史 | 1870×1870 | RTL/映射通过，196执行全局布线；无最终交付 |
+| R | 8路共享GDN/SSM数据通路、8KiB活动+8KiB影子状态、四抽头卷积与历史 | 1870×1870 | RTL/映射通过，196已进入详细布线；无最终交付 |
 | S | 16KiB、1024×128bit、单1RW标准单元工作存储 | 1610×1610 | 190原生全流程完成；208完整物理门通过（setup/hold最小5.995658/0.008125ns）；207三初态最终功能及严格LEC已通过；完整GDS DRC仍运行，未最终验收 |
-| T | 6KiB、384×128bit标准单元结果交接，所有权/背压/提交/撤销/消费释放 | 1120×1120 | [既有C叶块最终文件、接点及版图](T/README.md)；沿用原接收结果，未重跑 |
+| T | 6KiB、384×128bit标准单元结果交接，所有权/背压/提交/撤销/消费释放 | 1120×1120 | [既有C叶块最终文件、接点及版图](T/README.md)；沿用原接收结果，补齐只读原生几何交付 |
 
 功能与数值/缓冲/端口定义见[五宏规格](../../../../docs/BLOCK_LIBRARY_V1.md)，实际命令及周期见[接口合同](../../../../docs/BLOCK_V1_COMMANDS.md)。M/V/R外框来自同一基础面积规则；这里没有另设裕量版本。S与R的局部状态是独立实体，不能将容量混算；S/T均不称SRAM。
 
 M/T单块接收不等于通用层次Lib或M11/M12系统资格。阵列、多实例系统和通用十二层提取留下一轮。V/R/S必须完成同源的原生与完整GDS DRC、全部实际端点时序/电气/寄生、PG及连接、精确最终网表三初态功能和严格LEC，之后才生成最终V/SDC/DEF/ODB/GDS/SPEF索引、实际接点和版图图。
 
 当前S原生终态见[190](../results/run190-five-macro-010130/index.json)，完整物理门通过见[208](../results/run208-five-macro-013337/index.json)，其余独立门执行见[207](../results/run207-five-macro-015115/index.json)，恢复与协作未完成项见[接续记录](../../../../docs/handoffs/2026-10-28-issue-121-five-macro.md)。时间点快照不是终态资格；后续以各块的同源最终交付索引为准。
+
+M/T的完整原生占用、OBS和M10底部几何合同现分别见[M](M/native-geometry/README.md)、[T](T/native-geometry/README.md)。原迭代器文件不作完整性依据，已补核封存DEF全部普通网络RECT；候选LEF抽象覆盖资格仍false。S/R/V待同源最终验收后由已暂存221队列生成这些数据，尚未运行该队列。

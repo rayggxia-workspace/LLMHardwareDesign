@@ -6,3 +6,5 @@
 - `pins.json`：从同一选定C实际ODB导出386个信号位的M10真实矩形，保留DBU和um坐标；本次工具原生读回，不由RTL端口数猜坐标。
 
 T通用层次Lib/flat-abstract等价资格仍false；既有candidate.lib/lef只列候选视图，不能宣称任意M11/M12父层连接或完整系统已通过。本轮五宏库尚未全部完成。
+
+[完整原生占用/OBS与M10底部几何合同](native-geometry/README.md)：2026-10-28 03:07 CST只读导出并完成独立DEF RECT补全，原ODB未改。候选LEF的抽象覆盖和未来M11/M12系统资格仍未通过。

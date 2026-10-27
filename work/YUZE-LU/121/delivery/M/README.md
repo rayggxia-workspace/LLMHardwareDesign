@@ -29,3 +29,5 @@
 ```powershell
 python project/experiments/block_v1/render_pin_map.py work/YUZE-LU/121/delivery/M/five-macro-delivery.json work/YUZE-LU/121/delivery/M/pins.json work/YUZE-LU/121/delivery/M/pins.svg
 ```
+
+[完整原生占用/OBS与M10底部几何合同](native-geometry/README.md)：2026-10-28 03:07 CST只读导出并完成独立DEF RECT补全，原ODB未改。候选LEF的抽象覆盖和未来M11/M12系统资格仍未通过。
