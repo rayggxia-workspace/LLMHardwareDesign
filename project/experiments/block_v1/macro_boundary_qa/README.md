@@ -172,3 +172,5 @@ run168 的新合同显式增加 raw/corrected Lib、supply correction、typed PG
 `candidate_split_probe.py --original-request REQUEST --executable ORIGINAL_STA --min-executable PRIVATE_PROBE --min-probe-receipt BUILD_RECEIPT --output NEW_DIR` 先验证原候选请求/来源，再在本机从同一 full timing V/SDC/SPEF 分别重新导出 max/min。导出 source clock latency 置零，测量仍保持共享原诊断 SDC。它产生新的 control request 和独立 probe 收据，明确不替换原 candidate Lib/LEF。原始收据、工具、脚本与模型哈希全部保留；pair 原始 TSV/SPEF 独立复算。
 
 24 组小控制及 T6K A/C 均已实际执行。输出 min 的明显乐观误差得到缓解，仍有输入侧和输出近似误差；绝不据此签发整体资格。结果、构建补丁和恢复入口见 `work/YUZE-LU/127/分离minmax原型报告.md` 与 `split-model-probe-summary.json`。当前原型只在一个 typical corner 和列明场景上实测。
+
+另提供 `--analysis max|min --normalize-driver` 私有扰动：仅减去真实 input start-path 的 arrival，保留 wire RC。已实际执行四个 DFF 对照、两个 exact reread 及 T6K A/C；观察没有改善，不能作为修复。`native_control.py` 支持独立 `--export-executable/--export-probe-receipt`，始终用原 STA 测量；`candidate_split_probe.py` 同理支持独立 max export 工具/构建证明。细节与源码身份区别见 `work/YUZE-LU/127/输入边界归一化负结果.md`。

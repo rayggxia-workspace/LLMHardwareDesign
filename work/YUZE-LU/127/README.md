@@ -27,6 +27,8 @@ git diff --check
 
 继续完成私有 min/max 分离原型和 24 组实际场景对照，并在同源 T6K A/C 上复验。输出 hold 最大差由 107.274/60.402 ps 降到 5.669/4.886 ps，max 聚合 slack 与原候选逐值相同；输入仍有 51.768/17.622 ps 乐观差。见《分离minmax原型报告.md》、`split-model-probe-summary.json` 及构建补丁；不是只留计划，也没有签发整模资格。原生工具和主线 exporter 保持原样。
 
+输入 start-path arrival 归一化也已实际运行：四个 DFF 对照/两个 exact reread、T6K A/C 均未改善，后两路 1540 个聚合 slack 相对前轮变化为 0。已保留负结果、构建与测量 SHA，见《输入边界归一化负结果.md》及 `driver-boundary-negative-probe.json`；控制增至 102 项。源码核对确认输入 driver 的 load-dependent 部分附加在 wire arcs，报告显示位置与 Path 对象 arrival 不同；下一步区分驱动 Ceff 和真实输入 RC，不能减去整条 wire delay。
+
 ## 未完成与下一步
 
 1. 支线继续验证输入边界 arrival/外部 driver 延迟归属，保留输入 RC；主线审查紧凑模型的有效工作域与 min/max 表示合同，保留完整 V/SPEF/ODB flat 参考。支线不平行修改主线 exporter。

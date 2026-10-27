@@ -31,6 +31,25 @@ class PatchScope(unittest.TestCase):
             with self.assertRaisesRegex(Invalid,'exact two edits'):
                 patch_source(text)
 
+    def test_driver_patch_does_not_change_clock_launched_output_arrival(self):
+        text='''#include "Path.hh"
+min_max_(MinMax::max()),
+const MinMax *min_max = MinMax::max();
+Arrival data_delay = src_path->arrival();
+          Arrival delay = path->arrival();
+          OutputDelays &delays = output_pin_delays[output_pin];
+          Arrival delay = path->arrival();
+          RiseFallMinMax &delays = clk_delays[clk_edge];
+'''
+        changed=patch_source(text,True,'max')
+        self.assertIn('min_max_(MinMax::max()),',changed)
+        self.assertIn('Arrival delay = path->arrival();\n          RiseFallMinMax &delays = clk_delays[clk_edge];',changed)
+        self.assertEqual(changed.count('boundary_start->arrival()'),2)
+
+    def test_driver_patch_rejects_unsupported_boundary_source(self):
+        with self.assertRaisesRegex(Invalid,'driver-boundary patch target'):
+            patch_source('min_max_(MinMax::max()),\nconst MinMax *min_max = MinMax::max();',True)
+
 
 class SplitModelGates(unittest.TestCase):
     def setUp(self):

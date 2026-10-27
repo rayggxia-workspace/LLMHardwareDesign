@@ -59,13 +59,25 @@ set_load 2 [get_ports q]
 '''
 
 
-def control(executable, library, output, parallel=1, export_drive="original-sdc"):
+def control(executable, library, output, parallel=1, export_drive="original-sdc", export_executable=None, export_probe_receipt=None):
     executable, library, output = Path(executable).resolve(), Path(library).resolve(), Path(output).resolve()
+    require((export_executable is None) == (export_probe_receipt is None), 'export probe tool/build receipt pair')
+    exporter = executable if export_executable is None else Path(export_executable).resolve()
+    proof_hash = None
+    if export_executable is not None:
+        export_probe_receipt=Path(export_probe_receipt).resolve()
+        proof=json.loads(export_probe_receipt.read_text())
+        require(proof['schema']=='block-v1-min-output-probe-build/1' and proof['passed'] is True
+                and proof['original_inputs_unchanged'] is True and proof['analysis']=='max'
+                and proof['outputs'][exporter.name]==file_sha(exporter)
+                and proof['original_inputs'].get(str(executable))==file_sha(executable), 'export probe tool identity')
+        proof_hash=file_sha(export_probe_receipt)
     output.mkdir(parents=True, exist_ok=False)
     summary = {"schema": "block-v1-native-boundary-control/1", "passed": False,
                "executable_sha256": file_sha(executable), "base_lib_sha256": file_sha(library),
                "control_script_sha256": file_sha(Path(__file__)),
                "qualified_hard_macro": False, "flat_abstract_boundary_qualified": False,
+               "export_executable_sha256":file_sha(exporter),"export_probe_receipt_sha256":proof_hash,
                "cases": [], "export_drive": export_drive,
                "scope": "Actual native small DFF controls; not placed/routed C8/T6K or full macro qualification"}
     try:
@@ -113,14 +125,14 @@ close $stream
                 f"write_timing_model -library_name QA127_{name.replace('-', '_')} -cell_name QA127_MACRO model.lib", "exit 0", ""])
             # Tcl failures must return a failing process, including missing API.
             (folder / "export.tcl").write_text("if {[catch {\n" + script.replace("exit 0\n", "") + "} problem options]} {puts stderr $problem; puts stderr [dict get $options -errorinfo]; exit 1}\nexit 0\n")
-            argv = [str(executable), "-no_init", "-exit", "export.tcl"]
+            argv = [str(exporter), "-no_init", "-exit", "export.tcl"]
             env = dict(os.environ, OMP_NUM_THREADS="1")
             with (folder / "export.log").open("w") as stream:
                 code = subprocess.run(argv, cwd=folder, env=env, stdout=stream, stderr=subprocess.STDOUT).returncode
             require(code == 0 and (folder / "model.lib").is_file(), "native model export failed; inspect preserved export.log")
             require(native_log_diagnostics(folder / "export.log")["native_error_count"] == 0, "native model export printed errors")
             export_record = {"argv": argv, "returncode": code,
-                             "executable_sha256": file_sha(executable),
+                             "executable_sha256": file_sha(exporter),
                              "inputs": {str(p): file_sha(p) for p in (library, folder / "flat.v", folder / "source.spef", folder / export_sdc, folder / "export.tcl")},
                              "outputs": {n: file_sha(folder / n) for n in ("model.lib", "export.log")}}
             export_record["transition_capture"] = capture_record
@@ -153,6 +165,7 @@ close $stream
         # The control succeeds by running honest measurements plus a stable
         # reread. Actual model mismatches remain visible and are not relaxed.
         require(file_sha(executable) == summary["executable_sha256"]
+                and file_sha(exporter) == summary['export_executable_sha256']
                 and file_sha(library) == summary["base_lib_sha256"]
                 and file_sha(Path(__file__)) == summary["control_script_sha256"], "control tool/library/code changed")
         summary["passed"] = True
@@ -168,8 +181,10 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--parallel", type=int, default=1)
     parser.add_argument("--export-drive", choices=("original-sdc", "matched-transition"), default="original-sdc")
+    parser.add_argument('--export-executable',type=Path)
+    parser.add_argument('--export-probe-receipt',type=Path)
     args = parser.parse_args()
-    result = control(args.executable, args.library, args.output, args.parallel, args.export_drive)
+    result = control(args.executable, args.library, args.output, args.parallel, args.export_drive,args.export_executable,args.export_probe_receipt)
     print(json.dumps(result, indent=2, allow_nan=False))
 
 

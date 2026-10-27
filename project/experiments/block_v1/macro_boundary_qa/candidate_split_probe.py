@@ -16,7 +16,7 @@ from candidate_request import validate_binding
 from native_pair import run, verify, tcl_list, native_log_diagnostics, signed_slack_diagnostic
 
 
-def execute(original_request, executable, min_executable, min_probe_receipt, output):
+def execute(original_request, executable, min_executable, min_probe_receipt, output, max_executable=None, max_probe_receipt=None):
     original_request, executable, min_executable, min_probe_receipt, output = [Path(p).resolve() for p in
         (original_request, executable, min_executable, min_probe_receipt, output)]
     request = load_json(original_request.read_bytes())
@@ -29,16 +29,25 @@ def execute(original_request, executable, min_executable, min_probe_receipt, out
             and proof['original_inputs_unchanged'] is True, 'probe private build status')
     require(proof['outputs'][min_executable.name] == file_sha(min_executable)
             and proof['original_inputs'].get(str(executable)) == file_sha(executable), 'probe native tool identity')
+    require((max_executable is None) == (max_probe_receipt is None), 'max probe tool/build receipt pair')
+    if max_executable is not None:
+        max_executable,max_probe_receipt=Path(max_executable).resolve(),Path(max_probe_receipt).resolve()
+        max_proof=load_json(max_probe_receipt.read_bytes())
+        require(max_proof['schema'] == 'block-v1-min-output-probe-build/1' and max_proof['passed'] is True
+                and max_proof['original_inputs_unchanged'] is True and max_proof['analysis'] == 'max'
+                and max_proof['outputs'][max_executable.name] == file_sha(max_executable)
+                and max_proof['original_inputs'].get(str(executable)) == file_sha(executable), 'max probe native tool identity')
     require(not any(output.is_relative_to(p.parent) for p in paths.values()), 'probe output inside inputs')
     output.mkdir(parents=True,exist_ok=False)
-    sealed = {str(p):file_sha(p) for p in [original_request,executable,min_executable,min_probe_receipt,*paths.values()]}
+    sealed = {str(p):file_sha(p) for p in [original_request,executable,min_executable,min_probe_receipt,*paths.values(),
+        *([max_executable,max_probe_receipt] if max_executable is not None else [])]}
     receipt = {'schema':'block-v1-candidate-split-probe/1','passed':False,'started':time.time(),
         'qualified_hard_macro':False,'purpose':'Private perturbation; fresh max AND min from full timing V, not published candidate models',
         'producer_sha256':file_sha(Path(__file__)),'inputs':sealed,'original_candidate_binding':original_binding,
         'export_clock_source_latency':'Explicit zero, matching main native_views.py export; measurement keeps shared original SDC',
         'exports':[]}
     try:
-        for analysis, tool in [('max',executable),('min',min_executable)]:
+        for analysis, tool in [('max',max_executable or executable),('min',min_executable)]:
             script = ''.join('read_liberty '+tcl_list([paths[r]])+'\n' for r in sorted(paths) if r.startswith('base_lib_'))
             script += 'read_verilog '+tcl_list([paths['flat_verilog']])+'\nlink_design '+request['flat_top']+'\n'
             script += 'read_sdc '+tcl_list([paths['sdc']])+'\nread_spef '+tcl_list([paths['flat_spef']])+'\n'
@@ -84,6 +93,8 @@ if __name__ == '__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     for name in ['original-request','executable','min-executable','min-probe-receipt','output']:
         parser.add_argument('--'+name,required=True)
+    parser.add_argument('--max-executable')
+    parser.add_argument('--max-probe-receipt')
     args=parser.parse_args()
-    result=execute(args.original_request,args.executable,args.min_executable,args.min_probe_receipt,args.output)
+    result=execute(args.original_request,args.executable,args.min_executable,args.min_probe_receipt,args.output,args.max_executable,args.max_probe_receipt)
     print(json.dumps({'passed':result['passed'],'measurement':result.get('measurement')}))
