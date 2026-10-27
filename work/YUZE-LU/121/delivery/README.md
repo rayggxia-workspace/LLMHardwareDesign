@@ -1,5 +1,7 @@
 # 五种基础宏交付入口
 
+补充验证：230 队列已暂存同一 V RTL 的成对 RoPE 命令组合及完整统计域边界用例，尚未运行；与三项未领取的 R 独立验收共用队列，替代未提交的 224。原语回归不冒充这项组合用例已经通过，既有 P&R 不重启。
+
 更新时间：2026-10-28 04:18 CST。Refs [Issue #121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)、[PR #122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)。**M、T 已有通过独立接收的单块结果；V、R、S 继续执行，五宏整体尚未交付完成。** 每种仅一个基础实现；当前修复只处理实测缺陷，没有另设裕量版本。
 
 | 宏 | 基础资源与功能 | 外框 µm | 当前有效结果及剩余项 |
