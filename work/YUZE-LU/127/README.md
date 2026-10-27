@@ -29,15 +29,17 @@ git diff --check
 
 输入 start-path arrival 归一化也已实际运行：四个 DFF 对照/两个 exact reread、T6K A/C 均未改善，后两路 1540 个聚合 slack 相对前轮变化为 0。已保留负结果、构建与测量 SHA，见《输入边界归一化负结果.md》及 `driver-boundary-negative-probe.json`；控制增至 102 项。源码核对确认输入 driver 的 load-dependent 部分附加在 wire arcs，报告显示位置与 Path 对象 arrival 不同；下一步区分驱动 Ceff 和真实输入 RC，不能减去整条 wire delay。
 
+最新原生 driver 分量原型已继续完成：直接记录原生 `gate_delay-intrinsic_delay`，只从模型去嵌入此分量，真实输入 RC/slew 不变，分别构建私有 min/max。四个 DFF pair/两个 exact reread 和 T6K A/C 原生复验完成；低 R/同驱动通过原 1 ps 诊断。A/C 总超差降至192/110，slack 超差29/4，C无>1ps乐观聚合slack、仍有4项悲观及106项slew超差；A仍有9.834ps乐观差。完整资格仍false，控制增至105。见《原生驱动分量去嵌入报告.md》、`arc-driver-probe-summary.json` 与源补丁。
+
 ## 未完成与下一步
 
-1. 支线继续验证输入边界 arrival/外部 driver 延迟归属，保留输入 RC；主线审查紧凑模型的有效工作域与 min/max 表示合同，保留完整 V/SPEF/ODB flat 参考。支线不平行修改主线 exporter。
+1. 原生 driver 归属已有改善证据；主线审查可维护的 min/max 与 driver 去嵌入合同。支线继续核对高R/不同驱动、Ceff/电容近似和port slew有效工作域，保留完整 V/SPEF/ODB flat 参考，不平行修改主线 exporter。
 2. 来源、PG、完整 timing V 与实际 OBS 已取得本轮通过证据；OBS 不包含隐藏 transistor/GDS、DRC 或任意父层走线可达性资格。
 3. 审查正式 flat/abstract 场景、全部适用弧/例外/corner/electrical 覆盖和容差。现有原生测量是 worst-per-boundary-edge 聚合，两个特殊 arc group 角色仍未完全分类，不能冒称全部弧等价。
 4. 合格 C8 A/C 完整来源交付后逐一接收，继续补真实寄生归属与完整适用覆盖。不能把读回成功、无 active-net 判断的 annotation 清单或自报 ledger 当作完整证明。
 5. 主线负责生产、物理/功能接收与正式冻结，支线交付可复算的通过或失败报告。#127 不关闭、不标 done；本批 PR 审查不代替整体完成。
 
-恢复第一步：读取 #127 最新 Issue/PR 回执与《修正版接收报告_run168-169.md》，核对 run160/161 来源、run168 修正版与 run169 OBS；先复算当前结果，再接收主线新模型/C8 候选。无需重新派生分支或接管主线活动作业。
+恢复第一步：读取 #127 最新 Issue/PR 回执和《原生驱动分量去嵌入报告.md》，保留前两种原型与负结果；核对 run160/161、run168/169 的来源/接口/OBS，再复算最新probe或接收主线新模型/C8。无需重新派生分支或接管主线活动作业。
 
 ## 协作接入回执
 

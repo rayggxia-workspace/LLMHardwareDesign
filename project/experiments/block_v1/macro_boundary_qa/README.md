@@ -174,3 +174,11 @@ run168 的新合同显式增加 raw/corrected Lib、supply correction、typed PG
 24 组小控制及 T6K A/C 均已实际执行。输出 min 的明显乐观误差得到缓解，仍有输入侧和输出近似误差；绝不据此签发整体资格。结果、构建补丁和恢复入口见 `work/YUZE-LU/127/分离minmax原型报告.md` 与 `split-model-probe-summary.json`。当前原型只在一个 typical corner 和列明场景上实测。
 
 另提供 `--analysis max|min --normalize-driver` 私有扰动：仅减去真实 input start-path 的 arrival，保留 wire RC。已实际执行四个 DFF 对照、两个 exact reread 及 T6K A/C；观察没有改善，不能作为修复。`native_control.py` 支持独立 `--export-executable/--export-probe-receipt`，始终用原 STA 测量；`candidate_split_probe.py` 同理支持独立 max export 工具/构建证明。细节与源码身份区别见 `work/YUZE-LU/127/输入边界归一化负结果.md`。
+
+## 12. 原生 driver 分量去嵌入的私有原型
+
+`build_arc_probe.py --source-root PINNED_SOURCE --build PINNED_BUILD --analysis min|max --output NEW_PRIVATE_DIR` 另构建一个固定源研究变体。在 `GraphDelayCalc` 的实际计算位置缓存 `gate_delay-intrinsic_delay`，在输入模型生成处只去掉这个外部驱动分量，保留原始 native Ceff、slew 与完整 wire RC；与分离 min/max 一同实测。复制静态库、仅重编两对象，原工具/源码/构建输入不变。
+
+原型限定一个 source design 和一次导出/进程；每个 pin/edge/scene/min-max 只允许一个 native driver arc，否则拒绝。它不是通用签核工具或已集成的主线功能。沿用前节的独立 export 工具/构建收据参数运行小控制和候选 probe，测量仍用原 STA。实际每路 T6K 每份 max/min 模型取得 756 条原生分量，完整保留在 SHA 索引。
+
+四个 DFF 控制和两个 exact reread、真实 T6K A/C 均实际执行。低 R/同驱动 pair 通过原 1 ps 诊断；T6K A/C 超差项从原958/900降到192/110，模型仍未取得完整资格。新控制总数105。报告、原始分量/工具/模型/测量索引和源补丁见 `work/YUZE-LU/127/原生驱动分量去嵌入报告.md`、`arc-driver-probe-summary.json`、`native-driver-component.patch`。
