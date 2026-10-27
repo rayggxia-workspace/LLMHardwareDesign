@@ -1,6 +1,9 @@
 # YUZE-LU 的进度
 
 
+2026-10-27 11:45 CST：133/92206已在node22/32CPU运行，A/C两个完整T6K预制route/final子任务各16CPU并行，均实际make读回原native M1–M10、RCX、LEC及cap40/hold5ps、原输入保护和完整via-only参数；源码5bf5b4d0e74b2132cc7d8b1eb392f7fe8c2e1e61、归档05a956018f53186e2521e375d181adc7b58f5d9af9c7617a2ff12f2c9e2caf13，148成员/983040字节。尚无完整候选或独立接收终态。128 C8两路已过placement、正在CTS；当前本任务7个allocation，其他成员未动。134依赖128两路成功且尚无job。正式物理Block、一般多网分布RC/拼接、共同底座、两产品和参数库仍未验收。
+
+
 2026-10-27 11:40 CST：132/92204两路各8核实际封存保护CTS接入检查均通过，baseline203.216秒、via-only208.265秒；整组3:35、TotalCPU53:58.362、MaxRSS1726008K、已分配16核利用率约94.1%。确认安装ORFS的DETAILED_ROUTE_ARGS会替换默认参数，新修复必须完整保留原M10 via包围、64轮及报告参数。133已准备同节点A/C两路各16核完整route/final有限尝试，不改pin、约束、预算或native tech；尚未运行/接收。134新类型接收已不可变部署，源码cb89511、归档2b8c2b5351bc3aeb5342bfdbc66d6a0d6164551289d292ef22973f21b3c3e62f，依赖128两路成功，当前无job；130停用。完整23项间距修复、宏/一般RC/共同底座/两产品及参数库仍未验收。
 
 

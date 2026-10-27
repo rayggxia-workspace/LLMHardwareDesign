@@ -193,3 +193,6 @@ python project/experiments/block_v1/native_drc_geometry.py work/YUZE-LU/121/resu
 
 
 有限via-only原生修复由 `native_pipeline_viaonly.json`、`native_via_route_group.py` 和 `native-via-route-group` 入口执行；实际输入绑定与覆盖参数风险见[接入证据及完整布线门槛](decisions/2026-10-27-block-v1-via-only-route.md)。两个叶任务目录仍为tasks/native-viaonly-run-transaction6k-a/c，独立回执，父组仅合并，不代替后续完整接收。
+
+
+`native-via-qualification-group`组织A/C完整独立物理接收与A/C实际最终网表三初态功能回归，共四路各16CPU、同一64CPU allocation。依赖133完整候选成功；按实际可用RAM选择4/2/1路，不缩减每路门槛。可复算编排控制：`python project/experiments/block_v1/native_via_group_control.py NEW_CONTROL.json`（输出须不存在）。当前三个实际stub控制通过，仅证明并发/失败独立/内存降级，实际EDA资格另由135产生。

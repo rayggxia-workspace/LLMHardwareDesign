@@ -59,7 +59,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-via-route-group':
+    if MODE=='native-via-qualification-group':
+        from native_via_route_group import verify
+        verify(ROOT,OUT,CPUS,qualify=True)
+    elif MODE=='native-via-route-group':
         from native_via_route_group import verify
         verify(ROOT,OUT,CPUS)
     elif MODE in ('native-viaonly-run-transaction6k-a','native-viaonly-run-transaction6k-c'):

@@ -1,0 +1,152 @@
+{
+  "remote_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-133",
+  "manifest": {
+    "run_id": "block-v1-20261027-133",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": true,
+    "source_commit": "5bf5b4d0e74b2132cc7d8b1eb392f7fe8c2e1e61",
+    "source_archive_sha256": "05a956018f53186e2521e375d181adc7b58f5d9af9c7617a2ff12f2c9e2caf13",
+    "tasks": [
+      {
+        "id": "native-via-route-group",
+        "partition": "c96",
+        "cpus": 32,
+        "memory": "0",
+        "minutes": 0,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-133/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-133/src",
+          "native-via-route-group"
+        ],
+        "node": "node22",
+        "after_runs": [
+          "block-v1-20261027-132:native-pin-access-probe",
+          "block-v1-20261027-080:native-run-transaction6k-a",
+          "block-v1-20261027-080:native-run-transaction6k-c"
+        ]
+      }
+    ]
+  },
+  "manifest_sha256": "0ea10ee582bf15321860564f842dd5e4c01bbed6c1930bcc6e5e8b3c7e71b8ff",
+  "state": {
+    "created_utc": "2026-10-27T03:42:49.709625+00:00",
+    "manifest_sha256": "0ea10ee582bf15321860564f842dd5e4c01bbed6c1930bcc6e5e8b3c7e71b8ff",
+    "run_id": "block-v1-20261027-133",
+    "tasks": {
+      "native-via-route-group": {
+        "dispatcher_source_sha256": "7bf3da954f66308b13cd202df42d1cd1ad100b3d848b07b2cebcd35ac4531ad7",
+        "id": "native-via-route-group",
+        "job_id": "92206",
+        "reserved_utc": "2026-10-27T03:42:55.514944+00:00",
+        "state": "PENDING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodelist=node22",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=32",
+          "--partition=c96",
+          "--time=0",
+          "--mem=0",
+          "--job-name=yzl-bv1-native-via-route-group",
+          "--comment=yzl-bv1:block-v1-20261027-133:native-via-route-group",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-133/tasks/native-via-route-group",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-133/tasks/native-via-route-group/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-133/tasks/native-via-route-group/job.sh"
+        ],
+        "submitted_utc": "2026-10-27T03:42:55.602422+00:00",
+        "token": "yzl-bv1:block-v1-20261027-133:native-via-route-group"
+      }
+    }
+  },
+  "tasks": {
+    "native-viaonly-run-transaction6k-a": {
+      "job_id": null,
+      "artifacts": {
+        "native-candidate.json": {
+          "bytes": 5315,
+          "sha256": "087efc97e6ced695963105b8cdfdfc257cc62185f4894cd6627661c9fdcd55b3",
+          "content": {
+            "schema": "block-v1-native-candidate/1",
+            "top": "transaction6k",
+            "policy": "A",
+            "cpus": 16,
+            "inputs_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare",
+            "inputs_receipt_sha256": "bc1db15fe91cf39ea2159a3ce42bd6203893399a135cd0ed76d7acc53933223a",
+            "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-a",
+            "source_receipt_sha256": "227de426c19439245523067fdc5be6331f78afd5383e21fa13cb3bcb2c073286",
+            "source_candidate_sha256": "de4f0aedad150883f89c014a2b1a4484b780bae1a781b79860118c8ca5928f8b",
+            "copied_checkpoint_files": {
+              "1_2_yosys.sdc": "0719915f532ae8e01e5470bc30386c360defb548d00f3847603f7991e932f0ca",
+              "1_2_yosys.v": "0aca513f04ce5aadc38a0bee97d8b184e1e2dd4e6aabc92b920b6322ca1c292a",
+              "1_synth.odb": "965c6784a20ec7f590eeb00952e7f30ebaee73382bab336a1c75dce7d149bda2",
+              "1_synth.sdc": "eae6aa60cdc22a9f873d3c8b4c1d265c53a61cbb1dc0ecd84d6eab497636b7f7",
+              "1_synth_lec.v": "cb7e0c1c1b78ea2c3df501383559741255252a7671235a0558432b30a66bd529",
+              "2_1_floorplan.odb": "dbcf7cf97661608efb5e09f8fb0b8979341c2a7b1ba628835e21770d52d8220a",
+              "2_1_floorplan.sdc": "eae6aa60cdc22a9f873d3c8b4c1d265c53a61cbb1dc0ecd84d6eab497636b7f7",
+              "2_2_floorplan_macro.odb": "dbcf7cf97661608efb5e09f8fb0b8979341c2a7b1ba628835e21770d52d8220a",
+              "2_2_floorplan_macro.tcl": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+              "2_3_floorplan_tapcell.odb": "49eaeec74b0efd7f37cdaec9c7effb1444146c0ad1dd50f0efb6d0bc2a00384a",
+              "2_4_floorplan_pdn.odb": "b1035586a920593e25fb73c77d8bceffbee487a2adea46a279ea4124c1e3ce73",
+              "2_floorplan.odb": "b1035586a920593e25fb73c77d8bceffbee487a2adea46a279ea4124c1e3ce73",
+              "2_floorplan.sdc": "eae6aa60cdc22a9f873d3c8b4c1d265c53a61cbb1dc0ecd84d6eab497636b7f7",
+              "3_1_place_gp_skip_io.odb": "b1035586a920593e25fb73c77d8bceffbee487a2adea46a279ea4124c1e3ce73",
+              "3_2_place_iop.odb": "b1035586a920593e25fb73c77d8bceffbee487a2adea46a279ea4124c1e3ce73",
+              "3_3_place_gp.odb": "9c3ae867f6e2e8304a7246d3af7a3809cb90b17038e84efe36e1ba8a64da705e",
+              "3_4_place_resized.odb": "6afaf52923d5322b62475466987148535b407fc842de110b3b064158bc29eeb7",
+              "3_5_place_dp.odb": "ffc7dcc386e1d3768b674d0a1ed53c27bc420d41556d09a0514933c3cc25f91a",
+              "3_place.odb": "ffc7dcc386e1d3768b674d0a1ed53c27bc420d41556d09a0514933c3cc25f91a",
+              "3_place.sdc": "eae6aa60cdc22a9f873d3c8b4c1d265c53a61cbb1dc0ecd84d6eab497636b7f7",
+              "4_1_cts.odb": "a8fe7d095ef5558472c4f1dd29c934b7ba387fd87d84650c6df99e96689945f6",
+              "4_after_rsz_lec.v": "ae92090122871e7161cfe0b1346e954414541f320f781dc77c6b335aa87e9010",
+              "4_before_rsz_lec.v": "e13b61eace35c4ece3b7c9fb1b5a786649cb867ab1abc45c5232dc8e496ac68b",
+              "4_cts.odb": "a8fe7d095ef5558472c4f1dd29c934b7ba387fd87d84650c6df99e96689945f6",
+              "4_cts.sdc": "e19a29586b4bd41466fd2cc22804dc9665b465c7e74d096c5a98d6313df266f7"
+            },
+            "repair_variant": "cap40-hold5ps-input-diode-via-only-m10-from-sealed-cts",
+            "hold_margin_ns": 0.005,
+            "via_probe_binding": {
+              "receipt_sha256": "58c05a259b6aa18716430507d1b3db3c630eaff36895d61496e05757c3322db5",
+              "report_sha256": "0cbc4a53f425e3090c14030a816eb20c5693a47025de0b0097d3b07dbe620ff3",
+              "installed_route_script_sha256": "a21fd34d5104533a865f2e138c9fed546416ac6a37b1457baa8c0715537e0ba0",
+              "prior_route_log_sha256": "efa55c84f04ea21e61f8c9a893072a0757aec99e7001388968246dfafaca22ad",
+              "prior_default_args": "-via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10 -droute_end_iter 64 -verbose 1 -drc_report_iter_step 5",
+              "detail_route_args": "-via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10 -droute_end_iter 64 -verbose 1 -drc_report_iter_step 5 -via_access_layer metal10",
+              "measured_pin_access_policy": "A",
+              "current_policy": "A",
+              "scope": "A actual option viability and installed script binding; current candidate still requires complete actual route and independent acceptance"
+            },
+            "actual_config": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-133/tasks/native-viaonly-run-transaction6k-a/config.mk",
+            "actual_config_sha256": "63c8938c8281db15f560629ae68c5f57b7f4b477db2204336fe83d1a3da72026",
+            "stages": [],
+            "qualified_hard_macro": false,
+            "scope": "Native prefabrication route/final repair; all original electrical limits, area budgets and independent gates still apply",
+            "actual_variables": {
+              "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+              "MAX_ROUTING_LAYER": "metal10",
+              "MIN_ROUTING_LAYER": "metal1",
+              "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+              "KEEP_VARS": "1",
+              "LEC_CHECK": "1",
+              "SEC_CHECK": "0",
+              "CAP_MARGIN": "40",
+              "HOLD_SLACK_MARGIN": "0.005",
+              "PRE_GLOBAL_ROUTE_TCL": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-133/tasks/native-viaonly-run-transaction6k-a/input-diodes.tcl",
+              "VIA_IN_PIN_MIN_LAYER": "metal10",
+              "VIA_IN_PIN_MAX_LAYER": "metal10",
+              "DETAILED_ROUTE_ARGS": "-via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10 -droute_end_iter 64 -verbose 1 -drc_report_iter_step 5 -via_access_layer metal10"
+            }
+          }
+        }
+      }
+    }
+  },
+  "source_archive_sha256": "05a956018f53186e2521e375d181adc7b58f5d9af9c7617a2ff12f2c9e2caf13",
+  "sacct": "92206|RUNNING|0:0|00:01:35|00:00:00||32|node22\n92206.batch|RUNNING|0:0|00:01:35|00:00:00||32|node22\n92206.extern|RUNNING|0:0|00:01:35|00:00:00||32|node22\n",
+  "parent_allocation_job_id": "92206",
+  "collected_utc": "2026-10-27T03:44:29.301192+00:00"
+}
