@@ -19,15 +19,17 @@ python -B scripts/check_project.py
 git diff --check
 ```
 
-首轮为 36 项 synthetic 测试；原生诊断批增至 73 项，后续弧元数据/有符号差控制增至 80 项，本批修正版/流式几何/供电反篡改控制增至 93 项，另实际执行原生控制及 T6K 候选诊断。最终数量以测试回执为准。`synthetic-report.json` 的 passed 仅表示接收器逻辑控制通过，所有正式资格保持 false。生成用法：导入 `test_audit.Fixture` 在临时目录构造，再调用 `audit.audit(index_path)`；不使用任何真实候选文件。
+首轮为 36 项 synthetic 测试；原生诊断批增至 73 项，弧元数据/有符号差控制增至 80 项，修正版/流式几何/供电反篡改控制增至 93 项，分离 min/max 的声明/加载/私有补丁控制增至 100 项。另实际执行原生控制及 T6K 候选诊断。最终数量以测试回执为准。`synthetic-report.json` 的 passed 仅表示接收器逻辑控制通过，所有正式资格保持 false。生成用法：导入 `test_audit.Fixture` 在临时目录构造，再调用 `audit.audit(index_path)`；不使用任何真实候选文件。
 
 历史 run164 的 PG 表示和 189 个保护单元来源问题已由主线 run168 修复，支线重新接收每路 30 个角色并验证通过。当前结果见《修正版接收报告_run168-169.md》与 `revised-candidate-summary-168-169.json`，旧报告保留历史失败。run168 原生测量上下文通过，仍分别有 958/900 项诊断超差，最大 slack 差为 107.274412/60.402183 ps。主线统一预算内运行 run169 只读 ODB 导出后，支线实际检查 A/C 的 9,208,361/9,206,675 个源金属矩形，未覆盖项均为 0。
 
 另实际运行输出最短路径反例：0/8 级 BUF 支路控制的 max 输出差均低于 1 ps，但 8 级控制的 min 输出乐观差达到 230.138311/208.133455 ps。与固定 OpenSTA 源码的 max 路径选择一致，不能将当前 max 导出表直接视为已准确覆盖 min 输出。原始输入、输出、工具与代码摘要保存在 `native-output-path-control.json`。小 DFF 驱动/线阻控制和全部失败仍保留，未将复杂候选差异归为单一原因。
 
+继续完成私有 min/max 分离原型和 24 组实际场景对照，并在同源 T6K A/C 上复验。输出 hold 最大差由 107.274/60.402 ps 降到 5.669/4.886 ps，max 聚合 slack 与原候选逐值相同；输入仍有 51.768/17.622 ps 乐观差。见《分离minmax原型报告.md》、`split-model-probe-summary.json` 及构建补丁；不是只留计划，也没有签发整模资格。原生工具和主线 exporter 保持原样。
+
 ## 未完成与下一步
 
-1. 主线决定紧凑模型的有效工作域及 min/max 表示合同，保留完整 V/SPEF/ODB 的 flat 参考；支线复验新的模型候选，不平行修改主线 exporter。
+1. 支线继续验证输入边界 arrival/外部 driver 延迟归属，保留输入 RC；主线审查紧凑模型的有效工作域与 min/max 表示合同，保留完整 V/SPEF/ODB flat 参考。支线不平行修改主线 exporter。
 2. 来源、PG、完整 timing V 与实际 OBS 已取得本轮通过证据；OBS 不包含隐藏 transistor/GDS、DRC 或任意父层走线可达性资格。
 3. 审查正式 flat/abstract 场景、全部适用弧/例外/corner/electrical 覆盖和容差。现有原生测量是 worst-per-boundary-edge 聚合，两个特殊 arc group 角色仍未完全分类，不能冒称全部弧等价。
 4. 合格 C8 A/C 完整来源交付后逐一接收，继续补真实寄生归属与完整适用覆盖。不能把读回成功、无 active-net 判断的 annotation 清单或自报 ledger 当作完整证明。

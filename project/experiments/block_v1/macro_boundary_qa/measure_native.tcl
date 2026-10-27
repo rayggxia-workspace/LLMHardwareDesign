@@ -2,6 +2,10 @@
 # No repair, extraction, clock-latency reset or constraint substitution.
 proc qa_observe {} {
   foreach library $::env(BV1QA_LIBS) {read_liberty $library}
+  if {[info exists ::env(BV1QA_MIN_LIB)] && $::env(BV1QA_MIN_LIB) ne ""} {
+    read_liberty -max $::env(BV1QA_MAX_LIB)
+    read_liberty -min $::env(BV1QA_MIN_LIB)
+  }
   read_verilog $::env(BV1QA_VERILOG)
   link_design $::env(BV1QA_TOP)
   read_sdc $::env(BV1QA_SDC)

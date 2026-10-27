@@ -162,3 +162,13 @@ run168 的新合同显式增加 raw/corrected Lib、supply correction、typed PG
 `output_path_control.py --executable /approved/tools/sta --library /approved/libs/NangateOpenCellLibrary_typical.lib --output /approved/NEW-output-control` 构造 DFF 输出的直接/BUF 链两条路径汇入 NOR2_X1，显式注入全部 SPEF，并与导出宏在独立进程中对照。分别运行 0/8 级 BUF，保存原生导出和测量收据、源 V/SPEF/SDC、模型、日志与原始 TSV。它是实际 STA 控制，不是放置布线结果。
 
 该控制支持固定提交源码中 max-only 输出导出的限制：增加长路径后，max 输出数值仍接近，但 min 输出乐观误差明显增大。不能据此断言 T6K 的每项差异都只有同一原因；完整原因与模型方案由主线审查。详见 work/YUZE-LU/127 的 run168/169 报告。
+
+## 11. 私有 min/max 分开模型的实测原型
+
+`build_min_probe.py --source PINNED/MakeTimingModel.cc --build PINNED_BUILD --expected-source-sha256 SHA --output NEW_PRIVATE_DIR` 只复制静态库，编译明确标记的修改版 source，再链接为另一个 `sta-min-output-probe`。两处修改分别选择 min 的输出路径和 min 的 input/output 弧；原 upstream source、STA、静态库、构建参数均不改写并核验 SHA。它要求 Linux 已有同版构建，**不是原生公开功能、正式导出器或项目签核方案**；不安装、不替换服务器工具。
+
+小控制加 `--min-executable NEW_PRIVATE_DIR/sta-min-output-probe --min-probe-receipt NEW_PRIVATE_DIR/build-receipt.json` 后，使用官方 `read_liberty -max` / `read_liberty -min` 分开加载同 cell 的两份模型。支持 `--driver BUF_X1|BUF_X2 --output-load-ff N`，单位固定 fF。请求明确 `macro_delay_model=split-min-max`、绑定 `macro_min_lib`；该扩展仅允许 `native-control`，不能伪装成已发布候选，原始两份模型与实际加载方向在收据中复算。
+
+`candidate_split_probe.py --original-request REQUEST --executable ORIGINAL_STA --min-executable PRIVATE_PROBE --min-probe-receipt BUILD_RECEIPT --output NEW_DIR` 先验证原候选请求/来源，再在本机从同一 full timing V/SDC/SPEF 分别重新导出 max/min。导出 source clock latency 置零，测量仍保持共享原诊断 SDC。它产生新的 control request 和独立 probe 收据，明确不替换原 candidate Lib/LEF。原始收据、工具、脚本与模型哈希全部保留；pair 原始 TSV/SPEF 独立复算。
+
+24 组小控制及 T6K A/C 均已实际执行。输出 min 的明显乐观误差得到缓解，仍有输入侧和输出近似误差；绝不据此签发整体资格。结果、构建补丁和恢复入口见 `work/YUZE-LU/127/分离minmax原型报告.md` 与 `split-model-probe-summary.json`。当前原型只在一个 typical corner 和列明场景上实测。

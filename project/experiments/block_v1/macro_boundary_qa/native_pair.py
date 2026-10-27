@@ -184,6 +184,10 @@ def run(request_path, output, executable, parallel=1):
     require(expected_ports.get("clk") == "input" and len(expected_ports) > 1
             and all(d in ("input", "output") for d in expected_ports.values()), "native expected ports")
     roles = request["files"]
+    split_model = request.get("macro_delay_model", "single")
+    require(split_model in ("single", "split-min-max"), "macro delay model declaration")
+    require(("macro_min_lib" in roles) == (split_model == "split-min-max"), "split model min Liberty declaration")
+    require(split_model == "single" or request["evidence_kind"] == "native-control", "split model currently control-only")
     require({"flat_verilog", "flat_spef", "sdc", "abstract_verilog", "macro_lib"} <= roles.keys(), "native required files")
     require(any(role.startswith("base_lib_") for role in roles), "native base Liberty required")
     require(("abstract_spef" in roles) == (request["abstract_parent_interconnect"] == "explicit-spef"),
@@ -225,15 +229,17 @@ def run(request_path, output, executable, parallel=1):
             folder = output / view
             folder.mkdir()
             libraries = [paths[r] for r in sorted(paths) if r.startswith("base_lib_")]
-            if view == "abstract":
+            if view == "abstract" and split_model == "single":
                 libraries.append(paths["macro_lib"])
             env = dict(os.environ, OMP_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1", MKL_NUM_THREADS="1",
                        BV1QA_LIBS=tcl_list(libraries), BV1QA_VERILOG=str(paths[view+"_verilog"]),
                        BV1QA_TOP=request[view+"_top"], BV1QA_SDC=str(paths["sdc"]),
+                       BV1QA_MAX_LIB=str(paths["macro_lib"]) if view == "abstract" and split_model == "split-min-max" else "",
+                       BV1QA_MIN_LIB=str(paths["macro_min_lib"]) if view == "abstract" and split_model == "split-min-max" else "",
                        BV1QA_SPEF=str(paths["flat_spef"]) if view == "flat" else str(paths.get("abstract_spef", "")))
             argv = [str(executable), "-no_init", "-exit", str(script)]
             record = {"view": view, "argv": argv, "cwd": str(folder),
-                      "environment": {k: env[k] for k in ("OMP_NUM_THREADS", "BV1QA_LIBS", "BV1QA_VERILOG", "BV1QA_TOP", "BV1QA_SDC", "BV1QA_SPEF")}}
+                      "environment": {k: env[k] for k in ("OMP_NUM_THREADS", "BV1QA_LIBS", "BV1QA_VERILOG", "BV1QA_TOP", "BV1QA_SDC", "BV1QA_SPEF", "BV1QA_MAX_LIB", "BV1QA_MIN_LIB")}}
             with (folder / "native.log").open("w", encoding="utf-8") as log:
                 record["returncode"] = subprocess.run(argv, cwd=folder, env=env, stdout=log, stderr=subprocess.STDOUT).returncode
             receipt["commands"].append(record)
@@ -281,6 +287,10 @@ def verify(folder, request_path):
     require(receipt["schema"] == "block-v1-native-boundary-receipt/1"
             and receipt["passed"] is True, "native receipt failed")
     request = load_json(request_path.read_bytes())
+    split_model = request.get("macro_delay_model", "single")
+    require(split_model in ("single", "split-min-max")
+            and (("macro_min_lib" in request["files"]) == (split_model == "split-min-max")), "split model min Liberty declaration")
+    require(split_model == "single" or request["evidence_kind"] == "native-control", "split model currently control-only")
     require(file_sha(request_path) == receipt["inputs"]["request"], "native request receipt binding")
     for role, entry in request["files"].items():
         path = (request_path.parent / entry["path"]).resolve()
@@ -289,6 +299,14 @@ def verify(folder, request_path):
     require({record["view"] for record in receipt["commands"]} == {"flat", "abstract"}
             and len(receipt["commands"]) == 2
             and all(record["returncode"] == 0 for record in receipt["commands"]), "native command coverage")
+    if split_model == "split-min-max":
+        for record in receipt["commands"]:
+            env = record["environment"]
+            abstract = record["view"] == "abstract"
+            require(env.get("BV1QA_MIN_LIB") == (receipt["input_paths"]["macro_min_lib"] if abstract else "")
+                    and env.get("BV1QA_MAX_LIB") == (receipt["input_paths"]["macro_lib"] if abstract else ""), "split model native loading binding")
+            base = [receipt["input_paths"][r] for r in sorted(request["files"]) if r.startswith("base_lib_")]
+            require(env["BV1QA_LIBS"] == tcl_list(base), "split model base libraries binding")
     outputs = receipt["outputs"]
     actual = {p.relative_to(folder).as_posix() for p in folder.rglob("*")
               if p.is_file() and p != folder / "receipt.json"}
