@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 import sys
 from native_escape import parse,simplify,signature
-from native_escape_audit import physical,connectivity,readback
+from native_escape_audit import physical,connectivity,readback,header_identity
 
 
 def verify(destination):
@@ -59,7 +59,20 @@ def verify(destination):
     try:readback(work/'before.def',work/'bad.def',dict(test=p))
     except AssertionError:rejected['outside_net_scope']=True
     else:raise AssertionError('Accepted altered native definitions')
-    result=dict(passed=True,synthetic_positive_cases=['U-to-line','M9-tree-prune','actual-mask-shape-grammar','DEF-readback'],rejected=rejected,
+    original_header=parse(u)[0]
+    reordered=original_header.replace('( PIN test ) ( sink A )','( sink A ) ( PIN test )')
+    assert reordered!=original_header and header_identity(reordered)==header_identity(original_header)
+    for name,header in dict(wrong_cell=original_header.replace('sink A','other A'),
+                           wrong_pin=original_header.replace('sink A','sink B'),
+                           missing_terminal=original_header.replace('( sink A )',''),
+                           extra_terminal=original_header.replace('+ USE','( extra A ) + USE'),
+                           changed_use=original_header.replace('SIGNAL','CLOCK')).items():
+        assert header_identity(header)!=header_identity(original_header),name
+        rejected[name]=True
+    try:header_identity(original_header+' + FIXEDBUMP')
+    except AssertionError:rejected['unsupported_header_attribute']=True
+    else:raise AssertionError('Accepted unsupported header attribute')
+    result=dict(passed=True,synthetic_positive_cases=['U-to-line','M9-tree-prune','actual-mask-shape-grammar','DEF-readback','terminal-order-invariance'],rejected=rejected,
         missing_via_rejected=True,cross_net_short_rejected=True,cross_net_edge_touch_rejected=True,
         scope='Declared synthetic grammar, anchor, scope and connectivity controls only; actual native EDA and physical repair remain independently required')
     destination.write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result))

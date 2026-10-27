@@ -1,5 +1,7 @@
 # Issue 121 执行记录
 
+2026-10-27 14:12 CST：151源码06f1c39523c30e7fe74aeb9fee0b7bfa0553ea85、归档806812a4896bc9dbe1e03524e292138d1141db7674369937ef19b2bfaaf74dd7，162成员/1085440字节；stage147，实际92237 FAILED/1:14/TotalCPU2:09.700/MaxRSS1322996K，A/C导入10/1网后端点换序触发原header顺序检查。证据`run151-initial`、`run151-group-terminal`及两子；完整失败保留。152严格端点身份/USE检查及新增六反例在`escape-controls-152.json`和fixture，尚未部署实际EDA，其余所有门槛保持，完整目标未完成。
+
 2026-10-27 14:07 CST：`run149-not-submitted`读回无dispatch-state/tasks/job，16G申请被原集群内存保护拒绝。`run150-initial`、`run150-group-terminal`、`run150a-terminal`、`run150c-terminal`保留实际92236 FAILED两路读回错误：INCREMENTAL未导入NETS路由；1:14/TotalCPU2:09.030/MaxRSS1326488K。stage145/146分别是149/150原manifest；源61748febed2b1532a6d705951678abc80f1f5ee0和归档f9a2774c46ec26494a7183d95800ccd2dac6a1ed366118fbdcd322041accd387（162成员/1085440字节）。151将从新源码修正为FLOORPLAN既有网络导入，尚未部署；所有资格门槛保留。完整目标未完成，14:07仍6allocation，128最终输出未终态。
 
 2026-10-27 14:01 CST：新增149预制接入线修复探针和`escape-controls-149.json`、`escape-controls-149b.json`及各自合成DEF fixture；149b新增真实矩形边接触的声明合成反例。149拟在同一c96/4CPU/16GiB allocation内A/C各2CPU，实际EDA尚未执行。所有133/135/148原始源及失败不改，149诊断通过也需新寄生与完整物理/功能接收，详见[有限修复决策](../../../../docs/decisions/2026-10-27-block-v1-native-escape-repair.md)。13:58实际128两路均已do-finish但尚无回执；134/141等待完整成功，147旧失败依赖继续停用。计划SHA重新核验不变，完整目标未完成。

@@ -38,4 +38,8 @@ python project/experiments/block_v1/native_escape_control.py NEW_CONTROL.json
 
 151只修正导入方式为`read_def -floorplan_initialize`，patch仍只列既有命中网络，没有COMPONENTS/PINS/PG/DIE/TRACKS等段；不再预先删除wire。所有原网络/范围/实际几何读回门槛保留；必须实际验证该安装版行为，不能仅凭上游源码宣称成功。151本源码提交时尚未部署/执行；同一4CPU/整节点内存allocation内A/C各2CPU，仍作12GiB内存预检。
 
+151/92237实际1:14、TotalCPU2:09.700、MaxRSS1322996KiB，两路已导入10/1个网络，但严格header字节顺序检查失败。实际DEF显示`revoke_valid`、`begin_words[0]`等网络的hold与diode端点顺序交换，网络/端点名字一致；没有据此跳过连接证明，原失败保留于`run151-group-terminal`及A/C子索引。
+
+152将header检查改为严格解析网络名、完整无重复端点集合和USE种类，唯一忽略端点序列化顺序；额外属性与未知语法仍拒绝，其他所有DEF范围/路径检查及完整Verilog字节相等保持。`escape-controls-152.json`实际本地通过端点换序正例，以及错cell/错pin/缺端点/多端点/改USE/额外属性六类新增反例。该修正只处理序列化等价，不改变物理候选、pin、规则或资源；152在本源码提交时尚未部署/执行。
+
 即使149探针通过，仍须从修改后的真实ODB重新生成完整原生GDS、寄生、SDC与网表，并重跑完整DRC、全部端点STA/电气、PG/连接/LEC和实际最终功能；不能复用133旧SPEF充当新路由寄生。正式同源宏视图、flat/abstract边界、父层glue、完整恢复/epoch、一般多网分布十二层RC与原生/新层拼接、共同冻结父层、两产品和敏感性仍是独立门槛。探针的四个完整资格标志保持false。

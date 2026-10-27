@@ -89,6 +89,17 @@ def def_inventory(path):
     return nets,outside.hexdigest()
 
 
+def header_identity(header):
+    # OpenDB reconnects listed existing terminals and can reorder their DEF
+    # serialization. Preserve the exact endpoint multiset, net and USE type;
+    # no other header grammar or attribute is silently discarded.
+    match=re.fullmatch(r'\s*-\s+(\S+)\s+((?:\(\s*\S+\s+\S+\s*\)\s*)+)\+\s+USE\s+(SIGNAL|CLOCK)\s*',header)
+    assert match,'Unsupported connection header'
+    terms=re.findall(r'\(\s*(\S+)\s+(\S+)\s*\)',match[2])
+    assert terms and len(terms)==len(set(terms)),'Duplicate terminal'
+    return match[1],sorted(terms),match[3]
+
+
 def readback(before,after,plans):
     a,ah=def_inventory(before);b,bh=def_inventory(after)
     assert set(a)==set(b)and ah==bh,'Native cells/pins/PG/definitions or net set changed'
@@ -97,7 +108,7 @@ def readback(before,after,plans):
     observed={text.lstrip().split()[1]:text for text in records(after)if text.lstrip().split()[1]in plans}
     for name,text in observed.items():
         header,paths=parse(text);plan=plans[name]
-        assert header.split()==plan['header'].split(),'Logical connection header changed'
+        assert header_identity(header)==header_identity(plan['header']),'Logical connection identity changed'
         assert signature(paths)==signature(plan['final_paths']),'Actual OpenDB route differs from plan'
     return dict(passed=True,total_nets=len(a),changed_nets=sorted(changed),outside_nets_sha256=ah,
                 unchanged_net_count=len(a)-len(changed))
