@@ -59,7 +59,15 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-const-prepare':
+    if MODE.startswith('native-const-protected-run-'):
+        from native_run import implement
+        top,policy=MODE.removeprefix('native-const-protected-run-').rsplit('-',1)
+        implement(ROOT,OUT,CPUS,run,top,policy.upper(),pipeline='native_pipeline_const_protected.json')
+    elif MODE.startswith('native-const-protected-receive-'):
+        from native_receive import verify
+        top,policy=MODE.removeprefix('native-const-protected-receive-').rsplit('-',1)
+        verify(ROOT,OUT,CPUS,run,top,policy.upper(),pipeline='native_pipeline_const_protected.json')
+    elif MODE=='native-const-prepare':
         from native_const_prepare import prepare
         prepare(ROOT,OUT)
     elif MODE.startswith('native-const-floorplan-'):

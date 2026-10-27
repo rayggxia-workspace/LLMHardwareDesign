@@ -15,7 +15,7 @@ from native_formal import receive as formal_audit
 
 def verify(root,out,cpus,run,top,policy,historical=False,pipeline=None):
     pipeline=pipeline or ('native_pipeline_057.json' if historical else 'native_pipeline.json')
-    assert pipeline in ('native_pipeline.json','native_pipeline_057.json','native_pipeline_cap20.json','native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json','native_pipeline_diode_full.json','native_pipeline_const.json')
+    assert pipeline in ('native_pipeline.json','native_pipeline_057.json','native_pipeline_cap20.json','native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json','native_pipeline_diode_full.json','native_pipeline_const.json','native_pipeline_const_protected.json')
     config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
     diode=config.get('input_diode_master')=='ANTENNA_X1'
     assert bool(config.get('historical_input_contract',False))==historical
@@ -70,6 +70,9 @@ def verify(root,out,cpus,run,top,policy,historical=False,pipeline=None):
     if config.get('repair_variant'):
         from native_reroute import checked_config
         flow_config=checked_config(source,receipt,flow_config,margin=config.get('cap_margin',20),hold_margin=config.get('hold_margin_ns'),diode=diode)
+    if config.get('fresh_input_protection'):
+        from native_run import checked_fresh_config
+        flow_config=checked_fresh_config(source,receipt,flow_config)
     assert file_sha(pins_path)==bound['outputs'][str(pins_path.relative_to(prep))]
     pins=json.loads(pins_path.read_text())['pins'];wanted={p['pin']:p for p in pins};got={}
     for line in(out/'physical-pins.tsv').read_text().splitlines():
