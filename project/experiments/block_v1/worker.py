@@ -59,7 +59,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-boundary-diagnostic':
+    if MODE=='native-boundary-physical':
+        from native_formal_boundary import physical
+        physical(ROOT,OUT,CPUS,run)
+    elif MODE=='native-boundary-diagnostic':
         from native_formal_boundary import verify
         verify(ROOT,OUT,CPUS,run)
     elif MODE=='native-diode-hook-probe':

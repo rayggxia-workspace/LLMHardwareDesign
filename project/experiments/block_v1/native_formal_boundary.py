@@ -84,3 +84,24 @@ def verify(root,out,cpus,run):
         scope='Read-only actual top-port connectivity diagnosis; no waived boundaries or equivalence/physical acceptance')
     assert all(file_sha(Path(p))==digest for p,digest in inputs.items())
     (out/'native-boundary-diagnostic.json').write_text(json.dumps(record,indent=2)+'\n')
+
+
+def physical(root,out,cpus,run):
+    from io_slots import file_sha
+    source=out.parents[2]/'block-v1-20261027-080/tasks/native-run-shared109-c'
+    receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed']is True
+    results=source/'flow/results/nangate45/bv1_shared109_C/base'
+    inputs={}
+    for label,name in [('before','1_synth.odb'),('after','6_final.odb')]:
+        path=results/name;inputs[str(path)]=file_sha(path)
+        assert inputs[str(path)]==receipt['outputs'][str(path.relative_to(source))]
+        script='set ::env(BV1_BOUNDARY_ODB) {'+str(path)+'}\n'
+        script+='source {'+str(root/'project/experiments/block_v1/native_boundary_physical.tcl')+'}\n'
+        (out/(label+'.tcl')).write_text(script)
+        run(['openroad','-no_init','-exit',str(out/(label+'.tcl'))],label+'.log')
+    assert all(file_sha(Path(p))==digest for p,digest in inputs.items())
+    record=dict(schema='block-v1-native-boundary-physical-diagnostic/1',passed=True,
+                input_sha256=inputs,driver_traces={label:[line for line in(out/(label+'.log')).read_text().splitlines()
+                    if line.split('\t')[0]in ('PORT','NET','DRIVER','MASTER')]for label in ['before','after']},
+                qualified_equivalence=False,scope='Actual immutable synth/final ODB driver traces only; no waiver, repair, equivalence or physical acceptance')
+    (out/'native-boundary-physical.json').write_text(json.dumps(record,indent=2)+'\n')
