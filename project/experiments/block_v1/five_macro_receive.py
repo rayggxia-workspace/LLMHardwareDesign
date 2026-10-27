@@ -10,7 +10,7 @@ def source(out,kind,original=False,repaired=False):
     assert kind in ('m','s','r','v')
     assert not (original or repaired) or kind=='m' or (kind=='v' and original and not repaired)
     number=(('189' if original else '193' if repaired else '205') if kind=='m'
-            else dict(s='190',r='196',v='203' if original else '213')[kind])
+            else dict(s='190',r='196',v='203' if original else '214')[kind])
     task=(('five-macro-route-m' if original else 'five-macro-repair-m-hold' if repaired else 'five-macro-finish-m-patch') if kind=='m'
           else 'five-macro-repair-v-drive' if kind=='v' and not original else 'five-macro-route-'+kind)
     folder=out.parents[2]/('block-v1-20261027-'+number+'/tasks/'+task)
