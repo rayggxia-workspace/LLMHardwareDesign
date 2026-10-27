@@ -46,12 +46,12 @@ def probe(root,out,cpus,run,policy):
     text+='write_timing_model -library_name '+library+' -cell_name '+cell+' diagnostic.lib\n'
     (out/'export.tcl').write_text(text)
     run(['openroad','-no_init','-exit','export.tcl'],'export.log')
-    text='read_liberty diagnostic.lib\nset stream [open interface.tsv w]\n'
-    text+='foreach pin [get_lib_pins '+library+'/'+cell+'/*] {puts $stream "[get_full_name $pin]\\t[get_property $pin direction]"}\nclose $stream\n'
+    text='read_liberty diagnostic.lib\nset wanted_library {'+library+'}\nset wanted_master {'+cell+'}\n'
+    text+='source {'+str(root/'project/experiments/block_v1/native_lib_pins.tcl')+'}\n'
     (out/'readback.tcl').write_text(text)
     run(['openroad','-no_init','-exit','readback.tcl'],'readback.log')
     observed={};prefix=library+'/'+cell+'/'
-    for line in(out/'interface.tsv').read_text().splitlines():
+    for line in(out/'lib-interface.tsv').read_text().splitlines():
         name,direction=line.split('\t');assert name.startswith(prefix)
         pin=name[len(prefix):];assert pin not in observed
         if pin not in ('VDD','VSS'):observed[pin]=direction.lower()
@@ -63,6 +63,7 @@ def probe(root,out,cpus,run,policy):
     result=dict(schema='block-v1-native-timing-model-probe/1',passed=all(checks.values()),checks=checks,top=top,policy=policy,
                 source=str(source),source_receipt_sha256=file_sha(source/'receipt.json'),producer_sha256=file_sha(report),inputs=inputs,
                 pipeline_sha256=file_sha(pipeline),preparation_receipt_sha256=file_sha(prep/'receipt.json'),pins_sha256=file_sha(pins),
+                lib_interface_script_sha256=file_sha(root/'project/experiments/block_v1/native_lib_pins.tcl'),
                 diagnostic_model_sha256=file_sha(out/'diagnostic.lib'),diagnostic_model_bytes=(out/'diagnostic.lib').stat().st_size,
                 pin_count=len(expected),timing_arc_types=types,physical_receiver_qualified=False,
                 flat_abstract_boundary_qualified=False,exact_final_function_qualified=False,twelve_layer_qualified=False,qualified_hard_macro=False,

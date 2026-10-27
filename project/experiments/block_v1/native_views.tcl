@@ -24,8 +24,4 @@ foreach box [$master getObstructions] {
   puts $stream "obstruction\t[[$box getTechLayer] getName]\t[$box xMin]\t[$box yMin]\t[$box xMax]\t[$box yMax]"
 }
 close $stream
-set stream [open lib-interface.tsv w]
-foreach pin [get_lib_pins ${wanted_library}/${wanted_master}/*] {
-  puts $stream "[get_full_name $pin]\t[get_property $pin direction]"
-}
-close $stream
+source $lib_interface_script

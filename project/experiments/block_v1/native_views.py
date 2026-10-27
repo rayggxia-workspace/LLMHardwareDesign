@@ -118,7 +118,9 @@ close $stream
     (out/'generate-views.tcl').write_text(text)
     run(['openroad','-no_init','-exit','generate-views.tcl'],'generate-views.log')
     text='read_liberty candidate.lib\nread_lef {'+platform+'/lef/NangateOpenCellLibrary.tech.lef}\nread_lef candidate.lef\n'
-    text+='set wanted_master {'+top+'}\nset wanted_library {'+library+'}\nsource {'+str(root/'project/experiments/block_v1/native_views.tcl')+'}\n'
+    text+='set wanted_master {'+top+'}\nset wanted_library {'+library+'}\n'
+    text+='set lib_interface_script {'+str(root/'project/experiments/block_v1/native_lib_pins.tcl')+'}\n'
+    text+='source {'+str(root/'project/experiments/block_v1/native_views.tcl')+'}\n'
     (out/'readback-views.tcl').write_text(text)
     run(['openroad','-no_init','-exit','readback-views.tcl'],'readback-views.log')
     prep=base/config['preparation_run']/'tasks/native-prepare';bound=json.loads((prep/'receipt.json').read_text());assert bound['passed']is True
@@ -133,7 +135,8 @@ close $stream
         physical_receiver=str(receiver),physical_receiver_sha256=file_sha(proof),
         physical_receiver_receipt_sha256=file_sha(receiver/'receipt.json'),pipeline=pipeline,
         pipeline_file_sha256=file_sha(root/'project/experiments/block_v1'/pipeline),
-        generator_sha256=file_sha(Path(__file__)),readback_script_sha256=file_sha(root/'project/experiments/block_v1/native_views.tcl'),inputs=inputs,
+        generator_sha256=file_sha(Path(__file__)),readback_script_sha256=file_sha(root/'project/experiments/block_v1/native_views.tcl'),
+        lib_interface_script_sha256=file_sha(root/'project/experiments/block_v1/native_lib_pins.tcl'),inputs=inputs,
         actual_model_api_help_sha256=file_sha(api/'view-api.log'),
         views={name:dict(path=str(out/name),sha256=file_sha(out/name))for name in ['candidate.lib','candidate.lef']},
         native_gds=dict(path=str(gds),sha256=file_sha(gds)),flat_abstract_boundary_qualified=False,
