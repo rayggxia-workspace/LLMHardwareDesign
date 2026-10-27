@@ -44,3 +44,6 @@ API参照[OpenDB dbCapNode](https://openroad.readthedocs.io/en/latest/doxygen_ou
 ## 08:22 原生节点编号
 
 098/92143已实际读入7R/8C并完成OpenDB读回，但内部编号从SPEF 3–8变为4–9，逐节点/边门槛正确拒绝，原失败不改。原因由[固定OpenROAD源码](https://github.com/The-OpenROAD-Project/OpenROAD/blob/6ea4ca224f3589dd91809933f50f39af66053634/src/odb/src/db/dbNet.cpp#L687)的collapseInternalCapNum证实：cnt始于1，按CAP创建顺序遇每个节点先增1，仅内部节点被赋值；端点保持ITerm身份。writer现输出相同canonical标签，明确要求当前八节点图的前两点为实际U0/U1，输出完整物理坐标/SPEF/native-key映射，不按C/R值匹配节点。局部重评估用旧实际读回数据通过7项检查，4负例仍拒绝，其中换C/换R保总量；这不等于新102原生导入已执行。
+
+
+102修正导入已部署，源码5f43b4e、归档7d4cd3c6f3055312eba84680ab35a77168fddb88e0b44bef7fa84c7879063356，118成员/829440字节；当前等8槽内空位，无Slurm作业。
