@@ -123,8 +123,27 @@ def one(inputs,rev,plan):
         (out/'whole_access.json').write_text(json.dumps(rec['whole_signal_geometry'],indent=2)+'\n')
     stages=list(csv.DictReader((out/'stages.tsv').open(),delimiter='\t'));log=(out/'openroad.log').read_text()
     rec['stages']=stages;rec['PDN_gates_executed_and_connected']=all(any(s['stage']==n and s['status']=='EXECUTED' for s in stages) for n in ['pdn_check_VDD','pdn_check_VSS','pdn_final_VDD','pdn_final_VSS']) and all('All shapes on net '+n+' are connected.' in log for n in ['VDD','VSS'])
+    def lines(path):return sorted(path.read_text().splitlines()) if path.exists() else None
+    rec['parent_PG_geometry_unchanged_by_signal_route']=lines(out/'before.pdn.tsv') is not None and lines(out/'before.pdn.tsv')==lines(out/'after.pdn.tsv')
+    rec['all_instance_master_XY_orient_unchanged_by_signal_route']=lines(out/'before.instances.tsv') is not None and lines(out/'before.instances.tsv')==lines(out/'after.instances.tsv')
+    if plan!='A':
+        rec['parent_PG_geometry_matches_frozen_A']=lines(out/'before.pdn.tsv') is not None and lines(out/'before.pdn.tsv')==lines(baseline/'before.pdn.tsv')
+        rec['TOP_IO_all_pin_boxes_match_frozen_A']=lines(out/'before.pins.tsv') is not None and lines(out/'before.pins.tsv')==lines(baseline/'before.pins.tsv')
+        def family_placements(path):
+            if not path.exists():return None
+            result=[]
+            with path.open() as f:
+                for row in csv.DictReader(f,delimiter='\t'):
+                    for case,info in contract['physical_instances'].items():
+                        if row['instance']==info['instance']:
+                            assert row['master'].startswith('p126_'+case+'_')
+                            row['master']='UNCHANGED_LOGICAL_LEAF_FAMILY_'+case
+                    result.append(tuple(row[k] for k in ['instance','master','x','y','orientation']))
+            return sorted(result)
+        rec['all_leaf_families_and_constant_cells_XY_match_frozen_A']=family_placements(out/'before.instances.tsv') is not None and family_placements(out/'before.instances.tsv')==family_placements(baseline/'before.instances.tsv')
     rec['finished_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat();rec['files']={p.name:{'bytes':p.stat().st_size,'sha256':sha(p)} for p in out.iterdir() if p.is_file() and p.name!='execution.json'}
-    passed=rec.get('independent_DRC_count')==0 and rec.get('whole_signal_geometry',{}).get('pass') and rec['PDN_gates_executed_and_connected'] and r.returncode==0
+    passed=rec.get('independent_DRC_count')==0 and rec.get('whole_signal_geometry',{}).get('pass') and rec['PDN_gates_executed_and_connected'] and r.returncode==0 and rec['parent_PG_geometry_unchanged_by_signal_route'] and rec['all_instance_master_XY_orient_unchanged_by_signal_route']
+    if plan!='A':passed=passed and rec['parent_PG_geometry_matches_frozen_A'] and rec['TOP_IO_all_pin_boxes_match_frozen_A'] and rec['all_leaf_families_and_constant_cells_XY_match_frozen_A']
     rec['status']='NATIVE_ACCESS_GATES_PASSED_NOT_FULL_QUALIFICATION' if passed else 'ACTUAL_PARENT_ACCESS_FAILED_OR_INCOMPLETE'
     (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     print('NEW_PARENT_RESULT',design,focus,plan,rec.get('independent_DRC_count'),rec.get('whole_signal_geometry',{}).get('pass'),rec['PDN_gates_executed_and_connected'],flush=True)
