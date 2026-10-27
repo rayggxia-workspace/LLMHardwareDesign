@@ -26,7 +26,7 @@ def one(case,plan,revision):
     spec=CFG['physical_blocks'][case];src=Path(spec['odb']);before=src.stat();observed=sha(src)
     assert observed==spec['expected_sha256']
     # Source config is at the design run root, six levels above .../base/*.odb.
-    source_config=src.parents[5]/'config.mk'
+    source_config=src.parents[5]/('vec-config.mk' if case=='vector' else 'config.mk')
     values=config_values(source_config)
     std='/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib'
     libs=[std]+values.get('ADDITIONAL_LIBS','').split()
@@ -66,11 +66,15 @@ def one(case,plan,revision):
     receipt['status']='STAGES_EXECUTED_NOT_QUALIFIED' if result.returncode==0 else 'ACTUAL_TRIAL_FAILED'
     (out/'execution.json').write_text(json.dumps(receipt,indent=2)+'\n')
     print('TRIAL_RETURN',case,plan,result.returncode,flush=True)
+    return result.returncode==0
 
 def safe(args):
-    try:one(*args)
+    try:return one(*args)
     except Exception:
         traceback.print_exc();print('DRIVER_FAILED',args,flush=True)
+        out=ROOT/'trials'/args[2]/(args[0]+'-'+args[1]);out.mkdir(parents=True,exist_ok=True)
+        (out/'driver_failure.json').write_text(json.dumps({'args':args,'traceback':traceback.format_exc(),'status':'DRIVER_FAILED_NOT_PHYSICAL_RESULT'},indent=2)+'\n')
+        return False
 
 if __name__=='__main__':
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=8
@@ -81,4 +85,6 @@ if __name__=='__main__':
             'command -v klayout; grep -E "MIN_ROUTING_LAYER|MAX_ROUTING_LAYER|MIN_CLK_ROUTING|MAX_CLK_ROUTING" /OpenROAD-flow-scripts/flow/platforms/nangate45/config.mk; cat /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl; ls /OpenROAD-flow-scripts/flow/platforms/nangate45/drc; sha256sum /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad /OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules /OpenROAD-flow-scripts/flow/platforms/nangate45/config.mk /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib'],stdout=f,stderr=subprocess.STDOUT,check=True)
     plans=os.environ.get('PINXY_PLANS','A,A_replay,Aopt,B,C').split(',')
     assert set(plans)<=set(['A','A_replay','Aopt','B','C'])
-    with ThreadPoolExecutor(max_workers=2) as pool:list(pool.map(safe,[(case,p,revision) for p in plans]))
+    with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(safe,[(case,p,revision) for p in plans]))
+    (ROOT/'trials'/revision/(case+'-batch.json')).write_text(json.dumps({'case':case,'plans':plans,'process_return_success':results,'qualification':'CHECK_INDEPENDENT_STAGE_RESULTS'},indent=2)+'\n')
+    sys.exit(0 if all(results) else 1)

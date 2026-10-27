@@ -39,6 +39,7 @@ def category(case,m):
 
 def load_new(case,mapping,original):
     b=read(case,'bterms');b.pin=b.pin.map(legacy.norm);b.net=b.net.map(legacy.norm)
+    actual_use=pd.read_csv(ROOT/'pin-use-r01'/(case+'.tsv'),sep='\t').set_index('pin').sig_type.to_dict()
     design={}
     with gzip.open(ROOT/'physical'/case/'design.tsv.gz','rt') as f:
         for line in f:
@@ -59,7 +60,7 @@ def load_new(case,mapping,original):
             assert np.allclose(old[['x0_um','y0_um','x1_um','y1_um']].to_numpy(float),rect,atol=1e-8)
             interface=old.interface;bus=old.bus
         else:interface=category(case,m);bus=q.pin
-        row={'case':case,'pin':q.pin,'bus':bus,'interface':interface,'direction':q.direction,'use':'CLOCK' if m['semantic_bus']=='clk' else 'SIGNAL',
+        row={'case':case,'pin':q.pin,'bus':bus,'interface':interface,'direction':q.direction,'use':actual_use[q.pin],
              'layer':q.layer,'edge':edge,'x_um':x,'y_um':y,'x0_um':rect[0],'y0_um':rect[1],'x1_um':rect[2],'y1_um':rect[3],
              'net_id':int(q.net_id),'net':q.net,'semantic_bus':m['semantic_bus'],'semantic_bit':int(m['semantic_bit'])}
         if actual is not None:row['use']=actual.loc[q.pin,'use']

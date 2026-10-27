@@ -84,7 +84,23 @@ def build(root,out):
     for p in (root/'inventory').iterdir():
         if p.suffix=='.csv':compress(p,data/(p.name+'.gz'))
         elif p.suffix=='.json':compress(p,data/(p.name+'.gz'))
+    evidence=data/'evidence';evidence.mkdir(exist_ok=True)
+    for c in ['mxu','vector','opentpu_aux','llaccel_aux']:
+        dest=evidence/c;dest.mkdir(exist_ok=True)
+        for name in ['receipt.json','anchors.tsv.gz','endpoints.tsv.gz','bterms.tsv.gz','tech.tsv.gz','vias.tsv.gz','macros.tsv.gz','design.tsv.gz']:
+            p=root/'physical'/c/name
+            if p.exists():shutil.copy2(p,dest/name)
+    notes=root.parent/'source_notes/issue55/runs'
+    for d in notes.iterdir():
+        if d.is_dir():
+            dest=evidence/d.name;dest.mkdir(exist_ok=True)
+            for p in d.iterdir():
+                if p.is_file() and p.suffix=='.json':compress(p,dest/(p.name+'.gz'))
+    physical_evidence=root/'trial_receipts'
+    if physical_evidence.exists():shutil.copytree(physical_evidence,evidence/'physical',dirs_exist_ok=True)
     shutil.copy2(root/'coverage_gate.json',data)
+    shutil.copytree(root/'pin-use-r01',data/'pin-use-r01',dirs_exist_ok=True)
+    shutil.copy2(root/'pin_use_correction.json',data)
     # Preserve exact compact hierarchy/frontier and origin proof for reproducing ownership.
     for p in (root/'partition-r02').iterdir():
         if p.is_file():

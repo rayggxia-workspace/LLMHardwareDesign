@@ -1,9 +1,14 @@
 # Independent selected-net connectivity export. All layers, real dbWire/vias and
 # actual ITerm access rectangles; no bbox-center connectivity approximation.
-set relocations {};source $::env(PINXY_RELOCATIONS)
 set block [ord::get_db_block];set selected [dict create]
-foreach r $relocations {set t [$block findBTerm [lindex $r 0]];set n [$t getNet];dict set selected [$n getId] $n}
-set af [open $::env(PINXY_ACCESS_OUT) w]
+if {[info exists ::env(PINXY_ACCESS_ALL)] && $::env(PINXY_ACCESS_ALL) eq "1"} {
+  foreach n [$block getNets] {if {[$n getSigType] ni {POWER GROUND} && [llength [$n getITerms]]+[llength [$n getBTerms]]>1} {dict set selected [$n getId] $n}}
+} else {
+  set relocations {};source $::env(PINXY_RELOCATIONS)
+  foreach r $relocations {set t [$block findBTerm [lindex $r 0]];set n [$t getNet];dict set selected [$n getId] $n}
+}
+if {[file exists $::env(PINXY_ACCESS_OUT)]} {error "Do not overwrite existing access export"}
+if {[file extension $::env(PINXY_ACCESS_OUT)] eq ".gz"} {set af [open [list | gzip -n -c > $::env(PINXY_ACCESS_OUT)] w]} else {set af [open $::env(PINXY_ACCESS_OUT) w]}
 puts $af "net\tlayer\tx0\ty0\tx1\ty1\tkind\tlink"
 proc access_row {nn layer bb kind link} {
   global af
@@ -17,15 +22,19 @@ proc access_box {nn s kind link {dx 0} {dy 0}} {
 set itr [odb::dbWirePathItr];set path [odb::dbWirePath];set ps [odb::dbWirePathShape]
 dict for {nid net} $selected {
   set nn [$net getName];set w [$net getWire];set serial 0
-  if {$w eq "NULL"} {error "Selected net lacks dbWire $nn"}
-  $itr begin $w
-  while {[$itr getNextPath $path]} {while {[$itr getNextShape $ps]} {
+  if {[llength [$net getSWires]]} {error "Signal special-wire geometry requires explicit extension: $nn"}
+  if {$w eq "NULL"} {
+    access_row $nn UNROUTED {0 0 0 0} UNROUTED MISSING_WIRE
+  } else {
+   $itr begin $w
+   while {[$itr getNextPath $path]} {while {[$itr getNextShape $ps]} {
     incr serial;set s [odb::dbWirePathShape_shape_get $ps]
     if {[$s isVia]} {
       set v [$s getTechVia];if {$v eq "NULL"} {set v [$s getVia]};lassign [$s getViaXY] x y
       foreach box [$v getBoxes] {access_box $nn $box VIA "via_$serial" $x $y}
     } else {access_box $nn $s WIRE "wire_$serial"}
-  }}
+   }}
+  }
   foreach bt [$net getBTerms] {foreach bp [$bt getBPins] {foreach box [$bp getBoxes] {access_box $nn $box BTERM "B:[$bt getName]"}}}
   foreach it [$net getITerms] {
     set boxes [$it getGeometries];set term "I:[[$it getInst] getName]/[[$it getMTerm] getName]"
