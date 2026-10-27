@@ -23,7 +23,7 @@ def summarize(root):
         j=json.loads(p.read_text());completed=bool(j.get('finished_utc'));log=read(d/'openroad.log.gz')
         stages=list(csv.DictReader(read(d/'stages.tsv').splitlines(),delimiter='\t'))
         bystage={r['stage']:r['status'] for r in stages}
-        c={'state':j.get('status','RUNNING_OR_RECEIPT_INCOMPLETE'),'completed':completed,'finished_utc':j.get('finished_utc',''),'plan':plan,'candidate_revision':'r02' if rev=='grid-r05' else 'r01_or_PR120','selected_pin_count':j.get('selected_pin_count',8),'scheduler_job':j['scheduler_job'],'source_sha256':j['source_sha256'],
+        c={'state':j.get('status','RUNNING_OR_RECEIPT_INCOMPLETE'),'completed':completed,'finished_utc':j.get('finished_utc',''),'plan':plan,'candidate_revision':'r02' if rev in ['grid-r05','full-other-r01'] and case not in ['act','gemm'] else 'r01_or_PR120','selected_pin_count':j.get('selected_pin_count',8),'scheduler_job':j['scheduler_job'],'source_sha256':j['source_sha256'],
            'driver_commit':j['driver_commit'],'source_unchanged':j.get('source_unchanged',False),'failed_stages':[r for r in stages if r['status']=='FAIL'],
            'routed':bystage.get('detailed_route')=='EXECUTED','RCX_executed':bystage.get('extract_rc',bystage.get('baseline_rc'))=='EXECUTED',
            'setup_worst_slack_ns':slack(d,'setup'),'hold_worst_slack_ns':slack(d,'hold'),'raw_receipt':str(p.relative_to(base)),
@@ -87,7 +87,9 @@ def summarize(root):
         done=[t for t in s['trials'].values() if t.get('completed')];candidates=[t for t in done if t.get('plan')=='C']
         if candidates:
             t=max(candidates,key=lambda t:(t['selected_pin_count'],t['candidate_revision']=='r02',t['finished_utc']));n=t['selected_pin_count'];s['route_status']=(f'{n}pin C实际重接完成；'+('完整C尚未实施' if n==8 else '全C已实施；完整父层/规则未资格化')) if t['routed'] else 'C实际试验失败/未完成，见回执'
-            s['full_C_migration_routed']=bool(case=='act' and n==740 and t['routed'])
+            with (root/(case+'_pin_coordinates.csv')).open(encoding='utf-8') as f:
+                expected_moved=sum(r['plan']=='C' and r['moved'].lower() in ['true','1'] for r in csv.DictReader(f))
+            s['full_C_migration_routed']=bool(n==expected_moved and t['routed'])
             full=t.get('whole_multi_terminal_signal_clock_geometry',{}).get('pass','待验证')
             s['whole_block_OpenDB_multi_terminal_geometry']=full
             s['drc_status']='独立clean进程DRC {}; selected-net连通 {}; 全块几何连通 {}；父层未验证'.format(t.get('independent_clean_DRC_count','待复核'),t.get('selected_access_all_terminals_pass','待补查'),full)
