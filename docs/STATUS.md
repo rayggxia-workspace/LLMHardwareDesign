@@ -1,3 +1,5 @@
+2026-10-27 22:05 CST：五宏主线实际推进。M新RTL的1200组随机/边界tile、尾块、多tile、S8/S16/P15样例、K=65535守卫、跨组合并、RNE/饱和和背压通过（282066检查/203846周期）；S全1024地址与10000随机事务通过（91035检查）。M完整映射77203单元；S保留原131072bit标准单元存储，展开后376059单元，其中131201DFF，映射面积978028.268um²，不能称SRAM。186六独立16CPU实际并跑；186映射Yosys路径语法失败、187调度缺receipt mode、188 signed导入/scopeinfo元数据失败均保留，不冒充P&R通过。修正沿用已通过数值RTL和映射，没有重复ABC。189/92444 node26/96CPU中M已完成floorplan/place/CTS，正在route；190/92446 node24/96CPU中S展开/完整库存通过，独立原生流程已进入floorplan。当前仅这两块的物理输入就绪，V/R尚待RTL，节点内并发因实际依赖低于六；未启动虚构或重复工作占资源。本任务六旧baseline+两新allocation共八，其他成员不计入且未动。T真实最终GDS渲染和386个M10信号pin实际导出通过，图/pin已保存delivery/T。五块仍未全部完成，V/R实现与硬化、M/S最终全流程/独立完整接收继续，Issue保持in_progress、草稿PR122未合并。
+
 2026-10-27 CST：用户明确冻结M/V/R/S/T五种基础宏，每种一个实现，要求全部最终M1–M10布局布线。裸M8/混合VS不是最终边界；旧四边界计划已归档，完整系统/两产品/一般十二层提取移至后续。92426在PENDING、0CPU、0elapsed时因边界改定取消，未执行EDA。T选定C实际叶块证据保留；新M/V/R/S尚未最终P&R通过。当前规格与执行入口为docs/BLOCK_LIBRARY_V1.md、docs/plans/block-v1-library-implementation.md，任务继续in_progress。
 
 # 当前状态

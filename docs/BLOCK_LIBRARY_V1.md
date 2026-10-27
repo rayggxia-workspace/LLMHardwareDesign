@@ -30,7 +30,7 @@ S16 采用 radix128：低两位digit为0..127，最高digit为-2..1，权重1/12
 
 命令口 `valid/ready/op4/index6/data128`，响应 `valid/ready/data128/error/saturated`。LOAD_A一拍、LOAD_B每行一拍；START格式A/B分别S8/S16、clear、有效K/N，内部每digit-pair为乘积寄存/归约寄存/累加3拍，最后一拍应答：1/3/9步分别4/10/28拍（相对于接受命令后的周期）。读部分和每拍两路S64。MERGE共享一个S64×S32缩放乘法器，scale、左移和清上下文参数明确，8路预览后统一提交，溢出拒绝且不部分改写；跨组scale必须被映射成同一声明单位下的整数multiplier/shift，否则先在V生成合法元数据，不隐含任意浮点scale。
 
-组间使用S128防止提前RQ；最终 read_final 对总和只做一次 RNE 右移，再饱和为S8/S16/S32并以每lane S32容器传输，响应报告饱和。MERGE的确切RTL调度和最终读出延迟须在实现回执中与接口表对齐；未通过前不报告完整 M 已完成。
+组间使用S128防止提前RQ；最终 read_final 对总和只做一次 RNE 右移，再饱和为S8/S16/S32并以每lane S32容器传输，响应报告饱和。本版MERGE在接受后17拍应答；LOAD/READ在接受边沿产生可保持响应，消费该响应后下一拍才可接受后继命令。RTL测试已逐次检查4/10/28拍MAC与17拍MERGE，不将这些逻辑周期当作已通过实际时钟。
 
 ## V：一个宏、三条固定内部通路
 
@@ -67,3 +67,9 @@ T采用原transaction6k，384×128bit=6144B，begin 1..384words、连续写、�
 M/V/R为新设计，S为独立存储硬化，T复用实际叶块证据。没有证据的功能、延迟、误差、P&R填“待完成”。通用十二层提取、完整模型部署和应用质量不混为单块验收；同时不以原语通过冒充所有模型算子已覆盖。
 
 开源结构参考：[llaccel复用记录](decisions/2026-10-27-block-v1-compute-reuse.md)、[openTPU固定mxu](https://github.com/FeSens/openTPU/blob/91df41092f612361c5bc22f83b31d23382ffabb0/rtl/mxu/otpu_mxu.sv)。采用结构参考不构成复制RTL或自动继承验证。
+
+## 22:05 CST 实际执行增量
+
+M RTL数值/协议测试已通过1200组tile、282066检查，S已通过全1024地址和10000随机事务。实际回执见[186](../work/YUZE-LU/121/results/run186-five-macro-215030/index.json)。M77,203个标准单元；S完整展开376,059个单元/131,201 DFF，[190快照](../work/YUZE-LU/121/results/run190-five-macro-220425/index.json)明确计入131072bit payload和响应控制；映射面积978028.268um²不是最终宏外框。M选定外框560×560um，S1610×1610um，均由完整映射面积/0.40+40um边界、向上取整10um规则一次生成；后续修复保留同一外框，不另立裕量版本。
+
+M189/92444实际推进到CTS完成/route，S190/92446实际开始独立原生floorplan，均未最终验收。原186/187/188的脚本/元数据失败完整保留。T的真实最终全层版图图见[PNG](../work/YUZE-LU/121/delivery/T/transaction6k-C.png)，386个实际M10信号端点见[pin清单](../work/YUZE-LU/121/delivery/T/pins.json)。V/R仍待新RTL、具体延迟/近似封存和最终P&R；不能套用旧C8或M/S/T资格。
