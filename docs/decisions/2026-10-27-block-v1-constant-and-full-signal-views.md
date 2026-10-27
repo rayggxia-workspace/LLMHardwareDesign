@@ -49,3 +49,9 @@
 每个新导入与最终ODB都另扫实际已使用网驱动；严格接收原14条无驱动为失败、T6K与新导入为通过，并拒绝五种损坏/缺失驱动报告。121完整零延迟功能不替代120全DRC/STA、PG、电气、宏视图与边界寄生；三初态不替代四态或延迟仿真。118及121原终态索引在 `work/YUZE-LU/121/results/run118-terminal/index.json` 与 `run121-terminal/index.json`。
 
 用户补充授权适当参考 openTPU、llaccel 和其他优质项目，也包括计算资源模块。当前优先从本仓库已完成的 [openTPU同资源分块对照](../experiments/issue-15-opentpu-comparison.md) 复用宏RC接续、完整边界负载和修复计价方法；[既有llaccel/openTPU回归](../experiments/issue-7-parallel-blocks-wave2.md)供RAM延迟/握手与计算控制对照。具体乘法/累加/SFU替换必须逐项核有符号位宽、完整K、精确乘积后一次RNE、背压与复位/所有权；直接换成较窄MAC、分段局部量化、不同指数近似或synthetic RAM会改变本版合同，不能作为等价捷径。当前没有从未核验上游复制新RTL，也未新增另一套阵列。可复用的设计与后续具体采用分别记录，不把参考项目的通过当成本项目新网表通过。
+
+## 120 完整独立接收终态
+
+2026-10-27 11:06 CST 新终态：120/92182独立完整接收自然失败47:19，TotalCPU51:07.095、MaxRSS19936M。完整DRC剩23项：M10间距19、M9间距4，天线类别未报告违例；严格原始/最终LEC、RC覆盖、PG及189个保护实例原根网等通过。时序门槛另因189个输入-only ANTENNA_X1/A被枚举为无有限setup/hold端点而失败，须用实际Liberty/STA端点资格证明并保持真实数据端点覆盖，当前不豁免。有限端点最差setup5.203448ns/hold.005355ns，电气计数零仍不能覆盖上述失败。完整原报告及索引保留，未冻结宏。此刻本任务6个allocation运行，128两路仍placement。
+
+证据：`work/YUZE-LU/121/results/run120-terminal/index.json`。121完整信号视图零延迟三初态功能通过仍成立；不能代替120物理失败。后续先定位真实23项间距与保护输入的时序端点类型，任何重运行须沿用实际完整保护负载和原全部门槛。
