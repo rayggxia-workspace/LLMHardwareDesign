@@ -9,7 +9,7 @@ def source(out,kind,original=False,repaired=False):
     from io_slots import file_sha
     assert kind in ('m','s','r','v')
     assert not (original or repaired) or kind=='m'
-    number=(('189' if original else '193' if repaired else '203') if kind=='m'
+    number=(('189' if original else '193' if repaired else '205') if kind=='m'
             else dict(s='190',r='196',v='203')[kind])
     task=(('five-macro-route-m' if original else 'five-macro-repair-m-hold' if repaired else 'five-macro-finish-m-patch') if kind=='m'
           else 'five-macro-route-'+kind)
