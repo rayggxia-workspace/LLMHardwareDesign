@@ -2,12 +2,12 @@
 
 补充验证：[230 原样 RTL 命令组合回执](../results/v-composition-044706/index.json)已通过320个成对RoPE tile、65535元素跨命令统计与三项错误保持检查，共93091检查/68868周期。使用既有92523节点永久空余的80–95 CPU、约25秒，无新allocation；生产队列Store记录v-composition=PASSED。R196最终回执已通过，230/92545已接续三项独立验收并跳过这项已通过补测，224仍不提交。补测不是最终网表实测或模型质量结论，V228仍须完整同源验收。
 
-更新时间：2026-10-28 06:36 CST。Refs [Issue #121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)、[PR #122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)。**M、V、S、T 已有通过独立接收的单块结果；M/S/T完整原生几何已齐，V几何导出及R剩余验收继续，五宏整体尚未交付完成。** 每种仅一个基础实现；当前修复只处理实测缺陷，没有另设裕量版本。
+更新时间：2026-10-28 06:42 CST。Refs [Issue #121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)、[PR #122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)。**M、V、S、T 已有通过独立接收的单块结果；四块完整原生几何已齐，R剩余验收继续，五宏整体尚未交付完成。** 每种仅一个基础实现；当前修复只处理实测缺陷，没有另设裕量版本。
 
 | 宏 | 基础资源与功能 | 外框 µm | 当前有效结果及剩余项 |
 | --- | --- | --- | --- |
 | M | 64个S8基础乘法器；8路局部归约/S64累加；S16分解、S128跨组合并；操作数缓冲与RNE/饱和 | 560×560 | [最终文件、接点及版图](M/README.md)：同源四门通过，待项目审查 |
-| V | 8路逐元素/统计；2路独立函数流水线；U128组级单元；2KiB回放；有限TopK | 1210×1210 | [最终文件、接点及版图](V/README.md)：228同源四门及最终交付已通过，完整原生几何导出中；相同RTL/外框/接口，仅修实测7BUF及1DFF驱动和PG连接次序，未沿用旧源资格 |
+| V | 8路逐元素/统计；2路独立函数流水线；U128组级单元；2KiB回放；有限TopK | 1210×1210 | [最终文件、接点及版图](V/README.md)：228同源四门、最终交付及完整原生几何均通过；相同RTL/外框/接口，仅修实测7BUF及1DFF驱动和PG连接次序，未沿用旧源资格 |
 | R | 8路共享GDN/SSM通路；8KiB活动+8KiB影子状态；四抽头卷积与历史 | 1870×1870 | 196原生最终全流程通过；230/92545在node26并行DRC/最终功能，208独立物理已通过，严格LEC及交付按真实子回执补位；尚未最终接收 |
 | S | 16KiB、1024×128bit、单1RW标准单元工作存储 | 1610×1610 | [最终文件、接点及版图](S/README.md)：225同源四门、最终交付及完整原生占用/OBS均通过，待项目审查 |
 | T | 6KiB、384×128bit标准单元结果交接；所有权/背压/提交/撤销/消费释放 | 1120×1120 | [既有C叶块最终文件、接点及版图](T/README.md)：沿用选定单块接收，完整原生几何已齐 |
@@ -28,7 +28,7 @@
 
 每块最终接收必须绑定同一份最终文件：全部真实端点时序/电气/寄生、PG与连接、精确M10接点；全片原生DRC及完整FreePDK45 GDS deck；三初态最终网表功能；严格LEC。通过后提供最终Verilog/SDC/DEF/ODB/GDS/SPEF的服务器位置、大小和SHA-256，仓库保存实际接点及版图图。大体积数据库保存在授权服务器目录，不将中间布局当作最终交付。
 
-M/S/T完整原生wire/via/PG/pin/OBS与M10底部几何合同见[M](M/native-geometry/README.md)、[S](S/native-geometry/README.md)、[T](T/native-geometry/README.md)。普通网络RECT已据封存DEF补核；原geometry目录仅保留迭代器历史。候选LEF的抽象覆盖、通用层次Lib和M11/M12系统资格仍为false。V完整几何由228在本块验收后生成；R由225原队列对应依赖生成。225已完成S且等待真实R交付而自然释放，后续仅在依赖ready时以共享state/claim接续未领取R几何；旧V222几何已过时，不作最终V入口。
+M/V/S/T完整原生wire/via/PG/pin/OBS与M10底部几何合同见[M](M/native-geometry/README.md)、[V](V/native-geometry/README.md)、[S](S/native-geometry/README.md)、[T](T/native-geometry/README.md)。普通网络RECT已据封存DEF补核；原geometry目录仅保留迭代器历史。候选LEF的抽象覆盖、通用层次Lib和M11/M12系统资格仍为false。V完整几何已由228在本块验收后生成并通过；R由225原队列对应依赖生成。225已完成S且等待真实R交付而自然释放，后续仅在依赖ready时以共享state/claim接续未领取R几何；旧V222几何已过时，不作最终V入口。
 
 R交付接续：旧222控制allocation已自然释放，R物理208通过，交付尚未领取；[231暂存证据](../results/r-delivery-resume-staged-052218/index.json)复用原222不可变队列和claim锁，仅等207三门真实通过后提交，目前零新allocation。它不改变任何宏实现，也不把旧V失败转移为R失败。
 
