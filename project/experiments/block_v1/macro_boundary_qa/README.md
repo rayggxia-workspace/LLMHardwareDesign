@@ -182,3 +182,9 @@ run168 的新合同显式增加 raw/corrected Lib、supply correction、typed PG
 原型限定一个 source design 和一次导出/进程；每个 pin/edge/scene/min-max 只允许一个 native driver arc，否则拒绝。它不是通用签核工具或已集成的主线功能。沿用前节的独立 export 工具/构建收据参数运行小控制和候选 probe，测量仍用原 STA。实际每路 T6K 每份 max/min 模型取得 756 条原生分量，完整保留在 SHA 索引。
 
 四个 DFF 控制和两个 exact reread、真实 T6K A/C 均实际执行。低 R/同驱动 pair 通过原 1 ps 诊断；T6K A/C 超差项从原958/900降到192/110，模型仍未取得完整资格。新控制总数105。报告、原始分量/工具/模型/测量索引和源补丁见 `work/YUZE-LU/127/原生驱动分量去嵌入报告.md`、`arc-driver-probe-summary.json`、`native-driver-component.patch`。
+
+## 13. 输入残差分解与输出线阻控制
+
+`input_driver_residual.py --probe PROBE_DIR --measured MEASURED_DIR --output NEW_JSON` 复验同源 probe 输入/输出、原候选、原始 pair TSV/SPEF 和加载绑定，再用源 driver 分量与父层实际 input arrival−原 SDC input delay 解释输入 slack 差。只支持当前 canonical 单时钟 T6K SDC、理想父层与此原型，两份导出日志上下文必须相同；缺项、重复、不同源或不支持语法拒绝。它不修改观察值、模型或验收结果。实际 A/C 各756项输入观测，解释后最大残差0.006171/0.006513ps。
+
+`native_control.py --output-resistance-ohm N` 独立改变输出 SPEF 电阻，默认1Ω。实际1Ω/20kΩ共八个model pair、四个exact reread；后者输出 slew 差44.883ps、setup乐观差25.454305ps。T6K C的106个slew超差全部来自输出，不以输入改善豁免。控制总数112，详见 `work/YUZE-LU/127/输入残差分解与输出线阻控制报告.md` 与 `input-output-residual-summary.json`。

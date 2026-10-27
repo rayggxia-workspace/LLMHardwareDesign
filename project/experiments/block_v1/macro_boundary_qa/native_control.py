@@ -1,6 +1,7 @@
 """Actual DFF/Liberty/SPEF/export/STA controls; no routed macro qualification."""
 import argparse
 import json
+import math
 import os
 from pathlib import Path
 import subprocess
@@ -10,7 +11,8 @@ from audit import file_sha, require
 from native_pair import run, tcl_list, verify, native_log_diagnostics
 
 
-def probe_spef(resistance):
+def probe_spef(resistance, output_resistance_ohm=1):
+    require(all(math.isfinite(float(r)) and float(r) >= 0 for r in (resistance, output_resistance_ohm)), 'control resistance')
     header = '''*SPEF "IEEE 1481-1998"
 *DESIGN "qa_probe"
 *DATE "fixed control"
@@ -30,7 +32,7 @@ clk I
 d I
 q O
 '''
-    for name, pin, direction, value in (("clk", "CK", "I", 1), ("d", "D", "I", resistance), ("q", "Q", "O", 1)):
+    for name, pin, direction, value in (("clk", "CK", "I", 1), ("d", "D", "I", resistance), ("q", "Q", "O", output_resistance_ohm)):
         header += f'''*D_NET {name} 2
 *CONN
 *P {name} {direction}
@@ -59,7 +61,7 @@ set_load 2 [get_ports q]
 '''
 
 
-def control(executable, library, output, parallel=1, export_drive="original-sdc", export_executable=None, export_probe_receipt=None):
+def control(executable, library, output, parallel=1, export_drive="original-sdc", export_executable=None, export_probe_receipt=None, output_resistance_ohm=1):
     executable, library, output = Path(executable).resolve(), Path(library).resolve(), Path(output).resolve()
     require((export_executable is None) == (export_probe_receipt is None), 'export probe tool/build receipt pair')
     exporter = executable if export_executable is None else Path(export_executable).resolve()
@@ -78,7 +80,7 @@ def control(executable, library, output, parallel=1, export_drive="original-sdc"
                "control_script_sha256": file_sha(Path(__file__)),
                "qualified_hard_macro": False, "flat_abstract_boundary_qualified": False,
                "export_executable_sha256":file_sha(exporter),"export_probe_receipt_sha256":proof_hash,
-               "cases": [], "export_drive": export_drive,
+               "cases": [], "export_drive": export_drive, "output_wire_resistance_ohm": output_resistance_ohm,
                "scope": "Actual native small DFF controls; not placed/routed C8/T6K or full macro qualification"}
     try:
         (output / "native_control.py").write_bytes(Path(__file__).read_bytes())
@@ -87,7 +89,7 @@ def control(executable, library, output, parallel=1, export_drive="original-sdc"
             folder.mkdir()
             (folder / "flat.v").write_text("module qa_probe(input clk,d,output q); DFF_X1 ff(.CK(clk),.D(d),.Q(q)); endmodule\n")
             (folder / "wrapper.v").write_text("module qa_wrapper(input clk,d,output q); QA127_MACRO macro0(.clk(clk),.d(d),.q(q)); endmodule\n")
-            (folder / "source.spef").write_text(probe_spef(resistance))
+            (folder / "source.spef").write_text(probe_spef(resistance, output_resistance_ohm))
             (folder / "BUF_X2.sdc").write_text(sdc("BUF_X2"))
             (folder / "BUF_X1.sdc").write_text(sdc("BUF_X1"))
             (folder / "transition-export.sdc").write_text("\n".join(
@@ -183,8 +185,9 @@ def main():
     parser.add_argument("--export-drive", choices=("original-sdc", "matched-transition"), default="original-sdc")
     parser.add_argument('--export-executable',type=Path)
     parser.add_argument('--export-probe-receipt',type=Path)
+    parser.add_argument('--output-resistance-ohm',type=float,default=1)
     args = parser.parse_args()
-    result = control(args.executable, args.library, args.output, args.parallel, args.export_drive,args.export_executable,args.export_probe_receipt)
+    result = control(args.executable, args.library, args.output, args.parallel, args.export_drive,args.export_executable,args.export_probe_receipt,args.output_resistance_ohm)
     print(json.dumps(result, indent=2, allow_nan=False))
 
 
