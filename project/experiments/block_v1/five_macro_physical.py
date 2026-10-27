@@ -33,6 +33,34 @@ def implement(root,out,cpus,run,kind):
     platform=flow/'platforms/nangate45'
     lib=platform/'lib/NangateOpenCellLibrary_typical.lib'
     assert file_sha(lib)==mapping['liberty_sha256']
+    structural_source=mapped/'mapped.v'
+    if kind=='m':
+        # Reuse the existing signed-metadata adapter. OpenSTA's gate reader
+        # rejects `wire signed`; do not change any cell or pin connection.
+        import copy
+        from structural_view import unsigned,compare
+        mapped_json=mapped/'mapped.json'
+        mapped_receipt=json.loads((mapped/'receipt.json').read_text())
+        assert file_sha(mapped_json)==mapped_receipt['outputs']['mapped.json']
+        expected=json.loads(mapped_json.read_text());metadata=unsigned(expected)
+        (out/'unsigned.json').write_text(json.dumps(expected)+'\n')
+        script='read_json '+str(out/'unsigned.json')+'\nhierarchy -check -top '+top+'\n'
+        script+='write_verilog -noattr -noexpr -norename structural.v\nwrite_json structural.json\n'
+        script+='design -reset\nread_liberty -lib '+str(lib)+'\nread_verilog structural.v\n'
+        script+='hierarchy -check -top '+top+'\nwrite_json reparsed.json\n'
+        (out/'structural.ys').write_text(script);run(['yosys','-s',str(out/'structural.ys')],'structural.log')
+        expected=json.loads((out/'structural.json').read_text())
+        observed=json.loads((out/'reparsed.json').read_text());proof=compare(expected,observed)
+        negative=copy.deepcopy(observed);cell=next(iter(negative['modules'][top]['cells'].values()))
+        values=next(v for v in cell['connections'].values() if v)
+        values[0]='1' if values[0]!='1' else '0'
+        rejected=False
+        try:compare(expected,negative)
+        except AssertionError:rejected=True
+        assert rejected
+        proof.update(metadata=metadata,single_pin_bit_negative_rejected=True)
+        (out/'structural-proof.json').write_text(json.dumps(proof,indent=2)+'\n')
+        structural_source=out/'structural.v'
     native=platform/'lef/NangateOpenCellLibrary.tech.lef'
     technology=json.loads((root/'project/experiments/block_v1/technology.json').read_text())
     assert file_sha(native)==technology['native_tech_sha256']
@@ -72,7 +100,8 @@ def implement(root,out,cpus,run,kind):
     pins+='if {[lsort $actual_pins] ne [lsort [dict keys $planned_pins]]} {error "Exact macro pin inventory mismatch"}\n'
     (out/'pins.tcl').write_text(pins)
     (out/'input.sdc').write_text(constraints(budget))
-    with slot(base):shutil.copyfile(mapped/'mapped.v',out/'input.v')
+    with slot(base):shutil.copyfile(structural_source,out/'input.v')
+    input_sha=file_sha(out/'input.v')
     nickname='bv1_'+top
     config='export PLATFORM = nangate45\nexport DESIGN_NAME = '+top+'\nexport DESIGN_NICKNAME = '+nickname+'\n'
     config+='export VERILOG_FILES = '+str(out/'input.v')+'\nexport SDC_FILE = '+str(out/'input.sdc')+'\n'
@@ -104,7 +133,7 @@ def implement(root,out,cpus,run,kind):
     save()
     for number,stage in enumerate(('do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish')):
         run(command+[stage],'%02d-%s.log'%(number,stage));result['stages'].append(stage)
-        assert file_sha(out/'input.v')==mapping['mapped_sha256'];save()
+        assert file_sha(out/'input.v')==input_sha;save()
     for suffix in ('v','sdc','def','odb','spef'):
         p=results/('6_final.'+suffix);assert p.is_file()
         result['final_files'][p.name]=dict(path=str(p),sha256=file_sha(p),bytes=p.stat().st_size)

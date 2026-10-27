@@ -1,0 +1,36 @@
+{
+  "schema": "block-v1-node-queue/1",
+  "node_cpus": 96,
+  "default_task_cpus": 16,
+  "memory_guard_gib": 16,
+  "state_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-189/node-queue-state.json",
+  "tasks": [
+    {
+      "id": "m-route",
+      "mode": "five-macro-route-m",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-189/tasks/five-macro-route-m",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-189/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "64GiB provisional admission estimate, not measured peak. Only M route is ready here after187 mapping/186 test; S independently running188, V/R RTL unavailable. This is an explicit dependency limit, no arbitrary concurrency reduction.",
+      "report": "five-macro-native-flow.json",
+      "after": [],
+      "receipts": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-187/tasks/five-macro-matrix-map/receipt.json",
+          "mode": "five-macro-matrix-map",
+          "reports": [
+            "five-macro-matrix-map.json"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/tasks/five-macro-matrix-test/receipt.json",
+          "mode": "five-macro-matrix-test",
+          "reports": [
+            "five-macro-matrix-test.json"
+          ]
+        }
+      ]
+    }
+  ]
+}
