@@ -3,6 +3,7 @@
 read_db $::env(PINXY_ODB)
 set out $::env(PINXY_FINAL_OUT)
 write_db $out/clean.odb
+report_wire_length -detailed_route -summary -file $out/wire_length.csv
 set b [ord::get_db_block];set t [ord::get_db_tech]
 set f [open $out/technology.tsv w]
 puts $f "dbu_per_um\t[$b getDbUnitsPerMicron]"

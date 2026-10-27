@@ -8,6 +8,7 @@ def one(case,rev,plan):
     original=ROOT/'trials'/rev/(case+'-'+plan);trial=original/'execution.json'
     if not trial.exists():print('NOT_READY',original,flush=True);return
     j=json.loads(trial.read_text())
+    if not j.get('finished_utc'):print('TRIAL_STILL_RUNNING',original,flush=True);return
     src=Path(CFG['physical_blocks'][case]['odb']) if plan=='A' else original/'routed.odb'
     if not src.exists():print('NO_COMPLETED_ROUTE',original,flush=True);return
     out=ROOT/'finalized'/rev/(case+'-'+plan);out.mkdir(parents=True,exist_ok=False)
