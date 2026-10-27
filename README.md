@@ -1,6 +1,8 @@
 # LLMHardwareDesign：预制计算底座研究
 
-本项目研究面向多个计算图的预制计算底座：预先确定计算 Block 和部分物理资源，再通过有限的金属／通孔层定制跨 Block 互联。当前处于**架构定义与研究方案整理阶段**；具体工艺、Block 库、定制层集合和实现工具链仍待确定。性能、能耗和成本优势是待验证目标，不是已有结论。
+本项目研究面向多个计算图的预制计算底座：预先确定计算 Block 和部分物理资源，再通过有限的金属／通孔层定制跨 Block 互联。第一版采用 **Nangate45 原生 M1–M10、via1–via9 预制，自建研究层 M11/M12、via10/via11 后定制**；Block 实现与表征正在推进，方案确定不等于实现已验收。性能、能耗和成本优势仍待验证。
+
+**当前阶段提示：叶块冻结不等于共同底座冻结。** 首轮先形成可用 Block 与接口；同类实例数量、不同裕量物理版本的组合、排布和固定预连线由共同底座阶段确定。共同底座冻结后，不同产品只改变声明允许的定制图形。详见[当前实施边界与分阶段冻结](docs/decisions/0004-block-library-base-freeze.md)；具体实现范围和验收状态以 [Issue #121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121) / [PR #122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122) 为准。
 
 ## 从哪里开始
 
