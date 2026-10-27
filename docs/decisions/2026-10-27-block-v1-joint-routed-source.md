@@ -15,3 +15,10 @@
 资源沿用96CPU节点队列、默认16CPU/项，两个真实独立科学fixture各六个单线程原生变体按就绪并行。只有两份已合格科学输入时，不为填核新增无研究目的场景；结束立即释放节点。4GiB/项是暂定预算，180短采样不作为精确峰值或上界。本任务现有七allocation，计划182是第八个，其他成员不计入且未操作。
 
 可复查输入/配置：work/YUZE-LU/121/node-queue-182.json、joint-routed-controls-182.json。代码joint_routed.py与joint_routed_geometry.py。原生LEF/DEF/ODB工具参考：https://openroad.readthedocs.io/en/latest/main/src/odb/README.html 。实际安装版本仍以执行receipt与命令日志为准。
+
+
+## 182实际通过与直接节点位置门
+
+182/92402实际COMPLETED/50秒/CPU5.432秒/Slurm组MaxRSS12280K；两路真实wire/via/pin逐体元并集及六种SPEF原生读回/反例通过，输入输出索引已收集。source2296bebb3a4ee3115ff0f6d2f40c19f29f45a7ba，archive8ebd97412c48ebd69e9347ae2d51dcc68d1921c7674f919225e3ae46314ef24c。182节点位置依据生成的DEF与并集，仅凭并集仍不能排除锚点在导体内移动/交换，而电气值与总体几何保持相同。因此新增独立joint_node_binding.py直接读取实际MPin矩形及实例getTransform，按Iterm ID核对layer及二倍DBU表示的实际中心。
+
+新183准备以182封存ODB和已接收SPEF做原生正例、锚点移2DBU、同网同层左右锚点交换。后两者必须保持完整导体并集和逐节点电气值，却被物理ID/位置门拒绝。这是来源完整性门，不能以零几何差替代；截至本记录183尚未运行。上述校验只支持此资格fixture的单矩形pin，其他形状显式拒绝。

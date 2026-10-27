@@ -258,3 +258,6 @@ RAW_LIB_FOLDER需提供已按164收据封存的candidate164-a.lib/c.lib。只读
 
 
 新增`joint-routed-branch` / `joint-routed-via`：真实wire/via/pin三维导体并集逐体元匹配封存场几何，再在routed ODB原生导入六个SPEF正反例。九个纯几何控制通过，实际运行尚待182。via为单独科学fixture假设，无生产/完整DRC/一般提取/拼接资格。合同见docs/decisions/2026-10-27-block-v1-joint-routed-source.md。
+
+
+新增joint-node-binding-branch/via从182封存routed ODB原生接收实际变换后的pin位置/层/ID；183准备运行，原生锚点位移/交换反例必须在并集与电气值保持相同下被拒绝。182真实导体并集与耦合读回已实际通过。
