@@ -14,7 +14,7 @@
 
 ## 先定位实际导体再修复 DRC
 
-094C 保留全部 61 项独立 DRC：三个 M10 间距和 58 个天线违例。技术 LEF 未给出天线规则，库中的 ANTENNA_X1 扩散面积为 0；不能因 router 报零天线而豁免独立检查，也不能编造 diode/gate/diffusion 面积。
+094C 保留全部 61 项独立 DRC：三个 M10 间距和 58 个天线违例。技术 LEF 未给出天线规则，库 LEF 中 ANTENNA_X1 的 ANTENNADIFFAREA 元数据为 0（不等同于实际 GDS 扩散区为零）；不能因 router 报零天线而豁免独立检查，也不能编造 diode/gate/diffusion 面积。
 
 新增只读 `native_drc_locate.py/.tcl`：绑定失败接收 receipt、原 lyrdb、源物理 receipt、输入哈希和最终 ODB。对原始 marker 建立带一 DBU 包络的窗口，在实际 native wire/via/PG/BTerm 矩形中保留全部相交候选，导出候选网络及其端口、ITerm、master 和实例包围盒。运行前后重核原 ODB/报告哈希；不修改、修复或导出新数据库。
 
@@ -48,3 +48,20 @@
 `native_cell_gate.py` 绑定平台 LEF/GDS/Liberty/DRC 文件哈希及 094/103 证据。正式正例必须与原单负载输入网的 0.0205/0.02625um² DRC 门面积一致，并读回真实 Liberty 面积、非反相函数及输入/输出电容；所有输入再次核哈希。该探针不修改原生平台或设计，不能直接证明任何修复合格。KLayout 几何连接使用[官方 Region merged/interacting API](https://www.klayout.de/doc/code/class_Region.html)。
 
 实际 Liberty SHA `8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1` 的解析正例已通过：例如 BUF_X8 输入电容 6.585178fF、面积 3.458um²、输出函数 A；BUF_X1 输入 0.974659fF、CLKBUF_X1 输入 0.77983fF。九种缓冲器均实际读取，重复/未闭合 group 被拒，带引号和注释的花括号正确处理。原始库留本地临时资料与服务器，不复制整库进仓库。GDS 门面积与当前设计修复资格仍待安装工具运行。
+
+
+## 2026-10-27 09:40 CST：实际保护单元与完整修复候选
+
+108/92164（13秒）实际门面积探针通过，记录SHA `d79f0c3943ef1d13a66edbb6a2d99feff9e673110a65b04c0dd9552a01152989`。ANTENNA_X1实际GDS的A连接到0.0081um²原deck定义的扩散区，Liberty面积0.266um²、A电容0.023429fF。107的首次探针因引用服务器不存在的本地摘要文件失败；已保留，108改读receipt绑定的原lyrdb，未改平台或门槛。不能再将LEF中0.0元数据解释为实际没有二极管。
+
+109/92166原完整网表LEC出现一个未匹配合成边界而按严格接收器失败，原日志保留。110/92169完成19秒：原库BUF_X1与ANTENNA_X1在真实长M1线上的四种GDS均由未修改的完整FreePDK45.lydrc检查，接通二极管的case全部DRC为零；无二极管、断线、去掉二极管contact三种case均有一个METAL1_ANTENNA。原平台deck没有面积加成factor，其裸diode层调用语义见[KLayout官方说明](https://www.klayout.org/downloads/master/doc-qt5/about/drc_ref_netter.html)。这只资格了真实保护连通机制，不是完整Block通过。110记录SHA `d15e38eb18d56d299e783415448ac66a52b0cecd4251e616eecd75c4055d3324`；短探针Slurm MaxRSS记0属于缺少可用采样，不报告实际内存为零。
+
+新增native_logic_projection.py只从布尔比较视图移除实际Liberty确认为仅A输入、无输出/函数/状态的ANTENNA_X1。Yosys实际解析的完整图保留全部其他单元、所有端口/别名/常数/时序引脚，逆操作必须逐项重建原图，导出后再次解析并以原structural_view.compare核所有引脚比特。完整物理网表、单元、布局、PG、RC、STA和最终门级模拟均保留保护单元与真实负载。没有放宽native_formal.inspect：投影视图仍须完整正向边界、零未匹配、显式UNSAT/IDENTICAL。110的三种不安全投影被拒，实际把BUF输入改成常零仍由严格LEC检出SAT/DIFFERENT。109失败不能改写为通过；C8原有两个未匹配输出也未获豁免，其最终网表中没有ANTENNA_X1，仍需另行定位。
+
+113/92170在实际080封存CTS完成插入/连接/合法化和pin_access，1:52、MaxRSS1590156K。189个已使用的非clock输入各接一个真实ANTENNA_X1，逐实例原根网保持；新增master面积50.274um²、总输入电容4.428081fF，后续普通修复另按实际完整库存计价。保护root net防止hold修复将二极管移到新buffer下游；原首级buffer之后仍可修复。clock保持原合同，未使用端口不凭空创建逻辑。M10范围的via-in-pin选项已在实际安装版验证；其enclosure约束见[OpenROAD官方文档](https://openroad.readthedocs.io/en/latest/main/src/drt/README.html)。小探针没有完成路由/完整STA/PG/DRC，不称合格macro。
+
+111/92171使用源码993efe5、归档 `3439b746f22fa0073313a7e85e44bfdc324caa54afaf8c3045d39da6c555be55`（131成员/901120字节），node20/32CPU运行完整route/final。依110/113通过，实际make读回CAP_MARGIN=40、HOLD_SLACK_MARGIN=0.005、PRE_GLOBAL_ROUTE_TCL和VIA_IN_PIN_MIN/MAX_LAYER=metal10；SDC、Liberty、pin XY、原生tech/RCX、die/core/面积与全部验收不变。112同源码独立接收已部署，尚无job；最终保护实例必须逐个仍在原根网、全部计价并过PG、DRC、RCX/STA/功能。当前新增保护是预制修复，尚未冻结硬件，不是后定制增加有源器件。
+
+105/92157完成23:11、MaxRSS21286428K；106独立STA中104356端点无负值、最差hold约+2.42ps、setup约+5.20134ns，cap/slew计数0。106/92165仍在完整独立DRC，因此不能冻结。094A/92149完整旧终态FAILED 39:50、MaxRSS7296544K，210项分为M9间距5、via9间距1、M10间距15、天线189（M4=10/M6=12/M7=26/M8=31/M9=71/M10=39），原四hold负端点保留。原lyrdb SHA `c230a46b501532df049929b4bc03e1ec223336650355bfaa0cd4dad90d250804`。114在独立新run对这210项的真实wire/via/PG/port矩形只读定位，cut层也必须实际识别，不猜间距归属。
+
+证据入口：work/YUZE-LU/121/results/run108-first-native、run110-terminal、run113-followup、run105-terminal、run106-sta-intermediate、run094a-terminal。索引可省略重复未使用输出名称表，保留数量/全部门槛/时序极值与原完整服务器文件SHA/bytes；原报告及失败不删改。完整P0–P6、C8最终功能、宏/边界、一般分布式RC及拼接、共同底座、两产品和参数库继续，仍无合格物理Block。
