@@ -6,6 +6,7 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 import subprocess,os,json,hashlib,datetime,sys,re,traceback
 from run_exports import ROOT,CFG,IMAGE,BIN,sha
+DRIVER=Path(__file__).resolve().parent
 
 def config_values(path,seen=None):
     seen=set() if seen is None else seen
@@ -32,22 +33,28 @@ def one(case,plan,revision):
     libtcl=out/'libs.tcl';libtcl.write_text(''.join('read_liberty {'+p+'}\n' for p in libs))
     sdc=src.parent/('5_1_grt.sdc' if case.endswith('_aux') else '6_final.sdc')
     assert sdc.exists(),sdc
-    inputs=ROOT/'inputs/trial-inputs-r03'
+    inputs=ROOT/'inputs'/os.environ.get('PINXY_INPUT_SET','trial-inputs-r03')
+    if plan=='A_replay' and not (inputs/(case+'-'+plan+'.tcl')).exists():
+        raise RuntimeError('A_replay needs explicitly frozen A coordinates')
     receipt={'case':case,'plan':plan,'stage_scope':'8 selected pins; all remaining pins stay original; pure XY, no buffering/resizing',
        'source_odb':str(src),'source_sha256':observed,'source_config':str(source_config),'source_sdc':str(sdc),'libs':libs,
-       'input_sha256':{str(p):sha(p) for p in [src,sdc,source_config,inputs/(case+'-'+plan+'.tcl'),ROOT/'code/physical_trial.tcl']},
+       'input_sha256':{str(p):sha(p) for p in [src,sdc,source_config,inputs/(case+'-'+plan+'.tcl'),DRIVER/'physical_trial.tcl']+list(map(Path,libs[1:]))},
        'scheduler_job':os.environ['SLURM_JOB_ID'],'allocated_cpus':os.environ['SLURM_CPUS_PER_TASK'],'openroad_threads':4,
-       'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'driver_commit':(ROOT/'code/driver_commit.txt').read_text().strip(),
+       'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),
        'parent_handoff_target_layer':'UNKNOWN; this experiment cannot qualify parent access'}
-    env='PINXY_OUTPUT={},PINXY_ODB={},PINXY_SDC={},PINXY_LIBS_TCL={},PINXY_RELOCATIONS={},PINXY_PLAN={},PINXY_TOP_LAYER={},OMP_NUM_THREADS=4'.format(
-        out,src,sdc,libtcl,inputs/(case+'-'+plan+'.tcl'),plan,8 if case.endswith('_aux') else 10)
+    env='PINXY_OUTPUT={},PINXY_ODB={},PINXY_SDC={},PINXY_LIBS_TCL={},PINXY_RELOCATIONS={},PINXY_PLAN={},PINXY_TOP_LAYER={},PINXY_DRIVER={},PINXY_ACCESS_OUT={},OMP_NUM_THREADS=4'.format(
+        out,src,sdc,libtcl,inputs/(case+'-'+plan+'.tcl'),plan,8 if case.endswith('_aux') else 10,DRIVER,out/'access.tsv')
     cmd=['singularity','exec','--cleanenv','--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
          '--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro',
-         '--home',str(ROOT/'home'),'--pwd',str(out),'--env',env,IMAGE,BIN,'-threads','4','-no_init','-exit',str(ROOT/'code/physical_trial.tcl')]
+         '--home',str(ROOT/'home'),'--pwd',str(out),'--env',env,IMAGE,BIN,'-threads','4','-no_init','-exit',str(DRIVER/'physical_trial.tcl')]
     receipt['command']=cmd
     (out/'execution.json').write_text(json.dumps(receipt,indent=2)+'\n')
     with (out/'openroad.log').open('x') as f:result=subprocess.run(cmd,stdout=f,stderr=subprocess.STDOUT)
     receipt['returncode']=result.returncode;receipt['finished_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
+    if (out/'access.tsv').exists():
+        from check_access import check
+        access=check(out/'access.tsv');(out/'access.json').write_text(json.dumps(access,indent=2)+'\n')
+        receipt['selected_access_pass']=access['pass']
     assert observed==sha(src) and before.st_mtime_ns==src.stat().st_mtime_ns,'SOURCE CHANGED'
     receipt['source_unchanged']=True
     receipt['fingerprint_checks']={}
@@ -67,9 +74,11 @@ def safe(args):
 
 if __name__=='__main__':
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=8
-    gate=json.loads((ROOT/'inputs/trial-inputs-r03/coverage_gate.json').read_text());assert gate['status']=='PASS_ALL_BLOCK_CANDIDATE_COVERAGE_ONLY'
+    gate=json.loads((ROOT/'inputs'/os.environ.get('PINXY_INPUT_SET','trial-inputs-r03')/'coverage_gate.json').read_text());assert gate['status']=='PASS_ALL_BLOCK_CANDIDATE_COVERAGE_ONLY'
     case,revision=sys.argv[1:3]
     with (ROOT/'logs'/('platform-'+case+'-'+revision+'.log')).open('x') as f:
         subprocess.run(['singularity','exec','--cleanenv','--home',str(ROOT/'home'),IMAGE,'sh','-c',
-            'command -v klayout; grep -E "MIN_ROUTING_LAYER|MAX_ROUTING_LAYER|MIN_CLK_ROUTING|MAX_CLK_ROUTING" /OpenROAD-flow-scripts/flow/platforms/nangate45/config.mk; cat /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl; ls /OpenROAD-flow-scripts/flow/platforms/nangate45/drc; sha256sum /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad /OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules'],stdout=f,stderr=subprocess.STDOUT,check=True)
-    with ThreadPoolExecutor(max_workers=2) as pool:list(pool.map(safe,[(case,p,revision) for p in ['A','Aopt','B','C']]))
+            'command -v klayout; grep -E "MIN_ROUTING_LAYER|MAX_ROUTING_LAYER|MIN_CLK_ROUTING|MAX_CLK_ROUTING" /OpenROAD-flow-scripts/flow/platforms/nangate45/config.mk; cat /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl; ls /OpenROAD-flow-scripts/flow/platforms/nangate45/drc; sha256sum /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad /OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules /OpenROAD-flow-scripts/flow/platforms/nangate45/config.mk /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib'],stdout=f,stderr=subprocess.STDOUT,check=True)
+    plans=os.environ.get('PINXY_PLANS','A,A_replay,Aopt,B,C').split(',')
+    assert set(plans)<=set(['A','A_replay','Aopt','B','C'])
+    with ThreadPoolExecutor(max_workers=2) as pool:list(pool.map(safe,[(case,p,revision) for p in plans]))

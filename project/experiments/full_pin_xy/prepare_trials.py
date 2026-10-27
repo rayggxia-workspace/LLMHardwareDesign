@@ -38,8 +38,8 @@ def main(root,out):
             # C centers are endpoint-guided proxy targets, not real routing cost.
             rows,cols=linear_sum_assignment(abs(target[:,None,:]-slots[None,:,:]).sum(axis=2))
             optimized.loc[g.index[rows],['x_um','y_um']]=slots[cols]
-        for plan in ['A','Aopt','B','C']:
-            d=table[(table.plan==('A' if plan=='Aopt' else plan)) & table.pin.isin(names)].set_index('pin').loc[names].copy()
+        for plan in ['A','A_replay','Aopt','B','C']:
+            d=table[(table.plan==('A' if plan in ['Aopt','A_replay'] else plan)) & table.pin.isin(names)].set_index('pin').loc[names].copy()
             if plan=='Aopt':
                 for p in names:
                     dx,dy=optimized.loc[p,['x_um','y_um']].to_numpy()-d.loc[p,['x_um','y_um']].to_numpy()
