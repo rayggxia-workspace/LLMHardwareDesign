@@ -17,11 +17,15 @@ def implement(root,out,cpus,run,kind):
     label='matrix' if kind=='m' else 'store'
     task_root=out.parent
     mapped=task_root/('five-macro-'+label+'-map')
-    tested=task_root/('five-macro-'+label+'-test')
+    tested=base/'block-v1-20261027-186/tasks'/('five-macro-'+label+'-test')
     for source,name in [(mapped,'five-macro-'+label+'-map.json'),(tested,'five-macro-'+label+'-test.json')]:
         receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed'] is True
         assert file_sha(source/name)==receipt['outputs'][name]
         assert json.loads((source/name).read_text())['passed'] is True
+    original=json.loads((tested/('five-macro-'+label+'-test.json')).read_text())
+    rtl=root/('project/rtl/block_library_v1/'+top+'.sv')
+    assert file_sha(rtl)==(original['source_sha256'] if kind=='m' else original['source_sha256'][str(rtl.relative_to(root))])
+    if kind=='s':assert file_sha(root/'project/rtl/norm_service/store82.sv')==original['source_sha256']['project/rtl/norm_service/store82.sv']
     mapping=json.loads((mapped/('five-macro-'+label+'-map.json')).read_text())
     assert file_sha(mapped/'mapped.v')==mapping['mapped_sha256']
     flow=Path('/OpenROAD-flow-scripts/flow')

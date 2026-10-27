@@ -25,11 +25,14 @@ def map_matrix(root, out, cpus, run, top='block_v1_m'):
     assert top in ('block_v1_m','block_v1_s16k')
     rtl=root/('project/rtl/block_library_v1/'+top+'.sv')
     lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
-    script='read_liberty -lib {'+str(lib)+'}\nread_verilog -sv {'+str(rtl)+'}\n'
-    if top=='block_v1_s16k':script+='read_verilog -sv {'+str(root/'project/rtl/norm_service/store82.sv')+'}\n'
+    # Yosys scripts have their own tokenizer: Tcl braces are literal filename
+    # characters here. All immutable server source paths are space-free.
+    for path in (lib,rtl):assert not any(c.isspace() for c in str(path))
+    script='read_liberty -lib '+str(lib)+'\nread_verilog -sv '+str(rtl)+'\n'
+    if top=='block_v1_s16k':script+='read_verilog -sv '+str(root/'project/rtl/norm_service/store82.sv')+'\n'
     script+='hierarchy -check -top '+top+'\nsynth -top '+top+' -noabc\n'
-    script+='dfflibmap -liberty {'+str(lib)+'}\nabc -liberty {'+str(lib)+'}\nclean\ncheck -assert\n'
-    script+='stat -liberty {'+str(lib)+'}\nwrite_verilog -noattr mapped.v\nwrite_json mapped.json\n'
+    script+='dfflibmap -liberty '+str(lib)+'\nabc -liberty '+str(lib)+'\nclean\ncheck -assert\n'
+    script+='stat -liberty '+str(lib)+'\nwrite_verilog -noattr mapped.v\nwrite_json mapped.json\n'
     (out/'map.ys').write_text(script);run(['yosys','-s',str(out/'map.ys')],'map.log')
     module=json.loads((out/'mapped.json').read_text())['modules'][top]
     cells={}
