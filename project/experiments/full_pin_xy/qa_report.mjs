@@ -6,9 +6,9 @@ import {spawn} from 'node:child_process';
 const [report,out]=process.argv.slice(2);
 await fs.mkdir(out,{recursive:true});
 const edge=process.env.EDGE_BINARY||'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
-const port=9346;
+const port=9346+Math.floor(Math.random()*1000);
 const child=spawn(edge,['--headless=new','--disable-gpu','--no-first-run','--disable-extensions',`--remote-debugging-port=${port}`,`--user-data-dir=${path.resolve(out,'edge-profile')}`,'about:blank'],{windowsHide:true,stdio:'ignore'});
-let socket;
+let socket,command;
 try {
  let targets;
  for(let i=0;i<100;i++){try{targets=await(await fetch(`http://127.0.0.1:${port}/json/list`)).json();break;}catch{await new Promise(r=>setTimeout(r,100));}}
@@ -18,6 +18,7 @@ try {
  let id=0;const pending=new Map(),errors=[];
  socket.onmessage=e=>{const m=JSON.parse(e.data);if(m.id){const p=pending.get(m.id);pending.delete(m.id);m.error?p.reject(m.error):p.resolve(m.result);}if(m.method==='Runtime.exceptionThrown')errors.push(m.params);};
  const call=(method,params={})=>new Promise((resolve,reject)=>{const n=++id;pending.set(n,{resolve,reject});socket.send(JSON.stringify({id:n,method,params}));});
+ command=call;
  const evaluate=async expression=>{const r=await call('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
  await call('Page.enable');await call('Runtime.enable');
  await call('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
@@ -38,6 +39,7 @@ try {
  await fs.writeFile(path.join(out,'browser_qa.json'),JSON.stringify(result,null,2)+'\n');
  console.log(result.status,all.images.length,'loaded images; exact constant-bit query passed');
 } finally {
+ if(command&&socket?.readyState===1){try{await Promise.race([command('Browser.close'),new Promise(r=>setTimeout(r,1000))]);}catch{}}
  if(socket&&socket.readyState===1){socket.close();}
  child.kill();
 }
