@@ -5,7 +5,7 @@ Requires a strict-complete baseline GDS and a proven semantic fixture mismatch.
 """
 from pathlib import Path
 from collections import Counter
-import datetime,json,os,re,subprocess,xml.etree.ElementTree as ET
+import datetime,json,os,re,subprocess,sys,xml.etree.ElementTree as ET
 from run_exports import ROOT,IMAGE,sha
 
 driver=Path(__file__).resolve().parent;prior=json.loads((ROOT/'rule_semantics/well4-r01/summary.json').read_text())
@@ -13,13 +13,14 @@ assert prior['original_expression_differs_from_width_reference_on_fixtures']
 source=ROOT/'streamout/r03/llaccel_aux-A';original=json.loads((source/'execution.json').read_text());gds=source/'diagnostic.gds'
 assert original['merge_returncode']==0 and not original['missing_GDS_cells']
 assert sha(gds)==original['files']['diagnostic.gds']['sha256']
-out=ROOT/'rule_semantics/llaccel-A-well-reference-r01';out.mkdir(parents=True,exist_ok=False)
+revision=sys.argv[1] if len(sys.argv)>1 else 'r01';assert revision.replace('-','').isalnum()
+out=ROOT/'rule_semantics'/('llaccel-A-well-reference-'+revision);out.mkdir(parents=True,exist_ok=False)
 common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
 deck='/OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc'
 raw=subprocess.check_output(common+[IMAGE,'cat',deck]);code=ET.fromstring(raw).findtext('text');assert code
 definitions=[]
 for name in ['nwell','pwell']:
-    m=re.search(r'^\s*'+name+r'\s*=\s*input\([^\n]+\)\s*$',code,re.M);assert m,(name,'native input mapping not resolved')
+    m=re.search(r'^\s*'+name+r'\s*=\s*(?:input|polygons)\([^\n]+\)\s*$',code,re.M);assert m,(name,'native input mapping not resolved')
     definitions.append(m[0].strip())
 runset=(driver/'well4_semantics.drc').read_text();runset=runset.replace('well = input(21, 0).or(input(22, 0))','\n'.join(definitions)+'\nwell = nwell.or(pwell)')
 script=out/'actual_reference.drc';script.write_text(runset)
