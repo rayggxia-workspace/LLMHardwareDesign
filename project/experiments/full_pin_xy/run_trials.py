@@ -69,4 +69,7 @@ if __name__=='__main__':
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=8
     gate=json.loads((ROOT/'inputs/trial-inputs-r03/coverage_gate.json').read_text());assert gate['status']=='PASS_ALL_BLOCK_CANDIDATE_COVERAGE_ONLY'
     case,revision=sys.argv[1:3]
+    with (ROOT/'logs'/('platform-'+case+'-'+revision+'.log')).open('x') as f:
+        subprocess.run(['singularity','exec','--cleanenv','--home',str(ROOT/'home'),IMAGE,'sh','-c',
+            'command -v klayout; grep -E "MIN_ROUTING_LAYER|MAX_ROUTING_LAYER|MIN_CLK_ROUTING|MAX_CLK_ROUTING" /OpenROAD-flow-scripts/flow/platforms/nangate45/config.mk; cat /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl; ls /OpenROAD-flow-scripts/flow/platforms/nangate45/drc; sha256sum /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad /OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules'],stdout=f,stderr=subprocess.STDOUT,check=True)
     with ThreadPoolExecutor(max_workers=2) as pool:list(pool.map(safe,[(case,p,revision) for p in ['A','Aopt','B','C']]))

@@ -88,7 +88,7 @@ if {$::env(PINXY_PLAN) eq "A"} {
     write_db $out/global.odb
   }]
   if {$routed} {set routed [stage detailed_route {
-    detailed_route -output_drc $out/route.drc -output_maze $out/maze.log -bottom_routing_layer metal2 -top_routing_layer metal$::env(PINXY_TOP_LAYER) -verbose 1
+    detailed_route -output_drc $out/route.drc -output_maze $out/maze.log -verbose 1
     write_db $out/routed.odb
   }]}
   if {!$routed} {stage failed_route_checkpoint {write_db $out/failed-route.odb};close $stages;exit 1}
@@ -101,6 +101,14 @@ if {$::env(PINXY_PLAN) eq "A"} {
   }
 }
 stage fresh_native_drc {drt::check_drc -output_file $out/fresh_route.drc}
+stage odb_route_connectivity {
+  odb::orderWires [ord::get_db_block] true
+  set f [open $out/odb_connectivity.tsv w];puts $f "net\titerms\tbterms\tisConnected\tisRCDisconnected"
+  foreach n [[ord::get_db_block] getNets] {
+    if {[$n getSigType] in {POWER GROUND}} {continue}
+    puts $f [join [list [$n getName] [llength [$n getITerms]] [llength [$n getBTerms]] [$n isConnected] [$n isRCDisconnected]] "\t"]
+  };close $f
+}
 stage placement {check_placement -verbose}
 foreach net {VDD VSS} {stage pdn_$net {check_power_grid -net $net -error_file $out/$net.pdn.rpt}}
 stage wire_statistics {report_wire_length -detailed_route -summary -file $out/wire_length.csv}
