@@ -1,5 +1,7 @@
 # 架构与运行
 
+当前第一版计算积木为 **M/V/R/S/T五个物理宏，每种一个基础实现**；逐块最终M1–M10布局布线是本轮交付。见[规格](BLOCK_LIBRARY_V1.md)与[逐块计划](plans/block-v1-library-implementation.md)。M新最终物理/功能已通过部分接收但原生M2 DRC未过，R实际RTL已通过，V新实现待实际回归，S独立route中，T沿用已接收C叶块；不能以旧M8/VS四边界替代这五块。下方历史实验保留原证据范围。
+
 当前Block主线见[首版逐块实施计划](plans/block-v1-library-implementation.md)。`python project/experiments/block_v1/make_library.py --check`验证新M8/VS/S16K独立候选及源码逆重建；它不代表数值或P&R通过。`library-v1-source`、`library-v1-byte`及`library-v1-map-<top>`提供原生层级检查、八lane数值与完整标准单元映射，后继仍须逐块完整物理接收。
 
 `native-c8-formal-diagnosis-group` 在2CPU内两路1CPU对134实际失败作只读图/边界诊断，子模式 `native-c8-formal-diagnose-<a|c>`；只诊断未匹配输入，不改变任何LEC验收门，详见[严格对应诊断](decisions/2026-10-27-block-v1-c8-formal-input-diagnosis.md)。
