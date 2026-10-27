@@ -5,11 +5,12 @@ from pathlib import Path
 import shutil
 
 
-def source(out,kind):
+def source(out,kind,original=False):
     from io_slots import file_sha
     assert kind in ('m','s')
-    number='189' if kind=='m' else '190'
-    folder=out.parents[2]/('block-v1-20261027-'+number+'/tasks/five-macro-route-'+kind)
+    number=('189' if original else '193') if kind=='m' else '190'
+    task=('five-macro-route-m' if original else 'five-macro-repair-m-hold') if kind=='m' else 'five-macro-route-s'
+    folder=out.parents[2]/('block-v1-20261027-'+number+'/tasks/'+task)
     receipt=json.loads((folder/'receipt.json').read_text());assert receipt['passed'] is True
     proof=folder/'five-macro-native-flow.json';assert file_sha(proof)==receipt['outputs'][proof.name]
     flow=json.loads(proof.read_text());assert flow['passed'] and flow['pipeline_completed']

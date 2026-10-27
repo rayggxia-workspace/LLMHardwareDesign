@@ -8,7 +8,7 @@ def matrix_hold(root,out,cpus,run):
     from five_macro_receive import source
     from io_slots import file_sha,slot
     assert cpus==16
-    original,r,old,results=source(out,'m')
+    original,r,old,results=source(out,'m',original=True)
     failed=out.parents[2]/'block-v1-20261027-191/tasks/five-macro-physical-m'
     fr=json.loads((failed/'receipt.json').read_text());assert fr['passed'] is False
     p=failed/'five-macro-physical.json';assert file_sha(p)==fr['outputs'][p.name]
@@ -34,7 +34,17 @@ def matrix_hold(root,out,cpus,run):
     # New pre-freeze repair target, same physical implementation, RTL,
     # footprint, pin geometry, CTS source and actual electrical limits.
     # The .020 target is a repair knob; it is NOT a relaxed acceptance limit.
-    config=(original/'config.mk').read_text()+'\nexport HOLD_SLACK_MARGIN = 0.020\n'
+    # Full-deck191 found the unprotected input clock antenna. Keep the
+    # original hook intact; this repair protects the clock root as well.
+    # All added cells/loads remain in final STA, PG, GDS and function views.
+    hook=(root/'project/experiments/block_v1/native_input_diodes.tcl').read_text()
+    skip='  if {[$port getName] eq "clk"} {continue}\n'
+    assert hook.count(skip)==1
+    (out/'input-diodes.tcl').write_text(hook.replace(skip,''))
+    config=(original/'config.mk').read_text()
+    assert str(original/'input-diodes.tcl') in config
+    config=config.replace(str(original/'input-diodes.tcl'),str(out/'input-diodes.tcl'))
+    config+='\nexport HOLD_SLACK_MARGIN = 0.020\n'
     (out/'config.mk').write_text(config)
     command=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(out/'config.mk'),
              'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
@@ -46,7 +56,7 @@ def matrix_hold(root,out,cpus,run):
                   repair_of=str(original),repair_source_receipt_sha256=file_sha(original/'receipt.json'),
                   measured_failure_sha256=file_sha(p),measured_failure_receipt_sha256=file_sha(failed/'receipt.json'),
                   measured_hold_ns=timing['minimum_hold_ns'],sealed_cts_inputs=copied,
-                  repair_target_hold_ns=.020,implementation_count=1,
+                  repair_target_hold_ns=.020,implementation_count=1,clock_root_protection=True,
                   scope='Repair actual negative hold in same unfrozen M leaf, same RTL/die/pins/CTS; new route/RCX/final artifacts require every independent gate again')
     record['actual_variables']=dict(old['actual_variables'],HOLD_SLACK_MARGIN='0.020')
     def save():(out/'five-macro-native-flow.json').write_text(json.dumps(record,indent=2)+'\n')
