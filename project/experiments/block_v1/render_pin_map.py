@@ -45,7 +45,8 @@ def render(index,pins,output):
         svg.append('<text x="760" y="%g" class="small">x %.3f..%.3f µm; y %.3f..%.3f µm</text>'%(y0+260,xmin,xmax,ymin,ymax))
     svg.append('<text x="30" y="746" class="small">Source pins.json SHA-256: '+digest+'</text>')
     svg.append('<metadata>'+html.escape(json.dumps(dict(source_index_sha256=hashlib.sha256(index.read_bytes()).hexdigest(),source_pins_sha256=digest,full_macro_pin_rectangles=len(rows),scope='Actual ODB signal pin locations; no routing/OBS or M11/M12 access qualification')) )+'</metadata></svg>')
-    result='\n'.join(svg)+'\n';ET.fromstring(result);output.write_text(result,encoding='utf-8')
+    result='\n'.join(svg)+'\n';ET.fromstring(result)
+    with output.open('w',encoding='utf-8',newline='\n') as stream:stream.write(result)
 
 
 if __name__=='__main__':
