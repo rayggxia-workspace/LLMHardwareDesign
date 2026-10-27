@@ -1,12 +1,12 @@
 # 架构与运行
 
-`native-c8-formal-diagnosis-group` 在4CPU内两路2CPU对134实际失败作只读图/边界诊断，子模式 `native-c8-formal-diagnose-<a|c>`；只诊断未匹配输入，不改变任何LEC验收门，详见[严格对应诊断](decisions/2026-10-27-block-v1-c8-formal-input-diagnosis.md)。
+`native-c8-formal-diagnosis-group` 在2CPU内两路1CPU对134实际失败作只读图/边界诊断，子模式 `native-c8-formal-diagnose-<a|c>`；只诊断未匹配输入，不改变任何LEC验收门，详见[严格对应诊断](decisions/2026-10-27-block-v1-c8-formal-input-diagnosis.md)。
 
 C8有限预制前实际修复探针为 `native-c8-probe-group`（4CPU内两路2CPU）及 `native-c8-probe-<a|c>`，绑定128/162/163；完整原生/宏资格仍独立。离线命令 `python project/experiments/block_v1/native_c8_legalize_control.py work/YUZE-LU/121/results <含c8-upper163-a/c.tsv的授权目录> <全新JSON路径>` 校验真实源几何、确定性、完整upper接触及12组独立穷举spacing对照；算法边界见[障碍事件接入](decisions/2026-10-27-block-v1-c8-obstacle-escape.md)。`native_upper_index_control.py` 接受位置参数 `<含upper159-a/c-before/after.tsv的授权目录> <全新JSON路径>`，没有额外help子命令。
 
 T6K修复后同源视图使用 `native-escape-view-group`（16CPU，两路8CPU、保守内存门2/1路）及 `native-escape-view-transaction6k-<a|c>`，绑定160成功原生最终输出、161完整物理及最终功能、145真实Lib pin/bus控制；配置 `native_pipeline_escape.json`。`python project/experiments/block_v1/native_escape_view_control.py work/YUZE-LU/121/results <全新JSON路径>` 重放真实161来源绑定和18个破坏副本。现有 `native_view_control.py` 另含7种真实stub编排控制，均不能替代实际EDA。实际161证据和视图限制见[完整接收与视图入口](decisions/2026-10-27-block-v1-t6k-received-views.md)。
 
-`native_c8_escape.py` 是有限C8文本候选构造，尚无实际ODB编辑资格；`native_upper_index.py` 加速全部上层跨网接触候选筛选，谓词与原穷举相同。`python project/experiments/block_v1/native_upper_index_control.py --help` 查看四份SHA绑定159几何及声明控制的完整对照入口；原始几何仅在授权存储/本地诊断目录，仓库保留报告。不得把语法/index控制当作实际修复或原生DRC通过。
+`native_c8_escape.py` 是有限C8文本候选构造，尚无实际ODB编辑资格；`native_upper_index.py` 加速全部上层跨网接触候选筛选，谓词与原穷举相同。`python project/experiments/block_v1/native_upper_index_control.py <授权159几何目录> <全新JSON路径>` 重放四份SHA绑定159几何及声明控制的完整对照；原始几何仅在授权存储/本地诊断目录，仓库保留报告。不得把语法/index控制当作实际修复或原生DRC通过。
 
 Block v1 新预制候选的同源候选视图入口为 `native-prefab-view-<shared109|transaction6k>-<a|c>`；单32CPU内四路8CPU的 `native-prefab-view-group` 根据实际内存选择4/2/1路。必须先有128/134（C8）及133/135（T6K）的完整成功物理回执，再使用其最终ODB/SDC/SPEF/GDS生成并读回LEF/Liberty；不会使候选视图自动成为合格宏。`python project/experiments/block_v1/native_view_control.py <全新JSON路径>` 仅验证来源反例及实际stub编排。来源、内存估计与尚未验证的输入线阻/边界时序限制见[同源视图决策](decisions/2026-10-27-block-v1-prefab-view-sources.md)。
 

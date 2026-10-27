@@ -18,7 +18,7 @@ from native_cell_gate import group as liberty_group
 
 
 def verify(root,out,cpus,policy):
-    assert cpus==2 and policy in ('A','C');base=out.parents[2]
+    assert cpus==1 and policy in ('A','C');base=out.parents[2]
     source=base/'block-v1-20261027-134/tasks'/('native-receive-shared109-'+policy.lower())
     receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed']is False
     assert receipt['error']=="AssertionError('Final native LEC lacks complete positive evidence')"
@@ -73,21 +73,21 @@ def verify(root,out,cpus,policy):
 
 
 def group(root,out,cpus):
-    assert cpus==4
+    assert cpus==2
     memory=memory_snapshot();parallel=2 if memory['MemAvailable']>=2*24*1024**3*1.2 else 1
     def execute(policy):
         mode='native-c8-formal-diagnose-'+policy;folder=out.parent/mode;folder.mkdir(exist_ok=False);start=time.time()
-        env=dict(os.environ,OMP_NUM_THREADS='2',OPENBLAS_NUM_THREADS='1',MKL_NUM_THREADS='1')
+        env=dict(os.environ,OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',MKL_NUM_THREADS='1')
         with(folder/'group-child.log').open('w')as stream:
-            code=subprocess.run([sys.executable,str(root/'project/experiments/block_v1/worker.py'),str(root),mode,'2'],cwd=folder,env=env,stdout=stream,stderr=subprocess.STDOUT).returncode
+            code=subprocess.run([sys.executable,str(root/'project/experiments/block_v1/worker.py'),str(root),mode,'1'],cwd=folder,env=env,stdout=stream,stderr=subprocess.STDOUT).returncode
         p=folder/'receipt.json';q=folder/'native-c8-formal-diagnosis.json';r=json.loads(p.read_text())if p.exists()else{}
         passed=bool(code==0 and r.get('passed')is True and q.exists())
-        if passed:passed=r['cpus']==2 and r['mode']==mode and r['outputs'][q.name]==file_sha(q)and json.loads(q.read_text())['passed']is True
-        return dict(policy=policy,cpus=2,started=start,finished=time.time(),passed=passed,returncode=code,
+        if passed:passed=r['cpus']==1 and r['mode']==mode and r['outputs'][q.name]==file_sha(q)and json.loads(q.read_text())['passed']is True
+        return dict(policy=policy,cpus=1,started=start,finished=time.time(),passed=passed,returncode=code,
                     receipt_sha256=file_sha(p)if p.exists()else None,proof_sha256=file_sha(q)if q.exists()else None)
     with concurrent.futures.ThreadPoolExecutor(max_workers=parallel)as pool:children=list(pool.map(execute,['a','c']))
     result=dict(schema='block-v1-native-c8-formal-diagnosis-group/1',passed=all(r['passed']for r in children),allocated_cpus=cpus,
-                simultaneous_workers=parallel,maximum_concurrent_cpu_ceilings=2*parallel,memory_preflight=memory,
+                simultaneous_workers=parallel,maximum_concurrent_cpu_ceilings=parallel,memory_preflight=memory,
                 per_child_memory_budget_bytes=24*1024**3,parallel_memory_safety_factor=1.2,children=children,qualified_hard_macro=False)
     (out/'native-c8-formal-diagnosis-group.json').write_text(json.dumps(result,indent=2)+'\n')
     assert result['passed'],'C8 formal diagnostic child failed; independent peer retained'
