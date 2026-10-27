@@ -8,7 +8,7 @@
 - 实际物理：ACT8pin真实重接、fresh native DRC、RCX/独立边界STA及所选网络连通已完成；原始与C试验全块多端信号/时钟几何连通通过。GEMM、其他四块和ACT完整740-pin C对照在独立目录继续执行，结果以分阶段回执为准。
 - ACT完整740-pin C已通过独立clean进程native DRC=0、全块多端几何连通；setup/hold余量1.259268ns/0.032872ns，电气违例报告0，但系统外部模型/父层仍未资格化。RCX后ODB重读不兼容已隔离，物理母本与RC/STA分析分开，失败保留。
 - 下一步：收集全部独立试验终态、全块连通和实际RC/STA/电气对照，继续查找版本匹配父层handoff层/路径与抽象接入证据。不将未知层擅自指派，也不把DRT0写成全部通过。
-- PR：本阶段draft PR待创建并补在线链接；Issue保持in_progress，不提前关闭。
+- PR：[PR129](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/129) 已draft上传，head fbac838；新增14组PNG/SVG及全部表/HTML在分支中，原ACT/GEMM图保留；Issue保持in_progress，不提前关闭。
 - 登记/看板：复用管理中心登记PR5 pending；未配置可核验board.json，Projects工具不可用，条目unverified/同步pending，处理人待指定。
 
 ## 原Issue119成果记录（保留）

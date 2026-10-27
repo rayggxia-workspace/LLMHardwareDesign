@@ -19,3 +19,5 @@ ACT完整740-pin C对照fullC-r01采用相同C可移动cohort，B也是该740-pi
 
 登记：管理中心PR5 pending；Projects未配置board.json且无工具，unverified/同步pending；处理人待指定。不得把文件上传写成在线协作接入完成。
 本记录用于持续执行与审查，不表示任务完成、暂停或已验收。新的结果在同一Issue/PR增量更新，所有失败与基线未通过项保留。
+
+在线交付：[Draft PR129](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/129)，首次发布fbac83836ecc7767a929639265b67b31d74902db；图表已上传。ACT740完整C的独立clean DRC/全块几何连通通过；新增四块制造网格r02已修订、8pin重试grid-r05。旧RCX后ODB重读失败保留，物理母本统一从提取前routed ODB生成。当前运行/后续独立检查按最新execution与Slurm读回，不根据旧snapshot猜终态。
