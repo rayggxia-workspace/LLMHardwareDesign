@@ -1,5 +1,7 @@
 # Issue 121 执行记录
 
+2026-10-27 12:26 CST：133完成，135四路资格实际运行；140初态实测通过，141完整最终叶+映射glue组合已部署但尚无job。证据见`results/run133-group-terminal`、`run133a-terminal`、`run133c-terminal`、`run135-group-first`及四子快照、`run140-first`、`run141-deployment`。阶段136/137 manifest对应140/141，旧139无job并停用。当前完整P0–P6目标未完成，当前7allocation；保持8槽与真实内存/线程约束，其他成员未动。详细初态数值、所有失败与资格边界见[组合决策](../../../docs/decisions/2026-10-27-block-v1-final-composition.md)。
+
 137实际glue通过，136失败原样保存，见`results/run137-terminal`与`run136-terminal`；原008库存成功结果重新采集于`results/run008-current-verified`，不将其mapped-suite超时改写为通过。最终叶/真实glue组合与初始化顺序的证据边界及并行配置见[组合决策](../../../docs/decisions/2026-10-27-block-v1-final-composition.md)。当前初始化控制与完整组合尚未实际运行；完整目标未完成。
 
 真实父层glue：新增 `project/experiments/block_v1/native_glue.py` 与 `native-glue-map`，只映射现有shared121 wrapper，在两叶端点上作完整组合等价和三个真实坏连接检查，并逐master核算所有glue与tie单元。Python编译通过；当前尚未服务器运行。物理父层、实际最终C8/S16K/T6K完整组合、一般十二层RC/拼接及共同底座/两产品仍待验收。见[决策](../../../docs/decisions/2026-10-27-block-v1-real-glue.md)。
