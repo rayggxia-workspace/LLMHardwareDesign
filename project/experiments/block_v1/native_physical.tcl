@@ -62,6 +62,18 @@ foreach inst [$block getInsts] {
   puts $stream "[$inst getName]\t[$net getName]"
 }
 close $stream
+set stream [open passive-inventory.tsv w]
+foreach inst [$block getInsts] {
+  set master [$inst getMaster]
+  if {[$master getName] ne "ANTENNA_X1"} {continue}
+  foreach term [$inst getITerms] {
+    set definition [$term getMTerm]
+    if {[$definition getSigType] in {POWER GROUND}} {continue}
+    set net [$term getNet]
+    puts $stream "[$inst getName]/[$definition getName]\t[$master getName]\t[$master getType]\t[$definition getIoType]\t[$net getName]"
+  }
+}
+close $stream
 set stream [open physical-pins.tsv w]
 foreach term [$block getBTerms] {
   if {[$term getSigType] in {POWER GROUND}} {continue}

@@ -103,6 +103,32 @@ def verify(root,out,cpus,run,top,policy,historical=False,pipeline=None):
         expected={r[0]:r[2]for r in rows}
         got=dict(line.split('\t')for line in(out/'physical-input-diodes.tsv').read_text().splitlines())
         checks['all_input_diodes_preserved_on_exact_root_nets']=bool(expected)and got==expected and len(rows)==len(expected)
+        # Input-only protection capacitances remain in the actual physical
+        # database, SPEF and native electrical analysis. Their endpoint type
+        # must be proved against the actual library and qualified real controls.
+        control=base/'block-v1-20261027-131/tasks/native-passive-endpoint-probe'
+        bound_control=json.loads((control/'receipt.json').read_text());assert bound_control['passed']is True
+        control_path=control/'native-passive-endpoint-probe.json'
+        assert file_sha(control_path)==bound_control['outputs'][control_path.name]
+        qualified_control=json.loads(control_path.read_text());assert qualified_control['passed']is True
+        assert qualified_control['actual']['passed']
+        assert {key:value['passed']for key,value in qualified_control['fixtures'].items()}==dict(positive=True,**{'bad-capacitance':False,'bad-setup':False,'unconstrained-data':False})
+        assert set(qualified_control['library_faults'])=={'timing-arc','output','function','state'}and all(qualified_control['library_faults'].values())
+        assert bound_control['inputs']['project/experiments/block_v1/native_passive_endpoint.py']==file_sha(root/'project/experiments/block_v1/native_passive_endpoint.py')
+        library=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
+        assert file_sha(library)==qualified_control['library_sha256']
+        inventory={}
+        for line in(out/'passive-inventory.tsv').read_text().splitlines():
+            name,master,kind,direction,net=line.split('\t');assert name not in inventory
+            inventory[name]=dict(master=master,type=kind,direction=direction,net=net,pin=name.rsplit('/',1)[1])
+        assert {name.rsplit('/',1)[0]:row['net']for name,row in inventory.items()}==expected
+        from native_passive_endpoint import audit as passive_audit
+        passive=passive_audit(out,out/'timed-endpoints',library.read_text(),inventory)
+        passive['control_receipt_sha256']=file_sha(control/'receipt.json')
+        passive['control_report_sha256']=file_sha(control_path)
+        (out/'passive-endpoint-audit.json').write_text(json.dumps(passive,indent=2)+'\n')
+        timing=passive['timed_endpoints'];checks['timing']=passive['passed']
+        checks['all_passive_loads_typed_by_exact_library_and_odb']=passive['qualified_passive_count']==len(expected)>0
     # Build GDS in a new output tree using explicit do-targets only. Source
     # final DEF and all previous-run files stay unchanged.
     folder=out/'gds-flow/results/nangate45'/('bv1_'+top+'_'+policy)/'base';folder.mkdir(parents=True)

@@ -59,7 +59,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-diagnosis-group':
+    if MODE=='native-pin-access-probe':
+        from native_pin_access_probe import verify
+        verify(ROOT,OUT,CPUS)
+    elif MODE=='native-diagnosis-group':
         from native_diagnosis_group import verify
         verify(ROOT,OUT,CPUS)
     elif MODE=='native-passive-endpoint-probe':
