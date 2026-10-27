@@ -48,6 +48,12 @@ for task in manifest['tasks']:
    raw=file.read_bytes()
    try:
     content=json.loads(raw.decode())
+    if relative=='native-physical-receiver.json':
+     timing=content.get('timing',{})
+     if 'explicit_unused_internal_outputs'in timing:
+      omitted=timing.pop('explicit_unused_internal_outputs')
+      timing['explicit_unused_internal_output_count']=len(omitted)
+      content['index_projection']='Unused-output name table omitted only; original complete unchanged server report is bound by outer SHA256/bytes. All gates/counts/extremes remain.'
     if relative=='receipt.json' and len(content.get('outputs',{}))>1000:
      outputs=content['outputs']
      content['outputs']={name:digest for name,digest in outputs.items()

@@ -76,6 +76,11 @@ def implement(root, out, cpus, run, top, policy,pipeline=PIPELINE):
         bound=json.loads((proof/'receipt.json').read_text());assert bound['passed']is True
         path=proof/'native-antenna-fixture.json';assert file_sha(path)==bound['outputs'][path.name]
         qualified=json.loads(path.read_text());assert qualified['passed']is True and qualified['formal']['passed']is True
+        hook_probe=base/'block-v1-20261027-113/tasks/native-diode-hook-probe'
+        hook_receipt=json.loads((hook_probe/'receipt.json').read_text());assert hook_receipt['passed']is True
+        hook_path=hook_probe/'native-diode-hook.json';assert file_sha(hook_path)==hook_receipt['outputs'][hook_path.name]
+        assert json.loads(hook_path.read_text())['passed']is True
+        assert hook_receipt['inputs']['project/experiments/block_v1/native_input_diodes.tcl']==file_sha(root/'project/experiments/block_v1/native_input_diodes.tcl')
         hook=out/'input-diodes.tcl';shutil.copyfile(root/'project/experiments/block_v1/native_input_diodes.tcl',hook)
     else:hook=None
     source = base / config['source_candidate_run'] / ('tasks/native-run-' + top + '-' + policy.lower())
