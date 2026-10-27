@@ -68,6 +68,7 @@ def one(inputs,rev,plan):
         commands.append('read_lef '+tcl(dest))
     if plan=='A':
         commands += ['read_verilog '+tcl(inputs/'parent.v'),'link_design '+contract['top'],'source '+tcl(inputs/'setup.tcl'),
+          'cut_rows -halo_width_x 2 -halo_width_y 2',
           'add_global_connection -net VDD -inst_pattern {.*} -pin_pattern {^VDD$} -power',
           'add_global_connection -net VSS -inst_pattern {.*} -pin_pattern {^VSS$} -ground','global_connect',
           'set_voltage_domain -name CORE -power VDD -ground VSS','define_pdn_grid -name parent_grid -voltage_domains CORE -pins metal10',
@@ -111,13 +112,19 @@ def one(inputs,rev,plan):
     stages=list(csv.DictReader((out/'stages.tsv').open(),delimiter='\t'));log=(out/'openroad.log').read_text()
     rec['stages']=stages;rec['PDN_gates_executed_and_connected']=all(any(s['stage']==n and s['status']=='EXECUTED' for s in stages) for n in ['pdn_check_VDD','pdn_check_VSS','pdn_final_VDD','pdn_final_VSS']) and all('All shapes on net '+n+' are connected.' in log for n in ['VDD','VSS'])
     rec['finished_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat();rec['files']={p.name:{'bytes':p.stat().st_size,'sha256':sha(p)} for p in out.iterdir() if p.is_file() and p.name!='execution.json'}
-    rec['status']='STAGES_EXECUTED_NOT_FULL_QUALIFICATION';(out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
+    passed=rec.get('independent_DRC_count')==0 and rec.get('whole_signal_geometry',{}).get('pass') and rec['PDN_gates_executed_and_connected'] and r.returncode==0
+    rec['status']='NATIVE_ACCESS_GATES_PASSED_NOT_FULL_QUALIFICATION' if passed else 'ACTUAL_PARENT_ACCESS_FAILED_OR_INCOMPLETE'
+    (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     print('NEW_PARENT_RESULT',design,focus,plan,rec.get('independent_DRC_count'),rec.get('whole_signal_geometry',{}).get('pass'),rec['PDN_gates_executed_and_connected'],flush=True)
+    return bool(passed)
 
 if __name__=='__main__':
     inputs=ROOT/'inputs'/sys.argv[1];rev=sys.argv[2];plans=sys.argv[3:] or ['A','A_replay','A_child_replay','Aopt','B','C']
+    results=[]
     for plan in plans:
-        try:one(inputs,rev,plan)
+        try:results.append(one(inputs,rev,plan))
         except Exception:
             traceback.print_exc();c=json.loads((inputs/'contract.json').read_text());out=ROOT/'parents'/rev/(c['design']+'-'+c['focus']+'-'+plan);out.mkdir(parents=True,exist_ok=True)
             (out/'driver_failure.json').write_text(json.dumps({'status':'DRIVER_OR_BASELINE_GATE_FAILED_NOT_A_PASS','traceback':traceback.format_exc()},indent=2)+'\n')
+            results.append(False)
+    sys.exit(0 if all(results) else 1)
