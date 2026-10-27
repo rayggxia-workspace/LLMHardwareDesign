@@ -66,6 +66,9 @@ try:
     elif MODE.startswith('five-macro-geometry-'):
         from five_macro_geometry import export
         export(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE=='five-macro-probe-v-tail':
+        from five_macro_v_repair import probe_tail
+        probe_tail(ROOT,OUT,CPUS,run)
     elif MODE=='five-macro-finish-v-drive':
         from five_macro_v_repair import finish_routed
         finish_routed(ROOT,OUT,CPUS,run)

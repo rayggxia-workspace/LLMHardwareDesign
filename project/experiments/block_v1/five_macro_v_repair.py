@@ -16,6 +16,104 @@ TARGETS={
 }
 
 
+def probe_tail(root,out,cpus,run):
+    """Measure the new222 flop limit and PG failures on a disposable database."""
+    from five_macro_receive import source
+    from io_slots import file_sha
+    assert cpus==16
+    folder,receipt,_,results=source(out,'v')
+    failed=out.parents[2]/'block-v1-20261027-222/tasks/five-macro-physical-v'
+    fr=json.loads((failed/'receipt.json').read_text());assert fr['passed']is False
+    p=failed/'five-macro-physical.json';assert file_sha(p)==fr['outputs'][p.name]
+    failure=json.loads(p.read_text());assert failure['source_receipt_sha256']==file_sha(folder/'receipt.json')
+    assert {k for k,v in failure['checks'].items()if not v}=={'all_real_timed_endpoints','all_pg_iterms_correct'}
+    summary=failed/'physical-summary.tsv';assert file_sha(summary)==fr['outputs'][summary.name]
+    assert 'incorrect_pg_iterms\t2\n'in summary.read_text()
+    worst=failed/'electrical-worst.rpt';assert file_sha(worst)==fr['outputs'][worst.name]
+    cap=worst.read_text().split('max capacitance\n',1)[1]
+    rows=re.findall(r'(?m)^(\S+)/Q\s+([\d.]+)\s+([\d.]+)\s+(-[\d.]+) \(VIOLATED\)$',cap)
+    assert len(rows)==1 and rows[0][0].endswith('slice$812988')
+    lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
+    text=lib.read_text();starts=list(re.finditer(r'\bcell\s*\(\s*([^\s)]+)\s*\)\s*\{',text));caps={}
+    for i,m in enumerate(starts):
+        if m[1]not in ('DFF_X1','DFF_X2'):continue
+        chunk=text[m.end():starts[i+1].start()if i+1<len(starts)else len(text)]
+        caps[m[1]]=[float(v)for v in re.findall(r'\bmax_capacitance\s*:\s*([\d.eE+-]+)',chunk)]
+    assert caps['DFF_X1']and caps['DFF_X2']
+    assert min(caps['DFF_X2'])>=float(rows[0][2])*1.2
+    script='set_thread_count 16\nread_db {'+str(results/'6_final.odb')+'}\n'+'''
+set b [ord::get_db_block]
+set f [open pg-before.tsv w]
+set candidates {}
+foreach i [$b getInsts] {
+  if {[string match {*slice$812988} [$i getName]]} {lappend candidates $i}
+  foreach t [$i getITerms] {
+    set m [$t getMTerm];set type [$m getSigType]
+    if {$type ni {POWER GROUND}} {continue}
+    set n [$t getNet];set expected [expr {$type eq "POWER" ? "VDD" : "VSS"}]
+    if {$n eq "NULL" || [$n getName] ne $expected} {
+      set net_name [expr {$n eq "NULL" ? "NULL" : [$n getName]}]
+      puts $f "[binary encode hex [$i getName]]\t[[$i getMaster] getName]\t[$m getName]\t$type\t$net_name"
+    }
+  }
+}
+close $f
+if {[llength $candidates]!=1} {error "Measured flop is not unique"}
+set i [lindex $candidates 0]
+if {[[$i getMaster] getName] ne "DFF_X1"} {error "Unexpected measured flop master"}
+proc tail_signals {i} {
+  set result {}
+  foreach t [$i getITerms] {
+    set m [$t getMTerm]
+    if {[$m getSigType] in {POWER GROUND}} {continue}
+    set n [$t getNet]
+    if {$n eq "NULL" && [$m getIoType] in {INPUT INOUT}} {error "Open measured flop signal input"}
+    set net_name [expr {$n eq "NULL" ? "NULL" : [$n getName]}]
+    lappend result [list [$m getName] $net_name]
+  }
+  return [lsort $result]
+}
+set before [tail_signals $i]
+set old [$i getMaster];set new [[ord::get_db] findMaster DFF_X2]
+if {$new eq "NULL" || ![$i swapMaster $new]} {error "DFF_X2 native swap failed"}
+if {[tail_signals $i] ne $before} {error "Flop functional pin/net identity changed"}
+set f [open flop-probe.tsv w]
+puts $f "[binary encode hex [$i getName]]\t[$old getName]\t[$old getWidth]\t[$old getHeight]\t[$new getName]\t[$new getWidth]\t[$new getHeight]"
+close $f
+add_global_connection -net VDD -inst_pattern .* -pin_pattern VDD -power
+add_global_connection -net VSS -inst_pattern .* -pin_pattern VSS -ground
+global_connect
+set bad 0
+foreach i [$b getInsts] {
+  foreach t [$i getITerms] {
+    set m [$t getMTerm];set type [$m getSigType]
+    if {$type ni {POWER GROUND}} {continue}
+    set n [$t getNet];set expected [expr {$type eq "POWER" ? "VDD" : "VSS"}]
+    if {$n eq "NULL" || [$n getName] ne $expected} {incr bad}
+  }
+}
+set f [open pg-after.txt w];puts $f $bad;close $f
+if {$bad!=0} {error "Explicit native PG reconnection left failures"}
+write_db disposable.odb
+'''
+    (out/'probe.tcl').write_text(script);run(['openroad','-no_init','-exit',str(out/'probe.tcl')],'probe.log')
+    pg=(out/'pg-before.tsv').read_text().splitlines();assert len(pg)==2
+    fields=(out/'flop-probe.tsv').read_text().strip().split('\t');assert len(fields)==7
+    assert fields[1]=='DFF_X1'and fields[4]=='DFF_X2'and fields[3]==fields[6]
+    assert (out/'pg-after.txt').read_text().strip()=='0'
+    assert source(out,'v')[1]==receipt
+    result=dict(passed=True,source_receipt_sha256=file_sha(folder/'receipt.json'),
+                physical_failure_receipt_sha256=file_sha(failed/'receipt.json'),
+                measured_flop=dict(instance=bytes.fromhex(fields[0]).decode(),instance_hex=fields[0],old_master=fields[1],new_master=fields[4],
+                                   old_size_dbu=list(map(int,fields[2:4])),new_size_dbu=list(map(int,fields[5:7])),
+                                   limit_ff=float(rows[0][1]),cap_ff=float(rows[0][2]),slack_ff=float(rows[0][3])),
+                liberty_sha256=file_sha(lib),flop_max_capacitance_ff=caps,
+                pg_before=pg,pg_after_incorrect=0,native_signal_pin_net_identity_preserved=True,
+                original_final_unchanged=True,qualified_hard_macro=False,
+                scope='Disposable native DFF_X2 signal-pin swap and explicit PG API control; placement/reroute/RCX/full gates still required.')
+    (out/'five-macro-probe-v-tail.json').write_text(json.dumps(result,indent=2)+'\n')
+
+
 def swap_script():
     body='''proc drive_pin_snapshot {i} {
   set rows {}
