@@ -47,3 +47,8 @@ API参照[OpenDB dbCapNode](https://openroad.readthedocs.io/en/latest/doxygen_ou
 
 
 102修正导入已部署，源码5f43b4e、归档7d4cd3c6f3055312eba84680ab35a77168fddb88e0b44bef7fa84c7879063356，118成员/829440字节；当前等8槽内空位，无Slurm作业。
+
+
+## 2026-10-27 08:29 CST 实际SPEF回装通过
+
+101/92144精确最终T6KC网表功能接收通过：8:43、MaxRSS3810680K，全1及随机121/122三个初态均242事务/264051周期/3295817检查，保留原映射存储和Liberty单元；回执b4b7ec85ca9d5f4b1bd9ac277d4480401d002fbd1ce5d9b5527c390785cd3075。102/92148实际SPEF导入通过：43秒、MaxRSS12820K，8节点/7边身份、逐C/R、单位和总量七门槛，实际错误单位/保总量换节点C/换边R三负例均正确拒绝；回执a8a81b3db9acbd12cdce56251d6eb9ea543fa0bc829269264bbe3f9300fd6ae6。该单隔离网络仍无本路由独立局部FV/一般跨网节点耦合与全Block提取资格。100/92147双48CPU科学对照继续；094边缘T6KA独立接收已提交92149，源hold count=4待精确STA诊断。内部094的61项DRC失败仍阻止冻结；095宏视图不绕过依赖。
