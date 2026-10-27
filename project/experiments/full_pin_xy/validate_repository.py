@@ -45,6 +45,21 @@ def main():
                 s=physical[pin];assert s['layer']==r['layer'] and s['direction']==r['direction']
                 for k in ['x0','y0','x1','y1']:assert abs(float(r[k+'_um'])-int(s[k])/2000)<1e-6
     assert total==74301
+    for c in ['mxu','vector','opentpu_aux','llaccel_aux']:
+        for r in rows(DATA/f'{c}_pin_coordinates.csv.gz'):
+            if r['plan']!='A' and yes(r['moved']):
+                for k in ['x0_um','y0_um','x1_um','y1_um']:
+                    assert abs(float(r[k])/0.005-round(float(r[k])/0.005))<1e-5,(c,r['pin'],'manufacturing grid')
+    physical=list((DATA/'evidence/physical').glob('*/finalized/fullC-r02/act-C/execution.json'))
+    assert physical,'ACT full-C independent physical evidence missing'
+    actual=json.loads(physical[-1].read_text())
+    assert actual['independent_DRC_count']==0 and actual['whole_access']['pass'] and actual['clean_byte_identical_to_pre_RCX_source']
+    with gzip.open(physical[-1].parent/'pins.tsv.gz','rt') as f:actual_pins={r['pin'].replace('\\',''):r for r in csv.DictReader(f,delimiter='\t') if r['use'] not in ['POWER','GROUND']}
+    actrows={r['pin']:r for r in rows(DATA/'act_pin_coordinates.csv.gz') if r['plan']=='C'}
+    assert len(actual_pins)==len(actrows)==860
+    for pin,r in actrows.items():
+        q=actual_pins[pin];assert q['layer']==r['layer'] and q['direction']==r['direction'] and q['use']==r['use'] and q['net'].replace('\\','')==r['net']
+        for k in ['x0','y0','x1','y1']:assert abs(int(q[k])/2000-float(r[k+'_um']))<1e-6,(pin,k,'actual full-C XY')
     for design in ['opentpu','llaccel']:
         s=json.loads(gzip.decompress((DATA/'partition_summary.json.gz').read_bytes()))[design]
         assert s['unassigned_leaves']==0 and len(s['physical_cells'])==3
