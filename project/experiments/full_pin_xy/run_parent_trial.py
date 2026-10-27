@@ -8,6 +8,7 @@ from collections import defaultdict
 import csv,datetime,json,os,re,subprocess,sys,traceback
 from run_exports import ROOT,CFG,IMAGE,BIN,sha
 from check_access import check
+from lef_view_contract import verify as verify_lef_view
 DRIVER=Path(__file__).resolve().parent
 BASE={'act':'r02','gemm':'r01','mxu':'r03','vector':'r04','opentpu_aux':'r03','llaccel_aux':'r03'}
 
@@ -50,6 +51,7 @@ def one(inputs,rev,plan):
       'historical_handoff':'STILL_UNKNOWN','scheduler_job':os.environ['SLURM_JOB_ID'],'allocated_cpus':os.environ['SLURM_CPUS_PER_TASK'],
       'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'input_contract_sha256':sha(inputs/'contract.json'),'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()}
     (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
+    common=['singularity','exec','--cleanenv','--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro','--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro','--home',str(ROOT/'home'),'--pwd',str(out)]
     views={};commands=[]
     if plan=='A':
         commands += ['read_lef /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef','read_lef /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.mod.lef']
@@ -63,8 +65,16 @@ def one(inputs,rev,plan):
     for case in selected:
         view_plan=plan if case==focus else 'A';view_plan='A' if view_plan=='A_replay' else view_plan
         source,j,jpath=child_source(case,view_plan);alias='p126_'+case+'_'+view_plan;dest=out/(alias+'.lef')
-        alias_view(source,dest,contract['physical_instances'][case]['master'],alias)
-        views[case]={'source_clean_receipt':str(jpath),'source_clean_receipt_sha256':sha(jpath),'source_abstract_lef':str(source),'source_abstract_sha256':sha(source),'parent_alias':alias,'alias_lef_sha256':sha(dest)}
+        clean=source.parent/'clean.odb';assert sha(clean)==j['clean_odb_sha256']
+        detailed=out/(case+'.detailed.lef');export=out/(case+'.detail-export.tcl')
+        export.write_text('read_db '+tcl(clean)+'\nwrite_abstract_lef -bloat_factor 0 '+tcl(detailed)+'\n')
+        with (out/(case+'.detail-export.log')).open('x') as f:er=subprocess.run(common+[IMAGE,BIN,'-threads','1','-no_init','-exit',str(export)],stdout=f,stderr=subprocess.STDOUT)
+        assert er.returncode==0,'Actual detailed LEF export failed'
+        validation=verify_lef_view(source,detailed)
+        (out/(case+'.detail-contract.json')).write_text(json.dumps(validation,indent=2)+'\n')
+        alias_view(detailed,dest,contract['physical_instances'][case]['master'],alias)
+        views[case]={'source_clean_receipt':str(jpath),'source_clean_receipt_sha256':sha(jpath),'source_abstract_lef':str(source),'source_abstract_sha256':sha(source),'source_clean_odb_sha256':sha(clean),
+          'actual_detailed_LEF_sha256':sha(detailed),'detailed_LEF_gate':validation,'parent_alias':alias,'alias_lef_sha256':sha(dest)}
         commands.append('read_lef '+tcl(dest))
     if plan=='A':
         commands += ['read_verilog '+tcl(inputs/'parent.v'),'link_design '+contract['top'],'source '+tcl(inputs/'setup.tcl'),
@@ -97,7 +107,6 @@ def one(inputs,rev,plan):
     rec['child_views']=views;rec['routing_only_macro_model']='Not characterized; capacitance zero is only a linker placeholder. Do not use for parent RC/STA/electrical qualification.'
     rec['parent_PDN_strategy']='New fixed parent M1/M4/M7/M10 grid plus macro M8/M9 local straps and adjacent M7-M8/M8-M9/M9-M10 connections. Original direct M7-M10-stack strategy failed actual macro obstructions; r01/r02 retained. No OBS removed or rule lowered; all actual leaf PG unchanged. After A is checked, freeze its PG for all variants.'
     rec['setup_sha256']=sha(setup)
-    common=['singularity','exec','--cleanenv','--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro','--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro','--home',str(ROOT/'home'),'--pwd',str(out)]
     env='PINXY_PARENT_OUT={},PINXY_PARENT_INPUT={},PINXY_PARENT_RUN_SETUP={},PINXY_DRIVER={},OMP_NUM_THREADS=4'.format(out,inputs,setup,DRIVER)
     cmd=common+['--env',env,IMAGE,BIN,'-threads','4','-no_init','-exit',str(DRIVER/'parent_trial.tcl')];rec['command']=cmd
     with (out/'openroad.log').open('x') as f:r=subprocess.run(cmd,stdout=f,stderr=subprocess.STDOUT)
