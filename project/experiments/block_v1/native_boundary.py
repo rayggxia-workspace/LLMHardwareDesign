@@ -8,16 +8,17 @@ from constraint_readback import audit
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def verify(root,out):
-    config=json.loads((root/'project/experiments/block_v1/native_pipeline.json').read_text())
+def verify(root,out,pipeline='native_pipeline.json'):
+    assert pipeline in ('native_pipeline.json','native_pipeline_const.json')
+    config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
     source=out.parents[2]/config['floorplan_run']
     prep=out.parents[2]/config['preparation_run']/'tasks/native-prepare'
     bound=json.loads((prep/'receipt.json').read_text());assert bound['passed']is True
     budget=json.loads((root/'project/experiments/block_v1/physical-budget.json').read_text())
     results=[]
-    for top in budget['leaves']:
+    for top in (['shared109']if pipeline=='native_pipeline_const.json'else budget['leaves']):
         for policy in ['A','C']:
-            folder=source/('tasks/native-floorplan-'+top+'-'+policy.lower())
+            folder=source/('tasks/'+config.get('floorplan_task_prefix','native-floorplan-')+top+'-'+policy.lower())
             receipt=json.loads((folder/'receipt.json').read_text());assert receipt['passed']is True
             for name in ['native-floorplan-input.json','constraints-readback.sdc','prepare.log','prepared.odb']:
                 assert sha(folder/name)==receipt['outputs'][name]

@@ -18,9 +18,10 @@ def sha(path):
     return digest.hexdigest()
 
 
-def implement(root,out,cpus,run,top,policy):
+def implement(root,out,cpus,run,top,policy,pipeline='native_pipeline.json'):
     assert top in ('shared109','transaction6k')and policy in('A','C')and cpus>=16
-    config=json.loads((root/'project/experiments/block_v1/native_pipeline.json').read_text())
+    assert pipeline in ('native_pipeline.json','native_pipeline_const.json')
+    config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
     base=out.parents[2];audit=base/config['boundary_audit_run']/'tasks/native-boundary-audit'
     prior=json.loads((audit/'receipt.json').read_text());assert prior['passed']is True
     path=audit/'native-boundary-audit.json';assert sha(path)==prior['outputs'][path.name]

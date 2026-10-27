@@ -59,7 +59,25 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-diode2-receive-transaction6k-a':
+    if MODE=='native-const-prepare':
+        from native_const_prepare import prepare
+        prepare(ROOT,OUT)
+    elif MODE.startswith('native-const-floorplan-'):
+        from native_floorplan import prepare
+        top,policy=MODE.removeprefix('native-const-floorplan-').rsplit('-',1)
+        prepare(ROOT,OUT,run,top,policy.upper(),pipeline='native_pipeline_const.json')
+    elif MODE=='native-const-boundary-audit':
+        from native_boundary import verify
+        verify(ROOT,OUT,pipeline='native_pipeline_const.json')
+    elif MODE.startswith('native-const-run-'):
+        from native_run import implement
+        top,policy=MODE.removeprefix('native-const-run-').rsplit('-',1)
+        implement(ROOT,OUT,CPUS,run,top,policy.upper(),pipeline='native_pipeline_const.json')
+    elif MODE.startswith('native-const-receive-'):
+        from native_receive import verify
+        top,policy=MODE.removeprefix('native-const-receive-').rsplit('-',1)
+        verify(ROOT,OUT,CPUS,run,top,policy.upper(),pipeline='native_pipeline_const.json')
+    elif MODE=='native-diode2-receive-transaction6k-a':
         from native_receive import verify
         verify(ROOT,OUT,CPUS,run,'transaction6k','A',pipeline='native_pipeline_diode_full.json')
     elif MODE=='native-diode2-final-t6k-a':

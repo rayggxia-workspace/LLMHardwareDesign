@@ -15,7 +15,7 @@ from native_formal import receive as formal_audit
 
 def verify(root,out,cpus,run,top,policy,historical=False,pipeline=None):
     pipeline=pipeline or ('native_pipeline_057.json' if historical else 'native_pipeline.json')
-    assert pipeline in ('native_pipeline.json','native_pipeline_057.json','native_pipeline_cap20.json','native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json','native_pipeline_diode_full.json')
+    assert pipeline in ('native_pipeline.json','native_pipeline_057.json','native_pipeline_cap20.json','native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json','native_pipeline_diode_full.json','native_pipeline_const.json')
     config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
     diode=config.get('input_diode_master')=='ANTENNA_X1'
     assert bool(config.get('historical_input_contract',False))==historical
@@ -46,6 +46,11 @@ def verify(root,out,cpus,run,top,policy,historical=False,pipeline=None):
     timing=sta_audit(out)
     coverage=annotation_audit(out)
     script('independent-physical',prefix+'source {'+str(root/'project/experiments/block_v1/native_physical.tcl')+'}\n')
+    script('independent-drivers',prefix+'read_db $::env(BV1_ODB)\n'
+           +'set ::env(BV1_UNDRIVEN_REPORT) {used-signal-drivers.tsv}\n'
+           +'source {'+str(root/'project/experiments/block_v1/native_undriven.tcl')+'}\n')
+    from native_driver_report import inspect as driver_audit
+    drivers=driver_audit((out/'used-signal-drivers.tsv').read_text())
     summary={}
     for line in(out/'physical-summary.tsv').read_text().splitlines():
         name,*values=line.split('\t');assert name not in summary;summary[name]=values
@@ -83,6 +88,7 @@ def verify(root,out,cpus,run,top,policy,historical=False,pipeline=None):
         all_pg_iterms_correct=summary['incorrect_pg_iterms']==['0']and int(summary['pg_iterm_count'][0])>0,
         pg_vdd=summary['pg_VDD']==['1'],pg_vss=summary['pg_VSS']==['1'],
         open_signal_inputs_zero=summary['open_signal_inputs']==['0'],exact_prefabricated_m10_pins=pins_equal,
+        undriven_used_signal_nets_zero=drivers['passed'],
         exact_native_layers=layers==['metal%d'%i for i in range(1,11)],
         same_die=die==[0,0,round(w*scale),round(h*scale)],
         core_inside_die=die[0]<core[0]<core[2]<die[2]and die[1]<core[1]<core[3]<die[3],
@@ -121,6 +127,7 @@ def verify(root,out,cpus,run,top,policy,historical=False,pipeline=None):
     with slot(base):assert all(file_sha(Path(p))==digest for p,digest in inputs.items())
     result=dict(schema='block-v1-native-physical-receiver/1',passed=all(checks.values()),checks=checks,top=top,policy=policy,
         timing=timing,rc_coverage=coverage,boundary=boundary,mapped_to_final_lec=formal,source=str(source),source_receipt_sha256=file_sha(source/'receipt.json'),
+        used_signal_driver_audit=drivers,used_signal_driver_report_sha256=file_sha(out/'used-signal-drivers.tsv'),
         active_cell_count=active_count,active_area_um2=active,physical_only_cell_count=physical_count,physical_only_area_um2=physical,
         all_instance_area_um2=active+physical,die_area_um2=w*h,masters=masters,
         core_bbox_dbu=core,core_area_um2=(core[2]-core[0])*(core[3]-core[1])/scale**2,

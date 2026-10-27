@@ -12,9 +12,10 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def prepare(root,out,run,top,policy):
+def prepare(root,out,run,top,policy,pipeline='native_pipeline.json'):
     assert top in ('shared109','transaction6k') and policy in ('A','C')
-    config=json.loads((root/'project/experiments/block_v1/native_pipeline.json').read_text())
+    assert pipeline in ('native_pipeline.json','native_pipeline_const.json')
+    config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
     base=out.parents[2]
     source=base/config['preparation_run']/'tasks/native-prepare'
     receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed']is True
@@ -58,8 +59,13 @@ close $stream
 write_db prepared.odb
 write_def prepared.def
 '''
+    script+='set ::env(BV1_UNDRIVEN_REPORT) {used-signal-drivers.tsv}\n'
+    script+='source {'+str(root/'project/experiments/block_v1/native_undriven.tcl')+'}\n'
     (out/'prepare.tcl').write_text(script)
     run(['openroad','-no_init','-exit','prepare.tcl'],'prepare.log')
+    from native_driver_report import inspect as driver_audit
+    drivers=driver_audit((out/'used-signal-drivers.tsv').read_text())
+    assert drivers['passed'],'Imported source contains used nets without real drivers'
     wanted={p['pin']:p for p in json.loads((folder/'pins.json').read_text())['pins']}
     got={}
     for line in(out/'observed-pins.tsv').read_text().splitlines():
@@ -105,5 +111,7 @@ write_def prepared.def
         initial_mapped_cells=int(count),initial_area_um2=float(area),source=str(source),
         actual_native_tracks={m+':'+a:v for (m,a),v in tracks.items()},all_pins_track_aligned=True,
         old_offset_negative_rejected=True,
+        used_signal_driver_audit=drivers,
+        used_signal_driver_report_sha256=sha(out/'used-signal-drivers.tsv'),
         source_receipt_sha256=sha(source/'receipt.json'),passed=True,
         qualification='Input import, unplaced cell inventory, die/core rows and exact fixed pin boxes only; PG/placement/CTS/route/STA/RC unqualified'),indent=2)+'\n')
