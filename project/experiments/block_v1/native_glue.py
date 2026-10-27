@@ -113,7 +113,10 @@ def verify(root, out, cpus, run):
     equiv += 'equiv_make gold gate equiv\nhierarchy -top equiv\nequiv_simple\nequiv_status -assert\n'
     (out/'equivalence.ys').write_text(equiv)
     run(['yosys', '-s', 'equivalence.ys'], 'equivalence.log')
-    assert 'Equivalence successfully proven!' in (out/'equivalence.log').read_text()
+    equivalent = (out/'equivalence.log').read_text()
+    assert 'Equivalence successfully proven!' in equivalent
+    counts = re.findall(r'Of those cells (\d+) are proven and (\d+) are unproven\.', equivalent)
+    assert len(counts) == 1 and int(counts[0][0]) > 0 and counts[0][1] == '0'
     binary = Path('/OpenROAD-flow-scripts/tools/install/kepler-formal/bin/kepler-formal')
     control = out.parents[2]/'block-v1-20261027-073/tasks/native-formal-control'
     bound = json.loads((control/'receipt.json').read_text()); assert bound['passed'] is True
@@ -137,7 +140,11 @@ def verify(root, out, cpus, run):
             with (folder/'emit.log').open('w') as stream:
                 subprocess.run(['yosys', '-s', 'emit.ys'], cwd=folder, stdout=stream, stderr=subprocess.STDOUT, check=True)
             after = folder/'fault.v'
-        config = 'format: verilog\ninput_paths:\n  - '+str(out/'literal-cut.v')+'\n  - '+str(after)+'\n'
+        # Kepler classifies real LOGIC0/1 outputs as PI boundaries. Keep the
+        # same physical ties on both sides of this fault-control miter; strict
+        # PI matching remains required. RTL semantics, including actual tie
+        # functions, are proven by the separate functional-Liberty Yosys miter.
+        config = 'format: verilog\ninput_paths:\n  - '+str(out/'mapped-cut.v')+'\n  - '+str(after)+'\n'
         config += 'liberty_files:\n - '+str(library)+'\nlog_file: '+str(folder/'kepler.log')+'\n'
         (folder/'config.yml').write_text(config)
         env = dict(os.environ, OMP_NUM_THREADS='2', OPENBLAS_NUM_THREADS='1', MKL_NUM_THREADS='1')
@@ -163,6 +170,8 @@ def verify(root, out, cpus, run):
                   physical_glue_qualified=False, qualified_hard_macro=False,
                   boundary=boundaries['mapped'], signed_metadata_only=metadata, tie_cell_restoration=ties,
                   rtl_to_mapped_equivalence_log_sha256=file_sha(out/'equivalence.log'), native_lec_cases=cases,
+                  functional_liberty_proven_equiv_cells=int(counts[0][0]),
+                  native_lec_scope='Same-source full tied-netlist identity and three actual leaf-pin wiring faults; all PI/PO boundaries matched in the identity control. Functional-Liberty RTL equivalence is the separate Yosys proof.',
                   native_lec_control_receipt_sha256=file_sha(control/'receipt.json'), allocated_cpus=cpus,
                   simultaneous_formal_processes=4, omp_threads_per_process=2,
                   scope='Real wrapper glue mapped and separately priced; all-symbolic leaf-boundary equivalence and three real wiring faults. Both physical leaves, parent routing/PG/CTS and routed behavioral composition remain required')

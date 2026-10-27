@@ -8,6 +8,8 @@ Issue [121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)�
 
 从 Yosys 实际 generic 与 mapped 图构造组合边界：所有叶输出成为符号输入，所有叶输入成为待验证输出，并保留全部外部端口。未连接的叶输出仍有独立符号接口，缺少叶输入则拒绝。不引入行为存储。Yosys 对原 RTL 图与功能 Liberty 展开后的 mapped 图作完整等价检查；实际 Kepler 再核 literal/tied 映射视图，并对 core.cmd、core.ack、sink.revoke_valid 三个真实连接分别改错，要求反例。宽有符号端口只清除结构声明元数据，全部 cell 参数及连接不变，保存证据。
 
-四个 Kepler 正/负案例在同一个8CPU allocation内并行，每进程OMP两线程、BLAS一线程，保留独立日志、返回码与时间。实际库、网表、formal输入输出均由源码归档和回执绑定。此阶段尚未服务器运行；Python编译只证明语法，不是映射或等价通过。
+四个 Kepler 正/负案例在同一个8CPU allocation内并行，每进程OMP两线程、BLAS一线程，保留独立日志、返回码与时间。实际库、网表、formal输入输出均由源码归档和回执绑定。
+
+实际136/92214在node21/8CPU自然失败57秒，回执不改写：Yosys功能Liberty展开后的原RTL/实际映射图4788个等价点全部证明，但Kepler将14个LOGIC0_X1/Z列为额外PI，literal/tied正例虽UNSAT/IDENTICAL仍被严格边界检查拒绝。三种实际坏连接均产生SAT。后续Kepler改为同源完整tied网表的identity正例与三个实际坏连接控制，两个方向都保留原14个常量单元；仍要求identity所有PI/PO完整匹配，不过滤或豁免。原RTL与实际常量函数的非平凡等价继续由独立Yosys功能Liberty证明，Kepler案例只声明接线错误检出控制。本修正尚未实际运行。
 
 后续必须将这份有源 glue 纳入实际父层 placement/PG/CTS/布线、成本与共同底座冻结，并与实际最终 C8/S16K/T6K 网表运行完整四 profile/恢复/背压接收。本项成功也不构成合格物理 Block、宏边界或十二层提取资格。
