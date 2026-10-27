@@ -15,7 +15,7 @@ from native_formal import receive as formal_audit
 
 def verify(root,out,cpus,run,top,policy,historical=False,pipeline=None):
     pipeline=pipeline or ('native_pipeline_057.json' if historical else 'native_pipeline.json')
-    assert pipeline in ('native_pipeline.json','native_pipeline_057.json','native_pipeline_cap20.json','native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json','native_pipeline_diode_full.json','native_pipeline_const.json','native_pipeline_const_protected.json','native_pipeline_viaonly.json')
+    assert pipeline in ('native_pipeline.json','native_pipeline_057.json','native_pipeline_cap20.json','native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json','native_pipeline_diode_full.json','native_pipeline_const.json','native_pipeline_const_protected.json','native_pipeline_viaonly.json','native_pipeline_escape.json')
     config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
     diode=config.get('input_diode_master')=='ANTENNA_X1'
     assert bool(config.get('historical_input_contract',False))==historical
@@ -73,6 +73,9 @@ def verify(root,out,cpus,run,top,policy,historical=False,pipeline=None):
     if config.get('fresh_input_protection'):
         from native_run import checked_fresh_config
         flow_config=checked_fresh_config(source,receipt,flow_config)
+    if config.get('native_escape_repair'):
+        from native_escape_finish import checked_config as checked_escape_config
+        flow_config=checked_escape_config(source,receipt,flow_config)
     assert file_sha(pins_path)==bound['outputs'][str(pins_path.relative_to(prep))]
     pins=json.loads(pins_path.read_text())['pins'];wanted={p['pin']:p for p in pins};got={}
     for line in(out/'physical-pins.tsv').read_text().splitlines():

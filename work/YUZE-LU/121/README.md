@@ -1,5 +1,7 @@
 # Issue 121 执行记录
 
+2026-10-27 14:36 CST：154实际有限探针通过，stage150；组/两子终态索引`run154-group-terminal`、`run154a-terminal`、`run154c-terminal`。源e1beb5821428bf57e8cbe02e06a6260f161cb22c，归档4c2b48a868c38970690e16322ee4f490611e6b51966a09c8e21a6e0cd92dc4d9（162成员/1095680字节）。92243/1:43/TotalCPU3:01.781/MaxRSS1897412K，A/C各10门通过，完整源18/2复现、upper mask XOR0、after upper0、所有via身份/坐标保持；并非完整宏资格。155/156后继全门代码已准备尚未部署，见正式有限修复决策；14:36现有6allocation保留，128无终态。
+
 2026-10-27 14:27 CST：153源码2533cff07db1210c1870197bb798c4dbf77ae9b9，归档3b6fc298071931b1ed2fb1524c493ceaaf8c2fd53ffa39ecfe270e5fb1b28c68（162成员/1095680字节），stage149。92241实际FAILED/1:20/TotalCPU2:21.279/MaxRSS1322944K，组/两子终态索引`run153-group-terminal`、`run153a-terminal`、`run153c-terminal`；`run153-initial`采集时已终态。原GDS DBU0.0001µm与probe0.0005µm的单向换算保护拒绝，尚未XOR/DRC。154仅改为共同细网格整数放大，物理候选不变，实际尚未运行。
 
 2026-10-27 14:22 CST：152源码3c0bc644d5ab1fab9a7889b591b7ce9271de5c10，归档b936b365906670e37fa6d942d6474ce04038190021714740a63470fb4f14ecf5（162成员/1095680字节），stage148。92239实际FAILED/1:19/TotalCPU2:19.502/MaxRSS1324944K；组与两子终态索引`run152-group-terminal`、`run152a-terminal`、`run152c-terminal`，实际绑定报告与网表诊断`native-escape-152-diagnosis.json`。153固定via原坐标/身份、M9树投影与M10确定性L，新GDS mask XOR/原GDS复现门；`escape-controls-153.json`及fixture通过，实际153尚未运行，全部完整资格仍待验收。

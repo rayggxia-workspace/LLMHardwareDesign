@@ -28,7 +28,7 @@ def verify(root,out,cpus,run,policy,pipeline='native_pipeline_cap40.json'):
     from native_formal import receive
     assert policy in ('A','C')and cpus>=8
     base=out.parents[2]
-    assert pipeline in ('native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json','native_pipeline_diode_full.json','native_pipeline_viaonly.json')
+    assert pipeline in ('native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json','native_pipeline_diode_full.json','native_pipeline_viaonly.json','native_pipeline_escape.json')
     config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
     top='transaction6k'
     source=base/config['candidate_run']/('tasks/'+config['candidate_task_prefix']+top+'-'+policy.lower())

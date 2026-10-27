@@ -60,7 +60,19 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-escape-probe-group':
+    if MODE in ('native-escape-finish-group','native-escape-qualification-group'):
+        from native_escape_finish import group
+        group(ROOT,OUT,CPUS,qualify=MODE=='native-escape-qualification-group')
+    elif MODE in ('native-escape-run-transaction6k-a','native-escape-run-transaction6k-c'):
+        from native_escape_finish import implement
+        implement(ROOT,OUT,CPUS,run,MODE[-1].upper())
+    elif MODE in ('native-escape-receive-transaction6k-a','native-escape-receive-transaction6k-c'):
+        from native_receive import verify
+        verify(ROOT,OUT,CPUS,run,'transaction6k',MODE[-1].upper(),pipeline='native_pipeline_escape.json')
+    elif MODE in ('native-escape-final-transaction6k-a','native-escape-final-transaction6k-c'):
+        from native_final_function import verify
+        verify(ROOT,OUT,CPUS,run,MODE[-1].upper(),pipeline='native_pipeline_escape.json')
+    elif MODE=='native-escape-probe-group':
         from native_escape_probe import group
         group(ROOT,OUT,CPUS)
     elif MODE in ('native-escape-probe-a','native-escape-probe-c'):

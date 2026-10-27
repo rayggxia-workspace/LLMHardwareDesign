@@ -217,3 +217,5 @@ python project/experiments/block_v1/native_drc_geometry.py work/YUZE-LU/121/resu
 `native-escape-probe-group`为预制冻结前的有限M9/M10/via9接入线修复探针：同一4CPU c96 allocation内A/C各2CPU，既有整节点内存申请、实际内存预检与独立失败保留。语法/锚点/范围/连通控制命令为`python project/experiments/block_v1/native_escape_control.py NEW_CONTROL.json`，输出须不存在；149b含边接触控制。149因16G申请不兼容提交前拒绝无job；150实际读回拒绝INCREMENTAL未导入网络，失败保留，151修正为FLOORPLAN网络导入尚待实际运行。完整源绑定、OpenROAD精确读回、实际上层mask与诊断DRC、源18/2标记复现以及后续新寄生/完整接收要求见[有限修复决策](decisions/2026-10-27-block-v1-native-escape-repair.md)。诊断不等于宏资格。
 
 152实际因源合并mask报告条数不等原完整GDS而失败，并发现A新增3条VIA9.2；失败均保留。153严格保持全部via身份/原坐标，只简化M9树枝和M10折返；新增完整原GDS upper-mask XOR，并直接在原GDS复现18/2源标记，after诊断仍需0。153声明合成控制通过、实际EDA未执行。完整物理接收与新寄生/功能仍独立必需，详见同一有限修复决策。
+
+154实际有限探针两路10门全部通过，仍不等于完整宏。155 `native-escape-finish-group`以同一32CPU allocation内A/C各16CPU重新运行原生do-6_report/RCX/LEC，严格保持154接受副本全部几何/网表/SDC，并在实际最终ODB上重跑原生全片check_drc；156 `native-escape-qualification-group`在155完整成功后组织两物理/两最终功能各8CPU、共32CPU的四路完整接收。`native_pipeline_escape.json`统一绑定源、接收和154探针，`native_escape_finish.checked_config`拒绝未绑定/变化的配置、probe、脚本或实际DRC。实际155/156本源码提交时尚未运行；所有完整接收门保留，细节见有限修复决策。

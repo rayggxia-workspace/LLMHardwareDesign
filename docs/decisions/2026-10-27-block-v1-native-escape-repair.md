@@ -55,4 +55,16 @@ python project/experiments/block_v1/native_escape_control.py NEW_CONTROL.json
 
 153/92241实际FAILED/1:20、TotalCPU2:21.279、MaxRSS1322944KiB：原生GDS的DBU为0.0001µm，探针为0.0005µm，单向整数放大检查拒绝0.2比例，未进入XOR/DRC。实际原GDS UNITS二进制记录也读回0.0001µm（1e-10m）；这不是物理候选通过或失败的结论，失败索引保留。154仅把两份mask均整数放大到共同细网格，本例原GDS×1、探针×5，在0.0001µm做XOR，禁止坐标舍入或非整数缩放；物理候选和所有门槛不变，实际154尚未运行。
 
+## 154实际通过与155/156完整后继
+
+154/92243实际COMPLETED/1:43、TotalCPU3:01.781、MaxRSS1897412KiB，一个c96 node22/4CPU allocation内A/C各2CPU并行。两路各10项检查均通过：完整原GDS18/2及分类准确复现，ODB/原GDS上层mask精确XOR为0，修改后原生上层诊断0，全部连接/范围/低层/网表一致性、missing-cut及异网短路控制通过。A只修改8网、C只修改1网；全部via原坐标/身份不变。源e1beb5821428bf57e8cbe02e06a6260f161cb22c、归档4c2b48a868c38970690e16322ee4f490611e6b51966a09c8e21a6e0cd92dc4d9（162成员/1095680字节），组与两子终态索引保留。**这只是有限几何探针通过，完整物理/新寄生/功能/宏资格均未通过。**
+
+155的`native-escape-finish-group`将在同一32CPU allocation内A/C各16CPU，从154实际accepted edited.odb运行安装原生`do-6_report`，重新写最终ODB/DEF/Verilog/SDC、LEC与SPEF；不再次插fill、placement/CTS/route或优化。原生最终输出脚本SHA `b56f8584f32520191869a7f6da061843b27d1cf574176902c281c7f11a159168`内含真实RCX命令，不复制133旧SPEF。全部实际flow脚本/Makefile SHA、原输入/保护、原工具/预算继续绑定。
+
+固定上游[原生check_drc入口](https://github.com/The-OpenROAD-Project/OpenROAD/blob/6556255d82c707820dd400e9b8cf331b378b735e/src/drt/src/TritonRoute.tcl#L494)和[全片实现](https://github.com/The-OpenROAD-Project/OpenROAD/blob/6556255d82c707820dd400e9b8cf331b378b735e/src/drt/src/TritonRoute.cpp#L1248)说明零面积默认box检查整个Block。155必须在实际安装版读回该命令body/默认box、调用新最终ODB的全片检查并要求报告0；检查前后DEF字节相同。再次要求最终全部NETS/NETS外与154接受副本完全一致，全部物理Verilog及原约束SDC字节不变。不复制旧DRT报告，不以旧源DRT0冒充修改后检查。
+
+156的`native-escape-qualification-group`仅在155完整成功后启动；同一32CPU allocation内A/C独立物理与A/C实际最终功能四路各8CPU。物理接收器仍运行原完整GDS/deck、全部端点STA/电气、PG/连接/LEC/RC覆盖/面积/pin/驱动与原生DRC门；功能仍是最终全部实际信号单元/真实RAM的三初态242事务接收。每路32GiB估计加20%余量，按实际可用内存选4/2/1路；producer选2/1路。失败不取消独立peer，所有门槛保留。新pipeline为`native_pipeline_escape.json`，正式宏视图还需后继绑定，不复用147失败来源。
+
+155/156在本源码提交时**尚未部署/执行**。宏边界、C8完整组合/恢复epoch、父层物理、一般多网节点分布十二层RC/拼接/窗口、共同冻结与两产品/敏感性/参数库仍需继续完成。
+
 即使149探针通过，仍须从修改后的真实ODB重新生成完整原生GDS、寄生、SDC与网表，并重跑完整DRC、全部端点STA/电气、PG/连接/LEC和实际最终功能；不能复用133旧SPEF充当新路由寄生。正式同源宏视图、flat/abstract边界、父层glue、完整恢复/epoch、一般多网分布十二层RC与原生/新层拼接、共同冻结父层、两产品和敏感性仍是独立门槛。探针的四个完整资格标志保持false。
