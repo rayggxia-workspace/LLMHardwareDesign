@@ -1,5 +1,7 @@
 # Block v1 执行入口
 
+本轮用户范围纠正：以[首版积木实施计划](../../../docs/plans/block-v1-library-implementation.md)与[物理清单](../../../docs/BLOCK_LIBRARY_V1.md)为主线，必须完成每个入选块的最终M1–M10布局布线。下文旧P0–P6/十二层工作是保留的历史工程入口，不再全部属于本轮验收。
+
 Refs #121；授权计划见 `docs/plans/block-v1-nangate45-m11-m12.md`，进度/输入证据见 `work/YUZE-LU/121/`。
 
 只用Nangate45原生M1–M10做预制，新增研究M11/M12和via10/11做定制互联。有源和原生几何冻结后不允许repair新增或移动单元。

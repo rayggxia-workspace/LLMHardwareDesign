@@ -60,7 +60,16 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE in ('joint-node-binding-branch','joint-node-binding-via'):
+    if MODE=='library-v1-source':
+        from library_v1 import source_probe
+        source_probe(ROOT,OUT,CPUS,run)
+    elif MODE=='library-v1-byte':
+        from library_v1 import byte_probe
+        byte_probe(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('library-v1-map-'):
+        from library_v1 import map_block
+        map_block(ROOT,OUT,CPUS,run,MODE[len('library-v1-map-'):])
+    elif MODE in ('joint-node-binding-branch','joint-node-binding-via'):
         from joint_node_binding import verify
         verify(ROOT,OUT,CPUS,run,MODE.rsplit('-',1)[-1])
     elif MODE in ('joint-routed-branch','joint-routed-via'):

@@ -1,5 +1,7 @@
 # 架构与运行
 
+当前Block主线见[首版逐块实施计划](plans/block-v1-library-implementation.md)。`python project/experiments/block_v1/make_library.py --check`验证新M8/VS/S16K独立候选及源码逆重建；它不代表数值或P&R通过。`library-v1-source`、`library-v1-byte`及`library-v1-map-<top>`提供原生层级检查、八lane数值与完整标准单元映射，后继仍须逐块完整物理接收。
+
 `native-c8-formal-diagnosis-group` 在2CPU内两路1CPU对134实际失败作只读图/边界诊断，子模式 `native-c8-formal-diagnose-<a|c>`；只诊断未匹配输入，不改变任何LEC验收门，详见[严格对应诊断](decisions/2026-10-27-block-v1-c8-formal-input-diagnosis.md)。
 
 C8有限预制前实际修复探针为 `native-c8-probe-group`（4CPU内两路2CPU）及 `native-c8-probe-<a|c>`，绑定128/162/163；完整原生/宏资格仍独立。离线命令 `python project/experiments/block_v1/native_c8_legalize_control.py work/YUZE-LU/121/results <含c8-upper163-a/c.tsv的授权目录> <全新JSON路径>` 校验真实源几何、确定性、完整upper接触及12组独立穷举spacing对照；算法边界见[障碍事件接入](decisions/2026-10-27-block-v1-c8-obstacle-escape.md)。`native_upper_index_control.py` 接受位置参数 `<含upper159-a/c-before/after.tsv的授权目录> <全新JSON路径>`，没有额外help子命令。
