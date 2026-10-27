@@ -132,6 +132,9 @@ def build(root,out,keep_figures=False):
     summary=json.loads((root/'inventory/partition_summary.json').read_text());bindings=json.loads((root/'inventory/binding_summary.json').read_text())
     physical=root/'physical_summary.json';pstat=json.loads(physical.read_text(encoding='utf-8')) if physical.exists() else {}
     dump(data/'physical_summary.json',pstat)
+    measured=pstat.get('act',{}).get('matched_740pin_comparison',{})
+    measured_rows=[{'试验':k,'同组pin':v['selected_pins'],'DRT实际总线长 μm':v['wire_length_um'],'DRT via数量':v['via_count'],'线长变化':f"{v['wire_change_percent']:+.2f}%",'via变化':f"{v['via_change_percent']:+.2f}%",'setup余量 ns':v['setup_worst_slack_ns'],'hold余量 ns':v['hold_worst_slack_ns']} for k,v in measured.get('plans',{}).items()]
+    measured_html=('<h3>ACT同组740-pin实际对照</h3>'+table(pd.DataFrame(measured_rows))+'<p>这是DRT在RCX前输出的真实路由统计，按工具口径计数，区别于几何L1及RC/STA。单次匹配试验中C线长约−6.40%、via约−1.70%，远小于几何L1的−42.4%；setup余量略变差，没有时序改善结论。B仅为相同740-pin子集。A原边界已能合法布线；C提供内部线长的额外价值，父层代价/通道和完整规则仍未知，外框未缩小。</p>') if measured_rows else ''
     metrics={c:json.loads((root/f'{c}_metrics.json').read_text()) for c in ORDER}
     totals=[];htmlparts=[];pins=[]
     for c in ORDER:
@@ -179,6 +182,7 @@ __BLOCKS__
 <script>const pins=__PINS__;const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function render(){const c=document.querySelector('#case').value,q=document.querySelector('#search').value.toLowerCase();let a=pins.filter(r=>(!c||r[0]===c)&&r.join(' ').toLowerCase().includes(q));document.querySelector('#count').textContent=`匹配 ${a.length} / ${pins.length} 原始信号pin；所有方案保持同一完整清单。`;document.querySelector('#rows').innerHTML=a.slice(0,100).map(r=>'<tr>'+[...r.slice(0,6),r[6]+', '+r[7],r[8]+', '+r[9],r[10]+', '+r[11],r[12]].map(s=>'<td>'+escape(s)+'</td>').join('')+'</tr>').join('')}document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',render));render();</script></html>'''
     replacements={'NAV':''.join(f'<a href="#{c}">{TITLES[c]}</a>' for c in ORDER),'OWN':table(own),'MATRIX':table(matrix),'TOTAL':table(pd.DataFrame(totals)),'BLOCKS':'\n'.join(htmlparts),'STAGES':table(pd.DataFrame(stages)),'PHYSICAL':html.escape(json.dumps(pstat,ensure_ascii=False,indent=2)),'OPTIONS':''.join(f'<option>{c}</option>' for c in ORDER),'PINS':rawpins}
     for k,v in replacements.items():report=report.replace('__'+k+'__',v)
+    report=report.replace('<pre>'+html.escape(json.dumps(pstat,ensure_ascii=False,indent=2))+'</pre>',measured_html+'<pre>'+html.escape(json.dumps(pstat,ensure_ascii=False,indent=2))+'</pre>')
     (out/'report.html').write_text(report,encoding='utf-8')
     for p in out.rglob('*'):
         if p.is_file() and p.suffix in ['.svg','.html','.json','.csv']:

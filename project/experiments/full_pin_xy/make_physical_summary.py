@@ -40,7 +40,7 @@ def summarize(root):
                 access=json.loads((d/name).read_text());c['selected_access_all_terminals_pass']=access['pass'];c['selected_access_nets']=len(access['nets'])
         layers={}
         for layer,length in re.findall(r'^(metal\d+)\s+([\d.]+)um\s+\d+%',log,re.M):layers[layer]=float(length)
-        c['actual_routed_wire_length_by_layer_um']=layers;c['actual_routed_wire_length_sum_um']=sum(layers.values()) if layers else None
+        c['analysis_state_wire_length_by_layer_um_DO_NOT_USE_AS_PHYSICAL']=layers;c['analysis_state_wire_length_sum_um_DO_NOT_USE_AS_PHYSICAL']=sum(layers.values()) if layers else None
         before=read(d/'before.pins.tsv.gz');after=read(d/'after.pins.tsv.gz')
         if before and after:
             aa=[TCL.splitlist(line) for line in before.splitlines()];bb=[TCL.splitlist(line) for line in after.splitlines()]
@@ -92,6 +92,12 @@ def summarize(root):
             s['drc_status']='独立clean进程DRC {}; selected-net连通 {}; 全块几何连通 {}；父层未验证'.format(t.get('independent_clean_DRC_count','待复核'),t.get('selected_access_all_terminals_pass','待补查'),full)
             s['sta_status']='RCX {}; setup {}ns / hold {}ns；电气违例行{}；系统边界不完整'.format(t['RCX_executed'],t['setup_worst_slack_ns'],t['hold_worst_slack_ns'],t['reported_timing_electrical_violator_rows'])
         else:s['route_status']='试验运行/驱动失败；未报告C通过';s['drc_status']='尚未完成';s['sta_status']='尚未完成'
+    source=summary['act']['trials'];keys=['fullC-r01/A_replay','fullBcohort-r01/B','fullC-r02/C']
+    if all(k in source and source[k].get('DRT_pre_RCX_wire_length_sum_um') for k in keys):
+        control=source[keys[0]];summary['act']['matched_740pin_comparison']={'scope':'Same 740 C-movable cohort, same source/resources/frame/layer set; B is subset of full859-pin B. DRT pre-RCX native statistics, one trial; not extracted RC or system PPA.',
+            'plans':{k:{'selected_pins':source[k]['selected_pin_count'],'wire_length_um':source[k]['DRT_pre_RCX_wire_length_sum_um'],'via_count':source[k]['DRT_pre_RCX_vias'],
+            'wire_change_percent':100*(source[k]['DRT_pre_RCX_wire_length_sum_um']/control['DRT_pre_RCX_wire_length_sum_um']-1),'via_change_percent':100*(source[k]['DRT_pre_RCX_vias']/control['DRT_pre_RCX_vias']-1),
+            'setup_worst_slack_ns':source[k]['setup_worst_slack_ns'],'hold_worst_slack_ns':source[k]['hold_worst_slack_ns']} for k in keys}}
     (root/'physical_summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     print('PHYSICAL_SUMMARY_UPDATED',sum(len(s['trials']) for s in summary.values()),'trial receipts; full qualification NOT inferred')
 if __name__=='__main__':
