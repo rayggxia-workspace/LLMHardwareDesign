@@ -16,9 +16,11 @@ for directory in sorted((ROOT/'leaf_timing_models').glob('*/*')):
         if p.suffix in ['.lib','.tsv','.txt','.log']:
             with (destination/(p.name+'.gz')).open('xb') as raw,gzip.GzipFile(filename='',mode='wb',fileobj=raw,mtime=0) as f:f.write(p.read_bytes())
         elif p.suffix in ['.json','.tcl']:shutil.copyfile(p,destination/p.name)
+    libtext=(directory/'timing.lib').read_text() if (directory/'timing.lib').exists() else ''
     records.append({'model':directory.relative_to(ROOT/'leaf_timing_models').as_posix(),'source_directory':str(directory),
       'source_execution_sha256':sha(execution) if execution.exists() else None,'actual_receipt':j,
       'driver_failure':json.loads(failure.read_text()) if failure.exists() else None,
+      'native_model_features_textual_presence_only':{key:key in libtext for key in ['minimum_period','max_capacitance','max_transition','setup_rising','hold_rising']},
       'qualified_for_full_system_STA':False,'reason':'Native extracted research model; boundary drive/load/slew and SRAM device/model qualifications incomplete. Leaf internal failures/minimum-period coverage remain separate.'})
 (out/'summary.json').write_text(json.dumps({'created_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),
  'scope':'Completed model exports or explicit driver failures only. Not characterized signoff libraries; active exports omitted, never passed.',
