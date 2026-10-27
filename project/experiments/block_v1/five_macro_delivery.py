@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 
-def final_leaf(root,out,cpus,run,kind):
+def final_leaf(root,out,cpus,run,kind,gate_roots=None):
     """Index and render a new leaf only after all its exact final gates pass."""
     from io_slots import file_sha
     from five_macro_receive import source
@@ -12,7 +12,9 @@ def final_leaf(root,out,cpus,run,kind):
     proofs={};receipts={}
     for stage,report in [('physical','five-macro-physical.json'),('drc','five-macro-drc.json'),
                          ('final-function','five-macro-final-function.json'),('formal','five-macro-formal.json')]:
-        parent=out.parent/('five-macro-'+stage+'-'+kind)
+        gate_root=(gate_roots or {}).get(stage,out.parent)
+        assert gate_root.name=='tasks' and gate_root.parent.parent==out.parents[2]
+        parent=gate_root/('five-macro-'+stage+'-'+kind)
         receipt=json.loads((parent/'receipt.json').read_text());assert receipt['passed'] is True
         path=parent/report;assert file_sha(path)==receipt['outputs'][report]
         proof=json.loads(path.read_text());assert proof['passed'] is True
@@ -24,6 +26,7 @@ def final_leaf(root,out,cpus,run,kind):
     assert proofs['drc']['full_deck']['total_items']==0 and not proofs['drc']['native_report'].strip()
     assert all(proofs['physical']['checks'].values()) and proofs['formal']['strict_native_lec']['passed']
     assert len(proofs['final-function']['initial_runs'])==3
+    assert proofs['formal']['source_final_function_receipt_sha256']==receipts['final-function']['sha256']
     # These are actual native pins, not the planned XY list or a picture.
     script='read_db {'+str(results/'6_final.odb')+'}\nset f [open pins.tsv w]\n'
     script+='foreach p [[ord::get_db_block] getBTerms] {if {[$p getSigType] in {POWER GROUND}} {continue}; foreach pin [$p getBPins] {foreach b [$pin getBoxes] {puts $f "[$p getName]|[[$b getTechLayer] getName]|[$b xMin]|[$b yMin]|[$b xMax]|[$b yMax]"}}}\nclose $f\n'
@@ -65,6 +68,13 @@ view.save_image(OUTPUT,1600,1600)
                 qualified_hard_macro=False,hierarchical_lib_qualified=False,m11_m12_system_qualified=False,
                 scope='One actual final native M1-M10 leaf; all same-source physical/full native and full GDS deck/function/strict LEC gates pass. Hierarchical timing-model and M11/M12-system qualification are separate and unclaimed.')
     (out/'five-macro-delivery.json').write_text(json.dumps(result,indent=2)+'\n')
+
+
+def received_leaf(root,out,cpus,run,kind):
+    """Fresh exact-pin physical gate; other gates bind the same unchanged source."""
+    assert kind in ('s','r','v')
+    original=out.parents[2]/'block-v1-20261027-207/tasks'
+    final_leaf(root,out,cpus,run,kind,gate_roots={stage:original for stage in ('drc','final-function','formal')})
 
 
 def selected(root,key):

@@ -99,6 +99,9 @@ try:
     elif MODE in ('five-macro-route-m','five-macro-route-s','five-macro-route-r','five-macro-route-v'):
         from five_macro_physical import implement
         implement(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE in ('five-macro-delivery-received-s','five-macro-delivery-received-r','five-macro-delivery-received-v'):
+        from five_macro_delivery import received_leaf
+        received_leaf(ROOT,OUT,CPUS,run,MODE[-1])
     elif MODE.startswith('five-macro-delivery-'):
         from five_macro_delivery import final_leaf
         final_leaf(ROOT,OUT,CPUS,run,MODE[-1])

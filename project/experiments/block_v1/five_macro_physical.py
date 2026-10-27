@@ -95,13 +95,8 @@ def implement(root,out,cpus,run,kind):
         for i in range(p['bits']):bits.append(dict(port=name,index=i,direction=p['direction'],role='clock' if name=='clk' else 'signal'))
     plan=generate(bits,leaf,'C',grid)
     (out/'pins.json').write_text(json.dumps(plan,indent=2)+'\n')
-    pins='set planned_pins [dict create]\n'
-    for p in plan['pins']:
-        assert not any(c in p['pin'] for c in '{}\\\n\r')
-        pins+='dict set planned_pins {'+p['pin']+'} 1\n'
-        pins+='place_pin -pin_name {%s} -layer metal10 -location {%g %g} -pin_size {.8 .8}\n'%tuple([p['pin']]+p['xy_um'])
-    pins+='set actual_pins {}\nforeach p [[ord::get_db_block] getBTerms] {if {[$p getSigType] ni {POWER GROUND}} {lappend actual_pins [$p getName]}}\n'
-    pins+='if {[lsort $actual_pins] ne [lsort [dict keys $planned_pins]]} {error "Exact macro pin inventory mismatch"}\n'
+    from pin_contract import script as pin_script
+    pins=pin_script(plan)
     (out/'pins.tcl').write_text(pins)
     (out/'input.sdc').write_text(constraints(budget))
     with slot(base):shutil.copyfile(structural_source,out/'input.v')

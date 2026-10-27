@@ -1,5 +1,27 @@
 # Issue121 五宏实施接续
 
+2026-10-28 01:20 CST：207独立S物理接收失败，仅`exact_m10_pin_geometry=false`，全部实际端点时序、电气、RC、PG、连接等门通过，见[原始失败](../../work/YUZE-LU/121/results/run207-five-macro-010821/index.json)。已定位为旧生成器`%g`六位有效数字序列化：S273接点中128个输出的未格式化JSON和实际执行Tcl相差5nm；实际Tcl与ODB精确一致。源文件与失败不重写。新`pin_contract.py`严格核完整脚本、源回执SHA、整数DBU及全位号矩形；原始native TSV的8种错误全拒绝，无容差。见[取舍](../decisions/2026-10-28-block-v1-executed-pin-contract.md)与[控制](../../work/YUZE-LU/121/results/pin-contract-controls-20261028-0119/pin-contract-controls.json)。尚不能把软件控制当完整物理门通过。
+
+新208六项DAG已本地validate，通过后将重新运行S/R/V完整物理接收，并只在新physical及207同一未改动源的DRC/function/formal全部通过后生成交付。queue SHA256=`1dabb6001660acb63db57182c8fada6adf2a015095223cd240316a0098ad6bbc`，尚待源码提交/部署，不可冒称已运行。207保留运行，无新取消；旧physical失败不会取消其独立DRC/function/formal。当前S仍未验收，M/T已接收，V/R继续物理；下一步提交新源、部署208到自然释放的node24（届时不超八allocation），再核真实门结果。
+
+2026-10-28 01:05 CST：**S190全流程COMPLETED/0:0**，elapsed2:58:57、CPU11:23:34、Slurm batch MaxRSS147104644K（约140.3GiB，包含最终LEC，不冒充独立单进程峰值）。最终V/SDC/DEF/ODB/SPEF及来源SHA已生成，[终态](../../work/YUZE-LU/121/results/run190-five-macro-010130/index.json)。尚无S最终接收资格。
+
+207/92488已在node25/96CPU实际运行S的physical、full-DRC、final-function三个独立16CPU检查；见[实际领取与可用内存](../../work/YUZE-LU/121/results/run207-five-macro-010508/index.json)。当前其余项受真实依赖限制，非整批等待。207共15项S/R/V接收与交付，queue SHA256=`90b4429c1657f347880be31a891db1e7eaa577d8f5a13d34e8ebf774f98c6400`；复用原203的同一源码73b50a85395c6195d84fdb31c5faed4a51e77d20和归档15ac4bd9b3356d0f30fdef996054360d115437968185690fdf2f3a32f2b3684f，**没有新增RTL版本**。生产stage203-manifest/queue207保持原生字节，Git属性-text保证服务器哈希可跨系统复用。
+
+原203统一64GiB接收估计被上述实际内存推翻。已对相同生产调度器做真实子进程的SIGINT排空隔离控制：停止新领取、等待已有子进程完成，必须随后独立处理遗留RUNNING claim。控制通过后，只向203调度器PID1710701发SIGINT，未取消Slurm allocation、进程组或EDA子任务。V已继续进入详细布线。控制、精确目标、来源SHA和请求后CPU增长见[排空记录](../../work/YUZE-LU/121/results/drain203-005449/index.json)。**不要恢复/重提203队列**；它只让既有Vroute自然收尾，预期父调度器最终以KeyboardInterrupt非零退出，不能把父队列失败当V子结果失败，也不能用遗留RUNNING claim当进程存活证据。M已完成的接收保持有效，后续S/R/V检查只由207领取；各块仍逐项核对实际子回执。
+
+207内存预算（GiB，均再乘1.2并留16GiB guard）：
+
+| 阶段 | S | R | V | 依据 |
+| --- | --- | --- | --- | --- |
+| 独立物理/STA | 64 | 64 | 32 | 不包含LEC；暂定预算，不把旧组合receiver的LEC峰值分配到本阶段 |
+| 完整GDS DRC | 64 | 64 | 64 | 旧C8两个完整检查实测process-tree峰值约24.2/23.3GiB；不是本次实测 |
+| 最终功能构建/三初态 | 128 | 192 | 96 | 暂定构建预算，继续保留500ms实际过程树采样 |
+| 严格LEC | 192 | 224 | 64 | S最终流程约140.3GiB实测；R/V按145877/21816与S131201 DFF规模估计，不能称新门实测 |
+| 交付导出 | 16 | 16 | 16 | 仅所有门通过后才领取 |
+
+当前四旧baseline+R196+V203+207共七allocation，S190已自然释放；只在确有ready任务受RAM阻挡且总数不超八时增加共享claim的peer。默认上限仍六个16CPU，按live MemAvailable与保留量即完即补。207部署前验证发现移除v-route后遗留内部依赖，已改为203精确外部子回执并通过同一生产validate；修正前无job。恢复第一步：采集207、196和203真实子结果；S/R/V任何实际失败保留且修该基础版，不能提前接收或恢复旧范围。
+
 2026-10-28 00:39 CST 续记：CLI GraphQL独立读回实际账号YUZE-LU，分支及PR122 head均为cf31e8a7fa46116c753670b221e40b7723b84522；PR仍OPEN/draft。此后本次交付入口/快照提交继续沿同一分支快进，不能以旧SHA冒称后继head。统一入口见[五宏交付索引](../../work/YUZE-LU/121/delivery/README.md)。S190详细布线完成，流程内最终LEC正在检查262545输入/262532输出（无未匹配端口），尚无独立接收资格；R196进入CTS，V203进入global route。只读记录见[00:39快照](../../work/YUZE-LU/121/results/live-20261028-003912/index.json)。
 
 旧181/92386自然FAILED收尾，elapsed4:31:28、CPU4:51:15、Slurm组MaxRSS183501616K；共享178队列A接收失败原因包括hold=-0.047559ns，C为hold=-0.103899ns和原生DRC未通过，保留[终态摘要](../../work/YUZE-LU/121/results/run178-five-macro-003712/index.json)，不扩展旧C8修复。当前四个旧baseline（92045/92046/92047/92062）加190/196/203，共七allocation；其他成员未操作。203当前仅Vroute可运行，S/R/V独立接收均受实际最终布线依赖约束，不能为了填满节点制造重复版本或提前领取。先前00:20的八allocation仅为当时快照。

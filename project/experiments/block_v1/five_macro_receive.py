@@ -64,13 +64,16 @@ def physical(root,out,cpus,run,kind):
     for line in (out/'physical-summary.tsv').read_text().splitlines():
         k,*values=line.split('\t');assert k not in summary;summary[k]=values
     dbu=int(summary['dbu'][0]);assert dbu==2000
-    plan=json.loads((folder/'pins.json').read_text())['pins'];wanted={p['pin']:p for p in plan};got={}
-    for line in (out/'physical-pins.tsv').read_text().splitlines():
-        name,layer,*xy=line.split('\t');assert name not in got;got[name]=(layer,list(map(int,xy)))
-    exact=set(wanted)==set(got)
-    for name,p in wanted.items():
-        x,y=p['xy_um'];w,h=p['size_um'];expect=[round(z*dbu) for z in (x-w/2,y-h/2,x+w/2,y+h/2)]
-        exact &= got.get(name)==('metal10',expect)
+    from pin_contract import inspect as pin_audit
+    pin_plan=json.loads((folder/'pins.json').read_text());plan=pin_plan['pins']
+    assert file_sha(folder/'pins.tcl')==r['outputs']['pins.tcl']
+    pin_contract=pin_audit(pin_plan,(folder/'pins.tcl').read_text(),(out/'physical-pins.tsv').read_text(),dbu)
+    if pin_contract['passed']:
+        from pin_contract_controls import exercise
+        controls=exercise(pin_plan,(folder/'pins.tcl').read_text(),(out/'physical-pins.tsv').read_text())
+        assert controls['passed']
+        pin_contract['software_controls']={k:controls[k]for k in ('negative_controls','precise_serialization_preserves_original_coordinates','comparator_sha256','scope')}
+    exact=pin_contract['passed']
     budget=json.loads((root/'project/experiments/block_v1/physical-budget.json').read_text())
     boundary=constraints((out/'constraints-readback.sdc').read_text(),plan,budget)
     masters=[];active=0;physical_area=0
@@ -91,7 +94,7 @@ def physical(root,out,cpus,run,kind):
                 exact_die=list(map(int,summary['die']))==[0,0,round(flow['die_um'][0]*dbu),round(flow['die_um'][1]*dbu)])
     source(out,kind)
     result=dict(passed=all(checks.values()),top=flow['top'],checks=checks,timing=timing,rc_coverage=annotation,
-                used_drivers=drivers,boundary=boundary,masters=masters,active_area_um2=active,
+                used_drivers=drivers,boundary=boundary,pin_contract=pin_contract,masters=masters,active_area_um2=active,
                 physical_only_area_um2=physical_area,die_um=flow['die_um'],source=str(folder),
                 source_receipt_sha256=file_sha(folder/'receipt.json'),exact_final_function_qualified=False,
                 independent_full_deck_drc_qualified=False,qualified_hard_macro=False,

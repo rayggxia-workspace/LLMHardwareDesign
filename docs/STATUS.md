@@ -1,3 +1,7 @@
+2026-10-28 01:20 CST：S207独立物理门仅接点几何失败，其他全部时序/电气/RC/PG/连接通过。已定位128个输出由旧%g格式化丢位造成计划与实际执行Tcl差5nm；实际Tcl与ODB精确一致。新严格脚本/整数DBU比较器的273pin正例及8种拒绝反例通过，无容差、不改原生硬件；208准备重新完整物理接收，尚未冒称通过。原207失败和独立DRC/function/formal继续保留；交付必须同源四门通过并核formal→function回执。详情见docs/decisions/2026-10-28-block-v1-executed-pin-contract.md。M/T已有单块结果、S未验收、V/R继续物理，Issue121保持in_progress、PR122草稿未合并。
+
+2026-10-28 01:05 CST：S190原生全流程COMPLETED/0:0（2:58:57/CPU11:23:34），最终五份文件已生成；207/92488 node25已实际三路16CPU运行独立物理、完整GDS DRC、最终功能，严格LEC等功能通过即补位。S仍未验收；M/T已有单块结果，V详细布线、R CTS继续。S最终LEC所在batch实测峰值147104644K约140.3GiB，推翻原64GiB统一接收估计；207按阶段内存预算及实际可用RAM调度，默认最多6×16。203只停止调度器新领取，隔离排空控制通过，既有Vroute自然收尾，不能恢复旧203领取；后续S/R/V接收统一207，来源与实际依据见docs/handoffs/2026-10-28-issue-121-five-macro.md。当前本任务七allocation；不取消EDA、不扩大五宏范围。Issue121保持in_progress、PR122草稿未合并；登记pending、看板unverified/同步pending、独立审查人待指定。
+
 2026-10-28 00:20 CST：M首版最终单块原生接收通过，待项目审查。204精确M2补铜→205新final/RCX→203同源四项接收与交付全部通过；560×560um、275个M10真实接点，全部端点setup/hold最小1.737254/0.014780ns，原生与完整FreePDK45 GDS DRC均0，三初态最终网表功能及严格LEC全匹配通过。最终V/SDC/DEF/ODB/GDS/SPEF索引、实际pin和全层PNG已保存delivery/M，PNG已查看，接点SVG由实际ODB矩形生成；通用层次Lib/M11-M12系统资格仍false，不宣称整个任务完成。
 
 V196正式RTL/全域函数通过，388350单元/543387.726um²，唯一外框1210×1210um，203独立P&R运行；206同源命令周期实测通过，N256 RMS/L2=357拍、Softmax=422拍、八元素函数7拍、40选8为328拍，传输/响应成本另计。R196继续place，S190已完成global route、正在detailed route；T沿用既有C叶块。178旧C8队列自然FAILED收尾，空槽已由203/92475 node23接上；五旧baseline+190/196/203共八allocation。203初始四路16CPU接收/布线实跑，完成立即补位，当前余项受各自最终布线依赖限制。详见docs/handoffs/2026-10-28-issue-121-five-macro.md。Issue121保持in_progress、PR122草稿未合并，登记pending、看板unverified/同步pending、独立审查人待指定。
