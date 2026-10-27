@@ -1,0 +1,817 @@
+{
+  "remote_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-171",
+  "manifest": {
+    "run_id": "block-v1-20261027-171",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": true,
+    "source_commit": "69924b7266e6b14ffe2c8cc524b73967d7c0d7e7",
+    "source_archive_sha256": "e2635ca931ba3239337fb0e3899daec900fb00014d2603d91763c6f57e20e3df",
+    "tasks": [
+      {
+        "id": "native-tie-formal-control-group",
+        "partition": "c96",
+        "cpus": 2,
+        "memory": "0",
+        "minutes": 0,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-171/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-171/src",
+          "native-tie-formal-control-group"
+        ],
+        "node": "node21",
+        "after_runs": [
+          "block-v1-20261027-170:native-c8-graph-inputs-group"
+        ]
+      }
+    ]
+  },
+  "manifest_sha256": "5b49ee718e39ec8bbd2e8a0d0bf1b757c3f7a35c184ef8847309a0ba0a8af34e",
+  "state": {
+    "created_utc": "2026-10-27T09:53:34.128570+00:00",
+    "manifest_sha256": "5b49ee718e39ec8bbd2e8a0d0bf1b757c3f7a35c184ef8847309a0ba0a8af34e",
+    "run_id": "block-v1-20261027-171",
+    "tasks": {
+      "native-tie-formal-control-group": {
+        "dispatcher_source_sha256": "7bf3da954f66308b13cd202df42d1cd1ad100b3d848b07b2cebcd35ac4531ad7",
+        "id": "native-tie-formal-control-group",
+        "job_id": "92340",
+        "reserved_utc": "2026-10-27T09:53:36.067814+00:00",
+        "state": "PENDING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodelist=node21",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=2",
+          "--partition=c96",
+          "--time=0",
+          "--mem=0",
+          "--job-name=yzl-bv1-native-tie-formal-control-group",
+          "--comment=yzl-bv1:block-v1-20261027-171:native-tie-formal-control-group",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-171/tasks/native-tie-formal-control-group",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-171/tasks/native-tie-formal-control-group/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-171/tasks/native-tie-formal-control-group/job.sh"
+        ],
+        "submitted_utc": "2026-10-27T09:53:36.090316+00:00",
+        "token": "yzl-bv1:block-v1-20261027-171:native-tie-formal-control-group"
+      }
+    }
+  },
+  "tasks": {
+    "native-tie-formal-control-1": {
+      "job_id": null,
+      "artifacts": {
+        "native-tie-formal-control.json": {
+          "bytes": 11875,
+          "sha256": "00d1b35cb43c77a9157e36871e60c866b3a1831cc69e7863c7aa1edce3fe6bff",
+          "content": {
+            "schema": "block-v1-native-tie-formal-control/1",
+            "passed": true,
+            "polarity": 1,
+            "library_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+            "binary_sha256": "019475eb893f936f2a6be213435454c10f3c338d13504372da060af15fc28040",
+            "results": {
+              "original": {
+                "passed": false,
+                "checks": {
+                  "explicit_unsat": true,
+                  "explicit_identical": true,
+                  "no_difference": true,
+                  "one_normalization_block": true,
+                  "complete_counts": true,
+                  "positive_inputs": true,
+                  "positive_outputs": true,
+                  "no_unmatched_boundaries": false,
+                  "all_inputs_matched": false,
+                  "all_outputs_matched": true
+                },
+                "counts": {
+                  "common inputs": 4,
+                  "diff0 inputs": 1,
+                  "diff1 inputs": 1,
+                  "common outputs": 4,
+                  "diff0 outputs": 0,
+                  "diff1 outputs": 0,
+                  "PIs0": 5,
+                  "PIs1": 5,
+                  "POs0": 4,
+                  "POs1": 4
+                },
+                "scope": "Native LEC combinational/state-boundary correspondence; reset/initial-state semantics and full mapped behavioral regression remain separate",
+                "returncode": 0,
+                "log_sha256": "b46b53c1d8fee20e6bcc7058a52934e112f1062d9a900b28ea94c7a61f902528"
+              },
+              "positive": {
+                "passed": true,
+                "checks": {
+                  "explicit_unsat": true,
+                  "explicit_identical": true,
+                  "no_difference": true,
+                  "one_normalization_block": true,
+                  "complete_counts": true,
+                  "positive_inputs": true,
+                  "positive_outputs": true,
+                  "no_unmatched_boundaries": true,
+                  "all_inputs_matched": true,
+                  "all_outputs_matched": true
+                },
+                "counts": {
+                  "common inputs": 4,
+                  "diff0 inputs": 0,
+                  "diff1 inputs": 0,
+                  "common outputs": 4,
+                  "diff0 outputs": 0,
+                  "diff1 outputs": 0,
+                  "PIs0": 4,
+                  "PIs1": 4,
+                  "POs0": 4,
+                  "POs1": 4
+                },
+                "scope": "Native LEC combinational/state-boundary correspondence; reset/initial-state semantics and full mapped behavioral regression remain separate",
+                "returncode": 0,
+                "log_sha256": "11385d028da9beccd13f1a11db5c8d15db5d18fda9aed26bb633729914d7933b"
+              },
+              "wrong_tie": {
+                "passed": false,
+                "checks": {
+                  "explicit_unsat": false,
+                  "explicit_identical": false,
+                  "no_difference": false,
+                  "one_normalization_block": true,
+                  "complete_counts": true,
+                  "positive_inputs": true,
+                  "positive_outputs": true,
+                  "no_unmatched_boundaries": true,
+                  "all_inputs_matched": true,
+                  "all_outputs_matched": true
+                },
+                "counts": {
+                  "common inputs": 4,
+                  "diff0 inputs": 0,
+                  "diff1 inputs": 0,
+                  "common outputs": 4,
+                  "diff0 outputs": 0,
+                  "diff1 outputs": 0,
+                  "PIs0": 4,
+                  "PIs1": 4,
+                  "POs0": 4,
+                  "POs1": 4
+                },
+                "scope": "Native LEC combinational/state-boundary correspondence; reset/initial-state semantics and full mapped behavioral regression remain separate",
+                "returncode": 0,
+                "log_sha256": "1e24f646a4a7885fd5486be6f5ce51e7efe6c066a87fd7ec203ca8a7f84fefc5"
+              },
+              "wrong_clock": {
+                "passed": false,
+                "checks": {
+                  "explicit_unsat": false,
+                  "explicit_identical": false,
+                  "no_difference": false,
+                  "one_normalization_block": true,
+                  "complete_counts": true,
+                  "positive_inputs": true,
+                  "positive_outputs": true,
+                  "no_unmatched_boundaries": true,
+                  "all_inputs_matched": true,
+                  "all_outputs_matched": true
+                },
+                "counts": {
+                  "common inputs": 4,
+                  "diff0 inputs": 0,
+                  "diff1 inputs": 0,
+                  "common outputs": 4,
+                  "diff0 outputs": 0,
+                  "diff1 outputs": 0,
+                  "PIs0": 4,
+                  "PIs1": 4,
+                  "POs0": 4,
+                  "POs1": 4
+                },
+                "scope": "Native LEC combinational/state-boundary correspondence; reset/initial-state semantics and full mapped behavioral regression remain separate",
+                "returncode": 0,
+                "log_sha256": "1fbe94bbb62490d697f6880b89c44e2b8a665a26c603c1c0ed8c161578f01c2e"
+              }
+            },
+            "projection_proofs": {
+              "before": {
+                "schema": "block-v1-constant-boolean-projection/1",
+                "passed": true,
+                "validated_functions": {
+                  "LOGIC0_X1": "0",
+                  "LOGIC1_X1": "1"
+                },
+                "removed_instances": {
+                  "tie_probe/constant_before": {
+                    "hide_name": 0,
+                    "type": "LOGIC1_X1",
+                    "parameters": {},
+                    "attributes": {
+                      "module_not_derived": "00000000000000000000000000000001",
+                      "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-171/tasks/native-tie-formal-control-1/before.v:1.61-1.83"
+                    },
+                    "port_directions": {
+                      "Z": "output"
+                    },
+                    "connections": {
+                      "Z": [
+                        6
+                      ]
+                    }
+                  }
+                },
+                "removed_count": 1,
+                "rewritten_bit_positions": [
+                  [
+                    "tie_probe",
+                    "netnames",
+                    "t",
+                    null,
+                    0,
+                    6
+                  ],
+                  [
+                    "tie_probe",
+                    "cells",
+                    "g",
+                    "B",
+                    0,
+                    6
+                  ]
+                ],
+                "original_graph_sha256": "705b2308dec2139cf3c77257f7fa1c33b47936b6d2529d42e4e6f169b057a8d3",
+                "projected_graph_sha256": "e28d1a7acab6a198e3e254029b90668a55d3240f289acb77ae9497b2078c1769",
+                "exact_inverse_reconstruction": true,
+                "scope": "Real Liberty single-output stateless function 0/1 substitution only; all physical resources retained; strict positive LEC/state-boundary correspondence remains mandatory",
+                "emitted_structural_proof": {
+                  "schema": "block-v1-structural-view-proof/1",
+                  "passed": true,
+                  "modules": {
+                    "tie_probe": {
+                      "cells": 2,
+                      "cell_pin_bits_checked": 6,
+                      "bit_id_bijection": 4
+                    }
+                  },
+                  "escaped_module_identifiers": {}
+                }
+              },
+              "after": {
+                "schema": "block-v1-constant-boolean-projection/1",
+                "passed": true,
+                "validated_functions": {
+                  "LOGIC0_X1": "0",
+                  "LOGIC1_X1": "1"
+                },
+                "removed_instances": {
+                  "tie_probe/constant_after": {
+                    "hide_name": 0,
+                    "type": "LOGIC1_X1",
+                    "parameters": {},
+                    "attributes": {
+                      "module_not_derived": "00000000000000000000000000000001",
+                      "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-171/tasks/native-tie-formal-control-1/after.v:1.61-1.82"
+                    },
+                    "port_directions": {
+                      "Z": "output"
+                    },
+                    "connections": {
+                      "Z": [
+                        6
+                      ]
+                    }
+                  }
+                },
+                "removed_count": 1,
+                "rewritten_bit_positions": [
+                  [
+                    "tie_probe",
+                    "netnames",
+                    "t",
+                    null,
+                    0,
+                    6
+                  ],
+                  [
+                    "tie_probe",
+                    "cells",
+                    "g",
+                    "B",
+                    0,
+                    6
+                  ]
+                ],
+                "original_graph_sha256": "685d9e198ac4252cc33213e641d58d2b1ac858bd96f9f8ec96ff92c871c74b0a",
+                "projected_graph_sha256": "04d1ba9954535880d477cfd3a9162dd9637eb462699374c0fb1a182334d9dfec",
+                "exact_inverse_reconstruction": true,
+                "scope": "Real Liberty single-output stateless function 0/1 substitution only; all physical resources retained; strict positive LEC/state-boundary correspondence remains mandatory",
+                "emitted_structural_proof": {
+                  "schema": "block-v1-structural-view-proof/1",
+                  "passed": true,
+                  "modules": {
+                    "tie_probe": {
+                      "cells": 2,
+                      "cell_pin_bits_checked": 6,
+                      "bit_id_bijection": 4
+                    }
+                  },
+                  "escaped_module_identifiers": {}
+                }
+              },
+              "wrong_tie": {
+                "schema": "block-v1-constant-boolean-projection/1",
+                "passed": true,
+                "validated_functions": {
+                  "LOGIC0_X1": "0",
+                  "LOGIC1_X1": "1"
+                },
+                "removed_instances": {
+                  "tie_probe/constant_after": {
+                    "hide_name": 0,
+                    "type": "LOGIC0_X1",
+                    "parameters": {},
+                    "attributes": {
+                      "module_not_derived": "00000000000000000000000000000001",
+                      "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-171/tasks/native-tie-formal-control-1/wrong_tie.v:1.61-1.82"
+                    },
+                    "port_directions": {
+                      "Z": "output"
+                    },
+                    "connections": {
+                      "Z": [
+                        6
+                      ]
+                    }
+                  }
+                },
+                "removed_count": 1,
+                "rewritten_bit_positions": [
+                  [
+                    "tie_probe",
+                    "netnames",
+                    "t",
+                    null,
+                    0,
+                    6
+                  ],
+                  [
+                    "tie_probe",
+                    "cells",
+                    "g",
+                    "B",
+                    0,
+                    6
+                  ]
+                ],
+                "original_graph_sha256": "3851dc0fda1291bdd025a37cbaa778fdce14fa17258f0d3ebcbf67454f0b13fd",
+                "projected_graph_sha256": "0b00e770f0f4153d0aa1868fd80f0d063304671379e4597eea12523cbf677ca8",
+                "exact_inverse_reconstruction": true,
+                "scope": "Real Liberty single-output stateless function 0/1 substitution only; all physical resources retained; strict positive LEC/state-boundary correspondence remains mandatory",
+                "emitted_structural_proof": {
+                  "schema": "block-v1-structural-view-proof/1",
+                  "passed": true,
+                  "modules": {
+                    "tie_probe": {
+                      "cells": 2,
+                      "cell_pin_bits_checked": 6,
+                      "bit_id_bijection": 4
+                    }
+                  },
+                  "escaped_module_identifiers": {}
+                }
+              },
+              "wrong_clock": {
+                "schema": "block-v1-constant-boolean-projection/1",
+                "passed": true,
+                "validated_functions": {
+                  "LOGIC0_X1": "0",
+                  "LOGIC1_X1": "1"
+                },
+                "removed_instances": {
+                  "tie_probe/constant_after": {
+                    "hide_name": 0,
+                    "type": "LOGIC1_X1",
+                    "parameters": {},
+                    "attributes": {
+                      "module_not_derived": "00000000000000000000000000000001",
+                      "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-171/tasks/native-tie-formal-control-1/wrong_clock.v:1.61-1.82"
+                    },
+                    "port_directions": {
+                      "Z": "output"
+                    },
+                    "connections": {
+                      "Z": [
+                        6
+                      ]
+                    }
+                  }
+                },
+                "removed_count": 1,
+                "rewritten_bit_positions": [
+                  [
+                    "tie_probe",
+                    "netnames",
+                    "t",
+                    null,
+                    0,
+                    6
+                  ],
+                  [
+                    "tie_probe",
+                    "cells",
+                    "g",
+                    "B",
+                    0,
+                    6
+                  ]
+                ],
+                "original_graph_sha256": "d4728ee2c24fe29ef109daabe3a202dd0e2cc5f7315ad4af8e3cc4a05e54ebe8",
+                "projected_graph_sha256": "985ca07420878cbaf1a818c67621e27ca8cf97a099d184d1bca6058d0334fd7b",
+                "exact_inverse_reconstruction": true,
+                "scope": "Real Liberty single-output stateless function 0/1 substitution only; all physical resources retained; strict positive LEC/state-boundary correspondence remains mandatory",
+                "emitted_structural_proof": {
+                  "schema": "block-v1-structural-view-proof/1",
+                  "passed": true,
+                  "modules": {
+                    "tie_probe": {
+                      "cells": 2,
+                      "cell_pin_bits_checked": 6,
+                      "bit_id_bijection": 4
+                    }
+                  },
+                  "escaped_module_identifiers": {}
+                }
+              }
+            },
+            "qualified_hard_macro": false,
+            "scope": "Actual renamed tie/resized DFF frontend probe, reversible constant function substitution and native strict positive/real wrong-tie/clock negatives; no complete C8 LEC qualification"
+          }
+        },
+        "receipt.json": {
+          "bytes": 32389,
+          "sha256": "af34c66a2b6b6a9162acf7ad0d460210368d17bba297e46f8b6088f7a0890dc1",
+          "content": {
+            "mode": "native-tie-formal-control-1",
+            "cpus": 1,
+            "started": 1793094823.1469688,
+            "commands": [
+              {
+                "argv": [
+                  "yosys",
+                  "-s",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-171/tasks/native-tie-formal-control-1/before-parse.ys"
+                ],
+                "log": "before-parse.log",
+                "started": 1793094823.4910421,
+                "returncode": 0,
+                "finished": 1793094823.6140819
+              },
+              {
+                "argv": [
+                  "yosys",
+                  "-s",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-171/tasks/native-tie-formal-control-1/before-emit.ys"
+                ],
+                "log": "before-emit.log",
+                "started": 1793094823.8334022,
+                "returncode": 0,
+                "finished": 1793094823.9089644
+              },
+              {
+                "argv": [
+                  "yosys",
+                  "-s",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-171/tasks/native-tie-formal-control-1/after-parse.ys"
+                ],
+                "log": "after-parse.log",
+                "started": 1793094823.9246821,
+                "returncode": 0,
+                "finished": 1793094823.9929893
+              },
+              {
+                "argv": [
+                  "yosys",
+                  "-s",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-171/tasks/native-tie-formal-control-1/after-emit.ys"
+                ],
+                "log": "after-emit.log",
+                "started": 1793094824.2083623,
+                "returncode": 0,
+                "finished": 1793094824.2845297
+              },
+              {
+                "argv": [
+                  "yosys",
+                  "-s",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-171/tasks/native-tie-formal-control-1/wrong_tie-parse.ys"
+                ],
+                "log": "wrong_tie-parse.log",
+                "started": 1793094824.3002462,
+                "returncode": 0,
+                "finished": 1793094824.3664799
+              },
+              {
+                "argv": [
+                  "yosys",
+                  "-s",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-171/tasks/native-tie-formal-control-1/wrong_tie-emit.ys"
+                ],
+                "log": "wrong_tie-emit.log",
+                "started": 1793094824.582283,
+                "returncode": 0,
+                "finished": 1793094824.659884
+              },
+              {
+                "argv": [
+                  "yosys",
+                  "-s",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-171/tasks/native-tie-formal-control-1/wrong_clock-parse.ys"
+                ],
+                "log": "wrong_clock-parse.log",
+                "started": 1793094824.6754274,
+                "returncode": 0,
+                "finished": 1793094824.744136
+              },
+              {
+                "argv": [
+                  "yosys",
+                  "-s",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-171/tasks/native-tie-formal-control-1/wrong_clock-emit.ys"
+                ],
+                "log": "wrong_clock-emit.log",
+                "started": 1793094824.9608402,
+                "returncode": 0,
+                "finished": 1793094825.0399938
+              }
+            ],
+            "source_commit": "69924b7266e6b14ffe2c8cc524b73967d7c0d7e7",
+            "inputs": {
+              "bundle-manifest.json": "9d6c5b923f8f05cc96b504fe175ae33094698bd2bc82e416b7b2e9f60da04577",
+              "project/experiments/attention_rtl/receive.py": "ad04114b0b5c3b9d6bfbbd59b9a7db5721eac312879ae51887fa0ebaaa60d9ec",
+              "project/experiments/block_v1/README.md": "20b84747d8bb79643431107dfe669d7861bf53ab8937ca4008c619e6efb896ae",
+              "project/experiments/block_v1/__pycache__/io_slots.cpython-310.pyc": "51be8c02401352515ba65918eba5c01a25aa3bcc3e0bd376a7cfd3454438be27",
+              "project/experiments/block_v1/__pycache__/native_cell_gate.cpython-310.pyc": "5bc8702ab7964f3307b1f5459a8bfa994b0a4f098452af2e92ede83c70ff12cc",
+              "project/experiments/block_v1/__pycache__/native_formal.cpython-310.pyc": "5987d0668ce52271cdb38a0e901feedb3f7cca85fbc83425b402f0d2c9a1afd9",
+              "project/experiments/block_v1/__pycache__/native_tie_formal_control.cpython-310.pyc": "56fe6241bed94531bf467c051629e0a0165308c3002e12b34f35d74687653120",
+              "project/experiments/block_v1/__pycache__/native_tie_projection.cpython-310.pyc": "7837cacd314915cdaae28654cafda57adb345d058eae5bc878d30140a17d20c7",
+              "project/experiments/block_v1/__pycache__/structural_view.cpython-310.pyc": "d06ab857b27a10160858fc9bc5e11ad7b07e8d07f03023ba0cb3f0abda9223cd",
+              "project/experiments/block_v1/adapt_committed.py": "0b24bf13c6ff9ed8acf4788907a1f516249895556448ecd2dbb6bff11dcf37d2",
+              "project/experiments/block_v1/bundle.py": "cdcb7869da894d6665a773376e3391d5f55cf4f30d5826f09e1ca6946fe554d1",
+              "project/experiments/block_v1/capture_field_client.cpp": "e118e7f767d85848e8a70cab22858cf173fa3e4a10c75df12f74eb7a10d50487",
+              "project/experiments/block_v1/capture_field_patch.py": "ecc77ced239e25354bf5997c57bbf0450940ccca7a3077d0c98dce09370eaf69",
+              "project/experiments/block_v1/capture_field_verify.py": "c9a437022e3275fd225671a1ea953865afbf1ceabb2b5b4c6d9285f0392cdc7f",
+              "project/experiments/block_v1/collect.py": "54f9c76affa8c6bc5a034194dea9b4b5eabd0c1d24bf888870865f7eb08c1afa",
+              "project/experiments/block_v1/committed_qualification.cpp": "e67cf27daa0c5d4764f6086d8a927a799668bf2f305757a342c8b13c50bf8870",
+              "project/experiments/block_v1/committed_sim.cpp": "ababe0b37ce8fc93075ef6d863903c9b788852c2f4016ee64d465c59a6491f13",
+              "project/experiments/block_v1/constraint_readback.py": "8c0c2bab0757dbd764fc5e5bd7267aa0a6ffc2a46be08c7ae4a950bebd0d95be",
+              "project/experiments/block_v1/constraints.py": "9fb38f12380f179d7e79e842a8b7ec516cf6a2de5a0a2095354c007693352460",
+              "project/experiments/block_v1/direct_field_view.py": "e995f6dee326e6f907cf01abb831365f667169c931cefb49e023f29d7d0de0bb",
+              "project/experiments/block_v1/dispatch.py": "7bf3da954f66308b13cd202df42d1cd1ad100b3d848b07b2cebcd35ac4531ad7",
+              "project/experiments/block_v1/fetch_fsv.py": "c24c51a160f49c8cf5d77e48637bd05ae824192694ab1f45d2be04348f0ee75b",
+              "project/experiments/block_v1/fsv_build.py": "baf737b438fd3e91ed143174818083b1871d44bea84ce68c5841f7a04eb44e50",
+              "project/experiments/block_v1/fsv_client.cpp": "948929e56cf4272c72248353aa93625a496c81914f84b94d2a41fac2384194ba",
+              "project/experiments/block_v1/fv_reference.py": "7310d7560f610d1bf42677b1d1b8573d89069072d3974cd349f781ef3ce51059",
+              "project/experiments/block_v1/graph_field_client.cpp": "9a1b961b3a0a85e85bcff5256685dcb82bff0d722fdb26805db3449c934ec643",
+              "project/experiments/block_v1/graph_field_patch.py": "6e8d89acd2abf1ba743ce5a6e1fc23ffe97609da6d5328497b1801138e01d3dc",
+              "project/experiments/block_v1/graph_field_verify.py": "ac61252523b90fca9cc15ce3e1fa92e19f56475db76982617ce4320b4f6da5d7",
+              "project/experiments/block_v1/gverify121.py": "77f22a3d9f699e411ab33ce2512cd7a041ab8fb9832294a2d2c51ba8c06fb15d",
+              "project/experiments/block_v1/heldout_rc.py": "cd614546b37b6537c77c9ab78cc4514a1362833a2493791e15e4c32806fdf137",
+              "project/experiments/block_v1/import_sources.py": "48f634fead3cb583bbd6017e4206169582b901469d84fcc104af69cfd7f5bb57",
+              "project/experiments/block_v1/inspect_native_gds.rb": "306dbfe313e167bcf9e3c4b5f5a3149c8dc3f38a61414e9ef3a67bc4b491943b",
+              "project/experiments/block_v1/inspect_overlay.tcl": "0684947b17abe0f8e2d5ccda44b522a0bd883b30a502f5367252b2f4670e116f",
+              "project/experiments/block_v1/inventory121.py": "f2c5fa7aa18a86104f7b0ac50a857664b711748f1818621d08a5c0b395099900",
+              "project/experiments/block_v1/io_slots.py": "e4c7ab88f5f45e9eeaf87f11f76286c067382da43023bec08cfbf695f30b933d",
+              "project/experiments/block_v1/klayout_overlay.py": "17f0e57e9138ffeeaa04226e71281a78209dab27b406192a62415642ca4e598d",
+              "project/experiments/block_v1/make_wrapper.py": "a23dd9e51675d5b829f432f039ae7b70e9602b998aca663c09e84d9a2f8e8070",
+              "project/experiments/block_v1/model_coverage.py": "c9aeabce1939efecd7235c3c2cf4b73682abe48c155fcec2f0bb67b0961784fd",
+              "project/experiments/block_v1/native_acceptance_info.tcl": "0ada675d449c2ee18cce36b3cd508e1055eccc0962c517f02149d6ac56f80f61",
+              "project/experiments/block_v1/native_allocation_group.py": "5f018f6b566a6d7d96ab0e69f1790cf2017a6dc301283753e32bb11b669cdf35",
+              "project/experiments/block_v1/native_annotation.py": "19c1da7d508db105ea5d6117de099989a8fa2e6295f87bfe51f6763b641b361c",
+              "project/experiments/block_v1/native_annotation.tcl": "07c090608e024986b49b4a9124071d4e8220e5d1f378df3c83c49bdbd3fb527a",
+              "project/experiments/block_v1/native_antenna_fixture.py": "35431fcc32726aa910586a13fef35e0f905d12ee6bb065bbc47a737161b0f545",
+              "project/experiments/block_v1/native_antenna_fixture.rb": "0a1ead5c5258f21bdebb590ab09a11c3ec1f729b5681cea3066dec7f58e8ea83",
+              "project/experiments/block_v1/native_boundary.py": "404c318555ef6f34dd55f2f13a577ddee8deeb42a5028010326d4a85a8bf3393",
+              "project/experiments/block_v1/native_boundary_physical.tcl": "e781d1a4f92f8e0600d3431cfe437e3e6399645f8de231739604b3f971b3d7ab",
+              "project/experiments/block_v1/native_c8_escape.py": "a2bcf6cea8eebfa0a06303b15fef2ce8b2f127338895df27881452e3610093c9",
+              "project/experiments/block_v1/native_c8_formal_diagnosis.py": "08c1c902329521b78ac3d38d04173797fddfd14fdc34d30d73f0b4104c5b19c3",
+              "project/experiments/block_v1/native_c8_gds.rb": "128bb44247d4520930332f3b9caf0837246a8fff983428fe173e231769421b35",
+              "project/experiments/block_v1/native_c8_geometry.py": "275f6d1e2dabff0b46ddbcdcf2b0b1978be5de030a0522bdd453598e9515a7be",
+              "project/experiments/block_v1/native_c8_graph_inputs.py": "488d1bc3499333a8a637e58abc68b300f351dfab7bdc05880b13b289f5244789",
+              "project/experiments/block_v1/native_c8_legalize.py": "fa2b0db2ed138ef602c29f961a7e41fb5704bd416d31995f9901ca2ca4e49c2a",
+              "project/experiments/block_v1/native_c8_legalize_control.py": "79fa2621997e35d0fe884c3a22c7841fd641ad9be3254238f1f039789af5ad7d",
+              "project/experiments/block_v1/native_c8_locate.py": "9e6b1ea62558fcd3897f506bc2676ef7a1f76ecc7e23a99bcf69dffab479a22c",
+              "project/experiments/block_v1/native_c8_probe.py": "e98c661e43a343a8e47be32973dacb0cc5969f9fbcfb0e667ac7ae6685db82c5",
+              "project/experiments/block_v1/native_cell_gate.py": "94e95e242fa161a09d4239bdbce91074960500610f31796b0fd3d5f8a1bea125",
+              "project/experiments/block_v1/native_cell_gate.rb": "641bf05afbb690aca5f7b1c03df0f31cbd43d19c7909d1f72370fabe88a7fe90",
+              "project/experiments/block_v1/native_cell_pins.tcl": "44019caa74b58fa23eaa03a3873f8ff4171079e12866b7b8d87098435e879c46",
+              "project/experiments/block_v1/native_composed.py": "95c40d9feff5a3ff5de3352ce18b27501dc8a735fa1ec34c550d3137fc352c70",
+              "project/experiments/block_v1/native_composed_group.py": "b925435c37e1fe206b760d385f92e24f43836b3187bf21a29f7e7e8d41fc353f",
+              "project/experiments/block_v1/native_const_prepare.py": "c50fd8557d6812b5b027040d29c1fea8ab29aafa260c1d33554fd024bb0302d5",
+              "project/experiments/block_v1/native_const_probe.py": "082da09f651eb18576015718dcddd0d93333b8d1fc2c03209b65593a416bf685",
+              "project/experiments/block_v1/native_diagnosis_group.py": "17c4f3b6803291ad107e2f8449dde1e1f68476ede53f225a937c7cdd2a09c71a",
+              "project/experiments/block_v1/native_diode_hook.py": "7586ff41c6a5f5c4593ea959c586728ead6d72ae67f2580fdf236fde4426da97",
+              "project/experiments/block_v1/native_drc.py": "2fc6a9b0c92d9a6cb759780d95c2af908375d30f9bfaa24a4d1672932194f8a7",
+              "project/experiments/block_v1/native_drc_geometry.py": "66cb8a6b4582c4cb1489235f776f97f77cd9b3834aaef1c1db27ba8b50e66cc4",
+              "project/experiments/block_v1/native_drc_locate.py": "63569735110b8e3a6881e81579104b67177d54abfbcc8d52ce46a95b6d1bc4db",
+              "project/experiments/block_v1/native_drc_locate.tcl": "6079cdf68dd4ecf919e5d8779b0be7f3663da6d6e1a8f1c99e9410facb880032",
+              "project/experiments/block_v1/native_driver_report.py": "06845cd35e394385ad5be593cef686e99b27f7bf8d3d4ce07b9570d4fa114796",
+              "project/experiments/block_v1/native_escape.py": "e48466a4997628dab2550a339e1561dc8da727777c949ca7108390e78ab0121d",
+              "project/experiments/block_v1/native_escape_audit.py": "d731e47770f65cc4b94f14ed6e5a7280d1443bc4066535f43334fb449ae9293c",
+              "project/experiments/block_v1/native_escape_control.py": "31b8a19a0bf1096a54d4dbcbe5af311d514b6260c4d56c8962af6b6bde2b023f",
+              "project/experiments/block_v1/native_escape_finish.py": "db2f81da598411bce1f00cf112472c095eb7cdb6a8f6ef4f73755ff78d8a0df1",
+              "project/experiments/block_v1/native_escape_gds.rb": "2012c573def75e85ffd0f0a806b761d1dd595a77cb6b1522ec1a7d01242bf5e9",
+              "project/experiments/block_v1/native_escape_geometry.tcl": "c450916440b3b807fb95ac911bb5eab932746e1f2032afe6d633864e15c8475d",
+              "project/experiments/block_v1/native_escape_probe.py": "7a69f157764413352842ed58c0ca2035dfcff8873a0b574b30d70ef813a9c12b",
+              "project/experiments/block_v1/native_escape_relocate.py": "69f15043055487f5fbcbcd8d7930b56084481d18cb4c068c43a907c1fc37f942",
+              "project/experiments/block_v1/native_escape_relocate_control.py": "52cbfda36ab422533ca8a3d6351c76b7c58ac3a2c8f90a25e5b0784bcce3c443",
+              "project/experiments/block_v1/native_escape_view_control.py": "aa42299398de48fabc740ed6679798145903cc90d5ea80af061f4fad945ac46d",
+              "project/experiments/block_v1/native_final_function.py": "3e6c15d3514ef2133db7a33de24782eb61615541636cacb5fc2368f070ef7b54",
+              "project/experiments/block_v1/native_floorplan.py": "9b9f2ccaa66c57fe9b798c2cd2ecc8e2525af9e6f95a1f9fc4e101c5eff59a08",
+              "project/experiments/block_v1/native_formal.py": "b64b46329698f4803c4dee3c01096a5df03ce7689aa87a9ffadfd13cb565ca18",
+              "project/experiments/block_v1/native_formal_boundary.py": "2b60765e6837807af461f9ef8b8be90023e8cc611ef177a1cdb35c8a9c68b558",
+              "project/experiments/block_v1/native_glue.py": "620746c7e6004b73d88ba8f35af05dd739d25254fc73beb18901e2dbcf9d09ce",
+              "project/experiments/block_v1/native_input_diodes.tcl": "64d5a64c025ddbff57efd6383429bc0227a4d0e964b038b90272b62b2956a3aa",
+              "project/experiments/block_v1/native_lib_pins.tcl": "cfa6c21cbb7351c02f184ea8bc0373d4ebbe9562be3eec6f492091186e0107ba",
+              "project/experiments/block_v1/native_logic_projection.py": "31e707fc836458f69da97d11101a8d147cf68a281266213bfe85432ccbe29491",
+              "project/experiments/block_v1/native_model_probe.py": "3f58039c35cfa9976e8bad923fac314f379d3b85d458b3a7fa43b68c373addd2",
+              "project/experiments/block_v1/native_name_ids.cpp": "239d8e60f64ad47e80295cb4fe09ad6dea19f9cbd0996fe10ae280cadfac1a46",
+              "project/experiments/block_v1/native_passive_endpoint.py": "4133b0df87ddf01a22009052fda1e91fc91f8f2d02a99653b3c93060bb09c1be",
+              "project/experiments/block_v1/native_pg_pins.tcl": "9edcc1b12ee0bc00002709ef667eae531f27761fe456c5f68f1d1cb126aff546",
+              "project/experiments/block_v1/native_physical.tcl": "25cc10974677d4abe664ba7d5573700bd601abc43d4feca1d3c8f3b9ca767e32",
+              "project/experiments/block_v1/native_pin_access_probe.py": "64d61749172d366417b9972179cab561ac898cc0b430412e0fda82b1079e1a5b",
+              "project/experiments/block_v1/native_pipeline.json": "ca1657650f5d800038b0dcc28ff8f5fd0d1a82f4f154701a4877066044e7380e",
+              "project/experiments/block_v1/native_pipeline_057.json": "980c1a59a7e5b82f2a0e13d039db51079c034a4d14971b2540571ddc5711f51c",
+              "project/experiments/block_v1/native_pipeline_c8_escape.json": "1640f368a254ebc313a9135c1662a6bbceec6e2b0c677fd5e5eceab72093bf8d",
+              "project/experiments/block_v1/native_pipeline_cap20.json": "04740dd67cecff74066b9d5e8c5966a81bd10fde1e1583fb5b174e675af67d92",
+              "project/experiments/block_v1/native_pipeline_cap40.json": "65c4bb2e94be76292150304e46471d6c884b806831eaeb7a19afe3f0fb1f0d5e",
+              "project/experiments/block_v1/native_pipeline_const.json": "92cf3c3ba36d641a3152a976b3a5316b1e50148328da0f3235ba835dcc8a8cff",
+              "project/experiments/block_v1/native_pipeline_const_protected.json": "107f491533b912bfbbac2fb5c88923c1d39485341d9df2ec195966d9c0223446",
+              "project/experiments/block_v1/native_pipeline_diode.json": "42ce1062f6b2eedf13086dcecced29f62192a0797110f7826d30d4547ff975b3",
+              "project/experiments/block_v1/native_pipeline_diode_full.json": "788b91e665af81f0c7bb30a4d12f3413def598353af277c9b5eeae62c3291527",
+              "project/experiments/block_v1/native_pipeline_escape.json": "e16f4e393ffbac06eb29b1744f2a5e7e00f46eb29374fad86b0353ba1d1adf78",
+              "project/experiments/block_v1/native_pipeline_hold5.json": "4bf09e20ed81767261d62f6687efe115eb9743e18d359c35277a2e473be09a34",
+              "project/experiments/block_v1/native_pipeline_viaonly.json": "f65d4fd9f794648e3d6ef6d830308f3579cd5b2ac22dc53d3838f02eca28541f",
+              "project/experiments/block_v1/native_prepare.py": "147011ab3ff112d1c4552a6f200315d4b4975840d4617cb92ed57b1f06799b6a",
+              "project/experiments/block_v1/native_qa_occupancy.py": "1857450c2c9c44622c309d2d8a10d83083302c60a5dc55b3fca112ad73c1fe11",
+              "project/experiments/block_v1/native_receive.py": "91a5057c9364a358f835a79c996744fc49351a10d234a45a574e32c85765049a",
+              "project/experiments/block_v1/native_reroute.py": "cb372b5da32a84a55fb92af88f8dbb847c8631925806750f5ea507df23c141d5",
+              "project/experiments/block_v1/native_run.py": "d60e0ec35fa2333f72844af8b4d59c22c8c8cb489a18574a1f4d1e31be5e7ecf",
+              "project/experiments/block_v1/native_signal_view.py": "d99c08ca73fa7fd52eb2f2a732aac1539174eb557fa6beb46033a7f42683377a",
+              "project/experiments/block_v1/native_sta.py": "c15b58d24194d31cad7e6d2fc1f7c7efbe81fc861b49ba85f05d9658a9c6ac5c",
+              "project/experiments/block_v1/native_sta.tcl": "1fe95cac7c2fd9e253e434806c33eb059740ef2cb4c36da10cd75b9bb26cea8e",
+              "project/experiments/block_v1/native_tie_formal_control.py": "db0288624d1ad74e24d7dd7d671318f33f05d000fbfd4e66fbb868c5dde5c63f",
+              "project/experiments/block_v1/native_tie_projection.py": "e251edb0f398550e4e82d4a68bb61dd8357d5db50d4c4f3e9ae53a6708d4607b",
+              "project/experiments/block_v1/native_undriven.tcl": "4d13a5928fb6954c819345a1939a23d6715b918bbf62eafe6e5f969b38dd703c",
+              "project/experiments/block_v1/native_upper_index.py": "1f21643fb8ac1e8b9d780ee3fc3309380f3b09c6691e69563df1a5e473c59d42",
+              "project/experiments/block_v1/native_upper_index_control.py": "dbd1b4e5c86ccc8f5a9bd54e17e8b89589156305f1a3495c93bb2bea1d58edfe",
+              "project/experiments/block_v1/native_via_group_control.py": "ec86ee9caacc62f5e5177d14df67bfbc3ba2260487d1bb3de778fceefe400aa1",
+              "project/experiments/block_v1/native_via_route_group.py": "f4664eab289c5eb1c8c0e52547e586c3f45cbf80e166d52789d2ab568656b1dc",
+              "project/experiments/block_v1/native_view_control.py": "19ee28c7e902ac6e2e81529d64e08d2317ff3560956561791f993b9290eaa03b",
+              "project/experiments/block_v1/native_view_group.py": "a8f7fd422ec5f06bf7843d9a6e6780f464ead76bc79b80b778cbb8a80bf7d4b1",
+              "project/experiments/block_v1/native_view_pg.py": "5ea7ee4e2a908337d4646f71bf4e26602debda42c6b4ad545c5753849f4ba512",
+              "project/experiments/block_v1/native_view_pg_control.py": "fe0cdb1d9895d2f197f59708ea13f50aa341ffa5e0f2ff8fd3d0f10c55be4984",
+              "project/experiments/block_v1/native_views.py": "4b958d457149dc0e5f726ee6213e897f396f4b71f2cf3fe3790c4fd0d0866f49",
+              "project/experiments/block_v1/native_views.tcl": "b8871264191b7b4a225065c737072695bb8d42a14179d89a8870eaa5e55ad7f4",
+              "project/experiments/block_v1/native_whole_drc.py": "79dadd46adf659be068de60f67115ed7240afe7c1404a0c4c32da8ed77d3a681",
+              "project/experiments/block_v1/odb_geometry.tcl": "c63203ef734d90a549ac3b81311c4678edf35c76b340b96c3ac174007d70f67b",
+              "project/experiments/block_v1/odb_geometry_check.rb": "b89e917d9b75d081ab384485f72632ce928617913606067115fac56d42c929bb",
+              "project/experiments/block_v1/overlay.py": "4d63c0d1fd1d8c398221c24030b68f782106352f1f8702cd4f16c67a474d0865",
+              "project/experiments/block_v1/partial_field_client.cpp": "a33ce421a81ff3090a307d22b04c7ebb03bd89c693bd4b9734ffb70c5a595f63",
+              "project/experiments/block_v1/partial_field_patch.py": "8e0b24bb32453cf79283bfc0d4359639eaf24c7b2cc76fb3c0594b2b797c59ae",
+              "project/experiments/block_v1/partial_field_verify.py": "01aaebad577960068cda3d901efaccd2e3a78f9ddc7705da78bb3fc3f26d7220",
+              "project/experiments/block_v1/partial_group.py": "35876d8ea60dda6cd3c78a624ccc9a40b16c2ef9ff7c1f061ab4c0bc13221de9",
+              "project/experiments/block_v1/pattern_prepare.py": "6fb19a4a25a7a361aceec2d62d305ae9f7bb7cf249eb858d01f6d0b6db8e3eea",
+              "project/experiments/block_v1/physical-budget.json": "b7e9108ad18f40b88f6fd897a838bf04b48764390766955520eeac4a87d91a19",
+              "project/experiments/block_v1/physical_inputs.py": "2b5135425526748c1b0358d24074187c440264b321b202b659a7714a698d10f7",
+              "project/experiments/block_v1/pin_plan.py": "b2de8b111e4d0136f4c2f85ba203ed340208b51f2c0b0c381a049ea46f60ae61",
+              "project/experiments/block_v1/primitive_geometry.rb": "fafc4e50e9c72c6562675a88f64be8611a6e1081d2b7cbec883483dba00000f0",
+              "project/experiments/block_v1/probe.sh": "743d53a5b4c39d4918d0528b9a84df35c2807b47067bac3dbffcc361fd352548",
+              "project/experiments/block_v1/probe_geometry.rb": "ad81441ad234094e07ffb1ad92293cfc7dc56f7876bfcb59bd2f171641fd72a6",
+              "project/experiments/block_v1/qa127_pinned/origin.json": "3e4c4faa3c3a170e639bc2a0ea5fc70c7951fce5bfc4a02857c33adb198db1b7",
+              "project/experiments/block_v1/qa127_pinned/source_occupancy.tcl": "ed9a3eec244097e238c52104332b3199be509cf05aefb425d1f5442f4463eade",
+              "project/experiments/block_v1/rc_calibration.json": "a4db2b58b556fceef70a3f7ba1263ee14b2f780575c9550881aadaaa772432fc",
+              "project/experiments/block_v1/rc_pipeline.py": "ca635760217cb540031540ec626ca0f7fd5cb978b2284b2fb91ca8904b6752f2",
+              "project/experiments/block_v1/receive121.py": "2a612ff5c06636c03b7f569a080363141bdebeeb1c80318e8955ddd31242bf43",
+              "project/experiments/block_v1/reference_fit.py": "394ee3543aa14ed436179a073d29763787ed65095a3258df1e5319e9a2fa9d29",
+              "project/experiments/block_v1/reference_run.py": "3fc5dc9ca55b95cdecb291214256a8f8034862a3b734649baf9ee5feac04a2b5",
+              "project/experiments/block_v1/route_probe.py": "8fbba7b328c9d052c7506fbd646f45286c0694e654a7b3d33985867195f777b6",
+              "project/experiments/block_v1/routed_field.py": "cae152e2c5812e29b8633a95e769626792775cb527012771348a47db49e7493c",
+              "project/experiments/block_v1/routed_graph_field.py": "14bb42fe2db1b9549730b26806b87243409d2655ac58f67704d85710b8470f9f",
+              "project/experiments/block_v1/routed_graph_view.py": "6d1d18256dae98688ad7c7f8fa4ef52fe33c8dae8e61740f29a4fe1984de3291",
+              "project/experiments/block_v1/semantic_negative.py": "a080f7365354a414a1647cea5c8234c7aedbfb9fa9a0b46fe5262b938f88b39f",
+              "project/experiments/block_v1/structural_view.py": "6c506af6b9ed5c6878afc2842799f738b88556f7d32c976753b55b7aebbd4f2e",
+              "project/experiments/block_v1/technology.json": "5b1fac19e4120b44684371adbc45438e9ac7653fc5efd6026a5126b5b5b86c39",
+              "project/experiments/block_v1/test_transaction.cpp": "bbfbe18907783eae87aae3dcaede35f1ada28a6e6f2a4f1cf0348ccf6392458a",
+              "project/experiments/block_v1/window_field.py": "13ba8283e3c3f6ab188d8be09e4278a9993aea06ed418cca49021b8ea884d0ab",
+              "project/experiments/block_v1/worker.py": "d56505dbdd07b6d45239c0ccc709fa804bfb7959083ed15a1c487f627b8429b3",
+              "project/experiments/block_v1/worker.sh": "ae4cf1820fd00a3f0ffa3a42bdf235bf3f4a17518bcb0c75cfd8bbcede06be05",
+              "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+              "project/experiments/gdn_state/reference.py": "e8add3d9ba6941aa5dc7484f190406854e0a870ae8b2029a8d0eba20b595daa5",
+              "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+              "project/experiments/shared_gdn/PROTOCOL.md": "3002060a69744fc46121aeba8c15d1c42fb9ce952b67e47a281548dfe9bdb221",
+              "project/experiments/shared_gdn/analyze.py": "6f63248270a1419d0157c2657d069605d77639b427a98503812c77901e253290",
+              "project/experiments/shared_gdn/collect.py": "6ca5c15718e41998bc05137e4f53385bbeb03c7b4fde7b610a8a82a9fa3d4d01",
+              "project/experiments/shared_gdn/cost.py": "d920e359bb1d65b5847d31089d8210394e5675eda586789a2e8938e44bd5e8a1",
+              "project/experiments/shared_gdn/gate.py": "c0f8d4c38b36736459947bf4efb50a7a68cdfb3a7509638a01175dfbe2931f9c",
+              "project/experiments/shared_gdn/gverify.py": "c698ba20d0d037a1d4396dfc82e69f432bc1b942a38b9eb5aa3ad42d03e8907f",
+              "project/experiments/shared_gdn/inputs.py": "431109179969566b4cb97fe3615ed1bb82356a07edebdd259c2bc77cbbd3949c",
+              "project/experiments/shared_gdn/inventory_negative.py": "7fb03bd0af0077922d1ca9d0c579f915c9cda877bbd563678755a989a8f852f2",
+              "project/experiments/shared_gdn/negative.py": "a2e0ea6a09eda99740f8fe527e2321b741fcbcf6ad84626bf727b95117e6d2f1",
+              "project/experiments/shared_gdn/qualification.cpp": "f7ae0706b98258e9adc156b388f002f03e60bb8b59f3a0f1a98e834a138038b8",
+              "project/experiments/shared_gdn/receive.py": "8d851d68649108e69c2233dbb89d568a5a04e14bc91f1e42e8e25c01102ef1ec",
+              "project/experiments/shared_gdn/run.py": "d0cb68e98d3ca85bb15d56239f3aeeb7865b9697841e7e6ace0f8fb2b31f4016",
+              "project/experiments/shared_gdn/sim.cpp": "ace54074760bbcca1a491f04d0a1faab8075330a175cf7ff51954b0c16ce7cb3",
+              "project/experiments/v_consumer/reference.py": "b3133796572b25d7241affb9fad44b0765603d267e83c18946a821703fd95f09",
+              "project/rtl/block_v1/shared121.sv": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+              "project/rtl/block_v1/transaction6k.sv": "0491dc05357b61855a3fadd9598ac738bdf305a8c8306499ac8b6c184fa4b0b5",
+              "project/rtl/gdn_state/wide104.sv": "c623eb27ec992af1ae4411261ed75fccf886100fc294cf280f6a00c15905c890",
+              "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+              "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+              "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+              "project/rtl/shared_gdn/gdn109.sv": "b329550d0a85e1357627cf6ec03391b08f43765c8f8737a8524f94376ea3f424",
+              "project/rtl/shared_gdn/shared109.sv": "b890b351c2cd2c3cec5a988c7f28d345f8319f85a50fbcb2d72917cfd537d555",
+              "project/rtl/shared_services/a106.sv": "c692d5405e8afa9ca0a13ff7919d6092213335445ed15057f3b8345c51139011",
+              "project/rtl/shared_services/attention106.sv": "a3adef94747a334849a2053e42a23d3dc0ce864273bba16367c1d4d0623259fa",
+              "project/rtl/shared_services/m106.sv": "c901ee8f01a45c3a1b9a917279bdcd3e305d899475abb5754a3c2ddbd0a97ed3",
+              "project/rtl/shared_services/mfront106.sv": "bb918aad183e4da39aeace350ae654ee2280e85a03275c954c0cb0d926cec84e",
+              "project/rtl/shared_services/norm106.sv": "be7ba8053341ae1e8eb3f17e4666116ca56c45e54db7c415f2e6e9ed1fc9ff1d",
+              "project/rtl/shared_services/r106.sv": "84e5f85042f2fa4c9091ea7e508a77f01b90843146cb36ac0b635d04a4d2eb7f",
+              "project/rtl/shared_services/shared106.sv": "1756a68d178305b6603ad6a6b0f95bd8df7fe38ed6c40bfd8d16790ebd8fca86",
+              "project/rtl/v_consumer/vprep97.sv": "755621fd19cbfd38c3c52df889a045867c64a56bb6e024a6f75c65d83dd32ee7",
+              "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+              "work/YUZE-LU/121/source-manifest.json": "7958c8f0c2d7ca3c886dcb16fb841d81ff315162d1fc041fb9485430b08cc6cb"
+            },
+            "tool_hashes": {
+              "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys": "c2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b",
+              "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+              "/usr/bin/klayout": "fee1214ef5c63033057626a9dab0deb0664fecb69184d1c3fd43dc9c0dc1eba5",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator_bin": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd"
+            },
+            "passed": true,
+            "finished": 1793094825.5778167,
+            "outputs": {
+              "after.json": "976f770693c0afc66f8eb291fa20ed5ae849dfaf26a870b89654e6bf647e8e5a",
+              "before.json": "3576bcaffea7d12a2ae529d0de9fba1f6b3be2c2a5b4e263e2368bb6b8450917",
+              "before-emit.ys": "802d8423c16a4f7fc3227a36234be7ddc04637b4110cd85420a20788dd577105",
+              "wrong_clock-parse.log": "428c6e31ccf94b9de04288d7c029e9df0ec8e4f6ea493fed49374cf767ebdc01",
+              "after.v": "47e57361bbd968bd50c6b91a60fdee768a8b7ecbb6ac1d3a4c40ca98ce5e9d11",
+              "before-reparsed.json": "2939f35511e47842d3bcc6e3fd60b40f4e4fa30f7a7c6afdfea16d8c5c550dc5",
+              "wrong_tie-parse.log": "ca811265cae09a81c47aab3d9365eadf57df6c33f717226c0fc371db2bfb002b",
+              "wrong_tie.json": "c0c664bfbc93b666fa20abb7c41b4a4ba5c1fc90ce73516d5fc29ad1f3a2f056",
+              "wrong_tie-literal.json": "194e794e93a6ac4b1a88ed587d278d18ae30f8d4de98c1b4d73a74ab6eba8c53",
+              "wrong_clock.json": "6fb1154a73306f434fb9aeac38a3220142e5b35c9b33b1c283de5bd17c2470cd",
+              "wrong_clock-kepler.yml": "9b8f1d62c510ae57f13829cba15373d9e1ab134a36124e06877533b885da2568",
+              "before-literal.json": "7c4ac623e1542700af3b85dba8466caff973a94d38026b6fdc22730d70504f12",
+              "wrong_tie-kepler.log": "1e24f646a4a7885fd5486be6f5ce51e7efe6c066a87fd7ec203ca8a7f84fefc5",
+              "wrong_clock-kepler.log": "1fbe94bbb62490d697f6880b89c44e2b8a665a26c603c1c0ed8c161578f01c2e",
+              "original-kepler.log": "b46b53c1d8fee20e6bcc7058a52934e112f1062d9a900b28ea94c7a61f902528",
+              "after-emit.log": "994079b0978cc8f53050417b35e8d607f4e113bab517b95af6165f92b398f7b5",
+              "after-reparsed.json": "772df3735a36e1192403b5746a8a5761179753358f25ec576ebff953c03a0bf8",
+              "wrong_clock-literal.json": "86efee78437cdb737d6cffa4a7a2e80aefb96e62e4a012d5441adbe6a74bf509",
+              "before-parse.log": "59d3ebcb3fbb661e3de74bcea823930d7f12479df1a5ab04fb981823ffa3705a",
+              "wrong_clock-reparsed.json": "bde4de90c2dec47d62e45ea94c7bdc2b712a8aad27a1ec484a97e38922b94489",
+              "wrong_tie-emit.log": "4f3253857df9784aa3bbc49038ba82592cd27ed4907c73698a8c4b997199cb79",
+              "wrong_clock-emit.log": "9fead59615bc2e2e1e828cfa15ba258ca546eb20791f463408d51ef0ebf06a5c",
+              "wrong_clock-literal.v": "d7bb7e92598b55b6fbf5ab55145c7b055075d93af36db8a06323e9c9045e6847",
+              "wrong_clock-command.log": "3e43b5ba666876f21e025588d8d00d205d92236bc8b1b5f56080571005a9cbde",
+              "wrong_clock.v": "f24062520423ce2e55d570e8806913565126ae4f035a902d35ed0850f9ccd237",
+              "before-parse.ys": "3a231e0ff09869b00d61ed4e952924aec7da11ac84c3fe9f49afd261831f4f12",
+              "positive-command.log": "50842d69ac1c2b649584633615aa5cf78a03cb75ecf079cfedf9a6b377008be4",
+              "wrong_tie-command.log": "c2c5aa1356c4d37df5f20225349eeae3025486543b64f9837843fb26bec67600",
+              "wrong_tie-kepler.yml": "0fc2aac46a6c317898cb5bc5b40852b63acaa6c6ef66c6e635425dbd0c656d63",
+              "original-kepler.yml": "33ca9ab318e75881f5612472002243847effe6974be2134419c662b0c607ef69",
+              "before-literal.v": "d635a7252c606f3c92f3758c3c58d60c096f3091992b88a690b2ba46a439dbd8",
+              "positive-kepler.yml": "982cbcdc036a1a043cb49f635fd3dc1fa6854233cd9fdd20948f75fb56baba3d",
+              "after-parse.ys": "ea42f113aae6cea9b4b6f4b5fc953ddbc54c469ea9a96b656d1c7c81bc81ed96",
+              "after-emit.ys": "4ea45c9f210d228f6a99e0b07bda13d43c7bddf4ae82f1ec9b9296e8a6e96ab7",
+              "after-literal.json": "ab5d27240f0af0003bf27441c2ca35efcbd6a2730ee396e7ffdccf5b4f7ab4f1",
+              "wrong_tie-emit.ys": "5ed3dcfeddcba2e6a675021bb5466530eb23bb633a57bb727e978c1159eb731a",
+              "positive-kepler.log": "11385d028da9beccd13f1a11db5c8d15db5d18fda9aed26bb633729914d7933b",
+              "wrong_clock-emit.ys": "dc3fc0cb6b7bebd49346efb1fdb416db7347fe92cd2d5496896b36c19b816e15",
+              "before.v": "e910bce6ea99bd29e57a79cc2ce09f27539a2741781ca9bed699e836a9b4f81a",
+              "wrong_tie-reparsed.json": "b638ea4fa2c61ea576cac940c26deee1f7dd01f2cb466603669fc414853c0870",
+              "wrong_tie.v": "ae09471cd65534ea6188f343e10e8625ee0362b020426e619ddb5b81a1e69722",
+              "original-command.log": "848e71e737e7732cfcc3c3886cce3d44400f2ccf81ced95b463395e0275b8f47",
+              "wrong_tie-parse.ys": "220dafa91279d2e7ba61c0d1caadc4f9845ca37bdbbfc015e3484d3c840ed8f2",
+              "group-child.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "after-literal.v": "e7983f44ff9fafe26dec8da9501d6a2c474d02fce811d555c06e568ff845e298",
+              "wrong_clock-parse.ys": "58664df1d8e6966042187945a20b674d24cfc7ac99761d99e80e543e8dfebca5",
+              "wrong_tie-literal.v": "d9419c9a54d09247ad87c65da9e4ce912fe4c87b34ba2249663ff89b16a0dc7c",
+              "native-tie-formal-control.json": "00d1b35cb43c77a9157e36871e60c866b3a1831cc69e7863c7aa1edce3fe6bff",
+              "after-parse.log": "09b0ea70168142fc79ec06f94fbc1174c241ee1ba3c420ca2b500afa4ed12e37",
+              "before-emit.log": "08b9b7dc44bc79d2f68bf7f0499628a0869975f632b29fd0b69559b57e3254e9"
+            }
+          }
+        }
+      }
+    }
+  },
+  "source_archive_sha256": "e2635ca931ba3239337fb0e3899daec900fb00014d2603d91763c6f57e20e3df",
+  "sacct": "92340|COMPLETED|0:0|00:00:09|00:06.150||2|node21\n92340.batch|COMPLETED|0:0|00:00:09|00:06.149|0|2|node21\n92340.extern|COMPLETED|0:0|00:00:09|00:00:00|0|2|node21\n",
+  "parent_allocation_job_id": "92340",
+  "collected_utc": "2026-10-27T09:55:19.221377+00:00"
+}

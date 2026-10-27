@@ -178,3 +178,8 @@
 168/92335实际T6K两路typed PG与完整flat timing网表交付通过，0:58、TotalCPU2:54.816、MaxRSS3193048K，node21双8CPU。原始模型保留，VDD/VSS仅转换pg_pin，精确逆变换证明全部其他模型字节不变；实际原生读回power/ground及is_pwr_gnd全部通过。candidate-timing.v严格复制161实际ODB完整信号导出，两路各保留189保护单元并绑定完整proof，旧6_final.v继续保留但不能充当full-SPEF flat源。169/92336用PR128固定5eda23a源只读导出实际ODB占用，node22双1CPU，2:47、CPU4:07.617、MaxRSS3592768K；A453227实例/2229968个master OBS、C451330/2232347；完整占用666023293/664926056字节保留服务器并封存SHA。仅导出通过，独立覆盖/边界资格仍待#127。167/92333仍RUNNING，node20双8CPU，不能先称C8新RC/全片DRC通过。新170准备补查严格C8前后完整图的无驱动使用bit及未使用输出，不改图/日志/严格门，本次提交尚未运行。完整P0–P6及宏冻结/两个新增层产品未完成；登记pending、看板unverified/同步pending、待独立审查。
 
 168/169 group与全部peer终态索引均位于work/YUZE-LU/121/results/run168-*及run169-*；同源交接inventory为t6k-qa127-handoff-168.json，每路30角色，仅索引，独立pack仍需前后hash。
+
+
+2026-10-27 17:58 CST：171/92340实际两路常量极性对照通过，9秒、CPU6.149秒，MaxRSS=0记为无有效采样。原生改名tie每侧1个未匹配输入；真实库常量literal编码后严格4输入/4输出全对应、UNSAT/IDENTICAL通过，错误tie极性和错误DFF时钟均有SAT/Found difference而拒绝。原inspect严格门不改。172准备对134原失败的两份完整C8图逐项逆变换/发射重读回证明，再重复完整严格LEC；同c96双2CPU，200GiB/路加20%RAM预检，本次提交尚未运行，仍非实际完整C8资格。167最终输出仍RUNNING，未取消旧作业。
+
+完整172重验只读取134封存图，不改变其原失败、实际ODB/PG/RC/时序或功能网表。通过仍需与新167源的完整接收/最终功能绑定，不能把旧图形式结果直接宣布新物理宏合格。

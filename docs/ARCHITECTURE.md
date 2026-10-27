@@ -246,3 +246,6 @@ python project/experiments/block_v1/native_view_pg_control.py RAW_LIB_FOLDER wor
 ```
 
 RAW_LIB_FOLDER需提供已按164收据封存的candidate164-a.lib/c.lib。只读占用入口`native-qa-occupancy-group`（2CPU）、`native-qa-occupancy-a/c`（各1CPU），使用qa127_pinned/source_occupancy.tcl固定PR128/5eda23a字节与原odb_geometry.tcl，在独立目录导出actual wires/special wires/transformed pin/master OBS/NET→PORT。新170`native-c8-graph-inputs-group`（2CPU）及a/c各1CPU从134失败后的完整图补查driver/use，诊断通过与LEC资格分开。
+
+
+原生常量前端对照：native-tie-formal-control-group（2CPU）两路0/1各1CPU；完整旧C8图严格重验：native-c8-tie-lec-group（4CPU）及native-c8-tie-lec-a/c各2CPU。后者强制171实际控制、原失败134所有图SHA、实际库/Kepler一致，真实常量函数替换的精确逆变换与Yosys发射后全cell/pin-bit重读回均需通过，native_formal.inspect全部严格门保持。正式物理/最终功能接收尚未接入该候选编码。
