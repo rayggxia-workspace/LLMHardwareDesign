@@ -59,7 +59,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-diode-hook-probe':
+    if MODE=='native-boundary-diagnostic':
+        from native_formal_boundary import verify
+        verify(ROOT,OUT,CPUS,run)
+    elif MODE=='native-diode-hook-probe':
         from native_diode_hook import verify
         verify(ROOT,OUT,CPUS,run)
     elif MODE=='native-antenna-fixture':
