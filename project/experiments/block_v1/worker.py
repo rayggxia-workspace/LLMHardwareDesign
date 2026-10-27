@@ -60,7 +60,13 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-c8-formal-diagnosis-group':
+    if MODE=='native-c8-finish-group':
+        from native_escape_finish import group
+        group(ROOT,OUT,CPUS,c8=True)
+    elif MODE in ('native-c8-run-shared109-a','native-c8-run-shared109-c'):
+        from native_escape_finish import implement
+        implement(ROOT,OUT,CPUS,run,MODE[-1].upper(),top='shared109')
+    elif MODE=='native-c8-formal-diagnosis-group':
         from native_c8_formal_diagnosis import group
         group(ROOT,OUT,CPUS)
     elif MODE in ('native-c8-formal-diagnose-a','native-c8-formal-diagnose-c'):

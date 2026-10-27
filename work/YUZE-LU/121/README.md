@@ -164,3 +164,10 @@
 100/92147双向joint-node科学验证通过：31:20、MaxRSS7392852K、96CPU内两48CPU；分支与via两方向的细化/外推/远边界/offset/统计/局部电容/互易/保边际错误重连全部通过。103/92154只读原生定位通过：33秒、MaxRSS685692K，扫描220361网/5734869形状、236次命中，61个标记无遗漏。M10三间距项对应read_index[7]/[8]，间距0.13um对0.8um规则；58天线项经原正交多边形精确面积筛选全部单网候选，marker42排除begin_words[5]、保留begin_words[6]，共53个输入网络。105/92157严格5ps边缘T6KA修复在node20/32CPU运行，106独立接收已部署、尚无job。094A完整DRC仍活跃；080 C8C进入RCX，但LEC日志两个未匹配输出边界仍需严格接收。
 
 证据：`results/run100-terminal/`、`results/capture-node-scientific-summary.json`、`results/run103-first-native/`、`results/native-drc-polygon-diagnosis.json`、`results/native-drc-polygon-controls.json`、`results/run105-first-native/`、`results/live-107.json`。未改动原报告、数据库、原门面积或300比值；全部原生失败仍需完整重跑，不把定位或局部RC通过当作宏签核。下一步核实际库GDS的输入门/扩散连通与可用修复单元，明确M10接入重路由方案，同时接收105与080新终态。
+
+
+## 2026-10-27 17:28 CST 实际终态与后继入口
+
+165/92314实际C8 A/C探针全部11门通过，4:36、TotalCPU7:29.230、MaxRSS4128260K，node25同allocation双2CPU。A45/C29网改动，其中15/4处via9落点；原生upper诊断合并标记A37/C25降至0，完整upper接触0、固定低层/其他网/完整V及源SHA保持。这不是162原raw49/37项的完整GDS接收。166/92326只读严格LEC诊断双1CPU实际通过，0:50、CPU1:20.266、MaxRSS71428K；A/C时序实例143988逐名相同，无新增/删除，A501/C277处DFF_X1变DFF_X2，无字面x/z输入，但尚未证明原生未匹配PI对应，不豁免严格门。141/92256实际FAILED/1:40:06/CPU3:20:52/MaxRSS358556384K，同样被严格C8 LEC拒绝，未完成组合功能。新167准备从实际165接受ODB重新原生最终输出/默认flow LEC/RCX及全片DRT，c96双8CPU，200GiB/路加20%余量；本次提交时尚未运行。T6K161完整接收和164视图通过仍不等于宏边界资格；164 Liberty PG及完整flat timing源另以新版本修正。17:25本任务4个RUNNING allocation（057三路、067）；统一预算基础6/上限8，含PENDING/未知；其他成员未操作。完整P0–P6未完成。
+
+证据：results/run165-group-terminal、run165a/c-terminal、run166-group-terminal、run166a/c-terminal和run141-group/a/c-terminal（均位于work/YUZE-LU/121/）。167采用native_pipeline_c8_escape.json、native-c8-finish-group / native-c8-run-shared109-a/c，保持严格状态边界LEC未通过标志；不启动已知依赖失败的完整接收。

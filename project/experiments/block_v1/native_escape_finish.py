@@ -31,15 +31,16 @@ def checked_config(source,receipt,original):
     """Bind new artifacts to the real accepted edit and exact native config."""
     path=source/'native-escape-finish.json';assert file_sha(path)==receipt['outputs'][path.name]
     proof=json.loads(path.read_text());assert proof['passed']is True
+    c8=proof.get('top','transaction6k')=='shared109'
     assert all(proof['checks'].values())and proof['regenerated_rc']is True
     probe=Path(proof['probe']);r=json.loads((probe/'receipt.json').read_text());assert r['passed']is True
     assert file_sha(probe/'receipt.json')==proof['probe_receipt_sha256']
-    p=probe/'native-escape-probe.json';assert file_sha(p)==r['outputs'][p.name]==proof['probe_report_sha256']
+    p=probe/('native-c8-probe.json'if c8 else'native-escape-probe.json');assert file_sha(p)==r['outputs'][p.name]==proof['probe_report_sha256']
     edit=json.loads(p.read_text());assert edit['passed']is True and all(edit['checks'].values())
     assert edit['edited_odb_sha256']==proof['accepted_edit_odb_sha256']
     for name in ['config.mk','input-diodes.tcl','native-candidate.json']:
         assert file_sha(source/name)==receipt['outputs'][name]
-    assert (source/'config.mk').read_bytes()==original.read_bytes()+config_suffix(40,.005,source/'input-diodes.tcl','metal10').encode()
+    assert (source/'config.mk').read_bytes()==original.read_bytes()+config_suffix(40,.005,source/'input-diodes.tcl',None if c8 else'metal10').encode()
     candidate=json.loads((source/'native-candidate.json').read_text());assert candidate['pipeline_completed']is True
     assert candidate['native_escape_repair']is True and candidate['actual_config_sha256']==file_sha(source/'config.mk')
     assert proof['actual_flow_scripts']==FLOW_HASHES
@@ -48,20 +49,23 @@ def checked_config(source,receipt,original):
     return source/'config.mk'
 
 
-def implement(root,out,cpus,run,policy):
-    assert cpus==16 and policy in ('A','C')
-    base=out.parents[2];config=json.loads((root/'project/experiments/block_v1/native_pipeline_escape.json').read_text())
-    probe_run=base/config['escape_probe_run'];group=probe_run/'tasks/native-escape-probe-group'
+def implement(root,out,cpus,run,policy,top='transaction6k'):
+    assert top in ('shared109','transaction6k');c8=top=='shared109'
+    assert cpus==(8 if c8 else 16)and policy in ('A','C')
+    pipeline='native_pipeline_c8_escape.json'if c8 else'native_pipeline_escape.json'
+    base=out.parents[2];config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
+    probe_run=base/config['escape_probe_run'];group=probe_run/('tasks/native-c8-probe-group'if c8 else'tasks/native-escape-probe-group')
     gr=json.loads((group/'receipt.json').read_text());assert gr['passed']is True
-    gp=group/'native-escape-group.json';assert file_sha(gp)==gr['outputs'][gp.name]
+    gp=group/('native-c8-probe-group.json'if c8 else'native-escape-group.json');assert file_sha(gp)==gr['outputs'][gp.name]
     g=json.loads(gp.read_text());assert g['passed']is True and len(g['children'])==2
-    probe=probe_run/'tasks'/('native-escape-probe-'+policy.lower())
+    probe=probe_run/'tasks'/(('native-c8-probe-'if c8 else'native-escape-probe-')+policy.lower())
     pr=json.loads((probe/'receipt.json').read_text());assert pr['passed']is True
     child=next(r for r in g['children']if r['policy']==policy.lower());assert child['passed']is True and child['receipt_sha256']==file_sha(probe/'receipt.json')
-    pp=probe/'native-escape-probe.json';assert file_sha(pp)==pr['outputs'][pp.name]==child['proof_sha256']
+    pp=probe/('native-c8-probe.json'if c8 else'native-escape-probe.json');assert file_sha(pp)==pr['outputs'][pp.name]==child['proof_sha256']
     p=json.loads(pp.read_text());assert p['passed']is True and p['policy']==policy and all(p['checks'].values())
     helpers=['native_escape.py','native_escape_audit.py','native_escape_geometry.tcl','native_escape_gds.rb','native_escape_probe.py']
-    if config.get('escape_short_repair'):helpers.append('native_escape_relocate.py')
+    if c8:helpers=['native_escape.py','native_escape_audit.py','native_escape_geometry.tcl','native_c8_escape.py','native_c8_geometry.py','native_c8_legalize.py','native_c8_probe.py','native_c8_gds.rb','native_upper_index.py']
+    elif config.get('escape_short_repair'):helpers.append('native_escape_relocate.py')
     for name in helpers:
         path=root/'project/experiments/block_v1'/name
         assert file_sha(path)==pr['inputs'][str(path.relative_to(root))]
@@ -72,14 +76,18 @@ def implement(root,out,cpus,run,policy):
     assert file_sha(original/'receipt.json')==p['source_receipt_sha256']
     for name,digest in p['source_files'].items():assert file_sha(Path(name))==digest
     prep=base/config['preparation_run']/'tasks/native-prepare';prep_r=json.loads((prep/'receipt.json').read_text());assert prep_r['passed']is True
-    blueprint=prep/('transaction6k-'+policy)/'config.mk'
+    blueprint=prep/(top+'-'+policy)/'config.mk'
     assert file_sha(blueprint)==prep_r['outputs'][str(blueprint.relative_to(prep))]
-    from native_reroute import checked_config as original_config
-    original_config(original,old,blueprint,margin=40,hold_margin=.005,diode=True,via_access_layer='metal10')
-    relative=Path('flow/results/nangate45')/('bv1_transaction6k_'+policy)/'base'
+    if c8:
+        from native_run import checked_fresh_config
+        checked_fresh_config(original,old,blueprint)
+    else:
+        from native_reroute import checked_config as original_config
+        original_config(original,old,blueprint,margin=40,hold_margin=.005,diode=True,via_access_layer='metal10')
+    relative=Path('flow/results/nangate45')/('bv1_'+top+'_'+policy)/'base'
     results=out/relative;results.mkdir(parents=True)
     for category in ['logs','reports','objects']:
-        (out/'flow'/category/'nangate45'/('bv1_transaction6k_'+policy)/'base').mkdir(parents=True)
+        (out/'flow'/category/'nangate45'/('bv1_'+top+'_'+policy)/'base').mkdir(parents=True)
     copied={}
     def copy(source,destination,expected):
         assert file_sha(source)==expected
@@ -91,7 +99,7 @@ def implement(root,out,cpus,run,policy):
     for name in ['1_synth_lec.v','1_2_yosys.v','1_2_yosys.sdc','bv1-input-diodes.tsv']:
         copy(oldresults/name,results/name,old['outputs'][(relative/name).as_posix()])
     copy(original/'input-diodes.tcl',out/'input-diodes.tcl',old['outputs']['input-diodes.tcl'])
-    (out/'config.mk').write_bytes(blueprint.read_bytes()+config_suffix(40,.005,out/'input-diodes.tcl','metal10').encode())
+    (out/'config.mk').write_bytes(blueprint.read_bytes()+config_suffix(40,.005,out/'input-diodes.tcl',None if c8 else'metal10').encode())
     flow=Path('/OpenROAD-flow-scripts/flow')
     assert {name:file_sha(flow/name)for name in FLOW_HASHES}==FLOW_HASHES
     command=['make','-C',str(flow),'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES='+str(cpus)]
@@ -101,7 +109,7 @@ def implement(root,out,cpus,run,policy):
     for key,value in wanted.items():
         log='variable-'+key+'.log';run(command+['print-'+key],log)
         m=re.search(r'(?m)^'+key+r': (.+)$',(out/log).read_text());assert m and m[1].strip()==value
-    record=dict(schema='block-v1-native-candidate/1',top='transaction6k',policy=policy,cpus=cpus,stages=[],native_escape_repair=True,
+    record=dict(schema='block-v1-native-candidate/1',top=top,policy=policy,cpus=cpus,stages=[],native_escape_repair=True,
         actual_config=str(out/'config.mk'),actual_config_sha256=file_sha(out/'config.mk'),actual_variables=wanted,
         inputs_source=str(prep),inputs_receipt_sha256=file_sha(prep/'receipt.json'),source=str(original),source_receipt_sha256=file_sha(original/'receipt.json'),
         escape_probe=str(probe),escape_probe_receipt_sha256=file_sha(probe/'receipt.json'),qualified_hard_macro=False)
@@ -117,7 +125,7 @@ def implement(root,out,cpus,run,policy):
     save();run(command+['do-6_report'],'do-6_report.log');record['stages'].append('do-6_report');save()
     # A fresh process checks the actual regenerated final database. The
     # compiled API signature and complete DEF before/after check are retained.
-    script='set_thread_count 16\nread_db {%s}\nwrite_def final-readback.def\nwrite_verilog final-all.v\n'% (results/'6_final.odb')
+    script='set_thread_count %d\nread_db {%s}\nwrite_def final-readback.def\nwrite_verilog final-all.v\n'% (cpus,results/'6_final.odb')
     script+='if {[llength [info commands ::drt::check_drc_cmd]] != 1} {error "Missing compiled native full-chip DRC checker"}\n'
     # Same compiled entry point and whole-block zero box used by the upstream
     # public wrapper; no route repair, clipping, or suppression is requested.
@@ -129,30 +137,32 @@ def implement(root,out,cpus,run,policy):
     assert file_sha(out/'final-all.v')==file_sha(probe/'after.v'),'Final reporting changed full physical/logical netlist'
     assert file_sha(results/'6_final.sdc')==file_sha(oldresults/'6_final.sdc'),'Final reporting changed constraints'
     assert not(out/'native-router-drc.rpt').read_text().strip(),'Actual full-chip native router DRC failed'
-    report=out/'flow/reports/nangate45'/('bv1_transaction6k_'+policy)/'base/5_route_drc.rpt'
+    report=out/'flow/reports/nangate45'/('bv1_'+top+'_'+policy)/'base/5_route_drc.rpt'
     shutil.copyfile(out/'native-router-drc.rpt',report)
     assert all(file_sha(out/name)==digest for name,digest in copied.items())
     assert all(file_sha(Path(name))==digest for name,digest in p['source_files'].items())
     checks=dict(accepted_probe=True,exact_final_def_scope=True,exact_final_full_netlist=True,constraints_unchanged=True,
         fresh_native_extraction=(results/'6_final.spef').stat().st_size>0,actual_full_chip_router_drc_zero=True,checker_geometry_unchanged=True)
-    proof=dict(schema='block-v1-native-escape-finish/1',passed=all(checks.values()),checks=checks,policy=policy,
+    proof=dict(schema='block-v1-native-escape-finish/1',passed=all(checks.values()),checks=checks,policy=policy,top=top,
         probe=str(probe),probe_receipt_sha256=file_sha(probe/'receipt.json'),probe_report_sha256=file_sha(pp),accepted_edit_odb_sha256=p['edited_odb_sha256'],
         actual_flow_scripts=FLOW_HASHES,regenerated_rc=True,native_router_drc_sha256=file_sha(out/'native-router-drc.rpt'),
         native_checker_api_sha256=file_sha(out/'native-checker-api.txt'),native_checker_command='drt::check_drc_cmd native-router-drc.rpt 0 0 0 0 native_escape_drc',copied_input_hashes=copied,
-        full_independent_drc_qualified=False,exact_final_function_qualified=False,qualified_hard_macro=False,
-        scope='Ordinary native final outputs/LEC/RCX regenerated from accepted fixed-via edit, exact geometry/hardware/constraints readback and actual whole-chip native router DRC; independent full GDS/DRC/STA/function/macro gates remain required')
+        full_independent_drc_qualified=False,strict_state_boundary_lec_qualified=False,exact_final_function_qualified=False,qualified_hard_macro=False,
+        scope='Ordinary native final outputs/default flow LEC/RCX regenerated from accepted bounded upper edit, exact geometry/hardware/constraints readback and actual whole-chip native router DRC; strict complete state-boundary LEC and independent full GDS/DRC/STA/function/macro gates remain required')
     (out/'native-escape-finish.json').write_text(json.dumps(proof,indent=2)+'\n')
     record['pipeline_completed']=True;record['final_files']={f.name:dict(path=str(f),sha256=file_sha(f))for f in results.glob('6_final.*')}
     assert all('6_final.'+ext in record['final_files']for ext in ['odb','sdc','v','spef','def']);save()
     checked_config(out,dict(outputs={name:file_sha(out/name)for name in ['native-escape-finish.json','config.mk','input-diodes.tcl','native-candidate.json','native-router-drc.rpt']}),blueprint)
 
 
-def group(root,out,cpus,qualify=False):
-    assert cpus==32
-    specs=[('native-escape-'+role+'-transaction6k-'+p,proof,8 if qualify else 16)
+def group(root,out,cpus,qualify=False,c8=False):
+    assert cpus==(16 if c8 else 32)and not(c8 and qualify)
+    specs=[(('native-c8-'if c8 else'native-escape-')+role+('-shared109-'if c8 else'-transaction6k-')+p,proof,8 if qualify or c8 else 16)
            for role,proof in ([('receive','native-physical-receiver.json'),('final','native-final-function.json')]if qualify else[('run','native-escape-finish.json')])for p in ['a','c']]
     memory=memory_snapshot();child_cpus=specs[0][2]
-    simultaneous=next((n for n in ([4,2,1]if qualify else[2,1])if memory['MemAvailable']>=n*32*1024**3*1.2),1)
+    per_child=200 if c8 else 32
+    assert memory['MemAvailable']>=per_child*1024**3*1.2,'Insufficient memory for one complete native child'
+    simultaneous=next((n for n in ([4,2,1]if qualify else[2,1])if memory['MemAvailable']>=n*per_child*1024**3*1.2),1)
     assert child_cpus*simultaneous<=cpus
     def execute(spec):
         mode,name,allocated=spec;folder=out.parent/mode;folder.mkdir(exist_ok=False);started=time.time()
@@ -167,6 +177,6 @@ def group(root,out,cpus,qualify=False):
     with concurrent.futures.ThreadPoolExecutor(max_workers=simultaneous)as pool:children=list(pool.map(execute,specs))
     record=dict(schema='block-v1-native-escape-'+('qualification'if qualify else'finish')+'-group/1',passed=all(r['passed']for r in children),
         allocated_cpus=cpus,simultaneous_workers=simultaneous,maximum_concurrent_cpu_ceilings=child_cpus*simultaneous,memory_preflight=memory,
-        children=children,qualified_hard_macro=False,scope='Independent full native finish or full physical/function children; peer failure retains all evidence, no macro/twelve-layer qualification')
+        children=children,per_child_memory_budget_bytes=per_child*1024**3,parallel_memory_safety_factor=1.2,qualified_hard_macro=False,scope='Independent native finish or full physical/function children; C8 finish does not qualify its pending strict state-boundary LEC; peer failure retains all evidence, no macro/twelve-layer qualification')
     (out/'native-escape-finish-group.json').write_text(json.dumps(record,indent=2)+'\n')
     assert record['passed'],'Native escape final/qualification child failed; peer evidence preserved'

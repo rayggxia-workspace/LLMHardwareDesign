@@ -30,3 +30,10 @@
 159两2CPU探针：1:49、TotalCPU3:09.295、MaxRSS1350256KiB，分配4CPU平均约43.4%；160两16CPU原生最终输出：8:54、TotalCPU34:45.937、MaxRSS41580320KiB，分配32CPU平均约12.2%，其中LEC/原生RCX阶段单任务扩展仍弱。162两8CPU C8全片原生检查：4:22、TotalCPU46:08.830、MaxRSS18331828KiB，分配16CPU平均约66.0%。这是不同任务/阶段的实际资源观测，不能当作同一工作负载的加速比。
 
 后续优先把独立候选/接收子任务装入同一allocation，按阶段线程和实测内存安排并发；有多少真实独立任务才并行多少，不为填核增加无目的参数扫描。132/135/148及以上原结果保留，不修改正在运行作业的线程数或按耗时取消。161按4×8CPU完整接收，134按2×32CPU完整C8物理，141按2×24CPU真实组合；总任务allocation上限仍为8，其他成员不计入且不操作。
+
+
+## 2026-10-27 17:28 CST 实际终态与后继入口
+
+165/92314实际C8 A/C探针全部11门通过，4:36、TotalCPU7:29.230、MaxRSS4128260K，node25同allocation双2CPU。A45/C29网改动，其中15/4处via9落点；原生upper诊断合并标记A37/C25降至0，完整upper接触0、固定低层/其他网/完整V及源SHA保持。这不是162原raw49/37项的完整GDS接收。166/92326只读严格LEC诊断双1CPU实际通过，0:50、CPU1:20.266、MaxRSS71428K；A/C时序实例143988逐名相同，无新增/删除，A501/C277处DFF_X1变DFF_X2，无字面x/z输入，但尚未证明原生未匹配PI对应，不豁免严格门。141/92256实际FAILED/1:40:06/CPU3:20:52/MaxRSS358556384K，同样被严格C8 LEC拒绝，未完成组合功能。新167准备从实际165接受ODB重新原生最终输出/默认flow LEC/RCX及全片DRT，c96双8CPU，200GiB/路加20%余量；本次提交时尚未运行。T6K161完整接收和164视图通过仍不等于宏边界资格；164 Liberty PG及完整flat timing源另以新版本修正。17:25本任务4个RUNNING allocation（057三路、067）；统一预算基础6/上限8，含PENDING/未知；其他成员未操作。完整P0–P6未完成。
+
+证据：results/run165-group-terminal、run165a/c-terminal、run166-group-terminal、run166a/c-terminal和run141-group/a/c-terminal（均位于work/YUZE-LU/121/）。167采用native_pipeline_c8_escape.json、native-c8-finish-group / native-c8-run-shared109-a/c，保持严格状态边界LEC未通过标志；不启动已知依赖失败的完整接收。
