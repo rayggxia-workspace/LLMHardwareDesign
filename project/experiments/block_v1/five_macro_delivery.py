@@ -3,6 +3,70 @@ import json
 from pathlib import Path
 
 
+def final_leaf(root,out,cpus,run,kind):
+    """Index and render a new leaf only after all its exact final gates pass."""
+    from io_slots import file_sha
+    from five_macro_receive import source
+    assert cpus==16 and kind in ('m','v','r','s')
+    folder,r,flow,results=source(out,kind)
+    proofs={};receipts={}
+    for stage,report in [('physical','five-macro-physical.json'),('drc','five-macro-drc.json'),
+                         ('final-function','five-macro-final-function.json'),('formal','five-macro-formal.json')]:
+        parent=out.parent/('five-macro-'+stage+'-'+kind)
+        receipt=json.loads((parent/'receipt.json').read_text());assert receipt['passed'] is True
+        path=parent/report;assert file_sha(path)==receipt['outputs'][report]
+        proof=json.loads(path.read_text());assert proof['passed'] is True
+        assert proof['source_receipt_sha256']==file_sha(folder/'receipt.json')
+        proofs[stage]=proof
+        receipts[stage]=dict(path=str(parent/'receipt.json'),sha256=file_sha(parent/'receipt.json'),
+                             report_path=str(path),report_sha256=file_sha(path))
+    gds=Path(proofs['drc']['gds']['path']);assert file_sha(gds)==proofs['drc']['gds']['sha256']
+    assert proofs['drc']['full_deck']['total_items']==0 and not proofs['drc']['native_report'].strip()
+    assert all(proofs['physical']['checks'].values()) and proofs['formal']['strict_native_lec']['passed']
+    assert len(proofs['final-function']['initial_runs'])==3
+    # These are actual native pins, not the planned XY list or a picture.
+    script='read_db {'+str(results/'6_final.odb')+'}\nset f [open pins.tsv w]\n'
+    script+='foreach p [[ord::get_db_block] getBTerms] {if {[$p getSigType] in {POWER GROUND}} {continue}; foreach pin [$p getBPins] {foreach b [$pin getBoxes] {puts $f "[$p getName]|[[$b getTechLayer] getName]|[$b xMin]|[$b yMin]|[$b xMax]|[$b yMax]"}}}\nclose $f\n'
+    script+='set f [open dbu.txt w]; puts $f [[ord::get_db_block] getDbUnitsPerMicron];close $f\n'
+    (out/'pins.tcl').write_text(script);run(['openroad','-no_init','-exit',str(out/'pins.tcl')],'pins.log')
+    dbu=int((out/'dbu.txt').read_text());assert dbu==2000
+    pins=[]
+    for line in (out/'pins.tsv').read_text().splitlines():
+        name,layer,*box=line.split('|');box=list(map(int,box))
+        assert layer=='metal10' and box[2]-box[0]==1600 and box[3]-box[1]==1600
+        pins.append(dict(pin=name,layer=layer,box_dbu=box,box_um=[v/dbu for v in box]))
+    wanted=json.loads((folder/'pins.json').read_text())['pins']
+    assert len(pins)==len({p['pin'] for p in pins})==len(wanted)
+    assert {p['pin'] for p in pins}=={p['pin'] for p in wanted}
+    (out/'pins.json').write_text(json.dumps(dict(dbu_per_um=dbu,pins=pins),indent=2)+'\n')
+    image=out/(flow['top']+'.png')
+    script='''import pya
+view=pya.LayoutView()
+view.load_layout(INPUT,0)
+view.max_hier()
+view.add_missing_layers()
+view.zoom_fit()
+view.save_image(OUTPUT,1600,1600)
+'''.replace('INPUT',repr(str(gds))).replace('OUTPUT',repr(str(image)))
+    (out/'render.py').write_text(script)
+    run(['env','QT_QPA_PLATFORM=offscreen','klayout','-z','-r',str(out/'render.py')],'layout.log')
+    assert image.stat().st_size>1000
+    files={}
+    for path in [results/('6_final.'+suffix) for suffix in ('v','sdc','def','odb','spef')]+[gds]:
+        files[path.name]=dict(path=str(path),sha256=file_sha(path),bytes=path.stat().st_size)
+    assert source(out,kind)[1]==r
+    result=dict(passed=True,macro=kind.upper(),top=flow['top'],implementation_count=1,
+                native_leaf_accepted=True,native_routing_layers=['metal'+str(i) for i in range(1,11)],
+                die_um=flow['die_um'],active_area_um2=proofs['physical']['active_area_um2'],
+                physical_only_area_um2=proofs['physical']['physical_only_area_um2'],
+                final_files=files,source_receipt_sha256=file_sha(folder/'receipt.json'),gate_receipts=receipts,
+                pins=dict(path=str(out/'pins.json'),sha256=file_sha(out/'pins.json'),signal_bits=len(pins)),
+                image=dict(path=str(image),sha256=file_sha(image),bytes=image.stat().st_size),
+                qualified_hard_macro=False,hierarchical_lib_qualified=False,m11_m12_system_qualified=False,
+                scope='One actual final native M1-M10 leaf; all same-source physical/full native and full GDS deck/function/strict LEC gates pass. Hierarchical timing-model and M11/M12-system qualification are separate and unclaimed.')
+    (out/'five-macro-delivery.json').write_text(json.dumps(result,indent=2)+'\n')
+
+
 def selected(root,key):
     from io_slots import file_sha
     index=root/'project/experiments/block_v1/five_macro_t_source.json'
