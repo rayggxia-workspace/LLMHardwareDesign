@@ -101,6 +101,10 @@ def verify(root,out,cpus,run,top,policy,historical=False,pipeline=None):
     deck=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc')
     run(['klayout','-b','-rd','in_gds='+str(gds),'-rd','report_file='+str(out/'native-drc.lyrdb'),'-r',str(deck)],'independent-drc.log')
     database=ET.parse(out/'native-drc.lyrdb').getroot();items=database.find('items');assert items is not None
+    from native_drc import summarize
+    drc_summary=summarize(out/'native-drc.lyrdb')
+    assert drc_summary['total_items']==len(items)
+    (out/'native-drc-summary.json').write_text(json.dumps(drc_summary,indent=2)+'\n')
     checks['independent_native_drc_zero']=len(items)==0
     reports=source/'flow/reports/nangate45'/('bv1_'+top+'_'+policy)/'base'
     drc=reports/'5_route_drc.rpt';assert file_sha(drc)==receipt['outputs'][str(drc.relative_to(source))]
@@ -112,7 +116,9 @@ def verify(root,out,cpus,run,top,policy,historical=False,pipeline=None):
         active_cell_count=active_count,active_area_um2=active,physical_only_cell_count=physical_count,physical_only_area_um2=physical,
         all_instance_area_um2=active+physical,die_area_um2=w*h,masters=masters,
         core_bbox_dbu=core,core_area_um2=(core[2]-core[0])*(core[3]-core[1])/scale**2,
-        independent_drc_items=len(items),native_deck_sha256=file_sha(deck),gds_sha256=file_sha(gds),
+        independent_drc_items=len(items),independent_drc_categories=drc_summary['categories'],
+        independent_drc_summary_sha256=file_sha(out/'native-drc-summary.json'),
+        native_deck_sha256=file_sha(deck),gds_sha256=file_sha(gds),
         rc_coverage_qualified=coverage['passed'],exact_final_function_qualified=False,twelve_layer_qualified=False,
         historical_input_contract=historical,pipeline=pipeline,
         qualified_hard_macro=False,scope='Native final ODB/SDC/SPEF physical gates; RC coverage, final function, macro views and twelve-layer research qualification remain separate')

@@ -167,3 +167,6 @@ Block v1 独立最终物理入口为 `native-receive-<shared109|transaction6k>-<
 
 
 最终物理网表行为：`native-final-t6k-a`/`native-final-t6k-c`绑定cap40封存源093的6_final.v和原073 LEC控制/077输入，直接用实际网表与同一Liberty导出的单元行为构建Verilator，不替换RAM、不重新综合网表。每allocation16CPU，三模型各最多4线程并行，运行完整242事务队列scoreboard，全1及两个随机初态；结果要求完整计数且三个初态响应一致。该零延迟检查不代替STA/四态、宏边界、C8最终功能或共同底座回装。当前代码未部署执行。
+
+
+独立DRC分类：`python project/experiments/block_v1/native_drc.py <native-drc.lyrdb> <new-summary.json>`保留所有项、数值、原报告SHA及分类，不过滤天线/间距。native_receive后续run自动绑定summary SHA；本次实际094失败已原样保存，不能用DRT零项替代。098内部节点collapse修复参见节点电荷决策，102重跑仍须实际执行。101已实际部署并启动92144，前述“未部署”保留为提交时快照。

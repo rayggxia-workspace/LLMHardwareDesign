@@ -39,3 +39,8 @@ API参照[OpenDB dbCapNode](https://openroad.readthedocs.io/en/latest/doxygen_ou
 096/92133真实路由8节点电荷测量完成55秒，六项锁定门槛全部通过；最后offset的总C约13.2813 fF，仍仅单个隔离网络起点电荷，不是完整分布式RC。097/92134实际SPEF导入失败，已定位安装版Tcl SWIG不接受显式uint32_t corner参数；源码改用官方同义默认corner=0无参接口，不放宽逐节点/逐边检查，重跑待部署。093边缘T6KA修复已提交92135；094内部T6KC独立官方DRC仍运行，095继续等待其全部通过。
 
 原096六门槛为正总量、局部符号、统计精度、逐列守恒、offset收敛、与原051总量一致。八节点C来自场解起点分桶，七边R保留原DC图。失败097导入已实际读入7个resistor/8个ground cap，随后getCapacitance 0被SWIG拒绝；原日志和回执保留在run097-first-native。使用getCapacitance()的默认corner=0语义见[官方API](https://openroad.readthedocs.io/en/latest/doxygen_output/html/classodb_1_1dbCapNode.html)。该修复尚未在安装版执行，不能报告节点/边回装通过。
+
+
+## 08:22 原生节点编号
+
+098/92143已实际读入7R/8C并完成OpenDB读回，但内部编号从SPEF 3–8变为4–9，逐节点/边门槛正确拒绝，原失败不改。原因由[固定OpenROAD源码](https://github.com/The-OpenROAD-Project/OpenROAD/blob/6ea4ca224f3589dd91809933f50f39af66053634/src/odb/src/db/dbNet.cpp#L687)的collapseInternalCapNum证实：cnt始于1，按CAP创建顺序遇每个节点先增1，仅内部节点被赋值；端点保持ITerm身份。writer现输出相同canonical标签，明确要求当前八节点图的前两点为实际U0/U1，输出完整物理坐标/SPEF/native-key映射，不按C/R值匹配节点。局部重评估用旧实际读回数据通过7项检查，4负例仍拒绝，其中换C/换R保总量；这不等于新102原生导入已执行。

@@ -73,8 +73,14 @@ def verify(root,out,cpus,run):
     odb=original/'probe/routed.odb';assert file_sha(odb)==bound['outputs']['probe/routed.odb']
     nodes=result['nodes'];physical=[tuple(n['physical'])for n in nodes]
     assert len(nodes)==8 and len(set(physical))==8
-    ids={p:'*1:%d'%(i+1)for i,p in enumerate(physical)}
-    keys={p:'N:%d'%(i+1)for i,p in enumerate(physical)}
+    # bench_read_spef calls collapseInternalCapNum: its counter starts at
+    # one, advances for every cap node (including terminals), then assigns
+    # that number to internal nodes. Emit canonical labels in that same
+    # CAP creation order, rather than assuming original labels survive.
+    # Source: OpenROAD 6ea4ca2 src/odb/src/db/dbNet.cpp:687-698.
+    assert physical[:2]==[('metal10',68800,68800),('metal10',273600,273600)]
+    ids={p:'*1:%d'%(i+2)for i,p in enumerate(physical)}
+    keys={p:'N:%d'%(i+2)for i,p in enumerate(physical)}
     for p,index in [(('metal10',68800,68800),2),(('metal10',273600,273600),3)]:
         ids[p]='*%d:p'%index;keys[p]='I:U%d/p'%(index-2)
     charges=result['local_ground_ff'];assert len(charges)==8 and all(math.isfinite(v)and v>0 for v in charges)
@@ -112,6 +118,8 @@ def verify(root,out,cpus,run):
         variants[mode]=dict(spef_sha256=file_sha(folder/'candidate.spef'),script_sha256=file_sha(folder/'receive.tcl'))
     assert file_sha(odb)==bound['outputs']['probe/routed.odb']
     record=dict(schema='block-v1-routed-graph-view/1',passed=True,
+        node_identity=[dict(physical=list(p),spef_label=ids[p],native_key=keys[p])for p in physical],
+        native_internal_numbering='collapseInternalCapNum: CAP creation rank plus one; terminals retain real instance/pin identity',
         measured_source_sha256=file_sha(path),source_receipt_sha256=file_sha(source/'receipt.json'),
         source_odb_sha256=file_sha(odb),variants=variants,readback_and_negatives=observed,
         independent_local_fv_on_this_route=False,qualified_node_pair_coupling=False,qualified_full_block=False,
