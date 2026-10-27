@@ -36,7 +36,8 @@ def interface(text, top):
 def derive(bundle):
     top = bundle.index["top"]
     # Read only declarations, not the entire multi-megabyte structural netlist.
-    with bundle.paths["final_v"].open(encoding="utf-8") as stream:
+    timing_role = "flat_timing_v" if bundle.obj("view_report").get("flat_timing_view") is not None else "final_v"
+    with bundle.paths[timing_role].open(encoding="utf-8") as stream:
         prefix = stream.read(65536)
     names, declarations, ports = interface(prefix, top)
     expected = {p["pin"]: p["direction"] for p in bundle.obj("pins")["pins"]}
@@ -70,7 +71,9 @@ def validate_binding(request, paths):
     for role, key in (("source_receipt", "source_receipt_sha256"), ("view_receipt", "view_receipt_sha256"),
                       ("final_sdc", "source_sdc_sha256")):
         require(bundle.digest(role) == binding[key], "candidate receipt/SDC binding")
-    for role, source_role in (("flat_verilog", "final_v"), ("flat_spef", "final_spef"), ("macro_lib", "lib")):
+    timing_role = "flat_timing_v" if bundle.obj("view_report").get("flat_timing_view") is not None else "final_v"
+    require(binding.get("flat_verilog_source_role", "final_v") == timing_role, "candidate flat timing role declaration")
+    for role, source_role in (("flat_verilog", timing_role), ("flat_spef", "final_spef"), ("macro_lib", "lib")):
         require(file_sha(paths[role]) == bundle.digest(source_role), "candidate file role binding")
     ports, supplies, wrapper, sdc = derive(bundle)
     require(request["expected_ports"] == ports and request["flat_top"] == bundle.index["top"]
@@ -93,7 +96,8 @@ def prepare(index, library, output, tolerance_ns=.001):
     output.mkdir(parents=True, exist_ok=False)
     (output / "parent.v").write_text(wrapper, encoding="utf-8")
     (output / "same-constraints.sdc").write_text(diagnostic_sdc, encoding="utf-8")
-    paths = {"flat_verilog": bundle.paths["final_v"], "flat_spef": bundle.paths["final_spef"],
+    timing_role = "flat_timing_v" if bundle.obj("view_report").get("flat_timing_view") is not None else "final_v"
+    paths = {"flat_verilog": bundle.paths[timing_role], "flat_spef": bundle.paths["final_spef"],
              "sdc": output / "same-constraints.sdc", "abstract_verilog": output / "parent.v",
              "macro_lib": bundle.paths["lib"], "base_lib_0": library}
     request = {"schema": "block-v1-native-boundary-request/1", "evidence_kind": "native-candidate-diagnostic",
@@ -101,6 +105,7 @@ def prepare(index, library, output, tolerance_ns=.001):
                "expected_ports": ports, "time_tolerance_ns": tolerance_ns, "slew_tolerance_ns": tolerance_ns,
                "files": {role: {"path": str(path), "sha256": file_sha(path)} for role, path in paths.items()},
                "candidate_binding": {"index": str(bundle.index_path), "index_sha256": file_sha(bundle.index_path),
+                                     "flat_verilog_source_role": timing_role,
                                      "source_receipt_sha256": bundle.digest("source_receipt"),
                                      "view_receipt_sha256": bundle.digest("view_receipt"),
                                      "source_sdc_sha256": bundle.digest("final_sdc")},

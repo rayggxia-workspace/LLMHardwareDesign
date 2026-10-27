@@ -9,6 +9,13 @@ if {[catch {
     if {[$port is_bus]} {continue}
     puts $stream "[get_full_name $port]\t[get_property $port direction]\t[$port is_pwr_gnd]"
   }
+  # PG ports do not occur in the signal get_lib_pins collection.
+  foreach name {VDD VSS} {
+    set port [$cell find_liberty_port $name]
+    if {$port ne "NULL" && [$port is_pwr_gnd]} {
+      puts $stream "$name\t[get_property $port direction]\t[$port is_pwr_gnd]"
+    }
+  }
   close $stream
   set groups [open model-arc-groups.tsv w]
   set arcs [open model-arcs.tsv w]

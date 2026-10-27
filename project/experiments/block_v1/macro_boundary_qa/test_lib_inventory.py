@@ -47,6 +47,14 @@ class ModelInventoryControls(unittest.TestCase):
         with self.assertRaisesRegex(Invalid, "signal pins"):
             receive(self.folder, self.ports)
 
+    def test_typed_power_ground_roles_are_distinct_from_ordinary_inputs(self):
+        p = self.folder / "model-ports.tsv"
+        p.write_text(p.read_text().replace("VDD\tinput\t0", "VDD\tpower\t1").replace("VSS\tinput\t0", "VSS\tground\t1"))
+        self.assertTrue(receive(self.folder, self.ports)["ports"]["VDD"]["is_power_ground"])
+        p.write_text(p.read_text().replace("VDD\tpower\t1", "VDD\tground\t1"))
+        with self.assertRaisesRegex(Invalid, "supply role"):
+            receive(self.folder, self.ports)
+
 
 if __name__ == "__main__":
     unittest.main()

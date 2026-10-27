@@ -15,7 +15,9 @@ def receive(folder, expected_ports):
     folder = Path(folder)
     ports = {}
     for name, direction, pg in rows(folder / "model-ports.tsv"):
-        require(name not in ports and direction in ("input", "output", "inout") and pg in ("0", "1"), "model native pin metadata")
+        require(name not in ports and direction in ("input", "output", "inout", "power", "ground") and pg in ("0", "1"), "model native pin metadata")
+        if direction in ("power", "ground") or pg == "1":
+            require((name, direction, pg) in (("VDD", "power", "1"), ("VSS", "ground", "1")), "typed model supply role")
         ports[name] = {"direction": direction, "is_power_ground": pg == "1"}
     require({name: value["direction"] for name, value in ports.items() if name not in ("VDD", "VSS")} == expected_ports,
             "model native signal pins")

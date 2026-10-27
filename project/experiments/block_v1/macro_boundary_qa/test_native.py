@@ -212,6 +212,14 @@ class NativeReceiverControls(unittest.TestCase):
         self.assertEqual(report["missing_spef_instance_or_net_messages"], 2)
         self.assertFalse(report["exact_source_annotation_binding_accepted"])
 
+    def test_errors_with_code_after_colon_or_without_code_are_counted(self):
+        path = self.folder / "native.log"
+        path.write_text("Error: 1670 source.spef line 3, syntax error\nError: unnumbered failure\n")
+        report = native_log_diagnostics(path)
+        self.assertEqual(report["native_error_count"], 2)
+        self.assertEqual(report["message_counts"]["Error 1670"], 1)
+        self.assertEqual(report["message_counts"]["Error unnumbered"], 1)
+
     def test_optimistic_and_pessimistic_slack_directions_are_distinct(self):
         flat = receive(self.folder, self.ports)
         abstract = json.loads(json.dumps(flat))

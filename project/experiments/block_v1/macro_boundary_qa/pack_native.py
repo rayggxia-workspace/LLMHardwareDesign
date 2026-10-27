@@ -9,7 +9,7 @@ from pathlib import Path
 import shutil
 import sys
 
-from audit import FINALS, VIEW_OUTPUTS, Invalid, audit, file_sha, load_json, require
+from audit import FINALS, VIEW_OUTPUTS, TYPED_OUTPUTS, Invalid, audit, file_sha, load_json, require
 
 
 def native_paths(views, prepare, budget, pipeline):
@@ -29,6 +29,10 @@ def native_paths(views, prepare, budget, pipeline):
     if report.get("exact_final_function_qualified") is True:
         function = Path(report["final_function_control"]["path"])
         paths.update(function_receipt=function / "receipt.json", function_report=function / "native-final-function.json")
+    if report.get("supply_model_correction") is not None:
+        paths.update({role: views / relative for role, relative in TYPED_OUTPUTS.items()})
+        paths.update(flat_timing_source=Path(report["flat_timing_view"]["source_path"]),
+                     flat_timing_proof=Path(report["flat_timing_view"]["source_proof"]))
     return top, policy, paths
 
 

@@ -140,6 +140,8 @@ VIEW_OUTPUTS = {"view_report": "native-view-generation.json", "lib": "candidate.
                 "lef": "candidate.lef", "lef_interface": "lef-interface.tsv",
                 "lib_interface": "lib-interface.tsv", "lib_buses": "lib-buses.tsv",
                 "source_pg": "source-pg-pins.tsv"}
+TYPED_OUTPUTS = {"raw_lib": "candidate-raw.lib", "supply_correction": "supply-model-correction.json",
+                 "lib_pg_interface": "lib-pg-interface.tsv", "flat_timing_v": "candidate-timing.v"}
 
 
 def audit_source(bundle):
@@ -188,7 +190,9 @@ def audit_source(bundle):
                 and inputs.get(root + name) == view[field], f"exporter code binding: {field}")
     require(view["typed_bus_metadata_sha256"] == bundle.digest("lib_buses"), "bus metadata hash")
     prefix = f"flow/results/nangate45/bv1_{top}_{policy}/base"
-    require(len(view["inputs"]) == len(FINALS), "unexpected/missing final inputs")
+    typed = view.get("supply_model_correction") is not None
+    require(typed == (view.get("flat_timing_view") is not None), "partial typed-view contract")
+    require(len(view["inputs"]) == len(FINALS)+(2 if typed else 0), "unexpected/missing final inputs")
     for role, suffix in FINALS.items():
         bundle.owned(role, "source_receipt", f"{prefix}/6_final.{suffix}")
         require(view["inputs"].get(str(bundle.identity(role))) == bundle.digest(role),
@@ -208,13 +212,63 @@ def audit_source(bundle):
             and physical["rc_coverage_qualified"] is True
             and physical["mapped_to_final_lec"]["passed"] is True
             and physical["independent_drc_items"] == 0, "physical prerequisite failed")
+    typed_binding = audit_typed_view(bundle, view, physical) if typed else {"verified": False, "status": "legacy untyped view"}
     function_binding = {"verified": False, "status": "not claimed by view producer"}
     if view.get("exact_final_function_qualified") is True:
         function_binding = audit_function_binding(bundle, view)
     return {"passed": True, "stage_commits": commits,
             "budget_provenance": "bound through exporter receipt input inventory",
             "final_function_evidence_binding": function_binding,
+            "typed_view_evidence_binding": typed_binding,
             "receipt_authenticity": "trusted input receipts; hashes are not signatures"}
+
+
+def validate_supply_conversion(raw, corrected, record):
+    require(record["schema"] == "block-v1-supply-model-correction/1" and record["passed"] is True
+            and record["exact_inverse_reconstruction"] is True and record["all_other_model_bytes_unchanged"] is True,
+            "supply conversion proof flags")
+    require(sha(raw.encode()) == record["original_sha256"] and sha(corrected.encode()) == record["corrected_sha256"], "supply conversion hashes")
+    require([e["name"] for e in record["edits"]] == ["VDD", "VSS"], "supply conversion edit identities")
+    rebuilt = raw
+    for edit, kind in zip(record["edits"], ("primary_power", "primary_ground")):
+        name = edit["name"]
+        require(edit["pg_type"] == kind, "supply conversion role")
+        original_pattern = r'pin\("'+name+r'"\)\s*\{\s*direction\s*:\s*input\s*;\s*capacitance\s*:\s*0(?:\.0+)?\s*;\s*max_transition\s*:\s*(?:\d+(?:\.\d*)?|\.\d+)\s*;\s*\}'
+        replacement_pattern = r'pg_pin\("'+name+r'"\)\s*\{\s*voltage_name\s*:\s*"'+name+r'"\s*;\s*pg_type\s*:\s*'+kind+r'\s*;\s*\}'
+        require(re.fullmatch(original_pattern, edit["original"]) and re.fullmatch(replacement_pattern, edit["replacement"]), "supply conversion changed semantics")
+        require(rebuilt.count(edit["original"]) == 1, "supply conversion original uniqueness")
+        rebuilt = rebuilt.replace(edit["original"], edit["replacement"], 1)
+    require(rebuilt == corrected, "supply conversion changed non-supply model bytes")
+
+
+def audit_typed_view(bundle, view, physical):
+    for role, relative in TYPED_OUTPUTS.items():
+        bundle.owned(role, "view_receipt", relative)
+    record = bundle.obj("supply_correction")
+    require(record == view["supply_model_correction"], "supply correction report binding")
+    validate_supply_conversion(bundle.read("raw_lib").decode(), bundle.read("lib").decode(), record)
+    require(bundle.rows("lib_pg_interface") == [["VDD", "power", "1"], ["VSS", "ground", "1"]], "typed supply native readback")
+    timing, proof = view["flat_timing_view"], bundle.obj("flat_timing_proof")
+    bundle.owned("flat_timing_source", "physical_receipt", "physical-functional.v")
+    bundle.owned("flat_timing_proof", "physical_receipt", "physical-functional-proof.json")
+    require(origin(timing["path"]) == bundle.identity("flat_timing_v")
+            and origin(timing["source_path"]) == bundle.identity("flat_timing_source")
+            and origin(timing["source_proof"]) == bundle.identity("flat_timing_proof")
+            and timing["sha256"] == bundle.digest("flat_timing_v") == bundle.digest("flat_timing_source")
+            and timing["source_proof_sha256"] == bundle.digest("flat_timing_proof"), "flat timing source/proof binding")
+    require(proof == physical["mapped_to_final_lec"]["physical_functional_view"]
+            and proof["schema"] == "block-v1-physical-functional-view/1" and proof["passed"] is True
+            and proof["full_view_sha256"] == bundle.digest("flat_timing_v")
+            and origin(proof["full_view"]) == bundle.identity("flat_timing_source"), "flat timing physical proof mismatch")
+    projection = proof["input_only_projection"]
+    require(proof["source_antenna_count"] == 0 and projection["passed"] is True
+            and projection["allowed_master"] == "ANTENNA_X1" and projection["exact_inverse_reconstruction"] is True
+            and projection["removed_count"] == timing["retained_protection_cells"] > 0, "flat timing protection-cell contract")
+    for role in ("flat_timing_source", "flat_timing_proof"):
+        require(view["inputs"].get(str(bundle.identity(role))) == bundle.digest(role), "flat timing exporter input binding")
+    return {"verified": True, "supply_only_change_reconstructed": True,
+            "full_timing_netlist_bound": True, "retained_protection_cells": timing["retained_protection_cells"],
+            "scope": "Independent exact supply-only reconstruction and same-source full timing V binding; not boundary accuracy"}
 
 
 def audit_function_binding(bundle, view):
@@ -333,7 +387,8 @@ def audit_interface(bundle):
         lib[name] = direction
     for supply in ("VDD", "VSS"):
         if supply in lib:
-            require(lib.pop(supply) == "inout", "Liberty PG direction")
+            wanted = {"VDD": "power", "VSS": "ground"} if bundle.obj("view_report").get("supply_model_correction") is not None else {"VDD": "inout", "VSS": "inout"}
+            require(lib.pop(supply) == wanted[supply], "Liberty PG direction")
     require(lib == {n: p["direction"] for n, p in expected.items()}, "Liberty port/direction set")
     expected_buses = {}
     for name, pin in expected.items():

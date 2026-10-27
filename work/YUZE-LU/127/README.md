@@ -19,19 +19,21 @@ python -B scripts/check_project.py
 git diff --check
 ```
 
-首轮为 36 项 synthetic 测试；原生诊断批增至 73 项，后续弧元数据/有符号差控制增至 80 项，另实际执行原生控制及 T6K 候选诊断。最终数量以测试回执为准。`synthetic-report.json` 的 passed 仅表示接收器逻辑控制通过，所有正式资格保持 false。生成用法：导入 `test_audit.Fixture` 在临时目录构造，再调用 `audit.audit(index_path)`；不使用任何真实候选文件。
+首轮为 36 项 synthetic 测试；原生诊断批增至 73 项，后续弧元数据/有符号差控制增至 80 项，本批修正版/流式几何/供电反篡改控制增至 93 项，另实际执行原生控制及 T6K 候选诊断。最终数量以测试回执为准。`synthetic-report.json` 的 passed 仅表示接收器逻辑控制通过，所有正式资格保持 false。生成用法：导入 `test_audit.Fixture` 在临时目录构造，再调用 `audit.audit(index_path)`；不使用任何真实候选文件。
 
-第二批真实发现：run164 T6K A/C 均未通过 Liberty PG direction 门；A 的原生对照有超差，且 exact final.v/SPEF 中二极管实例/网络无法完整对应。失败不豁免，原生数字不能归因成单一模型误差。详见本目录真实诊断报告与 JSON 摘要。小 DFF 控制说明，导出输入驱动上下文和输入线阻敏感性需要分别检查，固定 transition 的独立诊断变体也不能普遍消除误差。
+历史 run164 的 PG 表示和 189 个保护单元来源问题已由主线 run168 修复，支线重新接收每路 30 个角色并验证通过。当前结果见《修正版接收报告_run168-169.md》与 `revised-candidate-summary-168-169.json`，旧报告保留历史失败。run168 原生测量上下文通过，仍分别有 958/900 项诊断超差，最大 slack 差为 107.274412/60.402183 ps。主线统一预算内运行 run169 只读 ODB 导出后，支线实际检查 A/C 的 9,208,361/9,206,675 个源金属矩形，未覆盖项均为 0。
+
+另实际运行输出最短路径反例：0/8 级 BUF 支路控制的 max 输出差均低于 1 ps，但 8 级控制的 min 输出乐观差达到 230.138311/208.133455 ps。与固定 OpenSTA 源码的 max 路径选择一致，不能将当前 max 导出表直接视为已准确覆盖 min 输出。原始输入、输出、工具与代码摘要保存在 `native-output-path-control.json`。小 DFF 驱动/线阻控制和全部失败仍保留，未将复杂候选差异归为单一原因。
 
 ## 未完成与下一步
 
-1. 主线修复或明确 PG 表示合同；提供完整物理 timing 源或 ODB flat 对照，解决源 V/SPEF 中二极管无法对应的问题。支线保留全部失败，不平行修改主线 exporter。
-2. 在主线统一预算内执行只读 ODB 几何导出，运行已实现的 OBS 精确覆盖；支线已通知主线安排资源，尚无实际 ODB coverage 结果。
-3. 审查正式 flat/abstract 场景、全部适用弧/例外/corner/electrical 覆盖和容差。现有原生测量是 worst-per-boundary-edge 聚合，不能冒称全部弧等价。
-4. 对修正后的 T6K、合格 C8 A/C 新候选逐一复验，补真实寄生归属与完整适用覆盖。不能把读回成功、小 OBS 清单、无 active-net 判断的 annotation 清单或自报 ledger 当作完整证明。
+1. 主线决定紧凑模型的有效工作域及 min/max 表示合同，保留完整 V/SPEF/ODB 的 flat 参考；支线复验新的模型候选，不平行修改主线 exporter。
+2. 来源、PG、完整 timing V 与实际 OBS 已取得本轮通过证据；OBS 不包含隐藏 transistor/GDS、DRC 或任意父层走线可达性资格。
+3. 审查正式 flat/abstract 场景、全部适用弧/例外/corner/electrical 覆盖和容差。现有原生测量是 worst-per-boundary-edge 聚合，两个特殊 arc group 角色仍未完全分类，不能冒称全部弧等价。
+4. 合格 C8 A/C 完整来源交付后逐一接收，继续补真实寄生归属与完整适用覆盖。不能把读回成功、无 active-net 判断的 annotation 清单或自报 ledger 当作完整证明。
 5. 主线负责生产、物理/功能接收与正式冻结，支线交付可复算的通过或失败报告。#127 不关闭、不标 done；本批 PR 审查不代替整体完成。
 
-恢复第一步：读取 #127 最新 Issue/PR 回执与本目录真实报告，核对 run160/161/164 来源；先复算现有失败，再接收主线修正版。不要从旧首批记录推断“尚无真实数据”。无需重新派生分支或接管主线活动作业。
+恢复第一步：读取 #127 最新 Issue/PR 回执与《修正版接收报告_run168-169.md》，核对 run160/161 来源、run168 修正版与 run169 OBS；先复算当前结果，再接收主线新模型/C8 候选。无需重新派生分支或接管主线活动作业。
 
 ## 协作接入回执
 

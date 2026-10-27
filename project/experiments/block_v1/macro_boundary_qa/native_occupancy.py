@@ -41,8 +41,11 @@ def execute(index, output, executable, geometry_helper):
             stats[key] = int(value)
         require(set(stats) == {"dbu_per_um", "native_instances", "native_master_obstruction_boxes"}
                 and stats["dbu_per_um"] == 2000 and stats["native_instances"] > 0, "native occupancy scope/count")
-        with (output / "source-occupancy.tsv").open(encoding="utf-8") as stream:
-            result = inspect((line.rstrip("\n").split("\t") for line in stream), bundle.rows("lef_interface"))
+        def source_rows():
+            with (output / "source-occupancy.tsv").open(encoding="utf-8") as stream:
+                for line in stream:
+                    yield line.rstrip("\n").split("\t")
+        result = inspect(source_rows, bundle.rows("lef_interface"))
         result.update(native_summary=stats, source_odb_sha256=bundle.digest("final_odb"),
                       source_occupancy_sha256=file_sha(output / "source-occupancy.tsv"),
                       source_index_sha256=sealed["index"])

@@ -155,9 +155,9 @@ def tcl_list(paths):
 def native_log_diagnostics(path):
     counts, examples = {}, []
     for line in Path(path).read_text(encoding="utf-8").splitlines():
-        match = re.match(r"(Error|Warning)\s+(\d+):", line)
+        match = re.match(r"(Error|Warning)(?:\s+(\d+))?:\s*(?:(\d+)\s+)?", line)
         if match:
-            key = f"{match[1]} {match[2]}"
+            key = f"{match[1]} {match[2] or match[3] or 'unnumbered'}"
             counts[key] = counts.get(key, 0)+1
             if len(examples) < 10:
                 examples.append(line)

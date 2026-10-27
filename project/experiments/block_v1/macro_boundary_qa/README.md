@@ -146,3 +146,19 @@ python3 -B project/experiments/block_v1/macro_boundary_qa/native_pair.py \
 两个原生无 from-port 的 clock-tree 特殊组完整保留。当前接口不能安全给出其 role 名称，明确标 unresolved、native_role_metadata_complete=false；不跳过，也不调用会解引用空指针的原生 full_name。模型弧清单不是 flat 对应关系或数值安全性证明。
 
 `native_pair.signed_slack_diagnostic(flat, abstract, threshold_ns)` 区分 abstract-minus-flat 的正向（乐观）和负向（悲观）slack 差，仍不签发资格。待审查的建议见 `work/YUZE-LU/127/宏边界验收口径建议.md`：声明有限工作域，审查安全包络及误差方向，不将全数值相等当作唯一合同，也不把全部组合图/预连研究提前放入本轮。
+
+## 9. 修正版 typed PG / 完整 timing V 与真实 OBS 接收
+
+run168 的新合同显式增加 raw/corrected Lib、supply correction、typed PG 读回、完整 timing V 及其原物理源/proof。`audit.py` 独立重建两处 supply-only 编辑，拒绝非零电容、额外函数/时序语义、错误供电类型、信号字节修改或改错摘要；其余模型字节必须完全保持。完整 timing V 必须与同源 physical receiver 的 full view/proof 完全对应并保留原保护单元。原 filtered final V 仍作为历史功能依赖核验，不能偷换成 full timing V。
+
+`candidate_request.py` 对 typed view 自动选取已绑定的 `flat_timing_v`，在请求记录 flat_verilog_source_role；旧版仍选 final_v。新版 parent 不引入普通 PG 输入常量连接。原生模型清点另查询 PG 端口，验证 power/ground 与 is_power_ground 的对应；PG 与信号集合分开。
+
+主线在统一预算下执行 pinned ODB 导出后，`receive_occupancy.py INDEX EVIDENCE NEW_OUTPUT` 独立接收 worker 收据、ODB/几何/summary、pinned collector/helper、producer 代码、实际 wrapper 与工具 SHA，拒绝换源或改写 wrapper。`EVIDENCE` 为 block-v1-native-occupancy-evidence/1，包含 candidate_index_sha256、expected_collector（已核对 Git commit 与源码 SHA）和九个文件角色 receipt/report/summary/geometry/helper/collector/wrapper/producer/native_log，各保留相对本地 path、绝对 POSIX origin 与 SHA。参考实际 run169 索引记录，不拿示例当作运行证据。
+
+几何扫描使用两遍文件迭代：先保存 NET/PORT 元数据，再逐矩形检查，避免将 666 MB TSV 全部展开为数 GB Python 图形对象；失败例仅保留前 100 项但完整累计失败数。实际 run169 A/C 对应同一 run160 ODB，当前 LEF 与旧版逐字一致，因此可为 run168 接收复用该封存几何，仍按源 SHA 核验。
+
+## 10. 输出长短路径的原生反例
+
+`output_path_control.py --executable /approved/tools/sta --library /approved/libs/NangateOpenCellLibrary_typical.lib --output /approved/NEW-output-control` 构造 DFF 输出的直接/BUF 链两条路径汇入 NOR2_X1，显式注入全部 SPEF，并与导出宏在独立进程中对照。分别运行 0/8 级 BUF，保存原生导出和测量收据、源 V/SPEF/SDC、模型、日志与原始 TSV。它是实际 STA 控制，不是放置布线结果。
+
+该控制支持固定提交源码中 max-only 输出导出的限制：增加长路径后，max 输出数值仍接近，但 min 输出乐观误差明显增大。不能据此断言 T6K 的每项差异都只有同一原因；完整原因与模型方案由主线审查。详见 work/YUZE-LU/127 的 run168/169 报告。

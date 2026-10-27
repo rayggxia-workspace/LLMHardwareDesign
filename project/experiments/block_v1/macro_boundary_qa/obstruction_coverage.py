@@ -42,6 +42,13 @@ def covered(target, rectangles):
 
 
 def inspect(source_rows, lef_rows):
+    # A callable supplies a fresh iterator for each pass. Large native TSVs
+    # retain only net/port metadata, never millions of geometry tuples.
+    if callable(source_rows):
+        source_factory = source_rows
+    else:
+        saved_rows = list(source_rows)
+        source_factory = lambda: iter(saved_rows)
     obstacles, windows = defaultdict(list), defaultdict(list)
     for row in lef_rows:
         if row[0] == "obstruction":
@@ -49,8 +56,8 @@ def inspect(source_rows, lef_rows):
         elif row[0] == "box":
             windows[(row[1], row[2])].append(rectangle(row[3:]))
     require(obstacles, "empty abstract obstruction inventory")
-    nets, ports, source, dbu = {}, defaultdict(list), [], None
-    for row in source_rows:
+    nets, ports, source_count, dbu = {}, defaultdict(list), 0, None
+    for row in source_factory():
         if row[0].startswith("# block-v1-odb-geometry/1"):
             require(dbu is None and row == ["# block-v1-odb-geometry/1 dbu_per_um=2000"], "source geometry units/header")
             dbu = 2000
@@ -67,14 +74,21 @@ def inspect(source_rows, lef_rows):
             raise ValueError("unknown geometry metadata")
         else:
             require(len(row) == 7, "source occupancy row arity")
-            alias, layer, kind, *coords = row
-            require(layer in {f"metal{i}" for i in range(1, 11)} | {f"via{i}" for i in range(1, 10)}, "source nonnative layer")
-            source.append((alias, layer, kind, rectangle(coords)))
-    require(dbu == 2000 and source and nets, "empty/untyped source occupancy")
+            source_count += 1
+    require(dbu == 2000 and source_count and nets, "empty/untyped source occupancy")
     require(set(ports) <= nets.keys(), "unresolved source port net")
-    uncovered, count = [], 0
+    uncovered, uncovered_count, count = [], 0, 0
     by_layer = Counter()
-    for alias, layer, kind, box in source:
+    native_layers = {f"metal{i}" for i in range(1, 11)} | {f"via{i}" for i in range(1, 10)}
+    reread_count = 0
+    for row in source_factory():
+        if row[0].startswith("#"):
+            continue
+        require(len(row) == 7, "source occupancy reread arity")
+        alias, layer, kind, *coords = row
+        require(layer in native_layers, "source nonnative layer")
+        box = rectangle(coords)
+        reread_count += 1
         require(alias in nets, "unresolved geometry net")
         # Abstract via cut OBS are not required: adjacent metal OBS provide
         # normal route/via keepouts. Preserve cut counts separately.
@@ -84,9 +98,12 @@ def inspect(source_rows, lef_rows):
         count += 1
         allowed = obstacles[layer] + [rect for name in ports[alias] for rect in windows[(name, layer)]]
         if not covered(box, allowed):
-            uncovered.append({"net_or_owner": nets[alias], "layer": layer, "kind": kind, "bbox_dbu": list(box)})
-    return {"schema": "block-v1-abstract-occupancy-coverage/1", "passed": not uncovered,
+            uncovered_count += 1
+            if len(uncovered) < 100:
+                uncovered.append({"net_or_owner": nets[alias], "layer": layer, "kind": kind, "bbox_dbu": list(box)})
+    require(reread_count == source_count, "source geometry changed between passes")
+    return {"schema": "block-v1-abstract-occupancy-coverage/1", "passed": uncovered_count == 0,
             "checked_source_metal_rectangles": count, "source_shapes_by_layer": dict(by_layer),
-            "uncovered_count": len(uncovered), "uncovered_examples": uncovered[:100],
+            "uncovered_count": uncovered_count, "uncovered_examples": uncovered,
             "hidden_gds_geometry_qualified": False, "qualified_hard_macro": False,
             "scope": "Exact union coverage of exported source occupancy and same-net pin windows; via cuts counted, hidden GDS geometry and DRC not qualified"}

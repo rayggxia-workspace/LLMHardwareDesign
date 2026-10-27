@@ -2,6 +2,7 @@
 # wires, special wires and transformed instance/block pins; append all master
 # OBS through each instance transform and exact net-to-port membership.
 if {[catch {
+  set_thread_count 1
   read_db $::env(BV1QA_ODB)
   source $::env(BV1QA_GEOMETRY_HELPER)
   bvgeom::export source-occupancy.tsv
