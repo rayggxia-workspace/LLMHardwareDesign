@@ -1,5 +1,7 @@
 # Issue 121 执行记录
 
+真实父层glue：新增 `project/experiments/block_v1/native_glue.py` 与 `native-glue-map`，只映射现有shared121 wrapper，在两叶端点上作完整组合等价和三个真实坏连接检查，并逐master核算所有glue与tie单元。Python编译通过；当前尚未服务器运行。物理父层、实际最终C8/S16K/T6K完整组合、一般十二层RC/拼接及共同底座/两产品仍待验收。见[决策](../../../docs/decisions/2026-10-27-block-v1-real-glue.md)。
+
 
 2026-10-27 11:49 CST：135四路完整T6K物理/最终功能资格已不可变部署，源码11505a8286b9abbeeedc25c42832d38765c480bc、归档b4b5392f1c8daf73c7062f6ed9df5e93c5e33476a0338b9177e399819079a30a，149成员/983040字节；依赖133 A/C组完整成功，尚无Slurm job。134也未提交，依赖128两路。133/92206仍实际运行；128两路placement完成，CTS接近本阶段报告输出，未有完整回执。当前7个本任务allocation；完整目标仍未完成。
 

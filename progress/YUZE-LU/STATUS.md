@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-10-27：补齐真实shared121父层glue的映射/独立计价与完整符号叶接口等价入口，命令/ACK/revoke三种接线错误拟在同一8CPU allocation并行验证；代码Python编译通过，尚未服务器运行，不声明物理或完整组合通过。128两路已过CTS进入route，133双路完整route/final继续；134/135依赖尚未提交。任务[121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)、[PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)仍in_progress/草稿，登记pending、看板unverified/同步pending、审查人待指定。下一步实际映射与formal，再将全部glue纳入物理父层及最终四profile组合。
+
 
 2026-10-27 11:49 CST：135四路完整T6K物理/最终功能资格已不可变部署，源码11505a8286b9abbeeedc25c42832d38765c480bc、归档b4b5392f1c8daf73c7062f6ed9df5e93c5e33476a0338b9177e399819079a30a，149成员/983040字节；依赖133 A/C组完整成功，尚无Slurm job。134也未提交，依赖128两路。133/92206仍实际运行；128两路placement完成，CTS接近本阶段报告输出，未有完整回执。当前7个本任务allocation；完整目标仍未完成。
 

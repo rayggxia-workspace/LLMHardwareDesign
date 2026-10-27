@@ -184,6 +184,9 @@ python project/experiments/block_v1/native_drc_geometry.py work/YUZE-LU/121/resu
 
 ## C8 物理常量导入及完整预制修复（Issue121）
 
+新增 `native-glue-map`（`native_glue.py`）通过既有 `worker.sh`/统一 `dispatch.py` manifest 入口运行，8CPU内四个两OMP线程的实际Kepler案例并发。它只映射真实 `shared121.sv` 的父层有源 glue，保留两叶接口；Yosys原RTL/mapped完整组合边界等价、精确常量逆还原、实际命令/ACK/revoke三反例与逐master面积均须通过。结果为 `native-glue.json`，两叶及父层物理资格另验。见[glue计价与边界](decisions/2026-10-27-block-v1-real-glue.md)。当前尚未服务器运行。
+
+
 `native_pipeline_const.json` 的123/124/125分别是常量准备、双pin导入、完整边界审计；正式长实现采用 `native_pipeline_const_protected.json` 的128/134，126/127未提交、不再调度。新worker模式为 `native-const-protected-run-shared109-a/c` 与 `native-const-protected-receive-shared109-a/c`；manifest任务ID保持 `native-run-shared109-a/c` 和 `native-receive-shared109-a/c`。各run通过统一 `dispatch.py MANIFEST --submit`、跨run依赖和八allocation预算调度。归档命令 `python project/experiments/block_v1/bundle.py NEW_SOURCE.tar` 从Git字节绑定提交；正式P&R从新源全阶段开始，不复用旧CTS。
 
 `native_const_prepare`严格绑定118的完整常量还原、错误常量拒绝、旧14条无驱动负例和新导入/T6K零无驱动正例。`native_floorplan`与`native_receive`在实际ODB运行 `native_undriven.tcl`，由 `native_driver_report.inspect`核明细与terminal summary，保存 `used-signal-drivers.tsv`；连到dbNet不能替代真实driver证明。`native_run.checked_fresh_config`核原123配置加唯一固定保护/修复后缀、实际make变量与hash；全部原预算/端点/检查不变。当前实际导入/边界已通过，128两路正在placement，尚未物理通过。129仅部署无job、停用后续调度；130旧源未提交，停用；后续134以 `native-const-receiver-group` 组织同一64CPU allocation内两个32CPU完整独立接收器，依赖128两路成功。实际内存快照决定同时两路或串行，记录各子回执及组回执；本地声明stub编排控制不能代替物理接收。见[节点内并行安排](decisions/2026-10-27-block-v1-node-packing.md)与[计算资源参考取舍](decisions/2026-10-27-block-v1-compute-reuse.md)。

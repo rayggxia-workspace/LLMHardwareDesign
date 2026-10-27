@@ -59,7 +59,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-via-qualification-group':
+    if MODE=='native-glue-map':
+        from native_glue import verify
+        verify(ROOT,OUT,CPUS,run)
+    elif MODE=='native-via-qualification-group':
         from native_via_route_group import verify
         verify(ROOT,OUT,CPUS,qualify=True)
     elif MODE=='native-via-route-group':
