@@ -25,11 +25,14 @@ for name in ['nwell','pwell']:
 runset=(driver/'well4_semantics.drc').read_text();runset=runset.replace('well = input(21, 0).or(input(22, 0))','\n'.join(definitions)+'\nwell = nwell.or(pwell)')
 script=out/'actual_reference.drc';script.write_text(runset)
 runset+='\nnwell.width(200.nm, euclidian).output("NWELL_WIDTH200_REFERENCE", "Additional individual nwell width check")\npwell.width(200.nm, euclidian).output("PWELL_WIDTH200_REFERENCE", "Additional individual pwell width check")\n'
+runset+='nwell.space(135.nm, euclidian).output("NWELL_SPACE135_REFERENCE", "Additional individual nwell spacing check")\npwell.space(135.nm, euclidian).output("PWELL_SPACE135_REFERENCE", "Additional individual pwell spacing check")\n'
 script.write_text(runset)
 report=out/'actual_reference.lyrdb'
 with (out/'reference.log').open('x') as f:r=subprocess.run(common+[IMAGE,'klayout','-b','-r',str(script),'-rd','input='+str(gds),'-rd','report='+str(report)],stdout=f,stderr=subprocess.STDOUT)
 assert r.returncode==0 and report.exists()
 counts=Counter()
+declared=[e.findtext('name') for e in ET.parse(str(report)).findall('./categories/category')]
+for name in declared:counts[name]=0
 for event,e in ET.iterparse(str(report),events=['end']):
     if e.tag=='item':counts[e.findtext('category').strip("'")]+=1;e.clear()
 old=Counter()
@@ -42,6 +45,7 @@ summary={'scope':'ADDITIONAL_ACTUAL_LAYOUT_RULE_SEMANTICS_DIAGNOSTIC_ONLY; not a
  'original_WELL4_count_reproduced':old.get('WELL.4',0)==counts.get('ORIGINAL_WELL4',0),
  'original_deck_unmodified':True,'installed_original_deck_sha256':__import__('hashlib').sha256(raw).hexdigest(),
  'actual_well_layer_mapping_from_original_source':definitions,'source_notes_WELL2_not_coded':'was not coded' in code and 'WELL.2' in code,
+ 'declared_reference_checks':declared,'reference_mask_scope':'WIDTH200_REFERENCE/SPACE135_REFERENCE operate on the nwell|pwell union; individual NWELL/PWELL checks are separately named. Different-potential WELL.2 remains unimplemented/unverified.',
  'reference_runset_sha256':sha(script),'reference_report_sha256':sha(report),'original_full_reports_reclassified_as_pass':False,
  'full_qualification':False,'remaining_conditions':'Original antenna reports, missing/unverified applicable rules including WELL.2, LVS, system timing and SRAM views still separate; no rule waivers.'}
 (out/'summary.json').write_text(json.dumps(summary,indent=2)+'\n');print('ACTUAL_WELL_REFERENCE',counts,'original',old.get('WELL.4'),flush=True)
