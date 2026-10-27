@@ -21,6 +21,7 @@ python project/experiments/full_pin_xy/validate_repository.py
 python project/experiments/full_pin_xy/inventory.py --root R
 python project/experiments/full_pin_xy/bind_interfaces.py --root R
 python project/experiments/full_pin_xy/expand_candidates.py --root R --cases mxu vector opentpu_aux llaccel_aux
+python project/experiments/full_pin_xy/align_candidate_grid.py --root R
 python project/experiments/full_pin_xy/validate_candidates.py --root R
 python project/experiments/full_pin_xy/build_deliverables.py --root R --out docs/experiments/issue-126-full-pin
 ```
@@ -75,3 +76,7 @@ sbatch --job-name=hpy-p126-act --export=ALL,PINXY_DRIVER_DIR=/public/home/yuzelu
 - `report_wire_length` 逐层长度、真实via与拥塞：布线数据库/工具指标。
 - OpenRCX SPEF、STA路径/电容/slew：实际提取与分析，受原边界与宏模型完整性限制。
 - 外框没变：不能宣称block面积节省。没有真实通道/整体边界缩小，也不宣称系统面积收益。
+
+实际发现的RCX状态问题：同一ACT数据库在load/constraint后原样写回仍独立DRC=0，extract后保存再读入报12534项。旧checked.odb/analysis_after_RCX.odb均只作诊断，不作为物理母本。`finalize_job.sh`必须从routed.odb（A用原始ODB）另起进程导出clean.odb，并验证字节一致、独立DRC和全块几何连通；SPEF/STA记录同一提取前来源。该修复不改规则，旧失败保留。
+
+`align_candidate_grid.py`是r01→r02的增量修订，只对制造网格做小于0.0025μm的修正，保留r01坐标/指标/失败；需要从真实数据库取得`R/native_grid/<case>.tsv`，不能猜网格。先恢复r01到全新R目录，再生成r02；已修订目录不重复运行以覆盖历史。`prepare_grid_trials.py`保留相同8pin cohort作修订后重试。

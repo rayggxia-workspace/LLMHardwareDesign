@@ -126,3 +126,19 @@ python project/experiments/pin_xy_candidates/validate_repository.py
 ```
 
 完整重画先按该目录 README 恢复独立工作目录和只读 physical/ 快照，再运行 analyze_layout.py；不能在参考报告或已有实验目录原地运行。最近端点 L1 与矩形风险不是提取线长/RC，也不是 DRC、时序或实际面积收益。本次没有启动新的 P&R。
+
+## Issue126：完整功能分块、六块候选覆盖与真实接入
+
+[中文入口](experiments/issue-126-full-pin.md)与[交互报告](experiments/issue-126-full-pin/report.html)在PR120之上增量扩展，代码位于 `project/experiments/full_pin_xy/`。
+openTPU为ACT/MXU/SYSTEM，llaccel_core为GEMM/VECTOR/SYSTEM，SYSTEM复用Issue55真实包装和完整功能归属。
+六块24,767原始信号pin，A/B/C共74,301行；未重算ACT/GEMM原有候选。命令与输入恢复见该目录README。
+
+```sh
+python scripts/check_project.py
+python project/experiments/full_pin_xy/validate_repository.py
+```
+
+`prepare_trials.py`冻结同一8pin的原始、重布线控制、边界槽位重排、B/C；`physical_trial.tcl`实际改ODB并GRT/DRT/RCX，分别保留规则、连通、PDN、STA和电气回执。
+`export_access.tcl`/`check_access.py`从真实各层路由、via定义和ITerm访问矩形独立检查连通；全块模式只排除不需互连的单端网络，不等于GDS/LVS。
+候选检查、局部试验、完整C实现与父层资格均单列；原父层handoff/目标层仍未知，不能自行指定M8或提升至M11/M12。
+远程只写 `/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027`，采用先提交、全新commit驱动目录和全新尝试名；不覆盖历史数据库或活动作业。当前物理结果以报告中的实际阶段回执为准，不将DRT0等同完整通过。

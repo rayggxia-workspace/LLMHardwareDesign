@@ -67,13 +67,13 @@ def hierarchy(out):
     for ext in ['png','svg']:fig.savefig(out/f'hierarchy.{ext}',dpi=180)
     plt.close(fig)
 
-def build(root,out):
+def build(root,out,keep_figures=False):
     root=Path(root).resolve();out=Path(out).resolve();out.mkdir(parents=True,exist_ok=True)
     assets=out/'assets';data=out/'data';assets.mkdir(exist_ok=True);data.mkdir(exist_ok=True)
-    hierarchy(assets)
+    if not keep_figures or not (assets/'hierarchy.png').exists():hierarchy(assets)
     for c in ORDER:
         if c not in ['act','gemm']:
-            endpoint_plot(root,c)
+            if not keep_figures or not (root/f'{c}_endpoints.png').exists():endpoint_plot(root,c)
             for kind in ['comparison','zoom','endpoints']:
                 for ext in ['png','svg']:shutil.copy2(root/f'{c}_{kind}.{ext}',assets)
         compress(root/f'{c}_pin_coordinates.csv',data/f'{c}_pin_coordinates.csv.gz')
@@ -101,10 +101,10 @@ def build(root,out):
         latest=sorted(p for p in physical_evidence.iterdir() if p.is_dir())[-1]
         published=evidence/'physical';published.mkdir(exist_ok=True)
         for prior in published.iterdir():
-            if prior.is_dir() and prior.name!=latest.name:
+            if prior.is_dir():
                 assert published.resolve() in prior.resolve().parents
                 shutil.rmtree(prior)  # only duplicated generated publication copies; originals retained
-        shutil.copytree(latest,published/latest.name,dirs_exist_ok=True)
+        shutil.copytree(latest,published/latest.name,ignore=shutil.ignore_patterns('timing.selected_*.txt.gz'))
     shutil.copy2(root/'coverage_gate.json',data)
     shutil.copytree(root/'pin-use-r01',data/'pin-use-r01',dirs_exist_ok=True)
     shutil.copy2(root/'pin_use_correction.json',data)
@@ -177,4 +177,4 @@ __BLOCKS__
     print('REPORT_COMPLETE',out,'original_pins',len(pins),'rows',3*len(pins))
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--root',required=True);p.add_argument('--out',required=True);a=p.parse_args();build(a.root,a.out)
+    p=argparse.ArgumentParser();p.add_argument('--root',required=True);p.add_argument('--out',required=True);p.add_argument('--keep-figures',action='store_true');a=p.parse_args();build(a.root,a.out,a.keep_figures)

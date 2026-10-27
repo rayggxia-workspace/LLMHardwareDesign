@@ -16,3 +16,10 @@
 - Projects 入口：候选[组织看板 #1](https://github.com/orgs/rayggxia-workspace/projects/1)；本轮查询因缺少 `read:project` 失败，且无 `config/board.json`，实际看板与条目 `unverified`、同步 `pending`。恢复动作见 [Issue #7 看板交接](handoffs/2026-10-21-issue-7-projects.md)
 
 本页只记录全项目阶段和关键限制；具体任务进度以 Issue 和 PR 为准。
+
+## 2026-10-27：全功能分块与二维pin增量里程碑
+
+[Issue126](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/126)进行中：[PR120](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/120)未合并head4f91e098为起点，复用Issue55完整SYSTEM包装，补齐两系统六块、18项功能归属和全部接口连接矩阵。
+六块24,767原始信号pin、74,301行A/B/C候选覆盖通过；其他四块对照图、端点依据、实际金属/PG/OBS筛查和逐pin数据已生成。
+ACT局部8pin实际GRT/DRT、fresh native DRC、RCX及独立边界STA已执行，原始与C试验全块多端信号/时钟几何连通通过；其他块及完整740-pin ACT对照继续执行，失败与待验证独立记录。
+完整父层接入/目标层、完整规则/GDS/LVS、系统RC/STA及电气资格尚未完成，不能把候选覆盖写成物理全部完成。详见[中文入口](experiments/issue-126-full-pin.md)。原参考包、PR120工作树、Issue55/121活动任务不修改。
