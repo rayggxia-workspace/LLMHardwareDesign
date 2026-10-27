@@ -69,9 +69,33 @@ op2字段：算术op[3:0]、RNE右移[10:4]、有效lane数[14:11]、广播B开�
 
 2KiB回放最多256个S32输入及同量输出，128bit口每次四元素；N=256需64次装载与64次读回命令。响应被背压时执行结果保持，下一命令须等待消费。上述数值不得写成“每拍接收8元素”或“EXP宏每拍接受新命令”。
 
-## M
+## M：6bit index，完整八路矩阵乘加
 
-M的LOAD_A/LOAD_B/MAC/READ_PARTIAL/MERGE/READ_FINAL/RESET_CONTEXT及格式、3/9步分解、延迟详见[主规格M节](BLOCK_LIBRARY_V1.md#m完整矩阵乘加)与`block_v1_m.sv`顶注释。
+对应[封存RTL](../project/rtl/block_library_v1/block_v1_m.sv)与[最终单块接收](../work/YUZE-LU/121/delivery/M/README.md)。输入tile以A的K向量、B的逐输出通道K向量装载；第i路结果为sum_j(A[j]*B[i][j])，不是把64个乘积送到外部求和。
+
+| op | 功能 | index / data |
+| --- | --- | --- |
+| 0 | LOAD_A | index未使用；data的第j个16bit槽装A[j]，j=0..7 |
+| 1 | LOAD_B | index=i=0..7，装第i输出通道的八个B[i][j]；每个16bit槽对应一个K位置 |
+| 2 | MAC | fmt_a bit0、fmt_b bit1（0=S8/1=S16），clear_acc bit2；k_valid[7:4]、n_valid[11:8]均1..8；index未使用 |
+| 3 | READ_PARTIAL | index=0..3，低/高64bit分别返回第2*index与2*index+1路S64部分和；data未使用 |
+| 4 | MERGE | scale_factor[31:0]为S32，左移merge_shift[38:32]=0..63，clear_merge bit39；index未使用；每路候选为旧merged或0，加accumulator*scale_factor*2^merge_shift |
+| 5 | READ_FINAL | index=0/1，每次返回四路S32容器；RNE右移[6:0]=0..127，输出宽度[9:8]为0=S8、1=S16、2=S32；3拒绝。按宽度饱和后有符号扩展到各S32槽 |
+| 6 | RESET_CONTEXT | index/data未使用；使操作数、部分和、合并结果的有效位失效并清K计数，下一轮须重新装载 |
+
+S8模式只读取每个S16槽的低8bit并按有符号解释，S16模式使用完整16bit；提供S8时可按S16符号扩展装载。除表内明确校验的范围/有效性外，未使用index和data位由当前RTL忽略，调用方统一写0；不承诺保留位非零一定报错。其他op拒绝。`busy=!cmd_ready`包括执行和响应待消费，不能仅当作乘法阵列忙信号；reset优先，reset期间不构成命令接受。
+
+MAC必须已装A及前n_valid行B。首次或重新开始一组须clear_acc=1，后续clear_acc=0在同一声明数值单位下累加；累计有效K不得超过65535。S16在M内部按radix128分成三个S8 digit，双S16展开九组；尾K/N不参与本次乘加。READ_PARTIAL仍读全部八路，未参与的输出lane在续累加时可能保留旧值，调用方按有效输出范围消费。改变数值单位或每路所属输出时必须显式开始新上下文，不能把不同输出混入旧累加器。
+
+MAC不隐式执行MERGE，LOAD也不清旧部分和/合并结果。跨量化组先对各组得到S64部分和，再显式MERGE；首组合并须clear_merge=1，后续为0。八路S128预览全部通过范围检查后统一提交；任一路越界则整次MERGE报错且保留全部旧合并结果。最终输出只在READ_FINAL做一次RNE和饱和，rsp_saturated是本次四路读回的饱和逻辑或，不是逐lane标志或全部八路的全局标志。
+
+| 操作 | 从接受沿到寄存响应的周期 | 传输与复用限制 |
+| --- | --- | --- |
+| LOAD_A/B、READ_PARTIAL/FINAL、RESET_CONTEXT | 0 | 接受沿后产生响应；须消费，不能理解成组合透传 |
+| MAC S8×S8 / 单侧S16 / 双S16 | 4 / 10 / 28 | 1/3/9个digit-pair，每组乘积/归约/累加三拍，最后一拍响应 |
+| MERGE | 17 | 一个S64×S32缩放器逐路计算及对齐，末尾统一提交 |
+
+上述MAC/MERGE周期已由同源最终网表的原样`test_matrix_macro.cpp`逐次核对，数据、RNE/饱和、边界和背压见[203接收回执](../work/YUZE-LU/121/results/run203-five-macro-001344/index.json)。所有响应保持至rsp_ready消费；消费沿不接下一命令，下一接受沿最早再隔一拍。因此128bit LOAD/READ命令无背压时也最多每两拍一次；全8输出的冷装载需要1条A和8条B，从首条LOAD接受到后继MAC接受至少18拍，装载后可以复用已有效操作数。READ_PARTIAL共四条、READ_FINAL共两条命令，响应消费与外部搬运另计。此处18拍是RTL协议推导，未新增端到端峰值测试，也不将64个基础乘法器报成每拍一个完整矩阵tile。
 
 ## S：工作存储协议
 
