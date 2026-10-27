@@ -93,4 +93,4 @@ sbatch --job-name=hpy-p126-act --export=ALL,PINXY_DRIVER_DIR=/public/home/yuzelu
 
 `summarize_path_electrical.py`以有界内存解析native OpenSTA JSON路径，原值单位为F/s，保留来源SHA和观察范围，不能当作全部net的负载/转换覆盖。`run_electrical_audit.py`使用已完成、SHA匹配的报告；完整ACT C另与标准JSON解析交叉检查count和最大负载。首轮旧回执无selected_pin_count导致驱动KeyError，保留92382失败；r02从原始冻结Tcl恢复精确cohort后由92383重试，不更改物理结果。
 
-`collect_extension_snapshot.py`只收集已完成严格流片视图探针的日志、规则分类、原始报告/SHA与已完成电气观察。大GDS与大型lyrdb保留远程。可用deck全部执行成功仍不等于LVS、真实父层可达或生产工艺签核。
+`collect_extension_snapshot.py`只收集已完成严格stream-out视图探针的日志、规则分类、原始报告/SHA与已完成电气观察。大GDS与大型lyrdb保留远程。可用deck全部执行成功仍不等于LVS、真实父层可达或生产工艺签核。

@@ -359,7 +359,7 @@
 <p>已验证束语义：MXU的4路32-bit t_wdata/t_wen lane；GEMM/VECTOR写数据与byte strobe、高半常量位；llaccel SYSTEM的bank_wdata/bank_we按字节保持关联。其余“每32bit”是绘图/候选分段假设，不能视为真实bank或lane。实际逻辑bus/事务映射见groups与pin_bindings。</p>
 <p>几何筛查包括逐层原pin矩形异网相交、基础间距、PG、OBS、宏bbox和候选间距；未在这个阶段验证实际新接入的轨道、via cut/enclosure、完整LEF58规则或父层可访问性。M6/M8/M10通孔堆叠仅作明确假设的敏感性比较，尺寸与间距来自各块导出的tech/vias，不统一套用最高层间距；两个SYSTEM允许顶层为M8，M10敏感性列明确非法且不用于方案资格。</p>
 <p>父层逐pin逻辑连接已补齐，对端原始M5/M6层可以核对；原始父层真实handoff层、实际穿层序列仍全部未知，不能把对端M5/M6等同于父层M8接入。连接语义没有改变，未知目标保持未知，后续需要版本匹配的父层数据库。</p></section>
-<article id="act"><h2>openTPU ACT</h2><p>优先做 C 的稀疏局部试验。数据/scale 组有真实内部端点依据；时钟和窄控制留边。全 C 仍有145个异网直接相交 pin，需接入修复。</p><img loading="lazy" src="../issue-119-pin-xy/assets/act_comparison.png" alt="act全pin对照"><div class="scroll"><table class="dataframe stats">
+<article id="act"><h2>openTPU ACT</h2><p>C 的740pin已实际重接，并通过独立native DRC/所检连通；数据/scale有内部端点依据，时钟和窄控制留边。仍需解决缺失宏GDS、天线检查及父层接入，不能视为合格硬宏。原候选相对旧布线的145个异网相交与新布线终态分开记录。</p><img loading="lazy" src="../issue-119-pin-xy/assets/act_comparison.png" alt="act全pin对照"><div class="scroll"><table class="dataframe stats">
   <thead>
     <tr style="text-align: right;">
       <th>方案</th>
@@ -821,7 +821,161 @@
       <td>0.032872</td>
     </tr>
   </tbody>
-</table><p>这是DRT在RCX前输出的真实路由统计，按工具口径计数，区别于几何L1及RC/STA。单次匹配试验中C线长约−6.40%、via约−1.70%，远小于几何L1的−42.4%；setup余量略变差，没有时序改善结论。B仅为相同740-pin子集。A原边界已能合法布线；C提供内部线长的额外价值，父层代价/通道和完整规则仍未知，外框未缩小。</p><pre>{
+</table><p>这是DRT在RCX前输出的真实路由统计，按工具口径计数，区别于几何L1及RC/STA。单次匹配试验中C线长约−6.40%、via约−1.70%，远小于几何L1的−42.4%；setup余量略变差，没有时序改善结论。B仅为相同740-pin子集。A原边界已通过native DRC和所检OpenDB连通；C提供内部线长的额外价值，父层代价/通道和完整规则仍未知，外框未缩小。</p><h3>独立GDS合并与现有规则deck：实际失败不隐藏</h3><table class="dataframe stats">
+  <thead>
+    <tr style="text-align: right;">
+      <th>block</th>
+      <th>方案/范围</th>
+      <th>严格GDS合并返回</th>
+      <th>缺失GDS单元</th>
+      <th>现有deck违例</th>
+      <th>完整资格</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>act</td>
+      <td>A原始基线</td>
+      <td>2</td>
+      <td>fakeram45_1r1w_32x128, fakeram45_1r1w_32x64</td>
+      <td>678</td>
+      <td>FAILED_OR_INCOMPLETE</td>
+    </tr>
+    <tr>
+      <td>act</td>
+      <td>C（ACT完整740 C；其他为局部，见来源）</td>
+      <td>2</td>
+      <td>fakeram45_1r1w_32x128, fakeram45_1r1w_32x64</td>
+      <td>770</td>
+      <td>FAILED_OR_INCOMPLETE</td>
+    </tr>
+  </tbody>
+</table><p><a href="data/validation_extensions/milestone-r01/summary.json">规则分类、原始日志与SHA索引</a>。没有豁免缺失宏，也没有关闭FEOL、BEOL、off-grid或antenna检查。ACT的两个fakeram缺少匹配GDS；原始/C诊断布局均不完整，其678/770项目前均为天线类别，不能据此签核完整设计，或直接把差值归因于XY变化。native DRC=0和该deck结果必须分别记录。</p><h3>实际RC/STA路径上的负载与转换时间</h3><table class="dataframe stats">
+  <thead>
+    <tr style="text-align: right;">
+      <th>block</th>
+      <th>试验</th>
+      <th>选择pin</th>
+      <th>报告check数量</th>
+      <th>观察到最大数据负载 fF</th>
+      <th>观察到最大数据slew ps</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>act</td>
+      <td>r02/A</td>
+      <td>8</td>
+      <td>4940</td>
+      <td>102.0</td>
+      <td>187.4</td>
+    </tr>
+    <tr>
+      <td>act</td>
+      <td>fullC-r02/C</td>
+      <td>740</td>
+      <td>4940</td>
+      <td>102.1</td>
+      <td>188.5</td>
+    </tr>
+    <tr>
+      <td>gemm</td>
+      <td>r01/A</td>
+      <td>8</td>
+      <td>46810</td>
+      <td>185.1</td>
+      <td>156.5</td>
+    </tr>
+    <tr>
+      <td>gemm</td>
+      <td>r01/C</td>
+      <td>8</td>
+      <td>46810</td>
+      <td>185.1</td>
+      <td>156.5</td>
+    </tr>
+    <tr>
+      <td>mxu</td>
+      <td>r03/A</td>
+      <td>8</td>
+      <td>74972</td>
+      <td>219.4</td>
+      <td>199.4</td>
+    </tr>
+    <tr>
+      <td>mxu</td>
+      <td>grid-r05/C</td>
+      <td>8</td>
+      <td>74972</td>
+      <td>219.4</td>
+      <td>199.4</td>
+    </tr>
+    <tr>
+      <td>vector</td>
+      <td>r04/A</td>
+      <td>8</td>
+      <td>13098</td>
+      <td>166.5</td>
+      <td>145.3</td>
+    </tr>
+    <tr>
+      <td>vector</td>
+      <td>grid-r05/C</td>
+      <td>8</td>
+      <td>13098</td>
+      <td>166.5</td>
+      <td>145.3</td>
+    </tr>
+    <tr>
+      <td>opentpu_aux</td>
+      <td>r03/A</td>
+      <td>8</td>
+      <td>150742</td>
+      <td>252.0</td>
+      <td>395.1</td>
+    </tr>
+    <tr>
+      <td>opentpu_aux</td>
+      <td>grid-r05/C</td>
+      <td>8</td>
+      <td>150742</td>
+      <td>252.0</td>
+      <td>395.1</td>
+    </tr>
+    <tr>
+      <td>llaccel_aux</td>
+      <td>r03/A</td>
+      <td>8</td>
+      <td>205058</td>
+      <td>356.9</td>
+      <td>472.8</td>
+    </tr>
+    <tr>
+      <td>llaccel_aux</td>
+      <td>grid-r05/C</td>
+      <td>8</td>
+      <td>205058</td>
+      <td>356.9</td>
+      <td>836.5</td>
+    </tr>
+    <tr>
+      <td>act</td>
+      <td>fullC-r01/A_replay</td>
+      <td>740</td>
+      <td>4940</td>
+      <td>102.6</td>
+      <td>187.4</td>
+    </tr>
+    <tr>
+      <td>act</td>
+      <td>fullBcohort-r01/B</td>
+      <td>740</td>
+      <td>4940</td>
+      <td>102.5</td>
+      <td>187.4</td>
+    </tr>
+  </tbody>
+</table><p>来自native OpenSTA JSON的SI单位F/s，转换为fF/ps；只是被报告路径点的观察最大值，路径点可能重复、集合可能变化，不是全部网络或完整系统电气覆盖。精确来源SHA、观察数量与最大值所在pin见上述目录的electrical_observations.json；原边界驱动/slew/load模型仍不完整。</p><p>导出LEF的同层PIN/OBS正面积相交诊断：原ACT782个、完整C777个（含PG口径），<a href="data/act-original-abstract-audit.json">原始</a>/<a href="data/act-fullC-abstract-audit.json">C逐pin证据</a>。这些相交可能包含同网连接形状，不能直接当作DRC违例或父层不可接入结论；也不能把灰色区域或LEF导出成功当作父层可达证明。尚需在版本匹配父层上检查具体via/handoff。</p><p>另冻结了完整C同组的原XY重布线、Aopt边界槽位优化和B子集控制。<a href="data/full_cohort_controls/selection.json">完整cohort/优化范围</a>及逐块Aopt CSV.gz在同目录。Aopt只在原分束、原边、原层既有槽位内置换，使用C中心L1代理，未改变硬件分束语义；未知分束仍沿用展示假设，不是全局最优边界、真实布线成本或已完成物理结果。</p><pre>{
   &quot;act&quot;: {
     &quot;trials&quot;: {
       &quot;r01/A&quot;: {

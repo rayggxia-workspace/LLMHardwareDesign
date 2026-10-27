@@ -1,6 +1,6 @@
 """Portable stdlib validation of shipped evidence; never claims physical pass."""
 from pathlib import Path
-from collections import Counter
+from collections import Counter,defaultdict
 from html.parser import HTMLParser
 import csv,gzip,hashlib,json,math,xml.etree.ElementTree as ET
 HERE=Path(__file__).resolve().parent;REPO=HERE.parents[2]

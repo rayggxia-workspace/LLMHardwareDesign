@@ -12,6 +12,8 @@
 - PR：[PR129](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/129) 已draft上传，本轮head以PR最新读回为准；新增14组PNG/SVG及全部表/HTML在分支中，原ACT/GEMM图保留；Issue保持in_progress，不提前关闭。
 - 登记/看板：复用管理中心登记PR5 pending；未配置可核验board.json，Projects工具不可用，条目unverified/同步pending，处理人待指定。
 
+新增证据：ACT严格GDS合并因两个fakeram视图缺失失败，未豁免；不完整诊断GDS原始/C的现有deck为678/770项天线错误，native DRC0不代表完整规则通过。其余完整C、匹配cohort边界控制及严格GDS已继续提交，详见交接和原始Slurm回执。真实RC/STA路径负载/slew观察已汇总，单位与覆盖边界单列。
+
 ## 原Issue119成果记录（保留）
 
 - 更新时间：2026-10-26（中国标准时间）。
