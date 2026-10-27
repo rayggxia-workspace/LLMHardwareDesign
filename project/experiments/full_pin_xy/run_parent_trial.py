@@ -80,7 +80,11 @@ def one(inputs,rev,plan):
           'add_pdn_connect -grid parent_grid -layers {metal7 metal10}']
         for i,info in enumerate(contract['physical_instances'].values()):
             commands += ['define_pdn_grid -name macro_pg_'+str(i)+' -voltage_domains CORE -macro -instances '+tcl(info['instance'])+' -grid_over_pg_pins -halo {2 2 2 2}',
-              'add_pdn_connect -grid macro_pg_'+str(i)+' -layers {metal7 metal10}']
+              'add_pdn_stripe -grid macro_pg_'+str(i)+' -layer metal8 -width 1.40 -pitch 30 -offset 2',
+              'add_pdn_stripe -grid macro_pg_'+str(i)+' -layer metal9 -width 1.40 -pitch 30 -offset 2',
+              'add_pdn_connect -grid macro_pg_'+str(i)+' -layers {metal7 metal8}',
+              'add_pdn_connect -grid macro_pg_'+str(i)+' -layers {metal8 metal9}',
+              'add_pdn_connect -grid macro_pg_'+str(i)+' -layers {metal9 metal10}']
         commands += ['pdngen -failed_via_report '+tcl(out/'failed_vias.rpt')]
     else:
         inst=contract['physical_instances'][focus]['instance']
@@ -91,6 +95,7 @@ def one(inputs,rev,plan):
     commands += ['create_clock -name parent_route_classification_only -period 2.5 [get_ports clk]']
     setup=out/'run_setup.tcl';setup.write_text('\n'.join(commands)+'\n')
     rec['child_views']=views;rec['routing_only_macro_model']='Not characterized; capacitance zero is only a linker placeholder. Do not use for parent RC/STA/electrical qualification.'
+    rec['parent_PDN_strategy']='New fixed parent M1/M4/M7/M10 grid plus macro M8/M9 local straps and adjacent M7-M8/M8-M9/M9-M10 connections. Original direct M7-M10-stack strategy failed actual macro obstructions; r01/r02 retained. No OBS removed or rule lowered; all actual leaf PG unchanged. After A is checked, freeze its PG for all variants.'
     rec['setup_sha256']=sha(setup)
     common=['singularity','exec','--cleanenv','--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro','--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro','--home',str(ROOT/'home'),'--pwd',str(out)]
     env='PINXY_PARENT_OUT={},PINXY_PARENT_INPUT={},PINXY_PARENT_RUN_SETUP={},PINXY_DRIVER={},OMP_NUM_THREADS=4'.format(out,inputs,setup,DRIVER)

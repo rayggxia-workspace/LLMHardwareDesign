@@ -30,6 +30,12 @@ proc parent_contract {prefix} {
   };close $f
   set f [open "$prefix.pins.tsv" w];puts $f "pin\tdirection\tuse\tnet\tlayer\tx0\ty0\tx1\ty1"
   foreach bt [$b getBTerms] {foreach bp [$bt getBPins] {foreach box [$bp getBoxes] {puts $f [join [list [$bt getName] [$bt getIoType] [$bt getSigType] [[$bt getNet] getName] [[$box getTechLayer] getName] [$box xMin] [$box yMin] [$box xMax] [$box yMax]] "\t"]}}};close $f
+  set f [open "$prefix.pdn.tsv" w]
+  foreach n [$b getNets] {foreach sw [$n getSWires] {foreach r [$sw getWires] {
+    set via {};set xy {}
+    if {[$r isVia]} {set v [$r getTechVia];if {$v eq "NULL"} {set v [$r getBlockVia]};set via [$v getName];set layer VIA;set xy [$r getViaXY]} else {set layer [[$r getTechLayer] getName]}
+    puts $f [join [list [$n getName] $layer [$r xMin] [$r yMin] [$r xMax] [$r yMax] $via $xy] "\t"]
+  }}};close $f
 }
 if {![stage load {
   read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
