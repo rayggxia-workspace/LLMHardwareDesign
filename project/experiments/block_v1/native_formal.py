@@ -79,7 +79,7 @@ def fixture(root,out,run):
     (out/'native-formal-control.json').write_text(json.dumps(record,indent=2)+'\n')
 
 
-def receive(source,receipt,results,top,prep,logic_context=None):
+def receive(source,receipt,results,top,prep,logic_context=None,constant_functions=False):
     from io_slots import file_sha
     base=source.parents[2]
     control=base/'block-v1-20261027-073/tasks/native-formal-control'
@@ -104,6 +104,13 @@ def receive(source,receipt,results,top,prep,logic_context=None):
     received=inspect(log.read_text());original_received=received
     projection=None
     physical_view=None
+    constant_control=None
+    if constant_functions:
+        assert top=='shared109' and logic_context is not None
+        from native_c8_qualification import replay_qualification
+        constant_control=replay_qualification(logic_context[0],base)
+        assert file_sha(Path(positive['binary']))==constant_control['binary_sha256']
+        assert file_sha(Path(lib))==constant_control['library_sha256']
     if logic_context is not None:
         root,out,run=logic_context
         fixture=base/'block-v1-20261027-110/tasks/native-antenna-fixture'
@@ -114,9 +121,12 @@ def receive(source,receipt,results,top,prep,logic_context=None):
         from native_signal_view import export as export_physical
         full_functional,physical_view=export_physical(root,out,run,source,receipt,results,top,Path(lib))
         from native_logic_projection import export
-        before,before_proof=export(root,out,run,results/'1_synth_lec.v',Path(lib),top,'formal-before')
-        after,after_proof=export(root,out,run,full_functional,Path(lib),top,'formal-after')
+        before,before_proof=export(root,out,run,results/'1_synth_lec.v',Path(lib),top,'formal-before',constant_functions=constant_functions)
+        after,after_proof=export(root,out,run,full_functional,Path(lib),top,'formal-after',constant_functions=constant_functions)
         assert before_proof['removed_count']==0 and after_proof['removed_count']>0
+        if constant_functions:
+            assert all(p['constant_functions']['removed_count']>0 and p['constant_functions']['exact_inverse_reconstruction']
+                       and p['used_model_audit']['passed'] for p in [before_proof,after_proof])
         config_text='format: verilog\ninput_paths:\n  - '+str(before)+'\n  - '+str(after)+'\n'
         strict_log=out/'strict-projected-kepler.log';strict_config=out/'strict-projected-kepler.yml'
         config_text+='liberty_files:\n - '+lib+'\nlog_file: '+str(strict_log)+'\n'
@@ -125,6 +135,7 @@ def receive(source,receipt,results,top,prep,logic_context=None):
         received=inspect(strict_log.read_text())
         projection=dict(before=before_proof,after=after_proof,strict_log_sha256=file_sha(strict_log),
             strict_config_sha256=file_sha(strict_config),control_receipt_sha256=file_sha(fixture/'receipt.json'))
+        if constant_control is not None:projection['constant_control']=constant_control
     assert received['passed'],'Final native LEC lacks complete positive evidence'
     return dict(**received,log_sha256=file_sha(log),config_sha256=file_sha(config),
         full_final_netlist_sha256=file_sha(results/'6_final.v'),control_receipt_sha256=file_sha(control/'receipt.json'),

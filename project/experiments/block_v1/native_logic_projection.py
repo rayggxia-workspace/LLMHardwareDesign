@@ -1,7 +1,8 @@
 """Audited Boolean view of physically present, input-only protection cells.
 
-Only ANTENNA_X1 can be removed from the Boolean view. Full physical netlists,
-Liberty loads, placement, PG, routing and gate simulation retain every cell.
+The default removes only ANTENNA_X1. The separately controlled C8 path then
+encodes true constant-cell functions. Full physical netlists, Liberty loads,
+placement, PG, routing and gate simulation retain every cell.
 """
 import copy
 import json
@@ -45,7 +46,22 @@ def project(data,liberty):
         scope='Input-only, stateless, no-function ANTENNA_X1 Boolean removal only; physical and simulation views retain cells and real loads')
 
 
-def export(root,out,run,netlist,library,top,label):
+def used_model_audit(data,liberty):
+    """Reject instantiated Liberty models that Kepler reports unsupported."""
+    from native_cell_gate import group
+    used={entry['type'] for module in data['modules'].values()
+          if not module.get('attributes',{}).get('blackbox')
+          for entry in module.get('cells',{}).values()}
+    assert used,'No actual instantiated library models'
+    for master in sorted(used):
+        body=group(liberty,'cell',master)
+        assert not re.search(r'\b(?:statetable|state_function)\s*[:(]',body),('Unsupported instantiated library model',master)
+    return dict(passed=True,instantiated_masters=sorted(used),
+        unsupported_instantiated_statetable_or_state_function=[],
+        scope='Actual instantiated masters contain none of the statetable/state_function constructs warned unsupported by the native frontend; this is not a general frontend completeness proof')
+
+
+def export(root,out,run,netlist,library,top,label,constant_functions=False):
     from io_slots import file_sha
     from structural_view import compare
     original=out/(label+'-physical.json')
@@ -53,7 +69,15 @@ def export(root,out,run,netlist,library,top,label):
     ys=out/(label+'-parse.ys');ys.write_text(script)
     run(['yosys','-s',str(ys)],label+'-parse.log')
     data=json.loads(original.read_text())
-    projected,proof=project(data,library.read_text())
+    liberty=library.read_text()
+    projected,proof=project(data,liberty)
+    if constant_functions:
+        from native_tie_projection import project as project_constants
+        proof['used_model_audit']=used_model_audit(data,liberty)
+        projected,constants=project_constants(projected,liberty)
+        assert constants['original_graph_sha256']==proof['projected_graph_sha256']
+        proof['constant_functions']=constants
+        proof['final_graph_sha256']=constants['projected_graph_sha256']
     graph=out/(label+'-logic.json');graph.write_text(json.dumps(projected)+'\n')
     target=out/(label+'-logic.v');reparsed=out/(label+'-reparsed.json')
     script='read_json '+str(graph)+'\nwrite_verilog -norename -noattr -noexpr '+str(target)+'\n'

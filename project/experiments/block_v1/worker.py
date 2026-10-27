@@ -60,7 +60,19 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-c8-tie-lec-group':
+    if MODE=='native-projection-control-group':
+        from native_projection_control import group
+        group(ROOT,OUT,CPUS)
+    elif MODE in ('native-projection-control-0','native-projection-control-1'):
+        from native_projection_control import verify
+        verify(ROOT,OUT,CPUS,run,int(MODE[-1]))
+    elif MODE=='native-c8-qualification-group':
+        from native_c8_qualification import group
+        group(ROOT,OUT,CPUS)
+    elif MODE in ('native-c8-receive-shared109-a','native-c8-receive-shared109-c'):
+        from native_receive import verify
+        verify(ROOT,OUT,CPUS,run,'shared109',MODE[-1].upper(),pipeline='native_pipeline_c8_escape.json')
+    elif MODE=='native-c8-tie-lec-group':
         from native_c8_tie_lec import group
         group(ROOT,OUT,CPUS)
     elif MODE in ('native-c8-tie-lec-a','native-c8-tie-lec-c'):

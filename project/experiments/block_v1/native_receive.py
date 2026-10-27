@@ -15,7 +15,7 @@ from native_formal import receive as formal_audit
 
 def verify(root,out,cpus,run,top,policy,historical=False,pipeline=None):
     pipeline=pipeline or ('native_pipeline_057.json' if historical else 'native_pipeline.json')
-    assert pipeline in ('native_pipeline.json','native_pipeline_057.json','native_pipeline_cap20.json','native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json','native_pipeline_diode_full.json','native_pipeline_const.json','native_pipeline_const_protected.json','native_pipeline_viaonly.json','native_pipeline_escape.json')
+    assert pipeline in ('native_pipeline.json','native_pipeline_057.json','native_pipeline_cap20.json','native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json','native_pipeline_diode_full.json','native_pipeline_const.json','native_pipeline_const_protected.json','native_pipeline_viaonly.json','native_pipeline_escape.json','native_pipeline_c8_escape.json')
     config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
     diode=config.get('input_diode_master')=='ANTENNA_X1'
     assert bool(config.get('historical_input_contract',False))==historical
@@ -86,7 +86,9 @@ def verify(root,out,cpus,run,top,policy,historical=False,pipeline=None):
         expected=[round(v*scale)for v in [x-w/2,y-h/2,x+w/2,y+h/2]]
         pins_equal &= got.get(name)==('metal10',expected)
     boundary=boundary_audit((out/'constraints-readback.sdc').read_text(),pins,budget)
-    formal=formal_audit(source,receipt,results,top,prep,logic_context=(root,out,run)if diode else None)
+    constants=pipeline=='native_pipeline_c8_escape.json'
+    if constants:assert top=='shared109' and diode and config['native_escape_repair'] is True
+    formal=formal_audit(source,receipt,results,top,prep,logic_context=(root,out,run)if diode else None,constant_functions=constants)
     layers=summary['routing_layers'][0].split(',')
     die=list(map(int,summary['die']));w,h=leaf['die_um']
     core=list(map(int,summary['core']))
