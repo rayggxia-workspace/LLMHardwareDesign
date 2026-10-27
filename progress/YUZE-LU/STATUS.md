@@ -1,6 +1,9 @@
 # YUZE-LU 的进度
 
 
+2026-10-27 11:49 CST：135四路完整T6K物理/最终功能资格已不可变部署，源码11505a8286b9abbeeedc25c42832d38765c480bc、归档b4b5392f1c8daf73c7062f6ed9df5e93c5e33476a0338b9177e399819079a30a，149成员/983040字节；依赖133 A/C组完整成功，尚无Slurm job。134也未提交，依赖128两路。133/92206仍实际运行；128两路placement完成，CTS接近本阶段报告输出，未有完整回执。当前7个本任务allocation；完整目标仍未完成。
+
+
 2026-10-27 11:45 CST：133/92206已在node22/32CPU运行，A/C两个完整T6K预制route/final子任务各16CPU并行，均实际make读回原native M1–M10、RCX、LEC及cap40/hold5ps、原输入保护和完整via-only参数；源码5bf5b4d0e74b2132cc7d8b1eb392f7fe8c2e1e61、归档05a956018f53186e2521e375d181adc7b58f5d9af9c7617a2ff12f2c9e2caf13，148成员/983040字节。尚无完整候选或独立接收终态。128 C8两路已过placement、正在CTS；当前本任务7个allocation，其他成员未动。134依赖128两路成功且尚无job。正式物理Block、一般多网分布RC/拼接、共同底座、两产品和参数库仍未验收。
 
 
