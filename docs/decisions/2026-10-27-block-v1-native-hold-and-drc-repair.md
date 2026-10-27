@@ -41,3 +41,10 @@
 103记录SHA `0d582637870673975b5a12c2d2864eaf4a3c35f0234411f7a4cffb76dfa4204e`。最初57个天线marker为单包围盒网络、一个为双网络；新增native_drc_geometry.py以整数DBU竖直切片处理凹正交多边形，保留全部原命中及其精确相交面积，排除L形空白区误命中。凹区、正面积、整体面积、边缘接触、离网格、斜边、未绑定locator以及真实marker42八项控制通过。该结果仅收紧导体几何候选，不取代GDS电气连通。
 
 这些输入端候选首级负载为48个CLKBUF_X1与5个BUF_X1；原独立报告agate分别0.0205/0.02625um²，最大ametal28um²、最大ratio1365.85365854。实际core margin20um，不能假定把标准单元直接放到die边缘仍合法。后续须先取得实际GDS输入门/扩散与Liberty负载证据，再确定合法buffer/尺寸/走线修复，全部进入预制库存；不得伪造天线字段、提高300限值或依靠bounding-box推断修复成功。
+## 实际库输入门与电气参数探针（续）
+
+`native_cell_pins.tcl` 从实际原生 tech/标准单元 LEF 导出 BUF_X1/2/4/8/16/32、CLKBUF_X1/2/3 和 ANTENNA_X1 的全部非 PG pin 与真实尺寸。`native_cell_gate.rb` 读取同平台实际库 GDS，以与原独立 deck 相同的 poly/contact/metal 连接链从 pin 金属传播，测量 `poly & active` 输入门面积；按原 `(nplus & active) - nwell` 定义列出接触到的扩散候选，不发明 diode factor。用去除 contact 的负例要求输入门连接消失，避免把全单元总门面积误作输入门面积。
+
+`native_cell_gate.py` 绑定平台 LEF/GDS/Liberty/DRC 文件哈希及 094/103 证据。正式正例必须与原单负载输入网的 0.0205/0.02625um² DRC 门面积一致，并读回真实 Liberty 面积、非反相函数及输入/输出电容；所有输入再次核哈希。该探针不修改原生平台或设计，不能直接证明任何修复合格。KLayout 几何连接使用[官方 Region merged/interacting API](https://www.klayout.de/doc/code/class_Region.html)。
+
+实际 Liberty SHA `8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1` 的解析正例已通过：例如 BUF_X8 输入电容 6.585178fF、面积 3.458um²、输出函数 A；BUF_X1 输入 0.974659fF、CLKBUF_X1 输入 0.77983fF。九种缓冲器均实际读取，重复/未闭合 group 被拒，带引号和注释的花括号正确处理。原始库留本地临时资料与服务器，不复制整库进仓库。GDS 门面积与当前设计修复资格仍待安装工具运行。

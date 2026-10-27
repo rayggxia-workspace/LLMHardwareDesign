@@ -59,7 +59,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-drc-locate-c':
+    if MODE=='native-cell-gate-probe':
+        from native_cell_gate import verify
+        verify(ROOT,OUT,CPUS,run)
+    elif MODE=='native-drc-locate-c':
         from native_drc_locate import verify
         verify(ROOT,OUT,CPUS,run)
     elif MODE in ('native-final-t6k-a','native-final-t6k-c'):
