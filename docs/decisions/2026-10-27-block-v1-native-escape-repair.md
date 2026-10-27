@@ -14,9 +14,9 @@
 
 这是**预制冻结之前**在独立副本上的修复。已封存133和135原始输出不改；未来两个定制产品仍只能改变M11/M12/via10/via11，不能在产品之间移动M9/M10或有源实例。
 
-## 149探针及资格边界
+## 有限探针及资格边界
 
-`native-escape-probe-group`在一个c96 allocation内并跑A/C，各2CPU，合计4CPU，申请16GiB。运行时可用内存不足12GiB则顺序执行；独立失败不取消另一分支。该内存申请是探针预算，实际峰值须以Slurm回执确认。本任务仍受6基础/8上限统一dispatcher限制，排队及未知提交计槽。
+`native-escape-probe-group`在一个c96 allocation内并跑A/C，各2CPU，合计4CPU。原149填写16GiB申请，在提交前被既有`RealMemory=1`集群保护拒绝，没有dispatch-state/tasks/job；原部署不改，索引`run149-not-submitted`保留。150恢复既有`memory=0`整节点内存申请，未放宽dispatcher。运行时可用内存不足12GiB则顺序执行；独立失败不取消另一分支。本任务仍受6基础/8上限统一dispatcher限制，排队及未知提交计槽。
 
 两路各绑定133完整源文件/回执、135失败全门结果、148零遗漏定位和077固定pin的SHA。OpenROAD先导出源DEF/Verilog/实际形状，副本仅替换计划中的wire，再严格读回全部网络及NETS之外字节、完整逻辑网表、未改网络实际形状和M1–M8形状。检查选中网络全部wire/库terminal的矩形连通，及对所有其他网（含PG）的M9/M10/via9重叠、接触和基础间距。真实去via9 cut、插入异网短路控制须被拒。
 
@@ -28,6 +28,14 @@
 python project/experiments/block_v1/native_escape_control.py NEW_CONTROL.json
 ```
 
-输出必须不存在。`escape-controls-149.json`保留早期控制，含边接触新增控制的复跑另写`escape-controls-149b.json`。这些是合成控制，尚未证明实际OpenROAD编辑成功。149实际EDA在本次源码提交时**未执行**。
+输出必须不存在。`escape-controls-149.json`保留早期控制，含边接触新增控制的复跑另写`escape-controls-149b.json`。这些是合成控制，不能证明实际OpenROAD编辑成功。
+
+## 150实际失败与151修正
+
+150/92236实际A/C两路均失败，1:14、TotalCPU2:09.030、MaxRSS1326488KiB；严格读回发现修改网没有ROUTED记录，未进入几何/DRC门槛。原OpenROAD命令虽然返回0，不能以退出码充当编辑成功。失败组/两子及原输出哈希保留于`run150-group-terminal`、`run150a-terminal`和`run150c-terminal`，不覆盖。
+
+固定上游[definReader.cpp 1967行](https://github.com/The-OpenROAD-Project/OpenROAD/blob/6556255d82c707820dd400e9b8cf331b378b735e/src/odb/src/defin/definReader.cpp#L1967)（Git blob `a8044b54be76e89052244c5f94d58492122dbca6`）仅在DEFAULT/FLOORPLAN等模式注册NETS回调，INCREMENTAL没有NETS回调；这与150实际忽略patch路由一致。[definNet.cpp](https://github.com/The-OpenROAD-Project/OpenROAD/blob/6556255d82c707820dd400e9b8cf331b378b735e/src/odb/src/defin/definNet.cpp#L54)（blob `22fb6bc7d134431f30aec144b0eb3f1d8d2bbcde`）会在读取既有网络时替换该网wire。
+
+151只修正导入方式为`read_def -floorplan_initialize`，patch仍只列既有命中网络，没有COMPONENTS/PINS/PG/DIE/TRACKS等段；不再预先删除wire。所有原网络/范围/实际几何读回门槛保留；必须实际验证该安装版行为，不能仅凭上游源码宣称成功。151本源码提交时尚未部署/执行；同一4CPU/整节点内存allocation内A/C各2CPU，仍作12GiB内存预检。
 
 即使149探针通过，仍须从修改后的真实ODB重新生成完整原生GDS、寄生、SDC与网表，并重跑完整DRC、全部端点STA/电气、PG/连接/LEC和实际最终功能；不能复用133旧SPEF充当新路由寄生。正式同源宏视图、flat/abstract边界、父层glue、完整恢复/epoch、一般多网分布十二层RC与原生/新层拼接、共同冻结父层、两产品和敏感性仍是独立门槛。探针的四个完整资格标志保持false。

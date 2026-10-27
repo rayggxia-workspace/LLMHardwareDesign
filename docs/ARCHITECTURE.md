@@ -214,4 +214,4 @@ python project/experiments/block_v1/native_drc_geometry.py work/YUZE-LU/121/resu
 
 148实际双路只读定位通过但间距未修复；阶段 CPU/内存、原生 DRC 固定4核及后续节点内并发规则见[节点内并行决策](decisions/2026-10-27-block-v1-intranode-parallelism.md)。
 
-149 `native-escape-probe-group`为预制冻结前的有限M9/M10/via9接入线修复探针：同一4CPU c96 allocation内A/C各2CPU，16GiB预算、实际内存预检与独立失败保留。语法/锚点/范围/连通控制命令为`python project/experiments/block_v1/native_escape_control.py NEW_CONTROL.json`，输出须不存在；149b含边接触控制。完整源绑定、OpenROAD精确读回、实际上层mask与诊断DRC、源18/2标记复现以及后续新寄生/完整接收要求见[有限修复决策](decisions/2026-10-27-block-v1-native-escape-repair.md)。本源码提交时实际EDA尚未执行，诊断不等于宏资格。
+`native-escape-probe-group`为预制冻结前的有限M9/M10/via9接入线修复探针：同一4CPU c96 allocation内A/C各2CPU，既有整节点内存申请、实际内存预检与独立失败保留。语法/锚点/范围/连通控制命令为`python project/experiments/block_v1/native_escape_control.py NEW_CONTROL.json`，输出须不存在；149b含边接触控制。149因16G申请不兼容提交前拒绝无job；150实际读回拒绝INCREMENTAL未导入网络，失败保留，151修正为FLOORPLAN网络导入尚待实际运行。完整源绑定、OpenROAD精确读回、实际上层mask与诊断DRC、源18/2标记复现以及后续新寄生/完整接收要求见[有限修复决策](decisions/2026-10-27-block-v1-native-escape-repair.md)。诊断不等于宏资格。

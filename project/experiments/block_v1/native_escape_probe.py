@@ -61,10 +61,13 @@ def verify(root,out,cpus,run,policy):
     patch='VERSION 5.8 ;\nDIVIDERCHAR "/" ;\nBUSBITCHARS "[]" ;\nDESIGN transaction6k ;\nUNITS DISTANCE MICRONS 2000 ;\n'
     patch+='NETS %d ;\n'%len(rewritten)+''.join(rewritten.values())+'END NETS\nEND DESIGN\n'
     (out/'escape-patch.def').write_text(patch)
-    edit='if {[llength [info commands odb::dbWire_destroy]] != 1} {error "Missing exact native wire replacement API"}\n'
+    edit=''
     for name in plans:
-        edit+='set net [[ord::get_db_block] findNet {%s}]\nif {$net eq "NULL"} {error "Missing source net"}\nodb::dbWire_destroy [$net getWire]\n'%name
-    edit+='read_def -incremental escape-patch.def\nwrite_def after.def\nwrite_db edited.odb\nwrite_verilog after.v\nescape_geometry after-geometry.tsv {%s}\n'%tcl_names
+        edit+='set net [[ord::get_db_block] findNet {%s}]\nif {$net eq "NULL" || [$net getWire] eq "NULL"} {error "Missing source net/wire"}\n'%name
+    # INCREMENTAL intentionally omits the NETS callbacks in definReader.
+    # FLOORPLAN processes only these existing named nets and replaces wires;
+    # all actual definitions, other nets and geometry are checked below.
+    edit+='read_def -floorplan_initialize escape-patch.def\nwrite_def after.def\nwrite_db edited.odb\nwrite_verilog after.v\nescape_geometry after-geometry.tsv {%s}\n'%tcl_names
     script('edit',edit)
     diff=readback(out/'before.def',out/'after.def',plans)
     assert file_sha(out/'before.v')==file_sha(out/'after.v'),'Cell/logical netlist changed'
