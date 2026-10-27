@@ -1,4 +1,4 @@
-2026-10-28 02:02 CST：V203原生全流程与实际子回执通过，最终V/SDC/DEF/ODB/SPEF已生成；203父调度器按既定排空以FAILED2:0退出，不是V子任务失败。209/92507 node13已三路16CPU并行实际接收V物理/完整DRC/最终功能，210/92509 node17已运行新严格物理门；均用8aead40绑定调度器、原207/208不可变任务及锁，实查queue-live分别0–15/16–31/32–47和0–15 CPU集合。S物理/三初态功能已通过，完整DRC/严格LEC继续；R仍全局布线。四旧baseline+R196+排空中207+209+210共八allocation，不追加。M/T已接收，S/V/R未最终验收，整套in_progress、PR122草稿未合并。详情见五宏接续和统一交付入口。
+2026-10-28 02:12 CST：V独立严格物理门失败，已据实保留：7处cap、1处slew违规（最差-53.180515fF/-0.026617585ns）；setup/hold最小1.794861/0.016820ns及接点/RC/PG/连通通过，不能验收V。只读212已确定7个BUF驱动及其GRT/CTS来源；后续在同一1210×1210µm基础版内修复驱动并重生route/RCX及全部接收，不放宽限制。211短诊断因Slurm16CPU子cpuset不含80–95而未启动EDA，212改用既有96CPU envelope再taskset硬限80–95，8.9秒只读通过，没有新增allocation/取消EDA。S完整物理和三初态最终功能通过，DRC/严格LEC继续；R全局布线；M/T已接收。210已自然FAILED释放，目前四旧baseline+R196+207+209共七allocation。五宏仍in_progress、PR122草稿未合并。
 
 2026-10-28 01:20 CST：S207独立物理门仅接点几何失败，其他全部时序/电气/RC/PG/连接通过。已定位128个输出由旧%g格式化丢位造成计划与实际执行Tcl差5nm；实际Tcl与ODB精确一致。新严格脚本/整数DBU比较器的273pin正例及8种拒绝反例通过，无容差、不改原生硬件；208准备重新完整物理接收，尚未冒称通过。原207失败和独立DRC/function/formal继续保留；交付必须同源四门通过并核formal→function回执。详情见docs/decisions/2026-10-28-block-v1-executed-pin-contract.md。M/T已有单块结果、S未验收、V/R继续物理，Issue121保持in_progress、PR122草稿未合并。
 

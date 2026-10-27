@@ -1,5 +1,13 @@
 # Issue121 五宏实施接续
 
+2026-10-28 02:12 CST：**V的严格物理接收失败，下一主线是修同一基础版的真实电气违规。** [210实际失败/终态](../../work/YUZE-LU/121/results/run210-five-macro-020353/index.json)：7处max-cap、1处max-slew；最差裕量-53.180515289fF/-0.02661758475ns，全部setup/hold端点最小1.794861/0.016820ns，pin/RC/PG/连通等通过。不能改阈值、声称V已验收或复用旧源检查资格到修复后ODB。92509自然FAILED1:0，elapsed4:33，节点17释放；当前四旧baseline+R196+排空中207+209共七allocation，其他成员未动。209仍继续原V的DRC/最终功能及后续formal，保留结果作原源证据，不因本次physical失败取消。
+
+[211失败与212只读诊断原件](../../work/YUZE-LU/121/results/v-electrical-probe-021023/index.json)：212在既有209/92507内8.9秒完成、未改ODB。实际七个驱动为place81609/BUF_X1、place67728/BUF_X1、place53406/BUF_X2、wire109242/BUF_X4、place55219/BUF_X2、place58201/BUF_X2、place55816/BUF_X2。全部存在5_1_grt和final且master一致；wire109242不在4_cts，其余六个在CTS已存在。211未启动OpenROAD，因为Slurm16CPU step的cpuset不允许显式80–95；212申请同一job的96CPU step envelope后用taskset把实际诊断硬限到未使用80–95，父活跃32CPU、可用内存约485GiB，不新增allocation或触碰既有EDA。失败保持原样，不重提211/212。
+
+**恢复的第一步**：继续核S真实DRC/formal和R原生进度；V先实现/验证七个BUF的局部增强驱动，再在独立allocation跑必要route/RCX及全套接收。212已保存确切OpenROAD帮助与global_route/detail_route源码：`size_cell`不存在，不能按此命令猜测；原生OpenDB swapMaster需先在可丢弃副本验证针脚/连接不变。可从封存5_1_grt.odb/sdc接续，使用实际PRE_DETAIL_ROUTE hook，在`global_route -start_incremental`/`-end_incremental`包围单元替换与合法化后再详细布线；是否需要时序修复及具体API仍须实际验证，尚无编辑、修复成功或新P&R作业。建议按实测负载和BUF pin的真实Liberty上限选强度，外框/引脚/数值硬件保持一版；新输出全部重新STA/RC/PG/DRC/功能/LEC，不能把准备当运行。旧213目录当前尚不存在，可用于新修复队列，但先核服务器真实目录/job再创建。
+
+新V修复源必须显式区分原203（诊断/历史）和新最终源；现有receiver默认V仍指203，不能直接对新ODB套旧source回执。S已通过208 physical与207三初态function，待207实际DRC/formal；R196仍原生全局布线。原208/210中v-physical已FAILED、v-delivery将BLOCKED，不能恢复该失败V任务或重提job；后续S/R未领取项如需续队列，应保持独立claim与来源，不能与新修复队列重复执行。209仍是修正后CPU绑定调度器，禁止恢复旧207/203。
+
 2026-10-28 02:02 CST：**V203实际原生全流程及子回执已通过，209/210已实际提交并开始检查**，不再只是暂存。203/92475父调度器按既定排空自然FAILED2:0，elapsed1:57:39、CPU15:21:39、batch MaxRSS22012388K；不能将该父状态当V失败。V最终五文件/源码/配置SHA见[原生子结果与绑定接收实录](../../work/YUZE-LU/121/results/v-native-bound-receive-0202/index.json)。V尚无最终独立验收资格。
 
 209/92507在node13/96CPU实际三路并行v-physical、v-drc、v-final-function，queue-live硬绑定CPU分别0–15/16–31/32–47，final-function通过后formal立即补位；这是原207业务任务的同一来源、路径、锁。210/92509在node17/96CPU已实际运行新严格v-physical，CPU0–15，复用原208业务任务及锁。scheduler源8aead40194d3f82e2947876152ec6836dd34a536、归档639fb13c…，无新RTL或物理变体。**不能再新建或重提209/210；后续先核这两个真实job和共享207/208状态。** 旧207只让S DRC/formal自然收尾，原203已退出；不要恢复这两个旧调度器。当前四旧baseline+R196+207+209+210共八allocation（含pending/unknown），其他成员未操作。若peer后续park而又有ready工作，先核旧owner是否真实终态，再建新绑定peer复用原锁，不能根据历史RUNNING claim重复执行。S物理/三初态最终功能通过但DRC/严格LEC尚未通过；R全局布线继续，五宏主线未完成。
