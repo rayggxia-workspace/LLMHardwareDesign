@@ -38,6 +38,13 @@ def physical(root,out,cpus,run,kind):
     qualified=json.loads(q.read_text());assert qualified['passed'] and qualified['actual']['passed']
     assert file_sha(lib)==qualified['library_sha256']
     assert cr['inputs']['project/experiments/block_v1/native_passive_endpoint.py']==file_sha(root/'project/experiments/block_v1/native_passive_endpoint.py')
+    sta_control=out.parents[2]/'block-v1-20261027-066/tasks/native-sta-control'
+    sc=json.loads((sta_control/'receipt.json').read_text());assert sc['passed'] is True
+    sp=sta_control/'native-sta-control.json';assert file_sha(sp)==sc['outputs'][sp.name]
+    sq=json.loads(sp.read_text());assert sq['positive']['passed'] and not sq['bad_capacitance']['passed'] and not sq['bad_setup']['passed']
+    assert sq['annotation']['positive']['passed'] and not sq['annotation']['missing_input_rc']['passed']
+    for name in ('native_sta.py','native_annotation.py'):
+        relative='project/experiments/block_v1/'+name;assert sc['inputs'][relative]==file_sha(root/relative)
     prefix=''.join('set ::env('+k+') {'+str(results/name)+'}\n' for k,name in [('BV1_ODB','6_final.odb'),('BV1_SDC','6_final.sdc'),('BV1_SPEF','6_final.spef')])
     for name,body in [('sta','source {'+str(root/'project/experiments/block_v1/native_sta.tcl')+'}\n'),
                       ('physical','source {'+str(root/'project/experiments/block_v1/native_physical.tcl')+'}\n'),
@@ -162,10 +169,12 @@ def formal(root,out,cpus,run,kind):
     qualification=composition_qualification(root,out.parents[2])
     binary=Path('/OpenROAD-flow-scripts/tools/install/kepler-formal/bin/kepler-formal')
     assert file_sha(lib)==qualification['library_sha256'] and file_sha(binary)==qualification['binary_sha256']
+    original=results/'1_synth_lec.v'
+    assert file_sha(original)==r['outputs'][str(original.relative_to(folder))]
     # The controls prove exact constant functions and input-only protection
     # projection, including wrong-tie/wrong-clock rejection. Actual simulation
     # above always retains every physical signal-bearing cell.
-    before,bproof=export(root,out,run,results/'1_synth_lec.v',lib,top,'before',constant_functions=True)
+    before,bproof=export(root,out,run,original,lib,top,'before',constant_functions=True)
     after,aproof=export(root,out,run,actual,lib,top,'after',constant_functions=True)
     assert bproof['removed_count']==0 and aproof['removed_count']>0
     config='format: verilog\ninput_paths:\n  - '+str(before)+'\n  - '+str(after)+'\n'

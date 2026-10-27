@@ -96,6 +96,9 @@ try:
     elif MODE.startswith('five-macro-formal-'):
         from five_macro_receive import formal
         formal(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE=='five-macro-repair-m-hold':
+        from five_macro_repair import matrix_hold
+        matrix_hold(ROOT,OUT,CPUS,run)
     elif MODE=='library-v1-source':
         from library_v1 import source_probe
         source_probe(ROOT,OUT,CPUS,run)
