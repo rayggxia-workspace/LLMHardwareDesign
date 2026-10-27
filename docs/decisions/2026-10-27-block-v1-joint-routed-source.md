@@ -25,3 +25,10 @@
 
 
 183/92403实际10秒FAILED，正例实际读取成功，但shift/swap被OpenDB ODB-0359对FIRM实例的保护提前拒绝，尚未证明目标位置门拒绝。原失败及所有输出保留。184仅在测试副本内临时将锚点置PLACED、施加预定破坏、恢复原placement status后导入/读回；封存源ODB保持只读且前后SHA相同，原生保护和接收门未删除。184待实际运行。
+
+
+## 2026-10-27 20:16 CST 直接原生位置接收实际通过
+
+184/92404实际COMPLETED/12秒/CPU3.903秒/Slurm组MaxRSS0（无有效采样，非零内存）；source eb58f4b65ce7daf0868a85e078d5a4ed82581569，archive251a81d36b3f6ac0b41237a97e069c9ac597800e168e99daf00b787998a61acd。两份实际ODB的六/七个Iterm均按完整instance变换读取，layer与二倍DBU中心逐项匹配。每份原生shift/swap保持导体并集、节点ground/R/耦合读回不变，物理ID/位置门分别发现一/两个错误节点并拒绝。封存源前后SHA相同；183失败保持。182+184共同支撑真实三维导体、物理节点身份与电气值的有限科学fixture闭环，不扩成生产via/任意图/拼接/完整Block资格。
+
+后继P2需要以实际生产0.6um via10/11及0.1um enclosure和完整routed几何作为新的独立FV/场求解输入；其形状/电阻不同，不能复用原0.8um cut科学数值。保留M10公开pin和原生层ownership，继续一般多网/窗口/分层拼接及全RC覆盖；完整C8/P4b/P5/P6和独立审查仍是必需项。

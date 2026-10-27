@@ -261,3 +261,6 @@ RAW_LIB_FOLDER需提供已按164收据封存的candidate164-a.lib/c.lib。只读
 
 
 新增joint-node-binding-branch/via从182封存routed ODB原生接收实际变换后的pin位置/层/ID；183准备运行，原生锚点位移/交换反例必须在并集与电气值保持相同下被拒绝。182真实导体并集与耦合读回已实际通过。
+
+
+182真实导体来源与184直接实际位置门均已原生通过，183固定实例保护失败也保留。完整结果见work/YUZE-LU/121/results/run182-*、run183-*、run184-*。固定PR128 fbbd5ec显式输出RC十二个pair的记录输出逐项复算见macro-qa128-explicit-output-rc-fbbd5ec.json；只作为待审查的层次timing/RC方向，不替换物理M10pin或签发真实宏资格。
