@@ -59,4 +59,3 @@ def verify(root,out,cpus,run,policy):
         scope='Full native library GDS and unchanged complete FreePDK45 deck on exact sealed165 edit DEF; pending167 final identity/RCX/LEC and complete physical/function/macro gates remain separate')
     (out/'native-c8-edit-full-drc.json').write_text(json.dumps(result,indent=2)+'\n')
     assert result['passed'],'Full accepted-edit GDS DRC failed; original source and complete report retained'
-
