@@ -34,13 +34,15 @@ S16 采用 radix128：低两位digit为0..127，最高digit为-2..1，权重1/12
 
 ## V：一个宏、三条固定内部通路
 
-基础码为S32容器，常用Q16.16；逐元素输入可声明整数码及shift。8路S32加减/乘法/比较选择/移位/RNE/饱和/打包，乘法内部S64。有限成对置换用于RoPE，cos/sin从参数输入；不增加三角函数发生器。普通点操作目标8元素/接受拍，乘法及转换有独立流水，不能全部挤入一个标量乘法器。
+基础码为S32容器，常用Q16.16；逐元素输入可声明整数码及shift。`block_v1_v` 已写首版RTL，尚待实际测试。8路S32加减/乘法/FMA/比较选择/移位/RNE/饱和/打包，八个S32×S33乘法器在逐元素、平方统计和归一化阶段复用；S33第二操作数容纳有符号S32或非负U32，乘积S65。有限成对置换用于RoPE，cos/sin从参数输入。8元素输入分两拍加载A、两拍加载B；点操作接受后预期2拍，不能把八lane误报为128bit接口每拍接受8个S32元素。函数和组级迭代单元独立，不争用这些乘法器。
 
 统计通路8路输入树，S128 sum与非负128bit sumsq、S32 max/min及16bit索引、16bit计数（单域最多65535元素）；有明确start/continue/final，跨周期统计上下文保持单位。小TopK最多40项选8，有限40×(S32+index)候选状态、多轮稳定选择，tie按较小ID；动态ID不固定成专家集合。
 
-函数通路至少2个并行逐元素EXP/激活入口，另一个组级 reciprocal/rsqrt 迭代单元；三类不共享唯一标量乘法器。EXP常规域[-16,0] Q16.16，正参数先显式范围约化；reciprocal/rsqrt输入正数且带归一化指数，零/负数错误有响应，不静默饱和。Sigmoid/SiLU/GELU_tanh在[-8,8]、Softplus在[-16,16]定义近似及域外延拓。LUT/系数/分段、最大绝对和相对误差、具体流水级和II须由独立高精度扫描和实际RTL确定并封存；此处**不把待实现的近似精度写成实测**。
+函数通路两路并行线性插值，各自一个S33×U11乘法器；预期3级、II=1，每拍两元素。系数由独立Decimal60/RNE生成：EXP[-16,0]每单位128段，Sigmoid/SiLU/GELU_tanh[-8,8]每单位32段，Softplus[-16,16]每单位32段。EXP低于-16延拓0，正EXP报错（先在外部显式约化）；Sigmoid域外0/1，SiLU/GELU域外0/x，Softplus域外0/x。域端点取表值。插值乘积S45/RNE，输出Q16.16。生成器、实际系数、独立二进制64位解析扫描及逐输入实际RTL扫描均已准备，**最大误差、II和流水深度仍须实际回执，不能写成已验证**。小值相对误差无意义，因此绝对误差总报告，相对误差只在|reference|>=1/256报告。
 
-固定连接支持 RMS/L2：平方->统计->rsqrt->广播缩放；Softmax：max->减法/EXP->sum->reciprocal->归一化；激活：函数加逐元素路径。回放数据2KiB（256×S32输入+256×S32临时输出）；更长组分段经S回放，统计屏障和额外流量明确计入。RMS0的1+gamma、epsilon和输出shift均是参数，不从模型名推测。
+独立组级单元为精确U128恢复除法（预期128拍）和整数平方根（预期64拍），有限握手/保持响应。外部reciprocal返回RNE(2^32/x_raw)，rsqrt返回RNE(sqrt(2^48/x_raw))，x为正Q16.16码，结果Q16.16/S32，超范围显式饱和；0报错。原始U128组单元单独验证全范围与零除，不靠主机计算替代硬件。
+
+固定连接已写成内部控制器：RMS/L2做平方->统计->组级rsqrt->广播缩放；Softmax做max->减法/两路EXP->sum->组级reciprocal->缩放。回放2KiB（256×S32输入+256×S32临时输出），组合操作N=1..256，统计流仍可跨命令到65535。更长组需经S分段并用统计/函数/点操作执行，不声称256字内置组合命令能直接处理任意长组。RMS使用sqrt(N*2^96/(sum(x_raw²)+N*epsilon_raw))，L2使用sqrt(2^96/(sum(x_raw²)+epsilon_raw))，epsilon为U64 Q32.32，避免先将均值整数截断；组级系数Q32.32/U64，内部用八路乘法器做低/高U32两步分解，再一次RNE32，资源与额外周期均在V内。Softmax的系数RNE(2^48/sum(exp_raw))同样Q32.32。gamma/1+gamma与任意逐元素权重由同一个V的点通路接续，不在归一化命令中隐藏权重存储。
 
 对外128bit数据流分两拍装一个8-lane向量，命令/参数/响应各有限一个持有槽。三通路仲裁与独立忙状态明确；最终的逐操作延迟表是RTL验收项，尚未冻结函数实现时不能假称可直接进入最终P&R。
 
@@ -48,11 +50,11 @@ S16 采用 radix128：低两位digit为0..127，最高digit为-2..1，权重1/12
 
 8个并行value/channel lane，完整key/state域1..256。一个活动state tile为256×8×S32=8KiB，另8KiB shadow，合计16KiB局部状态；不能与外部S16K混算成同一份存储。Q/K或B/C各256×S16，合计1KiB；8路当前V/X与参数，3×8×S32=96B历史和4×8系数用于一个活动channel组四抽头深度卷积。跨channel/head的历史需带owner/位置读回保存，不能96B声称容纳全部4608通道历史。
 
-8路S32×S32乘加资源，共享各阶段，乘积S64、点积S128、提交前检查S32范围。向量系数Q1.14、decay/beta为UQ1.31、状态S32+显式共同单位/epoch；beta/decay合法[0,1]（1编码0x80000000），每阶段RNE位置固定。SSM的dt*X由V生成带声明单位的注入值，R负责与B外积及更新；skip D*X在R内。不能将这些新合同的误差当历史全整数实验已经验证。
+`block_v1_r` 已写首版RTL，尚待实际数值与周期回执。8路S32×S33乘加资源，共享各阶段，乘积S65、点积S128、提交前检查S32范围；S33用于正确容纳正的0x80000000，不能有符号误读成负衰减。向量系数Q1.14、decay/beta为UQ1.31、状态S32+显式共同单位/epoch；beta/decay合法[0,1]（1编码0x80000000），每阶段RNE位置固定。GDN用共同decay，SSM支持每个state元素独立decay：执行前把UQ1.31因素装入8KiB shadow，衰减阶段逐行读因素并覆盖为候选state，因素有效位被消耗，下一次SSM必须重装；没有第三份隐藏8KiB。SSM输入分别保留原X和V算好的dt*X各8路，skip D为每lane独立Q16.16。不能将这些新合同的误差当历史全整数实验已经验证。
 
 GDN：全域decay -> K点积 -> beta*(V-pred) -> K外积更新 -> Q点积读出。key完整驻留，先取得全key预测才更新，不对key分片提前改写。SSM：decay -> B外积注入 -> C点积读出+skip。SSM域256、GDN域128直接驻留；value维8路分片，多head由真实访问器供给状态和元数据。投影在M；卷积后的SiLU、Q/K L2Norm及外围激活/norm在V。GDN norm->gate与Falcon gate->跨4096channel norm均在宏之间调度。
 
-shadow通过范围检查后才允许提交，失败保持旧state和旧history；state与history具有共同owner/位置/epoch。旧输出未消费不能覆盖；commit/revoke边界和复位后有效性必须有测试。每阶段访存和乘加安排的实际周期表随RTL封存，不能用算子数量估算当实测时延。
+shadow通过范围检查后才允许提交，失败保持旧state和旧history；额外96B history_next保留待提交卷积历史。state与history有共同owner/位置/epoch。卷积可先产生待提交历史，再从外部V接回激活/归一化数据，运行GDN/SSM，最后一起commit；也可单独commit卷积，next_position由命令显式给出，epoch加1。错误owner/旧epoch不能提交，epoch耗尽拒绝；revoke丢候选。commit期间按row复制，禁止外部访问；reset只使整个上下文失效，不宣称断电/中途reset可回滚部分复制，重开后必须重装state/history。命令响应均保持到消费；输出候选在显式commit/revoke前可读。预期GDN为8N+6拍、SSM为6N+4拍、卷积10拍，state commit N拍、纯history commit1拍；这些是从RTL推导的待核验合同，非实测时序/频率。
 
 ## S/T 的沿用边界
 

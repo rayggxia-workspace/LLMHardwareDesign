@@ -3,6 +3,41 @@ import json
 from pathlib import Path
 
 
+def vector_component(root,out,cpus,run,component):
+    from io_slots import file_sha
+    assert cpus==16 and component in ('group','function')
+    folder=root/'project/rtl/block_library_v1';top='block_v1_v_'+component
+    rtl=folder/(top+'.sv');bench=root/('project/experiments/block_v1/test_vector_'+component+'.cpp')
+    run(['/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator','--cc','--exe','--build','-j',str(cpus),'-Wno-fatal',
+         '--top-module',top,'-I'+str(folder),'-Mdir',str(out/'obj'),str(rtl),str(bench)],component+'-build.log')
+    run([str(out/('obj/V'+top))],component+'-result.json')
+    result=json.loads((out/(component+'-result.json')).read_text());assert result['passed']
+    result.update(source_sha256=file_sha(rtl),bench_sha256=file_sha(bench),physical_implementation_completed=False)
+    (out/('five-macro-vector-'+component+'.json')).write_text(json.dumps(result,indent=2)+'\n')
+
+
+def vector_test(root,out,cpus,run):
+    from io_slots import file_sha
+    assert cpus==16
+    folder=root/'project/rtl/block_library_v1'
+    sources=[folder/name for name in ('block_v1_v.sv','block_v1_v_group.sv','block_v1_v_function.sv')]
+    bench=root/'project/experiments/block_v1/test_vector_macro.cpp'
+    run(['/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator','--cc','--exe','--build','-j',str(cpus),'-Wno-fatal',
+         '--top-module','block_v1_v','-I'+str(folder),'-Mdir',str(out/'obj')]+list(map(str,sources))+[str(bench)],'vector-build.log')
+    run([str(out/'obj/Vblock_v1_v')],'vector-result.json')
+    result=json.loads((out/'vector-result.json').read_text());assert result['passed'] and result['compose_cases']==270
+    result.update(source_sha256={p.name:file_sha(p) for p in sources+[folder/'block_v1_v_tables.svh']},
+                  bench_sha256=file_sha(bench),physical_implementation_completed=False,final_netlist_verified=False)
+    (out/'five-macro-vector-test.json').write_text(json.dumps(result,indent=2)+'\n')
+
+
+def vector_scan(root,out,cpus,run):
+    assert cpus==16
+    run(['python3',str(root/'project/experiments/block_v1/scan_vector_functions.py'),
+         str(root/'project/rtl/block_library_v1/block_v1_v_tables.json')],'five-macro-vector-scan.json')
+    assert json.loads((out/'five-macro-vector-scan.json').read_text())['passed']
+
+
 def recurrent_test(root,out,cpus,run):
     from io_slots import file_sha
     assert cpus==16
@@ -36,13 +71,16 @@ def matrix_test(root, out, cpus, run):
 def map_matrix(root, out, cpus, run, top='block_v1_m'):
     from io_slots import file_sha
     assert cpus == 16
-    assert top in ('block_v1_m','block_v1_s16k','block_v1_r')
+    assert top in ('block_v1_m','block_v1_s16k','block_v1_r','block_v1_v')
     rtl=root/('project/rtl/block_library_v1/'+top+'.sv')
     lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
     # Yosys scripts have their own tokenizer: Tcl braces are literal filename
     # characters here. All immutable server source paths are space-free.
     for path in (lib,rtl):assert not any(c.isspace() for c in str(path))
-    script='read_liberty -lib '+str(lib)+'\nread_verilog -sv '+str(rtl)+'\n'
+    script='read_liberty -lib '+str(lib)+'\nread_verilog -sv -I'+str(rtl.parent)+' '+str(rtl)+'\n'
+    if top=='block_v1_v':
+        for name in ('block_v1_v_group.sv','block_v1_v_function.sv'):
+            script+='read_verilog -sv -I'+str(rtl.parent)+' '+str(rtl.parent/name)+'\n'
     if top=='block_v1_s16k':script+='read_verilog -sv '+str(root/'project/rtl/norm_service/store82.sv')+'\n'
     script+='hierarchy -check -top '+top+'\nsynth -top '+top+' -noabc\n'
     script+='dfflibmap -liberty '+str(lib)+'\nabc -liberty '+str(lib)+'\nclean\ncheck -assert\n'
@@ -57,7 +95,7 @@ def map_matrix(root, out, cpus, run, top='block_v1_m'):
                 mapped_sha256=file_sha(out/'mapped.v'),cells=cells,cell_count=sum(cells.values()),
                 ports={k:dict(direction=v['direction'],bits=len(v['bits'])) for k,v in module['ports'].items()},
                 physical_implementation_completed=False,functional_equivalence_qualified=False)
-    label={'block_v1_m':'matrix','block_v1_s16k':'store','block_v1_r':'recurrent'}[top]
+    label={'block_v1_m':'matrix','block_v1_s16k':'store','block_v1_r':'recurrent','block_v1_v':'vector'}[top]
     (out/('five-macro-'+label+'-map.json')).write_text(json.dumps(result,indent=2)+'\n')
 
 

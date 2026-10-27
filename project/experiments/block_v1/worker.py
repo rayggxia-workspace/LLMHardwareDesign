@@ -60,7 +60,19 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='five-macro-recurrent-test':
+    if MODE in ('five-macro-vector-group','five-macro-vector-function'):
+        from five_macro import vector_component
+        vector_component(ROOT,OUT,CPUS,run,MODE.rsplit('-',1)[1])
+    elif MODE=='five-macro-vector-test':
+        from five_macro import vector_test
+        vector_test(ROOT,OUT,CPUS,run)
+    elif MODE=='five-macro-vector-map':
+        from five_macro import map_matrix
+        map_matrix(ROOT,OUT,CPUS,run,'block_v1_v')
+    elif MODE=='five-macro-vector-scan':
+        from five_macro import vector_scan
+        vector_scan(ROOT,OUT,CPUS,run)
+    elif MODE=='five-macro-recurrent-test':
         from five_macro import recurrent_test
         recurrent_test(ROOT,OUT,CPUS,run)
     elif MODE=='five-macro-recurrent-map':
