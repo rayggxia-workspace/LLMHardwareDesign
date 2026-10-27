@@ -84,6 +84,18 @@ try:
     elif MODE=='five-macro-t-layout':
         from five_macro_delivery import layout
         layout(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('five-macro-physical-'):
+        from five_macro_receive import physical
+        physical(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE.startswith('five-macro-drc-'):
+        from five_macro_receive import drc
+        drc(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE.startswith('five-macro-final-function-'):
+        from five_macro_receive import function
+        function(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE.startswith('five-macro-formal-'):
+        from five_macro_receive import formal
+        formal(ROOT,OUT,CPUS,run,MODE[-1])
     elif MODE=='library-v1-source':
         from library_v1 import source_probe
         source_probe(ROOT,OUT,CPUS,run)
