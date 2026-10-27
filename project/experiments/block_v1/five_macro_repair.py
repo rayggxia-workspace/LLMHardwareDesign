@@ -4,6 +4,60 @@ from pathlib import Path
 import shutil
 
 
+def patch_metal2(root,out,cpus,run):
+    """One additive, pre-freeze notch fill on the measured M2 net only."""
+    import collections
+    from io_slots import file_sha
+    from five_macro_receive import source
+    from native_escape import records
+    from native_escape_audit import geometry
+    assert cpus==16
+    folder,r,flow,results=source(out,'m')
+    located=out.parents[2]/'block-v1-20261027-196/tasks/five-macro-locate-m'
+    lr=json.loads((located/'receipt.json').read_text());assert lr['passed'] is True
+    p=located/'five-macro-locate-m.json';assert file_sha(p)==lr['outputs'][p.name]
+    location=json.loads(p.read_text());assert location['passed'] and location['read_only']
+    assert location['source_receipt_sha256']==file_sha(folder/'receipt.json')
+    name='$abc$226431$new_n33888';box=[282460,530600,282650,531160]
+    assert {h['net'] for h in location['hits']}=={name}
+    assert all(h['layer']=='metal2' for h in location['hits'])
+    helper=root/'project/experiments/block_v1'
+    setup='set_thread_count 16\nread_db {'+str(results/'6_final.odb')+'}\n'
+    setup+='set ::env(BV1_GEOMETRY_SOURCE) {'+str(helper/'odb_geometry.tcl')+'}\nsource {'+str(helper/'native_escape_geometry.tcl')+'}\n'
+    body='write_def before.def\nwrite_verilog before.v\nescape_geometry before-geometry.tsv {'+name+'}\n'
+    (out/'before.tcl').write_text(setup+body);run(['openroad','-no_init','-exit',str(out/'before.tcl')],'before.log')
+    before_records={s.lstrip().split()[1]:s for s in records(out/'before.def')}
+    old=before_records[name];assert old.rstrip().endswith(';')
+    # DEF RECT coordinates are relative to this route point. Its exact native
+    # readback is checked below; keep every original route/via/terminal.
+    new=old.rstrip()[:-1].rstrip()+'\n      NEW metal2 ( 282580 531020 ) RECT ( -120 -420 70 140 ) ;\n'
+    patch='VERSION 5.8 ;\nDIVIDERCHAR "/" ;\nBUSBITCHARS "[]" ;\nDESIGN '+flow['top']+' ;\nUNITS DISTANCE MICRONS 2000 ;\nNETS 1 ;\n'+new+'END NETS\nEND DESIGN\n'
+    (out/'patch.def').write_text(patch)
+    body='read_def -floorplan_initialize {'+str(out/'patch.def')+'}\nwrite_def after.def\nwrite_db edited.odb\nwrite_verilog after.v\nescape_geometry after-geometry.tsv {'+name+'}\n'
+    body+='drt::check_drc_cmd native-whole-drc.rpt 0 0 0 0 native_whole_drc\n'
+    (out/'edit.tcl').write_text(setup+body);run(['openroad','-no_init','-exit',str(out/'edit.tcl')],'edit.log')
+    after_records={s.lstrip().split()[1]:s for s in records(out/'after.def')}
+    assert set(before_records)==set(after_records)
+    assert all(before_records[k]==after_records[k] for k in before_records if k!=name)
+    assert file_sha(out/'before.v')==file_sha(out/'after.v')
+    before=geometry(out/'before-geometry.tsv');after=geometry(out/'after-geometry.tsv')
+    assert set(before)==set(after)
+    for net in before:
+        a=collections.Counter(before[net]);b=collections.Counter(after[net])
+        assert not a-b,'A conductor was removed'
+        if net==name:assert b-a==collections.Counter([('metal2','wire',tuple(box))])
+        else:assert a==b,'Another net changed'
+    report=(out/'native-whole-drc.rpt').read_text()
+    result=dict(passed=not report.strip(),source_receipt_sha256=file_sha(folder/'receipt.json'),
+                location_receipt_sha256=file_sha(located/'receipt.json'),net=name,added_metal2_box_dbu=box,
+                source_unchanged=source(out,'m')[1]==r,unchanged_full_signal_netlist=True,
+                all_other_routes_unchanged=True,no_original_conductors_removed=True,
+                native_full_chip_drc_report=report,edited_odb_sha256=file_sha(out/'edited.odb'),
+                edited_def_sha256=file_sha(out/'after.def'),qualified_hard_macro=False,
+                scope='One additive pre-freeze M2 notch fill, actual exact geometry and full native DRC only; new final outputs/RCX/STA/full deck/function/strict LEC still required')
+    (out/'five-macro-patch-m.json').write_text(json.dumps(result,indent=2)+'\n');assert result['passed']
+
+
 def locate(root,out,cpus,run):
     """Localize every measured193 native marker without changing geometry."""
     from decimal import Decimal
