@@ -1,3 +1,5 @@
+2026-10-28 02:24 CST：已准备213不可变修复队列，尚未提交/通过。V以原203封存GRT为起点，仅对实测七个BUF增强驱动，保持RTL/1210µm外框/M10接口；先以可丢弃ODB实际验证swapMaster、全部pin/net与Liberty容量，再普通详细布线/RCX及同源四门重验。新receiver区分原203和候选最终213，旧V资格不沿用。213默认六组硬绑定16CPU、即完即补；真实依赖限制并发，S/R剩余独立项复用208源/未领取CWD和207实际回执。02:23仍七allocation，S DRC/formal、R global route继续；不恢复旧207/203/210。准备不是修复成功，五宏仍in_progress。
+
 2026-10-28 02:12 CST：V独立严格物理门失败，已据实保留：7处cap、1处slew违规（最差-53.180515fF/-0.026617585ns）；setup/hold最小1.794861/0.016820ns及接点/RC/PG/连通通过，不能验收V。只读212已确定7个BUF驱动及其GRT/CTS来源；后续在同一1210×1210µm基础版内修复驱动并重生route/RCX及全部接收，不放宽限制。211短诊断因Slurm16CPU子cpuset不含80–95而未启动EDA，212改用既有96CPU envelope再taskset硬限80–95，8.9秒只读通过，没有新增allocation/取消EDA。S完整物理和三初态最终功能通过，DRC/严格LEC继续；R全局布线；M/T已接收。210已自然FAILED释放，目前四旧baseline+R196+207+209共七allocation。五宏仍in_progress、PR122草稿未合并。
 
 2026-10-28 01:20 CST：S207独立物理门仅接点几何失败，其他全部时序/电气/RC/PG/连接通过。已定位128个输出由旧%g格式化丢位造成计划与实际执行Tcl差5nm；实际Tcl与ODB精确一致。新严格脚本/整数DBU比较器的273pin正例及8种拒绝反例通过，无容差、不改原生硬件；208准备重新完整物理接收，尚未冒称通过。原207失败和独立DRC/function/formal继续保留；交付必须同源四门通过并核formal→function回执。详情见docs/decisions/2026-10-28-block-v1-executed-pin-contract.md。M/T已有单块结果、S未验收、V/R继续物理，Issue121保持in_progress、PR122草稿未合并。

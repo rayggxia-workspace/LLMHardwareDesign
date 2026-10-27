@@ -1,3 +1,5 @@
+2026-10-28 02:24 CST：已准备213不可变修复队列，尚未提交/通过。V以原203封存GRT为起点，仅对实测七个BUF增强驱动，保持RTL/1210µm外框/M10接口；先以可丢弃ODB实际验证swapMaster、全部pin/net与Liberty容量，再普通详细布线/RCX及同源四门重验。新receiver区分原203和候选最终213，旧V资格不沿用。213默认六组硬绑定16CPU、即完即补；真实依赖限制并发，S/R剩余独立项复用208源/未领取CWD和207实际回执。02:23仍七allocation，S DRC/formal、R global route继续；不恢复旧207/203/210。准备不是修复成功，五宏仍in_progress。
+
 # Issue121 五宏实施接续
 
 2026-10-28 02:12 CST：**V的严格物理接收失败，下一主线是修同一基础版的真实电气违规。** [210实际失败/终态](../../work/YUZE-LU/121/results/run210-five-macro-020353/index.json)：7处max-cap、1处max-slew；最差裕量-53.180515289fF/-0.02661758475ns，全部setup/hold端点最小1.794861/0.016820ns，pin/RC/PG/连通等通过。不能改阈值、声称V已验收或复用旧源检查资格到修复后ODB。92509自然FAILED1:0，elapsed4:33，节点17释放；当前四旧baseline+R196+排空中207+209共七allocation，其他成员未动。209仍继续原V的DRC/最终功能及后续formal，保留结果作原源证据，不因本次physical失败取消。
