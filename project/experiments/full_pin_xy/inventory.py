@@ -46,7 +46,7 @@ FUNCTIONS={
 
 def main(root):
     root=Path(root).resolve();src=root/'partition-r02';out=root/'inventory';out.mkdir(exist_ok=True)
-    interfaces=[];connections=[];functional=[];summaries={};pin_maps={};matrices=Counter()
+    interfaces=[];connections=[];functional=[];summaries={};pin_maps={};matrices=Counter();top_infrastructure=[]
     for case in ['opentpu','llaccel']:
         graph=load(src/f'{case}_partition_graph.json.gz');top=graph['top_module'];bits=defaultdict(list)
         hierarchy=[]
@@ -62,6 +62,10 @@ def main(root):
                                'source_partition_sha256':graph['source_partition_sha256']})
         for name,p in top['ports'].items():
             for k,(pn,b) in enumerate(zip(pin_names(name,p),p['bits'])):
+                if isinstance(b,str):
+                    top_infrastructure.append({'design':case,'pin':pn,'direction':p['direction'],'literal':b,
+                       'scope':'Original constant TOP_IO assignment; not a physical leaf pin or shared zero net',
+                       'new_parent_implementation':'A separate constant driver per output, fixed identically across new controlled-parent comparisons; explicitly additional parent infrastructure'})
                 role='driver' if p['direction']=='input' else 'sink' if p['direction']=='output' else 'inout'
                 bits[b].append({'block':'TOP_IO','pin':pn,'bus':name,'bit_index':k,'direction':p['direction'],'role':role})
         cell_owners={};casepin={}
@@ -118,9 +122,11 @@ def main(root):
                          'storage_macro_counts':inv['original_storage_blackbox_counts'],'unassigned_leaves':0,
                          'parameters':load(src/f'{case}_input_manifest.json')['parameters'],
                          'parameter_evidence_note':'Original JSON metadata not exported for some child parameters; source/-G/default evidence retained from Issue55, not fabricated.',
-                         'top_infrastructure':'No functional logic silently left in a free top block: TOP_IO is external ports/clock source, all actual glue belongs to SYSTEM.',
+                         'top_infrastructure':'TOP_IO retains external ports/clock source and declared constant outputs, explicitly listed in top_infrastructure.csv. Nontrivial glue belongs to SYSTEM. Constant outputs need separately costed parent drivers, not a fourth hard macro.',
+                         'constant_top_output_bits':sum(r['design']==case for r in top_infrastructure),
                          'external_scope':'DRAM device, package and host are external. llaccel_core exposes SRAM bank ports; llaccel_top behavioral SRAM banks are outside this frozen top.'}
     write_csv(out/'functional_ownership.csv',functional);write_csv(out/'interfaces.csv',interfaces)
+    write_csv(out/'top_infrastructure.csv',top_infrastructure)
     write_csv(out/'connections.csv',connections)
     write_csv(out/'connection_matrix.csv',[{'design':c,'source':s,'sink':d,'bit_connections':n} for (c,s,d),n in sorted(matrices.items())])
     save(out/'partition_summary.json',summaries);save(out/'pin_logical_mapping.json',pin_maps)
