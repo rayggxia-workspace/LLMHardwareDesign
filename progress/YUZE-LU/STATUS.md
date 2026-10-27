@@ -6,7 +6,7 @@
 - 任务：[Issue #116](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/116)，负责人及实际账号 YUZE-LU；分支 `task/116-model-analysis-docs`。
 - 本地成果：[模型分析目录](../../docs/model-analysis/README.md)，集中提供精简字符算子图、完整图册和原 PR #115 的实验分析报告；旧报告路径保留跳转，README 与导读更新入口。
 - 原始图册、图结构、配置和回执按 SHA 原样复制；新说明明确 Falcon 旧手工图的已知差异。没有重新运行模型/ONNX、修改历史 Issue #114 的证据或接触服务器作业。
-- 验证与导入清单：[work116](../../work/YUZE-LU/116/README.md)。本轮重验183份导入文件、194处本地引用、40张SVG、10组成功回执及原报告正文迁移均通过；正在通过任务分支和PR交付，实际PR/CI/合并回执保存在Issue #116，未合并前不标done。未重跑模型或物理实验。
+- 验证与导入清单：[work116](../../work/YUZE-LU/116/README.md)。本轮重验183份导入文件、196处本地引用、40张SVG、10组成功回执及原报告正文迁移均通过；正在通过任务分支和PR交付，实际PR/CI/合并回执保存在Issue #116，未合并前不标done。未重跑模型或物理实验。
 - 接入：无 `config/board.json`，连接器未提供 Projects 条目能力，条目未核实、同步 pending；管理员待指定。现有登记和项目里程碑不变。
 
 ## 2026-10-27 共同文档阶段边界澄清
