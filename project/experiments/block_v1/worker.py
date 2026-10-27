@@ -69,6 +69,9 @@ try:
     elif MODE=='five-macro-finish-v-drive':
         from five_macro_v_repair import finish_routed
         finish_routed(ROOT,OUT,CPUS,run)
+    elif MODE=='five-macro-resume-s-spacing':
+        from five_macro_s_repair import resume
+        resume(ROOT,OUT,CPUS,run)
     elif MODE=='five-macro-finish-s-spacing':
         from five_macro_s_repair import repair
         repair(ROOT,OUT,CPUS,run)

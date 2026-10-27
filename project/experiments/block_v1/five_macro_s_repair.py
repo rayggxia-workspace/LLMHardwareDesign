@@ -2,6 +2,7 @@
 import json
 from decimal import Decimal
 import re
+from pathlib import Path
 
 
 def locate(root,out,cpus,run):
@@ -160,5 +161,69 @@ def repair(root,out,cpus,run):
         p=target/('6_final.'+suffix);assert p.stat().st_size>0
         record['final_files'][p.name]=dict(path=str(p),sha256=file_sha(p),bytes=p.stat().st_size)
     assert source(out,'s',original=True)[1]==receipt
+    record.update(passed=True,pipeline_completed=True,regenerated_rc=True,whole_native_drc_zero=True,
+                  exact_accepted_geometry_and_hardware_unchanged=True);save()
+
+
+def resume(root,out,cpus,run):
+    """Finish the sealed, geometrically proved223 edit after its Python error."""
+    import shutil
+    from io_slots import file_sha,slot
+    from five_macro_receive import source
+    from native_escape_finish import FLOW_HASHES
+    from native_escape_audit import def_inventory
+    assert cpus==16
+    original,original_receipt,flow,original_results=source(out,'s',original=True)
+    # Actual223 CWD typo is historical and immutable; retain its explicit path.
+    prior=out.parents[2]/'block-s1-20261027-223/tasks/five-macro-finish-s-spacing'
+    receipt=json.loads((prior/'receipt.json').read_text());assert receipt['passed']is False
+    assert receipt['error']=='''NameError("name 'Path' is not defined")'''
+    p=prior/'five-macro-patch-s.json';assert file_sha(p)==receipt['outputs'][p.name]
+    patch=json.loads(p.read_text());assert patch['passed']and patch['connectivity']['passed']
+    assert patch['source_receipt_sha256']==file_sha(original/'receipt.json')
+    for key in ('unchanged_signal_netlist','unchanged_all_bpin_boxes','unchanged_all_vias','unchanged_non_target_routes','unchanged_other_layers'):
+        assert patch[key]is True
+    assert patch['native_def_readback']['passed']and patch['native_def_readback']['changed_nets']==['addr[7]','din[43]','din[55]']
+    assert not patch['native_whole_drc_report'].strip()
+    assert file_sha(prior/'edited.odb')==receipt['outputs']['edited.odb']==patch['edited_odb_sha256']
+    nickname='nangate45/bv1_block_v1_s16k/base';target=out/'flow/results'/nickname;target.mkdir(parents=True)
+    for category in ('logs','reports','objects'):(out/'flow'/category/nickname).mkdir(parents=True)
+    copied={}
+    def copy(relative,destination):
+        p=prior/relative;digest=file_sha(p);assert digest==receipt['outputs'][relative]
+        with slot(out.parents[2]):shutil.copyfile(p,destination)
+        assert file_sha(destination)==digest;copied[str(destination.relative_to(out))]=digest
+    for name in ('6_1_fill.odb','6_1_fill.sdc','1_synth_lec.v','1_2_yosys.v','1_2_yosys.sdc','bv1-input-diodes.tsv'):
+        copy('flow/results/'+nickname+'/'+name,target/name)
+    assert file_sha(target/'6_1_fill.odb')==patch['edited_odb_sha256']
+    for name in ('pins.json','pins.tcl','input-diodes.tcl'):copy(name,out/name)
+    copy('native-whole-drc.rpt',out/'native-source-drc.rpt')
+    copy('five-macro-patch-s.json',out/'accepted-source-patch.json')
+    config_path=prior/'config.mk';assert file_sha(config_path)==receipt['outputs']['config.mk']
+    config=config_path.read_text();assert config.count(str(prior/'input-diodes.tcl'))==1
+    (out/'config.mk').write_text(config.replace(str(prior/'input-diodes.tcl'),str(out/'input-diodes.tcl')))
+    native_flow=Path('/OpenROAD-flow-scripts/flow');assert {n:file_sha(native_flow/n)for n in FLOW_HASHES}==FLOW_HASHES
+    record=dict(flow,passed=False,pipeline_completed=False,stages=[],final_files={},
+                source_receipt_sha256=file_sha(original/'receipt.json'),config_sha256=file_sha(out/'config.mk'),
+                pins_sha256=file_sha(out/'pins.json'),spacing_patch_sha256=file_sha(p),
+                partial_source_receipt_sha256=file_sha(prior/'receipt.json'),
+                accepted_edit_odb_sha256=patch['edited_odb_sha256'],actual_flow_scripts=FLOW_HASHES,
+                scope='Resume the exact proved223 S edit after missing Path import. Same16KiB/ports/cells/vias; fresh ordinary final RCX and all independent gates required.')
+    def save():(out/'five-macro-native-flow.json').write_text(json.dumps(record,indent=2)+'\n')
+    save()
+    command=['make','-C',str(native_flow),'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
+    run(command+['do-6_report'],'do-6_report.log');record['stages'].append('do-6_report');save()
+    body='read_db {'+str(target/'6_final.odb')+'}\nwrite_def final-readback.def\nwrite_verilog final-all.v\n'
+    (out/'final-check.tcl').write_text(body);run(['openroad','-no_init','-exit',str(out/'final-check.tcl')],'final-check.log')
+    assert def_inventory(prior/'after.def')==def_inventory(out/'final-readback.def')
+    assert file_sha(prior/'after.v')==file_sha(out/'final-all.v')
+    assert file_sha(target/'6_final.sdc')==file_sha(original_results/'6_final.sdc')
+    shutil.copyfile(out/'native-source-drc.rpt',out/'flow/reports'/nickname/'5_route_drc.rpt')
+    for name,digest in copied.items():assert file_sha(out/name)==digest
+    for suffix in ('v','sdc','def','odb','spef'):
+        p=target/('6_final.'+suffix);assert p.stat().st_size>0
+        record['final_files'][p.name]=dict(path=str(p),sha256=file_sha(p),bytes=p.stat().st_size)
+    assert source(out,'s',original=True)[1]==original_receipt
+    assert file_sha(prior/'receipt.json')==record['partial_source_receipt_sha256']
     record.update(passed=True,pipeline_completed=True,regenerated_rc=True,whole_native_drc_zero=True,
                   exact_accepted_geometry_and_hardware_unchanged=True);save()
