@@ -1,3 +1,5 @@
+2026-10-28 00:39 CST：五宏统一交付入口为work/YUZE-LU/121/delivery/README.md。M最终单块独立接收通过、T沿用既有C；S190详细布线完成、流程内最终LEC运行，R196进入CTS、V203进入全局布线，整套任务仍未完成。旧181/92386自然失败收尾、证据保留；当前四旧baseline加190/196/203共七allocation，节点内默认6×16即完即补，后续接收等待真实final依赖。CLI GraphQL已独立核对YUZE-LU及branch/PR122 head均为cf31e8a7fa46116c753670b221e40b7723b84522，OPEN/draft。Issue121继续in_progress；登记pending、看板unverified/同步pending、独立审查人待指定。
+
 2026-10-28 00:20 CST：M首版最终单块原生接收通过，待项目审查。204精确M2补铜→205新final/RCX→203同源四项接收与交付全部通过；560×560um、275个M10真实接点，全部端点setup/hold最小1.737254/0.014780ns，原生与完整FreePDK45 GDS DRC均0，三初态最终网表功能及严格LEC全匹配通过。最终V/SDC/DEF/ODB/GDS/SPEF索引、实际pin和全层PNG已保存delivery/M，PNG已查看，接点SVG由实际ODB矩形生成；通用层次Lib/M11-M12系统资格仍false，不宣称整个任务完成。
 
 V196正式RTL/全域函数通过，388350单元/543387.726um²，唯一外框1210×1210um，203独立P&R运行；206同源命令周期实测通过，N256 RMS/L2=357拍、Softmax=422拍、八元素函数7拍、40选8为328拍，传输/响应成本另计。R196继续place，S190已完成global route、正在detailed route；T沿用既有C叶块。178旧C8队列自然FAILED收尾，空槽已由203/92475 node23接上；五旧baseline+190/196/203共八allocation。203初始四路16CPU接收/布线实跑，完成立即补位，当前余项受各自最终布线依赖限制。详见docs/handoffs/2026-10-28-issue-121-five-macro.md。Issue121保持in_progress、PR122草稿未合并，登记pending、看板unverified/同步pending、独立审查人待指定。

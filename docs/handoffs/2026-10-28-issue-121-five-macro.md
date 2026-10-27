@@ -1,5 +1,9 @@
 # Issue121 五宏实施接续
 
+2026-10-28 00:39 CST 续记：CLI GraphQL独立读回实际账号YUZE-LU，分支及PR122 head均为cf31e8a7fa46116c753670b221e40b7723b84522；PR仍OPEN/draft。此后本次交付入口/快照提交继续沿同一分支快进，不能以旧SHA冒称后继head。统一入口见[五宏交付索引](../../work/YUZE-LU/121/delivery/README.md)。S190详细布线完成，流程内最终LEC正在检查262545输入/262532输出（无未匹配端口），尚无独立接收资格；R196进入CTS，V203进入global route。只读记录见[00:39快照](../../work/YUZE-LU/121/results/live-20261028-003912/index.json)。
+
+旧181/92386自然FAILED收尾，elapsed4:31:28、CPU4:51:15、Slurm组MaxRSS183501616K；共享178队列A接收失败原因包括hold=-0.047559ns，C为hold=-0.103899ns和原生DRC未通过，保留[终态摘要](../../work/YUZE-LU/121/results/run178-five-macro-003712/index.json)，不扩展旧C8修复。当前四个旧baseline（92045/92046/92047/92062）加190/196/203，共七allocation；其他成员未操作。203当前仅Vroute可运行，S/R/V独立接收均受实际最终布线依赖约束，不能为了填满节点制造重复版本或提前领取。先前00:20的八allocation仅为当时快照。
+
 2026-10-28 00:20 CST。仓库rayggxia-workspace/LLMHardwareDesign，负责人YUZE-LU；[Issue121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)持续in_progress，[PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)草稿、未合并。分支`task/121-block-v1-twelve-layer`；本记录正文对应代码0a34c7ad8cff2d364517ea24e283890d9d219aa8及随后本次文档/交付提交，以实际远程head读回为准。
 
 ## 主线和实际结果
