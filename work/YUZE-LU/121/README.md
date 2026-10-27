@@ -1,5 +1,7 @@
 # Issue 121 执行记录
 
+2026-10-27 12:54 CST：144实际49秒严格失败，组/两子索引`run144-group-terminal`、`run144a-terminal`、`run144c-terminal`保留，stage140 manifest对应实际144。真实386signal bit无缺失/错方向，但限定查询另有11个bus容器；已补对象类型/成员逐项证明，待145实际诊断。146保留正式视图编号；142无job停用，不覆盖旧输入或回执。
+
 2026-10-27 12:49 CST：143/92226自然FAILED/51秒，MaxRSS3002100K；组与A/C子任务失败索引为`run143-group-terminal`、`run143a-terminal`、`run143c-terminal`，旧局部pin/全名前缀不兼容原因与共享限定查询修复见同源视图决策。`view-controls-144.json`再次通过来源/编排控制。142未提交停用，144/145拟采用新不可变源码，尚未运行；原失败与部署不覆盖。
 
 2026-10-27 12:43 CST：142四视图组已不可变部署无job，依赖134/135完整成功，部署索引`results/run142-deployment`和stage138 manifest；135最终功能A/C子任务均成功，各三初态完整242事务，整组物理DRC继续，索引`run135a-final-terminal`、`run135c-final-terminal`绑定父allocation仍RUNNING而非冒称整组终态。另准备143实际封存T6K时序模型双路诊断，尚未运行，不是正式宏视图。

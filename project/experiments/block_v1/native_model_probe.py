@@ -64,8 +64,12 @@ def probe(root,out,cpus,run,policy):
                 source=str(source),source_receipt_sha256=file_sha(source/'receipt.json'),producer_sha256=file_sha(report),inputs=inputs,
                 pipeline_sha256=file_sha(pipeline),preparation_receipt_sha256=file_sha(prep/'receipt.json'),pins_sha256=file_sha(pins),
                 lib_interface_script_sha256=file_sha(root/'project/experiments/block_v1/native_lib_pins.tcl'),
+                typed_bus_metadata_sha256=file_sha(out/'lib-buses.tsv'),typed_bus_count=len((out/'lib-buses.tsv').read_text().splitlines()),
                 diagnostic_model_sha256=file_sha(out/'diagnostic.lib'),diagnostic_model_bytes=(out/'diagnostic.lib').stat().st_size,
-                pin_count=len(expected),timing_arc_types=types,physical_receiver_qualified=False,
+                pin_count=len(expected),observed_signal_pin_count=len(observed),missing_pins=sorted(set(expected)-set(observed)),
+                extra_pins=sorted(set(observed)-set(expected)),
+                wrong_directions={p:[d,observed[p]]for p,d in expected.items()if p in observed and d!=observed[p]},
+                timing_arc_types=types,physical_receiver_qualified=False,
                 flat_abstract_boundary_qualified=False,exact_final_function_qualified=False,twelve_layer_qualified=False,qualified_hard_macro=False,
                 scope='Read-only actual sealed T6K native STA timing-model API/export/interface diagnostic. No physical, boundary accuracy, input resistance, final-function, twelve-layer or macro qualification; diagnostic.lib cannot substitute for source-qualified views.')
     (out/'native-timing-model-probe.json').write_text(json.dumps(result,indent=2)+'\n')

@@ -25,3 +25,7 @@ python project/experiments/block_v1/native_view_control.py <全新控制JSON路�
 2026-10-27 12:49 CST：143/92226实际自然失败51秒，TotalCPU2:39.191、MaxRSS3002100K；两路都成功写出并由原生工具读入模型，各399个pin，但旧解析断言要求`get_full_name`返回库/cell前缀，实际安装工具返回的是局部pin名。保留组和两子任务全部失败回执，不把成功导出当完整诊断通过。修复为共享`native_lib_pins.tcl`：精确库/cell查询必须恰好匹配一个cell，错误库和错误cell查询均须为空，从限定查询返回的局部pin名构造完整身份，再与原准备pin方向逐项核对。正式视图和诊断使用同一脚本并保存其SHA；不接受未限定库/cell的裸名称。
 
 142只部署、没有job，因使用旧读回假设而停用，不覆盖原不可变归档。144将执行修复后的两路实际诊断；145将保留原134/135整组成功依赖，部署修正脚本的正式四视图组。此时144/145尚未部署。13来源反例及4种真实stub编排控制在修复源码上再次通过，索引`view-controls-144.json`，仍不替代真实工具诊断或物理资格。
+
+2026-10-27 12:54 CST：144/92227两路再次严格失败49秒，TotalCPU2:41.247、MaxRSS3184988K。限定库/cell及错库/错cell控制实际通过，386个真实signal bit全部存在且方向一致；额外查询对象为11个Liberty bus容器与VDD/VSS。原接收已区分PG，但尚未区分bus容器，故接口检查仍失败，原回执保留。模型分别360706/360660字节；均有31 combinational、195 rising_edge、189 setup_rising、189 hold_rising、各1 min/max_clock_tree_path，数量仅描述导出结果，不证明时序覆盖或边界精度。
+
+共享脚本现按实际Liberty对象的`is_bus`与`member_iterator`区分bus容器，逐项证明所有成员也存在于同一限定查询且方向一致；容器及全成员表另存`lib-buses.tsv`，信号bit仍要求与全部原386端点精确对应，未知额外scalar pin继续拒绝。API参考[OpenSTA的bus成员展开](https://github.com/The-OpenROAD-Project/OpenSTA/blob/master/sdc/Sdc.tcl)（2026-10-27读取）；当前容器上的实际执行另由新145诊断验证，不假定上游当前源码等于安装版本。编号用途更新：145用于此项修复后的双路实际诊断，146用于后续正式四视图；尚未部署，不复用144失败或142旧部署。
