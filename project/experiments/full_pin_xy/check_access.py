@@ -30,13 +30,17 @@ def check_rows(reader,whole=False):
         for ids in links.values():
             for i in ids[1:]:union(i,ids[0])
         for ids in bylayer.values():
-            ids.sort(key=lambda i:rows[i]['x0']);active=[]
+            # Exact 2-D hash, including closed boundaries. Large clock/reset
+            # trees otherwise make a one-axis active list needlessly quadratic.
+            bins=defaultdict(list);step=8000  # 4um at the verified 2000 DBU/um
             for i in ids:
-                r=rows[i];active=[j for j in active if rows[j]['x1']>=r['x0']]
-                for j in active:
+                r=rows[i];keys=[(x,y) for x in range(r['x0']//step,r['x1']//step+1) for y in range(r['y0']//step,r['y1']//step+1)]
+                candidates=set()
+                for key in keys:candidates.update(bins[key])
+                for j in candidates:
                     q=rows[j]
-                    if q['y0']<=r['y1'] and q['y1']>=r['y0']:union(i,j)
-                active.append(i)
+                    if q['x0']<=r['x1'] and q['x1']>=r['x0'] and q['y0']<=r['y1'] and q['y1']>=r['y0']:union(i,j)
+                for key in keys:bins[key].append(i)
         terms={link:find(ids[0]) for link,ids in links.items() if link.startswith(('I:','B:'))}
         components=defaultdict(list)
         for term,root in terms.items():components[root].append(term)

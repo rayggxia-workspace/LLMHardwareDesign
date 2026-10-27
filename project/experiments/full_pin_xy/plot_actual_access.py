@@ -10,7 +10,7 @@ def draw(root,out):
     from matplotlib.collections import PatchCollection
     interp=tkinter.Tcl();records={}
     for p in ['A','B','C']:
-        source=sorted((root/'trial_receipts').glob(f'*/trials/r02/act-{p}/independent-access.tsv.gz'))[-1]
+        source=sorted((root/'trial_receipts').glob(f'*/finalized/r02/act-{p}/selected_access.tsv.gz'))[-1]
         with gzip.open(source,'rt') as f:records[p]=list(csv.DictReader(f,delimiter='\t'))
     meta=json.loads((root/'act.meta.json').read_text());dims=np.array(meta['die_dbu'])/2000
     fig,axes=plt.subplots(1,3,figsize=(19.5,8.4));fig.subplots_adjust(left=.045,right=.985,top=.80,bottom=.25,wspace=.18)
@@ -30,8 +30,8 @@ def draw(root,out):
                 patches.append(R(bb[:2],bb[2]-bb[0],bb[3]-bb[1]))
                 if layer.startswith('via'):counts[plan,layer,round(bb[2]-bb[0],6),round(bb[3]-bb[1],6)]+=1
             if patches:ax.add_collection(PatchCollection(patches,facecolor=colors.get(layer,'#17283c'),edgecolor='none',alpha=.8,zorder=3))
-        pinfile=sorted((root/'trial_receipts').glob(f'*/trials/r02/act-{plan}/after.pins.tsv.gz'))[-1]
-        with gzip.open(pinfile,'rt') as f:pins=[r for line in f if (r:=interp.splitlist(line))[2] not in ['POWER','GROUND']]
+        pinfile=sorted((root/'trial_receipts').glob(f'*/finalized/r02/act-{plan}/pins.tsv.gz'))[-1]
+        with gzip.open(pinfile,'rt') as f:pins=[list(r.values()) for r in csv.DictReader(f,delimiter='\t') if r['use'] not in ['POWER','GROUND']]
         assert len(pins)==860
         xy=np.array([[(int(r[5])+int(r[7]))/4000,(int(r[6])+int(r[8]))/4000] for r in pins]);ax.scatter(xy[:,0],xy[:,1],s=3,c='#9eabb8',zorder=4)
         for r in records[plan]:

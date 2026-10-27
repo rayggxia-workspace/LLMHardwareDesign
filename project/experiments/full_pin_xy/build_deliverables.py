@@ -97,10 +97,23 @@ def build(root,out):
             for p in d.iterdir():
                 if p.is_file() and p.suffix=='.json':compress(p,dest/(p.name+'.gz'))
     physical_evidence=root/'trial_receipts'
-    if physical_evidence.exists():shutil.copytree(physical_evidence,evidence/'physical',dirs_exist_ok=True)
+    if physical_evidence.exists():
+        latest=sorted(p for p in physical_evidence.iterdir() if p.is_dir())[-1]
+        published=evidence/'physical';published.mkdir(exist_ok=True)
+        for prior in published.iterdir():
+            if prior.is_dir() and prior.name!=latest.name:
+                assert published.resolve() in prior.resolve().parents
+                shutil.rmtree(prior)  # only duplicated generated publication copies; originals retained
+        shutil.copytree(latest,published/latest.name,dirs_exist_ok=True)
     shutil.copy2(root/'coverage_gate.json',data)
     shutil.copytree(root/'pin-use-r01',data/'pin-use-r01',dirs_exist_ok=True)
     shutil.copy2(root/'pin_use_correction.json',data)
+    for c in ['mxu','vector','opentpu_aux','llaccel_aux']:
+        prior=data/'candidate_revision_r01'/c;prior.mkdir(parents=True,exist_ok=True)
+        compress(root/'revisions/r01'/c/f'{c}_pin_coordinates.csv',prior/f'{c}_pin_coordinates.csv.gz')
+        shutil.copy2(root/'revisions/r01'/c/f'{c}_metrics.json',prior)
+        shutil.copy2(root/f'{c}_grid_revision.json',data)
+    shutil.copytree(root/'native_grid',data/'native_grid',dirs_exist_ok=True)
     # Preserve exact compact hierarchy/frontier and origin proof for reproducing ownership.
     for p in (root/'partition-r02').iterdir():
         if p.is_file():
@@ -152,7 +165,7 @@ def build(root,out):
 <p>父层逐pin逻辑连接已补齐，对端原始M5/M6层可以核对；原始父层真实handoff层、实际穿层序列仍全部未知，不能把对端M5/M6等同于父层M8接入。连接语义没有改变，未知目标保持未知，后续需要版本匹配的父层数据库。</p></section>
 __BLOCKS__
 <section class="card" id="physical"><h2>独立物理验证阶段</h2><div class="scroll">__STAGES__</div><p>小区域对照固定同一8个pin，其余pin保持原始位置；A读取原始边界，Aopt只在相同边/相同层的原有8个边界槽位内做分配优化，B/C采用相应候选坐标。Aopt使用C中心作端点导向代理成本，不能称为全局最优边界。place_pin真实写入ODB并核对中心和原层/尺寸；只清除相关网络原dbWire，然后实际global_route/detail_route。保留原单元与宏位置、规格、CTS和PDN，不删OBS、不修驱动掩盖XY成本。</p><p>A_replay保持原XY但重新接同一组网络，区分重跑布线本身影响。后续ACT完整740-pin C的独立对照另用fullC-r01记录，B只取同一740-pin cohort，不能冒充完整859-pin B；其实际阶段以回执为准。</p><img loading="lazy" src="assets/act_actual_access.png"><p><a href="assets/act_actual_access.svg">实际接入SVG</a> · <a href="data/act_actual_access_via_geometry.csv">实际via cut层尺寸/数量</a>；尺寸来自实际路由数据库，不是最大层通用间距假设。</p>
-<p>DRT完成、fresh native DRC、ODB连通、PDN、OpenRCX、setup/hold/电气检查分别记录；命令执行成功不等于各规则通过。继承baseline未通过项继续保留。精确阶段、失败与工具输出见<a href="data/physical_summary.json">物理回执</a>；原始大型ODB/DEF/SPEF留在授权独立远程目录，输出SHA索引见execution.json。</p><pre>__PHYSICAL__</pre>
+<div class="warn"><b>实际发现并隔离的工具问题：</b>当前OpenRCX提取后保存的ODB重新读入，会产生大量native DRC冲突；ACT逐阶段试验确认读写/加载/约束前DRC=0，extract后ODB重读报12534项。旧checked.odb不作为物理母本。使用提取前routed.odb（A用原始ODB）在新进程导出clean.odb、视图并独立DRC/全块连通；clean与提取前输入逐字节一致。SPEF/STA保留其同一提取前来源，并明确系统边界不完整。全部旧失败和分析状态诊断保留，未降低规则。</div><p>新增四块另按实际0.005μm制造网格修订候选r02，最大轴向修正均小于0.0025μm；保留原r01逐pin坐标/指标及被place_pin对齐的失败。此为已在内部的二维候选之网格修正，不是把边缘微移伪装成内部二维。实际试验采用原相同8pin cohort重试，层/方向/连接语义不变。</p><p>DRT完成、独立clean进程native DRC、全块几何连通、PDN、OpenRCX、setup/hold/电气检查分别记录；命令执行成功不等于各规则通过。继承baseline未通过项继续保留。精确阶段、失败与工具输出见<a href="data/physical_summary.json">物理回执</a>；原始大型ODB/DEF/SPEF留在授权独立远程目录，输出SHA索引见execution.json。</p><pre>__PHYSICAL__</pre>
 <p>物理底座使用原Nangate45平台：signal M2–M10/clock M4–M10；两个SYSTEM保持其原上限M8。没有M11/M12扩展。OpenROAD显示版本unknown，采用可执行文件SHA0a4cdf08…锁定；原研究宏Liberty不是生产SRAM时序签核库。块外框未缩小，不报告block面积节省；没有真实缩小通道/总体边界也不报告系统面积收益。</p></section>
 <section class="card" id="query"><h2>逐pin查询（完整数据，显示上限100行）</h2><select id="case"><option value="">全部block</option>__OPTIONS__</select><input id="search" placeholder="pin / bus / 类别 / 保留理由"><p id="count"></p><div class="scroll"><table><thead><tr><th>block</th><th>pin</th><th>bus</th><th>类别</th><th>方向</th><th>层</th><th>A XY μm</th><th>B XY μm</th><th>C XY μm</th><th>C依据</th></tr></thead><tbody id="rows"></tbody></table></div></section>
 <section class="card"><h2>来源、可复现入口和限制</h2><p><a href="https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/120">PR120</a>未合并成果为起点；<a href="https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/58">Issue55/PR58</a>提供已存在的完整包装/结构证明和两个已完成SYSTEM路由源。没有接管其活动作业，也没有把其待验证项改成通过。</p><p><a href="data/sources.json">六块实际数据库路径/SHA</a> · <a href="data/coverage_gate.json">覆盖回执</a> · <a href="data/artifact_index.json">交付文件SHA索引</a> · <a href="../../../project/experiments/full_pin_xy/README.md">脚本与命令</a></p><p>原参考HTML及ref-project、历史实验、PR120旧工作树均保持完整。新结果只写issue126独立目录。几何端点L1不是真实布线线长；实际线长由数据库路由段统计，RC由OpenRCX提取；两者与STA结果单独比较。候选图不能代表合法实现图。</p></section><footer>本报告保留负结果与未知条件。每块推荐取决于本次固定配置、原目标层证据和密度；不泛化为所有大模型或所有划分粒度。</footer></main>
