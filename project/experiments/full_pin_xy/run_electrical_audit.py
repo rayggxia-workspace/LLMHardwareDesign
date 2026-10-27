@@ -13,7 +13,11 @@ summary=[]
 for case,rev,plan in inputs:
     source=ROOT/'trials'/rev/(case+'-'+plan);receipt=json.loads((source/'execution.json').read_text());assert receipt.get('finished_utc')
     p=source/'timing.paths.json';expected=receipt['outputs'][p.name]['sha256'];assert sha(p)==expected
-    r=summarize(p);r.update({'case':case,'revision':rev,'plan':plan,'selected_pin_count':receipt['selected_pin_count'],
+    selected=receipt.get('selected_pin_count')
+    if selected is None:
+        command=receipt['command'];environment=dict(x.split('=',1) for x in command[command.index('--env')+1].split(','))
+        selected=sum(line.startswith('lappend relocations ') for line in Path(environment['PINXY_RELOCATIONS']).read_text().splitlines())
+    r=summarize(p);r.update({'case':case,'revision':rev,'plan':plan,'selected_pin_count':selected,
        'source':str(p),'source_sha256':expected,'RC_STA_receipt':str(source/'execution.json')})
     # Independently compare the streaming parser to the standard whole-document
     # parser on the complete real ACT C report before processing giant reports.
