@@ -15,7 +15,9 @@
 
 ## 真实模型实验与 Block 分析
 
-[阶段性分析报告](docs/MODEL_EXPERIMENT_ANALYSIS.md)汇总八个具体模型的运行目的、实际范围、关键结果与失败，并将证据对应到 P1–P15 能力和 M/V/A/R/S/D 逻辑域。原实验以固定 commit 链接追溯；本报告集成不等于来源 PR 或整模型硬件验收。
+[阶段性分析报告](docs/model-analysis/MODEL_EXPERIMENT_ANALYSIS.md)汇总八个具体模型的运行目的、实际范围、关键结果与失败，并将证据对应到 P1–P15 能力和 M/V/A/R/S/D 逻辑域。原实验以固定 commit 链接追溯；本报告集成不等于来源 PR 或整模型硬件验收。
+
+模型资料统一归档在 [docs/model-analysis](docs/model-analysis/README.md)：可阅读[精简字符算子图](docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md)，或通过[完整图册说明](docs/model-analysis/COMPUTATION_GRAPHS_FULL.md)查看手工、原始 ONNX 与 onnxsim 图及验证边界。
 
 ## 当前工作方式
 

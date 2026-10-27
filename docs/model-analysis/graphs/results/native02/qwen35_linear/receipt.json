@@ -1,0 +1,40 @@
+{
+  "model": "qwen35_linear",
+  "started": 1792996859.7992072,
+  "source_sha256": "9143c395876f6e662ba6ba20cedc91e111751e3bdbc9c61a6b2fe05e3390d8d0",
+  "status": "failed",
+  "scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+  "implementation_file": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/lib/python3.12/site-packages/transformers/models/qwen3_5/modeling_qwen3_5.py",
+  "implementation_sha256": "b4b17fe08d8d54da34a0fce78639666279ae7fd0a9e4ec06fce6602774707ca3",
+  "versions": {
+    "torch": "2.10.0+cpu",
+    "transformers": "5.20.2"
+  },
+  "weights": {
+    "loaded": true,
+    "matched_tensors": 14,
+    "missing": [],
+    "unexpected": [],
+    "files": [
+      {
+        "path": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/models/qwen35-4b-851bf6e8/model.safetensors-00001-of-00002.safetensors",
+        "size": 5329398688
+      },
+      {
+        "path": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/models/qwen35-4b-851bf6e8/model.safetensors-00002-of-00002.safetensors",
+        "size": 3990429408
+      }
+    ],
+    "tensor_sha256": "4997869e144afe4dea94985a050f69338c47ad6b2bce82f0467c990ae2269dae"
+  },
+  "native_seconds": 0.7375025749206543,
+  "error": "UnsupportedOperatorError(\"Exporting the operator 'aten::linalg_solve_triangular' to ONNX opset version 17 is not supported\")",
+  "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/sources/native_export.py\", line 93, in main\n    torch.onnx.export(wrapped,inputs,str(out/'raw.onnx'),input_names=['x','mask','cos','sin'],output_names=['y'],opset_version=17,dynamo=False,do_constant_folding=False,export_params=True)\n  File \"/public/home/yuzelu/RuizhiLiang/issue53-cpu-pilot-20261023/venv/lib/python3.12/site-packages/torch/onnx/__init__.py\", line 341, in export\n    export(\n  File \"/public/home/yuzelu/RuizhiLiang/issue53-cpu-pilot-20261023/venv/lib/python3.12/site-packages/torch/onnx/_internal/torchscript_exporter/utils.py\", line 552, in export\n    _export(\n  File \"/public/home/yuzelu/RuizhiLiang/issue53-cpu-pilot-20261023/venv/lib/python3.12/site-packages/torch/onnx/_internal/torchscript_exporter/utils.py\", line 1513, in _export\n    graph, params_dict, torch_out = _model_to_graph(\n                                    ^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/RuizhiLiang/issue53-cpu-pilot-20261023/venv/lib/python3.12/site-packages/torch/onnx/_internal/torchscript_exporter/utils.py\", line 1116, in _model_to_graph\n    graph = _optimize_graph(\n            ^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/RuizhiLiang/issue53-cpu-pilot-20261023/venv/lib/python3.12/site-packages/torch/onnx/_internal/torchscript_exporter/utils.py\", line 689, in _optimize_graph\n    graph = _C._jit_pass_onnx(graph, operator_export_type)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/RuizhiLiang/issue53-cpu-pilot-20261023/venv/lib/python3.12/site-packages/torch/onnx/_internal/torchscript_exporter/utils.py\", line 1794, in _run_symbolic_function\n    raise errors.UnsupportedOperatorError(\ntorch.onnx.errors.UnsupportedOperatorError: Exporting the operator 'aten::linalg_solve_triangular' to ONNX opset version 17 is not supported\n",
+  "finished": 1792996895.9707942,
+  "artifacts": {
+    "config.json": {
+      "bytes": 2231,
+      "sha256": "1daf5de67b2900ad20e1e84e084e4e70ec505a7ec885cf406c524bc448339185"
+    }
+  }
+}

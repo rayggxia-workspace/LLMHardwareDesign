@@ -1,0 +1,22 @@
+{
+  "model": "qwen35_linear",
+  "started": 1792996983.6071177,
+  "source_sha256": "57f93f461f63bf859ed1725603b908428e934e9ca10e58c897832e1e3aa17126",
+  "status": "failed",
+  "scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+  "implementation_file": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/lib/python3.12/site-packages/transformers/models/qwen3_5/modeling_qwen3_5.py",
+  "implementation_sha256": "b4b17fe08d8d54da34a0fce78639666279ae7fd0a9e4ec06fce6602774707ca3",
+  "versions": {
+    "torch": "2.10.0+cpu",
+    "transformers": "5.20.2"
+  },
+  "error": "ValueError('Duplicate tensor binding: model.language_model.layers.0.mlp.down_proj.weight')",
+  "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/sources/native_export_v2.py\", line 95, in main\n    receipt['weights']=load_layer_weights(layer,p,idx);wrapped=Wrapped(layer,args.model).eval()\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/sources/native_export_v2.py\", line 50, in load_layer_weights\n    if suffix in state:raise ValueError('Duplicate tensor binding: '+k)\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: Duplicate tensor binding: model.language_model.layers.0.mlp.down_proj.weight\n",
+  "finished": 1792996984.2391775,
+  "artifacts": {
+    "config.json": {
+      "bytes": 2231,
+      "sha256": "1daf5de67b2900ad20e1e84e084e4e70ec505a7ec885cf406c524bc448339185"
+    }
+  }
+}
