@@ -79,16 +79,19 @@ def one(case,variant,revision):
         rec['model_file_bytes']=(out/'timing.lib').stat().st_size
     rec['source_odb_and_SPEF_unchanged']=sha(odb)==rec['clean_odb_sha256'] and sha(spef)==rec['matching_existing_SPEF_sha256']
     rec['finished_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat();rec['files']={p.name:{'sha256':sha(p),'bytes':p.stat().st_size} for p in out.iterdir() if p.is_file() and p.name!='execution.json'}
-    rec['status']='NATIVE_EXTRACTED_MODEL_EXPORTED_NOT_QUALIFIED' if rec.get('exact_all_signal_pin_direction_match') and rec['SPEF_replay_matches_recorded_trial_1e_minus5_ns'] else 'ACTUAL_MODEL_EXPORT_INTERFACE_OR_SPEF_REPLAY_CHECK_FAILED'
+    rec['status']='NATIVE_EXTRACTED_MODEL_EXPORTED_NOT_QUALIFIED' if rec.get('exact_all_signal_pin_direction_match') and rec.get('model_has_timing_groups') and rec['SPEF_replay_matches_recorded_trial_1e_minus5_ns'] else 'ACTUAL_MODEL_EXPORT_INTERFACE_OR_SPEF_REPLAY_CHECK_FAILED'
     (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     print('LEAF_MODEL',case,variant,rec['status'],rec.get('actual_model_signal_pins'),flush=True)
     return rec
 
 def safe(args):
+    out=ROOT/'leaf_timing_models'/args[2]/(args[0]+'-'+args[1])
+    if out.exists():
+        print('REFUSE_EXISTING_MODEL_DIRECTORY_UNCHANGED',out,flush=True);return None
     try:return one(*args)
     except Exception:
-        traceback.print_exc();out=ROOT/'leaf_timing_models'/args[2]/(args[0]+'-'+args[1]);out.mkdir(parents=True,exist_ok=True)
-        (out/'driver_failure.json').write_text(json.dumps({'status':'FAILED_NOT_A_MODEL_PASS','traceback':traceback.format_exc()},indent=2)+'\n')
+        traceback.print_exc();out.mkdir(parents=True,exist_ok=True)
+        with (out/'driver_failure.json').open('x') as f:f.write(json.dumps({'status':'FAILED_NOT_A_MODEL_PASS','traceback':traceback.format_exc()},indent=2)+'\n')
 
 if __name__=='__main__':
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=8

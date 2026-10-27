@@ -159,9 +159,12 @@ if __name__=='__main__':
     inputs=ROOT/'inputs'/sys.argv[1];rev=sys.argv[2];plans=sys.argv[3:] or ['A','A_replay','A_child_replay','Aopt','B','C']
     results=[]
     for plan in plans:
+        c=json.loads((inputs/'contract.json').read_text());out=ROOT/'parents'/rev/(c['design']+'-'+c['focus']+'-'+plan)
+        if out.exists():
+            print('REFUSE_EXISTING_PARENT_DIRECTORY_UNCHANGED',out,flush=True);results.append(False);continue
         try:results.append(one(inputs,rev,plan))
         except Exception:
             traceback.print_exc();c=json.loads((inputs/'contract.json').read_text());out=ROOT/'parents'/rev/(c['design']+'-'+c['focus']+'-'+plan);out.mkdir(parents=True,exist_ok=True)
-            (out/'driver_failure.json').write_text(json.dumps({'status':'DRIVER_OR_BASELINE_GATE_FAILED_NOT_A_PASS','traceback':traceback.format_exc()},indent=2)+'\n')
+            with (out/'driver_failure.json').open('x') as f:f.write(json.dumps({'status':'DRIVER_OR_BASELINE_GATE_FAILED_NOT_A_PASS','traceback':traceback.format_exc()},indent=2)+'\n')
             results.append(False)
     sys.exit(0 if all(results) else 1)

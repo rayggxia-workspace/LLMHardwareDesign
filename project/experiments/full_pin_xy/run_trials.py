@@ -70,11 +70,14 @@ def one(case,plan,revision):
     return result.returncode==0
 
 def safe(args):
+    out=ROOT/'trials'/args[2]/(args[0]+'-'+args[1])
+    if out.exists():
+        print('REFUSE_EXISTING_TRIAL_DIRECTORY_UNCHANGED',out,flush=True);return False
     try:return one(*args)
     except Exception:
         traceback.print_exc();print('DRIVER_FAILED',args,flush=True)
         out=ROOT/'trials'/args[2]/(args[0]+'-'+args[1]);out.mkdir(parents=True,exist_ok=True)
-        (out/'driver_failure.json').write_text(json.dumps({'args':args,'traceback':traceback.format_exc(),'status':'DRIVER_FAILED_NOT_PHYSICAL_RESULT'},indent=2)+'\n')
+        with (out/'driver_failure.json').open('x') as f:f.write(json.dumps({'args':args,'traceback':traceback.format_exc(),'status':'DRIVER_FAILED_NOT_PHYSICAL_RESULT'},indent=2)+'\n')
         return False
 
 if __name__=='__main__':
