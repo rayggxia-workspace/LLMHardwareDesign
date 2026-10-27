@@ -7,3 +7,5 @@
 - [0001：初期资料直接进入项目目录](0001-initial-research-layout.md)（accepted）
 - [0002：openTPU 同资源物理对照约定](0002-opentpu-physical-comparison.md)（proposed，工程已试行，待PR审查）
 - [0003：提取后规格修复的线路复用与完整成本复核](0003-extracted-route-reuse.md)（proposed，本轮通过工程检查，待PR审查）
+
+- [0004：缺失历史父层时建立独立受控接入基线](0004-controlled-parent-pin-access.md)（proposed，用户授权后试行，尚未通过物理验证）

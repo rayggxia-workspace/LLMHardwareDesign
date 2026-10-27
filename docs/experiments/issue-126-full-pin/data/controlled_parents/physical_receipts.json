@@ -1,0 +1,720 @@
+[
+  {
+    "raw_receipt": "milestone-r09/parents/ll-r01/llaccel-gemm-A/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "gemm",
+      "design": "llaccel",
+      "plan": "A",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92458",
+      "allocated_cpus": "8",
+      "driver_commit": "3d882006b5e0fd2720271ba4c00cd90cfc81feab",
+      "input_contract_sha256": "0484b727a8ea7405652d03148277e8c30c3b2a4713317752d48863c428fead96",
+      "started_utc": "2026-10-27T14:43:20.669698+00:00"
+    },
+    "graph_check": {
+      "exact_terminal_set_direction_layer_and_bit_graph": true,
+      "endpoints": 27050,
+      "parent_bits": 13507,
+      "independent_constant_nets_preserved": true,
+      "normalization": "Only OpenDB backslash name escaping; reject any key collision before comparing graph"
+    },
+    "actual_stage_receipt": {}
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r01/opentpu-act-A/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "A",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92407",
+      "allocated_cpus": "8",
+      "driver_commit": "56c4c33265878649e450a390aaa195e4854e7ef1",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:25:48.516263+00:00",
+      "child_views": {
+        "opentpu_aux": {
+          "source_clean_receipt": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r03/opentpu_aux-A/execution.json",
+          "source_clean_receipt_sha256": "25264eb43de14b384aad1470c69bcc88ef089affab996e17fb3a8f635595c6d3",
+          "source_abstract_lef": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r03/opentpu_aux-A/abstract.lef",
+          "source_abstract_sha256": "5cff1fc79d70f1de70108f6970bb37010b2a8c37e2baa1ac0f0a4cf94771219c",
+          "parent_alias": "p126_opentpu_aux_A",
+          "alias_lef_sha256": "720c2b0d319e4840f44b0ab805e6235b79282de7408f1a8be051d757483c583c"
+        },
+        "act": {
+          "source_clean_receipt": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r02/act-A/execution.json",
+          "source_clean_receipt_sha256": "f5da645916adc50b30a40fa68179c0a44482b988a4b9e3590a9cadb1ca1967ae",
+          "source_abstract_lef": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r02/act-A/abstract.lef",
+          "source_abstract_sha256": "c53810f1d37eddd9b9622458fbaadd3a511f761ac3e2f2a366893da23c69e61b",
+          "parent_alias": "p126_act_A",
+          "alias_lef_sha256": "63851902f94372758af826eb28e58664b95e5428b97326df6f796dbd384a6a7c"
+        },
+        "mxu": {
+          "source_clean_receipt": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r03/mxu-A/execution.json",
+          "source_clean_receipt_sha256": "3d85770ee8d4351f11265b97d4a918dcd988ca06cd3bcad876f557e26ac22e61",
+          "source_abstract_lef": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r03/mxu-A/abstract.lef",
+          "source_abstract_sha256": "b65a3181a72616f142546e35e39824b1f67c3c96f9ce7cb3de9d1e6490d4658f",
+          "parent_alias": "p126_mxu_A",
+          "alias_lef_sha256": "79db19873be5be60e10b30ab00cb9dc79be85c742dfec2144ff9ee1c715dd244"
+        }
+      },
+      "routing_only_macro_model": "Not characterized; capacitance zero is only a linker placeholder. Do not use for parent RC/STA/electrical qualification.",
+      "setup_sha256": "84f794c5009750a75b65b061b542b470331df54fe16c6ab3efcf6c35738a9d02",
+      "command": [
+        "singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro",
+        "--bind",
+        "/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro",
+        "--home",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/home",
+        "--pwd",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/parents/r01/opentpu-act-A",
+        "--env",
+        "PINXY_PARENT_OUT=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/parents/r01/opentpu-act-A,PINXY_PARENT_INPUT=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/inputs/parent-inputs-opentpu-act-r03,PINXY_PARENT_RUN_SETUP=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/parents/r01/opentpu-act-A/run_setup.tcl,PINXY_DRIVER=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/parent-r01/code,OMP_NUM_THREADS=4",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad",
+        "-threads",
+        "4",
+        "-no_init",
+        "-exit",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/parent-r01/code/parent_trial.tcl"
+      ],
+      "returncode": 1,
+      "stages": [
+        {
+          "stage": "load",
+          "status": "FAIL",
+          "detail": "PDN-0008"
+        }
+      ],
+      "PDN_gates_executed_and_connected": false,
+      "finished_utc": "2026-10-27T12:25:50.424983+00:00",
+      "files": {
+        "p126_opentpu_aux_A.lef": {
+          "bytes": 3942639,
+          "sha256": "720c2b0d319e4840f44b0ab805e6235b79282de7408f1a8be051d757483c583c"
+        },
+        "openroad.log": {
+          "bytes": 85102,
+          "sha256": "ef93c6827cd1bea25fefae2eb67c73a33ecccb52973a5afff87e5389efc2ff7d"
+        },
+        "run_setup.tcl": {
+          "bytes": 2388,
+          "sha256": "84f794c5009750a75b65b061b542b470331df54fe16c6ab3efcf6c35738a9d02"
+        },
+        "load.error.txt": {
+          "bytes": 530,
+          "sha256": "884497155aef0b349a14363165e7b6b6e58e7439557b82d2f6a4a162e135c194"
+        },
+        "p126_act_A.lef": {
+          "bytes": 251164,
+          "sha256": "63851902f94372758af826eb28e58664b95e5428b97326df6f796dbd384a6a7c"
+        },
+        "stages.tsv": {
+          "bytes": 39,
+          "sha256": "8aa094d3f054c2001ddea6ff54688cf98e28bf0a1bff7c7b6e8e181a6edbbd69"
+        },
+        "p126_mxu_A.lef": {
+          "bytes": 1928055,
+          "sha256": "79db19873be5be60e10b30ab00cb9dc79be85c742dfec2144ff9ee1c715dd244"
+        },
+        "failed-load.odb": {
+          "bytes": 6450710,
+          "sha256": "f9c72a2c5fcdc4a384fbf7e2b84ac126f7cc6fa6c9dff19b3652e5b6e5615fa1"
+        }
+      },
+      "status": "STAGES_EXECUTED_NOT_FULL_QUALIFICATION"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {
+      "load": "FAIL"
+    }
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r01/opentpu-act-A_child_replay/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "A_child_replay",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92407",
+      "allocated_cpus": "8",
+      "driver_commit": "56c4c33265878649e450a390aaa195e4854e7ef1",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:25:50.561914+00:00"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {}
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r01/opentpu-act-A_replay/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "A_replay",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92407",
+      "allocated_cpus": "8",
+      "driver_commit": "56c4c33265878649e450a390aaa195e4854e7ef1",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:25:50.503391+00:00"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {}
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r01/opentpu-act-Aopt/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "Aopt",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92407",
+      "allocated_cpus": "8",
+      "driver_commit": "56c4c33265878649e450a390aaa195e4854e7ef1",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:25:50.617158+00:00"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {}
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r01/opentpu-act-B/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "B",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92407",
+      "allocated_cpus": "8",
+      "driver_commit": "56c4c33265878649e450a390aaa195e4854e7ef1",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:25:50.674139+00:00"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {}
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r01/opentpu-act-C/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "C",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92407",
+      "allocated_cpus": "8",
+      "driver_commit": "56c4c33265878649e450a390aaa195e4854e7ef1",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:25:50.731580+00:00"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {}
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r02/opentpu-act-A/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "A",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92408",
+      "allocated_cpus": "8",
+      "driver_commit": "1a72666b492892578a27738a6b11c85e26edc37f",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:27:56.491745+00:00",
+      "child_views": {
+        "opentpu_aux": {
+          "source_clean_receipt": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r03/opentpu_aux-A/execution.json",
+          "source_clean_receipt_sha256": "25264eb43de14b384aad1470c69bcc88ef089affab996e17fb3a8f635595c6d3",
+          "source_abstract_lef": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r03/opentpu_aux-A/abstract.lef",
+          "source_abstract_sha256": "5cff1fc79d70f1de70108f6970bb37010b2a8c37e2baa1ac0f0a4cf94771219c",
+          "parent_alias": "p126_opentpu_aux_A",
+          "alias_lef_sha256": "720c2b0d319e4840f44b0ab805e6235b79282de7408f1a8be051d757483c583c"
+        },
+        "act": {
+          "source_clean_receipt": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r02/act-A/execution.json",
+          "source_clean_receipt_sha256": "f5da645916adc50b30a40fa68179c0a44482b988a4b9e3590a9cadb1ca1967ae",
+          "source_abstract_lef": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r02/act-A/abstract.lef",
+          "source_abstract_sha256": "c53810f1d37eddd9b9622458fbaadd3a511f761ac3e2f2a366893da23c69e61b",
+          "parent_alias": "p126_act_A",
+          "alias_lef_sha256": "63851902f94372758af826eb28e58664b95e5428b97326df6f796dbd384a6a7c"
+        },
+        "mxu": {
+          "source_clean_receipt": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r03/mxu-A/execution.json",
+          "source_clean_receipt_sha256": "3d85770ee8d4351f11265b97d4a918dcd988ca06cd3bcad876f557e26ac22e61",
+          "source_abstract_lef": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r03/mxu-A/abstract.lef",
+          "source_abstract_sha256": "b65a3181a72616f142546e35e39824b1f67c3c96f9ce7cb3de9d1e6490d4658f",
+          "parent_alias": "p126_mxu_A",
+          "alias_lef_sha256": "79db19873be5be60e10b30ab00cb9dc79be85c742dfec2144ff9ee1c715dd244"
+        }
+      },
+      "routing_only_macro_model": "Not characterized; capacitance zero is only a linker placeholder. Do not use for parent RC/STA/electrical qualification.",
+      "setup_sha256": "03e677274733e2821a52ae8ae15a8c703007ed9e981c4d18a1bd07a1e114858e",
+      "command": [
+        "singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro",
+        "--bind",
+        "/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro",
+        "--home",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/home",
+        "--pwd",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/parents/r02/opentpu-act-A",
+        "--env",
+        "PINXY_PARENT_OUT=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/parents/r02/opentpu-act-A,PINXY_PARENT_INPUT=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/inputs/parent-inputs-opentpu-act-r03,PINXY_PARENT_RUN_SETUP=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/parents/r02/opentpu-act-A/run_setup.tcl,PINXY_DRIVER=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/parent-r02/code,OMP_NUM_THREADS=4",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad",
+        "-threads",
+        "4",
+        "-no_init",
+        "-exit",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/parent-r02/code/parent_trial.tcl"
+      ],
+      "returncode": 1,
+      "stages": [
+        {
+          "stage": "load",
+          "status": "FAIL",
+          "detail": "PDN-0006"
+        }
+      ],
+      "PDN_gates_executed_and_connected": false,
+      "finished_utc": "2026-10-27T12:27:58.035717+00:00",
+      "files": {
+        "p126_opentpu_aux_A.lef": {
+          "bytes": 3942639,
+          "sha256": "720c2b0d319e4840f44b0ab805e6235b79282de7408f1a8be051d757483c583c"
+        },
+        "openroad.log": {
+          "bytes": 85511,
+          "sha256": "efe071d9af077e2e97dd2c7911fb875cf1dd8ce860e74b2b6566af648e169776"
+        },
+        "run_setup.tcl": {
+          "bytes": 2429,
+          "sha256": "03e677274733e2821a52ae8ae15a8c703007ed9e981c4d18a1bd07a1e114858e"
+        },
+        "load.error.txt": {
+          "bytes": 530,
+          "sha256": "7c18d43d50c625301fd802fccaee0fe721104f005fcda704968f383c4bfbd55c"
+        },
+        "p126_act_A.lef": {
+          "bytes": 251164,
+          "sha256": "63851902f94372758af826eb28e58664b95e5428b97326df6f796dbd384a6a7c"
+        },
+        "stages.tsv": {
+          "bytes": 39,
+          "sha256": "2b5419112218119b92092ffaa9967278a945ee03b5070d02db25f6031154f9ad"
+        },
+        "p126_mxu_A.lef": {
+          "bytes": 1928055,
+          "sha256": "79db19873be5be60e10b30ab00cb9dc79be85c742dfec2144ff9ee1c715dd244"
+        },
+        "failed-load.odb": {
+          "bytes": 6565103,
+          "sha256": "f193ca6072ee40a1f6591c7f81c2d7e1da92a1ae29f503328b93c31943e6a2b4"
+        }
+      },
+      "status": "ACTUAL_PARENT_ACCESS_FAILED_OR_INCOMPLETE"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {
+      "load": "FAIL"
+    }
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r02/opentpu-act-A_child_replay/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "A_child_replay",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92408",
+      "allocated_cpus": "8",
+      "driver_commit": "1a72666b492892578a27738a6b11c85e26edc37f",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:27:58.168926+00:00"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {}
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r02/opentpu-act-A_replay/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "A_replay",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92408",
+      "allocated_cpus": "8",
+      "driver_commit": "1a72666b492892578a27738a6b11c85e26edc37f",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:27:58.103149+00:00"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {}
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r02/opentpu-act-Aopt/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "Aopt",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92408",
+      "allocated_cpus": "8",
+      "driver_commit": "1a72666b492892578a27738a6b11c85e26edc37f",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:27:58.233446+00:00"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {}
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r02/opentpu-act-B/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "B",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92408",
+      "allocated_cpus": "8",
+      "driver_commit": "1a72666b492892578a27738a6b11c85e26edc37f",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:27:58.290330+00:00"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {}
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r02/opentpu-act-C/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "C",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92408",
+      "allocated_cpus": "8",
+      "driver_commit": "1a72666b492892578a27738a6b11c85e26edc37f",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:27:58.342553+00:00"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {}
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r03/opentpu-act-A/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "A",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92409",
+      "allocated_cpus": "8",
+      "driver_commit": "8005cb74c62aa5352b4e074162c68e33faad5824",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:33:04.118358+00:00",
+      "child_views": {
+        "opentpu_aux": {
+          "source_clean_receipt": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r03/opentpu_aux-A/execution.json",
+          "source_clean_receipt_sha256": "25264eb43de14b384aad1470c69bcc88ef089affab996e17fb3a8f635595c6d3",
+          "source_abstract_lef": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r03/opentpu_aux-A/abstract.lef",
+          "source_abstract_sha256": "5cff1fc79d70f1de70108f6970bb37010b2a8c37e2baa1ac0f0a4cf94771219c",
+          "parent_alias": "p126_opentpu_aux_A",
+          "alias_lef_sha256": "720c2b0d319e4840f44b0ab805e6235b79282de7408f1a8be051d757483c583c"
+        },
+        "act": {
+          "source_clean_receipt": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r02/act-A/execution.json",
+          "source_clean_receipt_sha256": "f5da645916adc50b30a40fa68179c0a44482b988a4b9e3590a9cadb1ca1967ae",
+          "source_abstract_lef": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r02/act-A/abstract.lef",
+          "source_abstract_sha256": "c53810f1d37eddd9b9622458fbaadd3a511f761ac3e2f2a366893da23c69e61b",
+          "parent_alias": "p126_act_A",
+          "alias_lef_sha256": "63851902f94372758af826eb28e58664b95e5428b97326df6f796dbd384a6a7c"
+        },
+        "mxu": {
+          "source_clean_receipt": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r03/mxu-A/execution.json",
+          "source_clean_receipt_sha256": "3d85770ee8d4351f11265b97d4a918dcd988ca06cd3bcad876f557e26ac22e61",
+          "source_abstract_lef": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r03/mxu-A/abstract.lef",
+          "source_abstract_sha256": "b65a3181a72616f142546e35e39824b1f67c3c96f9ce7cb3de9d1e6490d4658f",
+          "parent_alias": "p126_mxu_A",
+          "alias_lef_sha256": "79db19873be5be60e10b30ab00cb9dc79be85c742dfec2144ff9ee1c715dd244"
+        }
+      },
+      "routing_only_macro_model": "Not characterized; capacitance zero is only a linker placeholder. Do not use for parent RC/STA/electrical qualification.",
+      "parent_PDN_strategy": "New fixed parent M1/M4/M7/M10 grid plus macro M8/M9 local straps and adjacent M7-M8/M8-M9/M9-M10 connections. Original direct M7-M10-stack strategy failed actual macro obstructions; r01/r02 retained. No OBS removed or rule lowered; all actual leaf PG unchanged. After A is checked, freeze its PG for all variants.",
+      "setup_sha256": "040fb8c5aaad1798d709375b1a6b26d4b64762d8b0a271956830311bbe2cfb2a",
+      "command": [
+        "singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro",
+        "--bind",
+        "/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro",
+        "--home",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/home",
+        "--pwd",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/parents/r03/opentpu-act-A",
+        "--env",
+        "PINXY_PARENT_OUT=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/parents/r03/opentpu-act-A,PINXY_PARENT_INPUT=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/inputs/parent-inputs-opentpu-act-r03,PINXY_PARENT_RUN_SETUP=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/parents/r03/opentpu-act-A/run_setup.tcl,PINXY_DRIVER=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/parent-r03/code,OMP_NUM_THREADS=4",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad",
+        "-threads",
+        "4",
+        "-no_init",
+        "-exit",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/parent-r03/code/parent_trial.tcl"
+      ],
+      "returncode": 1,
+      "stages": [
+        {
+          "stage": "load",
+          "status": "FAIL",
+          "detail": "PDN-0006"
+        }
+      ],
+      "PDN_gates_executed_and_connected": false,
+      "finished_utc": "2026-10-27T12:33:05.788080+00:00",
+      "files": {
+        "p126_opentpu_aux_A.lef": {
+          "bytes": 3942639,
+          "sha256": "720c2b0d319e4840f44b0ab805e6235b79282de7408f1a8be051d757483c583c"
+        },
+        "openroad.log": {
+          "bytes": 85511,
+          "sha256": "f38204ccec920ae4976e45f1362815242b4998f14a1ff21de8f8d7ec7468fb1b"
+        },
+        "run_setup.tcl": {
+          "bytes": 3239,
+          "sha256": "040fb8c5aaad1798d709375b1a6b26d4b64762d8b0a271956830311bbe2cfb2a"
+        },
+        "load.error.txt": {
+          "bytes": 530,
+          "sha256": "d87ea8aa2a8bc9d43628a0a134244f203567cd3a298c829acf568a8cc20b95b3"
+        },
+        "p126_act_A.lef": {
+          "bytes": 251164,
+          "sha256": "63851902f94372758af826eb28e58664b95e5428b97326df6f796dbd384a6a7c"
+        },
+        "stages.tsv": {
+          "bytes": 39,
+          "sha256": "2b5419112218119b92092ffaa9967278a945ee03b5070d02db25f6031154f9ad"
+        },
+        "p126_mxu_A.lef": {
+          "bytes": 1928055,
+          "sha256": "79db19873be5be60e10b30ab00cb9dc79be85c742dfec2144ff9ee1c715dd244"
+        },
+        "failed-load.odb": {
+          "bytes": 6565103,
+          "sha256": "f193ca6072ee40a1f6591c7f81c2d7e1da92a1ae29f503328b93c31943e6a2b4"
+        }
+      },
+      "status": "ACTUAL_PARENT_ACCESS_FAILED_OR_INCOMPLETE"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {
+      "load": "FAIL"
+    }
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r03/opentpu-act-A_child_replay/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "A_child_replay",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92409",
+      "allocated_cpus": "8",
+      "driver_commit": "8005cb74c62aa5352b4e074162c68e33faad5824",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:33:05.920435+00:00"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {}
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r03/opentpu-act-A_replay/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "A_replay",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92409",
+      "allocated_cpus": "8",
+      "driver_commit": "8005cb74c62aa5352b4e074162c68e33faad5824",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:33:05.860372+00:00"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {}
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r03/opentpu-act-Aopt/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "Aopt",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92409",
+      "allocated_cpus": "8",
+      "driver_commit": "8005cb74c62aa5352b4e074162c68e33faad5824",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:33:05.975819+00:00"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {}
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r03/opentpu-act-B/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "B",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92409",
+      "allocated_cpus": "8",
+      "driver_commit": "8005cb74c62aa5352b4e074162c68e33faad5824",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:33:06.033966+00:00"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {}
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r03/opentpu-act-C/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "C",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92409",
+      "allocated_cpus": "8",
+      "driver_commit": "8005cb74c62aa5352b4e074162c68e33faad5824",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:33:06.087217+00:00"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {}
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r04/opentpu-act-A/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "A",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92410",
+      "allocated_cpus": "8",
+      "driver_commit": "b6119751f3569c1b5ce226a04e0976c1f1edd58c",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T12:37:45.563673+00:00"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {
+      "load": "EXECUTED",
+      "placement_and_contract": "EXECUTED",
+      "pdn_check_VDD": "FAIL",
+      "pdn_check_VSS": "FAIL",
+      "global_route": "EXECUTED"
+    }
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r06/opentpu-act-A/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "A",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92428",
+      "allocated_cpus": "8",
+      "driver_commit": "fb0c44ef2baedc4cfbb54145643a3f4392471b30",
+      "input_contract_sha256": "28db1454e3f5800939492c0414b591619fcad29813c82032a9ae30843b10af16",
+      "started_utc": "2026-10-27T13:00:32.647913+00:00"
+    },
+    "graph_check": {},
+    "actual_stage_receipt": {
+      "load": "EXECUTED",
+      "placement_and_contract": "EXECUTED",
+      "pdn_check_VDD": "EXECUTED",
+      "pdn_check_VSS": "EXECUTED",
+      "global_route": "EXECUTED"
+    }
+  },
+  {
+    "raw_receipt": "milestone-r09/parents/r07/opentpu-act-A/execution.json",
+    "receipt": {
+      "scope": "NEW_CONTROLLED_PARENT_NOT_HISTORICAL",
+      "case": "act",
+      "design": "opentpu",
+      "plan": "A",
+      "parent_STA": "NOT_EXECUTED_UNCHARACTERIZED_PORT_STUBS",
+      "historical_handoff": "STILL_UNKNOWN",
+      "scheduler_job": "92441",
+      "allocated_cpus": "8",
+      "driver_commit": "a33330dd8d2bd62e246bc9caf262f3a61c58e775",
+      "input_contract_sha256": "0fc0021b4c376706f47e9580a672df2c2d461a97e4df230adfd58ae2c8f2a4d5",
+      "started_utc": "2026-10-27T13:53:12.623127+00:00"
+    },
+    "graph_check": {
+      "exact_terminal_set_direction_layer_and_bit_graph": true,
+      "endpoints": 6618,
+      "parent_bits": 3408,
+      "independent_constant_nets_preserved": true,
+      "normalization": "Only OpenDB backslash name escaping; reject any key collision before comparing graph"
+    },
+    "actual_stage_receipt": {
+      "load": "EXECUTED",
+      "placement_and_contract": "EXECUTED",
+      "pdn_check_VDD": "EXECUTED",
+      "pdn_check_VSS": "EXECUTED",
+      "global_route": "EXECUTED"
+    }
+  }
+]

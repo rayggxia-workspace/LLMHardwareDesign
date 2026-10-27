@@ -142,3 +142,7 @@ python project/experiments/full_pin_xy/validate_repository.py
 `export_access.tcl`/`check_access.py`从真实各层路由、via定义和ITerm访问矩形独立检查连通；全块模式只排除不需互连的单端网络，不等于GDS/LVS。
 候选检查、局部试验、完整C实现与父层资格均单列；原父层handoff/目标层仍未知，不能自行指定M8或提升至M11/M12。
 远程只写 `/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027`，采用先提交、全新commit驱动目录和全新尝试名；不覆盖历史数据库或活动作业。当前物理结果以报告中的实际阶段回执为准，不将DRT0等同完整通过。
+
+完整cohort比较、实际失败驱动的GEMM整字节/MXU整lane增量修订，见`prepare_electrical_revision.py`、`prepare_mxu_repair.py`；原ABC和当前物理补充表分别保存。`stage_incremental_evidence.py`复用真实执行输入并核对Tcl SHA。`make_physical_summary.py`按实际cohort比较DRT提取前线长/via、独立native DRC、所检全块多端连通与setup/hold/电气，原始逐net细节保留在链接回执，HTML只展示摘要。
+
+按用户明确授权补建的受控父层由`prepare_controlled_parent.py`/`parent_job.sh`实施；`verify_parent_graph.py`在PG/布线前核对全部端点/bit/方向/原层，后续各变体冻结A的PG/外框/TOP_IO及单元位置。新TOP_IO策略与tie成本明确单列，历史handoff仍未知。父层Liberty仅物理链接、未表征，禁止用其得出父层STA/负载资格。真实GDS/LVS/宏器件模型缺项继续保留。

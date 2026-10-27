@@ -9,6 +9,7 @@ EXPECTED={'act':860,'mxu':2172,'opentpu_aux':2229,'gemm':3753,'vector':2246,'lla
 def rows(p):
     with gzip.open(p,'rt',encoding='utf-8-sig',newline='') as f:return list(csv.DictReader(f))
 def yes(s):return str(s).lower()=='true'
+def read_json(p):return json.loads(gzip.decompress(p.read_bytes()).decode('utf-8') if p.suffix=='.gz' else p.read_text(encoding='utf-8'))
 def main():
     gate=json.loads((DATA/'coverage_gate.json').read_text());assert gate['status']=='PASS_ALL_BLOCK_CANDIDATE_COVERAGE_ONLY'
     bindings=rows(DATA/'pin_bindings.csv.gz');assert len(bindings)==24767
@@ -51,9 +52,9 @@ def main():
             if r['plan']!='A' and yes(r['moved']):
                 for k in ['x0_um','y0_um','x1_um','y1_um']:
                     assert abs(float(r[k])/0.005-round(float(r[k])/0.005))<1e-5,(c,r['pin'],'manufacturing grid')
-    physical=list((DATA/'evidence/physical').glob('*/finalized/fullC-r02/act-C/execution.json'))
+    physical=list((DATA/'evidence/physical').glob('*/finalized/fullC-r02/act-C/execution.json*'))
     assert physical,'ACT full-C independent physical evidence missing'
-    actual=json.loads(physical[-1].read_text())
+    actual=read_json(physical[-1])
     assert actual['independent_DRC_count']==0 and actual['whole_access']['pass'] and actual['clean_byte_identical_to_pre_RCX_source']
     with gzip.open(physical[-1].parent/'pins.tsv.gz','rt') as f:actual_pins={r['pin'].replace('\\',''):r for r in csv.DictReader(f,delimiter='\t') if r['use'] not in ['POWER','GROUND']}
     actrows={r['pin']:r for r in rows(DATA/'act_pin_coordinates.csv.gz') if r['plan']=='C'}
@@ -64,8 +65,8 @@ def main():
     # Every block's C experiment: full ACT, the exact eight-pin cohort elsewhere.
     for c in EXPECTED:
         rev='fullC-r02' if c=='act' else 'r01' if c=='gemm' else 'grid-r05'
-        p=sorted((DATA/'evidence/physical').glob(f'*/finalized/{rev}/{c}-C/execution.json'))[-1]
-        rec=json.loads(p.read_text());assert rec['export_returncode']==rec['independent_DRC_returncode']==rec['independent_DRC_count']==0
+        p=sorted((DATA/'evidence/physical').glob(f'*/finalized/{rev}/{c}-C/execution.json*'))[-1]
+        rec=read_json(p);assert rec['export_returncode']==rec['independent_DRC_returncode']==rec['independent_DRC_count']==0
         assert rec['whole_access']['pass'] and rec['source_unchanged'] and rec['clean_byte_identical_to_pre_RCX_source']
         with gzip.open(p.parent/'pins.tsv.gz','rt') as f:pp=[r for r in csv.DictReader(f,delimiter='\t') if r['use'] not in ['POWER','GROUND']]
         assert len(pp)==EXPECTED[c] and len({r['pin'] for r in pp})==EXPECTED[c]
@@ -80,6 +81,64 @@ def main():
     for design in ['opentpu','llaccel']:
         s=json.loads(gzip.decompress((DATA/'partition_summary.json.gz').read_bytes()))[design]
         assert s['unassigned_leaves']==0 and len(s['physical_cells'])==3
+    # Additional complete original C trials are distinct from eight-pin proofs.
+    # Assert exact full pin correspondence even if a physical rule later fails;
+    # never turn an expected reported physical failure into a fake "pass".
+    for p in (DATA/'evidence/physical').glob('*/finalized/full-other-r01/*-C/execution.json*'):
+        rec=read_json(p);c=rec['case']
+        with gzip.open(p.parent/'pins.tsv.gz','rt') as f:pp=[r for r in csv.DictReader(f,delimiter='\t') if r['use'] not in ['POWER','GROUND']]
+        assert len(pp)==EXPECTED[c] and len({r['pin'] for r in pp})==EXPECTED[c]
+        for r in pp:
+            want=allplans[c]['C'][r['pin'].replace('\\','')]
+            for key in ['layer','direction','use']:assert r[key]==want[key]
+            assert r['net'].replace('\\','')==want['net']
+            for k in ['x0','y0','x1','y1']:assert abs(int(r[k])/2000-float(want[k+'_um']))<1e-6,(c,r['pin'],'complete C correspondence')
+    for c,name,filename,rev,expected_moved in [('gemm','gemm_electrical_r03','gemm_C_electrical_r03_all_pins.csv.gz','electrical-r03',3021),('mxu','mxu_repair_r03','mxu_C_repair_r03_all_pins.csv.gz','mxu-repair-r03',1931)]:
+        revision=DATA/'incremental_revisions'/name
+        if not revision.exists():continue
+        proposed={r['pin']:r for r in rows(revision/filename)}
+        assert len(proposed)==EXPECTED[c] and set(proposed)==set(allplans[c]['A'])
+        meta=json.loads((DATA/(c+'.meta.json')).read_text());die=[v/meta['units_per_micron'] for v in meta['die_dbu']]
+        moved=0;xy=set()
+        for pin,r in proposed.items():
+            a=allplans[c]['A'][pin]
+            for key in ['bus','interface','layer','net','net_id','direction','use']:assert r[key]==a[key],(c,pin,key,'incremental contract')
+            point=(r['x_um'],r['y_um']);assert point not in xy;xy.add(point)
+            box=[float(r[k+'_um']) for k in ['x0','y0','x1','y1']]
+            assert box[0]>=die[0]-1e-6 and box[1]>=die[1]-1e-6 and box[2]<=die[2]+1e-6 and box[3]<=die[3]+1e-6
+            if c=='mxu':assert all(abs(v/.005-round(v/.005))<1e-5 for v in box)
+            if any(abs(float(r[k+'_um'])-float(a[k+'_um']))>1e-6 for k in ['x0','y0','x1','y1']):moved+=1
+            for axis in ['x','y']:assert abs((float(r[axis+'1_um'])-float(r[axis+'0_um']))-(float(a[axis+'1_um'])-float(a[axis+'0_um'])))<1e-6
+        assert moved==expected_moved
+        p=sorted((DATA/'evidence/physical').glob(f'*/finalized/{rev}/{c}-C/execution.json*'))[-1]
+        rec=read_json(p);assert rec['source_unchanged'] and rec['clean_byte_identical_to_pre_RCX_source']
+        with gzip.open(p.parent/'pins.tsv.gz','rt') as f:actual=[r for r in csv.DictReader(f,delimiter='\t') if r['use'] not in ['POWER','GROUND']]
+        assert len(actual)==EXPECTED[c]
+        for r in actual:
+            want=proposed[r['pin'].replace('\\','')]
+            for key in ['layer','direction','use']:assert r[key]==want[key]
+            assert r['net'].replace('\\','')==want['net']
+            for k in ['x0','y0','x1','y1']:assert abs(int(r[k])/2000-float(want[k+'_um']))<1e-6,(c,r['pin'],'incremental actual coordinates')
+        publication=json.loads((revision/'publication.json').read_text())
+        assert hashlib.sha256((revision/(c+'-C.tcl')).read_bytes()).hexdigest()==publication['relocation_Tcl_sha256']
+    reject=DATA/'fixed_pg_rejections/llaccel_aux_full_C'
+    if reject.exists():
+        proof=read_json(reject/'proof.json');assert proof['signal_pins_checked']==13507 and proof['direct_contact_pin_count']==26 and proof['direct_contact_rectangle_pairs']==44
+        before=gzip.decompress((reject/'before.pdn.tsv.gz').read_bytes());moved=gzip.decompress((reject/'moved.pdn.tsv.gz').read_bytes())
+        assert before==moved and hashlib.sha256(moved).hexdigest()==proof['moved_PG_sha256']==proof['before_PG_sha256']
+        actual=gzip.decompress((reject/'moved.pins.tsv.gz').read_bytes());assert hashlib.sha256(actual).hexdigest()==proof['moved_pins_sha256']
+        # This SYSTEM wrapper uses scalar bit_N names only; reject any ambiguous
+        # Tcl quoting rather than pretending whitespace parsing is general.
+        pp=[line.split() for line in actual.decode().splitlines()];assert all(len(r)==9 for r in pp)
+        pp=[r for r in pp if r[2] not in ['POWER','GROUND']];assert len(pp)==13507 and len({r[0] for r in pp})==13507
+        for r in pp:
+            want=allplans['llaccel_aux']['C'][r[0]]
+            assert r[1:5]==[want['direction'],want['use'],want['net'],want['layer']]
+            for k,v in zip(['x0','y0','x1','y1'],r[5:9]):assert abs(int(v)/2000-float(want[k+'_um']))<1e-6
+        for r in proof['contacts']:
+            assert r['fixed_PG_net'] in ['VDD','VSS'] and r['layer']==allplans['llaccel_aux']['C'][r['pin']]['layer']
+            a=r['actual_pin_box_um'];b=r['PG_shape_box_um'];assert min(a[2],b[2])>max(a[0],b[0]) and min(a[3],b[3])>max(a[1],b[1])
+        stop=read_json(reject/'stop-action.json');assert stop['job']=='92369' and stop['other_jobs_untouched'] and stop['known_direct_short_pins']==26
     controls=DATA/'full_cohort_controls'
     if controls.exists():
         selections=json.loads((controls/'selection.json').read_text())
@@ -96,6 +155,9 @@ def main():
                 k=(grouped[r['pin']],a['original_edge'],a['layer'])
                 before[k].append((a['x_um'],a['y_um']));after[k].append((r['x_um'],r['y_um']))
             assert {k:sorted(v) for k,v in before.items()}=={k:sorted(v) for k,v in after.items()},(c,'Aopt source slot set changed')
+    for p in (DATA/'evidence/physical').glob('storage_index.json'):
+        for original,r in read_json(p).items():
+            b=gzip.decompress((p.parent/r['stored_as']).read_bytes());assert len(b)==r['original_bytes'] and hashlib.sha256(b).hexdigest()==r['original_sha256'],original
     index=json.loads((DATA/'artifact_index.json').read_text())
     for rel,rec in index.items():
         p=OUT/rel;assert p.stat().st_size==rec['bytes'] and hashlib.sha256(p.read_bytes()).hexdigest()==rec['sha256'],rel

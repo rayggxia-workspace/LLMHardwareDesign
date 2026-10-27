@@ -94,3 +94,25 @@ sbatch --job-name=hpy-p126-act --export=ALL,PINXY_DRIVER_DIR=/public/home/yuzelu
 `summarize_path_electrical.py`以有界内存解析native OpenSTA JSON路径，原值单位为F/s，保留来源SHA和观察范围，不能当作全部net的负载/转换覆盖。`run_electrical_audit.py`使用已完成、SHA匹配的报告；完整ACT C另与标准JSON解析交叉检查count和最大负载。首轮旧回执无selected_pin_count导致驱动KeyError，保留92382失败；r02从原始冻结Tcl恢复精确cohort后由92383重试，不更改物理结果。
 
 `collect_extension_snapshot.py`只收集已完成严格stream-out视图探针的日志、规则分类、原始报告/SHA与已完成电气观察。大GDS与大型lyrdb保留远程。可用deck全部执行成功仍不等于LVS、真实父层可达或生产工艺签核。
+
+## 新增完整C修订和受控父层
+
+`prepare_electrical_revision.py`从实际GEMM失败驱动/写strobe关系恢复完整字节29/30，共18pin；原3039重接cohort不变，实际3021移动。`prepare_mxu_repair.py`按真实lane0恢复33pin并修复两处signal-to-VDD内部M5点；1964重接cohort，1931移动。完整逐pin补充表与原ABC独立。两次实际重布线后的独立native DRC/所检全块几何连通通过，现有模型电气报告0；不是完整资格。
+
+`stage_incremental_evidence.py`复用已执行修订输入，GEMM发布副本只修正恢复位的几何指标，强制Tcl SHA与实际执行版一致。`validate_repository.py`把两份完整补充表与clean ODB的所有实际信号pin逐项比较，不把图或局部样例当全块证据。
+
+```sh
+python project/experiments/full_pin_xy/make_physical_summary.py --root R
+python project/experiments/full_pin_xy/stage_incremental_evidence.py --root R
+python project/experiments/full_pin_xy/build_deliverables.py --root R --out docs/experiments/issue-126-full-pin --keep-figures
+python project/experiments/full_pin_xy/validate_repository.py
+node project/experiments/full_pin_xy/qa_report.mjs docs/experiments/issue-126-full-pin/report.html QA_OUTPUT_DIR
+```
+
+`prepare_controlled_parent.py --root R --out NEW_INPUT_DIR --design opentpu --focus act`（或llaccel/gemm）从真实冻结三叶图生成**新受控父层**；其历史handoff仍未知。真实Verilog/Liberty bus映射由`verify_parent_graph.py`在PG/路由之前验证全部端点、方向、目标层和bit↔native net双射，拒绝把同值常量并网。端口Liberty未表征，仅链接/路由使用，禁止父层STA/电气资格结论。
+
+`parent_job.sh INPUT_NAME NEW_REV [A A_replay A_child_replay Aopt B C]`从真实已核对的叶clean ODB导出详细OBS，不删除原OBS。`filter_parent_pg.tcl`对**新父层**PG通孔检查真实M7–M10各层障碍，安全位置选择后仍必须通过PG/独立native DRC/所检全块几何连通。各变体冻结A的外框/PG/TOP_IO/单元位置；A不通过不晋级。r07 openTPU92441核对6618端点/3408网，PG通过后DRT运行；llaccel92458独立27050端点。早期halo/PG/bus失败按各原目录和stage_failure_actions保留。
+
+GEMM严格GDS92376已自然完成，A/8pin C合并成功但1346/1358项天线违规。其余四项原GDS任务经核实全部尚未开始且无输出后，整合成92430（16CPU，4case×4deck threads），没有耗时中断活动任务。ACT/MXU分别缺2/4个fakeram器件GDS；不得用伪造几何替代签核视图。
+
+`verify_fixed_pg_contacts.py --root R --case llaccel_aux --actual ACTUAL_FINGERPRINT_DIR --out NEW_PROOF_DIR`对真实移动后全pin回读、输入ODB SHA、未变PG指纹和真实导出PG金属做精确同层直接求交。llSYS完整C确认26pin/44对直接接触，不是间距猜测。`stop_known_invalid_pg_trial.py`是只用于识别92369新无效变体的严格守卫，核对job/name/source/driver/cohort/实际文件SHA后才能停止，不按耗时，不修改其他job/原始数据库；此脚本不作通用取消接口。完整失败检查点仍留远程，局部C8检查不代表全C通过。

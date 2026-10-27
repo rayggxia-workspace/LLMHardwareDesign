@@ -13,16 +13,16 @@ TITLES=expand.TITLES
 ORDER=['act','mxu','opentpu_aux','gemm','vector','llaccel_aux']
 RECOMMEND={
  'act':'C 的740pin已实际重接，并通过独立native DRC/所检连通；数据/scale有内部端点依据，时钟和窄控制留边。仍需解决缺失宏GDS、天线检查及父层接入，不能视为合格硬宏。原候选相对旧布线的145个异网相交与新布线终态分开记录。',
- 'mxu':'保留边界和 C 局部试验并行。C 的端点 L1 减少有限；t_wdata/t_wen 按真实32-bit lane 关联，ACT 链路优先靠相关 FIFO/逻辑。',
+ 'mxu':'本轮优先保留/优化边界。混合C修订后1931pin在内部，独立native DRC/所检连通通过、现有模型电气报告0，但实际线长比同组原XY重布线增加约4.30%，没有整体迁移收益。原C的3项VDD短路/5项电容超限保留；内部方案仅作父层代价进一步试验的备选。',
  'opentpu_aux':'采用混合式少量内移。TMEM、VPU、DMA/量化局部端点提供候选中心；外部 DRAM/collective、控制和共享信号保留边缘更合理。',
- 'gemm':'优先 C 数据簇的局部试验。288个恒零高位写数据/strobe 保留，不能据逻辑常量随意删 pin。全 C 冲突260个，不具备直接替换资格。',
+ 'gemm':'本轮优先保留/优化边界。修订混合C保留两个完整字节共18pin于边缘，3021pin在内部，当前native/几何/电气门槛通过，但实际线长比同组原XY重布线增加约1.19%，未显示整体XY迁移的额外价值。288个恒零位保留，旧C的260个相交、实际2项电容超限及GDS天线失败不隐藏。',
  'vector':'本轮推荐优化原边界。B/C 的端点 L1 都增加，迁移价值有限；即使内部窗口几何可放，也不能据此主张收益。',
  'llaccel_aux':'先优化边界并按真实 bank/事务局部试验。全 C 的4731个直接金属相交 pin、6700个基础间距风险提示拥塞可能向内部转移；不建议整体采用。'}
 
 def dump(p,v):p.write_text(json.dumps(v,ensure_ascii=False,indent=2,allow_nan=False)+'\n',encoding='utf-8',newline='\n')
 def compress(src,dst):
     with dst.open('wb') as raw,gzip.GzipFile(filename='',mode='wb',fileobj=raw,mtime=0) as f:f.write(src.read_bytes())
-def table(df):return df.to_html(index=False,escape=True,border=0,classes='stats')
+def table(df):return '<div class="scroll">'+df.astype(object).where(pd.notna(df),'待验证').to_html(index=False,escape=True,border=0,classes='stats')+'</div>'
 
 def endpoint_plot(root,c):
     legacy=expand.legacy;legacy.ROOT=root
@@ -62,8 +62,8 @@ def hierarchy(out):
             ax.add_patch(R((x,y),w,h,fc=color,ec='#52667d',lw=1));ax.text(x+.2,y+h-.35,name,weight='bold',fontsize=14)
             ax.text(x+.2,y+.25,desc,fontsize=11,va='bottom')
         for x in [2.5,7.1]:ax.annotate('',(x,3.65),(x,3.15),arrowprops={'arrowstyle':'<->','color':'#52667d'})
-        ax.text(.45,.37,'TOP_IO：外部端口和时钟源；父层只保留三块之间的连线',fontsize=9)
-    fig.text(.03,.035,'系统按3个物理叶块计数；SYSTEM 内功能子层次完整归属，不额外重复计硬宏。ACT+MXU 是替代粒度。\n外部 DRAM、host/封装不在设计内；llaccel_core 的16个外部 SRAM bank 存储本体未计入已实现 block。',fontsize=11,color='#56677d')
+        ax.text(.45,.37,'TOP_IO：外部端口/时钟源、常量声明及三块之间的连线',fontsize=9)
+    fig.text(.03,.035,'系统按3个物理叶块计数；SYSTEM 内功能子层次完整归属。ACT+MXU 是替代粒度。\nopenTPU另有37个常零TOP_IO声明位；新父层的独立tie驱动成本单列，不额外计硬宏。\n外部DRAM/host/封装及llaccel_core外的16个SRAM bank存储本体不计为已实现block。',fontsize=11,color='#56677d')
     for ext in ['png','svg']:fig.savefig(out/f'hierarchy.{ext}',dpi=180)
     plt.close(fig)
 
@@ -99,6 +99,7 @@ def build(root,out,keep_figures=False):
     physical_evidence=root/'trial_receipts'
     if physical_evidence.exists():
         latest=sorted(p for p in physical_evidence.iterdir() if p.is_dir())[-1]
+        latest_physical_name=latest.name
         published=evidence/'physical';published.mkdir(exist_ok=True)
         for prior in published.iterdir():
             if prior.is_dir():
@@ -107,11 +108,15 @@ def build(root,out,keep_figures=False):
         shutil.copytree(latest,published/latest.name,ignore=shutil.ignore_patterns('timing.selected_*.txt.gz'))
         # Tool text is losslessly compressed; preserve exact report bytes and
         # avoid whitespace normalization of evidence during Git publication.
-        for p in published.rglob('*'):
-            if p.is_file() and p.suffix in ['.drc','.txt','.tsv']:
+        storage={}
+        for p in list(published.rglob('*')):
+            if p.is_file() and (p.suffix in ['.drc','.txt','.tsv'] or (p.suffix=='.json' and p.stat().st_size>65536)):
+                original=p.relative_to(published).as_posix()
+                storage[original]={'stored_as':original+'.gz','original_bytes':p.stat().st_size,'original_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'encoding':'lossless gzip; exact native bytes retained'}
                 compress(p,p.with_name(p.name+'.gz'))
                 assert published.resolve() in p.resolve().parents
                 p.unlink()
+        dump(published/'storage_index.json',storage)
     shutil.copy2(root/'coverage_gate.json',data)
     shutil.copytree(root/'pin-use-r01',data/'pin-use-r01',dirs_exist_ok=True)
     shutil.copy2(root/'pin_use_correction.json',data)
@@ -148,6 +153,27 @@ def build(root,out,keep_figures=False):
     if (root/'full_cohort_controls').exists():
         shutil.copytree(root/'full_cohort_controls',data/'full_cohort_controls',dirs_exist_ok=True)
         extension_html+='<p>另冻结了完整C同组的原XY重布线、Aopt边界槽位优化和B子集控制。<a href="data/full_cohort_controls/selection.json">完整cohort/优化范围</a>及逐块Aopt CSV.gz在同目录。Aopt只在原分束、原边、原层既有槽位内置换，使用C中心L1代理，未改变硬件分束语义；未知分束仍沿用展示假设，不是全局最优边界、真实布线成本或已完成物理结果。</p>'
+    if (root/'incremental_revisions').exists():
+        shutil.copytree(root/'incremental_revisions',data/'incremental_revisions',dirs_exist_ok=True)
+        extension_html+='<h3>真实失败驱动的增量混合C：完整逐pin补充表</h3><p>原始A/B/C和PR120逐字节保留。GEMM原完整C的gemm_wr_wstrb[29]/[30]驱动电容超限；恢复两个真实完整字节（data232–247及strobe29/30，共18pin）到A，匹配3039pin重布线组，实际移动3021pin。MXU原完整C有3项signal-to-VDD short（pf_uv[109]、b_rdata[174]）及5项t_wdata lane0电容超限；整个33pin lane0保留A，两处M5内部点分别向左移1.12μm，仍属内部二维。匹配1964pin重布线组，实际移动1931pin。两次修订均保持单元、驱动、缓冲、原pin层/尺寸、PDN、边界及允许层。</p><p><a href="data/incremental_revisions/gemm_electrical_r03/gemm_C_electrical_r03_all_pins.csv.gz">GEMM全部3753pin增量C</a> · <a href="data/incremental_revisions/gemm_electrical_r03/revision.json">GEMM字节证据</a> · <a href="data/incremental_revisions/mxu_repair_r03/mxu_C_repair_r03_all_pins.csv.gz">MXU全部2172pin增量C</a> · <a href="data/incremental_revisions/mxu_repair_r03/revision.json">MXU修复证据</a>。两修订独立native DRC均为0、全块所检多端几何连通通过，现有边界模型下setup/hold为正且电气报告0；完整GDS/LVS/父层和系统电气仍未通过。主A/B/C图和查询仍展示原候选，不与补充修订混淆。GEMM发布表修正恢复位的几何指标元数据，实际执行Tcl逐字节一致。</p>'
+    if (root/'controlled_parents').exists():
+        shutil.copytree(root/'controlled_parents',data/'controlled_parents',dirs_exist_ok=True)
+        extension_html+='<h3>补建受控父层：独立新基线，历史层级仍未知</h3><p>用户确认无额外历史handoff/宏GDS并授权补充后，依据冻结三叶块图创建NEW_CONTROLLED_PARENT_NOT_HISTORICAL。openTPU固定6618端点/3408网，37个独立LOGIC0_X1实现原TOP_IO常零声明（新增基础设施成本19.684μm²，各方案相同）；llaccel固定27050端点。叶端口保持原M5/M6，TOP_IO策略、M2–M10信号/M4–M10时钟、R0布局、轨道相位与新PG显式冻结。逐bit图/方向/层检查在PG和路由之前执行。端口占位Liberty只用于链接/路由，零电容不是表征值，禁止据此报告父层STA/负载资格。</p><p>早期halo、PG条带、默认过度bloat及标量bus映射失败均留证；修订为详细OBS原生导出、按实际层障碍选择新PG通孔、真实Verilog/Liberty bus映射。openTPU r07已核对全部6618端点并通过双电源连通检查，实际路由仍在运行；llaccel独立启动，不能因提交而声称通过。<a href="data/controlled_parents/scope.json">试验/合同索引</a>；完整输入合同、Verilog、物理链接Liberty及逐端点表以gzip保留。原历史目标层仍UNKNOWN；新基线不追溯证明旧父层，也不补造SRAM器件GDS。</p>'
+        parent_rows=[];parent_records=[]
+        for p in sorted((root/'trial_receipts'/latest_physical_name/'parents').glob('*/*/execution.json')):
+            r=json.loads(p.read_text(encoding='utf-8'));graph=p.parent/'pre_model.graph_check.json';g=json.loads(graph.read_text()) if graph.exists() else {}
+            stages_file=p.parent/'stages.tsv.gz';ss={}
+            if stages_file.exists():ss={q['stage']:q['status'] for q in csv.DictReader(gzip.decompress(stages_file.read_bytes()).decode().splitlines(),delimiter='\t')}
+            if r['plan']=='A':parent_rows.append({'试验':p.parent.relative_to(p.parents[2]).as_posix(),'job':r['scheduler_job'],'逐bit图':g.get('exact_terminal_set_direction_layer_and_bit_graph'),'端点':g.get('endpoints'),
+              'PG-VDD':ss.get('pdn_check_VDD'),'PG-VSS':ss.get('pdn_check_VSS'),'GRT':ss.get('global_route'),'DRT':ss.get('detailed_route'),
+              '独立native DRC':r.get('independent_DRC_count'),'所检全块连通':r.get('whole_signal_geometry',{}).get('pass'),'终态':r.get('status','未有完整终态；检查运行/失败日志') if p.parent.parent.name in ['r07','ll-r01'] else '历史实际失败/已停止无效试验；非通过'})
+            parent_records.append({'raw_receipt':p.relative_to(root/'trial_receipts').as_posix(),'receipt':r,'graph_check':g,'actual_stage_receipt':ss})
+        parent_rows.sort(key=lambda r:0 if r['试验'].startswith('r07/') else 1 if r['试验'].startswith('ll-r01/') else 2)
+        dump(data/'controlled_parents/physical_receipts.json',parent_records)
+        extension_html+=table(pd.DataFrame(parent_rows))+'<p><a href="data/controlled_parents/physical_receipts.json">新增父层实际阶段索引</a>。旧失败/主动停止的无效变体仍保留，未完成项绝非通过；完整原始日志/停止原因在physical证据目录。</p>'
+    if (root/'fixed_pg_rejections').exists():
+        shutil.copytree(root/'fixed_pg_rejections',data/'fixed_pg_rejections',dirs_exist_ok=True)
+        extension_html+='<h3>llaccel SYSTEM完整C：实际固定PG直接冲突，保留失败</h3><p>不是仅凭候选图判定：从真实place_pin后的moved.pins.tsv核对全部13507信号pin与完整C一致，原始/移动后PG指纹逐字节相同。26个信号pin与不可移动的VDD/VSS同层金属存在44对正面积直接相交；原几何导出ODB SHA与本次真实输入一致。固定pin与PG时，DRT不能消除此交叠，因此保存moved/ripped/global ODB、日志和证明后，只停止该已确认无效的新试验92369，其他作业和原数据库不改。13184pin完整C迁移已写入，但完整布线、独立终态DRC、RC/STA均未完成，不能用8pin局部结果代替。</p><p><a href="data/fixed_pg_rejections/llaccel_aux_full_C/proof.json">全部逐矩形直接接触证明</a> · <a href="data/fixed_pg_rejections/llaccel_aux_full_C/direct_contacts.csv.gz">冲突CSV</a> · <a href="data/fixed_pg_rejections/llaccel_aux_full_C/moved.pins.tsv.gz">全部实际移动后pin原始回读</a> · <a href="data/fixed_pg_rejections/llaccel_aux_full_C/stop-action.json">仅停止新无效变体的守卫/回执</a>。直接金属接触证明不是完整规则检查，未把间距风险或灰色背景当作真实短路。完整C当前不推荐；优先边界或严格筛选的少量内部簇。</p>'
     # Preserve exact compact hierarchy/frontier and origin proof for reproducing ownership.
     for p in (root/'partition-r02').iterdir():
         if p.is_file():
@@ -155,10 +181,17 @@ def build(root,out,keep_figures=False):
             else:compress(p,data/(p.name+'.gz'))
     cfg=json.loads((HERE/'sources.json').read_text());dump(data/'sources.json',cfg)
     from plot_actual_access import draw
-    draw(root,out)
+    if not keep_figures or not (assets/'act_actual_access.png').exists():draw(root,out)
     summary=json.loads((root/'inventory/partition_summary.json').read_text());bindings=json.loads((root/'inventory/binding_summary.json').read_text())
     physical=root/'physical_summary.json';pstat=json.loads(physical.read_text(encoding='utf-8')) if physical.exists() else {}
     dump(data/'physical_summary.json',pstat)
+    full_rows=[]
+    for c,s in pstat.items():
+        for name,q in s.get('matched_full_cohort_comparison',{}).get('plans',{}).items():
+            full_rows.append({'block':c,'实际试验':name,'重接组':q['selected_pin_count'],'实际移动':q['actual_moved_pin_count'],
+              'DRT线长 μm':q['DRT_pre_RCX_wire_length_sum_um'],'相对原XY控制线长 %':round(q['wire_change_vs_same_cohort_A_replay_percent'],2) if q['wire_change_vs_same_cohort_A_replay_percent'] is not None else None,'via':q['DRT_pre_RCX_vias'],'独立native DRC':q['independent_clean_DRC_count'],
+              '多端几何连通':q['whole_geometry_pass'],'setup ns':q['setup_worst_slack_ns'],'hold ns':q['hold_worst_slack_ns'],'时序/电气违规行':q['reported_timing_electrical_violator_rows']})
+    extension_html='<h3>完整C同组实际边界 / Aopt / B / C对照</h3>'+table(pd.DataFrame(full_rows))+'<p>只列已产生完整执行回执的试验；待验证检查项不是0。B只迁移原C同组，Aopt仅优化原边/原层槽位，不是全局最优边界。修订C仍重接相同cohort，但按真实byte/lane保留部分pin。GEMM修订C线长4548300μm，相对原XY控制4494984μm约+1.19%；MXU修订C3132185μm，相对3003026μm约+4.30%，两者当前更推荐保留边界。端点L1减少并未变成实际块内线长收益；父层/通道影响尚未知。ACT同组C约−6.40%，仍需父层和完整规则证据。逐层线长、失败明细及资格边界见物理回执；原基线失败保留。大型原始JSON和工具文本无损gzip保存，<a href="data/evidence/physical/storage_index.json">原文件名/字节数/SHA与压缩路径映射</a>可追溯，未删原始检查内容。</p>'+extension_html
     measured=pstat.get('act',{}).get('matched_740pin_comparison',{})
     measured_rows=[{'试验':k,'同组pin':v['selected_pins'],'DRT实际总线长 μm':v['wire_length_um'],'DRT via数量':v['via_count'],'线长变化':f"{v['wire_change_percent']:+.2f}%",'via变化':f"{v['via_change_percent']:+.2f}%",'setup余量 ns':v['setup_worst_slack_ns'],'hold余量 ns':v['hold_worst_slack_ns']} for k,v in measured.get('plans',{}).items()]
     measured_html=('<h3>ACT同组740-pin实际对照</h3>'+table(pd.DataFrame(measured_rows))+'<p>这是DRT在RCX前输出的真实路由统计，按工具口径计数，区别于几何L1及RC/STA。单次匹配试验中C线长约−6.40%、via约−1.70%，远小于几何L1的−42.4%；setup余量略变差，没有时序改善结论。B仅为相同740-pin子集。A原边界已能合法布线；C提供内部线长的额外价值，父层代价/通道和完整规则仍未知，外框未缩小。</p>') if measured_rows else ''
@@ -182,6 +215,7 @@ def build(root,out,keep_figures=False):
     for c in ORDER:
         p=pstat.get(c,{})
         stages.append({'block':TITLES[c],'划分/接口':'完成；物理port逐bit匹配','候选/几何':'全pin A/B/C覆盖','实际接入':p.get('route_status','未执行/尚未收集'),'DRC/连通':p.get('drc_status','候选不代表通过'),'RC/STA/电气':p.get('sta_status','尚未收集'),'父层接入':'原始handoff/实际层序未知'})
+    physical_display={c:{k:v for k,v in s.items() if k!='trials'} for c,s in pstat.items()}
     rawpins=json.dumps(pins,ensure_ascii=False,separators=(',',':')).replace('</','<\\/')
     report='''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>全功能分块与二维pin布局研究 · Issue126</title>
 <style>body{font:16px/1.75 "Microsoft YaHei",sans-serif;color:#17283c;background:#f1f4f8;margin:0}main{max-width:1560px;margin:auto;padding:32px}h1{font-size:32px}h2{border-bottom:2px solid #d9e3ed;padding-bottom:12px}article,.card{background:white;border:1px solid #dce4ed;border-radius:12px;padding:24px;margin:24px 0}.warn{background:#fff3df;border-left:5px solid #c8892b;padding:18px}img{max-width:100%;height:auto}.scroll{overflow:auto}table{border-collapse:collapse;font-size:13px;width:100%}th,td{border:1px solid #dce4ed;padding:8px;text-align:left}th{background:#edf3f8}a{color:#0072b2}code{overflow-wrap:anywhere}input,select{font:inherit;padding:8px;margin:4px}small{color:#56677d}details{margin:18px 0}nav a{margin-right:18px}footer{font-size:13px;color:#56677d}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:600px;overflow:auto;font-size:12px}</style>
@@ -207,17 +241,19 @@ __BLOCKS__
 <section class="card" id="query"><h2>逐pin查询（完整数据，显示上限100行）</h2><select id="case"><option value="">全部block</option>__OPTIONS__</select><input id="search" placeholder="pin / bus / 类别 / 保留理由"><p id="count"></p><div class="scroll"><table><thead><tr><th>block</th><th>pin</th><th>bus</th><th>类别</th><th>方向</th><th>层</th><th>A XY μm</th><th>B XY μm</th><th>C XY μm</th><th>C依据</th></tr></thead><tbody id="rows"></tbody></table></div></section>
 <section class="card"><h2>来源、可复现入口和限制</h2><p><a href="https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/120">PR120</a>未合并成果为起点；<a href="https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/58">Issue55/PR58</a>提供已存在的完整包装/结构证明和两个已完成SYSTEM路由源。没有接管其活动作业，也没有把其待验证项改成通过。</p><p><a href="data/sources.json">六块实际数据库路径/SHA</a> · <a href="data/coverage_gate.json">覆盖回执</a> · <a href="data/artifact_index.json">交付文件SHA索引</a> · <a href="../../../project/experiments/full_pin_xy/README.md">脚本与命令</a></p><p>原参考HTML及ref-project、历史实验、PR120旧工作树均保持完整。新结果只写issue126独立目录。几何端点L1不是真实布线线长；实际线长由数据库路由段统计，RC由OpenRCX提取；两者与STA结果单独比较。候选图不能代表合法实现图。</p></section><footer>本报告保留负结果与未知条件。每块推荐取决于本次固定配置、原目标层证据和密度；不泛化为所有大模型或所有划分粒度。</footer></main>
 <script>const pins=__PINS__;const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function render(){const c=document.querySelector('#case').value,q=document.querySelector('#search').value.toLowerCase();let a=pins.filter(r=>(!c||r[0]===c)&&r.join(' ').toLowerCase().includes(q));document.querySelector('#count').textContent=`匹配 ${a.length} / ${pins.length} 原始信号pin；所有方案保持同一完整清单。`;document.querySelector('#rows').innerHTML=a.slice(0,100).map(r=>'<tr>'+[...r.slice(0,6),r[6]+', '+r[7],r[8]+', '+r[9],r[10]+', '+r[11],r[12]].map(s=>'<td>'+escape(s)+'</td>').join('')+'</tr>').join('')}document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',render));render();</script></html>'''
-    replacements={'NAV':''.join(f'<a href="#{c}">{TITLES[c]}</a>' for c in ORDER),'OWN':table(own),'MATRIX':table(matrix),'TOTAL':table(pd.DataFrame(totals)),'BLOCKS':'\n'.join(htmlparts),'STAGES':table(pd.DataFrame(stages)),'PHYSICAL':html.escape(json.dumps(pstat,ensure_ascii=False,indent=2)),'OPTIONS':''.join(f'<option>{c}</option>' for c in ORDER),'PINS':rawpins}
+    replacements={'NAV':''.join(f'<a href="#{c}">{TITLES[c]}</a>' for c in ORDER),'OWN':table(own),'MATRIX':table(matrix),'TOTAL':table(pd.DataFrame(totals)),'BLOCKS':'\n'.join(htmlparts),'STAGES':table(pd.DataFrame(stages)),'PHYSICAL':html.escape(json.dumps(physical_display,ensure_ascii=False,indent=2)),'OPTIONS':''.join(f'<option>{c}</option>' for c in ORDER),'PINS':rawpins}
     for k,v in replacements.items():report=report.replace('__'+k+'__',v)
+    report=report.replace('顶层基础设施保留外部端口和时钟源入口，以及三块间纯连接；所有计算、存储、控制、搬运、仲裁、状态和胶合逻辑均归属上述叶块。',
+      '顶层保留外部端口、时钟源、三块间连接及固定常量输出；非平凡计算/存储/控制/搬运/仲裁/状态和胶合逻辑归属上述叶块。原openTPU另有37个常零TOP_IO声明位（a_we/a_wdata/a_be），见<a href="data/top_infrastructure.csv.gz">逐位基础设施清单</a>，不能把相同零值合成一条原始物理网络。新受控父层以37个独立tie cell落实，并在全部对照中固定位置/成本；它们不是第四个硬宏，也不改变六块原接口。')
     measured_html=measured_html.replace('A原边界已能合法布线','A原边界已通过native DRC和所检OpenDB连通')
-    report=report.replace('<pre>'+html.escape(json.dumps(pstat,ensure_ascii=False,indent=2))+'</pre>',measured_html+extension_html+'<pre>'+html.escape(json.dumps(pstat,ensure_ascii=False,indent=2))+'</pre>')
+    report=report.replace('<pre>'+html.escape(json.dumps(physical_display,ensure_ascii=False,indent=2))+'</pre>',measured_html+extension_html+'<details><summary>物理阶段摘要（完整试验及原始回执见JSON索引）</summary><pre>'+html.escape(json.dumps(physical_display,ensure_ascii=False,indent=2))+'</pre></details>')
     (out/'report.html').write_text(report,encoding='utf-8')
     for p in out.rglob('*'):
         if p.is_file() and p.suffix in ['.svg','.html','.json','.csv']:
             # Normalize only text representation of generated/publication data.
             # Native tool text is preserved byte-exact in gzip above.
             s=p.read_text(encoding='utf-8');p.write_text('\n'.join(line.rstrip() for line in s.splitlines())+'\n',encoding='utf-8',newline='\n')
-    dump(data/'artifact_index.json',{str(p.relative_to(out)):{'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(out.rglob('*')) if p.is_file() and p.name!='artifact_index.json'})
+    dump(data/'artifact_index.json',{p.relative_to(out).as_posix():{'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(out.rglob('*')) if p.is_file() and p.name!='artifact_index.json'})
     print('REPORT_COMPLETE',out,'original_pins',len(pins),'rows',3*len(pins))
 
 if __name__=='__main__':

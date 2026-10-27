@@ -19,6 +19,12 @@
 
 ## 2026-10-27：全功能分块与二维pin增量里程碑
 
+最新失败确认：llaccel SYSTEM完整C的13184pin已实际迁移，全部13507信号pin回读匹配；26pin/44矩形对与不变PG同层直接相交。保留检查点及逐矩形证明后，仅停止新无效试验92369，未完成全C布线/RC/STA。其余父层、控制和GDS作业继续。新增严格GDS中VECTOR原始/8pin C均36项天线；openSYS原始缺4个fakeram，诊断deck52486项（含46014项WELL），均非完整规则通过。
+
+完整C增量：GEMM原全C有2项电容失败，恢复对应18pin整字节后3021pin在内部；MXU原全C有3项VDD短路/5项电容失败，保留33pin lane并修复2处内部点后1931pin在内部。两修订独立native DRC0/全块所检几何连通通过，现有边界模型下违规报告0，完整资格仍未通过。VECTOR1022及openSYS1768全C已真实布线，native/几何门槛通过但时序失败；llSYS完整C继续运行。新受控父层按用户授权补建，原历史handoff未知不改写；openTPU完整6618端点图和双电源连通已通过，父层路由进行中。严格GDS已暴露GEMM天线及ACT/MXU缺失fakeram视图，失败单列。
+
+匹配全组原XY重布线对照显示，GEMM/MXU修订C真实线长分别约+1.19%/+4.30%，当前优先保留边界；ACT完整C约−6.40%，setup略差，不泛化为系统或面积收益。已通过工程门槛与是否值得迁移分别判断。
+
 [Issue126](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/126)进行中：[PR120](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/120)未合并head4f91e098为起点，复用Issue55完整SYSTEM包装，补齐两系统六块、18项功能归属和全部接口连接矩阵。
 六块24,767原始信号pin、74,301行A/B/C候选覆盖通过；其他四块对照图、端点依据、实际金属/PG/OBS筛查和逐pin数据已生成。
 六块C已实际接入：ACT完整740pin，其余五块各8pin局部；独立clean native DRC=0、全块多端OpenDB几何连通均通过。VECTOR与两个SYSTEM独立边界时序/电气失败保留。ACT同组C相对原XY重布线线长−6.40%、via−1.70%，setup略差，外框未变。其他五块完整C进入独立尝试，失败与待验证独立记录。

@@ -2,6 +2,10 @@
 
 ## 2026-10-27（中国标准时间）：Issue126 进行中
 
+- 最新终态修正：llSYS完整C真实迁移后核对全部13507pin，26pin/44矩形对与固定PG直接相交；仅停止该已确认无效的新试验92369，保存moved/ripped/global检查点及证明。完整C未布线/RC/STA，不用8pin通过替代。GEMM/MXU修订C虽当前门槛通过，实际线长+1.19%/+4.30%，本轮优先边界。父层/其余控制/GDS继续，新增9份已完成GDS视图探针含openSYS原始缺宏及WELL失败。
+
+- 最新：完整GEMM/MXU失败驱动的混合修订实际移动3021/1931pin，独立native DRC0/所检全块几何连通/现有模型电气报告0；原GEMM2项电容、MXU3项PG短路/5项电容失败保留。VECTOR/openSYS全C原生门槛通过但时序失败，llSYS全C仍运行。用户授权补建受控父层后，openTPU6618端点/3408网逐项图/层核对与双网PG通过，正在DRT；llaccel27050端点的新基线92458独立推进。历史handoff和真实fakeram器件GDS仍缺，不用占位Liberty或几何视图声称签核。后文8pin为历史局部结果，最新阶段以HTML/physical_summary为准。
+
 - 当前任务：[Issue126](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/126)，分支 `task/126-full-block-pin-xy`，以PR120未合并head4f91e098为基线，未覆盖旧工作树。
 - 已完成：复用Issue55真实SYSTEM包装，补齐openTPU/llaccel六块、18项功能完整归属、逐bit接口与连接矩阵；六块24,767原始信号pin，74,301行A/B/C覆盖及保层/方向/网络/尺寸/越界/重复检查。
 - 图表/报告：[中文入口](../../docs/experiments/issue-126-full-pin.md)。新增四块全pin对照、局部实际占用、真实端点PNG/SVG；ACT/GEMM原成果逐字节复用。

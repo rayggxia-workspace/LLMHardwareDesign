@@ -34,6 +34,10 @@ try {
  if(query.rows!==1||!query.text.includes('vec_wr_wdata[300]'))throw Error(JSON.stringify(query));
  await evaluate('document.querySelector("#search").value="";document.querySelector("#case").value="";render();document.querySelector("#physical").scrollIntoView()');
  await fs.writeFile(path.join(out,'report-physical.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ for(const [name,heading] of [['cohort','完整C同组实际'],['gds','独立GDS合并'],['revision','真实失败驱动'],['parent','补建受控父层']]){
+  await evaluate(`(()=>{const e=[...document.querySelectorAll('h3')].find(e=>e.textContent.includes(${JSON.stringify(heading)}));if(!e)throw Error('Missing result section');e.scrollIntoView()})()`);
+  await fs.writeFile(path.join(out,`report-${name}.png`),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ }
  if(errors.length)throw Error(JSON.stringify(errors));
  const result={status:'PASS_BROWSER_RENDER_FILTER_AND_IMAGES',...all,query,exceptions:errors};
  await fs.writeFile(path.join(out,'browser_qa.json'),JSON.stringify(result,null,2)+'\n');

@@ -1,5 +1,21 @@
 # Issue126 持续执行入口与阶段证据
 
+最新里程碑以本段、HTML及原始execution为准；下文保留早期记录，不据旧“尚未完成”覆盖新终态。新快照milestone-r09共66项trial回执；extensions/milestone-r03含7项已完成stream-out视图。ACT同组全A_replay/B的92455/92457独立native DRC0/所检全块连通已完成；MXU全B独立native DRC0/连通通过但21项电气失败。GEMM/MXU修订C线长分别约+1.19%/+4.30%，目前优先保留边界，不能因已可布通而声称收益。llaccel新父层27050端点/13507网的前置逐bit合同已通过，PG/路由仍独立验收。
+
+llSYS完整C92369已在确认实际26pin/44矩形对固定PG直接相交后，仅停止该新无效变体。driver cc92773，`verify_fixed_pg_contacts.py`核对实际place_pin后13507信号pin全C一致、原/新PG指纹字节相同，并与原ODB SHA匹配的真实PG金属逐层求交；`stop_known_invalid_pg_trial.py`核对唯一job/name/source/driver/cohort/实际指纹才scancel。保留moved/ripped/global ODB，未完成完整DRT/RC/STA，不是耗时取消。原始源/其他作业未改。证明和实际回读发布在data/fixed_pg_rejections；原26个风险现已是实际移动后几何直接接触证明，仍不冒充完整DRC。
+
+最新extensions/milestone-r04含9份完成GDS视图：VECTOR A/8pin C严格merge0，但均36项天线；openSYS A缺4宏，诊断deck52486（含46014 WELL），C和llSYS继续。较早snapshot中的“待完成”只表示当时状态。全部大型原始JSON和工具文本无损gzip并提供storage_index映射，源字节SHA验证，不把数百万行逐net数组重复塞进HTML/PR diff。
+
+本轮发布验证：check_project PASS；仓库业务验证6块/74301行/1689文件SHA/79链接通过，含两份增量完整表与实际clean pin逐项对应；浏览器20图全部加载，24767pin及常量位检索通过、无JS异常/页面溢出。新增cohort/GDS/增量/父层截图与完整层次图已打开目视核验；Python编译通过。新增Full pin candidate evidence CI只校验候选合同/文件证据，不代表物理规则通过；实际远程检查门槛仍逐项保留。
+
+- ACT完整740 C通过当前native/几何门槛；GEMM原3039 C有2项电容失败，增量electrical-r03实际3021移动、92423/92424已完成独立DRC0/全块所检几何连通/现有STA电气0。MXU原1964 C有3项PG短路及5项max-cap；增量mxu-repair-r03移动1931、92437/92450已完成独立DRC0/所检全块连通/现有电气0。
+- VECTOR完整1022 C独立DRC0/所检全块连通，但setup−4.166987ns、违规103行；openSYS1768 C同门槛通过但setup/hold−1.765776/−0.400698ns、违规2101。llSYS13184全C的92369仍运行，92374依赖检查，不取消。
+- 完整cohort控制：GEMM Aopt电气4项、B独立native DRC9项均保留；MXU A_replay/Aopt独立native0/所检全块连通，B21项电气，独立终态待收。ACT全A_replay/B增加独立clean92455/92457；92454因本地shell展开远程PWD失败，日志保留，不曾改变物理输入。
+- GEMM严格GDS原始/8pin C合并无缺失，但1346/1358项均天线；MXU A/8pin C缺4个fakeram，不能资格化。原92377/92378/92380/92381只在核实全部尚未开始且输出不存在后合并为16CPU的92430（4×4thread），原取消原因留证；不是耗时取消。92376已自然完成。
+- 受控父层r06的PG虽通过，原标量bus映射却只接上3607/6618端点，已停止该新无效变体并存证。r07/92441真实bus位序合同在路由前完整6618端点/3408网核对通过，VDD/VSS连通通过，详细布线运行；inputs/parent-inputs-opentpu-act-r04，driver a33330d。llaccel父层92458独立新基线，输入parent-inputs-llaccel-gemm-r01，driver3d88200，27050端点。路由Liberty未表征，禁止父层STA结论。
+- 一次控制打包guard发现原MXU92390已运行，正确拒绝变更；后续PowerShell未自动停止，误提交重复92448，已立即只停止新重复并留证。原92388–92399未覆盖或中断；第二次guard发现VECTOR92391运行后退出，未提交。恢复时不要再合并这些活动控制。
+- 先取新快照，重跑make_physical_summary、stage_incremental_evidence、build_deliverables --keep-figures、validate_repository，再更新同一PR129。图表已入库，不新增重复PR，不关闭Issue126。完整GDS/LVS、父层可访问性及完整系统RC/STA电气未资格化。
+
 仓库：rayggxia-workspace/LLMHardwareDesign；[Issue126](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/126)，负责人huangpingyang04-lgtm，in_progress。
 分支 `task/126-full-block-pin-xy`，在PR120 head4f91e098之上，不擅自合并PR120；当前物理驱动commit在每次execution.json里精确记录。
 
@@ -32,3 +48,16 @@ ACT完整740-pin C对照fullC-r01采用相同C可移动cohort，B也是该740-pi
 - 电气观察：92383已完成14组原生JSON路径汇总，F/s单位，完整ACT C与标准JSON解析交叉核对通过。只为已报告路径点最大负载/slew观察，不是全部net覆盖。92382旧回执字段缺失的驱动失败保留，新版从原冻结Tcl恢复cohort。
 - validation_extensions/milestone-r01 为新增严格GDS失败和真实电气观察快照；raw GDS/大型lyrdb留远程。ACT原始/完整C导出LEF同层PIN/OBS相交782/777（含PG）只作矩形诊断，包含可能的同网形状，不直接判不可接入。
 - 原始匹配父层handoff/层序及缺失宏GDS已向用户询问位置；现有资料中继续保持未知，不指派目标层。根因未完全定位的RCX后ODB问题仍在，隔离流程不等于已修复工具或证明绝对RC正确性。
+
+用户已明确回复没有其他材料，“如果必须，请你自行补充即可”。当前独立补建父层试验见决策0004；历史handoff未知不改写。`prepare_controlled_parent.py`从真实frontier生成完整三宏父层，所有层级/坐标/连接/资源合同固定。openTPU原TOP_IO37个常零声明位新增独立tie驱动实现（不是新增硬宏），原六块接口不改；routing_only.lib只是物理链接端口占位，禁止用它报告STA/电气通过。
+
+- 父层inputs/parent-inputs-opentpu-act-r03；macro原点按0.28μm轨道相位对齐；新父层2228.735×3409.335μm。
+- r01/92407 因宏halo和未切行冲突实际失败（原驱动catch导致Slurm0，不作为通过）；r02/92408切行后在ACT的M7→M10 PG接入被OBS阻塞；r03/92409中间M8/M9条带仍被默认抽象阻塞。失败均保留，后续方案拒绝越过基线门槛。
+- r04/92410，驱动b611975，详细OBS从真实clean ODB导出bloat_factor=0，保留所有信号/PG pin行、尺寸与占用层。默认Tcl bloat_factor=10已实际读出。PDN生成能执行，但PSM发现新增局部M8/M9条带与原宏信号冲突，未通过；不能报告父层访问通过。当前作业按实际读回，不因耗时取消。
+- 下一步优先尝试详细OBS+原直接M7→M10 stack策略，并对新父层PG via按实际M7–M10各层原宏OBS做安全站点选择；原H1 filter_pg.tcl只适合无M10宏OBS，本次必须扩展或另建，不能原样调用/跳过M10。不得删源宏OBS或源金属。新增PG有短路时后续驱动应在PG gate失败就保存并停止该变体，不继续无效DRT。
+
+新独立物理回执snapshot milestone-r06已下载，make_physical_summary已更新52项：GEMM完整3039pin C通过独立native DRC0/全块多端几何连通，setup0.771186ns、hold0.041430ns，但有2项max-cap失败：output3424/Z→gemm_wr_wstrb[29]，output3425/Z→gemm_wr_wstrb[30]。原C与失败保留。
+
+按新证据冻结额外C_electrical_r03（不改PR120 A/B/C）：把完整真实写字节29/30各8data+strobe共18pin恢复原边界，其他C坐标不动。全部3753pin保留；同一3039pin重布线cohort，实际移动3021。`prepare_electrical_revision.py`从实际选网连通报告确认驱动/strobe关系并核对原byte组。驱动ad9678f，inputs/trial-inputs-gemm-electrical-r03，路由92423、独立clean92424（afterany），均UNLIMITED；未完成前不写修复通过。
+
+MXU完整1964pin C的路由92366已COMPLETED0:0、独立clean92371已COMPLETED0:0，尚需下载最新回执并核对真实终态，不只凭Slurm推断。VECTOR全C92367进行；openSYS92368/llSYS92369依赖等待。完整边界控制92389 GEMM中A_replay/Aopt已返回0，B尚运行；其余control/qual依赖不改。

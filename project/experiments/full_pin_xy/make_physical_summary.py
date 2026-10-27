@@ -31,6 +31,8 @@ def summarize(root):
            'whole_cell_master_XY_orient_connections_unchanged':j.get('fingerprint_checks',{}).get('cells',{}).get('exact_equal',False),
            'pdn_geometry_fingerprint_unchanged':j.get('fingerprint_checks',{}).get('pdn',{}).get('exact_equal',False),
            'die_unchanged':j.get('fingerprint_checks',{}).get('die',{}).get('exact_equal',False)}
+        if rev=='electrical-r03':c['candidate_revision']='C_electrical_r03'
+        if rev=='mxu-repair-r03':c['candidate_revision']='C_mxu_repair_r03'
         drc=d/'fresh_route.drc';c['fresh_native_DRC_count']=len(re.findall(r'^violation type:',read(drc),re.M)) if drc.exists() and bystage.get('fresh_native_drc')=='EXECUTED' else None
         if drc.exists() and drc.stat().st_size>0 and c['fresh_native_DRC_count']==0:c['fresh_native_DRC_count']='NONEMPTY_REPORT_REQUIRES_PARSE'
         check=read(d/'timing.checks.txt');c['reported_timing_electrical_violator_rows']=sum('(VIOLATED)' in line for line in check.splitlines()) if bystage.get('sta')=='EXECUTED' else None
@@ -86,22 +88,56 @@ def summarize(root):
     for case,s in summary.items():
         done=[t for t in s['trials'].values() if t.get('completed')];candidates=[t for t in done if t.get('plan')=='C']
         if candidates:
-            t=max(candidates,key=lambda t:(t['selected_pin_count'],t['candidate_revision']=='r02',t['finished_utc']));n=t['selected_pin_count'];s['route_status']=(f'{n}pin C实际重接完成；'+('完整C尚未实施' if n==8 else '全C已实施；完整父层/规则未资格化')) if t['routed'] else 'C实际试验失败/未完成，见回执'
+            t=max(candidates,key=lambda t:(t['selected_pin_count'],{'C_electrical_r03':3,'C_mxu_repair_r03':3,'r02':2}.get(t['candidate_revision'],1),t['finished_utc']));n=t['selected_pin_count']
+            moved=t.get('actual_all_pin_contract_check',{}).get('moved_count')
+            s['route_status']=(f'选定{n}pin、实际移动{moved}pin，C实际重接完成；'+('完整C尚未实施' if n==8 else '增量C_electrical_r03，保留18pin边界' if t['candidate_revision']=='C_electrical_r03' else '增量C_mxu_repair_r03，保留真实lane0且修复2个PG相交点' if t['candidate_revision']=='C_mxu_repair_r03' else '原C全组已实施；完整父层/规则未资格化')) if t['routed'] else 'C实际试验失败/未完成，见回执'
             with (root/(case+'_pin_coordinates.csv')).open(encoding='utf-8') as f:
                 expected_moved=sum(r['plan']=='C' and r['moved'].lower() in ['true','1'] for r in csv.DictReader(f))
-            s['full_C_migration_routed']=bool(n==expected_moved and t['routed'])
+            s['original_full_C_trial_routed']=any(q.get('routed') and q.get('actual_all_pin_contract_check',{}).get('moved_count')==expected_moved for q in candidates)
+            s['full_C_migration_routed']=s['original_full_C_trial_routed']
+            s['current_variant']={'candidate_revision':t['candidate_revision'],'selected_cohort':n,'actual_moved_signal_pins':moved,'raw_receipt':t['raw_receipt']}
             full=t.get('whole_multi_terminal_signal_clock_geometry',{}).get('pass','待验证')
             s['whole_block_OpenDB_multi_terminal_geometry']=full
             s['drc_status']='独立clean进程DRC {}; selected-net连通 {}; 全块几何连通 {}；父层未验证'.format(t.get('independent_clean_DRC_count','待复核'),t.get('selected_access_all_terminals_pass','待补查'),full)
             s['sta_status']='RCX {}; setup {}ns / hold {}ns；时序/电气违例行{}；系统边界不完整'.format(t['RCX_executed'],t['setup_worst_slack_ns'],t['hold_worst_slack_ns'],t['reported_timing_electrical_violator_rows'])
         else:s['route_status']='试验运行/驱动失败；未报告C通过';s['drc_status']='尚未完成';s['sta_status']='尚未完成'
+    for case,s in summary.items():
+        source=s['trials'];wanted=['full-controls-r04/A_replay','full-controls-r04/Aopt','full-controls-r04/B','full-other-r01/C','electrical-r03/C','mxu-repair-r03/C']
+        if case=='act':wanted=['fullC-r01/A_replay','full-controls-r04/Aopt','fullBcohort-r01/B','fullC-r02/C']
+        records={}
+        for key in wanted:
+            t=source.get(key,{})
+            if not t.get('completed') or not t.get('DRT_pre_RCX_wire_length_sum_um'):continue
+            records[key]={k:t.get(k) for k in ['selected_pin_count','DRT_pre_RCX_wire_length_sum_um','DRT_pre_RCX_vias','setup_worst_slack_ns','hold_worst_slack_ns','independent_clean_DRC_count','reported_timing_electrical_violator_rows']}
+            records[key]['actual_moved_pin_count']=t.get('actual_all_pin_contract_check',{}).get('moved_count')
+            records[key]['whole_geometry_pass']=t.get('whole_multi_terminal_signal_clock_geometry',{}).get('pass')
+        ref=records.get(wanted[0])
+        for q in records.values():
+            q['wire_change_vs_same_cohort_A_replay_percent']=100*(q['DRT_pre_RCX_wire_length_sum_um']/ref['DRT_pre_RCX_wire_length_sum_um']-1) if ref else None
+            q['via_change_vs_same_cohort_A_replay_percent']=100*(q['DRT_pre_RCX_vias']/ref['DRT_pre_RCX_vias']-1) if ref else None
+        s['matched_full_cohort_comparison']={'scope':'Same original full-C cohort rerouted from identical source; revised C keeps whole byte/lane groups at A as explicitly listed. B is only this cohort, not full B. Aopt is a slot assignment using C-center L1 proxy, not a globally optimal boundary. Native stats only; no system PPA qualification. Missing gate values mean pending, never pass.','plans':records}
+    rejection=root/'fixed_pg_rejections/llaccel_aux_full_C/proof.json'
+    if rejection.exists():
+        r=json.loads(rejection.read_text(encoding='utf-8'));s=summary['llaccel_aux']
+        assert r['all_actual_moved_pins_match_complete_original_C'] and r['actual_PG_before_and_after_move_byte_identical'] and r['direct_contact_pin_count']>0
+        s['full_C_actual_fixed_PG_rejection']={'scope':r['scope'],'checked_actual_signal_pins':r['signal_pins_checked'],'same_layer_fixed_PG_contact_pins':r['direct_contact_pin_count'],'rectangle_pairs':r['direct_contact_rectangle_pairs'],'raw_proof':'fixed_pg_rejections/llaccel_aux_full_C/proof.json','full_route_complete':False,'complete_DRC_pass':False}
+        s['route_status']='完整C的13184pin已实际place_pin并完成GRT；26pin/44矩形对与固定PG直接相交，确认无效后停止该新DRT，未完成全C布线。另保留8pin局部C结果。'
+        s['drc_status']='完整C实际固定PG短路失败；8pin局部独立native DRC0/所检全块连通通过，不能混作全C通过'
+        s['sta_status']='完整C未提取/STA；历史8pin局部存在setup/hold及电气失败，非资格化'
     source=summary['act']['trials'];keys=['fullC-r01/A_replay','fullBcohort-r01/B','fullC-r02/C']
+    if source.get('full-controls-r04/Aopt',{}).get('DRT_pre_RCX_wire_length_sum_um'):keys.insert(1,'full-controls-r04/Aopt')
     if all(k in source and source[k].get('DRT_pre_RCX_wire_length_sum_um') for k in keys):
         control=source[keys[0]];summary['act']['matched_740pin_comparison']={'scope':'Same 740 C-movable cohort, same source/resources/frame/layer set; B is subset of full859-pin B. DRT pre-RCX native statistics, one trial; not extracted RC or system PPA.',
             'plans':{k:{'selected_pins':source[k]['selected_pin_count'],'wire_length_um':source[k]['DRT_pre_RCX_wire_length_sum_um'],'via_count':source[k]['DRT_pre_RCX_vias'],
             'wire_change_percent':100*(source[k]['DRT_pre_RCX_wire_length_sum_um']/control['DRT_pre_RCX_wire_length_sum_um']-1),'via_change_percent':100*(source[k]['DRT_pre_RCX_vias']/control['DRT_pre_RCX_vias']-1),
             'setup_worst_slack_ns':source[k]['setup_worst_slack_ns'],'hold_worst_slack_ns':source[k]['hold_worst_slack_ns']} for k in keys}}
-    (root/'physical_summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    # Per-net geometry details stay byte-exact in the linked raw receipts.
+    # Avoid duplicating multi-megabyte terminal/shape arrays in each summary.
+    def compact(value):
+        if isinstance(value,dict):return {k:(('See exact linked raw receipt; '+str(len(v))+' records') if k in ['nets','moved_pins'] and isinstance(v,(list,dict)) else compact(v)) for k,v in value.items()}
+        if isinstance(value,list):return [compact(v) for v in value]
+        return value
+    (root/'physical_summary.json').write_text(json.dumps(compact(summary),ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     print('PHYSICAL_SUMMARY_UPDATED',sum(len(s['trials']) for s in summary.values()),'trial receipts; full qualification NOT inferred')
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--root',required=True);a=p.parse_args();summarize(a.root)

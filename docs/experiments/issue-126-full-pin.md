@@ -5,6 +5,31 @@
 本分支在其上增量提交，不合并或覆盖旧成果。
 
 直接查看：[中文交互 HTML](issue-126-full-pin/report.html)。
+
+## 最新完整C与增量物理结果（早期8pin记录见后文）
+
+全部六块A/B/C覆盖已完成；实际完整C和补充修订按下表分别记录。**独立native DRC与OpenDB几何连通通过不等于完整GDS/LVS、父层或系统时序资格。**
+
+| 块/修订 | 实际移动 / 信号pin | 独立native DRC | 所检全块多端连通 | setup / hold ns | 时序/电气违规行 |
+|---|---:|---:|---|---|---:|
+| ACT 原C | 740 / 860 | 0 | 通过 | 1.259268 / 0.032872 | 0 |
+| GEMM 原C | 3039 / 3753 | 0 | 通过 | 0.771186 / 0.041430 | 2 |
+| GEMM 增量C_electrical_r03 | 3021 / 3753 | 0 | 通过 | 0.771255 / 0.041530 | 0 |
+| MXU 原C | 1964 / 2172 | 3（与VDD短路） | 通过 | 0.245821 / 0.048919 | 5 |
+| MXU 增量C_mxu_repair_r03 | 1931 / 2172 | 0 | 通过 | 0.247994 / 0.048823 | 0 |
+| VECTOR 原C | 1022 / 2246 | 0 | 通过 | -4.166987 / 0.026787 | 103 |
+| openTPU SYSTEM 原C | 1768 / 2229 | 0 | 通过 | -1.765776 / -0.400698 | 2101 |
+| llaccel SYSTEM 原C | 13184已place_pin / 13507 | 实际26pin/44对固定PG直接冲突；完整DRT停止 | 完整终态未检查 | 完整C未提取/STA | 不以局部结果代替 |
+
+GEMM恢复真实字节29/30的16data+2strobe到A；MXU恢复完整33pin写lane0，并修复pf_uv[109]、b_rdata[174]两个M5内部PG冲突点。原A/B/C未改，补充完整逐pin表在HTML新增节中，均保持原层/尺寸/网络/单元/PG/边界及相同重布线cohort。真实物理失败是修订依据，不隐藏旧结果。**GEMM/MXU当前优先边界**：修订C实际线长4548300/3132185μm，相对同组原XY重布线4494984/3003026μm分别约+1.19%/+4.30%，并无块内线长收益。VECTOR同样优先边界，两个SYSTEM不建议直接全C替换；ACT有约6.40%实际块内线长收益，仍待父层与完整规则验证。
+
+严格GDS新增结果：GEMM原始及8pin局部C均严格合并成功，但未修改deck分别1346/1358项天线违规；ACT缺2个fakeram GDS，MXU缺4个，不能补造器件。其他GDS检查继续执行，逐项见HTML。没有面积节省声明。
+
+后续严格GDS：VECTOR原始/8pin局部C都能严格合并，但deck均36项天线；openSYS原始缺4个fakeram，诊断deck52486项，含46014项WELL。不能把不完整宏GDS上的诊断当完整规则签核，也不能删除原基线失败。
+
+llaccel SYSTEM完整C的实际place_pin回读已与全部13507信号pin逐项核对，原始/移动后PG指纹逐字节相同。26个pin/44对矩形与固定VDD/VSS同层直接相交，不能靠重布线消除；保留moved/ripped/global ODB和日志后，只停止该新无效试验92369。直接接触证明、实际回读与停止守卫均在HTML链接中；它不是完整DRC检查，也不表示完整C已布线。其他作业继续。
+
+用户授权补充缺失材料后，新建两个**受控父层**，不冒充历史父层：openTPU 6618端点/3408网已在PG与路由前核对通过，双电源连通通过，正在详细布线；llaccel 27050端点独立启动。新TOP_IO/PG策略与37个固定tie cell成本单列，端口Liberty仅物理链接，父层STA禁止据此资格化。历史handoff仍UNKNOWN，详见[决策0004](../decisions/0004-controlled-parent-pin-access.md)。
 图像：[ACT](issue-119-pin-xy/assets/act_comparison.png)、[MXU](issue-126-full-pin/assets/mxu_comparison.png)、[openTPU SYSTEM](issue-126-full-pin/assets/opentpu_aux_comparison.png)、[GEMM](issue-119-pin-xy/assets/gemm_comparison.png)、[VECTOR](issue-126-full-pin/assets/vector_comparison.png)、[llaccel SYSTEM](issue-126-full-pin/assets/llaccel_aux_comparison.png)；每块包含局部放大、真实端点图，新增四块PNG/SVG均入库。
 
 复用 Issue55 已有真实 SYSTEM 包装补齐完整功能归属：openTPU 为 ACT/MXU/SYSTEM；llaccel_core 为 GEMM/VECTOR/SYSTEM。18项功能完整归属，两个父层未归属叶单元均为0。外部DRAM/host/封装、llaccel_core外部SRAM存储本体不虚构为已实现block。ACT+MXU合并版是替代粒度，不重复计数。
@@ -28,7 +53,7 @@ python project/experiments/full_pin_xy/validate_repository.py
 
 ACT完整740-pin C现已实际完成接入和详细布线：提取前路由母本经独立进程native DRC=0、全块多端信号/时钟几何连通通过；独立边界setup/hold最差余量约1.259268ns/0.032872ns，电气违例报告为0，仍非完整系统签核。当前OpenRCX后的ODB序列化状态与DRC不兼容，已通过逐阶段对照定位并隔离，所有物理母本使用提取前routed/clean ODB，RCX/STA单独记录。新增四块候选按真实制造网格r02增量修订，r01与失败保留。
 
-## 本轮独立C接入终态
+## 历史首轮局部C接入记录（后续完整范围见上表）
 
 下表只说明已执行范围；所有六块的当前C试验均独立clean native DRC=0、全块多端信号/时钟OpenDB几何连通通过。GDS/LVS、完整规则和真实父层接入均未由此通过。
 
