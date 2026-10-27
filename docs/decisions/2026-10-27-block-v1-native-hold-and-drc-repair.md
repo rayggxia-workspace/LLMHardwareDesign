@@ -8,7 +8,7 @@
 
 固定 ORFS 的 `repair_timing_helper` 将 `HOLD_SLACK_MARGIN` 传给 `repair_timing -hold_margin`；global route 阶段按真实 GRT 寄生执行修复，然后详细布线改变寄生。因此增加一次有界分支：从同一 080 封存 CTS 重跑 route/final，保持 `CAP_MARGIN=40`，增加 `HOLD_SLACK_MARGIN=0.005`（ns，即 5 ps）。这是更严格的预制修复目标。SDC、Liberty、时钟、外部负载、面积/修复预算及独立零违例门槛不变；新增 buffer 和所有单元完整计价。不是把验收 slack 容差放宽到 −5 ps。
 
-`native_pipeline_hold5.json` 将候选、独立接收分别指向 104、105。先运行边缘 T6KA；内部候选仍需根据真实 DRC 定位决定修复，避免无依据重跑。后续对照必须使用一致的合格合同和公平成本。105、宏视图、最终网表行为的 worker 入口均支持该严格配置；入口存在不代表任务已经部署、运行或通过。
+`native_pipeline_hold5.json` 将候选、独立接收分别指向 105、106。先运行边缘 T6KA；内部候选仍需根据真实 DRC 定位决定修复，避免无依据重跑。后续对照必须使用一致的合格合同和公平成本。106、宏视图、最终网表行为的 worker 入口均支持该严格配置；入口存在不代表任务已经部署、运行或通过。
 
 配置接收要求原配置字节加精确两行目标、实际 make 变量读回、记录和 receipt 哈希一致。Linux 实际上传源码的正例通过；缺 hold、追加限值、错误 hold 读回、错误单位、错误分支、关闭 LEC、过期哈希和跨 pipeline 八个负例被拒，见 `work/YUZE-LU/121/results/native-hold5-config-controls.json`。这仅证明配置约束，不证明修复后的时序或 DRC。
 
@@ -24,4 +24,6 @@
 
 ## 运行与资源
 
-使用现有 `bundle.py` 从已提交 Git 字节封装；新 run 目录与 manifest 不覆盖旧失败证据。103 使用 `native-drc-locate-c`，104 使用 `native-hold5-run-transaction6k-A`；通过统一 dispatcher 计入全 Issue121 的八 allocation 上限，包括 PENDING 和提交不确定状态。其他成员任务不变，不因耗时取消既有作业。
+使用现有 `bundle.py` 从已提交 Git 字节封装；新 run 目录与 manifest 不覆盖旧失败证据。103 使用 `native-drc-locate-c`，105 使用 `native-hold5-run-transaction6k-a`；通过统一 dispatcher 计入全 Issue121 的八 allocation 上限，包括 PENDING 和提交不确定状态。其他成员任务不变，不因耗时取消既有作业。
+
+部署后预检发现 104 manifest 使用小写策略后缀，而旧 worker 将其直接传给只接受 A/C 的入口。104 调度状态实际为空、无 Slurm job；保留原部署并停止选择，不能覆写不可变 manifest。worker 已将各 repair 入口策略统一转大写，使用新 105 重新部署；这项预检没有产生物理通过或失败结果。

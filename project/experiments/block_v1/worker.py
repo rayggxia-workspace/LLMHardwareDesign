@@ -147,17 +147,17 @@ try:
         from native_reroute import implement
         variant=MODE.split('-')[1]
         top,policy=MODE.removeprefix('native-'+variant+'-run-').rsplit('-',1)
-        implement(ROOT,OUT,CPUS,run,top,policy,pipeline='native_pipeline_'+variant+'.json')
+        implement(ROOT,OUT,CPUS,run,top,policy.upper(),pipeline='native_pipeline_'+variant+'.json')
     elif MODE.startswith(('native-cap20-receive-','native-cap40-receive-','native-hold5-receive-')):
         from native_receive import verify
         variant=MODE.split('-')[1]
         top,policy=MODE.removeprefix('native-'+variant+'-receive-').rsplit('-',1)
-        verify(ROOT,OUT,CPUS,run,top,policy,pipeline='native_pipeline_'+variant+'.json')
+        verify(ROOT,OUT,CPUS,run,top,policy.upper(),pipeline='native_pipeline_'+variant+'.json')
     elif MODE.startswith(('native-cap20-view-','native-cap40-view-','native-hold5-view-')):
         from native_views import generate
         variant=MODE.split('-')[1]
         top,policy=MODE.removeprefix('native-'+variant+'-view-').rsplit('-',1)
-        generate(ROOT,OUT,CPUS,run,top,policy,pipeline='native_pipeline_'+variant+'.json')
+        generate(ROOT,OUT,CPUS,run,top,policy.upper(),pipeline='native_pipeline_'+variant+'.json')
     elif MODE.startswith('native-run-'):
         from native_run import implement
         top,policy=MODE.removeprefix('native-run-').rsplit('-',1)
