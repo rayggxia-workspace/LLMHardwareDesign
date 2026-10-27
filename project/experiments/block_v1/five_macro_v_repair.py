@@ -82,7 +82,20 @@ puts $f "[binary encode hex [$i getName]]\t[$old getName]\t[$old getWidth]\t[$ol
 close $f
 add_global_connection -net VDD -inst_pattern .* -pin_pattern VDD -power
 add_global_connection -net VSS -inst_pattern .* -pin_pattern VSS -ground
+set protected [$b findInst wire109242]
+if {$protected eq "NULL"} {error "Missing measured floating-PG instance"}
+if {[llength [info commands odb::dbInst_isDoNotTouch]]==1} {
+  set getter isDoNotTouch
+} elseif {[llength [info commands odb::dbInst_getDoNotTouch]]==1} {
+  set getter getDoNotTouch
+} else {error "Missing native dont-touch readback API"}
+if {[llength [info commands odb::dbInst_setDoNotTouch]]!=1} {error "Missing native scoped dont-touch setter"}
+set protected_before [$protected $getter]
+if {!$protected_before} {error "Measured floating-PG instance lost protection"}
+$protected setDoNotTouch false
 global_connect
+$protected setDoNotTouch $protected_before
+if {[$protected $getter]!=$protected_before} {error "Disposable PG probe did not restore protection"}
 set bad 0
 foreach i [$b getInsts] {
   foreach t [$i getITerms] {
