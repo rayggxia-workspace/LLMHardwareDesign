@@ -11,23 +11,28 @@ import sys
 
 
 def snapshot(top, name_id):
+    def bit(term):
+        # Installed Naja exposes getBit only for a bus-bit term. Scalars are
+        # represented as bit 0 here, without invoking an unavailable method.
+        return term.getBit() if hasattr(term,'getBit') else 0
+
     def endpoint(term):
         return dict(instance=term.getInstance().getName(),
                     master=term.getInstance().getModel().getName(),
                     pin=term.getBitTerm().getName(),
-                    bit=term.getBitTerm().getBit(),
+                    bit=bit(term.getBitTerm()),
                     direction=str(term.getBitTerm().getDirection()))
 
     terms=[]
     for term in top.getBitTerms():
         net=term.getNet()
         terms.append(dict(name=term.getName(),name_id=name_id(term.getName().encode()),
-                          bit=term.getBit(),direction=str(term.getDirection()),
+                          bit=bit(term),direction=str(term.getDirection()),
                           term_id=term.getID(),
                           net=None if net is None else dict(name=net.getName(),type=net.getTypeAsString(),
                               constants=dict(zero=net.isConstant0(),one=net.isConstant1(),
                                              x=net.isConstantX(),z=net.isConstantZ()),
-                              top_terms=[dict(name=t.getName(),bit=t.getBit(),direction=str(t.getDirection()))
+                              top_terms=[dict(name=t.getName(),bit=bit(t),direction=str(t.getDirection()))
                                          for t in net.getBitTerms()],
                               instance_terms=[endpoint(t)for t in net.getInstTerms()])))
     return dict(top=top.getName(),terms=terms)
