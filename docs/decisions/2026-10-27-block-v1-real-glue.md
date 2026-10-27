@@ -12,4 +12,6 @@ Issue [121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)�
 
 实际136/92214在node21/8CPU自然失败57秒，回执不改写：Yosys功能Liberty展开后的原RTL/实际映射图4788个等价点全部证明，但Kepler将14个LOGIC0_X1/Z列为额外PI，literal/tied正例虽UNSAT/IDENTICAL仍被严格边界检查拒绝。三种实际坏连接均产生SAT。后续Kepler改为同源完整tied网表的identity正例与三个实际坏连接控制，两个方向都保留原14个常量单元；仍要求identity所有PI/PO完整匹配，不过滤或豁免。原RTL与实际常量函数的非平凡等价继续由独立Yosys功能Liberty证明，Kepler案例只声明接线错误检出控制。本修正尚未实际运行。
 
-后续必须将这份有源 glue 纳入实际父层 placement/PG/CTS/布线、成本与共同底座冻结，并与实际最终 C8/S16K/T6K 网表运行完整四 profile/恢复/背压接收。本项成功也不构成合格物理 Block、宏边界或十二层提取资格。
+137/92215实际通过：node21/8CPU，13秒、TotalCPU7.357秒，MaxRSS原记账为0（不可据此宣称零内存）。真实glue为32单元/23.674000um²，包含18个普通门和14个LOGIC0_X1。Yosys4788等价点全部证明；Kepler identity的4600输入、4631输出完整匹配且UNSAT/IDENTICAL，三个实际坏连接都为SAT且所有PI/PO仍完整匹配，四个进程时间区间实际重叠。源码fc182be567a9aa1fcc8a08c42ae32e2582eb8d42、归档a4f7d843377e6f9ed7c9d924aea0fd3617006a98074de23d78f177927c126016（150成员/993280字节）。原136严格失败保留。
+
+后续必须将这份有源 glue 纳入实际父层 placement/PG/CTS/布线、成本与共同底座冻结，并与实际最终 C8/S16K/T6K 网表运行完整四 profile/恢复/背压接收。实际组合入口见[最终组合决策](2026-10-27-block-v1-final-composition.md)。本项成功不构成合格物理 Block、宏边界或十二层提取资格。

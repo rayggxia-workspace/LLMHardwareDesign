@@ -27,6 +27,9 @@ def inspect(inp,run,oracle):
  need(sha(m['build_path'])==m['build_sha256'],'actual build identity')
  build=json.loads(Path(m['build_path']).read_text())
  need(build['top']=='shared121' and build['binary_sha256']==m['binary_sha256'] and build['source_commit']==m['source_commit'],'correct top and compiled source')
+ if build.get('native_composed_binding'):
+  from native_composed import receive_binding
+  receive_binding(build,source_bundle)
  if build.get('mapped_binding'):
   mb=build['mapped_binding'];need(mb['flow']=='full-mapped-zero-delay','exact full mapped flow')
   for path_key in ('mapping_receipt','mapped_json','library'):need(sha(mb[path_key])==mb[path_key+'_sha256'],'mapped source binding '+path_key)
@@ -37,7 +40,12 @@ def inspect(inp,run,oracle):
   need(set(mb['exported_models']).issubset(set(build['command']['argv'])),'compiled mapped models')
  command=json.loads((run/'simulation-command.json').read_text())
  need(command['exit']==0 and sha(command['argv'][0])==m['binary_sha256'],'exact executed new binary')
- need(command['argv'][1:]==[str(inp/'vectors.tsv'),str(run/'actual.jsonl'),str(m['stall']),str(m['pilot'])],'exact input and wait mode')
+ if build.get('native_composed_binding'):
+  from native_composed import runtime_arguments
+  need(m['suite']=='mixed-committed' and m['pilot']==0,'complete physical mixed suite')
+  expected=runtime_arguments(inp,run,m['stall'],m['initial_state_mode'],m['runtime_seed'])
+ else:expected=[str(inp/'vectors.tsv'),str(run/'actual.jsonl'),str(m['stall']),str(m['pilot'])]
+ need(command['argv'][1:]==expected,'exact input, wait mode and declared initialization')
  need(sha(inp/'manifest.json')==m['input_manifest_sha256'],'original scientific input binding')
  for artifact in m['artifacts']:
   p=(run/artifact['path']).resolve()

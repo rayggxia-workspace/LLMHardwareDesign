@@ -29,11 +29,12 @@ for tool in [shutil.which('yosys'),shutil.which('openroad'),shutil.which('klayou
         receipt['tool_hashes'][tool]=hashlib.sha256(Path(tool).read_bytes()).hexdigest()
 
 
-def run(argv, log):
+def run(argv, log, cwd=None):
     record = dict(argv=list(map(str,argv)), log=log, started=time.time())
+    if cwd is not None:record['cwd']=str(cwd)
     receipt['commands'].append(record)
     with (OUT/log).open('w') as stream:
-        result = subprocess.run(record['argv'], stdout=stream, stderr=subprocess.STDOUT)
+        result = subprocess.run(record['argv'], cwd=cwd, stdout=stream, stderr=subprocess.STDOUT)
     record.update(returncode=result.returncode, finished=time.time())
     if result.returncode:
         raise RuntimeError('command failed; see '+log)
@@ -59,7 +60,16 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-glue-map':
+    if MODE=='native-composed-group':
+        from native_composed_group import verify
+        verify(ROOT,OUT,CPUS)
+    elif MODE=='native-composed-init-control':
+        from native_composed import initialization_control
+        initialization_control(ROOT,OUT,CPUS,run)
+    elif MODE in ('native-composed-a','native-composed-c'):
+        from native_composed import verify
+        verify(ROOT,OUT,CPUS,run,MODE[-1].upper())
+    elif MODE=='native-glue-map':
         from native_glue import verify
         verify(ROOT,OUT,CPUS,run)
     elif MODE=='native-via-qualification-group':

@@ -184,6 +184,8 @@ python project/experiments/block_v1/native_drc_geometry.py work/YUZE-LU/121/resu
 
 ## C8 物理常量导入及完整预制修复（Issue121）
 
+`native-composed-init-control`先用安装Verilator/实际Liberty的128个DFF验证参数解析先于DUT构造、全1/两随机初态；`native-composed-group`随后以48CPU内A/C各24CPU组织实际最终两叶和映射glue的完整混合整数接收，每子任务三初态×两背压、每模型4线程。`worker.run`的可选cwd只用于叶视图隔离目录，日志记录实际cwd；旧调用不变。独立数学接收器对新物理分支再次核实际源/LEC/全信号视图/库/驱动和编译参数，原数学/旧分支不放宽。当前仅Python编译通过，实际初始化/组合未运行。见[组合决策](decisions/2026-10-27-block-v1-final-composition.md)。
+
 新增 `native-glue-map`（`native_glue.py`）通过既有 `worker.sh`/统一 `dispatch.py` manifest 入口运行，8CPU内四个两OMP线程的实际Kepler案例并发。它只映射真实 `shared121.sv` 的父层有源 glue，保留两叶接口；Yosys原RTL/mapped完整组合边界等价、精确常量逆还原、实际命令/ACK/revoke三反例与逐master面积均须通过。结果为 `native-glue.json`，两叶及父层物理资格另验。见[glue计价与边界](decisions/2026-10-27-block-v1-real-glue.md)。当前尚未服务器运行。
 
 
