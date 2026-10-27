@@ -90,12 +90,10 @@ def one(inputs,rev,plan):
           'add_pdn_connect -grid parent_grid -layers {metal7 metal10}']
         for i,info in enumerate(contract['physical_instances'].values()):
             commands += ['define_pdn_grid -name macro_pg_'+str(i)+' -voltage_domains CORE -macro -instances '+tcl(info['instance'])+' -grid_over_pg_pins -halo {2 2 2 2}',
-              'add_pdn_stripe -grid macro_pg_'+str(i)+' -layer metal8 -width 1.40 -pitch 30 -offset 2',
-              'add_pdn_stripe -grid macro_pg_'+str(i)+' -layer metal9 -width 1.40 -pitch 30 -offset 2',
-              'add_pdn_connect -grid macro_pg_'+str(i)+' -layers {metal7 metal8}',
-              'add_pdn_connect -grid macro_pg_'+str(i)+' -layers {metal8 metal9}',
-              'add_pdn_connect -grid macro_pg_'+str(i)+' -layers {metal9 metal10}']
+              'add_pdn_connect -grid macro_pg_'+str(i)+' -layers {metal7 metal10}']
         commands += ['pdngen -failed_via_report '+tcl(out/'failed_vias.rpt')]
+        commands += ['set llhd_macro_instances {'+' '.join(v['instance'] for v in contract['physical_instances'].values())+'}',
+          'source '+tcl(DRIVER/'filter_parent_pg.tcl')]
     else:
         inst=contract['physical_instances'][focus]['instance']
         commands += ['set b [ord::get_db_block]','set i [$b findInst '+tcl(inst)+']']
@@ -105,7 +103,7 @@ def one(inputs,rev,plan):
     commands += ['create_clock -name parent_route_classification_only -period 2.5 [get_ports clk]']
     setup=out/'run_setup.tcl';setup.write_text('\n'.join(commands)+'\n')
     rec['child_views']=views;rec['routing_only_macro_model']='Not characterized; capacitance zero is only a linker placeholder. Do not use for parent RC/STA/electrical qualification.'
-    rec['parent_PDN_strategy']='New fixed parent M1/M4/M7/M10 grid plus macro M8/M9 local straps and adjacent M7-M8/M8-M9/M9-M10 connections. Original direct M7-M10-stack strategy failed actual macro obstructions; r01/r02 retained. No OBS removed or rule lowered; all actual leaf PG unchanged. After A is checked, freeze its PG for all variants.'
+    rec['parent_PDN_strategy']='Detailed bloat0 OBS; parent M1/M4/M7/M10 grid plus direct M7-M10 via stacks. Only unsafe NEW parent via groups are selected out using actual M7/M8/M9/M10 source OBS and conservative 2um landing guard; each table maximum1.5um verified. Original geometry/OBS/pins/rules retained. No M8/M9 PG straps (r04 straps caused actual PSM shorts). Independent native DRC/PSM still mandatory. Freeze checked A PG for all variants.'
     rec['setup_sha256']=sha(setup)
     env='PINXY_PARENT_OUT={},PINXY_PARENT_INPUT={},PINXY_PARENT_RUN_SETUP={},PINXY_DRIVER={},OMP_NUM_THREADS=4'.format(out,inputs,setup,DRIVER)
     cmd=common+['--env',env,IMAGE,BIN,'-threads','4','-no_init','-exit',str(DRIVER/'parent_trial.tcl')];rec['command']=cmd

@@ -43,8 +43,14 @@ if {![stage load {
   source $::env(PINXY_PARENT_RUN_SETUP)
 }]} {catch {write_db $out/failed-load.odb};close $stages;exit 1}
 if {![stage placement_and_contract {check_placement -verbose;parent_contract $out/before;write_db $out/placed.odb}]} {close $stages;exit 1}
-stage pdn_check_VDD {check_power_grid -net VDD -error_file $out/VDD.pdn.rpt}
-stage pdn_check_VSS {check_power_grid -net VSS -error_file $out/VSS.pdn.rpt}
+set vdd_ok [stage pdn_check_VDD {check_power_grid -net VDD -error_file $out/VDD.pdn.rpt}]
+set vss_ok [stage pdn_check_VSS {check_power_grid -net VSS -error_file $out/VSS.pdn.rpt}]
+if {!$vdd_ok || !$vss_ok} {
+  write_db $out/failed-PG.odb
+  parent_contract $out/after
+  puts "FAILED_PARENT_PG_GATE; do not attempt a qualified signal route on invalid power geometry"
+  close $stages;exit 1
+}
 if {![stage global_route {
   set_routing_layers -signal metal2-metal10 -clock metal4-metal10
   global_route -guide_file $out/route.guide -congestion_report_file $out/congestion.rpt
