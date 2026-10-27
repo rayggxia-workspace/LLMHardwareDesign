@@ -79,7 +79,7 @@ def fixture(root,out,run):
     (out/'native-formal-control.json').write_text(json.dumps(record,indent=2)+'\n')
 
 
-def receive(source,receipt,results,top,prep):
+def receive(source,receipt,results,top,prep,logic_context=None):
     from io_slots import file_sha
     base=source.parents[2]
     control=base/'block-v1-20261027-073/tasks/native-formal-control'
@@ -101,6 +101,28 @@ def receive(source,receipt,results,top,prep):
     original=prep/'inputs'/top/(top+'.v')
     assert file_sha(original)==bound['outputs'][str(original.relative_to(prep))]
     assert file_sha(results/'1_2_yosys.v')==file_sha(original)
-    received=inspect(log.read_text());assert received['passed'],'Final native LEC lacks complete positive evidence'
+    received=inspect(log.read_text());original_received=received
+    projection=None
+    if logic_context is not None:
+        root,out,run=logic_context
+        fixture=base/'block-v1-20261027-110/tasks/native-antenna-fixture'
+        bound=json.loads((fixture/'receipt.json').read_text());assert bound['passed']is True
+        control_path=fixture/'native-antenna-fixture.json';assert file_sha(control_path)==bound['outputs'][control_path.name]
+        projection_control=json.loads(control_path.read_text());assert projection_control['passed']is True and projection_control['formal']['passed']is True
+        assert len(projection_control['projection_faults'])==4
+        from native_logic_projection import export
+        before,before_proof=export(root,out,run,results/'1_synth_lec.v',Path(lib),top,'formal-before')
+        after,after_proof=export(root,out,run,results/'6_final.v',Path(lib),top,'formal-after')
+        assert before_proof['removed_count']==0 and after_proof['removed_count']>0
+        config_text='format: verilog\ninput_paths:\n  - '+str(before)+'\n  - '+str(after)+'\n'
+        strict_log=out/'strict-projected-kepler.log';strict_config=out/'strict-projected-kepler.yml'
+        config_text+='liberty_files:\n - '+lib+'\nlog_file: '+str(strict_log)+'\n'
+        strict_config.write_text(config_text)
+        run([str(Path(positive['binary'])),'--config',str(strict_config)],'strict-projected-formal.log')
+        received=inspect(strict_log.read_text())
+        projection=dict(before=before_proof,after=after_proof,strict_log_sha256=file_sha(strict_log),
+            strict_config_sha256=file_sha(strict_config),control_receipt_sha256=file_sha(fixture/'receipt.json'))
+    assert received['passed'],'Final native LEC lacks complete positive evidence'
     return dict(**received,log_sha256=file_sha(log),config_sha256=file_sha(config),
-        full_final_netlist_sha256=file_sha(results/'6_final.v'),control_receipt_sha256=file_sha(control/'receipt.json'))
+        full_final_netlist_sha256=file_sha(results/'6_final.v'),control_receipt_sha256=file_sha(control/'receipt.json'),
+        original_full_view_received=original_received,boolean_projection=projection)

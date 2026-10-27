@@ -14,49 +14,70 @@ PIPELINE = 'native_pipeline_cap20.json'
 SUFFIX = '\nexport CAP_MARGIN = 20\n'
 
 
-def config_suffix(margin,hold_margin=None):
+def config_suffix(margin,hold_margin=None,diode_hook=None):
     assert margin in (20,40)
     suffix='\nexport CAP_MARGIN = %d\n'%margin
     if hold_margin is not None:
         assert margin==40 and hold_margin==.005
         suffix+='export HOLD_SLACK_MARGIN = 0.005\n'
+    if diode_hook is not None:
+        assert margin==40 and hold_margin==.005
+        assert Path(diode_hook).is_absolute() and not re.search(r'[\s$#]',str(diode_hook))
+        suffix+='export PRE_GLOBAL_ROUTE_TCL = '+str(diode_hook)+'\n'
+        suffix+='export VIA_IN_PIN_MIN_LAYER = metal10\nexport VIA_IN_PIN_MAX_LAYER = metal10\n'
     return suffix
 
 
-def variant(margin,hold_margin=None):
+def variant(margin,hold_margin=None,diode=False):
     config_suffix(margin,hold_margin)
+    if diode:
+        assert margin==40 and hold_margin==.005
+        return 'cap40-hold5ps-input-diode-via-in-m10-from-sealed-cts'
     return 'cap40-hold5ps-from-sealed-cts'if hold_margin is not None else 'cap-margin-%d-from-sealed-cts'%margin
 
 
-def checked_config(source, receipt, original,margin=20,hold_margin=None):
+def checked_config(source, receipt, original,margin=20,hold_margin=None,diode=False):
     """Bind actual configuration to the original plus exact repair targets."""
     path = source / 'config.mk'
     assert file_sha(path) == receipt['outputs']['config.mk']
-    assert path.read_bytes() == original.read_bytes() + config_suffix(margin,hold_margin).encode()
+    hook=source/'input-diodes.tcl'if diode else None
+    if diode:assert file_sha(hook)==receipt['outputs'][hook.name]
+    assert path.read_bytes() == original.read_bytes() + config_suffix(margin,hold_margin,hook).encode()
     record = source / 'native-candidate.json'
     assert file_sha(record) == receipt['outputs'][record.name]
     candidate = json.loads(record.read_text())
-    assert candidate['repair_variant'] == variant(margin,hold_margin)
+    assert candidate['repair_variant'] == variant(margin,hold_margin,diode)
     assert candidate['actual_variables']['CAP_MARGIN'] == str(margin)
     if hold_margin is not None:
         assert candidate['actual_variables']['HOLD_SLACK_MARGIN']=='0.005'
         assert candidate['hold_margin_ns']==hold_margin
     assert candidate['actual_variables']['LEC_CHECK'] == '1'
     assert candidate['actual_variables']['SEC_CHECK'] == '0'
+    if diode:
+        assert candidate['actual_variables']['PRE_GLOBAL_ROUTE_TCL']==str(hook)
+        assert candidate['actual_variables']['VIA_IN_PIN_MIN_LAYER']==candidate['actual_variables']['VIA_IN_PIN_MAX_LAYER']=='metal10'
     assert candidate['actual_config_sha256'] == file_sha(path)
     return path
 
 
 def implement(root, out, cpus, run, top, policy,pipeline=PIPELINE):
     assert top in ('shared109', 'transaction6k') and policy in ('A', 'C') and cpus >= 16
-    assert pipeline in ('native_pipeline_cap20.json','native_pipeline_cap40.json','native_pipeline_hold5.json')
+    assert pipeline in ('native_pipeline_cap20.json','native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json')
     config = json.loads((root / 'project/experiments/block_v1' / pipeline).read_text())
     margin=config.get('cap_margin',20)
     assert margin==(20 if pipeline=='native_pipeline_cap20.json'else 40)
     hold_margin=config.get('hold_margin_ns')
-    assert hold_margin==(.005 if pipeline=='native_pipeline_hold5.json'else None)
-    assert config['repair_variant']==variant(margin,hold_margin)
+    diode=pipeline=='native_pipeline_diode.json'
+    assert hold_margin==(.005 if pipeline in ('native_pipeline_hold5.json','native_pipeline_diode.json')else None)
+    assert config['repair_variant']==variant(margin,hold_margin,diode)
     base = out.parents[2]
+    if diode:
+        proof=base/'block-v1-20261027-110/tasks/native-antenna-fixture'
+        bound=json.loads((proof/'receipt.json').read_text());assert bound['passed']is True
+        path=proof/'native-antenna-fixture.json';assert file_sha(path)==bound['outputs'][path.name]
+        qualified=json.loads(path.read_text());assert qualified['passed']is True and qualified['formal']['passed']is True
+        hook=out/'input-diodes.tcl';shutil.copyfile(root/'project/experiments/block_v1/native_input_diodes.tcl',hook)
+    else:hook=None
     source = base / config['source_candidate_run'] / ('tasks/native-run-' + top + '-' + policy.lower())
     receipt = json.loads((source / 'receipt.json').read_text())
     assert receipt['passed'] is True
@@ -71,7 +92,7 @@ def implement(root, out, cpus, run, top, policy,pipeline=PIPELINE):
     assert file_sha(original_config) == accepted['outputs'][str(original_config.relative_to(prep))]
     assert original_record['inputs_receipt_sha256'] == file_sha(prep / 'receipt.json')
     folder = out / 'config.mk'
-    folder.write_bytes(original_config.read_bytes() + config_suffix(margin,hold_margin).encode())
+    folder.write_bytes(original_config.read_bytes() + config_suffix(margin,hold_margin,hook).encode())
     nickname = 'bv1_' + top + '_' + policy
     relative = Path('flow/results/nangate45') / nickname / 'base'
     results = out / relative
@@ -93,7 +114,7 @@ def implement(root, out, cpus, run, top, policy,pipeline=PIPELINE):
         inputs_source=str(prep), inputs_receipt_sha256=file_sha(prep / 'receipt.json'),
         source=str(source), source_receipt_sha256=file_sha(source / 'receipt.json'),
         source_candidate_sha256=file_sha(record_path), copied_checkpoint_files=copied,
-        repair_variant=variant(margin,hold_margin),hold_margin_ns=hold_margin,
+        repair_variant=variant(margin,hold_margin,diode),hold_margin_ns=hold_margin,
         actual_config=str(folder), actual_config_sha256=file_sha(folder), stages=[],
         qualified_hard_macro=False,
         scope='Native prefabrication route/final repair; all original electrical limits, area budgets and independent gates still apply')
@@ -107,6 +128,7 @@ def implement(root, out, cpus, run, top, policy,pipeline=PIPELINE):
         RCX_RULES='/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules',
         KEEP_VARS='1', LEC_CHECK='1', SEC_CHECK='0', CAP_MARGIN=str(margin))
     if hold_margin is not None:wanted['HOLD_SLACK_MARGIN']='0.005'
+    if diode:wanted.update(PRE_GLOBAL_ROUTE_TCL=str(hook),VIA_IN_PIN_MIN_LAYER='metal10',VIA_IN_PIN_MAX_LAYER='metal10')
     record['actual_variables'] = {}
     for name, expected in wanted.items():
         run(command + ['print-' + name], 'variable-' + name + '.log')

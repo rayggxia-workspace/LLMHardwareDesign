@@ -59,7 +59,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-antenna-fixture':
+    if MODE=='native-diode-hook-probe':
+        from native_diode_hook import verify
+        verify(ROOT,OUT,CPUS,run)
+    elif MODE=='native-antenna-fixture':
         from native_antenna_fixture import verify
         verify(ROOT,OUT,CPUS,run)
     elif MODE=='native-cell-gate-probe':
@@ -74,6 +77,9 @@ try:
     elif MODE in ('native-hold5-final-t6k-a','native-hold5-final-t6k-c'):
         from native_final_function import verify
         verify(ROOT,OUT,CPUS,run,policy=MODE[-1].upper(),pipeline='native_pipeline_hold5.json')
+    elif MODE in ('native-diode-final-t6k-a','native-diode-final-t6k-c'):
+        from native_final_function import verify
+        verify(ROOT,OUT,CPUS,run,policy=MODE[-1].upper(),pipeline='native_pipeline_diode.json')
     elif MODE=='transaction':
         run([str(VERILATOR),'--cc','--exe','--build','-j',str(CPUS),'-Wno-fatal',
              '--top-module','transaction6k','--Mdir',str(OUT/'obj'),'-CFLAGS','-std=c++17 -O2',
@@ -149,17 +155,17 @@ try:
     elif MODE=='physical-inputs-compatible':
         from physical_inputs import prepare
         prepare(ROOT,OUT,CPUS,run,compatible=True)
-    elif MODE.startswith(('native-cap20-run-','native-cap40-run-','native-hold5-run-')):
+    elif MODE.startswith(('native-cap20-run-','native-cap40-run-','native-hold5-run-','native-diode-run-')):
         from native_reroute import implement
         variant=MODE.split('-')[1]
         top,policy=MODE.removeprefix('native-'+variant+'-run-').rsplit('-',1)
         implement(ROOT,OUT,CPUS,run,top,policy.upper(),pipeline='native_pipeline_'+variant+'.json')
-    elif MODE.startswith(('native-cap20-receive-','native-cap40-receive-','native-hold5-receive-')):
+    elif MODE.startswith(('native-cap20-receive-','native-cap40-receive-','native-hold5-receive-','native-diode-receive-')):
         from native_receive import verify
         variant=MODE.split('-')[1]
         top,policy=MODE.removeprefix('native-'+variant+'-receive-').rsplit('-',1)
         verify(ROOT,OUT,CPUS,run,top,policy.upper(),pipeline='native_pipeline_'+variant+'.json')
-    elif MODE.startswith(('native-cap20-view-','native-cap40-view-','native-hold5-view-')):
+    elif MODE.startswith(('native-cap20-view-','native-cap40-view-','native-hold5-view-','native-diode-view-')):
         from native_views import generate
         variant=MODE.split('-')[1]
         top,policy=MODE.removeprefix('native-'+variant+'-view-').rsplit('-',1)

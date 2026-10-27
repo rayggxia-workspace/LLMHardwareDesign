@@ -28,7 +28,7 @@ def verify(root,out,cpus,run,policy,pipeline='native_pipeline_cap40.json'):
     from native_formal import receive
     assert policy in ('A','C')and cpus>=8
     base=out.parents[2]
-    assert pipeline in ('native_pipeline_cap40.json','native_pipeline_hold5.json')
+    assert pipeline in ('native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json')
     config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
     top='transaction6k'
     source=base/config['candidate_run']/('tasks/'+config['candidate_task_prefix']+top+'-'+policy.lower())
@@ -37,7 +37,7 @@ def verify(root,out,cpus,run,policy,pipeline='native_pipeline_cap40.json'):
     results=source/'flow/results/nangate45'/('bv1_'+top+'_'+policy)/'base'
     netlist=results/'6_final.v'
     assert file_sha(netlist)==receipt['outputs'][str(netlist.relative_to(source))]
-    formal=receive(source,receipt,results,top,prep)
+    formal=receive(source,receipt,results,top,prep,logic_context=(root,out,run)if pipeline=='native_pipeline_diode.json'else None)
     assert formal['passed']is True and formal['full_final_netlist_sha256']==file_sha(netlist)
     library=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
     script='read_liberty -ignore_miss_func -ignore_miss_dir '+str(library)+'\nwrite_verilog -noattr cells.v\n'

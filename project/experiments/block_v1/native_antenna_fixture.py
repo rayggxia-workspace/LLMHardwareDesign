@@ -45,9 +45,45 @@ def verify(root,out,cpus,run):
     config+='liberty_files:\n - '+str(lib)+'\nlog_file: '+str(out/'diode-kepler.log')+'\n'
     (out/'diode-kepler.yml').write_text(config)
     run(['/OpenROAD-flow-scripts/tools/install/kepler-formal/bin/kepler-formal','--config',str(out/'diode-kepler.yml')],'diode-formal-command.log')
-    formal=inspect((out/'diode-kepler.log').read_text());assert formal['passed'],formal
+    full_formal=inspect((out/'diode-kepler.log').read_text())
+    # Preserve the tool's unmatched synthetic boundary. Do not waive it.
+    from native_logic_projection import export,project
+    before_logic,before_proof=export(root,out,run,out/'before.v',lib,'diode_probe','before')
+    after_logic,after_proof=export(root,out,run,out/'after.v',lib,'diode_probe','after')
+    assert before_proof['removed_count']==0 and after_proof['removed_count']==1
+    config='format: verilog\ninput_paths:\n  - '+str(before_logic)+'\n  - '+str(after_logic)+'\n'
+    config+='liberty_files:\n - '+str(lib)+'\nlog_file: '+str(out/'logic-kepler.log')+'\n'
+    (out/'logic-kepler.yml').write_text(config)
+    run(['/OpenROAD-flow-scripts/tools/install/kepler-formal/bin/kepler-formal','--config',str(out/'logic-kepler.yml')],'logic-formal-command.log')
+    formal=inspect((out/'logic-kepler.log').read_text());assert formal['passed'],formal
+    import copy
+    parsed=json.loads((out/'after-physical.json').read_text());faults={}
+    for name in ['diode-output','diode-extra-pin','diode-parameter']:
+        changed=copy.deepcopy(parsed);cell=changed['modules']['diode_probe']['cells']['d']
+        if name=='diode-output':cell['port_directions']['A']='output'
+        elif name=='diode-extra-pin':cell['connections']['Z']=[2]
+        else:cell['parameters']['invented']=1
+        try:project(changed,lib.read_text())
+        except AssertionError:faults[name]=True
+        else:raise AssertionError('Unsafe Boolean projection accepted '+name)
+    # Change real logic while retaining the diode. The strict final comparator
+    # must still find a difference after the audited physical-only removal.
+    (out/'wrong.v').write_text(after.replace('.A(a),.Z(z)',".A(1'b0),.Z(z)"))
+    wrong_logic,wrong_proof=export(root,out,run,out/'wrong.v',lib,'diode_probe','wrong')
+    assert wrong_proof['removed_count']==1
+    config='format: verilog\ninput_paths:\n  - '+str(before_logic)+'\n  - '+str(wrong_logic)+'\n'
+    config+='liberty_files:\n - '+str(lib)+'\nlog_file: '+str(out/'wrong-kepler.log')+'\n'
+    (out/'wrong-kepler.yml').write_text(config)
+    import subprocess
+    binary='/OpenROAD-flow-scripts/tools/install/kepler-formal/bin/kepler-formal'
+    with(out/'wrong-formal-command.log').open('w')as stream:
+        result=subprocess.run([binary,'--config',str(out/'wrong-kepler.yml')],stdout=stream,stderr=subprocess.STDOUT)
+    wrong_text=(out/'wrong-kepler.log').read_text();wrong=inspect(wrong_text)
+    assert not wrong['passed'] and ('Found difference'in wrong_text or 'SAT solver finished: SAT'in wrong_text)
+    faults['actual_logic_mutation']=dict(returncode=result.returncode,received=wrong)
     assert all(file_sha(Path(p))==digest for p,digest in inputs.items())
-    record=dict(schema='block-v1-native-antenna-fixture/1',passed=True,cases=cases,formal=formal,
+    record=dict(schema='block-v1-native-antenna-fixture/1',passed=True,cases=cases,formal=formal,full_formal=full_formal,
+        boolean_projection={'before':before_proof,'after':after_proof},projection_faults=faults,
         source_probe_sha256=file_sha(path),input_sha256=inputs,qualified_block_repair=False,
         scope='Actual BUF_X1 and ANTENNA_X1 GDS on a deliberately long M1 fixture; unchanged full native deck and actual Liberty LEC. Antenna connectivity controls only, not full fixture DRC, legalization, PG, timing or block qualification')
     (out/'native-antenna-fixture.json').write_text(json.dumps(record,indent=2)+'\n')

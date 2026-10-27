@@ -53,6 +53,15 @@ close $stream
 set stream [open physical-masters.tsv w]
 dict for {key count} $masters {puts $stream "$key\t$count"}
 close $stream
+set stream [open physical-input-diodes.tsv w]
+foreach inst [$block getInsts] {
+  if {[[$inst getMaster] getName] ne "ANTENNA_X1"} {continue}
+  set term [$inst findITerm A]
+  set net [$term getNet]
+  if {$net eq "NULL"} {error "Unconnected actual diode"}
+  puts $stream "[$inst getName]\t[$net getName]"
+}
+close $stream
 set stream [open physical-pins.tsv w]
 foreach term [$block getBTerms] {
   if {[$term getSigType] in {POWER GROUND}} {continue}
