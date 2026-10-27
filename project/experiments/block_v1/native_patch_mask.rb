@@ -6,14 +6,16 @@ layouts = [$before_gds, $after_gds].map do |path|
   raise 'Expected one complete native top' unless layout.top_cells.size == 1
   layout
 end
-unit = 0.0005
+unit = (layouts.map(&:dbu)+[0.0005]).min
 scales = layouts.map do |layout|
   ratio = layout.dbu / unit
   raise 'Non-integer exact native units' unless ratio >= 1 && (ratio-ratio.round).abs < 1e-9
   ratio.round
 end
 keys = layouts.flat_map { |l| l.layer_indices.map { |i| info=l.get_info(i); [info.layer,info.datatype] } }.uniq.sort
-patch = RBA::Region.new(RBA::Box.new(282460,530600,282650,531160))
+patch_scale = 0.0005/unit
+raise 'Non-integer exact patch units' unless (patch_scale-patch_scale.round).abs < 1e-9
+patch = RBA::Region.new(RBA::Box.new(*[282460,530600,282650,531160].map { |v| v*patch_scale.round }))
 differences = []
 keys.each do |key|
   masks = layouts.each_with_index.map do |layout,j|
@@ -34,5 +36,5 @@ raise 'Expected actual nonempty M2 addition' unless differences.size == 1
 File.write($out+'/patch-mask-readback.json',JSON.pretty_generate({
   'passed'=>true,'complete_polygon_layer_count'=>keys.size,'common_dbu_um'=>unit,
   'before_gds'=>$before_gds,'after_gds'=>$after_gds,'source_dbu_um'=>layouts.map(&:dbu),
-  'exact_integer_scales'=>scales,'only_additive_expected_metal2_union'=>true,
+  'exact_integer_scales'=>scales,'exact_patch_integer_scale'=>patch_scale.round,'only_additive_expected_metal2_union'=>true,
   'missing_patch_negative_rejected'=>true,'differences'=>differences})+"\n")

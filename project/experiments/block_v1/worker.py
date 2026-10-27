@@ -114,6 +114,9 @@ try:
     elif MODE.startswith('five-macro-formal-'):
         from five_macro_receive import formal
         formal(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE=='five-macro-finish-m-patch':
+        from five_macro_repair import finish_patch
+        finish_patch(ROOT,OUT,CPUS,run)
     elif MODE=='five-macro-patch-m':
         from five_macro_repair import patch_metal2
         patch_metal2(ROOT,OUT,CPUS,run)

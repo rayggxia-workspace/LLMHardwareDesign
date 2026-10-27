@@ -1,15 +1,18 @@
-"""Independent, read-only reception of the actual new M/S final leaves."""
+"""Independent, read-only reception of the actual five-macro final leaves."""
 import concurrent.futures
 import json
 from pathlib import Path
 import shutil
 
 
-def source(out,kind,original=False):
+def source(out,kind,original=False,repaired=False):
     from io_slots import file_sha
-    assert kind in ('m','s')
-    number=('189' if original else '193') if kind=='m' else '190'
-    task=('five-macro-route-m' if original else 'five-macro-repair-m-hold') if kind=='m' else 'five-macro-route-s'
+    assert kind in ('m','s','r','v')
+    assert not (original or repaired) or kind=='m'
+    number=(('189' if original else '193' if repaired else '203') if kind=='m'
+            else dict(s='190',r='196',v='203')[kind])
+    task=(('five-macro-route-m' if original else 'five-macro-repair-m-hold' if repaired else 'five-macro-finish-m-patch') if kind=='m'
+          else 'five-macro-route-'+kind)
     folder=out.parents[2]/('block-v1-20261027-'+number+'/tasks/'+task)
     receipt=json.loads((folder/'receipt.json').read_text());assert receipt['passed'] is True
     proof=folder/'five-macro-native-flow.json';assert file_sha(proof)==receipt['outputs'][proof.name]
@@ -131,7 +134,7 @@ def function(root,out,cpus,run,kind):
     netlist,proof=export(root,out,run,folder,r,results,top,lib)
     (out/'cells.ys').write_text('read_liberty -ignore_miss_func -ignore_miss_dir '+str(lib)+'\nwrite_verilog -noattr cells.v\n')
     run(['yosys','-s',str(out/'cells.ys')],'cells.log')
-    bench=root/('project/experiments/block_v1/test_'+('matrix' if kind=='m' else 'store')+'_macro.cpp')
+    bench=root/('project/experiments/block_v1/test_'+dict(m='matrix',s='store',r='recurrent',v='vector')[kind]+'_macro.cpp')
     compiler='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
     run([compiler,'--cc','--exe','--build','-j','16','-Wno-fatal','--top-module',top,'--prefix','V'+top,
          '-Mdir',str(out/'obj'),'--output-split','12000','--output-split-cfuncs','150','--threads','4',

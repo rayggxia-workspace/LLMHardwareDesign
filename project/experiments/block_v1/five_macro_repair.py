@@ -4,6 +4,73 @@ from pathlib import Path
 import shutil
 
 
+def finish_patch(root,out,cpus,run):
+    """Fresh native RCX/final outputs from the proved M patch, no rerouting."""
+    from io_slots import file_sha,slot
+    from five_macro_receive import source
+    from native_escape_finish import FLOW_HASHES
+    from native_escape_audit import def_inventory
+    assert cpus==16
+    original,r,old,results=source(out,'m',repaired=True)
+    probe=out.parents[2]/'block-v1-20261027-204/tasks/five-macro-patch-m'
+    pr=json.loads((probe/'receipt.json').read_text());assert pr['passed'] is True
+    pp=probe/'five-macro-patch-m.json';assert file_sha(pp)==pr['outputs'][pp.name]
+    p=json.loads(pp.read_text());assert p['passed'] and p['complete_gds_mask']['passed']
+    assert p['exact_native_def_rect_readback'] and p['non_net_geometry_unchanged']
+    assert p['unchanged_full_signal_netlist'] and p['all_other_routes_unchanged'] and p['no_original_conductors_removed']
+    assert p['source_receipt_sha256']==file_sha(original/'receipt.json')
+    assert not p['native_full_chip_drc_report'].strip()
+    for name in ('edited.odb','after.def','after.v','patch-mask-readback.json'):
+        assert file_sha(probe/name)==pr['outputs'][name]
+    assert file_sha(probe/'edited.odb')==p['edited_odb_sha256']
+    nickname='bv1_'+old['top'];target=out/'flow/results/nangate45'/nickname/'base';target.mkdir(parents=True)
+    for category in ('logs','reports','objects'):(out/'flow'/category/'nangate45'/nickname/'base').mkdir(parents=True)
+    copied={}
+    def copy(a,b,digest):
+        assert file_sha(a)==digest
+        with slot(out.parents[2]):shutil.copyfile(a,b)
+        assert file_sha(b)==digest;b.chmod(0o444);copied[str(b.relative_to(out))]=digest
+    copy(probe/'edited.odb',target/'6_1_fill.odb',p['edited_odb_sha256'])
+    copy(results/'6_final.sdc',target/'6_1_fill.sdc',r['outputs'][str((results/'6_final.sdc').relative_to(original))])
+    for name in ('1_synth_lec.v','1_2_yosys.v','1_2_yosys.sdc','bv1-input-diodes.tsv'):
+        copy(results/name,target/name,r['outputs'][str((results/name).relative_to(original))])
+    for name in ('pins.json','pins.tcl','input-diodes.tcl'):
+        copy(original/name,out/name,r['outputs'][name])
+    config=(original/'config.mk').read_text()
+    old_hook=str(original/'input-diodes.tcl');assert config.count(old_hook)==1
+    (out/'config.mk').write_text(config.replace(old_hook,str(out/'input-diodes.tcl')))
+    flow=Path('/OpenROAD-flow-scripts/flow')
+    assert {name:file_sha(flow/name) for name in FLOW_HASHES}==FLOW_HASHES
+    record=dict(old,passed=False,pipeline_completed=False,stages=[],final_files={},
+                config_sha256=file_sha(out/'config.mk'),pins_sha256=file_sha(out/'pins.json'),
+                pre_freeze_m2_patch=True,patch_receipt_sha256=file_sha(probe/'receipt.json'),
+                patch_report_sha256=file_sha(pp),source_receipt_sha256=file_sha(original/'receipt.json'),
+                accepted_edit_odb_sha256=p['edited_odb_sha256'],actual_flow_scripts=FLOW_HASHES,
+                scope='Same M implementation, accepted single additive M2 patch; ordinary final-report/RCX only, all independent final gates required again')
+    def save():(out/'five-macro-native-flow.json').write_text(json.dumps(record,indent=2)+'\n')
+    save()
+    command=['make','-C',str(flow),'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
+    run(command+['do-6_report'],'do-6_report.log');record['stages'].append('do-6_report');save()
+    body='set_thread_count 16\nread_db {'+str(target/'6_final.odb')+'}\nwrite_def final-readback.def\nwrite_verilog final-all.v\n'
+    body+='drt::check_drc_cmd native-whole-drc.rpt 0 0 0 0 native_whole_drc\nwrite_def checked-readback.def\n'
+    (out/'final-check.tcl').write_text(body);run(['openroad','-no_init','-exit',str(out/'final-check.tcl')],'final-check.log')
+    assert def_inventory(probe/'after.def')==def_inventory(out/'final-readback.def')
+    assert file_sha(out/'final-readback.def')==file_sha(out/'checked-readback.def')
+    assert file_sha(out/'final-all.v')==file_sha(probe/'after.v')
+    assert file_sha(target/'6_final.sdc')==file_sha(results/'6_final.sdc')
+    assert not (out/'native-whole-drc.rpt').read_text().strip()
+    for name,digest in copied.items():assert file_sha(out/name)==digest
+    report=out/'flow/reports/nangate45'/nickname/'base/5_route_drc.rpt'
+    shutil.copyfile(out/'native-whole-drc.rpt',report)
+    for suffix in ('v','sdc','def','odb','spef'):
+        path=target/('6_final.'+suffix);assert path.stat().st_size>0
+        record['final_files'][path.name]=dict(path=str(path),sha256=file_sha(path),bytes=path.stat().st_size)
+    assert source(out,'m',repaired=True)[1]==r
+    record.update(passed=True,pipeline_completed=True,regenerated_rc=True,
+                  exact_accepted_geometry_and_hardware_unchanged=True,whole_native_drc_zero=True)
+    save()
+
+
 def patch_metal2(root,out,cpus,run):
     """One additive, pre-freeze notch fill on the measured M2 net only."""
     import collections
@@ -13,7 +80,7 @@ def patch_metal2(root,out,cpus,run):
     import re
     from native_escape_audit import geometry,def_inventory,connectivity,header_identity
     assert cpus==16
-    folder,r,flow,results=source(out,'m')
+    folder,r,flow,results=source(out,'m',repaired=True)
     located=out.parents[2]/'block-v1-20261027-196/tasks/five-macro-locate-m'
     lr=json.loads((located/'receipt.json').read_text());assert lr['passed'] is True
     p=located/'five-macro-locate-m.json';assert file_sha(p)==lr['outputs'][p.name]
@@ -83,7 +150,7 @@ def patch_metal2(root,out,cpus,run):
     report=(out/'native-whole-drc.rpt').read_text()
     result=dict(passed=not report.strip(),source_receipt_sha256=file_sha(folder/'receipt.json'),
                 location_receipt_sha256=file_sha(located/'receipt.json'),net=name,added_metal2_box_dbu=box,
-                source_unchanged=source(out,'m')[1]==r,unchanged_full_signal_netlist=True,
+                source_unchanged=source(out,'m',repaired=True)[1]==r,unchanged_full_signal_netlist=True,
                 all_other_routes_unchanged=True,no_original_conductors_removed=True,
                 non_net_geometry_unchanged=True,exact_native_def_rect_readback=True,complete_gds_mask=mask,
                 source_gds_sha256=file_sha(original_gds),edited_gds_sha256=file_sha(gds),
@@ -102,7 +169,7 @@ def locate(root,out,cpus,run):
     from io_slots import file_sha
     from five_macro_receive import source
     assert cpus==16
-    folder,r,flow,results=source(out,'m')
+    folder,r,flow,results=source(out,'m',repaired=True)
     failed=out.parents[2]/'block-v1-20261027-193/tasks/five-macro-drc-m'
     fr=json.loads((failed/'receipt.json').read_text());assert fr['passed'] is False
     p=failed/'five-macro-drc.json';assert file_sha(p)==fr['outputs'][p.name]
