@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-node-queue':
+    if MODE in ('joint-rc-native-branch','joint-rc-native-via'):
+        from joint_rc_native import verify
+        verify(ROOT,OUT,CPUS,run,MODE.rsplit('-',1)[-1])
+    elif MODE=='native-node-queue':
         from native_node_queue import serve
         serve(ROOT,OUT,CPUS)
     elif MODE in ('native-c8-edit-full-drc-a','native-c8-edit-full-drc-c'):

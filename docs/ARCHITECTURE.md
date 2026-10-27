@@ -178,7 +178,7 @@ Block v1 独立最终物理入口为 `native-receive-<shared109|transaction6k>-<
 `capture-geometry-group`在96CPU内两子worker各48CPU执行`capture-branch-fv`/`capture-via-fv`；每子任务4网格单线程与6场解各7线程，均绑定099构建和033FV安装回执。独立FV真实面基函数返回双向joint矩阵；接收器检查锁定收敛/局部/互易与保边际错误重连，合成控制不代替实际科学运行。collector保存子回执/组回执及输出SHA。当前源码待部署，实际尚未运行。
 
 
-最终物理网表行为：`native-final-t6k-a`/`native-final-t6k-c`绑定cap40封存源093的6_final.v和原073 LEC控制/077输入，直接用实际网表与同一Liberty导出的单元行为构建Verilator，不替换RAM、不重新综合网表。每allocation16CPU，三模型各最多4线程并行，运行完整242事务队列scoreboard，全1及两个随机初态；结果要求完整计数且三个初态响应一致。该零延迟检查不代替STA/四态、宏边界、C8最终功能或共同底座回装。当前代码未部署执行。
+最终物理网表行为：`native-final-t6k-a`/`native-final-t6k-c`绑定cap40封存源093的6_final.v和原073 LEC控制/077输入，直接用实际网表与同一Liberty导出的单元行为构建Verilator，不替换RAM、不重新综合网表。每allocation16CPU，三模型各最多6线程并行，运行完整242事务队列scoreboard，全1及两个随机初态；结果要求完整计数且三个初态响应一致。该零延迟检查不代替STA/四态、宏边界、C8最终功能或共同底座回装。当前代码未部署执行。
 
 
 独立DRC分类：`python project/experiments/block_v1/native_drc.py <native-drc.lyrdb> <new-summary.json>`保留所有项、数值、原报告SHA及分类，不过滤天线/间距。native_receive后续run自动绑定summary SHA；本次实际094失败已原样保存，不能用DRT零项替代。098内部节点collapse修复参见节点电荷决策，102重跑仍须实际执行。101已实际部署并启动92144，前述“未部署”保留为提交时快照。
@@ -249,3 +249,6 @@ RAW_LIB_FOLDER需提供已按164收据封存的candidate164-a.lib/c.lib。只读
 
 
 原生常量前端对照：native-tie-formal-control-group（2CPU）两路0/1各1CPU；完整旧C8图严格重验：native-c8-tie-lec-group（4CPU）及native-c8-tie-lec-a/c各2CPU。后者强制171实际控制、原失败134所有图SHA、实际库/Kepler一致，真实常量函数替换的精确逆变换与Yosys发射后全cell/pin-bit重读回均需通过，native_formal.inspect全部严格门保持。正式物理/最终功能接收尚未接入该候选编码。
+
+
+节点耦合组装原生读回入口（准备，未实跑）：`joint-rc-native-branch` / `joint-rc-native-via`由`joint_rc_native.py`接收run100实际完整科学证明、逐节点ground和双向节点对C，`joint_rc.py`显式均值对称化后输出唯一物理C的对称SPEF表示。每候选4CPU内动态执行六种独立原生import；逐节点ground、每条R和每一对CCSeg分别读回，错单位/丢C/节点ground交换/R交换及保节点耦合边际的错误重连均须拒绝。小型无源LEF锚仅绑定电气ID，无布线物理资格。纯组装检查命令：`python project/experiments/block_v1/joint_rc_controls.py work/YUZE-LU/121/results/run100-terminal/index.json`。见[耦合RC组装边界](decisions/2026-10-27-block-v1-joint-rc-native.md)。
