@@ -11,7 +11,7 @@
 
 ## 当前执行快照：2026-10-27 CST
 
-当前快照为2026-10-27 08:29 CST：101/92144精确最终T6KC网表功能接收通过：8:43、MaxRSS3810680K，全1及随机121/122三个初态均242事务/264051周期/3295817检查，保留原映射存储和Liberty单元；回执b4b7ec85ca9d5f4b1bd9ac277d4480401d002fbd1ce5d9b5527c390785cd3075。102/92148实际SPEF导入通过：43秒、MaxRSS12820K，8节点/7边身份、逐C/R、单位和总量七门槛，实际错误单位/保总量换节点C/换边R三负例均正确拒绝；回执a8a81b3db9acbd12cdce56251d6eb9ea543fa0bc829269264bbe3f9300fd6ae6。该单隔离网络仍无本路由独立局部FV/一般跨网节点耦合与全Block提取资格。100/92147双48CPU科学对照继续；094边缘T6KA独立接收已提交92149，源hold count=4待精确STA诊断。内部094的61项DRC失败仍阻止冻结；095宏视图不绕过依赖。 本任务最多8个allocation，其他成员任务不动；完整P0–P6尚未验收。登记PR5实际open/unmerged为pending；无board.json/Projects工具，看板unverified、同步pending，管理员及独立审查人待指定。
+当前快照为2026-10-27 08:52 CST：新增原生DRC只读定位与严格5ps hold修复入口：真实61标记解析/五坏输入、Linux实际源码的配置正例/八负例通过，未替代物理接收。103定位已部署（源码5449132、归档c41fffa3946f15c1ccaa18cd225fe358668285f86f7230204e39fba1e88c7bd5，8CPU/node24）；105边缘T6KA修复与106独立接收已部署（源码a504854、归档d932b5930e7e1e61bfe4108612088be5a6be5d49f811436602c57d4df8372a17，各32CPU/node20和node24），均121成员/849920字节，当前无Slurm job，依统一八槽预算等待。104在预检发现小写策略不兼容后停选，实际未提交，未覆盖原manifest。080 C8C进入最终LEC，中间日志有两个diff1 outputs，严格完整对应门槛保留；094A仍在完整DRC、100双48CPU科学验证仍运行。 仍无合格原生物理Block，十二层RC/拼接、宏边界、完整共同底座、两产品和参数库未验收。登记PR5实际open/unmerged为pending；无board.json/Projects工具，看板unverified、同步pending，管理员及独立审查人待指定。
 
 - run069/070：研究通量分片变体保留源文件前后SHA，原作者参考和线程一致性通过；直线左右电容与独立FV、三网格/远边界/offset及交换负例全部通过。不是完整分布式RC资格。run074节点对耦合探针node19/48CPU/UNLIMITED完成7:48；独立FV和保持行列边际的重连负例通过，仍不覆盖一般分支或完整提取。
 - run073：真实DFF buffer/强度调整正例、D/CK/输出三种真实负例及五个报告故障控制通过；原071脚本名、072日志重复摘要失败保留。最终接收器要求显式UNSAT/IDENTICAL、完整且非空边界相等，并另报core面积。
@@ -78,3 +78,12 @@
 
 
 08:32独立STA诊断：094-A/92149运行中的独立STA已完成中间报告：104356个端点，4个hold负端点；最差hold −0.000622502 ns（约−0.623 ps），最差setup +5.227097988 ns，cap计数0、精确最差cap slack +4.102060317993164 fF。端点为slice86879/87007/87391/87519的D端，完整名字及首批展开路径保留于run094-t6ka-sta-intermediate。下载与远端再次读取SHA一致；该目录只证明已生成的独立STA中间证据，完整物理作业仍运行，不能代替终态接收。
+
+
+## 2026-10-27 08:52 CST 原生修复准备
+
+新增原生DRC只读定位与严格5ps hold修复入口：真实61标记解析/五坏输入、Linux实际源码的配置正例/八负例通过，未替代物理接收。103定位已部署（源码5449132、归档c41fffa3946f15c1ccaa18cd225fe358668285f86f7230204e39fba1e88c7bd5，8CPU/node24）；105边缘T6KA修复与106独立接收已部署（源码a504854、归档d932b5930e7e1e61bfe4108612088be5a6be5d49f811436602c57d4df8372a17，各32CPU/node20和node24），均121成员/849920字节，当前无Slurm job，依统一八槽预算等待。104在预检发现小写策略不兼容后停选，实际未提交，未覆盖原manifest。080 C8C进入最终LEC，中间日志有两个diff1 outputs，严格完整对应门槛保留；094A仍在完整DRC、100双48CPU科学验证仍运行。
+
+证据：`results/native-drc-location-controls.json`、`results/native-hold5-config-controls.json`、`results/run103-initial/`、`results/run104-not-submitted/`、`results/run105-initial/`、`results/run106-initial/`、`results/live-105.json`；部署manifest为stage99–stage102。live-105中100 children路径为组目录下观察，空列表不能证明其真实任务目录缺文件，实际子任务另在tasks/capture-branch-fv及tasks/capture-via-fv。
+
+恢复先读Slurm真实状态，按103→105→106优先调度，104不再选择；保留所有活跃作业，不因耗时终止。103命中仅用于确定实际网络，再决定M10间距及天线预制修复；105必须通过严格独立接收和实际最终网表功能，不能用配置控制充当时序修复。

@@ -27,3 +27,8 @@
 使用现有 `bundle.py` 从已提交 Git 字节封装；新 run 目录与 manifest 不覆盖旧失败证据。103 使用 `native-drc-locate-c`，105 使用 `native-hold5-run-transaction6k-a`；通过统一 dispatcher 计入全 Issue121 的八 allocation 上限，包括 PENDING 和提交不确定状态。其他成员任务不变，不因耗时取消既有作业。
 
 部署后预检发现 104 manifest 使用小写策略后缀，而旧 worker 将其直接传给只接受 A/C 的入口。104 调度状态实际为空、无 Slurm job；保留原部署并停止选择，不能覆写不可变 manifest。worker 已将各 repair 入口策略统一转大写，使用新 105 重新部署；这项预检没有产生物理通过或失败结果。
+
+
+## 2026-10-27 08:52 CST 实际部署
+
+新增原生DRC只读定位与严格5ps hold修复入口：真实61标记解析/五坏输入、Linux实际源码的配置正例/八负例通过，未替代物理接收。103定位已部署（源码5449132、归档c41fffa3946f15c1ccaa18cd225fe358668285f86f7230204e39fba1e88c7bd5，8CPU/node24）；105边缘T6KA修复与106独立接收已部署（源码a504854、归档d932b5930e7e1e61bfe4108612088be5a6be5d49f811436602c57d4df8372a17，各32CPU/node20和node24），均121成员/849920字节，当前无Slurm job，依统一八槽预算等待。104在预检发现小写策略不兼容后停选，实际未提交，未覆盖原manifest。080 C8C进入最终LEC，中间日志有两个diff1 outputs，严格完整对应门槛保留；094A仍在完整DRC、100双48CPU科学验证仍运行。
