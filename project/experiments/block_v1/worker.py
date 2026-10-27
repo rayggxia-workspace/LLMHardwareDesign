@@ -252,6 +252,14 @@ try:
         variant=MODE.split('-')[1]
         top,policy=MODE.removeprefix('native-'+variant+'-receive-').rsplit('-',1)
         verify(ROOT,OUT,CPUS,run,top,policy.upper(),pipeline='native_pipeline_'+variant+'.json')
+    elif MODE=='native-prefab-view-group':
+        from native_view_group import verify
+        verify(ROOT,OUT,CPUS)
+    elif MODE.startswith('native-prefab-view-'):
+        from native_views import generate
+        top,policy=MODE.removeprefix('native-prefab-view-').rsplit('-',1)
+        pipeline={'shared109':'native_pipeline_const_protected.json','transaction6k':'native_pipeline_viaonly.json'}[top]
+        generate(ROOT,OUT,CPUS,run,top,policy.upper(),pipeline=pipeline)
     elif MODE.startswith(('native-cap20-view-','native-cap40-view-','native-hold5-view-','native-diode-view-')):
         from native_views import generate
         variant=MODE.split('-')[1]

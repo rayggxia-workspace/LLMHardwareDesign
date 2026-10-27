@@ -27,7 +27,7 @@ result['sacct']=subprocess.check_output(['sacct','-n','-P','-j',','.join(ids),'-
 for task in manifest['tasks']:
  p=root/'tasks'/task['id']
  data={'job_id':state['tasks'].get(task['id'],{}).get('job_id'),'artifacts':{}}
- for relative in ['native-glue.json','native-composed-initialization.json','native-composed-function.json','native-composed-group.json']:
+ for relative in ['native-glue.json','native-composed-initialization.json','native-composed-function.json','native-composed-group.json','native-view-group.json']:
   file=p/relative
   if file.is_file():
    raw=file.read_bytes()

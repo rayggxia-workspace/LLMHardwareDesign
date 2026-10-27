@@ -1,5 +1,7 @@
 # Issue 121 执行记录
 
+2026-10-27 12:44 CST：新增严格绑定128/134与133/135的四路同源视图组，尚未部署/执行；`view-controls-142.json`仅为13坏来源反例与4种实际stub编排控制，不是EDA资格。生成LEF/Liberty仍保留所有宏边界/功能/十二层标志false。参见[来源决策](../../../docs/decisions/2026-10-27-block-v1-prefab-view-sources.md)。线上已核PR122 head d560bb7与Issue/PR描述一致，完整目标仍未完成。
+
 2026-10-27 12:26 CST：133完成，135四路资格实际运行；140初态实测通过，141完整最终叶+映射glue组合已部署但尚无job。证据见`results/run133-group-terminal`、`run133a-terminal`、`run133c-terminal`、`run135-group-first`及四子快照、`run140-first`、`run141-deployment`。阶段136/137 manifest对应140/141，旧139无job并停用。当前完整P0–P6目标未完成，当前7allocation；保持8槽与真实内存/线程约束，其他成员未动。详细初态数值、所有失败与资格边界见[组合决策](../../../docs/decisions/2026-10-27-block-v1-final-composition.md)。
 
 137实际glue通过，136失败原样保存，见`results/run137-terminal`与`run136-terminal`；原008库存成功结果重新采集于`results/run008-current-verified`，不将其mapped-suite超时改写为通过。最终叶/真实glue组合与初始化顺序的证据边界及并行配置见[组合决策](../../../docs/decisions/2026-10-27-block-v1-final-composition.md)。当前初始化控制与完整组合尚未实际运行；完整目标未完成。

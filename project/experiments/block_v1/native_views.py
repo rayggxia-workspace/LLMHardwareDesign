@@ -8,6 +8,24 @@ import json
 from pathlib import Path
 
 
+def received_contract(physical,source,source_receipt_sha256,pipeline,top,policy):
+    """Reject partial, failed, historical or different-source physical proofs."""
+    required={'timing','rc_coverage','mapped_to_final_lec','unplaced_zero',
+              'all_pg_iterms_correct','pg_vdd','pg_vss','open_signal_inputs_zero',
+              'exact_prefabricated_m10_pins','undriven_used_signal_nets_zero',
+              'exact_native_layers','same_die','core_inside_die',
+              'active_cell_area_within_cap','independent_native_drc_zero','native_drt_drc_zero'}
+    checks=physical['checks']
+    assert physical['passed']is True and required<=set(checks)
+    assert all(value is True for value in checks.values())
+    assert physical['historical_input_contract']is False
+    assert (physical['top'],physical['policy'],physical['pipeline'])==(top,policy,pipeline)
+    assert physical['source']==str(source)
+    assert physical['source_receipt_sha256']==source_receipt_sha256
+    assert physical['independent_drc_items']==0 and physical['rc_coverage_qualified']is True
+    assert physical['mapped_to_final_lec']['passed']is True
+
+
 def interface(folder,pins,leaf,top,library):
     """Inspect native-tool readback of the actual generated Liberty and LEF."""
     expected={p['pin']:p for p in pins};terms={};boxes={};pg={};lib={};summary={};obs=set();seen=set();lib_seen=set()
@@ -56,7 +74,10 @@ def interface(folder,pins,leaf,top,library):
 def generate(root,out,cpus,run,top,policy,pipeline='native_pipeline.json'):
     from io_slots import file_sha,slot
     assert top in ('shared109','transaction6k')and policy in ('A','C')and cpus>=8
-    assert pipeline in ('native_pipeline.json','native_pipeline_cap20.json','native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json')
+    assert pipeline in ('native_pipeline.json','native_pipeline_cap20.json','native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json',
+                        'native_pipeline_const_protected.json','native_pipeline_viaonly.json')
+    if pipeline=='native_pipeline_const_protected.json':assert top=='shared109'
+    if pipeline=='native_pipeline_viaonly.json':assert top=='transaction6k'
     base=out.parents[2];config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
     api=base/'block-v1-20261027-073/tasks/native-formal-control'
     control=json.loads((api/'receipt.json').read_text());assert control['passed']is True
@@ -64,11 +85,10 @@ def generate(root,out,cpus,run,top,policy,pipeline='native_pipeline.json'):
     receiver=base/config['receiver_run']/('tasks/'+config.get('receiver_task_prefix','native-receive-')+top+'-'+policy.lower())
     accepted=json.loads((receiver/'receipt.json').read_text());assert accepted['passed']is True
     proof=receiver/'native-physical-receiver.json';assert file_sha(proof)==accepted['outputs'][proof.name]
-    physical=json.loads(proof.read_text());assert physical['passed']is True and not physical['historical_input_contract']
+    physical=json.loads(proof.read_text())
     source=base/config['candidate_run']/('tasks/'+config.get('candidate_task_prefix','native-run-')+top+'-'+policy.lower())
-    assert physical['pipeline']==pipeline
-    assert physical['source']==str(source)and file_sha(source/'receipt.json')==physical['source_receipt_sha256']
     receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed']is True
+    received_contract(physical,source,file_sha(source/'receipt.json'),pipeline,top,policy)
     relative=Path('flow/results/nangate45')/('bv1_'+top+'_'+policy)/'base';results=source/relative
     inputs={}
     with slot(base):
@@ -110,7 +130,10 @@ close $stream
     with slot(base):assert all(file_sha(Path(path))==digest for path,digest in inputs.items())
     record=dict(schema='block-v1-native-view-generation/1',passed=received['passed'],top=top,policy=policy,
         interface=received,source=str(source),source_receipt_sha256=file_sha(source/'receipt.json'),
-        physical_receiver_sha256=file_sha(proof),inputs=inputs,
+        physical_receiver=str(receiver),physical_receiver_sha256=file_sha(proof),
+        physical_receiver_receipt_sha256=file_sha(receiver/'receipt.json'),pipeline=pipeline,
+        pipeline_file_sha256=file_sha(root/'project/experiments/block_v1'/pipeline),
+        generator_sha256=file_sha(Path(__file__)),readback_script_sha256=file_sha(root/'project/experiments/block_v1/native_views.tcl'),inputs=inputs,
         actual_model_api_help_sha256=file_sha(api/'view-api.log'),
         views={name:dict(path=str(out/name),sha256=file_sha(out/name))for name in ['candidate.lib','candidate.lef']},
         native_gds=dict(path=str(gds),sha256=file_sha(gds)),flat_abstract_boundary_qualified=False,

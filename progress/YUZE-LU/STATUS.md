@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-10-27 12:44 CST：已核远端PR122精确head d560bb7，Issue121/PR描述已同步12:33实际快照。新增128/134 C8与133/135 T6K同源视图入口及单allocation四路8CPU组，生成前要求全部真实物理资格；13坏来源反例和4种实际stub并发/失败保留控制通过，实际视图尚未部署/运行。128仍route，135四路完整资格继续；134/141无job，完整宏/边界/一般RC、恢复/epoch、父层及两产品仍待验收。[Issue121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121) in_progress，[PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)草稿；登记pending、看板unverified/同步pending、审查人待指定。下一步先封存来源/部署依赖，再接收实际终态。
+
 2026-10-27 12:26 CST：133双路普通route/final成功，135/92222同node22四路各16CPU完整资格正在运行。140实际初态控制通过，141两候选各六次最终叶+glue完整混合组合已不可变部署，源码3497286/归档096948bd6526b239f1d13928fe89c03f9ab879794beb3c8dadcdca9c4c6dfb27，尚无job，待128；138探针因同D被合并失败原样保留，139无job停用。当前7个allocation，134仍待128。源码编译/管理结构/diff及137/140实际证据已保存；尚未跑完整组合、恢复/epoch、父层物理、宏/一般RC、共同底座与两产品。[Issue121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)保持in_progress、[PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)草稿；登记pending、看板unverified/同步pending、审查人待指定。下一步接收135并按128终态调度134/141。
 
 2026-10-27：137实际glue通过13秒，32单元/23.674um²，4788等价点、完整4600输入/4631输出与三个真实坏连接检出通过；四进程实测重叠，136失败保留。新增实际最终C8/S16K/T6K+映射glue组合入口，两候选各三初态×两背压、完整混合整数oracle；初始化控制与组合尚未部署。008库存重新核验inventory确为COMPLETED/通过（同run mapped-suite自然TIMEOUT不改写），原库存642253单元/1538342.904um²与两真实存储保持独立来源。下一步138实测初始化顺序，再依128/133/137成功运行组合；父层物理和其他完整门槛仍待办。Issue121/PR122仍in_progress/草稿，登记/看板和审查待处理。
