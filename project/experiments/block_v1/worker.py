@@ -60,7 +60,13 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-whole-drc-group':
+    if MODE=='native-c8-locate-group':
+        from native_c8_locate import group
+        group(ROOT,OUT,CPUS)
+    elif MODE in ('native-c8-locate-a','native-c8-locate-c'):
+        from native_c8_locate import verify
+        verify(ROOT,OUT,CPUS,run,MODE[-1].upper())
+    elif MODE=='native-whole-drc-group':
         from native_whole_drc import group
         group(ROOT,OUT,CPUS)
     elif MODE in ('native-whole-drc-c8-a','native-whole-drc-c8-c'):

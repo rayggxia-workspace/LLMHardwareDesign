@@ -227,3 +227,5 @@ python project/experiments/block_v1/native_escape_relocate_control.py work/YUZE-
 实际159探针与160/161全片/完整接收仍分别运行；声明控制不是物理资格。
 
 C8最终数据库新增全片原生DRC：`native-whole-drc-group`（16CPU）在同一allocation内启动`native-whole-drc-c8-a/c`（各8CPU），绑定128成功源并要求实际新全片报告0、检查前后完整DEF及源SHA不变。`native_whole_drc.py`先保存失败报告再断言，不能仅采用route阶段0报告；仍须134完整物理、141完整组合及全部宏/十二层门。
+
+C8最终原生全片失败的只读定位：`native-c8-locate-group`（4CPU）在一个allocation内启动`native-c8-locate-a/c`各2CPU；绑定128最终成功源及162真实失败，输出`native-c8-location.json`、完整源DEF/几何和实际固定port、逐标记命中/未匹配、固定via文本提案及不支持列表。不编辑ODB，不替代完整物理资格。
