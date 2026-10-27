@@ -59,7 +59,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('native-const-protected-run-'):
+    if MODE=='native-const-receiver-group':
+        from native_allocation_group import receive_pair
+        receive_pair(ROOT,OUT,CPUS)
+    elif MODE.startswith('native-const-protected-run-'):
         from native_run import implement
         top,policy=MODE.removeprefix('native-const-protected-run-').rsplit('-',1)
         implement(ROOT,OUT,CPUS,run,top,policy.upper(),pipeline='native_pipeline_const_protected.json')
