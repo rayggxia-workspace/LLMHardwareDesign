@@ -32,7 +32,7 @@ def map_matrix(root, out, cpus, run, top='block_v1_m'):
     if top=='block_v1_s16k':script+='read_verilog -sv '+str(root/'project/rtl/norm_service/store82.sv')+'\n'
     script+='hierarchy -check -top '+top+'\nsynth -top '+top+' -noabc\n'
     script+='dfflibmap -liberty '+str(lib)+'\nabc -liberty '+str(lib)+'\nclean\ncheck -assert\n'
-    script+='flatten\nclean\ncheck -assert\nstat -liberty '+str(lib)+'\nwrite_verilog -noattr mapped.v\nwrite_json mapped.json\n'
+    script+='flatten -noscopeinfo\nclean\ncheck -assert\nstat -liberty '+str(lib)+'\nwrite_verilog -noattr mapped.v\nwrite_json mapped.json\n'
     (out/'map.ys').write_text(script);run(['yosys','-s',str(out/'map.ys')],'map.log')
     module=json.loads((out/'mapped.json').read_text())['modules'][top]
     cells={}
@@ -58,7 +58,7 @@ def flatten_store(root,out,cpus,run):
     lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
     assert file_sha(lib)==old['liberty_sha256']
     script='read_liberty -lib '+str(lib)+'\nread_verilog '+str(source/'mapped.v')+'\n'
-    script+='hierarchy -check -top block_v1_s16k\nflatten\nclean\ncheck -assert\nstat -liberty '+str(lib)+'\n'
+    script+='hierarchy -check -top block_v1_s16k\nflatten -noscopeinfo\nclean\ncheck -assert\nstat -liberty '+str(lib)+'\n'
     script+='write_verilog -noattr mapped.v\nwrite_json mapped.json\n'
     (out/'flatten.ys').write_text(script);run(['yosys','-s',str(out/'flatten.ys')],'flatten.log')
     data=json.loads((out/'mapped.json').read_text());module=data['modules']['block_v1_s16k'];cells={}
