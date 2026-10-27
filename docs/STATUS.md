@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-10-27 18:22 CST：173/92348实际组合控制双1CPU通过，16秒、CPU9.489秒，Slurm MaxRSS=0无有效采样；真实常量两极性、保护负载、改名tie/改驱动强度DFF正例严格4输入/4输出、UNSAT/IDENTICAL，错误tie/clock均SAT拒绝。新增174完整C8接收已不可变部署到node22/16CPU，源码2937f9c、archive26c12abad3caf6dc77e56f259458e12babd512a82e725b45057ea2a7b8136def；严格等待167/172/173，目前tasks为空、无job。准备节点内双8CPU，200GiB/路加20%RAM；167/172仍运行，当前六allocation，未取消旧作业。PR128固定bd91c42已独立接收168/169供电/full timing V/真实OBS（A9208361/C9206675矩形、未覆盖0），时序958/900诊断项仍失败，宏仍不合格。完整P0–P6、组合功能/一般十二层RC/共同底座/两产品/独立审查仍未完成。
+
 2026-10-27 18:03 CST：172/92341实际已RUNNING于node21，4CPU内A/C各2CPU；167/92333仍RUNNING于node20双8CPU。18:00本任务六allocation（另057三路与067），没有新增其他成员负担或取消旧作业。172源码5614eff、archive f30afc3c13d446ca5b9972b1fd777c4ef9d9c8be937ef744970a8554d88f33cb；严格常量编码完整图重验尚未终态。继续入口docs/handoffs/2026-10-27-issue-121-live-native-checks.md，全部P0–P6和宏/两产品仍未完成。
 
 2026-10-27 17:58 CST：171/92340实际两路常量极性对照通过，9秒、CPU6.149秒，MaxRSS=0记为无有效采样。原生改名tie每侧1个未匹配输入；真实库常量literal编码后严格4输入/4输出全对应、UNSAT/IDENTICAL通过，错误tie极性和错误DFF时钟均有SAT/Found difference而拒绝。原inspect严格门不改。172准备对134原失败的两份完整C8图逐项逆变换/发射重读回证明，再重复完整严格LEC；同c96双2CPU，200GiB/路加20%RAM预检，本次提交尚未运行，仍非实际完整C8资格。167最终输出仍RUNNING，未取消旧作业。

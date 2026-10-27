@@ -44,3 +44,7 @@
 168/92335实际T6K两路typed PG与完整flat timing网表交付通过，0:58、TotalCPU2:54.816、MaxRSS3193048K，node21双8CPU。原始模型保留，VDD/VSS仅转换pg_pin，精确逆变换证明全部其他模型字节不变；实际原生读回power/ground及is_pwr_gnd全部通过。candidate-timing.v严格复制161实际ODB完整信号导出，两路各保留189保护单元并绑定完整proof，旧6_final.v继续保留但不能充当full-SPEF flat源。169/92336用PR128固定5eda23a源只读导出实际ODB占用，node22双1CPU，2:47、CPU4:07.617、MaxRSS3592768K；A453227实例/2229968个master OBS、C451330/2232347；完整占用666023293/664926056字节保留服务器并封存SHA。仅导出通过，独立覆盖/边界资格仍待#127。167/92333仍RUNNING，node20双8CPU，不能先称C8新RC/全片DRC通过。新170准备补查严格C8前后完整图的无驱动使用bit及未使用输出，不改图/日志/严格门，本次提交尚未运行。完整P0–P6及宏冻结/两个新增层产品未完成；登记pending、看板unverified/同步pending、待独立审查。
 
 168/169 group与全部peer终态索引均位于work/YUZE-LU/121/results/run168-*及run169-*；同源交接inventory为t6k-qa127-handoff-168.json，每路30角色，仅索引，独立pack仍需前后hash。
+
+## 2026-10-27 18:22 CST
+
+173/92348组合控制在node22同allocation双1CPU通过，16秒/TotalCPU9.489秒，MaxRSS=0为无有效采样；短任务约29.7%的分配CPU平均占用包含工具/容器启动开销，不是加速比。后继174已部署为双8CPU完整C8接收，按200GiB/路和20%余量预检，受167/172/173实际成功依赖阻挡，尚无job。167双8CPU、172双2CPU继续运行，当前共六allocation。优先并行真实独立候选/激励/验证阶段，保留源/终态和资源证据，不为凑满96核增加无目的扫描。
