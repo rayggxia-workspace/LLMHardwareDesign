@@ -1,0 +1,531 @@
+{
+  "time": 1793122406.7256308,
+  "runs": {
+    "207": {
+      "node-queue-state.json": {
+        "manifest_sha256": "90b4429c1657f347880be31a891db1e7eaa577d8f5a13d34e8ebf774f98c6400",
+        "tasks": {
+          "s-physical": {
+            "status": "FAILED",
+            "owner": {
+              "job_id": "92488",
+              "node": "node25",
+              "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/native-node-queue",
+              "pid": 812836
+            },
+            "started": 1793120577.6674507,
+            "cpus": 16,
+            "reserved_memory_bytes": 82463372083,
+            "passed": false,
+            "returncode": 1,
+            "finished": 1793120865.6508434,
+            "argv": [
+              "python3",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/src/project/experiments/block_v1/worker.py",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/src",
+              "five-macro-physical-s",
+              "16"
+            ],
+            "receipt_sha256": "75287b0b2e600ba16a8ff50506fa088194d68bb76be3e20009d2f7a0a271e950",
+            "report_sha256": "28bde5fc1117429fd61f713e939499d2bc57fca9aec7e09edba4fc49ebf56068",
+            "sampled_peak_tree_rss_bytes": 4778377216,
+            "sampled_process_vm_hwm_bytes": {
+              "812866": 283033600,
+              "812975": 4750995456,
+              "814004": 4414918656,
+              "814252": 1485799424
+            },
+            "memory_samples": 574,
+            "memory_measurement_scope": "500ms process-tree RSS sum and per-process VmHWM; samples may miss short peaks and shared pages may be counted more than once"
+          },
+          "s-drc": {
+            "status": "RUNNING",
+            "owner": {
+              "job_id": "92488",
+              "node": "node25",
+              "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/native-node-queue",
+              "pid": 812836
+            },
+            "started": 1793120577.6883254,
+            "cpus": 16,
+            "reserved_memory_bytes": 82463372083
+          },
+          "s-final-function": {
+            "status": "RUNNING",
+            "owner": {
+              "job_id": "92488",
+              "node": "node25",
+              "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/native-node-queue",
+              "pid": 812836
+            },
+            "started": 1793120577.7326522,
+            "cpus": 16,
+            "reserved_memory_bytes": 164926744166
+          },
+          "s-delivery": {
+            "status": "BLOCKED",
+            "reasons": [
+              "s-physical"
+            ],
+            "finished": 1793120865.7001576
+          }
+        },
+        "events": [
+          {
+            "event": "claim",
+            "id": "s-physical",
+            "owner": {
+              "job_id": "92488",
+              "node": "node25",
+              "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/native-node-queue",
+              "pid": 812836
+            },
+            "time": 1793120577.6258633
+          },
+          {
+            "event": "claim",
+            "id": "s-drc",
+            "owner": {
+              "job_id": "92488",
+              "node": "node25",
+              "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/native-node-queue",
+              "pid": 812836
+            },
+            "time": 1793120577.688327
+          },
+          {
+            "event": "claim",
+            "id": "s-final-function",
+            "owner": {
+              "job_id": "92488",
+              "node": "node25",
+              "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/native-node-queue",
+              "pid": 812836
+            },
+            "time": 1793120577.7326536
+          },
+          {
+            "event": "finish",
+            "id": "s-physical",
+            "owner": {
+              "job_id": "92488",
+              "node": "node25",
+              "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/native-node-queue",
+              "pid": 812836
+            },
+            "time": 1793120865.650846,
+            "passed": false
+          }
+        ]
+      },
+      "tasks/native-node-queue/queue-live.json": {
+        "time": 1793122382.4575453,
+        "owner": {
+          "job_id": "92488",
+          "node": "node25",
+          "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/native-node-queue",
+          "pid": 812836
+        },
+        "active": [
+          "s-drc",
+          "s-final-function"
+        ],
+        "active_cpu_ceilings": 32,
+        "maximum_tasks": 3,
+        "memory": {
+          "MemTotal": 540659195904,
+          "MemAvailable": 520528400384
+        },
+        "reserved_memory_with_margin_bytes": 247390116249,
+        "admission_blocked": {
+          "s-formal": {
+            "reason": "dependency",
+            "prerequisites": [
+              "s-final-function"
+            ]
+          },
+          "r-physical": {
+            "reason": "dependency",
+            "prerequisites": [
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-196/tasks/five-macro-route-r/receipt.json"
+            ]
+          },
+          "r-drc": {
+            "reason": "dependency",
+            "prerequisites": [
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-196/tasks/five-macro-route-r/receipt.json"
+            ]
+          },
+          "r-final-function": {
+            "reason": "dependency",
+            "prerequisites": [
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-196/tasks/five-macro-route-r/receipt.json"
+            ]
+          },
+          "r-formal": {
+            "reason": "dependency",
+            "prerequisites": [
+              "r-final-function",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-196/tasks/five-macro-route-r/receipt.json"
+            ]
+          },
+          "v-physical": {
+            "reason": "dependency",
+            "prerequisites": [
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-203/tasks/five-macro-route-v/receipt.json"
+            ]
+          },
+          "v-drc": {
+            "reason": "dependency",
+            "prerequisites": [
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-203/tasks/five-macro-route-v/receipt.json"
+            ]
+          },
+          "v-final-function": {
+            "reason": "dependency",
+            "prerequisites": [
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-203/tasks/five-macro-route-v/receipt.json"
+            ]
+          },
+          "v-formal": {
+            "reason": "dependency",
+            "prerequisites": [
+              "v-final-function"
+            ]
+          },
+          "r-delivery": {
+            "reason": "dependency",
+            "prerequisites": [
+              "r-physical",
+              "r-drc",
+              "r-final-function",
+              "r-formal"
+            ]
+          },
+          "v-delivery": {
+            "reason": "dependency",
+            "prerequisites": [
+              "v-physical",
+              "v-drc",
+              "v-final-function",
+              "v-formal"
+            ]
+          }
+        },
+        "manifest_sha256": "90b4429c1657f347880be31a891db1e7eaa577d8f5a13d34e8ebf774f98c6400"
+      },
+      "logs": {
+        "s-physical": [
+          {
+            "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-physical-s/drivers.log",
+            "bytes": 252,
+            "mtime": 1793120852.0,
+            "tail": "OpenROAD unknown \nFeatures included (+) or not (-): -GPU +GUI -Python\nThis program is licensed under the BSD-3 license. See the LICENSE file for details.\nComponents of this program may be licensed under more restrictive licenses which must be honored.\n"
+          },
+          {
+            "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-physical-s/node-queue-child.log",
+            "bytes": 530,
+            "mtime": 1793120865.0,
+            "tail": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/src/project/experiments/block_v1/worker.py\", line 110, in <module>\n    physical(ROOT,OUT,CPUS,run,MODE[-1])\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/src/project/experiments/block_v1/five_macro_receive.py\", line 99, in physical\n    (out/'five-macro-physical.json').write_text(json.dumps(result,indent=2)+'\\n');assert result['passed']\nAssertionError\n"
+          }
+        ],
+        "s-drc": [
+          {
+            "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-drc-s/gds-flow/logs/nangate45/bv1_block_v1_s16k/base/6_1_merge.log",
+            "bytes": 531,
+            "mtime": 1793120722.0,
+            "tail": "KLayout 0.30.12\nWarning: DEF UNITS does not match reader DBU (DEF UNITS is 2000 and corresponds to a DBU of 0.0005, but reader DBU is set to 0.0001) (line=5, cell=, file=6_final.def)\n[INFO] Reporting cells prior to loading DEF ...\n\t/OpenROAD-flow-scripts/flow/platforms/nangate45/gds/NangateOpenCellLibrary.gds\n[INFO] GDS_ALLOW_EMPTY=fakeram.*\n[INFO] All LEF cells have matching GDS/OAS cells\n[INFO] No orphan cells in the final layout\nElapsed time: 0:27.77[h:]min:sec. CPU time: user 25.03 sys 2.27 (98%). Peak memory: 2539992KB.\n"
+          },
+          {
+            "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-drc-s/full-deck.log",
+            "bytes": 10079,
+            "mtime": 1793121292.0,
+            "tail": "8.00M\n\"width\" in: FreePDK45.lydrc:124\n    Edge pairs: 0 (flat)  0 (hierarchical)\n    Elapsed: 0.780s  Memory: 3708.00M\n\"output\" in: FreePDK45.lydrc:124\n    Edge pairs: 0 (flat)  0 (hierarchical)\n    Elapsed: 0.430s  Memory: 3708.00M\n\"space\" in: FreePDK45.lydrc:125\n    Edge pairs: 0 (flat)  0 (hierarchical)\n    Elapsed: 8.570s  Memory: 3709.00M\n\"output\" in: FreePDK45.lydrc:125\n    Edge pairs: 0 (flat)  0 (hierarchical)\n    Elapsed: 0.420s  Memory: 3709.00M\n\"&\" in: FreePDK45.lydrc:126\n    Polygons (raw): 0 (flat)  0 (hierarchical)\n    Elapsed: 6.370s  Memory: 3957.00M\n\"output\" in: FreePDK45.lydrc:126\n    Polygons (raw): 0 (flat)  0 (hierarchical)\n    Elapsed: 0.430s  Memory: 3957.00M\n\"width\" in: FreePDK45.lydrc:129\n    Edge pairs: 0 (flat)  0 (hierarchical)\n    Elapsed: 2.580s  Memory: 3957.00M\n\"output\" in: FreePDK45.lydrc:129\n    Edge pairs: 0 (flat)  0 (hierarchical)\n    Elapsed: 0.430s  Memory: 3957.00M\n\"space\" in: FreePDK45.lydrc:130\n    Edge pairs: 0 (flat)  0 (hierarchical)\n    Elapsed: 3.220s  Memory: 3957.00M\n\"output\" in: FreePDK45.lydrc:130\n    Edge pairs: 0 (flat)  0 (hierarchical)\n    Elapsed: 0.430s  Memory: 3957.00M\n\"or\" in: FreePDK45.lydrc:131\n    Polygons (raw): 420455 (flat)  420455 (hierarchical)\n    Elapsed: 138.460s  Memory: 8776.00M\n\"or\" in: FreePDK45.lydrc:131\n"
+          }
+        ],
+        "s-final-function": [
+          {
+            "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-final-function-s/cells.log",
+            "bytes": 5213,
+            "mtime": 1793120741.0,
+            "tail": "dule `\\OAI221_X2'.\nDumping module `\\OAI221_X4'.\nDumping module `\\OAI222_X1'.\nDumping module `\\OAI222_X2'.\nDumping module `\\OAI222_X4'.\nDumping module `\\OAI22_X1'.\nDumping module `\\OAI22_X2'.\nDumping module `\\OAI22_X4'.\nDumping module `\\OAI33_X1'.\nDumping module `\\OR2_X1'.\nDumping module `\\OR2_X2'.\nDumping module `\\OR2_X4'.\nDumping module `\\OR3_X1'.\nDumping module `\\OR3_X2'.\nDumping module `\\OR3_X4'.\nDumping module `\\OR4_X1'.\nDumping module `\\OR4_X2'.\nDumping module `\\OR4_X4'.\nDumping module `\\SDFFRS_X1'.\nDumping module `\\SDFFRS_X2'.\nDumping module `\\SDFFR_X1'.\nDumping module `\\SDFFR_X2'.\nDumping module `\\SDFFS_X1'.\nDumping module `\\SDFFS_X2'.\nDumping module `\\SDFF_X1'.\nDumping module `\\SDFF_X2'.\nDumping module `\\TAPCELL_X1'.\nDumping module `\\TBUF_X1'.\nDumping module `\\TBUF_X16'.\nDumping module `\\TBUF_X2'.\nDumping module `\\TBUF_X4'.\nDumping module `\\TBUF_X8'.\nDumping module `\\TINV_X1'.\nDumping module `\\TLAT_X1'.\nDumping module `\\XNOR2_X1'.\nDumping module `\\XNOR2_X2'.\nDumping module `\\XOR2_X1'.\nDumping module `\\XOR2_X2'.\n\nEnd of script. Logfile hash: 1ee8bfd2d5, time: 0.06s, user: 0.03s, system: 0.01s, MEM: 6582.95 MB peak\nYosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)\nTime spent: 83% 2x read_liberty (0 sec), 15% 2x write_verilog (0 sec), ...\n"
+          },
+          {
+            "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-final-function-s/build.log",
+            "bytes": 8276728,
+            "mtime": 1793121764.0,
+            "tail": "nclude -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -std=c++17 -O2   -include Vblock_v1_s16k__pch.h.slow -c -o Vblock_v1_s16k_vm_classes_Slow_15.o Vblock_v1_s16k_vm_classes_Slow_15.cpp\n/usr/bin/g++   -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -std=c++17 -O2   -include Vblock_v1_s16k__pch.h.slow -c -o Vblock_v1_s16k__Syms.o Vblock_v1_s16k__Syms.cpp\n"
+          }
+        ]
+      }
+    },
+    "208": {
+      "pending-placement-20261028.json": {
+        "time": 1793122066.1500268,
+        "before_job": "JobId=92498 JobName=yzl-bv1-native-node-queue\n   UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A\n   Priority=4294583628 Nice=0 Account=yuzelu QOS=normal\n   JobState=PENDING Reason=Resources Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A\n   SubmitTime=2026-10-28T01:25:01 EligibleTime=2026-10-28T01:25:01\n   AccrueTime=2026-10-28T01:25:01\n   StartTime=2027-10-28T01:18:20 EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-28T01:27:31 Scheduler=Backfill:*\n   Partition=c96 AllocNode:Sid=mgt01:3757704\n   ReqNodeList=node24 ExcNodeList=(null)\n   NodeList=\n   NumNodes=1-1 NumCPUs=96 NumTasks=1 CPUs/Task=96 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=96,mem=1M,node=1,billing=96\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=96 MinMemoryNode=0 MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue/job.sh\n   WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue\n   Comment=yzl-bv1:block-v1-20261027-208:native-node-queue \n   StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue/job.log\n   StdIn=/dev/null\n   StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue/job.log\n   Power=\n   TresPerTask=cpu:96\n   \n\n",
+        "target_node": "NodeName=node22 Arch=x86_64 CoresPerSocket=1 \n   CPUAlloc=0 CPUEfctv=96 CPUTot=96 CPULoad=3.91\n   AvailableFeatures=(null)\n   ActiveFeatures=(null)\n   Gres=(null)\n   NodeAddr=node22 NodeHostName=node22 Version=23.11.5\n   OS=Linux 4.18.0-553.el8_10.x86_64 #1 SMP Fri May 24 13:05:10 UTC 2024 \n   RealMemory=1 AllocMem=0 FreeMem=505845 Sockets=96 Boards=1\n   State=IDLE ThreadsPerCore=1 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A\n   Partitions=c96 \n   BootTime=2026-09-17T11:11:34 SlurmdStartTime=2026-10-18T13:10:32\n   LastBusyTime=2026-10-28T01:11:12 ResumeAfterTime=None\n   CfgTRES=cpu=96,mem=1M,billing=96\n   AllocTRES=\n   CapWatts=n/a\n   CurrentWatts=0 AveWatts=0\n   ExtSensorsJoules=n/a ExtSensorsWatts=0 ExtSensorsTemp=n/a\n\n",
+        "queue_sha256": "1dabb6001660acb63db57182c8fada6adf2a015095223cd240316a0098ad6bbc",
+        "manifest_sha256": "6af0d76575beae8a3cf29de24b3283e4b0d8b0075e21de807a98b030e76c7248",
+        "reason": "Own job92498 still PENDING/0elapsed/no allocation. Original node24 is mixed while node22 is idle96CPU. Change only pending placement, same job/source/queue/checks; preserve original manifest and explicit override record.",
+        "argv": [
+          "scontrol",
+          "update",
+          "JobId=92498",
+          "ReqNodeList=node22"
+        ],
+        "returncode": 0,
+        "output": "",
+        "after_job": "JobId=92498 JobName=yzl-bv1-native-node-queue\n   UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A\n   Priority=4294583628 Nice=0 Account=yuzelu QOS=normal\n   JobState=PENDING Reason=None Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A\n   SubmitTime=2026-10-28T01:25:01 EligibleTime=2026-10-28T01:25:01\n   AccrueTime=2026-10-28T01:25:01\n   StartTime=2027-10-28T01:18:20 EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-28T01:27:31 Scheduler=Backfill:*\n   Partition=c96 AllocNode:Sid=mgt01:3757704\n   ReqNodeList=node22 ExcNodeList=(null)\n   NodeList=\n   NumNodes=1-1 NumCPUs=96 NumTasks=1 CPUs/Task=96 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=96,mem=1M,node=1,billing=96\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=96 MinMemoryNode=0 MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue/job.sh\n   WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue\n   Comment=yzl-bv1:block-v1-20261027-208:native-node-queue \n   StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue/job.log\n   StdIn=/dev/null\n   StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue/job.log\n   Power=\n   TresPerTask=cpu:96\n   \n\n",
+        "finished": 1793122066.2303817
+      },
+      "node-queue-state.json": {
+        "manifest_sha256": "1dabb6001660acb63db57182c8fada6adf2a015095223cd240316a0098ad6bbc",
+        "tasks": {
+          "s-physical": {
+            "status": "PASSED",
+            "owner": {
+              "job_id": "92498",
+              "node": "node22",
+              "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue",
+              "pid": 975015
+            },
+            "started": 1793122113.736448,
+            "cpus": 16,
+            "reserved_memory_bytes": 82463372083,
+            "passed": true,
+            "returncode": 0,
+            "finished": 1793122399.6569288,
+            "argv": [
+              "python3",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/src/project/experiments/block_v1/worker.py",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/src",
+              "five-macro-physical-s",
+              "16"
+            ],
+            "receipt_sha256": "39b90006945e5e934613924eb7a5342eb0ecef2ad48ff4003646a81be52cc3bd",
+            "report_sha256": "c370cf976ae1621f5b4aeab63e95cb30bb4f37490a07aa5695e7459493df67f8",
+            "sampled_peak_tree_rss_bytes": 4777484288,
+            "sampled_process_vm_hwm_bytes": {
+              "975131": 288026624,
+              "975143": 4749905920,
+              "975287": 4419350528,
+              "975437": 1485328384
+            },
+            "memory_samples": 570,
+            "memory_measurement_scope": "500ms process-tree RSS sum and per-process VmHWM; samples may miss short peaks and shared pages may be counted more than once"
+          }
+        },
+        "events": [
+          {
+            "event": "claim",
+            "id": "s-physical",
+            "owner": {
+              "job_id": "92498",
+              "node": "node22",
+              "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue",
+              "pid": 975015
+            },
+            "time": 1793122113.698557
+          },
+          {
+            "event": "finish",
+            "id": "s-physical",
+            "owner": {
+              "job_id": "92498",
+              "node": "node22",
+              "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue",
+              "pid": 975015
+            },
+            "time": 1793122399.6569319,
+            "passed": true
+          }
+        ]
+      },
+      "tasks/native-node-queue/queue-live.json": {
+        "time": 1793122388.5740027,
+        "owner": {
+          "job_id": "92498",
+          "node": "node22",
+          "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue",
+          "pid": 975015
+        },
+        "active": [
+          "s-physical"
+        ],
+        "active_cpu_ceilings": 16,
+        "maximum_tasks": 1,
+        "memory": {
+          "MemTotal": 540676399104,
+          "MemAvailable": 530027524096
+        },
+        "reserved_memory_with_margin_bytes": 82463372083,
+        "admission_blocked": {
+          "s-delivery": {
+            "reason": "dependency",
+            "prerequisites": [
+              "s-physical",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-drc-s/receipt.json",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-final-function-s/receipt.json",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-formal-s/receipt.json"
+            ]
+          },
+          "r-physical": {
+            "reason": "dependency",
+            "prerequisites": [
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-196/tasks/five-macro-route-r/receipt.json"
+            ]
+          },
+          "r-delivery": {
+            "reason": "dependency",
+            "prerequisites": [
+              "r-physical",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-drc-r/receipt.json",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-final-function-r/receipt.json",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-formal-r/receipt.json"
+            ]
+          },
+          "v-physical": {
+            "reason": "dependency",
+            "prerequisites": [
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-203/tasks/five-macro-route-v/receipt.json"
+            ]
+          },
+          "v-delivery": {
+            "reason": "dependency",
+            "prerequisites": [
+              "v-physical",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-drc-v/receipt.json",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-final-function-v/receipt.json",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-formal-v/receipt.json"
+            ]
+          }
+        },
+        "manifest_sha256": "1dabb6001660acb63db57182c8fada6adf2a015095223cd240316a0098ad6bbc"
+      },
+      "tasks/native-node-queue/native-node-queue.json": {
+        "schema": "block-v1-node-queue-result/1",
+        "passed": true,
+        "owner": {
+          "job_id": "92498",
+          "node": "node22",
+          "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue",
+          "pid": 975015
+        },
+        "manifest_sha256": "1dabb6001660acb63db57182c8fada6adf2a015095223cd240316a0098ad6bbc",
+        "state_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/node-queue-state.json",
+        "state_sha256": "2677e19c855d3c39b70aac7d4171ef47db88506e9d65c22bdba0be8dd12c5ad6",
+        "completed_here": [
+          {
+            "id": "s-physical",
+            "passed": true,
+            "returncode": 0,
+            "started": 1793122113.736448,
+            "finished": 1793122399.6231492,
+            "argv": [
+              "python3",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/src/project/experiments/block_v1/worker.py",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/src",
+              "five-macro-physical-s",
+              "16"
+            ],
+            "receipt_sha256": "39b90006945e5e934613924eb7a5342eb0ecef2ad48ff4003646a81be52cc3bd",
+            "report_sha256": "c370cf976ae1621f5b4aeab63e95cb30bb4f37490a07aa5695e7459493df67f8",
+            "sampled_peak_tree_rss_bytes": 4777484288,
+            "sampled_process_vm_hwm_bytes": {
+              "975131": 288026624,
+              "975143": 4749905920,
+              "975287": 4419350528,
+              "975437": 1485328384
+            },
+            "memory_samples": 570,
+            "memory_measurement_scope": "500ms process-tree RSS sum and per-process VmHWM; samples may miss short peaks and shared pages may be counted more than once"
+          }
+        ],
+        "allocated_cpus": 96,
+        "default_task_cpus": 16,
+        "maximum_concurrent_task_cpu_ceilings": 16,
+        "maximum_concurrent_tasks": 1,
+        "allocation_parked": true,
+        "parked_for_external_dependencies": true,
+        "parked_for_memory_or_cpu": false,
+        "queue_all_tasks_passed": false,
+        "admission_blocked": {
+          "s-delivery": {
+            "reason": "dependency",
+            "prerequisites": [
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-drc-s/receipt.json",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-final-function-s/receipt.json",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-formal-s/receipt.json"
+            ]
+          },
+          "r-physical": {
+            "reason": "dependency",
+            "prerequisites": [
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-196/tasks/five-macro-route-r/receipt.json"
+            ]
+          },
+          "r-delivery": {
+            "reason": "dependency",
+            "prerequisites": [
+              "r-physical",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-drc-r/receipt.json",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-final-function-r/receipt.json",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-formal-r/receipt.json"
+            ]
+          },
+          "v-physical": {
+            "reason": "dependency",
+            "prerequisites": [
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-203/tasks/five-macro-route-v/receipt.json"
+            ]
+          },
+          "v-delivery": {
+            "reason": "dependency",
+            "prerequisites": [
+              "v-physical",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-drc-v/receipt.json",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-final-function-v/receipt.json",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-formal-v/receipt.json"
+            ]
+          }
+        },
+        "qualified_hard_macro": false,
+        "scope": "Allocation scheduling only; successful parking does not qualify pending EDA tasks or any hard macro"
+      },
+      "logs": {
+        "s-physical": [
+          {
+            "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/five-macro-physical-s/physical.log",
+            "bytes": 436,
+            "mtime": 1793122383.0,
+            "tail": "OpenROAD unknown \nFeatures included (+) or not (-): -GPU +GUI -Python\nThis program is licensed under the BSD-3 license. See the LICENSE file for details.\nComponents of this program may be licensed under more restrictive licenses which must be honored.\n[INFO PSM-0040] All shapes on net VDD are connected.\nNATIVE_PG VDD code=0 return=<1> pass=1\n[INFO PSM-0040] All shapes on net VSS are connected.\nNATIVE_PG VSS code=0 return=<1> pass=1\n"
+          },
+          {
+            "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/five-macro-physical-s/drivers.log",
+            "bytes": 252,
+            "mtime": 1793122386.0,
+            "tail": "OpenROAD unknown \nFeatures included (+) or not (-): -GPU +GUI -Python\nThis program is licensed under the BSD-3 license. See the LICENSE file for details.\nComponents of this program may be licensed under more restrictive licenses which must be honored.\n"
+          }
+        ]
+      }
+    }
+  },
+  "placement": {
+    "time": 1793122066.1500268,
+    "before_job": "JobId=92498 JobName=yzl-bv1-native-node-queue\n   UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A\n   Priority=4294583628 Nice=0 Account=yuzelu QOS=normal\n   JobState=PENDING Reason=Resources Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A\n   SubmitTime=2026-10-28T01:25:01 EligibleTime=2026-10-28T01:25:01\n   AccrueTime=2026-10-28T01:25:01\n   StartTime=2027-10-28T01:18:20 EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-28T01:27:31 Scheduler=Backfill:*\n   Partition=c96 AllocNode:Sid=mgt01:3757704\n   ReqNodeList=node24 ExcNodeList=(null)\n   NodeList=\n   NumNodes=1-1 NumCPUs=96 NumTasks=1 CPUs/Task=96 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=96,mem=1M,node=1,billing=96\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=96 MinMemoryNode=0 MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue/job.sh\n   WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue\n   Comment=yzl-bv1:block-v1-20261027-208:native-node-queue \n   StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue/job.log\n   StdIn=/dev/null\n   StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue/job.log\n   Power=\n   TresPerTask=cpu:96\n   \n\n",
+    "target_node": "NodeName=node22 Arch=x86_64 CoresPerSocket=1 \n   CPUAlloc=0 CPUEfctv=96 CPUTot=96 CPULoad=3.91\n   AvailableFeatures=(null)\n   ActiveFeatures=(null)\n   Gres=(null)\n   NodeAddr=node22 NodeHostName=node22 Version=23.11.5\n   OS=Linux 4.18.0-553.el8_10.x86_64 #1 SMP Fri May 24 13:05:10 UTC 2024 \n   RealMemory=1 AllocMem=0 FreeMem=505845 Sockets=96 Boards=1\n   State=IDLE ThreadsPerCore=1 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A\n   Partitions=c96 \n   BootTime=2026-09-17T11:11:34 SlurmdStartTime=2026-10-18T13:10:32\n   LastBusyTime=2026-10-28T01:11:12 ResumeAfterTime=None\n   CfgTRES=cpu=96,mem=1M,billing=96\n   AllocTRES=\n   CapWatts=n/a\n   CurrentWatts=0 AveWatts=0\n   ExtSensorsJoules=n/a ExtSensorsWatts=0 ExtSensorsTemp=n/a\n\n",
+    "queue_sha256": "1dabb6001660acb63db57182c8fada6adf2a015095223cd240316a0098ad6bbc",
+    "manifest_sha256": "6af0d76575beae8a3cf29de24b3283e4b0d8b0075e21de807a98b030e76c7248",
+    "reason": "Own job92498 still PENDING/0elapsed/no allocation. Original node24 is mixed while node22 is idle96CPU. Change only pending placement, same job/source/queue/checks; preserve original manifest and explicit override record.",
+    "argv": [
+      "scontrol",
+      "update",
+      "JobId=92498",
+      "ReqNodeList=node22"
+    ],
+    "returncode": 0,
+    "output": "",
+    "after_job": "JobId=92498 JobName=yzl-bv1-native-node-queue\n   UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A\n   Priority=4294583628 Nice=0 Account=yuzelu QOS=normal\n   JobState=PENDING Reason=None Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A\n   SubmitTime=2026-10-28T01:25:01 EligibleTime=2026-10-28T01:25:01\n   AccrueTime=2026-10-28T01:25:01\n   StartTime=2027-10-28T01:18:20 EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-28T01:27:31 Scheduler=Backfill:*\n   Partition=c96 AllocNode:Sid=mgt01:3757704\n   ReqNodeList=node22 ExcNodeList=(null)\n   NodeList=\n   NumNodes=1-1 NumCPUs=96 NumTasks=1 CPUs/Task=96 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=96,mem=1M,node=1,billing=96\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=96 MinMemoryNode=0 MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue/job.sh\n   WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue\n   Comment=yzl-bv1:block-v1-20261027-208:native-node-queue \n   StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue/job.log\n   StdIn=/dev/null\n   StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/native-node-queue/job.log\n   Power=\n   TresPerTask=cpu:96\n   \n\n",
+    "finished": 1793122066.2303817
+  }
+}

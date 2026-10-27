@@ -62,7 +62,7 @@ shadow通过范围检查后才允许提交，失败不改活动state和活动his
 
 ## S/T 的沿用边界
 
-S采用原store82单1RW：1024×128bit，地址10bit，无byte mask；ready=!valid，请求接受后一拍valid，take前保持，旧响应占用时不接新请求。写也有响应；复位清控制不清存储，读前必须写入。标准单元实现，**不称SRAM宏**。独立顶层不含VS，无第二份隐藏存储；尚无独立S最终P&R通过。
+S采用原store82单1RW：1024×128bit，地址10bit，无byte mask；ready=!valid，请求接受后一拍valid，take前保持，旧响应占用时不接新请求。写也有响应；复位清控制不清存储，读前必须写入。标准单元实现，**不称SRAM宏**。独立顶层不含VS，无第二份隐藏存储；S190原生全流程及S208完整物理门已通过：1610×1610µm、273个M10接点，10ns/2fF约束下最小setup/hold裕量5.995658/0.008125ns；完整DRC、最终功能和严格LEC仍待207完成，尚未最终验收。
 
 T采用原transaction6k，384×128bit=6144B，begin 1..384words、连续写、完整后SEALED/commit、commit前可revoke、同步读持有、最后消费后release。已选既有C：die1120×1120um，有源415495.990um²，10ns/2fF条件下setup/hold最小slack5.228821/0.016969ns，完整deck DRC0及三初态最终网表功能通过；未重跑这些结果。完整文件及SHA见 [T最终索引](../work/YUZE-LU/121/library-v1-t6k-C-20261027.json)，层次Lib资格仍false。
 

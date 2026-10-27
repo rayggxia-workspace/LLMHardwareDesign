@@ -1,5 +1,11 @@
 # Issue121 五宏实施接续
 
+2026-10-28 01:34 CST：**S完整物理门208通过，S最终验收仍待其余三门**。来源S190回执SHA256=`211665746082e21f4529bd643d0e140e9f4d1e1643d1ea38335b860f2c6a3ea0`；新物理回执=`39b90006945e5e934613924eb7a5342eb0ecef2ad48ff4003646a81be52cc3bd`。273接点按原执行Tcl精确匹配、8种反例全拒绝；131331有效端点（完整报告277649，另146318显式未使用内部输出）setup/hold最小5.995658/0.008125ns；所有时序、电气、RC、供电、连接门通过。见[完整原生接收与终态](../../work/YUZE-LU/121/results/run208-five-macro-013337/index.json)。原207失败保留，207完整DRC及三初态最终网表功能继续，严格LEC依赖实际功能回执；交付须四门同源，不能提前发布S合格。
+
+208实际部署源2c03b5a65e6844cb7fc0189306ea3d8bda38338f、archive SHA256=f816cec893d362bd027ab485eaebfd40590b8e50785305d99b4b6fb6772ff6c6，queue SHA256=1dabb6001660acb63db57182c8fada6adf2a015095223cd240316a0098ad6bbc。原[部署清单](../../work/YUZE-LU/121/stage204-manifest.json)保留node24；92498尚PENDING/零elapsed/无allocation时发现node24已mixed，核node22 IDLE96后只更新同一job的ReqNodeList=node22，未新增job或取消任何任务。[放置变更与实际执行观察](../../work/YUZE-LU/121/results/acceptance-20261028-013327/index.json)保留前后原文及哈希。92498已COMPLETED0:0，elapsed5:34、CPU6:03.659，批组MaxRSS4615200K；500ms采样过程树峰值4777484288B（约4.45GiB），不是LEC/DRC峰值。其余任务只等外部依赖，故自动park释放node22；queue_all_tasks_passed=false。**下一步只在208有真正ready工作时新建peer，复用208源/队列/共享claim；不重提原job、不重复已通过S物理门、不恢复已排空203。** 目前四旧baseline+R196+V203+207共七allocation。R已全局布线、V详细布线，见[观察](../../work/YUZE-LU/121/results/live-20261028-013227/index.json)。
+
+在线分支与PR122已由CLI GraphQL独立核为2c03b5a65e6844cb7fc0189306ea3d8bda38338f，账号YUZE-LU、OPEN/draft；后继元数据提交需重新核head，不能沿用此核验冒称后继提交已发布。
+
 2026-10-28 01:20 CST：207独立S物理接收失败，仅`exact_m10_pin_geometry=false`，全部实际端点时序、电气、RC、PG、连接等门通过，见[原始失败](../../work/YUZE-LU/121/results/run207-five-macro-010821/index.json)。已定位为旧生成器`%g`六位有效数字序列化：S273接点中128个输出的未格式化JSON和实际执行Tcl相差5nm；实际Tcl与ODB精确一致。源文件与失败不重写。新`pin_contract.py`严格核完整脚本、源回执SHA、整数DBU及全位号矩形；原始native TSV的8种错误全拒绝，无容差。见[取舍](../decisions/2026-10-28-block-v1-executed-pin-contract.md)与[控制](../../work/YUZE-LU/121/results/pin-contract-controls-20261028-0119/pin-contract-controls.json)。尚不能把软件控制当完整物理门通过。
 
 新208六项DAG已本地validate，通过后将重新运行S/R/V完整物理接收，并只在新physical及207同一未改动源的DRC/function/formal全部通过后生成交付。queue SHA256=`1dabb6001660acb63db57182c8fada6adf2a015095223cd240316a0098ad6bbc`，尚待源码提交/部署，不可冒称已运行。207保留运行，无新取消；旧physical失败不会取消其独立DRC/function/formal。当前S仍未验收，M/T已接收，V/R继续物理；下一步提交新源、部署208到自然释放的node24（届时不超八allocation），再核真实门结果。
