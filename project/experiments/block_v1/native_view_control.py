@@ -35,7 +35,7 @@ def verify(destination):
     stub='''import hashlib,json,sys,time
 from pathlib import Path
 mode=sys.argv[2];started=time.time();time.sleep(.7)
-top,policy=mode.removeprefix('native-prefab-view-').rsplit('-',1)
+top,policy=mode.removeprefix('native-prefab-view-').removeprefix('native-escape-view-').rsplit('-',1)
 passed=mode!=FAIL_MODE
 path=Path('native-view-generation.json');path.write_text(json.dumps(dict(passed=passed,top=top,policy=policy.upper())))
 Path('receipt.json').write_text(json.dumps(dict(mode=mode,cpus=int(sys.argv[3]),passed=passed,started=started,finished=time.time(),outputs={path.name:hashlib.sha256(path.read_bytes()).hexdigest()})))
@@ -44,19 +44,22 @@ sys.exit(0 if passed else 1)
     original=group.memory_snapshot;cases={}
     try:
         with tempfile.TemporaryDirectory()as temporary:
-            for name,failure,available,parallel in [('four',None,1000,4),('two',None,500,2),('one',None,200,1),
-                ('failed-peer','native-prefab-view-transaction6k-c',1000,4)]:
+            for name,failure,available,parallel,escape in [('four',None,1000,4,False),('two',None,500,2,False),('one',None,200,1,False),
+                ('failed-peer','native-prefab-view-transaction6k-c',1000,4,False),
+                ('escape-two',None,1000,2,True),('escape-one',None,200,1,True),
+                ('escape-failed-peer','native-escape-view-transaction6k-c',1000,2,True)]:
                 base=Path(temporary)/name;root=base/'src';worker=root/'project/experiments/block_v1/worker.py'
                 worker.parent.mkdir(parents=True);worker.write_text('FAIL_MODE='+repr(failure)+'\n'+stub)
                 out=base/'tasks/native-prefab-view-group';out.mkdir(parents=True)
                 group.memory_snapshot=lambda:dict(MemTotal=1024*1024**3,MemAvailable=available*1024**3)
                 rejected=False
-                try:group.verify(root,out,32)
+                try:group.verify(root,out,16 if escape else 32,escape_only=escape)
                 except AssertionError:rejected=True
                 result=json.loads((out/'native-view-group.json').read_text());children=result['children']
                 assert result['simultaneous_workers']==parallel and result['maximum_concurrent_cpu_ceilings']==8*parallel
                 assert rejected==(failure is not None)and result['passed']==(failure is None)
-                assert len(children)==4 and sum(c['passed']for c in children)==(4 if failure is None else 3)
+                count=2 if escape else 4
+                assert len(children)==count and sum(c['passed']for c in children)==(count if failure is None else count-1)
                 assert all(c['receipt_sha256']and c['proof_sha256']for c in children)
                 receipts=[json.loads((out.parent/c['mode']/'receipt.json').read_text())for c in children]
                 overlap=max(sum(r['started']<=at<r['finished']for r in receipts)for at in [r['started']for r in receipts])

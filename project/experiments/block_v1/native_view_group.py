@@ -13,15 +13,15 @@ import time
 from native_allocation_group import file_sha,memory_snapshot
 
 
-def verify(root,out,cpus):
-    assert cpus==32
-    specs=[('native-prefab-view-'+top+'-'+policy,top,policy.upper())
-           for top in ['shared109','transaction6k']for policy in ['a','c']]
+def verify(root,out,cpus,escape_only=False):
+    assert cpus==(16 if escape_only else 32)
+    specs=[(('native-escape-view-'if escape_only else'native-prefab-view-')+top+'-'+policy,top,policy.upper())
+           for top in (['transaction6k']if escape_only else['shared109','transaction6k'])for policy in ['a','c']]
     memory=memory_snapshot()
     # Deliberately use the observed ~172GiB full C8 peak for every child.
     # A view-only peak has not been measured; no lower estimate is asserted.
     prior_peak=180451804*1024
-    simultaneous=next((n for n in [4,2,1]if memory['MemAvailable']>=n*prior_peak*1.2),1)
+    simultaneous=next((n for n in [len(specs),1]if memory['MemAvailable']>=n*prior_peak*1.2),1)if escape_only else next((n for n in [4,2,1]if memory['MemAvailable']>=n*prior_peak*1.2),1)
     def execute(spec):
         mode,top,policy=spec;folder=out.parent/mode;folder.mkdir(exist_ok=False)
         env=dict(os.environ,OMP_NUM_THREADS='8',OPENBLAS_NUM_THREADS='1',MKL_NUM_THREADS='1')
@@ -45,6 +45,6 @@ def verify(root,out,cpus):
                 allocated_cpus=cpus,simultaneous_workers=simultaneous,maximum_concurrent_cpu_ceilings=8*simultaneous,
                 memory_preflight=memory,prior_full_c8_peak_bytes=prior_peak,memory_safety_factor=1.2,
                 qualified_hard_macro=False,
-                scope='Four same-source native-tool candidate view generations/readbacks; no boundary timing, final function, twelve-layer or hard-macro qualification')
+                scope=('Two complete-physical/final-function-qualified T6K candidate view generations/readbacks; no boundary timing, twelve-layer or hard-macro qualification'if escape_only else'Four same-source native-tool candidate view generations/readbacks; no boundary timing, final function, twelve-layer or hard-macro qualification'))
     (out/'native-view-group.json').write_text(json.dumps(record,indent=2)+'\n')
     assert record['passed'],'A source-qualified view child failed; all completed peer receipts retained'

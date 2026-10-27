@@ -60,7 +60,13 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-c8-locate-group':
+    if MODE=='native-escape-view-group':
+        from native_view_group import verify
+        verify(ROOT,OUT,CPUS,escape_only=True)
+    elif MODE in ('native-escape-view-transaction6k-a','native-escape-view-transaction6k-c'):
+        from native_views import generate
+        generate(ROOT,OUT,CPUS,run,'transaction6k',MODE[-1].upper(),pipeline='native_pipeline_escape.json')
+    elif MODE=='native-c8-locate-group':
         from native_c8_locate import group
         group(ROOT,OUT,CPUS)
     elif MODE in ('native-c8-locate-a','native-c8-locate-c'):

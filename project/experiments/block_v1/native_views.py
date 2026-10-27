@@ -26,6 +26,25 @@ def received_contract(physical,source,source_receipt_sha256,pipeline,top,policy)
     assert physical['mapped_to_final_lec']['passed']is True
 
 
+def final_function_contract(proof,source,source_receipt_sha256,policy,netlist_sha256):
+    """Bind the real, complete final T6K scoreboard to this physical source."""
+    assert proof['schema']=='block-v1-native-final-function/1'and proof['passed']is True
+    assert (proof['top'],proof['policy'],proof['pipeline'])==('transaction6k',policy,'native_pipeline_escape.json')
+    assert proof['source']==str(source)and proof['source_receipt_sha256']==source_receipt_sha256
+    assert proof['original_flow_netlist_sha256']==netlist_sha256
+    formal=proof['formal'];assert formal['passed']is True and all(v is True for v in formal['checks'].values())
+    assert formal['full_final_netlist_sha256']==netlist_sha256
+    assert formal['physical_functional_view']['full_view_sha256']==proof['final_netlist_sha256']
+    runs=proof['initial_state_runs'];assert set(runs)=={'all-ones','random-121','random-122'}
+    reference=None
+    for name,initial,seed in [('all-ones',1,121),('random-121',2,121),('random-122',2,122)]:
+        row=runs[name];assert row['initial_mode']==initial and row['runtime_seed']==seed
+        result=row['scoreboard'];assert result['passed']is True and result['seed']==1212026102 and result['transactions']==242
+        assert all(type(result[k])is int and result[k]>0 for k in ['cycles','assertions'])
+        if reference is None:reference=result
+        assert result==reference
+
+
 def library_interface_control(root,base):
     """Bind the actual installed-tool scope/bus proof, not timing accuracy."""
     from io_slots import file_sha
@@ -111,11 +130,11 @@ def generate(root,out,cpus,run,top,policy,pipeline='native_pipeline.json'):
     from io_slots import file_sha,slot
     assert top in ('shared109','transaction6k')and policy in ('A','C')and cpus>=8
     assert pipeline in ('native_pipeline.json','native_pipeline_cap20.json','native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json',
-                        'native_pipeline_const_protected.json','native_pipeline_viaonly.json')
+                        'native_pipeline_const_protected.json','native_pipeline_viaonly.json','native_pipeline_escape.json')
     if pipeline=='native_pipeline_const_protected.json':assert top=='shared109'
-    if pipeline=='native_pipeline_viaonly.json':assert top=='transaction6k'
+    if pipeline in ('native_pipeline_viaonly.json','native_pipeline_escape.json'):assert top=='transaction6k'
     base=out.parents[2];config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
-    interface_control=library_interface_control(root,base)if pipeline in ('native_pipeline_const_protected.json','native_pipeline_viaonly.json')else None
+    interface_control=library_interface_control(root,base)if pipeline in ('native_pipeline_const_protected.json','native_pipeline_viaonly.json','native_pipeline_escape.json')else None
     api=base/'block-v1-20261027-073/tasks/native-formal-control'
     control=json.loads((api/'receipt.json').read_text());assert control['passed']is True
     assert file_sha(api/'view-api.log')==control['outputs']['view-api.log']
@@ -132,6 +151,17 @@ def generate(root,out,cpus,run,top,policy,pipeline='native_pipeline.json'):
         for name in ['6_final.odb','6_final.sdc','6_final.spef','6_final.v','6_final.def']:
             path=results/name;digest=file_sha(path);assert digest==receipt['outputs'][(relative/name).as_posix()]
             inputs[str(path)]=digest
+    function_control=None
+    if pipeline=='native_pipeline_escape.json':
+        function=base/config['receiver_run']/('tasks/native-escape-final-transaction6k-'+policy.lower())
+        accepted_function=json.loads((function/'receipt.json').read_text())
+        assert accepted_function['passed']is True and accepted_function['mode']=='native-escape-final-transaction6k-'+policy.lower()
+        fp=function/'native-final-function.json';assert file_sha(fp)==accepted_function['outputs'][fp.name]
+        received_function=json.loads(fp.read_text())
+        final_function_contract(received_function,source,file_sha(source/'receipt.json'),policy,inputs[str(results/'6_final.v')])
+        driver=root/'project/experiments/block_v1/test_transaction.cpp'
+        assert file_sha(driver)==received_function['driver_sha256']==accepted_function['inputs'][str(driver.relative_to(root))]
+        function_control=dict(path=str(function),receipt_sha256=file_sha(function/'receipt.json'),proof_sha256=file_sha(fp))
     library='BV1_'+top+'_'+policy
     platform='/OpenROAD-flow-scripts/flow/platforms/nangate45'
     text='set_thread_count %d\nread_liberty {%s/lib/NangateOpenCellLibrary_typical.lib}\n'%(cpus,platform)
@@ -178,7 +208,8 @@ close $stream
         actual_model_api_help_sha256=file_sha(api/'view-api.log'),
         views={name:dict(path=str(out/name),sha256=file_sha(out/name))for name in ['candidate.lib','candidate.lef']},
         native_gds=dict(path=str(gds),sha256=file_sha(gds)),flat_abstract_boundary_qualified=False,
-        exact_final_function_qualified=False,twelve_layer_qualified=False,qualified_hard_macro=False,
+        exact_final_function_qualified=function_control is not None,final_function_control=function_control,
+        twelve_layer_qualified=False,qualified_hard_macro=False,
         scope='Same-source candidate view generation and native-tool interface readback only; full boundary, function and twelve-layer qualification remain required')
     (out/'native-view-generation.json').write_text(json.dumps(record,indent=2)+'\n')
     assert record['passed'],'Generated native view interface mismatch'
