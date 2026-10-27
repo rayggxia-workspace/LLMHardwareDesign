@@ -12,7 +12,7 @@ HERE=Path(__file__).resolve().parent;REPO=HERE.parents[2]
 TITLES=expand.TITLES
 ORDER=['act','mxu','opentpu_aux','gemm','vector','llaccel_aux']
 RECOMMEND={
- 'act':'优先做 C 的稀疏局部试验。数据/scale 组有真实内部端点依据；时钟和窄控制留边。全 C 仍有145个异网直接相交 pin，需接入修复。',
+ 'act':'C 的740pin已实际重接，并通过独立native DRC/所检连通；数据/scale有内部端点依据，时钟和窄控制留边。仍需解决缺失宏GDS、天线检查及父层接入，不能视为合格硬宏。原候选相对旧布线的145个异网相交与新布线终态分开记录。',
  'mxu':'保留边界和 C 局部试验并行。C 的端点 L1 减少有限；t_wdata/t_wen 按真实32-bit lane 关联，ACT 链路优先靠相关 FIFO/逻辑。',
  'opentpu_aux':'采用混合式少量内移。TMEM、VPU、DMA/量化局部端点提供候选中心；外部 DRAM/collective、控制和共享信号保留边缘更合理。',
  'gemm':'优先 C 数据簇的局部试验。288个恒零高位写数据/strobe 保留，不能据逻辑常量随意删 pin。全 C 冲突260个，不具备直接替换资格。',
@@ -122,6 +122,32 @@ def build(root,out,keep_figures=False):
         shutil.copy2(root/f'{c}_grid_revision.json',data)
     shutil.copytree(root/'native_grid',data/'native_grid',dirs_exist_ok=True)
     if (root/'parent-provenance-scan-r01.json').exists():shutil.copy2(root/'parent-provenance-scan-r01.json',data)
+    extensions=root/'validation_extensions'
+    extension_html=''
+    if extensions.exists():
+        latest=sorted(p for p in extensions.iterdir() if p.is_dir())[-1]
+        destination=data/'validation_extensions'/latest.name
+        shutil.copytree(latest,destination,dirs_exist_ok=True)
+        extra=json.loads((latest/'summary.json').read_text(encoding='utf-8'))
+        erows=[{'block':r['case'],'方案/范围':r['plan']+('（ACT完整740 C；其他为局部，见来源）' if r['plan']=='C' else '原始基线'),
+          '严格GDS合并返回':r['merge_returncode'],'缺失GDS单元':', '.join(r['missing_GDS_cells']) or '无缺失报告',
+          '现有deck违例':r.get('available_deck_violation_count','未知'),'完整资格':r['full_rule_qualification']} for r in extra['streamout']]
+        extension_html='<h3>独立GDS合并与现有规则deck：实际失败不隐藏</h3>'+table(pd.DataFrame(erows))+f'<p><a href="data/validation_extensions/{latest.name}/summary.json">规则分类、原始日志与SHA索引</a>。没有豁免缺失宏，也没有关闭FEOL、BEOL、off-grid或antenna检查。ACT的两个fakeram缺少匹配GDS；原始/C诊断布局均不完整，其678/770项目前均为天线类别，不能据此签核完整设计，或直接把差值归因于XY变化。native DRC=0和该deck结果必须分别记录。</p>'
+        electrical=latest/'electrical_observations.json'
+        if electrical.exists():
+            es=json.loads(electrical.read_text(encoding='utf-8'));rows_e=[]
+            for r in es['records']:
+                d=r['path_observations']['data']
+                rows_e.append({'block':r['case'],'试验':r['revision']+'/'+r['plan'],'选择pin':r['selected_pin_count'],'报告check数量':r['reported_checks'],
+                  '观察到最大数据负载 fF':d['maximum_observed_capacitance_F']*1e15 if d['maximum_observed_capacitance_F'] is not None else None,
+                  '观察到最大数据slew ps':d['maximum_observed_slew_s']*1e12 if d['maximum_observed_slew_s'] is not None else None})
+            extension_html+='<h3>实际RC/STA路径上的负载与转换时间</h3>'+table(pd.DataFrame(rows_e))+'<p>来自native OpenSTA JSON的SI单位F/s，转换为fF/ps；只是被报告路径点的观察最大值，路径点可能重复、集合可能变化，不是全部网络或完整系统电气覆盖。精确来源SHA、观察数量与最大值所在pin见上述目录的electrical_observations.json；原边界驱动/slew/load模型仍不完整。</p>'
+    if (root/'act-fullC-abstract-audit.json').exists():
+        for name in ['act-fullC-abstract-audit.json','act-original-abstract-audit.json']:shutil.copy2(root/name,data)
+        extension_html+='<p>导出LEF的同层PIN/OBS正面积相交诊断：原ACT782个、完整C777个（含PG口径），<a href="data/act-original-abstract-audit.json">原始</a>/<a href="data/act-fullC-abstract-audit.json">C逐pin证据</a>。这些相交可能包含同网连接形状，不能直接当作DRC违例或父层不可接入结论；也不能把灰色区域或LEF导出成功当作父层可达证明。尚需在版本匹配父层上检查具体via/handoff。</p>'
+    if (root/'full_cohort_controls').exists():
+        shutil.copytree(root/'full_cohort_controls',data/'full_cohort_controls',dirs_exist_ok=True)
+        extension_html+='<p>另冻结了完整C同组的原XY重布线、Aopt边界槽位优化和B子集控制。<a href="data/full_cohort_controls/selection.json">完整cohort/优化范围</a>及逐块Aopt CSV.gz在同目录。Aopt只在原分束、原边、原层既有槽位内置换，使用C中心L1代理，未改变硬件分束语义；未知分束仍沿用展示假设，不是全局最优边界、真实布线成本或已完成物理结果。</p>'
     # Preserve exact compact hierarchy/frontier and origin proof for reproducing ownership.
     for p in (root/'partition-r02').iterdir():
         if p.is_file():
@@ -183,7 +209,8 @@ __BLOCKS__
 <script>const pins=__PINS__;const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function render(){const c=document.querySelector('#case').value,q=document.querySelector('#search').value.toLowerCase();let a=pins.filter(r=>(!c||r[0]===c)&&r.join(' ').toLowerCase().includes(q));document.querySelector('#count').textContent=`匹配 ${a.length} / ${pins.length} 原始信号pin；所有方案保持同一完整清单。`;document.querySelector('#rows').innerHTML=a.slice(0,100).map(r=>'<tr>'+[...r.slice(0,6),r[6]+', '+r[7],r[8]+', '+r[9],r[10]+', '+r[11],r[12]].map(s=>'<td>'+escape(s)+'</td>').join('')+'</tr>').join('')}document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',render));render();</script></html>'''
     replacements={'NAV':''.join(f'<a href="#{c}">{TITLES[c]}</a>' for c in ORDER),'OWN':table(own),'MATRIX':table(matrix),'TOTAL':table(pd.DataFrame(totals)),'BLOCKS':'\n'.join(htmlparts),'STAGES':table(pd.DataFrame(stages)),'PHYSICAL':html.escape(json.dumps(pstat,ensure_ascii=False,indent=2)),'OPTIONS':''.join(f'<option>{c}</option>' for c in ORDER),'PINS':rawpins}
     for k,v in replacements.items():report=report.replace('__'+k+'__',v)
-    report=report.replace('<pre>'+html.escape(json.dumps(pstat,ensure_ascii=False,indent=2))+'</pre>',measured_html+'<pre>'+html.escape(json.dumps(pstat,ensure_ascii=False,indent=2))+'</pre>')
+    measured_html=measured_html.replace('A原边界已能合法布线','A原边界已通过native DRC和所检OpenDB连通')
+    report=report.replace('<pre>'+html.escape(json.dumps(pstat,ensure_ascii=False,indent=2))+'</pre>',measured_html+extension_html+'<pre>'+html.escape(json.dumps(pstat,ensure_ascii=False,indent=2))+'</pre>')
     (out/'report.html').write_text(report,encoding='utf-8')
     for p in out.rglob('*'):
         if p.is_file() and p.suffix in ['.svg','.html','.json','.csv']:

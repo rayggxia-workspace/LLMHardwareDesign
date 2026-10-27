@@ -84,7 +84,9 @@ if __name__=='__main__':
     with (ROOT/'logs'/('platform-'+case+'-'+revision+'.log')).open('x') as f:
         subprocess.run(['singularity','exec','--cleanenv','--home',str(ROOT/'home'),IMAGE,'sh','-c',
             'command -v klayout; grep -E "MIN_ROUTING_LAYER|MAX_ROUTING_LAYER|MIN_CLK_ROUTING|MAX_CLK_ROUTING" /OpenROAD-flow-scripts/flow/platforms/nangate45/config.mk; cat /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl; ls /OpenROAD-flow-scripts/flow/platforms/nangate45/drc; sha256sum /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad /OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules /OpenROAD-flow-scripts/flow/platforms/nangate45/config.mk /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib'],stdout=f,stderr=subprocess.STDOUT,check=True)
-    plans=os.environ.get('PINXY_PLANS','A,A_replay,Aopt,B,C').split(',')
+    # Positional plan list avoids Slurm --export treating embedded commas as
+    # separate variable assignments. Existing environment-based inputs remain valid.
+    plans=(sys.argv[3] if len(sys.argv)>3 else os.environ.get('PINXY_PLANS','A,A_replay,Aopt,B,C')).split(',')
     assert set(plans)<=set(['A','A_replay','Aopt','B','C'])
     with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(safe,[(case,p,revision) for p in plans]))
     (ROOT/'trials'/revision/(case+'-batch.json')).write_text(json.dumps({'case':case,'plans':plans,'process_return_success':results,'qualification':'CHECK_INDEPENDENT_STAGE_RESULTS'},indent=2)+'\n')

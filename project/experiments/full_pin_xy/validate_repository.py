@@ -80,6 +80,22 @@ def main():
     for design in ['opentpu','llaccel']:
         s=json.loads(gzip.decompress((DATA/'partition_summary.json.gz').read_bytes()))[design]
         assert s['unassigned_leaves']==0 and len(s['physical_cells'])==3
+    controls=DATA/'full_cohort_controls'
+    if controls.exists():
+        selections=json.loads((controls/'selection.json').read_text())
+        for c in EXPECTED:
+            chosen={pin for pin,r in allplans[c]['C'].items() if yes(r['moved'])}
+            assert chosen==set(selections[c]['pins'])
+            assert hashlib.sha256(gzip.decompress((DATA/(c+'_pin_coordinates.csv.gz')).read_bytes())).hexdigest()==selections[c]['candidate_sha256']
+            grouped={r['pin']:r['group'] for r in rows(DATA/(c+'_groups.csv.gz')) if r['plan']=='A'}
+            optimized=rows(controls/(c+'-Aopt.csv.gz'));assert len(optimized)==len(chosen) and {r['pin'] for r in optimized}==chosen
+            before=defaultdict(list);after=defaultdict(list)
+            for r in optimized:
+                a=allplans[c]['A'][r['pin']]
+                for key in ['layer','direction','use','net','bus','interface']:assert r[key]==a[key],(c,r['pin'],key,'Aopt contract')
+                k=(grouped[r['pin']],a['original_edge'],a['layer'])
+                before[k].append((a['x_um'],a['y_um']));after[k].append((r['x_um'],r['y_um']))
+            assert {k:sorted(v) for k,v in before.items()}=={k:sorted(v) for k,v in after.items()},(c,'Aopt source slot set changed')
     index=json.loads((DATA/'artifact_index.json').read_text())
     for rel,rec in index.items():
         p=OUT/rel;assert p.stat().st_size==rec['bytes'] and hashlib.sha256(p.read_bytes()).hexdigest()==rec['sha256'],rel

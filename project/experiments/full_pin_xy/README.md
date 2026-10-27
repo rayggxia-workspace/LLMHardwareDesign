@@ -80,3 +80,17 @@ sbatch --job-name=hpy-p126-act --export=ALL,PINXY_DRIVER_DIR=/public/home/yuzelu
 实际发现的RCX状态问题：同一ACT数据库在load/constraint后原样写回仍独立DRC=0，extract后保存再读入报12534项。旧checked.odb/analysis_after_RCX.odb均只作诊断，不作为物理母本。`finalize_job.sh`必须从routed.odb（A用原始ODB）另起进程导出clean.odb，并验证字节一致、独立DRC和全块几何连通；SPEF/STA记录同一提取前来源。该修复不改规则，旧失败保留。
 
 `align_candidate_grid.py`是r01→r02的增量修订，只对制造网格做小于0.0025μm的修正，保留r01坐标/指标/失败；需要从真实数据库取得`R/native_grid/<case>.tsv`，不能猜网格。先恢复r01到全新R目录，再生成r02；已修订目录不重复运行以覆盖历史。`prepare_grid_trials.py`保留相同8pin cohort作修订后重试。
+
+## 增量完整C、严格GDS与实际电气观察
+
+`prepare_full_trial.py --cases gemm mxu vector opentpu_aux llaccel_aux` 支持冻结全部C可移动集合；完整C不保证可布通。B控制只取相同C集合，不能冒充完整B；其他pin不动。
+
+完整C路由92365–92369按afterany串行，后续独立clean检查92370–92374逐项依赖；驱动f08e026，inputs/trial-inputs-full-other-r01。范围GEMM3039/MXU1964/VECTOR1022/openSYS1768/llSYS13184。结果没完成前保持运行/待验证，不推断通过。
+
+`streamout_job.sh <new-revision> <case>` 使用已有KLayout和未修改FreePDK45.lydrc，严格合并所有实际单元，不设置allow-empty，不关闭FEOL/BEOL/off-grid/antenna。ACT原始/完整740pin C的92375已实际完成：两个fakeram无GDS，严格合并返回2；保留下来的诊断GDS不完整，deck报678/770项天线错误，不是完整规则签核。其余五块GDS作业92376/92377/92378/92380/92381由相同实际clean来源继续验证，C仍为各8pin局部。
+
+`audit_abstract.py`只统计真实导出LEF的同层PIN/OBS正面积交叠。它不区分同网金属语义，不能据相交数宣布父层无法接入，也不能据无相交宣布可接入。
+
+`summarize_path_electrical.py`以有界内存解析native OpenSTA JSON路径，原值单位为F/s，保留来源SHA和观察范围，不能当作全部net的负载/转换覆盖。`run_electrical_audit.py`使用已完成、SHA匹配的报告；完整ACT C另与标准JSON解析交叉检查count和最大负载。首轮旧回执无selected_pin_count导致驱动KeyError，保留92382失败；r02从原始冻结Tcl恢复精确cohort后由92383重试，不更改物理结果。
+
+`collect_extension_snapshot.py`只收集已完成严格流片视图探针的日志、规则分类、原始报告/SHA与已完成电气观察。大GDS与大型lyrdb保留远程。可用deck全部执行成功仍不等于LVS、真实父层可达或生产工艺签核。
