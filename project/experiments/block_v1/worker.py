@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE in ('five-macro-probe-v-drive','five-macro-repair-v-drive'):
+    if MODE.startswith('five-macro-geometry-'):
+        from five_macro_geometry import export
+        export(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE in ('five-macro-probe-v-drive','five-macro-repair-v-drive'):
         from five_macro_v_repair import probe,repair
         (probe if MODE=='five-macro-probe-v-drive' else repair)(ROOT,OUT,CPUS,run)
     elif MODE=='five-macro-vector-latency':
