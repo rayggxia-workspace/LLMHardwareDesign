@@ -78,8 +78,9 @@ def verify(root,out,cpus,run):
     base=out.parents[2]
     failed=base/'block-v1-20261027-094/tasks/native-cap40-receive-transaction6k-c'
     failed_receipt=json.loads((failed/'receipt.json').read_text());assert failed_receipt['passed']is False
-    report=failed/'native-drc-summary.json';assert file_sha(report)==failed_receipt['outputs'][report.name]
-    summary=json.loads(report.read_text())
+    report=failed/'native-drc.lyrdb';assert file_sha(report)==failed_receipt['outputs'][report.name]
+    from native_drc import summarize
+    summary=summarize(report)
     located=base/'block-v1-20261027-103/tasks/native-drc-locate-c'
     receipt=json.loads((located/'receipt.json').read_text());assert receipt['passed']is True
     location=located/'native-drc-location.json';assert file_sha(location)==receipt['outputs'][location.name]
@@ -106,7 +107,7 @@ def verify(root,out,cpus,run):
             if pin['direction']=='INPUT'and name!='ANTENNA_X1':assert pin['gate_area_um2']>0 and pin['seed_covered_um2']>0
     passed=all(all(row[key]for key in ['actual_gate_matches','missing_contact_rejected'])for row in controls.values())
     record=dict(schema='block-v1-native-cell-gate-probe/1',passed=passed,geometry=geometry,library=library,dimensions=dimensions,
-        reference_controls=controls,input_sha256=hashes,source_drc_summary_sha256=file_sha(report),source_location_sha256=file_sha(location),
+        reference_controls=controls,input_sha256=hashes,source_drc_report_sha256=file_sha(report),source_location_sha256=file_sha(location),
         qualified_repair=False,scope='Actual native master geometry/Liberty inventory with input-gate agreement controls; no block repair, characterized diode model or DRC qualification')
     (out/'native-cell-gate-probe.json').write_text(json.dumps(record,indent=2)+'\n')
     assert {str(path):file_sha(path)for path in inputs}==hashes
