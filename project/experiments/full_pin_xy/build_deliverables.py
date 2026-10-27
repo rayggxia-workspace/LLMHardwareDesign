@@ -136,7 +136,7 @@ def build(root,out,keep_figures=False):
         extra=json.loads((latest/'summary.json').read_text(encoding='utf-8'))
         erows=[{'block':r['case'],'方案/范围':r['plan']+('（ACT完整740 C；其他为局部，见来源）' if r['plan']=='C' else '原始基线'),
           '严格GDS合并返回':r['merge_returncode'],'缺失GDS单元':', '.join(r['missing_GDS_cells']) or '无缺失报告',
-          '现有deck违例':r.get('available_deck_violation_count','未知'),'完整资格':r['full_rule_qualification']} for r in extra['streamout']]
+          '原deck报告项（规则适用性分项）':r.get('available_deck_violation_count','未知'),'完整资格':r['full_rule_qualification']} for r in extra['streamout']]
         extension_html='<h3>独立GDS合并与现有规则deck：实际失败不隐藏</h3>'+table(pd.DataFrame(erows))+f'<p><a href="data/validation_extensions/{latest.name}/summary.json">规则分类、原始日志与SHA索引</a>。没有豁免缺失宏，也没有关闭FEOL、BEOL、off-grid或antenna检查。ACT的两个fakeram缺少匹配GDS；原始/C诊断布局均不完整，其678/770项目前均为天线类别，不能据此签核完整设计，或直接把差值归因于XY变化。native DRC=0和该deck结果必须分别记录。</p>'
         electrical=latest/'electrical_observations.json'
         if electrical.exists():
@@ -158,7 +158,7 @@ def build(root,out,keep_figures=False):
         extension_html+='<h3>真实失败驱动的增量混合C：完整逐pin补充表</h3><p>原始A/B/C和PR120逐字节保留。GEMM原完整C的gemm_wr_wstrb[29]/[30]驱动电容超限；恢复两个真实完整字节（data232–247及strobe29/30，共18pin）到A，匹配3039pin重布线组，实际移动3021pin。MXU原完整C有3项signal-to-VDD short（pf_uv[109]、b_rdata[174]）及5项t_wdata lane0电容超限；整个33pin lane0保留A，两处M5内部点分别向左移1.12μm，仍属内部二维。匹配1964pin重布线组，实际移动1931pin。两次修订均保持单元、驱动、缓冲、原pin层/尺寸、PDN、边界及允许层。</p><p><a href="data/incremental_revisions/gemm_electrical_r03/gemm_C_electrical_r03_all_pins.csv.gz">GEMM全部3753pin增量C</a> · <a href="data/incremental_revisions/gemm_electrical_r03/revision.json">GEMM字节证据</a> · <a href="data/incremental_revisions/mxu_repair_r03/mxu_C_repair_r03_all_pins.csv.gz">MXU全部2172pin增量C</a> · <a href="data/incremental_revisions/mxu_repair_r03/revision.json">MXU修复证据</a>。两修订独立native DRC均为0、全块所检多端几何连通通过，现有边界模型下setup/hold为正且电气报告0；完整GDS/LVS/父层和系统电气仍未通过。主A/B/C图和查询仍展示原候选，不与补充修订混淆。GEMM发布表修正恢复位的几何指标元数据，实际执行Tcl逐字节一致。</p>'
     if (root/'controlled_parents').exists():
         shutil.copytree(root/'controlled_parents',data/'controlled_parents',dirs_exist_ok=True)
-        extension_html+='<h3>补建受控父层：独立新基线，历史层级仍未知</h3><p>用户确认无额外历史handoff/宏GDS并授权补充后，依据冻结三叶块图创建NEW_CONTROLLED_PARENT_NOT_HISTORICAL。openTPU固定6618端点/3408网，37个独立LOGIC0_X1实现原TOP_IO常零声明（新增基础设施成本19.684μm²，各方案相同）；llaccel固定27050端点。叶端口保持原M5/M6，TOP_IO策略、M2–M10信号/M4–M10时钟、R0布局、轨道相位与新PG显式冻结。逐bit图/方向/层检查在PG和路由之前执行。端口占位Liberty只用于链接/路由，零电容不是表征值，禁止据此报告父层STA/负载资格。</p><p>早期halo、PG条带、默认过度bloat及标量bus映射失败均留证；修订为详细OBS原生导出、按实际层障碍选择新PG通孔、真实Verilog/Liberty bus映射。openTPU r07已核对全部6618端点并通过双电源连通检查，实际路由仍在运行；llaccel独立启动，不能因提交而声称通过。<a href="data/controlled_parents/scope.json">试验/合同索引</a>；完整输入合同、Verilog、物理链接Liberty及逐端点表以gzip保留。原历史目标层仍UNKNOWN；新基线不追溯证明旧父层，也不补造SRAM器件GDS。</p>'
+        extension_html+='<h3>补建受控父层：独立新基线，历史层级仍未知</h3><p>用户确认无额外历史handoff/宏GDS并授权补充后，依据冻结三叶块图创建NEW_CONTROLLED_PARENT_NOT_HISTORICAL。openTPU固定6618端点/3408网，37个独立LOGIC0_X1实现原TOP_IO常零声明（新增基础设施成本19.684μm²，各方案相同）；llaccel固定27050端点。叶端口保持原M5/M6，TOP_IO策略、M2–M10信号/M4–M10时钟、R0布局、轨道相位与新PG显式冻结。逐bit图/方向/层检查在PG和路由之前执行。端口占位Liberty只用于链接/路由，零电容不是表征值，禁止据此报告父层STA/负载资格。</p><p>早期halo、PG条带、默认过度bloat及标量bus映射失败均留证；修订为详细OBS原生导出、按实际层障碍选择新PG通孔、真实Verilog/Liberty bus映射。openTPU r07全部6618端点、llaccel全部27050端点均已核对，并分别通过前置双电源连通检查；两者实际路由继续，尚无独立终态DRC/连通/系统时序通过证据。<a href="data/controlled_parents/scope.json">试验/合同索引</a>；完整输入合同、Verilog、物理链接Liberty及逐端点表以gzip保留。原历史目标层仍UNKNOWN；新基线不追溯证明旧父层，也不补造SRAM器件GDS。</p>'
         parent_rows=[];parent_records=[]
         for p in sorted((root/'trial_receipts'/latest_physical_name/'parents').glob('*/*/execution.json')):
             r=json.loads(p.read_text(encoding='utf-8'));graph=p.parent/'pre_model.graph_check.json';g=json.loads(graph.read_text()) if graph.exists() else {}
@@ -174,6 +174,30 @@ def build(root,out,keep_figures=False):
     if (root/'fixed_pg_rejections').exists():
         shutil.copytree(root/'fixed_pg_rejections',data/'fixed_pg_rejections',dirs_exist_ok=True)
         extension_html+='<h3>llaccel SYSTEM完整C：实际固定PG直接冲突，保留失败</h3><p>不是仅凭候选图判定：从真实place_pin后的moved.pins.tsv核对全部13507信号pin与完整C一致，原始/移动后PG指纹逐字节相同。26个信号pin与不可移动的VDD/VSS同层金属存在44对正面积直接相交；原几何导出ODB SHA与本次真实输入一致。固定pin与PG时，DRT不能消除此交叠，因此保存moved/ripped/global ODB、日志和证明后，只停止该已确认无效的新试验92369，其他作业和原数据库不改。13184pin完整C迁移已写入，但完整布线、独立终态DRC、RC/STA均未完成，不能用8pin局部结果代替。</p><p><a href="data/fixed_pg_rejections/llaccel_aux_full_C/proof.json">全部逐矩形直接接触证明</a> · <a href="data/fixed_pg_rejections/llaccel_aux_full_C/direct_contacts.csv.gz">冲突CSV</a> · <a href="data/fixed_pg_rejections/llaccel_aux_full_C/moved.pins.tsv.gz">全部实际移动后pin原始回读</a> · <a href="data/fixed_pg_rejections/llaccel_aux_full_C/stop-action.json">仅停止新无效变体的守卫/回执</a>。直接金属接触证明不是完整规则检查，未把间距风险或灰色背景当作真实短路。完整C当前不推荐；优先边界或严格筛选的少量内部簇。</p>'
+    models=root/'timing_model_snapshots'
+    if models.exists():
+        latest_models=sorted(p for p in models.iterdir() if p.is_dir())[-1]
+        target=data/'timing_models'/latest_models.name;shutil.copytree(latest_models,target,dirs_exist_ok=True)
+        model_summary=json.loads((latest_models/'summary.json').read_text(encoding='utf-8'))
+        model_rows=[]
+        for item in model_summary['records']:
+            r=item['actual_receipt']
+            if r.get('status')!='NATIVE_EXTRACTED_MODEL_EXPORTED_NOT_QUALIFIED':continue
+            model_rows.append({'版本':item['model'],'实际叶物理来源':r['physical_revision']+'/'+r['source_plan'],'来源重接组':('原始，无重接' if r['source_plan']=='A' else r['selected_pin_count']),
+              '全部信号pin匹配':r['actual_model_signal_pins'],'方向/bit核对':r['exact_all_signal_pin_direction_match'],
+              'SPEF重读setup偏差 ns':r['SPEF_replay_worst_slack']['setup']['delta_ns'],'SPEF重读hold偏差 ns':r['SPEF_replay_worst_slack']['hold']['delta_ns'],
+              'minimum_period覆盖':r['minimum_period_present'],'完整签核资格':False})
+        extension_html+='<h3>基于实际SPEF导出的叶块研究时序模型</h3>'+table(pd.DataFrame(model_rows))+f'<p><a href="data/timing_models/{latest_models.name}/summary.json">逐模型来源/SHA/实际导出及失败回执</a>；原生timing.lib、逐port表、setup/hold/checks、约束/寄生覆盖及日志以无损gzip保存。六块A/C的12份模型全部导出，逐版完整核对原始信号pin清单和方向，SPEF重读最差setup/hold与原试验偏差均为0；另外ACT/MXU的原XY重布线/Aopt/B、GEMM原XY/Aopt等8份控制模型已补齐。每份模型使用与其路由版本匹配、SHA锁定的实际提取SPEF；仍是原研究库条件下的导出模型，非SRAM器件表征或完整签核库。llaccel SYSTEM C只对应8pin局部，完整C仍失败。Liberty的bus聚合声明及VDD/VSS不重复计作信号bit，旧探针的分类/元数据失败保留。</p><p>全部当前导出模型缺少minimum_period条目；外部输入/输出延时、驱动、slew、负载和真实SRAM资格仍有缺项。原叶块时序/电气失败必须单独保留，不能因父层模型没有该检查而消失。独立父层RC/STA作业92476/92477已排队：等待实际父层结束，只有独立native DRC/所检全块连通/PG，以及叶模型物理ODB与来源回执SHA完全匹配才执行A/A_replay/叶块重布线/Aopt/B/C。旧四个尚未开始的分析作业已在严格核对pending且无输出后替换，保留调度回执，实际P&amp;R作业不变。父层为明确的新2.5ns基准，外部I/O约束仍不完整；尚未执行，不写签核通过。RCX仅在独立分析进程中运行，不保存分析后ODB为物理母本。</p>'
+    if (root/'rule_semantics').exists():
+        destination=data/'rule_semantics';shutil.copytree(root/'rule_semantics',destination,dirs_exist_ok=True)
+        for p in list(destination.rglob('*')):
+            if p.is_file() and p.suffix in ['.lyrdb','.log']:compress(p,p.with_name(p.name+'.gz'));p.unlink()
+        proof=json.loads((root/'rule_semantics/well4-r01/summary.json').read_text(encoding='utf-8'))
+        rules=[{'独立几何例':r['fixture'],'原WELL.4表达式':r['counts'].get('ORIGINAL_WELL4',0),'200nm宽度参考':r['counts'].get('WIDTH200_REFERENCE',0),'135nm间距参考':r['counts'].get('SPACE135_REFERENCE',0)} for r in proof['fixtures']]
+        extension_html+='<h3>原deck规则实现适用性：WELL.4 独立几何验证</h3>'+table(pd.DataFrame(rules))+'<p>安装的原deck把well.separation(well,200.nm)标为“最小井宽200nm”。独立KLayout实际执行表明：单个150nm窄井被原式漏检；两个宽井相隔150nm，原式报1，而宽度200nm/间距135nm参考均0。该表达式与井宽检查不等价。<a href="https://www.klayout.de/doc/about/drc_ref_layer.html">KLayout官方方法定义</a>与<a href="data/rule_semantics/well4-r01/summary.json">六例GDS/原生检查/工具及源码SHA</a>支持这一点。原始全量deck和所有计数保留，不把WELL.4项全部归因于XY或解释为真实宽度违规；也不把参考检查当完整DRC通过。实际完整llSYS A的原deck74761项中72975项为WELL.4；其余报告项、LVS、规则覆盖等仍需单独验证。</p>'
+        for p in sorted((root/'rule_semantics').glob('llaccel-A-well-reference-*/summary.json')):
+            r=json.loads(p.read_text(encoding='utf-8'));scope=p.parent.name
+            extension_html+=f'<p><a href="data/rule_semantics/{scope}/summary.json">实际llSYS A专项参考 {scope}</a>：原WELL.4计数是否复现={r["original_WELL4_count_reproduced"]}；专项计数={html.escape(str(r["actual_reference_counts"]))}。参考的井并集/逐mask范围和层级/tiling条件见回执。早期平坦参考与原deep/tiled全量计数不直接等同。原deck注明WELL.2未实现，via enclosure METALx.3/.4也有实现TODO，其适用性和完整规则覆盖尚未验证；不通过删除原检查制造通过。</p>'
     # Preserve exact compact hierarchy/frontier and origin proof for reproducing ownership.
     for p in (root/'partition-r02').iterdir():
         if p.is_file():

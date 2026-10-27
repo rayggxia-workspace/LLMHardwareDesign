@@ -34,6 +34,7 @@ def stage(root):
         shutil.copyfile(src/'proof.json',dest/'proof.json');copy_gz(src/'direct_contacts.csv',dest/'direct_contacts.csv.gz')
         for name in ['moved.pins.tsv','before.pdn.tsv','moved.pdn.tsv','execution.json']:copy_gz(actual/name,dest/(name+'.gz'))
         if (src/'stop-action.json').exists():shutil.copyfile(src/'stop-action.json',dest/'stop-action.json')
+        if (src/'checkpoint-index.json').exists():shutil.copyfile(src/'checkpoint-index.json',dest/'checkpoint-index.json')
     print('STAGED_EXISTING_INCREMENTAL_AND_NEW_PARENT_CONTRACTS')
 
 if __name__=='__main__':

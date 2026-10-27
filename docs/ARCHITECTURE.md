@@ -146,3 +146,7 @@ python project/experiments/full_pin_xy/validate_repository.py
 完整cohort比较、实际失败驱动的GEMM整字节/MXU整lane增量修订，见`prepare_electrical_revision.py`、`prepare_mxu_repair.py`；原ABC和当前物理补充表分别保存。`stage_incremental_evidence.py`复用真实执行输入并核对Tcl SHA。`make_physical_summary.py`按实际cohort比较DRT提取前线长/via、独立native DRC、所检全块多端连通与setup/hold/电气，原始逐net细节保留在链接回执，HTML只展示摘要。
 
 按用户明确授权补建的受控父层由`prepare_controlled_parent.py`/`parent_job.sh`实施；`verify_parent_graph.py`在PG/布线前核对全部端点/bit/方向/原层，后续各变体冻结A的PG/外框/TOP_IO及单元位置。新TOP_IO策略与tie成本明确单列，历史handoff仍未知。父层Liberty仅物理链接、未表征，禁止用其得出父层STA/负载资格。真实GDS/LVS/宏器件模型缺项继续保留。
+
+后续`run_timing_models.py`/`timing_model_job.sh`已实际从匹配clean ODB与原SPEF导出20份研究叶模型，逐信号bit/方向及SPEF重读余量校验通过；原占位Lib仍只用于已冻结路由阶段。`run_parent_rc_sta.py`在独立进程中读取真实导出模型，精确匹配物理ODB及来源回执SHA，并以父层native/连通/PG门槛为前提；新2.5ns基准仍缺外部I/O延时、驱动、slew、load及minimum_period覆盖，始终不输出完整系统签核。已排队92476/92477，原失败/未执行条件保留。
+
+`run_well_semantics.py`用独立小GDS验证原WELL.4表达式与其宽度描述不符；`run_actual_well_reference.py`在严格完整llSYS A GDS上新增并集及逐N/P mask宽度/间距专项检查，原全量deck不替换。实际参考均0，原表达式仍大量报告且与原全量计数未完全复现；不把它解释为所有原项消除。原deck中WELL.2未实现及部分via enclosure实现疑问仍属规则覆盖缺项。`run_parent_preflight.py`将固定父层几何与未完成信号路由分开；旧placed输入缺GCELLGRID导致原生检查未成功，不能记为DRC0。

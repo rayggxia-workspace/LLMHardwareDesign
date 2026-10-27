@@ -1,5 +1,11 @@
 # 当前状态
 
+## 2026-10-28（中国标准时间）：Issue126 新增验证里程碑，仍进行中
+
+全部六块候选和功能归属维持完整覆盖。已补齐20份匹配实际SPEF/物理版本的研究叶模型，全部信号bit/方向与重读setup/hold通过；不是器件表征库，仍缺minimum_period/完整外部模型。VECTOR完整同组对照已收集：C实际线长约+1.62%，B独立native DRC4项，继续优先边界。llSYS全C固定PG冲突的约3.04GB失败检查点已锁SHA保存。
+
+原GDS全量deck的WELL.4存在实现/描述不一致，已用独立几何证实漏检窄井及错误的宽度解释，并新增实际GDS逐N/P mask宽度/间距参考。原始所有计数不删；参考0不等于完整DRC通过，原表达式计数尚有31项未精确复现，WELL.2及via enclosure覆盖仍未闭合。两个新父层双电源检查通过、路由仍在运行，92476/92477后续RC/STA依赖严格物理与模型来源门槛，尚未执行。Issue126保持in_progress，PR129 draft。
+
 - 更新日期：2026-10-23（中国标准时间）
 - 当前阶段：H1同资源分块／合并物理对照已完成，主线、并发成果及HTML按用户授权整合；H2在独立工作树推进，尚未验收
 - 当前工程：[Issue #15](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15) 已完成openTPU ACT/MXU同功能／资源的块内及父层对照。三块和两父层、六类证明共十一份封存来源严格通过；拆分叶面积+0.412%、总信号线+7.142%、通孔+2.974%，完整setup／hold两组均满足2.5ns／0.5ns预算。[中文结果与三类图表](experiments/issue-15-opentpu-results.html)已生成并目视核验，详见[实验记录](experiments/issue-15-opentpu-comparison.md)。独立全量重布线21亦已自然完成并通过十一项来源／证明对照；本次整合不启动、终止或改写既有远程作业。

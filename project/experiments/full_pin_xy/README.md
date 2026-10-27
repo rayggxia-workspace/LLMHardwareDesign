@@ -116,3 +116,13 @@ node project/experiments/full_pin_xy/qa_report.mjs docs/experiments/issue-126-fu
 GEMM严格GDS92376已自然完成，A/8pin C合并成功但1346/1358项天线违规。其余四项原GDS任务经核实全部尚未开始且无输出后，整合成92430（16CPU，4case×4deck threads），没有耗时中断活动任务。ACT/MXU分别缺2/4个fakeram器件GDS；不得用伪造几何替代签核视图。
 
 `verify_fixed_pg_contacts.py --root R --case llaccel_aux --actual ACTUAL_FINGERPRINT_DIR --out NEW_PROOF_DIR`对真实移动后全pin回读、输入ODB SHA、未变PG指纹和真实导出PG金属做精确同层直接求交。llSYS完整C确认26pin/44对直接接触，不是间距猜测。`stop_known_invalid_pg_trial.py`是只用于识别92369新无效变体的严格守卫，核对job/name/source/driver/cohort/实际文件SHA后才能停止，不按耗时，不修改其他job/原始数据库；此脚本不作通用取消接口。完整失败检查点仍留远程，局部C8检查不代表全C通过。
+
+## 实际SPEF叶模型与独立父层RC/STA
+
+`timing_model_job.sh NEW_REVISION case... [--variants A A_child_replay Aopt B C]`在8CPU分配内最多2×4threads，从独立clean ODB与对应原已提取SPEF导出模型。复用项目`write_timing_model`流程，源ODB/SPEF/SDC/Lib锁SHA；重新读入模型并检查全部信号bit/方向，bus聚合声明及PG口另计。SPEF重读的最差setup/hold必须与原报告在1e-5ns内一致；未知额外port、丢bit或重读不符均失败。现有目录拒绝修改。调用前按本目录native运行约定指定冻结PINXY_DRIVER_DIR，不能复用已存在的NEW_REVISION输出。
+
+实际r02的六块A/C12份及r03的ACT/MXU三控制、GEMM两控制共8份均完成，20份逐bit/重读校验通过；全部仍是研究导出模型，不是SRAM器件表征签核库。llSYS C仅8pin局部，原全C失败保持。r01的旧元数据字段和bus/PG分类探针失败保留。`collect_timing_model_snapshot.py NEW_NAME`收集原始Lib/port/report/日志及来源SHA，未完成导出不列为通过。
+
+`parent_rc_sta_job.sh PARENT_REV DESIGN FOCUS NEW_ANALYSIS_REV A A_replay A_child_replay Aopt B C`只分析通过独立native DRC、所检全块连通及双PG门槛的实际父层。按真实child view物理ODB及clean回执SHA查找已导出模型，禁止用其他XY版本或路由占位Lib替代；只改派生Lib的library/cell声明名匹配实际macro alias。新父层2.5ns是固定研究基准；外部I/O delays/driver/slew/load仍缺，模型也缺minimum_period，内部叶块失败必须单独保留。即使某报告为0也不输出完整系统资格。RCX在单独分析进程执行，验证物理输入SHA未改，不写提取后ODB为物理母本。
+
+92476/92477为目前未执行的依赖作业，分别等待92441/92458实际父层和对应模型任务。更早四个post-analysis仅在全部pending、输出不存在的守卫后由`supersede_pending_parent_analysis.py`替换，保留前后Slurm和命令证据；物理任务/冻结驱动不修改。`release_pending_controls.py`只释放两个尚未启动SYSTEM控制的调度串行依赖，不新建/取消物理job，不变输入/目录/CPU；原活动VECTOR/父层不变。

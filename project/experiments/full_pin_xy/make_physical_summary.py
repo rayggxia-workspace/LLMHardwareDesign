@@ -121,6 +121,8 @@ def summarize(root):
         r=json.loads(rejection.read_text(encoding='utf-8'));s=summary['llaccel_aux']
         assert r['all_actual_moved_pins_match_complete_original_C'] and r['actual_PG_before_and_after_move_byte_identical'] and r['direct_contact_pin_count']>0
         s['full_C_actual_fixed_PG_rejection']={'scope':r['scope'],'checked_actual_signal_pins':r['signal_pins_checked'],'same_layer_fixed_PG_contact_pins':r['direct_contact_pin_count'],'rectangle_pairs':r['direct_contact_rectangle_pairs'],'raw_proof':'fixed_pg_rejections/llaccel_aux_full_C/proof.json','full_route_complete':False,'complete_DRC_pass':False}
+        t=s['trials'].get('full-other-r01/C')
+        if t:t.update({'state':'STOPPED_KNOWN_INVALID_FIXED_PG_CONTACT','stopped_after_exact_actual_pin_and_immutable_PG_proof':True,'full_detailed_route_completed':False,'original_incomplete_driver_receipt_preserved':True})
         s['route_status']='完整C的13184pin已实际place_pin并完成GRT；26pin/44矩形对与固定PG直接相交，确认无效后停止该新DRT，未完成全C布线。另保留8pin局部C结果。'
         s['drc_status']='完整C实际固定PG短路失败；8pin局部独立native DRC0/所检全块连通通过，不能混作全C通过'
         s['sta_status']='完整C未提取/STA；历史8pin局部存在setup/hold及电气失败，非资格化'

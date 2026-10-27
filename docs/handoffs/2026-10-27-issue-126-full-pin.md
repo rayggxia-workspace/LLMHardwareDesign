@@ -1,5 +1,21 @@
 # Issue126 持续执行入口与阶段证据
 
+## 最新：2026-10-28（中国标准时间）
+
+正式报告复用原14对PNG/SVG和ACT/GEMM6对，不改候选原图含义。最新物理快照milestone-r10含71条trial记录；20份真实SPEF研究叶模型（r02 A/C12份+r03控制8份）在timing_model_snapshots/milestone-r02，旧r01驱动探针失败保留。全部信号bit/方向及SPEF重读setup/hold一致；Lib bus聚合与PG口另计，不增加原始24767pin。所有导出模型仍无minimum_period，系统I/O模型/真实SRAM资格不完整。
+
+VECTOR完整同组：A_replay6797818、Aopt6830343、B6856466、C6908170μm；C约+1.62%，A/Aopt/C独立native0，B4项，电气/时序行59/61/99/103，保持负结果。ACT/GEMM/MXU结论与前述−6.40%/+1.19%/+4.30%不变。llSYS全C已失败；92479只读索引其moved/ripped/global等约3.04GB产物，SHA见checkpoint-index.json，不能当完成route。
+
+父层92441(openTPU r07)/92458(llaccel ll-r01)继续实际P&R，全部端点及前置双PG已通过，尚无完整native/连通/时序终态。92476/92477是最新依赖post-analysis，driver502a327，精确按child物理ODB和clean回执SHA匹配真实模型，分析A/A_replay/叶重布线/Aopt/B/C；旧92467/68/72/73仅在全部pending且无输出后替换，守卫调度证据入库。物理job未改。新基准2.5ns、缺I/O delay/driver/slew/load，始终不宣称系统资格。原SYSTEM物理控制92392/93在核对未启动后只释放调度串行依赖，原job/输入/驱动/目录/CPU不变。
+
+WELL语义92481已完成：150nm单窄井原WELL.4漏检；两个宽井间隔150nm原式报1而width200/space135参考0。实际llSYS A专项92484是早期flat参考，不能与原deep/tiled计数等同；92486匹配deep/tiles1000μm/border1μm并加逐N/P mask检查，宽度200/间距135均0，但原式73006对原72975未精确复现，原因未闭合。原全量报告、deck SHA均保留，不把计数重分类为通过；WELL.2未实现和via enclosure TODO也未通过。初次92483只因输入层提取API不符失败，保留日志，不是硬件错误。
+
+父层固定几何预检92489/90读取placed输入均因GCELLGRID未定义而原生失败，native_count=None，绝不能写0。92496改读openTPU真实global.odb并核对signal dbWire=0，未篡改网格/规则/几何，结果按实际回执收集；llaccel global检查点尚未取得。无论预检如何都不替代最终信号route/连通/完整规则。
+
+本次新增模型/规则发布检查：check_project PASS；业务验证全部74301行、2204文件SHA、89链接PASS；20图加载、24767pin/常量位检索PASS。模型表及WELL专项页面已打开目视核验，Python编译与Git空白检查通过。此结果只证明发布证据一致，不替代物理资格。
+
+恢复先读AGENTS/Skill/远程规则、Issue126/PR129最新head，再核对上述自己的job，收集新的执行回执。不要重新跑r02/r03模型、覆盖原结果、接管Issue55/121，或将原WELL计数/原PG失败藏起来。模型/semantic补充报告后仍需等父层、其余控制/GDS和真实器件/完整规则/系统约束；Issue不关闭。
+
 最新里程碑以本段、HTML及原始execution为准；下文保留早期记录，不据旧“尚未完成”覆盖新终态。新快照milestone-r09共66项trial回执；extensions/milestone-r03含7项已完成stream-out视图。ACT同组全A_replay/B的92455/92457独立native DRC0/所检全块连通已完成；MXU全B独立native DRC0/连通通过但21项电气失败。GEMM/MXU修订C线长分别约+1.19%/+4.30%，目前优先保留边界，不能因已可布通而声称收益。llaccel新父层27050端点/13507网的前置逐bit合同已通过，PG/路由仍独立验收。
 
 llSYS完整C92369已在确认实际26pin/44矩形对固定PG直接相交后，仅停止该新无效变体。driver cc92773，`verify_fixed_pg_contacts.py`核对实际place_pin后13507信号pin全C一致、原/新PG指纹字节相同，并与原ODB SHA匹配的真实PG金属逐层求交；`stop_known_invalid_pg_trial.py`核对唯一job/name/source/driver/cohort/实际指纹才scancel。保留moved/ripped/global ODB，未完成完整DRT/RC/STA，不是耗时取消。原始源/其他作业未改。证明和实际回读发布在data/fixed_pg_rejections；原26个风险现已是实际移动后几何直接接触证明，仍不冒充完整DRC。

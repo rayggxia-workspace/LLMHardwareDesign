@@ -139,6 +139,10 @@ def main():
             assert r['fixed_PG_net'] in ['VDD','VSS'] and r['layer']==allplans['llaccel_aux']['C'][r['pin']]['layer']
             a=r['actual_pin_box_um'];b=r['PG_shape_box_um'];assert min(a[2],b[2])>max(a[0],b[0]) and min(a[3],b[3])>max(a[1],b[1])
         stop=read_json(reject/'stop-action.json');assert stop['job']=='92369' and stop['other_jobs_untouched'] and stop['known_direct_short_pins']==26
+        if (reject/'checkpoint-index.json').exists():
+            checkpoint=read_json(reject/'checkpoint-index.json');assert checkpoint['full_route_completed'] is False and checkpoint['full_physical_qualification'] is False
+            assert set(['moved.odb','ripped.odb','global.odb'])<=set(checkpoint['checkpoints'])
+            assert all(q['unchanged_during_index'] and len(q['sha256'])==64 and q['bytes']>0 for q in checkpoint['checkpoints'].values())
     controls=DATA/'full_cohort_controls'
     if controls.exists():
         selections=json.loads((controls/'selection.json').read_text())
@@ -158,6 +162,51 @@ def main():
     for p in (DATA/'evidence/physical').glob('storage_index.json'):
         for original,r in read_json(p).items():
             b=gzip.decompress((p.parent/r['stored_as']).read_bytes());assert len(b)==r['original_bytes'] and hashlib.sha256(b).hexdigest()==r['original_sha256'],original
+    models=DATA/'timing_models'
+    if models.exists():
+        successful=set()
+        for summary_path in models.glob('*/summary.json'):
+            for item in read_json(summary_path)['records']:
+                r=item['actual_receipt']
+                if r.get('status')!='NATIVE_EXTRACTED_MODEL_EXPORTED_NOT_QUALIFIED':continue
+                c=r['case'];expected={p:a['direction'].lower() for p,a in allplans[c]['A'].items()}
+                directory=summary_path.parent/item['model'];lib=gzip.decompress((directory/'timing.lib.gz').read_bytes())
+                assert hashlib.sha256(lib).hexdigest()==r['generated_library_sha256']==r['files']['timing.lib']['sha256']
+                with gzip.open(directory/'model_pins.tsv.gz','rt') as f:pp=list(csv.DictReader(f,delimiter='\t'))
+                actual={q['pin'].split('/')[-1].replace('\\',''):q['direction'].lower() for q in pp};assert len(actual)==len(pp)
+                assert {p:d for p,d in actual.items() if p in expected}==expected
+                assert set(actual)-set(expected)==set(r['native_bus_aggregate_declarations_not_extra_bits'])|set(r['native_PG_ports_not_signal_pins'])
+                assert set(r['native_PG_ports_not_signal_pins'])<=set(['VDD','VSS'])
+                for name,q in r['native_bus_aggregate_declarations_not_extra_bits'].items():
+                    assert len(q['members'])>1 and all(p in expected and expected[p]==q['actual_native_direction'] for p in q['members'])
+                assert r['actual_model_signal_pins']==r['expected_physical_signal_pins']==EXPECTED[c]
+                assert r['exact_all_signal_pin_direction_match'] and r['source_odb_and_SPEF_unchanged'] and r['model_has_timing_groups']
+                assert all(q['delta_ns'] is not None and abs(q['delta_ns'])<=1e-5 for q in r['SPEF_replay_worst_slack'].values())
+                assert r['minimum_period_present']==('minimum_period' in lib.decode())
+                assert item['qualified_for_full_system_STA'] is False
+                sub=r['source_clean_receipt'].split('/full-pin-20261027/',1)[1]
+                matches=list((DATA/'evidence/physical').glob('*/'+sub+'*'));assert len(matches)==1,(item['model'],'matching clean physical source missing')
+                raw=gzip.decompress(matches[0].read_bytes()) if matches[0].suffix=='.gz' else matches[0].read_bytes()
+                assert hashlib.sha256(raw).hexdigest()==r['source_clean_receipt_sha256']
+                assert json.loads(raw)['clean_odb_sha256']==r['clean_odb_sha256']
+                successful.add((c,r['variant']))
+        assert all((c,p) in successful for c in EXPECTED for p in ['A','C'])
+    semantic=DATA/'rule_semantics/well4-r01'
+    if semantic.exists():
+        proof=read_json(semantic/'summary.json');assert proof['original_deck_unmodified'] and proof['original_expression_differs_from_width_reference_on_fixtures']
+        assert proof['qualified_design_or_rule_deck'] is False and proof['full_original_design_reports_changed'] is False
+        examples={r['fixture']:r for r in proof['fixtures']}
+        thin=examples['thin_isolated']['counts'];gap=examples['wide_gap150']['counts']
+        assert thin.get('ORIGINAL_WELL4',0)==0 and thin['WIDTH200_REFERENCE']>0
+        assert gap['ORIGINAL_WELL4']>0 and gap.get('WIDTH200_REFERENCE',0)==gap.get('SPACE135_REFERENCE',0)==0
+        for name,r in examples.items():
+            assert hashlib.sha256((semantic/(name+'.gds')).read_bytes()).hexdigest()==r['GDS_sha256']
+            assert hashlib.sha256(gzip.decompress((semantic/(name+'.lyrdb.gz')).read_bytes())).hexdigest()==r['native_report_sha256']
+        for p in (DATA/'rule_semantics').glob('llaccel-A-well-reference-*/summary.json'):
+            r=read_json(p);assert r['original_deck_unmodified'] and r['full_qualification'] is False and r['original_full_reports_reclassified_as_pass'] is False
+            assert r['installed_original_deck_sha256']==proof['installed_original_deck_sha256']
+            assert hashlib.sha256((p.parent/'actual_reference.drc').read_bytes()).hexdigest()==r['reference_runset_sha256']
+            assert hashlib.sha256(gzip.decompress((p.parent/'actual_reference.lyrdb.gz').read_bytes())).hexdigest()==r['reference_report_sha256']
     index=json.loads((DATA/'artifact_index.json').read_text())
     for rel,rec in index.items():
         p=OUT/rel;assert p.stat().st_size==rec['bytes'] and hashlib.sha256(p.read_bytes()).hexdigest()==rec['sha256'],rel

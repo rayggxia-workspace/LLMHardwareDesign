@@ -1,5 +1,13 @@
 # huangpingyang04-lgtm 的进度
 
+## 2026-10-28（中国标准时间）：Issue126 持续验证
+
+- 当前：原24767pin/74301候选行及完整功能归属已交付，PR129仍draft、Issue126 in_progress。20份真实SPEF叶模型全部bit/方向/重读余量通过，原探针失败和minimum_period/系统模型缺项保留。
+- 新结果：VECTOR全同组C线长+1.62%、B native DRC4项；ACT C−6.40%，GEMM/MXU修订C+1.19%/+4.30%，推荐分别见HTML。llSYS全C真实固定PG冲突失败，3.04GB检查点只读锁SHA。
+- 规则适用性：独立几何确认原WELL.4用separation而非width导致含义错误；实际llSYS A逐N/P mask width200/space135参考0，原式计数73006仍未精确复现72975，未删原报告或宣称DRC通过。WELL.2、via enclosure及GDS/LVS材料限制继续保留。
+- 继续：父层92441/92458前置端点/双PG通过，路由运行；精确模型来源门槛的post-analysis92476/92477等待执行。固定几何预检前两次因GCELLGRID失败，92496使用真实global检查点，状态以回执为准。
+- 入口：[PR129](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/129) / [中文报告](../../docs/experiments/issue-126-full-pin/report.html) / [交接](../../docs/handoffs/2026-10-27-issue-126-full-pin.md)。登记PR5 pending；看板unverified/同步pending，审查及处理人待指定。
+
 ## 2026-10-27（中国标准时间）：Issue126 进行中
 
 - 最新终态修正：llSYS完整C真实迁移后核对全部13507pin，26pin/44矩形对与固定PG直接相交；仅停止该已确认无效的新试验92369，保存moved/ripped/global检查点及证明。完整C未布线/RC/STA，不用8pin通过替代。GEMM/MXU修订C虽当前门槛通过，实际线长+1.19%/+4.30%，本轮优先边界。父层/其余控制/GDS继续，新增9份已完成GDS视图探针含openSYS原始缺宏及WELL失败。
@@ -28,3 +36,5 @@
 - 验证：原分析完整性和交互浏览器检查通过、六图目视核验；本次仓库标准库验证通过：13,839 行、12 图、81 链接、46 文件 SHA；管理检查/编译/SVG XML/空白检查通过。成果提交的 [CI 40337360301](https://github.com/rayggxia-workspace/LLMHardwareDesign/actions/runs/40337360301) 已实际 success；本次进度回执提交的最新 CI 以 PR 为准。未执行新的 P&R。
 - 阻塞：Projects 无已核验配置/工具，unverified/同步 pending；登记 PR5 仍 pending；审查人/看板处理人待指定。
 - [持久交接](../../docs/handoffs/2026-10-26-issue-119-pin-xy.md)。本文件只记录已进入当前 main 基线的新任务；不覆盖其他并行分支中尚未合入的个人进度。
+
+本次模型/规则发布验证：2204文件SHA、89链接、全部74301候选行通过；20图和逐pin筛选正常，模型/规则页截图已目视核验。保持Issue126 in_progress / PR129 draft；父层和其余远程验证继续。

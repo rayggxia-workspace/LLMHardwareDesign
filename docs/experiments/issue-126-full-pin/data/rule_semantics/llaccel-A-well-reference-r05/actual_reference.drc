@@ -1,0 +1,18 @@
+# Independent semantic probe only; never replace the original project deck.
+threads(1)
+source($input)
+report("WELL expression semantics; not design qualification", $report)
+tiles(1000.um)
+tile_borders(1.um)
+deep
+nwell   = polygons(3, 0)
+pwell   = polygons(2, 0)
+well = nwell.or(pwell)
+well.separation(well, 200.nm, euclidian).output("ORIGINAL_WELL4", "Original installed WELL.4 expression verbatim")
+well.width(200.nm, euclidian).output("WIDTH200_REFERENCE", "Independent 200nm minimum width reference")
+well.space(135.nm, euclidian).output("SPACE135_REFERENCE", "Independent 135nm same-potential spacing reference")
+
+nwell.width(200.nm, euclidian).output("NWELL_WIDTH200_REFERENCE", "Additional individual nwell width check")
+pwell.width(200.nm, euclidian).output("PWELL_WIDTH200_REFERENCE", "Additional individual pwell width check")
+nwell.space(135.nm, euclidian).output("NWELL_SPACE135_REFERENCE", "Additional individual nwell spacing check")
+pwell.space(135.nm, euclidian).output("PWELL_SPACE135_REFERENCE", "Additional individual pwell spacing check")
