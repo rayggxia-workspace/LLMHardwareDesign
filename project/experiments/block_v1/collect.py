@@ -48,6 +48,11 @@ for task in manifest['tasks']:
    raw=file.read_bytes()
    try:
     content=json.loads(raw.decode())
+    if relative=='native-boundary-diagnostic.json':
+     differences=content['top_port_differences']
+     content['top_port_difference_count']=len(differences)
+     content['top_port_differences']=[row for row in differences if tuple(row['port']) in [('adebug',6),('mdebug',4)]]
+     content['index_projection']='Only the two currently unmatched top-port records are embedded; all original port snapshots, differences and complete diagnostic remain unchanged on server and are bound by receipt plus outer report SHA256/bytes. Counts and strict rejection remain unchanged.'
     if relative=='native-physical-receiver.json':
      timing=content.get('timing',{})
      if 'explicit_unused_internal_outputs'in timing:

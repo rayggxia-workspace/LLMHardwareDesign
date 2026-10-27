@@ -59,7 +59,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-boundary-physical':
+    if MODE=='native-constant-control':
+        from native_const_probe import verify
+        verify(ROOT,OUT,CPUS,run)
+    elif MODE=='native-boundary-physical':
         from native_formal_boundary import physical
         physical(ROOT,OUT,CPUS,run)
     elif MODE=='native-boundary-diagnostic':
