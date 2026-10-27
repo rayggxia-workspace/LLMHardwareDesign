@@ -16,7 +16,8 @@ def implement(root,out,cpus,run,kind):
     top='block_v1_m' if kind=='m' else 'block_v1_s16k'
     label='matrix' if kind=='m' else 'store'
     task_root=out.parent
-    mapped=task_root/('five-macro-'+label+'-map')
+    mapped=(base/'block-v1-20261027-187/tasks/five-macro-matrix-map' if kind=='m'
+            else task_root/'five-macro-store-flatten')
     tested=base/'block-v1-20261027-186/tasks'/('five-macro-'+label+'-test')
     for source,name in [(mapped,'five-macro-'+label+'-map.json'),(tested,'five-macro-'+label+'-test.json')]:
         receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed'] is True

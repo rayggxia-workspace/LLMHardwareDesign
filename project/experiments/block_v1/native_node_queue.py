@@ -38,6 +38,8 @@ def validate(spec,base):
         assert t['mode']==cwd.name and t['report'].endswith('.json')
         for d in t.get('receipts',[]):
             assert Path(d['path']).name=='receipt.json' and base in Path(d['path']).parents
+            assert isinstance(d['mode'],str) and d['mode'],'Missing prerequisite receipt mode'
+            assert isinstance(d.get('reports',[]),list)
             if d.get('producer_state'):
                 assert base in Path(d['producer_state']).parents and d['producer_task']
     state=Path(spec['state_path']);assert state.parent.parent==base and state.name=='node-queue-state.json'

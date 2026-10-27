@@ -72,6 +72,9 @@ try:
     elif MODE=='five-macro-store-map':
         from five_macro import map_matrix
         map_matrix(ROOT,OUT,CPUS,run,'block_v1_s16k')
+    elif MODE=='five-macro-store-flatten':
+        from five_macro import flatten_store
+        flatten_store(ROOT,OUT,CPUS,run)
     elif MODE in ('five-macro-route-m','five-macro-route-s'):
         from five_macro_physical import implement
         implement(ROOT,OUT,CPUS,run,MODE[-1])
