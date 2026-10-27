@@ -60,7 +60,13 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-escape-view-group':
+    if MODE=='native-c8-probe-group':
+        from native_c8_probe import group
+        group(ROOT,OUT,CPUS)
+    elif MODE in ('native-c8-probe-a','native-c8-probe-c'):
+        from native_c8_probe import verify
+        verify(ROOT,OUT,CPUS,run,MODE[-1].upper())
+    elif MODE=='native-escape-view-group':
         from native_view_group import verify
         verify(ROOT,OUT,CPUS,escape_only=True)
     elif MODE in ('native-escape-view-transaction6k-a','native-escape-view-transaction6k-c'):
