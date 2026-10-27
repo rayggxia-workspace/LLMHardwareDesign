@@ -1,0 +1,59 @@
+{
+  "scope": "Read fixed published report and exact Git blob, recompute every input residual from its recorded rows; not rerun independent STA or qualify models",
+  "source_commit": "cb3a089ce483a8647a7275b0fe29299133f4e17d",
+  "path": "work/YUZE-LU/127/input-output-residual-summary.json",
+  "git_blob": "d815ef8ef7507c6e15cefcdece494bfc82ed4a27",
+  "sha256": "8193d2a09cf2e82f5ceae30da2112af58af706fd6cf986fb2998cc3eba37a9f5",
+  "qualified_hard_macro": false,
+  "candidates": {
+    "a": {
+      "input_rows": 756,
+      "recomputed_maximum_unexplained_residual_ps": 0.006170713005606166,
+      "port_slew": {
+        "input": {
+          "coordinates": 760,
+          "maximum_absolute_difference_ps": 5.719000000000002,
+          "over_original_1ps_diagnostic_count": 17
+        },
+        "output": {
+          "coordinates": 784,
+          "maximum_absolute_difference_ps": 4.753000000000007,
+          "over_original_1ps_diagnostic_count": 146
+        }
+      },
+      "native_measurement_binding": {
+        "passed": true,
+        "native_measurement_binding_passed": true,
+        "models_match_within_declared_diagnostic_tolerances": false,
+        "receipt_sha256": "3b0c7ccc0dceefa13246fee38cc03bc00b3ba6d3e4f0077edfc6a406e4609ed7",
+        "source_rc_derived_from_spef": true,
+        "flat_abstract_boundary_qualified": false
+      }
+    },
+    "c": {
+      "input_rows": 756,
+      "recomputed_maximum_unexplained_residual_ps": 0.006512074509822975,
+      "port_slew": {
+        "input": {
+          "coordinates": 760,
+          "maximum_absolute_difference_ps": 0.893999999999999,
+          "over_original_1ps_diagnostic_count": 0
+        },
+        "output": {
+          "coordinates": 784,
+          "maximum_absolute_difference_ps": 3.680000000000003,
+          "over_original_1ps_diagnostic_count": 106
+        }
+      },
+      "native_measurement_binding": {
+        "passed": true,
+        "native_measurement_binding_passed": true,
+        "models_match_within_declared_diagnostic_tolerances": false,
+        "receipt_sha256": "6bae19e3e5712235bab3871668141ed3cd30b0dc2fc0e527d062ca6bc30fb007",
+        "source_rc_derived_from_spef": true,
+        "flat_abstract_boundary_qualified": false
+      }
+    }
+  },
+  "next_contract": "Retain exact full V/SPEF as timing reference. Independently accept input drive/impedance/slew and output RC/load contexts; no fitted constant subtraction or relaxed tolerance. Explicit boundary RC remains an unqualified candidate."
+}

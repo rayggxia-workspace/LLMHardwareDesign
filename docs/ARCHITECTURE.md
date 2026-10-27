@@ -252,3 +252,6 @@ RAW_LIB_FOLDER需提供已按164收据封存的candidate164-a.lib/c.lib。只读
 
 
 节点耦合组装原生读回入口（准备，未实跑）：`joint-rc-native-branch` / `joint-rc-native-via`由`joint_rc_native.py`接收run100实际完整科学证明、逐节点ground和双向节点对C，`joint_rc.py`显式均值对称化后输出唯一物理C的对称SPEF表示。每候选4CPU内动态执行六种独立原生import；逐节点ground、每条R和每一对CCSeg分别读回，错单位/丢C/节点ground交换/R交换及保节点耦合边际的错误重连均须拒绝。小型无源LEF锚仅绑定电气ID，无布线物理资格。纯组装检查命令：`python project/experiments/block_v1/joint_rc_controls.py work/YUZE-LU/121/results/run100-terminal/index.json`。见[耦合RC组装边界](decisions/2026-10-27-block-v1-joint-rc-native.md)。
+
+
+180实际接收已通过：`results/run180-native-node-queue-terminal`及两joint-rc-native peer索引；fixture科学资格与纯组装/原生读回分开记录。完整原生输出/SPEF/ODB仍为宏时序参考；固定PR128 cb3a089输入残差已逐项复算，输出RC反例及输出slew超差未被修正或豁免，详细来源`work/YUZE-LU/121/macro-qa128-update-cb3a089.json`。
