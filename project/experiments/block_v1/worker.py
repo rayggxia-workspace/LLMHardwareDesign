@@ -84,6 +84,9 @@ try:
     elif MODE in ('five-macro-probe-v-drive','five-macro-repair-v-drive'):
         from five_macro_v_repair import probe,repair
         (probe if MODE=='five-macro-probe-v-drive' else repair)(ROOT,OUT,CPUS,run)
+    elif MODE=='five-macro-vector-composition':
+        from five_macro import vector_composition
+        vector_composition(ROOT,OUT,CPUS,run)
     elif MODE=='five-macro-vector-latency':
         from five_macro import vector_latency
         vector_latency(ROOT,OUT,CPUS,run)

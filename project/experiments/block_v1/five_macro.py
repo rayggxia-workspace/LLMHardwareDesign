@@ -37,6 +37,33 @@ def vector_latency(root,out,cpus,run):
     (out/'five-macro-vector-latency.json').write_text(json.dumps(result,indent=2)+'\n')
 
 
+def vector_composition(root,out,cpus,run):
+    """Additional command compositions on exactly the already implemented RTL."""
+    from io_slots import file_sha
+    assert cpus==16
+    original=out.parents[2]/'block-v1-20261027-196/tasks/five-macro-vector-test'
+    receipt=json.loads((original/'receipt.json').read_text());assert receipt['passed']
+    proof=original/'five-macro-vector-test.json';assert file_sha(proof)==receipt['outputs'][proof.name]
+    tested=json.loads(proof.read_text());assert tested['passed']
+    folder=root/'project/rtl/block_library_v1'
+    assert all(file_sha(folder/name)==digest for name,digest in tested['source_sha256'].items())
+    driver=root/'project/experiments/block_v1/test_vector_macro.cpp'
+    assert file_sha(driver)==tested['bench_sha256']
+    bench=driver.with_name('test_vector_compositions.cpp')
+    sources=[folder/name for name in ('block_v1_v.sv','block_v1_v_group.sv','block_v1_v_function.sv')]
+    run(['/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator','--cc','--exe','--build','-j','16','-Wno-fatal',
+         '--top-module','block_v1_v','-I'+str(folder),'-Mdir',str(out/'obj')]+list(map(str,sources))+[str(bench)],'composition-build.log')
+    run([str(out/'obj/Vblock_v1_v')],'composition-result.json')
+    result=json.loads((out/'composition-result.json').read_text())
+    assert result['passed'] and result['rope_cases']==320 and result['statistics_elements']==65535
+    assert result['rejected_boundary_cases']==3
+    result.update(source_sha256=tested['source_sha256'],scoreboard_receipt_sha256=file_sha(original/'receipt.json'),
+                  driver_sha256=file_sha(driver),bench_sha256=file_sha(bench),
+                  physical_implementation_completed=False,final_netlist_verified=False,
+                  scope='Unchanged V RTL command-level paired RoPE with supplied Q16.16 coefficients, stagewise RNE/saturation and full statistics-domain controls. No trig generation hardware or model-quality qualification.')
+    (out/'five-macro-vector-composition.json').write_text(json.dumps(result,indent=2)+'\n')
+
+
 def vector_test(root,out,cpus,run):
     from io_slots import file_sha
     assert cpus==16
