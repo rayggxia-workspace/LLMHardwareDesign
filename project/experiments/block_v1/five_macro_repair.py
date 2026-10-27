@@ -10,7 +10,7 @@ def patch_metal2(root,out,cpus,run):
     from io_slots import file_sha
     from five_macro_receive import source
     from native_escape import records
-    from native_escape_audit import geometry
+    from native_escape_audit import geometry,def_inventory,connectivity
     assert cpus==16
     folder,r,flow,results=source(out,'m')
     located=out.parents[2]/'block-v1-20261027-196/tasks/five-macro-locate-m'
@@ -28,9 +28,13 @@ def patch_metal2(root,out,cpus,run):
     (out/'before.tcl').write_text(setup+body);run(['openroad','-no_init','-exit',str(out/'before.tcl')],'before.log')
     before_records={s.lstrip().split()[1]:s for s in records(out/'before.def')}
     old=before_records[name];assert old.rstrip().endswith(';')
-    # DEF RECT coordinates are relative to this route point. Its exact native
-    # readback is checked below; keep every original route/via/terminal.
-    new=old.rstrip()[:-1].rstrip()+'\n      NEW metal2 ( 282580 531020 ) RECT ( -120 -420 70 140 ) ;\n'
+    # Two overlapping default-width (140DBU) vertical segments have exactly
+    # the selected190x560DBU rectangular union. Use ordinary wire segments:
+    # measured197's DEF RECT reached native DRC but the installed path-shape
+    # iterator omitted it. Do not waive that missing-conductor proof.
+    added=[('metal2','wire',(282460,530600,282600,531160)),
+           ('metal2','wire',(282510,530600,282650,531160))]
+    new=old.rstrip()[:-1].rstrip()+'\n      NEW metal2 ( 282530 530670 ) ( * 531090 )\n      NEW metal2 ( 282580 530670 ) ( * 531090 ) ;\n'
     patch='VERSION 5.8 ;\nDIVIDERCHAR "/" ;\nBUSBITCHARS "[]" ;\nDESIGN '+flow['top']+' ;\nUNITS DISTANCE MICRONS 2000 ;\nNETS 1 ;\n'+new+'END NETS\nEND DESIGN\n'
     (out/'patch.def').write_text(patch)
     body='read_def -floorplan_initialize {'+str(out/'patch.def')+'}\nwrite_def after.def\nwrite_db edited.odb\nwrite_verilog after.v\nescape_geometry after-geometry.tsv {'+name+'}\n'
@@ -39,19 +43,23 @@ def patch_metal2(root,out,cpus,run):
     after_records={s.lstrip().split()[1]:s for s in records(out/'after.def')}
     assert set(before_records)==set(after_records)
     assert all(before_records[k]==after_records[k] for k in before_records if k!=name)
+    assert def_inventory(out/'before.def')[1]==def_inventory(out/'after.def')[1], 'Non-NETS geometry changed'
     assert file_sha(out/'before.v')==file_sha(out/'after.v')
     before=geometry(out/'before-geometry.tsv');after=geometry(out/'after-geometry.tsv')
     assert set(before)==set(after)
     for net in before:
         a=collections.Counter(before[net]);b=collections.Counter(after[net])
         assert not a-b,'A conductor was removed'
-        if net==name:assert b-a==collections.Counter([('metal2','wire',tuple(box))])
+        if net==name:assert b-a==collections.Counter(added)
         else:assert a==b,'Another net changed'
+    connected=connectivity(after[name]);assert connected['passed']
     report=(out/'native-whole-drc.rpt').read_text()
     result=dict(passed=not report.strip(),source_receipt_sha256=file_sha(folder/'receipt.json'),
                 location_receipt_sha256=file_sha(located/'receipt.json'),net=name,added_metal2_box_dbu=box,
                 source_unchanged=source(out,'m')[1]==r,unchanged_full_signal_netlist=True,
                 all_other_routes_unchanged=True,no_original_conductors_removed=True,
+                non_net_geometry_unchanged=True,added_exact_wire_boxes_dbu=[list(v[2]) for v in added],
+                target_net_connectivity=connected,
                 native_full_chip_drc_report=report,edited_odb_sha256=file_sha(out/'edited.odb'),
                 edited_def_sha256=file_sha(out/'after.def'),qualified_hard_macro=False,
                 scope='One additive pre-freeze M2 notch fill, actual exact geometry and full native DRC only; new final outputs/RCX/STA/full deck/function/strict LEC still required')
