@@ -5,7 +5,7 @@ import tempfile
 import unittest
 
 from audit import Invalid
-from native_pair import receive, compare_native, native_log_diagnostics
+from native_pair import receive, compare_native, native_log_diagnostics, signed_slack_diagnostic
 from spef_inventory import inventory
 
 
@@ -211,6 +211,24 @@ class NativeReceiverControls(unittest.TestCase):
         self.assertEqual(report["native_error_count"], 1)
         self.assertEqual(report["missing_spef_instance_or_net_messages"], 2)
         self.assertFalse(report["exact_source_annotation_binding_accepted"])
+
+    def test_optimistic_and_pessimistic_slack_directions_are_distinct(self):
+        flat = receive(self.folder, self.ports)
+        abstract = json.loads(json.dumps(flat))
+        abstract["observations"][0]["slack_ns"] += .002
+        abstract["observations"][1]["slack_ns"] -= .003
+        result = signed_slack_diagnostic(flat, abstract, .001)
+        self.assertEqual(result["optimistic_count"], 1)
+        self.assertEqual(result["pessimistic_count"], 1)
+        self.assertFalse(result["qualified_hard_macro"])
+
+    def test_signed_comparison_rejects_missing_or_duplicate_coverage(self):
+        flat = receive(self.folder, self.ports)
+        for mutation in (lambda v: v["observations"].pop(), lambda v: v["observations"].append(v["observations"][0])):
+            abstract = json.loads(json.dumps(flat))
+            mutation(abstract)
+            with self.assertRaises(Invalid):
+                signed_slack_diagnostic(flat, abstract, .001)
 
 
 if __name__ == "__main__":

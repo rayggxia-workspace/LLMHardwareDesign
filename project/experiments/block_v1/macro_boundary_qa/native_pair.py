@@ -127,6 +127,22 @@ def compare_native(flat, abstract, time_tolerance_ns, slew_tolerance_ns):
             "scope": "Native aggregate slack/port-slew comparison only; endpoint sets retained separately, full arc/electrical/RC equivalence still required"}
 
 
+def signed_slack_diagnostic(flat, abstract, threshold_ns):
+    """Report optimism separately from pessimism; no new acceptance policy."""
+    require(number(threshold_ns) >= 0, "signed diagnostic threshold")
+    by_key = [{tuple(row["key"]): row for row in v["observations"]} for v in (flat, abstract)]
+    require(by_key[0].keys() == by_key[1].keys() and by_key[0], "signed diagnostic observation coverage")
+    require(all(len(mapping) == len(v["observations"]) for mapping, v in zip(by_key, (flat, abstract))), "signed diagnostic duplicate observation")
+    differences = [{"key": list(k), "abstract_minus_flat_slack_ns": scalar(by_key[1][k]["slack_ns"])-scalar(row["slack_ns"])}
+                   for k, row in by_key[0].items()]
+    return {"threshold_ns": threshold_ns,
+            "optimistic_count": sum(d["abstract_minus_flat_slack_ns"] > threshold_ns for d in differences),
+            "pessimistic_count": sum(d["abstract_minus_flat_slack_ns"] < -threshold_ns for d in differences),
+            "worst_optimistic": max(differences, key=lambda d: d["abstract_minus_flat_slack_ns"]),
+            "worst_pessimistic": min(differences, key=lambda d: d["abstract_minus_flat_slack_ns"]),
+            "qualified_hard_macro": False, "scope": "Diagnostic direction only; source/context and acceptance policy must be reviewed separately"}
+
+
 def tcl_list(paths):
     values = []
     for path in paths:

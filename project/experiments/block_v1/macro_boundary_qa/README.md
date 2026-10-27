@@ -138,3 +138,11 @@ python3 -B project/experiments/block_v1/macro_boundary_qa/native_pair.py \
 `native_occupancy.py` 用指定 OpenROAD 只读 final ODB，`source_occupancy.tcl` 使用固定哈希的项目 `odb_geometry.tcl` 导出几何，再附加每个 instance 变换后的 master OBS 及真实 NET→PORT 归属。这里复用几何生产器，**不复用主线验收器**。
 
 `obstruction_coverage.py` 对每个源金属矩形做整数坐标的矩形并集覆盖检查；仅同 net、同层实际端口窗口可豁免。面积相等、矩形相交或层清单齐全都不能代替覆盖。via cut 只计数，由相邻金属 keepout 提供正常 route/via 限制；隐藏 transistor/GDS 几何与原生 DRC 不在该诊断的资格范围内。必须实际运行 ODB 导出并保存收据后，才能报告候选覆盖结果。
+
+## 8. 原生模型弧清点与验收建议
+
+`native_lib_inventory.py INDEX NEW_OUTPUT --executable /approved/tools/sta` 在新进程只读候选模型，枚举原生 scalar pin 方向/is_power_ground、所有 timing arc group、条件与 transition arc。`verify(index, folder, executable)` 根据绑定的原始 TSV 重新解析，检查模型/工具/采集代码与来源收据。实际 T6K A/C 各有 606 组、1,250 条 transition arc；供电普通输入无弧，不代表 PG 合同自动通过。
+
+两个原生无 from-port 的 clock-tree 特殊组完整保留。当前接口不能安全给出其 role 名称，明确标 unresolved、native_role_metadata_complete=false；不跳过，也不调用会解引用空指针的原生 full_name。模型弧清单不是 flat 对应关系或数值安全性证明。
+
+`native_pair.signed_slack_diagnostic(flat, abstract, threshold_ns)` 区分 abstract-minus-flat 的正向（乐观）和负向（悲观）slack 差，仍不签发资格。待审查的建议见 `work/YUZE-LU/127/宏边界验收口径建议.md`：声明有限工作域，审查安全包络及误差方向，不将全数值相等当作唯一合同，也不把全部组合图/预连研究提前放入本轮。

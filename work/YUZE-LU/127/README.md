@@ -19,7 +19,7 @@ python -B scripts/check_project.py
 git diff --check
 ```
 
-首轮为 36 项 synthetic 测试；第二批增至 73 项，另实际执行原生控制及 T6K 候选诊断。最终数量以测试回执为准。`synthetic-report.json` 的 passed 仅表示接收器逻辑控制通过，所有正式资格保持 false。生成用法：导入 `test_audit.Fixture` 在临时目录构造，再调用 `audit.audit(index_path)`；不使用任何真实候选文件。
+首轮为 36 项 synthetic 测试；原生诊断批增至 73 项，后续弧元数据/有符号差控制增至 80 项，另实际执行原生控制及 T6K 候选诊断。最终数量以测试回执为准。`synthetic-report.json` 的 passed 仅表示接收器逻辑控制通过，所有正式资格保持 false。生成用法：导入 `test_audit.Fixture` 在临时目录构造，再调用 `audit.audit(index_path)`；不使用任何真实候选文件。
 
 第二批真实发现：run164 T6K A/C 均未通过 Liberty PG direction 门；A 的原生对照有超差，且 exact final.v/SPEF 中二极管实例/网络无法完整对应。失败不豁免，原生数字不能归因成单一模型误差。详见本目录真实诊断报告与 JSON 摘要。小 DFF 控制说明，导出输入驱动上下文和输入线阻敏感性需要分别检查，固定 transition 的独立诊断变体也不能普遍消除误差。
 
