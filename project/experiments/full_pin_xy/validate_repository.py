@@ -12,10 +12,11 @@ def yes(s):return str(s).lower()=='true'
 def main():
     gate=json.loads((DATA/'coverage_gate.json').read_text());assert gate['status']=='PASS_ALL_BLOCK_CANDIDATE_COVERAGE_ONLY'
     bindings=rows(DATA/'pin_bindings.csv.gz');assert len(bindings)==24767
-    total=0
+    total=0;allplans={}
     for c,n in EXPECTED.items():
         data=rows(DATA/f'{c}_pin_coordinates.csv.gz');total+=len(data);assert len(data)==3*n
         plans={p:{r['pin']:r for r in data if r['plan']==p} for p in ['A','B','C']}
+        allplans[c]=plans
         for p in plans:assert len(plans[p])==n
         meta=json.loads((DATA/(c+'.meta.json')).read_text());die=[x/meta['units_per_micron'] for x in meta['die_dbu']]
         ref=plans['A'];assert set(ref)=={r['pin'] for r in bindings if r['case']==c}
@@ -60,6 +61,22 @@ def main():
     for pin,r in actrows.items():
         q=actual_pins[pin];assert q['layer']==r['layer'] and q['direction']==r['direction'] and q['use']==r['use'] and q['net'].replace('\\','')==r['net']
         for k in ['x0','y0','x1','y1']:assert abs(int(q[k])/2000-float(r[k+'_um']))<1e-6,(pin,k,'actual full-C XY')
+    # Every block's C experiment: full ACT, the exact eight-pin cohort elsewhere.
+    for c in EXPECTED:
+        rev='fullC-r02' if c=='act' else 'r01' if c=='gemm' else 'grid-r05'
+        p=sorted((DATA/'evidence/physical').glob(f'*/finalized/{rev}/{c}-C/execution.json'))[-1]
+        rec=json.loads(p.read_text());assert rec['export_returncode']==rec['independent_DRC_returncode']==rec['independent_DRC_count']==0
+        assert rec['whole_access']['pass'] and rec['source_unchanged'] and rec['clean_byte_identical_to_pre_RCX_source']
+        with gzip.open(p.parent/'pins.tsv.gz','rt') as f:pp=[r for r in csv.DictReader(f,delimiter='\t') if r['use'] not in ['POWER','GROUND']]
+        assert len(pp)==EXPECTED[c] and len({r['pin'] for r in pp})==EXPECTED[c]
+        moved=0
+        for r in pp:
+            pin=r['pin'].replace('\\','');a=allplans[c]['A'][pin];cc=allplans[c]['C'][pin]
+            assert r['layer']==a['layer'] and r['direction']==a['direction'] and r['use']==a['use'] and r['net'].replace('\\','')==a['net']
+            aa=[float(a[k+'_um']) for k in ['x0','y0','x1','y1']];bb=[float(cc[k+'_um']) for k in ['x0','y0','x1','y1']];got=[int(r[k])/2000 for k in ['x0','y0','x1','y1']]
+            if any(abs(x-y)>1e-6 for x,y in zip(aa,got)):
+                moved+=1;assert all(abs(x-y)<1e-6 for x,y in zip(bb,got)),(c,pin,'actual XY differs from proposed C')
+        assert moved==(740 if c=='act' else 8),(c,'actual experiment scope')
     for design in ['opentpu','llaccel']:
         s=json.loads(gzip.decompress((DATA/'partition_summary.json.gz').read_bytes()))[design]
         assert s['unassigned_leaves']==0 and len(s['physical_cells'])==3

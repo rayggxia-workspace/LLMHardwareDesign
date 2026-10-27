@@ -121,6 +121,7 @@ def build(root,out,keep_figures=False):
         shutil.copy2(root/'revisions/r01'/c/f'{c}_metrics.json',prior)
         shutil.copy2(root/f'{c}_grid_revision.json',data)
     shutil.copytree(root/'native_grid',data/'native_grid',dirs_exist_ok=True)
+    if (root/'parent-provenance-scan-r01.json').exists():shutil.copy2(root/'parent-provenance-scan-r01.json',data)
     # Preserve exact compact hierarchy/frontier and origin proof for reproducing ownership.
     for p in (root/'partition-r02').iterdir():
         if p.is_file():

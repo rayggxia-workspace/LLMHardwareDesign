@@ -10,7 +10,7 @@ def read(p):
 def slack(d,kind):
     m=re.search(r'worst slack (?:max|min)\s+([-\d.]+)',read(d/f'timing.{kind}.txt'));return float(m[1]) if m else None
 def summarize(root):
-    root=Path(root);base=root/'trial_receipts';summary={c:{'trials':{},'full_C_migration_routed':False,'full_block_connectivity':'NOT_VERIFIED','parent_access':'UNKNOWN original handoff/target layers and version-matched parent paths',
+    root=Path(root);base=root/'trial_receipts';summary={c:{'trials':{},'full_C_migration_routed':False,'whole_block_OpenDB_multi_terminal_geometry':'PENDING','complete_GDS_LVS_connectivity':'NOT_VERIFIED','parent_access':'UNKNOWN original handoff/target layers and version-matched parent paths',
         'full_DRC_GDS_LVS':'NOT_QUALIFIED','full_system_RC_STA_electrical':'NOT_QUALIFIED'} for c in EXPECTED}
     for d in sorted(base.glob('*/trials/*/*')):
         if not d.is_dir():continue
@@ -23,7 +23,7 @@ def summarize(root):
         j=json.loads(p.read_text());completed=bool(j.get('finished_utc'));log=read(d/'openroad.log.gz')
         stages=list(csv.DictReader(read(d/'stages.tsv').splitlines(),delimiter='\t'))
         bystage={r['stage']:r['status'] for r in stages}
-        c={'state':j.get('status','RUNNING_OR_RECEIPT_INCOMPLETE'),'completed':completed,'plan':plan,'selected_pin_count':j.get('selected_pin_count',8),'scheduler_job':j['scheduler_job'],'source_sha256':j['source_sha256'],
+        c={'state':j.get('status','RUNNING_OR_RECEIPT_INCOMPLETE'),'completed':completed,'finished_utc':j.get('finished_utc',''),'plan':plan,'candidate_revision':'r02' if rev=='grid-r05' else 'r01_or_PR120','selected_pin_count':j.get('selected_pin_count',8),'scheduler_job':j['scheduler_job'],'source_sha256':j['source_sha256'],
            'driver_commit':j['driver_commit'],'source_unchanged':j.get('source_unchanged',False),'failed_stages':[r for r in stages if r['status']=='FAIL'],
            'routed':bystage.get('detailed_route')=='EXECUTED','RCX_executed':bystage.get('extract_rc',bystage.get('baseline_rc'))=='EXECUTED',
            'setup_worst_slack_ns':slack(d,'setup'),'hold_worst_slack_ns':slack(d,'hold'),'raw_receipt':str(p.relative_to(base)),
@@ -86,11 +86,12 @@ def summarize(root):
     for case,s in summary.items():
         done=[t for t in s['trials'].values() if t.get('completed')];candidates=[t for t in done if t.get('plan')=='C']
         if candidates:
-            t=max(candidates,key=lambda t:t['selected_pin_count']);n=t['selected_pin_count'];s['route_status']=f'{n}pin C实际重接完成；完整资格未验证' if t['routed'] else 'C实际试验失败/未完成，见回执'
+            t=max(candidates,key=lambda t:(t['selected_pin_count'],t['candidate_revision']=='r02',t['finished_utc']));n=t['selected_pin_count'];s['route_status']=(f'{n}pin C实际重接完成；'+('完整C尚未实施' if n==8 else '全C已实施；完整父层/规则未资格化')) if t['routed'] else 'C实际试验失败/未完成，见回执'
             s['full_C_migration_routed']=bool(case=='act' and n==740 and t['routed'])
             full=t.get('whole_multi_terminal_signal_clock_geometry',{}).get('pass','待验证')
+            s['whole_block_OpenDB_multi_terminal_geometry']=full
             s['drc_status']='独立clean进程DRC {}; selected-net连通 {}; 全块几何连通 {}；父层未验证'.format(t.get('independent_clean_DRC_count','待复核'),t.get('selected_access_all_terminals_pass','待补查'),full)
-            s['sta_status']='RCX {}; setup {}ns / hold {}ns；电气违例行{}；系统边界不完整'.format(t['RCX_executed'],t['setup_worst_slack_ns'],t['hold_worst_slack_ns'],t['reported_timing_electrical_violator_rows'])
+            s['sta_status']='RCX {}; setup {}ns / hold {}ns；时序/电气违例行{}；系统边界不完整'.format(t['RCX_executed'],t['setup_worst_slack_ns'],t['hold_worst_slack_ns'],t['reported_timing_electrical_violator_rows'])
         else:s['route_status']='试验运行/驱动失败；未报告C通过';s['drc_status']='尚未完成';s['sta_status']='尚未完成'
     source=summary['act']['trials'];keys=['fullC-r01/A_replay','fullBcohort-r01/B','fullC-r02/C']
     if all(k in source and source[k].get('DRT_pre_RCX_wire_length_sum_um') for k in keys):

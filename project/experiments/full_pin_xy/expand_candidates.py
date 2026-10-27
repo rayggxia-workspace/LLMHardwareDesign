@@ -197,9 +197,15 @@ def plot(case,df,plans,patches,metrics,anchors,dims,macros,index):
     fig.text(.04,.035,'圆=M5，方=M6；显示标记放大，不代表 pin/通孔尺寸。底图是实际实例 bbox 栅格投影，不能推断上方金属可用。\nB/C 为 proposed；已做实际金属、PG、OBS 的局部矩形筛查，完整接入、RC/STA/DRC 分阶段另报。',fontsize=10,color='#56677d')
     for ext in ['png','svg']:fig.savefig(ROOT/f'{case}_comparison.{ext}',dpi=180)
     plt.close(fig)
+    # Equal physical magnification across A/B/C; centers may differ because
+    # boundary and interior dense groups occupy different regions.
+    for p,z in zoom.items():
+        cx=(z[0]+z[2])/2;cy=(z[1]+z[3])/2
+        x0=max(-2,min(w+2-40,cx-20));y0=max(-2,min(h+2-24,cy-12))
+        zoom[p]=(x0,y0,x0+40,y0+24)
     fig,axes=plt.subplots(1,3,figsize=(19.5,6.9));fig.subplots_adjust(left=.045,right=.985,top=.79,bottom=.29,wspace=.2)
     fig.text(.04,.94,f'{TITLES[case]} | 密集区与实际占用局部放大',fontsize=22,weight='bold')
-    fig.text(.04,.88,'独立取窗、不同局部尺度，单位 μm；蓝灰 M5、紫灰 M6、土黄 M7 PG 均来自数据库，不是新接入线。',fontsize=10,color='#56677d')
+    fig.text(.04,.88,'各取密集区、相同40 × 24 μm窗口和放大倍率；蓝灰 M5、紫灰 M6、土黄 M7 PG 均来自数据库，不是新接入线。',fontsize=10,color='#56677d')
     for ax,(p,xy) in zip(axes,plans.items()):
         z=zoom[p];legacy.draw_base(ax,bg,dims,macros)
         for l,color in [('metal5','#93b1c5'),('metal6','#c4accf'),('metal7','#d29f58')]:
