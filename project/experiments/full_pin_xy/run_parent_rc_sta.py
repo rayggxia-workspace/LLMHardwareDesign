@@ -27,7 +27,7 @@ def one(parent_rev,design,focus,plan,revision):
     rec={'scope':'NEW_CONTROLLED_PARENT_SCOPED_RC_STA_NOT_SYSTEM_QUALIFICATION','source_parent_directory':str(source),
       'design':design,'focus':focus,'plan':plan,'source_parent_revision':parent_rev,'scheduler_job':os.environ['SLURM_JOB_ID'],
       'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),
-      'full_system_RC_STA_electrical_qualified':False,'limitations':['NEW fixed 2.5ns parent benchmark, not historical constraints','external input driver/slew and output load absent, explicitly incomplete',
+      'full_system_RC_STA_electrical_qualified':False,'limitations':['NEW fixed 2.5ns parent benchmark, not historical constraints','external input/output delays, input driver/slew and output load absent, explicitly incomplete',
         'leaf internal STA/electrical failures remain separate mandatory failures','native exported models lack minimum_period coverage','research SRAM models and missing GDS/LVS, no characterized signoff library','RCX serialization issue isolated; absolute RC needs independent corroboration']}
     receipt=source/'execution.json';p=json.loads(receipt.read_text()) if receipt.exists() else {}
     rec['parent_execution_sha256']=sha(receipt) if receipt.exists() else None
