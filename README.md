@@ -1,6 +1,6 @@
 # LLMHardwareDesign：预制计算底座研究
 
-当前第一版计算积木为 **M/V/R/S/T五个物理宏，每种一个基础实现**；本轮交付是逐块最终M1–M10布局布线与同源验收。见[五宏规格](docs/BLOCK_LIBRARY_V1.md)、[实施计划](docs/plans/block-v1-library-implementation.md)及[当前交付索引](work/YUZE-LU/121/delivery/README.md)。五块均已有原生最终布局布线并通过独立物理检查，M/S/T完整接收，V仅余完整GDS DRC，R继续最终验收；整体尚未完成。阵列、多实例、跨块预连及产品留下一轮，裕量版本暂不做。下方既有共同边界和历史证据保留各自范围。
+当前第一版计算积木为 **M/V/R/S/T五个物理宏，每种一个基础实现**；本轮交付是逐块最终M1–M10布局布线与同源验收。见[五宏规格](docs/BLOCK_LIBRARY_V1.md)、[实施计划](docs/plans/block-v1-library-implementation.md)及[当前交付索引](work/YUZE-LU/121/delivery/README.md)。五块均已有原生最终布局布线并通过独立物理检查，M/V/S/T完整接收，V完整几何导出与R剩余验收继续；整体尚未完成。阵列、多实例、跨块预连及产品留下一轮，裕量版本暂不做。下方既有共同边界和历史证据保留各自范围。
 
 本项目研究面向多个计算图的预制计算底座：预先确定计算 Block 和部分物理资源，再通过有限的金属／通孔层定制跨 Block 互联。第一版采用 **Nangate45 原生 M1–M10、via1–via9 预制，自建研究层 M11/M12、via10/via11 后定制**；Block 实现与表征正在推进，方案确定不等于实现已验收。性能、能耗和成本优势仍待验证。
 
