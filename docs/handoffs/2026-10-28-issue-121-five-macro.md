@@ -1,5 +1,9 @@
 # Issue121 五宏实施接续
 
+2026-10-28 02:02 CST：**V203实际原生全流程及子回执已通过，209/210已实际提交并开始检查**，不再只是暂存。203/92475父调度器按既定排空自然FAILED2:0，elapsed1:57:39、CPU15:21:39、batch MaxRSS22012388K；不能将该父状态当V失败。V最终五文件/源码/配置SHA见[原生子结果与绑定接收实录](../../work/YUZE-LU/121/results/v-native-bound-receive-0202/index.json)。V尚无最终独立验收资格。
+
+209/92507在node13/96CPU实际三路并行v-physical、v-drc、v-final-function，queue-live硬绑定CPU分别0–15/16–31/32–47，final-function通过后formal立即补位；这是原207业务任务的同一来源、路径、锁。210/92509在node17/96CPU已实际运行新严格v-physical，CPU0–15，复用原208业务任务及锁。scheduler源8aead40194d3f82e2947876152ec6836dd34a536、归档639fb13c…，无新RTL或物理变体。**不能再新建或重提209/210；后续先核这两个真实job和共享207/208状态。** 旧207只让S DRC/formal自然收尾，原203已退出；不要恢复这两个旧调度器。当前四旧baseline+R196+207+209+210共八allocation（含pending/unknown），其他成员未操作。若peer后续park而又有ready工作，先核旧owner是否真实终态，再建新绑定peer复用原锁，不能根据历史RUNNING claim重复执行。S物理/三初态最终功能通过但DRC/严格LEC尚未通过；R全局布线继续，五宏主线未完成。
+
 2026-10-28 01:56 CST：**209/210已实际暂存并通过Linux队列验证，均未提交job**，不是已运行。绑定调度器源8aead40194d3f82e2947876152ec6836dd34a536，归档SHA256=639fb13ce4c8c37fe7c5e660c24426833f6dd4326fd4e7f6f1ea6f5c57b86c1b，两处native_node_queue.py均核为控制通过的c86a7f27bb4ba74a1509d601d4daf39ebb201e6ed75bfa019e5f3c601ae6632f。209的node-queue.json精确复制207（90b4429c…），原state_path/tasks/source完全保留；210精确复制208（1dabb600…）。见[实际暂存回读](../../work/YUZE-LU/121/results/bound-staged-015548/index.json)、[209清单](../../work/YUZE-LU/121/stage205-manifest.json)、[210清单](../../work/YUZE-LU/121/stage206-manifest.json)。两处dispatch-state.tasks={}；当前两队列均无ready任务，因此没有空占节点。
 
 恢复提交入口：先核真实子回执、ready任务和本任务全部RUNNING/PENDING/unknown不超过八，再在服务器对应209/210目录运行`python3 src/project/experiments/block_v1/dispatch.py manifest.json --submit`。209续207业务验收，210续208新physical/交付；两份manifest不绑定节点，交由c96分区选择空闲96CPU。派发器同一全任务锁强制八槽限制，未知提交不重试。任一peer自然park后，后续新ready任务需要新peer复用同一不可变队列和claim，不能重提旧job。S DRC及严格LEC仍在原207活动子进程中自然收尾；其父调度器排空状态不授权重复检查。01:54观察中完整DRC已完成此前大union（1629.920秒），严格LEC已匹配262545输入/262532输出、无未匹配端口，均尚未终态通过。
