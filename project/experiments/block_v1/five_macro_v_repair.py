@@ -136,3 +136,66 @@ write_guides $::env(RESULTS_DIR)/route.guide
         record['final_files'][p.name]=dict(path=str(p),sha256=file_sha(p),bytes=p.stat().st_size)
     assert source(out,'v',original=True)[1]==r
     record.update(passed=True,pipeline_completed=True);save()
+
+
+def finish_routed(root,out,cpus,run):
+    """Resume the sealed215 detailed route through the omitted native stages."""
+    from io_slots import file_sha,slot
+    from five_macro_receive import source
+    from native_escape_finish import FLOW_HASHES
+    assert cpus==16
+    original,original_receipt,_,_=source(out,'v',original=True)
+    prior=out.parents[2]/'block-v1-20261027-215/tasks/five-macro-repair-v-drive'
+    receipt=json.loads((prior/'receipt.json').read_text());assert receipt['passed']is False
+    proof_path=prior/'five-macro-native-flow.json'
+    assert file_sha(proof_path)==receipt['outputs'][proof_path.name]
+    proof=json.loads(proof_path.read_text())
+    assert proof['stages']==['do-5_2_route']and not proof['pipeline_completed']
+    assert proof['source_receipt_sha256']==file_sha(original/'receipt.json')
+    assert proof['measured_driver_repair']=={k:list(v)for k,v in TARGETS.items()}
+    commands=receipt['commands'];assert commands[-2]['returncode']==0
+    assert commands[-2]['argv'][-1]=='do-5_2_route'
+    assert commands[-1]['argv'][-1]=='do-finish'and commands[-1]['returncode']==2
+    failed_log=prior/'do-finish.log'
+    assert file_sha(failed_log)==receipt['outputs'][failed_log.name]
+    assert '[ERROR ORD-0007]'in failed_log.read_text()and '/base/5_route.odb does not exist.'in failed_log.read_text()
+    flow=Path('/OpenROAD-flow-scripts/flow')
+    assert {n:file_sha(flow/n)for n in FLOW_HASHES}==FLOW_HASHES
+    nickname='nangate45/bv1_block_v1_v/base'
+    # Preserve the installed flow text that defines the missing fill/copy steps.
+    shutil.copyfile(flow/'Makefile',out/'native-flow-Makefile')
+    target=out/'flow/results'/nickname;target.mkdir(parents=True)
+    for category in ('logs','reports','objects'):(out/'flow'/category/nickname).mkdir(parents=True)
+    copied={}
+    def copy(relative,destination):
+        p=prior/relative;digest=file_sha(p);assert digest==receipt['outputs'][relative]
+        with slot(out.parents[2]):shutil.copyfile(p,destination)
+        assert file_sha(destination)==digest;copied[str(destination.relative_to(out))]=digest
+    for name in ('5_2_route.odb','5_1_grt.sdc','1_synth_lec.v','1_2_yosys.v','1_2_yosys.sdc','bv1-input-diodes.tsv'):
+        copy('flow/results/'+nickname+'/'+name,target/name)
+    for name in ('pins.json','pins.tcl','input-diodes.tcl','drive-repair.tcl'):
+        copy(name,out/name)
+    copy('flow/reports/'+nickname+'/5_route_drc.rpt',out/'flow/reports'/nickname/'5_route_drc.rpt')
+    copy('flow/logs/'+nickname+'/5_2_route.log',out/'sealed-detail-route.log')
+    assert not(out/'flow/reports'/nickname/'5_route_drc.rpt').read_text().strip()
+    config_path=prior/'config.mk';assert file_sha(config_path)==receipt['outputs']['config.mk']==proof['config_sha256']
+    config=config_path.read_text()
+    for name in ('input-diodes.tcl','drive-repair.tcl'):config=config.replace(str(prior/name),str(out/name))
+    (out/'config.mk').write_text(config)
+    record=dict(proof,passed=False,pipeline_completed=False,stages=[],final_files={},
+                config_sha256=file_sha(out/'config.mk'),pins_sha256=file_sha(out/'pins.json'),
+                routed_source_receipt_sha256=file_sha(prior/'receipt.json'),sealed_routed_inputs=copied,
+                actual_flow_scripts=FLOW_HASHES,
+                scope='Same V seven-buffer repair; resume sealed215 detailed route via installed fillcell/route aliases/final RCX. Every independent gate must use these new final files.')
+    def save():(out/'five-macro-native-flow.json').write_text(json.dumps(record,indent=2)+'\n')
+    save()
+    command=['make','-C',str(flow),'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
+    for stage in ('do-5_3_fillcell','do-5_route','do-5_route.sdc','do-finish'):
+        run(command+[stage],stage+'.log');record['stages'].append(stage);save()
+    for suffix in ('v','sdc','def','odb','spef'):
+        p=target/('6_final.'+suffix);assert p.stat().st_size>0
+        record['final_files'][p.name]=dict(path=str(p),sha256=file_sha(p),bytes=p.stat().st_size)
+    for name,digest in copied.items():assert file_sha(out/name)==digest
+    assert source(out,'v',original=True)[1]==original_receipt
+    assert file_sha(prior/'receipt.json')==record['routed_source_receipt_sha256']
+    record.update(passed=True,pipeline_completed=True,regenerated_rc=True);save()

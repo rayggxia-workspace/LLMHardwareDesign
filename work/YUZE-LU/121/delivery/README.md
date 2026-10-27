@@ -1,3 +1,5 @@
+2026-10-28 03:25 CST：新终态已读回：S207完整GDS deck实际10项METAL10.2，原生7标记（addr[6]/addr[7]、din[31]/din[43]间距及din[55] NS Metal），不再记DRC运行。V215详细布线自然完成且router报告0，但随后do-finish缺5_route.odb失败；查安装原生Makefile确认漏do-5_3_fillcell/do-5_route/do-5_route.sdc，保留失败，222从封存5_2_route.odb接续这三步及完整final/RCX，全部独立门重验。222仅准备未提交，同时只读定位S及接续从未领取的208 R物理/交付；R交付只依实际207子回执，不依已排空FAILED父。03:18本任务六allocation，R196详细布线与209旧V DRC仍继续、其他成员未动。M/T已交付，五宏整体仍未完成。221几何队列未提交，V依赖旧215交付路径已过时；后继必须另建匹配新最终交付的几何队列，不覆盖221历史。
+
 # 五种基础宏交付入口
 
 2026-10-28 03:11 CST，Refs [Issue121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)，[PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)仍为草稿。每种只有一个基础实现；本轮必须交付全部五块的原生Nangate45 M1–M10最终布局布线。**目前两块已有单块接收结果，另外三块尚在执行；整套任务未完成。**
