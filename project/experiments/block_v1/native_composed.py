@@ -142,16 +142,21 @@ def receive_binding(build, bundle):
         assert '--x-initial' in build['command']['argv'] and '--x-assign' in build['command']['argv']
         assert build['command']['argv'][build['command']['argv'].index('--x-initial')+1] == 'unique'
         assert build['command']['argv'][build['command']['argv'].index('--x-assign')+1] == 'unique'
+        if record.get('physical_contract_required'):
+            from native_composed_physical import receive
+            receive(record)
+            from native_composed_controls import qualified
+            assert qualified(Path(__file__).resolve().parents[3],base)==record['prerequisite_control']
     return record
 
 
-def verify(root, out, cpus, run, policy):
+def verify(root, out, cpus, run, policy, repaired=False):
     from io_slots import file_sha
     from native_formal import receive
     from native_allocation_group import memory_snapshot
-    assert cpus == 24 and policy in ('A', 'C')
-    base = out.parents[2]; inputs = {}; leaves = {}; models = []
-    control = base/'block-v1-20261027-140/tasks/native-composed-init-control'
+    assert cpus == (12 if repaired else 24) and policy in ('A', 'C')
+    base = out.parents[2]; inputs = {}; leaves = {}; models = []; physical_receivers = {}
+    control = base/'block-v1-20261027-175/tasks/native-composed-init-control'
     bound = json.loads((control/'receipt.json').read_text()); assert bound['passed'] is True
     path = control/'native-composed-initialization.json'; assert file_sha(path) == bound['outputs'][path.name]
     initialization = json.loads(path.read_text()); assert initialization['passed'] is True
@@ -166,7 +171,8 @@ def verify(root, out, cpus, run, policy):
         assert bind(Path(filename)) == sha
         if '/project/rtl/' in filename: assert file_sha(root/'project/rtl'/filename.split('/project/rtl/', 1)[1]) == sha
     bind(glue/'receipt.json')
-    for top, pipeline in [('shared109', 'native_pipeline_const_protected.json'), ('transaction6k', 'native_pipeline_viaonly.json')]:
+    pipelines=[('shared109','native_pipeline_c8_escape.json'),('transaction6k','native_pipeline_escape.json')] if repaired else [('shared109','native_pipeline_const_protected.json'),('transaction6k','native_pipeline_viaonly.json')]
+    for top, pipeline in pipelines:
         config = json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
         source = base/config['candidate_run']/('tasks/'+config.get('candidate_task_prefix', 'native-run-')+top+'-'+policy.lower())
         receipt = json.loads((source/'receipt.json').read_text()); assert receipt['passed'] is True
@@ -179,7 +185,18 @@ def verify(root, out, cpus, run, policy):
             assert sealed[relative] == receipt['outputs'][relative]
         folder = out/top; folder.mkdir()
         def child_run(argv, log): run(argv, str(folder.relative_to(out)/log), cwd=folder)
-        formal = receive(source, receipt, results, top, prep, logic_context=(root, folder, child_run))
+        if repaired:
+            receiver=base/config['receiver_run']/'tasks'/(config['receiver_task_prefix']+top+'-'+policy.lower())
+            bound=json.loads((receiver/'receipt.json').read_text());assert bound['passed'] is True
+            physical_path=receiver/'native-physical-receiver.json';assert bind(physical_path)==bound['outputs'][physical_path.name]
+            physical=json.loads(physical_path.read_text());formal=physical['mapped_to_final_lec']
+            from native_composed_physical import contract
+            contract(physical,formal,source,file_sha(source/'receipt.json'),pipeline,top,policy,sealed[str((results/'6_final.v').relative_to(source))])
+            physical_receivers[top]=dict(pipeline=pipeline,report=str(physical_path),report_sha256=bind(physical_path),receipt=str(receiver/'receipt.json'),receipt_sha256=bind(receiver/'receipt.json'))
+            for name in ['physical-functional.v','physical-functional-proof.json']:
+                assert bind(receiver/name)==bound['outputs'][name]
+        else:
+            formal = receive(source, receipt, results, top, prep, logic_context=(root, folder, child_run))
         assert formal['passed'] is True and formal['physical_functional_view']['passed'] is True
         proof = folder/'formal.json'; proof.write_text(json.dumps(formal, indent=2)+'\n'); bind(proof)
         view = Path(formal['physical_functional_view']['full_view']); bind(view); models.append(view)
@@ -208,6 +225,10 @@ def verify(root, out, cpus, run, policy):
                   cells_export_script=str(out/'cells.ys'), original_driver=str(source_driver), compiled_driver=str(driver),
                   glue_area_um2=glue_proof['glue_area_um2'], qualified_hard_macro=False,
                   recovery_and_terminal_epoch_gate_qualified=False, parent_physical_qualified=False)
+    if repaired:
+        from native_composed_controls import qualified
+        record.update(physical_contract_required=True,physical_receivers=physical_receivers,
+                      prerequisite_control=qualified(root,base))
     binding_path.write_text(json.dumps(record, indent=2)+'\n')
     run(argv, 'build-composed.log')
     binary = out/'obj/Vshared121'; bundle = json.loads((root/'bundle-manifest.json').read_text())
@@ -218,7 +239,7 @@ def verify(root, out, cpus, run, policy):
     receive_binding(build, bundle)
     inp = base/'block-v1-20261027-004/tasks/fixtures/upstream/input01'
     memory = memory_snapshot()
-    parallel = next((n for n in [6, 3, 1] if memory['MemAvailable'] >= n*16*1024**3*1.2), 1)
+    parallel = next((n for n in ([3, 1] if repaired else [6, 3, 1]) if memory['MemAvailable'] >= n*16*1024**3*1.2), 1)
     assert 4*parallel <= cpus
     def simulate(spec):
         name, initial, seed, stall = spec

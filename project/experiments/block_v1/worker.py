@@ -60,7 +60,19 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='native-projection-control-group':
+    if MODE=='native-composed-controls-group':
+        from native_composed_controls import group
+        group(ROOT,OUT,CPUS)
+    elif MODE=='native-composed-physical-control':
+        from native_composed_physical import verify
+        verify(ROOT,OUT,CPUS)
+    elif MODE=='native-repaired-composed-group':
+        from native_composed_group import verify
+        verify(ROOT,OUT,CPUS,repaired=True)
+    elif MODE in ('native-repaired-composed-a','native-repaired-composed-c'):
+        from native_composed import verify
+        verify(ROOT,OUT,CPUS,run,MODE[-1].upper(),repaired=True)
+    elif MODE=='native-projection-control-group':
         from native_projection_control import group
         group(ROOT,OUT,CPUS)
     elif MODE in ('native-projection-control-0','native-projection-control-1'):
