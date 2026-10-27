@@ -52,7 +52,7 @@ def accepted(root,out,kind):
             path=Path(f['path']);assert file_sha(path)==f['sha256']
         return index,odb,dict(index_path=str(p),index_sha256=file_sha(p),
                               source_receipt_sha256=index['source_receipt_sha256']),386,[1120,1120]
-    number=dict(m='203',v='222',s='225',r='208')[kind]
+    number=dict(m='203',v='228',s='225',r='208')[kind]
     mode='five-macro-delivery-'+kind if kind in ('m','v','s') else 'five-macro-delivery-received-'+kind
     folder=base/('block-v1-20261027-'+number)/'tasks'/mode
     receipt=json.loads((folder/'receipt.json').read_text());assert receipt['passed'] and receipt['mode']==mode

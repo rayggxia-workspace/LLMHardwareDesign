@@ -200,12 +200,24 @@ def probe(root,out,cpus,run):
 def repair(root,out,cpus,run):
     from five_macro_receive import source
     from io_slots import file_sha,slot
+    from native_escape_finish import FLOW_HASHES
     assert cpus==16
+    native_flow=Path('/OpenROAD-flow-scripts/flow')
+    assert {n:file_sha(native_flow/n)for n in FLOW_HASHES}==FLOW_HASHES
     original,r,old,results=source(out,'v',original=True)
     probe=out.parents[2]/'block-v1-20261027-214/tasks/five-macro-probe-v-drive';pr=json.loads((probe/'receipt.json').read_text());assert pr['passed']
     p=probe/'five-macro-probe-v-drive.json';assert file_sha(p)==pr['outputs'][p.name]
     proof=json.loads(p.read_text());assert proof['passed']and proof['source_receipt_sha256']==file_sha(original/'receipt.json')
     assert proof['targets']=={k:list(v)for k,v in TARGETS.items()}
+    tail=out.parents[2]/'block-v1-20261027-227/tasks/five-macro-probe-v-tail'
+    tr=json.loads((tail/'receipt.json').read_text());assert tr['passed']
+    tp=tail/'five-macro-probe-v-tail.json';assert file_sha(tp)==tr['outputs'][tp.name]
+    tq=json.loads(tp.read_text());assert tq['passed'] and tq['pg_after_incorrect']==0
+    flop=tq['measured_flop'];assert flop['old_master']=='DFF_X1' and flop['new_master']=='DFF_X2'
+    assert flop['slack_ff']<0 and bytes.fromhex(flop['instance_hex']).decode()==flop['instance']
+    assert tq['native_signal_pin_net_identity_preserved'] and tq['original_final_unchanged']
+    failed_source=tail.parents[2]/'block-v1-20261027-222/tasks/five-macro-finish-v-drive/receipt.json'
+    assert file_sha(failed_source)==tq['source_receipt_sha256']
     target=out/'flow/results/nangate45/bv1_block_v1_v/base';target.mkdir(parents=True)
     for category in ('logs','reports','objects'):
         (out/'flow'/category/'nangate45/bv1_block_v1_v/base').mkdir(parents=True)
@@ -217,7 +229,30 @@ def repair(root,out,cpus,run):
         for name in ('pins.json','pins.tcl','input-diodes.tcl'):
             assert file_sha(original/name)==r['outputs'][name];shutil.copyfile(original/name,out/name)
     hook='global_route -start_incremental\n'+swap_script()
+    hook+='''set i [$drive_block findInst [binary decode hex {FLOP_HEX}]]
+if {$i eq "NULL" || [[$i getMaster] getName] ne "DFF_X1"} {error "Unexpected measured flop"}
+set before [drive_pin_snapshot $i]
+set replacement [[ord::get_db] findMaster DFF_X2]
+if {$replacement eq "NULL" || ![$i swapMaster $replacement]} {error "Measured flop swap failed"}
+if {[drive_pin_snapshot $i] ne $before} {error "Measured flop pin/net connectivity changed"}
+puts "DRIVE_SWAP_MEASURED_FLOP DFF_X1 DFF_X2"
+add_global_connection -net VDD -inst_pattern .* -pin_pattern VDD -power
+add_global_connection -net VSS -inst_pattern .* -pin_pattern VSS -ground
+global_connect
+set bad_pg 0
+foreach inst [$drive_block getInsts] {
+  foreach t [$inst getITerms] {
+    set type [[$t getMTerm] getSigType]
+    if {$type ni {POWER GROUND}} {continue}
+    set n [$t getNet];set expected [expr {$type eq "POWER" ? "VDD" : "VSS"}]
+    if {$n eq "NULL" || [$n getName] ne $expected} {incr bad_pg}
+  }
+}
+if {$bad_pg!=0} {error "Measured drive repair has $bad_pg incorrect PG pins"}
+'''.replace('FLOP_HEX',flop['instance_hex'])
+    # Connect new masters before protection: native global_connect skips protected cells.
     for name in TARGETS:hook+='set_dont_touch [get_cells {'+name+'}]\n'
+    hook+='set_dont_touch [get_cells [binary decode hex {'+flop['instance_hex']+'}]]\n'
     hook+='''detailed_placement_helper
 check_placement -verbose
 global_route -end_incremental
@@ -233,14 +268,16 @@ write_guides $::env(RESULTS_DIR)/route.guide
     record=dict(old,passed=False,pipeline_completed=False,stages=[],final_files={},
                 config_sha256=file_sha(out/'config.mk'),pins_sha256=file_sha(out/'pins.json'),
                 source_receipt_sha256=file_sha(original/'receipt.json'),drive_probe_receipt_sha256=file_sha(probe/'receipt.json'),
+                tail_probe_receipt_sha256=file_sha(tail/'receipt.json'),measured_flop_repair=flop,
+                actual_flow_scripts=FLOW_HASHES,
                 measured_driver_repair=TARGETS,sealed_grt_inputs=copied,implementation_count=1,
-                scope='Same V RTL/die/pins, measured seven BUF drive repair from sealed GRT. Fresh route/RCX and all independent gates required.')
+                scope='Same V RTL/die/pins: measured seven BUF and one DFF drive repair from sealed original GRT; PG connected before cell protection. Fresh route/RCX and all independent gates required.')
     def save():(out/'five-macro-native-flow.json').write_text(json.dumps(record,indent=2)+'\n')
     save()
     command=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
     run(command+['print-PRE_DETAIL_ROUTE_TCL'],'hook-variable.log')
     assert 'PRE_DETAIL_ROUTE_TCL: '+str(out/'drive-repair.tcl')in(out/'hook-variable.log').read_text()
-    for stage in ('do-5_2_route','do-finish'):
+    for stage in ('do-5_2_route','do-5_3_fillcell','do-5_route','do-5_route.sdc','do-finish'):
         run(command+[stage],stage+'.log');record['stages'].append(stage);save()
     for suffix in ('v','sdc','def','odb','spef'):
         p=target/('6_final.'+suffix);assert p.stat().st_size>0
