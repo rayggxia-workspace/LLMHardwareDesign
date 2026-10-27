@@ -15,8 +15,9 @@ from native_formal import receive as formal_audit
 
 def verify(root,out,cpus,run,top,policy,historical=False,pipeline=None):
     pipeline=pipeline or ('native_pipeline_057.json' if historical else 'native_pipeline.json')
-    assert pipeline in ('native_pipeline.json','native_pipeline_057.json','native_pipeline_cap20.json','native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json')
+    assert pipeline in ('native_pipeline.json','native_pipeline_057.json','native_pipeline_cap20.json','native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json','native_pipeline_diode_full.json')
     config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
+    diode=config.get('input_diode_master')=='ANTENNA_X1'
     assert bool(config.get('historical_input_contract',False))==historical
     base=out.parents[2];source=base/config['candidate_run']/('tasks/'+config.get('candidate_task_prefix','native-run-')+top+'-'+policy.lower())
     receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed']is True
@@ -63,7 +64,7 @@ def verify(root,out,cpus,run,top,policy,historical=False,pipeline=None):
     assert file_sha(flow_config)==bound['outputs'][str(flow_config.relative_to(prep))]
     if config.get('repair_variant'):
         from native_reroute import checked_config
-        flow_config=checked_config(source,receipt,flow_config,margin=config.get('cap_margin',20),hold_margin=config.get('hold_margin_ns'),diode=pipeline=='native_pipeline_diode.json')
+        flow_config=checked_config(source,receipt,flow_config,margin=config.get('cap_margin',20),hold_margin=config.get('hold_margin_ns'),diode=diode)
     assert file_sha(pins_path)==bound['outputs'][str(pins_path.relative_to(prep))]
     pins=json.loads(pins_path.read_text())['pins'];wanted={p['pin']:p for p in pins};got={}
     for line in(out/'physical-pins.tsv').read_text().splitlines():
@@ -74,7 +75,7 @@ def verify(root,out,cpus,run,top,policy,historical=False,pipeline=None):
         expected=[round(v*scale)for v in [x-w/2,y-h/2,x+w/2,y+h/2]]
         pins_equal &= got.get(name)==('metal10',expected)
     boundary=boundary_audit((out/'constraints-readback.sdc').read_text(),pins,budget)
-    formal=formal_audit(source,receipt,results,top,prep,logic_context=(root,out,run)if pipeline=='native_pipeline_diode.json'else None)
+    formal=formal_audit(source,receipt,results,top,prep,logic_context=(root,out,run)if diode else None)
     layers=summary['routing_layers'][0].split(',')
     die=list(map(int,summary['die']));w,h=leaf['die_um']
     core=list(map(int,summary['core']))
@@ -86,7 +87,7 @@ def verify(root,out,cpus,run,top,policy,historical=False,pipeline=None):
         same_die=die==[0,0,round(w*scale),round(h*scale)],
         core_inside_die=die[0]<core[0]<core[2]<die[2]and die[1]<core[1]<core[3]<die[3],
         active_cell_area_within_cap=0<active<=leaf['max_stdcell_area_um2'])
-    if pipeline=='native_pipeline_diode.json':
+    if diode:
         inserted=results/'bv1-input-diodes.tsv'
         assert file_sha(inserted)==receipt['outputs'][str(inserted.relative_to(source))]
         rows=[line.split('\t')for line in inserted.read_text().splitlines()]

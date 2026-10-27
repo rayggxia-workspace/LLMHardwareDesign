@@ -28,7 +28,7 @@ def verify(root,out,cpus,run,policy,pipeline='native_pipeline_cap40.json'):
     from native_formal import receive
     assert policy in ('A','C')and cpus>=8
     base=out.parents[2]
-    assert pipeline in ('native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json')
+    assert pipeline in ('native_pipeline_cap40.json','native_pipeline_hold5.json','native_pipeline_diode.json','native_pipeline_diode_full.json')
     config=json.loads((root/'project/experiments/block_v1'/pipeline).read_text())
     top='transaction6k'
     source=base/config['candidate_run']/('tasks/'+config['candidate_task_prefix']+top+'-'+policy.lower())
@@ -37,8 +37,13 @@ def verify(root,out,cpus,run,policy,pipeline='native_pipeline_cap40.json'):
     results=source/'flow/results/nangate45'/('bv1_'+top+'_'+policy)/'base'
     netlist=results/'6_final.v'
     assert file_sha(netlist)==receipt['outputs'][str(netlist.relative_to(source))]
-    formal=receive(source,receipt,results,top,prep,logic_context=(root,out,run)if pipeline=='native_pipeline_diode.json'else None)
+    diode=config.get('input_diode_master')=='ANTENNA_X1'
+    formal=receive(source,receipt,results,top,prep,logic_context=(root,out,run)if diode else None)
     assert formal['passed']is True and formal['full_final_netlist_sha256']==file_sha(netlist)
+    original_netlist_sha256=file_sha(netlist)
+    if diode:
+        view=formal['physical_functional_view'];assert view['passed']is True
+        netlist=Path(view['full_view']);assert file_sha(netlist)==view['full_view_sha256']
     library=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
     script='read_liberty -ignore_miss_func -ignore_miss_dir '+str(library)+'\nwrite_verilog -noattr cells.v\n'
     (out/'export-cells.ys').write_text(script)
@@ -61,10 +66,11 @@ def verify(root,out,cpus,run,policy,pipeline='native_pipeline_cap40.json'):
         observed=dict(pool.map(simulate,[('all-ones',1,121),('random-121',2,121),('random-122',2,122)]))
     assert all(row['scoreboard']==observed['all-ones']['scoreboard']for row in observed.values())
     with slot(base):
-        assert file_sha(netlist)==receipt['outputs'][str(netlist.relative_to(source))]
+        assert file_sha(results/'6_final.v')==original_netlist_sha256
+        assert file_sha(netlist)==(formal['physical_functional_view']['full_view_sha256']if diode else original_netlist_sha256)
     record=dict(schema='block-v1-native-final-function/1',passed=True,top=top,policy=policy,pipeline=pipeline,
         source=str(source),source_receipt_sha256=file_sha(source/'receipt.json'),
-        final_netlist=str(netlist),final_netlist_sha256=file_sha(netlist),formal=formal,
+        final_netlist=str(netlist),final_netlist_sha256=file_sha(netlist),original_flow_netlist_sha256=original_netlist_sha256,formal=formal,
         liberty_sha256=file_sha(library),cell_models_sha256=file_sha(out/'cells.v'),
         driver_sha256=file_sha(driver),binary_sha256=file_sha(binary),initial_state_runs=observed,
         simultaneous_models=3,threads_per_model=threads,max_runtime_threads=3*threads,allocated_cpus=cpus,
