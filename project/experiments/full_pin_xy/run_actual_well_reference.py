@@ -24,6 +24,8 @@ for name in ['nwell','pwell']:
     definitions.append(m[0].strip())
 runset=(driver/'well4_semantics.drc').read_text();runset=runset.replace('well = input(21, 0).or(input(22, 0))','\n'.join(definitions)+'\nwell = nwell.or(pwell)')
 script=out/'actual_reference.drc';script.write_text(runset)
+runset+='\nnwell.width(200.nm, euclidian).output("NWELL_WIDTH200_REFERENCE", "Additional individual nwell width check")\npwell.width(200.nm, euclidian).output("PWELL_WIDTH200_REFERENCE", "Additional individual pwell width check")\n'
+script.write_text(runset)
 report=out/'actual_reference.lyrdb'
 with (out/'reference.log').open('x') as f:r=subprocess.run(common+[IMAGE,'klayout','-b','-r',str(script),'-rd','input='+str(gds),'-rd','report='+str(report)],stdout=f,stderr=subprocess.STDOUT)
 assert r.returncode==0 and report.exists()
