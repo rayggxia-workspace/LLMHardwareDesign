@@ -9,6 +9,7 @@ import csv,datetime,json,os,re,subprocess,sys,traceback
 from run_exports import ROOT,CFG,IMAGE,BIN,sha
 from check_access import check
 from lef_view_contract import verify as verify_lef_view
+from verify_parent_graph import validate_graph
 DRIVER=Path(__file__).resolve().parent
 BASE={'act':'r02','gemm':'r01','mxu':'r03','vector':'r04','opentpu_aux':'r03','llaccel_aux':'r03'}
 
@@ -30,7 +31,7 @@ def alias_view(source,dest,original,alias):
     text,n=re.subn(r'(?m)^END '+re.escape(original)+r'\s*$', 'END '+alias,text);assert n==1
     dest.write_text(text)
 
-def validate_graph(path,contract,expected):
+def legacy_unescaped_graph_diagnostic(path,contract,expected):
     with path.open() as f:rows=list(csv.DictReader(f,delimiter='\t'))
     key=lambda r:(r['kind'],r.get('instance',''),r['pin'])
     physical={key(r):r for r in rows};assert len(physical)==len(rows)==len(expected)
@@ -78,6 +79,8 @@ def one(inputs,rev,plan):
         commands.append('read_lef '+tcl(dest))
     if plan=='A':
         commands += ['read_verilog '+tcl(inputs/'parent.v'),'link_design '+contract['top'],'source '+tcl(inputs/'setup.tcl'),
+          'parent_contract '+tcl(out/'pre_model'),
+          'exec python3 -B '+tcl(DRIVER/'verify_parent_graph.py')+' '+tcl(inputs/'contract.json')+' '+tcl(inputs/'endpoints.json')+' '+tcl(out/'pre_model.endpoints.tsv')+' --out '+tcl(out/'pre_model.graph_check.json'),
           'cut_rows -halo_width_x 2 -halo_width_y 2',
           'add_global_connection -net VDD -inst_pattern {.*} -pin_pattern {^VDD$} -power',
           'add_global_connection -net VSS -inst_pattern {.*} -pin_pattern {^VSS$} -ground','global_connect',
@@ -100,6 +103,8 @@ def one(inputs,rev,plan):
         if plan!='A_replay':commands += ['set m [[ord::get_db] findMaster '+tcl(views[focus]['parent_alias'])+']','if {![$i swapMaster $m]} {error {Physical macro view swap failed}}']
         commands += ['set changednets {};foreach it [$i getITerms] {set n [$it getNet];if {$n ne "NULL" && [$n getSigType] ni {POWER GROUND}} {lappend changednets $n}}',
           'foreach n [lsort -unique $changednets] {set w [$n getWire];if {$w ne "NULL"} {odb::dbWire_destroy $w}}']
+        commands += ['parent_contract '+tcl(out/'pre_model'),
+          'exec python3 -B '+tcl(DRIVER/'verify_parent_graph.py')+' '+tcl(inputs/'contract.json')+' '+tcl(inputs/'endpoints.json')+' '+tcl(out/'pre_model.endpoints.tsv')+' --out '+tcl(out/'pre_model.graph_check.json')]
     commands += ['create_clock -name parent_route_classification_only -period 2.5 [get_ports clk]']
     setup=out/'run_setup.tcl';setup.write_text('\n'.join(commands)+'\n')
     rec['child_views']=views;rec['routing_only_macro_model']='Not characterized; capacitance zero is only a linker placeholder. Do not use for parent RC/STA/electrical qualification.'

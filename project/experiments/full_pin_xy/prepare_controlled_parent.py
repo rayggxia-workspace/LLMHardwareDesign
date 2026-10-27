@@ -42,12 +42,14 @@ def prepare(root,out,design,focus):
                 parents[bit].append({'kind':'ITERM','instance':inst,'case':case,'pin':pin,'direction':p['direction'],'original_leaf_pin_layer':pins[pin]['layer']})
         assert set(pins)==set(expected)
         assert all(pins[p]['direction'].lower()==d for p,(d,b) in expected.items())
-        records[case]={'instance':inst,'master':master,'pins':expected}
+        assert not any(p.get('upto',0) for p in module['ports'].values()),'Ascending port requires an explicit bit-order implementation'
+        records[case]={'instance':inst,'master':master,'pins':expected,
+          'ports':{n:{'direction':p['direction'],'width':len(p['bits']),'offset':p.get('offset',0),'connections_lsb_first':cell['connections'][n]} for n,p in module['ports'].items()}}
     assert focus in records
     external=[];constant_drivers=[]
     next_constant=max([b for c in top['cells'].values() for bs in c['connections'].values() for b in bs if isinstance(b,int)]+[b for p in top['ports'].values() for b in p['bits'] if isinstance(b,int)])+1
     for port,p in top['ports'].items():
-        for pin,bit in zip(pin_names(port,p),p['bits']):
+        for bit_index,(pin,bit) in enumerate(zip(pin_names(port,p),p['bits'])):
             literal=None
             if isinstance(bit,str):
                 assert bit in ['0','1'] and p['direction']=='output',(pin,bit,'not a routable known constant output')
@@ -55,7 +57,7 @@ def prepare(root,out,design,focus):
                 driver={'instance':'top_constant_'+str(len(constant_drivers)),'master':'LOGIC'+literal+'_X1','pin':'Z','value':literal,'bit':bit,'external_pin':pin}
                 constant_drivers.append(driver)
                 parents[bit].append({'kind':'ITERM','instance':driver['instance'],'case':'TOP_CONSTANT_INFRASTRUCTURE','pin':'Z','direction':'output','original_leaf_pin_layer':'metal1','literal_value':literal,'new_constant_driver':True})
-            external.append({'pin':pin,'direction':p['direction'],'bit':bit,'original_literal':literal})
+            external.append({'pin':pin,'direction':p['direction'],'bit':bit,'original_literal':literal,'port':port,'port_width':len(p['bits']),'port_index':p.get('offset',0)+bit_index})
             parents[bit].append({'kind':'BTERM','pin':pin,'direction':p['direction']})
     # Freeze a common R0 two-row floorplan, with 80um margins and channel.
     aux=design+'_aux';compute=[c for c in records if c!=aux];assert len(compute)==2
@@ -91,27 +93,41 @@ def prepare(root,out,design,focus):
             e['xy_um']=([.07 if i%2==0 else width-.07,offset] if vertical else [offset,.07 if i%2==0 else height-.07])
             e['size_um']=[.14,.14]
     topname='hpy_pinxy_'+design+'_controlled_parent'
-    # Scalar escaped names exactly match physical LEF/Liberty bit pin names.
+    # Preserve actual vector ports. Literal escaped scalar names such as
+    # \\data[0] do NOT reliably bind a Liberty/LEF bus bit in this OpenROAD.
     verilog=['// NEW controlled parent; exact frozen frontier graph, no new functional logic.',
-       'module '+topname+'('+', '.join(escaped(e['pin']) for e in external)+');']
-    verilog += [e['direction']+' '+escaped(e['pin'])+';' for e in external]
+       'module '+topname+'('+', '.join(escaped(n) for n in top['ports'])+');']
+    for name,p in top['ports'].items():
+        assert not p.get('upto',0)
+        n=len(p['bits']);offset=p.get('offset',0)
+        verilog.append(p['direction']+' '+(f'[{offset+n-1}:{offset}] ' if n>1 else '')+escaped(name)+';')
     verilog += ['wire n_'+str(bit)+';' for bit in sorted(parents)]
     for e in external:
         assert e['direction'] in ['input','output']
-        verilog.append('assign '+('n_'+str(e['bit'])+' = '+escaped(e['pin']) if e['direction']=='input' else escaped(e['pin'])+' = n_'+str(e['bit']))+';')
+        portref=escaped(e['port'])+(f'[{e["port_index"]}]' if e['port_width']>1 else '')
+        verilog.append('assign '+('n_'+str(e['bit'])+' = '+portref if e['direction']=='input' else portref+' = n_'+str(e['bit']))+';')
     for case,rec in records.items():
-        verilog.append('p126_'+case+'_A '+escaped(rec['instance'])+'('+', '.join('.'+escaped(pin)+'(n_'+str(bit)+')' for pin,(direction,bit) in rec['pins'].items())+');')
+        ports=[]
+        for name,p in rec['ports'].items():
+            bits=p['connections_lsb_first'];expression=('{' + ','.join('n_'+str(bit) for bit in reversed(bits))+'}') if len(bits)>1 else 'n_'+str(bits[0])
+            ports.append('.'+escaped(name)+'('+expression+')')
+        verilog.append('p126_'+case+'_A '+escaped(rec['instance'])+'('+', '.join(ports)+');')
     for driver in constant_drivers:
         verilog.append(driver['master']+' '+driver['instance']+'(.Z(n_'+str(driver['bit'])+'));')
     verilog.append('endmodule');(out/'parent.v').write_text('\n'.join(verilog)+'\n',encoding='utf-8')
     lib=['/* ROUTING/LINKING PORT STUBS ONLY. NOT CHARACTERIZED TIMING MODELS. */',
-      'library (pinxy_ROUTING_ONLY) { delay_model : table_lookup; time_unit : "1ns"; voltage_unit : "1V"; current_unit : "1mA"; pulling_resistance_unit : "1kohm"; capacitive_load_unit (1,pf); nom_voltage : 1.0; nom_temperature : 25; nom_process : 1;']
+      'library (pinxy_ROUTING_ONLY) { delay_model : table_lookup; bus_naming_style : "%s[%d]"; time_unit : "1ns"; voltage_unit : "1V"; current_unit : "1mA"; pulling_resistance_unit : "1kohm"; capacitive_load_unit (1,pf); nom_voltage : 1.0; nom_temperature : 25; nom_process : 1;']
+    types=sorted({(p['width'],p['offset']) for r in records.values() for p in r['ports'].values() if p['width']>1})
+    for n,offset in types:
+        lib.append(f'type (B{n}_{offset}) {{ base_type : array; data_type : bit; bit_width : {n}; bit_from : {offset+n-1}; bit_to : {offset}; downto : true; }}')
     for case,rec in records.items():
         for view in ['A','A_child_replay','Aopt','B','C']:
             lib.append('cell ("p126_'+case+'_'+view+'") { is_macro_cell : true; area : '+str(dims[case][0]*dims[case][1])+';')
-            for pin,(direction,bit) in rec['pins'].items():
-                assert '"' not in pin
-                lib.append('pin ("'+pin+'") { direction : '+direction+'; '+('capacitance : 0; ' if direction=='input' else '')+('clock : true; ' if pin=='clk' else '')+'}')
+            for name,p in rec['ports'].items():
+                assert '"' not in name;direction=p['direction'];n=p['width'];offset=p['offset']
+                attrs='direction : '+direction+'; '+('capacitance : 0; ' if direction=='input' else '')+('clock : true; ' if name=='clk' else '')
+                if n==1:lib.append('pin ("'+name+'") { '+attrs+'}')
+                else:lib.append(f'bus ("{name}") {{ bus_type : B{n}_{offset}; direction : {direction}; pin ("{name}[{offset+n-1}:{offset}]") {{ {attrs} }} }}')
             lib += ['pg_pin (VDD) { pg_type : primary_power; voltage_name : VDD; }','pg_pin (VSS) { pg_type : primary_ground; voltage_name : VSS; }','}']
     lib.append('}');(out/'routing_only.lib').write_text('\n'.join(lib)+'\n',encoding='utf-8')
     setup=[f'initialize_floorplan -die_area {{0 0 {width:.6f} {height:.6f}}} -core_area {{10 10 {width-10:.6f} {height-10:.6f}}} -site FreePDK45_38x28_10R_NP_162NW_34O',
