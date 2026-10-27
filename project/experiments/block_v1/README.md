@@ -1,5 +1,9 @@
 # Block v1 执行入口
 
+当前物理边界唯一为 **M/V/R/S/T**，每种一个基础实现。`five_macro.py` 提供完整 M 和独立 S 的功能/完整映射任务；`five_macro_physical.py` 在各自前置通过后跑最终原生流程，独立完整接收仍必需；`five_macro_delivery.py` 从选定 T6K C 的实际 ODB/GDS 导出接点与图。旧 `make_library.py` 的裸 M8 / 混合 VS 仅历史试验，不能作为最终宏。
+
+M 的独立参考为 `test_matrix_macro.cpp`（含S8/S16、P15样例、全K上界、跨组/RNE/背压/守卫），S 为 `test_store_macro.cpp`（全地址、随机读写、响应占用与reset保留）。V/R新 RTL 及三者的新最终物理接收均继续实施；文档规格不等于功能已实现。
+
 本轮用户范围纠正：以[首版积木实施计划](../../../docs/plans/block-v1-library-implementation.md)与[物理清单](../../../docs/BLOCK_LIBRARY_V1.md)为主线，必须完成每个入选块的最终M1–M10布局布线。下文旧P0–P6/十二层工作是保留的历史工程入口，不再全部属于本轮验收。
 
 Refs #121；授权计划见 `docs/plans/block-v1-nangate45-m11-m12.md`，进度/输入证据见 `work/YUZE-LU/121/`。

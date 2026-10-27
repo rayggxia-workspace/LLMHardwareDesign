@@ -1,3 +1,5 @@
+2026-10-27 CST：用户明确冻结M/V/R/S/T五种基础宏，每种一个实现，要求全部最终M1–M10布局布线。裸M8/混合VS不是最终边界；旧四边界计划已归档，完整系统/两产品/一般十二层提取移至后续。92426在PENDING、0CPU、0elapsed时因边界改定取消，未执行EDA。T选定C实际叶块证据保留；新M/V/R/S尚未最终P&R通过。当前规格与执行入口为docs/BLOCK_LIBRARY_V1.md、docs/plans/block-v1-library-implementation.md，任务继续in_progress。
+
 # Issue 121 执行记录
 
 2026-10-27 21:01 CST：新四块独立功能/映射队列185已部署并实际提交92426，96CPU、六个16CPU任务；当前资源排队，本任务六RUNNING＋两PENDING共八allocation，不追加节点。源码8d6f3b77、archive12db5fe0741f10c5ffcb419d6f1232191d61f4d95cd0e9985e9b51b99868f4b0；Linux路径/DAG预检通过，不当功能/映射通过。T6K选择既有C结果，重新核对同源RTL、三类回执和10份最终产物SHA；完整单块物理/三初态最终功能通过，层次模型仍未合格。M8/VS/S16K新单块最终P&R仍待完成，本轮不能只交文档或综合。

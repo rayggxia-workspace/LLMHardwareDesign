@@ -60,7 +60,28 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='library-v1-source':
+    if MODE=='five-macro-matrix-test':
+        from five_macro import matrix_test
+        matrix_test(ROOT,OUT,CPUS,run)
+    elif MODE=='five-macro-matrix-map':
+        from five_macro import map_matrix
+        map_matrix(ROOT,OUT,CPUS,run)
+    elif MODE=='five-macro-store-test':
+        from five_macro import store_test
+        store_test(ROOT,OUT,CPUS,run)
+    elif MODE=='five-macro-store-map':
+        from five_macro import map_matrix
+        map_matrix(ROOT,OUT,CPUS,run,'block_v1_s16k')
+    elif MODE in ('five-macro-route-m','five-macro-route-s'):
+        from five_macro_physical import implement
+        implement(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE=='five-macro-t-pins':
+        from five_macro_delivery import pins
+        pins(ROOT,OUT,CPUS,run)
+    elif MODE=='five-macro-t-layout':
+        from five_macro_delivery import layout
+        layout(ROOT,OUT,CPUS,run)
+    elif MODE=='library-v1-source':
         from library_v1 import source_probe
         source_probe(ROOT,OUT,CPUS,run)
     elif MODE=='library-v1-byte':
