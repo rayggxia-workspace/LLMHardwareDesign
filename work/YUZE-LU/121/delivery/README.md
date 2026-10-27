@@ -30,4 +30,6 @@
 
 M/T完整原生wire/via/PG/pin/OBS与M10底部几何合同见[M](M/native-geometry/README.md)、[T](T/native-geometry/README.md)。普通网络RECT已据封存DEF补核；原geometry目录仅保留迭代器历史。候选LEF的抽象覆盖、通用层次Lib和M11/M12系统资格仍为false。V完整几何由228在本块验收后生成；S/R由225对应依赖生成，225中的旧V222几何任务已过时，不作最终V入口。
 
+R交付接续：旧222控制allocation已自然释放，R物理208通过，交付尚未领取；[231暂存证据](../results/r-delivery-resume-staged-052218/index.json)复用原222不可变队列和claim锁，仅等207三门真实通过后提交，目前零新allocation。它不改变任何宏实现，也不把旧V失败转移为R失败。
+
 当前恢复入口及历史失败证据见[接续记录](../../../../docs/handoffs/2026-10-28-issue-121-five-macro.md)。原V203/222和S190的失败不能由新结果反向抹去，也不能将旧功能/LEC资格转移给新最终文件。阵列、多实例系统与上层M11/M12布线留下一轮。
