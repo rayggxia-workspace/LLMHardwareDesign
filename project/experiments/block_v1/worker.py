@@ -66,6 +66,9 @@ try:
     elif MODE in ('revision300-input-delay-s','revision300-input-delay-t'):
         from revision300_input_delay_probe import probe
         probe(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE in ('revision300-route-s','revision300-route-t') and (ROOT/'project/experiments/block_v1/revision300-hold-resume.json').exists():
+        from revision300_hold_resume import implement
+        implement(ROOT,OUT,CPUS,run,MODE[-1])
     elif MODE=='revision300-hold-probe':
         from revision300_cts_probe import hold_probe
         hold_probe(ROOT,OUT,CPUS,run)

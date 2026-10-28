@@ -26,6 +26,9 @@ def finalize(root, out, cpus, run, kind):
     top, rtl, bench = sources(root, kind)
     assert top == flow['top']
     tested = raw.parent/('revision300-test-'+kind)
+    if 'source_function_task' in flow:
+        tested = out.parents[2]/flow['source_function_task']
+        assert out.parents[2] in tested.resolve().parents and tested.name == 'revision300-test-'+kind
     tr = json.loads((tested/'receipt.json').read_text())
     assert tr['passed']is True and file_sha(tested/'receipt.json') == flow['source_function_receipt_sha256']
     tp = tested/'revision300-rtl-test.json'
