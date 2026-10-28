@@ -49,8 +49,8 @@ def measure(root,out,cpus,run,kind,variant):
     index,odb,provenance,count,die=accepted(root,out,kind)
     folder,receipt,flow,results=source(root,out,kind)
     base=out.parents[2]
-    escape_run={'m':'262','t':'261','s':'285','v':'285','r':'285'}[kind]
-    escaped=base/('block-v1-20261029-'+escape_run)/'tasks'/('revision300-escape-'+kind)
+    from revision300_interface_source import selected
+    escaped=selected(root,out,kind)
     er=json.loads((escaped/'receipt.json').read_text())
     assert er['passed'] and er['mode']==escaped.name
     ep=escaped/'revision300-escape.json'

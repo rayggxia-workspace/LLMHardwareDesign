@@ -6,7 +6,7 @@ import copy,json,math,re,shutil
 from pathlib import Path
 
 
-def implement(root,out,cpus,run,kind):
+def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None):
     from io_slots import file_sha,slot
     from constraints import generate as constraints
     from revision300_ports import generate,independent
@@ -16,6 +16,11 @@ def implement(root,out,cpus,run,kind):
     assert cpus==16 and kind in ('s','t','m','v','r')
     folder=root/'project/experiments/block_v1';base=out.parents[2]
     mapped=out.parent/('revision300-map-'+kind);tested=out.parent/('revision300-test-'+kind)
+    if prerequisite_tasks is not None:
+        assert kind=='v' and set(prerequisite_tasks)=={'mapping','function'}
+        mapped=base/prerequisite_tasks['mapping'];tested=base/prerequisite_tasks['function']
+        assert all(base in p.resolve().parents for p in (mapped,tested))
+        assert mapped.name=='revision300-map-v' and tested.name=='revision300-test-v'
     records=[]
     for source,name in [(mapped,'revision300-rtl-map.json'),(tested,'revision300-rtl-test.json')]:
         receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed']is True
@@ -77,6 +82,21 @@ def implement(root,out,cpus,run,kind):
     (out/'input-diodes.tcl').write_text(hook)
     config+=config_suffix(40,.005,out/'input-diodes.tcl','metal10')
     config+='\nexport HOLD_SLACK_MARGIN = 0.020\n'
+    route_args=None
+    if routing_policy is not None:
+        assert kind=='v' and routing_policy==dict(upper_layer_adjustment=.20,congestion_iterations=100)
+        assert file_sha(flow/'scripts/global_route.tcl')=='3968898c9abd8c0fd56c50d08bed6d3943bdc641f63c8674817449bbec2706ce'
+        assert '$cong_iters $::env(GLOBAL_ROUTE_ARGS)' in (flow/'scripts/global_route.tcl').read_text()
+        hook=out/'grt-capacity.tcl'
+        hook.write_text('source {'+str(out/'input-diodes.tcl')+'}\n'
+            'set_global_routing_layer_adjustment metal4-metal10 .20\n'
+            'set f [open [file join $::env(RESULTS_DIR) bv1-grt-adjustment.tsv] w]\n'
+            'puts $f "metal4-metal10\\t0.20"\nputs $f "native_rules\\tunchanged"\nclose $f\n')
+        old='export PRE_GLOBAL_ROUTE_TCL = '+str(out/'input-diodes.tcl')
+        assert config.count(old)==1
+        config=config.replace(old,'export PRE_GLOBAL_ROUTE_TCL = '+str(hook))
+        route_args='-congestion_iterations 100 -congestion_report_iter_step 5 -verbose'
+        config+='export GLOBAL_ROUTE_ARGS = '+route_args+'\n'
     (out/'config.mk').write_text(config)
     results=out/'flow/results/nangate45'/nickname/'base';results.mkdir(parents=True)
     for suffix in ('v','sdc'):
@@ -84,6 +104,7 @@ def implement(root,out,cpus,run,kind):
     command=['make','-C',str(flow),'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
     wanted=dict(MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',KEEP_VARS='1',LEC_CHECK='1',SEC_CHECK='0',
                 TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN='0.020')
+    if route_args is not None:wanted.update(PRE_GLOBAL_ROUTE_TCL=str(hook),GLOBAL_ROUTE_ARGS=route_args)
     actual={}
     for key,value in wanted.items():
         log='variable-'+key+'.log';run(command+['print-'+key],log)
@@ -96,11 +117,18 @@ def implement(root,out,cpus,run,kind):
                 config_sha256=file_sha(out/'config.mk'),pins_sha256=file_sha(out/'pins.json'),budget=budget,actual_variables=actual,
                 planned_complete_escape=geometry,planned_independent_gds=coarse,stages=[],final_files={},qualified_hard_macro=False,
                 scope='Fresh native M1-M10 flow and declared full-port coarse geometry; complete actual native/upper readback, independent STA/DRC/function/LEC remain separate')
+    if prerequisite_tasks is not None:
+        result.update(source_mapping_task=prerequisite_tasks['mapping'],source_function_task=prerequisite_tasks['function'],
+                      inherited_physical_stages=[],fresh_routing_policy=routing_policy)
     def save():(out/'revision300-native-flow.json').write_text(json.dumps(result,indent=2)+'\n')
     save()
     for number,stage in enumerate(('do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish')):
         run(command+[stage],'%02d-%s.log'%(number,stage));result['stages'].append(stage)
         assert file_sha(out/'input.v')==input_sha;save()
+        if stage=='do-route' and route_args is not None:
+            assert (results/'bv1-grt-adjustment.tsv').read_text()=='metal4-metal10\t0.20\nnative_rules\tunchanged\n'
+            grt=out/'flow/logs/nangate45'/nickname/'base/5_1_grt.log'
+            assert '-congestion_iterations 100' in grt.read_text()
     for suffix in ('v','sdc','def','odb','spef'):
         p=results/('6_final.'+suffix);assert p.is_file()
         result['final_files'][p.name]=dict(path=str(p),sha256=file_sha(p),bytes=p.stat().st_size)
