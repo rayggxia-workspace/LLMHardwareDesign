@@ -196,12 +196,14 @@ def check(out):
         assert q['all_original_signal_terminal_and_port_graph_equal_with_exact_two_proven_sizes'] and q['retained_real_diode_count']==636
         assert q['all_sources_unchanged'] and not q['full_qualification']
         cost=q['separate_two_size_ECO_cost'];assert cost['changed_masters']==2 and cost['moved_existing_instances']==1 and cost['added_functional_instances']==0 and abs(cost['standard_cell_master_bbox_area_delta_um2']-1.33)<1e-6
-        assert rows['gemm']['completed_source']=='costed_real_diode_and_sizes/r01'
-        assert rows['gemm']['setup_ns']==q['setup_ns'] and rows['gemm']['hold_ns']==q['hold_ns']
+        r=rows['gemm'].get('historical_636diode_two_size_source',rows['gemm'])
+        assert r['completed_source']=='costed_real_diode_and_sizes/r01'
+        assert r['setup_ns']==q['setup_ns'] and r['hold_ns']==q['hold_ns']
     if j.get('GEMM_post_diode_size_GDS_available_deck',{}).get('completed_utc'):
         q=j['GEMM_post_diode_size_GDS_available_deck'];assert q['merge_returncode']==q['DRC_returncode']==0
         assert q['available_deck_findings']==37 and q['source_DEF_SHA']==j['GEMM_post_diode_size_ECO']['files']['routed.def']['sha256']
-        assert rows['gemm']['available_deck_findings']==37 and not q['full_qualification']
+        r=rows['gemm'].get('historical_636diode_two_size_source',rows['gemm'])
+        assert r['available_deck_findings']==37 and not q['full_qualification']
     if j.get('GEMM_remaining_antenna_native_correlations'):
         q=j['GEMM_remaining_antenna_native_correlations'];a=q['correlation_summary']
         assert q['native_returncode']==0 and q['all_sources_unchanged'] and not q['full_qualification']
@@ -219,6 +221,16 @@ def check(out):
             for kind in ['setup','hold']:
                 text=gzip.decompress((p/(kind+'.txt.gz')).read_bytes()).decode()
                 assert partial[kind+'_ns']==float(re.search(r'worst slack (?:min|max)\s+([-\d.]+)',text)[1])
+        if q.get('completed_utc'):
+            assert q['fresh_DRC_count']==0 and q['whole_signal_geometry']['pass'] and q['whole_signal_geometry']['checked_terminals']==806643
+            assert q['actual_total_real_diodes']==658 and q['all_original_instances_and_signal_graph_preserved_with_only_22_real_diode_loads']
+            assert q['all_prior_functional_and_636_diode_poses_and_terminals_unchanged'] and all(q['pin_PG_die_unchanged'].values())
+            assert q['setup_ns']==rows['gemm']['setup_ns']==0.770702 and q['hold_ns']==rows['gemm']['hold_ns']==0.039533
+            assert q['literal_VIOLATED_markers_not_complete_failure_count']==0 and q['separate_additional_diode_cost']['master_bbox_area_um2']==5.852
+            assert rows['gemm']['completed_source']=='658_real_diodes/r01' and rows['gemm']['available_deck_findings'] is None
+    if j.get('actual_22_diode_access_figure'):
+        q=j['actual_22_diode_access_figure'];assert q['old_GDS_findings']==37 and q['new_actual_diodes']==22 and q['unchanged_original_signal_pins']==3753
+        assert abs(q['new_master_bbox_area_um2']-5.852)<1e-6 and not q['full_qualification']
     if j.get('upper_all770_actual_hook_preparation_r02'):
         q=j['upper_all770_actual_hook_preparation_r02'];assert q['actual_hook_boxes']==1541 and q['per_mode_edges']==770
         assert q['native_via10_M10_landing_size_dbu']==[1600,1600] and not q['full_qualification']

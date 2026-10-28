@@ -362,6 +362,14 @@ def render(root,out):
             incremental_text='<p><strong>92975定向22个新增真实diode：</strong>原层接线/详细布线、原视图合同、双PG及RCX/STA原生命令均已执行；闭合原生进程报告setup/hold='+str(partial.get('setup_ns'))+'/'+str(partial.get('hold_ns'))+'ns，文字违例='+str(partial.get('literal_VIOLATED_markers_not_complete_failure_count'))+'。独立fresh DRC、全量数字图及源合同以最终receipt各自为准，未终态不记0/通过。92976为对应严格GDS原deck依赖作业；不把提交视为规则通过。旧37项原样保留。</p>'
         if q.get('completed_utc'):
             incremental_text+='<p>92975最终回执：fresh native='+str(q.get('fresh_DRC_count'))+'，全量22新增负载数字合同='+str(q.get('all_original_instances_and_signal_graph_preserved_with_only_22_real_diode_loads'))+'，原pose/端点='+str(q.get('all_prior_functional_and_636_diode_poses_and_terminals_unchanged'))+'。无论Slurm结局，完整规则/RTL/系统资格仍未通过。</p>'
+            if q.get('native_returncodes',{}).get('implementation')==0 and q.get('fresh_DRC_count') is not None and 'whole_signal_geometry' in q:
+                r=next(r for r in rows if r['case']=='gemm')
+                r['historical_636diode_two_size_source']={k:r[k] for k in ['completed_source','actual_internal_route','native_DRC_count','all_multiterminal_signal_clock_geometry','setup_ns','hold_ns','violation_marker_rows','available_deck_findings']}
+                r.update({'completed_source':'658_real_diodes/r01','actual_internal_route':'COMPLETED_INCREMENTAL_REAL_DIODE_ECO_NOT_PURE_XY',
+                  'native_DRC_count':q['fresh_DRC_count'],'all_multiterminal_signal_clock_geometry':q['whole_signal_geometry']['pass'],
+                  'setup_ns':q.get('setup_ns'),'hold_ns':q.get('hold_ns'),
+                  'violation_marker_rows':q.get('literal_VIOLATED_markers_not_complete_failure_count'),
+                  'available_deck_findings':None,'complete_rules':'CURRENT_658_DIODE_GDS_PENDING; COVERAGE_INCOMPLETE'})
     prepared=snapshot/'upper_adaptation_trial/r02/preparation.json.gz'
     if prepared.exists():
         q=read(prepared);result['upper_all770_actual_hook_preparation_r02']=dict(q,evidence=(dest/prepared.relative_to(snapshot)).relative_to(out).as_posix())
@@ -407,6 +415,11 @@ def render(root,out):
     from plot_actual_shared_conductors import plot as plot_fixed
     fixed=plot_fixed(root,snapshot,out);result['actual_shared_conductor_geometry']=fixed
     fixed_image='<figure><img src="assets/common_shared_conductors_actual.png" loading="lazy" alt="256条原生FIXED M10导体与真实接点，非冻结或两模式完成"><figcaption><a href="assets/common_shared_conductors_actual.svg">实际导体SVG</a> · <a href="data/common_shared_conductors_actual.csv">全部256条native坐标CSV</a> · <a href="data/common_shared_conductors_actual.json">来源与边界</a>。固定属性/几何已核验，底层完整布线和两模式复用尚未验证。</figcaption></figure>' if fixed else ''
+    from plot_actual_diode_access import plot as plot_diodes
+    diode_figure=plot_diodes(snapshot,out)
+    if diode_figure:
+        result['actual_22_diode_access_figure']=diode_figure
+        incremental_text+='<figure><img src="assets/gemm_real_diode_access.png" loading="lazy" alt="原GDS37个真实bbox与22个实际新增diode位置，非新版本天线通过"><figcaption><a href="assets/gemm_real_diode_access.svg">真实diode接入SVG</a> · <a href="data/gemm_real_diode_access.json">实际来源及局部receiver</a>。总览符号为定位标记，局部为真实LEF placement bbox；非pin/via/GDS轮廓。</figcaption></figure>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',
@@ -423,6 +436,8 @@ def render(root,out):
       'costed_real_diode_and_sizes/r01':'diode+两换型/r01',
       'CURRENT_GDS_PENDING; PRIOR_REAL_DIODE_GDS37_FAILED; COVERAGE_INCOMPLETE':'当前GDS待验；旧37失败/覆盖不全',
       'CURRENT_REAL_DIODE_SIZE_GDS37_FAILED; COVERAGE_INCOMPLETE':'当前GDS37失败/覆盖不全',
+      '658_real_diodes/r01':'658diode/r01','COMPLETED_INCREMENTAL_REAL_DIODE_ECO_NOT_PURE_XY':'增量22diode已布线',
+      'CURRENT_658_DIODE_GDS_PENDING; COVERAGE_INCOMPLETE':'658版GDS待验/覆盖不全',
       'RUNNING_OR_RECEIPT_NOT_TERMINAL':'运行中/未收齐终态'}
     def show(value):
         if value is None:return '未知/待验证'
