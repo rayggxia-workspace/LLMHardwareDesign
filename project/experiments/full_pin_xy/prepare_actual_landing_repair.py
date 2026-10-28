@@ -1,16 +1,20 @@
-"""One diagnosed GEMM M10 landing repair, screened against actual routed geometry."""
+"""One diagnosed GEMM/MXU M10 landing repair, screened against actual geometry."""
 from pathlib import Path
 import csv,gzip,hashlib,json,re,sys
 from run_exports import ROOT,sha
 from run_escape_landing import run
 
 
-def prepare(revision):
-    source=ROOT/'escape_fixtures/gemm-r02/gemm-C';old=json.loads((source/'execution.json').read_text())
-    assert old.get('completed_utc') and old['native_route_returncode']==0 and old['independent_DRC_count']==1
+def prepare(revision,case='gemm'):
+    assert case in ['gemm','mxu']
+    source=ROOT/'escape_fixtures'/('gemm-r02/gemm-C' if case=='gemm' else 'mxu-r01/mxu-C')
+    old=json.loads((source/'execution.json').read_text());expected=1 if case=='gemm' else 2
+    assert old.get('completed_utc') and old['native_route_returncode']==0 and old['independent_DRC_count']==expected
     drc=(source/'independent.drc').read_text()
-    assert 'net:gemm_a_rdata[128] net:gemm_a_rdata[129]' in drc and 'on Layer metal10' in drc
-    net='gemm_a_rdata[128]';obstacles=[];terminals=[]
+    pair='net:gemm_a_rdata[128] net:gemm_a_rdata[129]' if case=='gemm' else 'net:act_data[197] net:act_data[213]'
+    assert pair in drc and 'on Layer metal10' in drc
+    if case=='mxu':assert 'net:act_data[12]' in drc and 'on Layer metal6' in drc
+    net='gemm_a_rdata[128]' if case=='gemm' else 'act_data[197]';obstacles=[];terminals=[]
     with gzip.open(source/'whole_access.tsv.gz','rt') as f:
         for q in csv.DictReader(f,delimiter='\t'):
             if q['net']==net and q['kind'] in ['ITERM','BTERM']:terminals.append(q)
@@ -37,8 +41,9 @@ def prepare(revision):
             if not any(b[0]-1.5<q[2] and b[2]+1.5>q[0] and b[1]-1.5<q[3] and b[3]+1.5>q[1] for q in obstacles):
                 candidates.append((abs(x-endpoint[0])+abs(y-endpoint[1]),x,y))
     assert candidates,'No actual-metal screened proposed landing'
-    _,x,y=min(candidates);input_set='gemm-actual-landing-'+revision;out=ROOT/'inputs'/input_set;out.mkdir(parents=True,exist_ok=False)
-    rec={'scope':'PROPOSED_NEW_PARENT_M10_XY_NOT_LEAF_PIN_CHANGE','case':'gemm','source_fixture':str(source),
+    _,x,y=min(candidates);input_set=case+'-actual-landing-'+revision;out=ROOT/'inputs'/input_set;out.mkdir(parents=True,exist_ok=False)
+    rec={'scope':'PROPOSED_NEW_PARENT_M10_XY_NOT_LEAF_PIN_CHANGE','case':case,'source_fixture':str(source),
+      'expected_source_native_DRC_count':expected,'other_source_errors_preserved_not_waived':case=='mxu',
       'net':net,'original_leaf_layer':term['layer'],'leaf_parent_xy_um':endpoint,
       'old_parent_xy_um':[(int(original[k+'0'])+int(original[k+'1']))/4000 for k in ['x','y']],
       'new_parent_xy_um':[round(x,6),round(y,6)],'parent_layer':'metal10','parent_size_um':[.8,.8],
@@ -53,4 +58,4 @@ def prepare(revision):
     return run(input_set,revision)
 
 
-if __name__=='__main__':sys.exit(prepare(sys.argv[1]))
+if __name__=='__main__':sys.exit(prepare(*sys.argv[1:3]))

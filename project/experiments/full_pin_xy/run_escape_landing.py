@@ -14,7 +14,9 @@ def run(input_set,revision):
     source=Path(delta.get('source_fixture',str(ROOT/'escape_fixtures/r04/act-C'))).resolve()
     assert (ROOT/'escape_fixtures').resolve() in source.parents
     case=delta.get('case','act');assert case in ['act','gemm','mxu']
-    old=json.loads((source/'execution.json').read_text());assert old['native_route_returncode']==0 and old['independent_DRC_count']==1
+    expected=delta.get('expected_source_native_DRC_count',1)
+    assert expected==1 or (case=='mxu' and expected==2)
+    old=json.loads((source/'execution.json').read_text());assert old['native_route_returncode']==0 and old['independent_DRC_count']==expected
     for name,digest in delta['source_files_uncompressed_SHA'].items():
         p=source/(name if name=='whole_access.tsv.gz' else name[:-3]);content=gzip.decompress(p.read_bytes()) if p.suffix=='.gz' else p.read_bytes()
         assert hashlib.sha256(content).hexdigest()==digest,(name,'Actual input geometry differs')
