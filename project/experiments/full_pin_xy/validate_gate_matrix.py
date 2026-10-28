@@ -285,6 +285,9 @@ def check(out):
         assert q['strict_allow_empty']=='DISABLED' and not q['missing_SRAM_geometry_fabricated']
         assert q['merge_returncode']==q['DRC_returncode']==0
         assert q['available_deck_findings']==sum(q['available_deck_findings_by_category'].values())==rows['gemm']['available_deck_findings']==0
+        import xml.etree.ElementTree as ET
+        actual_rdb=(out/q['evidence']).parent/'diagnostic.lyrdb.gz'
+        assert len(ET.fromstring(gzip.decompress(actual_rdb.read_bytes())).findall('.//item'))==0
     if j.get('actual_fixed256_native_attribute_audit'):
         q=j['actual_fixed256_native_attribute_audit'];assert q['native_export_returncode']==0 and not q['native_export_executed_this_run']
         assert q['all_256_native_FIXEDS_and_original_net_bindings_verified'] and q['all_closed_source_files_unchanged'] and q['native_shared_conductor_count']==256

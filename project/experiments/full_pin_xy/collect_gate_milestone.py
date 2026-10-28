@@ -73,6 +73,7 @@ def collect(name):
         a=p.stat();r={'source':str(p),'bytes':a.st_size}
         keep=p.suffix in ['.json','.log','.tcl','.txt','.tsv','.csv','.drc','.lyt'] and a.st_size<=8*1024*1024
         if 'upper_adaptation_trial/r02/' in str(p) and p.name=='congestion.rpt' and a.st_size<=8*1024*1024:keep=True
+        if 'antenna_diode_stream/' in str(p) and p.suffix=='.lyrdb' and a.st_size<=8*1024*1024:keep=True
         if 'antenna_rules/r01' in str(p) and p.suffix in ['.lef','.lydrc'] and a.st_size<=8*1024*1024:keep=True
         if 'fixed_wire_api' in str(p) and p.suffix=='.def' and a.st_size<=1024*1024:keep=True
         omit_paths='paths.json' in p.name and 'actual_path_audit/r01' not in str(p)
