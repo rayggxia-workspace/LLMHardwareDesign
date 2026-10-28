@@ -21,16 +21,16 @@ def calculate(root):
             if r['scenario']=='continuous_supply':
                 key=(r['logical_k'],r['logical_n'],r['format_a_bits'],r['format_b_bits'])
                 assert key not in rows;rows[key]=r
-    recurrent=load(base/'RECURRENT-RESOURCE-BUDGET.json')
+    recurrent=load(base/'recurrent-resource-budget.json')
     rmodels={r['model']:r for r in recurrent['models']}
     sv={}
     for p in sorted((base/'model-sv-0408/tasks').glob('*/revision300-sv-workspace.json'))+[base/'sv-workspace-0305/tasks/revision300-sv-workspace/revision300-sv-workspace.json']:
         d=load(p);assert d['passed']
         for r in d['measurements']['cases']:
             if r['profile']==0:sv[(r['operation'],r['size'])]=r
-    conv=load(base/'vr-bench-0225/block-v1-20261029-269/tasks/revision300-bench-r-extended/revision300-vr-benchmark.json')
+    conv=load(base/'r-prefetch-0727/block-v1-20261029-309/tasks/revision300-bench-r-extended/revision300-vr-benchmark.json')
     convrow=next(r for r in conv['measurements']['cases']if r['workload']=='conv4'and r['size']==1 and r['profile']==0)
-    assert convrow['total_cycles']==42
+    assert conv['passed'] and convrow['total_cycles']==sum(p['cycles']for p in convrow['phases'].values())
     assert len(rows)==80
 
     def matrix(k,n,mcount,formats):
@@ -112,7 +112,7 @@ def calculate(root):
                 rcycles=next(r['r_stage_cycles']for r in rm['r_count_candidates']if r['count']==6)if rm else 0
                 conv_groups=1024 if model=='qwen35'else 576 if model=='falcon_h1'else 0
                 conv_layers=24 if model=='qwen35'else 32 if model=='falcon_h1'else 0
-                conv_cycles=conv_layers*math.ceil(conv_groups/6)*42
+                conv_cycles=conv_layers*math.ceil(conv_groups/6)*convrow['total_cycles']
                 norm_cycles=sum(t['norm_softmax_cycles']for t in details)+sv[(0,h)]['total_cycles']
                 s_access=sum(t['s_payload_access_bytes']for t in details)+sv[(0,h)]['s_payload_access_bytes']
                 candidate.append(dict(context=context,m_count=mcount,r_count=6 if rm else 0,

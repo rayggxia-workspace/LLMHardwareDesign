@@ -34,6 +34,9 @@ M/V/R共有 `clk/reset`、`cmd_valid/ready`、`cmd_op[3:0]`、`cmd_index`、`cmd
 
 原始RTL已逐次检查：GDN=8N+6拍、SSM=6N+4拍、卷积10拍（接受命令后到响应）；state commit按row复制N拍，纯history commit1拍。响应消费/装载/读回额外占用接口周期，不计成零成本。
 
+300MHz修订R309已实际验证：GDN4N+15、SSM3N+11、卷积14拍，state/history共同commit1拍；
+520bit操作数寄存级保持行循环II1。上述原始RTL周期仅是100MHz历史；新R最终物理资格仍待311/312。
+
 ## V：8bit index，128bit口分拍装8lane
 
 | op | 功能 | index / data |
