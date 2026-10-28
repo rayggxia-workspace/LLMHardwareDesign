@@ -174,3 +174,6 @@ python project/experiments/full_pin_xy/validate_repository.py
 实际共同集成（明确未合格）：`common_integration_job.sh C NEW_REV`读取冻结来源的六块真实详细OBS与匹配提取Lib，复用common-topology-r02全图及既定256×32μm导体拓扑/预算；先实例放置/PDN，再筛查真实M10金属、PG与OBS后写FIXED dbWire并执行底层GRT/DRT。原叶pin不改；新父层M10施工接点与原层定义分开。原生API由`fixed_wire_probe_job.sh NEW_REV`先验证，BPin的实际枚举为FIRM，DEF信号wire实际为FIXED；原错误版本保留。施工端口未降为合法模式几何前不冻结，不把LL失败DRC源或负STA来源提升为合格底座。
 
 `estimator_diagnosis_job.sh NEW_REV`复现VECTOR EST-0104；用`PINXY_EST_FILLERS_BEFORE_ESTIMATE=1`进行单变量对照，将remove_fillers移到估算之前。r01冷隔离仍失败，r02同命令/源/约束下修复执行成功，检查点仍NOT_LEGALIZED_OR_ROUTED。`plot_actual_common_placement.py`只绘制原生44实例放置来源；`gate_report.py`复用已完成DRT最后原生报告统计同ECO两侧逐层线长/via，不重复路由，也不把此表称系统收益。
+
+
+`vector_resume_job.sh NEW_REV`从estimator_diagnosis/r02实际成功检查点继续，不重跑repair_design；各原生进程隔离timing_repair、legalization、route，分别保存阶段账本。恢复原filler类型集合、原pin/PG/die、原OBS及准确临时窗口，最后RCX/STA和独立DRC/信号时钟/双PG均保留。返回0也只表示已执行的研究门槛，不代表完整规则/形式/系统资格。

@@ -119,4 +119,11 @@ def check(out):
         assert j['VECTOR_isolated_estimator_trial']['receipt']['native_returncode']==1
     if j.get('actual_six_resource_placement'):
         assert j['actual_six_resource_placement']['actual_instances']==44 and not j['actual_six_resource_placement']['full_qualification']
+    if j.get('VECTOR_checkpoint_resume_submission'):
+        r=j['VECTOR_checkpoint_resume_submission'];s=read(out/r['evidence'])
+        p=(out/r['evidence']).parent/'vector_resume_r01.execution.json.gz';raw=gzip.decompress(p.read_bytes());q=json.loads(raw)
+        assert hashlib.sha256(raw).hexdigest()==s['initial_execution_uncompressed_SHA256']
+        assert q['scheduler_job']==s['job']==r['job']=='92872' and q['driver_commit']==s['head']==r['source_driver_commit']
+        assert q['repair_design_repeated'] is False and q['full_qualification'] is False
+        assert q['original_SDC_clocks_loads_and_allowed_layers_preserved'] and not r['full_qualification']
     print('PASS_GATE_MATRIX_NATIVE_EVIDENCE',len(rows),'blocks;',native_files,'raw files; duplicate-LEF failure and real strict-merge outcomes preserved; NOT full qualification')

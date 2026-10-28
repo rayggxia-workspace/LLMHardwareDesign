@@ -238,6 +238,16 @@ def render(root,out):
     early=snapshot/'estimator_diagnosis/r02/execution.json.gz'
     result['VECTOR_filler_order_control']={'job':'92867','state':scheduler.get('92867',{}).get('State','UNKNOWN'),
       'receipt':read(early) if early.exists() else None,'qualification':False}
+    resumed=data/'runtime_submissions/vector_resume_r01.json'
+    if resumed.exists():
+        submit=read(resumed);initial=read(resumed.parent/'vector_resume_r01.execution.json.gz')
+        assert not initial['repair_design_repeated'] and not initial['full_qualification']
+        result['VECTOR_checkpoint_resume_submission']={'job':submit['job'],'source_driver_commit':submit['head'],
+          'state_at_observation':submit['state_at_observation'],'observed_UTC':submit['observed_UTC'],
+          'terminal_receipt':bool(initial.get('completed_utc')),'full_qualification':False,
+          'evidence':resumed.relative_to(out).as_posix()}
+        r=next(r for r in rows if r['case']=='vector');r['newer_attempt']={'previous_failure':r['newer_attempt'],
+          'latest_checkpoint_resume':result['VECTOR_checkpoint_resume_submission']}
     from plot_actual_common_placement import plot as plot_placement
     placement=plot_placement(root,snapshot,out);result['actual_six_resource_placement']=placement
     if placement and trial_receipt is None:result['actual_common_integration_trial']['status']='ACTUAL_RESOURCE_PLACEMENT_EXPORTED; PDN_OR_FOLLOWING_STAGE_RUNNING'
@@ -299,4 +309,5 @@ def render(root,out):
 <p>固定信号导体API首轮92853真实失败：BPin不接受FIXED状态枚举；改为安装工具支持的FIRM后，92854实际生成两处接入矩形及含FIXED metal10信号段的ODB/DEF。原失败不覆盖；API探针不代表共同底座实现或规则通过。</p>
 <p>六资源实际集成92855在独立common_integration/r01/C目录执行：复用既有完整构造图、真实资源和交错位置、256条×32μm共享导体拓扑/预算，读取匹配的完整详细OBS与实际研究模型；PG、合法接点、固定导体、底层路由及独立验证分别留回执。当前调度状态：'''+html.escape(result['actual_common_integration_trial']['state'])+'''；当前阶段：'''+html.escape(str(result['actual_common_integration_trial']['status']))+'''。不得将作业启动、视图读取、构造端口或固定线API当成实际共享系统完成。构造端口尚待真实模式降为固定几何，尚无两完整M11/M12功能或合格冻结。</p>
 '''+placement_image+'''
-<p>VECTOR 92861在无GRT、无增量路由、同进程无SPEF的隔离条件下仍EST-0104失败。实际VECTOR有411821个filler，SYS源没有。仅将remove_fillers移到estimate_parasitics之前，92867原生命令成功，实际14处换型、17个缓冲插入并保存检查点；单变量对照证明该排序足以排除本隔离流程中的错误，不能外推已解决所有工具状态问题。上游<a href="https://github.com/The-OpenROAD-Project/OpenROAD/blob/82552e4e9180fd5dd0c9cda58273029c83efb146/src/est/src/EstimateParasitics.cpp">固定源码参考</a>在增量修复入口拒绝待更新的寄生状态；安装二进制版本仍显示unknown、源树不存在，不能冒称此上游commit就是安装版本。原SDC和最终检查不放宽，新检查点尚未合法化、未重布线/提取，不是最终RC/STA通过。</p></section>'''
+<p>VECTOR 92861在无GRT、无增量路由、同进程无SPEF的隔离条件下仍EST-0104失败。实际VECTOR有411821个filler，SYS源没有。仅将remove_fillers移到estimate_parasitics之前，92867原生命令成功，实际14处换型、17个缓冲插入并保存检查点；单变量对照证明该排序足以排除本隔离流程中的错误，不能外推已解决所有工具状态问题。上游<a href="https://github.com/The-OpenROAD-Project/OpenROAD/blob/82552e4e9180fd5dd0c9cda58273029c83efb146/src/est/src/EstimateParasitics.cpp">固定源码参考</a>在增量修复入口拒绝待更新的寄生状态；安装二进制版本仍显示unknown、源树不存在，不能冒称此上游commit就是安装版本。原SDC和最终检查不放宽，新检查点尚未合法化、未重布线/提取，不是最终RC/STA通过。</p>
+<p>新92872已实际从该检查点接续setup/hold修复及独立合法化、原filler类型恢复、原层全量布线/RCX/STA/fresh native与全块信号/时钟/双PG检查；不重复已成功repair_design。<a href="data/runtime_submissions/vector_resume_r01.json">提交与冻结驱动</a>、<a href="data/runtime_submissions/vector_resume_r01.execution.json.gz">初始原生运行回执</a>单列：这是运行中的成本ECO，尚无上述后续门槛终态通过，不替换上表已完成源，也不把估算余量当最终提取结果。</p></section>'''

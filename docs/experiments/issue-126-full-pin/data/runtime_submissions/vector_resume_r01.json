@@ -1,0 +1,11 @@
+{
+  "head": "d03db1d79f14b6f75f92fd4b6a85098d3469f3bb",
+  "commands": "set -euo pipefail\ncd /public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027\ntest ! -e drivers/vector-resume-r01\ntest ! -e vector_resume/r01\nmkdir -p drivers/vector-resume-r01/code\ntar -xf tmp/vector-resume-r01-driver.tar --strip-components=3 -C drivers/vector-resume-r01/code\nprintf '%s\\n' d03db1d79f14b6f75f92fd4b6a85098d3469f3bb > drivers/vector-resume-r01/code/driver_commit.txt\nexport PINXY_DRIVER_DIR=$PWD/drivers/vector-resume-r01/code\nsbatch --parsable --export=ALL --output=$PWD/logs/vector-resume-r01-%j.log \"$PINXY_DRIVER_DIR/vector_resume_job.sh\" r01\n",
+  "receipt": "92872\n",
+  "job": "92872",
+  "observed_UTC": "2026-10-28T15:34:51.063748+00:00",
+  "state_at_observation": "RUNNING",
+  "not_terminal_or_qualification": true,
+  "initial_execution_uncompressed_SHA256": "f6f6e589b767f3c7a64b27ff2c1cbd7bf285fa36fae041368f334b5693765bc7",
+  "remote_directory": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/vector_resume/r01"
+}

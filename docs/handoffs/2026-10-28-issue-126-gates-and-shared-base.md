@@ -78,3 +78,12 @@ GEMM/MXU已通过的成本ECO和eco_views/r02不重做。ACT父夹具hold失败�
 VECTOR92861冷隔离无GRT/增量/SPEF仍EST-0104。实际411821个filler；仅把删除filler移到估算之前，92867（7c89d88ce212a3fcece0ca73b70ad491c9feda28）成功，14处换型/17缓冲，检查点位于estimator_diagnosis/r02/cell_repaired_NOT_LEGALIZED_OR_ROUTED.odb。不重复这轮电气修复；下一步从该实际检查点继续setup/hold修复、独立合法化/填充恢复、原层完整路由和全部原生/RCX/STA检查。上游固定commit82552e4的EST guard为参考推断，安装二进制仍unknown、源树不存在，不冒称版本匹配。
 
 恢复先核实92690/92691、92841、92855实际终态；不重提同一试验/覆盖驱动。gate-r06/r07保存模型/API/排序对照及放置原文和双SHA。完整目标active，未有合格冻结/两完整M11/M12模式/公平系统对照。
+
+
+## VECTOR从实际检查点接续：92872
+
+最新已发布f3588b927a4df00989f42f98847fbccc32a5dce7已读回，CI40715927581/40715927576均success；实际放置PNG/SVG的GitHub blob0edbaac14ef46a0e683d13eb01e47ad8039c47c0/ec4d4040fbcb06a72a224d793c91875b73e730fa与本机一致。管理/业务9849文件SHA、27图及最终图目视检查通过，完整物理资格仍未通过。
+
+新脚本run_vector_resume.py/vector_resume_job.sh已冻结为d03db1d79f14b6f75f92fd4b6a85098d3469f3bb，92872实际RUNNING，ROOT/vector_resume/r01，drivers/vector-resume-r01/code。直接读estimator_diagnosis/r02成功检查点，不重复14换型/17缓冲的repair_design；接续原约束setup/hold修复、独立进程合法化及原filler类型恢复，再按原M2–M10/clock M4–M10和准确原窗口全量GRT/DRT，RCX/完整现有STA/电气、双PG与fresh native/全块几何及原pin/PG/die核对。初始运行回执与SHA在data/runtime_submissions；作业启动不表示任何后续门槛通过。当前heuristic setup仍约−4.2ns，只是优化估算，不是最终提取余量。
+
+最近核实92690 RUNNING约7h30、92691依赖等待、92841 GEMM landing RUNNING约49min、92855六资源共同PDN RUNNING约28min、92872 RUNNING；不按耗时取消。共同原生放置已完成但PG生成尚未收齐终态，共享导体尚未写线；恢复第一步重新查五作业与execution/stages，先收齐再增量修复，保留所有源/失败/活动驱动。目标继续active，不标完整共同底座、两完整M11/M12模式或系统对照完成。
