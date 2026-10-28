@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-10-29 Asia/Shanghai：Issue126新SYSTEM恢复92968实际运行，复用同一已合法化检查点；770-edge适配92969在时钟native别名前置检查失败、未路由，已核实两个精确alias并保留gate-r15。GEMM当前矩阵改为已验证636diode+两换型源，旧等成本Aopt/C另列；共同底座未合格冻结、两完整系统/对照未完成。fa3d1a0两CI success，仍in_progress/Draft。
+
 2026-10-29 Asia/Shanghai新终态：GEMM92940保留636真实diode/原接口，两处同功能换型修复cap，fresh native0/所检连通/双PG/RCX，setup/hold 0.770752/0.039624ns、文字违例0；另计master面积+1.330μm²。第一diode版严格GDS92912仍失败37项天线，换型后92943独立运行。SYSTEM92925 GRT/DRT后因空句柄导出失败，最终fresh/RC/STA未执行。gate-r14及中文矩阵发布，[交接](handoffs/2026-10-29-issue-126-fixed-conductors-and-diode.md)。共同底座未合格冻结、两完整功能/系统对照未完成，继续in_progress/Draft。
 
 2026-10-29 Asia/Shanghai：92855已实际写入256条M10导体，92931独立核验原生FIXED/逐网/32×0.8μm几何通过，仍未冻结或证明两模式实际复用。GEMM636真实diode92910已完整布线/fresh native0/所检连通及RCX，但新cap2失败保留；92929全量原端点+636真实非驱动负载的数字图合同通过。新增实际导体PNG/SVG与256行CSV，原24767 pin/74301候选行保持。下一步修复INV_X1/XNOR2_X1实际cap违例，并收集GDS92912及其他活动作业；[新交接](handoffs/2026-10-29-issue-126-fixed-conductors-and-diode.md)。任务in_progress/Draft，完整系统未完成。

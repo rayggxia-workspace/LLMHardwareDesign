@@ -32,7 +32,8 @@ for event,item in ET.iterparse(spec['RDB'],events=['end']):
     for i in range(box.left//TILE,box.right//TILE+1):
         for j in range(box.bottom//TILE,box.top//TILE+1):index[layer,i,j].add(n)
     item.clear()
-assert len(markers)==spec['expected_findings']==1460
+assert isinstance(spec['expected_findings'],int) and spec['expected_findings']>0
+assert len(markers)==spec['expected_findings']
 reuse=spec.get('reuse_correlations_from')
 if reuse:
     previous=json.loads((Path(reuse)/'marker_net_correlations.json').read_text())
@@ -85,4 +86,11 @@ summary={'scope':'READ_ONLY_EXACT_GDS_POLYGON_TO_NATIVE_CONDUCTOR_CORRELATION_AN
   'original1460_findings_repaired':False,'functional_or_LVS_proof':False,'full_qualification':False,
   'klayout_version':pya.__version__,'not_claimed':['Full rules passed','Actual antenna repair completed','Uniform gate area model invented','Ambiguous findings assigned a guessed net'],
   'source_files_SHA256':{p:hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in [spec['RDB'],spec['native_conductors'],spec['standard_GDS'],spec['deck']]}}
+if spec.get('existing_real_diode_nets'):
+    path=Path(spec['existing_real_diode_nets']);existing=set(json.loads(path.read_text()))
+    assert len(existing)==636
+    summary['existing_real_diode_netlist_SHA256']=hashlib.sha256(path.read_bytes()).hexdigest()
+    summary['mapped_nets_already_with_real_diode']=sorted(set(unique)&existing)
+    summary['mapped_nets_without_existing_real_diode']=sorted(set(unique)-existing)
+    summary['protected_net_membership_not_GDS_LVS_or_antenna_protection_proof']=True
 (out/'correlation_summary.json').write_text(json.dumps(summary,indent=2)+'\n');print('ANTENNA_CORRELATION',summary['mapping_status_counts'],len(unique),inventory,flush=True)

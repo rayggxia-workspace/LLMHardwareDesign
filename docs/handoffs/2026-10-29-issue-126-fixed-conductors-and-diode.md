@@ -1,5 +1,7 @@
 # Issue126：实际256条固定导体、真实diode及新电气失败
 
+2026-10-29 Asia/Shanghai接续（gate-r15，优先）：fa3d1a02b2cf3fe4ac99b400d11afe2abde94527已上传，两个CI40750007210/40750007226均success，30图及actualFIXED PNG/SVG blob读回一致。实际新作业92968使用driver53a1b3ed8b535948f4a0e1b1bd8c4e2674c5ca58，ROOT/output_chain_resume/r02，按SHA原样复制r01已经合法化的ODB并check_placement，不重新选点或移动；修复selected_buffers句柄导出，增加routed_PENDING_CONTRACTS.odb避免再次丢失真实布线。92969/同driver在ROOT/upper_adaptation_trial/r01前置断言失败，未路由：两外部时钟native canonical alias与中间wire名不同。只对唯一TOP_IO clk输入组件接受opentpu__clk/llaccel__clk精确alias，非放宽通用连接检查；原失败保留。gate-r15由92970/driver47d592e16bf60976821ff170fbf143dc1bc00588不可覆盖采集。下一步发布此证据后以新r02运行适配层，并按匹配版本的真实GDS/原生几何关联剩余天线，不重复插diode。共同92855仍下层GRT，未合格冻结/两完整系统；92943原deck仍运行。
+
 ## 2026-10-29 增量终态（gate-r14，优先于下方历史）
 
 恢复核验PR129仍open/draft，在线head ddf59eee8b004bd871b68942cb3fecaa96f8a10c；本人账号huangpingyang04-lgtm/id239819021。共同资源选择不再询问，整个目标继续active。

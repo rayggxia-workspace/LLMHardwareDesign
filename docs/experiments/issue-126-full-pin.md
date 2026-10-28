@@ -1,5 +1,7 @@
 # 全功能分块、全块二维 pin 与实际接入（Issue126）
 
+gate-r15接续：SYSTEM92968复用原合法化检查点运行；770-edge适配92969在两个时钟canonical别名检查失败，未执行路由。精确alias修订与原失败分别保留，不改变连接语义。主矩阵反映最新GEMM真实diode+两换型源，旧等成本控制单列；原30图和逐pin数据保持，完整系统尚未完成。
+
 任务：[Issue126](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/126)，进行中。
 起点：[PR120](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/120)，已重新核实 open、未合并，head `4f91e098127b4320ce50dcb29165a7af1fca559c`。
 本分支在其上增量提交，不合并或覆盖旧成果。
