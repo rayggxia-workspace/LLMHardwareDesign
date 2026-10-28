@@ -12,6 +12,7 @@ JOBS+=['93028','93030','93031']
 JOBS+=['93038','93040']
 JOBS+=['93041','93043','93048','93049']
 JOBS+=['93051']
+JOBS+=['93060','93061']
 
 
 def sha(path):
@@ -67,7 +68,8 @@ def collect(name):
       'pin_escape_route/r0[12]/*/*','logs/mxu-escape-r0[12]-*.log',
       'escape_fixtures/gemm658-r0[12]/*/*','logs/gemm658-parent-r0[12]-*.log',
       'vector_clone_probe/r01/*','logs/vector-clone-probe-r01-*.log',
-      'vector_clone_crash/r0[12]/*','logs/vector-crash-r0[12]-*.log']
+      'vector_clone_crash/r0[12]/*','logs/vector-crash-r0[12]-*.log',
+      'pin_escape_views/r01/*/*','logs/mxu-pin-escape-views-r01-*.log']
     stable_intermediates={}
     incremental=ROOT/'antenna_incremental_eco/r01/gemm-C/execution.json'
     if incremental.exists() and json.loads(incremental.read_text()).get('native_returncodes',{}).get('implementation')==0:
@@ -92,6 +94,7 @@ def collect(name):
         if 'antenna_rules/r01' in str(p) and p.suffix in ['.lef','.lydrc'] and a.st_size<=8*1024*1024:keep=True
         if 'fixed_wire_api' in str(p) and p.suffix=='.def' and a.st_size<=1024*1024:keep=True
         if 'actual_path_audit/' in str(p) and p.name=='fresh_DRC_target_net.tsv.gz' and a.st_size<=8*1024*1024:keep=True
+        if 'pin_escape_views/' in str(p) and p.name=='target_pin_access.tsv.gz' and a.st_size<=8*1024*1024:keep=True
         omit_paths='paths.json' in p.name and 'actual_path_audit/' not in str(p)
         keep=keep and not omit_paths and not any(s in p.name for s in ['.cells.','.pdn.','whole_access.tsv','selected_access.tsv'])
         if not keep:
