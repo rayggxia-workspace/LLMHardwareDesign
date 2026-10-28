@@ -107,9 +107,9 @@ def screen_pads(out,preparation,inputs):
     topnames=sorted({c.split(':')[0]+'__'+q['pin'] for c,ts in components.items() for q in ts if q['kind']=='TOP_IO'})
     boundary=[];pitch=1.12;inset=16.8
     for y in [inset,height-inset]:
-        for i in range(int((width-2*inset)/pitch)):boundary.append((inset+i*pitch,y,'metal6'))
+        for i in range(int((width-2*inset)/pitch)):boundary.append((.07+round((inset+i*pitch-.07)/.28)*.28,y,'metal6'))
     for x in [inset,width-inset]:
-        for i in range(int((height-2*inset)/pitch)):boundary.append((x,inset+i*pitch,'metal5'))
+        for i in range(int((height-2*inset)/pitch)):boundary.append((x,.07+round((inset+i*pitch-.07)/.28)*.28,'metal5'))
     assert len(boundary)>=len(topnames)
     topxy={}
     top_component={c.split(':')[0]+'__'+q['pin']:ts for c,ts in components.items() for q in ts if q['kind']=='TOP_IO'}
@@ -199,7 +199,7 @@ def run(scheme,revision):
           'initialize_floorplan -die_area {'+' '.join(map(str,plan['frame_um']))+'} -core_area {10 10 '+str(plan['frame_um'][2]-10)+' '+str(plan['frame_um'][3]-10)+'} -site FreePDK45_38x28_10R_NP_162NW_34O','make_tracks']
         for m in plan['instances']:lines+=['place_macro -macro_name '+tcl(m['instance'])+' -location {'+str(m['x_um'])+' '+str(m['y_um'])+'} -orientation R0 -exact']
         lines+=['cut_rows -halo_width_x 2 -halo_width_y 2',
-          'set b [ord::get_db_block];set row [lindex [$b getRows] 0];lassign [$row getOrigin] ix iy;set sw [[$row getSite] getWidth];foreach i [$b getInsts] {if {[[$i getMaster] getType] eq "BLOCK"} {continue};$i setOrient R0;$i setLocation $ix $iy;$i setPlacementStatus FIRM;set ix [expr {$ix+int(ceil(double([[$i getMaster] getWidth])/$sw))*$sw+4*$sw}]}',
+          'set b [ord::get_db_block];set row [lindex [$b getRows] 0];lassign [$row getOrigin] ix iy;set sw [[$row getSite] getWidth];foreach i [$b getInsts] {if {[[$i getMaster] getType] eq "BLOCK"} {continue};$i setOrient [$row getOrient];$i setLocation $ix $iy;$i setPlacementStatus FIRM;set ix [expr {$ix+int(ceil(double([[$i getMaster] getWidth])/$sw))*$sw+4*$sw}]}',
           'if {![stage placement {check_placement -verbose;parent_contract '+tcl(out/'placed')+'}]} {close $stages;exit 1}',
           'add_global_connection -net VDD -inst_pattern {.*} -pin_pattern {^VDD$} -power',
           'add_global_connection -net VSS -inst_pattern {.*} -pin_pattern {^VSS$} -ground','global_connect',
