@@ -6,6 +6,27 @@
 
 直接查看：[中文交互 HTML](issue-126-full-pin/report.html)。
 
+## 2026-10-28 接续：真实接入与六块共同底座（进行中）
+
+用户明确确认六块资源并集、交错布局，并让两功能共享实际固定预连；本轮包含研究M11/M12建模。下方旧阶段的“不扩展M11/M12”和优先边界结论不替代本轮范围；保留内部方案继续系统比较。
+
+- ACT新740-pin接入窗口叶视图：独立native0、4819网/15659端点连通，setup1.255988ns/hold0.031533ns、违规行0。
+- GEMM新3021-pin窗口视图：独立native0、268637网连通，setup0.773657ns/hold0.036870ns，但3项最大电容失败。
+- MXU新1931-pin窗口视图：独立native0、191438网连通，setup0.246862ns/hold0.040715ns，但1项最大电容失败。
+- VECTOR新1022-pin窗口视图：独立native0、375495网连通，setup−4.195674ns/hold0.036847ns，118项时序/电气违规行。独立成本化ECO正在执行。
+- 上述四块实际9031个信号pin均与完整增量CSV逐项回读匹配；原功能/层/网络/方向/尺寸和单元/PG/外框保持。新窗口法是完整信号重布线，不能混入此前局部rip的纯XY线长收益。
+- 两个SYSTEM的新完整窗口视图仍在执行；llSYS PG修订前26pin/44对直接接触保留，修订后实际13507pin回读、PG指纹相同且直接接触0，不等于完整布通。
+
+ACT256-bit父层实际接入：Aopt和新C均已达到当前native/所检几何/双PG门槛。C的r_data[195]仅修改新增父层M10中间接点，原ACT M5/M6不变；92719独立native0、860网/1720端点连通、PG逐字节保持。新增[真实修复PNG](issue-126-full-pin/assets/act_parent_landing_actual.png)/[SVG](issue-126-full-pin/assets/act_parent_landing_actual.svg)已打开核验；旧1项/后续2项失败都保留。此夹具不等于完整共同底座/系统通过，后续RC/STA采用相同明确研究I/O约束和2/10/50fF负载敏感性，结果单独记录。
+
+该RC/STA已于92732实际执行：原时钟/SDC相同，明确新增研究I/O策略0.2T/0.05T max/min delay、BUF_X4驱动和上述负载。Aopt/C均有约−0.074ns hold失败；10fF时setup分别1.424290/1.353438ns、hold−0.074562/−0.073476ns，C另有4条VIOLATED标记。两者均保留604个零线长接触网的寄生未标注提示，源ODB保持不变，尚无完整RC/STA资格。标记行数不包含所有setup/hold报告行，不能当完整违规总数。先前92726的工具命令兼容性失败也保留，未假写已执行提取。
+
+共同构造网表已原生链接：34,954端点与17,686固定逻辑连通分量逐项双射，全部原24,767信号pin及原层保留。两模式逐bit图计划复用同一组256资源，分别770条适配图边；37个常量输出驱动各自独立，另有1个闲置时钟驱动。这是逻辑/原生链接检查，未实现共同布局/预连/时钟/PG、未冻结M1–M10、未仅通过M11/M12实现两套功能。内部施工端口还须在冻结前降为真实保留金属，不能用此网表作已完成底座。
+
+研究M11/M12已实际完成2网/4端点小例与独立native0/几何检查，规则/层高/RC由M9/M10外推，明确研究假设，不具制造签核资格。新增[实际小例PNG](issue-126-full-pin/assets/research_upper_actual.png)、[llSYS PG修订PNG](issue-126-full-pin/assets/llsys_pg_revision.png)、[共同布局proposed PNG](issue-126-full-pin/assets/common_base_proposed.png)，各有SVG；报告连同原图共24幅可查看图像。
+
+旧openTPU父层终态native11失败，旧llaccel父层GRT拥塞失败，92476/92477后续RC/STA未执行。缺SRAM GDS、天线/规则覆盖、模型minimum_period/外部资格及所有STA失败不豁免。详见[本轮交接](../handoffs/2026-10-28-issue-126-common-base-continuation.md)、HTML增量阶段表和原始SHA索引。PR129保持Draft、Issue126保持in_progress。
+
 ## 2026-10-28：真实叶模型与后续父层分析
 
 已导出20份与真实叶块版本匹配的研究时序模型：六块A/C共12份，以及ACT/MXU的原XY重布线、Aopt、B和GEMM原XY/Aopt共8份。所有原始信号bit及方向核对通过，匹配SPEF重读的最差setup/hold与原试验均一致；文件、源ODB/SPEF/SDC/Lib SHA、完整端口表和实际失败探针均入库。llaccel SYSTEM C模型只对应8pin局部，不代表已失败的13184pin全C。

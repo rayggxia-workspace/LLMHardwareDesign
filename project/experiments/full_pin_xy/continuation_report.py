@@ -198,7 +198,7 @@ def render(root,out):
         stages.append({'block':expand.TITLES[c],'all_pins':COUNTS[c],'selected_internal':j.get('selected_pin_count'),'job':j.get('scheduler_job'),
                        'trial_terminal':bool(j.get('finished_utc')),'route_returncode':j.get('returncode'),'independent_native_DRC':q.get('independent_DRC_count'),
                        'whole_geometry':q.get('whole_access',{}).get('pass'),'setup_ns':slack('setup'),'hold_ns':slack('hold'),'electrical_timing_violator_rows':viol,
-                       'full_qualification':False,'source_receipt':str((d/'execution.json.gz').relative_to(snapshot)) if (d/'execution.json.gz').exists() else None})
+                       'full_qualification':False,'source_receipt':(d/'execution.json.gz').relative_to(snapshot).as_posix() if (d/'execution.json.gz').exists() else None})
     summary={'scope':'CONTINUATION_STAGE_RECEIPTS_NOT_FULL_SYSTEM_QUALIFICATION','snapshot':snapshot.name,'blocks':stages,
              'complete_original_pin_count':24767,'candidate_rows_preserved':74301,'common_base_frozen':False,
              'M11_M12_complete_functions_implemented':False,'system_comparison_complete':False,
@@ -221,7 +221,7 @@ def render(root,out):
     for area in ['escape_fixtures','escape_pg_repair','escape_spacing_reroute']:
         for p in sorted((snapshot/area).glob('*/*/execution.json.gz')):
             j=read(p);g=j.get('whole_signal_geometry',{})
-            access_rows.append({'fixture':str(p.parent.relative_to(snapshot)), 'job':j.get('scheduler_job'),
+            access_rows.append({'fixture':p.parent.relative_to(snapshot).as_posix(), 'job':j.get('scheduler_job'),
                                 'native_return':j.get('native_route_returncode',j.get('native_repair_returncode')),
                                 'fresh_DRC':j.get('independent_DRC_count',j.get('fresh_DRC_count')),
                                 'whole_geometry':g.get('pass'),'status':j.get('status','待验证')})
@@ -230,6 +230,7 @@ def render(root,out):
         section=section.replace('<h3>研究M11/M12', '<h4>实际接入夹具逐轮回执（不等于系统实现）</h4><div class="scroll">'+rows+'</div><p>ACT0.8μm条带避让轮原PG间距项消失，但出现2项信号间距错误；全部PG指纹和860网连通通过仍不能改写DRC失败。GEMM旧内部C在gemm_a_rdata[142]报DRT-0073无接入点，新完整窗口视图另行验证。</p><h3>研究M11/M12')
     stamp=read(snapshot/'snapshot.json')['created_utc']
     section=section.replace('<h3>六块完整内部接入窗口试验</h3>','<p>本节原始物理回执快照UTC：'+html.escape(stamp)+'；运行中的作业不以文件存在或Slurm成功作为通过。</p><h3>六块完整内部接入窗口试验</h3>')
+    section=section.replace('空项为待验证，不是0。','空项为待验证，不是0。违规行数仅计VIOLATED文字标记，不是完整违规总数；setup/hold及原始全部检查另列。')
     section=section.replace('<h3>llaccel SYSTEM：','<p>下方原A/B/C交互查询保留原候选；本轮增量C坐标另按原pin名称逐项对应：</p><ul>'+''.join(pin_links)+'</ul><h3>llaccel SYSTEM：')
     topology=root/'common-topology-r02/topology_proof.json'
     if topology.exists():
@@ -240,4 +241,14 @@ def render(root,out):
         section=section.replace('尚未原生链接或布线；此为图证明','原生构造链接已实际执行：34,954端点/17,686连通分量逐项双射、原信号层不变；节点位置尚未实现、没有共同布线或冻结。构造链接回执见本节native索引；此为图证明')
     if landing_figure:
         section=section.replace('<h3>研究M11/M12','<h3>ACT父层修复已通过当前几何门槛</h3><img loading="lazy" src="assets/act_parent_landing_actual.png" alt="ACT实际父层接点修复前后"><p><a href="assets/act_parent_landing_actual.svg">SVG</a>。92719保留原叶M5/M6、全部PG和其他859个父层pin矩形，仅修订新增M10接点r_data[195]，独立native0、双PG及860网/1720端点所检几何连通通过。原1项/后续2项失败均保留，不通过删除PG/OBS或降低规则修复。</p><h3>研究M11/M12')
+    rc_rows=[]
+    for p in sorted((snapshot/'escape_rc_sta/r02').glob('*/execution.json.gz')):
+        j=read(p)
+        for load,v in j.get('observations',{}).items():
+            rc_rows.append({'ACT方案':j['variant'],'输出负载fF':int(load),'native返回':j.get('native_returncode'),
+                            'setup ns':v['setup_ns'],'hold ns':v['hold_ns'],'VIOLATED标记行':v['violation_rows'],
+                            '源物理文件保持':j['all_source_files_unchanged'],'完整资格':False})
+    if rc_rows:
+        rc_table=pd.DataFrame(rc_rows).to_html(index=False,border=0)
+        section=section.replace('<h3>研究M11/M12','<h3>ACT真实接入后的RC/STA：执行完成，仍实际失败</h3><div class="scroll">'+rc_table+'</div><p>92732使用精确匹配的Aopt/r04 C叶模型及同一原始SDC/clock，新增相同研究I/O条件：max/min延时0.2T/0.05T、BUF_X4驱动、clock transition0.05ns、输出2/10/50fF。native report_units确认1fF；这不是原叶块或完整系统的原始边界条件，不混入纯XY收益。两方案hold约−0.074ns，均未通过。VIOLATED标记行仅统计该文字标记，不包含所有setup/hold报告行，不是完整违规总数。604个物理同层零线长接触网在RCX报告为未标注driver，原始覆盖提示保留；没有填虚构RC或理想化网络来清除提示。源物理ODB逐字节不变，没有保存RCX后ODB为母本。首次92726因当前工具无remove_from_collection命令而未完成，原失败保留，使用原生Tcl列表修复后重新执行。</p><h3>研究M11/M12')
     return section

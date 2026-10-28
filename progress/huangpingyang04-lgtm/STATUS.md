@@ -42,3 +42,11 @@
 ## 2026-10-28：Issue126继续真实接入与共同底座
 
 用户确认六块资源并集和共享实际固定预连。本轮已取得ACT访问窗口版全重布线native0/4819网连通、真实研究12层小例及独立检查；旧两父层分别11项DRC/GRT拥塞失败，LL全C新PG修订仍在完整布线。共同M1–M10尚未实现/冻结，两完整M11/M12功能未实现，不以候选/作业提交替代。详见[新接续交接](../../docs/handoffs/2026-10-28-issue-126-common-base-continuation.md)。PR129持续草稿，Issue126进行中。
+## 2026-10-28 17时后（Asia/Shanghai）：Issue126持续执行
+
+- [Issue126](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/126) / [Draft PR129](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/129)，in_progress。接受用户六块资源并集、真实共享固定导体的选择；不合并PR120/129。
+- 新ACT/GEMM/MXU/VECTOR完整内部窗口叶视图独立native0/所检全块连通通过，9031个实际signal pin与完整增量表一致；GEMM3/MXU1最大电容失败、VECTOR setup−4.195674ns/118违规仍保留，两个SYSTEM还在执行。
+- ACT父层256bit接入92719通过native0、860网/双PG；仅新增M10中间点r_data195修复，原叶M5/M6、其他859父pin和PG不变。四组新增PNG/SVG及旧图共24幅已打开/浏览器核验。原始失败和旧物理发布快照保留。
+- 共同构造网表原生链接34954端点/17686分量双射通过，38个常量/idle驱动单列；没有共同M1–M10实际布局预连/冻结，也没有两完整M11/M12功能或系统收益结论。
+- 继续收集SYSTEM、GEMM/MXU父接入、电气ECO、VECTOR时序ECO和ACT夹具RC/STA。恢复入口及本人作业ID见[接续交接](../../docs/handoffs/2026-10-28-issue-126-common-base-continuation.md)。SRAM GDS/完整规则/模型资格仍缺，登记PR5 pending、看板unverified/同步pending、审查人待指定。
+

@@ -1,0 +1,146 @@
+{
+  "case": "opentpu_aux",
+  "plan": "C",
+  "stage_scope": "8 selected pins; all remaining pins stay original; pure XY, no buffering/resizing",
+  "source_odb": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-opentpu-4c-01/flow/results/nangate45/hpy_opentpu_aux/base/5_route_connected.odb",
+  "source_sha256": "5f007a35c034f20d320bf719e7f0a3c4c106efa9ed8451a8cea882642ce20efb",
+  "source_config": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-opentpu-4c-01/config.mk",
+  "source_sdc": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-opentpu-4c-01/flow/results/nangate45/hpy_opentpu_aux/base/5_1_grt.sdc",
+  "libs": [
+    "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
+    "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/macros/fakeram45_1r1w_1024x128.lib",
+    "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/macros/fakeram45_1r1w_128x128.lib",
+    "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/macros/fakeram45_1r1w_4096x32.lib",
+    "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/macros/fakeram45_1r1w_512x31.lib"
+  ],
+  "input_sha256": {
+    "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-opentpu-4c-01/flow/results/nangate45/hpy_opentpu_aux/base/5_route_connected.odb": "5f007a35c034f20d320bf719e7f0a3c4c106efa9ed8451a8cea882642ce20efb",
+    "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-opentpu-4c-01/flow/results/nangate45/hpy_opentpu_aux/base/5_1_grt.sdc": "94d98ba4b55e26ea2c3cbe4d434c7dca72b347054b914070a8c0a295962f4e68",
+    "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-opentpu-4c-01/config.mk": "7689a4a25a524cdcd64232fa3f2d4f9d4ab080bf63e3b6e8f71eafe1a3e91e64",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/inputs/trial-inputs-r04/opentpu_aux-C.tcl": "0197a9a5967a3a1347452221e4df16a39666e8b0176b63cfe94758eefa0a3f06",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/5107f46/code/physical_trial.tcl": "6a6c6c5593eaa5e98e73e8666ff7c536d9fc628960f393ded29dcc85cc86ca5c",
+    "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/macros/fakeram45_1r1w_1024x128.lib": "18965eeca81cc6e0e23c7bf72e54b8849906fa9cf27e38ea9e6e9196c39d454d",
+    "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/macros/fakeram45_1r1w_128x128.lib": "7c13f49d23bdd16c0c6fdc39362592e41c4d4284e316bcf5fc4ebf60bb5eaff8",
+    "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/macros/fakeram45_1r1w_4096x32.lib": "a5c360682df97351f24c9af2953e36c4d2014f91ae5dd528131dbd54bd068f2e",
+    "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/macros/fakeram45_1r1w_512x31.lib": "f9b3a3cd1e7f6b0a3b54a5f96612fa5820501687b129b99eb45b5a638706efcd"
+  },
+  "scheduler_job": "92284",
+  "allocated_cpus": "8",
+  "openroad_threads": 4,
+  "started_utc": "2026-10-27T09:22:08.927288+00:00",
+  "driver_commit": "5107f46c22ab01a8a29b1abea598d0919b3b271f",
+  "parent_handoff_target_layer": "UNKNOWN; this experiment cannot qualify parent access",
+  "command": [
+    "singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro",
+    "--bind",
+    "/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro",
+    "--home",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/home",
+    "--pwd",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/r03/opentpu_aux-C",
+    "--env",
+    "PINXY_OUTPUT=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/r03/opentpu_aux-C,PINXY_ODB=/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-opentpu-4c-01/flow/results/nangate45/hpy_opentpu_aux/base/5_route_connected.odb,PINXY_SDC=/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-opentpu-4c-01/flow/results/nangate45/hpy_opentpu_aux/base/5_1_grt.sdc,PINXY_LIBS_TCL=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/r03/opentpu_aux-C/libs.tcl,PINXY_RELOCATIONS=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/inputs/trial-inputs-r04/opentpu_aux-C.tcl,PINXY_PLAN=C,PINXY_TOP_LAYER=8,PINXY_DRIVER=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/5107f46/code,PINXY_ACCESS_OUT=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/r03/opentpu_aux-C/access.tsv,OMP_NUM_THREADS=4",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad",
+    "-threads",
+    "4",
+    "-no_init",
+    "-exit",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/5107f46/code/physical_trial.tcl"
+  ],
+  "returncode": 1,
+  "finished_utc": "2026-10-27T09:23:03.304953+00:00",
+  "source_unchanged": true,
+  "fingerprint_checks": {
+    "cells": {
+      "before_sha256": "a93ac0325b8189e6b29477a3294a076f7e1a54109a6ba8eeaf981bbf92f9d021",
+      "after_sha256": null,
+      "exact_equal": false
+    },
+    "pdn": {
+      "before_sha256": "78e42e8df6538359e6890f9c78a1e01254b63efd475ae2663e0f3ece1501a177",
+      "after_sha256": null,
+      "exact_equal": false
+    },
+    "die": {
+      "before_sha256": "21b25befa017eeec389338d4f7460d67eb7c2a1e765ae60a07354cac64e012aa",
+      "after_sha256": null,
+      "exact_equal": false
+    }
+  },
+  "outputs": {
+    "route.guide": {
+      "bytes": 149754648,
+      "sha256": "f2f481327b311ef292171fa3f602b8703efd5f370cdb9a5ddca0d83a37944678"
+    },
+    "global.odb": {
+      "bytes": 580979319,
+      "sha256": "46f0fbde2f9ca0e3cc6fbfdf31d51a195f8d3fff6232ca3f8289e857052ccdf2"
+    },
+    "libs.tcl": {
+      "bytes": 650,
+      "sha256": "321fbdbef4c31734c4ea46896c04c180d625cfa4b964566def22c74e3f79be20"
+    },
+    "moved.pdn.tsv": {
+      "bytes": 8001337,
+      "sha256": "78e42e8df6538359e6890f9c78a1e01254b63efd475ae2663e0f3ece1501a177"
+    },
+    "moved.pins.tsv": {
+      "bytes": 154748,
+      "sha256": "06b9d879e428164d798311edaeffef35c7d1bfc016c5a85cf8e5e73dac7c9124"
+    },
+    "openroad.log": {
+      "bytes": 1370,
+      "sha256": "fbbb0dc9ca106bb524f7a4b3653f6254f0746e5c223547573f0bd42ab236baed"
+    },
+    "before.die.tsv": {
+      "bytes": 20,
+      "sha256": "21b25befa017eeec389338d4f7460d67eb7c2a1e765ae60a07354cac64e012aa"
+    },
+    "ripped.odb": {
+      "bytes": 580979805,
+      "sha256": "955adf0a0d02aae4a8d3ab96a07400725c2bffa41272d41fc90f10cbe115ccd5"
+    },
+    "stages.tsv": {
+      "bytes": 136,
+      "sha256": "665e4c3b941fd90e0bf739b9a8ee5395c164d3dbbef7bccd6ff358da915d4877"
+    },
+    "before.pdn.tsv": {
+      "bytes": 8001337,
+      "sha256": "78e42e8df6538359e6890f9c78a1e01254b63efd475ae2663e0f3ece1501a177"
+    },
+    "moved.odb": {
+      "bytes": 580982059,
+      "sha256": "23d3063e5dcb4314538188bcf7b946e9dc972e1e8f143b7c4b63a5509ab57b91"
+    },
+    "before.pins.tsv": {
+      "bytes": 154748,
+      "sha256": "d0625437558cb36f41811d8c8d71513575ee9e2fee0d031eeb5dc4ef63f40fe5"
+    },
+    "before.cells.tsv": {
+      "bytes": 101086606,
+      "sha256": "a93ac0325b8189e6b29477a3294a076f7e1a54109a6ba8eeaf981bbf92f9d021"
+    },
+    "failed-route.odb": {
+      "bytes": 580979319,
+      "sha256": "46f0fbde2f9ca0e3cc6fbfdf31d51a195f8d3fff6232ca3f8289e857052ccdf2"
+    },
+    "moved.die.tsv": {
+      "bytes": 20,
+      "sha256": "21b25befa017eeec389338d4f7460d67eb7c2a1e765ae60a07354cac64e012aa"
+    },
+    "detailed_route.error.txt": {
+      "bytes": 403,
+      "sha256": "39bc3383a5e700e1fc2ff607447e971ed70000c83e78835218a0ed6e61e398e6"
+    },
+    "moved.cells.tsv": {
+      "bytes": 101086606,
+      "sha256": "a93ac0325b8189e6b29477a3294a076f7e1a54109a6ba8eeaf981bbf92f9d021"
+    }
+  },
+  "status": "ACTUAL_TRIAL_FAILED"
+}

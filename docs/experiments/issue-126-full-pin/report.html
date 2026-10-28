@@ -286,7 +286,247 @@
   </tbody>
 </table></div></div><p>计数为展开后的逐bit驱动-接收端关系，可能含同一信号扇出，不能相加当独立网络或pin数。数字net ID仅在相应模块域内解释；常量按值记录，不把所有0字面量并作真实共同网络。</p>
 <p><a href="data/interfaces.csv.gz">完整接口组/方向/位宽</a> · <a href="data/connections.csv.gz">逐bit逻辑连接</a> · <a href="data/connections_physical_endpoints.csv.gz">连接两端原pin层</a> · <a href="data/pin_bindings.csv.gz">24,767条物理pin与逻辑接口绑定</a> · <a href="data/partition_summary.json.gz">配置/层次摘要</a></p></section>
-<section class="card" id="coverage"><h2>全部信号pin覆盖与几何方案</h2><div class="scroll"><div class="scroll"><table class="dataframe stats">
+<section class="card" id="continuation"><h2>2026-10-28 接续：真实接入与共同底座（进行中）</h2>
+<div class="warn"><b>当前范围与状态：</b>用户已确认六块资源并集、交错布局、两功能共享实际固定预连导体；本轮包含研究M11/M12建模。下方旧报告“不扩展M11/M12”仅描述此前阶段。本节不宣布共同M1–M10实现/冻结、两套M11/M12功能或完整系统对照完成。</div>
+<p>本节原始物理回执快照UTC：2026-10-28T09:43:27.682606+00:00；运行中的作业不以文件存在或Slurm成功作为通过。</p><h3>六块完整内部接入窗口试验</h3><div class="scroll"><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>block</th>
+      <th>all_pins</th>
+      <th>selected_internal</th>
+      <th>job</th>
+      <th>trial_terminal</th>
+      <th>route_returncode</th>
+      <th>independent_native_DRC</th>
+      <th>whole_geometry</th>
+      <th>setup_ns</th>
+      <th>hold_ns</th>
+      <th>electrical_timing_violator_rows</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>openTPU ACT</td>
+      <td>860</td>
+      <td>740</td>
+      <td>92666</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>True</td>
+      <td>1.255988</td>
+      <td>0.031533</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>openTPU MXU</td>
+      <td>2172</td>
+      <td>1931</td>
+      <td>92684</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>True</td>
+      <td>0.246862</td>
+      <td>0.040715</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <td>openTPU SYSTEM</td>
+      <td>2229</td>
+      <td>1768</td>
+      <td>92688</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>待验证</td>
+      <td>待验证</td>
+      <td>-1.779887</td>
+      <td>-0.38923</td>
+      <td>2016.0</td>
+    </tr>
+    <tr>
+      <td>llaccel GEMM</td>
+      <td>3753</td>
+      <td>3021</td>
+      <td>92682</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>True</td>
+      <td>0.773657</td>
+      <td>0.03687</td>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <td>llaccel VECTOR</td>
+      <td>2246</td>
+      <td>1022</td>
+      <td>92686</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>True</td>
+      <td>-4.195674</td>
+      <td>0.036847</td>
+      <td>118.0</td>
+    </tr>
+    <tr>
+      <td>llaccel SYSTEM</td>
+      <td>13507</td>
+      <td>13184</td>
+      <td>92690</td>
+      <td>False</td>
+      <td>待验证</td>
+      <td>待验证</td>
+      <td>待验证</td>
+      <td>待验证</td>
+      <td>待验证</td>
+      <td>待验证</td>
+    </tr>
+  </tbody>
+</table></div><p>空项为待验证，不是0。违规行数仅计VIOLATED文字标记，不是完整违规总数；setup/hold及原始全部检查另列。候选覆盖24,767个原始pin/74,301行A/B/C未改；本轮另提供六块完整增量pin表，保留层/网络/方向/矩形及常量。真实相邻层轨道和临时接入窗口指导实际重布线，移除的只有新建临时约束，原OBS、单元、允许层集合及PDN保留。该方法重布全部信号/时钟，不能混入旧局部rip同组对照的纯XY收益。ACT740个内部pin的新叶视图独立native0/4819网连通通过，当前源约束setup1.255988ns、hold0.031533ns、违规行0；仍有SRAM/GDS/规则/边界模型资格缺项。</p>
+<p><a href="data/continuation/summary.json">本轮阶段摘要</a> · <a href="data/continuation/native/milestone-r05/snapshot.json">原始回执、远程物理产物与SHA索引</a>。VECTOR旧C在原3ns约束的最差路径是块内寄存器到寄存器，精确RC/SDC重放仍约−4.17ns；openSYS也有setup/hold/电气失败。没有放宽时钟或删检查，尚未证明新窗口试验修复这些失败。</p>
+<p>下方原A/B/C交互查询保留原候选；本轮增量C坐标另按原pin名称逐项对应：</p><ul><li><a href="data/continuation/inputs/act/act_C_access_r03_all_pins.csv.gz">openTPU ACT：860个完整增量pin坐标</a></li><li><a href="data/continuation/inputs/mxu/mxu_C_access_r03_all_pins.csv.gz">openTPU MXU：2172个完整增量pin坐标</a></li><li><a href="data/continuation/inputs/opentpu_aux/opentpu_aux_C_access_r03_all_pins.csv.gz">openTPU SYSTEM：2229个完整增量pin坐标</a></li><li><a href="data/continuation/inputs/gemm/gemm_C_access_r03_all_pins.csv.gz">llaccel GEMM：3753个完整增量pin坐标</a></li><li><a href="data/continuation/inputs/vector/vector_C_access_r03_all_pins.csv.gz">llaccel VECTOR：2246个完整增量pin坐标</a></li><li><a href="data/continuation/inputs/llaccel_aux/llaccel_aux_C_access_r03_all_pins.csv.gz">llaccel SYSTEM：13507个完整增量pin坐标</a></li></ul><h3>llaccel SYSTEM：先消除实际固定PG直接接触</h3><img loading="lazy" src="assets/llsys_pg_revision.png" alt="llSYS PG直接接触局部修订"><p><a href="assets/llsys_pg_revision.svg">SVG</a>。原C的26pin/44接触对及失败检查点保留。PG修订r03经实际place_pin回读全部13,507pin匹配，PG指纹相同、同层直接接触0；13,184个pin仍移动。92648/92649与后续完整窗口重布线是不同试验，状态分别读取；直接接触0不代表DRC/STA通过。</p>
+<h3>ACT：原层到父层M10的真实接入</h3><p>原宏860个M5/M6 pin未升级金属层；256个read bus bit经实际布线接入新的父层M10中间接点，其余604个父端口与原宏端口真实同层重合，单独记录为零线长。89.6μm平移保持上层轨道相位，Aopt夹具native0、双PG和860网/1720端点连通通过。C完整内部窗口叶视图通过，但父夹具r04仍有1项r_data[195]与VDD的M10间距错误；via限定修复拒绝修改电源条带，保留失败。保留PG的真实条带避让重布线结果见本轮原始回执；没有将夹具通过写成系统通过。</p>
+<h4>实际接入夹具逐轮回执（不等于系统实现）</h4><div class="scroll"><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>fixture</th>
+      <th>job</th>
+      <th>native_return</th>
+      <th>fresh_DRC</th>
+      <th>whole_geometry</th>
+      <th>status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>escape_fixtures/gemm-r01/gemm-C</td>
+      <td>92700</td>
+      <td>1</td>
+      <td>待验证</td>
+      <td>待验证</td>
+      <td>ACTUAL_ESCAPE_FIXTURE_FAILED_OR_INCOMPLETE</td>
+    </tr>
+    <tr>
+      <td>escape_fixtures/r03/act-Aopt</td>
+      <td>92672</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>True</td>
+      <td>FIXED_LAYER_ESCAPE_ACCESS_GATES_PASSED_NOT_SYSTEM_QUALIFIED</td>
+    </tr>
+    <tr>
+      <td>escape_fixtures/r04/act-C</td>
+      <td>92677</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>True</td>
+      <td>ACTUAL_ESCAPE_FIXTURE_FAILED_OR_INCOMPLETE</td>
+    </tr>
+    <tr>
+      <td>escape_pg_repair/r01/act-C</td>
+      <td>92695</td>
+      <td>1</td>
+      <td>待验证</td>
+      <td>待验证</td>
+      <td>PARENT_ESCAPE_REPAIR_FAILED_OR_INCOMPLETE</td>
+    </tr>
+    <tr>
+      <td>escape_spacing_reroute/r01/act-C</td>
+      <td>92696</td>
+      <td>0</td>
+      <td>2.0</td>
+      <td>True</td>
+      <td>ACTUAL_ESCAPE_REROUTE_FAILED_OR_INCOMPLETE</td>
+    </tr>
+    <tr>
+      <td>escape_spacing_reroute/r03/act-C</td>
+      <td>92707</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>True</td>
+      <td>PARENT_ESCAPE_GEOMETRY_GATES_PASSED_NOT_FULL_SYSTEM_QUALIFIED</td>
+    </tr>
+  </tbody>
+</table></div><p>ACT0.8μm条带避让轮原PG间距项消失，但出现2项信号间距错误；全部PG指纹和860网连通通过仍不能改写DRC失败。GEMM旧内部C在gemm_a_rdata[142]报DRT-0073无接入点，新完整窗口视图另行验证。</p><h3>ACT父层修复已通过当前几何门槛</h3><img loading="lazy" src="assets/act_parent_landing_actual.png" alt="ACT实际父层接点修复前后"><p><a href="assets/act_parent_landing_actual.svg">SVG</a>。92719保留原叶M5/M6、全部PG和其他859个父层pin矩形，仅修订新增M10接点r_data[195]，独立native0、双PG及860网/1720端点所检几何连通通过。原1项/后续2项失败均保留，不通过删除PG/OBS或降低规则修复。</p><h3>ACT真实接入后的RC/STA：执行完成，仍实际失败</h3><div class="scroll"><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>ACT方案</th>
+      <th>输出负载fF</th>
+      <th>native返回</th>
+      <th>setup ns</th>
+      <th>hold ns</th>
+      <th>VIOLATED标记行</th>
+      <th>源物理文件保持</th>
+      <th>完整资格</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Aopt</td>
+      <td>2</td>
+      <td>0</td>
+      <td>1.435373</td>
+      <td>-0.074562</td>
+      <td>0</td>
+      <td>True</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>Aopt</td>
+      <td>10</td>
+      <td>0</td>
+      <td>1.424290</td>
+      <td>-0.074562</td>
+      <td>0</td>
+      <td>True</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>Aopt</td>
+      <td>50</td>
+      <td>0</td>
+      <td>1.328216</td>
+      <td>-0.074562</td>
+      <td>305</td>
+      <td>True</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>C</td>
+      <td>2</td>
+      <td>0</td>
+      <td>1.353438</td>
+      <td>-0.073476</td>
+      <td>4</td>
+      <td>True</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>C</td>
+      <td>10</td>
+      <td>0</td>
+      <td>1.353438</td>
+      <td>-0.073476</td>
+      <td>4</td>
+      <td>True</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>C</td>
+      <td>50</td>
+      <td>0</td>
+      <td>1.351096</td>
+      <td>-0.073476</td>
+      <td>228</td>
+      <td>True</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table></div><p>92732使用精确匹配的Aopt/r04 C叶模型及同一原始SDC/clock，新增相同研究I/O条件：max/min延时0.2T/0.05T、BUF_X4驱动、clock transition0.05ns、输出2/10/50fF。native report_units确认1fF；这不是原叶块或完整系统的原始边界条件，不混入纯XY收益。两方案hold约−0.074ns，均未通过。VIOLATED标记行仅统计该文字标记，不包含所有setup/hold报告行，不是完整违规总数。604个物理同层零线长接触网在RCX报告为未标注driver，原始覆盖提示保留；没有填虚构RC或理想化网络来清除提示。源物理ODB逐字节不变，没有保存RCX后ODB为母本。首次92726因当前工具无remove_from_collection命令而未完成，原失败保留，使用原生Tcl列表修复后重新执行。</p><h3>研究M11/M12：实际工具/通孔小例</h3><img loading="lazy" src="assets/research_upper_actual.png" alt="真实M11 M12小例路由"><p><a href="assets/research_upper_actual.svg">SVG</a>。92650/92653的2网/4端点独立native0、实际via10/11及所检几何连通通过，新增下层金属只在既有M10接点内。原十层规则块哈希不变。层厚2μm、高14.09/18.09μm、RC来自原M9/M10外推，via零包围是研究假设；尚无12层完整制造deck、校准RCX或系统STA。0.5/1/2倍RC敏感性仍待执行。</p>
+<h3>六块共同底座：已编译完整逻辑与布局合同，尚未实现冻结</h3><img loading="lazy" src="assets/common_base_proposed.png" alt="六块共同底座拟议布局与共享预连"><p><a href="assets/common_base_proposed.svg">SVG</a>。完整两功能逐bit图、所有24,767pin、37个独立常量TOP_IO声明和相同256导体预算已编译。资源并集不意味着共享同一计算实例；共享导体必须在两功能物理实现中实际使用。图中的proposed位置/导体不是布通结果。其余固定私有连接、闲置时钟/复位/外部输入及常量驱动、PG/完整接入仍待实现；两套独立旧父层不冒充共同底座。底层未冻结，无哈希一致性或面积收益结论。</p>
+<p>共同拓扑已实际编译并执行逐bit图检查：17,686个固定逻辑连通分量、24,767个原接口pin、两模式各770条适配图边；两模式计划使用同一组256个资源，未误合并不同原始bit。37个原始常量输出各有独立驱动，另新增1个闲置时钟LOGIC0驱动，合计38实例，面积/缓冲/负载仍待物理计量。构造Verilog中的内部接入端口必须在冻结和STA前降为真实保留金属，原生构造链接已实际执行：34,954端点/17,686连通分量逐项双射、原信号层不变；节点位置尚未实现、没有共同布线或冻结。构造链接回执见本节native索引；此为图证明，不是形式功能等价或物理实现。<a href="data/continuation/common-topology-r02/topology_proof.json.gz">图检查及缺项</a> · <a href="data/continuation/common-topology-r02/base_construction.v.gz">可复用构造网表</a>。外部闲置输入/复位策略仍需完整RTL极性与激励核验。</p><p>旧openTPU父层r07终态独立native11失败（10项M9 spacing、1项via cut spacing），虽3207网几何连通/双PG通过也未资格化；旧llaccel父层ll-r01在GRT-0116拥塞失败。92476/92477被实际物理门槛阻止，RC/STA未执行。完整GDS、缺失SRAM、天线和WELL规则语义问题继续保留。优化Aopt与内部C都继续保留，局部块内线长增加并不能替代完整系统收益判断。</p></section><section class="card" id="coverage"><h2>全部信号pin覆盖与几何方案</h2><div class="scroll"><div class="scroll"><table class="dataframe stats">
   <thead>
     <tr style="text-align: right;">
       <th>block</th>
@@ -417,7 +657,7 @@
     </tr>
   </tbody>
 </table></div></div><p>区域面积为候选组窗口包络和，不是通孔占地、可用金属面积或节省面积。密度是采样20μm窗口统计，最小NN是点中心几何距离；按层实际尺寸/规则判断风险。</p><details open><summary>密集区实际金属放大</summary><img loading="lazy" src="../issue-119-pin-xy/assets/act_zoom.png"></details><details><summary>真实内部端点与示意连线</summary><img loading="lazy" src="../issue-119-pin-xy/assets/act_endpoints.png"></details><p><a href="../issue-119-pin-xy/assets/act_comparison.svg">SVG对照</a> · <a href="data/act_pin_coordinates.csv.gz">全部逐pin A/B/C CSV.gz</a> · <a href="data/act_groups.csv.gz">分束对应</a> · <a href="data/act_metrics.json">完整几何指标</a></p></article>
-<article id="mxu"><h2>openTPU MXU</h2><p>本轮优先保留/优化边界。混合C修订后1931pin在内部，独立native DRC/所检连通通过、现有模型电气报告0，但实际线长比同组原XY重布线增加约4.30%，没有整体迁移收益。原C的3项VDD短路/5项电容超限保留；内部方案仅作父层代价进一步试验的备选。</p><img loading="lazy" src="assets/mxu_comparison.png" alt="mxu全pin对照"><div class="scroll"><div class="scroll"><table class="dataframe stats">
+<article id="mxu"><h2>openTPU MXU</h2><p>保留优化边界与内部二维两条系统对照。混合C修订后1931pin在内部，独立native DRC/所检连通通过、现有模型电气报告0；块内线长比同组原XY重布线增加约4.30%，系统收益未知。原C的3项VDD短路/5项电容超限保留；内部方案继续真实接入与共同底座比较，不因块内代价增加撤回边缘。</p><img loading="lazy" src="assets/mxu_comparison.png" alt="mxu全pin对照"><div class="scroll"><div class="scroll"><table class="dataframe stats">
   <thead>
     <tr style="text-align: right;">
       <th>方案</th>
@@ -533,7 +773,7 @@
     </tr>
   </tbody>
 </table></div></div><p>区域面积为候选组窗口包络和，不是通孔占地、可用金属面积或节省面积。密度是采样20μm窗口统计，最小NN是点中心几何距离；按层实际尺寸/规则判断风险。</p><details open><summary>密集区实际金属放大</summary><img loading="lazy" src="assets/opentpu_aux_zoom.png"></details><details><summary>真实内部端点与示意连线</summary><img loading="lazy" src="assets/opentpu_aux_endpoints.png"></details><p><a href="assets/opentpu_aux_comparison.svg">SVG对照</a> · <a href="data/opentpu_aux_pin_coordinates.csv.gz">全部逐pin A/B/C CSV.gz</a> · <a href="data/opentpu_aux_groups.csv.gz">分束对应</a> · <a href="data/opentpu_aux_metrics.json">完整几何指标</a></p></article>
-<article id="gemm"><h2>llaccel GEMM</h2><p>本轮优先保留/优化边界。修订混合C保留两个完整字节共18pin于边缘，3021pin在内部，当前native/几何/电气门槛通过，但实际线长比同组原XY重布线增加约1.19%，未显示整体XY迁移的额外价值。288个恒零位保留，旧C的260个相交、实际2项电容超限及GDS天线失败不隐藏。</p><img loading="lazy" src="../issue-119-pin-xy/assets/gemm_comparison.png" alt="gemm全pin对照"><div class="scroll"><div class="scroll"><table class="dataframe stats">
+<article id="gemm"><h2>llaccel GEMM</h2><p>保留优化边界与内部二维两条系统对照。修订混合C保留两个完整字节共18pin于边缘，3021pin在内部，当前native/几何/电气门槛通过；块内线长比同组原XY重布线增加约1.19%，系统收益未知。288个恒零位保留，旧C的260个相交、实际2项电容超限及GDS天线失败不隐藏。</p><img loading="lazy" src="../issue-119-pin-xy/assets/gemm_comparison.png" alt="gemm全pin对照"><div class="scroll"><div class="scroll"><table class="dataframe stats">
   <thead>
     <tr style="text-align: right;">
       <th>方案</th>
@@ -591,7 +831,7 @@
     </tr>
   </tbody>
 </table></div></div><p>区域面积为候选组窗口包络和，不是通孔占地、可用金属面积或节省面积。密度是采样20μm窗口统计，最小NN是点中心几何距离；按层实际尺寸/规则判断风险。</p><details open><summary>密集区实际金属放大</summary><img loading="lazy" src="../issue-119-pin-xy/assets/gemm_zoom.png"></details><details><summary>真实内部端点与示意连线</summary><img loading="lazy" src="../issue-119-pin-xy/assets/gemm_endpoints.png"></details><p><a href="../issue-119-pin-xy/assets/gemm_comparison.svg">SVG对照</a> · <a href="data/gemm_pin_coordinates.csv.gz">全部逐pin A/B/C CSV.gz</a> · <a href="data/gemm_groups.csv.gz">分束对应</a> · <a href="data/gemm_metrics.json">完整几何指标</a></p></article>
-<article id="vector"><h2>llaccel VECTOR</h2><p>本轮推荐优化原边界。B/C 的端点 L1 都增加，迁移价值有限；即使内部窗口几何可放，也不能据此主张收益。</p><img loading="lazy" src="assets/vector_comparison.png" alt="vector全pin对照"><div class="scroll"><div class="scroll"><table class="dataframe stats">
+<article id="vector"><h2>llaccel VECTOR</h2><p>保留优化边界与完整内部二维对照。B/C端点L1增加只反映局部几何代价；原C时序失败，继续真实接入窗口及单列成本的物理修复。共同底座结果取得前不以块内代价决定系统取舍。</p><img loading="lazy" src="assets/vector_comparison.png" alt="vector全pin对照"><div class="scroll"><div class="scroll"><table class="dataframe stats">
   <thead>
     <tr style="text-align: right;">
       <th>方案</th>
@@ -649,7 +889,7 @@
     </tr>
   </tbody>
 </table></div></div><p>区域面积为候选组窗口包络和，不是通孔占地、可用金属面积或节省面积。密度是采样20μm窗口统计，最小NN是点中心几何距离；按层实际尺寸/规则判断风险。</p><details open><summary>密集区实际金属放大</summary><img loading="lazy" src="assets/vector_zoom.png"></details><details><summary>真实内部端点与示意连线</summary><img loading="lazy" src="assets/vector_endpoints.png"></details><p><a href="assets/vector_comparison.svg">SVG对照</a> · <a href="data/vector_pin_coordinates.csv.gz">全部逐pin A/B/C CSV.gz</a> · <a href="data/vector_groups.csv.gz">分束对应</a> · <a href="data/vector_metrics.json">完整几何指标</a></p></article>
-<article id="llaccel_aux"><h2>llaccel SYSTEM</h2><p>先优化边界并按真实 bank/事务局部试验。全 C 的4731个直接金属相交 pin、6700个基础间距风险提示拥塞可能向内部转移；不建议整体采用。</p><img loading="lazy" src="assets/llaccel_aux_comparison.png" alt="llaccel_aux全pin对照"><div class="scroll"><div class="scroll"><table class="dataframe stats">
+<article id="llaccel_aux"><h2>llaccel SYSTEM</h2><p>保留13184-pin内部方案继续实际接入修复。原C的4731个既有金属相交pin、6700个间距风险均保留，固定PG直接接触已作局部修订。直接接触修订不等于完整布通；不退回边缘结束系统研究。</p><img loading="lazy" src="assets/llaccel_aux_comparison.png" alt="llaccel_aux全pin对照"><div class="scroll"><div class="scroll"><table class="dataframe stats">
   <thead>
     <tr style="text-align: right;">
       <th>方案</th>
@@ -977,11 +1217,53 @@
     </tr>
     <tr>
       <td>opentpu_aux</td>
+      <td>full-controls-r04/A_replay</td>
+      <td>1768</td>
+      <td>0</td>
+      <td>15416246.0</td>
+      <td>0.0</td>
+      <td>3103880</td>
+      <td>0</td>
+      <td>True</td>
+      <td>-0.388183</td>
+      <td>-0.38566</td>
+      <td>1369</td>
+    </tr>
+    <tr>
+      <td>opentpu_aux</td>
+      <td>full-controls-r04/Aopt</td>
+      <td>1768</td>
+      <td>1223</td>
+      <td>15427424.0</td>
+      <td>0.07</td>
+      <td>3104231</td>
+      <td>0</td>
+      <td>True</td>
+      <td>-0.388174</td>
+      <td>-0.394093</td>
+      <td>1369</td>
+    </tr>
+    <tr>
+      <td>opentpu_aux</td>
+      <td>full-controls-r04/B</td>
+      <td>1768</td>
+      <td>1768</td>
+      <td>15416485.0</td>
+      <td>0.0</td>
+      <td>3104925</td>
+      <td>0</td>
+      <td>True</td>
+      <td>-0.425153</td>
+      <td>-0.385355</td>
+      <td>1377</td>
+    </tr>
+    <tr>
+      <td>opentpu_aux</td>
       <td>full-other-r01/C</td>
       <td>1768</td>
       <td>1768</td>
       <td>16429522.0</td>
-      <td>待验证</td>
+      <td>6.57</td>
       <td>3139544</td>
       <td>0</td>
       <td>True</td>
@@ -1115,8 +1397,50 @@
       <td>0.026787</td>
       <td>103</td>
     </tr>
+    <tr>
+      <td>llaccel_aux</td>
+      <td>full-controls-r04/A_replay</td>
+      <td>13184</td>
+      <td>0</td>
+      <td>35910472.0</td>
+      <td>0.0</td>
+      <td>5279890</td>
+      <td>0</td>
+      <td>True</td>
+      <td>-2.145376</td>
+      <td>-0.546583</td>
+      <td>2643</td>
+    </tr>
+    <tr>
+      <td>llaccel_aux</td>
+      <td>full-controls-r04/Aopt</td>
+      <td>13184</td>
+      <td>11113</td>
+      <td>36137949.0</td>
+      <td>0.63</td>
+      <td>5286616</td>
+      <td>0</td>
+      <td>True</td>
+      <td>-2.56934</td>
+      <td>-0.545894</td>
+      <td>2792</td>
+    </tr>
+    <tr>
+      <td>llaccel_aux</td>
+      <td>full-controls-r04/B</td>
+      <td>13184</td>
+      <td>13184</td>
+      <td>36709526.0</td>
+      <td>2.23</td>
+      <td>5317669</td>
+      <td>0</td>
+      <td>True</td>
+      <td>-4.428765</td>
+      <td>-0.549543</td>
+      <td>3172</td>
+    </tr>
   </tbody>
-</table></div><p>只列已产生完整执行回执的试验；待验证检查项不是0。B只迁移原C同组，Aopt仅优化原边/原层槽位，不是全局最优边界。修订C仍重接相同cohort，但按真实byte/lane保留部分pin。GEMM修订C线长4548300μm，相对原XY控制4494984μm约+1.19%；MXU修订C3132185μm，相对3003026μm约+4.30%，两者当前更推荐保留边界。端点L1减少并未变成实际块内线长收益；父层/通道影响尚未知。ACT同组C约−6.40%，仍需父层和完整规则证据。逐层线长、失败明细及资格边界见物理回执；原基线失败保留。大型原始JSON和工具文本无损gzip保存，<a href="data/evidence/physical/storage_index.json">原文件名/字节数/SHA与压缩路径映射</a>可追溯，未删原始检查内容。</p><h3>独立GDS合并与现有规则deck：实际失败不隐藏</h3><div class="scroll"><table class="dataframe stats">
+</table></div><p>只列已产生完整执行回执的试验；待验证检查项不是0。B只迁移原C同组，Aopt仅优化原边/原层槽位，不是全局最优边界。修订C仍重接相同cohort，但按真实byte/lane保留部分pin。GEMM修订C线长4548300μm，相对原XY控制4494984μm约+1.19%；MXU修订C3132185μm，相对3003026μm约+4.30%，两者边界和内部方案均继续保留，局部成本不决定系统取舍。端点L1减少并未变成实际块内线长收益；父层/通道影响尚未知。ACT同组C约−6.40%，仍需父层和完整规则证据。逐层线长、失败明细及资格边界见物理回执；原基线失败保留。大型原始JSON和工具文本无损gzip保存，<a href="data/evidence/physical/storage_index.json">原文件名/字节数/SHA与压缩路径映射</a>可追溯，未删原始检查内容。</p><h3>独立GDS合并与现有规则deck：实际失败不隐藏</h3><div class="scroll"><table class="dataframe stats">
   <thead>
     <tr style="text-align: right;">
       <th>block</th>
@@ -1169,6 +1493,14 @@
       <td>FAILED_OR_INCOMPLETE</td>
     </tr>
     <tr>
+      <td>llaccel_aux</td>
+      <td>C（ACT完整740 C；其他为局部，见来源）</td>
+      <td>0</td>
+      <td>无缺失报告</td>
+      <td>74683</td>
+      <td>FAILED_OR_INCOMPLETE</td>
+    </tr>
+    <tr>
       <td>mxu</td>
       <td>A原始基线</td>
       <td>4</td>
@@ -1193,6 +1525,14 @@
       <td>FAILED_OR_INCOMPLETE</td>
     </tr>
     <tr>
+      <td>opentpu_aux</td>
+      <td>C（ACT完整740 C；其他为局部，见来源）</td>
+      <td>4</td>
+      <td>fakeram45_1r1w_128x128, fakeram45_1r1w_512x31, fakeram45_1r1w_1024x128, fakeram45_1r1w_4096x32</td>
+      <td>52462</td>
+      <td>FAILED_OR_INCOMPLETE</td>
+    </tr>
+    <tr>
       <td>vector</td>
       <td>A原始基线</td>
       <td>0</td>
@@ -1209,7 +1549,7 @@
       <td>FAILED_OR_INCOMPLETE</td>
     </tr>
   </tbody>
-</table></div><p><a href="data/validation_extensions/milestone-r05/summary.json">规则分类、原始日志与SHA索引</a>。没有豁免缺失宏，也没有关闭FEOL、BEOL、off-grid或antenna检查。ACT的两个fakeram缺少匹配GDS；原始/C诊断布局均不完整，其678/770项目前均为天线类别，不能据此签核完整设计，或直接把差值归因于XY变化。native DRC=0和该deck结果必须分别记录。</p><h3>实际RC/STA路径上的负载与转换时间</h3><div class="scroll"><table class="dataframe stats">
+</table></div><p><a href="data/validation_extensions/milestone-r07/summary.json">规则分类、原始日志与SHA索引</a>。没有豁免缺失宏，也没有关闭FEOL、BEOL、off-grid或antenna检查。ACT的两个fakeram缺少匹配GDS；原始/C诊断布局均不完整，其678/770项目前均为天线类别，不能据此签核完整设计，或直接把差值归因于XY变化。native DRC=0和该deck结果必须分别记录。</p><h3>实际RC/STA路径上的负载与转换时间</h3><div class="scroll"><table class="dataframe stats">
   <thead>
     <tr style="text-align: right;">
       <th>block</th>
@@ -1334,7 +1674,7 @@
       <td>187.4</td>
     </tr>
   </tbody>
-</table></div><p>来自native OpenSTA JSON的SI单位F/s，转换为fF/ps；只是被报告路径点的观察最大值，路径点可能重复、集合可能变化，不是全部网络或完整系统电气覆盖。精确来源SHA、观察数量与最大值所在pin见上述目录的electrical_observations.json；原边界驱动/slew/load模型仍不完整。</p><p>导出LEF的同层PIN/OBS正面积相交诊断：原ACT782个、完整C777个（含PG口径），<a href="data/act-original-abstract-audit.json">原始</a>/<a href="data/act-fullC-abstract-audit.json">C逐pin证据</a>。这些相交可能包含同网连接形状，不能直接当作DRC违例或父层不可接入结论；也不能把灰色区域或LEF导出成功当作父层可达证明。尚需在版本匹配父层上检查具体via/handoff。</p><p>另冻结了完整C同组的原XY重布线、Aopt边界槽位优化和B子集控制。<a href="data/full_cohort_controls/selection.json">完整cohort/优化范围</a>及逐块Aopt CSV.gz在同目录。Aopt只在原分束、原边、原层既有槽位内置换，使用C中心L1代理，未改变硬件分束语义；未知分束仍沿用展示假设，不是全局最优边界、真实布线成本或已完成物理结果。</p><h3>真实失败驱动的增量混合C：完整逐pin补充表</h3><p>原始A/B/C和PR120逐字节保留。GEMM原完整C的gemm_wr_wstrb[29]/[30]驱动电容超限；恢复两个真实完整字节（data232–247及strobe29/30，共18pin）到A，匹配3039pin重布线组，实际移动3021pin。MXU原完整C有3项signal-to-VDD short（pf_uv[109]、b_rdata[174]）及5项t_wdata lane0电容超限；整个33pin lane0保留A，两处M5内部点分别向左移1.12μm，仍属内部二维。匹配1964pin重布线组，实际移动1931pin。两次修订均保持单元、驱动、缓冲、原pin层/尺寸、PDN、边界及允许层。</p><p><a href="data/incremental_revisions/gemm_electrical_r03/gemm_C_electrical_r03_all_pins.csv.gz">GEMM全部3753pin增量C</a> · <a href="data/incremental_revisions/gemm_electrical_r03/revision.json">GEMM字节证据</a> · <a href="data/incremental_revisions/mxu_repair_r03/mxu_C_repair_r03_all_pins.csv.gz">MXU全部2172pin增量C</a> · <a href="data/incremental_revisions/mxu_repair_r03/revision.json">MXU修复证据</a>。两修订独立native DRC均为0、全块所检多端几何连通通过，现有边界模型下setup/hold为正且电气报告0；完整GDS/LVS/父层和系统电气仍未通过。主A/B/C图和查询仍展示原候选，不与补充修订混淆。GEMM发布表修正恢复位的几何指标元数据，实际执行Tcl逐字节一致。</p><h3>补建受控父层：独立新基线，历史层级仍未知</h3><p>用户确认无额外历史handoff/宏GDS并授权补充后，依据冻结三叶块图创建NEW_CONTROLLED_PARENT_NOT_HISTORICAL。openTPU固定6618端点/3408网，37个独立LOGIC0_X1实现原TOP_IO常零声明（新增基础设施成本19.684μm²，各方案相同）；llaccel固定27050端点。叶端口保持原M5/M6，TOP_IO策略、M2–M10信号/M4–M10时钟、R0布局、轨道相位与新PG显式冻结。逐bit图/方向/层检查在PG和路由之前执行。端口占位Liberty只用于链接/路由，零电容不是表征值，禁止据此报告父层STA/负载资格。</p><p>早期halo、PG条带、默认过度bloat及标量bus映射失败均留证；修订为详细OBS原生导出、按实际层障碍选择新PG通孔、真实Verilog/Liberty bus映射。openTPU r07全部6618端点、llaccel全部27050端点均已核对，并分别通过前置双电源连通检查；两者实际路由继续，尚无独立终态DRC/连通/系统时序通过证据。<a href="data/controlled_parents/scope.json">试验/合同索引</a>；完整输入合同、Verilog、物理链接Liberty及逐端点表以gzip保留。原历史目标层仍UNKNOWN；新基线不追溯证明旧父层，也不补造SRAM器件GDS。</p><div class="scroll"><table class="dataframe stats">
+</table></div><p>来自native OpenSTA JSON的SI单位F/s，转换为fF/ps；只是被报告路径点的观察最大值，路径点可能重复、集合可能变化，不是全部网络或完整系统电气覆盖。精确来源SHA、观察数量与最大值所在pin见上述目录的electrical_observations.json；原边界驱动/slew/load模型仍不完整。</p><p>导出LEF的同层PIN/OBS正面积相交诊断：原ACT782个、完整C777个（含PG口径），<a href="data/act-original-abstract-audit.json">原始</a>/<a href="data/act-fullC-abstract-audit.json">C逐pin证据</a>。这些相交可能包含同网连接形状，不能直接当作DRC违例或父层不可接入结论；也不能把灰色区域或LEF导出成功当作父层可达证明。尚需在版本匹配父层上检查具体via/handoff。</p><p>另冻结了完整C同组的原XY重布线、Aopt边界槽位优化和B子集控制。<a href="data/full_cohort_controls/selection.json">完整cohort/优化范围</a>及逐块Aopt CSV.gz在同目录。Aopt只在原分束、原边、原层既有槽位内置换，使用C中心L1代理，未改变硬件分束语义；未知分束仍沿用展示假设，不是全局最优边界、真实布线成本或已完成物理结果。</p><h3>真实失败驱动的增量混合C：完整逐pin补充表</h3><p>原始A/B/C和PR120逐字节保留。GEMM原完整C的gemm_wr_wstrb[29]/[30]驱动电容超限；恢复两个真实完整字节（data232–247及strobe29/30，共18pin）到A，匹配3039pin重布线组，实际移动3021pin。MXU原完整C有3项signal-to-VDD short（pf_uv[109]、b_rdata[174]）及5项t_wdata lane0电容超限；整个33pin lane0保留A，两处M5内部点分别向左移1.12μm，仍属内部二维。匹配1964pin重布线组，实际移动1931pin。两次修订均保持单元、驱动、缓冲、原pin层/尺寸、PDN、边界及允许层。</p><p><a href="data/incremental_revisions/gemm_electrical_r03/gemm_C_electrical_r03_all_pins.csv.gz">GEMM全部3753pin增量C</a> · <a href="data/incremental_revisions/gemm_electrical_r03/revision.json">GEMM字节证据</a> · <a href="data/incremental_revisions/mxu_repair_r03/mxu_C_repair_r03_all_pins.csv.gz">MXU全部2172pin增量C</a> · <a href="data/incremental_revisions/mxu_repair_r03/revision.json">MXU修复证据</a>。两修订独立native DRC均为0、全块所检多端几何连通通过，现有边界模型下setup/hold为正且电气报告0；完整GDS/LVS/父层和系统电气仍未通过。主A/B/C图和查询仍展示原候选，不与补充修订混淆。GEMM发布表修正恢复位的几何指标元数据，实际执行Tcl逐字节一致。</p><h3>补建受控父层：独立新基线，历史层级仍未知</h3><p>用户确认无额外历史handoff/宏GDS并授权补充后，依据冻结三叶块图创建NEW_CONTROLLED_PARENT_NOT_HISTORICAL。openTPU固定6618端点/3408网，37个独立LOGIC0_X1实现原TOP_IO常零声明（新增基础设施成本19.684μm²，各方案相同）；llaccel固定27050端点。叶端口保持原M5/M6，TOP_IO策略、M2–M10信号/M4–M10时钟、R0布局、轨道相位与新PG显式冻结。逐bit图/方向/层检查在PG和路由之前执行。端口占位Liberty只用于链接/路由，零电容不是表征值，禁止据此报告父层STA/负载资格。</p><p>早期halo、PG条带、默认过度bloat及标量bus映射失败均留证；修订为详细OBS原生导出、按实际层障碍选择新PG通孔、真实Verilog/Liberty bus映射。openTPU r07全部6618端点、llaccel全部27050端点均已核对，并分别通过前置双电源连通检查；两者均已终态失败：openTPU r07独立native11项，llaccel ll-r01在GRT拥塞失败；后续RC/STA物理门槛阻止执行。<a href="data/controlled_parents/scope.json">试验/合同索引</a>；完整输入合同、Verilog、物理链接Liberty及逐端点表以gzip保留。原历史目标层仍UNKNOWN；新基线不追溯证明旧父层，也不补造SRAM器件GDS。</p><div class="scroll"><table class="dataframe stats">
   <thead>
     <tr style="text-align: right;">
       <th>试验</th>
@@ -1359,10 +1699,10 @@
       <td>EXECUTED</td>
       <td>EXECUTED</td>
       <td>EXECUTED</td>
-      <td>待验证</td>
-      <td>待验证</td>
-      <td>待验证</td>
-      <td>未有完整终态；检查运行/失败日志</td>
+      <td>EXECUTED</td>
+      <td>11.0</td>
+      <td>True</td>
+      <td>ACTUAL_PARENT_ACCESS_FAILED_OR_INCOMPLETE</td>
     </tr>
     <tr>
       <td>ll-r01/llaccel-gemm-A</td>
@@ -1371,11 +1711,11 @@
       <td>27050.0</td>
       <td>EXECUTED</td>
       <td>EXECUTED</td>
+      <td>FAIL</td>
       <td>待验证</td>
       <td>待验证</td>
       <td>待验证</td>
-      <td>待验证</td>
-      <td>未有完整终态；检查运行/失败日志</td>
+      <td>ACTUAL_PARENT_ACCESS_FAILED_OR_INCOMPLETE</td>
     </tr>
     <tr>
       <td>r01/opentpu-act-A</td>
@@ -1679,7 +2019,7 @@
       <td>False</td>
     </tr>
   </tbody>
-</table></div><p><a href="data/timing_models/milestone-r02/summary.json">逐模型来源/SHA/实际导出及失败回执</a>；原生timing.lib、逐port表、setup/hold/checks、约束/寄生覆盖及日志以无损gzip保存。六块A/C的12份模型全部导出，逐版完整核对原始信号pin清单和方向，SPEF重读最差setup/hold与原试验偏差均为0；另外ACT/MXU的原XY重布线/Aopt/B、GEMM原XY/Aopt等8份控制模型已补齐。每份模型使用与其路由版本匹配、SHA锁定的实际提取SPEF；仍是原研究库条件下的导出模型，非SRAM器件表征或完整签核库。llaccel SYSTEM C只对应8pin局部，完整C仍失败。Liberty的bus聚合声明及VDD/VSS不重复计作信号bit，旧探针的分类/元数据失败保留。</p><p>全部当前导出模型缺少minimum_period条目；外部输入/输出延时、驱动、slew、负载和真实SRAM资格仍有缺项。原叶块时序/电气失败必须单独保留，不能因父层模型没有该检查而消失。独立父层RC/STA作业92476/92477已排队：等待实际父层结束，只有独立native DRC/所检全块连通/PG，以及叶模型物理ODB与来源回执SHA完全匹配才执行A/A_replay/叶块重布线/Aopt/B/C。旧四个尚未开始的分析作业已在严格核对pending且无输出后替换，保留调度回执，实际P&amp;R作业不变。父层为明确的新2.5ns基准，外部I/O约束仍不完整；尚未执行，不写签核通过。RCX仅在独立分析进程中运行，不保存分析后ODB为物理母本。</p><h3>原deck规则实现适用性：WELL.4 独立几何验证</h3><div class="scroll"><table class="dataframe stats">
+</table></div><p><a href="data/timing_models/milestone-r02/summary.json">逐模型来源/SHA/实际导出及失败回执</a>；原生timing.lib、逐port表、setup/hold/checks、约束/寄生覆盖及日志以无损gzip保存。六块A/C的12份模型全部导出，逐版完整核对原始信号pin清单和方向，SPEF重读最差setup/hold与原试验偏差均为0；另外ACT/MXU的原XY重布线/Aopt/B、GEMM原XY/Aopt等8份控制模型已补齐。每份模型使用与其路由版本匹配、SHA锁定的实际提取SPEF；仍是原研究库条件下的导出模型，非SRAM器件表征或完整签核库。llaccel SYSTEM C只对应8pin局部，完整C仍失败。Liberty的bus聚合声明及VDD/VSS不重复计作信号bit，旧探针的分类/元数据失败保留。</p><p>全部当前导出模型缺少minimum_period条目；外部输入/输出延时、驱动、slew、负载和真实SRAM资格仍有缺项。原叶块时序/电气失败必须单独保留，不能因父层模型没有该检查而消失。独立父层RC/STA作业92476/92477已终态：openTPU父层native11失败、llaccel父层GRT拥塞失败，物理来源门槛阻止后续RC/STA，未执行而非通过。该门槛仍要求独立native DRC/所检全块连通/PG和精确叶模型ODB及来源SHA匹配。旧四个尚未开始的分析作业已在严格核对pending且无输出后替换，保留调度回执，实际P&amp;R作业不变。父层为明确的新2.5ns基准，外部I/O约束仍不完整；尚未执行，不写签核通过。RCX仅在独立分析进程中运行，不保存分析后ODB为物理母本。</p><h3>原deck规则实现适用性：WELL.4 独立几何验证</h3><div class="scroll"><table class="dataframe stats">
   <thead>
     <tr style="text-align: right;">
       <th>独立几何例</th>
@@ -1740,7 +2080,7 @@
       &quot;candidate_revision&quot;: &quot;r01_or_PR120&quot;,
       &quot;selected_cohort&quot;: 740,
       &quot;actual_moved_signal_pins&quot;: 740,
-      &quot;raw_receipt&quot;: &quot;milestone-r10\\trials\\fullC-r02\\act-C\\execution.json&quot;
+      &quot;raw_receipt&quot;: &quot;milestone-r12\\trials\\fullC-r02\\act-C\\execution.json&quot;
     },
     &quot;drc_status&quot;: &quot;独立clean进程DRC 0; selected-net连通 True; 全块几何连通 True；父层未验证&quot;,
     &quot;sta_status&quot;: &quot;RCX True; setup 1.259268ns / hold 0.032872ns；时序/电气违例行0；系统边界不完整&quot;,
@@ -1856,7 +2196,7 @@
       &quot;candidate_revision&quot;: &quot;C_mxu_repair_r03&quot;,
       &quot;selected_cohort&quot;: 1964,
       &quot;actual_moved_signal_pins&quot;: 1931,
-      &quot;raw_receipt&quot;: &quot;milestone-r10\\trials\\mxu-repair-r03\\mxu-C\\execution.json&quot;
+      &quot;raw_receipt&quot;: &quot;milestone-r12\\trials\\mxu-repair-r03\\mxu-C\\execution.json&quot;
     },
     &quot;drc_status&quot;: &quot;独立clean进程DRC 0; selected-net连通 True; 全块几何连通 True；父层未验证&quot;,
     &quot;sta_status&quot;: &quot;RCX True; setup 0.247994ns / hold 0.048823ns；时序/电气违例行0；系统边界不完整&quot;,
@@ -1944,13 +2284,52 @@
       &quot;candidate_revision&quot;: &quot;r02&quot;,
       &quot;selected_cohort&quot;: 1768,
       &quot;actual_moved_signal_pins&quot;: 1768,
-      &quot;raw_receipt&quot;: &quot;milestone-r10\\trials\\full-other-r01\\opentpu_aux-C\\execution.json&quot;
+      &quot;raw_receipt&quot;: &quot;milestone-r12\\trials\\full-other-r01\\opentpu_aux-C\\execution.json&quot;
     },
     &quot;drc_status&quot;: &quot;独立clean进程DRC 0; selected-net连通 True; 全块几何连通 True；父层未验证&quot;,
     &quot;sta_status&quot;: &quot;RCX True; setup -1.765776ns / hold -0.400698ns；时序/电气违例行2101；系统边界不完整&quot;,
     &quot;matched_full_cohort_comparison&quot;: {
       &quot;scope&quot;: &quot;Same original full-C cohort rerouted from identical source; revised C keeps whole byte/lane groups at A as explicitly listed. B is only this cohort, not full B. Aopt is a slot assignment using C-center L1 proxy, not a globally optimal boundary. Native stats only; no system PPA qualification. Missing gate values mean pending, never pass.&quot;,
       &quot;plans&quot;: {
+        &quot;full-controls-r04/A_replay&quot;: {
+          &quot;selected_pin_count&quot;: 1768,
+          &quot;DRT_pre_RCX_wire_length_sum_um&quot;: 15416246.0,
+          &quot;DRT_pre_RCX_vias&quot;: 3103880,
+          &quot;setup_worst_slack_ns&quot;: -0.388183,
+          &quot;hold_worst_slack_ns&quot;: -0.38566,
+          &quot;independent_clean_DRC_count&quot;: 0,
+          &quot;reported_timing_electrical_violator_rows&quot;: 1369,
+          &quot;actual_moved_pin_count&quot;: 0,
+          &quot;whole_geometry_pass&quot;: true,
+          &quot;wire_change_vs_same_cohort_A_replay_percent&quot;: 0.0,
+          &quot;via_change_vs_same_cohort_A_replay_percent&quot;: 0.0
+        },
+        &quot;full-controls-r04/Aopt&quot;: {
+          &quot;selected_pin_count&quot;: 1768,
+          &quot;DRT_pre_RCX_wire_length_sum_um&quot;: 15427424.0,
+          &quot;DRT_pre_RCX_vias&quot;: 3104231,
+          &quot;setup_worst_slack_ns&quot;: -0.388174,
+          &quot;hold_worst_slack_ns&quot;: -0.394093,
+          &quot;independent_clean_DRC_count&quot;: 0,
+          &quot;reported_timing_electrical_violator_rows&quot;: 1369,
+          &quot;actual_moved_pin_count&quot;: 1223,
+          &quot;whole_geometry_pass&quot;: true,
+          &quot;wire_change_vs_same_cohort_A_replay_percent&quot;: 0.07250792443245224,
+          &quot;via_change_vs_same_cohort_A_replay_percent&quot;: 0.01130842687218081
+        },
+        &quot;full-controls-r04/B&quot;: {
+          &quot;selected_pin_count&quot;: 1768,
+          &quot;DRT_pre_RCX_wire_length_sum_um&quot;: 15416485.0,
+          &quot;DRT_pre_RCX_vias&quot;: 3104925,
+          &quot;setup_worst_slack_ns&quot;: -0.425153,
+          &quot;hold_worst_slack_ns&quot;: -0.385355,
+          &quot;independent_clean_DRC_count&quot;: 0,
+          &quot;reported_timing_electrical_violator_rows&quot;: 1377,
+          &quot;actual_moved_pin_count&quot;: 1768,
+          &quot;whole_geometry_pass&quot;: true,
+          &quot;wire_change_vs_same_cohort_A_replay_percent&quot;: 0.001550312572851098,
+          &quot;via_change_vs_same_cohort_A_replay_percent&quot;: 0.03366753869351591
+        },
         &quot;full-other-r01/C&quot;: {
           &quot;selected_pin_count&quot;: 1768,
           &quot;DRT_pre_RCX_wire_length_sum_um&quot;: 16429522.0,
@@ -1961,8 +2340,8 @@
           &quot;reported_timing_electrical_violator_rows&quot;: 2101,
           &quot;actual_moved_pin_count&quot;: 1768,
           &quot;whole_geometry_pass&quot;: true,
-          &quot;wire_change_vs_same_cohort_A_replay_percent&quot;: null,
-          &quot;via_change_vs_same_cohort_A_replay_percent&quot;: null
+          &quot;wire_change_vs_same_cohort_A_replay_percent&quot;: 6.572780429165448,
+          &quot;via_change_vs_same_cohort_A_replay_percent&quot;: 1.1490134927896634
         }
       }
     }
@@ -1980,7 +2359,7 @@
       &quot;candidate_revision&quot;: &quot;C_electrical_r03&quot;,
       &quot;selected_cohort&quot;: 3039,
       &quot;actual_moved_signal_pins&quot;: 3021,
-      &quot;raw_receipt&quot;: &quot;milestone-r10\\trials\\electrical-r03\\gemm-C\\execution.json&quot;
+      &quot;raw_receipt&quot;: &quot;milestone-r12\\trials\\electrical-r03\\gemm-C\\execution.json&quot;
     },
     &quot;drc_status&quot;: &quot;独立clean进程DRC 0; selected-net连通 True; 全块几何连通 True；父层未验证&quot;,
     &quot;sta_status&quot;: &quot;RCX True; setup 0.771255ns / hold 0.04153ns；时序/电气违例行0；系统边界不完整&quot;,
@@ -2068,7 +2447,7 @@
       &quot;candidate_revision&quot;: &quot;r02&quot;,
       &quot;selected_cohort&quot;: 1022,
       &quot;actual_moved_signal_pins&quot;: 1022,
-      &quot;raw_receipt&quot;: &quot;milestone-r10\\trials\\full-other-r01\\vector-C\\execution.json&quot;
+      &quot;raw_receipt&quot;: &quot;milestone-r12\\trials\\full-other-r01\\vector-C\\execution.json&quot;
     },
     &quot;drc_status&quot;: &quot;独立clean进程DRC 0; selected-net连通 True; 全块几何连通 True；父层未验证&quot;,
     &quot;sta_status&quot;: &quot;RCX True; setup -4.166987ns / hold 0.026787ns；时序/电气违例行103；系统边界不完整&quot;,
@@ -2143,13 +2522,53 @@
       &quot;candidate_revision&quot;: &quot;r02&quot;,
       &quot;selected_cohort&quot;: 8,
       &quot;actual_moved_signal_pins&quot;: 8,
-      &quot;raw_receipt&quot;: &quot;milestone-r10\\trials\\grid-r05\\llaccel_aux-C\\execution.json&quot;
+      &quot;raw_receipt&quot;: &quot;milestone-r12\\trials\\grid-r05\\llaccel_aux-C\\execution.json&quot;
     },
     &quot;drc_status&quot;: &quot;完整C实际固定PG短路失败；8pin局部独立native DRC0/所检全块连通通过，不能混作全C通过&quot;,
     &quot;sta_status&quot;: &quot;完整C未提取/STA；历史8pin局部存在setup/hold及电气失败，非资格化&quot;,
     &quot;matched_full_cohort_comparison&quot;: {
       &quot;scope&quot;: &quot;Same original full-C cohort rerouted from identical source; revised C keeps whole byte/lane groups at A as explicitly listed. B is only this cohort, not full B. Aopt is a slot assignment using C-center L1 proxy, not a globally optimal boundary. Native stats only; no system PPA qualification. Missing gate values mean pending, never pass.&quot;,
-      &quot;plans&quot;: {}
+      &quot;plans&quot;: {
+        &quot;full-controls-r04/A_replay&quot;: {
+          &quot;selected_pin_count&quot;: 13184,
+          &quot;DRT_pre_RCX_wire_length_sum_um&quot;: 35910472.0,
+          &quot;DRT_pre_RCX_vias&quot;: 5279890,
+          &quot;setup_worst_slack_ns&quot;: -2.145376,
+          &quot;hold_worst_slack_ns&quot;: -0.546583,
+          &quot;independent_clean_DRC_count&quot;: 0,
+          &quot;reported_timing_electrical_violator_rows&quot;: 2643,
+          &quot;actual_moved_pin_count&quot;: 0,
+          &quot;whole_geometry_pass&quot;: true,
+          &quot;wire_change_vs_same_cohort_A_replay_percent&quot;: 0.0,
+          &quot;via_change_vs_same_cohort_A_replay_percent&quot;: 0.0
+        },
+        &quot;full-controls-r04/Aopt&quot;: {
+          &quot;selected_pin_count&quot;: 13184,
+          &quot;DRT_pre_RCX_wire_length_sum_um&quot;: 36137949.0,
+          &quot;DRT_pre_RCX_vias&quot;: 5286616,
+          &quot;setup_worst_slack_ns&quot;: -2.56934,
+          &quot;hold_worst_slack_ns&quot;: -0.545894,
+          &quot;independent_clean_DRC_count&quot;: 0,
+          &quot;reported_timing_electrical_violator_rows&quot;: 2792,
+          &quot;actual_moved_pin_count&quot;: 11113,
+          &quot;whole_geometry_pass&quot;: true,
+          &quot;wire_change_vs_same_cohort_A_replay_percent&quot;: 0.633455889969925,
+          &quot;via_change_vs_same_cohort_A_replay_percent&quot;: 0.12738901757423093
+        },
+        &quot;full-controls-r04/B&quot;: {
+          &quot;selected_pin_count&quot;: 13184,
+          &quot;DRT_pre_RCX_wire_length_sum_um&quot;: 36709526.0,
+          &quot;DRT_pre_RCX_vias&quot;: 5317669,
+          &quot;setup_worst_slack_ns&quot;: -4.428765,
+          &quot;hold_worst_slack_ns&quot;: -0.549543,
+          &quot;independent_clean_DRC_count&quot;: 0,
+          &quot;reported_timing_electrical_violator_rows&quot;: 3172,
+          &quot;actual_moved_pin_count&quot;: 13184,
+          &quot;whole_geometry_pass&quot;: true,
+          &quot;wire_change_vs_same_cohort_A_replay_percent&quot;: 2.2251280907697346,
+          &quot;via_change_vs_same_cohort_A_replay_percent&quot;: 0.7155262704336751
+        }
+      }
     },
     &quot;full_C_actual_fixed_PG_rejection&quot;: {
       &quot;scope&quot;: &quot;ACTUAL_MOVED_PINS_DIRECT_FIXED_PG_METAL_CONTACT; not a complete DRC run&quot;,

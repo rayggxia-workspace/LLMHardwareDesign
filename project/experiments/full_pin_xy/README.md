@@ -126,3 +126,17 @@ GEMM严格GDS92376已自然完成，A/8pin C合并成功但1346/1358项天线违
 `parent_rc_sta_job.sh PARENT_REV DESIGN FOCUS NEW_ANALYSIS_REV A A_replay A_child_replay Aopt B C`只分析通过独立native DRC、所检全块连通及双PG门槛的实际父层。按真实child view物理ODB及clean回执SHA查找已导出模型，禁止用其他XY版本或路由占位Lib替代；只改派生Lib的library/cell声明名匹配实际macro alias。新父层2.5ns是固定研究基准；外部I/O delays/driver/slew/load仍缺，模型也缺minimum_period，内部叶块失败必须单独保留。即使某报告为0也不输出完整系统资格。RCX在单独分析进程执行，验证物理输入SHA未改，不写提取后ODB为物理母本。
 
 92476/92477为目前未执行的依赖作业，分别等待92441/92458实际父层和对应模型任务。更早四个post-analysis仅在全部pending、输出不存在的守卫后由`supersede_pending_parent_analysis.py`替换，保留前后Slurm和命令证据；物理任务/冻结驱动不修改。`release_pending_controls.py`只释放两个尚未启动SYSTEM控制的调度串行依赖，不新建/取消物理job，不变输入/目录/CPU；原活动VECTOR/父层不变。
+
+## 2026-10-28 接续（历史状态不替代最新回执）
+
+旧父层已终态native11/GRT失败，92476/92477受物理门槛阻止，未执行RC/STA。用户已授权研究M11/M12，并确认六块资源并集/共享实际固定导体；不是两套独立父层并排算共享底座。
+
+- `prepare_act_access_revision.py --root R --out NEW --case CASE`生成全pin增量表与真实相邻层轨道接入窗口。使用已提交冻结驱动、完整信号重布线和独立finalize，原层/尺寸/语义/单元/PDN/OBS不变；新方法不与旧局部rip直接算纯XY收益。
+- `prepare_common_base.py --root R --out NEW`只编译交错布局及256段有限M10预连提案；`compile_shared_topology.py --root R --preparation P --out NEW`实际执行两模式完整逐bit图校验，声明37独立原常量及1个idle clock驱动。`common_link_job.sh INPUT NEW_REV`原生链接/`verify_common_native.py`核对全部34954端点/17686逻辑分量。均不等于实际共同布局/布线/冻结。
+- `prepare_escape_landing.py`从真实信号/PG/OBS选择新的父层M10中间点，`escape_landing_job.sh INPUT NEW_REV`实际重接并核验其他859父pin/所有PG不变，原叶ACT M5/M6不抬层。92719当前几何门槛通过；初始及失败变体保留。
+- `escape_rc_sta_job.sh NEW_REV`对已接受的ACT Aopt/C真实夹具做RCX/SPEF和同等新增I/O研究策略下的2/10/50fF敏感性。92726工具兼容失败与92732真正执行后hold/电气失败、604零线长接触网未标注提示全部保留；不保存RCX后ODB。
+- `run_leaf_eco.py`另存重定尺寸/缓冲/布局的成本、全部pin/PG/die指纹、native/连通/RC/STA。不能将无命令错误视为电气修复成功，不能把删除filler说成面积节省或纯XY收益。
+- `extend_upper_tech.py`原M9/M10规则/RC外推研究M11/M12，原十层规则块SHA不变。实际两网小例及独立native/连通通过，仅验证工具/接入；制造deck、12层校准RCX及完整系统仍未验证。
+- `collect_continuation.py NEW_NAME`只写新快照，运行中与未复制大文件分别记录；`refresh_continuation.py --root R --out REPORT_DIR`仅刷新新增节/PNG/SVG与SHA，原ABC和旧物理发布命名空间保留。`validate_continuation.py`由主验证器调用，检查24767候选及已取得9031个新实际pin的逐项对应、层/方向/网络/尺寸/坐标、常量、重复/越界和原生快照字节哈希；不是物理资格证书。
+
+源码/当前作业及恢复入口见`docs/handoffs/2026-10-28-issue-126-common-base-continuation.md`。不覆盖原参考、其他工作树、冻结驱动或活动作业；每次提交/复用前重新核实远程状态。

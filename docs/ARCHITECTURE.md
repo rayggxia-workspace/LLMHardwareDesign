@@ -150,3 +150,9 @@ python project/experiments/full_pin_xy/validate_repository.py
 后续`run_timing_models.py`/`timing_model_job.sh`已实际从匹配clean ODB与原SPEF导出20份研究叶模型，逐信号bit/方向及SPEF重读余量校验通过；原占位Lib仍只用于已冻结路由阶段。`run_parent_rc_sta.py`在独立进程中读取真实导出模型，精确匹配物理ODB及来源回执SHA，并以父层native/连通/PG门槛为前提；新2.5ns基准仍缺外部I/O延时、驱动、slew、load及minimum_period覆盖，始终不输出完整系统签核。已排队92476/92477，原失败/未执行条件保留。
 
 `run_well_semantics.py`用独立小GDS验证原WELL.4表达式与其宽度描述不符；`run_actual_well_reference.py`在严格完整llSYS A GDS上新增并集及逐N/P mask宽度/间距专项检查，原全量deck不替换。实际参考均0，原表达式仍大量报告且与原全量计数未完全复现；不把它解释为所有原项消除。原deck中WELL.2未实现及部分via enclosure实现疑问仍属规则覆盖缺项。`run_parent_preflight.py`将固定父层几何与未完成信号路由分开；旧placed输入缺GCELLGRID导致原生检查未成功，不能记为DRC0。
+
+2026-10-28接续：`prepare_act_access_revision.py --case CASE`将真实内部候选对齐相邻层轨道，冻结输入后在`physical_trial.tcl`保留临时接入窗口、完整信号重布线，移除的只有本轮新约束。实际层/端点/PG/OBS/原允许层不变；不与旧局部rip成本混比。`compile_shared_topology.py --root R --preparation P --out NEW`检查两功能共享256有限导体的完整逐bit图，生成构造网表；`common_link_job.sh INPUT NEW_REV`读取匹配Aopt真实LEF/Lib，`verify_common_native.py`检查34954端点/17686分量双射。此阶段不布局/布线/冻结，施工端口还须降为保留金属。
+
+`run_escape_landing.py`仅修订新父层M10中间接点，不改原ACT M5/M6；只有fresh native/860网连通/双PG/原PG及其他父pin保持全部满足才标记几何门槛通过。`escape_rc_sta_job.sh NEW_REV`对已接受Aopt/C夹具实际提取与同研究I/O约束、2/10/50fF敏感性分析，不保存RCX后ODB；所有hold/电气/604零长度网未标注提示保留。`run_leaf_eco.py`的重定尺寸/缓冲/布局成本与纯XY分开，等价仍需独立验证。
+
+可复现发布检查：`python scripts/check_project.py`；`python -m compileall -q project/experiments/full_pin_xy`；`python project/experiments/full_pin_xy/test_zero_wire_access.py`；`python project/experiments/full_pin_xy/validate_repository.py`。完整报告用`build_deliverables.py --root R --out docs/experiments/issue-126-full-pin --keep-figures`；仅刷新新增阶段用`refresh_continuation.py`同参数；浏览器用`node project/experiments/full_pin_xy/qa_report.mjs REPORT NEW_QA_DIR`。原CSV/历史快照和PR120原图保持，新增原生文本无损gzip、大型物理文件只读留远程SHA索引。9031个新实际pin逐项与增量表比较，不能把全部24767候选的检查当全部物理完成。

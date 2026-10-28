@@ -19,7 +19,7 @@ def collect(name):
               'upper_layer_probe/r01','upper_layer_probe/r01/model','upper_layer_validation/r01','leaf_diagnosis/r01/*',
               'escape_fixtures/gemm-r0*/*','leaf_timing_models/r05/*',
               'escape_fixtures/mxu-r01/*','leaf_timing_models/r06/*','common_native_link/r01',
-              'leaf_eco/r0*/*','escape_landing/r01/*','tool_api/incremental-r01',
+              'leaf_eco/r0*/*','escape_landing/r01/*','escape_rc_sta/r0*/*','tool_api/incremental-r01',
               'parents/r07/*','parents/ll-r01/*','parent_rc_sta/r02/*']
     for pattern in patterns:paths.extend(p for p in ROOT.glob(pattern) if p.is_dir())
     records=[]
