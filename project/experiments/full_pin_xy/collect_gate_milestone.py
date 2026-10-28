@@ -13,6 +13,7 @@ JOBS+=['93038','93040']
 JOBS+=['93041','93043','93048','93049']
 JOBS+=['93051']
 JOBS+=['93060','93061']
+JOBS+=['93072','93073','93074']
 
 
 def sha(path):
@@ -69,7 +70,11 @@ def collect(name):
       'escape_fixtures/gemm658-r0[12]/*/*','logs/gemm658-parent-r0[12]-*.log',
       'vector_clone_probe/r01/*','logs/vector-clone-probe-r01-*.log',
       'vector_clone_crash/r0[12]/*','logs/vector-crash-r0[12]-*.log',
-      'pin_escape_views/r01/*/*','logs/mxu-pin-escape-views-r01-*.log']
+      'pin_escape_views/r01/*/*','logs/mxu-pin-escape-views-r01-*.log',
+      'system_stacked_via_route/r01/*/*','logs/system-stacked-via-r01-*.log',
+      'vector_clone_probe/r02/*','logs/vector-clone-probe-r02-*.log',
+      'escape_view_recheck/r01/*/*','logs/mxu-escape-view-recheck-r01-*.log',
+      'sta_coverage_api/r01/*','logs/sta-coverage-api-r01-*.log']
     stable_intermediates={}
     incremental=ROOT/'antenna_incremental_eco/r01/gemm-C/execution.json'
     if incremental.exists() and json.loads(incremental.read_text()).get('native_returncodes',{}).get('implementation')==0:
