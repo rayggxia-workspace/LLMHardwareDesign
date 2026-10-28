@@ -7,12 +7,13 @@ from run_exports import ROOT,IMAGE,sha
 DRIVER=Path(__file__).resolve().parent
 
 
-def run(revision,physical_revision):
-    source=ROOT/'antenna_diode_eco'/physical_revision/'gemm-C'
+def run(revision,physical_revision,source_kind='diode'):
+    assert source_kind in ['diode','cap']
+    source=ROOT/('antenna_diode_eco' if source_kind=='diode' else 'diode_cap_eco')/physical_revision/'gemm-C'
     out=ROOT/'antenna_diode_stream'/revision/'gemm-C';out.mkdir(parents=True,exist_ok=False)
     p=source/'execution.json';receipt=json.loads(p.read_text())
     record={'scope':'REAL_DIODE_ECO_STRICT_GDS_AND_UNCHANGED_AVAILABLE_RULES_NOT_COMPLETE_SIGNOFF',
-      'source_receipt':str(p),'source_receipt_SHA':sha(p),'full_qualification':False,
+      'source_receipt':str(p),'source_receipt_SHA':sha(p),'full_qualification':False,'source_kind':source_kind,
       'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID'],
       'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'available_deck_findings':None,
       'original_available_deck_findings':1460,'missing_SRAM_geometry_fabricated':False}
@@ -20,8 +21,17 @@ def run(revision,physical_revision):
         record['status']='NOT_EXECUTED_NO_COMPLETED_REAL_DIODE_ROUTE'
         (out/'execution.json').write_text(json.dumps(record,indent=2)+'\n');return 1
     deffile=source/'routed.def';assert sha(deffile)==receipt['files'][deffile.name]['sha256']
-    assert receipt['original_functional_instances_pose_and_terminal_contract_unchanged'] and all(receipt['unchanged_geometry'].values())
-    assert receipt['separate_diode_cost']['inserted_real_ANTENNA_X1']==636
+    if source_kind=='diode':
+        source_contract=(receipt.get('original_functional_instances_pose_and_terminal_contract_unchanged')
+          and all(receipt.get('unchanged_geometry',{}).get(k) for k in ['pins','pdn','die'])
+          and receipt.get('separate_diode_cost',{}).get('inserted_real_ANTENNA_X1')==636)
+    else:
+        source_contract=(receipt.get('all_original_signal_terminal_and_port_graph_equal_with_exact_two_proven_sizes')
+          and all(receipt.get('pin_PG_die_unchanged',{}).get(k) for k in ['pins','pdn','die'])
+          and receipt.get('retained_real_diode_count')==636)
+    if not source_contract:
+        record['status']='NOT_EXECUTED_SOURCE_CONTRACT_FAILED_OR_UNVERIFIED'
+        (out/'execution.json').write_text(json.dumps(record,indent=2)+'\n');return 1
     previous=ROOT/'streamout/costed-r02/gemm-C_ECO/input.json';old=json.loads(previous.read_text())
     spec={'def':str(deffile),'top':old['top'],'lefs':old['lefs'],'source_clean_execution':str(p)}
     (out/'input.json').write_text(json.dumps(spec,indent=2)+'\n')
@@ -52,4 +62,4 @@ def run(revision,physical_revision):
     return 0 if record.get('merge_returncode')==record.get('DRC_returncode')==0 and record['available_deck_findings']==0 else 1
 
 
-if __name__=='__main__':sys.exit(run(*sys.argv[1:3]))
+if __name__=='__main__':sys.exit(run(*sys.argv[1:4]))
