@@ -9,6 +9,7 @@ JOBS=['92690','92691','92700','92714','92721','92781','92783','92792','92794','9
 JOBS+=['92968','92969','92972','92974','92975','92976','92979','92984','92985','92997','93015']
 JOBS+=['93025']
 JOBS+=['93028','93030','93031']
+JOBS+=['93038','93040']
 
 
 def sha(path):
@@ -60,7 +61,8 @@ def collect(name):
       'upper_detailed_resume/r01/*','upper_detailed_resume/r01/*/*','logs/upper-detailed-r01-*.log',
       'actual_path_audit/r02/*/*','logs/system-relocated-path-r02-*.log',
       'upper_search_budget/r01/*','upper_search_budget/r01/*/*','logs/upper-search-r01-*.log',
-      'system_patch_route/r01/*/*','logs/system-patch-r01-*.log']
+      'system_patch_route/r0[12]/*/*','logs/system-patch-r0[12]-*.log',
+      'pin_escape_route/r0[12]/*/*','logs/mxu-escape-r0[12]-*.log']
     stable_intermediates={}
     incremental=ROOT/'antenna_incremental_eco/r01/gemm-C/execution.json'
     if incremental.exists() and json.loads(incremental.read_text()).get('native_returncodes',{}).get('implementation')==0:

@@ -36,6 +36,11 @@ def run(revision,profile='system_clean_patches'):
     assert len(reservations)==1 and sha(reservations[0])==source_inputs[str(reservations[0])]
     out=ROOT/('pin_escape_route' if mxu else 'system_patch_route')/revision/(case+'-C');out.mkdir(parents=True,exist_ok=False)
     inputs={str(p):sha(p) for p in [receipt,odb,drc,original,sdc,reservations[0]]}
+    source_slacks={}
+    for kind in ['setup','hold']:
+        p=source/(kind+'.txt');assert sha(p)==prior['files'][p.name]['sha256']
+        inputs[str(p)]=sha(p)
+        source_slacks[kind]=float(re.search(r'worst slack (?:max|min)\s+([-\d.]+)',p.read_text())[1])
     guide=source/'route.guide';expected_lef=None
     if mxu:
         assert sha(guide)==prior['files'][guide.name]['sha256'];inputs[str(guide)]=sha(guide)
@@ -47,7 +52,7 @@ def run(revision,profile='system_clean_patches'):
     inputs.update({p:sha(Path(p)) for p in old['libs'] if Path(p).is_file()})
     allowed='metal2-metal10' if mxu else 'metal2-metal8';clocks='metal4-metal10' if mxu else 'metal4-metal8'
     rec={'scope':'ACTUAL_MXU_M6_ESCAPE_RING_PHYSICAL_REROUTE_NOT_OBS_DELETION_OR_PIN_CHANGE' if mxu else 'ACTUAL_SYSTEM_NATIVE_CLEAN_PATCHES_ROUTE_VARIANT_NOT_CELLS_OR_PIN_ECO_OR_QUALIFICATION',
-      'profile':profile,'source_SHA':inputs,'source_native_DRC_count':prior['fresh_DRC_count'],'source_setup_ns':prior['setup_ns'],'source_hold_ns':prior['hold_ns'],
+      'profile':profile,'source_SHA':inputs,'source_native_DRC_count':prior['fresh_DRC_count'],'source_setup_ns':source_slacks['setup'],'source_hold_ns':source_slacks['hold'],
       'original_SDC_and_allowed_layers_unchanged':True,'original_failures_retained':True,
       'new_cells_sizing_pin_XY_changes_requested':0,'detailed_route_options':[] if mxu else ['-clean_patches'],
       'global_route_reexecuted':mxu,'full_qualification':False,'native_returncodes':{},
