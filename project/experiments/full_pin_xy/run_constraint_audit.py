@@ -28,8 +28,8 @@ foreach d $rules {
           'set it [$i findITerm '+tcl(pin)+'];set m [$i getMaster];set n [$it getNet];set idt UNKNOWN;set ndt UNKNOWN;catch {set idt [$i isDoNotTouch]};catch {set ndt [$n isDoNotTouch]}',
           'puts $f [join [list '+tcl(full)+' [$m getName] [$m getType] [$m getWidth] [$n getName] $idt $ndt [llength [$n getBTerms]] [llength [$n getITerms]]] "\\t"]']
     commands+=['close $f',
-        'set f [open '+tcl(directory/'cell_tools.txt')+' w];foreach c {replace_cell size_cell filler_placement remove_fillers detailed_placement} {puts $f [list $c [info commands $c]];if {[llength [info commands $c]]} {redirect -variable h {help $c};puts $f $h}};close $f',
-        'set f [open '+tcl(directory/'candidate_masters.tsv')+' w];puts $f "master\\ttype\\twidth_dbu\\theight_dbu";foreach l [[ord::get_db] getLibs] {foreach m [$l getMasters] {if {[regexp {^(BUF_X[1248]|XOR2_X[124]|DFFE?_.*|FILLCELL_.*)$} [$m getName]]} {puts $f [join [list [$m getName] [$m getType] [$m getWidth] [$m getHeight]] "\\t"]}}};close $f',
+        'set f [open '+tcl(directory/'cell_tools.txt')+' w];foreach c {replace_cell size_cell filler_placement remove_fillers detailed_placement} {puts $f [list $c [info commands $c]];if {[llength [info commands $c]]} {catch {help $c} h;puts $f $h}};close $f',
+        'set f [open '+tcl(directory/'candidate_masters.tsv')+' w];puts $f "master\\ttype\\twidth_dbu\\theight_dbu";foreach l [[ord::get_db] getLibs] {foreach m [$l getMasters] {if {[regexp {^(BUF_X[1248]|XOR2_X[124]|DFF.*|FILLCELL_.*)$} [$m getName]]} {puts $f [join [list [$m getName] [$m getType] [$m getWidth] [$m getHeight]] "\\t"]}}};close $f',
         'puts "READ_ONLY_NDR_DRIVER_AUDIT_FINISHED"']
     # Tcl quoted \t must contain a single backslash, not a literal \\t field.
     commands=[s.replace('\\\\t','\\t') for s in commands]
