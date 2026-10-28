@@ -47,8 +47,8 @@ def collect(name):
             if q.get('native_returncodes',{}).get(stage)==0:stable_intermediates[str(vector.parent/filename)]=stage
     resumed=ROOT/'output_chain_resume/r01/opentpu_aux-C/execution.json'
     if resumed.exists() and json.loads(resumed.read_text()).get('native_returncodes',{}).get('legalization')==0:
-        for name in ['placed_NOT_ROUTED.odb','placed.connections.tsv','placed.nonselected.tsv']:
-            stable_intermediates[str(resumed.parent/name)]='isolated_legalization'
+        for stage_file in ['placed_NOT_ROUTED.odb','placed.connections.tsv','placed.nonselected.tsv']:
+            stable_intermediates[str(resumed.parent/stage_file)]='isolated_legalization'
     records=[]
     for p in sorted(set(p for pattern in patterns for p in ROOT.glob(pattern) if p.is_file())):
         a=p.stat();r={'source':str(p),'bytes':a.st_size}

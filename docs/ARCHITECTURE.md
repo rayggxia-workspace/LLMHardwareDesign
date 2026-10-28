@@ -185,3 +185,5 @@ python project/experiments/full_pin_xy/validate_repository.py
 远程冻结驱动分别运行buffered_eco_job.sh / parent_region_job.sh / antenna_netmap_job.sh；实际参数、源码SHA、输入SHA、native命令及失败在gate-r08原文中。前者证明同硬存储合同下原映射端点有向关系，不是RTL形式等价；区域图使用真实矩形，不删除OBS；天线按原RDB实际金属多边形正面积相交追踪，不用bbox或几何关联冒充LVS。真实ANTENNA_X1仅完成库存核实，尚未插入/路由或通过原1460项天线规则。[KLayout原生antenna_check语义](https://www.klayout.de/doc/about/drc_ref_netter.html#h2-antenna_check)仅用于解释原规则行为，不能作为制造签核资格。
 
 实际成本diode驱动run_antenna_diode_eco.py/antenna_diode_access.tcl保留原单元/所有端点/原pin/PG/OBS/外框/SDC/路由层，以原生636网实际receiver为定位依据；只新增真实库diode及真实负载，源SHA和逐diode坐标入回执。独立run_antenna_diode_stream.py在源结束后严格合并并执行不修改原deck，未完成路由明确不执行，不能由Slurm/native0代签。audit_actual_leaf_paths.py使用相同SPEF重读完整关键路径；plot_actual_critical_paths.py按真实相邻arrival统计cell/net arc，非线长或无线下界；全量VECTOR有向合同复用verify_buffered_eco.py并传入vector。具体driver commit/作业号/原命令见2026-10-29交接与gate-r10快照，禁止复写活动输出。
+
+SYSTEM同网表buffer重排使用output_chain_placement.tcl/run_output_chain_placement.py，所有输出纳入选择，仅移动真实私有identity链，不新增/换型/改网；原失败92921及检查点保留。resume_output_chain.py在无Lib/SDC的新原生进程合法化同一检查点，恢复真实原状态并核查连接/非选中位置；再新进程按原Lib/SDC重布线/提取/STA。成功的中间合法化不替代最终物理门槛。gate-r12对已关闭native阶段的ODB/合同文件索引SHA，检查点及原命令由交接和原回执绑定。

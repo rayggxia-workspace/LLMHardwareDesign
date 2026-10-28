@@ -48,3 +48,15 @@ VECTOR已从92867实际14resize/17buffer检查点继续，先去filler避免EST-
 ## 01:05 CST新失败与恢复入口
 
 新92921（driver3e6a10233f419cc508679a61c3a072014705e75e）已FAILED：1244个输出port全部考虑，772条私有链/1262个现有identity buffer生成真实重排，不增单元/不换型/不改网。Diamond报告1262 moves后Signal11，implementation=-11，未完成合法化检查或布线；全部源SHA保持。ROOT/output_chain_placement/r01/opentpu_aux-C/moved_NOT_LEGALIZED_OR_ROUTED.odb有完成SHA，禁止重做同一移动选择。gate-r11/92924新原文不可覆盖快照保留失败。计划中的恢复脚本resume_output_chain.py分离无Lib/SDC的几何合法化与原SDC/Lib的布线/RC/STA进程，复用该检查点及真实源状态；假设是STA观察器/进程状态，准确崩溃根因尚未证实。SYS原无filler时不添加新filler，check_placement仍执行。恢复作业须以新发布回执核实，不能把脚本存在说成已运行或通过。
+
+## 01:07 CST：同一检查点独立合法化实际成功，布线继续
+
+92925（driver e151247a7cd59c082e578d13c06575801e265b51），ROOT/output_chain_resume/r01/opentpu_aux-C：没有重复选择或生成1262个buffer坐标，复用92921有SHA的moved检查点。原source状态独立导出、无Lib/SDC几何进程Diamond及check_placement通过，1262 moves全部成功；原功能master/逐端连接、非选中原实例位置合同与92921移动前source字节相等。原SYS没有filler，未添加filler，检查未删除。随后独立新进程恢复原Lib/SDC和signal M2–M8/clock M4–M8，正在完整重布线。未终态DRC/PG/连通/RCX/STA不得填通过；准确崩溃根因仍是未闭合假设。
+
+新gate-r12/92926保存不可覆盖原文、当前调度状态和已关闭原生合法化阶段的placed ODB及两份实际合同文件SHA，实际合同SHA对source比较；不对活动写入ODB做哈希。新report/矩阵的SYSTEM_output_chain_resume与原92921失败分别保留。
+
+恢复首先核实92925、92910/92912、92690/92691、92841、92855、92892；不重做成功的VECTOR/SYS数字合同及GEMM关联，不改活动driver或输出。共同集成92855在原双PG检查后仍推进筛选/固定线与底层接入，没有合格冻结或完整M11/M12模式。下一次新终态使用gate-r13，不能覆盖r12。
+
+管理回执：e151247的证据CI40731981497已读回success，结构CI40731981494仍以前次读回in_progress为准；后续head/CI须重新查询。登记PR5 pending、Projects配置/能力缺失看板unverified/同步pending、审查人待指定；Issue126保持in_progress，PR129 Draft。
+
+采集器r12新增阶段文件循环曾复用name，导致远程gate-r12.tar.gz内根名为placed.nonselected.tsv；原ROOT/gate_milestones/gate-r12及原文记录/双SHA不变。本地核验归档全部成员和manifest后仅恢复目录标签为gate-r12，代码已改用stage_file避免覆盖快照名。此前r11检查通过不当作r12已发布；修正后重新生成/验证最新r12矩阵。
