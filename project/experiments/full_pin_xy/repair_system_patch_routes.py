@@ -114,6 +114,7 @@ set_nets_to_route [list [$n getName]]'''.replace('RING_FILE',tcl(out/'proposed_t
             commands[index:index]=['write_abstract_lef '+tcl(out/'abstract.lef'),'write_abstract_lef -bloat_factor 0 '+tcl(out/'detailed.lef')]
             rec['hypothesis']='Physically route act_data[12] from unchanged original M6 pin through permitted existing layers, clearing its M6 vicinity; re-export actual metal OBS. Do not cut occupied OBS, claim a zero-DRC parent, or say DRT only changes one net.'
             rec['temporary_keepout_gap_and_thickness_um']=.14
+            save()
         script=out/'route.tcl';script.write_text('\n'.join(commands)+'\n')
         env='PINXY_OUTPUT='+str(out)+',PINXY_ACCESS_ALL=1,PINXY_ACCESS_OUT='+str(out/'whole_access.tsv.gz')
         rec['native_returncodes']['implementation']=execute(common,script,out/'native.log',env,threads=4);save()

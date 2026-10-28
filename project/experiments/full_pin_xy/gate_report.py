@@ -427,6 +427,20 @@ def render(root,out):
     if search:
         result['all770_search_budget200_mode_receipts_r01']=search
         upper_text+='<p>93030是新的独立搜索试验：FastRoute拥塞迭代预算由默认50增加到200，verbose记录实际迭代；相同原DB、770边、轨道、PG/OBS、pin和物理规则，原GRT/DRT失败保留。终态以原生回执为准，运行中不算通过；下层仍未合格冻结。</p>'
+    p=snapshot/'system_patch_route/r02/opentpu_aux-C/execution.json.gz'
+    if p.exists():
+        q=read(p);result['SYSTEM_native_clean_patches_r02_attempt']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        state=('终态：native '+str(q.get('native_returncodes'))+'，fresh DRC '+str(q.get('fresh_DRC_count','未取得'))+'，setup/hold '+str(q.get('setup_ns','未取得'))+'/'+str(q.get('hold_ns','未取得'))+'ns') if q.get('completed_utc') else '实际运行中，最终fresh/RC/STA尚未取得'
+        upper_text+='<p><strong>93038 SYSTEM native clean_patches/r02：</strong>'+state+'。在原容器内核验同一Lib，保留93031前置失败；不改pin/单元/PG/原OBS/原SDC与层集合。该新试验不是改检查或时序闭合，当前矩阵已完成源与新尝试分别记录。</p>'
+    failed=snapshot/'logs/mxu-escape-r01-93040.log.gz'
+    if failed.exists():
+        result['MXU_escape_r01_preparation_failure']={'state':'FAILED_BEFORE_NATIVE_ROUTING','job_id':'93040','evidence':(dest/failed.relative_to(snapshot)).relative_to(out).as_posix(),'full_qualification':False}
+        upper_text+='<p><strong>93040 MXU M6引出试验前置失败：</strong>旧叶回执不含SYSTEM格式setup_ns字段，KeyError，未进入路由；原日志保留。r02改为按SHA读取原生setup/hold原文，不改变物理输入或试验约束。</p>'
+    p=snapshot/'pin_escape_route/r02/mxu-C/execution.json.gz'
+    if p.exists():
+        q=read(p);result['MXU_actual_M6_escape_r02_attempt']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        state=('终态：native '+str(q.get('native_returncodes'))+'，fresh DRC '+str(q.get('fresh_DRC_count','未取得'))+'，setup/hold '+str(q.get('setup_ns','未取得'))+'/'+str(q.get('hold_ns','未取得'))+'ns') if q.get('completed_utc') else '实际运行中，尚无最终路由/视图/RC/STA回执'
+        upper_text+='<p><strong>93041 MXU实际M6接入重接/r02：</strong>'+state+'。从成本ECO/r04源保持原act_data[12]的M6层、XY及0.14×0.14μm尺寸，临时M6路由ring约束引导真实接线，完成后移除仅本次新增约束；保留原占用OBS，不剪去真实金属。gap/thickness各0.14μm只是临时约束参数，不替代M6完整spacing规则。新父层可达性/DRC未执行，不能凭叶native0宣称原M6–OBS报项已修复。</p>'
     diagnosis=root/'vector_table_diagnosis_r03'
     if (diagnosis/'summary.json').exists():
         folder=data/'vector_Liberty_table_diagnosis';shutil.copytree(diagnosis,folder,dirs_exist_ok=True)

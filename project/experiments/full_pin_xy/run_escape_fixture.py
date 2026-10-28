@@ -27,16 +27,37 @@ def execute(common, script, log, env=None, threads=4):
 
 def one(case, variant, revision):
     assert case in ['act', 'gemm', 'mxu'] and variant in ['Aopt', 'C']
-    source, proof, proof_path = child_source(case, variant)
-    odb = source.parent/'clean.odb'
-    model_revision=('r02' if variant == 'C' else 'r03')
-    if variant=='C':model_revision=os.environ.get('PINXY_'+case.upper()+'_C_MODEL_REVISION',model_revision)
-    model_dir = ROOT/'leaf_timing_models'/model_revision/(case+'-'+variant)
-    model = json.loads((model_dir/'execution.json').read_text())
-    assert model['status']=='NATIVE_EXTRACTED_MODEL_EXPORTED_NOT_QUALIFIED' and model['exact_all_signal_pin_direction_match']
-    assert sha(model_dir/'timing.lib')==model['generated_library_sha256']
-    assert model['source_clean_receipt_sha256'] == sha(proof_path)
-    assert model['clean_odb_sha256'] == sha(odb) == proof['clean_odb_sha256']
+    kind=os.environ.get('PINXY_CHILD_VIEW_KIND','legacy_verified')
+    assert kind in ['legacy_verified','real_diode658']
+    if kind=='real_diode658':
+        assert (case,variant)==('gemm','C')
+        model_dir=ROOT/'diode_views/r01/gemm-C';source=model_dir/'abstract.lef';proof_path=model_dir/'execution.json'
+        proof=json.loads(proof_path.read_text());odb=model_dir/'clean.odb'
+        assert proof.get('completed_utc') and proof['native_export_returncode']==proof['fresh_model_read_returncode']==0
+        assert proof['matching_all_signal_model_pins']==3753 and proof['all_original_signal_and_PG_pins_and_size_exactly_preserved']
+        assert proof['SPEF_replay_matches_source'] and proof['all_sources_and_pre_RCX_geometry_unchanged']
+        for p in [odb,source,model_dir/'timing.lib',model_dir/'pins.tsv']:assert sha(p)==proof['files'][p.name]['sha256']
+        assert sha(odb)==proof['source_geometry_sha256']
+        actual_receipt=Path(proof['source_receipt']);assert sha(actual_receipt)==proof['source_receipt_SHA256']
+        actual=json.loads(actual_receipt.read_text())
+        assert actual.get('completed_utc') and actual['actual_total_real_diodes']==658 and actual['fresh_DRC_count']==0 and actual['whole_signal_geometry']['pass']
+        # The original access windows are still valid only because every original
+        # pin/PG rectangle was verified unchanged in this actual new view.
+        access_trial_receipt=ROOT/'trials/access-r03/gemm-C/execution.json'
+    else:
+        source, proof, proof_path = child_source(case, variant)
+        odb = source.parent/'clean.odb'
+        model_revision=('r02' if variant == 'C' else 'r03')
+        if variant=='C':model_revision=os.environ.get('PINXY_'+case.upper()+'_C_MODEL_REVISION',model_revision)
+        model_dir = ROOT/'leaf_timing_models'/model_revision/(case+'-'+variant)
+        model = json.loads((model_dir/'execution.json').read_text())
+        assert model['status']=='NATIVE_EXTRACTED_MODEL_EXPORTED_NOT_QUALIFIED' and model['exact_all_signal_pin_direction_match']
+        assert sha(model_dir/'timing.lib')==model['generated_library_sha256']
+        assert model['source_clean_receipt_sha256'] == sha(proof_path)
+        assert model['clean_odb_sha256'] == sha(odb) == proof['clean_odb_sha256']
+        access_trial_receipt=Path(proof['legacy_RC_STA_receipt'])
+    source_view_hashes={str(p):sha(p) for p in [odb,source,proof_path,model_dir/'execution.json',model_dir/'timing.lib',source.parent/'pins.tsv',access_trial_receipt]}
+    if kind=='real_diode658':source_view_hashes[str(actual_receipt)]=sha(actual_receipt)
     out = ROOT/'escape_fixtures'/revision/(case+'-'+variant)
     out.mkdir(parents=True, exist_ok=False)
     rec = {'scope': 'REAL_256BIT_PARENT_M10_ESCAPE_FIXTURE; unchanged original leaf pins; NOT common-base/full system qualification',
@@ -45,6 +66,9 @@ def one(case, variant, revision):
            'driver_commit': (DRIVER/'driver_commit.txt').read_text().strip(), 'scheduler_job': os.environ['SLURM_JOB_ID'],
            'full_qualification': False, 'source_leaf_STA_and_complete_rules': 'Inherited independent leaf reports remain mandatory; do not hide their failures',
            'new_parent_M10_ports_not_redefinitions_of_leaf_M5_M6': True}
+    rec['source_view_kind']=kind;rec['closed_source_view_SHA256']=source_view_hashes
+    rec['original_access_windows_receipt_only_not_current_leaf_STA_source']=str(access_trial_receipt)
+    if kind=='real_diode658':rec['actual_658_leaf_receipt_SHA256']=sha(actual_receipt)
     common = ['singularity', 'exec', '--cleanenv', '--bind', str(ROOT/'tmp')+':/tmp', '--home', str(ROOT/'home'), '--pwd', str(out)]
     export = out/'export.tcl'
     export.write_text('read_db '+tcl(odb)+'\nwrite_abstract_lef -bloat_factor 0 '+tcl(out/'leaf_detail.lef')+'\n')
@@ -114,7 +138,7 @@ def one(case, variant, revision):
     reservation_input=os.environ.get('PINXY_PARENT_ACCESS_RESERVATIONS') or (os.environ.get('PINXY_ACT_ACCESS_RESERVATIONS') if case=='act' else None)
     if variant=='C' and reservation_input:
         reservations=Path(reservation_input)
-        leaf_trial=json.loads(Path(proof['legacy_RC_STA_receipt']).read_text())
+        leaf_trial=json.loads(access_trial_receipt.read_text())
         assert leaf_trial['input_sha256'][str(reservations)]==sha(reservations),'Parent keepouts must be the exact accepted leaf access windows'
         before_pdn=[
             'set prior_parent_block_obs [lsort [[ord::get_db_block] getObstructions]]',
@@ -160,6 +184,19 @@ def one(case, variant, revision):
             chosen = (px,py);old_rects.append(b);break
         assert chosen, (pin,'No actual M10 OBS/PG-screened landing')
         landing[pin] = chosen
+    if kind=='real_diode658':
+        # Reuse the old successful repair as a proposal, screening it against
+        # this actual new child's M10 OBS, new PG and all other landings again.
+        deltafile=ROOT/'inputs/gemm-actual-landing-r01/landing_delta.json';delta=json.loads(deltafile.read_text())
+        assert delta['net']=='gemm_a_rdata[128]' and delta['parent_layer']=='metal10' and delta['parent_size_um']==[.8,.8]
+        px,py=delta['new_parent_xy_um'];b=(px-.4,py-.4,px+.4,py+.4)
+        others=[(x-.4,y-.4,x+.4,y+.4) for p,(x,y) in landing.items() if p!=delta['net']]
+        assert min(b[:2])>=10 and b[2]<=die_w-10 and b[3]<=die_h-10
+        assert not any(b[0]-1.5<q[2] and b[2]+1.5>q[0] and b[1]-1.5<q[3] and b[3]+1.5>q[1] for q in obstacles+others)
+        landing[delta['net']]=(px,py);source_view_hashes[str(deltafile)]=sha(deltafile)
+        rec['reused_prior_parent_repair_as_proposal']={'source_delta_SHA256':sha(deltafile),'pin':delta['net'],'new_parent_M10_xy_um':[px,py],
+          'screened_against_this_new_actual_M10_OBS_PG_and_all_other_landing_rectangles':True,
+          'new_native_route_DRC_and_access_not_inferred_from_old_fixture':True}
     commands = ['read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib',
                 'read_liberty '+tcl(model_dir/'timing.lib'), 'read_db '+tcl(out/'placed.odb')]
     landing_rows = []
@@ -189,6 +226,7 @@ def one(case, variant, revision):
     env = 'PINXY_DRIVER={},PINXY_ACCESS_ALL=1,PINXY_ACCESS_OUT={}'.format(DRIVER,out/'whole_access.tsv.gz')
     rec['native_route_returncode'] = execute(common,out/'route.tcl',out/'route.log',env)
     rec['source_unchanged'] = sha(odb)==rec['source_clean_ODB_SHA']
+    rec['all_closed_source_views_unchanged']=all(sha(Path(p))==v for p,v in source_view_hashes.items())
     if rec['native_route_returncode']==0:
         fresh=out/'fresh.tcl';fresh.write_text('read_db '+tcl(out/'routed.odb')+'\nset_routing_layers -signal metal2-metal10 -clock metal4-metal10\ndrt::check_drc -output_file '+tcl(out/'independent.drc')+'\n')
         rec['independent_DRC_returncode']=execute(common,fresh,out/'independent.log',threads=1)
@@ -199,7 +237,7 @@ def one(case, variant, revision):
     rec['RC_STA']='Not yet executed; requires accepted native/PG/whole geometry and exact leaf model source; never infer timing from successful routing'
     rec['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
     rec['files']={p.name:{'sha256':sha(p),'bytes':p.stat().st_size} for p in out.iterdir() if p.is_file()}
-    rec['status']='FIXED_LAYER_ESCAPE_ACCESS_GATES_PASSED_NOT_SYSTEM_QUALIFIED' if rec.get('independent_DRC_count')==0 and rec.get('whole_signal_geometry',{}).get('pass') and rec['native_route_returncode']==0 else 'ACTUAL_ESCAPE_FIXTURE_FAILED_OR_INCOMPLETE'
+    rec['status']='FIXED_LAYER_ESCAPE_ACCESS_GATES_PASSED_NOT_SYSTEM_QUALIFIED' if rec.get('independent_DRC_count')==0 and rec.get('whole_signal_geometry',{}).get('pass') and rec['native_route_returncode']==0 and rec['source_unchanged'] and rec['all_closed_source_views_unchanged'] else 'ACTUAL_ESCAPE_FIXTURE_FAILED_OR_INCOMPLETE'
     (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     print('ESCAPE_FIXTURE',case,variant,rec['status'],flush=True)
     return rec['status']=='FIXED_LAYER_ESCAPE_ACCESS_GATES_PASSED_NOT_SYSTEM_QUALIFIED'

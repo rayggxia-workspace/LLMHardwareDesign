@@ -332,6 +332,19 @@ def check(out):
     if j.get('SYSTEM_clean_patch_r01_preparation_failure'):
         q=j['SYSTEM_clean_patch_r01_preparation_failure'];assert q['state']=='FAILED_BEFORE_NATIVE_ROUTING' and not q['full_qualification']
         text=gzip.decompress((out/q['evidence']).read_bytes()).decode();assert 'FileNotFoundError' in text and '/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib' in text
+    if j.get('MXU_escape_r01_preparation_failure'):
+        q=j['MXU_escape_r01_preparation_failure'];assert q['state']=='FAILED_BEFORE_NATIVE_ROUTING' and not q['full_qualification']
+        text=gzip.decompress((out/q['evidence']).read_bytes()).decode();assert "KeyError: 'setup_ns'" in text
+    if j.get('SYSTEM_native_clean_patches_r02_attempt'):
+        q=j['SYSTEM_native_clean_patches_r02_attempt'];assert not q['full_qualification'] and q['source_native_DRC_count']==2
+        assert q['original_SDC_and_allowed_layers_unchanged'] and q['new_cells_sizing_pin_XY_changes_requested']==0 and not q['global_route_reexecuted']
+    if j.get('MXU_actual_M6_escape_r02_attempt'):
+        q=j['MXU_actual_M6_escape_r02_attempt'];assert not q['full_qualification'] and q['source_native_DRC_count']==0
+        assert q['profile']=='mxu_M6_escape' and q['new_cells_sizing_pin_XY_changes_requested']==0
+        assert q['original_SDC_and_allowed_layers_unchanged']
+        if 'temporary_keepout_gap_and_thickness_um' in q:assert q['temporary_keepout_gap_and_thickness_um']==.14
+        p=(out/q['evidence']).parent
+        assert 'set gap 280;set thick 280' in gzip.decompress((p/'route.tcl.gz').read_bytes()).decode()
     if j.get('SYSTEM_existing_buffer_relocation_r02',{}).get('completed_utc'):
         q=j['SYSTEM_existing_buffer_relocation_r02'];assert not q['full_qualification'] and q['native_returncodes']['route']==0
         assert q['fresh_DRC_count']==rows['opentpu_aux']['native_DRC_count']==2 and q['whole_signal_geometry']['pass']
