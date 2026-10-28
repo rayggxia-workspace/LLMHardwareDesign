@@ -60,12 +60,19 @@ def prepare(root, out, case='act', candidate_table=None):
             if len(macros) and np.any((b[0]-.56<macros[:,2])&(b[2]+.56>macros[:,0])&(b[1]-.56<macros[:,3])&(b[3]+.56>macros[:,1])):continue
             nearby=[i for i in neighbors.query_ball_point([x,y],10.) if i!=current_index]
             others=xy[nearby]
-            separation=.56 if adjacent=='metal6' or case=='act' else 1.12
+            separation=.56 if adjacent=='metal6' or case=='act' else .84
             if np.any((abs(others[:,0]-x)<separation-1e-8)&(abs(others[:,1]-y)<separation-1e-8)):continue
             if index.hits(r.layer,x,y,hx,hy,.14,int(r.net_id)):continue
             if index.hits(adjacent,x,y,half,half,0,int(r.net_id)):continue
             chosen=(x,y);break
-        assert chosen,(pin,'No fixed-PG/OBS-clear adjacent-layer access site')
+        if chosen is None:
+            failure=out.with_suffix('.failure.json')
+            if not failure.exists():
+                failure.write_text(json.dumps({'status':'LOCAL_CANDIDATE_SEARCH_FAILED_NOT_A_PHYSICAL_RESULT','case':case,'pin':pin,
+                    'old_C_xy_um':old.tolist(),'original_pin_layer':r.layer,'adjacent_layer':adjacent,
+                    'all_signal_pins':expected[case],'selected_cohort':len(cohort),'completed_candidates_before_failure':len(windows),
+                    'generator_file_SHA':hashlib.sha256(Path(__file__).read_bytes()).hexdigest()},indent=2)+'\n')
+            raise AssertionError((pin,'No fixed-PG/OBS-clear adjacent-layer access site'))
         x,y=chosen
         xy[current_index]=[x,y]
         c.loc[pin,['x_um','y_um','x0_um','y0_um','x1_um','y1_um']]=[x,y,x-hx,y-hy,x+hx,y+hy]
@@ -106,6 +113,8 @@ def prepare(root, out, case='act', candidate_table=None):
     receipt={'scope':'PROPOSED_ADJACENT_LAYER_ACCESS_REVISION_NOT_PHYSICALLY_QUALIFIED','case':case,'signal_pins':expected[case],'moved_pin_count':len(cohort),
              'method_evidence':'ACT actual escape fixture r02 C: DRT-0073 No access point u_macro/r_data[342]. Other blocks require their own actual access tests; no unobserved failure is asserted.',
              'source_C_SHA':hashlib.sha256(Path(candidate_table if candidate_table else raw).read_bytes()).hexdigest(),'changes':changes,'windows':windows,
+             'generator_file_SHA':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+             'candidate_spacing_note':'M7 candidate centers use0.84um heuristic (0.4um via7 cut+0.44um cut spacing), not the old arbitrary1.12um screen. Actual routing/DRC is unchanged and remains mandatory. ACT retains its already-executed recipe.',
              'routing_method':'Reroute all signal/clock nets around newly created temporary windows; original cells/PG/OBS/layers/rectangles untouched. Remove only these new constraints after routing, verify original block-OBS list unchanged.',
              'track_phase_requirement':'Parent R0 translation must preserve 0.28/0.8/1.6um upper-track phases, e.g. multiples of11.2um; .005um manufacturing grid alone is insufficient',
              'not_checked':['Actual new route','Native DRC','Via/parent pin access','PG/whole connectivity','RC/STA','GDS/full rules']}
