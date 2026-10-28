@@ -1,5 +1,6 @@
 # Native routing support probe ONLY; no six-block or common-base claim.
 read_lef $::env(PINXY_TECH)
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
 read_verilog $::env(PINXY_VERILOG)
 link_design upper_probe
 initialize_floorplan -die_area {0 0 100 100} -core_area {0 0 100 100} -site FreePDK45_38x28_10R_NP_162NW_34O

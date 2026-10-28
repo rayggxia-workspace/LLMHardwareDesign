@@ -57,8 +57,10 @@ def extend(source, rc_source, output):
         assert len(lines) == 1
         rc += '\n# RESEARCH EXTRAPOLATION; uncalibrated upper layer\n'+renamed(lines[0], {'metal'+str(donor): 'metal'+str(new)})+'\n'
     output.mkdir(parents=True)
-    (output/'research12.tech.lef').write_text(extended, encoding='utf-8', newline='\n')
-    (output/'research12.setRC.tcl').write_text(rc, encoding='utf-8', newline='\n')
+    with (output/'research12.tech.lef').open('w', encoding='utf-8', newline='\n') as f:
+        f.write(extended)
+    with (output/'research12.setRC.tcl').open('w', encoding='utf-8', newline='\n') as f:
+        f.write(rc)
     manifest = {'scope': 'RESEARCH_ASSUMPTIONS_ONLY; not original Nangate45 M11/M12 or manufacturing qualification',
                 'source_tech_sha256': digest(raw), 'source_RC_sha256': digest(rc_source.read_bytes()),
                 'original_M1_M10_and_via1_via9_layer_blocks_identical': True, 'original_layer_block_hashes': originals,
