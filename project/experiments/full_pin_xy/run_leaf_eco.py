@@ -6,8 +6,8 @@ clock relaxation, pipeline/protocol/resource redesign, or rule deletion.
 """
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
-import csv, datetime, json, os, re, sys, traceback
-from run_exports import ROOT, sha
+import csv, datetime, json, os, re, subprocess, sys, traceback
+from run_exports import ROOT, IMAGE, sha
 from run_parent_trial import BASE, C_REVISION, tcl
 from run_escape_fixture import execute
 from check_access import check
@@ -25,6 +25,8 @@ def one(case,variant,revision):
     out=ROOT/'leaf_eco'/revision/(case+'-'+variant);out.mkdir(parents=True,exist_ok=False)
     electrical_only=os.environ.get('PINXY_ECO_ELECTRICAL_ONLY')=='1'
     incremental=os.environ.get('PINXY_ECO_INCREMENTAL')=='1'
+    targeted=os.environ.get('PINXY_ECO_TARGETED')=='1'
+    assert not targeted or (electrical_only and incremental and case in ['gemm','mxu'] and variant=='C')
     inputs={str(p):sha(p) for p in [odb,spef,sdc,trial,source/'execution.json']}
     # Reuse the existing exact geometry fingerprint/stage helpers, not the
     # original trial's load/move/route body.
@@ -58,6 +60,31 @@ def one(case,variant,revision):
                     'if {![stage begin_incremental {global_route -start_incremental}]} {close $stages;exit 1}']
         lines=[s for s in lines if not s.startswith('if {![stage rip_signal_routes')]
         lines=[s.replace('global_route -allow_congestion -guide_file','global_route -end_incremental -allow_congestion -guide_file') for s in lines]
+    replacements=[]
+    if targeted:
+        from cell_semantics import check_pair
+        # Exact masters and escaping were read from the actual source ODB in
+        # constraint_audit/r04, not guessed from report display names.
+        replacements=([('place15450','BUF_X1','BUF_X2'),('_328297_','XOR2_X1','XOR2_X2'),
+                       (r'rq_m\[341\]$_DFFE_PN0P_','DFFR_X1','DFFR_X2')]
+                      if case=='gemm' else [('place10281','BUF_X1','BUF_X2')])
+        lib_text={p:subprocess.check_output(['singularity','exec','--cleanenv','--home',str(ROOT/'home'),IMAGE,'cat',p]).decode()
+                  for p in old['libs']}
+        logic_contracts=[check_pair([Path(p) for p in old['libs']],a,b,lambda p:lib_text[str(p)]) for _,a,b in replacements]
+        (out/'replacement_logic_contracts.json').write_text(json.dumps(logic_contracts,indent=2)+'\n')
+        replacement_tcl=['set b [ord::get_db_block];set filler_masters {};foreach i [$b getInsts] {set m [$i getMaster];if {[$m getType] eq "CORE_SPACER"} {lappend filler_masters [$m getName]}};set filler_masters [lsort -unique $filler_masters];if {![llength $filler_masters]} {error "Original filler master set missing"}',
+          'proc terminal_contract {inst} {set result {};foreach it [$inst getITerms] {set n [$it getNet];lappend result [list [[$it getMTerm] getName] [[$it getMTerm] getIoType] [expr {$n eq "NULL" ? "NULL" : [$n getName]}]]};return [lsort $result]}',
+          'remove_fillers']
+        for inst,old_master,new_master in replacements:
+            replacement_tcl+=['set i [$b findInst '+tcl(inst)+'];if {$i eq "NULL" || [[$i getMaster] getName] ne '+tcl(old_master)+'} {error "Exact targeted source master changed"}',
+              'set prior [terminal_contract $i];replace_cell '+tcl(inst)+' '+tcl(new_master)+';set i [$b findInst '+tcl(inst)+'];if {[terminal_contract $i] ne $prior || [[$i getMaster] getName] ne '+tcl(new_master)+'} {error "Replacement changed terminal semantics"}']
+        i=next(i for i,s in enumerate(lines) if s.startswith('if {![stage cell_repair'))
+        lines[i]='if {![stage cell_repair {'+';'.join(replacement_tcl)+'}]} {close $stages;exit 1}'
+        lines=[s.replace('detailed_placement;check_placement -verbose',
+                         'detailed_placement -incremental;check_placement -verbose;filler_placement -prefix PINXY_CAP_FILL_ $filler_masters;global_connect;check_placement -verbose') for s in lines]
+        # No guide overflow waiver in this new targeted implementation. Earlier
+        # runs and any real failures remain in their immutable directories.
+        lines=[s.replace('global_route -end_incremental -allow_congestion','global_route -end_incremental') for s in lines]
     reservation_keys=[p for p in old['input_sha256'] if p.endswith('/access_reservations.tcl')]
     if reservation_keys:
         assert len(reservation_keys)==1
@@ -83,7 +110,10 @@ def one(case,variant,revision):
          'source_inputs_SHA':inputs,'original_SDC_and_clocks_unchanged':True,'cell_sizing_buffering_and_placement_changes_separate_cost':True,
          'new_access_window_trial_replaced':False,'equivalence_not_yet_verified':True,'full_qualification':False,
          'electrical_only_repair':electrical_only,'incremental_route_attempt':incremental,'same_source_access_windows_retained':bool(reservation_keys),
-         'GRT_overflow_permitted_for_guides_only_not_pass':True,'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),
+         'targeted_master_changes':replacements,'fillers_restored_with_original_master_set':targeted,
+         'replacement_logic_state_precheck':'EXACT_LIBERTY_FUNCTION_AND_SEQUENTIAL_STATE_CONTRACT' if targeted else 'NOT_EXECUTED',
+         'design_formal_equivalence':'NOT_EXECUTED',
+         'GRT_overflow_permitted_for_guides_only_not_pass':not targeted,'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),
          'scheduler_job':os.environ['SLURM_JOB_ID'],'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()}
     (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
