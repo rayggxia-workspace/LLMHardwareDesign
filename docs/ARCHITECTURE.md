@@ -156,3 +156,8 @@ python project/experiments/full_pin_xy/validate_repository.py
 `run_escape_landing.py`仅修订新父层M10中间接点，不改原ACT M5/M6；只有fresh native/860网连通/双PG/原PG及其他父pin保持全部满足才标记几何门槛通过。`escape_rc_sta_job.sh NEW_REV`对已接受Aopt/C夹具实际提取与同研究I/O约束、2/10/50fF敏感性分析，不保存RCX后ODB；所有hold/电气/604零长度网未标注提示保留。`run_leaf_eco.py`的重定尺寸/缓冲/布局成本与纯XY分开，等价仍需独立验证。
 
 可复现发布检查：`python scripts/check_project.py`；`python -m compileall -q project/experiments/full_pin_xy`；`python project/experiments/full_pin_xy/test_zero_wire_access.py`；`python project/experiments/full_pin_xy/validate_repository.py`。完整报告用`build_deliverables.py --root R --out docs/experiments/issue-126-full-pin --keep-figures`；仅刷新新增阶段用`refresh_continuation.py`同参数；浏览器用`node project/experiments/full_pin_xy/qa_report.mjs REPORT NEW_QA_DIR`。原CSV/历史快照和PR120原图保持，新增原生文本无损gzip、大型物理文件只读留远程SHA索引。9031个新实际pin逐项与增量表比较，不能把全部24767候选的检查当全部物理完成。
+
+
+2026-10-28晚接续新增：`prepare_local_pin_patch.py`/`local_pin_patch_job.sh`实施LL完整表的三点增量重接线；实际DRT无AP失败与坐标正确分开。`constraint_audit_job.sh NEW_REV`取得只读NDR规则/关联/实际wire宽度及驱动查询，源SHA不变，不当完整规则通过。`cell_semantics.py`和`run_leaf_eco.py`的TARGETED分支做实际X2驱动增强并恢复填充，成本与纯XY分开。FRESH_GRT分支先实际重建GRT，再显式用GRT估算做修复，原SPEF重放与最后RCX/STA分别记录；SYSTEM原允许层不变，合法化工具崩溃不删检查。实际冻结驱动与作业号见10月28日接续交接。
+
+新增快照命令：在获分配的本人Slurm作业内从远程ROOT执行`python3 -B DRIVER/collect_resume_progress.py NEW_NAME [JOB...]`；只写新的resume_snapshots目录。下载到分析目录的resume_evidence后，运行原`refresh_continuation.py`和`validate_repository.py`，25幅报告图含新增真实PG/原生marker/proposed局部图。`qa_report.mjs`检验所有图片和逐bit筛选；生成图必须打开目视核验。候选/快照校验通过不代表native/完整DRC、连通、RC、STA或冻结资格。

@@ -1,6 +1,6 @@
 """Publish continuation receipts and true/proposed geometry without merging stages."""
 from pathlib import Path
-import csv, gzip, hashlib, html, json, shutil
+import csv, gzip, hashlib, html, io, json, shutil
 import numpy as np
 import pandas as pd
 import expand_candidates as expand
@@ -44,7 +44,11 @@ def frame(fig,title,subtitle):
 
 
 def save(fig,assets,name):
-    for ext in ['png','svg']:fig.savefig(assets/(name+'.'+ext),dpi=180)
+    png=io.BytesIO();fig.savefig(png,format='png',dpi=180);p=assets/(name+'.png');s=assets/(name+'.svg')
+    if p.exists() and s.exists() and p.read_bytes()==png.getvalue():
+        expand.legacy.plt.close(fig);return
+    p.write_bytes(png.getvalue())
+    with expand.legacy.plt.rc_context({'svg.hashsalt':'issue126-continuation'}):fig.savefig(s,dpi=180,metadata={'Date':None})
     expand.legacy.plt.close(fig)
 
 
@@ -282,4 +286,5 @@ def render(root,out):
     if llpg.exists():
         j=read(llpg)
         section=section.replace('<h3>ACT：原层到父层M10的真实接入</h3>','<p><b>LL PG-only备选完整C最新终态：</b>92648/92649已完成真实布线与独立检查：13184移动/13507总pin，725253网/2325528端点所检几何连通通过，但独立native DRC仍4项（3项Metal Spacing、1项NS Metal）。直接PG接触0不是间距/线宽通过。该方案不同于仍在运行的access-r03完整窗口版，不覆盖后者状态；原生四项报告及全部指纹见terminal_updates/LLPG-r01，原始旧C直接26pin/44对接触失败也保留。</p><h3>ACT：原层到父层M10的真实接入</h3>')
-    return section
+    from resume_report import render as render_resume
+    return section+render_resume(root,out)

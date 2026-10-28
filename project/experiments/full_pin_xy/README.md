@@ -142,3 +142,21 @@ GEMM严格GDS92376已自然完成，A/8pin C合并成功但1346/1358项天线违
 源码/当前作业及恢复入口见`docs/handoffs/2026-10-28-issue-126-common-base-continuation.md`。不覆盖原参考、其他工作树、冻结驱动或活动作业；每次提交/复用前重新核实远程状态。
 
 `collect_terminal_leaf.py CASE REV NEW_NAME`只补收已经产生终态的原生回执、timing和pin表，不再运行P&R，也不替换旧快照；`refresh_continuation.py`会把这些新增终态补入阶段表，实际完整资格始终由各项检查决定。当前五块11260个新实际pin核对通过，llSYS完整窗口仍单列为执行中。
+
+
+## 10月28日晚恢复：真实失败、驱动修复与估算模型
+
+`prepare_local_pin_patch.py --root R --out NEW`生成LL完整13507点表，只增量修改真实四项native marker涉及的三点。`local_pin_patch_job.sh INPUT NEW_REV`实际重接线；92747因另一未移动bit_4812无AP失败，不能只检查坐标就宣称修复。
+
+`constraint_audit_job.sh NEW_REV`只读原始LL/PG-C及GEMM/MXU窗口视图，核实实际NDR/驱动/dont-touch/矩形宽度与源SHA；不代替via、NDR spacing或完整规则。API查询失败的r01-r03原样保留，r04/r05取得原生结果。
+
+`run_leaf_eco.py`可用`PINXY_ECO_TARGETED=1,PINXY_ECO_ELECTRICAL_ONLY=1,PINXY_ECO_INCREMENTAL=1`运行精确三处GEMM/一处MXU X2换型，`cell_semantics.py`核对Liberty逻辑和触发器状态，原端口网络单列检查，恢复原master种类填充。这是成本ECO，不是纯XY；设计形式等价仍待独立执行。
+
+支持的原生GRT估算排查用`PINXY_ECO_FRESH_GRT=1,PINXY_ECO_PLACEMENT_HEURISTIC=1,PINXY_ECO_INCREMENTAL=1,PINXY_ECO_C_ONLY=1,PINXY_ECO_HOLD=1`配合`leaf_eco_job.sh NEW_REV vector opentpu_aux`。精确源SPEF重放与修复阶段GRT估算分开；末端必须真实DRT/RCX/STA。SYSTEM保持M2–M8/clock M4–M8；r06/r07的EST-0104/Signal11不删除，r08支持diamond合法化并保存NOT_ROUTED检查点。不得把估算slack或中间合法化0错误写成最终通过。
+
+`collect_resume_progress.py NEW_NAME [JOB...]`在本人Slurm资源内补收版本化证据；`resume_report.py`由refresh自动生成中文接续节及真实PG/旧pin/native marker/proposed局部图。`validate_repository.py`增加全部13507局部候选的不遗漏、不重复、层/尺寸/网络/方向/越界、恰好3点变化及原文SHA检查，仍非物理资格。
+
+
+`eco_view_job.sh CASE SOURCE_ECO_REV NEW_VIEW_REV`仅接受已完成native0/所检全块连通、pin/PG/die原样的定点ECO，复制预RCX ODB并导出LEF（含详细OBS）、DEF、实际网表、匹配SPEF研究时序模型；检查全部位/方向/PG/外框及SPEF重放。92776/92777已导出GEMM3753/MXU2172位r02视图；完整规则/形式等价仍待验证。`checkpoint_legalization_job.sh NEW_REV`只在隔离进程复用SYS已有修复检查点，保持原PG/pin/die、恢复原种类填充并保留check_placement；输出NOT_ROUTED，不能冒充接入/DRC/STA完成。
+
+`checkpoint_route_job.sh NEW_REV`从SYS已检查的隔离放置继续真实完整重布线/PG/RCX/STA/fresh native DRC；逐原OBS ID及几何核对，新增OBS须恰为原临时接入窗口，详细布线后只删新约束。`PINXY_STREAM_ECO_VIEW_REV=r02 streamout_pack_job.sh NEW_REV gemm mxu`只针对新成本ECO视图做严格GDS合并与不改deck的全量规则检查；不再重跑旧A/C。

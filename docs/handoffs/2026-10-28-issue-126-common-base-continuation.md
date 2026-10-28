@@ -1,5 +1,22 @@
 # Issue126 接续：真实二维接入与共同十层底座（进行中）
 
+## 19时后恢复执行（优先于下方旧快照）
+
+用户询问是否停止后，实际恢复采集与修复；远程旧作业在前一对话结束后仍运行，但不能宣称助手一直在后台采集。复核PR129 open/draft、起点head28a2c93；PR120未合并。不覆盖本人/他人的历史目录或冻结驱动。
+
+新源码冻结驱动：410f6e7（LL三点局部实际重接线）、dcc8cf8/6397662（只读NDR/驱动审计）、7885500/caca2f4/62d6b8f（定点cap ECO的版本化前置修复）、c166f69/1d93e2e（估算器失败排查）、a43f92b（原生GRT估算/分阶段检查点）。发布head以GitHub实时读回为准。
+
+- 92747/92748终态失败：LL PG-C的三点位置修订保留13184/13507内部移动，但DRT-1231报告另一个未移动bit_4812（bank_wdata[1362]输出、M6）无AP；没有routed.odb可做独立检查。新完整候选表trial-inputs-ll-local-patch-r01、真实旧PG/DRC/新proposed图不等于通过。不要重复提交这个相同三点试验；完整窗口92690/92691仍独立。
+- 92749/92751/92752审计接口失败保留；92753/92759四个只读源ODB查询成功且SHA不改。LL原始/PG-C的28条NDR关联完全相同、hard_spacing原为0；实际有NDR网的常规矩形344/362/GEMM101/MXU164，共971个未见短边不足名义宽度。未覆盖via/NDR spacing/所有时钟或92690内存；安装镜像未找到匹配GRT源代码。
+- 92757：GEMM r03三处精确驱动换X2，实际Liberty逻辑/触发器状态契约和端口网络检查、恢复填充、重布线/RCX。r03 MXU只读Liberty前置读取失败，未重接线。92758：MXU r04一处换BUF_X2，已完成实际DRT、双PG、RCX/STA，setup0.246756/hold0.038563、report_check_types未列违例，fresh DRC仍执行。92761 r05是明确绑定宏Lib的同配置复测；不能当独立XY方案或叠加收益，现有活动结果保留、不重复扩增。没有完整设计形式等价或完整规则通过证据。
+- 92762 r06：两块SPEF精确setup/hold重放成功，EST-0104估算状态不一致失败。92767 r07：VECTOR仍EST-0104；openSYS修复执行，协商合法化迭代0非法单元后Signal11崩溃，未完成check_placement/布线。不能把合法化中间日志写成最终通过，不能宣称唯一根因已查明。
+- 92770 r08：在ROOT/leaf_eco/r08，先重新运行原生GRT再估算，原SPEF仅重放验证后显式切换GRT估算；SYSTEM用已核实支持的diamond合法化，保留check_placement，并在cell_repaired_NOT_ROUTED.odb保存检查点，绝非布线成品。保持原SDC及SYSTEM M2–M8/clock M4–M8。恢复先查实际状态，不能仅凭本交接继续重复提交。
+- 92707实际成功的ACT2.4um临时避让备选（escape_spacing_reroute/r03）native0、860网/1720端点连通、双PG，原叶层/全部PG/父pin保持；92706 1.6um两项spacing失败保留。原92719成功接点版不替换。
+
+新增collect_resume_progress.py仅写ROOT/resume_snapshots/NEW，稳定时间窗内的文件复制仍不等于作业终态。r01/r02证据对应本地analysis/resume_evidence与正式data/continuation/resume；逐文件原文/压缩SHA校验。新LL局部图PNG/SVG为相同2.2um窗口，旧pin和固定PG真实尺寸，native marker仅诊断bbox、虚线仅位移，无真实新走线路径。原A/B/C和原24图保持。
+
+共同底座仍只有构造原生链接，没有布局/预连/冻结manifest、两完整M11/12或公平系统结果。原SYSTEM/VECTOR失败、缺匹配SRAM GDS、完整规则/宏模型/历史逐pin目标层继续未知。常规修复继续本人执行；登记PR5 pending、看板unverified/同步pending、审查人与管理员待指定，不能写done。
+
 日期：2026-10-28（Asia/Shanghai）。沿用Issue126 / Draft PR129、task/126-full-block-pin-xy；负责人huangpingyang04-lgtm。此前发布2461fa2及PR120未合并成果保留。原参考包、历史产物、其他工作树及Issue55/121活动作业不修改。
 
 ## 17时后接续里程碑（优先于下方早期快照）
@@ -59,3 +76,17 @@ preparation_contract.json明确frozen=false，原始硬块资源、待实现idle
 原HTML/14对新PNG/SVG仍对应此前发布快照；本轮新增实际数据/图与完整中文阶段报告继续增量提交，不把代码上传视作完整物理验收。运行管理检查、真实几何/候选业务检查、打开新图，再推送同一PR129；Issue保持in_progress，不合并PR120/129。
 
 规则rayggxia-project-collab1.0.0；project_id=llm-hardware-design；登记management-hub PR5 pending；无board.json/Projects工具，看板unverified/同步pending，管理员/审查人待指定。当前不满足完整系统完成标准。
+
+### 后续已收齐终态（覆盖本节此前的“仍执行”字样）
+
+GEMM r03（92757子试验）与MXU r04（92758）现均fresh native DRC0、所检全块连通通过、pin/PG/die及原宏资源位置不变，原cap3/1在重提取report_check_types中均未列违例。GEMM setup0.773637/hold0.036719，3处换型标准单元bbox面积+1.596um²；MXU setup0.246756/hold0.038563，1处换型+0.266um²，不新增功能实例。填充拆装不当功能资源减少或外框面积节省；MXU r05同配置复测也通过上述native/连通，结果不重复计收益。92757 Slurm整体FAILED是并行MXU前置Lib读取失败，不能把GEMM独立成功回执误标失败。
+
+92773/92774视图r01因原SDC目录未挂载，物理导出后时序模型阶段失败；修复只读挂载后92776/92777在eco_views/r02已完成匹配预RCX ODB/LEF/DEF/网表/研究时序模型，GEMM3753/MXU2172信号bit和方向全部匹配、源SPEF余量重放相同、源SHA保持、详细OBS契约通过。仍不是完整规则、宏器件表征或设计形式等价资格。
+
+r08 VECTOR仍EST-0104，SYS保存cell_repaired_NOT_ROUTED.odb后仍Signal11；92775 VECTOR分离精确SPEF重放进程后仍同错，SPEF状态残留假设未获证明。92778直接复用SYS检查点做独立原生合法化/原类型填充/放置检查，不重复单元修复、没有STA或布线成品；恢复先查checkpoint_legalization/r01实际终态，再决定后续重布线。长时间LL窗口92690/92691及父接入92700/92714/92721仍须持续收集，不重提原相同试验。新增raw快照resume-r03。
+
+92778在检查点合法化前置assert masters失败，未执行native合法化；真实原始无CORE_SPACER，含423453 CORE/15378 CORE_WELLTAP/21 BLOCK。81c6f53修订允许原本无spacer、不新增虚构填充，暂时固定原BLOCK/welltap几何并在核对后恢复状态，92780在checkpoint_legalization/r02继续；不要重跑已完成的单元修复或把NOT_ROUTED检查点当成布线/时序完成。
+
+92780的SYS隔离合法化已成功：原生命令与check_placement执行、原macro/welltap几何和状态核对恢复、pin/PG/die指纹不变；输出placed_NOT_ROUTED.odb，尚无布线/RC/时序资格。0e5254e驱动92781（ROOT/checkpoint_route/r01）直接接续完整信号/时钟重布线及PG/RCX/STA/fresh DRC，不重新做单元修复。先独立导出原OBS对象ID+几何，检查新增OBS恰好原接入窗口；仅在详细布线后移除新约束并确认原OBS集合/几何相同，原M2–M8/clock M4–M8及SDC保持。恢复先查92781实际终态，不把提交/运行当成通过。
+
+GEMM/MXU新ECO视图的严格GDS合并及原有完整FreePDK45 deck另以92783继续，ROOT/streamout/costed-r01；只读复用eco_views/r02，明确C_ECO而非纯XY对照。缺SRAM GDS仍报合并失败，allow-empty保持禁用，不伪造几何，不修改原deck或掩盖WELL/天线/包围等原有失败。

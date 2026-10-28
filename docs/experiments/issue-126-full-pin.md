@@ -102,3 +102,6 @@ ACT完整740-pin C现已实际完成接入和详细布线：提取前路由母�
 ACT相同740-pin cohort的原XY重布线/B子集/C：DRT提取前总线长271,186 / 271,833 / 253,825 μm，via为37,557 / 37,833 / 36,918。C比原XY控制组线长−6.40%、via−1.70%，setup余量略变差；这是单次真实路由统计，不是几何L1、RC或全系统PPA，也不能证明优于所有边界优化。外框相同，不计面积节省。
 
 父层材料继续检查了Issue55的44份已完成parent/union/top元数据，5份含精确原叶ODB哈希，但这只提供placement等来源线索，仍未建立逐pin原始handoff/实际层序；不据此指派M8或宣布父层可访问。
+
+
+2026-10-28晚接续入口：[中文报告新增真实修复/失败节](issue-126-full-pin/report.html#resume20261028)、[三点实际修复尝试图PNG](issue-126-full-pin/assets/llsys_local_repair_attempt.png) / [SVG](issue-126-full-pin/assets/llsys_local_repair_attempt.svg)、[交接](../handoffs/2026-10-28-issue-126-common-base-continuation.md)。这次LL三点重接线实际DRT-1231失败；GEMM/MXU驱动增强为成本ECO，候选正确不代表完整资格。具体最新终态以原生快照/接续节为准，下方旧表保留来源，不用旧局部8pin覆盖更新的完整候选/物理状态。

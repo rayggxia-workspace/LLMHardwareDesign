@@ -237,6 +237,10 @@ def main():
         if (OUT/'assets/act_parent_landing_actual.png').exists():
             assert (OUT/'assets/act_parent_landing_actual.svg').exists()
             expected_figures+=1
+        if (OUT/'data/continuation/resume').exists():
+            assert 'id="resume20261028"' in text
+            for ext in ['png','svg']:assert (OUT/'assets'/('llsys_local_repair_attempt.'+ext)).exists()
+            expected_figures+=1
     assert len(list((OUT/'assets').glob('*.png')))==expected_figures
     assert len(list((OUT/'assets').glob('*.svg')))==expected_figures
     assert all(x not in text for x in ['__PINS__','__PHYSICAL__','__TOTAL__'])

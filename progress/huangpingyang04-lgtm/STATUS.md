@@ -52,3 +52,18 @@
 
 - 后续终态：openSYS新窗口独立native0/460503网连通（累计五块11260实际pin），setup/hold和2016标记仍失败；llSYS新窗口未终态。VECTOR成本ECO A/C仍setup失败，GEMM/MXU电气ECO仍cap3/1失败，新增buffer/移除filler不当面积收益。ACT夹具92732真实RC/STA两方案均hold约−0.074ns且604零长度网未标注。阶段cb945271已上传、两CI成功、4对新PNG/SVG路径读回；新增终态小包与后续commit继续同PR。
 
+
+
+## 2026-10-28晚（Asia/Shanghai）：Issue126恢复实际执行
+
+- [Issue126](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/126) / [Draft PR129](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/129)，继续in_progress。重新核对28a2c93旧head及本人活动作业，保留PR120/129未合并状态。
+- LL三点实际增量修复92747因另一个未移动bit_4812无AP而失败，92748无完成路由可检查；完整窗口92690/92691继续独立。13507完整候选/13184内部移动均保留，新增真实尺寸PG/旧pin/native marker/proposed图，不能报通过。
+- 只读NDR/驱动审计92753/92759源SHA不变；971个所统计有NDR网的wire矩形未见名义宽度不足，不扩大到spacing/via/所有时钟。GEMM三处/MXU一处真实驱动换X2，Liberty逻辑状态/端口网络预检查，恢复填充；成本单列。MXU r04重提取setup/hold正且未列cap违例，fresh DRC现已0/所检连通通过，完整规则及形式等价仍不齐；r05是同配置读取绑定改进复测，收益不重复计算。
+- VECTOR/openSYS估算状态EST-0104及合法化后Signal11真实失败保留；92770新原生GRT/合法化实现继续，不放宽SDC或删检查。原层集合、宏资源、完整接口仍为门槛。
+- 新中文接续报告和PNG/SVG、完整局部坐标、raw SHA证据更新同PR；下一步收集本人未终态检查并继续真实修复，然后才可推进共同冻结底座。没有共同M1–M10实际预连/冻结、两完整M11/M12功能或完整系统对照。登记PR5 pending、看板unverified/同步pending、审查人待指定。
+
+后续已收齐：GEMM三处和MXU一处换型均fresh native0/所检全块连通、完整原pin/PG/die保持，重提取cap违例3/1均消除；setup/hold G0.773637/0.036719、M0.246756/0.038563ns，标准单元bbox面积成本+1.596/+0.266um²。两份实际物理/研究时序视图92776/92777全部3753/2172bit及方向、SPEF重放/源SHA/OBS契约通过。仍缺完整规则、形式等价及匹配SRAM GDS，不标完成。VECTOR r09仍EST-0104、SYS r08仍工具Signal11，92778复用已存检查点独立合法化，不重复修复。正式raw更新resume-r03，图25幅保持待验收。
+
+92780的SYS隔离合法化已成功：原生命令与check_placement执行、原macro/welltap几何和状态核对恢复、pin/PG/die指纹不变；输出placed_NOT_ROUTED.odb，尚无布线/RC/时序资格。0e5254e驱动92781（ROOT/checkpoint_route/r01）直接接续完整信号/时钟重布线及PG/RCX/STA/fresh DRC，不重新做单元修复。先独立导出原OBS对象ID+几何，检查新增OBS恰好原接入窗口；仅在详细布线后移除新约束并确认原OBS集合/几何相同，原M2–M8/clock M4–M8及SDC保持。恢复先查92781实际终态，不把提交/运行当成通过。
+
+GEMM/MXU新ECO视图的严格GDS合并及原有完整FreePDK45 deck另以92783继续，ROOT/streamout/costed-r01；只读复用eco_views/r02，明确C_ECO而非纯XY对照。缺SRAM GDS仍报合并失败，allow-empty保持禁用，不伪造几何，不修改原deck或掩盖WELL/天线/包围等原有失败。
