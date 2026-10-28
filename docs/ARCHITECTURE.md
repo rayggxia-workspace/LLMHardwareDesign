@@ -115,3 +115,13 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
+
+## 全项目研究教程与文档核对
+
+[研究总报告阅读入口](research-handbook/README.md)与[完整全文](research-handbook/FULL_REPORT.md)汇总逐模型实验、算子/Block候选、电路及物理证据，固定来源和任务快照见报告目录。下列命令只构建/核对文档，不连接服务器或重新执行原实验：
+
+```powershell
+python -B scripts/check_project.py
+python -B work/Liangruizhi/117/build_handbook.py
+python -B work/Liangruizhi/117/audit_handbook.py
+```
