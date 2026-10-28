@@ -13,9 +13,10 @@ def intersects(a,b,spacing=0):
             a[1]<b[3]+spacing and b[1]<a[3]+spacing)
 
 
-def audit(root,out,cpus,run,kind):
+def audit(root,out,cpus,run,kind,band_um=80,landing_um=.8,center_spacing_um=3.2):
     from io_slots import file_sha,slot
     assert cpus==16 and kind in ('m','t')
+    assert (band_um,landing_um,center_spacing_um) in ((80,.8,3.2),(240,2.,4.8))
     base=out.parents[2]
     number='258' if kind=='m' else '256'
     geom=base/('block-v1-20261029-'+number)/'tasks'/('revision300-geometry-'+kind)
@@ -60,14 +61,14 @@ def audit(root,out,cpus,run,kind):
     u=lambda x:int(x*dbu)
     x0=min(track['metal10','X'],key=lambda x:abs(x-u(40)))
     x1=min(track['metal10','X'],key=lambda x:abs(x-(die[2]-u(40))))
-    low,high=die[3]//2-u(40),die[3]//2+u(40)
+    low,high=die[3]//2-u(band_um/2),die[3]//2+u(band_um/2)
     candidates=[]
     for y in track['metal9','Y']:
         if low<=y<=high:
             candidates.append(dict(y=y,shapes=[
                 ('metal9',[x0-u(.4),y-u(.4),x1+u(.4),y+u(.4)]),
-                ('metal10',[x0-u(.4),y-u(.4),x0+u(.4),y+u(.4)]),
-                ('metal10',[x1-u(.4),y-u(.4),x1+u(.4),y+u(.4)]),
+                ('metal10',[x0-u(landing_um/2),y-u(landing_um/2),x0+u(landing_um/2),y+u(landing_um/2)]),
+                ('metal10',[x1-u(landing_um/2),y-u(landing_um/2),x1+u(landing_um/2),y+u(landing_um/2)]),
                 ('via9',[x0-u(.4),y-u(.4),x0+u(.4),y+u(.4)]),
                 ('via9',[x1-u(.4),y-u(.4),x1+u(.4),y+u(.4)])],blockers=[]))
     aliases={};counts={};occupancy=geom/'source-occupancy.tsv'
@@ -95,7 +96,7 @@ def audit(root,out,cpus,run,kind):
         if row['blockers']:continue
         # Actual1.6um tracks alone fail the0.88um cut spacing: select at
         # least3.2um between via centers, not mechanically16*wire pitch.
-        if chosen and row['y']-chosen[-1]['y']<u(3.2):continue
+        if chosen and row['y']-chosen[-1]['y']<u(center_spacing_um):continue
         chosen.append(row)
         if len(chosen)==16:break
     assert intersects([0,0,10,10],[9,9,11,11])
@@ -108,10 +109,11 @@ def audit(root,out,cpus,run,kind):
         native_track_axes={layer+'-'+axis:values for (layer,axis),values in track.items()},
         native_shape_counts=counts,selected_paths=chosen,candidates=candidates,
         metal_width_um=.8,conservative_metal_spacing_um=1.5,via9_cut_um=.8,
-        via9_cut_spacing_um=.88,selected_center_spacing_um=3.2,
+        via9_cut_spacing_um=.88,selected_center_spacing_um=center_spacing_um,
+        corridor_band_um=band_um,metal10_endpoint_landing_um=landing_um,
         native_geometry_report_sha256=file_sha(report),native_receipt_sha256=file_sha(geom/'receipt.json'),
         native_occupancy_sha256=file_sha(occupancy),native_odb_sha256=file_sha(odb),
         native_def_sha256=file_sha(deffile),native_technology_sha256=file_sha(tech),
         fixed_routes_created=False,full_native_drc_qualified=False,p3_qualified=False,
-        scope='Exact accepted native occupancy/DEF tracks and pinned native via9 rules. Finite straight16bit horizontal corridor across the central80um band,40um inset endpoints. Conservative1.5um metal guard may reject legal PRL cases. No route database, DRC or timing qualification; no proof that arbitrary detours or other corridor locations fail. Accepted native macro unchanged.')
+        scope='Exact accepted native occupancy/DEF tracks and pinned native via9 rules. Finite straight16bit horizontal corridor across declared central band,40um inset endpoints. Conservative1.5um metal guard may reject legal PRL cases. No route database, DRC or timing qualification; no proof that arbitrary detours or other corridor locations fail. Accepted native macro unchanged.')
     (out/'revision300-preconnect.json').write_text(json.dumps(result,indent=2)+'\n')
