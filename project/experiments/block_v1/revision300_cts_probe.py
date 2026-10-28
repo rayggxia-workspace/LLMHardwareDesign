@@ -56,15 +56,15 @@ write_sdc -digits 12 diagnostic-readback.sdc
     (out/'revision300-cts-probe.json').write_text(json.dumps(result, indent=2)+'\n')
 
 
-def readback(root, out, cpus, run):
+def readback(root, out, cpus, run, kind='t'):
     """Resume only reports from the actual saved pre-repair snapshot."""
     from io_slots import file_sha
-    assert cpus == 16
+    assert cpus == 16 and kind in ('s','t')
     base = out.parents[2]
-    source = base/'block-v1-20261028-237/tasks/revision300-cts-probe'
+    source = base/('block-v1-20261028-237/tasks/revision300-cts-probe'if kind=='t'else'block-v1-20261028-240/tasks/revision300-cts-probe-s')
     receipt = json.loads((source/'receipt.json').read_text())
-    assert receipt['passed'] is False and receipt['mode'] == 'revision300-cts-probe'
-    results = source/'flow/results/nangate45/bv1_transaction6k/base'
+    assert receipt['passed'] is (kind=='s') and receipt['mode'] == source.name
+    results = source/('flow/results/nangate45/'+('bv1_transaction6k'if kind=='t'else'bv1_block_v1_s16k')+'/base')
     files = [results/('4_1_pre_repair_setup_hold.'+suffix) for suffix in ['odb', 'sdc']]
     bound = {}
     for p in files:
@@ -91,10 +91,10 @@ write_sdc -digits 12 diagnostic-readback.sdc
     (out/'revision300-cts-readback.json').write_text(json.dumps(result, indent=2)+'\n')
 
 
-def hold_probe(root,out,cpus,run):
-    """Bound a diagnostic repair to 0.1% buffers; preserve before/after paths."""
+def hold_probe(root,out,cpus,run,percent=.1):
+    """Bound diagnostic repair; 20% reproduces the original cap, not an increase."""
     from io_slots import file_sha
-    assert cpus==16
+    assert cpus==16 and percent in (.1,20)
     base=out.parents[2]
     source=base/'block-v1-20261028-237/tasks/revision300-cts-probe'
     receipt=json.loads((source/'receipt.json').read_text())
@@ -107,15 +107,17 @@ def hold_probe(root,out,cpus,run):
     body='set_thread_count 16\nread_liberty {'+str(platform/'lib/NangateOpenCellLibrary_typical.lib')+'}\n'
     body+='read_db {'+str(files[0])+'}\nread_sdc {'+str(files[1])+'}\nsource {'+str(platform/'setRC.tcl')+'}\n'
     body+='set_propagated_clock [all_clocks]\nestimate_parasitics -placement\n'
-    body+='report_checks -path_delay min_max -group_path_count 4 -digits 9 -format full_clock_expanded > before.rpt\n'
-    body+='set code [catch {repair_timing -hold -max_buffer_percent 0.1 -hold_margin 0.020 -verbose} message]\n'
+    body+='report_worst_slack -min -digits 9 > before-summary.rpt\nreport_worst_slack -max -digits 9 >> before-summary.rpt\n'
+    body+='report_checks -path_delay min_max -group_path_count 10 -digits 9 -format full_clock_expanded > before.rpt\n'
+    body+='set code [catch {repair_timing -hold -max_buffer_percent '+str(percent)+' -hold_margin 0.020 -verbose} message]\n'
     body+='set f [open repair-status.txt w]\nputs $f [list $code $message]\nclose $f\n'
-    body+='report_checks -path_delay min_max -group_path_count 4 -digits 9 -format full_clock_expanded > after.rpt\n'
+    body+='report_worst_slack -min -digits 9 > after-summary.rpt\nreport_worst_slack -max -digits 9 >> after-summary.rpt\n'
+    body+='report_checks -path_delay min_max -group_path_count 10 -digits 9 -format full_clock_expanded > after.rpt\n'
     body+='write_db diagnostic-after.odb\n'
     (out/'bounded-hold.tcl').write_text(body)
     run(['openroad','-no_init','-exit',out/'bounded-hold.tcl'],'bounded-hold.log')
     assert all(file_sha(p)==digest for p,digest in hashes.items())
     result=dict(passed=True,source_receipt_sha256=file_sha(source/'receipt.json'),source_files_sha256=hashes,
-                source_unchanged=True,max_buffer_percent=.1,qualified_hard_macro=False,
+                source_unchanged=True,max_buffer_percent=percent,qualified_hard_macro=False,
                 scope='Bounded placement-RC hold repair diagnosis; command failure caught for before/after inspection, never final acceptance')
     (out/'revision300-hold-probe.json').write_text(json.dumps(result,indent=2)+'\n')

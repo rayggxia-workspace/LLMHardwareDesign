@@ -66,6 +66,9 @@ try:
     elif MODE=='revision300-hold-probe':
         from revision300_cts_probe import hold_probe
         hold_probe(ROOT,OUT,CPUS,run)
+    elif MODE=='revision300-hold-final-probe':
+        from revision300_cts_probe import hold_probe
+        hold_probe(ROOT,OUT,CPUS,run,20)
     elif MODE=='revision300-cts-probe-s':
         from revision300_cts_probe import probe
         probe(ROOT,OUT,CPUS,run,'s')
@@ -82,6 +85,9 @@ try:
     elif MODE=='revision300-cts-readback':
         from revision300_cts_probe import readback
         readback(ROOT,OUT,CPUS,run)
+    elif MODE=='revision300-cts-readback-s':
+        from revision300_cts_probe import readback
+        readback(ROOT,OUT,CPUS,run,'s')
     elif MODE.startswith('revision300-test-'):
         from revision300_rtl import test
         test(ROOT,OUT,CPUS,run,MODE[-1])
