@@ -121,7 +121,7 @@ clock 使用共同输入、真实状态负载、CTS资源和最终线路，分�
 
 <!-- current-method-checkpoint -->
 
-最新检查点：2026-10-28T21:13:45.434140+00:00；源码c55c29a519f29662c3d46667591f04852cb25bb3；索引/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-bounded-driver-progress-20261028T211345Z/milestone.json，SHA 151781538e6bd9ddf6d533faabf653b38da0fa7ad38f6eacd9b1c78e8fffde17。候选1/3未冻结，二/三未验收、四未执行；新大阶段通用化仍在当前主线之后。
+最新检查点：2026-10-28T21:57:48.493472+00:00；源码59171ed9ece9f319d6d1ed6d4a055104f2269c4c；索引/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-driver-state-and-route-preparation-20261028T215748Z/milestone.json，SHA fb3bb51fa50313568aa84d9769c2a858dac32322ff480721d86cf64777e0b2ea。候选1/3未冻结，二/三未验收、四未执行；新大阶段通用化仍在当前主线之后。
 
 1. 保持完整规模和原3ns；实际物理网表导出/回装、新编译、完整有限回归链与来源闭合分开记录，不推广为所有输入等价或新统一父版通过。
 2. 真正生成导体/via并做全接口接触/连通、保持性和fresh DRC；92966完整M8几何通过，但质量失败必须拒绝。端口标记、颜色、规划不能代替实际线路。
@@ -133,3 +133,8 @@ clock 使用共同输入、真实状态负载、CTS资源和最终线路，分�
 8. 重布复用migrate的fixed NETS-only往返、非目标导体保护、独立native inventory、接触/连通和fresh DRC/PG。仅显式双cell一入一出split可原本无导线；has_wire仅声明0→1，其余字段精确。13元数据对照及真实native遗漏/错误声明负例93017实际通过，不代替物理检查。
 9. afterany不是成功；复用continue_after实际host COMPLETED0/4及来源SHA/状态守卫。93017明确import_fixed失败、尚未router。新93018复用封存native DEF，以已有scan/normalize仅修正声明FIXED状态词、其余字节保持；必须完整native往返保持性通过才放行真实布线，不能把状态修正当作几何修复。
 10. 92548的14059实际固定线路未闭合，841闲置扇出/案例、统一PG/clock/完整父版功能/质量、最终冻结和两版定制仍待。不同原型的局部通过不能拼接。正式Block/LLM输入、最终通用全流程尚未完成。
+
+11. 新62BUF的实际前后网表用既有H1全部命名锥归一化方法：93022重新解析真实网表、65545状态/168074锥、实际状态输入破坏负例闭合；SHA不同不复用旧字节身份证明。对“同一helper多来源同SHA”先校验唯一hash集合再逐文件读取，保留93020严格拒绝，不把它称硬件反例。
+12. native DEF状态修正后，93018完整八表/所有导体往返保持性已完成，第一轮PA完成且无缺AP；二者仍只为过程检查。当前正在实际路由，未闭合前不能接受最终几何/PG/RC，也不重启现场。
+13. 新driver_route_context显式绑定完整物理route、同一placement/access源、新状态锥证明、最终资源字节、PG/freshDRC/124网完整保持性和原3ns/模型/RC，并做真实来源帧破坏控制；新的实际闭合验证尚待93018，不将代码写好当作通过。
+14. 完整回装新增每资源闭合export复用：只对未变化的GEMM/VECTOR用receipt/ODB/所有native哈希和解析后全实例/接口身份复用，AUX重新实际导出；仍原完整父层、资源/存储和观察器。RC/覆盖/prepare/compile/replay 93024/26/29/34/36已提交4核依赖链但尚待，停止条件是任何上游非COMPLETED0/4或类型/来源闭合失败。
