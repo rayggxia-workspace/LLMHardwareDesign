@@ -45,11 +45,12 @@ def measure(root,out,cpus,run,kind,variant):
     from revision300_constraint_readback import audit as constraints
     from native_passive_endpoint import audit as passive
     from native_annotation import inspect as annotation
-    assert cpus==16 and kind in ('m','t') and variant in ('approved','base','high')
+    assert cpus==16 and kind in 'mvrst' and len(kind)==1 and variant in ('approved','base','high')
     index,odb,provenance,count,die=accepted(root,out,kind)
     folder,receipt,flow,results=source(root,out,kind)
     base=out.parents[2]
-    escaped=base/('block-v1-20261029-'+('262'if kind=='m'else'261'))/'tasks'/('revision300-escape-'+kind)
+    escape_run={'m':'262','t':'261','s':'285','v':'285','r':'285'}[kind]
+    escaped=base/('block-v1-20261029-'+escape_run)/'tasks'/('revision300-escape-'+kind)
     er=json.loads((escaped/'receipt.json').read_text())
     assert er['passed'] and er['mode']==escaped.name
     ep=escaped/'revision300-escape.json'
