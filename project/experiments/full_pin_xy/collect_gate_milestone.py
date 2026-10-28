@@ -49,7 +49,8 @@ def collect(name):
         keep=p.suffix in ['.json','.log','.tcl','.txt','.tsv','.csv','.drc','.lyt'] and a.st_size<=8*1024*1024
         if 'antenna_rules/r01' in str(p) and p.suffix in ['.lef','.lydrc'] and a.st_size<=8*1024*1024:keep=True
         if 'fixed_wire_api' in str(p) and p.suffix=='.def' and a.st_size<=1024*1024:keep=True
-        keep=keep and not any(s in p.name for s in ['.cells.','.pdn.','whole_access.tsv','selected_access.tsv','paths.json'])
+        omit_paths='paths.json' in p.name and 'actual_path_audit/r01' not in str(p)
+        keep=keep and not omit_paths and not any(s in p.name for s in ['.cells.','.pdn.','whole_access.tsv','selected_access.tsv'])
         if not keep:
             r['storage']='REMOTE_ONLY_INDEXED'
             if str(p) in stable_intermediates:

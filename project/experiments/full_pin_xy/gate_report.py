@@ -30,7 +30,7 @@ def slack(path):
 
 
 def render(root,out):
-    root,out=Path(root),Path(out);sources=sorted((root/'gate_evidence').glob('gate-*'))
+    root,out=Path(root),Path(out);sources=sorted(p for p in (root/'gate_evidence').glob('gate-*') if p.is_dir())
     if not sources:return ''
     snapshot=sources[-1];meta=read(snapshot/'snapshot.json');assert not meta['full_qualification']
     dest=out/'data/gate_milestones'/snapshot.name
