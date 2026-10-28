@@ -1,5 +1,7 @@
 # Issue126：658真实diode终态、全网增量接线证据及770边适配
 
+**2026-10-29更正优先：92974已FAILED41m59s。** R19原文实际已包含终态，先前renderer只显示前置prepare、遗漏终态摘要，导致“运行中”过时；本次按原文更正，失败未删除。openTPU/llaccel两个770边子试验均GRT-0116拥塞失败，分别UTC19:56:29/19:43:47终态，未进入DRT；fresh DRC、完整边连通与M10 landing包含核验未执行。source同一真实但未合格下层8bfddd007d2cc07df5d0f74ebee91799e592185ed7d1e1a0a11a32690ed53cc5保持。原始congestion.rpt有2.85μm估计网格、capacity1/usage2或capacity2/usage3等水平过载，原报告未标具体层；不能当真实金属DRC或原架构不可行证明。下一步读取全量拥塞数据并作同frame/PG/OBS的受控工具诊断，不重提相同试验、不改规则制造通过。
+
 2026-10-29 Asia/Shanghai新增实际视图终态：92997/driver206052c721a7c910a7767a94cbd914d482e96bc3在ROOT/diode_views/r01/gemm-C完成clean ODB/LEF/OBS/DEF/真实网表和提取时序模型导出，全部3753 signal pin及PG/尺寸/原层匹配、SPEF余量重放一致、模型独立重读通过。minimum_period=false，完整规则/新父层/RTL/共同冻结/系统资格仍未闭合。gate-r19由93003/drivereff6bfa6c31bf29d196061b4a116b2564fd8aae3不可覆盖收集。此前发布206052c两CI40758759432/40758759459均success，31幅图已打开及在线PNG/SVG blob读回一致。新658diode负载/两追加换型不能与旧3换型Aopt直接做纯XY收益；旧对照来源另列。严格GDS92976、全770边适配92974及SYS92968等继续，当前任务仍active/in_progress/Draft。
 
 2026-10-29 Asia/Shanghai；仓库rayggxia-workspace/LLMHardwareDesign，[Issue126](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/126)/[Draft PR129](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/129)，负责人huangpingyang04-lgtm。分支task/126-full-block-pin-xy；此前已发布51bcac124844b344ade86a64031bec14648bfac0，两CI40752386668/40752386573均success；本阶段发布head和CI以PR最新读回为准。整个目标仍active，不能把本文当作全目标完成。
@@ -18,7 +20,7 @@ ROOT=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027。
 
 ## 两模式适配与仍运行项
 
-- 92974/driver51bcac1：ROOT/upper_adaptation_trial/r02。已通过真实1541个M10 hook、两个唯一时钟alias、via10下层0.8×0.8μm占地的前置核验。每模式770条边/1540个实际hook，256条共享导体各用真实A/B两端；只读同一fixed_prewires_NOT_FROZEN.odb。两模式GRT仍运行；adapter-only/unqualified，不是两完整功能或已冻结底座。首轮92969 alias断言失败仍保留。
+- 92974/driver51bcac1：ROOT/upper_adaptation_trial/r02。前置1541个M10 hook/唯一clock alias/via10落脚核验通过，但两模式已在GRT拥塞失败、未执行DRT。每模式770边/1540个实际hook、256资源A/B仅是已绑定的计划；同一下层只读输入保持，不是两完整功能或已冻结底座。首轮92969 alias断言失败仍保留。
 - 92968/driver53a1b3ed8b535948f4a0e1b1bd8c4e2674c5ca58：ROOT/output_chain_resume/r02/opentpu_aux-C。复用已经完成的r01合法化ODB，不重选/移动buffer；按实际实例名查找修复空句柄导出，check_placement和原合同通过，真实GRT/DRT继续。原92921 Signal11、92925导出失败保留。
 - 92690 LL完整窗口RUNNING，92691等待依赖；92841 GEMM父层接点修复、92892 MXU父层修复、92855共同下层GRT仍RUNNING。只操作本人独立ROOT，不按耗时取消、不改活动驱动/输出，不干扰Issue55或其他成员作业。
 - 92855已写256条原生FIXED M10资源及1029个父层施工接点、双PG所检通过；下层私有路由尚未终态，仍不是合格共同底座。构造port下降、真实模式共享、规范化M1–M10冻结与完整功能/RC/STA/端到端公平对照均未完成。

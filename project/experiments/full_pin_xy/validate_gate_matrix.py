@@ -236,6 +236,18 @@ def check(out):
         q=j['upper_all770_actual_hook_preparation_r02'];assert q['actual_hook_boxes']==1541 and q['per_mode_edges']==770
         assert q['native_via10_M10_landing_size_dbu']==[1600,1600] and not q['full_qualification']
         assert set(q['native_clock_net_aliases'])=={'opentpu:2:external_clock','llaccel:2:external_clock'}
+    if j.get('upper_all770_actual_terminal_r02'):
+        q=j['upper_all770_actual_terminal_r02'];assert q['same_real_partial_lower_input_for_both_modes'] and q['all_preparation_sources_unchanged']
+        assert not q['full_qualification'] and not q['qualified_common_base'] and not q['two_complete_M11_M12_systems']
+        for mode in ['opentpu','llaccel']:
+            r=next(r for r in q['modes'] if r['mode']==mode);assert r['native_route_returncode']==1
+            assert r['independent_DRC_count'] is None and r['actual_770_native_edge_terminal_bijection'] is None
+            p=(out/q['evidence']).parent/mode
+            assert 'GRT-0116' in gzip.decompress((p/'global_route.error.txt.gz').read_bytes()).decode()
+            actual=read(p/'execution.json.gz');assert actual['native_route_returncode']==1 and actual['completed_utc']
+            assert 'routed_adapter_NOT_SYSTEM.odb' not in actual['files']
+            stages=gzip.decompress((p/'stages.tsv.gz').read_bytes()).decode()
+            assert 'global_route\tFAIL\tGRT-0116' in stages and 'detailed_route\tEXECUTED' not in stages
     if j.get('VECTOR_exact_Liberty_table_grid_diagnosis'):
         q=j['VECTOR_exact_Liberty_table_grid_diagnosis'];assert not q['full_qualification'] and not q['is_zero_wire_lower_bound'] and not q['is_timing_repair_or_proof_infeasible']
         assert q['actual_cell_arc_count']==141 and abs(q['actual_extracted_cell_arrival_increment_sum_ns']-6.7401)<1e-6

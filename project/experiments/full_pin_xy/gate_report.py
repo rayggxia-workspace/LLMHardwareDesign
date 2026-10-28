@@ -378,7 +378,21 @@ def render(root,out):
     prepared=snapshot/'upper_adaptation_trial/r02/preparation.json.gz'
     if prepared.exists():
         q=read(prepared);result['upper_all770_actual_hook_preparation_r02']=dict(q,evidence=(dest/prepared.relative_to(snapshot)).relative_to(out).as_posix())
-        upper_text='<p>92974已核查同一真实下层检查点的1541个M10接点、两唯一时钟alias及via10下层0.8×0.8μm落脚；两模式各770条边/1540个实际hook，256共享资源分别使用真实A/B两端。当前适配层GRT运行，计划与真实下层绑定不等于上层布通或两完整功能；私有下层、叶块与完整检查未闭合，未冻结。</p>'
+        upper_text='<p>92974前置已核查同一真实下层检查点的1541个M10接点、两唯一时钟alias及via10下层0.8×0.8μm落脚；两模式各770条边/1540个实际hook，256共享资源分别使用真实A/B两端。该核验只属于前置绑定，路由以逐模式真实终态为准；私有下层、叶块与完整检查未闭合，未冻结。</p>'
+    per_mode=[]
+    for mode in ['opentpu','llaccel']:
+        p=snapshot/'upper_adaptation_trial/r02'/mode/'execution.json.gz'
+        if p.exists():
+            q=read(p);per_mode.append({'mode':mode,'receipt':q,
+              'state':'FAILED_NATIVE_ROUTE' if q.get('completed_utc') and q.get('native_route_returncode') else 'COMPLETED_NATIVE_ROUTE_NOT_QUALIFIED' if q.get('completed_utc') else 'NOT_TERMINAL',
+              'evidence':(dest/p.relative_to(snapshot)).relative_to(out).as_posix()})
+    result['upper_all770_per_mode_actual_receipts_r02']=per_mode
+    upper_terminal=snapshot/'upper_adaptation_trial/r02/trial_summary.json.gz'
+    if upper_terminal.exists():
+        q=read(upper_terminal);result['upper_all770_actual_terminal_r02']=dict(q,evidence=(dest/upper_terminal.relative_to(snapshot)).relative_to(out).as_posix())
+        modes={m['mode']:m for m in q['modes']}
+        if all(m.get('native_route_returncode')==1 for m in modes.values()):
+            upper_text+='<p><strong>92974已终态FAILED，优先于此前运行中记录：</strong>openTPU及llaccel两个770边适配子试验均GRT-0116拥塞失败，未进入DRT；fresh DRC、完整边连通及实际M10 landing包含检查均未执行，不记0/通过。两者使用相同实际但未合格下层输入，仍不证明两功能已实现或冻结。原报告估计拥塞不是实际金属DRC；下一步定位原始congestion区域与接口/网格约束，不能只因耗时归因或放宽规则制造通过。</p>'
     for revision in ['r01','r02']:
         p=snapshot/('tool_api/grt-start-'+revision+'/execution.json.gz')
         if p.exists():result['native_GRT_capability_'+revision]=dict(read(p),evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())

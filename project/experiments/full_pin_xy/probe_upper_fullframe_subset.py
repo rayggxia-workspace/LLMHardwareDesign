@@ -1,6 +1,6 @@
 """Two actual edges with the full real frame/OBS, solely a routing tool diagnosis.
 
-The full 770-edge jobs continue untouched. This subset cannot qualify any full
+The full 770-edge jobs and terminal evidence stay untouched. This subset cannot qualify any full
 block, shared base or system, even if its routing and native checks pass.
 """
 from pathlib import Path
