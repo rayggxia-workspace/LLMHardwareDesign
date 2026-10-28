@@ -18,11 +18,18 @@ DRIVER=Path(__file__).resolve().parent
 from buffer_graph_contract import compare
 
 
-def run(revision):
-    case='opentpu_aux';view=ROOT/'eco_views/r03/opentpu_aux-C';vp=view/'execution.json';v=json.loads(vp.read_text())
-    reference=Path(CFG['physical_blocks'][case]['odb']);current=view/'clean.odb'
-    assert v.get('completed_utc') and v['native_export_returncode']==0 and v['SPEF_replay_matches_source']
-    assert sha(reference)==CFG['physical_blocks'][case]['expected_sha256'] and sha(current)==v['source_geometry_sha256']
+def run(revision,case='opentpu_aux'):
+    assert case in ['opentpu_aux','vector']
+    view=ROOT/('eco_views/r03/opentpu_aux-C' if case=='opentpu_aux' else 'vector_resume/r01')
+    vp=view/'execution.json';v=json.loads(vp.read_text())
+    reference=Path(CFG['physical_blocks'][case]['odb']);current=view/('clean.odb' if case=='opentpu_aux' else 'routed.odb')
+    assert v.get('completed_utc') and sha(reference)==CFG['physical_blocks'][case]['expected_sha256']
+    if case=='opentpu_aux':
+        assert v['native_export_returncode']==0 and v['SPEF_replay_matches_source'] and sha(current)==v['source_geometry_sha256']
+    else:
+        assert v['native_returncodes']['route']==0 and v['fresh_DRC_count']==0 and v['whole_signal_geometry']['pass']
+        assert all(v['source_pin_PG_die_unchanged'].values()) and v['all_sources_unchanged']
+        assert sha(current)==v['files']['routed.odb']['sha256']
     out=ROOT/'buffered_equivalence'/revision/case;out.mkdir(parents=True,exist_ok=False)
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp',
       '--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
@@ -52,4 +59,4 @@ def run(revision):
     return 0 if rec['relative_mapped_digital_contract_pass'] and rec['all_sources_unchanged'] else 1
 
 
-if __name__=='__main__':sys.exit(run(sys.argv[1]))
+if __name__=='__main__':sys.exit(run(*sys.argv[1:3]))
