@@ -6,11 +6,11 @@ from check_access import check
 DRIVER=Path(__file__).resolve().parent
 def one(case,rev,plan):
     original=ROOT/'trials'/rev/(case+'-'+plan);trial=original/'execution.json'
-    if not trial.exists():print('NOT_READY',original,flush=True);return
+    if not trial.exists():print('NOT_READY',original,flush=True);return False
     j=json.loads(trial.read_text())
-    if not j.get('finished_utc'):print('TRIAL_STILL_RUNNING',original,flush=True);return
+    if not j.get('finished_utc'):print('TRIAL_STILL_RUNNING',original,flush=True);return False
     src=Path(CFG['physical_blocks'][case]['odb']) if plan=='A' else original/'routed.odb'
-    if not src.exists():print('NO_COMPLETED_ROUTE',original,flush=True);return
+    if not src.exists():print('NO_COMPLETED_ROUTE',original,flush=True);return False
     out=ROOT/'finalized'/rev/(case+'-'+plan);out.mkdir(parents=True,exist_ok=False)
     env=dict(item.split('=',1) for item in j['command'][j['command'].index('--env')+1].split(','))
     relocations=env['PINXY_RELOCATIONS'];before=sha(src)
@@ -32,10 +32,15 @@ def one(case,rev,plan):
             result=check(out/(name+'.tsv.gz'),whole);(out/(name+'.json')).write_text(json.dumps(result,indent=2)+'\n');rec[name]=result
     rec['files']={p.name:{'bytes':p.stat().st_size,'sha256':sha(p)} for p in out.iterdir() if p.is_file()}
     (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n');print('CLEAN_FINALIZED',case,rev,plan,rec.get('independent_DRC_count'),rec.get('whole_access',{}).get('pass'),flush=True)
+    return (rec['export_returncode']==0 and rec.get('source_unchanged') and rec.get('clean_byte_identical_to_pre_RCX_source')
+            and rec.get('independent_DRC_returncode')==0 and rec.get('independent_DRC_count')==0
+            and all(rec.get(k,{}).get('pass') for k in ['selected_access','whole_access']))
 def safe(args):
-    try:one(*args)
+    try:return one(*args)
     except Exception:
         import traceback;traceback.print_exc()
+        return False
 if __name__=='__main__':
     case,rev=sys.argv[1:3];plans=sys.argv[3:] or ['A','A_replay','Aopt','B','C']
-    with ThreadPoolExecutor(max_workers=2) as pool:list(pool.map(safe,[(case,rev,p) for p in plans]))
+    with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(safe,[(case,rev,p) for p in plans]))
+    sys.exit(0 if all(results) else 1)
