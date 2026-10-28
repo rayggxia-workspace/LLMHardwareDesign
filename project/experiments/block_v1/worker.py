@@ -60,7 +60,17 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='revision300-cts-probe':
+    if MODE=='revision300-constraints-control':
+        from revision300_constraints_control import control
+        control(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('revision300-final-source-'):
+        from revision300_receive import finalize
+        finalize(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE.startswith('revision300-physical-') or MODE.startswith('revision300-drc-') or MODE.startswith('revision300-final-function-') or MODE.startswith('revision300-formal-'):
+        from revision300_receive import receive
+        operation='function'if MODE.startswith('revision300-final-function-')else MODE.split('-')[1]
+        receive(ROOT,OUT,CPUS,run,operation,MODE[-1])
+    elif MODE=='revision300-cts-probe':
         from revision300_cts_probe import probe
         probe(ROOT,OUT,CPUS,run)
     elif MODE=='revision300-cts-readback':

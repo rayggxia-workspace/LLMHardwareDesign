@@ -27,7 +27,7 @@ def source(out,kind,original=False,repaired=False):
     return folder,receipt,flow,results
 
 
-def physical(root,out,cpus,run,kind):
+def physical(root,out,cpus,run,kind,selected=None):
     from io_slots import file_sha
     from native_sta import inspect as sta_audit
     from native_annotation import inspect as annotation_audit
@@ -35,7 +35,8 @@ def physical(root,out,cpus,run,kind):
     from native_driver_report import inspect as driver_audit
     from constraint_readback import audit as constraints
     assert cpus==16
-    folder,r,flow,results=source(out,kind)
+    receive=source if selected is None else selected
+    folder,r,flow,results=receive(out,kind)
     lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
     control=out.parents[2]/'block-v1-20261027-131/tasks/native-passive-endpoint-probe'
     cr=json.loads((control/'receipt.json').read_text());assert cr['passed']
@@ -51,6 +52,8 @@ def physical(root,out,cpus,run,kind):
     for name in ('native_sta.py','native_annotation.py'):
         relative='project/experiments/block_v1/'+name;assert sc['inputs'][relative]==file_sha(root/relative)
     prefix=''.join('set ::env('+k+') {'+str(results/name)+'}\n' for k,name in [('BV1_ODB','6_final.odb'),('BV1_SDC','6_final.sdc'),('BV1_SPEF','6_final.spef')])
+    if selected is not None:
+        prefix+='rename write_sdc bv1_original_write_sdc\nproc write_sdc {args} {uplevel 1 [list bv1_original_write_sdc -digits 12 {*}$args]}\n'
     for name,body in [('sta','source {'+str(root/'project/experiments/block_v1/native_sta.tcl')+'}\n'),
                       ('physical','source {'+str(root/'project/experiments/block_v1/native_physical.tcl')+'}\n'),
                       ('drivers','read_db $::env(BV1_ODB)\nset ::env(BV1_UNDRIVEN_REPORT) {used-signal-drivers.tsv}\nsource {'+str(root/'project/experiments/block_v1/native_undriven.tcl')+'}\n')]:
@@ -76,6 +79,12 @@ def physical(root,out,cpus,run,kind):
         pin_contract['software_controls']={k:controls[k]for k in ('negative_controls','precise_serialization_preserves_original_coordinates','comparator_sha256','scope')}
     exact=pin_contract['passed']
     budget=json.loads((root/'project/experiments/block_v1/physical-budget.json').read_text())
+    if selected is not None:
+        from revision300_constraint_readback import audit as precise_constraints
+        from revision300_constraints_control import reference
+        budget=flow['budget']
+        serialization,control_sha=reference(root,out,budget)
+        constraints=lambda text,pins,approved:dict(precise_constraints(text,pins,approved,serialization),serialization_control_receipt_sha256=control_sha)
     boundary=constraints((out/'constraints-readback.sdc').read_text(),plan,budget)
     masters=[];active=0;physical_area=0
     for line in (out/'physical-masters.tsv').read_text().splitlines():
@@ -93,7 +102,7 @@ def physical(root,out,cpus,run,kind):
                 all_placed=summary['unplaced']==['0'],no_open_signal_inputs=summary['open_signal_inputs']==['0'],
                 exact_ten_layers=summary['routing_layers']==[','.join('metal'+str(i) for i in range(1,11))],
                 exact_die=list(map(int,summary['die']))==[0,0,round(flow['die_um'][0]*dbu),round(flow['die_um'][1]*dbu)])
-    source(out,kind)
+    receive(out,kind)
     result=dict(passed=all(checks.values()),top=flow['top'],checks=checks,timing=timing,rc_coverage=annotation,
                 used_drivers=drivers,boundary=boundary,pin_contract=pin_contract,masters=masters,active_area_um2=active,
                 physical_only_area_um2=physical_area,die_um=flow['die_um'],source=str(folder),
@@ -103,11 +112,12 @@ def physical(root,out,cpus,run,kind):
     (out/'five-macro-physical.json').write_text(json.dumps(result,indent=2)+'\n');assert result['passed']
 
 
-def drc(root,out,cpus,run,kind):
+def drc(root,out,cpus,run,kind,selected=None):
     from io_slots import file_sha,slot
     from native_drc import summarize
     assert cpus==16
-    folder,r,flow,results=source(out,kind);nickname='bv1_'+flow['top']
+    receive=source if selected is None else selected
+    folder,r,flow,results=receive(out,kind);nickname='bv1_'+flow['top']
     script='set_thread_count 16\nread_db {'+str(results/'6_final.odb')+'}\nwrite_def before.def\n'
     script+='if {[llength [info commands ::drt::check_drc_cmd]] != 1} {error "Missing whole-chip DRC API"}\n'
     script+='drt::check_drc_cmd native-whole-drc.rpt 0 0 0 0 native_whole_drc\nwrite_def after.def\n'
@@ -121,7 +131,7 @@ def drc(root,out,cpus,run,kind):
     gds=target/'6_final.gds';deck=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc')
     run(['klayout','-b','-rd','in_gds='+str(gds),'-rd','report_file='+str(out/'full-deck.lyrdb'),'-r',str(deck)],'full-deck.log')
     summary=summarize(out/'full-deck.lyrdb');native=(out/'native-whole-drc.rpt').read_text()
-    source(out,kind)
+    receive(out,kind)
     result=dict(passed=summary['total_items']==0 and not native.strip(),top=flow['top'],source=str(folder),
                 source_receipt_sha256=file_sha(folder/'receipt.json'),native_report=native,full_deck=summary,
                 deck_sha256=file_sha(deck),gds=dict(path=str(gds),sha256=file_sha(gds),bytes=gds.stat().st_size),
@@ -129,16 +139,17 @@ def drc(root,out,cpus,run,kind):
     (out/'five-macro-drc.json').write_text(json.dumps(result,indent=2)+'\n');assert result['passed']
 
 
-def function(root,out,cpus,run,kind):
+def function(root,out,cpus,run,kind,selected=None):
     from io_slots import file_sha
     from native_signal_view import export
     assert cpus==16
-    folder,r,flow,results=source(out,kind);top=flow['top']
+    receive=source if selected is None else selected
+    folder,r,flow,results=receive(out,kind);top=flow['top']
     lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
     netlist,proof=export(root,out,run,folder,r,results,top,lib)
     (out/'cells.ys').write_text('read_liberty -ignore_miss_func -ignore_miss_dir '+str(lib)+'\nwrite_verilog -noattr cells.v\n')
     run(['yosys','-s',str(out/'cells.ys')],'cells.log')
-    bench=root/('project/experiments/block_v1/test_'+dict(m='matrix',s='store',r='recurrent',v='vector')[kind]+'_macro.cpp')
+    bench=root/'project/experiments/block_v1/test_transaction.cpp'if kind=='t'else root/('project/experiments/block_v1/test_'+dict(m='matrix',s='store',r='recurrent',v='vector')[kind]+'_macro.cpp')
     compiler='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
     run([compiler,'--cc','--exe','--build','-j','16','-Wno-fatal','--top-module',top,'--prefix','V'+top,
          '-Mdir',str(out/'obj'),'--output-split','12000','--output-split-cfuncs','150','--threads','4',
@@ -151,7 +162,7 @@ def function(root,out,cpus,run,kind):
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
         runs=dict(pool.map(simulate,[('all-ones',1,121),('random-121',2,121),('random-122',2,122)]))
     assert all(v['result']==runs['all-ones']['result'] for v in runs.values())
-    source(out,kind)
+    receive(out,kind)
     result=dict(passed=True,top=top,source=str(folder),source_receipt_sha256=file_sha(folder/'receipt.json'),
                 full_final_netlist=proof,bench_sha256=file_sha(bench),library_sha256=file_sha(lib),
                 cell_models_sha256=file_sha(out/'cells.v'),initial_runs=runs,physical_acceptance=False,
@@ -160,14 +171,15 @@ def function(root,out,cpus,run,kind):
     (out/'five-macro-final-function.json').write_text(json.dumps(result,indent=2)+'\n')
 
 
-def formal(root,out,cpus,run,kind):
+def formal(root,out,cpus,run,kind,selected=None,function_folder=None):
     from io_slots import file_sha
     from native_logic_projection import export
     from native_c8_qualification import composition_qualification
     from native_formal import inspect
     assert cpus==16
-    folder,r,flow,results=source(out,kind);top=flow['top']
-    earlier=out.parent/('five-macro-final-function-'+kind)
+    receive=source if selected is None else selected
+    folder,r,flow,results=receive(out,kind);top=flow['top']
+    earlier=out.parent/('five-macro-final-function-'+kind)if function_folder is None else function_folder
     receipt=json.loads((earlier/'receipt.json').read_text());assert receipt['passed'] is True
     proof=earlier/'five-macro-final-function.json';assert file_sha(proof)==receipt['outputs'][proof.name]
     fn=json.loads(proof.read_text());assert fn['passed']
@@ -189,7 +201,7 @@ def formal(root,out,cpus,run,kind):
     config+='liberty_files:\n - '+str(lib)+'\nlog_file: '+str(out/'kepler.log')+'\n'
     (out/'kepler.yml').write_text(config);run([str(binary),'--config',str(out/'kepler.yml')],'formal.log')
     received=inspect((out/'kepler.log').read_text())
-    source(out,kind)
+    receive(out,kind)
     result=dict(passed=received['passed'],top=top,strict_native_lec=received,before=bproof,after=aproof,
                 source=str(folder),source_receipt_sha256=file_sha(folder/'receipt.json'),
                 source_final_function_receipt_sha256=file_sha(earlier/'receipt.json'),qualified_controls=qualification,
