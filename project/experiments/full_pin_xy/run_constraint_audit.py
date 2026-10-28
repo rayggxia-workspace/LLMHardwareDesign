@@ -18,7 +18,7 @@ def one(name,path,drivers,out):
         '''set rules [concat [[ord::get_db_tech] getNonDefaultRules] [$b getNonDefaultRules]]
 foreach d $rules {
  set hard UNKNOWN;catch {set hard [$d getHardSpacing]}
- foreach lr [$d getLayerRules] {puts $f [join [list [$d getName] $hard [[$lr getLayer] getName] [$lr getWidth] [$lr getSpacing]] "\\t"]}
+ foreach ly [[ord::get_db_tech] getLayers] {set lr [$d getLayerRule $ly];if {$lr ne "NULL"} {puts $f [join [list [$d getName] $hard [$ly getName] [$lr getWidth] [$lr getSpacing]] "\\t"]}}
 };close $f''',
         'set f [open '+tcl(directory/'drivers.tsv')+' w];puts $f "pin\\tmaster\\tmaster_type\\twidth_dbu\\tnet\\tinst_dont_touch\\tnet_dont_touch\\tBTerms\\tITerms"']
     for full in drivers:
