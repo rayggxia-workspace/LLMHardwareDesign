@@ -121,20 +121,17 @@ clock 使用共同输入、真实状态负载、CTS资源和最终线路，分�
 
 <!-- current-method-checkpoint -->
 
-最新检查点：2026-10-28T21:57:48.493472+00:00；源码59171ed9ece9f319d6d1ed6d4a055104f2269c4c；索引/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-driver-state-and-route-preparation-20261028T215748Z/milestone.json，SHA fb3bb51fa50313568aa84d9769c2a858dac32322ff480721d86cf64777e0b2ea。候选1/3未冻结，二/三未验收、四未执行；新大阶段通用化仍在当前主线之后。
+当前方法检查点：2026-10-28T22:46:29.340460+00:00；源码288c448e9276f366c287075f60af718b1b3ad78b；索引/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-driver-route-failure-and-BPin-controls-20261028T224629Z/milestone.json SHA b8c16bd8490ff49a7fe93f0f0739dc93a3e84c3771cc5d9007c01ae6261a5aee。候选1/3未冻结，阶段二/三未验收、四未执行。
 
-1. 保持完整规模和原3ns；实际物理网表导出/回装、新编译、完整有限回归链与来源闭合分开记录，不推广为所有输入等价或新统一父版通过。
-2. 真正生成导体/via并做全接口接触/连通、保持性和fresh DRC；92966完整M8几何通过，但质量失败必须拒绝。端口标记、颜色、规划不能代替实际线路。
-3. 前后RC匹配die/track、Lib/SDC/提取规则/工具/真实锚点与完整覆盖，再按身份记录新增/消除/持续/恶化。范围控制不是新布局候选；12setup/1hold/7cap新增和已有退化未被微小差值豁免。
-4. 全组路径及全部负端点count/TNS/WNS/单位交叉核验；第一组不是全局最差，旧复位误归因撤回留证。原完整core与自建AUX边界不同，不自动继承豁免。
-5. 已封存TSV/metrics仅在完整来源SHA一致时复用并重解析；旧功能仅在新实际导出逐字节、所有旧输入闭合和fresh PG成立时精确复用。新增62BUF后字节身份已改变，必须新功能证明。
-6. 实际ERC pin→native driver/net/placement/master→M8路径→真实Liberty/LEF/PIN/OBS。62BUF_X2原位替换有19重叠；43只有bbox无冲突。CLKBUF_X1同尺寸但容量不足，说明尺寸适合和catalog负载上限均不是实际布线/RC合格。
-7. 有界新增驱动先声明实例、分支和允许的旧端点变化，固定所有原单元，仅放置新增单元。93016全库存、原导体和真实off-site负例实际通过；UNROUTED文件不可称已供电/布线。
-8. 重布复用migrate的fixed NETS-only往返、非目标导体保护、独立native inventory、接触/连通和fresh DRC/PG。仅显式双cell一入一出split可原本无导线；has_wire仅声明0→1，其余字段精确。13元数据对照及真实native遗漏/错误声明负例93017实际通过，不代替物理检查。
-9. afterany不是成功；复用continue_after实际host COMPLETED0/4及来源SHA/状态守卫。93017明确import_fixed失败、尚未router。新93018复用封存native DEF，以已有scan/normalize仅修正声明FIXED状态词、其余字节保持；必须完整native往返保持性通过才放行真实布线，不能把状态修正当作几何修复。
-10. 92548的14059实际固定线路未闭合，841闲置扇出/案例、统一PG/clock/完整父版功能/质量、最终冻结和两版定制仍待。不同原型的局部通过不能拼接。正式Block/LLM输入、最终通用全流程尚未完成。
-
-11. 新62BUF的实际前后网表用既有H1全部命名锥归一化方法：93022重新解析真实网表、65545状态/168074锥、实际状态输入破坏负例闭合；SHA不同不复用旧字节身份证明。对“同一helper多来源同SHA”先校验唯一hash集合再逐文件读取，保留93020严格拒绝，不把它称硬件反例。
-12. native DEF状态修正后，93018完整八表/所有导体往返保持性已完成，第一轮PA完成且无缺AP；二者仍只为过程检查。当前正在实际路由，未闭合前不能接受最终几何/PG/RC，也不重启现场。
-13. 新driver_route_context显式绑定完整物理route、同一placement/access源、新状态锥证明、最终资源字节、PG/freshDRC/124网完整保持性和原3ns/模型/RC，并做真实来源帧破坏控制；新的实际闭合验证尚待93018，不将代码写好当作通过。
-14. 完整回装新增每资源闭合export复用：只对未变化的GEMM/VECTOR用receipt/ODB/所有native哈希和解析后全实例/接口身份复用，AUX重新实际导出；仍原完整父层、资源/存储和观察器。RC/覆盖/prepare/compile/replay 93024/26/29/34/36已提交4核依赖链但尚待，停止条件是任何上游非COMPLETED0/4或类型/来源闭合失败。
+1. 完整案例规模、真实物理网表和全资源/存储/外部模型边界固定；状态锥、有限整机回归、真实放置/PG/布线/DRC/RC/质量分开验收，不以任一局部PASS代替终验。93022新实际网表65545状态/168074锥及真实状态输入破坏通过，不能复用旧字节身份称新整机回归通过。
+2. 在冻结前只新增必要buffer并声明split/load连接。93016合法放置/保持原546397位置及所有导体通过；UNROUTED数据库仍不算真实接线。实际恢复必须来源守卫和新目录，不动原四核心/封存文件。
+3. native DEF往返必须八表/全导体保持；仅原声明124网可重布、其中62明确双cell一入一出split允许原无wire。93017严格状态失败、93018往返通过后真实调用路由，随后DRT1231失败；不能把准备通过当布线通过。
+4. **AP覆盖需区分标准单元、macro、顶层BPin和实际可达几何。** 93018 stdCellPinNoAp0不涵盖顶层BPin；49个已观察顶层PIN失败，无最终route DB。必须验证实际BTerm→net、所有BPin shape和保存AP的层/点/真实自有矩形关系，不能只看PA退出0或std计数。
+5. 93047从真实日志提取49口、完整preparedDB/轨道/AP读回及15489424重复保护矩形空间接触扫描。它们都在非选中固定网络，源有AP且BPin boxes被重复矩形覆盖。实际接触是诊断证据，排他根因与修复尚未证明。
+6. **成对原生PA对照93053正在执行。** 同一完整source/124目标准备/Lib/SDC/RC/tool，唯一变化是是否添加本任务重复导体保护OBS，原始阻挡与真实固定几何不删；串行4线程。记录全部signal BPin及观察49口前后AP、真实native catch code/几何身份、原OBS保持，输入全hash重核。一次性内存只按声明移除待重布wire，不write_db/全局或详细布线。这个对照不产生可采用的物理结果，也不证明完整DRT失败排他原因。
+7. afterany不是成功。93024/26/29/34/36正确地child_launched=false：五项业务均NOTRUN，禁止写成实际RC/回归失败。新driver RC来源适配/全覆盖/完整回装export精确复用/编译回归入口已实现但端到端未验证；需新实际物理producer通过全部严格门槛后才运行。
+8. 复用已闭合完整prepare检查点及精确来源，不重复几十分钟的大准备；不能复用失败route作为可接受物理源。若未来实际新网表字节不同，重新做状态锥/完整功能；不变GEMM/VECTOR export可按原receipt/ODB/所有native SHA和解析后完整身份精确复用。
+9. RC/时序必须同die/track、库、SDC、提取规则、实际锚点、完整net/pin覆盖，按身份区分新增/持续/恶化。旧M8无buffer5691setup/36hold/1104cap质量失败不能冒充新buffer测量；无epsilon、时钟放宽或reset例外。
+10. 全组时序最差是ATTENTION数据setup/crossbar输入hold，旧首组复位误归因已撤回留证；原完整core/AUX边界不同不自动继承豁免。不同局部原型PASS不拼成最终共同底座。
+11. 92548保留运行。14059预连线是规划加未闭合实际路线，841闲置扇出/案例、当前191父版PG/clock/功能/质量与VECTOR新增问题仍待。外clock/open37负载null保留。正式通用Block与LLM阶段不替代当前完整案例验收。
+12. 容器Python3.10与host3.12语法不同：93046在数据库前失败，新兼容源码/目录93047闭合，不覆盖旧失败；host AST检查不等于实际容器运行通过。全部申请4核但诊断/状态比较常主要单线程，按真实CPU/wall报告，不声称4倍加速。
