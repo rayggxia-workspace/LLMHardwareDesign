@@ -10,7 +10,8 @@ module block_v1_r(
  localparam IDLE=0,DEC_MUL=1,DEC_WRITE=2,PRED_MUL=3,PRED_ADD=4,
  PRED_END=5,ERR_PREP=6,ERR_MUL=7,ERR_WRITE=8,UP_MUL=9,UP_WRITE=10,
  READ_MUL=11,READ_ADD=12,READ_END=13,SKIP_MUL=14,SKIP_WRITE=15,
- CONV_MUL=16,CONV_ADD=17,CONV_END=18,FINISH=19,COPY=20;
+ CONV_MUL=16,CONV_ADD=17,CONV_END=18,FINISH=19,COPY=20,
+ ERR_FETCH=21,SKIP_FETCH=22,CONV_FETCH=23;
  reg [4:0] phase;
  reg signed [31:0] bank0[0:2047],bank1[0:2047];
  reg bank_role;
@@ -28,6 +29,10 @@ module block_v1_r(
  // <=256 products of S32 by S16 need at most55 signed bits.
  reg signed [63:0] dot[0:7];
  reg signed [31:0] mul_a[0:7];reg signed [32:0] mul_b[0:7];
+ // Isolate dynamic state/history selection from the shared multipliers.
+ // Row loops still accept one operand row per cycle; only fill/drain grows.
+ reg signed [31:0] operand_a[0:7];reg signed [32:0] operand_b[0:7];
+ reg operand_valid,fetch_done;reg [8:0] operand_row;
  reg signed [64:0] product[0:7];
  reg [511:0] active_valid,decay_valid;
  reg [31:0] key_valid,query_valid;
@@ -65,11 +70,11 @@ module block_v1_r(
    case(phase)
     DEC_MUL:begin mul_a[l]=active[row*8+l];mul_b[l]=mode==0?$signed({1'b0,decay}):$signed({1'b0,shadow[row*8+l]});end
     PRED_MUL:begin mul_a[l]=shadow[row*8+l];mul_b[l]={{17{key[row][15]}},key[row]};end
-    ERR_MUL:begin mul_a[l]=error_value[l];mul_b[l]=$signed({1'b0,beta});end
+    ERR_FETCH:begin mul_a[l]=error_value[l];mul_b[l]=$signed({1'b0,beta});end
     UP_MUL:begin mul_a[l]=mode==0?error_value[l]:inject[l];mul_b[l]={{17{key[row][15]}},key[row]};end
     READ_MUL:begin mul_a[l]=shadow[row*8+l];mul_b[l]={{17{query[row][15]}},query[row]};end
-    SKIP_MUL:begin mul_a[l]=x[l];mul_b[l]={skip[l][31],skip[l]};end
-    CONV_MUL:begin mul_a[l]=tap==0?x[l]:history[(tap-1)*8+l];mul_b[l]={{17{taps[tap*8+l][15]}},taps[tap*8+l]};end
+    SKIP_FETCH:begin mul_a[l]=x[l];mul_b[l]={skip[l][31],skip[l]};end
+    CONV_FETCH:begin mul_a[l]=tap==0?x[l]:history[(tap-1)*8+l];mul_b[l]={{17{taps[tap*8+l][15]}},taps[tap*8+l]};end
     default:begin end
    endcase
    case(phase)
@@ -92,6 +97,7 @@ module block_v1_r(
    output_valid<=0;pending_state<=0;pending_history<=0;failed<=0;
    owner<=0;epoch<=0;position<=0;length<=0;row<=0;mode<=0;tap<=0;
    bank_role<=0;row_valid<=0;product_row<=0;
+   operand_valid<=0;fetch_done<=0;operand_row<=0;
   end else begin
    if(rsp_valid&&rsp_ready)rsp_valid<=0;
    if(cmd_valid&&cmd_ready)begin
@@ -133,9 +139,10 @@ module block_v1_r(
        (cmd_data[1:0]==1&&(!factor_loaded||x_valid!=15||skip_valid!=3)))rsp_error<=1;
       else begin
        mode<=cmd_data[1:0];row<=0;row_valid<=0;tap<=0;failed<=0;output_valid<=0;rsp_valid<=0;
+       operand_valid<=0;fetch_done<=0;
        for(i=0;i<8;i=i+1)dot[i]<=0;
        if(cmd_data[1:0]==2)begin
-        phase<=CONV_MUL;
+        phase<=CONV_FETCH;
         for(i=0;i<8;i=i+1)begin history_next[i]<=x[i];history_next[8+i]<=history[i];history_next[16+i]<=history[8+i];end
        end else begin phase<=DEC_MUL;decay_valid<=0;end
       end
@@ -171,56 +178,61 @@ module block_v1_r(
      default:rsp_error<=1;
     endcase
    end else case(phase)
-    DEC_MUL,UP_MUL:begin
-     // Launch the next row while retiring the preceding product. Decay reads
-     // its old SSM factor before that shadow row is overwritten.
-     for(i=0;i<8;i=i+1)product[i]<=mul_a[i]*mul_b[i];
-     if(row_valid)begin
-      failed<=failed||value_error;
-      for(i=0;i<8;i=i+1)if(bank_role)bank0[product_row*8+i]<=value[i][31:0];else bank1[product_row*8+i]<=value[i][31:0];
+    DEC_MUL,UP_MUL,PRED_MUL,READ_MUL:begin
+     // Fetch row n, multiply buffered row n-1, retire product n-2.
+     // SSM factors are captured before that same shadow row is overwritten.
+     if(!fetch_done)begin
+      for(i=0;i<8;i=i+1)begin operand_a[i]<=mul_a[i];operand_b[i]<=mul_b[i];end
+      operand_row<=row;operand_valid<=1;
+      if(row+1==length)fetch_done<=1;else row<=row+1;
+     end else operand_valid<=0;
+     if(operand_valid)begin
+      for(i=0;i<8;i=i+1)product[i]<=operand_a[i]*operand_b[i];
+      product_row<=operand_row;
      end
-     product_row<=row;row_valid<=1;
-     if(row+1==length)phase<=phase==DEC_MUL?DEC_WRITE:UP_WRITE;
-     else row<=row+1;
+     row_valid<=operand_valid;
+     if(row_valid)begin
+      if(phase==DEC_MUL||phase==UP_MUL)begin
+       failed<=failed||value_error;
+       for(i=0;i<8;i=i+1)if(bank_role)bank0[product_row*8+i]<=value[i][31:0];else bank1[product_row*8+i]<=value[i][31:0];
+      end else for(i=0;i<8;i=i+1)dot[i]<=dot[i]+$signed(product[i]);
+     end
+     if(operand_valid&&operand_row+1==length)
+      phase<=phase==DEC_MUL?DEC_WRITE:phase==UP_MUL?UP_WRITE:phase==PRED_MUL?PRED_ADD:READ_ADD;
     end
     DEC_WRITE,UP_WRITE:begin
      failed<=failed||value_error;
      for(i=0;i<8;i=i+1)if(bank_role)bank0[product_row*8+i]<=value[i][31:0];else bank1[product_row*8+i]<=value[i][31:0];
-     row<=0;row_valid<=0;
+     row<=0;row_valid<=0;operand_valid<=0;fetch_done<=0;
      for(i=0;i<8;i=i+1)dot[i]<=0;
      if(phase==DEC_WRITE)phase<=mode==0?PRED_MUL:UP_MUL;else phase<=READ_MUL;
     end
-    PRED_MUL,READ_MUL:begin
-     for(i=0;i<8;i=i+1)begin
-      product[i]<=mul_a[i]*mul_b[i];
-      if(row_valid)dot[i]<=dot[i]+$signed(product[i]);
-     end
-     row_valid<=1;
-     if(row+1==length)phase<=phase==PRED_MUL?PRED_ADD:READ_ADD;
-     else row<=row+1;
-    end
     PRED_ADD,READ_ADD:begin
      for(i=0;i<8;i=i+1)dot[i]<=dot[i]+$signed(product[i]);
-     row<=0;row_valid<=0;phase<=phase==PRED_ADD?PRED_END:READ_END;
+     row<=0;row_valid<=0;operand_valid<=0;fetch_done<=0;phase<=phase==PRED_ADD?PRED_END:READ_END;
+    end
+    ERR_FETCH,SKIP_FETCH,CONV_FETCH:begin
+     for(i=0;i<8;i=i+1)begin operand_a[i]<=mul_a[i];operand_b[i]<=mul_b[i];end
+     phase<=phase==ERR_FETCH?ERR_MUL:phase==SKIP_FETCH?SKIP_MUL:CONV_MUL;
     end
     ERR_MUL,SKIP_MUL,CONV_MUL:begin
-     for(i=0;i<8;i=i+1)product[i]<=mul_a[i]*mul_b[i];
+     for(i=0;i<8;i=i+1)product[i]<=operand_a[i]*operand_b[i];
      phase<=phase==ERR_MUL?ERR_WRITE:phase==SKIP_MUL?SKIP_WRITE:CONV_ADD;
     end
     PRED_END,ERR_PREP,ERR_WRITE:begin
      failed<=failed||value_error;for(i=0;i<8;i=i+1)error_value[i]<=value[i][31:0];
-     phase<=phase==PRED_END?ERR_PREP:phase==ERR_PREP?ERR_MUL:UP_MUL;
+     phase<=phase==PRED_END?ERR_PREP:phase==ERR_PREP?ERR_FETCH:UP_MUL;
     end
     READ_END:begin
      failed<=failed||value_error;for(i=0;i<8;i=i+1)output_value[i]<=value[i][31:0];
-     phase<=mode==0?FINISH:SKIP_MUL;
+     phase<=mode==0?FINISH:SKIP_FETCH;
     end
     SKIP_WRITE,CONV_END:begin
      failed<=failed||value_error;for(i=0;i<8;i=i+1)output_value[i]<=value[i][31:0];phase<=FINISH;
     end
     CONV_ADD:begin
      for(i=0;i<8;i=i+1)dot[i]<=dot[i]+$signed({{63{product[i][64]}},product[i]});
-     if(tap==3)phase<=CONV_END;else begin tap<=tap+1;phase<=CONV_MUL;end
+     if(tap==3)phase<=CONV_END;else begin tap<=tap+1;phase<=CONV_FETCH;end
     end
     FINISH:begin
      rsp_valid<=1;rsp_error<=failed;rsp_data<=0;phase<=IDLE;output_valid<=!failed;

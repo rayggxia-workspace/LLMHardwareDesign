@@ -60,7 +60,7 @@ int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);reset();
   cmd(5,1,half(skip,0));cmd(5,2,half(skip,1));
   if(mode)for(unsigned j=0;j<n;++j)for(int p=0;p<2;++p)cmd(15,2*j+p,half(factor[j],p));
   need(reference(a,k,q,x,injection,skip,decay,beta,factor,mode,out),"random domain unexpectedly overflowed");
-  auto r=execute(mode);need(r.latency==(mode==0?4*n+10:3*n+7),"execution latency mismatch");
+  auto r=execute(mode);need(r.latency==(mode==0?4*n+15:3*n+11),"execution latency mismatch");
   output_matches(out);state_matches(original);
   // Wrong owner/epoch cannot consume a valid candidate.
   cmd(7,0,U(owner+1)|(U(epoch)<<32)|(U(position)<<64)|(U(position+1)<<96),true);
@@ -90,7 +90,7 @@ int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);reset();
   for(int j=0;j<3;++j){h[j]=random_row(20000);for(int p=0;p<2;++p)cmd(9,2*j+p,half(h[j],p));}
   for(int j=0;j<4;++j){U v=0;for(int l=0;l<8;++l){t[j][l]=int(rng()%32768)-16384;v|=U(uint16_t(t[j][l]))<<(16*l);}cmd(10,j,v);}
   Row out{};for(int l=0;l<8;++l){I v=I(x[l])*t[0][l];for(int j=0;j<3;++j)v+=I(h[j][l])*t[j+1][l];out[l]=int32_t(rne(v,14));}
-  need(execute(2).latency==10,"convolution latency");output_matches(out);
+  need(execute(2).latency==14,"convolution latency");output_matches(out);
   auto matches_history=[&](const std::array<Row,3>&expect){for(int j=0;j<3;++j)for(int p=0;p<2;++p){U v=cmd(14,2*j+p,0).data;for(int l=0;l<4;++l)need(int32_t(v>>(32*l))==expect[j][p*4+l],"history changed incorrectly");}};
   matches_history(h);if(trial%3==0){cmd(8,0,0);matches_history(h);}else {commit(position+1);matches_history({x,h[0],h[1]});}
  }
