@@ -16,7 +16,7 @@ DRIVER=Path(__file__).resolve().parent
 
 
 def one(case,variant,revision):
-    assert case in ['vector','gemm','mxu'] and variant in ['A','C']
+    assert case in ['vector','gemm','mxu','opentpu_aux'] and variant in ['A','C']
     physical=BASE[case] if variant=='A' else C_REVISION[case]
     source=ROOT/'finalized'/physical/(case+'-'+variant);proof=json.loads((source/'execution.json').read_text())
     assert proof['independent_DRC_count']==0 and proof['whole_access']['pass'] and proof['clean_byte_identical_to_pre_RCX_source']
@@ -26,6 +26,9 @@ def one(case,variant,revision):
     electrical_only=os.environ.get('PINXY_ECO_ELECTRICAL_ONLY')=='1'
     incremental=os.environ.get('PINXY_ECO_INCREMENTAL')=='1'
     targeted=os.environ.get('PINXY_ECO_TARGETED')=='1'
+    rc_heuristic=os.environ.get('PINXY_ECO_PLACEMENT_HEURISTIC')=='1'
+    fix_hold=os.environ.get('PINXY_ECO_HOLD')=='1'
+    assert not rc_heuristic or (incremental and not targeted)
     assert not targeted or (electrical_only and incremental and case in ['gemm','mxu'] and variant=='C')
     inputs={str(p):sha(p) for p in [odb,spef,sdc,trial,source/'execution.json']}
     # Reuse the existing exact geometry fingerprint/stage helpers, not the
@@ -60,6 +63,27 @@ def one(case,variant,revision):
                     'if {![stage begin_incremental {global_route -start_incremental}]} {close $stages;exit 1}']
         lines=[s for s in lines if not s.startswith('if {![stage rip_signal_routes')]
         lines=[s.replace('global_route -allow_congestion -guide_file','global_route -end_incremental -allow_congestion -guide_file') for s in lines]
+    if rc_heuristic:
+        # read_guides/start_incremental invalidated the resizer's estimated-RC
+        # state in r01/r02 (EST-0027); do not misdescribe WLM as extracted-RC
+        # optimization. Establish a placement heuristic, then restore exact
+        # source SPEF for the pre-repair STA. Changed nets use the heuristic;
+        # only the final fresh RCX/STA determines the physical outcome.
+        i=next(i for i,s in enumerate(lines) if s.startswith('if {![stage cell_repair'))
+        lines[i:i]=['if {![stage repair_RC_model {estimate_parasitics -placement;read_spef '+tcl(spef)+';report_parasitic_annotation -report_unannotated > '+tcl(out/'repair_RC_coverage.txt')+';report_worst_slack -max -digits 6 > '+tcl(out/'repair_before.setup.txt')+';report_worst_slack -min -digits 6 > '+tcl(out/'repair_before.hold.txt')+'}]} {close $stages;exit 1}']
+        lines[i+1:i+1]=['if {![stage exact_source_STA_replayed {foreach kind {setup hold} {set a [open [file join '+tcl(out)+' before.$kind.txt] r];set av [read $a];close $a;set b [open [file join '+tcl(out)+' repair_before.$kind.txt] r];set bv [read $b];close $b;if {$av ne $bv} {error "Exact source SPEF STA changed before cell repair"}}}]} {close $stages;exit 1}']
+    if fix_hold:
+        assert not electrical_only and not targeted
+        lines=[s.replace('-max_utilization 85 -verbose}]}',
+                         '-max_utilization 85 -verbose;repair_timing -hold -max_utilization 85 -verbose}]}')
+               if s.startswith('if {![stage cell_repair') else s for s in lines]
+    if rc_heuristic:
+        i=next(i for i,s in enumerate(lines) if s.startswith('if {![stage cell_repair'))
+        lines[i]=lines[i].replace('remove_fillers;',
+             'set eco_fillers {};foreach fi [[ord::get_db_block] getInsts] {set fm [$fi getMaster];if {[$fm getType] eq "CORE_SPACER"} {lappend eco_fillers [$fm getName]}};set eco_fillers [lsort -unique $eco_fillers];remove_fillers;')
+        lines=[s.replace('detailed_placement;check_placement -verbose',
+              'detailed_placement;check_placement -verbose;filler_placement -prefix PINXY_RC_FILL_ $eco_fillers;global_connect;check_placement -verbose') for s in lines]
+        lines=[s.replace('global_route -end_incremental -allow_congestion','global_route -end_incremental') for s in lines]
     replacements=[]
     if targeted:
         from cell_semantics import check_pair
@@ -108,26 +132,31 @@ def one(case,variant,revision):
 }'''
     lines.insert(0,cost_proc)
     lines=[s+'\ncell_cost '+tcl(out/('before.cell_cost.tsv' if '/before}' in s else 'after.cell_cost.tsv')) if s.startswith('fingerprint ') else s for s in lines]
+    if case.endswith('_aux'):
+        lines=[s.replace('-signal metal2-metal10 -clock metal4-metal10','-signal metal2-metal8 -clock metal4-metal8') for s in lines]
     (out/'run.tcl').write_text('\n'.join(lines)+'\n')
     rec={'scope':'COSTED_CELL_ECO_EXPERIMENT_NOT_PURE_XY_OR_FULL_QUALIFICATION','case':case,'variant':variant,'source_physical_revision':physical,
          'source_inputs_SHA':inputs,'original_SDC_and_clocks_unchanged':True,'cell_sizing_buffering_and_placement_changes_separate_cost':True,
          'new_access_window_trial_replaced':False,'equivalence_not_yet_verified':True,'full_qualification':False,
          'electrical_only_repair':electrical_only,'incremental_route_attempt':incremental,'same_source_access_windows_retained':bool(reservation_keys),
-         'targeted_master_changes':replacements,'fillers_restored_with_original_master_set':targeted,
+         'targeted_master_changes':replacements,'fillers_restored_with_original_master_set':targeted or rc_heuristic,
+         'repair_estimator':'PLACEMENT_HEURISTIC_WITH_EXACT_SOURCE_SPEF_RESTORED_BEFORE_REPAIR' if rc_heuristic else 'LEGACY_OR_TARGETED_NO_ESTIMATOR_FIX',
+         'hold_repair_requested':fix_hold,'final_timing_requires_fresh_extraction':True,
          'replacement_logic_state_precheck':'EXACT_LIBERTY_FUNCTION_AND_SEQUENTIAL_STATE_CONTRACT' if targeted else 'NOT_EXECUTED',
          'design_formal_equivalence':'NOT_EXECUTED',
-         'GRT_overflow_permitted_for_guides_only_not_pass':not targeted,'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),
+         'GRT_overflow_permitted_for_guides_only_not_pass':not (targeted or rc_heuristic),'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),
          'scheduler_job':os.environ['SLURM_JOB_ID'],'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()}
     (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
             '--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro','--home',str(ROOT/'home'),'--pwd',str(out)]
-    if targeted:
+    if targeted or rc_heuristic:
         for p in old['libs']:
             if Path(p).is_file():common+=['--bind',p+':'+p+':ro']
     env='PINXY_OUTPUT={},PINXY_ACCESS_ALL=1,PINXY_ACCESS_OUT={}'.format(out,out/'whole_access.tsv.gz')
     rec['native_returncode']=execute(common,out/'run.tcl',out/'native.log',env)
     if (out/'routed.odb').exists():
-        fresh=out/'fresh.tcl';fresh.write_text('read_db '+tcl(out/'routed.odb')+'\nset_routing_layers -signal metal2-metal10 -clock metal4-metal10\ndrt::check_drc -output_file '+tcl(out/'independent.drc')+'\n')
+        top='8' if case.endswith('_aux') else '10'
+        fresh=out/'fresh.tcl';fresh.write_text('read_db '+tcl(out/'routed.odb')+'\nset_routing_layers -signal metal2-metal'+top+' -clock metal4-metal'+top+'\ndrt::check_drc -output_file '+tcl(out/'independent.drc')+'\n')
         rec['fresh_DRC_returncode']=execute(common,fresh,out/'independent.log',threads=1)
         p=out/'independent.drc';rec['fresh_DRC_count']=len(re.findall(r'^violation type:',p.read_text(),re.M)) if rec['fresh_DRC_returncode']==0 and p.exists() else None
     if (out/'whole_access.tsv.gz').exists():rec['whole_signal_geometry']=check(out/'whole_access.tsv.gz',True)
@@ -166,7 +195,7 @@ def safe(args):
 
 if __name__=='__main__':
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=8
-    cases=sys.argv[2:] or ['vector'];assert set(cases)<=set(['vector','gemm','mxu'])
-    variants=['C'] if os.environ.get('PINXY_ECO_ELECTRICAL_ONLY')=='1' else ['A','C']
+    cases=sys.argv[2:] or ['vector'];assert set(cases)<=set(['vector','gemm','mxu','opentpu_aux'])
+    variants=['C'] if os.environ.get('PINXY_ECO_ELECTRICAL_ONLY')=='1' or os.environ.get('PINXY_ECO_C_ONLY')=='1' else ['A','C']
     with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(safe,[(c,v,sys.argv[1]) for c in cases for v in variants]))
     sys.exit(0 if all(results) else 1)
