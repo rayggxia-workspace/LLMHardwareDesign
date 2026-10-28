@@ -109,6 +109,26 @@ def one(case, variant, revision):
         'if {[$s isVia]} {set v [$s getTechVia];if {$v eq "NULL"} {set v [$s getBlockVia]};lassign [$s getViaXY] x y;foreach b [$v getBoxes] {if {[[$b getTechLayer] getName] eq "metal10"} {puts $f [join [list [expr {[$b xMin]+$x}] [expr {[$b yMin]+$y}] [expr {[$b xMax]+$x}] [expr {[$b yMax]+$y}]] "\\t"]}}} elseif {[[$s getTechLayer] getName] eq "metal10"} {puts $f [join [list [$s xMin] [$s yMin] [$s xMax] [$s yMax]] "\\t"]}',
         '}}}', 'close $f']
     (out/'setup.tcl').write_text('\n'.join(setup)+'\n')
+    if case=='act' and variant=='C' and os.environ.get('PINXY_ACT_ACCESS_RESERVATIONS'):
+        reservations=Path(os.environ['PINXY_ACT_ACCESS_RESERVATIONS'])
+        leaf_trial=json.loads(Path(proof['legacy_RC_STA_receipt']).read_text())
+        assert leaf_trial['input_sha256'][str(reservations)]==sha(reservations),'Parent keepouts must be the exact accepted leaf access windows'
+        before_pdn=[
+            'set prior_parent_block_obs [lsort [[ord::get_db_block] getObstructions]]',
+            'set temporary_parent_access_obs {};set access_reservations {};source '+tcl(reservations),
+            'set u [[ord::get_db_block] getDbUnitsPerMicron]',
+            'foreach row $access_reservations {lassign $row layer x0 y0 x1 y1;set ly [[ord::get_db_tech] findLayer $layer];set coords {};foreach v [list $x0 $y0 $x1 $y1] offset [list '+str(dx)+' '+str(dy)+' '+str(dx)+' '+str(dy)+'] {lappend coords [expr {round(($v+$offset)*$u)}]};lappend temporary_parent_access_obs [odb::dbObstruction_create [ord::get_db_block] $ly {*}$coords]}']
+        after_pdn=[
+            'foreach ob $temporary_parent_access_obs {odb::dbObstruction_destroy $ob}',
+            'if {[lsort [[ord::get_db_block] getObstructions]] ne $prior_parent_block_obs} {error "Original parent block OBS changed"}',
+            'puts "NEW_PARENT_PG_AVOIDED_TEMPORARY_ACCESS_WINDOWS; original block/master OBS retained"']
+        position=next(i for i,s in enumerate(setup) if s.startswith('pdngen '))
+        setup[position:position]=before_pdn
+        position+=len(before_pdn)
+        setup[position+1:position+1]=after_pdn
+        (out/'setup.tcl').write_text('\n'.join(setup)+'\n')
+        rec['parent_PG_access_window_SHA']=sha(reservations)
+        rec['parent_PG_access_policy']='Exclude only newly generated parent PG from exact leaf access windows; remove only new temporary keepouts after PDN; source leaf PG/metal/OBS unchanged'
     assert execute(common, out/'setup.tcl', out/'setup.log', 'PINXY_PARENT_OUT='+str(out)) == 0, 'Actual setup/PG failed; source untouched'
     obstacles = []
     in_obs, layer = False, None

@@ -32,11 +32,12 @@ def prepare(root, out):
         frame[c] = [v/meta['units_per_micron'] for v in meta['die_dbu']][2:]
         d = pd.read_csv(root/(c+'_pin_coordinates.csv'), low_memory=False)
         a, proposed = d[d.plan == 'A'].set_index('pin'), d[d.plan == 'C'].set_index('pin')
-        replacement = {'gemm': ('trial-inputs-gemm-electrical-publication-r04', 'gemm_C_electrical_r03_all_pins.csv'),
+        replacement = {'act': ('trial-inputs-act-access-publication-r04','act_C_access_r03_all_pins.csv'),
+                       'gemm': ('trial-inputs-gemm-electrical-publication-r04', 'gemm_C_electrical_r03_all_pins.csv'),
                        'mxu': ('trial-inputs-mxu-repair-r04', 'mxu_C_repair_r03_all_pins.csv'),
                        'llaccel_aux': ('trial-inputs-llsys-pg-r03', 'llaccel_aux_C_pg_r03_all_pins.csv')}.get(c)
         if replacement:
-            p = (root if c == 'llaccel_aux' else root.parent)/replacement[0]/replacement[1]
+            p = (root if c in ['act','llaccel_aux'] else root.parent)/replacement[0]/replacement[1]
             assert p.exists(), p
             proposed = pd.read_csv(p, low_memory=False).set_index('pin')
         optimized = a.copy()
