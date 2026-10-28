@@ -24,8 +24,13 @@ def calculate(root):
     recurrent=load(base/'recurrent-resource-budget.json')
     rmodels={r['model']:r for r in recurrent['models']}
     sv={}
-    for p in sorted((base/'model-sv-0408/tasks').glob('*/revision300-sv-workspace.json'))+[base/'sv-workspace-0305/tasks/revision300-sv-workspace/revision300-sv-workspace.json']:
+    svroot=base/'v-workspace-319-0756/block-v1-20261029-319/tasks'
+    svreports=sorted(svroot.glob('*/revision300-sv-workspace.json'))
+    assert len(svreports)==5
+    for p in svreports:
         d=load(p);assert d['passed']
+        for name,digest in d['rtl_sha256'].items():
+            assert hashlib.sha256((root/name).read_bytes()).hexdigest()==digest
         for r in d['measurements']['cases']:
             if r['profile']==0:sv[(r['operation'],r['size'])]=r
     conv=load(base/'r-prefetch-0727/block-v1-20261029-309/tasks/revision300-bench-r-extended/revision300-vr-benchmark.json')
