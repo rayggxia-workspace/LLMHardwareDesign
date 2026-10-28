@@ -18,6 +18,7 @@ def collect(name):
               'escape_pg_repair/*/*','escape_spacing_reroute/*/*','leaf_timing_models/r04/*',
               'upper_layer_probe/r01','upper_layer_probe/r01/model','upper_layer_validation/r01','leaf_diagnosis/r01/*',
               'escape_fixtures/gemm-r01/*','leaf_timing_models/r05/*',
+              'escape_fixtures/mxu-r01/*','leaf_timing_models/r06/*','common_native_link/r01',
               'leaf_eco/r01/*',
               'parents/r07/*','parents/ll-r01/*','parent_rc_sta/r02/*']
     for pattern in patterns:paths.extend(p for p in ROOT.glob(pattern) if p.is_dir())

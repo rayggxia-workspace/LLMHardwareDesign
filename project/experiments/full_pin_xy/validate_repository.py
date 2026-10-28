@@ -185,10 +185,13 @@ def main():
                 assert r['minimum_period_present']==('minimum_period' in lib.decode())
                 assert item['qualified_for_full_system_STA'] is False
                 sub=r['source_clean_receipt'].split('/full-pin-20261027/',1)[1]
-                matches=list((DATA/'evidence/physical').glob('*/'+sub+'*'));assert len(matches)==1,(item['model'],'matching clean physical source missing')
-                raw=gzip.decompress(matches[0].read_bytes()) if matches[0].suffix=='.gz' else matches[0].read_bytes()
-                assert hashlib.sha256(raw).hexdigest()==r['source_clean_receipt_sha256']
-                assert json.loads(raw)['clean_odb_sha256']==r['clean_odb_sha256']
+                matches=list((DATA/'evidence/physical').glob('*/'+sub+'*'));assert matches,(item['model'],'matching clean physical source missing')
+                # Multiple immutable publication snapshots are allowed. Every
+                # duplicate must still match the exact native source and ODB.
+                for match in matches:
+                    raw=gzip.decompress(match.read_bytes()) if match.suffix=='.gz' else match.read_bytes()
+                    assert hashlib.sha256(raw).hexdigest()==r['source_clean_receipt_sha256']
+                    assert json.loads(raw)['clean_odb_sha256']==r['clean_odb_sha256']
                 successful.add((c,r['variant']))
         assert all((c,p) in successful for c in EXPECTED for p in ['A','C'])
     semantic=DATA/'rule_semantics/well4-r01'
