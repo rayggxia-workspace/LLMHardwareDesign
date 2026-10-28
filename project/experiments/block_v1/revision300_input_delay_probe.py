@@ -24,6 +24,7 @@ def probe(root, out, cpus, run, kind):
     for p in files:
         assert file_sha(p) == receipt['outputs'][str(p.relative_to(source))]
     platform = Path('/OpenROAD-flow-scripts/flow/platforms/nangate45')
+    (out/'native-cts-script.txt').write_bytes(Path('/OpenROAD-flow-scripts/flow/scripts/cts.tcl').read_bytes())
     body = 'set_thread_count 16\nread_liberty {'+str(platform/'lib/NangateOpenCellLibrary_typical.lib')+'}\n'
     body += 'read_db {'+str(files[0])+'}\nread_sdc {'+str(files[1])+'}\nsource {'+str(platform/'setRC.tcl')+'}\n'
     body += '''set_propagated_clock [all_clocks]
@@ -89,6 +90,20 @@ report_check_types -max_capacitance -max_slew -violators -digits 9 > padded-elec
 write_db padded.odb
 write_verilog padded.v
 write_sdc -digits 12 padded.sdc
+set status [catch {repair_timing -hold -max_buffer_percent 20 -hold_margin 0.020 -verbose} message]
+set stream [open repair-status.txt w]
+puts $stream [list $status $message]
+close $stream
+detailed_placement
+check_placement -verbose
+estimate_parasitics -placement
+report_worst_slack -min -digits 9 > repaired-summary.rpt
+report_worst_slack -max -digits 9 >> repaired-summary.rpt
+report_checks -path_delay min_max -group_path_count 10 -digits 9 -format full_clock_expanded > repaired.rpt
+report_check_types -max_capacitance -max_slew -violators -digits 9 > repaired-electrical.rpt
+write_db repaired.odb
+write_verilog repaired.v
+write_sdc -digits 12 repaired.sdc
 puts "BV1_DELAY_PROBE ports=$ports buffers=$count"
 '''
     (out/'input-delay.tcl').write_text(body)
@@ -99,5 +114,6 @@ puts "BV1_DELAY_PROBE ports=$ports buffers=$count"
     result = dict(passed=True, source_receipt_sha256=file_sha(source/'receipt.json'),
                   source_files_sha256=bound, source_unchanged=True, stages_per_input=24,
                   buffer_count=len(inventory), input_count=len(inventory)//24,
-                  qualified_hard_macro=False, scope='Physical input-delay probe only; placement RC, no route or final acceptance')
+                  qualified_hard_macro=False, max_buffer_percent=20, hold_margin_ns=0.020,
+                  scope='Physical input-delay plus ordinary hold-repair probe only; placement RC, no route or final acceptance')
     (out/'revision300-input-delay-probe.json').write_text(json.dumps(result, indent=2)+'\n')
