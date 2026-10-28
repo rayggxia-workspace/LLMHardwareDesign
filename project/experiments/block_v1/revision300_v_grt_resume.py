@@ -10,7 +10,7 @@ def implement(root,out,cpus,run):
     policy=root/'project/experiments/block_v1/revision300-v-grt-resume.json'
     assert json.loads(policy.read_text())==dict(schema='revision300-v-grt-resume/1',
         source='block-v1-20261028-236/tasks/revision300-route-v',resume_from='4_cts.odb',
-        global_route_adjustment=.20,same_native_geometry_rules=True,
+        upper_layer_adjustment=.20,same_native_geometry_rules=True,
         same_approved_timing_constraints=True,requires_fresh_final_acceptance=True)
     base=out.parents[2]
     source=base/'block-v1-20261028-236/tasks/revision300-route-v'
@@ -37,7 +37,14 @@ def implement(root,out,cpus,run):
         config=config.replace(str(source/name),str(out/name))
     # This changes the global router's conservative capacity reservation only.
     # It does not change native track geometry, spacing, DRC or timing limits.
-    config+='\nexport GRT_ADJUSTMENT = 0.20\n'
+    hook=out/'grt-capacity.tcl'
+    hook.write_text('source {'+str(out/'input-diodes.tcl')+'}\n'
+        'set_global_routing_layer_adjustment metal4-metal10 0.20\n'
+        'set f [open [file join $::env(RESULTS_DIR) bv1-grt-adjustment.tsv] w]\n'
+        'puts $f "metal4-metal10\\t0.20"\nputs $f "native_rules\\tunchanged"\nclose $f\n')
+    previous='export PRE_GLOBAL_ROUTE_TCL = '+str(out/'input-diodes.tcl')
+    assert config.count(previous)==1
+    config=config.replace(previous,'export PRE_GLOBAL_ROUTE_TCL = '+str(hook))
     (out/'config.mk').write_text(config)
     relative='flow/results/nangate45/bv1_block_v1_v/base'
     results=out/relative;results.mkdir(parents=True)
@@ -54,11 +61,12 @@ def implement(root,out,cpus,run):
         source_function_task=str(source.parent/'revision300-test-v'),
         inherited_cts_files_sha256=copied,failed_grt_log_sha256=file_sha(grt),
         resume_policy_sha256=file_sha(policy),
+        executable_pre_global_route_hook_sha256=file_sha(hook),
         config_sha256=file_sha(out/'config.mk'),global_route_adjustment=.20,
         acceptance_policy='Unchanged native rules and approved300MHz SDC. Detailed routing and all new final gates remain mandatory; no congestion or DRC waiver.',
         scope='Same V RTL/footprint/placement/CTS; resume router with20percent conservative capacity adjustment explicitly suggested by failed native log. Fresh route/finish and all final acceptance required.')
     command=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
-    wanted=dict(original['actual_variables'],GRT_ADJUSTMENT='0.20')
+    wanted=dict(original['actual_variables'],PRE_GLOBAL_ROUTE_TCL=str(hook))
     result['actual_variables']={}
     for name,expected in wanted.items():
         log='variable-'+name+'.log';run(command+['print-'+name],log)
@@ -68,6 +76,7 @@ def implement(root,out,cpus,run):
     save()
     for stage in ('do-route','do-finish'):
         run(command+[stage],stage+'.log');result['stages'].append(stage);save()
+        assert (results/'bv1-grt-adjustment.tsv').read_text()=='metal4-metal10\t0.20\nnative_rules\tunchanged\n'
     for suffix in ('v','sdc','def','odb','spef'):
         p=results/('6_final.'+suffix);assert p.is_file()
         result['final_files'][p.name]=dict(path=str(p),sha256=file_sha(p),bytes=p.stat().st_size)
