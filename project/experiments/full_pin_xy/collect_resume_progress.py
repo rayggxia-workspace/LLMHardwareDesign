@@ -14,7 +14,8 @@ def collect(name,extra_jobs):
               'constraint_audit/r0*/installed_GRT_source_excerpt.txt',
               'escape_spacing_reroute/r02/act-C/*','escape_spacing_reroute/r03/act-C/*',
               'trials/local-patch-r01/llaccel_aux-C/*','finalized/local-patch-r01/llaccel_aux-C/*',
-              'inputs/ll-local-patch-r01/*','leaf_eco/r0[34567]/*/*']
+              'inputs/ll-local-patch-r01/*','leaf_eco/r0[345678]/*/*',
+              'logs/rc-aware-eco-r07-*.log','logs/native-grt-eco-r08-*.log']
     paths=set(p for pattern in patterns for p in ROOT.glob(pattern) if p.is_file())
     paths.update(ROOT/'logs'/n for n in ['local-patch-r01-92747.log','local-patch-qual-r01-92748.log',
          'constraint-audit-r01-92749.log','constraint-audit-r02-92751.log','constraint-audit-r03-92752.log',
