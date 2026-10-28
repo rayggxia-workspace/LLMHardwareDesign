@@ -28,6 +28,21 @@ foreach d $rules {
           'set it [$i findITerm '+tcl(pin)+'];set m [$i getMaster];set n [$it getNet];set idt UNKNOWN;set ndt UNKNOWN;catch {set idt [$i isDoNotTouch]};catch {set ndt [$n isDoNotTouch]}',
           'puts $f [join [list '+tcl(full)+' [$m getName] [$m getType] [$m getWidth] [$n getName] $idt $ndt [llength [$n getBTerms]] [llength [$n getITerms]]] "\\t"]']
     commands+=['close $f',
+        '''set profiles [dict create];set itr [odb::dbWirePathItr];set wp [odb::dbWirePath];set ps [odb::dbWirePathShape]
+foreach n [$b getNets] {
+ set d [$n getNonDefaultRule];set w [$n getWire];if {$d eq "NULL" || $w eq "NULL"} {continue}
+ $itr begin $w
+ while {[$itr getNextPath $wp]} {while {[$itr getNextShape $ps]} {
+  set s [odb::dbWirePathShape_shape_get $ps];if {[$s isVia]} {continue}
+  set ly [$s getTechLayer];set lr [$d getLayerRule $ly];set nominal UNKNOWN
+  if {$lr ne "NULL"} {set nominal [$lr getWidth]}
+  set width [expr {min([$s xMax]-[$s xMin],[$s yMax]-[$s yMin])}]
+  dict incr profiles [list [$n getName] [$d getName] [$ly getName] $width $nominal]
+ }}
+}
+set f [open '''+tcl(directory/'NDR_wire_width_profiles.tsv')+''' w]
+puts $f "net\\tNDR\\tlayer\\tmin_box_dimension_dbu\\tNDR_nominal_width_dbu\\tshape_count"
+dict for {k v} $profiles {puts $f [join [list {*}$k $v] "\\t"]};close $f''',
         'set f [open '+tcl(directory/'cell_tools.txt')+' w];foreach c {replace_cell size_cell filler_placement remove_fillers detailed_placement} {puts $f [list $c [info commands $c]];if {[llength [info commands $c]]} {catch {help $c} h;puts $f $h}};close $f',
         'set f [open '+tcl(directory/'candidate_masters.tsv')+' w];puts $f "master\\ttype\\twidth_dbu\\theight_dbu";foreach l [[ord::get_db] getLibs] {foreach m [$l getMasters] {if {[regexp {^(BUF_X[1248]|XOR2_X[124]|DFF.*|FILLCELL_.*)$} [$m getName]]} {puts $f [join [list [$m getName] [$m getType] [$m getWidth] [$m getHeight]] "\\t"]}}};close $f',
         'puts "READ_ONLY_NDR_DRIVER_AUDIT_FINISHED"']
@@ -58,7 +73,8 @@ def run(revision):
        'for d in /OpenROAD-flow-scripts/tools/OpenROAD/src/grt/src /OpenROAD/src/grt/src; do if [ -d "$d" ]; then grep -n -B 8 -A 12 -F "Disabled NDR" "$d"/*.cpp || true; fi; done; sha256sum /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad']
     with (out/'installed_GRT_source_excerpt.txt').open('x') as f:subprocess.run(command,stdout=f,stderr=subprocess.STDOUT,check=True)
     (out/'execution.json').write_text(json.dumps({'scope':'READ_ONLY_SOURCE_AND_NDR_AUDIT','records':records,'created_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        'full_qualification':False,'not_claimed':['NDR actual width/spacing passed','live in-memory GRT constraints unchanged','STA/electrical pass']},indent=2)+'\n')
+        'full_qualification':False,'width_profile_limit':'Actual rectangular wire dimensions only; pin-access taper/neckdown and NDR soft-spacing exemptions require separate review. No spacing/via/full-rule pass inferred.',
+        'not_claimed':['NDR actual width/spacing passed','live in-memory GRT constraints unchanged','STA/electrical pass']},indent=2)+'\n')
     print('CONSTRAINT_AUDIT_FINISHED',[(j['native_returncode'],j['source_unchanged']) for j in records],flush=True)
 
 
