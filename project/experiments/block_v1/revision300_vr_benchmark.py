@@ -6,7 +6,7 @@ from pathlib import Path
 def measure(root,out,cpus,run,kind,variant):
     from io_slots import file_sha
     from revision300_rtl import COMPILER,sources
-    assert cpus==16 and kind in ('v','r') and variant in ('baseline','revised')
+    assert cpus==16 and kind in ('v','r') and variant in ('baseline','revised','extended')
     top,rtls,numeric=sources(root,kind)
     bound=rtls+([rtls[0].parent/'block_v1_v_tables.svh']if kind=='v'else[])
     old=json.loads((root/'project/experiments/block_v1/baseline-vr-sha256.json').read_text())
@@ -16,14 +16,14 @@ def measure(root,out,cpus,run,kind,variant):
         bound=[prefix/p.relative_to(root)for p in bound]
         rtls=bound[:-1]if kind=='v'else bound
     bench=root/'project/experiments/block_v1/bench_vector_recurrent.cpp'
-    flags='-std=c++17 -O2'+(' -DBENCH_RECURRENT'if kind=='r'else'')+(' -DBASELINE_VR'if variant=='baseline'else'')
+    flags='-std=c++17 -O2'+(' -DBENCH_RECURRENT'if kind=='r'else'')+(' -DBASELINE_VR'if variant=='baseline'else'')+(' -DEXTENDED_VR'if variant=='extended'else'')
     run([COMPILER,'--cc','--exe','--build','-j','16','-Wno-fatal','--x-initial','unique','--x-assign','unique',
          '--top-module',top,'-I'+str(rtls[0].parent),'-Mdir',out/'obj','-CFLAGS',flags]+rtls+[bench],'build.log')
     results=[]
     for label,initial,seed in [('ones',1,121),('random',2,122)]:
         run([out/'obj'/('V'+top),'+verilator+rand+reset+'+str(initial),'+verilator+seed+'+str(seed)],label+'.json')
         value=json.loads((out/(label+'.json')).read_text());assert value['passed']is True
-        assert len(value['cases'])==(42 if kind=='v'else 24)
+        assert len(value['cases'])==((36 if kind=='v'else 9)if variant=='extended'else(42 if kind=='v'else 24))
         identities=set()
         for row in value['cases']:
             key=(row['workload'],row['size'],row['profile']);assert key not in identities;identities.add(key)
