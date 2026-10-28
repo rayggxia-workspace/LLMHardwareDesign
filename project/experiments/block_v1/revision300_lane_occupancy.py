@@ -53,6 +53,14 @@ def measure(root,out,cpus,run,kind,variant):
     top,rtls,numeric=sources(root,kind)
     tools=root/'project/experiments/block_v1'
     prior=out.parents[2]/('block-v1-20261029-'+('268'if variant=='revised'else'269'))/'tasks'/('revision300-bench-'+kind+'-'+variant)
+    prefetched=kind=='r' and 'reg operand_valid,fetch_done;' in rtls[0].read_text()
+    if prefetched:
+        # New latency source requires new measured public results, not a
+        # comparison against the old236 execution schedule.
+        policy=json.loads((tools/'revision300-r-fresh.json').read_text())
+        assert policy['measurements']==dict(revised='block-v1-20261029-309/tasks/revision300-bench-r-revised',
+                                           extended='block-v1-20261029-309/tasks/revision300-bench-r-extended')
+        prior=out.parents[2]/policy['measurements'][variant]
     receipt=json.loads((prior/'receipt.json').read_text());assert receipt['passed']
     report=prior/'revision300-vr-benchmark.json'
     assert file_sha(report)==receipt['outputs'][report.name]
@@ -66,7 +74,19 @@ def measure(root,out,cpus,run,kind,variant):
     assert code.count('std::map<std::string,uint64_t> reasons;')==1
     code=code.replace('std::map<std::string,uint64_t> reasons;',
         'std::map<std::string,uint64_t> reasons,internal;')
-    code=code.replace('static std::map<std::string,Phase> phases;',MONITOR+'\nstatic std::map<std::string,Phase> phases;')
+    monitor=MONITOR
+    if prefetched:
+        old='if(state==1||state==3||state==7||state==9||state==11||state==14||state==16)'
+        assert monitor.count(old)==1
+        monitor=monitor.replace(old,
+            'if(((state==1||state==3||state==9||state==11)&&r->block_v1_r__DOT__operand_valid)||state==7||state==14||state==16)')
+        anchor='++p.internal["phase_"+std::to_string(state)];'
+        assert monitor.count(anchor)==2
+        monitor=monitor.replace(anchor,anchor+'''
+ if(((state==1||state==3||state==9||state==11)&&!r->block_v1_r__DOT__fetch_done)||state==21||state==22||state==23)
+  p.internal["operand_register_write_slots"]+=8;
+''',1)
+    code=code.replace('static std::map<std::string,Phase> phases;',monitor+'\nstatic std::map<std::string,Phase> phases;')
     assert code.count('++result.reasons[reason];++result.cycles;')==1
     code=code.replace('++result.reasons[reason];++result.cycles;',
         'sample_internal(result);++result.reasons[reason];++result.cycles;')
@@ -106,4 +126,5 @@ def measure(root,out,cpus,run,kind,variant):
         reference_report_sha256=file_sha(report),reference_receipt_sha256=file_sha(prior/'receipt.json'),
         original_bench_sha256=file_sha(original),instrumented_bench_sha256=file_sha(bench),
         instrument_generator_sha256=file_sha(Path(__file__)),rtl_sha256=reference['rtl_sha256'],
-        scope='Preedge actual phase/valid/row_valid register samples during identical finite public schedules. Eight product-register writes per enabled phase; function valid tokens counted for each2lane stage, allocated slots include odd tail padding. Ratios may use stated total/phase cycle denominators. These are logical enable/token occupancy, not transistor switching, power, gate-netlist occupancy, or model/system performance.'),indent=2)+'\n')
+        prefetched_operand_pipeline=prefetched,
+        scope='Preedge actual phase/valid/row_valid and, for prefetched R, operand_valid/fetch_done samples during identical source-bound public schedules. Product slots require their actual write enable; R operand slots include pipeline fill and single-fetch phases. Function valid tokens counted for each2lane stage, allocated slots include odd tail padding. Ratios may use stated total/phase cycle denominators. These are logical enable/token occupancy, not transistor switching, power, gate-netlist occupancy, or model/system performance.'),indent=2)+'\n')

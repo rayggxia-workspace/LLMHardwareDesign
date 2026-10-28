@@ -17,10 +17,10 @@ def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None
     folder=root/'project/experiments/block_v1';base=out.parents[2]
     mapped=out.parent/('revision300-map-'+kind);tested=out.parent/('revision300-test-'+kind)
     if prerequisite_tasks is not None:
-        assert kind=='v' and set(prerequisite_tasks)=={'mapping','function'}
+        assert kind in ('v','r') and set(prerequisite_tasks)=={'mapping','function'}
         mapped=base/prerequisite_tasks['mapping'];tested=base/prerequisite_tasks['function']
         assert all(base in p.resolve().parents for p in (mapped,tested))
-        assert mapped.name=='revision300-map-v' and tested.name=='revision300-test-v'
+        assert mapped.name=='revision300-map-'+kind and tested.name=='revision300-test-'+kind
     records=[]
     for source,name in [(mapped,'revision300-rtl-map.json'),(tested,'revision300-rtl-test.json')]:
         receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed']is True

@@ -126,6 +126,9 @@ try:
     elif MODE=='revision300-constraints-control':
         from revision300_constraints_control import control
         control(ROOT,OUT,CPUS,run)
+    elif MODE=='revision300-route-r' and (ROOT/'project/experiments/block_v1/revision300-r-fresh.json').exists():
+        from revision300_r_fresh import implement
+        implement(ROOT,OUT,CPUS,run)
     elif MODE=='revision300-route-v' and (ROOT/'project/experiments/block_v1/revision300-v-fresh.json').exists():
         from revision300_v_fresh import implement
         implement(ROOT,OUT,CPUS,run)
