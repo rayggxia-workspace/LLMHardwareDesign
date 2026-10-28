@@ -11,7 +11,7 @@ import pandas as pd
 import expand_candidates as expand
 
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
-def run(root,case,actual,out):
+def run(root,case,actual,out,candidate_table=None):
     root=Path(root);actual=Path(actual);out=Path(out);out.mkdir(parents=True,exist_ok=False)
     receipt=json.loads((root/'physical'/case/'receipt.json').read_text(encoding='utf-8'))
     execution=json.loads((actual/'execution.json').read_text(encoding='utf-8'))
@@ -20,7 +20,8 @@ def run(root,case,actual,out):
     tcl=tkinter.Tcl();records=[tcl.splitlist(s) for s in (actual/'moved.pins.tsv').read_text().splitlines()]
     records=[r for r in records if r[2] not in ['POWER','GROUND']]
     got={r[0].replace('\\',''):r for r in records};assert len(got)==len(records)
-    raw=pd.read_csv(root/(case+'_pin_coordinates.csv'),low_memory=False);c=raw[raw.plan=='C'].set_index('pin')
+    expected=Path(candidate_table) if candidate_table else root/(case+'_pin_coordinates.csv')
+    raw=pd.read_csv(expected,low_memory=False);c=raw[raw.plan=='C'].set_index('pin')
     assert set(got)==set(c.index)
     for pin,r in c.iterrows():
         q=got[pin];assert (q[1],q[2],q[3].replace('\\',''),q[4])==(r.direction,r['use'],r.net,r.layer)
@@ -39,7 +40,9 @@ def run(root,case,actual,out):
             contacts.append({'pin':pin,'signal_net':q[3],'layer':q[4],'actual_pin_box_um':box,'fixed_PG_net':name,'PG_shape_box_um':rect[idx].tolist(),'PG_shape_kind':kind})
     report={'scope':'ACTUAL_MOVED_PINS_DIRECT_FIXED_PG_METAL_CONTACT; not a complete DRC run','case':case,'scheduler_job':execution['scheduler_job'],
        'original_odb_sha256':receipt['source_sha256'],'original_geometry_export_receipt_sha256':sha(root/'physical'/case/'receipt.json'),
-       'all_actual_moved_pins_match_complete_original_C':True,'signal_pins_checked':len(got),'actual_PG_before_and_after_move_byte_identical':True,
+       'all_actual_moved_pins_match_complete_original_C':candidate_table is None,
+       'all_actual_moved_pins_match_complete_expected_candidate':True,'expected_candidate_SHA':sha(expected),
+       'signal_pins_checked':len(got),'actual_PG_before_and_after_move_byte_identical':True,
        'before_PG_sha256':sha(actual/'before.pdn.tsv'),'moved_PG_sha256':sha(actual/'moved.pdn.tsv'),'moved_pins_sha256':sha(actual/'moved.pins.tsv'),
        'direct_contact_pin_count':len({r['pin'] for r in contacts}),'direct_contact_rectangle_pairs':len(contacts),'contacts':contacts,
        'conclusion':'KNOWN_INVALID_WITH_FIXED_PG: signal and power metal overlap on the same layer; DRT cannot repair an immovable pin/PG rectangle overlap' if contacts else 'NO_DIRECT_CONTACT_FOUND; full DRC and via/spacing checks still required'}
@@ -48,4 +51,4 @@ def run(root,case,actual,out):
     print('ACTUAL_FIXED_PG_CONTACTS',case,report['signal_pins_checked'],report['direct_contact_pin_count'],report['direct_contact_rectangle_pairs'])
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--root',required=True);p.add_argument('--case',required=True);p.add_argument('--actual',required=True);p.add_argument('--out',required=True);a=p.parse_args();run(a.root,a.case,a.actual,a.out)
+    p=argparse.ArgumentParser();p.add_argument('--root',required=True);p.add_argument('--case',required=True);p.add_argument('--actual',required=True);p.add_argument('--out',required=True);p.add_argument('--candidate-table');a=p.parse_args();run(a.root,a.case,a.actual,a.out,a.candidate_table)
