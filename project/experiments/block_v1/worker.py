@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='revision300-s-wire-api':
+    if MODE=='revision300-s-patch-probe':
+        from revision300_s_wire_probe import repair_probe
+        repair_probe(ROOT,OUT,CPUS,run)
+    elif MODE=='revision300-s-wire-api':
         from revision300_s_wire_probe import probe
         probe(ROOT,OUT,CPUS,run)
     elif MODE.startswith('revision300-s-drc-localize-'):
