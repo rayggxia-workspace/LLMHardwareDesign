@@ -33,6 +33,31 @@ def test(root,out,cpus,run,kind):
     (out/'revision300-rtl-test.json').write_text(json.dumps(result,indent=2)+'\n')
 
 
+def vector_boundary(root,out,cpus,run,variant):
+    """Fresh compositions/latencies on this source, without old RTL qualification."""
+    from io_slots import file_sha
+    assert cpus==16 and variant in ('composition','latency')
+    top,rtl,driver=sources(root,'v')
+    bench=driver.with_name('test_vector_'+('compositions'if variant=='composition'else'latency')+'.cpp')
+    run([COMPILER,'--cc','--exe','--build','-j','16','-Wno-fatal',
+         '--x-initial','unique','--x-assign','unique','--top-module',top,
+         '-I'+str(rtl[0].parent),'-Mdir',out/'obj','-CFLAGS','-std=c++17 -O2']+rtl+[bench],'build.log')
+    runs={}
+    for name,initial,seed in [('all-ones',1,121),('random-121',2,121),('random-122',2,122)]:
+        run([out/'obj'/('V'+top),'+verilator+rand+reset+'+str(initial),'+verilator+seed+'+str(seed)],name+'.json')
+        result=json.loads((out/(name+'.json')).read_text());assert result['passed']
+        if variant=='composition':
+            assert result['rope_cases']==320 and result['statistics_elements']==65535
+            assert result['rejected_boundary_cases']==3
+        runs[name]=result
+    assert all(v==runs['all-ones']for v in runs.values())
+    bound=rtl+[rtl[0].parent/'block_v1_v_tables.svh']
+    (out/'revision300-vector-boundary.json').write_text(json.dumps(dict(passed=True,variant=variant,
+        rtl_sha256={str(p.relative_to(root)):file_sha(p)for p in bound},
+        bench_sha256=file_sha(bench),driver_sha256=file_sha(driver),initial_runs=runs,
+        final_netlist_verified=False,physical_implementation_completed=False),indent=2)+'\n')
+
+
 def mapping(root,out,cpus,run,kind):
     from io_slots import file_sha
     assert cpus==16

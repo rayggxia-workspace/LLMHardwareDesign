@@ -9,8 +9,10 @@ module block_v1_v(
  localparam IDLE=0,P_MUL=1,P_WRITE=2,S_MUL=3,S_WRITE=4,F_RUN=5,
  G_START=6,G_WAIT=7,G_ROOT=8,G_ROOT_WAIT=9,N_LOW=10,N_HIGH=11,N_WRITE=12,
  C_MUL=13,C_ADD=14,C_END=15,T_SCAN=16,T_SAVE=17,
- ROT_LOW=18,ROT_HIGH=19,ROT_ROUND=20,ROT_COMBINE=21,S_REDUCE=22,C_REDUCE=23;
+ ROT_LOW=18,ROT_HIGH=19,ROT_ROUND=20,ROT_COMBINE=21,S_REDUCE=22,C_REDUCE=23,
+ M_EXEC=24,P_TOTAL=25,P_ROUND=26;
  reg [4:0] phase;
+ reg [4:0] mul_return;
  reg signed [31:0] a[0:7],b[0:7],input_mem[0:255],output_mem[0:255];
  reg [1:0] a_valid,b_valid;reg [63:0] replay_valid;
  reg [8:0] output_count,length,offset;
@@ -18,7 +20,10 @@ module block_v1_v(
  reg [1:0] point_width;reg broadcast_b,swap_b;
  reg signed [31:0] scalar_b,scalar_c;
  reg signed [31:0] mul_a[0:7];reg signed [32:0] mul_b[0:7],point_b[0:7];
+ // Break operand selection from the eight shared multipliers.
+ reg signed [31:0] operand_a[0:7];reg signed [32:0] operand_b[0:7];
  reg signed [64:0] product[0:7],low_product[0:7];
+ reg signed [127:0] point_total[0:7],point_rounded[0:7];
  reg signed [127:0] rounded,total[0:7],sum;
  // Whole-domain bounds:65535 S32 values fit S64 sum and U80 squares.
  reg signed [63:0] stats_sum[0:1];
@@ -118,7 +123,7 @@ module block_v1_v(
   for(integer l=0;l<8;l=l+1)begin
    // Point results must not see replay/normalization address muxes through
    // the phase-selected shared multiplier operand. Same P_WRITE arithmetic,
-   // explicit separate combinational selection, no new storage or cycle.
+   // explicit separate combinational selection before P_TOTAL registration.
    point_b[l]=broadcast_b?{scalar_b[31],scalar_b}:
       swap_b?{b[l^1][31],b[l^1]}:{b[l][31],b[l]};
    mul_a[l]=a[l];mul_b[l]=point_b[l];
@@ -155,7 +160,7 @@ module block_v1_v(
  integer i;reg signed [127:0] lower,upper;
  always @(posedge clk)begin
   if(reset)begin
-   phase<=IDLE;rsp_valid<=0;rsp_data<=0;rsp_error<=0;rsp_saturated<=0;
+   phase<=IDLE;mul_return<=IDLE;rsp_valid<=0;rsp_data<=0;rsp_error<=0;rsp_saturated<=0;
    a_valid<=0;b_valid<=0;replay_valid<=0;output_count<=0;stats_valid<=0;stats_final<=0;
    id_valid<=0;top_valid<=0;function_sent<=0;function_received<=0;function_length<=0;composing<=0;
    broadcast_b<=0;swap_b<=0;point_op<=0;point_shift<=0;point_width<=0;point_count<=0;
@@ -256,14 +261,27 @@ module block_v1_v(
     endcase
    end else case(phase)
     P_MUL,S_MUL,C_MUL:begin
-     for(i=0;i<8;i=i+1)product[i]<=mul_a[i]*mul_b[i];
-     phase<=phase==P_MUL?P_WRITE:phase==S_MUL?S_REDUCE:C_REDUCE;
+     for(i=0;i<8;i=i+1)begin operand_a[i]<=mul_a[i];operand_b[i]<=mul_b[i];end
+     mul_return<=phase==P_MUL?P_TOTAL:phase==S_MUL?S_REDUCE:C_REDUCE;
+     phase<=M_EXEC;
+    end
+    M_EXEC:begin
+     for(i=0;i<8;i=i+1)product[i]<=operand_a[i]*operand_b[i];
+     phase<=mul_return;
+    end
+    P_TOTAL:begin
+     for(i=0;i<8;i=i+1)point_total[i]<=total[i];
+     phase<=P_ROUND;
+    end
+    P_ROUND:begin
+     for(i=0;i<8;i=i+1)point_rounded[i]<=rne(point_total[i],point_op==7?7'd0:point_shift);
+     phase<=P_WRITE;
     end
     P_WRITE:begin
      lower=point_width==0?-128'sd128:point_width==1?-128'sd32768:-128'sd2147483648;
      upper=point_width==0?128'sd127:point_width==1?128'sd32767:128'sd2147483647;
      for(i=0;i<8;i=i+1)if(i<point_count)begin
-      rounded=rne(total[i],point_op==7?7'd0:point_shift);
+      rounded=point_rounded[i];
       if(rounded<lower)begin rounded=lower;rsp_saturated<=1;end
       if(rounded>upper)begin rounded=upper;rsp_saturated<=1;end
       output_mem[i]<=rounded[31:0];
@@ -321,8 +339,14 @@ module block_v1_v(
       phase<=IDLE;rsp_valid<=1;
      end
     end
-    N_LOW:begin for(i=0;i<8;i=i+1)product[i]<=mul_a[i]*mul_b[i];phase<=N_HIGH;end
-    N_HIGH:begin for(i=0;i<8;i=i+1)begin low_product[i]<=product[i];product[i]<=mul_a[i]*mul_b[i];end phase<=N_WRITE;end
+    N_LOW:begin
+     for(i=0;i<8;i=i+1)begin operand_a[i]<=mul_a[i];operand_b[i]<=mul_b[i];end
+     mul_return<=N_HIGH;phase<=M_EXEC;
+    end
+    N_HIGH:begin
+     for(i=0;i<8;i=i+1)begin low_product[i]<=product[i];operand_a[i]<=mul_a[i];operand_b[i]<=mul_b[i];end
+     mul_return<=N_WRITE;phase<=M_EXEC;
+    end
     N_WRITE:begin
      for(i=0;i<8;i=i+1)if(offset+i<length)begin
       rounded=rne(($signed({{63{product[i][64]}},product[i]})<<<32)+$signed({{63{low_product[i][64]}},low_product[i]}),32);
@@ -333,8 +357,14 @@ module block_v1_v(
      if(offset+8>=length)begin output_count<=length;rsp_valid<=1;phase<=IDLE;end
      else begin offset<=offset+8;phase<=N_LOW;end
     end
-    ROT_LOW:begin for(i=0;i<8;i=i+1)product[i]<=mul_a[i]*mul_b[i];phase<=ROT_HIGH;end
-    ROT_HIGH:begin for(i=0;i<8;i=i+1)begin low_product[i]<=product[i];product[i]<=mul_a[i]*mul_b[i];end phase<=ROT_ROUND;end
+    ROT_LOW:begin
+     for(i=0;i<8;i=i+1)begin operand_a[i]<=mul_a[i];operand_b[i]<=mul_b[i];end
+     mul_return<=ROT_HIGH;phase<=M_EXEC;
+    end
+    ROT_HIGH:begin
+     for(i=0;i<8;i=i+1)begin low_product[i]<=product[i];operand_a[i]<=mul_a[i];operand_b[i]<=mul_b[i];end
+     mul_return<=ROT_ROUND;phase<=M_EXEC;
+    end
     ROT_ROUND:begin
      for(i=0;i<8;i=i+1)begin
       rounded=rne({{63{low_product[i][64]}},low_product[i]},16);

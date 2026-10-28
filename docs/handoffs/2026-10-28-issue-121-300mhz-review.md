@@ -1,3 +1,5 @@
+2026-10-29 07:49 CST：314/93070只读V306已完成placement诊断自然COMPLETED/0:0，真实cmd_index[0]→product[6][64]路径setup−1.713852644ns，原始11小文件/7稳定输出和全部归档Git blobs/输入绑定已核验。V新增操作数寄存与逐元素total/RNE分级，8共享乘法器不变；逐元素预计2→5拍、统计3→4拍，需新源实际验证后更新占用及有限预算，不挪用305周期。原306继续CTS、R309映射继续，311/312/313保持真实前置等待；307/308尚未退役或启动。新版最终仍只有M/S/T接收，V/R未齐。Issue121=in_progress、PR122=draft；登记pending、看板unverified/同步pending、独立审查和管理员待指定。
+
 2026-10-29 07:38 CST：补正共同STATUS当前入口，明确新R311/312/313后继与旧R队列历史边界，避免照旧条目误恢复。recurrent预算生成器统一模型config路径为仓库POSIX路径；重跑SHA/实际相位/字节、层屏障与80候选检查均通过，预算数值不变。23:37:59UTC（07:37:59CST）对应读取实际R309已越过memory_share SAT端口共享、进入OPT_MEM_WIDEN/CLEAN；V306进入detailed place metrics，仍未完成整阶段。原任务持续，未因耗时取消。
 
 2026-10-29 07:35 CST：finish-progress-073138真实进程采样证明新V306 OpenROAD与R309 Yosys仍各约100 CPU ticks/s增长，RSS约3.1/7.2GiB；所有线程仍在各自16CPU硬掩码。R309映射和V306布局尚未完成，不按日志静默取消/重启。314只读新V306 placement路径诊断已stage/validate，实际do-place前置检查未ready，因此dispatch.tasks={}、没有allocation；后续仅真实stage完成才提交。诊断代码a5471da读取新source selector，旧302原源不变。311/312/313/307/308仍真实依赖等待，本任务当前6 allocations含两旧，其他成员保持。五宏新版M/S/T最终齐、V/R未齐；目标active，Issue121=in_progress、PR122=draft。

@@ -102,7 +102,7 @@ int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);dut.cmd_vali
  for(unsigned op=0;op<10;++op)for(unsigned t=0;t<80;++t){Row a,b;for(int j=0;j<8;++j){a[j]=int32_t(rng());b[j]=int32_t(rng());}load(0,a);load(1,b);
   bool broadcast=t&1,swap=t&2;int32_t sb=int32_t(rng()),sc=int32_t(rng());unsigned shift=op==7?rng()%97:rng()%128,width=t%3,n=1+rng()%8;int bits=width==0?8:width==1?16:32;
   U data=U(op)|(U(shift)<<4)|(U(n)<<11)|(U(broadcast)<<15)|(U(width)<<16)|(U(swap)<<18)|(U(uint32_t(sb))<<32)|(U(uint32_t(sc))<<64);
-  auto response=cmd(2,0,data);need(response.latency==2,"point cycle count");auto actual=read(n);bool saturated=false;
+  auto response=cmd(2,0,data);need(response.latency==5,"point cycle count");auto actual=read(n);bool saturated=false;
   for(unsigned j=0;j<n;++j){I bv=broadcast?sb:b[j^unsigned(swap)];I y=0;switch(op){case 0:y=I(a[j])+bv;break;case 1:y=I(a[j])-bv;break;case 2:y=I(a[j])*bv;break;case 3:y=I(a[j])*bv+sc;break;case 4:y=std::max(I(a[j]),bv);break;case 5:y=std::min(I(a[j]),bv);break;case 6:y=I(a[j])>=bv?-1:0;break;case 7:y=I(a[j])*(I(1)<<shift);break;case 8:y=a[j];break;case 9:y=a[j]<0?bv:sc;break;}if(op!=7)y=rne(y,shift);int32_t expected=sat(y,bits);saturated|=I(expected)!=y;need(actual[j]==expected,"point arithmetic mismatch");}
   need(response.saturated==saturated,"point saturation flag");++point_cases;
  }
