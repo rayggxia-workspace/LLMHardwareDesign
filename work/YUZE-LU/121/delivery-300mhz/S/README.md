@@ -25,4 +25,4 @@
 
 实际M10接点图：[pins.svg](pins.svg)。全部273端口同时引出的实际P2几何及16位细图见[interface-plots](interface-plots/plot-manifest.json)，通过原生全掩膜XOR0和新增M10负例；图不代表负载或RC已合格。1690²µm测试外框包括40µm halo，原生1610²µm不变。
 
-边界πRC实际结果：base全部端口通过，setup/hold+0.586439/+0.012282ns，电容裕量仅+0.017889fF；high有142电容违规，最差−44.113152fF，故不合格。见[完整回执](../../review-20261028/s-boundary-rc-0627/README.md)。逐端口输出C修订297正在运行。
+边界πRC实际结果：base全部端口通过，setup/hold+0.586439/+0.012282ns，电容裕量仅+0.017889fF；high有142电容违规，最差−44.113152fF，故不合格。见[完整回执](../../review-20261028/s-boundary-rc-0627/README.md)。逐端口输出C修订297已完成：base/high均通过，setup分别+0.662945/+0.636128ns、hold均+0.012282ns，见[实际载荷](../../review-20261028/s-output-load-0629/README.md)。
