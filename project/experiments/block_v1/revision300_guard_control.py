@@ -42,4 +42,3 @@ print(json.dumps(dict(passed=True,negative_rejected=True,returncode=r.returncode
                   positive=reports[0], negative=negative, qualified_hard_macro=False,
                   scope='S64 overflow fault-injection guard only, outside legal input magnitude; legacy and packed paths, both signs, rejection/held response/old completed result preserved. Negative physically disables checker in a separate simulation source.')
     (out/'revision300-m-guard-control.json').write_text(json.dumps(result, indent=2)+'\n')
-

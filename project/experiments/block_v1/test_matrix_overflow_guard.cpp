@@ -45,4 +45,3 @@ int main(int argc,char**argv){try{
  }
  std::cout<<"{\"passed\":true,\"fault_injections\":4,\"checks\":"<<checks<<",\"cycles\":"<<cycles<<"}\n";return 0;
 }catch(const std::exception&e){std::cerr<<e.what()<<" at cycle "<<cycles<<"\n";return 1;}}
-
