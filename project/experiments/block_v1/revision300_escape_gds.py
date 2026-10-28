@@ -15,7 +15,7 @@ native_pairs={(native.get_info(i).layer,native.get_info(i).datatype) for i in na
 assert not native_pairs.intersection(set(mapping.values())-{mapping['metal10']})
 dbu=Decimal(str(native.dbu))
 def coordinate(value,source_dbu=2000):
-    exact=Decimal(value)/Decimal(source_dbu)/dbu
+    exact=Decimal(str(value))/Decimal(str(source_dbu))/dbu
     assert exact==exact.to_integral_value(),('Inexact GDS conversion',value,source_dbu,native.dbu)
     return int(exact)
 def micron(value):return coordinate(value,1)
