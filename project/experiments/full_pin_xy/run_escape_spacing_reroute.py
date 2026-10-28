@@ -22,6 +22,8 @@ def run(source_revision, revision):
     marker=(source/'independent.drc').read_text()
     assert marker.count('violation type:')==1 and 'net:r_data[195] net:VDD' in marker and 'on Layer metal10' in marker
     out=ROOT/'escape_spacing_reroute'/revision/'act-C';out.mkdir(parents=True,exist_ok=False)
+    guard_um=float(os.environ.get('PINXY_M10_STRIPE_GUARD_UM','.8'))
+    assert guard_um in [.8,1.6,2.4], 'Explicit finite M10-only routing-constraint experiment'
     inputs={str(source/p):sha(source/p) for p in ['execution.json','routed.odb','independent.drc','landing_ports.csv','route.tcl']}
     commands=(source/'route.tcl').read_text().replace(str(source),str(out))
     commands=commands.replace('read_db '+tcl(out/'placed.odb'),'read_db '+tcl(source/'routed.odb'))
@@ -41,7 +43,7 @@ set stripes {};foreach sw [[$b findNet VDD] getSWires] {foreach s [$sw getWires]
  if {[$s xMin] < 147.17*$u && [$s xMax]>144.95*$u && [$s yMin]<367.67*$u && [$s yMax]>365.27*$u} {lappend stripes $s}
 }}
 if {[llength $stripes]!=1} {error "Expected exactly the proven parent PG stripe"}
-set stripe [lindex $stripes 0];set guard [expr {round(.8*$u)}]
+set stripe [lindex $stripes 0];set guard [expr {round('''+str(guard_um)+'''*$u)}]
 set temporary [odb::dbObstruction_create $b [[ord::get_db_tech] findLayer metal10] [expr {[$stripe xMin]-$guard}] [$stripe yMin] [expr {[$stripe xMax]+$guard}] [$stripe yMax]]
 puts "NEW_TEMPORARY_SIGNAL_KEEPOUT_AROUND_ACTUAL_PARENT_M10_STRIPE"
 foreach n [$b getNets] {if {[$n getSigType] ni {POWER GROUND}} {set w [$n getWire];if {$w ne "NULL"} {odb::dbWire_destroy $w}}}
@@ -55,7 +57,7 @@ pg_snapshot '''+tcl(out/'after.pdn.tsv')+'\n'
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
     rc=execute(common,out/'route.tcl',out/'route.log','PINXY_ACCESS_ALL=1,PINXY_ACCESS_OUT='+str(out/'whole_access.tsv.gz'))
     rec={'scope':'REAL_PARENT_FIXTURE_REROUTE_NOT_COMMON_BASE_OR_SYSTEM_QUALIFICATION','source':str(source),'source_inputs_SHA':inputs,
-         'native_route_returncode':rc,'temporary_keepout_guard_um':.8,'guard_basis':'M10 original minimum spacing .8um; conservative signal keepout, not rule change',
+         'native_route_returncode':rc,'temporary_keepout_guard_um':guard_um,'guard_basis':'M10 minimum spacing .8um and PRL maximum1.5um; finite conservative signal keepout sensitivity. No pin/via rule change.',
          'all_leaf_pins_layers_shapes_and_all_PG_preserved':True,'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),
          'scheduler_job':os.environ['SLURM_JOB_ID'],'full_qualification':False,'GRT_overflow_retained_not_a_pass':True}
     if rc==0:

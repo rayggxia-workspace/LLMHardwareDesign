@@ -271,6 +271,9 @@ __BLOCKS__
       '顶层保留外部端口、时钟源、三块间连接及固定常量输出；非平凡计算/存储/控制/搬运/仲裁/状态和胶合逻辑归属上述叶块。原openTPU另有37个常零TOP_IO声明位（a_we/a_wdata/a_be），见<a href="data/top_infrastructure.csv.gz">逐位基础设施清单</a>，不能把相同零值合成一条原始物理网络。新受控父层以37个独立tie cell落实，并在全部对照中固定位置/成本；它们不是第四个硬宏，也不改变六块原接口。')
     measured_html=measured_html.replace('A原边界已能合法布线','A原边界已通过native DRC和所检OpenDB连通')
     report=report.replace('<pre>'+html.escape(json.dumps(physical_display,ensure_ascii=False,indent=2))+'</pre>',measured_html+extension_html+'<details><summary>物理阶段摘要（完整试验及原始回执见JSON索引）</summary><pre>'+html.escape(json.dumps(physical_display,ensure_ascii=False,indent=2))+'</pre></details>')
+    from continuation_report import render as render_continuation
+    continuation=render_continuation(root,out)
+    report=report.replace('<section class="card" id="coverage">',continuation+'<section class="card" id="coverage">')
     (out/'report.html').write_text(report,encoding='utf-8')
     for p in out.rglob('*'):
         if p.is_file() and p.suffix in ['.svg','.html','.json','.csv']:

@@ -220,8 +220,17 @@ def main():
         if link.startswith(('http','#','data:')):continue
         assert (OUT/link.split('#')[0]).exists(),link
     for p in (OUT/'assets').glob('*.svg'):ET.parse(p)
-    assert len(list((OUT/'assets').glob('*.png')))==14
-    assert len(list((OUT/'assets').glob('*.svg')))==14
+    expected_figures=14
+    if (DATA/'continuation/summary.json').exists():
+        continuation=read_json(DATA/'continuation/summary.json')
+        assert continuation['complete_original_pin_count']==24767 and continuation['candidate_rows_preserved']==74301
+        assert not continuation['common_base_frozen'] and not continuation['M11_M12_complete_functions_implemented']
+        assert len(continuation['blocks'])==6 and all(not r['full_qualification'] for r in continuation['blocks'])
+        for name in ['research_upper_actual','llsys_pg_revision','common_base_proposed']:
+            assert (OUT/'assets'/(name+'.png')).exists() and (OUT/'assets'/(name+'.svg')).exists()
+        expected_figures+=3
+    assert len(list((OUT/'assets').glob('*.png')))==expected_figures
+    assert len(list((OUT/'assets').glob('*.svg')))==expected_figures
     assert all(x not in text for x in ['__PINS__','__PHYSICAL__','__TOTAL__'])
     print('PASS_REPOSITORY_CANDIDATE_EVIDENCE',len(EXPECTED),'blocks',sum(EXPECTED.values()),'original pins',total,'ABC rows',len(index),'file hashes',len(parser.links),'links; NOT physical qualification')
 if __name__=='__main__':main()

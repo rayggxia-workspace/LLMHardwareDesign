@@ -51,6 +51,7 @@ def one(case,plan,revision):
         env+=',PINXY_ACCESS_RESERVATIONS='+str(reservations)
         receipt['input_sha256'][str(reservations)]=sha(reservations)
         receipt['temporary_access_reservation_method']='Full signal/clock reroute, original cells/PDN/OBS/allowed layers preserved; remove only newly created window constraints after DRT. Not a same-rip-cohort wire-cost comparison.'
+        receipt['stage_scope']='{} selected internal pins; full signal/clock reroute with new temporary access-window constraints. Original cells/PDN/OBS/allowed layers preserved; no buffering/resizing. Not the old selected-net-rip control.'.format(selected_count)
     cmd=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
          '--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro',
          '--home',str(ROOT/'home'),'--pwd',str(out),'--env',env,IMAGE,BIN,'-threads','4','-no_init','-exit',str(DRIVER/'physical_trial.tcl')]
