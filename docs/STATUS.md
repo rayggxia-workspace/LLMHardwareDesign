@@ -1,5 +1,13 @@
 # 当前状态
 
+## 2026-10-29 00:40 CST：真实验证继续，未完成整个目标
+
+SYSTEM 92886已完成全量映射相对数字合同：438852个原非filler实例、1539803个原端点、2229个端口、529989个原网络分量保持；5829个新增identity缓冲与980处换型的有向可达性/无环性通过。这是同SRAM合同下的相对网表证明，不是RTL形式验证或时序通过；源setup/hold仍−0.462192/−0.125999ns。
+
+GEMM原GDS 1460项天线多边形已逐项唯一关联636条真实布线网；实际ANTENNA_X1 GDS的原deck识别面积0.0081μm²已核实。尚未插入真实diode，1460失败保留。MXU局部M6报项的重叠OBS被真实同网金属覆盖，新PNG/SVG展示原生几何；不是删除OBS或豁免规则，原父层2项失败保留。
+
+最新核验：92690 LL完整窗口、92841 GEMM父层落脚修复、92855六块共同集成、92872 VECTOR实际重布线、92892 MXU落脚修复均RUNNING，92691依赖等待。VECTOR新检查点合法化完成但最终RC/STA尚无终态。没有合格共同M1–M10冻结、两完整M11/M12模式或端到端系统比较。继续当前作业和真实天线修复，不重复提交。详见[最新交接](handoffs/2026-10-29-issue-126-physical-continuation.md)、[中文HTML](experiments/issue-126-full-pin/report.html)。Issue126保持in_progress/PR129 Draft；登记pending、看板unverified/同步pending、审查人待指定。
+
 ## 2026-10-28晚新终态：SYS真实重布线完成但时序失败；GDS规则仍失败
 
 SYS成本ECO92781已有fresh native0、466332网所检连通及真实RCX/STA，setup/hold仍−0.462192/−0.125999ns和1113文字标记，不能宣布修复完成。GDS修复92798终态：GEMM严格合并通过但原deck1460项天线，MXU缺四宏GDS且部分诊断deck1578项，全部保留。GEMM Aopt旧父夹具native0/连通/PG；MXU Aopt/C父夹具5/2项native spacing失败。等成本Aopt ECO92812继续，不重复已有C；共同底座/两M11/M12功能与系统对照尚未实现。

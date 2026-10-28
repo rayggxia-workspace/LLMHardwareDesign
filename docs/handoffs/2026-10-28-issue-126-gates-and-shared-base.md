@@ -1,3 +1,5 @@
+最新恢复入口：[2026-10-29物理接续](2026-10-29-issue-126-physical-continuation.md)。下列为保留历史，勿用旧运行中覆盖新终态。
+
 # Issue126：严格GDS读取修复与六块门槛矩阵
 
 更新时间：2026-10-28晚，Asia/Shanghai。仓库rayggxia-workspace/LLMHardwareDesign；Issue126 / Draft PR129；本人huangpingyang04-lgtm；分支task/126-full-block-pin-xy。恢复核验head20108f97d27f0f15ad32cf7655d331e5754181da，规则rayggxia-project-collab1.0.0。上一轮属于实际进展：已发布脚本、raw和物理ECO；本轮不是无变化重提。

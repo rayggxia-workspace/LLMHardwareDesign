@@ -24,3 +24,5 @@ jobs:
         run: python3 -m compileall -q project/experiments/full_pin_xy
       - name: Check real zero-wire contact and disconnected cases
         run: python3 project/experiments/full_pin_xy/test_zero_wire_access.py
+      - name: Reject reversed buffers, cycles and changed original connections
+        run: python3 project/experiments/full_pin_xy/test_buffer_graph_contract.py

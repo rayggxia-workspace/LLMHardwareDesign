@@ -249,6 +249,9 @@ def main():
     if (OUT/'assets/common_placement_actual.png').exists():
         assert (OUT/'assets/common_placement_actual.svg').exists()
         expected_figures+=1
+    if (OUT/'assets/mxu_M6_actual_ownership.png').exists():
+        assert (OUT/'assets/mxu_M6_actual_ownership.svg').exists()
+        expected_figures+=1
     assert len(list((OUT/'assets').glob('*.png')))==expected_figures
     assert len(list((OUT/'assets').glob('*.svg')))==expected_figures
     assert all(x not in text for x in ['__PINS__','__PHYSICAL__','__TOTAL__'])

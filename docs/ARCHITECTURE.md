@@ -177,3 +177,9 @@ python project/experiments/full_pin_xy/validate_repository.py
 
 
 `vector_resume_job.sh NEW_REV`从estimator_diagnosis/r02实际成功检查点继续，不重跑repair_design；各原生进程隔离timing_repair、legalization、route，分别保存阶段账本。恢复原filler类型集合、原pin/PG/die、原OBS及准确临时窗口，最后RCX/STA和独立DRC/信号时钟/双PG均保留。返回0也只表示已执行的研究门槛，不代表完整规则/形式/系统资格。
+
+## Issue126：实际有向合同、局部金属归属与天线网追踪（2026-10-29）
+
+本地复核：`python project/experiments/full_pin_xy/test_buffer_graph_contract.py`，包含反向buffer/循环/改变原网/NULL端点的失败反例；`python project/experiments/full_pin_xy/validate_repository.py`。完整报告刷新：`python project/experiments/full_pin_xy/refresh_continuation.py --root work/huangpingyang04-lgtm/126/analysis --out docs/experiments/issue-126-full-pin --gates-only`；独立浏览器QA：`node project/experiments/full_pin_xy/qa_report.mjs docs/experiments/issue-126-full-pin/report.html work/huangpingyang04-lgtm/126/analysis/gate-report-qa-r10`。
+
+远程冻结驱动分别运行buffered_eco_job.sh / parent_region_job.sh / antenna_netmap_job.sh；实际参数、源码SHA、输入SHA、native命令及失败在gate-r08原文中。前者证明同硬存储合同下原映射端点有向关系，不是RTL形式等价；区域图使用真实矩形，不删除OBS；天线按原RDB实际金属多边形正面积相交追踪，不用bbox或几何关联冒充LVS。真实ANTENNA_X1仅完成库存核实，尚未插入/路由或通过原1460项天线规则。[KLayout原生antenna_check语义](https://www.klayout.de/doc/about/drc_ref_netter.html#h2-antenna_check)仅用于解释原规则行为，不能作为制造签核资格。

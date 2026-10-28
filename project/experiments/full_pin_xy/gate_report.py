@@ -189,6 +189,12 @@ def render(root,out):
         row['whole_mapped_relative_digital_contract']=q.get('relative_mapped_digital_contract_pass')
         row['relative_contract_scope']=q['scope']+'; '+q['unchanged_memory_semantics']
     result['whole_mapped_relative_digital_contracts']=proofs
+    buffered=snapshot/'buffered_equivalence/r01/opentpu_aux/execution.json.gz'
+    if buffered.exists():
+        q=read(buffered);result['SYSTEM_directed_buffer_relation']=dict(q,evidence=(dest/buffered.relative_to(snapshot)).relative_to(out).as_posix())
+        r=next(r for r in rows if r['case']=='opentpu_aux')
+        r['whole_mapped_relative_digital_contract']=q['relative_mapped_digital_contract_pass']
+        r['relative_contract_scope']=q['scope']+'; '+q['memory_contract']
     system_view=snapshot/'eco_views/r03/opentpu_aux-C/execution.json.gz'
     system_text=''
     if system_view.exists() and read(system_view).get('completed_utc'):
@@ -248,6 +254,18 @@ def render(root,out):
           'evidence':resumed.relative_to(out).as_posix()}
         r=next(r for r in rows if r['case']=='vector');r['newer_attempt']={'previous_failure':r['newer_attempt'],
           'latest_checkpoint_resume':result['VECTOR_checkpoint_resume_submission']}
+    live_vector=snapshot/'vector_resume/r01/execution.json.gz'
+    if live_vector.exists():
+        q=read(live_vector);result['VECTOR_physical_resume_latest']={'scheduler_state':scheduler.get('92872',{}).get('State','UNKNOWN'),
+          'native_stage_returncodes':q.get('native_returncodes',{}),'terminal_receipt':bool(q.get('completed_utc')),
+          'separate_cell_ECO_cost':q.get('separate_cell_ECO_cost'),'fresh_DRC_count':q.get('fresh_DRC_count'),
+          'full_qualification':False,'evidence':(dest/live_vector.relative_to(snapshot)).relative_to(out).as_posix()}
+        r=next(r for r in rows if r['case']=='vector');r['newer_attempt']['physical_resume_latest']=result['VECTOR_physical_resume_latest']
+    antenna=snapshot/'antenna_netmap/r02/execution.json.gz'
+    if antenna.exists():result['actual_GDS_antenna_correlations']=dict(read(antenna),evidence=(dest/antenna.relative_to(snapshot)).relative_to(out).as_posix())
+    from plot_mxu_region_ownership import plot as plot_ownership
+    ownership=plot_ownership(snapshot,out);result['MXU_M6_bounded_ownership']=ownership
+    ownership_image='<img src="assets/mxu_M6_actual_ownership.png" alt="MXU M6真实金属归属，保留抽象DRC失败" loading="lazy"><p><a href="assets/mxu_M6_actual_ownership.svg">M6实际金属SVG</a> · <a href="data/mxu_parent_region_ownership.json">原生矩形覆盖与未检查条件</a></p>' if ownership else ''
     from plot_actual_common_placement import plot as plot_placement
     placement=plot_placement(root,snapshot,out);result['actual_six_resource_placement']=placement
     if placement and trial_receipt is None:result['actual_common_integration_trial']['status']='ACTUAL_RESOURCE_PLACEMENT_EXPORTED; PDN_OR_FOLLOWING_STAGE_RUNNING'
@@ -290,6 +308,9 @@ def render(root,out):
 <div class="scroll"><table><thead><tr><th>实际物理版本</th><th>路由返回</th><th>fresh native DRC</th><th>所检连通</th><th>信号网数</th><th>双PG日志连通</th></tr></thead><tbody>'''+parents+'''</tbody></table></div>
 <p>92700与92714均已终态FAILED，不能继续标运行中：GEMM旧源C先前DRT无AP，Aopt子试验却已native0、3753网/7506端点及双PG通过；MXU Aopt/C均完成布线/2172网/4344端点连通及双PG，但fresh native分别5/2项spacing失败。C的两项位于M6的act_data[12]与macro OBS、以及M10的act_data[197]/[213]之间；Aopt五项均为M10信号间距。错误原文及来源保持，不用DRT0覆盖fresh结果。</p>
 <p>新版GEMM父夹具92721也已终态FAILED：完成实际路由、所检信号连通与双PG，fresh native仍有1项M10 gemm_a_rdata[128]/[129]间距错误。92841只针对已证实位置，用实际异网M10走线/via、PG、macro OBS和1.5μm的该层PRL上限筛选新的父层接点并重新接线；其原叶M5/M6及PG不改，等待真实终态，不宣布通过，也不把旧源夹具冒充成本ECO叶视图资格。</p>
+<h3>MXU M6局部层次归属：同网占用仍不是规则豁免</h3>
+<p>92891只读取得父层、旧叶块与成本ECO叶块的真实局部线段、via落脚、pin、PG及OBS。两叶源所导出的M6矩形/网络标签一致；与原生M6红框相交的父层OBS由实际同网叶金属覆盖。这提示该报项与抽象的网络归属有关，不能把OBS当空白、删除OBS或直接豁免原生DRC。两叶源各有2项OBS变换未核对，完整层次/跨层规则仍待验证。92892另行修订父层act_data[197]的M10接点并重布线，保留全部原pin/PG和另一M6报项，不提前宣布通过。</p>
+'''+ownership_image+'''
 <p>这些旧夹具绑定各自记录的旧叶ODB，不是新成本ECO视图的父层资格。每块只有256个新的父层M10中间接点，原叶M5/M6 pin不改；其余点真实同层重合，非遗漏。</p>
 <h3>公平周边控制：相同单元成本，不重做C</h3>
 <div class="scroll"><table><thead><tr><th>优化边界Aopt</th><th>相同X2换型数</th><th>fresh native DRC</th><th>所检全块连通</th><th>setup ns</th><th>hold ns</th></tr></thead><tbody>'''+boundary+'''</tbody></table></div>
@@ -302,6 +323,9 @@ def render(root,out):
 '''+rule_text+'''
 <h3>完整映射端点图相对验证：不同于RTL形式验证</h3>
 <p>92837/92838已核对原始源ODB与新成本ECO：GEMM 226775个非filler实例/826710个信号端点，MXU 179887/635434，全部实例、逐pin网络、方向、时钟/复位/常量及顶层端口一致；仅原定3/1处换型，实际Liberty逻辑与状态合同相等。未修改存储黑盒的实例和全部连接，以相同存储合同为条件的数字功能保持证据通过；不是RTL等价、模拟行为等价或完整物理签核。</p>
+<p>新增SYSTEM 92886同样通过全量相对数字合同：438852个原非filler实例、1539803个原信号端点、2229个顶层端口与529989个原网络分量保持；5829个新增实例仅为已核实identity缓冲，980处原实例换型Liberty逻辑/状态相等。逐分量检查原驱动方向可达性、无新增缓冲环、无原网络误合并，9723个未连端点逐项保持，不将NULL统一短接。5个反例测试包括反向缓冲、缓冲环、误合并和未连端点改变，防止仅做无向合并误判。结论以原硬存储合同不变为条件，非RTL或模拟/时序等价；SYS负STA和规则缺项仍然失败。</p>
+<h3>GEMM天线修复输入：真实多边形对应与实际diode几何</h3>
+<p>92901已经完成1460项实际GDS错误多边形与原生导体的正面积精确相交对应，均唯一对应，共636个网络；不使用bbox交叉猜网。之后解析diode源层声明时失败（源deck实际使用polygons而不是input），原失败保留。92903只修正源声明读取并按SHA复用已完成对应，不重跑布线或篡改规则。真实标准GDS存在非空ANTENNA_X1，按原deck的(nplus &amp; active)−nwell识别面积0.0081μm²、contact相交面积0.004225μm²；原Liberty具有非零输入电容。上述仍是修复输入准备，未插入实际diode，原1460项仍未修复；几何对应不替代LVS或完整规则签核。</p>
 <p>后续已收齐92781：SYS隔离合法化后的成本ECO完成真实详细布线、RCX及fresh native0，466332网/1474481端点所检连通通过；本轮路由前后cells/pin/PG/die原文指纹相同，单元修复/合法化成本另算。实际setup−0.462192ns、hold−0.125999ns，1113条VIOLATED文本标记（不是全部违例计数），仍时序/电气失败。原窗口版−1.779887/−0.389230和历史崩溃保留，不把成本ECO改善混成纯XY收益。</p>
 '''+system_text+'''
 <h3>共同集成已经实际启动，但尚非合格或冻结底座</h3>
@@ -310,4 +334,4 @@ def render(root,out):
 <p>六资源实际集成92855在独立common_integration/r01/C目录执行：复用既有完整构造图、真实资源和交错位置、256条×32μm共享导体拓扑/预算，读取匹配的完整详细OBS与实际研究模型；PG、合法接点、固定导体、底层路由及独立验证分别留回执。当前调度状态：'''+html.escape(result['actual_common_integration_trial']['state'])+'''；当前阶段：'''+html.escape(str(result['actual_common_integration_trial']['status']))+'''。不得将作业启动、视图读取、构造端口或固定线API当成实际共享系统完成。构造端口尚待真实模式降为固定几何，尚无两完整M11/M12功能或合格冻结。</p>
 '''+placement_image+'''
 <p>VECTOR 92861在无GRT、无增量路由、同进程无SPEF的隔离条件下仍EST-0104失败。实际VECTOR有411821个filler，SYS源没有。仅将remove_fillers移到estimate_parasitics之前，92867原生命令成功，实际14处换型、17个缓冲插入并保存检查点；单变量对照证明该排序足以排除本隔离流程中的错误，不能外推已解决所有工具状态问题。上游<a href="https://github.com/The-OpenROAD-Project/OpenROAD/blob/82552e4e9180fd5dd0c9cda58273029c83efb146/src/est/src/EstimateParasitics.cpp">固定源码参考</a>在增量修复入口拒绝待更新的寄生状态；安装二进制版本仍显示unknown、源树不存在，不能冒称此上游commit就是安装版本。原SDC和最终检查不放宽，新检查点尚未合法化、未重布线/提取，不是最终RC/STA通过。</p>
-<p>新92872已实际从该检查点接续setup/hold修复及独立合法化、原filler类型恢复、原层全量布线/RCX/STA/fresh native与全块信号/时钟/双PG检查；不重复已成功repair_design。<a href="data/runtime_submissions/vector_resume_r01.json">提交与冻结驱动</a>、<a href="data/runtime_submissions/vector_resume_r01.execution.json.gz">初始原生运行回执</a>单列：这是运行中的成本ECO，尚无上述后续门槛终态通过，不替换上表已完成源，也不把估算余量当最终提取结果。</p></section>'''
+<p>新92872从该检查点接续、不重复repair_design：setup修复命令完成，但估算仍约−4.18ns并明确报无法修复全部setup；独立合法化和check_placement成功，恢复411382个原类型filler，已进入原层详细布线。中间步骤成功不代表最终RCX/STA/fresh native与信号/时钟/双PG通过；最新阶段以矩阵中的physical_resume_latest为准，不把估算余量当提取结果。<a href="data/runtime_submissions/vector_resume_r01.json">提交/固定驱动</a>、<a href="data/runtime_submissions/vector_resume_r01.execution.json.gz">初始回执</a>及本节最新原文快照分别保留。</p></section>'''

@@ -126,4 +126,22 @@ def check(out):
         assert q['scheduler_job']==s['job']==r['job']=='92872' and q['driver_commit']==s['head']==r['source_driver_commit']
         assert q['repair_design_repeated'] is False and q['full_qualification'] is False
         assert q['original_SDC_clocks_loads_and_allowed_layers_preserved'] and not r['full_qualification']
+    if j.get('SYSTEM_directed_buffer_relation'):
+        r=j['SYSTEM_directed_buffer_relation'];q=read(out/r['evidence']);s=q['summary']
+        assert q['relative_mapped_digital_contract_pass'] and q['all_sources_unchanged'] and q['native_export_codes']==[0,0]
+        assert s['added_identity_buffers']==5829 and s['resized_original_instances']==980 and s['original_signal_terminals']==1539803
+        assert s['original_nonfiller_instances']==438852 and s['actual_nonfiller_instances']==444681 and s['null_terminals_checked_individually']==9723
+        assert s['directed_original_driver_reachability'] and s['added_buffer_graph_acyclic']
+        assert q['RTL_formal_equivalence']=='NOT_EXECUTED' and not q['full_qualification']
+        assert rows['opentpu_aux']['whole_mapped_relative_digital_contract'] is True
+    if j.get('actual_GDS_antenna_correlations'):
+        q=j['actual_GDS_antenna_correlations'];s=q['correlation_summary']
+        assert q['native_returncode']==0 and q['all_sources_unchanged'] and not q['full_qualification']
+        assert s['marker_count']==1460 and s['mapping_status_counts']=={'UNIQUE_EXACT_POLYGON_CONDUCTOR_CORRELATION':1460} and s['unique_correlated_net_count']==636
+        assert s['bbox_only_assignment_used'] is False and not s['original1460_findings_repaired'] and not s['functional_or_LVS_proof']
+        assert s['diode_inventory']['actual_standard_GDS_cell_nonempty'] and s['diode_inventory']['diode_recognition_area_um2']>0
+        assert s['diode_inventory']['diode_contact_overlap_area_um2']>0
+    if j.get('MXU_M6_bounded_ownership'):
+        q=j['MXU_M6_bounded_ownership'];assert q['old_and_costed_leaf_all_exported_M6_rectangles_and_net_labels_equal']
+        assert q['original_parent_native_DRC_count_retained']==2 and q['gap_is_not_a_rule_pass'] and not q['full_qualification']
     print('PASS_GATE_MATRIX_NATIVE_EVIDENCE',len(rows),'blocks;',native_files,'raw files; duplicate-LEF failure and real strict-merge outcomes preserved; NOT full qualification')

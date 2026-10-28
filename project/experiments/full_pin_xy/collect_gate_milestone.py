@@ -3,7 +3,7 @@ from pathlib import Path
 import argparse,datetime,gzip,hashlib,json,subprocess,tarfile
 
 ROOT=Path('/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027')
-JOBS=['92690','92691','92700','92714','92721','92781','92783','92792','92794','92795','92798','92812','92825','92834','92835','92837','92838','92841','92846','92847','92848','92853','92854','92855','92861','92867']
+JOBS=['92690','92691','92700','92714','92721','92781','92783','92792','92794','92795','92798','92812','92825','92834','92835','92837','92838','92841','92846','92847','92848','92853','92854','92855','92861','92867','92872','92886','92891','92892','92901','92903']
 
 
 def sha(path):
@@ -30,7 +30,16 @@ def collect(name):
       'eco_views/r04/*/*','leaf_timing_models/r07/*/*','fixed_wire_api/r0[12]/*',
       'common_integration/r01/*/*','estimator_diagnosis/r0[12]/*','logs/common-integration-C-r01-*.log',
       'logs/fixed-wire-api-r0[12]-*.log','logs/estimator-isolate-r0[12]-*.log','logs/integration-model-r07-*.log',
-      'tmp/estimator-order-reference-r01.json']
+      'tmp/estimator-order-reference-r01.json','vector_resume/r01/*','buffered_equivalence/r01/*/*',
+      'parent_region_audit/r01/*','escape_landing/r02/mxu-C/*','inputs/mxu-actual-landing-r02/landing_delta.json',
+      'antenna_netmap/r0[12]/*','logs/buffered-proof-r01-*.log','logs/mxu-region-r01-*.log',
+      'logs/mxu-actual-landing-r02-*.log','logs/antenna-netmap-r0[12]-*.log','logs/vector-resume-r01-*.log']
+    stable_intermediates={}
+    vector=ROOT/'vector_resume/r01/execution.json'
+    if vector.exists():
+        q=json.loads(vector.read_text())
+        for stage,filename in [('timing_repair','timing_repaired_NOT_LEGALIZED_OR_ROUTED.odb'),('legalization','placed_NOT_ROUTED.odb')]:
+            if q.get('native_returncodes',{}).get(stage)==0:stable_intermediates[str(vector.parent/filename)]=stage
     records=[]
     for p in sorted(set(p for pattern in patterns for p in ROOT.glob(pattern) if p.is_file())):
         a=p.stat();r={'source':str(p),'bytes':a.st_size}
@@ -40,6 +49,9 @@ def collect(name):
         keep=keep and not any(s in p.name for s in ['.cells.','.pdn.','whole_access.tsv','selected_access.tsv','paths.json'])
         if not keep:
             r['storage']='REMOTE_ONLY_INDEXED'
+            if str(p) in stable_intermediates:
+                digest=sha(p);b=p.stat()
+                if (a.st_size,a.st_mtime_ns)==(b.st_size,b.st_mtime_ns):r.update({'storage':'REMOTE_ONLY_COMPLETED_NATIVE_STAGE_SHA256','sha256':digest,'closed_native_stage':stable_intermediates[str(p)]})
             # Finished execution receipts already index their large output SHA;
             # don't hash a live multi-GB ODB/GDS or copy it into Git.
             records.append(r);continue
