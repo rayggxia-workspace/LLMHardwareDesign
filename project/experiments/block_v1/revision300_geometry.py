@@ -61,7 +61,8 @@ def verify(data,technology):
     assert technology['rule_id']=='nangate45-custom12-demo-2um-v1'
     g=technology['geometry_um'];assert (g['width'],g['spacing'],g['cut_width'],g['cut_spacing'],g['enclosure'])==(2.,2.,2.,2.2,0.)
     shapes=data['shapes'];assert data['dbu_per_um']==DBU
-    names={p['net']for p in data['ports']};assert len(names)==16 and len(data['ports'])==16
+    count=data.get('expected_bits',16)
+    names={p['net']for p in data['ports']};assert len(names)==count and len(data['ports'])==count and count>0
     assert all(s['layer']in LAYERS and s['net']in names for s in shapes)
     links=[set()for s in shapes]
     for i,a in enumerate(shapes):
@@ -99,7 +100,7 @@ def verify(data,technology):
             if i in seen:continue
             seen.add(i);todo.extend(links[i]-seen)
         assert seen==indices,('Open or wrong-net graph',port['net'])
-    return dict(passed=True,total_signal_bits=16,connected_bits=16,shorts=0,opens=0,geometry_violations=0,
+    return dict(passed=True,total_signal_bits=count,connected_bits=count,shorts=0,opens=0,geometry_violations=0,
                 via10_count=sum(s['layer']=='via10'for s in shapes),via11_count=sum(s['layer']=='via11'for s in shapes))
 
 

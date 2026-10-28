@@ -61,7 +61,9 @@ module transaction6k (
     READ_REQ: begin held <= payload[cursor]; state <= READ_HOLD; end
     READ_HOLD: if (read_take) begin
      if (cursor + 1 == word_count) state <= RELEASE;
-     else begin cursor <= cursor + 1; state <= READ_REQ; end
+     // Refill the finite holding register on the consumption edge. Immutable
+     // committed payload uses the same 1RW storage as provisional writes.
+     else begin cursor <= cursor + 1; held <= payload[cursor+1]; end
     end
     RELEASE: if (release_valid) state <= EMPTY;
     default: begin state <= EMPTY; protocol_error <= 1; end

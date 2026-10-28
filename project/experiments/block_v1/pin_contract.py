@@ -17,11 +17,13 @@ def script(plan, legacy=False):
         name = pin['pin']
         assert name not in names and not any(c in name for c in '{}\\\n\r')
         names.add(name)
-        assert pin['layer'] == 'metal10' and pin['size_um'] == [.8, .8]
+        assert pin['layer'] == 'metal10' and pin['size_um'] in ([.8,.8],[2.,2.])
+        size=' '.join(str(Decimal(str(value))) for value in pin['size_um'])
+        if pin['size_um']==[.8,.8]:size='.8 .8'
         xy = [('%g' % value if legacy else str(Decimal(str(value)))) for value in pin['xy_um']]
         assert all(Decimal(value).is_finite() for value in xy)
         text += 'dict set planned_pins {' + name + '} 1\n'
-        text += 'place_pin -pin_name {' + name + '} -layer metal10 -location {' + ' '.join(xy) + '} -pin_size {.8 .8}\n'
+        text += 'place_pin -pin_name {' + name + '} -layer metal10 -location {' + ' '.join(xy) + '} -pin_size {'+size+'}\n'
     text += 'set actual_pins {}\nforeach p [[ord::get_db_block] getBTerms] {if {[$p getSigType] ni {POWER GROUND}} {lappend actual_pins [$p getName]}}\n'
     text += 'if {[lsort $actual_pins] ne [lsort [dict keys $planned_pins]]} {error "Exact macro pin inventory mismatch"}\n'
     return text
@@ -35,16 +37,17 @@ def rectangles(plan, executed_script, dbu=2000):
     serializer = 'exact-decimal' if executed_script == precise else 'legacy-six-significant-digit-g'
     expected = {}
     changed = []
-    pattern = r'^place_pin -pin_name \{([^}]+)\} -layer metal10 -location \{([^ ]+) ([^}]+)\} -pin_size \{\.8 \.8\}$'
+    pattern = r'^place_pin -pin_name \{([^}]+)\} -layer metal10 -location \{([^ ]+) ([^}]+)\} -pin_size \{([^ ]+) ([^}]+)\}$'
     locations = {p['pin']: p for p in plan['pins']}
     for line in executed_script.splitlines():
         if not line.startswith('place_pin '):
             continue
         match = re.fullmatch(pattern, line)
         assert match, line
-        name, x, y = match.groups()
+        name, x, y, sx, sy = match.groups()
+        assert [Decimal(sx),Decimal(sy)]==[Decimal(str(v))for v in locations[name]['size_um']]
         box = [(Decimal(value) + delta) * dbu for value, delta in
-               [(x, Decimal('-.4')), (y, Decimal('-.4')), (x, Decimal('.4')), (y, Decimal('.4'))]]
+               [(x, -Decimal(sx)/2), (y, -Decimal(sy)/2), (x, Decimal(sx)/2), (y, Decimal(sy)/2)]]
         assert all(value == value.to_integral_value() for value in box), 'Fractional DBU in executed pin'
         expected[name] = ('metal10', [int(value) for value in box])
         requested = locations[name]['xy_um']

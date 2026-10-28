@@ -60,7 +60,16 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='revision300-stripes':
+    if MODE.startswith('revision300-test-'):
+        from revision300_rtl import test
+        test(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE.startswith('revision300-map-'):
+        from revision300_rtl import mapping
+        mapping(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE.startswith('revision300-route-'):
+        from revision300_flow import implement
+        implement(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE=='revision300-stripes':
         from revision300_geometry import suite
         suite(ROOT,OUT,CPUS,run)
     elif MODE.startswith('revision300-screen-'):

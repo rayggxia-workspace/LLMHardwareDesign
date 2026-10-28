@@ -129,9 +129,16 @@ struct Test {
   begin(1,999); write(0); d.commit_valid=1; tick(); clear(); tick(); reset();
   begin(384,1000); for(unsigned i=0;i<384;++i) write(i);
   d.commit_valid=1; tick(); clear();
-  while(phase==PUBLISHED) { d.read_take=1; tick(); }
+  unsigned burst_first=0,burst_last=0,burst_count=0;
+  while(phase==PUBLISHED) {
+   d.read_take=1; d.eval();
+   if(d.read_valid){if(!burst_count)burst_first=cycles;burst_last=cycles;++burst_count;}
+   tick();
+  }
+  require(burst_count==384 && burst_last-burst_first+1==384,"continuous committed burst: one word per cycle");
   clear(); d.release_valid=1; tick(); clear(); tick();
   std::cout << "{\"passed\":true,\"seed\":1212026102,\"transactions\":242,\"cycles\":" << cycles
+            << ",\"continuous_burst_words\":" << burst_count << ",\"continuous_burst_cycles\":" << burst_last-burst_first+1
             << ",\"assertions\":" << checks << "}\n";
  }
 };
