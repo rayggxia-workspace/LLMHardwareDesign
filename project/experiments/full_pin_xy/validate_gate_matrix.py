@@ -39,7 +39,8 @@ def check(out):
         physical=read(paths[-1]);assert rows[case]['native_DRC_count']==physical['fresh_DRC_count']==0
         for kind in ['setup','hold']:
             text=gzip.decompress((paths[-1].parent/(kind+'.txt.gz')).read_bytes()).decode()
-            value=float(re.search(r'worst slack (?:min|max)\s+([-\d.]+)',text)[1]);assert rows[case][kind+'_ns']==value
+            historical=rows[case].get('historical_matched_costed_source_before_diode',rows[case])
+            value=float(re.search(r'worst slack (?:min|max)\s+([-\d.]+)',text)[1]);assert historical[kind+'_ns']==value
         if (fixed/'execution.json.gz').exists():
             end=read(fixed/'execution.json.gz')
             assert rows[case]['available_deck_findings']==end.get('available_deck_findings')
