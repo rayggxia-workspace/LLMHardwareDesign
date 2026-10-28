@@ -220,5 +220,7 @@ def safe(args):
 if __name__=='__main__':
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=8
     case,revision=sys.argv[1:3]
-    with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(safe,[(case,v,revision) for v in ['Aopt','C']]))
+    variants=sys.argv[3:] or ['Aopt','C']
+    assert len(set(variants))==len(variants) and set(variants)<=set(['Aopt','C'])
+    with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(safe,[(case,v,revision) for v in variants]))
     sys.exit(0 if all(results) else 1)

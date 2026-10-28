@@ -23,7 +23,7 @@ def tcl(value):
 
 def child_source(case,plan):
     if plan in ['A','A_replay']:rev,p=BASE[case],'A'
-    elif case=='act':rev,p={'A_child_replay':('fullC-r01','A_replay'),'Aopt':('full-controls-r04','Aopt'),'B':('fullBcohort-r01','B'),'C':('fullC-r02','C')}[plan]
+    elif case=='act':rev,p={'A_child_replay':('fullC-r01','A_replay'),'Aopt':('full-controls-r04','Aopt'),'B':('fullBcohort-r01','B'),'C':(C_REVISION['act'],'C')}[plan]
     else:rev,p=(C_REVISION[case],'C') if plan=='C' else ('full-controls-r04','A_replay' if plan=='A_child_replay' else plan)
     directory=ROOT/'finalized'/rev/(case+'-'+p);j=json.loads((directory/'execution.json').read_text())
     assert j['independent_DRC_count']==0 and j['whole_access']['pass'] and j['clean_byte_identical_to_pre_RCX_source'],('Unverified child geometry',case,plan)
