@@ -50,7 +50,7 @@ static Counts execute(const std::vector<Beat>&q,bool tagged,unsigned scenario){
   bool push=offer&&d.cmd_ready,pop=d.rsp_valid&&d.rsp_ready;
   // Exactly one cycle attribution, ordered by externally observed pressure.
   if(d.rsp_valid&&!d.rsp_ready)++s.output_wait;
-  else if(sent<q.size()&&!offer)++s.producer_gap;
+  else if(sent<q.size()&&!offer&&d.cmd_ready)++s.producer_gap;
   else if(push){
    if(q[sent].op==0||q[sent].op==1||(q[sent].op>=7&&q[sent].op<=9))++s.operand;
    else if(q[sent].op==2||q[sent].op==10)++s.compute;
