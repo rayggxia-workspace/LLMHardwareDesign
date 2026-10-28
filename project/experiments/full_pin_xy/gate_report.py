@@ -327,7 +327,7 @@ def render(root,out):
         if q.get('native_returncode')==0:
             a=q['correlation_summary'];markers=read(post_map.parent/'marker_net_correlations.json.gz')
             with (data/'gemm_remaining_antenna_nets.csv').open('w',encoding='utf-8-sig',newline='') as f:
-                w=csv.DictWriter(f,fieldnames=['native_net','actual_marker_count','actual_layers','already_connected_real_diode','source_receipt']);w.writeheader()
+                w=csv.DictWriter(f,fieldnames=['native_net','actual_marker_count','actual_layers','already_connected_real_diode','source_receipt'],lineterminator='\n');w.writeheader()
                 for net in sorted({m['native_net'] for m in markers}):
                     group=[m for m in markers if m['native_net']==net]
                     w.writerow({'native_net':net,'actual_marker_count':len(group),'actual_layers':'/'.join(sorted({m['layer'] for m in group})),
@@ -377,11 +377,16 @@ def render(root,out):
     for revision in ['r01','r02']:
         p=snapshot/('tool_api/grt-start-'+revision+'/execution.json.gz')
         if p.exists():result['native_GRT_capability_'+revision]=dict(read(p),evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
-    diagnosis=root/'vector_table_diagnosis_r02'
+    diagnosis=root/'vector_table_diagnosis_r03'
     if (diagnosis/'summary.json').exists():
         folder=data/'vector_Liberty_table_diagnosis';shutil.copytree(diagnosis,folder,dirs_exist_ok=True)
         q=read(folder/'summary.json');result['VECTOR_exact_Liberty_table_grid_diagnosis']=q
         incremental_text+='<p>VECTOR只读库表诊断：实际关键路径141段cell arc合计6.7401ns；FA_X1/HA_X1/OAI33_X1在当前同函数系列无更大驱动型号。逐arc表格最小值混合不同slew/负载/跳变/条件，不是可同时实现的STA，也不是零线延迟下界或不可行证明；原约束与物理输入未改变。<a href="data/vector_Liberty_table_diagnosis/arcs.csv">141段实际master/arc及库表CSV</a>。</p>'
+    route_boxes=snapshot/'route_representation_audit/r01/execution.json.gz'
+    if route_boxes.exists():
+        q=read(route_boxes);result['actual_whole_net_routing_box_comparison']=dict(q,evidence=(dest/route_boxes.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('all_closed_source_geometry_and_receipts_unchanged'):
+            incremental_text+='<p>92985按三份真实几何SHA检查全部268637条网：两换型阶段有15条网的WIRE/VIA矩形多重集表示不同；再增22个diode后为77条，其中22目标网、2条原636已保护网、53条其他网；其余268560条矩形表示完全一致。证明不能把增量DRT说成只重布22网。不同表示可能包含切段/重复差异，不直接等于几何并集、线长或RC变化；完整逐网digest表留授权远程存储并有SHA。</p>'
     upper_failed=snapshot/'upper_adaptation_trial/r01/preparation_failure.json.gz'
     if upper_failed.exists():
         q=read(upper_failed);result['upper_all770_preparation_r01_failed']=dict(q,evidence=(dest/upper_failed.relative_to(snapshot)).relative_to(out).as_posix())

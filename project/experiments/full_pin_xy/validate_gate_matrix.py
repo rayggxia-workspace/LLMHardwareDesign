@@ -228,6 +228,7 @@ def check(out):
             assert q['setup_ns']==rows['gemm']['setup_ns']==0.770702 and q['hold_ns']==rows['gemm']['hold_ns']==0.039533
             assert q['literal_VIOLATED_markers_not_complete_failure_count']==0 and q['separate_additional_diode_cost']['master_bbox_area_um2']==5.852
             assert rows['gemm']['completed_source']=='658_real_diodes/r01' and rows['gemm']['available_deck_findings'] is None
+            assert j.get('actual_22_diode_access_figure') and (out/'assets/gemm_real_diode_access.png').exists() and (out/'assets/gemm_real_diode_access.svg').exists()
     if j.get('actual_22_diode_access_figure'):
         q=j['actual_22_diode_access_figure'];assert q['old_GDS_findings']==37 and q['new_actual_diodes']==22 and q['unchanged_original_signal_pins']==3753
         assert abs(q['new_master_bbox_area_um2']-5.852)<1e-6 and not q['full_qualification']
@@ -246,6 +247,14 @@ def check(out):
         body=gzip.decompress((p/'global_route.body.tcl.gz').read_bytes()).decode();log=gzip.decompress((p/'native.log.gz').read_bytes()).decode()
         assert 'if { [info exists keys(-guide_file)] } {' in body and 'info eif' not in body
         assert 'BODY_COMPLETE global_route 1' in log and '0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53' in log
+    if j.get('actual_whole_net_routing_box_comparison'):
+        q=j['actual_whole_net_routing_box_comparison'];assert q['all_closed_source_geometry_and_receipts_unchanged'] and not q['full_qualification']
+        a,b=q['comparisons'];assert a['actual_nets']==b['actual_nets']==268637
+        assert a['counts']=={'identical':268622,'different_representation':15}
+        assert b['counts']=={'identical':268560,'different_representation':77}
+        assert b['by_target_group']['new_22_diode_net:different_representation']==22
+        assert b['by_target_group']['previous_636_diode_net:different_representation']==2
+        assert b['by_target_group']['other_original_net:different_representation']==53
     if j.get('actual_fixed256_native_attribute_audit'):
         q=j['actual_fixed256_native_attribute_audit'];assert q['native_export_returncode']==0 and not q['native_export_executed_this_run']
         assert q['all_256_native_FIXEDS_and_original_net_bindings_verified'] and q['all_closed_source_files_unchanged'] and q['native_shared_conductor_count']==256

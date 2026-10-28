@@ -16,9 +16,12 @@ def plot(snapshot,out):
     if not p.exists():return None
     read=lambda p:gzip.decompress(p.read_bytes())
     proof=json.loads(read(p))
-    if proof.get('native_returncodes',{}).get('implementation')!=0:return None
+    if proof.get('native_returncodes',{}).get('implementation')!=0 or not proof.get('completed_utc'):return None
     assert read(folder/'before.pins.tsv.gz')==read(folder/'after.pins.tsv.gz')
-    assert read(folder/'before.pdn.tsv.gz')==read(folder/'after.pdn.tsv.gz')
+    # Large PG tables stay in authorized storage; the terminal receipt binds
+    # both immutable raw files by SHA instead of inventing local PG geometry.
+    assert proof['pin_PG_die_unchanged']['pdn']
+    assert proof['files']['before.pdn.tsv']['sha256']==proof['files']['after.pdn.tsv']['sha256']
     assert read(folder/'before.die.tsv.gz')==read(folder/'after.die.tsv.gz')
     diodes=list(csv.DictReader(io.StringIO(read(folder/'diode_placed.tsv.gz').decode()),delimiter='\t'))
     receivers=list(csv.DictReader(io.StringIO(read(folder/'diode_receivers.tsv.gz').decode()),delimiter='\t'))
@@ -50,14 +53,14 @@ def plot(snapshot,out):
     d=next(d for d in diodes if d['orientation']=='R0');r=next(r for r in receivers if r['diode']==d['diode'])
     cell=[int(d['x_dbu'])/2000,int(d['y_dbu'])/2000,int(d['width_dbu'])/2000,int(d['height_dbu'])/2000]
     receiver=[int(n)/2000 for n in r['receiver_bbox_dbu'].split()]
-    axes[2].add_patch(Rectangle(cell[:2],cell[2],cell[3],facecolor='#e5aa4c',edgecolor='#b47428',alpha=.8,label='新diode实际LEF placement bbox'))
-    axes[2].add_patch(Rectangle(receiver[:2],receiver[2]-receiver[0],receiver[3]-receiver[1],facecolor='#328aaa',edgecolor='#256680',alpha=.6,label='原真实receiver instance bbox'))
+    axes[2].add_patch(Rectangle(cell[:2],cell[2],cell[3],facecolor='#e5aa4c',edgecolor='#b47428',alpha=.8,label='新diode：真实LEF放置框'))
+    axes[2].add_patch(Rectangle(receiver[:2],receiver[2]-receiver[0],receiver[3]-receiver[1],facecolor='#328aaa',edgecolor='#256680',alpha=.6,label='原接收单元：真实实例框'))
     x0=min(cell[0],receiver[0])-.4;x1=max(cell[0]+cell[2],receiver[2])+.4
     y0=min(cell[1],receiver[1])-.45;y1=max(cell[1]+cell[3],receiver[3])+.45
     axes[2].set_xlim(x0,x1);axes[2].set_ylim(y0,y1);axes[2].set_aspect('equal');axes[2].set_xlabel('x (μm)');axes[2].set_ylabel('y (μm)')
     axes[2].set_title(d['net']+' 实际局部',fontsize=11)
     axes[2].text(.03,.97,'diode '+str(cell[2])+' × '+str(cell[3])+' μm\nR0 / 真实master尺寸',transform=axes[2].transAxes,va='top',fontsize=8,color='#56677d')
-    axes[2].legend(loc='lower left',bbox_to_anchor=(-.10,-.18),frameon=False,fontsize=8)
+    axes[2].legend(loc='lower left',frameon=False,fontsize=8)
     for ax in axes:ax.grid(alpha=.15);ax.set_axisbelow(True)
     fig.text(.035,.13,'总览：pin点和diode十字为显示符号，尺寸不代表pin / via占地；红框为原GDS多边形bbox，逐网归属来自精确多边形交集。\n局部：按真实DBU绘制LEF placement bbox，非GDS轮廓或pin / via几何。22个新单元另计master面积5.852μm²，block外框不变。\n原3753个信号pin的XY/层/尺寸及PG保持；新版本fresh DRC、全网/数字合同及严格GDS分别看回执，不能从这张图推断通过。',fontsize=9,color='#56677d',linespacing=1.7)
     assets=out/'assets';fig.savefig(assets/'gemm_real_diode_access.png',dpi=180)

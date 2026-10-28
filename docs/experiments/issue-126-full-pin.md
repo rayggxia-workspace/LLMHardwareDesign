@@ -1,5 +1,7 @@
 # 全功能分块、全块二维 pin 与实际接入（Issue126）
 
+2026-10-29 Asia/Shanghai新终态：GEMM92975定向增加22真实diode后，总658diode版本已fresh native0、268637网/806643端点所检连通、全量数字图和原pose/端点/pin/PG/外框保持；真实setup/hold 0.770702/0.039533ns、文字违例0，另计22 master面积5.852μm²。新严格GDS92976运行，旧37项不提前标已清除。92985证明全网中77条WIRE/VIA矩形表示不同，不能称只重布22网。新增真实接入PNG/SVG及gate-r17/r18双SHA证据；两模式各770边适配92974与SYSTEM92968仍运行。共同冻结/两完整系统/公平对照未完成。 [最新交接](../handoffs/2026-10-29-issue-126-incremental-diode-and-upper.md)。Issue126 in_progress/PR129 Draft；登记pending、看板unverified/同步pending、审查人待指定。
+
 2026-10-29 Asia/Shanghai增量终态：新换型版严格GDS92943仍FAILED37项天线；92972以同版本DEF/GDS/RDB/原生几何SHA读取7516494行，全部37个真实多边形唯一关联22条真实网，与现有636个diode网交集0。全部22网及层级CSV/原多边形证据随gate-r16发布（92973/drivercda2025d28793aeab7a4d3391058d50f3d227e51），不是修复或LVS通过。已编写定向22真实diode增量GRT/DRT脚本（尚未提交作业）；保留636diode、两换型、原功能/位置/接口/PG/OBS/层集合，新增负载/面积成本独立，路由后仍需fresh/连通/RC/STA与原deck。下一步发布读回后执行新适配r02和22网增量接入，不以native0/CI代替整个目标。SYSTEM92968、共同92855和其余LL/父层作业继续；底座未合格冻结，两完整功能/对照未完成。
 
 gate-r15接续：SYSTEM92968复用原合法化检查点运行；770-edge适配92969在两个时钟canonical别名检查失败，未执行路由。精确alias修订与原失败分别保留，不改变连接语义。主矩阵反映最新GEMM真实diode+两换型源，旧等成本控制单列；原30图和逐pin数据保持，完整系统尚未完成。

@@ -1,5 +1,7 @@
 # 架构与运行
 
+Issue126新终态复现：`incremental_diode_eco_job.sh r01`的真实658diode源已完成native/全网几何/原数字及位置合同/RCX/原SDC检查，完整GDS仍独立。`route_representation_job.sh r01`按三份真实SHA比较全部268637网的WIRE/VIA矩形多重集，15/77网不同表示不等于物理并集/线长/RC；完整逐网digest留授权存储。`export_real_diode_view.py`/`real_diode_view_job.sh`为该确定源导出真实clean ODB/LEF/OBS/DEF/网表、SPEF研究模型并逐bit/方向/层/尺寸核查，独立重读模型和余量；未提交/未执行状态由runtime_submissions及新回执明确，不因代码存在称视图已完成。`audit_path_liberty_tables.py`只读诊断真实141段cell arc的原库表，不把独立grid最小值当STA或可行/不可行证明。`plot_actual_diode_access.py`分别绘制原GDS bbox及新真实cell放置框，定位符号和真实尺寸区分，发布PNG/SVG需目视核验。
+
 Issue126剩余天线：`post_diode_netmap_job.sh cap-r01 cap`/`run_post_diode_netmap.py`只接受匹配DEF/GDS/RDB/原生几何SHA，将真实多边形精确关联实际网，逐项核查已有diode集合。`run_incremental_diode_eco.py`/`incremental_diode_eco_job.sh`据37项/22网证据复用636diode+两换型真实源，旧单元/diode全部FIRM后放置22新ANTENNA_X1，恢复原状态；原guide的start/end incremental GRT及普通DRT不等于只改22条网。全量图、原pose/端点、pin/PG/外框/OBS、fresh DRC、RCX及原SDC检查独立保留，新GDS原deck须再执行，不能以插入数量或native0替代规则资格。
 
 Issue126增量复现：`diode_cap_eco_job.sh r01`/`run_diode_cap_eco.py`只在636真实diode后的确定源上按原Liberty逻辑/状态合同换型INV/XNOR两实例，保存增量接线、fresh DRC、全网几何、RCX及完整原SDC报告，成本独立。`antenna_diode_stream_job.sh cap-r01 r01 cap`按源SHA执行严格GDS及未修改的原deck，与旧diode源37项天线分开。`run_full_upper_adapter.py`/`full_upper_adapter_job.sh`实现两个770-edge适配层独立试验，输入为同一个真实但未合格的下层检查点；每条实际overlay M10矩形须包含在原hook内，M1–M9/cut1–cut9不得新增，不以适配层试验替代下层冻结/完整系统RC/STA。源码/命令/工具/作业由gate-r14及后续不可覆盖回执绑定。

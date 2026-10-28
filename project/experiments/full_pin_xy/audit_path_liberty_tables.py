@@ -44,7 +44,7 @@ def run(paths,liberty,out):
           'best_grid_master':best,'available_exact_logic_state_family_masters':'/'.join(sorted(peers))})
     assert len(rows)==141
     with (out/'arcs.csv').open('w',encoding='utf-8-sig',newline='') as f:
-        w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader();w.writerows(rows)
+        w=csv.DictWriter(f,fieldnames=list(rows[0]),lineterminator='\n');w.writeheader();w.writerows(rows)
     summary={'scope':'EXACT_LIBRARY_TABLE_GRID_DIAGNOSIS_NOT_ZERO_WIRE_STA_OR_PHYSICAL_FEASIBILITY_BOUND',
       'actual_extracted_path_SHA256':hashlib.sha256(raw).hexdigest(),'actual_Liberty_SHA256':hashlib.sha256(liberty.read_bytes()).hexdigest(),
       'startpoint':path['startpoint'],'endpoint':path['endpoint'],'actual_path_slack_ns':path['slack']*1e9,
