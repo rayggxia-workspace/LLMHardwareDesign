@@ -121,17 +121,15 @@ clock 使用共同输入、真实状态负载、CTS资源和最终线路，分�
 
 <!-- current-method-checkpoint -->
 
-最新检查点：2026-10-28T19:51:26.039270+00:00；review源码e3108ad649131ecb252ac27bbb577bf532c2e568，索引 /public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-post-M8-closure-20261028T195126Z/milestone.json，SHA 1cea67d39e995d396860ee55ef1ae503d46422b4ecb78c2846f604e07d22e723；候选1/3未冻结，二/三未验收、四未执行。
+最新检查点：2026-10-28T21:13:45.434140+00:00；源码c55c29a519f29662c3d46667591f04852cb25bb3；索引/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-bounded-driver-progress-20261028T211345Z/milestone.json，SHA 151781538e6bd9ddf6d533faabf653b38da0fa7ad38f6eacd9b1c78e8fffde17。候选1/3未冻结，二/三未验收、四未执行；新大阶段通用化仍在当前主线之后。
 
-1. 保留全组时序报告及原生WNS/TNS/全部负端点/单位核对；第一组不代表全局最差。此前复位路径误读已撤回，原记录保留，没有reset例外或时钟放宽。
-2. 全端口M8引出复用access_extension：92966原生完整接口、9表/原导体保持、所有新导体接触/端口连通、完整freshDRC0、track/BPin检查实际通过。真正输出ODB/真实via/导体；不能用规划或LEF标记代替。
-3. 92980/82通过既有host COMPLETED0/4及来源hash守卫自动启动，完整RC/13507实际M8锚点/电阻图/557955 active网1771801端点覆盖闭合。编译、工具完成、覆盖与5691setup/36hold/1104cap质量失败分别记录。
-4. M8可改变die/track范围；复用旧die-track-only原生过程为measure_access_frame_control参数入口，只扩范围、路径清空，不删/移/加原导体，逐表和实际track集合核验；92994及完整覆盖已完成，同范围完整比较确认新M8电气退化拒绝。此为匹配提取范围控制，不是底座候选、布线或质量验收，未据raw/postM8聚合差值定因。
-5. qualify_access_replay_reuse在新进程检查完整PG并重新导出实际Verilog；新资源字节与旧物理回归资源一致且旧完整回归输入闭合，5个真实身份frame破坏被拒绝后，才精确复用既有六组180任务有限证据。92992实测通过，**没有新仿真**，不扩大到current191/闲置6资源、SDF/任意输入/最终冻结父版。不同字节或输入闭合失败即要求新功能证明。
-6. compare_cross_boundary_registers新增保存原生清单复用：92986不重复原提取/STA，仍重验全部count/TNS/WNS、原模型/时钟与查询集合。6个旧查询未涉及的D端点单独未知；2099同名数值恶化不能自动当遗留或因果证明。
-7. 完整物理回装/新编译/六组真实回归及trace负例继续使用既有prepare/compile/replay链，物理1851723单元和外部16bank不缩减；四核内串行生成/build和4×1thread仿真。新源码/配置固定后使用新目录，不能改封存快照。
-8. 92548实际固定14059线仍运行；841闲置扇出/case、统一源/全几何/PG/clock/质量/两完整案例新功能与冻结均待。VECTOR4cap退化继续拒绝，外clock/open37负载仍未确定。现有route入口仅固定父层、replay仅native清单；最终通用全流程和正式Block/LLM支持未完成。新实现服务器快照与远端精选文档交付分开记录。
-
-9. 同范围比较已实证：12类原生表/实际轨道/两视图完整active覆盖后，新增12setup/1hold/7cap及既有3836setup/35hold/55cap恶化，必须拒绝。原始不同frame的聚合差值不用于布线因果；并非原始完整core继承证明。
-10. 复用单视图已闭合原生census的原始TSV/metrics，绑定同ODB/SPEF/nativeframe/Lib/SDC/tool/collector，重新解析并复核count/TNS/WNS/单位，写到新目录。93002实际只新跑control原生collector，postM8未重复；structured/legacy report ledger均需实际hash一致。
-11. 62实际cap pin用既有native join及破坏夹具定位到61端口网+1内部网、均BUF_X1。仅为有限驱动/接入修正依据，尺寸、引脚接触、原位置/PG、时序及功能仍要实际验证；表字段适配93004失败保留、修正后93005通过。
+1. 保持完整规模和原3ns；实际物理网表导出/回装、新编译、完整有限回归链与来源闭合分开记录，不推广为所有输入等价或新统一父版通过。
+2. 真正生成导体/via并做全接口接触/连通、保持性和fresh DRC；92966完整M8几何通过，但质量失败必须拒绝。端口标记、颜色、规划不能代替实际线路。
+3. 前后RC匹配die/track、Lib/SDC/提取规则/工具/真实锚点与完整覆盖，再按身份记录新增/消除/持续/恶化。范围控制不是新布局候选；12setup/1hold/7cap新增和已有退化未被微小差值豁免。
+4. 全组路径及全部负端点count/TNS/WNS/单位交叉核验；第一组不是全局最差，旧复位误归因撤回留证。原完整core与自建AUX边界不同，不自动继承豁免。
+5. 已封存TSV/metrics仅在完整来源SHA一致时复用并重解析；旧功能仅在新实际导出逐字节、所有旧输入闭合和fresh PG成立时精确复用。新增62BUF后字节身份已改变，必须新功能证明。
+6. 实际ERC pin→native driver/net/placement/master→M8路径→真实Liberty/LEF/PIN/OBS。62BUF_X2原位替换有19重叠；43只有bbox无冲突。CLKBUF_X1同尺寸但容量不足，说明尺寸适合和catalog负载上限均不是实际布线/RC合格。
+7. 有界新增驱动先声明实例、分支和允许的旧端点变化，固定所有原单元，仅放置新增单元。93016全库存、原导体和真实off-site负例实际通过；UNROUTED文件不可称已供电/布线。
+8. 重布复用migrate的fixed NETS-only往返、非目标导体保护、独立native inventory、接触/连通和fresh DRC/PG。仅显式双cell一入一出split可原本无导线；has_wire仅声明0→1，其余字段精确。13元数据对照及真实native遗漏/错误声明负例93017实际通过，不代替物理检查。
+9. afterany不是成功；复用continue_after实际host COMPLETED0/4及来源SHA/状态守卫。93017明确import_fixed失败、尚未router。新93018复用封存native DEF，以已有scan/normalize仅修正声明FIXED状态词、其余字节保持；必须完整native往返保持性通过才放行真实布线，不能把状态修正当作几何修复。
+10. 92548的14059实际固定线路未闭合，841闲置扇出/案例、统一PG/clock/完整父版功能/质量、最终冻结和两版定制仍待。不同原型的局部通过不能拼接。正式Block/LLM输入、最终通用全流程尚未完成。
