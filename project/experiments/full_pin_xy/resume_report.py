@@ -53,6 +53,7 @@ def plot(root,out):
     fig.text(.04,.07,'三图使用相同2.2 × 2.2 μm窗口和比例；pin矩形按真实0.14 × 0.14 μm尺寸绘制，边线仅用于显示。金色为该层真实固定PG。\n红色是旧版原生DRC诊断范围，不是通孔或金属尺寸；虚线箭头只表示XY位移，不是真实走线。未显示其余信号、via与OBS，背景不等于可用区域。\n旧版4项DRC失败保留；三点修复未完成详细布线，不能声称新位置通过。完整接入窗口方案92690/92691是另一独立试验。',fontsize=10,color='#56677d')
     fig.savefig(out/'assets/llsys_local_repair_attempt.png',dpi=180)
     with plt.rc_context({'svg.hashsalt':'issue126-resume'}):fig.savefig(out/'assets/llsys_local_repair_attempt.svg',dpi=180,metadata={'Date':None})
+    svg=out/'assets/llsys_local_repair_attempt.svg';svg.write_bytes(b'\n'.join(line.rstrip(b' \t\r') for line in svg.read_bytes().splitlines())+b'\n')
     plt.close(fig)
     source_paths=[drc,inputs/'revision.json',inputs/'llaccel_aux_C_local_patch_r01_all_pins.csv',
                   root/'trial-inputs-llsys-pg-r03/llaccel_aux_C_pg_r03_all_pins.csv',root/'physical/llaccel_aux/shapes.tsv.gz']
@@ -60,7 +61,7 @@ def plot(root,out):
             'input_sha256':{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in source_paths},
             'scale_um':[2.2,2.2],'pin_shape_um':[.14,.14],'via_footprint':'NOT_DISPLAYED',
             'arrow':'XY_displacement_only_not_route','full_qualification':False}
-    (out/'data/continuation/resume/llsys_local_repair_figure_sources.json').write_text(json.dumps(record,indent=2)+'\n',encoding='utf-8')
+    (out/'data/continuation/resume/llsys_local_repair_figure_sources.json').write_text(json.dumps(record,indent=2)+'\n',encoding='utf-8',newline='\n')
 
 
 def render(root,out):
