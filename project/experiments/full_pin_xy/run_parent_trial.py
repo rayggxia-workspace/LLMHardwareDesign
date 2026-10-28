@@ -13,6 +13,9 @@ from verify_parent_graph import validate_graph
 DRIVER=Path(__file__).resolve().parent
 BASE={'act':'r02','gemm':'r01','mxu':'r03','vector':'r04','opentpu_aux':'r03','llaccel_aux':'r03'}
 C_REVISION={'act':'fullC-r02','gemm':'electrical-r03','mxu':'mxu-repair-r03','vector':'full-other-r01','opentpu_aux':'full-other-r01','llaccel_aux':'full-other-r01'}
+if 'PINXY_ACT_C_REVISION' in os.environ:
+    assert re.fullmatch(r'[A-Za-z0-9-]+',os.environ['PINXY_ACT_C_REVISION'])
+    C_REVISION['act']=os.environ['PINXY_ACT_C_REVISION']
 
 def tcl(value):
     assert not any(c in str(value) for c in '{}\n\r'),value

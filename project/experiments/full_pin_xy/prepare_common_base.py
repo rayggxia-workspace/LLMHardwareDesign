@@ -91,7 +91,7 @@ def prepare(root, out):
             cs = sorted({q['case'] for q in terms if q['kind'] == 'ITERM'})
             for a, b in itertools.combinations(cs, 2):
                 weights[a, b] += 1
-    snap = lambda x: round(math.ceil(x/.28-1e-8)*.28, 6)
+    snap = lambda x: round(math.ceil(x/11.2-1e-8)*11.2, 6)
     gap, margin = snap(192.), snap(80.)
     candidates = []
     for perm in itertools.permutations(CASES):
@@ -161,6 +161,7 @@ def prepare(root, out):
                 'original_constant_TOP_IO_declarations':37,
                 'additional_parent_infrastructure_inventory_complete':False,
                 'frame_um': [0, 0, width, height], 'shared_fixed_passive_components': 256,
+                'R0_placement_phase_pitch_um':11.2,
                 'shared_wire_total_length_um': 8192., 'shared_wire_topology_and_budget_same_for_Aopt_and_C': True,
                 'shared_resource_sets_identical_between_modes': True,
                 'private_fixed_connections': 'Other original intra-system graphs retain full bit semantics; no change of protocol/pipeline/cache/computation',

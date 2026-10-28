@@ -29,7 +29,9 @@ def one(case, variant, revision):
     assert case in ['act', 'gemm'] and variant in ['Aopt', 'C']
     source, proof, proof_path = child_source(case, variant)
     odb = source.parent/'clean.odb'
-    model_dir = ROOT/'leaf_timing_models'/('r02' if variant == 'C' else 'r03')/(case+'-'+variant)
+    model_revision=('r02' if variant == 'C' else 'r03')
+    if case=='act' and variant=='C':model_revision=os.environ.get('PINXY_ACT_C_MODEL_REVISION',model_revision)
+    model_dir = ROOT/'leaf_timing_models'/model_revision/(case+'-'+variant)
     model = json.loads((model_dir/'execution.json').read_text())
     assert model['source_clean_receipt_sha256'] == sha(proof_path)
     assert model['clean_odb_sha256'] == sha(odb) == proof['clean_odb_sha256']
@@ -72,7 +74,9 @@ def one(case, variant, revision):
     text = 'module escape_fixture(\n'+',\n'.join(declarations)+'\n);\n\\'+master+'  u_macro(\n'
     text += ',\n'.join('.'+n+'('+n+')' for n in ports)+'\n);\nendmodule\n'
     (out/'fixture.v').write_text(text)
-    dx = dy = 80.08
+    dx = dy = 89.6  # 8x11.2um preserves the real M4-M10 track phases.
+    rec['parent_R0_translation_um']=[dx,dy]
+    rec['track_phase_policy']='11.2um is the LCM of actual 0.28/0.8/1.6um M4-M10 tracks; original leaf geometry remains unchanged'
     die_w, die_h = math.ceil((width+2*dx)/.005)*.005, math.ceil((height+2*dy)/.005)*.005
     setup = [
         'read_lef /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef',
@@ -144,8 +148,11 @@ def one(case, variant, revision):
             layer,w,h = p['layer'],(int(p['x1'])-int(p['x0']))/2000,(int(p['y1'])-int(p['y0']))/2000
         commands.append('place_pin -pin_name '+tcl(pin)+' -layer '+layer+' -location {'+str(x)+' '+str(y)+'} -pin_size {'+str(w)+' '+str(h)+'}')
         landing_rows.append({'pin':pin,'leaf_original_layer':p['layer'],'parent_layer':layer,'parent_x_um':x,'parent_y_um':y,'selected_M10_escape':pin in selected})
+    allow_overflow=os.environ.get('PINXY_ALLOW_CONGESTED_GUIDES')=='1'
+    rec['GRT_overflow_allowed_for_guide_only']=allow_overflow
+    rec['GRT_overflow_not_a_physical_pass']=True
     commands += ['set_routing_layers -signal metal2-metal10 -clock metal4-metal10',
-                 'global_route -guide_file '+tcl(out/'route.guide')+' -congestion_report_file '+tcl(out/'congestion.rpt'),
+                 'global_route '+('-allow_congestion ' if allow_overflow else '')+'-guide_file '+tcl(out/'route.guide')+' -congestion_report_file '+tcl(out/'congestion.rpt'),
                  'write_db '+tcl(out/'global.odb'),
                  'detailed_route -output_drc '+tcl(out/'route.drc')+' -verbose 1',
                  'write_db '+tcl(out/'routed.odb'),
