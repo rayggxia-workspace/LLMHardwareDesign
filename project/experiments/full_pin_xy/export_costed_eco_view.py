@@ -34,7 +34,10 @@ def run(case,source_revision,view_revision):
       'check_setup -verbose > '+tcl(out/'constraint_coverage.txt'),'write_timing_model '+tcl(out/'timing.lib'),
       'puts "COSTED_ECO_PHYSICAL_AND_EXTRACTED_RESEARCH_VIEW_EXPORTED_NOT_QUALIFIED"']
     script=out/'export.tcl';script.write_text('\n'.join(lines)+'\n')
-    common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
+    common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp',
+            '--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
+            '--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro',
+            '--home',str(ROOT/'home'),'--pwd',str(out)]
     for p in baseline['libs']:
         if Path(p).is_file():common+=['--bind',p+':'+p+':ro']
     rec={'scope':'COSTED_ECO_ACCESS_AND_EXTRACTED_RESEARCH_TIMING_VIEW_NOT_FULL_PHYSICAL_QUALIFICATION',
