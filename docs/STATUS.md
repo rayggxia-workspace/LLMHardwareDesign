@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-10-29 Asia/Shanghai：92855已实际写入256条M10导体，92931独立核验原生FIXED/逐网/32×0.8μm几何通过，仍未冻结或证明两模式实际复用。GEMM636真实diode92910已完整布线/fresh native0/所检连通及RCX，但新cap2失败保留；92929全量原端点+636真实非驱动负载的数字图合同通过。新增实际导体PNG/SVG与256行CSV，原24767 pin/74301候选行保持。下一步修复INV_X1/XNOR2_X1实际cap违例，并收集GDS92912及其他活动作业；[新交接](handoffs/2026-10-29-issue-126-fixed-conductors-and-diode.md)。任务in_progress/Draft，完整系统未完成。
+
 2026-10-29 01:07 CST：92925复用同一1262-buffer检查点的独立无STA合法化/check_placement及原连接/非选中位置合同通过，完整原层接线继续；92921 Signal11失败仍保留。gate-r12原文及已关闭阶段SHA独立保存，最终DRC/连通/RC/STA尚未终态，任务仍in_progress。
 
 2026-10-29 01:05 CST增量：SYSTEM现有输出buffer重排92921在Diamond后Signal11（-11），未布线；772链/1262个现有buffer真实移动检查点及gate-r11保留，后续分离几何进程复用，不重复选点。前阶段aab4619两CI成功、29图已上传核验；GEMM真实diode92910/92912及共同集成/LL/父层其他作业继续，未完成总目标。

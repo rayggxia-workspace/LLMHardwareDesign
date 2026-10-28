@@ -1,3 +1,5 @@
+最新阶段入口：[实际固定导体与diode](2026-10-29-issue-126-fixed-conductors-and-diode.md)。以下历史原样保留，恢复先读新交接/实际回执。
+
 # Issue126：全量数字合同、真实局部归属及天线修复接续
 
 更新时间：2026-10-29，Asia/Shanghai。仓库rayggxia-workspace/LLMHardwareDesign；[Issue126](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/126) / [Draft PR129](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/129)；负责人huangpingyang04-lgtm；分支task/126-full-block-pin-xy。恢复核实线上head为0f1e43dc59d61005150dc8141c29b288832fa70c，两CI成功。新增驱动commit为9957f1aa7abcdfb3f0909bfbc94c55879f713be5、1d77813aa2dae753bcd368f9f5cb216142016c78、ed81920a56d5e60ab4fb61023b881834e37e59e0、e2b2974e8f25963dda99f3f624e1ebb60a994f49；发布head以PR最新读回为准。

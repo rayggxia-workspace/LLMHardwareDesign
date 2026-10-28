@@ -38,7 +38,7 @@ def plot(root,snapshot,out):
     plan=json.loads((root/'common-base-preparation-r04/preparation_contract.json').read_text(encoding='utf-8'))
     origins={q['instance']:q for q in table(source/'placed.instances.tsv.gz')}
     plt,R=expand.legacy.plt,expand.legacy.Rectangle
-    fig=plt.figure(figsize=(16,10));grid=fig.add_gridspec(2,2,width_ratios=[1.05,1.1],left=.075,right=.96,top=.78,bottom=.23,hspace=.45,wspace=.35)
+    fig=plt.figure(figsize=(13,9));grid=fig.add_gridspec(2,2,width_ratios=[1.05,1.1],left=.075,right=.96,top=.78,bottom=.25,hspace=.55,wspace=.30)
     overview=fig.add_subplot(grid[:,0]);area=fig.add_subplot(grid[0,1]);contact=fig.add_subplot(grid[1,1])
     fig.text(.045,.95,'共同集成 | 256 条真实 M10 固定导体',fontsize=22,weight='bold',color='#17283c')
     fig.text(.045,.89,'原生 FIXED 属性、逐网绑定与矩形均已独立读回；每条中心线32 μm、宽0.8 μm，总中心线8192 μm。\n仅为底层布线前检查点：未冻结，尚未证明两套完整功能实际复用；M11/M12适配与完整系统检查仍待完成。',fontsize=11,color='#56677d',linespacing=1.5)
@@ -57,7 +57,7 @@ def plot(root,snapshot,out):
     overview.set_xlim(plan['frame_um'][0],plan['frame_um'][2]);overview.set_ylim(plan['frame_um'][1],plan['frame_um'][3]);overview.set_aspect('equal')
     overview.set_title('六资源原生放置 + 实际导体',loc='left',fontsize=11,weight='bold')
     chosen=rows[0];cx=(chosen['x0_um']+chosen['x1_um'])/2;cy=chosen['y0_um']+.4
-    windows=[(area,[cx-15,cy-5,cx+15,cy+40],'接点邻域：仅显示实际 M10 金属'),(contact,[cx-2.4,cy-2.4,cx+2.4,cy+2.4],chosen['resource']+' 的下端 M10 接点（未画via）')]
+    windows=[(area,[cx-35,cy-5,cx+55,cy+40],'接点邻域：仅显示实际 M10 金属'),(contact,[cx-6,cy-2.4,cx+6,cy+2.4],chosen['resource']+' 下端与邻近 M10 接点（未画via）')]
     for ax,window,title in windows:
         ax.set_facecolor('#f4f6f8')
         for ob in obstacles:
