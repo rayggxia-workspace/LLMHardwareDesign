@@ -115,3 +115,17 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
+
+
+## Issue #119：pin XY 候选对照
+
+[ACT/GEMM 摘要与两块对照图](experiments/issue-119-pin-xy-candidates.md)比较真实四边、贴边多排和内部二维混合接点；完整逐 pin 清单/原层/网络/方向保持。图表、压缩 CSV、轻量证据位于 docs/experiments/issue-119-pin-xy/，只读解析/布局/绘图脚本位于 project/experiments/pin_xy_candidates/。原 ref-project 报告、ODB 和既有实验不修改，大体积物理表留授权服务器并用 SHA 索引。
+
+本次仓库校验仅用标准库：
+
+```sh
+python scripts/check_project.py
+python project/experiments/pin_xy_candidates/validate_repository.py
+```
+
+完整重画先按该目录 README 恢复独立工作目录和只读 physical/ 快照，再运行 analyze_layout.py；不能在参考报告或已有实验目录原地运行。最近端点 L1 与矩形风险不是提取线长/RC，也不是 DRC、时序或实际面积收益。本次没有启动新的 P&R。
