@@ -79,3 +79,16 @@ Issue126晚间后续终态：GEMM/MXU定点ECO均已native0/所检全块连通�
 新图equal_cost_leaf_margins.png/svg比较实际Aopt/C提取余量，明确相同3/1处换型成本及完整规则失败。gate-r05不可覆盖原文/SHA保存上述终态。新模型准备92846/92847导出等成本G/M Aopt视图；92848为VECTOR全窗口及LL PG-only4错误源导出真实非零研究模型，其中LL明确标记UNQUALIFIED_FAILED_DRC_SOURCE，不放宽物理门槛、不把模型导出视为DRC通过。将用于用户授权的未合格共同集成，非合格冻结。
 
 上一发布5fa66e0已核实GitHub head/图blob，CI40706845419及40706840681均success，Issue126仍in_progress/PR129 Draft。完整技术目标继续active，未实施实际共享底座/冻结、两完整上层功能及系统对照。
+
+
+## 六资源实际集成与VECTOR排序对照（仍非完整验收）
+
+3eb6bb957146be5535f6630a92241611c9458afa已从GitHub读回，CI40709632122/40709632132均success，新等成本PNG/SVG blob与本机一致。新增真实逐层DRT指标直接复用旧原生终态日志，不重新路由：GEMM同ECO C相对Aopt实际总线长−0.547%、via−0.102%；MXU+2.133%/−0.092%。这些是工具报告精度下的叶块实测，不是几何L1/提取RC或系统收益；仍保留内部方案，继续系统总成本验证。
+
+92846/92847 G/M Aopt完整匹配视图导出成功；92848 VECTOR2246/LL SYSTEM13507位真实模型匹配与SPEF重放通过，LL原生DRC4完整保留为UNQUALIFIED_FAILED_DRC_SOURCE。固定线API92853失败（BPin不接受FIXED枚举），92854改用FIRM后原生ODB/DEF实际写出FIXED M10线及两端接入矩形；这只是API探针。
+
+六块集成92855已实际执行，冻结驱动6b6dd8b912a6ceff59d3ecf63b5ee0140380d1e5，ROOT/common_integration/r01/C；实际六宏+38基础设施放置已导出，完整详细OBS/真实模型读取完成，PDN生成中。新图common_placement_actual严格来自placed.instances.tsv，未绘制虚构信号路径/PG/共享导体，背景不等于空白金属。复用256×32μm实际共享导体拓扑/预算，但尚未实际写线/完成底层布线，不能称共同冻结底座。原LL DRC4、GDS/STA/目标层等缺项保留。
+
+VECTOR92861冷隔离无GRT/增量/SPEF仍EST-0104。实际411821个filler；仅把删除filler移到估算之前，92867（7c89d88ce212a3fcece0ca73b70ad491c9feda28）成功，14处换型/17缓冲，检查点位于estimator_diagnosis/r02/cell_repaired_NOT_LEGALIZED_OR_ROUTED.odb。不重复这轮电气修复；下一步从该实际检查点继续setup/hold修复、独立合法化/填充恢复、原层完整路由和全部原生/RCX/STA检查。上游固定commit82552e4的EST guard为参考推断，安装二进制仍unknown、源树不存在，不冒称版本匹配。
+
+恢复先核实92690/92691、92841、92855实际终态；不重提同一试验/覆盖驱动。gate-r06/r07保存模型/API/排序对照及放置原文和双SHA。完整目标active，未有合格冻结/两完整M11/M12模式/公平系统对照。

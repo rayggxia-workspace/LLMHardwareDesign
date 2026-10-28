@@ -169,3 +169,8 @@ python project/experiments/full_pin_xy/validate_repository.py
 新增实际验证：`antenna_rules_job.sh NEW_REV`只读核实安装LEF/GDS deck原文、原生逐层规则存在性及源SHA；原生天线0不代表已加载有效规则。`mapped_eco_job.sh CASE NEW_REV`对原始与成本ECO ODB导出全量映射端点，比较全部实例、信号/时钟/复位/常量/顶层网络及实际Liberty换型合同；相同存储黑盒合同的相对数字保持证明不替代RTL形式验证。`eco_view_job.sh opentpu_aux r01 NEW_VIEW_REV`导出实际检查点布线的SYS2229位视图，原始成本表与最终原生实例表分别核算；G/M可追加Aopt参数导出等成本周边视图。
 
 `plot_equal_cost_controls.py`只读取实际Aopt/C余量及独立成本，由gate_report刷新PNG/SVG；原A/B/C图不覆盖。`prepare_actual_landing_repair.py NEW_REV`以新版GEMM父夹具1项实际M10错误为触发，筛查原生异网金属/PG/OBS并移动新父层接点，原叶层/尺寸和PG不改；真实重布线、独立规则及全块连通仍必须执行。新集成模型只在显式`PINXY_UNQUALIFIED_MODEL_EXPORT=1`且LL完整PG-only原生错误数确为4时允许诊断导出，状态保留FAILED_DRC_SOURCE；不是放宽物理通过条件，不用于合格冻结。
+
+
+实际共同集成（明确未合格）：`common_integration_job.sh C NEW_REV`读取冻结来源的六块真实详细OBS与匹配提取Lib，复用common-topology-r02全图及既定256×32μm导体拓扑/预算；先实例放置/PDN，再筛查真实M10金属、PG与OBS后写FIXED dbWire并执行底层GRT/DRT。原叶pin不改；新父层M10施工接点与原层定义分开。原生API由`fixed_wire_probe_job.sh NEW_REV`先验证，BPin的实际枚举为FIRM，DEF信号wire实际为FIXED；原错误版本保留。施工端口未降为合法模式几何前不冻结，不把LL失败DRC源或负STA来源提升为合格底座。
+
+`estimator_diagnosis_job.sh NEW_REV`复现VECTOR EST-0104；用`PINXY_EST_FILLERS_BEFORE_ESTIMATE=1`进行单变量对照，将remove_fillers移到估算之前。r01冷隔离仍失败，r02同命令/源/约束下修复执行成功，检查点仍NOT_LEGALIZED_OR_ROUTED。`plot_actual_common_placement.py`只绘制原生44实例放置来源；`gate_report.py`复用已完成DRT最后原生报告统计同ECO两侧逐层线长/via，不重复路由，也不把此表称系统收益。

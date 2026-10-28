@@ -151,6 +151,30 @@ def render(root,out):
           'cell_ECO_cost':q['separate_cell_ECO_cost'],'full_qualification':False,
           'evidence':(dest/p.relative_to(snapshot)).relative_to(out).as_posix()})
     result['optimized_boundary_same_ECO_controls']=controls
+    actual_routes=[]
+    for control in controls:
+        case=control['case'];version='r03' if case=='gemm' else 'r04'
+        for variant in ['Aopt','C']:
+            p=(snapshot/'leaf_eco/boundary-r01'/(case+'-Aopt')/'native.log.gz') if variant=='Aopt' else existing(data,'leaf_eco/'+version+'/'+case+'-C/native.log')
+            assert p and p.exists()
+            raw=gzip.decompress(p.read_bytes());text=raw.decode()
+            totals=list(re.finditer(r'Total wire length = ([\d.]+) um\.',text));assert totals
+            last=totals[-1];tail=text[last.start():]
+            lengths={k:float(v) for k,v in re.findall(r'Total wire length on LAYER (metal\d+) = ([\d.]+) um\.',tail)}
+            via=re.findall(r'Total number of vias = (\d+)\.',tail);assert via and set(lengths)=={'metal'+str(i) for i in range(1,11)}
+            native_path=(dest/p.relative_to(snapshot)) if variant=='Aopt' else p
+            actual_routes.append({'case':case,'variant':variant,'DRT_reported_wire_length_um':float(last[1]),
+              'DRT_reported_per_layer_wire_length_um':lengths,'DRT_reported_vias':int(via[-1]),
+              'scope':'Actual last DRT report from completed matching costed route, rounded um; via counting follows DRT, not PDN signoff',
+              'not_geometric_endpoint_L1':True,'not_extracted_RC_or_system_gain':True,
+              'source_native_log_uncompressed_SHA256':hashlib.sha256(raw).hexdigest(),
+              'evidence':native_path.relative_to(out).as_posix()})
+    for r in actual_routes:
+        baseline=next(q for q in actual_routes if q['case']==r['case'] and q['variant']=='Aopt')
+        r['wire_change_vs_same_ECO_Aopt_percent']=100*(r['DRT_reported_wire_length_um']/baseline['DRT_reported_wire_length_um']-1)
+        r['via_change_vs_same_ECO_Aopt_percent']=100*(r['DRT_reported_vias']/baseline['DRT_reported_vias']-1)
+    result['same_ECO_actual_leaf_DRT_metrics']=actual_routes
+    (data/'equal_cost_leaf_actual_metrics.json').write_text(json.dumps(actual_routes,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     audit=snapshot/'antenna_audit/r01/execution.json.gz'
     if audit.exists():
         q=read(audit);result['antenna_checker_disagreement']={'native_returncode':q['native_returncode'],
@@ -184,6 +208,41 @@ def render(root,out):
         rule_text='<p><strong>92834已定位原生0的覆盖根因：</strong>M1–M10的hasDefaultAntennaRule与hasOxide2AntennaRule逐层均为0；原tech LEF没有天线关键字，macro LEF只有diode相关ANTENNADIFFAREA、没有ANTENNAGATEAREA。原GDS deck则启用300:1金属/实际gate面积检查并按实际扩散识别diode。原生缺规则/缺gate模型的0不能代表规则通过；需要从真实GDS补建模型或直接以不修改的GDS检查指导修复，不放宽300:1。</p>'
     from plot_equal_cost_controls import plot
     plot(result,out)
+    integration_views=[]
+    for rel in ['eco_views/r04/gemm-Aopt','eco_views/r04/mxu-Aopt','leaf_timing_models/r07/vector-C','leaf_timing_models/r07/llaccel_aux-C']:
+        p=snapshot/rel/'execution.json.gz'
+        if not p.exists():continue
+        q=read(p)
+        integration_views.append({'version':rel,'native_export_returncode':q.get('native_export_returncode'),
+          'signal_bits':q.get('matching_all_signal_model_pins',q.get('actual_model_signal_pins')),
+          'source_native_DRC':q.get('source_native_DRC',q.get('inherited_native_DRC_count')),
+          'status':q.get('status','COSTED_ECO_VIEW_EXPORTED_NOT_QUALIFIED'),
+          'full_qualification':False,'evidence':(dest/p.relative_to(snapshot)).relative_to(out).as_posix()})
+    result['new_actual_integration_views']=integration_views
+    trial=snapshot/'common_integration/r01/C/execution.json.gz'
+    trial_receipt=read(trial) if trial.exists() else None
+    result['actual_common_integration_trial']={'job':'92855','state':scheduler.get('92855',{}).get('State','UNKNOWN'),
+      'status':trial_receipt.get('status') if trial_receipt else 'SOURCE_VIEW_PREPARATION_OR_NATIVE_EXECUTION_RUNNING',
+      'terminal_receipt':trial_receipt,'qualified':False,'frozen':False}
+    api=[]
+    for rev in ['r01','r02']:
+        p=snapshot/'fixed_wire_api'/rev/'execution.json.gz'
+        if p.exists():
+            q=read(p);api.append({'revision':rev,'native_returncode':q['native_returncode'],
+              'DEF_fixed_M10_wire':q.get('DEF_has_FIXED_M10_wire'),'full_qualification':False,
+              'evidence':(dest/p.relative_to(snapshot)).relative_to(out).as_posix()})
+    result['fixed_signal_wire_native_API_probes']=api
+    est=snapshot/'estimator_diagnosis/r01/execution.json.gz'
+    result['VECTOR_isolated_estimator_trial']={'job':'92861','state':scheduler.get('92861',{}).get('State','UNKNOWN'),
+      'receipt':read(est) if est.exists() else None,'qualification':False}
+    early=snapshot/'estimator_diagnosis/r02/execution.json.gz'
+    result['VECTOR_filler_order_control']={'job':'92867','state':scheduler.get('92867',{}).get('State','UNKNOWN'),
+      'receipt':read(early) if early.exists() else None,'qualification':False}
+    from plot_actual_common_placement import plot as plot_placement
+    placement=plot_placement(root,snapshot,out);result['actual_six_resource_placement']=placement
+    if placement and trial_receipt is None:result['actual_common_integration_trial']['status']='ACTUAL_RESOURCE_PLACEMENT_EXPORTED; PDN_OR_FOLLOWING_STAGE_RUNNING'
+    if (snapshot/'common_integration/r01/C/before.shared.tsv.gz').exists() and trial_receipt is None:result['actual_common_integration_trial']['status']='FIXED_M10_CONDUCTORS_WRITTEN; LOWER_ROUTE_OR_CHECKS_RUNNING'
+    placement_image='<img src="assets/common_placement_actual.png" alt="六资源原生实际放置，非冻结或已完成共享布线" loading="lazy"><p><a href="assets/common_placement_actual.svg">原生实际放置SVG</a>。未显示内部金属，浅灰背景不是空白接入许可。</p>' if placement else ''
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',
@@ -206,6 +265,7 @@ def render(root,out):
     stream=''.join('<tr>'+''.join('<td>'+('已执行（非通过）' if k=='deck_executed' and r[k] is True else show(r[k]))+'</td>' for k in ['block','strict_merge_errors','missing_GDS_cells','deck_executed','deck_findings','stage_outcome'])+'</tr>' for r in stream_rows)
     parents=''.join('<tr>'+''.join('<td>'+show(r[k])+'</td>' for k in ['version','route_returncode','native_DRC','signal_geometry','signal_nets_checked','both_PG_native_log_connected'])+'</tr>' for r in parent_rows)
     boundary=''.join('<tr>'+''.join('<td>'+show(v)+'</td>' for v in [r['case'],len(r['targeted_master_changes']),r['native_DRC'],r['whole_signal_geometry'],r['setup_ns'],r['hold_ns']])+'</tr>' for r in controls)
+    route_table=''.join('<tr>'+''.join('<td>'+show(v)+'</td>' for v in [r['case']+' '+r['variant'],r['DRT_reported_wire_length_um'],r['DRT_reported_vias'],format(r['wire_change_vs_same_ECO_Aopt_percent'],'+.3f')+'%',format(r['via_change_vs_same_ECO_Aopt_percent'],'+.3f')+'%'])+'</tr>' for r in actual_routes)
     return '''<section class="card" id="latest-physical-gates"><h2>最新六块验证矩阵与GDS导入修复（优先于历史快照）</h2>
 <div class="warn">本节按已收齐的具体版本区分已完成、失败、运行中、未执行和未知；native0、Slurm0或候选完整均不提升为全部物理完成。全部6块完整设计形式等价/系统RTL等价均尚未执行，历史逐pin目标金属层仍部分未知。</div>
 <p><a href="data/qualification_matrix.json">机器可核查矩阵JSON（含来源/父层/功能/新尝试）</a> · <a href="data/qualification_matrix.csv">CSV</a> · <a href="'''+dest.relative_to(out).as_posix()+'''/snapshot.json">原文/SHA/物理产物索引</a>；快照 '''+html.escape(meta['created_utc'])+'''。空值不是0。</p>
@@ -225,6 +285,8 @@ def render(root,out):
 <div class="scroll"><table><thead><tr><th>优化边界Aopt</th><th>相同X2换型数</th><th>fresh native DRC</th><th>所检全块连通</th><th>setup ns</th><th>hold ns</th></tr></thead><tbody>'''+boundary+'''</tbody></table></div>
 <p>92812已COMPLETED，两块Aopt均实际增量DRT、RCX、独立native0和所检全块连通通过；GEMM与MXU分别沿用C相同3/1处换型、标准单元master面积+1.596/+0.266μm²，原pin/PG/外框和源保持。原SDC/允许层不变；setup/hold分别0.772449/0.053582和0.249090/0.053253ns。它们是等成本叶块对照，不是共同底座或完整系统收益结论。</p>
 <img src="assets/equal_cost_leaf_margins.png" alt="同换型成本叶块提取余量实测，不是系统资格" loading="lazy"><p><a href="assets/equal_cost_leaf_margins.svg">同图SVG</a>；四份数据均来自实际提取回执，非几何线长预测。</p>
+<div class="scroll"><table><thead><tr><th>同ECO叶块方案</th><th>DRT实测总线长 μm</th><th>DRT via数</th><th>相对同ECO Aopt线长</th><th>相对via</th></tr></thead><tbody>'''+route_table+'''</tbody></table></div>
+<p><a href="data/equal_cost_leaf_actual_metrics.json">实际逐层线长、via及原生日志SHA</a>直接复用已完成DRT最后一组报告，没有重复路由。数值按工具报告精度取整μm，逐层取整和总数可能有小差异；via按DRT口径，不当完整PDN via统计。与候选几何L1、提取RC及系统收益分别记录。即使叶块内部成本增加，也保留内部方案，继续共同底座/适配层系统总成本验证，不能据此撤回边缘并结束研究。</p>
 <h3>天线规则分歧仍未修复</h3>
 <p>只读审计92825在同一GEMM实际ODB上check_antennas报0网/0pin，而严格合并GDS原deck仍报1460项天线。源SHA保持，未调用修复。实际ANTENNA_X1物理单元和原Liberty模型均存在，输入A的非零capacitance为0.023429（须按原库单位解释）；未加入零电容占位。接下来比较真实LEF规则与GDS公式、连接/层覆盖及diode识别；native0不抹去GDS失败。</p>
 '''+rule_text+'''
@@ -232,4 +294,9 @@ def render(root,out):
 <p>92837/92838已核对原始源ODB与新成本ECO：GEMM 226775个非filler实例/826710个信号端点，MXU 179887/635434，全部实例、逐pin网络、方向、时钟/复位/常量及顶层端口一致；仅原定3/1处换型，实际Liberty逻辑与状态合同相等。未修改存储黑盒的实例和全部连接，以相同存储合同为条件的数字功能保持证据通过；不是RTL等价、模拟行为等价或完整物理签核。</p>
 <p>后续已收齐92781：SYS隔离合法化后的成本ECO完成真实详细布线、RCX及fresh native0，466332网/1474481端点所检连通通过；本轮路由前后cells/pin/PG/die原文指纹相同，单元修复/合法化成本另算。实际setup−0.462192ns、hold−0.125999ns，1113条VIOLATED文本标记（不是全部违例计数），仍时序/电气失败。原窗口版−1.779887/−0.389230和历史崩溃保留，不把成本ECO改善混成纯XY收益。</p>
 '''+system_text+'''
-<p>共同M1–M10尚无实际预连/合格冻结，M11/M12尚无两完整功能。按用户新授权，可以继续明确标为未合格的集成试验发现问题；不会把构造链接、研究探针或未合格试验标成最终底座。</p></section>'''
+<h3>共同集成已经实际启动，但尚非合格或冻结底座</h3>
+<p>新增92846/92847实际导出匹配等成本G/M Aopt全部3753/2172位的非零研究模型；92848导出实际VECTOR完整1022-pin迁移源的2246位模型及LL PG-only完整13507位模型。后者原native4失败保留，明确标UNQUALIFIED_FAILED_DRC_SOURCE，不因模型导出提升为规则通过。</p>
+<p>固定信号导体API首轮92853真实失败：BPin不接受FIXED状态枚举；改为安装工具支持的FIRM后，92854实际生成两处接入矩形及含FIXED metal10信号段的ODB/DEF。原失败不覆盖；API探针不代表共同底座实现或规则通过。</p>
+<p>六资源实际集成92855在独立common_integration/r01/C目录执行：复用既有完整构造图、真实资源和交错位置、256条×32μm共享导体拓扑/预算，读取匹配的完整详细OBS与实际研究模型；PG、合法接点、固定导体、底层路由及独立验证分别留回执。当前调度状态：'''+html.escape(result['actual_common_integration_trial']['state'])+'''；当前阶段：'''+html.escape(str(result['actual_common_integration_trial']['status']))+'''。不得将作业启动、视图读取、构造端口或固定线API当成实际共享系统完成。构造端口尚待真实模式降为固定几何，尚无两完整M11/M12功能或合格冻结。</p>
+'''+placement_image+'''
+<p>VECTOR 92861在无GRT、无增量路由、同进程无SPEF的隔离条件下仍EST-0104失败。实际VECTOR有411821个filler，SYS源没有。仅将remove_fillers移到estimate_parasitics之前，92867原生命令成功，实际14处换型、17个缓冲插入并保存检查点；单变量对照证明该排序足以排除本隔离流程中的错误，不能外推已解决所有工具状态问题。上游<a href="https://github.com/The-OpenROAD-Project/OpenROAD/blob/82552e4e9180fd5dd0c9cda58273029c83efb146/src/est/src/EstimateParasitics.cpp">固定源码参考</a>在增量修复入口拒绝待更新的寄生状态；安装二进制版本仍显示unknown、源树不存在，不能冒称此上游commit就是安装版本。原SDC和最终检查不放宽，新检查点尚未合法化、未重布线/提取，不是最终RC/STA通过。</p></section>'''

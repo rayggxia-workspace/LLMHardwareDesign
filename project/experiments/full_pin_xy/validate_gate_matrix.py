@@ -93,4 +93,30 @@ def check(out):
         cost=q['separate_cell_ECO_cost'];assert cost['same_original_macro_resources_and_placement']
         assert cost['added_functional_instances_excluding_fillers']==5829 and cost['changed_master_original_instances']==980
         assert cost['moved_original_instances']==1168 and not q['full_qualification']
+    for r in j.get('new_actual_integration_views',[]):
+        q=read(out/r['evidence']);assert r['native_export_returncode']==0 and not r['full_qualification']
+        if 'llaccel_aux' in r['version']:
+            assert r['signal_bits']==13507 and r['source_native_DRC']==4
+            assert r['status']=='UNQUALIFIED_FAILED_DRC_SOURCE_EXTRACTED_MODEL_EXPORTED'
+            assert q['explicit_unqualified_failed_DRC_source_export'] and q['exact_all_signal_pin_direction_match']
+    probes=j.get('fixed_signal_wire_native_API_probes',[])
+    if probes:
+        assert [(r['revision'],r['native_returncode']) for r in probes]==[('r01',1),('r02',0)]
+        assert probes[-1]['DEF_fixed_M10_wire'] is True
+        source=(out/probes[-1]['evidence']).parent/'fixed.def.gz'
+        assert '+ FIXED metal10' in gzip.decompress(source.read_bytes()).decode()
+        assert not j['actual_common_integration_trial']['qualified'] and not j['actual_common_integration_trial']['frozen']
+    for r in j.get('same_ECO_actual_leaf_DRT_metrics',[]):
+        raw=gzip.decompress((out/r['evidence']).read_bytes());text=raw.decode()
+        assert hashlib.sha256(raw).hexdigest()==r['source_native_log_uncompressed_SHA256']
+        assert float(re.findall(r'Total wire length = ([\d.]+) um\.',text)[-1])==r['DRT_reported_wire_length_um']
+        assert int(re.findall(r'Total number of vias = (\d+)\.',text)[-1])==r['DRT_reported_vias']
+        assert set(r['DRT_reported_per_layer_wire_length_um'])=={'metal'+str(i) for i in range(1,11)}
+        assert r['not_geometric_endpoint_L1'] and r['not_extracted_RC_or_system_gain']
+    if j.get('VECTOR_filler_order_control',{}).get('receipt'):
+        q=j['VECTOR_filler_order_control']['receipt'];assert q['native_returncode']==0 and q['all_sources_unchanged']
+        assert q['fillers_removed_before_estimation'] and not q['full_qualification']
+        assert j['VECTOR_isolated_estimator_trial']['receipt']['native_returncode']==1
+    if j.get('actual_six_resource_placement'):
+        assert j['actual_six_resource_placement']['actual_instances']==44 and not j['actual_six_resource_placement']['full_qualification']
     print('PASS_GATE_MATRIX_NATIVE_EVIDENCE',len(rows),'blocks;',native_files,'raw files; duplicate-LEF failure and real strict-merge outcomes preserved; NOT full qualification')

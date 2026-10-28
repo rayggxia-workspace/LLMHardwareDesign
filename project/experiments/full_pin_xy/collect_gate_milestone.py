@@ -3,7 +3,7 @@ from pathlib import Path
 import argparse,datetime,gzip,hashlib,json,subprocess,tarfile
 
 ROOT=Path('/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027')
-JOBS=['92690','92691','92700','92714','92721','92781','92783','92792','92794','92795','92798','92812','92825','92834','92835','92837','92838','92841']
+JOBS=['92690','92691','92700','92714','92721','92781','92783','92792','92794','92795','92798','92812','92825','92834','92835','92837','92838','92841','92846','92847','92848','92853','92854','92855','92861','92867']
 
 
 def sha(path):
@@ -26,12 +26,17 @@ def collect(name):
       'antenna_audit/r01/*','logs/antenna-audit-r01-*.log','antenna_rules/r01/*',
       'eco_views/r03/opentpu_aux-C/*','mapped_equivalence/r01/*/*','escape_landing/r01/gemm-C/*',
       'inputs/gemm-actual-landing-r01/landing_delta.json','logs/antenna-rules-r01-*.log',
-      'logs/sys-eco-view-r03-*.log','logs/mapped-eco-*-r01-*.log','logs/gemm-actual-landing-r01-*.log']
+      'logs/sys-eco-view-r03-*.log','logs/mapped-eco-*-r01-*.log','logs/gemm-actual-landing-r01-*.log',
+      'eco_views/r04/*/*','leaf_timing_models/r07/*/*','fixed_wire_api/r0[12]/*',
+      'common_integration/r01/*/*','estimator_diagnosis/r0[12]/*','logs/common-integration-C-r01-*.log',
+      'logs/fixed-wire-api-r0[12]-*.log','logs/estimator-isolate-r0[12]-*.log','logs/integration-model-r07-*.log',
+      'tmp/estimator-order-reference-r01.json']
     records=[]
     for p in sorted(set(p for pattern in patterns for p in ROOT.glob(pattern) if p.is_file())):
         a=p.stat();r={'source':str(p),'bytes':a.st_size}
         keep=p.suffix in ['.json','.log','.tcl','.txt','.tsv','.csv','.drc','.lyt'] and a.st_size<=8*1024*1024
         if 'antenna_rules/r01' in str(p) and p.suffix in ['.lef','.lydrc'] and a.st_size<=8*1024*1024:keep=True
+        if 'fixed_wire_api' in str(p) and p.suffix=='.def' and a.st_size<=1024*1024:keep=True
         keep=keep and not any(s in p.name for s in ['.cells.','.pdn.','whole_access.tsv','selected_access.tsv','paths.json'])
         if not keep:
             r['storage']='REMOTE_ONLY_INDEXED'
