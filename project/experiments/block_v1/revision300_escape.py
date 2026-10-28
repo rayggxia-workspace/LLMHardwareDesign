@@ -44,6 +44,24 @@ def compare(actual,expected):
         union_equal(subset(actual),subset(expected))
 
 
+def diagnose(root,out,cpus,run):
+    """Read-only failure localization; never grants P2 acceptance."""
+    from io_slots import file_sha
+    assert cpus==16
+    failed=out.parents[2]/'block-v1-20261029-257/tasks/revision300-escape-t'
+    receipt=json.loads((failed/'receipt.json').read_text())
+    assert receipt['passed'] is False and receipt['mode']=='revision300-escape-t'
+    manifest=failed/'gds-inputs.json';request=json.loads(manifest.read_text())
+    original=Path(request['native_gds']);joined=Path(request['output'])
+    hashes={str(p):file_sha(p)for p in (original,joined,manifest,failed/'receipt.json')}
+    script=(root/'project/experiments/block_v1/revision300_escape_diagnostic.py').read_text()
+    (out/'diagnostic.py').write_text(script.replace('INPUT_MANIFEST_PLACEHOLDER',str(manifest)).replace('OUTPUT_REPORT_PLACEHOLDER',str(out/'gds-difference.json')))
+    run(['klayout','-b','-r',out/'diagnostic.py'],'diagnostic.log')
+    assert hashes=={str(p):file_sha(p)for p in (original,joined,manifest,failed/'receipt.json')}
+    (out/'revision300-escape-diagnostic.json').write_text(json.dumps(dict(passed=True,input_hashes=hashes,
+        diagnosis=json.loads((out/'gds-difference.json').read_text()),p2_qualified=False),indent=2)+'\n')
+
+
 def control(technology):
     from revision300_geometry import fixture,verify
     expected=fixture('horizontal16');compare(expected['shapes'],expected['shapes'])

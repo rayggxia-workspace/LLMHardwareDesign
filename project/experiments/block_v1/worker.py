@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('revision300-escape-'):
+    if MODE=='revision300-escape-gds-diagnostic':
+        from revision300_escape import diagnose
+        diagnose(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('revision300-escape-'):
         from revision300_escape import implement
         implement(ROOT,OUT,CPUS,run,MODE[-1])
     elif MODE.startswith('revision300-delivery-'):
