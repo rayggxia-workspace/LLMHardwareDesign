@@ -1,3 +1,5 @@
+实际S/V有限工作空间复现：worker.py模式 revision300-sv-workspace，16CPU，源293cbfb/run275；sv_workspace_bench.sv只实例原样S/V，bench_sv_workspace.cpp使用原独立整数参考，初始数据真实写S，后续操作数只来自实际S输出。27场景两初态、载荷/应答/屏障全部计价；不授予集成物理资格。证据见work/YUZE-LU/121/review-20261028/sv-workspace-0305。新R代表阶段估算见RECURRENT-RESOURCE-BUDGET.md及recurrent-resource-budget.json；逐层ceil(512/R数)保留依赖屏障，八模型完整资源预算未完成。
+
 新增内部占用复现：worker.py 模式 revision300-occupancy-{v,r}-{revised,extended}，16CPU；使用268/269执行时封存bench并核对SHA，--public-flat-rw只读内部phase/valid，公共数值/周期/流量必须完整相同。原始RTL与bench不改。有限预连资源诊断模式 revision300-preconnect-{m,t}，不创建固定线路、不授予P3资格。270 V续跑20%/100次迭代以实际GLOBAL_ROUTE_ARGS和工具日志验证。证据见work/YUZE-LU/121/review-20261028/native-progress-0255/README.md。
 
 # 架构与运行
