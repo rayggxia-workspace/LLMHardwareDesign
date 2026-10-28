@@ -19,6 +19,7 @@ DRIVER=Path(__file__).resolve().parent
 
 
 def run(revision):
+    assert revision in ['r01','r02']
     source=ROOT/'vector_resume/r01';rp=source/'execution.json';prior=json.loads(rp.read_text())
     assert prior.get('completed_utc') and prior['native_returncodes']['route']==0 and prior['fresh_DRC_count']==0
     assert prior['whole_signal_geometry']['pass'] and prior['all_sources_unchanged'] and all(prior['source_pin_PG_die_unchanged'].values())
@@ -31,6 +32,9 @@ def run(revision):
     assert proof['source_SHA'][str(odb)]==sha(odb) and proof['source_SHA'][str(spef)]==sha(spef)
     out=ROOT/'vector_clone_probe'/revision;out.mkdir(parents=True,exist_ok=False)
     inputs={str(p):sha(p) for p in [rp,odb,spef,oldpath,sdc,replay]}
+    guide=source/'route.guide'
+    if revision=='r02':
+        assert sha(guide)==prior['files'][guide.name]['sha256'];inputs[str(guide)]=sha(guide)
     rec={'scope':'ACTUAL_GATE_CLONING_HEURISTIC_ECO_PROBE_NOT_LEGAL_ROUTED_EQUIVALENT_OR_TIMING_CLOSED',
       'source_SHA':inputs,'source_actual_extracted_setup_ns':prior['setup_ns'],'source_actual_extracted_hold_ns':prior['hold_ns'],
       'source_SPEF_replay_reused_without_repetition':str(replay),
@@ -39,6 +43,7 @@ def run(revision):
       'new_clone_full_digital_relation':'NOT_EXECUTED','final_legalization_route_RC_STA':'NOT_EXECUTED','full_qualification':False,
       'native_returncodes':{},'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID'],
       'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()}
+    if revision=='r02':rec['new_single_context_change']='Initialize original native guide/GRT incremental context before the same placement heuristic and setup sequence. Hypothesis follows rebased crash stack in GlobalRouter::estimatePathResistance / SizeUpMatchGenerator; not a root-cause proof.'
     def save():(out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     save()
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp',
@@ -63,6 +68,9 @@ def run(revision):
           'report_worst_slack -max -digits 6 > '+tcl(out/'HEURISTIC_after.setup.txt'),
           'report_worst_slack -min -digits 6 > '+tcl(out/'HEURISTIC_after.hold.txt'),
           'write_verilog '+tcl(out/'gate_repaired_NOT_QUALIFIED.v'),'close $stages']
+        if revision=='r02':
+            index=next(i for i,line in enumerate(lines) if line.startswith('if {![stage placement_estimator '))
+            lines[index:index]=['if {![stage initialize_original_GRT_context {read_guides '+tcl(guide)+';global_route -start_incremental;set f [open '+tcl(out/'actual_GRT_context.txt')+' w];puts $f [list HAVE_ROUTES [grt::have_routes]];close $f;if {![grt::have_routes]} {error "Original guides did not establish a native GRT route context; stop before repeating setup crash"}}]} {close $stages;exit 1}']
         script=out/'probe.tcl';script.write_text('\n'.join(lines)+'\n')
         rec['native_returncodes']['clone_heuristic_probe']=execute(common,script,out/'native.log','PINXY_OUTPUT='+str(out),threads=4);save()
         rec['pin_PG_die_unchanged']={k:(out/('after.'+k+'.tsv')).exists() and sha(out/('before.'+k+'.tsv'))==sha(out/('after.'+k+'.tsv')) for k in ['pins','pdn','die']}

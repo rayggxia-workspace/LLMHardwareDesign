@@ -12,9 +12,7 @@ from run_exports import ROOT,sha
 DRIVER=Path(__file__).resolve().parent
 
 
-def read_geometry(directory):
-    receipt=directory/'execution.json';r=json.loads(receipt.read_text());p=directory/'whole_access.tsv.gz'
-    assert r.get('completed_utc') and sha(p)==r['files'][p.name]['sha256']
+def routing_box_hashes(p,expected_nets):
     hashes={};total=0
     with gzip.open(str(p),'rt') as f:
         for name,group in itertools.groupby(csv.DictReader(f,delimiter='\t'),key=lambda q:q['net']):
@@ -25,7 +23,14 @@ def read_geometry(directory):
                 boxes.append((q['kind'],q['layer'])+tuple(int(q[k]) for k in ['x0','y0','x1','y1']))
             digest=hashlib.sha256(json.dumps(sorted(boxes),separators=(',',':')).encode()).hexdigest()
             hashes[name]=(digest,len(boxes));total+=len(boxes)
-    assert len(hashes)==268637
+    assert len(hashes)==expected_nets
+    return hashes,total
+
+
+def read_geometry(directory):
+    receipt=directory/'execution.json';r=json.loads(receipt.read_text());p=directory/'whole_access.tsv.gz'
+    assert r.get('completed_utc') and sha(p)==r['files'][p.name]['sha256']
+    hashes,total=routing_box_hashes(p,268637)
     return hashes,{'receipt':str(receipt),'receipt_SHA256':sha(receipt),'actual_geometry':str(p),
       'actual_geometry_SHA256':sha(p),'routing_box_rows_with_duplicates':total,'actual_multiterminal_nets':len(hashes)}
 
