@@ -138,7 +138,7 @@ write_abstract_lef -bloat_occupied_layers candidate.lef
     from native_rect_completion import complement
     source_def=Path(index['final_files']['6_final.def']['path'])
     assert file_sha(source_def)==index['final_files']['6_final.def']['sha256']
-    rects=complement(out/'source-occupancy.tsv',source_def,kind)
+    rects=complement(out/'source-occupancy.tsv',source_def,kind,require_historic_m_patch=selected is None)
     (out/'native-rect-completion.json').write_text(json.dumps(rects,indent=2)+'\n')
     summary=dict(line.split('\t',1)for line in(out/'native-summary.tsv').read_text().splitlines())
     dbu=int(summary['dbu']);assert dbu==2000

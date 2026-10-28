@@ -31,7 +31,7 @@ def rectangles(record):
     return result
 
 
-def complement(geometry,source_def,kind):
+def complement(geometry,source_def,kind,require_historic_m_patch=True):
     from io_slots import file_sha
     from native_escape import records
     aliases={};before_counts=Counter()
@@ -46,7 +46,7 @@ def complement(geometry,source_def,kind):
     expected=[]
     for record in records(source_def):
         expected.extend(rectangles(record))
-    if kind=='m':
+    if kind=='m' and require_historic_m_patch:
         assert ('$abc$226431$new_n33888','metal2',282460,530600,282650,531160)in expected
     rendered=[]
     for name,layer,a,b,c,d in expected:
@@ -77,7 +77,7 @@ def complement(geometry,source_def,kind):
     assert Counter({('n2','metal2',282460,530600,282650,531160):1})!=fixture
     return dict(passed=True,native_def_path=str(source_def),native_def_sha256=file_sha(source_def),
                 rectangle_count=len(expected),rectangles=expected,exact_rect_multiset=True,
-                known_m_gds_patch_present=kind=='m',unsupported_rect_path_rejected=refused,
+                known_m_gds_patch_present=kind=='m' and require_historic_m_patch,unsupported_rect_path_rejected=refused,
                 scope='All normal-net RECT tokens in sealed native DEF parsed or rejected; append them to the installed path-iterator geometry under exact native net identity. No source DB/GDS edits.')
 
 
