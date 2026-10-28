@@ -432,6 +432,14 @@ def render(root,out):
         q=read(p);result['SYSTEM_native_clean_patches_r02_attempt']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
         state=('终态：native '+str(q.get('native_returncodes'))+'，fresh DRC '+str(q.get('fresh_DRC_count','未取得'))+'，setup/hold '+str(q.get('setup_ns','未取得'))+'/'+str(q.get('hold_ns','未取得'))+'ns') if q.get('completed_utc') else '实际运行中，最终fresh/RC/STA尚未取得'
         upper_text+='<p><strong>93038 SYSTEM native clean_patches/r02：</strong>'+state+'。在原容器内核验同一Lib，保留93031前置失败；不改pin/单元/PG/原OBS/原SDC与层集合。该新试验不是改检查或时序闭合，当前矩阵已完成源与新尝试分别记录。</p>'
+        if q.get('completed_utc') and q.get('fresh_DRC_count')==0 and q.get('whole_signal_geometry',{}).get('pass') and all(q.get('all_cells_poses_original_connections_pins_PG_die_unchanged',{}).values()):
+            r=next(r for r in rows if r['case']=='opentpu_aux');r['historical_source_before_clean_patches']=json.loads(json.dumps(r))
+            r.update({'completed_source':'native_clean_patches/r02','actual_internal_route':'COMPLETED_ROUTE_PATCH_VARIANT_STA_CHECK_SEPARATE',
+              'native_DRC_count':0,'all_multiterminal_signal_clock_geometry':True,'setup_ns':q.get('setup_ns'),'hold_ns':q.get('hold_ns'),
+              'violation_marker_rows':q.get('literal_VIOLATED_markers_not_complete_failure_count'),
+              'complete_rules':'CURRENT_CLEAN_PATCHES_GDS_NOT_EXECUTED_MISSING_REAL_SRAM_AND_COVERAGE_GAPS',
+              'parent_access':'CURRENT_CLEAN_PATCHES_SOURCE_NOT_VALIDATED_IN_PARENT','current_source_research_model':'NOT_EXPORTED',
+              'common_base_source_selection':'ORIGINAL_R02_NOT_UPGRADED_TO_THIS_SOURCE'})
     failed=snapshot/'logs/mxu-escape-r01-93040.log.gz'
     if failed.exists():
         result['MXU_escape_r01_preparation_failure']={'state':'FAILED_BEFORE_NATIVE_ROUTING','job_id':'93040','evidence':(dest/failed.relative_to(snapshot)).relative_to(out).as_posix(),'full_qualification':False}
@@ -441,6 +449,35 @@ def render(root,out):
         q=read(p);result['MXU_actual_M6_escape_r02_attempt']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
         state=('终态：native '+str(q.get('native_returncodes'))+'，fresh DRC '+str(q.get('fresh_DRC_count','未取得'))+'，setup/hold '+str(q.get('setup_ns','未取得'))+'/'+str(q.get('hold_ns','未取得'))+'ns') if q.get('completed_utc') else '实际运行中，尚无最终路由/视图/RC/STA回执'
         upper_text+='<p><strong>93041 MXU实际M6接入重接/r02：</strong>'+state+'。从成本ECO/r04源保持原act_data[12]的M6层、XY及0.14×0.14μm尺寸，临时M6路由ring约束引导真实接线，完成后移除仅本次新增约束；保留原占用OBS，不剪去真实金属。gap/thickness各0.14μm只是临时约束参数，不替代M6完整spacing规则。新父层可达性/DRC未执行，不能凭叶native0宣称原M6–OBS报项已修复。</p>'
+        if q.get('completed_utc') and q.get('fresh_DRC_count')==0 and q.get('whole_signal_geometry',{}).get('pass') and all(q.get('all_cells_poses_original_connections_pins_PG_die_unchanged',{}).values()):
+            r=next(r for r in rows if r['case']=='mxu');r['historical_source_before_M6_escape']=json.loads(json.dumps(r))
+            r.update({'completed_source':'M6_escape_route/r02','actual_internal_route':'COMPLETED_M6_ACCESS_REROUTE_ORIGINAL_PIN_XY_UNCHANGED',
+              'native_DRC_count':0,'all_multiterminal_signal_clock_geometry':True,'setup_ns':q.get('setup_ns'),'hold_ns':q.get('hold_ns'),
+              'violation_marker_rows':q.get('literal_VIOLATED_markers_not_complete_failure_count'),
+              'complete_rules':'CURRENT_M6_ESCAPE_GDS_NOT_EXECUTED_MISSING_REAL_SRAM_AND_COVERAGE_GAPS',
+              'historical_strict_GDS_merge_errors':r.get('strict_GDS_merge_errors'),'strict_GDS_merge_errors':None,
+              'historical_available_deck_findings':r.get('available_deck_findings'),'available_deck_findings':None,
+              'parent_access':'NEW_M6_ESCAPE_OBS_NOT_YET_VALIDATED_IN_PARENT','current_source_research_model':'NOT_EXPORTED',
+              'common_base_source_selection':'ORIGINAL_R02_NOT_UPGRADED_TO_THIS_SOURCE'})
+    for revision in ['r01','r02']:
+        failure=snapshot/'escape_fixtures'/('gemm658-'+revision)/'gemm-C/driver_failure.json.gz'
+        attempt=snapshot/'escape_fixtures'/('gemm658-'+revision)/'gemm-C/execution.json.gz'
+        if failure.exists():
+            q=read(failure);result['GEMM_actual658_parent_'+revision+'_preparation_failure']=dict(q,evidence=(dest/failure.relative_to(snapshot)).relative_to(out).as_posix())
+            upper_text+='<p><strong>GEMM658父层93043前置失败：</strong>旧修订M10坐标未满足当前真实OBS/PG/其他接点的重新筛查，断言拒绝，未路由；不是原生金属DRC结论。旧92841只代表旧叶源，失败不覆盖。新r02复用经SHA绑定的真实detailed LEF，并在当前源内重新选择128号新增父M10点，原叶M5/M6不改。</p>'
+        if attempt.exists():
+            q=read(attempt);result['GEMM_actual658_parent_'+revision+'_attempt']=dict(q,evidence=(dest/attempt.relative_to(snapshot)).relative_to(out).as_posix())
+            if q.get('completed_utc'):
+                upper_text+='<p><strong>GEMM658父层93049终态FAILED：</strong>已通过当前源重新选点，实际使用658diode clean ODB/匹配非零模型与全部3753原信号位；严格GRT仍GRT-0116拥塞失败，未执行DRT/fresh/所检全网连通/RC/STA，不能用旧父层native0替代。原DB/LEF/模型SHA保持，256个新增M10接点与原叶M5/M6分别记录；新128号点为787.295/944.07μm，6.4μm只是局部搜索packing guard，不是通用技术规则。</p>'
+    p=snapshot/'vector_clone_probe/r01/execution.json.gz'
+    if p.exists():
+        q=read(p);result['VECTOR_actual_gate_clone_probe_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('completed_utc'):
+            upper_text+='<p><strong>VECTOR93048已FAILED：</strong>同一当前r01源/原SDC，在remove_fillers和placement估计后，setup优化首次迭代前Signal11/native−11；不是逻辑不可能证明，也未定位为CloneMove本身的根因。未生成修复检查点、after指纹或后续合法化/布线/RC/STA，pin/PG保持的after检查未执行，不能把缺失输出的false当实际改了pin。原闭合源文件保持，原−4.140220ns失败继续保留。24GB sbatch请求此前已被调度器拒绝且无作业号，后按实际c96内存配置复用mem=0才提交；两个阶段分别记录。</p>'
+    p=snapshot/'vector_clone_crash/r01/execution.json.gz'
+    if p.exists():
+        q=read(p);result['VECTOR_exact_native_crash_symbolization_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        upper_text+='<p>93051是只读崩溃/API诊断，不附加、发信号或改变活动进程。原始addr2line结果与setup调用背景不一致，尚不能当根因；需要核对ELF加载基址与栈地址表示，完整原文/SHA保留，不把诊断程序return0当修复通过。</p>'
     diagnosis=root/'vector_table_diagnosis_r03'
     if (diagnosis/'summary.json').exists():
         folder=data/'vector_Liberty_table_diagnosis';shutil.copytree(diagnosis,folder,dirs_exist_ok=True)
@@ -537,6 +574,10 @@ def render(root,out):
       'CURRENT_658_DIODE_AVAILABLE_DECK0_COVERAGE_INCOMPLETE':'原可用GDS deck零项/覆盖不全',
       'CURRENT_658_DIODE_GDS_OR_AVAILABLE_DECK_FAILED':'当前严格GDS/deck失败',
       'existing_output_buffers/r02':'原输出buffer重排/r02','COMPLETED_NATIVE_DRC_AND_STA_FAILED':'已布线；native/STA失败',
+      'M6_escape_route/r02':'M6实际引出重接/r02','COMPLETED_M6_ACCESS_REROUTE_ORIGINAL_PIN_XY_UNCHANGED':'实际重接/原pin不变',
+      'CURRENT_M6_ESCAPE_GDS_NOT_EXECUTED_MISSING_REAL_SRAM_AND_COVERAGE_GAPS':'新源GDS未验/缺SRAM及覆盖缺口',
+      'native_clean_patches/r02':'native路由patch/r02','COMPLETED_ROUTE_PATCH_VARIANT_STA_CHECK_SEPARATE':'实际patch重接/STA另验',
+      'CURRENT_CLEAN_PATCHES_GDS_NOT_EXECUTED_MISSING_REAL_SRAM_AND_COVERAGE_GAPS':'新源GDS未验/缺SRAM及覆盖缺口',
       'RUNNING_OR_RECEIPT_NOT_TERMINAL':'运行中/未收齐终态'}
     def show(value):
         if value is None:return '未知/待验证'
@@ -569,7 +610,7 @@ def render(root,out):
 <h3>公平周边控制：相同单元成本，不重做C</h3>
 <div class="scroll"><table><thead><tr><th>优化边界Aopt</th><th>相同X2换型数</th><th>fresh native DRC</th><th>所检全块连通</th><th>setup ns</th><th>hold ns</th></tr></thead><tbody>'''+boundary+'''</tbody></table></div>
 <p>92812已COMPLETED，两块Aopt均实际增量DRT、RCX、独立native0和所检全块连通通过；GEMM与MXU分别沿用C相同3/1处换型、标准单元master面积+1.596/+0.266μm²，原pin/PG/外框和源保持。原SDC/允许层不变；setup/hold分别0.772449/0.053582和0.249090/0.053253ns。它们是等成本叶块对照，不是共同底座或完整系统收益结论。</p>
-<p>上述是历史3/1换型同成本来源；主矩阵当前GEMM的658diode及追加两换型另有真实负载/单元成本，不能直接与此旧Aopt作纯XY收益比较。完整周边系统对照仍需匹配后续实现口径。</p>
+<p>上述是历史3/1换型同成本来源；主矩阵当前GEMM的658diode及追加两换型另有真实负载/单元成本，不能直接与此旧Aopt作纯XY收益比较。MXU新M6引出重接也未替换此组旧r04布线/RC来源，须另列实际source。完整周边系统对照仍需匹配后续实现口径。</p>
 <img src="assets/equal_cost_leaf_margins.png" alt="同换型成本叶块提取余量实测，不是系统资格" loading="lazy"><p><a href="assets/equal_cost_leaf_margins.svg">同图SVG</a>；四份数据均来自实际提取回执，非几何线长预测。</p>
 <div class="scroll"><table><thead><tr><th>同ECO叶块方案</th><th>DRT实测总线长 μm</th><th>DRT via数</th><th>相对同ECO Aopt线长</th><th>相对via</th></tr></thead><tbody>'''+route_table+'''</tbody></table></div>
 <p><a href="data/equal_cost_leaf_actual_metrics.json">实际逐层线长、via及原生日志SHA</a>直接复用已完成DRT最后一组报告，没有重复路由。数值按工具报告精度取整μm，逐层取整和总数可能有小差异；via按DRT口径，不当完整PDN via统计。与候选几何L1、提取RC及系统收益分别记录。即使叶块内部成本增加，也保留内部方案，继续共同底座/适配层系统总成本验证，不能据此撤回边缘并结束研究。</p>

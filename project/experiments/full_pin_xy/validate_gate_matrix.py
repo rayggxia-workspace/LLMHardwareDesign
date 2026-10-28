@@ -31,19 +31,20 @@ def check(out):
         assert cfg['read_lef_with_def_before'] is True and cfg['read_lef_with_def_after'] is False
         assert cfg['explicit_LEFs_roundtrip_exact'] and cfg['explicit_LEFs']==inputs['lefs']
         merge=read(fixed/'merge.json.gz');assert merge['allow_empty']=='DISABLED' and merge['no_missing_macro_waiver']
-        assert rows[case]['strict_GDS_merge_errors']==merge['merge_errors']
+        gds_source=rows[case].get('historical_source_before_M6_escape',rows[case])
+        assert gds_source['strict_GDS_merge_errors']==merge['merge_errors']
         if case=='gemm':assert merge['merge_errors']==0
-        else:assert merge['merge_errors']==4 and rows[case]['complete_rules'].startswith('FAILED_STRICT_GDS')
+        else:assert merge['merge_errors']==4 and gds_source['complete_rules'].startswith('FAILED_STRICT_GDS')
         version='r03' if case=='gemm' else 'r04'
         paths=sorted((data/'continuation/resume').glob('resume-*/leaf_eco/'+version+'/'+case+'-C/execution.json.gz'));assert paths
         physical=read(paths[-1]);assert rows[case]['native_DRC_count']==physical['fresh_DRC_count']==0
         for kind in ['setup','hold']:
             text=gzip.decompress((paths[-1].parent/(kind+'.txt.gz')).read_bytes()).decode()
-            historical=rows[case].get('historical_matched_costed_source_before_diode',rows[case])
+            historical=rows[case].get('historical_source_before_M6_escape',rows[case].get('historical_matched_costed_source_before_diode',rows[case]))
             value=float(re.search(r'worst slack (?:min|max)\s+([-\d.]+)',text)[1]);assert historical[kind+'_ns']==value
         if (fixed/'execution.json.gz').exists():
             end=read(fixed/'execution.json.gz')
-            assert rows[case].get('historical_costed_GDS_findings_before_diode',rows[case]['available_deck_findings'])==end.get('available_deck_findings')
+            assert gds_source.get('historical_costed_GDS_findings_before_diode',gds_source['available_deck_findings'])==end.get('available_deck_findings')
             assert not end['full_qualification']
     assert rows['llaccel_aux']['native_DRC_count']==4 and rows['llaccel_aux']['newer_attempt']['three_pin_job'].endswith('FAILED_DRT_1231')
     system=folder/'checkpoint_route/r01/execution.json.gz'
@@ -345,10 +346,36 @@ def check(out):
         if 'temporary_keepout_gap_and_thickness_um' in q:assert q['temporary_keepout_gap_and_thickness_um']==.14
         p=(out/q['evidence']).parent
         assert 'set gap 280;set thick 280' in gzip.decompress((p/'route.tcl.gz').read_bytes()).decode()
+        if q.get('completed_utc'):
+            assert q['native_returncodes']=={'implementation':0,'fresh_DRC':0} and q['fresh_DRC_count']==0
+            assert q['whole_signal_geometry']['pass'] and q['whole_signal_geometry']['checked_nets']==191438
+            assert q['whole_signal_geometry']['checked_terminals']==597343 and all(q['all_cells_poses_original_connections_pins_PG_die_unchanged'].values())
+            assert q['all_closed_sources_unchanged'] and q['container_libraries_unchanged'] and q['all_original_pins_and_size_in_actual_new_LEF_identical']
+            assert q['setup_ns']==rows['mxu']['setup_ns']==.246690 and q['hold_ns']==rows['mxu']['hold_ns']==.038538
+            assert q['literal_VIOLATED_markers_not_complete_failure_count']==0 and rows['mxu']['completed_source']=='M6_escape_route/r02'
+            assert rows['mxu']['current_source_research_model']=='NOT_EXPORTED' and rows['mxu']['strict_GDS_merge_errors'] is None
+            assert rows['mxu']['historical_source_before_M6_escape']['strict_GDS_merge_errors']==4
+            for k in ['cells','connections','pins','pdn','die']:assert q['files']['before.'+k+'.tsv']['sha256']==q['files']['after.'+k+'.tsv']['sha256']
+    if j.get('GEMM_actual658_parent_r01_preparation_failure'):
+        q=j['GEMM_actual658_parent_r01_preparation_failure'];assert q['status']=='FAILED_NOT_PHYSICAL_QUALIFICATION' and 'AssertionError' in q['traceback']
+    if j.get('GEMM_actual658_parent_r02_attempt',{}).get('completed_utc'):
+        q=j['GEMM_actual658_parent_r02_attempt'];assert not q['full_qualification'] and q['source_view_kind']=='real_diode658'
+        assert q['native_route_returncode']==1 and q['source_unchanged'] and q['all_closed_source_views_unchanged']
+        assert q['all_signal_pins']==3753 and q['actual_parent_M10_landing_ports']==256 and not q['GRT_overflow_allowed_for_guide_only']
+        assert q['source_clean_ODB_SHA']==j['GEMM_actual658_diode_physical_and_extracted_views']['source_geometry_sha256']
+        assert q['reused_prior_parent_repair_as_proposal']['prior_proposal_rejected_by_current_source_screening']
+        assert 'independent_DRC_count' not in q and 'whole_signal_geometry' not in q
+        assert 'GRT-0116' in gzip.decompress((out/q['evidence']).parent.joinpath('route.log.gz').read_bytes()).decode()
+    if j.get('VECTOR_actual_gate_clone_probe_r01',{}).get('completed_utc'):
+        q=j['VECTOR_actual_gate_clone_probe_r01'];assert not q['full_qualification'] and q['native_returncodes']['clone_heuristic_probe']==-11
+        assert q['all_closed_sources_unchanged'] and q['final_legalization_route_RC_STA']=='NOT_EXECUTED' and q['new_clone_full_digital_relation']=='NOT_EXECUTED'
+        assert 'gate_repaired_NOT_LEGALIZED_OR_ROUTED.odb' not in q['files'] and 'after.pins.tsv' not in q['files']
+        assert 'Signal 11 received' in gzip.decompress((out/q['evidence']).parent.joinpath('native.log.gz').read_bytes()).decode()
     if j.get('SYSTEM_existing_buffer_relocation_r02',{}).get('completed_utc'):
         q=j['SYSTEM_existing_buffer_relocation_r02'];assert not q['full_qualification'] and q['native_returncodes']['route']==0
-        assert q['fresh_DRC_count']==rows['opentpu_aux']['native_DRC_count']==2 and q['whole_signal_geometry']['pass']
-        assert q['setup_ns']==rows['opentpu_aux']['setup_ns']==-0.056303 and q['hold_ns']==rows['opentpu_aux']['hold_ns']==-0.119814
+        source_row=rows['opentpu_aux'].get('historical_source_before_clean_patches',rows['opentpu_aux'])
+        assert q['fresh_DRC_count']==source_row['native_DRC_count']==2 and q['whole_signal_geometry']['pass']
+        assert q['setup_ns']==source_row['setup_ns']==-0.056303 and q['hold_ns']==source_row['hold_ns']==-0.119814
         assert q['literal_VIOLATED_markers_not_complete_failure_count']==1233 and q['all_sources_unchanged']
         assert all(q['pin_PG_die_unchanged'].values()) and not q['legalization_recomputed'] and not q['selection_or_moves_recomputed']
         for kind in ['connections','nonselected']:assert q['files']['before.'+kind+'.tsv']['sha256']==q['files']['after.'+kind+'.tsv']['sha256']

@@ -23,11 +23,31 @@ assert binary_sha=='0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba05819
 cmd=common+[IMAGE,'addr2line','-f','-C','-e',BIN]+addresses
 r=subprocess.run(cmd,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
 (out/'actual_addr2line.txt').write_bytes(r.stdout)
+elf_evidence={}
+if sys.argv[1]=='r02':
+    outputs={}
+    for name,args in [('header',['-W','-h']),('segments',['-W','-l'])]:
+        result=subprocess.run(common+[IMAGE,'readelf']+args+[BIN],stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+        (out/('actual_ELF_'+name+'.txt')).write_bytes(result.stdout);outputs[name]=result.stdout.decode(errors='replace')
+        elf_evidence[name+'_returncode']=result.returncode
+    loads=[int(line.split()[2],16) for line in outputs['segments'].splitlines() if line.strip().startswith('LOAD ')]
+    entry=re.search(r'Entry point address:\s*(0x[\da-fA-F]+)',outputs['header'])
+    if loads and entry:
+        base=min(loads);entry=int(entry[1],16);shifted=[hex(int(a,16)+base) for a in addresses]
+        result=subprocess.run(common+[IMAGE,'addr2line','-f','-C','-e',BIN]+shifted,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+        (out/'actual_addr2line_plus_min_LOAD_VA.txt').write_bytes(result.stdout)
+        lines=result.stdout.decode(errors='replace').splitlines()
+        elf_evidence.update({'minimum_LOAD_VA':hex(base),'ELF_entry_VA':hex(entry),
+          'candidate_stack_offsets_plus_LOAD_VA':shifted,'shifted_addr2line_returncode':result.returncode,
+          'shifted_last_frame_minus_ELF_entry_bytes':int(shifted[-1],16)-entry,
+          'candidate_shifted_last_frame_symbol':lines[-2] if len(lines)>1 else None,
+          'interpretation':'Raw and module-base-shifted candidates retained. Entrypoint/_start agreement supports an address-representation inference only; not an automatic software root-cause proof.'})
 script=out/'api.tcl';script.write_text('set f [open '+tcl(out/'repair_timing.body.tcl')+' w];puts -nonewline $f [info body repair_timing];close $f\nhelp repair_timing\n')
 rc=execute(common,script,out/'native_api.log',threads=1)
 rec={'scope':'READ_ONLY_EXACT_NATIVE_VECTOR_CRASH_SYMBOLIZATION_AND_API_NOT_REPAIR_OR_ROOT_CAUSE_PROOF',
   'source_SHA':inputs,'actual_executable_SHA256':binary_sha,'native_stack_addresses':addresses,
   'addr2line_returncode':r.returncode,'native_API_returncode':rc,
+  'ELF_address_interpretation_diagnosis':elf_evidence,
   'debug_symbols_and_source_may_be_unavailable':True,'active_jobs_not_attached_signalled_or_changed':True,
   'full_qualification':False,'all_closed_sources_unchanged':all(sha(Path(p))==v for p,v in inputs.items()),
   'scheduler_job':os.environ['SLURM_JOB_ID'],'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),

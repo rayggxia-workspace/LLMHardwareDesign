@@ -1,4 +1,4 @@
-"""Real routed 658-diode GEMM physical/RC timing views; never full qualification."""
+"""Actual source-bound routed GEMM/MXU views; never full qualification."""
 from pathlib import Path
 import csv,datetime,json,os,re,shutil,sys,traceback
 from run_exports import ROOT,sha
@@ -9,32 +9,39 @@ from lef_view_contract import parse,verify
 DRIVER=Path(__file__).resolve().parent
 
 
-def run(revision):
-    source=ROOT/'antenna_incremental_eco/r01/gemm-C';receipt=source/'execution.json';j=json.loads(receipt.read_text())
-    out=ROOT/'diode_views'/revision/'gemm-C';out.mkdir(parents=True,exist_ok=False)
-    rec={'scope':'REAL_658_DIODE_ACCESS_AND_EXTRACTED_RESEARCH_VIEW_NOT_FULL_QUALIFICATION',
+def run(revision,kind='gemm658'):
+    assert kind in ['gemm658','mxu_pin_escape'];mxu=kind=='mxu_pin_escape';case='mxu' if mxu else 'gemm';count=2172 if mxu else 3753
+    source=ROOT/('pin_escape_route/r02/mxu-C' if mxu else 'antenna_incremental_eco/r01/gemm-C');receipt=source/'execution.json';j=json.loads(receipt.read_text())
+    out=ROOT/('pin_escape_views' if mxu else 'diode_views')/revision/(case+'-C');out.mkdir(parents=True,exist_ok=False)
+    rec={'scope':'REAL_M6_PIN_ESCAPE_ACCESS_AND_EXTRACTED_RESEARCH_VIEW_NOT_FULL_QUALIFICATION' if mxu else 'REAL_658_DIODE_ACCESS_AND_EXTRACTED_RESEARCH_VIEW_NOT_FULL_QUALIFICATION',
+      'source_kind':kind,
       'full_qualification':False,'source_receipt':str(receipt),'source_receipt_SHA256':sha(receipt),
       'original_M5_M6_pins_not_raised':True,'complete_rules_and_RTL_formal':'NOT_QUALIFIED',
       'scheduler_job':os.environ['SLURM_JOB_ID'],'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip()}
     try:
         assert j.get('completed_utc') and j['native_returncodes']['implementation']==j['native_returncodes']['fresh_DRC']==0
-        assert j['fresh_DRC_count']==0 and j['whole_signal_geometry']['pass'] and j['actual_total_real_diodes']==658
-        assert j['all_original_instances_and_signal_graph_preserved_with_only_22_real_diode_loads']
-        assert j['all_prior_functional_and_636_diode_poses_and_terminals_unchanged'] and all(j['pin_PG_die_unchanged'].values())
-        assert j['all_sources_unchanged']
-        assert all(j['native_stage_status'].get(s)=='EXECUTED' for s in ['detailed_route','preserve_original_views','VDD','VSS','whole_signal_geometry','rcx','sta'])
-        original=ROOT/'eco_views/r02/gemm-C';old=json.loads((original/'execution.json').read_text())
+        assert j['fresh_DRC_count']==0 and j['whole_signal_geometry']['pass']
+        if mxu:
+            assert j['all_closed_sources_unchanged'] and j['container_libraries_unchanged']
+            assert all(j['all_cells_poses_original_connections_pins_PG_die_unchanged'].values()) and j['all_original_pins_and_size_in_actual_new_LEF_identical']
+        else:
+            assert j['actual_total_real_diodes']==658 and j['all_original_instances_and_signal_graph_preserved_with_only_22_real_diode_loads']
+            assert j['all_prior_functional_and_636_diode_poses_and_terminals_unchanged'] and all(j['pin_PG_die_unchanged'].values()) and j['all_sources_unchanged']
+        required=['detailed_route','VDD','VSS','whole_signal_geometry','rcx','sta']+([] if mxu else ['preserve_original_views'])
+        assert all(j['native_stage_status'].get(s)=='EXECUTED' for s in required)
+        original=ROOT/('eco_views/r02/'+case+'-C');old=json.loads((original/'execution.json').read_text())
         assert sha(original/'abstract.lef')==old['files']['abstract.lef']['sha256']
         assert sha(original/'pins.tsv')==old['files']['pins.tsv']['sha256']
-        trial=ROOT/'trials/access-r03/gemm-C/execution.json';baseline=json.loads(trial.read_text());sdc=Path(baseline['source_sdc'])
+        trial=ROOT/('trials/access-r03/'+case+'-C/execution.json');baseline=json.loads(trial.read_text());sdc=Path(baseline['source_sdc'])
         assert sha(sdc)==baseline['input_sha256'][str(sdc)]
         odb=source/'routed.odb';spef=source/'extracted.spef'
         for p in [odb,spef,source/'independent.drc']:assert sha(p)==j['files'][p.name]['sha256']
         inputs={str(p):sha(p) for p in [receipt,odb,spef,original/'execution.json',original/'abstract.lef',original/'pins.tsv',trial,sdc]}
         rec.update({'source_SHA':inputs,'source_geometry_sha256':sha(odb),'source_SPEF_sha256':sha(spef),
           'source_native_DRC':0,'source_setup_ns':j['setup_ns'],'source_hold_ns':j['hold_ns'],
-          'source_literal_violated_markers':j.get('literal_VIOLATED_markers_not_complete_failure_count'),
-          'separate_additional_diode_cost':j['separate_additional_diode_cost']})
+          'source_literal_violated_markers':j.get('literal_VIOLATED_markers_not_complete_failure_count')})
+        if not mxu:rec['separate_additional_diode_cost']=j['separate_additional_diode_cost']
+        else:rec['this_route_variant_new_cells_or_sizing']=0;rec['inherited_costed_source']='Original MXU costed/r04 one sizing is retained; not zero total ECO cost or pure XY benefit.'
         shutil.copyfile(str(odb),str(out/'clean.odb'));assert sha(out/'clean.odb')==sha(odb)
         common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp',
           '--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
@@ -50,6 +57,9 @@ def run(revision):
           'report_worst_slack -max -digits 6 > '+tcl(out/'setup.txt'),'report_worst_slack -min -digits 6 > '+tcl(out/'hold.txt'),
           'report_parasitic_annotation -report_unannotated > '+tcl(out/'parasitic_coverage.txt'),
           'check_setup -verbose > '+tcl(out/'constraint_coverage.txt'),'write_timing_model '+tcl(out/'timing.lib')]
+        if mxu:
+            lines+=['set ::env(PINXY_ACCESS_ALL) 0','set ::env(PINXY_ACCESS_NET_NAMES) {act_data[12]}',
+              'set ::env(PINXY_ACCESS_OUT) '+tcl(out/'target_pin_access.tsv.gz'),'source '+tcl(DRIVER/'export_access.tcl')]
         script=out/'export.tcl';script.write_text('\n'.join(lines)+'\n')
         rec['native_export_returncode']=execute(common,script,out/'export.log')
         assert rec['native_export_returncode']==0
@@ -70,17 +80,35 @@ def run(revision):
         for extra in set(pins)-set(expected)-pg:
             members=[p for p in expected if re.fullmatch(re.escape(extra)+r'\[\d+\]',p)]
             assert len(members)>1 and all(expected[p]==pins[extra] for p in members)
-        assert {p:d for p,d in pins.items() if p in expected}==expected and len(expected)==3753
-        rec['matching_all_signal_model_pins']=3753
+        assert {p:d for p,d in pins.items() if p in expected}==expected and len(expected)==count
+        rec['matching_all_signal_model_pins']=count
         rec['minimum_period_present']='minimum_period' in (out/'timing.lib').read_text()
         rec['all_sources_and_pre_RCX_geometry_unchanged']=all(sha(Path(p))==v for p,v in inputs.items()) and sha(out/'clean.odb')==sha(odb)
         assert rec['all_sources_and_pre_RCX_geometry_unchanged']
-        rec['status']='ACTUAL_REAL_DIODE_VIEW_EXPORTED_NOT_QUALIFIED_COMMON_BASE_OR_FULL_SYSTEM'
+        if mxu:
+            target=[p for p in physical if p['pin'].replace('\\','')=='act_data[12]'];assert len(target)==1 and target[0]['layer']=='metal6'
+            box=[int(target[0][k])/2000 for k in ['x0','y0','x1','y1']];window=[box[0]-1.5,box[1]-1.5,box[2]+1.5,box[3]+1.5]
+            local=[];polygons=[];inside=False;layer=None
+            with (out/'detailed.lef').open() as f:
+                for line in f:
+                    line=line.strip()
+                    if line=='OBS':inside=True
+                    elif inside and line.startswith('LAYER '):layer=line.split()[1]
+                    elif inside and layer=='metal6' and line.startswith('RECT '):
+                        r=list(map(float,line.split()[1:5]))
+                        if r[0]<=window[2] and r[2]>=window[0] and r[1]<=window[3] and r[3]>=window[1]:local.append(r)
+                    elif inside and layer=='metal6' and line.startswith('POLYGON '):polygons.append(line)
+                    elif inside and line=='END':inside=False
+            context={'scope':'Actual local detailed LEF M6 OBS; no free-space or DRC inference','original_pin_box_um':box,'window_um':window,
+              'actual_M6_OBS_rectangles_um':local,'M6_polygon_lines_not_silently_treated_as_empty':polygons,
+              'new_parent_access':'NOT_EXECUTED','DBU_per_um':2000,'full_qualification':False}
+            (out/'actual_M6_OBS_context.json').write_text(json.dumps(context,indent=2)+'\n');rec['actual_M6_OBS_context']=context
+        rec['status']='ACTUAL_M6_ESCAPE_VIEW_EXPORTED_NOT_QUALIFIED_COMMON_BASE_OR_FULL_SYSTEM' if mxu else 'ACTUAL_REAL_DIODE_VIEW_EXPORTED_NOT_QUALIFIED_COMMON_BASE_OR_FULL_SYSTEM'
     except Exception:rec['actual_failure']=traceback.format_exc()
     rec['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
     rec['files']={p.name:{'bytes':p.stat().st_size,'sha256':sha(p)} for p in out.iterdir() if p.is_file()}
     (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
-    return 0 if 'actual_failure' not in rec and rec.get('matching_all_signal_model_pins')==3753 else 1
+    return 0 if 'actual_failure' not in rec and rec.get('matching_all_signal_model_pins')==count else 1
 
 
-if __name__=='__main__':sys.exit(run(sys.argv[1]))
+if __name__=='__main__':sys.exit(run(*sys.argv[1:3]))
