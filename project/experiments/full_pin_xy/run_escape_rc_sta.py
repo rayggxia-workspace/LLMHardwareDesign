@@ -34,7 +34,7 @@ def one(variant,revision):
            'source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl',
            'report_units','set clocks [all_clocks];if {[llength $clocks]!=1} {error "Expected exact single original clock"}',
            'set clk [lindex $clocks 0];set period [get_property $clk period]',
-           'set in [remove_from_collection [all_inputs] [get_ports clk]]',
+           'set in {};set clock_ports [get_ports clk];foreach p [all_inputs] {if {[lsearch -exact $clock_ports $p]<0} {lappend in $p}}',
            'set_input_delay -clock $clk -max [expr {.2*$period}] $in',
            'set_input_delay -clock $clk -min [expr {.05*$period}] $in',
            'set_output_delay -clock $clk -max [expr {.2*$period}] [all_outputs]',
