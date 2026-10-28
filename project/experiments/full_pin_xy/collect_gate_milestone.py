@@ -3,7 +3,7 @@ from pathlib import Path
 import argparse,datetime,gzip,hashlib,json,subprocess,tarfile
 
 ROOT=Path('/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027')
-JOBS=['92690','92691','92700','92714','92721','92781','92783','92792','92794','92795','92798','92812','92825','92834','92835','92837','92838','92841','92846','92847','92848','92853','92854','92855','92861','92867','92872','92886','92891','92892','92901','92903','92910','92912','92913','92914','92915']
+JOBS=['92690','92691','92700','92714','92721','92781','92783','92792','92794','92795','92798','92812','92825','92834','92835','92837','92838','92841','92846','92847','92848','92853','92854','92855','92861','92867','92872','92886','92891','92892','92901','92903','92910','92912','92913','92914','92915','92921']
 
 
 def sha(path):
@@ -36,7 +36,8 @@ def collect(name):
       'logs/mxu-actual-landing-r02-*.log','logs/antenna-netmap-r0[12]-*.log','logs/vector-resume-r01-*.log',
       'antenna_diode_eco/r01/gemm-C/*','antenna_diode_stream/r01/gemm-C/*','buffered_equivalence/r01/vector/*',
       'actual_path_audit/r01/*/*','logs/antenna-diode-r01-*.log','logs/antenna-diode-stream-r01-*.log',
-      'logs/vector-buffered-proof-r01-*.log','logs/vector-actual-paths-r01-*.log','logs/sys-actual-paths-r01-*.log']
+      'logs/vector-buffered-proof-r01-*.log','logs/vector-actual-paths-r01-*.log','logs/sys-actual-paths-r01-*.log',
+      'output_chain_placement/r01/opentpu_aux-C/*','logs/output-chain-r01-*.log']
     stable_intermediates={}
     vector=ROOT/'vector_resume/r01/execution.json'
     if vector.exists():

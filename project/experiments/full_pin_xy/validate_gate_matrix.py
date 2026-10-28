@@ -166,4 +166,11 @@ def check(out):
         assert r['original_antenna_rules_unchanged'] and r['no_fake_gate_or_diffusion_area']
         lib=r.get('actual_diode_Liberty_contract')
         if lib:assert lib['capacitive_load_unit']==['1','ff'] and lib['actual_input_capacitance']>0 and lib['single_input_only_no_output_function_or_state']
+    if j.get('SYSTEM_output_chain_placement'):
+        q=j['SYSTEM_output_chain_placement'];r=q['receipt']
+        assert not q['full_qualification'] and r['native_returncodes']['implementation']==-11
+        assert r['new_functional_cells']==r['master_sizing_changes']==r['functional_net_splits']==0
+        assert r['output_port_selection_summary']=={'all_output_ports_considered':1244,'private_output_chains_selected':772}
+        assert r['selected_existing_buffers']==1262 and r['all_sources_unchanged']
+        assert 'Signal 11 received' in gzip.decompress((out/q['evidence']).parent.joinpath('native.log.gz').read_bytes()).decode()
     print('PASS_GATE_MATRIX_NATIVE_EVIDENCE',len(rows),'blocks;',native_files,'raw files; duplicate-LEF failure and real strict-merge outcomes preserved; NOT full qualification')
