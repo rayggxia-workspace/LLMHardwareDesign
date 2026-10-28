@@ -44,9 +44,13 @@ def diagnose(root,out,cpus,run):
     sdc=generate(budget).replace('create_clock -name core -period %g'%budget['clock_ns'],
                                'create_clock -name core -period %.12g'%budget['clock_ns'])
     (out/'input.sdc').write_text(sdc)
-    script='read_liberty {'+str(liberty)+'}\nread_verilog {'+str(out/'structural.v')+'}\n'
+    platform=liberty.parents[1]
+    script='set_thread_count 16\n'
+    for name in ('NangateOpenCellLibrary.tech.lef','NangateOpenCellLibrary.macro.mod.lef'):
+        script+='read_lef {'+str(platform/'lef'/name)+'}\n'
+    script+='read_liberty {'+str(liberty)+'}\nread_verilog {'+str(out/'structural.v')+'}\n'
     script+='link_design '+mapping['top']+'\nread_sdc {'+str(out/'input.sdc')+'}\n'
-    script+='report_checks -path_delay max -group_path_count 30 -format full_clock_expanded -fields {slew cap fanout input_pin net} -digits 9\n'
+    script+='report_checks -path_delay max -group_path_count 30 -format full_clock_expanded -fields {slew cap fanout} -digits 9\n'
     script+='report_worst_slack -max -digits 9\nreport_tns -digits 9\n'
     script+='puts BV1_ZERO_WIRE_DIAGNOSTIC_COMPLETE\n'
     (out/'diagnostic.tcl').write_text(script)
