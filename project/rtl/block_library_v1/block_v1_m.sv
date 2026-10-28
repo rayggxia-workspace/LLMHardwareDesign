@@ -69,6 +69,31 @@ module block_v1_m(
   end
  endfunction
 
+ // Eight byte-local sums plus a group carry chain avoid a64-bit ripple from
+ // the selected/shifted addend. The65-bit result is bit-exact signed addition;
+ // no register, extra cycle, narrower accumulator or guard removal is used.
+ function automatic [64:0] add_s64_grouped;
+  input [63:0] left,right;
+  reg [8:0] subtotal[0:7];
+  reg [7:0] propagate;
+  reg [8:0] carry;
+  reg [64:0] result;
+  integer group;
+  begin
+   for(group=0;group<8;group=group+1)begin
+    subtotal[group]={1'b0,left[8*group+:8]}+{1'b0,right[8*group+:8]};
+    propagate[group]=&(left[8*group+:8]^right[8*group+:8]);
+   end
+   carry[0]=0;
+   for(group=0;group<8;group=group+1)begin
+    carry[group+1]=subtotal[group][8]|(propagate[group]&carry[group]);
+    result[8*group+:8]=subtotal[group][7:0]+carry[group];
+   end
+   result[64]=left[63]^right[63]^carry[8];
+   add_s64_grouped=result;
+  end
+ endfunction
+
  // Arithmetic-floor quotient + positive remainder implements ties-to-even
  // for both signs, without abs(-2^127) overflow.
  function automatic signed [127:0] round_even;
@@ -122,8 +147,8 @@ module block_v1_m(
       $signed({{3{product[8*row+5][15]}},product[8*row+5]}))+
      ($signed({{3{product[8*row+6][15]}},product[8*row+6]})+
       $signed({{3{product[8*row+7][15]}},product[8*row+7]})));
-   next_acc[row]=$signed({accumulator[row][63],accumulator[row]})+
-       ($signed({{46{reduced[row][18]}},reduced[row]})<<<digit_shift);
+    next_acc[row]=add_s64_grouped(accumulator[row],
+        $signed({{45{reduced[row][18]}},reduced[row]})<<<digit_shift);
   end
   aligned_scale=$signed({{160{scale_product[95]}},scale_product})<<<merge_shift;
   alignment_error=aligned_scale[255:127]!={129{aligned_scale[127]}};

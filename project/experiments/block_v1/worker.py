@@ -100,6 +100,9 @@ try:
     elif MODE=='revision300-cts-readback-s':
         from revision300_cts_probe import readback
         readback(ROOT,OUT,CPUS,run,'s')
+    elif MODE=='revision300-m-add-control':
+        from revision300_add_control import control
+        control(ROOT,OUT,CPUS,run)
     elif MODE=='revision300-m-guard-control':
         from revision300_guard_control import control
         control(ROOT,OUT,CPUS,run)
