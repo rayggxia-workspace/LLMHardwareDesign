@@ -10,12 +10,15 @@ DRIVER=Path(__file__).resolve().parent
 
 
 def run(input_set,revision):
-    inputs=ROOT/'inputs'/input_set;delta=json.loads((inputs/'landing_delta.json').read_text());source=ROOT/'escape_fixtures/r04/act-C'
+    inputs=ROOT/'inputs'/input_set;delta=json.loads((inputs/'landing_delta.json').read_text())
+    source=Path(delta.get('source_fixture',str(ROOT/'escape_fixtures/r04/act-C'))).resolve()
+    assert (ROOT/'escape_fixtures').resolve() in source.parents
+    case=delta.get('case','act');assert case in ['act','gemm','mxu']
     old=json.loads((source/'execution.json').read_text());assert old['native_route_returncode']==0 and old['independent_DRC_count']==1
     for name,digest in delta['source_files_uncompressed_SHA'].items():
         p=source/(name if name=='whole_access.tsv.gz' else name[:-3]);content=gzip.decompress(p.read_bytes()) if p.suffix=='.gz' else p.read_bytes()
         assert hashlib.sha256(content).hexdigest()==digest,(name,'Actual input geometry differs')
-    out=ROOT/'escape_landing'/revision/'act-C';out.mkdir(parents=True,exist_ok=False)
+    out=ROOT/'escape_landing'/revision/(case+'-C');out.mkdir(parents=True,exist_ok=False)
     source_sha=sha(source/'routed.odb');commands=(source/'route.tcl').read_text().replace(str(source),str(out))
     commands=commands.replace('read_db '+tcl(out/'placed.odb'),'read_db '+tcl(source/'routed.odb'))
     commands='\n'.join(s for s in commands.splitlines() if not s.startswith('place_pin '))+'\n'
@@ -42,6 +45,7 @@ snapshot_parent '''+tcl(out/'before')+'\n'
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
     rc=execute(common,out/'route.tcl',out/'route.log','PINXY_ACCESS_ALL=1,PINXY_ACCESS_OUT='+str(out/'whole_access.tsv.gz'))
     rec={'scope':'NEW_PARENT_M10_LANDING_XY_REPAIR_NOT_LEAF_PIN_CHANGE_OR_COMMON_BASE','input_delta':delta,'delta_SHA':sha(inputs/'landing_delta.json'),
+         'source_fixture':str(source),'case':case,'source_leaf_ODB_SHA':old.get('source_clean_ODB_SHA'),
          'native_route_returncode':rc,'source_routed_ODB_SHA':source_sha,'source_unchanged':source_sha==sha(source/'routed.odb'),
          'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID'],'full_qualification':False}
     if rc==0:
