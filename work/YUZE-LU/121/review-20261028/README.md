@@ -1,3 +1,5 @@
+2026-10-28 22:05 CST：五宏修订RTL已落实：M驻留双银行/共享64个S8乘法/归约累加流水，V双统计上下文/长函数/RoPE/全组分块归一化，R同阶段row流水/原子银行切换，S/T连续传输。run234 S/T、run236 M/V/R均通过三初态独立RTL回归，M/V/S/T综合通过；新版尚未最终接收。92804/node13运行S物理，92811/node16运行R综合及M/V物理；T在CTS hold修复41060缓冲后仍负余量而失败，保留源布局及失败回执，准备新副本CTS诊断，不提高上限或放松检查。新版合同docs/BLOCK_V1_REVIEW_CONTRACT.md；29份真实小回执/报告及队列快照见work/YUZE-LU/121/review-20261028/checkpoint-2200/index.json，旧100MHz资格不转移。236为真实六项16CPU起跑、按依赖即时补位；当前仅真实前置任务就绪，后继四门/接口/有限预连/吞吐与模型资源预算仍待完成。Issue121=in_progress、PR122=draft；登记pending、看板unverified/同步pending、管理员和独立审查人待指定。
+
 # 300MHz与粗金属接口审阅修订
 
 Refs [Issue121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121) / [PR122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)。用户要求实施两份审阅建议并完成新版五块最终布局布线。
@@ -7,7 +9,7 @@ Refs [Issue121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/1
 - [演示几何规则](../../../../docs/technology/M11_M12_DEMO_RULES.md)。
 - 原100MHz最终包固定在ad3c2b3，不回写服务器封存物；本目录新run与后续交付保存新版证据。
 
-当前仅本地三个16位样例与九项负例通过，独立GDS及旧最终源新约束诊断待远程执行。诊断结果不是新版验收。最终交付仍须五块各一个实现，真实300MHz最终物理、同源四门、完整端口引出与有限预连检查、周期/流量及面积/接口前后对比。
+当前新版合同及真实进展见[22:00快照](checkpoint-2200/README.md)和[修订合同](../../../../docs/BLOCK_V1_REVIEW_CONTRACT.md)。下方初期检查点保留当时状态；新版RTL回归均已通过，但最终物理未接收。诊断结果不是新版验收。最终交付仍须五块各一个实现，真实300MHz最终物理、同源四门、完整端口引出与有限预连检查、周期/流量及面积/接口前后对比。
 
 ## 2026-10-28 implementation checkpoint
 

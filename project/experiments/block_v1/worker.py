@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('revision300-test-'):
+    if MODE=='revision300-cts-probe':
+        from revision300_cts_probe import probe
+        probe(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('revision300-test-'):
         from revision300_rtl import test
         test(ROOT,OUT,CPUS,run,MODE[-1])
     elif MODE.startswith('revision300-map-'):
