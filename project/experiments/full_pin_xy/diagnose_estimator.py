@@ -9,6 +9,7 @@ DRIVER=Path(__file__).resolve().parent
 
 
 def run(revision):
+    early_fillers=os.environ.get('PINXY_EST_FILLERS_BEFORE_ESTIMATE')=='1'
     source=ROOT/'finalized/access-r03/vector-C';p=source/'execution.json';proof=json.loads(p.read_text())
     assert proof['independent_DRC_count']==0 and proof['whole_access']['pass']
     trial=Path(proof['legacy_RC_STA_receipt']);old=json.loads(trial.read_text());odb=source/'clean.odb';sdc=Path(old['source_sdc'])
@@ -40,9 +41,11 @@ print(json.dumps({'matching_installed_source':records,'source_absence_is_not_a_r
     helpers=(DRIVER/'physical_trial.tcl').read_text().split('if {![stage load {',1)[0]
     lines=[helpers]+['read_liberty '+tcl(path) for path in old['libs']]
     lines+=['read_db '+tcl(odb),'read_sdc '+tcl(sdc),'source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl',
-      'fingerprint '+tcl(out/'before'),
+      'fingerprint '+tcl(out/'before')]
+    if early_fillers:lines+=['if {![stage remove_fillers_before_estimator {remove_fillers}]} {close $stages;exit 1}']
+    lines+=[
       'if {![stage isolated_placement_estimator {estimate_parasitics -placement;report_worst_slack -max -digits 6 > '+tcl(out/'HEURISTIC_before.setup.txt')+';report_worst_slack -min -digits 6 > '+tcl(out/'HEURISTIC_before.hold.txt')+'}]} {close $stages;exit 1}',
-      'if {![stage isolated_repair_design {remove_fillers;repair_design -max_utilization 85;write_db '+tcl(out/'cell_repaired_NOT_LEGALIZED_OR_ROUTED.odb')+'}]} {close $stages;exit 1}',
+      'if {![stage isolated_repair_design {'+('' if early_fillers else 'remove_fillers;')+'repair_design -max_utilization 85;write_db '+tcl(out/'cell_repaired_NOT_LEGALIZED_OR_ROUTED.odb')+'}]} {close $stages;exit 1}',
       'report_worst_slack -max -digits 6 > '+tcl(out/'HEURISTIC_after.setup.txt'),
       'fingerprint '+tcl(out/'after'),'close $stages',
       'puts "ISOLATED_ESTIMATOR_TRIAL_NO_GRT_NO_SPEF_NO_INCREMENTAL; not final RC or STA"']
@@ -51,6 +54,8 @@ print(json.dumps({'matching_installed_source':records,'source_absence_is_not_a_r
     rc=execute(common,script,out/'native.log','PINXY_OUTPUT='+str(out),threads=4)
     rec={'scope':'ISOLATED_VECTOR_EST0104_DIAGNOSIS_NOT_PHYSICAL_IMPLEMENTATION',
       'change_from_failed_r09':'No GRT initialization, no start_incremental, no SPEF imported in repair process; exact source SPEF separately replayed in matching r07 model',
+      'fillers_removed_before_estimation':early_fillers,
+      'single_variable_from_isolated_r01':'Move remove_fillers before estimate_parasitics, without changing repair_design or constraints' if early_fillers else 'Baseline isolated ordering: estimate then remove_fillers then repair_design',
       'source_SHA':inputs,'original_SDC_clocks_layers_preserved':True,
       'native_returncode':rc,'actual_final_RC_STA':'NOT_EXECUTED','full_qualification':False,
       'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID'],
