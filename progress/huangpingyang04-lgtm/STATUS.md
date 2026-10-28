@@ -34,3 +34,13 @@
 **追溯与协作。** 唯一任务根 /public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z；本轮review源码 b2991d5cadc340172a9ca312b0fe2d7b2f5045f5，各作业原始commit/配置/工具/输入SHA/日志/CPU在索引。OpenROAD版本字符串unknown，binary SHA 0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53。整片检查CPU294872s/墙钟75985s，平均3.881核，约占4核97.0%；新作业均4CPU/native≤4/BLAS1，不停/重复活跃作业、不超额。索引 /public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-state-closure-20261028T175958Z/milestone.json；SHA 2ba969769ad2fe7fb120671f193ec6463daac922b9a7b58b44f03f1555fee7e7。保留历史/封存结果，只更新原六份任务记录；大ODB/DEF/SPEF/全日志/工艺留服务器。
 
 沿用本人账号/Issue55/现有PR58，不新建、合并、关闭。上次核实远端afe2654e254059910a01799b2840021b85413d84；本次发布以独立交付receipt为准。规则rayggxia-project-collab1.0.0；登记复用管理中心PR5 pending（未重核），board unverified/同步pending（board.json缺失），reviewer待指定，保持in_progress。原232939字节方法全文在155133Z归档previous_methods.md及Git历史，本次previous_methods仅保存更新前17KB稿。
+
+<!-- actual-AUX-complete-RC-checkpoint -->
+
+新增实际检查点：2026-10-28T18:13:55.121251+00:00（UTC，CST=UTC+8）。
+AUX全网92945实际COMPLETED0/4：623217条信号网、1837063个必要端点全部连通，失败网0、未连信号输入0。454s/CPU452.664s，约1核；底层实际电气图23207497节点，不是仅端口/画线方案。
+92949实际COMPLETED0/4，原3ns真实OpenRCX/精确STA完成，但**质量失败**：setup WNS−1.5643455862360762ns、TNS−6788.803340083859ns、5658负端点；hold WNS−0.2471712904311318ns、TNS−4.276947361771401ns、35负端点；cap1039、slew0，fanout无有限约束不算覆盖通过。292s/CPU340.770s，平均1.167核。状态证书、完整连接、真实提取和质量分别判断；不能把measurement PASS写成时序/功能/冻结通过。与旧版计数不同不代替逐端点/逐PIN比较，尚未宣称消除新增退化。
+92952只在精确92949实际完成后启动全active SPEF端点覆盖，当前RUNNING；覆盖通过也不能豁免上述违例。
+92951小型两线API探针已闭合：全网SPEF导出和按-net名称导出实际通过，按net_id导出复现SIGSEGV11。仅工具接口诊断，不是硬件/工艺验证。5e36d063fd855e606ee29cd9c32c05cf1974d56a在自己的新源码版本改为已探测的-nets接口、保留所有原失败；92953新r03已实际串行完成父/新M8两份低阈值提取、各仅一条net83203的SPEF且完整端点/单位匹配；两版仍未导出这四victim网的直接耦合，不能把旧无记录简单归因于0.1fF阈值，也未证明变化原因。159s/CPU171.147s；仅诊断通过，不改生产0.1fF或豁免4cap退化。
+92548完整固定布线当前RUNNING；14059仍未有完整真实布通/独立验证，841闲置扇出/案例未完成。底座候选1/3未冻结，阶段二/三未验收，四未执行。继续修复/验证质量、统一共同父版，再重验两完整案例。
+最新索引：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-AUX-RC-closure-20261028T181355Z/milestone.json；SHA-256 3576bbe8a1632d09ae3cdf41a9a37bbfdac40fe39cdb8770b54391682459de30。本轮review代码5e36d063fd855e606ee29cd9c32c05cf1974d56a；每作业精确source_commit/config/tool/input/outputs/CPU与旧历史索引均保留。上一已核实远端2d08aea475c6ba1ad67fca392d963898cf5dc3be/结构CI40741313336 success；本次后续发布看独立receipt。不修改历史结果、不上传大数据库/日志/工艺，不停止/重复活跃作业，仍4CPU/native≤4/BLAS1。
