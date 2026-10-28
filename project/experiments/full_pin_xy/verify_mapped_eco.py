@@ -13,6 +13,20 @@ from cell_semantics import check_pair
 DRIVER=Path(__file__).resolve().parent
 
 
+def export_graph(common,source,out,label):
+    """Actual native graph export, shared with the directed buffer-cone proof."""
+    target=out/(label+'.tsv');script=out/(label+'.tcl')
+    script.write_text('\n'.join(['read_db '+tcl(source),
+      'set b [ord::get_db_block];set f [open '+tcl(target)+' w];puts $f "kind\\tinstance\\tpin\\tdirection\\tnet"',
+      'foreach i [$b getInsts] {set m [$i getMaster];if {[$m getType] eq "CORE_SPACER"} {continue};puts $f [join [list CELL [$i getName] [$m getName] [$m getType] {}] "\\t"];foreach t [$i getITerms] {if {[$t getSigType] in {POWER GROUND}} {continue};set n [$t getNet];puts $f [join [list ITERM [$i getName] [[$t getMTerm] getName] [$t getIoType] [expr {$n eq "NULL" ? "NULL" : [$n getName]}]] "\\t"]}}',
+      'foreach p [$b getBTerms] {if {[$p getSigType] in {POWER GROUND}} {continue};set n [$p getNet];puts $f [join [list PORT {} [$p getName] [$p getIoType] [expr {$n eq "NULL" ? "NULL" : [$n getName]}]] "\\t"]};close $f'])+'\n')
+    rc=execute(common,script,out/(label+'.log'),threads=1)
+    if rc:return rc
+    with target.open('rb') as f,(out/(label+'.tsv.gz')).open('xb') as raw,gzip.GzipFile(filename='',mode='wb',fileobj=raw,mtime=0) as z:
+        for chunk in iter(lambda:f.read(1024*1024),b''):z.write(chunk)
+    return 0
+
+
 def load(path):
     masters={};terms={};ports={}
     with gzip.open(path,'rt') as f:
