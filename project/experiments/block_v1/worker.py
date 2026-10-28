@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('revision300-checkpoint-timing-'):
+    if MODE=='revision300-v-carry-proof':
+        from revision300_v_carry_proof import prove
+        prove(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('revision300-checkpoint-timing-'):
         from revision300_checkpoint_timing import diagnose
         diagnose(ROOT,OUT,CPUS,run,MODE[-1])
     elif MODE=='revision300-v-map-timing':

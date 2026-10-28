@@ -55,10 +55,29 @@ module block_v1_v(
  reg best_valid,top_valid;reg signed [31:0] best_value;reg [15:0] best_id;
  assign cmd_ready=!reset&&phase==IDLE&&(!rsp_valid||rsp_ready);
  assign busy=!cmd_ready;
+ // Parallel byte sums plus explicit group carry preserve all128 result bits.
+ // Avoid chaining a wide FMA carry into another wide rounding increment.
+ function automatic signed [127:0] add128_grouped;
+  input [127:0] left,right;input carry_in;
+  reg [8:0] subtotal[0:15];reg [15:0] propagate;
+  reg [16:0] carry;reg [127:0] result;integer g;
+  begin
+   for(g=0;g<16;g=g+1)begin
+    subtotal[g]={1'b0,left[8*g+:8]}+{1'b0,right[8*g+:8]};
+    propagate[g]=&(left[8*g+:8]^right[8*g+:8]);
+   end
+   carry[0]=carry_in;
+   for(g=0;g<16;g=g+1)begin
+    carry[g+1]=subtotal[g][8]|(propagate[g]&carry[g]);
+    result[8*g+:8]=subtotal[g][7:0]+carry[g];
+   end
+   add128_grouped=result;
+  end
+ endfunction
  function automatic signed [127:0] rne;
   input signed [127:0] v;input [6:0] shift;
   reg signed [127:0] q;reg [127:0] remn,half;
-  begin if(shift==0)rne=v;else begin q=v>>>shift;remn=$unsigned(v)&({128{1'b1}}>>(128-shift));half=128'd1<<(shift-1);rne=q+((remn>half)||((remn==half)&&q[0]));end end
+  begin if(shift==0)rne=v;else begin q=v>>>shift;remn=$unsigned(v)&({128{1'b1}}>>(128-shift));half=128'd1<<(shift-1);rne=add128_grouped(q,{127'b0,((remn>half)||((remn==half)&&q[0]))},1'b0);end end
  endfunction
  reg replay_loaded;reg [129:0] twice_remainder,four_remainder;
  reg [128:0] rounded_group;reg root_increment;
@@ -114,16 +133,16 @@ module block_v1_v(
    else if(swap_b)mul_b[l]={b[l^1][31],b[l^1]};
    total[l]=0;
    case(point_op)
-    0:total[l]=$signed({{96{a[l][31]}},a[l]})+$signed(point_b[l]);
-    1:total[l]=$signed({{96{a[l][31]}},a[l]})-$signed(point_b[l]);
+    0:total[l]=add128_grouped({{96{a[l][31]}},a[l]},{{95{point_b[l][32]}},point_b[l]},1'b0);
+    1:total[l]=add128_grouped({{96{a[l][31]}},a[l]},~{{95{point_b[l][32]}},point_b[l]},1'b1);
     2:total[l]=$signed({{63{product[l][64]}},product[l]});
-    3:total[l]=$signed({{63{product[l][64]}},product[l]})+$signed({{96{scalar_c[31]}},scalar_c});
+    3:total[l]=add128_grouped({{63{product[l][64]}},product[l]},{{96{scalar_c[31]}},scalar_c},1'b0);
     4:total[l]=$signed(a[l])>$signed(point_b[l])?$signed(a[l]):$signed(point_b[l]);
     5:total[l]=$signed(a[l])<$signed(point_b[l])?$signed(a[l]):$signed(point_b[l]);
     6:total[l]=$signed(a[l])>=$signed(point_b[l])?-128'sd1:128'sd0;
     7:total[l]=$signed({{96{a[l][31]}},a[l]})<<<point_shift;
     8:total[l]=$signed({{96{a[l][31]}},a[l]});
-    9:total[l]=a[l]<0?$signed(point_b[l]):$signed({{96{scalar_c[31]}},scalar_c});
+    9:total[l]=a[l]<0?$signed(point_b[l]):$signed({{96{scalar_c[31]}},scalar_c},1'b0);
     default:total[l]=0;
    endcase
   end
