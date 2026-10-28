@@ -9,7 +9,7 @@ Refs [Issue121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/1
 
 当前仅本地三个16位样例与九项负例通过，独立GDS及旧最终源新约束诊断待远程执行。诊断结果不是新版验收。最终交付仍须五块各一个实现，真实300MHz最终物理、同源四门、完整端口引出与有限预连检查、周期/流量及面积/接口前后对比。
 
-## 2026-10-28 21:24 CST implementation checkpoint
+## 2026-10-28 implementation checkpoint
 
 Initial remote run233 job92802/node13 completed six independently claimed measurements, receipt/report SHA verified in [run233](run233/README.md). P1 independent GDS passed; all five old final timing diagnostics retain negative checks and never qualify revised leaves.
 

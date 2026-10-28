@@ -1,0 +1,87 @@
+{
+  "schema": "block-v1-node-queue/1",
+  "node_cpus": 96,
+  "default_task_cpus": 16,
+  "memory_guard_gib": 16,
+  "state_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-234/node-queue-state.json",
+  "tasks": [
+    {
+      "id": "revision300-test-s",
+      "mode": "revision300-test-s",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-234/tasks/revision300-test-s",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-234/src",
+      "cpus": 16,
+      "memory_gib": 8,
+      "memory_basis": "Provisional conservative admission reservation: old final storage-map/native memory scale, new continuous RTL may differ. 1.2 margin and16GiB node guard applied; measured RSS recorded independently.",
+      "report": "revision300-rtl-test.json",
+      "after": [],
+      "receipts": []
+    },
+    {
+      "id": "revision300-test-t",
+      "mode": "revision300-test-t",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-234/tasks/revision300-test-t",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-234/src",
+      "cpus": 16,
+      "memory_gib": 8,
+      "memory_basis": "Provisional conservative admission reservation: old final storage-map/native memory scale, new continuous RTL may differ. 1.2 margin and16GiB node guard applied; measured RSS recorded independently.",
+      "report": "revision300-rtl-test.json",
+      "after": [],
+      "receipts": []
+    },
+    {
+      "id": "revision300-map-s",
+      "mode": "revision300-map-s",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-234/tasks/revision300-map-s",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-234/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "Provisional conservative admission reservation: old final storage-map/native memory scale, new continuous RTL may differ. 1.2 margin and16GiB node guard applied; measured RSS recorded independently.",
+      "report": "revision300-rtl-map.json",
+      "after": [],
+      "receipts": []
+    },
+    {
+      "id": "revision300-map-t",
+      "mode": "revision300-map-t",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-234/tasks/revision300-map-t",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-234/src",
+      "cpus": 16,
+      "memory_gib": 40,
+      "memory_basis": "Provisional conservative admission reservation: old final storage-map/native memory scale, new continuous RTL may differ. 1.2 margin and16GiB node guard applied; measured RSS recorded independently.",
+      "report": "revision300-rtl-map.json",
+      "after": [],
+      "receipts": []
+    },
+    {
+      "id": "revision300-route-s",
+      "mode": "revision300-route-s",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-234/tasks/revision300-route-s",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-234/src",
+      "cpus": 16,
+      "memory_gib": 40,
+      "memory_basis": "Provisional conservative admission reservation: old final storage-map/native memory scale, new continuous RTL may differ. 1.2 margin and16GiB node guard applied; measured RSS recorded independently.",
+      "report": "revision300-native-flow.json",
+      "after": [
+        "revision300-test-s",
+        "revision300-map-s"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "revision300-route-t",
+      "mode": "revision300-route-t",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-234/tasks/revision300-route-t",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-234/src",
+      "cpus": 16,
+      "memory_gib": 32,
+      "memory_basis": "Provisional conservative admission reservation: old final storage-map/native memory scale, new continuous RTL may differ. 1.2 margin and16GiB node guard applied; measured RSS recorded independently.",
+      "report": "revision300-native-flow.json",
+      "after": [
+        "revision300-test-t",
+        "revision300-map-t"
+      ],
+      "receipts": []
+    }
+  ]
+}

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <random>
 #include <stdexcept>
+#include <vector>
 using I128=__int128_t;
 using U128=__uint128_t;
 using Vec=std::array<int16_t,8>;
@@ -61,6 +62,60 @@ static void final_matches(const std::array<I128,8>&x,unsigned sh,unsigned mode){
   require(r.saturated==sat,"wrong saturation flag");
  }
 }
+struct Transfer{unsigned op,index;U128 data;};
+static std::vector<Transfer> packed(unsigned bank,const std::vector<Vec>&aa,const std::vector<Mat>&bb,bool wa,bool wb){
+ std::vector<Transfer> q;
+ for(unsigned t=0;t<aa.size();++t){
+  unsigned base=bank*32+t*8;U128 a=0;
+  for(unsigned j=0;j<8;++j)a|=wa?U128(uint16_t(aa[t][j]))<<(16*j):U128(uint8_t(aa[t][j]))<<(8*j);
+  q.push_back({7,base+unsigned(wa),a});
+  for(unsigned c=0;c<(wb?8:4);++c){U128 b=0;
+   if(wb)b=pack(bb[t][c]);
+   else for(unsigned j=0;j<16;++j)b|=U128(uint8_t(bb[t][2*c+j/8][j%8]))<<(8*j);
+   q.push_back({wb?9u:8u,base+c,b});
+  }
+ }
+ return q;
+}
+static U128 descriptor(bool wa,bool wb,bool clear,unsigned k,unsigned n,unsigned tiles){return U128(wa)|(U128(wb)<<1)|(U128(clear)<<2)|(U128(k)<<4)|(U128(n)<<8)|(U128(tiles)<<12);}
+static void packed_cases(){
+ for(unsigned test=0;test<240;++test){
+  unsigned bank=test%2,tiles=1+rng()%4,k=1+rng()%8,n=1+rng()%8;bool wa=test&1,wb=test&2;
+  std::vector<Vec> aa(tiles);std::vector<Mat> bb(tiles);std::array<int64_t,8> expected{};
+  for(unsigned t=0;t<tiles;++t)for(unsigned j=0;j<8;++j){
+   aa[t][j]=int16_t(rng());for(auto&row:bb[t])row[j]=int16_t(rng());
+  }
+  for(auto w:packed(bank,aa,bb,wa,wb))command(w.op,w.index,w.data);
+  for(unsigned t=0;t<tiles;++t)for(unsigned row=0;row<n;++row)for(unsigned j=0;j<(t+1==tiles?k:8);++j)
+   expected[row]+=int64_t(wa?aa[t][j]:int16_t(int8_t(aa[t][j])))*(wb?bb[t][row][j]:int16_t(int8_t(bb[t][row][j])));
+  auto r=command(10,bank*32,descriptor(wa,wb,true,k,n,tiles));
+  require(r.data==(U128(1)<<127),"tagged descriptor completion");
+  require(r.latency==tiles*(wa?3:1)*(wb?3:1)+3,"resident tile pipeline fill/drain latency");
+  require(partial()==expected,"packed multi-tile wide/tail mismatch");
+ }
+ // Existing active bank runs while twenty tightly packed next-bank transfers
+ // are offered continuously. Finite response holding is randomly stalled.
+ std::vector<Vec> aa(4);std::vector<Mat> bb(4);std::array<int64_t,8> e{};
+ for(unsigned t=0;t<4;++t)for(unsigned j=0;j<8;++j){aa[t][j]=j+1;for(unsigned r=0;r<8;++r){bb[t][r][j]=r+1;e[r]+=int64_t(j+1)*(r+1);}}
+ for(auto w:packed(0,aa,bb,true,true))command(w.op,w.index,w.data);
+ auto q=packed(1,aa,bb,false,false);dut.cmd_valid=1;dut.cmd_op=10;dut.cmd_index=0;put_data(descriptor(true,true,true,8,8,4));dut.rsp_ready=1;tick();
+ unsigned sent=0,acks=0,overlap=0,elapsed=0;bool completed=false,held=false;U128 last=0;
+ while(sent<q.size()||acks<q.size()||!completed){
+  require(elapsed++<2000,"overlapped descriptor timeout");
+  dut.clk=0;dut.cmd_valid=sent<q.size();
+  if(dut.cmd_valid){auto w=q[sent];dut.cmd_op=w.op;dut.cmd_index=w.index;put_data(w.data);}
+  dut.rsp_ready=rng()%4!=0;dut.eval();
+  if(held)require(dut.rsp_valid&&get_data()==last&&!dut.rsp_error,"overlapped response must hold");
+  bool push=dut.cmd_valid&&dut.cmd_ready,pop=dut.rsp_valid&&dut.rsp_ready;
+  if(push){++sent;if(!completed)++overlap;}
+  if(pop){require(!dut.rsp_error,"unexpected overlap error");if(get_data()==(U128(1)<<127))completed=true;else{require(get_data()==0,"loader acknowledgement tag");++acks;}}
+  held=dut.rsp_valid&&!dut.rsp_ready;last=get_data();tick();
+ }
+ dut.cmd_valid=0;dut.rsp_ready=0;dut.eval();
+ require(overlap>=16,"finite preload must overlap core execution");require(partial()==e,"overlap changed active operands");
+ command(10,32,descriptor(false,false,false,8,8,4));for(auto&v:e)v*=2;require(partial()==e,"preloaded bank accumulation");
+ command(6,0,0);command(10,0,descriptor(false,false,true,8,8,4),true);
+}
 int main(int argc,char**argv){try{
  Verilated::commandArgs(argc,argv);dut.reset=1;dut.cmd_valid=0;dut.rsp_ready=0;tick();dut.reset=0;tick();
  command(3,0,0,true);command(4,0,0,true);command(5,0,0,true);command(15,0,0,true);
@@ -106,7 +161,8 @@ int main(int argc,char**argv){try{
  require(partial()==std::array<int64_t,8>{},"K overflow modified state");
  command(6,0,0);command(3,0,0,true);command(5,0,0,true);
  dut.reset=1;tick();dut.reset=0;tick();command(3,0,0,true);command(5,0,0,true);
- std::cout<<"{\"passed\":true,\"random_and_corner_tiles\":1200,\"checks\":"<<checks
+ packed_cases();
+ std::cout<<"{\"packed_descriptor_cases\":240,\"overlapped_preload_words\":20,\"passed\":true,\"random_and_corner_tiles\":1200,\"checks\":"<<checks
           <<",\"cycles\":"<<cycles<<",\"scope\":\"RTL integer/rounding/protocol/guard simulation; no PPA or model quality claim\"}\n";
  return 0;
 }catch(const std::exception&e){std::cerr<<e.what()<<" at cycle "<<cycles<<"\n";return 1;}}
