@@ -54,6 +54,11 @@ def measure(root,out,cpus,run,kind,variant):
     tools=root/'project/experiments/block_v1'
     prior=out.parents[2]/('block-v1-20261029-'+('268'if variant=='revised'else'269'))/'tasks'/('revision300-bench-'+kind+'-'+variant)
     prefetched=kind=='r' and 'reg operand_valid,fetch_done;' in rtls[0].read_text()
+    vector_prefetched=kind=='v' and 'M_EXEC=24,P_TOTAL=25,P_ROUND=26;' in rtls[0].read_text()
+    if vector_prefetched:
+        policy=json.loads((tools/'revision300-v-fresh.json').read_text())
+        assert policy['function']=='block-v1-20261029-315/tasks/revision300-test-v'
+        prior=out.parents[2]/('block-v1-20261029-315/tasks/revision300-bench-v-'+variant)
     if prefetched:
         # New latency source requires new measured public results, not a
         # comparison against the old236 execution schedule.
@@ -75,6 +80,18 @@ def measure(root,out,cpus,run,kind,variant):
     code=code.replace('std::map<std::string,uint64_t> reasons;',
         'std::map<std::string,uint64_t> reasons,internal;')
     monitor=MONITOR
+    if vector_prefetched:
+        old='if(state==1||state==3||state==13||state==10||state==11||state==18||state==19)'
+        assert monitor.count(old)==1
+        monitor=monitor.replace(old,'if(state==24)')
+        anchor='if(state==22||state==23)p.internal["reduction_tree_capture_cycles"]++;'
+        assert monitor.count(anchor)==1
+        monitor=monitor.replace(anchor,anchor+'''
+ if(state==1||state==3||state==13||state==10||state==11||state==18||state==19)
+  p.internal["operand_register_write_slots"]+=8;
+ if(state==25)p.internal["point_total_register_write_slots"]+=8;
+ if(state==26)p.internal["point_rounded_register_write_slots"]+=8;
+''')
     if prefetched:
         old='if(state==1||state==3||state==7||state==9||state==11||state==14||state==16)'
         assert monitor.count(old)==1
@@ -127,4 +144,5 @@ def measure(root,out,cpus,run,kind,variant):
         original_bench_sha256=file_sha(original),instrumented_bench_sha256=file_sha(bench),
         instrument_generator_sha256=file_sha(Path(__file__)),rtl_sha256=reference['rtl_sha256'],
         prefetched_operand_pipeline=prefetched,
-        scope='Preedge actual phase/valid/row_valid and, for prefetched R, operand_valid/fetch_done samples during identical source-bound public schedules. Product slots require their actual write enable; R operand slots include pipeline fill and single-fetch phases. Function valid tokens counted for each2lane stage, allocated slots include odd tail padding. Ratios may use stated total/phase cycle denominators. These are logical enable/token occupancy, not transistor switching, power, gate-netlist occupancy, or model/system performance.'),indent=2)+'\n')
+        vector_operand_point_pipeline=vector_prefetched,
+        scope='Preedge actual phase/valid/row_valid and, for prefetched R, operand_valid/fetch_done samples during identical source-bound public schedules. Product slots require their actual write enable; V product writes occur only in M_EXEC, operand/total/rounded slots use their separate phases; R operand slots include pipeline fill and single-fetch phases. Function valid tokens counted for each2lane stage, allocated slots include odd tail padding. Ratios may use stated total/phase cycle denominators. These are logical enable/token occupancy, not transistor switching, power, gate-netlist occupancy, or model/system performance.'),indent=2)+'\n')
