@@ -27,6 +27,8 @@ def one(case,variant,revision):
     incremental=os.environ.get('PINXY_ECO_INCREMENTAL')=='1'
     targeted=os.environ.get('PINXY_ECO_TARGETED')=='1'
     rc_heuristic=os.environ.get('PINXY_ECO_PLACEMENT_HEURISTIC')=='1'
+    fresh_grt=os.environ.get('PINXY_ECO_FRESH_GRT')=='1'
+    assert not fresh_grt or rc_heuristic
     fix_hold=os.environ.get('PINXY_ECO_HOLD')=='1'
     assert not rc_heuristic or (incremental and not targeted)
     assert not targeted or (electrical_only and incremental and case in ['gemm','mxu'] and variant=='C')
@@ -86,6 +88,20 @@ def one(case,variant,revision):
         lines=[s.replace('detailed_placement;check_placement -verbose',
               'detailed_placement;check_placement -verbose;filler_placement -prefix PINXY_RC_FILL_ $eco_fillers;global_connect;check_placement -verbose') for s in lines]
         lines=[s.replace('global_route -end_incremental -allow_congestion','global_route -end_incremental') for s in lines]
+    if fresh_grt:
+        # r07 still rejected guide-derived VECTOR estimator state; build native
+        # GRT segments rather than silently reverting to WLM or waiving errors.
+        lines=[s for s in lines if not s.startswith('read_guides ')]
+        i=next(i for i,s in enumerate(lines) if s.startswith('if {![stage begin_incremental'))
+        lines[i:i]=['if {![stage initialize_native_GRT {global_route -guide_file '+tcl(out/'initial_native.guide')+' -congestion_report_file '+tcl(out/'initial_native_congestion.rpt')+'}]} {close $stages;exit 1}']
+        lines=[s.replace('estimate_parasitics -placement','estimate_parasitics -global_routing') for s in lines]
+        i=next(i for i,s in enumerate(lines) if s.startswith('if {![stage cell_repair'))
+        lines[i+1:i+1]=['if {![stage cell_repair_checkpoint {write_db '+tcl(out/'cell_repaired_NOT_ROUTED.odb')+';fingerprint '+tcl(out/'cell_repaired')+';cell_cost '+tcl(out/'cell_repaired.cell_cost.tsv')+'}]} {close $stages;exit 1}']
+        if case.endswith('_aux'):
+            # r07 converged with the negotiation legalizer then segfaulted.
+            # This is a separate supported implementation, not removal of the
+            # placement check; keep check_placement and the failed predecessor.
+            lines=[s.replace('detailed_placement;check_placement','detailed_placement -use_diamond_legalizer;check_placement') for s in lines]
     replacements=[]
     if targeted:
         from cell_semantics import check_pair
@@ -142,7 +158,9 @@ def one(case,variant,revision):
          'new_access_window_trial_replaced':False,'equivalence_not_yet_verified':True,'full_qualification':False,
          'electrical_only_repair':electrical_only,'incremental_route_attempt':incremental,'same_source_access_windows_retained':bool(reservation_keys),
          'targeted_master_changes':replacements,'fillers_restored_with_original_master_set':targeted or rc_heuristic,
-         'repair_estimator':'EXACT_SOURCE_SPEF_REPLAY_THEN_DECLARED_PLACEMENT_HEURISTIC' if rc_heuristic else 'LEGACY_OR_TARGETED_NO_ESTIMATOR_FIX',
+         'repair_estimator':('EXACT_SOURCE_SPEF_REPLAY_THEN_NATIVE_GRT_HEURISTIC' if fresh_grt else 'EXACT_SOURCE_SPEF_REPLAY_THEN_DECLARED_PLACEMENT_HEURISTIC') if rc_heuristic else 'LEGACY_OR_TARGETED_NO_ESTIMATOR_FIX',
+         'fresh_native_global_routes_for_estimation':fresh_grt,
+         'SYSTEM_legalizer':'SUPPORTED_DIAMOND_WITH_UNCHANGED_CHECK_PLACEMENT' if fresh_grt and case.endswith('_aux') else 'DEFAULT',
          'hold_repair_requested':fix_hold,'final_timing_requires_fresh_extraction':True,
          'replacement_logic_state_precheck':'EXACT_LIBERTY_FUNCTION_AND_SEQUENTIAL_STATE_CONTRACT' if targeted else 'NOT_EXECUTED',
          'design_formal_equivalence':'NOT_EXECUTED',
