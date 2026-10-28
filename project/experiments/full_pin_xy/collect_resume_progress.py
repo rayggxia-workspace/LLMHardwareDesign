@@ -17,7 +17,8 @@ def collect(name,extra_jobs):
               'inputs/ll-local-patch-r01/*','leaf_eco/r0[3456789]/*/*','eco_views/r0[12]/*/*',
               'logs/rc-aware-eco-r07-*.log','logs/native-grt-eco-r08-*.log',
               'logs/isolated-vector-eco-r09-*.log','logs/costed-eco-view-*-r0[12]-*.log',
-              'checkpoint_legalization/r01/*','logs/checkpoint-legalization-r01-*.log']
+              'checkpoint_legalization/r0[12]/*','logs/checkpoint-legalization-r0[12]-*.log',
+              'checkpoint_route/r01/*','logs/checkpoint-route-r01-*.log']
     paths=set(p for pattern in patterns for p in ROOT.glob(pattern) if p.is_file())
     paths.update(ROOT/'logs'/n for n in ['local-patch-r01-92747.log','local-patch-qual-r01-92748.log',
          'constraint-audit-r01-92749.log','constraint-audit-r02-92751.log','constraint-audit-r03-92752.log',

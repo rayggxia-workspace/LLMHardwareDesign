@@ -15,6 +15,8 @@ def run(case,source_revision,view_revision):
     assert j.get('completed_utc') and j['native_returncode']==0 and j['fresh_DRC_returncode']==0 and j['fresh_DRC_count']==0
     assert j['whole_signal_geometry']['pass'] and j['source_unchanged'] and all(j['geometry_invariants'].values())
     assert j['full_qualification'] is False and j['targeted_master_changes']
+    with (source/'stages.tsv').open() as f:stages={r['stage']:r['status'] for r in csv.DictReader(f,delimiter='\t')}
+    assert all(stages.get(s)=='EXECUTED' for s in ['cell_repair','legalization','global_route','detailed_route','VDD','VSS','whole_signal_geometry','rcx','sta'])
     assert all(sha(Path(p))==v for p,v in j['source_inputs_SHA'].items())
     original=ROOT/'finalized'/j['source_physical_revision']/(case+'-C');old=json.loads((original/'execution.json').read_text())
     trial=Path(old['legacy_RC_STA_receipt']);baseline=json.loads(trial.read_text());sdc=Path(baseline['source_sdc'])
