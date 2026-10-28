@@ -8,14 +8,19 @@ from run_escape_fixture import execute
 DRIVER=Path(__file__).resolve().parent
 out=ROOT/'tool_api'/sys.argv[1];out.mkdir(parents=True,exist_ok=False)
 script=out/'probe.tcl'
-script.write_text('''puts {NATIVE_GRT_COMMANDS_BEGIN}
+script.write_text('set probe_out '+tcl(out)+'\n'+'''puts {NATIVE_GRT_COMMANDS_BEGIN}
 foreach c [lsort [info commands grt::*]] {puts $c}
 puts {NATIVE_GRT_COMMANDS_END}
 foreach c {global_route set_routing_layers set_global_routing_layer_adjustment set_global_routing_region_adjustment} {
   puts "COMMAND_BODY $c"
-  if {[catch {info body $c} body]} {puts $body} else {puts $body}
+  if {![catch {info body $c} body]} {
+    set f [open $probe_out/$c.body.tcl w];puts -nonewline $f $body;close $f
+    puts [list BODY_COMPLETE $c [info complete $body]]
+  } else {puts $body}
   catch {help $c}
 }
+puts [list ACTUAL_EXECUTABLE [info nameofexecutable]]
+catch {puts [exec sha256sum [info nameofexecutable]]}
 catch {help *grid*}
 foreach p {/OpenROAD-flow-scripts/tools/OpenROAD/src/grt/src/GlobalRouter.cpp /OpenROAD-flow-scripts/tools/OpenROAD/src/grt/src/Grid.cpp /OpenROAD-flow-scripts/tools/OpenROAD/src/grt/src/GlobalRouter.tcl} {
   puts [list SOURCE_AVAILABLE $p [file exists $p]]
