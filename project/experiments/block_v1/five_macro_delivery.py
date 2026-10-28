@@ -43,7 +43,9 @@ def final_leaf(root,out,cpus,run,kind,gate_roots=None,selected=None,gate_prefix=
     assert len(pins)==len({p['pin'] for p in pins})==len(wanted)
     assert {p['pin'] for p in pins}=={p['pin'] for p in wanted}
     if selected is not None:
-        assert {p['pin']:(p['layer'],p['box_dbu']) for p in pins}=={p['pin']:(p['layer'],p['box_dbu']) for p in wanted}
+        from pin_contract import rectangles
+        expected,_=rectangles(json.loads((folder/'pins.json').read_text()),(folder/'pins.tcl').read_text(),dbu)
+        assert {p['pin']:(p['layer'],p['box_dbu']) for p in pins}==expected
     (out/'pins.json').write_text(json.dumps(dict(dbu_per_um=dbu,pins=pins),indent=2)+'\n')
     image=out/(flow['top']+'.png')
     script='''import pya
