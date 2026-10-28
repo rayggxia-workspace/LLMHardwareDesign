@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('revision300-s-drc-localize-'):
+    if MODE=='revision300-s-wire-api':
+        from revision300_s_wire_probe import probe
+        probe(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('revision300-s-drc-localize-'):
         from revision300_s_drc_localize import diagnose
         diagnose(ROOT,OUT,CPUS,run,MODE.rsplit('-',1)[1])
     elif MODE=='revision300-sv-workspace':
