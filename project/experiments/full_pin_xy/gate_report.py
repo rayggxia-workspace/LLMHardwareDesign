@@ -393,6 +393,11 @@ def render(root,out):
         modes={m['mode']:m for m in q['modes']}
         if all(m.get('native_route_returncode')==1 for m in modes.values()):
             upper_text+='<p><strong>92974已终态FAILED，优先于此前运行中记录：</strong>openTPU及llaccel两个770边适配子试验均GRT-0116拥塞失败，未进入DRT；fresh DRC、完整边连通及实际M10 landing包含检查均未执行，不记0/通过。两者使用相同实际但未合格下层输入，仍不证明两功能已实现或冻结。原报告估计拥塞不是实际金属DRC；下一步定位原始congestion区域与接口/网格约束，不能只因耗时归因或放宽规则制造通过。</p>'
+    tool=snapshot/'upper_tool_diagnosis/r01/execution.json.gz'
+    if tool.exists():
+        q=read(tool);result['upper_fullframe_two_edge_tool_diagnosis']=dict(q,evidence=(dest/tool.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('completed_utc'):
+            upper_text+='<p><strong>93015受控工具诊断终态：</strong>相同全frame/全部原M10 PG及OBS约束下的2/770条实际边，native route/fresh DRC0、2网/4端点所检连通通过；只证明子集，不能代表完整系统。失败检查点仍有770网的原生DB guide，已真实导出，不因grt::have_routes=0猜测数据不存在。下一步复用完整DB guide继续DRT，原GRT-0116仍记FAILED，不重跑同一全局搜索或使用allow_congestion/infinite_cap改变结果。</p>'
     for revision in ['r01','r02']:
         p=snapshot/('tool_api/grt-start-'+revision+'/execution.json.gz')
         if p.exists():result['native_GRT_capability_'+revision]=dict(read(p),evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
@@ -425,6 +430,25 @@ def render(root,out):
           'evidence':(dest/chain_resume.relative_to(snapshot)).relative_to(out).as_posix()}
         if q.get('completed_utc') and q.get('route_stage_status',{}).get('preserve_contracts')=='FAIL':
             chain_resume_text='<p><strong>SYSTEM 92925已终态失败：</strong>真实GRT/DRT命令执行完成，但随后preserve_contracts在导出已移动buffer坐标时遇到空实例句柄（Empty command name）。这是恢复脚本将selected_buffers值保留为空造成的导出失败；已有原连接、非选中位置和pin/PG/外框文件仍需分别按SHA核查。没有保存最终routed ODB，fresh native、RCX/STA及最终物理合同尚未执行，空route.drc不是资格通过。原合法化检查点和全部失败保留；修复原生实例查找后在新目录复用检查点，不重新选择或移动buffer。</p>'
+    resumed=snapshot/'output_chain_resume/r02/opentpu_aux-C/execution.json.gz'
+    if resumed.exists():
+        q=read(resumed);result['SYSTEM_existing_buffer_relocation_r02']=dict(q,evidence=(dest/resumed.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('completed_utc'):
+            r=next(r for r in rows if r['case']=='opentpu_aux')
+            r['historical_source_before_existing_buffer_relocation']={k:r[k] for k in ['completed_source','actual_internal_route','native_DRC_count','all_multiterminal_signal_clock_geometry','setup_ns','hold_ns','violation_marker_rows']}
+            r.update({'completed_source':'existing_output_buffers/r02','actual_internal_route':'COMPLETED_NATIVE_DRC_AND_STA_FAILED',
+              'native_DRC_count':q.get('fresh_DRC_count'),'all_multiterminal_signal_clock_geometry':q.get('whole_signal_geometry',{}).get('pass'),
+              'setup_ns':q.get('setup_ns'),'hold_ns':q.get('hold_ns'),'violation_marker_rows':q.get('literal_VIOLATED_markers_not_complete_failure_count')})
+            chain_resume_text+='<p><strong>SYSTEM92968已终态FAILED：</strong>复用合法化检查点并修复句柄导出后，完整route/RCX/原SDC已完成、466332网所检连通通过；fresh native仍2项，setup/hold −0.056303/−0.119814ns、1233文字违例。旧−0.462192/−0.125999ns、原native0及全部工具失败分别保留。原接口/PG/外框、原功能连接和非选中位置保持，现有输出buffer重排不是纯XY收益或时序闭合；旧r03研究模型不是这个新source的匹配视图。</p>'
+    landing_text=''
+    repairs=[]
+    for case,revision in [('gemm','r01'),('mxu','r02')]:
+        p=snapshot/'escape_landing'/revision/(case+'-C')/'execution.json.gz'
+        if p.exists():
+            q=read(p);repairs.append(dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix()))
+            if q.get('completed_utc'):
+                landing_text+='<p>'+case+'父层落脚修订已终态：fresh native='+str(q.get('fresh_DRC_count'))+'，所检几何连通='+str(q.get('whole_signal_geometry',{}).get('pass'))+'，双PG='+str(q.get('both_power_grids_pass'))+'。只改一个新增父层M10点、原接口/PG保持；此夹具的旧叶源SHA='+str(q.get('source_leaf_ODB_SHA'))+'，不能代替当前658diode或成本叶的完整父层/RC/STA资格。</p>'
+    result['latest_actual_parent_landing_repairs']=repairs
     from plot_actual_critical_paths import plot as plot_paths
     diagnosis=plot_paths(snapshot,out)
     if diagnosis:result['actual_critical_path_diagnosis']=diagnosis
@@ -472,6 +496,7 @@ def render(root,out):
       'CURRENT_658_DIODE_GDS_PENDING; COVERAGE_INCOMPLETE':'658版GDS待验/覆盖不全',
       'CURRENT_658_DIODE_AVAILABLE_DECK0_COVERAGE_INCOMPLETE':'原可用GDS deck零项/覆盖不全',
       'CURRENT_658_DIODE_GDS_OR_AVAILABLE_DECK_FAILED':'当前严格GDS/deck失败',
+      'existing_output_buffers/r02':'原输出buffer重排/r02','COMPLETED_NATIVE_DRC_AND_STA_FAILED':'已布线；native/STA失败',
       'RUNNING_OR_RECEIPT_NOT_TERMINAL':'运行中/未收齐终态'}
     def show(value):
         if value is None:return '未知/待验证'
@@ -496,7 +521,7 @@ def render(root,out):
 <h3>新收齐父夹具终态：批作业失败与子结果分开</h3>
 <div class="scroll"><table><thead><tr><th>实际物理版本</th><th>路由返回</th><th>fresh native DRC</th><th>所检连通</th><th>信号网数</th><th>双PG日志连通</th></tr></thead><tbody>'''+parents+'''</tbody></table></div>
 <p>92700与92714均已终态FAILED，不能继续标运行中：GEMM旧源C先前DRT无AP，Aopt子试验却已native0、3753网/7506端点及双PG通过；MXU Aopt/C均完成布线/2172网/4344端点连通及双PG，但fresh native分别5/2项spacing失败。C的两项位于M6的act_data[12]与macro OBS、以及M10的act_data[197]/[213]之间；Aopt五项均为M10信号间距。错误原文及来源保持，不用DRT0覆盖fresh结果。</p>
-<p>新版GEMM父夹具92721也已终态FAILED：完成实际路由、所检信号连通与双PG，fresh native仍有1项M10 gemm_a_rdata[128]/[129]间距错误。92841只针对已证实位置，用实际异网M10走线/via、PG、macro OBS和1.5μm的该层PRL上限筛选新的父层接点并重新接线；其原叶M5/M6及PG不改，等待真实终态，不宣布通过，也不把旧源夹具冒充成本ECO叶视图资格。</p>
+<p>新版GEMM父夹具92721也已终态FAILED：完成实际路由、所检信号连通与双PG，fresh native仍有1项M10 gemm_a_rdata[128]/[129]间距错误。92841只针对已证实位置，用实际异网M10走线/via、PG、macro OBS和1.5μm该层PRL上限筛选新父层点并重接；原叶M5/M6及PG不改，最新终态如下，不把旧源夹具冒充成本ECO/658diode叶资格。</p>'''+landing_text+'''
 <h3>MXU M6局部层次归属：同网占用仍不是规则豁免</h3>
 <p>92891只读取得父层、旧叶块与成本ECO叶块的真实局部线段、via落脚、pin、PG及OBS。两叶源所导出的M6矩形/网络标签一致；与原生M6红框相交的父层OBS由实际同网叶金属覆盖。这提示该报项与抽象的网络归属有关，不能把OBS当空白、删除OBS或直接豁免原生DRC。两叶源各有2项OBS变换未核对，完整层次/跨层规则仍待验证。92892另行修订父层act_data[197]的M10接点并重布线，保留全部原pin/PG和另一M6报项，不提前宣布通过。</p>
 '''+ownership_image+'''

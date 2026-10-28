@@ -50,11 +50,12 @@ def check(out):
     if system.exists() and read(system).get('completed_utc'):
         q=read(system);assert not q['full_qualification'] and q['native_returncode']==0 and q['fresh_DRC_count']==0
         assert q['source_unchanged'] and all(q['geometry_invariants'].values()) and q['whole_signal_geometry']['pass']
-        assert rows['opentpu_aux']['completed_source']=='costed_ECO/isolated-route-r01'
+        historical=rows['opentpu_aux'].get('historical_source_before_existing_buffer_relocation',rows['opentpu_aux'])
+        assert historical['completed_source']=='costed_ECO/isolated-route-r01'
         for kind in ['setup','hold']:
             t=gzip.decompress((system.parent/(kind+'.txt.gz')).read_bytes()).decode()
-            value=float(re.search(r'worst slack (?:min|max)\s+([-\d.]+)',t)[1]);assert rows['opentpu_aux'][kind+'_ns']==value<0
-        assert rows['opentpu_aux']['violation_marker_rows']==gzip.decompress((system.parent/'checks.txt.gz').read_bytes()).decode().count('(VIOLATED)')
+            value=float(re.search(r'worst slack (?:min|max)\s+([-\d.]+)',t)[1]);assert historical[kind+'_ns']==value<0
+        assert historical['violation_marker_rows']==gzip.decompress((system.parent/'checks.txt.gz').read_bytes()).decode().count('(VIOLATED)')
     parents={r['version']:r for r in j.get('selected_parent_fixture_terminal_receipts',[])}
     for case,plan,errors,nets in [('gemm','Aopt',0,3753),('mxu','Aopt',5,2172),('mxu','C',2,2172)]:
         relative='escape_fixtures/'+('gemm-r01' if case=='gemm' else 'mxu-r01')+'/'+case+'-'+plan
@@ -288,6 +289,30 @@ def check(out):
         import xml.etree.ElementTree as ET
         actual_rdb=(out/q['evidence']).parent/'diagnostic.lyrdb.gz'
         assert len(ET.fromstring(gzip.decompress(actual_rdb.read_bytes())).findall('.//item'))==0
+    if j.get('upper_fullframe_two_edge_tool_diagnosis',{}).get('completed_utc'):
+        q=j['upper_fullframe_two_edge_tool_diagnosis'];assert not q['full_qualification'] and q['subset_edges']==2 and q['original_mode_edges']==770
+        assert q['fresh_DRC_count']==0 and q['only_two_selected_edge_geometry']['checked_nets']==2 and q['only_two_selected_edge_geometry']['pass']
+        assert q['actual_four_selected_M10_hook_rectangles_unchanged'] and q['entire_original_overlay_M10_PG_OBS_constraint_set_preserved']
+        assert q['all_closed_source_geometry_files_unchanged']
+        p=(out/q['evidence']).parent
+        import csv,io
+        guides=list(csv.DictReader(io.StringIO(gzip.decompress((p/'failed_checkpoint_guides.tsv.gz').read_bytes()).decode()),delimiter='\t'))
+        assert len(guides)==770 and all(int(g['DB_guide_count_or_minus1_unsupported'])>0 for g in guides)
+        text=gzip.decompress((p/'recovered_from_failed.guide.gz').read_bytes()).decode()
+        ids=re.findall(r'^(?:src|dst)\[(\d+)\]\s*\n\(',text,re.M);assert len(ids)==len(set(ids))==770 and set(map(int,ids))==set(range(770))
+    if j.get('SYSTEM_existing_buffer_relocation_r02',{}).get('completed_utc'):
+        q=j['SYSTEM_existing_buffer_relocation_r02'];assert not q['full_qualification'] and q['native_returncodes']['route']==0
+        assert q['fresh_DRC_count']==rows['opentpu_aux']['native_DRC_count']==2 and q['whole_signal_geometry']['pass']
+        assert q['setup_ns']==rows['opentpu_aux']['setup_ns']==-0.056303 and q['hold_ns']==rows['opentpu_aux']['hold_ns']==-0.119814
+        assert q['literal_VIOLATED_markers_not_complete_failure_count']==1233 and q['all_sources_unchanged']
+        assert all(q['pin_PG_die_unchanged'].values()) and not q['legalization_recomputed'] and not q['selection_or_moves_recomputed']
+        for kind in ['connections','nonselected']:assert q['files']['before.'+kind+'.tsv']['sha256']==q['files']['after.'+kind+'.tsv']['sha256']
+    for q in j.get('latest_actual_parent_landing_repairs',[]):
+        if not q.get('completed_utc'):continue
+        assert q['native_route_returncode']==q['fresh_DRC_returncode']==0 and q['whole_signal_geometry']['pass']
+        assert q['fresh_DRC_count']==(0 if q['case']=='gemm' else 1)
+        assert q['exactly_one_parent_M10_pin_XY_changed_all_other_rectangles_unchanged'] and q['all_PG_geometry_byteexact_unchanged'] and q['both_power_grids_pass']
+        assert q['source_unchanged'] and not q['full_qualification']
     if j.get('actual_fixed256_native_attribute_audit'):
         q=j['actual_fixed256_native_attribute_audit'];assert q['native_export_returncode']==0 and not q['native_export_executed_this_run']
         assert q['all_256_native_FIXEDS_and_original_net_bindings_verified'] and q['all_closed_source_files_unchanged'] and q['native_shared_conductor_count']==256
