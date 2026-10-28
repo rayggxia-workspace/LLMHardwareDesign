@@ -2,6 +2,7 @@
 import json
 import re
 import shutil
+from pathlib import Path
 
 
 def implement(root,out,cpus,run):
@@ -10,13 +11,16 @@ def implement(root,out,cpus,run):
     policy=root/'project/experiments/block_v1/revision300-v-grt-resume.json'
     selected=json.loads(policy.read_text())
     adjustment=selected['upper_layer_adjustment']
-    assert adjustment in (.20,.18)
-    prior=selected.get('prior_failed_attempt')
-    fields={k:v for k,v in selected.items()if k!='prior_failed_attempt'}
-    assert fields==dict(schema='revision300-v-grt-resume/1',
+    assert adjustment==.20
+    iterations=selected['congestion_iterations']
+    assert iterations==100
+    assert selected==dict(schema='revision300-v-grt-resume/2',
         source='block-v1-20261028-236/tasks/revision300-route-v',resume_from='4_cts.odb',
-        upper_layer_adjustment=adjustment,same_native_geometry_rules=True,
-        same_approved_timing_constraints=True,requires_fresh_final_acceptance=True)
+        upper_layer_adjustment=.20,congestion_iterations=100,
+        failed_attempts=['block-v1-20261029-264/tasks/revision300-route-v',
+                        'block-v1-20261029-267/tasks/revision300-route-v'],
+        same_native_geometry_rules=True,same_approved_timing_constraints=True,
+        requires_fresh_final_acceptance=True)
     base=out.parents[2]
     source=base/'block-v1-20261028-236/tasks/revision300-route-v'
     receipt=json.loads((source/'receipt.json').read_text())
@@ -30,20 +34,27 @@ def implement(root,out,cpus,run):
     text=grt.read_text()
     assert 'Global routing finished with congestion' in text
     assert 'Try reduce the layer adjustment from 25% to 20%' in text
-    prior_proof=None
-    if adjustment==.18:
-        assert prior=='block-v1-20261029-264/tasks/revision300-route-v'
-        failed=base/prior;pr=json.loads((failed/'receipt.json').read_text())
+    prior_proof=[]
+    for task,capacity,resources,demand,usage,h,v,congestion in (
+        (selected['failed_attempts'][0],.20,9504319,6405684,'67.40%',7,8,115),
+        (selected['failed_attempts'][1],.18,9601687,6347646,'66.11%',8,5,143)):
+        failed=base/task;pr=json.loads((failed/'receipt.json').read_text())
         assert pr['passed']is False and pr['mode']==out.name
         log=failed/'flow/logs/nangate45/bv1_block_v1_v/base/5_1_grt.log'
         assert file_sha(log)==pr['outputs'][str(log.relative_to(failed))]
         assert 'Global routing finished with congestion' in log.read_text()
-        assert re.search(r'(?m)^Total\s+9504319\s+6405684\s+67.40%\s+7\s*/\s*8\s*/\s*115\s*$',log.read_text())
+        pattern=r'(?m)^Total\s+%d\s+%d\s+%s\s+%d\s*/\s*%d\s*/\s*%d\s*$'
+        assert re.search(pattern%(resources,demand,re.escape(usage),h,v,congestion),log.read_text())
         marker=failed/'flow/results/nangate45/bv1_block_v1_v/base/bv1-grt-adjustment.tsv'
         assert file_sha(marker)==pr['outputs'][str(marker.relative_to(failed))]
-        assert marker.read_text()=='metal4-metal10\t0.20\nnative_rules\tunchanged\n'
-        prior_proof=dict(task=str(failed),receipt_sha256=file_sha(failed/'receipt.json'),
-                         log_sha256=file_sha(log),previous_adjustment=.20,previous_total_congestion=115)
+        assert marker.read_text()=='metal4-metal10\t%.2f\nnative_rules\tunchanged\n'%capacity
+        prior_proof.append(dict(task=str(failed),receipt_sha256=file_sha(failed/'receipt.json'),
+            log_sha256=file_sha(log),previous_adjustment=capacity,previous_total_congestion=congestion))
+    # Verify the pinned flow really consumes the argument; an unconsumed knob is not a retry.
+    flow=Path('/OpenROAD-flow-scripts/flow')
+    assert file_sha(flow/'scripts/global_route.tcl')=='3968898c9abd8c0fd56c50d08bed6d3943bdc641f63c8674817449bbec2706ce'
+    assert '$cong_iters $::env(GLOBAL_ROUTE_ARGS)' in (flow/'scripts/global_route.tcl').read_text()
+    route_args='-congestion_iterations 100 -congestion_report_iter_step 5 -verbose'
     for name,digest in original['rtl_sha256'].items():assert file_sha(root/name)==digest
     sealed=('pins.json','pins.tcl','input.sdc','input.v','input-diodes.tcl','config.mk')
     for name in sealed:
@@ -64,6 +75,8 @@ def implement(root,out,cpus,run):
     previous='export PRE_GLOBAL_ROUTE_TCL = '+str(out/'input-diodes.tcl')
     assert config.count(previous)==1
     config=config.replace(previous,'export PRE_GLOBAL_ROUTE_TCL = '+str(hook))
+    assert not re.search(r'(?m)^export GLOBAL_ROUTE_ARGS\s*=',config)
+    config+='\nexport GLOBAL_ROUTE_ARGS = '+route_args+'\n'
     (out/'config.mk').write_text(config)
     relative='flow/results/nangate45/bv1_block_v1_v/base'
     results=out/relative;results.mkdir(parents=True)
@@ -81,11 +94,11 @@ def implement(root,out,cpus,run):
         inherited_cts_files_sha256=copied,failed_grt_log_sha256=file_sha(grt),
         resume_policy_sha256=file_sha(policy),
         executable_pre_global_route_hook_sha256=file_sha(hook),
-        config_sha256=file_sha(out/'config.mk'),global_route_adjustment=adjustment,prior_failed_attempt=prior_proof,
+        config_sha256=file_sha(out/'config.mk'),global_route_adjustment=adjustment,global_route_iterations=iterations,prior_failed_attempts=prior_proof,
         acceptance_policy='Unchanged native rules and approved300MHz SDC. Detailed routing and all new final gates remain mandatory; no congestion or DRC waiver.',
-        scope='Same V RTL/footprint/placement/CTS; capacity reservation only.20percent followed native advice;18percent requires the actual prior20percent failure115 evidence. Fresh route/finish and all final acceptance required.')
+        scope='Same V RTL/footprint/placement/CTS. Return to best measured20percent reservation and increase FastRoute congestion iterations30to100 through verified GLOBAL_ROUTE_ARGS. Zero congestion and all fresh final gates remain mandatory.')
     command=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
-    wanted=dict(original['actual_variables'],PRE_GLOBAL_ROUTE_TCL=str(hook))
+    wanted=dict(original['actual_variables'],PRE_GLOBAL_ROUTE_TCL=str(hook),GLOBAL_ROUTE_ARGS=route_args)
     result['actual_variables']={}
     for name,expected in wanted.items():
         log='variable-'+name+'.log';run(command+['print-'+name],log)
@@ -95,6 +108,9 @@ def implement(root,out,cpus,run):
     save()
     for stage in ('do-route','do-finish'):
         run(command+[stage],stage+'.log');result['stages'].append(stage);save()
+        if stage=='do-route':
+            actual_log=out/'flow/logs/nangate45/bv1_block_v1_v/base/5_1_grt.log'
+            assert '-congestion_iterations 100' in actual_log.read_text()
         assert (results/'bv1-grt-adjustment.tsv').read_text()=='metal4-metal10\t%.2f\nnative_rules\tunchanged\n'%adjustment
     for suffix in ('v','sdc','def','odb','spef'):
         p=results/('6_final.'+suffix);assert p.is_file()
