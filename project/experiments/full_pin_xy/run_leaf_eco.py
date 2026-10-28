@@ -66,12 +66,14 @@ def one(case,variant,revision):
     if rc_heuristic:
         # read_guides/start_incremental invalidated the resizer's estimated-RC
         # state in r01/r02 (EST-0027); do not misdescribe WLM as extracted-RC
-        # optimization. Establish a placement heuristic, then restore exact
-        # source SPEF for the pre-repair STA. Changed nets use the heuristic;
-        # only the final fresh RCX/STA determines the physical outcome.
+        # optimization. Replay exact source SPEF, then explicitly switch to
+        # a placement heuristic for repair. The installed resizer rejects
+        # SPEF as its active estimator (r06 EST-0104). Only final fresh RCX/STA
+        # determines the physical outcome; heuristic slack is separate.
         i=next(i for i,s in enumerate(lines) if s.startswith('if {![stage cell_repair'))
         lines[i:i]=['if {![stage repair_RC_model {estimate_parasitics -placement;read_spef '+tcl(spef)+';report_parasitic_annotation -report_unannotated > '+tcl(out/'repair_RC_coverage.txt')+';report_worst_slack -max -digits 6 > '+tcl(out/'repair_before.setup.txt')+';report_worst_slack -min -digits 6 > '+tcl(out/'repair_before.hold.txt')+'}]} {close $stages;exit 1}']
         lines[i+1:i+1]=['if {![stage exact_source_STA_replayed {foreach kind {setup hold} {set a [open [file join '+tcl(out)+' before.$kind.txt] r];set av [read $a];close $a;set b [open [file join '+tcl(out)+' repair_before.$kind.txt] r];set bv [read $b];close $b;if {$av ne $bv} {error "Exact source SPEF STA changed before cell repair"}}}]} {close $stages;exit 1}']
+        lines[i+2:i+2]=['if {![stage declared_repair_heuristic {estimate_parasitics -placement;report_worst_slack -max -digits 6 > '+tcl(out/'heuristic_before.setup.txt')+';report_worst_slack -min -digits 6 > '+tcl(out/'heuristic_before.hold.txt')+'}]} {close $stages;exit 1}']
     if fix_hold:
         assert not electrical_only and not targeted
         lines=[s.replace('-max_utilization 85 -verbose}]}',
@@ -140,7 +142,7 @@ def one(case,variant,revision):
          'new_access_window_trial_replaced':False,'equivalence_not_yet_verified':True,'full_qualification':False,
          'electrical_only_repair':electrical_only,'incremental_route_attempt':incremental,'same_source_access_windows_retained':bool(reservation_keys),
          'targeted_master_changes':replacements,'fillers_restored_with_original_master_set':targeted or rc_heuristic,
-         'repair_estimator':'PLACEMENT_HEURISTIC_WITH_EXACT_SOURCE_SPEF_RESTORED_BEFORE_REPAIR' if rc_heuristic else 'LEGACY_OR_TARGETED_NO_ESTIMATOR_FIX',
+         'repair_estimator':'EXACT_SOURCE_SPEF_REPLAY_THEN_DECLARED_PLACEMENT_HEURISTIC' if rc_heuristic else 'LEGACY_OR_TARGETED_NO_ESTIMATOR_FIX',
          'hold_repair_requested':fix_hold,'final_timing_requires_fresh_extraction':True,
          'replacement_logic_state_precheck':'EXACT_LIBERTY_FUNCTION_AND_SEQUENTIAL_STATE_CONTRACT' if targeted else 'NOT_EXECUTED',
          'design_formal_equivalence':'NOT_EXECUTED',
