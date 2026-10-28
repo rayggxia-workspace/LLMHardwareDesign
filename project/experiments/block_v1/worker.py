@@ -91,6 +91,13 @@ try:
     elif MODE.startswith('revision300-preconnect-'):
         from revision300_preconnect import audit
         audit(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE=='revision300-boundary-rc-control':
+        from revision300_boundary_rc import control
+        control(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('revision300-boundary-rc-'):
+        from revision300_boundary_rc import measure
+        kind,variant=MODE.split('-')[-2:]
+        measure(ROOT,OUT,CPUS,run,kind,variant)
     elif MODE.startswith('revision300-load-'):
         from revision300_load import measure
         _,_,kind,variant=MODE.split('-')
