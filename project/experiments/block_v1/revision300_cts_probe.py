@@ -30,7 +30,7 @@ def probe(root, out, cpus, run):
             with slot(base):
                 shutil.copyfile(p, out/name)
     hook = out/'diagnostic.tcl'
-    hook.write_text('''# Post-CTS, before any timing repair. Placement RC only.
+    hook.write_text('cd {'+str(out)+'}\n'+'''# Post-CTS, before any timing repair. Placement RC only.
 report_worst_slack -min -digits 9 > diagnostic-timing.rpt
 report_worst_slack -max -digits 9 >> diagnostic-timing.rpt
 report_checks -path_delay min_max -group_path_count 20 -digits 9 -format full_clock_expanded >> diagnostic-timing.rpt
@@ -54,3 +54,38 @@ write_sdc -digits 12 diagnostic-readback.sdc
                   qualified_hard_macro=False, physical_implementation_completed=False,
                   scope='Post-CTS pre-repair diagnostic only; placement RC, repair intentionally skipped; no final acceptance')
     (out/'revision300-cts-probe.json').write_text(json.dumps(result, indent=2)+'\n')
+
+
+def readback(root, out, cpus, run):
+    """Resume only reports from the actual saved pre-repair snapshot."""
+    from io_slots import file_sha
+    assert cpus == 16
+    base = out.parents[2]
+    source = base/'block-v1-20261028-237/tasks/revision300-cts-probe'
+    receipt = json.loads((source/'receipt.json').read_text())
+    assert receipt['passed'] is False and receipt['mode'] == 'revision300-cts-probe'
+    results = source/'flow/results/nangate45/bv1_transaction6k/base'
+    files = [results/('4_1_pre_repair_setup_hold.'+suffix) for suffix in ['odb', 'sdc']]
+    bound = {}
+    for p in files:
+        assert file_sha(p) == receipt['outputs'][str(p.relative_to(source))]
+        bound[str(p)] = file_sha(p)
+    platform = Path('/OpenROAD-flow-scripts/flow/platforms/nangate45')
+    prefix = 'set_thread_count 16\nread_liberty {'+str(platform/'lib/NangateOpenCellLibrary_typical.lib')+'}\n'
+    prefix += 'read_db {'+str(files[0])+'}\nread_sdc {'+str(files[1])+'}\n'
+    prefix += 'source {'+str(platform/'setRC.tcl')+'}\nset_propagated_clock [all_clocks]\nestimate_parasitics -placement\n'
+    body = '''report_worst_slack -min -digits 9 > diagnostic-timing.rpt
+report_worst_slack -max -digits 9 >> diagnostic-timing.rpt
+report_checks -path_delay min_max -group_path_count 20 -digits 9 -format full_clock_expanded >> diagnostic-timing.rpt
+report_check_types -max_capacitance -max_slew -violators -digits 9 > diagnostic-electrical.rpt
+write_sdc -digits 12 diagnostic-readback.sdc
+'''
+    (out/'readback.tcl').write_text(prefix+body)
+    run(['openroad', '-no_init', '-exit', out/'readback.tcl'], 'readback.log')
+    for name, digest in bound.items():
+        assert file_sha(Path(name)) == digest
+    result = dict(passed=True, source_receipt_sha256=file_sha(source/'receipt.json'),
+                  source_files_sha256=bound, source_unchanged=True,
+                  qualified_hard_macro=False, physical_implementation_completed=False,
+                  scope='Read-only post-CTS pre-repair snapshot, placement RC only; no optimization or final acceptance')
+    (out/'revision300-cts-readback.json').write_text(json.dumps(result, indent=2)+'\n')
