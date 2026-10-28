@@ -121,17 +121,16 @@ clock 使用共同输入、真实状态负载、CTS资源和最终线路，分�
 
 <!-- current-method-checkpoint -->
 
-当前方法检查点：2026-10-28T22:46:29.340460+00:00；源码288c448e9276f366c287075f60af718b1b3ad78b；索引/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-driver-route-failure-and-BPin-controls-20261028T224629Z/milestone.json SHA b8c16bd8490ff49a7fe93f0f0739dc93a3e84c3771cc5d9007c01ae6261a5aee。候选1/3未冻结，阶段二/三未验收、四未执行。
+当前方法检查点2026-10-28T23:21:14.565247+00:00；源码0342f146be57300ec71642f4537cd5f08fad2e23；完整证据索引/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-native-PA-review-and-protected-handoff-20261028T232114Z/milestone.json SHA caad563d9101329f140b99282441bb34fcdf2e32d3f889fbf33c676d51c50a0f。候选1/3未冻结，二/三未验收、四NOTRUN。
 
-1. 完整案例规模、真实物理网表和全资源/存储/外部模型边界固定；状态锥、有限整机回归、真实放置/PG/布线/DRC/RC/质量分开验收，不以任一局部PASS代替终验。93022新实际网表65545状态/168074锥及真实状态输入破坏通过，不能复用旧字节身份称新整机回归通过。
-2. 在冻结前只新增必要buffer并声明split/load连接。93016合法放置/保持原546397位置及所有导体通过；UNROUTED数据库仍不算真实接线。实际恢复必须来源守卫和新目录，不动原四核心/封存文件。
-3. native DEF往返必须八表/全导体保持；仅原声明124网可重布、其中62明确双cell一入一出split允许原无wire。93017严格状态失败、93018往返通过后真实调用路由，随后DRT1231失败；不能把准备通过当布线通过。
-4. **AP覆盖需区分标准单元、macro、顶层BPin和实际可达几何。** 93018 stdCellPinNoAp0不涵盖顶层BPin；49个已观察顶层PIN失败，无最终route DB。必须验证实际BTerm→net、所有BPin shape和保存AP的层/点/真实自有矩形关系，不能只看PA退出0或std计数。
-5. 93047从真实日志提取49口、完整preparedDB/轨道/AP读回及15489424重复保护矩形空间接触扫描。它们都在非选中固定网络，源有AP且BPin boxes被重复矩形覆盖。实际接触是诊断证据，排他根因与修复尚未证明。
-6. **成对原生PA对照93053正在执行。** 同一完整source/124目标准备/Lib/SDC/RC/tool，唯一变化是是否添加本任务重复导体保护OBS，原始阻挡与真实固定几何不删；串行4线程。记录全部signal BPin及观察49口前后AP、真实native catch code/几何身份、原OBS保持，输入全hash重核。一次性内存只按声明移除待重布wire，不write_db/全局或详细布线。这个对照不产生可采用的物理结果，也不证明完整DRT失败排他原因。
-7. afterany不是成功。93024/26/29/34/36正确地child_launched=false：五项业务均NOTRUN，禁止写成实际RC/回归失败。新driver RC来源适配/全覆盖/完整回装export精确复用/编译回归入口已实现但端到端未验证；需新实际物理producer通过全部严格门槛后才运行。
-8. 复用已闭合完整prepare检查点及精确来源，不重复几十分钟的大准备；不能复用失败route作为可接受物理源。若未来实际新网表字节不同，重新做状态锥/完整功能；不变GEMM/VECTOR export可按原receipt/ODB/所有native SHA和解析后完整身份精确复用。
-9. RC/时序必须同die/track、库、SDC、提取规则、实际锚点、完整net/pin覆盖，按身份区分新增/持续/恶化。旧M8无buffer5691setup/36hold/1104cap质量失败不能冒充新buffer测量；无epsilon、时钟放宽或reset例外。
-10. 全组时序最差是ATTENTION数据setup/crossbar输入hold，旧首组复位误归因已撤回留证；原完整core/AUX边界不同不自动继承豁免。不同局部原型PASS不拼成最终共同底座。
-11. 92548保留运行。14059预连线是规划加未闭合实际路线，841闲置扇出/案例、当前191父版PG/clock/功能/质量与VECTOR新增问题仍待。外clock/open37负载null保留。正式通用Block与LLM阶段不替代当前完整案例验收。
-12. 容器Python3.10与host3.12语法不同：93046在数据库前失败，新兼容源码/目录93047闭合，不覆盖旧失败；host AST检查不等于实际容器运行通过。全部申请4核但诊断/状态比较常主要单线程，按真实CPU/wall报告，不声称4倍加速。
+1. 完整硬件/外部模型边界、原3ns及资源保持约束固定；状态锥、有限整机回归、真实PG/布线/DRC/RC/质量分别验收。93022新65545状态/168074锥通过不替代新整机回归；旧字节身份证明不可移给新buffer资源。
+2. 封存完整native prepare可在原ODB/全部原native表、原Lib/SDC/RC/tool/比较helper和124targets/62splits一致、八表/全导体保持通过时复用；93056实际输入与15真实来源帧破坏拒绝闭合。失败route本身不能复用为成功物理源。
+3. native PA完成/标准单元NoAp0、数据库存在AP、每个BPin矩形有AP、worker局部实际可接入是不同条件。93018在前者完成后仍DRT1231失败。93062真实完整单box正例和新增M8无AP负例验证逐box守卫，未伪造AP或隐藏几何。
+4. 93047几何接触不能作为因果证明。93053两组完整native PA都执行完成，但汇总独占文件第二次创建失败；93065在新目录逐输入/输出SHA与原控制流/log/身份复核，不重复28分钟PA、不修改失败历史。
+5. **实际反例约束算法候选。** 有/无重复保护的49口均有M8 AP，保存坐标逐行相同；“重复OBS令M8保存点丢失”不受支持。要求49M8AP丢失的先前重排方案门槛未满足，不执行/采用。坐标相同也不证明方向标志或worker可达性相同。
+6. 新93067方法实验保持原完整保护：PA/GRT→所有真实signal BPin box的native AP覆盖→真实ODB/guides/原OBS清单→新进程读回再检查→detailed_route -no_pin_access。仅消费原生实际AP，不制造AP或删除原OBS/固定导体。保存检查点便于后续失败定位，不以handoff或退出0代替完整实际线路验收。
+7. 原124目标、62新split是唯一信号改线范围；所有原/新增单元的位置/master/连接、非目标导体、PG/clock/BPin/OBS及M9/M10空层须独立读回。fresh连接/异网接触/全DRC/PG、真实RC/全端点质量和完整新回归仍必须做。
+8. afterany不是成功：93024/26/29/34/36 child_launched=false，业务NOTRUN；新typed源适配与完整回装/编译/六组回归代码端到端仍待合格物理producer，不冒充实际功能/时序结果。
+9. RC比较同die/track/模型/SDC/提取/tool/锚点及完整覆盖，按身份区分新增/持续/恶化，不设epsilon或时钟/复位例外。旧M8无buffer5691setup/36hold/1104cap拒绝不等于新buffer测量；VECTOR新增问题仍拒绝。
+10. 92548保留运行；14059规划≠闭合实际固定线。841闲置扇出/案例、统一PG/clock/当前191完整父版/两完整案例/最终冻结仍待。外clock/open37负载null保留。阶段后正式通用Block/LLM算法不替代本轮完整案例。
+11. 93058源UNROUTED完整PG/放置通过，不能代替最终route的fresh PG、IR/EM或质量。4核申请和实际用核分开，PA两组约3.812核、PG/来源核对约1核；所有阶段≤分配4核、BLAS1、无重复活跃作业。
