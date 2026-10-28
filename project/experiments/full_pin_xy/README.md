@@ -140,3 +140,5 @@ GEMM严格GDS92376已自然完成，A/8pin C合并成功但1346/1358项天线违
 - `collect_continuation.py NEW_NAME`只写新快照，运行中与未复制大文件分别记录；`refresh_continuation.py --root R --out REPORT_DIR`仅刷新新增节/PNG/SVG与SHA，原ABC和旧物理发布命名空间保留。`validate_continuation.py`由主验证器调用，检查24767候选及已取得9031个新实际pin的逐项对应、层/方向/网络/尺寸/坐标、常量、重复/越界和原生快照字节哈希；不是物理资格证书。
 
 源码/当前作业及恢复入口见`docs/handoffs/2026-10-28-issue-126-common-base-continuation.md`。不覆盖原参考、其他工作树、冻结驱动或活动作业；每次提交/复用前重新核实远程状态。
+
+`collect_terminal_leaf.py CASE REV NEW_NAME`只补收已经产生终态的原生回执、timing和pin表，不再运行P&R，也不替换旧快照；`refresh_continuation.py`会把这些新增终态补入阶段表，实际完整资格始终由各项检查决定。当前五块11260个新实际pin核对通过，llSYS完整窗口仍单列为执行中。
