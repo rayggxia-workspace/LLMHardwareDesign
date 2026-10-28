@@ -63,6 +63,12 @@ try:
     if MODE=='revision300-constraints-control':
         from revision300_constraints_control import control
         control(ROOT,OUT,CPUS,run)
+    elif MODE=='revision300-hold-probe':
+        from revision300_cts_probe import hold_probe
+        hold_probe(ROOT,OUT,CPUS,run)
+    elif MODE=='revision300-cts-probe-s':
+        from revision300_cts_probe import probe
+        probe(ROOT,OUT,CPUS,run,'s')
     elif MODE.startswith('revision300-final-source-'):
         from revision300_receive import finalize
         finalize(ROOT,OUT,CPUS,run,MODE[-1])

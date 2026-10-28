@@ -39,7 +39,11 @@ def control(root,out,cpus,run):
         sdc=re.sub(r'create_clock -name core -period [^ ]+',
                    'create_clock -name core -period %.12g'%selected['clock_ns'],generate(selected))
         (out/(name+'-input.sdc')).write_text(sdc)
-        script='read_liberty {'+str(lib)+'}\nread_verilog {'+str(fixture)+'}\nlink_design revision300_boundary_fixture\n'
+        platform=lib.parent.parent
+        lefs=[platform/'lef/NangateOpenCellLibrary.tech.lef',platform/'lef/NangateOpenCellLibrary.macro.mod.lef']
+        assert all(p.is_file()for p in lefs)
+        script=''.join('read_lef {'+str(p)+'}\n'for p in lefs)
+        script+='read_liberty {'+str(lib)+'}\nread_verilog {'+str(fixture)+'}\nlink_design revision300_boundary_fixture\n'
         script+='read_sdc {'+str(out/(name+'-input.sdc'))+'}\nwrite_sdc -no_timestamp -digits 12 {'+str(out/(name+'-readback.sdc'))+'}\n'
         (out/(name+'.tcl')).write_text(script)
         run(['openroad','-no_init','-exit',out/(name+'.tcl')],name+'.log')
@@ -54,7 +58,7 @@ def control(root,out,cpus,run):
             assert rejected,name
             reports[name]=dict(rejected=True)
     result=dict(passed=True,budget=budget,serialization=reference,cases=reports,
-                library_sha256=file_sha(lib),qualified_hard_macro=False,
+                library_sha256=file_sha(lib),lef_sha256={str(p):file_sha(p)for p in lefs},qualified_hard_macro=False,
                 scope='Native approved-budget 12-decimal SDC reference and three actual independently reparsed bad-budget controls; no STA slack adjustment or leaf acceptance')
     (out/'revision300-constraints-control.json').write_text(json.dumps(result,indent=2)+'\n')
 

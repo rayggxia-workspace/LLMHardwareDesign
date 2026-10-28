@@ -74,7 +74,11 @@ def finalize(root, out, cpus, run, kind):
 
 def source(root, out, kind):
     from io_slots import file_sha
-    folder = out.parent/('revision300-final-source-'+kind)
+    selection=json.loads((root/'project/experiments/block_v1/revision300-selected-sources.json').read_text())
+    assert selection['schema']=='revision300-selected-sources/1'
+    relative=selection['macros'][kind];assert relative,'No selected revised final source'
+    folder = out.parents[2]/relative
+    assert out.parents[2]in folder.resolve().parents and folder.name=='revision300-final-source-'+kind
     receipt = json.loads((folder/'receipt.json').read_text())
     assert receipt['passed'] is True and receipt['mode'] == folder.name
     path = folder/'revision300-final-source.json'
