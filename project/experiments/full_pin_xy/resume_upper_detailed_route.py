@@ -1,7 +1,8 @@
 """Continue real DB guides after strict GRT failure, without changing its result.
 
-No global-route rerun, -allow_congestion, infinite capacity, layer/rule relaxation
-or synthetic guide. The original failed stage remains FAILED in every receipt.
+Default: no global-route rerun. The separate grt200 profile changes only search
+budget 50 to 200 and logging. Neither profile uses -allow_congestion, infinite
+capacity, layer/rule relaxation or synthetic guide. Original failures persist.
 """
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor

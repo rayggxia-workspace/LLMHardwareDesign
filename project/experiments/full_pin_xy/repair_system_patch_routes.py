@@ -4,8 +4,8 @@ The two source M2 violations remain in history. This is a routing algorithm
 variant, not removal of a DRC check, pin migration or a timing relaxation.
 """
 from pathlib import Path
-import datetime,json,os,re,sys,traceback
-from run_exports import ROOT,sha
+import datetime,json,os,re,subprocess,sys,traceback
+from run_exports import ROOT,IMAGE,sha
 from run_parent_trial import tcl
 from run_escape_fixture import execute
 from check_access import check
@@ -29,7 +29,8 @@ def run(revision):
     assert len(reservations)==1 and sha(reservations[0])==prior['source_SHA'][str(reservations[0])]
     out=ROOT/'system_patch_route'/revision/'opentpu_aux-C';out.mkdir(parents=True,exist_ok=False)
     inputs={str(p):sha(p) for p in [receipt,odb,drc,original,sdc,reservations[0]]}
-    inputs.update({p:sha(Path(p)) for p in old['libs']})
+    # Standard-cell Liberty exists inside the original ORFS image, not on host.
+    inputs.update({p:sha(Path(p)) for p in old['libs'] if Path(p).is_file()})
     rec={'scope':'ACTUAL_SYSTEM_NATIVE_CLEAN_PATCHES_ROUTE_VARIANT_NOT_CELLS_OR_PIN_ECO_OR_QUALIFICATION',
       'source_SHA':inputs,'source_native_DRC_count':2,'source_setup_ns':prior['setup_ns'],'source_hold_ns':prior['hold_ns'],
       'original_SDC_and_allowed_layers_unchanged':True,'original_failures_retained':True,
@@ -45,7 +46,10 @@ def run(revision):
       '--home',str(ROOT/'home'),'--pwd',str(out)]
     for path in old['libs']:
         if Path(path).is_file():common+=['--bind',path+':'+path+':ro']
+    def image_library_hashes():
+        return {p:subprocess.check_output(common+[IMAGE,'sha256sum',p]).decode().split()[0] for p in old['libs'] if not Path(p).is_file()}
     try:
+        rec['container_library_SHA256']=image_library_hashes();save()
         helper=(DRIVER/'physical_trial.tcl').read_text().split('if {![stage load {',1)[0]
         contracts=(DRIVER/'output_chain_placement.tcl').read_text().split('read_db $::env(PINXY_CHAIN_SOURCE)',1)[0]
         commands=[helper,contracts]+['read_liberty '+tcl(p) for p in old['libs']]
@@ -86,9 +90,10 @@ def run(revision):
             with (out/'stages.tsv').open() as f:rec['native_stage_status']={r['stage']:r['status'] for r in csv.DictReader(f,delimiter='\t')}
     except Exception:rec['actual_failure']=traceback.format_exc()
     rec['all_closed_sources_unchanged']=all(sha(Path(p))==v for p,v in inputs.items())
+    rec['container_libraries_unchanged']=image_library_hashes()==rec.get('container_library_SHA256')
     rec['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
     rec['files']={p.name:{'bytes':p.stat().st_size,'sha256':sha(p)} for p in out.iterdir() if p.is_file() and p.name!='execution.json'};save()
-    passed=('actual_failure' not in rec and rec['native_returncodes'].get('implementation')==0 and rec.get('fresh_DRC_count')==0 and rec.get('whole_signal_geometry',{}).get('pass') and all(rec.get('all_cells_poses_original_connections_pins_PG_die_unchanged',{}).values()) and rec.get('setup_ns',-1)>=0 and rec.get('hold_ns',-1)>=0 and rec.get('literal_VIOLATED_markers_not_complete_failure_count')==0 and rec['all_closed_sources_unchanged'] and all(rec.get('native_stage_status',{}).get(k)=='EXECUTED' for k in ['VDD','VSS','rcx','sta','whole_signal_geometry']))
+    passed=('actual_failure' not in rec and rec['native_returncodes'].get('implementation')==0 and rec.get('fresh_DRC_count')==0 and rec.get('whole_signal_geometry',{}).get('pass') and all(rec.get('all_cells_poses_original_connections_pins_PG_die_unchanged',{}).values()) and rec.get('setup_ns',-1)>=0 and rec.get('hold_ns',-1)>=0 and rec.get('literal_VIOLATED_markers_not_complete_failure_count')==0 and rec['all_closed_sources_unchanged'] and rec['container_libraries_unchanged'] and all(rec.get('native_stage_status',{}).get(k)=='EXECUTED' for k in ['VDD','VSS','rcx','sta','whole_signal_geometry']))
     return 0 if passed else 1
 
 

@@ -8,6 +8,7 @@ JOBS=['92690','92691','92700','92714','92721','92781','92783','92792','92794','9
 
 JOBS+=['92968','92969','92972','92974','92975','92976','92979','92984','92985','92997','93015']
 JOBS+=['93025']
+JOBS+=['93028','93030','93031']
 
 
 def sha(path):
@@ -57,7 +58,9 @@ def collect(name):
       'diode_views/r01/gemm-C/*','logs/real-diode-view-r01-*.log',
       'upper_tool_diagnosis/r01/*','logs/upper-fullframe-diagnostic-r01-*.log',
       'upper_detailed_resume/r01/*','upper_detailed_resume/r01/*/*','logs/upper-detailed-r01-*.log',
-      'actual_path_audit/r02/*/*','logs/system-relocated-path-r02-*.log']
+      'actual_path_audit/r02/*/*','logs/system-relocated-path-r02-*.log',
+      'upper_search_budget/r01/*','upper_search_budget/r01/*/*','logs/upper-search-r01-*.log',
+      'system_patch_route/r01/*/*','logs/system-patch-r01-*.log']
     stable_intermediates={}
     incremental=ROOT/'antenna_incremental_eco/r01/gemm-C/execution.json'
     if incremental.exists() and json.loads(incremental.read_text()).get('native_returncodes',{}).get('implementation')==0:
@@ -81,7 +84,8 @@ def collect(name):
         if 'upper_tool_diagnosis/r01/' in str(p) and p.suffix=='.guide' and a.st_size<=8*1024*1024:keep=True
         if 'antenna_rules/r01' in str(p) and p.suffix in ['.lef','.lydrc'] and a.st_size<=8*1024*1024:keep=True
         if 'fixed_wire_api' in str(p) and p.suffix=='.def' and a.st_size<=1024*1024:keep=True
-        omit_paths='paths.json' in p.name and 'actual_path_audit/r01' not in str(p)
+        if 'actual_path_audit/' in str(p) and p.name=='fresh_DRC_target_net.tsv.gz' and a.st_size<=8*1024*1024:keep=True
+        omit_paths='paths.json' in p.name and 'actual_path_audit/' not in str(p)
         keep=keep and not omit_paths and not any(s in p.name for s in ['.cells.','.pdn.','whole_access.tsv','selected_access.tsv'])
         if not keep:
             r['storage']='REMOTE_ONLY_INDEXED'
