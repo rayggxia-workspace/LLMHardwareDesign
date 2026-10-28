@@ -68,7 +68,7 @@ def one(case,variant,revision):
         replacements=([('place15450','BUF_X1','BUF_X2'),('_328297_','XOR2_X1','XOR2_X2'),
                        (r'rq_m\[341\]$_DFFE_PN0P_','DFFR_X1','DFFR_X2')]
                       if case=='gemm' else [('place10281','BUF_X1','BUF_X2')])
-        lib_text={p:subprocess.check_output(['singularity','exec','--cleanenv',
+        lib_text={p:Path(p).read_text() if Path(p).is_file() else subprocess.check_output(['singularity','exec','--cleanenv',
                   '--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
                   '--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro',
                   '--home',str(ROOT/'home'),IMAGE,'cat',p]).decode()
@@ -121,6 +121,9 @@ def one(case,variant,revision):
     (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
             '--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro','--home',str(ROOT/'home'),'--pwd',str(out)]
+    if targeted:
+        for p in old['libs']:
+            if Path(p).is_file():common+=['--bind',p+':'+p+':ro']
     env='PINXY_OUTPUT={},PINXY_ACCESS_ALL=1,PINXY_ACCESS_OUT={}'.format(out,out/'whole_access.tsv.gz')
     rec['native_returncode']=execute(common,out/'run.tcl',out/'native.log',env)
     if (out/'routed.odb').exists():
