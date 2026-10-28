@@ -68,7 +68,10 @@ def one(case,variant,revision):
         replacements=([('place15450','BUF_X1','BUF_X2'),('_328297_','XOR2_X1','XOR2_X2'),
                        (r'rq_m\[341\]$_DFFE_PN0P_','DFFR_X1','DFFR_X2')]
                       if case=='gemm' else [('place10281','BUF_X1','BUF_X2')])
-        lib_text={p:subprocess.check_output(['singularity','exec','--cleanenv','--home',str(ROOT/'home'),IMAGE,'cat',p]).decode()
+        lib_text={p:subprocess.check_output(['singularity','exec','--cleanenv',
+                  '--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
+                  '--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro',
+                  '--home',str(ROOT/'home'),IMAGE,'cat',p]).decode()
                   for p in old['libs']}
         logic_contracts=[check_pair([Path(p) for p in old['libs']],a,b,lambda p:lib_text[str(p)]) for _,a,b in replacements]
         (out/'replacement_logic_contracts.json').write_text(json.dumps(logic_contracts,indent=2)+'\n')
