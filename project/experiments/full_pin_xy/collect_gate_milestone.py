@@ -13,7 +13,7 @@ JOBS+=['93038','93040']
 JOBS+=['93041','93043','93048','93049']
 JOBS+=['93051']
 JOBS+=['93060','93061']
-JOBS+=['93072','93073','93074']
+JOBS+=['93072','93073','93074','93075']
 
 
 def sha(path):
@@ -74,7 +74,8 @@ def collect(name):
       'system_stacked_via_route/r01/*/*','logs/system-stacked-via-r01-*.log',
       'vector_clone_probe/r02/*','logs/vector-clone-probe-r02-*.log',
       'escape_view_recheck/r01/*/*','logs/mxu-escape-view-recheck-r01-*.log',
-      'sta_coverage_api/r01/*','logs/sta-coverage-api-r01-*.log']
+      'sta_coverage_api/r01/*','logs/sta-coverage-api-r01-*.log',
+      'extended_sta/r01/*','extended_sta/r01/*/*','logs/extended-sta-r01-*.log']
     stable_intermediates={}
     incremental=ROOT/'antenna_incremental_eco/r01/gemm-C/execution.json'
     if incremental.exists() and json.loads(incremental.read_text()).get('native_returncodes',{}).get('implementation')==0:

@@ -5,7 +5,7 @@ commands and Liberty check types remain coverage gaps, not zero violations.
 """
 from pathlib import Path
 import datetime,json,os,sys
-from run_exports import ROOT
+from run_exports import ROOT,sha
 from run_parent_trial import tcl
 from run_escape_fixture import execute
 
