@@ -364,7 +364,7 @@ def render(root,out):
             p=incremental.parent/'checks.txt.gz'
             if p.exists():partial['literal_VIOLATED_markers_not_complete_failure_count']=gzip.decompress(p.read_bytes()).decode().count('(VIOLATED)')
             item['closed_native_implementation_STA_reports_not_fresh_DRC_or_final_graph']=partial
-            incremental_text='<p><strong>92975定向22个新增真实diode：</strong>原层接线/详细布线、原视图合同、双PG及RCX/STA原生命令均已执行；闭合原生进程报告setup/hold='+str(partial.get('setup_ns'))+'/'+str(partial.get('hold_ns'))+'ns，文字违例='+str(partial.get('literal_VIOLATED_markers_not_complete_failure_count'))+'。独立fresh DRC、全量数字图及源合同以最终receipt各自为准，未终态不记0/通过。92976为对应严格GDS原deck依赖作业；不把提交视为规则通过。旧37项原样保留。</p>'
+            incremental_text+='<p><strong>92975定向22个新增真实diode：</strong>原层接线/详细布线、原视图合同、双PG及RCX/STA原生命令均已执行；闭合原生进程报告setup/hold='+str(partial.get('setup_ns'))+'/'+str(partial.get('hold_ns'))+'ns，文字违例='+str(partial.get('literal_VIOLATED_markers_not_complete_failure_count'))+'。独立fresh DRC、全量数字图及源合同以最终receipt各自为准，未终态不记0/通过。92976为对应严格GDS原deck依赖作业；不把提交视为规则通过。旧37项原样保留。</p>'
         if q.get('completed_utc'):
             incremental_text+='<p>92975最终回执：fresh native='+str(q.get('fresh_DRC_count'))+'，全量22新增负载数字合同='+str(q.get('all_original_instances_and_signal_graph_preserved_with_only_22_real_diode_loads'))+'，原pose/端点='+str(q.get('all_prior_functional_and_636_diode_poses_and_terminals_unchanged'))+'。无论Slurm结局，完整规则/RTL/系统资格仍未通过。</p>'
             if q.get('native_returncodes',{}).get('implementation')==0 and q.get('fresh_DRC_count') is not None and 'whole_signal_geometry' in q:
