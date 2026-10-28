@@ -14,7 +14,7 @@ module block_v1_m(
  localparam IDLE=0,PRODUCT=1,REDUCE=2,ACCUMULATE=3,DONE=4,
             SCALE=5,ALIGN=6,COMMIT=7,BURST=8,DRAIN=9,
             READ_SHIFT=10,READ_ROUND=11,READ_CLAMP=12,MERGE_LOW=13,MERGE_HIGH=14,
-            SCALE_MULT=15,SCALE_JOIN=16;
+            SCALE_MULT=15,SCALE_JOIN=16,CHECK_ACC=17;
  reg [4:0] state;
  reg signed [15:0] a[0:7],b[0:63];
  reg a_valid;reg [7:0] b_valid;
@@ -90,7 +90,9 @@ module block_v1_m(
  integer i,j;
  reg signed [18:0] sums[0:7];
  reg signed [64:0] next_acc[0:7];
- reg accumulation_error;
+ reg [7:0] acc_sign_left,acc_sign_right,acc_sign_result;
+ reg acc_check_valid,accumulation_fault;
+ wire observed_acc_overflow=|((~(acc_sign_left^acc_sign_right))&(acc_sign_result^acc_sign_left));
  reg signed [255:0] aligned_scale;
  reg alignment_error;
  reg [127:0] read_data;
@@ -109,7 +111,6 @@ module block_v1_m(
     multiplicand[8*r+c]=digit(a[c],fmt_a,digit_a);multiplier[8*r+c]=digit(b[8*r+c],fmt_b,digit_b);
    end
   end
-  accumulation_error=0;
   for(integer row=0;row<8;row=row+1)begin
    // Explicit balanced local tree, not an external product interface.
    sums[row]=
@@ -123,7 +124,6 @@ module block_v1_m(
       $signed({{3{product[8*row+7][15]}},product[8*row+7]})));
    next_acc[row]=$signed({accumulator[row][63],accumulator[row]})+
        ($signed({{46{reduced[row][18]}},reduced[row]})<<<digit_shift);
-   if(next_acc[row][64]!=next_acc[row][63])accumulation_error=1;
   end
   aligned_scale=$signed({{160{scale_product[95]}},scale_product})<<<merge_shift;
   alignment_error=aligned_scale[255:127]!={129{aligned_scale[127]}};
@@ -205,8 +205,15 @@ module block_v1_m(
    for(i=0;i<8;i=i+1)tile_b_valid[i]<=0;
    merge_shift<=0;clear_merge<=0;merge_error<=0;scale_product<=0;
    scale_operand<=0;scale_low<=0;scale_upper<=0;
+   acc_sign_left<=0;acc_sign_right<=0;acc_sign_result<=0;acc_check_valid<=0;accumulation_fault<=0;
    for(i=0;i<8;i=i+1)begin accumulator[i]<=0;merged[i]<=0;preview[i]<=0;reduced[i]<=0;end
   end else begin
+   // The carry-chain result no longer gates every accumulator write. Capture
+   // signs with each valid addition, then check them in a separate stage.
+   // reduced is S19 and digit_shift<=28, so the shifted addend fits S47 and
+   // retains reduced[18] as its S64 sign. S64 overflow remains checked exactly.
+   acc_check_valid<=0;
+   if(acc_check_valid)accumulation_fault<=accumulation_fault|observed_acc_overflow;
    if(rsp_valid&&rsp_ready)rsp_valid<=0;
    if(burst_busy&&cmd_valid&&cmd_ready)load_tile();
    if(state==PRODUCT||state==BURST)for(i=0;i<64;i=i+1)product[i]<=multiplicand[i]*multiplier[i];
@@ -233,6 +240,7 @@ module block_v1_m(
        burst_completion<=0;
        k_count<=cmd_data[2]?{12'b0,cmd_data[7:4]}:k_count+{12'b0,cmd_data[7:4]};
        accumulator_valid<=0;
+       accumulation_fault<=0;
        if(cmd_data[2])for(i=0;i<8;i=i+1)accumulator[i]<=0;
       end
       3:if(accumulator_valid&&cmd_index<4)
@@ -262,6 +270,7 @@ module block_v1_m(
         fmt_a<=cmd_data[0];fmt_b<=cmd_data[1];active_n<=cmd_data[11:8];last_k<=cmd_data[7:4];
         execution_bank<=cmd_index[5];tile_count<=cmd_data[14:12];issue_tile<=0;issue_a<=0;issue_b<=0;
         product_valid<=0;reduce_valid<=0;burst_completion<=1;accumulator_valid<=0;
+        accumulation_fault<=0;
         k_count<=cmd_data[2]?descriptor_k[15:0]:k_count+descriptor_k[15:0];
         if(cmd_data[2])for(i=0;i<8;i=i+1)accumulator[i]<=0;
         state<=BURST;
@@ -271,15 +280,15 @@ module block_v1_m(
     end
     PRODUCT:state<=REDUCE;
     REDUCE:begin for(i=0;i<8;i=i+1)reduced[i]<=sums[i];state<=ACCUMULATE;end
-    ACCUMULATE:if(accumulation_error)begin
-     // The legal <=65535 S16 input domain cannot overflow S64. Keep a guard
-     // rather than publishing an unproved wrap if the contract is changed.
-     accumulator_valid<=0;respond(0,1,0);
-    end else begin
-     for(i=0;i<8;i=i+1)accumulator[i]<=next_acc[i][63:0];
+    ACCUMULATE:begin
+     acc_check_valid<=1;
+     for(i=0;i<8;i=i+1)begin
+      accumulator[i]<=next_acc[i][63:0];acc_sign_left[i]<=accumulator[i][63];
+      acc_sign_right[i]<=reduced[i][18];acc_sign_result[i]<=next_acc[i][63];
+     end
      if(digit_b==(fmt_b?2:0))begin
       digit_b<=0;
-      if(digit_a==(fmt_a?2:0))begin accumulator_valid<=1;state<=DONE;end
+      if(digit_a==(fmt_a?2:0))begin state<=CHECK_ACC;end
       else begin digit_a<=digit_a+1'b1;state<=PRODUCT;end
      end else begin digit_b<=digit_b+1'b1;state<=PRODUCT;end
     end
@@ -301,18 +310,19 @@ module block_v1_m(
       reduce_shift<=product_shift;reduce_last<=product_last;
      end
      if(reduce_valid)begin
-      if(accumulation_error)begin
-       accumulator_valid<=0;product_valid<=0;reduce_valid<=0;
-       // Completion waits for the response register rather than overwriting
-       // an accepted loader acknowledgement. Legal S16/fullK cannot overflow.
-       state<=DONE;
-      end else begin
-       for(i=0;i<8;i=i+1)accumulator[i]<=next_acc[i][63:0];
-       if(reduce_last)begin accumulator_valid<=1;state<=DONE;end
+      acc_check_valid<=1;
+      for(i=0;i<8;i=i+1)begin
+       accumulator[i]<=next_acc[i][63:0];acc_sign_left[i]<=accumulator[i][63];
+       acc_sign_right[i]<=reduced[i][18];acc_sign_result[i]<=next_acc[i][63];
       end
+      if(reduce_last)state<=CHECK_ACC;
      end
     end
-    DONE:if(!rsp_valid||rsp_ready)respond(burst_completion?128'h80000000000000000000000000000000:128'd0,!accumulator_valid,0);
+    CHECK_ACC:state<=DONE;
+    DONE:if(!rsp_valid||rsp_ready)begin
+     accumulator_valid<=!accumulation_fault;
+     respond(burst_completion?128'h80000000000000000000000000000000:128'd0,accumulation_fault,0);
+    end
     READ_SHIFT:begin
      for(i=0;i<4;i=i+1)begin
       read_q[i]<=merged[4*int'(read_index)+i]>>>read_shift;

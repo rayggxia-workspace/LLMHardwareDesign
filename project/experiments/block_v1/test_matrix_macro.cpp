@@ -46,7 +46,7 @@ static std::array<int64_t,8> partial(){
 static void load(const Vec&a,const Mat&b){command(0,0,pack(a));for(int i=0;i<8;++i)command(1,i,pack(b[i]));}
 static void mac(bool wa,bool wb,bool clear,unsigned k,unsigned n){
  auto r=command(2,0,U128(wa)|(U128(wb)<<1)|(U128(clear)<<2)|(U128(k)<<4)|(U128(n)<<8));
- require(r.latency==3*(wa?3:1)*(wb?3:1)+1,"wrong MAC cycle count");
+ require(r.latency==3*(wa?3:1)*(wb?3:1)+2,"wrong MAC cycle count");
 }
 static I128 rne(I128 x,unsigned sh){
  if(!sh)return x;
@@ -90,7 +90,7 @@ static void packed_cases(){
    expected[row]+=int64_t(wa?aa[t][j]:int16_t(int8_t(aa[t][j])))*(wb?bb[t][row][j]:int16_t(int8_t(bb[t][row][j])));
   auto r=command(10,bank*32,descriptor(wa,wb,true,k,n,tiles));
   require(r.data==(U128(1)<<127),"tagged descriptor completion");
-  require(r.latency==tiles*(wa?3:1)*(wb?3:1)+3,"resident tile pipeline fill/drain latency");
+  require(r.latency==tiles*(wa?3:1)*(wb?3:1)+4,"resident tile pipeline fill/drain latency");
   require(partial()==expected,"packed multi-tile wide/tail mismatch");
  }
  // Existing active bank runs while twenty tightly packed next-bank transfers
