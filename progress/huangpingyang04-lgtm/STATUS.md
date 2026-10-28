@@ -90,3 +90,16 @@ GEMM/MXU新ECO视图的严格GDS合并及原有完整FreePDK45 deck另以92783�
 92812实际COMPLETED：GEMM/MXU Aopt同C相同3/1处X2换型，真实DRT/RCX与fresh native0、全块所检连通通过；setup/hold分别0.772449/0.053582ns、0.249090/0.053253ns，原pin/PG/die及源保持。成本分别+1.596/+0.266μm²标准单元master面积，非block面积收益。尚不是系统对照。
 
 92825只读检查同GEMM源，原生天线0网/0pin而GDS deck1460仍未修复；实际ANTENNA_X1原Liberty存在非零输入capacitance0.023429，单位以源库为准。下一步查规则/连接和diode识别差异，不删除检查或无模型插diode。gate-r04不可覆盖快照保存上述及父层/SYS/GDS终态原文和双SHA。92690仍RUNNING、92691依赖等待，92721仍RUNNING；不重复提交。六块完整资格、共同实际底座/冻结、两个完整M11/M12模式及系统对照均未完成，目标继续active。
+
+
+## 新阶段：原生天线覆盖根因、全映射合同与SYS匹配视图
+
+92834真实只读审计：M1–M10所有default/oxide2天线规则均无，tech LEF天线关键字0，macro LEF无ANTENNAGATEAREA。原GDS deck300:1检查不变；原生天线0缺覆盖，不是通过。92837/92838对比原始ODB与成本ECO，GEMM226775非filler实例/826710信号端点、MXU179887/635434全量网络/方向/实例/时钟复位常量保持，仅3/1处等Liberty逻辑状态换型；相同未修改存储黑盒合同下相对数字功能保持，非RTL形式验证。
+
+92835导出SYS2229位匹配新ODB/SPEF的物理/研究时序视图并准确重放原负余量；实际成本为新增5829功能实例、980原实例换型、1168移动、标准单元master面积+6918.128μm²，存储宏/全部pin/PG/外框保持，时序电气仍失败。不是纯XY收益或面积节省。
+
+92721已FAILED，GEMM新版父夹具route/连通/双PG完成，但fresh native1：M10 gemm_a_rdata[128]/[129]间距。92841按真实异网M10/PG/OBS筛选父pin128新位置并实际重布线中，原叶层/尺寸与PG保持待核；不算通过。92690 LL完整窗口仍运行、92691依赖等待。
+
+新图equal_cost_leaf_margins.png/svg比较实际Aopt/C提取余量，明确相同3/1处换型成本及完整规则失败。gate-r05不可覆盖原文/SHA保存上述终态。新模型准备92846/92847导出等成本G/M Aopt视图；92848为VECTOR全窗口及LL PG-only4错误源导出真实非零研究模型，其中LL明确标记UNQUALIFIED_FAILED_DRC_SOURCE，不放宽物理门槛、不把模型导出视为DRC通过。将用于用户授权的未合格共同集成，非合格冻结。
+
+上一发布5fa66e0已核实GitHub head/图blob，CI40706845419及40706840681均success，Issue126仍in_progress/PR129 Draft。完整技术目标继续active，未实施实际共享底座/冻结、两完整上层功能及系统对照。

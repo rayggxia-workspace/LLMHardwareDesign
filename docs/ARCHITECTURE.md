@@ -164,3 +164,8 @@ python project/experiments/full_pin_xy/validate_repository.py
 
 
 本轮GDS导入/规则阶段：`streamout_probe.py`显式设read_lef_with_def=false，仅保留原配置依赖的LEF清单，避免KLayout自动把导出的abstract/detailed两份顶层LEF当成子宏重复读入；实际安装API证据由`audit_streamout_reader.py`生成。allow-empty仍禁用，原FreePDK45 deck不改。`collect_gate_milestone.py NEW_NAME`在本人分配资源内收集不可覆盖的原始阶段快照；下载到analysis/gate_evidence后执行`refresh_continuation.py --root R --out REPORT --gates-only`，生成逐块qualification_matrix.json/CSV与最新门槛HTML。`validate_gate_matrix.py`由主验证器调用，独立核对旧提前失败、显式LEF配置、真实严格合并结果及实际时序数字。已知GDS缺失/规则覆盖缺口与native结果分别报告，不以Slurm/CI/空缺失列表宣布通过。
+
+
+新增实际验证：`antenna_rules_job.sh NEW_REV`只读核实安装LEF/GDS deck原文、原生逐层规则存在性及源SHA；原生天线0不代表已加载有效规则。`mapped_eco_job.sh CASE NEW_REV`对原始与成本ECO ODB导出全量映射端点，比较全部实例、信号/时钟/复位/常量/顶层网络及实际Liberty换型合同；相同存储黑盒合同的相对数字保持证明不替代RTL形式验证。`eco_view_job.sh opentpu_aux r01 NEW_VIEW_REV`导出实际检查点布线的SYS2229位视图，原始成本表与最终原生实例表分别核算；G/M可追加Aopt参数导出等成本周边视图。
+
+`plot_equal_cost_controls.py`只读取实际Aopt/C余量及独立成本，由gate_report刷新PNG/SVG；原A/B/C图不覆盖。`prepare_actual_landing_repair.py NEW_REV`以新版GEMM父夹具1项实际M10错误为触发，筛查原生异网金属/PG/OBS并移动新父层接点，原叶层/尺寸和PG不改；真实重布线、独立规则及全块连通仍必须执行。新集成模型只在显式`PINXY_UNQUALIFIED_MODEL_EXPORT=1`且LL完整PG-only原生错误数确为4时允许诊断导出，状态保留FAILED_DRC_SOURCE；不是放宽物理通过条件，不用于合格冻结。
