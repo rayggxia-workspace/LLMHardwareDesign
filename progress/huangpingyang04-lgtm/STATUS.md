@@ -50,3 +50,5 @@
 - 共同构造网表原生链接34954端点/17686分量双射通过，38个常量/idle驱动单列；没有共同M1–M10实际布局预连/冻结，也没有两完整M11/M12功能或系统收益结论。
 - 继续收集SYSTEM、GEMM/MXU父接入、电气ECO、VECTOR时序ECO和ACT夹具RC/STA。恢复入口及本人作业ID见[接续交接](../../docs/handoffs/2026-10-28-issue-126-common-base-continuation.md)。SRAM GDS/完整规则/模型资格仍缺，登记PR5 pending、看板unverified/同步pending、审查人待指定。
 
+- 后续终态：openSYS新窗口独立native0/460503网连通（累计五块11260实际pin），setup/hold和2016标记仍失败；llSYS新窗口未终态。VECTOR成本ECO A/C仍setup失败，GEMM/MXU电气ECO仍cap3/1失败，新增buffer/移除filler不当面积收益。ACT夹具92732真实RC/STA两方案均hold约−0.074ns且604零长度网未标注。阶段cb945271已上传、两CI成功、4对新PNG/SVG路径读回；新增终态小包与后续commit继续同PR。
+

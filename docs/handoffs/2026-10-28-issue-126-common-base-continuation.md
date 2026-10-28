@@ -18,6 +18,10 @@ common-topology-r02生成完整构造网表与逐bit图检查：17686固定逻�
 
 后续实际终态补充：92726的ACT夹具分析在remove_from_collection（当前OpenSTA无此命令）处失败，提取/STA未执行；原目录不改。0ec2e5a驱动用原生Tcl列表修正后，92732在escape_rc_sta/r02对Aopt/C真正完成RCX/SPEF/三负载STA，源物理ODB SHA不变。native单位1fF；10fF时Aopt setup1.424290/hold−0.074562，C setup1.353438/hold−0.073476，均hold失败，C另有4条VIOLATED标记，50fF标记数分别305/228。604个物理同层零长度接触网仍提示未标注driver；不得用假RC/删检查消除。该I/O策略是新增且两方案相同的研究bench（0.2T/0.05T max/min、BUF_X4、clock slew0.05ns），不能说成原叶约束或完整系统实际收益。raw数据新增milestone-r05；92724的两块电气ECO与其他活动作业继续收集，不因Slurm成功或DRT0宣称检查通过。
 
+cb945271阶段报告/4对新PNG/SVG已实际推送并由GitHub读回head；CI40669214019/40669213933成功，API列出全部8个新图片路径（PR超过3000文件，REST列表有截断，不把该列表当完整文件清单）。之后新增openSYS 92689终态：native0/460503网/1462823端点连通、原pre-RCX字节保持，setup−1.779887/hold−0.389230、2016标记失败；11260个新实际pin逐项核对。补录原生原文/index到terminal_updates/openSYS-r01，不改milestone-r05。LL PG-only92648已结束，92649独立检查；LL完整窗口92690/92691仍执行/等待，恢复先查实际状态。
+
+92708和92724也已终态并保留失败：VECTOR成本ECO A/C setup−4.136094/−4.162278（native0、连通通过），仍远不满足原约束。GEMM/MXU电气ECO r02均native0/连通及pin/PDN/die原样，但cap3/1项仍失败；GEMM无新功能单元，MXU加1buffer、标准单元master bbox面积+1.862um²而未解决目标。分别删除345005/258099个CORE_SPACER，仅新拷贝操作；没有block面积收益，若后续复用必须先恢复填充/适用规则和功能等价检查，不能作为已合格叶视图。首次ECO结果只能记录实际成本/失败，原源文件完整。
+
 ## 用户本轮确认的范围
 
 用户明确选择六块资源并集、交错共同布局，并要求两种功能真实复用同一批固定预连导体；不要求共用同一计算实例。本轮包含研究性M11/M12技术建模。此前M1–M8/M9–M10的Issue55仍独立活动，只读复用源码/输入，不接管其作业。没有冻结共同M1–M10，没有通过M11/M12完成两套系统，不把原两父层当共同底座。

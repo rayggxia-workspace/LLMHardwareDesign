@@ -21,6 +21,10 @@ ACT256-bit父层实际接入：Aopt和新C均已达到当前native/所检几何/
 
 该RC/STA已于92732实际执行：原时钟/SDC相同，明确新增研究I/O策略0.2T/0.05T max/min delay、BUF_X4驱动和上述负载。Aopt/C均有约−0.074ns hold失败；10fF时setup分别1.424290/1.353438ns、hold−0.074562/−0.073476ns，C另有4条VIOLATED标记。两者均保留604个零线长接触网的寄生未标注提示，源ODB保持不变，尚无完整RC/STA资格。标记行数不包含所有setup/hold报告行，不能当完整违规总数。先前92726的工具命令兼容性失败也保留，未假写已执行提取。
 
+推送后新增终态：openTPU SYSTEM完整1768-pin窗口版92688/92689已独立native0、460503网/1462823端点所检连通通过；setup−1.779887ns、hold−0.389230ns、2016条VIOLATED标记，仍失败。新增小型terminal_updates/openSYS-r01原生回执补入HTML，旧快照不变。至此五块的11260个实际pin已逐项核对，llSYS完整窗口版仍未终态。
+
+成本化ECO不等于修复成功：VECTOR A/C的原时钟ECO虽然native0/所检几何通过，setup仍−4.136094/−4.162278ns；GEMM/MXU电气专用增量ECO仍有3/1项电容失败。GEMM未增加功能单元；MXU增加1个buffer、标准单元主矩形面积+1.862μm²，但未修复该电容项。两个新ECO拷贝分别移除345005/258099个CORE_SPACER，后续若使用还须恢复填充并完成适用规则；不能说成计算资源或block面积节省，原始数据库不变。
+
 共同构造网表已原生链接：34,954端点与17,686固定逻辑连通分量逐项双射，全部原24,767信号pin及原层保留。两模式逐bit图计划复用同一组256资源，分别770条适配图边；37个常量输出驱动各自独立，另有1个闲置时钟驱动。这是逻辑/原生链接检查，未实现共同布局/预连/时钟/PG、未冻结M1–M10、未仅通过M11/M12实现两套功能。内部施工端口还须在冻结前降为真实保留金属，不能用此网表作已完成底座。
 
 研究M11/M12已实际完成2网/4端点小例与独立native0/几何检查，规则/层高/RC由M9/M10外推，明确研究假设，不具制造签核资格。新增[实际小例PNG](issue-126-full-pin/assets/research_upper_actual.png)、[llSYS PG修订PNG](issue-126-full-pin/assets/llsys_pg_revision.png)、[共同布局proposed PNG](issue-126-full-pin/assets/common_base_proposed.png)，各有SVG；报告连同原图共24幅可查看图像。

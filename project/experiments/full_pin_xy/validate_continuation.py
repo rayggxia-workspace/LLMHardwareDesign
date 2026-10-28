@@ -43,4 +43,10 @@ def check(out):
             original=content if r['source'].endswith('.gz') else gzip.decompress(content)
             assert len(original)==r['bytes'] and hashlib.sha256(original).hexdigest()==r['sha256'],r['relative']
             files+=1
+    for manifest in (root/'terminal_updates').glob('*/index.json'):
+        j=json.loads(manifest.read_text());assert not j['full_qualification']
+        for r in j['records']:
+            content=(manifest.parent/r['relative']).read_bytes();assert hashlib.sha256(content).hexdigest()==r['stored_sha256']
+            raw=gzip.decompress(content);assert len(raw)==r['bytes'] and hashlib.sha256(raw).hexdigest()==r['sha256']
+            files+=1
     print('PASS_CONTINUATION_PIN_INVARIANTS_AND_NATIVE_SNAPSHOT_HASHES',sum(counts.values()),'candidate pins;',actual_pin_checks,'actual native pins;',files,'files; NOT full physical qualification')

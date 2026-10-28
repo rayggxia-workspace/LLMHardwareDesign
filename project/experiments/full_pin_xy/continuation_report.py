@@ -169,6 +169,8 @@ def render(root,out):
     if not snapshots:return ''
     snapshot=snapshots[-1];dest=out/'data/continuation';dest.mkdir(exist_ok=True)
     stage_native(snapshot,dest/'native'/snapshot.name)
+    updates=root/'terminal_updates'
+    if updates.exists():shutil.copytree(updates,dest/'terminal_updates',dirs_exist_ok=True)
     for name in ['common-base-preparation-r04','common-topology-r02','llsys-pg-r03-contact-proof','llsys-pg-r03-actual-pin-input']:
         for p in (root/name).iterdir():
             if p.is_file():gzcopy(p,dest/name/(p.name+'.gz'))
@@ -189,6 +191,8 @@ def render(root,out):
     for c in CASES:
         revision='act-access-r03' if c=='act' else 'access-r03';d=snapshot/'trials'/revision/(c+'-C');p=d/'execution.json.gz';j=read(p) if p.exists() else {}
         f=snapshot/'finalized'/revision/(c+'-C')/'execution.json.gz';q=read(f) if f.exists() else {}
+        newer=sorted(updates.glob('*/finalized/'+revision+'/'+c+'-C/execution.json.gz')) if updates.exists() else []
+        if newer:f=newer[-1];q=read(f)
         def slack(kind):
             p=d/('timing.'+kind+'.txt.gz')
             if not p.exists():return None
@@ -231,6 +235,11 @@ def render(root,out):
     stamp=read(snapshot/'snapshot.json')['created_utc']
     section=section.replace('<h3>六块完整内部接入窗口试验</h3>','<p>本节原始物理回执快照UTC：'+html.escape(stamp)+'；运行中的作业不以文件存在或Slurm成功作为通过。</p><h3>六块完整内部接入窗口试验</h3>')
     section=section.replace('空项为待验证，不是0。','空项为待验证，不是0。违规行数仅计VIOLATED文字标记，不是完整违规总数；setup/hold及原始全部检查另列。')
+    if updates.exists():
+        additions=[]
+        for p in sorted(updates.glob('*/index.json')):
+            j=read(p);additions.append(expand.TITLES[j['case']]+'：'+j['created_utc']+'，native DRC='+str(j['native_DRC_count'])+'，所检全块连通='+str(j['whole_geometry']))
+        if additions:section=section.replace('<h3>六块完整内部接入窗口试验</h3>','<p>快照后新增终态已补入本表，原快照不改：'+html.escape('；'.join(additions))+'。原生回执位于data/continuation/terminal_updates，指标仍分阶段解释。</p><h3>六块完整内部接入窗口试验</h3>')
     section=section.replace('<h3>llaccel SYSTEM：','<p>下方原A/B/C交互查询保留原候选；本轮增量C坐标另按原pin名称逐项对应：</p><ul>'+''.join(pin_links)+'</ul><h3>llaccel SYSTEM：')
     topology=root/'common-topology-r02/topology_proof.json'
     if topology.exists():
@@ -251,4 +260,22 @@ def render(root,out):
     if rc_rows:
         rc_table=pd.DataFrame(rc_rows).to_html(index=False,border=0)
         section=section.replace('<h3>研究M11/M12','<h3>ACT真实接入后的RC/STA：执行完成，仍实际失败</h3><div class="scroll">'+rc_table+'</div><p>92732使用精确匹配的Aopt/r04 C叶模型及同一原始SDC/clock，新增相同研究I/O条件：max/min延时0.2T/0.05T、BUF_X4驱动、clock transition0.05ns、输出2/10/50fF。native report_units确认1fF；这不是原叶块或完整系统的原始边界条件，不混入纯XY收益。两方案hold约−0.074ns，均未通过。VIOLATED标记行仅统计该文字标记，不包含所有setup/hold报告行，不是完整违规总数。604个物理同层零线长接触网在RCX报告为未标注driver，原始覆盖提示保留；没有填虚构RC或理想化网络来清除提示。源物理ODB逐字节不变，没有保存RCX后ODB为母本。首次92726因当前工具无remove_from_collection命令而未完成，原失败保留，使用原生Tcl列表修复后重新执行。</p><h3>研究M11/M12')
+    eco_rows=[]
+    for p in sorted((snapshot/'leaf_eco').glob('*/*/execution.json.gz')):
+        j=read(p)
+        if not j.get('completed_utc'):continue
+        row={'ECO':p.parent.parent.name+'/'+p.parent.name,'native DRC':j.get('fresh_DRC_count'),'全块几何':j.get('whole_signal_geometry',{}).get('pass'),
+             '原pin/PG/die不变':all(j.get('geometry_invariants',{}).values()) if j.get('geometry_invariants') else None}
+        for kind in ['setup','hold']:
+            f=p.parent/(kind+'.txt.gz')
+            import re
+            m=re.search(r'worst slack (?:max|min)\s+([-\d.]+)',gzip.decompress(f.read_bytes()).decode()) if f.exists() else None
+            row[kind+' ns']=float(m[1]) if m else None
+        cost=j.get('separate_cell_ECO_cost',{});row['新增实例']=cost.get('added_instances');row['删除spacer']=cost.get('removed_CORE_SPACER_fillers')
+        row['标准单元主矩形面积变化um²']=round(cost['standard_cell_master_bbox_area_after_um2']-cost['standard_cell_master_bbox_area_before_um2'],6) if cost else None
+        f=p.parent/'checks.txt.gz';row['VIOLATED标记行']=sum('(VIOLATED)' in s for s in gzip.decompress(f.read_bytes()).decode().splitlines()) if f.exists() else None
+        eco_rows.append(row)
+    if eco_rows:
+        df=pd.DataFrame(eco_rows);et=df.astype(object).where(pd.notna(df),'未核查/无回执').to_html(index=False,border=0)
+        section=section.replace('<h3>研究M11/M12','<h3>单列成本的单元/缓冲ECO：实际仍失败</h3><div class="scroll">'+et+'</div><p>ECO不混入纯pin XY收益。VECTOR A/C原约束setup仍负；GEMM/MXU电气专用ECO仍有3/1项cap失败。MXU增加1个buffer、标准单元master bbox面积+1.862μm²，并未修复目标。r02分别去掉345005/258099个CORE_SPACER，只作用于新拷贝；原数据库不改，不能说成block面积或计算资源节省。若后续复用需恢复填充并执行全部适用规则及功能等价检查；当前不作合格叶视图。首轮r01缺精确成本表的项显示未核查，不填0。</p><h3>研究M11/M12')
     return section

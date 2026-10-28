@@ -288,7 +288,7 @@
 <p><a href="data/interfaces.csv.gz">完整接口组/方向/位宽</a> · <a href="data/connections.csv.gz">逐bit逻辑连接</a> · <a href="data/connections_physical_endpoints.csv.gz">连接两端原pin层</a> · <a href="data/pin_bindings.csv.gz">24,767条物理pin与逻辑接口绑定</a> · <a href="data/partition_summary.json.gz">配置/层次摘要</a></p></section>
 <section class="card" id="continuation"><h2>2026-10-28 接续：真实接入与共同底座（进行中）</h2>
 <div class="warn"><b>当前范围与状态：</b>用户已确认六块资源并集、交错布局、两功能共享实际固定预连导体；本轮包含研究M11/M12建模。下方旧报告“不扩展M11/M12”仅描述此前阶段。本节不宣布共同M1–M10实现/冻结、两套M11/M12功能或完整系统对照完成。</div>
-<p>本节原始物理回执快照UTC：2026-10-28T09:43:27.682606+00:00；运行中的作业不以文件存在或Slurm成功作为通过。</p><h3>六块完整内部接入窗口试验</h3><div class="scroll"><table class="dataframe">
+<p>本节原始物理回执快照UTC：2026-10-28T09:43:27.682606+00:00；运行中的作业不以文件存在或Slurm成功作为通过。</p><p>快照后新增终态已补入本表，原快照不改：openTPU SYSTEM：2026-10-28T10:12:03.005118+00:00，native DRC=0，所检全块连通=True。原生回执位于data/continuation/terminal_updates，指标仍分阶段解释。</p><h3>六块完整内部接入窗口试验</h3><div class="scroll"><table class="dataframe">
   <thead>
     <tr style="text-align: right;">
       <th>block</th>
@@ -338,8 +338,8 @@
       <td>92688</td>
       <td>True</td>
       <td>0.0</td>
-      <td>待验证</td>
-      <td>待验证</td>
+      <td>0.0</td>
+      <td>True</td>
       <td>-1.779887</td>
       <td>-0.38923</td>
       <td>2016.0</td>
@@ -524,7 +524,72 @@
       <td>False</td>
     </tr>
   </tbody>
-</table></div><p>92732使用精确匹配的Aopt/r04 C叶模型及同一原始SDC/clock，新增相同研究I/O条件：max/min延时0.2T/0.05T、BUF_X4驱动、clock transition0.05ns、输出2/10/50fF。native report_units确认1fF；这不是原叶块或完整系统的原始边界条件，不混入纯XY收益。两方案hold约−0.074ns，均未通过。VIOLATED标记行仅统计该文字标记，不包含所有setup/hold报告行，不是完整违规总数。604个物理同层零线长接触网在RCX报告为未标注driver，原始覆盖提示保留；没有填虚构RC或理想化网络来清除提示。源物理ODB逐字节不变，没有保存RCX后ODB为母本。首次92726因当前工具无remove_from_collection命令而未完成，原失败保留，使用原生Tcl列表修复后重新执行。</p><h3>研究M11/M12：实际工具/通孔小例</h3><img loading="lazy" src="assets/research_upper_actual.png" alt="真实M11 M12小例路由"><p><a href="assets/research_upper_actual.svg">SVG</a>。92650/92653的2网/4端点独立native0、实际via10/11及所检几何连通通过，新增下层金属只在既有M10接点内。原十层规则块哈希不变。层厚2μm、高14.09/18.09μm、RC来自原M9/M10外推，via零包围是研究假设；尚无12层完整制造deck、校准RCX或系统STA。0.5/1/2倍RC敏感性仍待执行。</p>
+</table></div><p>92732使用精确匹配的Aopt/r04 C叶模型及同一原始SDC/clock，新增相同研究I/O条件：max/min延时0.2T/0.05T、BUF_X4驱动、clock transition0.05ns、输出2/10/50fF。native report_units确认1fF；这不是原叶块或完整系统的原始边界条件，不混入纯XY收益。两方案hold约−0.074ns，均未通过。VIOLATED标记行仅统计该文字标记，不包含所有setup/hold报告行，不是完整违规总数。604个物理同层零线长接触网在RCX报告为未标注driver，原始覆盖提示保留；没有填虚构RC或理想化网络来清除提示。源物理ODB逐字节不变，没有保存RCX后ODB为母本。首次92726因当前工具无remove_from_collection命令而未完成，原失败保留，使用原生Tcl列表修复后重新执行。</p><h3>单列成本的单元/缓冲ECO：实际仍失败</h3><div class="scroll"><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>ECO</th>
+      <th>native DRC</th>
+      <th>全块几何</th>
+      <th>原pin/PG/die不变</th>
+      <th>setup ns</th>
+      <th>hold ns</th>
+      <th>新增实例</th>
+      <th>删除spacer</th>
+      <th>标准单元主矩形面积变化um²</th>
+      <th>VIOLATED标记行</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>r01/vector-A</td>
+      <td>0</td>
+      <td>True</td>
+      <td>True</td>
+      <td>-4.136094</td>
+      <td>0.024133</td>
+      <td>未核查/无回执</td>
+      <td>未核查/无回执</td>
+      <td>未核查/无回执</td>
+      <td>62</td>
+    </tr>
+    <tr>
+      <td>r01/vector-C</td>
+      <td>0</td>
+      <td>True</td>
+      <td>True</td>
+      <td>-4.162278</td>
+      <td>0.022326</td>
+      <td>未核查/无回执</td>
+      <td>未核查/无回执</td>
+      <td>未核查/无回执</td>
+      <td>77</td>
+    </tr>
+    <tr>
+      <td>r02/gemm-C</td>
+      <td>0</td>
+      <td>True</td>
+      <td>True</td>
+      <td>0.773634</td>
+      <td>0.036717</td>
+      <td>0.0</td>
+      <td>345005.0</td>
+      <td>0.0</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>r02/mxu-C</td>
+      <td>0</td>
+      <td>True</td>
+      <td>True</td>
+      <td>0.246756</td>
+      <td>0.038563</td>
+      <td>1.0</td>
+      <td>258099.0</td>
+      <td>1.862</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table></div><p>ECO不混入纯pin XY收益。VECTOR A/C原约束setup仍负；GEMM/MXU电气专用ECO仍有3/1项cap失败。MXU增加1个buffer、标准单元master bbox面积+1.862μm²，并未修复目标。r02分别去掉345005/258099个CORE_SPACER，只作用于新拷贝；原数据库不改，不能说成block面积或计算资源节省。若后续复用需恢复填充并执行全部适用规则及功能等价检查；当前不作合格叶视图。首轮r01缺精确成本表的项显示未核查，不填0。</p><h3>研究M11/M12：实际工具/通孔小例</h3><img loading="lazy" src="assets/research_upper_actual.png" alt="真实M11 M12小例路由"><p><a href="assets/research_upper_actual.svg">SVG</a>。92650/92653的2网/4端点独立native0、实际via10/11及所检几何连通通过，新增下层金属只在既有M10接点内。原十层规则块哈希不变。层厚2μm、高14.09/18.09μm、RC来自原M9/M10外推，via零包围是研究假设；尚无12层完整制造deck、校准RCX或系统STA。0.5/1/2倍RC敏感性仍待执行。</p>
 <h3>六块共同底座：已编译完整逻辑与布局合同，尚未实现冻结</h3><img loading="lazy" src="assets/common_base_proposed.png" alt="六块共同底座拟议布局与共享预连"><p><a href="assets/common_base_proposed.svg">SVG</a>。完整两功能逐bit图、所有24,767pin、37个独立常量TOP_IO声明和相同256导体预算已编译。资源并集不意味着共享同一计算实例；共享导体必须在两功能物理实现中实际使用。图中的proposed位置/导体不是布通结果。其余固定私有连接、闲置时钟/复位/外部输入及常量驱动、PG/完整接入仍待实现；两套独立旧父层不冒充共同底座。底层未冻结，无哈希一致性或面积收益结论。</p>
 <p>共同拓扑已实际编译并执行逐bit图检查：17,686个固定逻辑连通分量、24,767个原接口pin、两模式各770条适配图边；两模式计划使用同一组256个资源，未误合并不同原始bit。37个原始常量输出各有独立驱动，另新增1个闲置时钟LOGIC0驱动，合计38实例，面积/缓冲/负载仍待物理计量。构造Verilog中的内部接入端口必须在冻结和STA前降为真实保留金属，原生构造链接已实际执行：34,954端点/17,686连通分量逐项双射、原信号层不变；节点位置尚未实现、没有共同布线或冻结。构造链接回执见本节native索引；此为图证明，不是形式功能等价或物理实现。<a href="data/continuation/common-topology-r02/topology_proof.json.gz">图检查及缺项</a> · <a href="data/continuation/common-topology-r02/base_construction.v.gz">可复用构造网表</a>。外部闲置输入/复位策略仍需完整RTL极性与激励核验。</p><p>旧openTPU父层r07终态独立native11失败（10项M9 spacing、1项via cut spacing），虽3207网几何连通/双PG通过也未资格化；旧llaccel父层ll-r01在GRT-0116拥塞失败。92476/92477被实际物理门槛阻止，RC/STA未执行。完整GDS、缺失SRAM、天线和WELL规则语义问题继续保留。优化Aopt与内部C都继续保留，局部块内线长增加并不能替代完整系统收益判断。</p></section><section class="card" id="coverage"><h2>全部信号pin覆盖与几何方案</h2><div class="scroll"><div class="scroll"><table class="dataframe stats">
   <thead>
