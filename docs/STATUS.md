@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-10-29 Asia/Shanghai新增实际视图终态：92997/driver206052c721a7c910a7767a94cbd914d482e96bc3在ROOT/diode_views/r01/gemm-C完成clean ODB/LEF/OBS/DEF/真实网表和提取时序模型导出，全部3753 signal pin及PG/尺寸/原层匹配、SPEF余量重放一致、模型独立重读通过。minimum_period=false，完整规则/新父层/RTL/共同冻结/系统资格仍未闭合。gate-r19由93003/drivereff6bfa6c31bf29d196061b4a116b2564fd8aae3不可覆盖收集。此前发布206052c两CI40758759432/40758759459均success，31幅图已打开及在线PNG/SVG blob读回一致。新658diode负载/两追加换型不能与旧3换型Aopt直接做纯XY收益；旧对照来源另列。严格GDS92976、全770边适配92974及SYS92968等继续，当前任务仍active/in_progress/Draft。
+
 2026-10-29 Asia/Shanghai新终态：GEMM92975定向增加22真实diode后，总658diode版本已fresh native0、268637网/806643端点所检连通、全量数字图和原pose/端点/pin/PG/外框保持；真实setup/hold 0.770702/0.039533ns、文字违例0，另计22 master面积5.852μm²。新严格GDS92976运行，旧37项不提前标已清除。92985证明全网中77条WIRE/VIA矩形表示不同，不能称只重布22网。新增真实接入PNG/SVG及gate-r17/r18双SHA证据；两模式各770边适配92974与SYSTEM92968仍运行。共同冻结/两完整系统/公平对照未完成。 [最新交接](handoffs/2026-10-29-issue-126-incremental-diode-and-upper.md)。Issue126 in_progress/PR129 Draft；登记pending、看板unverified/同步pending、审查人待指定。
 
 2026-10-29 Asia/Shanghai增量终态：新换型版严格GDS92943仍FAILED37项天线；92972以同版本DEF/GDS/RDB/原生几何SHA读取7516494行，全部37个真实多边形唯一关联22条真实网，与现有636个diode网交集0。全部22网及层级CSV/原多边形证据随gate-r16发布（92973/drivercda2025d28793aeab7a4d3391058d50f3d227e51），不是修复或LVS通过。已编写定向22真实diode增量GRT/DRT脚本（尚未提交作业）；保留636diode、两换型、原功能/位置/接口/PG/OBS/层集合，新增负载/面积成本独立，路由后仍需fresh/连通/RC/STA与原deck。下一步发布读回后执行新适配r02和22网增量接入，不以native0/CI代替整个目标。SYSTEM92968、共同92855和其余LL/父层作业继续；底座未合格冻结，两完整功能/对照未完成。

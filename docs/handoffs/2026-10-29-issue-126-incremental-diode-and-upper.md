@@ -1,5 +1,7 @@
 # Issue126：658真实diode终态、全网增量接线证据及770边适配
 
+2026-10-29 Asia/Shanghai新增实际视图终态：92997/driver206052c721a7c910a7767a94cbd914d482e96bc3在ROOT/diode_views/r01/gemm-C完成clean ODB/LEF/OBS/DEF/真实网表和提取时序模型导出，全部3753 signal pin及PG/尺寸/原层匹配、SPEF余量重放一致、模型独立重读通过。minimum_period=false，完整规则/新父层/RTL/共同冻结/系统资格仍未闭合。gate-r19由93003/drivereff6bfa6c31bf29d196061b4a116b2564fd8aae3不可覆盖收集。此前发布206052c两CI40758759432/40758759459均success，31幅图已打开及在线PNG/SVG blob读回一致。新658diode负载/两追加换型不能与旧3换型Aopt直接做纯XY收益；旧对照来源另列。严格GDS92976、全770边适配92974及SYS92968等继续，当前任务仍active/in_progress/Draft。
+
 2026-10-29 Asia/Shanghai；仓库rayggxia-workspace/LLMHardwareDesign，[Issue126](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/126)/[Draft PR129](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/129)，负责人huangpingyang04-lgtm。分支task/126-full-block-pin-xy；此前已发布51bcac124844b344ade86a64031bec14648bfac0，两CI40752386668/40752386573均success；本阶段发布head和CI以PR最新读回为准。整个目标仍active，不能把本文当作全目标完成。
 
 ## 新的真实终态
@@ -31,7 +33,9 @@ gate-r17由92988/driverb7f9fcf1bd88cbfb12a246957bd1e37592fbe8d1收集闭合nativ
 
 ## 下一条实际动作及未完成项
 
-完成本阶段上传/在线读回后，执行已编写export_real_diode_view.py/real_diode_view_job.sh，为658diode实际源导出可供父层研究使用的clean ODB/LEF/OBS/DEF/真实网表与非零提取时序视图，逐项保持3753 signal pin、方向、原M5/M6及尺寸，SPEF余量精确重放。本文创建时该视图作业尚未提交，实际作业以runtime_submissions为准。继续92976与其他活动终态；不重复运行已完成native实现。
+92997的658diode实际视图导出已经完成，不重提。下一步收齐92976严格GDS及其他实际终态，并核对两770-edge模式的真实GRT进度；继续六块接入修复/共同底座/两模式/公平对照完整目标。已编写probe_upper_fullframe_subset.py/upper_fullframe_probe_job.sh，只克隆闭合的真实placed_adapter检查点，在相同全frame和全部原M10 PG/OBS约束上保留2/770条真实边并启用verbose，定位工具规模瓶颈。本文本次更新时诊断作业尚未提交，发布读回后再执行，实际作业以runtime_submissions为准；不附加/暂停/取消原770-edge作业，不以子集代替完整覆盖或模型/系统资格。
+
+如诊断证实默认GCell搜索粒度带来开销，可进一步研究原物理层/轨道/规则不变的粗全局guide或直接研究guide→原12层详细布线路径；这是待验证工程假设，不是已经执行/优化成功。不改M1–M10物理模型或降低最终规则检查，不以删除层/规则制造通过，所有策略最终仍需原完整研究技术下的fresh DRC/几何与真实M10 landing约束。先看实际probe日志再选择变量，不能仅因耗时宣称根因。
 
 VECTOR/openSYS原时序失败、LL源native4及完整窗口未终态、ACT父层hold失败/604寄生未标注提示、缺实际SRAM GDS、原deck规则覆盖/模型minimum_period及历史逐pin目标层缺项全部保留。没有完整设计RTL形式证明、合格共同冻结、两完整M11/M12实现或公平系统收益结论。六资源并集/真实共享导体选择已确认，不重新询问。
 
