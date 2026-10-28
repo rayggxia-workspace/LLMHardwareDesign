@@ -63,11 +63,9 @@ def measure(root,out,cpus,run,kind,variant):
     outputs={p['pin']for p in plan if p['direction']=='output'}
     costs={p['net']:p for p in escape['early_rc_costs']}
     assert set(costs)=={p['pin']for p in plan} and outputs
-    # Both current finite demonstrators use equal-length exits. Refuse a
-    # future unequal design rather than quietly replacing it by an average.
     loads={n:50. if variant=='approved'else 2.+costs[n][variant+'_wire_cap_ff'] for n in outputs}
-    assert len(set(loads.values()))==1
-    load=next(iter(loads.values()))
+    uniform=len(set(loads.values()))==1
+    load=next(iter(loads.values())) if uniform else None
     physical=Path(index['gate_receipts']['physical']['report_path']).parent
     pr=json.loads((physical/'receipt.json').read_text())
     inv=physical/'passive-inventory.tsv'
@@ -81,7 +79,8 @@ def measure(root,out,cpus,run,kind,variant):
     original=(tools/'native_sta.tcl').read_text()
     anchor='read_sdc $::env(BV1_SDC)\n'
     assert original.count(anchor)==1
-    changed=''if variant=='approved'else 'set_load %.15g [all_outputs]\n'%load
+    changed=''if variant=='approved'else ''.join(
+        'set_load %.15g [get_ports {%s}]\n'%(value,name) for name,value in sorted(loads.items()))
     body=original.replace(anchor,anchor+changed)
     # Keep the helper's own source-relative annotation lookup bound to the
     # unchanged committed helper, not to this generated task directory.
@@ -94,9 +93,13 @@ def measure(root,out,cpus,run,kind,variant):
     (out/'load-sta.tcl').write_text(prefix+body)
     run(['openroad','-no_init','-exit',out/'load-sta.tcl'],'load-sta.log')
     readback=(out/'constraints-readback.sdc').read_text()
-    budget=dict(flow['budget'],output_load_pf=load/1000.)
-    reference=serialization_reference(root,out,run,(results/'6_final.sdc').read_text(),load)
-    boundary=constraints(readback,plan,budget,reference)
+    if uniform:
+        budget=dict(flow['budget'],output_load_pf=load/1000.)
+        reference=serialization_reference(root,out,run,(results/'6_final.sdc').read_text(),load)
+        boundary=constraints(readback,plan,budget,reference)
+    else:
+        reference,boundary=per_port_reference(root,out,run,(results/'6_final.sdc').read_text(),
+                                            readback,plan,flow['budget'],loads)
     lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
     timing=passive(out,out/'timed-endpoints',lib.read_text(),inventory)
     rc=annotation(out)
@@ -118,3 +121,65 @@ def measure(root,out,cpus,run,kind,variant):
         combined_300mhz_interface_timing_qualified=False,calibrated_rc_qualified=False,
         scope='Same accepted native ODB/SDC/SPEF, output lumped-C sensitivity only. Base/high use actual P2 exit lengths and uncalibrated RC, plus2fF receiver; replace original50fF, do not double-count it. Series R/input/clock wires/coupling/remote driver timing not modeled. No new physical implementation or system qualification.')
     (out/'revision300-load.json').write_text(json.dumps(report,indent=2)+'\n')
+
+
+def per_port_reference(root,out,run,sdc,readback,plan,budget,loads):
+    """Bind each unequal load to same-tool serialization; preserve all other audits."""
+    import re
+    from decimal import Decimal
+    from revision300_constraint_readback import audit
+    reference=serialization_reference(root,out,run,sdc,50.)
+    values=sorted(set(loads.values()))
+    tools=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45')
+    fixture=out/'load-map-fixture.v'
+    names=['q%d'%i for i in range(len(values))]
+    fixture.write_text('module revision300_load_map(input clk,d,output '+','.join(names)+');\n'+
+        ''.join('DFF_X1 f%d(.CK(clk),.D(d),.Q(%s));\n'%(i,n)for i,n in enumerate(names))+'endmodule\n')
+    prefix=''.join('read_lef {'+str(tools/'lef'/name)+'}\n'for name in
+        ('NangateOpenCellLibrary.tech.lef','NangateOpenCellLibrary.macro.mod.lef'))
+    prefix+='read_liberty {'+str(tools/'lib/NangateOpenCellLibrary_typical.lib')+'}\n'
+    prefix+='read_verilog {'+str(fixture)+'}\nlink_design revision300_load_map\n'
+    grammar=r'set_load -pin_load (\S+) \[get_ports \{([^}]+)\}\]'
+    def tokens(text):
+        result={}
+        for line in text.splitlines():
+            if line.startswith('set_load '):
+                m=re.fullmatch(grammar,line);assert m, line
+                token,name=m.groups();assert name not in result;result[name]=token
+        return result
+    observed={}
+    for label in ('positive','wrong-load'):
+        script=prefix+'create_clock -name core -period 3.333333333333 [get_ports clk]\n'
+        script+=''.join('set_load %.15g [get_ports {%s}]\n'%(v+(1. if label=='wrong-load'and i==0 else 0.),n)
+                        for i,(n,v) in enumerate(zip(names,values)))
+        script+='write_sdc -no_timestamp -digits 12 {'+str(out/('map-'+label+'.sdc'))+'}\n'
+        (out/('map-'+label+'.tcl')).write_text(script)
+        run(['openroad','-no_init','-exit',out/('map-'+label+'.tcl')],'map-'+label+'.log')
+        observed[label]=tokens((out/('map-'+label+'.sdc')).read_text())
+        assert set(observed[label])==set(names)
+    assert observed['positive'][names[0]]!=observed['wrong-load'][names[0]]
+    assert all(observed['positive'][n]==observed['wrong-load'][n]for n in names[1:])
+    value_tokens=dict(zip(values,[observed['positive'][n]for n in names]))
+    expected={n:value_tokens[v]for n,v in loads.items()}
+    def checked(text,expected_tokens):
+        actual=tokens(text);assert set(actual)==set(loads)
+        assert all(Decimal(actual[n])==Decimal(expected_tokens[n])for n in actual)
+        normalized=[]
+        for line in text.splitlines():
+            if line.startswith('set_load '):
+                match=re.fullmatch(grammar,line)
+                line='set_load -pin_load '+reference['output_load_ff']+' [get_ports {'+match.group(2)+'}]'
+            normalized.append(line)
+        result=audit('\n'.join(normalized)+'\n',plan,dict(budget,output_load_pf=.05),reference)
+        result.update(output_load_ff=None,per_port_load_ff=loads,per_port_native_tokens=actual,
+                      exact_per_port_load_coverage=True)
+        return result
+    boundary=checked(readback,expected)
+    wrong=dict(expected)
+    first=next(n for n,v in loads.items()if v==values[0])
+    wrong[first]=observed['wrong-load'][names[0]]
+    try:checked(readback,wrong)
+    except AssertionError:pass
+    else:raise AssertionError('Actual single-port wrong load accepted')
+    return dict(uniform_reference=reference,per_port_native_tokens=expected,
+                actual_single_port_wrong_load_rejected=True),boundary
