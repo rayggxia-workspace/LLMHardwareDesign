@@ -476,3 +476,5 @@ R首版真实RTL测试195通过240组GDN/SSM和100组四抽头卷积，397971检
 2026-10-29 06:29 CST：297/93050自然COMPLETED/0:0，S逐端口base/high输出C均合格，分别setup+0.662945/+0.636128ns、hold+0.012282ns；两组真实不同载荷、同工具读回/单端口错误负例通过。S实际原生/全端口几何/各有限条件已齐，high全端口πRC142输入电容违规不能由输出C通过覆盖。V接口298已验证暂存，source9677551/archive44d392fc，6个V-only任务但无allocation，等待295真实几何。V291在CTS严格LEC solver，R236 GRT运行；281旧V严格LEC通过也不覆盖其物理拒收。292与297已自然释放、R未claim，真正依赖满足后必须新allocation指向原不可变队列/state，只补未claim任务。
 
 2026-10-29 06:53 CST：302/93054只读完成V291 placement/R236 CTS路径诊断，自然COMPLETED；原源不变。V实际scalar_c[2]→output_mem[6][20]、setup−2.256069ns；R row[4]→product[4][63]、−1.139707ns，均为placement估计不是最终门。V拟128bit分组进位等价重构，保留数值/周期；新增实际RTL函数264输入位SAT及single-bit负例，测试/映射/benchmark尚未执行。原291严格CTS LEC/236 GRT15继续，295/298尚未分配；S已齐。最新已发布head=a7ddff2，PR/Issue正文exact读回及OPEN/draft/in_progress已核验，后续新源尚未发布。
+
+2026-10-29 06:57 CST：304/93055的264bit全域add/sub/RNE SAT及真实single-bit负例通过，但完整三项在误改select cast语法处编译失败；原22文件/11稳定绑定和3条postfinally traceback差异保存v-carry-304-0657。305/93057已实际提交src3a3e1d6/archiveeb0a9d88，纠正唯一cast，已证明两源函数SHA相同，仅复用数学证明；完整数值/映射/bench新跑、未有新物理资格。原291/236/281保持正常运行，295/298未分配尚绑291，不可混用305结果。
