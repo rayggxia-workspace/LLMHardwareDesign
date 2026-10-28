@@ -60,7 +60,13 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('five-macro-geometry-complete-'):
+    if MODE=='revision300-stripes':
+        from revision300_geometry import suite
+        suite(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('revision300-screen-'):
+        from revision300_screen import screen
+        screen(ROOT,OUT,CPUS,run,MODE[-1].upper())
+    elif MODE.startswith('five-macro-geometry-complete-'):
         from native_rect_completion import complete
         complete(ROOT,OUT,CPUS,run,MODE[-1])
     elif MODE.startswith('five-macro-geometry-'):

@@ -22,6 +22,9 @@ def generate(native, spec, out):
     assert "LAYER metal11" not in text and "LAYER via10\n" not in text
     assert text.count("END metal10") == 1
     g, e = spec["geometry_um"], spec["electrical"]
+    ox = g.get("track_offset_x", g.get("track_offset"))
+    oy = g.get("track_offset_y", g.get("track_offset"))
+    assert ox is not None and oy is not None
     assert g["cut_width"] + 2*g["enclosure"] <= g["width"] + 1e-12
     assert g["width"] + g["spacing"] <= g["pitch"] + 1e-12
     assert abs(g["metal11_bottom"] - 12.09 - g["dielectric_gap"]) < 1e-9
@@ -51,7 +54,7 @@ LAYER metal{level}
   HEIGHT {h} ;
 END metal{level}
 """.format(cut=cut,cw=g["cut_width"],cs=g["cut_spacing"],vr=e["via_resistance_ohm"],
-           level=level,direction=direction,w=g["width"],p=g["pitch"],o=g["track_offset"],
+           level=level,direction=direction,w=g["width"],p=g["pitch"],o=oy if level==11 else ox,
            s=g["spacing"],ew=g["eol_width"],ei=g["eol_within"],r=e["sheet_resistance_ohm"],
            t=g["thickness"],h=g["metal%d_bottom"%level]))
     for cut in [10,11]:
@@ -86,7 +89,7 @@ END BV1_via{cut}_array
     (out / "native.tech.lef").write_bytes(raw)
     (out / "research12.tech.lef").write_bytes(emitted.encode())
     tracks = "".join("make_tracks metal%d -x_offset %g -x_pitch %g -y_offset %g -y_pitch %g\n" %
-                     (level,g["track_offset"],g["pitch"],g["track_offset"],g["pitch"]) for level in [11,12])
+                     (level,ox,g["pitch"],oy,g["pitch"]) for level in [11,12])
     (out / "new_tracks.tcl").write_text(tracks)
     r_per_um = e["sheet_resistance_ohm"]/g["width"]
     c_ff_per_um = 0.0088541878128*e["relative_permittivity"]*(g["width"]/g["dielectric_gap"]+2*g["thickness"]/g["spacing"])

@@ -1,3 +1,5 @@
+2026-10-28 15:03 CST：按用户两份审阅建议启动五宏修订，目标为连续供数/有限缓冲/流水、真实300MHz最终P&R及2µm规则下全部端口同时引出。旧ad3c2b3五宏100MHz包保留基线，不转移资格。已封存两原件SHA及UTF-8/LF副本；新增technology-2um-v1.json、physical-budget-300mhz.json、逐项验收计划docs/plans/block-v1-review-300mhz.md。本地三个16位条带/转向样例及九负例检查通过，独立GDS及五旧源300MHz诊断待远程执行；新版RTL/完整接口/最终物理均未完成。复用Issue121/PR122转in_progress/draft；登记pending、看板unverified/同步pending，管理员与审查人待指定。
+
 2026-10-28 12:00 CST：M/V/R/S/T五个基础实现的最终M1–M10布局布线、全部真实端点物理/电气/寄生/PG/连接与真实M10接点、原生及完整未修改FreePDK45 GDS DRC、三初态最终网表功能、严格LEC和最终文件接收均已通过。R完整DRC0，回执f05f5deb…，GDS1ee28161…；R交付回执2b3520ab…、278个接点和版图已核验。R232/92620完整原生几何已通过，回执119c0d12…，同一ODB/DEF、RECT=0且ODB未变；2983490452B占用文件保留授权服务器及SHA索引。92620自然COMPLETED/0:0、11分27秒；五块最终包和完整几何均齐。统一交付入口work/YUZE-LU/121/delivery/README.md。五宏四门回执/报告SHA、相同源回执、最终文件实际大小及当前实际使用RTL SHA已重新核验，T沿用选定161-C真实证据。候选LEF抽象覆盖、通用层次Lib及M11/M12系统仍false。五块技术交付完成，本次统一交审：Issue121保持OPEN并转in_review，PR122转ready，独立审查及合并待完成，不标done或关闭；登记pending，看板unverified/同步pending，管理员及独立审查人待指定。本次提交父88dcdcb9da1989d5c69f44a8a2b0cfdf4d1f0847，当前提交以PR实际head为准；统一审计delivery/final-library-audit.json通过。以下日期增量均为当时历史，不覆盖本条当前状态。
 
 2026-10-28 04:04 CST：V227原生可丢弃探针通过（回执3be1887c78ab24c3bb78d3097e25e3d2133ca294f926e745159deb2b2b71f17d）：实测一只DFF_X1换DFF_X2保持信号pin/net；wire109242临时解除dont_touch后PG两脚接回且保护恢复。226原生因保护跳过PG的失败保留，见results/v-tail-probe-040305/index.json。准备228同一V基础版：原203封存GRT起，仅7个已测BUF和1个已测DFF换驱动，PG先连接后设保护；完整fillcell/route别名/final/RCX及新源全部四门与完整几何重新验收。228尚未提交/通过，不沿用222资格。当前七allocation；S225 native LEC、R196详细布线第3轮、222既有其他验收继续，不取消EDA。五宏整体未完成。
@@ -224,7 +226,7 @@ R首版真实RTL测试195通过240组GDN/SSM和100组四抽头卷积，397971检
 
 ## 2026-10-27 08:52 CST 原生修复准备
 
-新增原生DRC只读定位与严格5ps hold修复入口：真实61标记解析/五坏输入、Linux实际源码的配置正例/八负例通过，未替代物理接收。103定位已部署（源码5449132、归档c41fffa3946f15c1ccaa18cd225fe358668285f86f7230204e39fba1e88c7bd5，8CPU/node24）；105边缘T6KA修复与106独立接收已部署（源码a504854、归档d932b5930e7e1e61bfe4108612088be5a6be5d49f811436602c57d4df8372a17，各32CPU/node20和node24），均121成员/849920字节，当前无Slurm job，依统一八槽预算等待。104在预检发现小写策略不兼容后停选，实际未提交，未覆盖原manifest。080 C8C进入最终LEC，中间日志有两个diff1 outputs，严格完整对应门槛保留；094A仍在完整DRC、100双48CPU科学验证仍运行。
+新增原生DRC只读定位与严格5ps hold修复入口：真实61标记解析/五坏输入、Linux实际源码的配置正例/九负例通过，未替代物理接收。103定位已部署（源码5449132、归档c41fffa3946f15c1ccaa18cd225fe358668285f86f7230204e39fba1e88c7bd5，8CPU/node24）；105边缘T6KA修复与106独立接收已部署（源码a504854、归档d932b5930e7e1e61bfe4108612088be5a6be5d49f811436602c57d4df8372a17，各32CPU/node20和node24），均121成员/849920字节，当前无Slurm job，依统一八槽预算等待。104在预检发现小写策略不兼容后停选，实际未提交，未覆盖原manifest。080 C8C进入最终LEC，中间日志有两个diff1 outputs，严格完整对应门槛保留；094A仍在完整DRC、100双48CPU科学验证仍运行。
 
 证据：`results/native-drc-location-controls.json`、`results/native-hold5-config-controls.json`、`results/run103-initial/`、`results/run104-not-submitted/`、`results/run105-initial/`、`results/run106-initial/`、`results/live-105.json`；部署manifest为stage99–stage102。live-105中100 children路径为组目录下观察，空列表不能证明其真实任务目录缺文件，实际子任务另在tasks/capture-branch-fv及tasks/capture-via-fv。
 
