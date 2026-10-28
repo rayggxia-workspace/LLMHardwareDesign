@@ -42,7 +42,9 @@ def collect(name):
       'passive_load_equivalence/r01/gemm/*','shared_conductor_audit/r0[12]/*',
       'logs/passive-load-proof-r01-*.log','logs/shared-fixed-audit-r0[12]-*.log',
       'diode_cap_eco/r01/gemm-C/*','antenna_diode_stream/cap-r01/gemm-C/*',
-      'logs/diode-cap-eco-r01-*.log','logs/post-cap-gds-r01-*.log']
+      'logs/diode-cap-eco-r01-*.log','logs/post-cap-gds-r01-*.log',
+      'output_chain_resume/r02/opentpu_aux-C/*','logs/system_chain_resume_r02-*.log',
+      'upper_adaptation_trial/r0[12]/*','upper_adaptation_trial/r0[12]/*/*','logs/full_upper_adapter_r0[12]-*.log']
     stable_intermediates={}
     vector=ROOT/'vector_resume/r01/execution.json'
     if vector.exists():

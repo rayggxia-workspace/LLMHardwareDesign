@@ -30,12 +30,20 @@ def prepare(out):
     topology=json.loads((contract/'topology_proof.json').read_text());assert topology['all_original_signal_pins']==24767 and not topology['frozen']
     boxes=table(base/'before_route.pins.tsv');bypin=defaultdict(list)
     for q in boxes:bypin[q['pin']].append(q)
-    hooks={};allboxes=[]
+    hooks={};allboxes=[];aliases={}
     for component,pad in pads.items():
         rows=sorted(bypin[pad],key=lambda q:(int(q['y0']),int(q['x0'])))
         shared=component.startswith('SHARED:');assert len(rows)==(2 if shared else 1)
         for index,q in enumerate(rows):
-            assert q['layer']=='metal10' and q['net']==wires[component]
+            assert q['layer']=='metal10'
+            if q['net']!=wires[component]:
+                # Verilog clock input aliases become canonical native net names.
+                # Accept only the two exact, sole-TOP_IO clock components.
+                ts=components[component];design=component.split(':')[0]
+                assert component==design+':2:external_clock' and design in ['opentpu','llaccel']
+                assert len(ts)==1 and ts[0]['kind']=='TOP_IO' and ts[0]['pin']=='clk' and ts[0]['direction']=='input'
+                assert q['net']==design+'__clk'
+                aliases[component]={'compiled_wire':wires[component],'actual_native_clock_alias':q['net']}
             box=[int(q[k]) for k in ['x0','y0','x1','y1']];assert box[2]-box[0]==box[3]-box[1]==1600
             hook=dict(component=component,pad=pad,net=q['net'],base_pin_box_dbu=box,shared_end=('A' if index==0 else 'B') if shared else None)
             hooks[component,hook['shared_end']]=hook;allboxes.append(tuple(box))
@@ -91,7 +99,7 @@ def prepare(out):
         (out/(mode+'_actual_hook_plan.json')).write_text(json.dumps(plan,indent=2)+'\n');plans[mode]=plan
     rec={'scope':'REAL_PARTIAL_BASE_AND_ALL_ADAPTER_HOOK_PREPARATION_NOT_FROZEN_SYSTEM',
       'source_SHA':inputs,'actual_hook_boxes':1541,'same_real_lower_checkpoint_for_both_modes':True,
-      'native_via10_M10_landing_size_dbu':[1600,1600],'per_mode_edges':770,'full_qualification':False}
+      'native_via10_M10_landing_size_dbu':[1600,1600],'per_mode_edges':770,'native_clock_net_aliases':aliases,'full_qualification':False}
     (out/'preparation.json').write_text(json.dumps(rec,indent=2)+'\n')
     return plans,rec,tech
 

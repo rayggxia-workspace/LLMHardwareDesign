@@ -303,6 +303,13 @@ def render(root,out):
     if cap.exists():
         q=read(cap);result['GEMM_post_diode_size_ECO']=dict(q,evidence=(dest/cap.relative_to(snapshot)).relative_to(out).as_posix())
         if q.get('completed_utc'):
+            r=next(r for r in rows if r['case']=='gemm')
+            r.update({'prior_completed_source':r['completed_source'],'completed_source':'costed_real_diode_and_sizes/r01',
+              'actual_internal_route':'COMPLETED_REAL_DIODE_AND_TWO_SIZE_ECO_NOT_PURE_XY',
+              'native_DRC_count':q.get('fresh_DRC_count'),'all_multiterminal_signal_clock_geometry':q.get('whole_signal_geometry',{}).get('pass'),
+              'setup_ns':q.get('setup_ns'),'hold_ns':q.get('hold_ns'),
+              'violation_marker_rows':q.get('literal_VIOLATED_markers_not_complete_failure_count'),
+              'complete_rules':'CURRENT_GDS_PENDING; PRIOR_REAL_DIODE_GDS37_FAILED; COVERAGE_INCOMPLETE'})
             cap_text='<p><strong>92940两处真实换型已终态：</strong>INV_X1→INV_X2、XNOR2_X1→XNOR2_X2的原Liberty逻辑/状态严格一致，新max-cap分别121.46/52.0325fF。当前fresh native0、所检全网连通、双PG和原pin/PG/外框保持；真实setup/hold='+str(q.get('setup_ns'))+'/'+str(q.get('hold_ns'))+'ns、VIOLATED文字标记='+str(q.get('literal_VIOLATED_markers_not_complete_failure_count'))+'。独立全量数字图验证仅这两个master改变，636真实diode及原信号端点/网络/端口全部保持。额外两换型/一个移动/master面积+1.330μm²单列，非XY或block面积收益。以上不是原636-diode版本的cap2已经不存在于历史；两版本分别保存。换型后GDS/原deck作业92943仍独立验证，未与旧版本37项混写。</p>'
     cap_stream=snapshot/'antenna_diode_stream/cap-r01/gemm-C/execution.json.gz'
     if cap_stream.exists():
