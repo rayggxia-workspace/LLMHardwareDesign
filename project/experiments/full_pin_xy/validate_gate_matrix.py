@@ -43,7 +43,7 @@ def check(out):
             value=float(re.search(r'worst slack (?:min|max)\s+([-\d.]+)',text)[1]);assert historical[kind+'_ns']==value
         if (fixed/'execution.json.gz').exists():
             end=read(fixed/'execution.json.gz')
-            assert rows[case]['available_deck_findings']==end.get('available_deck_findings')
+            assert rows[case].get('historical_costed_GDS_findings_before_diode',rows[case]['available_deck_findings'])==end.get('available_deck_findings')
             assert not end['full_qualification']
     assert rows['llaccel_aux']['native_DRC_count']==4 and rows['llaccel_aux']['newer_attempt']['three_pin_job'].endswith('FAILED_DRT_1231')
     system=folder/'checkpoint_route/r01/execution.json.gz'
@@ -195,6 +195,17 @@ def check(out):
         assert q['all_original_signal_terminal_and_port_graph_equal_with_exact_two_proven_sizes'] and q['retained_real_diode_count']==636
         assert q['all_sources_unchanged'] and not q['full_qualification']
         cost=q['separate_two_size_ECO_cost'];assert cost['changed_masters']==2 and cost['moved_existing_instances']==1 and cost['added_functional_instances']==0 and abs(cost['standard_cell_master_bbox_area_delta_um2']-1.33)<1e-6
+        assert rows['gemm']['completed_source']=='costed_real_diode_and_sizes/r01'
+        assert rows['gemm']['setup_ns']==q['setup_ns'] and rows['gemm']['hold_ns']==q['hold_ns']
+    if j.get('GEMM_post_diode_size_GDS_available_deck',{}).get('completed_utc'):
+        q=j['GEMM_post_diode_size_GDS_available_deck'];assert q['merge_returncode']==q['DRC_returncode']==0
+        assert q['available_deck_findings']==37 and q['source_DEF_SHA']==j['GEMM_post_diode_size_ECO']['files']['routed.def']['sha256']
+        assert rows['gemm']['available_deck_findings']==37 and not q['full_qualification']
+    if j.get('GEMM_remaining_antenna_native_correlations'):
+        q=j['GEMM_remaining_antenna_native_correlations'];a=q['correlation_summary']
+        assert q['native_returncode']==0 and q['all_sources_unchanged'] and not q['full_qualification']
+        assert a['marker_count']==37 and a['mapping_status_counts']=={'UNIQUE_EXACT_POLYGON_CONDUCTOR_CORRELATION':37}
+        assert a['unique_correlated_net_count']==22 and len(a['mapped_nets_without_existing_real_diode'])==22 and a['mapped_nets_already_with_real_diode']==[]
     if j.get('actual_fixed256_native_attribute_audit'):
         q=j['actual_fixed256_native_attribute_audit'];assert q['native_export_returncode']==0 and not q['native_export_executed_this_run']
         assert q['all_256_native_FIXEDS_and_original_net_bindings_verified'] and q['all_closed_source_files_unchanged'] and q['native_shared_conductor_count']==256

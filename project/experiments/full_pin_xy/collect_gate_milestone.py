@@ -6,7 +6,7 @@ ROOT=Path('/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027')
 JOBS=['92690','92691','92700','92714','92721','92781','92783','92792','92794','92795','92798','92812','92825','92834','92835','92837','92838','92841','92846','92847','92848','92853','92854','92855','92861','92867','92872','92886','92891','92892','92901','92903','92910','92912','92913','92914','92915','92921','92925','92929','92930','92931','92940','92943']
 
 
-JOBS+=['92968','92969']
+JOBS+=['92968','92969','92972']
 
 
 def sha(path):
@@ -47,7 +47,8 @@ def collect(name):
       'diode_cap_eco/r01/gemm-C/*','antenna_diode_stream/cap-r01/gemm-C/*',
       'logs/diode-cap-eco-r01-*.log','logs/post-cap-gds-r01-*.log',
       'output_chain_resume/r02/opentpu_aux-C/*','logs/system_chain_resume_r02-*.log',
-      'upper_adaptation_trial/r0[12]/*','upper_adaptation_trial/r0[12]/*/*','logs/full_upper_adapter_r0[12]-*.log']
+      'upper_adaptation_trial/r0[12]/*','upper_adaptation_trial/r0[12]/*/*','logs/full_upper_adapter_r0[12]-*.log',
+      'post_diode_netmap/cap-r01/*','logs/post-diode-map-cap-r01-*.log']
     stable_intermediates={}
     vector=ROOT/'vector_resume/r01/execution.json'
     if vector.exists():

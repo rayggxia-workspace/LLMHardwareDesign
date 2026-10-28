@@ -315,6 +315,24 @@ def render(root,out):
     cap_stream=snapshot/'antenna_diode_stream/cap-r01/gemm-C/execution.json.gz'
     if cap_stream.exists():
         q=read(cap_stream);result['GEMM_post_diode_size_GDS_available_deck']=dict(q,evidence=(dest/cap_stream.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('completed_utc'):
+            r=next(r for r in rows if r['case']=='gemm')
+            r['historical_costed_GDS_findings_before_diode']=r.get('available_deck_findings')
+            r['available_deck_findings']=q['available_deck_findings']
+            r['complete_rules']='CURRENT_REAL_DIODE_SIZE_GDS37_FAILED; COVERAGE_INCOMPLETE'
+            cap_text+='<p><strong>92943新换型版严格GDS已终态FAILED：</strong>merge/原deck命令均0，但仍37项天线，不能因native/电气通过就称完整规则合格。该版本的DEF、GDS、RDB和原生全量几何均有独立SHA，不与旧37项直接混用。</p>'
+    post_map=snapshot/'post_diode_netmap/cap-r01/execution.json.gz'
+    if post_map.exists():
+        q=read(post_map);result['GEMM_remaining_antenna_native_correlations']=dict(q,evidence=(dest/post_map.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('native_returncode')==0:
+            a=q['correlation_summary'];markers=read(post_map.parent/'marker_net_correlations.json.gz')
+            with (data/'gemm_remaining_antenna_nets.csv').open('w',encoding='utf-8-sig',newline='') as f:
+                w=csv.DictWriter(f,fieldnames=['native_net','actual_marker_count','actual_layers','already_connected_real_diode','source_receipt']);w.writeheader()
+                for net in sorted({m['native_net'] for m in markers}):
+                    group=[m for m in markers if m['native_net']==net]
+                    w.writerow({'native_net':net,'actual_marker_count':len(group),'actual_layers':'/'.join(sorted({m['layer'] for m in group})),
+                      'already_connected_real_diode':net in a['mapped_nets_already_with_real_diode'],'source_receipt':(dest/post_map.relative_to(snapshot)).relative_to(out).as_posix()})
+            cap_text+='<p>92972已按新换型版精确SHA读取7516494行原生几何：37个真实GDS多边形均唯一关联22条真实网；与现有636个diode网交集为0，22条均尚无该ECO diode。<a href="data/gemm_remaining_antenna_nets.csv">全部22网及层级CSV</a>，原多边形/各网交面积证据保留。不是按bbox猜网或GDS LVS通过；下一步定向增量接入，不重复添加已有负载，不能提前称天线修复完成。</p>'
     path_audits=[]
     for case in ['vector','opentpu_aux']:
         p=snapshot/'actual_path_audit/r01'/case/'execution.json.gz'
@@ -372,6 +390,10 @@ def render(root,out):
       'NOT_PASSED_OR_INCOMPLETE_COVERAGE':'未通过/规则覆盖不全','GDS_MERGED_DECK_NOT_TERMINAL':'GDS合并通过；deck未终态',
       'FAILED_STRICT_GDS_MISSING_CELLS; partial-deck results diagnostic only':'缺宏GDS；全设计失败',
       'AVAILABLE_DECK_HAS_FINDINGS':'原deck仍有错误项','AVAILABLE_DECK_0_COVERAGE_STILL_INCOMPLETE':'原deck零项；完整覆盖未闭合',
+      'COMPLETED_REAL_DIODE_AND_TWO_SIZE_ECO_NOT_PURE_XY':'真实diode/换型已布线',
+      'costed_real_diode_and_sizes/r01':'diode+两换型/r01',
+      'CURRENT_GDS_PENDING; PRIOR_REAL_DIODE_GDS37_FAILED; COVERAGE_INCOMPLETE':'当前GDS待验；旧37失败/覆盖不全',
+      'CURRENT_REAL_DIODE_SIZE_GDS37_FAILED; COVERAGE_INCOMPLETE':'当前GDS37失败/覆盖不全',
       'RUNNING_OR_RECEIPT_NOT_TERMINAL':'运行中/未收齐终态'}
     def show(value):
         if value is None:return '未知/待验证'
