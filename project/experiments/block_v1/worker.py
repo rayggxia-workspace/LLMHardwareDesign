@@ -63,6 +63,9 @@ try:
     if MODE=='revision300-constraints-control':
         from revision300_constraints_control import control
         control(ROOT,OUT,CPUS,run)
+    elif MODE in ('revision300-input-delay-s','revision300-input-delay-t'):
+        from revision300_input_delay_probe import probe
+        probe(ROOT,OUT,CPUS,run,MODE[-1])
     elif MODE=='revision300-hold-probe':
         from revision300_cts_probe import hold_probe
         hold_probe(ROOT,OUT,CPUS,run)
