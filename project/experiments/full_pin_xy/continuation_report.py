@@ -132,7 +132,7 @@ def render(root,out):
     if not snapshots:return ''
     snapshot=snapshots[-1];dest=out/'data/continuation';dest.mkdir(exist_ok=True)
     stage_native(snapshot,dest/'native'/snapshot.name)
-    for name in ['common-base-preparation-r04','llsys-pg-r03-contact-proof','llsys-pg-r03-actual-pin-input']:
+    for name in ['common-base-preparation-r04','common-topology-r02','llsys-pg-r03-contact-proof','llsys-pg-r03-actual-pin-input']:
         for p in (root/name).iterdir():
             if p.is_file():gzcopy(p,dest/name/(p.name+'.gz'))
     inputs={c:('trial-inputs-act-access-publication-r04' if c=='act' else 'trial-inputs-'+c+'-access-'+('r04' if c.endswith('_aux') else 'r03')) for c in CASES}
@@ -193,4 +193,8 @@ def render(root,out):
     stamp=read(snapshot/'snapshot.json')['created_utc']
     section=section.replace('<h3>六块完整内部接入窗口试验</h3>','<p>本节原始物理回执快照UTC：'+html.escape(stamp)+'；运行中的作业不以文件存在或Slurm成功作为通过。</p><h3>六块完整内部接入窗口试验</h3>')
     section=section.replace('<h3>llaccel SYSTEM：','<p>下方原A/B/C交互查询保留原候选；本轮增量C坐标另按原pin名称逐项对应：</p><ul>'+''.join(pin_links)+'</ul><h3>llaccel SYSTEM：')
+    topology=root/'common-topology-r02/topology_proof.json'
+    if topology.exists():
+        t=read(topology)
+        section=section.replace('<p>旧openTPU父层r07','<p>共同拓扑已实际编译并执行逐bit图检查：17,686个固定逻辑连通分量、24,767个原接口pin、两模式各770条适配图边；两模式计划使用同一组256个资源，未误合并不同原始bit。37个原始常量输出各有独立驱动，另新增1个闲置时钟LOGIC0驱动，合计38实例，面积/缓冲/负载仍待物理计量。构造Verilog中的内部接入端口必须在冻结和STA前降为真实保留金属，尚未原生链接或布线；此为图证明，不是形式功能等价或物理实现。<a href="data/continuation/common-topology-r02/topology_proof.json.gz">图检查及缺项</a> · <a href="data/continuation/common-topology-r02/base_construction.v.gz">可复用构造网表</a>。外部闲置输入/复位策略仍需完整RTL极性与激励核验。</p><p>旧openTPU父层r07')
     return section
