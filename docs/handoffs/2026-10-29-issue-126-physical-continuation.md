@@ -44,3 +44,7 @@ VECTOR已从92867实际14resize/17buffer检查点继续，先去filler避免EST-
 先读回上述作业及execution.json终态，不复做已通过证明。发布当前中文HTML/机器矩阵/新图/原文快照并读回GitHub head/图片及CI。随后对636个已关联GEMM网按真实ANTENNA_X1、输入cap和原规则做单独成本化diode接入试验，原有实例/接口/PG/边界保持并重路由、fresh DRC、完整所检连通、RC/STA及严格GDS原deck；不虚构ANTENNAGATEAREA，不删天线规则或使用占位库。其他独立作业继续；新终态用gate-r09，不能覆盖gate-r08。
 
 规则rayggxia-project-collab1.0.0；project_id=llm-hardware-design；登记management-hub PR5 pending；没有board.json及Projects能力，看板unverified/同步pending，管理员及审查人待指定。Issue保持status:in_progress，PR保持Draft，Refs #126；不合并PR120/129，不标整个目标完成。
+
+## 01:05 CST新失败与恢复入口
+
+新92921（driver3e6a10233f419cc508679a61c3a072014705e75e）已FAILED：1244个输出port全部考虑，772条私有链/1262个现有identity buffer生成真实重排，不增单元/不换型/不改网。Diamond报告1262 moves后Signal11，implementation=-11，未完成合法化检查或布线；全部源SHA保持。ROOT/output_chain_placement/r01/opentpu_aux-C/moved_NOT_LEGALIZED_OR_ROUTED.odb有完成SHA，禁止重做同一移动选择。gate-r11/92924新原文不可覆盖快照保留失败。计划中的恢复脚本resume_output_chain.py分离无Lib/SDC的几何合法化与原SDC/Lib的布线/RC/STA进程，复用该检查点及真实源状态；假设是STA观察器/进程状态，准确崩溃根因尚未证实。SYS原无filler时不添加新filler，check_placement仍执行。恢复作业须以新发布回执核实，不能把脚本存在说成已运行或通过。

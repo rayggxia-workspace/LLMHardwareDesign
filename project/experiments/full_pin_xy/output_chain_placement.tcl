@@ -109,7 +109,8 @@ if {![stage existing_buffer_relocation {
 if {![stage legalization {
   detailed_placement -use_diamond_legalizer;check_placement -verbose
   foreach row $original_status {lassign $row i status;$i setPlacementStatus $status}
-  filler_placement -prefix PINXY_CHAIN_FILL_ $filler_masters;global_connect;check_placement -verbose
+  if {[llength $filler_masters]} {filler_placement -prefix PINXY_CHAIN_FILL_ $filler_masters} else {puts "ORIGINAL_HAS_NO_CORE_SPACERS_NONE_ADDED"}
+  global_connect;check_placement -verbose
   nonselected_pose_contract $out/placed.nonselected.tsv
   set f [open $out/before.nonselected.tsv r];set old [read $f];close $f
   set f [open $out/placed.nonselected.tsv r];set current [read $f];close $f
