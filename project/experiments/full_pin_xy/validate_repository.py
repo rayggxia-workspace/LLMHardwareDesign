@@ -262,6 +262,10 @@ def main():
         assert (OUT/'assets/gemm_real_diode_access.svg').exists()
         assert 'assets/gemm_real_diode_access.png' in text and 'assets/gemm_real_diode_access.svg' in text
         expected_figures+=1
+    if (OUT/'assets/system_actual_M2_conflict.png').exists():
+        assert (OUT/'assets/system_actual_M2_conflict.svg').exists()
+        assert 'assets/system_actual_M2_conflict.png' in text and 'assets/system_actual_M2_conflict.svg' in text
+        expected_figures+=1
     assert len(list((OUT/'assets').glob('*.png')))==expected_figures
     assert len(list((OUT/'assets').glob('*.svg')))==expected_figures
     assert all(x not in text for x in ['__PINS__','__PHYSICAL__','__TOTAL__'])

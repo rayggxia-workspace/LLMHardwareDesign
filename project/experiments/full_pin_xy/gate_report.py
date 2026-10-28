@@ -409,6 +409,24 @@ def render(root,out):
             f=snapshot/'upper_detailed_resume/r01'/mode/'execution.json.gz'
             if f.exists():result['all770_native_guide_detail_mode_receipts_r01'].append(dict(read(f),evidence=(dest/f.relative_to(snapshot)).relative_to(out).as_posix()))
         upper_text+='<p><strong>93025全770原生guide接续已FAILED：</strong>两个模式均实际进入DRT，pin access完成后报DRT-0352：Input route guides are congested。没有生成实际适配布线，fresh DRC、770边物理连通、M10 landing包含检查未执行，不能填0或通过。全部原DB guide和原GRT-0116失败保留，输入/层/规则未改变；2边成功不推广为全量成功。后续依据原生API的搜索预算参数作独立试验，不能以allow_congestion/infinite_cap绕开原失败。</p>'
+    p=snapshot/'actual_path_audit/r02/opentpu_aux/execution.json.gz'
+    if p.exists():
+        q=read(p);result['SYSTEM_current_relocated_source_path_audit']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('completed_utc'):
+            from plot_actual_system_m2 import plot
+            diagnosis=plot(snapshot,out);result['SYSTEM_actual_M2_and_current_path_diagnosis']=diagnosis
+            upper_text+='<p><strong>93028新SYSTEM真实SPEF路径诊断已完成：</strong>精确重放92968源的setup/hold −0.056303/−0.119814ns；当前最差setup由u_slice.u_quant.ackw寄存器到bit_114845，最差hold由bit_1216到_28604_[223]寄存器，不使用旧92781源路径解释新版本。只读导出两DRC所属实际网_215139_的全层矩形，原SDC/ODB/SPEF保持；不是修复通过。<a href="data/system_actual_M2_and_current_paths.json">当前路径及来源SHA</a> · <a href="data/system_actual_M2_net_rectangles.csv">实际矩形CSV</a>。</p><img loading="lazy" src="assets/system_actual_M2_conflict.png"><p><a href="assets/system_actual_M2_conflict.svg">实际M2报项SVG</a>。只画该网，空白不表示周围无金属/PDN/OBS；红框是原生DRC bbox，显示线宽不是物理尺寸。</p>'
+    failed=snapshot/'logs/system-patch-r01-93031.log.gz'
+    if failed.exists():
+        result['SYSTEM_clean_patch_r01_preparation_failure']={'state':'FAILED_BEFORE_NATIVE_ROUTING','job_id':'93031','evidence':(dest/failed.relative_to(snapshot)).relative_to(out).as_posix(),'full_qualification':False}
+        upper_text+='<p><strong>93031新clean_patches试验前置失败：</strong>驱动在服务器端对容器内部标准单元Lib路径计算SHA，FileNotFoundError，尚未执行路由/RC/STA。原日志与空输出目录保留；修订驱动只在原工具镜像内读取同一Lib并记录前后SHA，新r02尚未提交，不能记修复通过。</p>'
+    search=[]
+    for mode in ['opentpu','llaccel']:
+        p=snapshot/'upper_search_budget/r01'/mode/'execution.json.gz'
+        if p.exists():search.append(dict(read(p),evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix()))
+    if search:
+        result['all770_search_budget200_mode_receipts_r01']=search
+        upper_text+='<p>93030是新的独立搜索试验：FastRoute拥塞迭代预算由默认50增加到200，verbose记录实际迭代；相同原DB、770边、轨道、PG/OBS、pin和物理规则，原GRT/DRT失败保留。终态以原生回执为准，运行中不算通过；下层仍未合格冻结。</p>'
     diagnosis=root/'vector_table_diagnosis_r03'
     if (diagnosis/'summary.json').exists():
         folder=data/'vector_Liberty_table_diagnosis';shutil.copytree(diagnosis,folder,dirs_exist_ok=True)

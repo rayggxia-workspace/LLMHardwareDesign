@@ -314,6 +314,24 @@ def check(out):
             p=(out/m['evidence']).parent
             assert 'DRT-0352' in gzip.decompress((p/'detailed_route.error.txt.gz').read_bytes()).decode()
         assert modes[0]['source_lower_checkpoint_SHA256']==modes[1]['source_lower_checkpoint_SHA256']==q['source_lower_checkpoint_SHA256']
+    if j.get('SYSTEM_current_relocated_source_path_audit',{}).get('completed_utc'):
+        q=j['SYSTEM_current_relocated_source_path_audit'];assert q['native_returncode']==0 and q['source_kind']=='system_existing_buffers_r02'
+        assert q['all_sources_unchanged'] and all(q['source_worst_slacks_exactly_replayed'].values()) and not q['full_qualification']
+        source=j['SYSTEM_existing_buffer_relocation_r02'];assert q['source_SHA'][q['actual_source_directory']+'/routed.odb']==source['files']['routed.odb']['sha256']
+        assert q['source_SHA'][q['actual_source_directory']+'/extracted.spef']==source['files']['extracted.spef']['sha256']
+        r=j['SYSTEM_actual_M2_and_current_path_diagnosis'];assert not r['full_qualification'] and not r['plot_contains_other_nets_PDN_or_all_OBS']
+        assert r['source_native_DRC_count']==2 and len(r['actual_native_markers'])==2 and all(m['layer']=='metal2' for m in r['actual_native_markers'])
+        assert {p['source_text_slack_ns'] for p in r['paths']}=={-0.056303,-0.119814}
+        import csv,io
+        p=(out/q['evidence']).parent
+        native_compressed=gzip.decompress((p/'fresh_DRC_target_net.tsv.gz.gz').read_bytes())
+        assert hashlib.sha256(native_compressed).hexdigest()==q['files']['fresh_DRC_target_net.tsv.gz']['sha256']
+        native=list(csv.DictReader(io.StringIO(gzip.decompress(native_compressed).decode()),delimiter='\t'))
+        with (data/'system_actual_M2_net_rectangles.csv').open(encoding='utf-8') as f:exported=list(csv.DictReader(f))
+        assert exported==native and len(native)==r['actual_rectangle_rows'] and {x['net'] for x in native}=={'_215139_'}
+    if j.get('SYSTEM_clean_patch_r01_preparation_failure'):
+        q=j['SYSTEM_clean_patch_r01_preparation_failure'];assert q['state']=='FAILED_BEFORE_NATIVE_ROUTING' and not q['full_qualification']
+        text=gzip.decompress((out/q['evidence']).read_bytes()).decode();assert 'FileNotFoundError' in text and '/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib' in text
     if j.get('SYSTEM_existing_buffer_relocation_r02',{}).get('completed_utc'):
         q=j['SYSTEM_existing_buffer_relocation_r02'];assert not q['full_qualification'] and q['native_returncodes']['route']==0
         assert q['fresh_DRC_count']==rows['opentpu_aux']['native_DRC_count']==2 and q['whole_signal_geometry']['pass']
