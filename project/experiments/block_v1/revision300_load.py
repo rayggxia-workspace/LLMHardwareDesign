@@ -4,15 +4,45 @@ No new RTL/layout, no approved SDC mutation, no combined interface timing
 qualification: series R, input wires, coupling and remote drivers stay separate.
 """
 import json
-import re
 from pathlib import Path
+
+
+def serialization_reference(root,out,run,sdc,load):
+    """Same-tool tiny fixture, exact tokens and actual wrong-load control."""
+    from revision300_constraints_control import serialization
+    from revision300_constraint_readback import audit
+    tools=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45')
+    fixture=out/'load-fixture.v'
+    fixture.write_text('module revision300_load_fixture(input clk,d,output q); DFF_X1 ff(.CK(clk),.D(d),.Q(q)); endmodule\n')
+    prefix=''.join('read_lef {'+str(tools/'lef'/name)+'}\n'for name in
+        ('NangateOpenCellLibrary.tech.lef','NangateOpenCellLibrary.macro.mod.lef'))
+    prefix+='read_liberty {'+str(tools/'lib/NangateOpenCellLibrary_typical.lib')+'}\n'
+    prefix+='read_verilog {'+str(fixture)+'}\nlink_design revision300_load_fixture\n'
+    (out/'load-fixture.sdc').write_text(sdc)
+    refs={}
+    for label,value in [('positive',load),('wrong-load',load+1.)]:
+        script=prefix+'read_sdc {'+str(out/'load-fixture.sdc')+'}\nset_load %.15g [all_outputs]\n'%value
+        script+='write_sdc -no_timestamp -digits 12 {'+str(out/(label+'-reference.sdc'))+'}\n'
+        (out/(label+'-reference.tcl')).write_text(script)
+        run(['openroad','-no_init','-exit',out/(label+'-reference.tcl')],label+'-reference.log')
+        refs[label]=serialization((out/(label+'-reference.sdc')).read_text())
+    assert {k:v for k,v in refs['positive'].items()if k!='output_load_ff'}=={k:v for k,v in refs['wrong-load'].items()if k!='output_load_ff'}
+    assert refs['positive']['output_load_ff']!=refs['wrong-load']['output_load_ff']
+    budget=json.loads((root/'project/experiments/block_v1/physical-budget-300mhz.json').read_text())
+    budget['output_load_pf']=load/1000.
+    pins=[dict(pin='clk',direction='input'),dict(pin='d',direction='input'),dict(pin='q',direction='output')]
+    audit((out/'positive-reference.sdc').read_text(),pins,budget,refs['positive'])
+    try:audit((out/'wrong-load-reference.sdc').read_text(),pins,budget,refs['positive'])
+    except AssertionError:pass
+    else:raise AssertionError('Actual wrong output load accepted')
+    return refs['positive']
 
 
 def measure(root,out,cpus,run,kind,variant):
     from io_slots import file_sha
     from revision300_delivery import accepted
     from revision300_receive import source
-    from constraint_readback import audit as constraints
+    from revision300_constraint_readback import audit as constraints
     from native_passive_endpoint import audit as passive
     from native_annotation import inspect as annotation
     assert cpus==16 and kind in ('m','t') and variant in ('approved','base','high')
@@ -63,11 +93,9 @@ def measure(root,out,cpus,run,kind,variant):
     (out/'load-sta.tcl').write_text(prefix+body)
     run(['openroad','-no_init','-exit',out/'load-sta.tcl'],'load-sta.log')
     readback=(out/'constraints-readback.sdc').read_text()
-    # Existing strict grammar expects four zero decimals on driver slew.
-    # Normalize only exact zero tokens; all budget and slack checks unchanged.
-    normalized=re.sub(r'(-input_transition_(?:rise|fall) )0\.0+(?= )',r'\g<1>0.0000',readback)
     budget=dict(flow['budget'],output_load_pf=load/1000.)
-    boundary=constraints(normalized,plan,budget)
+    reference=serialization_reference(root,out,run,(results/'6_final.sdc').read_text(),load)
+    boundary=constraints(readback,plan,budget,reference)
     lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
     timing=passive(out,out/'timed-endpoints',lib.read_text(),inventory)
     rc=annotation(out)
@@ -84,6 +112,7 @@ def measure(root,out,cpus,run,kind,variant):
         source_spef_sha256=file_sha(results/'6_final.spef'),source_escape_receipt_sha256=file_sha(escaped/'receipt.json'),
         source_escape_report_sha256=file_sha(ep),approved_budget_unchanged=True,output_count=len(outputs),
         applied_output_load_ff=load,receiver_ff=2.,load_by_port_ff=loads,constraint_readback=boundary,
+        native_serialization_reference=reference,actual_wrong_load_negative_rejected=True,
         timing=timing,annotation=rc,original_final_files_unchanged=True,
         combined_300mhz_interface_timing_qualified=False,calibrated_rc_qualified=False,
         scope='Same accepted native ODB/SDC/SPEF, output lumped-C sensitivity only. Base/high use actual P2 exit lengths and uncalibrated RC, plus2fF receiver; replace original50fF, do not double-count it. Series R/input/clock wires/coupling/remote driver timing not modeled. No new physical implementation or system qualification.')
