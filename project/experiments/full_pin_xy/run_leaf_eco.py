@@ -29,6 +29,8 @@ def one(case,variant,revision):
     rc_heuristic=os.environ.get('PINXY_ECO_PLACEMENT_HEURISTIC')=='1'
     fresh_grt=os.environ.get('PINXY_ECO_FRESH_GRT')=='1'
     assert not fresh_grt or rc_heuristic
+    isolate_estimator=os.environ.get('PINXY_ECO_ISOLATE_ESTIMATOR')=='1'
+    assert not isolate_estimator or fresh_grt
     fix_hold=os.environ.get('PINXY_ECO_HOLD')=='1'
     assert not rc_heuristic or (incremental and not targeted)
     assert not targeted or (electrical_only and incremental and case in ['gemm','mxu'] and variant=='C')
@@ -152,6 +154,13 @@ def one(case,variant,revision):
     lines=[s+'\ncell_cost '+tcl(out/('before.cell_cost.tsv' if '/before}' in s else 'after.cell_cost.tsv')) if s.startswith('fingerprint ') else s for s in lines]
     if case.endswith('_aux'):
         lines=[s.replace('-signal metal2-metal10 -clock metal4-metal10','-signal metal2-metal8 -clock metal4-metal8') for s in lines]
+    if isolate_estimator:
+        # Test whether importing SPEF in the repair process leaves incompatible
+        # estimator state. Baseline replay stays mandatory in another native
+        # process; do not remove final RCX/STA or call estimates extracted RC.
+        lines=[s for s in lines if s!='read_spef '+tcl(spef)
+               and not s.startswith(('if {![stage repair_RC_model','if {![stage exact_source_STA_replayed'))
+               and not (s.startswith('report_worst_slack ') and '/before.' in s)]
     (out/'run.tcl').write_text('\n'.join(lines)+'\n')
     rec={'scope':'COSTED_CELL_ECO_EXPERIMENT_NOT_PURE_XY_OR_FULL_QUALIFICATION','case':case,'variant':variant,'source_physical_revision':physical,
          'source_inputs_SHA':inputs,'original_SDC_and_clocks_unchanged':True,'cell_sizing_buffering_and_placement_changes_separate_cost':True,
@@ -160,6 +169,7 @@ def one(case,variant,revision):
          'targeted_master_changes':replacements,'fillers_restored_with_original_master_set':targeted or rc_heuristic,
          'repair_estimator':('EXACT_SOURCE_SPEF_REPLAY_THEN_NATIVE_GRT_HEURISTIC' if fresh_grt else 'EXACT_SOURCE_SPEF_REPLAY_THEN_DECLARED_PLACEMENT_HEURISTIC') if rc_heuristic else 'LEGACY_OR_TARGETED_NO_ESTIMATOR_FIX',
          'fresh_native_global_routes_for_estimation':fresh_grt,
+         'exact_SPEF_baseline_replay_in_separate_process':isolate_estimator,
          'SYSTEM_legalizer':'SUPPORTED_DIAMOND_WITH_UNCHANGED_CHECK_PLACEMENT' if fresh_grt and case.endswith('_aux') else 'DEFAULT',
          'hold_repair_requested':fix_hold,'final_timing_requires_fresh_extraction':True,
          'replacement_logic_state_precheck':'EXACT_LIBERTY_FUNCTION_AND_SEQUENTIAL_STATE_CONTRACT' if targeted else 'NOT_EXECUTED',
@@ -173,6 +183,16 @@ def one(case,variant,revision):
         for p in old['libs']:
             if Path(p).is_file():common+=['--bind',p+':'+p+':ro']
     env='PINXY_OUTPUT={},PINXY_ACCESS_ALL=1,PINXY_ACCESS_OUT={}'.format(out,out/'whole_access.tsv.gz')
+    if isolate_estimator:
+        baseline=out/'baseline_SPEF_replay.tcl'
+        baseline.write_text('\n'.join(['read_liberty '+tcl(p) for p in old['libs']]+[
+          'read_db '+tcl(odb),'read_sdc '+tcl(sdc),'source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl','read_spef '+tcl(spef),
+          'report_worst_slack -max -digits 6 > '+tcl(out/'before.setup.txt'),
+          'report_worst_slack -min -digits 6 > '+tcl(out/'before.hold.txt')])+'\n')
+        rec['separate_exact_baseline_returncode']=execute(common,baseline,out/'baseline_SPEF_replay.log',env)
+        rec['separate_exact_baseline_matches_source']=all((out/('before.'+kind+'.txt')).read_text()==(trial.parent/('timing.'+kind+'.txt')).read_text() for kind in ['setup','hold'])
+        (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
+        assert rec['separate_exact_baseline_returncode']==0 and rec['separate_exact_baseline_matches_source']
     rec['native_returncode']=execute(common,out/'run.tcl',out/'native.log',env)
     if (out/'routed.odb').exists():
         top='8' if case.endswith('_aux') else '10'
@@ -214,8 +234,8 @@ def safe(args):
 
 
 if __name__=='__main__':
-    assert int(os.environ['SLURM_CPUS_PER_TASK'])>=8
     cases=sys.argv[2:] or ['vector'];assert set(cases)<=set(['vector','gemm','mxu','opentpu_aux'])
     variants=['C'] if os.environ.get('PINXY_ECO_ELECTRICAL_ONLY')=='1' or os.environ.get('PINXY_ECO_C_ONLY')=='1' else ['A','C']
+    assert int(os.environ['SLURM_CPUS_PER_TASK'])>=4*min(2,len(cases)*len(variants))
     with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(safe,[(c,v,sys.argv[1]) for c in cases for v in variants]))
     sys.exit(0 if all(results) else 1)
