@@ -9,10 +9,12 @@ from lef_view_contract import parse,verify
 DRIVER=Path(__file__).resolve().parent
 
 
-def run(case,source_revision,view_revision):
+def run(case,source_revision,view_revision,variant='C'):
     assert case in ['gemm','mxu','opentpu_aux']
+    assert variant in ['Aopt','C']
     checkpoint=case=='opentpu_aux'
-    source=ROOT/'checkpoint_route'/source_revision if checkpoint else ROOT/'leaf_eco'/source_revision/(case+'-C')
+    if checkpoint:assert variant=='C'
+    source=ROOT/'checkpoint_route'/source_revision if checkpoint else ROOT/'leaf_eco'/source_revision/(case+'-'+variant)
     receipt=source/'execution.json';j=json.loads(receipt.read_text())
     assert j.get('completed_utc') and j['native_returncode']==0 and j['fresh_DRC_returncode']==0 and j['fresh_DRC_count']==0
     assert j['whole_signal_geometry']['pass'] and j['source_unchanged'] and all(j['geometry_invariants'].values())
@@ -25,12 +27,12 @@ def run(case,source_revision,view_revision):
     assert all(sha(Path(p))==v for p,v in j['source_inputs_SHA'].items())
     prior_eco=ROOT/'leaf_eco/r08/opentpu_aux-C'
     origin=json.loads((prior_eco/'execution.json').read_text()) if checkpoint else j
-    original=ROOT/'finalized'/origin['source_physical_revision']/(case+'-C');old=json.loads((original/'execution.json').read_text())
+    original=ROOT/'finalized'/origin['source_physical_revision']/(case+'-'+variant);old=json.loads((original/'execution.json').read_text())
     trial=Path(old['legacy_RC_STA_receipt']);baseline=json.loads(trial.read_text());sdc=Path(baseline['source_sdc'])
     assert sha(sdc)==baseline['input_sha256'][str(sdc)]
     odb=source/'routed.odb';spef=source/'extracted.spef'
     for p in [odb,spef,source/'independent.drc']:assert sha(p)==j['files'][p.name]['sha256']
-    out=ROOT/'eco_views'/view_revision/(case+'-C');out.mkdir(parents=True,exist_ok=False)
+    out=ROOT/'eco_views'/view_revision/(case+'-'+variant);out.mkdir(parents=True,exist_ok=False)
     shutil.copy2(str(odb),str(out/'clean.odb'));assert sha(out/'clean.odb')==sha(odb)
     lines=['read_liberty '+tcl(p) for p in baseline['libs']]
     lines+=['read_db '+tcl(out/'clean.odb'),
@@ -53,7 +55,7 @@ def run(case,source_revision,view_revision):
     for p in baseline['libs']:
         if Path(p).is_file():common+=['--bind',p+':'+p+':ro']
     rec={'scope':'COSTED_ECO_ACCESS_AND_EXTRACTED_RESEARCH_TIMING_VIEW_NOT_FULL_PHYSICAL_QUALIFICATION',
-         'case':case,'source_revision':source_revision,'source_receipt':str(receipt),'source_receipt_sha256':sha(receipt),
+         'case':case,'variant':variant,'source_revision':source_revision,'source_receipt':str(receipt),'source_receipt_sha256':sha(receipt),
          'source_geometry_sha256':sha(odb),'source_SPEF_sha256':sha(spef),'source_SDC_sha256':sha(sdc),
          'source_native_DRC':0,'source_whole_signal_geometry':{k:v for k,v in j['whole_signal_geometry'].items() if k!='nets'},
          'separate_cell_ECO_cost':j.get('separate_cell_ECO_cost'),'design_formal_equivalence':'NOT_EXECUTED',
@@ -121,4 +123,4 @@ def run(case,source_revision,view_revision):
     return rec['native_export_returncode']
 
 
-if __name__=='__main__':sys.exit(run(*sys.argv[1:4]))
+if __name__=='__main__':sys.exit(run(*sys.argv[1:5]))

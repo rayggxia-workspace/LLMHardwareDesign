@@ -157,6 +157,33 @@ def render(root,out):
           'source_unchanged':q['source_unchanged'],'actual_diode_liberty_cells':q['actual_diode_liberty_cells'],
           'GDS_deck_findings_not_repaired':1460,'full_qualification':False,
           'evidence':(dest/audit.relative_to(snapshot)).relative_to(out).as_posix()}
+    proofs=[]
+    for p in sorted(snapshot.glob('mapped_equivalence/r01/*/execution.json.gz')):
+        q=read(p);case=p.parent.name
+        proofs.append(dict(q,case=case,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix()))
+        row=next(r for r in rows if r['case']==case)
+        row['whole_mapped_relative_digital_contract']=q.get('relative_mapped_digital_contract_pass')
+        row['relative_contract_scope']=q['scope']+'; '+q['unchanged_memory_semantics']
+    result['whole_mapped_relative_digital_contracts']=proofs
+    system_view=snapshot/'eco_views/r03/opentpu_aux-C/execution.json.gz'
+    system_text=''
+    if system_view.exists() and read(system_view).get('completed_utc'):
+        q=read(system_view);result['new_SYSTEM_costed_view']=dict(q,evidence=(dest/system_view.relative_to(snapshot)).relative_to(out).as_posix())
+        next(r for r in rows if r['case']=='opentpu_aux')['matching_current_physical_and_research_timing_view']=result['new_SYSTEM_costed_view']['evidence']
+        cost=q['separate_cell_ECO_cost'];delta=cost['standard_cell_master_bbox_area_after_um2']-cost['standard_cell_master_bbox_area_before_um2']
+        system_text='<p>92835导出与新SYS实际ODB/SPEF匹配的2229位物理/研究时序视图，全部原pin/PG/外框保持、SPEF余量准确重放。相对修复前实际新增'+str(cost['added_functional_instances_excluding_fillers'])+'个功能实例、'+str(cost['changed_master_original_instances'])+'个原实例换型、'+str(cost['moved_original_instances'])+'个原实例移动，标准单元master面积增加'+format(delta,'.3f')+'μm²；未新增spacer，原存储宏资源和位置保持。这些均为独立实现成本，不能归因纯XY或称block面积节省；完整功能与时序/电气仍待修复。</p>'
+    rule_file=snapshot/'antenna_rules/r01/layer_rule_presence.tsv.gz';rule_text=''
+    if rule_file.exists():
+        with gzip.open(rule_file,'rt') as f:rules=list(csv.DictReader(f,delimiter='\t'))
+        raw=gzip.decompress((rule_file.parent/'NangateOpenCellLibrary.macro.mod.lef.gz').read_bytes()).decode() if (rule_file.parent/'NangateOpenCellLibrary.macro.mod.lef.gz').exists() else None
+        proof=read(rule_file.parent/'execution.json.gz')
+        result['native_antenna_coverage_audit']={'layer_rules':rules,'source_files':proof['installed_source_files'],
+          'native_returncode':proof['native_returncode'],'source_unchanged':proof['source_unchanged'],
+          'source_macro_LEF_has_gate_area':None if raw is None else 'ANTENNAGATEAREA' in raw,
+          'full_qualification':False,'evidence':(dest/rule_file.relative_to(snapshot)).relative_to(out).as_posix()}
+        rule_text='<p><strong>92834已定位原生0的覆盖根因：</strong>M1–M10的hasDefaultAntennaRule与hasOxide2AntennaRule逐层均为0；原tech LEF没有天线关键字，macro LEF只有diode相关ANTENNADIFFAREA、没有ANTENNAGATEAREA。原GDS deck则启用300:1金属/实际gate面积检查并按实际扩散识别diode。原生缺规则/缺gate模型的0不能代表规则通过；需要从真实GDS补建模型或直接以不修改的GDS检查指导修复，不放宽300:1。</p>'
+    from plot_equal_cost_controls import plot
+    plot(result,out)
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',
@@ -192,11 +219,17 @@ def render(root,out):
 <h3>新收齐父夹具终态：批作业失败与子结果分开</h3>
 <div class="scroll"><table><thead><tr><th>实际物理版本</th><th>路由返回</th><th>fresh native DRC</th><th>所检连通</th><th>信号网数</th><th>双PG日志连通</th></tr></thead><tbody>'''+parents+'''</tbody></table></div>
 <p>92700与92714均已终态FAILED，不能继续标运行中：GEMM旧源C先前DRT无AP，Aopt子试验却已native0、3753网/7506端点及双PG通过；MXU Aopt/C均完成布线/2172网/4344端点连通及双PG，但fresh native分别5/2项spacing失败。C的两项位于M6的act_data[12]与macro OBS、以及M10的act_data[197]/[213]之间；Aopt五项均为M10信号间距。错误原文及来源保持，不用DRT0覆盖fresh结果。</p>
+<p>新版GEMM父夹具92721也已终态FAILED：完成实际路由、所检信号连通与双PG，fresh native仍有1项M10 gemm_a_rdata[128]/[129]间距错误。92841只针对已证实位置，用实际异网M10走线/via、PG、macro OBS和1.5μm的该层PRL上限筛选新的父层接点并重新接线；其原叶M5/M6及PG不改，等待真实终态，不宣布通过，也不把旧源夹具冒充成本ECO叶视图资格。</p>
 <p>这些旧夹具绑定各自记录的旧叶ODB，不是新成本ECO视图的父层资格。每块只有256个新的父层M10中间接点，原叶M5/M6 pin不改；其余点真实同层重合，非遗漏。</p>
 <h3>公平周边控制：相同单元成本，不重做C</h3>
 <div class="scroll"><table><thead><tr><th>优化边界Aopt</th><th>相同X2换型数</th><th>fresh native DRC</th><th>所检全块连通</th><th>setup ns</th><th>hold ns</th></tr></thead><tbody>'''+boundary+'''</tbody></table></div>
 <p>92812已COMPLETED，两块Aopt均实际增量DRT、RCX、独立native0和所检全块连通通过；GEMM与MXU分别沿用C相同3/1处换型、标准单元master面积+1.596/+0.266μm²，原pin/PG/外框和源保持。原SDC/允许层不变；setup/hold分别0.772449/0.053582和0.249090/0.053253ns。它们是等成本叶块对照，不是共同底座或完整系统收益结论。</p>
+<img src="assets/equal_cost_leaf_margins.png" alt="同换型成本叶块提取余量实测，不是系统资格" loading="lazy"><p><a href="assets/equal_cost_leaf_margins.svg">同图SVG</a>；四份数据均来自实际提取回执，非几何线长预测。</p>
 <h3>天线规则分歧仍未修复</h3>
 <p>只读审计92825在同一GEMM实际ODB上check_antennas报0网/0pin，而严格合并GDS原deck仍报1460项天线。源SHA保持，未调用修复。实际ANTENNA_X1物理单元和原Liberty模型均存在，输入A的非零capacitance为0.023429（须按原库单位解释）；未加入零电容占位。接下来比较真实LEF规则与GDS公式、连接/层覆盖及diode识别；native0不抹去GDS失败。</p>
+'''+rule_text+'''
+<h3>完整映射端点图相对验证：不同于RTL形式验证</h3>
+<p>92837/92838已核对原始源ODB与新成本ECO：GEMM 226775个非filler实例/826710个信号端点，MXU 179887/635434，全部实例、逐pin网络、方向、时钟/复位/常量及顶层端口一致；仅原定3/1处换型，实际Liberty逻辑与状态合同相等。未修改存储黑盒的实例和全部连接，以相同存储合同为条件的数字功能保持证据通过；不是RTL等价、模拟行为等价或完整物理签核。</p>
 <p>后续已收齐92781：SYS隔离合法化后的成本ECO完成真实详细布线、RCX及fresh native0，466332网/1474481端点所检连通通过；本轮路由前后cells/pin/PG/die原文指纹相同，单元修复/合法化成本另算。实际setup−0.462192ns、hold−0.125999ns，1113条VIOLATED文本标记（不是全部违例计数），仍时序/电气失败。原窗口版−1.779887/−0.389230和历史崩溃保留，不把成本ECO改善混成纯XY收益。</p>
+'''+system_text+'''
 <p>共同M1–M10尚无实际预连/合格冻结，M11/M12尚无两完整功能。按用户新授权，可以继续明确标为未合格的集成试验发现问题；不会把构造链接、研究探针或未合格试验标成最终底座。</p></section>'''

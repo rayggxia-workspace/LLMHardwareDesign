@@ -3,7 +3,7 @@ from pathlib import Path
 import argparse,datetime,gzip,hashlib,json,subprocess,tarfile
 
 ROOT=Path('/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027')
-JOBS=['92690','92691','92700','92714','92721','92781','92783','92792','92794','92795','92798','92812','92825']
+JOBS=['92690','92691','92700','92714','92721','92781','92783','92792','92794','92795','92798','92812','92825','92834','92835','92837','92838','92841']
 
 
 def sha(path):
@@ -23,11 +23,15 @@ def collect(name):
       'trials/access-r03/llaccel_aux-C/stages.tsv','finalized/access-r03/llaccel_aux-C/*',
       'escape_fixtures/gemm-r01/*/*','escape_fixtures/gemm-r02/*/*',
       'escape_fixtures/mxu-r01/*/*','leaf_eco/boundary-r01/*/*','logs/boundary-eco-r01-*.log',
-      'antenna_audit/r01/*','logs/antenna-audit-r01-*.log']
+      'antenna_audit/r01/*','logs/antenna-audit-r01-*.log','antenna_rules/r01/*',
+      'eco_views/r03/opentpu_aux-C/*','mapped_equivalence/r01/*/*','escape_landing/r01/gemm-C/*',
+      'inputs/gemm-actual-landing-r01/landing_delta.json','logs/antenna-rules-r01-*.log',
+      'logs/sys-eco-view-r03-*.log','logs/mapped-eco-*-r01-*.log','logs/gemm-actual-landing-r01-*.log']
     records=[]
     for p in sorted(set(p for pattern in patterns for p in ROOT.glob(pattern) if p.is_file())):
         a=p.stat();r={'source':str(p),'bytes':a.st_size}
         keep=p.suffix in ['.json','.log','.tcl','.txt','.tsv','.csv','.drc','.lyt'] and a.st_size<=8*1024*1024
+        if 'antenna_rules/r01' in str(p) and p.suffix in ['.lef','.lydrc'] and a.st_size<=8*1024*1024:keep=True
         keep=keep and not any(s in p.name for s in ['.cells.','.pdn.','whole_access.tsv','selected_access.tsv','paths.json'])
         if not keep:
             r['storage']='REMOTE_ONLY_INDEXED'

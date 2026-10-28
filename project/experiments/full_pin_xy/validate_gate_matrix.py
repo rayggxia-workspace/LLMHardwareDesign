@@ -76,4 +76,21 @@ def check(out):
         text=gzip.decompress(((out/audit['evidence']).parent/'native.log.gz').read_bytes()).decode()
         assert 'Found 0 net violations' in text and 'Found 0 pin violations' in text
         assert audit['GDS_deck_findings_not_repaired']==rows['gemm']['available_deck_findings']==1460
+    for r in j.get('whole_mapped_relative_digital_contracts',[]):
+        q=read(out/r['evidence']);assert q['relative_mapped_digital_contract_pass'] and q['all_sources_unchanged']
+        assert q['same_all_top_ports_directions_and_networks'] and q['same_nonfiller_instance_set']
+        assert q['same_all_signal_clock_reset_constant_terminals_and_networks'] and q['changed_masters_exact_Liberty_logic_state_contract']
+        assert q['native_export_codes']==[0,0] and q['RTL_equivalence']=='NOT_EXECUTED' and not q['full_qualification']
+        assert len(q['changed_masters'])=={'gemm':3,'mxu':1}[r['case']]
+        assert rows[r['case']]['whole_mapped_relative_digital_contract'] is True
+    if j.get('native_antenna_coverage_audit'):
+        q=j['native_antenna_coverage_audit'];assert q['source_unchanged'] and q['native_returncode']==0
+        assert len(q['layer_rules'])==10 and all(r['has_default_antenna_rule']==r['has_oxide2_rule']=='0' for r in q['layer_rules'])
+        assert q['source_macro_LEF_has_gate_area'] is False
+    if j.get('new_SYSTEM_costed_view'):
+        q=j['new_SYSTEM_costed_view'];assert q['native_export_returncode']==0 and q['matching_all_signal_model_pins']==2229
+        assert q['all_original_signal_and_PG_pins_and_size_exactly_preserved'] and q['SPEF_replay_matches_source']
+        cost=q['separate_cell_ECO_cost'];assert cost['same_original_macro_resources_and_placement']
+        assert cost['added_functional_instances_excluding_fillers']==5829 and cost['changed_master_original_instances']==980
+        assert cost['moved_original_instances']==1168 and not q['full_qualification']
     print('PASS_GATE_MATRIX_NATIVE_EVIDENCE',len(rows),'blocks;',native_files,'raw files; duplicate-LEF failure and real strict-merge outcomes preserved; NOT full qualification')
