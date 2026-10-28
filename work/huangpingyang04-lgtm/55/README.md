@@ -14,7 +14,7 @@
 
 <!-- current-buffer-PG-status -->
 
-当前检查点：2026-10-28T15:51:33.599266+00:00。整体in_progress；阶段一pass_with_inherited_issues；阶段二/三未验收；四未执行。资源并集底座主候选1/3，**未冻结**。冻结后两完整案例共享全部Block/有源资源、位置/朝向、内部和固定连接、PG/clock及M8接入点；现行主方案M1–M8固定，仅M9/M10和真实via8_0/via9_0定制，M11/M12后备未启用。openTPU保留otpu_asic_top全部33内部SRAM；llaccel保持EPILOGUE_FUSION=0、DMA_MAX_OUTSTANDING=16，外16SRAM bank/DRAM/主机参与功能测试但不算core面积。没有缩减硬件或放宽3ns时钟。
+当前检查点：2026-10-28T16:21:22.746788+00:00。整体in_progress；阶段一pass_with_inherited_issues；阶段二/三未验收；四未执行。资源并集底座主候选1/3，**未冻结**。冻结后两完整案例共享全部Block/有源资源、位置/朝向、内部和固定连接、PG/clock及M8接入点；现行主方案M1–M8固定，仅M9/M10和真实via8_0/via9_0定制，M11/M12后备未启用。openTPU保留otpu_asic_top全部33内部SRAM；llaccel保持EPILOGUE_FUSION=0、DMA_MAX_OUTSTANDING=16，外16SRAM bank/DRAM/主机参与功能测试但不算core面积。没有缩减硬件或放宽3ns时钟。
 
 **新增实测结论：两个M7上方候选均物理通过，但电气质量恶化，拒绝。**
 92850/92852真实ODB及读回、92856/92857独立完整来源资格通过：全部41相关网/3边界、全部八类资源与非目标、原27条native DRC逐条保持且新增0，M9/M10为空。不是零DRC或制造签核。9600候选ODB SHA=27fc135711941bc7f8c3eef66fb47431296ca79ebfa8193f4acfca6f98ddb5f0；11200候选SHA=fc3af6c4b890aeae317fd190e96094a487eff7a462d29675a9f2a93b01b50e08。
@@ -23,20 +23,26 @@
 相对紧邻保留e238：**分别29/83个既有setup负端点恶化，各1个既有cap项恶化**；最大额外0.0950350936/0.1199040901ps，新增/消除负端点仍0。相对真正原始，两候选均200setup/26cap项恶化，最差额外3.2267522900/3.2516212865ps。因此拒绝两候选，不按WNS/计数相同或差异很小豁免；有限M7上方轨道族停止，不宣称整体不可行。之前54形状路线同样因10setup/3cap退化拒绝，错误证据保留。
 92870一个4核作业串行完成两份真实SPEF/native诊断，严格复用兼容原始/preM8视图而不重扫参照。相对e238，9600/11200的net83203总电容分别+0.1987/+0.2452fF；ground−0.905280/−0.807880fF、coupling+1.103940/+1.0530114fF。诊断只分析同一已实测选定内部网，不作排他因果或功能证明。
 
-**新有限候选：在M8保持原接点，不再继续扩大M7轨道搜索。**
-fa8ea6b新增显式same_plane_upper_projection_v1：把原M9水平段移到相邻M8的非首选水平线，保留原M8两端导体，只移除两个旧via8_0；其余原目标几何精确保持，无单元/状态/流水/clock/内存/Block布局变化，仍是冻结前原资源的必要迁线。
-92871已实际通过合成拓扑/准入/分号/破坏测试、原58形状DEF/native精确往返、当前8896896行导体/cut完整预筛；仅1个候选，52形状，接触/冲突0。**这是预筛，不能写成真实布线/DRC通过。**
-实际物理92874为RUNNING，固定源码d0da269cddbc1788de0fe447b531fe1a11ad41bc；独立来源92883为PENDING、真实RC92884为PENDING、原始/e238完整质量92885为PENDING。已实际提交四核后继，按精确submission/源码/receipt及实际COMPLETED0严格门槛顺序执行。任一前驱未通过则后继拒绝，**现在没有M8真实物理或电气通过结论**。保留e238 SHA=e23827eea06a8f74bbab2f49ed87d75d2bb83741a829b5735de0a28454f94102；其相对原始200setup/26cap仍未通过，也不是合格最终源。
+**新M8候选实际物理通过，但4项电容退化，仍拒绝。**
+fa8ea6b显式same_plane_upper_projection_v1将原M9水平段移到相邻M8非首选方向，保持原M8接点/其他导体、移除两旧via8_0；无单元/状态/流水/clock/内存/Block布局变化，仍是冻结前必要迁线。92871实际格式/拓扑/原58形状往返及8896896行预筛通过只算准备。
+92874真实ODB/新进程读回及92883独立资格已完成：精确52形状，41网/3边界、八类完整资源/端点与所有非目标保持，M9/M10为空，原27条native DRC逐条保持/新增0，11实际报告破坏负例通过。ODB585047369字节，SHA1c43657d3b52181d004559d1d6df6f57e045c5b611dffaa0db7b007dfdb21fec；不是零DRC、制造签核或功能证明。
+92884真实OpenRCX/原3ns/同Lib-SDC-RC-frame与92885完整原始/e238对照已完成：setup WNS−4.173063790419197ns、TNS−1057.7070114693813ns、287负端点；hold+0.02439915005763723ns/负端点0，cap56/slew0，fanout无有限限制。相对e238：setup恶化0、改善37、其余相同，但**4个既有cap项严格恶化**，因此拒绝，保留e238。相对真正原始仍198setup/26cap项恶化、最大额外3.0921932556ps，不算质量验收。SPEF426150222字节，SHAfaa37dc7b9a2f5de7bac23ee795cf7832a0fa276c61a2f63fd2f5b9e365e5bbb。
+92898仅重读新当前8896890行/52形状和SPEF，精确复用原始/preM8封存视图并检出8种缓存破坏，无重复提取。目标net83203总C相对e238降低4.6571fF，仍不保证全部其他引脚不恶化。
+92900实际将4个严格退化pin唯一映射到_073768_、_134077_、_135797_、_139309_；各有合法信号输出身份，5项合成准入负例通过。两份已提取的目标net视图均无这4网的直接耦合记录，不能宣称它们由该直接耦合导致，也不能由无记录证明无间接影响。
+92902首次比较这4网的父版/新M8真实SPEF，规范化别名/记录顺序、保留节点身份和单位：四网CONN及RES逐项相同，CAP实际数值不同（不是只有显示/行顺序不同），每网声明总C多0.0001fF；4/4/4/5条CAP记录改变。合成别名/顺序、改R、缺C、截断控制通过；原始日志/SPEF均不改。原因仍未排他定位，**不擅自设容忍度、不把这些差异视作已豁免**。下一步先定位这些实际CAP变化/提取上下文，再决定有依据的有限修正，不盲目平移/扩轨。
+保留e238 SHA=e23827eea06a8f74bbab2f49ed87d75d2bb83741a829b5735de0a28454f94102；其原有200setup/26cap退化仍未验收。
 
 **AUX与整片主线继续，不因汇总停止。**
 92750新AUX基线详细布线/fresh native DRC0/PG/放置/资源通过；92796全部620686信号网/1832001必要端点连通；92797最终.v字节及八类表精确等同CTS，仅限定复用65545状态/168074锥证书。92805真实原3ns仍setup6100/hold8673负端点、cap1317；92809精确覆盖555400 active SPEF网/1766715端点，不能把覆盖通过写成质量通过。旧严格3696状态锥差异保留，旧完整core和自建AUX边界/clock不同，不全部豁免为继承。
-92810为RUNNING，实际调用repair_design/repair_timing及阻值感知reroute，正在详细布线；GRT估计不当最终提取结果。DRT读取5_1_grt.sdc、clock仍3.0000ns，诊断updated_clks.sdc4.2480未用于放宽。新增buffer/resize在本人未冻结辅助内，不能继承旧字节身份；92832/92833新完整状态锥和实际全网检查仍分别PENDING/PENDING，未完成即不宣称新功能证明。
-92538为RUNNING，仅3456/4096区闭合进度；92793条件恢复等待自然终态，92547/48原来源与固定线路依赖保留。**14059固定连接仍为预连线方案，尚未完成真实完整固定导线；每案例841闲置扇出未完成。** 共同PG/clock/固定连接、整片检查、新物理版完整功能和质量、冻结及两完整case定制均未验收。原open20例/87160行/2317514字段和llaccel六组180任务/243883行/17769493字段仅对应旧版本。外clock rise/fall、open37常量输出负载未确定，保留null。
+92810实际在原3ns完成GRT/DRT，但**独立fresh native复查出现2项M2违例，整体FAILED1**：同一net _280627_的一项NS Metal和一项Metal Spacing，约(1218.56,1042.30)um；路由器末态曾报0，不能代替新进程独立检查。未执行真实RC、新完整功能、状态锥或全网验收。9055s墙钟/27375sCPU，平均约3.02核。失败receipt/5_route_connected ODB/DEF/.v/3nsSDC与全部日志保留，不采用失败源。
+**纠正后继环境结果：**92832/92833均未启动子检查，但实际原因是容器找不到sacct，不能描述成已验证的前驱失败拒绝。两份continuation明确保留FileNotFoundError，旧成功/状态证明没有沿用。ef58b6d给续接器新增宿主/usr/bin/sacct预采集，容器内验证同作业/源码/配置/生产者身份/新鲜度；92904已实际在宿主观察92810=FAILED1/4并在容器拒绝、child_launched=false，5种合成状态负例通过。实际成功前驱启动/子receipt分支尚未新验证，不夸大为完整续接资格。
+92905为RUNNING，在新目录只读完整导出失败AUX源的资源/几何，第一次库存（92810在库存之前即失败）；显式OpenROADthreads4、allocation4，源码df38ac012f85ad442ce60ba0b655a347c67dca2c。它仅供定位两项M2问题，必须核对实际输入SHA和失败receipt后才用于派生修复；不是失败版本物理资格通过。不会重复整个路由或绕过DRC直接执行旧后继。后续若局部修复成功，新增buffer/尺寸逻辑还必须新完整状态/全网/真实RC/完整功能，不沿用92797字节身份。
+92538为RUNNING，仅3600/4096区闭合进度；92793条件恢复等待自然终态，92547/48原来源与固定线路依赖保留。**14059固定连接仍为预连线方案，尚未完成真实完整固定导线；每案例841闲置扇出未完成。** 共同PG/clock/固定连接、整片检查、新物理版完整功能和质量、冻结及两完整case定制均未验收。原open20例/87160行/2317514字段和llaccel六组180任务/243883行/17769493字段仅对应旧版本。外clock rise/fall、open37常量输出负载未确定，保留null。
 
-**算法与记录。** 方法文档精简为13部分：分离底座生成/使用、结构/状态/布局/PG/clock/迁线/全片/真实质量/严格后继与失败反馈，并标明入口支持范围；旧232939字节方法全文存本次previous_methods.md及Git历史。当前route入口只实现固定父层连接，replay仅native清单；不声称已完成任意Block/LLM编译器或全流程重放。所有Stage2/3运行源码固定在服务器快照，精选文档更新不等于完整算法源码入库。
+**算法与记录。** 方法文档精简为13部分：分离底座生成/使用、结构/状态/布局/PG/clock/迁线/全片/真实质量/严格后继与失败反馈，并标明入口支持范围；旧232939字节方法全文存155133Z归档previous_methods.md及Git历史。当前route入口只实现固定父层连接，replay仅native清单；不声称已完成任意Block/LLM编译器或全流程重放。所有Stage2/3运行源码固定在服务器快照，精选文档更新不等于完整算法源码入库。
 
 **资源和追溯。** 新作业均4CPU/native≤4/BLAS1，不独占节点、不停其他或本任务已有作业、不重复活跃实验。92850/52 wall1409/1408s、CPU2130.536/2128.258s，平均约1.51核；92858/60 wall211/209s、CPU264.309/262.156s，约1.25核；单线程不声称4倍提速。实际allocation/affinity、源码/配置/工具/输入/产物SHA由各driver和索引绑定。OpenROAD版本字符串unknown，二进制SHA0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53。
-服务器根/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z；本轮源码5c5a68ef15d09dc0c3c57c6b149beae5a51d1c61。最新索引/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-milestone-20261028T155133Z/milestone.json，SHA-256=8a606cd2c624fdbf9530caebe1fab3be69a7010df24777726f39a3f8308fbbdb；历史索引、真实ODB/SPEF和完整日志均保留服务器。只更新原六份进展/方法/README/个人记录/结果摘要；不上传大数据库、全量日志或工艺。
+服务器根/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z；本轮源码72c79742f268543f21800dd24d47c6142bc3d7c4。最新索引/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-milestone-20261028T162122Z/milestone.json，SHA-256=2c11611941660c3d20c1c3544fe6ae2b066120b6d80890e98a3a7ae784921317；历史索引、真实ODB/SPEF和完整日志均保留服务器。只更新原六份进展/方法/README/个人记录/结果摘要；不上传大数据库、全量日志或工艺。
 
-GitHub沿用Issue55/task/55-full-block-integration/草稿PR58，原已发布44511b859c2dfa4ae5bf40e888739158cb419bef及并行图形成果保留；本次精确远端提交以交付receipt为准。登记沿用管理中心PR5 pending（未重核）；board unverified/同步pending、reviewer待指定，继续in_progress、不合并/关闭/标done。
-下一步：读取M8实际物理结果，严格资格后完成真实RC/原始及e238完整质量，再决定是否采用；继续AUX详细布线/新状态/全网及整片/实际固定连线主线，所有必要条件闭合后才冻结和两完整case定制。
+GitHub沿用Issue55/task/55-full-block-integration/草稿PR58，原已发布f81793e46a10d87033e7af45dc38baec4e6c49cf及并行图形成果保留；本次精确远端提交以交付receipt为准。登记沿用管理中心PR5 pending（未重核）；board unverified/同步pending、reviewer待指定，继续in_progress、不合并/关闭/标done。
+下一步：分析四网实际CAP差异，保留e238及全部失败；完成92905失败AUX库存再局部定位/修复2项M2并重新资格化；保持整片/完整固定线路主线，不提前冻结或宣称两完整case通过。
