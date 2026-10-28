@@ -259,8 +259,39 @@ def render(root,out):
         q=read(live_vector);result['VECTOR_physical_resume_latest']={'scheduler_state':scheduler.get('92872',{}).get('State','UNKNOWN'),
           'native_stage_returncodes':q.get('native_returncodes',{}),'terminal_receipt':bool(q.get('completed_utc')),
           'separate_cell_ECO_cost':q.get('separate_cell_ECO_cost'),'fresh_DRC_count':q.get('fresh_DRC_count'),
+          'setup_ns':q.get('setup_ns'),'hold_ns':q.get('hold_ns'),
+          'literal_VIOLATED_markers_not_complete_failure_count':q.get('literal_VIOLATED_markers_not_complete_failure_count'),
           'full_qualification':False,'evidence':(dest/live_vector.relative_to(snapshot)).relative_to(out).as_posix()}
         r=next(r for r in rows if r['case']=='vector');r['newer_attempt']['physical_resume_latest']=result['VECTOR_physical_resume_latest']
+        if q.get('completed_utc'):
+            assert q['all_sources_unchanged'] and all(q['source_pin_PG_die_unchanged'].values())
+            r['prior_completed_source_before_latest_ECO']={k:r[k] for k in ['completed_source','actual_internal_route','native_DRC_count','all_multiterminal_signal_clock_geometry','setup_ns','hold_ns','violation_marker_rows']}
+            r.update({'completed_source':'costed_VECTOR_resume/r01','actual_internal_route':'COMPLETED_COSTED_ECO_NOT_PURE_XY',
+              'native_DRC_count':q['fresh_DRC_count'],'all_multiterminal_signal_clock_geometry':q['whole_signal_geometry']['pass'],
+              'setup_ns':q['setup_ns'],'hold_ns':q['hold_ns'],'violation_marker_rows':q['literal_VIOLATED_markers_not_complete_failure_count'],
+              'power_grid':'NATIVE_VDD_VSS_COMMANDS_EXECUTED','separate_cell_ECO_cost':q['separate_cell_ECO_cost']})
+            r['evidence'].append((dest/live_vector.relative_to(snapshot)).relative_to(out).as_posix())
+    diode=snapshot/'antenna_diode_eco/r01/gemm-C/execution.json.gz'
+    if diode.exists():
+        q=read(diode);result['GEMM_real_diode_ECO']={'scheduler_state':scheduler.get('92910',{}).get('State','UNKNOWN'),
+          'receipt':q,'full_qualification':False,'original1460_repair_not_yet_verified':True,
+          'strict_GDS_followup_job':'92912','strict_GDS_followup_state':scheduler.get('92912',{}).get('State','UNKNOWN'),
+          'evidence':(dest/diode.relative_to(snapshot)).relative_to(out).as_posix()}
+        stage_file=diode.parent/'stages.tsv.gz'
+        if stage_file.exists():
+            with gzip.open(stage_file,'rt') as f:result['GEMM_real_diode_ECO']['native_stage_status']={r['stage']:r['status'] for r in csv.DictReader(f,delimiter='\t')}
+    path_audits=[]
+    for case in ['vector','opentpu_aux']:
+        p=snapshot/'actual_path_audit/r01'/case/'execution.json.gz'
+        if p.exists():path_audits.append(dict(read(p),evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix()))
+    result['latest_actual_extracted_path_audits']=path_audits
+    from plot_actual_critical_paths import plot as plot_paths
+    diagnosis=plot_paths(snapshot,out)
+    if diagnosis:result['actual_critical_path_diagnosis']=diagnosis
+    vector_proof=snapshot/'buffered_equivalence/r01/vector/execution.json.gz'
+    if vector_proof.exists():
+        q=read(vector_proof);result['VECTOR_directed_buffer_relation']=dict(q,evidence=(dest/vector_proof.relative_to(snapshot)).relative_to(out).as_posix())
+        next(r for r in rows if r['case']=='vector')['whole_mapped_relative_digital_contract']=q.get('relative_mapped_digital_contract_pass',False)
     antenna=snapshot/'antenna_netmap/r02/execution.json.gz'
     if antenna.exists():result['actual_GDS_antenna_correlations']=dict(read(antenna),evidence=(dest/antenna.relative_to(snapshot)).relative_to(out).as_posix())
     from plot_mxu_region_ownership import plot as plot_ownership
@@ -334,4 +365,7 @@ def render(root,out):
 <p>六资源实际集成92855在独立common_integration/r01/C目录执行：复用既有完整构造图、真实资源和交错位置、256条×32μm共享导体拓扑/预算，读取匹配的完整详细OBS与实际研究模型；PG、合法接点、固定导体、底层路由及独立验证分别留回执。当前调度状态：'''+html.escape(result['actual_common_integration_trial']['state'])+'''；当前阶段：'''+html.escape(str(result['actual_common_integration_trial']['status']))+'''。不得将作业启动、视图读取、构造端口或固定线API当成实际共享系统完成。构造端口尚待真实模式降为固定几何，尚无两完整M11/M12功能或合格冻结。</p>
 '''+placement_image+'''
 <p>VECTOR 92861在无GRT、无增量路由、同进程无SPEF的隔离条件下仍EST-0104失败。实际VECTOR有411821个filler，SYS源没有。仅将remove_fillers移到estimate_parasitics之前，92867原生命令成功，实际14处换型、17个缓冲插入并保存检查点；单变量对照证明该排序足以排除本隔离流程中的错误，不能外推已解决所有工具状态问题。上游<a href="https://github.com/The-OpenROAD-Project/OpenROAD/blob/82552e4e9180fd5dd0c9cda58273029c83efb146/src/est/src/EstimateParasitics.cpp">固定源码参考</a>在增量修复入口拒绝待更新的寄生状态；安装二进制版本仍显示unknown、源树不存在，不能冒称此上游commit就是安装版本。原SDC和最终检查不放宽，新检查点尚未合法化、未重布线/提取，不是最终RC/STA通过。</p>
-<p>新92872从该检查点接续、不重复repair_design：setup修复命令完成，但估算仍约−4.18ns并明确报无法修复全部setup；独立合法化和check_placement成功，恢复411382个原类型filler，已进入原层详细布线。中间步骤成功不代表最终RCX/STA/fresh native与信号/时钟/双PG通过；最新阶段以矩阵中的physical_resume_latest为准，不把估算余量当提取结果。<a href="data/runtime_submissions/vector_resume_r01.json">提交/固定驱动</a>、<a href="data/runtime_submissions/vector_resume_r01.execution.json.gz">初始回执</a>及本节最新原文快照分别保留。</p></section>'''
+<p>92872已取得真实终态：从该检查点接续、不重复repair_design，独立合法化、全详细布线、fresh native0、375675条多端信号/时钟网和双PG所检通过；实际RCX后setup仍−4.140220ns、hold0.037989ns，83个文字VIOLATED标记，整体FAILED而非签核。新增180个功能实例、818原实例换型、875原实例移动，标准单元master面积+917.700μm²，全部独立成本；旧−4.195674ns源保留。92914/92915重读实际SPEF分析VECTOR/SYS完整关键路径，不放宽SDC；92913检查VECTOR实际全量有向缓冲合同。最新终态以矩阵和原文为准。<a href="data/runtime_submissions/vector_resume_r01.json">提交/固定驱动</a>、<a href="data/runtime_submissions/vector_resume_r01.execution.json.gz">初始回执</a>分别保留。</p>
+<p><strong>真实提取路径诊断：</strong>92914/92915精确重放源setup/hold。VECTOR最差路径为p0_r[18]到wr_data_r[18]，发射Q之后141个cell arc约6.740ns、142段net arc约0.198ns；cell值含实际负载/slew影响，不是无法改善的零线长下界。SYSTEM最差输出路径有8个cell arc约0.455ns、9段net arc约1.052ns，其中最后到port约0.657ns，后续优先核对真实缓冲位置和绕行。工具JSON有舍入，不代替原文6位余量。未放宽时钟，也未宣布物理修复成功。</p>
+<figure><img src="assets/actual_critical_path_diagnosis.png" loading="lazy"><figcaption>实际SPEF关键路径；不包含发射时钟/required-time项，不是线长或零连线下界。<a href="assets/actual_critical_path_diagnosis.svg">SVG</a> · <a href="data/actual_critical_path_diagnosis.json">原文SHA/数值</a></figcaption></figure>
+<p><strong>GEMM真实天线ECO：</strong>92910使用真实ANTENNA_X1对636条已关联网接入，新增输入capacitance每个0.023429fF（实际typical库capacitive_load_unit=1ff）；单输入无输出/状态合同已核对，不用占位负载。636个单元已实际插入/合法化，原功能实例位置/连接保持，完整接线与RCX/STA继续；92912依赖其结束后严格GDS和不修改原deck。新增面积/负载单列，原1460项天线在独立终态前仍未视为修复；不把单元识别、合法化或native0当完整规则通过。</p></section>'''

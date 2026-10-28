@@ -144,4 +144,26 @@ def check(out):
     if j.get('MXU_M6_bounded_ownership'):
         q=j['MXU_M6_bounded_ownership'];assert q['old_and_costed_leaf_all_exported_M6_rectangles_and_net_labels_equal']
         assert q['original_parent_native_DRC_count_retained']==2 and q['gap_is_not_a_rule_pass'] and not q['full_qualification']
+    if j.get('VECTOR_physical_resume_latest',{}).get('terminal_receipt'):
+        q=read(out/j['VECTOR_physical_resume_latest']['evidence']);r=rows['vector']
+        assert q['fresh_DRC_count']==0 and q['whole_signal_geometry']['pass'] and q['whole_signal_geometry']['checked_nets']==375675
+        assert q['setup_ns']==r['setup_ns']==-4.14022 and q['hold_ns']==r['hold_ns']==0.037989
+        assert r['violation_marker_rows']==83 and r['completed_source']=='costed_VECTOR_resume/r01'
+        assert all(q['source_pin_PG_die_unchanged'].values()) and q['all_sources_unchanged'] and not r['full_qualification']
+        assert q['separate_cell_ECO_cost']['added_functional_instances_excluding_fillers']==180
+    for q in j.get('latest_actual_extracted_path_audits',[]):
+        assert q['native_returncode']==0 and q['all_sources_unchanged'] and all(q['source_worst_slacks_exactly_replayed'].values())
+        assert not q['full_qualification']
+    if j.get('actual_critical_path_diagnosis'):
+        q=j['actual_critical_path_diagnosis'];assert not q['full_qualification'] and q['original_clock_constraints_unchanged']
+        for r in q['paths']:
+            p=folder/'actual_path_audit/r01'/r['case']/'setup_paths.json.gz';raw=gzip.decompress(p.read_bytes())
+            assert hashlib.sha256(raw).hexdigest()==r['actual_setup_path_JSON_uncompressed_SHA256']
+            assert abs(r['cell_arc_increment_ns']+r['net_arc_increment_ns']-r['endpoint_arrival_ns']+r['launch_Q_arrival_ns'])<1e-9
+    if j.get('GEMM_real_diode_ECO'):
+        q=j['GEMM_real_diode_ECO'];assert not q['full_qualification'] and q['original1460_repair_not_yet_verified']
+        r=q['receipt'];assert r['original_antenna_findings']==1460 and r['actual_correlated_native_nets']==636
+        assert r['original_antenna_rules_unchanged'] and r['no_fake_gate_or_diffusion_area']
+        lib=r.get('actual_diode_Liberty_contract')
+        if lib:assert lib['capacitive_load_unit']==['1','ff'] and lib['actual_input_capacitance']>0 and lib['single_input_only_no_output_function_or_state']
     print('PASS_GATE_MATRIX_NATIVE_EVIDENCE',len(rows),'blocks;',native_files,'raw files; duplicate-LEF failure and real strict-merge outcomes preserved; NOT full qualification')
