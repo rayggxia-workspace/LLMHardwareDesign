@@ -255,6 +255,14 @@ def check(out):
         assert b['by_target_group']['new_22_diode_net:different_representation']==22
         assert b['by_target_group']['previous_636_diode_net:different_representation']==2
         assert b['by_target_group']['other_original_net:different_representation']==53
+    if j.get('GEMM_actual658_diode_physical_and_extracted_views',{}).get('completed_utc'):
+        q=j['GEMM_actual658_diode_physical_and_extracted_views'];assert not q['full_qualification'] and 'actual_failure' not in q
+        assert q['native_export_returncode']==q['fresh_model_read_returncode']==0 and q['matching_all_signal_model_pins']==3753
+        assert q['SPEF_replay_matches_source'] and q['all_original_signal_and_PG_pins_and_size_exactly_preserved']
+        assert q['all_sources_and_pre_RCX_geometry_unchanged'] and q['minimum_period_present'] is False
+        source=j['GEMM_additional22_diode_actual_attempt']
+        assert q['source_receipt_SHA256']==hashlib.sha256(gzip.decompress((out/source['evidence']).read_bytes())).hexdigest()
+        assert q['source_geometry_sha256']==source['files']['routed.odb']['sha256'] and q['source_SPEF_sha256']==source['files']['extracted.spef']['sha256']
     if j.get('actual_fixed256_native_attribute_audit'):
         q=j['actual_fixed256_native_attribute_audit'];assert q['native_export_returncode']==0 and not q['native_export_executed_this_run']
         assert q['all_256_native_FIXEDS_and_original_net_bindings_verified'] and q['all_closed_source_files_unchanged'] and q['native_shared_conductor_count']==256

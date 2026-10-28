@@ -346,6 +346,11 @@ def render(root,out):
     chain_resume_text=''
     upper_text=''
     incremental_text=''
+    diode_views=snapshot/'diode_views/r01/gemm-C/execution.json.gz'
+    if diode_views.exists():
+        q=read(diode_views);result['GEMM_actual658_diode_physical_and_extracted_views']=dict(q,evidence=(dest/diode_views.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('completed_utc'):
+            incremental_text+='<p><strong>92997实际研究视图已导出：</strong>与658diode确定源逐SHA绑定的clean ODB、LEF/OBS、DEF、真实网表和非零提取时序Lib已生成；3753个signal pin及PG/尺寸/原M5/M6与原真实接口完全一致，SPEF余量精确重放、独立模型重读通过。minimum_period存在='+str(q.get('minimum_period_present'))+'，完整规则/RTL/新父层可达性及系统资格未闭合，不能当合格冻结。大视图、SPEF与工具/配置由终态回执逐SHA索引，未用最终LEF坐标修改冒充真实接线。</p>'
     incremental=snapshot/'antenna_incremental_eco/r01/gemm-C/execution.json.gz'
     if incremental.exists():
         q=read(incremental)
@@ -475,6 +480,7 @@ def render(root,out):
 <h3>公平周边控制：相同单元成本，不重做C</h3>
 <div class="scroll"><table><thead><tr><th>优化边界Aopt</th><th>相同X2换型数</th><th>fresh native DRC</th><th>所检全块连通</th><th>setup ns</th><th>hold ns</th></tr></thead><tbody>'''+boundary+'''</tbody></table></div>
 <p>92812已COMPLETED，两块Aopt均实际增量DRT、RCX、独立native0和所检全块连通通过；GEMM与MXU分别沿用C相同3/1处换型、标准单元master面积+1.596/+0.266μm²，原pin/PG/外框和源保持。原SDC/允许层不变；setup/hold分别0.772449/0.053582和0.249090/0.053253ns。它们是等成本叶块对照，不是共同底座或完整系统收益结论。</p>
+<p>上述是历史3/1换型同成本来源；主矩阵当前GEMM的658diode及追加两换型另有真实负载/单元成本，不能直接与此旧Aopt作纯XY收益比较。完整周边系统对照仍需匹配后续实现口径。</p>
 <img src="assets/equal_cost_leaf_margins.png" alt="同换型成本叶块提取余量实测，不是系统资格" loading="lazy"><p><a href="assets/equal_cost_leaf_margins.svg">同图SVG</a>；四份数据均来自实际提取回执，非几何线长预测。</p>
 <div class="scroll"><table><thead><tr><th>同ECO叶块方案</th><th>DRT实测总线长 μm</th><th>DRT via数</th><th>相对同ECO Aopt线长</th><th>相对via</th></tr></thead><tbody>'''+route_table+'''</tbody></table></div>
 <p><a href="data/equal_cost_leaf_actual_metrics.json">实际逐层线长、via及原生日志SHA</a>直接复用已完成DRT最后一组报告，没有重复路由。数值按工具报告精度取整μm，逐层取整和总数可能有小差异；via按DRT口径，不当完整PDN via统计。与候选几何L1、提取RC及系统收益分别记录。即使叶块内部成本增加，也保留内部方案，继续共同底座/适配层系统总成本验证，不能据此撤回边缘并结束研究。</p>
