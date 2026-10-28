@@ -1,0 +1,184 @@
+{
+  "schema": "revision300-native-flow/1",
+  "passed": true,
+  "top": "block_v1_v",
+  "implementation_count": 1,
+  "source_mapping_receipt_sha256": "2024d71a7438994a86d09617150e6aadbd104e535cb4af85a79e971672a1ebe4",
+  "source_function_receipt_sha256": "153ec18810355a65ba6ae75545e541309fece0770c411fb954fc9dd112469087",
+  "rtl_sha256": {
+    "project/rtl/block_library_v1/block_v1_v.sv": "529637e1f285327300d6f6e456a9bd42e2f3eaa449a0ac955255cc70d5db0553",
+    "project/rtl/block_library_v1/block_v1_v_function.sv": "2c33da6291cb4d2e7992d4c13ded51ea594b12a392c0e4bb84aab1735d5f054d",
+    "project/rtl/block_library_v1/block_v1_v_group.sv": "8d7636a2aa277d9b1901196505632b9bfccd9d7a8f5178526b2965a3418c20f5",
+    "project/rtl/block_library_v1/block_v1_v_tables.svh": "95c91b28cc5f71f1bbaba1c0dd3fb872d23ab2e215e157436505be95b2e26edc"
+  },
+  "mapped_area_um2": 566531.854,
+  "die_um": [
+    1240,
+    1240
+  ],
+  "area_derived_side_um": 1240,
+  "footprint_rule": "ceil10(sqrt(mapped_area/0.40)+40), min400; enlarge by10um only until complete coarse tracks fit",
+  "config_sha256": "55cad4a6f2cf837909e01de921c66473c28fd06d2504174447b419712ffea910",
+  "pins_sha256": "2f8442def38967f5213f2dcf57e784422d4a837112d5783008cb2be63c59ab06",
+  "budget": {
+    "schema": "block-v1-300mhz-contract/1",
+    "clock_ns": 3.3333333333333335,
+    "uncertainty_ns": 0.1,
+    "clock_transition_ns": 0.05,
+    "input_delay_max_ns": 0.8,
+    "input_delay_min_ns": 0.2,
+    "output_delay_max_ns": 0.8,
+    "output_delay_min_ns": 0.2,
+    "input_driver": {
+      "cell": "BUF_X2",
+      "pin": "Z"
+    },
+    "output_load_pf": 0.05,
+    "corner": "NangateOpenCellLibrary_typical",
+    "status": "Selected revised-leaf design contract; actual300MHz closure not yet measured",
+    "rationale": [
+      "3.333333333ns clock; symmetric0.8ns I/O windows leave1.633333333ns total for declared external interconnect after0.1ns uncertainty, rather than copying old2ns delays.",
+      "50fF receiver load is explicit macro-boundary test budget, including2fF receiver and48fF local wire allowance; eventual complete escape load must be reported separately and must not silently inherit end-to-end300MHz qualification.",
+      "No false or multicycle exceptions added. Pipeline stages, clock/drivers/FIFOs and all physical resources priced in native frozen macro."
+    ]
+  },
+  "actual_variables": {
+    "MIN_ROUTING_LAYER": "metal1",
+    "MAX_ROUTING_LAYER": "metal10",
+    "KEEP_VARS": "1",
+    "LEC_CHECK": "1",
+    "SEC_CHECK": "0",
+    "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+    "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+    "CAP_MARGIN": "40",
+    "HOLD_SLACK_MARGIN": "0.020",
+    "PRE_GLOBAL_ROUTE_TCL": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-270/tasks/revision300-route-v/grt-capacity.tcl",
+    "GLOBAL_ROUTE_ARGS": "-congestion_iterations 100 -congestion_report_iter_step 5 -verbose"
+  },
+  "planned_complete_escape": {
+    "passed": true,
+    "total_signal_bits": 277,
+    "connected_bits": 277,
+    "shorts": 0,
+    "opens": 0,
+    "geometry_violations": 0,
+    "via10_count": 277,
+    "via11_count": 133
+  },
+  "planned_independent_gds": {
+    "passed": true,
+    "fixtures": [
+      {
+        "name": "all-ports",
+        "passed": true,
+        "gds_readback_exact": true,
+        "checks": {
+          "metal10_width": true,
+          "metal10_spacing": true,
+          "metal11_width": true,
+          "metal11_spacing": true,
+          "metal12_width": true,
+          "metal12_spacing": true,
+          "via10_spacing": true,
+          "via10_lower_enclosure": true,
+          "via10_upper_enclosure": true,
+          "via11_spacing": true,
+          "via11_lower_enclosure": true,
+          "via11_upper_enclosure": true
+        },
+        "gds_bytes": 94764
+      }
+    ],
+    "scope": "Independent actual GDS rectangle identity, nativeM10 limited width/space and new-layer width/space/cut-enclosure; not complete native-macro DRC."
+  },
+  "stages": [
+    "do-1_synth",
+    "do-floorplan",
+    "do-place",
+    "do-cts",
+    "do-route",
+    "do-finish"
+  ],
+  "final_files": {
+    "6_final.v": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-270/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/6_final.v",
+      "sha256": "5786ce2764acae0a8dd1ab9b80e4deb8bd1c38283f0c73c4532c547fb47916ae",
+      "bytes": 105861838
+    },
+    "6_final.sdc": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-270/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/6_final.sdc",
+      "sha256": "ba14dfbd7dcee2f788cb56f49365554c12b6570f24f729b6a5db9499fb4c59e4",
+      "bytes": 78278
+    },
+    "6_final.def": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-270/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/6_final.def",
+      "sha256": "c92a3284287f63fc539054f78373f376fe9ea0133143050235bfac3f65956411",
+      "bytes": 734690887
+    },
+    "6_final.odb": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-270/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/6_final.odb",
+      "sha256": "07c29bd9f374171d43847a2cd7b781549835dfade3581f5bd97ef0bb1067e83c",
+      "bytes": 991579819
+    },
+    "6_final.spef": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-270/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/6_final.spef",
+      "sha256": "0f811591aa8b09516d5ad27b938c46e570d02880e4313b9221d88b44e563d1d1",
+      "bytes": 1006621546
+    }
+  },
+  "qualified_hard_macro": false,
+  "scope": "Same V RTL/footprint/placement/CTS. Return to best measured20percent reservation and increase FastRoute congestion iterations30to100 through verified GLOBAL_ROUTE_ARGS. Zero congestion and all fresh final gates remain mandatory.",
+  "pipeline_completed": true,
+  "source_cts_task": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-236/tasks/revision300-route-v",
+  "source_cts_receipt_sha256": "eac56ef77dd0e2bed4212a5057b0a82ded027467aaf57e768d60b5ab73848018",
+  "source_function_task": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-236/tasks/revision300-test-v",
+  "inherited_cts_files_sha256": {
+    "2_1_floorplan.sdc": "7618cdf7cc105ce4aed6d565659175be97e09234a5cbea0de82dd6a6aad7f7df",
+    "1_synth_lec.v": "51acecad4b2db2b32f31b26743308440293de685522233b882ddf6f8713e9816",
+    "1_2_yosys.sdc": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+    "1_2_yosys.v": "9edb04416cb2ec7bbd9ae513a1561db7eea46bb3d600b0269aca0970d98f2b9c",
+    "2_floorplan.sdc": "7618cdf7cc105ce4aed6d565659175be97e09234a5cbea0de82dd6a6aad7f7df",
+    "3_place.sdc": "7618cdf7cc105ce4aed6d565659175be97e09234a5cbea0de82dd6a6aad7f7df",
+    "2_3_floorplan_tapcell.odb": "028e77a5dbd88467a44a9c6ca750f8931e489b31c80e21688ccc4cd409c674e7",
+    "1_synth.odb": "2202b68a73489d808a5fcace56cb26ea1b0b14f0ae7f681c7f9fac7ea05c0dca",
+    "2_4_floorplan_pdn.odb": "53a24aed6c9ba9d89d45b6c75021af8434df3379aedf348d05274016c4c71f20",
+    "3_place.odb": "01049365ebbdff96186f6151888f6a816451715cb86058d97ca0bd11a1d30a2a",
+    "2_floorplan.odb": "53a24aed6c9ba9d89d45b6c75021af8434df3379aedf348d05274016c4c71f20",
+    "4_cts.odb": "e25ce381c1314992cf608a05a00c34e545ae23a035c60baf24e5a4771c9076ab",
+    "4_after_rsz_lec.v": "02d83cb4233ce9628c12e16279e10f171daec383acc94c8170bdb96f85a18fe1",
+    "2_1_floorplan.odb": "eddc7b88ad8ee5a4d5667c23c3b038ab72a9cefa59090878f427d78416a54273",
+    "3_4_place_resized.odb": "547a1f0d87892b4860b0bface12768983440073cde22f95558b95152c6732cd1",
+    "3_2_place_iop.odb": "53a24aed6c9ba9d89d45b6c75021af8434df3379aedf348d05274016c4c71f20",
+    "1_synth.sdc": "7618cdf7cc105ce4aed6d565659175be97e09234a5cbea0de82dd6a6aad7f7df",
+    "2_2_floorplan_macro.tcl": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "3_5_place_dp.odb": "01049365ebbdff96186f6151888f6a816451715cb86058d97ca0bd11a1d30a2a",
+    "2_2_floorplan_macro.odb": "eddc7b88ad8ee5a4d5667c23c3b038ab72a9cefa59090878f427d78416a54273",
+    "4_before_rsz_lec.v": "a3aab5c758c5a295ac6ba71a95d27a1734d9259c7d63d82b3ddef8b60b2c5bfb",
+    "3_3_place_gp.odb": "9d0f1b178c53e44a69fbe39b35d734a1be0284517681d8869b552b3df9429f7d",
+    "4_cts.sdc": "ba14dfbd7dcee2f788cb56f49365554c12b6570f24f729b6a5db9499fb4c59e4",
+    "4_1_cts.odb": "e25ce381c1314992cf608a05a00c34e545ae23a035c60baf24e5a4771c9076ab",
+    "3_1_place_gp_skip_io.odb": "53a24aed6c9ba9d89d45b6c75021af8434df3379aedf348d05274016c4c71f20"
+  },
+  "failed_grt_log_sha256": "19b560ab1998742a87b8d67abd18681ca679fac1659a834fcf63bd352569b18b",
+  "resume_policy_sha256": "1735dc7ed89323248d0b70314c96a55785897112d42f7b910e24a9068f3fe52a",
+  "executable_pre_global_route_hook_sha256": "03c4040d21861f37671fda76a7d2c23a532f533e094a6e26cf51c33c6db5b0e8",
+  "global_route_adjustment": 0.2,
+  "global_route_iterations": 100,
+  "prior_failed_attempts": [
+    {
+      "task": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-264/tasks/revision300-route-v",
+      "receipt_sha256": "afc8c45ef98a9f786228ce424f4f44dada11ba251e34016ff9617808cf81e4e3",
+      "log_sha256": "8d7700f20bd2afc830b3cd2ff09b9ad987fb4672c3e40c1d88ed62527676e288",
+      "previous_adjustment": 0.2,
+      "previous_total_congestion": 115
+    },
+    {
+      "task": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-267/tasks/revision300-route-v",
+      "receipt_sha256": "3f040386930f81217e37635d08fc5496b18515b7d894b4dc34be484d593f9bf0",
+      "log_sha256": "d5e83d70209bfa32ef6e88a2cd5f4d541e2c81fef535bef6c15d9401d82a8961",
+      "previous_adjustment": 0.18,
+      "previous_total_congestion": 143
+    }
+  ],
+  "acceptance_policy": "Unchanged native rules and approved300MHz SDC. Detailed routing and all new final gates remain mandatory; no congestion or DRC waiver."
+}
