@@ -128,6 +128,8 @@ if {![stage global_route {global_route -guide_file $out/route.guide -congestion_
 if {![stage detailed_route {detailed_route -output_drc $out/route.drc -verbose 1}]} {close $stages;exit 1}
 if {![stage preserve_contracts {
   foreach ob $temporary_obs {odb::dbObstruction_destroy $ob}
+  # Keep real routed geometry even if an export/check fails afterwards.
+  write_db $out/routed_PENDING_CONTRACTS.odb
   if {[obs_snapshot] ne $original_obs} {error "Original OBS changed"}
   connection_contract $out/after.connections.tsv
   nonselected_pose_contract $out/after.nonselected.tsv
@@ -138,7 +140,14 @@ if {![stage preserve_contracts {
     if {$a ne $z} {error "Original functional or nonselected contract changed"}
   }
   set f [open $out/actual_existing_buffer_moves.tsv w];puts $f "instance\tmaster\tx_dbu\ty_dbu\torientation"
-  dict for {name i} $selected_buffers {lassign [$i getLocation] x y;puts $f [join [list $name [[$i getMaster] getName] $x $y [$i getOrient]] "\t"]};close $f
+  dict for {name ignored_handle} $selected_buffers {
+    # Selection dictionaries restored in another native process contain names,
+    # not reusable OpenDB object handles. Always resolve against this database.
+    set i [$b findInst $name]
+    if {$i eq "NULL" || $i eq ""} {error "Selected buffer missing from current database: $name"}
+    lassign [$i getLocation] x y
+    puts $f [join [list $name [[$i getMaster] getName] $x $y [$i getOrient]] "\t"]
+  };close $f
   write_db $out/routed.odb;write_def $out/routed.def;write_verilog $out/mapped.v
 }]} {close $stages;exit 1}
 report_wire_length -detailed_route -summary -file $out/wire_length.csv

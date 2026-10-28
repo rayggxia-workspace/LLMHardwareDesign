@@ -20,6 +20,20 @@ def run(revision):
     for q in [sdc,reservations[0]]:assert sha(q)==f['source_SHA'][str(q)]
     out=ROOT/'output_chain_resume'/revision/'opentpu_aux-C';out.mkdir(parents=True,exist_ok=False)
     inputs={str(p):sha(p) for p in [fp,checkpoint,original,sdc,reservations[0]]}
+    reuse=None
+    if revision=='r02':
+        previous=ROOT/'output_chain_resume/r01/opentpu_aux-C';receipt=previous/'execution.json'
+        prior=json.loads(receipt.read_text())
+        assert prior.get('completed_utc') and prior['native_returncodes']['legalization']==0
+        assert prior['isolated_geometry_contracts_pass'] and prior['all_sources_unchanged']
+        assert prior['route_stage_status']['preserve_contracts']=='FAIL'
+        reuse=previous/'placed_NOT_ROUTED.odb'
+        assert sha(reuse)==prior['files'][reuse.name]['sha256']
+        inputs.update({str(p):sha(p) for p in [receipt,reuse]})
+        for kind in ['connections','nonselected']:
+            q=previous/('placed.'+kind+'.tsv');assert sha(q)==prior['files'][q.name]['sha256']
+            assert sha(q)==prior['source_SHA'][str(failed/('before.'+kind+'.tsv'))]
+            inputs[str(q)]=sha(q)
     for name in ['before.connections.tsv','before.nonselected.tsv','before.pins.tsv','before.pdn.tsv','before.die.tsv','proposed_existing_buffer_moves.tsv']:
         q=failed/name;assert sha(q)==f['files'][name]['sha256'];inputs[str(q)]=sha(q);shutil.copyfile(str(q),str(out/name))
     with (out/'proposed_existing_buffer_moves.tsv').open() as h:moves=list(csv.DictReader(h,delimiter='\t'))
@@ -52,7 +66,17 @@ def run(revision):
           'set f [open '+tcl(out/'original_status.tcl')+' w];puts $f {set original_status [dict create]};set fillers {}',
           'foreach i [[ord::get_db_block] getInsts] {if {[[$i getMaster] getType] eq "CORE_SPACER"} {lappend fillers [[$i getMaster] getName]} else {puts $f [list dict set original_status [$i getName] [$i getPlacementStatus]]}};puts $f [list set filler_masters [lsort -unique $fillers]];close $f'])
         isolated=helper.replace('$out/stages.tsv','$out/legalization.stages.tsv')
-        native('legalization',[isolated,contracts,selection,'read_db '+tcl(checkpoint),'set b [ord::get_db_block]',
+        if reuse:
+            shutil.copyfile(str(reuse),str(out/'placed_NOT_ROUTED.odb'))
+            assert sha(out/'placed_NOT_ROUTED.odb')==sha(reuse)
+            rec['reused_exact_closed_legalized_checkpoint']=str(reuse)
+            rec['legalization_recomputed']=False;save()
+            native('reused_placement_check',[isolated,contracts,selection,'read_db '+tcl(out/'placed_NOT_ROUTED.odb'),
+              'check_placement -verbose','connection_contract '+tcl(out/'placed.connections.tsv'),
+              'nonselected_pose_contract '+tcl(out/'placed.nonselected.tsv'),'close $stages'],'PINXY_OUTPUT='+str(out))
+        else:
+            rec['legalization_recomputed']=True
+            native('legalization',[isolated,contracts,selection,'read_db '+tcl(checkpoint),'set b [ord::get_db_block]',
           'source '+tcl(out/'original_status.tcl'),
           'if {![stage isolated_legalization_no_STA {detailed_placement -use_diamond_legalizer}]} {close $stages;exit 1}',
           'dict for {name status} $original_status {set i [$b findInst $name];if {$i eq "NULL"} {error "Missing original instance"};$i setPlacementStatus $status}',
