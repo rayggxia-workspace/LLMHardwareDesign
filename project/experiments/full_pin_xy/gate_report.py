@@ -298,6 +298,15 @@ def render(root,out):
         if stream_proof.get('merge_returncode')==stream_proof.get('DRC_returncode')==0:
             antenna_count=sum(v for k,v in stream_proof.get('available_deck_findings_by_category',{}).items() if 'ANTENNA' in k)
             result['GEMM_real_diode_ECO']['original1460_repair_not_yet_verified']=antenna_count!=0
+    cap=snapshot/'diode_cap_eco/r01/gemm-C/execution.json.gz'
+    cap_text=''
+    if cap.exists():
+        q=read(cap);result['GEMM_post_diode_size_ECO']=dict(q,evidence=(dest/cap.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('completed_utc'):
+            cap_text='<p><strong>92940两处真实换型已终态：</strong>INV_X1→INV_X2、XNOR2_X1→XNOR2_X2的原Liberty逻辑/状态严格一致，新max-cap分别121.46/52.0325fF。当前fresh native0、所检全网连通、双PG和原pin/PG/外框保持；真实setup/hold='+str(q.get('setup_ns'))+'/'+str(q.get('hold_ns'))+'ns、VIOLATED文字标记='+str(q.get('literal_VIOLATED_markers_not_complete_failure_count'))+'。独立全量数字图验证仅这两个master改变，636真实diode及原信号端点/网络/端口全部保持。额外两换型/一个移动/master面积+1.330μm²单列，非XY或block面积收益。以上不是原636-diode版本的cap2已经不存在于历史；两版本分别保存。换型后GDS/原deck作业92943仍独立验证，未与旧版本37项混写。</p>'
+    cap_stream=snapshot/'antenna_diode_stream/cap-r01/gemm-C/execution.json.gz'
+    if cap_stream.exists():
+        q=read(cap_stream);result['GEMM_post_diode_size_GDS_available_deck']=dict(q,evidence=(dest/cap_stream.relative_to(snapshot)).relative_to(out).as_posix())
     path_audits=[]
     for case in ['vector','opentpu_aux']:
         p=snapshot/'actual_path_audit/r01'/case/'execution.json.gz'
@@ -404,4 +413,4 @@ def render(root,out):
 <p><strong>SYSTEM真实输出缓冲试验92921：</strong>全部1244个输出port纳入选择，772条私有identity链、1262个已有buffer生成真实重排，不增单元、不换型、不改网络。实际Diamond合法化后OpenROAD触发Signal11（implementation=-11），没有完成路由；moved_NOT_LEGALIZED_OR_ROUTED.odb及完整失败回执保留，原pin/PG/外框和源保持。后续复用已存检查点，在独立不加载STA的进程验证合法化，不重复生成同一移动方案。原SYS源时序失败不删，当前仍非物理修复通过。</p>
 <p><strong>92925独立恢复已实际推进：</strong>复用上述1262个buffer坐标，独立几何进程不加载Lib/SDC；原生合法化、check_placement及原功能master/连接与非选中单元位置合同均通过，原本无filler则未新增。原生关闭的placed ODB及两份实际合同文件另索引SHA，与原source合同相等；不是重选点或跳过检查。随后在新进程恢复原Lib/SDC及M2–M8/M4–M8约束，完整重接线继续；最终DRC/PG/连通/RCX/STA未终态，不宣布时序修复或准确崩溃根因已证实。</p>
 <p><strong>GEMM真实天线ECO：</strong>92910已完成636个真实ANTENNA_X1接入、完整重布线、fresh native0及268637网/806621端点所检连通、双PG和真实RCX。setup/hold为0.770727/0.039500ns，但新增两个max-cap失败：_328822_/ZN（实际INV_X1，67.621605&gt;60.730000fF）、_332783_/ZN（实际XNOR2_X1，27.449909&gt;26.016199fF），并非电气通过。原功能实例位置/连接、原pin/PG/外框保持；新增636单元master面积169.176μm²、每个实际输入cap0.023429fF均单列成本，非block面积变化。</p>
-<p>92929独立原生全量数字合同通过：原226775非filler实例、826710个信号端点、3753端口完全保持，新增636个真实单输入无输出/状态diode各连到已核对636网；真实负载变化不被当作RC/时序等价。'''+diode_stream_text+'''后续两个电容失败按实际master/真实Liberty换型能力增量处理，不能降负载或删检查。</p></section>'''
+<p>92929独立原生全量数字合同通过：原226775非filler实例、826710个信号端点、3753端口完全保持，新增636个真实单输入无输出/状态diode各连到已核对636网；真实负载变化不被当作RC/时序等价。'''+diode_stream_text+'''两个源cap失败及其后续尺寸修复分别记录，未降负载或删检查。</p>'''+cap_text+'''</section>'''

@@ -181,6 +181,19 @@ def check(out):
         assert s['added_real_diode_cells']==s['added_non_driving_input_loads']==636
         assert s['actual_input_capacitance']>0 and s['original_all_signal_terminal_and_port_graph_exactly_equal']
         assert q['RTL_formal_equivalence']=='NOT_EXECUTED' and not q['full_qualification']
+    if j.get('GEMM_real_diode_GDS_available_deck'):
+        q=j['GEMM_real_diode_GDS_available_deck'];assert q['merge_returncode']==q['DRC_returncode']==0
+        assert q['available_deck_findings']==sum(q['available_deck_findings_by_category'].values())==37
+        assert all('ANTENNA' in k for k in q['available_deck_findings_by_category']) and not q['full_qualification']
+        old=j['GEMM_real_diode_ECO']['receipt'];assert q['source_DEF_SHA']==old['files']['routed.def']['sha256']
+        assert q['source_receipt_and_DEF_unchanged'] and j['GEMM_real_diode_ECO']['original1460_repair_not_yet_verified']
+    if j.get('GEMM_post_diode_size_ECO',{}).get('completed_utc'):
+        q=j['GEMM_post_diode_size_ECO'];assert q['native_returncodes']['implementation']==q['native_returncodes']['fresh_DRC']==q['native_returncodes']['relative_graph_export']==0
+        assert q['fresh_DRC_count']==0 and q['whole_signal_geometry']['pass'] and all(q['pin_PG_die_unchanged'].values())
+        assert q['setup_ns']==0.770752 and q['hold_ns']==0.039624 and q['literal_VIOLATED_markers_not_complete_failure_count']==0
+        assert q['all_original_signal_terminal_and_port_graph_equal_with_exact_two_proven_sizes'] and q['retained_real_diode_count']==636
+        assert q['all_sources_unchanged'] and not q['full_qualification']
+        cost=q['separate_two_size_ECO_cost'];assert cost['changed_masters']==2 and cost['moved_existing_instances']==1 and cost['added_functional_instances']==0 and abs(cost['standard_cell_master_bbox_area_delta_um2']-1.33)<1e-6
     if j.get('actual_fixed256_native_attribute_audit'):
         q=j['actual_fixed256_native_attribute_audit'];assert q['native_export_returncode']==0 and not q['native_export_executed_this_run']
         assert q['all_256_native_FIXEDS_and_original_net_bindings_verified'] and q['all_closed_source_files_unchanged'] and q['native_shared_conductor_count']==256
