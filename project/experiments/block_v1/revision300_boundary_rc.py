@@ -75,14 +75,18 @@ def measure(root,out,cpus,run,kind,variant):
     from native_passive_endpoint import audit as passive
     from native_annotation import inspect as annotation
     from revision300_boundary_spef import augment
-    assert cpus==16 and kind in ('m','t')and variant in ('base','high')
-    base=out.parents[2];controls=out.parent/'revision300-boundary-rc-control'
+    assert cpus==16 and kind in 'mvrst' and len(kind)==1 and variant in ('base','high')
+    base=out.parents[2]
+    controls=out.parent/'revision300-boundary-rc-control'
+    if kind in 'svr':
+        controls=qualified_shared_control(root,base)
     cr=json.loads((controls/'receipt.json').read_text());assert cr['passed']
     cp=controls/'revision300-boundary-rc-control.json';assert file_sha(cp)==cr['outputs'][cp.name]
     assert json.loads(cp.read_text())['actual_openroad_spef_consumer_control']
     index,odb,provenance,count,die=accepted(root,out,kind)
     folder,receipt,flow,results=source(root,out,kind)
-    escaped=base/('block-v1-20261029-'+('262'if kind=='m'else'261'))/'tasks'/('revision300-escape-'+kind)
+    escape_run={'m':'262','t':'261','s':'285','v':'285','r':'285'}[kind]
+    escaped=base/('block-v1-20261029-'+escape_run)/'tasks'/('revision300-escape-'+kind)
     er=json.loads((escaped/'receipt.json').read_text());assert er['passed']
     ep=escaped/'revision300-escape.json';assert file_sha(ep)==er['outputs'][ep.name]
     escape=json.loads(ep.read_text());assert escape['source_delivery']==provenance and escape['all_signal_bits']==count
@@ -123,3 +127,35 @@ def measure(root,out,cpus,run,kind,variant):
         combined_system_timing_qualified=False,calibrated_12layer_rc_qualified=False,
         scope='All actual P2 signal exits including inputs/output/clock modeled as series-R/two-half-C pi, native extracted coupling retained. Approved I/O delays now refer to declared virtual outside boundary; data BUF_X2 source and ideal clock transition unchanged;2fF receiver replaces50fF, avoiding double counting. High uses1.5x R/C as an explicit uncalibrated sensitivity. New-layer coupling/remote driver implementation/array/manufacturing are not qualified. Timing failures remain failures, no constraint relaxation or source change.')
     (out/'revision300-boundary-rc.json').write_text(json.dumps(report,indent=2)+'\n')
+
+
+def qualified_shared_control(root,base):
+    """Reuse the actual 287 consumer controls only with identical control code/tool."""
+    import shutil
+    from io_slots import file_sha
+    folder=base/'block-v1-20261029-287'
+    controls=folder/'tasks/revision300-boundary-rc-control'
+    rp=controls/'receipt.json'
+    assert file_sha(rp)=='dae552951665422d08aed4dbdc6088f951c38385734ebf00655fe4d2af346e1e'
+    receipt=json.loads(rp.read_text())
+    assert receipt['passed'] and receipt['mode']==controls.name
+    assert receipt['source_commit']=='b217f8bf3ff68ab91109ff9a0aeb552dd6166f88'
+    state=json.loads((folder/'node-queue-state.json').read_text())
+    assert state['tasks'][controls.name]['status']=='PASSED'
+    relative='project/experiments/block_v1/'
+    old=folder/'src'/relative/'revision300_boundary_rc.py'
+    assert file_sha(old)==receipt['inputs'][relative+'revision300_boundary_rc.py']
+    # measure() is extended for three other leaves; the entire actual control
+    # function and its imports above measure() must remain byte-identical.
+    separator=b'\ndef measure('
+    assert old.read_bytes().split(separator)[0]==Path(__file__).read_bytes().split(separator)[0]
+    for name in ['revision300_boundary_spef.py','io_slots.py']:
+        assert file_sha(root/relative/name)==receipt['inputs'][relative+name]
+    tool=Path(shutil.which('openroad')).resolve()
+    assert file_sha(tool)==receipt['tool_hashes'][str(tool)]
+    for name,digest in receipt['outputs'].items():
+        assert file_sha(controls/name)==digest
+    report=json.loads((controls/'revision300-boundary-rc-control.json').read_text())
+    assert report['passed'] and report['actual_openroad_spef_consumer_control']
+    assert report['huge_resistance_negative_rejected'] and report['huge_capacitance_negative_rejected']
+    return controls

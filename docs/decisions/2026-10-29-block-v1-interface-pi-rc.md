@@ -13,3 +13,5 @@ Issue #121 / PR #122；2026-10-29。补充已有全端口几何和输出集中C�
 源入口：`revision300_boundary_spef.py`、`revision300_boundary_rc.py`。原生P&R/DRC/功能/LEC和已通过的M/T输出C不重跑。
 
 实际证据：[287全部端口πRC](../../work/YUZE-LU/121/review-20261028/boundary-rc-0448/README.md)。high仅定义敏感性边界，失败不触发第二种物理实现；首版T保持原基础实现及声明base连接条件。
+
+S/V/R后继试验复用287已实际完成的小电路消费控制：固定其回执SHA/source commit，核验全部输出、原控制函数和其导入前缀逐字节相同、SPEF改写器/哈希助手相同、当前OpenROAD二进制SHA相同及原生产队列PASSED。仅扩展measure的宏选择/真实285引出来源；不复制旧宏STA资格或重复小电路控制。各宏均需自己的新STA结果。尚未运行。
