@@ -1,3 +1,5 @@
+2026-10-29 03:35 CST：S277三阶段定位完成；278实际OpenDB append/addRect API验证通过。279在副本只追加同网M2 RECT(0.1×0.03µm)，原生全片DRC从1降为0，原ODB SHA保持；仍不是最终接收。280计划先独立全DEF差分仅该处，再重新fill/route别名/finish/RCX，所有最终门与交付/几何须新源新跑。证据s-patch-0335（27捕获/19绑定）；M/T通过项不重跑，V270/R236继续。Issue121保持in_progress、PR122草稿。
+
 2026-10-29 03:18 CST：276三个stage的原生DRC均已实际完成，同一metal2 spacing在5_2 route已存在并保持到5_3 fill/6_final；但后续目标net几何查找因ODB保留转义网名而失败。277修复为枚举实际网名并去反斜杠唯一匹配；复用276已绑定输入ODB/脚本/receipt的原始native检查结果，只补缺失几何/help读回，不重做完成的原生检查或任何已过最终门。S仍未接收，修复路径尚待形状证据；V270/R236继续。
 
 2026-10-29 03:12 CST更正：S258完整验收已实际结束，92920=FAILED/1:0。完整未修改GDS deck为0，但原生全片DRC发现1项metal2 spacing，words[674][3]，bbox(181.1300,903.3850)-(181.2300,903.4150)µm；S不可接收，delivery/geometry阻塞。其他三门虽过不覆盖DRC。新增276三项独立16CPU只读诊断分别核对5_2 route、5_3 fill、6_final，定位违例引入阶段及真实net wire/via/pin形状，再决定最小原生修复；不豁免检查、不修改旧数据库，修复后须新源全部最终门。V270/R236仍live。

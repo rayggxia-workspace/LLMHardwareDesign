@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='revision300-s-patch-probe':
+    if MODE=='revision300-route-s' and (ROOT/'project/experiments/block_v1/revision300-s-patch-resume.json').exists():
+        from revision300_s_patch_finish import implement
+        implement(ROOT,OUT,CPUS,run)
+    elif MODE=='revision300-s-patch-probe':
         from revision300_s_wire_probe import repair_probe
         repair_probe(ROOT,OUT,CPUS,run)
     elif MODE=='revision300-s-wire-api':
