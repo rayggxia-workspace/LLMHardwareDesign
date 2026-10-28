@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('revision300-load-'):
+    if MODE.startswith('revision300-preconnect-'):
+        from revision300_preconnect import audit
+        audit(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE.startswith('revision300-load-'):
         from revision300_load import measure
         _,_,kind,variant=MODE.split('-')
         measure(ROOT,OUT,CPUS,run,kind,variant)
