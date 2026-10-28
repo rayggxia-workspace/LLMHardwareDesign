@@ -27,7 +27,7 @@ def stage_native(snapshot,dest):
         if r['storage']!='LOSSLESS_SNAPSHOT':continue
         p=snapshot/r['relative'];name=p.name
         geometry=any(t in name for t in ['.cells.tsv','.pdn.tsv','whole_access.tsv','selected_access.tsv']) or name.endswith('.lef.gz') or name.startswith('timing.selected_')
-        keep=(not geometry and p.stat().st_size<2*1024*1024) or str(r['relative']).startswith('upper_layer_')
+        keep=(not geometry and p.stat().st_size<2*1024*1024) or str(r['relative']).startswith('upper_layer_') or (str(r['relative']).startswith('escape_landing/') and p.stat().st_size<2*1024*1024)
         if keep:
             d=dest/r['relative'];d.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(p,d)
         else:
@@ -127,6 +127,43 @@ def plot_common(root,assets):
     save(fig,assets,'common_base_proposed')
 
 
+def plot_landing(root,out,snapshot):
+    """Actual before/after route boxes, not candidate connection sketches."""
+    final=snapshot/'escape_landing/r01/act-C';proof=final/'execution.json.gz'
+    if not proof.exists():return False
+    receipt=read(proof)
+    if receipt.get('fresh_DRC_count')!=0 or not receipt.get('whole_signal_geometry',{}).get('pass'):return False
+    assert receipt['all_PG_geometry_byteexact_unchanged'] and receipt['exactly_one_parent_M10_pin_XY_changed_all_other_rectangles_unchanged']
+    original=root/'continuation_evidence/milestone-r02/escape_fixtures/r04/act-C'
+    before=pd.read_csv(original/'whole_access.tsv.gz',sep='\t');after=pd.read_csv(final/'whole_access.tsv.gz',sep='\t')
+    pg=pd.read_csv(original/'parent_M10_PG.tsv.gz',sep='\t')
+    frames=[d[d.net=='r_data[195]'].copy() for d in [before,after]]
+    data=out/'data/continuation/act_parent_landing';data.mkdir(parents=True,exist_ok=True)
+    for name,d in zip(['before','after'],frames):
+        text=d.to_csv(index=False,sep='\t',lineterminator='\n').encode()
+        with (data/(name+'_actual_geometry.tsv.gz')).open('wb') as raw,gzip.GzipFile(filename='',mode='wb',fileobj=raw,mtime=0) as f:f.write(text)
+    shutil.copyfile(original/'parent_M10_PG.tsv.gz',data/'unchanged_parent_M10_PG.tsv.gz')
+    plt,R=expand.legacy.plt,expand.legacy.Rectangle;fig,axes=plt.subplots(1,2,figsize=(16,8.8))
+    fig.subplots_adjust(left=.06,right=.98,top=.80,bottom=.25,wspace=.19)
+    frame(fig,'ACT | 实际父层 M10 接点修复对照','原叶块860个M5/M6 pin及740个内部位置不改；仅移动新增父层中间接点，原PG几何逐字节保持。')
+    colors={'metal5':'#0072b2','metal6':'#b47bac','metal7':'#81926a','metal8':'#85a6b8','metal9':'#6e8195','metal10':'#17283c'}
+    for ax,d,title in zip(axes,frames,['A. actual r04：1项PG间距失败','B. actual landing-r01：native DRC 0']):
+        for _,r in pg.iterrows():
+            x,y,u,v=np.array([r.x0,r.y0,r.x1,r.y1],float)/2000
+            if x<188 and u>136 and y<392 and v>350:ax.add_patch(R((x,y),u-x,v-y,fc='#ddac69',ec='none',alpha=.55,zorder=1))
+        for _,r in d.iterrows():
+            if r.layer=='UNROUTED':continue
+            x,y,u,v=np.array([r.x0,r.y0,r.x1,r.y1],float)/2000
+            ax.add_patch(R((x,y),u-x,v-y,fc=colors.get(r.layer,'#17283c'),ec='none',alpha=.85,zorder=3))
+            if r.kind in ['BTERM','ITERM']:
+                label='原ACT pin / M6' if r.kind=='ITERM' else '新增父层接点 / M10'
+                ax.annotate(label,((x+u)/2,(y+v)/2),xytext=(4,11 if r.kind=='ITERM' else -34),textcoords='offset points',fontsize=8,color='#17283c')
+        ax.set(xlim=(136,188),ylim=(350,392));ax.set_aspect('equal');ax.set_xlabel('X (μm)');ax.set_ylabel('Y (μm)');ax.grid(alpha=.1);ax.set_title(title,loc='left',fontsize=12,weight='bold')
+    fig.text(.04,.07,'只显示r_data[195]真实ODB导出的各层信号金属/通孔，及真实M10父层PG（金色）；未展示的其他金属不能视作空闲。\nM6紫、M7绿、M8浅蓝、M9灰蓝、M10深色，cut为深色；全部矩形按原尺寸绘制，没有示意路径或虚构via占地。\n父层接点由(144.095,368.070)移到(172.895,374.470)μm；原ACT M6 pin仍在(148.495,370.470)μm（父坐标）。\n修复后860网/1720端点所检几何连通及VDD/VSS通过；仍不是共同底座、完整制造规则、RC/STA或两种功能实现通过。',fontsize=10,color='#56677d')
+    save(fig,out/'assets','act_parent_landing_actual')
+    return True
+
+
 def render(root,out):
     root,out=Path(root),Path(out);snapshots=sorted((root/'continuation_evidence').glob('milestone-*'))
     if not snapshots:return ''
@@ -168,6 +205,7 @@ def render(root,out):
              'source_manifest_SHA':hashlib.sha256((snapshot/'snapshot.json').read_bytes()).hexdigest()}
     (dest/'summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     plot_upper(root,out/'assets');plot_pg(root,out/'assets');plot_common(root,out/'assets')
+    landing_figure=plot_landing(root,out,snapshot)
     table=pd.DataFrame(stages).drop(columns=['source_receipt','full_qualification']).astype(object).where(pd.notna(pd.DataFrame(stages).drop(columns=['source_receipt','full_qualification'])),'待验证').to_html(index=False,border=0)
     section='''<section class="card" id="continuation"><h2>2026-10-28 接续：真实接入与共同底座（进行中）</h2>
 <div class="warn"><b>当前范围与状态：</b>用户已确认六块资源并集、交错布局、两功能共享实际固定预连导体；本轮包含研究M11/M12建模。下方旧报告“不扩展M11/M12”仅描述此前阶段。本节不宣布共同M1–M10实现/冻结、两套M11/M12功能或完整系统对照完成。</div>
@@ -197,4 +235,9 @@ def render(root,out):
     if topology.exists():
         t=read(topology)
         section=section.replace('<p>旧openTPU父层r07','<p>共同拓扑已实际编译并执行逐bit图检查：17,686个固定逻辑连通分量、24,767个原接口pin、两模式各770条适配图边；两模式计划使用同一组256个资源，未误合并不同原始bit。37个原始常量输出各有独立驱动，另新增1个闲置时钟LOGIC0驱动，合计38实例，面积/缓冲/负载仍待物理计量。构造Verilog中的内部接入端口必须在冻结和STA前降为真实保留金属，尚未原生链接或布线；此为图证明，不是形式功能等价或物理实现。<a href="data/continuation/common-topology-r02/topology_proof.json.gz">图检查及缺项</a> · <a href="data/continuation/common-topology-r02/base_construction.v.gz">可复用构造网表</a>。外部闲置输入/复位策略仍需完整RTL极性与激励核验。</p><p>旧openTPU父层r07')
+    native_link=snapshot/'common_native_link/r01/execution.json.gz'
+    if native_link.exists() and read(native_link).get('native_returncode')==0:
+        section=section.replace('尚未原生链接或布线；此为图证明','原生构造链接已实际执行：34,954端点/17,686连通分量逐项双射、原信号层不变；节点位置尚未实现、没有共同布线或冻结。构造链接回执见本节native索引；此为图证明')
+    if landing_figure:
+        section=section.replace('<h3>研究M11/M12','<h3>ACT父层修复已通过当前几何门槛</h3><img loading="lazy" src="assets/act_parent_landing_actual.png" alt="ACT实际父层接点修复前后"><p><a href="assets/act_parent_landing_actual.svg">SVG</a>。92719保留原叶M5/M6、全部PG和其他859个父层pin矩形，仅修订新增M10接点r_data[195]，独立native0、双PG及860网/1720端点所检几何连通通过。原1项/后续2项失败均保留，不通过删除PG/OBS或降低规则修复。</p><h3>研究M11/M12')
     return section

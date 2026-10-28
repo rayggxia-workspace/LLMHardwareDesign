@@ -234,6 +234,9 @@ def main():
         for name in ['research_upper_actual','llsys_pg_revision','common_base_proposed']:
             assert (OUT/'assets'/(name+'.png')).exists() and (OUT/'assets'/(name+'.svg')).exists()
         expected_figures+=3
+        if (OUT/'assets/act_parent_landing_actual.png').exists():
+            assert (OUT/'assets/act_parent_landing_actual.svg').exists()
+            expected_figures+=1
     assert len(list((OUT/'assets').glob('*.png')))==expected_figures
     assert len(list((OUT/'assets').glob('*.svg')))==expected_figures
     assert all(x not in text for x in ['__PINS__','__PHYSICAL__','__TOTAL__'])

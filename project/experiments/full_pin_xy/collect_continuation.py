@@ -17,9 +17,9 @@ def collect(name):
               'trials/llsys-pg-r03/*','finalized/llsys-pg-r03/*','escape_fixtures/r03/*','escape_fixtures/r04/*',
               'escape_pg_repair/*/*','escape_spacing_reroute/*/*','leaf_timing_models/r04/*',
               'upper_layer_probe/r01','upper_layer_probe/r01/model','upper_layer_validation/r01','leaf_diagnosis/r01/*',
-              'escape_fixtures/gemm-r01/*','leaf_timing_models/r05/*',
+              'escape_fixtures/gemm-r0*/*','leaf_timing_models/r05/*',
               'escape_fixtures/mxu-r01/*','leaf_timing_models/r06/*','common_native_link/r01',
-              'leaf_eco/r01/*',
+              'leaf_eco/r0*/*','escape_landing/r01/*','tool_api/incremental-r01',
               'parents/r07/*','parents/ll-r01/*','parent_rc_sta/r02/*']
     for pattern in patterns:paths.extend(p for p in ROOT.glob(pattern) if p.is_dir())
     records=[]
@@ -33,7 +33,7 @@ def collect(name):
             # Full-cohort selected path dumps and complete leaf physical views
             # are already indexed in the execution receipt; keep them remote.
             keep=keep and not p.name.startswith('timing.selected_')
-            if 'upper_layer_' not in str(directory):
+            if 'upper_layer_' not in str(directory) and 'escape_landing/' not in str(directory):
                 keep=keep and not any(k in p.name for k in ['.cells.tsv','.pdn.tsv','whole_access.tsv','selected_access.tsv']) and suffix!='.lef'
             if not keep:
                 rec['storage']='REMOTE_ONLY_INDEXED';records.append(rec);continue
