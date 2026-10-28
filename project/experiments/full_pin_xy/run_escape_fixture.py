@@ -33,6 +33,8 @@ def one(case, variant, revision):
     if case=='act' and variant=='C':model_revision=os.environ.get('PINXY_ACT_C_MODEL_REVISION',model_revision)
     model_dir = ROOT/'leaf_timing_models'/model_revision/(case+'-'+variant)
     model = json.loads((model_dir/'execution.json').read_text())
+    assert model['status']=='NATIVE_EXTRACTED_MODEL_EXPORTED_NOT_QUALIFIED' and model['exact_all_signal_pin_direction_match']
+    assert sha(model_dir/'timing.lib')==model['generated_library_sha256']
     assert model['source_clean_receipt_sha256'] == sha(proof_path)
     assert model['clean_odb_sha256'] == sha(odb) == proof['clean_odb_sha256']
     out = ROOT/'escape_fixtures'/revision/(case+'-'+variant)
