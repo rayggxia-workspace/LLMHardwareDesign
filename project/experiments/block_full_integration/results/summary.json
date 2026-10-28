@@ -1,380 +1,547 @@
 {
-  "schema_version": 1,
-  "updated_utc": "2026-10-23T11:39:58.709846+00:00",
-  "repository": "rayggxia-workspace/LLMHardwareDesign",
+  "schema_version": 2,
+  "repository": "https://github.com/rayggxia-workspace/LLMHardwareDesign",
   "issue": 55,
   "owner": "huangpingyang04-lgtm",
   "task_root": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z",
-  "source_commit_at_stage1_review": "b415b0a688160c6943e904350ec81acd455e8550",
-  "frozen_base_version": null,
-  "major_base_candidates_used": 0,
   "layer_policy": {
     "fixed": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8
+      "metal1",
+      "metal2",
+      "metal3",
+      "metal4",
+      "metal5",
+      "metal6",
+      "metal7",
+      "metal8"
     ],
     "custom": [
-      9,
-      10
+      "metal9",
+      "metal10"
     ],
-    "custom_via_connections": [
-      [
-        8,
-        9
-      ],
-      [
-        9,
-        10
-      ]
-    ],
-    "M11_M12": "separate fallback only"
+    "access_via": "via8_0",
+    "upper_via": "via9",
+    "fallback_M11_M12_started": false
   },
   "stages": {
-    "1": {
-      "status": "pass_with_inherited_issues",
-      "scope": "Complete input/hierarchy ownership inventory and executable finite original-design baselines; no integration or signoff claim",
-      "inheritance": [
-        "VECTOR input setup WNS -4.16659 ns and 59 max-cap violations",
-        "Research FakeRAM and two-state simulation; no production SRAM or exhaustive formal proof"
-      ],
-      "cleanup": "442 state/memory definitions have no raw local output path, 1 no path after restricted two-state constants; 6 retained state interface expressions attributed. Raw checkpoint retained.",
-      "parameter_evidence": "Executed -G overrides plus pinned SV bindings/defaults and actual port/generate consequences; missing JSON parameter metadata not fabricated"
-    },
-    "2": {
-      "status": null,
-      "execution": "partial preparation, complete integration not validated"
-    },
-    "3": {
-      "status": "fail",
-      "execution": "First ACT selective migration completed routing but failed target-vs-all contact acceptance",
-      "job_id": 89967,
-      "fixed_resources_unchanged": true,
-      "M9_M10_remaining_electrical_boxes": 0,
-      "required_target_nets": 69,
-      "connected_target_nets": 69,
-      "different_net_shape_contacts": 43,
-      "router_reported_DRVs": 1,
-      "classification": "new migration failure, not inherited input failure",
-      "full_common_base": "not built"
-    },
-    "4": {
-      "status": null,
-      "execution": "not executed"
-    }
+    "1": "pass_with_inherited_issues; remote Stage1 only",
+    "2": "fail/unaccepted: complete current191 native-parent finite active+idle regressions passed; auxiliary newly worsened timing unresolved",
+    "3": "fail/unaccepted: bothM3notcheslocallyrepaired/fresh76clocknets157endpoints/13controlregions0; NEW4096sourceDRC92538running;14059fixedroutesunbuilt;auxiliary/VECTORtimingunresolved;nofreeze",
+    "4": "not_executed: no accepted frozen base; pre-freeze tool qualification only"
   },
-  "baseline_extensions": {
-    "llaccel": {
-      "seeds": [
-        0,
-        2
-      ],
-      "launches_per_seed": 30,
-      "checks_per_seed": 60,
-      "failures": 0,
-      "seed1": "reused historical original baseline",
-      "new_backpressure": "not introduced"
-    },
-    "opentpu": {
-      "cases": 20,
-      "legacy": 8,
-      "seeded": 12,
-      "ready_seeds": [
-        0,
-        1,
-        2
-      ],
-      "trace_rows": 87160,
-      "memory_bytes_compared": 5242880,
-      "failures": 0
-    }
+  "frozen_base_version": null,
+  "major_base_candidates_used": 1,
+  "major_base_candidates_max": 3,
+  "resource_policy": {
+    "new_jobs_cpus": 4,
+    "threads_max": 4,
+    "no_job_stopped": true,
+    "exact_controller_CPU_affinity_for_new_jobs": true,
+    "affinity_source_commit": "63dcdd3de436e3842756f48e3e14896d06f48828",
+    "new_jobs": [
+      "92207",
+      "92208",
+      "92209",
+      "92210",
+      "92211",
+      "92212",
+      "92213",
+      "92216",
+      "92217",
+      "92218",
+      "92219",
+      "92220",
+      "92224",
+      "92225"
+    ],
+    "running_snapshots_unchanged": true
   },
-  "core_inputs": [
-    {
-      "id": "act",
-      "master": "llhd_opentpu_act",
-      "source_commit": "f237dab2f196855a59a083b1454786df8f01291f",
-      "size_um": [
-        326.205,
-        326.205
-      ],
-      "internal_instances": 16178,
-      "signal_port_bits": 860,
-      "custom_layer_existing_net_counts": {
-        "metal9": 69
-      },
-      "inherited_metrics": {
-        "finish__timing__setup__tns": 0,
-        "finish__timing__hold__tns": 0,
-        "finish__timing__setup__ws": 1.27562,
-        "finish__timing__hold__ws": 0.0361168,
-        "finish__timing__drv__max_slew_limit": 0.301655,
-        "finish__timing__drv__max_slew": 0,
-        "finish__timing__drv__max_cap_limit": 0.188855,
-        "finish__timing__drv__max_cap": 0,
-        "finish__timing__drv__max_fanout_limit": 0,
-        "finish__timing__drv__max_fanout": 0
-      }
-    },
-    {
-      "id": "gemm",
-      "master": "gemm_engine",
-      "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
-      "size_um": [
-        1157.32,
-        1157.32
-      ],
-      "internal_instances": 571780,
-      "signal_port_bits": 3753,
-      "custom_layer_existing_net_counts": {
-        "metal9": 47,
-        "metal10": 3
-      },
-      "inherited_metrics": {
-        "finish__timing__setup__tns": 0,
-        "finish__timing__hold__tns": 0,
-        "finish__timing__setup__ws": 0.775024,
-        "finish__timing__hold__ws": 0.0518109,
-        "finish__timing__drv__max_slew_limit": 0.349461,
-        "finish__timing__drv__max_slew": 0,
-        "finish__timing__drv__max_cap_limit": 0.00851057,
-        "finish__timing__drv__max_cap": 0,
-        "finish__timing__drv__max_fanout_limit": 0,
-        "finish__timing__drv__max_fanout": 0
-      }
-    },
-    {
-      "id": "mxu",
-      "master": "llhd_opentpu_mxu",
-      "source_commit": "f237dab2f196855a59a083b1454786df8f01291f",
-      "size_um": [
-        1100.455,
-        1100.455
-      ],
-      "internal_instances": 441518,
-      "signal_port_bits": 2172,
-      "custom_layer_existing_net_counts": {
-        "metal9": 11
-      },
-      "inherited_metrics": {
-        "finish__timing__setup__tns": 0,
-        "finish__timing__hold__tns": 0,
-        "finish__timing__setup__ws": 0.210635,
-        "finish__timing__hold__ws": 0.0386703,
-        "finish__timing__drv__max_slew_limit": 0.385744,
-        "finish__timing__drv__max_slew": 0,
-        "finish__timing__drv__max_cap_limit": 0.29517,
-        "finish__timing__drv__max_cap": 0,
-        "finish__timing__drv__max_fanout_limit": 0,
-        "finish__timing__drv__max_fanout": 0
-      }
-    },
-    {
-      "id": "vector",
-      "master": "vec_engine",
-      "source_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
-      "size_um": [
-        1148.52,
-        1148.52
-      ],
-      "internal_instances": 733546,
-      "signal_port_bits": 2246,
-      "custom_layer_existing_net_counts": {
-        "metal9": 40
-      },
-      "inherited_metrics": {
-        "finish__timing__setup__tns": -1056.05,
-        "finish__timing__hold__tns": 0,
-        "finish__timing__setup__ws": -4.16659,
-        "finish__timing__hold__ws": 0.0253833,
-        "finish__timing__drv__max_slew_limit": 0.16234,
-        "finish__timing__drv__max_slew": 0,
-        "finish__timing__drv__max_cap_limit": -0.241973,
-        "finish__timing__drv__max_cap": 59,
-        "finish__timing__drv__max_fanout_limit": 0,
-        "finish__timing__drv__max_fanout": 0
-      }
-    }
-  ],
-  "evidence": {
-    "llaccel_parameters": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/parameters-llaccel-01/execution.json",
-      "bytes": 2535,
-      "sha256": "c52899350b1517f205426e7c794364c7252f7e82045291629d3e12216a81fead",
-      "status": "PASS_SOURCE_BINDING_AND_ELABORATED_BOUNDARY_EVIDENCE"
-    },
-    "opentpu_parameters": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/parameters-opentpu-01/execution.json",
-      "bytes": 3392,
-      "sha256": "bcb80e68b38294af6f1fcea57c8b7a13e7abc718c233718ac7e9b421481915d4",
-      "status": "PASS_SOURCE_BINDING_AND_ELABORATED_BOUNDARY_EVIDENCE"
-    },
-    "opentpu_cleanup": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/cleanup-opentpu-review-01/execution.json",
-      "bytes": 3889,
-      "sha256": "95f0f382a05e5f691389371e2a32567515f6fc1bce5407a11a2c1d4b69ba4537",
-      "status": "PASS_LIMITED_CLEANUP_ATTRIBUTION"
-    },
-    "llaccel_seed_extension": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/baseline-extra-01/execution.json",
-      "bytes": 11137,
-      "sha256": "482d074643ae33abb816f17b78062752c7c1e9217bd294e65c503137a2c8b2db",
-      "status": "PASS_ORIGINAL_RTL_SEEDS_0_2_EXTENSION"
-    },
-    "opentpu_observer": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/open-observer-replay-01/execution.json",
-      "bytes": 103225,
-      "sha256": "49ece4c687208c4c07efe219ef922d50c8d990b0b49704f0239e8a73507604c8",
-      "status": "PASS_ORIGINAL_OBSERVER_LEGACY8_SEEDED12"
-    },
-    "act_native": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/native-act-01/execution.json",
-      "bytes": 18498,
-      "sha256": "7f7e33a08a5c240cb0bc8c0565ad470f814842a7383231679bba74e31dac3446"
-    },
-    "mxu_native": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/native-mxu-01/execution.json",
-      "bytes": 18510,
-      "sha256": "32f90207e5c437579b618b542a310a61eb8b35fbbcdb3dc28cab805bc81943f4"
-    },
-    "gemm_native": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/native-gemm-01/execution.json",
-      "bytes": 19064,
-      "sha256": "859943ccd43b8554b54f4db03aa24b26c8bb51612fdbdeaf91bd0acf61b60efb"
-    },
-    "vector_native": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/native-vector-01/execution.json",
-      "bytes": 18450,
-      "sha256": "30cc65b225bd3ca5831e80d7e6c6933ca01eeb88b32d9ccf46ef976864136dc9"
-    },
-    "mxu_review": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/catalog-and-reviews-01-driver/mxu-independent-review.json",
-      "bytes": 4797,
-      "sha256": "3e83403f102ec0f9c2e557378a60410b54232d6d7cca0f6bdc47fbcd06512b01"
-    },
-    "gemm_review": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/catalog-and-reviews-01-driver/gemm-independent-review.json",
-      "bytes": 5033,
-      "sha256": "7314890d60a1aabf94c80ad380a65649547ecba2cdb3a8c24bd1f8e3a8533cca"
-    },
-    "vector_review": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/catalog-and-reviews-01-driver/vector-independent-review.json",
-      "bytes": 4771,
-      "sha256": "7fe1400cd8024905e14f60f926b7f5862e3ce18f08fdfc05e3a948fadbe062b6"
-    },
-    "runs/catalog-01/input_manifest.json": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/catalog-01/input_manifest.json",
-      "bytes": 69602,
-      "sha256": "04e435633b3e05882b5e46f1a0036cf41dbcc404404f7cb8b64241563f3e6398"
-    },
-    "runs/catalog-01/block_catalog.json": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/catalog-01/block_catalog.json",
-      "bytes": 89332,
-      "sha256": "ddbd1436097d786c1f8b2ea7527408ba9eca07094b4d1dfddd435a0cd2298ce2"
-    },
-    "inputs/rtl_inventory.json": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/inputs/rtl_inventory.json",
-      "bytes": 184712,
-      "sha256": "349d6ff5e1aecbbfde22fc077cbfca5c6572a53fe9b6c61f4d84a34086a95407"
-    },
-    "inputs/baseline_evidence.json": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/inputs/baseline_evidence.json",
-      "bytes": 92438,
-      "sha256": "5432878481e0358aa296c0f623f7f6fa270b6315a8e3a6a0186f43b7bc802080"
-    },
-    "deliverables/coverage_map.csv": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/deliverables/coverage_map.csv",
-      "bytes": 20464,
-      "sha256": "fa123ffc0536c0ed57f865fe9b70d9735b7cdc56966388db5b295330f3260bed"
-    },
-    "deliverables/open_observer_89965_independent_review.json": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/deliverables/open_observer_89965_independent_review.json",
-      "bytes": 8741,
-      "sha256": "aeb59272b94904b787823d7ef9b7003f4684c6fde6a748a3e3512e9e05dcd2a3"
-    },
-    "runs/hierarchy-opentpu-04/execution.json": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/hierarchy-opentpu-04/execution.json",
-      "bytes": 3773,
-      "sha256": "c467757bf282be2f9266cd66c07b5ce706584f64ccad2b28c57a9cfe320474ea"
-    },
-    "runs/hierarchy-opentpu-04/partition_inventory.json": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/hierarchy-opentpu-04/partition_inventory.json",
-      "bytes": 2114,
-      "sha256": "1ca13f343fd434a3c7ebc15107122390056a50888994e17158aa67bd210ebc08"
-    },
-    "runs/hierarchy-llaccel-03/execution.json": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/hierarchy-llaccel-03/execution.json",
-      "bytes": 3109,
-      "sha256": "a6e779026660c317acd4ebc7e230351147f8aae41bf0fbc7b70dffe20aeca966"
-    },
-    "runs/hierarchy-llaccel-03/partition_inventory.json": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/hierarchy-llaccel-03/partition_inventory.json",
-      "bytes": 1791,
-      "sha256": "b9b7f1e5543662d7653850ac093d95eedd70969f1264a37974a1b377e3436b39"
-    },
-    "runs/migration-prepare-act-03/execution.json": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/migration-prepare-act-03/execution.json",
-      "bytes": 24177,
-      "sha256": "5e3609c88624269add458fbfeba03182384c875cc749eb1d9fc97bf80dc2b30e"
-    },
-    "runs/native-geometry-act-01-driver/original-target-geometry.json": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/native-geometry-act-01-driver/original-target-geometry.json",
-      "bytes": 39972,
-      "sha256": "0cd6bdcaff16084dc75b7657725d645806b2039d15e4629a48f961d5d303d1a1"
-    },
-    "act_review": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/stage1-readonly-01-driver/act-independent-review.json",
-      "bytes": 4594,
-      "sha256": "72542423d35535f06f1ee0082bdf147c16a840ccccc433096b303b7d2af516f4"
-    },
-    "runs/migration-route-act-01/execution.json": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/migration-route-act-01/execution.json",
-      "bytes": 28359,
-      "sha256": "627fea091a1b03a508d0a0df09179ad6bb69ea4a6a9739b163402b52e39cbd03"
-    },
-    "runs/migration-route-act-01/route_comparison.json": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/migration-route-act-01/route_comparison.json",
-      "bytes": 57153,
-      "sha256": "5331f10891986679b230299264e2deb73d6a79653fce6e66b3744c8f63b5add3"
-    },
-    "runs/migration-route-act-01/upper_layer_check.json": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/migration-route-act-01/upper_layer_check.json",
-      "bytes": 181,
-      "sha256": "42f489b6a2ed1b1061e0c2feb08038046df32eef9475c669176de5b9266ce2c7"
-    },
-    "runs/migration-route-act-01/route_target_geometry.json": {
-      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/migration-route-act-01/route_target_geometry.json",
-      "bytes": 54077,
-      "sha256": "bb478e7104b6a94e5f968096849cea7ebec641d022be77ee4e0517af67ac592e"
-    }
-  },
-  "known_limits": [
-    "No common frozen base",
-    "No new complete integrated DUT paired comparison",
-    "No M8 fixed escape route",
-    "No full macro replacement equivalence",
-    "No final M9/M10 customization or new RC/STA acceptance"
-  ],
   "delivery": {
-    "remote_branch": "task/55-full-block-integration",
-    "pull_request": "https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/58",
-    "uploaded": true,
-    "registry": "pending management-hub PR5 merge",
-    "projects": "unverified; sync pending missing board config/capability",
-    "reviewer": "not assigned",
-    "stage1_commit": "e5b858bfb3cf238273dac1f4ba04f4235bebc8de",
-    "reviewed_server_commit": "21d791bced62ec4cbac56f11c14f5db8572f02e5",
-    "identical_git_tree": "aee7964565711680c955ef0e899d42eec68d23b5",
-    "ci": {
-      "name": "Project structure",
-      "run_id": 39948031519,
-      "conclusion": "success",
-      "scope": "management structure only"
+    "pr": 58,
+    "uploaded_scope": "stage1_only",
+    "new_push": false,
+    "current_remote_head_verified": "09f1876dd8eaaf0cb77005a4c094527d9ed5d9b0",
+    "current_PR_open_draft_verified": true,
+    "remote_verified_utc": "2026-10-27T06:53:23.617616+00:00",
+    "current_update": "prepared locally; actual remote delivery receipt required",
+    "current_remote_API": "connector transport unavailable at this read",
+    "registry": "pending management-hub PR5 merge; not reverified",
+    "projects": "unverified; board.json missing; sync pending",
+    "reviewer": "待指定"
+  },
+  "updated_utc": "2026-10-28T06:10:57.638684+00:00",
+  "source_commit_at_current_review": "2b421ae6f17f91e697868b6f5116da4eef5445f3",
+  "base_frozen": false,
+  "major_base_candidate": "1/3",
+  "latest_evidence_index": {
+    "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-milestone-20261028T061057Z/milestone.json",
+    "sha256": "28352e959fe9ce8648c95ba9a9979b7187a0e1ddc0ff7cc65cc41056a74cb3e8"
+  },
+  "latest_server_index": {
+    "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-milestone-20261028T061057Z/milestone.json",
+    "sha256": "28352e959fe9ce8648c95ba9a9979b7187a0e1ddc0ff7cc65cc41056a74cb3e8"
+  },
+  "latest_milestone": {
+    "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-milestone-20261028T061057Z/milestone.json",
+    "sha256": "28352e959fe9ce8648c95ba9a9979b7187a0e1ddc0ff7cc65cc41056a74cb3e8"
+  },
+  "previous_evidence_index": {
+    "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-milestone-20261028T045452Z/milestone.json",
+    "sha256": "1a613b7d43578793b56f8ce271f00393101030bf2cff3fa6ccbd7555f07f176c"
+  },
+  "historical_summary": {
+    "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-milestone-20261028T061057Z/previous_summary.json",
+    "sha256": "0519629f66c6f559c86974af4a1ee0f5b5155e751a96df6481ba7674fafe4def"
+  },
+  "current_scheduler_snapshot": {
+    "92538": {
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 34615,
+      "CPU_time": "00:00:00",
+      "allocated_CPUs": 4
+    },
+    "92547": {
+      "state": "PENDING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 0,
+      "CPU_time": "00:00:00",
+      "allocated_CPUs": 0
+    },
+    "92548": {
+      "state": "PENDING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 0,
+      "CPU_time": "00:00:00",
+      "allocated_CPUs": 0
+    },
+    "92642": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 58,
+      "CPU_time": "00:57.177",
+      "allocated_CPUs": 4
+    },
+    "92643": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 49,
+      "CPU_time": "00:48.222",
+      "allocated_CPUs": 4
+    },
+    "92644": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 1444,
+      "CPU_time": "35:36.538",
+      "allocated_CPUs": 4
+    },
+    "92645": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 5,
+      "CPU_time": "00:04.227",
+      "allocated_CPUs": 4
+    },
+    "92646": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 204,
+      "CPU_time": "04:16.901",
+      "allocated_CPUs": 4
+    },
+    "92647": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 0,
+      "CPU_time": "00:00.149",
+      "allocated_CPUs": 4
+    },
+    "92652": {
+      "state": "FAILED",
+      "exit_code": "1:0",
+      "elapsed_seconds": 51,
+      "CPU_time": "01:06.565",
+      "allocated_CPUs": 4
     }
-  }
+  },
+  "current_evidence": {
+    "vector_bounded_via_relocation_screen": {
+      "job_id": "92642",
+      "source_commit": "d4224ebdc0b578ec47c162872f203ead14604e2c",
+      "scheduler": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed_seconds": 58,
+        "CPU_time": "00:57.177",
+        "allocated_CPUs": 4
+      },
+      "status": "PASS_CLOSED_VIA_CANDIDATE_MEASUREMENT_ONLY",
+      "error": null,
+      "execution": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-single-new-marker-via-relocations-r02-4c-01/execution.json",
+        "sha256": "e1fcdec4a6ecd451b292ecdec573b36a713662597c6c5edb2ed0f5d448ee5f3a"
+      },
+      "submission": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-single-new-marker-via-relocations-r02-4c-01-driver/submission.json",
+        "sha256": "e2e8dfd031a3e219a957cb510ae4f0abcf7dc918b95df301408d4a375b9857d4"
+      },
+      "spec": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-single-new-marker-via-relocations-r02-4c-01-driver/spec.json",
+        "sha256": "b5193f8af44bdf442f820eb6ff9e22162014db754452d8d1cdf3dbba7de901f9"
+      },
+      "source_revision": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-single-new-marker-via-relocations-r02-4c-01-driver/source_revision.json",
+        "sha256": "dde7c4d4464222389e69bdf028e6bc6921ff09bd251b73fc5fb2c9d76caefd71"
+      },
+      "whole_case_or_quality_or_freeze_accepted": false
+    },
+    "vector_old_screen_regression": {
+      "job_id": "92643",
+      "source_commit": "d4224ebdc0b578ec47c162872f203ead14604e2c",
+      "scheduler": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed_seconds": 49,
+        "CPU_time": "00:48.222",
+        "allocated_CPUs": 4
+      },
+      "status": "PASS_CLOSED_VIA_CANDIDATE_MEASUREMENT_ONLY",
+      "error": null,
+      "execution": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-via-screen-old-mode-regression-r01-4c-01/execution.json",
+        "sha256": "87e7a561272f475939e2b81d8ea18f3e80d03b8cd653b92c02055b389024e502"
+      },
+      "submission": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-via-screen-old-mode-regression-r01-4c-01-driver/submission.json",
+        "sha256": "ccc00e8bb0e629e025b6c949c9015b3201096b8badc8bc48b96fcd8899a14e95"
+      },
+      "spec": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-via-screen-old-mode-regression-r01-4c-01-driver/spec.json",
+        "sha256": "f77fc7a1e01e066f11a658f0a6670229ae02c38f41cb70ca385213306bf7ca05"
+      },
+      "source_revision": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-via-screen-old-mode-regression-r01-4c-01-driver/source_revision.json",
+        "sha256": "63a34b3b114d4f1e6ff6a27157d43b322b7b572efa6b07766c00e563aacbaa0d"
+      },
+      "whole_case_or_quality_or_freeze_accepted": false
+    },
+    "vector_local_via_repair": {
+      "job_id": "92644",
+      "source_commit": "74add03d1589b1eace2948be18d3db5025be61eb",
+      "scheduler": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed_seconds": 1444,
+        "CPU_time": "35:36.538",
+        "allocated_CPUs": 4
+      },
+      "status": "PASS_LOCAL_VIA_RELOCATION_CANDIDATE_WITH_ORIGINAL_NATIVE_MARKERS_RC_FUNCTION_TIMING_PENDING",
+      "error": null,
+      "execution": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-repair-r01-4c-01/execution.json",
+        "sha256": "27eb2e4a9fcff91186633d2e23dfe330ea61793b4b549764ac6a2deaca2366ac"
+      },
+      "submission": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-repair-r01-4c-01-driver/submission.json",
+        "sha256": "44757217d21960c52d950016cbcdb29f43dcf2a07d07958e8efaee043c1baca7"
+      },
+      "spec": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-repair-r01-4c-01-driver/spec.json",
+        "sha256": "2c7ec7e6219cdd05ea5c2bda7295dabe65569f3b653e1a5fc201a89364cb8dcc"
+      },
+      "source_revision": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-repair-r01-4c-01-driver/source_revision.json",
+        "sha256": "982788c172f1cb94c4d3a8a4eccc6db6990587a5487b8bdc07816ba27eae9055"
+      },
+      "whole_case_or_quality_or_freeze_accepted": false,
+      "route_comparison.json": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-repair-r01-4c-01/route_comparison.json",
+        "sha256": "1166ba6ea9cd418a8355e99452027c2a3ed0da3e9b229c0969cd7c44574e21c4"
+      },
+      "required_boundary_access.json": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-repair-r01-4c-01/required_boundary_access.json",
+        "sha256": "dca09305163b818c4426705187b685b8d6e9f7f74a8de018f2c0bfc8ec5b8361"
+      },
+      "routed_target_geometry.json": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-repair-r01-4c-01/routed_target_geometry.json",
+        "sha256": "4d2994ac54e95529c481e3a491af1a4a5bbca1d74a6cc8abf1f8971eb29ecd95"
+      },
+      "expected_via_delta.json": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-repair-r01-4c-01/expected_via_delta.json",
+        "sha256": "f13ceb6e1be163d7b8922b4fb0686a3af23dd9b86cc424abf75088156f2d1144"
+      },
+      "matched_original_marker_comparison.json": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-repair-r01-4c-01/matched_original_marker_comparison.json",
+        "sha256": "e591213e4e3cd5381ed2ea7cbb50bc2610fd1149c24d80245fe391f99629037f"
+      },
+      "upper_layer_check.json": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-repair-r01-4c-01/upper_layer_check.json",
+        "sha256": "42f489b6a2ed1b1061e0c2feb08038046df32eef9475c669176de5b9266ce2c7"
+      },
+      "coordinate_edit_checks.json": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-repair-r01-4c-01/coordinate_edit_checks.json",
+        "sha256": "f5d9d0ea5aa112b91b2f915fe099edae485854c630e1d4d1acb314c85df86283"
+      },
+      "database": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-repair-r01-4c-01/patch/patched.odb",
+        "sha256": "d95ba8c4c1aedb25e3feb75fe12862999b3136b9cc90ec72adacf3cbac5a61b2"
+      },
+      "original_markers_retained": 27,
+      "new_markers": 0,
+      "full_target_networks": 40,
+      "required_M8_boundary_terminals": 2,
+      "actual_geometry_delta": "Only one via3_2 center shifted -70DBU/-35nm X on net157847; exactly three via layer-shape rows; ordinary wire coordinates/resources unchanged.",
+      "wall_seconds": 1444,
+      "CPU_seconds": 2136.538,
+      "average_cores": 1.4795969529085873,
+      "allocated_capacity_utilization_percent": 36.98992382271468
+    },
+    "vector_local_via_source_gate": {
+      "job_id": "92645",
+      "source_commit": "45eb22b54b8c4b703b96249b618048d54755af88",
+      "scheduler": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed_seconds": 5,
+        "CPU_time": "00:04.227",
+        "allocated_CPUs": 4
+      },
+      "status": "PASS_CLOSED_SELECTIVE_ERC_PHYSICAL_SOURCE_ONLY",
+      "error": null,
+      "execution": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-source-gate-r01-4c-01/execution.json",
+        "sha256": "0d386183fb2f0fe7ee831143f45786378fca6f76c55abc6e746e7e7676de247a"
+      },
+      "submission": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-source-gate-r01-4c-01-driver/submission.json",
+        "sha256": "7c183ee6872f3d1356d898888124a31892b3e6ff3bb0c704efc543bbcb574e13"
+      },
+      "spec": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-source-gate-r01-4c-01-driver/spec.json",
+        "sha256": "e60097f95401a32d61bbee47aa784d675c8a85b65d58bf47165bdebb917c00dc"
+      },
+      "source_revision": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-source-gate-r01-4c-01-driver/source_revision.json",
+        "sha256": "d8c51283d941b3761a6501c716737a26d3f341a6024ccc061d1e76d04a3764d4"
+      },
+      "whole_case_or_quality_or_freeze_accepted": false,
+      "physical_check_result": "pass_with_inherited_issues",
+      "original_markers": 27,
+      "new_markers": 0,
+      "scope": "Complete VECTOR macro selective physical source qualification only; not entire base or final signoff."
+    },
+    "vector_local_via_RC_measurement": {
+      "job_id": "92646",
+      "source_commit": "9af77ed570aa53bf24c8959af8990c9ea5c09272",
+      "scheduler": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed_seconds": 204,
+        "CPU_time": "04:16.901",
+        "allocated_CPUs": 4
+      },
+      "status": "MEASURED_QUALIFIED_SELECTIVE_ERC_RC_AND_ENDPOINT_CHANGES_ONLY",
+      "error": null,
+      "execution": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-RC-comparison-r01-4c-01/execution.json",
+        "sha256": "f9ff606919c26a0b99f9750417a9b240b3324b2d07b98eb2225871eddc41149b"
+      },
+      "submission": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-RC-comparison-r01-4c-01-driver/submission.json",
+        "sha256": "40697b895a9f38cab84d3819cf030423946c488ebf0223a5a292dda0d4aff50a"
+      },
+      "spec": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-RC-comparison-r01-4c-01-driver/spec.json",
+        "sha256": "143394aacbd684fa259618469593b437689da812278ddbf590c7778b1965d73e"
+      },
+      "source_revision": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-RC-comparison-r01-4c-01-driver/source_revision.json",
+        "sha256": "756d6989680b17cbd4e13e5f7a280cc4399753c474e4b4b037f92bde6df5f78d"
+      },
+      "whole_case_or_quality_or_freeze_accepted": false,
+      "original_endpoint_changes": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-RC-comparison-r01-4c-01/same_context_original_endpoint_changes.json",
+        "sha256": "fd88025bcccdc134c9463d00ef60268e2f2c7a9ceeaa5084cd22cfae1bee8d5a"
+      },
+      "pre_repair_endpoint_changes": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-RC-comparison-r01-4c-01/same_context_endpoint_changes.json",
+        "sha256": "039509189be2715e19780d3956948d12a2abe2689ba3b3b1492b677e34f12797"
+      },
+      "setup_WNS_ns": -4.173054464545526,
+      "setup_TNS_ns": -1057.743504945322,
+      "hold_WNS_ns": 0.02439915005763723,
+      "setup_failing_endpoint_groups": 287,
+      "new_setup_failing_endpoint_identities": 0,
+      "persistent_setup_endpoints_worsened": 190,
+      "worst_extra_setup_degradation_ns": -0.028407055289885186,
+      "capacitance_violations": 56,
+      "slew_violations": 0,
+      "fanout": "unbounded: not coverage pass",
+      "wall_seconds": 204,
+      "CPU_seconds": 256.901,
+      "new_SPEF": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-RC-comparison-r01-4c-01/extraction/extracted_coordinates.spef",
+        "sha256": "5aa63d0a102b1cbe013e6cbc056223f7f95926a1b936cb95f5970d2fb9369bbe"
+      },
+      "original_clock_period_ns": 3
+    },
+    "vector_local_via_named_ERC": {
+      "job_id": "92647",
+      "source_commit": "3fba409fd0e198903843f9bf17e2d7761f363a00",
+      "scheduler": {
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed_seconds": 0,
+        "CPU_time": "00:00.149",
+        "allocated_CPUs": 4
+      },
+      "status": "MEASURED_SELECTIVE_ERC_NAMED_ERC_CHANGES_ONLY",
+      "error": null,
+      "execution": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-named-ERC-r01-4c-01/execution.json",
+        "sha256": "9eb66b8b3ecab927ad8c02894e72fc9d89bada2aa96da186bec7bf98209840f0"
+      },
+      "submission": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-named-ERC-r01-4c-01-driver/submission.json",
+        "sha256": "6cc6be51f0bff364047f4ae5345a1ced802157fb1b8f7dbcd67e829de81edbd5"
+      },
+      "spec": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-named-ERC-r01-4c-01-driver/spec.json",
+        "sha256": "455d1ddfa46b0a2261ee4db50aa58af724ecc132e8ee87f884180f60b0fb070f"
+      },
+      "source_revision": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-named-ERC-r01-4c-01-driver/source_revision.json",
+        "sha256": "40410f044219aaf28b7e6df2512432b986644ecc64c9e4f0f9a2ac8df5fa892c"
+      },
+      "whole_case_or_quality_or_freeze_accepted": false,
+      "original_changes": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-named-ERC-r01-4c-01/original_reference_named_ERC_changes.json",
+        "sha256": "0cdc985f7a6831aee0c8d692fd15ac6ceead3d182d64e3b4ecfb88587cd73065"
+      },
+      "pre_repair_changes": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-local-via-left70-named-ERC-r01-4c-01/named_ERC_changes.json",
+        "sha256": "0ede20449cc19eeb02567a5c6b9d4bda47956889a4819b668b227a65fded3a76"
+      },
+      "original_capacitance_violations": 59,
+      "current_capacitance_violations": 56,
+      "new": 0,
+      "resolved": 3,
+      "persistent": 56,
+      "persistent_worsened": 27
+    },
+    "preserved_endpoint_path_diagnostic_failure": {
+      "job_id": "92652",
+      "source_commit": "2b421ae6f17f91e697868b6f5116da4eef5445f3",
+      "scheduler": {
+        "state": "FAILED",
+        "exit_code": "1:0",
+        "elapsed_seconds": 51,
+        "CPU_time": "01:06.565",
+        "allocated_CPUs": 4
+      },
+      "status": "FAIL_SELECTED_NATIVE_ENDPOINT_PATH_DIAGNOSTIC",
+      "error": "ValueError: Native endpoint path report failed:original",
+      "execution": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-worsened-endpoint-path-reports-r01-4c-01/execution.json",
+        "sha256": "2e110c532ba3285bfdfd9c80ef543e4315f0fcbb8d187a217469e2c564296261"
+      },
+      "submission": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-worsened-endpoint-path-reports-r01-4c-01-driver/submission.json",
+        "sha256": "728d4dddf57647e7d29bdaaa86525e4af066ec61a0a7bc1c7f145f5dd3fb3619"
+      },
+      "spec": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-worsened-endpoint-path-reports-r01-4c-01-driver/spec.json",
+        "sha256": "4dc245dd5e031b757469123c5cfd2c83360c575306c68b112e16ce9777ec9c60"
+      },
+      "source_revision": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-worsened-endpoint-path-reports-r01-4c-01-driver/source_revision.json",
+        "sha256": "90c450c06a2aac8bca18408e77f1e46212ee36393c173bafc38dd595c1e29ad2"
+      },
+      "whole_case_or_quality_or_freeze_accepted": false
+    }
+  },
+  "complete_source_scan_current_observation": {
+    "job_id": "92538",
+    "scheduler": {
+      "state": "RUNNING",
+      "exit_code": "0:0",
+      "elapsed_seconds": 34615,
+      "CPU_time": "00:00:00",
+      "allocated_CPUs": 4
+    },
+    "observed_utc": "2026-10-28T06:10:57.638684+00:00",
+    "closed_tiles": 1408,
+    "required_tiles": 4096,
+    "workers": [
+      {
+        "worker": 0,
+        "closed_tiles": 384,
+        "last_tokens": [
+          "TILE",
+          "96",
+          "1546",
+          "9086"
+        ]
+      },
+      {
+        "worker": 1,
+        "closed_tiles": 336,
+        "last_tokens": [
+          "TILE",
+          "84",
+          "1352",
+          "305258"
+        ]
+      },
+      {
+        "worker": 2,
+        "closed_tiles": 336,
+        "last_tokens": [
+          "TILE",
+          "85",
+          "1372",
+          "8982"
+        ]
+      },
+      {
+        "worker": 3,
+        "closed_tiles": 352,
+        "last_tokens": [
+          "TILE",
+          "89",
+          "1425",
+          "189264"
+        ]
+      }
+    ],
+    "partial_coverage_only": true,
+    "complete_qualification": false,
+    "fourth_TILE_token": "elapsed milliseconds, not marker count"
+  },
+  "next_steps": [
+    "Correct exact native endpoint lookup for port vec_rd0_req[24]; preserve92652 failed diagnostic. Reuse existing three ODB/SPEFs, report worst6 of190 endpoints with no quality tolerance or new extraction.",
+    "Diagnose and resolve190 worsened existing setup endpoints(max28.407ps),27 worsened capacitance pins; no new failing identities does not waive worsened quality.",
+    "Fix53 reproducible M3 markers on our newly built AUX, including one clock-net marker; they are not proven original-project inherited issues. Preserve all8 slow targets and full inventory.",
+    "Keep92538 full4096 scan running without duplicate;92547 qualification and92548 actual14059 fixed wires stay dependent. Controlled partial resume only after terminal state.",
+    "Reassemble one coherent base after qualified macro changes; revalidate fixed14059, each-case841 idle customization, PG/clock and full functions before freeze and both complete M9/M10 cases. External waveform/37outputC remain unknown/null."
+  ],
+  "fixed_preconnections": {
+    "planned_nets": 14059,
+    "actual_routing_completed": false,
+    "route_job": "92548",
+    "state": "PENDING"
+  },
+  "idle_case_custom_connections": {
+    "sinks_each_case": 841,
+    "actual_routing_completed": false
+  },
+  "external_electrical_inputs": {
+    "clock_rise_ns": null,
+    "clock_fall_ns": null,
+    "opentpu_37_constant_output_loads": null,
+    "user_confirmed": "未确定"
+  },
+  "quality_accepted": false,
+  "final_complete_cases_accepted": false
 }
