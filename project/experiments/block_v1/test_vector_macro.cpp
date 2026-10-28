@@ -42,6 +42,60 @@ static int32_t lut(unsigned fn,int32_t x){
 static U isqrt(U n){U lo=0,hi=U(1)<<64;while(lo+1<hi){U m=(lo+hi)/2;if(m*m<=n)lo=m;else hi=m;}return lo;}
 static U quotient_rne(U n,U d){U q=n/d,r=n%d;return q+(r>d-r||(r==d-r&&(q&1)));}
 static U root_rne(U n,U d){U q=n/d,rem=n%d,r=isqrt(q),s=q-r*r;return r+(s>r||(s==r&&(rem>d/4||(rem==d/4&&d%4==0&&(r&1)))));}
+static void global_statistics(const std::vector<int32_t>&a,unsigned context){
+ for(unsigned begin=0;begin<a.size();begin+=8){Row row{};unsigned n=std::min(8u,unsigned(a.size()-begin));for(unsigned j=0;j<n;++j)row[j]=a[begin+j];load(0,row);
+  cmd(3,context,U(begin==0)|(U(begin+n==a.size())<<1)|(U(n)<<2)|(U(begin)<<16));
+ }
+}
+static uint64_t global_external_bytes=0;
+static void revised_cases(){
+ for(unsigned fn=0;fn<5;++fn)for(unsigned test=0;test<8;++test){unsigned n=test==0?256:1+rng()%256;std::vector<int32_t>a(n);
+  int lo=fn==0||fn==4?-16:-8,hi=fn==0?0:fn==4?16:8;
+  for(auto&v:a)v=lo*65536+int(rng()%uint64_t((hi-lo)*65536+1));
+  replay(a);cmd(14,fn,n);auto y=read(n);for(unsigned j=0;j<n;++j)need(y[j]==lut(fn,a[j]),"long replay function");
+ }
+ for(unsigned test=0;test<80;++test){Row x,b;for(auto&v:x)v=int32_t(rng());for(auto&v:b)v=int32_t(rng()%131073)-65536;
+  replay(std::vector<int32_t>(x.begin(),x.end()));load(1,b);auto response=cmd(15,0,0);auto y=read(8);bool clipped=false;
+  for(unsigned j=0;j<8;++j){I p=rne(I(x[j])*b[j&6],16),q=rne(I(x[j^1])*b[j|1],16);int32_t a=sat(p),c=sat(q);I z=j&1?I(a)+c:I(a)-c;int32_t out=sat(z);clipped|=p!=a||q!=c||z!=out;need(y[j]==out,"internal RoPE stagewise rounding");}
+  need(response.saturated==clipped,"internal RoPE saturation");
+ }
+ for(unsigned n:{257u,769u,3072u}){
+  std::vector<int32_t>a(n);for(auto&v:a)v=int32_t(rng()%2097153)-1048576;
+  cmd(13,0,0);replay(std::vector<int32_t>(a.begin(),a.begin()+256));cmd(8,4,U(256)|(U(4295)<<9),true);
+  global_statistics(std::vector<int32_t>(8,-3),1);global_statistics(a,0);
+  need(I(cmd(4,4,0).data)==-24,"independent statistics contexts");
+  U squares=0;I sum=0;int32_t maximum=*std::max_element(a.begin(),a.end());
+  for(auto v:a){squares+=U(I(v)*v);sum+=v;}
+  need(I(cmd(4,0,0).data)==sum&&cmd(4,1,0).data==squares,"global statistics did not combine all chunks");
+  for(unsigned kind=0;kind<2;++kind){U f=root_rne(U(kind==0?n:1)<<96,squares+U(4295)*(kind==0?n:1));
+   for(unsigned begin=0;begin<n;begin+=256){unsigned count=std::min(256u,n-begin);std::vector<int32_t>part(a.begin()+begin,a.begin()+begin+count);replay(part);cmd(8,4+kind,U(count)|(U(4295)<<9));auto y=read(count);
+    for(unsigned j=0;j<count;++j)need(y[j]==sat(rne(I(a[begin+j])*f,32)),"whole-group norm replay incorrectly normalized a chunk");}
+  }
+  std::vector<int32_t>exponentials(n);
+  for(unsigned begin=0;begin<n;begin+=256){unsigned count=std::min(256u,n-begin);replay(std::vector<int32_t>(a.begin()+begin,a.begin()+begin+count));cmd(14,8,count);auto y=read(count);
+   for(unsigned j=0;j<count;++j){auto expected=lut(0,int32_t(std::max(int64_t(a[begin+j])-maximum,int64_t(-1048576))));need(y[j]==expected,"global max subtraction and EXP");exponentials[begin+j]=y[j];}}
+  global_statistics(exponentials,1);U total=0;for(auto v:exponentials)total+=uint32_t(v);U f=quotient_rne(U(1)<<48,total);
+  for(unsigned begin=0;begin<n;begin+=256){unsigned count=std::min(256u,n-begin);replay(std::vector<int32_t>(exponentials.begin()+begin,exponentials.begin()+begin+count));cmd(8,6,count);auto y=read(count);
+   for(unsigned j=0;j<count;++j)need(y[j]==sat(rne(I(exponentials[begin+j])*f,32)),"whole-group Softmax denominator across chunks");}
+  // Explicit external schedule: one initialized in-place N*S32 workspace,
+  // statistics barrier before destructive rewrite. Count six N-word accesses
+  // for Softmax, and three for each of RMS/L2, independently of macro compute.
+  need(n*4<=16384,"finite S16K workspace exceeded");global_external_bytes+=uint64_t(n)*4*(6+3+3);
+ }
+ // No per-word acknowledgement bubble on the128-bit replay/read interface.
+ std::vector<int32_t>a(256);for(auto&v:a)v=-int32_t(rng()%1048577);
+ for(unsigned operation=0;operation<2;++operation){
+  unsigned sent=0,received=0,elapsed=0,first=0,last=0;
+  while(received<64){dut.clk=0;dut.cmd_valid=sent<64;dut.cmd_op=operation?9:7;dut.cmd_index=sent;U data=0;
+   if(!operation&&sent<64)for(unsigned j=0;j<4;++j)data|=U(uint32_t(a[4*sent+j]))<<(32*j);put(data);dut.rsp_ready=1;dut.eval();
+   if(dut.cmd_valid&&dut.cmd_ready){if(!sent)first=elapsed;last=elapsed;++sent;}
+   if(dut.rsp_valid){need(!dut.rsp_error,"continuous stream error");if(operation){U actual=get();for(unsigned j=0;j<4;++j)need(int32_t(actual>>(32*j))==lut(0,a[4*received+j]),"continuous output order/data");}else need(get()==0,"replay loader ack");++received;}
+   tick();need(++elapsed<1000,"continuous interface stalled");
+  }
+  dut.cmd_valid=0;dut.rsp_ready=0;dut.eval();need(sent==64&&last-first+1==64,"continuous128bit transfer must have II1");
+  if(!operation)cmd(14,0,256);
+ }
+}
 int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);dut.cmd_valid=0;dut.reset=1;tick();tick();dut.reset=0;tick();
  cmd(9,0,0,true);cmd(6,0,0,true);cmd(8,0,1,true);cmd(11,0,40|(8<<6),true);
  unsigned point_cases=0,function_cases=0,compose_cases=0;double max_function_abs[5]={};
@@ -82,5 +136,6 @@ int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);dut.cmd_vali
   std::stable_sort(order.begin(),order.end(),[&](unsigned l,unsigned r){return a[l]>a[r]||(a[l]==a[r]&&ids[l]<ids[r]);});auto r=cmd(11,0,n|(k<<6));need(r.latency==k*(n+1),"TopK cycle count");
   for(unsigned j=0;j<k;++j){U v=cmd(12,j,0).data;need(int32_t(v)==a[order[j]]&&uint16_t(v>>32)==ids[order[j]],"TopK dynamic ID/tie mismatch");}
  }
- std::cout<<"{\"passed\":true,\"point_cases\":"<<point_cases<<",\"function_cases\":"<<function_cases<<",\"compose_cases\":"<<compose_cases<<",\"topk_cases\":100,\"checks\":"<<checks<<",\"cycles\":"<<cycles<<",\"sampled_function_max_abs\":[";for(int f=0;f<5;++f)std::cout<<(f?",":"")<<max_function_abs[f];std::cout<<"]}\n";return 0;
+ revised_cases();
+ std::cout<<"{\"long_function_cases\":40,\"internal_rope_cases\":80,\"global_groups\":3,\"continuous_words\":64,\"continuous_cycles\":64,\"declared_global_external_effective_bytes\":"<<global_external_bytes<<",\"passed\":true,\"point_cases\":"<<point_cases<<",\"function_cases\":"<<function_cases<<",\"compose_cases\":"<<compose_cases<<",\"topk_cases\":100,\"checks\":"<<checks<<",\"cycles\":"<<cycles<<",\"sampled_function_max_abs\":[";for(int f=0;f<5;++f)std::cout<<(f?",":"")<<max_function_abs[f];std::cout<<"]}\n";return 0;
 }catch(const std::exception&e){std::cerr<<e.what()<<"\n";return 1;}}

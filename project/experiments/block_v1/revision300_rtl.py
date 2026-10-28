@@ -39,7 +39,7 @@ def mapping(root,out,cpus,run,kind):
     top,rtl,bench=sources(root,kind)
     lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
     script='read_liberty -lib '+str(lib)+'\nread_verilog -sv -I'+str(rtl[0].parent)+' '+' '.join(map(str,rtl))+'\n'
-    script+='hierarchy -check -top '+top+'\nsynth -top '+top+' -noabc\n'
+    script+='hierarchy -check -top '+top+'\nproc\nopt\nwrite_json operators.json\nsynth -top '+top+' -noabc\n'
     script+='dfflibmap -liberty '+str(lib)+'\nabc -liberty '+str(lib)+'\nclean\ncheck -assert\n'
     script+='flatten -noscopeinfo\nclean\ncheck -assert\nstat -liberty '+str(lib)+'\nwrite_verilog -noattr mapped.v\nwrite_json mapped.json\n'
     (out/'map.ys').write_text(script);run(['yosys','-s',out/'map.ys'],'map.log')
@@ -48,8 +48,15 @@ def mapping(root,out,cpus,run,kind):
         assert not c['type'].startswith('$'),c['type']
         cells[c['type']]=cells.get(c['type'],0)+1
     bound=rtl+([rtl[0].parent/'block_v1_v_tables.svh']if kind=='v'else[])
+    operators={}
+    for module_name,m in json.loads((out/'operators.json').read_text())['modules'].items():
+        for c in m.get('cells',{}).values():
+            if c['type']!='$mul':continue
+            p=c['parameters'];key=(module_name,int(p['A_WIDTH'],2),int(p['B_WIDTH'],2),int(p['Y_WIDTH'],2))
+            operators[key]=operators.get(key,0)+1
     result=dict(passed=True,top=top,rtl_sha256={str(p.relative_to(root)):file_sha(p)for p in bound},
                 liberty_sha256=file_sha(lib),mapped_sha256=file_sha(out/'mapped.v'),cells=cells,cell_count=sum(cells.values()),
+                pretechnology_multipliers=[dict(module=k[0],a_bits=k[1],b_bits=k[2],result_bits=k[3],count=v)for k,v in sorted(operators.items())],
                 ports={k:dict(direction=v['direction'],bits=len(v['bits']))for k,v in module['ports'].items()},
                 physical_implementation_completed=False,functional_equivalence_qualified=False)
     (out/'revision300-rtl-map.json').write_text(json.dumps(result,indent=2)+'\n')

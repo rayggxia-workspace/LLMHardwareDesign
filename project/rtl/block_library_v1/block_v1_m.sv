@@ -18,6 +18,7 @@ module block_v1_m(
  reg signed [15:0] a[0:7],b[0:63];
  reg a_valid;reg [7:0] b_valid;
  reg signed [15:0] product[0:63];
+ reg signed [7:0] multiplicand[0:63],multiplier[0:63];
  reg signed [18:0] reduced[0:7];
  reg signed [63:0] accumulator[0:7];
  reg signed [127:0] merged[0:7],preview[0:7];
@@ -92,6 +93,17 @@ module block_v1_m(
  reg signed [127:0] rounded,lower_limit,upper_limit;
  integer lane_number;
  always @* begin
+  for(integer r=0;r<8;r=r+1)for(integer c=0;c<8;c=c+1)begin
+   multiplicand[8*r+c]=0;multiplier[8*r+c]=0;
+   if(state==BURST)begin
+    if(r<int'(active_n)&&(issue_tile+1<tile_count||c<int'(last_k)))begin
+     multiplicand[8*r+c]=digit(tile_a[(int'(execution_bank)*4+int'(issue_tile))*8+c],fmt_a,issue_a);
+     multiplier[8*r+c]=digit(tile_b[(int'(execution_bank)*4+int'(issue_tile))*64+8*r+c],fmt_b,issue_b);
+    end
+   end else if(r<int'(active_n)&&c<int'(active_k))begin
+    multiplicand[8*r+c]=digit(a[c],fmt_a,digit_a);multiplier[8*r+c]=digit(b[8*r+c],fmt_b,digit_b);
+   end
+  end
   accumulation_error=0;
   for(integer row=0;row<8;row=row+1)begin
    // Explicit balanced local tree, not an external product interface.
@@ -156,7 +168,7 @@ module block_v1_m(
     tile_fmt_b[t]<=cmd_op==9;
     if(cmd_op==8)begin
      for(k=0;k<16;k=k+1)tile_b[t*64+chunk*16+k]<=$signed(cmd_data[8*k+:8]);
-     tile_b_valid[t][2*chunk+:2]<=2'b11;
+     tile_b_valid[t][{cmd_index[1:0],1'b0}+:2]<=2'b11;
     end else begin
      for(k=0;k<8;k=k+1)tile_b[t*64+chunk*8+k]<=$signed(cmd_data[16*k+:16]);
      tile_b_valid[t][chunk]<=1;
@@ -192,6 +204,7 @@ module block_v1_m(
   end else begin
    if(rsp_valid&&rsp_ready)rsp_valid<=0;
    if(burst_busy&&cmd_valid&&cmd_ready)load_tile();
+   if(state==PRODUCT||state==BURST)for(i=0;i<64;i=i+1)product[i]<=multiplicand[i]*multiplier[i];
    case(state)
     IDLE:if(cmd_valid&&cmd_ready)begin
      case(cmd_op)
@@ -251,13 +264,7 @@ module block_v1_m(
       default:respond(0,1,0);
      endcase
     end
-    PRODUCT:begin
-     for(i=0;i<8;i=i+1)for(j=0;j<8;j=j+1)
-      if(i<int'(active_n)&&j<int'(active_k))
-       product[8*i+j]<=digit(a[j],fmt_a,digit_a)*digit(b[8*i+j],fmt_b,digit_b);
-      else product[8*i+j]<=0;
-     state<=REDUCE;
-    end
+    PRODUCT:state<=REDUCE;
     REDUCE:begin for(i=0;i<8;i=i+1)reduced[i]<=sums[i];state<=ACCUMULATE;end
     ACCUMULATE:if(accumulation_error)begin
      // The legal <=65535 S16 input domain cannot overflow S64. Keep a guard
@@ -274,11 +281,6 @@ module block_v1_m(
     BURST,DRAIN:begin
      product_valid<=state==BURST;reduce_valid<=product_valid;
      if(state==BURST)begin
-      for(i=0;i<8;i=i+1)for(j=0;j<8;j=j+1)
-       if(i<int'(active_n)&&(issue_tile+1<tile_count||j<int'(last_k)))
-        product[8*i+j]<=digit(tile_a[(int'(execution_bank)*4+int'(issue_tile))*8+j],fmt_a,issue_a)*
-                          digit(tile_b[(int'(execution_bank)*4+int'(issue_tile))*64+8*i+j],fmt_b,issue_b);
-       else product[8*i+j]<=0;
       product_shift<=7*({4'b0,issue_a}+{4'b0,issue_b});
       product_last<=issue_tile+1==tile_count&&issue_a==(fmt_a?2:0)&&issue_b==(fmt_b?2:0);
       if(issue_b==(fmt_b?2:0))begin

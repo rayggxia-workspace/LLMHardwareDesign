@@ -3,6 +3,7 @@ import argparse
 import copy
 import hashlib
 import json
+import re
 from pathlib import Path
 from pin_contract import inspect, observed, rectangles, script
 
@@ -46,7 +47,11 @@ def exercise(plan, text, actual):
     del altered[names[0]]
     faults['missing_pin'] = rejected(plan,text,serialize(altered))
     faults['duplicate_pin'] = rejected(plan,text,actual+actual.splitlines()[0]+'\n')
-    faults['altered_placement_script'] = rejected(plan,text.replace('-pin_size {.8 .8}','-pin_size {.81 .8}',1),actual)
+    from decimal import Decimal
+    size=re.search(r'-pin_size \{([^ ]+) ([^}]+)\}',text)
+    assert size
+    bad_size='-pin_size {'+str(Decimal(size[1])+Decimal('.01'))+' '+size[2]+'}'
+    faults['altered_placement_script'] = rejected(plan,text[:size.start()]+bad_size+text[size.end():],actual)
     altered_plan = copy.deepcopy(plan)
     altered_plan['pins'][0]['xy_um'][0] += .8
     faults['altered_original_plan'] = rejected(altered_plan,text,actual)

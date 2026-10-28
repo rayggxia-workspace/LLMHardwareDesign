@@ -60,13 +60,26 @@ int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);reset();
   cmd(5,1,half(skip,0));cmd(5,2,half(skip,1));
   if(mode)for(unsigned j=0;j<n;++j)for(int p=0;p<2;++p)cmd(15,2*j+p,half(factor[j],p));
   need(reference(a,k,q,x,injection,skip,decay,beta,factor,mode,out),"random domain unexpectedly overflowed");
-  auto r=execute(mode);need(r.latency==(mode==0?8*n+6:6*n+4),"execution latency mismatch");
+  auto r=execute(mode);need(r.latency==(mode==0?4*n+10:3*n+7),"execution latency mismatch");
   output_matches(out);state_matches(original);
   // Wrong owner/epoch cannot consume a valid candidate.
   cmd(7,0,U(owner+1)|(U(epoch)<<32)|(U(position)<<64)|(U(position+1)<<96),true);
   if(trial%5==0){cmd(8,0,0);state_matches(original);cmd(12,0,0,true);commit(position+1,true);}
   else {commit(position+1);state_matches(a);cmd(12,0,0,true);}
   ++random_cases;
+ }
+ // Repeated GDN/SSM transitions exercise both physical bank roles without
+ // reopening or reloading state. Aborting a candidate cannot swap roles.
+ {unsigned n=3;open(n);std::vector<Row>a(n),factor(n);for(auto&v:a)v=random_row(10000);state_load(a);
+  std::vector<int16_t>k{1024,-2048,4096},q{-1024,2048,512};load_vector(2,k);load_vector(3,q);
+  Row x=random_row(5000),in=random_row(2000),skip=random_row(1000),out{};
+  for(unsigned step=0;step<6;++step){unsigned mode=step%2;auto before=a;
+   values(0,x);values(2,in);cmd(5,0,U(0x70000000U)|(U(0x50000000U)<<32));cmd(5,1,half(skip,0));cmd(5,2,half(skip,1));
+   if(mode)for(unsigned r=0;r<n;++r){factor[r].fill(0x60000000);for(int p=0;p<2;++p)cmd(15,2*r+p,half(factor[r],p));}
+   need(reference(a,k,q,x,in,skip,0x70000000U,0x50000000U,factor,mode,out),"repeat-mode numeric domain");
+   execute(mode);output_matches(out);state_matches(before);auto c=cmd(7,0,U(owner)|(U(epoch)<<32)|(U(position)<<64)|(U(position+1)<<96));
+   need(c.latency==1,"bank role commit must be constant-time");++epoch;++position;state_matches(a);
+  }
  }
  // Rounded negative ties and beta=one: all-key prediction precedes update.
  {open(2);std::vector<Row>a(2);a[0].fill(-3);a[1].fill(5);state_load(a);std::vector<int16_t>k{8192,8192},q{16384,-16384};load_vector(2,k);load_vector(3,q);Row x{};x.fill(-7);values(0,x);cmd(5,0,U(0x40000000U)|(U(0x80000000U)<<32));Row out{},z{};std::vector<Row>f;need(reference(a,k,q,x,z,z,0x40000000U,0x80000000U,f,0,out),"tie reference");execute(0);output_matches(out);commit(position);state_matches(a);}

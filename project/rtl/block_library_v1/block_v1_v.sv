@@ -8,7 +8,8 @@ module block_v1_v(
 );
  localparam IDLE=0,P_MUL=1,P_WRITE=2,S_MUL=3,S_WRITE=4,F_RUN=5,
  G_START=6,G_WAIT=7,G_ROOT=8,G_ROOT_WAIT=9,N_LOW=10,N_HIGH=11,N_WRITE=12,
- C_MUL=13,C_ADD=14,C_END=15,T_SCAN=16,T_SAVE=17;
+ C_MUL=13,C_ADD=14,C_END=15,T_SCAN=16,T_SAVE=17,
+ ROT_LOW=18,ROT_HIGH=19,ROT_ROUND=20,ROT_COMBINE=21,S_REDUCE=22,C_REDUCE=23;
  reg [4:0] phase;
  reg signed [31:0] a[0:7],b[0:7],input_mem[0:255],output_mem[0:255];
  reg [1:0] a_valid,b_valid;reg [63:0] replay_valid;
@@ -18,15 +19,23 @@ module block_v1_v(
  reg signed [31:0] scalar_b,scalar_c;
  reg signed [31:0] mul_a[0:7];reg signed [32:0] mul_b[0:7];
  reg signed [64:0] product[0:7],low_product[0:7];
- reg signed [127:0] rounded,total[0:7],sum,stats_sum;
- reg [127:0] sumsq,stats_sumsq;
- reg signed [31:0] maximum,stats_max,stats_min;
- reg [15:0] stats_argmax,stats_argmin,stats_count,stats_base;
- reg stats_valid,stats_final,stats_start,stats_finish;
+ reg signed [127:0] rounded,total[0:7],sum;
+ // Whole-domain bounds:65535 S32 values fit S64 sum and U80 squares.
+ reg signed [63:0] stats_sum[0:1];
+ reg [79:0] sumsq,stats_sumsq[0:1];
+ reg signed [31:0] maximum,stats_max[0:1],stats_min[0:1];
+ reg [15:0] stats_argmax[0:1],stats_argmin[0:1],stats_count[0:1],stats_base;
+ reg [1:0] stats_valid,stats_final;reg stats_start,stats_finish,stats_context;
  reg [3:0] stats_n;reg [127:0] block_sum,block_sq;
  reg signed [31:0] block_max,block_min;reg [15:0] block_argmax,block_argmin;
+ reg signed [63:0] sum_tree[0:14],stat_block_sum;
+ reg [79:0] square_tree[0:14],stat_block_sq;
+ reg signed [31:0] max_tree[0:14],min_tree[0:14],stat_block_max,stat_block_min;
+ reg [15:0] argmax_tree[0:14],argmin_tree[0:14],stat_block_argmax,stat_block_argmin;
+ reg leaf_enabled;reg signed [31:0] leaf_value;
  reg [2:0] function_kind;reg [8:0] function_sent,function_received,function_length;
- reg composing;reg [1:0] compose_kind;reg [63:0] epsilon;
+ reg composing,function_source_replay,function_subtract_max;reg signed [31:0] rot_low[0:7],rot_high[0:7];
+ reg [1:0] compose_kind;reg [63:0] epsilon;
  reg [63:0] factor;
  reg [2:0] group_kind;reg [127:0] group_n,group_d,division_remainder;
  wire group_ready,group_valid,group_error;
@@ -44,7 +53,7 @@ module block_v1_v(
  reg [4:0] id_valid;reg [39:0] selected;
  reg [5:0] top_n,scan_index,best_index;reg [3:0] top_k,top_round;
  reg best_valid,top_valid;reg signed [31:0] best_value;reg [15:0] best_id;
- assign cmd_ready=!reset&&phase==IDLE&&!rsp_valid;
+ assign cmd_ready=!reset&&phase==IDLE&&(!rsp_valid||rsp_ready);
  assign busy=!cmd_ready;
  function automatic signed [127:0] rne;
   input signed [127:0] v;input [6:0] shift;
@@ -59,14 +68,34 @@ module block_v1_v(
   fx0=0;fx1=0;difference=0;
   for(integer j=0;j<2;j=j+1)begin
    if(function_sent+j<function_length)begin
-    if(composing)begin
+    if(function_subtract_max)begin
      difference=$signed({input_mem[function_sent+j][31],input_mem[function_sent+j]})-$signed({maximum[31],maximum});
      if(j==0)fx0=difference< -33'sd1048576 ? -32'sd1048576:difference[31:0];
      else fx1=difference< -33'sd1048576 ? -32'sd1048576:difference[31:0];
-    end else if(j==0)fx0=a[function_sent+j];else fx1=a[function_sent+j];
+    end else if(function_source_replay)begin if(j==0)fx0=input_mem[function_sent+j];else fx1=input_mem[function_sent+j];end
+    else if(j==0)fx0=a[function_sent+j];else fx1=a[function_sent+j];
    end
   end
-  block_sum=0;block_sq=0;block_max=32'sh80000000;block_min=32'sh7fffffff;block_argmax=0;block_argmin=0;
+  for(integer l=0;l<8;l=l+1)begin
+   leaf_enabled=phase==S_REDUCE?l<stats_n:offset+l<length;
+   leaf_value=phase==S_REDUCE?a[l]:input_mem[offset+l];
+   sum_tree[7+l]=leaf_enabled?$signed(leaf_value):64'sd0;
+   square_tree[7+l]=leaf_enabled?$unsigned(product[l]):80'd0;
+   max_tree[7+l]=leaf_enabled?leaf_value:32'sh80000000;
+   min_tree[7+l]=leaf_enabled?leaf_value:32'sh7fffffff;
+   argmax_tree[7+l]=leaf_enabled?stats_base+l:16'hffff;
+   argmin_tree[7+l]=leaf_enabled?stats_base+l:16'hffff;
+  end
+  for(integer t=6;t>=0;t=t-1)begin
+   sum_tree[t]=sum_tree[2*t+1]+sum_tree[2*t+2];square_tree[t]=square_tree[2*t+1]+square_tree[2*t+2];
+   if(max_tree[2*t+1]>max_tree[2*t+2]||(max_tree[2*t+1]==max_tree[2*t+2]&&argmax_tree[2*t+1]<argmax_tree[2*t+2]))begin
+    max_tree[t]=max_tree[2*t+1];argmax_tree[t]=argmax_tree[2*t+1];end
+   else begin max_tree[t]=max_tree[2*t+2];argmax_tree[t]=argmax_tree[2*t+2];end
+   if(min_tree[2*t+1]<min_tree[2*t+2]||(min_tree[2*t+1]==min_tree[2*t+2]&&argmin_tree[2*t+1]<argmin_tree[2*t+2]))begin
+    min_tree[t]=min_tree[2*t+1];argmin_tree[t]=argmin_tree[2*t+1];end
+   else begin min_tree[t]=min_tree[2*t+2];argmin_tree[t]=argmin_tree[2*t+2];end
+  end
+  block_sum=sum_tree[0];block_sq=square_tree[0];block_max=max_tree[0];block_min=min_tree[0];block_argmax=argmax_tree[0];block_argmin=argmin_tree[0];
   for(integer l=0;l<8;l=l+1)begin
    mul_a[l]=a[l];mul_b[l]={b[l][31],b[l]};
    if(phase==S_MUL)mul_b[l]={a[l][31],a[l]};
@@ -74,7 +103,9 @@ module block_v1_v(
    else if(phase==N_LOW||phase==N_HIGH)begin
     mul_a[l]=compose_kind==2?output_mem[offset+l]:input_mem[offset+l];
     mul_b[l]=phase==N_LOW?$signed({1'b0,factor[31:0]}):$signed({1'b0,factor[63:32]});
-   end else if(broadcast_b)mul_b[l]={scalar_b[31],scalar_b};
+   end else if(phase==ROT_LOW)begin mul_a[l]=input_mem[l];mul_b[l]={b[l&6][31],b[l&6]};end
+   else if(phase==ROT_HIGH)begin mul_a[l]=input_mem[l^1];mul_b[l]={b[l|1][31],b[l|1]};end
+   else if(broadcast_b)mul_b[l]={scalar_b[31],scalar_b};
    else if(swap_b)mul_b[l]={b[l^1][31],b[l^1]};
    total[l]=0;
    case(point_op)
@@ -90,16 +121,6 @@ module block_v1_v(
     9:total[l]=a[l]<0?$signed(mul_b[l]):$signed({{96{scalar_c[31]}},scalar_c});
     default:total[l]=0;
    endcase
-   if((phase==S_WRITE&&l<stats_n)||(phase==C_ADD&&offset+l<length))begin
-    if(phase==S_WRITE)begin
-     block_sum=block_sum+$signed({{96{a[l][31]}},a[l]});
-     if(l==0||$signed(a[l])>block_max)begin block_max=a[l];block_argmax=stats_base+l;end
-     if(l==0||$signed(a[l])<block_min)begin block_min=a[l];block_argmin=stats_base+l;end
-    end else begin
-     if($signed(input_mem[offset+l])>block_max)block_max=input_mem[offset+l];
-    end
-    block_sq=block_sq+$unsigned({{63{product[l][64]}},product[l]});
-   end
   end
   twice_remainder={2'b0,group_r}<<1;
   rounded_group={1'b0,group_q}+((twice_remainder>{2'b0,group_d})||((twice_remainder=={2'b0,group_d})&&group_q[0]));
@@ -114,7 +135,7 @@ module block_v1_v(
    a_valid<=0;b_valid<=0;replay_valid<=0;output_count<=0;stats_valid<=0;stats_final<=0;
    id_valid<=0;top_valid<=0;function_sent<=0;function_received<=0;function_length<=0;composing<=0;
    broadcast_b<=0;swap_b<=0;point_op<=0;point_shift<=0;point_width<=0;point_count<=0;
-   length<=0;offset<=0;factor<=0;group_n<=0;group_d<=0;group_kind<=0;
+   length<=0;offset<=0;factor<=0;group_n<=0;group_d<=0;group_kind<=0;stats_context<=0;function_source_replay<=0;function_subtract_max<=0;
   end else begin
    if(rsp_valid&&rsp_ready)rsp_valid<=0;
    if(cmd_valid&&cmd_ready)begin
@@ -130,18 +151,18 @@ module block_v1_v(
       else begin point_op<=cmd_data[3:0];point_shift<=cmd_data[10:4];point_count<=cmd_data[14:11];broadcast_b<=cmd_data[15];point_width<=cmd_data[17:16];swap_b<=cmd_data[18];scalar_b<=cmd_data[63:32];scalar_c<=cmd_data[95:64];phase<=P_MUL;rsp_valid<=0;output_count<=0;end
      end
      3:begin // Statistics: start0, final1, n[5:2], base ID[31:16].
-      if(a_valid!=3||cmd_data[5:2]==0||cmd_data[5:2]>8||cmd_data[15:6]!=0||cmd_data[127:32]!=0||
-        (!cmd_data[0]&&(!stats_valid||stats_final||{1'b0,stats_count}+cmd_data[5:2]>65535))||{1'b0,cmd_data[31:16]}+cmd_data[5:2]>65536)rsp_error<=1;
-      else begin stats_start<=cmd_data[0];stats_finish<=cmd_data[1];stats_n<=cmd_data[5:2];stats_base<=cmd_data[31:16];phase<=S_MUL;rsp_valid<=0;end
+      if(cmd_index>1||a_valid!=3||cmd_data[5:2]==0||cmd_data[5:2]>8||cmd_data[15:6]!=0||cmd_data[127:32]!=0||
+        (!cmd_data[0]&&(!stats_valid[cmd_index[0]]||stats_final[cmd_index[0]]||{1'b0,stats_count[cmd_index[0]]}+cmd_data[5:2]>65535))||{1'b0,cmd_data[31:16]}+cmd_data[5:2]>65536)rsp_error<=1;
+      else begin stats_context<=cmd_index[0];stats_start<=cmd_data[0];stats_finish<=cmd_data[1];stats_n<=cmd_data[5:2];stats_base<=cmd_data[31:16];phase<=S_MUL;rsp_valid<=0;end
      end
      4:begin
-      if(!stats_valid||cmd_index>2)rsp_error<=1;
-      else case(cmd_index)0:rsp_data<=stats_sum;1:rsp_data<=stats_sumsq;
-       2:rsp_data<={15'b0,stats_final,stats_count,stats_argmin,stats_min,stats_argmax,stats_max};endcase
+      if(!stats_valid[cmd_index[2]]||cmd_index>6||cmd_index[1:0]>2)rsp_error<=1;
+      else case(cmd_index[1:0])0:rsp_data<=stats_sum[cmd_index[2]];1:rsp_data<=stats_sumsq[cmd_index[2]];
+       2:rsp_data<={15'b0,stats_final[cmd_index[2]],stats_count[cmd_index[2]],stats_argmin[cmd_index[2]],stats_min[cmd_index[2]],stats_argmax[cmd_index[2]],stats_max[cmd_index[2]]};endcase
      end
      5:begin
       if(a_valid!=3||cmd_data>4)rsp_error<=1;
-      else begin function_kind<=cmd_data[2:0];function_sent<=0;function_received<=0;function_length<=8;composing<=0;phase<=F_RUN;rsp_valid<=0;output_count<=0;end
+      else begin function_kind<=cmd_data[2:0];function_sent<=0;function_received<=0;function_length<=8;composing<=0;function_source_replay<=0;function_subtract_max<=0;phase<=F_RUN;rsp_valid<=0;output_count<=0;end
      end
      6:begin // External group op: index0 reciprocal Q16, index1 rsqrt Q16.
       if(cmd_index>1||cmd_data==0)rsp_error<=1;
@@ -151,9 +172,21 @@ module block_v1_v(
       if(cmd_index>63)rsp_error<=1;
       else begin for(i=0;i<4;i=i+1)input_mem[4*cmd_index+i]<=cmd_data[32*i+:32];replay_valid[cmd_index]<=1;end
      end
-     8:begin // compose: index0 RMS,1 L2,2 softmax; N[8:0], epsilon Q32.32[72:9].
-      if(cmd_index>2||cmd_data[8:0]==0||cmd_data[8:0]>256||cmd_data[127:73]!=0||!replay_loaded)rsp_error<=1;
-      else begin compose_kind<=cmd_index[1:0];length<=cmd_data[8:0];epsilon<=cmd_data[72:9];offset<=0;sumsq<=0;maximum<=32'sh80000000;phase<=C_MUL;rsp_valid<=0;output_count<=0;end
+     8:begin // Local composition0/1/2, or global-stat replay4/5/6.
+      if((cmd_index>2&&cmd_index<4)||cmd_index>6||cmd_data[8:0]==0||cmd_data[8:0]>256||cmd_data[127:73]!=0||!replay_loaded||
+         (cmd_index>=4&&(!stats_valid[0]||!stats_final[0]||stats_count[0]<cmd_data[8:0]))||
+         (cmd_index==6&&(!stats_valid[1]||!stats_final[1]||stats_count[1]!=stats_count[0]||stats_sum[1]<=0)))rsp_error<=1;
+      else begin
+       compose_kind<=cmd_index==6?1:cmd_index[1:0];length<=cmd_data[8:0];epsilon<=cmd_data[72:9];offset<=0;
+       rsp_valid<=0;output_count<=0;
+       if(cmd_index<4)begin sumsq<=0;maximum<=32'sh80000000;phase<=C_MUL;end
+       else if(cmd_index==6)begin group_kind<=4;group_n<=128'd1<<48;group_d<=stats_sum[1];phase<=G_START;end
+       else if(stats_sumsq[0]==0&&cmd_data[72:9]==0)begin rsp_error<=1;rsp_valid<=1;end
+       else begin
+        group_kind<=3;group_n<=cmd_index==4?({112'b0,stats_count[0]}<<96):(128'd1<<96);
+        group_d<=stats_sumsq[0]+(cmd_index==4?{64'b0,cmd_data[72:9]}*{112'b0,stats_count[0]}:{64'b0,cmd_data[72:9]});phase<=G_START;
+       end
+      end
      end
      9:begin // Read four S32 values or explicit packed8/packed16 point result.
       if(cmd_index<64)begin
@@ -182,12 +215,25 @@ module block_v1_v(
       else rsp_data<={80'b0,chosen_id[cmd_index],chosen_value[cmd_index]};
      end
      13:begin a_valid<=0;b_valid<=0;replay_valid<=0;stats_valid<=0;output_count<=0;id_valid<=0;top_valid<=0;end
+     14:begin // Replay function, optional subtract context0 global max.
+      if(cmd_index>12||cmd_index[2:0]>4||cmd_data[127:9]!=0||cmd_data[8:0]==0||cmd_data[8:0]>256||!replay_loaded||
+         (cmd_index[3]&&(!stats_valid[0]||!stats_final[0]||cmd_index[2:0]!=0)))rsp_error<=1;
+      else begin
+       function_kind<=cmd_index[2:0];function_sent<=0;function_received<=0;function_length<=cmd_data[8:0];
+       composing<=0;function_source_replay<=1;function_subtract_max<=cmd_index[3];maximum<=stats_max[0];
+       phase<=F_RUN;rsp_valid<=0;output_count<=0;
+      end
+     end
+     15:begin // Eight-element RoPE with four supplied cos/sin coefficient pairs.
+      if(cmd_index!=0||cmd_data!=0||!replay_valid[0]||!replay_valid[1]||b_valid!=3)rsp_error<=1;
+      else begin phase<=ROT_LOW;rsp_valid<=0;output_count<=0;end
+     end
      default:rsp_error<=1;
     endcase
    end else case(phase)
     P_MUL,S_MUL,C_MUL:begin
      for(i=0;i<8;i=i+1)product[i]<=mul_a[i]*mul_b[i];
-     phase<=phase==P_MUL?P_WRITE:phase==S_MUL?S_WRITE:C_ADD;
+     phase<=phase==P_MUL?P_WRITE:phase==S_MUL?S_REDUCE:C_REDUCE;
     end
     P_WRITE:begin
      lower=point_width==0?-128'sd128:point_width==1?-128'sd32768:-128'sd2147483648;
@@ -200,19 +246,23 @@ module block_v1_v(
      end
      output_count<=point_count;rsp_valid<=1;phase<=IDLE;
     end
+    S_REDUCE,C_REDUCE:begin
+     stat_block_sum<=block_sum[63:0];stat_block_sq<=block_sq[79:0];stat_block_max<=block_max;stat_block_min<=block_min;
+     stat_block_argmax<=block_argmax;stat_block_argmin<=block_argmin;phase<=phase==S_REDUCE?S_WRITE:C_ADD;
+    end
     S_WRITE:begin
-     stats_sum<=stats_start?$signed(block_sum):stats_sum+$signed(block_sum);
-     stats_sumsq<=stats_start?block_sq:stats_sumsq+block_sq;
-     if(stats_start||block_max>stats_max||(block_max==stats_max&&block_argmax<stats_argmax))begin stats_max<=block_max;stats_argmax<=block_argmax;end
-     if(stats_start||block_min<stats_min||(block_min==stats_min&&block_argmin<stats_argmin))begin stats_min<=block_min;stats_argmin<=block_argmin;end
-     stats_count<=stats_start?{12'b0,stats_n}:stats_count+stats_n;stats_final<=stats_finish;stats_valid<=1;phase<=IDLE;rsp_valid<=1;
+     stats_sum[stats_context]<=stats_start?$signed(stat_block_sum):stats_sum[stats_context]+$signed(stat_block_sum);
+     stats_sumsq[stats_context]<=stats_start?stat_block_sq:stats_sumsq[stats_context]+stat_block_sq;
+     if(stats_start||stat_block_max>stats_max[stats_context]||(stat_block_max==stats_max[stats_context]&&stat_block_argmax<stats_argmax[stats_context]))begin stats_max[stats_context]<=stat_block_max;stats_argmax[stats_context]<=stat_block_argmax;end
+     if(stats_start||stat_block_min<stats_min[stats_context]||(stat_block_min==stats_min[stats_context]&&stat_block_argmin<stats_argmin[stats_context]))begin stats_min[stats_context]<=stat_block_min;stats_argmin[stats_context]<=stat_block_argmin;end
+     stats_count[stats_context]<=stats_start?{12'b0,stats_n}:stats_count[stats_context]+stats_n;stats_final[stats_context]<=stats_finish;stats_valid[stats_context]<=1;phase<=IDLE;rsp_valid<=1;
     end
     C_ADD:begin
-     sumsq<=sumsq+block_sq;if(block_max>maximum)maximum<=block_max;
+     sumsq<=sumsq+stat_block_sq;if(stat_block_max>maximum)maximum<=stat_block_max;
      if(offset+8>=length)phase<=C_END;else begin offset<=offset+8;phase<=C_MUL;end
     end
     C_END:begin
-     if(compose_kind==2)begin composing<=1;function_kind<=0;function_sent<=0;function_received<=0;function_length<=length;sum<=0;phase<=F_RUN;end
+     if(compose_kind==2)begin composing<=1;function_source_replay<=1;function_subtract_max<=1;function_kind<=0;function_sent<=0;function_received<=0;function_length<=length;sum<=0;phase<=F_RUN;end
      else if(sumsq==0&&epsilon==0)begin rsp_error<=1;rsp_valid<=1;phase<=IDLE;end
      else begin group_kind<=3;group_n<=compose_kind==0?({119'b0,length}<<96):(128'd1<<96);
       group_d<=sumsq+(compose_kind==0?epsilon*{55'b0,length}:epsilon);phase<=G_START;end
@@ -226,7 +276,7 @@ module block_v1_v(
       function_received<=function_received+2;
       if(function_received+2>=function_length)begin
        if(composing)begin group_kind<=4;group_n<=128'd1<<48;group_d<=sum+$unsigned(fy0)+(function_received+1<function_length?$unsigned(fy1):32'd0);phase<=G_START;end
-       else begin output_count<=function_error||rsp_error?0:8;rsp_valid<=1;phase<=IDLE;end
+       else begin output_count<=function_error||rsp_error?0:function_length;rsp_valid<=1;phase<=IDLE;end
       end
      end
     end
@@ -258,6 +308,31 @@ module block_v1_v(
      end
      if(offset+8>=length)begin output_count<=length;rsp_valid<=1;phase<=IDLE;end
      else begin offset<=offset+8;phase<=N_LOW;end
+    end
+    ROT_LOW:begin for(i=0;i<8;i=i+1)product[i]<=mul_a[i]*mul_b[i];phase<=ROT_HIGH;end
+    ROT_HIGH:begin for(i=0;i<8;i=i+1)begin low_product[i]<=product[i];product[i]<=mul_a[i]*mul_b[i];end phase<=ROT_ROUND;end
+    ROT_ROUND:begin
+     for(i=0;i<8;i=i+1)begin
+      rounded=rne({{63{low_product[i][64]}},low_product[i]},16);
+      if(rounded< -128'sd2147483648)begin rounded=-128'sd2147483648;rsp_saturated<=1;end
+      if(rounded>128'sd2147483647)begin rounded=128'sd2147483647;rsp_saturated<=1;end
+      rot_low[i]<=rounded[31:0];
+      rounded=rne({{63{product[i][64]}},product[i]},16);
+      if(rounded< -128'sd2147483648)begin rounded=-128'sd2147483648;rsp_saturated<=1;end
+      if(rounded>128'sd2147483647)begin rounded=128'sd2147483647;rsp_saturated<=1;end
+      rot_high[i]<=rounded[31:0];
+     end
+     phase<=ROT_COMBINE;
+    end
+    ROT_COMBINE:begin
+     for(i=0;i<8;i=i+1)begin
+      rounded=i[0]?$signed({{96{rot_low[i][31]}},rot_low[i]})+$signed({{96{rot_high[i][31]}},rot_high[i]}):
+                    $signed({{96{rot_low[i][31]}},rot_low[i]})-$signed({{96{rot_high[i][31]}},rot_high[i]});
+      if(rounded< -128'sd2147483648)begin rounded=-128'sd2147483648;rsp_saturated<=1;end
+      if(rounded>128'sd2147483647)begin rounded=128'sd2147483647;rsp_saturated<=1;end
+      output_mem[i]<=rounded[31:0];
+     end
+     output_count<=8;rsp_valid<=1;phase<=IDLE;
     end
     T_SCAN:begin
      if(!selected[scan_index]&&(!best_valid||input_mem[scan_index]>best_value||(input_mem[scan_index]==best_value&&top_id[scan_index]<best_id)))begin

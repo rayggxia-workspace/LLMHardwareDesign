@@ -12,12 +12,21 @@ module block_v1_r(
  READ_MUL=11,READ_ADD=12,READ_END=13,SKIP_MUL=14,SKIP_WRITE=15,
  CONV_MUL=16,CONV_ADD=17,CONV_END=18,FINISH=19,COPY=20;
  reg [4:0] phase;
- reg signed [31:0] active[0:2047],shadow[0:2047];
+ reg signed [31:0] bank0[0:2047],bank1[0:2047];
+ reg bank_role;
+ wire signed [31:0] active[0:2047],shadow[0:2047];
+ genvar address;
+ generate for(address=0;address<2048;address=address+1)begin:roles
+  assign active[address]=bank_role?bank1[address]:bank0[address];
+  assign shadow[address]=bank_role?bank0[address]:bank1[address];
+ end endgenerate
+ reg row_valid;reg [8:0] product_row;
  reg signed [15:0] key[0:255],query[0:255];
  reg signed [31:0] x[0:7],inject[0:7],skip[0:7],error_value[0:7],output_value[0:7];
  reg signed [31:0] history[0:23],history_next[0:23];
  reg signed [15:0] taps[0:31];
- reg signed [127:0] dot[0:7];
+ // <=256 products of S32 by S16 need at most55 signed bits.
+ reg signed [63:0] dot[0:7];
  reg signed [31:0] mul_a[0:7];reg signed [32:0] mul_b[0:7];
  reg signed [64:0] product[0:7];
  reg [511:0] active_valid,decay_valid;
@@ -26,7 +35,7 @@ module block_v1_r(
  reg context_valid,param_valid,failed,output_valid,pending_state,pending_history;
  reg [31:0] owner,epoch,position,decay,beta,next_position;
  reg [8:0] length,row;reg [1:0] mode,tap;
- assign cmd_ready=!reset&&phase==IDLE&&!rsp_valid;
+ assign cmd_ready=!reset&&phase==IDLE&&(!rsp_valid||rsp_ready);
  assign busy=!cmd_ready;
  function automatic signed [127:0] rne;
   input signed [127:0] v;input [6:0] sh;
@@ -64,10 +73,10 @@ module block_v1_r(
     default:begin end
    endcase
    case(phase)
-    DEC_WRITE,ERR_WRITE:value[l]=rne({{63{product[l][64]}},product[l]},31);
+    DEC_MUL,DEC_WRITE,ERR_WRITE:value[l]=rne({{63{product[l][64]}},product[l]},31);
     PRED_END,READ_END,CONV_END:value[l]=rne(dot[l],14);
     ERR_PREP:value[l]=$signed({{96{x[l][31]}},x[l]})-$signed({{96{error_value[l][31]}},error_value[l]});
-    UP_WRITE:value[l]=$signed({{96{shadow[row*8+l][31]}},shadow[row*8+l]})+rne({{63{product[l][64]}},product[l]},14);
+    UP_MUL,UP_WRITE:value[l]=$signed({{96{shadow[product_row*8+l][31]}},shadow[product_row*8+l]})+rne({{63{product[l][64]}},product[l]},14);
     SKIP_WRITE:value[l]=$signed({{96{output_value[l][31]}},output_value[l]})+rne({{63{product[l][64]}},product[l]},16);
     default:value[l]=0;
    endcase
@@ -82,6 +91,7 @@ module block_v1_r(
    tap_valid<=0;history_valid<=0;skip_valid<=0;param_valid<=0;
    output_valid<=0;pending_state<=0;pending_history<=0;failed<=0;
    owner<=0;epoch<=0;position<=0;length<=0;row<=0;mode<=0;tap<=0;
+   bank_role<=0;row_valid<=0;product_row<=0;
   end else begin
    if(rsp_valid&&rsp_ready)rsp_valid<=0;
    if(cmd_valid&&cmd_ready)begin
@@ -96,7 +106,7 @@ module block_v1_r(
       if(!context_valid||cmd_index>=2*length||pending_state||pending_history||
          (cmd_op==15&&(cmd_data[31:0]>32'h80000000||cmd_data[63:32]>32'h80000000||cmd_data[95:64]>32'h80000000||cmd_data[127:96]>32'h80000000)))rsp_error<=1;
       else begin
-       for(i=0;i<4;i=i+1)if(cmd_op==1)active[cmd_index*4+i]<=cmd_data[32*i+:32];else shadow[cmd_index*4+i]<=cmd_data[32*i+:32];
+       for(i=0;i<4;i=i+1)if((cmd_op==1)^bank_role)bank0[cmd_index*4+i]<=cmd_data[32*i+:32];else bank1[cmd_index*4+i]<=cmd_data[32*i+:32];
        if(cmd_op==1)active_valid[cmd_index]<=1;else decay_valid[cmd_index]<=1;
       end
      end
@@ -122,7 +132,7 @@ module block_v1_r(
        (cmd_data[1:0]<2&&(!loaded||!coefficient_loaded||!param_valid||x_valid[1:0]!=3))||
        (cmd_data[1:0]==1&&(!factor_loaded||x_valid!=15||skip_valid!=3)))rsp_error<=1;
       else begin
-       mode<=cmd_data[1:0];row<=0;tap<=0;failed<=0;output_valid<=0;rsp_valid<=0;
+       mode<=cmd_data[1:0];row<=0;row_valid<=0;tap<=0;failed<=0;output_valid<=0;rsp_valid<=0;
        for(i=0;i<8;i=i+1)dot[i]<=0;
        if(cmd_data[1:0]==2)begin
         phase<=CONV_MUL;
@@ -161,24 +171,41 @@ module block_v1_r(
      default:rsp_error<=1;
     endcase
    end else case(phase)
-    DEC_MUL,PRED_MUL,ERR_MUL,UP_MUL,READ_MUL,SKIP_MUL,CONV_MUL:begin
+    DEC_MUL,UP_MUL:begin
+     // Launch the next row while retiring the preceding product. Decay reads
+     // its old SSM factor before that shadow row is overwritten.
      for(i=0;i<8;i=i+1)product[i]<=mul_a[i]*mul_b[i];
-     case(phase)
-      DEC_MUL:phase<=DEC_WRITE;PRED_MUL:phase<=PRED_ADD;ERR_MUL:phase<=ERR_WRITE;
-      UP_MUL:phase<=UP_WRITE;READ_MUL:phase<=READ_ADD;SKIP_MUL:phase<=SKIP_WRITE;default:phase<=CONV_ADD;
-     endcase
+     if(row_valid)begin
+      failed<=failed||value_error;
+      for(i=0;i<8;i=i+1)if(bank_role)bank0[product_row*8+i]<=value[i][31:0];else bank1[product_row*8+i]<=value[i][31:0];
+     end
+     product_row<=row;row_valid<=1;
+     if(row+1==length)phase<=phase==DEC_MUL?DEC_WRITE:UP_WRITE;
+     else row<=row+1;
     end
     DEC_WRITE,UP_WRITE:begin
-     failed<=failed||value_error;for(i=0;i<8;i=i+1)shadow[row*8+i]<=value[i][31:0];
-     if(row+1==length)begin row<=0;
-      for(i=0;i<8;i=i+1)dot[i]<=0;
-      if(phase==DEC_WRITE)phase<=mode==0?PRED_MUL:UP_MUL;else phase<=READ_MUL;
-     end else begin row<=row+1;phase<=phase==DEC_WRITE?DEC_MUL:UP_MUL;end
+     failed<=failed||value_error;
+     for(i=0;i<8;i=i+1)if(bank_role)bank0[product_row*8+i]<=value[i][31:0];else bank1[product_row*8+i]<=value[i][31:0];
+     row<=0;row_valid<=0;
+     for(i=0;i<8;i=i+1)dot[i]<=0;
+     if(phase==DEC_WRITE)phase<=mode==0?PRED_MUL:UP_MUL;else phase<=READ_MUL;
+    end
+    PRED_MUL,READ_MUL:begin
+     for(i=0;i<8;i=i+1)begin
+      product[i]<=mul_a[i]*mul_b[i];
+      if(row_valid)dot[i]<=dot[i]+$signed(product[i]);
+     end
+     row_valid<=1;
+     if(row+1==length)phase<=phase==PRED_MUL?PRED_ADD:READ_ADD;
+     else row<=row+1;
     end
     PRED_ADD,READ_ADD:begin
-     for(i=0;i<8;i=i+1)dot[i]<=dot[i]+$signed({{63{product[i][64]}},product[i]});
-     if(row+1==length)begin row<=0;phase<=phase==PRED_ADD?PRED_END:READ_END;end
-     else begin row<=row+1;phase<=phase==PRED_ADD?PRED_MUL:READ_MUL;end
+     for(i=0;i<8;i=i+1)dot[i]<=dot[i]+$signed(product[i]);
+     row<=0;row_valid<=0;phase<=phase==PRED_ADD?PRED_END:READ_END;
+    end
+    ERR_MUL,SKIP_MUL,CONV_MUL:begin
+     for(i=0;i<8;i=i+1)product[i]<=mul_a[i]*mul_b[i];
+     phase<=phase==ERR_MUL?ERR_WRITE:phase==SKIP_MUL?SKIP_WRITE:CONV_ADD;
     end
     PRED_END,ERR_PREP,ERR_WRITE:begin
      failed<=failed||value_error;for(i=0;i<8;i=i+1)error_value[i]<=value[i][31:0];
@@ -202,12 +229,12 @@ module block_v1_r(
      // a previously completed convolution remains explicitly revocable.
     end
     COPY:begin
-     if(pending_state)for(i=0;i<8;i=i+1)active[row*8+i]<=shadow[row*8+i];
-     if(!pending_state||row+1==length)begin
-      if(pending_history)for(i=0;i<24;i=i+1)history[i]<=history_next[i];
-      pending_state<=0;pending_history<=0;position<=next_position;epoch<=epoch+1;
-      x_valid<=0;output_valid<=0;phase<=IDLE;rsp_valid<=1;rsp_error<=0;rsp_data<=0;
-     end else row<=row+1;
+     // Atomic active/shadow ownership exchange, including SSM's reused decay
+     // storage. Every later SSM step must reload its inactive-bank factors.
+     if(pending_state)bank_role<=!bank_role;
+     if(pending_history)for(i=0;i<24;i=i+1)history[i]<=history_next[i];
+     pending_state<=0;pending_history<=0;position<=next_position;epoch<=epoch+1;
+     x_valid<=0;output_valid<=0;phase<=IDLE;rsp_valid<=1;rsp_error<=0;rsp_data<=0;
     end
     default:begin end
    endcase
