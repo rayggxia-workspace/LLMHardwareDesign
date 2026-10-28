@@ -17,7 +17,7 @@ module block_v1_v(
  reg [3:0] point_op,point_count;reg [6:0] point_shift;
  reg [1:0] point_width;reg broadcast_b,swap_b;
  reg signed [31:0] scalar_b,scalar_c;
- reg signed [31:0] mul_a[0:7];reg signed [32:0] mul_b[0:7];
+ reg signed [31:0] mul_a[0:7];reg signed [32:0] mul_b[0:7],point_b[0:7];
  reg signed [64:0] product[0:7],low_product[0:7];
  reg signed [127:0] rounded,total[0:7],sum;
  // Whole-domain bounds:65535 S32 values fit S64 sum and U80 squares.
@@ -97,7 +97,12 @@ module block_v1_v(
   end
   block_sum=sum_tree[0];block_sq=square_tree[0];block_max=max_tree[0];block_min=min_tree[0];block_argmax=argmax_tree[0];block_argmin=argmin_tree[0];
   for(integer l=0;l<8;l=l+1)begin
-   mul_a[l]=a[l];mul_b[l]={b[l][31],b[l]};
+   // Point results must not see replay/normalization address muxes through
+   // the phase-selected shared multiplier operand. Same P_WRITE arithmetic,
+   // explicit separate combinational selection, no new storage or cycle.
+   point_b[l]=broadcast_b?{scalar_b[31],scalar_b}:
+      swap_b?{b[l^1][31],b[l^1]}:{b[l][31],b[l]};
+   mul_a[l]=a[l];mul_b[l]=point_b[l];
    if(phase==S_MUL)mul_b[l]={a[l][31],a[l]};
    else if(phase==C_MUL)begin mul_a[l]=input_mem[offset+l];mul_b[l]={input_mem[offset+l][31],input_mem[offset+l]};end
    else if(phase==N_LOW||phase==N_HIGH)begin
@@ -109,16 +114,16 @@ module block_v1_v(
    else if(swap_b)mul_b[l]={b[l^1][31],b[l^1]};
    total[l]=0;
    case(point_op)
-    0:total[l]=$signed({{96{a[l][31]}},a[l]})+$signed(mul_b[l]);
-    1:total[l]=$signed({{96{a[l][31]}},a[l]})-$signed(mul_b[l]);
+    0:total[l]=$signed({{96{a[l][31]}},a[l]})+$signed(point_b[l]);
+    1:total[l]=$signed({{96{a[l][31]}},a[l]})-$signed(point_b[l]);
     2:total[l]=$signed({{63{product[l][64]}},product[l]});
     3:total[l]=$signed({{63{product[l][64]}},product[l]})+$signed({{96{scalar_c[31]}},scalar_c});
-    4:total[l]=$signed(a[l])>$signed(mul_b[l])?$signed(a[l]):$signed(mul_b[l]);
-    5:total[l]=$signed(a[l])<$signed(mul_b[l])?$signed(a[l]):$signed(mul_b[l]);
-    6:total[l]=$signed(a[l])>=$signed(mul_b[l])?-128'sd1:128'sd0;
+    4:total[l]=$signed(a[l])>$signed(point_b[l])?$signed(a[l]):$signed(point_b[l]);
+    5:total[l]=$signed(a[l])<$signed(point_b[l])?$signed(a[l]):$signed(point_b[l]);
+    6:total[l]=$signed(a[l])>=$signed(point_b[l])?-128'sd1:128'sd0;
     7:total[l]=$signed({{96{a[l][31]}},a[l]})<<<point_shift;
     8:total[l]=$signed({{96{a[l][31]}},a[l]});
-    9:total[l]=a[l]<0?$signed(mul_b[l]):$signed({{96{scalar_c[31]}},scalar_c});
+    9:total[l]=a[l]<0?$signed(point_b[l]):$signed({{96{scalar_c[31]}},scalar_c});
     default:total[l]=0;
    endcase
   end
