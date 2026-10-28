@@ -3,7 +3,7 @@ from pathlib import Path
 import argparse,datetime,gzip,hashlib,json,subprocess,tarfile
 
 ROOT=Path('/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027')
-JOBS=['92690','92691','92700','92714','92721','92781','92783','92792','92794','92795','92798','92812','92825','92834','92835','92837','92838','92841','92846','92847','92848','92853','92854','92855','92861','92867','92872','92886','92891','92892','92901','92903','92910','92912','92913','92914','92915','92921']
+JOBS=['92690','92691','92700','92714','92721','92781','92783','92792','92794','92795','92798','92812','92825','92834','92835','92837','92838','92841','92846','92847','92848','92853','92854','92855','92861','92867','92872','92886','92891','92892','92901','92903','92910','92912','92913','92914','92915','92921','92925']
 
 
 def sha(path):
@@ -37,13 +37,18 @@ def collect(name):
       'antenna_diode_eco/r01/gemm-C/*','antenna_diode_stream/r01/gemm-C/*','buffered_equivalence/r01/vector/*',
       'actual_path_audit/r01/*/*','logs/antenna-diode-r01-*.log','logs/antenna-diode-stream-r01-*.log',
       'logs/vector-buffered-proof-r01-*.log','logs/vector-actual-paths-r01-*.log','logs/sys-actual-paths-r01-*.log',
-      'output_chain_placement/r01/opentpu_aux-C/*','logs/output-chain-r01-*.log']
+      'output_chain_placement/r01/opentpu_aux-C/*','logs/output-chain-r01-*.log',
+      'output_chain_resume/r01/opentpu_aux-C/*','logs/output-chain-resume-r01-*.log']
     stable_intermediates={}
     vector=ROOT/'vector_resume/r01/execution.json'
     if vector.exists():
         q=json.loads(vector.read_text())
         for stage,filename in [('timing_repair','timing_repaired_NOT_LEGALIZED_OR_ROUTED.odb'),('legalization','placed_NOT_ROUTED.odb')]:
             if q.get('native_returncodes',{}).get(stage)==0:stable_intermediates[str(vector.parent/filename)]=stage
+    resumed=ROOT/'output_chain_resume/r01/opentpu_aux-C/execution.json'
+    if resumed.exists() and json.loads(resumed.read_text()).get('native_returncodes',{}).get('legalization')==0:
+        for name in ['placed_NOT_ROUTED.odb','placed.connections.tsv','placed.nonselected.tsv']:
+            stable_intermediates[str(resumed.parent/name)]='isolated_legalization'
     records=[]
     for p in sorted(set(p for pattern in patterns for p in ROOT.glob(pattern) if p.is_file())):
         a=p.stat();r={'source':str(p),'bytes':a.st_size}

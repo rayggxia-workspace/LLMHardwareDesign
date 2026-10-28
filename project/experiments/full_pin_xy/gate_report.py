@@ -290,6 +290,11 @@ def render(root,out):
         q=read(chain);result['SYSTEM_output_chain_placement']={'receipt':q,'full_qualification':False,
           'state':scheduler.get('92921',{}).get('State','UNKNOWN'),
           'evidence':(dest/chain.relative_to(snapshot)).relative_to(out).as_posix()}
+    chain_resume=snapshot/'output_chain_resume/r01/opentpu_aux-C/execution.json.gz'
+    if chain_resume.exists():
+        q=read(chain_resume);result['SYSTEM_output_chain_resume']={'receipt':q,'full_qualification':False,
+          'state':scheduler.get('92925',{}).get('State','UNKNOWN'),
+          'evidence':(dest/chain_resume.relative_to(snapshot)).relative_to(out).as_posix()}
     from plot_actual_critical_paths import plot as plot_paths
     diagnosis=plot_paths(snapshot,out)
     if diagnosis:result['actual_critical_path_diagnosis']=diagnosis
@@ -374,4 +379,5 @@ def render(root,out):
 <p><strong>真实提取路径诊断：</strong>92914/92915精确重放源setup/hold。VECTOR最差路径为p0_r[18]到wr_data_r[18]，发射Q之后141个cell arc约6.740ns、142段net arc约0.198ns；cell值含实际负载/slew影响，不是无法改善的零线长下界。SYSTEM最差输出路径有8个cell arc约0.455ns、9段net arc约1.052ns，其中最后到port约0.657ns，后续优先核对真实缓冲位置和绕行。工具JSON有舍入，不代替原文6位余量。未放宽时钟，也未宣布物理修复成功。</p>
 <figure><img src="assets/actual_critical_path_diagnosis.png" loading="lazy"><figcaption>实际SPEF关键路径；不包含发射时钟/required-time项，不是线长或零连线下界。<a href="assets/actual_critical_path_diagnosis.svg">SVG</a> · <a href="data/actual_critical_path_diagnosis.json">原文SHA/数值</a></figcaption></figure>
 <p><strong>SYSTEM真实输出缓冲试验92921：</strong>全部1244个输出port纳入选择，772条私有identity链、1262个已有buffer生成真实重排，不增单元、不换型、不改网络。实际Diamond合法化后OpenROAD触发Signal11（implementation=-11），没有完成路由；moved_NOT_LEGALIZED_OR_ROUTED.odb及完整失败回执保留，原pin/PG/外框和源保持。后续复用已存检查点，在独立不加载STA的进程验证合法化，不重复生成同一移动方案。原SYS源时序失败不删，当前仍非物理修复通过。</p>
+<p><strong>92925独立恢复已实际推进：</strong>复用上述1262个buffer坐标，独立几何进程不加载Lib/SDC；原生合法化、check_placement及原功能master/连接与非选中单元位置合同均通过，原本无filler则未新增。原生关闭的placed ODB及两份实际合同文件另索引SHA，与原source合同相等；不是重选点或跳过检查。随后在新进程恢复原Lib/SDC及M2–M8/M4–M8约束，完整重接线继续；最终DRC/PG/连通/RCX/STA未终态，不宣布时序修复或准确崩溃根因已证实。</p>
 <p><strong>GEMM真实天线ECO：</strong>92910使用真实ANTENNA_X1对636条已关联网接入，新增输入capacitance每个0.023429fF（实际typical库capacitive_load_unit=1ff）；单输入无输出/状态合同已核对，不用占位负载。636个单元已实际插入/合法化，原功能实例位置/连接保持，完整接线与RCX/STA继续；92912依赖其结束后严格GDS和不修改原deck。新增面积/负载单列，原1460项天线在独立终态前仍未视为修复；不把单元识别、合法化或native0当完整规则通过。</p></section>'''

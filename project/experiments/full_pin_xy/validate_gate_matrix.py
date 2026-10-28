@@ -173,4 +173,13 @@ def check(out):
         assert r['output_port_selection_summary']=={'all_output_ports_considered':1244,'private_output_chains_selected':772}
         assert r['selected_existing_buffers']==1262 and r['all_sources_unchanged']
         assert 'Signal 11 received' in gzip.decompress((out/q['evidence']).parent.joinpath('native.log.gz').read_bytes()).decode()
+    if j.get('SYSTEM_output_chain_resume'):
+        q=j['SYSTEM_output_chain_resume'];r=q['receipt'];assert not q['full_qualification'] and not r['selection_or_moves_recomputed']
+        assert r['native_returncodes']['legalization']==0 and r['isolated_geometry_contracts_pass']
+        meta=read(latest);indexed={x['source']:x for x in meta['records']}
+        base='/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/'
+        for kind in ['connections','nonselected']:
+            p=base+'output_chain_resume/r01/opentpu_aux-C/placed.'+kind+'.tsv'
+            ref=base+'output_chain_placement/r01/opentpu_aux-C/before.'+kind+'.tsv'
+            assert indexed[p]['closed_native_stage']=='isolated_legalization' and indexed[p]['sha256']==r['source_SHA'][ref]
     print('PASS_GATE_MATRIX_NATIVE_EVIDENCE',len(rows),'blocks;',native_files,'raw files; duplicate-LEF failure and real strict-merge outcomes preserved; NOT full qualification')
