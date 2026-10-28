@@ -16,7 +16,8 @@ S连续4096读取/4096拍；T完整批384字/384连续消费拍。M240驻留desc
 以上是RTL验证，不能称为最终网表、300MHz频率或整模型吞吐通过。
 
 T源route receipt保留原错误和配置/3_place数据库SHA；CTS实际插入41060个hold缓冲后仍
-WNS hold≈−0.237ns、setup≈−6.088ns，触及max-buffer限制。尚未确认根因，不增加上限或放松验收。
+hold WNS≈−0.237ns、hold TNS≈−6.088ns，触及max-buffer限制。这里已按真实表头更正：
+原记录将TNS误写成setup；该修复统计不能提供最终setup余量。尚未确认根因，不增加上限或放松验收。
 新增revision300-cts-probe准备仅从该布局副本恢复CTS并提取修复前路径；诊断没有最终资格。
 
 真实资源：236开始六个16CPU独立任务占满c96，并在M/V综合通过后分别即时领取对应P&R。

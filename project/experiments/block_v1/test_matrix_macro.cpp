@@ -136,7 +136,7 @@ int main(int argc,char**argv){try{
   mac(wa,wb,clear,k,n);require(partial()==expected,"matrix/tail/multi-tile integer mismatch");
   int32_t factor=int32_t(rng());unsigned shift=rng()%13;bool cm=test%7==0||test==0;
   auto r=command(4,0,U128(uint32_t(factor))|(U128(shift)<<32)|(U128(cm)<<39));
-  require(r.latency==17,"wrong merge latency");if(cm)merged.fill(0);
+  require(r.latency==33,"wrong staged merge latency");if(cm)merged.fill(0);
   for(int i=0;i<8;++i)merged[i]+=I128(expected[i])*factor*(I128(1)<<shift);
   for(unsigned mode=0;mode<3;++mode)final_matches(merged,rng()%100,mode);
  }

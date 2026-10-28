@@ -9,8 +9,10 @@ def finalize(root, out, cpus, run, kind):
     from constraint_readback import audit
     from constraints import generate
     assert cpus == 16 and kind in 'mvrst'
-    number = '234' if kind in 'st' else '236'
-    raw = out.parents[2]/('block-v1-20261028-'+number)/'tasks'/('revision300-route-'+kind)
+    selection=json.loads((root/'project/experiments/block_v1/revision300-selected-sources.json').read_text())
+    assert selection['schema']=='revision300-selected-sources/1'
+    raw = out.parents[2]/selection['native'][kind]
+    assert out.parents[2]in raw.resolve().parents and raw.name=='revision300-route-'+kind
     receipt = json.loads((raw/'receipt.json').read_text())
     assert receipt['passed'] is True and receipt['mode'] == 'revision300-route-'+kind
     proof = raw/'revision300-native-flow.json'

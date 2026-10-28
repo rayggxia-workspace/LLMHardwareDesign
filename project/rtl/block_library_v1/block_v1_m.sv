@@ -13,7 +13,7 @@ module block_v1_m(
 );
  localparam IDLE=0,PRODUCT=1,REDUCE=2,ACCUMULATE=3,DONE=4,
             SCALE=5,ALIGN=6,COMMIT=7,BURST=8,DRAIN=9,
-            READ_SHIFT=10,READ_ROUND=11,READ_CLAMP=12;
+            READ_SHIFT=10,READ_ROUND=11,READ_CLAMP=12,MERGE_LOW=13,MERGE_HIGH=14;
  reg [3:0] state;
  reg signed [15:0] a[0:7],b[0:63];
  reg a_valid;reg [7:0] b_valid;
@@ -32,6 +32,10 @@ module block_v1_m(
  reg [6:0] merge_shift;
  reg clear_merge,merge_error;
  reg signed [95:0] scale_product;
+ reg [127:0] merge_left,merge_right;
+ reg [64:0] merge_low;
+ reg signed [64:0] merge_upper,merge_high;
+ reg merge_alignment_error;
  // Two finite operand banks, four K8 tiles each. S16 uses radix128 products
  // in the same64 physical S8 multipliers. Loader and active bank are distinct.
  reg signed [15:0] tile_a[0:63],tile_b[0:511];
@@ -86,7 +90,6 @@ module block_v1_m(
  reg signed [64:0] next_acc[0:7];
  reg accumulation_error;
  reg signed [255:0] aligned_scale;
- reg signed [128:0] merge_sum;
  reg alignment_error;
  reg [127:0] read_data;
  reg read_saturated,read_error;
@@ -121,10 +124,8 @@ module block_v1_m(
    if(next_acc[row][64]!=next_acc[row][63])accumulation_error=1;
   end
   aligned_scale=$signed({{160{scale_product[95]}},scale_product})<<<merge_shift;
-  merge_sum=$signed({aligned_scale[127],aligned_scale[127:0]})+
-      (clear_merge?129'sd0:$signed({merged[scale_lane][127],merged[scale_lane]}));
-  alignment_error=aligned_scale[255:127]!={129{aligned_scale[127]}} ||
-                  merge_sum[128]!=merge_sum[127];
+  alignment_error=aligned_scale[255:127]!={129{aligned_scale[127]}};
+  merge_high=merge_upper+$signed({64'b0,merge_low[64]});
   read_data=0;read_saturated=0;read_error=0;
   rounded=0;lower_limit=0;upper_limit=0;lane_number=0;
   case(read_width)
@@ -194,6 +195,7 @@ module block_v1_m(
    a_valid<=0;b_valid<=0;accumulator_valid<=0;merged_valid<=0;k_count<=0;
    fmt_a<=0;fmt_b<=0;clear_acc<=0;active_k<=0;active_n<=0;
    digit_a<=0;digit_b<=0;scale_lane<=0;scale_factor<=0;
+   merge_left<=0;merge_right<=0;merge_low<=0;merge_upper<=0;merge_alignment_error<=0;
    tile_a_valid<=0;tile_fmt_a<=0;tile_fmt_b<=0;execution_bank<=0;tile_count<=0;
    issue_tile<=0;issue_a<=0;issue_b<=0;last_k<=0;product_valid<=0;reduce_valid<=0;
    product_last<=0;reduce_last<=0;product_shift<=0;reduce_shift<=0;burst_completion<=0;
@@ -322,7 +324,19 @@ module block_v1_m(
     READ_CLAMP:respond(read_data,0,read_saturated);
     SCALE:begin scale_product<=accumulator[scale_lane]*scale_factor;state<=ALIGN;end
     ALIGN:begin
-     preview[scale_lane]<=merge_sum[127:0];merge_error<=merge_error|alignment_error;
+     merge_left<=clear_merge?128'd0:merged[scale_lane];
+     merge_right<=aligned_scale[127:0];merge_alignment_error<=alignment_error;
+     state<=MERGE_LOW;
+    end
+    MERGE_LOW:begin
+     merge_low<={1'b0,merge_left[63:0]}+{1'b0,merge_right[63:0]};
+     merge_upper<=$signed({merge_left[127],merge_left[127:64]})+
+                  $signed({merge_right[127],merge_right[127:64]});
+     state<=MERGE_HIGH;
+    end
+    MERGE_HIGH:begin
+     preview[scale_lane]<={merge_high[63:0],merge_low[63:0]};
+     merge_error<=merge_error|merge_alignment_error|(merge_high[64]!=merge_high[63]);
      if(scale_lane==7)state<=COMMIT;
      else begin scale_lane<=scale_lane+1'b1;state<=SCALE;end
     end
