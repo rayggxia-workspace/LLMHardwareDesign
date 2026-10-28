@@ -100,6 +100,10 @@ try:
     elif MODE.startswith('revision300-bench-m-'):
         from revision300_benchmark import matrix
         matrix(ROOT,OUT,CPUS,run,MODE.rsplit('-',1)[-1])
+    elif MODE.startswith('revision300-bench-s-') or MODE.startswith('revision300-bench-t-'):
+        from revision300_benchmark import storage
+        fields=MODE.split('-')
+        storage(ROOT,OUT,CPUS,run,fields[-2],fields[-1])
     elif MODE.startswith('revision300-test-'):
         from revision300_rtl import test
         test(ROOT,OUT,CPUS,run,MODE[-1])
