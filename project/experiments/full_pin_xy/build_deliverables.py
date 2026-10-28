@@ -13,11 +13,11 @@ TITLES=expand.TITLES
 ORDER=['act','mxu','opentpu_aux','gemm','vector','llaccel_aux']
 RECOMMEND={
  'act':'C 的740pin已实际重接，并通过独立native DRC/所检连通；数据/scale有内部端点依据，时钟和窄控制留边。仍需解决缺失宏GDS、天线检查及父层接入，不能视为合格硬宏。原候选相对旧布线的145个异网相交与新布线终态分开记录。',
- 'mxu':'本轮优先保留/优化边界。混合C修订后1931pin在内部，独立native DRC/所检连通通过、现有模型电气报告0，但实际线长比同组原XY重布线增加约4.30%，没有整体迁移收益。原C的3项VDD短路/5项电容超限保留；内部方案仅作父层代价进一步试验的备选。',
+ 'mxu':'保留优化边界与内部二维两条系统对照。混合C修订后1931pin在内部，独立native DRC/所检连通通过、现有模型电气报告0；块内线长比同组原XY重布线增加约4.30%，系统收益未知。原C的3项VDD短路/5项电容超限保留；内部方案继续真实接入与共同底座比较，不因块内代价增加撤回边缘。',
  'opentpu_aux':'采用混合式少量内移。TMEM、VPU、DMA/量化局部端点提供候选中心；外部 DRAM/collective、控制和共享信号保留边缘更合理。',
- 'gemm':'本轮优先保留/优化边界。修订混合C保留两个完整字节共18pin于边缘，3021pin在内部，当前native/几何/电气门槛通过，但实际线长比同组原XY重布线增加约1.19%，未显示整体XY迁移的额外价值。288个恒零位保留，旧C的260个相交、实际2项电容超限及GDS天线失败不隐藏。',
- 'vector':'本轮推荐优化原边界。B/C 的端点 L1 都增加，迁移价值有限；即使内部窗口几何可放，也不能据此主张收益。',
- 'llaccel_aux':'先优化边界并按真实 bank/事务局部试验。全 C 的4731个直接金属相交 pin、6700个基础间距风险提示拥塞可能向内部转移；不建议整体采用。'}
+ 'gemm':'保留优化边界与内部二维两条系统对照。修订混合C保留两个完整字节共18pin于边缘，3021pin在内部，当前native/几何/电气门槛通过；块内线长比同组原XY重布线增加约1.19%，系统收益未知。288个恒零位保留，旧C的260个相交、实际2项电容超限及GDS天线失败不隐藏。',
+ 'vector':'保留优化边界与完整内部二维对照。B/C端点L1增加只反映局部几何代价；原C时序失败，继续真实接入窗口及单列成本的物理修复。共同底座结果取得前不以块内代价决定系统取舍。',
+ 'llaccel_aux':'保留13184-pin内部方案继续实际接入修复。原C的4731个既有金属相交pin、6700个间距风险均保留，固定PG直接接触已作局部修订。直接接触修订不等于完整布通；不退回边缘结束系统研究。'}
 
 def dump(p,v):p.write_text(json.dumps(v,ensure_ascii=False,indent=2,allow_nan=False)+'\n',encoding='utf-8',newline='\n')
 def compress(src,dst):
@@ -101,14 +101,13 @@ def build(root,out,keep_figures=False):
         latest=sorted(p for p in physical_evidence.iterdir() if p.is_dir())[-1]
         latest_physical_name=latest.name
         published=evidence/'physical';published.mkdir(exist_ok=True)
-        for prior in published.iterdir():
-            if prior.is_dir():
-                assert published.resolve() in prior.resolve().parents
-                shutil.rmtree(prior)  # only duplicated generated publication copies; originals retained
-        shutil.copytree(latest,published/latest.name,ignore=shutil.ignore_patterns('timing.selected_*.txt.gz'))
+        # Keep prior publication namespaces, too; remote originals and Git
+        # history are not the only route back to an earlier native receipt.
+        shutil.copytree(latest,published/latest.name,dirs_exist_ok=True,ignore=shutil.ignore_patterns('timing.selected_*.txt.gz'))
         # Tool text is losslessly compressed; preserve exact report bytes and
         # avoid whitespace normalization of evidence during Git publication.
-        storage={}
+        prior_index=published/'storage_index.json'
+        storage=json.loads(prior_index.read_text(encoding='utf-8')) if prior_index.exists() else {}
         for p in list(published.rglob('*')):
             if p.is_file() and (p.suffix in ['.drc','.txt','.tsv'] or (p.suffix=='.json' and p.stat().st_size>65536)):
                 original=p.relative_to(published).as_posix()
@@ -187,7 +186,7 @@ def build(root,out,keep_figures=False):
               '全部信号pin匹配':r['actual_model_signal_pins'],'方向/bit核对':r['exact_all_signal_pin_direction_match'],
               'SPEF重读setup偏差 ns':r['SPEF_replay_worst_slack']['setup']['delta_ns'],'SPEF重读hold偏差 ns':r['SPEF_replay_worst_slack']['hold']['delta_ns'],
               'minimum_period覆盖':r['minimum_period_present'],'完整签核资格':False})
-        extension_html+='<h3>基于实际SPEF导出的叶块研究时序模型</h3>'+table(pd.DataFrame(model_rows))+f'<p><a href="data/timing_models/{latest_models.name}/summary.json">逐模型来源/SHA/实际导出及失败回执</a>；原生timing.lib、逐port表、setup/hold/checks、约束/寄生覆盖及日志以无损gzip保存。六块A/C的12份模型全部导出，逐版完整核对原始信号pin清单和方向，SPEF重读最差setup/hold与原试验偏差均为0；另外ACT/MXU的原XY重布线/Aopt/B、GEMM原XY/Aopt等8份控制模型已补齐。每份模型使用与其路由版本匹配、SHA锁定的实际提取SPEF；仍是原研究库条件下的导出模型，非SRAM器件表征或完整签核库。llaccel SYSTEM C只对应8pin局部，完整C仍失败。Liberty的bus聚合声明及VDD/VSS不重复计作信号bit，旧探针的分类/元数据失败保留。</p><p>全部当前导出模型缺少minimum_period条目；外部输入/输出延时、驱动、slew、负载和真实SRAM资格仍有缺项。原叶块时序/电气失败必须单独保留，不能因父层模型没有该检查而消失。独立父层RC/STA作业92476/92477已排队：等待实际父层结束，只有独立native DRC/所检全块连通/PG，以及叶模型物理ODB与来源回执SHA完全匹配才执行A/A_replay/叶块重布线/Aopt/B/C。旧四个尚未开始的分析作业已在严格核对pending且无输出后替换，保留调度回执，实际P&amp;R作业不变。父层为明确的新2.5ns基准，外部I/O约束仍不完整；尚未执行，不写签核通过。RCX仅在独立分析进程中运行，不保存分析后ODB为物理母本。</p>'
+        extension_html+='<h3>基于实际SPEF导出的叶块研究时序模型</h3>'+table(pd.DataFrame(model_rows))+f'<p><a href="data/timing_models/{latest_models.name}/summary.json">逐模型来源/SHA/实际导出及失败回执</a>；原生timing.lib、逐port表、setup/hold/checks、约束/寄生覆盖及日志以无损gzip保存。六块A/C的12份模型全部导出，逐版完整核对原始信号pin清单和方向，SPEF重读最差setup/hold与原试验偏差均为0；另外ACT/MXU的原XY重布线/Aopt/B、GEMM原XY/Aopt等8份控制模型已补齐。每份模型使用与其路由版本匹配、SHA锁定的实际提取SPEF；仍是原研究库条件下的导出模型，非SRAM器件表征或完整签核库。llaccel SYSTEM C只对应8pin局部，完整C仍失败。Liberty的bus聚合声明及VDD/VSS不重复计作信号bit，旧探针的分类/元数据失败保留。</p><p>全部当前导出模型缺少minimum_period条目；外部输入/输出延时、驱动、slew、负载和真实SRAM资格仍有缺项。原叶块时序/电气失败必须单独保留，不能因父层模型没有该检查而消失。独立父层RC/STA作业92476/92477已终态：openTPU父层native11失败、llaccel父层GRT拥塞失败，物理来源门槛阻止后续RC/STA，未执行而非通过。该门槛仍要求独立native DRC/所检全块连通/PG和精确叶模型ODB及来源SHA匹配。旧四个尚未开始的分析作业已在严格核对pending且无输出后替换，保留调度回执，实际P&amp;R作业不变。父层为明确的新2.5ns基准，外部I/O约束仍不完整；尚未执行，不写签核通过。RCX仅在独立分析进程中运行，不保存分析后ODB为物理母本。</p>'
     if (root/'rule_semantics').exists():
         destination=data/'rule_semantics';shutil.copytree(root/'rule_semantics',destination,dirs_exist_ok=True)
         for p in list(destination.rglob('*')):
@@ -215,7 +214,7 @@ def build(root,out,keep_figures=False):
             full_rows.append({'block':c,'实际试验':name,'重接组':q['selected_pin_count'],'实际移动':q['actual_moved_pin_count'],
               'DRT线长 μm':q['DRT_pre_RCX_wire_length_sum_um'],'相对原XY控制线长 %':round(q['wire_change_vs_same_cohort_A_replay_percent'],2) if q['wire_change_vs_same_cohort_A_replay_percent'] is not None else None,'via':q['DRT_pre_RCX_vias'],'独立native DRC':q['independent_clean_DRC_count'],
               '多端几何连通':q['whole_geometry_pass'],'setup ns':q['setup_worst_slack_ns'],'hold ns':q['hold_worst_slack_ns'],'时序/电气违规行':q['reported_timing_electrical_violator_rows']})
-    extension_html='<h3>完整C同组实际边界 / Aopt / B / C对照</h3>'+table(pd.DataFrame(full_rows))+'<p>只列已产生完整执行回执的试验；待验证检查项不是0。B只迁移原C同组，Aopt仅优化原边/原层槽位，不是全局最优边界。修订C仍重接相同cohort，但按真实byte/lane保留部分pin。GEMM修订C线长4548300μm，相对原XY控制4494984μm约+1.19%；MXU修订C3132185μm，相对3003026μm约+4.30%，两者当前更推荐保留边界。端点L1减少并未变成实际块内线长收益；父层/通道影响尚未知。ACT同组C约−6.40%，仍需父层和完整规则证据。逐层线长、失败明细及资格边界见物理回执；原基线失败保留。大型原始JSON和工具文本无损gzip保存，<a href="data/evidence/physical/storage_index.json">原文件名/字节数/SHA与压缩路径映射</a>可追溯，未删原始检查内容。</p>'+extension_html
+    extension_html='<h3>完整C同组实际边界 / Aopt / B / C对照</h3>'+table(pd.DataFrame(full_rows))+'<p>只列已产生完整执行回执的试验；待验证检查项不是0。B只迁移原C同组，Aopt仅优化原边/原层槽位，不是全局最优边界。修订C仍重接相同cohort，但按真实byte/lane保留部分pin。GEMM修订C线长4548300μm，相对原XY控制4494984μm约+1.19%；MXU修订C3132185μm，相对3003026μm约+4.30%，两者边界和内部方案均继续保留，局部成本不决定系统取舍。端点L1减少并未变成实际块内线长收益；父层/通道影响尚未知。ACT同组C约−6.40%，仍需父层和完整规则证据。逐层线长、失败明细及资格边界见物理回执；原基线失败保留。大型原始JSON和工具文本无损gzip保存，<a href="data/evidence/physical/storage_index.json">原文件名/字节数/SHA与压缩路径映射</a>可追溯，未删原始检查内容。</p>'+extension_html
     measured=pstat.get('act',{}).get('matched_740pin_comparison',{})
     measured_rows=[{'试验':k,'同组pin':v['selected_pins'],'DRT实际总线长 μm':v['wire_length_um'],'DRT via数量':v['via_count'],'线长变化':f"{v['wire_change_percent']:+.2f}%",'via变化':f"{v['via_change_percent']:+.2f}%",'setup余量 ns':v['setup_worst_slack_ns'],'hold余量 ns':v['hold_worst_slack_ns']} for k,v in measured.get('plans',{}).items()]
     measured_html=('<h3>ACT同组740-pin实际对照</h3>'+table(pd.DataFrame(measured_rows))+'<p>这是DRT在RCX前输出的真实路由统计，按工具口径计数，区别于几何L1及RC/STA。单次匹配试验中C线长约−6.40%、via约−1.70%，远小于几何L1的−42.4%；setup余量略变差，没有时序改善结论。B仅为相同740-pin子集。A原边界已能合法布线；C提供内部线长的额外价值，父层代价/通道和完整规则仍未知，外框未缩小。</p>') if measured_rows else ''

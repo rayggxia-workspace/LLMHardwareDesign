@@ -14,7 +14,7 @@ DRIVER=Path(__file__).resolve().parent
 
 def one(case,variant,revision):
     if variant=='A':rev,plan=BASE[case],'A'
-    elif variant=='C':rev,plan=('grid-r05','C') if case=='llaccel_aux' else (C_REVISION[case],'C')
+    elif variant=='C':rev,plan=('grid-r05','C') if case=='llaccel_aux' and 'PINXY_LLACCEL_AUX_C_REVISION' not in os.environ else (C_REVISION[case],'C')
     elif variant=='A_child_replay':rev,plan=('fullC-r01','A_replay') if case=='act' else ('full-controls-r04','A_replay')
     elif variant=='B':rev,plan=('fullBcohort-r01','B') if case=='act' else ('full-controls-r04','B')
     else:assert variant=='Aopt';rev,plan='full-controls-r04','Aopt'

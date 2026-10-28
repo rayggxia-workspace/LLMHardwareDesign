@@ -226,6 +226,8 @@ def main():
         assert continuation['complete_original_pin_count']==24767 and continuation['candidate_rows_preserved']==74301
         assert not continuation['common_base_frozen'] and not continuation['M11_M12_complete_functions_implemented']
         assert len(continuation['blocks'])==6 and all(not r['full_qualification'] for r in continuation['blocks'])
+        from validate_continuation import check as check_continuation
+        check_continuation(OUT)
         for name in ['research_upper_actual','llsys_pg_revision','common_base_proposed']:
             assert (OUT/'assets'/(name+'.png')).exists() and (OUT/'assets'/(name+'.svg')).exists()
         expected_figures+=3

@@ -26,11 +26,11 @@ def execute(common, script, log, env=None, threads=4):
 
 
 def one(case, variant, revision):
-    assert case in ['act', 'gemm'] and variant in ['Aopt', 'C']
+    assert case in ['act', 'gemm', 'mxu'] and variant in ['Aopt', 'C']
     source, proof, proof_path = child_source(case, variant)
     odb = source.parent/'clean.odb'
     model_revision=('r02' if variant == 'C' else 'r03')
-    if case=='act' and variant=='C':model_revision=os.environ.get('PINXY_ACT_C_MODEL_REVISION',model_revision)
+    if variant=='C':model_revision=os.environ.get('PINXY_'+case.upper()+'_C_MODEL_REVISION',model_revision)
     model_dir = ROOT/'leaf_timing_models'/model_revision/(case+'-'+variant)
     model = json.loads((model_dir/'execution.json').read_text())
     assert model['status']=='NATIVE_EXTRACTED_MODEL_EXPORTED_NOT_QUALIFIED' and model['exact_all_signal_pin_direction_match']
@@ -58,11 +58,11 @@ def one(case, variant, revision):
     assert len(size) == 1
     width, height = map(float, size[0])
     assert re.search(r'cell\s*\(\s*"?'+re.escape(master)+r'"?\s*\)', (model_dir/'timing.lib').read_text()), 'Native model/master mismatch'
-    design = 'opentpu' if case == 'act' else 'llaccel'
+    design = 'opentpu' if case in ['act','mxu'] else 'llaccel'
     graph = load(ROOT/'inputs/partition-r02'/(design+'_partition_graph.json.gz'))
     cell = next(c for inst,c in graph['top_module']['cells'].items() if owner(inst,design) == case)
     ports = graph['frontier'][cell['type']]['ports']
-    bus = 'r_data' if case == 'act' else 'gemm_a_rdata'
+    bus = {'act':'r_data','mxu':'act_data','gemm':'gemm_a_rdata'}[case]
     selected = {bus+'['+str(i)+']' for i in range(256)}
     with (source.parent/'pins.tsv').open() as f:
         pins = {q['pin'].replace('\\',''): q for q in csv.DictReader(f,delimiter='\t') if q['use'] not in ['POWER','GROUND']}
@@ -111,8 +111,9 @@ def one(case, variant, revision):
         'if {[$s isVia]} {set v [$s getTechVia];if {$v eq "NULL"} {set v [$s getBlockVia]};lassign [$s getViaXY] x y;foreach b [$v getBoxes] {if {[[$b getTechLayer] getName] eq "metal10"} {puts $f [join [list [expr {[$b xMin]+$x}] [expr {[$b yMin]+$y}] [expr {[$b xMax]+$x}] [expr {[$b yMax]+$y}]] "\\t"]}}} elseif {[[$s getTechLayer] getName] eq "metal10"} {puts $f [join [list [$s xMin] [$s yMin] [$s xMax] [$s yMax]] "\\t"]}',
         '}}}', 'close $f']
     (out/'setup.tcl').write_text('\n'.join(setup)+'\n')
-    if case=='act' and variant=='C' and os.environ.get('PINXY_ACT_ACCESS_RESERVATIONS'):
-        reservations=Path(os.environ['PINXY_ACT_ACCESS_RESERVATIONS'])
+    reservation_input=os.environ.get('PINXY_PARENT_ACCESS_RESERVATIONS') or (os.environ.get('PINXY_ACT_ACCESS_RESERVATIONS') if case=='act' else None)
+    if variant=='C' and reservation_input:
+        reservations=Path(reservation_input)
         leaf_trial=json.loads(Path(proof['legacy_RC_STA_receipt']).read_text())
         assert leaf_trial['input_sha256'][str(reservations)]==sha(reservations),'Parent keepouts must be the exact accepted leaf access windows'
         before_pdn=[
