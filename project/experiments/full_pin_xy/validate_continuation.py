@@ -35,7 +35,7 @@ def check(out):
                 assert r['net'].replace('\\','')==p['net']
                 for k in ['x0','y0','x1','y1']:assert abs(int(r[k])/unit-float(p[k+'_um']))<1e-6,(case,pin,'actual native coordinates')
             actual_pin_checks+=count
-    files=0
+    files=0;alternative_pin_checks=0
     for manifest in (root/'native').glob('*/snapshot.json'):
         for r in json.loads(manifest.read_text())['records']:
             if r['storage']!='LOSSLESS_SNAPSHOT':continue
@@ -49,4 +49,16 @@ def check(out):
             content=(manifest.parent/r['relative']).read_bytes();assert hashlib.sha256(content).hexdigest()==r['stored_sha256']
             raw=gzip.decompress(content);assert len(raw)==r['bytes'] and hashlib.sha256(raw).hexdigest()==r['sha256']
             files+=1
-    print('PASS_CONTINUATION_PIN_INVARIANTS_AND_NATIVE_SNAPSHOT_HASHES',sum(counts.values()),'candidate pins;',actual_pin_checks,'actual native pins;',files,'files; NOT full physical qualification')
+        if j['case']=='llaccel_aux' and j['revision']=='llsys-pg-r03':
+            with gzip.open(root/'inputs/llsys-pg-r03/llaccel_aux_C_pg_r03_all_pins.csv.gz','rt',encoding='utf-8-sig',newline='') as f:expected={r['pin']:r for r in csv.DictReader(f)}
+            p=manifest.parent/'finalized/llsys-pg-r03/llaccel_aux-C/pins.tsv.gz'
+            with gzip.open(p,'rt',encoding='utf-8-sig',newline='') as f:rows=[r for r in csv.DictReader(f,delimiter='\t') if r['use'] not in ['POWER','GROUND']]
+            actual={r['pin'].replace('\\',''):r for r in rows};assert len(actual)==len(rows)==len(expected)==13507
+            assert set(actual)==set(expected)
+            for pin,r in actual.items():
+                e=expected[pin]
+                for k in ['layer','direction','use']:assert r[k]==e[k]
+                assert r['net'].replace('\\','')==e['net']
+                for k in ['x0','y0','x1','y1']:assert abs(int(r[k])/2000-float(e[k+'_um']))<1e-6
+            alternative_pin_checks+=len(actual)
+    print('PASS_CONTINUATION_PIN_INVARIANTS_AND_NATIVE_SNAPSHOT_HASHES',sum(counts.values()),'candidate pins;',actual_pin_checks,'current-access native pins;',alternative_pin_checks,'alternative native pins;',files,'files; NOT full physical qualification')

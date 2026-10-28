@@ -238,7 +238,7 @@ def render(root,out):
     if updates.exists():
         additions=[]
         for p in sorted(updates.glob('*/index.json')):
-            j=read(p);additions.append(expand.TITLES[j['case']]+'：'+j['created_utc']+'，native DRC='+str(j['native_DRC_count'])+'，所检全块连通='+str(j['whole_geometry']))
+            j=read(p);additions.append(expand.TITLES[j['case']]+'/'+j['revision']+'：'+j['created_utc']+'，native DRC='+str(j['native_DRC_count'])+'，所检全块连通='+str(j['whole_geometry']))
         if additions:section=section.replace('<h3>六块完整内部接入窗口试验</h3>','<p>快照后新增终态已补入本表，原快照不改：'+html.escape('；'.join(additions))+'。原生回执位于data/continuation/terminal_updates，指标仍分阶段解释。</p><h3>六块完整内部接入窗口试验</h3>')
     section=section.replace('<h3>llaccel SYSTEM：','<p>下方原A/B/C交互查询保留原候选；本轮增量C坐标另按原pin名称逐项对应：</p><ul>'+''.join(pin_links)+'</ul><h3>llaccel SYSTEM：')
     topology=root/'common-topology-r02/topology_proof.json'
@@ -278,4 +278,8 @@ def render(root,out):
     if eco_rows:
         df=pd.DataFrame(eco_rows);et=df.astype(object).where(pd.notna(df),'未核查/无回执').to_html(index=False,border=0)
         section=section.replace('<h3>研究M11/M12','<h3>单列成本的单元/缓冲ECO：实际仍失败</h3><div class="scroll">'+et+'</div><p>ECO不混入纯pin XY收益。VECTOR A/C原约束setup仍负；GEMM/MXU电气专用ECO仍有3/1项cap失败。MXU增加1个buffer、标准单元master bbox面积+1.862μm²，并未修复目标。r02分别去掉345005/258099个CORE_SPACER，只作用于新拷贝；原数据库不改，不能说成block面积或计算资源节省。若后续复用需恢复填充并执行全部适用规则及功能等价检查；当前不作合格叶视图。首轮r01缺精确成本表的项显示未核查，不填0。</p><h3>研究M11/M12')
+    llpg=updates/'LLPG-r01/index.json'
+    if llpg.exists():
+        j=read(llpg)
+        section=section.replace('<h3>ACT：原层到父层M10的真实接入</h3>','<p><b>LL PG-only备选完整C最新终态：</b>92648/92649已完成真实布线与独立检查：13184移动/13507总pin，725253网/2325528端点所检几何连通通过，但独立native DRC仍4项（3项Metal Spacing、1项NS Metal）。直接PG接触0不是间距/线宽通过。该方案不同于仍在运行的access-r03完整窗口版，不覆盖后者状态；原生四项报告及全部指纹见terminal_updates/LLPG-r01，原始旧C直接26pin/44对接触失败也保留。</p><h3>ACT：原层到父层M10的真实接入</h3>')
     return section
