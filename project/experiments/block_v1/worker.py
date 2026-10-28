@@ -94,6 +94,9 @@ try:
     elif MODE=='revision300-cts-readback-s':
         from revision300_cts_probe import readback
         readback(ROOT,OUT,CPUS,run,'s')
+    elif MODE.startswith('revision300-bench-m-'):
+        from revision300_benchmark import matrix
+        matrix(ROOT,OUT,CPUS,run,MODE.rsplit('-',1)[-1])
     elif MODE.startswith('revision300-test-'):
         from revision300_rtl import test
         test(ROOT,OUT,CPUS,run,MODE[-1])
