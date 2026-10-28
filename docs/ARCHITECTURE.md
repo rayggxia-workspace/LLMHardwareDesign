@@ -1,9 +1,11 @@
 # 架构与运行
 
-2026-10-28修订主线：[五宏实现合同](BLOCK_V1_REVIEW_CONTRACT.md)及[300MHz验收计划](plans/block-v1-review-300mhz.md)。
-M/V/R/S/T新版三初态RTL回归均通过，M/V/S/T已综合，新的原生P&R仍执行；T在CTS修复失败，
-`revision300-cts-probe`只从receipt绑定的3_place副本运行跳过时序修复的CTS路径诊断，
-明确不生成最终宏资格。所有EDA仍由worker.sh/worker.py在Slurm内运行。
+2026-10-29修订主线：[五宏实现合同](BLOCK_V1_REVIEW_CONTRACT.md)、[300MHz验收计划](plans/block-v1-review-300mhz.md)及[新版交付入口](../work/YUZE-LU/121/delivery-300mhz/README.md)。M/T原生最终六阶段、同源四门、完整几何及全端口P2通过，六点输出负载STA通过；S物理/最终功能/严格LEC通过，完整DRC继续；V267同CTS18%容量预留接续GRT，R236原生P&R运行。整体未完成。所有EDA与Verilator仍通过worker.sh/worker.py在Slurm内执行，不在登录节点运行。
+
+[V/R端口性能](../work/YUZE-LU/121/review-20261028/vr-bench-0225/README.md)的真实命令、工具SHA及源码commit见逐任务receipt。268的模式为revision300-bench-{v,r}-{baseline,revised,compare}；269的模式为revision300-bench-{v,r}-extended。source_commit分别0d001311ff49fd86e58b7e2dceedb68ee5fceaca和074a5365439e8c789f126649010609ae8283f150。每模式16CPU，容器和编译器由worker.sh固定；受控原队列见[node-queue-268.json](../work/YUZE-LU/121/review-20261028/node-queue-268.json)及[node-queue-269.json](../work/YUZE-LU/121/review-20261028/node-queue-269.json)，完整allocation argv见对应stage manifest。复现必须先用bundle.py从实际Git blob建立新源归档，选新run目录，经dispatch.py的八节点上限/unknown提交核验；不得覆盖封存目录或重交已通过队列充数。
+
+旧/新公共测量使用完全相同数值参考，基线RTL另按baseline-vr-sha256.json与ad3c2b3核对；长组扩展先全统计后有限回放。所有相位、应答、状态导出、容器/填充开销明示；模型速度、内部lane占用和实际S执行均不由这些测量自动取得资格。
+
 以下旧实验入口及100MHz结果保留其历史证据范围，不代表新版通过。
 
 当前第一版计算积木为 **M/V/R/S/T五个物理宏，每种一个基础实现**；逐块最终M1–M10布局布线是本轮交付。见[规格](BLOCK_LIBRARY_V1.md)与[逐块计划](plans/block-v1-library-implementation.md)。M新最终物理/功能已通过部分接收但原生M2 DRC未过，R实际RTL已通过，V新实现待实际回归，S独立route中，T沿用已接收C叶块；不能以旧M8/VS四边界替代这五块。下方历史实验保留原证据范围。
