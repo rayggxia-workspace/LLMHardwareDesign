@@ -19,6 +19,6 @@
 - `transaction6k-C.png`：从索引绑定的实际187318230B完整最终GDS只读渲染，1600×1600，全部层，SHA25634419a1f73ea39eb78f857cedd68d000423d881451a8fe21beafcce23337c8ee。已目视核对有完整边界/供电及布线。图不是DRC报告。
 - `pins.json`：从同一选定C实际ODB导出386个信号位的M10真实矩形，保留DBU和um坐标；本次工具原生读回，不由RTL端口数猜坐标。
 
-T通用层次Lib/flat-abstract等价资格仍false；既有candidate.lib/lef只列候选视图，不能宣称任意M11/M12父层连接或完整系统已通过。本轮五宏库尚未全部完成。
+T通用层次Lib/flat-abstract等价资格仍false；既有candidate.lib/lef只列候选视图，不能宣称任意M11/M12父层连接或完整系统已通过。五宏原生单块验收均通过，项目独立审查待完成，见[统一入口](../README.md)。
 
 [完整原生占用/OBS与M10底部几何合同](native-geometry/README.md)：2026-10-28 03:07 CST只读导出并完成独立DEF RECT补全，原ODB未改。候选LEF的抽象覆盖和未来M11/M12系统资格仍未通过。
