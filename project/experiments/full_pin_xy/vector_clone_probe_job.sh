@@ -3,7 +3,7 @@
 #SBATCH --partition=c96
 #SBATCH --cpus-per-task=4
 #SBATCH --time=0
-#SBATCH --mem=24000
+#SBATCH --mem=0
 set -euo pipefail
 export PATH="/public/software/singularity-ce-4.3.4/bin:$PATH"
 cd /public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027

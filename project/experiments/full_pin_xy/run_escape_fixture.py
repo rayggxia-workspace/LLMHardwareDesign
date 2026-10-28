@@ -8,7 +8,7 @@ pin-layer definition. Independent native/whole geometry/PG gates are separate.
 """
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
-import csv, datetime, gzip, json, math, os, re, subprocess, sys, traceback
+import csv, datetime, gzip, json, math, os, re, shutil, subprocess, sys, traceback
 from run_exports import ROOT, IMAGE, BIN, sha
 from run_parent_trial import child_source, tcl
 from lef_view_contract import verify as verify_lef
@@ -36,7 +36,7 @@ def one(case, variant, revision):
         assert proof.get('completed_utc') and proof['native_export_returncode']==proof['fresh_model_read_returncode']==0
         assert proof['matching_all_signal_model_pins']==3753 and proof['all_original_signal_and_PG_pins_and_size_exactly_preserved']
         assert proof['SPEF_replay_matches_source'] and proof['all_sources_and_pre_RCX_geometry_unchanged']
-        for p in [odb,source,model_dir/'timing.lib',model_dir/'pins.tsv']:assert sha(p)==proof['files'][p.name]['sha256']
+        for p in [odb,source,model_dir/'detailed.lef',model_dir/'timing.lib',model_dir/'pins.tsv']:assert sha(p)==proof['files'][p.name]['sha256']
         assert sha(odb)==proof['source_geometry_sha256']
         actual_receipt=Path(proof['source_receipt']);assert sha(actual_receipt)==proof['source_receipt_SHA256']
         actual=json.loads(actual_receipt.read_text())
@@ -57,7 +57,9 @@ def one(case, variant, revision):
         assert model['clean_odb_sha256'] == sha(odb) == proof['clean_odb_sha256']
         access_trial_receipt=Path(proof['legacy_RC_STA_receipt'])
     source_view_hashes={str(p):sha(p) for p in [odb,source,proof_path,model_dir/'execution.json',model_dir/'timing.lib',source.parent/'pins.tsv',access_trial_receipt]}
-    if kind=='real_diode658':source_view_hashes[str(actual_receipt)]=sha(actual_receipt)
+    if kind=='real_diode658':
+        source_view_hashes[str(actual_receipt)]=sha(actual_receipt)
+        source_view_hashes[str(model_dir/'detailed.lef')]=sha(model_dir/'detailed.lef')
     out = ROOT/'escape_fixtures'/revision/(case+'-'+variant)
     out.mkdir(parents=True, exist_ok=False)
     rec = {'scope': 'REAL_256BIT_PARENT_M10_ESCAPE_FIXTURE; unchanged original leaf pins; NOT common-base/full system qualification',
@@ -72,7 +74,12 @@ def one(case, variant, revision):
     common = ['singularity', 'exec', '--cleanenv', '--bind', str(ROOT/'tmp')+':/tmp', '--home', str(ROOT/'home'), '--pwd', str(out)]
     export = out/'export.tcl'
     export.write_text('read_db '+tcl(odb)+'\nwrite_abstract_lef -bloat_factor 0 '+tcl(out/'leaf_detail.lef')+'\n')
-    assert execute(common, export, out/'export.log', threads=1) == 0
+    if kind=='real_diode658':
+        shutil.copyfile(str(model_dir/'detailed.lef'),str(out/'leaf_detail.lef'))
+        assert sha(out/'leaf_detail.lef')==proof['files']['detailed.lef']['sha256']
+        rec['actual_leaf_detailed_export_reused_by_exact_SHA_not_reexported']=True
+    else:
+        assert execute(common, export, out/'export.log', threads=1) == 0
     rec['leaf_abstract_contract'] = verify_lef(source, out/'leaf_detail.lef')
     lef = (out/'leaf_detail.lef').read_text()
     master = re.findall(r'^MACRO\s+(\S+)', lef, re.M)
@@ -189,12 +196,26 @@ def one(case, variant, revision):
         # this actual new child's M10 OBS, new PG and all other landings again.
         deltafile=ROOT/'inputs/gemm-actual-landing-r01/landing_delta.json';delta=json.loads(deltafile.read_text())
         assert delta['net']=='gemm_a_rdata[128]' and delta['parent_layer']=='metal10' and delta['parent_size_um']==[.8,.8]
-        px,py=delta['new_parent_xy_um'];b=(px-.4,py-.4,px+.4,py+.4)
+        prior_proposal=delta['new_parent_xy_um'];px,py=prior_proposal
         others=[(x-.4,y-.4,x+.4,y+.4) for p,(x,y) in landing.items() if p!=delta['net']]
-        assert min(b[:2])>=10 and b[2]<=die_w-10 and b[3]<=die_h-10
-        assert not any(b[0]-1.5<q[2] and b[2]+1.5>q[0] and b[1]-1.5<q[3] and b[3]+1.5>q[1] for q in obstacles+others)
+        def clear_point(px,py):
+            b=(px-.4,py-.4,px+.4,py+.4)
+            return min(b[:2])>=10 and b[2]<=die_w-10 and b[3]<=die_h-10 and not any(b[0]-1.5<q[2] and b[2]+1.5>q[0] and b[1]-1.5<q[3] and b[3]+1.5>q[1] for q in obstacles+others)
+        prior_rejected=not clear_point(px,py)
+        if prior_rejected:
+            sx,sy=landing[delta['net']];replacement=None
+            for _,i,j in offsets:
+                x,y=round(sx+i*3.2,6),round(sy+j*3.2,6)
+                # Proposed packing guard, not a technology rule or via size.
+                if any(max(abs(x-qx),abs(y-qy))<6.4-1e-8 for p,(qx,qy) in landing.items() if p!=delta['net']):continue
+                if clear_point(x,y):replacement=(x,y);break
+            assert replacement,'No current-source M10 proposal meets actual OBS/PG/landing screening'
+            px,py=replacement
+        assert clear_point(px,py)
         landing[delta['net']]=(px,py);source_view_hashes[str(deltafile)]=sha(deltafile)
         rec['reused_prior_parent_repair_as_proposal']={'source_delta_SHA256':sha(deltafile),'pin':delta['net'],'new_parent_M10_xy_um':[px,py],
+          'prior_proposal_rejected_by_current_source_screening':prior_rejected,'old_proposed_xy_um':prior_proposal,
+          'replacement_search_extra_center_guard_um_not_technology_rule':6.4 if prior_rejected else None,
           'screened_against_this_new_actual_M10_OBS_PG_and_all_other_landing_rectangles':True,
           'new_native_route_DRC_and_access_not_inferred_from_old_fixture':True}
     commands = ['read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib',
