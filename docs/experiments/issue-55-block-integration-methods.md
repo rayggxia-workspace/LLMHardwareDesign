@@ -101,7 +101,7 @@ clock 使用共同输入、真实状态负载、CTS资源和最终线路，分�
 | 完整清单/分区、有限原始及派生回归 | 已实现并有对应版本证据 | 新最终物理版需再验 |
 | 状态/库语义、身份和真实破坏门槛 | 已实现，限定证据 | 变更逻辑需新证明；不是无条件全等价 |
 | 公共IO/布局/PG/clock/固定连接规划 | 多子步骤已实现并局部验证 | 共同完整父版和所有固定导线未闭合 |
-| 原拓扑迁线/全导体预筛/独立局部物理来源 | 已实现并验证若干适配器 | M8物理通过但4cap退化拒绝；新AUX全M8接入尚待实际结果；任意拓扑不支持 |
+| 原拓扑迁线/全导体预筛/独立局部物理来源 | 已实现并验证若干适配器 | M8物理通过但4cap退化拒绝；新AUX全M8几何/PG/精确有限功能资源复用通过，真实RC质量FAIL；任意拓扑不支持 |
 | 真实RC/完整端点和逐PIN电气比较 | 已实现并实际发现失败 | 当前退化未解决，外部参数缺失 |
 | 可恢复整片native检查 | 实现和4096区检查/独立76时钟网157端点资格通过 | 新固定布线/统一父版仍需新完整几何与电气检查 |
 | 冻结和两个完整case定制验收 | 尚未完成 | 完整功能/资源/PG/clock/线网/几何/质量先闭合 |
@@ -121,13 +121,13 @@ clock 使用共同输入、真实状态负载、CTS资源和最终线路，分�
 
 <!-- current-method-checkpoint -->
 
-最新算法检查点：2026-10-28T19:12:14.154222+00:00；review代码1aace9b1c42127ef60f57550dee24e8aecdce8f0。索引 /public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-physical-LL-replay-20261028T191214Z/milestone.json，SHA 41ea0187987f76f83f576edf2e844958aa65afc8ced0eceba6a26219163e6a7e；整体二/三未验收、四未执行、底座1/3未冻结。
+最新检查点：2026-10-28T19:51:26.039270+00:00；review源码e3108ad649131ecb252ac27bbb577bf532c2e568，索引 /public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-post-M8-closure-20261028T195126Z/milestone.json，SHA 1cea67d39e995d396860ee55ef1ae503d46422b4ecb78c2846f604e07d22e723；候选1/3未冻结，二/三未验收、四未执行。
 
-1. 分组时序报告必须遍历所有路径组，再与原生WNS/TNS/全负端点数核对。第一组不是全局最差；本次实际纠正asynchronous正slack被误读的错误，旧记录保留并撤回解释。组顺序/错模式/重复组/篡改MET负例与源绑定单位标签已实际验证，浮点换算因子不能要求恰好等于数学10次幂，也不能借精度说明豁免退化。
-2. 原生失败定位复用既有compare_timing_endpoints收集器，新增明确的auxiliary_route_repaired typed adapter，实际重验同源DRC/PG、完整状态/全网、同一SPEF/Lib/SDC/3ns与active覆盖。5658/35全部端点数量、原生TNS/WNS和单位实际闭合；D/顶层口分组仅是观察到的端点角色，不能自动判定遗留或所有功能意义。代表路径wire/cell归因不是固定下界。
-3. 物理功能回装继续用原prepare_physical_replay/compile_partition_observer_v2/replay_partition_llaccel_observer。新AUX+GEMM+VECTOR全1851723单元从实际ODB导出，完整原父层接口/连线保留；不得以旧二进制/RTL回退代替新物理源。已实际通过六组/180任务/243883行/17769493字段/540个1MiB镜像。仍仅有限二态零延迟功能，非current191共同父版/闲置6资源或最终冻结回归。
-4. 前驱COMPLETED0、源码/配置/来源和hash门槛后才启动后继：92956→92958→92959实际成功分支闭合，compile PASS和simulate PASS分开。4CPU内生成-j4/build-j4串行，仿真4×1thread。源changed后旧功能/冻结资格不能重标；旧golden输入可复用。
-5. 新真实trace的85行副本实际注入done、ready、有效SRAM写字节和表头错误，四项均检出；无效DRAM载荷变化合法正例通过。只限定checker，不当作所有硬件故障覆盖或重新仿真通过。
-6. 新AUX全端口M8引出92966当前RUNNING，固定接线92548当前RUNNING。它们的最终几何/新导体/保持性/RC和统一底座功能未闭合，不把方案、工具出口或其他源的通过拼成完整验收。原3ns电气失败仍必须解决或准确追溯，外clock波形/open37输出负载仍未确定。
-
-现有route入口仅固定父层连接范围、replay入口仅native清单范围，完整两case定制与一键全流程未完成。正式Block/LLM前端适配和最终系统PPA比较仍按原约定后续接入，不用本次有限case成功证明任意模型支持。新Stage2/3代码仍在服务器快照；精选远端进展文档不是完整算法源码交付。
+1. 保留全组时序报告及原生WNS/TNS/全部负端点/单位核对；第一组不代表全局最差。此前复位路径误读已撤回，原记录保留，没有reset例外或时钟放宽。
+2. 全端口M8引出复用access_extension：92966原生完整接口、9表/原导体保持、所有新导体接触/端口连通、完整freshDRC0、track/BPin检查实际通过。真正输出ODB/真实via/导体；不能用规划或LEF标记代替。
+3. 92980/82通过既有host COMPLETED0/4及来源hash守卫自动启动，完整RC/13507实际M8锚点/电阻图/557955 active网1771801端点覆盖闭合。编译、工具完成、覆盖与5691setup/36hold/1104cap质量失败分别记录。
+4. M8可改变die/track范围；复用旧die-track-only原生过程为measure_access_frame_control参数入口，只扩范围、路径清空，不删/移/加原导体，逐表和实际track集合核验；92994本次仍运行。此为匹配提取范围控制，不是底座候选、布线或质量验收，未据raw/postM8聚合差值定因。
+5. qualify_access_replay_reuse在新进程检查完整PG并重新导出实际Verilog；新资源字节与旧物理回归资源一致且旧完整回归输入闭合，5个真实身份frame破坏被拒绝后，才精确复用既有六组180任务有限证据。92992实测通过，**没有新仿真**，不扩大到current191/闲置6资源、SDF/任意输入/最终冻结父版。不同字节或输入闭合失败即要求新功能证明。
+6. compare_cross_boundary_registers新增保存原生清单复用：92986不重复原提取/STA，仍重验全部count/TNS/WNS、原模型/时钟与查询集合。6个旧查询未涉及的D端点单独未知；2099同名数值恶化不能自动当遗留或因果证明。
+7. 完整物理回装/新编译/六组真实回归及trace负例继续使用既有prepare/compile/replay链，物理1851723单元和外部16bank不缩减；四核内串行生成/build和4×1thread仿真。新源码/配置固定后使用新目录，不能改封存快照。
+8. 92548实际固定14059线仍运行；841闲置扇出/case、统一源/全几何/PG/clock/质量/两完整案例新功能与冻结均待。VECTOR4cap退化继续拒绝，外clock/open37负载仍未确定。现有route入口仅固定父层、replay仅native清单；最终通用全流程和正式Block/LLM支持未完成。新实现服务器快照与远端精选文档交付分开记录。
