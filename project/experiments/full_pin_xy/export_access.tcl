@@ -35,7 +35,11 @@ dict for {nid net} $selected {
     } else {access_box $nn $s WIRE "wire_$serial"}
    }}
   }
-  foreach bt [$net getBTerms] {foreach bp [$bt getBPins] {foreach box [$bp getBoxes] {access_box $nn $box BTERM "B:[$bt getName]"}}}
+  foreach bt [$net getBTerms] {
+    set count 0
+    foreach bp [$bt getBPins] {foreach box [$bp getBoxes] {incr count;access_box $nn $box BTERM "B:[$bt getName]"}}
+    if {!$count} {error "No real access rectangles B:[$bt getName]"}
+  }
   foreach it [$net getITerms] {
     set boxes [$it getGeometries];set term "I:[[$it getInst] getName]/[[$it getMTerm] getName]"
     if {![llength $boxes]} {error "No real access rectangles $term"}
