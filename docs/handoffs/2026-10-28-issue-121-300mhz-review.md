@@ -1,3 +1,9 @@
+2026-10-29 07:19 CST：305/93057全部三项自然通过、COMPLETED/0:0；430867映射单元，三个初态各543474检查/391381拍与289完全一致，42端口测量/profiles逐项相同。v-carry-305-0711实际UTC23:08:28.996960捕获22小文件/14稳定输出；305归档全部Git blob及输入SHA核验通过。
+
+306/93063 node17已实际全新P&R，源566e7df/archivebf2c3992，映射面积582294.482µm²、1250²µm候选/277位，实际入口复核相同函数SAT复用与305映射/功能源，当前进入布局；不继承291/270任何物理阶段。307七项最终门和308六项接口已validate、均无allocation，真实native/geometry前置后即补位；295/298未分配已退役。v-fresh-306-start实际UTC23:16:27捕获21原始小文件，306/307/308全部Git源字节核验。旧281自然FAILED/1:0，物理/DRC失败、功能/strictformal通过，R未claim，未来真实R前置后新allocation恢复原队列/状态。原291/236及两旧任务继续，未按耗时取消。
+
+309/93066已实际提交R操作数寄存修订，源f32c4ff/archive7130f86c，四项独立16CPU数值/映射/公共端口/卷积测量，6×16队列默认。基于302实际row→product长路径，增加520bit局部操作数和行号/控制，保持8乘法器/行II1和全部边界；预计EXEC GDN4N+15/SSM3N+11/卷积14，仍待实测，不转移236物理或旧性能资格。当前含两旧6 allocations，1.2内存准入+16GiB guard，其他成员未动。M/S/T新版最终接收保持，V/R未齐；目标active，Issue121=in_progress/PR122=draft，登记pending、看板unverified/同步pending，独立审查/管理员待指定。
+
 2026-10-29 06:12 CST：S280新版最终接收完成：原生六阶段及四门、完整未修改GDS deck0、最终六文件、完整原生几何均通过，1610²µm/273个2µm M10接点，setup/hold+0.687419/+0.012282ns；最终三初态各98424检查，严格LEC262545/262532全匹配diff0/UNSAT。交付55a93ad7…、几何78e58311…；s-final-0610实际22:12:02UTC捕获37文件/24输出绑定及全部源Git blobs核验，真实GDS图SHA核验并已查看。正式delivery-300mhz/S提供最终Verilog/SDC/DEF/ODB/GDS/SPEF服务器位置/大小/SHA、真实pin/完整几何，一页对照补S真实面积，新增4来源SHA。M/S/T原生已齐，V/R未齐；不能提前标五宏完成。
 
 仅在S真实geometry PASSED后提交292/93044（22:11:56UTC），当前S全部273端口P2开始接续，R分支等281本宏真实geometry，不等V。295/296无allocation；296已暂存并validate为V专用六任务（P2 128GiB、三输出C各64GiB、两πRC各64GiB forecast/1.2+16GiB guard），源734997a/archive d1fdd46c…全部297 Git blobs和295前置实际绑定核验。296不继承281或退役285/288。当前本任务含两旧仍6 allocations；R236 GRT、V291新布局、旧V281 DRC/strictformal继续。
