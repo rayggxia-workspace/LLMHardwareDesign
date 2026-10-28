@@ -1,3 +1,5 @@
+2026-10-29 04:44 CST：286/93010自然失败保留，13文件捕获boundary-rc-286-failure。实际OpenROAD原始fixture已运行，ff/D及q时序有限，未连ff/QN=INF/INF触发错误的全端点finite要求；四项M/T πRC均被依赖挡住、从未运行。接收器修为只允许固定QN同时INF/INF且真实fanout0，D/Q仍有限且不允许其他端点，不放宽原生宏时序。准备新287重新做实际四控制→四项新STA，不重启286/不挪资格。原始log空白SHA保留、Git文本检查明确排除失败目录*.log。S/V/R原流程继续，Issue121=in_progress/PR122=draft，登记pending/看板unverified同步pending。
+
 2026-10-29 04:42 CST：286/93010已实际提交并在node18运行，先真实OpenROAD DFF消费控制→M/T四项全部端口πRC敏感性；封存源75d880322682ff8ae60b24661d9389c3f014d0a5，archive bdeb0549d14595d6e33bcdfcb8c4ea0e9b3ba67cf98401ca8214722f7027362e。仍未宣称试验通过。当前本任务6个allocation，含两旧与pending/unknown，不动其他成员。285/281仅暂存、无allocation。S280 DRC/最终功能、V270 detailed、R236 GRT继续，M/T原验收保持；Issue121=in_progress/PR122=draft、登记pending/看板unverified同步pending。更正前两条人工进度标记：阶段E以03a5da6实际提交时间04:30为准，πRC准备以75d8803实际提交时间04:39为准；实验实际时间仍以原始index/receipt为准。
 
 2026-10-29 03:45 CST：V270首次全局布线实际Total congestion=0，继续时序修复/后续布线，不授予最终资格；R236已进入CTS。S280全DEF差分实际通过，非目标字节相同且目标仅新增声明RECT，fresh finish内置LEC运行。V/R后继281接收DAG准备中，只等各自native真实通过才分配，不重跑M/T。补齐M已通过262实际全部275位及16位输入/输出图，六文件SHA、真实源/生成器绑定、三PNG查看完成，无新物理运行或接口时序资格。

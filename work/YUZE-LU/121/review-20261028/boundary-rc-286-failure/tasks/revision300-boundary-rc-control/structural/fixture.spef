@@ -1,0 +1,50 @@
+*SPEF "ieee 1481-1999"
+*DESIGN "revision300_rc_fixture"
+*DATE "fixed research fixture"
+*VENDOR "research"
+*PROGRAM "explicit pi control"
+*VERSION "1"
+*DESIGN_FLOW "NAME_SCOPE LOCAL" "PIN_CAP NONE"
+*DIVIDER /
+*DELIMITER :
+*BUS_DELIMITER []
+*T_UNIT 1 NS
+*C_UNIT 1 PF
+*R_UNIT 1 OHM
+*L_UNIT 1 HENRY
+*NAME_MAP
+*1 d
+*2 q
+*3 clk
+*D_NET *1 0.01
+*CONN
+*P d I
+*I ff:D I
+*CAP
+1 d 0.004
+2 ff:D 0.005
+3 d q 0.001
+*RES
+1 d ff:D 0.1
+*END
+*D_NET *2 0.01
+*CONN
+*P q O
+*I ff:Q O
+*CAP
+1 q 0.004
+2 ff:Q 0.005
+3 q d 0.001
+*RES
+1 q ff:Q 0.1
+*END
+*D_NET *3 0.01
+*CONN
+*P clk I
+*I ff:CK I
+*CAP
+1 clk 0.005
+2 ff:CK 0.005
+*RES
+1 clk ff:CK 0.1
+*END

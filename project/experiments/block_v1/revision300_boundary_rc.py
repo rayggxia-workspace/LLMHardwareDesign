@@ -1,5 +1,6 @@
 """Finite all-port pi-RC timing sensitivity on unchanged accepted leaves."""
 import json
+import math
 from pathlib import Path
 
 
@@ -34,14 +35,27 @@ set_load 2 [get_ports q]
         script+='read_verilog {'+str(verilog)+'}\nlink_design revision300_rc_fixture\n'
         script+='read_sdc {'+str(sdc)+'}\nread_spef {'+str(spef)+'}\nset_propagated_clock [all_clocks]\nsta::find_timing\n'
         script+='set f [open {'+str(out/(label+'-endpoints.tsv'))+'} w]\n'
-        script+='foreach pin [sta::endpoints] {puts $f "[get_full_name $pin]\\t[get_property $pin slack_max]\\t[get_property $pin slack_min]"}\nclose $f\n'
+        script+='''foreach pin [sta::endpoints] {
+ set fanout 0
+ foreach reached [get_fanout -from [list $pin] -flat -pin_levels 2 -trace_arcs all] {
+  if {$reached ne $pin} {incr fanout}
+ }
+ puts $f "[get_full_name $pin]\\t[get_property $pin slack_max]\\t[get_property $pin slack_min]\\t$fanout"
+}
+close $f
+'''
         script+='report_parasitic_annotation -report_unannotated\nreport_checks -path_delay min_max -format full_clock_expanded -digits 12\n'
         p=out/(label+'.tcl');p.write_text(script);run(['openroad','-no_init','-exit',p],label+'.log')
-        values={}
+        values={};unused={}
         for line in (out/(label+'-endpoints.tsv')).read_text().splitlines():
-            name,setup,hold=line.split('\t');values[name]=[float(setup),float(hold)]
-        assert {'ff/D','q'}<=set(values)and all(v[0]!=float('inf')and v[1]!=float('inf')for v in values.values())
-        observed[label]=dict(endpoints=values,spef_sha256=digest(spef))
+            name,setup,hold,fanout=line.split('\t');pair=[float(setup),float(hold)]
+            if name=='ff/QN':
+                assert setup==hold=='INF'and int(fanout)==0
+                unused[name]=dict(setup=setup,hold=hold,fanout=int(fanout))
+            else:
+                assert all(math.isfinite(v)for v in pair);values[name]=pair
+        assert set(values)=={'ff/D','q'}and set(unused)=={'ff/QN'}
+        observed[label]=dict(endpoints=values,unused_fixture_qn=unused,spef_sha256=digest(spef))
     positive=observed['positive']['endpoints']['ff/D'][0]
     assert observed['huge-r']['endpoints']['ff/D'][0]<positive-1
     assert observed['huge-c']['endpoints']['ff/D'][0]<positive-.01
@@ -62,7 +76,7 @@ def measure(root,out,cpus,run,kind,variant):
     from native_annotation import inspect as annotation
     from revision300_boundary_spef import augment
     assert cpus==16 and kind in ('m','t')and variant in ('base','high')
-    base=out.parents[2];controls=base/'block-v1-20261029-286/tasks/revision300-boundary-rc-control'
+    base=out.parents[2];controls=out.parent/'revision300-boundary-rc-control'
     cr=json.loads((controls/'receipt.json').read_text());assert cr['passed']
     cp=controls/'revision300-boundary-rc-control.json';assert file_sha(cp)==cr['outputs'][cp.name]
     assert json.loads(cp.read_text())['actual_openroad_spef_consumer_control']
