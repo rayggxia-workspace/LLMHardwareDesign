@@ -33,26 +33,36 @@ for event,item in ET.iterparse(spec['RDB'],events=['end']):
         for j in range(box.bottom//TILE,box.top//TILE+1):index[layer,i,j].add(n)
     item.clear()
 assert len(markers)==spec['expected_findings']==1460
-scores=[Counter() for m in markers];native_rows=0;exact_tests=0;metal_layers={'metal'+str(i) for i in range(2,11)}
-with gzip.open(spec['native_conductors'],'rt') as f:
-    for q in csv.DictReader(f,delimiter='\t'):
-        native_rows+=1;layer=q['layer']
-        if layer not in metal_layers:continue
-        a,b,c,d=[int(q[k]) for k in ['x0','y0','x1','y1']];candidates=set()
-        for i in range(a//TILE,c//TILE+1):
-            for j in range(b//TILE,d//TILE+1):candidates.update(index.get((layer,i,j),()))
-        if not candidates:continue
-        box=pya.Box(a,b,c,d);shape=pya.Region(box)
-        for n in candidates:
-            if not regions[n].bbox().overlaps(box):continue
-            exact_tests+=1;area=(regions[n]&shape).area()
-            if area>0:scores[n][q['net']]+=area*DBU*DBU
-        if native_rows%500000==0:print('CORRELATION_PROGRESS',native_rows,exact_tests,flush=True)
-for m,score in zip(markers,scores):
-    m['candidate_net_intersection_area_sum_um2']=dict(score)
-    m['area_note']='Sum over native rectangles may double count wire/via overlap; used only to identify distinct positive-area net correlations, not metal/gate area or RC.'
-    m['net_mapping']='UNIQUE_EXACT_POLYGON_CONDUCTOR_CORRELATION' if len(score)==1 else 'AMBIGUOUS_MULTIPLE_NETS' if score else 'NO_NATIVE_CONDUCTOR_MATCH'
-    m['native_net']=next(iter(score)) if len(score)==1 else None
+reuse=spec.get('reuse_correlations_from')
+if reuse:
+    previous=json.loads((Path(reuse)/'marker_net_correlations.json').read_text())
+    assert len(previous)==len(markers)
+    for old,new in zip(previous,markers):
+        for key in ['marker_id','category','layer','cell','actual_GDS_metal_polygon_texts_um','reported_measurements','source_polygon_bbox_um']:
+            assert old[key]==new[key],('RDB correlation source changed',key)
+        assert old['net_mapping'] in ['UNIQUE_EXACT_POLYGON_CONDUCTOR_CORRELATION','AMBIGUOUS_MULTIPLE_NETS','NO_NATIVE_CONDUCTOR_MATCH']
+    markers=previous;native_rows=None;exact_tests=None
+else:
+    scores=[Counter() for m in markers];native_rows=0;exact_tests=0;metal_layers={'metal'+str(i) for i in range(2,11)}
+    with gzip.open(spec['native_conductors'],'rt') as f:
+        for q in csv.DictReader(f,delimiter='\t'):
+            native_rows+=1;layer=q['layer']
+            if layer not in metal_layers:continue
+            a,b,c,d=[int(q[k]) for k in ['x0','y0','x1','y1']];candidates=set()
+            for i in range(a//TILE,c//TILE+1):
+                for j in range(b//TILE,d//TILE+1):candidates.update(index.get((layer,i,j),()))
+            if not candidates:continue
+            box=pya.Box(a,b,c,d);shape=pya.Region(box)
+            for n in candidates:
+                if not regions[n].bbox().overlaps(box):continue
+                exact_tests+=1;area=(regions[n]&shape).area()
+                if area>0:scores[n][q['net']]+=area*DBU*DBU
+            if native_rows%500000==0:print('CORRELATION_PROGRESS',native_rows,exact_tests,flush=True)
+    for m,score in zip(markers,scores):
+        m['candidate_net_intersection_area_sum_um2']=dict(score)
+        m['area_note']='Sum over native rectangles may double count wire/via overlap; used only to identify distinct positive-area net correlations, not metal/gate area or RC.'
+        m['net_mapping']='UNIQUE_EXACT_POLYGON_CONDUCTOR_CORRELATION' if len(score)==1 else 'AMBIGUOUS_MULTIPLE_NETS' if score else 'NO_NATIVE_CONDUCTOR_MATCH'
+        m['native_net']=next(iter(score)) if len(score)==1 else None
 (out/'marker_net_correlations.json').write_text(json.dumps(markers,indent=2)+'\n')
 unique=sorted({m['native_net'] for m in markers if m['native_net']})
 (out/'unique_correlated_native_nets.json').write_text(json.dumps(unique,indent=2)+'\n')
@@ -61,7 +71,7 @@ inventory={'actual_standard_GDS_cell_found':cell is not None,'actual_standard_GD
 if cell is not None:
     bb=cell.bbox();inventory['actual_GDS_bbox_um']=[bb.left*layout.dbu,bb.bottom*layout.dbu,bb.right*layout.dbu,bb.top*layout.dbu]
     code=ET.parse(spec['deck']).getroot().findtext('text');layers={}
-    for name,l,dt in re.findall(r'(\w+)\s*=\s*input\(\s*(\d+)\s*(?:,\s*(\d+)\s*)?\)',code):layers[name]=(int(l),int(dt or 0))
+    for name,l,dt in re.findall(r'(\w+)\s*=\s*(?:input|polygons)\(\s*(\d+)\s*(?:,\s*(\d+)\s*)?\)',code):layers[name]=(int(l),int(dt or 0))
     assert all(n in layers for n in ['nplus','active','nwell','cont']),layers
     def mask(name):return pya.Region(cell.begin_shapes_rec(layout.layer(*layers[name])))
     diode=(mask('nplus')&mask('active'))-mask('nwell');diode.merge()
@@ -71,7 +81,7 @@ if cell is not None:
 summary={'scope':'READ_ONLY_EXACT_GDS_POLYGON_TO_NATIVE_CONDUCTOR_CORRELATION_AND_REAL_DIODE_INVENTORY',
   'marker_count':len(markers),'mapping_status_counts':dict(Counter(m['net_mapping'] for m in markers)),
   'unique_correlated_net_count':len(unique),'native_rows_streamed':native_rows,'exact_polygon_intersection_tests':exact_tests,
-  'native_geometry_DBU_um':DBU,'bbox_only_assignment_used':False,'diode_inventory':inventory,
+  'native_geometry_DBU_um':DBU,'reused_geometry_correlations_from':reuse,'bbox_only_assignment_used':False,'diode_inventory':inventory,
   'original1460_findings_repaired':False,'functional_or_LVS_proof':False,'full_qualification':False,
   'klayout_version':pya.__version__,'not_claimed':['Full rules passed','Actual antenna repair completed','Uniform gate area model invented','Ambiguous findings assigned a guessed net'],
   'source_files_SHA256':{p:hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in [spec['RDB'],spec['native_conductors'],spec['standard_GDS'],spec['deck']]}}

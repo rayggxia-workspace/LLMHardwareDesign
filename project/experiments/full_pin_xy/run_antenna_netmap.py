@@ -6,7 +6,7 @@ from run_exports import ROOT,IMAGE,sha
 DRIVER=Path(__file__).resolve().parent
 
 
-def run(revision):
+def run(revision,reuse_revision=None):
     source=ROOT/'streamout/costed-r02/gemm-C_ECO';p=source/'execution.json';j=json.loads(p.read_text())
     assert j['merge_returncode']==0 and j['available_deck_findings']==1460
     leaf=ROOT/'leaf_eco/r03/gemm-C';l=json.loads((leaf/'execution.json').read_text());native=leaf/'whole_access.tsv.gz'
@@ -19,10 +19,20 @@ def run(revision):
     spec={'RDB':str(rdb),'native_conductors':str(native),'top':'gemm_engine','expected_findings':1460,
       'standard_GDS':'/OpenROAD-flow-scripts/flow/platforms/nangate45/gds/NangateOpenCellLibrary.gds',
       'deck':'/OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc'}
+    inputs={str(q):sha(q) for q in [p,leaf/'execution.json',rdb,native]}
+    if reuse_revision:
+        assert reuse_revision=='r01','Reuse only the diagnosed completed geometry correlation'
+        previous=ROOT/'antenna_netmap'/reuse_revision;prior=json.loads((previous/'execution.json').read_text())
+        assert prior['native_returncode']==1 and prior['all_sources_unchanged']
+        old_spec=json.loads((previous/'input.json').read_text());assert old_spec==spec
+        for name in ['marker_net_correlations.json','unique_correlated_native_nets.json']:
+            f=previous/name;assert sha(f)==prior['files'][name]['sha256'];inputs[str(f)]=sha(f)
+        assert all(sha(Path(k))==v for k,v in prior['source_SHA'].items())
+        inputs[str(previous/'execution.json')]=sha(previous/'execution.json')
+        spec['reuse_correlations_from']=str(previous)
     (out/'input.json').write_text(json.dumps(spec,indent=2)+'\n')
     command=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out),
       '--env','PINXY_ANTENNA_MAP_OUT='+str(out),IMAGE,'klayout','-b','-r',str(DRIVER/'map_antenna_polygons.py')]
-    inputs={str(q):sha(q) for q in [p,leaf/'execution.json',rdb,native]}
     with (out/'native.log').open('x') as f:rc=subprocess.run(command,stdout=f,stderr=subprocess.STDOUT).returncode
     rec={'scope':'ANTENNA_REPAIR_INPUT_CORRELATION_NOT_PHYSICAL_REPAIR_OR_FULL_QUALIFICATION',
       'native_returncode':rc,'source_SHA':inputs,'all_sources_unchanged':all(sha(Path(k))==v for k,v in inputs.items()),
@@ -33,4 +43,4 @@ def run(revision):
     (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n');return rc
 
 
-if __name__=='__main__':sys.exit(run(sys.argv[1]))
+if __name__=='__main__':sys.exit(run(*sys.argv[1:3]))
