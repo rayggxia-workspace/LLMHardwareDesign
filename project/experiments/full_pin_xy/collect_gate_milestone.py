@@ -3,7 +3,7 @@ from pathlib import Path
 import argparse,datetime,gzip,hashlib,json,subprocess,tarfile
 
 ROOT=Path('/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027')
-JOBS=['92690','92691','92700','92714','92721','92781','92783','92792','92794','92795','92798']
+JOBS=['92690','92691','92700','92714','92721','92781','92783','92792','92794','92795','92798','92812','92825']
 
 
 def sha(path):
@@ -21,8 +21,9 @@ def collect(name):
       'logs/costed-gds-r0[12]-*.log','logs/stream-pack-costed-r0[12]-*.log',
       'checkpoint_route/r01/*','trials/access-r03/llaccel_aux-C/execution.json',
       'trials/access-r03/llaccel_aux-C/stages.tsv','finalized/access-r03/llaccel_aux-C/*',
-      'escape_fixtures/gemm-r01/*/execution.json','escape_fixtures/gemm-r02/*/execution.json',
-      'escape_fixtures/mxu-r01/*/execution.json']
+      'escape_fixtures/gemm-r01/*/*','escape_fixtures/gemm-r02/*/*',
+      'escape_fixtures/mxu-r01/*/*','leaf_eco/boundary-r01/*/*','logs/boundary-eco-r01-*.log',
+      'antenna_audit/r01/*','logs/antenna-audit-r01-*.log']
     records=[]
     for p in sorted(set(p for pattern in patterns for p in ROOT.glob(pattern) if p.is_file())):
         a=p.stat();r={'source':str(p),'bytes':a.st_size}

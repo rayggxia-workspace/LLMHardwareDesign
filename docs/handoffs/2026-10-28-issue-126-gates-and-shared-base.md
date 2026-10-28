@@ -32,3 +32,23 @@ GEMM/MXU已通过的成本ECO和eco_views/r02不重做。ACT父夹具hold失败�
 4. 未有共同M1–M10实际固定预连/冻结、两完整M11/M12功能或公平系统对照，目标保持完整且active；不能用本轮阶段发布替代总验收。
 
 登记management-hub PR5 pending；没有board.json/Projects能力，看板unverified/同步pending；管理员与审查人待指定。Issue保持in_progress，PR129 Draft，PR120未合并，不自合并。
+
+
+## 后续已收齐终态（优先于本页此前运行中）
+
+92700 FAILED5:13:40，但GEMM Aopt子试验native0、3753网/7506端点连通和双PG通过；旧C为DRT无AP失败。92714 FAILED4:19:36，MXU Aopt/C均路由0、2172网/4344端点连通和双PG通过，fresh native为5/2项spacing错误。C两项分别M6 inst:u_macro–act_data[12]及M10 act_data[197]–[213]；Aopt五项均M10。原生错误全部保留；旧夹具来源不是新成本ECO的叶视图，后续须精确匹配新视图。
+
+92781 COMPLETED1:39:40：SYS成本ECO已完成全信号/时钟DRT、PG、RCX、STA、独立native0，466332网/1474481端点所检连通；路由前后cells/pin/PDN/die指纹相同、源未改。实际setup−0.462192/hold−0.125999ns，1113个VIOLATED文字标记（不当完整计数），仍时序/电气失败。先修复/合法化成本尚需从before与cell_repaired.cell_cost表独立统计；route前后单元不变不代表相对原始源没有ECO。新物理/研究时序视图尚未导出，不替换成原旧模型。
+
+92798 FAILED51:13：GEMM严格合并0，原完整deck1460项，全部天线（M2 5/M3 108/M4 437/M5 507/M6 220/M7 66/M8 78/M9 30/M10 9）。MXU严格合并4缺fakeram，部分诊断GDS的deck1578项（含1项METAL1.5及其余天线）；不是完整MXU规则结论。新包装器失败传播已实际生效，不删规则、不以原生0覆盖GDS失败。接下来可独立检查真实LEF天线规则/实际diode单元和工具antenna API，再决定合法修复；不得先假设KLayout计数已消除。
+
+59910b08707f20bb5d685990cfda9b310eee189a冻结驱动92812已对GEMM/MXU Aopt应用同C相同3/1处X2换型（ROOT/leaf_eco/boundary-r01），不重复C；开始增量路由/DRT，待真实终态。保存原层/尺寸/原SDC、恢复填充，成本单列，为公平基线准备。
+
+不可覆盖gate-r02/gate-r03进一步保存父层/SYS/GDS终态；报告矩阵将新SYS成本ECO与旧原窗口版分别保存，旧源失败/运行中不能覆盖已收齐的新终态。发布后继续功能等价、逐层成本、MXU父层M6/M10真实接入修复及未合格共同集成；全部原完整目标仍active。
+
+
+## 最新增量：等成本周边控制与天线只读审计
+
+92812实际COMPLETED：GEMM/MXU Aopt同C相同3/1处X2换型，真实DRT/RCX与fresh native0、全块所检连通通过；setup/hold分别0.772449/0.053582ns、0.249090/0.053253ns，原pin/PG/die及源保持。成本分别+1.596/+0.266μm²标准单元master面积，非block面积收益。尚不是系统对照。
+
+92825只读检查同GEMM源，原生天线0网/0pin而GDS deck1460仍未修复；实际ANTENNA_X1原Liberty存在非零输入capacitance0.023429，单位以源库为准。下一步查规则/连接和diode识别差异，不删除检查或无模型插diode。gate-r04不可覆盖快照保存上述及父层/SYS/GDS终态原文和双SHA。92690仍RUNNING、92691依赖等待，92721仍RUNNING；不重复提交。六块完整资格、共同实际底座/冻结、两个完整M11/M12模式及系统对照均未完成，目标继续active。

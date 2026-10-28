@@ -45,4 +45,35 @@ def check(out):
             assert rows[case]['available_deck_findings']==end.get('available_deck_findings')
             assert not end['full_qualification']
     assert rows['llaccel_aux']['native_DRC_count']==4 and rows['llaccel_aux']['newer_attempt']['three_pin_job'].endswith('FAILED_DRT_1231')
+    system=folder/'checkpoint_route/r01/execution.json.gz'
+    if system.exists() and read(system).get('completed_utc'):
+        q=read(system);assert not q['full_qualification'] and q['native_returncode']==0 and q['fresh_DRC_count']==0
+        assert q['source_unchanged'] and all(q['geometry_invariants'].values()) and q['whole_signal_geometry']['pass']
+        assert rows['opentpu_aux']['completed_source']=='costed_ECO/isolated-route-r01'
+        for kind in ['setup','hold']:
+            t=gzip.decompress((system.parent/(kind+'.txt.gz')).read_bytes()).decode()
+            value=float(re.search(r'worst slack (?:min|max)\s+([-\d.]+)',t)[1]);assert rows['opentpu_aux'][kind+'_ns']==value<0
+        assert rows['opentpu_aux']['violation_marker_rows']==gzip.decompress((system.parent/'checks.txt.gz').read_bytes()).decode().count('(VIOLATED)')
+    parents={r['version']:r for r in j.get('selected_parent_fixture_terminal_receipts',[])}
+    for case,plan,errors,nets in [('gemm','Aopt',0,3753),('mxu','Aopt',5,2172),('mxu','C',2,2172)]:
+        relative='escape_fixtures/'+('gemm-r01' if case=='gemm' else 'mxu-r01')+'/'+case+'-'+plan
+        if relative not in parents:continue
+        r=parents[relative];assert r['native_DRC']==errors and r['signal_geometry'] is True and r['both_PG_native_log_connected'] is True
+        assert r['signal_nets_checked']==nets and r['parent_M10_accesses']==256
+        drc=folder/relative/'independent.drc.gz';text=gzip.decompress(drc.read_bytes()).decode()
+        assert len(re.findall(r'^violation type:',text,re.M))==errors
+    for r in j.get('optimized_boundary_same_ECO_controls',[]):
+        p=out/r['evidence'];q=read(p)
+        assert r['native_DRC']==q['fresh_DRC_count']==0 and r['whole_signal_geometry'] is True
+        assert all(r['geometry_invariants'].values()) and r['source_unchanged'] and not r['full_qualification']
+        assert len(r['targeted_master_changes'])=={'gemm':3,'mxu':1}[r['case']]
+        for kind in ['setup','hold']:
+            t=gzip.decompress((p.parent/(kind+'.txt.gz')).read_bytes()).decode()
+            assert r[kind+'_ns']==float(re.search(r'worst slack (?:min|max)\s+([-\d.]+)',t)[1])>0
+    audit=j.get('antenna_checker_disagreement')
+    if audit:
+        q=read(out/audit['evidence']);assert q['native_returncode']==0 and q['source_unchanged'] and 'ANTENNA_X1' in q['actual_diode_liberty_cells']
+        text=gzip.decompress(((out/audit['evidence']).parent/'native.log.gz').read_bytes()).decode()
+        assert 'Found 0 net violations' in text and 'Found 0 pin violations' in text
+        assert audit['GDS_deck_findings_not_repaired']==rows['gemm']['available_deck_findings']==1460
     print('PASS_GATE_MATRIX_NATIVE_EVIDENCE',len(rows),'blocks;',native_files,'raw files; duplicate-LEF failure and real strict-merge outcomes preserved; NOT full qualification')
