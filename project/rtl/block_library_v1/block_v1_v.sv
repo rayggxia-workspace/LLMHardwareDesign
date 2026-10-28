@@ -142,7 +142,7 @@ module block_v1_v(
     6:total[l]=$signed(a[l])>=$signed(point_b[l])?-128'sd1:128'sd0;
     7:total[l]=$signed({{96{a[l][31]}},a[l]})<<<point_shift;
     8:total[l]=$signed({{96{a[l][31]}},a[l]});
-    9:total[l]=a[l]<0?$signed(point_b[l]):$signed({{96{scalar_c[31]}},scalar_c},1'b0);
+    9:total[l]=a[l]<0?$signed(point_b[l]):$signed({{96{scalar_c[31]}},scalar_c});
     default:total[l]=0;
    endcase
   end
