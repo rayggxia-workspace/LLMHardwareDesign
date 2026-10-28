@@ -52,7 +52,16 @@ def measure(root,out,cpus,run,kind,variant):
     assert cpus==16 and kind in ('v','r') and variant in ('revised','extended')
     top,rtls,numeric=sources(root,kind)
     tools=root/'project/experiments/block_v1'
-    original=tools/'bench_vector_recurrent.cpp'
+    prior=out.parents[2]/('block-v1-20261029-'+('268'if variant=='revised'else'269'))/'tasks'/('revision300-bench-'+kind+'-'+variant)
+    receipt=json.loads((prior/'receipt.json').read_text());assert receipt['passed']
+    report=prior/'revision300-vr-benchmark.json'
+    assert file_sha(report)==receipt['outputs'][report.name]
+    reference=json.loads(report.read_text())
+    # The extended-only additions landed after the common benchmark. Use its
+    # exact execution-time benchmark instead of treating current bytes as old.
+    original=prior.parents[1]/'src/project/experiments/block_v1/bench_vector_recurrent.cpp'
+    assert reference['bench_sha256']==file_sha(original)
+    assert reference['numeric_reference_sha256']==file_sha(numeric)
     code=original.read_text()
     assert code.count('std::map<std::string,uint64_t> reasons;')==1
     code=code.replace('std::map<std::string,uint64_t> reasons;',
@@ -75,13 +84,6 @@ def measure(root,out,cpus,run,kind,variant):
     run([COMPILER,'--cc','--exe','--build','-j','16','-Wno-fatal','--public-flat-rw',
          '--x-initial','unique','--x-assign','unique','--top-module',top,
          '-I'+str(rtls[0].parent),'-Mdir',out/'obj','-CFLAGS',flags]+rtls+[bench],'build.log')
-    prior=out.parents[2]/('block-v1-20261029-'+('268'if variant=='revised'else'269'))/'tasks'/('revision300-bench-'+kind+'-'+variant)
-    receipt=json.loads((prior/'receipt.json').read_text());assert receipt['passed']
-    report=prior/'revision300-vr-benchmark.json'
-    assert file_sha(report)==receipt['outputs'][report.name]
-    reference=json.loads(report.read_text())
-    assert reference['bench_sha256']==file_sha(original)
-    assert reference['numeric_reference_sha256']==file_sha(numeric)
     for path,digest in reference['rtl_sha256'].items():
         current=root/'project'/path.split('/src/project/',1)[1]
         assert file_sha(current)==digest
