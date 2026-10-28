@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('revision300-delivery-'):
+    if MODE.startswith('revision300-escape-'):
+        from revision300_escape import implement
+        implement(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE.startswith('revision300-delivery-'):
         from revision300_delivery import deliver
         deliver(ROOT,OUT,CPUS,run,MODE[-1])
     elif MODE.startswith('revision300-geometry-'):
