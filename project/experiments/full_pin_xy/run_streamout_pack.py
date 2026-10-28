@@ -15,3 +15,4 @@ def one(case):
 with ThreadPoolExecutor(max_workers=len(cases)) as pool:results=list(pool.map(one,cases))
 out=ROOT/'streamout'/revision
 with (out/'pack.json').open('x') as f:json.dump({'scheduler_job':os.environ['SLURM_JOB_ID'],'allocated_cpus':os.environ['SLURM_CPUS_PER_TASK'],'per_KLayout_DRC_threads':4,'results':results},f,indent=2)
+sys.exit(0 if all(r['driver_returncode']==0 for r in results) else 1)
