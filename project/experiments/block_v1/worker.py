@@ -119,6 +119,11 @@ try:
     elif MODE=='revision300-m-guard-control':
         from revision300_guard_control import control
         control(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('revision300-bench-v-') or MODE.startswith('revision300-bench-r-'):
+        from revision300_vr_benchmark import measure,compare
+        fields=MODE.split('-')
+        if fields[-1]=='compare':compare(ROOT,OUT,CPUS,run,fields[-2])
+        else:measure(ROOT,OUT,CPUS,run,fields[-2],fields[-1])
     elif MODE.startswith('revision300-bench-m-'):
         from revision300_benchmark import matrix
         matrix(ROOT,OUT,CPUS,run,MODE.rsplit('-',1)[-1])
