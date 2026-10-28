@@ -1,3 +1,9 @@
+2026-10-29 06:12 CST：S280新版最终接收完成：原生六阶段及四门、完整未修改GDS deck0、最终六文件、完整原生几何均通过，1610²µm/273个2µm M10接点，setup/hold+0.687419/+0.012282ns；最终三初态各98424检查，严格LEC262545/262532全匹配diff0/UNSAT。交付55a93ad7…、几何78e58311…；s-final-0610实际22:12:02UTC捕获37文件/24输出绑定及全部源Git blobs核验，真实GDS图SHA核验并已查看。正式delivery-300mhz/S提供最终Verilog/SDC/DEF/ODB/GDS/SPEF服务器位置/大小/SHA、真实pin/完整几何，一页对照补S真实面积，新增4来源SHA。M/S/T原生已齐，V/R未齐；不能提前标五宏完成。
+
+仅在S真实geometry PASSED后提交292/93044（22:11:56UTC），当前S全部273端口P2开始接续，R分支等281本宏真实geometry，不等V。295/296无allocation；296已暂存并validate为V专用六任务（P2 128GiB、三输出C各64GiB、两πRC各64GiB forecast/1.2+16GiB guard），源734997a/archive d1fdd46c…全部297 Git blobs和295前置实际绑定核验。296不继承281或退役285/288。当前本任务含两旧仍6 allocations；R236 GRT、V291新布局、旧V281 DRC/strictformal继续。
+
+恢复注意：292若S完成而R前置未ready会自然park释放节点；advance_ready不会重新提交已有allocation。待真实R前置通过，核验旧job终态和未领取项，再新建allocation目录复用原不可变queue/source/state恢复（参考resume251.py），仅做未领取项、不重跑S。281同理，保留旧V FAILED，R子receipt独立判定。目标active，Issue121=in_progress/PR122=draft，登记pending/看板unverified同步pending，独立审查人/管理员待指定。
+
 2026-10-29 06:01 CST：finish-progress-060133真实逐进程/全线程采样确认R236 GRT、V291布局、S280完整DRC、旧V281 DRC/strictformal持续计算，全部线程在各16CPU掩码；旧V功能通过后formal实际补位。S DRC进入天线规则，未结束不得提前接收。下一步仍按真实最终回执启动292/295；准备296仅用于新V295完整geometry后的P2/输出C/全部端口πRC，不能复用拒收281。接口源296为计划选择，不授予验收或占节点。目标active，五宏整体未齐。
 
 2026-10-29 05:58 CST：295新V七任务接收/交付/几何DAG已远程暂存并validate，源d6b3979cb52418fdc8f3ccb5048b38b95b50cff0/archive8b6b9998ca0568918c45e10af7684cf2a913d6c50730adb67bc3c15f7d530b9d；无allocation，等待291真实native成功，随后物理/DRC/最终功能独立并行、strictformal依功能即补位、交付/几何依四门。292 S/R接口同样仅暂存，两个队列advance_ready只在真实前置pass后提交。native-progress-0559实际21:58:03UTC捕获17原始文件，295全部297源Git blobs/旧281功能报告绑定核验。291实际已完成新structural及do-1_synth、进入floorplan，候选1240²µm，实际GLOBAL_ROUTE_ARGS100轮/PRE_GLOBAL_ROUTE hook/HOLD0.020/原生M1–M10变量读回；GRT marker尚需实际阶段验证，全部物理继承为空。281旧V最终网表三个初态功能已过、formal补位运行，但物理拒收仍有效，不能转移给修订291。S280完整DRC、R236 GRT及其他成员不动。当前本任务6个allocation含两旧，五宏仍未齐，目标active/Issue121=in_progress/PR122=draft；登记pending，看板unverified/同步pending。
