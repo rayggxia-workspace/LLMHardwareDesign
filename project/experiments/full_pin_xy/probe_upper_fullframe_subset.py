@@ -24,7 +24,11 @@ def run(revision):
     # The original source process may still advance its receipt. The placed
     # native checkpoint was closed before that global-route stage started.
     (out/'observed_full770_execution.json').write_bytes(observed)
-    paths=[odb,planfile,rc,source/'route.tcl'];inputs={str(p):sha(p) for p in paths}
+    paths=[odb,planfile,rc,source/'route.tcl']
+    failed=source/'failed_global.odb'
+    if failed.exists() and q.get('completed_utc'):
+        assert sha(failed)==q['files'][failed.name]['sha256'];paths.append(failed)
+    inputs={str(p):sha(p) for p in paths}
     selected=plan['physical_edges'][:2];assert [e['edge_id'] for e in selected]==[0,1]
     expected={p['helper_pin']:p for e in selected for p in e['endpoints']};assert len(expected)==4
     rec={'scope':'TWO_EDGE_FULL_FRAME_REAL_OBS_TOOL_DIAGNOSIS_NOT_FULL770_BLOCK_OR_SYSTEM',
@@ -37,6 +41,13 @@ def run(revision):
     (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
     try:
+        if str(failed) in inputs:
+            # First inspect the completed failed checkpoint for recoverable real
+            # guide objects. Do not blindly repeat its expensive global route.
+            audit=out/'failed_checkpoint_guide_audit.tcl'
+            audit.write_text('read_db '+tcl(failed)+'\nset b [ord::get_db_block];set f [open '+tcl(out/'failed_checkpoint_guides.tsv')+' w]\nputs $f "net\\tDB_guide_count_or_minus1_unsupported\\thas_native_wire"\nforeach n [$b getNets] {set count -1;if {![catch {$n getGuides} gs]} {set count [llength $gs]};puts $f [join [list [$n getName] $count [expr {[$n getWire] ne "NULL"}]] "\\t"]};close $f\nset f [open '+tcl(out/'guide_native_capabilities.txt')+' w];puts $f [info commands odb::dbGuide_*];catch {puts $f [list HAVE_ROUTES [grt::have_routes]]};close $f\nif {[catch {write_guides '+tcl(out/'recovered_from_failed.guide')+'} message]} {set f [open '+tcl(out/'guide_recovery.error.txt')+' w];puts $f $message;close $f}\n')
+            rec['native_returncodes']['failed_checkpoint_guide_inventory']=execute(common,audit,out/'guide_inventory.log',threads=1)
+            (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
         helper=(DRIVER/'physical_trial.tcl').read_text().split('if {![stage load {',1)[0]
         lines=[helper,'read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib',
           'read_db '+tcl(odb),'source '+tcl(rc),'set b [ord::get_db_block];if {[llength [$b getInsts]]} {error "Unexpected FEOL instances"}',

@@ -1,5 +1,7 @@
 # Issue126：658真实diode终态、全网增量接线证据及770边适配
 
+2026-10-29新终态：GEMM658diode源的92976严格GDS合并和未修改原FreePDK45可用deck均return0，实际RDB报项0，源receipt/DEF保持；不是完整制造覆盖、RTL形式、父层或系统签核。旧1460/37/37来源分别保留，native0/RC/原SDC/3753-pin视图证据仍独立。另一项同时明确FAILED：92974两模式各770边均GRT-0116拥塞失败，未执行DRT/fresh/全边连通/实际landing验证，绝不写成完成。gate-r20含新GDS原生零项RDB及两模式原congestion.rpt（估计网格，不当金属DRC），原文和大产物SHA均保留。下一步同frame/全部PG与OBS受控工具诊断并继续其他块与共同底座完整目标。
+
 **2026-10-29更正优先：92974已FAILED41m59s。** R19原文实际已包含终态，先前renderer只显示前置prepare、遗漏终态摘要，导致“运行中”过时；本次按原文更正，失败未删除。openTPU/llaccel两个770边子试验均GRT-0116拥塞失败，分别UTC19:56:29/19:43:47终态，未进入DRT；fresh DRC、完整边连通与M10 landing包含核验未执行。source同一真实但未合格下层8bfddd007d2cc07df5d0f74ebee91799e592185ed7d1e1a0a11a32690ed53cc5保持。原始congestion.rpt有2.85μm估计网格、capacity1/usage2或capacity2/usage3等水平过载，原报告未标具体层；不能当真实金属DRC或原架构不可行证明。下一步读取全量拥塞数据并作同frame/PG/OBS的受控工具诊断，不重提相同试验、不改规则制造通过。
 
 2026-10-29 Asia/Shanghai新增实际视图终态：92997/driver206052c721a7c910a7767a94cbd914d482e96bc3在ROOT/diode_views/r01/gemm-C完成clean ODB/LEF/OBS/DEF/真实网表和提取时序模型导出，全部3753 signal pin及PG/尺寸/原层匹配、SPEF余量重放一致、模型独立重读通过。minimum_period=false，完整规则/新父层/RTL/共同冻结/系统资格仍未闭合。gate-r19由93003/drivereff6bfa6c31bf29d196061b4a116b2564fd8aae3不可覆盖收集。此前发布206052c两CI40758759432/40758759459均success，31幅图已打开及在线PNG/SVG blob读回一致。新658diode负载/两追加换型不能与旧3换型Aopt直接做纯XY收益；旧对照来源另列。严格GDS92976、全770边适配92974及SYS92968等继续，当前任务仍active/in_progress/Draft。
