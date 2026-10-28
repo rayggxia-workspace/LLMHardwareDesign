@@ -212,6 +212,10 @@ def check(out):
     if j.get('SYSTEM_output_chain_resume'):
         q=j['SYSTEM_output_chain_resume'];r=q['receipt'];assert not q['full_qualification'] and not r['selection_or_moves_recomputed']
         assert r['native_returncodes']['legalization']==0 and r['isolated_geometry_contracts_pass']
+        if r.get('completed_utc'):
+            assert r['native_returncodes']['route']==1 and r['route_stage_status']['preserve_contracts']=='FAIL'
+            assert 'fresh_DRC_count' not in r and 'setup_ns' not in r
+            assert 'Empty command name' in gzip.decompress((out/q['evidence']).parent.joinpath('preserve_contracts.error.txt.gz').read_bytes()).decode()
         meta=read(latest);indexed={x['source']:x for x in meta['records']}
         base='/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/'
         for kind in ['connections','nonselected']:

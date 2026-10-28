@@ -6,6 +6,8 @@
 
 直接查看：[中文交互 HTML](issue-126-full-pin/report.html)。
 
+最新gate-r14：GEMM真实636 diode后两换型已native0/所检连通/RCX，setup/hold 0.770752/0.039624ns、文字违例0；第一diode版严格GDS仍37项天线失败，新版本原deck运行。SYSTEM92925路由后空句柄导出失败，最终fresh/RC/STA未执行。原失败和物理版本分别保留，共同冻结及两完整系统未完成，详见最新交接及矩阵。
+
 新里程碑：真实256条M10导体原生FIXED属性已独立核对，新PNG/SVG/逐导体CSV随报告；GEMM真实636 diode布线完成但cap2失败，全量数字图保持。仍无合格共同冻结或两完整M11/M12功能，详见[最新交接](../handoffs/2026-10-29-issue-126-fixed-conductors-and-diode.md)。
 
 最新状态以HTML的六块物理门槛矩阵和[2026-10-29交接](../handoffs/2026-10-29-issue-126-physical-continuation.md)为准：已增加SYSTEM全量有向缓冲合同、GEMM天线1460多边形/636网的实际关联及MXU真实M6局部PNG/SVG；实际diode修复和完整资格尚未完成。旧运行中记录保留为历史。

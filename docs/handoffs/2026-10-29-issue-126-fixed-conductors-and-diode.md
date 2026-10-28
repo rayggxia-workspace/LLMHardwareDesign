@@ -1,5 +1,18 @@
 # Issue126：实际256条固定导体、真实diode及新电气失败
 
+## 2026-10-29 增量终态（gate-r14，优先于下方历史）
+
+恢复核验PR129仍open/draft，在线head ddf59eee8b004bd871b68942cb3fecaa96f8a10c；本人账号huangpingyang04-lgtm/id239819021。共同资源选择不再询问，整个目标继续active。
+
+- GEMM92940完成：ROOT/diode_cap_eco/r01/gemm-C，driver98342d02aa1c008f9aa8a2757e7d346bd855db79。INV_X1→X2及XNOR2_X1→X2原Liberty逻辑/状态严格相同；全部原端点/网络/端口、636真实diode及pin/PG/外框保持。fresh native0、268637网所检连通、双PG及真实RCX/STA完成，setup/hold 0.770752/0.039624ns，文字VIOLATED=0。单列2换型、1移动、master面积+1.330μm²，非block面积/纯XY收益、RTL形式或完整规则通过。
+- 第一diode版严格GDS92912已FAILED：ROOT/antenna_diode_stream/r01/gemm-C，merge和不修改的原deck命令均0，但实际37项天线（M3:2、M4:6、M5:13、M6:9、M7:1、M8:5、M10:1）。原1460及新37分别保留。换型后严格GDS92943在antenna_diode_stream/cap-r01/gemm-C、driver4949a34c8b5dca34345d9655a2411c32e10dd0af仍RUNNING，不能混用两个物理版本。下一步按匹配SHA的多边形定位剩余网，先查现有636个diode是否覆盖，不盲目重复插入。
+- SYSTEM92925终态FAILED，ROOT/output_chain_resume/r01/opentpu_aux-C。GRT/DRT命令已执行，但preserve_contracts导出坐标遇到空句柄：resume_output_chain.py选中字典值为{}，后续$i getLocation失败。最终routed ODB未保存，fresh DRC/RC/STA未执行，空route.drc不是通过。原合法化检查点及合同保留；修复按名字查找真实实例后在新目录复用，不重选或重复移动buffer。
+- gate_milestones/gate-r14由92963/driver2919390bb231d2d4ad62b901ee9c7cc0d390325e不可覆盖收集，raw/gzip双SHA。大体积原生物理文件仍留授权ROOT；原30图及24767 pin/74301行A/B/C不重做。
+
+本阶段上传/在线读回后，执行已编写run_full_upper_adapter.py/full_upper_adapter_job.sh的770-edge双模式适配试验（尚未提交，实际作业以回执为准）。只读取同一个真实但私有下层未完成的fixed_prewires_NOT_FROZEN.odb，明确adapter-only/unqualified；不是两完整系统/合格冻结。原pin M5/M6不变，新父层M10 hook与via10 landing独立核查。其他活动92690/92691/92841/92892/92855/92943继续，不按耗时取消。
+
+VECTOR/SYSTEM时序、LL窗口终态、缺真实SRAM GDS、原规则/模型覆盖、历史父层目标层、RTL功能/共同冻结/完整对照均未闭合。Issue/PR保持in_progress/Draft；登记pending、看板unverified/同步pending、审查人待指定。发布head/CI以PR读回为准，不以本地成功替代在线结果。
+
 更新时间：2026-10-29 Asia/Shanghai。仓库rayggxia-workspace/LLMHardwareDesign；[Issue126](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/126) / [Draft PR129](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/129)；负责人huangpingyang04-lgtm；分支task/126-full-block-pin-xy。本轮恢复head f2172cfff803c403d2834ca687d465996b6d733c已核实，两CI40733453132/40733452924均success；当前发布head以PR读回为准。上一轮为实际progress，本轮不重复启动原有作业。
 
 ## 新的实际里程碑
