@@ -1,3 +1,5 @@
+新增内部占用复现：worker.py 模式 revision300-occupancy-{v,r}-{revised,extended}，16CPU；使用268/269执行时封存bench并核对SHA，--public-flat-rw只读内部phase/valid，公共数值/周期/流量必须完整相同。原始RTL与bench不改。有限预连资源诊断模式 revision300-preconnect-{m,t}，不创建固定线路、不授予P3资格。270 V续跑20%/100次迭代以实际GLOBAL_ROUTE_ARGS和工具日志验证。证据见work/YUZE-LU/121/review-20261028/native-progress-0255/README.md。
+
 # 架构与运行
 
 2026-10-29修订主线：[五宏实现合同](BLOCK_V1_REVIEW_CONTRACT.md)、[300MHz验收计划](plans/block-v1-review-300mhz.md)及[新版交付入口](../work/YUZE-LU/121/delivery-300mhz/README.md)。M/T原生最终六阶段、同源四门、完整几何及全端口P2通过，六点输出负载STA通过；S物理/最终功能/严格LEC通过，完整DRC继续；V267同CTS18%容量预留接续GRT，R236原生P&R运行。整体未完成。所有EDA与Verilator仍通过worker.sh/worker.py在Slurm内执行，不在登录节点运行。
