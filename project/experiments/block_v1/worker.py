@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('revision300-preconnect-trial-'):
+    if MODE.startswith('revision300-model-m-bench-'):
+        from revision300_model_m_bench import measure
+        measure(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]))
+    elif MODE.startswith('revision300-preconnect-trial-'):
         from revision300_preconnect_trial import trial
         trial(ROOT,OUT,CPUS,run,MODE[-1])
     elif MODE=='revision300-route-s' and (ROOT/'project/experiments/block_v1/revision300-s-patch-resume.json').exists():
