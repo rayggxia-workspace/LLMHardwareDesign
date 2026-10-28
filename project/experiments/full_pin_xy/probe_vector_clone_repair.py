@@ -43,7 +43,7 @@ def run(revision):
       'new_clone_full_digital_relation':'NOT_EXECUTED','final_legalization_route_RC_STA':'NOT_EXECUTED','full_qualification':False,
       'native_returncodes':{},'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID'],
       'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()}
-    if revision=='r02':rec['new_single_context_change']='Initialize original native guide/GRT incremental context before the same placement heuristic and setup sequence. Hypothesis follows rebased crash stack in GlobalRouter::estimatePathResistance / SizeUpMatchGenerator; not a root-cause proof.'
+    if revision=='r02':rec['new_single_context_change']='Initialize original native guide/GRT incremental context before the same placement heuristic and setup sequence. Candidate address mapping suggested GlobalRouter/SizeUp calls but entrypoint alignment remains unresolved; this is a controlled context capability trial, not a diagnosed root-cause fix.'
     def save():(out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     save()
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp',

@@ -353,7 +353,7 @@ def check(out):
             assert q['all_closed_sources_unchanged'] and q['container_libraries_unchanged'] and q['all_original_pins_and_size_in_actual_new_LEF_identical']
             assert q['setup_ns']==rows['mxu']['setup_ns']==.246690 and q['hold_ns']==rows['mxu']['hold_ns']==.038538
             assert q['literal_VIOLATED_markers_not_complete_failure_count']==0 and rows['mxu']['completed_source']=='M6_escape_route/r02'
-            assert rows['mxu']['current_source_research_model']=='NOT_EXPORTED' and rows['mxu']['strict_GDS_merge_errors'] is None
+            assert rows['mxu']['current_source_research_model'] in ['NOT_EXPORTED','SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING'] and rows['mxu']['strict_GDS_merge_errors'] is None
             assert rows['mxu']['historical_source_before_M6_escape']['strict_GDS_merge_errors']==4
             for k in ['cells','connections','pins','pdn','die']:assert q['files']['before.'+k+'.tsv']['sha256']==q['files']['after.'+k+'.tsv']['sha256']
     if j.get('GEMM_actual658_parent_r01_preparation_failure'):
@@ -371,6 +371,19 @@ def check(out):
         assert q['all_closed_sources_unchanged'] and q['final_legalization_route_RC_STA']=='NOT_EXECUTED' and q['new_clone_full_digital_relation']=='NOT_EXECUTED'
         assert 'gate_repaired_NOT_LEGALIZED_OR_ROUTED.odb' not in q['files'] and 'after.pins.tsv' not in q['files']
         assert 'Signal 11 received' in gzip.decompress((out/q['evidence']).parent.joinpath('native.log.gz').read_bytes()).decode()
+    if j.get('MXU_actual_M6_escape_physical_RC_views',{}).get('completed_utc'):
+        q=j['MXU_actual_M6_escape_physical_RC_views'];source=j['MXU_actual_M6_escape_r02_attempt']
+        assert q['native_export_returncode']==q['fresh_model_read_returncode']==0 and q['matching_all_signal_model_pins']==2172
+        assert q['all_original_signal_and_PG_pins_and_size_exactly_preserved'] and q['all_sources_and_pre_RCX_geometry_unchanged'] and q['SPEF_replay_matches_source']
+        assert not q['minimum_period_present'] and not q['full_qualification']
+        assert q['source_geometry_sha256']==source['files']['routed.odb']['sha256'] and q['source_SPEF_sha256']==source['files']['extracted.spef']['sha256']
+        assert q['source_receipt_SHA256']==hashlib.sha256(gzip.decompress((out/source['evidence']).read_bytes())).hexdigest()
+        r=j['MXU_actual_M6_escape_context'];assert not r['full_qualification'] and r['new_parent_validation']=='NOT_EXECUTED'
+        assert abs(r['before_OBS_intersection_pin_union_area_um2']-.0098)<1e-9 and abs(r['after_OBS_intersection_pin_union_area_um2']-.0098)<1e-9
+    if j.get('SYSTEM_native_clean_patches_r02_attempt',{}).get('completed_utc'):
+        q=j['SYSTEM_native_clean_patches_r02_attempt'];assert q['fresh_DRC_count']==rows['opentpu_aux']['native_DRC_count']==2 and q['whole_signal_geometry']['pass']
+        assert q['setup_ns']==rows['opentpu_aux']['setup_ns']==-.056396 and q['hold_ns']==rows['opentpu_aux']['hold_ns']==-.119919
+        assert q['all_closed_sources_unchanged'] and all(q['all_cells_poses_original_connections_pins_PG_die_unchanged'].values())
     if j.get('SYSTEM_existing_buffer_relocation_r02',{}).get('completed_utc'):
         q=j['SYSTEM_existing_buffer_relocation_r02'];assert not q['full_qualification'] and q['native_returncodes']['route']==0
         source_row=rows['opentpu_aux'].get('historical_source_before_clean_patches',rows['opentpu_aux'])

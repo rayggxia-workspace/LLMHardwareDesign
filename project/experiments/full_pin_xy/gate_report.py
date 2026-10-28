@@ -432,14 +432,6 @@ def render(root,out):
         q=read(p);result['SYSTEM_native_clean_patches_r02_attempt']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
         state=('终态：native '+str(q.get('native_returncodes'))+'，fresh DRC '+str(q.get('fresh_DRC_count','未取得'))+'，setup/hold '+str(q.get('setup_ns','未取得'))+'/'+str(q.get('hold_ns','未取得'))+'ns') if q.get('completed_utc') else '实际运行中，最终fresh/RC/STA尚未取得'
         upper_text+='<p><strong>93038 SYSTEM native clean_patches/r02：</strong>'+state+'。在原容器内核验同一Lib，保留93031前置失败；不改pin/单元/PG/原OBS/原SDC与层集合。该新试验不是改检查或时序闭合，当前矩阵已完成源与新尝试分别记录。</p>'
-        if q.get('completed_utc') and q.get('fresh_DRC_count')==0 and q.get('whole_signal_geometry',{}).get('pass') and all(q.get('all_cells_poses_original_connections_pins_PG_die_unchanged',{}).values()):
-            r=next(r for r in rows if r['case']=='opentpu_aux');r['historical_source_before_clean_patches']=json.loads(json.dumps(r))
-            r.update({'completed_source':'native_clean_patches/r02','actual_internal_route':'COMPLETED_ROUTE_PATCH_VARIANT_STA_CHECK_SEPARATE',
-              'native_DRC_count':0,'all_multiterminal_signal_clock_geometry':True,'setup_ns':q.get('setup_ns'),'hold_ns':q.get('hold_ns'),
-              'violation_marker_rows':q.get('literal_VIOLATED_markers_not_complete_failure_count'),
-              'complete_rules':'CURRENT_CLEAN_PATCHES_GDS_NOT_EXECUTED_MISSING_REAL_SRAM_AND_COVERAGE_GAPS',
-              'parent_access':'CURRENT_CLEAN_PATCHES_SOURCE_NOT_VALIDATED_IN_PARENT','current_source_research_model':'NOT_EXPORTED',
-              'common_base_source_selection':'ORIGINAL_R02_NOT_UPGRADED_TO_THIS_SOURCE'})
     failed=snapshot/'logs/mxu-escape-r01-93040.log.gz'
     if failed.exists():
         result['MXU_escape_r01_preparation_failure']={'state':'FAILED_BEFORE_NATIVE_ROUTING','job_id':'93040','evidence':(dest/failed.relative_to(snapshot)).relative_to(out).as_posix(),'full_qualification':False}
@@ -478,6 +470,19 @@ def render(root,out):
     if p.exists():
         q=read(p);result['VECTOR_exact_native_crash_symbolization_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
         upper_text+='<p>93051是只读崩溃/API诊断，不附加、发信号或改变活动进程。原始addr2line结果与setup调用背景不一致，尚不能当根因；需要核对ELF加载基址与栈地址表示，完整原文/SHA保留，不把诊断程序return0当修复通过。</p>'
+    p=snapshot/'pin_escape_views/r01/mxu-C/execution.json.gz'
+    if p.exists():
+        q=read(p);result['MXU_actual_M6_escape_physical_RC_views']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('completed_utc') and q.get('native_export_returncode')==q.get('fresh_model_read_returncode')==0:
+            r=next(r for r in rows if r['case']=='mxu');r['current_source_research_model']='SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING'
+            from plot_mxu_escape_context import plot
+            result['MXU_actual_M6_escape_context']=plot(snapshot,out)
+            upper_text+='<p><strong>93060 MXU新真实视图已导出：</strong>clean ODB/LEF/OBS/DEF/实际网表与非零提取Lib绑定新04e59990…源，2172信号pin/原PG/尺寸/层保持，SPEF setup/hold重放一致，模型独立重读通过；minimum_period仍缺失。M6 OBS仍延伸出原pin，两次pin–OBS几何交面积约0.0098μm²，不把叶native0当新父层可达。既有via5/M6接点来自真实网络，可作为后续XY研究区域，尚未迁移该pin。<a href="data/mxu_actual_M6_escape_context.json">实际OBS/接点与来源</a> · <a href="data/mxu_actual_escape_net_rectangles.csv">实际完整目标网矩形CSV</a>。</p><img loading="lazy" src="assets/mxu_actual_M6_escape_context.png"><p><a href="assets/mxu_actual_M6_escape_context.svg">M6实际重接与OBS SVG</a>。局部图同尺度；灰为实际占用OBS，红框仅属旧父层，新父层未执行；全网路径用实际原生矩形，没有虚构接入线。</p>'
+    p=snapshot/'vector_clone_crash/r02/execution.json.gz'
+    if p.exists():
+        q=read(p);result['VECTOR_native_ELF_address_diagnosis_r02']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('completed_utc'):
+            upper_text+='<p><strong>93061 ELF地址诊断已完成，但根因未闭合：</strong>实际ELF最小LOAD基址0x200000，entry0x227f200；栈地址加该基址的末帧仍比entry早4054字节，未对齐_start，候选符号不能当准确故障定位。原/平移地址与完整输出分别保存；后续原guide/GRT上下文初始化只是独立能力试验，不称已找到或修复CloneMove根因。</p>'
     diagnosis=root/'vector_table_diagnosis_r03'
     if (diagnosis/'summary.json').exists():
         folder=data/'vector_Liberty_table_diagnosis';shutil.copytree(diagnosis,folder,dirs_exist_ok=True)
@@ -553,6 +558,16 @@ def render(root,out):
     if diode_figure:
         result['actual_22_diode_access_figure']=diode_figure
         incremental_text+='<figure><img src="assets/gemm_real_diode_access.png" loading="lazy" alt="原GDS37个真实bbox与22个实际新增diode位置，非新版本天线通过"><figcaption><a href="assets/gemm_real_diode_access.svg">真实diode接入SVG</a> · <a href="data/gemm_real_diode_access.json">实际来源及局部receiver</a>。总览符号为定位标记，局部为真实LEF placement bbox；非pin/via/GDS轮廓。</figcaption></figure>'
+    # Promote sources after all chronological predecessor updates.
+    q=result.get('SYSTEM_native_clean_patches_r02_attempt',{})
+    if q.get('completed_utc') and q.get('native_returncodes',{}).get('fresh_DRC')==0 and q.get('whole_signal_geometry',{}).get('pass') and all(q.get('all_cells_poses_original_connections_pins_PG_die_unchanged',{}).values()):
+        r=next(r for r in rows if r['case']=='opentpu_aux');r['historical_source_before_clean_patches']=json.loads(json.dumps(r))
+        r.update({'completed_source':'native_clean_patches/r02','actual_internal_route':'COMPLETED_ROUTE_PATCH_VARIANT_NATIVE_AND_STA_FAILED',
+          'native_DRC_count':q.get('fresh_DRC_count'),'all_multiterminal_signal_clock_geometry':True,'setup_ns':q.get('setup_ns'),'hold_ns':q.get('hold_ns'),
+          'violation_marker_rows':q.get('literal_VIOLATED_markers_not_complete_failure_count'),
+          'complete_rules':'CURRENT_CLEAN_PATCHES_GDS_NOT_EXECUTED_MISSING_REAL_SRAM_AND_COVERAGE_GAPS',
+          'parent_access':'CURRENT_CLEAN_PATCHES_SOURCE_NOT_VALIDATED_IN_PARENT','current_source_research_model':'NOT_EXPORTED',
+          'common_base_source_selection':'ORIGINAL_R02_NOT_UPGRADED_TO_THIS_SOURCE'})
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',
@@ -577,6 +592,7 @@ def render(root,out):
       'M6_escape_route/r02':'M6实际引出重接/r02','COMPLETED_M6_ACCESS_REROUTE_ORIGINAL_PIN_XY_UNCHANGED':'实际重接/原pin不变',
       'CURRENT_M6_ESCAPE_GDS_NOT_EXECUTED_MISSING_REAL_SRAM_AND_COVERAGE_GAPS':'新源GDS未验/缺SRAM及覆盖缺口',
       'native_clean_patches/r02':'native路由patch/r02','COMPLETED_ROUTE_PATCH_VARIANT_STA_CHECK_SEPARATE':'实际patch重接/STA另验',
+      'COMPLETED_ROUTE_PATCH_VARIANT_NATIVE_AND_STA_FAILED':'已重接/native及STA失败',
       'CURRENT_CLEAN_PATCHES_GDS_NOT_EXECUTED_MISSING_REAL_SRAM_AND_COVERAGE_GAPS':'新源GDS未验/缺SRAM及覆盖缺口',
       'RUNNING_OR_RECEIPT_NOT_TERMINAL':'运行中/未收齐终态'}
     def show(value):
