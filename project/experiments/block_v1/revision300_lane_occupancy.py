@@ -1,0 +1,107 @@
+"""Sample real RTL phase/valid registers during the existing public schedules.
+
+The original benchmark/reference and RTL stay unchanged. Instrumented builds
+must reproduce every public result before their extra counters are accepted.
+"""
+import copy
+import json
+from pathlib import Path
+
+
+MONITOR=r'''
+#ifdef BENCH_RECURRENT
+#include "Vblock_v1_r___024root.h"
+#else
+#include "Vblock_v1_v___024root.h"
+#endif
+static void sample_internal(Phase& p) {
+ auto*r=dut.rootp;
+#ifdef BENCH_RECURRENT
+ unsigned state=r->block_v1_r__DOT__phase;
+ ++p.internal["phase_"+std::to_string(state)];
+ if(state==1||state==3||state==7||state==9||state==11||state==14||state==16)
+  p.internal["product_register_write_slots"]+=8;
+ if(((state==1||state==9)&&r->block_v1_r__DOT__row_valid)||state==2||state==10)
+  p.internal["shadow_state_write_slots"]+=8;
+ if(((state==3||state==11)&&r->block_v1_r__DOT__row_valid)||state==4||state==12||state==17)
+  p.internal["dot_accumulator_write_slots"]+=8;
+#else
+ unsigned state=r->block_v1_v__DOT__phase;
+ ++p.internal["phase_"+std::to_string(state)];
+ if(state==1||state==3||state==13||state==10||state==11||state==18||state==19)
+  p.internal["product_register_write_slots"]+=8;
+ if(state==22||state==23)p.internal["reduction_tree_capture_cycles"]++;
+ if(r->block_v1_v__DOT__function_in) {
+  p.internal["function_issue_allocated_slots"]+=2;
+  auto sent=r->block_v1_v__DOT__function_sent;
+  auto len=r->block_v1_v__DOT__function_length;
+  p.internal["function_issue_valid_elements"]+=std::min(2u,unsigned(len-sent));
+ }
+ if(r->block_v1_v__DOT__function_unit__DOT__valid1)p.internal["function_stage1_valid_slots"]+=2;
+ if(r->block_v1_v__DOT__function_unit__DOT__valid2)p.internal["function_stage2_valid_slots"]+=2;
+ if(r->block_v1_v__DOT__function_valid)p.internal["function_output_valid_slots"]+=2;
+ if(r->block_v1_v__DOT__group_in&&r->block_v1_v__DOT__group_ready)p.internal["group_accepted_operations"]++;
+#endif
+}
+'''
+
+
+def measure(root,out,cpus,run,kind,variant):
+    from io_slots import file_sha
+    from revision300_rtl import COMPILER,sources
+    assert cpus==16 and kind in ('v','r') and variant in ('revised','extended')
+    top,rtls,numeric=sources(root,kind)
+    tools=root/'project/experiments/block_v1'
+    original=tools/'bench_vector_recurrent.cpp'
+    code=original.read_text()
+    assert code.count('std::map<std::string,uint64_t> reasons;')==1
+    code=code.replace('std::map<std::string,uint64_t> reasons;',
+        'std::map<std::string,uint64_t> reasons,internal;')
+    code=code.replace('static std::map<std::string,Phase> phases;',MONITOR+'\nstatic std::map<std::string,Phase> phases;')
+    assert code.count('++result.reasons[reason];++result.cycles;')==1
+    code=code.replace('++result.reasons[reason];++result.cycles;',
+        'sample_internal(result);++result.reasons[reason];++result.cycles;')
+    anchor='bool f=true;for(auto r:p.reasons)'
+    assert code.count(anchor)==1
+    # Emit counters as a separate phase field; the original attribution stays exact.
+    field='<<",\\\"cycle_attribution\\\":{";'
+    assert code.count(field)==1
+    code=code.replace(field,'<<",\\\"internal_register_samples\\\":{";')
+    code=code.replace(anchor,'''bool q=true;for(auto r:p.internal){if(!q)std::cout<<",";q=false;std::cout<<"\\\""<<r.first<<"\\\":"<<r.second;}
+  std::cout<<"},\\\"cycle_attribution\\\":{";
+  '''+anchor)
+    bench=out/'instrumented.cpp';bench.write_text(code)
+    flags='-std=c++17 -O2 -I'+str(tools)+(' -DBENCH_RECURRENT'if kind=='r'else'')+(' -DEXTENDED_VR'if variant=='extended'else'')
+    run([COMPILER,'--cc','--exe','--build','-j','16','-Wno-fatal','--public-flat-rw',
+         '--x-initial','unique','--x-assign','unique','--top-module',top,
+         '-I'+str(rtls[0].parent),'-Mdir',out/'obj','-CFLAGS',flags]+rtls+[bench],'build.log')
+    prior=out.parents[2]/('block-v1-20261029-'+('268'if variant=='revised'else'269'))/'tasks'/('revision300-bench-'+kind+'-'+variant)
+    receipt=json.loads((prior/'receipt.json').read_text());assert receipt['passed']
+    report=prior/'revision300-vr-benchmark.json'
+    assert file_sha(report)==receipt['outputs'][report.name]
+    reference=json.loads(report.read_text())
+    assert reference['bench_sha256']==file_sha(original)
+    assert reference['numeric_reference_sha256']==file_sha(numeric)
+    for path,digest in reference['rtl_sha256'].items():
+        current=root/'project'/path.split('/src/project/',1)[1]
+        assert file_sha(current)==digest
+    result=[]
+    for label,initial,seed in [('ones',1,121),('random',2,122)]:
+        run([out/'obj'/('V'+top),'+verilator+rand+reset+'+str(initial),'+verilator+seed+'+str(seed)],label+'.json')
+        value=json.loads((out/(label+'.json')).read_text());assert value['passed']
+        public=copy.deepcopy(value)
+        for row in public['cases']:
+            for phase in row['phases'].values():
+                counters=phase.pop('internal_register_samples')
+                assert sum(v for k,v in counters.items()if k.startswith('phase_'))==phase['cycles']
+        old=copy.deepcopy(reference['measurements'])
+        for row in old['cases']:row.pop('modeled_output_gbytes_per_second_at_300mhz')
+        assert public==old,'Instrumented run changed public cycles, traffic or numeric checks'
+        result.append(value)
+    assert result[0]==result[1]
+    (out/'revision300-lane-occupancy.json').write_text(json.dumps(dict(passed=True,
+        macro=kind.upper(),variant=variant,initial_runs=2,measurements=result[0],
+        reference_report_sha256=file_sha(report),reference_receipt_sha256=file_sha(prior/'receipt.json'),
+        original_bench_sha256=file_sha(original),instrumented_bench_sha256=file_sha(bench),
+        instrument_generator_sha256=file_sha(Path(__file__)),rtl_sha256=reference['rtl_sha256'],
+        scope='Preedge actual phase/valid/row_valid register samples during identical finite public schedules. Eight product-register writes per enabled phase; function valid tokens counted for each2lane stage, allocated slots include odd tail padding. Ratios may use stated total/phase cycle denominators. These are logical enable/token occupancy, not transistor switching, power, gate-netlist occupancy, or model/system performance.'),indent=2)+'\n')

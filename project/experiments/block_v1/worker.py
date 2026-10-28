@@ -60,7 +60,11 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('revision300-preconnect-'):
+    if MODE.startswith('revision300-occupancy-'):
+        from revision300_lane_occupancy import measure
+        _,_,kind,variant=MODE.split('-')
+        measure(ROOT,OUT,CPUS,run,kind,variant)
+    elif MODE.startswith('revision300-preconnect-'):
         from revision300_preconnect import audit
         audit(ROOT,OUT,CPUS,run,MODE[-1])
     elif MODE.startswith('revision300-load-'):
