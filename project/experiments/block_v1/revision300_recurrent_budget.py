@@ -20,6 +20,7 @@ def calculate(root,report,template):
         physical_implementation_completed=False,
         full_model_10tps_qualified=False)
     for model in result['models']:
+        model['config']=model['config'].replace('\\','/')
         assert hashlib.sha256((root/model['config']).read_bytes()).hexdigest()==model['config_sha256']
         row=next(x for x in source['measurements']['cases']if x['profile']==0 and
             x['size']==model['state_rows'] and x['workload']==('gdn-update'if model['model']=='qwen35'else'ssm-update'))

@@ -1,3 +1,7 @@
+2026-10-29 07:38 CST：当前新版最终接收仍为M/S/T，V/R未齐。V305数值/映射/端口测量全过，306实际全新布局布线，307最终门/308接口等待真实前置。R309操作数寄存流水的三初态、24公共情形、9卷积情形与310两项实际占用采样全部通过，映射运行；行II1保持，GDN/SSM/卷积增加的填充延迟已重算。新R后继明确为311原生→312同源最终门/文件/完整几何→313全接口；旧236/291正常收尾，旧281/292/297未claim的R分支不再作为新源主线，不能混用资格或误恢复。证据见review-20261028/{v-carry-305-0711,v-fresh-306-start,r-prefetch-0727}及delivery-300mhz。有限预算16M点Qwen3.5/Falcon已计价98.636/94.235ms，未宣称整模型达标。Issue121=in_progress、PR122=draft；登记pending、看板unverified/同步pending、独立审查和管理员待指定。
+
+以下为各时间点的历史记录，其待执行路径不覆盖上面的当前选择。
+
 2026-10-29 06:12 CST：S280新版最终接收完成：原生六阶段及四门、完整未修改GDS deck0、最终六文件、完整原生几何均通过，1610²µm/273个2µm M10接点，setup/hold+0.687419/+0.012282ns；最终三初态各98424检查，严格LEC262545/262532全匹配diff0/UNSAT。交付55a93ad7…、几何78e58311…；s-final-0610实际22:12:02UTC捕获37文件/24输出绑定及全部源Git blobs核验，真实GDS图SHA核验并已查看。正式delivery-300mhz/S提供最终Verilog/SDC/DEF/ODB/GDS/SPEF服务器位置/大小/SHA、真实pin/完整几何，一页对照补S真实面积，新增4来源SHA。M/S/T原生已齐，V/R未齐；不能提前标五宏完成。
 
 仅在S真实geometry PASSED后提交292/93044（22:11:56UTC），当前S全部273端口P2开始接续，R分支等281本宏真实geometry，不等V。295/296无allocation；296已暂存并validate为V专用六任务（P2 128GiB、三输出C各64GiB、两πRC各64GiB forecast/1.2+16GiB guard），源734997a/archive d1fdd46c…全部297 Git blobs和295前置实际绑定核验。296不继承281或退役285/288。当前本任务含两旧仍6 allocations；R236 GRT、V291新布局、旧V281 DRC/strictformal继续。
