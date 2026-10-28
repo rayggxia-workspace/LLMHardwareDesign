@@ -60,7 +60,13 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='revision300-constraints-control':
+    if MODE.startswith('revision300-delivery-'):
+        from revision300_delivery import deliver
+        deliver(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE.startswith('revision300-geometry-'):
+        from revision300_delivery import geometry
+        geometry(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE=='revision300-constraints-control':
         from revision300_constraints_control import control
         control(ROOT,OUT,CPUS,run)
     elif MODE in ('revision300-input-delay-s','revision300-input-delay-t'):

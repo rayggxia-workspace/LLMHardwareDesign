@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 
 
-def access_contract(rows,dbu,technology):
+def access_contract(rows,dbu,technology,allow_zero_enclosure=False):
     """Place the declared via10 bottom enclosure wholly inside each real BPin."""
     def units(value):
         n=Decimal(str(value))*dbu
@@ -17,7 +17,11 @@ def access_contract(rows,dbu,technology):
         return int(n)
     cut=units(technology['geometry_um']['cut_width'])
     enclosure=units(technology['geometry_um']['enclosure'])
-    assert cut>0 and enclosure>0 and cut%2==0
+    assert cut>0 and (enclosure>0 or (allow_zero_enclosure and enclosure==0)) and cut%2==0
+    if allow_zero_enclosure:
+        assert technology['schema']=='block-v1-coarse-demo-stack/1'
+        assert technology['model']=='ideal-alignment-research-demo'
+        assert technology['qualification']['manufacturing_validated'] is False
     seen=set();access=[]
     for row in rows:
         name,layer,box=row['pin'],row['layer'],row['box_dbu']
@@ -74,13 +78,14 @@ def accepted(root,out,kind):
                          delivery_report_sha256=file_sha(p)),index['pins']['signal_bits'],index['die_um']
 
 
-def export(root,out,cpus,run,kind):
+def export(root,out,cpus,run,kind,selected=None,technology_name='technology.json',allow_zero_enclosure=False):
     from io_slots import file_sha,slot
     assert cpus==16 and kind in ('m','v','r','s','t')
-    index,odb,provenance,count,die=accepted(root,out,kind)
+    receive=accepted if selected is None else selected
+    index,odb,provenance,count,die=receive(root,out,kind)
     before=file_sha(odb)
     helper=root/'project/experiments/block_v1/odb_geometry.tcl'
-    technology_path=root/'project/experiments/block_v1/technology.json'
+    technology_path=root/'project/experiments/block_v1'/technology_name
     technology=json.loads(technology_path.read_text())
     script='set_thread_count 16\nread_db {'+str(odb)+'}\nsource {'+str(helper)+'}\n'
     script+='''set block [ord::get_db_block]
@@ -145,11 +150,11 @@ write_abstract_lef -bloat_occupied_layers candidate.lef
         (pg if sigtype in ('POWER','GROUND')else pins).append(row)
     assert len(pins)==len({p['pin']for p in pins})==count
     assert {p['sigtype']for p in pg}=={'POWER','GROUND'}
-    if kind!='t':
+    if kind!='t' or selected is not None:
         p=Path(index['pins']['path']);assert file_sha(p)==index['pins']['sha256']
         wanted=json.loads(p.read_text())['pins']
         assert {p['pin']:(p['layer'],tuple(p['box_dbu']))for p in pins}=={p['pin']:(p['layer'],tuple(p['box_dbu']))for p in wanted}
-    access=access_contract(pins,dbu,technology)
+    access=access_contract(pins,dbu,technology,allow_zero_enclosure)
     rejected={}
     import copy
     for label in ('undersized_landing','wrong_layer','noninteger_center'):
@@ -158,7 +163,7 @@ write_abstract_lef -bloat_occupied_layers candidate.lef
         elif label=='wrong_layer':bad[0]['layer']='metal9'
         else:bad[0]['box_dbu'][2]-=1
         rejected[label]=False
-        try:access_contract(bad,dbu,technology)
+        try:access_contract(bad,dbu,technology,allow_zero_enclosure)
         except AssertionError:rejected[label]=True
     assert all(rejected.values())
     # Stream the complete geometry; do not turn native OBS into conductors or
@@ -179,7 +184,7 @@ write_abstract_lef -bloat_occupied_layers candidate.lef
         geometry_only=True,technology_sha256=file_sha(technology_path),negative_controls=rejected,
         future_m11_m12_system_qualified=False),indent=2)+'\n')
     assert file_sha(odb)==before
-    assert accepted(root,out,kind)[1]==odb
+    assert receive(root,out,kind)[1]==odb
     files={}
     for name in ('source-occupancy.tsv','native-pins.tsv','occupancy-summary.tsv','m10-access.json','candidate.lef','native-rect-completion.json'):
         p=out/name;assert p.stat().st_size>0

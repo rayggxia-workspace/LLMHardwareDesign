@@ -3,18 +3,19 @@ import json
 from pathlib import Path
 
 
-def final_leaf(root,out,cpus,run,kind,gate_roots=None):
+def final_leaf(root,out,cpus,run,kind,gate_roots=None,selected=None,gate_prefix='five-macro-',pin_size_um=.8):
     """Index and render a new leaf only after all its exact final gates pass."""
     from io_slots import file_sha
     from five_macro_receive import source
-    assert cpus==16 and kind in ('m','v','r','s')
-    folder,r,flow,results=source(out,kind)
+    assert cpus==16 and (kind in ('m','v','r','s') or (kind=='t' and selected is not None))
+    receive=source if selected is None else selected
+    folder,r,flow,results=receive(out,kind)
     proofs={};receipts={}
     for stage,report in [('physical','five-macro-physical.json'),('drc','five-macro-drc.json'),
                          ('final-function','five-macro-final-function.json'),('formal','five-macro-formal.json')]:
         gate_root=(gate_roots or {}).get(stage,out.parent)
         assert gate_root.name=='tasks' and gate_root.parent.parent==out.parents[2]
-        parent=gate_root/('five-macro-'+stage+'-'+kind)
+        parent=gate_root/(gate_prefix+stage+'-'+kind)
         receipt=json.loads((parent/'receipt.json').read_text());assert receipt['passed'] is True
         path=parent/report;assert file_sha(path)==receipt['outputs'][report]
         proof=json.loads(path.read_text());assert proof['passed'] is True
@@ -36,11 +37,13 @@ def final_leaf(root,out,cpus,run,kind,gate_roots=None):
     pins=[]
     for line in (out/'pins.tsv').read_text().splitlines():
         name,layer,*box=line.split('|');box=list(map(int,box))
-        assert layer=='metal10' and box[2]-box[0]==1600 and box[3]-box[1]==1600
+        assert layer=='metal10' and box[2]-box[0]==round(pin_size_um*dbu) and box[3]-box[1]==round(pin_size_um*dbu)
         pins.append(dict(pin=name,layer=layer,box_dbu=box,box_um=[v/dbu for v in box]))
     wanted=json.loads((folder/'pins.json').read_text())['pins']
     assert len(pins)==len({p['pin'] for p in pins})==len(wanted)
     assert {p['pin'] for p in pins}=={p['pin'] for p in wanted}
+    if selected is not None:
+        assert {p['pin']:(p['layer'],p['box_dbu']) for p in pins}=={p['pin']:(p['layer'],p['box_dbu']) for p in wanted}
     (out/'pins.json').write_text(json.dumps(dict(dbu_per_um=dbu,pins=pins),indent=2)+'\n')
     image=out/(flow['top']+'.png')
     script='''import pya
@@ -57,7 +60,7 @@ view.save_image(OUTPUT,1600,1600)
     files={}
     for path in [results/('6_final.'+suffix) for suffix in ('v','sdc','def','odb','spef')]+[gds]:
         files[path.name]=dict(path=str(path),sha256=file_sha(path),bytes=path.stat().st_size)
-    assert source(out,kind)[1]==r
+    assert receive(out,kind)[1]==r
     result=dict(passed=True,macro=kind.upper(),top=flow['top'],implementation_count=1,
                 native_leaf_accepted=True,native_routing_layers=['metal'+str(i) for i in range(1,11)],
                 die_um=flow['die_um'],active_area_um2=proofs['physical']['active_area_um2'],

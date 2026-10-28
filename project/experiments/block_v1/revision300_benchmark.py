@@ -9,15 +9,20 @@ def storage(root,out,cpus,run,kind,variant):
     assert cpus==16 and kind in ('s','t') and variant in ('baseline','revised')
     top,rtls,_=sources(root,kind);rtl=rtls[0]
     baseline=variant=='baseline'
+    dependencies=[]
     if baseline:
         rtl=out.parents[2]/'block-v1-20261027-193/src'/rtl.relative_to(root)
         expected={'s':'f0c7ae7db0bae810e4b17c160e3bc23ec15612fa19ecee4cf5031dba27aae240',
                   't':'0491dc05357b61855a3fadd9598ac738bdf305a8c8306499ac8b6c184fa4b0b5'}
         assert file_sha(rtl)==expected[kind]
+        if kind=='s':
+            dependency=rtl.parents[1]/'norm_service/store82.sv'
+            assert file_sha(dependency)=='c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70'
+            dependencies.append(dependency)
     bench=root/'project/experiments/block_v1/bench_store_handoff.cpp'
     flags='-std=c++17 -O2'+(' -DHANDOFF_T' if kind=='t'else'')+(''if baseline else' -DREVISED_ST')
     run([COMPILER,'--cc','--exe','--build','-j','16','-Wno-fatal','--x-initial','unique','--x-assign','unique',
-         '--top-module',top,'-Mdir',out/'obj','-CFLAGS',flags,rtl,bench],'build.log')
+         '--top-module',top,'-Mdir',out/'obj','-CFLAGS',flags,rtl]+dependencies+[bench],'build.log')
     observed=[]
     for label,initial,seed in [('ones',1,121),('random',2,122)]:
         run([out/'obj'/('V'+top),'+verilator+rand+reset+'+str(initial),'+verilator+seed+'+str(seed)],label+'.json')
@@ -31,7 +36,8 @@ def storage(root,out,cpus,run,kind,variant):
             row['modeled_read_phase_gbytes_per_second_at_300mhz']=.3*row['effective_payload_bytes_each_direction']/row['read']['cycles']
         observed.append(result)
     assert observed[0]==observed[1]
-    result=dict(passed=True,kind=kind,variant=variant,rtl_path=str(rtl),rtl_sha256=file_sha(rtl),bench_sha256=file_sha(bench),
+    result=dict(passed=True,kind=kind,variant=variant,rtl_path=str(rtl),rtl_sha256=file_sha(rtl),
+                dependency_rtl_sha256={str(p):file_sha(p)for p in dependencies},bench_sha256=file_sha(bench),
                 compiler_sha256=file_sha(Path(COMPILER)),initial_runs=2,measurements=observed[0],
                 baseline_git_commit='ad3c2b34511d58792ec5b550252590912f03252e'if baseline else None,
                 physical_implementation_completed=False,final_netlist_verified=False,
