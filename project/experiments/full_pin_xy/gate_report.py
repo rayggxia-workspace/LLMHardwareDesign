@@ -427,6 +427,9 @@ def render(root,out):
     if search:
         result['all770_search_budget200_mode_receipts_r01']=search
         upper_text+='<p>93030是新的独立搜索试验：FastRoute拥塞迭代预算由默认50增加到200，verbose记录实际迭代；相同原DB、770边、轨道、PG/OBS、pin和物理规则，原GRT/DRT失败保留。终态以原生回执为准，运行中不算通过；下层仍未合格冻结。</p>'
+        for q in search:
+            if q.get('completed_utc'):
+                upper_text+='<p><strong>200次搜索 '+html.escape(q['mode'])+' 子试验已终态：</strong>native返回'+str(q.get('native_returncodes'))+'，原生阶段'+str(q.get('native_stage_status'))+'。GRT失败的模式没有进入DRT/fresh/完整连通/RC/STA；原物理规则与全部770边不变，不能当系统实现或架构不可行证明。</p>'
     p=snapshot/'system_patch_route/r02/opentpu_aux-C/execution.json.gz'
     if p.exists():
         q=read(p);result['SYSTEM_native_clean_patches_r02_attempt']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
@@ -466,6 +469,32 @@ def render(root,out):
         q=read(p);result['VECTOR_actual_gate_clone_probe_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
         if q.get('completed_utc'):
             upper_text+='<p><strong>VECTOR93048已FAILED：</strong>同一当前r01源/原SDC，在remove_fillers和placement估计后，setup优化首次迭代前Signal11/native−11；不是逻辑不可能证明，也未定位为CloneMove本身的根因。未生成修复检查点、after指纹或后续合法化/布线/RC/STA，pin/PG保持的after检查未执行，不能把缺失输出的false当实际改了pin。原闭合源文件保持，原−4.140220ns失败继续保留。24GB sbatch请求此前已被调度器拒绝且无作业号，后按实际c96内存配置复用mem=0才提交；两个阶段分别记录。</p>'
+    p=snapshot/'vector_clone_probe/r02/execution.json.gz'
+    if p.exists():
+        q=read(p);result['VECTOR_original_GRT_context_probe_r02']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('completed_utc'):
+            upper_text+='<p><strong>VECTOR93073上下文试验已FAILED：</strong>原guide/GRT上下文已实际初始化，setup优化超过原崩溃位置后报RSZ-0074：无法从global routes为pin _362545_/ZN、net _080826_建立完整树（找到1个pin、应为2个）。不是Signal11根因已解决或时序改善。未生成可用检查点、after合同、合法化/新详细布线/RC/STA；原闭合源SHA保持，−4.140220ns失败不替换。原回执repair_model固定文本仍写无GRT，实际r02脚本/阶段/new_single_context_change表明已加载原guide；本段明确纠正解释，原回执不改写。下一步需原生内部route同步或不依赖残缺guide的工具修复，不无变化重试。</p>'
+    for key,relative,title in [
+      ('SYSTEM_actual_stacked_via_r01','system_stacked_via_route/r01/opentpu_aux-C','93072 SYSTEM原生via叠放接线'),
+      ('MXU_actual_view_parent_recheck_r01','escape_view_recheck/r01/mxu-C','93074 MXU全部2172真实父层复核')]:
+        p=snapshot/relative/'execution.json.gz'
+        if not p.exists():continue
+        q=read(p);result[key]=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        state=('终态；native='+str(q.get('native_returncodes'))+'；fresh DRC='+str(q.get('fresh_DRC_count','未执行'))) if q.get('completed_utc') else '运行中；缺终态项不记0/通过'
+        upper_text+='<p><strong>'+title+'：</strong>'+state+'。SYSTEM使用原网实际via1/via2定义及原M1端点重接，不是修改最终LEF；单网物理改变、全部网连通/PG/RC/原SDC独立检查。MXU在原2172条真实父层路线/PG上换入新actual LEF/OBS，原pin层/尺寸/位置/语义保持，不剪真实OBS；它只复核接入，不是父层RC/STA或共同底座资格。原失败及输入SHA保留。</p>'
+    p=snapshot/'logs/sta-coverage-api-r01-93075.log.gz'
+    if p.exists():
+        q={'job':'93075','state':'WRAPPER_FAILED_AFTER_NATIVE_CAPABILITY_LOG','error':'NameError: sha not imported while writing metadata','full_qualification':False,
+           'evidence':(dest/p.relative_to(snapshot)).relative_to(out).as_posix()}
+        result['STA_coverage_capability_wrapper_failure']=q
+        upper_text+='<p><strong>93075能力探针包装失败保留：</strong>原生工具已完整输出report_check_types帮助及库声明，但Python写元数据时漏导入sha，NameError，Slurm FAILED；不伪造成功回执，也不重跑同一只读探针。原生帮助确认支持min_pulse_width/min_period/max_skew及clock_gating_setup/hold；实际typical库有45处min_pulse_width timing_type、无minimum_period timing_type声明，计数不是设计检查通过。已修正脚本供复用，新的六块逐源RC/原SDC扩展检查单独提交，空报告不能当库已定义或签核通过。</p>'
+    extended=[]
+    for case in CASES:
+        p=snapshot/'extended_sta/r01'/case/'execution.json.gz'
+        if p.exists():extended.append(dict(read(p),evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix()))
+    if extended:
+        result['source_bound_extended_STA_r01']=extended
+        upper_text+='<p>93076新的六块扩展STA：按各自已闭合实际ODB/SPEF/原SDC逐SHA重读，补查原生min pulse width、min period、max skew、gating setup/hold及min slew/cap/fanout，输出真实clock/skew/latency、约束与寄生覆盖。每块终态及源余量重放分别记录；未终态不当通过，派生path minimum period与缺失Liberty minimum_period规则严格区分。这个只读覆盖审计不改变设计，也不修复原负时序。</p>'
     p=snapshot/'vector_clone_crash/r01/execution.json.gz'
     if p.exists():
         q=read(p);result['VECTOR_exact_native_crash_symbolization_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
@@ -477,7 +506,7 @@ def render(root,out):
             r=next(r for r in rows if r['case']=='mxu');r['current_source_research_model']='SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING'
             from plot_mxu_escape_context import plot
             result['MXU_actual_M6_escape_context']=plot(snapshot,out)
-            upper_text+='<p><strong>93060 MXU新真实视图已导出：</strong>clean ODB/LEF/OBS/DEF/实际网表与非零提取Lib绑定新04e59990…源，2172信号pin/原PG/尺寸/层保持，SPEF setup/hold重放一致，模型独立重读通过；minimum_period仍缺失。M6 OBS仍延伸出原pin，两次pin–OBS几何交面积约0.0098μm²，不把叶native0当新父层可达。既有via5/M6接点来自真实网络，可作为后续XY研究区域，尚未迁移该pin。<a href="data/mxu_actual_M6_escape_context.json">实际OBS/接点与来源</a> · <a href="data/mxu_actual_escape_net_rectangles.csv">实际完整目标网矩形CSV</a>。</p><img loading="lazy" src="assets/mxu_actual_M6_escape_context.png"><p><a href="assets/mxu_actual_M6_escape_context.svg">M6实际重接与OBS SVG</a>。局部图同尺度；灰为实际占用OBS，红框仅属旧父层，新父层未执行；全网路径用实际原生矩形，没有虚构接入线。</p>'
+            upper_text+='<p><strong>93060 MXU新真实视图已导出：</strong>clean ODB/LEF/OBS/DEF/实际网表与非零提取Lib绑定新04e59990…源，2172信号pin/原PG/尺寸/层保持，SPEF setup/hold重放一致，模型独立重读通过；minimum_period仍缺失。M6 OBS仍延伸出原pin，两次pin–OBS几何交面积约0.0098μm²，不把叶native0当新父层可达。既有via5/M6接点来自真实网络，可作为后续XY研究区域，尚未迁移该pin。<a href="data/mxu_actual_M6_escape_context.json">实际OBS/接点与来源</a> · <a href="data/mxu_actual_escape_net_rectangles.csv">实际完整目标网矩形CSV</a>。</p><img loading="lazy" src="assets/mxu_actual_M6_escape_context.png"><p><a href="assets/mxu_actual_M6_escape_context.svg">M6实际重接与OBS SVG</a>。局部图同尺度；灰为实际占用OBS，红框仅属旧父层，本图采集时新父层未执行、后续93074结果另列；全网路径用实际原生矩形，没有虚构接入线。</p>'
     p=snapshot/'vector_clone_crash/r02/execution.json.gz'
     if p.exists():
         q=read(p);result['VECTOR_native_ELF_address_diagnosis_r02']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
@@ -568,6 +597,19 @@ def render(root,out):
           'complete_rules':'CURRENT_CLEAN_PATCHES_GDS_NOT_EXECUTED_MISSING_REAL_SRAM_AND_COVERAGE_GAPS',
           'parent_access':'CURRENT_CLEAN_PATCHES_SOURCE_NOT_VALIDATED_IN_PARENT','current_source_research_model':'NOT_EXPORTED',
           'common_base_source_selection':'ORIGINAL_R02_NOT_UPGRADED_TO_THIS_SOURCE'})
+    q=result.get('MXU_actual_view_parent_recheck_r01',{})
+    if q:
+        r=next(r for r in rows if r['case']=='mxu');r['current_source_parent_access_recheck']=q
+        if q.get('completed_utc'):
+            r['parent_access']='CURRENT_M6_ACTUAL_VIEW_COMPLETE_PARENT_RECHECK_NATIVE_'+str(q.get('fresh_DRC_count','UNKNOWN'))+'_NOT_SYSTEM_RC_STA'
+    q=result.get('SYSTEM_actual_stacked_via_r01',{})
+    if q.get('completed_utc') and q.get('native_returncodes',{}).get('detailed_edit_and_analysis')==0 and q.get('whole_signal_geometry',{}).get('pass') and all(q.get('original_cells_poses_signal_connections_pins_PG_die_unchanged',{}).values()) and q.get('all_other_exported_multiterminal_route_box_multisets_identical'):
+        r=next(r for r in rows if r['case']=='opentpu_aux');r['historical_source_before_stacked_via']=json.loads(json.dumps(r))
+        r.update({'completed_source':'native_stacked_via/r01','actual_internal_route':'ACTUAL_STACKED_VIA_ROUTE_CHECKS_SEPARATE',
+          'native_DRC_count':q.get('fresh_DRC_count'),'all_multiterminal_signal_clock_geometry':True,
+          'setup_ns':q.get('setup_ns'),'hold_ns':q.get('hold_ns'),'violation_marker_rows':q.get('literal_VIOLATED_markers_not_complete_failure_count'),
+          'complete_rules':'CURRENT_STACKED_VIA_GDS_NOT_EXECUTED_COVERAGE_GAPS','parent_access':'CURRENT_STACKED_VIA_SOURCE_NOT_VALIDATED_IN_PARENT',
+          'current_source_research_model':'NOT_EXPORTED','common_base_source_selection':'ORIGINAL_R02_NOT_UPGRADED_TO_THIS_SOURCE'})
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',

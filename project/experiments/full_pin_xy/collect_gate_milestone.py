@@ -13,7 +13,7 @@ JOBS+=['93038','93040']
 JOBS+=['93041','93043','93048','93049']
 JOBS+=['93051']
 JOBS+=['93060','93061']
-JOBS+=['93072','93073','93074','93075']
+JOBS+=['93072','93073','93074','93075','93076']
 
 
 def sha(path):
@@ -101,6 +101,7 @@ def collect(name):
         if 'fixed_wire_api' in str(p) and p.suffix=='.def' and a.st_size<=1024*1024:keep=True
         if 'actual_path_audit/' in str(p) and p.name=='fresh_DRC_target_net.tsv.gz' and a.st_size<=8*1024*1024:keep=True
         if 'pin_escape_views/' in str(p) and p.name=='target_pin_access.tsv.gz' and a.st_size<=8*1024*1024:keep=True
+        if 'extended_sta/r01/' in str(p) and p.name=='extended_checks_all_not_only_violators.txt' and a.st_size<=64*1024*1024:keep=True
         omit_paths='paths.json' in p.name and 'actual_path_audit/' not in str(p)
         keep=keep and not omit_paths and not any(s in p.name for s in ['.cells.','.pdn.','whole_access.tsv','selected_access.tsv'])
         if not keep:

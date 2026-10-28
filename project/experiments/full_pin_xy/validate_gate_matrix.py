@@ -381,17 +381,47 @@ def check(out):
         r=j['MXU_actual_M6_escape_context'];assert not r['full_qualification'] and r['new_parent_validation']=='NOT_EXECUTED'
         assert abs(r['before_OBS_intersection_pin_union_area_um2']-.0098)<1e-9 and abs(r['after_OBS_intersection_pin_union_area_um2']-.0098)<1e-9
     if j.get('SYSTEM_native_clean_patches_r02_attempt',{}).get('completed_utc'):
-        q=j['SYSTEM_native_clean_patches_r02_attempt'];assert q['fresh_DRC_count']==rows['opentpu_aux']['native_DRC_count']==2 and q['whole_signal_geometry']['pass']
-        assert q['setup_ns']==rows['opentpu_aux']['setup_ns']==-.056396 and q['hold_ns']==rows['opentpu_aux']['hold_ns']==-.119919
+        q=j['SYSTEM_native_clean_patches_r02_attempt'];source_row=rows['opentpu_aux'].get('historical_source_before_stacked_via',rows['opentpu_aux'])
+        assert q['fresh_DRC_count']==source_row['native_DRC_count']==2 and q['whole_signal_geometry']['pass']
+        assert q['setup_ns']==source_row['setup_ns']==-.056396 and q['hold_ns']==source_row['hold_ns']==-.119919
         assert q['all_closed_sources_unchanged'] and all(q['all_cells_poses_original_connections_pins_PG_die_unchanged'].values())
     if j.get('SYSTEM_existing_buffer_relocation_r02',{}).get('completed_utc'):
         q=j['SYSTEM_existing_buffer_relocation_r02'];assert not q['full_qualification'] and q['native_returncodes']['route']==0
-        source_row=rows['opentpu_aux'].get('historical_source_before_clean_patches',rows['opentpu_aux'])
+        latest=rows['opentpu_aux'].get('historical_source_before_stacked_via',rows['opentpu_aux'])
+        source_row=latest.get('historical_source_before_clean_patches',latest)
         assert q['fresh_DRC_count']==source_row['native_DRC_count']==2 and q['whole_signal_geometry']['pass']
         assert q['setup_ns']==source_row['setup_ns']==-0.056303 and q['hold_ns']==source_row['hold_ns']==-0.119814
         assert q['literal_VIOLATED_markers_not_complete_failure_count']==1233 and q['all_sources_unchanged']
         assert all(q['pin_PG_die_unchanged'].values()) and not q['legalization_recomputed'] and not q['selection_or_moves_recomputed']
         for kind in ['connections','nonselected']:assert q['files']['before.'+kind+'.tsv']['sha256']==q['files']['after.'+kind+'.tsv']['sha256']
+    if j.get('VECTOR_original_GRT_context_probe_r02',{}).get('completed_utc'):
+        q=j['VECTOR_original_GRT_context_probe_r02'];assert not q['full_qualification'] and q['native_returncodes']['clone_heuristic_probe']==1
+        assert q['all_closed_sources_unchanged'] and q['final_legalization_route_RC_STA']=='NOT_EXECUTED'
+        assert 'gate_repaired_NOT_LEGALIZED_OR_ROUTED.odb' not in q['files'] and 'after.pins.tsv' not in q['files']
+        text=gzip.decompress((out/q['evidence']).parent.joinpath('native.log.gz').read_bytes()).decode()
+        assert 'RSZ-0074' in text and 'STAGE_EXECUTED initialize_original_GRT_context' in text
+    for key in ['SYSTEM_actual_stacked_via_r01','MXU_actual_view_parent_recheck_r01']:
+        q=j.get(key,{})
+        if not q.get('completed_utc'):continue
+        assert not q['full_qualification'] and q['all_closed_sources_unchanged']
+        if 'fresh_DRC_count' in q:
+            text=gzip.decompress((out/q['evidence']).parent.joinpath('independent.drc.gz').read_bytes()).decode()
+            assert q['fresh_DRC_count']==len(re.findall(r'^violation type:',text,re.M))
+        if key=='MXU_actual_view_parent_recheck_r01':
+            assert q['all_original_leaf_signal_pins']==2172 and q['actual_new_leaf_ODB_SHA256']==j['MXU_actual_M6_escape_physical_RC_views']['source_geometry_sha256']
+            assert q['parent_RC_STA']=='NOT_EXECUTED_ACCESS_RECHECK_ONLY'
+            assert all(q['all_original_parent_BTerm_PG_die_geometry_unchanged'].values()) and q['all_original_macro_pin_rectangles_net_directions_layers_in_parent_exactly_unchanged']
+            assert q['whole_parent_signal_geometry']['pass'] and q['whole_parent_signal_geometry']['checked_nets']==2172
+        elif q.get('whole_signal_geometry'):
+            assert q['whole_signal_geometry']['pass'] and q['whole_signal_geometry']['checked_nets']==466332
+            assert all(q['original_cells_poses_signal_connections_pins_PG_die_unchanged'].values())
+            assert q['actual_changed_multiterminal_net_wire_via_box_multisets']==['_215139_']
+    for q in j.get('source_bound_extended_STA_r01',[]):
+        assert not q['full_qualification']
+        if not q.get('completed_utc'):continue
+        assert q['native_returncode']==0 and q['all_sources_unchanged'] and all(q['source_worst_slacks_exactly_replayed'].values())
+        assert q['original_constraints_and_SPEF_unchanged']
+        assert 'extended_checks_all_not_only_violators.txt' in q['files']
     for q in j.get('latest_actual_parent_landing_repairs',[]):
         if not q.get('completed_utc'):continue
         assert q['native_route_returncode']==q['fresh_DRC_returncode']==0 and q['whole_signal_geometry']['pass']
