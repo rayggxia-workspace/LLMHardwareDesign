@@ -16,8 +16,8 @@ DRIVER=Path(__file__).resolve().parent
 
 
 def one(case,variant,revision):
-    assert case in ['vector','gemm','mxu','opentpu_aux'] and variant in ['A','C']
-    physical=BASE[case] if variant=='A' else C_REVISION[case]
+    assert case in ['vector','gemm','mxu','opentpu_aux'] and variant in ['A','Aopt','C']
+    physical=BASE[case] if variant=='A' else 'full-controls-r04' if variant=='Aopt' else C_REVISION[case]
     source=ROOT/'finalized'/physical/(case+'-'+variant);proof=json.loads((source/'execution.json').read_text())
     assert proof['independent_DRC_count']==0 and proof['whole_access']['pass'] and proof['clean_byte_identical_to_pre_RCX_source']
     trial=Path(proof['legacy_RC_STA_receipt']);old=json.loads(trial.read_text());odb=source/'clean.odb';spef=trial.parent/'extracted.spef';sdc=Path(old['source_sdc'])
@@ -33,7 +33,7 @@ def one(case,variant,revision):
     assert not isolate_estimator or fresh_grt
     fix_hold=os.environ.get('PINXY_ECO_HOLD')=='1'
     assert not rc_heuristic or (incremental and not targeted)
-    assert not targeted or (electrical_only and incremental and case in ['gemm','mxu'] and variant=='C')
+    assert not targeted or (electrical_only and incremental and case in ['gemm','mxu'] and variant in ['Aopt','C'])
     inputs={str(p):sha(p) for p in [odb,spef,sdc,trial,source/'execution.json']}
     # Reuse the existing exact geometry fingerprint/stage helpers, not the
     # original trial's load/move/route body.
@@ -236,6 +236,8 @@ def safe(args):
 if __name__=='__main__':
     cases=sys.argv[2:] or ['vector'];assert set(cases)<=set(['vector','gemm','mxu','opentpu_aux'])
     variants=['C'] if os.environ.get('PINXY_ECO_ELECTRICAL_ONLY')=='1' or os.environ.get('PINXY_ECO_C_ONLY')=='1' else ['A','C']
+    if os.environ.get('PINXY_ECO_ONLY_VARIANT'):
+        value=os.environ['PINXY_ECO_ONLY_VARIANT'];assert value in ['A','Aopt','C'];variants=[value]
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=4*min(2,len(cases)*len(variants))
     with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(safe,[(c,v,sys.argv[1]) for c in cases for v in variants]))
     sys.exit(0 if all(results) else 1)
