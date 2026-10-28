@@ -83,9 +83,32 @@ if {$::env(PINXY_PLAN) eq "A"} {
       lappend changednets [$term getNet]
     }
     fingerprint $out/moved
+    set temporary_access_obs {}
+    set original_block_obs [lsort [$block getObstructions]]
+    if {[info exists ::env(PINXY_ACCESS_RESERVATIONS)]} {
+      set access_reservations {};source $::env(PINXY_ACCESS_RESERVATIONS)
+      set rf [open $out/temporary_access_windows.tsv w]
+      puts $rf "layer\tx0\ty0\tx1\ty1\tnew_object"
+      foreach row $access_reservations {
+        lassign $row layer x0 y0 x1 y1
+        set ly [[ord::get_db_tech] findLayer $layer]
+        if {$ly eq "NULL"} {error "Missing actual reservation layer $layer"}
+        set coords {};foreach v [list $x0 $y0 $x1 $y1] {lappend coords [expr {round($v*$units)}]}
+        set ob [odb::dbObstruction_create $block $ly {*}$coords]
+        lappend temporary_access_obs $ob
+        puts $rf [join [list $layer {*}$coords $ob] "\t"]
+      }
+      close $rf
+    }
     write_db $out/moved.odb
     # Rip up only nets incident on selected pins; preserve all other existing routes as input.
-    foreach n [lsort -unique $changednets] {set w [$n getWire];if {$w ne "NULL"} {odb::dbWire_destroy $w}}
+    if {[llength $temporary_access_obs]} {
+      set changednets {}
+      foreach n [$block getNets] {if {[$n getSigType] ni {POWER GROUND}} {lappend changednets $n}}
+    }
+    set rf [open $out/actually_ripped_nets.tsv w]
+    foreach n [lsort -unique $changednets] {set w [$n getWire];if {$w ne "NULL"} {puts $rf [$n getName];odb::dbWire_destroy $w}}
+    close $rf
     write_db $out/ripped.odb
   }]} {close $stages;exit 1}
   set routed [stage global_route {
@@ -95,6 +118,13 @@ if {$::env(PINXY_PLAN) eq "A"} {
   }]
   if {$routed} {set routed [stage detailed_route {
     detailed_route -output_drc $out/route.drc -output_maze $out/maze.log -verbose 1
+    if {[llength $temporary_access_obs]} {
+      foreach ob $temporary_access_obs {odb::dbObstruction_destroy $ob}
+      if {[lsort [[ord::get_db_block] getObstructions]] ne $original_block_obs} {error "Original block OBS set changed"}
+      set rf [open $out/access_windows_removed_original_OBS_preserved.txt w]
+      puts $rf "Only [llength $temporary_access_obs] newly created routing constraints removed; original block OBS handles identical; source master OBS never changed. Verify actual signal clearance separately."
+      close $rf
+    }
     write_db $out/routed.odb
   }]}
   if {!$routed} {stage failed_route_checkpoint {write_db $out/failed-route.odb};close $stages;exit 1}

@@ -45,6 +45,12 @@ def one(case,plan,revision):
        'parent_handoff_target_layer':'UNKNOWN; this experiment cannot qualify parent access'}
     env='PINXY_OUTPUT={},PINXY_ODB={},PINXY_SDC={},PINXY_LIBS_TCL={},PINXY_RELOCATIONS={},PINXY_PLAN={},PINXY_TOP_LAYER={},PINXY_DRIVER={},PINXY_ACCESS_OUT={},OMP_NUM_THREADS=4'.format(
         out,src,sdc,libtcl,inputs/(case+'-'+plan+'.tcl'),plan,8 if case.endswith('_aux') else 10,DRIVER,out/'access.tsv')
+    reservations=inputs/'access_reservations.tcl'
+    if reservations.exists():
+        assert case=='act' and plan=='C','Access-window experiment is explicitly ACT C only'
+        env+=',PINXY_ACCESS_RESERVATIONS='+str(reservations)
+        receipt['input_sha256'][str(reservations)]=sha(reservations)
+        receipt['temporary_access_reservation_method']='Full signal/clock reroute, original cells/PDN/OBS/allowed layers preserved; remove only newly created window constraints after DRT. Not a same-rip-cohort wire-cost comparison.'
     cmd=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
          '--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro',
          '--home',str(ROOT/'home'),'--pwd',str(out),'--env',env,IMAGE,BIN,'-threads','4','-no_init','-exit',str(DRIVER/'physical_trial.tcl')]

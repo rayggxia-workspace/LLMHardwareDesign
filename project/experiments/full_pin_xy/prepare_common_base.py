@@ -45,6 +45,8 @@ def prepare(root, out):
         edge = pd.read_csv(p, low_memory=False).set_index('pin')
         for column in ['x_um', 'y_um', 'x0_um', 'y0_um', 'x1_um', 'y1_um']:
             optimized.loc[edge.index, column] = edge[column]
+        optimized['plan'] = 'Aopt'
+        optimized['moved'] = (abs(optimized.x_um-a.x_um)>1e-6)|(abs(optimized.y_um-a.y_um)>1e-6)
         assert set(a.index) == set(proposed.index) == set(maps[c])
         proposed = proposed.loc[a.index]
         for v in [optimized, proposed]:
@@ -66,7 +68,11 @@ def prepare(root, out):
                                        'original_pin_layer': str(pinsets[c]['Aopt'].loc[pin, 'layer'])})
         for name, port in graph['top_module']['ports'].items():
             for pin, bit in zip(pin_names(name, port), port['bits']):
-                bybit[bit].append({'kind': 'TOP_IO', 'pin': pin, 'direction': port['direction'], 'layer': 'NEW_PARENT_POLICY_NOT_YET_IMPLEMENTED'})
+                key=bit if isinstance(bit,int) else 'LITERAL_OUTPUT_'+pin
+                term={'kind': 'TOP_IO', 'pin': pin, 'direction': port['direction'], 'layer': 'NEW_PARENT_POLICY_NOT_YET_IMPLEMENTED'}
+                if isinstance(bit,str):
+                    term.update({'literal':bit,'physical_constant_net':'Distinct declaration; physical driver/lowering still required, never short all same-valued ports'})
+                bybit[key].append(term)
         nets[design] = {str(bit): terms for bit, terms in bybit.items()}
     # Explicitly select actual read buses, not synthetic lanes or new protocols.
     selected = {}
@@ -111,12 +117,25 @@ def prepare(root, out):
     # real finite two-terminal passive resources, not arbitrary intersections.
     prewires = []
     cx = round(.095+round((margin+col1+gap/2-.095)/3.2)*3.2, 6)
+    ys=[]
+    for design in ['opentpu','llaccel']:
+        for bit in selected[design]:
+            for term in nets[design][bit]:
+                for scheme in ['Aopt','C']:
+                    ys.append(float(pinsets[term['case']][scheme].loc[term['pin'],'y_um'])+pos[term['case']][1])
+    center_y=float(np.median(ys))
+    first_y=max(margin+64,min(center_y-3.5*96,height-margin-64-32-7*96))
     for i in range(256):
         x = round(cx+(i % 32-16)*3.2, 6)
-        y = round(.07+round((margin+64+(i//32)*96.-.07)/1.6)*1.6, 6)
+        y = round(.07+round((first_y+(i//32)*96.-.07)/1.6)*1.6, 6)
         prewires.append({'resource': 'R'+format(i, '04d'), 'layer': 'metal10', 'x0_um': x-.4, 'y0_um': y-.4,
                          'x1_um': x+.4, 'y1_um': y+32.+.4, 'centerline_length_um': 32., 'width_um': .8,
                          'pad_A_xy_um': [x, y], 'pad_B_xy_um': [x, y+32.]})
+    for q in prewires:
+        assert 0<q['x0_um']<q['x1_um']<width and 0<q['y0_um']<q['y1_um']<height
+        for c in CASES:
+            x,y=pos[c];w,h=frame[c]
+            assert not (q['x0_um']<x+w and q['x1_um']>x and q['y0_um']<y+h and q['y1_um']>y),'Proposed common corridor intersects a macro outline'
     bindings = []
     for design in ['opentpu', 'llaccel']:
         for i, bit in enumerate(selected[design]):
@@ -139,6 +158,8 @@ def prepare(root, out):
     contract = {'status': 'PREPARATION_COMPLETE_BASE_NOT_ROUTED_OR_FROZEN', 'frozen': False,
                 'approved_resource_policy': 'Six original functional resources; interleaved common placement; both modes must physically reuse shared fixed conductors',
                 'original_signal_pins': sum(len(pinsets[c]['C']) for c in CASES), 'instances': placements,
+                'original_constant_TOP_IO_declarations':37,
+                'additional_parent_infrastructure_inventory_complete':False,
                 'frame_um': [0, 0, width, height], 'shared_fixed_passive_components': 256,
                 'shared_wire_total_length_um': 8192., 'shared_wire_topology_and_budget_same_for_Aopt_and_C': True,
                 'shared_resource_sets_identical_between_modes': True,
@@ -148,6 +169,7 @@ def prepare(root, out):
                 'shared_compute_claim': False, 'source_graph_SHA': {k: g['source_partition_sha256'] for k,g in graphs.items()},
                 'functional_bit_graph_modified': False, 'original_handoff_still_unknown': True,
                 'placement_proxy': {'enumerated_candidates': len(candidates), 'block_center_weighted_L1_um': cost, 'not_actual_wire_or_RC': True},
+                'prewire_position_proxy':'Median endpoint Y across both modes AND Aopt/C, in a macro-outline-free corridor. PG/actual metal access and rules remain unverified.',
                 'required_before_freeze': ['Six selected physical view sources and independent access/native checks', 'Record all inherited full-rule/STA failures',
                     'Actual lower-layer escape, PG/clock/private preconnections and finite shared wire implementation',
                     'Whole conductor/connectivity and exact lower-layer manifests', 'Actual active/idle infrastructure and costs',
