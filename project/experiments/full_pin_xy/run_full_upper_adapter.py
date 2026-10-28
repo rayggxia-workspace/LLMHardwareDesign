@@ -50,7 +50,8 @@ def prepare(out):
     assert len(hooks)==len(set(allboxes))==1541
     tech=ROOT/'upper_layer_probe/r01/model/research12.tech.lef';model=json.loads((tech.parent/'model.json').read_text())
     assert model['original_M1_M10_and_via1_via9_layer_blocks_identical'] and sha(tech)==model['files'][tech.name]['sha256']
-    inputs={str(p):sha(p) for p in [odb,audited,tech,tech.parent/'model.json',base/'before_route.pins.tsv',base/'actual_M10_obstacles.tsv']+list(p for p in contract.iterdir() if p.is_file())}
+    rc=tech.parent/'research12.setRC.tcl';assert sha(rc)==model['files'][rc.name]['sha256']
+    inputs={str(p):sha(p) for p in [odb,audited,tech,rc,tech.parent/'model.json',base/'before_route.pins.tsv',base/'actual_M10_obstacles.tsv']+list(p for p in contract.iterdir() if p.is_file())}
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
     script=out/'base_boundary.tcl';script.write_text('\n'.join(['read_db '+tcl(odb),
       'set b [ord::get_db_block];set tech [ord::get_db_tech];set f [open '+tcl(out/'base_boundary.tsv')+' w]',
@@ -125,6 +126,7 @@ def one(mode,plan,root,tech):
           'read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib',
           'read_verilog '+tcl(out/'routing_helper.v'),'link_design upper_adapter_trial',
           'initialize_floorplan -die_area {'+frame+'} -core_area {'+frame+'} -site FreePDK45_38x28_10R_NP_162NW_34O','make_tracks',
+          'source '+tcl(tech.parent/'research12.setRC.tcl'),
           'set b [ord::get_db_block];if {[llength [$b getInsts]]!=0} {error "Adapter helper must add no FEOL instances"};set m10 [[ord::get_db_tech] findLayer metal10]']
         for edge in plan['physical_edges']:
             for h in edge['endpoints']:

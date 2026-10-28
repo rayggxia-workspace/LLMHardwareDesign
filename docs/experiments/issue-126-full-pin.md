@@ -1,5 +1,7 @@
 # 全功能分块、全块二维 pin 与实际接入（Issue126）
 
+2026-10-29 Asia/Shanghai增量终态：新换型版严格GDS92943仍FAILED37项天线；92972以同版本DEF/GDS/RDB/原生几何SHA读取7516494行，全部37个真实多边形唯一关联22条真实网，与现有636个diode网交集0。全部22网及层级CSV/原多边形证据随gate-r16发布（92973/drivercda2025d28793aeab7a4d3391058d50f3d227e51），不是修复或LVS通过。已编写定向22真实diode增量GRT/DRT脚本（尚未提交作业）；保留636diode、两换型、原功能/位置/接口/PG/OBS/层集合，新增负载/面积成本独立，路由后仍需fresh/连通/RC/STA与原deck。下一步发布读回后执行新适配r02和22网增量接入，不以native0/CI代替整个目标。SYSTEM92968、共同92855和其余LL/父层作业继续；底座未合格冻结，两完整功能/对照未完成。
+
 gate-r15接续：SYSTEM92968复用原合法化检查点运行；770-edge适配92969在两个时钟canonical别名检查失败，未执行路由。精确alias修订与原失败分别保留，不改变连接语义。主矩阵反映最新GEMM真实diode+两换型源，旧等成本控制单列；原30图和逐pin数据保持，完整系统尚未完成。
 
 任务：[Issue126](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/126)，进行中。

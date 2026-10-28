@@ -1,5 +1,7 @@
 # 架构与运行
 
+Issue126剩余天线：`post_diode_netmap_job.sh cap-r01 cap`/`run_post_diode_netmap.py`只接受匹配DEF/GDS/RDB/原生几何SHA，将真实多边形精确关联实际网，逐项核查已有diode集合。`run_incremental_diode_eco.py`/`incremental_diode_eco_job.sh`据37项/22网证据复用636diode+两换型真实源，旧单元/diode全部FIRM后放置22新ANTENNA_X1，恢复原状态；原guide的start/end incremental GRT及普通DRT不等于只改22条网。全量图、原pose/端点、pin/PG/外框/OBS、fresh DRC、RCX及原SDC检查独立保留，新GDS原deck须再执行，不能以插入数量或native0替代规则资格。
+
 Issue126增量复现：`diode_cap_eco_job.sh r01`/`run_diode_cap_eco.py`只在636真实diode后的确定源上按原Liberty逻辑/状态合同换型INV/XNOR两实例，保存增量接线、fresh DRC、全网几何、RCX及完整原SDC报告，成本独立。`antenna_diode_stream_job.sh cap-r01 r01 cap`按源SHA执行严格GDS及未修改的原deck，与旧diode源37项天线分开。`run_full_upper_adapter.py`/`full_upper_adapter_job.sh`实现两个770-edge适配层独立试验，输入为同一个真实但未合格的下层检查点；每条实际overlay M10矩形须包含在原hook内，M1–M9/cut1–cut9不得新增，不以适配层试验替代下层冻结/完整系统RC/STA。源码/命令/工具/作业由gate-r14及后续不可覆盖回执绑定。
 
 本仓库含研究资料、参考结果和实验性分层物理实现代码。`project/experiments/` 下保留 `block_hierarchy/`、`parallel_blocks/` 和 `opentpu_compare/` 的实验及证据；正式预制底座和制造工具链尚未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md) 中标注的候选架构不能当作已实现硬件。

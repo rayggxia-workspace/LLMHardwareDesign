@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-10-29 Asia/Shanghai增量终态：新换型版严格GDS92943仍FAILED37项天线；92972以同版本DEF/GDS/RDB/原生几何SHA读取7516494行，全部37个真实多边形唯一关联22条真实网，与现有636个diode网交集0。全部22网及层级CSV/原多边形证据随gate-r16发布（92973/drivercda2025d28793aeab7a4d3391058d50f3d227e51），不是修复或LVS通过。已编写定向22真实diode增量GRT/DRT脚本（尚未提交作业）；保留636diode、两换型、原功能/位置/接口/PG/OBS/层集合，新增负载/面积成本独立，路由后仍需fresh/连通/RC/STA与原deck。下一步发布读回后执行新适配r02和22网增量接入，不以native0/CI代替整个目标。SYSTEM92968、共同92855和其余LL/父层作业继续；底座未合格冻结，两完整功能/对照未完成。
+
 2026-10-29 Asia/Shanghai：Issue126新SYSTEM恢复92968实际运行，复用同一已合法化检查点；770-edge适配92969在时钟native别名前置检查失败、未路由，已核实两个精确alias并保留gate-r15。GEMM当前矩阵改为已验证636diode+两换型源，旧等成本Aopt/C另列；共同底座未合格冻结、两完整系统/对照未完成。fa3d1a0两CI success，仍in_progress/Draft。
 
 2026-10-29 Asia/Shanghai新终态：GEMM92940保留636真实diode/原接口，两处同功能换型修复cap，fresh native0/所检连通/双PG/RCX，setup/hold 0.770752/0.039624ns、文字违例0；另计master面积+1.330μm²。第一diode版严格GDS92912仍失败37项天线，换型后92943独立运行。SYSTEM92925 GRT/DRT后因空句柄导出失败，最终fresh/RC/STA未执行。gate-r14及中文矩阵发布，[交接](handoffs/2026-10-29-issue-126-fixed-conductors-and-diode.md)。共同底座未合格冻结、两完整功能/系统对照未完成，继续in_progress/Draft。

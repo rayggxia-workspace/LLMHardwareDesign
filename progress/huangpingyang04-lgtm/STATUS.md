@@ -1,5 +1,7 @@
 # huangpingyang04-lgtm 的进度
 
+2026-10-29 Asia/Shanghai增量终态：新换型版严格GDS92943仍FAILED37项天线；92972以同版本DEF/GDS/RDB/原生几何SHA读取7516494行，全部37个真实多边形唯一关联22条真实网，与现有636个diode网交集0。全部22网及层级CSV/原多边形证据随gate-r16发布（92973/drivercda2025d28793aeab7a4d3391058d50f3d227e51），不是修复或LVS通过。已编写定向22真实diode增量GRT/DRT脚本（尚未提交作业）；保留636diode、两换型、原功能/位置/接口/PG/OBS/层集合，新增负载/面积成本独立，路由后仍需fresh/连通/RC/STA与原deck。下一步发布读回后执行新适配r02和22网增量接入，不以native0/CI代替整个目标。SYSTEM92968、共同92855和其余LL/父层作业继续；底座未合格冻结，两完整功能/对照未完成。
+
 2026-10-29 Asia/Shanghai：[Issue126](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/126)/[Draft PR129](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/129)继续，fa3d1a0两CI success。SYSTEM92968复用已合法化源实际接线；全770-edge适配92969因两个外部clock规范别名前置失败，未路由。精确alias已核实，失败与gate-r15保留，下一步新r02及剩余天线实际网关联。GEMM当前矩阵切到636diode+2size实际源，原等成本控制另存；完整共同冻结/系统对照仍未完成。登记pending/看板unverified/同步pending，审查人待指定。
 
 2026-10-29 Asia/Shanghai：[Issue126](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/126)/[Draft PR129](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/129)继续。GEMM92940两换型ECO已native0/所检连通/RCX，setup0.770752、hold0.039624ns、文字违例0，成本2换型/1移动/+1.330μm²。第一diode GDS92912仍37项天线失败，新92943原deck继续。SYSTEM92925路由后空句柄导出失败，最终fresh/RC/STA未执行；定位到恢复字典空值，下一步按名称绑定真实实例、复用合法化检查点。gate-r14原文与中文矩阵同步；接续未合格770-edge适配试验和其余修复。[交接](../../docs/handoffs/2026-10-29-issue-126-fixed-conductors-and-diode.md)；登记pending/看板unverified及同步pending，审查人待指定，完整目标未完成。

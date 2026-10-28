@@ -76,7 +76,8 @@ def check(out):
         q=read(out/audit['evidence']);assert q['native_returncode']==0 and q['source_unchanged'] and 'ANTENNA_X1' in q['actual_diode_liberty_cells']
         text=gzip.decompress(((out/audit['evidence']).parent/'native.log.gz').read_bytes()).decode()
         assert 'Found 0 net violations' in text and 'Found 0 pin violations' in text
-        assert audit['GDS_deck_findings_not_repaired']==rows['gemm']['available_deck_findings']==1460
+        historical=rows['gemm'].get('historical_costed_GDS_findings_before_diode',rows['gemm']['available_deck_findings'])
+        assert audit['GDS_deck_findings_not_repaired']==historical==1460
     for r in j.get('whole_mapped_relative_digital_contracts',[]):
         q=read(out/r['evidence']);assert q['relative_mapped_digital_contract_pass'] and q['all_sources_unchanged']
         assert q['same_all_top_ports_directions_and_networks'] and q['same_nonfiller_instance_set']

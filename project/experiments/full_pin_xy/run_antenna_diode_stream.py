@@ -8,8 +8,9 @@ DRIVER=Path(__file__).resolve().parent
 
 
 def run(revision,physical_revision,source_kind='diode'):
-    assert source_kind in ['diode','cap']
-    source=ROOT/('antenna_diode_eco' if source_kind=='diode' else 'diode_cap_eco')/physical_revision/'gemm-C'
+    assert source_kind in ['diode','cap','incremental']
+    physical_root={'diode':'antenna_diode_eco','cap':'diode_cap_eco','incremental':'antenna_incremental_eco'}[source_kind]
+    source=ROOT/physical_root/physical_revision/'gemm-C'
     out=ROOT/'antenna_diode_stream'/revision/'gemm-C';out.mkdir(parents=True,exist_ok=False)
     p=source/'execution.json';receipt=json.loads(p.read_text())
     record={'scope':'REAL_DIODE_ECO_STRICT_GDS_AND_UNCHANGED_AVAILABLE_RULES_NOT_COMPLETE_SIGNOFF',
@@ -25,10 +26,15 @@ def run(revision,physical_revision,source_kind='diode'):
         source_contract=(receipt.get('original_functional_instances_pose_and_terminal_contract_unchanged')
           and all(receipt.get('unchanged_geometry',{}).get(k) for k in ['pins','pdn','die'])
           and receipt.get('separate_diode_cost',{}).get('inserted_real_ANTENNA_X1')==636)
-    else:
+    elif source_kind=='cap':
         source_contract=(receipt.get('all_original_signal_terminal_and_port_graph_equal_with_exact_two_proven_sizes')
           and all(receipt.get('pin_PG_die_unchanged',{}).get(k) for k in ['pins','pdn','die'])
           and receipt.get('retained_real_diode_count')==636)
+    else:
+        source_contract=(receipt.get('all_original_instances_and_signal_graph_preserved_with_only_22_real_diode_loads')
+          and receipt.get('all_prior_functional_and_636_diode_poses_and_terminals_unchanged')
+          and all(receipt.get('pin_PG_die_unchanged',{}).get(k) for k in ['pins','pdn','die'])
+          and receipt.get('actual_total_real_diodes')==658)
     if not source_contract:
         record['status']='NOT_EXECUTED_SOURCE_CONTRACT_FAILED_OR_UNVERIFIED'
         (out/'execution.json').write_text(json.dumps(record,indent=2)+'\n');return 1

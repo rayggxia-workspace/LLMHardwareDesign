@@ -3,7 +3,7 @@
 proc original_functional_contract {file} {
   set f [open $file w]
   foreach i [[ord::get_db_block] getInsts] {
-    if {[[$i getMaster] getType] eq "CORE_SPACER" || [string match PINXY_ANT_* [$i getName]]} {continue}
+    if {[[$i getMaster] getType] eq "CORE_SPACER" || [string match ${::pinxy_diode_prefix}* [$i getName]]} {continue}
     puts $f [list CELL [$i getName] [[$i getMaster] getName] [$i getLocation] [$i getOrient] [$i getPlacementStatus]]
     foreach t [$i getITerms] {
       set n [$t getNet];set nn NULL;if {$n ne "NULL"} {set nn [$n getName]}
@@ -18,6 +18,10 @@ proc obstruction_contract {} {
     lappend rows [list [$ob getId] [[$r getTechLayer] getName] [$r xMin] [$r yMin] [$r xMax] [$r yMax]]
   };return [lsort $rows]
 }
+set pinxy_diode_prefix PINXY_ANT_
+set pinxy_diode_count 636
+if {[info exists ::env(PINXY_DIODE_PREFIX)]} {set pinxy_diode_prefix $::env(PINXY_DIODE_PREFIX)}
+if {[info exists ::env(PINXY_DIODE_COUNT)]} {set pinxy_diode_count $::env(PINXY_DIODE_COUNT)}
 read_db $::env(PINXY_DIODE_SOURCE)
 read_sdc $::env(PINXY_DIODE_SDC)
 source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
@@ -29,7 +33,7 @@ if {$a eq "NULL" || [$a getIoType] ne "INPUT"} {error "Actual diode A is not an 
 foreach mt [$dm getMTerms] {
   if {[$mt getSigType] ni {POWER GROUND} && ([$mt getName] ne "A" || [$mt getIoType] ne "INPUT")} {error "Unexpected diode signal terminal"}
 }
-foreach i [$b getInsts] {if {[string match PINXY_ANT_* [$i getName]]} {error "Source already contains this ECO prefix"}}
+foreach i [$b getInsts] {if {[string match ${pinxy_diode_prefix}* [$i getName]]} {error "Source already contains this ECO prefix"}}
 fingerprint $out/before
 original_functional_contract $out/before.original.tsv
 set original_obs [obstruction_contract]
@@ -41,6 +45,17 @@ foreach i [$b getInsts] {
 }
 set filler_masters [lsort -unique $filler_masters]
 if {![llength $filler_masters]} {error "Missing original filler master set"}
+set temporary_obs {};set access_reservations {};source $::env(PINXY_DIODE_RESERVATIONS)
+foreach row $access_reservations {
+  lassign $row ly x0 y0 x1 y1;set coords {}
+  foreach v [list $x0 $y0 $x1 $y1] {lappend coords [expr {round($v*$u)}]}
+  lappend temporary_obs [odb::dbObstruction_create $b [[ord::get_db_tech] findLayer $ly] {*}$coords]
+}
+set_routing_layers -signal metal2-metal10 -clock metal4-metal10
+if {[info exists ::env(PINXY_DIODE_GUIDES)]} {
+  read_guides $::env(PINXY_DIODE_GUIDES)
+  if {![stage begin_incremental_GRT {global_route -start_incremental}]} {close $stages;exit 1}
+}
 if {![stage actual_diode_insert {
   remove_fillers
   # Freeze all old functional cells for this ECO's legalizer, then restore status.
@@ -64,7 +79,7 @@ if {![stage actual_diode_insert {
     if {$best eq ""} {error "No verified receiver for $name; do not invent one"}
     set receiver [$best getInst];set bb [$receiver getBBox]
     set x [$bb xMax];set y [$bb yMin]
-    set inst [odb::dbInst_create $b $dm [format PINXY_ANT_%04d $count]]
+    set inst [odb::dbInst_create $b $dm [format ${pinxy_diode_prefix}%04d $count]]
     if {$inst eq "NULL"} {error "Cannot create actual diode"}
     $inst setLocation $x $y;$inst setPlacementStatus PLACED
     [$inst findITerm A] connect $n
@@ -72,7 +87,7 @@ if {![stage actual_diode_insert {
     puts $f [join [list [$inst getName] $name [$receiver getName] [[$best getMTerm] getName] [list [$bb xMin] [$bb yMin] [$bb xMax] [$bb yMax]] $x $y [$dm getName]] "\t"]
     incr count
   };close $f
-  if {$count!=636} {error "Unexpected count $count"}
+  if {$count!=$pinxy_diode_count} {error "Unexpected count $count"}
   write_db $out/inserted_NOT_LEGALIZED_OR_ROUTED.odb
 }]} {close $stages;exit 1}
 if {![stage diode_legalization {
@@ -83,9 +98,10 @@ if {![stage diode_legalization {
   set f [open $out/before.original.tsv r];set old [read $f];close $f
   set f [open $out/placed.original.tsv r];set current [read $f];close $f
   if {$old ne $current} {error "Original cell pose/master/terminal relation changed"}
-  filler_placement -prefix PINXY_ANT_FILL_ $filler_masters
-  add_global_connection -net VDD -inst_pattern {^PINXY_ANT_[0-9]+$} -pin_pattern {^VDD$} -power
-  add_global_connection -net VSS -inst_pattern {^PINXY_ANT_[0-9]+$} -pin_pattern {^VSS$} -ground
+  filler_placement -prefix ${pinxy_diode_prefix}FILL_ $filler_masters
+  set diode_pattern [format {^%s[0-9]+$} $pinxy_diode_prefix]
+  add_global_connection -net VDD -inst_pattern $diode_pattern -pin_pattern {^VDD$} -power
+  add_global_connection -net VSS -inst_pattern $diode_pattern -pin_pattern {^VSS$} -ground
   global_connect
   check_placement -verbose
   set f [open $out/diode_placed.tsv w];puts $f "diode\tnet\tx_dbu\ty_dbu\torientation\twidth_dbu\theight_dbu\tVDD\tVSS"
@@ -97,20 +113,18 @@ if {![stage diode_legalization {
   };close $f
   write_db $out/placed_NOT_ROUTED.odb
 }]} {close $stages;exit 1}
-set temporary_obs {};set access_reservations {};source $::env(PINXY_DIODE_RESERVATIONS)
-foreach row $access_reservations {
-  lassign $row ly x0 y0 x1 y1;set coords {}
-  foreach v [list $x0 $y0 $x1 $y1] {lappend coords [expr {round($v*$u)}]}
-  lappend temporary_obs [odb::dbObstruction_create $b [[ord::get_db_tech] findLayer $ly] {*}$coords]
+if {[info exists ::env(PINXY_DIODE_GUIDES)]} {
+  if {![stage global_route {global_route -end_incremental -guide_file $out/route.guide -congestion_report_file $out/congestion.rpt}]} {close $stages;exit 1}
+} else {
+  if {![stage full_signal_clock_rip {
+    foreach n [$b getNets] {if {[$n getSigType] ni {POWER GROUND}} {set w [$n getWire];if {$w ne "NULL"} {odb::dbWire_destroy $w}}}
+  }]} {close $stages;exit 1}
+  if {![stage global_route {global_route -guide_file $out/route.guide -congestion_report_file $out/congestion.rpt}]} {close $stages;exit 1}
 }
-set_routing_layers -signal metal2-metal10 -clock metal4-metal10
-if {![stage full_signal_clock_rip {
-  foreach n [$b getNets] {if {[$n getSigType] ni {POWER GROUND}} {set w [$n getWire];if {$w ne "NULL"} {odb::dbWire_destroy $w}}}
-}]} {close $stages;exit 1}
-if {![stage global_route {global_route -guide_file $out/route.guide -congestion_report_file $out/congestion.rpt}]} {close $stages;exit 1}
 if {![stage detailed_route {detailed_route -output_drc $out/route.drc -verbose 1}]} {close $stages;exit 1}
 if {![stage preserve_original_views {
   foreach ob $temporary_obs {odb::dbObstruction_destroy $ob}
+  write_db $out/routed_PENDING_CONTRACTS.odb
   if {[obstruction_contract] ne $original_obs} {error "Original OBS changed"}
   original_functional_contract $out/after.original.tsv
   fingerprint $out/after
