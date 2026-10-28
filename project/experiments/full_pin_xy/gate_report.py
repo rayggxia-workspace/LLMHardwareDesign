@@ -345,10 +345,39 @@ def render(root,out):
           'evidence':(dest/chain.relative_to(snapshot)).relative_to(out).as_posix()}
     chain_resume_text=''
     upper_text=''
+    incremental_text=''
+    incremental=snapshot/'antenna_incremental_eco/r01/gemm-C/execution.json.gz'
+    if incremental.exists():
+        q=read(incremental)
+        item=dict(q,evidence=(dest/incremental.relative_to(snapshot)).relative_to(out).as_posix())
+        result['GEMM_additional22_diode_actual_attempt']=item
+        if q.get('native_returncodes',{}).get('implementation')==0:
+            partial={}
+            for kind in ['setup','hold']:
+                p=incremental.parent/(kind+'.txt.gz')
+                if p.exists():partial[kind+'_ns']=slack(p)
+            p=incremental.parent/'checks.txt.gz'
+            if p.exists():partial['literal_VIOLATED_markers_not_complete_failure_count']=gzip.decompress(p.read_bytes()).decode().count('(VIOLATED)')
+            item['closed_native_implementation_STA_reports_not_fresh_DRC_or_final_graph']=partial
+            incremental_text='<p><strong>92975定向22个新增真实diode：</strong>原层接线/详细布线、原视图合同、双PG及RCX/STA原生命令均已执行；闭合原生进程报告setup/hold='+str(partial.get('setup_ns'))+'/'+str(partial.get('hold_ns'))+'ns，文字违例='+str(partial.get('literal_VIOLATED_markers_not_complete_failure_count'))+'。独立fresh DRC、全量数字图及源合同以最终receipt各自为准，未终态不记0/通过。92976为对应严格GDS原deck依赖作业；不把提交视为规则通过。旧37项原样保留。</p>'
+        if q.get('completed_utc'):
+            incremental_text+='<p>92975最终回执：fresh native='+str(q.get('fresh_DRC_count'))+'，全量22新增负载数字合同='+str(q.get('all_original_instances_and_signal_graph_preserved_with_only_22_real_diode_loads'))+'，原pose/端点='+str(q.get('all_prior_functional_and_636_diode_poses_and_terminals_unchanged'))+'。无论Slurm结局，完整规则/RTL/系统资格仍未通过。</p>'
+    prepared=snapshot/'upper_adaptation_trial/r02/preparation.json.gz'
+    if prepared.exists():
+        q=read(prepared);result['upper_all770_actual_hook_preparation_r02']=dict(q,evidence=(dest/prepared.relative_to(snapshot)).relative_to(out).as_posix())
+        upper_text='<p>92974已核查同一真实下层检查点的1541个M10接点、两唯一时钟alias及via10下层0.8×0.8μm落脚；两模式各770条边/1540个实际hook，256共享资源分别使用真实A/B两端。当前适配层GRT运行，计划与真实下层绑定不等于上层布通或两完整功能；私有下层、叶块与完整检查未闭合，未冻结。</p>'
+    for revision in ['r01','r02']:
+        p=snapshot/('tool_api/grt-start-'+revision+'/execution.json.gz')
+        if p.exists():result['native_GRT_capability_'+revision]=dict(read(p),evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+    diagnosis=root/'vector_table_diagnosis_r02'
+    if (diagnosis/'summary.json').exists():
+        folder=data/'vector_Liberty_table_diagnosis';shutil.copytree(diagnosis,folder,dirs_exist_ok=True)
+        q=read(folder/'summary.json');result['VECTOR_exact_Liberty_table_grid_diagnosis']=q
+        incremental_text+='<p>VECTOR只读库表诊断：实际关键路径141段cell arc合计6.7401ns；FA_X1/HA_X1/OAI33_X1在当前同函数系列无更大驱动型号。逐arc表格最小值混合不同slew/负载/跳变/条件，不是可同时实现的STA，也不是零线延迟下界或不可行证明；原约束与物理输入未改变。<a href="data/vector_Liberty_table_diagnosis/arcs.csv">141段实际master/arc及库表CSV</a>。</p>'
     upper_failed=snapshot/'upper_adaptation_trial/r01/preparation_failure.json.gz'
     if upper_failed.exists():
         q=read(upper_failed);result['upper_all770_preparation_r01_failed']=dict(q,evidence=(dest/upper_failed.relative_to(snapshot)).relative_to(out).as_posix())
-        upper_text='<p><strong>770-edge适配试验92969前置失败：</strong>尚未路由。原生Verilog将两个外部时钟alias规范化为opentpu__clk/llaccel__clk，与编译中间wire名字不同；输入检查拒绝而非忽略。原失败保留，后续只接受这两个经唯一TOP_IO组件证明的精确alias，不改变真实连接。92968在新目录复用已完成SYSTEM合法化检查点，按名称查找实例的恢复修复真实运行；作业提交不是通过。</p>'
+        upper_text+='<p><strong>770-edge适配试验92969前置失败：</strong>尚未路由。原生Verilog将两个外部时钟alias规范化为opentpu__clk/llaccel__clk，与编译中间wire名字不同；输入检查拒绝而非忽略。原失败保留，后续只接受这两个经唯一TOP_IO组件证明的精确alias，不改变真实连接。92968在新目录复用已完成SYSTEM合法化检查点，按名称查找实例的恢复修复真实运行；作业提交不是通过。</p>'
     chain_resume=snapshot/'output_chain_resume/r01/opentpu_aux-C/execution.json.gz'
     if chain_resume.exists():
         q=read(chain_resume);result['SYSTEM_output_chain_resume']={'receipt':q,'full_qualification':False,
@@ -451,4 +480,4 @@ def render(root,out):
 <p><strong>SYSTEM真实输出缓冲试验92921：</strong>全部1244个输出port纳入选择，772条私有identity链、1262个已有buffer生成真实重排，不增单元、不换型、不改网络。实际Diamond合法化后OpenROAD触发Signal11（implementation=-11），没有完成路由；moved_NOT_LEGALIZED_OR_ROUTED.odb及完整失败回执保留，原pin/PG/外框和源保持。后续复用已存检查点，在独立不加载STA的进程验证合法化，不重复生成同一移动方案。原SYS源时序失败不删，当前仍非物理修复通过。</p>
 <p><strong>92925独立恢复已实际推进：</strong>复用上述1262个buffer坐标，独立几何进程不加载Lib/SDC；原生合法化、check_placement及原功能master/连接与非选中单元位置合同均通过，原本无filler则未新增。原生关闭的placed ODB及两份实际合同文件另索引SHA，与原source合同相等；不是重选点或跳过检查。随后在新进程恢复原Lib/SDC及M2–M8/M4–M8约束，完整重接线继续；最终DRC/PG/连通/RCX/STA未终态，不宣布时序修复或准确崩溃根因已证实。</p>
 <p><strong>GEMM真实天线ECO：</strong>92910已完成636个真实ANTENNA_X1接入、完整重布线、fresh native0及268637网/806621端点所检连通、双PG和真实RCX。setup/hold为0.770727/0.039500ns，但新增两个max-cap失败：_328822_/ZN（实际INV_X1，67.621605&gt;60.730000fF）、_332783_/ZN（实际XNOR2_X1，27.449909&gt;26.016199fF），并非电气通过。原功能实例位置/连接、原pin/PG/外框保持；新增636单元master面积169.176μm²、每个实际输入cap0.023429fF均单列成本，非block面积变化。</p>
-<p>92929独立原生全量数字合同通过：原226775非filler实例、826710个信号端点、3753端口完全保持，新增636个真实单输入无输出/状态diode各连到已核对636网；真实负载变化不被当作RC/时序等价。'''+diode_stream_text+'''两个源cap失败及其后续尺寸修复分别记录，未降负载或删检查。</p>'''+cap_text+chain_resume_text+upper_text+'''</section>'''
+<p>92929独立原生全量数字合同通过：原226775非filler实例、826710个信号端点、3753端口完全保持，新增636个真实单输入无输出/状态diode各连到已核对636网；真实负载变化不被当作RC/时序等价。'''+diode_stream_text+'''两个源cap失败及其后续尺寸修复分别记录，未降负载或删检查。</p>'''+cap_text+chain_resume_text+upper_text+incremental_text+'''</section>'''

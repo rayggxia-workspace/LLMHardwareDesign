@@ -207,6 +207,33 @@ def check(out):
         assert q['native_returncode']==0 and q['all_sources_unchanged'] and not q['full_qualification']
         assert a['marker_count']==37 and a['mapping_status_counts']=={'UNIQUE_EXACT_POLYGON_CONDUCTOR_CORRELATION':37}
         assert a['unique_correlated_net_count']==22 and len(a['mapped_nets_without_existing_real_diode'])==22 and a['mapped_nets_already_with_real_diode']==[]
+    if j.get('GEMM_additional22_diode_actual_attempt'):
+        q=j['GEMM_additional22_diode_actual_attempt'];assert not q['full_qualification']
+        assert q['previous_real_diodes']==636 and q['requested_additional_real_diodes']==22
+        assert q['no_full_signal_clock_wire_rip_requested'] and q['DRT_not_claimed_22_net_only']
+        if q.get('native_returncodes',{}).get('implementation')==0:
+            p=(out/q['evidence']).parent;stages=gzip.decompress((p/'stages.tsv.gz').read_bytes()).decode()
+            for stage in ['actual_diode_insert','diode_legalization','global_route','detailed_route','preserve_original_views','VDD','VSS','whole_signal_geometry','rcx','sta']:
+                assert stage+'\tEXECUTED\t' in stages
+            partial=q['closed_native_implementation_STA_reports_not_fresh_DRC_or_final_graph']
+            for kind in ['setup','hold']:
+                text=gzip.decompress((p/(kind+'.txt.gz')).read_bytes()).decode()
+                assert partial[kind+'_ns']==float(re.search(r'worst slack (?:min|max)\s+([-\d.]+)',text)[1])
+    if j.get('upper_all770_actual_hook_preparation_r02'):
+        q=j['upper_all770_actual_hook_preparation_r02'];assert q['actual_hook_boxes']==1541 and q['per_mode_edges']==770
+        assert q['native_via10_M10_landing_size_dbu']==[1600,1600] and not q['full_qualification']
+        assert set(q['native_clock_net_aliases'])=={'opentpu:2:external_clock','llaccel:2:external_clock'}
+    if j.get('VECTOR_exact_Liberty_table_grid_diagnosis'):
+        q=j['VECTOR_exact_Liberty_table_grid_diagnosis'];assert not q['full_qualification'] and not q['is_zero_wire_lower_bound'] and not q['is_timing_repair_or_proof_infeasible']
+        assert q['actual_cell_arc_count']==141 and abs(q['actual_extracted_cell_arrival_increment_sum_ns']-6.7401)<1e-6
+        assert q['actual_Liberty_SHA256']=='8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1'
+        assert q['masters_on_path_with_no_exact_function_family_size_alternative']==['FA_X1','HA_X1','OAI33_X1']
+    if j.get('native_GRT_capability_r02'):
+        q=j['native_GRT_capability_r02'];p=(out/q['evidence']).parent
+        assert q['native_returncode']==0 and q['no_active_process_attach_signal_or_input_mutation'] and not q['full_qualification']
+        body=gzip.decompress((p/'global_route.body.tcl.gz').read_bytes()).decode();log=gzip.decompress((p/'native.log.gz').read_bytes()).decode()
+        assert 'if { [info exists keys(-guide_file)] } {' in body and 'info eif' not in body
+        assert 'BODY_COMPLETE global_route 1' in log and '0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53' in log
     if j.get('actual_fixed256_native_attribute_audit'):
         q=j['actual_fixed256_native_attribute_audit'];assert q['native_export_returncode']==0 and not q['native_export_executed_this_run']
         assert q['all_256_native_FIXEDS_and_original_net_bindings_verified'] and q['all_closed_source_files_unchanged'] and q['native_shared_conductor_count']==256
