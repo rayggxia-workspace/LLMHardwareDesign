@@ -15,17 +15,24 @@ def one(name,path,drivers,out):
         'set b [ord::get_db_block];set f [open '+tcl(directory/'net_ndr.tsv')+' w];puts $f "net\\tsig_type\\tNDR"',
         'foreach n [$b getNets] {set d [$n getNonDefaultRule];if {$d ne "NULL"} {puts $f [join [list [$n getName] [$n getSigType] [$d getName]] "\\t"]}};close $f',
         'set f [open '+tcl(directory/'NDR_rules.tsv')+' w];puts $f "rule\\thard_spacing\\tlayer\\twidth_dbu\\tspacing_dbu"',
-        '''foreach d [[ord::get_db_tech] getNonDefaultRules] {
+        '''set rules [concat [[ord::get_db_tech] getNonDefaultRules] [$b getNonDefaultRules]]
+foreach d $rules {
  set hard UNKNOWN;catch {set hard [$d getHardSpacing]}
  foreach lr [$d getLayerRules] {puts $f [join [list [$d getName] $hard [[$lr getLayer] getName] [$lr getWidth] [$lr getSpacing]] "\\t"]}
 };close $f''',
         'set f [open '+tcl(directory/'drivers.tsv')+' w];puts $f "pin\\tmaster\\tmaster_type\\twidth_dbu\\tnet\\tinst_dont_touch\\tnet_dont_touch\\tBTerms\\tITerms"']
     for full in drivers:
         inst,pin=full.rsplit('/',1)
-        commands+=['set i [$b findInst '+tcl(inst)+'];if {$i eq "NULL"} {error "Unknown actual driver"}',
+        escaped=inst.replace('[',r'\[').replace(']',r'\]')
+        commands+=['set i [$b findInst '+tcl(inst)+'];if {$i eq "NULL"} {set i [$b findInst '+tcl(escaped)+']};if {$i eq "NULL"} {error "Unknown actual driver"}',
           'set it [$i findITerm '+tcl(pin)+'];set m [$i getMaster];set n [$it getNet];set idt UNKNOWN;set ndt UNKNOWN;catch {set idt [$i isDoNotTouch]};catch {set ndt [$n isDoNotTouch]}',
           'puts $f [join [list '+tcl(full)+' [$m getName] [$m getType] [$m getWidth] [$n getName] $idt $ndt [llength [$n getBTerms]] [llength [$n getITerms]]] "\\t"]']
-    commands+=['close $f','puts "READ_ONLY_NDR_DRIVER_AUDIT_FINISHED"']
+    commands+=['close $f',
+        'set f [open '+tcl(directory/'cell_tools.txt')+' w];foreach c {replace_cell size_cell filler_placement remove_fillers detailed_placement} {puts $f [list $c [info commands $c]];if {[llength [info commands $c]]} {redirect -variable h {help $c};puts $f $h}};close $f',
+        'set f [open '+tcl(directory/'candidate_masters.tsv')+' w];puts $f "master\\ttype\\twidth_dbu\\theight_dbu";foreach l [[ord::get_db] getLibs] {foreach m [$l getMasters] {if {[regexp {^(BUF_X[1248]|XOR2_X[124]|DFFE?_.*|FILLCELL_.*)$} [$m getName]]} {puts $f [join [list [$m getName] [$m getType] [$m getWidth] [$m getHeight]] "\\t"]}}};close $f',
+        'puts "READ_ONLY_NDR_DRIVER_AUDIT_FINISHED"']
+    # Tcl quoted \t must contain a single backslash, not a literal \\t field.
+    commands=[s.replace('\\\\t','\\t') for s in commands]
     script.write_text('\n'.join(commands)+'\n')
     command=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
              '--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro','--home',str(ROOT/'home'),'--pwd',str(directory),IMAGE,BIN,'-threads','1','-no_init','-exit',str(script)]
