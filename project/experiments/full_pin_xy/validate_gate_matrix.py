@@ -387,8 +387,8 @@ def check(out):
         assert q['all_closed_sources_unchanged'] and all(q['all_cells_poses_original_connections_pins_PG_die_unchanged'].values())
     if j.get('SYSTEM_existing_buffer_relocation_r02',{}).get('completed_utc'):
         q=j['SYSTEM_existing_buffer_relocation_r02'];assert not q['full_qualification'] and q['native_returncodes']['route']==0
-        latest=rows['opentpu_aux'].get('historical_source_before_stacked_via',rows['opentpu_aux'])
-        source_row=latest.get('historical_source_before_clean_patches',latest)
+        system_source_row=rows['opentpu_aux'].get('historical_source_before_stacked_via',rows['opentpu_aux'])
+        source_row=system_source_row.get('historical_source_before_clean_patches',system_source_row)
         assert q['fresh_DRC_count']==source_row['native_DRC_count']==2 and q['whole_signal_geometry']['pass']
         assert q['setup_ns']==source_row['setup_ns']==-0.056303 and q['hold_ns']==source_row['hold_ns']==-0.119814
         assert q['literal_VIOLATED_markers_not_complete_failure_count']==1233 and q['all_sources_unchanged']

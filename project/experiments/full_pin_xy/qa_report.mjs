@@ -33,6 +33,10 @@ try {
   await evaluate('document.querySelector("#latest-physical-gates").scrollIntoView()');
   await fs.writeFile(path.join(out,'report-latest-gates.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
  }
+ if(await evaluate('[...document.querySelectorAll("p")].some(e=>e.textContent.startsWith("93076新的六块扩展STA"))')){
+  await evaluate('[...document.querySelectorAll("p")].find(e=>e.textContent.startsWith("93076新的六块扩展STA")).scrollIntoView()');
+  await fs.writeFile(path.join(out,'report-extended-STA.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ }
  if(await evaluate('[...document.querySelectorAll("p")].some(e=>e.textContent.startsWith("93025全770原生guide接续已FAILED"))')){
   await evaluate('[...document.querySelectorAll("p")].find(e=>e.textContent.startsWith("93025全770原生guide接续已FAILED")).scrollIntoView()');
   await fs.writeFile(path.join(out,'report-full770-detail-failure.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));

@@ -495,6 +495,15 @@ def render(root,out):
     if extended:
         result['source_bound_extended_STA_r01']=extended
         upper_text+='<p>93076新的六块扩展STA：按各自已闭合实际ODB/SPEF/原SDC逐SHA重读，补查原生min pulse width、min period、max skew、gating setup/hold及min slew/cap/fanout，输出真实clock/skew/latency、约束与寄生覆盖。每块终态及源余量重放分别记录；未终态不当通过，派生path minimum period与缺失Liberty minimum_period规则严格区分。这个只读覆盖审计不改变设计，也不修复原负时序。</p>'
+        upper_text+='<table><thead><tr><th>扩展检查对象</th><th>原生执行</th><th>setup/hold原文重放</th><th>新增检查文字VIOLATED</th><th>证据</th></tr></thead><tbody>'
+        for q in extended:
+            complete=bool(q.get('completed_utc'));r=next(r for r in rows if r['case']==q['case'])
+            r['source_bound_extended_STA_audit']={'completed':complete,'native_returncode':q.get('native_returncode'),
+              'actual_source':q['actual_source'],'exact_slack_replay':q.get('source_worst_slacks_exactly_replayed'),
+              'literal_VIOLATED_not_complete_rule_coverage':q.get('extended_literal_VIOLATED_rows_not_complete_rule_coverage'),
+              'evidence':q['evidence'],'full_qualification':False}
+            upper_text+='<tr><td>'+html.escape(q['case'])+'</td><td>'+('return '+str(q.get('native_returncode')) if complete else '运行中')+'</td><td>'+str(q.get('source_worst_slacks_exactly_replayed','未取得'))+'</td><td>'+str(q.get('extended_literal_VIOLATED_rows_not_complete_rule_coverage','未知'))+'</td><td><a href="'+q['evidence']+'">原生回执/文件SHA</a></td></tr>'
+        upper_text+='</tbody></table><p>表中0只表示新增报表没有文字VIOLATED；不表示全部规则已定义或系统时序通过。原有setup/hold、电气、未标注寄生和minimum_period覆盖缺项仍独立保留。</p>'
     p=snapshot/'vector_clone_crash/r01/execution.json.gz'
     if p.exists():
         q=read(p);result['VECTOR_exact_native_crash_symbolization_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
