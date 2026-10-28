@@ -75,6 +75,9 @@ try:
     elif MODE=='revision300-constraints-control':
         from revision300_constraints_control import control
         control(ROOT,OUT,CPUS,run)
+    elif MODE=='revision300-route-v' and (ROOT/'project/experiments/block_v1/revision300-v-grt-resume.json').exists():
+        from revision300_v_grt_resume import implement
+        implement(ROOT,OUT,CPUS,run)
     elif MODE in ('revision300-input-delay-s','revision300-input-delay-t'):
         from revision300_input_delay_probe import probe
         probe(ROOT,OUT,CPUS,run,MODE[-1])
