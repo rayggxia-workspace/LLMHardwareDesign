@@ -134,9 +134,10 @@ int main(int argc,char**argv){try{
   for(unsigned i=0;i<n;++i)for(unsigned j=0;j<k;++j)
    expected[i]+=int64_t(wa?a[j]:int16_t(int8_t(a[j])))*(wb?b[i][j]:int16_t(int8_t(b[i][j])));
   mac(wa,wb,clear,k,n);require(partial()==expected,"matrix/tail/multi-tile integer mismatch");
-  int32_t factor=int32_t(rng());unsigned shift=rng()%13;bool cm=test%7==0||test==0;
+  const int32_t scale_corners[]={INT32_MIN,INT32_MIN+1,-65537,-1,0,1,65537,INT32_MAX};
+  int32_t factor=test<128?scale_corners[test%8]:int32_t(rng());unsigned shift=rng()%13;bool cm=test%7==0||test==0;
   auto r=command(4,0,U128(uint32_t(factor))|(U128(shift)<<32)|(U128(cm)<<39));
-  require(r.latency==33,"wrong staged merge latency");if(cm)merged.fill(0);
+  require(r.latency==49,"wrong staged merge latency");if(cm)merged.fill(0);
   for(int i=0;i<8;++i)merged[i]+=I128(expected[i])*factor*(I128(1)<<shift);
   for(unsigned mode=0;mode<3;++mode)final_matches(merged,rng()%100,mode);
  }

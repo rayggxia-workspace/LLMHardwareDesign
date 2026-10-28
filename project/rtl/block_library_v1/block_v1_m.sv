@@ -13,8 +13,9 @@ module block_v1_m(
 );
  localparam IDLE=0,PRODUCT=1,REDUCE=2,ACCUMULATE=3,DONE=4,
             SCALE=5,ALIGN=6,COMMIT=7,BURST=8,DRAIN=9,
-            READ_SHIFT=10,READ_ROUND=11,READ_CLAMP=12,MERGE_LOW=13,MERGE_HIGH=14;
- reg [3:0] state;
+            READ_SHIFT=10,READ_ROUND=11,READ_CLAMP=12,MERGE_LOW=13,MERGE_HIGH=14,
+            SCALE_MULT=15,SCALE_JOIN=16;
+ reg [4:0] state;
  reg signed [15:0] a[0:7],b[0:63];
  reg a_valid;reg [7:0] b_valid;
  reg signed [15:0] product[0:63];
@@ -32,6 +33,7 @@ module block_v1_m(
  reg [6:0] merge_shift;
  reg clear_merge,merge_error;
  reg signed [95:0] scale_product;
+ reg signed [63:0] scale_operand,scale_low,scale_upper;
  reg [127:0] merge_left,merge_right;
  reg [64:0] merge_low;
  reg signed [64:0] merge_upper,merge_high;
@@ -202,6 +204,7 @@ module block_v1_m(
    read_index<=0;read_shift<=0;read_width<=0;read_increment<=0;
    for(i=0;i<8;i=i+1)tile_b_valid[i]<=0;
    merge_shift<=0;clear_merge<=0;merge_error<=0;scale_product<=0;
+   scale_operand<=0;scale_low<=0;scale_upper<=0;
    for(i=0;i<8;i=i+1)begin accumulator[i]<=0;merged[i]<=0;preview[i]<=0;reduced[i]<=0;end
   end else begin
    if(rsp_valid&&rsp_ready)rsp_valid<=0;
@@ -322,7 +325,19 @@ module block_v1_m(
     end
     READ_ROUND:begin for(i=0;i<4;i=i+1)read_r[i]<=read_q[i]+read_increment[i];state<=READ_CLAMP;end
     READ_CLAMP:respond(read_data,0,read_saturated);
-    SCALE:begin scale_product<=accumulator[scale_lane]*scale_factor;state<=ALIGN;end
+    // Separate the lane mux, two partial multiplications, and exact join.
+    // unsigned(low32)*signed(factor) fits S64, including INT32_MIN.
+    // signed(high32)*factor shifted32 plus sign-extended low is exact S96.
+    SCALE:begin scale_operand<=accumulator[scale_lane];state<=SCALE_MULT;end
+    SCALE_MULT:begin
+     scale_low<=$signed({1'b0,scale_operand[31:0]})*scale_factor;
+     scale_upper<=$signed(scale_operand[63:32])*scale_factor;
+     state<=SCALE_JOIN;
+    end
+    SCALE_JOIN:begin
+     scale_product<=$signed({{32{scale_low[63]}},scale_low})+$signed({scale_upper,32'b0});
+     state<=ALIGN;
+    end
     ALIGN:begin
      merge_left<=clear_merge?128'd0:merged[scale_lane];
      merge_right<=aligned_scale[127:0];merge_alignment_error<=alignment_error;
