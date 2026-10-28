@@ -25,7 +25,8 @@ def audit(root,out,cpus,run,kind):
     proof=json.loads(report.read_text());assert proof['passed']
     # Read the exact accepted native DEF rather than inferring tracks from pitch.
     native=base/('block-v1-20261029-258' if kind=='m' else 'block-v1-20261028-249')/'tasks'/('revision300-final-source-'+kind)
-    odb=native/'flow/results/nangate45'/('bv1_block_v1_'+kind)/'base/6_final.odb'
+    top='bv1_block_v1_m' if kind=='m' else 'bv1_transaction6k'
+    odb=native/'flow/results/nangate45'/top/'base/6_final.odb'
     deffile=odb.with_suffix('.def')
     source=json.loads((native/'receipt.json').read_text())
     assert source['passed']
