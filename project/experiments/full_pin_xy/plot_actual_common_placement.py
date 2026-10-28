@@ -15,7 +15,10 @@ def plot(root,snapshot,out):
     plt,R=expand.legacy.plt,expand.legacy.Rectangle
     fig,ax=plt.subplots(figsize=(9.4,11.5));fig.subplots_adjust(left=.13,right=.94,bottom=.18,top=.83)
     fig.text(.075,.955,'六资源共同集成 | 原生实际放置',fontsize=20,weight='bold',color='#17283c')
-    fig.text(.075,.905,'92855 / C：6块 + 38个常量/idle基础设施实例。\nPG生成中；共享固定导体与两完整适配模式尚未完成。',fontsize=11,color='#56677d',linespacing=1.6)
+    progress=('父层PG所检完成；256条M10导体已写入，底层布线及两模式尚未闭合。'
+      if (snapshot/'common_integration/r01/C/before.shared.tsv.gz').exists()
+      else 'PG/后续接入执行中；共享固定导体与两完整适配模式尚未完成。')
+    fig.text(.075,.905,'92855 / C：6块 + 38个常量/idle基础设施实例。\n'+progress,fontsize=11,color='#56677d',linespacing=1.6)
     ax.set_facecolor('#f4f6f8')
     for m in plan['instances']:
         r=byname[m['instance']];assert r['master']=='p126_'+m['case'] and r['orientation']=='R0'

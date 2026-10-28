@@ -161,11 +161,34 @@ def check(out):
             assert hashlib.sha256(raw).hexdigest()==r['actual_setup_path_JSON_uncompressed_SHA256']
             assert abs(r['cell_arc_increment_ns']+r['net_arc_increment_ns']-r['endpoint_arrival_ns']+r['launch_Q_arrival_ns'])<1e-9
     if j.get('GEMM_real_diode_ECO'):
-        q=j['GEMM_real_diode_ECO'];assert not q['full_qualification'] and q['original1460_repair_not_yet_verified']
+        q=j['GEMM_real_diode_ECO'];assert not q['full_qualification']
         r=q['receipt'];assert r['original_antenna_findings']==1460 and r['actual_correlated_native_nets']==636
         assert r['original_antenna_rules_unchanged'] and r['no_fake_gate_or_diffusion_area']
         lib=r.get('actual_diode_Liberty_contract')
         if lib:assert lib['capacitive_load_unit']==['1','ff'] and lib['actual_input_capacitance']>0 and lib['single_input_only_no_output_function_or_state']
+        if r.get('completed_utc'):
+            assert r['fresh_DRC_count']==0 and r['whole_signal_geometry']['checked_nets']==268637 and r['whole_signal_geometry']['pass']
+            assert r['original_functional_instances_pose_and_terminal_contract_unchanged'] and all(r['unchanged_geometry'].values())
+            assert q['setup_ns']==0.770727 and q['hold_ns']==0.0395 and q['literal_VIOLATED_markers_not_complete_failure_count']==2
+            assert {x['pin'] for x in q['max_capacitance_failures']}=={'_328822_/ZN','_332783_/ZN'}
+            assert all(x['slack_ff']<0 and x['cap_ff']>x['limit_ff'] for x in q['max_capacitance_failures'])
+            assert abs(r['separate_diode_cost']['master_bbox_area_um2']-169.176)<1e-6
+    if j.get('GEMM_passive_load_digital_relation'):
+        q=j['GEMM_passive_load_digital_relation'];s=q['summary']
+        assert q['relative_mapped_digital_contract_pass'] and q['all_stable_geometry_and_source_files_unchanged']
+        assert q['native_export_codes']==[0,0] and q['electrical_target_export_returncode']==0
+        assert s['original_nonfiller_instances']==226775 and s['original_signal_terminals']==826710 and s['top_ports']==3753
+        assert s['added_real_diode_cells']==s['added_non_driving_input_loads']==636
+        assert s['actual_input_capacitance']>0 and s['original_all_signal_terminal_and_port_graph_exactly_equal']
+        assert q['RTL_formal_equivalence']=='NOT_EXECUTED' and not q['full_qualification']
+    if j.get('actual_fixed256_native_attribute_audit'):
+        q=j['actual_fixed256_native_attribute_audit'];assert q['native_export_returncode']==0 and not q['native_export_executed_this_run']
+        assert q['all_256_native_FIXEDS_and_original_net_bindings_verified'] and q['all_closed_source_files_unchanged'] and q['native_shared_conductor_count']==256
+        assert q['actual_shared_centerline_length_um']==8192 and not q['qualified'] and not q['frozen']
+        old=read(folder/'shared_conductor_audit/r01/execution.json.gz');assert old['native_export_returncode']==0 and old['all_256_native_FIXEDS_and_original_net_bindings_verified'] is False
+        fixed=read(folder/'shared_conductor_audit/r02/native_fixedness.json.gz');assert len(fixed)==256 and len({x['pad'] for x in fixed})==256
+        assert all(x['native_DEF_path_status']=='FIXED' and x['native_layer']=='metal10' and '+ FIXED metal10' in x['native_DEF_net_statement'] for x in fixed)
+        p=j['actual_shared_conductor_geometry'];assert p['native_fixed_conductors']==256 and p['native_shared_port_boxes']==512 and not p['full_qualification']
     if j.get('SYSTEM_output_chain_placement'):
         q=j['SYSTEM_output_chain_placement'];r=q['receipt']
         assert not q['full_qualification'] and r['native_returncodes']['implementation']==-11

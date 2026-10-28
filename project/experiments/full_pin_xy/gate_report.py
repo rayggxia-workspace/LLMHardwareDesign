@@ -280,6 +280,24 @@ def render(root,out):
         stage_file=diode.parent/'stages.tsv.gz'
         if stage_file.exists():
             with gzip.open(stage_file,'rt') as f:result['GEMM_real_diode_ECO']['native_stage_status']={r['stage']:r['status'] for r in csv.DictReader(f,delimiter='\t')}
+        if q.get('completed_utc'):
+            for kind in ['setup','hold']:result['GEMM_real_diode_ECO'][kind+'_ns']=slack(diode.parent/(kind+'.txt.gz'))
+            checks=gzip.decompress((diode.parent/'checks.txt.gz').read_bytes()).decode()
+            result['GEMM_real_diode_ECO']['literal_VIOLATED_markers_not_complete_failure_count']=checks.count('(VIOLATED)')
+            result['GEMM_real_diode_ECO']['max_capacitance_failures']=[{'pin':pin,'limit_ff':float(limit),'cap_ff':float(cap),'slack_ff':float(s)}
+              for pin,limit,cap,s in re.findall(r'^(\S+)\s+([\d.]+)\s+([\d.]+)\s+(-[\d.]+)\s+\(VIOLATED\)',checks,re.M)]
+    diode_proof=snapshot/'passive_load_equivalence/r01/gemm/execution.json.gz'
+    if diode_proof.exists():
+        result['GEMM_passive_load_digital_relation']=dict(read(diode_proof),evidence=(dest/diode_proof.relative_to(snapshot)).relative_to(out).as_posix())
+    diode_stream=snapshot/'antenna_diode_stream/r01/gemm-C/execution.json.gz'
+    diode_stream_text='92912仍在独立执行严格GDS和不修改的原deck，原1460项尚未作为已修复。'
+    if diode_stream.exists():
+        stream_proof=read(diode_stream)
+        result['GEMM_real_diode_GDS_available_deck']=dict(stream_proof,evidence=(dest/diode_stream.relative_to(snapshot)).relative_to(out).as_posix())
+        diode_stream_text='92912最新严格GDS merge='+str(stream_proof.get('merge_returncode'))+'、原deck return='+str(stream_proof.get('DRC_returncode'))+'、实际报项='+str(stream_proof.get('available_deck_findings'))+'；分类='+html.escape(str(stream_proof.get('available_deck_findings_by_category')))+'。不是完整制造规则、系统LVS或电气资格。'
+        if stream_proof.get('merge_returncode')==stream_proof.get('DRC_returncode')==0:
+            antenna_count=sum(v for k,v in stream_proof.get('available_deck_findings_by_category',{}).items() if 'ANTENNA' in k)
+            result['GEMM_real_diode_ECO']['original1460_repair_not_yet_verified']=antenna_count!=0
     path_audits=[]
     for case in ['vector','opentpu_aux']:
         p=snapshot/'actual_path_audit/r01'/case/'execution.json.gz'
@@ -312,6 +330,11 @@ def render(root,out):
     if placement and trial_receipt is None:result['actual_common_integration_trial']['status']='ACTUAL_RESOURCE_PLACEMENT_EXPORTED; PDN_OR_FOLLOWING_STAGE_RUNNING'
     if (snapshot/'common_integration/r01/C/before.shared.tsv.gz').exists() and trial_receipt is None:result['actual_common_integration_trial']['status']='FIXED_M10_CONDUCTORS_WRITTEN; LOWER_ROUTE_OR_CHECKS_RUNNING'
     placement_image='<img src="assets/common_placement_actual.png" alt="六资源原生实际放置，非冻结或已完成共享布线" loading="lazy"><p><a href="assets/common_placement_actual.svg">原生实际放置SVG</a>。未显示内部金属，浅灰背景不是空白接入许可。</p>' if placement else ''
+    fixed_audit=snapshot/'shared_conductor_audit/r02/execution.json.gz'
+    if fixed_audit.exists():result['actual_fixed256_native_attribute_audit']=dict(read(fixed_audit),evidence=(dest/fixed_audit.relative_to(snapshot)).relative_to(out).as_posix())
+    from plot_actual_shared_conductors import plot as plot_fixed
+    fixed=plot_fixed(root,snapshot,out);result['actual_shared_conductor_geometry']=fixed
+    fixed_image='<figure><img src="assets/common_shared_conductors_actual.png" loading="lazy" alt="256条原生FIXED M10导体与真实接点，非冻结或两模式完成"><figcaption><a href="assets/common_shared_conductors_actual.svg">实际导体SVG</a> · <a href="data/common_shared_conductors_actual.csv">全部256条native坐标CSV</a> · <a href="data/common_shared_conductors_actual.json">来源与边界</a>。固定属性/几何已核验，底层完整布线和两模式复用尚未验证。</figcaption></figure>' if fixed else ''
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',
@@ -372,7 +395,7 @@ def render(root,out):
 <h3>共同集成已经实际启动，但尚非合格或冻结底座</h3>
 <p>新增92846/92847实际导出匹配等成本G/M Aopt全部3753/2172位的非零研究模型；92848导出实际VECTOR完整1022-pin迁移源的2246位模型及LL PG-only完整13507位模型。后者原native4失败保留，明确标UNQUALIFIED_FAILED_DRC_SOURCE，不因模型导出提升为规则通过。</p>
 <p>固定信号导体API首轮92853真实失败：BPin不接受FIXED状态枚举；改为安装工具支持的FIRM后，92854实际生成两处接入矩形及含FIXED metal10信号段的ODB/DEF。原失败不覆盖；API探针不代表共同底座实现或规则通过。</p>
-<p>六资源实际集成92855在独立common_integration/r01/C目录执行：复用既有完整构造图、真实资源和交错位置、256条×32μm共享导体拓扑/预算，读取匹配的完整详细OBS与实际研究模型；PG、合法接点、固定导体、底层路由及独立验证分别留回执。当前调度状态：'''+html.escape(result['actual_common_integration_trial']['state'])+'''；当前阶段：'''+html.escape(str(result['actual_common_integration_trial']['status']))+'''。不得将作业启动、视图读取、构造端口或固定线API当成实际共享系统完成。构造端口尚待真实模式降为固定几何，尚无两完整M11/M12功能或合格冻结。</p>
+<p>六资源实际集成92855在独立common_integration/r01/C目录执行：复用既有完整构造图、真实资源和交错位置、256条×32μm共享导体拓扑/预算，读取匹配的完整详细OBS与实际研究模型；PG、合法接点、固定导体、底层路由及独立验证分别留回执。当前调度状态：'''+html.escape(result['actual_common_integration_trial']['state'])+'''；当前阶段：'''+html.escape(str(result['actual_common_integration_trial']['status']))+'''。92930已成功导出真实DEF，但解析未考虑缩进而失败；92931只复用该有SHA的已完成原生DEF，实际核对全部256条FIXED metal10与逐网绑定、32μm×0.8μm几何，总中心线8192μm，原失败保留。不是仅核对计划CSV。底层GRT仍运行，构造端口尚待真实模式降为固定几何，尚无两完整M11/M12功能或合格冻结。</p>'''+fixed_image+'''
 '''+placement_image+'''
 <p>VECTOR 92861在无GRT、无增量路由、同进程无SPEF的隔离条件下仍EST-0104失败。实际VECTOR有411821个filler，SYS源没有。仅将remove_fillers移到estimate_parasitics之前，92867原生命令成功，实际14处换型、17个缓冲插入并保存检查点；单变量对照证明该排序足以排除本隔离流程中的错误，不能外推已解决所有工具状态问题。上游<a href="https://github.com/The-OpenROAD-Project/OpenROAD/blob/82552e4e9180fd5dd0c9cda58273029c83efb146/src/est/src/EstimateParasitics.cpp">固定源码参考</a>在增量修复入口拒绝待更新的寄生状态；安装二进制版本仍显示unknown、源树不存在，不能冒称此上游commit就是安装版本。原SDC和最终检查不放宽，新检查点尚未合法化、未重布线/提取，不是最终RC/STA通过。</p>
 <p>92872已取得真实终态：从该检查点接续、不重复repair_design，独立合法化、全详细布线、fresh native0、375675条多端信号/时钟网和双PG所检通过；实际RCX后setup仍−4.140220ns、hold0.037989ns，83个文字VIOLATED标记，整体FAILED而非签核。新增180个功能实例、818原实例换型、875原实例移动，标准单元master面积+917.700μm²，全部独立成本；旧−4.195674ns源保留。92914/92915重读实际SPEF分析VECTOR/SYS完整关键路径，不放宽SDC；92913检查VECTOR实际全量有向缓冲合同。最新终态以矩阵和原文为准。<a href="data/runtime_submissions/vector_resume_r01.json">提交/固定驱动</a>、<a href="data/runtime_submissions/vector_resume_r01.execution.json.gz">初始回执</a>分别保留。</p>
@@ -380,4 +403,5 @@ def render(root,out):
 <figure><img src="assets/actual_critical_path_diagnosis.png" loading="lazy"><figcaption>实际SPEF关键路径；不包含发射时钟/required-time项，不是线长或零连线下界。<a href="assets/actual_critical_path_diagnosis.svg">SVG</a> · <a href="data/actual_critical_path_diagnosis.json">原文SHA/数值</a></figcaption></figure>
 <p><strong>SYSTEM真实输出缓冲试验92921：</strong>全部1244个输出port纳入选择，772条私有identity链、1262个已有buffer生成真实重排，不增单元、不换型、不改网络。实际Diamond合法化后OpenROAD触发Signal11（implementation=-11），没有完成路由；moved_NOT_LEGALIZED_OR_ROUTED.odb及完整失败回执保留，原pin/PG/外框和源保持。后续复用已存检查点，在独立不加载STA的进程验证合法化，不重复生成同一移动方案。原SYS源时序失败不删，当前仍非物理修复通过。</p>
 <p><strong>92925独立恢复已实际推进：</strong>复用上述1262个buffer坐标，独立几何进程不加载Lib/SDC；原生合法化、check_placement及原功能master/连接与非选中单元位置合同均通过，原本无filler则未新增。原生关闭的placed ODB及两份实际合同文件另索引SHA，与原source合同相等；不是重选点或跳过检查。随后在新进程恢复原Lib/SDC及M2–M8/M4–M8约束，完整重接线继续；最终DRC/PG/连通/RCX/STA未终态，不宣布时序修复或准确崩溃根因已证实。</p>
-<p><strong>GEMM真实天线ECO：</strong>92910使用真实ANTENNA_X1对636条已关联网接入，新增输入capacitance每个0.023429fF（实际typical库capacitive_load_unit=1ff）；单输入无输出/状态合同已核对，不用占位负载。636个单元已实际插入/合法化，原功能实例位置/连接保持，完整接线与RCX/STA继续；92912依赖其结束后严格GDS和不修改原deck。新增面积/负载单列，原1460项天线在独立终态前仍未视为修复；不把单元识别、合法化或native0当完整规则通过。</p></section>'''
+<p><strong>GEMM真实天线ECO：</strong>92910已完成636个真实ANTENNA_X1接入、完整重布线、fresh native0及268637网/806621端点所检连通、双PG和真实RCX。setup/hold为0.770727/0.039500ns，但新增两个max-cap失败：_328822_/ZN（实际INV_X1，67.621605&gt;60.730000fF）、_332783_/ZN（实际XNOR2_X1，27.449909&gt;26.016199fF），并非电气通过。原功能实例位置/连接、原pin/PG/外框保持；新增636单元master面积169.176μm²、每个实际输入cap0.023429fF均单列成本，非block面积变化。</p>
+<p>92929独立原生全量数字合同通过：原226775非filler实例、826710个信号端点、3753端口完全保持，新增636个真实单输入无输出/状态diode各连到已核对636网；真实负载变化不被当作RC/时序等价。'''+diode_stream_text+'''后续两个电容失败按实际master/真实Liberty换型能力增量处理，不能降负载或删检查。</p></section>'''
