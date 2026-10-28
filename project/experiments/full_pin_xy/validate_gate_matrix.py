@@ -227,7 +227,8 @@ def check(out):
             assert q['all_prior_functional_and_636_diode_poses_and_terminals_unchanged'] and all(q['pin_PG_die_unchanged'].values())
             assert q['setup_ns']==rows['gemm']['setup_ns']==0.770702 and q['hold_ns']==rows['gemm']['hold_ns']==0.039533
             assert q['literal_VIOLATED_markers_not_complete_failure_count']==0 and q['separate_additional_diode_cost']['master_bbox_area_um2']==5.852
-            assert rows['gemm']['completed_source']=='658_real_diodes/r01' and rows['gemm']['available_deck_findings'] is None
+            assert rows['gemm']['completed_source']=='658_real_diodes/r01'
+            if not j.get('GEMM_actual658_diode_strict_GDS_available_deck',{}).get('completed_utc'):assert rows['gemm']['available_deck_findings'] is None
             assert j.get('actual_22_diode_access_figure') and (out/'assets/gemm_real_diode_access.png').exists() and (out/'assets/gemm_real_diode_access.svg').exists()
     if j.get('actual_22_diode_access_figure'):
         q=j['actual_22_diode_access_figure'];assert q['old_GDS_findings']==37 and q['new_actual_diodes']==22 and q['unchanged_original_signal_pins']==3753
@@ -276,6 +277,14 @@ def check(out):
         assert q['source_receipt_SHA256']==hashlib.sha256(gzip.decompress((out/source['evidence']).read_bytes())).hexdigest()
         assert q['source_geometry_sha256']==source['files']['routed.odb']['sha256'] and q['source_SPEF_sha256']==source['files']['extracted.spef']['sha256']
         assert '92997实际研究视图已导出' in (out/'report.html').read_text(encoding='utf-8')
+    if j.get('GEMM_actual658_diode_strict_GDS_available_deck',{}).get('completed_utc'):
+        q=j['GEMM_actual658_diode_strict_GDS_available_deck'];source=j['GEMM_additional22_diode_actual_attempt']
+        assert q['source_kind']=='incremental' and q['source_receipt_and_DEF_unchanged'] and not q['full_qualification']
+        assert q['source_DEF_SHA']==source['files']['routed.def']['sha256'] and q['source_native_DRC_count']==0
+        assert q['source_receipt_SHA']==hashlib.sha256(gzip.decompress((out/source['evidence']).read_bytes())).hexdigest()
+        assert q['strict_allow_empty']=='DISABLED' and not q['missing_SRAM_geometry_fabricated']
+        assert q['merge_returncode']==q['DRC_returncode']==0
+        assert q['available_deck_findings']==sum(q['available_deck_findings_by_category'].values())==rows['gemm']['available_deck_findings']==0
     if j.get('actual_fixed256_native_attribute_audit'):
         q=j['actual_fixed256_native_attribute_audit'];assert q['native_export_returncode']==0 and not q['native_export_executed_this_run']
         assert q['all_256_native_FIXEDS_and_original_net_bindings_verified'] and q['all_closed_source_files_unchanged'] and q['native_shared_conductor_count']==256

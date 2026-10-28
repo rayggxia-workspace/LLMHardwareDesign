@@ -406,6 +406,14 @@ def render(root,out):
         q=read(route_boxes);result['actual_whole_net_routing_box_comparison']=dict(q,evidence=(dest/route_boxes.relative_to(snapshot)).relative_to(out).as_posix())
         if q.get('all_closed_source_geometry_and_receipts_unchanged'):
             incremental_text+='<p>92985按三份真实几何SHA检查全部268637条网：两换型阶段有15条网的WIRE/VIA矩形多重集表示不同；再增22个diode后为77条，其中22目标网、2条原636已保护网、53条其他网；其余268560条矩形表示完全一致。证明不能把增量DRT说成只重布22网。不同表示可能包含切段/重复差异，不直接等于几何并集、线长或RC变化；完整逐网digest表留授权远程存储并有SHA。</p>'
+    final_gds=snapshot/'antenna_diode_stream/incremental-r01/gemm-C/execution.json.gz'
+    if final_gds.exists():
+        q=read(final_gds);result['GEMM_actual658_diode_strict_GDS_available_deck']=dict(q,evidence=(dest/final_gds.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('completed_utc'):
+            r=next(r for r in rows if r['case']=='gemm');r['available_deck_findings']=q.get('available_deck_findings')
+            passed=q.get('merge_returncode')==q.get('DRC_returncode')==0 and q.get('available_deck_findings')==0
+            r['complete_rules']='CURRENT_658_DIODE_AVAILABLE_DECK0_COVERAGE_INCOMPLETE' if passed else 'CURRENT_658_DIODE_GDS_OR_AVAILABLE_DECK_FAILED'
+            incremental_text+='<p><strong>92976真实658diode版严格GDS已终态：</strong>merge='+str(q.get('merge_returncode'))+'，未改原deck return='+str(q.get('DRC_returncode'))+'，实际报项='+str(q.get('available_deck_findings'))+'。以实际源DEF/GDS/RDB SHA绑定，原1460和两个37项版本分别保留。该新版本原可用deck零项不代表完整制造规则、RTL形式、父层或系统资格；原WELL/via enclosure等覆盖缺口及其他块缺真实SRAM GDS不消失。</p>'
     upper_failed=snapshot/'upper_adaptation_trial/r01/preparation_failure.json.gz'
     if upper_failed.exists():
         q=read(upper_failed);result['upper_all770_preparation_r01_failed']=dict(q,evidence=(dest/upper_failed.relative_to(snapshot)).relative_to(out).as_posix())
@@ -462,6 +470,8 @@ def render(root,out):
       'CURRENT_REAL_DIODE_SIZE_GDS37_FAILED; COVERAGE_INCOMPLETE':'当前GDS37失败/覆盖不全',
       '658_real_diodes/r01':'658diode/r01','COMPLETED_INCREMENTAL_REAL_DIODE_ECO_NOT_PURE_XY':'增量22diode已布线',
       'CURRENT_658_DIODE_GDS_PENDING; COVERAGE_INCOMPLETE':'658版GDS待验/覆盖不全',
+      'CURRENT_658_DIODE_AVAILABLE_DECK0_COVERAGE_INCOMPLETE':'原可用GDS deck零项/覆盖不全',
+      'CURRENT_658_DIODE_GDS_OR_AVAILABLE_DECK_FAILED':'当前严格GDS/deck失败',
       'RUNNING_OR_RECEIPT_NOT_TERMINAL':'运行中/未收齐终态'}
     def show(value):
         if value is None:return '未知/待验证'
@@ -498,7 +508,7 @@ def render(root,out):
 <img src="assets/equal_cost_leaf_margins.png" alt="同换型成本叶块提取余量实测，不是系统资格" loading="lazy"><p><a href="assets/equal_cost_leaf_margins.svg">同图SVG</a>；四份数据均来自实际提取回执，非几何线长预测。</p>
 <div class="scroll"><table><thead><tr><th>同ECO叶块方案</th><th>DRT实测总线长 μm</th><th>DRT via数</th><th>相对同ECO Aopt线长</th><th>相对via</th></tr></thead><tbody>'''+route_table+'''</tbody></table></div>
 <p><a href="data/equal_cost_leaf_actual_metrics.json">实际逐层线长、via及原生日志SHA</a>直接复用已完成DRT最后一组报告，没有重复路由。数值按工具报告精度取整μm，逐层取整和总数可能有小差异；via按DRT口径，不当完整PDN via统计。与候选几何L1、提取RC及系统收益分别记录。即使叶块内部成本增加，也保留内部方案，继续共同底座/适配层系统总成本验证，不能据此撤回边缘并结束研究。</p>
-<h3>天线规则分歧仍未修复</h3>
+<h3>历史天线规则分歧：原始源失败保留</h3>
 <p>只读审计92825在同一GEMM实际ODB上check_antennas报0网/0pin，而严格合并GDS原deck仍报1460项天线。源SHA保持，未调用修复。实际ANTENNA_X1物理单元和原Liberty模型均存在，输入A的非零capacitance为0.023429（须按原库单位解释）；未加入零电容占位。接下来比较真实LEF规则与GDS公式、连接/层覆盖及diode识别；native0不抹去GDS失败。</p>
 '''+rule_text+'''
 <h3>完整映射端点图相对验证：不同于RTL形式验证</h3>
