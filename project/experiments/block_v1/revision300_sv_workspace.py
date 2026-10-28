@@ -3,13 +3,24 @@ import json
 from pathlib import Path
 
 
-def measure(root,out,cpus,run):
+def measure(root,out,cpus,run,model_group=None):
     from io_slots import file_sha
     from revision300_rtl import COMPILER,sources
     assert cpus==16
     folder=root/'project/experiments/block_v1'
     _,v,numeric=sources(root,'v');_,s,_=sources(root,'s')
     wrapper=folder/'sv_workspace_bench.sv';bench=folder/'bench_sv_workspace.cpp'
+    original_bench=bench
+    model_shapes=None
+    if model_group is not None:
+        groups=((512,576,1024),(1280,1536,1920),(2048,2560,4096),(64,128,256))
+        assert model_group in range(4)
+        model_shapes=groups[model_group]
+        text=bench.read_text();needle='for(unsigned n:{257u,769u,3072u})'
+        assert text.count(needle)==1
+        replacement='for(unsigned n:{'+','.join(str(n)+'u'for n in model_shapes)+'})'
+        bench=out/'model-sv-shape-bench.cpp';bench.write_text(text.replace(needle,replacement))
+        assert bench.read_text().replace(replacement,needle)==text
     # The original reference includes this generated Verilator class name.
     # An alias allows unchanged reference functions to use the test harness.
     (out/'Vblock_v1_v.h').write_text('#include "Vsv_workspace_bench.h"\nusing Vblock_v1_v=Vsv_workspace_bench;\n')
@@ -21,7 +32,11 @@ def measure(root,out,cpus,run):
     for label,initial,seed in [('ones',1,121),('random',2,122)]:
         run([out/'obj/Vsv_workspace_bench','+verilator+rand+reset+'+str(initial),'+verilator+seed+'+str(seed)],label+'.json')
         d=json.loads((out/(label+'.json')).read_text());assert d['passed'] and len(d['cases'])==27
+        identities=set()
         for row in d['cases']:
+            if model_shapes is not None:assert row['size']in model_shapes
+            identity=(row['operation'],row['size'],row['profile'])
+            assert identity not in identities;identities.add(identity)
             assert row['workspace_payload_bytes']<=16384
             assert row['total_cycles']==sum(p['cycles']for p in row['phases'].values())
             assert sum(p['s_reads']+p['s_writes']for p in row['phases'].values())==sum(p['s_acks']for p in row['phases'].values())
@@ -31,6 +46,8 @@ def measure(root,out,cpus,run):
     (out/'revision300-sv-workspace.json').write_text(json.dumps(dict(passed=True,
         initial_runs=2,measurements=measurements[0],rtl_sha256={str(p.relative_to(root)):file_sha(p)for p in v+s+[v[0].parent/'block_v1_v_tables.svh']},
         wrapper_sha256=file_sha(wrapper),bench_sha256=file_sha(bench),numeric_reference_sha256=file_sha(numeric),
+        original_bench_sha256=file_sha(original_bench),model_group=model_group,model_shapes=model_shapes,
+        only_shape_list_changed=model_group is not None,
         profiles={'0':'continuous sources/sinks','1':'source4of7 local cycles','2':'sink not ready2of5 local cycles'},
         maximum_s_payload_bytes=16384,maximum_v_replay_bytes=2048,additional_payload_queue_bytes=0,
         physical_integration_qualified=False,

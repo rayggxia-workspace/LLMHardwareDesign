@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('revision300-model-m-bench-'):
+    if MODE.startswith('revision300-model-sv-bench-'):
+        from revision300_sv_workspace import measure
+        measure(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]))
+    elif MODE.startswith('revision300-model-m-bench-'):
         from revision300_model_m_bench import measure
         measure(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]))
     elif MODE.startswith('revision300-preconnect-trial-'):
