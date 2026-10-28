@@ -18,3 +18,5 @@
 完整接口run262也已通过P2几何：275位同时连接；真实DEF/ODB三次读回和joined GDS全部原生层XOR0，新增M10金属负例被拒；新层几何规则通过。[P2原始三报告](../../review-20261028/m-p2-0130/index.json)。全测试外框820×820µm，每根280µm，总线长77000µm；via10=275/via11=133。简化模型每线电容base43.5095fF/high65.2642fF，base未超过原48fF线预算；高变体及完整接口输入/输出时序仍待单独验证。不能从几何接通推断组合300MHz或12层工艺资格。
 
 新增[实际输出负载敏感性](../../review-20261028/load-0200/README.md)：全部三点总输出负载50/45.509479/67.264218fF均通过，最小setup/hold保持+0.008340/+0.013190ns。原最终ODB/SDC/SPEF及全部文件保持；每个点包含完整端点、电气、RC覆盖、实际小电路精确序列化及错负载负例。仅集中输出C，不包括输入/clock线、串联R、耦合或远端驱动；组合接口300MHz仍未取得资格。
+
+[全部275位实际接口图](interface/all-ports.png) · [16位输入](interface/cmd-data16.png) · [16位输出](interface/response-data16.png) · [来源与SHA](interface/plot-manifest.json)。三张PNG已查看，仅P2几何证据；输入/clock/串联R等完整接口时序仍待验收。
