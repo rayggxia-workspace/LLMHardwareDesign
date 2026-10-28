@@ -7,10 +7,14 @@ def diagnose(root,out,cpus,run,kind):
     from io_slots import file_sha
     assert cpus==16 and kind in ('v','r')
     base=out.parents[2]
-    number,day,checkpoint,sdc,required=(
-        ('291','20261029','3_5_place_dp.odb','3_place.sdc','do-place') if kind=='v' else
-        ('236','20261028','4_cts.odb','4_cts.sdc','do-cts'))
-    source=base/('block-v1-'+day+'-'+number)/('tasks/revision300-route-'+kind)
+    checkpoint,sdc,required=(
+        ('3_5_place_dp.odb','3_place.sdc','do-place') if kind=='v' else
+        ('4_cts.odb','4_cts.sdc','do-cts'))
+    selection=json.loads((root/'project/experiments/block_v1/revision300-selected-sources.json').read_text())
+    relative=Path(selection['native'][kind])
+    assert not relative.is_absolute() and '..' not in relative.parts
+    assert relative.name=='revision300-route-'+kind and relative.parent.name=='tasks'
+    source=base/relative
     flow=json.loads((source/'revision300-native-flow.json').read_text())
     assert required in flow['stages'] and flow['top']=='block_v1_'+kind
     results=source/('flow/results/nangate45/bv1_block_v1_'+kind+'/base')
