@@ -47,7 +47,7 @@ def one(case,plan,revision):
         out,src,sdc,libtcl,inputs/(case+'-'+plan+'.tcl'),plan,8 if case.endswith('_aux') else 10,DRIVER,out/'access.tsv')
     reservations=inputs/'access_reservations.tcl'
     if reservations.exists():
-        assert case=='act' and plan=='C','Access-window experiment is explicitly ACT C only'
+        assert plan=='C','Access-window input sets are explicit C-only physical trials'
         env+=',PINXY_ACCESS_RESERVATIONS='+str(reservations)
         receipt['input_sha256'][str(reservations)]=sha(reservations)
         receipt['temporary_access_reservation_method']='Full signal/clock reroute, original cells/PDN/OBS/allowed layers preserved; remove only newly created window constraints after DRT. Not a same-rip-cohort wire-cost comparison.'
@@ -87,7 +87,7 @@ def safe(args):
         return False
 
 if __name__=='__main__':
-    assert int(os.environ['SLURM_CPUS_PER_TASK'])>=8
+    assert int(os.environ['SLURM_CPUS_PER_TASK'])>=4
     gate=json.loads((ROOT/'inputs'/os.environ.get('PINXY_INPUT_SET','trial-inputs-r03')/'coverage_gate.json').read_text());assert gate['status']=='PASS_ALL_BLOCK_CANDIDATE_COVERAGE_ONLY'
     case,revision=sys.argv[1:3]
     with (ROOT/'logs'/('platform-'+case+'-'+revision+'.log')).open('x') as f:
@@ -97,6 +97,6 @@ if __name__=='__main__':
     # separate variable assignments. Existing environment-based inputs remain valid.
     plans=(sys.argv[3] if len(sys.argv)>3 else os.environ.get('PINXY_PLANS','A,A_replay,Aopt,B,C')).split(',')
     assert set(plans)<=set(['A','A_replay','Aopt','B','C'])
-    with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(safe,[(case,p,revision) for p in plans]))
+    with ThreadPoolExecutor(max_workers=min(2,int(os.environ['SLURM_CPUS_PER_TASK'])//4)) as pool:results=list(pool.map(safe,[(case,p,revision) for p in plans]))
     (ROOT/'trials'/revision/(case+'-batch.json')).write_text(json.dumps({'case':case,'plans':plans,'process_return_success':results,'qualification':'CHECK_INDEPENDENT_STAGE_RESULTS'},indent=2)+'\n')
     sys.exit(0 if all(results) else 1)
