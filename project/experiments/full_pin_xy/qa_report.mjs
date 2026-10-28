@@ -29,6 +29,10 @@ try {
  const all=await evaluate('({title:document.title,count:document.querySelector("#count").textContent,images:[...document.images].map(i=>({src:i.getAttribute("src"),loaded:i.complete&&i.naturalWidth>0})),overflow:document.documentElement.scrollWidth>innerWidth})');
  if(!all.count.includes('24767')||all.images.some(i=>!i.loaded)||all.overflow)throw Error(JSON.stringify(all));
  await fs.writeFile(path.join(out,'report-top.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ if(await evaluate('!!document.querySelector("#latest-physical-gates")')){
+  await evaluate('document.querySelector("#latest-physical-gates").scrollIntoView()');
+  await fs.writeFile(path.join(out,'report-latest-gates.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ }
  await evaluate('document.querySelector("#case").value="vector";document.querySelector("#search").value="vec_wr_wdata[300]";render()');
  const query=await evaluate('({count:document.querySelector("#count").textContent,rows:document.querySelectorAll("#rows tr").length,text:document.querySelector("#rows").textContent})');
  if(query.rows!==1||!query.text.includes('vec_wr_wdata[300]'))throw Error(JSON.stringify(query));

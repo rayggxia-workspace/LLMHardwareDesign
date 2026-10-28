@@ -161,3 +161,6 @@ python project/experiments/full_pin_xy/validate_repository.py
 2026-10-28晚接续新增：`prepare_local_pin_patch.py`/`local_pin_patch_job.sh`实施LL完整表的三点增量重接线；实际DRT无AP失败与坐标正确分开。`constraint_audit_job.sh NEW_REV`取得只读NDR规则/关联/实际wire宽度及驱动查询，源SHA不变，不当完整规则通过。`cell_semantics.py`和`run_leaf_eco.py`的TARGETED分支做实际X2驱动增强并恢复填充，成本与纯XY分开。FRESH_GRT分支先实际重建GRT，再显式用GRT估算做修复，原SPEF重放与最后RCX/STA分别记录；SYSTEM原允许层不变，合法化工具崩溃不删检查。实际冻结驱动与作业号见10月28日接续交接。
 
 新增快照命令：在获分配的本人Slurm作业内从远程ROOT执行`python3 -B DRIVER/collect_resume_progress.py NEW_NAME [JOB...]`；只写新的resume_snapshots目录。下载到分析目录的resume_evidence后，运行原`refresh_continuation.py`和`validate_repository.py`，25幅报告图含新增真实PG/原生marker/proposed局部图。`qa_report.mjs`检验所有图片和逐bit筛选；生成图必须打开目视核验。候选/快照校验通过不代表native/完整DRC、连通、RC、STA或冻结资格。
+
+
+本轮GDS导入/规则阶段：`streamout_probe.py`显式设read_lef_with_def=false，仅保留原配置依赖的LEF清单，避免KLayout自动把导出的abstract/detailed两份顶层LEF当成子宏重复读入；实际安装API证据由`audit_streamout_reader.py`生成。allow-empty仍禁用，原FreePDK45 deck不改。`collect_gate_milestone.py NEW_NAME`在本人分配资源内收集不可覆盖的原始阶段快照；下载到analysis/gate_evidence后执行`refresh_continuation.py --root R --out REPORT --gates-only`，生成逐块qualification_matrix.json/CSV与最新门槛HTML。`validate_gate_matrix.py`由主验证器调用，独立核对旧提前失败、显式LEF配置、真实严格合并结果及实际时序数字。已知GDS缺失/规则覆盖缺口与native结果分别报告，不以Slurm/CI/空缺失列表宣布通过。

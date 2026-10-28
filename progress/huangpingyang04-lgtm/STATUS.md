@@ -67,3 +67,6 @@
 92780的SYS隔离合法化已成功：原生命令与check_placement执行、原macro/welltap几何和状态核对恢复、pin/PG/die指纹不变；输出placed_NOT_ROUTED.odb，尚无布线/RC/时序资格。0e5254e驱动92781（ROOT/checkpoint_route/r01）直接接续完整信号/时钟重布线及PG/RCX/STA/fresh DRC，不重新做单元修复。先独立导出原OBS对象ID+几何，检查新增OBS恰好原接入窗口；仅在详细布线后移除新约束并确认原OBS集合/几何相同，原M2–M8/clock M4–M8及SDC保持。恢复先查92781实际终态，不把提交/运行当成通过。
 
 GEMM/MXU新ECO视图的严格GDS合并及原有完整FreePDK45 deck另以92783继续，ROOT/streamout/costed-r01；只读复用eco_views/r02，明确C_ECO而非纯XY对照。缺SRAM GDS仍报合并失败，allow-empty保持禁用，不伪造几何，不修改原deck或掩盖WELL/天线/包围等原有失败。
+
+
+2026-10-28晚接续：92783的两块严格GDS在重复顶层LEF提前失败，deck未执行；安装API实测read_lef_with_def=true造成双抽象视图自动加载。9345fd3修复后92798的GEMM已严格合并0、MXU实际缺4个fakeram GDS，完整deck仍待终态；不伪造宏、不放宽检查。新增六块机器门槛矩阵JSON/CSV与latest-physical-gates中文节、不可覆盖gate-r01原文快照。详见docs/handoffs/2026-10-28-issue-126-gates-and-shared-base.md；完整共同底座/两模式/系统比较尚未完成。

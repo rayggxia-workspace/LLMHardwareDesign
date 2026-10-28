@@ -160,3 +160,6 @@ GEMM严格GDS92376已自然完成，A/8pin C合并成功但1346/1358项天线违
 `eco_view_job.sh CASE SOURCE_ECO_REV NEW_VIEW_REV`仅接受已完成native0/所检全块连通、pin/PG/die原样的定点ECO，复制预RCX ODB并导出LEF（含详细OBS）、DEF、实际网表、匹配SPEF研究时序模型；检查全部位/方向/PG/外框及SPEF重放。92776/92777已导出GEMM3753/MXU2172位r02视图；完整规则/形式等价仍待验证。`checkpoint_legalization_job.sh NEW_REV`只在隔离进程复用SYS已有修复检查点，保持原PG/pin/die、恢复原种类填充并保留check_placement；输出NOT_ROUTED，不能冒充接入/DRC/STA完成。
 
 `checkpoint_route_job.sh NEW_REV`从SYS已检查的隔离放置继续真实完整重布线/PG/RCX/STA/fresh native DRC；逐原OBS ID及几何核对，新增OBS须恰为原临时接入窗口，详细布线后只删新约束。`PINXY_STREAM_ECO_VIEW_REV=r02 streamout_pack_job.sh NEW_REV gemm mxu`只针对新成本ECO视图做严格GDS合并与不改deck的全量规则检查；不再重跑旧A/C。
+
+
+本轮GDS导入/规则阶段：`streamout_probe.py`显式设read_lef_with_def=false，仅保留原配置依赖的LEF清单，避免KLayout自动把导出的abstract/detailed两份顶层LEF当成子宏重复读入；实际安装API证据由`audit_streamout_reader.py`生成。allow-empty仍禁用，原FreePDK45 deck不改。`collect_gate_milestone.py NEW_NAME`在本人分配资源内收集不可覆盖的原始阶段快照；下载到analysis/gate_evidence后执行`refresh_continuation.py --root R --out REPORT --gates-only`，生成逐块qualification_matrix.json/CSV与最新门槛HTML。`validate_gate_matrix.py`由主验证器调用，独立核对旧提前失败、显式LEF配置、真实严格合并结果及实际时序数字。已知GDS缺失/规则覆盖缺口与native结果分别报告，不以Slurm/CI/空缺失列表宣布通过。

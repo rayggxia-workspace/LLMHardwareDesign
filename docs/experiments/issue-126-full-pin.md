@@ -105,3 +105,6 @@ ACT相同740-pin cohort的原XY重布线/B子集/C：DRT提取前总线长271,18
 
 
 2026-10-28晚接续入口：[中文报告新增真实修复/失败节](issue-126-full-pin/report.html#resume20261028)、[三点实际修复尝试图PNG](issue-126-full-pin/assets/llsys_local_repair_attempt.png) / [SVG](issue-126-full-pin/assets/llsys_local_repair_attempt.svg)、[交接](../handoffs/2026-10-28-issue-126-common-base-continuation.md)。这次LL三点重接线实际DRT-1231失败；GEMM/MXU驱动增强为成本ECO，候选正确不代表完整资格。具体最新终态以原生快照/接续节为准，下方旧表保留来源，不用旧局部8pin覆盖更新的完整候选/物理状态。
+
+
+2026-10-28晚接续：92783的两块严格GDS在重复顶层LEF提前失败，deck未执行；安装API实测read_lef_with_def=true造成双抽象视图自动加载。9345fd3修复后92798的GEMM已严格合并0、MXU实际缺4个fakeram GDS，完整deck仍待终态；不伪造宏、不放宽检查。新增六块机器门槛矩阵JSON/CSV与latest-physical-gates中文节、不可覆盖gate-r01原文快照。详见docs/handoffs/2026-10-28-issue-126-gates-and-shared-base.md；完整共同底座/两模式/系统比较尚未完成。

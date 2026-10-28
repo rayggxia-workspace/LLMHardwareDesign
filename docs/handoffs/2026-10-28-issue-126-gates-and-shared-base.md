@@ -1,0 +1,34 @@
+# Issue126：严格GDS读取修复与六块门槛矩阵
+
+更新时间：2026-10-28晚，Asia/Shanghai。仓库rayggxia-workspace/LLMHardwareDesign；Issue126 / Draft PR129；本人huangpingyang04-lgtm；分支task/126-full-block-pin-xy。恢复核验head20108f97d27f0f15ad32cf7655d331e5754181da，规则rayggxia-project-collab1.0.0。上一轮属于实际进展：已发布脚本、raw和物理ECO；本轮不是无变化重提。
+
+## 已确认的新失败和修复
+
+92783虽然Slurm COMPLETED0:0，两块merge_returncode都1：Duplicate MACRO name gemm_engine / llhd_opentpu_mxu，发生在读取DEF旁abstract.lef阶段；完整deck未执行，missing_GDS_cells=[]不是宏GDS齐全。原失败在ROOT/streamout/costed-r01保留。
+
+安装KLayout0.30.12的真实API审计92795（tool_api/streamout-reader-r03）证实read_lef_with_def默认为true，会额外读取DEF同目录全部LEF；两份同名顶层导出abstract.lef/detailed.lef因此重复。先前审计92792遇写-only属性、92794遇借用对象生命周期，错误日志保留；修订保留LoadLayoutOptions所有者后取得有效API证据。
+
+9345fd369d1ea1a9e3231d74fb2c318baec74680冻结驱动只禁止隐式同目录加载，原显式标准单元/真实SRAM依赖清单完全保持；保存并重新读回配置，清单和开关实测一致。未删LEF或几何、allow-empty仍禁用、不改原完整deck。新92798在ROOT/streamout/costed-r02：GEMM严格GDS合并0错误；MXU实际检出4个fakeram45_1r1w_64x40/64/72/96缺GDS，严格合并失败。两块原deck继续执行，其中MXU是不完整GDS的诊断，不能称全设计通过。新包装器向Slurm传递失败，仍按每块回执判定。恢复先查92798终态，不重提同一试验。
+
+## 当前实际作业及限制
+
+本人远程ROOT=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027。92690/92691 LL完整窗口及独立检查，92700旧GEMM父夹具，92714 MXU父夹具，92721新GEMM父夹具，92781 SYS成本ECO检查点完整重布线仍需逐一核实。开始本轮均RUNNING或对应Dependency，未按耗时取消；他人Issue55作业不干预。
+
+GEMM/MXU已通过的成本ECO和eco_views/r02不重做。ACT父夹具hold失败、VECTOR EST-0104及原setup失败、LL PG备选native4与三点修订DRT-1231、完整SRAM GDS缺失、旧deck覆盖/实现问题均保留。用户无额外材料，允许自行补充受控材料，历史逐pin目标层仍未知，不冒充复原历史。
+
+## 本轮正式产物与验证
+
+报告新增latest-physical-gates及机器可核查data/qualification_matrix.json / CSV：六块全部接口与候选、具体已完成物理源、native/完整规则、信号时钟/PG、源RC/STA、父层、原目标层和功能/等价逐项标记；已完成源与较新修复分别保留，未知不写0。GEMM/MXU数字来自实际成本ECO原文，不用旧窗口cap失败覆盖新修复。
+
+新不可覆盖快照ROOT/gate_milestones/gate-r01（92800）已下载至analysis/gate_evidence，正式data/gate_milestones保留原文gzip、原文/压缩SHA、调度状态和远程物理索引。GDS/ODB/SPEF等大文件仍在授权远程目录，由原execution.json索引SHA。原A/B/C和25幅图不改。下一次终态另用gate-r02，不覆盖。
+
+原入口docs/experiments/issue-126-full-pin.md；HTML的latest-physical-gates优先于历史运行中说明。发布前运行管理/业务验证、浏览器及最新矩阵目视检查；实际head/CI/图片读回证据更新PR129和Issue126后再进入下一大阶段。
+
+## 下一条实际动作
+
+1. 核实并收集92798/92781/92690及父夹具终态，补录deck分类计数，不能用Slurm或命令0替代规则通过。
+2. 建立VECTOR EST-0104最小复现/准确API与版本证据，停止无变量反复运行完整试验。GEMM/MXU可独立做映射网表相对原源的完整数字功能等价及实际逐层线长/via统计；不能把cell逻辑子证明当作整个设计形式验证。
+3. 用户已新授权可先推进明确未合格的六资源共同集成试验，复用既有逐bit构造/同256共享导体计划；当前尚未启动实际共同预连，不标合格冻结。选择匹配的真实新内部视图，记录每个失败/缺项、idle/clock/PG和原层目标。
+4. 未有共同M1–M10实际固定预连/冻结、两完整M11/M12功能或公平系统对照，目标保持完整且active；不能用本轮阶段发布替代总验收。
+
+登记management-hub PR5 pending；没有board.json/Projects能力，看板unverified/同步pending；管理员与审查人待指定。Issue保持in_progress，PR129 Draft，PR120未合并，不自合并。

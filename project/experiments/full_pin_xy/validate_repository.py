@@ -231,6 +231,8 @@ def main():
         assert len(continuation['blocks'])==6 and all(not r['full_qualification'] for r in continuation['blocks'])
         from validate_continuation import check as check_continuation
         check_continuation(OUT)
+        from validate_gate_matrix import check as check_gate_matrix
+        check_gate_matrix(OUT)
         for name in ['research_upper_actual','llsys_pg_revision','common_base_proposed']:
             assert (OUT/'assets'/(name+'.png')).exists() and (OUT/'assets'/(name+'.svg')).exists()
         expected_figures+=3
