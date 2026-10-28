@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('revision300-model-sv-bench-'):
+    if MODE=='revision300-v-map-timing':
+        from revision300_v_map_timing import diagnose
+        diagnose(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('revision300-model-sv-bench-'):
         from revision300_sv_workspace import measure
         measure(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]))
     elif MODE.startswith('revision300-model-m-bench-'):
