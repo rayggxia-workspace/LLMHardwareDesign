@@ -8,7 +8,7 @@ from run_parent_trial import tcl
 DRIVER=Path(__file__).resolve().parent
 
 
-def run(revision):
+def run(revision,reuse_revision=None):
     source=ROOT/'common_integration/r01/C';odb=source/'fixed_prewires_NOT_FROZEN.odb'
     assert odb.exists() and 'STAGE_START lower_global_route' in (source/'lower_route.log').read_text()
     expected=json.loads((source/'actual_shared_conductors.json').read_text());assert len(expected)==256
@@ -26,17 +26,29 @@ def run(revision):
       'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()}
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp',
       '--home',str(ROOT/'home'),'--pwd',str(out)]
-    script=out/'audit.tcl';script.write_text('read_db '+tcl(odb)+'\nwrite_def '+tcl(out/'native_checkpoint.def')+'\n')
-    rec['native_export_returncode']=execute(common,script,out/'native.log',threads=1)
+    deffile=out/'native_checkpoint.def'
+    if reuse_revision:
+        assert reuse_revision=='r01'
+        previous=ROOT/'shared_conductor_audit'/reuse_revision;prior=json.loads((previous/'execution.json').read_text())
+        assert prior['native_export_returncode']==0 and prior['all_closed_source_files_unchanged']
+        assert prior['source_SHA']==inputs
+        deffile=previous/'native_checkpoint.def';assert sha(deffile)==prior['files'][deffile.name]['sha256']
+        inputs[str(deffile)]=sha(deffile);inputs[str(previous/'execution.json')]=sha(previous/'execution.json')
+        rec.update({'native_export_returncode':0,'native_export_executed_this_run':False,'reused_verified_native_DEF':str(deffile),
+          'reason':'Read completed native DEF with its real leading indentation; retain r01 parser failure, do not re-export geometry.'})
+    else:
+        script=out/'audit.tcl';script.write_text('read_db '+tcl(odb)+'\nwrite_def '+tcl(deffile)+'\n')
+        rec['native_export_returncode']=execute(common,script,out/'native.log',threads=1)
+        rec['native_export_executed_this_run']=True
     try:
         assert rec['native_export_returncode']==0
         nets={q['net']:q for q in geometry};found={};active=None;parts=[];in_nets=False
-        with (out/'native_checkpoint.def').open() as f:
+        with deffile.open() as f:
             for line in f:
                 if re.match(r'^NETS\s+\d+\s*;',line):in_nets=True;continue
                 if line.strip()=='END NETS':in_nets=False
                 if not in_nets:continue
-                start=re.match(r'^-\s+(\S+)',line)
+                start=re.match(r'^\s*-\s+(\S+)',line)
                 if start:active=start.group(1);parts=[]
                 if active in nets:parts.append(line)
                 if ';' in line and active:
@@ -66,4 +78,4 @@ def run(revision):
     return 0 if rec['all_256_native_FIXEDS_and_original_net_bindings_verified'] and rec['all_closed_source_files_unchanged'] else 1
 
 
-if __name__=='__main__':sys.exit(run(sys.argv[1]))
+if __name__=='__main__':sys.exit(run(*sys.argv[1:3]))
