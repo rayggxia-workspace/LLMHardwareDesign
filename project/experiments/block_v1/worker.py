@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('revision300-occupancy-'):
+    if MODE=='revision300-sv-workspace':
+        from revision300_sv_workspace import measure
+        measure(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('revision300-occupancy-'):
         from revision300_lane_occupancy import measure
         _,_,kind,variant=MODE.split('-')
         measure(ROOT,OUT,CPUS,run,kind,variant)
