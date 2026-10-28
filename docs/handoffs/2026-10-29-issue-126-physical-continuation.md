@@ -2,6 +2,22 @@
 
 更新时间：2026-10-29，Asia/Shanghai。仓库rayggxia-workspace/LLMHardwareDesign；[Issue126](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/126) / [Draft PR129](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/129)；负责人huangpingyang04-lgtm；分支task/126-full-block-pin-xy。恢复核实线上head为0f1e43dc59d61005150dc8141c29b288832fa70c，两CI成功。新增驱动commit为9957f1aa7abcdfb3f0909bfbc94c55879f713be5、1d77813aa2dae753bcd368f9f5cb216142016c78、ed81920a56d5e60ab4fb61023b881834e37e59e0、e2b2974e8f25963dda99f3f624e1ebb60a994f49；发布head以PR最新读回为准。
 
+## 最新00:55 CST：VECTOR真实终态与GEMM实际diode作业
+
+新gate-r09/92917、gate-r10/92918只读快照保留；r09原采集规则省略paths.json，r10补齐有界实际关键路径JSON，未覆盖任何历史源。最新HTML/机器矩阵采用r10。
+
+92872已终态FAILED1:0：真实全布线、fresh native0、375675网/1073220端点所检连通、双PG和实际RCX均完成；setup−4.140220ns / hold0.037989ns，83个VIOLATED文字标记。原pin/PG/外框与路由前单元布局指纹保持。相对旧源新增180功能实例、818换型、875移动，master面积+917.700μm²，单列成本，不是XY/面积收益。旧−4.195674ns源和全部失败保留。
+
+92913 VECTOR全量有向相对数字合同PASS：321725原非filler、1076107原信号端点、2246端口、380381原网分量、607个独立NULL保持；180新增identity缓冲、818换型通过。仍是同硬存储合同的相对映射证明，不替代RTL/器件/物理资格。
+
+92914/92915 actual_path_audit/r01/{vector,opentpu_aux}精确重放实际SPEF setup/hold。VECTOR最差p0_r[18]/Q→wr_data_r[18]/D，141 cell arc约6.7401ns、142 net arc约0.1984ns；SYSTEM最差寄存器→bit_22632有8 cell arc约0.4554ns和9 net arc约1.0524ns，末段到port约0.657ns。源JSON有舍入，cell arc含负载/slew，不是零线长下界或架构不可能证明。新actual_critical_path_diagnosis PNG/SVG、数据及原文SHA随报告发布；下一步针对SYS实际输出缓冲位置和引出绕行做保持逻辑的修复，不重复无变量setup命令。
+
+实际GEMM diode92910：驱动d694a7e2d66d59a1708bbaaf6b5f9dea322f32b1，ROOT/antenna_diode_eco/r01/gemm-C。636个真实ANTENNA_X1已插入/合法化、原功能实例位置/连接检查保持，完整GRT已执行，DRT正在运行；不称天线通过。真实库capacitive_load_unit=(1,ff)，每个输入cap0.023429fF。标准单元site面积成本预计169.176μm²，须以原生导出终态核对，不是block面积变化。
+
+92912严格GDS及原deck依赖92910终态（afterany，源无完成路由则明确不执行），驱动6184a8effd0be31cd31830acb35a98fbc1bc0c76，ROOT/antenna_diode_stream/r01/gemm-C。allow-empty禁用，原deck/300:1不改，不伪造器件。92690/92691、92841、92855、92892继续核实，92855原生PDN生成及VDD/VSS检查已完成，固定导体/底层路由尚无终态。
+
+已发布前阶段db2ae1cd442c53a2ef4d2b0f03b6980b75eb2b9e：CI40727062699/40727062697均completed/success，新M6图片GitHub blob与本机一致。当前阶段发布head及CI以最新PR回读为准。整个目标继续active，仍无合格共同冻结、两完整M11/M12功能或系统对照。
+
 ## 已收集的新终态
 
 - 92886，ROOT/buffered_equivalence/r01/opentpu_aux：实际原始与ECO映射数据库导出、所有原端点/方向、Liberty状态/逻辑、5829个新增identity缓冲和980换型逐项检查。438852原非filler、1539803原信号端点、2229顶层端口、529989原网分量、9723个独立NULL端点保持；有向同原驱动可达、无环、无新增多驱动/孤岛通过。5个正反向/循环/改网/NULL反例测试进入CI。固定相同硬存储合同条件下的相对网表证明，非RTL/存储器内部形式等价，原SYS提取setup/hold失败仍保留。

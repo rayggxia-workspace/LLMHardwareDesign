@@ -37,11 +37,12 @@ def plot(snapshot,out):
         a,b=r['cell_arc_increment_ns'],r['net_arc_increment_ns']
         ax.barh(y,a,height=.38,color=colors[0]);ax.barh(y,b,left=a,height=.38,color=colors[1])
         ax.text(a/2,y,f'{a:.3f}',ha='center',va='center',color='white',weight='bold')
+        if b>.4:ax.text(a+b/2,y,f'{b:.3f}',ha='center',va='center',color='#17283c',weight='bold')
         ax.text(a+b+.08,y,f'cell {r["cell_arc_count"]} 段 / net {r["net_arc_count"]} 段',va='center',fontsize=10,color='#56677d')
     ax.set_xlim(0,8.3);ax.set_ylim(-.6,1.6);ax.set_yticks([1,0],['VECTOR 成本ECO','openTPU SYSTEM 成本ECO'])
     ax.set_xlabel('相邻 arrival 增量之和 (ns)');ax.grid(axis='x',alpha=.18);ax.set_axisbelow(True)
-    ax.barh([],[],color=colors[0],label='cell arc（含负载 / slew 影响）');ax.barh([],[],color=colors[1],label='net arc（当前提取STA）')
-    ax.legend(loc='upper right',frameon=False,fontsize=9)
+    handles=[expand.legacy.Rectangle((0,0),1,1,facecolor=c) for c in colors]
+    ax.legend(handles,['cell arc（含负载 / slew 影响）','net arc（当前提取STA）'],loc='upper right',frameon=False,fontsize=9)
     fig.text(.045,.12,'VECTOR：141个cell arc约6.740ns；仅移动接口不能直接消除这条逻辑链，仍需保留失败并研究允许的物理修复。\nSYSTEM：net arc约1.052ns，其中末段到输出port约0.657ns；应进一步检查实际缓冲位置与接入绕行。\n数值来自工具舍入JSON；不等于独立RC常数、真实线长或无连线延迟下界。没有时序通过、面积收益或系统比较结论。',fontsize=10,color='#56677d',linespacing=1.7)
     assets=out/'assets';fig.savefig(assets/'actual_critical_path_diagnosis.png',dpi=180)
     dest=assets/'actual_critical_path_diagnosis.svg'

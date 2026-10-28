@@ -1,5 +1,9 @@
 # 当前状态
 
+## 2026-10-29 00:55 CST：VECTOR终态已收集，真实diode接线继续
+
+VECTOR92872全详细布线/fresh native0/375675网所检连通及双PG通过，但提取setup−4.140220ns、83文字违例，整体FAILED；成本180新增buffer/818换型/875移动，非纯XY。92913全量有向数字合同通过，92914/92915实际SPEF关键路径证明VECTOR深链cell arc与SYS长输出net arc两类问题，新增PNG/SVG及原文SHA随HTML发布。GEMM92910的636真实ANTENNA_X1已插入/合法化，正重布线；92912等待严格GDS原deck，原1460项尚未修复确认。共同集成92855双PG检查完成，仍不是冻结或两完整M11/M12功能。Issue126 in_progress/PR129 Draft；[新交接](handoffs/2026-10-29-issue-126-physical-continuation.md)，下方旧运行中说明均保留为历史。
+
 ## 2026-10-29 00:40 CST：真实验证继续，未完成整个目标
 
 SYSTEM 92886已完成全量映射相对数字合同：438852个原非filler实例、1539803个原端点、2229个端口、529989个原网络分量保持；5829个新增identity缓冲与980处换型的有向可达性/无环性通过。这是同SRAM合同下的相对网表证明，不是RTL形式验证或时序通过；源setup/hold仍−0.462192/−0.125999ns。

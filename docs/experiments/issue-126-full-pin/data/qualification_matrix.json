@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "scope": "LATEST_KNOWN_COMPLETED_SOURCE_PLUS_SEPARATE_NEWER_ATTEMPTS_NOT_FULL_QUALIFICATION",
-  "snapshot_UTC": "2026-10-28T16:19:31.918852+00:00",
-  "source_snapshot": "data/gate_milestones/gate-r08/snapshot.json",
+  "snapshot_UTC": "2026-10-28T16:48:20.387199+00:00",
+  "source_snapshot": "data/gate_milestones/gate-r10/snapshot.json",
   "rules": "Completed version and newer repair are distinct. Unknown is null, never zero. Literal VIOLATED marker rows are not a full failure count. Full manufacturing rules/formal/system evidence remains separate.",
   "blocks": [
     {
@@ -71,7 +71,7 @@
       },
       "strict_GDS_merge_errors": 4,
       "available_deck_findings": 1578,
-      "GDS_full_rule_evidence": "data/gate_milestones/gate-r08/streamout/costed-r02/mxu-C_ECO/",
+      "GDS_full_rule_evidence": "data/gate_milestones/gate-r10/streamout/costed-r02/mxu-C_ECO/",
       "whole_mapped_relative_digital_contract": true,
       "relative_contract_scope": "WHOLE_MAPPED_DIGITAL_TERMINAL_GRAPH_AND_LIBERTY_LOGIC_STATE_RELATIVE_PROOF; IDENTICAL_BLACKBOX_INSTANCE_AND_ALL_TERMINALS_CONTRACT_ASSUMED"
     },
@@ -108,11 +108,11 @@
       "full_qualification": false,
       "evidence": [
         "data/continuation/terminal_updates/openSYS-r01/trials/access-r03/opentpu_aux-C/stages.tsv.gz",
-        "data/gate_milestones/gate-r08/checkpoint_route/r01/execution.json.gz"
+        "data/gate_milestones/gate-r10/checkpoint_route/r01/execution.json.gz"
       ],
       "whole_mapped_relative_digital_contract": true,
       "relative_contract_scope": "WHOLE_MAPPED_DIGITAL_RELATION_WITH_DIRECTED_IDENTITY_BUFFER_CONES; Identical original hard-memory instances and all terminals; same memory semantics assumed",
-      "matching_current_physical_and_research_timing_view": "data/gate_milestones/gate-r08/eco_views/r03/opentpu_aux-C/execution.json.gz"
+      "matching_current_physical_and_research_timing_view": "data/gate_milestones/gate-r10/eco_views/r03/opentpu_aux-C/execution.json.gz"
     },
     {
       "case": "gemm",
@@ -153,7 +153,7 @@
       },
       "strict_GDS_merge_errors": 0,
       "available_deck_findings": 1460,
-      "GDS_full_rule_evidence": "data/gate_milestones/gate-r08/streamout/costed-r02/gemm-C_ECO/",
+      "GDS_full_rule_evidence": "data/gate_milestones/gate-r10/streamout/costed-r02/gemm-C_ECO/",
       "whole_mapped_relative_digital_contract": true,
       "relative_contract_scope": "WHOLE_MAPPED_DIGITAL_TERMINAL_GRAPH_AND_LIBERTY_LOGIC_STATE_RELATIVE_PROOF; IDENTICAL_BLACKBOX_INSTANCE_AND_ALL_TERMINALS_CONTRACT_ASSUMED"
     },
@@ -164,13 +164,13 @@
       "current_source_internal_moved_pins": 1022,
       "partition_and_all_interfaces": "COMPLETE_SOURCE_INVENTORY",
       "candidate_ABC": "COMPLETE_3_VERSIONS_NOT_PHYSICAL_PASS",
-      "completed_source": "access-r03",
-      "actual_internal_route": "COMPLETED",
+      "completed_source": "costed_VECTOR_resume/r01",
+      "actual_internal_route": "COMPLETED_COSTED_ECO_NOT_PURE_XY",
       "native_DRC_count": 0,
       "all_multiterminal_signal_clock_geometry": true,
-      "setup_ns": -4.195674,
-      "hold_ns": 0.036847,
-      "violation_marker_rows": 118,
+      "setup_ns": -4.14022,
+      "hold_ns": 0.037989,
+      "violation_marker_rows": 83,
       "power_grid": "NATIVE_VDD_VSS_COMMANDS_EXECUTED",
       "RC_STA_scope": "SOURCE_SDC_EXTRACTED_RESULTS_NOT_COMPLETE_SYSTEM_QUALIFICATION",
       "complete_rules": "NOT_PASSED_OR_INCOMPLETE_COVERAGE",
@@ -194,22 +194,58 @@
           "evidence": "data/runtime_submissions/vector_resume_r01.json"
         },
         "physical_resume_latest": {
-          "scheduler_state": "RUNNING",
+          "scheduler_state": "FAILED",
           "native_stage_returncodes": {
             "timing_repair": 0,
-            "legalization": 0
+            "legalization": 0,
+            "route": 0
           },
-          "terminal_receipt": false,
-          "separate_cell_ECO_cost": null,
-          "fresh_DRC_count": null,
+          "terminal_receipt": true,
+          "separate_cell_ECO_cost": {
+            "added_functional_instances_excluding_fillers": 180,
+            "removed_functional_instances_excluding_fillers": 0,
+            "changed_master_original_instances": 818,
+            "moved_original_instances": 875,
+            "original_CORE_SPACER_count": 411821,
+            "restored_CORE_SPACER_count": 411382,
+            "standard_cell_master_area_delta_um2": 917.6999999698019,
+            "not_pure_pin_XY_benefit": true,
+            "not_block_area_saving": true
+          },
+          "fresh_DRC_count": 0,
+          "setup_ns": -4.14022,
+          "hold_ns": 0.037989,
+          "literal_VIOLATED_markers_not_complete_failure_count": 83,
           "full_qualification": false,
-          "evidence": "data/gate_milestones/gate-r08/vector_resume/r01/execution.json.gz"
+          "evidence": "data/gate_milestones/gate-r10/vector_resume/r01/execution.json.gz"
         }
       },
       "full_qualification": false,
       "evidence": [
-        "data/continuation/native/milestone-r05/trials/access-r03/vector-C/stages.tsv.gz"
-      ]
+        "data/continuation/native/milestone-r05/trials/access-r03/vector-C/stages.tsv.gz",
+        "data/gate_milestones/gate-r10/vector_resume/r01/execution.json.gz"
+      ],
+      "prior_completed_source_before_latest_ECO": {
+        "completed_source": "access-r03",
+        "actual_internal_route": "COMPLETED",
+        "native_DRC_count": 0,
+        "all_multiterminal_signal_clock_geometry": true,
+        "setup_ns": -4.195674,
+        "hold_ns": 0.036847,
+        "violation_marker_rows": 118
+      },
+      "separate_cell_ECO_cost": {
+        "added_functional_instances_excluding_fillers": 180,
+        "removed_functional_instances_excluding_fillers": 0,
+        "changed_master_original_instances": 818,
+        "moved_original_instances": 875,
+        "original_CORE_SPACER_count": 411821,
+        "restored_CORE_SPACER_count": 411382,
+        "standard_cell_master_area_delta_um2": 917.6999999698019,
+        "not_pure_pin_XY_benefit": true,
+        "not_block_area_saving": true
+      },
+      "whole_mapped_relative_digital_contract": true
     },
     {
       "case": "llaccel_aux",
@@ -265,7 +301,7 @@
       "parent_M10_accesses": 256,
       "full_parent_RC_STA": "NOT_EXECUTED_OR_NOT_QUALIFIED",
       "completed_UTC": "2026-10-28T13:36:46.108749+00:00",
-      "evidence": "data/gate_milestones/gate-r08/escape_fixtures/gemm-r01/gemm-Aopt/execution.json.gz"
+      "evidence": "data/gate_milestones/gate-r10/escape_fixtures/gemm-r01/gemm-Aopt/execution.json.gz"
     },
     {
       "version": "escape_fixtures/gemm-r01/gemm-C",
@@ -278,7 +314,7 @@
       "parent_M10_accesses": 256,
       "full_parent_RC_STA": "NOT_EXECUTED_OR_NOT_QUALIFIED",
       "completed_UTC": "2026-10-28T08:28:10.317536+00:00",
-      "evidence": "data/gate_milestones/gate-r08/escape_fixtures/gemm-r01/gemm-C/execution.json.gz"
+      "evidence": "data/gate_milestones/gate-r10/escape_fixtures/gemm-r01/gemm-C/execution.json.gz"
     },
     {
       "version": "escape_fixtures/gemm-r02/gemm-C",
@@ -291,7 +327,7 @@
       "parent_M10_accesses": 256,
       "full_parent_RC_STA": "NOT_EXECUTED_OR_NOT_QUALIFIED",
       "completed_UTC": "2026-10-28T14:31:56.563907+00:00",
-      "evidence": "data/gate_milestones/gate-r08/escape_fixtures/gemm-r02/gemm-C/execution.json.gz"
+      "evidence": "data/gate_milestones/gate-r10/escape_fixtures/gemm-r02/gemm-C/execution.json.gz"
     },
     {
       "version": "escape_fixtures/mxu-r01/mxu-Aopt",
@@ -304,7 +340,7 @@
       "parent_M10_accesses": 256,
       "full_parent_RC_STA": "NOT_EXECUTED_OR_NOT_QUALIFIED",
       "completed_UTC": "2026-10-28T12:58:59.846083+00:00",
-      "evidence": "data/gate_milestones/gate-r08/escape_fixtures/mxu-r01/mxu-Aopt/execution.json.gz"
+      "evidence": "data/gate_milestones/gate-r10/escape_fixtures/mxu-r01/mxu-Aopt/execution.json.gz"
     },
     {
       "version": "escape_fixtures/mxu-r01/mxu-C",
@@ -317,7 +353,7 @@
       "parent_M10_accesses": 256,
       "full_parent_RC_STA": "NOT_EXECUTED_OR_NOT_QUALIFIED",
       "completed_UTC": "2026-10-28T13:05:34.295302+00:00",
-      "evidence": "data/gate_milestones/gate-r08/escape_fixtures/mxu-r01/mxu-C/execution.json.gz"
+      "evidence": "data/gate_milestones/gate-r10/escape_fixtures/mxu-r01/mxu-C/execution.json.gz"
     }
   ],
   "optimized_boundary_same_ECO_controls": [
@@ -364,7 +400,7 @@
         "not_pure_pin_XY_benefit": true
       },
       "full_qualification": false,
-      "evidence": "data/gate_milestones/gate-r08/leaf_eco/boundary-r01/gemm-Aopt/execution.json.gz"
+      "evidence": "data/gate_milestones/gate-r10/leaf_eco/boundary-r01/gemm-Aopt/execution.json.gz"
     },
     {
       "case": "mxu",
@@ -399,7 +435,7 @@
         "not_pure_pin_XY_benefit": true
       },
       "full_qualification": false,
-      "evidence": "data/gate_milestones/gate-r08/leaf_eco/boundary-r01/mxu-Aopt/execution.json.gz"
+      "evidence": "data/gate_milestones/gate-r10/leaf_eco/boundary-r01/mxu-Aopt/execution.json.gz"
     }
   ],
   "same_ECO_actual_leaf_DRT_metrics": [
@@ -424,7 +460,7 @@
       "not_geometric_endpoint_L1": true,
       "not_extracted_RC_or_system_gain": true,
       "source_native_log_uncompressed_SHA256": "b6b9d3cf8b875773452614de01d3534f7ed337c9c1bb6c15ff63cc839b65d079",
-      "evidence": "data/gate_milestones/gate-r08/leaf_eco/boundary-r01/gemm-Aopt/native.log.gz",
+      "evidence": "data/gate_milestones/gate-r10/leaf_eco/boundary-r01/gemm-Aopt/native.log.gz",
       "wire_change_vs_same_ECO_Aopt_percent": 0.0,
       "via_change_vs_same_ECO_Aopt_percent": 0.0
     },
@@ -474,7 +510,7 @@
       "not_geometric_endpoint_L1": true,
       "not_extracted_RC_or_system_gain": true,
       "source_native_log_uncompressed_SHA256": "6c5cbfd7997066eb22ea6769c65528dfe80b85113dd6fdef77a13f1eb67936cf",
-      "evidence": "data/gate_milestones/gate-r08/leaf_eco/boundary-r01/mxu-Aopt/native.log.gz",
+      "evidence": "data/gate_milestones/gate-r10/leaf_eco/boundary-r01/mxu-Aopt/native.log.gz",
       "wire_change_vs_same_ECO_Aopt_percent": 0.0,
       "via_change_vs_same_ECO_Aopt_percent": 0.0
     },
@@ -512,7 +548,7 @@
     ],
     "GDS_deck_findings_not_repaired": 1460,
     "full_qualification": false,
-    "evidence": "data/gate_milestones/gate-r08/antenna_audit/r01/execution.json.gz"
+    "evidence": "data/gate_milestones/gate-r10/antenna_audit/r01/execution.json.gz"
   },
   "whole_mapped_relative_digital_contracts": [
     {
@@ -600,7 +636,7 @@
         }
       },
       "case": "gemm",
-      "evidence": "data/gate_milestones/gate-r08/mapped_equivalence/r01/gemm/execution.json.gz"
+      "evidence": "data/gate_milestones/gate-r10/mapped_equivalence/r01/gemm/execution.json.gz"
     },
     {
       "scope": "WHOLE_MAPPED_DIGITAL_TERMINAL_GRAPH_AND_LIBERTY_LOGIC_STATE_RELATIVE_PROOF",
@@ -677,7 +713,7 @@
         }
       },
       "case": "mxu",
-      "evidence": "data/gate_milestones/gate-r08/mapped_equivalence/r01/mxu/execution.json.gz"
+      "evidence": "data/gate_milestones/gate-r10/mapped_equivalence/r01/mxu/execution.json.gz"
     }
   ],
   "SYSTEM_directed_buffer_relation": {
@@ -757,7 +793,7 @@
         "sha256": "f5cc0bb8bf1d63fdd15c4382ba7bdd0f1be2fc7756e22292e73f839a6eb18b6e"
       }
     },
-    "evidence": "data/gate_milestones/gate-r08/buffered_equivalence/r01/opentpu_aux/execution.json.gz"
+    "evidence": "data/gate_milestones/gate-r10/buffered_equivalence/r01/opentpu_aux/execution.json.gz"
   },
   "new_SYSTEM_costed_view": {
     "scope": "COSTED_ECO_ACCESS_AND_EXTRACTED_RESEARCH_TIMING_VIEW_NOT_FULL_PHYSICAL_QUALIFICATION",
@@ -931,7 +967,7 @@
       }
     },
     "completed_utc": "2026-10-28T14:38:41.701519+00:00",
-    "evidence": "data/gate_milestones/gate-r08/eco_views/r03/opentpu_aux-C/execution.json.gz"
+    "evidence": "data/gate_milestones/gate-r10/eco_views/r03/opentpu_aux-C/execution.json.gz"
   },
   "native_antenna_coverage_audit": {
     "layer_rules": [
@@ -1022,7 +1058,7 @@
     "source_unchanged": true,
     "source_macro_LEF_has_gate_area": false,
     "full_qualification": false,
-    "evidence": "data/gate_milestones/gate-r08/antenna_rules/r01/layer_rule_presence.tsv.gz"
+    "evidence": "data/gate_milestones/gate-r10/antenna_rules/r01/layer_rule_presence.tsv.gz"
   },
   "new_actual_integration_views": [
     {
@@ -1032,7 +1068,7 @@
       "source_native_DRC": 0,
       "status": "COSTED_ECO_VIEW_EXPORTED_NOT_QUALIFIED",
       "full_qualification": false,
-      "evidence": "data/gate_milestones/gate-r08/eco_views/r04/gemm-Aopt/execution.json.gz"
+      "evidence": "data/gate_milestones/gate-r10/eco_views/r04/gemm-Aopt/execution.json.gz"
     },
     {
       "version": "eco_views/r04/mxu-Aopt",
@@ -1041,7 +1077,7 @@
       "source_native_DRC": 0,
       "status": "COSTED_ECO_VIEW_EXPORTED_NOT_QUALIFIED",
       "full_qualification": false,
-      "evidence": "data/gate_milestones/gate-r08/eco_views/r04/mxu-Aopt/execution.json.gz"
+      "evidence": "data/gate_milestones/gate-r10/eco_views/r04/mxu-Aopt/execution.json.gz"
     },
     {
       "version": "leaf_timing_models/r07/vector-C",
@@ -1050,7 +1086,7 @@
       "source_native_DRC": 0,
       "status": "NATIVE_EXTRACTED_MODEL_EXPORTED_NOT_QUALIFIED",
       "full_qualification": false,
-      "evidence": "data/gate_milestones/gate-r08/leaf_timing_models/r07/vector-C/execution.json.gz"
+      "evidence": "data/gate_milestones/gate-r10/leaf_timing_models/r07/vector-C/execution.json.gz"
     },
     {
       "version": "leaf_timing_models/r07/llaccel_aux-C",
@@ -1059,13 +1095,13 @@
       "source_native_DRC": 4,
       "status": "UNQUALIFIED_FAILED_DRC_SOURCE_EXTRACTED_MODEL_EXPORTED",
       "full_qualification": false,
-      "evidence": "data/gate_milestones/gate-r08/leaf_timing_models/r07/llaccel_aux-C/execution.json.gz"
+      "evidence": "data/gate_milestones/gate-r10/leaf_timing_models/r07/llaccel_aux-C/execution.json.gz"
     }
   ],
   "actual_common_integration_trial": {
     "job": "92855",
     "state": "RUNNING",
-    "status": "ACTUAL_RESOURCE_PLACEMENT_EXPORTED; PDN_OR_FOLLOWING_STAGE_RUNNING",
+    "status": "FIXED_M10_CONDUCTORS_WRITTEN; LOWER_ROUTE_OR_CHECKS_RUNNING",
     "terminal_receipt": null,
     "qualified": false,
     "frozen": false
@@ -1076,14 +1112,14 @@
       "native_returncode": 1,
       "DEF_fixed_M10_wire": null,
       "full_qualification": false,
-      "evidence": "data/gate_milestones/gate-r08/fixed_wire_api/r01/execution.json.gz"
+      "evidence": "data/gate_milestones/gate-r10/fixed_wire_api/r01/execution.json.gz"
     },
     {
       "revision": "r02",
       "native_returncode": 0,
       "DEF_fixed_M10_wire": true,
       "full_qualification": false,
-      "evidence": "data/gate_milestones/gate-r08/fixed_wire_api/r02/execution.json.gz"
+      "evidence": "data/gate_milestones/gate-r10/fixed_wire_api/r02/execution.json.gz"
     }
   ],
   "VECTOR_isolated_estimator_trial": {
@@ -1258,16 +1294,335 @@
     "evidence": "data/runtime_submissions/vector_resume_r01.json"
   },
   "VECTOR_physical_resume_latest": {
-    "scheduler_state": "RUNNING",
+    "scheduler_state": "FAILED",
     "native_stage_returncodes": {
       "timing_repair": 0,
-      "legalization": 0
+      "legalization": 0,
+      "route": 0
     },
-    "terminal_receipt": false,
-    "separate_cell_ECO_cost": null,
-    "fresh_DRC_count": null,
+    "terminal_receipt": true,
+    "separate_cell_ECO_cost": {
+      "added_functional_instances_excluding_fillers": 180,
+      "removed_functional_instances_excluding_fillers": 0,
+      "changed_master_original_instances": 818,
+      "moved_original_instances": 875,
+      "original_CORE_SPACER_count": 411821,
+      "restored_CORE_SPACER_count": 411382,
+      "standard_cell_master_area_delta_um2": 917.6999999698019,
+      "not_pure_pin_XY_benefit": true,
+      "not_block_area_saving": true
+    },
+    "fresh_DRC_count": 0,
+    "setup_ns": -4.14022,
+    "hold_ns": 0.037989,
+    "literal_VIOLATED_markers_not_complete_failure_count": 83,
     "full_qualification": false,
-    "evidence": "data/gate_milestones/gate-r08/vector_resume/r01/execution.json.gz"
+    "evidence": "data/gate_milestones/gate-r10/vector_resume/r01/execution.json.gz"
+  },
+  "GEMM_real_diode_ECO": {
+    "scheduler_state": "RUNNING",
+    "receipt": {
+      "scope": "COSTED_REAL_ANTENNA_DIODE_ECO_NOT_PURE_XY_OR_QUALIFIED_BASE",
+      "source_SHA": {
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/antenna_netmap/r02/execution.json": "f7fbd594c0c75a63c4705aace82d9c0921d3e2d49eaeaf24300e33fe8c0e83ed",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/antenna_netmap/r02/marker_net_correlations.json": "013d1eb8896cab9ee7c97e033af40496d47e245f680dec3e5694b9b0fdeb0c37",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/antenna_netmap/r02/unique_correlated_native_nets.json": "887b546de127309a6273a4fdbec91085d4987d01ea31ff218dae0bb8d5d01e6c",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/antenna_netmap/r02/correlation_summary.json": "3428b1c2a9263f916eea9b1c274891645a602ecb04adc353110d9c9849dbdc84",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/eco_views/r02/gemm-C/execution.json": "93664b1fc3e80a537ef66a73fee516ee9b2a9049d12740e37e229f98a5696d27",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/eco_views/r02/gemm-C/clean.odb": "7e8112baae6bafe37bee4f78701092954c0eb0a0fd1f3a85f5292759e83c4139",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/leaf_eco/r03/gemm-C/execution.json": "4749c0d339764c806e33061e7fd7f1fd7c17a81d2363bfd843e6f993e6117b05",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/access-r03/gemm-C/execution.json": "246f0b12c547f7bf33268890bfe47c93a170f0e7abdae116df4c64584cb64128",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/6_final.sdc": "7e7228dce3ef76286673e76330ca124074495fb28caf8a685afc9b0d2ff51ac4",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/inputs/trial-inputs-gemm-access-r03/access_reservations.tcl": "960b7d9583411aa3e491b29d1799d334f3cad0936144102648ee8373ee22acde"
+      },
+      "full_qualification": false,
+      "original_antenna_findings": 1460,
+      "actual_correlated_native_nets": 636,
+      "native_returncodes": {},
+      "original_antenna_rules_unchanged": true,
+      "no_fake_gate_or_diffusion_area": true,
+      "original_SDC_and_allowed_layers_preserved": true,
+      "allowed_layers": "signal M2-M10; clock M4-M10",
+      "design_RTL_formal_equivalence": "NOT_EXECUTED",
+      "complete_GDS_rules": "NOT_YET_EXECUTED",
+      "driver_commit": "d694a7e2d66d59a1708bbaaf6b5f9dea322f32b1",
+      "scheduler_job": "92910",
+      "started_utc": "2026-10-28T16:37:01.784506+00:00",
+      "actual_diode_Liberty_contract": {
+        "liberty": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
+        "actual_input_capacitance": 0.023429,
+        "capacitive_load_unit": [
+          "1",
+          "ff"
+        ],
+        "single_input_only_no_output_function_or_state": true
+      }
+    },
+    "full_qualification": false,
+    "original1460_repair_not_yet_verified": true,
+    "strict_GDS_followup_job": "92912",
+    "strict_GDS_followup_state": "PENDING",
+    "evidence": "data/gate_milestones/gate-r10/antenna_diode_eco/r01/gemm-C/execution.json.gz",
+    "native_stage_status": {
+      "actual_diode_insert": "EXECUTED",
+      "diode_legalization": "EXECUTED",
+      "full_signal_clock_rip": "EXECUTED",
+      "global_route": "EXECUTED"
+    }
+  },
+  "latest_actual_extracted_path_audits": [
+    {
+      "scope": "READ_ONLY_REAL_EXTRACTED_CRITICAL_PATH_DIAGNOSIS_NOT_REPAIR_OR_QUALIFICATION",
+      "case": "vector",
+      "native_returncode": 0,
+      "source_SHA": {
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/vector_resume/r01/execution.json": "c46b7f107448bc576bf2e865e06f5443b9d7adcfd50d3ed5475a16ee7af8968d",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/vector_resume/r01/routed.odb": "243c1025646eb8b41b00e8257b78484b458d4eff250fa0b09ce32bc3fe7682d9",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/vector_resume/r01/extracted.spef": "248d929b62d9d59925f41f564b573cf9d471df75262e3c15d36123cb4046f224",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/results/nangate45/llhd_vec_original/base/6_final.sdc": "f3c983ea390db85166eb5e823900bd9508fc987558d952cc99784ce79d71f72b"
+      },
+      "original_SDC_and_extracted_SPEF_preserved": true,
+      "source_worst_slacks_exactly_replayed": {
+        "setup": true,
+        "hold": true
+      },
+      "full_qualification": false,
+      "driver_commit": "6184a8effd0be31cd31830acb35a98fbc1bc0c76",
+      "scheduler_job": "92914",
+      "all_sources_unchanged": true,
+      "completed_utc": "2026-10-28T16:41:28.261326+00:00",
+      "files": {
+        "checks.txt": {
+          "bytes": 21625,
+          "sha256": "4f4babb260a5c42cdfe5e69d9810c04b47598d3a0cb655605a3b36658ba974b3"
+        },
+        "constraint_coverage.txt": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "hold_paths.json": {
+          "bytes": 244750,
+          "sha256": "7bfab5c4480cd31e91c38f4b3dbd8a7baccd0b17c3200ec7fba37a06f4f5bbe1"
+        },
+        "audit.tcl": {
+          "bytes": 2260,
+          "sha256": "e3fd9c9000bdca8e1276d9503d8347ec9343ae6226eb889c90ff5127c5393037"
+        },
+        "native.log": {
+          "bytes": 287,
+          "sha256": "1961fe846f2672bf092c463e551de142e8fc26f2069f59ad266dfbad979162f9"
+        },
+        "setup.txt": {
+          "bytes": 26,
+          "sha256": "0ec5c4c21eb5fb3c41e313b0c4b44dae6e3df4bc2295ebe026b3d9b3834b29f5"
+        },
+        "hold.txt": {
+          "bytes": 25,
+          "sha256": "bdb4e98d867be9ae1625e432794f15a5f26a368169f993fc37467f5d09c10354"
+        },
+        "setup_paths.json": {
+          "bytes": 1176901,
+          "sha256": "d4a2682f34e4dc4088090baf9adf2b7d69657512b83e62c739d1370d3dc7a923"
+        },
+        "hold_paths.txt": {
+          "bytes": 75572,
+          "sha256": "6de6f139355e17a3df9ab047fe5f38a7f41c13bbc5780f9e6afad93f09b5678f"
+        },
+        "setup_paths.txt": {
+          "bytes": 215894,
+          "sha256": "d5eac1fe3f5e230dd3750cbe12543a966b5e334adf6c78eab0c640c7e7098daa"
+        },
+        "parasitic_coverage.txt": {
+          "bytes": 146009,
+          "sha256": "42791b57e9d5127591ca543a0191a4bfced87ce8de206687fa8ea9b2a6aa14dd"
+        }
+      },
+      "evidence": "data/gate_milestones/gate-r10/actual_path_audit/r01/vector/execution.json.gz"
+    },
+    {
+      "scope": "READ_ONLY_REAL_EXTRACTED_CRITICAL_PATH_DIAGNOSIS_NOT_REPAIR_OR_QUALIFICATION",
+      "case": "opentpu_aux",
+      "native_returncode": 0,
+      "source_SHA": {
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/checkpoint_route/r01/execution.json": "efb57c6cb3c6722e0c3d51fdaa217f7730345acc393c476c2080b43db3c942d7",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/checkpoint_route/r01/routed.odb": "f1c4e629b0fd1aaa47ca08717b00fc9855d9803d259fea3c40a685214840712e",
+        "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/checkpoint_route/r01/extracted.spef": "d4ab454240550c2a4ca94128c8a56b42e5356cd99c2cb44d320409d62336ac71",
+        "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-opentpu-4c-01/flow/results/nangate45/hpy_opentpu_aux/base/5_1_grt.sdc": "94d98ba4b55e26ea2c3cbe4d434c7dca72b347054b914070a8c0a295962f4e68"
+      },
+      "original_SDC_and_extracted_SPEF_preserved": true,
+      "source_worst_slacks_exactly_replayed": {
+        "setup": true,
+        "hold": true
+      },
+      "full_qualification": false,
+      "driver_commit": "6184a8effd0be31cd31830acb35a98fbc1bc0c76",
+      "scheduler_job": "92915",
+      "all_sources_unchanged": true,
+      "completed_utc": "2026-10-28T16:41:47.786786+00:00",
+      "files": {
+        "checks.txt": {
+          "bytes": 101431,
+          "sha256": "5cb532c7cb11c241d15227aab1afabdb2306a5a7dfa674e7f329bac6922da267"
+        },
+        "constraint_coverage.txt": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "hold_paths.json": {
+          "bytes": 152150,
+          "sha256": "5a41c172539d316f9980b366faef05d18c1ee1e536202e368fc6f5841d70d2c5"
+        },
+        "audit.tcl": {
+          "bytes": 2903,
+          "sha256": "c507589c591019c4db6d2c88b9a1520f7bcee2eaae0d1acd4dd4247dba29324f"
+        },
+        "native.log": {
+          "bytes": 287,
+          "sha256": "1961fe846f2672bf092c463e551de142e8fc26f2069f59ad266dfbad979162f9"
+        },
+        "setup.txt": {
+          "bytes": 26,
+          "sha256": "0000e4c3bebe952fecbb82227b12cdfb30b8595af25db1a4193f88f0207da01e"
+        },
+        "hold.txt": {
+          "bytes": 26,
+          "sha256": "38d46a406bfa244af4ac2f505f7cdd3f645a65549059d89944e62278062a431b"
+        },
+        "setup_paths.json": {
+          "bytes": 179351,
+          "sha256": "0df9e8de9f0c07654332b1c1926db02fad84953e9f97a4f036e77dbd189d7229"
+        },
+        "hold_paths.txt": {
+          "bytes": 42245,
+          "sha256": "94e4f876c377f2f1f282952e2a18e4efc8c5562664e1a7fdc1d538f31e5e0e2b"
+        },
+        "setup_paths.txt": {
+          "bytes": 45518,
+          "sha256": "e22eff9a8d5814409e27292b14311400c1816b9251f22e59aa0eda48071af00d"
+        },
+        "parasitic_coverage.txt": {
+          "bytes": 3779742,
+          "sha256": "75dbd375ecdea9edea63bccd6edce023d3aa076865541352089e5aa8d51e423b"
+        }
+      },
+      "evidence": "data/gate_milestones/gate-r10/actual_path_audit/r01/opentpu_aux/execution.json.gz"
+    }
+  ],
+  "actual_critical_path_diagnosis": {
+    "scope": "ACTUAL_EXTRACTED_STA_PATH_DIAGNOSIS_NOT_PHYSICAL_REPAIR_OR_WIRELESS_LOWER_BOUND",
+    "paths": [
+      {
+        "case": "vector",
+        "startpoint": "p0_r[18]$_DFFE_PN0P_/Q",
+        "endpoint": "wr_data_r[18]$_DFFE_PN0P_/D",
+        "cell_arc_increment_ns": 6.7401000000000115,
+        "net_arc_increment_ns": 0.1984000000000002,
+        "cell_arc_count": 141,
+        "net_arc_count": 142,
+        "launch_Q_arrival_ns": 0.6395000000000001,
+        "endpoint_arrival_ns": 7.578,
+        "required_time_ns": 3.437,
+        "reported_JSON_rounded_slack_ns": -4.140000000000001,
+        "actual_setup_path_JSON_uncompressed_SHA256": "d4a2682f34e4dc4088090baf9adf2b7d69657512b83e62c739d1370d3dc7a923",
+        "interpretation": "Adjacent arrival increments from actual extracted STA JSON, rounded by tool; exclude launch clock/Q and required-time terms. Cell arcs include load/slew effects; not zero-wire bounds or isolated RC constants."
+      },
+      {
+        "case": "opentpu_aux",
+        "startpoint": "_28604_[110]$_DFFE_PP_/Q",
+        "endpoint": "bit_22632",
+        "cell_arc_increment_ns": 0.4554000000000001,
+        "net_arc_increment_ns": 1.0523999999999998,
+        "cell_arc_count": 8,
+        "net_arc_count": 9,
+        "launch_Q_arrival_ns": 0.9542,
+        "endpoint_arrival_ns": 2.462,
+        "required_time_ns": 2.0,
+        "reported_JSON_rounded_slack_ns": -0.4622,
+        "actual_setup_path_JSON_uncompressed_SHA256": "0df9e8de9f0c07654332b1c1926db02fad84953e9f97a4f036e77dbd189d7229",
+        "interpretation": "Adjacent arrival increments from actual extracted STA JSON, rounded by tool; exclude launch clock/Q and required-time terms. Cell arcs include load/slew effects; not zero-wire bounds or isolated RC constants."
+      }
+    ],
+    "full_qualification": false,
+    "original_clock_constraints_unchanged": true
+  },
+  "VECTOR_directed_buffer_relation": {
+    "scope": "WHOLE_MAPPED_DIGITAL_RELATION_WITH_DIRECTED_IDENTITY_BUFFER_CONES",
+    "memory_contract": "Identical original hard-memory instances and all terminals; same memory semantics assumed",
+    "RTL_formal_equivalence": "NOT_EXECUTED",
+    "analog_RC_STA_electrical_equivalence": "NOT_CLAIMED",
+    "complete_rules": "NOT_QUALIFIED",
+    "full_qualification": false,
+    "source_SHA": {
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/vec-physical-01/flow/results/nangate45/llhd_vec_original/base/6_final.odb": "90a7815415c077581f37107e689507594a1ebaaccb7e4a930b1091d54d17b10a",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/vector_resume/r01/routed.odb": "243c1025646eb8b41b00e8257b78484b458d4eff250fa0b09ce32bc3fe7682d9",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/vector_resume/r01/execution.json": "c46b7f107448bc576bf2e865e06f5443b9d7adcfd50d3ed5475a16ee7af8968d"
+    },
+    "driver_commit": "6184a8effd0be31cd31830acb35a98fbc1bc0c76",
+    "scheduler_job": "92913",
+    "native_export_codes": [
+      0,
+      0
+    ],
+    "relative_mapped_digital_contract_pass": true,
+    "summary": {
+      "all_original_instances_retained": true,
+      "all_original_terminal_sets_directions_preserved": true,
+      "original_net_partition_equal_after_buffer_elimination": true,
+      "directed_original_driver_reachability": true,
+      "added_buffer_graph_acyclic": true,
+      "null_terminals_checked_individually": 607,
+      "original_nonfiller_instances": 321725,
+      "actual_nonfiller_instances": 321905,
+      "added_identity_buffers": 180,
+      "resized_original_instances": 818,
+      "original_signal_terminals": 1076107,
+      "top_ports": 2246,
+      "original_net_components": 380381,
+      "original_driven_components_checked": 380381,
+      "original_driverless_components_unchanged": 0,
+      "single_driver_components_checked": 380381
+    },
+    "all_sources_unchanged": true,
+    "completed_utc": "2026-10-28T16:42:22.928975+00:00",
+    "files": {
+      "costed_C.tcl": {
+        "bytes": 903,
+        "sha256": "34e5220891ac9a8f50e03da4ad3ceecbf3c78f2c3e721a36f577ec26c591f98e"
+      },
+      "reference.tsv.gz": {
+        "bytes": 6825690,
+        "sha256": "e45e7097aa34b81c4274f5a8c59a29a71a432ab1b87ae9310c324276eda98125"
+      },
+      "digital_contract_details.json": {
+        "bytes": 961824,
+        "sha256": "a887acdc9fba054f2be2c152c7f6e353f30b4352c4eb34c9dbf6a399267facaa"
+      },
+      "reference.log": {
+        "bytes": 287,
+        "sha256": "1961fe846f2672bf092c463e551de142e8fc26f2069f59ad266dfbad979162f9"
+      },
+      "costed_C.log": {
+        "bytes": 287,
+        "sha256": "1961fe846f2672bf092c463e551de142e8fc26f2069f59ad266dfbad979162f9"
+      },
+      "costed_C.tsv": {
+        "bytes": 46172703,
+        "sha256": "f4f970c44b4ab9cffd950b66df1dcb856cd91ef94327f034182a60b15efc1b7d"
+      },
+      "reference.tcl": {
+        "bytes": 949,
+        "sha256": "6235842d046277d3eb97967a7333931d742f397d78a259b56bdfdee882ccf5b3"
+      },
+      "reference.tsv": {
+        "bytes": 46152672,
+        "sha256": "7d5e7d74f20369b43048add29719b653f5e7987fec68e61494fba71e7620fb42"
+      },
+      "costed_C.tsv.gz": {
+        "bytes": 6829680,
+        "sha256": "e4f70d8d4ef0b1daa09dfe4fcbe0ed16ef624187271801cdc782ce91aba30e6e"
+      }
+    },
+    "evidence": "data/gate_milestones/gate-r10/buffered_equivalence/r01/vector/execution.json.gz"
   },
   "actual_GDS_antenna_correlations": {
     "scope": "ANTENNA_REPAIR_INPUT_CORRELATION_NOT_PHYSICAL_REPAIR_OR_FULL_QUALIFICATION",
@@ -1350,7 +1705,7 @@
         "sha256": "ee2808c19d4d09aef394b53ee41f9b4559c779ddae72d72a0f15e29e243c6dd5"
       }
     },
-    "evidence": "data/gate_milestones/gate-r08/antenna_netmap/r02/execution.json.gz"
+    "evidence": "data/gate_milestones/gate-r10/antenna_netmap/r02/execution.json.gz"
   },
   "MXU_M6_bounded_ownership": {
     "scope": "BOUNDED_M6_OWNERSHIP_AND_GEOMETRIC_GAP_NOT_FULL_DRC_LVS_OR_ACCESS_PASS",
