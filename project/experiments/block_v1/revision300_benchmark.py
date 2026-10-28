@@ -13,9 +13,10 @@ def matrix(root, out, cpus, run, variant):
            if baseline else root/'project/rtl/block_library_v1/block_v1_m.sv')
     if baseline:
         assert file_sha(rtl) == 'd8ddfc5ff141fdf23d1326ada16491a3d5e0bc56b10ef72b4beb99c4cb41de54'
-    run([COMPILER, '--cc', '--exe', '--build', '-j', '16', '-Wno-fatal',
+    flags = '-std=c++17 -O2'+('' if baseline else ' -DBENCH_REVISED')
+    run([COMPILER, '--cc', '--exe', '--build', '-j', '16', '-Wno-fatal', '--public-flat-rw',
          '--x-initial', 'unique', '--x-assign', 'unique', '--top-module', 'block_v1_m',
-         '-Mdir', str(out/'obj'), '-CFLAGS', '-std=c++17 -O2', rtl, bench], 'build.log')
+         '-Mdir', str(out/'obj'), '-CFLAGS', flags, rtl, bench], 'build.log')
     layout = 'packed' if variant == 'packed' else 'legacy'
     observed = []
     for label, initial, seed in [('ones', 1, 121), ('random', 2, 122)]:
@@ -23,16 +24,21 @@ def matrix(root, out, cpus, run, variant):
         run([out/'obj/Vblock_v1_m', layout, '+verilator+rand+reset+'+str(initial),
              '+verilator+seed+'+str(seed)], name)
         result = json.loads((out/name).read_text())
-        assert result['passed'] is True and len(result['cases']) == 16
+        assert result['passed'] is True and len(result['cases']) == 64
         for row in result['cases']:
             phases = [row[x] for x in ('preload', 'work', 'finalization_and_readback')]
-            assert row['logical_k'] == 1024 and row['logical_n'] == 8 and row['logical_macs'] == 8192
+            assert [row['logical_k'], row['logical_n']] in [[1024,8],[65,7],[9,1],[3072,8]]
+            assert row['logical_macs'] == row['logical_k']*row['logical_n']
             assert row['total_cycles'] == sum(p['cycles'] for p in phases)
             for phase in phases:
                 assert phase['cycles'] == sum(phase['cycle_attribution'].values())
                 assert phase['accepted_commands'] == phase['retired_responses']
                 assert phase['command_container_bytes'] == 16*phase['accepted_commands']
                 assert phase['response_container_bytes'] == 16*phase['retired_responses']
+                occupancy = phase['resource_occupancy_may_overlap']
+                for name in ('product_issue_cycles', 'reduction_cycles', 'accumulation_cycles', 'arithmetic_union_cycles'):
+                    assert 0 <= occupancy[name] <= phase['cycles']
+            assert row['work']['resource_occupancy_may_overlap']['valid_s8_digit_products'] == row['logical_macs']*row['base_s8_products_per_logical_mac']
             row['measured_logical_macs_per_total_cycle'] = row['logical_macs']/row['total_cycles']
             row['modeled_gmac_per_second_at_300mhz'] = 0.3*row['measured_logical_macs_per_total_cycle']
         observed.append(result)
