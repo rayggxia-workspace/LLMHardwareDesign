@@ -14,7 +14,8 @@ from audit_full_upper_access import audit
 DRIVER=Path(__file__).resolve().parent
 
 
-def one(mode,revision):
+def one(mode,revision,profile='retained-guides'):
+    assert profile in ['retained-guides','grt200']
     source=ROOT/'upper_adaptation_trial/r02'/mode;rp=source/'execution.json';prior=json.loads(rp.read_text())
     assert prior.get('completed_utc') and prior['native_route_returncode']==1
     assert 'GRT-0116' in (source/'global_route.error.txt').read_text()
@@ -24,11 +25,13 @@ def one(mode,revision):
     base=Path(plan['source_lower_checkpoint']);assert ROOT in base.parents and sha(base)==plan['source_lower_checkpoint_SHA256']
     assert prior['source_lower_checkpoint_SHA256']==plan['source_lower_checkpoint_SHA256']
     rc=ROOT/'upper_layer_probe/r01/model/research12.setRC.tcl'
-    out=ROOT/'upper_detailed_resume'/revision/mode;out.mkdir(parents=True,exist_ok=False)
+    family='upper_detailed_resume' if profile=='retained-guides' else 'upper_search_budget'
+    out=ROOT/family/revision/mode;out.mkdir(parents=True,exist_ok=False)
     inputs={str(p):sha(p) for p in [rp,odb,planfile,base,rc,source/'global_route.error.txt',source/'congestion.rpt']}
     rec={'scope':'ALL770_ACTUAL_GUIDE_DETAIL_CONTINUATION_NOT_TWO_COMPLETE_SYSTEMS_OR_QUALIFIED_BASE',
       'mode':mode,'source_SHA':inputs,'source_lower_checkpoint_SHA256':sha(base),
-      'original_GRT_state':'FAILED_GRT_0116_RETAINED_NOT_WAIVED','global_route_reexecuted':False,
+      'original_GRT_state':'FAILED_GRT_0116_RETAINED_NOT_WAIVED','global_route_reexecuted':profile=='grt200',
+      'search_profile':profile,'search_only_change':('NONE' if profile=='retained-guides' else 'FastRoute congestion iterations 50 to 200, plus verbose logging; identical source DB, hooks, tracks, geometry, constraints and physical rules'),
       'allow_congestion_or_infinite_capacity_used':False,'all_physical_layers_tracks_and_rules_unchanged':True,
       'base_and_leaf_views':'ORIGINAL_R02_UNQUALIFIED_INPUTS_NOT_REPLACED_BY_NEW_658_VIEWS',
       'base_frozen':False,'full_qualification':False,'RC_STA_electrical':'NOT_EXECUTED_ADAPTER_ONLY',
@@ -50,6 +53,9 @@ def one(mode,revision):
           'fingerprint '+tcl(out/'after'),'save_obs '+tcl(out/'after.OBS.tsv'),
           'stage all770_native_geometry_export {source '+tcl(DRIVER/'export_access.tcl')+'}',
           'report_wire_length -detailed_route -summary -file '+tcl(out/'wire_length.csv'),'close $stages']
+        if profile=='grt200':
+            index=next(i for i,line in enumerate(lines) if line.startswith('if {![stage detailed_route '))
+            lines.insert(index,'if {![stage global_route_budget200 {global_route -congestion_iterations 200 -verbose -guide_file '+tcl(out/'search200.guide')+' -congestion_report_file '+tcl(out/'congestion.rpt')+';write_db '+tcl(out/'global_search200.odb')+'}]} {catch {write_db '+tcl(out/'failed_search200.odb')+'};close $stages;exit 1}')
         script=out/'resume.tcl';script.write_text('\n'.join(lines)+'\n')
         env='PINXY_OUTPUT='+str(out)+',PINXY_ACCESS_ALL=1,PINXY_ACCESS_OUT='+str(out/'whole_access.tsv.gz')
         rec['native_returncodes']['detailed_continuation']=execute(common,script,out/'native.log',env,threads=4);save()
@@ -72,18 +78,20 @@ def one(mode,revision):
     return rec
 
 
-def run(revision):
+def run(revision,profile='retained-guides'):
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=8
-    out=ROOT/'upper_detailed_resume'/revision;out.mkdir(parents=True,exist_ok=False)
-    with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(lambda mode:one(mode,revision),['opentpu','llaccel']))
+    assert profile in ['retained-guides','grt200']
+    family='upper_detailed_resume' if profile=='retained-guides' else 'upper_search_budget'
+    out=ROOT/family/revision;out.mkdir(parents=True,exist_ok=False)
+    with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(lambda mode:one(mode,revision,profile),['opentpu','llaccel']))
     assert results[0]['source_lower_checkpoint_SHA256']==results[1]['source_lower_checkpoint_SHA256']
     result={'scope':'TWO_ALL770_DETAIL_CONTINUATIONS_ORIGINAL_GLOBAL_FAILURES_RETAINED_NOT_COMPLETE_SYSTEMS',
       'same_partial_base_input_for_both_modes':True,'source_lower_checkpoint_SHA256':results[0]['source_lower_checkpoint_SHA256'],
-      'original_GRT_failed_in_both_modes':True,'global_route_reexecuted':False,
+      'original_GRT_failed_in_both_modes':True,'global_route_reexecuted':profile=='grt200','search_profile':profile,
       'full_qualification':False,'qualified_common_base':False,'two_complete_M11_M12_systems':False,
       'modes':[{k:r.get(k) for k in ['mode','native_returncodes','independent_DRC_count','all_edge_signal_clock_geometry','actual_770_native_edge_terminal_bijection','all_actual_overlay_M10_material_contained_in_existing_base_hook_rectangles','actual_failure']} for r in results]}
     (out/'summary.json').write_text(json.dumps(result,indent=2)+'\n')
     return 0 if all('actual_failure' not in r and r['native_returncodes'].get('detailed_continuation')==0 and r.get('independent_DRC_count')==0 and r.get('all_edge_signal_clock_geometry',{}).get('pass') and r.get('actual_770_native_edge_terminal_bijection') and r.get('all_actual_overlay_M10_material_contained_in_existing_base_hook_rectangles') and r.get('all_original_hook_shapes_and_OBS_constraints_unchanged') and r['all_closed_sources_unchanged'] for r in results) else 1
 
 
-if __name__=='__main__':sys.exit(run(sys.argv[1]))
+if __name__=='__main__':sys.exit(run(*sys.argv[1:3]))

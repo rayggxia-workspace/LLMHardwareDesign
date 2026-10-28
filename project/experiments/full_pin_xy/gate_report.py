@@ -401,6 +401,14 @@ def render(root,out):
     for revision in ['r01','r02']:
         p=snapshot/('tool_api/grt-start-'+revision+'/execution.json.gz')
         if p.exists():result['native_GRT_capability_'+revision]=dict(read(p),evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+    p=snapshot/'upper_detailed_resume/r01/summary.json.gz'
+    if p.exists():
+        q=read(p);result['all770_native_guide_detail_continuation_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        result['all770_native_guide_detail_mode_receipts_r01']=[]
+        for mode in ['opentpu','llaccel']:
+            f=snapshot/'upper_detailed_resume/r01'/mode/'execution.json.gz'
+            if f.exists():result['all770_native_guide_detail_mode_receipts_r01'].append(dict(read(f),evidence=(dest/f.relative_to(snapshot)).relative_to(out).as_posix()))
+        upper_text+='<p><strong>93025全770原生guide接续已FAILED：</strong>两个模式均实际进入DRT，pin access完成后报DRT-0352：Input route guides are congested。没有生成实际适配布线，fresh DRC、770边物理连通、M10 landing包含检查未执行，不能填0或通过。全部原DB guide和原GRT-0116失败保留，输入/层/规则未改变；2边成功不推广为全量成功。后续依据原生API的搜索预算参数作独立试验，不能以allow_congestion/infinite_cap绕开原失败。</p>'
     diagnosis=root/'vector_table_diagnosis_r03'
     if (diagnosis/'summary.json').exists():
         folder=data/'vector_Liberty_table_diagnosis';shutil.copytree(diagnosis,folder,dirs_exist_ok=True)

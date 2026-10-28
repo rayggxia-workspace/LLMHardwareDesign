@@ -3,6 +3,13 @@
 set block [ord::get_db_block];set selected [dict create]
 if {[info exists ::env(PINXY_ACCESS_ALL)] && $::env(PINXY_ACCESS_ALL) eq "1"} {
   foreach n [$block getNets] {if {[$n getSigType] ni {POWER GROUND} && [llength [$n getITerms]]+[llength [$n getBTerms]]>1} {dict set selected [$n getId] $n}}
+} elseif {[info exists ::env(PINXY_ACCESS_NET_NAMES)]} {
+  foreach name $::env(PINXY_ACCESS_NET_NAMES) {
+    set n [$block findNet $name]
+    if {$n eq "NULL" || [$n getSigType] in {POWER GROUND}} {error "Missing or non-signal selected native net $name"}
+    dict set selected [$n getId] $n
+  }
+  if {![dict size $selected]} {error "Empty explicit native net selection"}
 } else {
   set relocations {};source $::env(PINXY_RELOCATIONS)
   foreach r $relocations {set t [$block findBTerm [lindex $r 0]];set n [$t getNet];dict set selected [$n getId] $n}

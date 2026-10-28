@@ -300,6 +300,20 @@ def check(out):
         assert len(guides)==770 and all(int(g['DB_guide_count_or_minus1_unsupported'])>0 for g in guides)
         text=gzip.decompress((p/'recovered_from_failed.guide.gz').read_bytes()).decode()
         ids=re.findall(r'^(?:src|dst)\[(\d+)\]\s*\n\(',text,re.M);assert len(ids)==len(set(ids))==770 and set(map(int,ids))==set(range(770))
+    if j.get('all770_native_guide_detail_continuation_r01'):
+        q=j['all770_native_guide_detail_continuation_r01']
+        assert not q['full_qualification'] and not q['qualified_common_base'] and not q['two_complete_M11_M12_systems']
+        assert q['same_partial_base_input_for_both_modes'] and q['original_GRT_failed_in_both_modes'] and not q['global_route_reexecuted']
+        modes=j['all770_native_guide_detail_mode_receipts_r01'];assert len(modes)==2
+        for m in modes:
+            assert m['completed_utc'] and m['native_returncodes']['detailed_continuation']==1
+            assert m['all_original770_nets_had_native_DB_guides'] and m['all_closed_sources_unchanged']
+            assert m['original_GRT_state']=='FAILED_GRT_0116_RETAINED_NOT_WAIVED'
+            assert m['native_stage_status']['detailed_route']=='FAIL' and not m['allow_congestion_or_infinite_capacity_used']
+            assert 'independent_DRC_count' not in m and 'all_edge_signal_clock_geometry' not in m
+            p=(out/m['evidence']).parent
+            assert 'DRT-0352' in gzip.decompress((p/'detailed_route.error.txt.gz').read_bytes()).decode()
+        assert modes[0]['source_lower_checkpoint_SHA256']==modes[1]['source_lower_checkpoint_SHA256']==q['source_lower_checkpoint_SHA256']
     if j.get('SYSTEM_existing_buffer_relocation_r02',{}).get('completed_utc'):
         q=j['SYSTEM_existing_buffer_relocation_r02'];assert not q['full_qualification'] and q['native_returncodes']['route']==0
         assert q['fresh_DRC_count']==rows['opentpu_aux']['native_DRC_count']==2 and q['whole_signal_geometry']['pass']

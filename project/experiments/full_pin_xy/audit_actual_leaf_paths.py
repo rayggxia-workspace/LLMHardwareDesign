@@ -8,9 +8,13 @@ from run_escape_fixture import execute
 DRIVER=Path(__file__).resolve().parent
 
 
-def run(revision,case):
+def run(revision,case,source_kind='original'):
     assert case in ['vector','opentpu_aux']
+    assert source_kind in ['original','system_existing_buffers_r02']
     source=ROOT/('vector_resume/r01' if case=='vector' else 'checkpoint_route/r01')
+    if source_kind=='system_existing_buffers_r02':
+        assert case=='opentpu_aux'
+        source=ROOT/'output_chain_resume/r02/opentpu_aux-C'
     p=source/'execution.json';j=json.loads(p.read_text());assert j.get('completed_utc')
     old=json.loads((ROOT/'trials/access-r03'/(case+'-C')/'execution.json').read_text())
     odb=source/'routed.odb';spef=source/'extracted.spef';sdc=Path(old['source_sdc'])
@@ -27,6 +31,11 @@ def run(revision,case):
     script=out/'audit.tcl'
     lines=['read_liberty '+tcl(path) for path in old['libs']]+['read_db '+tcl(odb),'read_sdc '+tcl(sdc),
       'source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl','read_spef '+tcl(spef)]
+    if source_kind=='system_existing_buffers_r02':
+        # The two fresh native violations name this exact net, not a sampled bit.
+        lines+=['set ::env(PINXY_ACCESS_NET_NAMES) {_215139_}',
+          'set ::env(PINXY_ACCESS_OUT) '+tcl(out/'fresh_DRC_target_net.tsv.gz'),
+          'source '+tcl(DRIVER/'export_access.tcl')]
     for kind in ['setup','hold']:
         lines.append('report_worst_slack -'+('max' if kind=='setup' else 'min')+' -digits 6 > '+tcl(out/(kind+'.txt')))
         lines.append('report_checks -path_delay '+('max' if kind=='setup' else 'min')+' -fields {capacitance slew fanout} -format full_clock_expanded -group_path_count 12 -endpoint_path_count 1 -digits 6 > '+tcl(out/(kind+'_paths.txt')))
@@ -37,7 +46,8 @@ def run(revision,case):
     script.write_text('\n'.join(lines)+'\n')
     rc=execute(common,script,out/'native.log',threads=1)
     rec={'scope':'READ_ONLY_REAL_EXTRACTED_CRITICAL_PATH_DIAGNOSIS_NOT_REPAIR_OR_QUALIFICATION',
-      'case':case,'native_returncode':rc,'source_SHA':inputs,'original_SDC_and_extracted_SPEF_preserved':True,
+      'case':case,'source_kind':source_kind,'actual_source_directory':str(source),
+      'native_returncode':rc,'source_SHA':inputs,'original_SDC_and_extracted_SPEF_preserved':True,
       'source_worst_slacks_exactly_replayed':{},'full_qualification':False,
       'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID']}
     for kind in ['setup','hold']:
@@ -50,4 +60,4 @@ def run(revision,case):
     return 0 if rc==0 and all(rec['source_worst_slacks_exactly_replayed'].values()) and rec['all_sources_unchanged'] else 1
 
 
-if __name__=='__main__':sys.exit(run(*sys.argv[1:3]))
+if __name__=='__main__':sys.exit(run(*sys.argv[1:4]))
