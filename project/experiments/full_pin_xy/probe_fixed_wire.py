@@ -18,7 +18,7 @@ def run(revision):
       'place_pin -pin_name a -layer metal10 -location {19.295 19.27} -pin_size {.8 .8}',
       'set b [ord::get_db_block];set bt [$b findBTerm a];set net [$bt getNet];set ly [[ord::get_db_tech] findLayer metal10]',
       'set w [odb::dbWire_create $net];set enc [odb::dbWireEncoder];$enc begin $w;$enc newPath $ly FIXED;$enc addPoint 38590 38540;$enc addPoint 38590 102540;$enc end',
-      'set bp [odb::dbBPin_create $bt];$bp setPlacementStatus FIXED;odb::dbBox_create $bp $ly 37790 101740 39390 103340',
+      'set bp [odb::dbBPin_create $bt];$bp setPlacementStatus FIRM;odb::dbBox_create $bp $ly 37790 101740 39390 103340',
       'write_db '+tcl(out/'fixed.odb'),'write_def '+tcl(out/'fixed.def'),
       'puts "ACTUAL_FIXED_DBWIRE_AND_TWO_BPIN_RECTS_CREATED"'])+'\n')
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]

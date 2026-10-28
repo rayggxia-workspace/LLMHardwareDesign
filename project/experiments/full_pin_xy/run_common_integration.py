@@ -99,7 +99,7 @@ def screen_pads(out,preparation,inputs):
         x,y,b=chosen;placed.append(b);pad=pads['SHARED:'+r['resource']]
         commands.append('place_pin -pin_name '+tcl(pad)+' -layer metal10 -location {'+str(x)+' '+str(y)+'} -pin_size {.8 .8}')
         commands.append('set bt [$b findBTerm '+tcl(pad)+'];set net [$bt getNet];if {[$net getWire] ne "NULL"} {error "Unexpected existing shared wire"};set w [odb::dbWire_create $net];set enc [odb::dbWireEncoder];$enc begin $w;$enc newPath $m10 FIXED;$enc addPoint '+str(round(x*2000))+' '+str(round(y*2000))+';$enc addPoint '+str(round(x*2000))+' '+str(round((y+32)*2000))+';$enc end')
-        commands.append('set bp [odb::dbBPin_create $bt];$bp setPlacementStatus FIXED;odb::dbBox_create $bp $m10 '+ ' '.join(str(round(v*2000)) for v in [x-.4,y+31.6,x+.4,y+32.4]))
+        commands.append('set bp [odb::dbBPin_create $bt];$bp setPlacementStatus FIRM;odb::dbBox_create $bp $m10 '+ ' '.join(str(round(v*2000)) for v in [x-.4,y+31.6,x+.4,y+32.4]))
         actual.append({'resource':r['resource'],'component':'SHARED:'+r['resource'],'construction_pad':pad,
           'x0_um':b[0],'y0_um':b[1],'x1_um':b[2],'y1_um':b[3],'length_um':32.,'width_um':.8,
           'proposed_A_xy_um':px,'actual_A_xy_um':[x,y],'actual_B_xy_um':[x,y+32.]})
@@ -154,6 +154,7 @@ def screen_pads(out,preparation,inputs):
 
 
 def run(scheme,revision):
+    assert int(os.environ['SLURM_CPUS_PER_TASK'])>=16
     assert scheme in ['Aopt','C'];out=ROOT/'common_integration'/revision/scheme;out.mkdir(parents=True,exist_ok=False)
     inputs=ROOT/'inputs/common-topology-r02';prep=ROOT/'inputs/common-base-preparation-r04'
     assert prep.exists(),str(prep)
