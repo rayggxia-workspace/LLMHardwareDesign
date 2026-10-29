@@ -322,6 +322,9 @@ try:
     elif MODE in ('joint-rc-native-branch','joint-rc-native-via'):
         from joint_rc_native import verify
         verify(ROOT,OUT,CPUS,run,MODE.rsplit('-',1)[-1])
+    elif MODE=='native-node-queue-cohost':
+        from native_cohost_queue import serve
+        serve(ROOT,OUT,CPUS)
     elif MODE=='native-node-queue':
         from native_node_queue import serve
         serve(ROOT,OUT,CPUS)
