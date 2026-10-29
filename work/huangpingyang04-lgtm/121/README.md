@@ -4,6 +4,8 @@
 
 正式成果：[M11/M12宽线负载与M数据位宽](../../../docs/experiments/issue-121-load-and-width-review.md)。
 
+提交：[PR #134](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/134)，OPEN、非草稿、待独立审查。初始提交dfea826a47ebc24e974bca3c78feb1781ae45426；本地与上传树精确一致，最新commit/CI以PR读回为准。
+
 ## 范围与实际结果
 
 整理宽线负载/冻结阶段约束、既有run287电容失败、openTPU small和llaccel接口、128bit供数推导、256/512bit候选及联合评估步骤。来源清单见[load-width-sources.json](load-width-sources.json)。
@@ -17,7 +19,7 @@
 - 对本文引用的小型输入核对固定Git字节、SHA、端口声明与参数。
 - 复核128/256/512bit的300MHz理论带宽、S8 tile的72B有效/80B容器/5次接受，以及T high超限差值。
 - 核对本次文档相对文件链接和固定提交链接。
-- 结果以本次PR提交回执为准；业务仿真/综合/物理未执行，因为没有实现变更。
+- 实际结果：管理结构、diff空白检查、10份来源Git字节/身份、6个相对文件链接与条件算术均通过；业务仿真/综合/物理未执行，因为没有实现变更。CI实际状态另记在PR提交回执。
 
 ## 协作与恢复
 
