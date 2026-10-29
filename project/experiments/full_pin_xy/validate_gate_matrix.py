@@ -693,6 +693,65 @@ def check(out):
     q=j.get('MXU_clock_bound_parent_recheck_r04',{})
     if q.get('completed_utc'):
         assert q['all_original_macro_pin_contracts_persisted_and_independently_read_back'] and q['fresh_DRC_count']==1 and q['all_closed_sources_unchanged'] and not q['full_qualification']
+    q=j.get('ALL13507_actual_via_then_wire_r02',{})
+    if q.get('completed_utc'):
+        assert q['native_read_only_returncode']==0 and q['all_closed_sources_unchanged'] and not q['full_qualification']
+        assert q['candidate_policy']=='via_then_wire' and q['duplicate_candidate_pins']==0
+        assert q['status_counts']=={'KEEP_ALREADY_TRACK_CENTERED':327,'ACTUAL_OWN_VIA_GEOMETRIC_CANDIDATE_NOT_AP_VALIDATED':10261,'ACTUAL_OWN_WIRE_GEOMETRIC_CANDIDATE_NOT_AP_VALIDATED':2832,'KEEP_NO_BOUNDED_OWN_VIA_FOUND':87}
+        closed_dir=(out/q['evidence']).parent
+        table=list(csv.DictReader(io.StringIO(gzip.decompress((closed_dir/'all13507_actual_own_via_candidates.tsv.gz').read_bytes()).decode()),delimiter='\t'))
+        assert len(table)==13507 and len({r['pin'] for r in table})==13507
+        track=gzip.decompress((closed_dir/'native_tracks.tcl.gz').read_bytes()).decode()
+        tr={k:(int(a),int(b)) for k,a,b in re.findall(r'\{(metal5Y|metal6X)\} \{(\d+) (\d+)\}',track)}
+        assert len(tr)==2
+        chosen=[];wire=0
+        original_q=j['ALL13507_actual_own_via_caps_r01']
+        original_dir=(out/original_q['evidence']).parent
+        original={r['pin']:r for r in csv.DictReader(io.StringIO(gzip.decompress((original_dir/'all13507_actual_own_via_candidates.tsv.gz').read_bytes()).decode()),delimiter='\t')}
+        for r in table:
+            old=original[r['pin']]
+            assert all(r[k]==old[k] for k in ['net','layer','x0','y0','x1','y1','aligned_preferred'])
+            if old['candidate_x']:assert all(r[k]==old[k] for k in ['candidate_x','candidate_y','via','cap_x0','cap_y0','cap_x1','cap_y1']) and r['candidate_kind']=='VIA'
+            if not r['candidate_x']:continue
+            x,y=int(r['candidate_x']),int(r['candidate_y']);chosen.append((r['layer'],x,y))
+            assert (x-tr['metal6X'][0])%tr['metal6X'][1]==(y-tr['metal5Y'][0])%tr['metal5Y'][1]==0
+            assert int(r['cap_x0'])<=x-140 and int(r['cap_x1'])>=x+140 and int(r['cap_y0'])<=y-140 and int(r['cap_y1'])>=y+140
+            assert 0<int(r['distance_DBU'])<=10000
+            if r['candidate_kind']=='WIRE':wire+=1;assert not old['candidate_x'] and not r['via']
+        assert len(chosen)==len(set(chosen))==13093 and wire==2832
+    q=j.get('LLSYSTEM_all87_actual_residual_peers',{})
+    if q.get('completed_utc'):
+        assert q['native_read_only_returncode']==0 and q['all_closed_sources_unchanged'] and not q['full_qualification']
+        assert q['actual_class_counts']=={'HAS_REAL_CONNECTION_REQUIRES_ACCESS_REPAIR':87}
+        closed_dir=(out/q['evidence']).parent
+        table=list(csv.DictReader(io.StringIO(gzip.decompress((closed_dir/'all87_actual_net_classes.tsv.gz').read_bytes()).decode()),delimiter='\t'))
+        assert len(table)==87 and len({r['pin'] for r in table})==87
+        assert all(r['has_native_wire']=='1' and r['internal_ITerms']=='1' and r['top_BTerms']=='1' for r in table)
+        endpoints=list(csv.DictReader(io.StringIO(gzip.decompress((closed_dir/'all87_actual_internal_endpoints.tsv.gz').read_bytes()).decode()),delimiter='\t'))
+        assert {r['pin'] for r in endpoints}=={r['pin'] for r in table}
+    q=j.get('OBS_exact_union_installed_API_r01',{})
+    if q.get('completed_utc'):
+        assert not q['full_qualification'] and q['klayout_version']=='0.30.12' and q['sample_has_hole'] and q['exact_integer_XOR_empty']
+        assert sum((b[2]-b[0])*(b[3]-b[1]) for b in q['actual_sample_boxes'])==q['sample_area_DBU2']==680000
+    q=j.get('OBS_actual_exact_union_import_r01',{})
+    if q.get('completed_utc'):
+        assert not q['full_qualification'] and q['all_closed_sources_unchanged']
+        assert q['native_returncodes']=={'exact_KLayout_union':0,'original_OpenDB_import':0,'compacted_OpenDB_import':0}
+        assert q['all_original_native_PIN_rectangles_directions_USE_layers_size_exact'] and q['native_OpenDB_import_all_compacted_rectangle_multisets_exact'] and q['all_13507_signal_interfaces_imported']
+        union=q['actual_exact_union'];assert not union['full_qualification'] and union['all_bytes_outside_selected_OBS_RECT_lines_identical'] and union['source_LEF_unchanged']
+        assert [(union['layers'][l]['original_RECT_count'],union['layers'][l]['new_RECT_count']) for l in ['metal1','metal2','metal3']]==[(17025623,14242709),(4309362,4309362),(2234357,2185782)]
+        assert all(r['original_vs_decomposed_XOR_empty'] and r['original_vs_written_reread_XOR_empty'] and r['original_union_area_DBU2']==r['new_union_area_DBU2'] for r in union['layers'].values())
+        closed_dir=(out/q['evidence']).parent
+        assert gzip.decompress((closed_dir/'original.pins.tsv.gz').read_bytes())==gzip.decompress((closed_dir/'compacted.pins.tsv.gz').read_bytes())
+        assert gzip.decompress((closed_dir/'original.size.tsv.gz').read_bytes())==gzip.decompress((closed_dir/'compacted.size.tsv.gz').read_bytes())
+        assert read(closed_dir/'exact_union.json.gz')==union
+    runtime=data/'r47_runtime_observation.json'
+    if runtime.exists():
+        obs=read(runtime);assert not obs['full_qualification'] and obs['active_receipt_not_falsely_closed']
+        raw=(data/obs['active_receipt_snapshot']).read_bytes();assert hashlib.sha256(raw).hexdigest()==obs['active_receipt_snapshot_SHA256']
+        current=json.loads(raw);assert not current['full_qualification'] and not current.get('completed_utc')
+        assert current['native_returncodes']['actual_edit_and_geometry_export']==0 and len(current['complete_pin_contract']['only_changed_XY_pins'])==10261
+        assert current['complete_pin_contract']['all_signal_pins']==13507 and all(current['all_original_cells_signal_connections_PG_die_unchanged'].values())
     ram=j.get('NATIVE_RAM_capability_r01',{})
     if ram.get('completed_utc'):
         assert ram['native_probe_returncode']==0 and ram['generate_ram_present'] and not ram['generated_memory'] and not ram['existing_leaf_or_fake_memory_modified'] and not ram['full_qualification']

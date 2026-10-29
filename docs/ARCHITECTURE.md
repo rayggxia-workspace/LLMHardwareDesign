@@ -197,3 +197,6 @@ python project/experiments/full_pin_xy/validate_repository.py
 SYSTEM同网表buffer重排使用output_chain_placement.tcl/run_output_chain_placement.py，所有输出纳入选择，仅移动真实私有identity链，不新增/换型/改网；原失败92921及检查点保留。resume_output_chain.py在无Lib/SDC的新原生进程合法化同一检查点，恢复真实原状态并核查连接/非选中位置；再新进程按原Lib/SDC重布线/提取/STA。成功的中间合法化不替代最终物理门槛。gate-r12对已关闭native阶段的ODB/合同文件索引SHA，检查点及原命令由交接和原回执绑定。
 
 Issue126原生共享导体：audit_actual_shared_conductors.py从真实fixed_prewires_NOT_FROZEN.odb导出DEF，逐项核对256个FIXED metal10属性、net/port绑定和实际bbox；r02按SHA复用已完成r01导出，保留真实缩进解析失败。plot_actual_shared_conductors.py绘制真实PG/OBS/施工port，不画未知via或把总览ROI冒充金属占地。verify_passive_load_eco.py全量核对原映射端点和新增真实非驱动负载，原生图导出来源、观察中的receipt与稳定ODB分别记SHA，不能因metadata继续记录DRC就重算/伪称几何变更。原生接线/RC通过与新增cap2失败分开报告；完整规则/RTL形式/两个系统资格仍未闭合。重现命令及driver commit在2026-10-29固定导体与diode交接及gate-r13原文。
+
+
+Issue126 R47：`all_llsys_access_caps_job.sh NEW_REV via_then_wire`只读审计真实同网via及WIRE双轨道点，`llsys_residual_pin_job.sh NEW_REV`逐位读取剩余87位真实端点；不能将候选/未使用声明与实际接入混写。`llsys_owned_cap_access_job.sh NEW_REV`在新目录执行原生pin-only接入ECO，保留原WIRE/VIA/stub成本，独立完整pin/单元/PG/全网/fresh/RC-STA，父层AP另验。`obs_union_api_job.sh NEW_REV`核实已安装KLayout含孔整数并集分解；`obs_union_compaction_job.sh NEW_REV`对闭合四tip源实际M1-M3 OBS做整数XOR/非目标字节/pin/尺寸及OpenDB逐矩形导入核对。几何分解等价仍不替代router/DRC、PG、父层接入或系统资格。所有脚本使用获授权ROOT、已提交独立driver及hpy-Slurm资源，不覆盖活动输出。最新运行/终态与raw SHA见qualification_matrix.json及R47交接。

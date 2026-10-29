@@ -901,6 +901,10 @@ def render(root,out):
                       ('RAM_sync_wrapper_failed_r02','native_ram_sync_wrapper/r02'),
                       ('RAM_sync_wrapper_behavioral_r03','native_ram_sync_wrapper/r03'),
                       ('MXU_clock_bound_parent_recheck_r04','escape_view_recheck/r04/mxu-C'),
+                      ('ALL13507_actual_via_then_wire_r02','all_llsys_actual_access_caps/r02'),
+                      ('LLSYSTEM_all87_actual_residual_peers','llsys_residual_pin_audit/r01'),
+                      ('OBS_exact_union_installed_API_r01','obs_union_api/r01'),
+                      ('OBS_actual_exact_union_import_r01','obs_union_compaction/r01'),
                       ('MXU_clock_bound_parent_recheck_r02','escape_view_recheck/r02/mxu-C'),
                       ('MXU_clock_bound_parent_recheck_r03','escape_view_recheck/r03/mxu-C')]:
         p=snapshot/rel/'execution.json.gz'
@@ -924,6 +928,10 @@ def render(root,out):
                         'RAM_sync_wrapper_failed_r02':'native-ram-sync-wrapper-r02-complete-inputs',
                         'RAM_sync_wrapper_behavioral_r03':'native-ram-sync-wrapper-r03',
                         'MXU_clock_bound_parent_recheck_r04':'mxu-clock-bound-parent-r04-terminal',
+                        'ALL13507_actual_via_then_wire_r02':'all-llsys-access-caps-r02',
+                        'LLSYSTEM_all87_actual_residual_peers':'llsys-residual-pin-r01',
+                        'OBS_exact_union_installed_API_r01':'obs-union-api-r01',
+                        'OBS_actual_exact_union_import_r01':'obs-union-compaction-r01',
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
         update=root/'gate_terminal_updates'/terminal_names.get(label,'NO_TERMINAL_UPDATE')
         terminal_evidence=None
@@ -953,6 +961,20 @@ def render(root,out):
             assert q['native_read_only_returncode']==0 and q['all_13507_original_pin_rectangles_nets_layers_exact']
             assert q['status_counts']=={'KEEP_ALREADY_TRACK_CENTERED':327,'ACTUAL_OWN_VIA_GEOMETRIC_CANDIDATE_NOT_AP_VALIDATED':10261,'KEEP_NO_BOUNDED_OWN_VIA_FOUND':2919}
             upper_text+='<p><strong>93333全部13507 pin的真实同网落脚审计完成：</strong>327位已在优选轨道中心，10261位在5μm L1范围内找到原同网via金属帽且M5/M6双轨道中心匹配，候选点重复0；2919位未找到这种有界候选。原源pin/net/layer/矩形与源SHA全部逐项保持，本次没有实施任何迁移。每个候选帽真实存在，不是画出的端点；但异网/PG/OBS、实际经过层的via/间距和父层AP仍需核查，不能据此宣布10261位可接入或合法。<a href="'+(p.parent/'all13507_actual_own_via_candidates.tsv.gz').relative_to(out).as_posix()+'">完整13507位原坐标/同网via/候选及保留原因（DBU=2000/μm）</a>。</p>'
+        if label=='ALL13507_actual_via_then_wire_r02':
+            assert q['native_read_only_returncode']==0 and q['candidate_policy']=='via_then_wire'
+            assert q['status_counts']=={'KEEP_ALREADY_TRACK_CENTERED':327,'ACTUAL_OWN_VIA_GEOMETRIC_CANDIDATE_NOT_AP_VALIDATED':10261,'ACTUAL_OWN_WIRE_GEOMETRIC_CANDIDATE_NOT_AP_VALIDATED':2832,'KEEP_NO_BOUNDED_OWN_VIA_FOUND':87}
+            upper_text+='<p><strong>93352全量真实WIRE接点补查完成，只读：</strong>保留r01的10261个via候选及327个已居轨道中心pin；为原2919个未找到近邻via的pin另找到2832个真实同网WIRE内部的0.14μm双轨道接点，仍在5μm L1范围，候选点重复0。与源原矩形/层/net逐项核对，不统一平移，也没有把本轮候选写入物理源。仍87位无这种有界候选；它们不是可删除位。所有新点的异网/PG/OBS、真实via层级、父层AP与完整规则待验；不将13093个via/WIRE几何点称为物理接入完成。<a href="'+(p.parent/'all13507_actual_own_via_candidates.tsv.gz').relative_to(out).as_posix()+'">完整13507位及候选种类（DBU=2000/μm）</a>。</p>'
+        if label=='LLSYSTEM_all87_actual_residual_peers':
+            assert q['native_read_only_returncode']==0 and q['actual_class_counts']=={'HAS_REAL_CONNECTION_REQUIRES_ACCESS_REPAIR':87}
+            upper_text+='<p><strong>93361剩余全部87位的真实连接已核实：</strong>每位均有原生dbWire、一个内部ITerm及一个顶层BTerm；已导出实际实例/端口/层/几何。不能将它们当未使用声明删除、跳过接入，或借旧多端网检查宣布其新接点合格。需要进一步沿原网寻找落脚或真实接入ECO；原层/尺寸/语义及所有位继续保留。</p>'
+        if label=='OBS_exact_union_installed_API_r01':
+            assert q['exact_integer_XOR_empty'] and q['sample_has_hole'] and q['klayout_version']=='0.30.12'
+            upper_text+='<p><strong>93345当前KLayout API探针完成：</strong>实际0.30.12能将含孔整数矩形并集分解为矩形，并以XOR空集重建；这只是已安装API的小样验证，不是源LEF、DRC或父层通过。实际M1–M3源OBS压缩93349另在独立目录运行，必须取得源/写出重读整数XOR、所有非目标字节/pin/尺寸不变及原生OpenDB逐矩形导入回执后才可使用。即使几何相同，router/DRC对分段的处理仍须实际验证，不删除障碍或放宽规则。</p>'
+        if label=='OBS_actual_exact_union_import_r01':
+            assert q['all_closed_sources_unchanged'] and q['all_original_native_PIN_rectangles_directions_USE_layers_size_exact']
+            assert q['native_OpenDB_import_all_compacted_rectangle_multisets_exact'] and q['all_13507_signal_interfaces_imported']
+            upper_text+='<p><strong>93349真实OBS几何压缩及原生导入已完成：</strong>源是闭合四tip版本，不是活动10261-pin源。M1–M3逐层原并集与矩形分解/写出重读的整数XOR均为空，目标RECT之外所有原字节保留；原/新LEF分别原生导入，13507信号接口及PG/pin方向/USE/层/尺寸完全一致，新矩形多重集导入精确。M1矩形17025623→14242709，M2 4309362→4309362，M3 2234357→2185782；仅表示对象分解数量减少，占用几何不变，不是释放金属/面积/拥塞收益。大LEF/原生OBS留远程SHA索引，回执及pin导入原文已归档。尚未验证router/DRC对新分段的处理、父层AP/实际布线或RC-STA，未推广到当前叶块/底座，更不是缺失SRAM GDS的替代品。</p>'
         if label.startswith('RAM_sync_wrapper_failed_'):
             assert not q['behavioral_wrapper_equivalence_proven_in_stated_scope']
             upper_text+='<p>RAM行为包装原试验提前失败，实际等价证明未完成：r01标识符转义、r02缺少wire重命名的模块上下文。原脚本/输入/日志均保留；属于驱动错误，不能误写为功能反例，也不删除后续证明断言。</p>'
@@ -1095,6 +1117,15 @@ def render(root,out):
         result['latest_runtime_observation']=runtime.relative_to(out).as_posix()
         upper_text+='<p><strong>R46最新状态：</strong>93333全13507位落脚审计、93338显式包装的4160点RTL行为等价及93218持久2245 pin合同已闭合，后者fresh仍1项Short失败。93317实际RAM详细布线及93239/93243/93269/93217等保持原作业；没有任何新共同底座冻结或两完整功能验收。下一步以原生数据库实施有真实同网金属依据的接点ECO，并独立验证完整pin/连通/PG/native/RC/STA及父层AP，不能把10261个几何候选当物理通过。<a href="data/r46_runtime_observation.json">带时间的实际终态和运行观察</a>。</p>'
         upper_text=upper_text.replace('需要显式登记读保持/使能包装、完整功能/物理及成本检查，尚未实施或证明。','显式读保持/使能包装的RTL行为证明现已完成（见93338）；物理映射、核心门级等价及成本仍未验证。')
+    runtime=data/'r47_runtime_observation.json'
+    if runtime.exists():
+        observed=read(runtime);assert not observed['full_qualification']
+        result['latest_runtime_observation']=runtime.relative_to(out).as_posix()
+        upper_text+='<p><strong>R47实际接点ECO正在验证，不能当完整接入：</strong>93343驱动已实际完成10261个同网帽上的原生ODB pin编辑，13507位pin合同及原单元/连接/PG/外框前后核对、VDD/VSS原生命令均已执行；独立fresh、完整导出图的连通判定、全WIRE/VIA多重集及RC/STA尚未闭合，父层AP未验证。原线/stub不删除，不报告线长/面积/时序收益。活动回执仅复制为带时间的运行观察，绝不伪造completed_utc或终态文件索引。<a href="data/r47_runtime_observation.json">运行观察、冻结驱动及真实阶段</a> · <a href="data/r47_owned_cap_running_execution.json">当时原始活动回执（非终态）</a>。</p>'
+        if result.get('OBS_actual_exact_union_import_r01',{}).get('completed_utc'):
+            upper_text+='<p>R47早先观察中的93349运行状态现由已归档终态覆盖：几何并集/非目标字节及OpenDB逐矩形导入通过，router/DRC/父层AP兼容仍未验证；未推广当前93343或底座，旧/新pin epoch分别记录。</p>'
+        else:
+            upper_text+='<p>93349实际OBS试验日志已处理M1：17025623→14242709个矩形，只是分解数量变化；完整源/写出XOR及OpenDB导入结果尚无终态，未推广到当前93343或父层，未称接入/拥塞/面积收益。旧源M1–M3几何原样的证据和不同pin epoch必须分开；原活跃driver与物理源保持。</p>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',
