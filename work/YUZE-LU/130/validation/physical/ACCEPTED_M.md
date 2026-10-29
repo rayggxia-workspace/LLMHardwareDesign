@@ -1,6 +1,6 @@
 # Issue130：M 的已接收原生候选
 
-2026-10-29，Asia/Shanghai。[Issue130](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/130)／[PR132](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/132)。仅本侧任务的新 M；S 继续验收，不能据此宣布整个任务完成。
+2026-10-29，Asia/Shanghai。[Issue130](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/130)／[PR132](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/132)。本页为本侧新M的独立验收；配套S已另行完成收敛和实收，见[ACCEPTED_S](ACCEPTED_S.md)。两宏资格分别绑定自己的最终文件。
 
 | 项目 | 实际结果 |
 | --- | --- |

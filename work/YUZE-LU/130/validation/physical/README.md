@@ -1,3 +1,20 @@
+# 当前验收：M/S均已实收
+
+2026-10-30 02:34 中国标准时间。[Issue130](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/130)／[PR132](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/132)。当前证据为[ACCEPTED_M](ACCEPTED_M.md)和[ACCEPTED_S](ACCEPTED_S.md)，对应两个accepted索引/原始回执ZIP/几何ZIP。下文保留此前运行和失败历史，其中“仍运行/尚未接受”仅代表原记录时点。
+
+| 宏 | 尺寸 | setup / hold | 完整GDS DRC | 实收成员 |
+| --- | --- | --- | --- | --- |
+| M | 980×980µm | +47.355000 / +9.898000ps | 0 | 32 |
+| S | 1680×1680µm | +28.545000 / +7.200000ps | 0 | 44 |
+
+本侧交付为Nangate45 typical、300MHz、输入BUF_X2/Z、输出50fF、固定M1–M10下的新M与配套S原生叶块候选。M的独立A128/B512、S的四bank供数和有限控制已计入实际电路。V/R/T相对固定父提交4a0b04ed8eb4b5cd818f04f3c1fb4c2b4d4f76bd保持原接口与RTL；18项RTL初态回归的结论仅对应该固定源，不替代父分支后续修改的验收。S最终组合功能使用完整S/M物理网表和原T RTL夹具。
+
+S35最终DRC失败，不能接受。S41只重建dout[58]的M10折返；其非目标DEF与目标终端身份完全一致，重新finish/RCX后按新封存源接收全部最终门。完整deck计算与最终DEF逐字节一致，并对最终ODB重新全片检查。原失败producer、成功计算子阶段、成功构建和新源三初态结果均保留；依据见[实际文件接收决策](../../../../../docs/decisions/0005-exact-artifact-proof-reception.md)。
+
+层级Liberty、abstract coverage、M11/M12系统、完整M→V→R、四M阵列及制造签核未取得；50fF合同不能替代任意上层线长/负载验收。未声称父任务五宏全部完成。
+
+以下为不可冒充当前状态的历史执行记录。
+
 2026-10-30 00:26 CST：Issue130全部后续门已动态排队。S41修复/finish93509、完整原deck计算93510运行；93511封存→93512独立物理与93524最终三初态功能，93513同几何最终DRC接收。原S38/93479已完整三初态通过128972检查/63250周期；93524仍对新封存源重跑。93525严格同视图证明汇总→93526交付→93527几何/93528包。原S35/93407已FAILED，native4项和完整deck1项均为同一M10折返，六原始文件ZIP已存证，不接受。M已接受/实收，S尚未接受，Issue=in_progress、PR=draft；父任务不变，恢复见专属handoff及实际receipt。
 
 以下为历史记录。

@@ -1,10 +1,10 @@
 # M 独立供数与 S bank 化候选合同（Issue 130）
 
-更新：2026-10-29，Asia/Shanghai。任务：[Issue 130](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/130)。
+更新：2026-10-30，Asia/Shanghai。任务：[Issue 130](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/130)。
 
-本候选已完成 RTL、真实 S→M→T 仿真及 Nangate45 标准单元映射检查。**新 M 已完成布局布线及同源完整独立验收，原生合法候选已实际封存；S 的新布局布线仍在运行，尚未接收。** M 的实际六文件、完整DRC／最终网表功能／严格等价及下载校验见 [已接收 M](../work/YUZE-LU/130/validation/physical/ACCEPTED_M.md)。旧版五宏的物理结果保留，不能转移给新接口。
+本候选已完成RTL、实际S→M→T及Nangate45映射检查；**新M与配套S均已完成布局布线、同源四门验收、原生六文件封存和本地逐SHA收件。** 完整结果见[已接收M](../work/YUZE-LU/130/validation/physical/ACCEPTED_M.md)和[已接收S](../work/YUZE-LU/130/validation/physical/ACCEPTED_S.md)。两宏在typical300MHz/输出50fF合同下通过完整未修改GDS DRC、最终网表功能及严格等价；不转移旧版宏资格。
 
-本轮草稿为 [PR132](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/132)。当前候选分支同步父提交 `4a0b04ed8eb4b5cd818f04f3c1fb4c2b4d4f76bd`，只在本分支合并进度／属性文件冲突，重新测试随父支更新的 V group；M/S硬件源SHA不变。
+本轮审查提交为 [PR132](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/132)。当前候选分支同步父提交 `4a0b04ed8eb4b5cd818f04f3c1fb4c2b4d4f76bd`，只在本分支合并进度／属性文件冲突，重新测试随父支更新的 V group；M/S硬件源SHA不变。
 
 实现从 Issue121 的固定提交 `8b6b8d483085dd20a01e3a88a035fcc6b5db9f73` 分出，位于独立分支 `task/130-m-feed-banked-store`。不修改父任务的 RTL、运行目录或任务队列；每种新宏仅保留一个 RTL 实现。`block_feed_pair` 只是仿真夹具，不是新增的物理宏。
 

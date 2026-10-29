@@ -347,7 +347,7 @@ python -X utf8 project/experiments/block_feed_v1/plan.py --mapping work/YUZE-LU/
 
 ## Issue130：新 M/S 原生物理验收与交付重跑入口
 
-本侧任务在独立分支/不可变服务器目录运行，不复用旧宏资格。精确实现、已接受M原始证据和当前S进度见 `docs/BLOCK_FEED_V1.md`、`work/YUZE-LU/130/validation/physical/ACCEPTED_M.md` 与 `docs/handoffs/2026-10-29-issue-130-m-feed.md`。实际EDA只在授权Slurm计算节点/固定SHA容器运行，各个门16CPU；有依赖时afterok补位，不整批等待。
+本侧任务在独立分支/不可变服务器目录运行，不复用旧宏资格。精确实现、已接受M/S原始证据见 `docs/BLOCK_FEED_V1.md`、`work/YUZE-LU/130/validation/physical/ACCEPTED_M.md`、`work/YUZE-LU/130/validation/physical/ACCEPTED_S.md` 与 `docs/handoffs/2026-10-29-issue-130-m-feed.md`。实际EDA只在授权Slurm计算节点/固定SHA容器运行，各个门16CPU；有依赖时afterok补位，不整批等待。
 
 在已有准确源字节/工具环境下，新的原生P&R入口为：
 ```bash
@@ -371,14 +371,14 @@ python3 project/experiments/block_feed_v1/bundle.py --delivery ROOT/results/deli
 
 S最终网表不保留`store.mem_req`等RTL内部别名。`qualify.py function --peer`生成仅用于仿真的pair夹具，通过真实外部`ready`口观测宽读：原S的`ready=!reset&&(!valid||take)&&!wide_fire`，在每个采样周期检查`reset||!valid||take`后，反推`wide_fire=!reset&&(!valid||take)&&!ready`。生成前核对原RTL等式及夹具唯一替换位置，穷举合法布尔输入；实际内存事务次数断言、数值参考与背压检查全部保留。`memory-observer.json`及生成夹具/bench随S压缩包保存逐SHA证据，最终S/M网表及接口不改。原内部别名导致的编译失败记录仍保留，不能充作已运行的功能测试。
 
-大网表编译显式设置`--output-groups 0`，避免`-j16`默认将已拆分CPP重新合成16个超大编译单元；仍为16个构建进程动态补位，仿真每初态4线程、三个初态并行，总用核不超过16。参数含义核对[Verilator5.042官方说明](https://github.com/verilator/verilator/blob/v5.042/docs/guide/exe_verilator.rst)：0禁用文件合组。这只调整编译组织，不修改门级网表、库单元模型或测试。原qualify36/93451大合组编译保持运行，qualify38/93479为同一候选/同一测试的分散编译对照，未运行结束前不能声称其编译或功能更快/通过。
+大网表编译显式设置`--output-groups 0`，避免`-j16`默认将已拆分CPP重新合成16个超大编译单元；仍为16个构建进程动态补位，仿真每初态4线程、三个初态并行，总用核不超过16。参数含义核对[Verilator5.042官方说明](https://github.com/verilator/verilator/blob/v5.042/docs/guide/exe_verilator.rst)：0禁用文件合组。这只调整编译组织，不修改门级网表、库单元模型或测试。原qualify36/93451与qualify38/93479均已自然COMPLETED0，同一完整物理视图dc48941b…的三个初态各通过128972检查/63250周期。两次实际构建分别为8323.251s与4245.663s，Verilation wall分别8561.368s与4507.947s；这是同一功能的实际构建记录，不是隔离环境的性能基准。新封存S42由93524逐字节接收已成功S38二进制后，已重新运行三个初态并全部通过。
 
 本地收到原始bundle.json及tar.gz后执行（已有unpacked时只逐字节核验，不覆盖原文件）：
 ```powershell
 python -X utf8 project/experiments/block_feed_v1/verify_bundle.py D:/Data/LLMHardwareDesign-issue130-runtime/deliverables/M
 python -X utf8 project/experiments/block_feed_v1/verify_evidence.py
 ```
-第二条仅核验保存的原始证据及源字节，不重跑EDA。M已实收并核验；S必须等完整通过后才能同样登记。
+第二条仅核验保存的原始证据及源字节，不重跑EDA。M/S均已实际下载并逐SHA核验，原始小文件档案见ACCEPTED_M/ACCEPTED_S；这项本地复核不替代实际服务器EDA。
 
 显式formal-join不接收原失败producer的整体资格：要求原所有命令0及严格全边界UNSAT/IDENTICAL，重新哈希全部原始输入/输出/代码，重新运行实际原生正反例，并检查成功三初态功能的网表/库/封存源与证明完全相同。原失败receipt及Kepler日志/投影证明随新包保留；原生证明或成功功能缺失均拒绝。
 
