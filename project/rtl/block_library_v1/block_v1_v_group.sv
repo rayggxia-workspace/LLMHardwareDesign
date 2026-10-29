@@ -11,14 +11,41 @@ module block_v1_v_group(
  reg [129:0] remn;
  reg [63:0] root;
  reg [129:0] shifted,trial,next_rem;
+ reg [130:0] difference;
  reg [127:0] next_q;reg [63:0] next_root;
+ // One unsigned subtract supplies both the difference and no-borrow decision.
+ // Byte-local sums and group carries retain all130 bits without serializing
+ // a separate full-width comparison ahead of the subtract result mux.
+ function automatic [130:0] subtract130_grouped;
+  input [129:0] left,right;
+  reg [8:0] subtotal[0:15];reg [2:0] top;
+  reg [16:0] propagate;reg [17:0] carry;
+  reg [129:0] result;integer g;
+  begin
+   for(g=0;g<16;g=g+1)begin
+    subtotal[g]={1'b0,left[8*g+:8]}+{1'b0,~right[8*g+:8]};
+    propagate[g]=&(left[8*g+:8]^~right[8*g+:8]);
+   end
+   top={1'b0,left[129:128]}+{1'b0,~right[129:128]};
+   propagate[16]=&(left[129:128]^~right[129:128]);
+   carry[0]=1'b1;
+   for(g=0;g<16;g=g+1)begin
+    carry[g+1]=subtotal[g][8]|(propagate[g]&carry[g]);
+    result[8*g+:8]=subtotal[g][7:0]+carry[g];
+   end
+   carry[17]=top[2]|(propagate[16]&carry[16]);
+   result[129:128]=top[1:0]+carry[16];
+   subtract130_grouped={carry[17],result};
+  end
+ endfunction
  assign in_ready=!reset&&!running&&!out_valid;
  always @* begin
   shifted=sqrt_mode?(remn<<2)|{128'b0,digits[127:126]}:(remn<<1)|{129'b0,digits[127]};
   trial=sqrt_mode?({66'b0,root}<<2)|130'd1:{2'b0,divisor};
-  next_rem=shifted>=trial?shifted-trial:shifted;
-  next_q=(q<<1)|(shifted>=trial);
-  next_root=(root<<1)|(shifted>=trial);
+  difference=subtract130_grouped(shifted,trial);
+  next_rem=difference[130]?difference[129:0]:shifted;
+  next_q=(q<<1)|difference[130];
+  next_root=(root<<1)|difference[130];
  end
  always @(posedge clk)begin
   if(reset)begin running<=0;out_valid<=0;error<=0;quotient<=0;remainder<=0;end
