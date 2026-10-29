@@ -280,7 +280,10 @@ module block_v1_v(
      end
      default:rsp_error<=1;
     endcase
-   end else case(phase)
+   end
+   // Commands are accepted only in IDLE; active phases cannot accept one.
+   // Keep their datapath enables independent of cmd_valid/rsp_ready.
+   case(phase)
     P_MUL,S_MUL,C_MUL:begin
      for(i=0;i<8;i=i+1)begin
       operand_a[i]<=mul_a[i];operand_b[i]<=mul_b[i];
