@@ -91,6 +91,8 @@ def repair_grt(a,run,journal):
     config=(raw/'config.mk').read_text()
     for name in ['input.v','input.sdc','pins.tcl','input-diodes.tcl']:config=config.replace(str(raw/name),str(out/name))
     hook=out/'electrical-closure.tcl';shutil.copyfile(ROOT/'project/experiments/block_feed_v1'/a.closure_hook,hook)
+    if a.closure_hook=='measured_m_hold.tcl':
+        shutil.copyfile(ROOT/'project/experiments/block_feed_v1/measured_m_buffer.tcl',out/'measured-driver.tcl')
     assert 'PRE_DETAIL_ROUTE_TCL' not in config
     config+='\nexport PRE_DETAIL_ROUTE_TCL = '+str(hook)+'\n';(out/'config.mk').write_text(config)
     result=copy.deepcopy(journal)
@@ -115,7 +117,7 @@ def repair_grt(a,run,journal):
 def main():
     p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--from-grt',action='store_true')
-    p.add_argument('--closure-hook',choices=['electrical_closure.tcl','measured_m_buffer.tcl'],default='electrical_closure.tcl')
+    p.add_argument('--closure-hook',choices=['electrical_closure.tcl','measured_m_buffer.tcl','measured_m_hold.tcl'],default='electrical_closure.tcl')
     a=p.parse_args();a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,source=str(a.source),affinity=sorted(os.sched_getaffinity(0)),commands=[],inputs={})
     for d in ['project/experiments/block_feed_v1','project/experiments/block_v1','project/rtl/block_feed_v1']:
