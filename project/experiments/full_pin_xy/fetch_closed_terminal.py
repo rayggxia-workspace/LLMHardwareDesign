@@ -16,7 +16,8 @@ def fetch(relative,name,out):
     assert re.fullmatch(r'[A-Za-z0-9_-]+',name)
     source=REMOTE+'/'+relative
     def raw(filename):
-        assert PurePosixPath(filename).name==filename and filename not in ['.','..']
+        path=PurePosixPath(filename)
+        assert not path.is_absolute() and path.parts and all(re.fullmatch(r'[A-Za-z0-9_.-]+',part) and part not in ['.','..'] for part in path.parts)
         return subprocess.check_output(['ssh',HOST,'cat -- '+shlex.quote(source+'/'+filename)])
     receipt=raw('execution.json');q=json.loads(receipt)
     completion_field='completed_utc' if q.get('completed_utc') else 'finished_utc'
@@ -26,7 +27,7 @@ def fetch(relative,name,out):
     dest=Path(out)/name;dest.mkdir(parents=True,exist_ok=False)
     records=[]
     def save(filename,data):
-        p=dest/(filename+'.gz');p.write_bytes(gzip.compress(data,mtime=0))
+        p=dest/(filename+'.gz');p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(gzip.compress(data,mtime=0))
         records.append({'name':filename,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),
                         'stored_sha256':hashlib.sha256(p.read_bytes()).hexdigest()})
     save('execution.json',receipt)

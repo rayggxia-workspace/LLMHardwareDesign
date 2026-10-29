@@ -13,7 +13,7 @@ def run(revision):
         (out/'fixture.v').write_text('module hpy_cut_fixture (inout a,b); endmodule\n')
         for name,yy in [('orthogonal_gap_0p8_EXPECT_FAIL',20.0),('diagonal_gap_0p8_0p8_NATIVE_DECIDES',21.6)]:
             sub=out/name;sub.mkdir()
-            lines=['read_lef '+tcl(tech),'read_lef /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.mod.lef','read_verilog '+tcl(out/'fixture.v'),'link_design hpy_cut_fixture','initialize_floorplan -die_area {0 0 50 50} -core_area {1 1 49 49} -site FreePDK45_38x28_10R_NP_162NW_34O','set b [ord::get_db_block];set tech [ord::get_db_tech]','if {[$b getDbUnitsPerMicron]!=2000} {error "Fixture unit mismatch"}']
+            lines=['read_lef '+tcl(tech),'read_lef /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.mod.lef','read_verilog '+tcl(out/'fixture.v'),'link_design hpy_cut_fixture','initialize_floorplan -die_area {0 0 50 50} -core_area {1 1 49 49} -site FreePDK45_38x28_10R_NP_162NW_34O','make_tracks','set b [ord::get_db_block];set tech [ord::get_db_tech]','if {[$b getDbUnitsPerMicron]!=2000} {error "Fixture unit mismatch"}']
             for pin,x,y in [('a',20.,20.),('b',21.6,yy)]:
                 lines+=['place_pin -pin_name '+pin+' -layer metal11 -location {'+str(x)+' '+str(y)+'} -pin_size {.8 .8}',
                     'set n [[$b findBTerm '+pin+'] getNet];set w [odb::dbWire_create $n];set e [odb::dbWireEncoder];$e begin $w;$e newPath [$tech findLayer metal11] ROUTED;$e addPoint '+str(round(x*2000))+' '+str(round(y*2000))+';$e addTechVia [$tech findVia via11_0];$e end']
