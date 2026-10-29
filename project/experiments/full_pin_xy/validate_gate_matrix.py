@@ -365,7 +365,8 @@ def check(out):
             assert q['whole_signal_geometry']['checked_terminals']==597343 and all(q['all_cells_poses_original_connections_pins_PG_die_unchanged'].values())
             assert q['all_closed_sources_unchanged'] and q['container_libraries_unchanged'] and q['all_original_pins_and_size_in_actual_new_LEF_identical']
             assert q['setup_ns']==rows['mxu']['setup_ns']==.246690 and q['hold_ns']==rows['mxu']['hold_ns']==.038538
-            assert q['literal_VIOLATED_markers_not_complete_failure_count']==0 and rows['mxu']['completed_source']=='M6_escape_route/r02'
+            original_mxu=rows['mxu'].get('historical_source_before_actual_via_tip',rows['mxu'])
+            assert q['literal_VIOLATED_markers_not_complete_failure_count']==0 and original_mxu['completed_source']=='M6_escape_route/r02'
             assert rows['mxu']['current_source_research_model'] in ['NOT_EXPORTED','SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING'] and rows['mxu']['strict_GDS_merge_errors'] is None
             assert rows['mxu']['historical_source_before_M6_escape']['strict_GDS_merge_errors']==4
             for k in ['cells','connections','pins','pdn','die']:assert q['files']['before.'+k+'.tsv']['sha256']==q['files']['after.'+k+'.tsv']['sha256']
@@ -439,7 +440,8 @@ def check(out):
                 failure=j['MXU_current_actual_view_clock_USE_regression']
                 assert failure['status']=='FAILED_CLOCK_USE_CONTRACT' and failure['original']==before and failure['after_actual_view_swap']==after
                 assert failure['original_native_receipt_false_preserved'] and not failure['full_qualification']
-                assert rows['mxu']['parent_access'].endswith('_CLOCK_USE_CONTRACT_FAILED') and not rows['mxu']['full_qualification']
+                original_mxu=rows['mxu'].get('historical_source_before_actual_via_tip',rows['mxu'])
+                assert original_mxu['parent_access'].endswith('_CLOCK_USE_CONTRACT_FAILED') and not rows['mxu']['full_qualification']
             assert q['whole_parent_signal_geometry']['pass'] and q['whole_parent_signal_geometry']['checked_nets']==2172
         elif q.get('whole_signal_geometry'):
             assert q['whole_signal_geometry']['pass'] and q['whole_signal_geometry']['checked_nets']==466332
@@ -491,6 +493,57 @@ def check(out):
             assert all(int(rules[n]['width_DBU'])==1600 and int(rules[n]['spacing_DBU'])==3000 for n in ['metal11','metal12'])
             assert all(int(rules['metal'+str(i)]['spacing_DBU'])==(0 if revision=='r02' else 3000) for i in range(1,11))
             assert q['actual_rule_readback_and_all770_assignment_verified']
+    if j.get('MXU_actual_via_tip_figure'):
+        import csv,io
+        from collections import Counter
+        tip=j['MXU_actual_tip_ECO_r01'];fresh=j['MXU_actual_tip_original_range_fresh_r01'];view=j['MXU_actual_tip_views_r01']
+        assert not any(q['full_qualification'] for q in [tip,fresh,view])
+        assert tip['native_returncodes']=={'actual_edit_and_analysis':0,'fresh_DRC':1} and 'fresh_DRC_count' not in tip
+        assert tip['complete_pin_contract']['all_signal_pins']==2172 and tip['complete_pin_contract']['only_changed_XY_pins']==['act_data[12]']
+        assert tip['all_other_191437_multiterminal_route_box_multisets_identical'] and tip['exactly_four_actual_M6_WIRE_rectangles_removed_all_vias_unchanged']
+        assert tip['whole_signal_geometry']['checked_nets']==191438 and tip['whole_signal_geometry']['pass']
+        assert tip['whole_signal_geometry']['checked_shapes']==j['MXU_actual_M6_escape_r02_attempt']['whole_signal_geometry']['checked_shapes']-4
+        assert all(tip['all_cells_signal_connections_PG_die_unchanged'].values()) and tip['all_closed_sources_unchanged'] and tip['container_library_unchanged']
+        assert tip['setup_ns']==.24669 and tip['hold_ns']==.038538 and tip['literal_VIOLATED_markers_not_complete_failure_count']==0
+        assert fresh['native_fresh_returncode']==fresh['fresh_DRC_count']==0 and fresh['all_closed_sources_unchanged'] and fresh['prior_DRT_0155_failure_preserved']
+        assert fresh['original_allowed_signal_clock_ranges']==['metal2-metal10','metal4-metal10'] and fresh['routing_RCX_STA_reexecuted'] is False
+        assert fresh['source_actual_ECO_ODB_SHA256']==tip['files']['routed.odb']['sha256']==view['source_geometry_sha256']
+        assert fresh['source_actual_ECO_SPEF_SHA256']==tip['files']['extracted.spef']['sha256']==view['source_SPEF_sha256']
+        assert view['native_export_returncode']==view['fresh_model_read_returncode']==0 and view['matching_all_signal_model_pins']==2172
+        assert view['SPEF_replay_matches_source'] and view['all_sources_and_pre_RCX_geometry_unchanged'] and view['all_2172_current_pins_and_PG_match_actual_after_edit']
+        tip_dir=(out/tip['evidence']).parent;fresh_dir=(out/fresh['evidence']).parent;view_dir=(out/view['evidence']).parent
+        assert 'DRT-0155' in gzip.decompress((tip_dir/'independent.log.gz').read_bytes()).decode()
+        assert not gzip.decompress((fresh_dir/'independent.drc.gz').read_bytes())
+        pins=list(csv.DictReader(io.StringIO(gzip.decompress((tip_dir/'all_2172_actual_pin_correspondence.csv.gz').read_bytes()).decode())))
+        assert len(pins)==len({p['pin'] for p in pins})==2172
+        changed=[]
+        for p in pins:
+            old=[float(p['source_'+k+'_um']) for k in ['x0','y0','x1','y1']];new=[float(p['actual_'+k+'_um']) for k in ['x0','y0','x1','y1']]
+            assert all(abs((b-a)-.14)<1e-7 for a,b in [(old[0],old[2]),(old[1],old[3]),(new[0],new[2]),(new[1],new[3])])
+            if old!=new:changed.append(p['pin']);assert p['pin']=='act_data[12]' and p['layer']=='metal6' and new==[328.465,1088.64,328.605,1088.78]
+        assert changed==['act_data[12]']
+        def pin_tokens(s):
+            r=s.split();assert len(r)==9
+            for i in [0,3]:
+                if r[i].startswith('{') and r[i].endswith('}'):r[i]=r[i][1:-1]
+            return tuple(r)
+        a=gzip.decompress((tip_dir/'after.pins.tsv.gz').read_bytes()).decode().splitlines()
+        b=gzip.decompress((view_dir/'pins.tsv.gz').read_bytes()).decode().splitlines()[1:]
+        assert Counter(map(pin_tokens,a))==Counter(map(pin_tokens,b))
+        for k in ['setup','hold']:assert gzip.decompress((tip_dir/(k+'.txt.gz')).read_bytes())==gzip.decompress((view_dir/(k+'.txt.gz')).read_bytes())
+        assert view['source_receipt_SHA256']==hashlib.sha256(gzip.decompress((tip_dir/'execution.json.gz').read_bytes())).hexdigest()
+        assert rows['mxu']['completed_source']=='actual_M6_via_tip/r01+original_range_fresh/r01' and rows['mxu']['native_DRC_count']==0
+        assert 'NOT_VALIDATED_IN_PARENT' in rows['mxu']['parent_access'] and rows['mxu']['full_qualification'] is False
+        fig=j['MXU_actual_via_tip_figure'];assert fig['actual_target_rows_before_after']==[24,20] and fig['removed_M6_WIRE_rectangles']==4 and fig['all_actual_vias_unchanged']
+    for terminal in (out/'data/gate_terminal_updates').glob('*'):
+        if not terminal.is_dir():continue
+        capture=read(terminal/'capture.json');receipt=read(terminal/'execution.json.gz')
+        assert capture['source_completed_utc']==receipt['completed_utc'] and not capture['full_qualification']
+        for r in capture['records']:
+            assert Path(r['name']).name==r['name']
+            stored=(terminal/(r['name']+'.gz')).read_bytes();raw=gzip.decompress(stored)
+            assert len(raw)==r['bytes'] and hashlib.sha256(raw).hexdigest()==r['sha256'] and hashlib.sha256(stored).hexdigest()==r['stored_sha256']
+            if r['name']!='execution.json':assert r['sha256']==receipt['files'][r['name']]['sha256'] and r['bytes']==receipt['files'][r['name']]['bytes']
     for q in j.get('source_bound_extended_STA_r01',[]):
         assert not q['full_qualification']
         if not q.get('completed_utc'):continue

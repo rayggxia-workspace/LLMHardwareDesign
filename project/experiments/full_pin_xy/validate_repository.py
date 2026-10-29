@@ -278,6 +278,10 @@ def main():
         assert (OUT/'assets/llsys_actual_via_tip_repair.svg').exists()
         assert 'assets/llsys_actual_via_tip_repair.png' in text and 'assets/llsys_actual_via_tip_repair.svg' in text
         expected_figures+=1
+    if (OUT/'assets/mxu_actual_via_tip_repair.png').exists():
+        assert (OUT/'assets/mxu_actual_via_tip_repair.svg').exists()
+        assert 'assets/mxu_actual_via_tip_repair.png' in text and 'assets/mxu_actual_via_tip_repair.svg' in text
+        expected_figures+=1
     assert len(list((OUT/'assets').glob('*.png')))==expected_figures
     assert len(list((OUT/'assets').glob('*.svg')))==expected_figures
     assert all(x not in text for x in ['__PINS__','__PHYSICAL__','__TOTAL__'])

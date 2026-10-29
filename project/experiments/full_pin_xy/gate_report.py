@@ -883,11 +883,17 @@ def render(root,out):
                       ('UPPER_guard_API_r01','upper_guard_api/r01'),
                       ('UPPER_guard_API_r02','upper_guard_api/r02'),
                       ('UPPER_guard_API_r03','upper_guard_api/r03'),
+                      ('MXU_actual_tip_ECO_r01','mxu_actual_via_tip/r01'),
+                      ('MXU_actual_tip_original_range_fresh_r01','mxu_actual_tip_fresh/r01'),
+                      ('MXU_actual_tip_views_r01','mxu_actual_tip_views/r01/mxu-C'),
                       ('MXU_clock_bound_parent_recheck_r02','escape_view_recheck/r02/mxu-C'),
                       ('MXU_clock_bound_parent_recheck_r03','escape_view_recheck/r03/mxu-C')]:
         p=snapshot/rel/'execution.json.gz'
         terminal_names={'LLSYSTEM_current_actual_tip_views':'llsys-tip-views-r01',
                         'MXU_clock_bound_parent_recheck_r03':'mxu-clock-bound-parent-r03',
+                        'MXU_actual_tip_ECO_r01':'mxu-actual-via-tip-r01',
+                        'MXU_actual_tip_original_range_fresh_r01':'mxu-actual-tip-fresh-r01',
+                        'MXU_actual_tip_views_r01':'mxu-actual-tip-views-r01',
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
         update=root/'gate_terminal_updates'/terminal_names.get(label,'NO_TERMINAL_UPDATE')
         terminal_evidence=None
@@ -905,7 +911,7 @@ def render(root,out):
             upper_text+='<p>真实原R02六块父层24767pin逐项轨道审计：其余五块preferred中心未对齐数0，LL SYSTEM为13184；宏原点均已对齐实际pitch。bit_1025的M5 preferred中心偏移0.07μm；原网535条实际矩形/端点已取得，未编造端点。仅为几何风险，未对齐不等于无AP，仍须真实局部PG/OBS/via及父层接入检查。</p><p><a href="'+(dest/rel/'all24767_actual_parent_pin_track_geometry.csv.gz').relative_to(out).as_posix()+'">全部24767父层信号pin逐项轨道CSV</a></p>'
         if label=='MXU_native_clock_Liberty_binding_probe' and q.get('native_probe_returncode')==0:
             upper_text+='<p>原生小探针真实记录：read_LEF后MTerm为SIGNAL，加载同源Liberty后变CLOCK，link及原2.5ns create_clock后保持CLOCK；旧/新源LEF均USE SIGNAL、Liberty均clock:true。这里只证明工具绑定阶段行为，不证明整父层修复；未手改USE或更改时钟。</p>'
-        if label.startswith('UPPER_guard_API_') and q.get('completed_utc'):
+        if label=='UPPER_guard_API_r03' and q.get('completed_utc'):
             upper_text+='<p>适配器原生NDR接口探针：返回'+str(q.get('native_probe_returncode'))+'，不是实际路由或DRC通过。r01的getLayerRules输出参数调用错误保留；r02正确读回M11/M12的0.8μm线宽/1.5μm间距并给全部770原网赋规则，但未指定的M1–M10 NDR spacing实际为0，未采用。r03显式给适配网全部12层NDR设置1.5μm hard spacing，实际仍只允许M11/M12路由、原下层材料不动；12层读回及全部770赋值通过。该额外保守约束及其成本与原profile分列，不是技术规则放宽、原pin升层、完整功能或制造签核。后续布线会同时执行带NDR和去除NDR元数据副本上的原技术规则独立fresh检查。</p><p><a href="https://openroad.readthedocs.io/en/latest/main/src/odb/README.html#create-ndr">OpenROAD官方NDR文档</a>；实际安装版本行为及Tcl body见原生log。</p>'
         if label=='LLSYSTEM_current_actual_tip_views' and q.get('completed_utc'):
             assert q['native_export_returncode']==q['fresh_model_read_returncode']==0 and q['matching_all_signal_model_pins']==13507
@@ -917,13 +923,35 @@ def render(root,out):
             upper_text+='<p><strong>93190当前LL源匹配视图已完成：</strong>原生默认/详细OBS抽象、DEF/网表及非零真实RC时序模型导出，独立模型重读0；13507信号位及全部原PG/层/尺寸/当前实际XY精确匹配，clean ODB与真实源SHA相同。原SPEF余量逐字重放−3.909029/−0.587515ns，仍失败；minimum_period规则缺项、父层/完整规则/功能资格未通过。此闭合回执独立追加，未改写R38快照时仍运行的记录。</p>'
         if label.startswith('MXU_clock_bound_parent_recheck_') and q.get('completed_utc'):
             upper_text+='<p>实际整父层返回'+str(q.get('native_returncodes'))+'；fresh='+str(q.get('fresh_DRC_count'))+'，完整2245条宏pin/网络/方向/层/USE合同='+str(q.get('all_original_macro_pin_rectangles_net_directions_layers_in_parent_exactly_unchanged'))+'。r02在native swapMaster发生Signal11，失败保留；r03改为先swap后绑定同一真实库，结果以该回执为准，不能以小探针代替。</p>'
+    mxu_tip=result.get('MXU_actual_tip_ECO_r01',{});mxu_fresh=result.get('MXU_actual_tip_original_range_fresh_r01',{});mxu_view=result.get('MXU_actual_tip_views_r01',{})
+    if all(q.get('completed_utc') for q in [mxu_tip,mxu_fresh,mxu_view]):
+        assert mxu_tip['native_returncodes']=={'actual_edit_and_analysis':0,'fresh_DRC':1}
+        assert mxu_fresh['native_fresh_returncode']==mxu_fresh['fresh_DRC_count']==0 and mxu_fresh['all_closed_sources_unchanged']
+        assert mxu_fresh['source_actual_ECO_ODB_SHA256']==mxu_tip['files']['routed.odb']['sha256']==mxu_view['source_geometry_sha256']
+        assert mxu_fresh['source_actual_ECO_SPEF_SHA256']==mxu_tip['files']['extracted.spef']['sha256']==mxu_view['source_SPEF_sha256']
+        assert mxu_tip['whole_signal_geometry']['pass'] and mxu_tip['all_other_191437_multiterminal_route_box_multisets_identical'] and mxu_tip['exactly_four_actual_M6_WIRE_rectangles_removed_all_vias_unchanged']
+        assert mxu_tip['complete_pin_contract']['all_signal_pins']==2172 and mxu_tip['complete_pin_contract']['only_changed_XY_pins']==['act_data[12]']
+        assert mxu_tip['all_closed_sources_unchanged'] and all(mxu_tip['all_cells_signal_connections_PG_die_unchanged'].values())
+        assert mxu_view['matching_all_signal_model_pins']==2172 and mxu_view['all_sources_and_pre_RCX_geometry_unchanged'] and mxu_view['all_2172_current_pins_and_PG_match_actual_after_edit'] and mxu_view['SPEF_replay_matches_source']
+        r=next(r for r in rows if r['case']=='mxu');r['historical_source_before_actual_via_tip']=json.loads(json.dumps(r))
+        r.update({'completed_source':'actual_M6_via_tip/r01+original_range_fresh/r01','actual_internal_route':'ACTUAL_ONE_M6_TIP_ROUTE_NATIVE0_STA_POSITIVE',
+          'native_DRC_count':0,'all_multiterminal_signal_clock_geometry':True,'power_grid':'NATIVE_VDD_VSS_COMMANDS_EXECUTED',
+          'setup_ns':mxu_tip['setup_ns'],'hold_ns':mxu_tip['hold_ns'],'violation_marker_rows':mxu_tip['literal_VIOLATED_markers_not_complete_failure_count'],
+          'complete_rules':'CURRENT_ACTUAL_TIP_GDS_NOT_EXECUTED_REAL_SRAM_COVERAGE_GAPS',
+          'parent_access':'NEW_ACTUAL_TIP_SOURCE_NOT_VALIDATED_IN_PARENT_OLD_SOURCE_FAILURES_RETAINED',
+          'current_source_research_model':'SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING',
+          'common_base_source_selection':'ORIGINAL_R02_NOT_UPGRADED_TO_THIS_SOURCE','current_complete_pin_contract':mxu_tip['complete_pin_contract']})
+        from plot_mxu_actual_via_tip import plot as plot_mxu_tip
+        result['MXU_actual_via_tip_figure']=plot_mxu_tip(snapshot,out/'data/gate_terminal_updates',out)
+        upper_text+='<h3>MXU：M6实际pin/via落脚重接及原范围独立检查已闭合</h3><p>仅act_data[12] XY由(328.255,1068.870)移到原网via5的M6帽(328.535,1088.710)μm，原M6/0.14μm正方形/网络/方向/功能保持；删除4条实际末端M6 WIRE，全部via及其余191437多端网矩形表示不变，0新单元/换型，继承原1次换型成本。全2172信号pin/PG/单元/连接/外框合同、全网所检连通、双PG、RCX/原STA已完成，setup/hold仍0.246690/0.038538ns，不声称系统收益。</p><p>首次fresh驱动误用M2–M8，DRT-0155拒绝源已有M9 guide，没有实际DRC结果；原失败原样保留。93223只复用同一闭合实际ODB/SPEF，按原源fresh.tcl逐SHA/文本核实的M2–M10信号、M4–M10时钟范围独立检查，native0/fresh0，未重做接线/提取或放宽原源规则。93228当前源匹配默认/详细OBS、真实网表与RC模型已完成，2172信号及PG/当前XY/尺寸匹配、原SPEF余量逐字重放，minimum_period规则仍缺项。</p><p><strong>新位置不是已验证的父层空闲点：</strong>M6详细OBS仍有真实同网via帽矩形与整个0.14μm pin重合（0.0196μm²），没有剪去占用；它对实际父层接入的影响仍待原生布线和分层规则核验。旧父层native1/时钟标签失败不继承为新源通过；完整GDS/SRAM/规则/RTL/共同冻结未完成。</p><img src="assets/mxu_actual_via_tip_repair.png" alt="MXU真实M6单pin接线前后与局部放大"><p><a href="assets/mxu_actual_via_tip_repair.svg">SVG</a> · <a href="data/mxu_actual_via_tip_repair.json">真实来源/坐标/范围</a> · <a href="data/gate_terminal_updates/mxu-actual-via-tip-r01/all_2172_actual_pin_correspondence.csv.gz">完整2172个实际pin逐项对应CSV</a></p>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',
              'complete_rules','historical_parent_target_layers','mapped_design_formal_equivalence','RTL_system_formal_equivalence','parent_access','full_qualification']
     with (data/'qualification_matrix.csv').open('w',encoding='utf-8-sig',newline='') as f:
         w=csv.DictWriter(f,fieldnames=columns,lineterminator='\n');w.writeheader();w.writerows({k:r[k] for k in columns} for r in rows)
-    labels={'COMPLETED':'已完成布线；非完整签核','COMPLETED_COSTED_ECO_NOT_PURE_XY':'成本ECO已布线',
+    labels={'ACTUAL_ONE_M6_TIP_ROUTE_NATIVE0_STA_POSITIVE':'实际M6单pin重接/native0','CURRENT_ACTUAL_TIP_GDS_NOT_EXECUTED_REAL_SRAM_COVERAGE_GAPS':'新源GDS未验/缺SRAM及覆盖',
+      'COMPLETED':'已完成布线；非完整签核','COMPLETED_COSTED_ECO_NOT_PURE_XY':'成本ECO已布线',
       'actual_via_tips/r02':'实际via落脚pin修复/r02','ACTUAL_THREE_PIN_VIA_TIP_ROUTE_NATIVE0_STA_FAILED':'实际3pin重接/native0/STA失败',
       'CURRENT_VIA_TIP_GDS_NOT_EXECUTED_COMPLETE_COVERAGE_GAPS':'新源GDS未验/完整覆盖缺口',
       'native_stacked_via/r01':'实际via叠放/r01','ACTUAL_STACKED_VIA_ROUTE_CHECKS_SEPARATE':'实际接线；检查分列',

@@ -29,7 +29,8 @@ def fetch(relative,name,out):
     save('execution.json',receipt)
     for filename,meta in sorted(q['files'].items()):
         if filename=='execution.json':continue
-        if Path(filename).suffix not in ['.json','.tcl','.log','.txt','.tsv','.csv','.drc'] or meta['bytes']>8*1024*1024:continue
+        selected_native_gzip=filename in ['target_pin_access.tsv.gz','before_actual_target.tsv.gz','after_actual_target.tsv.gz']
+        if (Path(filename).suffix not in ['.json','.tcl','.log','.txt','.tsv','.csv','.drc'] and not selected_native_gzip) or meta['bytes']>8*1024*1024:continue
         if any(s in filename for s in ['.cells.','.pdn.']):continue
         data=raw(filename)
         assert len(data)==meta['bytes'] and hashlib.sha256(data).hexdigest()==meta['sha256'],filename
