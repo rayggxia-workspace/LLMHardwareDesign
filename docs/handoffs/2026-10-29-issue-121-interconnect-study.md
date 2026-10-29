@@ -1,8 +1,20 @@
 # Issue121侧线互联实验交接
 
+## 全宽修复闭合（2026-10-29 23:57 CST）
+
+当前结果以[全宽报告](../reports/2026-10-29-block-v1-full-bus-driver-repair.md)和[结果索引](../../work/YUZE-LU/121/interconnect-fix-20261029/repair-results.json)为准，下文代表子集阶段保留为历史。当前分支`task/121-interconnect-study`，现有[PR133](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/133)待独立审查；实际执行源940=`dc411ac466956ad23998b9dce1540f8121c547bd`，其余源/归档SHA见最终审计。
+
+M928/T928及S940增强驱动实验副本的原生物理、原生整片DRC、完整未修改GDS规则、严格最终LEC和三初态最终网表功能全部通过。M→T完整275根、T→S完整281根，三种RC条件共6项全部无setup/hold/C/slew/fanout违规。原生产18文件保持，所有本侧线allocation已结束。实际峰值6×16，失败/中断/未执行尝试完整保存。
+
+S928的3条M2违规通过两处精确同网RECT修补解决，其他DEF字节相同；940重新fill/finish/RCX并独立验收，再用新S寄生重测TS。修补后检查必须由全新进程读取已保存ODB，不能重用修改前路由器内部状态。完整信号视图仅在逐字节及库/bench/日志同一性核对后复用937功能仿真，几何与时序没有资格转移。
+
+主线可审查这些副本及逐块六文件/实际接口LEF，采用后再冻结相应M1–M10；组合应读取`accepted_sdc`的精确批准SDC。此次角色是M→T、T→S及S ready返回，其他端口方向、共同CTS/顶层PG/完整控制器和制造校准继续按各自范围验证。接手第一步读取结果索引、最终源/资源审计及PR实际状态；不要重跑已关闭的41项、旧48项或本次6项来填槽。本侧线不修改主线工作树或Issue121整体状态。
+
+18项本地测试、结构/差异/链接及证据包重开逐成员SHA检查通过。登记pending、看板unverified/同步pending、管理员及独立审查人待指定；在线CI以PR当前head实际检查为准。
+
 ## 补齐交接（2026-10-29）
 
-当前结论以[补齐报告](../reports/2026-10-29-block-v1-representative-link-closure.md)为准，下文14:45记录是历史阶段。bridge/bank/booster三种预制接口实际M1–M10 P&R/全DRC/严格LEC通过，MT17/TS15根详细走线/独立研究几何通过。两槽桥真实门级15例×三初态通过；41项电气测量及31条端口C预算已闭合；当前guarded组合仍失败（MT9 cap；TS8 cap+1 slew）。全宽275/281根未收敛，不能用子集覆盖。
+当前结论以[补齐报告](../reports/2026-10-29-block-v1-representative-link-closure.md)为准，下文14:45记录是历史阶段。bridge/bank/booster三种预制接口实际M1–M10 P&R/全DRC/严格LEC通过，MT17/TS15根详细走线/独立研究几何通过。M/T/S RTL＋bridge最终门级混合15例×三初态通过；41项电气测量及31条端口C预算已闭合；当前guarded组合仍失败（MT9 cap；TS8 cap+1 slew）。全宽275/281根未收敛，不能用子集覆盖。
 
 主线无需重跑这41项或旧48项。下一版决策应处理弱端口到第一中继的实际水平距离，靠近混合pad配置固定第一驱动/多侧中继；强中继在本次分支形态下可从≤1mm/≤4起步。若集成桥/缓冲到M/T/S，重验受影响原生宏，不能只在新金属上补有源器件。完整CTS/顶层PG/控制器及全宽布线仍未验收。
 

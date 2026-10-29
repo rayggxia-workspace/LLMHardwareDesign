@@ -71,11 +71,17 @@ def definitions(root,base,pair,accept_runs=None):
     return native,lefs,pins,size,placements,links
 
 
-def route(root,out,cpus,run,pair,representative=False):
+def route(root,out,cpus,run,pair,representative=False,layout=None,guide_margin=32,iterations=64):
     from overlay import generate
     assert cpus==16 and pair in ('mt','ts')
     base=out.parents[2]
     native,lefs,pins,size,placements,links=definitions(root,base,pair)
+    if layout is not None:
+        assert set(layout)==set(placements)
+        placements=layout
+        for i,(a,p) in enumerate(placements.items()):
+            for b,q in list(placements.items())[:i]:
+                assert p[0]+size[a][0]<=q[0] or q[0]+size[b][0]<=p[0] or p[1]+size[a][1]<=q[1] or q[1]+size[b][1]<=p[1],('Active footprints overlap',a,b)
     original_count=len(links)
     if representative:
         def keep(link):
@@ -113,8 +119,8 @@ def route(root,out,cpus,run,pair,representative=False):
     guides=''
     for link in links:
         a,b=link['source_xy_um'],link['sink_xy_um']
-        box=[max(0,math.floor((min(a[i],b[i])-32)/32)*32)for i in (0,1)]
-        box += [min(upper[i],math.ceil((max(a[i],b[i])+32)/32)*32)for i in (0,1)]
+        box=[max(0,math.floor((min(a[i],b[i])-guide_margin)/32)*32)for i in (0,1)]
+        box += [min(upper[i],math.ceil((max(a[i],b[i])+guide_margin)/32)*32)for i in (0,1)]
         # Guide coordinates are database units, unlike LEF/track Tcl microns.
         guides+=link['id']+'\n(\n'+''.join(' '.join(str(round(v*2000))for v in box)+' metal%d\n'%level for level in (11,12))+')\n'
     (out/'route.guide').write_text(guides)
@@ -130,7 +136,7 @@ def route(root,out,cpus,run,pair,representative=False):
     script+='read_guides route.guide\n'
     script+='set grid [[ord::get_db_block] getGCellGrid]\n$grid resetGrid\n'
     script+='$grid addGridPatternX 0 %d 16000\n$grid addGridPatternY 0 %d 16000\n'%(math.ceil(upper[0]/8)+1,math.ceil(upper[1]/8)+1)
-    script+='detailed_route -output_drc route-drc.rpt -output_guide_coverage coverage.csv -via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10 -via_access_layer metal10 -droute_end_iter 64 -drc_report_iter_step 5 -verbose 1\n'
+    script+='detailed_route -output_drc route-drc.rpt -output_guide_coverage coverage.csv -via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10 -via_access_layer metal10 -droute_end_iter '+str(iterations)+' -drc_report_iter_step 5 -verbose 1\n'
     script+='write_db routed.odb\nwrite_def routed.def\nsource {'+str(root/'project/experiments/block_v1/odb_geometry.tcl')+'}\nbvgeom::export geometry.tsv\n'
     (out/'route.tcl').write_text(script)
     run(['openroad','-no_init','-exit',out/'route.tcl'],'route.log')

@@ -60,7 +60,49 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('linkclose-fanout-'):
+    if MODE=='linkfix-s-patch':
+        from linkfix_s_patch import probe
+        probe(ROOT, OUT, CPUS, run)
+    elif MODE=='linkfix-s-finish':
+        from linkfix_s_patch import finish
+        finish(ROOT, OUT, CPUS, run)
+    elif MODE.startswith('linkfix-s-qa-'):
+        from linkfix_s_qa import check
+        check(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE=='linkfix-s-combine':
+        from linkfix_s_qa import combine
+        combine(ROOT, OUT, CPUS, run)
+    elif MODE.startswith('linkfix-probe-'):
+        from linkfix import probe
+        probe(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkfix-native-'):
+        from linkfix import implement
+        implement(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkfix-io-view-'):
+        from linkfix import io_view
+        io_view(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkfix-accept-'):
+        from linkfix import accept
+        accept(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE=='linkfix-function-group':
+        from linkfix import function_group
+        function_group(ROOT, OUT, CPUS)
+    elif MODE.startswith('linkfix-function-'):
+        from linkfix import function
+        function(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkfix-geometry-'):
+        from linkfix_channel import geometry
+        geometry(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkclose-route-') and MODE.rsplit('-',1)[1] in ('mf3','tf3','tf5','tf6','tf7','tf8','tf9'):
+        from linkfix_channel import route
+        route(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkclose-route-') and MODE.rsplit('-',1)[1] in ('mq1','tq1','tq2','tq3'):
+        from linkfix import rebind
+        rebind(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkclose-route-') and MODE.rsplit('-',1)[1] in ('mf1','mf2','mf4','tf1','tf2'):
+        from linkfix import route
+        route(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkclose-fanout-'):
         from linkclose_fanout import route
         route(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
     elif MODE.startswith('linkclose-prepare-'):

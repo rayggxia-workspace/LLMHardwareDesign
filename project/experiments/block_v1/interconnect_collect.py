@@ -39,7 +39,7 @@ def add(path,expected=None):
     derived_from=dict(path=name,sha256=digest,original_receipt_bound=expected is not None,transformation='Only replace verified all-zero fanout dictionary with count and canonical dictionary SHA256; all other fields retained'))
   return
  files[name]=dict(sha256=digest,bytes=len(data),base64=base64.b64encode(data).decode(),receipt_bound=expected is not None)
-for name in ['manifest.json','node-queue.json','dispatch-state.json','node-queue-state.json','rejected-batch.json']:
+for name in ['manifest.json','node-queue.json','dispatch-state.json','node-queue-state.json','rejected-batch.json','cohost.json','cohost-launched.json','opportunistic.json','short-step-launched.json','opportunistic-short-step.json','opportunistic-electrical-step.json','source-superseded.json']:
  p=r/name
  if p.exists():add(p)
 allowed={'interconnect-probe.json','interconnect-prepare.json','interconnect-result.json',
@@ -48,9 +48,13 @@ allowed={'interconnect-probe.json','interconnect-prepare.json','interconnect-res
 if CLOSURE:
  allowed.update({'linkclose-probe.json','linkclose-physical.json','linkclose-accept.json','linkclose-field.json',
   'linkclose-route.json','linkclose-prepare.json','linkclose-result.json','five-macro-physical.json','five-macro-drc.json',
-  'geometry.json','geometry.tsv','route-inputs.json','interconnect-upper.gds','routed.def','pins.json','fixed-drivers.tsv',
-  'ones.json','random121.json','random122.json','linkclose-protocol.json','pg-repair.tsv','allocation.txt','started.txt','finished.txt','exit-code.txt'})
- allowed.update({'input.sdc','config.mk','scene.txt','field.jsonl','kepler.log','formal.log','passive-inventory.tsv','route.log','pg-repair.log','physical-probe.log','geometry.log'})
+  'geometry.json','geometry.tsv','route-inputs.json','interconnect-upper.gds','routed.def','pins.json','candidate.lef','fixed-drivers.tsv',
+  'ones.json','random121.json','random122.json','five-macro-final-function.json','all-ones.json','random-121.json','random-122.json','physical-functional-proof.json','linkclose-protocol.json','pg-repair.tsv','allocation.txt','started.txt','finished.txt','exit-code.txt'})
+ allowed.update({'native-node-queue.json','queue-live.json','input.sdc','config.mk','scene.txt','field.jsonl','kepler.log','formal.log','passive-inventory.tsv','route.log','pg-repair.log','physical-probe.log','geometry.log',
+  'native-whole-drc.rpt','full-deck.lyrdb','full-deck.log','native-drc.log'})
+ allowed.update({'linkfix-io-view.json','linkfix-probe.json','linkfix-native.json','linkfix-accept.json','linkfix-geometry.json','linkfix-cohost.json',
+ 'actual-launch-drivers.tsv','launch-changes.tsv','final-drivers.tsv','grt-drivers.tsv','channel-progress.json','channel-search.json','channel-attempts.json','timing-summary.tsv','electrical-violations.rpt','electrical-worst.rpt','timing.rpt','revision300-constraints-control.json',
+ 'linkfix-s-patch.json','linkfix-s-formal.json','function-reuse.json','before-native-drc.rpt','patched-native-drc.rpt','final-native-drc.rpt','patch.tcl','patch.log','patched-drc.tcl','patched-drc.log','quick-drc.tcl','quick-drc.log'})
 for receipt in sorted(r.glob('tasks/*/receipt.json')):
  add(receipt);d=json.loads(receipt.read_text())
  for name,digest in d['outputs'].items():
