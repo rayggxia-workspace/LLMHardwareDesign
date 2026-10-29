@@ -7,6 +7,8 @@ set -euo pipefail
 source_root=$1
 out=$2
 mapping=$3
+placement_mode=${4:-timing}
+case "$placement_mode" in timing|geometric) ;; *) exit 2 ;; esac
 test -n "${SLURM_JOB_ID:-}"
 test "$SLURM_CPUS_PER_TASK" -eq 16
 mkdir -p "$(dirname "$out")"
@@ -18,5 +20,5 @@ export PATH="/public/software/singularity-ce-4.3.4/bin:$PATH"
 srun --ntasks=1 --cpus-per-task=16 --cpu-bind=cores \
  singularity exec --cleanenv --bind /public/home/yuzelu --pwd "$source_root" \
  --env OMP_NUM_THREADS=16 --env OPENBLAS_NUM_THREADS=1 "$image" \
- bash -c 'set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; python3 "$1/project/experiments/block_feed_v1/physical.py" --top block_feed_s_macro --out "$2" --mapping "$3" --remove-abc-buffers --input-receivers' \
- bash "$source_root" "$out" "$mapping"
+ bash -c 'set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; python3 "$1/project/experiments/block_feed_v1/physical.py" --top block_feed_s_macro --out "$2" --mapping "$3" --remove-abc-buffers --input-receivers --placement-mode "$4"' \
+ bash "$source_root" "$out" "$mapping" "$placement_mode"

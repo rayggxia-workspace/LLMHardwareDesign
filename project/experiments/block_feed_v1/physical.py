@@ -92,6 +92,10 @@ def implement(args, run):
     if args.remove_abc_buffers:
         assert not any(name.startswith(('BUF_','CLKBUF_')) for name in mapping['cell_counts'])
         config+='export REMOVE_ABC_BUFFERS = 1\n'
+    if args.placement_mode=='geometric':
+        # Avoid repeated resizer calls inside GPL on the large mux-based store.
+        # The subsequent placed repair_design/repair_timing and final gates stay.
+        config+='export GPL_TIMING_DRIVEN = 0\nexport ENABLE_PLACE_REPAIR_TIMING = 1\n'
     hook=(folder/'native_input_diodes.tcl').read_text().replace('  if {[$port getName] eq "clk"} {continue}\n','')
     if args.input_receivers:
         hook=(ROOT/'project/experiments/block_feed_v1/input_receivers.tcl').read_text()+'\n'+hook
@@ -105,6 +109,8 @@ def implement(args, run):
     wanted=dict(MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',KEEP_VARS='1',LEC_CHECK='1',SEC_CHECK='0',
                 TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN='0.020')
     if args.remove_abc_buffers:wanted['REMOVE_ABC_BUFFERS']='1'
+    if args.placement_mode=='geometric':
+        wanted.update(GPL_TIMING_DRIVEN='0',ENABLE_PLACE_REPAIR_TIMING='1')
     actual={}
     for key,value in wanted.items():
         log='variable-'+key+'.log';run(command+['print-'+key],log)
@@ -117,6 +123,7 @@ def implement(args, run):
                 stages=[],final_files={},qualified_hard_macro=False,inherited_physical_stages=[])
     if args.input_receivers:result['repair']='Fixed BUF_X8 data input receivers in native macro; all limits unchanged'
     result['remove_abc_buffers']=args.remove_abc_buffers
+    result['placement_mode']=args.placement_mode
     def save():(out/'native-flow.json').write_text(json.dumps(result,indent=2)+'\n')
     save()
     for number,stage in enumerate(('do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish')):
@@ -133,6 +140,7 @@ def main():
     p.add_argument('--mapping',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--remove-abc-buffers',action='store_true')
     p.add_argument('--input-receivers',action='store_true')
+    p.add_argument('--placement-mode',choices=['timing','geometric'],default='timing')
     args=p.parse_args();args.out=args.out.resolve();args.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,top=args.top,start_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),
                  affinity=sorted(__import__('os').sched_getaffinity(0)),commands=[],inputs={})
