@@ -37,15 +37,15 @@ set original_obs [obs_snapshot]
 set ::env(PINXY_ACCESS_ALL) 1
 set ::env(PINXY_ACCESS_OUT) BEFORE_ACCESS
 source EXPORTER
-set count 0;foreach n [$b getNets] {incr count [llength [$n getGuides]]}
-if {$count<=0} {error "Actual source has no guides; this would be a vacuous probe"}
+set native_guide_count_before 0;foreach n [$b getNets] {incr native_guide_count_before [llength [$n getGuides]]}
+if {$native_guide_count_before<=0} {error "Actual source has no guides; this would be a vacuous probe"}
 foreach n [$b getNets] {set guides [$n getGuides];foreach g $guides {odb::dbGuide_destroy $g}}
-set remaining 0;foreach n [$b getNets] {incr remaining [llength [$n getGuides]]}
-if {$remaining!=0 || [obs_snapshot] ne $original_obs} {error "Guide metadata removal or OBS preservation failed"}
+set native_guide_count_after 0;foreach n [$b getNets] {incr native_guide_count_after [llength [$n getGuides]]}
+if {$native_guide_count_after!=0 || [obs_snapshot] ne $original_obs} {error "Guide metadata removal or OBS preservation failed"}
 fingerprint AFTER
 set ::env(PINXY_ACCESS_OUT) AFTER_ACCESS
 source EXPORTER
-set f [open COUNTS w];puts $f "$count\t$remaining";close $f
+set f [open COUNTS w];puts $f "$native_guide_count_before\t$native_guide_count_after";close $f
 write_db NEWODB
 close $stages
 '''
@@ -65,6 +65,8 @@ close $stages
             rec[label+'_fresh_elapsed_seconds']=time.monotonic()-start;save()
             assert rec['native_returncodes'][label+'_fresh_DRC']==0
             rec[label+'_native_DRC_count']=len(re.findall(r'^violation type:',(out/(label+'.drc')).read_text(),re.M))
+            guide_counts=re.findall(r'Number of guides:\s*(\d+)',(out/(label+'.log')).read_text())
+            assert guide_counts==[str(count if label=='original' else remaining)],'Independent native guide inventory differs from metadata count'
         rec['all_native_DRC_markers_byteexact']=(out/'original.drc').read_bytes()==(out/'guide_free.drc').read_bytes()
         assert rec['all_native_DRC_markers_byteexact'] and rec['original_native_DRC_count']>0
         rec['probe_outcome']='SAME_REAL_FAILURE_WITH_FULL_NATIVE_COMMAND_AND_PHYSICAL_EXPORTS_NOT_FULL_LEAF_OR_SYSTEM_PROOF'
