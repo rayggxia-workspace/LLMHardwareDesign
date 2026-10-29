@@ -1,6 +1,6 @@
 """Resume the actual 14-size/17-buffer VECTOR checkpoint, without repeating repair_design."""
 from pathlib import Path
-import csv,datetime,json,os,re,sys,traceback
+import csv,datetime,json,os,re,shutil,sys,traceback
 from run_exports import ROOT,sha
 from run_parent_trial import tcl
 from run_escape_fixture import execute
@@ -15,11 +15,22 @@ COST_PROC='''proc cell_cost {file} {
 }'''
 
 
-def run(revision):
-    out=ROOT/'vector_resume'/revision;out.mkdir(parents=True,exist_ok=False)
-    start=ROOT/'estimator_diagnosis/r02';proof=json.loads((start/'execution.json').read_text())
-    checkpoint=start/'cell_repaired_NOT_LEGALIZED_OR_ROUTED.odb'
-    assert proof['native_returncode']==0 and proof['fillers_removed_before_estimation'] and proof['all_sources_unchanged']
+def run(revision,source_kind='estimator_r02'):
+    assert source_kind in ['estimator_r02','placement_probe_r03','partition_restored_r01'];probe=source_kind!='estimator_r02';restored=source_kind=='partition_restored_r01'
+    out=ROOT/('vector_probe_route' if probe else 'vector_resume')/revision;out.mkdir(parents=True,exist_ok=False)
+    start=ROOT/('vector_partition_restore/r01' if restored else ('vector_clone_probe/r03' if probe else 'estimator_diagnosis/r02'));proof=json.loads((start/'execution.json').read_text())
+    checkpoint=start/('partition_restored_NOT_LEGALIZED_OR_ROUTED.odb' if restored else ('gate_repaired_NOT_LEGALIZED_OR_ROUTED.odb' if probe else 'cell_repaired_NOT_LEGALIZED_OR_ROUTED.odb'))
+    if probe:
+        assert proof.get('completed_utc') and proof['all_closed_sources_unchanged']
+        if restored:
+            assert proof['native_returncodes']['restore_original_five_inputs']==proof['native_returncodes']['restored_full_graph']==0
+            assert proof['actual_changed_signal_terminals_exactly_five_inputs'] and all(proof['all_original_pins_PG_die_unchanged'].values())
+        else:assert proof['native_returncodes']['clone_heuristic_probe']==0
+        relation_path=start/'execution.json' if restored else ROOT/'vector_probe_equivalence/r01/execution.json';relation=json.loads(relation_path.read_text())
+        assert relation['relative_mapped_digital_contract_pass'] and relation['all_closed_sources_unchanged']
+        if restored:assert relation['files'][checkpoint.name]['sha256']==sha(checkpoint)
+        else:assert relation['source_SHA'][str(checkpoint)]==sha(checkpoint)
+    else:assert proof['native_returncode']==0 and proof['fillers_removed_before_estimation'] and proof['all_sources_unchanged']
     assert sha(checkpoint)==proof['files'][checkpoint.name]['sha256']
     for k in ['pins','pdn','die']:assert sha(start/('before.'+k+'.tsv'))==sha(start/('after.'+k+'.tsv'))
     source=ROOT/'finalized/access-r03/vector-C';p=json.loads((source/'execution.json').read_text())
@@ -27,18 +38,23 @@ def run(revision):
     assert sha(sdc)==old['input_sha256'][str(sdc)]
     reservations=[Path(k) for k in old['input_sha256'] if k.endswith('/access_reservations.tcl')];assert len(reservations)==1
     reservations=reservations[0];assert sha(reservations)==old['input_sha256'][str(reservations)]
-    before_cost=ROOT/'leaf_eco/r09/vector-C/before.cell_cost.tsv'
+    before_cost=ROOT/('vector_resume/r01/actual_final.cell_cost.tsv' if probe else 'leaf_eco/r09/vector-C/before.cell_cost.tsv')
     r09=json.loads((before_cost.parent/'execution.json').read_text());assert sha(before_cost)==r09['files'][before_cost.name]['sha256']
     with before_cost.open() as f:original=list(csv.DictReader(f,delimiter='\t'))
     fillers=sorted({q['master'] for q in original if q['type']=='CORE_SPACER'});assert fillers
     inputs={str(q):sha(q) for q in [checkpoint,start/'execution.json',source/'execution.json',trial,sdc,reservations,before_cost]}
-    rec={'scope':'COSTED_VECTOR_ECO_RESUME_NOT_PURE_XY_OR_FULL_QUALIFICATION',
+    if probe:inputs[str(relation_path)]=sha(relation_path)
+    rec={'scope':'COSTED_VECTOR_PROBE_REAL_ROUTE_NOT_PURE_XY_OR_FULL_QUALIFICATION' if probe else 'COSTED_VECTOR_ECO_RESUME_NOT_PURE_XY_OR_FULL_QUALIFICATION',
       'source_checkpoint':str(checkpoint),'source_SHA':inputs,'repair_design_repeated':False,
       'original_SDC_clocks_loads_and_allowed_layers_preserved':True,'allowed_layers':'signal M2-M10; clock M4-M10',
       'timing_repair_estimator':'Native placement heuristic, not extracted RC; final RCX/STA mandatory',
       'full_qualification':False,'design_formal_equivalence':'NOT_EXECUTED','complete_rules':'NOT_QUALIFIED',
       'native_returncodes':{},'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),
       'scheduler_job':os.environ['SLURM_JOB_ID'],'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()}
+    if probe:
+        rec['source_kind']=source_kind;rec['setup_hold_heuristic_repeated']=False
+        rec['relative_mapped_digital_contract_receipt']=str(relation_path)
+        rec['inherited_prior_ECO_source']='vector_resume/r01; new costs relative to that source, not original RTL or pure XY'
     (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp',
       '--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
@@ -47,6 +63,15 @@ def run(revision):
     for path in old['libs']:
         if Path(path).is_file():common+=['--bind',path+':'+path+':ro']
     helpers=(DRIVER/'physical_trial.tcl').read_text().split('if {![stage load {',1)[0]
+    helpers+='''\nproc signal_connection_contract {file} {
+ set b [ord::get_db_block];set f [open $file w]
+ foreach i [$b getInsts] {
+  if {[[$i getMaster] getType] eq "CORE_SPACER"} {continue}
+  puts $f [list CELL [$i getName] [[$i getMaster] getName]]
+  foreach t [$i getITerms] {if {[$t getSigType] in {POWER GROUND}} {continue};set n [$t getNet];puts $f [list TERM [$i getName] [[$t getMTerm] getName] [$t getIoType] [expr {$n eq "NULL" ? "NULL" : [$n getName]}]]}
+ }
+ foreach t [$b getBTerms] {if {[$t getSigType] in {POWER GROUND}} {continue};set n [$t getNet];puts $f [list PORT [$t getName] [$t getIoType] [expr {$n eq "NULL" ? "NULL" : [$n getName]}]]};close $f
+}\n'''
     liblines=['read_liberty '+tcl(path) for path in old['libs']]
     def native(label,lines):
         script=out/(label+'.tcl');h=helpers.replace('$out/stages.tsv','$out/'+label+'.stages.tsv')
@@ -55,13 +80,17 @@ def run(revision):
         rec['native_returncodes'][label]=rc;(out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
         if rc:raise RuntimeError(label+' actual native failure')
     try:
-        native('timing_repair',liblines+['read_db '+tcl(checkpoint),'read_sdc '+tcl(sdc),
+        if probe:
+            shutil.copyfile(str(checkpoint),str(out/'timing_repaired_NOT_LEGALIZED_OR_ROUTED.odb'))
+            assert sha(out/'timing_repaired_NOT_LEGALIZED_OR_ROUTED.odb')==sha(checkpoint)
+        else:native('timing_repair',liblines+['read_db '+tcl(checkpoint),'read_sdc '+tcl(sdc),
           'source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl','estimate_parasitics -placement',
           'if {![stage setup_repair {repair_timing -setup -skip_pin_swap -skip_gate_cloning -skip_buffer_removal -skip_buffer_to_inverters -max_passes 20 -max_iterations 10000 -max_utilization 85 -verbose}]} {close $stages;exit 1}',
           'if {![stage hold_repair {repair_timing -hold -max_utilization 85 -verbose}]} {close $stages;exit 1}',
           'fingerprint '+tcl(out/'timing_repaired'),'cell_cost '+tcl(out/'timing_repaired.cell_cost.tsv'),
           'write_db '+tcl(out/'timing_repaired_NOT_LEGALIZED_OR_ROUTED.odb'),'close $stages'])
         native('legalization',['read_db '+tcl(out/'timing_repaired_NOT_LEGALIZED_OR_ROUTED.odb'),
+          'signal_connection_contract '+tcl(out/'before_legalization.signal_contract.tsv'),
           'set anchors {};foreach i [[ord::get_db_block] getInsts] {if {[[$i getMaster] getType] in {BLOCK CORE_WELLTAP}} {lappend anchors [list $i [$i getLocation] [$i getOrient] [$i getPlacementStatus]];$i setPlacementStatus FIRM}}',
           'if {![stage independent_legalization {detailed_placement -use_diamond_legalizer}]} {close $stages;exit 1}',
           'foreach row $anchors {lassign $row i xy ori status;if {[$i getLocation] ne $xy || [$i getOrient] ne $ori} {error "Original macro/welltap anchor moved"};$i setPlacementStatus $status}',
@@ -70,7 +99,10 @@ def run(revision):
           'add_global_connection -net VSS -inst_pattern {.*} -pin_pattern {^VSS$} -ground','global_connect',
           'if {![stage original_filler_master_restore {filler_placement -prefix PINXY_VECTOR_FILL_ {'+' '.join(fillers)+'};global_connect;check_placement -verbose}]} {close $stages;exit 1}',
           'fingerprint '+tcl(out/'placed'),'cell_cost '+tcl(out/'actual_final.cell_cost.tsv'),
+          'signal_connection_contract '+tcl(out/'after_legalization.signal_contract.tsv'),
           'write_db '+tcl(out/'placed_NOT_ROUTED.odb'),'close $stages'])
+        rec['all_functional_masters_signal_terminals_and_top_port_networks_unchanged_through_legalization']=sha(out/'before_legalization.signal_contract.tsv')==sha(out/'after_legalization.signal_contract.tsv')
+        assert rec['all_functional_masters_signal_terminals_and_top_port_networks_unchanged_through_legalization']
         a={q['instance']:q for q in original}
         with (out/'actual_final.cell_cost.tsv').open() as f:b={q['instance']:q for q in csv.DictReader(f,delimiter='\t')}
         names=set(a)&set(b);cost={'added_functional_instances_excluding_fillers':sum(b[n]['type']!='CORE_SPACER' for n in set(b)-set(a)),
@@ -128,4 +160,4 @@ def run(revision):
     return 0 if passed else 1
 
 
-if __name__=='__main__':sys.exit(run(sys.argv[1]))
+if __name__=='__main__':sys.exit(run(*sys.argv[1:3]))
