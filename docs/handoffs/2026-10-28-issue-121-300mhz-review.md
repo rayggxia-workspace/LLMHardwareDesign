@@ -1,3 +1,5 @@
+2026-10-29 14:49 CST：350实际global-route setup−0.08ns/hold+0.02ns，最差product[4][4]→output_mem[89][5]，9原始文件/308源与路径映射封存。选定同一基础V的N_WRITE完整S128高低乘积加法改用既有add128_grouped，RNE/饱和/周期保持，当前新源数值、映射、物理和最终资格均待355后续验证。原350继续正常收尾；R344/93237已placement，345/346待前置。M/S/T接收保持、V/R最终未齐，Issue121=in_progress、PR122=draft、目标active，登记pending/看板unverified与同步pending。
+
 2026-10-29 14:29 CST：R342映射实际通过，709124工艺单元/8个32×33乘法器，9原始小文件与307源核验；93189因保留两项旧引用采样失败自然FAILED/1:0，映射自身通过，修正后的343采样通过。354按逐项前置自动提交R344/93237/node21（14:24:55），已进入fresh floorplan，7启动原始文件/307源及R RTL绑定核验；345/346仍待真实前置。V350 CTS内置LEC已UNSAT/IDENTICAL，CTS setup−0.04/hold−0.23ns，11原始/308源绑定，继续原生route；351/352待真实前置。M/S/T已接收、V/R最终未齐，Issue121=in_progress/PR122=draft、目标active，登记pending、看板unverified/同步pending，管理员/独立审查待指定。
 
 2026-10-29 14:24 CST：V350 CTS内置LEC已实际UNSAT/IDENTICAL（51126输入/51115输出、diff0/diff1均0），完成后最差setup−0.04ns、hold−0.23ns；分别定位cmd_valid→stats_sumsq[0][79]和reset→rsp_data[86]。11原始文件SHA、308源Git blobs及全部V RTL绑定核验，350/93210继续原生route/finish，351/352仍待真实前置。R342已进入ABC工艺映射，344/345/346待映射回执。M/S/T已接收，V/R最终未齐；Issue121=in_progress、PR122=draft、目标active，登记pending、看板unverified/同步pending，管理员/独立审查待指定。

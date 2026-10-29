@@ -1,0 +1,1128 @@
+
+==========================================================================
+global route report_tns
+--------------------------------------------------------------------------
+tns max -1.23
+
+==========================================================================
+global route report_wns
+--------------------------------------------------------------------------
+wns max -0.08
+
+==========================================================================
+global route report_worst_slack
+--------------------------------------------------------------------------
+worst slack max -0.08
+
+==========================================================================
+global route report_clock_min_period
+--------------------------------------------------------------------------
+core period_min = 3.41 fmax = 293.12
+
+==========================================================================
+global route report_clock_skew
+--------------------------------------------------------------------------
+Clock core
+   0.66 source latency $auto$ff.cc:337:slice$565722/CK ^
+  -0.60 target latency $auto$ff.cc:337:slice$606931/CK ^
+   0.10 clock uncertainty
+   0.00 CRPR
+--------------
+   0.16 setup skew
+
+
+==========================================================================
+global route report_checks -path_delay min
+--------------------------------------------------------------------------
+Startpoint: cmd_data[75] (input port clocked by core)
+Endpoint: $auto$ff.cc:337:slice$611724
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: min
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                          0.00    0.00   clock core (rise edge)
+                          0.00    0.00   clock network delay (propagated)
+                          0.20    0.20 ^ input external delay
+     2    1.13    0.00    0.00    0.20 ^ cmd_data[75] (in)
+                                         cmd_data[75] (net)
+                  0.00    0.00    0.20 ^ hold148605/A (CLKBUF_X1)
+     1    0.96    0.01    0.02    0.23 ^ hold148605/Z (CLKBUF_X1)
+                                         net148605 (net)
+                  0.01    0.00    0.23 ^ hold156005/A (CLKBUF_X1)
+     1    0.92    0.01    0.03    0.25 ^ hold156005/Z (CLKBUF_X1)
+                                         net156005 (net)
+                  0.01    0.00    0.25 ^ hold148595/A (CLKBUF_X1)
+     1    0.92    0.01    0.03    0.28 ^ hold148595/Z (CLKBUF_X1)
+                                         net148595 (net)
+                  0.01    0.00    0.28 ^ hold148606/A (CLKBUF_X1)
+     1    0.94    0.01    0.03    0.30 ^ hold148606/Z (CLKBUF_X1)
+                                         net148606 (net)
+                  0.01    0.00    0.30 ^ hold147938/A (CLKBUF_X1)
+     1    0.89    0.01    0.03    0.33 ^ hold147938/Z (CLKBUF_X1)
+                                         net147938 (net)
+                  0.01    0.00    0.33 ^ hold148607/A (CLKBUF_X1)
+     1    0.94    0.01    0.03    0.35 ^ hold148607/Z (CLKBUF_X1)
+                                         net148607 (net)
+                  0.01    0.00    0.35 ^ hold148596/A (CLKBUF_X1)
+     1    0.92    0.01    0.03    0.38 ^ hold148596/Z (CLKBUF_X1)
+                                         net148596 (net)
+                  0.01    0.00    0.38 ^ hold148608/A (CLKBUF_X1)
+     1    1.19    0.01    0.03    0.40 ^ hold148608/Z (CLKBUF_X1)
+                                         net148608 (net)
+                  0.01    0.00    0.40 ^ input101/A (BUF_X1)
+     1    1.63    0.01    0.02    0.43 ^ input101/Z (BUF_X1)
+                                         net101 (net)
+                  0.01    0.00    0.43 ^ hold148609/A (CLKBUF_X1)
+     1    1.66    0.01    0.03    0.45 ^ hold148609/Z (CLKBUF_X1)
+                                         net148609 (net)
+                  0.01    0.00    0.45 ^ hold148597/A (CLKBUF_X1)
+     1    1.41    0.01    0.03    0.48 ^ hold148597/Z (CLKBUF_X1)
+                                         net148597 (net)
+                  0.01    0.00    0.48 ^ hold148610/A (CLKBUF_X1)
+     1    1.47    0.01    0.03    0.51 ^ hold148610/Z (CLKBUF_X1)
+                                         net148610 (net)
+                  0.01    0.00    0.51 ^ hold147939/A (CLKBUF_X1)
+     1    3.00    0.01    0.03    0.54 ^ hold147939/Z (CLKBUF_X1)
+                                         net147939 (net)
+                  0.01    0.00    0.54 ^ hold148611/A (CLKBUF_X1)
+     1    2.86    0.01    0.03    0.57 ^ hold148611/Z (CLKBUF_X1)
+                                         net148611 (net)
+                  0.01    0.00    0.57 ^ hold148598/A (CLKBUF_X1)
+     4   22.02    0.05    0.08    0.65 ^ hold148598/Z (CLKBUF_X1)
+                                         net148598 (net)
+                  0.05    0.00    0.65 ^ max_cap146752/A (CLKBUF_X3)
+     3   26.01    0.02    0.06    0.72 ^ max_cap146752/Z (CLKBUF_X3)
+                                         net146752 (net)
+                  0.02    0.00    0.72 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1446310/B (MUX2_X1)
+     1    1.51    0.01    0.04    0.76 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1446310/Z (MUX2_X1)
+                                         $abc$1386558$auto$rtlil.cc:3513:MuxGate$1303082 (net)
+                  0.01    0.00    0.76 ^ $auto$ff.cc:337:slice$611724/D (DFF_X2)
+                                  0.76   data arrival time
+
+                          0.00    0.00   clock core (rise edge)
+                          0.00    0.00   clock source latency
+     2   57.98    0.00    0.00    0.00 ^ clk (in)
+                                         clk (net)
+                  0.02    0.02    0.02 ^ wire147501/A (BUF_X8)
+     1   47.93    0.01    0.03    0.04 ^ wire147501/Z (BUF_X8)
+                                         net147501 (net)
+                  0.02    0.01    0.06 ^ clkbuf_0_clk/A (CLKBUF_X3)
+     2   49.68    0.04    0.07    0.13 ^ clkbuf_0_clk/Z (CLKBUF_X3)
+                                         clknet_0_clk (net)
+                  0.04    0.01    0.14 ^ clkbuf_1_1_0_clk/A (CLKBUF_X3)
+     2   25.78    0.02    0.06    0.19 ^ clkbuf_1_1_0_clk/Z (CLKBUF_X3)
+                                         clknet_1_1_0_clk (net)
+                  0.02    0.00    0.20 ^ clkbuf_2_2_0_clk/A (CLKBUF_X3)
+     1   33.81    0.03    0.06    0.26 ^ clkbuf_2_2_0_clk/Z (CLKBUF_X3)
+                                         clknet_2_2_0_clk (net)
+                  0.03    0.01    0.26 ^ clkbuf_2_2_1_clk/A (CLKBUF_X3)
+     4   45.24    0.04    0.07    0.33 ^ clkbuf_2_2_1_clk/Z (CLKBUF_X3)
+                                         clknet_2_2_1_clk (net)
+                  0.04    0.00    0.34 ^ clkbuf_4_8_0_clk/A (CLKBUF_X3)
+     2   33.59    0.03    0.06    0.40 ^ clkbuf_4_8_0_clk/Z (CLKBUF_X3)
+                                         clknet_4_8_0_clk (net)
+                  0.03    0.01    0.41 ^ clkbuf_5_17_0_clk/A (CLKBUF_X3)
+     8   52.89    0.04    0.08    0.48 ^ clkbuf_5_17_0_clk/Z (CLKBUF_X3)
+                                         clknet_5_17_0_clk (net)
+                  0.04    0.01    0.49 ^ clkbuf_8_141_0_clk/A (CLKBUF_X3)
+     2    9.19    0.01    0.05    0.54 ^ clkbuf_8_141_0_clk/Z (CLKBUF_X3)
+                                         clknet_8_141_0_clk (net)
+                  0.01    0.00    0.54 ^ clkbuf_9_282__f_clk/A (CLKBUF_X3)
+     9   27.03    0.02    0.05    0.59 ^ clkbuf_9_282__f_clk/Z (CLKBUF_X3)
+                                         clknet_9_282__leaf_clk (net)
+                  0.02    0.00    0.59 ^ clkbuf_leaf_3255_clk/A (CLKBUF_X3)
+     8   10.90    0.01    0.04    0.63 ^ clkbuf_leaf_3255_clk/Z (CLKBUF_X3)
+                                         clknet_leaf_3255_clk (net)
+                  0.01    0.00    0.63 ^ $auto$ff.cc:337:slice$611724/CK (DFF_X2)
+                          0.10    0.73   clock uncertainty
+                          0.00    0.73   clock reconvergence pessimism
+                          0.01    0.74   library hold time
+                                  0.74   data required time
+-----------------------------------------------------------------------------
+                                  0.74   data required time
+                                 -0.76   data arrival time
+-----------------------------------------------------------------------------
+                                  0.02   slack (MET)
+
+
+
+==========================================================================
+global route report_checks -path_delay max
+--------------------------------------------------------------------------
+Startpoint: $auto$ff.cc:337:slice$607595
+            (rising edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$570678
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                          0.00    0.00   clock core (rise edge)
+                          0.00    0.00   clock source latency
+     2   57.98    0.00    0.00    0.00 ^ clk (in)
+                                         clk (net)
+                  0.02    0.02    0.02 ^ wire147501/A (BUF_X8)
+     1   47.93    0.01    0.03    0.04 ^ wire147501/Z (BUF_X8)
+                                         net147501 (net)
+                  0.02    0.01    0.06 ^ clkbuf_0_clk/A (CLKBUF_X3)
+     2   49.68    0.04    0.07    0.13 ^ clkbuf_0_clk/Z (CLKBUF_X3)
+                                         clknet_0_clk (net)
+                  0.04    0.01    0.14 ^ clkbuf_1_1_0_clk/A (CLKBUF_X3)
+     2   25.78    0.02    0.06    0.19 ^ clkbuf_1_1_0_clk/Z (CLKBUF_X3)
+                                         clknet_1_1_0_clk (net)
+                  0.02    0.00    0.20 ^ clkbuf_2_2_0_clk/A (CLKBUF_X3)
+     1   33.81    0.03    0.06    0.26 ^ clkbuf_2_2_0_clk/Z (CLKBUF_X3)
+                                         clknet_2_2_0_clk (net)
+                  0.03    0.01    0.26 ^ clkbuf_2_2_1_clk/A (CLKBUF_X3)
+     4   45.24    0.04    0.07    0.33 ^ clkbuf_2_2_1_clk/Z (CLKBUF_X3)
+                                         clknet_2_2_1_clk (net)
+                  0.04    0.00    0.34 ^ clkbuf_4_8_0_clk/A (CLKBUF_X3)
+     2   33.59    0.03    0.06    0.40 ^ clkbuf_4_8_0_clk/Z (CLKBUF_X3)
+                                         clknet_4_8_0_clk (net)
+                  0.03    0.01    0.41 ^ clkbuf_5_17_0_clk/A (CLKBUF_X3)
+     8   52.89    0.04    0.08    0.48 ^ clkbuf_5_17_0_clk/Z (CLKBUF_X3)
+                                         clknet_5_17_0_clk (net)
+                  0.04    0.01    0.49 ^ clkbuf_8_142_0_clk/A (CLKBUF_X3)
+     2    8.28    0.01    0.05    0.53 ^ clkbuf_8_142_0_clk/Z (CLKBUF_X3)
+                                         clknet_8_142_0_clk (net)
+                  0.01    0.00    0.53 ^ clkbuf_9_285__f_clk/A (CLKBUF_X3)
+    11   31.45    0.03    0.05    0.59 ^ clkbuf_9_285__f_clk/Z (CLKBUF_X3)
+                                         clknet_9_285__leaf_clk (net)
+                  0.03    0.00    0.59 ^ clkbuf_leaf_2910_clk/A (CLKBUF_X3)
+     7    9.68    0.01    0.04    0.63 ^ clkbuf_leaf_2910_clk/Z (CLKBUF_X3)
+                                         clknet_leaf_2910_clk (net)
+                  0.01    0.00    0.63 ^ $auto$ff.cc:337:slice$607595/CK (DFF_X1)
+     2    7.20    0.01    0.09    0.72 v $auto$ff.cc:337:slice$607595/Q (DFF_X1)
+                                         product[4][4] (net)
+                  0.01    0.00    0.72 v place128461/A (BUF_X8)
+     4   53.74    0.01    0.03    0.75 v place128461/Z (BUF_X8)
+                                         net128461 (net)
+                  0.02    0.02    0.77 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680688/A (XNOR2_X1)
+     2    4.80    0.01    0.05    0.82 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680688/ZN (XNOR2_X1)
+                                         $abc$1386558$new_n344489 (net)
+                  0.01    0.00    0.82 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680700/A (AOI211_X1)
+     1    1.70    0.04    0.07    0.89 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680700/ZN (AOI211_X1)
+                                         $abc$1386558$new_n344501 (net)
+                  0.04    0.00    0.89 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680701/A (AOI21_X1)
+     2    3.09    0.01    0.02    0.91 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680701/ZN (AOI21_X1)
+                                         $abc$1386558$new_n344502 (net)
+                  0.01    0.00    0.91 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680703/C1 (AOI211_X1)
+     1    1.39    0.03    0.04    0.95 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680703/ZN (AOI211_X1)
+                                         $abc$1386558$new_n344504 (net)
+                  0.03    0.00    0.95 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680704/A2 (OR2_X1)
+     2    4.44    0.01    0.04    0.99 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680704/ZN (OR2_X1)
+                                         $abc$1386558$new_n344505 (net)
+                  0.01    0.00    0.99 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680705/B1 (OAI21_X1)
+     2    4.50    0.01    0.02    1.01 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680705/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344506 (net)
+                  0.01    0.00    1.01 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680706/B2 (OAI21_X2)
+     2    5.99    0.02    0.04    1.05 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680706/ZN (OAI21_X2)
+                                         $abc$1386558$new_n344507 (net)
+                  0.02    0.00    1.05 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680707/B1 (OAI21_X1)
+     2    3.07    0.01    0.02    1.07 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680707/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344508 (net)
+                  0.01    0.00    1.07 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680708/B2 (OAI21_X1)
+     2    3.31    0.03    0.04    1.11 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680708/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344509 (net)
+                  0.03    0.00    1.11 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680709/B1 (OAI21_X1)
+     2    3.27    0.01    0.02    1.13 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680709/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344510 (net)
+                  0.01    0.00    1.13 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680710/B2 (OAI21_X1)
+     2    2.88    0.02    0.04    1.17 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680710/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344511 (net)
+                  0.02    0.00    1.17 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680711/B1 (OAI21_X1)
+     2    2.83    0.01    0.02    1.19 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680711/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344512 (net)
+                  0.01    0.00    1.19 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680712/B2 (OAI21_X1)
+     2    3.36    0.03    0.04    1.23 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680712/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344513 (net)
+                  0.03    0.00    1.23 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680713/B1 (AOI21_X1)
+     2    2.96    0.01    0.02    1.25 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680713/ZN (AOI21_X1)
+                                         $abc$1386558$new_n344514 (net)
+                  0.01    0.00    1.25 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680714/B2 (OAI21_X1)
+     2    3.68    0.03    0.04    1.30 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680714/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344515 (net)
+                  0.03    0.00    1.30 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680715/B1 (OAI21_X1)
+     2    3.33    0.01    0.02    1.32 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680715/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344516 (net)
+                  0.01    0.00    1.32 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680716/B2 (OAI21_X1)
+     2    3.54    0.03    0.04    1.36 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680716/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344517 (net)
+                  0.03    0.00    1.36 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680717/B1 (AOI21_X1)
+     2    2.70    0.01    0.02    1.38 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680717/ZN (AOI21_X1)
+                                         $abc$1386558$new_n344518 (net)
+                  0.01    0.00    1.38 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680718/B2 (OAI21_X1)
+     2    3.62    0.03    0.04    1.43 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680718/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344519 (net)
+                  0.03    0.00    1.43 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680719/B1 (OAI21_X1)
+     2    2.88    0.01    0.02    1.45 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680719/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344520 (net)
+                  0.01    0.00    1.45 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680720/B2 (OAI21_X1)
+     2    3.45    0.03    0.04    1.49 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680720/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344521 (net)
+                  0.03    0.00    1.49 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680721/B1 (AOI21_X1)
+     2    3.84    0.01    0.02    1.51 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680721/ZN (AOI21_X1)
+                                         $abc$1386558$new_n344522 (net)
+                  0.01    0.00    1.51 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680722/B2 (OAI21_X1)
+     2    3.30    0.03    0.04    1.56 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680722/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344523 (net)
+                  0.03    0.00    1.56 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680723/A (OAI21_X1)
+     1    1.06    0.02    0.02    1.58 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680723/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344524 (net)
+                  0.02    0.00    1.58 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680724/A2 (AND2_X1)
+     2    2.72    0.01    0.04    1.61 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680724/ZN (AND2_X1)
+                                         $abc$1386558$new_n344525 (net)
+                  0.01    0.00    1.61 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680725/B2 (OAI21_X1)
+     2    3.30    0.03    0.04    1.65 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680725/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344526 (net)
+                  0.03    0.00    1.65 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680727/C1 (OAI211_X1)
+     2    3.55    0.02    0.03    1.68 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680727/ZN (OAI211_X1)
+                                         $abc$1386558$new_n344528 (net)
+                  0.02    0.00    1.68 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680729/A3 (NAND3_X1)
+     1    1.90    0.01    0.03    1.71 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680729/ZN (NAND3_X1)
+                                         $abc$1386558$new_n344530 (net)
+                  0.01    0.00    1.71 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680730/A (OAI21_X1)
+     2    4.82    0.02    0.03    1.73 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680730/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344531 (net)
+                  0.02    0.00    1.73 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680731/B2 (OAI21_X2)
+     1   10.37    0.03    0.05    1.79 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680731/ZN (OAI21_X2)
+                                         $abc$1386558$new_n344532 (net)
+                  0.03    0.00    1.79 ^ place98563/A (BUF_X4)
+     2   19.40    0.01    0.03    1.82 ^ place98563/Z (BUF_X4)
+                                         net98563 (net)
+                  0.01    0.00    1.83 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680732/B1 (AOI21_X1)
+     1    5.62    0.01    0.02    1.85 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680732/ZN (AOI21_X1)
+                                         $abc$1386558$new_n344533 (net)
+                  0.01    0.00    1.85 v place98529/A (BUF_X4)
+     3   25.77    0.01    0.03    1.88 v place98529/Z (BUF_X4)
+                                         net98529 (net)
+                  0.01    0.00    1.89 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680734/A2 (OR3_X1)
+     2    3.33    0.02    0.08    1.97 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680734/ZN (OR3_X1)
+                                         $abc$1386558$new_n344535 (net)
+                  0.02    0.00    1.97 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680741/B2 (OAI21_X1)
+     2    3.43    0.03    0.04    2.01 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680741/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344542 (net)
+                  0.03    0.00    2.01 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680742/A2 (NAND2_X1)
+     2    4.47    0.02    0.02    2.04 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680742/ZN (NAND2_X1)
+                                         $abc$1386558$new_n344543 (net)
+                  0.02    0.00    2.04 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680743/B2 (OAI22_X2)
+     2    4.96    0.03    0.05    2.09 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680743/ZN (OAI22_X2)
+                                         $abc$1386558$new_n344544 (net)
+                  0.03    0.00    2.09 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680744/A2 (NAND2_X1)
+     2    2.68    0.01    0.02    2.11 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680744/ZN (NAND2_X1)
+                                         $abc$1386558$new_n344545 (net)
+                  0.01    0.00    2.11 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680746/A1 (OR2_X1)
+     2    4.53    0.01    0.05    2.16 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680746/ZN (OR2_X1)
+                                         $abc$1386558$new_n344547 (net)
+                  0.01    0.00    2.16 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680751/B1 (OAI22_X2)
+     2    4.35    0.03    0.04    2.20 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680751/ZN (OAI22_X2)
+                                         $abc$1386558$new_n344552 (net)
+                  0.03    0.00    2.20 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680753/A1 (NAND2_X1)
+     2    4.36    0.02    0.03    2.23 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680753/ZN (NAND2_X1)
+                                         $abc$1386558$new_n344554 (net)
+                  0.02    0.00    2.23 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680754/B2 (OAI22_X2)
+     3    6.03    0.04    0.05    2.28 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680754/ZN (OAI22_X2)
+                                         $abc$1386558$new_n344555 (net)
+                  0.04    0.00    2.28 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680757/A2 (NAND3_X1)
+     2    2.96    0.02    0.03    2.31 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680757/ZN (NAND3_X1)
+                                         $abc$1386558$new_n344558 (net)
+                  0.02    0.00    2.31 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680762/B1 (OAI22_X1)
+     2    2.36    0.03    0.05    2.36 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680762/ZN (OAI22_X1)
+                                         $abc$1386558$new_n344563 (net)
+                  0.03    0.00    2.36 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680764/A1 (AND2_X1)
+     2    3.02    0.01    0.04    2.40 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680764/ZN (AND2_X1)
+                                         $abc$1386558$new_n344565 (net)
+                  0.01    0.00    2.40 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680772/A1 (NAND3_X1)
+     1    1.14    0.01    0.02    2.42 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680772/ZN (NAND3_X1)
+                                         $abc$1386558$new_n344573 (net)
+                  0.01    0.00    2.42 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680773/A2 (AND2_X1)
+     2    2.11    0.01    0.03    2.45 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680773/ZN (AND2_X1)
+                                         $abc$1386558$new_n344574 (net)
+                  0.01    0.00    2.45 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680774/A2 (OR2_X1)
+     2    2.17    0.01    0.05    2.50 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680774/ZN (OR2_X1)
+                                         $abc$1386558$new_n344575 (net)
+                  0.01    0.00    2.50 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680776/A1 (OR2_X1)
+     2    3.43    0.01    0.05    2.55 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680776/ZN (OR2_X1)
+                                         $abc$1386558$new_n344577 (net)
+                  0.01    0.00    2.55 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680804/A (OAI21_X1)
+     2    4.36    0.03    0.03    2.58 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680804/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344605 (net)
+                  0.03    0.00    2.58 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680954/B (XOR2_X1)
+     2    3.18    0.03    0.06    2.63 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680954/Z (XOR2_X1)
+                                         $abc$1386558$new_n344755 (net)
+                  0.03    0.00    2.63 ^ place97725/A (BUF_X1)
+     3    5.36    0.01    0.04    2.67 ^ place97725/Z (BUF_X1)
+                                         net97725 (net)
+                  0.01    0.00    2.67 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680997/A1 (NAND3_X1)
+     3    6.48    0.02    0.03    2.70 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680997/ZN (NAND3_X1)
+                                         $abc$1386558$new_n344798 (net)
+                  0.02    0.00    2.70 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1681030/A3 (NOR3_X2)
+     2    4.03    0.03    0.06    2.76 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1681030/ZN (NOR3_X2)
+                                         $abc$1386558$new_n344831 (net)
+                  0.03    0.00    2.76 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1681031/A2 (NOR2_X1)
+     2    3.91    0.01    0.02    2.78 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1681031/ZN (NOR2_X1)
+                                         $abc$1386558$new_n344832 (net)
+                  0.01    0.00    2.78 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1681060/A3 (NOR4_X1)
+     1    2.77    0.05    0.09    2.87 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1681060/ZN (NOR4_X1)
+                                         $abc$1386558$new_n344861 (net)
+                  0.05    0.00    2.87 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1681061/A4 (NAND4_X1)
+     1    4.94    0.03    0.05    2.91 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1681061/ZN (NAND4_X1)
+                                         $abc$1386558$new_n344862 (net)
+                  0.03    0.00    2.91 v place96427/A (BUF_X4)
+     1   29.45    0.01    0.04    2.95 v place96427/Z (BUF_X4)
+                                         net96427 (net)
+                  0.01    0.01    2.96 v wire153603/A (BUF_X8)
+     2  109.07    0.02    0.04    3.00 v wire153603/Z (BUF_X8)
+                                         net153603 (net)
+                  0.02    0.01    3.01 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1681062/A2 (AND2_X4)
+     6   23.87    0.01    0.04    3.05 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1681062/ZN (AND2_X4)
+                                         $abc$1386558$new_n344863 (net)
+                  0.01    0.00    3.05 v place93790/A (BUF_X8)
+     8   36.39    0.01    0.03    3.08 v place93790/Z (BUF_X8)
+                                         net93790 (net)
+                  0.01    0.01    3.09 v place93788/A (BUF_X4)
+     4   16.17    0.01    0.03    3.12 v place93788/Z (BUF_X4)
+                                         net93788 (net)
+                  0.01    0.00    3.12 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1683116/A1 (NOR2_X2)
+     1    6.81    0.02    0.03    3.15 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1683116/ZN (NOR2_X2)
+                                         $abc$1386558$new_n346917 (net)
+                  0.02    0.00    3.15 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1683117/A2 (NOR2_X4)
+     2   11.92    0.01    0.02    3.16 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1683117/ZN (NOR2_X4)
+                                         $abc$1386558$new_n346918 (net)
+                  0.01    0.00    3.16 v place90305/A (BUF_X8)
+     4  276.72    0.01    0.03    3.19 v place90305/Z (BUF_X8)
+                                         net90305 (net)
+                  0.33    0.27    3.46 v place90304/A (BUF_X16)
+     4   53.63    0.02    0.10    3.56 v place90304/Z (BUF_X16)
+                                         net90304 (net)
+                  0.02    0.02    3.58 v place90303/A (BUF_X8)
+     4   49.76    0.01    0.04    3.62 v place90303/Z (BUF_X8)
+                                         net90303 (net)
+                  0.01    0.01    3.63 v place90302/A (BUF_X2)
+     6   28.27    0.02    0.04    3.67 v place90302/Z (BUF_X2)
+                                         net90302 (net)
+                  0.02    0.00    3.67 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1720135/C2 (OAI211_X1)
+     1    6.53    0.04    0.06    3.74 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1720135/ZN (OAI211_X1)
+                                         $abc$1386558$new_n383936 (net)
+                  0.04    0.00    3.74 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1720136/B (OAI211_X1)
+     1    1.75    0.03    0.03    3.77 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1720136/ZN (OAI211_X1)
+                                         $abc$1386558$new_n383937 (net)
+                  0.03    0.00    3.77 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1720137/B (OAI211_X1)
+     1    6.29    0.04    0.04    3.81 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1720137/ZN (OAI211_X1)
+                                         $abc$1386558$new_n383938 (net)
+                  0.04    0.00    3.81 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1720138/B (OAI211_X1)
+     1    3.33    0.03    0.04    3.85 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1720138/ZN (OAI211_X1)
+                                         $abc$1386558$new_n383939 (net)
+                  0.03    0.00    3.85 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1720139/A (OAI21_X1)
+     1    1.35    0.03    0.03    3.88 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1720139/ZN (OAI21_X1)
+                                         $abc$1386558$auto$rtlil.cc:3513:MuxGate$1344040 (net)
+                  0.03    0.00    3.88 ^ $auto$ff.cc:337:slice$570678/D (DFF_X1)
+                                  3.88   data arrival time
+
+                          3.33    3.33   clock core (rise edge)
+                          0.00    3.33   clock source latency
+     2   57.98    0.00    0.00    3.33 ^ clk (in)
+                                         clk (net)
+                  0.02    0.02    3.35 ^ wire147501/A (BUF_X8)
+     1   47.93    0.01    0.03    3.38 ^ wire147501/Z (BUF_X8)
+                                         net147501 (net)
+                  0.02    0.01    3.39 ^ clkbuf_0_clk/A (CLKBUF_X3)
+     2   49.68    0.04    0.07    3.46 ^ clkbuf_0_clk/Z (CLKBUF_X3)
+                                         clknet_0_clk (net)
+                  0.04    0.00    3.47 ^ clkbuf_1_0_0_clk/A (CLKBUF_X3)
+     2   25.79    0.02    0.06    3.53 ^ clkbuf_1_0_0_clk/Z (CLKBUF_X3)
+                                         clknet_1_0_0_clk (net)
+                  0.02    0.00    3.53 ^ clkbuf_2_1_0_clk/A (CLKBUF_X3)
+     1   30.10    0.02    0.06    3.59 ^ clkbuf_2_1_0_clk/Z (CLKBUF_X3)
+                                         clknet_2_1_0_clk (net)
+                  0.03    0.01    3.59 ^ clkbuf_2_1_1_clk/A (CLKBUF_X3)
+     4   38.91    0.03    0.06    3.65 ^ clkbuf_2_1_1_clk/Z (CLKBUF_X3)
+                                         clknet_2_1_1_clk (net)
+                  0.03    0.01    3.66 ^ clkbuf_4_5_0_clk/A (CLKBUF_X3)
+     2   29.33    0.02    0.06    3.72 ^ clkbuf_4_5_0_clk/Z (CLKBUF_X3)
+                                         clknet_4_5_0_clk (net)
+                  0.02    0.01    3.72 ^ clkbuf_5_10_0_clk/A (CLKBUF_X3)
+     8   50.49    0.04    0.07    3.79 ^ clkbuf_5_10_0_clk/Z (CLKBUF_X3)
+                                         clknet_5_10_0_clk (net)
+                  0.04    0.01    3.80 ^ clkbuf_8_83_0_clk/A (CLKBUF_X3)
+     2    8.44    0.01    0.05    3.85 ^ clkbuf_8_83_0_clk/Z (CLKBUF_X3)
+                                         clknet_8_83_0_clk (net)
+                  0.01    0.00    3.85 ^ clkbuf_9_166__f_clk/A (CLKBUF_X3)
+     6   24.80    0.02    0.05    3.89 ^ clkbuf_9_166__f_clk/Z (CLKBUF_X3)
+                                         clknet_9_166__leaf_clk (net)
+                  0.02    0.00    3.90 ^ clkbuf_leaf_1081_clk/A (CLKBUF_X3)
+     7    9.59    0.01    0.04    3.94 ^ clkbuf_leaf_1081_clk/Z (CLKBUF_X3)
+                                         clknet_leaf_1081_clk (net)
+                  0.01    0.00    3.94 ^ $auto$ff.cc:337:slice$570678/CK (DFF_X1)
+                         -0.10    3.84   clock uncertainty
+                          0.00    3.84   clock reconvergence pessimism
+                         -0.04    3.80   library setup time
+                                  3.80   data required time
+-----------------------------------------------------------------------------
+                                  3.80   data required time
+                                 -3.88   data arrival time
+-----------------------------------------------------------------------------
+                                 -0.08   slack (VIOLATED)
+
+
+
+==========================================================================
+global route report_checks -unconstrained
+--------------------------------------------------------------------------
+Startpoint: $auto$ff.cc:337:slice$607595
+            (rising edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$570678
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                          0.00    0.00   clock core (rise edge)
+                          0.00    0.00   clock source latency
+     2   57.98    0.00    0.00    0.00 ^ clk (in)
+                                         clk (net)
+                  0.02    0.02    0.02 ^ wire147501/A (BUF_X8)
+     1   47.93    0.01    0.03    0.04 ^ wire147501/Z (BUF_X8)
+                                         net147501 (net)
+                  0.02    0.01    0.06 ^ clkbuf_0_clk/A (CLKBUF_X3)
+     2   49.68    0.04    0.07    0.13 ^ clkbuf_0_clk/Z (CLKBUF_X3)
+                                         clknet_0_clk (net)
+                  0.04    0.01    0.14 ^ clkbuf_1_1_0_clk/A (CLKBUF_X3)
+     2   25.78    0.02    0.06    0.19 ^ clkbuf_1_1_0_clk/Z (CLKBUF_X3)
+                                         clknet_1_1_0_clk (net)
+                  0.02    0.00    0.20 ^ clkbuf_2_2_0_clk/A (CLKBUF_X3)
+     1   33.81    0.03    0.06    0.26 ^ clkbuf_2_2_0_clk/Z (CLKBUF_X3)
+                                         clknet_2_2_0_clk (net)
+                  0.03    0.01    0.26 ^ clkbuf_2_2_1_clk/A (CLKBUF_X3)
+     4   45.24    0.04    0.07    0.33 ^ clkbuf_2_2_1_clk/Z (CLKBUF_X3)
+                                         clknet_2_2_1_clk (net)
+                  0.04    0.00    0.34 ^ clkbuf_4_8_0_clk/A (CLKBUF_X3)
+     2   33.59    0.03    0.06    0.40 ^ clkbuf_4_8_0_clk/Z (CLKBUF_X3)
+                                         clknet_4_8_0_clk (net)
+                  0.03    0.01    0.41 ^ clkbuf_5_17_0_clk/A (CLKBUF_X3)
+     8   52.89    0.04    0.08    0.48 ^ clkbuf_5_17_0_clk/Z (CLKBUF_X3)
+                                         clknet_5_17_0_clk (net)
+                  0.04    0.01    0.49 ^ clkbuf_8_142_0_clk/A (CLKBUF_X3)
+     2    8.28    0.01    0.05    0.53 ^ clkbuf_8_142_0_clk/Z (CLKBUF_X3)
+                                         clknet_8_142_0_clk (net)
+                  0.01    0.00    0.53 ^ clkbuf_9_285__f_clk/A (CLKBUF_X3)
+    11   31.45    0.03    0.05    0.59 ^ clkbuf_9_285__f_clk/Z (CLKBUF_X3)
+                                         clknet_9_285__leaf_clk (net)
+                  0.03    0.00    0.59 ^ clkbuf_leaf_2910_clk/A (CLKBUF_X3)
+     7    9.68    0.01    0.04    0.63 ^ clkbuf_leaf_2910_clk/Z (CLKBUF_X3)
+                                         clknet_leaf_2910_clk (net)
+                  0.01    0.00    0.63 ^ $auto$ff.cc:337:slice$607595/CK (DFF_X1)
+     2    7.20    0.01    0.09    0.72 v $auto$ff.cc:337:slice$607595/Q (DFF_X1)
+                                         product[4][4] (net)
+                  0.01    0.00    0.72 v place128461/A (BUF_X8)
+     4   53.74    0.01    0.03    0.75 v place128461/Z (BUF_X8)
+                                         net128461 (net)
+                  0.02    0.02    0.77 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680688/A (XNOR2_X1)
+     2    4.80    0.01    0.05    0.82 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680688/ZN (XNOR2_X1)
+                                         $abc$1386558$new_n344489 (net)
+                  0.01    0.00    0.82 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680700/A (AOI211_X1)
+     1    1.70    0.04    0.07    0.89 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680700/ZN (AOI211_X1)
+                                         $abc$1386558$new_n344501 (net)
+                  0.04    0.00    0.89 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680701/A (AOI21_X1)
+     2    3.09    0.01    0.02    0.91 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680701/ZN (AOI21_X1)
+                                         $abc$1386558$new_n344502 (net)
+                  0.01    0.00    0.91 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680703/C1 (AOI211_X1)
+     1    1.39    0.03    0.04    0.95 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680703/ZN (AOI211_X1)
+                                         $abc$1386558$new_n344504 (net)
+                  0.03    0.00    0.95 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680704/A2 (OR2_X1)
+     2    4.44    0.01    0.04    0.99 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680704/ZN (OR2_X1)
+                                         $abc$1386558$new_n344505 (net)
+                  0.01    0.00    0.99 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680705/B1 (OAI21_X1)
+     2    4.50    0.01    0.02    1.01 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680705/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344506 (net)
+                  0.01    0.00    1.01 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680706/B2 (OAI21_X2)
+     2    5.99    0.02    0.04    1.05 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680706/ZN (OAI21_X2)
+                                         $abc$1386558$new_n344507 (net)
+                  0.02    0.00    1.05 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680707/B1 (OAI21_X1)
+     2    3.07    0.01    0.02    1.07 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680707/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344508 (net)
+                  0.01    0.00    1.07 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680708/B2 (OAI21_X1)
+     2    3.31    0.03    0.04    1.11 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680708/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344509 (net)
+                  0.03    0.00    1.11 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680709/B1 (OAI21_X1)
+     2    3.27    0.01    0.02    1.13 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680709/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344510 (net)
+                  0.01    0.00    1.13 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680710/B2 (OAI21_X1)
+     2    2.88    0.02    0.04    1.17 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680710/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344511 (net)
+                  0.02    0.00    1.17 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680711/B1 (OAI21_X1)
+     2    2.83    0.01    0.02    1.19 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680711/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344512 (net)
+                  0.01    0.00    1.19 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680712/B2 (OAI21_X1)
+     2    3.36    0.03    0.04    1.23 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680712/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344513 (net)
+                  0.03    0.00    1.23 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680713/B1 (AOI21_X1)
+     2    2.96    0.01    0.02    1.25 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680713/ZN (AOI21_X1)
+                                         $abc$1386558$new_n344514 (net)
+                  0.01    0.00    1.25 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680714/B2 (OAI21_X1)
+     2    3.68    0.03    0.04    1.30 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680714/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344515 (net)
+                  0.03    0.00    1.30 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680715/B1 (OAI21_X1)
+     2    3.33    0.01    0.02    1.32 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680715/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344516 (net)
+                  0.01    0.00    1.32 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680716/B2 (OAI21_X1)
+     2    3.54    0.03    0.04    1.36 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680716/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344517 (net)
+                  0.03    0.00    1.36 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680717/B1 (AOI21_X1)
+     2    2.70    0.01    0.02    1.38 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680717/ZN (AOI21_X1)
+                                         $abc$1386558$new_n344518 (net)
+                  0.01    0.00    1.38 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680718/B2 (OAI21_X1)
+     2    3.62    0.03    0.04    1.43 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680718/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344519 (net)
+                  0.03    0.00    1.43 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680719/B1 (OAI21_X1)
+     2    2.88    0.01    0.02    1.45 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680719/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344520 (net)
+                  0.01    0.00    1.45 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680720/B2 (OAI21_X1)
+     2    3.45    0.03    0.04    1.49 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680720/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344521 (net)
+                  0.03    0.00    1.49 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680721/B1 (AOI21_X1)
+     2    3.84    0.01    0.02    1.51 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680721/ZN (AOI21_X1)
+                                         $abc$1386558$new_n344522 (net)
+                  0.01    0.00    1.51 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680722/B2 (OAI21_X1)
+     2    3.30    0.03    0.04    1.56 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680722/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344523 (net)
+                  0.03    0.00    1.56 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680723/A (OAI21_X1)
+     1    1.06    0.02    0.02    1.58 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680723/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344524 (net)
+                  0.02    0.00    1.58 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680724/A2 (AND2_X1)
+     2    2.72    0.01    0.04    1.61 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680724/ZN (AND2_X1)
+                                         $abc$1386558$new_n344525 (net)
+                  0.01    0.00    1.61 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680725/B2 (OAI21_X1)
+     2    3.30    0.03    0.04    1.65 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680725/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344526 (net)
+                  0.03    0.00    1.65 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680727/C1 (OAI211_X1)
+     2    3.55    0.02    0.03    1.68 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680727/ZN (OAI211_X1)
+                                         $abc$1386558$new_n344528 (net)
+                  0.02    0.00    1.68 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680729/A3 (NAND3_X1)
+     1    1.90    0.01    0.03    1.71 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680729/ZN (NAND3_X1)
+                                         $abc$1386558$new_n344530 (net)
+                  0.01    0.00    1.71 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680730/A (OAI21_X1)
+     2    4.82    0.02    0.03    1.73 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680730/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344531 (net)
+                  0.02    0.00    1.73 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680731/B2 (OAI21_X2)
+     1   10.37    0.03    0.05    1.79 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680731/ZN (OAI21_X2)
+                                         $abc$1386558$new_n344532 (net)
+                  0.03    0.00    1.79 ^ place98563/A (BUF_X4)
+     2   19.40    0.01    0.03    1.82 ^ place98563/Z (BUF_X4)
+                                         net98563 (net)
+                  0.01    0.00    1.83 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680732/B1 (AOI21_X1)
+     1    5.62    0.01    0.02    1.85 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680732/ZN (AOI21_X1)
+                                         $abc$1386558$new_n344533 (net)
+                  0.01    0.00    1.85 v place98529/A (BUF_X4)
+     3   25.77    0.01    0.03    1.88 v place98529/Z (BUF_X4)
+                                         net98529 (net)
+                  0.01    0.00    1.89 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680734/A2 (OR3_X1)
+     2    3.33    0.02    0.08    1.97 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680734/ZN (OR3_X1)
+                                         $abc$1386558$new_n344535 (net)
+                  0.02    0.00    1.97 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680741/B2 (OAI21_X1)
+     2    3.43    0.03    0.04    2.01 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680741/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344542 (net)
+                  0.03    0.00    2.01 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680742/A2 (NAND2_X1)
+     2    4.47    0.02    0.02    2.04 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680742/ZN (NAND2_X1)
+                                         $abc$1386558$new_n344543 (net)
+                  0.02    0.00    2.04 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680743/B2 (OAI22_X2)
+     2    4.96    0.03    0.05    2.09 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680743/ZN (OAI22_X2)
+                                         $abc$1386558$new_n344544 (net)
+                  0.03    0.00    2.09 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680744/A2 (NAND2_X1)
+     2    2.68    0.01    0.02    2.11 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680744/ZN (NAND2_X1)
+                                         $abc$1386558$new_n344545 (net)
+                  0.01    0.00    2.11 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680746/A1 (OR2_X1)
+     2    4.53    0.01    0.05    2.16 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680746/ZN (OR2_X1)
+                                         $abc$1386558$new_n344547 (net)
+                  0.01    0.00    2.16 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680751/B1 (OAI22_X2)
+     2    4.35    0.03    0.04    2.20 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680751/ZN (OAI22_X2)
+                                         $abc$1386558$new_n344552 (net)
+                  0.03    0.00    2.20 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680753/A1 (NAND2_X1)
+     2    4.36    0.02    0.03    2.23 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680753/ZN (NAND2_X1)
+                                         $abc$1386558$new_n344554 (net)
+                  0.02    0.00    2.23 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680754/B2 (OAI22_X2)
+     3    6.03    0.04    0.05    2.28 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680754/ZN (OAI22_X2)
+                                         $abc$1386558$new_n344555 (net)
+                  0.04    0.00    2.28 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680757/A2 (NAND3_X1)
+     2    2.96    0.02    0.03    2.31 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680757/ZN (NAND3_X1)
+                                         $abc$1386558$new_n344558 (net)
+                  0.02    0.00    2.31 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680762/B1 (OAI22_X1)
+     2    2.36    0.03    0.05    2.36 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680762/ZN (OAI22_X1)
+                                         $abc$1386558$new_n344563 (net)
+                  0.03    0.00    2.36 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680764/A1 (AND2_X1)
+     2    3.02    0.01    0.04    2.40 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680764/ZN (AND2_X1)
+                                         $abc$1386558$new_n344565 (net)
+                  0.01    0.00    2.40 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680772/A1 (NAND3_X1)
+     1    1.14    0.01    0.02    2.42 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680772/ZN (NAND3_X1)
+                                         $abc$1386558$new_n344573 (net)
+                  0.01    0.00    2.42 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680773/A2 (AND2_X1)
+     2    2.11    0.01    0.03    2.45 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680773/ZN (AND2_X1)
+                                         $abc$1386558$new_n344574 (net)
+                  0.01    0.00    2.45 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680774/A2 (OR2_X1)
+     2    2.17    0.01    0.05    2.50 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680774/ZN (OR2_X1)
+                                         $abc$1386558$new_n344575 (net)
+                  0.01    0.00    2.50 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680776/A1 (OR2_X1)
+     2    3.43    0.01    0.05    2.55 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680776/ZN (OR2_X1)
+                                         $abc$1386558$new_n344577 (net)
+                  0.01    0.00    2.55 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680804/A (OAI21_X1)
+     2    4.36    0.03    0.03    2.58 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680804/ZN (OAI21_X1)
+                                         $abc$1386558$new_n344605 (net)
+                  0.03    0.00    2.58 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680954/B (XOR2_X1)
+     2    3.18    0.03    0.06    2.63 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680954/Z (XOR2_X1)
+                                         $abc$1386558$new_n344755 (net)
+                  0.03    0.00    2.63 ^ place97725/A (BUF_X1)
+     3    5.36    0.01    0.04    2.67 ^ place97725/Z (BUF_X1)
+                                         net97725 (net)
+                  0.01    0.00    2.67 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680997/A1 (NAND3_X1)
+     3    6.48    0.02    0.03    2.70 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680997/ZN (NAND3_X1)
+                                         $abc$1386558$new_n344798 (net)
+                  0.02    0.00    2.70 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1681030/A3 (NOR3_X2)
+     2    4.03    0.03    0.06    2.76 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1681030/ZN (NOR3_X2)
+                                         $abc$1386558$new_n344831 (net)
+                  0.03    0.00    2.76 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1681031/A2 (NOR2_X1)
+     2    3.91    0.01    0.02    2.78 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1681031/ZN (NOR2_X1)
+                                         $abc$1386558$new_n344832 (net)
+                  0.01    0.00    2.78 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1681060/A3 (NOR4_X1)
+     1    2.77    0.05    0.09    2.87 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1681060/ZN (NOR4_X1)
+                                         $abc$1386558$new_n344861 (net)
+                  0.05    0.00    2.87 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1681061/A4 (NAND4_X1)
+     1    4.94    0.03    0.05    2.91 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1681061/ZN (NAND4_X1)
+                                         $abc$1386558$new_n344862 (net)
+                  0.03    0.00    2.91 v place96427/A (BUF_X4)
+     1   29.45    0.01    0.04    2.95 v place96427/Z (BUF_X4)
+                                         net96427 (net)
+                  0.01    0.01    2.96 v wire153603/A (BUF_X8)
+     2  109.07    0.02    0.04    3.00 v wire153603/Z (BUF_X8)
+                                         net153603 (net)
+                  0.02    0.01    3.01 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1681062/A2 (AND2_X4)
+     6   23.87    0.01    0.04    3.05 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1681062/ZN (AND2_X4)
+                                         $abc$1386558$new_n344863 (net)
+                  0.01    0.00    3.05 v place93790/A (BUF_X8)
+     8   36.39    0.01    0.03    3.08 v place93790/Z (BUF_X8)
+                                         net93790 (net)
+                  0.01    0.01    3.09 v place93788/A (BUF_X4)
+     4   16.17    0.01    0.03    3.12 v place93788/Z (BUF_X4)
+                                         net93788 (net)
+                  0.01    0.00    3.12 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1683116/A1 (NOR2_X2)
+     1    6.81    0.02    0.03    3.15 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1683116/ZN (NOR2_X2)
+                                         $abc$1386558$new_n346917 (net)
+                  0.02    0.00    3.15 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1683117/A2 (NOR2_X4)
+     2   11.92    0.01    0.02    3.16 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1683117/ZN (NOR2_X4)
+                                         $abc$1386558$new_n346918 (net)
+                  0.01    0.00    3.16 v place90305/A (BUF_X8)
+     4  276.72    0.01    0.03    3.19 v place90305/Z (BUF_X8)
+                                         net90305 (net)
+                  0.33    0.27    3.46 v place90304/A (BUF_X16)
+     4   53.63    0.02    0.10    3.56 v place90304/Z (BUF_X16)
+                                         net90304 (net)
+                  0.02    0.02    3.58 v place90303/A (BUF_X8)
+     4   49.76    0.01    0.04    3.62 v place90303/Z (BUF_X8)
+                                         net90303 (net)
+                  0.01    0.01    3.63 v place90302/A (BUF_X2)
+     6   28.27    0.02    0.04    3.67 v place90302/Z (BUF_X2)
+                                         net90302 (net)
+                  0.02    0.00    3.67 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1720135/C2 (OAI211_X1)
+     1    6.53    0.04    0.06    3.74 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1720135/ZN (OAI211_X1)
+                                         $abc$1386558$new_n383936 (net)
+                  0.04    0.00    3.74 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1720136/B (OAI211_X1)
+     1    1.75    0.03    0.03    3.77 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1720136/ZN (OAI211_X1)
+                                         $abc$1386558$new_n383937 (net)
+                  0.03    0.00    3.77 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1720137/B (OAI211_X1)
+     1    6.29    0.04    0.04    3.81 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1720137/ZN (OAI211_X1)
+                                         $abc$1386558$new_n383938 (net)
+                  0.04    0.00    3.81 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1720138/B (OAI211_X1)
+     1    3.33    0.03    0.04    3.85 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1720138/ZN (OAI211_X1)
+                                         $abc$1386558$new_n383939 (net)
+                  0.03    0.00    3.85 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1720139/A (OAI21_X1)
+     1    1.35    0.03    0.03    3.88 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1720139/ZN (OAI21_X1)
+                                         $abc$1386558$auto$rtlil.cc:3513:MuxGate$1344040 (net)
+                  0.03    0.00    3.88 ^ $auto$ff.cc:337:slice$570678/D (DFF_X1)
+                                  3.88   data arrival time
+
+                          3.33    3.33   clock core (rise edge)
+                          0.00    3.33   clock source latency
+     2   57.98    0.00    0.00    3.33 ^ clk (in)
+                                         clk (net)
+                  0.02    0.02    3.35 ^ wire147501/A (BUF_X8)
+     1   47.93    0.01    0.03    3.38 ^ wire147501/Z (BUF_X8)
+                                         net147501 (net)
+                  0.02    0.01    3.39 ^ clkbuf_0_clk/A (CLKBUF_X3)
+     2   49.68    0.04    0.07    3.46 ^ clkbuf_0_clk/Z (CLKBUF_X3)
+                                         clknet_0_clk (net)
+                  0.04    0.00    3.47 ^ clkbuf_1_0_0_clk/A (CLKBUF_X3)
+     2   25.79    0.02    0.06    3.53 ^ clkbuf_1_0_0_clk/Z (CLKBUF_X3)
+                                         clknet_1_0_0_clk (net)
+                  0.02    0.00    3.53 ^ clkbuf_2_1_0_clk/A (CLKBUF_X3)
+     1   30.10    0.02    0.06    3.59 ^ clkbuf_2_1_0_clk/Z (CLKBUF_X3)
+                                         clknet_2_1_0_clk (net)
+                  0.03    0.01    3.59 ^ clkbuf_2_1_1_clk/A (CLKBUF_X3)
+     4   38.91    0.03    0.06    3.65 ^ clkbuf_2_1_1_clk/Z (CLKBUF_X3)
+                                         clknet_2_1_1_clk (net)
+                  0.03    0.01    3.66 ^ clkbuf_4_5_0_clk/A (CLKBUF_X3)
+     2   29.33    0.02    0.06    3.72 ^ clkbuf_4_5_0_clk/Z (CLKBUF_X3)
+                                         clknet_4_5_0_clk (net)
+                  0.02    0.01    3.72 ^ clkbuf_5_10_0_clk/A (CLKBUF_X3)
+     8   50.49    0.04    0.07    3.79 ^ clkbuf_5_10_0_clk/Z (CLKBUF_X3)
+                                         clknet_5_10_0_clk (net)
+                  0.04    0.01    3.80 ^ clkbuf_8_83_0_clk/A (CLKBUF_X3)
+     2    8.44    0.01    0.05    3.85 ^ clkbuf_8_83_0_clk/Z (CLKBUF_X3)
+                                         clknet_8_83_0_clk (net)
+                  0.01    0.00    3.85 ^ clkbuf_9_166__f_clk/A (CLKBUF_X3)
+     6   24.80    0.02    0.05    3.89 ^ clkbuf_9_166__f_clk/Z (CLKBUF_X3)
+                                         clknet_9_166__leaf_clk (net)
+                  0.02    0.00    3.90 ^ clkbuf_leaf_1081_clk/A (CLKBUF_X3)
+     7    9.59    0.01    0.04    3.94 ^ clkbuf_leaf_1081_clk/Z (CLKBUF_X3)
+                                         clknet_leaf_1081_clk (net)
+                  0.01    0.00    3.94 ^ $auto$ff.cc:337:slice$570678/CK (DFF_X1)
+                         -0.10    3.84   clock uncertainty
+                          0.00    3.84   clock reconvergence pessimism
+                         -0.04    3.80   library setup time
+                                  3.80   data required time
+-----------------------------------------------------------------------------
+                                  3.80   data required time
+                                 -3.88   data arrival time
+-----------------------------------------------------------------------------
+                                 -0.08   slack (VIOLATED)
+
+
+
+==========================================================================
+global route report_check_types -max_slew -max_cap -max_fanout -violators
+--------------------------------------------------------------------------
+max slew
+
+Pin                                    Limit    Slew   Slack
+------------------------------------------------------------
+place107676/Z                           0.20    0.40   -0.20 (VIOLATED)
+place118855/Z                           0.20    0.27   -0.07 (VIOLATED)
+place103753/Z                           0.20    0.21   -0.02 (VIOLATED)
+$flatten\\function_unit.$abc$1784688$auto$blifparse.cc:397:parse_blif$1802174/ZN    0.20    0.21   -0.01 (VIOLATED)
+
+max capacitance
+
+Pin                                    Limit     Cap   Slack
+------------------------------------------------------------
+place118855/Z                         121.15  246.15 -125.00 (VIOLATED)
+
+place107676/Z                          60.65  180.51 -119.86 (VIOLATED)
+
+wire153532/Z                          242.31  337.91  -95.60 (VIOLATED)
+
+place103753/Z                         121.15  210.97  -89.82 (VIOLATED)
+
+wire153623/Z                          242.31  304.38  -62.07 (VIOLATED)
+
+wire154793/Z                          242.31  296.70  -54.39 (VIOLATED)
+
+$flatten\\function_unit.$abc$1784688$auto$blifparse.cc:397:parse_blif$1802174/ZN   59.36   90.99  -31.64 (VIOLATED)
+
+$abc$1386558$auto$blifparse.cc:397:parse_blif$1628869/ZN  101.01  123.11  -22.10 (VIOLATED)
+
+$abc$1386558$auto$blifparse.cc:397:parse_blif$1689428/ZN  237.43  257.14  -19.72 (VIOLATED)
+
+$abc$1386558$auto$blifparse.cc:397:parse_blif$1457015/ZN   58.36   77.60  -19.24 (VIOLATED)
+
+$abc$1386558$auto$blifparse.cc:397:parse_blif$1678005/Z   60.50   68.23   -7.73 (VIOLATED)
+
+
+==========================================================================
+global route max_slew_check_slack
+--------------------------------------------------------------------------
+-0.20028121769428253
+
+==========================================================================
+global route max_slew_check_limit
+--------------------------------------------------------------------------
+0.1985349953174591
+
+==========================================================================
+global route max_slew_check_slack_limit
+--------------------------------------------------------------------------
+-1.0088
+
+==========================================================================
+global route max_fanout_check_slack
+--------------------------------------------------------------------------
+1.0000000150474662e+30
+
+==========================================================================
+global route max_fanout_check_limit
+--------------------------------------------------------------------------
+1.0000000150474662e+30
+
+==========================================================================
+global route max_capacitance_check_slack
+--------------------------------------------------------------------------
+-124.99532318115234
+
+==========================================================================
+global route max_capacitance_check_limit
+--------------------------------------------------------------------------
+121.15499877929688
+
+==========================================================================
+global route max_capacitance_check_slack_limit
+--------------------------------------------------------------------------
+-1.0317
+
+==========================================================================
+global route max_slew_violation_count
+--------------------------------------------------------------------------
+max slew violation count 4
+
+==========================================================================
+global route max_fanout_violation_count
+--------------------------------------------------------------------------
+max fanout violation count 0
+
+==========================================================================
+global route max_cap_violation_count
+--------------------------------------------------------------------------
+max cap violation count 11
+
+==========================================================================
+global route setup_violation_count
+--------------------------------------------------------------------------
+setup violation count 49
+
+==========================================================================
+global route hold_violation_count
+--------------------------------------------------------------------------
+hold violation count 0
+
+==========================================================================
+global route report_checks -path_delay max reg to reg
+--------------------------------------------------------------------------
+Startpoint: $auto$ff.cc:337:slice$607595
+            (rising edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$570678
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+  Delay    Time   Description
+---------------------------------------------------------
+   0.00    0.00   clock core (rise edge)
+   0.00    0.00   clock source latency
+   0.00    0.00 ^ clk (in)
+   0.04    0.04 ^ wire147501/Z (BUF_X8)
+   0.08    0.13 ^ clkbuf_0_clk/Z (CLKBUF_X3)
+   0.06    0.19 ^ clkbuf_1_1_0_clk/Z (CLKBUF_X3)
+   0.06    0.26 ^ clkbuf_2_2_0_clk/Z (CLKBUF_X3)
+   0.08    0.33 ^ clkbuf_2_2_1_clk/Z (CLKBUF_X3)
+   0.07    0.40 ^ clkbuf_4_8_0_clk/Z (CLKBUF_X3)
+   0.08    0.48 ^ clkbuf_5_17_0_clk/Z (CLKBUF_X3)
+   0.05    0.53 ^ clkbuf_8_142_0_clk/Z (CLKBUF_X3)
+   0.05    0.59 ^ clkbuf_9_285__f_clk/Z (CLKBUF_X3)
+   0.04    0.63 ^ clkbuf_leaf_2910_clk/Z (CLKBUF_X3)
+   0.00    0.63 ^ $auto$ff.cc:337:slice$607595/CK (DFF_X1)
+   0.09    0.72 v $auto$ff.cc:337:slice$607595/Q (DFF_X1)
+   0.03    0.75 v place128461/Z (BUF_X8)
+   0.07    0.82 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680688/ZN (XNOR2_X1)
+   0.07    0.89 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680700/ZN (AOI211_X1)
+   0.02    0.91 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680701/ZN (AOI21_X1)
+   0.04    0.95 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680703/ZN (AOI211_X1)
+   0.04    0.99 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680704/ZN (OR2_X1)
+   0.02    1.01 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680705/ZN (OAI21_X1)
+   0.04    1.05 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680706/ZN (OAI21_X2)
+   0.02    1.07 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680707/ZN (OAI21_X1)
+   0.04    1.11 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680708/ZN (OAI21_X1)
+   0.02    1.13 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680709/ZN (OAI21_X1)
+   0.04    1.17 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680710/ZN (OAI21_X1)
+   0.02    1.19 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680711/ZN (OAI21_X1)
+   0.04    1.23 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680712/ZN (OAI21_X1)
+   0.02    1.25 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680713/ZN (AOI21_X1)
+   0.04    1.30 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680714/ZN (OAI21_X1)
+   0.02    1.32 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680715/ZN (OAI21_X1)
+   0.04    1.36 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680716/ZN (OAI21_X1)
+   0.02    1.38 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680717/ZN (AOI21_X1)
+   0.04    1.43 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680718/ZN (OAI21_X1)
+   0.02    1.45 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680719/ZN (OAI21_X1)
+   0.04    1.49 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680720/ZN (OAI21_X1)
+   0.02    1.51 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680721/ZN (AOI21_X1)
+   0.04    1.56 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680722/ZN (OAI21_X1)
+   0.02    1.58 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680723/ZN (OAI21_X1)
+   0.04    1.61 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680724/ZN (AND2_X1)
+   0.04    1.65 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680725/ZN (OAI21_X1)
+   0.03    1.68 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680727/ZN (OAI211_X1)
+   0.03    1.71 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680729/ZN (NAND3_X1)
+   0.03    1.73 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680730/ZN (OAI21_X1)
+   0.05    1.79 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680731/ZN (OAI21_X2)
+   0.03    1.82 ^ place98563/Z (BUF_X4)
+   0.03    1.85 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680732/ZN (AOI21_X1)
+   0.03    1.88 v place98529/Z (BUF_X4)
+   0.09    1.97 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680734/ZN (OR3_X1)
+   0.04    2.01 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680741/ZN (OAI21_X1)
+   0.02    2.04 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680742/ZN (NAND2_X1)
+   0.05    2.09 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680743/ZN (OAI22_X2)
+   0.02    2.11 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680744/ZN (NAND2_X1)
+   0.05    2.16 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680746/ZN (OR2_X1)
+   0.04    2.20 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680751/ZN (OAI22_X2)
+   0.03    2.23 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680753/ZN (NAND2_X1)
+   0.05    2.28 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680754/ZN (OAI22_X2)
+   0.03    2.31 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680757/ZN (NAND3_X1)
+   0.05    2.36 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680762/ZN (OAI22_X1)
+   0.04    2.40 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680764/ZN (AND2_X1)
+   0.02    2.42 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680772/ZN (NAND3_X1)
+   0.03    2.45 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680773/ZN (AND2_X1)
+   0.05    2.50 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680774/ZN (OR2_X1)
+   0.05    2.55 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680776/ZN (OR2_X1)
+   0.03    2.58 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680804/ZN (OAI21_X1)
+   0.06    2.63 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1680954/Z (XOR2_X1)
+   0.04    2.67 ^ place97725/Z (BUF_X1)
+   0.03    2.70 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1680997/ZN (NAND3_X1)
+   0.06    2.76 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1681030/ZN (NOR3_X2)
+   0.02    2.78 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1681031/ZN (NOR2_X1)
+   0.09    2.87 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1681060/ZN (NOR4_X1)
+   0.05    2.91 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1681061/ZN (NAND4_X1)
+   0.04    2.95 v place96427/Z (BUF_X4)
+   0.05    3.00 v wire153603/Z (BUF_X8)
+   0.05    3.05 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1681062/ZN (AND2_X4)
+   0.03    3.08 v place93790/Z (BUF_X8)
+   0.04    3.12 v place93788/Z (BUF_X4)
+   0.03    3.15 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1683116/ZN (NOR2_X2)
+   0.02    3.16 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1683117/ZN (NOR2_X4)
+   0.03    3.19 v place90305/Z (BUF_X8)
+   0.37    3.56 v place90304/Z (BUF_X16)
+   0.05    3.62 v place90303/Z (BUF_X8)
+   0.05    3.67 v place90302/Z (BUF_X2)
+   0.07    3.74 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1720135/ZN (OAI211_X1)
+   0.03    3.77 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1720136/ZN (OAI211_X1)
+   0.04    3.81 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1720137/ZN (OAI211_X1)
+   0.04    3.85 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1720138/ZN (OAI211_X1)
+   0.03    3.88 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1720139/ZN (OAI21_X1)
+   0.00    3.88 ^ $auto$ff.cc:337:slice$570678/D (DFF_X1)
+           3.88   data arrival time
+
+   3.33    3.33   clock core (rise edge)
+   0.00    3.33   clock source latency
+   0.00    3.33 ^ clk (in)
+   0.04    3.38 ^ wire147501/Z (BUF_X8)
+   0.08    3.46 ^ clkbuf_0_clk/Z (CLKBUF_X3)
+   0.06    3.53 ^ clkbuf_1_0_0_clk/Z (CLKBUF_X3)
+   0.06    3.59 ^ clkbuf_2_1_0_clk/Z (CLKBUF_X3)
+   0.07    3.65 ^ clkbuf_2_1_1_clk/Z (CLKBUF_X3)
+   0.06    3.72 ^ clkbuf_4_5_0_clk/Z (CLKBUF_X3)
+   0.08    3.79 ^ clkbuf_5_10_0_clk/Z (CLKBUF_X3)
+   0.05    3.85 ^ clkbuf_8_83_0_clk/Z (CLKBUF_X3)
+   0.05    3.89 ^ clkbuf_9_166__f_clk/Z (CLKBUF_X3)
+   0.04    3.94 ^ clkbuf_leaf_1081_clk/Z (CLKBUF_X3)
+   0.00    3.94 ^ $auto$ff.cc:337:slice$570678/CK (DFF_X1)
+  -0.10    3.84   clock uncertainty
+   0.00    3.84   clock reconvergence pessimism
+  -0.04    3.80   library setup time
+           3.80   data required time
+---------------------------------------------------------
+           3.80   data required time
+          -3.88   data arrival time
+---------------------------------------------------------
+          -0.08   slack (VIOLATED)
+
+
+
+==========================================================================
+global route report_checks -path_delay min reg to reg
+--------------------------------------------------------------------------
+Startpoint: $auto$ff.cc:337:slice$1302707
+            (rising edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$1302707
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: min
+
+  Delay    Time   Description
+---------------------------------------------------------
+   0.00    0.00   clock core (rise edge)
+   0.00    0.00   clock source latency
+   0.00    0.00 ^ clk (in)
+   0.04    0.04 ^ wire147501/Z (BUF_X8)
+   0.08    0.13 ^ clkbuf_0_clk/Z (CLKBUF_X3)
+   0.06    0.19 ^ clkbuf_1_1_0_clk/Z (CLKBUF_X3)
+   0.06    0.26 ^ clkbuf_2_2_0_clk/Z (CLKBUF_X3)
+   0.08    0.33 ^ clkbuf_2_2_1_clk/Z (CLKBUF_X3)
+   0.06    0.40 ^ clkbuf_4_9_0_clk/Z (CLKBUF_X3)
+   0.08    0.48 ^ clkbuf_5_19_0_clk/Z (CLKBUF_X3)
+   0.05    0.52 ^ clkbuf_8_154_0_clk/Z (CLKBUF_X3)
+   0.04    0.57 ^ clkbuf_9_309__f_clk/Z (CLKBUF_X3)
+   0.04    0.61 ^ clkbuf_leaf_3297_clk/Z (CLKBUF_X3)
+   0.00    0.61 ^ $auto$ff.cc:337:slice$1302707/CK (DFF_X1)
+   0.10    0.71 ^ $auto$ff.cc:337:slice$1302707/Q (DFF_X1)
+   0.02    0.73 v $abc$1386558$auto$blifparse.cc:397:parse_blif$1520695/ZN (OAI21_X1)
+   0.01    0.74 ^ $abc$1386558$auto$blifparse.cc:397:parse_blif$1520696/ZN (INV_X1)
+   0.00    0.74 ^ $auto$ff.cc:337:slice$1302707/D (DFF_X1)
+           0.74   data arrival time
+
+   0.00    0.00   clock core (rise edge)
+   0.00    0.00   clock source latency
+   0.00    0.00 ^ clk (in)
+   0.04    0.04 ^ wire147501/Z (BUF_X8)
+   0.08    0.13 ^ clkbuf_0_clk/Z (CLKBUF_X3)
+   0.06    0.19 ^ clkbuf_1_1_0_clk/Z (CLKBUF_X3)
+   0.06    0.26 ^ clkbuf_2_2_0_clk/Z (CLKBUF_X3)
+   0.08    0.33 ^ clkbuf_2_2_1_clk/Z (CLKBUF_X3)
+   0.06    0.40 ^ clkbuf_4_9_0_clk/Z (CLKBUF_X3)
+   0.08    0.48 ^ clkbuf_5_19_0_clk/Z (CLKBUF_X3)
+   0.05    0.52 ^ clkbuf_8_154_0_clk/Z (CLKBUF_X3)
+   0.04    0.57 ^ clkbuf_9_309__f_clk/Z (CLKBUF_X3)
+   0.04    0.61 ^ clkbuf_leaf_3297_clk/Z (CLKBUF_X3)
+   0.00    0.61 ^ $auto$ff.cc:337:slice$1302707/CK (DFF_X1)
+   0.10    0.71   clock uncertainty
+   0.00    0.71   clock reconvergence pessimism
+   0.01    0.72   library hold time
+           0.72   data required time
+---------------------------------------------------------
+           0.72   data required time
+          -0.74   data arrival time
+---------------------------------------------------------
+           0.02   slack (MET)
+
+
+
+==========================================================================
+global route critical path target clock latency max path
+--------------------------------------------------------------------------
+0.6146
+
+==========================================================================
+global route critical path target clock latency min path
+--------------------------------------------------------------------------
+0.6292
+
+==========================================================================
+global route critical path source clock latency min path
+--------------------------------------------------------------------------
+0.0000
+
+==========================================================================
+global route critical path delay
+--------------------------------------------------------------------------
+3.8791
+
+==========================================================================
+global route critical path slack
+--------------------------------------------------------------------------
+-0.0783
+
+==========================================================================
+global route slack div critical path delay
+--------------------------------------------------------------------------
+-2.018509
+
+==========================================================================
+global route report_power
+--------------------------------------------------------------------------
+Group                  Internal  Switching    Leakage      Total
+                          Power      Power      Power      Power (Watts)
+----------------------------------------------------------------
+Sequential             6.30e-02   1.20e-02   1.98e-03   7.70e-02   5.3%
+Combinational          6.23e-01   6.99e-01   1.48e-02   1.34e+00  91.8%
+Clock                  1.91e-02   2.26e-02   2.17e-04   4.19e-02   2.9%
+Macro                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+Pad                    0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+----------------------------------------------------------------
+Total                  7.05e-01   7.33e-01   1.70e-02   1.46e+00 100.0%
+                          48.4%      50.4%       1.2%

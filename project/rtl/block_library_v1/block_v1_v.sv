@@ -379,7 +379,8 @@ module block_v1_v(
     end
     N_WRITE:begin
      for(i=0;i<8;i=i+1)if(offset+i<length)begin
-      rounded=rne(($signed({{63{product[i][64]}},product[i]})<<<32)+$signed({{63{low_product[i][64]}},low_product[i]}),32);
+      // Preserve full S128 merge and RNE; avoid a separate ripple carry before RNE.
+      rounded=rne(add128_grouped($signed({{63{product[i][64]}},product[i]})<<<32,$signed({{63{low_product[i][64]}},low_product[i]}),1'b0),32);
       if(rounded< -128'sd2147483648)begin rounded=-128'sd2147483648;rsp_saturated<=1;end
       if(rounded>128'sd2147483647)begin rounded=128'sd2147483647;rsp_saturated<=1;end
       output_mem[offset+i]<=rounded[31:0];
