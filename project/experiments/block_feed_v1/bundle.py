@@ -46,6 +46,10 @@ def bundle(delivery, out):
         }.get(operation, ())
         for name in names:
             add(receipt.parent / name, 'evidence/' + operation + '/' + name)
+        if operation == 'function' and index['macro'] == 'S':
+            for name in ('memory-observer.json', 'physical-pair.sv', 'physical-test-pair.cpp'):
+                assert sha(receipt.parent / name) == json.loads(receipt.read_text())['outputs'][name]
+                add(receipt.parent / name, 'evidence/function/' + name)
 
     archive = out / ('block-feed-' + index['macro'].lower() + '-native.tar.gz')
     with tarfile.open(archive, 'w:gz', compresslevel=3) as stream:
