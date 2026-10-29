@@ -101,10 +101,11 @@ def one(mode,root,resume_revision=None,profile='original'):
         physical=groups(plan,wires);rc=ROOT/'upper_layer_probe/r01/model/research12.setRC.tcl'
         rec['source_SHA']={str(p):sha(p) for p in [source,planfile,old/mode/'execution.json',base,api,wf,fixed_audit,rc]}
         if profile=='guard15':
-            probe=ROOT/'upper_guard_api/r02/execution.json';guard_proof=json.loads(probe.read_text())
+            probe=ROOT/'upper_guard_api/r03/execution.json';guard_proof=json.loads(probe.read_text())
             assert guard_proof['native_probe_returncode']==0 and guard_proof['actual_rule_readback_and_all770_assignment_verified'] and guard_proof['all_closed_sources_unchanged']
             rec['source_SHA'][str(probe)]=sha(probe)
             rec['additional_conservative_routing_constraint']={'M11_M12_width_um':.8,'M11_M12_spacing_um':1.5,
+              'all_adapter_NDR_layer_spacings_um':1.5,'allowed_routing_layers':['metal11','metal12'],
               'technology_rules_unchanged':True,'original_hook_positions_layers_rectangles_unchanged':True,
               'separate_profile_cost_not_pure_XY_gain':True,'qualification':'Same research technology; no rule relaxation or manufacturing claim'}
         selected=[];resume=None

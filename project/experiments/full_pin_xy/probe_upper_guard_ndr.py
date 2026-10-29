@@ -11,7 +11,7 @@ DRIVER=Path(__file__).resolve().parent
 def guard_tcl(out):
     return '''puts "ACTUAL_CREATE_NDR_TCL_BODY [info body create_ndr]"
 puts "ACTUAL_SET_NDR_RULES_TCL_BODY [info body set_ndr_rules]"
-create_ndr -name HPY_UPPER_GUARD_15 -width {metal11 0.8 metal12 0.8} -spacing {metal11 1.5 metal12 1.5}
+create_ndr -name HPY_UPPER_GUARD_15 -width {metal11 0.8 metal12 0.8} -spacing 1.5
 set guard NULL
 foreach rule [[ord::get_db_block] getNonDefaultRules] {if {[$rule getName] eq "HPY_UPPER_GUARD_15"} {set guard $rule}}
 if {$guard eq "NULL"} {error "Actual native NDR creation not found"}
@@ -36,6 +36,8 @@ def run(revision):
          'source_SHA':{str(p):sha(p) for p in [source,rp]},'full_qualification':False,
          'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID'],
          'guard_rule_um':{'width_M11_M12':.8,'spacing_M11_M12':1.5},
+         'all_adapter_NDR_layer_spacings_um':1.5,
+         'reason_for_all_layer_NDR_spacing':'r02 API readback showed unspecified M1-M10 NDR spacings of zero; avoid relying on fallback. Allowed routing remains only M11/M12 and all original lower material remains fixed.',
          'documentation_source':'https://openroad.readthedocs.io/en/latest/main/src/odb/README.html#create-ndr',
          'not_checked':['Actual routing','Original and NDR DRC','Pin access','Full system function/RC/STA']}
     try:
@@ -45,6 +47,7 @@ def run(revision):
         if rec['native_probe_returncode']==0:
             with (out/'actual_NDR_layer_rules.tsv').open() as f:rules={r['layer']:r for r in csv.DictReader(f,delimiter='\t')}
             assert all(int(rules[ly]['width_DBU'])==1600 and int(rules[ly]['spacing_DBU'])==3000 for ly in ['metal11','metal12'])
+            assert set(rules)=={'metal'+str(i) for i in range(1,13)} and all(int(r['spacing_DBU'])==3000 for r in rules.values())
             rec['actual_rule_readback_and_all770_assignment_verified']=True
     except Exception:rec['actual_failure']=traceback.format_exc()
     rec['all_closed_sources_unchanged']=all(sha(Path(p))==h for p,h in rec['source_SHA'].items())
