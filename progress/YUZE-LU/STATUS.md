@@ -1,3 +1,5 @@
+2026-10-29 19:04:26 CST：372轻量准入PID3047721已部署，代码1376465/配置2d51a8b，24个远端文件SHA与原归档核验、正反控制和两轮实际读回通过。仅替换366轻量控制并退休未分配365；364已有运行记录，保留正常收尾，不取消任何EDA。369等待367六行为/算术/映射与368七测量实际回执，370/371待后继；R344/345/346保留。V363/93294已自然COMPLETED/0但最终setup−0.13ns，不能接收。367六项通过、映射运行；M/S/T接收保持、V/R最终未齐，目标active、Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending、审查待指定。
+
 2026-10-29 19:00:49 CST：V363六原生阶段自然完成但最终RCX setup−0.13ns，cmd_valid→stats_sumsq[1][79]，未达300MHz。新源367命令/状态使能分离，93237现有allocation节点内五×16并发、六行为/算术项通过，映射运行；三初态各566999检查/414906拍、公共42/扩展36全部测量与361一致，47原始/308源核验。368已准备测量，369→370→371已准备全新物理及完整验收，等待真实依赖；372准入待部署，不声称已运行。R344继续route，原有EDA不取消。M/S/T接收保持、V/R最终未齐，目标active，Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending、独立审查待指定。
 
 2026-10-29 18:56 CST：V363流程内最终LEC通过，最终RCX setup−0.13ns/TNS−12.04ns，cmd_valid→stats_sumsq[1][79]，hold仅舍入0，300MHz未接收。9原始文件与input.v/既有CTS源绑定核验。选定同一V的命令/运行状态使能分离，不加周期/资源、不放宽数值或时钟，待新源367全验证及重新物理。原363/R344正常收尾，R344继续route。M/S/T接收保持，目标active、Issue121=in_progress/PR122=draft；登记pending/看板unverified与同步pending、独立审查待指定。
