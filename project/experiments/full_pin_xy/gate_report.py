@@ -703,6 +703,19 @@ def render(root,out):
         for q in composed:
             if q.get('completed_utc'):
                 g=q.get('all_514_composed_geometry',{});upper_text+='<p>全支路合成 '+html.escape(q['mode'])+' 终态：原生阶段='+html.escape(str(q.get('native_returncodes')))+'，fresh='+str(q.get('fresh_DRC_count'))+'，最终几何连通='+str(g.get('pass'))+'；实际失败='+html.escape(str(q.get('actual_failure')))+'。所有门槛分别验收，不把原生0当完成。</p>'
+                drcpath=snapshot/'upper_branch_composition/r01'/q['mode']/'independent.drc.gz'
+                if drcpath.exists():
+                    from collections import Counter
+                    text=gzip.decompress(drcpath.read_bytes()).decode();kinds=dict(Counter(re.findall(r'^violation type: (.*)$',text,re.M)))
+                    q['source_bound_independent_DRC_type_counts']=kinds
+                    upper_text+='<p><strong>该结果仍失败：</strong>独立原生类型统计 '+html.escape(str(kinds))+'。本网连通和按本网删桥的256桥依赖不能排除跨网短路；存在Short时，不得称真实功能连接、电气隔离或完整固定预连复用已通过。原生实际支路/通孔矩形多重集与FIXED完整保留只证明合成未改变源材料，不能覆盖原路由本身的错误。</p>'
+    repairs=[]
+    for mode in ['opentpu','llaccel']:
+        p=snapshot/'upper_branch_repair/r01'/mode/'execution.json.gz'
+        if p.exists():repairs.append(dict(read(p),evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix()))
+    if repairs:
+        result['actual_native_selected_upper_branch_repair_r01']=repairs
+        upper_text+='<p><strong>93166实际选择支路修复：</strong>从llaccel已完成的原770支路ODB和guide接续，按独立14项DRC中真实网络及源边对应选择支路，不重复GRT。保持原规则/层/所有hook，只做原生详细重接，再重验全部770本网连接、实际变化网清单、精确原生合成/256桥/FIXED材料及fresh DRC；不能假定只改被选择的网，也不能把子阶段返回0当完成。尚未闭合时保留旧14项（含6 Short）失败，完整底座/功能/系统RC/STA不提升。</p>'
     p=snapshot/'vector_clone_crash/r01/execution.json.gz'
     if p.exists():
         q=read(p);result['VECTOR_exact_native_crash_symbolization_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())

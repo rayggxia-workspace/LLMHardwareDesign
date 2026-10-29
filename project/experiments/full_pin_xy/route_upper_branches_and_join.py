@@ -69,7 +69,7 @@ def material_and_indispensability(out,plan,physical):
             'exactly_256_original_actual_FIXED_M10_rectangles_added_to_helper_context':True,
             'all_256_fixed_bridges_indispensable_for_real_source_sink_geometry':all(not r['real_source_to_sink_connected_without_fixed_rectangle'] and r['terminal_components_without_fixed_rectangle']==2 for r in cut),
             'fixed_bridges_indispensable_count':sum(not r['real_source_to_sink_connected_without_fixed_rectangle'] for r in cut),
-            'scope':'Actual native rectangles/via links and analysis-only bridge cuts; not GDS LVS, full base freeze, RTL or STA'}
+            'scope':'Per-net actual native rectangles/via links and analysis-only bridge cuts. Cross-net isolation still requires independent DRC/LVS; not full base freeze, RTL or STA'}
 
 
 def one(mode,root,resume_revision=None):

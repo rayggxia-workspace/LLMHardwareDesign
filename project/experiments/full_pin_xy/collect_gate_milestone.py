@@ -21,6 +21,7 @@ JOBS+=['93112','93117']
 JOBS+=['93120']
 JOBS+=['93126','93127','93128','93129','93132']
 JOBS+=['93140','93148','93149','93150']
+JOBS+=['93166']
 
 
 def sha(path):
@@ -97,6 +98,7 @@ def collect(name):
       'common_lower_resume/r0[12]/*','logs/common-lower-cugr-r01-*.log','logs/common_lower_cugr_r02-*.log',
       'native_wire_append_api/r0[12]/*','logs/native-wire-append-api-r01-*.log','logs/native_wire_append_api_r02-*.log',
       'upper_branch_composition/r01/*','upper_branch_composition/r01/*/*','logs/upper-branches-compose-r01-*.log']
+    patterns+=['upper_branch_repair/r01/*','upper_branch_repair/r01/*/*','logs/upper-branch-repair-r01-*.log']
     stable_intermediates={}
     incremental=ROOT/'antenna_incremental_eco/r01/gemm-C/execution.json'
     if incremental.exists() and json.loads(incremental.read_text()).get('native_returncodes',{}).get('implementation')==0:
@@ -128,6 +130,7 @@ def collect(name):
         if 'system_stacked_via_views/' in str(p) and p.name in ['before_actual_target.tsv.gz','after_actual_target.tsv.gz','current_source_extended_checks_all.txt'] and a.st_size<=64*1024*1024:keep=True
         omit_paths='paths.json' in p.name and 'actual_path_audit/' not in str(p)
         keep=keep and not omit_paths and not any(s in p.name for s in ['.cells.','.pdn.','whole_access.tsv','selected_access.tsv'])
+        if ('upper_branch_composition/' in str(p) or 'upper_branch_repair/' in str(p)) and p.name in ['whole_access.tsv.gz','branch_access.tsv.gz'] and a.st_size<=8*1024*1024:keep=True
         if not keep:
             r['storage']='REMOTE_ONLY_INDEXED'
             if str(p) in stable_intermediates:
