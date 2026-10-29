@@ -23,6 +23,8 @@ module block_v1_v(
  reg signed [31:0] mul_a[0:7];reg signed [32:0] mul_b[0:7],point_b[0:7];
  // Break operand selection from the eight shared multipliers.
  reg signed [31:0] operand_a[0:7];reg signed [32:0] operand_b[0:7];
+ // Align reduction validity with the existing registered multiplier operands.
+ reg [7:0] operand_reduce_mask;
  reg signed [64:0] product[0:7],low_product[0:7];
  reg signed [127:0] point_total[0:7],point_rounded[0:7];
  reg signed [127:0] rounded,total[0:7],sum;
@@ -120,8 +122,8 @@ module block_v1_v(
    end
   end
   for(integer l=0;l<8;l=l+1)begin
-   leaf_enabled=phase==S_REDUCE?l<stats_n:offset+l<length;
-   leaf_value=phase==S_REDUCE?a[l]:input_mem[offset+l];
+   leaf_enabled=operand_reduce_mask[l];
+   leaf_value=operand_a[l];
    sum_tree[7+l]=leaf_enabled?$signed(leaf_value):64'sd0;
    square_tree[7+l]=leaf_enabled?$unsigned(product[l]):80'd0;
    max_tree[7+l]=leaf_enabled?leaf_value:32'sh80000000;
@@ -179,7 +181,7 @@ module block_v1_v(
  integer i;reg signed [127:0] lower,upper;
  always @(posedge clk)begin
   if(reset)begin
-   phase<=IDLE;mul_return<=IDLE;rsp_valid<=0;rsp_data<=0;rsp_error<=0;rsp_saturated<=0;
+   phase<=IDLE;mul_return<=IDLE;operand_reduce_mask<=0;rsp_valid<=0;rsp_data<=0;rsp_error<=0;rsp_saturated<=0;
    a_valid<=0;b_valid<=0;replay_valid<=0;output_count<=0;stats_valid<=0;stats_final<=0;
    id_valid<=0;top_valid<=0;function_sent<=0;function_received<=0;function_length<=0;composing<=0;function_pair_valid<=0;
    broadcast_b<=0;swap_b<=0;point_op<=0;point_shift<=0;point_width<=0;point_count<=0;
@@ -280,7 +282,11 @@ module block_v1_v(
     endcase
    end else case(phase)
     P_MUL,S_MUL,C_MUL:begin
-     for(i=0;i<8;i=i+1)begin operand_a[i]<=mul_a[i];operand_b[i]<=mul_b[i];end
+     for(i=0;i<8;i=i+1)begin
+      operand_a[i]<=mul_a[i];operand_b[i]<=mul_b[i];
+      if(phase==S_MUL)operand_reduce_mask[i]<=i<stats_n;
+      else if(phase==C_MUL)operand_reduce_mask[i]<=offset+i<length;
+     end
      mul_return<=phase==P_MUL?P_TOTAL:phase==S_MUL?S_REDUCE:C_REDUCE;
      phase<=M_EXEC;
     end
