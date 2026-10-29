@@ -81,28 +81,60 @@ def repair_grt(a,run,journal):
     assert sha(raw/'native-flow.json')==receipt['outputs']['native-flow.json']
     for p,digest in journal['rtl_sha256'].items():assert sha(ROOT/p)==digest
     for name,key in [('config.mk','config_sha256'),('pins.json','pins_sha256')]:assert sha(raw/name)==journal[key]==receipt['outputs'][name]
+    # A plain full-flow S checkpoint has no inherited CTS metadata yet. Bind
+    # its actual completed first four commands/files before reusing its GRT.
+    # A producer's failed route never grants any final qualification.
+    provenance={}
+    if not journal.get('inherited_physical_stages'):
+        expected=['do-1_synth','do-floorplan','do-place','do-cts']
+        assert journal['stages'][:4]==expected
+        logs={}
+        for i,stage in enumerate(expected):
+            name='%02d-%s.log'%(i,stage)
+            commands=[c for c in receipt['commands'] if c['log']==name]
+            assert len(commands)==1 and commands[0]['returncode']==0
+            assert sha(raw/name)==receipt['outputs'][name]==commands[0]['sha256']
+            logs[name]=receipt['outputs'][name]
+        cts={}
+        location=raw/('flow/results/nangate45/bv1_'+top+'/base')
+        for name in ['4_cts.odb','4_cts.sdc','1_synth_lec.v','1_2_yosys.v','1_2_yosys.sdc']:
+            f=location/name;digest=sha(f)
+            assert digest==receipt['outputs'][str(f.relative_to(raw))]
+            cts[name]=dict(path=str(f),sha256=digest)
+        provenance=dict(inherited_physical_stages=expected,source_native_folder=str(raw),
+                        source_cts_stage_log_sha256=logs,source_cts_files=cts,
+                        source_native_journal_sha256=sha(raw/'native-flow.json'))
     relative='flow/results/nangate45/bv1_'+top+'/base';before=raw/relative;after=out/relative;after.mkdir(parents=True)
     copied={}
-    for name in ['5_1_grt.odb','5_1_grt.sdc','route.guide','1_synth_lec.v','1_2_yosys.v','1_2_yosys.sdc','bv1-input-diodes.tsv','feed-input-receivers.tsv']:
+    checkpoint_files=['5_1_grt.odb','5_1_grt.sdc','route.guide','1_synth_lec.v','1_2_yosys.v','1_2_yosys.sdc','bv1-input-diodes.tsv','feed-input-receivers.tsv']
+    if journal.get('fanout_mode')=='partition':checkpoint_files.append('feed-partition-fanout.tsv')
+    for name in checkpoint_files:
         f=before/name;digest=sha(f);assert digest==receipt['outputs'][str(f.relative_to(raw))]
         shutil.copyfile(f,after/name);copied[name]=dict(path=str(f),sha256=digest)
-    for name in ['pins.json','pins.tcl','input.sdc','input.v','input-diodes.tcl']:
+    config_files=['pins.json','pins.tcl','input.sdc','input.v','input-diodes.tcl']
+    if journal.get('fanout_mode')=='partition':config_files.append('partition-fanout.tcl')
+    for name in config_files:
         assert sha(raw/name)==receipt['outputs'][name];shutil.copyfile(raw/name,out/name)
     config=(raw/'config.mk').read_text()
-    for name in ['input.v','input.sdc','pins.tcl','input-diodes.tcl']:config=config.replace(str(raw/name),str(out/name))
+    for name in config_files:config=config.replace(str(raw/name),str(out/name))
     hook=out/'electrical-closure.tcl';shutil.copyfile(ROOT/'project/experiments/block_feed_v1'/a.closure_hook,hook)
     if a.closure_hook in ('measured_m_buffer.tcl','measured_m_hold.tcl'):
         shutil.copyfile(ROOT/'project/experiments/block_feed_v1/measured_m_driver.tcl',out/'measured-driver.tcl')
     assert 'PRE_DETAIL_ROUTE_TCL' not in config
     config+='\nexport PRE_DETAIL_ROUTE_TCL = '+str(hook)+'\n';(out/'config.mk').write_text(config)
     result=copy.deepcopy(journal)
+    result.update(provenance)
     result.update(passed=False,pipeline_completed=False,final_files={},stages=journal['stages'][:4],fresh_physical_stages=[],
         config_sha256=sha(out/'config.mk'),source_grt_checkpoint=dict(folder=str(raw),receipt_sha256=sha(raw/'receipt.json'),
-            producer_passed=receipt['passed'],files=copied),electrical_closure_hook_sha256=sha(hook))
+            producer_passed=receipt['passed'],files=copied,journal_name='native-flow.json',
+            journal_sha256=sha(raw/'native-flow.json')),electrical_closure_hook_sha256=sha(hook))
+    wanted={k:(v.replace(str(raw)+'/',str(out)+'/') if isinstance(v,str) else v) for k,v in journal['actual_variables'].items()}
+    wanted.update(PRE_GLOBAL_ROUTE_TCL=str(out/'input-diodes.tcl'),PRE_DETAIL_ROUTE_TCL=str(hook))
+    result['actual_variables']=wanted
     def save():(out/'native-flow.json').write_text(json.dumps(result,indent=2)+'\n')
     save()
     cmd=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
-    for key,value in dict(journal['actual_variables'],PRE_GLOBAL_ROUTE_TCL=str(out/'input-diodes.tcl'),PRE_DETAIL_ROUTE_TCL=str(hook)).items():
+    for key,value in wanted.items():
         log='variable-'+key+'.log';run(cmd+['print-'+key],log)
         actual=re.search(r'(?m)^'+key+r': (.+)$',(out/log).read_text()).group(1).strip();assert actual==value
     for stage in ['do-5_2_route','do-5_3_fillcell','do-5_route','do-5_route.sdc','do-finish']:
@@ -117,7 +149,7 @@ def repair_grt(a,run,journal):
 def main():
     p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--from-grt',action='store_true')
-    p.add_argument('--closure-hook',choices=['electrical_closure.tcl','measured_m_buffer.tcl','measured_m_hold.tcl'],default='electrical_closure.tcl')
+    p.add_argument('--closure-hook',choices=['electrical_closure.tcl','measured_m_buffer.tcl','measured_m_hold.tcl','measured_s_hold.tcl'],default='electrical_closure.tcl')
     a=p.parse_args();a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,source=str(a.source),affinity=sorted(os.sched_getaffinity(0)),commands=[],inputs={})
     for d in ['project/experiments/block_feed_v1','project/experiments/block_v1','project/rtl/block_feed_v1']:

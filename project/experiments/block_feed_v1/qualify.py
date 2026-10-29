@@ -69,8 +69,14 @@ def seal(raw,out):
         r=json.loads((prior/'receipt.json').read_text());assert sha(prior/'receipt.json')==checkpoint['receipt_sha256']
         for name,row in checkpoint['files'].items():
             p=Path(row['path']);assert sha(p)==row['sha256']==r['outputs'][str(p.relative_to(prior))]
-        journal=prior/'source-cts-journal.json'
-        assert sha(journal)==flow['source_native_journal_sha256']==r['outputs'][journal.name]
+        name=checkpoint.get('journal_name','source-cts-journal.json')
+        assert name in ('source-cts-journal.json','native-flow.json')
+        journal=prior/name
+        expected=checkpoint.get('journal_sha256',flow['source_native_journal_sha256'])
+        assert sha(journal)==expected==r['outputs'][journal.name]
+        if name=='native-flow.json':
+            producer=json.loads(journal.read_text())
+            assert producer['top']==flow['top'] and producer['rtl_sha256']==flow['rtl_sha256']
     relative='flow/results/nangate45/bv1_'+flow['top']+'/base'
     before=raw/relative;after=out/relative;after.mkdir(parents=True)
     config_files=['config.mk','pins.json','pins.tcl','input.sdc']
