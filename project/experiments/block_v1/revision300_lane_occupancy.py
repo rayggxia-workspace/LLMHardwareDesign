@@ -56,9 +56,10 @@ def measure(root,out,cpus,run,kind,variant):
     prefetched=kind=='r' and 'reg operand_valid,fetch_done;' in rtls[0].read_text()
     vector_prefetched=kind=='v' and 'M_EXEC=24,P_TOTAL=25,P_ROUND=26' in rtls[0].read_text()
     vector_norm_pipeline=vector_prefetched and 'G_MUL=27,G_ADD=28;' in rtls[0].read_text()
+    vector_softmax_pipeline=vector_prefetched and 'F_DRAIN=29,F_DENOM=30;' in rtls[0].read_text()
     if vector_prefetched:
         policy=json.loads((tools/'revision300-v-fresh.json').read_text())
-        generation='329' if 'F_DRAIN=29,F_DENOM=30;' in rtls[0].read_text() else ('321' if vector_norm_pipeline else '315')
+        generation='329' if vector_softmax_pipeline else ('321' if vector_norm_pipeline else '315')
         assert policy['function']=='block-v1-20261029-'+generation+'/tasks/revision300-test-v'
         prior=out.parents[2]/('block-v1-20261029-'+generation+'/tasks/revision300-bench-v-'+variant)
     if prefetched:
@@ -100,6 +101,16 @@ def measure(root,out,cpus,run,kind,variant):
             monitor=monitor.replace(anchor,anchor+'''
  if(state==27)p.internal["norm_epsilon_product_register_writes"]++;
  if(state==28)p.internal["norm_denominator_add_register_writes"]++;
+''')
+        if vector_softmax_pipeline:
+            anchor='if(state==28)p.internal["norm_denominator_add_register_writes"]++;'
+            assert monitor.count(anchor)==1
+            monitor=monitor.replace(anchor,anchor+'''
+ if(state==5&&r->block_v1_v__DOT__composing&&r->block_v1_v__DOT__function_valid)
+  p.internal["softmax_pair_sum_register_writes"]++;
+ if((state==5&&r->block_v1_v__DOT__composing||state==29)&&r->block_v1_v__DOT__function_pair_valid)
+  p.internal["softmax_sum_register_writes"]++;
+ if(state==30)p.internal["softmax_denominator_handoff_writes"]++;
 ''')
     if prefetched:
         old='if(state==1||state==3||state==7||state==9||state==11||state==14||state==16)'
@@ -155,4 +166,5 @@ def measure(root,out,cpus,run,kind,variant):
         prefetched_operand_pipeline=prefetched,
         vector_operand_point_pipeline=vector_prefetched,
         vector_norm_denominator_pipeline=vector_norm_pipeline,
+        vector_softmax_denominator_pipeline=vector_softmax_pipeline,
         scope='Preedge actual phase/valid/row_valid and, for prefetched R, operand_valid/fetch_done samples during identical source-bound public schedules. Product slots require their actual write enable; V product writes occur only in M_EXEC, operand/total/rounded slots use their separate phases; R operand slots include pipeline fill and single-fetch phases. Function valid tokens counted for each2lane stage, allocated slots include odd tail padding. Ratios may use stated total/phase cycle denominators. These are logical enable/token occupancy, not transistor switching, power, gate-netlist occupancy, or model/system performance.'),indent=2)+'\n')
