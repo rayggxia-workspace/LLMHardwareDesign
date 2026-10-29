@@ -1,0 +1,181 @@
+{
+  "schema": "block-v1-recurrent-resource-budget/1",
+  "kind": "planning estimate from actual public-port cycles; not model speed",
+  "clock_hz": 300000000,
+  "host_reserve_ms": 10,
+  "host_reserve_is_assumption": true,
+  "source_report_sha256": "ed10b5b397c0d6f3cbd8faf8ca7b14467614f02f2d7e004188519fa7120aa837",
+  "models": [
+    {
+      "model": "qwen35",
+      "config": "docs/model-analysis/graphs/results/native03/qwen35_linear/config.json",
+      "config_sha256": "1daf5de67b2900ad20e1e84e084e4e70ec505a7ec885cf406c524bc448339185",
+      "layers": 24,
+      "heads": 32,
+      "channels_per_head": 128,
+      "state_rows": 128,
+      "macro_lanes": 8,
+      "blocks_per_token": 12288,
+      "active_state_bytes": 50331648,
+      "ssm_factor_valid_bytes_per_token": 0,
+      "cold_macro_cycles": 1094,
+      "aggregate_r_cycles_per_token": 13443072,
+      "aggregate_r_time_ms": 44.81024,
+      "phase_cycles": {
+        "compute": 6500352,
+        "control": 135168,
+        "input": 454656,
+        "output": 36864,
+        "state_export": 3158016,
+        "state_load": 3158016
+      },
+      "traffic": {
+        "request_valid_bytes": 58490880,
+        "response_valid_bytes": 50724864,
+        "request_container_bytes": 109314048,
+        "response_container_bytes": 109314048
+      },
+      "r_count_candidates": [
+        {
+          "count": 1,
+          "scheduled_macro_batches": 12288,
+          "r_stage_cycles": 13443072,
+          "r_stage_ms": 44.81024,
+          "remaining_device_ms_after_r": 45.18976
+        },
+        {
+          "count": 2,
+          "scheduled_macro_batches": 6144,
+          "r_stage_cycles": 6721536,
+          "r_stage_ms": 22.40512,
+          "remaining_device_ms_after_r": 67.59488
+        },
+        {
+          "count": 3,
+          "scheduled_macro_batches": 4104,
+          "r_stage_cycles": 4489776,
+          "r_stage_ms": 14.96592,
+          "remaining_device_ms_after_r": 75.03408
+        },
+        {
+          "count": 4,
+          "scheduled_macro_batches": 3072,
+          "r_stage_cycles": 3360768,
+          "r_stage_ms": 11.20256,
+          "remaining_device_ms_after_r": 78.79744
+        },
+        {
+          "count": 6,
+          "scheduled_macro_batches": 2064,
+          "r_stage_cycles": 2258016,
+          "r_stage_ms": 7.52672,
+          "remaining_device_ms_after_r": 82.47328
+        },
+        {
+          "count": 8,
+          "scheduled_macro_batches": 1536,
+          "r_stage_cycles": 1680384,
+          "r_stage_ms": 5.60128,
+          "remaining_device_ms_after_r": 84.39872
+        }
+      ],
+      "caveats": [
+        "Cold per-block state load and full export are charged; no whole-model resident state assumed.",
+        "Actual benchmark control11cycles per block includes configuration/commit; not a free1cycle complete transaction.",
+        "S input/DRAM/service latency and surrounding M/V/conv/normalization are additional.",
+        "State formats are the macro integer contract, not proven whole-model integer quality.",
+        "Balanced independent block scheduling is a planning assumption; no array/interconnect implementation."
+      ],
+      "layer_barrier_charged": true
+    },
+    {
+      "model": "falcon",
+      "config": "docs/model-analysis/graphs/results/native04/falcon/config.json",
+      "config_sha256": "637de670361e52af584b4245e40d52e81364990510027d0ef2ad3908618282cc",
+      "layers": 32,
+      "heads": 32,
+      "channels_per_head": 128,
+      "state_rows": 256,
+      "macro_lanes": 8,
+      "blocks_per_token": 16384,
+      "active_state_bytes": 134217728,
+      "ssm_factor_valid_bytes_per_token": 134217728,
+      "cold_macro_cycles": 2403,
+      "aggregate_r_cycles_per_token": 39370752,
+      "aggregate_r_time_ms": 131.23584,
+      "phase_cycles": {
+        "coefficients": 8404992,
+        "compute": 12795904,
+        "control": 180224,
+        "input": 1130496,
+        "output": 49152,
+        "state_export": 8404992,
+        "state_load": 8404992
+      },
+      "traffic": {
+        "request_valid_bytes": 287703040,
+        "response_valid_bytes": 134742016,
+        "request_container_bytes": 422576128,
+        "response_container_bytes": 422576128
+      },
+      "r_count_candidates": [
+        {
+          "count": 1,
+          "scheduled_macro_batches": 16384,
+          "r_stage_cycles": 39370752,
+          "r_stage_ms": 131.23584,
+          "remaining_device_ms_after_r": -41.235839999999996
+        },
+        {
+          "count": 2,
+          "scheduled_macro_batches": 8192,
+          "r_stage_cycles": 19685376,
+          "r_stage_ms": 65.61792,
+          "remaining_device_ms_after_r": 24.382080000000002
+        },
+        {
+          "count": 3,
+          "scheduled_macro_batches": 5472,
+          "r_stage_cycles": 13149216,
+          "r_stage_ms": 43.83072,
+          "remaining_device_ms_after_r": 46.16928
+        },
+        {
+          "count": 4,
+          "scheduled_macro_batches": 4096,
+          "r_stage_cycles": 9842688,
+          "r_stage_ms": 32.80896,
+          "remaining_device_ms_after_r": 57.19104
+        },
+        {
+          "count": 6,
+          "scheduled_macro_batches": 2752,
+          "r_stage_cycles": 6613056,
+          "r_stage_ms": 22.04352,
+          "remaining_device_ms_after_r": 67.95648
+        },
+        {
+          "count": 8,
+          "scheduled_macro_batches": 2048,
+          "r_stage_cycles": 4921344,
+          "r_stage_ms": 16.40448,
+          "remaining_device_ms_after_r": 73.59552
+        }
+      ],
+      "caveats": [
+        "Cold per-block state load and full export are charged; no whole-model resident state assumed.",
+        "Actual benchmark control11cycles per block includes configuration/commit; not a free1cycle complete transaction.",
+        "S input/DRAM/service latency and surrounding M/V/conv/normalization are additional.",
+        "State formats are the macro integer contract, not proven whole-model integer quality.",
+        "Balanced independent block scheduling is a planning assumption; no array/interconnect implementation."
+      ],
+      "layer_barrier_charged": true
+    }
+  ],
+  "source_report": "work/YUZE-LU/121/review-20261028/r-prefetch-0727/block-v1-20261029-309/tasks/revision300-bench-r-revised/revision300-vr-benchmark.json",
+  "prior_budget_sha256": "e6dc01ac5f4709650da6eda53bfec01d8635f3f509e0bbf73345919b99e9dce5",
+  "prior_budget": "work/YUZE-LU/121/review-20261028/r-prefetch-0727/previous-recurrent-budget.json",
+  "generator_sha256": "ba55f3b6ff8e5bec0f1e33e25721851498d2d7049a320534ba9b6d31d30f860e",
+  "physical_implementation_completed": false,
+  "full_model_10tps_qualified": false
+}
