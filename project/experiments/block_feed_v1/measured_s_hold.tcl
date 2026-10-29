@@ -2,7 +2,6 @@
 # sub-picosecond shorts, and two overloaded BUF_X4 data drivers. Delay only
 # the six sequential reset branches; reset->ready is a separate tight path.
 # No clock/state/SDC or timing exception is changed.
-global_route -start_incremental
 set block [ord::get_db_block]
 if {[$block getName] ne "block_feed_s_macro"} {error "Measured S top changed"}
 if {[llength [info commands odb::dbInst_isDoNotTouch]]==1} {
@@ -116,17 +115,25 @@ feed_s_delay $block $getter $f feed_measured_s_reset_delay $reset_pins 80 BUF_X8
 foreach name {max_cap36103 fanout36092} {
   if {[[$block findInst $name] findITerm A] eq "NULL" || [[[$block findInst $name] findITerm A] getNet] ne $reset_net} {error "Long reset branch changed"}
 }
-foreach suffix {639369 639497} {
+foreach suffix {639369 639497 666028} {
   set name [format {$auto$ff.cc:337:slice$%s} $suffix]
   set inst [$block findInst $name]
   if {$inst eq "NULL" || [[$inst getMaster] getName] ne "DFF_X1"} {error "Measured din short endpoint changed"}
-  feed_s_delay $block $getter $f feed_measured_s_din_${suffix} [list [$inst findITerm D]] 2 BUF_X1
+  feed_s_delay $block $getter $f feed_measured_s_endpoint_${suffix} [list [$inst findITerm D]] 2 BUF_X1
 }
 close $f
 global_connect
 detailed_placement_helper
 check_placement -verbose
-global_route -end_incremental
+# Rebuild all global routes after loading a persisted checkpoint and moving
+# cells, so the pre-DRT estimate covers the complete current route database.
+set layers [list -signal "$::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER)"]
+if {[info exists ::env(MIN_CLK_ROUTING_LAYER)] && [info exists ::env(MAX_CLK_ROUTING_LAYER)]} {
+  lappend layers -clock "$::env(MIN_CLK_ROUTING_LAYER)-$::env(MAX_CLK_ROUTING_LAYER)"
+}
+set_routing_layers {*}$layers
+pin_access
+global_route -congestion_report_file $::env(REPORTS_DIR)/feed-s-full-global-route.rpt -congestion_iterations 30 -verbose
 estimate_parasitics -global_routing
 set_propagated_clock [all_clocks]
 sta::find_timing
