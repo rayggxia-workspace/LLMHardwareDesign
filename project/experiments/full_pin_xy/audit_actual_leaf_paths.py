@@ -9,19 +9,25 @@ DRIVER=Path(__file__).resolve().parent
 
 
 def run(revision,case,source_kind='original'):
-    assert case in ['vector','opentpu_aux']
-    assert source_kind in ['original','system_existing_buffers_r02']
+    assert case in ['vector','opentpu_aux','llaccel_aux']
+    assert source_kind in ['original','system_existing_buffers_r02','system_stacked_vias_r01','llsys_actual_parent_tip_r01']
+    assert case!='llaccel_aux' or source_kind=='llsys_actual_parent_tip_r01'
     source=ROOT/('vector_resume/r01' if case=='vector' else 'checkpoint_route/r01')
     if source_kind=='system_existing_buffers_r02':
         assert case=='opentpu_aux'
         source=ROOT/'output_chain_resume/r02/opentpu_aux-C'
+    if source_kind=='system_stacked_vias_r01':
+        assert case=='opentpu_aux';source=ROOT/'system_stacked_via_route/r01/opentpu_aux-C'
+    if source_kind=='llsys_actual_parent_tip_r01':
+        assert case=='llaccel_aux';source=ROOT/'llsys_parent_access_tip/r01'
     p=source/'execution.json';j=json.loads(p.read_text());assert j.get('completed_utc')
-    old=json.loads((ROOT/'trials/access-r03'/(case+'-C')/'execution.json').read_text())
+    trial=ROOT/('trials/llsys-pg-r03' if case=='llaccel_aux' else 'trials/access-r03')/(case+'-C')/'execution.json'
+    old=json.loads(trial.read_text())
     odb=source/'routed.odb';spef=source/'extracted.spef';sdc=Path(old['source_sdc'])
     for f in [odb,spef]:assert sha(f)==j['files'][f.name]['sha256']
     assert sha(sdc)==old['input_sha256'][str(sdc)]
     out=ROOT/'actual_path_audit'/revision/case;out.mkdir(parents=True,exist_ok=False)
-    inputs={str(f):sha(f) for f in [p,odb,spef,sdc]}
+    inputs={str(f):sha(f) for f in [p,odb,spef,sdc,trial]}
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp',
       '--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
       '--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro',
@@ -48,6 +54,8 @@ def run(revision,case,source_kind='original'):
     rec={'scope':'READ_ONLY_REAL_EXTRACTED_CRITICAL_PATH_DIAGNOSIS_NOT_REPAIR_OR_QUALIFICATION',
       'case':case,'source_kind':source_kind,'actual_source_directory':str(source),
       'native_returncode':rc,'source_SHA':inputs,'original_SDC_and_extracted_SPEF_preserved':True,
+      'source_setup_ns':j.get('setup_ns'),'source_hold_ns':j.get('hold_ns'),
+      'coverage':'Top 12 actual paths per path group and delay type; complete original check-type report retained separately. Not exhaustive path enumeration.',
       'source_worst_slacks_exactly_replayed':{},'full_qualification':False,
       'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID']}
     for kind in ['setup','hold']:
