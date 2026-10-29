@@ -10,7 +10,7 @@ DRIVER=Path(__file__).resolve().parent
 
 
 def run(revision,kind='gemm658'):
-    assert kind in ['gemm658','mxu_pin_escape','system_stacked_vias','llsys_via_tips','mxu_via_tip','llsys_parent_tip','llsys_owned_restored','vector_resume'];vector=kind=='vector_resume';restored=kind=='llsys_owned_restored';mxu=kind=='mxu_pin_escape';system=kind=='system_stacked_vias';noap=kind=='llsys_parent_tip';llsys=kind in ['llsys_via_tips','llsys_parent_tip','llsys_owned_restored'];mxutip=kind=='mxu_via_tip';tip=llsys or mxutip
+    assert kind in ['gemm658','mxu_pin_escape','system_stacked_vias','llsys_via_tips','mxu_via_tip','llsys_parent_tip','llsys_owned_restored','vector_resume','llsys_wire_retention'];wire=kind=='llsys_wire_retention';vector=kind=='vector_resume';restored=kind=='llsys_owned_restored';mxu=kind=='mxu_pin_escape';system=kind=='system_stacked_vias';noap=kind=='llsys_parent_tip';llsys=kind in ['llsys_via_tips','llsys_parent_tip','llsys_owned_restored','llsys_wire_retention'];mxutip=kind=='mxu_via_tip';tip=llsys or mxutip
     case,count,relative,family={'gemm658':('gemm',3753,'antenna_incremental_eco/r01/gemm-C','diode_views'),
       'mxu_pin_escape':('mxu',2172,'pin_escape_route/r02/mxu-C','pin_escape_views'),
       'system_stacked_vias':('opentpu_aux',2229,'system_stacked_via_route/r01/opentpu_aux-C','system_stacked_via_views'),
@@ -18,7 +18,8 @@ def run(revision,kind='gemm658'):
       'mxu_via_tip':('mxu',2172,'mxu_actual_via_tip/r01','mxu_actual_tip_views'),
       'llsys_parent_tip':('llaccel_aux',13507,'llsys_parent_access_tip/r01','llsys_parent_tip_views'),
       'llsys_owned_restored':('llaccel_aux',13507,'owned_cap_wire_restore/r01','llsys_owned_restored_views'),
-      'vector_resume':('vector',2246,'vector_resume/r01','vector_current_views')}[kind]
+      'vector_resume':('vector',2246,'vector_resume/r01','vector_current_views'),
+      'llsys_wire_retention':('llaccel_aux',13507,'llsys_wire_pin_retention/r01','llsys_wire_retention_views')}[kind]
     source=ROOT/relative;receipt=source/'execution.json';j=json.loads(receipt.read_text())
     out=ROOT/family/revision/(case+'-C');out.mkdir(parents=True,exist_ok=False)
     rec={'scope':'ACTUAL_SOURCE_BOUND_PHYSICAL_AND_EXTRACTED_RESEARCH_VIEW_NOT_FULL_QUALIFICATION',
@@ -27,7 +28,7 @@ def run(revision,kind='gemm658'):
       'original_M5_M6_pins_not_raised':True,'complete_rules_and_RTL_formal':'NOT_QUALIFIED',
       'scheduler_job':os.environ['SLURM_JOB_ID'],'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip()}
     try:
-        stage_key='actual_edit_and_analysis' if tip else ('detailed_edit_and_analysis' if system else 'implementation')
+        stage_key='actual_edit_and_export' if wire else ('actual_edit_and_analysis' if tip else ('detailed_edit_and_analysis' if system else 'implementation'))
         assert j.get('completed_utc') and j['native_returncodes']['route' if vector else stage_key]==0
         if mxutip:
             recovered=ROOT/'mxu_actual_tip_fresh/r01';recovery_path=recovered/'execution.json';recovery=json.loads(recovery_path.read_text())
@@ -48,9 +49,13 @@ def run(revision,kind='gemm658'):
             assert j['all_closed_sources_unchanged'] and all(j['original_cells_poses_signal_connections_pins_PG_die_unchanged'].values())
             assert j['all_other_exported_multiterminal_route_box_multisets_identical'] and j['actual_changed_multiterminal_net_wire_via_box_multisets']==['_215139_']
         elif llsys:
-            assert j['all_closed_sources_unchanged'] and (restored or j['container_library_unchanged'])
-            assert all(j['all_cells_signal_connections_PG_die_unchanged'].values())
-            if restored:
+            assert j['all_closed_sources_unchanged'] and (restored or wire or j['container_library_unchanged'])
+            assert all(j['all_original_cells_connections_PG_die_exact' if wire else 'all_cells_signal_connections_PG_die_unchanged'].values())
+            if wire:
+                assert j['prior_10261_internal_points_retained'] and j['requested_pin_changes']==2832
+                assert j['all_original_WIRE_VIA_exact_plus_only_2827_requested_old_pin_WIRE_squares'] and j['actual_metal_union_unchanged_from_source_wire_via_plus_original_BPins']
+                assert len(j['complete_pin_contract']['only_changed_XY_pins'])==2832 and j['native_returncodes']['RC_STA']==0
+            elif restored:
                 assert j['all_10261_current_internal_points_retained'] and j['all_other_725252_multiterminal_WIRE_VIA_multisets_exact'] and j['exactly_one_M5_WIRE_extended_all_vias_exact']
                 assert j['complete_pin_contract']['only_changed_XY_pins']==[]
             elif noap:
@@ -59,7 +64,7 @@ def run(revision,kind='gemm658'):
             else:
                 assert j['all_other_725250_multiterminal_route_box_multisets_identical']
                 assert j['exactly_eight_actual_WIRE_rectangles_removed_no_added_wire_or_via_material']
-            assert restored or j['all_actual_target_via_rectangle_multisets_preserved']
+            assert restored or wire or j['all_actual_target_via_rectangle_multisets_preserved']
             assert j['complete_pin_contract']['all_signal_pins']==count
             assert j['complete_pin_contract']['all_functions_directions_networks_layers_sizes_and_PG_preserved']
         elif mxutip:
@@ -73,7 +78,10 @@ def run(revision,kind='gemm658'):
             assert j['actual_total_real_diodes']==658 and j['all_original_instances_and_signal_graph_preserved_with_only_22_real_diode_loads']
             assert j['all_prior_functional_and_636_diode_poses_and_terminals_unchanged'] and all(j['pin_PG_die_unchanged'].values()) and j['all_sources_unchanged']
         required=[('one_actual_wire_restore' if restored else ('actual_one_net_pin_and_route_edit' if mxutip or noap else ('actual_three_net_pin_and_route_edit' if llsys else ('native_one_net_detailed_routing' if system else 'detailed_route')))),'VDD','VSS','whole_signal_geometry','rcx','sta']+([] if mxu or system or tip else ['preserve_original_views'])
-        assert all(j['route_stage_status'].get(s)=='EXECUTED' for s in ['global_route','detailed_route','VDD','VSS','whole_signal_geometry','rcx','sta']) if vector else all(j['native_stage_status'].get(s)=='EXECUTED' for s in required)
+        if wire:
+            assert all(j['native_edit_stage_status'].get(s)=='EXECUTED' for s in ['actual_wire_pin_retention','VDD','VSS','whole_signal_geometry'])
+            assert all(j['native_RC_STA_stage_status'].get(s)=='EXECUTED' for s in ['rcx','sta'])
+        else:assert all(j['route_stage_status'].get(s)=='EXECUTED' for s in ['global_route','detailed_route','VDD','VSS','whole_signal_geometry','rcx','sta']) if vector else all(j['native_stage_status'].get(s)=='EXECUTED' for s in required)
         original=ROOT/('finalized/access-r03/vector-C' if vector else 'eco_views/'+('r03' if system else 'r02')+'/'+case+'-C')
         if not tip:
             old=json.loads((original/'execution.json').read_text())
@@ -98,6 +106,7 @@ def run(revision,kind='gemm658'):
             rec['pin_preservation_reference']='Current actual routed source after its explicitly recorded XY ECO; not the older A/B/C candidate or pre-ECO coordinates.'
             rec['inherited_costed_source']='Original MXU one sizing retained; one actual M6 via-tip XY edit adds no cells or sizing.' if mxutip else 'Complete original internal PG-only C; three actual via-tip XY edits, no added cells or resizing; negative original-source STA retained.'
             if restored:rec['inherited_costed_source']='All10261 actual internal points retained; exactly one M5 wire extended, no pin/cell/sizing/via changes; source negative setup/min kept. Geometry export patch coverage is audited separately.'
+            if wire:rec['inherited_costed_source']='10261 previous via points retained plus2832 actual WIRE points;2827 old pin conductors retained as native WIRE. No new cells/sizes/vias; no GRT/DRT search repeated. Native0/connectivity/RCX executed, negative STA retained; no system benefit inferred.'
             if noap:rec['inherited_costed_source']='Complete original internal C plus three prior actual via-tip repairs retained; one further bit_1025 M5 correction adds no cell or sizing. Negative STA remains.'
             rec['source_complete_pin_contract']=j['complete_pin_contract']
         elif vector:rec['separate_cell_ECO_cost']=j['separate_cell_ECO_cost']
@@ -148,6 +157,10 @@ def run(revision,kind='gemm658'):
             rec['before_target_actual_export_returncode']=execute(common,script,out/'before_target.log',threads=1)
             assert rec['before_target_actual_export_returncode']==0
         rec['detailed_OBS_view_contract']=verify(out/'abstract.lef',out/'detailed.lef')
+        if wire:
+            from coarsen_parent_low_obs import coarsen
+            rec['conservative_parent_low_OBS_preparation']=coarsen(out/'detailed.lef',out/'parent_conservative_low.lef')
+            rec['conservative_parent_native_readback']='Pending actual parent import; previous epoch readback not inherited'
         if tip:
             from collections import Counter
             def pin_tokens(s):
