@@ -15,7 +15,12 @@ import time
 
 p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
 p.add_argument('--native',type=Path,required=True);p.add_argument('--m-native',type=Path);p.add_argument('--s-native',type=Path)
+p.add_argument('--models',nargs='+',choices=['m','s'],default=['m','s'])
+p.add_argument('--peer-source',type=Path)
 a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
+assert len(a.models)==len(set(a.models))
+if 's' in a.models and 'm' not in a.models:
+    assert a.peer_source is not None and (a.peer_source/'receipt.json').is_file()
 native={'m':a.m_native or a.native/'block_feed_m','s':a.s_native or a.native/'block_feed_s_macro'}
 cpus=sorted(os.sched_getaffinity(0));assert len(cpus)>=32
 m=dict(s.split(':',1) for s in Path('/proc/meminfo').read_text().splitlines());available=int(m['MemAvailable'].split()[0])*1024
@@ -29,14 +34,16 @@ assert n>0,'Actual node memory cannot admit one guarded receiver'
 free=Queue()
 for i in range(n):free.put(cpus[16*i:16*(i+1)])
 tasks={}
-for macro in ['m','s']:
+for macro in a.models:
     top='block_feed_m' if macro=='m' else 'block_feed_s_macro'
     seal=a.out/('source-'+macro)
     tasks['seal-'+macro]=dict(args=['seal','--source',str(native[macro]),'--out',str(seal)],deps=[])
     for op in ['physical','drc','function','formal']:
         args=[op,'--source',str(seal),'--out',str(a.out/(op+'-'+macro))]
         deps=['seal-'+macro]
-        if op=='function' and macro=='s':args+=['--peer',str(a.out/'source-m')];deps+=['seal-m']
+        if op=='function' and macro=='s':
+            args+=['--peer',str(a.peer_source or a.out/'source-m')]
+            if a.peer_source is None:deps+=['seal-m']
         if op=='formal':args+=['--function',str(a.out/('function-'+macro))];deps+=['function-'+macro]
         tasks[op+'-'+macro]=dict(args=args,deps=deps)
 def one(name):
