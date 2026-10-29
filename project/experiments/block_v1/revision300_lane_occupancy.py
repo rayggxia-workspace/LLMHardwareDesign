@@ -56,7 +56,8 @@ def measure(root,out,cpus,run,kind,variant):
     prefetched=kind=='r' and 'reg operand_valid,fetch_done;' in rtls[0].read_text()
     vector_prefetched=kind=='v' and 'M_EXEC=24,P_TOTAL=25,P_ROUND=26' in rtls[0].read_text()
     vector_norm_pipeline=vector_prefetched and 'G_MUL=27,G_ADD=28;' in rtls[0].read_text()
-    vector_softmax_pipeline=vector_prefetched and 'F_DRAIN=29,F_DENOM=30;' in rtls[0].read_text()
+    vector_softmax_pipeline=vector_prefetched and 'F_DRAIN=29,F_DENOM=30' in rtls[0].read_text()
+    vector_merge_pipeline=vector_prefetched and 'N_MERGE=31;' in rtls[0].read_text()
     vector_function_input=vector_prefetched and 'reg function_input_valid;' in rtls[0].read_text()
     vector_group_subtract=kind=='v' and 'function automatic [130:0] subtract130_grouped;' in (rtls[0].parent/'block_v1_v_group.sv').read_text()
     vector_norm_merge=vector_prefetched and 'rounded=rne(add128_grouped($signed({{63{product[i][64]}},product[i]})<<<32' in rtls[0].read_text()
@@ -65,8 +66,8 @@ def measure(root,out,cpus,run,kind,variant):
         policy=json.loads((tools/'revision300-v-fresh.json').read_text())
         command_state_isolated='Keep their datapath enables independent of cmd_valid/rsp_ready.' in rtls[0].read_text()
         if 'function automatic signed [127:0] norm_merge_rne;' in rtls[0].read_text():
-            assert policy['function']=='block-v1-20261030-408/tasks/revision300-test-v'
-            prior=out.parents[2]/'block-v1-20261030-408/tasks'/('revision300-bench-v-'+variant)
+            assert policy['function']=='block-v1-20261030-421/tasks/revision300-test-v'
+            prior=out.parents[2]/'block-v1-20261030-421/tasks'/('revision300-bench-v-'+variant)
         else:
             generation='378' if 'square_tree[t]=add128_grouped(' in rtls[0].read_text() else '367' if command_state_isolated else '361' if vector_reduce_prefetched else ('355' if vector_norm_merge else ('348' if vector_group_subtract else ('336' if vector_function_input else ('329' if vector_softmax_pipeline else ('321' if vector_norm_pipeline else '315')))))
             assert policy['function']=='block-v1-20261029-'+generation+'/tasks/revision300-test-v'
@@ -109,6 +110,10 @@ def measure(root,out,cpus,run,kind,variant):
  if(state==25)p.internal["point_total_register_write_slots"]+=8;
  if(state==26)p.internal["point_rounded_register_write_slots"]+=8;
 ''')
+        if vector_merge_pipeline:
+            anchor='if(state==26)p.internal["point_rounded_register_write_slots"]+=8;'
+            assert monitor.count(anchor)==1
+            monitor=monitor.replace(anchor,anchor+'\n if(state==31)p.internal["norm_rounded_register_write_slots"]+=8;\n')
         if vector_norm_pipeline:
             anchor='if(state==26)p.internal["point_rounded_register_write_slots"]+=8;'
             assert monitor.count(anchor)==1
