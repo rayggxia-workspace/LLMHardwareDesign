@@ -369,6 +369,8 @@ python3 project/experiments/block_feed_v1/bundle.py --delivery ROOT/results/deli
 
 S最终网表不保留`store.mem_req`等RTL内部别名。`qualify.py function --peer`生成仅用于仿真的pair夹具，通过真实外部`ready`口观测宽读：原S的`ready=!reset&&(!valid||take)&&!wide_fire`，在每个采样周期检查`reset||!valid||take`后，反推`wide_fire=!reset&&(!valid||take)&&!ready`。生成前核对原RTL等式及夹具唯一替换位置，穷举合法布尔输入；实际内存事务次数断言、数值参考与背压检查全部保留。`memory-observer.json`及生成夹具/bench随S压缩包保存逐SHA证据，最终S/M网表及接口不改。原内部别名导致的编译失败记录仍保留，不能充作已运行的功能测试。
 
+大网表编译显式设置`--output-groups 0`，避免`-j16`默认将已拆分CPP重新合成16个超大编译单元；仍为16个构建进程动态补位，仿真每初态4线程、三个初态并行，总用核不超过16。参数含义核对[Verilator5.042官方说明](https://github.com/verilator/verilator/blob/v5.042/docs/guide/exe_verilator.rst)：0禁用文件合组。这只调整编译组织，不修改门级网表、库单元模型或测试。原qualify36/93451大合组编译保持运行，qualify38/93479为同一候选/同一测试的分散编译对照，未运行结束前不能声称其编译或功能更快/通过。
+
 本地收到原始bundle.json及tar.gz后执行（已有unpacked时只逐字节核验，不覆盖原文件）：
 ```powershell
 python -X utf8 project/experiments/block_feed_v1/verify_bundle.py D:/Data/LLMHardwareDesign-issue130-runtime/deliverables/M
