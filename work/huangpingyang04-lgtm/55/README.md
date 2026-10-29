@@ -14,20 +14,22 @@
 
 <!-- current-buffer-PG-status -->
 
-更新时间：2026-10-29T11:50:29.191790+00:00（UTC），Refs #55 / PR58。候选1/3 **UNFROZEN**；阶段一pass_with_inherited_issues，二/三未验收，四NOTRUN。openTPU仍为完整otpu_asic_top及33内部SRAM；LL仍为EPILOGUE_FUSION=0、DMA_MAX_OUTSTANDING=16，外16SRAM/DRAM/host在功能测试环境。冻结后M1–M8固定，M9/M10及真实via8_0/via9_0定制；M11/M12未启用。
+更新时间：2026-10-29T12:13:19.121348+00:00（UTC），Refs #55 / PR58。候选1/3 **UNFROZEN**；阶段一pass_with_inherited_issues，二/三未验收，四NOTRUN。完整openTPU otpu_asic_top及33内部SRAM保留；LL配置EPILOGUE_FUSION=0、DMA_MAX_OUTSTANDING=16，外16SRAM/DRAM/host在功能环境。冻结后M1–M8固定，M9/M10及真实via8_0/via9_0定制，M11/M12未启用。
 
-**实际通过的有限检查：** 获批26具名CORE_SPACER已在派生副本替换为26BUF_X4+53填充；3处6个原PG矩形保留，733520受保护原实例及原导体/阻挡保持。完整733599实例的放置/PG拓扑通过（非IR/EM）。93344实际写入52个首通孔与M1短引出：26区域native DRC均0，独立52序列化路径读回、真实短接负例和全源非目标保持检查闭合。最长M1引出660DBU=0.33μm，未移动26个获批位置。仅接入资格，不是完整信号已连通。
+**已实际完成的有限验证：** 获批26具名CORE_SPACER在新副本替换为26BUF_X4+53填充，3处6个原PG矩形保留；733520受保护原实例及原导体/OBS保持，完整733599实例放置与PG拓扑通过（非IR/EM）。93344的52首通孔/有界M1引出实际写入、26区域native DRC0、独立路径读回/真实短接负例/完整非目标保持闭合。93364投影/还原全部8类native资源与逐网几何精确保持，但同进程网表残留52临时端口，整体FAIL保留；93376新进程重载同一ODB导出与原placement逐字节相同，SHA6884f81cc974d0c7d8aa48d5c64a545e2bb76d0d0e8f10c7ea0fd83a310c5702。新93379只闭合临时路由输入资格，不是完整布线/功能。93383已COMPLETED0:0/4核：完整源仅将普通路径状态ROUTED改FIXED，全733599实例/端点/所有导体几何精确保持，输入未变。
 
-**新失败与实际修复证据：** 93364的完整临时端口投影/还原在全部8类native资源表、所有网导体/通孔多重集合比较和真实错网/删shadow负例上闭合；但同一还原进程write_verilog残留52临时端口，整体正确记FAIL。93368、93370依赖guard拒绝，child_launched=false，没有运行信号布线。没有删文本、忽略差异或把旧失败改成通过。93376新进程只读重载同一保存ODB，再导出的完整45,635,764字节网表与原placement逐字节相同，SHA-256 **6884f81cc974d0c7d8aa48d5c64a545e2bb76d0d0e8f10c7ea0fd83a310c5702**。93379新资格记录严格绑定旧物理闭合证明、真实负例和新进程导出，状态PASS_COMPLETE_BUFFER_TERMINAL_PROJECTION_WITH_FRESH_EXPORT_ONLY；它是可追溯的布线输入检查点，不是完整物理/功能验收。原大数据库只读复用，没有重跑25分钟投影。
+**新失败及实际定位：** 93385的52个实际M2 BPin均通过native PA，但GRT只有49网导引；三条遗漏正好是y2_r带反斜杠/方括号的[111]、[51]、[58]网，原生STA name lookup对这三条报not found。严格全部52导引关卡拒绝，**未执行DRT**。93391后继guard拒绝/nochild，端点还原未运行。旧失败没有改写，没有减少目标或跳过检查。
 
-**正在执行/等待：** 新93383（4核）在完整源副本中仅把原普通路径ROUTED状态改为FIXED，并要求全部733599实例/端点/所有导体几何严格一致；尚无闭合结果。新93385（4核）依赖93383，只有真实COMPLETED 0:0/4核且源资格通过才允许启动完整52信号网native PA/GRT、独立AP/guide/全源保持读回，再进行实际DRT。仍不是布线通过；DRT输出明确标UNACCEPTED，原BUF端点/首通孔还原、全网连通/短路/完整DRC/PG、RC/3ns时序及完整功能仍须逐项执行。新版本23bee7b5115ffe4d943e182946e338556bebf870；每次source/config变化使用新快照/新目录，不改失败或封存运行。
+**新实际进展，仍非布线完成：** 93395采用真实dbNet对象直接选择52网，真实重复/未知网络负例被拒；完整native PA再次闭合52/52真实M2落点，GRT实际52/52网有导引。保存全733599源及8,589,150个保护外网导体的duplicate OBS，独立新进程已读回全部52 AP与guide集合。当前正在完整native资源/逐网几何保持比较；该比较通过后才允许fresh DRT。导引线、AP、保存handoff都不是已经布好的电线。93395仍运行，尚无完整路线或后验物理结果。
 
-**其他主线仍未闭合：** AUX93191仍FAIL45项M3间距；93336只改FIXED/ROUTED状态后45原记录完全相同。93351完整546459实例/全几何的覆盖整片coarse-GCell诊断仍运行，且其结果不能覆盖原45或直接放行RC/LL后继。93130完整191父层/14059固定网DRT仍运行；最新日志为第0轮40%、中间报告3053444违例，**非最终违例数或不可行结论**。清单/guide不是完成的预连线。没有停止或重复这些作业。
+**后继实际已排队：** 93396（4核）只在93395成功且收据合格后，接回52真实BUF A/Z端点、导入仅替换端口tuple而不改路线字节的实际52网DEF、补回精确首通孔、按ID移除临时shadow；再做新进程完整网表字节一致、全源保持、原接入/实际DRT导体多重集保留、全52连通/短路及placement/PG。10项格式正负例通过，**真实还原尚未运行**。93397（4核）再等待其成功，进行fresh完整native DRC，要求原参照GCell网格精确相同、检查前后DEF字节不变、原27报错记录多重集逐条完全保持；新增/遗漏/改变记录均拒绝。原27报告破坏与网格格式控制通过，**真实完整DRC尚未运行**。即使通过也非零DRC、制造签核或RC/功能验收。
 
-下一步：先闭合93383→93385真实结果；成功后仅在新副本移除精确临时端口/保护shadow并接回52真实BUF端点，保留全部原有及新布线几何，再执行独立全源/连通/DRC/PG和RC质量、当前版完整功能。失败先保存证据并定位，不放宽时钟、不缩规模、不删PIN/OBS。AUX继续解释并解决45项，不挑有利上下文。共同PG/clock、各841闲置sink、当前完整回归/冻结/最终两案例尚未全部完成。用户未定的clock rise/fall和open37常量输出load保持null。
+AUX93191仍FAIL45项M3，93336只改路径状态后45记录完全一样；93351全546459源/全导体的覆盖整片coarse上下文诊断仍运行，不能用它豁免原45或放行RC/LL回归。93130全191父层/14059固定网详细布线仍运行；第0轮中途40%/3053444违例不是最终结果，不重复/停止。
+
+下一步：让93395完整保持性→实际DRT→93396真实端点还原/独立连通与供电→93397同原网格/原27记录完整DRC依次闭合；失败则保留证据定位。随后执行实际RC/原3ns质量与当前版完整功能。共同PG/clock、每case841闲置sink、AUX45、新增或恶化问题、同最终底座两完整案例仍未全部验证，满足条件才冻结。外clock rise/fall及open37常量输出load用户未确定，保持null。
 
 服务器根：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z
-工程源码：23bee7b5115ffe4d943e182946e338556bebf870
-最新证据索引：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-projection-fresh-export-checkpoint-20261029T115028Z/milestone.json
-SHA-256：3286dec9ef205564de71366a37b0def62890eba7feade95c1e45f2a3ba7c122c
-资源：新作业统一4CPU/native≤4/BLAS1/实际cpuset；Python比较主要1核。93344 wall948s/CPU964.273s，平均1.017核（4核容量利用率25.4%）；93364 wall1549s/CPU1548.686s，平均1核；93379 wall7s/CPU5.419s。申请4核不等于四倍提速。大DB/工艺/全日志仅服务器，后阶段完整源码尚未全部上传。登记PR5 pending，Projects unverified/sync pending，审查人待指定；Issue55 in_progress、PR58草稿未合并。
+工程最新：4b8756bbff7ed65498adeec997bf1a8c85a00b95（实际93395源码18cfba90b2e9eb4aab98d77fc04cd03ed02f37e9；93396源码787297d64f727aea685253fb102a631309e1ed73；93397源码4b8756bbff7ed65498adeec997bf1a8c85a00b95）
+最新证据索引：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-exact-net-selection-progress-20261029T121318Z/milestone.json
+SHA-256：e5f573ceae2f67b36d7f1aef07e4eb922f668a9d9756999c361fbc7456575556
+资源：所有新作业4CPU/native≤4/BLAS1/实际cpuset；93383 wall786s/CPU785.873s≈1核，93385 wall454s/CPU1501.015s≈3.31核（4核容量82.7%）。申请4核不等于每步四倍加速；Python完整比较主要1核。无原始/封存/其他成员文件修改，无停止/重复活跃实验。大DB/工艺/完整日志留服务器；后阶段源码仍未全部上传。登记PR5 pending、Projects unverified/sync pending、审查人待指定，Issue55 in_progress，PR58草稿未合并。
