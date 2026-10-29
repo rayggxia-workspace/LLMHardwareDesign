@@ -121,14 +121,10 @@ clock 使用共同输入、真实状态负载、CTS资源和最终线路，分�
 
 <!-- current-method-checkpoint -->
 
-## 当前方法增量：2026-10-29T05:11:28.795622+00:00
+方法检查点：2026-10-29T05:42:46.733544+00:00。整体仍UNFROZEN、阶段二/三未验收、四NOTRUN。
 
-- **完整源到完整源的逻辑绑定已验证限定范围。** 93182对新58位置源重新解析完整网表，65545同名状态/168074锥差异0、真实状态输入破坏检出。沿用certify_driver_stage_logic.py及既有Lib/model约束；不把位移相同、旧回归或缓冲器恒等行为代替新源证书。最终route导出网表仍须精确匹配，再实际完整回归。
-- **程序调用上下文属于版本化输入。** 93176在完整准备通过后，原过程内[file dirname [info script]]指向生成脚本所在结果目录，读不到ensure_native_tracks.tcl。新增fixed_escape_native_track_setup.tcl使相对依赖在固定源文件作用域执行；93191在完整DB中重现旧调用失败、实际新调用成功。轨道元数据成功不是布线成功。
-- **精确检查点复用已在实际恢复路径执行。** closed_driver_preparation.py新增严格fresh_fixed_escape_preparation_v1配置；仍只读复用完整已闭合prepared.odb/13表/精确八表比较与15489424保护，绑定原源/目标/拆分/工具/Lib/SDC/RC/helper及每项SHA；严格匹配实际五步骤闭合和失败位置。旧legacy配置规则保持；拒绝未知profile/未成功prepared阶段/源frame破坏。失败global和未做PA/布线不能作为成功继承。新目录/固定快照继续，不覆盖历史。
-- **新布线后续资格模块已实现，完整正例待验证。** fixed_escape_route_review.py联接driver_stage_route_context.py，去掉按文件名前缀判断源码的脆弱约定，仍要求唯一实际输入配置及严格schema/哈希。新profile独立核对61原配方、实际最终导体/via子集、全部13表/公共PIN盒/物理岛、原生AP行保持及额外候选标签/方向、保护矩形数量/OBS清理、实际源入口负例、fresh进程消费。源码/真实失败源拒绝与frame控制不等于当前新完整物理正例或制造证明。
-- **调度依赖是唤醒，不是验收。** 实际93183/85/86/87/88对FAILED93176均child_launched=false。修正后新93195/96/98/99/93200排队，宿主actualaccounting与容器同job/source/config/receipt/时效校验继续；仅前驱COMPLETED0/4且typed阶段成功才启动下一项。新RC/编译/完整LL尚未执行，不用排队记录替代结果。
-- **原物理门槛不减。** 新61固定线投影/真实补布/精确回装仍须原资源保持、全部公共物理岛连通、异网接触0、fresh全片DRC/PG，之后才RC/质量/完整功能。软件AP候选不是native全上下文PA；外部未知clock波形/open37负载仍null。旧完整AUX89DRC/61断开、原VECTOR新增问题和所有失败保留。候选1/3 UNFROZEN、二/三未验收、四NOTRUN。
+新增统一电气诊断适配器：沿用diagnose_access_erc_drivers.py，旧additive_access来源保留；新qualified_selective_physical来源严格绑定完整测量/物理ODB与native目录，默认比较原参考而非上个候选。选择所有新违例与严格恶化的持续违例，不设差值epsilon；报告名与原生名不等价时，只接收显式一一绑定，拒绝别名碰撞，不自动去转义。实际93215检出3个状态引脚缺失，93216显式绑定后全部26匹配；只有诊断通过，未做新修复/提取/功能/物理验收。
 
-最新证据索引：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-source-logic-and-checkpoint-entry-20261029T051128Z/milestone.json
-SHA-256：2f88cf5ff8e3688581e2ab62943dc8cbe4df289c33a3ee572a00ad95c80dc3e0；当前记录源码4c2646bb5f7520091a2d0cf73d86bdde29203094。完整输入/输出/停止条件/验收边界见前文；任意Block/LLM通用适配仍未证明。
+26个网络全部无公共BTerm，单元涉及13类且含3个DFFR_X1/Q，说明不能按直接外部M8负载套用AUX固定BUF_X1/Z方案。下一资源候选必须保持原单元状态/功能/位置，检查实际模型容量、PG、接口、逻辑锥与最终完整RC/时序；不能将诊断相关性当作因果解释。候选不能只消除新4项而忽略相对原参考的26项。
+
+此前实际闭合的准备复用、源目录Tcl入口、固定线投影/详细补布/精确回装和多形状BTerm物理岛门槛继续复用。完整标准单元PA已完成，软件M8 AP仍是候选；93191实际DRT及93130全14059固定网DRT仍运行，最终物理检查待执行。完整源、输入/工具/版本和结果索引：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-native-route-and-vector-drivers-20261029T054246Z/milestone.json；SHA 3c5cbe838bba5ced3f7c5902aa323d2a542f819aa135fb1ec62eac993875eef2。全部通用化能力以实际当前案例证据为限，最终冻结与任意Block适配均未证明。
