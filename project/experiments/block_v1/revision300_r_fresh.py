@@ -11,7 +11,9 @@ def implement(root,out,cpus,run):
         function='block-v1-20261029-342/tasks/revision300-test-r',
         measurements=dict(revised='block-v1-20261029-342/tasks/revision300-bench-r-revised',
                           extended='block-v1-20261029-342/tasks/revision300-bench-r-extended'),
-        inherited_physical_stages=[],requires_fresh_final_acceptance=True)
+        inherited_physical_stages=[],requires_fresh_final_acceptance=True,
+        floorplan_policy=dict(mapped_utilization=.28,placement_density=.35),
+        routing_policy=dict(upper_layer_adjustment=.20,congestion_iterations=100,clock_ndr='none'))
     relative='project/rtl/block_library_v1/block_v1_r.sv';current=file_sha(root/relative)
     for path in policy['measurements'].values():
         source=out.parents[2]/path;receipt=json.loads((source/'receipt.json').read_text())
@@ -20,4 +22,5 @@ def implement(root,out,cpus,run):
         assert file_sha(report)==receipt['outputs'][report.name]
         result=json.loads(report.read_text());assert result['passed']
         assert len(result['rtl_sha256'])==1 and next(iter(result['rtl_sha256'].values()))==current
-    fresh(root,out,cpus,run,'r',prerequisite_tasks={k:policy[k]for k in ('mapping','function')})
+    fresh(root,out,cpus,run,'r',prerequisite_tasks={k:policy[k]for k in ('mapping','function')},
+          floorplan_policy=policy['floorplan_policy'],routing_policy=policy['routing_policy'])

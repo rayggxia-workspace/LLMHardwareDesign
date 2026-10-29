@@ -6,7 +6,7 @@ import copy,json,math,re,shutil
 from pathlib import Path
 
 
-def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None):
+def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None,floorplan_policy=None):
     from io_slots import file_sha,slot
     from constraints import generate as constraints
     from revision300_ports import generate,independent
@@ -57,7 +57,11 @@ def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None
         chunk=text[m.end():starts[i+1].start()if i+1<len(starts)else len(text)]
         areas[m.group(1)]=float(re.search(r'\barea\s*:\s*([\d.eE+-]+)\s*;',chunk).group(1))
     active=sum(areas[name]*count for name,count in mapping['cells'].items())
-    side=max(400,math.ceil((math.sqrt(active/.4)+40)/10)*10);area_side=side
+    utilization=.40;placement_density=.45
+    if floorplan_policy is not None:
+        assert kind=='r' and floorplan_policy==dict(mapped_utilization=.28,placement_density=.35)
+        utilization=floorplan_policy['mapped_utilization'];placement_density=floorplan_policy['placement_density']
+    side=max(400,math.ceil((math.sqrt(active/utilization)+40)/10)*10);area_side=side
     while True:
         try:plan,fixture,geometry=generate(mapping['ports'],side,technology);break
         except AssertionError as e:
@@ -75,7 +79,7 @@ def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None
     config='export PLATFORM = nangate45\nexport DESIGN_NAME = '+top+'\nexport DESIGN_NICKNAME = '+nickname+'\n'
     config+='export VERILOG_FILES = '+str(out/'input.v')+'\nexport SDC_FILE = '+str(out/'input.sdc')+'\n'
     config+='export DIE_AREA = 0 0 %g %g\nexport CORE_AREA = 20 20 %g %g\n'%(side,side,side-20,side-20)
-    config+='export PLACE_DENSITY = 0.45\nexport FOOTPRINT_TCL = '+str(out/'pins.tcl')+'\nexport KEEP_VARS = 1\n'
+    config+='export PLACE_DENSITY = %g\nexport FOOTPRINT_TCL = '%placement_density+str(out/'pins.tcl')+'\nexport KEEP_VARS = 1\n'
     config+='override export MIN_ROUTING_LAYER = metal1\noverride export MAX_ROUTING_LAYER = metal10\n'
     # Include clock protection as well; previous V/R evidence required it.
     hook=(folder/'native_input_diodes.tcl').read_text().replace('  if {[$port getName] eq "clk"} {continue}\n','')
@@ -84,7 +88,7 @@ def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None
     config+='\nexport HOLD_SLACK_MARGIN = 0.020\n'
     route_args=None
     if routing_policy is not None:
-        assert kind=='v' and routing_policy==dict(upper_layer_adjustment=.20,congestion_iterations=100,clock_ndr='none')
+        assert kind in ('v','r') and routing_policy==dict(upper_layer_adjustment=.20,congestion_iterations=100,clock_ndr='none')
         # Native CTS default NDR plus RCX normalization produced a 1600-DBU
         # M3 shape in getShape/PSM where the path iterator reports 140 DBU.
         # Use native default-width clock routing in the new implementation;
@@ -116,6 +120,7 @@ def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None
     command=['make','-C',str(flow),'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
     wanted=dict(MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',KEEP_VARS='1',LEC_CHECK='1',SEC_CHECK='0',
                 TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN='0.020')
+    if floorplan_policy is not None:wanted['PLACE_DENSITY']='%g'%placement_density
     if route_args is not None:
         wanted.update(PRE_GLOBAL_ROUTE_TCL=str(hook),GLOBAL_ROUTE_ARGS=route_args,
                       CTS_ARGS='-sink_clustering_enable -repair_clock_nets -apply_ndr none',
@@ -128,7 +133,8 @@ def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None
     result=dict(schema='revision300-native-flow/1',passed=False,top=top,implementation_count=1,
                 source_mapping_receipt_sha256=file_sha(mapped/'receipt.json'),source_function_receipt_sha256=file_sha(tested/'receipt.json'),
                 rtl_sha256=mapping['rtl_sha256'],mapped_area_um2=active,die_um=[side,side],area_derived_side_um=area_side,
-                footprint_rule='ceil10(sqrt(mapped_area/0.40)+40), min400; enlarge by10um only until complete coarse tracks fit',
+                footprint_rule='ceil10(sqrt(mapped_area/%g)+40), min400; enlarge by10um only until complete coarse tracks fit'%utilization,
+                floorplan_policy=floorplan_policy,placement_density=placement_density,
                 config_sha256=file_sha(out/'config.mk'),pins_sha256=file_sha(out/'pins.json'),budget=budget,actual_variables=actual,
                 planned_complete_escape=geometry,planned_independent_gds=coarse,stages=[],final_files={},qualified_hard_macro=False,
                 scope='Fresh native M1-M10 flow and declared full-port coarse geometry; complete actual native/upper readback, independent STA/DRC/function/LEC remain separate')
