@@ -70,6 +70,9 @@ def verify(root):
                 assert sha(z.read('evidence/function/physical-test-pair.cpp')) == observer['generated_bench_sha256']
                 assert reports['function']['compiled_bench_sha256'] == observer['generated_bench_sha256']
                 assert reports['function']['bench_sha256'] == observer['original_bench_sha256']
+                assert observer['storage_rtl_sha256'] == source['rtl_sha256']['project/rtl/block_feed_v1/block_feed_s16k.sv']
+                assert len(observer['exhaustive_legal_boolean_rows']) == 10
+                assert len({tuple(row[:4]) for row in observer['exhaustive_legal_boolean_rows']}) == 10
                 for reset, valid, take, fire, ready, seen in observer['exhaustive_legal_boolean_rows']:
                     assert reset or not valid or take
                     assert ready == int(not reset and (not valid or take) and not fire)
