@@ -106,7 +106,14 @@ def audit_geometry(path, physical):
             'scope':'Exact integer union/material containment; not normalized full-base freeze, GDS LVS or RC/STA'}
 
 
-def one(mode,root,conductors,proof):
+def fixed_commands(g):
+    w=g['fixed_conductor'];assert w
+    a=[round(q*2000) for q in w['actual_A_xy_um']];z=[round(q*2000) for q in w['actual_B_xy_um']]
+    return ['set n [$b findNet '+tcl(g['net'])+'];if {[$n getWire] ne "NULL"} {error "Unexpected wire before actual FIXED restoration"}',
+            'set w [odb::dbWire_create $n];set enc [odb::dbWireEncoder];$enc begin $w;$enc newPath $m10 FIXED;$enc addPoint '+str(a[0])+' '+str(a[1])+';$enc addPoint '+str(z[0])+' '+str(z[1])+';$enc end']
+
+
+def one(mode,root,conductors,proof,profile):
     old=ROOT/'upper_adaptation_trial/r02'
     planfile=old/(mode+'_actual_hook_plan.json');plan=json.loads(planfile.read_text())
     source=old/mode/'placed_adapter_NOT_SYSTEM.odb'
@@ -130,6 +137,9 @@ def one(mode,root,conductors,proof):
          'base_frozen':False,'complete_system':False,'RC_STA_electrical':'NOT_EXECUTED',
          'original_edges':770,'physical_quotient_nets':514,'same_actual_hook_boxes':1540,
          'same_actual_fixed_M10_conductors':256,'architecture_or_topology_change':False}
+    rec['guide_search_profile']=profile
+    rec['temporary_guide_only_wire_detachment']=profile=='detach_for_guides_restore_before_DRT'
+    rec['guide_model_scope']='Only helper in-memory guide search may omit the already verified fixed fragments; original lower source immutable, exact native FIXED fragments restored before DRT and every terminal/material/DRC check remains required.'
     (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     (out/'physical_quotient_plan.json').write_text(json.dumps(physical,indent=2)+'\n')
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp',
@@ -150,14 +160,20 @@ def one(mode,root,conductors,proof):
             if any(plan['physical_edges'][i]['clock'] for i in g['edge_ids']): lines+=['$n setSigType CLOCK']
             w=g['fixed_conductor']
             if w:
-                a=[round(q*2000) for q in w['actual_A_xy_um']];z=[round(q*2000) for q in w['actual_B_xy_um']]
-                lines+=['set w [odb::dbWire_create $n];set enc [odb::dbWireEncoder];$enc begin $w;$enc newPath $m10 FIXED;$enc addPoint '+str(a[0])+' '+str(a[1])+';$enc addPoint '+str(z[0])+' '+str(z[1])+';$enc end']
+                lines+=fixed_commands(g)
         lines+=['if {[llength [$b getNets]]!=514 || [llength [$b getBTerms]]!=1540 || [llength [$b getInsts]]!=0} {error "Quotient native object count mismatch"}',
           'write_db '+tcl(out/'preconnected_adapter_NOT_SYSTEM.odb'),
           'write_def '+tcl(out/'preconnected_adapter.def'),
           'fingerprint '+tcl(out/'before'),
-          'set_routing_layers -signal metal11-metal12 -clock metal11-metal12',
-          'if {![stage global_route {global_route -guide_file '+tcl(out/'route.guide')+' -congestion_report_file '+tcl(out/'congestion.rpt')+'}]} {catch {write_db '+tcl(out/'failed_global.odb')+'};catch {write_def '+tcl(out/'failed_global.def')+'};close $stages;exit 1}',
+          'set_routing_layers -signal metal11-metal12 -clock metal11-metal12']
+        if profile=='detach_for_guides_restore_before_DRT':
+            lines+=['if {![stage guide_only_detach_fixed_fragments {set removed 0;foreach n [$b getNets] {set w [$n getWire];if {$w ne "NULL"} {odb::dbWire_destroy $w;incr removed}};if {$removed!=256} {error "Unexpected detached fragment count"}}]} {close $stages;exit 1}']
+        lines+=['set global_ok [stage global_route {global_route -guide_file '+tcl(out/'route.guide')+' -congestion_report_file '+tcl(out/'congestion.rpt')+'}]']
+        if profile=='detach_for_guides_restore_before_DRT':
+            restore=[cmd for g in physical if g['fixed_conductor'] for cmd in fixed_commands(g)]
+            lines+=['if {![stage restore_exact_FIXED_before_DRT {'+'\n'.join(restore)+'\nwrite_db '+tcl(out/'restored_FIXED_before_DRT.odb')+';write_def '+tcl(out/'restored_FIXED_before_DRT.def')+'}]} {close $stages;exit 1}',
+                    'if {$global_ok} {if {![stage require_all514_native_guides {set f [open '+tcl(out/'native_guide_inventory.tsv')+' w];puts $f "net\\tguide_count";set count 0;foreach n [$b getNets] {set gs [$n getGuides];if {![llength $gs]} {error "Missing actual guide on quotient net"};puts $f "[$n getName]\\t[llength $gs]";incr count};close $f;if {$count!=514} {error "Missing quotient net"}}]} {close $stages;exit 1}}']
+        lines+=['if {!$global_ok} {catch {write_db '+tcl(out/'failed_global.odb')+'};catch {write_def '+tcl(out/'failed_global.def')+'};close $stages;exit 1}',
           'if {![stage detailed_route {detailed_route -output_drc '+tcl(out/'route.drc')+' -verbose 1;write_db '+tcl(out/'routed_adapter_NOT_SYSTEM.odb')+';write_def '+tcl(out/'routed_adapter.def')+'}]} {close $stages;exit 1}',
           'fingerprint '+tcl(out/'after'),'save_obs '+tcl(out/'after.OBS.tsv'),
           'source '+tcl(DRIVER/'export_access.tcl'),'report_wire_length -detailed_route -summary -file '+tcl(out/'wire_length.csv'),'close $stages']
@@ -195,13 +211,14 @@ def one(mode,root,conductors,proof):
     return rec
 
 
-def run(revision):
+def run(revision,profile='fixed_context'):
+    assert profile in ['fixed_context','detach_for_guides_restore_before_DRT']
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=8
     out=ROOT/'upper_preconnected'/revision;out.mkdir(parents=True,exist_ok=False)
     wires=json.loads((ROOT/'common_integration/r01/C/actual_shared_conductors.json').read_text())
     proof=json.loads((ROOT/'shared_conductor_audit/r02/execution.json').read_text())
     with ThreadPoolExecutor(max_workers=2) as pool:
-        results=list(pool.map(lambda mode:one(mode,out,wires,proof),['opentpu','llaccel']))
+        results=list(pool.map(lambda mode:one(mode,out,wires,proof,profile),['opentpu','llaccel']))
     assert len({r['source_lower_checkpoint_SHA256'] for r in results})==1
     summary={'scope':'UNQUALIFIED_FULL_ADAPTER_PRECONNECTED_CONTEXT_NOT_TWO_SYSTEMS',
              'same_lower_input_SHA256':results[0]['source_lower_checkpoint_SHA256'],
@@ -210,4 +227,4 @@ def run(revision):
     return 0 if all(r.get('native_route_returncode')==0 and r.get('independent_DRC_count')==0 and r.get('actual_all_net_geometry',{}).get('pass') and r.get('all256_native_FIXED_attributes_retained') and r['all_closed_sources_unchanged'] for r in results) else 1
 
 
-if __name__=='__main__':sys.exit(run(sys.argv[1]))
+if __name__=='__main__':sys.exit(run(*sys.argv[1:3]))
