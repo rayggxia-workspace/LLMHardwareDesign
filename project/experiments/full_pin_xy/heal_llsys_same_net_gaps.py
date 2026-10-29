@@ -44,7 +44,10 @@ def run(revision):
         text=tech.read_text();grid=round(float(re.search(r'\bMANUFACTURINGGRID\s+([\d.]+)',text)[1])*2000);assert grid>0
         rules={};maxspace={}
         for layer in ['metal5','metal6']:
-            block=re.search(r'^LAYER '+layer+r'\s.*?^END '+layer,text,re.M|re.S)[0];assert round(float(re.search(r'\bWIDTH\s+([\d.]+)',block)[1])*2000)==280
+            block=re.search(r'^LAYER '+layer+r'\s.*?^END '+layer,text,re.M|re.S)[0]
+            # A scalar WIDTH statement ends in ';'. SPACINGTABLE WIDTH rows do not.
+            width=re.search(r'^\s*WIDTH\s+([\d.]+)\s*;',block,re.M)
+            assert width and round(float(width[1])*2000)==280
             tab=re.search(r'SPACINGTABLE\s+PARALLELRUNLENGTH(.*?);',block,re.S)[1].splitlines();ps=[round(float(x)*2000) for x in tab[0].split()];rows=[]
             for line in tab[1:]:
                 p=line.split()

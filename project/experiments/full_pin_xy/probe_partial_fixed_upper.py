@@ -33,6 +33,15 @@ def run(revision):
               'write_db '+tcl(folder/'routed_NOT_SYSTEM.odb'),'write_def '+tcl(folder/'routed.def'),
               'set ::env(PINXY_ACCESS_OUT) '+tcl(folder/'after.tsv'),'source '+tcl(DRIVER/'export_access.tcl'),
               'stage independent_native_DRC {drt::check_drc -output_file '+tcl(folder/'independent.drc')+'}','close $stages']
+            if revision!='r01':
+                # Native GRT treats a net with an existing wire as already routed,
+                # even when its four terminals remain in three components. Use a
+                # declared whole-fixture guide to test DRT independently of GRT.
+                guide=folder/'explicit_capability.guide'
+                guide.write_text('src\n(\n0 0 128000 128000 metal11\n0 0 128000 128000 metal12\n)\n')
+                at=next(i for i,line in enumerate(lines) if line.startswith('if {![stage native_upper_route'))
+                lines.insert(at,'read_guides '+tcl(guide))
+                rec['explicit_DRT_guide']='Private64um fixture covering M11/M12; does not establish actual system routing or fixed status restoration'
             script=folder/'run.tcl';script.write_text('\n'.join(lines)+'\n');rc=execute(common,script,folder/'native.log','PINXY_OUTPUT='+str(folder)+',PINXY_ACCESS_ALL=1',threads=4)
             result={'native_returncode':rc,'source_status':status,'complete_function_RC_STA':'NOT_EXECUTED_CAPABILITY_ONLY'}
             if (folder/'before.tsv').exists():result['before']=check(folder/'before.tsv',True)
