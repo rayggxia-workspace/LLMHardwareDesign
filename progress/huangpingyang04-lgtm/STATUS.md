@@ -15,18 +15,22 @@
 
 <!-- current-buffer-PG-status -->
 
-更新时间：2026-10-29T06:57:46.488680+00:00，Refs #55，沿用task/55-full-block-integration/草稿PR58。阶段一pass_with_inherited_issues，二/三未验收、四NOTRUN；候选1/3 UNFROZEN。主方案M1–M8固定/M9/M10+真实via8/via9定制，M11/M12未启用，open33内部SRAM及完整LL锁定配置不变。
+更新时间：2026-10-29T08:06:41.652416+00:00（UTC），Refs #55，沿用任务分支和草稿PR58。候选1/3 **UNFROZEN**；阶段一pass_with_inherited_issues，二/三未验收、四NOTRUN。主方案M1–M8固定，M9/M10及真实via8_0/via9_0定制，M11/M12未启用。open保留完整otpu_asic_top/33内部SRAM；LL锁定EPILOGUE_FUSION0、DMA_MAX_OUTSTANDING16，外16SRAM/DRAM/host在测试环境。
 
-93191已FAILED1:0/4：详细布线0DRV之后，独立124网全部连通/61公共物理岛/579原引出形状/原资源非目标保持/异网接触0/placement和PG通过；**fresh完整DRC仍45项M3间距FAIL**。最终实际v SHA2e1ba80981850ba7330fcdc7a05e975a0a72c292778efae3da2ea4902488bf66，与93182新逻辑锥证书字节相同，非完整功能或物理成功。45原生记录与旧93116M3完全相同、报告owner非124目标，只是定位，不豁免。wholewall5008s/CPU12172s≈2.4305核。
+93191整体仍FAIL：实际124网连通、61公共物理岛与579原引出形状保持、目标异网接触0、placement/PG通过；fresh完整DRC45项M3未放行。五后继guard失败且未启动业务检查，当前新源RC/完整LL回归未执行，不能拿旧版本回归替代。
 
-93195/96/98/99/93200五后继实际guard失败、child_launched=false；RC/回装/编译/覆盖/完整LL回归均未运行。93241网格诊断完成clone/DEF保持，但旧M1 guide导致DRT0155初始化失败；新93242四组完整源成对对照4核运行，只清理验证副本的非物理guide并改变GCell元数据，实际线路不改，不把有利结果当物理豁免。
+**新完成的检查器诊断：** 93242四组完整源对照已闭合：原源/原网格0、原源/当前网格45、当前源/当前网格45、当前源/零相位扩展覆盖网格97（与原45交集0），均同pitch，仅GCell元数据和验证副本非物理guide上下文；全DEF排除GCell后完全保持。证明报告依赖检查上下文，不证明哪个结果物理正确，不选择有利网格豁免。93246扫描16492283条实际形状、全部546459实例；45个报错框全部被同网实际M3金属覆盖。两套真实首个M3桥/via几何夹具共18项（ROUTED及FIXED各9）：连好0、去桥间隙1、异网短接1，跨三网格一致。只是有限定位和检查器正反例，不是整片通过。93275原生decoder绑定45owner/2210条路径，全部FIXED；93260此前DEF名字绑定失败保留，不自动猜别名。93280实际因原生路径仍为FIXED而FAILED；93283在新验证NETS副本明确变更557954个状态标记，原生ROUTED检查通过后，完整DEF仅状态差异保持关卡实际FAILED。两次都未进入fresh DRC，未接受为物理源；须查清具体差异，不删除或放松保持关卡。原始文件未写，没有真实重布线或失败豁免。
 
-VECTOR：93227真实BUF_X4/X8模型、93229全26驱动必要cap筛查通过；7X1/16X2/3X4只是当前负载下候选，wire RC未知。93234/35位置失败、均0pose；93238完整ROW盘点证明733546原实例/411821填充单元保留时现有ROW空闲0。未删fillers/加buffer/移动原单元；ROW外33.14/42.71/27/27.52μm是未验证几何余量，PG/长线RC/实际位置未解决。容量预检已前置、夹具通过；新的插入适配器尚未实际执行。
+**VECTOR有限替换已获用户明确授权。** 93258清单为26个具名CORE_SPACER→26个BUF_X4研究缓冲器＋53个补齐填充单元，最近点距驱动最多2.8μm；3处共6个原PG矩形需显式保留。原始/封存文件不改，原计算/状态/控制/TAP和既有导线保持。授权只覆盖清单，不扩大到其他填充单元；候选BUF并非最终团队Block规格。93253因PG PIN union不相等而失败保留；后续区分额外buffer PG手指和真正缺少的原PG金属，并非豁免供电保持。93267/93270精确26位点及全部9种实际via预筛均18通过/8失败；93273允许真实M1落脚金属对本PIN正面积接触后20通过/6输入PIN仍失败，真实cut包围、间距、轨道/网格、其他PIN/OBS及全外来障碍未放宽，没有把预筛改成物理通过。
 
-93130完整191/14059固定网仍actual DRT0th，未终态；清单/guide不等于导线，旧GRTFAIL保留。下一步查45M3真因和合法闭合、实际新增位置与PG/RC，再当前191统一PGclock/841闲置sink/新质量及完整功能，之后才冻结最终两case。clock rise/fall/open37常量输出load继续未知null。
+93277已实际COMPLETED0/4：完整733599实例中26个BUF_X4及53个补齐填充单元合法放置、3处共6个原PG矩形显式保留。独立读回确认733520个受保护原实例位置/master/朝向/status不变、全部原导体与阻挡保持、仅26个声明原输出端子移到split网、新拓扑精确匹配；真实off-site破坏负例检出。UNROUTED ODB为585063873字节，SHA57378f1e1f6e6f01dd47de8bdc8374f9326136d3d09563346e5b64d4750111a2。wall611s/CPU611.360s，平均约1.00核，非4倍提速。六个PIN接入预筛失败仍保留；PG/信号路线/完整DRC/RC/时序/功能与冻结未通过。新93287四核实际全源供电/placement及全设计pin_access已提交；即使工具返回，也仍须独立读出52个新信号PIN的真实AP，不算接线通过。
 
-全部新任务4核/native≤4/BLAS1，Python步骤主要1核。原始/封存/其他成员/受保护dirty文件保持，无安装、停止或重复活跃作业。服务器根：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z
-源码56a2412ad92af8ae6a729e26182f50d6a2a3ad50；AUX失败ODB SHA5a053bf16385c21222146421ddcae882e4e871b7c8937681bf8858ebf76ee662。
-索引：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-closed-connectivity-DRC45-and-row-capacity-20261029T065746Z/milestone.json
-SHA b435e8b0da026ad27928c263c64bfcd24d6be9e317648a29db57740e66891b4d。
-大DB/日志/工艺仅服务器；本次仅六既有精选记录，后阶段源码未全部上传。管理PR5 pending/Projects unverified及sync pending/审查人待指定，Issue in_progress。完整边界见docs/experiments/issue-55-full-block-integration.md。
+93130完整191父层/14059固定网仍运行，无最终布线验收；预连线方案和guide不等于实际导线。新作业均4核/native≤4/BLAS1，Python诊断主要单线程；93242 wall1442s/CPU5118s约3.55核，93246 wall32s/CPU31.999s约1核，93252 wall12s/CPU4.919s，不能称四倍提速。完整当前调度及其余真实核时见索引。未停止、重复活跃作业或改动无关任务。外clock rise/fall及open37输出load仍用户未定null。
+
+下一最小行动：读93287全源真实PG与PA结果，独立验证52新PIN并解决6个接入及真实路线/RC质量；先定位93283完整DEF差异，再推进同几何原生检查资格，解释并合法闭合45项后才放行AUX源。完成当前统一PGclock/闲置sink与完整功能，再冻结、从同一底座运行两个完整case的许可层定制。
+
+服务器唯一根：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z
+当前工程源码：95b108440aadc5e2452da7a68f3f76d9dd6db873
+最新索引：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-authorized-VECTOR-placement-readback-20261029T080641Z/milestone.json
+SHA-256 **af84f05334761d69bf4389b878ddb1eb4cea95e3f422f770d6eb06d616bd531c**。
+大ODB/DEF/工艺/完整日志仅服务器；精选既有六记录入库，后阶段完整源码仍服务器。登记PR5 pending、Projects unverified/sync pending、审查人待指定；Issue in_progress，不新建/合并/关闭。
