@@ -121,10 +121,12 @@ clock 使用共同输入、真实状态负载、CTS资源和最终线路，分�
 
 <!-- current-method-checkpoint -->
 
-方法检查点：2026-10-29T05:42:46.733544+00:00。整体仍UNFROZEN、阶段二/三未验收、四NOTRUN。
+方法检查点：2026-10-29T06:57:46.488680+00:00。整体仍UNFROZEN，二/三未验收、四NOTRUN。
 
-新增统一电气诊断适配器：沿用diagnose_access_erc_drivers.py，旧additive_access来源保留；新qualified_selective_physical来源严格绑定完整测量/物理ODB与native目录，默认比较原参考而非上个候选。选择所有新违例与严格恶化的持续违例，不设差值epsilon；报告名与原生名不等价时，只接收显式一一绑定，拒绝别名碰撞，不自动去转义。实际93215检出3个状态引脚缺失，93216显式绑定后全部26匹配；只有诊断通过，未做新修复/提取/功能/物理验收。
+1. 实际布线0DRV必须继续独立读回：93191完整124网/61公共物理岛/579原形状/所有受保护资源与PG通过，但fresh全片45M3间距仍FAIL。目标对全部23369795邻接节点接触0不代替全片规则。最终导出与93182已证新网表字节相同，只能继承其限定逻辑锥证据，不能代替完整功能。
+2. 失败分类要区分：本轮五个依赖guard实际拒绝失败前驱，child_launched=false，RC/回装/编译/完整回归没有运行。93241在DRC初始化因旧M1 guide失败，不是规则报告；clone/全DEF保持闭合部分可严格来源复用。93242四个成对完整源对照统一清除仅非物理guide、显式全die框、同pitch网格，不改真实几何；任何有利计数都不能直接豁免原45失败。45记录与旧失败相同/非目标owner只是定位依据。
+3. 修复前先查资源容量：26内部驱动涉及13种单元和3个Q，实际模型静态必要条件给出7X1/16X2/3X4，但split/输出wire RC未定不按0。实际完整ROW盘点证明733546原单元中411821填充单元保留时，现有ROW无空闲site。两位置搜索均0次pose，说明还没进入via检查。现已在大规模线网索引前加ROW容量预检，满行/恰好/过宽/坐标改名测试通过；正容量也不证明接入可行。没有删除fillers、改变原功能或实际添加buffer。ROW外余量只能作为待PG/RC/布线验证的几何候选。
+4. 当前统一入口保留旧additive来源，增加明确qualified-selective/preinsertion适配；实际driver端子ZN/Z/Q、buffer型号、源图/原生模型与实例前缀显式输入。新插入适配器编译完成但缺合格位置输入，尚未实际执行。通用Block/LLM编译不因这些局部能力而被宣称完成。
 
-26个网络全部无公共BTerm，单元涉及13类且含3个DFFR_X1/Q，说明不能按直接外部M8负载套用AUX固定BUF_X1/Z方案。下一资源候选必须保持原单元状态/功能/位置，检查实际模型容量、PG、接口、逻辑锥与最终完整RC/时序；不能将诊断相关性当作因果解释。候选不能只消除新4项而忽略相对原参考的26项。
-
-此前实际闭合的准备复用、源目录Tcl入口、固定线投影/详细补布/精确回装和多形状BTerm物理岛门槛继续复用。完整标准单元PA已完成，软件M8 AP仍是候选；93191实际DRT及93130全14059固定网DRT仍运行，最终物理检查待执行。完整源、输入/工具/版本和结果索引：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-native-route-and-vector-drivers-20261029T054246Z/milestone.json；SHA 3c5cbe838bba5ced3f7c5902aa323d2a542f819aa135fb1ec62eac993875eef2。全部通用化能力以实际当前案例证据为限，最终冻结与任意Block适配均未证明。
+索引：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-closed-connectivity-DRC45-and-row-capacity-20261029T065746Z/milestone.json
+SHA b435e8b0da026ad27928c263c64bfcd24d6be9e317648a29db57740e66891b4d。原算法历史/工具负例保留，上版全文归档于索引。下一步是45项真实原因与合法修复/检查流程、无原资源变更的可用新增位置及PG/接线/实际RC，再完成共同191与最终两case，原时钟/容量/功能保持。
