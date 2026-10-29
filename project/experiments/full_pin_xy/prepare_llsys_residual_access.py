@@ -12,12 +12,18 @@ from run_parent_trial import tcl
 from run_escape_fixture import execute
 DRIVER=Path(__file__).resolve().parent
 
-def run(revision,native_reuse=None):
+def run(revision,native_reuse=None,target_set='residual87'):
+    assert target_set in ['residual87','parent_failed1011']
     source=ROOT/'llsys_wire_pin_retention/r01';rp=source/'execution.json';q=json.loads(rp.read_text());assert q.get('completed_utc') and q['fresh_DRC_count']==0 and q['whole_signal_geometry']['pass'] and q['all_closed_sources_unchanged']
     odb=source/'routed.odb';geo=source/'whole_access.tsv.gz';pins=source/'after.pins.tsv';deffile=source/'routed.def'
     for p in [odb,geo,pins,deffile]:assert sha(p)==q['files'][p.name]['sha256']
     audit=ROOT/'all_llsys_actual_access_caps/r02';ap=audit/'execution.json';aq=json.loads(ap.read_text());table=audit/'all13507_actual_own_via_candidates.tsv';assert aq.get('completed_utc') and aq['all_closed_sources_unchanged'] and sha(table)==aq['files'][table.name]['sha256']
-    selected=[r for r in csv.DictReader(table.open(),delimiter='\t') if r['status']=='KEEP_NO_BOUNDED_OWN_VIA_FOUND'];assert len(selected)==87
+    inventory=list(csv.DictReader(table.open(),delimiter='\t'))
+    selected=[r for r in inventory if r['status']=='KEEP_NO_BOUNDED_OWN_VIA_FOUND'];assert len(selected)==87
+    if target_set=='parent_failed1011':
+        parent=ROOT/'common_integration/deadline-current-r01/C';pq=json.loads((parent/'execution.json').read_text());assert pq.get('completed_utc') and pq['native_final_stage_status']['lower_detailed_route']=='FAIL' and pq['all_sources_unchanged']
+        assert 'No access point for u_llaccel_aux/bit_1011' in (parent/'lower_route.log').read_text()
+        selected=[r for r in inventory if r['pin']=='bit_1011'];assert len(selected)==1
     actual={}
     for line in pins.open():
         p=line.split()
@@ -26,8 +32,12 @@ def run(revision,native_reuse=None):
     for r in selected:
         p=actual[r['pin']];assert p[3].strip('{}')==r['net'] and p[4]==r['layer'] and p[5:]==[r[k] for k in ['x0','y0','x1','y1']]
     tech=ROOT/'upper_layer_probe/r01/model/research12.tech.lef';model=json.loads((tech.parent/'model.json').read_text());assert model['original_M1_M10_and_via1_via9_layer_blocks_identical'] and sha(tech)==model['files'][tech.name]['sha256']
-    inputs={str(p):sha(p) for p in [rp,odb,geo,pins,deffile,ap,table,tech]};out=ROOT/'llsys_residual_access_preflight'/revision;out.mkdir(parents=True,exist_ok=False)
+    inputs={str(p):sha(p) for p in [rp,odb,geo,pins,deffile,ap,table,tech]}
+    if target_set!='residual87':inputs.update({str(p):sha(p) for p in [parent/'execution.json',parent/'lower_route.log']})
+    out=ROOT/('llsys_residual_access_preflight' if target_set=='residual87' else 'llsys_parent_failed_pin_preflight')/revision;out.mkdir(parents=True,exist_ok=False)
     rec={'scope':'ALL87_REAL_FIRST_HOP_PRESCREEN_FOR_ACTUAL_LEAF_REROUTE_NOT_PHYSICAL_IMPLEMENTATION_OR_PARENT_ACCESS','source_SHA':inputs,'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID'],'full_qualification':False,'original_signal_pins':13507,'residual_signal_pins':87,'native_edit_route_RC_STA':'NOT_EXECUTED_PREPARATION_ONLY','new_candidate_maximum_L1_um':1.12,'not_checked':['Full applicable rule interactions and complete access stack','Actual leaf reroute and parent AP','RC/STA or function qualification']}
+    rec['target_set']=target_set;rec['selected_signal_pins']=len(selected)
+    if target_set!='residual87':rec['scope']='ACTUAL_PARENT_FAILED_DRAM_RDATA329_M5_FIRST_HOP_DIAGNOSIS_NOT_IMPLEMENTATION';rec['residual_signal_pins']=1
     try:
         names=' '.join(tcl(r['pin']) for r in selected)
         body='''set b [ord::get_db_block];set seen [dict create]
@@ -59,7 +69,7 @@ set r [$b getDieArea];set f [open DIE w];puts $f [list [$r xMin] [$r yMin] [$r x
             assert proof.get('completed_utc') and proof['native_readonly_returncode']==0 and proof['all_closed_sources_unchanged'] and proof['source_SHA'][str(odb)]==sha(odb)
             inputs[str(previous/'execution.json')]=sha(previous/'execution.json')
             for name in ['actual_used_master_high_layers.tsv','all87_actual_peers.tsv','actual_high_PG_OBS.tsv','actual_first_hop_vias.tsv','actual_die.tsv']:
-                p=previous/name;assert sha(p)==proof['files'][name]['sha256'];inputs[str(p)]=sha(p);shutil.copyfile(str(p),str(out/name))
+                p=previous/name;assert sha(p)==proof['files'][name]['sha256'];inputs[str(p)]=sha(p);shutil.copyfile(str(p),str(out/('cached87_peers_NOT_CURRENT_TARGET.tsv' if target_set!='residual87' and name=='all87_actual_peers.tsv' else name)))
             rec['native_readonly_returncode']=0;rec['reused_native_readonly_phase']=str(previous);rec['new_native_readonly_script_not_executed']=True
         else:rec['native_readonly_returncode']=execute(common,script,out/'native_readonly.log',threads=1)
         assert rec['native_readonly_returncode']==0
@@ -85,14 +95,19 @@ set r [$b getDieArea];set f [open DIE w];puts $f [list [$r xMin] [$r yMin] [$r x
             prl=max(0,min(a[3],b[3])-max(a[1],b[1])) if dx and not dy else max(0,min(a[2],b[2])-max(a[0],b[0])) if dy and not dx else 0
             ps,rs=rules[layer];index=max(i for i,v in enumerate(ps) if v<=prl);row=max((r for r in rs if r[0]<=width),key=lambda r:r[0]);return row[1][index]
         local=defaultdict(list);centers={r['pin']:((int(r['x0'])+int(r['x1']))//2,(int(r['y0'])+int(r['y1']))//2) for r in selected};windows={n:(x-3500,y-3500,x+3500,y+3500) for n,(x,y) in centers.items()}
+        selected_native_terms=[]
         def consume(reader):
             for r in reader:
+                if target_set!='residual87' and r['net']=='bit_1011' and r['kind'] in ['ITERM','BTERM']:selected_native_terms.append(dict(r))
                 if r['layer'] not in ['metal5','metal6','metal7','via5','via6'] or r['kind']=='UNROUTED':continue
                 z=tuple(int(r[k]) for k in ['x0','y0','x1','y1'])
                 for n,w in windows.items():
                     if z[0]<=w[2] and z[2]>=w[0] and z[1]<=w[3] and z[3]>=w[1]:local[n].append((r['net'],r['layer'],z,r['kind']))
         with gzip.open(str(geo),'rt') as f:consume(csv.DictReader(f,delimiter='\t'))
         consume(csv.DictReader((out/'actual_high_PG_OBS.tsv').open(),delimiter='\t'))
+        if target_set!='residual87':
+            assert len({r['link'] for r in selected_native_terms if r['kind']=='ITERM'})==1 and len({r['link'] for r in selected_native_terms if r['kind']=='BTERM'})==1
+            (out/'actual_selected_native_terminals.json').write_text(json.dumps(selected_native_terms,indent=2)+'\n')
         tracks={}
         for line in deffile.open():
             m=re.match(r'TRACKS ([XY]) (\d+) DO (\d+) STEP (\d+) LAYER (metal[567]) ;',line)
@@ -116,11 +131,23 @@ set r [$b getDieArea];set f [open DIE w];puts $f [list [$r xMin] [$r yMin] [$r x
                     if bad:break
                 if not bad:chosen=(distance,x,y,placed);break
             row=dict(r);row['first_hop_via']=vname;row['candidate_rejection_counts']=dict(reject)
+            if target_set!='residual87':
+                original_blockers=[]
+                for layer,relative in via[vname]:
+                    z=(cx+relative[0],cy+relative[1],cx+relative[2],cy+relative[3])
+                    for net,ly,p,kind in local[name]:
+                        if ly!=layer or (net==r['net'] and not layer.startswith('via')) or (layer.startswith('via') and net==r['net'] and p==z):continue
+                        dx=max(z[0]-p[2],p[0]-z[2],0);dy=max(z[1]-p[3],p[1]-z[3],0);need=cutspaces[layer] if layer.startswith('via') else spacing(layer,z,p)
+                        if dx*dx+dy*dy<need*need:original_blockers.append({'net':net,'layer':ly,'kind':kind,'actual_box_DBU':p,'required_spacing_DBU':need})
+                row['actual_original_first_hop_blockers']=original_blockers
+                row['original_x_on_first_hop_grid']=(cx-xo)%xp==0;row['original_y_on_first_hop_grid']=(cy-yo)%yp==0
+                if not original_blockers and row['original_x_on_first_hop_grid'] and row['original_y_on_first_hop_grid']:
+                    chosen=None;row['first_hop_clear_does_not_explain_parent_NoAP']=True
             if chosen:
                 distance,x,y,placed=chosen;row.update(status='PRESCREENED_REAL_FIRST_HOP_POINT_REQUIRES_ACTUAL_REROUTE',target_x_DBU=x,target_y_DBU=y,target_L1_um=distance/2000.);occupied.add((r['layer'],x,y));newshapes.extend((r['net'],ly,z,'OTHER_NEW_CANDIDATE') for ly,z in placed)
-            else:row['status']='KEEP_NO_PRESCREENED_POINT_WITHIN_BOUND_NOT_PHYSICAL_INFEASIBILITY'
+            else:row['status']='KEEP_FIRST_HOP_CLEAR_PARENT_NOAP_NEEDS_STACK_OR_OBS_DIAGNOSIS' if row.get('first_hop_clear_does_not_explain_parent_NoAP') else 'KEEP_NO_PRESCREENED_POINT_WITHIN_BOUND_NOT_PHYSICAL_INFEASIBILITY'
             output.append(row);counts[row['status']]+=1
-        (out/'all87_first_hop_targets_NOT_IMPLEMENTED.json').write_text(json.dumps(output,indent=2)+'\n');rec['status_counts']=dict(counts);rec['all_87_actual_original_pin_contracts_verified']=True;rec['original_M5_M6_0p14_size_and_layer_preserved']=True;rec['actual_first_hop_templates']=via;rec['actual_per_layer_cut_spacing_DBU']=cutspaces;rec['native_no_high_layer_master_geometry_omitted']=True
+        (out/('all'+str(len(selected))+'_first_hop_targets_NOT_IMPLEMENTED.json')).write_text(json.dumps(output,indent=2)+'\n');rec['status_counts']=dict(counts);rec['all_selected_actual_original_pin_contracts_verified']=True;rec['original_M5_M6_0p14_size_and_layer_preserved']=True;rec['actual_first_hop_templates']=via;rec['actual_per_layer_cut_spacing_DBU']=cutspaces;rec['native_no_high_layer_master_geometry_omitted']=True
     except Exception:rec['actual_failure']=traceback.format_exc()
     rec['all_closed_sources_unchanged']=all(sha(Path(p))==v for p,v in inputs.items());rec['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat();rec['files']={p.name:{'bytes':p.stat().st_size,'sha256':sha(p)} for p in out.iterdir() if p.is_file()};(out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n');return int(bool(rec.get('actual_failure')) or not rec['all_closed_sources_unchanged'])
 if __name__=='__main__':sys.exit(run(*sys.argv[1:]))
