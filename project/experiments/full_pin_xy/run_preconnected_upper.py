@@ -138,7 +138,9 @@ def one(mode,root,conductors,proof,profile):
          'original_edges':770,'physical_quotient_nets':514,'same_actual_hook_boxes':1540,
          'same_actual_fixed_M10_conductors':256,'architecture_or_topology_change':False}
     rec['guide_search_profile']=profile
-    rec['temporary_guide_only_wire_detachment']=profile=='detach_for_guides_restore_before_DRT'
+    detach=profile.startswith('detach_for_')
+    rec['temporary_guide_only_wire_detachment']=detach
+    rec['native_global_search_engine']='CuGR' if 'cugr' in profile else 'FastRoute'
     rec['guide_model_scope']='Only helper in-memory guide search may omit the already verified fixed fragments; original lower source immutable, exact native FIXED fragments restored before DRT and every terminal/material/DRC check remains required.'
     (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     (out/'physical_quotient_plan.json').write_text(json.dumps(physical,indent=2)+'\n')
@@ -166,10 +168,11 @@ def one(mode,root,conductors,proof,profile):
           'write_def '+tcl(out/'preconnected_adapter.def'),
           'fingerprint '+tcl(out/'before'),
           'set_routing_layers -signal metal11-metal12 -clock metal11-metal12']
-        if profile=='detach_for_guides_restore_before_DRT':
+        if detach:
             lines+=['if {![stage guide_only_detach_fixed_fragments {set removed 0;foreach n [$b getNets] {set w [$n getWire];if {$w ne "NULL"} {odb::dbWire_destroy $w;incr removed}};if {$removed!=256} {error "Unexpected detached fragment count"}}]} {close $stages;exit 1}']
-        lines+=['set global_ok [stage global_route {global_route -guide_file '+tcl(out/'route.guide')+' -congestion_report_file '+tcl(out/'congestion.rpt')+'}]']
-        if profile=='detach_for_guides_restore_before_DRT':
+        engine=' -use_cugr -verbose' if 'cugr' in profile else ''
+        lines+=['set global_ok [stage global_route {global_route'+engine+' -guide_file '+tcl(out/'route.guide')+' -congestion_report_file '+tcl(out/'congestion.rpt')+'}]']
+        if detach:
             restore=[cmd for g in physical if g['fixed_conductor'] for cmd in fixed_commands(g)]
             lines+=['if {![stage restore_exact_FIXED_before_DRT {'+'\n'.join(restore)+'\nwrite_db '+tcl(out/'restored_FIXED_before_DRT.odb')+';write_def '+tcl(out/'restored_FIXED_before_DRT.def')+'}]} {close $stages;exit 1}',
                     'if {$global_ok} {if {![stage require_all514_native_guides {set f [open '+tcl(out/'native_guide_inventory.tsv')+' w];puts $f "net\\tguide_count";set count 0;foreach n [$b getNets] {set gs [$n getGuides];if {![llength $gs]} {error "Missing actual guide on quotient net"};puts $f "[$n getName]\\t[llength $gs]";incr count};close $f;if {$count!=514} {error "Missing quotient net"}}]} {close $stages;exit 1}}']
@@ -212,7 +215,7 @@ def one(mode,root,conductors,proof,profile):
 
 
 def run(revision,profile='fixed_context'):
-    assert profile in ['fixed_context','detach_for_guides_restore_before_DRT']
+    assert profile in ['fixed_context','detach_for_guides_restore_before_DRT','detach_for_cugr_guides_restore_before_DRT']
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=8
     out=ROOT/'upper_preconnected'/revision;out.mkdir(parents=True,exist_ok=False)
     wires=json.loads((ROOT/'common_integration/r01/C/actual_shared_conductors.json').read_text())
