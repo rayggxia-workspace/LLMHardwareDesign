@@ -56,7 +56,9 @@ def foreign_tree(pid, cpus, job):
 def serve(root, out, cpus):
     from native_allocation_group import memory_snapshot
     from native_node_queue import schedule, sha, validate
-    assert cpus == 80 and int(os.environ['SLURM_CPUS_PER_TASK']) == 80
+    # Request the full existing allocation in the overlapping Slurm step so
+    # cgroups expose the complete CPU set; taskset limits this worker to80.
+    assert cpus == 80 and int(os.environ['SLURM_CPUS_PER_TASK']) == 96
     base = out.parents[2]
     queue_path, cohost_path = root.parent / 'node-queue.json', root.parent / 'cohost.json'
     queue_sha, cohost_sha = sha(queue_path), sha(cohost_path)
@@ -102,6 +104,7 @@ def serve(root, out, cpus):
                   new_allocation=False, parent_owner=owner, foreign_cpus=binding['foreign_cpus'],
                   cohost_cpus=available, combined_cpu_ceiling=96, observations=observations,
                   runtime_queue_allocated_cpus=80, original_queue_node_cpus=96,
+                  slurm_step_requested_cpus=96, new_slurm_allocation=False,
                   maximum_combined_concurrent_tasks=1 + result['maximum_concurrent_tasks'],
                   scope='Existing Slurm job; peer16 plus at most five disjoint16CPU tasks, immediate refill. '
                         'Foreign forecast1.2 reservation and liveRSS retained in addition to normal task1.2/16GiB guard. '

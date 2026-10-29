@@ -8,8 +8,13 @@ read -r actual _ < image.sha256
 test "$actual" = "$expected"
 source_root=$1
 mode=$2
+worker_cpus=$SLURM_CPUS_PER_TASK
+if [[ "$mode" == native-node-queue-cohost ]]; then
+  test "$SLURM_CPUS_PER_TASK" = 96
+  worker_cpus=80
+fi
 singularity exec --cleanenv --bind /public/home/yuzelu --pwd "$PWD" \
-  --env OMP_NUM_THREADS="$SLURM_CPUS_PER_TASK" --env OPENBLAS_NUM_THREADS=1 \
+  --env OMP_NUM_THREADS="$worker_cpus" --env OPENBLAS_NUM_THREADS=1 \
   --env SLURM_JOB_ID="$SLURM_JOB_ID" --env SLURM_CPUS_PER_TASK="$SLURM_CPUS_PER_TASK" \
   "$image" bash -c 'set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; python3 "$1/project/experiments/block_v1/worker.py" "$1" "$2" "$3"' \
-  bash "$source_root" "$mode" "$SLURM_CPUS_PER_TASK"
+  bash "$source_root" "$mode" "$worker_cpus"
