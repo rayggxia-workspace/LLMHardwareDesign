@@ -63,6 +63,7 @@ def measure(root,out,cpus,run,kind,variant):
         generation='336' if vector_function_input else ('329' if vector_softmax_pipeline else ('321' if vector_norm_pipeline else '315'))
         assert policy['function']=='block-v1-20261029-'+generation+'/tasks/revision300-test-v'
         prior=out.parents[2]/('block-v1-20261029-'+generation+'/tasks/revision300-bench-v-'+variant)
+    recurrent_base_prefetched=prefetched and 'operand_state_base[0:7],product_state_base[0:7];' in rtls[0].read_text()
     if prefetched:
         # New latency source requires new measured public results, not a
         # comparison against the old236 execution schedule.
@@ -117,6 +118,11 @@ def measure(root,out,cpus,run,kind,variant):
   p.internal["softmax_sum_register_writes"]++;
  if(state==30)p.internal["softmax_denominator_handoff_writes"]++;
 ''')
+    if recurrent_base_prefetched:
+        anchor='++p.internal["phase_"+std::to_string(state)];'
+        assert monitor.count(anchor)==2
+        extra='\n if(state==9&&!r->block_v1_r__DOT__fetch_done)p.internal["update_state_base_fetch_slots"]+=8;\n if(state==9&&r->block_v1_r__DOT__operand_valid)p.internal["update_state_base_product_slots"]+=8;'
+        monitor=monitor.replace(anchor,anchor+extra,1)
     if prefetched:
         old='if(state==1||state==3||state==7||state==9||state==11||state==14||state==16)'
         assert monitor.count(old)==1

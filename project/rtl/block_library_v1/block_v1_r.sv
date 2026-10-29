@@ -33,6 +33,9 @@ module block_v1_r(
  // Row loops still accept one operand row per cycle; only fill/drain grows.
  reg signed [31:0] operand_a[0:7];reg signed [32:0] operand_b[0:7];
  reg operand_valid,fetch_done;reg [8:0] operand_row;
+ // Carry the old S32 state with its operand/product instead of selecting it
+ // through product_row in the update-add/overflow retirement path.
+ reg signed [31:0] operand_state_base[0:7],product_state_base[0:7];
  reg signed [64:0] product[0:7];
  reg [511:0] active_valid,decay_valid;
  reg [31:0] key_valid,query_valid;
@@ -81,7 +84,7 @@ module block_v1_r(
     DEC_MUL,DEC_WRITE,ERR_WRITE:value[l]=rne({{63{product[l][64]}},product[l]},31);
     PRED_END,READ_END,CONV_END:value[l]=rne(dot[l],14);
     ERR_PREP:value[l]=$signed({{96{x[l][31]}},x[l]})-$signed({{96{error_value[l][31]}},error_value[l]});
-    UP_MUL,UP_WRITE:value[l]=$signed({{96{shadow[product_row*8+l][31]}},shadow[product_row*8+l]})+rne({{63{product[l][64]}},product[l]},14);
+    UP_MUL,UP_WRITE:value[l]=$signed({{96{product_state_base[l][31]}},product_state_base[l]})+rne({{63{product[l][64]}},product[l]},14);
     SKIP_WRITE:value[l]=$signed({{96{output_value[l][31]}},output_value[l]})+rne({{63{product[l][64]}},product[l]},16);
     default:value[l]=0;
    endcase
@@ -182,12 +185,18 @@ module block_v1_r(
      // Fetch row n, multiply buffered row n-1, retire product n-2.
      // SSM factors are captured before that same shadow row is overwritten.
      if(!fetch_done)begin
-      for(i=0;i<8;i=i+1)begin operand_a[i]<=mul_a[i];operand_b[i]<=mul_b[i];end
+      for(i=0;i<8;i=i+1)begin
+       operand_a[i]<=mul_a[i];operand_b[i]<=mul_b[i];
+       if(phase==UP_MUL)operand_state_base[i]<=shadow[row*8+i];
+      end
       operand_row<=row;operand_valid<=1;
       if(row+1==length)fetch_done<=1;else row<=row+1;
      end else operand_valid<=0;
      if(operand_valid)begin
-      for(i=0;i<8;i=i+1)product[i]<=operand_a[i]*operand_b[i];
+      for(i=0;i<8;i=i+1)begin
+       product[i]<=operand_a[i]*operand_b[i];
+       if(phase==UP_MUL)product_state_base[i]<=operand_state_base[i];
+      end
       product_row<=operand_row;
      end
      row_valid<=operand_valid;
