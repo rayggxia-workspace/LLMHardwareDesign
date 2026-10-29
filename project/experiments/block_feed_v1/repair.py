@@ -91,8 +91,8 @@ def repair_grt(a,run,journal):
     config=(raw/'config.mk').read_text()
     for name in ['input.v','input.sdc','pins.tcl','input-diodes.tcl']:config=config.replace(str(raw/name),str(out/name))
     hook=out/'electrical-closure.tcl';shutil.copyfile(ROOT/'project/experiments/block_feed_v1'/a.closure_hook,hook)
-    if a.closure_hook=='measured_m_hold.tcl':
-        shutil.copyfile(ROOT/'project/experiments/block_feed_v1/measured_m_buffer.tcl',out/'measured-driver.tcl')
+    if a.closure_hook in ('measured_m_buffer.tcl','measured_m_hold.tcl'):
+        shutil.copyfile(ROOT/'project/experiments/block_feed_v1/measured_m_driver.tcl',out/'measured-driver.tcl')
     assert 'PRE_DETAIL_ROUTE_TCL' not in config
     config+='\nexport PRE_DETAIL_ROUTE_TCL = '+str(hook)+'\n';(out/'config.mk').write_text(config)
     result=copy.deepcopy(journal)

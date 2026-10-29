@@ -1,8 +1,8 @@
 # Exact extracted failure: all twelve short paths share hold40391/Z after its
 # necessary CLKBUF_X2 cap fix. Add three small data buffers before that cell.
 # This is actual native circuit delay, not a hold exception or SDC change.
-source [file join [file dirname $::env(DESIGN_CONFIG)] measured-driver.tcl]
 global_route -start_incremental
+source [file join [file dirname $::env(DESIGN_CONFIG)] measured-driver.tcl]
 set block [ord::get_db_block]
 set inst [$block findInst hold40391]
 if {$inst eq "NULL" || [[$inst getMaster] getName] ne "CLKBUF_X2"} {error "Measured hold driver changed"}
