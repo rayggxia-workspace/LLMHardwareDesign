@@ -8,9 +8,18 @@ import csv,gzip,heapq,json,math
 from pathlib import Path
 from plan_upper_local_bypass import STEP,HALF,METAL_SPACE,CUT_SPACE,rect,gap,box_wire,add_proposal
 
+def actual_table_spacing(a,b):
+    """Exact copied M9/M10 PRL table for rectangular screening only."""
+    dx=max(a[0]-b[2],b[0]-a[2],0);dy=max(a[1]-b[3],b[1]-a[3],0)
+    prl=max(0,min(a[3],b[3])-max(a[1],b[1])) if dx and not dy else max(0,min(a[2],b[2])-max(a[0],b[0])) if dy and not dx else 0
+    width=max(min(a[2]-a[0],a[3]-a[1]),min(b[2]-b[0],b[3]-b[1]))
+    if width>=3000 and prl>=8000:return 3000
+    if width>=1800 and prl>=5400:return 1800
+    return 1600
+
 class Index:
-    def __init__(self,records):
-        self.bins=defaultdict(list);self.size=64000
+    def __init__(self,records,metal_table=False):
+        self.bins=defaultdict(list);self.size=64000;self.metal_table=metal_table
         for i,(z,space) in enumerate(records):
             pad=space+HALF
             for x in range((z[0]-pad)//self.size,(z[2]+pad)//self.size+1):
@@ -22,7 +31,7 @@ class Index:
                 for i,p,s in self.bins.get((x,y),[]):
                     if i not in seen:
                         seen.add(i)
-                        if gap(z,p)<s:return False
+                        if gap(z,p)<(actual_table_spacing(z,p) if self.metal_table else s):return False
         return True
 
 def is_retained_via10(r,via_layers):
@@ -35,9 +44,9 @@ def astar(rows,obs,net,a,b,die,max_nodes=80000):
         if r['net']==net:continue
         z=rect(r)
         if r['layer'] in ['metal11','metal12'] and r['kind'] in ['WIRE','VIA','OBS']:
-            width=min(z[2]-z[0],z[3]-z[1]);metals[r['layer']].append((z,3000 if width>=1800 else METAL_SPACE))
+            metals[r['layer']].append((z,3000))
         if r['layer']=='via11' and r['kind']=='VIA':cuts.append((z,CUT_SPACE))
-    indices={k:Index(metals[k]) for k in ['metal11','metal12']};cutindex=Index(cuts)
+    indices={k:Index(metals[k],metal_table=True) for k in ['metal11','metal12']};cutindex=Index(cuts)
     start=(*a,11);target=(*b,11)
     endpoint_clear={name:indices['metal11'].clear(box_wire(p,p)) for name,p in [('a',a),('b',b)]}
     if not all(endpoint_clear.values()):return {'path_dbu':None,'reason':'ACTUAL_RETAINED_M11_VIA10_LANDING_BLOCKED','endpoint_clear':endpoint_clear,'expanded_nodes':0}
@@ -66,7 +75,7 @@ def astar(rows,obs,net,a,b,die,max_nodes=80000):
         for nxt,cost in nexts:
             ng=g+cost
             if ng>=scores.get(nxt,10**30):continue
-            scores[nxt]=ng;parent[nxt]=node;h=abs(nxt[0]-b[0])+abs(nxt[1]-b[1]);heapq.heappush(queue,(ng+h,ng,nxt))
+            scores[nxt]=ng;parent[nxt]=node;h=abs(nxt[0]-b[0])+abs(nxt[1]-b[1]);heapq.heappush(queue,(ng+1.75*h,ng,nxt))
     return {'path_dbu':None,'reason':'NODE_BUDGET_EXHAUSTED' if queue else 'NO_PATH_WITHIN_EXPLICIT_REGION','expanded_nodes':expanded,'region_dbu':region,'global_infeasibility_proven':False}
 
 def plan(branches,obstructions,diefile,out):
@@ -99,5 +108,5 @@ def plan(branches,obstructions,diefile,out):
         trials.append({'order':order,'results':edits})
         if len(edits)==len(order) and all(r['path_dbu'] for r in edits):solution=edits;break
         if edits[-1].get('reason')=='ACTUAL_RETAINED_M11_VIA10_LANDING_BLOCKED':break
-    result={'scope':'COMPLETE_RELATED_UPPER_NET_SEARCH_ALLOWING_VIA11_RELOCATION_NOT_NATIVE_IMPLEMENTATION','status':'PROPOSED_WHOLE_NET_PATHS_NATIVE_IMPLEMENTATION_REQUIRED' if solution else 'FAILED_BOUNDED_WHOLE_NET_SEARCH_NOT_GLOBAL_INFEASIBILITY','full_qualification':False,'selected_nets':selected,'retained_actual_via10_centers_dbu':endpoints,'original_lower_M10_via10_and_hooks_unchanged':True,'wire_width_DBU':1600,'metal_space_DBU':1600,'wide_metal_space_DBU':3000,'cut11_space_DBU':1760,'trials':trials,'solution':solution}
+    result={'scope':'COMPLETE_RELATED_UPPER_NET_SEARCH_ALLOWING_VIA11_RELOCATION_NOT_NATIVE_IMPLEMENTATION','status':'PROPOSED_WHOLE_NET_PATHS_NATIVE_IMPLEMENTATION_REQUIRED' if solution else 'FAILED_BOUNDED_WHOLE_NET_SEARCH_NOT_GLOBAL_INFEASIBILITY','full_qualification':False,'selected_nets':selected,'retained_actual_via10_centers_dbu':endpoints,'original_lower_M10_via10_and_hooks_unchanged':True,'wire_width_DBU':1600,'metal_spacing_policy':'Actual existing research PRL/width table; all native technology rules unchanged','weighted_Astar':1.75,'optimal_length_claimed':False,'cut11_space_DBU':1760,'trials':trials,'solution':solution}
     Path(out).write_text(json.dumps(result,indent=2)+'\n');return result

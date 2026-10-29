@@ -1,6 +1,6 @@
 """Read closed real upper source and diagnose a new whole-net repair variable."""
 from pathlib import Path
-import datetime,json,os,sys,traceback
+import datetime,json,os,re,sys,traceback
 from run_exports import ROOT,sha
 from plan_upper_whole_nets import plan
 DRIVER=Path(__file__).resolve().parent
@@ -8,7 +8,13 @@ def run(revision):
     source=ROOT/'upper_branch_repair/r02/llaccel';rp=source/'execution.json';q=json.loads(rp.read_text());assert q.get('completed_utc') and q['fresh_DRC_count']==2 and q['all_closed_sources_unchanged']
     names=['branch_access.tsv.gz','after_branch.OBS.tsv','before_route.die.tsv'];paths=[source/n for n in names]
     for p in paths:assert sha(p)==q['files'][p.name]['sha256']
-    inputs={str(p):sha(p) for p in [rp]+paths};out=ROOT/'upper_whole_net_search'/revision;out.mkdir(parents=True,exist_ok=False)
+    tech=ROOT/'upper_layer_probe/r01/model/research12.tech.lef';text=tech.read_text()
+    for layer in ['metal11','metal12']:
+        block=re.search(r'^LAYER '+layer+r'\s.*?^END '+layer,text,re.M|re.S).group(0)
+        assert re.search(r'PARALLELRUNLENGTH\s+0\.0000\s+2\.7000\s+4\.0000',block)
+        for width,spaces in [('0.0000','0.8000 0.8000 0.8000'),('0.9000','0.8000 0.9000 0.9000'),('1.5000','0.8000 0.9000 1.5000')]:
+            assert ('WIDTH '+width+' '+spaces) in ' '.join(block.split())
+    inputs={str(p):sha(p) for p in [rp,tech]+paths};out=ROOT/'upper_whole_net_search'/revision;out.mkdir(parents=True,exist_ok=False)
     rec={'scope':'SOURCE_BOUND_WHOLE_UPPER_NET_REPAIR_SEARCH_NOT_IMPLEMENTATION','source_SHA':inputs,'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID'],'full_qualification':False,'native_edit_DRC_RC_STA':'NOT_EXECUTED'}
     try:rec['geometric_result']=plan(*paths,out/'whole_net_result_NOT_IMPLEMENTED.json')
     except Exception:rec['actual_failure']=traceback.format_exc()
