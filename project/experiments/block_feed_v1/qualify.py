@@ -225,10 +225,11 @@ def final_formal(folder,out,run,function_folder):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('operation',choices=['controls','seal','physical','drc','function','formal','deliver','geometry','escape'])
+    p=argparse.ArgumentParser();p.add_argument('operation',choices=['controls','seal','physical','drc','function','formal','formal-join','deliver','geometry','escape'])
     p.add_argument('--source',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--peer',type=Path);p.add_argument('--function',type=Path)
     p.add_argument('--gates',type=Path)
+    p.add_argument('--computation',type=Path)
     p.add_argument('--geometry',type=Path);p.add_argument('--native-source',type=Path)
     a=p.parse_args();a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,operation=a.operation,source=str(a.source),commands=[],inputs={})
@@ -251,6 +252,9 @@ def main():
             selected=lambda target,kind:source(a.source)
             getattr(receive,a.operation)(ROOT,a.out,16,run,'m' if source(a.source)[2]['top']=='block_feed_m' else 's',selected=selected)
         elif a.operation=='function':final_function(a.source,a.out,run,a.peer)
+        elif a.operation=='formal-join':
+            from formal_join import join
+            join(ROOT,a.source,a.out,run,a.function,a.computation)
         elif a.operation=='deliver':
             from deliver import deliver
             deliver(a.source,a.out,run,a.gates)
