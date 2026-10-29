@@ -1,5 +1,12 @@
 # 全功能分块、全块二维 pin 与实际接入（Issue126）
 
+2026-10-29T15:08:17.562325+08:00 R41接续实际终态：93240已完成LL bit_1025最新实际源匹配物理/RC视图，13507信号pin及PG/层/尺寸/当前XY精确一致，clean ODB SHA 5e7e3b7c6b7a5bccb7f4c71aacccecf65b08c5e3be3c063a4d65ac162ebe781b，原SPEF逐字重放、独立模型重读0；setup/hold仍−3.909029/−0.587515ns、8876文字VIOLATED，minimum_period/父层/完整规则/功能未闭合。不继承旧三点源模型，不把导出成功当物理资格。11个原生小文件逐SHA追加data/gate_terminal_updates/llsys-parent-tip-views-r01，原R38不覆盖。
+
+已实际提交93243：driver936822309dcdcd8e928549898abeed850b70b14f、独立common_integration/boundary-r01/Aopt。对全部24767个真实Aopt信号pin逐项检查确在边界，使用同六块资源/布局外框/256×32μm真实FIXED拓扑预算，实际执行placement/PDN/CuGR/DRT及独立规则/连通检查。最新只为RUNNING，尚无终态。源epoch与两侧既有ECO差异单列，非最终纯XY收益对照；原C及活动驱动不变。93239最新MXU实际M6接点父层重接仍RUNNING，未宣布NoAP解决。92690/92691、92855、93197/93218及93217两770-edge guard15均保留，不按耗时取消。共同合格冻结/两完整功能/公平系统对照仍未完成，整体in_progress/Draft。
+
+[93243真实提交与公平性边界](issue-126-full-pin/data/common_boundary_r01_submission.json)。
+
+
 2026-10-29T14:33:20.815069+08:00 实际接入增量（R40）：MXU93219已完成真正dbWire/BTerm ECO，只有act_data[12] M6 XY移到原via5帽、4条旧末端M6 WIRE删除；全部2172 pin及PG/单元/网络/外框、所有via及其余191437多端网矩形表示保持，全网所检连通/双PG/RCX/原STA执行。初次fresh驱动误用LL的M2–M8范围，被原有M9 guide以DRT-0155拒绝，未产生DRC结果；失败不改写。93223按实际原源fresh.tcl的M2–M10信号/M4–M10时钟范围、精确相同ODB/SPEF独立fresh0，未重跑接线/提取或放宽原范围。setup/hold0.246690/0.038538ns、0文字VIOLATED，非完整规则资格。新ODB848f80449c9dd83a6138738376297d4ec66ca199436da20309c07d1320ead6fd、SPEFf6596ef24bddd6c397721a51782fea058d47369102e0272bac2419e528cc33eb。
 
 93228新MXU默认/详细OBS/真实网表/RC时序模型已完成并fresh重读0，2172位和PG/当前XY精确匹配、SPEF余量逐字重放，minimum_period仍缺项。新M6详细OBS与真实via帽/pin仍完全重合0.0196μm²，没有剪去占用，父层影响未知；不能仅凭子块native0称父层可达。原M6源与其父层native1/CLOCK失败保留为历史，新源主矩阵更新且父层NOT_VALIDATED/完整GDS-SRAM-规则缺项明确。36幅PNG/SVG中新增真实24→20行目标网前后图和同倍率局部，已打开目视核验。

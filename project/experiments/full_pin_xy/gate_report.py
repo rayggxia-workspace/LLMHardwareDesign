@@ -887,6 +887,7 @@ def render(root,out):
                       ('MXU_actual_tip_original_range_fresh_r01','mxu_actual_tip_fresh/r01'),
                       ('MXU_actual_tip_views_r01','mxu_actual_tip_views/r01/mxu-C'),
                       ('LLSYSTEM_bit1025_actual_tip_ECO_r01','llsys_parent_access_tip/r01'),
+                      ('LLSYSTEM_bit1025_actual_tip_views_r01','llsys_parent_tip_views/r01/llaccel_aux-C'),
                       ('MXU_clock_bound_parent_recheck_r02','escape_view_recheck/r02/mxu-C'),
                       ('MXU_clock_bound_parent_recheck_r03','escape_view_recheck/r03/mxu-C')]:
         p=snapshot/rel/'execution.json.gz'
@@ -896,6 +897,7 @@ def render(root,out):
                         'MXU_actual_tip_original_range_fresh_r01':'mxu-actual-tip-fresh-r01',
                         'MXU_actual_tip_views_r01':'mxu-actual-tip-views-r01',
                         'LLSYSTEM_bit1025_actual_tip_ECO_r01':'llsys-parent-access-tip-r01',
+                        'LLSYSTEM_bit1025_actual_tip_views_r01':'llsys-parent-tip-views-r01',
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
         update=root/'gate_terminal_updates'/terminal_names.get(label,'NO_TERMINAL_UPDATE')
         terminal_evidence=None
@@ -929,6 +931,16 @@ def render(root,out):
             r=next(r for r in rows if r['case']=='llaccel_aux');r['newer_actual_bit1025_ECO']={'evidence':e,'native_DRC_count':0,'matching_new_views':'NOT_YET_EXPORTED','parent_access':'NOT_VERIFIED','full_qualification':False}
             upper_text=upper_text.replace('93190当前LL源匹配视图已完成','93190此前三点源匹配视图已完成（最新bit1025变体另列）')
             upper_text+='<p><strong>93205 LL bit_1025真实重接已收齐终态：</strong>仅此M5 pin接到原网既有via5帽、删除3条原末端WIRE；原先三点修复及完整13184-move内部C保留，全部13507位接口/原层/尺寸/功能/网络、单元/PG/外框保持。725253多端网所检几何连通、双PG/RCX/原STA执行，native与fresh进程0/fresh0，其余725252多端网矩形表示及全部via保持。setup/hold仍−3.909029/−0.587515ns、8876文字VIOLATED，整体FAILED。原共同下层bit1025无AP不能据此宣布解决；新匹配视图和真实父层待完成，不继承前三点源模型；主矩阵仍明确列此前匹配视图源，此新实际变体单独记录。</p><p><a href="data/gate_terminal_updates/llsys-parent-access-tip-r01/all_13507_actual_pin_correspondence.csv.gz">本变体全部13507实际pin对应CSV</a></p>'
+        if label=='LLSYSTEM_bit1025_actual_tip_views_r01' and q.get('completed_utc'):
+            source=result['LLSYSTEM_bit1025_actual_tip_ECO_r01']
+            assert q['native_export_returncode']==q['fresh_model_read_returncode']==0
+            assert q['matching_all_signal_model_pins']==13507 and q['all_13507_current_pins_and_PG_match_actual_after_edit']
+            assert q['source_geometry_sha256']==source['files']['routed.odb']['sha256'] and q['source_SPEF_sha256']==source['files']['extracted.spef']['sha256']
+            assert q['SPEF_replay_matches_source'] and q['all_sources_and_pre_RCX_geometry_unchanged']
+            r=next(r for r in rows if r['case']=='llaccel_aux')
+            r['newer_actual_bit1025_ECO'].update({'matching_new_views':'SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING','model_evidence':e})
+            upper_text=upper_text.replace('新匹配视图和真实父层待完成，不继承前三点源模型；主矩阵仍明确列此前匹配视图源，此新实际变体单独记录。','新匹配视图已由93240完成，真实父层仍待完成；不继承前三点源模型，主矩阵保留此前三点源作历史比较，新变体独立记录。')
+            upper_text+='<p><strong>93240 bit_1025最新实际源视图已完成：</strong>全部13507信号位和PG/原M5-M6/尺寸/当前实际XY精确匹配，clean ODB与真实新源SHA一致；默认及详细OBS、DEF、真实网表与非零提取Lib导出，模型独立重读0。SPEF余量逐字重放，setup/hold仍−3.909029/−0.587515ns，8876文字VIOLATED未消失；minimum_period覆盖仍缺，真实父层无AP、完整规则及功能未闭合。不把导出成功当时序或系统通过。</p>'
         if label.startswith('MXU_clock_bound_parent_recheck_') and q.get('completed_utc'):
             upper_text+='<p>实际整父层返回'+str(q.get('native_returncodes'))+'；fresh='+str(q.get('fresh_DRC_count'))+'，完整2245条宏pin/网络/方向/层/USE合同='+str(q.get('all_original_macro_pin_rectangles_net_directions_layers_in_parent_exactly_unchanged'))+'。r02在native swapMaster发生Signal11，失败保留；r03改为先swap后绑定同一真实库，结果以该回执为准，不能以小探针代替。</p>'
     mxu_tip=result.get('MXU_actual_tip_ECO_r01',{});mxu_fresh=result.get('MXU_actual_tip_original_range_fresh_r01',{});mxu_view=result.get('MXU_actual_tip_views_r01',{})
@@ -952,6 +964,11 @@ def render(root,out):
         from plot_mxu_actual_via_tip import plot as plot_mxu_tip
         result['MXU_actual_via_tip_figure']=plot_mxu_tip(snapshot,out/'data/gate_terminal_updates',out)
         upper_text+='<h3>MXU：M6实际pin/via落脚重接及原范围独立检查已闭合</h3><p>仅act_data[12] XY由(328.255,1068.870)移到原网via5的M6帽(328.535,1088.710)μm，原M6/0.14μm正方形/网络/方向/功能保持；删除4条实际末端M6 WIRE，全部via及其余191437多端网矩形表示不变，0新单元/换型，继承原1次换型成本。全2172信号pin/PG/单元/连接/外框合同、全网所检连通、双PG、RCX/原STA已完成，setup/hold仍0.246690/0.038538ns，不声称系统收益。</p><p>首次fresh驱动误用M2–M8，DRT-0155拒绝源已有M9 guide，没有实际DRC结果；原失败原样保留。93223只复用同一闭合实际ODB/SPEF，按原源fresh.tcl逐SHA/文本核实的M2–M10信号、M4–M10时钟范围独立检查，native0/fresh0，未重做接线/提取或放宽原源规则。93228当前源匹配默认/详细OBS、真实网表与RC模型已完成，2172信号及PG/当前XY/尺寸匹配、原SPEF余量逐字重放，minimum_period规则仍缺项。</p><p><strong>新位置不是已验证的父层空闲点：</strong>M6详细OBS仍有真实同网via帽矩形与整个0.14μm pin重合（0.0196μm²），没有剪去占用；它对实际父层接入的影响仍待原生布线和分层规则核验。旧父层native1/时钟标签失败不继承为新源通过；完整GDS/SRAM/规则/RTL/共同冻结未完成。</p><img src="assets/mxu_actual_via_tip_repair.png" alt="MXU真实M6单pin接线前后与局部放大"><p><a href="assets/mxu_actual_via_tip_repair.svg">SVG</a> · <a href="data/mxu_actual_via_tip_repair.json">真实来源/坐标/范围</a> · <a href="data/gate_terminal_updates/mxu-actual-via-tip-r01/all_2172_actual_pin_correspondence.csv.gz">完整2172个实际pin逐项对应CSV</a></p>'
+    baseline_submission=data/'common_boundary_r01_submission.json'
+    if baseline_submission.exists():
+        q=read(baseline_submission);assert not q['full_qualification']
+        result['optimized_perimeter_common_base_trial_submission']=q
+        upper_text+='<p><strong>优化周边方案的真实共同底座试验已启动：</strong>93243采用独立boundary-r01/Aopt目录，同六块资源、3651.2×5913.6μm外框及256×32μm真实固定M10预连拓扑/预算；全部24767个源pin逐项检查边界坐标，实际执行布局、PDN、CuGR/DRT与独立检查。提交/运行不等于布线完成；Aopt与当前C的源epoch及既有ECO成本不同，现阶段只作集成问题对照，不能计算最终纯XY收益。两侧合格冻结/完整功能/RC-STA仍未完成。<a href="data/common_boundary_r01_submission.json">提交SHA、作业与公平性限制</a>。</p>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',

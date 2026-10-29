@@ -542,7 +542,22 @@ def check(out):
         assert q['all_other_multiterminal_route_box_multisets_identical'] and q['unchanged_multiterminal_nets']==725252 and q['exact_expected_actual_WIRE_rectangles_removed_no_added_wire_or_via_material']==3 and q['all_actual_target_via_rectangle_multisets_preserved']
         assert all(q['all_cells_signal_connections_PG_die_unchanged'].values()) and q['whole_signal_geometry']['checked_nets']==725253 and q['whole_signal_geometry']['pass']
         assert q['setup_ns']==-3.909029 and q['hold_ns']==-.587515 and q['literal_VIOLATED_markers_not_complete_failure_count']==8876
-        assert rows['llaccel_aux']['newer_actual_bit1025_ECO']['matching_new_views']=='NOT_YET_EXPORTED' and not rows['llaccel_aux']['newer_actual_bit1025_ECO']['full_qualification']
+        expected='SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING' if j.get('LLSYSTEM_bit1025_actual_tip_views_r01',{}).get('completed_utc') else 'NOT_YET_EXPORTED'
+        assert rows['llaccel_aux']['newer_actual_bit1025_ECO']['matching_new_views']==expected and not rows['llaccel_aux']['newer_actual_bit1025_ECO']['full_qualification']
+    view=j.get('LLSYSTEM_bit1025_actual_tip_views_r01',{})
+    if view.get('completed_utc'):
+        source=j['LLSYSTEM_bit1025_actual_tip_ECO_r01']
+        assert view['native_export_returncode']==view['fresh_model_read_returncode']==0 and not view['full_qualification']
+        assert view['matching_all_signal_model_pins']==13507 and view['all_13507_current_pins_and_PG_match_actual_after_edit']
+        assert view['source_geometry_sha256']==source['files']['routed.odb']['sha256'] and view['source_SPEF_sha256']==source['files']['extracted.spef']['sha256']
+        assert view['SPEF_replay_matches_source'] and view['all_sources_and_pre_RCX_geometry_unchanged'] and not view['minimum_period_present']
+        source_dir=(out/source['evidence']).parent;view_dir=(out/view['evidence']).parent
+        assert view['source_receipt_SHA256']==hashlib.sha256(gzip.decompress((source_dir/'execution.json.gz').read_bytes())).hexdigest()
+        a=gzip.decompress((source_dir/'after.pins.tsv.gz').read_bytes()).decode().splitlines()
+        b=gzip.decompress((view_dir/'pins.tsv.gz').read_bytes()).decode().splitlines()[1:]
+        assert Counter(tuple(line.split()) for line in a)==Counter(tuple(line.split()) for line in b)
+        for kind in ['setup','hold']:
+            assert gzip.decompress((source_dir/(kind+'.txt.gz')).read_bytes())==gzip.decompress((view_dir/(kind+'.txt.gz')).read_bytes())
     for terminal in (out/'data/gate_terminal_updates').glob('*'):
         if not terminal.is_dir():continue
         capture=read(terminal/'capture.json');receipt=read(terminal/'execution.json.gz')
