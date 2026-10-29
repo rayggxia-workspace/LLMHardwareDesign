@@ -11,7 +11,7 @@ module block_v1_v(
  C_MUL=13,C_ADD=14,C_END=15,T_SCAN=16,T_SAVE=17,
  ROT_LOW=18,ROT_HIGH=19,ROT_ROUND=20,ROT_COMBINE=21,S_REDUCE=22,C_REDUCE=23,
  M_EXEC=24,P_TOTAL=25,P_ROUND=26,G_MUL=27,G_ADD=28;
- localparam F_DRAIN=29,F_DENOM=30;
+ localparam F_DRAIN=29,F_DENOM=30,N_MERGE=31;
  reg [4:0] phase;
  reg [4:0] mul_return;
  reg signed [31:0] a[0:7],b[0:7],input_mem[0:255],output_mem[0:255];
@@ -27,6 +27,8 @@ module block_v1_v(
  reg [7:0] operand_reduce_mask;
  reg signed [64:0] product[0:7],low_product[0:7];
  reg signed [127:0] point_total[0:7],point_rounded[0:7];
+ // Register the exact normalization merge before saturation/replay writes.
+ reg signed [127:0] norm_rounded[0:7];
  reg signed [127:0] rounded,total[0:7],sum;
  // Whole-domain bounds:65535 S32 values fit S64 sum and U80 squares.
  reg signed [63:0] stats_sum[0:1];
@@ -401,12 +403,16 @@ module block_v1_v(
     end
     N_HIGH:begin
      for(i=0;i<8;i=i+1)begin low_product[i]<=product[i];operand_a[i]<=mul_a[i];operand_b[i]<=mul_b[i];end
-     mul_return<=N_WRITE;phase<=M_EXEC;
+     mul_return<=N_MERGE;phase<=M_EXEC;
+    end
+    N_MERGE:begin
+     for(i=0;i<8;i=i+1)norm_rounded[i]<=norm_merge_rne(product[i],low_product[i]);
+     phase<=N_WRITE;
     end
     N_WRITE:begin
      for(i=0;i<8;i=i+1)if(offset+i<length)begin
       // Preserve the full S128 result and the original ties-to-even point.
-      rounded=norm_merge_rne(product[i],low_product[i]);
+      rounded=norm_rounded[i];
       if(rounded< -128'sd2147483648)begin rounded=-128'sd2147483648;rsp_saturated<=1;end
       if(rounded>128'sd2147483647)begin rounded=128'sd2147483647;rsp_saturated<=1;end
       output_mem[offset+i]<=rounded[31:0];

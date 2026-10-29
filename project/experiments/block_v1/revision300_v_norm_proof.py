@@ -36,7 +36,8 @@ endmodule
     report=dict(passed=True,rtl_sha256=file_sha(rtl),proof_model_sha256=file_sha(out/'proof.sv'),
         actual_source_functions_extracted=True,unconstrained_input_bits=130,
         full128bit_signed_merge_rne32_equivalent=True,
-        actual_single_bit_negative_rejected=True,latency_or_register_change=False,
+        actual_single_bit_negative_rejected=True,arithmetic_function_latency_or_register_change=False,
+        macro_pipeline_qualification_separate=True,
         qualified_final_timing=False,
-        scope='All two-S65 inputs, full S128 result. Independent arithmetic reference; no range assumptions, saturation or cycle changes. Macro numerical, mapping and fresh final physical gates remain separate.')
+        scope='All two-S65 inputs, full S128 result. Pure combinational function identity only; no range assumptions or saturation. Macro pipeline, numerical, latency, mapping and fresh final physical gates remain separate.')
     (out/'revision300-v-norm-proof.json').write_text(json.dumps(report,indent=2)+'\n')

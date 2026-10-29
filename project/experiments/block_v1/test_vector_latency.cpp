@@ -1,5 +1,5 @@
 // Measure the macro command boundary, separately from function-lane II=1.
-// Reuse the exact existing handshake/backpressure driver; RTL is unchanged.
+// Reuse the handshake/backpressure driver; assert the normalization contract.
 #define main vector_scoreboard_main
 #include "test_vector_macro.cpp"
 #undef main
@@ -19,7 +19,12 @@ int main(int argc,char**argv){try{
  measure("reciprocal",6,0,65536);measure("rsqrt",6,1,65536);
  for(unsigned n:{1U,7U,8U,9U,64U,128U,256U}){
   std::vector<int32_t>x(n);for(unsigned j=0;j<n;++j)x[j]=(int(j%9)-4)*4096;replay(x);
-  for(unsigned kind=0;kind<3;++kind){measure(kind==0?"RMSNorm":kind==1?"L2Norm":"Softmax",8,kind,U(n)|(U(kind==2?0:4295)<<9),n);read(n);}
+  for(unsigned kind=0;kind<3;++kind){
+   auto t=measure(kind==0?"RMSNorm":kind==1?"L2Norm":"Softmax",8,kind,U(n)|(U(kind==2?0:4295)<<9),n);
+   unsigned groups=(n+7)/8;
+   unsigned expected=kind==2?137+10*groups+(n+1)/2:199+10*groups;
+   need(t==expected,"normalization command latency contract changed");read(n);
+  }
  }
  cmd(13,0,0);std::vector<int32_t>x(40);for(unsigned j=0;j<40;++j)x[j]=int(j%7);replay(x);
  for(unsigned p=0;p<5;++p){U ids=0;for(unsigned j=0;j<8;++j)ids|=U(60000-(8*p+j)*13)<<(16*j);cmd(10,p,ids);}

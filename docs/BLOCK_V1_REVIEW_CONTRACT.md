@@ -1,3 +1,5 @@
+2026-10-30 04:57 CST：唯一基础V新增N_MERGE完整S128寄存，归一化每8元素多1拍。新合同与独立期望、未执行资格和验证链见[流水决策](decisions/2026-10-30-block-v1-v-normalization-pipeline.md)。RMS/L2=199+10B；Softmax=137+10B+P（B=ceil(N/8)、P=ceil(N/2)，装载/消费/读回额外）。全组S回放也经此级，必须新测；当前新源尚未通过物理验收。
+
 2026-10-29 14:49 CST：350实际global-route setup−0.08ns/hold+0.02ns，最差product[4][4]→output_mem[89][5]，9原始文件/308源与路径映射封存。选定同一基础V的N_WRITE完整S128高低乘积加法改用既有add128_grouped，RNE/饱和/周期保持，当前新源数值、映射、物理和最终资格均待355后续验证。原350继续正常收尾；R344/93237已placement，345/346待前置。M/S/T接收保持、V/R最终未齐，Issue121=in_progress、PR122=draft、目标active，登记pending/看板unverified与同步pending。
 
 2026-10-29 13:31 CST：V337实际CTS setup−0.41ns指向group_unit.sqrt_mode→余数（优化别名twice_remainder[29]），8原始文件/源网表映射保留，原337继续route。V348完整130bit分组减法同时产生无借位决策，不增寄存/迭代/周期；260bit无约束SAT及真实单bit负例、三初态/公共/扩展/组合/延迟/映射七项全过，447672单元、93204自然完成。349现有R311空闲80CPU七项占用/工作空间全过、53原始/39稳定/308源核验；135测量与340一致，80预算绑定349/R342且全部成本字段一致。350/351/352新链已stage/validate，354源5b659f1/配置8c45007及PID2486398两轮核验；只换347轻量控制，未分配338/339退休，350实际93210/node17于13:28:16提交并运行。初次10秒观察超时后按原PID恢复，未重启/重投。R342映射继续，344/345/346待真实前置；M/S/T接收保持、V/R最终未齐。Issue121=in_progress、PR122=draft，目标active；登记pending、看板unverified/同步pending，管理员/独立审查待指定。
