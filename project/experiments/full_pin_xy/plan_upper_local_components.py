@@ -59,7 +59,10 @@ def plan(branches,obstructions,diefile,out):
     assert all(len(anchors[n])>=2 for n in selected),{n:len(anchors[n]) for n in selected}
     die=list(map(int,Path(diefile).read_text().split()));trials=[];solution=None;answer_rows=None
     # Rank the measured narrow src128 endpoint before long local crossings.
-    orders=[['src[%d]'%i for i in order] for order in [[128,248,206,129,201,243,199],[248,128,206,201,129,199,243],[128,129,201,199,243,248,206],[206,248,128,129,201,199,243]]]
+    # Closed r01 shows src129 loses its 15-node exit component after src128
+    # connects three boundary stems. Reserve that measured exit first; two
+    # targeted priority alternatives, not an unbounded permutation search.
+    orders=[['src[%d]'%i for i in order] for order in [[129,206,128,248,201,243,199],[129,128,206,201,248,199,243]]]
     for order in orders:
         rows=list(retained);edits=[];failed=None
         for net in order:
