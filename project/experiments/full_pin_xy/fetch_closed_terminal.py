@@ -19,7 +19,10 @@ def fetch(relative,name,out):
         assert PurePosixPath(filename).name==filename and filename not in ['.','..']
         return subprocess.check_output(['ssh',HOST,'cat -- '+shlex.quote(source+'/'+filename)])
     receipt=raw('execution.json');q=json.loads(receipt)
-    assert q.get('completed_utc'),'An active receipt is not terminal evidence'
+    completion_field='completed_utc' if q.get('completed_utc') else 'finished_utc'
+    assert q.get(completion_field),'An active receipt is not terminal evidence'
+    index_field='files' if 'files' in q else 'outputs'
+    assert isinstance(q.get(index_field),dict),'Closed native file index missing'
     dest=Path(out)/name;dest.mkdir(parents=True,exist_ok=False)
     records=[]
     def save(filename,data):
@@ -27,9 +30,9 @@ def fetch(relative,name,out):
         records.append({'name':filename,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),
                         'stored_sha256':hashlib.sha256(p.read_bytes()).hexdigest()})
     save('execution.json',receipt)
-    for filename,meta in sorted(q['files'].items()):
+    for filename,meta in sorted(q[index_field].items()):
         if filename=='execution.json':continue
-        selected_native_gzip=filename in ['target_pin_access.tsv.gz','before_actual_target.tsv.gz','after_actual_target.tsv.gz']
+        selected_native_gzip=filename in ['target_pin_access.tsv.gz','before_actual_target.tsv.gz','after_actual_target.tsv.gz','branch_access.tsv.gz','whole_access.tsv.gz']
         if (Path(filename).suffix not in ['.json','.tcl','.log','.txt','.tsv','.csv','.drc'] and not selected_native_gzip) or meta['bytes']>8*1024*1024:continue
         if any(s in filename for s in ['.cells.','.pdn.']):continue
         data=raw(filename)
@@ -37,7 +40,7 @@ def fetch(relative,name,out):
         save(filename,data)
     assert raw('execution.json')==receipt,'Closed receipt changed during capture'
     manifest={'source':source,'captured_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),
-              'source_completed_utc':q['completed_utc'],'records':records,'full_qualification':False,
+              'source_completed_utc':q[completion_field],'receipt_completion_field':completion_field,'receipt_file_index':index_field,'records':records,'full_qualification':False,
               'scope':'LOSSLESS_CLOSED_TERMINAL_EVIDENCE_ONLY; physical acceptance remains in the native receipt'}
     (dest/'capture.json').write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8',newline='\n')
     print('CLOSED_TERMINAL_CAPTURED',name,len(records),'SHA-verified raw files; not full physical qualification')

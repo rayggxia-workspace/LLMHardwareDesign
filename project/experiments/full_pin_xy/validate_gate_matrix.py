@@ -576,15 +576,63 @@ def check(out):
         if case=='llaccel_aux':
             assert types['worst_observed_by_check_type']['REMOVAL']['slack_ns']==-.587515
             assert types['worst_observed_by_check_type']['HOLD']['slack_ns']==-.340467
+    q=j.get('LLSYSTEM_full_window_terminal_92690',{})
+    if q.get('finished_utc'):
+        assert q['returncode']==1 and q['source_unchanged'] and q['selected_pin_count']==13184
+        closed_dir=(out/q['evidence']).parent
+        assert 'GRT-0116' in gzip.decompress((closed_dir/'global_route.error.txt.gz').read_bytes()).decode()
+        assert 'routed.odb' not in q['outputs'] and 'STAGE_FAIL global_route GRT-0116' in gzip.decompress((closed_dir/'openroad.log.gz').read_bytes()).decode()
+        for kind in ['cells','pdn','die']:assert q['outputs']['before.'+kind+'.tsv']['sha256']==q['outputs']['moved.'+kind+'.tsv']['sha256']
+        assert rows['llaccel_aux']['newer_attempt']['full_window_jobs']=={'92690':'FAILED','92691':'FAILED'}
+        dep=read(data/'llsys_full_window_92691_dependency.json')
+        assert not dep['full_qualification'] and dep['scheduler_job']=='92691' and 'NO_COMPLETED_ROUTE' in dep['actual_original_log_text']
+        assert hashlib.sha256(dep['actual_original_log_text'].encode()).hexdigest()==dep['source_log_sha256']
+    q=j.get('UPPER_remaining_repair_r02',{})
+    if q.get('completed_utc'):
+        assert q['native_returncodes']=={'all770_branch_route':0,'exact_native_composition':0,'fresh_DRC':0}
+        assert q['fresh_DRC_count']==2 and q['source_fresh_native_DRC_count']==10 and q['selected_branch_count']==11
+        assert len(q['actual_all770_branch_route_box_changed_native_net_names'])==20
+        assert q['native_binary_unchanged'] and q['all_closed_sources_unchanged'] and not q['full_qualification']
+        closed_dir=(out/q['evidence']).parent;old_dir=folder/'upper_branch_repair/r01/llaccel'
+        text=gzip.decompress((closed_dir/'independent.drc.gz').read_bytes()).decode()
+        assert re.findall(r'^violation type: (.*)$',text,re.M)==['Short','Short']
+        assert gzip.decompress((old_dir/'independent.drc.gz').read_bytes()).decode().startswith(text)
+        from check_access import check_rows
+        native_tables={}
+        for name,count in [('branch_access',770),('whole_access',514)]:
+            raw=gzip.decompress(gzip.decompress((closed_dir/(name+'.tsv.gz.gz')).read_bytes())).decode()
+            table=list(csv.DictReader(io.StringIO(raw),delimiter='\t'));native_tables[name]=table
+            actual=check_rows(table,True);expected=q['all_770_branch_geometry' if name=='branch_access' else 'all_514_composed_geometry']
+            assert actual==expected and actual['pass'] and actual['checked_nets']==count and actual['checked_terminals']==1540
+        old_rows=list(csv.DictReader(io.StringIO(gzip.decompress(gzip.decompress((old_dir/'branch_access.tsv.gz.gz').read_bytes())).decode()),delimiter='\t'))
+        def lower_material(table):
+            return Counter(tuple(str(r[k]) for k in ['net','kind','layer','x0','y0','x1','y1']) for r in table if r['layer'] in ['metal10','via10'])
+        assert lower_material(old_rows)==lower_material(native_tables['branch_access'])
+        contract=q['exact_hook_and_lower_material_contract'];assert contract['exact_original_hook_boxes']==1540 and contract['all_M10_contained_in_original_hook_or_fixed_conductor_material'] and contract['no_added_M1_M9_or_cut1_cut9']
+        bridge=q['actual_material_and_fixed_bridge_cut_checks'];assert bridge['all_256_fixed_bridges_indispensable_for_real_source_sink_geometry'] and bridge['all_actual_branch_WIRE_VIA_multisets_preserved_under_net_rebinding'] and q['all_256_native_FIXED_paths_preserved']
+        cuts=list(csv.DictReader(io.StringIO(gzip.decompress((closed_dir/'all256_actual_fixed_bridge_cut_checks.csv.gz').read_bytes()).decode())))
+        assert len(cuts)==256 and all(r['real_source_to_sink_connected_without_fixed_rectangle']=='False' and r['terminal_components_without_fixed_rectangle']=='2' for r in cuts)
+    short_figure=j.get('UPPER_actual_short_figure')
+    if short_figure:
+        assert not short_figure['full_qualification'] and short_figure['actual_short_count']==2 and short_figure['native_total_findings']==10
+        assert short_figure['both_intersection_boxes_exactly_match_native_DRC_markers']
+        assert [c['via10_landing_in_actual_overlap'] for c in short_figure['cases']]==[True,False]
+        assert all(c['actual_overlap_area_um2']==.64 for c in short_figure['cases'])
+        source=folder/'upper_branch_repair/r01/llaccel'
+        assert short_figure['source_receipt_SHA256']==hashlib.sha256(gzip.decompress((source/'execution.json.gz').read_bytes())).hexdigest()
+        assert short_figure['source_branch_geometry_SHA256']==read(source/'execution.json.gz')['files']['branch_access.tsv.gz']['sha256']
+        assert short_figure['source_native_DRC_SHA256']==hashlib.sha256(gzip.decompress((source/'independent.drc.gz').read_bytes())).hexdigest()
     for terminal in (out/'data/gate_terminal_updates').glob('*'):
         if not terminal.is_dir():continue
         capture=read(terminal/'capture.json');receipt=read(terminal/'execution.json.gz')
-        assert capture['source_completed_utc']==receipt['completed_utc'] and not capture['full_qualification']
+        completion_field=capture.get('receipt_completion_field','completed_utc');index_field=capture.get('receipt_file_index','files')
+        assert completion_field in ['completed_utc','finished_utc'] and index_field in ['files','outputs']
+        assert capture['source_completed_utc']==receipt[completion_field] and not capture['full_qualification']
         for r in capture['records']:
             assert Path(r['name']).name==r['name']
             stored=(terminal/(r['name']+'.gz')).read_bytes();raw=gzip.decompress(stored)
             assert len(raw)==r['bytes'] and hashlib.sha256(raw).hexdigest()==r['sha256'] and hashlib.sha256(stored).hexdigest()==r['stored_sha256']
-            if r['name']!='execution.json':assert r['sha256']==receipt['files'][r['name']]['sha256'] and r['bytes']==receipt['files'][r['name']]['bytes']
+            if r['name']!='execution.json':assert r['sha256']==receipt[index_field][r['name']]['sha256'] and r['bytes']==receipt[index_field][r['name']]['bytes']
     for q in j.get('source_bound_extended_STA_r01',[]):
         assert not q['full_qualification']
         if not q.get('completed_utc'):continue

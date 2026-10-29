@@ -53,6 +53,10 @@ try {
   await evaluate('[...document.querySelectorAll("p")].find(e=>e.textContent.startsWith("93117两模式真实固定预连上下文试验")).scrollIntoView()');
   await fs.writeFile(path.join(out,'report-actual-preconnected-context.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
  }
+ if(await evaluate(`!!document.querySelector('img[src="assets/upper_actual_via10_shorts.png"]')`)){
+  await evaluate(`document.querySelector('img[src="assets/upper_actual_via10_shorts.png"]').scrollIntoView()`);
+  await fs.writeFile(path.join(out,'report-upper-actual-shorts.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ }
  await evaluate('document.querySelector("#case").value="vector";document.querySelector("#search").value="vec_wr_wdata[300]";render()');
  const query=await evaluate('({count:document.querySelector("#count").textContent,rows:document.querySelectorAll("#rows tr").length,text:document.querySelector("#rows").textContent})');
  if(query.rows!==1||!query.text.includes('vec_wr_wdata[300]'))throw Error(JSON.stringify(query));

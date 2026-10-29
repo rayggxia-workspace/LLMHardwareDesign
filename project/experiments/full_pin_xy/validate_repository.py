@@ -282,6 +282,11 @@ def main():
         assert (OUT/'assets/mxu_actual_via_tip_repair.svg').exists()
         assert 'assets/mxu_actual_via_tip_repair.png' in text and 'assets/mxu_actual_via_tip_repair.svg' in text
         expected_figures+=1
+    if (OUT/'assets/upper_actual_via10_shorts.png').exists():
+        assert (OUT/'assets/upper_actual_via10_shorts.svg').exists()
+        assert 'assets/upper_actual_via10_shorts.png' in text and 'assets/upper_actual_via10_shorts.svg' in text
+        assert 'UPPER_actual_short_figure' in json.loads((OUT/'data/qualification_matrix.json').read_text(encoding='utf-8'))
+        expected_figures+=1
     assert len(list((OUT/'assets').glob('*.png')))==expected_figures
     assert len(list((OUT/'assets').glob('*.svg')))==expected_figures
     assert all(x not in text for x in ['__PINS__','__PHYSICAL__','__TOTAL__'])

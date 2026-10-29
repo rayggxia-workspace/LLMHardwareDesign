@@ -1277,11 +1277,12 @@
       "parent_access": "NEW_VIA_TIP_SOURCE_NOT_VALIDATED_IN_PARENT_OLD_R02_NoAP_bit_1025_RETAINED",
       "newer_attempt": {
         "full_window_jobs": {
-          "92690": "RUNNING",
-          "92691": "PENDING"
+          "92690": "FAILED",
+          "92691": "FAILED"
         },
         "three_pin_job": "92747_FAILED_DRT_1231",
-        "qualification": false
+        "qualification": false,
+        "full_window_failure_scope": "GRT_0116; no routed ODB; dependent clean export/native DRC/connectivity/RC/STA not executed"
       },
       "full_qualification": false,
       "evidence": [
@@ -32813,6 +32814,435 @@
     },
     "evidence": "data/gate_terminal_updates/llsys-current-paths-r03/execution.json.gz"
   },
+  "LLSYSTEM_full_window_terminal_92690": {
+    "case": "llaccel_aux",
+    "plan": "C",
+    "selected_pin_count": 13184,
+    "stage_scope": "13184 selected pins; all remaining pins stay original; pure XY, no buffering/resizing",
+    "source_odb": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-llaccel-abc-logic-4c-01/flow/results/nangate45/hpy_llaccel_aux/base/5_route_connected.odb",
+    "source_sha256": "e333d2fb77ff7af4c18b79dc0d76f1249924bec9e347f9391b641e07188b2e7a",
+    "source_config": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-llaccel-abc-logic-4c-01/config.mk",
+    "source_sdc": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-llaccel-abc-logic-4c-01/flow/results/nangate45/hpy_llaccel_aux/base/5_1_grt.sdc",
+    "libs": [
+      "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib"
+    ],
+    "input_sha256": {
+      "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-llaccel-abc-logic-4c-01/flow/results/nangate45/hpy_llaccel_aux/base/5_route_connected.odb": "e333d2fb77ff7af4c18b79dc0d76f1249924bec9e347f9391b641e07188b2e7a",
+      "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-llaccel-abc-logic-4c-01/flow/results/nangate45/hpy_llaccel_aux/base/5_1_grt.sdc": "bf1da8e419bc8ec292b2c56304fcea3b1b575b5dcf5f5370a1e54ac6d34225d6",
+      "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-llaccel-abc-logic-4c-01/config.mk": "70d783f0257e89d2013fed68fc70fc999e91b67f450ebe749887ad96ae3e89ba",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/inputs/trial-inputs-llaccel_aux-access-r04/llaccel_aux-C.tcl": "61d1e74f1c9e69a5fe739eae39f8e1d035d55e47acdfb274b11e62d3294c1a3a",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/all-block-access-r03/code/physical_trial.tcl": "40af32fd065743493e8ec3d9c76ec5e69dc08a324027d3ae644016b1738542a6",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/inputs/trial-inputs-llaccel_aux-access-r04/access_reservations.tcl": "5d15e1e4db0bb44bd5381059bdee9821bda4fdedc001e43c39351edcbb8573a4"
+    },
+    "scheduler_job": "92690",
+    "allocated_cpus": "4",
+    "openroad_threads": 4,
+    "started_utc": "2026-10-28T08:01:37.091178+00:00",
+    "driver_commit": "91a2647fcc2a0092a21e5ee022a70dbbff6f5ef2",
+    "parent_handoff_target_layer": "UNKNOWN; this experiment cannot qualify parent access",
+    "temporary_access_reservation_method": "Full signal/clock reroute, original cells/PDN/OBS/allowed layers preserved; remove only newly created window constraints after DRT. Not a same-rip-cohort wire-cost comparison.",
+    "command": [
+      "singularity",
+      "exec",
+      "--cleanenv",
+      "--bind",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/tmp:/tmp",
+      "--bind",
+      "/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro",
+      "--bind",
+      "/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro",
+      "--home",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/home",
+      "--pwd",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/access-r03/llaccel_aux-C",
+      "--env",
+      "PINXY_OUTPUT=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/access-r03/llaccel_aux-C,PINXY_ODB=/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-llaccel-abc-logic-4c-01/flow/results/nangate45/hpy_llaccel_aux/base/5_route_connected.odb,PINXY_SDC=/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-llaccel-abc-logic-4c-01/flow/results/nangate45/hpy_llaccel_aux/base/5_1_grt.sdc,PINXY_LIBS_TCL=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/access-r03/llaccel_aux-C/libs.tcl,PINXY_RELOCATIONS=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/inputs/trial-inputs-llaccel_aux-access-r04/llaccel_aux-C.tcl,PINXY_PLAN=C,PINXY_TOP_LAYER=8,PINXY_DRIVER=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/all-block-access-r03/code,PINXY_ACCESS_OUT=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/access-r03/llaccel_aux-C/access.tsv,OMP_NUM_THREADS=4,PINXY_ACCESS_RESERVATIONS=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/inputs/trial-inputs-llaccel_aux-access-r04/access_reservations.tcl",
+      "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+      "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad",
+      "-threads",
+      "4",
+      "-no_init",
+      "-exit",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/all-block-access-r03/code/physical_trial.tcl"
+    ],
+    "returncode": 1,
+    "finished_utc": "2026-10-29T07:35:09.767291+00:00",
+    "source_unchanged": true,
+    "fingerprint_checks": {
+      "cells": {
+        "before_sha256": "eca52507c46551ed32096d4adf574772ea894d67b4b0d0ae2c487b8ed9895ef1",
+        "after_sha256": null,
+        "exact_equal": false
+      },
+      "pdn": {
+        "before_sha256": "bee782064c969c6763d26285983d2347f5bc6283643c7311351d88c235f85d8b",
+        "after_sha256": null,
+        "exact_equal": false
+      },
+      "die": {
+        "before_sha256": "d0cc165a810ffe967745e98fc75be503554ff6ef0f66c975359342a1db4bc476",
+        "after_sha256": null,
+        "exact_equal": false
+      }
+    },
+    "outputs": {
+      "temporary_access_windows.tsv": {
+        "bytes": 1013968,
+        "sha256": "c4c701ba982d5a36f113e0efe76fe89540ac0eac7c2ee8d448b91d04c680fc91"
+      },
+      "actually_ripped_nets.tsv": {
+        "bytes": 8461995,
+        "sha256": "6532e5522ba1c75e5d5b69d4207ed38a087a2e8bd8ee8f59ac09c9267689c02d"
+      },
+      "libs.tcl": {
+        "bytes": 102,
+        "sha256": "a547de45fee1d9160cbd4558639ff396a9b83515b4b3f6fb57fda5c25389d68d"
+      },
+      "moved.pdn.tsv": {
+        "bytes": 6664031,
+        "sha256": "bee782064c969c6763d26285983d2347f5bc6283643c7311351d88c235f85d8b"
+      },
+      "moved.pins.tsv": {
+        "bytes": 980812,
+        "sha256": "8e38291779952e907ea4c046ead97ddba183f676df164240943e9988bf18a70b"
+      },
+      "openroad.log": {
+        "bytes": 1998,
+        "sha256": "c723b63b4ddffbbc29d9ea58ba1ca2015c14487b10fea53cfbc7186e2c28a11c"
+      },
+      "before.die.tsv": {
+        "bytes": 20,
+        "sha256": "d0cc165a810ffe967745e98fc75be503554ff6ef0f66c975359342a1db4bc476"
+      },
+      "ripped.odb": {
+        "bytes": 664802776,
+        "sha256": "bab573adf08e28567b1de3e1c33dc5dd3551cf8a60ba779695ac2baaf3b2612e"
+      },
+      "stages.tsv": {
+        "bytes": 111,
+        "sha256": "06c5a65477103b656546b6fa50209aac7ed1ff4d26f83100cc8ebef2c6db2276"
+      },
+      "before.pdn.tsv": {
+        "bytes": 6664031,
+        "sha256": "bee782064c969c6763d26285983d2347f5bc6283643c7311351d88c235f85d8b"
+      },
+      "moved.odb": {
+        "bytes": 929369240,
+        "sha256": "4299e372c3abd2fd477a52f08019caf0c661bf39e896eb898805c0efb724cfd1"
+      },
+      "before.pins.tsv": {
+        "bytes": 923718,
+        "sha256": "1659685236673eaf94ecbc203a482b3f61945aa48f0c4df4d440c711e44382f0"
+      },
+      "global_route.error.txt": {
+        "bytes": 271,
+        "sha256": "da16cf826012ef995981352987e485b23d35b25779a656c0e916acb4e32b7110"
+      },
+      "before.cells.tsv": {
+        "bytes": 136366234,
+        "sha256": "eca52507c46551ed32096d4adf574772ea894d67b4b0d0ae2c487b8ed9895ef1"
+      },
+      "failed-route.odb": {
+        "bytes": 1001216604,
+        "sha256": "dda421f891d6c5b6d6516e0a675c6553c98b60b17a5374ca8473c98fc3101b58"
+      },
+      "congestion.rpt": {
+        "bytes": 11558768,
+        "sha256": "70691793932de2b0250c709e24d21614394da9a4fde71f09feaeee766475ce11"
+      },
+      "moved.die.tsv": {
+        "bytes": 20,
+        "sha256": "d0cc165a810ffe967745e98fc75be503554ff6ef0f66c975359342a1db4bc476"
+      },
+      "moved.cells.tsv": {
+        "bytes": 136366234,
+        "sha256": "eca52507c46551ed32096d4adf574772ea894d67b4b0d0ae2c487b8ed9895ef1"
+      }
+    },
+    "status": "ACTUAL_TRIAL_FAILED",
+    "evidence": "data/gate_terminal_updates/llsys-full-window-92690/execution.json.gz"
+  },
+  "UPPER_remaining_repair_r02": {
+    "scope": "ALL770_ROUTED_BRANCHES_EXACT_NATIVE_FIXED_COMPOSITION_NOT_COMPLETE_SYSTEM",
+    "mode": "llaccel",
+    "driver_commit": "510bd1585d9d8d099cdde2d305ae72cd529d2445",
+    "scheduler_job": "93276",
+    "native_returncodes": {
+      "all770_branch_route": 0,
+      "exact_native_composition": 0,
+      "fresh_DRC": 0
+    },
+    "base_frozen": false,
+    "base_qualified": false,
+    "full_qualification": false,
+    "RC_STA_electrical": "NOT_EXECUTED_ADAPTER_HELPER_NOT_ACCELERATOR_TIMING_MODEL",
+    "helper_passive_port_directions": "Routing helper labels are not additional functional drivers; actual driver/sink graph is source-bound by original compiled plan",
+    "leaf_selection": "Original R02 unqualified source; not upgraded to newer leaf views",
+    "source_SHA": {
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/upper_adaptation_trial/r02/llaccel/placed_adapter_NOT_SYSTEM.odb": "255199acc70551faa15f40360d9fe403424706379f232bb6756f64becbc57159",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/upper_adaptation_trial/r02/llaccel_actual_hook_plan.json": "2e6dee4bb8be0b61c8382d967f4f7c1e08329c18d44e97abc186bbbcd24b77b7",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/upper_adaptation_trial/r02/llaccel/execution.json": "e5a114067e67daaf7767f36699664a5210874164955a73bdc3a7ee4b231c1656",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/common_integration/r01/C/fixed_prewires_NOT_FROZEN.odb": "8bfddd007d2cc07df5d0f74ebee91799e592185ed7d1e1a0a11a32690ed53cc5",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/native_wire_append_api/r02/execution.json": "c9f507d9d5a23a21c61b953c50fb7199c7523637ad00887463e6a7a43b406116",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/common_integration/r01/C/actual_shared_conductors.json": "1a472c0e29df43ac86d2857cdd4f0e61b221c36e354dc7222a3dcf67c5ca17dc",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/shared_conductor_audit/r02/execution.json": "a984f3fa88e7b2e14a9bf291e6984813d0ce577c41d889c6de01cbae60c9a1bc",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/upper_layer_probe/r01/model/research12.setRC.tcl": "2a1177992bf6a3d9710d55474533434cc9fe82d41b3e2f2e3500a54a41572b77",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/upper_branch_repair/r01/llaccel/routed_770_BRANCHES_NOT_SYSTEM.odb": "feb0549c682f5c74998d2b9e71d5523f0e96406bdb141a4b849c2dc3d9086476",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/upper_branch_repair/r01/llaccel/independent.drc": "e850ffc3872444ddbd7b73ec32f76c7bb978c43cc8a7c4143c2dfbed6f698a76",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/upper_branch_repair/r01/llaccel/branch_access.tsv.gz": "a1a05cfee8dbb339e1bb868b408e6c1328aee8f1461f0918fb61856a0dfc7a76",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/upper_branch_composition/r01/llaccel/route.guide": "70dc344b8a33e3370067b5924e212489de70d5dcddb9dc7dac2573e0600368d0",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/upper_branch_repair/r01/llaccel/execution.json": "0e75a3cf654a7b64756df8e411121d2df86a65c708034da20839caa4ed7dd996"
+    },
+    "routing_profile": "original",
+    "guide_reuse": "Same source-bound original guide; predecessor detailed repair changed physical wires but did not regenerate a global guide",
+    "resume_closed_branch_source": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/upper_branch_repair/r01/llaccel/routed_770_BRANCHES_NOT_SYSTEM.odb",
+    "global_route_reexecuted": false,
+    "selected_original_edge_ids_for_detail_repair": [
+      123,
+      124,
+      128,
+      139,
+      166,
+      180,
+      199,
+      205,
+      206,
+      243,
+      248
+    ],
+    "selected_branch_count": 11,
+    "source_fresh_native_DRC_count": 10,
+    "source_DRC_type_counts": {
+      "Short": 2,
+      "Metal Spacing": 8
+    },
+    "routing_rules_and_all_original_hooks_unchanged": true,
+    "source_lower_checkpoint_SHA256": "8bfddd007d2cc07df5d0f74ebee91799e592185ed7d1e1a0a11a32690ed53cc5",
+    "actual_OpenROAD_binary_SHA256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+    "actual_edges": 770,
+    "actual_hooks": 1540,
+    "actual_shared_fixed_resources": 256,
+    "all_770_branch_geometry": {
+      "scope": "ALL multi-terminal signal/clock nets in the entire block, including all their terminals; one-terminal unused nets excluded; actual DB rectangle/closed-overlap and via definition connectivity; not GDS LVS",
+      "pass": true,
+      "checked_nets": 770,
+      "connected_nets": 770,
+      "checked_terminals": 1540,
+      "checked_shapes": 32150,
+      "checked_layers": [
+        "metal10",
+        "metal11",
+        "metal12",
+        "via10",
+        "via11"
+      ],
+      "failed_nets": 0,
+      "nets": {},
+      "nets_detail": "failures only",
+      "native_wire_object_missing_nets": 0,
+      "physically_touching_zero_wire_nets": 0
+    },
+    "actual_all770_branch_route_box_changed_native_net_names": [
+      "src[123]",
+      "src[124]",
+      "src[128]",
+      "src[137]",
+      "src[139]",
+      "src[180]",
+      "src[196]",
+      "src[198]",
+      "src[199]",
+      "src[202]",
+      "src[204]",
+      "src[205]",
+      "src[206]",
+      "src[207]",
+      "src[214]",
+      "src[222]",
+      "src[223]",
+      "src[232]",
+      "src[248]",
+      "src[251]"
+    ],
+    "actual_changed_count_may_differ_from_selected_count": true,
+    "all_514_composed_geometry": {
+      "scope": "ALL multi-terminal signal/clock nets in the entire block, including all their terminals; one-terminal unused nets excluded; actual DB rectangle/closed-overlap and via definition connectivity; not GDS LVS",
+      "pass": true,
+      "checked_nets": 514,
+      "connected_nets": 514,
+      "checked_terminals": 1540,
+      "checked_shapes": 32406,
+      "checked_layers": [
+        "metal10",
+        "metal11",
+        "metal12",
+        "via10",
+        "via11"
+      ],
+      "failed_nets": 0,
+      "nets": {},
+      "nets_detail": "failures only",
+      "native_wire_object_missing_nets": 0,
+      "physically_touching_zero_wire_nets": 0
+    },
+    "exact_hook_and_lower_material_contract": {
+      "all_770_original_edges_accounted_for": true,
+      "actual_native_nets": 514,
+      "exact_original_hook_boxes": 1540,
+      "original_fixed_M10_unions_covered": 256,
+      "all_M10_contained_in_original_hook_or_fixed_conductor_material": true,
+      "no_added_M1_M9_or_cut1_cut9": true,
+      "scope": "Exact integer union/material containment; not normalized full-base freeze, GDS LVS or RC/STA"
+    },
+    "actual_material_and_fixed_bridge_cut_checks": {
+      "all_770_actual_branch_pairs_preserved": true,
+      "all_actual_branch_WIRE_VIA_multisets_preserved_under_net_rebinding": true,
+      "exactly_256_original_actual_FIXED_M10_rectangles_added_to_helper_context": true,
+      "all_256_fixed_bridges_indispensable_for_real_source_sink_geometry": true,
+      "fixed_bridges_indispensable_count": 256,
+      "scope": "Per-net actual native rectangles/via links and analysis-only bridge cuts. Cross-net isolation still requires independent DRC/LVS; not full base freeze, RTL or STA"
+    },
+    "all_256_native_FIXED_paths_preserved": true,
+    "fresh_DRC_count": 2,
+    "native_binary_unchanged": true,
+    "all_closed_sources_unchanged": true,
+    "completed_utc": "2026-10-29T07:51:39.914958+00:00",
+    "files": {
+      "after_branch_route.pdn.tsv": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fresh.tcl": {
+        "bytes": 340,
+        "sha256": "a6b6ed8e3c560fb1e3686f67a78bacf77bad539e68e26b214d35166d2168a9f4"
+      },
+      "independent.log": {
+        "bytes": 3504,
+        "sha256": "c7907d1dd5c87c18d30a6749771d97e50ee934878efad8227081bcb5f3bcb728"
+      },
+      "composition_stages.tsv": {
+        "bytes": 62,
+        "sha256": "7b03eea1604080e72cb2254ba8d6719a66ae58dc81640568f54c99ea3cdf91e5"
+      },
+      "before_route.die.tsv": {
+        "bytes": 21,
+        "sha256": "021c45d967f47e23ee74b2eb6c95c0d6f1fdf97c5e3cd6ae5bed5a67b3c2e409"
+      },
+      "before.OBS.tsv": {
+        "bytes": 2007418,
+        "sha256": "d68db2c7daf0a1bac380515b06391b0fbaa4ca940b736814bfda9e5781abd278"
+      },
+      "branch_access.tsv.gz": {
+        "bytes": 225059,
+        "sha256": "889b2aec39ce629c795b341ab63374268f8d83d6986afbb945d77af2cc294deb"
+      },
+      "physical_quotient_plan.json": {
+        "bytes": 835195,
+        "sha256": "c7b810eb3d5f66c1eccc97d44541cd5d258737759b8042620580f1219373c24a"
+      },
+      "route_branches.tcl": {
+        "bytes": 5645,
+        "sha256": "7369c3e82279f63908288557ef81b34cfe8718de136553b9e1a6dc2d6457c5f6"
+      },
+      "after_composition.pins.tsv": {
+        "bytes": 115838,
+        "sha256": "bfa749fa24875a2cfb162e27e8a78135a14e9e2a25e023c9206b49f0d5a3a10c"
+      },
+      "after_branch.OBS.tsv": {
+        "bytes": 2007418,
+        "sha256": "d68db2c7daf0a1bac380515b06391b0fbaa4ca940b736814bfda9e5781abd278"
+      },
+      "before_route.pdn.tsv": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after_composition.OBS.tsv": {
+        "bytes": 2007418,
+        "sha256": "d68db2c7daf0a1bac380515b06391b0fbaa4ca940b736814bfda9e5781abd278"
+      },
+      "after_branch_route.cells.tsv": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "routed_adapter.def": {
+        "bytes": 4867983,
+        "sha256": "925fcff304e650cf1c427aa5edcec3843ce63d3a04adf82c3c33861fac5a0af8"
+      },
+      "routed_770_BRANCHES_NOT_SYSTEM.odb": {
+        "bytes": 260217793,
+        "sha256": "6331f91e726f25d9eb2912e72bf612dea0b8373cff4f0eeeb2f63964d28731a7"
+      },
+      "independent.drc": {
+        "bytes": 288,
+        "sha256": "90dd9c455586293f98092571b068427a1f36995145d1cc90dfb7da45d3e731d6"
+      },
+      "after_composition.cells.tsv": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "branch_route.drc": {
+        "bytes": 256,
+        "sha256": "916db94f65f107d77b09d38c9b65bb4ff3497b2537b97e4000337e014ab3791c"
+      },
+      "before_route.cells.tsv": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "before_route.pins.tsv": {
+        "bytes": 115814,
+        "sha256": "232cfe88ddc144ea67766e56c4d1ce7cf3e4031efc6a532e4c634254509137d9"
+      },
+      "routed_adapter_NOT_SYSTEM.odb": {
+        "bytes": 259903112,
+        "sha256": "f2de9b65eeae22aac0bd664ed3efdfa02af71d324887f168c4e53b81bad2162d"
+      },
+      "branch_route_stages.tsv": {
+        "bytes": 52,
+        "sha256": "d6498cfed85dc001b8a648e75d1652486b5d268f7c38b53b7a319c44b5b45afd"
+      },
+      "composition_native.log": {
+        "bytes": 645,
+        "sha256": "b43b70f9871c3d464a9b5fbd7f049484da3a836cba78615060d2960898f2fab0"
+      },
+      "compose_actual_wires.tcl": {
+        "bytes": 656093,
+        "sha256": "d01def76132eb39f0dc24be8e225b2994443db6aef6468aed190f04722864f26"
+      },
+      "whole_access.tsv.gz": {
+        "bytes": 233464,
+        "sha256": "423297b5e62c8c808875fb039ad5fd4593f3488c7e8cde90963d329d28992ad1"
+      },
+      "branch_native.log": {
+        "bytes": 97500,
+        "sha256": "6bc2bcfcb8090d2b19d6ce954c68d42ea501d5d57df1e009b50af2a644608c4e"
+      },
+      "all256_actual_fixed_bridge_cut_checks.csv": {
+        "bytes": 9401,
+        "sha256": "e4ea2174e5e139a7a2402d94401e3e6bf3e565a2119453e8ba62fd127739a86b"
+      },
+      "after_composition.die.tsv": {
+        "bytes": 21,
+        "sha256": "021c45d967f47e23ee74b2eb6c95c0d6f1fdf97c5e3cd6ae5bed5a67b3c2e409"
+      },
+      "after_branch_route.die.tsv": {
+        "bytes": 21,
+        "sha256": "021c45d967f47e23ee74b2eb6c95c0d6f1fdf97c5e3cd6ae5bed5a67b3c2e409"
+      },
+      "after_branch_route.pins.tsv": {
+        "bytes": 115814,
+        "sha256": "232cfe88ddc144ea67766e56c4d1ce7cf3e4031efc6a532e4c634254509137d9"
+      },
+      "after_composition.pdn.tsv": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "wire_length.csv": {
+        "bytes": 25,
+        "sha256": "5faad33e59663a14f8e6bc570fbb9f6a62386445fb4f420d578adbc7f172551a"
+      }
+    },
+    "evidence": "data/gate_terminal_updates/upper-remaining-repair-r02-complete-geometry/execution.json.gz"
+  },
   "MXU_clock_bound_parent_recheck_r02": {
     "scope": "ALL2172_REAL_PARENT_ACCESS_RECHECK_NEW_ACTUAL_CHILD_OBS_NOT_OLD_FIXTURE_OR_COMMON_BASE_QUALIFICATION",
     "source_SHA": {
@@ -32975,6 +33405,129 @@
       "System area/timing/RC benefit"
     ]
   },
+  "UPPER_actual_short_figure": {
+    "scope": "ACTUAL_CLOSED_ADAPTER_WIRE_VIA10_INTERSECTIONS_NOT_PROPOSED_ROUTES",
+    "full_qualification": false,
+    "source_receipt_SHA256": "0e75a3cf654a7b64756df8e411121d2df86a65c708034da20839caa4ed7dd996",
+    "source_branch_geometry_SHA256": "a1a05cfee8dbb339e1bb868b408e6c1328aee8f1461f0918fb61856a0dfc7a76",
+    "source_native_DRC_SHA256": "e850ffc3872444ddbd7b73ec32f76c7bb978c43cc8a7c4143c2dfbed6f698a76",
+    "source_variant": "upper_branch_repair/r01/llaccel",
+    "native_total_findings": 10,
+    "actual_short_count": 2,
+    "DBU_per_um": 2000,
+    "cases": [
+      {
+        "reference_branch": 243,
+        "reference_kind": "VIA",
+        "wire_branch": 248,
+        "actual_reference_link": "via_46",
+        "actual_wire_link": "wire_33",
+        "actual_overlap_box_um": [
+          2438.095,
+          2642.87,
+          2438.895,
+          2643.67
+        ],
+        "actual_overlap_area_um2": 0.64,
+        "center_um": [
+          2438.495,
+          2643.27
+        ],
+        "via10_landing_in_actual_overlap": true,
+        "original_rows": [
+          {
+            "net": "src[243]",
+            "layer": "via10",
+            "x0": "4876190",
+            "y0": "5285740",
+            "x1": "4877790",
+            "y1": "5287340",
+            "kind": "VIA",
+            "link": "via_46"
+          },
+          {
+            "net": "src[243]",
+            "layer": "metal10",
+            "x0": "4876190",
+            "y0": "5285740",
+            "x1": "4877790",
+            "y1": "5287340",
+            "kind": "VIA",
+            "link": "via_46"
+          },
+          {
+            "net": "src[243]",
+            "layer": "metal11",
+            "x0": "4876190",
+            "y0": "5285740",
+            "x1": "4877790",
+            "y1": "5287340",
+            "kind": "VIA",
+            "link": "via_46"
+          },
+          {
+            "net": "src[248]",
+            "layer": "metal11",
+            "x0": "4869790",
+            "y0": "5285740",
+            "x1": "4880990",
+            "y1": "5287340",
+            "kind": "WIRE",
+            "link": "wire_33"
+          }
+        ]
+      },
+      {
+        "reference_branch": 199,
+        "reference_kind": "WIRE",
+        "wire_branch": 206,
+        "actual_reference_link": "wire_14",
+        "actual_wire_link": "wire_14",
+        "actual_overlap_box_um": [
+          2465.295,
+          2638.07,
+          2466.095,
+          2638.87
+        ],
+        "actual_overlap_area_um2": 0.64,
+        "center_um": [
+          2465.6949999999997,
+          2638.4700000000003
+        ],
+        "via10_landing_in_actual_overlap": false,
+        "original_rows": [
+          {
+            "net": "src[199]",
+            "layer": "metal11",
+            "x0": "4927390",
+            "y0": "5276140",
+            "x1": "4970590",
+            "y1": "5277740",
+            "kind": "WIRE",
+            "link": "wire_14"
+          },
+          {
+            "net": "src[206]",
+            "layer": "metal11",
+            "x0": "4930590",
+            "y0": "5263340",
+            "x1": "4932190",
+            "y1": "5300140",
+            "kind": "WIRE",
+            "link": "wire_14"
+          }
+        ]
+      }
+    ],
+    "both_intersection_boxes_exactly_match_native_DRC_markers": true,
+    "not_verified": [
+      "Complete system function",
+      "Qualified lower freeze",
+      "Full applicable rules",
+      "RC/STA",
+      "System benefit"
+    ]
+  },
   "optimized_perimeter_common_base_trial_submission": {
     "created_utc": "2026-10-29T07:00:33.659927+00:00",
     "driver_commit": "936822309dcdcd8e928549898abeed850b70b14f",
@@ -33004,5 +33557,5 @@
     ],
     "full_qualification": false
   },
-  "latest_runtime_observation": "data/r42_runtime_observation.json"
+  "latest_runtime_observation": "data/r43_runtime_observation.json"
 }

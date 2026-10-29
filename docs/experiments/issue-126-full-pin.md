@@ -1,5 +1,16 @@
 # 全功能分块、全块二维 pin 与实际接入（Issue126）
 
+2026-10-29T16:07:45.640559+08:00 R43实际阶段：93276已终态，upper_branch_repair/r02/llaccel从闭合r01十项源进行原生修复，fresh native 10→2，8项间距本轮不再出现，仍两处M11 Short，整体FAILED。请求11个原支路，实际20条wire-box网络改变（含相邻支路，完整清单保留）；native DRT/精确opcode重组/fresh进程均0，不把进程0当DRC通过。全部770支路/1540端点及514网所检连通、原hook/M10材料/OBS、256条native FIXED和逐网固定桥必要性保持；新原生几何双gzip和256桥CSV已无损采集，独立重算整组连通、原M10/via10材料及失败marker。guard15原93217继续，不取消或覆盖。
+
+新第37组PNG/SVG给出原r01两处真实Short与16μm/3.2μm同倍率放大。逐矩形和原生marker核对后确认：243/248处涉及via10的M11帽；199/206处是两条M11导线相交，不能将两处都称via帽冲突。两处交叠各0.8×0.8μm，0.64μm²。图保留r01历史几何；r02留下同坐标的两处Short，仍无异网隔离、RC/STA、共同合格冻结或完整系统通过。图中的M10/M11施工落脚不同于叶块原M5/M6 pin，没有升原pin层。
+
+92690/92691亦已终态：92690全窗口/全信号时钟重布线在GRT-0116拥塞失败，无routed.odb；原源不变，移动阶段原cells/PG/die哈希一致，但后布线检查缺失不能写通过。92691原日志NO_COMPLETED_ROUTE，clean导出/native DRC/连通/RC/STA未执行（不是一份DRC结果失败）。原GRT-0273时钟NDR警告保留，不借自动搜索行为宣称规则通过。legacy finished_utc/outputs格式回执保持原文，通过新捕获器识别后无损追加；没有伪造completed_utc/files。旧R38运行记录不覆盖，最新矩阵另列本终态。
+
+LL新定向ECO93269/driverbb77112cb027b7d7a5374c381737d467beb793e6已真实执行：从当前实际bit1025源和93248原SPEF路径选择12个负余量输出，移动38个原私有恒等buffer；几何隔离进程的选择/迁移及diamond合法化原生均0，完整功能cell/master/连接及未选单元位置合同通过。随后真实GRT/DRT/RC/STA/fresh仍运行，原13507信号pin/PG/外框/层和完整后检查待闭合；不把启发式/迁移当时序通过。原buffer模型按实际Liberty证明恒等，工具与库SHA绑定原源，原SDC/内部pin XY/计算架构不改。新修复源/driver及实际运行见r43_runtime_observation.json，未重复旧试验。
+
+当前已发布R42 head769e837cfa77399b7f3b98703bdb7c56715f87d3、在线CI40835690073/40835690078 success，矩阵/PNG/SVG读回一致。93239新MXU父层、93243 Aopt共同底座、93245最新实际接口C底座及原其他活跃作业继续；新阶段head/37图blob/CI以推送后读回为准。六块完整规则/时序电气、ACT2/MXU4真实SRAM GDS、历史逐pin目标层、完整RTL/合格冻结/两完整功能/公平系统对照仍未完成，整体active/in_progress/Draft。登记PR5 pending，看板unverified/同步pending，管理员/审查人待指定。
+
+
 2026-10-29T07:25:52.355190+00:00 R42实际终态：93247/93248分别对openTPU SYSTEM真实stacked-via源、LL bit1025实际源执行原SDC/ODB/SPEF关键路径审计；原生0、源SHA不变、max/min逐字重放。每组每延迟类型12条，非全路径枚举；两份各12个原文终态按raw/gzip SHA追加。openSYS max/min仍−0.056396/−0.119919ns。LL全局min −0.587515ns实际来自异步复位removal，采集clk组最差普通hold为−0.340467ns；max为寄存器u_attn.D_r[6]到bit_2941输出−3.909029ns。真实输出末段net报告1.668370ns/到达slew2.069668ns，属实际STA段值，非独立RC常数/可消除收益；不得将全部负min称普通hold。JSON历史setup_ns/hold_ns兼容保留，HTML表改为max/min slack，并新增逐类型/逐路径来源JSON。原时序失败仍在，没有通过诊断修复。
 
 93245已在独立common_integration/actual-access-tips-r01/C实际启动，driver2ef7cc0da8558f961f172457f5810e44c34b471d。仅选择已闭合且逐SHA绑定的新MXU/LL实际视图，完整逐pin核对旧接口功能/方向/层/尺寸/PG，差异XY全部索引；原topology/6资源/外框/256固定预算不改。其余叶源epoch和658diode/openSYS新源未选明确保留，仍早期未合格接入试验，不能当公平PPA或两完整功能。93243真实Aopt、93239实际MXU父层独立检查与原长作业仍执行，见带时间runtime回执，不重复/取消。R41 c3703265d9cc56401041e9636f7fd8dec419ee08已推送，在线CI40833728772/40833728831 success，矩阵/PNG/SVG blob读回一致；登记pending/看板unverified同步pending/待指定审查人，完整目标仍active/in_progress/Draft。

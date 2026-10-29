@@ -890,6 +890,8 @@ def render(root,out):
                       ('LLSYSTEM_bit1025_actual_tip_views_r01','llsys_parent_tip_views/r01/llaccel_aux-C'),
                       ('SYSTEM_current_actual_paths_r03','actual_path_audit/r03/opentpu_aux'),
                       ('LLSYSTEM_current_actual_paths_r03','actual_path_audit/r03/llaccel_aux'),
+                      ('LLSYSTEM_full_window_terminal_92690','trials/access-r03/llaccel_aux-C'),
+                      ('UPPER_remaining_repair_r02','upper_branch_repair/r02/llaccel'),
                       ('MXU_clock_bound_parent_recheck_r02','escape_view_recheck/r02/mxu-C'),
                       ('MXU_clock_bound_parent_recheck_r03','escape_view_recheck/r03/mxu-C')]:
         p=snapshot/rel/'execution.json.gz'
@@ -902,6 +904,8 @@ def render(root,out):
                         'LLSYSTEM_bit1025_actual_tip_views_r01':'llsys-parent-tip-views-r01',
                         'SYSTEM_current_actual_paths_r03':'system-current-paths-r03',
                         'LLSYSTEM_current_actual_paths_r03':'llsys-current-paths-r03',
+                        'LLSYSTEM_full_window_terminal_92690':'llsys-full-window-92690',
+                        'UPPER_remaining_repair_r02':'upper-remaining-repair-r02-complete-geometry',
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
         update=root/'gate_terminal_updates'/terminal_names.get(label,'NO_TERMINAL_UPDATE')
         terminal_evidence=None
@@ -914,7 +918,22 @@ def render(root,out):
             p=terminal_dest/'execution.json.gz';terminal_evidence=p.relative_to(out).as_posix()
         if not p.exists():continue
         q=read(p);e=terminal_evidence or (dest/p.relative_to(snapshot)).relative_to(out).as_posix();result[label]=dict(q,evidence=e)
-        upper_text+='<p><strong>'+label+'</strong>：'+('已收齐终态' if q.get('completed_utc') else '快照时仍执行中，不能当完成')+'。<a href="'+e+'">源SHA、原生返回及完整原文回执</a>；完整资格仍未完成。</p>'
+        upper_text+='<p><strong>'+label+'</strong>：'+('已收齐终态' if q.get('completed_utc') or q.get('finished_utc') else '快照时仍执行中，不能当完成')+'。<a href="'+e+'">源SHA、原生返回及完整原文回执</a>；完整资格仍未完成。</p>'
+        if label=='LLSYSTEM_full_window_terminal_92690' and q.get('finished_utc'):
+            assert q['returncode']==1 and q['source_unchanged'] and q['selected_pin_count']==13184
+            assert 'GRT-0116' in gzip.decompress((p.parent/'global_route.error.txt.gz').read_bytes()).decode()
+            assert 'routed.odb' not in q['outputs']
+            for kind in ['cells','pdn','die']:assert q['outputs']['before.'+kind+'.tsv']['sha256']==q['outputs']['moved.'+kind+'.tsv']['sha256']
+            r=next(r for r in rows if r['case']=='llaccel_aux')
+            r['newer_attempt']['full_window_jobs']={'92690':'FAILED','92691':'FAILED'}
+            r['newer_attempt']['full_window_failure_scope']='GRT_0116; no routed ODB; dependent clean export/native DRC/connectivity/RC/STA not executed'
+            upper_text=upper_text.replace('原full-window92690/92691继续','原full-window92690/92691现已终态失败（GRT-0116，后续未执行）')
+            upper_text+='<p><strong>92690/92691长期窗口试验已终态：</strong>92690源不变，13184个选定C pin已经迁移，移动阶段原cells/PG/die哈希一致；完整全信号/时钟重接在GRT-0116拥塞失败，没有routed.odb。92691原日志为NO_COMPLETED_ROUTE，clean导出/独立DRC/全网/RC/STA未执行，不是已有DRC结果失败。原工具GRT-0273时钟NDR警告亦保留，不以自动搜索行为宣称规则通过。旧快照的RUNNING只属当时观察，最新矩阵按本终态覆盖；此前PG-only/native0修复源与这次失败独立，未冒充新窗口通过。<a href="data/llsys_full_window_92691_dependency.json">92691原文、源SHA与未执行范围</a>。</p>'
+        if label=='UPPER_remaining_repair_r02' and q.get('completed_utc'):
+            assert q['fresh_DRC_count']==2 and q['source_fresh_native_DRC_count']==10 and q['all_closed_sources_unchanged']
+            assert q['all_770_branch_geometry']['pass'] and q['all_514_composed_geometry']['pass']
+            assert q['all_256_native_FIXED_paths_preserved'] and q['actual_material_and_fixed_bridge_cut_checks']['all_256_fixed_bridges_indispensable_for_real_source_sink_geometry']
+            upper_text+='<p><strong>93276残余涉网实际修复终态：独立native 10→2，仍失败。</strong>从闭合r01实际源请求剩余11个原支路，实际20条支路wire-box多重集改变，完整清单保留；复用逐SHA绑定的原guide。原生DRT、精确opcode重组和独立fresh进程均0。全部770支路/1540端点及514个重组网所检连通、原hook/M10材料/OBS、256条native FIXED及逐网固定桥必要性保持。8个间距报项本轮不再出现，仍有原两处M11 Short，异网隔离未通过；不把每网连通当系统连通或功能通过。原14→10→2历史完整保留，尚无完整下层冻结/两完整功能/RC/STA或收益结论；guard15独立作业不覆盖或取消。</p>'
         if label=='ALL24767_actual_parent_track_geometry' and q.get('completed_utc'):
             upper_text+='<p>真实原R02六块父层24767pin逐项轨道审计：其余五块preferred中心未对齐数0，LL SYSTEM为13184；宏原点均已对齐实际pitch。bit_1025的M5 preferred中心偏移0.07μm；原网535条实际矩形/端点已取得，未编造端点。仅为几何风险，未对齐不等于无AP，仍须真实局部PG/OBS/via及父层接入检查。</p><p><a href="'+(dest/rel/'all24767_actual_parent_pin_track_geometry.csv.gz').relative_to(out).as_posix()+'">全部24767父层信号pin逐项轨道CSV</a></p>'
         if label=='MXU_native_clock_Liberty_binding_probe' and q.get('native_probe_returncode')==0:
@@ -980,6 +999,13 @@ def render(root,out):
         from plot_mxu_actual_via_tip import plot as plot_mxu_tip
         result['MXU_actual_via_tip_figure']=plot_mxu_tip(snapshot,out/'data/gate_terminal_updates',out)
         upper_text+='<h3>MXU：M6实际pin/via落脚重接及原范围独立检查已闭合</h3><p>仅act_data[12] XY由(328.255,1068.870)移到原网via5的M6帽(328.535,1088.710)μm，原M6/0.14μm正方形/网络/方向/功能保持；删除4条实际末端M6 WIRE，全部via及其余191437多端网矩形表示不变，0新单元/换型，继承原1次换型成本。全2172信号pin/PG/单元/连接/外框合同、全网所检连通、双PG、RCX/原STA已完成，setup/hold仍0.246690/0.038538ns，不声称系统收益。</p><p>首次fresh驱动误用M2–M8，DRT-0155拒绝源已有M9 guide，没有实际DRC结果；原失败原样保留。93223只复用同一闭合实际ODB/SPEF，按原源fresh.tcl逐SHA/文本核实的M2–M10信号、M4–M10时钟范围独立检查，native0/fresh0，未重做接线/提取或放宽原源规则。93228当前源匹配默认/详细OBS、真实网表与RC模型已完成，2172信号及PG/当前XY/尺寸匹配、原SPEF余量逐字重放，minimum_period规则仍缺项。</p><p><strong>新位置不是已验证的父层空闲点：</strong>M6详细OBS仍有真实同网via帽矩形与整个0.14μm pin重合（0.0196μm²），没有剪去占用；它对实际父层接入的影响仍待原生布线和分层规则核验。旧父层native1/时钟标签失败不继承为新源通过；完整GDS/SRAM/规则/RTL/共同冻结未完成。</p><img src="assets/mxu_actual_via_tip_repair.png" alt="MXU真实M6单pin接线前后与局部放大"><p><a href="assets/mxu_actual_via_tip_repair.svg">SVG</a> · <a href="data/mxu_actual_via_tip_repair.json">真实来源/坐标/范围</a> · <a href="data/gate_terminal_updates/mxu-actual-via-tip-r01/all_2172_actual_pin_correspondence.csv.gz">完整2172个实际pin逐项对应CSV</a></p>'
+    from plot_upper_actual_shorts import plot as plot_upper_shorts
+    actual_shorts=plot_upper_shorts(snapshot,out)
+    if actual_shorts:
+        result['UPPER_actual_short_figure']=actual_shorts
+        upper_text+='<h3>适配层残余 Short：实际 M11 金属与接入帽逐项定位</h3><p>闭合upper_branch_repair/r01/llaccel有2处Short及8处间距报项。243/248处异网WIRE与via10的M11帽交叠；199/206处是两条M11 WIRE实际交叉，不能都称via落脚冲突。两处实际交叠均0.8×0.8μm、0.64μm²，逐整数矩形计算并与原生DRC marker精确对应；不是示意路径。原770支路连通与256固定桥逐网必要性不替代异网隔离，当前仍失败。</p><img src="assets/upper_actual_via10_shorts.png" alt="两处实际M11异网Short及同倍率局部放大"><p><a href="assets/upper_actual_via10_shorts.svg">SVG</a> · <a href="data/upper_actual_via10_shorts.json">逐矩形/原生DRC/源SHA</a>。上层0.8μm施工接点与原叶块M5/M6 pin不同，未把原pin升层；下层PG/OBS未绘不代表空闲。新r02只从这份10项闭合实际源按残余涉网重接，与仍运行的guard15分别记录，不宣称新原生DRC、RC或完整系统通过。</p>'
+        if result.get('UPPER_remaining_repair_r02',{}).get('completed_utc'):
+            upper_text=upper_text.replace('新r02只从这份10项闭合实际源按残余涉网重接，与仍运行的guard15分别记录，不宣称新原生DRC、RC或完整系统通过。','新r02/93276已将独立native报项从10降至2，仍为图中同坐标的两处Short；本图保留r01历史几何，当前结果及源原文分别列出。guard15独立记录，未宣称RC或完整系统通过。')
     baseline_submission=data/'common_boundary_r01_submission.json'
     if baseline_submission.exists():
         q=read(baseline_submission);assert not q['full_qualification']
@@ -990,6 +1016,10 @@ def render(root,out):
         observed=read(runtime);assert not observed['full_qualification']
         result['latest_runtime_observation']=runtime.relative_to(out).as_posix()
         upper_text+='<p><strong>新增实际接入93245及终态审计93247/93248：</strong>93245在独立actual-access-tips-r01/C使用最新MXU/LL真实视图，逐pin保留原层/尺寸/功能/PG并索引实际XY差异；其他源epoch差异单列。它重新构造/布线共同父层以验证旧NoAP是否消除，尚未取得物理完成证据，不继承旧源结果。<a href="data/r42_runtime_observation.json">带时间的真实提交/活动/依赖与已结束作业回执</a>；该观察不是持续实时状态，不能把RUNNING当通过。六块完整资格/共同合格冻结/两完整功能/公平系统收益仍未完成。</p>'
+    runtime=data/'r43_runtime_observation.json'
+    if runtime.exists():
+        observed=read(runtime);assert not observed['full_qualification'];result['latest_runtime_observation']=runtime.relative_to(out).as_posix()
+        upper_text+='<p><strong>LL当前源的定向真实buffer迁移93269：</strong>根据原SDC/SPEF审计的12个负余量输出，已选择38个原有私有恒等buffer、执行几何隔离进程的迁移和diamond合法化；原功能cell/master/连接与未选单元位置合同通过，0新功能单元/换型的请求独立记录。完整13507 pin/PG/外框、全网与原层集合仍须在后续实际DRT/fresh/RC/STA核验；当前路由在运行，不能当时序修复成功，也不改原内部pin XY或把min removal称普通hold。<a href="data/r43_runtime_observation.json">新试验冻结驱动、真实阶段和调度观察</a>。原未合格共同底座及两完整功能目标仍继续。</p>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',
