@@ -17,7 +17,7 @@ def run(revision):
             for pin,x,y in [('a',20.,20.),('b',21.6,yy)]:
                 lines+=['place_pin -pin_name '+pin+' -layer metal11 -location {'+str(x)+' '+str(y)+'} -pin_size {.8 .8}',
                     'set n [[$b findBTerm '+pin+'] getNet];set w [odb::dbWire_create $n];set e [odb::dbWireEncoder];$e begin $w;$e newPath [$tech findLayer metal11] ROUTED;$e addPoint '+str(round(x*2000))+' '+str(round(y*2000))+';$e addTechVia [$tech findVia via11_0];$e end']
-            lines+=['write_db '+tcl(sub/'fixture_NOT_SYSTEM.odb'),'write_def '+tcl(sub/'fixture.def'),'set_routing_layers -signal metal11-metal12 -clock metal11-metal12','drt::check_drc -output_file '+tcl(sub/'independent.drc')]
+            lines+=['set grid [odb::dbGCellGrid_create $b];$grid addGridPatternX 0 11 10000;$grid addGridPatternY 0 11 10000','write_db '+tcl(sub/'fixture_NOT_SYSTEM.odb'),'write_def '+tcl(sub/'fixture.def'),'set_routing_layers -signal metal11-metal12 -clock metal11-metal12','drt::check_drc -output_file '+tcl(sub/'independent.drc')]
             script=sub/'probe.tcl';script.write_text('\n'.join(lines)+'\n');rc=execute(common,script,sub/'native.log',threads=1)
             text=(sub/'independent.drc').read_text() if (sub/'independent.drc').exists() else ''
             rec['cases'][name]={'native_returncode':rc,'native_DRC_count':len(re.findall(r'^violation type:',text,re.M)),'actual_native_findings':text}
