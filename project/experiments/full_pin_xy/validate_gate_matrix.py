@@ -431,6 +431,36 @@ def check(out):
             assert not mode['conflicts'] and abs(mode['minimum_cut_rectangle_gap_um']-2.4)<1e-9
             p=(out/j['source_snapshot']).parent/'upper_adaptation_trial/r02'/(mode['mode']+'_actual_hook_plan.json.gz')
             assert hashlib.sha256(gzip.decompress(p.read_bytes())).hexdigest()==mode['source_plan_raw_sha256']
+    if j.get('SYSTEM_actual_stacked_via_physical_RC_views',{}).get('completed_utc'):
+        q=j['SYSTEM_actual_stacked_via_physical_RC_views'];source=j['SYSTEM_actual_stacked_via_r01']
+        assert not q['full_qualification'] and q['native_export_returncode']==q['fresh_model_read_returncode']==q['before_target_actual_export_returncode']==0
+        assert q['matching_all_signal_model_pins']==2229 and q['all_original_signal_and_PG_pins_and_size_exactly_preserved']
+        assert q['SPEF_replay_matches_source'] and q['all_sources_and_pre_RCX_geometry_unchanged'] and not q['minimum_period_present']
+        assert q['source_geometry_sha256']==source['files']['routed.odb']['sha256'] and q['source_SPEF_sha256']==source['files']['extracted.spef']['sha256']
+        assert q['source_receipt_SHA256']==hashlib.sha256(gzip.decompress((out/source['evidence']).read_bytes())).hexdigest()
+        assert q['current_exact_source_extended_STA']['native_command_executed']
+        assert q['current_exact_source_extended_STA']['actual_report_SHA256']==q['files']['current_source_extended_checks_all.txt']['sha256']
+        assert rows['opentpu_aux']['current_source_research_model']=='SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING'
+        f=j['SYSTEM_actual_stacked_via_figure'];assert not f['full_qualification'] and f['source_native_DRC_before_after']==[2,0]
+        assert f['after_ODB_SHA256']==q['source_geometry_sha256'] and f['before_ODB_SHA256']==q['before_actual_geometry_sha256']
+    if j.get('VECTOR_probe_strict_directed_buffer_relation_r01',{}).get('completed_utc'):
+        q=j['VECTOR_probe_strict_directed_buffer_relation_r01'];assert not q['full_qualification'] and not q['relative_mapped_digital_contract_pass']
+        assert q['all_closed_sources_unchanged'] and 'An original logical net split after buffer elimination' in q['actual_failure']
+        assert rows['vector']['completed_source']=='costed_VECTOR_resume/r01'
+    if j.get('LLSYSTEM_actual_four_marker_diagnosis_r01',{}).get('completed_utc'):
+        q=j['LLSYSTEM_actual_four_marker_diagnosis_r01'];assert not q['full_qualification'] and q['all_closed_sources_unchanged'] and q['native_local_PG_OBS_export_returncode']==0
+        assert q['source_native_DRC_count']==4 and q['source_all_multiterminal_nets']==725253 and q['all_target_rows']==862 and q['local_signal_clock_rows']==831
+        assert q['all_three_net_connectivity_replay']['pass'] and q['all_three_net_connectivity_replay']['checked_nets']==3
+    if j.get('VECTOR_actual_five_input_partition_restore_r01',{}).get('completed_utc'):
+        q=j['VECTOR_actual_five_input_partition_restore_r01'];assert not q['full_qualification'] and q['relative_mapped_digital_contract_pass']
+        assert q['pre_native_simulated_strict_relation_pass'] and not q['strict_verifier_changed'] and q['old_strict_failure_retained']
+        assert q['native_returncodes']=={'restore_original_five_inputs':0,'restored_full_graph':0}
+        assert q['actual_changed_signal_terminals_exactly_five_inputs'] and len(q['exact_five_input_restores'])==5
+        assert q['all_cell_instances_masters_poses_areas_unchanged'] and all(q['all_original_pins_PG_die_unchanged'].values())
+        assert q['all_closed_sources_unchanged'] and q['new_cells_or_sizing_in_this_restore']==0 and q['legality_route_RC_STA']=='NOT_EXECUTED'
+        assert q['summary']['original_signal_terminals']==1076467 and q['summary']['top_ports']==2246 and q['summary']['added_identity_buffers']==49
+        assert q['summary']['resized_original_instances']==365 and q['summary']['original_net_partition_equal_after_buffer_elimination']
+        assert q['summary']['directed_original_driver_reachability'] and q['summary']['added_buffer_graph_acyclic']
     for q in j.get('latest_actual_parent_landing_repairs',[]):
         if not q.get('completed_utc'):continue
         assert q['native_route_returncode']==q['fresh_DRC_returncode']==0 and q['whole_signal_geometry']['pass']

@@ -514,6 +514,51 @@ def render(root,out):
     if screen.exists():
         q=read(screen);result['planned_default_via10_pair_geometric_screen']=q
         upper_text+='<p>两模式各1540个原生M10 hook上<strong>计划</strong>的默认via10单cut接入，逐一检查1185030对矩形，最小cut矩形间距2.4μm；相对明确假设0.88μm未发现成对冲突。坐标与0.8μm cut模板来自真实hook plan，原叶M5/M6不改。这不是已放置via、实际DRC、OBS/PG/PRL/包围检查或完整布通，也不证明已找到GRT失败根因。<a href="data/upper_planned_via10_pair_screen_r01/summary.json">全部来源/假设</a> · <a href="data/upper_planned_via10_pair_screen_r01/planned_via10_nearest.csv">每个计划接点最近邻CSV</a>。</p>'
+    p=snapshot/'system_stacked_via_views/r01/opentpu_aux-C/execution.json.gz'
+    if p.exists():
+        q=read(p);result['SYSTEM_actual_stacked_via_physical_RC_views']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('completed_utc'):
+            upper_text+='<p><strong>93089 SYSTEM当前源实际视图：</strong>native export='+str(q.get('native_export_returncode'))+'、独立模型重读='+str(q.get('fresh_model_read_returncode'))+'，匹配全部'+str(q.get('matching_all_signal_model_pins'))+'个信号位及原PG/层/尺寸，真实SPEF余量重放='+str(q.get('SPEF_replay_matches_source'))+'。新源扩展检查独立执行、原负setup/hold不删；minimum_period覆盖仍缺失，不是父层、完整GDS/RTL或系统资格。两份当前真实ODB各自导出完整_215139_矩形，非根据脚本猜测路线。</p>'
+    from plot_system_stacked_via_actual import plot as plot_stacked
+    actual_stacked=plot_stacked(snapshot,out)
+    if actual_stacked:
+        result['SYSTEM_actual_stacked_via_figure']=actual_stacked
+        upper_text+='<img loading="lazy" src="assets/system_stacked_via_actual.png" alt="SYSTEM实际接线前后原生矩形，native2变0但时序失败"><p><a href="assets/system_stacked_via_actual.svg">真实接入修复SVG</a> · <a href="data/system_stacked_via_actual_rectangles.csv">两份完整目标网实际矩形CSV</a> · <a href="data/system_stacked_via_actual.json">源SHA及未验证项</a>。坐标同尺度、矩形为实际尺寸；周边异网/PG/OBS未绘，白底不是空闲。</p>'
+    q=result.get('VECTOR_placement_only_context_probe_r03',{})
+    if q.get('completed_utc'):
+        upper_text+='<p><strong>93083原生placement优化阶段已完成，尚非物理实现：</strong>原生返回'+str(q.get('native_returncodes'))+'；实际待布线检查点新增49个BUF、365处换型，master bbox面积较当前r01再增约354.046μm²，保留原负启发式余量（−4.179502/0.014579ns）。这不是提取RC或时序改善，不是block面积变化，原917.700μm²等此前成本另继承。原pin/PG/外框保持，尚未合法化/详细接线或RC/STA。</p>'
+    p=snapshot/'vector_probe_equivalence/r01/execution.json.gz'
+    if p.exists():
+        q=read(p);result['VECTOR_probe_strict_directed_buffer_relation_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('completed_utc') and not q.get('relative_mapped_digital_contract_pass'):
+            upper_text+='<p><strong>93094严格数字关系检查FAILED：</strong>复用原生source/repaired完整图并按SHA核验，没有重复导出或跑P&amp;R。消去新增buffer后仍有原逻辑网拆分（An original logical net split after buffer elimination），当前检查点不能提升为合格新实现；不能仅凭新增单元全为BUF或状态单元合同相同就宣布功能等价。原失败、全部原生图及Liberty保留，下一步逐端点定位；尚未排除实际逻辑损坏，也未完成更一般等价证明。新P&amp;R驱动的前置门槛要求此关系通过，尚未提交。</p>'
+    p=snapshot/'vector_probe_partition_diagnosis/r01/execution.json.gz'
+    if p.exists():
+        q=read(p);result['VECTOR_strict_partition_failure_diagnosis_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('completed_utc'):
+            upper_text+='<p><strong>93102原始分区失败已定位：</strong>确实只有net83166一条原网、11个原端点；5个输入被改接net158807，包含AOI/NAND输入及place83183/A。CSV枚举全部失败原网，原生图/SHA及11个实际端点均保留。这是分区检查定位，不宣称原优化必定改变布尔功能，也不豁免原失败。</p>'
+    p=snapshot/'vector_partition_restore/r01/execution.json.gz'
+    if p.exists():
+        q=read(p);result['VECTOR_actual_five_input_partition_restore_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('completed_utc'):
+            upper_text+='<p><strong>93106实际五输入恢复：</strong>先模拟接回真实原驱动place83184/Z所在net83166并要求未修改的严格比较器通过，再在native ODB中真实改接5个输入、重新导出完整原生图，同一严格关系检查='+str(q.get('relative_mapped_digital_contract_pass'))+'。原321905个非filler实例、1076467个信号端点、2246顶层端口及380561驱动分量核对，49个新增BUF为无环有向恒等链、365换型Liberty合同匹配、607个NULL端点逐项保持。原cell master/位置/面积及pin/PG/外框不变；本次只恢复网络，未加单元/换型。原失败版本另存，新检查点仍未合法化、详细接线、RC/STA或RTL/系统等价，不能据此提升完整物理资格。下一步才在严格通过的新源上实际跑P&amp;R；原VECTOR已布线源仍是r01负时序版本。</p>'
+            next(r for r in rows if r['case']=='vector')['new_unrouted_partition_restored_variant']={'relative_mapped_relation_pass':q.get('relative_mapped_digital_contract_pass'),
+              'legality_route_RC_STA':'NOT_EXECUTED','full_qualification':False,'evidence':(dest/p.relative_to(snapshot)).relative_to(out).as_posix()}
+    p=snapshot/'llsys_DRC_diagnosis/r01/execution.json.gz'
+    if p.exists():
+        q=read(p);result['LLSYSTEM_actual_four_marker_diagnosis_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('completed_utc'):
+            upper_text+='<p><strong>93092 LL SYSTEM实际四DRC诊断：</strong>在有完整13184个内部移动pin的PG-only备选源，全部四原生报项对应三网bit_1382013、bit_6907、bit_1389626。按闭合725253网全块原生导出SHA，保留三条完整目标网862行接入矩形及局部831行真实多端信号/时钟几何，并从同一clean ODB另读真实固定VDD/VSS与OBS。原文件/PG/约束不改；这是定位，不是修复或DRC通过。原full-window92690/92691继续，备选不冒充新窗口终态；单端未用网和库内部GDS金属覆盖缺项单列。</p>'
+    phase=[]
+    for mode in ['opentpu','llaccel']:
+        p=snapshot/'upper_grid_phase/r01'/mode/'execution.json.gz'
+        if p.exists():phase.append(dict(read(p),evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix()))
+    if phase:
+        result['all770_grid_phase_half_r01']=phase
+        upper_text+='<p>93090在新目录实际运行两模式770边guide grid相位试验：原点改为2850/2850 DBU（1.425μm），保留默认50次搜索及原物理轨道/层/规则/hook XY/PG/OBS；只测试离散网格敏感性，不等于根因已定位或布通。原200次/原50次/DRT失败保留；原R02未合格底座输入仍未升级到新叶源，未合格冻结。</p>'
+        for q in phase:
+            if q.get('completed_utc'):
+                upper_text+='<p>网格相位 '+html.escape(q['mode'])+' 子模式终态：native='+str(q.get('native_returncodes'))+'，实际阶段='+str(q.get('native_stage_status'))+'。GRT失败则DRT/fresh/全边连通/RC/STA未执行，不用Slurm另一子模式仍运行覆盖此失败。</p>'
     p=snapshot/'vector_clone_crash/r01/execution.json.gz'
     if p.exists():
         q=read(p);result['VECTOR_exact_native_crash_symbolization_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
@@ -629,6 +674,10 @@ def render(root,out):
           'setup_ns':q.get('setup_ns'),'hold_ns':q.get('hold_ns'),'violation_marker_rows':q.get('literal_VIOLATED_markers_not_complete_failure_count'),
           'complete_rules':'CURRENT_STACKED_VIA_GDS_NOT_EXECUTED_COVERAGE_GAPS','parent_access':'CURRENT_STACKED_VIA_SOURCE_NOT_VALIDATED_IN_PARENT',
           'current_source_research_model':'NOT_EXPORTED','common_base_source_selection':'ORIGINAL_R02_NOT_UPGRADED_TO_THIS_SOURCE'})
+    q=result.get('SYSTEM_actual_stacked_via_physical_RC_views',{})
+    if q.get('completed_utc') and q.get('native_export_returncode')==q.get('fresh_model_read_returncode')==0 and q.get('all_sources_and_pre_RCX_geometry_unchanged'):
+        r=next(r for r in rows if r['case']=='opentpu_aux');r['current_source_research_model']='SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING'
+        r['current_source_extended_STA_audit']=q.get('current_exact_source_extended_STA')
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',

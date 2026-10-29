@@ -270,6 +270,10 @@ def main():
         assert (OUT/'assets/mxu_actual_M6_escape_context.svg').exists()
         assert 'assets/mxu_actual_M6_escape_context.png' in text and 'assets/mxu_actual_M6_escape_context.svg' in text
         expected_figures+=1
+    if (OUT/'assets/system_stacked_via_actual.png').exists():
+        assert (OUT/'assets/system_stacked_via_actual.svg').exists()
+        assert 'assets/system_stacked_via_actual.png' in text and 'assets/system_stacked_via_actual.svg' in text
+        expected_figures+=1
     assert len(list((OUT/'assets').glob('*.png')))==expected_figures
     assert len(list((OUT/'assets').glob('*.svg')))==expected_figures
     assert all(x not in text for x in ['__PINS__','__PHYSICAL__','__TOTAL__'])
