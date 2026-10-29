@@ -47,7 +47,7 @@ endmodule
         script=['read_verilog gold.v','hierarchy -check -top gold','proc','memory','opt','design -stash gold',
                 'read_verilog actual_generated_behavioral.v proposed_explicit_sync_wrapper.v',
                 'hierarchy -check -top gate','proc','flatten','memory','opt']
-        script+=['rename \\core.mem['+str(i)+'] \\mem['+str(i)+']' for i in range(64)]
+        script+=[r'rename \core.mem['+str(i)+r'] \mem['+str(i)+']' for i in range(64)]
         script+=['design -stash gate','design -copy-from gold -as gold gold','design -copy-from gate -as gate gate',
                  'equiv_make gold gate equiv','hierarchy -check -top equiv','equiv_simple -seq 4','equiv_induct -seq 4','equiv_status -assert']
         (out/'equivalence.ys').write_text('\n'.join(script)+'\n')
