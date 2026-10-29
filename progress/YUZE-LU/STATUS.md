@@ -1,4 +1,4 @@
-2026-10-29 22:31 CST，Issue130当前：M最终接受/本地文件保持通过。S35原生六阶段、内建全边界LEC及RCX完成；93404独立物理通过，300MHz setup+28.545ps、hold+7.2ps，cap/slew/setup/hold违规0。93407完整未修改deck DRC仍运行；qualify36/93451以最终S和已接受M进行S→M→T三初态功能，完整模型16个C++编译进程活跃且内存充足。qualify37/93463源494a56da将严格LEC计算与功能并行：完整物理视图已导出/源哈希固定，最终仍无条件要求功能通过并核对同一视图；93464交付←功能/LEC/DRC，93465几何/93466包←交付。物理/DRC引用repair35同源门，function引用qualify36，没有重跑已通过门。旧93452/54/55/56均仅PENDING，经本人命令/目录核验后退役。S尚未接受，PR132仍draft、Issue130=in_progress。S34/93392原20ps参数对照继续。父任务保留，登记pending/看板unverified及同步pending，审查人待指定。
+2026-10-29 22:31 CST，Issue130当前：M最终接受/本地文件保持通过。S35原生六阶段、内建全边界LEC及RCX完成；93404独立物理通过，300MHz setup+28.545ps、hold+7.2ps，cap/slew/setup/hold违规0。93407完整未修改deck DRC仍运行；qualify36/93451以最终S和已接受M进行S→M→T三初态功能，完整模型16个C++编译进程活跃且内存充足。qualify37/93463源494a56da将严格LEC计算与功能并行：完整物理视图已导出/源哈希固定，最终仍无条件要求功能通过并核对同一视图；93464交付←功能/LEC/DRC，93465几何/93466包←交付。物理/DRC引用repair35同源门，function引用qualify36，没有重跑已通过门。旧93452/54/55/56均仅PENDING，经本人命令/目录核验后退役。S尚未接受，PR132仍draft、Issue130=in_progress。S34/93392的20ps内部目标对照已自然FAILED：插112160 hold buffers后RSZ-0060触及工具上限，原失败回执保留，未取得资格。父任务保留，登记pending/看板unverified及同步pending，审查人待指定。
 
 以下为父任务原进度，保留其原始事实，不由侧任务更新：
 
