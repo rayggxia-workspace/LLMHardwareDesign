@@ -57,12 +57,12 @@ def read(path):
     return json.loads(path.read_text()) if path.exists() else {}
 
 
-def own_allocations(lines):
+def own_allocations(lines, issue_job_ids):
     result = []
     for line in lines:
         fields = line.split('|')
         assert len(fields) == 3 and all(fields), 'Malformed Slurm observation'
-        if fields[1].startswith('yzl-'):
+        if fields[1].startswith('yzl-') and fields[0] in issue_job_ids:
             result.append(line)
     return result
 
@@ -140,7 +140,15 @@ def main():
                 # Requery before every possible mutation. Other members' jobs
                 # are untouched; pending own jobs count equally with running.
                 lines = output(['squeue', '-h', '-u', 'yuzelu', '-o', '%i|%j|%T']).splitlines()
-                own = own_allocations(lines)
+                issue_job_ids = set()
+                for path in base.glob('block-v1-*/dispatch-state.json'):
+                    assert path.resolve().parent.parent == base.resolve()
+                    recorded = read(path)
+                    assert recorded['run_id'] == path.parent.name
+                    issue_job_ids.update(str(x['job_id']) for x in recorded['tasks'].values() if x.get('job_id'))
+                # This is an issue budget, not a whole-account budget. Unknown
+                # reservations remain fail-closed in the original dispatcher.
+                own = own_allocations(lines, issue_job_ids)
                 status['own_live_allocations'] = own
                 if len(own) >= config['max_allocations']:
                     status['runs'][row['run_id']] = 'ready_at_allocation_cap'

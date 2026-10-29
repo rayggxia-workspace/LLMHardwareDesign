@@ -16,10 +16,11 @@ def check():
     assert classify(queue, {}, {}, lambda t,s:('waiting', [])) == 'waiting_dependency'
     assert classify(queue, {}, {}, lambda t,s:('failed', [])) == 'dependency_failed'
     lines = [str(n)+'|yzl-block|'+('PENDING' if n == 0 else 'RUNNING') for n in range(8)]
-    assert len(own_allocations(lines+['20|hpy-block|RUNNING'])) == 8
-    assert len(own_allocations(lines[:-1])) == 7
+    issue_ids = set(map(str, range(8)))
+    assert len(own_allocations(lines+['20|hpy-block|RUNNING','99|yzl-unrelated|RUNNING'], issue_ids)) == 8
+    assert len(own_allocations(lines[:-1], issue_ids)) == 7
     try:
-        own_allocations(['observation interrupted'])
+        own_allocations(['observation interrupted'], issue_ids)
     except AssertionError:
         pass
     else:
