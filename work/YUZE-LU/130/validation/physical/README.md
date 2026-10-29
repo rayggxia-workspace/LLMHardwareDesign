@@ -15,8 +15,10 @@
 | `issue130-m-feed-repair06-20261029`，93272 | `776ca2060fa34d723df5feac7b5572fac4800d0d` | 从本人成功CTS检查点加入731个近pin BUF_X8输入接收器后重跑；原输入违规消除，GRT剩内部hold40391/Z约84.73fF>60.73fF；停止这一已知不合格的详细布线，保留完整GRT与失败记录 |
 | `issue130-m-feed-repair09-20261029`，93282 | `4a1f0711f7009e89b7116edd6034242633347b78` | 原生通用DRV再修复触发GRT-0232拥塞检查，失败保留；未通过、不接受 |
 | `issue130-m-feed-repair10-20261029`，93284 | `23eb2c11021233b1349f3d24f6365d5e679afd9f` | 预期master核验拒绝BUF_X1假设，未改动该驱动器。随后实际只读ODB确认它是CLKBUF_X1；身份保护有效，失败保留 |
-| `issue130-m-feed-repair11-20261029`，93286 | `572739ac29dc51130df1a4352e4d783f4d9c804b` | 同一已完成GRT检查点，实际CLKBUF_X1→CLKBUF_X2，逐pin信号身份与PG核验；详细布线前原生cap/slew/setup/hold四计数均0；正在详细布线，仍待最终资格 |
+| `issue130-m-feed-repair11-20261029`，93286 | `572739ac29dc51130df1a4352e4d783f4d9c804b` | 同一已完成GRT检查点，实际CLKBUF_X1→CLKBUF_X2，逐pin信号身份与PG核验；详细布线及finish已完成，原生route DRC为空，流程setup约+0.05ns；仍待全部独立最终门，不据此接受 |
 | `issue130-m-feed-store12-20261029`，93288 | `0014051a03ca734261182f18d5d3c31338b19221` | 新S完整六阶段流程，带固定输入接收器；确认原映射无BUF/CLKBUF后使用官方REMOVE_ABC_BUFFERS=1分支，避免无效未放置size/swap。真实放置/CTS/布线/最终检查全部保留，正在运行 |
+| 同一`store12`快照，93297 | 同上 | `results/final-01`按各源实际receipt动态启动独立门。M封存通过，完整原生/GDS DRC进行中；S源尚未完成，因此对应门等待。MemAvailable447872716800B，低于两份旧峰值×1.2加16GiB保护量，当前一个16CPU接收器；S物理任务另行并发 |
+| `issue130-m-feed-store13-20261029`，93300 | `71f3f5f300736c24f3e05a2811fc9f097abbc119`，307文件 | 原S在GPL内部repair_design迭代0持续二十余分钟未报告进度，另开几何GPL候选对照；仅GPL_TIMING_DRIVEN=0，明确ENABLE_PLACE_REPAIR_TIMING=1，后续repair_design/repair_timing/CTS/路由/最终门不变。全局放置77秒完成，正在后续优化；尚未接受 |
 
 RTL未改变，仍接收93230的真实映射文件及93233的新Liberty／连接读回；每次P&R验证实际源、映射文件和Liberty SHA。没有继承旧宏的placement/CTS/route/STA/DRC/功能或等价结论。
 
