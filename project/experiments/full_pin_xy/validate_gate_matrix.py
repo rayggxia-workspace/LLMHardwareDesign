@@ -533,7 +533,7 @@ def check(out):
         for k in ['setup','hold']:assert gzip.decompress((tip_dir/(k+'.txt.gz')).read_bytes())==gzip.decompress((view_dir/(k+'.txt.gz')).read_bytes())
         assert view['source_receipt_SHA256']==hashlib.sha256(gzip.decompress((tip_dir/'execution.json.gz').read_bytes())).hexdigest()
         assert rows['mxu']['completed_source']=='actual_M6_via_tip/r01+original_range_fresh/r01' and rows['mxu']['native_DRC_count']==0
-        assert 'NOT_VALIDATED_IN_PARENT' in rows['mxu']['parent_access'] and rows['mxu']['full_qualification'] is False
+        assert (('ALL2172_PARENT_NATIVE0' in rows['mxu']['parent_access']) if j.get('MXU_actual_tip_parent_r01',{}).get('completed_utc') else ('NOT_VALIDATED_IN_PARENT' in rows['mxu']['parent_access'])) and rows['mxu']['full_qualification'] is False
         fig=j['MXU_actual_via_tip_figure'];assert fig['actual_target_rows_before_after']==[24,20] and fig['removed_M6_WIRE_rectangles']==4 and fig['all_actual_vias_unchanged']
     q=j.get('LLSYSTEM_bit1025_actual_tip_ECO_r01',{})
     if q.get('completed_utc'):
@@ -782,6 +782,30 @@ def check(out):
         log=gzip.decompress((closed_dir/'original.log.gz').read_bytes()).decode()
         assert re.findall(r'Number of guides:\s*(\d+)',log)==['11115']
         assert q['original_guide_count']!=11115 # Preserve and reject the old overwritten counter as inventory evidence.
+    q=j.get('MXU_actual_tip_parent_r01',{})
+    if q.get('completed_utc'):
+        assert not q['full_qualification'] and q['all_closed_sources_unchanged'] and q['fresh_DRC_count']==0
+        assert q['whole_parent_signal_geometry']['pass'] and q['whole_parent_signal_geometry']['checked_nets']==2172 and q['whole_parent_signal_geometry']['checked_terminals']==4344
+        assert q['whole_parent_signal_geometry']['physically_touching_zero_wire_nets']==1916
+        assert q['native_stage_status']['VDD']==q['native_stage_status']['VSS']=='EXECUTED'
+        assert q['new_macro_contract_persisted_and_independently_read_back'] and q['all_macro_functions_layers_sizes_directions_networks_and_clock_USE_preserved_with_exactly_one_authorized_XY_change']
+        assert q['only_changed_macro_XY_pin']=='act_data[12]' and q['actual_changed_parent_signal_wire_box_native_net_names']==['act_data[12]']
+        assert q['actual_new_leaf_ODB_SHA256']==j['MXU_actual_tip_views_r01']['source_geometry_sha256']
+        assert q['parent_RC_STA']=='NOT_EXECUTED_ACCESS_RECHECK_ONLY'
+    q=j.get('LLSYSTEM_full_guide_metadata_control_r01',{})
+    if q.get('completed_utc'):
+        assert not q['full_qualification'] and q['all_closed_sources_unchanged'] and q['all_original_checks_retained']
+        assert q['original_guide_count']==6191783 and q['remaining_guide_count']==0
+        assert q['guide_free_native_DRC_count']==q['original_guided_fresh_native_DRC_count']==2
+        assert q['original_guided_completed_markers_byteexact'] and q['all_source_native_WIRE_VIA_terminal_exports_byteexact']
+        assert all(q['all_native_physical_fingerprints_unchanged'].values()) and q['all_original_OBS_preserved']
+    q=j.get('PIN_metal_encoding_r02',{})
+    if q.get('completed_utc'):
+        assert not q['full_qualification'] and q['all_closed_sources_unchanged'] and q['actual_native_material_persisted_byteexact']
+        assert q['encoding_results']['POINT_PAIR']['exact_requested_M5_square'] and not q['encoding_results']['RECT_OPCODE']['actual_rows']
+        coverage=j['native_RECT_export_coverage'];assert coverage['current_exporter_omits_RECT'] and not coverage['existing_history_rewritten'] and not coverage['full_qualification']
+        assert 'RECT ( -140 -140 140 140 )' in coverage['native_DEF_net_records']['HPY_PATCH_RECT_OPCODE']
+        assert 'RECT_OPCODE\t0\t' in coverage['native_status_text']
     q=j.get('LLSYSTEM_actual_10261_access_ECO_r01',{})
     if q.get('completed_utc'):
         assert not q['full_qualification'] and q['all_closed_sources_unchanged'] and q['fresh_DRC_count']==2

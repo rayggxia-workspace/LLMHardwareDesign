@@ -40,6 +40,12 @@ try {
   await evaluate(`document.querySelector('img[src="assets/llsys_owned_cap_spacing.png"]').scrollIntoView()`);
   await fs.writeFile(path.join(out,'report-owned-cap-spacing.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
  }
+ for(const id of ['r49-actual-parent','r49-export-coverage']){
+  if(await evaluate(`!!document.getElementById(${JSON.stringify(id)})`)){
+   await evaluate(`document.getElementById(${JSON.stringify(id)}).scrollIntoView()`);
+   await fs.writeFile(path.join(out,`report-${id}.png`),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+  }
+ }
  if(await evaluate('!!document.querySelector("#latest-physical-gates")')){
   await evaluate('document.querySelector("#latest-physical-gates").scrollIntoView()');
   await fs.writeFile(path.join(out,'report-latest-gates.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));

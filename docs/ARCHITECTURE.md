@@ -203,3 +203,6 @@ Issue126 R47：`all_llsys_access_caps_job.sh NEW_REV via_then_wire`只读审计�
 
 
 Issue126 R48：`guide_free_drc_probe_job.sh NEW_REV`对真实770支路失败只移除dbGuide副本元数据，独立核对物理导出及两份同命令DRC；r01计数被导出器覆盖的原文保留，r02实际11115→0且两Short不变，未证明性能收益。`sbatch --cpus-per-task=2 .../guide_free_drc_probe_job.sh NEW_REV owned_cap_stage`进一步对当前10261-pin实际源做同物理全叶控制，绑定已完成的原编辑/DRC阶段、BPin及全网输出，保留原M2-M8信号/M4-M8时钟范围。只有完整物理导出与原生失败marker相同，`owned_cap_wire_restore_job.sh NEW_REV`才会尝试一个M5线尾恢复；预备驱动保持10261新接点及原层/尺寸/语义/全部via。原93343的native2与负时序不会被小样、脚本准备或Slurm状态掩盖。`owned_cap_spacing_diagnosis_job.sh NEW_REV`及`plot_owned_cap_spacing.py TERMINAL_DIR REPORT`复用真实前后71行，量化旧BPin移走的0.0049μm²金属，不把图中候选线尾当已执行。
+
+
+R49当前MXU父层RC/STA：冻结driver后由`mxu_actual_parent_rc_sta_job.sh r01`执行`run_mxu_actual_parent_rc_sta.py`，只读93239终态、真实模型与原SDC；每负余量/电气违规单列，不将研究I/O夹具当系统约束。`wire_shape_coverage_job.sh r01`执行`probe_wire_shape_coverage.py`，先独立核实RECT/patch导出覆盖，再审计原叶与父层；不直接替换活动导出器。终态均用`fetch_closed_terminal.py`归档双SHA，然后refresh_continuation/validate_repository及qa_report.mjs复验。

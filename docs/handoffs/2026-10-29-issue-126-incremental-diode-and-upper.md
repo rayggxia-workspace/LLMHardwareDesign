@@ -266,3 +266,14 @@ gate-r17由92988/driverb7f9fcf1bd88cbfb12a246957bd1e37592fbe8d1收集闭合nativ
 VECTOR/openSYS原时序失败、LL源native4及完整窗口未终态、ACT父层hold失败/604寄生未标注提示、缺实际SRAM GDS、原deck规则覆盖/模型minimum_period及历史逐pin目标层缺项全部保留。没有完整设计RTL形式证明、合格共同冻结、两完整M11/M12实现或公平系统收益结论。六资源并集/真实共享导体选择已确认，不重新询问。
 
 规则rayggxia-project-collab1.0.0；project_id llm-hardware-design；登记management-hub PR5 pending；缺board.json/Projects能力，看板unverified/同步pending，管理员/审查人待指定。Issue in_progress、PR Draft，Refs #126，不合并PR120/129、不提前关闭任务。
+
+
+## R49：当前MXU父层native0、全叶guide控制闭合及RECT覆盖更正
+
+93239已终态COMPLETED0：当前实际叶ODB848f8044的父层真实GRT/DRT及独立native0、2172网/4344端点所检连通、双PG与2245完整宏端口独立读回通过。仅act_data[12]授权XY/实际父网布线改变，功能/层/尺寸/方向/网络及clock USE保持。1916零WIRE直接接触网保留寄生覆盖问题；父层RC/STA尚未执行，新脚本run_mxu_actual_parent_rc_sta.py使用准确当前模型及原SDC/时钟、新增研究I/O策略，负结果完整保留，非历史系统约束。
+
+93374已终态FAILED1，原生流程0但仍2项bit_433 Metal Spacing，逐字节复现93343 marker。6191783 guide在副本清除，物理指纹/OBS及当前导出器输出逐字节保持；不是放宽规则或修复成功。依赖93375已进入实际单M5线尾恢复，10261内部接点保持，尚待native/RC/STA终态。不重复原作业、不覆盖驱动。
+
+93382原生API小样确认POINT_PAIR和RECT_OPCODE都成功，DEF真实含RECT，但现dbWirePathItr未导出RECT金属。既有几何连通/导出相等仅适用于导出矩形范围，完整patch金属覆盖尚未验证；native DRC直接检查原数据库，不受漏报影响。新增probe_wire_shape_coverage.py只读探针待执行，尚未推广导出器。93381确实运行后因Tcl序列化失败，未取消；原失败原文保存，旧辅助“preexecution”命名不当以此更正。
+
+中文HTML/qualification_matrix纳入上述真实终态及覆盖边界，保留38组PNG/SVG和全部24767原pin/74301 ABC。原时序、电气、缺SRAM GDS/完整规则/历史目标层/RTL、共同合格冻结、两完整功能和公平系统比较仍未完成。规则rayggxia-project-collab1.0.0，Refs #126 / Draft PR129，登记PR5 pending；缺board.json/Projects能力，看板unverified/同步pending，管理员/审查人待指定。下一步发布读回后在独立目录执行两个已准备脚本并收齐93375。

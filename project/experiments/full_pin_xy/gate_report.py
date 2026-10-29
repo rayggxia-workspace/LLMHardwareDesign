@@ -910,7 +910,11 @@ def render(root,out):
                       ('LLSYSTEM_actual_10261_access_ECO_r01','llsys_owned_cap_access/r01'),
                       ('LLSYSTEM_old_pin_metal_spacing_diagnosis_r01','owned_cap_spacing_diagnosis/r01'),
                       ('MXU_clock_bound_parent_recheck_r02','escape_view_recheck/r02/mxu-C'),
-                      ('MXU_clock_bound_parent_recheck_r03','escape_view_recheck/r03/mxu-C')]:
+                      ('MXU_clock_bound_parent_recheck_r03','escape_view_recheck/r03/mxu-C'),
+                      ('MXU_actual_tip_parent_r01','mxu_actual_tip_parent/r01/mxu-C'),
+                      ('PIN_metal_encoding_failed_r01','pin_metal_encoding_API/r01'),
+                      ('PIN_metal_encoding_r02','pin_metal_encoding_API/r02'),
+                      ('LLSYSTEM_full_guide_metadata_control_r01','guide_free_leaf_DRC/r01')]:
         p=snapshot/rel/'execution.json.gz'
         terminal_names={'LLSYSTEM_current_actual_tip_views':'llsys-tip-views-r01',
                         'MXU_clock_bound_parent_recheck_r03':'mxu-clock-bound-parent-r03-terminal',
@@ -940,6 +944,10 @@ def render(root,out):
                         'GUIDE_metadata_control_r02':'guide-free-drc-probe-r02-full-geometry',
                         'LLSYSTEM_actual_10261_access_ECO_r01':'llsys-owned-cap-access-r01',
                         'LLSYSTEM_old_pin_metal_spacing_diagnosis_r01':'owned-cap-spacing-diagnosis-r01',
+                        'MXU_actual_tip_parent_r01':'mxu-actual-tip-parent-r01',
+                        'PIN_metal_encoding_failed_r01':'pin-metal-encoding-api-r01-failed',
+                        'PIN_metal_encoding_r02':'pin-metal-encoding-api-r02',
+                        'LLSYSTEM_full_guide_metadata_control_r01':'guide-free-leaf-drc-r01',
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
         update=root/'gate_terminal_updates'/terminal_names.get(label,'NO_TERMINAL_UPDATE')
         terminal_evidence=None
@@ -1158,6 +1166,27 @@ def render(root,out):
         if result.get('LLSYSTEM_actual_10261_access_ECO_r01',{}).get('completed_utc'):
             upper_text+='<p><strong>最新终态覆盖旧运行观察：</strong>93343已因native2/负时序失败，原R47活动JSON仅是当时快照。全块guide-free对照会使用其已完成的真实失败作为控制，保留原DRC结果；之后只有对照物理导出和原生marker完全相同，才允许尝试上述单M5线尾修复。两份脚本仍待实际执行，不把准备称为修复通过。</p>'
             upper_text=upper_text.replace('原93343继续，不取消/覆盖','原93343失败终态保留，不重提或覆盖')
+    latest_parent=result.get('MXU_actual_tip_parent_r01',{})
+    if latest_parent.get('completed_utc'):
+        assert latest_parent['fresh_DRC_count']==0 and latest_parent['whole_parent_signal_geometry']['pass']
+        assert latest_parent['actual_new_leaf_ODB_SHA256']==mxu_view['source_geometry_sha256']
+        assert latest_parent['new_macro_contract_persisted_and_independently_read_back']
+        r=next(r for r in rows if r['case']=='mxu')
+        r['parent_access']='CURRENT_ACTUAL_TIP_ALL2172_PARENT_NATIVE0_GEOMETRY_PG_PERSISTED_CONTRACT_PASS; PARENT_RC_STA_NOT_EXECUTED'
+        r['current_actual_tip_parent']=latest_parent
+        upper_text+='<h3 id="r49-actual-parent">R49：MXU 当前实际源的完整父层接入已闭合，RC/STA待验</h3><p>93239完成真实增量GRT/DRT及独立native检查，旧1项违规变为0。新叶ODB 848f8044、2172信号网/4344端点/9302导出形状所检连通，VDD/VSS执行，全部2245宏端口含PG及clock USE在独立进程读回。仅act_data[12]的授权XY改变，原功能/层/尺寸/方向/网络保持；实际只改变该父网wire-box，父pin/PG/外框保持。旧“全部XY完全不变”字段为false符合本次授权，不能拿它当接口合同失败。</p><p>1916条直接接触零WIRE网仍须保留寄生覆盖告警。父层RC/STA尚未执行；已补可重跑脚本，使用该实际源模型、原SDC/时钟和明确新增的研究I/O负载2/10/50，读取工具原生单位，不冒充历史约束。新增父M10目标保持，历史逐pin目标层仍有未知；缺四类SRAM真实GDS、完整规则及RTL资格不消失。旧父层native1/时钟失败作为历史保留，不将native0写成系统合格。</p>'
+    ctrl=result.get('LLSYSTEM_full_guide_metadata_control_r01',{})
+    if ctrl.get('completed_utc'):
+        assert ctrl['guide_free_native_DRC_count']==ctrl['original_guided_fresh_native_DRC_count']==2
+        assert ctrl['original_guided_completed_markers_byteexact'] and ctrl['all_source_native_WIRE_VIA_terminal_exports_byteexact']
+        upper_text+='<h3>LL SYSTEM 全叶控制终态：原两项间距失败原样保留</h3><p>93374已闭合：6191783个guide元数据在独立副本中清除，原pin/cell/PG/die、OBS及当前导出器覆盖的WIRE/VIA/端点逐字节一致；原M2–M8信号/M4–M8时钟范围与完整native检查保留。独立native仍2项bit_433 Metal Spacing，marker与93343逐字节一致。Slurm FAILED1是保留这两项物理失败的门槛结果，非工具崩溃，也没有通过或速度收益声明。93375已通过前置控制开始单M5线尾实际恢复，保留10261个内部接点；修复结果仍待独立DRC/RC/STA终态。</p>'
+        upper_text=upper_text.replace('两份脚本仍待实际执行，不把准备称为修复通过。','最新93374控制已闭合，93375已开始实际修复；以R49段落覆盖旧运行状态，尚不称修复通过。')
+    encoding=result.get('PIN_metal_encoding_r02',{})
+    if encoding.get('completed_utc'):
+        assert encoding['encoding_results']['POINT_PAIR']['exact_requested_M5_square']
+        assert not encoding['encoding_results']['RECT_OPCODE']['actual_rows']
+        audit=read(data/'r49_encoding_export_coverage.json');result['native_RECT_export_coverage']=audit
+        upper_text+='<h3 id="r49-export-coverage">已确认的几何导出覆盖缺口：原生RECT金属</h3><p>93382独立小样中POINT_PAIR及RECT_OPCODE均实际成功，原生DEF分别含零长度ROUTED段与RECT(-140,-140,140,140)，原M5/2000 DBU每μm。现有dbWirePathItr导出仅得到前者0.14μm正方形，却漏报后者；不是RECT调用失败或“无金属”。ODB独立读回仍复现。该探针不是叶块修复、GDS或DRC通过证明。</p><p><strong>覆盖更正：</strong>既有几何连通与WIRE/VIA相等结论只覆盖当前导出器实际输出，尚未证明其包含所有RECT/patch metal。native DRC仍由原数据库全量检查，不受该导出器漏项影响；原DRC失败、RC和STA原样保留。对六叶/父层/适配层的RECT库存及完整形状导出需补查，在完成前不把“所检连通”扩写为全部导体或GDS LVS通过。已准备dbWireShapeItr独立只读能力探针，尚未推广新导出器。93381确实运行后因Tcl换行序列化失败，未取消；原失败回执保留。</p><p><a href="data/r49_encoding_export_coverage.json">原生DEF两条记录、文件SHA、成功状态及覆盖边界</a>。此项不推翻native检查，但阻止未经补查的完整金属覆盖声明。</p>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',
