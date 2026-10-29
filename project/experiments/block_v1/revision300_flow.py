@@ -6,7 +6,7 @@ import copy,json,math,re,shutil
 from pathlib import Path
 
 
-def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None,floorplan_policy=None):
+def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None,floorplan_policy=None,timing_policy=None):
     from io_slots import file_sha,slot
     from constraints import generate as constraints
     from revision300_ports import generate,independent
@@ -85,7 +85,11 @@ def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None
     hook=(folder/'native_input_diodes.tcl').read_text().replace('  if {[$port getName] eq "clk"} {continue}\n','')
     (out/'input-diodes.tcl').write_text(hook)
     config+=config_suffix(40,.005,out/'input-diodes.tcl','metal10')
-    config+='\nexport HOLD_SLACK_MARGIN = 0.020\n'
+    hold_margin=.020
+    if timing_policy is not None:
+        assert kind=='v' and timing_policy==dict(hold_slack_margin_ns=.080)
+        hold_margin=timing_policy['hold_slack_margin_ns']
+    config+='\nexport HOLD_SLACK_MARGIN = %.3f\n'%hold_margin
     route_args=None
     if routing_policy is not None:
         assert kind in ('v','r') and routing_policy==dict(upper_layer_adjustment=.20,congestion_iterations=100,clock_ndr='none')
@@ -119,7 +123,7 @@ def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None
         p=results/('1_2_yosys.'+suffix);shutil.copyfile(out/('input.'+suffix),p);p.chmod(0o444)
     command=['make','-C',str(flow),'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
     wanted=dict(MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',KEEP_VARS='1',LEC_CHECK='1',SEC_CHECK='0',
-                TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN='0.020')
+                TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN='%.3f'%hold_margin)
     if floorplan_policy is not None:wanted['PLACE_DENSITY']='%g'%placement_density
     if route_args is not None:
         wanted.update(PRE_GLOBAL_ROUTE_TCL=str(hook),GLOBAL_ROUTE_ARGS=route_args,
@@ -134,7 +138,7 @@ def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None
                 source_mapping_receipt_sha256=file_sha(mapped/'receipt.json'),source_function_receipt_sha256=file_sha(tested/'receipt.json'),
                 rtl_sha256=mapping['rtl_sha256'],mapped_area_um2=active,die_um=[side,side],area_derived_side_um=area_side,
                 footprint_rule='ceil10(sqrt(mapped_area/%g)+40), min400; enlarge by10um only until complete coarse tracks fit'%utilization,
-                floorplan_policy=floorplan_policy,placement_density=placement_density,
+                floorplan_policy=floorplan_policy,placement_density=placement_density,timing_policy=timing_policy,
                 config_sha256=file_sha(out/'config.mk'),pins_sha256=file_sha(out/'pins.json'),budget=budget,actual_variables=actual,
                 planned_complete_escape=geometry,planned_independent_gds=coarse,stages=[],final_files={},qualified_hard_macro=False,
                 scope='Fresh native M1-M10 flow and declared full-port coarse geometry; complete actual native/upper readback, independent STA/DRC/function/LEC remain separate')

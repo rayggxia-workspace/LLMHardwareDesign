@@ -66,6 +66,9 @@ try:
     elif MODE=='revision300-v-group-proof':
         from revision300_v_group_proof import prove
         prove(ROOT,OUT,CPUS,run)
+    elif MODE=='revision300-v-norm-proof':
+        from revision300_v_norm_proof import prove
+        prove(ROOT,OUT,CPUS,run)
     elif MODE=='revision300-v-carry-proof':
         from revision300_v_carry_proof import prove
         prove(ROOT,OUT,CPUS,run)

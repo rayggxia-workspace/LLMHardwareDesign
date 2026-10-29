@@ -105,6 +105,19 @@ module block_v1_v(
   reg signed [127:0] q;reg [127:0] remn,half;
   begin if(shift==0)rne=v;else begin q=v>>>shift;remn=$unsigned(v)&({128{1'b1}}>>(128-shift));half=128'd1<<(shift-1);rne=add128_grouped(q,{127'b0,((remn>half)||((remn==half)&&q[0]))},1'b0);end end
  endfunction
+ // Exact RNE of (high*2^32+low)/2^32 for all two-S65 operands.
+ // The discarded bits come only from low. Fold the rounding increment
+ // into one full-S128 addition instead of serial merge and round carries.
+ function automatic signed [127:0] norm_merge_rne;
+  input signed [64:0] high,low;
+  reg increment;
+  begin
+   increment=(low[31:0]>32'h80000000)||
+             ((low[31:0]==32'h80000000)&&(high[0]^low[32]));
+   norm_merge_rne=add128_grouped({{63{high[64]}},high},
+       $signed({{63{low[64]}},low})>>>32,increment);
+  end
+ endfunction
  reg replay_loaded;reg [129:0] twice_remainder,four_remainder;
  reg [128:0] rounded_group;reg root_increment;
  always @* begin
@@ -392,8 +405,8 @@ module block_v1_v(
     end
     N_WRITE:begin
      for(i=0;i<8;i=i+1)if(offset+i<length)begin
-      // Preserve full S128 merge and RNE; avoid a separate ripple carry before RNE.
-      rounded=rne(add128_grouped($signed({{63{product[i][64]}},product[i]})<<<32,$signed({{63{low_product[i][64]}},low_product[i]}),1'b0),32);
+      // Preserve the full S128 result and the original ties-to-even point.
+      rounded=norm_merge_rne(product[i],low_product[i]);
       if(rounded< -128'sd2147483648)begin rounded=-128'sd2147483648;rsp_saturated<=1;end
       if(rounded>128'sd2147483647)begin rounded=128'sd2147483647;rsp_saturated<=1;end
       output_mem[offset+i]<=rounded[31:0];

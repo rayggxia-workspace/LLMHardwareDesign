@@ -8,12 +8,27 @@ def implement(root,out,cpus,run):
     import hashlib
     policy=json.loads((root/'project/experiments/block_v1/revision300-v-fresh.json').read_text())
     assert policy==dict(schema='revision300-v-fresh/1',
-        mapping='block-v1-20261029-378/tasks/revision300-map-v',
-        function='block-v1-20261029-378/tasks/revision300-test-v',
+        mapping='block-v1-20261030-408/tasks/revision300-map-v',
+        function='block-v1-20261030-408/tasks/revision300-test-v',
+        normalization_arithmetic_proof='block-v1-20261030-408/tasks/revision300-v-norm-proof',
         group_arithmetic_proof='block-v1-20261029-348/tasks/revision300-v-group-proof',
         upper_layer_adjustment=.20,congestion_iterations=100,clock_ndr='none',
-        inherited_physical_stages=[],requires_fresh_final_acceptance=True)
+        hold_slack_margin_ns=.080,inherited_physical_stages=[],requires_fresh_final_acceptance=True)
     base=out.parents[2]
+    norm_proof=base/policy['normalization_arithmetic_proof']
+    norm_receipt=json.loads((norm_proof/'receipt.json').read_text())
+    assert norm_receipt['passed'] and norm_receipt['mode']=='revision300-v-norm-proof'
+    for name in ('revision300-v-norm-proof.json','proof.sv','positive.log','single-bit-negative.log'):
+        assert file_sha(norm_proof/name)==norm_receipt['outputs'][name]
+    norm_record=json.loads((norm_proof/'revision300-v-norm-proof.json').read_text())
+    assert norm_record['passed'] and norm_record['unconstrained_input_bits']==130
+    assert norm_record['full128bit_signed_merge_rne32_equivalent'] and norm_record['actual_single_bit_negative_rejected']
+    norm_relative='project/rtl/block_library_v1/block_v1_v.sv'
+    assert file_sha(root/norm_relative)==norm_record['rtl_sha256']==norm_receipt['inputs'][norm_relative]
+    (out/'norm-proof-reuse.json').write_text(json.dumps(dict(passed=True,
+        original_proof_receipt_sha256=file_sha(norm_proof/'receipt.json'),
+        current_rtl_sha256=file_sha(root/norm_relative),
+        scope='All-input exact normalization identity only; fresh final physical gates remain required.'),indent=2)+'\n')
     group_proof=base/policy['group_arithmetic_proof']
     group_receipt=json.loads((group_proof/'receipt.json').read_text())
     assert group_receipt['passed'] and group_receipt['mode']=='revision300-v-group-proof'
@@ -52,4 +67,5 @@ def implement(root,out,cpus,run):
         original_proof_receipt_sha256=file_sha(proof/'receipt.json'),actual_function_sha256=functions,
         current_rtl_sha256=file_sha(root/relative),scope='Only identical combinational functions; full macro checks remain independently required.'),indent=2)+'\n')
     fresh(root,out,cpus,run,'v',prerequisite_tasks={k:policy[k]for k in ('mapping','function')},
-          routing_policy={k:policy[k]for k in ('upper_layer_adjustment','congestion_iterations','clock_ndr')})
+          routing_policy={k:policy[k]for k in ('upper_layer_adjustment','congestion_iterations','clock_ndr')},
+          timing_policy=dict(hold_slack_margin_ns=policy['hold_slack_margin_ns']))
