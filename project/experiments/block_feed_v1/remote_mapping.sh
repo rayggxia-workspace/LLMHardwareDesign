@@ -8,12 +8,12 @@ source_root=$1
 output_root=$2
 test -n "${SLURM_JOB_ID:-}"
 test "$SLURM_CPUS_PER_TASK" -ge 2
+mkdir -p "$output_root"
 # This cluster advertises placeholder RealMemory=1MiB per node to Slurm.
 # A --mem request is unsatisfiable; guard ACTUAL available memory on the node.
-python3 -c 'from pathlib import Path; m=dict(s.split(":",1) for s in Path("/proc/meminfo").read_text().splitlines()); available=int(m["MemAvailable"].split()[0])*1024; print("MemAvailable",available); assert available>=32*1024**3,"Need32GiB available for two syntheses plus guard"' > "$2-memory-admission.txt"
+python3 -c 'from pathlib import Path; m=dict(s.split(":",1) for s in Path("/proc/meminfo").read_text().splitlines()); available=int(m["MemAvailable"].split()[0])*1024; print("MemAvailable",available); assert available>=32*1024**3,"Need32GiB available for two syntheses plus guard"' > "$output_root/memory-admission.txt"
 image=/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif
 expected=49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a
-mkdir -p "$output_root"
 sha256sum "$image" > "$output_root/image.sha256"
 read -r actual _ < "$output_root/image.sha256"
 test "$actual" = "$expected"
