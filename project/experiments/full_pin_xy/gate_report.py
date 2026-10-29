@@ -564,6 +564,14 @@ def render(root,out):
         q=read(p);result['VECTOR_partition_restored_actual_PNR_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
         next(r for r in rows if r['case']=='vector')['new_partition_restored_actual_PNR']=dict(q,full_qualification=False)
         upper_text+='<p><strong>93112 VECTOR已从严格通过的真实五输入恢复源继续P&amp;R：</strong>source_kind='+html.escape(str(q.get('source_kind')))+'，原生子阶段返回='+html.escape(str(q.get('native_returncodes')))+'。本轮不重复setup/hold启发式优化，原SDC/时钟/负载/允许层保持，单元和buffer成本继承并单列；原生合法化、placement检查和原filler恢复以实际阶段记录为准。详细布线尚无闭合回执时，fresh DRC/全块连通/RC/STA均不填写通过，主矩阵继续保留旧实际已布线负时序源。</p>'
+        if q.get('completed_utc'):
+            g=q.get('whole_signal_geometry',{})
+            upper_text+='<p><strong>该VECTOR新变体已终态：</strong>fresh native='+str(q.get('fresh_DRC_count'))+'，所检完整信号/时钟几何='+str(g.get('pass'))+'（'+str(g.get('checked_nets'))+'网、'+str(g.get('checked_terminals'))+'端点），双PG/RCX/STA阶段='+html.escape(str(q.get('route_stage_status')))+'；真实setup/hold='+str(q.get('setup_ns'))+'/'+str(q.get('hold_ns'))+'ns，文字VIOLATED='+str(q.get('literal_VIOLATED_markers_not_complete_failure_count'))+'。整体仍失败，未完成RTL/完整规则/新源父层或系统资格。与旧r01的−4.140220/0.037989ns相比，当前修复未改善这组提取余量且增加单元成本；保留可实现的内部C源，不退回边界，也不把此变体提升为主源或纯XY收益。</p>'
+    p=snapshot/'vector_probe_cost_audit/r01/execution.json.gz'
+    if p.exists():
+        q=read(p);result['VECTOR_actual_probe_cost_category_audit']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('all_original_uncategorized_cost_counts_reproduced'):
+            upper_text+='<p><strong>93128闭合实际成本复核：</strong>新增'+str(q['added_NONFILLER_instances'])+'个非filler单元，'+str(q['changed_master_original_NONFILLER_instances'])+'个原非filler换型、'+str(q['moved_original_NONFILLER_instances'])+'个原非filler移动；另有'+str(q['changed_master_reused_CORE_SPACER_names'])+'个重复filler实例名对应的master变化。原回执459个master变化是365个非filler＋94个filler，不能全称逻辑换型。排除BLOCK/filler的标准单元master面积增量仍约354.046μm²；旧+917.700μm²另继承，外框不缩小，无面积节省或纯XY声称。原回执/实际CSV保持，未重新优化或P&amp;R。</p>'
     preconnected=[]
     for mode in ['opentpu','llaccel']:
         p=snapshot/'upper_preconnected/r01'/mode/'execution.json.gz'
@@ -637,6 +645,33 @@ def render(root,out):
     if attempts:
         result['all770_guide_only_detach_restore_FIXED_before_DRT_r02']=attempts
         upper_text+='<p><strong>93120后续实际运行：</strong>在新目录以同一全部514网/770边/1540 hook生成guide，只在helper内存搜索副本暂取下256条既有FIXED片段，原下层文件不改；无论GRT成功或失败都先精确恢复原M10 FIXED，再保存检查点。若成功，必须确认全部514网均有实际guide才允许DRT，随后仍逐网检查真实连通、固定材料精确并集/FIXED、原hook/OBS与fresh DRC。只改变guide构造上下文，不改变规则、原层、拓扑或预连预算；未终态不称布通，更不是完整系统/冻结或RC/STA资格。</p>'
+        for q in attempts:
+            if q.get('completed_utc'):
+                upper_text+='<p>93120 '+html.escape(q['mode'])+' 已终态：native返回'+str(q.get('native_route_returncode'))+'，完成于'+html.escape(q['completed_utc'])+'；失败原文和恢复后的实际FIXED检查点均保留，不把恢复固定线段当GRT/DRT通过。</p>'
+    cugr=[]
+    for mode in ['opentpu','llaccel']:
+        p=snapshot/'upper_preconnected/r03'/mode/'execution.json.gz'
+        if p.exists():cugr.append(dict(read(p),evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix()))
+    if cugr:
+        result['all770_CuGR_guides_restore_FIXED_before_DRT_r03']=cugr
+        upper_text+='<p><strong>93129原生CuGR全量试验：</strong>依据已捕获安装版global_route的-use_cugr支持，在同一真实hook/拓扑/规则/临时guide副本恢复流程中换用CuGR；两模式均已取得全部514网的实际guide并在恢复原FIXED后进入DRT。该阶段突破不等于实际连通，原FastRoute失败不删。</p>'
+        for q in cugr:
+            g=q.get('actual_all_net_geometry',{})
+            if q.get('completed_utc'):
+                upper_text+='<p><strong>CuGR '+html.escape(q['mode'])+' 实际终态：</strong>native='+str(q.get('native_route_returncode'))+'、fresh native='+str(q.get('independent_DRC_count'))+'、连通='+str(g.get('pass'))+'（'+str(g.get('connected_nets'))+'/'+str(g.get('checked_nets'))+'物理网），原256 FIXED属性保持='+str(q.get('all256_native_FIXED_attributes_retained'))+'。即使guide完整，所检连接失败仍是失败；这进一步提示DRT对已有固定片段的剩余支路处理受限，尚不声称源码级根因或两完整系统。后续必须解决实际支路接入，不能把零/少量DRC或CuGR命令成功作为完成。</p>'
+    tips=[]
+    for rev in ['r01','r02']:
+        p=snapshot/'llsys_actual_via_tips'/rev/'execution.json.gz'
+        if p.exists():tips.append(dict(read(p),revision=rev,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix()))
+    if tips:
+        result['LLSYSTEM_actual_three_pin_via_tip_attempts']=tips
+        upper_text+='<p><strong>LL SYSTEM真实三pin/三网局部接线：</strong>针对已定位的四项原native报项，将bit_1382013(M5)、bit_6907(M6)、bit_1389626(M6)分别移到其真实原网既有via4/via5/via6落脚；原0.14×0.14μm尺寸/层/网络/方向/真实逻辑端点保持，删除八个明确原末端WIRE矩形，其余线与所有via定义/位置要求保持。完整13184个内部移动pin的C布局保留，不是少量内移伪装二维，也不重复92747的全pin-access失败路线。原目标父层未知项不指派。</p>'
+        for q in tips:
+            upper_text+='<p>via-tip '+q['revision']+'：native阶段返回='+html.escape(str(q.get('native_returncodes')))+'；完成时间='+html.escape(str(q.get('completed_utc')))+'。r01在容器读取原SDC时STA-0340提前失败，尚未改线；r02只补原issue55约束目录的只读映射，源SDC/时钟/负载/规则不改，随后实际三网编码接线及双PG检查已执行，RC/STA/独立fresh和完整13507-pin合同分别以终态回执为准。未终态不记DRC/全网连通或父层资格通过，不将原生编码器接线说成重新执行了GRT/DRT搜索。</p>'
+    p=snapshot/'common_lower_resume/r01/execution.json.gz'
+    if p.exists():
+        q=read(p);result['actual_common_lower_CuGR_resume_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        upper_text+='<p><strong>93132实际共同下层CuGR接续：</strong>从已原生审计的同一六资源/38基础设施/256 FIXED M10检查点接续，不重复布局或PDN；位置、pin/hook、实际旧R02叶视图、拓扑/预算、原signal M2–M10/clock M4–M10均保持，仅更换原生全局搜索器。原92855长期作业不取消或覆盖。新目录独立执行DRT、全部端点图/几何与双PG/fresh检查；仍未冻结、未执行该下层完整RC/STA、未实现两完整功能，原叶失败/真实GDS/规则覆盖缺项继续保留。具体native返回='+str(q.get('native_route_returncode'))+'，完成时间='+html.escape(str(q.get('completed_utc')))+'。</p>'
     p=snapshot/'vector_clone_crash/r01/execution.json.gz'
     if p.exists():
         q=read(p);result['VECTOR_exact_native_crash_symbolization_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())

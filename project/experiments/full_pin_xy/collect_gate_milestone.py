@@ -19,6 +19,7 @@ JOBS+=['93089','93090','93092','93094']
 JOBS+=['93102','93106']
 JOBS+=['93112','93117']
 JOBS+=['93120']
+JOBS+=['93126','93127','93128','93129','93132']
 
 
 def sha(path):
@@ -89,7 +90,10 @@ def collect(name):
     patterns+=['vector_probe_partition_diagnosis/r01/*','logs/vector-partition-diagnosis-r01-*.log',
       'vector_partition_restore/r01/*','logs/vector-partition-restore-r01-*.log',
       'vector_probe_route/r01/*','logs/vector-probe-route-r01-*.log']
-    patterns+=['upper_preconnected/r0[12]/*','upper_preconnected/r0[12]/*/*','logs/preconnected-upper-r0[12]-*.log']
+    patterns+=['upper_preconnected/r0[123]/*','upper_preconnected/r0[123]/*/*','logs/preconnected-upper-r0[123]-*.log']
+    patterns+=['llsys_actual_via_tips/r0[12]/*','logs/llsys-actual-via-tips-r0[12]-*.log',
+      'vector_probe_cost_audit/r01/*','logs/vector-probe-cost-audit-r01-*.log',
+      'common_lower_resume/r01/*','logs/common-lower-cugr-r01-*.log']
     stable_intermediates={}
     incremental=ROOT/'antenna_incremental_eco/r01/gemm-C/execution.json'
     if incremental.exists() and json.loads(incremental.read_text()).get('native_returncodes',{}).get('implementation')==0:
