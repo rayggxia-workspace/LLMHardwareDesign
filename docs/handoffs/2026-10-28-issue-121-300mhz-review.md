@@ -1,3 +1,5 @@
+2026-10-29 19:53:30 CST：V374 已完成 CTS 并进入详细布线。CTS setup/TNS −0.01/−0.02 ns、hold −0.04 ns，尚未通过；最大 norm_square[1]→group_unit.denominator[127]，最小 cmd_data[22]→input_mem[220][22]。修复内置 LEC 实际 UNSAT/IDENTICAL（51206 输入/51195 输出，差异均0），11原始文件及308源/Git/远端SHA核验；此为阶段诊断，最终RCX和375/376独立验收仍待实际结果。R344 全局布线额外迭代13/30，继续原任务，不增加版本或中断EDA。M/S/T接收保持，V/R最终未齐，目标active、Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending、审查待指定。
+
 2026-10-29 19:15:50 CST：377代码f318db6e/配置f61222a5、PID3065817，24原文件/归档SHA与两轮进程读回通过；仅替换372轻量控制并退休未分配369/370/371，全部EDA不取消。367/373各七项通过，80预算实际重绑373；374于19:12:31提交93372/node17，当前结构/综合检查运行，375/376按真实前置；7原始启动文件/308源核验。R344继续route。相关allocation含排队当前8个，保留上限；M/S/T接收、V/R最终未齐，目标active，Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending、审查待指定。
 
 2026-10-29 19:11:46 CST：367七项全部通过、415764映射单元（较361少29668，非物理面积），10原始/308源绑定；373七测量通过、53原始/39稳定/308源核验，135有限+78公共测量全同362，80预算已按373实际重绑且成本不变。368错误父类型在claim前FAILED/1，5原始保留，373新运行修正。374→375→376全新物理/最终门/接口已准备，377准入待部署；旧369/370/371不作新源资格。R344继续route。M/S/T接收，V/R最终未齐，目标active/Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending、审查待指定。
