@@ -408,3 +408,12 @@ VECTOR92861冷隔离无GRT/增量/SPEF仍EST-0104。实际411821个filler；仅�
 上一head92573a13bcdf4a1b4627df7ed1e65bdf5a492a5b已GitHub读回，矩阵blob99ce7ae72ce6bd9d04c83a83d891d677d0eca763、PNG39aefddb899245cbd41cefe08a896599371859cc、SVG5798abec0fb9109f3f5a54f871203de68ae993d0与本机相同；CI40869017008/40869016785均success。38图保留，研究父hold−0.333124ns及1916未标注网原样保留，最差实际b_rdata[91]路径非刚改动act_data[12]。
 
 93375仍RUNNING，真实M5编辑/分析进程0，独立全块native及RC/STA结果未闭合；92855/93217/93243/93269/93317均实际RUNNING。不取消、不重提、不把进程0当通过。下一步发布读回后执行小样decoder_rect，再实际审计六叶/父层/适配层RECT覆盖并继续真实接入。六块完整资格、共同合格冻结、两完整功能和公平端到端比较均未完成，目标active。规则rayggxia-project-collab1.0.0；Refs #126/PR129 Draft；登记PR5 pending，看板unverified/同步pending，管理员及审查人待指定。
+
+
+## R52：RECT读取签名失败及适配层局部绕行失败归档
+
+93393 native进程0但RECT getter失败：真实PATH/POINT/RECT枚举0/4/8、POINT3976000/2411360 DBU和metal5正确，getRect需要四输出参数。未修复覆盖，不传NULL指针；新decoder_payload模式只在已知闭合小样核对length/getOpcode/getData及实际int句柄能力，发布读回后执行。
+
+93394有限几何搜索FAILED1：src[248]在12/24/48/96μm窗口均11节点无路；实际M12 src[129]/[201]端点阻挡线联动，两顺序/三窗口最多23节点仍失败。无实际编辑，不改M10/via10/hook、不放宽研究规则；不是不可行证明，src[206]尚未搜索。下步查可达区域边界阻挡与完整相关段，不重复扩窗口。原guard15及93375活动作业不动。
+
+上一headc3137303519561f8860d360e100d7f381eb9839c已读回GitHub矩阵/PNG/SVG与本机一致，两CI40870022296/40870022373 success。新增两真实终态和6项原始文件/SHA纳入中文HTML/矩阵，38图保留。六块完整资格、共同合格冻结、两完整功能、公平系统对照未完成，目标active。规则rayggxia-project-collab1.0.0；Refs #126/PR129 Draft；登记PR5 pending，看板unverified/同步pending，管理员/审查人待指定。

@@ -7,7 +7,7 @@ from run_escape_fixture import execute
 DRIVER=Path(__file__).resolve().parent
 
 def run(revision,profile='shape_iterator'):
-    assert profile in ['shape_iterator','inventory','decoder_rect']
+    assert profile in ['shape_iterator','inventory','decoder_rect','decoder_payload']
     source=ROOT/'pin_metal_encoding_API/r02';rp=source/'execution.json';q=json.loads(rp.read_text())
     odb=source/'encoding_probe_NOT_LEAF.odb'
     assert q.get('completed_utc') and q['native_returncodes']['encode_and_export']==0 and sha(odb)==q['files'][odb.name]['sha256']
@@ -48,10 +48,25 @@ for {set i 0} {$i<3} {incr i} {
  }
 };close $f
 '''
+        if profile=='decoder_payload':
+            body=r'''set b [ord::get_db_block];set n [$b findNet HPY_PATCH_RECT_OPCODE]
+if {$n eq "NULL"} {error "Known native RECT probe missing"}
+set w [$n getWire];set f [open OUTPUT w];puts $f "stage\tstatus\tvalue"
+puts "NATIVE_INT_REFERENCE_HELPERS [lsort [concat [info commands ::odb::*intp*] [info commands ::odb::*intArray*]]]"
+set status [catch {$w length} count];puts $f [join [list wire_length_API $status $count] "\t"]
+if {!$status && [string is integer -strict $count] && $count>0 && $count<=64} {
+ for {set i 0} {$i<$count} {incr i} {
+  foreach method {getOpcode getData} {
+   set status [catch {$w $method $i} value]
+   puts $f [join [list ${method}_$i $status $value] "\t"]
+  }
+ }
+};close $f
+'''
         script=out/'probe.tcl';script.write_text('read_db '+tcl(odb)+'\n'+body.replace('OUTPUT',tcl(out/'native_all_shapes.tsv')))
         rec['actual_OpenROAD_binary_SHA256']=subprocess.check_output(common+[IMAGE,'sha256sum',BIN]).decode().split()[0]
         rec['native_returncode']=execute(common,script,out/'native.log',threads=1)
-        if rec['native_returncode']==0 and profile in ['shape_iterator','decoder_rect']:rec['actual_shape_export_text']=(out/'native_all_shapes.tsv').read_text()
+        if rec['native_returncode']==0 and profile in ['shape_iterator','decoder_rect','decoder_payload']:rec['actual_shape_export_text']=(out/'native_all_shapes.tsv').read_text()
     except Exception:rec['actual_failure']=traceback.format_exc()
     rec['all_closed_sources_unchanged']=all(sha(Path(p))==v for p,v in inputs.items())
     rec['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()

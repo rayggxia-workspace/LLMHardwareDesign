@@ -803,6 +803,25 @@ def check(out):
         critical=gzip.decompress(((out/q['evidence']).parent/'load2.critical.txt.gz').read_bytes()).decode()
         first=critical.split('Startpoint: ')[1]
         assert first.startswith('b_rdata[91]') and 'library hold time' in first and '0.460480' in first and '-0.333124' in first
+    q=j.get('WIRE_native_RECT_decoder_r03',{})
+    if q.get('completed_utc'):
+        assert not q['full_qualification'] and q['native_returncode']==0 and q['profile']=='decoder_rect' and q['all_closed_sources_unchanged']
+        text=q['actual_shape_export_text'];assert 'native_point\t0\t3976000 2411360' in text and 'native_rect\t1\tWrong number of arguments' in text and 'native_layer\t0\tmetal5' in text
+    a=j.get('UPPER_actual_bypass_endpoint_metal_audit')
+    if a:
+        assert not a['full_qualification'] and a['native_implementation']=='NOT_EXECUTED' and a['RECT_patch_coverage']=='NOT_YET_AUDITED'
+        assert a['cut11_rule_not_evaluated_by_this_endpoint_metal_audit']
+        assert [n['net'] for n in a['nets']]==['src[248]','src[206]']
+        start=a['nets'][0]['endpoints'][0];assert start['center_DBU']==[4870590,5286540]
+        blockers=next(m['metal_blockers'] for m in start['immediate_moves'] if m['layer']==12 and m['delta_DBU']==[0,0])
+        assert len(blockers)==1 and blockers[0]['net']=='src[201]' and blockers[0]['actual_square_gap_DBU']==0
+        assert a['source_exported_branch_SHA256']==j['UPPER_remaining_repair_r02']['files']['branch_access.tsv.gz']['sha256']
+    q=j.get('UPPER_local_bypass_search_r01',{})
+    if q.get('completed_utc'):
+        assert not q['full_qualification'] and q['all_closed_sources_unchanged'] and q['native_edit_route_DRC_RC_STA']=='NOT_EXECUTED' and q['fixed_M10_and_hook_changes_requested']==0
+        r=q['geometric_result'];assert r['status']=='NO_LOCAL_GEOMETRIC_BYPASS_FOUND' and r['failed_net']=='src[248]' and not r['previous_edits']
+        assert [p['margin_um'] for p in r['attempts']]==[12,24,48,96] and all(p['expanded_nodes']==11 and p['path_dbu'] is None for p in r['attempts'])
+        assert len(r['negotiation']['trials'])==6 and r['negotiation']['status']=='NO_COUPLED_PATH_FOUND'
     q=j.get('WIRE_native_binding_inventory_r02',{})
     if q.get('completed_utc'):
         assert not q['full_qualification'] and q['native_returncode']==0 and q['profile']=='inventory' and q['all_closed_sources_unchanged']

@@ -917,7 +917,9 @@ def render(root,out):
                       ('LLSYSTEM_full_guide_metadata_control_r01','guide_free_leaf_DRC/r01'),
                       ('MXU_actual_parent_RC_STA_r01','mxu_actual_parent_rc_sta/r01'),
                       ('WIRE_shape_coverage_API_r01','wire_shape_coverage_API/r01'),
-                      ('WIRE_native_binding_inventory_r02','wire_shape_coverage_API/r02')]:
+                      ('WIRE_native_binding_inventory_r02','wire_shape_coverage_API/r02'),
+                      ('WIRE_native_RECT_decoder_r03','wire_shape_coverage_API/r03'),
+                      ('UPPER_local_bypass_search_r01','upper_local_bypass_search/r01')]:
         p=snapshot/rel/'execution.json.gz'
         terminal_names={'LLSYSTEM_current_actual_tip_views':'llsys-tip-views-r01',
                         'MXU_clock_bound_parent_recheck_r03':'mxu-clock-bound-parent-r03-terminal',
@@ -954,6 +956,8 @@ def render(root,out):
                         'MXU_actual_parent_RC_STA_r01':'mxu-actual-parent-rc-sta-r01',
                         'WIRE_shape_coverage_API_r01':'wire-shape-coverage-api-r01',
                         'WIRE_native_binding_inventory_r02':'wire-binding-inventory-r02',
+                        'WIRE_native_RECT_decoder_r03':'native-rect-decoder-r03',
+                        'UPPER_local_bypass_search_r01':'upper-local-bypass-search-r01',
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
         update=root/'gate_terminal_updates'/terminal_names.get(label,'NO_TERMINAL_UPDATE')
         terminal_evidence=None
@@ -1210,6 +1214,20 @@ def render(root,out):
     if inventory.get('completed_utc'):
         assert inventory['native_returncode']==0 and inventory['profile']=='inventory' and inventory['all_closed_sources_unchanged']
         upper_text+='<h3 id="r51-wire-api">R51：当前原生解码接口库存已取得，RECT覆盖仍待验证</h3><p>93390只读真实小样，安装Tcl确认存在dbWireDecoder、getRect/getPoint/getLayer/next，以及dbWire_getOpcode/getData/getShape绑定；dbWireShapeItr不存在。3项原始回执按源码/二进制/输入及输出SHA保存。此库存只证明接口存在，不证明RECT坐标语义、完整patch库存、连通或DRC通过。新decoder_rect探针只对已知PATH/POINT/RECT三操作的原生小样读取，不凭空假设枚举值，不改叶块或活动驱动；先独立交叉核对再扩展全部物理源。</p><p>93375已完成真实M5线尾编辑/分析进程，仍等待完整独立native及RC/STA终态，保留10261接点与原失败；原共同底座/适配层/RAM作业继续，不重复提交或按耗时取消。六块完整资格、共同冻结、两完整功能与公平系统比较仍未完成。</p>'
+    decoder=result.get('WIRE_native_RECT_decoder_r03',{})
+    if decoder.get('completed_utc'):
+        assert decoder['native_returncode']==0 and decoder['all_closed_sources_unchanged']
+        assert 'native_rect\t1\tWrong number of arguments' in decoder['actual_shape_export_text']
+        upper_text+='<h3 id="r52-decoder">R52：原生RECT枚举已识别，但矩形读取调用失败</h3><p>93393原生进程0，只表示已捕获探针结果；实际decoder依次读到PATH=0、POINT=4、RECT=8，枚举值取自当前原生变量，非编造编号。POINT坐标3976000/2411360 DBU及metal5正确；getRect要求四个deltaX1/deltaY1/deltaX2/deltaY2参数，零参数调用实际失败。未取得矩形坐标，不能称RECT覆盖修复或完整几何通过。下一步仅在相同闭合小样核对当前绑定的length/getOpcode/getData及可用int输出句柄，禁止传空指针冒险，不修改任何叶块或活动源。</p>'
+    bypass=result.get('UPPER_local_bypass_search_r01',{})
+    if bypass.get('completed_utc'):
+        assert bypass['all_closed_sources_unchanged'] and bypass['geometric_result']['status']=='NO_LOCAL_GEOMETRIC_BYPASS_FOUND'
+        upper_text+='<h3>两处适配层Short的局部绕行搜索实际失败</h3><p>93394使用闭合upper_branch_repair/r02/llaccel的全部导出支路及实际OBS，只搜索M11/M12，原固定M10、via10与hook不改。src[248]在12/24/48/96μm窗口均仅扩展11个可达节点，无路径；联动src[129]/src[201]两条实际M12端点阻挡线、尝试两种顺序和12/24/48μm窗口，最多23节点仍失败。此前没有实际编辑成功，不重复扩大同一窗口。该有限保守矩形搜索不是不可布通证明，RECT覆盖/完整规则尚缺，需进一步核查端点阻挡及更完整的相关段联动；src[206]未搜索，不冒称两处都已验证不可行。原独立native两Short仍保留，原guard15活动路由不干扰。</p>'
+    endpoint_audit=data/'upper_bypass_endpoint_audit_r01.json'
+    if endpoint_audit.exists():
+        audit=read(endpoint_audit);assert not audit['full_qualification'] and audit['native_implementation']=='NOT_EXECUTED'
+        result['UPPER_actual_bypass_endpoint_metal_audit']=audit
+        upper_text+='<p><strong>真实端点阻挡补查：</strong>src[248]所选M11线起点中心(2435.295,2643.270)μm是原via10落脚；同XY的M12被src[201]真实WIRE占据，另一端M12被src[129]占据。src[206]另一端也有src[128]的M12 WIRE。完整逐端点/邻步/实际矩形和原源SHA见<a href="data/upper_bypass_endpoint_audit_r01.json">端点金属阻挡审计</a>，由可复用audit_upper_bypass_endpoints.py生成。该审计只查导出的金属间距，不检查cut11或完整规则，不能推断全部绕行不可行。原搜索还固定了已有via11，后续可研究相关上层段及via11联动，固定via10和M1–M10仍须保持；当前尚未实际重接。</p>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',
