@@ -115,3 +115,7 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
+
+## Issue #42：固定底座两控制锥的参数化证据重放
+
+入口为 [frozen_control_cones](../project/experiments/frozen_control_cones/README.zh-CN.md)。`flow.py --config example.json --out <全新目录>` 检查实际原生导出的冻结底座、全局导体接触和单比特组合逻辑；`check_evidence.py` 核对样本及可选服务器原证据。它是两小控制锥的有限检查流程，不是自动布局、正式 Block 映射或 router。物理/SAT原运行证据与本次Python重放分别记录，详见 [阶段记录](experiments/issue-42-frozen-control-cones.md)。

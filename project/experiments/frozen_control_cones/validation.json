@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "issue": 42,
+  "repository": "rayggxia-workspace/LLMHardwareDesign",
+  "base_commit": "0cc36f3238c7084d7126d94c314fe7d8bf0f9c5d",
+  "server_task_root": "/public/home/yuzelu/PingyangHuang/pending/control-cone-algorithm-pr-20261023T073506806184Z",
+  "code_model": "Python standard library, explicit combinational cell tables",
+  "python_version": "3.12.7 (main, Oct 26 2025, 19:10:49) [GCC 8.5.0 20210514 (Red Hat 8.5.0-28)]",
+  "primary_validation_job": 89894,
+  "primary_validation_status": "COMPLETED 0:0",
+  "scheduler_receipt": [
+    "89892|COMPLETED|0:0|00:00:13",
+    "89892.batch|COMPLETED|0:0|00:00:13",
+    "89892.extern|COMPLETED|0:0|00:00:13",
+    "89893|FAILED|1:0|00:00:01",
+    "89893.batch|FAILED|1:0|00:00:01",
+    "89893.extern|COMPLETED|0:0|00:00:01",
+    "89894|COMPLETED|0:0|00:00:13",
+    "89894.batch|COMPLETED|0:0|00:00:13",
+    "89894.extern|COMPLETED|0:0|00:00:13"
+  ],
+  "test_count": 15,
+  "tests_passed": true,
+  "native_vs_refactored": {
+    "opentpu_mxu_b_req": {
+      "native_observed_y": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "refactored_observed_y": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "equal": true
+    },
+    "llaccel_fifo_do_push": {
+      "native_observed_y": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "refactored_observed_y": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "equal": true
+    }
+  },
+  "evidence_check": {
+    "passed": true,
+    "files_verified": 60,
+    "server_evidence_verified": true,
+    "native_EDA_rerun": false,
+    "new_SAT_run": false
+  },
+  "management_check": "PASS: Project management structure is valid (schema 1).\nNOTE: This does not validate product behavior, permissions, or live GitHub settings.",
+  "native_EDA_or_SAT_rerun": false,
+  "earlier_attempts": {
+    "89892": "COMPLETED, 13-test preliminary implementation",
+    "89893": "FAILED, escaped newline syntax in new source; corrected before final 89894"
+  },
+  "commands": [
+    "python -B -I -S scripts/check_project.py",
+    "python -B -S check_evidence.py --archive-root <evidence.archive_root>",
+    "python -B -S -m unittest -v test_flow",
+    "python -B -S flow.py --config example.json --out <new result directory>"
+  ],
+  "implementation_hashes": {
+    "check_evidence.py": "ce47580ac608df975c115f01ff8d37878beea0ea0f7b70bee5529c19e3636d76",
+    "evidence.json": "abf37fecb18e67d0f2eac4f93933451331adb917e0da2583ce1da1845a00b7b3",
+    "example.json": "4d03903a7596c0ed655683b8dda67a350f902484782eec58364fbc7c2333b4a2",
+    "flow.py": "35eca688b6f8f08b81dcc854dbe15d3558d2fdd389cd5a75521737b156c5c493",
+    "geometry_reference.py": "9cd4d899366c8dd7870ae8cf4232c55e5787fc59d3d1e6130543e8c118e62faa",
+    "test_flow.py": "b084311ebe67a366ebad62c624649efdda5b168a9449cdc8df5266bf19ebce27"
+  },
+  "logs": [
+    {
+      "path": "/public/home/yuzelu/PingyangHuang/pending/control-cone-algorithm-pr-20261023T073506806184Z/logs/tests-v3.log",
+      "bytes": 1618,
+      "sha256": "c150024f6c89b26b1025bd721f11fa8f884c77552f3e39d592d6b5161062518d"
+    },
+    {
+      "path": "/public/home/yuzelu/PingyangHuang/pending/control-cone-algorithm-pr-20261023T073506806184Z/logs/evidence-v3.log",
+      "bytes": 122,
+      "sha256": "48d2a22c852f69a69bc5fb2cb3c3e9225937d580e84a06a6965c972725ae0756"
+    },
+    {
+      "path": "/public/home/yuzelu/PingyangHuang/pending/control-cone-algorithm-pr-20261023T073506806184Z/logs/management-final.log",
+      "bytes": 141,
+      "sha256": "8d8bcc7813afc2694e8517ea32e554cb8fd792afafdd62837b618a32b8fa3c0e"
+    },
+    {
+      "path": "/public/home/yuzelu/PingyangHuang/pending/control-cone-algorithm-pr-20261023T073506806184Z/logs/replay-v3.log",
+      "bytes": 1746,
+      "sha256": "86d6154df1bfbc057ad38ffe4b10ffaa72405131c715e46a9c6b245c8ea27003"
+    }
+  ],
+  "limits": [
+    "only two scalar combinational cutpoint cones",
+    "explicit hypothetical new-layer wiring, no automatic router proof",
+    "not full cores or final Block",
+    "no full foundry DRC/LVS/RC/STA"
+  ]
+}

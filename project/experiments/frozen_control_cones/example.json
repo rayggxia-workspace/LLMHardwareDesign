@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "fixture_root": "fixtures/native",
+  "base_prefix": "base/native",
+  "fixed_layers": [
+    "metal1",
+    "metal2",
+    "metal3",
+    "metal4",
+    "metal5",
+    "metal6",
+    "metal7",
+    "metal8",
+    "metal9",
+    "metal10"
+  ],
+  "custom_layers": [
+    "metal11",
+    "metal12"
+  ],
+  "landing_layer": "metal10",
+  "custom_vias": {
+    "HPY_VIA10": [
+      "metal10",
+      "metal11"
+    ],
+    "HPY_VIA11": [
+      "metal11",
+      "metal12"
+    ]
+  },
+  "manufacturing_grid_dbu": 10,
+  "maximum_exhaustive_inputs": 12,
+  "input_ports": [
+    "PIN/a",
+    "PIN/b"
+  ],
+  "output_ports": [
+    "PIN/y"
+  ],
+  "cell_model_source": "Nangate45 macro LEF + typical Liberty; provenance in evidence.json. Explicit tables are not an arbitrary Liberty interpreter.",
+  "cells": {
+    "INV_X1": {
+      "inputs": [
+        "A"
+      ],
+      "output": "ZN",
+      "truth_table": [
+        1,
+        0
+      ],
+      "size_dbu": [
+        760,
+        2800
+      ]
+    },
+    "AND2_X1": {
+      "inputs": [
+        "A1",
+        "A2"
+      ],
+      "output": "ZN",
+      "truth_table": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "size_dbu": [
+        1520,
+        2800
+      ]
+    }
+  },
+  "cases": [
+    {
+      "id": "opentpu_mxu_b_req",
+      "prefix": "opentpu/native",
+      "expected": [
+        [
+          0
+        ],
+        [
+          0
+        ],
+        [
+          0
+        ],
+        [
+          1
+        ]
+      ],
+      "source": {
+        "relative": "rtl/mxu/otpu_mxu.sv",
+        "line": 399,
+        "expression": "go_iss && need_b",
+        "cutpoints": [
+          "go_iss",
+          "need_b"
+        ]
+      }
+    },
+    {
+      "id": "llaccel_fifo_do_push",
+      "prefix": "llaccel/native",
+      "expected": [
+        [
+          0
+        ],
+        [
+          0
+        ],
+        [
+          1
+        ],
+        [
+          0
+        ]
+      ],
+      "source": {
+        "relative": "rtl/sync_fifo.sv",
+        "line": 28,
+        "expression": "push && !full",
+        "cutpoints": [
+          "push",
+          "full"
+        ]
+      }
+    }
+  ],
+  "power_nets": [
+    "VDD",
+    "VSS"
+  ]
+}
