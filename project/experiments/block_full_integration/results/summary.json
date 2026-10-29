@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "observed_utc": "2026-10-29T14:22:59.988922+00:00",
-  "status": "VECTOR_FULL_NATIVE_RESTORATION_DRC_AND_ACTUAL_RC_CLOSED_QUALITY_FAIL_AUX_CONTEXT0_QUALIFICATION_PENDING",
+  "observed_utc": "2026-10-29T15:36:10.759324+00:00",
+  "status": "UNACCEPTED_SOURCE_CHECKS_CLOSED_ACTUAL_QUALITY_AND_PARENT_ROUTE_FAILED",
   "server_root": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z",
   "repository": "rayggxia-workspace/LLMHardwareDesign",
   "issue": 55,
   "PR": 58,
   "owner": "huangpingyang04-lgtm",
   "branch": "task/55-full-block-integration",
-  "engineering_source": "e9dba2ca7bf07414ab6980631a3d5016c74ad630",
+  "engineering_source": "8fc21453e09fd4add179b0fe9ae3e0905b7e1782",
   "prior_index": {
     "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-exact-net-selection-progress-20261029T121318Z/milestone.json",
     "bytes": 30764,
@@ -65,6 +65,38 @@
       "status": "PASS_FRESH_COMPLETE_AUX_REFERENCE_CONTEXT_NETLIST_IDENTITY_ONLY",
       "job_id": "93461",
       "error": null
+    },
+    "aux-reference-context-source-gate-r01-4c-01": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/convergence-12h-20261029T131906Z/runs/aux-reference-context-source-gate-r01-4c-01/execution.json",
+      "sha256": "c8f51fcd81d3dcc2997bcfbc4f025a0f81683d66528da1b9f5048c47c1614cc7",
+      "status": "PASS_COMPLETE_AUX_REFERENCE_CONTEXT_NATIVE_SOURCE_ONLY",
+      "job_id": "93468"
+    },
+    "aux-reference-context-actual-RC-r02-4c-01": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/convergence-12h-20261029T131906Z/runs/aux-reference-context-actual-RC-r02-4c-01/execution.json",
+      "sha256": "d6afdcff50bb22ad9658106330c28412e00b859d4a95b86f721d8a89dce6cd7a",
+      "status": "PASS_AUXILIARY_RC_EXTRACTION_AND_PRECISE_MEASUREMENT_ONLY",
+      "job_id": "93473"
+    },
+    "aux-reference-context-RC-coverage-r01-4c-01": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/convergence-12h-20261029T131906Z/runs/aux-reference-context-RC-coverage-r01-4c-01/execution.json",
+      "sha256": "a5ace16061e74ea69057bd271cfa85ea6273b0ffd9cc7d2922a21b72178ac455",
+      "status": "PASS_DRIVER_STAGE_FULL_ACCESS_RC_ANCHORS_COVERAGE_ONLY",
+      "job_id": "93483"
+    },
+    "vector-quality-residual-localization-r01-4c-01": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/convergence-12h-20261029T131906Z/runs/vector-quality-residual-localization-r01-4c-01/execution.json",
+      "sha256": "40eb9a7df78b57cce0015a7467bee296ac2c62835d17833f7f4f654f29c2dfa6",
+      "status": "MEASURED_VECTOR_REAL_NAMED_RESIDUALS_AND_SPEF_COMPONENTS_ONLY",
+      "job_id": "93476"
+    },
+    "complete-fixed-parent-saved-guides-fresh-DRT-r01-4c-01": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/complete-fixed-parent-saved-guides-fresh-DRT-r01-4c-01/execution.json",
+      "sha256": "0119eed1da9cf1f204d35f6f20db261643476aa9299735c8fbc92d29ab4ec33f",
+      "status": "FAIL_COMPLETE_FIXED_PARENT_LOWER_ROUTE_OR_CHECK",
+      "job_id": "93130",
+      "finished_utc": "2026-10-29T14:26:01.319979+00:00",
+      "error": "TimeoutExpired: Command '['/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad', '-no_init', '-no_splash', '-exit', '/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/complete-fixed-parent-saved-guides-fresh-DRT-r01-4c-01-driver/source/project/experiments/block_full_integration/detail_saved_fixed_parent_guides.tcl']' timed out after 43199.999982797075 seconds"
     }
   },
   "base": {
@@ -124,7 +156,17 @@
     "full_native13tables_identity_passed": true,
     "full_source_actual_short_pairs_detected": 5,
     "actual_negative_native_Shorts": 12,
-    "combined_source_admission_or_RC_complete": false
+    "combined_source_admission_or_RC_complete": true,
+    "actual_active_SPEF_nets": 558017,
+    "actual_active_endpoints": 1771925,
+    "actual_M8_positive_resistance_graphs": 13507,
+    "setup_WNS_ns": -1.5718480295594668,
+    "setup_negative_endpoints": 5694,
+    "hold_WNS_ns": -0.24845443072813203,
+    "hold_negative_endpoints": 36,
+    "cap_violations": 1047,
+    "slew_violations": 0,
+    "quality_accepted": false
   },
   "resource": {
     "new_jobs_CPUs": 4,
@@ -154,11 +196,11 @@
     }
   },
   "unresolved": [
-    "VECTOR230setupendpointsand2cap-pinregressions relativeoriginal remain, not inherited waiver",
-    "AUX native13identity/fullsource5shortcontrols passed;combinedsourceadmission/freshnetlist andRC stillpending",
-    "93130actualfull191parent/14059fixednetsDRT nofinalresult",
-    "Noacceptedfinalcommonbase, currentfullcasefunctionsandtwoM9M10customphysicalroutes",
-    "Externalclockrise/falland37constantloads user-undetermined"
+    "VECTOR230setupand2capworse;currentuppercosttrialpending",
+    "AUX actual3ns setup/hold/cap qualityFAIL;coveragePASS",
+    "Fullparent191/14059 DRT timedout;fixedprewiringnotrouted",
+    "Currentcompletecasefunctions/PGclockidle/freeze/twofinalcustomroutesNOTACCEPTED",
+    "Externalclockwaveformand37loadsundetermined"
   ],
   "delivery": {
     "PR": 58,
@@ -169,7 +211,7 @@
     "merged": false,
     "late_stage_source_uploaded": false
   },
-  "source_commit": "e9dba2ca7bf07414ab6980631a3d5016c74ad630",
+  "source_commit": "8fc21453e09fd4add179b0fe9ae3e0905b7e1782",
   "complete_handoff_preservation": {
     "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/vector-buffer-signal-complement-route-r03-4c-01/complete_handoff_preservation.json",
     "bytes": 1056,
@@ -181,8 +223,17 @@
     "sha256": "50615c7445d973a0316b0116585e4bb7f3c341132e58b50ab777f073e56d3238"
   },
   "milestone": {
-    "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/convergence-12h-20261029T131906Z/records/milestone-20261029T142259Z.json",
-    "sha256": "42fd537906ab9ebc35e60d11b2694f144ded1e7c3f62aa816faf23f5d323bf08"
+    "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/convergence-12h-20261029T131906Z/records/milestone-20261029T153610Z.json",
+    "sha256": "43c9665c227852fa0b852f7770ab05765dd7ce564381864354899b11310e96fa"
   },
-  "round_root": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/convergence-12h-20261029T131906Z"
+  "round_root": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/convergence-12h-20261029T131906Z",
+  "parent_route": {
+    "job_id": "93130",
+    "status": "FAILED_SUBPROCESS_TIMEOUT",
+    "seconds": 43200,
+    "final_routed_database_saved": false,
+    "last_iteration": 0,
+    "last_partial_percent": 50,
+    "last_intermediate_violations": 3332037
+  }
 }
