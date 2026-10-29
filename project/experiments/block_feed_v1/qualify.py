@@ -61,6 +61,13 @@ def seal(raw,out):
         flow['completed_cts_provenance']=dict(producer_receipt_sha256=sha(original/'receipt.json'),
             producer_passed=producer['passed'],successful_stage_logs=binding,
             scope='Only explicit successful first-four-stage checkpoints; failed original route is not accepted')
+    if flow.get('source_grt_checkpoint'):
+        checkpoint=flow['source_grt_checkpoint'];prior=Path(checkpoint['folder'])
+        r=json.loads((prior/'receipt.json').read_text());assert sha(prior/'receipt.json')==checkpoint['receipt_sha256']
+        for name,row in checkpoint['files'].items():
+            p=Path(row['path']);assert sha(p)==row['sha256']==r['outputs'][str(p.relative_to(prior))]
+        journal=prior/'source-cts-journal.json'
+        assert sha(journal)==flow['source_native_journal_sha256']==r['outputs'][journal.name]
     relative='flow/results/nangate45/bv1_'+flow['top']+'/base'
     before=raw/relative;after=out/relative;after.mkdir(parents=True)
     for name in ['config.mk','pins.json','pins.tcl','input.sdc']:

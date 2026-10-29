@@ -22,11 +22,13 @@ from io_slots import file_sha as sha
 
 def repair(a,run):
     raw=a.source;out=a.out
-    snapshot=(raw/'native-flow.json').read_bytes();(out/'source-cts-journal.json').write_bytes(snapshot)
+    snapshot=(raw/'native-flow.json').read_bytes()
     journal=json.loads(snapshot);assert journal['stages'][:4]==['do-1_synth','do-floorplan','do-place','do-cts']
     top=journal['top'];assert top in ['block_feed_m','block_feed_s_macro']
     if a.from_grt:
+        (out/'source-grt-journal.json').write_bytes(snapshot)
         return repair_grt(a,run,journal)
+    (out/'source-cts-journal.json').write_bytes(snapshot)
     for p,digest in journal['rtl_sha256'].items():assert sha(ROOT/p)==digest
     assert sha(raw/'config.mk')==journal['config_sha256'] and sha(raw/'pins.json')==journal['pins_sha256']
     # Bind actual successful make-stage logs, not merely file existence.
