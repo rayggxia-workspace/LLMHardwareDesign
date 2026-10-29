@@ -1,3 +1,5 @@
+2026-10-29 16:19 CST：V361六项新源行为/264bit算术通过，三初态各566999检查/414906拍、公共42/扩展36全部测量与355一致，47原始/35稳定/308源绑定；映射继续。362在现有V357/93250空闲80CPU七项通过，53原始/39稳定/308源核验，135有限+78公共场景全部测量与356一致，无新allocation。363原生→364最终四门/六文件/完整几何→365接口已stage/validate，源423c006/archive61a504d6，均待真实前置，360控制尚未替换。R344 CTS继续；M/S/T接收、V/R最终未齐，Issue121=in_progress/PR122=draft、目标active，登记pending/看板unverified及同步pending。
+
 2026-10-29 16:09 CST：旧350六原生阶段自然COMPLETED/0，最终RCX setup−0.11ns/TNS−11.47ns，offset[0]→stat_block_min[6]；13原始快照及308源绑定。当前357 CTS内置LEC实际UNSAT/IDENTICAL，CTS setup−0.05ns/TNS−0.63ns、hold−0.17ns，offset[0]→stat_block_sq[65]，11原始/308源绑定；原357继续route。选定同一基础V归约叶值复用operand_a、捕获8bit尾块mask，不增操作周期，361新源验证/362测量及后续363/364/365资格全部待实际结果。R344已CTS，345/346待前置；M/S/T接收保持，V/R最终未齐，Issue121=in_progress/PR122=draft、目标active，登记pending/看板unverified与同步pending。
 
 2026-10-29 15:28 CST：V355七项全部通过、442776工艺单元，映射补充10原始文件/308源核验；356七项全部通过、135场景与349测量一致、53原始/39稳定/308源绑定，80预算按356重算且成本字段保持。V357/93250于15:19:01实际提交并在node16 fresh place；358最终门/六文件/完整几何及359接口待真实前置。360轻量准入已部署，源6f4/配置ac3d，替换354、仅未分配351/352退休，所有EDA正常收尾；R344/93237 node21 place继续。M/S/T接收、V/R最终未齐，Issue121=in_progress/PR122=draft、目标active；登记pending/看板unverified与同步pending。
