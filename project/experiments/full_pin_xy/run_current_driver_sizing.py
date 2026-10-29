@@ -68,7 +68,8 @@ def run(case,revision):
             for pin,b in groups(body,'pin'):
                 z=re.search(r'\bmax_capacitance\s*:\s*([\d.eE+-]+)',b)
                 if z:caps[name,pin]=float(z[1])
-            logic[name]=contract('cell ('+name+') {'+body+'}',name)
+            try:logic[name]=contract('cell ('+name+') {'+body+'}',name)
+            except AssertionError:logic[name]=None
         native('original_native_inventory','read_db '+tcl(odb)+'\nfingerprint '+tcl(out/'before')+'\n'+COST_PROC+'\ncell_cost '+tcl(out/'before.cell_cost.tsv')+'\nclose $stages',threads=1)
         before,terms=read_cells(out/'before.cells.tsv')
         nonfill={r['instance'] for r in csv.DictReader((out/'before.cell_cost.tsv').open(),delimiter='\t') if r['type']!='CORE_SPACER'}
@@ -82,9 +83,9 @@ def run(case,revision):
         selected={};inventory=[]
         for inst,checks in sorted(viol.items()):
             master=before[inst][0];m=re.fullmatch(r'(.+)_X(\d+)',master);target=None;candidates=[]
-            if m:
+            if m and logic.get(master) is not None:
                 for strength,name in sorted(families[m[1]]):
-                    if strength<=int(m[2]) or logic[name]!=logic[master]:continue
+                    if strength<=int(m[2]) or logic.get(name) is None or logic[name]!=logic[master]:continue
                     capok=all(caps.get((name,r['pin']),0)>=r['actual']*1.1 for kind,r in checks.items() if kind=='max capacitance')
                     slewok=all(strength>=int(m[2])*r['actual']/r['limit']*1.1 for kind,r in checks.items() if kind=='max slew')
                     candidates.append((strength,name,capok and slewok))
