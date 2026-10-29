@@ -1282,7 +1282,7 @@
         "evidence": "data/gate_milestones/gate-r38/extended_sta/r01/gemm/execution.json.gz",
         "full_qualification": false
       },
-      "current_source_RECT_inventory": "data/gate_terminal_updates/native-patch-audit-r01-gemm/execution.json.gz"
+      "current_source_RECT_inventory": "data/gate_terminal_updates/native-patch-audit-r02-gemm_658_current/execution.json.gz"
     },
     {
       "case": "vector",
@@ -49126,6 +49126,62 @@
     },
     "evidence": "data/gate_terminal_updates/native-patch-audit-r01-upper514/execution.json.gz"
   },
+  "NATIVE_patch_audit_gemm_658_current": {
+    "scope": "READ_ONLY_ALL_NATIVE_DBWIRE_RECT_PATCH_INVENTORY_ADDITIVE_EXPORTED_SIGNAL_CONNECTIVITY_NOT_DRC_RC_STA_OR_FULL_QUALIFICATION",
+    "case": "gemm_658_current",
+    "source_SHA": {
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/antenna_incremental_eco/r01/gemm-C/execution.json": "220e1b34ab863fdd9d105a559e11e5e978288deca299e5eaa884e3561e711794",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/antenna_incremental_eco/r01/gemm-C/routed.odb": "ac4702d5b6ff9e35e9030eabe767505aa54d93cd9cc708430e57cd5919f8b3d0",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/antenna_incremental_eco/r01/gemm-C/whole_access.tsv.gz": "5937821f09682c4fa02f8caf5a9b8b82dc64d59ea8a0145a4cb7ad4204521070",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/wire_shape_coverage_API/r08/execution.json": "8eb3c4a697485804e579514eff929f265c27a78fdc28ba50cc1e950b998c2e54",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/native-patch-export-r08/export_patch_rects.tcl": "b68bedea18af6e50ffeb1bf667c93599f4922bab6b073afb74a51554fb279514",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/current-gemm658-patch-audit-r02/export_patch_rects.tcl": "b68bedea18af6e50ffeb1bf667c93599f4922bab6b073afb74a51554fb279514"
+    },
+    "full_qualification": false,
+    "native_route_edit_DRC_RC_STA": "NOT_EXECUTED_READ_ONLY_AUDIT",
+    "source_physical_DRC_not_changed_or_promoted": 0,
+    "driver_commit": "ed0dd2e7bbda34dee9bb71d06fc0300d49ba7d4e",
+    "scheduler_job": "93428",
+    "array_task": 10,
+    "original_special_PG_OBS_and_complete_rules": "SEPARATE_EXISTING_GATES_NOT_REPLACED",
+    "legacy_ACT_closure": null,
+    "actual_OpenROAD_binary_SHA256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+    "native_returncode": 0,
+    "native_counts": {
+      "examined_nets": 290151,
+      "native_wires": 268637,
+      "native_decoder_RECT": 0,
+      "exported_patch_rectangles": 0,
+      "signal_special_wire_nets_not_audited": 0
+    },
+    "patch_nets": 0,
+    "patch_layers": {},
+    "additive_geometry_pass": true,
+    "baseline_geometry_reused": "No native RECT events found; original exported graph unchanged, not rerun",
+    "baseline_geometry_checked_nets": 268637,
+    "signal_special_wire_coverage_complete": true,
+    "all_closed_sources_unchanged": true,
+    "completed_utc": "2026-10-29T12:45:24.314880+00:00",
+    "files": {
+      "audit.tcl": {
+        "bytes": 658,
+        "sha256": "7fa4de344eb85bc09824b74fd83c796dd26d40d572c7641563c13d73bc020ff5"
+      },
+      "native.log": {
+        "bytes": 445,
+        "sha256": "d9555849e9c1c4eac854ca16e7173702762f624556e9e329f90a38554bbc9d8a"
+      },
+      "patch_rectangles.tsv": {
+        "bytes": 32,
+        "sha256": "8fe63cce5ff59b6f0bd81a67e7a0489f5319fb10bf6ce93cfe4888ae426c79d7"
+      },
+      "patch_counts.tsv": {
+        "bytes": 130,
+        "sha256": "2ad96324723881dee69207510caf1a5c812a0327d0901616c45c697c2f57fa6a"
+      }
+    },
+    "evidence": "data/gate_terminal_updates/native-patch-audit-r02-gemm_658_current/execution.json.gz"
+  },
   "MXU_actual_via_tip_figure": {
     "scope": "ACTUAL_M6_VIA_TIP_RECTANGLES_NOT_SCHEMATIC",
     "full_qualification": false,
@@ -50449,5 +50505,20 @@
     ],
     "total_native_wire_objects_across_snapshots_not_unique_nets": 2758947,
     "native_DRC_RC_STA_and_GDS_not_reexecuted_or_promoted": true
+  },
+  "all_current_six_leaf_RECT_audit": {
+    "completed": true,
+    "full_qualification": false,
+    "case_evidence_labels": {
+      "act": "NATIVE_patch_audit_act",
+      "mxu": "NATIVE_patch_audit_mxu",
+      "opentpu_aux": "NATIVE_patch_audit_opentpu_aux",
+      "gemm": "NATIVE_patch_audit_gemm_658_current",
+      "vector": "NATIVE_patch_audit_vector",
+      "llaccel_aux": "NATIVE_patch_audit_llaccel_10261_restored"
+    },
+    "current_GEMM_ODB_SHA256": "ac4702d5b6ff9e35e9030eabe767505aa54d93cd9cc708430e57cd5919f8b3d0",
+    "historical_GEMM636_plus_sizes_kept_separate": true,
+    "native_wires_across_all11_snapshots_not_unique_nets": 3027584
   }
 }

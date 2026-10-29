@@ -922,7 +922,8 @@ def render(root,out):
                       ('UPPER_local_bypass_search_r01','upper_local_bypass_search/r01'),
                       ('LLSYSTEM_actual_10261_wire_restore_r01','owned_cap_wire_restore/r01'),
                       *[('WIRE_RECT_probe_r0'+str(i),'wire_shape_coverage_API/r0'+str(i)) for i in range(4,9)],
-                      *[('NATIVE_patch_audit_'+case,'native_patch_audit/r01/'+case) for case in ['act','mxu','opentpu_aux','gemm','vector','llaccel_stable','llaccel_10261_restored','mxu_parent','upper770','upper514']]]:
+                      *[('NATIVE_patch_audit_'+case,'native_patch_audit/r01/'+case) for case in ['act','mxu','opentpu_aux','gemm','vector','llaccel_stable','llaccel_10261_restored','mxu_parent','upper770','upper514']],
+                      ('NATIVE_patch_audit_gemm_658_current','native_patch_audit/r02/gemm_658_current')]:
         p=snapshot/rel/'execution.json.gz'
         terminal_names={'LLSYSTEM_current_actual_tip_views':'llsys-tip-views-r01',
                         'MXU_clock_bound_parent_recheck_r03':'mxu-clock-bound-parent-r03-terminal',
@@ -962,6 +963,7 @@ def render(root,out):
                         'WIRE_native_RECT_decoder_r03':'native-rect-decoder-r03',
                         'UPPER_local_bypass_search_r01':'upper-local-bypass-search-r01',
                         'LLSYSTEM_actual_10261_wire_restore_r01':'owned-cap-wire-restore-r01',
+                        'NATIVE_patch_audit_gemm_658_current':'native-patch-audit-r02-gemm_658_current',
                         **{'WIRE_RECT_probe_r0'+str(i):name for i,name in [(4,'native-rect-payload-r04'),(5,'native-rect-getshape-r05'),(6,'native-rect-getshape-r06'),(7,'native-rect-coord-r07'),(8,'native-patch-export-r08')]},
                         **{'NATIVE_patch_audit_'+case:'native-patch-audit-r01-'+case for case in ['act','mxu','opentpu_aux','gemm','vector','llaccel_stable','llaccel_10261_restored','mxu_parent','upper770','upper514']},
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
@@ -1256,13 +1258,23 @@ def render(root,out):
         result['all_ten_closed_sources_RECT_audit']={'completed':True,'full_qualification':False,'source_specific_no_RECT_events':True,'cases':patch_cases,'total_native_wire_objects_across_snapshots_not_unique_nets':sum(q['native_counts']['native_wires'] for q in patch_audits.values()),'native_DRC_RC_STA_and_GDS_not_reexecuted_or_promoted':True}
         for row in rows:
             case='llaccel_10261_restored' if row['case']=='llaccel_aux' else row['case']
-            row['current_source_RECT_inventory']=patch_audits[case]['evidence']
-        upper_text+='<h3 id="r54-source-patch-audit">R54：六叶及相关父/适配层十个闭合源的RECT漏项影响已排除</h3><p>93414数组的全部10例均已终态COMPLETED0，合计检查2758947个原生dbWire对象（跨多个epoch/父层重复计数，不是独立原始网络或pin数）。逐网native decoder RECT事件及补充patch均为0，信号special wire未审计计数也均为0；原源码/工具/方法脚本与每份ODB/原导出图SHA前后保持。原图没有RECT可补，故复用同源已验证的连通图、未重复构造几何或重跑P&amp;R。</p><p>这项实际审计证明：已确认的通用RECT导出器漏项没有影响这十份指定SHA源；不把未来新增RECT、PG special wire、其他完整规则或GDS LVS视为已通过，不改变任何原负STA/DRC失败或系统资格。六块主矩阵各自链接其当前epoch审计，LL旧3tip源与10261修复源分别核实。93415新源完整LEF/OBS/模型导出仍运行，未宣称模型或父AP完成。</p>'
+            if case!='gemm':row['current_source_RECT_inventory']=patch_audits[case]['evidence']
+        upper_text+='<h3 id="r54-source-patch-audit">R54：十个指定闭合源的RECT审计（GEMM为旧636＋换型源）</h3><p>93414数组的全部10例均已终态COMPLETED0，合计检查2758947个原生dbWire对象（跨多个epoch/父层重复计数，不是独立原始网络或pin数）。逐网native decoder RECT事件及补充patch均为0，信号special wire未审计计数也均为0；原源码/工具/方法脚本与每份ODB/原导出图SHA前后保持。原图没有RECT可补，故复用同源已验证的连通图、未重复构造几何或重跑P&amp;R。</p><p>这项实际审计证明：已确认的通用RECT导出器漏项没有影响这十份指定SHA源；不把未来新增RECT、PG special wire、其他完整规则或GDS LVS视为已通过，不改变任何原负STA/DRC失败或系统资格。前十例中的GEMM是旧636＋换型源，不能代表当前658版；R55另行补审当前源。LL旧3tip源与10261修复源分别核实。93415新源完整LEF/OBS/模型导出仍运行，未宣称模型或父AP完成。</p>'
         audit_rows=[]
         for case in patch_cases:
             q=patch_audits[case];n=q['native_counts'];odb_sha=next(v for k,v in q['source_SHA'].items() if k.endswith('.odb'))
-            audit_rows.append('<tr><td>'+case+'</td><td>'+str(n['examined_nets'])+'</td><td>'+str(n['native_wires'])+'</td><td>0</td><td>'+odb_sha[:12]+'</td><td><a href="'+q['evidence']+'">原生回执/全SHA</a></td></tr>')
+            audit_rows.append('<tr><td>'+('gemm（旧636＋换型）' if case=='gemm' else case)+'</td><td>'+str(n['examined_nets'])+'</td><td>'+str(n['native_wires'])+'</td><td>0</td><td>'+odb_sha[:12]+'</td><td><a href="'+q['evidence']+'">原生回执/全SHA</a></td></tr>')
         upper_text+='<table><thead><tr><th>独立源/epoch</th><th>检查net对象</th><th>有dbWire对象</th><th>原生RECT</th><th>ODB SHA前12位</th><th>证据</th></tr></thead><tbody>'+''.join(audit_rows)+'</tbody></table>'
+    current_gemm_audit=result.get('NATIVE_patch_audit_gemm_658_current',{})
+    if current_gemm_audit.get('completed_utc'):
+        assert current_gemm_audit['native_returncode']==0 and current_gemm_audit['all_closed_sources_unchanged'] and current_gemm_audit['native_counts']['native_decoder_RECT']==0
+        source_gemm=result['GEMM_additional22_diode_actual_attempt'];actual_gemm_sha=next(v for k,v in current_gemm_audit['source_SHA'].items() if k.endswith('/routed.odb'))
+        assert actual_gemm_sha==source_gemm['files']['routed.odb']['sha256']
+        assert next(v for k,v in patch_audits['gemm']['source_SHA'].items() if k.endswith('/routed.odb'))==result['GEMM_post_diode_size_ECO']['files']['routed.odb']['sha256']
+        selected={case:('NATIVE_patch_audit_gemm_658_current' if case=='gemm' else 'NATIVE_patch_audit_'+('llaccel_10261_restored' if case=='llaccel_aux' else case)) for case in CASES}
+        for row in rows:row['current_source_RECT_inventory']=result[selected[row['case']]]['evidence']
+        result['all_current_six_leaf_RECT_audit']={'completed':True,'full_qualification':False,'case_evidence_labels':selected,'current_GEMM_ODB_SHA256':actual_gemm_sha,'historical_GEMM636_plus_sizes_kept_separate':True,'native_wires_across_all11_snapshots_not_unique_nets':3027584}
+        upper_text+='<h3 id="r55-current-gemm-audit">R55：纠正GEMM审计epoch，当前658源已独立补审</h3><p>源SHA复核发现前十例的GEMM为旧636 diode＋换型版a062582046fa，R54最初“当前六叶覆盖”表述不成立；原回执及提交保留，表格现明确标旧源。93428只新增数组索引10，在独立r02/gemm_658_current目录核查当前658源ac4702d5b6ff，未重跑或覆盖前十例。已终态COMPLETED0：290151个net对象/268637个dbWire、native RECT0、补充patch0、未审计信号special wire0，所有源SHA保持；精确绑定主矩阵实际658 diode回执而非仅看pin/网数量。</p><p>现在当前ACT/MXU/openTPU SYSTEM/GEMM/VECTOR/LL SYSTEM六份实际主源均有各自匹配的只读RECT审计；加上旧源及相关父/适配层共有11份指定snapshot、3027584个dbWire对象（含重复epoch/父层，不是独立网络或pin数）。此补查只排除RECT漏项，不改变任何时序、完整规则、SRAM、父层AP或系统资格失败。93415真实新视图仍待终态，不能将旧源视图继承给新源。</p>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',

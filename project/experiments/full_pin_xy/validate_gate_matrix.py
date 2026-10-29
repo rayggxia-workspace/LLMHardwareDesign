@@ -861,6 +861,16 @@ def check(out):
             assert 'native_decoder_RECT\t0' in counts and 'exported_patch_rectangles\t0' in counts
         current=j['NATIVE_patch_audit_llaccel_10261_restored'];assert next(v for p,v in current['source_SHA'].items() if p.endswith('/routed.odb'))==j['LLSYSTEM_actual_10261_wire_restore_r01']['files']['routed.odb']['sha256']
         assert next(v for p,v in j['NATIVE_patch_audit_mxu']['source_SHA'].items() if p.endswith('/routed.odb'))==j['MXU_actual_tip_ECO_r01']['files']['routed.odb']['sha256']
+    current_audit=j.get('all_current_six_leaf_RECT_audit')
+    if current_audit:
+        assert current_audit['completed'] and not current_audit['full_qualification'] and current_audit['historical_GEMM636_plus_sizes_kept_separate']
+        assert set(current_audit['case_evidence_labels'])==set(rows) and current_audit['native_wires_across_all11_snapshots_not_unique_nets']==3027584
+        for case,label in current_audit['case_evidence_labels'].items():
+            q=j[label];assert rows[case]['current_source_RECT_inventory']==q['evidence']
+            assert q['native_counts']['native_decoder_RECT']==q['native_counts']['exported_patch_rectangles']==q['native_counts']['signal_special_wire_nets_not_audited']==0 and q['all_closed_sources_unchanged'] and q['additive_geometry_pass']
+        q=j['NATIVE_patch_audit_gemm_658_current'];current=next(v for p,v in q['source_SHA'].items() if p.endswith('/routed.odb'))
+        old=next(v for p,v in j['NATIVE_patch_audit_gemm']['source_SHA'].items() if p.endswith('/routed.odb'))
+        assert current==j['GEMM_additional22_diode_actual_attempt']['files']['routed.odb']['sha256']==current_audit['current_GEMM_ODB_SHA256'] and old==j['GEMM_post_diode_size_ECO']['files']['routed.odb']['sha256'] and current!=old
     q=j.get('LLSYSTEM_actual_10261_wire_restore_r01',{})
     if q.get('completed_utc'):
         assert not q['full_qualification'] and q['all_closed_sources_unchanged'] and q['fresh_DRC_count']==0
