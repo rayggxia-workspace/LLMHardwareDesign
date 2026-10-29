@@ -84,7 +84,19 @@ def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None
     config+='\nexport HOLD_SLACK_MARGIN = 0.020\n'
     route_args=None
     if routing_policy is not None:
-        assert kind=='v' and routing_policy==dict(upper_layer_adjustment=.20,congestion_iterations=100)
+        assert kind=='v' and routing_policy==dict(upper_layer_adjustment=.20,congestion_iterations=100,clock_ndr='none')
+        # Native CTS default NDR plus RCX normalization produced a 1600-DBU
+        # M3 shape in getShape/PSM where the path iterator reports 140 DBU.
+        # Use native default-width clock routing in the new implementation;
+        # preserve all PG/DRC/RCX/STA gates rather than waiving that mismatch.
+        config+='export CTS_ARGS = -sink_clustering_enable -repair_clock_nets -apply_ndr none\n'
+        cts_policy=out/'clock-policy.tcl'
+        cts_policy.write_text('set f [open [file join $::env(RESULTS_DIR) bv1-clock-policy.tsv] w]\n'
+            'foreach net [[ord::get_db_block] getNets] {\n'
+            '  if {[$net getSigType] ne "CLOCK"} {continue}\n'
+            '  if {[$net getNonDefaultRule] ne "NULL"} {error "Unexpected clock NDR: [$net getName]"}\n'
+            '  puts $f "[$net getName]\\tnone"\n}\nclose $f\n')
+        config+='export POST_CTS_TCL = '+str(cts_policy)+'\n'
         assert file_sha(flow/'scripts/global_route.tcl')=='3968898c9abd8c0fd56c50d08bed6d3943bdc641f63c8674817449bbec2706ce'
         assert '$cong_iters $::env(GLOBAL_ROUTE_ARGS)' in (flow/'scripts/global_route.tcl').read_text()
         hook=out/'grt-capacity.tcl'
@@ -104,7 +116,10 @@ def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None
     command=['make','-C',str(flow),'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
     wanted=dict(MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',KEEP_VARS='1',LEC_CHECK='1',SEC_CHECK='0',
                 TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN='0.020')
-    if route_args is not None:wanted.update(PRE_GLOBAL_ROUTE_TCL=str(hook),GLOBAL_ROUTE_ARGS=route_args)
+    if route_args is not None:
+        wanted.update(PRE_GLOBAL_ROUTE_TCL=str(hook),GLOBAL_ROUTE_ARGS=route_args,
+                      CTS_ARGS='-sink_clustering_enable -repair_clock_nets -apply_ndr none',
+                      POST_CTS_TCL=str(cts_policy))
     actual={}
     for key,value in wanted.items():
         log='variable-'+key+'.log';run(command+['print-'+key],log)
@@ -125,6 +140,12 @@ def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None
     for number,stage in enumerate(('do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish')):
         run(command+[stage],'%02d-%s.log'%(number,stage));result['stages'].append(stage)
         assert file_sha(out/'input.v')==input_sha;save()
+        if stage=='do-cts' and route_args is not None:
+            rows=(results/'bv1-clock-policy.tsv').read_text().splitlines()
+            assert 'clk\tnone' in rows and all(row.endswith('\tnone')for row in rows)
+            result['clock_policy_readback']=dict(clock_nets=len(rows),ndr='none',
+                sha256=file_sha(results/'bv1-clock-policy.tsv'))
+            save()
         if stage=='do-route' and route_args is not None:
             assert (results/'bv1-grt-adjustment.tsv').read_text()=='metal4-metal10\t0.20\nnative_rules\tunchanged\n'
             grt=out/'flow/logs/nangate45'/nickname/'base/5_1_grt.log'

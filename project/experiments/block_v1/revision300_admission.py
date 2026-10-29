@@ -13,7 +13,8 @@ import subprocess
 import time
 
 
-RUNS = ('344', '345', '346', '380', '381', '382')
+RUNS = ('block-v1-20261029-344', 'block-v1-20261029-345', 'block-v1-20261029-346',
+        'block-v1-20261030-400', 'block-v1-20261030-401', 'block-v1-20261030-402')
 SLURM_TERMINAL = {'COMPLETED', 'FAILED', 'CANCELLED', 'TIMEOUT', 'OUT_OF_MEMORY',
                   'NODE_FAIL', 'PREEMPTED', 'BOOT_FAIL', 'DEADLINE', 'REVOKED'}
 
@@ -26,7 +27,7 @@ def validate(config, base):
     assert config['schema'] == 'revision300-admission/1'
     assert config['max_allocations'] == 8 and config['interval_seconds'] == 60
     assert base.is_absolute() and base.name == 'issue-121'
-    assert [x['run_id'] for x in config['runs']] == ['block-v1-20261029-' + n for n in RUNS]
+    assert [x['run_id'] for x in config['runs']] == list(RUNS)
     for row in config['runs']:
         root = base / row['run_id']
         assert root.resolve().parent == base.resolve()

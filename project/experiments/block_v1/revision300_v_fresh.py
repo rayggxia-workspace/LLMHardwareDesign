@@ -11,7 +11,7 @@ def implement(root,out,cpus,run):
         mapping='block-v1-20261029-378/tasks/revision300-map-v',
         function='block-v1-20261029-378/tasks/revision300-test-v',
         group_arithmetic_proof='block-v1-20261029-348/tasks/revision300-v-group-proof',
-        upper_layer_adjustment=.20,congestion_iterations=100,
+        upper_layer_adjustment=.20,congestion_iterations=100,clock_ndr='none',
         inherited_physical_stages=[],requires_fresh_final_acceptance=True)
     base=out.parents[2]
     group_proof=base/policy['group_arithmetic_proof']
@@ -52,4 +52,4 @@ def implement(root,out,cpus,run):
         original_proof_receipt_sha256=file_sha(proof/'receipt.json'),actual_function_sha256=functions,
         current_rtl_sha256=file_sha(root/relative),scope='Only identical combinational functions; full macro checks remain independently required.'),indent=2)+'\n')
     fresh(root,out,cpus,run,'v',prerequisite_tasks={k:policy[k]for k in ('mapping','function')},
-          routing_policy={k:policy[k]for k in ('upper_layer_adjustment','congestion_iterations')})
+          routing_policy={k:policy[k]for k in ('upper_layer_adjustment','congestion_iterations','clock_ndr')})
