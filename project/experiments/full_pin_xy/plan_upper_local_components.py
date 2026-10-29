@@ -81,12 +81,36 @@ def plan(branches,obstructions,diefile,out):
     orders=[['src[%d]'%i for i in order] for order in [[129,206,128,248,201,243,199],[129,128,206,201,248,199,243]]]
     for order in orders:
         rows=list(retained);edits=[];failed=None
+        gateways={}
+        # Reserve a real short escape for every immutable via10 landing before
+        # routing crossings. Prior closed attempts let earlier routes cage a
+        # future pin while still respecting its tiny landing rectangle.
         for net in order:
-            groups=sorted(anchor_groups[net],key=lambda g:(not any(p[2]==11 and inside(p,region) for p in g),g));root=sorted(groups[0],key=lambda p:(p[2]!=11,p))[0]
-            for group in groups[1:]:
+            real_pin_points=[]
+            for r in retained:
+                if r['net']==net and r['kind']=='VIA' and r['layer']=='metal11' and is_retained_via10(r,via_layers):
+                    z=rect(r);p=((z[0]+z[2])//2,(z[1]+z[3])//2,11)
+                    if inside(p,region):real_pin_points.append(p)
+            assert len(set(real_pin_points))==1
+            root=real_pin_points[0];other=[p for g in anchor_groups[net] if root not in g for p in g]
+            near=min(other,key=lambda p:abs(p[0]-root[0])+abs(p[1]-root[1]));direction=1 if near[1]>=root[1] else -1
+            candidates=[(root[0]+dx*STEP,root[1]+dy*STEP,12) for dx in range(-3,4) for dy in range(-3,4) if abs(dx)+abs(dy)>=2]
+            candidates.sort(key=lambda p:(abs(p[0]-root[0])+abs(p[1]-(root[1]+direction*2*STEP)),abs(p[0]-root[0])))
+            escape=None
+            for target in candidates:
+                small=(max(region[0],root[0]-4*STEP),max(region[1],root[1]-4*STEP),min(region[2],root[0]+4*STEP),min(region[3],root[1]+4*STEP))
+                q=astar(rows,obs,net,root[:2],target[:2],die,start_layer=11,target_layer=12,region_override=small,include_own_cuts=True)
+                if q['path_dbu']:escape=dict(net=net,root=root,target=target,role='reserved_actual_via10_escape',**q);break
+            if escape is None:failed={'net':net,'root':root,'reason':'NO_SMALL_RESERVED_PIN_ESCAPE'};break
+            edits.append(escape);add_proposal(rows,net,escape['path_dbu']);gateways[net]=(root,escape['target'])
+        if failed:
+            trials.append({'order':order,'connected_local_subpaths':len(edits),'failure':failed});continue
+        for net in order:
+            original_root,root=gateways[net];groups=[g for g in anchor_groups[net] if original_root not in g]
+            for group in groups:
                 alternatives=[]
                 for target in sorted(group,key=lambda p:abs(p[0]-root[0])+abs(p[1]-root[1])):
-                    q=astar(rows,obs,net,root[:2],target[:2],die,start_layer=root[2],target_layer=target[2],region_override=region)
+                    q=astar(rows,obs,net,root[:2],target[:2],die,start_layer=root[2],target_layer=target[2],region_override=region,include_own_cuts=True)
                     alternatives.append(dict(target=target,**q))
                     if q['path_dbu']:break
                 good=next((x for x in alternatives if x['path_dbu']),None)
