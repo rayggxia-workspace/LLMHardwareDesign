@@ -7,6 +7,7 @@ set -euo pipefail
 source_root=$1
 native=$2
 out=$3
+extra=${4:-}
 test -n "${SLURM_JOB_ID:-}"
 test "$SLURM_CPUS_PER_TASK" -eq 16
 mkdir -p "$(dirname "$out")"
@@ -18,5 +19,5 @@ export PATH="/public/software/singularity-ce-4.3.4/bin:$PATH"
 srun --ntasks=1 --cpus-per-task=16 --cpu-bind=cores \
  singularity exec --cleanenv --bind /public/home/yuzelu --pwd "$source_root" \
  --env OMP_NUM_THREADS=16 --env OPENBLAS_NUM_THREADS=1 "$image" \
- bash -c 'set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; python3 "$1/project/experiments/block_feed_v1/repair.py" --source "$2" --out "$3"' \
- bash "$source_root" "$native" "$out"
+ bash -c 'set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; args=(); if [[ -n "$4" ]]; then args+=("$4"); fi; python3 "$1/project/experiments/block_feed_v1/repair.py" --source "$2" --out "$3" "${args[@]}"' \
+ bash "$source_root" "$native" "$out" "$extra"
