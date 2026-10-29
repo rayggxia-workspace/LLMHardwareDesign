@@ -12,12 +12,13 @@ import csv,datetime,json,math,os,re,subprocess,sys,traceback
 from run_exports import ROOT,sha
 from run_parent_trial import tcl
 from run_escape_fixture import execute
-from lef_view_contract import verify
+from lef_view_contract import verify,parse as parse_lef
 from verify_common_native import verify as verify_graph
 from check_access import check
 
 DRIVER=Path(__file__).resolve().parent
 CASES=['act','mxu','opentpu_aux','gemm','vector','llaccel_aux']
+COUNTS={'act':860,'mxu':2172,'opentpu_aux':2229,'gemm':3753,'vector':2246,'llaccel_aux':13507}
 SHARED_SNAPSHOT='''proc common_shared_snapshot {file} {
  set f [open $file w];puts $f "pad\\tnet\\tlayer\\tx0\\ty0\\tx1\\ty1"
  set itr [odb::dbWirePathItr];set path [odb::dbWirePath];set ps [odb::dbWirePathShape]
@@ -60,6 +61,27 @@ def source_view(case,scheme):
     assert native==0 or (scheme=='C' and case=='llaccel_aux' and native==4)
     return {'directory':physical,'receipt':p,'ODB':odb,'model':model,'model_receipt':model_receipt,
             'native_DRC':native,'complete_rules':'NOT_QUALIFIED','RTL_equivalence':'NOT_EXECUTED'}
+
+
+def actual_boundary_pins(path,case,scheme):
+    size,pins,_=parse_lef(path);parts=size.split();width,height=float(parts[1]),float(parts[3]);result=[]
+    for name,lines in pins.items():
+        if any(s in lines for s in ['USE POWER ;','USE GROUND ;']):continue
+        layer=None;rectangles=[];direction=None;use=None
+        for line in lines:
+            if line.startswith('LAYER '):layer=line.split()[1]
+            elif line.startswith('DIRECTION '):direction=line.split()[1]
+            elif line.startswith('USE '):use=line.split()[1]
+            elif line.startswith('RECT '):rectangles.append((layer,list(map(float,line.split()[1:5]))))
+        assert len(rectangles)==1,(case,name,'Unexpected original signal pin shape')
+        layer,box=rectangles[0];assert layer in ['metal5','metal6']
+        x0,y0,x1,y1=box
+        edge=min(abs(x0),abs(y0),abs(width-x1),abs(height-y1))<=.0050001
+        if scheme=='Aopt':assert edge,(case,name,'Optimized-perimeter baseline contains interior pin')
+        result.append({'case':case,'scheme':scheme,'pin':name.replace('\\',''),'direction':direction,'use':use,'layer':layer,
+          'x0_um':x0,'y0_um':y0,'x1_um':x1,'y1_um':y1,'touches_block_edge_within_5nm':edge})
+    assert len(result)==COUNTS[case] and len({r['pin'] for r in result})==len(result)
+    return result
 
 
 def alias_stream(source,dest,master,alias):
@@ -175,6 +197,7 @@ def run(scheme,revision,route_engine='FastRoute'):
       'same_compiled_topology_resource_instances_frame_and_preconnect_budget':True,
       'fairness_limit':'Early integration trial. Original selected Aopt/C leaf epochs and all differing ECO/STA/rule costs remain separately indexed; not final pure-XY PPA or system comparison.'})
     try:
+        source_pin_rows=[]
         tech=ROOT/'upper_layer_probe/r01/model/research12.tech.lef';model=json.loads((tech.parent/'model.json').read_text())
         assert model['original_M1_M10_and_via1_via9_layer_blocks_identical'] and sha(tech)==model['files'][tech.name]['sha256']
         lines=['read_lef '+tcl(tech),'read_lef /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.mod.lef',
@@ -186,6 +209,7 @@ def run(scheme,revision,route_engine='FastRoute'):
                 script.write_text('read_db '+tcl(v['ODB'])+'\nwrite_abstract_lef -bloat_factor 0 '+tcl(detail)+'\n')
                 assert execute(common,script,out/(case+'.export.log'),threads=1)==0
             contract=verify(folder/'abstract.lef',detail)
+            source_pin_rows+=actual_boundary_pins(folder/'abstract.lef',case,scheme)
             master=None
             with (folder/'abstract.lef').open() as f:
                 for line in f:
@@ -200,7 +224,13 @@ def run(scheme,revision,route_engine='FastRoute'):
               'alias_LEF_SHA':sha(dest),'alias_model_SHA':sha(lib),'OBS_contract':contract,'full_qualification':False,
               'inherited_separate_cell_ECO_cost':leaf_receipt.get('separate_cell_ECO_cost'),
               'current_658_M6_tip_SYSTEM_bit1025_sources_not_selected_here':True}
-            for p in [v['receipt'],v['ODB'],v['model'],v['model_receipt']]:rec['source_SHA'][str(p)]=sha(p)
+            for p in [v['receipt'],v['ODB'],v['model'],v['model_receipt'],folder/'abstract.lef',detail]:rec['source_SHA'][str(p)]=sha(p)
+        assert len(source_pin_rows)==24767
+        with (out/'all24767_actual_source_pins.csv').open('w',newline='') as f:
+            writer=csv.DictWriter(f,fieldnames=list(source_pin_rows[0]),lineterminator='\n');writer.writeheader();writer.writerows(source_pin_rows)
+        rec['actual_source_signal_pin_coverage']={'all_signal_pins':len(source_pin_rows),
+          'all_on_block_edges':all(r['touches_block_edge_within_5nm'] for r in source_pin_rows),
+          'per_block':dict(Counter(r['case'] for r in source_pin_rows)),'geometry_source':'Actual source LEFs, not names or report colors'}
         rec['source_SHA'].update({str(p):sha(p) for p in [tech,prep/'preparation_contract.json',prep/'shared_prewire_geometry.csv']+list(p for p in inputs.iterdir() if p.is_file())})
         helpers=(DRIVER/'parent_trial.tcl').read_text().split('if {![stage load {',1)[0]
         place_helpers=helpers.replace('$out/stages.tsv','$out/placement_PG_stages.tsv')
