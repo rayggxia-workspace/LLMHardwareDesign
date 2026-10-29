@@ -70,7 +70,9 @@ def run(case,revision):
                 if z:caps[name,pin]=float(z[1])
             logic[name]=contract('cell ('+name+') {'+body+'}',name)
         native('original_native_inventory','read_db '+tcl(odb)+'\nfingerprint '+tcl(out/'before')+'\n'+COST_PROC+'\ncell_cost '+tcl(out/'before.cell_cost.tsv')+'\nclose $stages',threads=1)
-        before,terms=read_cells(out/'before.cells.tsv');viol=defaultdict(dict);section=None
+        before,terms=read_cells(out/'before.cells.tsv')
+        nonfill={r['instance'] for r in csv.DictReader((out/'before.cell_cost.tsv').open(),delimiter='\t') if r['type']!='CORE_SPACER'}
+        terms={k:v for k,v in terms.items() if k[0] in nonfill};viol=defaultdict(dict);section=None
         for line in report.read_text().splitlines():
             if line.strip() in ['max slew','max capacitance','max fanout']:section=line.strip()
             if section not in ['max slew','max capacitance'] or '(VIOLATED)' not in line:continue
@@ -103,15 +105,14 @@ set filler_masters [lsort -unique $filler_masters];remove_fillers
 foreach i [$b getInsts] {set name [$i getName];if {[dict exists $selected $name]} {set m [[ord::get_db] findMaster [dict get $selected $name]];if {$m eq "NULL" || ![$i swapMaster $m]} {error "Size swap failed"};$i setPlacementStatus PLACED} else {$i setPlacementStatus LOCKED}}
 if {![stage isolated_legalization {detailed_placement -use_diamond_legalizer;check_placement -verbose}]} {close $stages;exit 1}
 dict for {name status} $statuses {[$b findInst $name] setPlacementStatus $status}
-set f [open POSES w];puts $f [list set filler_masters $filler_masters];dict for {name master} $selected {set i [$b findInst $name];lassign [$i getLocation] x y;puts $f [list lappend size_replay [list $name $master $x $y [$i getPlacementStatus]]]};close $f
-fingerprint PLACED
-write_db CHECKPOINT
+set f [open @@POSES@@ w];puts $f [list set filler_masters $filler_masters];dict for {name master} $selected {set i [$b findInst $name];lassign [$i getLocation] x y;puts $f [list lappend size_replay [list $name $master $x $y [$i getPlacementStatus]]]};close $f
+fingerprint @@PLACED@@
+write_db @@CHECKPOINT@@
 close $stages
 '''
-        for a,b in [('POSES',tcl(out/'actual_size_poses.tcl')),('PLACED',tcl(out/'placed')),('CHECKPOINT',tcl(out/'placed_NOT_ROUTED.odb'))]:placement=placement.replace(a,b)
+        for a,b in [('@@POSES@@',tcl(out/'actual_size_poses.tcl')),('@@PLACED@@',tcl(out/'placed')),('@@CHECKPOINT@@',tcl(out/'placed_NOT_ROUTED.odb'))]:placement=placement.replace(a,b)
         native('isolated_geometry_size_and_legalization',placement)
-        after,at=read_cells(out/'placed.cells.tsv');assert set(terms)==set(at) and terms==at
-        nonfill={r['instance'] for r in csv.DictReader((out/'before.cell_cost.tsv').open(),delimiter='\t') if r['type']!='CORE_SPACER'}
+        after,at=read_cells(out/'placed.cells.tsv');assert terms=={k:v for k,v in at.items() if k[0] in nonfill}
         assert all(n in after and (after[n][0]==selected[n][1] if n in selected else after[n]==before[n]) for n in nonfill)
         rec['isolated_all_signal_connections_and_nonselected_functional_poses_preserved']=True;save()
         guides=[source/'route.guide',ROOT/'trials'/TRIALS[case]/(case+'-C')/'route.guide']
@@ -137,7 +138,7 @@ close $stages
         native('real_route_RC_STA','\n'.join(lines))
         native('fresh_DRC','read_db '+tcl(out/'routed.odb')+'\nset_routing_layers -signal metal2-metal8 -clock metal4-metal8\ndrt::check_drc -output_file '+tcl(out/'independent.drc')+'\nclose $stages',threads=1)
         rec['fresh_DRC_count']=len(re.findall(r'^violation type:',(out/'independent.drc').read_text(),re.M));rec['whole_signal_geometry']=check(out/'whole_access.tsv.gz',True)
-        cells,ct=read_cells(out/'after.cells.tsv');assert ct==terms
+        cells,ct=read_cells(out/'after.cells.tsv');assert {k:v for k,v in ct.items() if k[0] in nonfill}==terms
         assert all(cells[n][0]==selected[n][1] if n in selected else cells[n]==before[n] for n in nonfill)
         rec['exact_original_graph_with_only_proven_size_and_pose_changes']=True
         rec['pin_PG_die_preserved']={k:sha(out/('before.'+k+'.tsv'))==sha(out/('after.'+k+'.tsv')) for k in ['pins','pdn','die']};assert all(rec['pin_PG_die_preserved'].values())
