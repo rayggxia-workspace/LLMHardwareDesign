@@ -7,6 +7,7 @@ Construction access ports remain until a separately verified mode lowering;
 this trial cannot be frozen or called a complete functional implementation.
 """
 from pathlib import Path
+from collections import Counter
 import csv,datetime,json,math,os,re,subprocess,sys,traceback
 from run_exports import ROOT,sha
 from run_parent_trial import tcl
@@ -153,8 +154,9 @@ def screen_pads(out,preparation,inputs):
     return commands
 
 
-def run(scheme,revision):
-    assert int(os.environ['SLURM_CPUS_PER_TASK'])>=16
+def run(scheme,revision,route_engine='FastRoute'):
+    assert route_engine in ['FastRoute','CuGR'];native_threads=8 if route_engine=='CuGR' else 16
+    assert int(os.environ['SLURM_CPUS_PER_TASK'])>=native_threads
     assert scheme in ['Aopt','C'];out=ROOT/'common_integration'/revision/scheme;out.mkdir(parents=True,exist_ok=False)
     inputs=ROOT/'inputs/common-topology-r02';prep=ROOT/'inputs/common-base-preparation-r04'
     assert prep.exists(),str(prep)
@@ -168,6 +170,10 @@ def run(scheme,revision):
       'historical_targets':'PARTIAL_OR_UNKNOWN; new controlled policy separately indexed',
       'views':{},'source_SHA':{},'scheduler_job':os.environ['SLURM_JOB_ID'],
       'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()}
+    rec.update({'global_route_engine':route_engine,'native_threads':native_threads,
+      'shared_BPin_container_compatibility_fix_before_routing':route_engine=='CuGR',
+      'same_compiled_topology_resource_instances_frame_and_preconnect_budget':True,
+      'fairness_limit':'Early integration trial. Original selected Aopt/C leaf epochs and all differing ECO/STA/rule costs remain separately indexed; not final pure-XY PPA or system comparison.'})
     try:
         tech=ROOT/'upper_layer_probe/r01/model/research12.tech.lef';model=json.loads((tech.parent/'model.json').read_text())
         assert model['original_M1_M10_and_via1_via9_layer_blocks_identical'] and sha(tech)==model['files'][tech.name]['sha256']
@@ -188,9 +194,12 @@ def run(scheme,revision):
             assert master;alias='p126_'+case;dest=out/(alias+'.lef');alias_stream(detail,dest,master,alias)
             text=v['model'].read_text();text,n=re.subn(r'cell\s*\(\s*"?'+re.escape(master)+r'"?\s*\)','cell ("'+alias+'")',text);assert n==1
             lib=out/(alias+'.lib');lib.write_text(text);lines+=['read_lef '+tcl(dest),'read_liberty '+tcl(lib)];liblines+=['read_liberty '+tcl(lib)]
+            leaf_receipt=json.loads(v['receipt'].read_text())
             rec['views'][case]={'source_physical':str(folder),'receipt_SHA':sha(v['receipt']),'source_ODB_SHA':sha(v['ODB']),
               'model_SHA':sha(v['model']),'model_receipt_SHA':sha(v['model_receipt']),'inherited_native_DRC':v['native_DRC'],
-              'alias_LEF_SHA':sha(dest),'alias_model_SHA':sha(lib),'OBS_contract':contract,'full_qualification':False}
+              'alias_LEF_SHA':sha(dest),'alias_model_SHA':sha(lib),'OBS_contract':contract,'full_qualification':False,
+              'inherited_separate_cell_ECO_cost':leaf_receipt.get('separate_cell_ECO_cost'),
+              'current_658_M6_tip_SYSTEM_bit1025_sources_not_selected_here':True}
             for p in [v['receipt'],v['ODB'],v['model'],v['model_receipt']]:rec['source_SHA'][str(p)]=sha(p)
         rec['source_SHA'].update({str(p):sha(p) for p in [tech,prep/'preparation_contract.json',prep/'shared_prewire_geometry.csv']+list(p for p in inputs.iterdir() if p.is_file())})
         helpers=(DRIVER/'parent_trial.tcl').read_text().split('if {![stage load {',1)[0]
@@ -219,25 +228,33 @@ def run(scheme,revision):
           'set p [stage PDN_VDD {check_power_grid -net VDD -error_file '+tcl(out/'VDD.rpt')+'}];set q [stage PDN_VSS {check_power_grid -net VSS -error_file '+tcl(out/'VSS.rpt')+'}];close $stages;if {!$p || !$q} {exit 1}']
         script=out/'place_PG.tcl';script.write_text('\n'.join(lines)+'\n')
         env='PINXY_PARENT_OUT='+str(out)
-        rec['placement_PG_returncode']=execute(common,script,out/'place_PG.log',env,threads=16)
+        rec['placement_PG_returncode']=execute(common,script,out/'place_PG.log',env,threads=native_threads)
         if rec['placement_PG_returncode']!=0:raise RuntimeError('Actual placement/PDN failed; checkpoint and original rules retained')
         verify_graph(inputs,out/'placed.endpoints.tsv',out/'placed_graph_check.json')
         padcommands=screen_pads(out,prep,inputs)
         shared=json.loads((out/'actual_shared_conductors.json').read_text())
         routed=[helpers,SHARED_SNAPSHOT,'set common_shared_pads {'+' '.join(q['construction_pad'] for q in shared)+'}']+liblines+['read_db '+tcl(out/'placed_PG_NOT_FROZEN.odb'),'set b [ord::get_db_block];set m10 [[ord::get_db_tech] findLayer metal10]']+padcommands
+        if route_engine=='CuGR':
+            routed+=['parent_contract '+tcl(out/'before_BPin_container_fix'),
+              'if {![stage shared_construction_BPin_containers {set count 0;foreach pad $common_shared_pads {set bt [$b findBTerm $pad];if {$bt eq "NULL"} {error "Missing original construction pad"};set bps [$bt getBPins];if {[llength $bps]!=2} {error "Not the expected two-BPin case"};set keep [lindex $bps 0];set drop [lindex $bps 1];if {[llength [$keep getBoxes]]!=1 || [llength [$drop getBoxes]]!=1} {error "Unexpected original boxes"};set box [lindex [$drop getBoxes] 0];odb::dbBox_create $keep [$box getTechLayer] [$box xMin] [$box yMin] [$box xMax] [$box yMax];odb::dbBPin_destroy $drop;if {[llength [$bt getBPins]]!=1 || [llength [$keep getBoxes]]!=2} {error "BPin regrouping failed"};incr count};if {$count!=256} {error "Incomplete fixed-conductor coverage"}}]} {close $stages;exit 1}']
         routed+=['common_shared_snapshot '+tcl(out/'before.shared.tsv'),
           'parent_contract '+tcl(out/'before_route'),'write_db '+tcl(out/'fixed_prewires_NOT_FROZEN.odb'),
           'set_routing_layers -signal metal2-metal10 -clock metal4-metal10',
-          'if {![stage lower_global_route {global_route -guide_file '+tcl(out/'route.guide')+' -congestion_report_file '+tcl(out/'congestion.rpt')+'}]} {catch {write_db '+tcl(out/'failed_global.odb')+'};close $stages;exit 1}',
+          'if {![stage lower_global_route {global_route '+('-use_cugr -verbose ' if route_engine=='CuGR' else '')+'-guide_file '+tcl(out/'route.guide')+' -congestion_report_file '+tcl(out/'congestion.rpt')+'}]} {catch {write_db '+tcl(out/'failed_global.odb')+'};close $stages;exit 1}',
           'write_db '+tcl(out/'global.odb'),
-          'if {![stage lower_detailed_route {detailed_route -output_drc '+tcl(out/'route.drc')+' -verbose 1;write_db '+tcl(out/'routed_NOT_FROZEN.odb')+'}]} {close $stages;exit 1}',
+          'if {![stage lower_detailed_route {detailed_route -output_drc '+tcl(out/'route.drc')+' -verbose 1;write_db '+tcl(out/'routed_NOT_FROZEN.odb')+';write_def '+tcl(out/'routed.def')+'}]} {close $stages;exit 1}',
           'common_shared_snapshot '+tcl(out/'after.shared.tsv'),
           'parent_contract '+tcl(out/'after_route'),'source '+tcl(DRIVER/'export_access.tcl'),
           'report_wire_length -detailed_route -summary -file '+tcl(out/'wire_length.csv'),
           'stage final_VDD {check_power_grid -net VDD -error_file '+tcl(out/'final_VDD.rpt')+'}',
           'stage final_VSS {check_power_grid -net VSS -error_file '+tcl(out/'final_VSS.rpt')+'}','close $stages']
         script=out/'lower_route.tcl';script.write_text('\n'.join(routed)+'\n')
-        rec['lower_route_returncode']=execute(common,script,out/'lower_route.log',env+',PINXY_ACCESS_ALL=1,PINXY_ACCESS_OUT='+str(out/'whole_access.tsv.gz'),threads=16)
+        rec['lower_route_returncode']=execute(common,script,out/'lower_route.log',env+',PINXY_ACCESS_ALL=1,PINXY_ACCESS_OUT='+str(out/'whole_access.tsv.gz'),threads=native_threads)
+        if route_engine=='CuGR' and (out/'before_route.pins.tsv').exists():
+            a=(out/'before_BPin_container_fix.pins.tsv').read_text().splitlines();b=(out/'before_route.pins.tsv').read_text().splitlines()
+            rec['flat_pin_geometry_exact_multiset_preserved_by_BPin_regrouping']=Counter(a)==Counter(b)
+            assert rec['flat_pin_geometry_exact_multiset_preserved_by_BPin_regrouping']
+            assert all(sha(out/('before_BPin_container_fix.'+k+'.tsv'))==sha(out/('before_route.'+k+'.tsv')) for k in ['pdn','instances'])
         if (out/'before.shared.tsv').exists():
             actual=rows(out/'before.shared.tsv');expected={q['construction_pad']:q for q in shared}
             assert len(actual)==len(expected)==256
@@ -255,6 +272,11 @@ def run(scheme,revision):
             if rec['fresh_DRC_returncode']==0:rec['fresh_DRC_count']=len(re.findall(r'^violation type:',(out/'independent.drc').read_text(),re.M))
         if (out/'whole_access.tsv.gz').exists():rec['whole_signal_geometry']=check(out/'whole_access.tsv.gz',True)
         if (out/'after_route.endpoints.tsv').exists():verify_graph(inputs,out/'after_route.endpoints.tsv',out/'routed_graph_check.json')
+        if (out/'routed.def').exists():
+            rec['all_256_native_FIXED_status_paths_retained']=len(re.findall(r'\+\s+FIXED\s+metal10\b',(out/'routed.def').read_text()))==256
+            assert rec['all_256_native_FIXED_status_paths_retained']
+        if (out/'stages.tsv').exists():
+            with (out/'stages.tsv').open() as f:rec['native_final_stage_status']={r['stage']:r['status'] for r in csv.DictReader(f,delimiter='\t')}
         rec['status']='ACTUAL_LOWER_INTEGRATION_EXECUTED_READ_FAILURE_LEDGER_NOT_QUALIFIED'
     except Exception:
         rec['status']='ACTUAL_COMMON_INTEGRATION_FAILED_OR_INCOMPLETE_NOT_FROZEN';rec['actual_failure']=traceback.format_exc();traceback.print_exc()
@@ -262,7 +284,7 @@ def run(scheme,revision):
     rec['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
     rec['files']={p.name:{'bytes':p.stat().st_size,'sha256':sha(p)} for p in out.iterdir() if p.is_file()}
     (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n');print(rec['status'],flush=True)
-    return 0 if rec.get('lower_route_returncode')==0 and rec.get('fresh_DRC_count')==0 and rec['all_sources_unchanged'] else 1
+    return 0 if rec.get('lower_route_returncode')==0 and rec.get('fresh_DRC_count')==0 and rec['all_sources_unchanged'] and rec.get('whole_signal_geometry',{}).get('pass') and rec.get('shared_conductors_geometry_and_networks_exactly_preserved_through_DRT') and rec.get('all_256_native_FIXED_status_paths_retained') and all(rec.get('parent_invariants',{}).get(k) for k in ['pins','pdn','instances']) and all(rec.get('native_final_stage_status',{}).get(k)=='EXECUTED' for k in ['final_VDD','final_VSS']) else 1
 
 
-if __name__=='__main__':sys.exit(run(*sys.argv[1:3]))
+if __name__=='__main__':sys.exit(run(*sys.argv[1:4]))
