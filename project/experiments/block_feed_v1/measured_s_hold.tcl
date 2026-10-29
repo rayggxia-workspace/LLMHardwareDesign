@@ -134,9 +134,15 @@ if {[info exists ::env(MIN_CLK_ROUTING_LAYER)] && [info exists ::env(MAX_CLK_ROU
 set_routing_layers {*}$layers
 pin_access
 global_route -congestion_report_file $::env(REPORTS_DIR)/feed-s-full-global-route.rpt -congestion_iterations 30 -verbose
-estimate_parasitics -global_routing
+estimate_parasitics -placement
+  estimate_parasitics -global_routing
 set_propagated_clock [all_clocks]
 sta::find_timing
+# Full placement re-estimation drains the invalid-net cache produced by ODB
+# ECO edits in this image. Immediately overwrite it with full current GRT RC
+# before any STA decision or resizer call; placement RC never signs acceptance.
+# Upstream EstimateParasitics.cpp: estimateWireParasitics clears invalid nets,
+# whereas estimateGlobalRouteRC rebuilds RC but leaves that edit cache pending.
 # Work only on measured data-net buffer DRVs. These are real native cells;
 # preserve signal connectivity and PG, then reroute the changed nets. Starting
 # from this full live global route keeps unchanged-net/clock RC available.
@@ -167,6 +173,7 @@ for {set attempt 0} {$attempt<4} {incr attempt} {
   detailed_placement_helper
   check_placement -verbose
   global_route -end_incremental
+  estimate_parasitics -placement
   estimate_parasitics -global_routing
   sta::find_timing
   # Match this image's global_route.tcl: resizer owns its parasitic
@@ -177,6 +184,7 @@ for {set attempt 0} {$attempt<4} {incr attempt} {
   detailed_placement_helper
   check_placement -verbose
   global_route -end_incremental
+  estimate_parasitics -placement
   estimate_parasitics -global_routing
 }
 close $closure

@@ -36,4 +36,4 @@ python -X utf8 project/experiments/block_feed_v1/verify_bundle.py D:/Data/LLMHar
 
 实际完整原生几何导出93347亦已通过，ODB保持原字节，完整DEF矩形覆盖与三项错误接点控制均通过。原始导出754768611字节留在服务器同目录`results/delivery-m/geometry/`；本地`D:/Data/LLMHardwareDesign-issue130-runtime/deliverables/M/geometry/candidate.lef`已按原报告SHA核验，142047字节。此LEF仍为候选abstract，未宣称abstract coverage／层级时序通过。
 
-完整几何的8个小型原始文件另存于 [accepted-m-geometry.zip](accepted-m-geometry.zip)，包括候选LEF、实际pins、接入负控制和原生矩形覆盖回执；索引同时绑定最终ODB和原交付receipt，不将几何导出等同于上层互连验收。
+完整几何的7个小型原始文件另存于 [accepted-m-geometry.zip](accepted-m-geometry.zip)，包括候选LEF、实际pins、接入负控制和原生矩形覆盖回执；索引同时绑定最终ODB和原交付receipt，不将几何导出等同于上层互连验收。
