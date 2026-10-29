@@ -54,7 +54,6 @@ def material_and_indispensability(out,plan,physical):
         assert len(real)==2
         pair={'B:'+h['helper_pin'] for h in real}
         connected=any(pair<=set(ts) for ts in q['terminal_groups'])
-        assert not connected and q['terminal_components']==2
         cut.append({'resource':w['resource'],'native_net':g['net'],
                     'original_edge_ids':';'.join(map(str,g['edge_ids'])),
                     'actual_fixed_rectangle_removed_in_analysis_only':True,
@@ -67,7 +66,8 @@ def material_and_indispensability(out,plan,physical):
     return {'all_770_actual_branch_pairs_preserved':True,
             'all_actual_branch_WIRE_VIA_multisets_preserved_under_net_rebinding':True,
             'exactly_256_original_actual_FIXED_M10_rectangles_added_to_helper_context':True,
-            'all_256_fixed_bridges_indispensable_for_real_source_sink_geometry':True,
+            'all_256_fixed_bridges_indispensable_for_real_source_sink_geometry':all(not r['real_source_to_sink_connected_without_fixed_rectangle'] and r['terminal_components_without_fixed_rectangle']==2 for r in cut),
+            'fixed_bridges_indispensable_count':sum(not r['real_source_to_sink_connected_without_fixed_rectangle'] for r in cut),
             'scope':'Actual native rectangles/via links and analysis-only bridge cuts; not GDS LVS, full base freeze, RTL or STA'}
 
 
