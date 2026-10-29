@@ -7,7 +7,7 @@ from run_escape_fixture import execute
 DRIVER=Path(__file__).resolve().parent
 
 def run(revision,profile='shape_iterator'):
-    assert profile in ['shape_iterator','inventory']
+    assert profile in ['shape_iterator','inventory','decoder_rect']
     source=ROOT/'pin_metal_encoding_API/r02';rp=source/'execution.json';q=json.loads(rp.read_text())
     odb=source/'encoding_probe_NOT_LEAF.odb'
     assert q.get('completed_utc') and q['native_returncodes']['encode_and_export']==0 and sha(odb)==q['files'][odb.name]['sha256']
@@ -28,10 +28,30 @@ foreach name {HPY_PATCH_POINT_PAIR HPY_PATCH_RECT_OPCODE} {
 '''
         if profile=='inventory':
             body='puts "ACTUAL_WIRE_BINDING_INVENTORY [lsort [info commands ::odb::*Wire*]]"\n'
+        if profile=='decoder_rect':
+            # This closed probe net was built with exactly PATH, POINT, RECT;
+            # inspect those three known encoder operations, never arbitrary
+            # enum numbers or speculative getRect calls on real leaf wires.
+            body=r'''set b [ord::get_db_block];set n [$b findNet HPY_PATCH_RECT_OPCODE]
+if {$n eq "NULL"} {error "Closed known RECT probe net missing"}
+puts "ACTUAL_DECODER_ENUM_VARS [lsort [info vars ::odb::*WireDecoder*]]"
+foreach name [lsort [info vars ::odb::*WireDecoder*]] {puts "ENUM_VALUE $name [set $name]"}
+set d [odb::dbWireDecoder];$d begin [$n getWire]
+set f [open OUTPUT w];puts $f "stage\tstatus\tvalue"
+for {set i 0} {$i<3} {incr i} {
+ set op [$d next];puts $f [join [list opcode_$i 0 $op] "\t"]
+ if {$i==1} {set status [catch {$d getPoint} value];puts $f [join [list native_point $status $value] "\t"]}
+ if {$i==2} {
+  set status [catch {$d getRect} value];puts $f [join [list native_rect $status $value] "\t"]
+  set status [catch {$d getLayer} value];if {!$status} {set value [$value getName]}
+  puts $f [join [list native_layer $status $value] "\t"]
+ }
+};close $f
+'''
         script=out/'probe.tcl';script.write_text('read_db '+tcl(odb)+'\n'+body.replace('OUTPUT',tcl(out/'native_all_shapes.tsv')))
         rec['actual_OpenROAD_binary_SHA256']=subprocess.check_output(common+[IMAGE,'sha256sum',BIN]).decode().split()[0]
         rec['native_returncode']=execute(common,script,out/'native.log',threads=1)
-        if rec['native_returncode']==0 and profile=='shape_iterator':rec['actual_shape_export_text']=(out/'native_all_shapes.tsv').read_text()
+        if rec['native_returncode']==0 and profile in ['shape_iterator','decoder_rect']:rec['actual_shape_export_text']=(out/'native_all_shapes.tsv').read_text()
     except Exception:rec['actual_failure']=traceback.format_exc()
     rec['all_closed_sources_unchanged']=all(sha(Path(p))==v for p,v in inputs.items())
     rec['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()

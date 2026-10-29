@@ -206,3 +206,6 @@ Issue126 R48：`guide_free_drc_probe_job.sh NEW_REV`对真实770支路失败只�
 
 
 R49当前MXU父层RC/STA：冻结driver后由`mxu_actual_parent_rc_sta_job.sh r01`执行`run_mxu_actual_parent_rc_sta.py`，只读93239终态、真实模型与原SDC；每负余量/电气违规单列，不将研究I/O夹具当系统约束。`wire_shape_coverage_job.sh r01`执行`probe_wire_shape_coverage.py`，先独立核实RECT/patch导出覆盖，再审计原叶与父层；不直接替换活动导出器。终态均用`fetch_closed_terminal.py`归档双SHA，然后refresh_continuation/validate_repository及qa_report.mjs复验。
+
+
+R51原生覆盖交叉验证：`wire_shape_coverage_job.sh r03 decoder_rect`仅对闭合PATH/POINT/RECT小样读取当前真实dbWireDecoder，未修改叶块。`upper_local_bypass_job.sh r01`对闭合upper_branch_repair/r02真实全部支路/OBS搜索两处Short的M11/M12局部替换，固定M10/hook不改；搜索结果不是实际接线，必须另做原生重编码、独立DRC/全770及514图/真实256桥和下层冻结检查，RC/STA与功能另验。

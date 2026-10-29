@@ -803,6 +803,12 @@ def check(out):
         critical=gzip.decompress(((out/q['evidence']).parent/'load2.critical.txt.gz').read_bytes()).decode()
         first=critical.split('Startpoint: ')[1]
         assert first.startswith('b_rdata[91]') and 'library hold time' in first and '0.460480' in first and '-0.333124' in first
+    q=j.get('WIRE_native_binding_inventory_r02',{})
+    if q.get('completed_utc'):
+        assert not q['full_qualification'] and q['native_returncode']==0 and q['profile']=='inventory' and q['all_closed_sources_unchanged']
+        log=gzip.decompress(((out/q['evidence']).parent/'native.log.gz').read_bytes()).decode()
+        commands=log.split('ACTUAL_WIRE_BINDING_INVENTORY ')[1].splitlines()[0].split()
+        assert '::odb::dbWireDecoder' in commands and '::odb::dbWireDecoder_getRect' in commands and '::odb::dbWire_getOpcode' in commands and '::odb::dbWireShapeItr' not in commands
     q=j.get('WIRE_shape_coverage_API_r01',{})
     if q.get('completed_utc'):
         assert not q['full_qualification'] and q['native_returncode']==1 and q['all_closed_sources_unchanged']

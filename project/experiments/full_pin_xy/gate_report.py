@@ -916,7 +916,8 @@ def render(root,out):
                       ('PIN_metal_encoding_r02','pin_metal_encoding_API/r02'),
                       ('LLSYSTEM_full_guide_metadata_control_r01','guide_free_leaf_DRC/r01'),
                       ('MXU_actual_parent_RC_STA_r01','mxu_actual_parent_rc_sta/r01'),
-                      ('WIRE_shape_coverage_API_r01','wire_shape_coverage_API/r01')]:
+                      ('WIRE_shape_coverage_API_r01','wire_shape_coverage_API/r01'),
+                      ('WIRE_native_binding_inventory_r02','wire_shape_coverage_API/r02')]:
         p=snapshot/rel/'execution.json.gz'
         terminal_names={'LLSYSTEM_current_actual_tip_views':'llsys-tip-views-r01',
                         'MXU_clock_bound_parent_recheck_r03':'mxu-clock-bound-parent-r03-terminal',
@@ -952,6 +953,7 @@ def render(root,out):
                         'LLSYSTEM_full_guide_metadata_control_r01':'guide-free-leaf-drc-r01',
                         'MXU_actual_parent_RC_STA_r01':'mxu-actual-parent-rc-sta-r01',
                         'WIRE_shape_coverage_API_r01':'wire-shape-coverage-api-r01',
+                        'WIRE_native_binding_inventory_r02':'wire-binding-inventory-r02',
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
         update=root/'gate_terminal_updates'/terminal_names.get(label,'NO_TERMINAL_UPDATE')
         terminal_evidence=None
@@ -1204,6 +1206,10 @@ def render(root,out):
     if shape_probe.get('completed_utc'):
         assert shape_probe['native_returncode']==1 and shape_probe['all_closed_sources_unchanged']
         upper_text+='<h3>完整形状接口探针实际失败，不能凭文档假设安装能力</h3><p>93387只读小样实际运行：当前OpenROAD Tcl没有odb::dbWireShapeItr命令，原生invalid command name返回1。没有修改任何叶块或物理源，没有推广新导出器。RECT漏项仍未闭合；下一步需发现当前二进制真实绑定的解码/形状API或补充原生DEF RECT解析审计，先在已知小样交叉验证，再审计六叶/父层/适配层。不会重复无变化的同一接口调用。</p>'
+    inventory=result.get('WIRE_native_binding_inventory_r02',{})
+    if inventory.get('completed_utc'):
+        assert inventory['native_returncode']==0 and inventory['profile']=='inventory' and inventory['all_closed_sources_unchanged']
+        upper_text+='<h3 id="r51-wire-api">R51：当前原生解码接口库存已取得，RECT覆盖仍待验证</h3><p>93390只读真实小样，安装Tcl确认存在dbWireDecoder、getRect/getPoint/getLayer/next，以及dbWire_getOpcode/getData/getShape绑定；dbWireShapeItr不存在。3项原始回执按源码/二进制/输入及输出SHA保存。此库存只证明接口存在，不证明RECT坐标语义、完整patch库存、连通或DRC通过。新decoder_rect探针只对已知PATH/POINT/RECT三操作的原生小样读取，不凭空假设枚举值，不改叶块或活动驱动；先独立交叉核对再扩展全部物理源。</p><p>93375已完成真实M5线尾编辑/分析进程，仍等待完整独立native及RC/STA终态，保留10261接点与原失败；原共同底座/适配层/RAM作业继续，不重复提交或按耗时取消。六块完整资格、共同冻结、两完整功能与公平系统比较仍未完成。</p>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',
