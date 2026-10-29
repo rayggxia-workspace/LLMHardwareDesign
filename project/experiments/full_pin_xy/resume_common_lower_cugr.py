@@ -14,7 +14,8 @@ from check_access import check
 DRIVER=Path(__file__).resolve().parent
 
 
-def run(revision):
+def run(revision,source_kind='fixed_partial'):
+    assert source_kind in ['fixed_partial','closed_CuGR_global_r01']
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=8
     source=ROOT/'common_integration/r01/C';odb=source/'fixed_prewires_NOT_FROZEN.odb'
     audit=ROOT/'shared_conductor_audit/r02/execution.json';proof=json.loads(audit.read_text())
@@ -26,9 +27,22 @@ def run(revision):
     libs=[line for line in original.read_text().splitlines() if line.startswith('read_liberty ')]
     assert len(libs)==7
     inputs={str(p):sha(p) for p in [odb,audit,original,source/'actual_shared_conductors.json',source/'before.shared.tsv']+list(source.glob('p126_*.lib'))}
+    partial_odb=odb
+    if source_kind=='closed_CuGR_global_r01':
+        closed=ROOT/'common_lower_resume/r01';previous=json.loads((closed/'execution.json').read_text())
+        assert previous.get('completed_utc') and previous['all_closed_sources_unchanged']
+        assert previous['native_stage_status']['lower_global_route_CuGR']=='EXECUTED'
+        assert previous['native_stage_status']['lower_detailed_route']=='FAIL'
+        assert 'DRT-0302' in (closed/'native.log').read_text()
+        odb=closed/'global.odb';guide=closed/'route.guide'
+        for p in [odb,guide]:assert sha(p)==previous['files'][p.name]['sha256']
+        inputs.update({str(p):sha(p) for p in [odb,guide,closed/'execution.json',closed/'native.log']})
     out=ROOT/'common_lower_resume'/revision;out.mkdir(parents=True,exist_ok=False)
     rec={'scope':'ACTUAL_SIX_RESOURCE_PRIVATE_LOWER_ROUTE_CUGR_NOT_FROZEN_BASE',
-         'source_SHA':inputs,'source_partial_lower_SHA256':sha(odb),
+         'source_SHA':inputs,'source_partial_lower_SHA256':sha(partial_odb),
+         'actual_routing_checkpoint_SHA256':sha(odb),'source_kind':source_kind,
+         'global_route_reexecuted':source_kind=='fixed_partial',
+         'construction_shared_BPin_container_fix':source_kind=='closed_CuGR_global_r01',
          'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID'],
          'native_global_search_engine':'CuGR; original FastRoute92855 left running unchanged',
          'allowed_layers':'Same original parent: signal M2-M10; clock M4-M10',
@@ -43,11 +57,21 @@ def run(revision):
         rec['actual_OpenROAD_binary_SHA256']=subprocess.check_output(common+[IMAGE,'sha256sum',BIN]).decode().split()[0]
         helper=(DRIVER/'parent_trial.tcl').read_text().split('if {![stage load {',1)[0]
         lines=[helper,SHARED_SNAPSHOT,'set common_shared_pads {'+' '.join(w['construction_pad'] for w in shared)+'}']+libs
-        lines+=['read_db '+tcl(odb),'common_shared_snapshot '+tcl(out/'before.shared.tsv'),
+        lines+=['read_db '+tcl(odb)]
+        if source_kind=='closed_CuGR_global_r01':
+            lines+=['parent_contract '+tcl(out/'before_BPin_container_fix'),
+              'if {![stage shared_construction_BPin_containers {set b [ord::get_db_block];set count 0;foreach pad $common_shared_pads {set bt [$b findBTerm $pad];if {$bt eq "NULL"} {error "Missing original construction pad"};set bps [$bt getBPins];if {[llength $bps]!=2} {error "Not the exact original two-BPin case"};set keep [lindex $bps 0];set drop [lindex $bps 1];if {[llength [$keep getBoxes]]!=1 || [llength [$drop getBoxes]]!=1} {error "Unexpected original boxes"};set box [lindex [$drop getBoxes] 0];odb::dbBox_create $keep [$box getTechLayer] [$box xMin] [$box yMin] [$box xMax] [$box yMax];odb::dbBPin_destroy $drop;if {[llength [$bt getBPins]]!=1 || [llength [$keep getBoxes]]!=2} {error "BPin regrouping failed"};incr count};if {$count!=256} {error "Incomplete shared pad coverage"}}]} {close $stages;exit 1}']
+        lines+=['common_shared_snapshot '+tcl(out/'before.shared.tsv'),
           'parent_contract '+tcl(out/'before_route'),
-          'set_routing_layers -signal metal2-metal10 -clock metal4-metal10',
-          'if {![stage lower_global_route_CuGR {global_route -use_cugr -verbose -guide_file '+tcl(out/'route.guide')+' -congestion_report_file '+tcl(out/'congestion.rpt')+'}]} {catch {write_db '+tcl(out/'failed_global.odb')+'};close $stages;exit 1}',
-          'write_db '+tcl(out/'global.odb'),
+          'set_routing_layers -signal metal2-metal10 -clock metal4-metal10']
+        if source_kind=='fixed_partial':
+            lines+=['if {![stage lower_global_route_CuGR {global_route -use_cugr -verbose -guide_file '+tcl(out/'route.guide')+' -congestion_report_file '+tcl(out/'congestion.rpt')+'}]} {catch {write_db '+tcl(out/'failed_global.odb')+'};close $stages;exit 1}',
+                    'write_db '+tcl(out/'global.odb')]
+        else:
+            lines+=['if {![stage read_closed_original_CuGR_guides {read_guides '+tcl(guide)+'}]} {close $stages;exit 1}',
+                    'write_db '+tcl(out/'regrouped_BPin_NOT_FROZEN.odb'),
+                    'write_def '+tcl(out/'regrouped_BPin.def')]
+        lines+=[
           'if {![stage lower_detailed_route {detailed_route -output_drc '+tcl(out/'route.drc')+' -verbose 1;write_db '+tcl(out/'routed_NOT_FROZEN.odb')+';write_def '+tcl(out/'routed.def')+'}]} {close $stages;exit 1}',
           'common_shared_snapshot '+tcl(out/'after.shared.tsv'),'parent_contract '+tcl(out/'after_route'),
           'source '+tcl(DRIVER/'export_access.tcl'),
@@ -57,6 +81,9 @@ def run(revision):
         script=out/'lower_route.tcl';script.write_text('\n'.join(lines)+'\n')
         env='PINXY_PARENT_OUT='+str(out)+',PINXY_OUTPUT='+str(out)+',PINXY_ACCESS_ALL=1,PINXY_ACCESS_OUT='+str(out/'whole_access.tsv.gz')
         rec['native_route_returncode']=execute(common,script,out/'native.log',env,threads=8);save()
+        if (out/'before_BPin_container_fix.pins.tsv').exists() and (out/'before_route.pins.tsv').exists():
+            rec['all_flat_pin_geometry_PG_instances_unchanged_by_BPin_regrouping']={k:sha(out/('before_BPin_container_fix.'+k+'.tsv'))==sha(out/('before_route.'+k+'.tsv')) for k in ['pins','pdn','instances']}
+            assert all(rec['all_flat_pin_geometry_PG_instances_unchanged_by_BPin_regrouping'].values())
         if (out/'after.shared.tsv').exists():
             assert sha(source/'before.shared.tsv')==sha(out/'before.shared.tsv')==sha(out/'after.shared.tsv')
             rec['all_256_original_shared_material_boxes_and_native_net_bindings_unchanged']=True
@@ -87,4 +114,4 @@ def run(revision):
     return 0 if passed else 1
 
 
-if __name__=='__main__':sys.exit(run(sys.argv[1]))
+if __name__=='__main__':sys.exit(run(*sys.argv[1:3]))
