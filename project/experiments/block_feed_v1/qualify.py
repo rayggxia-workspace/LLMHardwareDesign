@@ -137,10 +137,11 @@ def final_formal(folder,out,run,function_folder):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('operation',choices=['controls','seal','physical','drc','function','formal','deliver','geometry'])
+    p=argparse.ArgumentParser();p.add_argument('operation',choices=['controls','seal','physical','drc','function','formal','deliver','geometry','escape'])
     p.add_argument('--source',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--peer',type=Path);p.add_argument('--function',type=Path)
     p.add_argument('--gates',type=Path)
+    p.add_argument('--geometry',type=Path);p.add_argument('--native-source',type=Path)
     a=p.parse_args();a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,operation=a.operation,source=str(a.source),commands=[],inputs={})
     for d in ['project/experiments/block_feed_v1','project/experiments/block_v1','project/rtl/block_feed_v1']:
@@ -168,6 +169,10 @@ def main():
         elif a.operation=='geometry':
             from deliver import geometry
             geometry(a.source,a.out,run)
+        elif a.operation=='escape':
+            from escape import implement
+            from deliver import accepted
+            implement(ROOT,a.out,16,run,accepted(a.source)['macro'].lower(),a.source,a.geometry,a.native_source)
         else:final_formal(a.source,a.out,run,a.function)
         receipt['passed']=True
     finally:
