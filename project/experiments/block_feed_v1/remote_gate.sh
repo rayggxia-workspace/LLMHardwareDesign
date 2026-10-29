@@ -4,11 +4,13 @@
 #SBATCH --cpus-per-task=16
 #SBATCH --time=12:00:00
 set -euo pipefail
-root=$(cd "$(dirname "$0")/../../.." && pwd)
-operation=$1
-source_folder=$2
-out=$3
-shift 3
+root=$1
+operation=$2
+source_folder=$3
+out=$4
+shift 4
+test -f "$root/source-manifest.json"
+test -f "$root/project/experiments/block_feed_v1/qualify.py"
 case "$operation" in physical|function|formal|deliver|geometry|escape) ;; *) exit 2 ;; esac
 test -n "${SLURM_JOB_ID:-}"
 test "$SLURM_CPUS_PER_TASK" -eq 16
