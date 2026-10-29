@@ -132,7 +132,11 @@ module block_v1_v(
    argmin_tree[7+l]=leaf_enabled?stats_base+l:16'hffff;
   end
   for(integer t=6;t>=0;t=t-1)begin
-   sum_tree[t]=sum_tree[2*t+1]+sum_tree[2*t+2];square_tree[t]=square_tree[2*t+1]+square_tree[2*t+2];
+   sum_tree[t]=sum_tree[2*t+1]+sum_tree[2*t+2];
+   // Preserve each full U80 sum; use the proven grouped carry primitive
+   // at all three square-reduction levels instead of serial ripple sums.
+   square_tree[t]=add128_grouped({48'b0,square_tree[2*t+1]},
+                               {48'b0,square_tree[2*t+2]},1'b0);
    if(max_tree[2*t+1]>max_tree[2*t+2]||(max_tree[2*t+1]==max_tree[2*t+2]&&argmax_tree[2*t+1]<argmax_tree[2*t+2]))begin
     max_tree[t]=max_tree[2*t+1];argmax_tree[t]=argmax_tree[2*t+1];end
    else begin max_tree[t]=max_tree[2*t+2];argmax_tree[t]=argmax_tree[2*t+2];end
