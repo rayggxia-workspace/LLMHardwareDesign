@@ -716,6 +716,14 @@ def render(root,out):
     if repairs:
         result['actual_native_selected_upper_branch_repair_r01']=repairs
         upper_text+='<p><strong>93166实际选择支路修复：</strong>从llaccel已完成的原770支路ODB和guide接续，按独立14项DRC中真实网络及源边对应选择支路，不重复GRT。保持原规则/层/所有hook，只做原生详细重接，再重验全部770本网连接、实际变化网清单、精确原生合成/256桥/FIXED材料及fresh DRC；不能假定只改被选择的网，也不能把子阶段返回0当完成。尚未闭合时保留旧14项（含6 Short）失败，完整底座/功能/系统RC/STA不提升。</p>'
+        for q in repairs:
+            if q.get('completed_utc'):
+                p=snapshot/'upper_branch_repair/r01'/q['mode']/'independent.drc.gz';counts={}
+                if p.exists():
+                    from collections import Counter
+                    counts=dict(Counter(re.findall(r'^violation type: (.*)$',gzip.decompress(p.read_bytes()).decode(),re.M)))
+                q['source_bound_fresh_DRC_type_counts']=counts
+                upper_text+='<p><strong>选择修复已终态：</strong>'+html.escape(q['mode'])+'选择'+str(q.get('selected_branch_count'))+'条原支路，实际WIRE/VIA表示改变'+str(len(q.get('actual_all770_branch_route_box_changed_native_net_names',[])))+'网；原生阶段='+html.escape(str(q.get('native_returncodes')))+'，fresh='+str(q.get('fresh_DRC_count'))+'，类型='+html.escape(str(counts))+'。必须以实际变化清单和完整重验为准；存在Short则仍失败，不能把本网连通或按本网删桥当全局隔离/功能通过。</p>'
     p=snapshot/'vector_clone_crash/r01/execution.json.gz'
     if p.exists():
         q=read(p);result['VECTOR_exact_native_crash_symbolization_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
@@ -823,6 +831,22 @@ def render(root,out):
         r=next(r for r in rows if r['case']=='mxu');r['current_source_parent_access_recheck']=q
         if q.get('completed_utc'):
             r['parent_access']='CURRENT_M6_ACTUAL_VIEW_COMPLETE_PARENT_RECHECK_NATIVE_'+str(q.get('fresh_DRC_count','UNKNOWN'))+'_NOT_SYSTEM_RC_STA'
+            if not q.get('all_original_macro_pin_rectangles_net_directions_layers_in_parent_exactly_unchanged'):
+                from collections import Counter
+                import io
+                folder=snapshot/'escape_view_recheck/r01/mxu-C'
+                def term_rows(name):return list(csv.DictReader(io.StringIO(gzip.decompress((folder/name).read_bytes()).decode()),delimiter='\t'))
+                a=term_rows('before.child_terms.tsv.gz');b=term_rows('after.child_terms.tsv.gz')
+                without_use=lambda xs:Counter(tuple(sorted((k,v) for k,v in x.items() if k!='use')) for x in xs)
+                assert without_use(a)==without_use(b)
+                ca=Counter(tuple(sorted(x.items())) for x in a);cb=Counter(tuple(sorted(x.items())) for x in b)
+                before=list((ca-cb).elements());after=list((cb-ca).elements());assert len(before)==len(after)==1
+                before,after=dict(before[0]),dict(after[0]);assert before['pin']==after['pin']=='clk' and before['use']=='CLOCK' and after['use']=='SIGNAL'
+                result['MXU_current_actual_view_clock_USE_regression']={'status':'FAILED_CLOCK_USE_CONTRACT',
+                  'original':before,'after_actual_view_swap':after,'all_geometry_layers_directions_networks_other_than_USE_exactly_equal':True,
+                  'original_native_receipt_false_preserved':True,'requires_source_bound_native_view_metadata_repair':True,'full_qualification':False}
+                r['parent_access']+='_CLOCK_USE_CONTRACT_FAILED'
+                upper_text+='<p><strong>MXU父层接口合同另有真实失败：</strong>原生before/after全部2245条宏pin矩形记录比较发现，clk的USE从CLOCK变为SIGNAL；坐标/M6/尺寸、方向和网络一致，其余记录不变。旧回执的接口不变检查False保留，不能只看native进程0或native1就省略该回归。必须从真实RTL/SDC时钟合同修正原生物理视图及模型并重新核验，不只改最终LEF或把CLOCK检查删掉；当前新视图父层仍未通过。</p>'
     q=result.get('SYSTEM_actual_stacked_via_r01',{})
     if q.get('completed_utc') and q.get('native_returncodes',{}).get('detailed_edit_and_analysis')==0 and q.get('whole_signal_geometry',{}).get('pass') and all(q.get('original_cells_poses_signal_connections_pins_PG_die_unchanged',{}).values()) and q.get('all_other_exported_multiterminal_route_box_multisets_identical'):
         r=next(r for r in rows if r['case']=='opentpu_aux');r['historical_source_before_stacked_via']=json.loads(json.dumps(r))
@@ -846,7 +870,7 @@ def render(root,out):
           'current_source_research_model':'NOT_EXPORTED','common_base_source_selection':'ORIGINAL_R02_NOT_UPGRADED_TO_THIS_SOURCE',
           'current_complete_pin_contract':q['complete_pin_contract']})
         r['evidence'].append(q['evidence'])
-        upper_text+='<p><strong>LL SYSTEM三pin真实修复已闭合：</strong>native编辑/RCX/STA与fresh进程均0，fresh native由4降0；725253网/2325528端点/28517815形状所检连通、双PG、完整13507-pin层/尺寸/网络/方向与PG合同通过。恰好只删除八个WIRE矩形、所有via原样；其余725250条多端网矩形多重集相同，单端未用网/真实GDS仍不在该比较范围。0新单元/换型，原功能实例/位置/连接/PG/外框不变。setup/hold仍−3.909029/−0.587515ns、8876文字VIOLATED，整体FAILED。主矩阵选此native0新源，旧native4/旧窗口作业失败保留；新匹配抽象/RC模型及父层接入仍待完成，不能继承旧父层或称六块完整物理资格通过。</p>'
+        upper_text+='<p><strong>LL SYSTEM三pin真实修复已闭合：</strong>native编辑/RCX/STA与fresh进程均0，fresh native由4降0；725253网/2325528端点/28517815形状所检连通、双PG、完整13507-pin层/尺寸/网络/方向与PG合同通过。恰好只删除八个WIRE矩形、所有via原样；其余725250条多端网矩形多重集相同，单端未用网/真实GDS仍不在该比较范围。0新单元/换型，原功能实例/位置/连接/PG/外框不变。setup/hold仍−3.909029/−0.587515ns、8876文字VIOLATED，整体FAILED。主矩阵选此native0新源，旧native4/旧窗口作业失败保留；新匹配抽象/RC模型及父层接入仍待完成，不能继承旧父层或称六块完整物理资格通过。<a href="data/llsys_actual_via_tips_r02_all_13507_pins.csv">完整13507个实际pin逐项前后对应CSV</a>。</p>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',

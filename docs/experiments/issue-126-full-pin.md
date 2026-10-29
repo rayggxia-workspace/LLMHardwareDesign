@@ -1,5 +1,27 @@
 # 全功能分块、全块二维 pin 与实际接入（Issue126）
 
+2026-10-29（gate-r37）两模式全770原支路实际CuGR/DRT及原生opcode合成都已终态：各514物理网/1540端点的本网矩形连通、全部770原边成员、固定256条M10/FIXED、原hook材料包含及WIRE/VIA合成精确保留通过。按本网删去各桥实际矩形，256桥均导致该网源/汇断开；这个测试不包含跨网路径，不能当全局隔离/功能证明。独立fresh仍失败：openTPU127项，llaccel14项（8 Metal Spacing、6 Short）。实际源material保留只证明合成没改源路由，不能覆盖源路由本身的短路，不得称两完整功能或合格冻结。
+
+93166已从llaccel闭合770支路ODB与guide做真实修复，不重做GRT；按14项原DRC选30支路，实际WIRE/VIA表示改变53网，未误称只改30网。原生详细接线/精确原生合成/fresh均0、全部514网/1540端点本网连通及256桥/FIXED/原层/原hook保持，但fresh仍10项（2 Short、8 Metal Spacing），整体FAILED。原14与当前10分别保留，未降低规则或删检查。实际规则/所有端点XY/允许层及原下层输入保持，模型RC/STA/完整LVS未执行，不能把本网连通当真实完整功能。后续须继续修复跨网短路/间距，同时处理实际共同下层NoAP bit_1025与新叶视图/时序电气。
+
+MXU93074当前M6真实视图的全部2172位父接入重验已终态：native route/export与fresh进程0，但fresh仍1项，不能继续标运行中或提升父层资格；当前源模型/库和完整接口绑定保留，真实M6 OBS/接入问题仍需实际修复。完整六块已各有native0子块源与完整规则/RC/STA/父层/功能资格分开。旧源码/原失败/历史视图不覆盖，任务active/in_progress/Draft。
+
+R37/93167/driver472def56122e298a9039bbcc8e26a68ffbdfbc17，UTC04:19:24.542309，tar SHA256 0c3f6afe9f281c3e477016c85fcc1d2bbeeb1d04303e58166d2b15dc9cb958c9。此快照额外保存适配器小型完整实际branch/whole几何（原native gzip再无损封装，源SHA可核对），供后续真实路径绘图/规则定位；不上传大型叶ODB/GDS/SPEF。源码、中文HTML、原34图/PNG/SVG、完整13507新实际pin CSV及R35/R36/R37证据随本阶段统一发布，当前head/在线CI/图片blob以推送后读回为准。
+
+
+2026-10-29（gate-r35/r36阶段）LL SYSTEM真实via-tip/r02已闭合：93127/native编辑与fresh均0，native4→0，725253多端网/2325528端点/28517815形状所检连通、双PG/RCX/原约束STA、完整13507-pin层/尺寸/方向/网络/PG合同通过。仅三pin XY移动到原网真实via落脚，恰好八个末端WIRE矩形删除；所有via多重集与其余725250网WIRE/VIA表示保持，0新增单元/换型，cells/连接/位置/PG/外框不变。setup/hold仍−3.909029/−0.587515ns、8876文字VIOLATED，整体FAILED。主矩阵升级此native0源并保留旧PG-only native4；新匹配LEF/OBS/RC模型、真实父层及完整GDS/规则尚未完成，旧父层结果不得继承。完整逐pin当前对应CSV已单独提取为data/llsys_actual_via_tips_r02_all_13507_pins.csv。
+
+VECTOR93112亦已终态：native合法化/路线均0、fresh native0、375723网/1073317端点/10349786形状所检连通与双PG/RCX/STA执行，但−4.148930/0.025481ns、82文字VIOLATED仍失败。93128基于两份闭合实际CSV复核：49新增非filler、365原非filler换型、325非filler移动；459这个总master变化数另含94个重复filler名，不能全称逻辑换型。排除BLOCK/filler面积增量354.046μm²，旧917.700μm²另继承。该变体未改善旧r01提取余量，保留旧可实现内部C作为当前主源，不撤回周边；均非纯XY或外框面积收益。
+
+上层93120两模式均GRT-0116失败并先恢复全部原FIXED；93129 CuGR两模式取得完整514网guide后进入DRT，但openTPU仍256共享网未接通（258/514连通）、fresh6；guide齐全仍不代表物理接通。93148原生dbWire.append已真实验证WIRE/VIA多重集及FIXED/ROUTED属性保持，r01包装器缺Singularity PATH的启动失败保留。93150全770支路CuGR/DRT后精确原生合成514网和原256条FIXED M10已实际运行，包含全部支路材料/原hook/OBS/固定材料/fresh及256桥删除敏感性检查；仍只是适配器、不是完整功能/有效STA或冻结。
+
+共同下层93132已越过CuGR全局阶段，但DRT-0302拒绝施工BTerm的双BPin容器；93149按同一闭合global.odb/guide接续，不重做GRT，只将256施工端口容器合一、两原矩形保持。该工具限制越过后实际DRT-0073在u_llaccel_aux/bit_1025无AP失败。原包装器pin行字节序断言也失败；后验10657行Counter完全相同，PG/实例字节相同，故不是物理坐标变化，原回执及真正NoAP均保留。只读观察：该M5 pin原aliasLEF矩形(353.85,1064.49)-(353.99,1064.63)μm，父层M5/M6轨道DBU原点190/140、pitch560，宏原点均已对齐；这只是接入疑点，尚未作为可行位置结论。下一步应版本化真实bit_1025端点/金属/PG/via诊断及合法接入修复，不擅自改布局或丢弃检查。
+
+R35/93137/driver bae87dfdc7e9694161eb2c94f814f1a25816d69c，UTC02:40:53.200112，tar SHA256 bd80261e3a266364c98d9fba41c08e574536b78176b0a3c076c3fe5aa8046852。R36/93155/driver29537721bb607c8203a811f2b8fbafb7ec3c62de，UTC03:13:31.017168，tar SHA256 4c08ff89e0d27c60eedaf5b5e9aafed8f4558acedc13837dd501353d5de5f7f6。R35独立1252原文先验证SHA后归档，R36优先用于最新矩阵；原ABC、24767信号pin/74301行、34幅PNG/SVG、历史失败保留。
+
+当前六块各已有其版本的native0内部源，不代表六块完整规则、父层可达性或RC/STA电气全部通过。完整目标active/in_progress/Draft；共同合格冻结、两完整功能、公平系统对照未完成。原92690/92691、92855、93074等活动不覆盖或按耗时取消。最新发布be02ca0两CI40803922706/40803922808成功，当前阶段源码/图/数据待本次验证推送后读回；登记pending、看板unverified同步pending、管理员/审查人待指定。
+
+
 2026-10-29 09:57 CST（gate-r34接续R33）93117已实际FAILED，不能继续标运行中或布通：openTPU原生命令0、fresh native 8项、514物理网只有258网/1540端点整体中的部分连通，256个共享固定网各分成3个端点分量。闭合实际guide只有258网、全部256共享网均没有guide；按原770边逐一核验是258边连通、512边断开。全部256原FIXED M10属性/矩形并集覆盖、原hook/OBS/外框保持，证明保留固定金属本身不足以证明实际功能连接。llaccel在GRT-0116失败，无DRT/fresh/全网连通/RC/STA；整个93117 FAILED 1:0。所报403412.44μm的M11/M12等仅这次不完整试验的路由，不能拿来计算完整系统收益。
 
 已实际提交93120/driver f63ad792c145db656a1b50cbb5e8f586953713af在新upper_preconnected/r02接续：保持同一514物理网/770原边/1540 hook/256固定导体及原规则，只在helper的guide搜索内存副本临时移除256条FIXED片段，GRT返回后无论成功/失败均精确恢复原M10 FIXED定义并保存实际ODB/DEF；若GRT成功，必须全部514网都有native guide才允许DRT。原底座文件、PG/OBS、pin层及最终材料不改，原r01失败保留。当前两模式均已实际执行guide-only detach并进入GRT，尚非新的物理通过，后续真实连接/材料/FIXED/DRC和RC/STA门槛不降低。

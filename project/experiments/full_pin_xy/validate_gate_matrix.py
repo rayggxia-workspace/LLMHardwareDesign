@@ -422,7 +422,23 @@ def check(out):
         if key=='MXU_actual_view_parent_recheck_r01':
             assert q['all_original_leaf_signal_pins']==2172 and q['actual_new_leaf_ODB_SHA256']==j['MXU_actual_M6_escape_physical_RC_views']['source_geometry_sha256']
             assert q['parent_RC_STA']=='NOT_EXECUTED_ACCESS_RECHECK_ONLY'
-            assert all(q['all_original_parent_BTerm_PG_die_geometry_unchanged'].values()) and q['all_original_macro_pin_rectangles_net_directions_layers_in_parent_exactly_unchanged']
+            assert all(q['all_original_parent_BTerm_PG_die_geometry_unchanged'].values())
+            if not q['all_original_macro_pin_rectangles_net_directions_layers_in_parent_exactly_unchanged']:
+                from collections import Counter
+                import csv,io
+                clock_folder=(out/q['evidence']).parent
+                def parse_terms(name):return list(csv.DictReader(io.StringIO(gzip.decompress((clock_folder/name).read_bytes()).decode()),delimiter='\t'))
+                a=parse_terms('before.child_terms.tsv.gz');b=parse_terms('after.child_terms.tsv.gz')
+                key=lambda r:tuple(sorted(r.items()))
+                ca=Counter(map(key,a));cb=Counter(map(key,b));minus=list((ca-cb).elements());plus=list((cb-ca).elements())
+                assert len(a)==len(b)==2245 and len(minus)==len(plus)==1
+                before,after=dict(minus[0]),dict(plus[0]);assert before['pin']==after['pin']=='clk'
+                assert before['use']=='CLOCK' and after['use']=='SIGNAL'
+                assert {k:v for k,v in before.items() if k!='use'}=={k:v for k,v in after.items() if k!='use'}
+                failure=j['MXU_current_actual_view_clock_USE_regression']
+                assert failure['status']=='FAILED_CLOCK_USE_CONTRACT' and failure['original']==before and failure['after_actual_view_swap']==after
+                assert failure['original_native_receipt_false_preserved'] and not failure['full_qualification']
+                assert rows['mxu']['parent_access'].endswith('_CLOCK_USE_CONTRACT_FAILED') and not rows['mxu']['full_qualification']
             assert q['whole_parent_signal_geometry']['pass'] and q['whole_parent_signal_geometry']['checked_nets']==2172
         elif q.get('whole_signal_geometry'):
             assert q['whole_signal_geometry']['pass'] and q['whole_signal_geometry']['checked_nets']==466332
