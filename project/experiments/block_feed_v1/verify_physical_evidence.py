@@ -13,6 +13,7 @@ def sha(data):
 def verify(root):
     base = root / 'work/YUZE-LU/130/validation/physical'
     verified = []
+    accepted_m = None
     for kind in ('m', 's'):
         path = base / ('accepted-' + kind + '-index.json')
         if not path.exists():
@@ -34,6 +35,8 @@ def verify(root):
             assert sha(z.read('meta/final-source.json')) == source_receipt['outputs']['final-source.json']
             assert sha(z.read('meta/source-receipt.json')) == delivery['source_receipt_sha256']
             assert delivery['passed'] and delivery['native_leaf_accepted'] and delivery['macro'] == kind.upper()
+            if kind == 'm':
+                accepted_m = delivery
             assert bundle['passed'] and received['passed'] and received['native_leaf_accepted']
             assert bundle['archive'] == index['server_bundle']
             assert received['archive_sha256'] == bundle['archive']['sha256']
@@ -62,6 +65,11 @@ def verify(root):
             assert len(reports['function']['initial_runs']) == 3
             assert all(v['result']['passed'] for v in reports['function']['initial_runs'].values())
             if kind == 's':
+                assert accepted_m is not None, 'S final simulation must bind to the independently accepted M'
+                assert reports['function']['peer_source_receipt_sha256'] == accepted_m['source_receipt_sha256']
+                peer_inputs = reports['function']['peer_full_final_netlist']['input_sha256']
+                assert len(peer_inputs) == 2
+                assert set(peer_inputs.values()) == {accepted_m['final_files']['6_final.v']['sha256'], accepted_m['final_files']['6_final.odb']['sha256']}
                 observer = json.loads(z.read('evidence/function/memory-observer.json'))
                 assert observer == reports['function']['memory_observer']
                 assert observer['passed'] and observer['memory_transaction_assertions_retained']
