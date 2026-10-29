@@ -20,6 +20,7 @@ JOBS+=['93102','93106']
 JOBS+=['93112','93117']
 JOBS+=['93120']
 JOBS+=['93126','93127','93128','93129','93132']
+JOBS+=['93140','93148','93149','93150']
 
 
 def sha(path):
@@ -93,7 +94,9 @@ def collect(name):
     patterns+=['upper_preconnected/r0[123]/*','upper_preconnected/r0[123]/*/*','logs/preconnected-upper-r0[123]-*.log']
     patterns+=['llsys_actual_via_tips/r0[12]/*','logs/llsys-actual-via-tips-r0[12]-*.log',
       'vector_probe_cost_audit/r01/*','logs/vector-probe-cost-audit-r01-*.log',
-      'common_lower_resume/r01/*','logs/common-lower-cugr-r01-*.log']
+      'common_lower_resume/r0[12]/*','logs/common-lower-cugr-r01-*.log','logs/common_lower_cugr_r02-*.log',
+      'native_wire_append_api/r0[12]/*','logs/native-wire-append-api-r01-*.log','logs/native_wire_append_api_r02-*.log',
+      'upper_branch_composition/r01/*','upper_branch_composition/r01/*/*','logs/upper-branches-compose-r01-*.log']
     stable_intermediates={}
     incremental=ROOT/'antenna_incremental_eco/r01/gemm-C/execution.json'
     if incremental.exists() and json.loads(incremental.read_text()).get('native_returncodes',{}).get('implementation')==0:
@@ -118,6 +121,7 @@ def collect(name):
         if 'antenna_rules/r01' in str(p) and p.suffix in ['.lef','.lydrc'] and a.st_size<=8*1024*1024:keep=True
         if 'fixed_wire_api' in str(p) and p.suffix=='.def' and a.st_size<=1024*1024:keep=True
         if 'upper_preconnected/' in str(p) and p.suffix in ['.def','.guide','.rpt'] and a.st_size<=8*1024*1024:keep=True
+        if 'native_wire_append_api/' in str(p) and p.suffix=='.def' and a.st_size<=8*1024*1024:keep=True
         if 'actual_path_audit/' in str(p) and p.name=='fresh_DRC_target_net.tsv.gz' and a.st_size<=8*1024*1024:keep=True
         if 'pin_escape_views/' in str(p) and p.name=='target_pin_access.tsv.gz' and a.st_size<=8*1024*1024:keep=True
         if 'extended_sta/r01/' in str(p) and p.name=='extended_checks_all_not_only_violators.txt' and a.st_size<=64*1024*1024:keep=True

@@ -672,6 +672,27 @@ def render(root,out):
     if p.exists():
         q=read(p);result['actual_common_lower_CuGR_resume_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
         upper_text+='<p><strong>93132实际共同下层CuGR接续：</strong>从已原生审计的同一六资源/38基础设施/256 FIXED M10检查点接续，不重复布局或PDN；位置、pin/hook、实际旧R02叶视图、拓扑/预算、原signal M2–M10/clock M4–M10均保持，仅更换原生全局搜索器。原92855长期作业不取消或覆盖。新目录独立执行DRT、全部端点图/几何与双PG/fresh检查；仍未冻结、未执行该下层完整RC/STA、未实现两完整功能，原叶失败/真实GDS/规则覆盖缺项继续保留。具体native返回='+str(q.get('native_route_returncode'))+'，完成时间='+html.escape(str(q.get('completed_utc')))+'。</p>'
+        if q.get('completed_utc'):
+            upper_text+='<p>93132已取得终态失败：CuGR全局阶段已完成并保留带SHA的global.odb与原guide；DRT读取设计时DRT-0302：Unsupported multiple pins on bterm access_0001。原共享施工端口使用两个BPin容器，不能因此视为底层布通。保留该原生工具限制及失败，不删除原固定金属或把DRT未执行写成零项。</p>'
+    p=snapshot/'common_lower_resume/r02/execution.json.gz'
+    if p.exists():
+        q=read(p);result['actual_common_lower_closed_guides_BPin_container_resume_r02']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        upper_text+='<p><strong>93149下层实际接续：</strong>复用93132已完成的原CuGR检查点/guide，不重复全局路由。只把256个共享<strong>施工</strong>BTerm的两个BPin容器合为一个容器内两块原矩形，原24767叶pin、两端0.8μm接点、原网络/FIXED导体、PG/OBS/位置均不改；逐项核对扁平pin几何/PG/实例保持。该表示修复尚不是冻结前全部施工端口降为固定几何，后者仍待完成。原DRT-0302保留，新DRT/全端点/双PG/fresh各自记录，尚未资格化。</p>'
+    p=snapshot/'native_wire_append_api/r02/execution.json.gz'
+    if p.exists():
+        q=read(p);result['native_wire_opcode_append_API_r02']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        if q.get('actual_rectangle_multisets_and_native_FIXED_ROUTED_path_flags_preserved'):
+            upper_text+='<p><strong>93148原生wire合成API已核实：</strong>在同一安装工具中dbWire.append真实执行，原生重新导出的WIRE/VIA矩形多重集与源A+B完全相同，DEF中的FIXED/ROUTED属性同时保留，原输入SHA保持。这是小型工具API试验，不是接口路由或系统通过；r01包装器未设置Singularity PATH，在启动原生工具前FileNotFoundError，原失败日志保留，r02改用项目标准作业环境。</p>'
+    composed=[]
+    for mode in ['opentpu','llaccel']:
+        p=snapshot/'upper_branch_composition/r01'/mode/'execution.json.gz'
+        if p.exists():composed.append(dict(read(p),evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix()))
+    if composed:
+        result['all770_branch_route_then_exact_native_fixed_composition_r01']=composed
+        upper_text+='<p><strong>93150两模式全770支路实际试验：</strong>为避免既有FIXED片段使原生路由跳过剩余连接，先在原770支路/1540真实hook的helper中完整CuGR/DRT，再通过已验证的原生opcode append合成514个物理网及同一256条实际原FIXED M10导体。原底座文件不改，所有支路矩形/通孔必须精确保留，最终逐一验证全部770原边、原hook/M10材料/OBS/FIXED及fresh DRC；另对全部256条真实固定桥作几何删除敏感性检查，区分实际必要的固定桥与冗余上层旁路。分析中的删桥不修改实际ODB。当前是实际运行的适配器流程，尚非两套完整加速器、合格冻结或有效系统RC/STA；提交本身不算通过。</p>'
+        for q in composed:
+            if q.get('completed_utc'):
+                g=q.get('all_514_composed_geometry',{});upper_text+='<p>全支路合成 '+html.escape(q['mode'])+' 终态：原生阶段='+html.escape(str(q.get('native_returncodes')))+'，fresh='+str(q.get('fresh_DRC_count'))+'，最终几何连通='+str(g.get('pass'))+'；实际失败='+html.escape(str(q.get('actual_failure')))+'。所有门槛分别验收，不把原生0当完成。</p>'
     p=snapshot/'vector_clone_crash/r01/execution.json.gz'
     if p.exists():
         q=read(p);result['VECTOR_exact_native_crash_symbolization_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
