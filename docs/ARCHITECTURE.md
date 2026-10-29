@@ -304,3 +304,16 @@ Linux轻量调度排空控制：`python3 project/experiments/block_v1/node_queue
 实际M10坐标比较器控制：`python project/experiments/block_v1/pin_contract_controls.py .local/issue121/pin-contract-source .local/issue121/pin-contract-received 新输出目录`；两个输入目录分别存原source的pins.json/pins.tcl/receipt.json，以及独立接收的physical-pins.tsv/receipt.json，均按回执哈希核对。2026-10-28原始S273个接点的正例与8种拒绝反例已通过，见[记录](../work/YUZE-LU/121/results/pin-contract-controls-20261028-0119/pin-contract-controls.json)。新`five-macro-physical-*`在完整原生接收内重复这些比较器控制；`five-macro-delivery-received-s/r/v`允许新physical与207的其他三门按相同source回执汇合，额外核formal→function回执一致。实际执行脚本与未格式化计划的差别及冻结原则见[接点决策](decisions/2026-10-28-block-v1-executed-pin-contract.md)。
 
 2026-10-28节点内CPU硬限制：`native_node_queue.py`从真实CPU affinity划分六个互斥16CPU集合，以taskset启动worker并立即补位；环境变量仍保留，但不再当硬限制证据。Linux无EDA控制命令：`python3 project/experiments/block_v1/node_queue_affinity_controls.py /absolute/new-control-directory`（控制节点须实际允许96CPU），以及`python3 project/experiments/block_v1/node_queue_controls.py`。真实32线程/后代继承、六并发/即完补位已通过；已有业务任务只原位绑定，详见[决策](decisions/2026-10-28-block-v1-cpu-affinity.md)。控制不是EDA或宏资格。
+
+
+## 本轮后继队列自动准入（2026-10-29）
+
+`project/experiments/block_v1/revision300_admission.py`只检查六个已经stage的队列：R311/312/313、V330/331/332。运行配置及启动证据在`work/YUZE-LU/121/review-20261028/admission-335/`。它每60秒检查真实叶任务前置和本成员allocation数量，复用每份不可变归档中的dispatch.py；原提交器的Issue共享锁、先写SUBMITTING reservation及包含pending/unknown的8allocation限制仍是唯一提交权威。已有任何提交记录均不重投；观察超时或会计信息缺失不视为作业结束。不会取消、修改或重启EDA。
+
+该进程只在登录节点处理JSON、Slurm查询和sbatch，所有综合/仿真/P&R仍由Slurm内原96CPU队列执行。节点内原6×16、1.2预留/16GiB guard与即完补位机制不变。六份manifest、node-queue、dispatch.py和native_node_queue.py的SHA固定；文件变化时闭锁并记录observation_error。不是新增产品调度系统，也不改变宏或验收边界。
+
+实际部署目录为`/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/admission-20261029-335`；`status.json`是最新观察，`events.jsonl`记录状态变化，`launch.json`记录进程与源SHA。09:45捕获证实PID2121001存活且至少两轮检查。恢复先核对该目录真实进程、命令行和状态，不能仅凭旧PID或锁文件认定存活，也不能在已有控制进程时重复启动。未知sbatch结果须核对原reservation与Slurm comment，不重投。控制进程finished只表示六队列均进入可检查终态，不能代替最终五宏审计。
+
+纯控制验证命令：`python -X utf8 project/experiments/block_v1/test_revision300_admission.py`。覆盖未知/失败/完成尝试禁止重投、前置与失败分类、8项含PENDING、其他成员及同账号无关作业不计入本任务、异常观察闭锁；本地和部署端均已通过。原EDA及最终门不能由此替代。
+
+准入预检查只匹配本Issue目录dispatch-state记录的作业ID，不以整个账号或名字前缀单独设限。原334控制版本及暴露过度计数的同账号无关任务负例、仅终止控制进程的退役回执保留；当前335的两轮真实检查与八个原EDA作业读回见其capture-start和allocation-scope-readback.json。
