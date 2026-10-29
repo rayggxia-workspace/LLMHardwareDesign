@@ -13,7 +13,8 @@ from run_escape_fixture import execute
 DRIVER=Path(__file__).resolve().parent
 
 
-def run(revision):
+def run(revision,profile='via_only'):
+    assert profile in ['via_only','via_then_wire']
     source=ROOT/'llsys_parent_tip_views/r01/llaccel_aux-C'
     rp=source/'execution.json';q=json.loads(rp.read_text())
     assert q.get('completed_utc') and q['source_native_DRC']==0 and q['all_sources_and_pre_RCX_geometry_unchanged']
@@ -38,13 +39,14 @@ def run(revision):
          'original_M5_M6_pin_size_DBU':280,'all_existing_geometry_unchanged':True,
          'not_checked':['Foreign signal/PG/OBS or transformed macro clearance at each candidate','Full per-layer cut/enclosure/spacing/DRC','Parent native AP and routing','RC/STA or functional qualification'],
          'duplicate_candidate_locations_are_risks_not_assigned_coordinates':True}
+    rec['candidate_policy']=profile
     try:
         tr=out/'native_tracks.tcl'
         tr.write_text('set tracks [dict create '+ ' '.join(tcl(layer+axis)+' '+tcl(' '.join(map(str,v))) for (layer,axis),v in sorted(tracks.items()))+']\n')
         body=r'''
 set b [ord::get_db_block]
 set f [open OUTPUT w]
-puts $f "pin\tnet\tlayer\tx0\ty0\tx1\ty1\taligned_preferred\tcandidate_x\tcandidate_y\tdistance_DBU\tvia\tcap_x0\tcap_y0\tcap_x1\tcap_y1\tstatus"
+puts $f "pin\tnet\tlayer\tx0\ty0\tx1\ty1\taligned_preferred\tcandidate_x\tcandidate_y\tdistance_DBU\tvia\tcap_x0\tcap_y0\tcap_x1\tcap_y1\tcandidate_kind\tstatus"
 set itr [odb::dbWirePathItr];set path [odb::dbWirePath];set ps [odb::dbWirePathShape]
 foreach bt [$b getBTerms] {
  if {[$bt getSigType] in {POWER GROUND}} {continue}
@@ -69,19 +71,41 @@ foreach bt [$b getBTerms] {
    foreach cap [$via getBoxes] {
     if {[[$cap getTechLayer] getName] ne $layer} {continue}
     if {[$cap xMin]>-140 || [$cap yMin]>-140 || [$cap xMax]<140 || [$cap yMax]<140} {continue}
-    set bd $distance;set best [list $vx $vy $distance [$via getName] [expr {$vx+[$cap xMin]}] [expr {$vy+[$cap yMin]}] [expr {$vx+[$cap xMax]}] [expr {$vy+[$cap yMax]}]]
+    set bd $distance;set best [list $vx $vy $distance [$via getName] [expr {$vx+[$cap xMin]}] [expr {$vy+[$cap yMin]}] [expr {$vx+[$cap xMax]}] [expr {$vy+[$cap yMax]}] VIA]
    }
   }}
  }
- if {$aligned} {set status KEEP_ALREADY_TRACK_CENTERED} elseif {[llength $best]} {set status ACTUAL_OWN_VIA_GEOMETRIC_CANDIDATE_NOT_AP_VALIDATED} else {set status KEEP_NO_BOUNDED_OWN_VIA_FOUND}
- if {![llength $best]} {set best [list {} {} {} {} {} {} {} {}]}
+ if {!$aligned && ![llength $best] && ALLOW_WIRE && [$n getWire] ne "NULL"} {
+  lassign [dict get $tracks metal6X] xo xp;lassign [dict get $tracks metal5Y] yo yp
+  $itr begin [$n getWire]
+  while {[$itr getNextPath $path]} {while {[$itr getNextShape $ps]} {
+   set s [odb::dbWirePathShape_shape_get $ps]
+   if {[$s isVia] || [[$s getTechLayer] getName] ne $layer} {continue}
+   set xl [expr {[$s xMin]+140}];set xh [expr {[$s xMax]-140}]
+   set yl [expr {[$s yMin]+140}];set yh [expr {[$s yMax]-140}]
+   if {$xl>$xh || $yl>$yh} {continue}
+   set ix0 [expr {int(ceil(double($xl-$xo)/$xp))}];set ix1 [expr {int(floor(double($xh-$xo)/$xp))}]
+   set iy0 [expr {int(ceil(double($yl-$yo)/$yp))}];set iy1 [expr {int(floor(double($yh-$yo)/$yp))}]
+   if {$ix0>$ix1 || $iy0>$iy1} {continue}
+   set ix [expr {max($ix0,min($ix1,int(round(double($x-$xo)/$xp))))}]
+   set iy [expr {max($iy0,min($iy1,int(round(double($y-$yo)/$yp))))}]
+   set vx [expr {$xo+$ix*$xp}];set vy [expr {$yo+$iy*$yp}]
+   set distance [expr {abs($vx-$x)+abs($vy-$y)}]
+   if {$distance>10000 || $distance>=$bd} {continue}
+   set bd $distance;set best [list $vx $vy $distance {} [$s xMin] [$s yMin] [$s xMax] [$s yMax] WIRE]
+  }}
+ }
+ if {$aligned} {set status KEEP_ALREADY_TRACK_CENTERED} elseif {[llength $best]} {
+  set status [expr {[lindex $best 8] eq "VIA" ? "ACTUAL_OWN_VIA_GEOMETRIC_CANDIDATE_NOT_AP_VALIDATED" : "ACTUAL_OWN_WIRE_GEOMETRIC_CANDIDATE_NOT_AP_VALIDATED"}]
+ } else {set status KEEP_NO_BOUNDED_OWN_VIA_FOUND}
+ if {![llength $best]} {set best [list {} {} {} {} {} {} {} {} {}]}
  puts $f [join [concat [list [$bt getName] [$n getName] $layer [$box xMin] [$box yMin] [$box xMax] [$box yMax] $aligned] $best [list $status]] "\t"]
 }
 close $f
 puts ALL13507_NATIVE_OWN_VIA_INVENTORY_READ_ONLY_NOT_REPAIR
 '''
         script=out/'read_all_caps.tcl'
-        script.write_text('read_db '+tcl(odb)+'\nsource '+tcl(tr)+'\n'+body.replace('OUTPUT',tcl(out/'all13507_actual_own_via_candidates.tsv')))
+        script.write_text('read_db '+tcl(odb)+'\nsource '+tcl(tr)+'\n'+body.replace('OUTPUT',tcl(out/'all13507_actual_own_via_candidates.tsv')).replace('ALLOW_WIRE','1' if profile=='via_then_wire' else '0'))
         common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
         rec['native_read_only_returncode']=execute(common,script,out/'native.log',threads=1)
         assert rec['native_read_only_returncode']==0
@@ -105,4 +129,4 @@ puts ALL13507_NATIVE_OWN_VIA_INVENTORY_READ_ONLY_NOT_REPAIR
     return 0 if 'actual_failure' not in rec and rec['all_closed_sources_unchanged'] else 1
 
 
-if __name__=='__main__':sys.exit(run(sys.argv[1]))
+if __name__=='__main__':sys.exit(run(*sys.argv[1:]))
