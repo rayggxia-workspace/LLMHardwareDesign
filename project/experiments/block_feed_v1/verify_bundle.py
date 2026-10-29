@@ -1,4 +1,4 @@
-import argparse,hashlib,json,tarfile
+import argparse,contextlib,hashlib,json,tarfile
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('folder',type=Path);a=p.parse_args();root=a.folder
 index=json.loads((root/'bundle.json').read_text())
@@ -10,18 +10,26 @@ def sha(path):
 archive=root/Path(index['archive']['path']).name
 assert index['passed'] and index['native_leaf_accepted']
 assert archive.stat().st_size==index['archive']['bytes'] and sha(archive)==index['archive']['sha256']
-out=root/'unpacked';out.mkdir(exist_ok=False)
+out=root/'unpacked';fresh=not out.exists()
+if fresh:out.mkdir(exist_ok=False)
+assert out.is_dir()
 with tarfile.open(archive,'r:gz') as stream:
  seen=set()
  for member in stream:
   name=member.name
   assert name in index['members'] and name not in seen and member.isfile() and not member.issym() and not member.islnk()
   assert not Path(name).is_absolute() and '..' not in Path(name).parts
-  target=out/name;target.parent.mkdir(parents=True,exist_ok=True)
+  target=out/name
+  if fresh:target.parent.mkdir(parents=True,exist_ok=True)
+  assert out.resolve() in target.resolve().parents and not target.is_symlink()
   h=hashlib.sha256();count=0
-  with stream.extractfile(member) as src,target.open('wb') as dst:
-   for block in iter(lambda:src.read(2**20),b''):dst.write(block);h.update(block);count+=len(block)
+  destination=target.open('wb') if fresh else contextlib.nullcontext()
+  with stream.extractfile(member) as src,destination as dst:
+   for block in iter(lambda:src.read(2**20),b''):
+    if dst is not None:dst.write(block)
+    h.update(block);count+=len(block)
   assert count==index['members'][name]['bytes']==member.size and h.hexdigest()==index['members'][name]['sha256']
+  if not fresh:assert target.is_file() and target.stat().st_size==count and sha(target)==h.hexdigest()
   seen.add(name)
  assert seen==set(index['members'])
 delivery=json.loads((out/'native/delivery.json').read_text());assert delivery['passed'] and delivery['native_leaf_accepted']

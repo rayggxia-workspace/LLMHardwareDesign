@@ -28,7 +28,7 @@
 
 ```powershell
 python -X utf8 project/experiments/block_feed_v1/verify_evidence.py
-# 首次接收一个新下载目录时（不覆盖已有 unpacked）：
+# 新目录首次解包；已有 unpacked 时只核验，不覆盖原始文件：
 python -X utf8 project/experiments/block_feed_v1/verify_bundle.py D:/Data/LLMHardwareDesign-issue130-runtime/deliverables/M
 ```
 

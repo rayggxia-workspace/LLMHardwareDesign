@@ -1,3 +1,5 @@
+> 2026-10-29 19:18 CST：M已接收保持。S22/93323的已完成GRT实测setup+0.00958389ns、hold−0.632971ns/8条、cap2、slew0；两处wire42991/Z及wire42863/Z为BUF_X4，327.86/279.50fF超过242.31fF。仅停止其本人详细布线子进程，原生失败回执与完整GRT保留；停止三重身份/原报告SHA在repair27/stopped-s22-route.json。原依赖93353–93360经逐个核验PENDING及本人目录后取消，实际没有运行。inspect28源c1c4beae/316文件的93371读取同一GRT，按设计在输出全部8条路径和驱动信息后停止（诊断，不是候选失败验收）；S普通四阶段/GRT来源绑定已实际通过。六条reset→AOI21→控制D和两条din31→D已明确。reset→ready只有约9.7ps余量，不能延迟整个reset；repair27的共同输入延迟草案从未提交作业。新修复将只连接6个AOI的reset输入、给两个D端小延迟、加大两处电容驱动及ready末级驱动；尚待实际原生重跑及同源全部最终门。
+
 > 2026-10-29 18:26 CST：**新M已经通过全部同源独立门，93346已实际封存，取得原生合法候选。** 完整GDS DRC total_items=0，原生whole-chip报告为空。实际六文件、32成员下载校验和29原始小文件字节档案见 [ACCEPTED_M.md](ACCEPTED_M.md)、[索引](accepted-m-index.json)。S22/93323仍在GRT修复扫描，尚未接受S；下文较早pending记录只作历史。
 
 # Issue130 新 M/S 物理实现记录
