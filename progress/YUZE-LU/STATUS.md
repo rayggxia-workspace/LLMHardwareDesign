@@ -1,20 +1,6 @@
-2026-10-29 19:32 CST，Issue130：M合法候选/六文件/几何/本地32成员SHA保持通过。S当前唯一运行修复为 **repair31/93380**，源`ef6460f0cfdc8a64a23f4ef35d045d809d6da3ee`、316文件，输出`issue130-m-feed-repair31-20261029/results/repair-s-03`；从本人S22完整GRT重用已绑定的成功前四阶段，仅6条reset顺序支路共享80级有限数据延迟（末级BUF_X8）、3个实测D端各2BUF_X1、两处电容驱动及ready末级加大；不动SDC/时钟/状态/宏尺寸。现在全量重建GRT和RC估计，尚未通过预DRT四项，更未接受S。
+2026-10-29 19:49 CST，Issue130：M已交付合法原生候选，六文件/几何/32成员原始包本地逐SHA通过，证据work/YUZE-LU/130/validation/physical/ACCEPTED_M.md。S尚未接收；repair31完整GRT真实14 cap/5 slew/1 setup/54 hold，被严格预DRT拒绝。repair32/93384（源782112e8、316文件）正从同一S22已绑定GRT重跑，保留完整live RC，按实测数据缓冲器负载修复，再执行原生时序修复/合法化/重布线。不改约束、尺寸、时钟或判据。最终仍需同源提取物理/功能/严格LEC/完整GDS DRC全过。Issue130=in_progress、PR132=draft；登记PR5 pending、看板unverified/同步pending、审查人待指定。恢复路径见docs/handoffs/2026-10-29-issue-130-m-feed.md；此前失败/停止与旧pending队列取消均保留在physical/README.md，不重启旧门、不操作父任务。
 
-S22/93323实际8hold/2cap后仅停止本人DRT子进程；旧未运行依赖93353–93360已核验PENDING后取消，不要重启。inspect28/93371按设计读取全部8路径/实际驱动后停止，诊断非验收；repair29/93377是Tcl调用帧问题，未完成修复；repair30/93378已cap/slew/setup均0但尚有FF666028反馈hold−0.000276140228ns/1条，被严格预DRT守卫拒绝，未跑DRT。31补2BUF并改完整GRT估计，不能转移任何失败资格。服务器共同前缀/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/，目录加issue130-m-feed-及-20261029。
-
-恢复先查93380真实进度及feed-measured-s-checks.tsv；仅全0后再等待原生finish并封存同源四门。S新最终门尚未提交，使用当前代码支持原始S的四阶段/原生GRt journal/partition TSV来源绑定。M peer固定qualify24/results/source-m，不重复M门。Issue130仍in_progress、PR132仍draft；不得接管父任务。
-
-2026-10-29 18:31 CST，Issue130更新：**新M同源完整GDS DRC93332与交付93346均已通过，原生合法候选已封存；几何93347通过，压缩包93350已下载并逐个核验32成员。** 实际六文件／LEF／29原始回执ZIP及SHA见work/YUZE-LU/130/validation/physical/ACCEPTED_M.md。S22/93323仍在GRT修复扫描，93353–93360依赖队列保持；整个Issue130仍in_progress，PR132保持draft。下文旧M pending状态已被本条取代。
-
-2026-10-29 18:19 CST，Issue130/PR132：M21原生及同源最终物理/三初态功能/严格LEC已通过，完整GDS DRC93332仍运行；setup+47.354788ps、hold+9.898194ps、cap/slew0，尚不能接受候选。M依赖交付93346/几何93347/包93350已排队。S22/93323为GRT DRV扫描，S15额外20ps对照已停止本人子进程、失败证据保留。新artifacts26源d8e7656d/312文件逐SHA核验，S93353–93360按真实依赖排好封存/四门/交付/几何/包。仅本人隔离目录及作业，未接管父任务；Issue130=in_progress，PR132=draft。登记pending、看板unverified/同步pending、审查人待指定。
-
-2026-10-29 17:39 CST：M21/93321原生完成，qualify24封存及93326独立完整物理门通过：setup+47.354788ps、hold+9.898194ps、cap/slew0；同源最终功能/严格LEC及GDS DRC继续。93328在native DRC零后被复制锁路径保护拦截，未开始GDS检查；qualify25/93332只重跑该门且保持目录保护。校正此前S阶段误读：正值来自hold表，setup修复仍余约−44ps少量路径，不能称setup闭合。S22/93323零额外hold目标仅2个必要缓冲、约2秒结束该阶段，已进入详细放置；S15/93307仍为额外20ps优化。仍没有可交付的完整合法候选。
-
-2026-10-29 17:20 CST：Issue130=in_progress，本轮必须取得新M/S合法物理候选。M11原生完成，但独立提取有12条hold违规（最差−0.030888181ns），被淘汰；功能及严格LEC通过不转移资格。M21/93321插实际数据延迟BUF修复两处已测短路径，预DRT四计数0，正在布线。S实测两个MUX2_X1分别约6.6万/6.2万负载；S15/93307插2172个分组BUF后setup闭合，但为20ps内部额外hold目标优化耗时；S22/93323试零额外修复目标，SDC和全部最终判据不变。旧失败、受控停止保留，尚无可交付合法候选。详细源和实际记录见work/YUZE-LU/130/validation/physical/README.md。父任务与他人作业不变。
-
-2026-10-29 15:31 CST：Issue130按用户要求继续完成新M/S布局布线及合法候选验收，状态in_progress。独立93249正在执行原生流程，M详细放置setup约+0.05ns、当前进入布线，尚非最终通过；93255新原生验收工具正反控制通过。记录work/YUZE-LU/130/validation/physical/README.md。最终STA/DRC/门级功能/严格LEC均待实际最终文件，本轮不能止于RTL阶段。父任务源和运行任务不变。
-
-2026-10-29 14:37 CST：Issue130独立分支task/130-m-feed-banked-store，从Issue121固定8b6b8d4分出；A128/B512 M、四bank16KiB S及固定在S内的供数器已实现。六项三初态18次通过；93233独立映射接收COMPLETED/0:0，M196088cells/867pins、S467658cells/966pins，旧失败保留。V/R/T源未改、真实S→M→T已测；完整M→V→R、生产调度及新M/S P&R/300MHz/RC/DRC/严格LEC仍待验。原全引出条带规则的尺寸成本已量化，未冻结扩大die。证据work/YUZE-LU/130，合同docs/BLOCK_FEED_V1.md，交接docs/handoffs/2026-10-29-issue-130-m-feed.md。父任务及PR122的源、状态、运行任务均未修改；以下原Issue121进度保留。登记PR5仍open/pending；无board.json，看板unverified/同步pending；审查人与管理员待指定。 草稿PR132待审查（Issue130=in_review，未done）；仅在此候选分支同步父4a0b04e并解决两处文档冲突，V group用run12重新三初态通过、旧源证据保留，M/S源不变。
+以下为父任务原进度，保留其原始事实，不由侧任务更新：
 
 2026-10-29 13:31 CST：V337实际CTS setup−0.41ns指向group_unit.sqrt_mode→余数（优化别名twice_remainder[29]），8原始文件/源网表映射保留，原337继续route。V348完整130bit分组减法同时产生无借位决策，不增寄存/迭代/周期；260bit无约束SAT及真实单bit负例、三初态/公共/扩展/组合/延迟/映射七项全过，447672单元、93204自然完成。349现有R311空闲80CPU七项占用/工作空间全过、53原始/39稳定/308源核验；135测量与340一致，80预算绑定349/R342且全部成本字段一致。350/351/352新链已stage/validate，354源5b659f1/配置8c45007及PID2486398两轮核验；只换347轻量控制，未分配338/339退休，350实际93210/node17于13:28:16提交并运行。初次10秒观察超时后按原PID恢复，未重启/重投。R342映射继续，344/345/346待真实前置；M/S/T接收保持、V/R最终未齐。Issue121=in_progress、PR122=draft，目标active；登记pending、看板unverified/同步pending，管理员/独立审查待指定。
 

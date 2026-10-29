@@ -361,7 +361,7 @@ python3 project/experiments/block_feed_v1/qualify.py function --source SEALED_FO
 python3 project/experiments/block_feed_v1/qualify.py formal --source SEALED_FOLDER --out GATES/formal-s --function GATES/function-s
 python3 project/experiments/block_feed_v1/qualify.py drc --source SEALED_FOLDER --out GATES/drc-s
 python3 project/experiments/block_feed_v1/qualify.py deliver --source SEALED_FOLDER --out ROOT/results/delivery-s/native --gates GATES
-python3 project/experiments/block_feed_v1/qualify.py geometry --source SEALED_FOLDER --out ROOT/results/delivery-s/geometry --gates GATES
+python3 project/experiments/block_feed_v1/qualify.py geometry --source ROOT/results/delivery-s/native --out ROOT/results/delivery-s/geometry
 python3 project/experiments/block_feed_v1/bundle.py --delivery ROOT/results/delivery-s/native --out ROOT/results/bundle-s
 ```
 
