@@ -482,6 +482,8 @@ def render(root,out):
         q=read(p);result[key]=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
         state=('终态；native='+str(q.get('native_returncodes'))+'；fresh DRC='+str(q.get('fresh_DRC_count','未执行'))) if q.get('completed_utc') else '运行中；缺终态项不记0/通过'
         upper_text+='<p><strong>'+title+'：</strong>'+state+'。SYSTEM使用原网实际via1/via2定义及原M1端点重接，不是修改最终LEF；单网物理改变、全部网连通/PG/RC/原SDC独立检查。MXU在原2172条真实父层路线/PG上换入新actual LEF/OBS，原pin层/尺寸/位置/语义保持，不剪真实OBS；它只复核接入，不是父层RC/STA或共同底座资格。原失败及输入SHA保留。</p>'
+        if key=='SYSTEM_actual_stacked_via_r01' and q.get('completed_utc'):
+            upper_text+='<p><strong>SYSTEM93072实际DRC修复已闭合，时序仍失败：</strong>fresh native='+str(q.get('fresh_DRC_count'))+'，setup/hold='+str(q.get('setup_ns'))+'/'+str(q.get('hold_ns'))+'ns、原文字违例'+str(q.get('literal_VIOLATED_markers_not_complete_failure_count'))+'。466332网/1474481端点所检连通、双PG/RCX/原SDC已执行，原cell/pose/连接/pin/PG/外框SHA保持；全部多端网WIRE/VIA矩形多重集比较只_215139_改变，其余466331网表示相同，不把矩形表示等同几何并集或RC等价。作业门槛保留负时序，Slurm FAILED不抹去fresh0事实，fresh0也不提升为全部资格。当前矩阵升级到实际新源，未导出新匹配研究视图或父层/完整GDS验证。</p>'
     p=snapshot/'logs/sta-coverage-api-r01-93075.log.gz'
     if p.exists():
         q={'job':'93075','state':'WRAPPER_FAILED_AFTER_NATIVE_CAPABILITY_LOG','error':'NameError: sha not imported while writing metadata','full_qualification':False,
@@ -495,14 +497,14 @@ def render(root,out):
     if extended:
         result['source_bound_extended_STA_r01']=extended
         upper_text+='<p>93076新的六块扩展STA：按各自已闭合实际ODB/SPEF/原SDC逐SHA重读，补查原生min pulse width、min period、max skew、gating setup/hold及min slew/cap/fanout，输出真实clock/skew/latency、约束与寄生覆盖。每块终态及源余量重放分别记录；未终态不当通过，派生path minimum period与缺失Liberty minimum_period规则严格区分。这个只读覆盖审计不改变设计，也不修复原负时序。</p>'
-        upper_text+='<table><thead><tr><th>扩展检查对象</th><th>原生执行</th><th>setup/hold原文重放</th><th>新增检查文字VIOLATED</th><th>证据</th></tr></thead><tbody>'
+        upper_text+='<table><thead><tr><th>扩展检查对象</th><th>实际源版本</th><th>原生执行</th><th>setup/hold原文重放</th><th>新增检查文字VIOLATED</th><th>证据</th></tr></thead><tbody>'
         for q in extended:
             complete=bool(q.get('completed_utc'));r=next(r for r in rows if r['case']==q['case'])
             r['source_bound_extended_STA_audit']={'completed':complete,'native_returncode':q.get('native_returncode'),
               'actual_source':q['actual_source'],'exact_slack_replay':q.get('source_worst_slacks_exactly_replayed'),
               'literal_VIOLATED_not_complete_rule_coverage':q.get('extended_literal_VIOLATED_rows_not_complete_rule_coverage'),
               'evidence':q['evidence'],'full_qualification':False}
-            upper_text+='<tr><td>'+html.escape(q['case'])+'</td><td>'+('return '+str(q.get('native_returncode')) if complete else '运行中')+'</td><td>'+str(q.get('source_worst_slacks_exactly_replayed','未取得'))+'</td><td>'+str(q.get('extended_literal_VIOLATED_rows_not_complete_rule_coverage','未知'))+'</td><td><a href="'+q['evidence']+'">原生回执/文件SHA</a></td></tr>'
+            upper_text+='<tr><td>'+html.escape(q['case'])+'</td><td>'+html.escape(q['actual_source'].split('/full-pin-20261027/',1)[-1])+'</td><td>'+('return '+str(q.get('native_returncode')) if complete else '运行中')+'</td><td>'+str(q.get('source_worst_slacks_exactly_replayed','未取得'))+'</td><td>'+str(q.get('extended_literal_VIOLATED_rows_not_complete_rule_coverage','未知'))+'</td><td><a href="'+q['evidence']+'">原生回执/文件SHA</a></td></tr>'
         upper_text+='</tbody></table><p>表中0只表示新增报表没有文字VIOLATED；不表示全部规则已定义或系统时序通过。原有setup/hold、电气、未标注寄生和minimum_period覆盖缺项仍独立保留。</p>'
     p=snapshot/'vector_clone_probe/r03/execution.json.gz'
     if p.exists():
@@ -634,6 +636,8 @@ def render(root,out):
     with (data/'qualification_matrix.csv').open('w',encoding='utf-8-sig',newline='') as f:
         w=csv.DictWriter(f,fieldnames=columns,lineterminator='\n');w.writeheader();w.writerows({k:r[k] for k in columns} for r in rows)
     labels={'COMPLETED':'已完成布线；非完整签核','COMPLETED_COSTED_ECO_NOT_PURE_XY':'成本ECO已布线',
+      'native_stacked_via/r01':'实际via叠放/r01','ACTUAL_STACKED_VIA_ROUTE_CHECKS_SEPARATE':'实际接线；检查分列',
+      'CURRENT_STACKED_VIA_GDS_NOT_EXECUTED_COVERAGE_GAPS':'新源GDS未验/覆盖缺口',
       'COMPLETED_BUT_NATIVE_DRC_FAILED':'已布线；native失败','NOT_TERMINAL':'尚未终态',
       'NATIVE_VDD_VSS_COMMANDS_EXECUTED':'双PG原生命令执行','NOT_YET_READ_FROM_STAGE_RECEIPT':'PG回执待核',
       'NOT_PASSED_OR_INCOMPLETE_COVERAGE':'未通过/规则覆盖不全','GDS_MERGED_DECK_NOT_TERMINAL':'GDS合并通过；deck未终态',

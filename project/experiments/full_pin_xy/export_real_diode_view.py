@@ -10,26 +10,32 @@ DRIVER=Path(__file__).resolve().parent
 
 
 def run(revision,kind='gemm658'):
-    assert kind in ['gemm658','mxu_pin_escape'];mxu=kind=='mxu_pin_escape';case='mxu' if mxu else 'gemm';count=2172 if mxu else 3753
-    source=ROOT/('pin_escape_route/r02/mxu-C' if mxu else 'antenna_incremental_eco/r01/gemm-C');receipt=source/'execution.json';j=json.loads(receipt.read_text())
-    out=ROOT/('pin_escape_views' if mxu else 'diode_views')/revision/(case+'-C');out.mkdir(parents=True,exist_ok=False)
-    rec={'scope':'REAL_M6_PIN_ESCAPE_ACCESS_AND_EXTRACTED_RESEARCH_VIEW_NOT_FULL_QUALIFICATION' if mxu else 'REAL_658_DIODE_ACCESS_AND_EXTRACTED_RESEARCH_VIEW_NOT_FULL_QUALIFICATION',
+    assert kind in ['gemm658','mxu_pin_escape','system_stacked_vias'];mxu=kind=='mxu_pin_escape';system=kind=='system_stacked_vias'
+    case,count,relative,family={'gemm658':('gemm',3753,'antenna_incremental_eco/r01/gemm-C','diode_views'),
+      'mxu_pin_escape':('mxu',2172,'pin_escape_route/r02/mxu-C','pin_escape_views'),
+      'system_stacked_vias':('opentpu_aux',2229,'system_stacked_via_route/r01/opentpu_aux-C','system_stacked_via_views')}[kind]
+    source=ROOT/relative;receipt=source/'execution.json';j=json.loads(receipt.read_text())
+    out=ROOT/family/revision/(case+'-C');out.mkdir(parents=True,exist_ok=False)
+    rec={'scope':'ACTUAL_SOURCE_BOUND_PHYSICAL_AND_EXTRACTED_RESEARCH_VIEW_NOT_FULL_QUALIFICATION',
       'source_kind':kind,
       'full_qualification':False,'source_receipt':str(receipt),'source_receipt_SHA256':sha(receipt),
       'original_M5_M6_pins_not_raised':True,'complete_rules_and_RTL_formal':'NOT_QUALIFIED',
       'scheduler_job':os.environ['SLURM_JOB_ID'],'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip()}
     try:
-        assert j.get('completed_utc') and j['native_returncodes']['implementation']==j['native_returncodes']['fresh_DRC']==0
+        assert j.get('completed_utc') and j['native_returncodes']['detailed_edit_and_analysis' if system else 'implementation']==j['native_returncodes']['fresh_DRC']==0
         assert j['fresh_DRC_count']==0 and j['whole_signal_geometry']['pass']
         if mxu:
             assert j['all_closed_sources_unchanged'] and j['container_libraries_unchanged']
             assert all(j['all_cells_poses_original_connections_pins_PG_die_unchanged'].values()) and j['all_original_pins_and_size_in_actual_new_LEF_identical']
+        elif system:
+            assert j['all_closed_sources_unchanged'] and all(j['original_cells_poses_signal_connections_pins_PG_die_unchanged'].values())
+            assert j['all_other_exported_multiterminal_route_box_multisets_identical'] and j['actual_changed_multiterminal_net_wire_via_box_multisets']==['_215139_']
         else:
             assert j['actual_total_real_diodes']==658 and j['all_original_instances_and_signal_graph_preserved_with_only_22_real_diode_loads']
             assert j['all_prior_functional_and_636_diode_poses_and_terminals_unchanged'] and all(j['pin_PG_die_unchanged'].values()) and j['all_sources_unchanged']
-        required=['detailed_route','VDD','VSS','whole_signal_geometry','rcx','sta']+([] if mxu else ['preserve_original_views'])
+        required=['native_one_net_detailed_routing' if system else 'detailed_route','VDD','VSS','whole_signal_geometry','rcx','sta']+([] if mxu or system else ['preserve_original_views'])
         assert all(j['native_stage_status'].get(s)=='EXECUTED' for s in required)
-        original=ROOT/('eco_views/r02/'+case+'-C');old=json.loads((original/'execution.json').read_text())
+        original=ROOT/('eco_views/'+('r03' if system else 'r02')+'/'+case+'-C');old=json.loads((original/'execution.json').read_text())
         assert sha(original/'abstract.lef')==old['files']['abstract.lef']['sha256']
         assert sha(original/'pins.tsv')==old['files']['pins.tsv']['sha256']
         trial=ROOT/('trials/access-r03/'+case+'-C/execution.json');baseline=json.loads(trial.read_text());sdc=Path(baseline['source_sdc'])
@@ -40,8 +46,10 @@ def run(revision,kind='gemm658'):
         rec.update({'source_SHA':inputs,'source_geometry_sha256':sha(odb),'source_SPEF_sha256':sha(spef),
           'source_native_DRC':0,'source_setup_ns':j['setup_ns'],'source_hold_ns':j['hold_ns'],
           'source_literal_violated_markers':j.get('literal_VIOLATED_markers_not_complete_failure_count')})
-        if not mxu:rec['separate_additional_diode_cost']=j['separate_additional_diode_cost']
-        else:rec['this_route_variant_new_cells_or_sizing']=0;rec['inherited_costed_source']='Original MXU costed/r04 one sizing is retained; not zero total ECO cost or pure XY benefit.'
+        if not (mxu or system):rec['separate_additional_diode_cost']=j['separate_additional_diode_cost']
+        else:
+            rec['this_route_variant_new_cells_or_sizing']=0
+            rec['inherited_costed_source']='All prior SYSTEM sizing/buffering/placement costs inherited; this route variant adds none; not zero total ECO cost or pure XY benefit.' if system else 'Original MXU costed/r04 one sizing is retained; not zero total ECO cost or pure XY benefit.'
         shutil.copyfile(str(odb),str(out/'clean.odb'));assert sha(out/'clean.odb')==sha(odb)
         common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp',
           '--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
@@ -60,9 +68,25 @@ def run(revision,kind='gemm658'):
         if mxu:
             lines+=['set ::env(PINXY_ACCESS_ALL) 0','set ::env(PINXY_ACCESS_NET_NAMES) {act_data[12]}',
               'set ::env(PINXY_ACCESS_OUT) '+tcl(out/'target_pin_access.tsv.gz'),'source '+tcl(DRIVER/'export_access.tcl')]
+        if system:
+            lines+=['set ::env(PINXY_ACCESS_ALL) 0','set ::env(PINXY_ACCESS_NET_NAMES) {_215139_}',
+              'set ::env(PINXY_ACCESS_OUT) '+tcl(out/'after_actual_target.tsv.gz'),'source '+tcl(DRIVER/'export_access.tcl'),
+              'report_check_types -min_pulse_width -min_period -max_skew -clock_gating_setup -clock_gating_hold -min_slew -min_capacitance -min_fanout -max_count 1000000 -digits 6 > '+tcl(out/'current_source_extended_checks_all.txt')]
         script=out/'export.tcl';script.write_text('\n'.join(lines)+'\n')
         rec['native_export_returncode']=execute(common,script,out/'export.log')
         assert rec['native_export_returncode']==0
+        if system:
+            ep=out/'current_source_extended_checks_all.txt'
+            rec['current_exact_source_extended_STA']={'native_command_executed':True,'literal_VIOLATED_rows_not_full_rule_coverage':ep.read_text().count('(VIOLATED)'),
+              'actual_report_SHA256':sha(ep),'applicability':'Only defined constraints under original source Lib/SDC; empty/undefined checks are not passed rules. Original negative setup/hold and library minimum_period coverage remain.'}
+            before=ROOT/'system_patch_route/r02/opentpu_aux-C';bp=before/'execution.json';previous=json.loads(bp.read_text())
+            assert previous.get('completed_utc') and previous['fresh_DRC_count']==2
+            before_odb=before/'routed.odb';assert sha(before_odb)==previous['files']['routed.odb']['sha256']
+            inputs.update({str(p):sha(p) for p in [bp,before_odb]})
+            rec['before_actual_geometry_sha256']=sha(before_odb)
+            script=out/'before_target.tcl';script.write_text('read_db '+tcl(before_odb)+'\nset ::env(PINXY_ACCESS_ALL) 0\nset ::env(PINXY_ACCESS_NET_NAMES) {_215139_}\nset ::env(PINXY_ACCESS_OUT) '+tcl(out/'before_actual_target.tsv.gz')+'\nsource '+tcl(DRIVER/'export_access.tcl')+'\n')
+            rec['before_target_actual_export_returncode']=execute(common,script,out/'before_target.log',threads=1)
+            assert rec['before_target_actual_export_returncode']==0
         rec['detailed_OBS_view_contract']=verify(out/'abstract.lef',out/'detailed.lef')
         assert parse(original/'abstract.lef')[:2]==parse(out/'abstract.lef')[:2]
         assert (original/'pins.tsv').read_bytes()==(out/'pins.tsv').read_bytes()
@@ -103,7 +127,7 @@ def run(revision,kind='gemm658'):
               'actual_M6_OBS_rectangles_um':local,'M6_polygon_lines_not_silently_treated_as_empty':polygons,
               'new_parent_access':'NOT_EXECUTED','DBU_per_um':2000,'full_qualification':False}
             (out/'actual_M6_OBS_context.json').write_text(json.dumps(context,indent=2)+'\n');rec['actual_M6_OBS_context']=context
-        rec['status']='ACTUAL_M6_ESCAPE_VIEW_EXPORTED_NOT_QUALIFIED_COMMON_BASE_OR_FULL_SYSTEM' if mxu else 'ACTUAL_REAL_DIODE_VIEW_EXPORTED_NOT_QUALIFIED_COMMON_BASE_OR_FULL_SYSTEM'
+        rec['status']='ACTUAL_SOURCE_VIEW_EXPORTED_NOT_QUALIFIED_COMMON_BASE_OR_FULL_SYSTEM'
     except Exception:rec['actual_failure']=traceback.format_exc()
     rec['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
     rec['files']={p.name:{'bytes':p.stat().st_size,'sha256':sha(p)} for p in out.iterdir() if p.is_file()}
