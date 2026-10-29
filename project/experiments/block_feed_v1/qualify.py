@@ -193,10 +193,17 @@ def final_formal(folder,out,run,function_folder):
     for polarity in (0,1):
         p=control/str(polarity);p.mkdir()
         projection(ROOT,p,1,lambda cmd,log:run(cmd,'control-'+str(polarity)+'-'+log),polarity)
-    fr=json.loads((function_folder/'receipt.json').read_text());assert fr['passed']
-    f=function_folder/'final-function.json';assert sha(f)==fr['outputs'][f.name]
-    fn=json.loads(f.read_text());assert fn['passed'] and fn['source_receipt_sha256']==sha(folder/'receipt.json')
-    actual=Path(fn['full_final_netlist']['full_view']);assert sha(actual)==fn['full_final_netlist']['full_view_sha256']==fr['outputs'][str(actual.relative_to(function_folder))]
+    # The fully exported immutable view is the computation dependency, whereas
+    # a successful function receipt is still an unconditional acceptance gate.
+    # Start expensive LEC while the same view is compiled/simulated, then join
+    # both receipts below. Nothing can be accepted from an incomplete function.
+    view_file=function_folder/'physical-functional-proof.json'
+    view=json.loads(view_file.read_text());view_sha=sha(view_file)
+    assert view['passed']
+    assert view['input_sha256'][str(results/'6_final.odb')]==flow['final_files']['6_final.odb']['sha256']
+    assert view['input_sha256'][str(results/'6_final.v')]==flow['final_files']['6_final.v']['sha256']
+    actual=Path(view['full_view']);assert actual==function_folder/'physical-functional.v'
+    actual_sha=sha(actual);assert actual_sha==view['full_view_sha256']
     before,bproof=export(ROOT,out,run,results/'1_synth_lec.v',LIB,top,'before',constant_functions=True)
     after,aproof=export(ROOT,out,run,actual,LIB,top,'after',constant_functions=True)
     assert bproof['removed_count']==0 and aproof['removed_count']>0
@@ -205,6 +212,11 @@ def final_formal(folder,out,run,function_folder):
     binary=Path('/OpenROAD-flow-scripts/tools/install/kepler-formal/bin/kepler-formal')
     run([binary,'--config',out/'kepler.yml'],'formal.log')
     received=inspect((out/'kepler.log').read_text())
+    fr=json.loads((function_folder/'receipt.json').read_text());assert fr['passed']
+    f=function_folder/'final-function.json';assert sha(f)==fr['outputs'][f.name]
+    fn=json.loads(f.read_text());assert fn['passed'] and fn['source_receipt_sha256']==sha(folder/'receipt.json')
+    assert fn['full_final_netlist']==view and sha(view_file)==view_sha==fr['outputs'][view_file.name]
+    assert sha(actual)==actual_sha==fn['full_final_netlist']['full_view_sha256']==fr['outputs'][str(actual.relative_to(function_folder))]
     result=dict(passed=received['passed'],top=top,strict_native_lec=received,before=bproof,after=aproof,
                 source_receipt_sha256=sha(folder/'receipt.json'),function_receipt_sha256=sha(function_folder/'receipt.json'),
                 log_sha256=sha(out/'kepler.log'),binary_sha256=sha(binary),qualified_hard_macro=False)
