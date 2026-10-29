@@ -343,3 +343,33 @@ python -X utf8 project/experiments/block_feed_v1/plan.py --mapping work/YUZE-LU/
 ```
 
 `plan.py`的全部端口引出诊断不等于新宏尺寸决定。必须重新验M/S接点、实际负载和完整P&R；不得沿用旧300MHz结果。
+
+
+## Issue130：新 M/S 原生物理验收与交付重跑入口
+
+本侧任务在独立分支/不可变服务器目录运行，不复用旧宏资格。精确实现、已接受M原始证据和当前S进度见 `docs/BLOCK_FEED_V1.md`、`work/YUZE-LU/130/validation/physical/ACCEPTED_M.md` 与 `docs/handoffs/2026-10-29-issue-130-m-feed.md`。实际EDA只在授权Slurm计算节点/固定SHA容器运行，各个门16CPU；有依赖时afterok补位，不整批等待。
+
+在已有准确源字节/工具环境下，新的原生P&R入口为：
+```bash
+python3 project/experiments/block_feed_v1/physical.py --top block_feed_s_macro --mapping MAP_FOLDER --out NEW_NATIVE_FOLDER --remove-abc-buffers --input-receivers --placement-mode geometric --fanout-mode partition --hold-repair-margin 0
+# 已完成GRT的限定修复：来源回执/成功CTS/RTL/config逐SHA绑定；输出须全新。
+python3 project/experiments/block_feed_v1/repair.py --source EXACT_GRT_FOLDER --out NEW_NATIVE_FOLDER --from-grt --closure-hook measured_s_hold.tcl
+# 以下每条需独立全新输出；SOURCE_FOLDER为成功原生输出，SEALED_FOLDER为seal输出。
+python3 project/experiments/block_feed_v1/qualify.py seal --source SOURCE_FOLDER --out SEALED_FOLDER
+python3 project/experiments/block_feed_v1/qualify.py physical --source SEALED_FOLDER --out GATES/physical-s
+python3 project/experiments/block_feed_v1/qualify.py function --source SEALED_FOLDER --out GATES/function-s --peer EXACT_ACCEPTED_M_SOURCE
+python3 project/experiments/block_feed_v1/qualify.py formal --source SEALED_FOLDER --out GATES/formal-s --function GATES/function-s
+python3 project/experiments/block_feed_v1/qualify.py drc --source SEALED_FOLDER --out GATES/drc-s
+python3 project/experiments/block_feed_v1/qualify.py deliver --source SEALED_FOLDER --out ROOT/results/delivery-s/native --gates GATES
+python3 project/experiments/block_feed_v1/qualify.py geometry --source SEALED_FOLDER --out ROOT/results/delivery-s/geometry --gates GATES
+python3 project/experiments/block_feed_v1/bundle.py --delivery ROOT/results/delivery-s/native --out ROOT/results/bundle-s
+```
+
+`remote_repair.sh ROOT GRT_SOURCE OUT --from-grt measured_s_hold.tcl` 与 `remote_gate.sh ROOT OP SOURCE OUT [--peer PEER|--function FUNCTION|--gates GATES]` 负责固定image SHA、16CPU及内存接纳。首个seal/全部门通过之前不能称最终候选；delivery要求四门同source receipt SHA。实际GDS DRC为完整未修改FreePDK45规则，禁止跳过FEOL/天线/offgrid。几何输出提供候选LEF和原生矩形/接点覆盖，不授予层级Liberty/abstract coverage或M11/M12系统资格。
+
+本地收到原始bundle.json及tar.gz后执行（已有unpacked时只逐字节核验，不覆盖原文件）：
+```powershell
+python -X utf8 project/experiments/block_feed_v1/verify_bundle.py D:/Data/LLMHardwareDesign-issue130-runtime/deliverables/M
+python -X utf8 project/experiments/block_feed_v1/verify_evidence.py
+```
+第二条仅核验保存的原始证据及源字节，不重跑EDA。M已实收并核验；S必须等完整通过后才能同样登记。
