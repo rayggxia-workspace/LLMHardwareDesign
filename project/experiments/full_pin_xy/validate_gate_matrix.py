@@ -752,6 +752,68 @@ def check(out):
         current=json.loads(raw);assert not current['full_qualification'] and not current.get('completed_utc')
         assert current['native_returncodes']['actual_edit_and_geometry_export']==0 and len(current['complete_pin_contract']['only_changed_XY_pins'])==10261
         assert current['complete_pin_contract']['all_signal_pins']==13507 and all(current['all_original_cells_signal_connections_PG_die_unchanged'].values())
+    q=j.get('GUIDE_metadata_control_r02',{})
+    if q.get('completed_utc'):
+        assert not q['full_qualification'] and q['all_closed_sources_unchanged']
+        assert q['original_guide_count']==11115 and q['remaining_guide_count']==0 and q['all_original_checks_retained']
+        assert q['native_returncodes']=={'metadata_copy_and_physical_exports':0,'original_fresh_DRC':0,'guide_free_fresh_DRC':0}
+        assert all(q['all_native_physical_fingerprints_unchanged'].values()) and q['all_original_OBS_preserved'] and q['all770_native_WIRE_VIA_terminal_exports_byteexact']
+        closed_dir=(out/q['evidence']).parent
+        a=gzip.decompress(gzip.decompress((closed_dir/'before_access.tsv.gz.gz').read_bytes()))
+        b=gzip.decompress(gzip.decompress((closed_dir/'after_access.tsv.gz.gz').read_bytes()))
+        assert a==b
+        from check_access import check_rows
+        actual=check_rows(list(csv.DictReader(io.StringIO(a.decode()),delimiter='\t')),True)
+        assert actual['pass'] and actual['checked_nets']==770 and actual['checked_terminals']==1540
+        assert gzip.decompress((closed_dir/'original.drc.gz').read_bytes())==gzip.decompress((closed_dir/'guide_free.drc.gz').read_bytes())
+        assert q['original_native_DRC_count']==q['guide_free_native_DRC_count']==2 and q['all_native_DRC_markers_byteexact']
+        for name,expected in [('original',11115),('guide_free',0)]:
+            log=gzip.decompress((closed_dir/(name+'.log.gz')).read_bytes()).decode()
+            assert re.findall(r'Number of guides:\s*(\d+)',log)==[str(expected)]
+        def normalized_native_check(name):
+            text=gzip.decompress((closed_dir/(name+'_fresh.tcl.gz')).read_bytes()).decode()
+            text=re.sub(r'read_db \{[^}]+\}','read_db SOURCE',text)
+            return re.sub(r'-output_file \{[^}]+\}','-output_file OUTPUT',text)
+        assert normalized_native_check('original')==normalized_native_check('guide_free')=='read_db SOURCE\nset_routing_layers -signal metal11-metal12 -clock metal11-metal12\ndrt::check_drc -output_file OUTPUT\n'
+    q=j.get('GUIDE_metadata_control_r01_counter_invalid',{})
+    if q.get('completed_utc'):
+        assert not q['full_qualification'] and q['original_guide_count']==1
+        closed_dir=(out/q['evidence']).parent
+        log=gzip.decompress((closed_dir/'original.log.gz').read_bytes()).decode()
+        assert re.findall(r'Number of guides:\s*(\d+)',log)==['11115']
+        assert q['original_guide_count']!=11115 # Preserve and reject the old overwritten counter as inventory evidence.
+    q=j.get('LLSYSTEM_actual_10261_access_ECO_r01',{})
+    if q.get('completed_utc'):
+        assert not q['full_qualification'] and q['all_closed_sources_unchanged'] and q['fresh_DRC_count']==2
+        assert q['native_returncodes']=={'actual_edit_and_geometry_export':0,'fresh_DRC':0,'RC_STA':0}
+        assert q['whole_signal_geometry']['pass'] and q['whole_signal_geometry']['checked_nets']==725253 and q['whole_signal_geometry']['checked_terminals']==2325528
+        assert q['all_725253_original_WIRE_VIA_rectangle_multisets_identical'] and q['new_cells_or_sizes']==0
+        assert len(q['complete_pin_contract']['only_changed_XY_pins'])==10261 and q['complete_pin_contract']['all_signal_pins']==13507
+        assert all(q['all_original_cells_signal_connections_PG_die_unchanged'].values())
+        assert all(q['native_edit_stage_status'][k]=='EXECUTED' for k in ['actual_existing_metal_pin_edit','VDD','VSS','whole_signal_geometry'])
+        assert q['native_RC_STA_stage_status']=={'rcx':'EXECUTED','sta':'EXECUTED'}
+        assert q['setup_ns']==-3.909029 and q['hold_ns']==-.587515 and q['literal_VIOLATED_markers_not_complete_failure_count']==8875
+        closed_dir=(out/q['evidence']).parent
+        drc=gzip.decompress((closed_dir/'independent.drc.gz').read_bytes()).decode()
+        assert re.findall(r'^violation type: (.*)$',drc,re.M)==['Metal Spacing','Metal Spacing'] and set(re.findall(r'net:(\S+)',drc))=={'bit_433'}
+        table=list(csv.DictReader(io.StringIO(gzip.decompress((closed_dir/'all_13507_actual_pin_correspondence.csv.gz').read_bytes()).decode())))
+        assert len(table)==13507 and len({r['pin'] for r in table})==13507 and sum(r['changed_from_complete_PG_C']=='True' for r in table)==10261
+        assert rows['llaccel_aux']['newer_attempt']['actual_10261_access_ECO']['status']=='FAILED_NATIVE2_AND_NEGATIVE_STA'
+    q=j.get('LLSYSTEM_old_pin_metal_spacing_diagnosis_r01',{})
+    if q.get('completed_utc'):
+        assert not q['full_qualification'] and q['all_closed_sources_unchanged'] and q['actual_target_rows_before_after']==[71,71]
+        assert q['actual_old_pin_metal_removed_DBU2']==19600 and q['old_pin_area_DBU2']==78400 and q['old_pin_covered_by_remaining_WIRE_VIA_DBU2']==58800
+        closed_dir=(out/q['evidence']).parent
+        tables=[list(csv.DictReader(io.StringIO(gzip.decompress((closed_dir/(label+'_failed_nets.tsv.gz')).read_bytes()).decode()),delimiter='\t')) for label in ['before','after']]
+        key=lambda r:tuple(r[k] for k in ['net','kind','layer','x0','y0','x1','y1','link'])
+        assert Counter(key(r) for r in tables[0] if r['kind']!='BTERM')==Counter(key(r) for r in tables[1] if r['kind']!='BTERM')
+        assert [len(r) for r in tables]==[71,71] and q['all_actual_target_WIRE_VIA_and_internal_endpoints_exact']
+        ext=q['proposed_exact_wire_extensions_NOT_IMPLEMENTED'];assert len(ext)==1 and ext[0]['actual_old_WIRE_box_DBU']==[3975490,2411220,3975910,2411500] and ext[0]['proposed_new_WIRE_box_DBU']==[3975490,2411220,3976140,2411500]
+        figure=j.get('LLSYSTEM_actual_owned_cap_spacing_figure');assert figure and not figure['full_qualification'] and not figure['proposed_repair_implemented']
+        assert figure['actual_lost_metal_DBU2']==19600 and figure['actual_pin_boxes_DBU']==q['old_new_actual_M5_pin_boxes_DBU']
+        assert sum((b[2]-b[0])*(b[3]-b[1]) for b in figure['lost_metal_rectangles_DBU'])==19600
+        assert figure['diagnosis_receipt_SHA256']==hashlib.sha256(gzip.decompress((closed_dir/'execution.json.gz').read_bytes())).hexdigest()
+        assert len(figure['actual_native_M5_spacing_markers_um'])==2
     ram=j.get('NATIVE_RAM_capability_r01',{})
     if ram.get('completed_utc'):
         assert ram['native_probe_returncode']==0 and ram['generate_ram_present'] and not ram['generated_memory'] and not ram['existing_leaf_or_fake_memory_modified'] and not ram['full_qualification']

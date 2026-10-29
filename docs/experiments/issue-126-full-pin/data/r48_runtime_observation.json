@@ -1,0 +1,54 @@
+{
+  "observed_utc": "2026-10-29T10:44:43.494984+00:00",
+  "scope": "BOUNDED_TRUE_RUNTIME_AND_TERMINAL_OBSERVATION_NOT_PHYSICAL_QUALIFICATION",
+  "full_qualification": false,
+  "actual_scheduler_command": "sacct -n -X -j 92855,93217,93239,93243,93269,93317,93343,93363,93365 --format=JobID,State,ExitCode,Elapsed",
+  "actual_scheduler_text": "92855           RUNNING      0:0   19:41:38 \n93217           RUNNING      0:0   05:04:30 \n93239           RUNNING      0:0   04:07:36 \n93243           RUNNING      0:0   03:44:09 \n93269           RUNNING      0:0   03:08:26 \n93317           RUNNING      0:0   01:38:51 \n93343            FAILED      1:0   00:40:11 \n93363         COMPLETED      0:0   00:00:11 \n93365         COMPLETED      0:0   00:00:10 \n",
+  "guide_counter_diagnosis": {
+    "job93363_receipt_original_guide_count": 1,
+    "independent_native_original_log_actual_guide_count": 11115,
+    "cause": "export_access.tcl global count overwrote caller count before receipt write",
+    "old_counter_valid_inventory": false,
+    "old_receipt_rewritten": false,
+    "job93365_corrected_actual_counts": [
+      11115,
+      0
+    ],
+    "actual_both_DRC_counts": [
+      2,
+      2
+    ],
+    "geometry_and_DRC_markers_byteexact": true,
+    "performance_gain_proven": false
+  },
+  "current_leaf_guide_free_status": "PREPARED_NOT_SUBMITTED. Use terminal93343 native2 as real control, reproduce exact markers before wire repair; no performance gain claimed.",
+  "entire_goal": "ACTIVE_UNFINISHED all six physical qualification/common qualified freeze/two modes/fair optimized perimeter comparison",
+  "actual_10261_pin_terminal": {
+    "job": "93343",
+    "status": "FAILED",
+    "fresh_DRC": 2,
+    "failed_net": "bit_433",
+    "rule": "Metal Spacing metal5",
+    "all13507_pin_contract": true,
+    "all725253_signal_clock_geometry": true,
+    "all_original_WIRE_VIA_multisets_exact": true,
+    "max_min_ns": [
+      -3.909029,
+      -0.587515
+    ],
+    "source_unchanged": true
+  },
+  "actual_metal_loss_diagnosis": {
+    "job": "93366",
+    "target_actual_rows_before_after": [
+      71,
+      71
+    ],
+    "measured_old_pin_metal_lost_DBU2": 19600,
+    "measured_old_pin_metal_lost_um2": 0.0049,
+    "proposed_one_M5_extension_um": 0.115,
+    "repair_implemented": false,
+    "all_10261_new_points_to_retain": true
+  },
+  "one_wire_restore_status": "PREPARED_NOT_SUBMITTED. Requires successful full-source physical/native failure control; original negative STA kept."
+}

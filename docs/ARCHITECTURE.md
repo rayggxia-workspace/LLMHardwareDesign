@@ -200,3 +200,6 @@ Issue126原生共享导体：audit_actual_shared_conductors.py从真实fixed_pre
 
 
 Issue126 R47：`all_llsys_access_caps_job.sh NEW_REV via_then_wire`只读审计真实同网via及WIRE双轨道点，`llsys_residual_pin_job.sh NEW_REV`逐位读取剩余87位真实端点；不能将候选/未使用声明与实际接入混写。`llsys_owned_cap_access_job.sh NEW_REV`在新目录执行原生pin-only接入ECO，保留原WIRE/VIA/stub成本，独立完整pin/单元/PG/全网/fresh/RC-STA，父层AP另验。`obs_union_api_job.sh NEW_REV`核实已安装KLayout含孔整数并集分解；`obs_union_compaction_job.sh NEW_REV`对闭合四tip源实际M1-M3 OBS做整数XOR/非目标字节/pin/尺寸及OpenDB逐矩形导入核对。几何分解等价仍不替代router/DRC、PG、父层接入或系统资格。所有脚本使用获授权ROOT、已提交独立driver及hpy-Slurm资源，不覆盖活动输出。最新运行/终态与raw SHA见qualification_matrix.json及R47交接。
+
+
+Issue126 R48：`guide_free_drc_probe_job.sh NEW_REV`对真实770支路失败只移除dbGuide副本元数据，独立核对物理导出及两份同命令DRC；r01计数被导出器覆盖的原文保留，r02实际11115→0且两Short不变，未证明性能收益。`sbatch --cpus-per-task=2 .../guide_free_drc_probe_job.sh NEW_REV owned_cap_stage`进一步对当前10261-pin实际源做同物理全叶控制，绑定已完成的原编辑/DRC阶段、BPin及全网输出，保留原M2-M8信号/M4-M8时钟范围。只有完整物理导出与原生失败marker相同，`owned_cap_wire_restore_job.sh NEW_REV`才会尝试一个M5线尾恢复；预备驱动保持10261新接点及原层/尺寸/语义/全部via。原93343的native2与负时序不会被小样、脚本准备或Slurm状态掩盖。`owned_cap_spacing_diagnosis_job.sh NEW_REV`及`plot_owned_cap_spacing.py TERMINAL_DIR REPORT`复用真实前后71行，量化旧BPin移走的0.0049μm²金属，不把图中候选线尾当已执行。

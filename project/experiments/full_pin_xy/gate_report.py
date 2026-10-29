@@ -905,6 +905,10 @@ def render(root,out):
                       ('LLSYSTEM_all87_actual_residual_peers','llsys_residual_pin_audit/r01'),
                       ('OBS_exact_union_installed_API_r01','obs_union_api/r01'),
                       ('OBS_actual_exact_union_import_r01','obs_union_compaction/r01'),
+                      ('GUIDE_metadata_control_r01_counter_invalid','guide_free_DRC_probe/r01'),
+                      ('GUIDE_metadata_control_r02','guide_free_DRC_probe/r02'),
+                      ('LLSYSTEM_actual_10261_access_ECO_r01','llsys_owned_cap_access/r01'),
+                      ('LLSYSTEM_old_pin_metal_spacing_diagnosis_r01','owned_cap_spacing_diagnosis/r01'),
                       ('MXU_clock_bound_parent_recheck_r02','escape_view_recheck/r02/mxu-C'),
                       ('MXU_clock_bound_parent_recheck_r03','escape_view_recheck/r03/mxu-C')]:
         p=snapshot/rel/'execution.json.gz'
@@ -932,6 +936,10 @@ def render(root,out):
                         'LLSYSTEM_all87_actual_residual_peers':'llsys-residual-pin-r01',
                         'OBS_exact_union_installed_API_r01':'obs-union-api-r01',
                         'OBS_actual_exact_union_import_r01':'obs-union-compaction-r01',
+                        'GUIDE_metadata_control_r01_counter_invalid':'guide-free-drc-probe-r01',
+                        'GUIDE_metadata_control_r02':'guide-free-drc-probe-r02-full-geometry',
+                        'LLSYSTEM_actual_10261_access_ECO_r01':'llsys-owned-cap-access-r01',
+                        'LLSYSTEM_old_pin_metal_spacing_diagnosis_r01':'owned-cap-spacing-diagnosis-r01',
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
         update=root/'gate_terminal_updates'/terminal_names.get(label,'NO_TERMINAL_UPDATE')
         terminal_evidence=None
@@ -975,6 +983,23 @@ def render(root,out):
             assert q['all_closed_sources_unchanged'] and q['all_original_native_PIN_rectangles_directions_USE_layers_size_exact']
             assert q['native_OpenDB_import_all_compacted_rectangle_multisets_exact'] and q['all_13507_signal_interfaces_imported']
             upper_text+='<p><strong>93349真实OBS几何压缩及原生导入已完成：</strong>源是闭合四tip版本，不是活动10261-pin源。M1–M3逐层原并集与矩形分解/写出重读的整数XOR均为空，目标RECT之外所有原字节保留；原/新LEF分别原生导入，13507信号接口及PG/pin方向/USE/层/尺寸完全一致，新矩形多重集导入精确。M1矩形17025623→14242709，M2 4309362→4309362，M3 2234357→2185782；仅表示对象分解数量减少，占用几何不变，不是释放金属/面积/拥塞收益。大LEF/原生OBS留远程SHA索引，回执及pin导入原文已归档。尚未验证router/DRC对新分段的处理、父层AP/实际布线或RC-STA，未推广到当前叶块/底座，更不是缺失SRAM GDS的替代品。</p>'
+        if label=='GUIDE_metadata_control_r01_counter_invalid':
+            upper_text+='<p><strong>93363旧guide对照的计数字段无效：</strong>after-access导出脚本覆盖全局count，原回执original_guide_count=1不是实际guide数量，不能用于规模/性能判断。原生日志实际11115→0，物理导出和两Short对照结果保留，但原计数不修改、不当作有效计数证明。93365在新目录保护变量并增加独立原生日志一致性断言，结果分列。</p>'
+        if label=='GUIDE_metadata_control_r02':
+            assert q['original_guide_count']==11115 and q['remaining_guide_count']==0 and q['all_native_DRC_markers_byteexact']
+            assert q['original_native_DRC_count']==q['guide_free_native_DRC_count']==2
+            upper_text+='<p><strong>93365真实guide元数据对照已完成：</strong>只在新副本删除11115个dbGuide对象，独立原生读回0；770网全部WIRE/VIA/端点导出逐字节相同，pin/cell/PG/外框及OBS保持。两份隔离进程使用同一DRC命令及M11–M12范围，均保留相同两Short，marker逐字节一致，未删物理对象或规则。原/无guide检查分别约3.264/3.307秒，本小样没有可依赖的加速结论；不是加速了当前全叶块或解除了短路。它只支持继续对当前6,191,783-guide叶块做隔离的元数据变量试验；该全叶检查脚本已准备，尚未提交，原93343继续，不取消/覆盖。完整RC/STA、父层AP与系统资格仍未完成。</p>'
+        if label=='LLSYSTEM_actual_10261_access_ECO_r01':
+            assert q['fresh_DRC_count']==2 and q['whole_signal_geometry']['pass'] and q['all_725253_original_WIRE_VIA_rectangle_multisets_identical']
+            r=next(r for r in rows if r['case']=='llaccel_aux');r.setdefault('newer_attempt',{})['actual_10261_access_ECO']={'status':'FAILED_NATIVE2_AND_NEGATIVE_STA','evidence':e,'original_pins':13507,'actual_moved_pins':10261,'fresh_native_findings':2,'max_min_ns':[q['setup_ns'],q['hold_ns']]}
+            upper_text+='<p><strong>93343已收齐终态，整体FAILED：</strong>原生编辑/独立fresh/RC-STA进程均0，13507位原层/尺寸/方向/逐bit网络、原单元/连接/PG/外框合同及双PG通过；725253网/2325528端点/28517812形状所检连通，全网原WIRE/VIA矩形多重集保持。但fresh出现两项同网bit_433的M5 Metal Spacing，max/min仍−3.909029/−0.587515ns、8875文字VIOLATED；不能因过程0、全网连通或少一条marker称物理/时序通过。0新单元/换型，10261个真实内部接点不撤回边界；主矩阵保留native0旧源，此新native2变体单列，不冒充已合格视图。父层AP/完整规则/GDS/RTL未验。<a href="'+(p.parent/'all_13507_actual_pin_correspondence.csv.gz').relative_to(out).as_posix()+'">实际完整13507位原生前后坐标/属性CSV（不是候选表）</a>。</p>'
+        if label=='LLSYSTEM_old_pin_metal_spacing_diagnosis_r01':
+            assert q['actual_old_pin_metal_removed_DBU2']==19600 and q['actual_target_rows_before_after']==[71,71]
+            upper_text+='<p><strong>93366实际几何诊断：</strong>bit_433前后各71行，WIRE/VIA及内部端点完全相同，但旧BPin移走后原位置实际少19600 DBU²=0.0049μm²金属，证明“WIRE/VIA没变”不等于全部导体占用没变。两项同网间距报项位于该局部。找到一条原M5线尾可延长0.115μm，其新矩形并集精确等于原线加旧pin占用；这是候选局部修复，尚未执行或DRC证明，不恢复旧pin位置、不移动新接点/层/通孔，也不改架构。保留此失败与真实坐标，继续原生修复。</p>'
+            figure=data/'llsys_owned_cap_spacing_figure.json'
+            if figure.exists():
+                result['LLSYSTEM_actual_owned_cap_spacing_figure']=read(figure)
+                upper_text+='<figure><img src="assets/llsys_owned_cap_spacing.png" alt="LL SYSTEM原生pin移动前后及同网M5间距失败"><figcaption>第38组真实前后图：同坐标/尺度，pin为原生0.14μm；粉色仅标记移走后少掉的旧pin金属，虚线是旧位置参考，不是当前金属。背景只含本信号网，不把未绘的PG/异网/OBS视为空白。修复未实施。<a href="assets/llsys_owned_cap_spacing.svg">SVG</a> · <a href="data/llsys_owned_cap_spacing_figure.json">图的来源/精确面积与原生marker</a></figcaption></figure>'
         if label.startswith('RAM_sync_wrapper_failed_'):
             assert not q['behavioral_wrapper_equivalence_proven_in_stated_scope']
             upper_text+='<p>RAM行为包装原试验提前失败，实际等价证明未完成：r01标识符转义、r02缺少wire重命名的模块上下文。原脚本/输入/日志均保留；属于驱动错误，不能误写为功能反例，也不删除后续证明断言。</p>'
@@ -1126,6 +1151,13 @@ def render(root,out):
             upper_text+='<p>R47早先观察中的93349运行状态现由已归档终态覆盖：几何并集/非目标字节及OpenDB逐矩形导入通过，router/DRC/父层AP兼容仍未验证；未推广当前93343或底座，旧/新pin epoch分别记录。</p>'
         else:
             upper_text+='<p>93349实际OBS试验日志已处理M1：17025623→14242709个矩形，只是分解数量变化；完整源/写出XOR及OpenDB导入结果尚无终态，未推广到当前93343或父层，未称接入/拥塞/面积收益。旧源M1–M3几何原样的证据和不同pin epoch必须分开；原活跃driver与物理源保持。</p>'
+    runtime=data/'r48_runtime_observation.json'
+    if runtime.exists():
+        observed=read(runtime);assert not observed['full_qualification'];result['latest_runtime_observation']=runtime.relative_to(out).as_posix()
+        upper_text+='<p><a href="data/r48_runtime_observation.json">R48带时间的终态/活动观察及guide计数错误诊断</a>。小样两Short原样保留、没有性能收益声明；全叶guide-free副本尚未执行，不能以准备或小样成功替代实际全块验证。六块资格/共同合格冻结/两完整功能及公平系统对照保持未完成。</p>'
+        if result.get('LLSYSTEM_actual_10261_access_ECO_r01',{}).get('completed_utc'):
+            upper_text+='<p><strong>最新终态覆盖旧运行观察：</strong>93343已因native2/负时序失败，原R47活动JSON仅是当时快照。全块guide-free对照会使用其已完成的真实失败作为控制，保留原DRC结果；之后只有对照物理导出和原生marker完全相同，才允许尝试上述单M5线尾修复。两份脚本仍待实际执行，不把准备称为修复通过。</p>'
+            upper_text=upper_text.replace('原93343继续，不取消/覆盖','原93343失败终态保留，不重提或覆盖')
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',
