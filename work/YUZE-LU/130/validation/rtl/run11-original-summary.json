@@ -1,0 +1,263 @@
+{
+  "passed": true,
+  "source_commit": "fa4c6ccf35750dbf385fadff974c9bfedb9e688b",
+  "working_tree_source_hashes_in_receipts": true,
+  "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+  "elapsed_seconds": 13.836004257202148,
+  "cpu_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23
+  ],
+  "workers": 2,
+  "build_jobs": 4,
+  "results": [
+    {
+      "passed": true,
+      "model": "r",
+      "top": "block_v1_r",
+      "command": [
+        "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/tools/bin/verilator",
+        "-Wno-fatal",
+        "--cc",
+        "--exe",
+        "--build",
+        "-j",
+        "4",
+        "--top-module",
+        "block_v1_r",
+        "--Mdir",
+        "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/run11/r/obj",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "--output-split",
+        "20000",
+        "--output-split-cfuncs",
+        "200",
+        "-CFLAGS",
+        "-std=c++17 -O1",
+        "-I/mnt/d/Data/LLMHardwareDesign-issue130-runtime/src/project/rtl/block_library_v1",
+        "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/src/project/rtl/block_library_v1/block_v1_r.sv",
+        "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/run11/r/adapted-fixture.cpp"
+      ],
+      "source_sha256": {
+        "project/rtl/block_library_v1/block_v1_r.sv": "4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d",
+        "project/experiments/block_v1/test_recurrent_macro.cpp": "ebb386b61800b8267756ba94d14a4cd361e3a04ccec8a003310803d65d009d73",
+        "project/experiments/block_feed_v1/run.py": "bfc7c1c49012f8d94225813407f3343b8df504fd7dd249667edc1d8e7ec639b3"
+      },
+      "runs": [
+        {
+          "initial_mode": 1,
+          "seed": 130,
+          "result": {
+            "passed": true,
+            "random_recurrent_cases": 240,
+            "conv_cases": 100,
+            "checks": 379979,
+            "cycles": 178456
+          },
+          "result_sha256": "4e5b3ea6482eb36ebaf7bfa96eaa196108b43706c458b4097723ce5302291bf1"
+        },
+        {
+          "initial_mode": 2,
+          "seed": 130,
+          "result": {
+            "passed": true,
+            "random_recurrent_cases": 240,
+            "conv_cases": 100,
+            "checks": 379979,
+            "cycles": 178456
+          },
+          "result_sha256": "4e5b3ea6482eb36ebaf7bfa96eaa196108b43706c458b4097723ce5302291bf1"
+        },
+        {
+          "initial_mode": 2,
+          "seed": 131,
+          "result": {
+            "passed": true,
+            "random_recurrent_cases": 240,
+            "conv_cases": 100,
+            "checks": 379979,
+            "cycles": 178456
+          },
+          "result_sha256": "4e5b3ea6482eb36ebaf7bfa96eaa196108b43706c458b4097723ce5302291bf1"
+        }
+      ],
+      "fixture_adaptation": {
+        "reason": "Construct DUT after commandArgs for actual randomized initial states",
+        "original": "project/experiments/block_v1/test_recurrent_macro.cpp",
+        "original_sha256": "ebb386b61800b8267756ba94d14a4cd361e3a04ccec8a003310803d65d009d73",
+        "generated_sha256": "4acecaa280339d0203af107caafb2a9da2e82e2ca4cc38b42cd5581187d8c6ff",
+        "declaration_before": "static Vblock_v1_r dut;",
+        "declaration_after": "static Vblock_v1_r* dut_ptr;\n#define dut (*dut_ptr)\n",
+        "entry_before": "Verilated::commandArgs(argc,argv);",
+        "entry_after": "Verilated::commandArgs(argc,argv);dut_ptr=new Vblock_v1_r;"
+      },
+      "physical_qualified": false
+    },
+    {
+      "passed": true,
+      "model": "v",
+      "top": "block_v1_v",
+      "command": [
+        "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/tools/bin/verilator",
+        "-Wno-fatal",
+        "--cc",
+        "--exe",
+        "--build",
+        "-j",
+        "4",
+        "--top-module",
+        "block_v1_v",
+        "--Mdir",
+        "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/run11/v/obj",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "--output-split",
+        "20000",
+        "--output-split-cfuncs",
+        "200",
+        "-CFLAGS",
+        "-std=c++17 -O1",
+        "-I/mnt/d/Data/LLMHardwareDesign-issue130-runtime/src/project/rtl/block_library_v1",
+        "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/src/project/rtl/block_library_v1/block_v1_v.sv",
+        "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/src/project/rtl/block_library_v1/block_v1_v_group.sv",
+        "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/src/project/rtl/block_library_v1/block_v1_v_function.sv",
+        "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/run11/v/adapted-fixture.cpp"
+      ],
+      "source_sha256": {
+        "project/rtl/block_library_v1/block_v1_v.sv": "675d72b24f29a9feaf8efc501a4bb9301fb0f6b2c49ce42338670502d07459af",
+        "project/rtl/block_library_v1/block_v1_v_group.sv": "8d7636a2aa277d9b1901196505632b9bfccd9d7a8f5178526b2965a3418c20f5",
+        "project/rtl/block_library_v1/block_v1_v_function.sv": "2c33da6291cb4d2e7992d4c13ded51ea594b12a392c0e4bb84aab1735d5f054d",
+        "project/experiments/block_v1/test_vector_macro.cpp": "5e585e926babc1e9c9180d20af8abee30138aaed5169e64f0dc25c57cfd429f9",
+        "project/experiments/block_feed_v1/run.py": "bfc7c1c49012f8d94225813407f3343b8df504fd7dd249667edc1d8e7ec639b3",
+        "project/rtl/block_library_v1/block_v1_v_tables.svh": "95c91b28cc5f71f1bbaba1c0dd3fb872d23ab2e215e157436505be95b2e26edc"
+      },
+      "runs": [
+        {
+          "initial_mode": 1,
+          "seed": 130,
+          "result": {
+            "long_function_cases": 40,
+            "internal_rope_cases": 80,
+            "global_groups": 3,
+            "continuous_words": 64,
+            "continuous_cycles": 64,
+            "declared_global_external_effective_bytes": 196704,
+            "passed": true,
+            "point_cases": 800,
+            "function_cases": 1250,
+            "compose_cases": 270,
+            "topk_cases": 100,
+            "checks": 566999,
+            "cycles": 414906,
+            "sampled_function_max_abs": [
+              1.6091e-05,
+              2.23559e-05,
+              6.93146e-05,
+              0.000104687,
+              3.89949e-05
+            ]
+          },
+          "result_sha256": "c196d862d9f733bf092b53191660e4fc158269e5d9a2c9a8e44f7ad8613e350c"
+        },
+        {
+          "initial_mode": 2,
+          "seed": 130,
+          "result": {
+            "long_function_cases": 40,
+            "internal_rope_cases": 80,
+            "global_groups": 3,
+            "continuous_words": 64,
+            "continuous_cycles": 64,
+            "declared_global_external_effective_bytes": 196704,
+            "passed": true,
+            "point_cases": 800,
+            "function_cases": 1250,
+            "compose_cases": 270,
+            "topk_cases": 100,
+            "checks": 566999,
+            "cycles": 414906,
+            "sampled_function_max_abs": [
+              1.6091e-05,
+              2.23559e-05,
+              6.93146e-05,
+              0.000104687,
+              3.89949e-05
+            ]
+          },
+          "result_sha256": "c196d862d9f733bf092b53191660e4fc158269e5d9a2c9a8e44f7ad8613e350c"
+        },
+        {
+          "initial_mode": 2,
+          "seed": 131,
+          "result": {
+            "long_function_cases": 40,
+            "internal_rope_cases": 80,
+            "global_groups": 3,
+            "continuous_words": 64,
+            "continuous_cycles": 64,
+            "declared_global_external_effective_bytes": 196704,
+            "passed": true,
+            "point_cases": 800,
+            "function_cases": 1250,
+            "compose_cases": 270,
+            "topk_cases": 100,
+            "checks": 566999,
+            "cycles": 414906,
+            "sampled_function_max_abs": [
+              1.6091e-05,
+              2.23559e-05,
+              6.93146e-05,
+              0.000104687,
+              3.89949e-05
+            ]
+          },
+          "result_sha256": "c196d862d9f733bf092b53191660e4fc158269e5d9a2c9a8e44f7ad8613e350c"
+        }
+      ],
+      "fixture_adaptation": {
+        "reason": "Construct DUT after commandArgs for actual randomized initial states",
+        "original": "project/experiments/block_v1/test_vector_macro.cpp",
+        "original_sha256": "5e585e926babc1e9c9180d20af8abee30138aaed5169e64f0dc25c57cfd429f9",
+        "generated_sha256": "3719b980e7a65716cd04d2dd1500e8468c05109b4d0d3d86a4af5ab13bf69b90",
+        "declaration_before": "static Vblock_v1_v dut;",
+        "declaration_after": "static Vblock_v1_v* dut_ptr;\n#define dut (*dut_ptr)\n",
+        "entry_before": "Verilated::commandArgs(argc,argv);",
+        "entry_after": "Verilated::commandArgs(argc,argv);dut_ptr=new Vblock_v1_v;"
+      },
+      "physical_qualified": false
+    }
+  ],
+  "errors": [],
+  "physical_qualified": false,
+  "tool_sha256": {
+    "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/tools/bin/verilator": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+    "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/tools/bin/verilator_bin": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd"
+  }
+}

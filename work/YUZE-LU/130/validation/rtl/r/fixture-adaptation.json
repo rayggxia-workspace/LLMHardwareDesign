@@ -1,0 +1,10 @@
+{
+  "reason": "Construct DUT after commandArgs for actual randomized initial states",
+  "original": "project/experiments/block_v1/test_recurrent_macro.cpp",
+  "original_sha256": "ebb386b61800b8267756ba94d14a4cd361e3a04ccec8a003310803d65d009d73",
+  "generated_sha256": "4acecaa280339d0203af107caafb2a9da2e82e2ca4cc38b42cd5581187d8c6ff",
+  "declaration_before": "static Vblock_v1_r dut;",
+  "declaration_after": "static Vblock_v1_r* dut_ptr;\n#define dut (*dut_ptr)\n",
+  "entry_before": "Verilated::commandArgs(argc,argv);",
+  "entry_after": "Verilated::commandArgs(argc,argv);dut_ptr=new Vblock_v1_r;"
+}

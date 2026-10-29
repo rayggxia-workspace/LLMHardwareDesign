@@ -58,6 +58,27 @@ def run_one(name, args, out):
                     raise RuntimeError(f"new integration lint warning: {line}")
         else:
             call([args.verilator, "--lint-only", "-Wall", "--top-module", top, *sources], folder / "lint.log")
+    original_cpp = cpp
+    adaptation = None
+    if name in ("v", "r"):
+        # Baseline fixtures construct their global DUT before commandArgs, so
+        # +rand+reset would not affect its initial state. Adapt ONLY a generated
+        # copy; preserve the baseline source and record both exact byte hashes.
+        text = cpp.read_text()
+        declaration = f"static V{top} dut;"
+        entry = "Verilated::commandArgs(argc,argv);"
+        if text.count(declaration) != 1 or text.count(entry) != 1:
+            raise RuntimeError("baseline fixture changed: inspect constructor adaptation")
+        text = text.replace(declaration, f"static V{top}* dut_ptr;\n#define dut (*dut_ptr)\n")
+        text = text.replace(entry, entry + f"dut_ptr=new V{top};")
+        cpp = folder / "adapted-fixture.cpp"
+        cpp.write_text(text)
+        adaptation = dict(reason="Construct DUT after commandArgs for actual randomized initial states",
+                          original=str(original_cpp.relative_to(ROOT)), original_sha256=sha(original_cpp),
+                          generated_sha256=sha(cpp), declaration_before=declaration,
+                          declaration_after=f"static V{top}* dut_ptr;\n#define dut (*dut_ptr)\n",
+                          entry_before=entry, entry_after=entry + f"dut_ptr=new V{top};")
+        (folder / "fixture-adaptation.json").write_text(json.dumps(adaptation, indent=2) + "\n")
     command = [args.verilator, "--cc", "--exe", "--build", "-j", str(args.build_jobs),
                "--top-module", top, "--Mdir", folder / "obj", "--x-initial", "unique",
                "--x-assign", "unique", "--output-split", "20000", "--output-split-cfuncs", "200",
@@ -75,12 +96,12 @@ def run_one(name, args, out):
         if not result.get("passed"):
             raise RuntimeError(f"non-passing result: {log}")
         runs.append(dict(initial_mode=mode, seed=seed, result=result, result_sha256=sha(log)))
-    inputs = [*sources, cpp, Path(__file__).resolve()]
+    inputs = [*sources, original_cpp, Path(__file__).resolve()]
     if name == "v":
         inputs.append(ROOT / "project/rtl/block_library_v1/block_v1_v_tables.svh")
     receipt = dict(passed=True, model=name, top=top, command=list(map(str, command)),
                    source_sha256={str(p.relative_to(ROOT)): sha(p) for p in inputs},
-                   runs=runs, physical_qualified=False)
+                   runs=runs, fixture_adaptation=adaptation, physical_qualified=False)
     (folder / "receipt.json").write_text(json.dumps(receipt, indent=2) + "\n")
     return receipt
 

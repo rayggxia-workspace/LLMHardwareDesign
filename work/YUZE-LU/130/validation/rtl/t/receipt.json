@@ -1,0 +1,81 @@
+{
+  "passed": true,
+  "model": "t",
+  "top": "transaction6k",
+  "command": [
+    "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/tools/bin/verilator",
+    "-Wno-fatal",
+    "--cc",
+    "--exe",
+    "--build",
+    "-j",
+    "4",
+    "--top-module",
+    "transaction6k",
+    "--Mdir",
+    "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/run07/t/obj",
+    "--x-initial",
+    "unique",
+    "--x-assign",
+    "unique",
+    "--output-split",
+    "20000",
+    "--output-split-cfuncs",
+    "200",
+    "-CFLAGS",
+    "-std=c++17 -O1",
+    "-I/mnt/d/Data/LLMHardwareDesign-issue130-runtime/src/project/rtl/block_library_v1",
+    "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/src/project/rtl/block_v1/transaction6k.sv",
+    "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/src/project/experiments/block_v1/test_transaction.cpp"
+  ],
+  "source_sha256": {
+    "project/rtl/block_v1/transaction6k.sv": "0b07833dffc28169ba70beafabad3d7503a31989f46fcbdcf03b15ba9026b3ef",
+    "project/experiments/block_v1/test_transaction.cpp": "2be15ed9706bdd0c8f334bd0dede9ba43a8688a08ed82e98c829449bc0fc36ef",
+    "project/experiments/block_feed_v1/run.py": "f6b535a1da4cec5b05660158d0576448d2a3ca99cb761fa3475f057bc11156fd"
+  },
+  "runs": [
+    {
+      "initial_mode": 1,
+      "seed": 130,
+      "result": {
+        "passed": true,
+        "seed": 1212026102,
+        "transactions": 242,
+        "cycles": 224032,
+        "continuous_burst_words": 384,
+        "continuous_burst_cycles": 384,
+        "assertions": 2839953
+      },
+      "result_sha256": "fa3006da6c72a4f418e12c3ba1aea34ea4aeba4ee1046e2ce0ee5230926c1d1c"
+    },
+    {
+      "initial_mode": 2,
+      "seed": 130,
+      "result": {
+        "passed": true,
+        "seed": 1212026102,
+        "transactions": 242,
+        "cycles": 224032,
+        "continuous_burst_words": 384,
+        "continuous_burst_cycles": 384,
+        "assertions": 2839953
+      },
+      "result_sha256": "fa3006da6c72a4f418e12c3ba1aea34ea4aeba4ee1046e2ce0ee5230926c1d1c"
+    },
+    {
+      "initial_mode": 2,
+      "seed": 131,
+      "result": {
+        "passed": true,
+        "seed": 1212026102,
+        "transactions": 242,
+        "cycles": 224032,
+        "continuous_burst_words": 384,
+        "continuous_burst_cycles": 384,
+        "assertions": 2839953
+      },
+      "result_sha256": "fa3006da6c72a4f418e12c3ba1aea34ea4aeba4ee1046e2ce0ee5230926c1d1c"
+    }
+  ],
+  "physical_qualified": false
+}

@@ -317,3 +317,29 @@ Linux轻量调度排空控制：`python3 project/experiments/block_v1/node_queue
 纯控制验证命令：`python -X utf8 project/experiments/block_v1/test_revision300_admission.py`。覆盖未知/失败/完成尝试禁止重投、前置与失败分类、8项含PENDING、其他成员及同账号无关作业不计入本任务、异常观察闭锁；本地和部署端均已通过。原EDA及最终门不能由此替代。
 
 准入预检查只匹配本Issue目录dispatch-state记录的作业ID，不以整个账号或名字前缀单独设限。原334控制版本及暴露过度计数的同账号无关任务负例、仅终止控制进程的退役回执保留；当前335的两轮真实检查与八个原EDA作业读回见其capture-start和allocation-scope-readback.json。
+
+
+## Issue130：独立供数 M 与 bank 化 S 候选
+
+固定基线 `8b6b8d483085dd20a01e3a88a035fcc6b5db9f73` 的独立后继，合同见 [BLOCK_FEED_V1.md](BLOCK_FEED_V1.md)，实际结果与适用边界见 [Issue130证据](../work/YUZE-LU/130/README.md)。新RTL位于 `project/rtl/block_feed_v1/`，保留父任务源及运行任务。仅M/S变更，供数器固定在S中；pair为测试夹具。新候选尚未取得物理资格。
+
+Linux/WSL，Verilator5.042、g++可用时，输出目录必须不存在：
+```bash
+python3 project/experiments/block_feed_v1/run.py --verilator /path/to/verilator --models m s pair v r t --workers 3 --build-jobs 4 --out /absolute/ascii/new-results
+```
+
+设正确的 `VERILATOR_ROOT`；总构建核数不得超过实际affinity。Windows路径含中文时在任务自己的ASCII运行目录复制收据列出的源，避免Verilator生成Makefile的路径转义问题；只在无法读取Windows worktree元数据的WSL副本传入已核实的 `--source-commit`，真实测试源仍以逐文件SHA为准。V/R的生成夹具适配及前后字节SHA写入结果，不修改旧测试。
+
+完整源检查／可选Nangate45映射（在Slurm计算节点执行重EDA）：
+```bash
+python3 project/experiments/block_feed_v1/inspect.py --yosys /path/to/yosys --abc /path/to/yosys-abc --liberty /path/to/NangateOpenCellLibrary_typical.lib --out /absolute/new-map
+```
+
+实际远程命令、不可变目录、镜像SHA及失败历史见证据README。以下本地读回不运行EDA、不产生物理资格：
+```powershell
+python -X utf8 project/experiments/block_feed_v1/verify_evidence.py
+python -X utf8 project/experiments/block_feed_v1/test_inspect.py
+python -X utf8 project/experiments/block_feed_v1/plan.py --mapping work/YUZE-LU/130/validation/remote-receive/summary.json --liberty /path/to/NangateOpenCellLibrary_typical.lib --out /absolute/new-pin-diagnostic
+```
+
+`plan.py`的全部端口引出诊断不等于新宏尺寸决定。必须重新验M/S接点、实际负载和完整P&R；不得沿用旧300MHz结果。

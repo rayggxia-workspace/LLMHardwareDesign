@@ -1,0 +1,468 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "passed": true,
+      "top": "block_feed_m",
+      "source_sha256": {
+        "project/rtl/block_feed_v1/block_feed_m.sv": "468e39c26fc30de1c1d067d7f270e0dde6c89a940a2ed1eef100d320d77dffa9"
+      },
+      "ports": {
+        "clk": {
+          "direction": "input",
+          "bits": 1
+        },
+        "reset": {
+          "direction": "input",
+          "bits": 1
+        },
+        "a_valid": {
+          "direction": "input",
+          "bits": 1
+        },
+        "a_ready": {
+          "direction": "output",
+          "bits": 1
+        },
+        "a_bank": {
+          "direction": "input",
+          "bits": 1
+        },
+        "a_row": {
+          "direction": "input",
+          "bits": 3
+        },
+        "a_tile": {
+          "direction": "input",
+          "bits": 2
+        },
+        "a_wide": {
+          "direction": "input",
+          "bits": 1
+        },
+        "a_data": {
+          "direction": "input",
+          "bits": 128
+        },
+        "b_valid": {
+          "direction": "input",
+          "bits": 1
+        },
+        "b_ready": {
+          "direction": "output",
+          "bits": 1
+        },
+        "b_bank": {
+          "direction": "input",
+          "bits": 1
+        },
+        "b_tile": {
+          "direction": "input",
+          "bits": 2
+        },
+        "b_wide": {
+          "direction": "input",
+          "bits": 1
+        },
+        "b_half": {
+          "direction": "input",
+          "bits": 1
+        },
+        "b_data": {
+          "direction": "input",
+          "bits": 512
+        },
+        "cmd_valid": {
+          "direction": "input",
+          "bits": 1
+        },
+        "cmd_ready": {
+          "direction": "output",
+          "bits": 1
+        },
+        "cmd_op": {
+          "direction": "input",
+          "bits": 4
+        },
+        "cmd_index": {
+          "direction": "input",
+          "bits": 6
+        },
+        "cmd_data": {
+          "direction": "input",
+          "bits": 64
+        },
+        "rsp_valid": {
+          "direction": "output",
+          "bits": 1
+        },
+        "rsp_ready": {
+          "direction": "input",
+          "bits": 1
+        },
+        "rsp_data": {
+          "direction": "output",
+          "bits": 128
+        },
+        "rsp_error": {
+          "direction": "output",
+          "bits": 1
+        },
+        "rsp_saturated": {
+          "direction": "output",
+          "bits": 1
+        },
+        "busy": {
+          "direction": "output",
+          "bits": 1
+        }
+      },
+      "signal_pin_bits": 867,
+      "memories": {
+        "aa": {
+          "WIDTH": 16,
+          "SIZE": 512,
+          "RD_PORTS": 8,
+          "WR_PORTS": 8
+        },
+        "acc": {
+          "WIDTH": 64,
+          "SIZE": 64,
+          "RD_PORTS": 11,
+          "WR_PORTS": 72
+        },
+        "bb": {
+          "WIDTH": 16,
+          "SIZE": 512,
+          "RD_PORTS": 64,
+          "WR_PORTS": 96
+        },
+        "bv": {
+          "WIDTH": 2,
+          "SIZE": 8,
+          "RD_PORTS": 5,
+          "WR_PORTS": 22
+        },
+        "merged": {
+          "WIDTH": 128,
+          "SIZE": 64,
+          "RD_PORTS": 5,
+          "WR_PORTS": 8
+        },
+        "preview": {
+          "WIDTH": 128,
+          "SIZE": 8,
+          "RD_PORTS": 8,
+          "WR_PORTS": 1
+        }
+      },
+      "multipliers": {
+        "8x8": 64,
+        "32x32": 1,
+        "64x32": 2
+      },
+      "physical_qualified": false,
+      "mapped": true,
+      "cell_counts": {
+        "INV_X1": 12657,
+        "OAI21_X1": 19533,
+        "AOI21_X1": 19294,
+        "NOR2_X1": 15231,
+        "NAND2_X1": 14019,
+        "AOI221_X1": 6818,
+        "AOI22_X1": 2723,
+        "AOI211_X1": 2154,
+        "AND2_X1": 3359,
+        "NAND3_X1": 1963,
+        "OAI211_X1": 3270,
+        "OAI222_X1": 93,
+        "NOR3_X1": 1863,
+        "OR2_X1": 4289,
+        "OAI22_X1": 5552,
+        "MUX2_X1": 28388,
+        "NOR4_X1": 312,
+        "OAI221_X1": 2583,
+        "AND4_X1": 279,
+        "OR3_X1": 1277,
+        "AND3_X1": 1327,
+        "NAND4_X1": 454,
+        "AOI222_X1": 1920,
+        "XNOR2_X1": 8174,
+        "XOR2_X1": 5184,
+        "OAI33_X1": 115,
+        "OR4_X1": 84,
+        "DFF_X1": 33173
+      },
+      "cell_count": 196088,
+      "portless_scope_annotations": 0,
+      "reused_artifacts": {
+        "source_commit": "4d2e9b61e4418f8161b1754576390480f400e2b7",
+        "source_manifest_sha256": "9eb1e660a726926fea4e78ee9e6046ffb55acd61e22a974ddd0e938595e5822d",
+        "artifacts": {
+          "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-r2-20261029/results/mapping-01/mapping/block_feed_m/structure.json": "7a14385b0dba40236356fa3b6e4c3e3a22cebf5e92e9e447e299dc6adb136faf",
+          "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-r2-20261029/results/mapping-01/mapping/block_feed_m/mapped.v": "21a7074c073f150b8054a2fc46ea8dbe40341dcfc3bb11385337ee6b7663e654",
+          "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-r2-20261029/results/mapping-01/mapping/block_feed_m/mapped.json": "87099cf138932fb3cb82c07d18e097f3ae0709129c7089a6a088c42d898b3850"
+        }
+      },
+      "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+      "mapped_verilog_sha256": "21a7074c073f150b8054a2fc46ea8dbe40341dcfc3bb11385337ee6b7663e654"
+    },
+    {
+      "passed": true,
+      "top": "block_feed_s_macro",
+      "source_sha256": {
+        "project/rtl/block_feed_v1/block_feed_s_macro.sv": "3d105bf4605076e5f806b45c545cb5fdd5658a23d82f0ea4b58c0cd8d2ce18c8",
+        "project/rtl/block_feed_v1/block_feed_loader.sv": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+        "project/rtl/block_feed_v1/block_feed_s16k.sv": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603"
+      },
+      "ports": {
+        "clk": {
+          "direction": "input",
+          "bits": 1
+        },
+        "reset": {
+          "direction": "input",
+          "bits": 1
+        },
+        "req": {
+          "direction": "input",
+          "bits": 1
+        },
+        "wr": {
+          "direction": "input",
+          "bits": 1
+        },
+        "addr": {
+          "direction": "input",
+          "bits": 10
+        },
+        "din": {
+          "direction": "input",
+          "bits": 128
+        },
+        "ready": {
+          "direction": "output",
+          "bits": 1
+        },
+        "valid": {
+          "direction": "output",
+          "bits": 1
+        },
+        "take": {
+          "direction": "input",
+          "bits": 1
+        },
+        "dout": {
+          "direction": "output",
+          "bits": 128
+        },
+        "load_valid": {
+          "direction": "input",
+          "bits": 1
+        },
+        "load_ready": {
+          "direction": "output",
+          "bits": 1
+        },
+        "load_bank": {
+          "direction": "input",
+          "bits": 1
+        },
+        "load_rows": {
+          "direction": "input",
+          "bits": 4
+        },
+        "load_tiles": {
+          "direction": "input",
+          "bits": 3
+        },
+        "load_a_wide": {
+          "direction": "input",
+          "bits": 1
+        },
+        "load_b_wide": {
+          "direction": "input",
+          "bits": 1
+        },
+        "load_reuse_b": {
+          "direction": "input",
+          "bits": 1
+        },
+        "load_a_base": {
+          "direction": "input",
+          "bits": 10
+        },
+        "load_b_base": {
+          "direction": "input",
+          "bits": 10
+        },
+        "done_valid": {
+          "direction": "output",
+          "bits": 1
+        },
+        "done_take": {
+          "direction": "input",
+          "bits": 1
+        },
+        "done_error": {
+          "direction": "output",
+          "bits": 1
+        },
+        "busy": {
+          "direction": "output",
+          "bits": 1
+        },
+        "a_valid": {
+          "direction": "output",
+          "bits": 1
+        },
+        "a_ready": {
+          "direction": "input",
+          "bits": 1
+        },
+        "a_bank": {
+          "direction": "output",
+          "bits": 1
+        },
+        "a_row": {
+          "direction": "output",
+          "bits": 3
+        },
+        "a_tile": {
+          "direction": "output",
+          "bits": 2
+        },
+        "a_wide": {
+          "direction": "output",
+          "bits": 1
+        },
+        "a_data": {
+          "direction": "output",
+          "bits": 128
+        },
+        "b_valid": {
+          "direction": "output",
+          "bits": 1
+        },
+        "b_ready": {
+          "direction": "input",
+          "bits": 1
+        },
+        "b_bank": {
+          "direction": "output",
+          "bits": 1
+        },
+        "b_tile": {
+          "direction": "output",
+          "bits": 2
+        },
+        "b_wide": {
+          "direction": "output",
+          "bits": 1
+        },
+        "b_half": {
+          "direction": "output",
+          "bits": 1
+        },
+        "b_data": {
+          "direction": "output",
+          "bits": 512
+        }
+      },
+      "signal_pin_bits": 966,
+      "memories": {
+        "feeder.queue_data": {
+          "WIDTH": 512,
+          "SIZE": 2,
+          "RD_PORTS": 1,
+          "WR_PORTS": 1
+        },
+        "feeder.queue_row": {
+          "WIDTH": 3,
+          "SIZE": 2,
+          "RD_PORTS": 1,
+          "WR_PORTS": 1
+        },
+        "feeder.queue_tile": {
+          "WIDTH": 2,
+          "SIZE": 2,
+          "RD_PORTS": 1,
+          "WR_PORTS": 1
+        },
+        "storage.bank0": {
+          "WIDTH": 128,
+          "SIZE": 256,
+          "RD_PORTS": 1,
+          "WR_PORTS": 1
+        },
+        "storage.bank1": {
+          "WIDTH": 128,
+          "SIZE": 256,
+          "RD_PORTS": 1,
+          "WR_PORTS": 1
+        },
+        "storage.bank2": {
+          "WIDTH": 128,
+          "SIZE": 256,
+          "RD_PORTS": 1,
+          "WR_PORTS": 1
+        },
+        "storage.bank3": {
+          "WIDTH": 128,
+          "SIZE": 256,
+          "RD_PORTS": 1,
+          "WR_PORTS": 1
+        }
+      },
+      "multipliers": {
+        "32x32": 2
+      },
+      "physical_qualified": false,
+      "mapped": true,
+      "cell_counts": {
+        "INV_X1": 2383,
+        "MUX2_X1": 135818,
+        "NOR2_X1": 60104,
+        "NAND2_X1": 2025,
+        "AND2_X1": 245,
+        "AOI21_X1": 10246,
+        "OR2_X1": 1630,
+        "AOI22_X1": 354,
+        "OAI21_X1": 68321,
+        "XOR2_X1": 5,
+        "XNOR2_X1": 20,
+        "OR4_X1": 25,
+        "OR3_X1": 192,
+        "AND3_X1": 196,
+        "OAI221_X1": 14513,
+        "NAND3_X1": 4790,
+        "OAI22_X1": 15728,
+        "NOR3_X1": 1565,
+        "AOI211_X1": 1345,
+        "OAI211_X1": 14275,
+        "AOI221_X1": 448,
+        "OAI33_X1": 62,
+        "NOR4_X1": 15,
+        "OAI222_X1": 39,
+        "NAND4_X1": 5,
+        "DFF_X1": 133309
+      },
+      "cell_count": 467658,
+      "portless_scope_annotations": 2,
+      "reused_artifacts": {
+        "source_commit": "4d2e9b61e4418f8161b1754576390480f400e2b7",
+        "source_manifest_sha256": "9eb1e660a726926fea4e78ee9e6046ffb55acd61e22a974ddd0e938595e5822d",
+        "artifacts": {
+          "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-r2-20261029/results/mapping-01/mapping/block_feed_s_macro/structure.json": "0674449d8c0e0102eff6d6d06bfa0d0e183cccbb4588572e04aaa585de071d7a",
+          "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-r2-20261029/results/mapping-01/mapping/block_feed_s_macro/mapped.v": "259b8b1821f0780af3b5e8bf050f59dba23a8788b3ae5bb902466b599905af4a",
+          "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-r2-20261029/results/mapping-01/mapping/block_feed_s_macro/mapped.json": "93e8126a21d8973df81210de93550080b25fb59d6821ed3e7058e3a5ebdd755f"
+        }
+      },
+      "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+      "mapped_verilog_sha256": "259b8b1821f0780af3b5e8bf050f59dba23a8788b3ae5bb902466b599905af4a"
+    }
+  ],
+  "errors": [],
+  "yosys": "Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)",
+  "physical_qualified": false
+}

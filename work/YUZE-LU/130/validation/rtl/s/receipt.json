@@ -1,0 +1,83 @@
+{
+  "passed": true,
+  "model": "s",
+  "top": "block_feed_s16k",
+  "command": [
+    "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/tools/bin/verilator",
+    "--cc",
+    "--exe",
+    "--build",
+    "-j",
+    "4",
+    "--top-module",
+    "block_feed_s16k",
+    "--Mdir",
+    "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/run10/s/obj",
+    "--x-initial",
+    "unique",
+    "--x-assign",
+    "unique",
+    "--output-split",
+    "20000",
+    "--output-split-cfuncs",
+    "200",
+    "-CFLAGS",
+    "-std=c++17 -O1",
+    "-I/mnt/d/Data/LLMHardwareDesign-issue130-runtime/src/project/rtl/block_library_v1",
+    "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/src/project/rtl/block_feed_v1/block_feed_s16k.sv",
+    "/mnt/d/Data/LLMHardwareDesign-issue130-runtime/src/project/experiments/block_feed_v1/test_s.cpp"
+  ],
+  "source_sha256": {
+    "project/rtl/block_feed_v1/block_feed_s16k.sv": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603",
+    "project/experiments/block_feed_v1/test_s.cpp": "70049a4e9f10f1ac996b40452b8a6bc76f4ad1bfa4af426f7c9686d602d8a243",
+    "project/experiments/block_feed_v1/run.py": "f6b535a1da4cec5b05660158d0576448d2a3ca99cb761fa3475f057bc11156fd"
+  },
+  "runs": [
+    {
+      "initial_mode": 1,
+      "seed": 130,
+      "result": {
+        "passed": true,
+        "checks": 844896,
+        "cycles": 29378,
+        "narrow_accesses": 12471,
+        "wide_accesses": 13306,
+        "actual_conflicts": 10376,
+        "wide_stream_requests": 256,
+        "wide_stream_cycles": 256
+      },
+      "result_sha256": "d7730c7183eb721d6e3c44b849d1b2e89ccca16adcfb71d53e621ff792a6c301"
+    },
+    {
+      "initial_mode": 2,
+      "seed": 130,
+      "result": {
+        "passed": true,
+        "checks": 844896,
+        "cycles": 29378,
+        "narrow_accesses": 12471,
+        "wide_accesses": 13306,
+        "actual_conflicts": 10376,
+        "wide_stream_requests": 256,
+        "wide_stream_cycles": 256
+      },
+      "result_sha256": "d7730c7183eb721d6e3c44b849d1b2e89ccca16adcfb71d53e621ff792a6c301"
+    },
+    {
+      "initial_mode": 2,
+      "seed": 131,
+      "result": {
+        "passed": true,
+        "checks": 844896,
+        "cycles": 29378,
+        "narrow_accesses": 12471,
+        "wide_accesses": 13306,
+        "actual_conflicts": 10376,
+        "wide_stream_requests": 256,
+        "wide_stream_cycles": 256
+      },
+      "result_sha256": "d7730c7183eb721d6e3c44b849d1b2e89ccca16adcfb71d53e621ff792a6c301"
+    }
+  ],
+  "physical_qualified": false
+}

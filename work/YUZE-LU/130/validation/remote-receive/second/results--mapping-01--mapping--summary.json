@@ -1,0 +1,206 @@
+{
+  "passed": false,
+  "results": [
+    {
+      "passed": true,
+      "top": "block_feed_m",
+      "source_sha256": {
+        "project/rtl/block_feed_v1/block_feed_m.sv": "468e39c26fc30de1c1d067d7f270e0dde6c89a940a2ed1eef100d320d77dffa9"
+      },
+      "ports": {
+        "clk": {
+          "direction": "input",
+          "bits": 1
+        },
+        "reset": {
+          "direction": "input",
+          "bits": 1
+        },
+        "a_valid": {
+          "direction": "input",
+          "bits": 1
+        },
+        "a_ready": {
+          "direction": "output",
+          "bits": 1
+        },
+        "a_bank": {
+          "direction": "input",
+          "bits": 1
+        },
+        "a_row": {
+          "direction": "input",
+          "bits": 3
+        },
+        "a_tile": {
+          "direction": "input",
+          "bits": 2
+        },
+        "a_wide": {
+          "direction": "input",
+          "bits": 1
+        },
+        "a_data": {
+          "direction": "input",
+          "bits": 128
+        },
+        "b_valid": {
+          "direction": "input",
+          "bits": 1
+        },
+        "b_ready": {
+          "direction": "output",
+          "bits": 1
+        },
+        "b_bank": {
+          "direction": "input",
+          "bits": 1
+        },
+        "b_tile": {
+          "direction": "input",
+          "bits": 2
+        },
+        "b_wide": {
+          "direction": "input",
+          "bits": 1
+        },
+        "b_half": {
+          "direction": "input",
+          "bits": 1
+        },
+        "b_data": {
+          "direction": "input",
+          "bits": 512
+        },
+        "cmd_valid": {
+          "direction": "input",
+          "bits": 1
+        },
+        "cmd_ready": {
+          "direction": "output",
+          "bits": 1
+        },
+        "cmd_op": {
+          "direction": "input",
+          "bits": 4
+        },
+        "cmd_index": {
+          "direction": "input",
+          "bits": 6
+        },
+        "cmd_data": {
+          "direction": "input",
+          "bits": 64
+        },
+        "rsp_valid": {
+          "direction": "output",
+          "bits": 1
+        },
+        "rsp_ready": {
+          "direction": "input",
+          "bits": 1
+        },
+        "rsp_data": {
+          "direction": "output",
+          "bits": 128
+        },
+        "rsp_error": {
+          "direction": "output",
+          "bits": 1
+        },
+        "rsp_saturated": {
+          "direction": "output",
+          "bits": 1
+        },
+        "busy": {
+          "direction": "output",
+          "bits": 1
+        }
+      },
+      "signal_pin_bits": 867,
+      "memories": {
+        "aa": {
+          "WIDTH": 16,
+          "SIZE": 512,
+          "RD_PORTS": 8,
+          "WR_PORTS": 8
+        },
+        "acc": {
+          "WIDTH": 64,
+          "SIZE": 64,
+          "RD_PORTS": 11,
+          "WR_PORTS": 72
+        },
+        "bb": {
+          "WIDTH": 16,
+          "SIZE": 512,
+          "RD_PORTS": 64,
+          "WR_PORTS": 96
+        },
+        "bv": {
+          "WIDTH": 2,
+          "SIZE": 8,
+          "RD_PORTS": 5,
+          "WR_PORTS": 22
+        },
+        "merged": {
+          "WIDTH": 128,
+          "SIZE": 64,
+          "RD_PORTS": 5,
+          "WR_PORTS": 8
+        },
+        "preview": {
+          "WIDTH": 128,
+          "SIZE": 8,
+          "RD_PORTS": 8,
+          "WR_PORTS": 1
+        }
+      },
+      "multipliers": {
+        "8x8": 64,
+        "32x32": 1,
+        "64x32": 2
+      },
+      "physical_qualified": false,
+      "mapped": true,
+      "cell_counts": {
+        "INV_X1": 12657,
+        "OAI21_X1": 19533,
+        "AOI21_X1": 19294,
+        "NOR2_X1": 15231,
+        "NAND2_X1": 14019,
+        "AOI221_X1": 6818,
+        "AOI22_X1": 2723,
+        "AOI211_X1": 2154,
+        "AND2_X1": 3359,
+        "NAND3_X1": 1963,
+        "OAI211_X1": 3270,
+        "OAI222_X1": 93,
+        "NOR3_X1": 1863,
+        "OR2_X1": 4289,
+        "OAI22_X1": 5552,
+        "MUX2_X1": 28388,
+        "NOR4_X1": 312,
+        "OAI221_X1": 2583,
+        "AND4_X1": 279,
+        "OR3_X1": 1277,
+        "AND3_X1": 1327,
+        "NAND4_X1": 454,
+        "AOI222_X1": 1920,
+        "XNOR2_X1": 8174,
+        "XOR2_X1": 5184,
+        "OAI33_X1": 115,
+        "OR4_X1": 84,
+        "DFF_X1": 33173
+      },
+      "cell_count": 196088,
+      "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+      "mapped_verilog_sha256": "21a7074c073f150b8054a2fc46ea8dbe40341dcfc3bb11385337ee6b7663e654"
+    }
+  ],
+  "errors": [
+    "unmapped cells: Counter({'MUX2_X1': 135818, 'DFF_X1': 133309, 'OAI21_X1': 68321, 'NOR2_X1': 60104, 'OAI22_X1': 15728, 'OAI221_X1': 14513, 'OAI211_X1': 14275, 'AOI21_X1': 10246, 'NAND3_X1': 4790, 'INV_X1': 2383, 'NAND2_X1': 2025, 'OR2_X1': 1630, 'NOR3_X1': 1565, 'AOI211_X1': 1345, 'AOI221_X1': 448, 'AOI22_X1': 354, 'AND2_X1': 245, 'AND3_X1': 196, 'OR3_X1': 192, 'OAI33_X1': 62, 'OAI222_X1': 39, 'OR4_X1': 25, 'XNOR2_X1': 20, 'NOR4_X1': 15, 'XOR2_X1': 5, 'NAND4_X1': 5, '$scopeinfo': 2})"
+  ],
+  "yosys": "Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)",
+  "physical_qualified": false
+}

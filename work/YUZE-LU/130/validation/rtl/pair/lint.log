@@ -1,0 +1,13 @@
+%Warning-WIDTHTRUNC: /mnt/d/Data/LLMHardwareDesign-issue130-runtime/src/project/rtl/block_v1/transaction6k.sv:56:13: Bit extraction of array[383:0] requires 9 bit index, not 10 bits.
+                                                                                                                   : ... note: In instance 'block_feed_pair.transaction'
+   56 |      payload[received] <= write_data;
+      |             ^
+                     ... For warning description see https://verilator.org/warn/WIDTHTRUNC?v=5.042
+                     ... Use "/* verilator lint_off WIDTHTRUNC */" and lint_on around source to disable this message.
+%Warning-WIDTHTRUNC: /mnt/d/Data/LLMHardwareDesign-issue130-runtime/src/project/rtl/block_v1/transaction6k.sv:61:36: Bit extraction of array[383:0] requires 9 bit index, not 10 bits.
+                                                                                                                   : ... note: In instance 'block_feed_pair.transaction'
+   61 |     READ_REQ: begin held <= payload[cursor]; state <= READ_HOLD; end
+      |                                    ^
+- V e r i l a t i o n   R e p o r t: Verilator 5.042 2025-11-02 rev UNKNOWN.REV
+- Verilator: Built from 0.217 MB sources in 7 modules, into 1.847 MB in 5 C++ files needing 0.000 MB
+- Verilator: Walltime 0.192 s (elab=0.015, cvt=0.078, bld=0.000); cpu 0.095 s on 1 threads; alloced 45.449 MB
