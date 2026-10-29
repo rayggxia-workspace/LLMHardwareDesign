@@ -1,3 +1,5 @@
+2026-10-29 15:11 CST：V355六数值/264bit算术项已过，47原始/35稳定/308源绑定核验，三初态各566999检查/414906拍，公共42/扩展36全部测量与348一致；映射继续。355复用R344/93237空闲80CPU，356复用R311/93125空闲80CPU执行七项新源占用/有限工作空间，均五个16CPU槽即时补位、无新allocation。选定未来357全新原生→358最终门/六文件/完整几何→359接口，仍待staging与真实前置；控制源RUNS已改，原354进程尚未替换。R344物理继续，M/S/T已接收、V/R最终未齐；Issue121=in_progress/PR122=draft、目标active，登记pending/看板unverified与同步pending。
+
 2026-10-29 14:29 CST：R342映射实际通过，709124工艺单元/8个32×33乘法器，9原始小文件与307源核验；93189因保留两项旧引用采样失败自然FAILED/1:0，映射自身通过，修正后的343采样通过。354按逐项前置自动提交R344/93237/node21（14:24:55），已进入fresh floorplan，7启动原始文件/307源及R RTL绑定核验；345/346仍待真实前置。V350 CTS内置LEC已UNSAT/IDENTICAL，CTS setup−0.04/hold−0.23ns，11原始/308源绑定，继续原生route；351/352待真实前置。M/S/T已接收、V/R最终未齐，Issue121=in_progress/PR122=draft、目标active，登记pending、看板unverified/同步pending，管理员/独立审查待指定。
 
 2026-10-29 14:24 CST：V350 CTS内置LEC已实际UNSAT/IDENTICAL（51126输入/51115输出、diff0/diff1均0），完成后最差setup−0.04ns、hold−0.23ns；分别定位cmd_valid→stats_sumsq[0][79]和reset→rsp_data[86]。11原始文件SHA、308源Git blobs及全部V RTL绑定核验，350/93210继续原生route/finish，351/352仍待真实前置。R342已进入ABC工艺映射，344/345/346待映射回执。M/S/T已接收，V/R最终未齐；Issue121=in_progress、PR122=draft、目标active，登记pending、看板unverified/同步pending，管理员/独立审查待指定。
