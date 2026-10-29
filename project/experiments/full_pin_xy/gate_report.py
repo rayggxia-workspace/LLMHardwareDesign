@@ -886,6 +886,7 @@ def render(root,out):
                       ('MXU_actual_tip_ECO_r01','mxu_actual_via_tip/r01'),
                       ('MXU_actual_tip_original_range_fresh_r01','mxu_actual_tip_fresh/r01'),
                       ('MXU_actual_tip_views_r01','mxu_actual_tip_views/r01/mxu-C'),
+                      ('LLSYSTEM_bit1025_actual_tip_ECO_r01','llsys_parent_access_tip/r01'),
                       ('MXU_clock_bound_parent_recheck_r02','escape_view_recheck/r02/mxu-C'),
                       ('MXU_clock_bound_parent_recheck_r03','escape_view_recheck/r03/mxu-C')]:
         p=snapshot/rel/'execution.json.gz'
@@ -894,6 +895,7 @@ def render(root,out):
                         'MXU_actual_tip_ECO_r01':'mxu-actual-via-tip-r01',
                         'MXU_actual_tip_original_range_fresh_r01':'mxu-actual-tip-fresh-r01',
                         'MXU_actual_tip_views_r01':'mxu-actual-tip-views-r01',
+                        'LLSYSTEM_bit1025_actual_tip_ECO_r01':'llsys-parent-access-tip-r01',
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
         update=root/'gate_terminal_updates'/terminal_names.get(label,'NO_TERMINAL_UPDATE')
         terminal_evidence=None
@@ -921,6 +923,12 @@ def render(root,out):
             r=next(r for r in rows if r['case']=='llaccel_aux');r['current_source_research_model']='SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING'
             upper_text=upper_text.replace('新匹配抽象/RC模型及父层接入仍待完成','新匹配抽象/RC模型已由93190闭合，父层接入仍待完成')
             upper_text+='<p><strong>93190当前LL源匹配视图已完成：</strong>原生默认/详细OBS抽象、DEF/网表及非零真实RC时序模型导出，独立模型重读0；13507信号位及全部原PG/层/尺寸/当前实际XY精确匹配，clean ODB与真实源SHA相同。原SPEF余量逐字重放−3.909029/−0.587515ns，仍失败；minimum_period规则缺项、父层/完整规则/功能资格未通过。此闭合回执独立追加，未改写R38快照时仍运行的记录。</p>'
+        if label=='LLSYSTEM_bit1025_actual_tip_ECO_r01' and q.get('completed_utc'):
+            assert q['native_returncodes']=={'actual_edit_and_analysis':0,'fresh_DRC':0} and q['fresh_DRC_count']==0 and q['all_closed_sources_unchanged']
+            assert q['complete_pin_contract']['all_signal_pins']==13507 and q['complete_pin_contract']['only_changed_XY_pins']==['bit_1025']
+            r=next(r for r in rows if r['case']=='llaccel_aux');r['newer_actual_bit1025_ECO']={'evidence':e,'native_DRC_count':0,'matching_new_views':'NOT_YET_EXPORTED','parent_access':'NOT_VERIFIED','full_qualification':False}
+            upper_text=upper_text.replace('93190当前LL源匹配视图已完成','93190此前三点源匹配视图已完成（最新bit1025变体另列）')
+            upper_text+='<p><strong>93205 LL bit_1025真实重接已收齐终态：</strong>仅此M5 pin接到原网既有via5帽、删除3条原末端WIRE；原先三点修复及完整13184-move内部C保留，全部13507位接口/原层/尺寸/功能/网络、单元/PG/外框保持。725253多端网所检几何连通、双PG/RCX/原STA执行，native与fresh进程0/fresh0，其余725252多端网矩形表示及全部via保持。setup/hold仍−3.909029/−0.587515ns、8876文字VIOLATED，整体FAILED。原共同下层bit1025无AP不能据此宣布解决；新匹配视图和真实父层待完成，不继承前三点源模型；主矩阵仍明确列此前匹配视图源，此新实际变体单独记录。</p><p><a href="data/gate_terminal_updates/llsys-parent-access-tip-r01/all_13507_actual_pin_correspondence.csv.gz">本变体全部13507实际pin对应CSV</a></p>'
         if label.startswith('MXU_clock_bound_parent_recheck_') and q.get('completed_utc'):
             upper_text+='<p>实际整父层返回'+str(q.get('native_returncodes'))+'；fresh='+str(q.get('fresh_DRC_count'))+'，完整2245条宏pin/网络/方向/层/USE合同='+str(q.get('all_original_macro_pin_rectangles_net_directions_layers_in_parent_exactly_unchanged'))+'。r02在native swapMaster发生Signal11，失败保留；r03改为先swap后绑定同一真实库，结果以该回执为准，不能以小探针代替。</p>'
     mxu_tip=result.get('MXU_actual_tip_ECO_r01',{});mxu_fresh=result.get('MXU_actual_tip_original_range_fresh_r01',{});mxu_view=result.get('MXU_actual_tip_views_r01',{})

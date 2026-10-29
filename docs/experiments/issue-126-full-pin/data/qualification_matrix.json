@@ -51,8 +51,8 @@
       "current_source_internal_moved_pins": 1931,
       "partition_and_all_interfaces": "COMPLETE_SOURCE_INVENTORY",
       "candidate_ABC": "COMPLETE_3_VERSIONS_NOT_PHYSICAL_PASS",
-      "completed_source": "M6_escape_route/r02",
-      "actual_internal_route": "COMPLETED_M6_ACCESS_REROUTE_ORIGINAL_PIN_XY_UNCHANGED",
+      "completed_source": "actual_M6_via_tip/r01+original_range_fresh/r01",
+      "actual_internal_route": "ACTUAL_ONE_M6_TIP_ROUTE_NATIVE0_STA_POSITIVE",
       "native_DRC_count": 0,
       "all_multiterminal_signal_clock_geometry": true,
       "setup_ns": 0.24669,
@@ -60,11 +60,11 @@
       "violation_marker_rows": 0,
       "power_grid": "NATIVE_VDD_VSS_COMMANDS_EXECUTED",
       "RC_STA_scope": "SOURCE_SDC_EXTRACTED_RESULTS_NOT_COMPLETE_SYSTEM_QUALIFICATION",
-      "complete_rules": "CURRENT_M6_ESCAPE_GDS_NOT_EXECUTED_MISSING_REAL_SRAM_AND_COVERAGE_GAPS",
+      "complete_rules": "CURRENT_ACTUAL_TIP_GDS_NOT_EXECUTED_REAL_SRAM_COVERAGE_GAPS",
       "historical_parent_target_layers": "PARTIAL_OR_UNKNOWN",
       "mapped_design_formal_equivalence": "NOT_EXECUTED",
       "RTL_system_formal_equivalence": "NOT_EXECUTED",
-      "parent_access": "CURRENT_M6_ACTUAL_VIEW_COMPLETE_PARENT_RECHECK_NATIVE_1_NOT_SYSTEM_RC_STA_CLOCK_USE_CONTRACT_FAILED",
+      "parent_access": "NEW_ACTUAL_TIP_SOURCE_NOT_VALIDATED_IN_PARENT_OLD_SOURCE_FAILURES_RETAINED",
       "newer_attempt": null,
       "full_qualification": false,
       "evidence": [
@@ -297,6 +297,270 @@
           }
         },
         "evidence": "data/gate_milestones/gate-r38/escape_view_recheck/r01/mxu-C/execution.json.gz"
+      },
+      "historical_source_before_actual_via_tip": {
+        "case": "mxu",
+        "block": "openTPU MXU",
+        "original_signal_pins": 2172,
+        "current_source_internal_moved_pins": 1931,
+        "partition_and_all_interfaces": "COMPLETE_SOURCE_INVENTORY",
+        "candidate_ABC": "COMPLETE_3_VERSIONS_NOT_PHYSICAL_PASS",
+        "completed_source": "M6_escape_route/r02",
+        "actual_internal_route": "COMPLETED_M6_ACCESS_REROUTE_ORIGINAL_PIN_XY_UNCHANGED",
+        "native_DRC_count": 0,
+        "all_multiterminal_signal_clock_geometry": true,
+        "setup_ns": 0.24669,
+        "hold_ns": 0.038538,
+        "violation_marker_rows": 0,
+        "power_grid": "NATIVE_VDD_VSS_COMMANDS_EXECUTED",
+        "RC_STA_scope": "SOURCE_SDC_EXTRACTED_RESULTS_NOT_COMPLETE_SYSTEM_QUALIFICATION",
+        "complete_rules": "CURRENT_M6_ESCAPE_GDS_NOT_EXECUTED_MISSING_REAL_SRAM_AND_COVERAGE_GAPS",
+        "historical_parent_target_layers": "PARTIAL_OR_UNKNOWN",
+        "mapped_design_formal_equivalence": "NOT_EXECUTED",
+        "RTL_system_formal_equivalence": "NOT_EXECUTED",
+        "parent_access": "CURRENT_M6_ACTUAL_VIEW_COMPLETE_PARENT_RECHECK_NATIVE_1_NOT_SYSTEM_RC_STA_CLOCK_USE_CONTRACT_FAILED",
+        "newer_attempt": null,
+        "full_qualification": false,
+        "evidence": [
+          "data/continuation/native/milestone-r05/trials/access-r03/mxu-C/stages.tsv.gz",
+          "data/continuation/resume/resume-r04/leaf_eco/r04/mxu-C/execution.json.gz"
+        ],
+        "formal_subproof": "Exact Liberty logic/state and resized-cell terminal contract; not full design formal",
+        "cell_master_bbox_area_delta_um2": 0.26600000000325963,
+        "parent_access_detail": {
+          "job": "92714",
+          "scheduler": "FAILED",
+          "terminal_receipt": true,
+          "native_DRC": 2,
+          "whole_geometry": true,
+          "full_parent_qualified": false
+        },
+        "strict_GDS_merge_errors": null,
+        "available_deck_findings": null,
+        "GDS_full_rule_evidence": "data/gate_milestones/gate-r38/streamout/costed-r02/mxu-C_ECO/",
+        "whole_mapped_relative_digital_contract": true,
+        "relative_contract_scope": "WHOLE_MAPPED_DIGITAL_TERMINAL_GRAPH_AND_LIBERTY_LOGIC_STATE_RELATIVE_PROOF; IDENTICAL_BLACKBOX_INSTANCE_AND_ALL_TERMINALS_CONTRACT_ASSUMED",
+        "historical_source_before_M6_escape": {
+          "case": "mxu",
+          "block": "openTPU MXU",
+          "original_signal_pins": 2172,
+          "current_source_internal_moved_pins": 1931,
+          "partition_and_all_interfaces": "COMPLETE_SOURCE_INVENTORY",
+          "candidate_ABC": "COMPLETE_3_VERSIONS_NOT_PHYSICAL_PASS",
+          "completed_source": "costed_ECO/r04",
+          "actual_internal_route": "COMPLETED_COSTED_ECO_NOT_PURE_XY",
+          "native_DRC_count": 0,
+          "all_multiterminal_signal_clock_geometry": true,
+          "setup_ns": 0.246756,
+          "hold_ns": 0.038563,
+          "violation_marker_rows": 0,
+          "power_grid": "NATIVE_VDD_VSS_COMMANDS_EXECUTED",
+          "RC_STA_scope": "SOURCE_SDC_EXTRACTED_RESULTS_NOT_COMPLETE_SYSTEM_QUALIFICATION",
+          "complete_rules": "FAILED_STRICT_GDS_MISSING_CELLS; partial-deck results diagnostic only",
+          "historical_parent_target_layers": "PARTIAL_OR_UNKNOWN",
+          "mapped_design_formal_equivalence": "NOT_EXECUTED",
+          "RTL_system_formal_equivalence": "NOT_EXECUTED",
+          "parent_access": "SELECTED_FIXTURE_TERMINAL_READ_DETAIL_NOT_SYSTEM_QUALIFICATION",
+          "newer_attempt": null,
+          "full_qualification": false,
+          "evidence": [
+            "data/continuation/native/milestone-r05/trials/access-r03/mxu-C/stages.tsv.gz",
+            "data/continuation/resume/resume-r04/leaf_eco/r04/mxu-C/execution.json.gz"
+          ],
+          "formal_subproof": "Exact Liberty logic/state and resized-cell terminal contract; not full design formal",
+          "cell_master_bbox_area_delta_um2": 0.26600000000325963,
+          "parent_access_detail": {
+            "job": "92714",
+            "scheduler": "FAILED",
+            "terminal_receipt": true,
+            "native_DRC": 2,
+            "whole_geometry": true,
+            "full_parent_qualified": false
+          },
+          "strict_GDS_merge_errors": 4,
+          "available_deck_findings": 1578,
+          "GDS_full_rule_evidence": "data/gate_milestones/gate-r38/streamout/costed-r02/mxu-C_ECO/",
+          "whole_mapped_relative_digital_contract": true,
+          "relative_contract_scope": "WHOLE_MAPPED_DIGITAL_TERMINAL_GRAPH_AND_LIBERTY_LOGIC_STATE_RELATIVE_PROOF; IDENTICAL_BLACKBOX_INSTANCE_AND_ALL_TERMINALS_CONTRACT_ASSUMED"
+        },
+        "historical_strict_GDS_merge_errors": 4,
+        "historical_available_deck_findings": 1578,
+        "current_source_research_model": "SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING",
+        "common_base_source_selection": "ORIGINAL_R02_NOT_UPGRADED_TO_THIS_SOURCE",
+        "source_bound_extended_STA_audit": {
+          "completed": true,
+          "native_returncode": 0,
+          "actual_source": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/pin_escape_route/r02/mxu-C",
+          "exact_slack_replay": {
+            "setup": true,
+            "hold": true
+          },
+          "literal_VIOLATED_not_complete_rule_coverage": 0,
+          "evidence": "data/gate_milestones/gate-r38/extended_sta/r01/mxu/execution.json.gz",
+          "full_qualification": false
+        },
+        "current_source_parent_access_recheck": {
+          "scope": "ALL2172_REAL_PARENT_ACCESS_RECHECK_NEW_ACTUAL_CHILD_OBS_NOT_OLD_FIXTURE_OR_COMMON_BASE_QUALIFICATION",
+          "source_SHA": {
+            "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/escape_landing/r02/mxu-C/execution.json": "b89fafc8b86c9f46ef5669ad4d70848b8b1a791d87f62124aafd9810c1bf26c2",
+            "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/escape_landing/r02/mxu-C/routed.odb": "dcc8acebe13fe83b2859df4c3cd2cdb626e7d9fb606cd1404100a3c66a58bcf8",
+            "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/pin_escape_views/r01/mxu-C/execution.json": "6fec2940fbb86aee9ebfdea773023c2e9271c4dd973fe5c7cfe57164986ddd77",
+            "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/eco_views/r02/mxu-C/abstract.lef": "05e998f0615486126f75a745eae7b5d7991cc5316e5886ead42f0cc9328ead00",
+            "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/pin_escape_views/r01/mxu-C/abstract.lef": "ab112062945f19debc2b7283f2f0b9d5cecfe6b61e08cb5c6c40d2bbe8f6ac3d",
+            "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/pin_escape_views/r01/mxu-C/detailed.lef": "976db09364d94d60b0eaa6cea9d6f8acee70ee044db5d3955919b89e2e69c053",
+            "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/pin_escape_views/r01/mxu-C/timing.lib": "62f69ceeda9465f208efc555a0c6bc0bd4a953fe6a2f1d986a76992e38a42f40",
+            "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/pin_escape_views/r01/mxu-C/pins.tsv": "5fdd40c0ba134f773d5e9bd31f808064e996fa04656e678081ac2701993bb064",
+            "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/pin_escape_views/r01/mxu-C/clean.odb": "04e59990bd24695ba00738a5d89ab8b3ec21978f87c1209c6a45f878c8b9bbd7"
+          },
+          "old_parent_native_DRC_count": 1,
+          "actual_new_leaf_ODB_SHA256": "04e59990bd24695ba00738a5d89ab8b3ec21978f87c1209c6a45f878c8b9bbd7",
+          "new_source_research_model_SHA256": "62f69ceeda9465f208efc555a0c6bc0bd4a953fe6a2f1d986a76992e38a42f40",
+          "all_original_leaf_signal_pins": 2172,
+          "old_parent_routes_and_PG_reused_not_assumed_valid": true,
+          "global_or_detailed_router_engine_reexecuted": false,
+          "parent_RC_STA": "NOT_EXECUTED_ACCESS_RECHECK_ONLY",
+          "full_qualification": false,
+          "native_returncodes": {
+            "actual_view_swap_and_access_export": 0,
+            "fresh_DRC": 0
+          },
+          "driver_commit": "e85a4eb93ac3f8eb762a6a029c696b26f51c7571",
+          "scheduler_job": "93074",
+          "started_utc": "2026-10-28T23:42:33.170681+00:00",
+          "fresh_DRC_count": 1,
+          "all_original_parent_BTerm_PG_die_geometry_unchanged": {
+            "pins": true,
+            "pdn": true,
+            "die": true
+          },
+          "all_original_macro_pin_rectangles_net_directions_layers_in_parent_exactly_unchanged": false,
+          "whole_parent_signal_geometry": {
+            "scope": "ALL multi-terminal signal/clock nets in the entire block, including all their terminals; one-terminal unused nets excluded; actual DB rectangle/closed-overlap and via definition connectivity; not GDS LVS",
+            "pass": true,
+            "checked_nets": 2172,
+            "connected_nets": 2172,
+            "checked_terminals": 4344,
+            "checked_shapes": 9300,
+            "checked_layers": [
+              "metal10",
+              "metal5",
+              "metal6",
+              "metal7",
+              "metal8",
+              "metal9",
+              "via5",
+              "via6",
+              "via7",
+              "via8",
+              "via9"
+            ],
+            "failed_nets": 0,
+            "nets": {},
+            "nets_detail": "failures only",
+            "native_wire_object_missing_nets": 1916,
+            "physically_touching_zero_wire_nets": 1916
+          },
+          "native_stage_status": {
+            "upgrade_to_actual_source_view": "EXECUTED",
+            "VDD": "EXECUTED",
+            "VSS": "EXECUTED",
+            "all_parent_signal_geometry": "EXECUTED"
+          },
+          "all_closed_sources_unchanged": true,
+          "completed_utc": "2026-10-29T03:50:30.534078+00:00",
+          "files": {
+            "fresh.tcl": {
+              "bytes": 335,
+              "sha256": "6c081bf7890e54ae4752273a17d537ee4a55a8e584bd4ddd7440a77ae3da2820"
+            },
+            "independent.log": {
+              "bytes": 3260,
+              "sha256": "66e4d49c126b8a187431493f53cd90c2956e75dfc532f25d4273564dfb275fff"
+            },
+            "upgraded_parent_NOT_SYSTEM.odb": {
+              "bytes": 496769866,
+              "sha256": "5a22f163dd07c2249d831d7f12a92d0879fd2ae1ad503f4769b9a7c11a853263"
+            },
+            "upgrade.tcl": {
+              "bytes": 5118,
+              "sha256": "79ad087fb1692d478ae592b1a48ce449b17523af8d16215ee49a1afe171206ad"
+            },
+            "after.child_terms.tsv": {
+              "bytes": 164726,
+              "sha256": "e6e65eea01a886ff154c19b8dc0722fb143270f3d80c4ae2a729f07527b8b74d"
+            },
+            "after.die.tsv": {
+              "bytes": 20,
+              "sha256": "be075b2ec4b3495499b88bd8999c7b76ab7ab5d05aec8e933fb9adb78722705f"
+            },
+            "before.child_terms.tsv": {
+              "bytes": 164725,
+              "sha256": "5ac81f7c03e9796adb6c78ba5ce63e575205caab17c23357e3fdc16c24107ddb"
+            },
+            "after.cells.tsv": {
+              "bytes": 78737,
+              "sha256": "ac3664f7c50e02b4b7529ba5c863ebe0b025a40043da53b55cdd589ff66c7f3e"
+            },
+            "after.pins.tsv": {
+              "bytes": 174243,
+              "sha256": "00ef37118a7c580b24805e9745d5353e240cd2057e16855af47f1b4d2c1a6d17"
+            },
+            "before.die.tsv": {
+              "bytes": 20,
+              "sha256": "be075b2ec4b3495499b88bd8999c7b76ab7ab5d05aec8e933fb9adb78722705f"
+            },
+            "native.log": {
+              "bytes": 1054,
+              "sha256": "cdb0133332b2cb6b99ab9d65e404f2abd74357ef9a3868ed9562b63446b32b48"
+            },
+            "independent.drc": {
+              "bytes": 129,
+              "sha256": "0286085ea6210a62129329cd923efc151b7099fd1c1d19ac2e7fe42bf3e2fd66"
+            },
+            "stages.tsv": {
+              "bytes": 125,
+              "sha256": "6ca436b721b977e903d584a6b65829153501732fdafcc183968b344d8e685f80"
+            },
+            "before.pdn.tsv": {
+              "bytes": 1231315,
+              "sha256": "768e13ea11a0c098a41dd7cb929b9179e439d1d0f64dd8290d459048b4cbba6f"
+            },
+            "before.pins.tsv": {
+              "bytes": 174243,
+              "sha256": "00ef37118a7c580b24805e9745d5353e240cd2057e16855af47f1b4d2c1a6d17"
+            },
+            "whole_access.tsv.gz": {
+              "bytes": 86038,
+              "sha256": "c4cae86a6a852768e77bdc1cedec55345d68a2f42607e049188f566354a9577c"
+            },
+            "before.cells.tsv": {
+              "bytes": 78731,
+              "sha256": "08cb1b5fd96c44e292a4b1db2fe787de7dcca56d373466143f46107ea2f2ce05"
+            },
+            "actual_child_timing.lib": {
+              "bytes": 1569456,
+              "sha256": "55c826120fc23fcd7355270f1adf8019c4dcd5c3a31744fbc3dedd9dfb4926d5"
+            },
+            "actual_child.lef": {
+              "bytes": 275143471,
+              "sha256": "dc4162bdcc992ea43b1208d312ef3e2a13a4054fb47dd6ec8007c326bb61efca"
+            },
+            "after.pdn.tsv": {
+              "bytes": 1231315,
+              "sha256": "768e13ea11a0c098a41dd7cb929b9179e439d1d0f64dd8290d459048b4cbba6f"
+            }
+          },
+          "evidence": "data/gate_milestones/gate-r38/escape_view_recheck/r01/mxu-C/execution.json.gz"
+        }
+      },
+      "current_complete_pin_contract": {
+        "all_signal_pins": 2172,
+        "only_changed_XY_pins": [
+          "act_data[12]"
+        ],
+        "all_functions_directions_networks_layers_sizes_and_PG_preserved": true,
+        "full_internal_C_retained": "Complete source internal C retained; only explicitly listed existing internal points corrected",
+        "source_or_target_parent_layers": "Historical mapping still partial/unknown; no new target layer assigned"
       }
     },
     {
@@ -1092,6 +1356,13 @@
         "all_functions_directions_networks_layers_sizes_and_PG_preserved": true,
         "full_internal_C_retained": "13184 original internal moves retained; only three existing internal points corrected",
         "source_or_target_parent_layers": "Historical mapping still partial/unknown; no new target layer assigned"
+      },
+      "newer_actual_bit1025_ECO": {
+        "evidence": "data/gate_terminal_updates/llsys-parent-access-tip-r01/execution.json.gz",
+        "native_DRC_count": 0,
+        "matching_new_views": "NOT_YET_EXPORTED",
+        "parent_access": "NOT_VERIFIED",
+        "full_qualification": false
       }
     }
   ],
@@ -31597,6 +31868,641 @@
     },
     "evidence": "data/gate_terminal_updates/upper-guard-api-r03/execution.json.gz"
   },
+  "MXU_actual_tip_ECO_r01": {
+    "scope": "ACTUAL_ONE_M6_PIN_VIA_TIP_NATIVE_ROUTE_ECO_NOT_FULL_QUALIFICATION",
+    "source_SHA": {
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/pin_escape_route/r02/mxu-C/execution.json": "cf7fb8ebf3cbe0cc067d3c1841eb3faab584d11fd27532dea3d7560e764faa05",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/pin_escape_route/r02/mxu-C/routed.odb": "04e59990bd24695ba00738a5d89ab8b3ec21978f87c1209c6a45f878c8b9bbd7",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/pin_escape_route/r02/mxu-C/whole_access.tsv.gz": "ad5d5458c59ab4ff0183dfcbd55229af24b75594e5022d6a09099aae7543390e",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/pin_escape_views/r01/mxu-C/execution.json": "6fec2940fbb86aee9ebfdea773023c2e9271c4dd973fe5c7cfe57164986ddd77",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/pin_escape_views/r01/mxu-C/target_pin_access.tsv.gz": "a5ece4f8a770a3faa267ec70cc5dac7c4ac1924da0d270fb2af9815ce340e6cb",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/access-r03/mxu-C/execution.json": "b302eab86c6e97c42c388a88062716dbbfe90a34b8e375d16a523c482515f971",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/mxu-cap20/flow/results/nangate45/parallel_opentpu_mxu/base/6_final.sdc": "4c4dbe0de8b7f0f2b23c2a5d5db48a551ff1d38302368633fe91f5f0910aca83"
+    },
+    "full_qualification": false,
+    "native_returncodes": {
+      "actual_edit_and_analysis": 0,
+      "fresh_DRC": 1
+    },
+    "driver_commit": "3c28051e990c1a05dd1b4366001e3fc137bed392",
+    "scheduler_job": "93219",
+    "new_cells_or_sizes": 0,
+    "inherited_cost": "One original MXU costed/r04 sizing retained; not a pure XY benefit.",
+    "edit": "Move act_data[12] on original M6/0.14-square to its existing own via5 M6 cap; delete exactly four old M6 terminal WIRE rectangles; preserve every actual via.",
+    "GRT_or_DRT_search_reexecuted": false,
+    "actual_implementation": "Native routed dbWire encoder, not final LEF editing",
+    "parent_access_full_GDS_RTL": "NOT_EXECUTED; old parent results cannot qualify this new source",
+    "historical_target_layers": "PARTIAL_OR_UNKNOWN_UNCHANGED; no new historical target assigned",
+    "container_library_SHA256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+    "actual_OpenROAD_binary_SHA256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+    "whole_signal_geometry": {
+      "scope": "ALL multi-terminal signal/clock nets in the entire block, including all their terminals; one-terminal unused nets excluded; actual DB rectangle/closed-overlap and via definition connectivity; not GDS LVS",
+      "pass": true,
+      "checked_nets": 191438,
+      "connected_nets": 191438,
+      "checked_terminals": 597343,
+      "checked_shapes": 5550251,
+      "checked_layers": [
+        "metal1",
+        "metal10",
+        "metal2",
+        "metal3",
+        "metal4",
+        "metal5",
+        "metal6",
+        "metal7",
+        "metal8",
+        "metal9",
+        "via1",
+        "via2",
+        "via3",
+        "via4",
+        "via5",
+        "via6",
+        "via7",
+        "via8",
+        "via9"
+      ],
+      "failed_nets": 0,
+      "nets": {},
+      "nets_detail": "failures only",
+      "native_wire_object_missing_nets": 0,
+      "physically_touching_zero_wire_nets": 0
+    },
+    "all_other_191437_multiterminal_route_box_multisets_identical": true,
+    "exactly_four_actual_M6_WIRE_rectangles_removed_all_vias_unchanged": true,
+    "complete_pin_contract": {
+      "all_signal_pins": 2172,
+      "only_changed_XY_pins": [
+        "act_data[12]"
+      ],
+      "all_functions_directions_networks_layers_sizes_and_PG_preserved": true,
+      "full_internal_C_retained": "Complete source internal C retained; only explicitly listed existing internal points corrected",
+      "source_or_target_parent_layers": "Historical mapping still partial/unknown; no new target layer assigned"
+    },
+    "all_cells_signal_connections_PG_die_unchanged": {
+      "cells": true,
+      "pdn": true,
+      "die": true
+    },
+    "setup_ns": 0.24669,
+    "hold_ns": 0.038538,
+    "literal_VIOLATED_markers_not_complete_failure_count": 0,
+    "native_stage_status": {
+      "actual_one_net_pin_and_route_edit": "EXECUTED",
+      "VDD": "EXECUTED",
+      "VSS": "EXECUTED",
+      "whole_signal_geometry": "EXECUTED",
+      "rcx": "EXECUTED",
+      "sta": "EXECUTED"
+    },
+    "container_library_unchanged": true,
+    "all_closed_sources_unchanged": true,
+    "completed_utc": "2026-10-29T05:45:08.268624+00:00",
+    "files": {
+      "checks.txt": {
+        "bytes": 115,
+        "sha256": "6c335d259728dcb345b7e1e2717292b60a51184dbd499a3b4763be9fd2de1381"
+      },
+      "fresh.tcl": {
+        "bytes": 299,
+        "sha256": "7263c4d7d9e0ae86ccea60bf3cf6de1fc9b5f238be152bdcb0efdf1b7a938d0b"
+      },
+      "independent.log": {
+        "bytes": 4397,
+        "sha256": "b79d781fa8e8317fceab5f22348d0a47fc91d94bcf98e864dfb7e4bac166cdf5"
+      },
+      "constraint_coverage.txt": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "routed.def": {
+        "bytes": 166377166,
+        "sha256": "d50d5d96a1e2937c55324c13be2d3afb0c47bf866a972ee430169429e418ad9f"
+      },
+      "after.die.tsv": {
+        "bytes": 20,
+        "sha256": "25ebdfd00601c9525e05e7b96a7629f2aaff9730338e30ca5016316579847f09"
+      },
+      "routed.odb": {
+        "bytes": 334840225,
+        "sha256": "848f80449c9dd83a6138738376297d4ec66ca199436da20309c07d1320ead6fd"
+      },
+      "after.cells.tsv": {
+        "bytes": 72566571,
+        "sha256": "55a03f0cf845e5ca74f0732fffd649a3c0fc435457add74c574737945f05e649"
+      },
+      "mapped.v": {
+        "bytes": 33764455,
+        "sha256": "1d6972d98e3c6bf59e4faa51502a2d130d433217fb3e8abf6fa8dc4d2012ba0d"
+      },
+      "edit.tcl": {
+        "bytes": 8020,
+        "sha256": "18401863dddd76653ec8ee9ad1e028f41dcbec7bbb705de6bd8488db80d346ae"
+      },
+      "after.pins.tsv": {
+        "bytes": 168119,
+        "sha256": "b83a4bbb4f92a765459db0d4ae67291806db72dc120443f18c6ae2bdf8e7db10"
+      },
+      "before.die.tsv": {
+        "bytes": 20,
+        "sha256": "25ebdfd00601c9525e05e7b96a7629f2aaff9730338e30ca5016316579847f09"
+      },
+      "native.log": {
+        "bytes": 2127,
+        "sha256": "d54e53ba21ab20d9833de355b1d12768b64a6cc477b3fc4a8151397e1fea168c"
+      },
+      "extracted.spef": {
+        "bytes": 203777696,
+        "sha256": "f6596ef24bddd6c397721a51782fea058d47369102e0272bac2419e528cc33eb"
+      },
+      "setup.txt": {
+        "bytes": 25,
+        "sha256": "c6dceb004c90c96da85b0829311f0f3b429f5812749aa7925f057d2f59c8a98c"
+      },
+      "original_actual_vias.tsv": {
+        "bytes": 1022,
+        "sha256": "7c9a88de75ae3d7ae52381d8ebf640700a3104c24d03080e84674f4e1bc7a355"
+      },
+      "stages.tsv": {
+        "bytes": 152,
+        "sha256": "c9cbefe76a60decf4fe4c059b9e3963bf81260b201f4eac9dca21efdb2820843"
+      },
+      "hold.txt": {
+        "bytes": 25,
+        "sha256": "a391c92d26e4f18e7b91ab80c548ddb4df71e5940dbb20b9235987432398f57b"
+      },
+      "before.pdn.tsv": {
+        "bytes": 1843035,
+        "sha256": "018eb5b80add5b0828d5b4af8dfb03c1d8289c8123c32c19b573951085d0ba21"
+      },
+      "before.pins.tsv": {
+        "bytes": 168119,
+        "sha256": "a8809919d3fbe6ab302d60effe66941a75e946c111eecb8446c34bf1bc5aa72f"
+      },
+      "all_2172_actual_pin_correspondence.csv": {
+        "bytes": 233305,
+        "sha256": "c98c2c882b363393fa22f61d84865bf6f0b1a254c0311c6f22b18c2f19bd2524"
+      },
+      "whole_access.tsv.gz": {
+        "bytes": 53134380,
+        "sha256": "295721da300aef28f1b5e993645ce68a45dad9545b9040cefa98b34c62f55dc5"
+      },
+      "before.cells.tsv": {
+        "bytes": 72566571,
+        "sha256": "55a03f0cf845e5ca74f0732fffd649a3c0fc435457add74c574737945f05e649"
+      },
+      "after.pdn.tsv": {
+        "bytes": 1843035,
+        "sha256": "018eb5b80add5b0828d5b4af8dfb03c1d8289c8123c32c19b573951085d0ba21"
+      },
+      "parasitic_coverage.txt": {
+        "bytes": 1622448,
+        "sha256": "23e20395175258eea9e128c35ad3e839cefe433c6d5b7d45915813592d65e057"
+      }
+    },
+    "evidence": "data/gate_terminal_updates/mxu-actual-via-tip-r01/execution.json.gz"
+  },
+  "MXU_actual_tip_original_range_fresh_r01": {
+    "scope": "FRESH_ONLY_RECHECK_SAME_CLOSED_ECO_ODB_UNDER_EXACT_ORIGINAL_MXU_ALLOWED_LAYERS",
+    "source_SHA": {
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/mxu_actual_via_tip/r01/execution.json": "6602a427ddd9b6dd6cf489b744a46a1b02bb6b930689ea4d9518048017419ff5",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/mxu_actual_via_tip/r01/routed.odb": "848f80449c9dd83a6138738376297d4ec66ca199436da20309c07d1320ead6fd",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/mxu_actual_via_tip/r01/extracted.spef": "f6596ef24bddd6c397721a51782fea058d47369102e0272bac2419e528cc33eb",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/mxu_actual_via_tip/r01/independent.log": "b79d781fa8e8317fceab5f22348d0a47fc91d94bcf98e864dfb7e4bac166cdf5",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/pin_escape_route/r02/mxu-C/execution.json": "cf7fb8ebf3cbe0cc067d3c1841eb3faab584d11fd27532dea3d7560e764faa05",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/pin_escape_route/r02/mxu-C/fresh.tcl": "866d127ebdfe0248730ac9cbf85a704c245e4e5924e38335dd3399ea3d46831b"
+    },
+    "full_qualification": false,
+    "source_actual_ECO_ODB_SHA256": "848f80449c9dd83a6138738376297d4ec66ca199436da20309c07d1320ead6fd",
+    "source_actual_ECO_SPEF_SHA256": "f6596ef24bddd6c397721a51782fea058d47369102e0272bac2419e528cc33eb",
+    "original_allowed_signal_clock_ranges": [
+      "metal2-metal10",
+      "metal4-metal10"
+    ],
+    "prior_DRT_0155_failure_preserved": true,
+    "routing_RCX_STA_reexecuted": false,
+    "driver_commit": "0fd51a4586e7a9f8e745369a808456a6dacd6ebc",
+    "scheduler_job": "93223",
+    "inherited_exact_source_setup_hold_ns": [
+      0.24669,
+      0.038538
+    ],
+    "complete_GDS_parent_RTL": "NOT_EXECUTED_NOT_QUALIFIED",
+    "native_fresh_returncode": 0,
+    "fresh_DRC_count": 0,
+    "all_closed_sources_unchanged": true,
+    "completed_utc": "2026-10-29T05:56:13.346586+00:00",
+    "files": {
+      "fresh.tcl": {
+        "bytes": 303,
+        "sha256": "1e3b0f7741164442229ee3d3e032f536a36f5f1179c8629bd14954b5afadda16"
+      },
+      "native.log": {
+        "bytes": 4017,
+        "sha256": "9d0c80f6836ba6db67b18cee2c9e82c5acd0230d750bdbeeb34aaf7b730fd46c"
+      },
+      "independent.drc": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "evidence": "data/gate_terminal_updates/mxu-actual-tip-fresh-r01/execution.json.gz"
+  },
+  "MXU_actual_tip_views_r01": {
+    "scope": "ACTUAL_SOURCE_BOUND_PHYSICAL_AND_EXTRACTED_RESEARCH_VIEW_NOT_FULL_QUALIFICATION",
+    "source_kind": "mxu_via_tip",
+    "full_qualification": false,
+    "source_receipt": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/mxu_actual_via_tip/r01/execution.json",
+    "source_receipt_SHA256": "6602a427ddd9b6dd6cf489b744a46a1b02bb6b930689ea4d9518048017419ff5",
+    "original_M5_M6_pins_not_raised": true,
+    "complete_rules_and_RTL_formal": "NOT_QUALIFIED",
+    "scheduler_job": "93228",
+    "driver_commit": "44de515e8823d5093e9b22f1ff7dace47f18ee29",
+    "separate_original_range_fresh_receipt": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/mxu_actual_tip_fresh/r01/execution.json",
+    "separate_original_range_fresh_receipt_SHA256": "915c8b1f351a975957f176e00350cdafb5198996e9b2b9a58d172e965babab08",
+    "original_r01_DRT_0155_failure_preserved": true,
+    "source_SHA": {
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/mxu_actual_via_tip/r01/execution.json": "6602a427ddd9b6dd6cf489b744a46a1b02bb6b930689ea4d9518048017419ff5",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/mxu_actual_via_tip/r01/routed.odb": "848f80449c9dd83a6138738376297d4ec66ca199436da20309c07d1320ead6fd",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/mxu_actual_via_tip/r01/extracted.spef": "f6596ef24bddd6c397721a51782fea058d47369102e0272bac2419e528cc33eb",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/access-r03/mxu-C/execution.json": "b302eab86c6e97c42c388a88062716dbbfe90a34b8e375d16a523c482515f971",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/mxu-cap20/flow/results/nangate45/parallel_opentpu_mxu/base/6_final.sdc": "4c4dbe0de8b7f0f2b23c2a5d5db48a551ff1d38302368633fe91f5f0910aca83",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/mxu_actual_via_tip/r01/after.pins.tsv": "b83a4bbb4f92a765459db0d4ae67291806db72dc120443f18c6ae2bdf8e7db10",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/mxu_actual_via_tip/r01/all_2172_actual_pin_correspondence.csv": "c98c2c882b363393fa22f61d84865bf6f0b1a254c0311c6f22b18c2f19bd2524",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/mxu_actual_tip_fresh/r01/execution.json": "915c8b1f351a975957f176e00350cdafb5198996e9b2b9a58d172e965babab08",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/mxu_actual_tip_fresh/r01/independent.drc": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_geometry_sha256": "848f80449c9dd83a6138738376297d4ec66ca199436da20309c07d1320ead6fd",
+    "source_SPEF_sha256": "f6596ef24bddd6c397721a51782fea058d47369102e0272bac2419e528cc33eb",
+    "source_native_DRC": 0,
+    "source_setup_ns": 0.24669,
+    "source_hold_ns": 0.038538,
+    "source_literal_violated_markers": 0,
+    "this_route_variant_new_cells_or_sizing": 0,
+    "pin_preservation_reference": "Current actual routed source after its explicitly recorded XY ECO; not the older A/B/C candidate or pre-ECO coordinates.",
+    "inherited_costed_source": "Original MXU one sizing retained; one actual M6 via-tip XY edit adds no cells or sizing.",
+    "source_complete_pin_contract": {
+      "all_signal_pins": 2172,
+      "only_changed_XY_pins": [
+        "act_data[12]"
+      ],
+      "all_functions_directions_networks_layers_sizes_and_PG_preserved": true,
+      "full_internal_C_retained": "Complete source internal C retained; only explicitly listed existing internal points corrected",
+      "source_or_target_parent_layers": "Historical mapping still partial/unknown; no new target layer assigned"
+    },
+    "native_export_returncode": 0,
+    "detailed_OBS_view_contract": {
+      "all_pin_lines_geometry_direction_use_including_PG_identical": true,
+      "size_identical": true,
+      "occupied_layers_retained": true,
+      "old_OBS_count_by_layer": {
+        "metal1": 10,
+        "metal2": 6230,
+        "metal3": 14979,
+        "metal4": 5405,
+        "metal5": 7256,
+        "metal6": 2097,
+        "metal7": 10,
+        "metal8": 60,
+        "metal9": 16,
+        "metal10": 3
+      },
+      "new_OBS_count_by_layer": {
+        "metal1": 5109860,
+        "metal2": 972950,
+        "metal3": 327784,
+        "metal4": 27671,
+        "metal5": 12466,
+        "metal6": 4825,
+        "metal7": 319,
+        "metal8": 92,
+        "metal9": 16,
+        "metal10": 2
+      },
+      "default_bloat_factor": 10,
+      "new_bloat_factor": 0,
+      "policy_source": "Existing project Issue7 export_detail.py and H1 detailed view workflow; current tool Tcl default verified as 10",
+      "scope": "Abstraction granularity gate only; does not prove all conductor coverage, spacing, actual via access or DRC. Native independent DRC and geometry checks are still mandatory."
+    },
+    "all_2172_current_pins_and_PG_match_actual_after_edit": true,
+    "historical_parent_target_layers": "PARTIAL_OR_UNKNOWN_UNCHANGED; new controlled parent still requires actual access validation",
+    "all_original_signal_and_PG_pins_and_size_exactly_preserved": true,
+    "SPEF_replay_matches_source": true,
+    "fresh_model_read_returncode": 0,
+    "matching_all_signal_model_pins": 2172,
+    "minimum_period_present": false,
+    "all_sources_and_pre_RCX_geometry_unchanged": true,
+    "actual_M6_OBS_context": {
+      "scope": "Actual local detailed LEF M6 OBS; no free-space or DRC inference",
+      "original_pin_box_um": [
+        328.465,
+        1088.64,
+        328.605,
+        1088.78
+      ],
+      "window_um": [
+        326.965,
+        1087.14,
+        330.105,
+        1090.28
+      ],
+      "actual_M6_OBS_rectangles_um": [
+        [
+          329.305,
+          1071.27,
+          329.445,
+          1088.5
+        ],
+        [
+          328.465,
+          1088.64,
+          328.605,
+          1088.78
+        ]
+      ],
+      "M6_polygon_lines_not_silently_treated_as_empty": [],
+      "new_parent_access": "NOT_EXECUTED",
+      "DBU_per_um": 2000,
+      "full_qualification": false
+    },
+    "status": "ACTUAL_SOURCE_VIEW_EXPORTED_NOT_QUALIFIED_COMMON_BASE_OR_FULL_SYSTEM",
+    "completed_utc": "2026-10-29T05:58:23.665815+00:00",
+    "files": {
+      "read_model.log": {
+        "bytes": 287,
+        "sha256": "1961fe846f2672bf092c463e551de142e8fc26f2069f59ad266dfbad979162f9"
+      },
+      "detailed.lef": {
+        "bytes": 275143328,
+        "sha256": "2fb5f27145e827d4f219687762870101dd2b9df27526851be8f14962ea36bd58"
+      },
+      "constraint_coverage.txt": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timing.lib": {
+        "bytes": 1569450,
+        "sha256": "30c5f83531f3c82da1c2b9dea177b82886b8b0f8fde700fff9e9819f3b052f72"
+      },
+      "target_pin_access.tsv.gz": {
+        "bytes": 284,
+        "sha256": "5c373864cbf204144a6c0eaa2826490525cc39e64e06313b8d278fcdfc85d0a9"
+      },
+      "export.tcl": {
+        "bytes": 3210,
+        "sha256": "6ab5a7a589be491727c8a6ae6f81246aac389a5ed63111b43e2039ddb9ced65b"
+      },
+      "clean.v": {
+        "bytes": 33764455,
+        "sha256": "1d6972d98e3c6bf59e4faa51502a2d130d433217fb3e8abf6fa8dc4d2012ba0d"
+      },
+      "read_model.tcl": {
+        "bytes": 393,
+        "sha256": "eb824532a00376c524b211561c2ddbdb46db06d2ed7585dae900b957952bd59a"
+      },
+      "model_pins.tsv": {
+        "bytes": 40321,
+        "sha256": "e0b0d698491db2223ae0818b498f2e809263190bc63823ec8ea6939406fa43e4"
+      },
+      "actual_M6_OBS_context.json": {
+        "bytes": 568,
+        "sha256": "683ecc0cd2d7d5d92554754b662532fd1772657c919aefad88d60be7a17eab08"
+      },
+      "setup.txt": {
+        "bytes": 25,
+        "sha256": "c6dceb004c90c96da85b0829311f0f3b429f5812749aa7925f057d2f59c8a98c"
+      },
+      "clean.odb": {
+        "bytes": 334840225,
+        "sha256": "848f80449c9dd83a6138738376297d4ec66ca199436da20309c07d1320ead6fd"
+      },
+      "hold.txt": {
+        "bytes": 25,
+        "sha256": "a391c92d26e4f18e7b91ab80c548ddb4df71e5940dbb20b9235987432398f57b"
+      },
+      "export.log": {
+        "bytes": 319,
+        "sha256": "699380176ec0c627e322aa26ab6e90556dd672586116dedac28f0a02ef6c7aa7"
+      },
+      "abstract.lef": {
+        "bytes": 1883927,
+        "sha256": "33b0190c940fbf80e6a7fba3f0fcb441511aa32972ed0a816f7204ac6094ee1d"
+      },
+      "clean.def": {
+        "bytes": 166377166,
+        "sha256": "d50d5d96a1e2937c55324c13be2d3afb0c47bf866a972ee430169429e418ad9f"
+      },
+      "pins.tsv": {
+        "bytes": 159539,
+        "sha256": "c5974a506b31efa05d2188ef99caa5a91118a8c965ca417c31aa38da689c37de"
+      },
+      "parasitic_coverage.txt": {
+        "bytes": 1622448,
+        "sha256": "23e20395175258eea9e128c35ad3e839cefe433c6d5b7d45915813592d65e057"
+      }
+    },
+    "evidence": "data/gate_terminal_updates/mxu-actual-tip-views-r01/execution.json.gz"
+  },
+  "LLSYSTEM_bit1025_actual_tip_ECO_r01": {
+    "scope": "ACTUAL_INTERNAL_C_PIN_VIA_TIP_ROUTE_ECO_NOT_FULL_QUALIFICATION",
+    "profile": "parent_noap",
+    "source_SHA": {
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/llsys_actual_via_tips/r02/execution.json": "f50aea903a8fed016872c66789d46fc25cb4b3f47b8ad87d411f9b628f2c6c14",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/llsys_noap_context/r01/execution.json": "794fde86acf5db7db16d68b272bfb07e2089ffaf9c7b7b16cd5b5057e9236a7d",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/llsys_actual_via_tips/r02/routed.odb": "d97f1ccd9749f5492277fca820fda02702926ac6694ba96539b36af2cd6d3402",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/llsys_actual_via_tips/r02/whole_access.tsv.gz": "1e9fe0fef153dfbdd71b185c930899c25c99c1802ea0daa5892d590b14496811",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/llsys-pg-r03/llaccel_aux-C/execution.json": "db705c5126387630c0ca40d7649a01a062a5c275e09597d5c85ffbbbf126ed64",
+      "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-llaccel-abc-logic-4c-01/flow/results/nangate45/hpy_llaccel_aux/base/5_1_grt.sdc": "bf1da8e419bc8ec292b2c56304fcea3b1b575b5dcf5f5370a1e54ac6d34225d6"
+    },
+    "source_native_DRC_count": 0,
+    "native_returncodes": {
+      "actual_edit_and_analysis": 0,
+      "fresh_DRC": 0
+    },
+    "driver_commit": "2059cd45b69ca3d7fcd056f7f41776cdffd6f4dc",
+    "scheduler_job": "93205",
+    "source_kind": "Complete 13507-pin PG-only C alternative; does not replace active full-window 92690/92691",
+    "edit": "Move only source-bound listed M5/M6 pins onto existing same-net via landings; remove exactly three bit_1025 terminal wire rectangles.",
+    "new_cells_or_sizes": 0,
+    "GRT_or_DRT_search_reexecuted": false,
+    "actual_implementation": "Native OpenDB wire encoder; not final LEF/plot editing",
+    "full_qualification": false,
+    "historical_parent_target_layers": "PARTIAL_OR_UNKNOWN_UNCHANGED",
+    "new_parent_access_GDS_RTL": "NOT_EXECUTED",
+    "original_container_library_SHA256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+    "actual_OpenROAD_binary_SHA256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+    "fresh_DRC_count": 0,
+    "whole_signal_geometry": {
+      "scope": "ALL multi-terminal signal/clock nets in the entire block, including all their terminals; one-terminal unused nets excluded; actual DB rectangle/closed-overlap and via definition connectivity; not GDS LVS",
+      "pass": true,
+      "checked_nets": 725253,
+      "connected_nets": 725253,
+      "checked_terminals": 2325528,
+      "checked_shapes": 28517812,
+      "checked_layers": [
+        "metal1",
+        "metal2",
+        "metal3",
+        "metal4",
+        "metal5",
+        "metal6",
+        "metal7",
+        "metal8",
+        "via1",
+        "via2",
+        "via3",
+        "via4",
+        "via5",
+        "via6",
+        "via7"
+      ],
+      "failed_nets": 0,
+      "nets": {},
+      "nets_detail": "failures only",
+      "native_wire_object_missing_nets": 0,
+      "physically_touching_zero_wire_nets": 0
+    },
+    "all_other_multiterminal_route_box_multisets_identical": true,
+    "unchanged_multiterminal_nets": 725252,
+    "exact_expected_actual_WIRE_rectangles_removed_no_added_wire_or_via_material": 3,
+    "all_actual_target_via_rectangle_multisets_preserved": true,
+    "complete_pin_contract": {
+      "all_signal_pins": 13507,
+      "only_changed_XY_pins": [
+        "bit_1025"
+      ],
+      "all_functions_directions_networks_layers_sizes_and_PG_preserved": true,
+      "full_internal_C_retained": "Complete 13184-move internal C retained; only explicitly listed existing internal points corrected",
+      "source_or_target_parent_layers": "Historical mapping still partial/unknown; no new target layer assigned"
+    },
+    "all_cells_signal_connections_PG_die_unchanged": {
+      "cells": true,
+      "pdn": true,
+      "die": true
+    },
+    "setup_ns": -3.909029,
+    "hold_ns": -0.587515,
+    "literal_VIOLATED_markers_not_complete_failure_count": 8876,
+    "native_stage_status": {
+      "actual_one_net_pin_and_route_edit": "EXECUTED",
+      "VDD": "EXECUTED",
+      "VSS": "EXECUTED",
+      "whole_signal_geometry": "EXECUTED",
+      "rcx": "EXECUTED",
+      "sta": "EXECUTED"
+    },
+    "container_library_unchanged": true,
+    "all_closed_sources_unchanged": true,
+    "completed_utc": "2026-10-29T06:01:22.799005+00:00",
+    "files": {
+      "checks.txt": {
+        "bytes": 1782837,
+        "sha256": "2e36e95e0e8980553a09c13c3370ddf1b6dbb2df286de4714a8cf36452bf5998"
+      },
+      "fresh.tcl": {
+        "bytes": 309,
+        "sha256": "18fd3c2749cec542453aa83e208c15dda24ea1d4c9a608acbe154f995350d7ba"
+      },
+      "independent.log": {
+        "bytes": 85489,
+        "sha256": "6e35bd669fdf5fe52d0569a44cf361197a1562a7bfb26eb91bacdd121644c7f7"
+      },
+      "constraint_coverage.txt": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "routed.def": {
+        "bytes": 732997434,
+        "sha256": "facbc436e64c15da2e3ab6655664eab825481a0a4b77873006182b7c0e6c4cbb"
+      },
+      "all_13507_actual_pin_correspondence.csv": {
+        "bytes": 1446852,
+        "sha256": "ca971fce7ea6eaf50993cb3d38e05814e4a2b37d72d05d8958716cd590989bc5"
+      },
+      "after.die.tsv": {
+        "bytes": 20,
+        "sha256": "d0cc165a810ffe967745e98fc75be503554ff6ef0f66c975359342a1db4bc476"
+      },
+      "routed.odb": {
+        "bytes": 984159974,
+        "sha256": "5e7e3b7c6b7a5bccb7f4c71aacccecf65b08c5e3be3c063a4d65ac162ebe781b"
+      },
+      "after.cells.tsv": {
+        "bytes": 136366234,
+        "sha256": "eca52507c46551ed32096d4adf574772ea894d67b4b0d0ae2c487b8ed9895ef1"
+      },
+      "mapped.v": {
+        "bytes": 80363617,
+        "sha256": "bf5f070c9261b065b71b3377dc7deda24f07c0dbbc17fae84c94d1625c0e9cb0"
+      },
+      "edit.tcl": {
+        "bytes": 7511,
+        "sha256": "74dbea7a1bf75cd4b9a183a663004d9c5e323f505d5e75bbf4231a46f6cdea4d"
+      },
+      "after.pins.tsv": {
+        "bytes": 980812,
+        "sha256": "3e060ddb58783bdf3f9132d4dd3a9e9684ce1ec1113bba2acf024aebef1e89bb"
+      },
+      "before.die.tsv": {
+        "bytes": 20,
+        "sha256": "d0cc165a810ffe967745e98fc75be503554ff6ef0f66c975359342a1db4bc476"
+      },
+      "native.log": {
+        "bytes": 2399,
+        "sha256": "ed23c92eef9c4e091e44ff79741d925d4f709f31d5e5d6148e713790e670748a"
+      },
+      "extracted.spef": {
+        "bytes": 1224975693,
+        "sha256": "1446090cab2f571abb85aacea45f1f1d91b9bd9e743522ab2080e00fadb0ff4e"
+      },
+      "setup.txt": {
+        "bytes": 26,
+        "sha256": "95473894dd14020d3ca4792b19e14fafa4fd6c77faf0dbb2c54886fbfda60c71"
+      },
+      "original_actual_vias.tsv": {
+        "bytes": 22349,
+        "sha256": "b00bf10fe568e55c443147fb8650b9649c2919347a1947f877b01c935a4c7b6a"
+      },
+      "independent.drc": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stages.tsv": {
+        "bytes": 152,
+        "sha256": "c9cbefe76a60decf4fe4c059b9e3963bf81260b201f4eac9dca21efdb2820843"
+      },
+      "hold.txt": {
+        "bytes": 26,
+        "sha256": "3dd14642b34701e4a15bc60a01510008d5bc556ac7f6ab4dcefe145fd2ea1b18"
+      },
+      "before.pdn.tsv": {
+        "bytes": 6664031,
+        "sha256": "bee782064c969c6763d26285983d2347f5bc6283643c7311351d88c235f85d8b"
+      },
+      "before.pins.tsv": {
+        "bytes": 980812,
+        "sha256": "c5f75f80f3bda55806438d6dbbd800a651548cac9932219f06599b6f76939d19"
+      },
+      "whole_access.tsv.gz": {
+        "bytes": 273132164,
+        "sha256": "b9c8c2be28dd39995c60264583dfc1ad4e8dddc37d7d1d67d419b89afb495ce6"
+      },
+      "before.cells.tsv": {
+        "bytes": 136366234,
+        "sha256": "eca52507c46551ed32096d4adf574772ea894d67b4b0d0ae2c487b8ed9895ef1"
+      },
+      "after.pdn.tsv": {
+        "bytes": 6664031,
+        "sha256": "bee782064c969c6763d26285983d2347f5bc6283643c7311351d88c235f85d8b"
+      },
+      "parasitic_coverage.txt": {
+        "bytes": 2759076,
+        "sha256": "0da7514af2554c9e5b7c2fc6e34fd99cbc3b9840e6a64cf61e789acad6338c10"
+      }
+    },
+    "evidence": "data/gate_terminal_updates/llsys-parent-access-tip-r01/execution.json.gz"
+  },
   "MXU_clock_bound_parent_recheck_r02": {
     "scope": "ALL2172_REAL_PARENT_ACCESS_RECHECK_NEW_ACTUAL_CHILD_OBS_NOT_OLD_FIXTURE_OR_COMMON_BASE_QUALIFICATION",
     "source_SHA": {
@@ -31710,5 +32616,53 @@
     "started_utc": "2026-10-29T05:06:17.177851+00:00",
     "clock_binding_fix": "Read the same source-bound aliased Liberty after native macro swap and before the post-swap contract snapshot; native Liberty clock:true classification is retained. No manual USE edit or clock constraint change. Prior r02 loading before swap crashed at native swapMaster and is preserved.",
     "evidence": "data/gate_milestones/gate-r38/escape_view_recheck/r03/mxu-C/execution.json.gz"
+  },
+  "MXU_actual_via_tip_figure": {
+    "scope": "ACTUAL_M6_VIA_TIP_RECTANGLES_NOT_SCHEMATIC",
+    "full_qualification": false,
+    "source_ODB_before_after_SHA256": [
+      "04e59990bd24695ba00738a5d89ab8b3ec21978f87c1209c6a45f878c8b9bbd7",
+      "848f80449c9dd83a6138738376297d4ec66ca199436da20309c07d1320ead6fd"
+    ],
+    "actual_target_rows_before_after": [
+      24,
+      20
+    ],
+    "removed_M6_WIRE_rectangles": 4,
+    "signal_pin_count": 2172,
+    "only_changed_XY_pins": [
+      "act_data[12]"
+    ],
+    "all_actual_vias_unchanged": true,
+    "source_original_range_fresh_DRC_count": 0,
+    "source_setup_hold_ns": [
+      0.24669,
+      0.038538
+    ],
+    "pin_boxes_before_after_um": [
+      [
+        328.185,
+        1068.8,
+        328.325,
+        1068.94
+      ],
+      [
+        328.465,
+        1088.64,
+        328.605,
+        1088.78
+      ]
+    ],
+    "not_drawn": [
+      "Foreign nets",
+      "PG",
+      "OBS"
+    ],
+    "not_verified_by_figure": [
+      "Parent access",
+      "Complete GDS/rules",
+      "RTL or system equivalence",
+      "System area/timing/RC benefit"
+    ]
   }
 }

@@ -535,6 +535,14 @@ def check(out):
         assert rows['mxu']['completed_source']=='actual_M6_via_tip/r01+original_range_fresh/r01' and rows['mxu']['native_DRC_count']==0
         assert 'NOT_VALIDATED_IN_PARENT' in rows['mxu']['parent_access'] and rows['mxu']['full_qualification'] is False
         fig=j['MXU_actual_via_tip_figure'];assert fig['actual_target_rows_before_after']==[24,20] and fig['removed_M6_WIRE_rectangles']==4 and fig['all_actual_vias_unchanged']
+    q=j.get('LLSYSTEM_bit1025_actual_tip_ECO_r01',{})
+    if q.get('completed_utc'):
+        assert q['native_returncodes']=={'actual_edit_and_analysis':0,'fresh_DRC':0} and q['fresh_DRC_count']==0 and q['all_closed_sources_unchanged'] and not q['full_qualification']
+        assert q['complete_pin_contract']['all_signal_pins']==13507 and q['complete_pin_contract']['only_changed_XY_pins']==['bit_1025']
+        assert q['all_other_multiterminal_route_box_multisets_identical'] and q['unchanged_multiterminal_nets']==725252 and q['exact_expected_actual_WIRE_rectangles_removed_no_added_wire_or_via_material']==3 and q['all_actual_target_via_rectangle_multisets_preserved']
+        assert all(q['all_cells_signal_connections_PG_die_unchanged'].values()) and q['whole_signal_geometry']['checked_nets']==725253 and q['whole_signal_geometry']['pass']
+        assert q['setup_ns']==-3.909029 and q['hold_ns']==-.587515 and q['literal_VIOLATED_markers_not_complete_failure_count']==8876
+        assert rows['llaccel_aux']['newer_actual_bit1025_ECO']['matching_new_views']=='NOT_YET_EXPORTED' and not rows['llaccel_aux']['newer_actual_bit1025_ECO']['full_qualification']
     for terminal in (out/'data/gate_terminal_updates').glob('*'):
         if not terminal.is_dir():continue
         capture=read(terminal/'capture.json');receipt=read(terminal/'execution.json.gz')
