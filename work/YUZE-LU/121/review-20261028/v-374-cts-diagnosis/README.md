@@ -4,6 +4,6 @@ Refs #121 / PR #122。2026-10-29 19:50:23 CST 捕获，源 f318db6eb6dc263e55100
 
 CTS setup −0.01 ns、TNS −0.02 ns；hold −0.04 ns，均尚未通过。最大路径 norm_square[1] → group_unit.denominator[127]；最小路径 cmd_data[22] → input_mem[220][22]。报告最小周期 3.34 ns / 299.15 MHz 仅属于此 CTS 阶段。
 
-CTS 修复内置 LEC 实际 UNSAT/IDENTICAL：公共输入 51206、公共输出 51195，输入/输出 diff0、diff1 均 0。这不代替独立最终网表严格 LEC。捕获时尚未记录 CTS 完成回执；后续只读观察已完成 CTS 并进入详细布线。原始快照保持不变。
+CTS 修复内置 LEC 实际 UNSAT/IDENTICAL：公共输入 51206、公共输出 51195，输入/输出 diff0、diff1 均 0。这不代替独立最终网表严格 LEC。捕获时尚未记录 CTS 完成回执；后续只读观察已完成 CTS 并进入 route 阶段；最新日志为全局布线修复。原始快照保持不变。
 
 继续原 93372 的 route/finish，不根据 CTS 提前修改 RTL，不复用旧版本最终资格。最终 RCX 时序、独立验收、六文件与全端口接口门均待实际后继 375/376。
