@@ -31,6 +31,9 @@ def bundle(delivery, out):
         add(row['path'], 'native/' + name)
     for name in ('receipt.json', 'delivery.json', 'pins.json', 'layout.png'):
         add(delivery / name, 'native/' + name)
+    if 'postroute_repair_proof' in index:
+        p=index['postroute_repair_proof'];assert sha(p['path'])==p['sha256']
+        add(p['path'],'evidence/physical/route-repair-proof.json')
     for operation, row in index['gate_receipts'].items():
         receipt = Path(row['path'])
         add(receipt, 'evidence/' + operation + '/receipt.json')

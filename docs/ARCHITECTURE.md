@@ -381,3 +381,7 @@ python -X utf8 project/experiments/block_feed_v1/verify_evidence.py
 第二条仅核验保存的原始证据及源字节，不重跑EDA。M已实收并核验；S必须等完整通过后才能同样登记。
 
 显式formal-join不接收原失败producer的整体资格：要求原所有命令0及严格全边界UNSAT/IDENTICAL，重新哈希全部原始输入/输出/代码，重新运行实际原生正反例，并检查成功三初态功能的网表/库/封存源与证明完全相同。原失败receipt及Kepler日志/投影证明随新包保留；原生证明或成功功能缺失均拒绝。
+
+Issue130单网几何修复：`repair.py --source RAW_NATIVE_FOLDER --out NEW_RAW_NATIVE_FOLDER --from-final`只允许当前明确测量的S dout[58] M10路径替换；源逐SHA绑定、全部非目标DEF和目标端点必须相同，全片native DRC0后重新原生finish/RCX。全部最终门重新接收。完整deck可用`qualify.py drc-compute --source NEW_RAW_NATIVE_FOLDER --out DRC_COMPUTATION`与finish并行；`qualify.py drc-join --source SEALED_FOLDER --out GATES/drc-s --computation DRC_COMPUTATION`要求最终DEF完全相同、全部原输出重新哈希、最终ODB重新全片native DRC0，完整未修改规则0，否则拒绝。
+
+`qualify.py function ... --reuse-build PREVIOUS_SUCCESSFUL_FUNCTION`仅允许已成功编译/三初态通过、每个有序实际编译输入和原二进制逐字节相同；新候选仍重新导出实际全网表/库模型/peer并重跑三个初态，原构建和原功能回执入包。不同几何若逻辑视图字节完全一致，可由formal-join显式记录原/新源，并以相同RTL/综合LEC输入/最终视图绑定严格证明；原失败producer的总体资格不转移。

@@ -63,6 +63,11 @@ view.save_image(OUTPUT,1600,1600)
                 image=dict(path=str(out/'layout.png'),sha256=sha(out/'layout.png')),
                 qualified_hard_macro=False,hierarchical_lib_qualified=False,m11_m12_system_qualified=False,
                 scope='One actual native M1-M10 final leaf: all-source-matched independent full native/GDS DRC, STA/electrical/RC/PG/pins/connectivity, three-initial-state final simulation and strict all-boundary LEC. Hierarchical timing model and uncalibrated custom metals are separate.')
+    if flow.get('postroute_repair'):
+        proof=folder/'route-repair-proof.json'
+        assert sha(proof)==flow['postroute_repair']['proof_sha256']
+        shutil.copyfile(proof,out/proof.name)
+        result['postroute_repair_proof']=dict(path=str(out/proof.name),sha256=sha(proof))
     (out/'delivery.json').write_text(json.dumps(result,indent=2)+'\n')
 
 

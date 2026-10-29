@@ -60,6 +60,13 @@ def verify(root):
                 reports[op] = report
             assert set(reports) == {'physical', 'drc', 'function', 'formal'}
             assert all(reports['physical']['checks'].values())
+            if 'postroute_repair_proof' in delivery:
+                raw=z.read('evidence/physical/route-repair-proof.json')
+                assert sha(raw)==delivery['postroute_repair_proof']['sha256']==source['postroute_repair']['proof_sha256']
+                proof=json.loads(raw)
+                assert proof['passed'] and proof['native_whole_drc_zero']
+                assert proof['identical_non_target_geometry'] and proof['identical_target_terminal_connections']
+                assert proof['target']=='dout[58]' and proof['old_net']!=proof['new_net']
             assert reports['drc']['full_deck']['total_items'] == 0
             assert not z.read('evidence/drc/native-whole-drc.rpt')
             assert not ET.fromstring(z.read('evidence/drc/full-deck.lyrdb')).findall('.//items/item')
