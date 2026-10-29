@@ -35,7 +35,31 @@ SHARED_SNAPSHOT='''proc common_shared_snapshot {file} {
 
 
 def source_view(case,scheme,source_profile='original'):
-    assert source_profile in ['original','latest_access_tips']
+    assert source_profile in ['original','latest_access_tips','deadline_current']
+    if source_profile=='deadline_current':
+        assert scheme=='C'
+        expected=json.loads((DRIVER/'deadline_current_sources.json').read_text())[case]
+        if case=='act':
+            value=source_view(case,scheme,'original');assert sha(value['ODB'])==expected['ODB_SHA256'];value['source_profile']=source_profile;return value
+        paths={'mxu':'mxu_actual_tip_views/r01/mxu-C','opentpu_aux':'system_stacked_via_views/r01/opentpu_aux-C','gemm':'diode_views/r01/gemm-C','vector':'vector_current_views/r01/vector-C','llaccel_aux':'llsys_owned_restored_views/r01/llaccel_aux-C'}
+        folder=ROOT/paths[case];rp=folder/'execution.json';current=json.loads(rp.read_text())
+        assert current.get('completed_utc') and current['native_export_returncode']==current['fresh_model_read_returncode']==0
+        assert current['source_native_DRC']==0 and current['matching_all_signal_model_pins']==COUNTS[case] and current['SPEF_replay_matches_source']
+        assert current['all_sources_and_pre_RCX_geometry_unchanged'] and current['all_original_signal_and_PG_pins_and_size_exactly_preserved']
+        assert current['source_geometry_sha256']==expected['ODB_SHA256']
+        for name in ['clean.odb','abstract.lef','detailed.lef','timing.lib','pins.tsv']:assert sha(folder/name)==current['files'][name]['sha256']
+        old=source_view(case,scheme,'original');a,b=parse_lef(old['directory']/'abstract.lef'),parse_lef(folder/'abstract.lef')
+        assert a[0]==b[0] and set(a[1])==set(b[1]);changes=[]
+        for name in a[1]:
+            x,y=a[1][name],b[1][name]
+            assert [v for v in x if not v.startswith('RECT ')]==[v for v in y if not v.startswith('RECT ')],(case,name,'Pin layer/function/direction/USE changed')
+            if x!=y:
+                assert not any(v in x for v in ['USE POWER ;','USE GROUND ;'])
+                for lines in [x,y]:
+                    boxes=[list(map(float,v.split()[1:5])) for v in lines if v.startswith('RECT ')];assert len(boxes)==1
+                    assert abs(boxes[0][2]-boxes[0][0]-.14)<1e-7 and abs(boxes[0][3]-boxes[0][1]-.14)<1e-7
+                changes.append(name)
+        return {'directory':folder,'receipt':rp,'ODB':folder/'clean.odb','model':folder/'timing.lib','model_receipt':rp,'native_DRC':0,'complete_rules':'NOT_QUALIFIED','RTL_equivalence':'NOT_EXECUTED','source_profile':source_profile,'actual_pin_XY_changes_against_original_common_source':changes,'all_original_pin_function_direction_use_layer_size_and_PG_preserved':True,'source_view_export_job':current['scheduler_job']}
     if source_profile=='latest_access_tips' and case in ['mxu','llaccel_aux']:
         assert scheme=='C'
         relative={'mxu':'mxu_actual_tip_views/r01/mxu-C','llaccel_aux':'llsys_parent_tip_views/r01/llaccel_aux-C'}[case]
@@ -209,7 +233,7 @@ def screen_pads(out,preparation,inputs):
 def run(scheme,revision,route_engine='FastRoute',source_profile='original'):
     assert route_engine in ['FastRoute','CuGR'];native_threads=8 if route_engine=='CuGR' else 16
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=native_threads
-    assert scheme in ['Aopt','C'] and source_profile in ['original','latest_access_tips']
+    assert scheme in ['Aopt','C'] and source_profile in ['original','latest_access_tips','deadline_current']
     assert source_profile=='original' or scheme=='C'
     out=ROOT/'common_integration'/revision/scheme;out.mkdir(parents=True,exist_ok=False)
     inputs=ROOT/'inputs/common-topology-r02';prep=ROOT/'inputs/common-base-preparation-r04'
