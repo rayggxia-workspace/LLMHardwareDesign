@@ -21,6 +21,9 @@ def read_cells(path):
     cells={};terms={}
     for line in path.open():
         p=line.split()
+        if p:p[0]=p[0].strip('{}')
+        if len(p)>=2:p[1]=p[1].strip('{}')
+        if len(p)==3:p[2]=p[2].strip('{}')
         if len(p)==3:terms[(p[0],p[1])]=p[2]
         elif len(p)>=5:cells[p[0]]=(p[1],tuple(p[2:]))
     return cells,terms
@@ -78,7 +81,7 @@ def run(case,revision):
             if line.strip() in ['max slew','max capacitance','max fanout']:section=line.strip()
             if section not in ['max slew','max capacitance'] or '(VIOLATED)' not in line:continue
             p=line.split();assert len(p)>=5
-            inst,pin=p[0].rsplit('/',1);assert inst in before and (inst,pin) in terms
+            inst,pin=p[0].rsplit('/',1);assert inst in before and (inst,pin) in terms,('Actual report driver not resolved',p[0],inst in before,(inst,pin) in terms)
             viol[inst][section]={'pin':pin,'limit':float(p[1]),'actual':float(p[2]),'native_line':line}
         selected={};inventory=[]
         for inst,checks in sorted(viol.items()):
