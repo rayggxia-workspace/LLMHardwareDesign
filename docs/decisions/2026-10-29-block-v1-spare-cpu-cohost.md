@@ -8,4 +8,6 @@ Issue #121 / PR #122。用户要求本任务最多6～8节点，节点内默认6
 
 每次内存准入从MemTotal预留父P&R的192GiB×1.2（或更大的实际进程树RSS），保留原MemAvailable实测及子任务各32GiB×1.2和16GiB guard。只有这些具体数值限制时才少于五个子任务，限制会保留在queue-live/result；父原任务不扩核、不重启、不减门。
 
-native_cohost_queue的独立控制覆盖正确分区、重叠、缺核、错误allocation、低内存与超过forecast的实际RSS；尚未在服务器执行，不把本地控制等同实际并行或宏资格。工作只重测当前RTL的占用和有限S/V/模型长度，不新增宏或产品范围；物理选择322/323/324和R311/312/313不变。
+native_cohost_queue的独立控制覆盖正确分区、重叠、缺核、错误allocation、低内存与超过forecast的实际RSS。实际327/93097.0已经执行完成，七项通过；原325/326未分配/未启动暂存保留并退役。为保证Slurm cgroup可见完整集合，step请求原allocation的96CPU，再用taskset把cohost严格限制为80CPU；真实SLURM_CPUS_PER_TASK=96和worker预算80分别记录，不伪装成新80CPU allocation。实际最大合计六任务、45次父进程树/全部计算线程及内存核验，见review-20261028/v-workspace-327-0854。
+
+工作只重测当前RTL的占用和有限S/V/模型长度，不新增宏或产品范围；物理选择322/323/324和R311/312/313不变。同节点调度检查不是宏资格；新的cohost必须重新核实真实活动父job及CPU分区，不重跑已完成327。
