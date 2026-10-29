@@ -1,4 +1,4 @@
-2026-10-29 19:49 CST，Issue130：M已交付合法原生候选，六文件/几何/32成员原始包本地逐SHA通过，证据work/YUZE-LU/130/validation/physical/ACCEPTED_M.md。S尚未接收；repair31完整GRT真实14 cap/5 slew/1 setup/54 hold，被严格预DRT拒绝。repair32/93384（源782112e8、316文件）正从同一S22已绑定GRT重跑，保留完整live RC，按实测数据缓冲器负载修复，再执行原生时序修复/合法化/重布线。不改约束、尺寸、时钟或判据。最终仍需同源提取物理/功能/严格LEC/完整GDS DRC全过。Issue130=in_progress、PR132=draft；登记PR5 pending、看板unverified/同步pending、审查人待指定。恢复路径见docs/handoffs/2026-10-29-issue-130-m-feed.md；此前失败/停止与旧pending队列取消均保留在physical/README.md，不重启旧门、不操作父任务。
+2026-10-29 20:06 CST，Issue130：M已交付合法原生候选，六文件/几何/32成员原始包本地逐SHA通过，证据work/YUZE-LU/130/validation/physical/ACCEPTED_M.md。S尚未接收；repair31完整GRT真实14 cap/5 slew/1 setup/54 hold，被严格预DRT拒绝。repair34/93392（源79e1686a、316文件）正从同一S22已绑定GRT重跑，32/33被原生寄生缓存一致性守卫拒绝，34以完整重估后当前全局布线RC覆盖，不清标志绕过检查；保留完整live RC，按实测数据缓冲器负载修复，再执行原生时序修复/合法化/重布线。不改约束、尺寸、时钟或判据。最终仍需同源提取物理/功能/严格LEC/完整GDS DRC全过。Issue130=in_progress、PR132=draft；登记PR5 pending、看板unverified/同步pending、审查人待指定。恢复路径见docs/handoffs/2026-10-29-issue-130-m-feed.md；此前失败/停止与旧pending队列取消均保留在physical/README.md，不重启旧门、不操作父任务。
 
 以下为父任务原进度，保留其原始事实，不由侧任务更新：
 
