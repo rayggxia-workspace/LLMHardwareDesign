@@ -68,8 +68,8 @@ def measure(root,out,cpus,run,kind,variant):
         # New latency source requires new measured public results, not a
         # comparison against the old236 execution schedule.
         policy=json.loads((tools/'revision300-r-fresh.json').read_text())
-        assert policy['measurements']==dict(revised='block-v1-20261029-309/tasks/revision300-bench-r-revised',
-                                           extended='block-v1-20261029-309/tasks/revision300-bench-r-extended')
+        generation='342' if recurrent_base_prefetched else '309'
+        assert policy['measurements']=={name:'block-v1-20261029-'+generation+'/tasks/revision300-bench-r-'+name for name in ('revised','extended')}
         prior=out.parents[2]/policy['measurements'][variant]
     receipt=json.loads((prior/'receipt.json').read_text());assert receipt['passed']
     report=prior/'revision300-vr-benchmark.json'
