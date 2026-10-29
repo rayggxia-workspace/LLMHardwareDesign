@@ -2,7 +2,7 @@
 #SBATCH --job-name=hpy-p126-patchaudit
 #SBATCH --partition=c96
 #SBATCH --cpus-per-task=1
-#SBATCH --array=0-9%3
+#SBATCH --array=0-10%3
 #SBATCH --time=0
 #SBATCH --mem=0
 set -euo pipefail
