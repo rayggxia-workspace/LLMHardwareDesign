@@ -15,7 +15,7 @@ int main(int argc,char**argv){try{
  for(unsigned op=0;op<10;++op){auto t=measure("element",2,0,U(op)|(U(op==7?3:0)<<4)|(U(8)<<11)|(U(2)<<16),8);need(t==5,"element latency changed");}
  auto stat=measure("statistics_start_final",3,0,1|2|(8<<2),8);need(stat==4,"statistics latency changed");
  measure("read_statistics",4,0,0);
- for(unsigned fn=0;fn<5;++fn){auto t=measure("function_8_elements",5,0,fn,8);need(t==7,"function macro latency changed");}
+ for(unsigned fn=0;fn<5;++fn){auto t=measure("function_8_elements",5,0,fn,8);need(t==8,"function macro input pipeline latency changed");}
  measure("reciprocal",6,0,65536);measure("rsqrt",6,1,65536);
  for(unsigned n:{1U,7U,8U,9U,64U,128U,256U}){
   std::vector<int32_t>x(n);for(unsigned j=0;j<n;++j)x[j]=(int(j%9)-4)*4096;replay(x);

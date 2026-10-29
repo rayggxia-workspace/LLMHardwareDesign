@@ -1,3 +1,5 @@
+2026-10-29 12:22 CST：V330/93135已自动启动并完成synth/floorplan/place/CTS，route正常运行；真实CTS/GRT setup−0.79/−0.52ns，路径已对应回放读寄存器/发送计数到function_unit.delta1，非最终资格。原始9文件与源路径映射保留。为同一基础V新增函数入口67数据/选择位+1valid寄存器，双路II1与内部三级函数/数值定义不变，八元素命令预期7→8拍；新实现尚待336六项独立验证和全部重测/新物理验收。R311仍place，M/S/T接收保持，V/R最终未齐；Issue121=in_progress、PR122=draft，目标active。
+
 2026-10-29 10:16 CST：R309四项全部通过，映射773440单元/8个32×33乘法器，93066自然COMPLETED/0:0；9原始小文件、300源Git blobs/receipt绑定及大网表日志SHA核验。335自动在释放的槽位提交R311/93125，实际RUNNING/node18，16CPU原生任务已claim；7原始启动文件与302源Git blobs核验。R312最终门/六文件/完整几何和313接口待真实前置。本任务仍8allocation，V330仍待空位，旧322详细布线继续。M/S/T已接收，V/R最终未齐；Issue121=in_progress、PR122=draft、目标active，登记pending/看板unverified/同步pending，独立审查待指定。
 
 2026-10-29 10:09 CST：修正300MHz交付入口、功能契约和前后对照中的过时当前指向：V以329验证/333有限工作空间预算为依据，物理主线330→331→332；315/321及316/322等保留为历史或正常收尾。仅修正文档指向，无新增物理验收。实际322已进入详细布线，309仍ABC映射；M/S/T已接收，V/R最终未齐。管理结构检查及文档diff检查通过。Issue121=in_progress、PR122=draft；登记pending、看板unverified/同步pending，独立审查与管理员待指定。下一步继续真实原生流程及最终四门/文件/几何验收。

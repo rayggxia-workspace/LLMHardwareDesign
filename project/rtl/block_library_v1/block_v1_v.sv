@@ -58,7 +58,20 @@ module block_v1_v(
  reg signed [31:0] fx0,fx1;reg signed [32:0] difference;
  wire function_in=phase==F_RUN&&function_sent<function_length;
  wire function_valid,function_error;wire signed [31:0] fy0,fy1;
- block_v1_v_function function_unit(clk,reset,function_in,function_kind,fx0,fx1,function_valid,fy0,fy1,function_error);
+ // Keep replay selection/subtract-max separate from LUT decode/interpolation.
+ // Two lanes still accept one pair per cycle; add one macro-boundary cycle.
+ reg function_input_valid;reg [2:0] function_input_kind;
+ reg signed [31:0] function_input_x0,function_input_x1;
+ always @(posedge clk)begin
+  if(reset)function_input_valid<=0;
+  else begin
+   function_input_valid<=function_in;
+   function_input_kind<=function_kind;
+   function_input_x0<=fx0;function_input_x1<=fx1;
+  end
+ end
+ block_v1_v_function function_unit(clk,reset,function_input_valid,function_input_kind,
+  function_input_x0,function_input_x1,function_valid,fy0,fy1,function_error);
  // TopK holds forty arbitrary IDs and up to eight selected entries.
  reg [15:0] top_id[0:39],chosen_id[0:7];reg signed [31:0] chosen_value[0:7];
  reg [4:0] id_valid;reg [39:0] selected;
