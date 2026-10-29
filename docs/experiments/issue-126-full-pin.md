@@ -312,3 +312,14 @@ ACT相同740-pin cohort的原XY重布线/B子集/C：DRT提取前总线长271,18
 93382原生API小样确认POINT_PAIR和RECT_OPCODE都成功，DEF真实含RECT，但现dbWirePathItr未导出RECT金属。既有几何连通/导出相等仅适用于导出矩形范围，完整patch金属覆盖尚未验证；native DRC直接检查原数据库，不受漏报影响。新增probe_wire_shape_coverage.py只读探针待执行，尚未推广导出器。93381确实运行后因Tcl序列化失败，未取消；原失败原文保存，旧辅助“preexecution”命名不当以此更正。
 
 中文HTML/qualification_matrix纳入上述真实终态及覆盖边界，保留38组PNG/SVG和全部24767原pin/74301 ABC。原时序、电气、缺SRAM GDS/完整规则/历史目标层/RTL、共同合格冻结、两完整功能和公平系统比较仍未完成。规则rayggxia-project-collab1.0.0，Refs #126 / Draft PR129，登记PR5 pending；缺board.json/Projects能力，看板unverified/同步pending，管理员/审查人待指定。下一步发布读回后在独立目录执行两个已准备脚本并收齐93375。
+
+
+## R50：MXU父层真实RC/STA失败与安装API能力失败
+
+93386已完成RCX/SPEF写出及读回，原时钟2.5ns不变，native report_units实际确认1ns/1fF。研究输出负载2/10/50fF时setup0.241270/0.221837/0.125666ns、min均−0.333124ns，文字VIOLATED0/3/113；需逐路径区分hold/removal，不把文件名当路径类型。Slurm FAILED1保留负min/电气失败，native0/父DRC0不替代时序通过。1916直接接触零WIRE网和原覆盖/资格缺项保留，未提升RCX后物理源。
+
+93387只读完整形状探针FAILED1：安装Tcl没有odb::dbWireShapeItr，RECT漏项尚未解决。新驱动增加inventory模式，只列当前实际Wire绑定，不再重复调用不存在API；待发布读回后在新r02目录执行，不能把能力库存成功当RECT覆盖通过。
+
+本阶段恢复的已发布head2200423990f6d620745bbacd7e3c0a8fef548a64已读回矩阵blob5460568a53f59b6c02f9f8b870dfafed06da02bd、PNG39aefddb899245cbd41cefe08a896599371859cc、SVG5798abec0fb9109f3f5a54f871203de68ae993d0，与本机一致；CI40868250242/40868250231均success，报告38组图已实际上传。该head冻结驱动提交93386/93387，首次提交shell在sbatch前变量名展开失败，修正提交命令后仅提交这两个job，没有重复或取消。
+
+93375真实单M5修复仍运行，以终态回执为准。原92855/93217/93243/93269/93317保留，不按耗时取消。全目标继续in_progress，六块完整资格、共同合格M1–M10冻结、两完整M11/M12功能和公平系统对照尚未完成。规则rayggxia-project-collab1.0.0，Refs #126/PR129 Draft；登记PR5 pending，看板unverified/同步pending，管理员及审查人待指定。

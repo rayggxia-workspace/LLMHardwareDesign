@@ -914,7 +914,9 @@ def render(root,out):
                       ('MXU_actual_tip_parent_r01','mxu_actual_tip_parent/r01/mxu-C'),
                       ('PIN_metal_encoding_failed_r01','pin_metal_encoding_API/r01'),
                       ('PIN_metal_encoding_r02','pin_metal_encoding_API/r02'),
-                      ('LLSYSTEM_full_guide_metadata_control_r01','guide_free_leaf_DRC/r01')]:
+                      ('LLSYSTEM_full_guide_metadata_control_r01','guide_free_leaf_DRC/r01'),
+                      ('MXU_actual_parent_RC_STA_r01','mxu_actual_parent_rc_sta/r01'),
+                      ('WIRE_shape_coverage_API_r01','wire_shape_coverage_API/r01')]:
         p=snapshot/rel/'execution.json.gz'
         terminal_names={'LLSYSTEM_current_actual_tip_views':'llsys-tip-views-r01',
                         'MXU_clock_bound_parent_recheck_r03':'mxu-clock-bound-parent-r03-terminal',
@@ -948,6 +950,8 @@ def render(root,out):
                         'PIN_metal_encoding_failed_r01':'pin-metal-encoding-api-r01-failed',
                         'PIN_metal_encoding_r02':'pin-metal-encoding-api-r02',
                         'LLSYSTEM_full_guide_metadata_control_r01':'guide-free-leaf-drc-r01',
+                        'MXU_actual_parent_RC_STA_r01':'mxu-actual-parent-rc-sta-r01',
+                        'WIRE_shape_coverage_API_r01':'wire-shape-coverage-api-r01',
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
         update=root/'gate_terminal_updates'/terminal_names.get(label,'NO_TERMINAL_UPDATE')
         terminal_evidence=None
@@ -1187,6 +1191,19 @@ def render(root,out):
         assert not encoding['encoding_results']['RECT_OPCODE']['actual_rows']
         audit=read(data/'r49_encoding_export_coverage.json');result['native_RECT_export_coverage']=audit
         upper_text+='<h3 id="r49-export-coverage">已确认的几何导出覆盖缺口：原生RECT金属</h3><p>93382独立小样中POINT_PAIR及RECT_OPCODE均实际成功，原生DEF分别含零长度ROUTED段与RECT(-140,-140,140,140)，原M5/2000 DBU每μm。现有dbWirePathItr导出仅得到前者0.14μm正方形，却漏报后者；不是RECT调用失败或“无金属”。ODB独立读回仍复现。该探针不是叶块修复、GDS或DRC通过证明。</p><p><strong>覆盖更正：</strong>既有几何连通与WIRE/VIA相等结论只覆盖当前导出器实际输出，尚未证明其包含所有RECT/patch metal。native DRC仍由原数据库全量检查，不受该导出器漏项影响；原DRC失败、RC和STA原样保留。对六叶/父层/适配层的RECT库存及完整形状导出需补查，在完成前不把“所检连通”扩写为全部导体或GDS LVS通过。已准备dbWireShapeItr独立只读能力探针，尚未推广新导出器。93381确实运行后因Tcl换行序列化失败，未取消；原失败回执保留。</p><p><a href="data/r49_encoding_export_coverage.json">原生DEF两条记录、文件SHA、成功状态及覆盖边界</a>。此项不推翻native检查，但阻止未经补查的完整金属覆盖声明。</p>'
+    parent_sta=result.get('MXU_actual_parent_RC_STA_r01',{})
+    if parent_sta.get('completed_utc'):
+        assert parent_sta['native_returncode']==0 and parent_sta['all_closed_sources_unchanged']
+        assert parent_sta['source_leaf_ODB_SHA256']==latest_parent['actual_new_leaf_ODB_SHA256']
+        assert all(row['hold_ns']<0 for row in parent_sta['observations'].values())
+        r=next(r for r in rows if r['case']=='mxu')
+        r['parent_access']='CURRENT_ACTUAL_TIP_ALL2172_PARENT_NATIVE0_GEOMETRY_PG_CONTRACT_PASS; EXTRACTED_PARENT_MIN_FAIL_MINUS0.333124NS'
+        r['current_actual_parent_RC_STA']=parent_sta
+        upper_text+='<h3 id="r50-parent-sta">R50：MXU 父层已真实提取，负min余量阻止通过</h3><p>93386使用93239当前实际父ODB及准确模型完成RCX、SPEF写出/读回、原2.5ns时钟和完整适用STA命令。工具原生report_units确认time=1ns、capacitance=1fF，负载2/10/50确实为fF。setup分别0.241270/0.221837/0.125666ns；min均−0.333124ns，原生check_types文字VIOLATED分别0/3/113，文字标记数不是完整失败数。即使2fF检查类型未列文字违规，独立worst min为负仍失败。已读原生critical路径：b_rdata[91]输入到u_macro的clk组min路径，library hold time=0.460480ns、arrival=0.127356ns，差为−0.333124ns，证实本项确为hold；并非刚移动的act_data[12]。不把研究I/O最小到达0.125ns合同失败直接解释为完整系统失败或纯pin XY代价。</p><p>Slurm FAILED1保留真实时序失败；native进程0及父DRC0均不构成合格。1916零WIRE直接接触网、minimum_period缺项、非历史研究I/O约束以及完整系统/规则/GDS/RTL限制继续保留。未保存或提升RCX后物理ODB，物理源不改；此处是实际父夹具提取结果，不是完整系统收益。</p>'
+    shape_probe=result.get('WIRE_shape_coverage_API_r01',{})
+    if shape_probe.get('completed_utc'):
+        assert shape_probe['native_returncode']==1 and shape_probe['all_closed_sources_unchanged']
+        upper_text+='<h3>完整形状接口探针实际失败，不能凭文档假设安装能力</h3><p>93387只读小样实际运行：当前OpenROAD Tcl没有odb::dbWireShapeItr命令，原生invalid command name返回1。没有修改任何叶块或物理源，没有推广新导出器。RECT漏项仍未闭合；下一步需发现当前二进制真实绑定的解码/形状API或补充原生DEF RECT解析审计，先在已知小样交叉验证，再审计六叶/父层/适配层。不会重复无变化的同一接口调用。</p>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',

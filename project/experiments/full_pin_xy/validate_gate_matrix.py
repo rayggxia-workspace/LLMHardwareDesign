@@ -792,6 +792,22 @@ def check(out):
         assert q['only_changed_macro_XY_pin']=='act_data[12]' and q['actual_changed_parent_signal_wire_box_native_net_names']==['act_data[12]']
         assert q['actual_new_leaf_ODB_SHA256']==j['MXU_actual_tip_views_r01']['source_geometry_sha256']
         assert q['parent_RC_STA']=='NOT_EXECUTED_ACCESS_RECHECK_ONLY'
+    q=j.get('MXU_actual_parent_RC_STA_r01',{})
+    if q.get('completed_utc'):
+        assert not q['full_qualification'] and q['native_returncode']==0 and q['all_closed_sources_unchanged']
+        assert q['source_leaf_ODB_SHA256']==j['MXU_actual_tip_parent_r01']['actual_new_leaf_ODB_SHA256']
+        assert 'time 1ns' in q['actual_native_units_text'] and 'capacitance 1fF' in q['actual_native_units_text']
+        assert q['actual_original_clock_period_native_units']=='2.500000'
+        assert q['observations']=={'2':{'setup_ns':0.241270,'hold_ns':-.333124,'literal_VIOLATED_markers_not_complete_failure_count':0},'10':{'setup_ns':.221837,'hold_ns':-.333124,'literal_VIOLATED_markers_not_complete_failure_count':3},'50':{'setup_ns':.125666,'hold_ns':-.333124,'literal_VIOLATED_markers_not_complete_failure_count':113}}
+        assert not q['post_RCX_physical_ODB_saved_or_promoted'] and 'MIN_FAIL' in rows['mxu']['parent_access']
+        critical=gzip.decompress(((out/q['evidence']).parent/'load2.critical.txt.gz').read_bytes()).decode()
+        first=critical.split('Startpoint: ')[1]
+        assert first.startswith('b_rdata[91]') and 'library hold time' in first and '0.460480' in first and '-0.333124' in first
+    q=j.get('WIRE_shape_coverage_API_r01',{})
+    if q.get('completed_utc'):
+        assert not q['full_qualification'] and q['native_returncode']==1 and q['all_closed_sources_unchanged']
+        log=gzip.decompress(((out/q['evidence']).parent/'native.log.gz').read_bytes()).decode()
+        assert 'invalid command name "odb::dbWireShapeItr"' in log
     q=j.get('LLSYSTEM_full_guide_metadata_control_r01',{})
     if q.get('completed_utc'):
         assert not q['full_qualification'] and q['all_closed_sources_unchanged'] and q['all_original_checks_retained']
