@@ -1,10 +1,14 @@
-实际S/V有限工作空间复现：worker.py模式 revision300-sv-workspace，16CPU，源293cbfb/run275；sv_workspace_bench.sv只实例原样S/V，bench_sv_workspace.cpp使用原独立整数参考，初始数据真实写S，后续操作数只来自实际S输出。27场景两初态、载荷/应答/屏障全部计价；不授予集成物理资格。证据见work/YUZE-LU/121/review-20261028/sv-workspace-0305。新R代表阶段估算见RECURRENT-RESOURCE-BUDGET.md及recurrent-resource-budget.json；逐层ceil(512/R数)保留依赖屏障，八模型完整资源预算未完成。
-
-新增内部占用复现：worker.py 模式 revision300-occupancy-{v,r}-{revised,extended}，16CPU；使用268/269执行时封存bench并核对SHA，--public-flat-rw只读内部phase/valid，公共数值/周期/流量必须完整相同。原始RTL与bench不改。有限预连资源诊断模式 revision300-preconnect-{m,t}，不创建固定线路、不授予P3资格。270 V续跑20%/100次迭代以实际GLOBAL_ROUTE_ARGS和工具日志验证。证据见work/YUZE-LU/121/review-20261028/native-progress-0255/README.md。
-
 # 架构与运行
 
-2026-10-29修订主线：[五宏实现合同](BLOCK_V1_REVIEW_CONTRACT.md)、[300MHz验收计划](plans/block-v1-review-300mhz.md)及[新版交付入口](../work/YUZE-LU/121/delivery-300mhz/README.md)。M/T原生最终六阶段、同源四门、完整几何及全端口P2通过，六点输出负载STA通过；S物理/最终功能/严格LEC通过，完整DRC继续；V267同CTS18%容量预留接续GRT，R236原生P&R运行。整体未完成。所有EDA与Verilator仍通过worker.sh/worker.py在Slurm内执行，不在登录节点运行。
+2026-10-29修订主线：[五宏实现合同](BLOCK_V1_REVIEW_CONTRACT.md)、[300MHz验收计划](plans/block-v1-review-300mhz.md)及[新版交付入口](../work/YUZE-LU/121/delivery-300mhz/README.md)。当前最终接收M/S/T；V315全部六项验证通过，316原生P&R进行，后继317最终门/文件/完整几何及318接口等待真实前置。R309数值/端口及310占用通过、映射进行，后继311原生/312最终门/313接口等待真实前置。原306/291/236正常收尾，旧源物理资格不转移；307/308只退役未分配未来选择。
+
+当前V复现使用worker.py模式`revision300-test-v`、`revision300-map-v`、`revision300-bench-v-{revised,extended}`、`revision300-vector-boundary-{composition,latency}`，各16CPU，真实源/工具/命令/输入SHA见run315逐项receipt。主RTL的8共享乘法器前增加操作数寄存，逐元素total/RNE分级；实测逐元素5拍、统计4拍。用`revision300-sv-workspace`及`revision300-model-sv-bench-{0,1,2,3}`复现319有限S/V调度，五项各27场景×两初态，初始S写入、实际S响应、全组屏障、回放及消费均计价。3072元素RMS/L2各10479拍、Softmax16707拍；不授予集成物理或系统吞吐资格。
+
+当前占用模式`revision300-occupancy-{v,r}-{revised,extended}`，各16CPU：V319绑定315公共测量，R310绑定309，公共结果/周期/流量必须逐项一致。`--public-flat-rw`只读实际phase/valid/operand_valid/fetch_done/row_valid，使能与填排空分别计数；不是功耗或有用MAC峰值。旧268/269/273/274保留历史证据，不能充作新流水占用。有限预连实际试验为282的`revision300-preconnect-trial-{m,t}`，M/T副本16路径、原生DRC0及缺via负例通过；生产宏未采用下层固定预连，未来可变连接依赖M11/M12。
+
+有限预算命令：`python project/experiments/block_v1/revision300_resource_budget.py work/YUZE-LU/121/review-20261028/RESOURCE-BUDGET.json`；当前输入283真实矩阵、309递推/卷积和319真实S/V周期，保留每层屏障及有限容量。80候选已重算；300MHz与主机10ms预留是规划假设，结果不授予整模型10token/s/整数质量。已有通过实验不为填槽重复运行。
+
+只读路径诊断模式`revision300-checkpoint-timing-v`读取源归档中selector选定的已完成placement；320只绑定316，实际do-place未完成前无allocation。前后核对ODB/SDC/网表/配置/库/setRC SHA，原流程继续，不改数据库。全部EDA与Verilator仍经worker.sh/worker.py在Slurm内执行，不在登录节点运行。
 
 [V/R端口性能](../work/YUZE-LU/121/review-20261028/vr-bench-0225/README.md)的真实命令、工具SHA及源码commit见逐任务receipt。268的模式为revision300-bench-{v,r}-{baseline,revised,compare}；269的模式为revision300-bench-{v,r}-extended。source_commit分别0d001311ff49fd86e58b7e2dceedb68ee5fceaca和074a5365439e8c789f126649010609ae8283f150。每模式16CPU，容器和编译器由worker.sh固定；受控原队列见[node-queue-268.json](../work/YUZE-LU/121/review-20261028/node-queue-268.json)及[node-queue-269.json](../work/YUZE-LU/121/review-20261028/node-queue-269.json)，完整allocation argv见对应stage manifest。复现必须先用bundle.py从实际Git blob建立新源归档，选新run目录，经dispatch.py的八节点上限/unknown提交核验；不得覆盖封存目录或重交已通过队列充数。
 
