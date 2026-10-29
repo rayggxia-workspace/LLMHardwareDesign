@@ -1,0 +1,5 @@
+# V350新源原生实际启动
+
+在348七项实际全部通过并释放allocation后，354原准入/dispatcher于2026-10-29 13:28:16 CST提交93210，实际RUNNING/node17，revision300-route-v已claim。源845bf03cd935066bf209acf8bd21c789bac89b4d、归档5cec93b8838ee95ec8dd3767fda307144e761354e72183f4d81a49c74b9b8aad。
+
+启动9原始文件及308源Git blobs核验见index。入口检查实际348组级260bit证明、304字节相同add/RNE证明及新源数值/映射；group-proof-reuse与carry-proof-reuse原记录保留。六物理阶段重新执行，启动不等于P&R完成或300MHz资格。351最终四门/六文件/完整几何、352全端口接口仍待真实前置。原337正常运行。
