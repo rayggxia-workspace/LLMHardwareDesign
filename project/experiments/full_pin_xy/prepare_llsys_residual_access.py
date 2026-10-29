@@ -6,13 +6,13 @@ does not call candidate coordinates a physical implementation or parent AP.
 """
 from pathlib import Path
 from collections import defaultdict,Counter
-import csv,datetime,gzip,json,math,os,re,subprocess,sys,traceback
+import csv,datetime,gzip,json,math,os,re,shutil,subprocess,sys,traceback
 from run_exports import ROOT,sha
 from run_parent_trial import tcl
 from run_escape_fixture import execute
 DRIVER=Path(__file__).resolve().parent
 
-def run(revision):
+def run(revision,native_reuse=None):
     source=ROOT/'llsys_wire_pin_retention/r01';rp=source/'execution.json';q=json.loads(rp.read_text());assert q.get('completed_utc') and q['fresh_DRC_count']==0 and q['whole_signal_geometry']['pass'] and q['all_closed_sources_unchanged']
     odb=source/'routed.odb';geo=source/'whole_access.tsv.gz';pins=source/'after.pins.tsv';deffile=source/'routed.def'
     for p in [odb,geo,pins,deffile]:assert sha(p)==q['files'][p.name]['sha256']
@@ -54,11 +54,22 @@ set r [$b getDieArea];set f [open DIE w];puts $f [list [$r xMin] [$r yMin] [$r x
         for k,p in [('MASTERS',out/'actual_used_master_high_layers.tsv'),('PEERS',out/'all87_actual_peers.tsv'),('PGOUT',out/'actual_high_PG_OBS.tsv'),('VIAS',out/'actual_first_hop_vias.tsv'),('DIE',out/'actual_die.tsv')]:body=body.replace(k,tcl(p))
         body=body.replace('NAMES',names);script=out/'native_readonly.tcl';script.write_text('read_db '+tcl(odb)+'\n'+body)
         common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
-        rec['native_readonly_returncode']=execute(common,script,out/'native_readonly.log',threads=1);assert rec['native_readonly_returncode']==0
+        if native_reuse:
+            assert native_reuse=='r01';previous=ROOT/'llsys_residual_access_preflight'/native_reuse;proof=json.loads((previous/'execution.json').read_text())
+            assert proof.get('completed_utc') and proof['native_readonly_returncode']==0 and proof['all_closed_sources_unchanged'] and proof['source_SHA'][str(odb)]==sha(odb)
+            inputs[str(previous/'execution.json')]=sha(previous/'execution.json')
+            for name in ['actual_used_master_high_layers.tsv','all87_actual_peers.tsv','actual_high_PG_OBS.tsv','actual_first_hop_vias.tsv','actual_die.tsv']:
+                p=previous/name;assert sha(p)==proof['files'][name]['sha256'];inputs[str(p)]=sha(p);shutil.copyfile(str(p),str(out/name))
+            rec['native_readonly_returncode']=0;rec['reused_native_readonly_phase']=str(previous);rec['new_native_readonly_script_not_executed']=True
+        else:rec['native_readonly_returncode']=execute(common,script,out/'native_readonly.log',threads=1)
+        assert rec['native_readonly_returncode']==0
         via={}
         for r in csv.DictReader((out/'actual_first_hop_vias.tsv').open(),delimiter='\t'):via.setdefault(r['via'],[]).append((r['layer'],tuple(int(r[k]) for k in ['x0','y0','x1','y1'])))
         assert set(via)=={'via5_0','via6_0'}
-        for v,rows in via.items():assert len(rows)==3 and all(z==(-140,-140,140,140) for ly,z in rows)
+        for v,rows in via.items():
+            assert len(rows)==3 and {ly for ly,z in rows}==({'metal5','via5','metal6'} if v=='via5_0' else {'metal6','via6','metal7'})
+            assert all(z[0]<z[2] and z[1]<z[3] for ly,z in rows)
+        rec['corrected_failed_r01_assumption']='Actual via6 M7 landing is0.4x0.4um; pin stays0.14x0.14um. Use measured rectangles, not one uniform via footprint.'
         text=tech.read_text();rules={};cutspaces={}
         for layer in ['metal5','metal6','metal7','via5','via6']:
             block=re.search(r'^LAYER '+layer+r'\s.*?^END '+layer,text,re.M|re.S).group(0)
@@ -84,12 +95,12 @@ set r [$b getDieArea];set f [open DIE w];puts $f [list [$r xMin] [$r yMin] [$r x
         consume(csv.DictReader((out/'actual_high_PG_OBS.tsv').open(),delimiter='\t'))
         tracks={}
         for line in deffile.open():
-            m=re.match(r'TRACKS ([XY]) (\d+) DO (\d+) STEP (\d+) LAYER (metal[56]) ;',line)
-            if m:tracks[m[3] if False else m[5],m[1]]=(int(m[2]),int(m[4]))
+            m=re.match(r'TRACKS ([XY]) (\d+) DO (\d+) STEP (\d+) LAYER (metal[567]) ;',line)
+            if m:tracks[m[5],m[1]]=(int(m[2]),int(m[4]))
             if line.startswith('COMPONENTS'):break
-        assert len(tracks)==4;xo,xp=tracks['metal6','X'];yo,yp=tracks['metal5','Y'];die=list(map(int,(out/'actual_die.tsv').read_text().split()));occupied={(p[4],(int(p[5])+int(p[7]))//2,(int(p[6])+int(p[8]))//2) for p in actual.values()};newshapes=[];output=[];counts=Counter()
+        assert len(tracks)==6;die=list(map(int,(out/'actual_die.tsv').read_text().split()));occupied={(p[4],(int(p[5])+int(p[7]))//2,(int(p[6])+int(p[8]))//2) for p in actual.values()};newshapes=[];output=[];counts=Counter()
         for r in selected:
-            name=r['pin'];cx,cy=centers[name];ix=round((cx-xo)/float(xp));iy=round((cy-yo)/float(yp));candidates=sorted((abs(xo+i*xp-cx)+abs(yo+j*yp-cy),xo+i*xp,yo+j*yp) for i in range(ix-4,ix+5) for j in range(iy-4,iy+5));chosen=None;reject=Counter();vname='via5_0' if r['layer']=='metal5' else 'via6_0'
+            name=r['pin'];cx,cy=centers[name];xo,xp=tracks['metal6','X'];yo,yp=tracks['metal5' if r['layer']=='metal5' else 'metal7','Y'];ix=round((cx-xo)/float(xp));iy=round((cy-yo)/float(yp));candidates=sorted((abs(xo+i*xp-cx)+abs(yo+j*yp-cy),xo+i*xp,yo+j*yp) for i in range(ix-4,ix+5) for j in range(iy-4,iy+5));chosen=None;reject=Counter();vname='via5_0' if r['layer']=='metal5' else 'via6_0'
             for distance,x,y in candidates:
                 if distance>2240:continue
                 if (r['layer'],x,y) in occupied:reject['duplicate_actual_signal_point']+=1;continue
@@ -112,4 +123,4 @@ set r [$b getDieArea];set f [open DIE w];puts $f [list [$r xMin] [$r yMin] [$r x
         (out/'all87_first_hop_targets_NOT_IMPLEMENTED.json').write_text(json.dumps(output,indent=2)+'\n');rec['status_counts']=dict(counts);rec['all_87_actual_original_pin_contracts_verified']=True;rec['original_M5_M6_0p14_size_and_layer_preserved']=True;rec['actual_first_hop_templates']=via;rec['actual_per_layer_cut_spacing_DBU']=cutspaces;rec['native_no_high_layer_master_geometry_omitted']=True
     except Exception:rec['actual_failure']=traceback.format_exc()
     rec['all_closed_sources_unchanged']=all(sha(Path(p))==v for p,v in inputs.items());rec['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat();rec['files']={p.name:{'bytes':p.stat().st_size,'sha256':sha(p)} for p in out.iterdir() if p.is_file()};(out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n');return int(bool(rec.get('actual_failure')) or not rec['all_closed_sources_unchanged'])
-if __name__=='__main__':sys.exit(run(sys.argv[1]))
+if __name__=='__main__':sys.exit(run(*sys.argv[1:]))
