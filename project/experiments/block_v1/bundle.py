@@ -10,7 +10,10 @@ import tarfile
 PATHS = ['project/rtl','project/experiments/block_v1','project/experiments/shared_gdn',
          'project/experiments/attention_rtl','project/experiments/cache_share',
          'project/experiments/gdn_state','project/experiments/r_state',
-         'project/experiments/v_consumer','work/YUZE-LU/121/source-manifest.json']
+         'project/experiments/v_consumer','work/YUZE-LU/121/source-manifest.json',
+         'work/YUZE-LU/121/delivery-300mhz/M/interface/actual-escape.json',
+         'work/YUZE-LU/121/delivery-300mhz/T/interface/actual-escape.json',
+         'work/YUZE-LU/121/delivery-300mhz/S/pins.json']
 
 
 def bundle(root, ref, destination):

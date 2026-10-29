@@ -60,7 +60,21 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('revision300-vector-boundary-'):
+    if MODE == 'interconnect-probe':
+        from interconnect_experiment import probe
+        probe(ROOT, OUT, CPUS, run)
+    elif MODE.startswith('interconnect-prepare-'):
+        from interconnect_experiment import prepare_macro
+        prepare_macro(ROOT, OUT, CPUS, run, MODE.rsplit('-', 1)[1])
+    elif MODE.startswith('interconnect-case-'):
+        from interconnect_experiment import measure
+        pair, topology, length, variant = MODE[len('interconnect-case-'):].split('-')
+        measure(ROOT, OUT, CPUS, run, pair, topology, float(length), variant)
+    elif MODE.startswith('interconnect-profile-'):
+        from interconnect_experiment import measure_profile
+        pair, topology, variant = MODE[len('interconnect-profile-'):].split('-')
+        measure_profile(ROOT, OUT, CPUS, run, pair, topology, variant)
+    elif MODE.startswith('revision300-vector-boundary-'):
         from revision300_rtl import vector_boundary
         vector_boundary(ROOT,OUT,CPUS,run,MODE.rsplit('-',1)[1])
     elif MODE=='revision300-v-carry-proof':

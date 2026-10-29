@@ -1,0 +1,514 @@
+{
+  "schema": "block-v1-node-queue/1",
+  "node_cpus": 96,
+  "default_task_cpus": 16,
+  "memory_guard_gib": 16,
+  "state_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/node-queue-state.json",
+  "tasks": [
+    {
+      "id": "interconnect-probe",
+      "mode": "interconnect-probe",
+      "cpus": 16,
+      "memory_gib": 4,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-probe",
+      "report": "interconnect-probe.json",
+      "after": []
+    },
+    {
+      "id": "interconnect-prepare-mt",
+      "mode": "interconnect-prepare-mt",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-prepare-mt",
+      "report": "interconnect-prepare.json",
+      "after": [
+        "interconnect-probe"
+      ]
+    },
+    {
+      "id": "interconnect-case-mt-direct-250-base",
+      "mode": "interconnect-case-mt-direct-250-base",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-mt-direct-250-base",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-mt"
+      ]
+    },
+    {
+      "id": "interconnect-case-mt-direct-250-high",
+      "mode": "interconnect-case-mt-direct-250-high",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-mt-direct-250-high",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-mt"
+      ]
+    },
+    {
+      "id": "interconnect-case-mt-direct-568-base",
+      "mode": "interconnect-case-mt-direct-568-base",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-mt-direct-568-base",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-mt"
+      ]
+    },
+    {
+      "id": "interconnect-case-mt-direct-568-high",
+      "mode": "interconnect-case-mt-direct-568-high",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-mt-direct-568-high",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-mt"
+      ]
+    },
+    {
+      "id": "interconnect-case-mt-direct-1200-base",
+      "mode": "interconnect-case-mt-direct-1200-base",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-mt-direct-1200-base",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-mt"
+      ]
+    },
+    {
+      "id": "interconnect-case-mt-direct-1200-high",
+      "mode": "interconnect-case-mt-direct-1200-high",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-mt-direct-1200-high",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-mt"
+      ]
+    },
+    {
+      "id": "interconnect-case-mt-endpoints-250-base",
+      "mode": "interconnect-case-mt-endpoints-250-base",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-mt-endpoints-250-base",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-mt"
+      ]
+    },
+    {
+      "id": "interconnect-case-mt-endpoints-250-high",
+      "mode": "interconnect-case-mt-endpoints-250-high",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-mt-endpoints-250-high",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-mt"
+      ]
+    },
+    {
+      "id": "interconnect-case-mt-endpoints-568-base",
+      "mode": "interconnect-case-mt-endpoints-568-base",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-mt-endpoints-568-base",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-mt"
+      ]
+    },
+    {
+      "id": "interconnect-case-mt-endpoints-568-high",
+      "mode": "interconnect-case-mt-endpoints-568-high",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-mt-endpoints-568-high",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-mt"
+      ]
+    },
+    {
+      "id": "interconnect-case-mt-endpoints-1200-base",
+      "mode": "interconnect-case-mt-endpoints-1200-base",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-mt-endpoints-1200-base",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-mt"
+      ]
+    },
+    {
+      "id": "interconnect-case-mt-endpoints-1200-high",
+      "mode": "interconnect-case-mt-endpoints-1200-high",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-mt-endpoints-1200-high",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-mt"
+      ]
+    },
+    {
+      "id": "interconnect-case-mt-relay-250-base",
+      "mode": "interconnect-case-mt-relay-250-base",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-mt-relay-250-base",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-mt"
+      ]
+    },
+    {
+      "id": "interconnect-case-mt-relay-250-high",
+      "mode": "interconnect-case-mt-relay-250-high",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-mt-relay-250-high",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-mt"
+      ]
+    },
+    {
+      "id": "interconnect-case-mt-relay-568-base",
+      "mode": "interconnect-case-mt-relay-568-base",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-mt-relay-568-base",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-mt"
+      ]
+    },
+    {
+      "id": "interconnect-case-mt-relay-568-high",
+      "mode": "interconnect-case-mt-relay-568-high",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-mt-relay-568-high",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-mt"
+      ]
+    },
+    {
+      "id": "interconnect-case-mt-relay-1200-base",
+      "mode": "interconnect-case-mt-relay-1200-base",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-mt-relay-1200-base",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-mt"
+      ]
+    },
+    {
+      "id": "interconnect-case-mt-relay-1200-high",
+      "mode": "interconnect-case-mt-relay-1200-high",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-mt-relay-1200-high",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-mt"
+      ]
+    },
+    {
+      "id": "interconnect-prepare-ts",
+      "mode": "interconnect-prepare-ts",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-prepare-ts",
+      "report": "interconnect-prepare.json",
+      "after": [
+        "interconnect-probe"
+      ]
+    },
+    {
+      "id": "interconnect-case-ts-direct-250-base",
+      "mode": "interconnect-case-ts-direct-250-base",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-ts-direct-250-base",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-ts"
+      ]
+    },
+    {
+      "id": "interconnect-case-ts-direct-250-high",
+      "mode": "interconnect-case-ts-direct-250-high",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-ts-direct-250-high",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-ts"
+      ]
+    },
+    {
+      "id": "interconnect-case-ts-direct-568-base",
+      "mode": "interconnect-case-ts-direct-568-base",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-ts-direct-568-base",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-ts"
+      ]
+    },
+    {
+      "id": "interconnect-case-ts-direct-568-high",
+      "mode": "interconnect-case-ts-direct-568-high",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-ts-direct-568-high",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-ts"
+      ]
+    },
+    {
+      "id": "interconnect-case-ts-direct-1200-base",
+      "mode": "interconnect-case-ts-direct-1200-base",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-ts-direct-1200-base",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-ts"
+      ]
+    },
+    {
+      "id": "interconnect-case-ts-direct-1200-high",
+      "mode": "interconnect-case-ts-direct-1200-high",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-ts-direct-1200-high",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-ts"
+      ]
+    },
+    {
+      "id": "interconnect-case-ts-endpoints-250-base",
+      "mode": "interconnect-case-ts-endpoints-250-base",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-ts-endpoints-250-base",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-ts"
+      ]
+    },
+    {
+      "id": "interconnect-case-ts-endpoints-250-high",
+      "mode": "interconnect-case-ts-endpoints-250-high",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-ts-endpoints-250-high",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-ts"
+      ]
+    },
+    {
+      "id": "interconnect-case-ts-endpoints-568-base",
+      "mode": "interconnect-case-ts-endpoints-568-base",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-ts-endpoints-568-base",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-ts"
+      ]
+    },
+    {
+      "id": "interconnect-case-ts-endpoints-568-high",
+      "mode": "interconnect-case-ts-endpoints-568-high",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-ts-endpoints-568-high",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-ts"
+      ]
+    },
+    {
+      "id": "interconnect-case-ts-endpoints-1200-base",
+      "mode": "interconnect-case-ts-endpoints-1200-base",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-ts-endpoints-1200-base",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-ts"
+      ]
+    },
+    {
+      "id": "interconnect-case-ts-endpoints-1200-high",
+      "mode": "interconnect-case-ts-endpoints-1200-high",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-ts-endpoints-1200-high",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-ts"
+      ]
+    },
+    {
+      "id": "interconnect-case-ts-relay-250-base",
+      "mode": "interconnect-case-ts-relay-250-base",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-ts-relay-250-base",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-ts"
+      ]
+    },
+    {
+      "id": "interconnect-case-ts-relay-250-high",
+      "mode": "interconnect-case-ts-relay-250-high",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-ts-relay-250-high",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-ts"
+      ]
+    },
+    {
+      "id": "interconnect-case-ts-relay-568-base",
+      "mode": "interconnect-case-ts-relay-568-base",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-ts-relay-568-base",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-ts"
+      ]
+    },
+    {
+      "id": "interconnect-case-ts-relay-568-high",
+      "mode": "interconnect-case-ts-relay-568-high",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-ts-relay-568-high",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-ts"
+      ]
+    },
+    {
+      "id": "interconnect-case-ts-relay-1200-base",
+      "mode": "interconnect-case-ts-relay-1200-base",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-ts-relay-1200-base",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-ts"
+      ]
+    },
+    {
+      "id": "interconnect-case-ts-relay-1200-high",
+      "mode": "interconnect-case-ts-relay-1200-high",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Native measured S STA4.523GiB and T1.973GiB;16GiB forecast per combined process includes Python graph audit and conservative headroom. Live RSS plus1.2 reserve and16GiB node guard remain mandatory.",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-906/tasks/interconnect-case-ts-relay-1200-high",
+      "report": "interconnect-result.json",
+      "after": [
+        "interconnect-prepare-ts"
+      ]
+    }
+  ]
+}

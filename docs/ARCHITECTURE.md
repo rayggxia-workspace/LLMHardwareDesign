@@ -293,6 +293,8 @@ RAW_LIB_FOLDER需提供已按164收据封存的candidate164-a.lib/c.lib。只读
 182真实导体来源与184直接实际位置门均已原生通过，183固定实例保护失败也保留。完整结果见work/YUZE-LU/121/results/run182-*、run183-*、run184-*。固定PR128 fbbd5ec显式输出RC十二个pair的记录输出逐项复算见macro-qa128-explicit-output-rc-fbbd5ec.json；只作为待审查的层次timing/RC方向，不替换物理M10pin或签发真实宏资格。
 # 当前 Block v1 五宏执行入口（2026-10-27）
 
+M/S/T代表性互联有限实验（2026-10-29）使用独立`interconnect_{spef,experiment,stage,collect,pin_profiles,cross_section,report}.py`入口，未修改基础宏RTL或生产P&R。两组130线完整原生图、36+12项测量及控制/复现命令见[报告](reports/2026-10-29-block-v1-interconnect-study.md)与[交接](handoffs/2026-10-29-issue-121-interconnect-study.md)。本地控制：`python -m unittest discover -s project/experiments/block_v1 -p test_interconnect_spef.py -v`；实际EDA仍经原Issue共享dispatcher/6×16队列。报告生成器只接受完整已关闭捕获，不把实验执行PASSED当作电路或制造资格。
+
 用户选定 M/V/R/S/T，每种一个实现，必须逐块交最终M1–M10布局布线。规格见 `docs/BLOCK_LIBRARY_V1.md`，计划见 `docs/plans/block-v1-library-implementation.md`。旧裸M8/混合VS为历史工程来源，非最终边界。
 
 业务任务由 `project/experiments/block_v1/worker.py` 调用：`five-macro-matrix-test` / `five-macro-matrix-map` / `five-macro-store-test` / `five-macro-store-map` / `five-macro-t-pins` / `five-macro-t-layout`，各16CPU；前两对各自通过后 `five-macro-route-m/s` 独立补位。以 `bundle.py` 从精确Git对象生成不可变输入、`native_node_queue.py` 管理96CPU的6×16动态队列，`dispatch.py` 统一限制本任务6～8allocation；独立全deck/STA/PG/最终网表接收不能省略。实际结果由每任务 receipt 和业务JSON判定，不以命令列存在当已通过。
