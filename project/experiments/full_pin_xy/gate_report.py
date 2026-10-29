@@ -678,6 +678,16 @@ def render(root,out):
     if p.exists():
         q=read(p);result['actual_common_lower_closed_guides_BPin_container_resume_r02']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
         upper_text+='<p><strong>93149下层实际接续：</strong>复用93132已完成的原CuGR检查点/guide，不重复全局路由。只把256个共享<strong>施工</strong>BTerm的两个BPin容器合为一个容器内两块原矩形，原24767叶pin、两端0.8μm接点、原网络/FIXED导体、PG/OBS/位置均不改；逐项核对扁平pin几何/PG/实例保持。该表示修复尚不是冻结前全部施工端口降为固定几何，后者仍待完成。原DRT-0302保留，新DRT/全端点/双PG/fresh各自记录，尚未资格化。</p>'
+        if q.get('completed_utc'):
+            from collections import Counter
+            before=p.parent/'before_BPin_container_fix.pins.tsv.gz';after=p.parent/'before_route.pins.tsv.gz'
+            if before.exists() and after.exists():
+                a=gzip.decompress(before.read_bytes());b=gzip.decompress(after.read_bytes())
+                multiset=Counter(a.splitlines())==Counter(b.splitlines());assert multiset
+                result['actual_common_lower_BPin_posthoc_exact_geometry_multiset']={'all10657_flat_pin_rows_exact_multiset_equal':multiset,
+                  'rows_before':len(a.splitlines()),'rows_after':len(b.splitlines()),'byte_order_equal':a==b,
+                  'scope':'Immutable native before/after rows; preserve original byte-order assertion failure, no physical rule waived'}
+            upper_text+='<p><strong>93149实际FAILED保留：</strong>两个BPin容器问题已越过，DRT随后报DRT-0073：u_llaccel_aux/bit_1025无access point，未完成下层布线。原包装器又因pin行顺序变化触发字节哈希断言；后验逐行多重集复核10657行完全相同、无遗漏/重复，PG和实例字节本来相同，因此该断言不是几何移动的证据。原失败回执不改，真实NoAP仍是物理接入失败，不能据此说共同底座完成；后续须处理该pin的真实轨道/金属/PG/via条件。</p>'
     p=snapshot/'native_wire_append_api/r02/execution.json.gz'
     if p.exists():
         q=read(p);result['native_wire_opcode_append_API_r02']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
@@ -812,6 +822,18 @@ def render(root,out):
     if q.get('completed_utc') and q.get('native_export_returncode')==q.get('fresh_model_read_returncode')==0 and q.get('all_sources_and_pre_RCX_geometry_unchanged'):
         r=next(r for r in rows if r['case']=='opentpu_aux');r['current_source_research_model']='SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING'
         r['current_source_extended_STA_audit']=q.get('current_exact_source_extended_STA')
+    for q in result.get('LLSYSTEM_actual_three_pin_via_tip_attempts',[]):
+        if not (q.get('completed_utc') and q.get('fresh_DRC_count')==0 and q.get('whole_signal_geometry',{}).get('pass') and q.get('complete_pin_contract',{}).get('all_signal_pins')==13507 and q.get('all_other_725250_multiterminal_route_box_multisets_identical') and q.get('exactly_eight_actual_WIRE_rectangles_removed_no_added_wire_or_via_material') and q.get('all_actual_target_via_rectangle_multisets_preserved') and all(q.get('all_cells_signal_connections_PG_die_unchanged',{}).values()) and q.get('all_closed_sources_unchanged')):continue
+        r=next(r for r in rows if r['case']=='llaccel_aux');r['historical_source_before_actual_via_tips']=json.loads(json.dumps(r))
+        r.update({'completed_source':'actual_via_tips/'+q['revision'],'actual_internal_route':'ACTUAL_THREE_PIN_VIA_TIP_ROUTE_NATIVE0_STA_FAILED',
+          'native_DRC_count':0,'all_multiterminal_signal_clock_geometry':True,'power_grid':'NATIVE_VDD_VSS_COMMANDS_EXECUTED',
+          'setup_ns':q.get('setup_ns'),'hold_ns':q.get('hold_ns'),'violation_marker_rows':q.get('literal_VIOLATED_markers_not_complete_failure_count'),
+          'complete_rules':'CURRENT_VIA_TIP_GDS_NOT_EXECUTED_COMPLETE_COVERAGE_GAPS',
+          'parent_access':'NEW_VIA_TIP_SOURCE_NOT_VALIDATED_IN_PARENT_OLD_R02_NoAP_bit_1025_RETAINED',
+          'current_source_research_model':'NOT_EXPORTED','common_base_source_selection':'ORIGINAL_R02_NOT_UPGRADED_TO_THIS_SOURCE',
+          'current_complete_pin_contract':q['complete_pin_contract']})
+        r['evidence'].append(q['evidence'])
+        upper_text+='<p><strong>LL SYSTEM三pin真实修复已闭合：</strong>native编辑/RCX/STA与fresh进程均0，fresh native由4降0；725253网/2325528端点/28517815形状所检连通、双PG、完整13507-pin层/尺寸/网络/方向与PG合同通过。恰好只删除八个WIRE矩形、所有via原样；其余725250条多端网矩形多重集相同，单端未用网/真实GDS仍不在该比较范围。0新单元/换型，原功能实例/位置/连接/PG/外框不变。setup/hold仍−3.909029/−0.587515ns、8876文字VIOLATED，整体FAILED。主矩阵选此native0新源，旧native4/旧窗口作业失败保留；新匹配抽象/RC模型及父层接入仍待完成，不能继承旧父层或称六块完整物理资格通过。</p>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',
@@ -819,6 +841,8 @@ def render(root,out):
     with (data/'qualification_matrix.csv').open('w',encoding='utf-8-sig',newline='') as f:
         w=csv.DictWriter(f,fieldnames=columns,lineterminator='\n');w.writeheader();w.writerows({k:r[k] for k in columns} for r in rows)
     labels={'COMPLETED':'已完成布线；非完整签核','COMPLETED_COSTED_ECO_NOT_PURE_XY':'成本ECO已布线',
+      'actual_via_tips/r02':'实际via落脚pin修复/r02','ACTUAL_THREE_PIN_VIA_TIP_ROUTE_NATIVE0_STA_FAILED':'实际3pin重接/native0/STA失败',
+      'CURRENT_VIA_TIP_GDS_NOT_EXECUTED_COMPLETE_COVERAGE_GAPS':'新源GDS未验/完整覆盖缺口',
       'native_stacked_via/r01':'实际via叠放/r01','ACTUAL_STACKED_VIA_ROUTE_CHECKS_SEPARATE':'实际接线；检查分列',
       'CURRENT_STACKED_VIA_GDS_NOT_EXECUTED_COVERAGE_GAPS':'新源GDS未验/覆盖缺口',
       'COMPLETED_BUT_NATIVE_DRC_FAILED':'已布线；native失败','NOT_TERMINAL':'尚未终态',

@@ -46,7 +46,19 @@ def check(out):
             end=read(fixed/'execution.json.gz')
             assert gds_source.get('historical_costed_GDS_findings_before_diode',gds_source['available_deck_findings'])==end.get('available_deck_findings')
             assert not end['full_qualification']
-    assert rows['llaccel_aux']['native_DRC_count']==4 and rows['llaccel_aux']['newer_attempt']['three_pin_job'].endswith('FAILED_DRT_1231')
+    ll=rows['llaccel_aux'];oldll=ll.get('historical_source_before_actual_via_tips',ll)
+    assert oldll['native_DRC_count']==4 and oldll['newer_attempt']['three_pin_job'].endswith('FAILED_DRT_1231')
+    if ll.get('historical_source_before_actual_via_tips'):
+        q=next(q for q in j['LLSYSTEM_actual_three_pin_via_tip_attempts'] if q['revision']=='r02')
+        assert q['completed_utc'] and q['native_returncodes']=={'actual_edit_and_analysis':0,'fresh_DRC':0}
+        assert ll['completed_source']=='actual_via_tips/r02' and ll['native_DRC_count']==q['fresh_DRC_count']==0
+        assert q['whole_signal_geometry']['pass'] and q['whole_signal_geometry']['checked_nets']==725253 and q['whole_signal_geometry']['checked_terminals']==2325528 and q['whole_signal_geometry']['checked_shapes']==28517815
+        assert q['complete_pin_contract']['all_signal_pins']==13507 and q['complete_pin_contract']['only_changed_XY_pins']==['bit_1382013','bit_1389626','bit_6907']
+        assert q['complete_pin_contract']['all_functions_directions_networks_layers_sizes_and_PG_preserved']
+        assert q['all_other_725250_multiterminal_route_box_multisets_identical'] and q['exactly_eight_actual_WIRE_rectangles_removed_no_added_wire_or_via_material'] and q['all_actual_target_via_rectangle_multisets_preserved']
+        assert all(q['all_cells_signal_connections_PG_die_unchanged'].values()) and q['all_closed_sources_unchanged'] and q['container_library_unchanged']
+        assert ll['setup_ns']==q['setup_ns']==-3.909029 and ll['hold_ns']==q['hold_ns']==-0.587515 and ll['violation_marker_rows']==q['literal_VIOLATED_markers_not_complete_failure_count']==8876
+        assert ll['current_source_research_model']=='NOT_EXPORTED' and 'NOT_VALIDATED' in ll['parent_access'] and not ll['full_qualification']
     system=folder/'checkpoint_route/r01/execution.json.gz'
     if system.exists() and read(system).get('completed_utc'):
         q=read(system);assert not q['full_qualification'] and q['native_returncode']==0 and q['fresh_DRC_count']==0
