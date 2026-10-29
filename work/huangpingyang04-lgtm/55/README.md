@@ -14,8 +14,8 @@
 
 <!-- current-buffer-PG-status -->
 
-更新时间 2026-10-29T17:38:16.760392+00:00；截止北京时间2026-10-30 09:19:06。候选1/3未冻结，M1–M8固定、M9/M10及via8_0/via9_0定制，M11/M12未启用。
+更新时间2026-10-29T19:18:02.773592+00:00；硬截止北京时间2026-10-30 09:19:06。候选1/3未冻结，M1–M8固定、M9/M10定制；阶段二/三未验收、四NOTRUN。
 
-当前同一完整六资源数字模型：93540 openTPU20组、93541 llaccel180任务均通过工作+对端保持复位有限门级回归（实际负例/33SRAM保护）；无SDF或最终物理底座证明。VECTOR第二实际布线原27DRC不变，但224时序端点恶化/cap31，未通过；93559确认原时钟几何不变而邻网_173771_耦合变化使接收时钟提前。AUX setup−1.571848ns/hold−0.248454ns/cap1047仍不达标，具体ATTN输出拼接与gemm_a_req[7]到SRAM bank选择路径已定位。93534完整父层原生CUGR运行，尚无最终布线；旧93130超时失败，不再记为运行。底座未冻结、两版最终定制布线/总验收未完成，外部时钟波形及37负载仍null。
+当前完整六资源数字联合版已实际通过openTPU305组有限测试（含3组连续双任务）及llaccel180任务，并检查完整对端复位空闲/33SRAM/真实负例。无SDF或最终物理底座证明。VECTOR加回22旧数据形状后全保持/PG/连通/原27DRC通过，3ns WNS改善到−4.173199682ns，恶化端点224→192，但cap31含1新增/4恶化，质量仍失败。AUX5694setup/36hold/cap1047仍失败；完整端点已绑定，新增3个是GEMM权重读回总线位。93534完整191/14059父层DRT仍第0轮，guides不是导线。6宏不重叠及191位置保持只指对应保存源，不能与新版叶功能源拼作最终物理通过。外部clock波形及37常量负载仍null。
 
-详细状态/范围/对象/证据见 docs/experiments/issue-55-full-block-integration.md 和 project/experiments/block_full_integration/results/summary.json。索引 /public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/convergence-12h-20261029T131906Z/records/milestone-20261029T173816Z.json，SHA-256 1068f85b683ae9ccf03049ba3ecd2e37337f794e3cc09112621cb7c695ec7dec；工程487cb63c5d105e485529352c8d2cb8773927a254。大文件留服务器，沿用Issue55/PR58草稿；登记PR5 pending、Projects未核验、审查人待指定。
+详细状态、对象、日志及限制：docs/experiments/issue-55-full-block-integration.md 和 project/experiments/block_full_integration/results/summary.json。索引 /public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/convergence-12h-20261029T131906Z/records/milestone-20261029T191802Z.json，SHA-256 6c655b01970d2e9e1a3e75179a76ef02f552f797f8893691a043506e791ce4ce。工程7d30d4bfbc48417d0a7dab0c503868c82a5c0cd7。原始/封存/并行成员资料保持，PR58仍草稿；登记PR5 pending、Projects未核验、审查人待指定。
