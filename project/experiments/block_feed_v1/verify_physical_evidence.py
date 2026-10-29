@@ -69,6 +69,27 @@ def verify(root):
             binding = json.loads((base.parent / 'source-binding.json').read_text())
             for name, digest in source['rtl_sha256'].items():
                 assert any(r['path'] == name and r['sha256'] == digest for r in binding['source_hashes'])
+        if 'geometry' in index:
+            geometry = index['geometry']
+            archive = base / geometry['archive']
+            assert sha(archive.read_bytes()) == geometry['archive_sha256']
+            with zipfile.ZipFile(archive) as z:
+                assert len(z.namelist()) == len(set(z.namelist()))
+                assert set(z.namelist()) == set(geometry['members'])
+                for name, digest in geometry['members'].items():
+                    assert sha(z.read(name)) == digest
+                receipt = json.loads(z.read('receipt.json'))
+                assert receipt['passed']
+                for name in z.namelist():
+                    if name != 'receipt.json':
+                        assert sha(z.read(name)) == receipt['outputs'][name]
+                report = json.loads(z.read('five-macro-geometry.json'))
+                assert report['passed'] and report['macro'] == delivery['macro']
+                assert report['original_odb_unchanged'] and report['native_def_rect_complete']
+                assert report['provenance']['delivery_receipt_sha256'] == bundle['delivery_receipt_sha256']
+                assert report['source_odb_sha256'] == delivery['final_files']['6_final.odb']['sha256']
+                assert sha(z.read('candidate.lef')) == report['files']['candidate.lef']['sha256']
+                assert all(json.loads(z.read('m10-access.json'))['negative_controls'].values())
         verified.append(kind.upper())
     return verified
 

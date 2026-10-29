@@ -6,7 +6,7 @@
 | --- | --- |
 | 结构 | 64 个 S8 乘法器，完整归约／累加／S16 分解和合并，A128／B512 独立输入；同一套 RTL |
 | 原生尺寸／金属 | 980×980µm；固定 M1–M10 |
-| 实际 active 单元面积 | 405283.452µm²；另有 476192.668µm² filler／保护等 physical-only 单元，不能将 mapped 面积当作最终面积 |
+| 实际 active 单元面积 | 405283.452µm²；另有 476192.668µm² filler／tapcell 等 physical-only 单元，不能将 mapped 面积当作最终面积 |
 | 信号接点 | 867 位；全部为宏内部 M10 的 2×2µm 接点；实际 ODB 逐位核验 |
 | 约束 | Nangate45 typical；300MHz，0.1ns 时钟不确定度；输入 BUF_X2/Z，输出 50fF；I/O max0.8ns/min0.2ns |
 | 最终提取 setup／hold | +0.047354788ns／+0.009898194ns；所有实际数据端点均检查 |
@@ -35,3 +35,5 @@ python -X utf8 project/experiments/block_feed_v1/verify_bundle.py D:/Data/LLMHar
 这里“合法”指上述明确合同下的原生叶子候选。尚未取得层级 Liberty／abstract coverage 资格，也未取得 M11/M12 整系统互连或实际新增金属工艺制造签核。50fF输出合同不能代替任意长度上层线的负载验证。旧失败候选和父任务旧宏均未转移验收资格。
 
 实际完整原生几何导出93347亦已通过，ODB保持原字节，完整DEF矩形覆盖与三项错误接点控制均通过。原始导出754768611字节留在服务器同目录`results/delivery-m/geometry/`；本地`D:/Data/LLMHardwareDesign-issue130-runtime/deliverables/M/geometry/candidate.lef`已按原报告SHA核验，142047字节。此LEF仍为候选abstract，未宣称abstract coverage／层级时序通过。
+
+完整几何的8个小型原始文件另存于 [accepted-m-geometry.zip](accepted-m-geometry.zip)，包括候选LEF、实际pins、接入负控制和原生矩形覆盖回执；索引同时绑定最终ODB和原交付receipt，不将几何导出等同于上层互连验收。
