@@ -1,3 +1,9 @@
+# Issue130 当前交付状态
+
+2026-10-29，Asia/Shanghai。任务 [Issue130](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/130)，草稿 [PR132](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/132)。M 已完成原生布局布线及全部同源独立验收，六文件/几何/压缩包已实收核验；见 [M 最终结果](validation/physical/ACCEPTED_M.md)。S35/93398 已通过完整GRT后的cap/slew/setup/hold四项0，现详细布线；仍待最终提取和独立四门，不能称整个任务完成。S34/93392 为相同RTL的20ps物理优化对照，不增加第二种宏实现。
+
+最新恢复入口和93403–93410同源验收依赖见 [专属交接](../../../docs/handoffs/2026-10-29-issue-130-m-feed.md)。下面保留较早RTL/接点分析记录，其中“尚未P&R”等旧状态仅为历史，当前以本节及实际接受证据为准。
+
 # Issue130：M/S 供数修改与实际验证
 
 任务：https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/130 。负责人：YUZE-LU。2026-10-29，Asia/Shanghai。
