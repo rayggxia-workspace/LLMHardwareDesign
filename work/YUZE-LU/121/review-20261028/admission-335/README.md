@@ -1,3 +1,5 @@
+历史准入335已退休：仅替换其登录控制进程，当前341管理新V337/338/339及原R311/312/313；所有Slurm EDA继续。实际退休原记录见../admission-341/retirements/。以下为原335部署时证据。
+
 # 本轮六队列准入控制（当前335）
 
 仅服务已stage的R311/312/313和V330/331/332，每60秒检查实际前置与本Issue空位，复用每份原dispatch.py。源0029a9b99a3a8f0b4eb4905dd142e01b30bd7ea6，配置acbd45e9478a3a1dd2b3ff8c346108005218b5bb/config SHA88b80eb281acfcf67f59e546c270b76b5ee06d14ac308cb0cab3128b25224799。
