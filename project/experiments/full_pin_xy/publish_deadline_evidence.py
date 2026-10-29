@@ -5,9 +5,12 @@ import argparse,datetime,gzip,hashlib,json,shutil
 NAMES=['wire-candidate-metal-r01','pin-retention-consumers-r01','pin-retention-consumers-r02','upper-whole-net-search-r01','upper-whole-net-search-r02','upper-whole-net-search-r03','upper-local-component-search-r01','upper-cut-corner-r01','upper-cut-corner-r02','upper-cut-corner-r03','original-ram-mapping-r01','current-electrical-r01','current-electrical-r02','conservative-low-views-r01','conservative-native-check-r01','llsys-wire-pin-retention-r01','llsys13093-views-r01','native-patch-audit-r03-llaccel13093']
 
 def publish(aux,out):
-    NAMES.extend(['current-common-deadline-r01','llsys-residual87-preflight-r01'])
+    names=NAMES+['current-common-deadline-r01','llsys-residual87-preflight-r01',
+      'current-common-resume-r01','parent1011-firsthop-r02','llsys-residual87-preflight-r02',
+      'common-def-import-r01','all13507-first-hop-r01','firsthop75-r01',
+      'drive-sizing-llsys-r04','drive-sizing-vector-r04','common-parent-PG-local-r01','fair-boundary-source-inventory-r01']
     aux,out=Path(aux),Path(out);dest=out/'data/deadline_receipts';dest.mkdir(exist_ok=True)
-    for name in NAMES:
+    for name in names:
         source=aux/'gate_terminal_updates'/name;q=json.loads((source/'capture.json').read_text())
         assert q['source_completed_utc']
         for r in q['records']:
@@ -42,6 +45,23 @@ def publish(aux,out):
       'original_RAM_mapping':{'source_RTL_SHA256':next(iter(ram['source_SHA'].values())),'actual_cells':ram['actual_mapped_statistics']['modules']['\\fakeram45_1r1w_64x64']['num_cells'],'actual_area_um2':ram['mapped_standard_cell_master_area_um2'],'original_abstract_area_um2':ram['original_abstract_area_um2'],'cannot_fit_this_mapping_in_original_outline':ram['drop_in_original_footprint_impossible_by_cell_area_alone'],'GDS_or_macro_replacement':'NOT_EXECUTED','evidence':'data/deadline_receipts/original-ram-mapping-r01/execution.json.gz'},
       'latest_native_phase_observation':obs,'observation_evidence':'data/deadline_receipts/'+observation.name,'upper_actual_two_Shorts_fixed':False,'geometric_solver_limits':'Bounded seven-net model infeasible; twelve measured-blocker-net model reached180s without feasible incumbent. Neither is a global physical impossibility proof; no native repair is claimed.','original_objective_complete':False}
     facts['common_base_actual_failure']={'completed_utc':common['completed_utc'],'job':'93460','stage':'lower_detailed_route','object':'u_llaccel_aux/bit_1011','semantic_interface':'dram_rsp_rdata[329]','function_zh':'把外部DRAM返回数据送入llaccel控制搬运块','native_error':'DRT-0073 No access point','layer':'metal5','local_xy_um':[340.015,1062.390],'current_c494_pin_unchanged':True,'PG_and_global_route':'EXECUTED','freeze_RC_STA_function':'NOT_EXECUTED','evidence':'data/deadline_receipts/current-common-deadline-r01/execution.json.gz','native_log':'data/deadline_receipts/current-common-deadline-r01/lower_route.log.gz'}
-    (out/'data/deadline_engineering_receipts.json').write_text(json.dumps(facts,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n');print('DEADLINE_STAGE_FACTS_PUBLISHED',len(NAMES),'closed receipt groups; current LL',odbsha,'native0/STA failed; goal incomplete')
+    imported=raw('common-def-import-r01');cause=raw('parent1011-firsthop-r02');risk=raw('all13507-first-hop-r01');sized=raw('drive-sizing-llsys-r04');pg=raw('common-parent-PG-local-r01')
+    assert imported['native_returncodes']['fresh_import']==0 and all(imported['original_parent_preserved'].values()) and imported['all256_native_FIXED_status_preserved']
+    assert sized['native_stages']['real_route_RC_STA.stages.tsv']['detailed_route']=='FAIL'
+    facts['latest_engineering_trials']={
+      'common_checkpoint_import':{'source':'common_checkpoint_def_import/r01','actual_native_import_and_PG':'EXECUTED','all_original_graph_PG_ports_poses_and256FIXED_preserved':True,'lower_route_freeze_RC_STA_functions':'NOT_EXECUTED_FOR_THIS_IMPORTED_CURRENT_SOURCE','evidence':'data/deadline_receipts/common-def-import-r01/execution.json.gz'},
+      'macro_swap_crash':{'source':'common_current_resume/r01','native_returncode':-11,'phase':'current_master_swaps','root_cause':'Not proven; only macro swap API stage located. Fresh DEF import succeeds; do not repeat the crash path.','evidence':'data/deadline_receipts/current-common-resume-r01/execution.json.gz'},
+      'bit1011_actual_first_hop':{'foreign_net':'net257248','layer':'metal6','actual_box_DBU':[679890,1830640,680170,2205000],'original_M5_center_DBU':[680030,2124780],'screened_target_center_DBU':[679470,2124780],'target_not_qualified_route':True,'evidence':'data/deadline_receipts/parent1011-firsthop-r02/execution.json.gz'},
+      'all13507_first_hop_risks':{'status_counts':risk['status_counts'],'scope':'Actual first-hop geometry risk only; not8570 native DRC failures and not entire stack proof','evidence':'data/deadline_receipts/all13507-first-hop-r01/execution.json.gz'},
+      'actual75_port_trial':{'stage':'native detailed route','failure':'DRT-1231 PIN/bit_3598 lacks access point; that pin was NOT among selected75. Original all-port AP gap persists.','new_source_not_promoted':True,'evidence':'data/deadline_receipts/firsthop75-r01/execution.json.gz'},
+      'actual_LL_sizing':{'actual_sized_and_legalized':7438,'all_reported_drivers':7784,'no_stronger_compatible_family':346,'stage':'incremental GRT executed; native DRT failed at unchanged bit_3598 AP; no new RC/STA result','cost_is_separate_not_pure_XY':True,'evidence':'data/deadline_receipts/drive-sizing-llsys-r04/execution.json.gz'},
+      'VECTOR_range_script_failure':{'actual_sized_and_legalized':75,'failure':'Wrong M2-M8 script range rejected original M9 guide _086937_; this is a trial script error, not a proof against original M2-M10','correction':'Original source fresh.tcl SHA-bound M2-M10 restored; closed75-size placement reused in93556, terminal result pending','evidence':'data/deadline_receipts/drive-sizing-vector-r04/execution.json.gz'},
+      'actual_parent_PG_local':{'rows':pg['actual_parent_pg_local_rows'],'native_R0_transform':pg['actual_R0_transform'],'evidence':'data/deadline_receipts/common-parent-PG-local-r01/execution.json.gz'},
+      'new_all_port_real_stubs':{'r01_job':'93557','r02_job':'93560','r03_job':json.loads((aux/'deadline_all_access_stubs_r03_submission.json').read_text())['job'],'scope':'Real native stub/XY edit under all13507 contract; single-terminal declarations must be proven and retained. Current qualification pending; do not promote by submission.'}}
+    baseline=raw('fair-boundary-source-inventory-r01')
+    assert baseline['all_sources_unchanged'] and all(all(baseline['cases'][case]['exact_resource_constraint_fingerprint_matches'].values()) for case in ['act','mxu','llaccel_aux'])
+    facts['fair_boundary_source_checks']={'exact_cells_connections_poses_PG_die_SDC_matches':['act','mxu','llaccel_aux'],'same_resource_leaf_reuse_only_not_system_PPA':True,'remaining_not_yet_exact_byte_proven':['gemm','vector','opentpu_aux'],'evidence':'data/deadline_receipts/fair-boundary-source-inventory-r01/execution.json.gz'}
+    facts['historical_native_phase_observation']=facts.pop('latest_native_phase_observation')
+    (out/'data/deadline_engineering_receipts.json').write_text(json.dumps(facts,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n');print('DEADLINE_STAGE_FACTS_PUBLISHED',len(names),'closed receipt groups; current LL',odbsha,'native0/STA failed; goal incomplete')
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--aux',required=True);p.add_argument('--out',required=True);a=p.parse_args();publish(a.aux,a.out)

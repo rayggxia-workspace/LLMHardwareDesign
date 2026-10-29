@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "authority": "唯一当前选用版本/阶段状态表；qualification_matrix为版本化技术证据库，不与本表竞争当前状态",
-  "as_of_utc": "2026-10-29T16:59:42.269564+00:00",
-  "as_of_Asia_Shanghai": "2026-10-30T00:59:42.269564+08:00",
+  "as_of_utc": "2026-10-29T18:29:05.166260+00:00",
+  "as_of_Asia_Shanghai": "2026-10-30T02:29:05.166260+08:00",
   "hard_deadline_utc": "2026-10-30T01:19:00+00:00",
   "hard_deadline_Asia_Shanghai": "2026-10-30T09:19:00+08:00",
   "source_matrix_SHA256": "4aeb2758a19550155e7819fe45f6f7db43621951010d2679fc13b958c477598a",
   "original_objective_complete": false,
-  "delivery_forecast": "按期交付实际结果；原目标全部成功目前风险高，不能承诺。共同底层尚未布完，部分块时序失败，上层还有短路。",
+  "delivery_forecast": "目前预计无法在12小时内把原目标全部验收通过；继续实际工程，并在北京时间09:19前交付已完成、实际失败、尚未验证与未执行的证据，不自行延期。",
   "critical_path": [
     "当前VECTOR匹配视图完成；推进LL父层接入",
     "仅用六块当前真实源推进共同底层实际路由和固定连接",
@@ -252,24 +252,25 @@
     {
       "id": "common_base",
       "object": "共同M1–M10底座",
-      "selected_version": "common_integration/deadline-current-r01/C；93460采用f0b2 LL＋其余5当前源，新c494接续待实际导入",
+      "selected_version": "common_checkpoint_def_import/r01：当前c494 LL＋其他5源；旧93460的实际接入失败单列保留",
       "actually_completed": [
         "六块实际布局、供电生成及双PG连通检查完成",
-        "256原生FIXED M10共享导体与全局布线检查点已生成"
+        "256原生FIXED M10共享导体与全局布线检查点已生成",
+        "新当前源经DEF检查点导入及双PG检查完成；原父层逐bit图/端口/PG/实例位置及256 FIXED保持；不是详细布线完成"
       ],
       "checks_passed": [],
       "actual_failures": [
         "详细布线实际失败：DRT-0073，u_llaccel_aux/bit_1011（M5、dram_rsp_rdata[329]）没有合法接入点；这个口负责外部存储返回数据。当前c494版此pin未移动，不能假设换版本即修复。"
       ],
       "unverified": [
-        "未生成完成布线的共同底座，不能冻结",
-        "最新c494 LL源尚待父层接续，不将f0b2源资格继承给新源",
+        "当前导入源尚未完成父层详细布线，不能冻结",
         "完整系统功能/规则/GDS/RC/STA尚未闭合"
       ],
-      "next_minimum_action": "复用已完成PG/固定预连检查点，接续当前LL及保守低层视图，保持M10连接对象/层级与几何不变，取得真实父层回执。",
+      "next_minimum_action": "先处理LL全部接口真实首级接入，复用已通过读回的检查点；保留旧NoAP和宏swap崩溃，不重跑已证明失败的调用路径。",
       "evidence": [
         "data/deadline_receipts/current-common-deadline-r01/execution.json.gz",
-        "data/deadline_receipts/current-common-deadline-r01/lower_route.log.gz"
+        "data/deadline_receipts/current-common-deadline-r01/lower_route.log.gz",
+        "data/deadline_receipts/common-def-import-r01/execution.json.gz"
       ],
       "full_qualification": false
     },
@@ -358,13 +359,60 @@
       "full_qualification": false
     }
   ],
+  "actual_access_edit_phase_snapshot": {
+    "scope": "FINISHED_ACTUAL_EDIT_PHASE_SNAPSHOT_NOT_TERMINAL_JOB_OR_PHYSICAL_QUALIFICATION",
+    "observed_utc": "2026-10-29T18:23:41.748580+00:00",
+    "source": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/all_llsys_access_stubs/r03",
+    "driver_commit": "00e28a273a044738dda195f1c45a2214e04fad4b",
+    "job": "93561",
+    "overall_job_closed_at_capture": false,
+    "full_qualification": false,
+    "native_returncodes_snapshot": {
+      "original_all13507_native_roles": 0,
+      "actual_stub_edit": 0,
+      "fresh_DRC": 0
+    },
+    "actual_edit_PG_stages": "stage\tstatus\tdetail\nactual_all_selected_stubs_and_original_layer_pins\tEXECUTED\t\nVDD\tEXECUTED\t\nVSS\tEXECUTED\t\n",
+    "source_ODB": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/all_llsys_access_stubs/r03/routed.odb",
+    "source_ODB_SHA256": "be4d4bfec81c70402a4cdc371ebef275a27c725ca7e2bc3919d72df92fe83e5c",
+    "source_original_C_inputs": {
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/all_llsys_access_stubs/r02/execution.json": "25ee2fe68864eee477b97db159e9738665bbe1e504bfeed9eeb39f20dccf0020",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/all_llsys_access_stubs/r02/all13507_source_bound_access_stub_plan.json": "271b0d1987a94ae83134671ec4690261e0f5634f95ca224cfd97481251526d38",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/all_llsys_access_stubs/r02/actual_stub_edit.tcl": "5936c8fef920157c79f42db52768533e31a90c0add4b79887561e212ee8da424",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/llsys_wire_pin_retention/r01/execution.json": "6daf100540fd300ce8f0b5000e2838748b3fa5c488d725d6f7040476a1249e69",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/llsys_wire_pin_retention/r01/routed.odb": "c4947012b2396735c69f395446dede19472fbc9ba1329eb4b68407dd66c5c1ad",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/llsys_wire_pin_retention/r01/whole_access.tsv.gz": "90c1129b637e55073bc0e300582592c7cbd13d51b1d40ae41d88c4a1b61f508b",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/llsys-pg-r03/llaccel_aux-C/execution.json": "db705c5126387630c0ca40d7649a01a062a5c275e09597d5c85ffbbbf126ed64",
+      "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-route-llaccel-abc-logic-4c-01/flow/results/nangate45/hpy_llaccel_aux/base/5_1_grt.sdc": "bf1da8e419bc8ec292b2c56304fcea3b1b575b5dcf5f5370a1e54ac6d34225d6",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/upper_layer_probe/r01/model/research12.tech.lef": "da0d8b80d19ba9e6e8e7e9cc3c6b13b80d85eaef650b26bbc5a8e945b4d26838",
+      "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/llsys_wire_pin_retention/r01/after.die.tsv": "d0cc165a810ffe967745e98fc75be503554ff6ef0f66c975359342a1db4bc476"
+    },
+    "all_pin_CSV_SHA256": "b8bd7886332f4e3d1b4ff70400c100adf1c7e235d44f66cce3478e0759524b61",
+    "native_single_terminal_no_peer_or_wire": 24,
+    "requested_actual_XY": 9517,
+    "native_fresh_AP_RC_STA": "Separate stages; no success inferred from this snapshot",
+    "actual_complete_CSV_validation": {
+      "all_original_pins": 13507,
+      "changed_XY": 9517,
+      "M5_M6_original_0p14_size_preserved": true,
+      "layer_counts": {
+        "metal5": 6683,
+        "metal6": 6824
+      },
+      "original_raw_native_pin_contract_preceded_this_export": true
+    },
+    "coordinate_artifact": "data/deadline_phase_snapshots/actual_access_stubs_r03_20261029T182343Z.csv.gz"
+  },
+  "actual_access_edit_phase_evidence": "data/deadline_phase_snapshots/actual_access_stubs_r03_20261029T182343Z.json",
   "legacy_evidence_commit": "ede7c445150c2281156a76d99c496ff0cd7a9f0d",
   "current_LL_physical_driver_commit": "459e32a2c48280474c39b8262dcdbaeff0f30357",
-  "source_deadline_stage_facts_SHA256": "d07624faa2f480f22493b163086233417b76dc47945dde7a1565273744a0133e",
+  "source_deadline_stage_facts_SHA256": "382da96bbe271bddc3b820fda9564de972225779d37805649a73a4de03860e36",
   "current_engineering_evidence": "data/deadline_engineering_receipts.json",
   "current_hourly_report_observations": [
     "第1小时14:21UTC已报告",
     "第2小时15:19UTC已报告",
-    "第3小时16:19UTC已报告；此前误看日志尾部导致漏收LL终态，现已纠正，以闭合回执为准"
+    "第3小时16:19UTC已报告；此前误看日志尾部导致漏收LL终态，现已纠正，以闭合回执为准",
+    "第4小时约17:19UTC已报告",
+    "第5小时约18:19UTC已报告：9517实际编辑/完整清单；预计无法在12小时全部验收，仍继续并按期交付"
   ]
 }

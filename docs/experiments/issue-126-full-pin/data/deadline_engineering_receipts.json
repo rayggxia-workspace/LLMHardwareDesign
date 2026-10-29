@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "scope": "CURRENT_DEADLINE_STAGE_FACTS_NOT_FULL_GOAL_QUALIFICATION",
-  "as_of_utc": "2026-10-29T16:57:01.762561+00:00",
+  "as_of_utc": "2026-10-29T18:29:05.045837+00:00",
   "full_qualification": false,
   "current_LL": {
     "source": "llsys_wire_pin_retention/r01",
@@ -3422,7 +3422,120 @@
     "GDS_or_macro_replacement": "NOT_EXECUTED",
     "evidence": "data/deadline_receipts/original-ram-mapping-r01/execution.json.gz"
   },
-  "latest_native_phase_observation": {
+  "observation_evidence": "data/deadline_receipts/native_phase_observation_20261029T161536Z.json",
+  "upper_actual_two_Shorts_fixed": false,
+  "geometric_solver_limits": "Bounded seven-net model infeasible; twelve measured-blocker-net model reached180s without feasible incumbent. Neither is a global physical impossibility proof; no native repair is claimed.",
+  "original_objective_complete": false,
+  "common_base_actual_failure": {
+    "completed_utc": "2026-10-29T16:16:01.573429+00:00",
+    "job": "93460",
+    "stage": "lower_detailed_route",
+    "object": "u_llaccel_aux/bit_1011",
+    "semantic_interface": "dram_rsp_rdata[329]",
+    "function_zh": "把外部DRAM返回数据送入llaccel控制搬运块",
+    "native_error": "DRT-0073 No access point",
+    "layer": "metal5",
+    "local_xy_um": [
+      340.015,
+      1062.39
+    ],
+    "current_c494_pin_unchanged": true,
+    "PG_and_global_route": "EXECUTED",
+    "freeze_RC_STA_function": "NOT_EXECUTED",
+    "evidence": "data/deadline_receipts/current-common-deadline-r01/execution.json.gz",
+    "native_log": "data/deadline_receipts/current-common-deadline-r01/lower_route.log.gz"
+  },
+  "latest_engineering_trials": {
+    "common_checkpoint_import": {
+      "source": "common_checkpoint_def_import/r01",
+      "actual_native_import_and_PG": "EXECUTED",
+      "all_original_graph_PG_ports_poses_and256FIXED_preserved": true,
+      "lower_route_freeze_RC_STA_functions": "NOT_EXECUTED_FOR_THIS_IMPORTED_CURRENT_SOURCE",
+      "evidence": "data/deadline_receipts/common-def-import-r01/execution.json.gz"
+    },
+    "macro_swap_crash": {
+      "source": "common_current_resume/r01",
+      "native_returncode": -11,
+      "phase": "current_master_swaps",
+      "root_cause": "Not proven; only macro swap API stage located. Fresh DEF import succeeds; do not repeat the crash path.",
+      "evidence": "data/deadline_receipts/current-common-resume-r01/execution.json.gz"
+    },
+    "bit1011_actual_first_hop": {
+      "foreign_net": "net257248",
+      "layer": "metal6",
+      "actual_box_DBU": [
+        679890,
+        1830640,
+        680170,
+        2205000
+      ],
+      "original_M5_center_DBU": [
+        680030,
+        2124780
+      ],
+      "screened_target_center_DBU": [
+        679470,
+        2124780
+      ],
+      "target_not_qualified_route": true,
+      "evidence": "data/deadline_receipts/parent1011-firsthop-r02/execution.json.gz"
+    },
+    "all13507_first_hop_risks": {
+      "status_counts": {
+        "FIRST_HOP_SCREEN_CLEAR_NOT_NATIVE_AP_PASS": 4937,
+        "not_on_actual_first_hop_cross_grid": 6796,
+        "FIRST_HOP_ACTUAL_GEOMETRY_RISK": 8570
+      },
+      "scope": "Actual first-hop geometry risk only; not8570 native DRC failures and not entire stack proof",
+      "evidence": "data/deadline_receipts/all13507-first-hop-r01/execution.json.gz"
+    },
+    "actual75_port_trial": {
+      "stage": "native detailed route",
+      "failure": "DRT-1231 PIN/bit_3598 lacks access point; that pin was NOT among selected75. Original all-port AP gap persists.",
+      "new_source_not_promoted": true,
+      "evidence": "data/deadline_receipts/firsthop75-r01/execution.json.gz"
+    },
+    "actual_LL_sizing": {
+      "actual_sized_and_legalized": 7438,
+      "all_reported_drivers": 7784,
+      "no_stronger_compatible_family": 346,
+      "stage": "incremental GRT executed; native DRT failed at unchanged bit_3598 AP; no new RC/STA result",
+      "cost_is_separate_not_pure_XY": true,
+      "evidence": "data/deadline_receipts/drive-sizing-llsys-r04/execution.json.gz"
+    },
+    "VECTOR_range_script_failure": {
+      "actual_sized_and_legalized": 75,
+      "failure": "Wrong M2-M8 script range rejected original M9 guide _086937_; this is a trial script error, not a proof against original M2-M10",
+      "correction": "Original source fresh.tcl SHA-bound M2-M10 restored; closed75-size placement reused in93556, terminal result pending",
+      "evidence": "data/deadline_receipts/drive-sizing-vector-r04/execution.json.gz"
+    },
+    "actual_parent_PG_local": {
+      "rows": 13797,
+      "native_R0_transform": "R0 179200 7436800 179200 7436800 4379210 11636800 2000",
+      "evidence": "data/deadline_receipts/common-parent-PG-local-r01/execution.json.gz"
+    },
+    "new_all_port_real_stubs": {
+      "r01_job": "93557",
+      "r02_job": "93560",
+      "r03_job": "93561",
+      "scope": "Real native stub/XY edit under all13507 contract; single-terminal declarations must be proven and retained. Current qualification pending; do not promote by submission."
+    }
+  },
+  "fair_boundary_source_checks": {
+    "exact_cells_connections_poses_PG_die_SDC_matches": [
+      "act",
+      "mxu",
+      "llaccel_aux"
+    ],
+    "same_resource_leaf_reuse_only_not_system_PPA": true,
+    "remaining_not_yet_exact_byte_proven": [
+      "gemm",
+      "vector",
+      "opentpu_aux"
+    ],
+    "evidence": "data/deadline_receipts/fair-boundary-source-inventory-r01/execution.json.gz"
+  },
+  "historical_native_phase_observation": {
     "observed_utc": "2026-10-29T16:15:36.500138+00:00",
     "full_qualification": false,
     "cases": {
@@ -3510,28 +3623,5 @@
         ]
       }
     }
-  },
-  "observation_evidence": "data/deadline_receipts/native_phase_observation_20261029T161536Z.json",
-  "upper_actual_two_Shorts_fixed": false,
-  "geometric_solver_limits": "Bounded seven-net model infeasible; twelve measured-blocker-net model reached180s without feasible incumbent. Neither is a global physical impossibility proof; no native repair is claimed.",
-  "original_objective_complete": false,
-  "common_base_actual_failure": {
-    "completed_utc": "2026-10-29T16:16:01.573429+00:00",
-    "job": "93460",
-    "stage": "lower_detailed_route",
-    "object": "u_llaccel_aux/bit_1011",
-    "semantic_interface": "dram_rsp_rdata[329]",
-    "function_zh": "把外部DRAM返回数据送入llaccel控制搬运块",
-    "native_error": "DRT-0073 No access point",
-    "layer": "metal5",
-    "local_xy_um": [
-      340.015,
-      1062.39
-    ],
-    "current_c494_pin_unchanged": true,
-    "PG_and_global_route": "EXECUTED",
-    "freeze_RC_STA_function": "NOT_EXECUTED",
-    "evidence": "data/deadline_receipts/current-common-deadline-r01/execution.json.gz",
-    "native_log": "data/deadline_receipts/current-common-deadline-r01/lower_route.log.gz"
   }
 }
