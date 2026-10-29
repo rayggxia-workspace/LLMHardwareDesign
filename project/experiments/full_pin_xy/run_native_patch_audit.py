@@ -18,7 +18,8 @@ CASES=[
  ('mxu_parent','mxu_actual_tip_parent/r01/mxu-C','upgraded_parent_NOT_SYSTEM.odb','whole_access.tsv.gz','whole_parent_signal_geometry'),
  ('upper770','upper_branch_repair/r02/llaccel','routed_770_BRANCHES_NOT_SYSTEM.odb','branch_access.tsv.gz','all_770_branch_geometry'),
  ('upper514','upper_branch_repair/r02/llaccel','routed_adapter_NOT_SYSTEM.odb','whole_access.tsv.gz','all_514_composed_geometry'),
- ('gemm_658_current','antenna_incremental_eco/r01/gemm-C','routed.odb','whole_access.tsv.gz','whole_signal_geometry')]
+ ('gemm_658_current','antenna_incremental_eco/r01/gemm-C','routed.odb','whole_access.tsv.gz','whole_signal_geometry'),
+ ('llaccel_13093','llsys_wire_pin_retention/r01','routed.odb','whole_access.tsv.gz','whole_signal_geometry')]
 
 def run(revision,index):
     case,relative,odbname,oldname,graphkey=CASES[index]
