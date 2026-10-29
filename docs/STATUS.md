@@ -1,3 +1,5 @@
+2026-10-29 15:28 CST：V355七项全部通过、442776工艺单元，映射补充10原始文件/308源核验；356七项全部通过、135场景与349测量一致、53原始/39稳定/308源绑定，80预算按356重算且成本字段保持。V357/93250于15:19:01实际提交并在node16 fresh place；358最终门/六文件/完整几何及359接口待真实前置。360轻量准入已部署，源6f4/配置ac3d，替换354、仅未分配351/352退休，所有EDA正常收尾；R344/93237 node21 place继续。M/S/T接收、V/R最终未齐，Issue121=in_progress/PR122=draft、目标active；登记pending/看板unverified与同步pending。
+
 2026-10-29 15:11 CST：V355六数值/264bit算术项已过，47原始/35稳定/308源绑定核验，三初态各566999检查/414906拍，公共42/扩展36全部测量与348一致；映射继续。355复用R344/93237空闲80CPU，356复用R311/93125空闲80CPU执行七项新源占用/有限工作空间，均五个16CPU槽即时补位、无新allocation。选定未来357全新原生→358最终门/六文件/完整几何→359接口，仍待staging与真实前置；控制源RUNS已改，原354进程尚未替换。R344物理继续，M/S/T已接收、V/R最终未齐；Issue121=in_progress/PR122=draft、目标active，登记pending/看板unverified与同步pending。
 
 2026-10-29 14:49 CST：350实际global-route setup−0.08ns/hold+0.02ns，最差product[4][4]→output_mem[89][5]，9原始文件/308源与路径映射封存。选定同一基础V的N_WRITE完整S128高低乘积加法改用既有add128_grouped，RNE/饱和/周期保持，当前新源数值、映射、物理和最终资格均待355后续验证。原350继续正常收尾；R344/93237已placement，345/346待前置。M/S/T接收保持、V/R最终未齐，Issue121=in_progress、PR122=draft、目标active，登记pending/看板unverified与同步pending。
