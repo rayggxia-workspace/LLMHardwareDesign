@@ -125,44 +125,36 @@ future续接复用verify_closed_producer：92108/92109在92018准确闭合后绑
 
 <!-- current-buffer-PG-status -->
 
-更新时间：2026-10-29T02:12:20.108872+00:00。以下覆盖历史状态，以封存索引及实际Slurm为准。
+更新时间：2026-10-29T04:13:47.859996+00:00（UTC；中国时间加8小时）。本段为当前结论；历史快照与上版六份记录完整归档在下面索引中。
 
-当前完整目标保持不变：阶段一 pass_with_inherited_issues；阶段二/三未验收、阶段四 NOTRUN；主要底座候选 **1/3，UNFROZEN**。同一资源并集冻结后必须保持实例、位置/朝向、内部实现、M1–M8、固定连接、M8接点、PG/clock和有源资源一致；只允许案例定制 **M9/M10及真实via8/via9**。M11/M12未启用。open=otpu_asic_top及全部33内部SRAM；LL=EPILOGUE_FUSION0 / DMA_MAX_OUTSTANDING16，外16 SRAM bank/DRAM/主机属功能环境，不计core面积。不缩规模、不加流水、不放宽3ns。
+**目标与冻结边界。** 两个完整案例使用同一资源并集。冻结后实例、位置/朝向、内部实现、M1–M8、固定预连线、M8接点、PG/clock和有源资源必须一致；只定制M9/M10及真实via8/via9。M11/M12未启用。open为otpu_asic_top及全部33内部SRAM；LL保持EPILOGUE_FUSION=0、DMA_MAX_OUTSTANDING=16，16外部SRAM bank/DRAM/主机仅属功能环境。不缩规模、不加流水、不放宽原周期。当前主要候选1/3，**UNFROZEN**；阶段一pass_with_inherited_issues，二/三未验收，四NOTRUN。
 
-**本轮实际新结果**
-- 93115 COMPLETED0/4：保留43862个原生AP，增加1642个明确标为软件几何候选的M7轨道/M8轨道交点，共45504个AP；完整13507端口/27014盒的输入检查、独立读回、实际禁用方向/删除AP负例闭合。没有移动引脚/器件、增加金属或删除原PIN/OBS/导体。**这是路由输入准备，不是完整native PA通过，也不是布线/DRC/功能通过。** wall46s / CPU44.562s，约0.969核；回执SHA ee54aa82c290770d6c9868d7b8adfbc02c642197680a79344e0be404e0cd6f68。
-- 93116按4核实际运行完整546459实例、124目标网、62拆分、15489424保护矩形的详细布线。已进入原生迭代，运行中观察的短路数仍非零，**没有终态或物理通过结论**；日志全设计线长/通孔总数不能当新增目标成果。原3ns及全部保持性/连接/异网接触/fresh DRC/PG门槛保留；不停止或重复提交该作业。
-- 93119 COMPLETED0/4：独立导出失败92548快照全部13张原生表，包括全部master PIN/OBS，逐表压缩字节完全一致。完整14059目标有737455个guides矩形、**目标实际wire仍为0**。只证明保存的原几何没有变化、可作为未布通输入；GRT-0116拥堵失败未变，不是固定线完成。wall785s / CPU792.767s，约1.010核；SHA afe22097d318c124ce06897b085d5626f2801c35d70ef0acd95563773c70a654。
-- 93121 COMPLETED0/4：读取全部选中网络的真实引脚/guide，61个目标M8物理盒都没有同层重叠guide，M5/M6盒有覆盖；实际移除guide负例检出。这是搜索引导缺口，不是DRT不可行证明。
-- **93123 FAILED**：小夹具的原生DRT退出0、DRC0，但没有实际导线，断线负例未检出。原因已定位：旧几何检查只要求每个逻辑端口有共同分量，不能保证同一BTerm的全部分离金属形状已连接。原文件保留，不采纳临时重复M8端口方案，不把旧PASS扩张成完整物理接口证明。
-- **93124 COMPLETED0/4**：新增独立的公共端口物理岛门槛；新原生数据库中，用真实via5_0/6_0/7_0和导线连接原M5/M8盒，独立读回通过；实际删除整段导线后失败，两份旧零导线夹具也正确拒绝。wall5s / CPU1.963s。**只资格化检查器；正例导线是小夹具内显式构造，不是全设计DRT或DRC通过。** 93116封存源码不改，其后续结果必须补用该门槛，不能只读旧几何PASS。
+**实际完成与失败：**
 
-**仍失败/未执行。** 92548固定预连线拥堵及862354溢出格未解；93101原生M8接入仍缺1642，软件候选不能抹掉该事实。93111坐标API、93114同进程载入第二DB等软件失败保留，修复只在新版本/目录。旧62BUF合法放置、65545状态/168074锥差异0、源PG预查及旧完整两案例回归只对各自版本有效；新124网布线、当前191父版完整功能、电气、固定/闲置/PGclock与最终共同底座尚未闭合。旧RC等child_launched=false仍为NOTRUN。旧AUX/VECTOR新增或恶化时序/电容不能归入继承问题；外clock rise/fall及open37常量输出负载仍null，不设0或epsilon。
+| 实验/作业 | 终态及严格证据边界 |
+| --- | --- |
+| 旧完整AUX详细布线93116 | FAILED1:0/4。完整546459实例、124目标、62拆分、15489424保护保持。独立新进程全片DRC **89**（44 M2 Short、45 M3 MetalSpacing）；目标对全量导体 **55个异网形状接触对**，不等于55个唯一短路位置。原实例/master/PIN/OBS/非目标导体、PG/clock保持；placement/PG拓扑通过，但信号物理失败。原DRT内部48标记不是最终89的替代。 |
+| 公共端口复核93131 | FAILED1:0/4。独立读回完整源/13表，**61/61公共M8端口存在未连接物理岛**；旧逻辑端口连通检查漏项不能作放行依据。 |
+| 接入感知位置规划93160 | COMPLETED0/4。2220个候选姿态，62个既有新buffer中58个位置需调整、4个保留。按真实行/轨道/PIN/OBS/过孔及完整原导体检查；规划自身不是native接入通过。 |
+| 实际新放置93162 | COMPLETED0/4。新位置实际写入派生ODB并独立读回；原546397实例全部保持，仍为546459实例/62新buffer。原导体与PIN/OBS保持、实际DPL0、离开合法site的真实负例检出。**只通过放置，不是布线/RC/功能。** |
+| 全部新buffer首过孔93165 | COMPLETED0/4。完整原设计背景下实际写入124个via1_4；全部62区域native DRC标记0，重新读回124个via身份/位置，真实异网短接负例检出。原新UNROUTED源placement/PG拓扑通过。诊断副本仅移除声明的124条可变普通信号线；非目标导体保留。**这是全部新buffer的局部首过孔接入，不是全片信号布通/最终DRC。** |
+| 保留固定线方法93164 | COMPLETED0/4。小型真实N45夹具中，将原固定导线投影成临时障碍、实际布新线、精确合并回原几何；全部11原形状保留，公共物理岛连通，新进程DRC0，实际删线负例检出。**只证明工具方法，未完成全61引出/完整124网布线。** |
+| 完整固定线93130 | **RUNNING/4**，已完成native track assignment、进入详细布线；没有最终结果。14059固定目标/6225真实公共PIN，未重跑PA/GRT；使用旧版AUX来源，后续新58位置版不能直接继承。 |
 
-**下一步最小行动。** 保留93116自然运行；用实际保存数据库及严格公共端口岛检查判断是否真实接到M8，并完成原保持性、短路、DRC、PG后才允许RC/新完整功能。若失败，按真实断点修复固定引出/局部接线方法，不靠AP标签或重复逻辑端口掩盖断线。复用93119封存的完整快照及guides评估后续实际固定线布线，不盲目重复6小时GRT。所有条件达到后才冻结同一底座、进行两完整案例定制。
+旧93157（guide单位DBU误用导致分配失败）、93159（直接保留FIXED线未补通）、93163（增加ROUTED端点seed仍未补通）全部原样保留；未采用这些失败方案。新方法93164实际使用DBU和精确固定几何合并。旧93123临时重复M8端口漏检方案未采用。软件AP候选/路径规划/guide均不等于实际完成布线。
 
-仅精选既有记录入库；大型ODB/DEF/SPEF/完整日志/trace/工艺留服务器。新作业4CPU、原生线程≤4、BLAS1，CPU时间与申请分别记录；本轮无在线换核、未停/重提活跃实验，不改原资料/封存结果/其他成员/受保护dirty文件。rayggxia-project-collab1.0.0；登记复用管理PR5 pending，board.json缺失/Projects unverified/同步pending，审查人待指定，Issue55继续in_progress。
+**资源与耗时。** 所有新任务申请4核、原生线程≤4、BLAS1，总进程受实际cpuset约束；未停止、在线变更或重复提交任何运行中实验。93116 wall6718s/CPU18413s，平均2.741核；93160 128s/127.450s≈0.996核；93162 951s/952.567s≈1.002核；93164 7s/3.721s≈0.532核；93165 640s/638.029s≈0.997核。这些规划、放置及局部检查主要单线程，**申请4核没有被写成4倍加速**。93130运行中CPU快照见索引，不将未结算TotalCPU=0当作无运行。
 
-服务器唯一根：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z
+**未完成/阻塞。** 新124网完整布线、完整61固定引出保留/回装、全片连接/DRC、实际RC/时序/新版本完整功能均未完成；旧AUX/VECTOR新增或恶化的电气/时序未解决。14059项固定预连线仍未取得实际布通验收，841闲置sink/每case、当前191父版统一PG/clock与active+idle尚未闭合。外时钟rise/fall和open37常量输出负载由用户确认未确定，保持null而非0。旧功能/状态锥证书只对绑定版本有效，移动/布新线后不得自动继承寄生和功能验收。
 
-最新完整索引：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-explicit-M8-input-and-physical-island-correction-20261029T021220Z/milestone.json
-SHA-256：1b15b26cc1e7c8860063ad7b2f05da504212c907d88bdbe0d3f9bc6f91f370ff
-复核源码：585a6a4e2c8afd8b4cc1a482d1497518fb92e330；各作业源码/spec/submission/输入与工具SHA见索引和封存execution。OpenROAD版本unknown，binary SHA0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53。
+**下一步最小行动。** 保留93130自然运行；以93162新源和93165接入证据，适配93164已资格化方法，保留原61条M5/M6→M8引出，在新独立目录实际重布完整124目标。所有原保持性/严格公共物理岛/异网接触/全片fresh DRC/PG门槛仍必须通过，之后才做当前版本RC/电气及完整功能；仍不冻结或进入阶段四。
 
+服务器根：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z
+当前实现源码：aafb7a5593c6bb74d2dba12dfda72ea6b4abda7d。各作业source/spec/submission、输入/工具/输出版本、大小和SHA见不可变索引。
+最新索引：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-closed-failure-and-qualified-first-via-20261029T041347Z/milestone.json
+索引SHA-256：938cb2b23fca5489ad697ba85205a1273c198e2136bc2631fef3a27e7050d7f3
+关键回执：旧AUX FAIL 1ba9fba9ccfb8c3da7e1b48009026b5a58e11a6faaaa7d680eb61364c81a7f9b；新放置 6eafb75bfafdbd863d7b57da81d2618a3458832a8791c875f1ba5668778c5c52；全部62首过孔 c638f76850c9cc5addfd2f2cfbeabe567aa918860caf1e4b638b3419108d4fc4；固定线工具方法 7157b67d8b733b3ce5516a72717c5fe9f01437ca366eaaefc64a7e3950daaf72。
+旧失败实际ODB：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-fixed-position-driver-route-r04-explicit-M8-4c-01/route/migrated.odb（872526222bytes），SHA 001b06bc9d0ed2578c8f3f3c884428c02e77bf043ae47b4c72f8f83e85d3ecc1。
+新UNROUTED放置ODB：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/auxiliary-access-aware-driver-stages-placement-r01-4c-01/driver_stages_placed_UNROUTED.odb（710445317bytes），SHA e6e350524915f2d64866ffffa1cad40218d376df7f7d372e12e7c775e17acbc2。
 
-### 实际DRT违规与接入反馈：2026-10-29T03:00:06.921596+00:00
-
-本次更新后的实测补充（以本段最新记录覆盖上文运行中观察）：
-- **93116 的详细布线阶段已正常返回，但原生 route.tsv 与 route.drc 均报48个M2 Short类型标记，不能验收为通过。** 44项带temporary-OBS来源，4项明确含两条网络；不能把48全部当作最终独立电气短路，也不能豁免这4项。原生报告SHA917ad6e27779439f908530597216c4bf6fa58ff5bde7efec6f5f408f79a36014；route.tsv SHA8ebe95f21466777b463a4571e3b33700b01c5656a4d7586c6107c0a99a67c5f1。真实候选ODB/DEF/v/SDC已保存在原run/route/，未冻结。作业仍RUNNING：新进程已完整导出623281网，保持性/连接/fresh DRC/PG后查尚未闭合；自然终态和最终SHA以后续execution为准，不停止、不重复。
-- **93145 COMPLETED0/4**：流读全部546459实例，对全部48个实际marker按精确DBU定位，48/48都与新BUF_X2区域相交，0与原driver区域相交。是区域归属，**不是精确PIN/via/障碍所有权或排他根因证明**。wall4s/CPU3.367s，单线程；回执SHA6f709cf14f4f5797f263c727f034d93571ef121e82c4cdc252d24b5dbdf0e2ec，目录runs/auxiliary-closed-DRT-marker-cell-attribution-r01-4c-01/。
-- **93130 RUNNING/4**：完整191父层、14059目标、6225真实公共PIN的保存native AP检查通过，实际track assignment已完成，详细布线0th迭代已开始。只复用资格化的原失败快照/完整拥堵guides，未重复PA/GRT；旧GRT失败不改为通过。源码f21c44e0b8800db66b6487ffaa22fda7feedf913；目录runs/complete-fixed-parent-saved-guides-fresh-DRT-r01-4c-01/。
-- **93131 PENDING，申请4核**，等待93116自然终态后补严格公共BPin物理岛门槛，缺完整候选就NOTRUN。源码35712838705cef0b93865f0ecb0f2316825247a6。没有提前放行RC或功能。
-- **93136 COMPLETED0/4**：完整流读16490071原始形状，61/61原M5/M6→M8端口已由原导体/过孔连通；原via7几何内存移除负例检出。wall92s/CPU89.477s≈0.973核。SHA3c3b400e5d724bdcf9b5a230a5eca3b42c69f86d9c7cc50817b844dd3483c183，目录runs/original-public-pin-retained-escape-components-r01-4c-01/。这是原线路诊断，不是新保留/投影算法已实际布通。
-
-下一步按失败证据检查新增buffer的M1→M2接入与原固定导体，评估接入感知的位置选择；已有DPL通过只证明不重叠/在合法site，未证明第一层过孔可接入。并评估保留原61段已连通M5/M6→M8引出，只重布变动部分。**这些方法尚未实施或物理验证**；不得靠删原导体/OBS、缩硬件或只改AP元数据解决。旧作业继续后查、新版本只在本任务新目录，全部原有保持性/物理/电气/功能门槛不减。
-
-候选仍1/3、UNFROZEN，二/三未验收、四NOTRUN。两个当前运行中作业均4核；新增诊断主要单线程，如实列CPU时间。source/配置/工具/输入SHA及不可变的前次记录归档见最新索引；大DB/完整日志/工艺仍只留服务器。
-
-最新索引：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-actual-DRT48-marker-and-escape-feedback-20261029T030006Z/milestone.json
-SHA-256：eea4a5f39f0f6355cd43fc4ad5bf78017f11d0dd998086d3eabafb950d24cb84
-复核源码：9b937a2489570438013b05c378477cdfbaf25d27。
+仅六份精选既有记录入库；大型数据库/完整日志/工艺继续只在服务器。rayggxia-project-collab1.0.0；登记复用管理中心PR5 pending；board.json缺失/Projects unverified、同步pending；审查人待指定，Issue55继续in_progress。本次结构检查通过，不代替以上业务验证。
