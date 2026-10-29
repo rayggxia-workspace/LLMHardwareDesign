@@ -7,7 +7,7 @@ from run_escape_fixture import execute
 DRIVER=Path(__file__).resolve().parent
 
 def run(revision,profile='shape_iterator'):
-    assert profile in ['shape_iterator','inventory','decoder_rect','decoder_payload','rect_native_shape','rect_native_coord']
+    assert profile in ['shape_iterator','inventory','decoder_rect','decoder_payload','rect_native_shape','rect_native_coord','patch_export']
     source=ROOT/'pin_metal_encoding_API/r02';rp=source/'execution.json';q=json.loads(rp.read_text())
     odb=source/'encoding_probe_NOT_LEAF.odb'
     assert q.get('completed_utc') and q['native_returncodes']['encode_and_export']==0 and sha(odb)==q['files'][odb.name]['sha256']
@@ -87,10 +87,17 @@ for {set i 0} {$i<3} {incr i} {set op [$d next]}
 set l [$d getLayer];puts $f [join [list native_RECT_layer 0 [$l getName]] "\t"]
 close $f
 '''
+        if profile=='patch_export':
+            body='set ::env(PINXY_PATCH_NET_NAMES) {HPY_PATCH_POINT_PAIR HPY_PATCH_RECT_OPCODE}\nset ::env(PINXY_PATCH_OUT) OUTPUT\nset ::env(PINXY_PATCH_COUNTS) '+tcl(out/'patch_counts.tsv')+'\nsource '+tcl(DRIVER/'export_patch_rects.tcl')+'\n'
         script=out/'probe.tcl';script.write_text('read_db '+tcl(odb)+'\n'+body.replace('OUTPUT',tcl(out/'native_all_shapes.tsv')))
         rec['actual_OpenROAD_binary_SHA256']=subprocess.check_output(common+[IMAGE,'sha256sum',BIN]).decode().split()[0]
         rec['native_returncode']=execute(common,script,out/'native.log',threads=1)
-        if rec['native_returncode']==0 and profile in ['shape_iterator','decoder_rect','decoder_payload','rect_native_shape','rect_native_coord']:rec['actual_shape_export_text']=(out/'native_all_shapes.tsv').read_text()
+        if rec['native_returncode']==0 and profile in ['shape_iterator','decoder_rect','decoder_payload','rect_native_shape','rect_native_coord','patch_export']:rec['actual_shape_export_text']=(out/'native_all_shapes.tsv').read_text()
+        if profile=='patch_export' and rec['native_returncode']==0:
+            import csv,io
+            rows=list(csv.DictReader(io.StringIO(rec['actual_shape_export_text']),delimiter='\t'))
+            rec['known_probe_exact_patch_verified']=len(rows)==1 and rows[0]['net']=='HPY_PATCH_RECT_OPCODE' and rows[0]['layer']=='metal5' and [int(rows[0][k]) for k in ['x0','y0','x1','y1']]==[3975860,2411220,3976140,2411500]
+            assert rec['known_probe_exact_patch_verified']
     except Exception:rec['actual_failure']=traceback.format_exc()
     rec['all_closed_sources_unchanged']=all(sha(Path(p))==v for p,v in inputs.items())
     rec['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
