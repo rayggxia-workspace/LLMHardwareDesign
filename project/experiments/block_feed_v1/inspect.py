@@ -22,14 +22,45 @@ def number(x):
     return int(x, 2) if isinstance(x, str) else x
 
 
+def mapped_inventory(module):
+    counts, annotations = Counter(), 0
+    for cell in module["cells"].values():
+        if cell["type"] == "$scopeinfo":
+            if cell["connections"]:
+                raise RuntimeError("scope metadata must have no hardware connections")
+            annotations += 1
+        elif cell["type"].startswith("$"):
+            raise RuntimeError("unmapped hardware cell: " + cell["type"])
+        else:
+            counts[cell["type"]] += 1
+    return counts, annotations
+
+
 def inspect(top, args):
     out = args.out / top
     out.mkdir(exist_ok=False)
     names = ["block_feed_m"] if top == "block_feed_m" else ["block_feed_s_macro", "block_feed_loader", "block_feed_s16k"]
     sources = [RTL / (n + ".sv") for n in names]
-    script = "read_verilog -sv " + " ".join(map(str, sources)) + "\n"
-    script += f"hierarchy -check -top {top}\nproc\nflatten\nopt\nmemory_collect\ncheck -assert\nstat\nwrite_json structure.json\n"
-    if args.liberty:
+    artifacts = out
+    reused = None
+    if args.reuse_mapped:
+        if not args.liberty:
+            raise RuntimeError("mapped artifact reception requires its Liberty")
+        artifacts = args.reuse_mapped / top
+        manifest_path = args.reuse_mapped.parents[2] / "source-manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        for s in sources:
+            if sha(s) != manifest["files"][str(s.relative_to(ROOT))]:
+                raise RuntimeError(f"predecessor RTL mismatch: {s}")
+        reused = dict(source_commit=manifest["source_commit"], source_manifest_sha256=sha(manifest_path),
+                      artifacts={str(artifacts / n): sha(artifacts / n)
+                                 for n in ("structure.json", "mapped.v", "mapped.json")})
+        script = "read_liberty -lib " + str(args.liberty) + "\nread_verilog " + str(artifacts / "mapped.v") + "\n"
+        script += f"hierarchy -check -top {top}\ncheck -assert\nstat -liberty {args.liberty}\n"
+    else:
+        script = "read_verilog -sv " + " ".join(map(str, sources)) + "\n"
+        script += f"hierarchy -check -top {top}\nproc\nflatten\nopt\nmemory_collect\ncheck -assert\nstat\nwrite_json structure.json\n"
+    if args.liberty and not args.reuse_mapped:
         script += "synth -top " + top + " -noabc\n"
         script += "read_liberty -lib " + str(args.liberty) + "\n"
         script += "dfflibmap -liberty " + str(args.liberty) + "\n"
@@ -40,7 +71,7 @@ def inspect(top, args):
         proc = subprocess.run([args.yosys, "-s", "inspect.ys"], cwd=out, stdout=stream, stderr=subprocess.STDOUT)
     if proc.returncode:
         raise RuntimeError(f"{top}: Yosys exited {proc.returncode}; see {out / 'yosys.log'}")
-    mod = json.loads((out / "structure.json").read_text())["modules"][top]
+    mod = json.loads((artifacts / "structure.json").read_text())["modules"][top]
     memories, muls = {}, Counter()
     for name, cell in mod["cells"].items():
         p = cell["parameters"]
@@ -59,12 +90,11 @@ def inspect(top, args):
                   signal_pin_bits=sum(len(p["bits"]) for p in mod["ports"].values()),
                   memories=memories, multipliers=dict(muls), physical_qualified=False)
     if args.liberty:
-        mapped = json.loads((out / "mapped.json").read_text())["modules"][top]
-        counts = Counter(c["type"] for c in mapped["cells"].values())
-        if any(n.startswith("$") for n in counts):
-            raise RuntimeError(f"unmapped cells: {counts}")
+        mapped = json.loads((artifacts / "mapped.json").read_text())["modules"][top]
+        counts, annotations = mapped_inventory(mapped)
         result.update(mapped=True, cell_counts=dict(counts), cell_count=sum(counts.values()),
-                      liberty_sha256=sha(args.liberty), mapped_verilog_sha256=sha(out / "mapped.v"))
+                      portless_scope_annotations=annotations, reused_artifacts=reused,
+                      liberty_sha256=sha(args.liberty), mapped_verilog_sha256=sha(artifacts / "mapped.v"))
     (out / "receipt.json").write_text(json.dumps(result, indent=2) + "\n")
     return result
 
@@ -75,6 +105,7 @@ def main():
     p.add_argument("--liberty", type=Path)
     p.add_argument("--abc", default="yosys-abc")
     p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--reuse-mapped", type=Path, help="Freshly check completed mapped files; preserve the old producer failure")
     args = p.parse_args()
     args.out = args.out.resolve()
     args.out.mkdir(parents=True, exist_ok=False)

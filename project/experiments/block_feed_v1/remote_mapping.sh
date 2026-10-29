@@ -6,6 +6,7 @@
 set -euo pipefail
 source_root=$1
 output_root=$2
+predecessor=${3:-}
 test -n "${SLURM_JOB_ID:-}"
 test "$SLURM_CPUS_PER_TASK" -ge 2
 mkdir -p "$output_root"
@@ -21,5 +22,5 @@ export PATH="/public/software/singularity-ce-4.3.4/bin:$PATH"
 srun --ntasks=1 --cpus-per-task="$SLURM_CPUS_PER_TASK" --cpu-bind=cores \
  singularity exec --cleanenv --bind /public/home/yuzelu --pwd "$source_root" \
  --env OMP_NUM_THREADS=1 --env OPENBLAS_NUM_THREADS=1 "$image" \
- bash -c 'set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; python3 "$1/project/experiments/block_feed_v1/inspect.py" --yosys "$(command -v yosys)" --abc "$(command -v yosys-abc)" --liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib --out "$2/mapping"' \
- bash "$source_root" "$output_root"
+ bash -c 'set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; args=("$1/project/experiments/block_feed_v1/inspect.py" --yosys "$(command -v yosys)" --abc "$(command -v yosys-abc)" --liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib --out "$2/mapping"); if [[ -n "$3" ]]; then args+=(--reuse-mapped "$3"); fi; python3 "${args[@]}"' \
+ bash "$source_root" "$output_root" "$predecessor"
