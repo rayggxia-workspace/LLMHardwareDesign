@@ -1,0 +1,3 @@
+333 seven current-Softmax-source measurements staged
+
+305 server source files and305 exact archive Git blobs verified;source701cc402c166a7e72e8626485446c1ac924273c1,archive7f8445cef63f4e4cf5915b16d34c6687e880b416917c949c28a7ffe1520cda38. No new allocation or step at capture. Existing93097 spare80CPU partition, only launch after329 cohost fully completes. Counts include actual pair-sum/accumulation/denominator write enables; public numeric/cycle identity must pass before occupancy accepted. Five model-length families use real finiteS16KiB/Vworkspace. Must reprice current budget after results.

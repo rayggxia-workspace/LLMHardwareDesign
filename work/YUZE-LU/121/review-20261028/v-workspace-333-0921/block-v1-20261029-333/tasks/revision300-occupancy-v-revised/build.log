@@ -1,0 +1,294 @@
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v_group.sv:20:16: Operator OR expects 128 bits on the RHS, but RHS's GTE generates 1 bits.
+                                                                                                                                                                      : ... note: In instance 'block_v1_v.group_unit'
+   20 |   next_q=(q<<1)|(shifted>=trial);
+      |                ^
+                      ... For warning description see https://verilator.org/warn/WIDTHEXPAND?v=5.042
+                      ... Use "/* verilator lint_off WIDTHEXPAND */" and lint_on around source to disable this message.
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v_group.sv:21:22: Operator OR expects 64 bits on the RHS, but RHS's GTE generates 1 bits.
+                                                                                                                                                                      : ... note: In instance 'block_v1_v.group_unit'
+   21 |   next_root=(root<<1)|(shifted>=trial);
+      |                      ^
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v_function.sv:32:63: Operator ASSIGN expects 12 bits on the Assign RHS, but Assign RHS's SHIFTR generates 33 bits.
+                                                                                                                                                                        : ... note: In instance 'block_v1_v.function_unit'
+   32 |      else begin offset=$signed({xv[31],xv})+33'sd1048576;index=offset>>9;frac={2'b0,offset[8:0]};lo=v_lut(fn,index);hi=v_lut(fn,index+1'b1);end
+      |                                                               ^
+                     ... For warning description see https://verilator.org/warn/WIDTHTRUNC?v=5.042
+                     ... Use "/* verilator lint_off WIDTHTRUNC */" and lint_on around source to disable this message.
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v_function.sv:36:62: Operator ASSIGN expects 12 bits on the Assign RHS, but Assign RHS's SHIFTR generates 33 bits.
+                                                                                                                                                                        : ... note: In instance 'block_v1_v.function_unit'
+   36 |      else begin offset=$signed({xv[31],xv})+33'sd524288;index=offset>>11;frac=offset[10:0];lo=v_lut(fn,index);hi=v_lut(fn,index+1'b1);end
+      |                                                              ^
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v_function.sv:40:63: Operator ASSIGN expects 12 bits on the Assign RHS, but Assign RHS's SHIFTR generates 33 bits.
+                                                                                                                                                                        : ... note: In instance 'block_v1_v.function_unit'
+   40 |      else begin offset=$signed({xv[31],xv})+33'sd1048576;index=offset>>11;frac=offset[10:0];lo=v_lut(fn,index);hi=v_lut(fn,index+1'b1);end
+      |                                                               ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v_function.sv:45:58: Operator ADD expects 46 bits on the RHS, but RHS's LOGOR generates 1 bits.
+                                                                                                                                                                         : ... note: In instance 'block_v1_v.function_unit'
+   45 |     total=$signed({{14{base2[l][31]}},base2[l]})+quotient+((remn>half)||((remn==half)&&quotient[0]));
+      |                                                          ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:83:36: Operator ADD expects 8 bits on the RHS, but RHS's SEL generates 1 bits.
+                                                                                                                                                                : ... note: In instance 'block_v1_v'
+   83 |     result[8*g+:8]=subtotal[g][7:0]+carry[g];
+      |                                    ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:102:49: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'function_sent' generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  102 |      difference=$signed({input_mem[function_sent+j][31],input_mem[function_sent+j]})-$signed({maximum[31],maximum});
+      |                                                 ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:102:80: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'function_sent' generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  102 |      difference=$signed({input_mem[function_sent+j][31],input_mem[function_sent+j]})-$signed({maximum[31],maximum});
+      |                                                                                ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:105:81: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'function_sent' generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  105 |     end else if(function_source_replay)begin if(j==0)fx0=input_mem[function_sent+j];else fx1=input_mem[function_sent+j];end
+      |                                                                                 ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:105:117: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'function_sent' generates 9 bits.
+                                                                                                                                                                  : ... note: In instance 'block_v1_v'
+  105 |     end else if(function_source_replay)begin if(j==0)fx0=input_mem[function_sent+j];else fx1=input_mem[function_sent+j];end
+      |                                                                                                                     ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:106:37: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'function_sent' generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  106 |     else if(j==0)fx0=a[function_sent+j];else fx1=a[function_sent+j];
+      |                                     ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:106:65: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'function_sent' generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  106 |     else if(j==0)fx0=a[function_sent+j];else fx1=a[function_sent+j];
+      |                                                                 ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:100:20: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'function_sent' generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  100 |    if(function_sent+j<function_length)begin
+      |                    ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:110:49: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'offset' generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  110 |    leaf_enabled=phase==S_REDUCE?l<stats_n:offset+l<length;
+      |                                                 ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:111:52: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'offset' generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  111 |    leaf_value=phase==S_REDUCE?a[l]:input_mem[offset+l];
+      |                                                    ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:112:30: Operator COND expects 64 bits on the Conditional True, but Conditional True's SIGNED generates 32 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  112 |    sum_tree[7+l]=leaf_enabled?$signed(leaf_value):64'sd0;
+      |                              ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:113:33: Operator COND expects 80 bits on the Conditional True, but Conditional True's UNSIGNED generates 65 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  113 |    square_tree[7+l]=leaf_enabled?$unsigned(product[l]):80'd0;
+      |                                 ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:116:44: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'stats_base' generates 16 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  116 |    argmax_tree[7+l]=leaf_enabled?stats_base+l:16'hffff;
+      |                                            ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:116:33: Operator COND expects 32 bits on the Conditional False, but Conditional False's CONST '16'hffff' generates 16 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  116 |    argmax_tree[7+l]=leaf_enabled?stats_base+l:16'hffff;
+      |                                 ^
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:116:20: Operator ASSIGN expects 16 bits on the Assign RHS, but Assign RHS's COND generates 32 bits.
+                                                                                                                                                                : ... note: In instance 'block_v1_v'
+  116 |    argmax_tree[7+l]=leaf_enabled?stats_base+l:16'hffff;
+      |                    ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:117:44: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'stats_base' generates 16 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  117 |    argmin_tree[7+l]=leaf_enabled?stats_base+l:16'hffff;
+      |                                            ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:117:33: Operator COND expects 32 bits on the Conditional False, but Conditional False's CONST '16'hffff' generates 16 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  117 |    argmin_tree[7+l]=leaf_enabled?stats_base+l:16'hffff;
+      |                                 ^
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:117:20: Operator ASSIGN expects 16 bits on the Assign RHS, but Assign RHS's COND generates 32 bits.
+                                                                                                                                                                : ... note: In instance 'block_v1_v'
+  117 |    argmin_tree[7+l]=leaf_enabled?stats_base+l:16'hffff;
+      |                    ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:128:12: Operator ASSIGN expects 128 bits on the Assign RHS, but Assign RHS's ARRAYSEL generates 64 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  128 |   block_sum=sum_tree[0];block_sq=square_tree[0];block_max=max_tree[0];block_min=min_tree[0];block_argmax=argmax_tree[0];block_argmin=argmin_tree[0];
+      |            ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:128:33: Operator ASSIGN expects 128 bits on the Assign RHS, but Assign RHS's ARRAYSEL generates 80 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  128 |   block_sum=sum_tree[0];block_sq=square_tree[0];block_max=max_tree[0];block_min=min_tree[0];block_argmax=argmax_tree[0];block_argmin=argmin_tree[0];
+      |                                 ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:137:56: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'offset' generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  137 |    else if(phase==C_MUL)begin mul_a[l]=input_mem[offset+l];mul_b[l]={input_mem[offset+l][31],input_mem[offset+l]};end
+      |                                                        ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:137:86: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'offset' generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  137 |    else if(phase==C_MUL)begin mul_a[l]=input_mem[offset+l];mul_b[l]={input_mem[offset+l][31],input_mem[offset+l]};end
+      |                                                                                      ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:137:110: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'offset' generates 9 bits.
+                                                                                                                                                                  : ... note: In instance 'block_v1_v'
+  137 |    else if(phase==C_MUL)begin mul_a[l]=input_mem[offset+l];mul_b[l]={input_mem[offset+l][31],input_mem[offset+l]};end
+      |                                                                                                              ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:139:47: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'offset' generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  139 |     mul_a[l]=compose_kind==2?output_mem[offset+l]:input_mem[offset+l];
+      |                                               ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:139:67: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'offset' generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  139 |     mul_a[l]=compose_kind==2?output_mem[offset+l]:input_mem[offset+l];
+      |                                                                   ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:151:29: Operator GTS expects 33 bits on the LHS, but LHS's SIGNED generates 32 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  151 |     4:total[l]=$signed(a[l])>$signed(point_b[l])?$signed(a[l]):$signed(point_b[l]);
+      |                             ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:151:49: Operator COND expects 128 bits on the Conditional True, but Conditional True's SIGNED generates 32 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  151 |     4:total[l]=$signed(a[l])>$signed(point_b[l])?$signed(a[l]):$signed(point_b[l]);
+      |                                                 ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:151:49: Operator COND expects 128 bits on the Conditional False, but Conditional False's SIGNED generates 33 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  151 |     4:total[l]=$signed(a[l])>$signed(point_b[l])?$signed(a[l]):$signed(point_b[l]);
+      |                                                 ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:152:29: Operator LTS expects 33 bits on the LHS, but LHS's SIGNED generates 32 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  152 |     5:total[l]=$signed(a[l])<$signed(point_b[l])?$signed(a[l]):$signed(point_b[l]);
+      |                             ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:152:49: Operator COND expects 128 bits on the Conditional True, but Conditional True's SIGNED generates 32 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  152 |     5:total[l]=$signed(a[l])<$signed(point_b[l])?$signed(a[l]):$signed(point_b[l]);
+      |                                                 ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:152:49: Operator COND expects 128 bits on the Conditional False, but Conditional False's SIGNED generates 33 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  152 |     5:total[l]=$signed(a[l])<$signed(point_b[l])?$signed(a[l]):$signed(point_b[l]);
+      |                                                 ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:153:29: Operator GTES expects 33 bits on the LHS, but LHS's SIGNED generates 32 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  153 |     6:total[l]=$signed(a[l])>=$signed(point_b[l])?-128'sd1:128'sd0;
+      |                             ^~
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:156:22: Operator COND expects 128 bits on the Conditional True, but Conditional True's SIGNED generates 33 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  156 |     9:total[l]=a[l]<0?$signed(point_b[l]):$signed({{96{scalar_c[31]}},scalar_c});
+      |                      ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:161:31: Operator ADD expects 129 bits on the RHS, but RHS's LOGOR generates 1 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  161 |   rounded_group={1'b0,group_q}+((twice_remainder>{2'b0,group_d})||((twice_remainder=={2'b0,group_d})&&group_q[0]));
+      |                               ^
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:182:28: Bit extraction of var[1:0] requires 1 bit index, not 8 bits.
+                                                                                                                                                                : ... note: In instance 'block_v1_v'
+  182 |        if(cmd_op==0)a_valid[cmd_index]<=1;else b_valid[cmd_index]<=1;end
+      |                            ^
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:182:55: Bit extraction of var[1:0] requires 1 bit index, not 8 bits.
+                                                                                                                                                                : ... note: In instance 'block_v1_v'
+  182 |        if(cmd_op==0)a_valid[cmd_index]<=1;else b_valid[cmd_index]<=1;end
+      |                                                       ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:190:112: Operator ADD expects 32 or 17 bits on the RHS, but RHS's SEL generates 4 bits.
+                                                                                                                                                                  : ... note: In instance 'block_v1_v'
+  190 |         (!cmd_data[0]&&(!stats_valid[cmd_index[0]]||stats_final[cmd_index[0]]||{1'b0,stats_count[cmd_index[0]]}+cmd_data[5:2]>65535))||{1'b0,cmd_data[31:16]}+cmd_data[5:2]>65536)rsp_error<=1;
+      |                                                                                                                ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:190:158: Operator ADD expects 32 or 17 bits on the RHS, but RHS's SEL generates 4 bits.
+                                                                                                                                                                  : ... note: In instance 'block_v1_v'
+  190 |         (!cmd_data[0]&&(!stats_valid[cmd_index[0]]||stats_final[cmd_index[0]]||{1'b0,stats_count[cmd_index[0]]}+cmd_data[5:2]>65535))||{1'b0,cmd_data[31:16]}+cmd_data[5:2]>65536)rsp_error<=1;
+      |                                                                                                                                                              ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:195:42: Operator ASSIGNDLY expects 128 bits on the Assign RHS, but Assign RHS's ARRAYSEL generates 64 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  195 |       else case(cmd_index[1:0])0:rsp_data<=stats_sum[cmd_index[2]];1:rsp_data<=stats_sumsq[cmd_index[2]];
+      |                                          ^~
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:195:78: Operator ASSIGNDLY expects 128 bits on the Assign RHS, but Assign RHS's ARRAYSEL generates 80 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  195 |       else case(cmd_index[1:0])0:rsp_data<=stats_sum[cmd_index[2]];1:rsp_data<=stats_sumsq[cmd_index[2]];
+      |                                                                              ^~
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:208:93: Bit extraction of var[63:0] requires 6 bit index, not 8 bits.
+                                                                                                                                                                : ... note: In instance 'block_v1_v'
+  208 |       else begin for(i=0;i<4;i=i+1)input_mem[4*cmd_index+i]<=cmd_data[32*i+:32];replay_valid[cmd_index]<=1;end
+      |                                                                                             ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:218:76: Operator ASSIGNDLY expects 128 bits on the Assign RHS, but Assign RHS's ARRAYSEL generates 64 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  218 |        else if(cmd_index==6)begin group_kind<=4;group_n<=128'd1<<48;group_d<=stats_sum[1];phase<=G_START;end
+      |                                                                            ^~
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:212:74: Operator LT expects 16 bits on the RHS, but RHS's SEL generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  212 |          (cmd_index>=4&&(!stats_valid[0]||!stats_final[0]||stats_count[0]<cmd_data[8:0]))||
+      |                                                                          ^
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:237:86: Bit extraction of var[4:0] requires 3 bit index, not 8 bits.
+                                                                                                                                                                : ... note: In instance 'block_v1_v'
+  237 |       else begin for(i=0;i<8;i=i+1)top_id[8*cmd_index+i]<=cmd_data[16*i+:16];id_valid[cmd_index]<=1;top_valid<=0;end
+      |                                                                                      ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:240:115: Operator GT expects 6 bits on the LHS, but LHS's SEL generates 4 bits.
+                                                                                                                                                                  : ... note: In instance 'block_v1_v'
+  240 |       if(cmd_data[127:10]!=0||cmd_data[5:0]==0||cmd_data[5:0]>40||cmd_data[9:6]==0||cmd_data[9:6]>8||cmd_data[9:6]>cmd_data[5:0]||
+      |                                                                                                                   ^
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:250:38: Bit extraction of array[7:0] requires 3 bit index, not 8 bits.
+                                                                                                                                                                : ... note: In instance 'block_v1_v'
+  250 |       else rsp_data<={80'b0,chosen_id[cmd_index],chosen_value[cmd_index]};
+      |                                      ^
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:250:62: Bit extraction of array[7:0] requires 3 bit index, not 8 bits.
+                                                                                                                                                                : ... note: In instance 'block_v1_v'
+  250 |       else rsp_data<={80'b0,chosen_id[cmd_index],chosen_value[cmd_index]};
+      |                                                              ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:249:31: Operator GTE expects 8 bits on the RHS, but RHS's VARREF 'top_k' generates 4 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  249 |       if(!top_valid||cmd_index>=top_k)rsp_error<=1;
+      |                               ^~
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:295:18: Operator ASSIGNDLY expects 9 bits on the Assign RHS, but Assign RHS's VARREF 'point_count' generates 4 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  295 |      output_count<=point_count;rsp_valid<=1;phase<=IDLE;
+      |                  ^~
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:306:88: Operator ADD expects 16 bits on the RHS, but RHS's VARREF 'stats_n' generates 4 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  306 |      stats_count[stats_context]<=stats_start?{12'b0,stats_n}:stats_count[stats_context]+stats_n;stats_final[stats_context]<=stats_finish;stats_valid[stats_context]<=1;phase<=IDLE;rsp_valid<=1;
+      |                                                                                        ^
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:325:17: Bit extraction of array[255:0] requires 8 bit index, not 9 bits.
+                                                                                                                                                                : ... note: In instance 'block_v1_v'
+  325 |       output_mem[function_received]<=fy0;if(function_received+1<function_length)output_mem[function_received+1]<=fy1;
+      |                 ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:353:50: Operator ADD expects 64 bits on the RHS, but RHS's VARREF 'root_increment' generates 1 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  353 |      if(group_kind==3)begin factor<=group_q[63:0]+root_increment;offset<=0;phase<=N_LOW;end
+      |                                                  ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:355:119: Operator ADD expects 128 bits on the RHS, but RHS's VARREF 'root_increment' generates 1 bits.
+                                                                                                                                                                  : ... note: In instance 'block_v1_v'
+  355 |       if(group_q+root_increment>2147483647)begin rsp_data<=128'd2147483647;rsp_saturated<=1;end else rsp_data<=group_q+root_increment;
+      |                                                                                                                       ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:355:17: Operator ADD expects 128 bits on the RHS, but RHS's VARREF 'root_increment' generates 1 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  355 |       if(group_q+root_increment>2147483647)begin rsp_data<=128'd2147483647;rsp_saturated<=1;end else rsp_data<=group_q+root_increment;
+      |                 ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:372:24: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'offset' generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  372 |       output_mem[offset+i]<=rounded[31:0];
+      |                        ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:368:33: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'offset' generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  368 |      for(i=0;i<8;i=i+1)if(offset+i<length)begin
+      |                                 ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:410:42: Bit extraction of array[255:0] requires 8 bit index, not 6 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  410 |       best_valid<=1;best_value<=input_mem[scan_index];best_id<=top_id[scan_index];best_index<=scan_index;
+      |                                          ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:409:55: Bit extraction of array[255:0] requires 8 bit index, not 6 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  409 |      if(!selected[scan_index]&&(!best_valid||input_mem[scan_index]>best_value||(input_mem[scan_index]==best_value&&top_id[scan_index]<best_id)))begin
+      |                                                       ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:409:90: Bit extraction of array[255:0] requires 8 bit index, not 6 bits.
+                                                                                                                                                                 : ... note: In instance 'block_v1_v'
+  409 |      if(!selected[scan_index]&&(!best_valid||input_mem[scan_index]>best_value||(input_mem[scan_index]==best_value&&top_id[scan_index]<best_id)))begin
+      |                                                                                          ^
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:415:18: Bit extraction of array[7:0] requires 3 bit index, not 4 bits.
+                                                                                                                                                                : ... note: In instance 'block_v1_v'
+  415 |      chosen_value[top_round]<=best_value;chosen_id[top_round]<=best_id;selected[best_index]<=1;
+      |                  ^
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/rtl/block_library_v1/block_v1_v.sv:415:51: Bit extraction of array[7:0] requires 3 bit index, not 4 bits.
+                                                                                                                                                                : ... note: In instance 'block_v1_v'
+  415 |      chosen_value[top_round]<=best_value;chosen_id[top_round]<=best_id;selected[best_index]<=1;
+      |                                                   ^
+make: Entering directory '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/tasks/revision300-occupancy-v-revised/obj'
+/usr/bin/g++  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -std=c++17 -O2 -I/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/experiments/block_v1   -Os  -c -o instrumented.o /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/tasks/revision300-occupancy-v-revised/instrumented.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -std=c++17 -O2 -I/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/experiments/block_v1   -c -o verilated.o /public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/verilated.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -std=c++17 -O2 -I/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/experiments/block_v1   -c -o verilated_dpi.o /public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/verilated_dpi.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -std=c++17 -O2 -I/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/experiments/block_v1   -c -o verilated_threads.o /public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/verilated_threads.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -std=c++17 -O2 -I/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/experiments/block_v1   -x c++-header Vblock_v1_v__pch.h -o Vblock_v1_v__pch.h.fast.gch
+/usr/bin/g++   -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -std=c++17 -O2 -I/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/experiments/block_v1   -x c++-header Vblock_v1_v__pch.h -o Vblock_v1_v__pch.h.slow.gch
+echo "" > Vblock_v1_v__ALL.verilator_deplist.tmp
+/usr/bin/g++   -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -std=c++17 -O2 -I/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/experiments/block_v1   -include Vblock_v1_v__pch.h.slow -c -o Vblock_v1_v___024root__Slow.o Vblock_v1_v___024root__Slow.cpp
+/usr/bin/g++   -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -std=c++17 -O2 -I/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/experiments/block_v1   -include Vblock_v1_v__pch.h.slow -c -o Vblock_v1_v___024root__0__Slow.o Vblock_v1_v___024root__0__Slow.cpp
+/usr/bin/g++   -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -std=c++17 -O2 -I/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/experiments/block_v1   -include Vblock_v1_v__pch.h.slow -c -o Vblock_v1_v__Syms.o Vblock_v1_v__Syms.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -std=c++17 -O2 -I/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/experiments/block_v1   -include Vblock_v1_v__pch.h.fast -c -o Vblock_v1_v.o Vblock_v1_v.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -std=c++17 -O2 -I/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/experiments/block_v1   -include Vblock_v1_v__pch.h.fast -c -o Vblock_v1_v___024root__0.o Vblock_v1_v___024root__0.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -std=c++17 -O2 -I/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/experiments/block_v1   -include Vblock_v1_v__pch.h.fast -c -o Vblock_v1_v___024root__1.o Vblock_v1_v___024root__1.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -std=c++17 -O2 -I/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/experiments/block_v1   -include Vblock_v1_v__pch.h.fast -c -o Vblock_v1_v___024root__2.o Vblock_v1_v___024root__2.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -std=c++17 -O2 -I/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/src/project/experiments/block_v1   -include Vblock_v1_v__pch.h.fast -c -o Vblock_v1_v__Dpi.o Vblock_v1_v__Dpi.cpp
+/usr/bin/g++    instrumented.o verilated.o verilated_dpi.o verilated_threads.o Vblock_v1_v__ALL.a    -pthread -lpthread -latomic   -o Vblock_v1_v
+rm Vblock_v1_v__ALL.verilator_deplist.tmp
+make: Leaving directory '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-333/tasks/revision300-occupancy-v-revised/obj'
+- V e r i l a t i o n   R e p o r t: Verilator 5.042 2025-11-02 rev UNKNOWN.REV
+- Verilator: Built from 0.372 MB sources in 4 modules, into 13.073 MB in 8 C++ files needing 0.007 MB
+- Verilator: Walltime 15.492 s (elab=0.019, cvt=0.786, bld=14.342); cpu 0.905 s on 16 threads; alloced 165.543 MB
