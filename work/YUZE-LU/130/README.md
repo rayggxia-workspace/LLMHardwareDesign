@@ -65,7 +65,7 @@ python3 /mnt/d/Data/LLMHardwareDesign-issue130-runtime/src/project/experiments/b
 ```
 /public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-r2-20261029/results/mapping-01/mapping/{block_feed_m,block_feed_s_macro}/
 ```
-本地原始回执、会计终态、输入manifest、镜像与内存记录：`validation/remote-receive/`。`index.json`逐项列出18个抓取文件的服务器位置、本地位置与SHA，失败与新接收分目录保存。
+本地原始回执、会计终态（accounting-raw.zip为原始输出，accounting.txt仅去除显示行尾空格）、输入manifest、镜像与内存记录：`validation/remote-receive/`。`index.json`逐项列出18个抓取文件的服务器位置、本地位置与SHA，失败与新接收分目录保存。
 
 重跑接收命令（通过sbatch，输出目录须新建；`SOURCE_ROOT`含与归档SHA一致的源）：
 ```bash
