@@ -30,6 +30,11 @@ def run(revision):
     for p in original:
         if p.parent==native and p.name!='execution.json':assert sha(p)==n['files'][p.name]['sha256']
     inputs={str(p):sha(p) for p in original};out=ROOT/'all_llsys_access_stubs'/revision;out.mkdir(parents=True,exist_ok=False)
+    parent_pg=None
+    if revision!='r01':
+        parent=ROOT/'parent_pg_llsys_local/r01';pr=json.loads((parent/'execution.json').read_text());parent_pg=parent/'actual_parent_PG_local.tsv'
+        assert pr.get('completed_utc') and pr['native_readonly_returncode']==0 and pr['all_closed_sources_unchanged'] and sha(parent_pg)==pr['files'][parent_pg.name]['sha256']
+        inputs.update({str(p):sha(p) for p in [parent/'execution.json',parent_pg]})
     rec={'scope':'ALL13507_CURRENT_PORT_REAL_M5_M6_STUB_AND_XY_ENGINEERING_NOT_FULL_SYSTEM_QUALIFICATION',
       'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID'],'source_SHA':inputs,
       'full_qualification':False,'original_signal_pins':13507,'all_original_port_layers_sizes_functions_directions_networks_constants_and_targets':'MUST_REMAIN_UNCHANGED',
@@ -50,6 +55,7 @@ def run(revision):
         rec['native_returncodes'][label]=rc;save();return rc
     try:
         ports=json.loads(table.read_text());assert len(ports)==13507 and len({p['pin'] for p in ports})==13507
+        port_layers={p['net']:p['original_layer'] for p in ports};own_metal=defaultdict(list)
         vias=a['actual_via_templates'];text=tech.read_text();rules={};maxgrow={};layers={'metal5':5,'metal6':6,'metal7':7,'via5':15,'via6':16}
         for layer in layers:
             block=re.search(r'^LAYER '+layer+r'\s.*?^END '+layer,text,re.M|re.S)[0]
@@ -70,9 +76,13 @@ def run(revision):
         def consume(reader):
             for r in reader:
                 if r['layer'] not in layers or r['kind']=='UNROUTED':continue
-                add(r['net'],r['kind'],r['layer'],tuple(int(r[k]) for k in ['x0','y0','x1','y1']))
+                z=tuple(int(r[k]) for k in ['x0','y0','x1','y1']);add(r['net'],r['kind'],r['layer'],z)
+                if r['net'] in port_layers and r['layer']==port_layers[r['net']] and r['kind'] in ['WIRE','VIA']:own_metal[r['net']].append((z,r['kind']))
         with gzip.open(str(geo),'rt') as f:consume(csv.DictReader(f,delimiter='\t'))
         with (native/'actual_high_PG_OBS.tsv').open() as f:consume(csv.DictReader(f,delimiter='\t'))
+        if parent_pg:
+            with parent_pg.open() as f:consume(csv.DictReader(f,delimiter='\t'))
+            rec['actual_common_parent_PG_included_with_native_R0_transform']=True
         db.commit();rec['actual_high_geometry_rows_indexed']=len(metadata)-1;save();print('ACTUAL_METAL_INDEX_COMPLETE',len(metadata)-1,flush=True)
         def clear(net,layer,z):
             margin=maxgrow[layer];level=layers[layer]
@@ -102,36 +112,63 @@ def run(revision):
             ys=range(round((cy-140)/yp)-1,round((cy-140)/yp)+2) if ly=='metal5' else range(math.floor((cy-140-20000)/yp),math.ceil((cy-140+20000)/yp)+1)
             candidates=sorted((abs(x-cx)+abs(y-cy),int((y!=cy) if ly=='metal5' else (x!=cx)),x,y) for x in (190+ix*560 for ix in xs) for y in (140+iy*yp for iy in ys) if abs(x-cx)+abs(y-cy)<=20000)
             chosen=None
+            support=None
+            # A straight new stub may be blocked along the way. Prefer a
+            # destination on already connected same-net actual metal; this
+            # changes the access XY without inventing a connecting route.
+            if revision!='r01':
+                owned={}
+                for box,kind in own_metal[r['net']]:
+                    xlo=max(box[0]+140,cx-100000);xhi=min(box[2]-140,cx+100000);ylo=max(box[1]+140,cy-100000);yhi=min(box[3]-140,cy+100000)
+                    for ix in range(math.ceil((xlo-190)/560),math.floor((xhi-190)/560)+1):
+                        for iy in range(math.ceil((ylo-140)/yp),math.floor((yhi-140)/yp)+1):
+                            x,y=190+ix*560,140+iy*yp;distance=abs(x-cx)+abs(y-cy)
+                            if distance<=100000:owned.setdefault((distance,x,y),(box,kind))
+                for (distance,x,y),evidence in sorted(owned.items()):
+                    if (ly,x,y) in occupied:continue
+                    path,unused,first=proposal(r,x,y)
+                    if all(clear(r['net'],layer,z) for layer,z in first):
+                        # Preserve the old BPin material as an exact real WIRE
+                        # square, using the already native/GDS-tested encoding.
+                        stubs=[] if distance==0 else [(ly,tuple(r['box_DBU']))]
+                        chosen=(distance,x,y,[],stubs,first);support=evidence;break
             for distance,perp,x,y in candidates:
+                if chosen:break
                 if (ly,x,y) in occupied or not(die[0]+140<=x<=die[2]-140 and die[1]+140<=y<=die[3]-140):continue
                 path,stubs,first=proposal(r,x,y)
                 if all(clear(r['net'],layer,z) for layer,z in stubs+first):chosen=(distance,x,y,path,stubs,first);break
             row=dict(r)
             if chosen:
-                distance,x,y,path,stubs,first=chosen;row.update(target_center_DBU=[x,y],stub_path_DBU=path,stub_L1_um=distance/2000.,status='REAL_STUB_AND_XY_NATIVE_IMPLEMENTATION_REQUIRED' if distance else 'KEEP_ACTUAL_XY_FIRST_HOP_PRESCREEN_CLEAR_NOT_AP_PASS')
+                distance,x,y,path,stubs,first=chosen;row.update(target_center_DBU=[x,y],stub_path_DBU=path,stub_L1_um=0 if support else distance/2000.,XY_L1_um=distance/2000.,status='REAL_STUB_AND_XY_NATIVE_IMPLEMENTATION_REQUIRED' if distance else 'KEEP_ACTUAL_XY_FIRST_HOP_PRESCREEN_CLEAR_NOT_AP_PASS')
+                row['access_method']='OWN_EXISTING_METAL_EXACT_OLD_PIN_RETENTION' if support else 'NEW_CONNECTED_SAME_LAYER_STUB'
+                if support:row['actual_own_metal_support']={'box_DBU':support[0],'kind':support[1],'layer':ly,'net':r['net']}
                 occupied.add((ly,x,y))
                 for layer,z in first:add(r['net'],'VIRTUAL_FUTURE_FIRST_HOP_NOT_INSTALLED',layer,z)
                 for layer,z in stubs:add(r['net'],'NEW_STUB_TO_BE_IMPLEMENTED',layer,z);expected_extra[r['net']].append(('WIRE',layer)+z)
                 if distance:selected.append(row)
-            else:row.update(target_center_DBU=[cx,cy],stub_path_DBU=[[cx,cy]],stub_L1_um=0,status='KEEP_NO_SCREENED_STUB_WITHIN10UM_ORIGINAL_ACCESS_RISK_REMAINS');occupied.add((ly,cx,cy))
+            else:row.update(target_center_DBU=[cx,cy],stub_path_DBU=[[cx,cy]],stub_L1_um=0,status='KEEP_NO_SCREENED_OWN50UM_OR_STUB10UM_ACCESS_ORIGINAL_RISK_REMAINS');occupied.add((ly,cx,cy))
             r.update(row);counts[row['status']]+=1
             if number%500==0:print('FULL_PORT_ACCESS_STUB_PROGRESS',number,dict(counts),flush=True)
         db.close();rec['all13507_status_counts']=dict(counts);rec['actual_requested_XY_and_stub_count']=len(selected);rec['first_hop_footprints_not_installed_in_leaf']=True
         (out/'all13507_source_bound_access_stub_plan.json').write_text(json.dumps(ports,indent=2)+'\n');save()
-        specs='set stub_specs {\n'+''.join('{'+tcl(r['pin'])+' '+tcl(r['net'])+' '+r['original_layer']+' {'+' '.join('{'+str(x)+' '+str(y)+'}' for x,y in r['stub_path_DBU'])+'}}\n' for r in selected)+'}\n'
+        specs='set stub_specs {\n'+''.join('{'+tcl(r['pin'])+' '+tcl(r['net'])+' '+r['original_layer']+' {'+' '.join('{'+str(x)+' '+str(y)+'}' for x,y in r['stub_path_DBU'])+'} '+' '.join(map(str,r['target_center_DBU']))+' '+r['access_method']+' {'+' '.join(map(str,r['box_DBU']))+'}}\n' for r in selected)+'}\n'
         (out/'actual_stub_specs.tcl').write_text(specs)
         libs=['read_liberty '+tcl(p) for p in old['libs']]
         edit='\n'.join(libs+['read_db '+tcl(odb),'fingerprint '+tcl(out/'before'),'set b [ord::get_db_block];set tech [ord::get_db_tech];set original_obs [lsort [$b getObstructions]]','source '+tcl(out/'actual_stub_specs.tcl')])+r'''
 if {![stage actual_all_selected_stubs_and_original_layer_pins {
  foreach spec $stub_specs {
-  lassign $spec pin net layer points;set bt [$b findBTerm $pin]
+  lassign $spec pin net layer points tx ty method oldbox;set bt [$b findBTerm $pin]
   if {$bt eq "NULL" || [[$bt getNet] getName] ne $net} {error "Original bit peer changed"}
   set n [$bt getNet];set wire [$n getWire];if {$wire eq "NULL"} {error "Original routed conductor missing"}
   if {[$b findNet HPY_ACTUAL_ACCESS_STUB_STAGING] ne "NULL"} {error "Staging collision"}
   set temp [odb::dbNet_create $b HPY_ACTUAL_ACCESS_STUB_STAGING];set tw [odb::dbWire_create $temp];set enc [odb::dbWireEncoder]
   $enc begin $tw;$enc newPath [$tech findLayer $layer] ROUTED
-  foreach point $points {lassign $point x y;$enc addPoint $x $y};$enc end;$wire append $tw;odb::dbNet_destroy $temp
-  lassign [lindex $points end] x y;place_pin -pin_name $pin -layer $layer -location [list [expr {$x/2000.}] [expr {$y/2000.}]] -pin_size {.14 .14}
+  if {$method eq "OWN_EXISTING_METAL_EXACT_OLD_PIN_RETENTION"} {
+   lassign $oldbox a c d e
+   if {$layer eq "metal5"} {set cy [expr {($c+$e)/2}];$enc addPoint $a $cy 0;$enc addPoint $d $cy 0} else {set cx [expr {($a+$d)/2}];$enc addPoint $cx $c 0;$enc addPoint $cx $e 0}
+  } else {foreach point $points {lassign $point x y;$enc addPoint $x $y}}
+  $enc end;$wire append $tw;odb::dbNet_destroy $temp
+  place_pin -pin_name $pin -layer $layer -location [list [expr {$tx/2000.}] [expr {$ty/2000.}]] -pin_size {.14 .14}
  }
 }]} {close $stages;exit 1}
 if {[lsort [$b getObstructions]] ne $original_obs} {error "Original block OBS changed"}
