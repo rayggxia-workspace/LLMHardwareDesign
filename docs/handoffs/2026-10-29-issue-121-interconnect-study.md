@@ -2,7 +2,7 @@
 
 仓库：rayggxia-workspace/LLMHardwareDesign；Issue：[121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)；主线PR：[122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)。账号YUZE-LU；2026-10-29 14:45 CST。
 
-独立工作树`D:\Data\电路实验\LLMHardwareDesign-worktrees\issue-121-interconnect-study`，分支`task/121-interconnect-study`，起点b451039b3d6083a9dcc8e4db7b46fa4440ed87ac。闭合实验代码/证据基准e3b129e2b8a55c70b5be9e5843ad9c5b172b0cb5；其后仅补交接、进度与发布回执。原运行源分别为7383a79/run907及b591fd8/run908，不转移新源码的物理资格。
+独立工作树`D:\Data\电路实验\LLMHardwareDesign-worktrees\issue-121-interconnect-study`，分支`task/121-interconnect-study`，起点b451039b3d6083a9dcc8e4db7b46fa4440ed87ac。闭合实验代码/证据基准e3b129e2b8a55c70b5be9e5843ad9c5b172b0cb5；其后补交接/进度与发布回执，并在本侧线同步主线94d5579入口，自动三方合并通过。主线工作树未修改。原运行源分别为7383a79/run907及b591fd8/run908，不转移新源码的物理资格。
 
 ## 已完成
 

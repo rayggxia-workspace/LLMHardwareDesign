@@ -77,6 +77,9 @@ try:
     elif MODE.startswith('revision300-vector-boundary-'):
         from revision300_rtl import vector_boundary
         vector_boundary(ROOT,OUT,CPUS,run,MODE.rsplit('-',1)[1])
+    elif MODE=='revision300-v-group-proof':
+        from revision300_v_group_proof import prove
+        prove(ROOT,OUT,CPUS,run)
     elif MODE=='revision300-v-carry-proof':
         from revision300_v_carry_proof import prove
         prove(ROOT,OUT,CPUS,run)
