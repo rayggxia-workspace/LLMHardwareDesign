@@ -110,13 +110,21 @@ def one(mode,root,resume_revision=None,profile='original'):
               'separate_profile_cost_not_pure_XY_gain':True,'qualification':'Same research technology; no rule relaxation or manufacturing claim'}
         selected=[];resume=None
         if resume_revision:
-            resume=ROOT/'upper_branch_composition'/resume_revision/mode
+            resume=(ROOT/'upper_branch_repair/r01' if resume_revision=='repair-r01' else ROOT/'upper_branch_composition'/resume_revision)/mode
             rp=resume/'execution.json';previous=json.loads(rp.read_text())
             assert previous.get('completed_utc') and previous['all_closed_sources_unchanged']
             assert previous['native_returncodes']['all770_branch_route']==0 and previous['native_returncodes']['exact_native_composition']==0
             assert previous['all_514_composed_geometry']['pass'] and previous['fresh_DRC_count']>0
-            for p in [resume/'routed_770_BRANCHES_NOT_SYSTEM.odb',resume/'route.guide',resume/'independent.drc',resume/'branch_access.tsv.gz']:
+            guide=resume/'route.guide'
+            if not guide.exists():
+                guides=[Path(p) for p in previous['source_SHA'] if p.endswith('/route.guide')]
+                assert resume_revision=='repair-r01' and len(guides)==1
+                guide=guides[0];assert sha(guide)==previous['source_SHA'][str(guide)]
+                rec['guide_reuse']='Same source-bound original guide; predecessor detailed repair changed physical wires but did not regenerate a global guide'
+            else:assert sha(guide)==previous['files'][guide.name]['sha256']
+            for p in [resume/'routed_770_BRANCHES_NOT_SYSTEM.odb',resume/'independent.drc',resume/'branch_access.tsv.gz']:
                 assert sha(p)==previous['files'][p.name]['sha256'];rec['source_SHA'][str(p)]=sha(p)
+            rec['source_SHA'][str(guide)]=sha(guide)
             rec['source_SHA'][str(rp)]=sha(rp)
             bad=set(re.findall(r'net:(\S+)',(resume/'independent.drc').read_text()))
             byname={g['net']:g for g in physical};assert bad and bad<=set(byname)
@@ -148,7 +156,7 @@ def one(mode,root,resume_revision=None,profile='original'):
         if resume:
             start=next(i for i,s in enumerate(lines) if s.startswith('if {![stage global_route_CuGR_all770'))
             end=next(i for i,s in enumerate(lines) if s.startswith('if {![stage detailed_route_all770'))
-            select=['read_guides '+tcl(resume/'route.guide'),'set selected_nets {}']
+            select=['read_guides '+tcl(guide),'set selected_nets {}']
             for i in selected:select.append('lappend selected_nets [[$b findBTerm '+tcl('src['+str(i)+']')+'] getNet]')
             select+=['set selected_names {};foreach n [lsort -unique $selected_nets] {lappend selected_names [$n getName]};if {[llength $selected_names]!='+str(len(selected))+'} {error "Selected branch identity mismatch"};set_nets_to_route $selected_names']
             lines[start:end]=select
@@ -220,7 +228,7 @@ def one(mode,root,resume_revision=None,profile='original'):
 def run(revision,resume_revision=None,modes_csv='opentpu,llaccel',profile='original'):
     modes=modes_csv.split(',');assert modes and len(set(modes))==len(modes) and set(modes)<={'opentpu','llaccel'}
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=4*len(modes)
-    if resume_revision:assert resume_revision=='r01'
+    if resume_revision:assert resume_revision in ['r01','repair-r01']
     assert profile in ['original','guard15']
     if profile=='guard15':assert not resume_revision
     family='upper_branch_guard' if profile=='guard15' else ('upper_branch_repair' if resume_revision else 'upper_branch_composition')
