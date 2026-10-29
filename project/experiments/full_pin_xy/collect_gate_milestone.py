@@ -18,6 +18,7 @@ JOBS+=['93083']
 JOBS+=['93089','93090','93092','93094']
 JOBS+=['93102','93106']
 JOBS+=['93112','93117']
+JOBS+=['93120']
 
 
 def sha(path):
@@ -88,7 +89,7 @@ def collect(name):
     patterns+=['vector_probe_partition_diagnosis/r01/*','logs/vector-partition-diagnosis-r01-*.log',
       'vector_partition_restore/r01/*','logs/vector-partition-restore-r01-*.log',
       'vector_probe_route/r01/*','logs/vector-probe-route-r01-*.log']
-    patterns+=['upper_preconnected/r01/*','upper_preconnected/r01/*/*','logs/preconnected-upper-r01-*.log']
+    patterns+=['upper_preconnected/r0[12]/*','upper_preconnected/r0[12]/*/*','logs/preconnected-upper-r0[12]-*.log']
     stable_intermediates={}
     incremental=ROOT/'antenna_incremental_eco/r01/gemm-C/execution.json'
     if incremental.exists() and json.loads(incremental.read_text()).get('native_returncodes',{}).get('implementation')==0:
@@ -112,7 +113,7 @@ def collect(name):
         if 'upper_tool_diagnosis/r01/' in str(p) and p.suffix=='.guide' and a.st_size<=8*1024*1024:keep=True
         if 'antenna_rules/r01' in str(p) and p.suffix in ['.lef','.lydrc'] and a.st_size<=8*1024*1024:keep=True
         if 'fixed_wire_api' in str(p) and p.suffix=='.def' and a.st_size<=1024*1024:keep=True
-        if 'upper_preconnected/r01/' in str(p) and p.suffix=='.def' and a.st_size<=8*1024*1024:keep=True
+        if 'upper_preconnected/' in str(p) and p.suffix in ['.def','.guide','.rpt'] and a.st_size<=8*1024*1024:keep=True
         if 'actual_path_audit/' in str(p) and p.name=='fresh_DRC_target_net.tsv.gz' and a.st_size<=8*1024*1024:keep=True
         if 'pin_escape_views/' in str(p) and p.name=='target_pin_access.tsv.gz' and a.st_size<=8*1024*1024:keep=True
         if 'extended_sta/r01/' in str(p) and p.name=='extended_checks_all_not_only_violators.txt' and a.st_size<=64*1024*1024:keep=True

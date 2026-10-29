@@ -588,13 +588,55 @@ def render(root,out):
               'all770_original_edge_memberships_preserved':True,'native_FIXED_M10_paths':256,
               'DEF_SHA256':hashlib.sha256(gzip.decompress(deffile.read_bytes())).hexdigest(),
               'scope':'Native pre-route DEF memberships and FIXED status only; routed geometry, native DRC, freeze and actual functional systems NOT established'}
+        guidefile=p.parent/'route.guide.gz'
+        geom=q.get('actual_all_net_geometry',{})
+        if q.get('completed_utc') and planfile.exists() and guidefile.exists() and geom.get('checked_nets')==514:
+            raw=gzip.decompress(guidefile.read_bytes());assert hashlib.sha256(raw).hexdigest()==q['files']['route.guide']['sha256']
+            names={g['net'] for g in plan};guides={s.strip() for s in raw.decode().splitlines() if s.strip() in names}
+            failures=geom['nets'];assert len(failures)==geom['failed_nets'] and len(plan)==514
+            original=read(snapshot/'upper_adaptation_trial/r02'/(mode+'_actual_hook_plan.json.gz'))
+            detail=[]
+            for g in plan:
+                bad=failures.get(g['net']);connected=0
+                for eid in g['edge_ids']:
+                    links={"B:"+h['helper_pin'] for h in original['physical_edges'][eid]['endpoints']}
+                    connected+=int(not bad or any(links<=set(ts) for ts in bad['terminal_groups']))
+                detail.append({'net':g['net'],'shared_fixed_M10':bool(g['fixed_conductor']),
+                  'native_guide_present':g['net'] in guides,'original_edge_ids':';'.join(map(str,g['edge_ids'])),
+                  'original_edge_count':len(g['edge_ids']),'connected_original_edges':connected,
+                  'disconnected_original_edges':len(g['edge_ids'])-connected,
+                  'native_terminal_components':bad['terminal_components'] if bad else 1})
+            detailfile=data/('preconnected_'+mode+'_r01_actual_guide_and_edge_coverage.csv')
+            with detailfile.open('w',encoding='utf-8-sig',newline='') as f:
+                w=csv.DictWriter(f,fieldnames=list(detail[0]),lineterminator='\n');w.writeheader();w.writerows(detail)
+            q['closed_native_guide_and_original_edge_diagnosis']={'native_nets_with_guides':len(guides),
+              'fixed_shared_nets_without_guides':sum(r['shared_fixed_M10'] and not r['native_guide_present'] for r in detail),
+              'original_edges_connected':sum(r['connected_original_edges'] for r in detail),
+              'original_edges_disconnected':sum(r['disconnected_original_edges'] for r in detail),
+              'all_770_edges_enumerated':sum(r['original_edge_count'] for r in detail)==770,
+              'detail_csv':detailfile.relative_to(out).as_posix(),
+              'scope':'Closed native guides plus actual rectangle terminal-component result; observed skipped shared fragments, not an upstream source-level diagnosis'}
         preconnected.append(q)
     if preconnected:
         result['all770_actual_preconnected_context_r01']=preconnected
         upper_text+='<p><strong>93117两模式真实固定预连上下文试验：</strong>保持全部770条原适配边、1540个实际M10 hook及256条原FIXED M10导体不变，仅将已经由同一实际导体连接的两条适配支路合为同一物理网络交给原生路由。每模式514个物理网＝256个四端共享网＋256个两端旁路＋2个时钟网；770条原逻辑边逐条保留，不是删256条边或减少预连预算。辅助端口包含被动接点，其输入标签不代表额外功能驱动；该helper仍不是加速器RTL或有效STA模型。原两支路分开路由的失败保留，未断言其表示就是失败根因。</p>'
         for q in preconnected:
             actual=q.get('snapshot_actual_native_DEF_context_check')
-            upper_text+='<p>预连上下文 '+html.escape(q['mode'])+'：原生预路由DEF核对='+html.escape(str(actual))+'；native终态返回='+str(q.get('native_route_returncode'))+'，完成时间='+html.escape(str(q.get('completed_utc')))+'。原R02底座仍未合格/未冻结、未升级新叶源；复制原导体至路由上下文不等于两完整功能已复用合格底座。最终必须核对所有770边、M10材料精确并集和FIXED属性、原hook/OBS、fresh DRC及连通；无终态不报告布通、RC/STA或系统收益。</p>'
+            status='尚未终态' if not q.get('completed_utc') else 'native返回'+str(q.get('native_route_returncode'))+'，完成于'+html.escape(q['completed_utc'])
+            context=('原生预路由DEF已核对514网、1540端点、全部770边成员及256条FIXED M10；DEF SHA256 <code>'+actual['DEF_SHA256']+'</code>' if actual else '尚未取得完整原生预路由DEF核对')
+            upper_text+='<p><strong>预连上下文 '+html.escape(q['mode'])+'：</strong>'+context+'。路由状态：'+status+'。原R02底座仍未合格/未冻结、未升级新叶源；此核对只覆盖预路由连接成员和FIXED状态，尚非已布线几何或两完整功能。最终仍须全部770边实际连通、M10材料精确并集/FIXED属性、原hook/OBS、fresh DRC及后续RC/STA；无终态不报告布通或系统收益。</p>'
+            if q.get('completed_utc'):
+                geom=q.get('actual_all_net_geometry',{});diag=q.get('closed_native_guide_and_original_edge_diagnosis')
+                upper_text+='<p><strong>该模式实际验收：</strong>fresh native DRC='+str(q.get('independent_DRC_count'))+'；所检连通='+str(geom.get('pass'))+'，已连通物理网='+str(geom.get('connected_nets'))+'/'+str(geom.get('checked_nets'))+'。M10原材料包含/FIXED保留与连通分别检查，不将native路由命令返回0当布通。</p>'
+                if diag:
+                    upper_text+='<p>闭合原生guide与实际端点分量核对：只有'+str(diag['native_nets_with_guides'])+'个物理网有guide，'+str(diag['fixed_shared_nets_without_guides'])+'个共享固定网没有guide；全部770原边中'+str(diag['original_edges_connected'])+'条物理连通、'+str(diag['original_edges_disconnected'])+'条断开。证据显示此流程跳过了已有FIXED片段的剩余连接，尚不等于安装二进制源码级根因。<a href="'+diag['detail_csv']+'">全部514网及770边验收CSV</a>。保留这次失败，再以只影响helper guide搜索的副本暂取下原FIXED片段、在DRT前按原生定义精确恢复的独立方案测试；不改变原底座、最终材料、PG/OBS、规则或完整验收。</p>'
+    attempts=[]
+    for mode in ['opentpu','llaccel']:
+        p=snapshot/'upper_preconnected/r02'/mode/'execution.json.gz'
+        if p.exists():attempts.append(dict(read(p),evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix()))
+    if attempts:
+        result['all770_guide_only_detach_restore_FIXED_before_DRT_r02']=attempts
+        upper_text+='<p><strong>93120后续实际运行：</strong>在新目录以同一全部514网/770边/1540 hook生成guide，只在helper内存搜索副本暂取下256条既有FIXED片段，原下层文件不改；无论GRT成功或失败都先精确恢复原M10 FIXED，再保存检查点。若成功，必须确认全部514网均有实际guide才允许DRT，随后仍逐网检查真实连通、固定材料精确并集/FIXED、原hook/OBS与fresh DRC。只改变guide构造上下文，不改变规则、原层、拓扑或预连预算；未终态不称布通，更不是完整系统/冻结或RC/STA资格。</p>'
     p=snapshot/'vector_clone_crash/r01/execution.json.gz'
     if p.exists():
         q=read(p);result['VECTOR_exact_native_crash_symbolization_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
