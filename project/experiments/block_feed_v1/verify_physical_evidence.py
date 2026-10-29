@@ -63,6 +63,11 @@ def verify(root):
             assert sha(z.read('native/delivery.json')) == json.loads(z.read('native/receipt.json'))['outputs']['delivery.json']
             assert {k: v['sha256'] for k, v in delivery['final_files'].items()} == received['final_files']
             assert set(received['final_files']) == {'6_final.' + s for s in ('v', 'sdc', 'odb', 'def', 'spef', 'gds')}
+            assert set(source['final_files'])=={'6_final.'+s for s in ('v','sdc','odb','def','spef')}
+            for n,row in source['final_files'].items():
+                assert delivery['final_files'][n]['sha256']==row['sha256']
+                rel='flow/results/nangate45/bv1_'+source['top']+'/base/'+n
+                assert row['sha256']==source_receipt['outputs'][rel]
             for name, row in bundle['members'].items():
                 if name in index['members']:
                     assert sha(z.read(name)) == row['sha256']
@@ -86,6 +91,7 @@ def verify(root):
                 assert proof['identical_non_target_geometry'] and proof['identical_target_terminal_connections']
                 assert proof['target']=='dout[58]' and proof['old_net']!=proof['new_net']
             assert reports['drc']['full_deck']['total_items'] == 0
+            assert reports['drc']['gds']['sha256']==delivery['final_files']['6_final.gds']['sha256']
             assert not z.read('evidence/drc/native-whole-drc.rpt')
             assert not ET.fromstring(z.read('evidence/drc/full-deck.lyrdb')).findall('.//items/item')
             if 'computation' in reports['drc']:
@@ -103,10 +109,14 @@ def verify(root):
                 assert computed['deck_sha256']==reports['drc']['deck_sha256']
                 assert computed['gds']==reports['drc']['gds']
                 assert sha(z.read('evidence/drc/full-deck.lyrdb'))==producer['outputs']['full-deck.lyrdb']
+                assert sha(z.read('evidence/drc/full-deck.log'))==producer['outputs']['full-deck.log']
                 assert c['all_original_outputs_rehashed'] and c['fresh_final_whole_drc_zero']
                 assert c['exact_final_def_sha256']==delivery['final_files']['6_final.def']['sha256']
+                assert computed['source_geometry'][computed['source'].rstrip('/')+'/after-route.def']==c['exact_final_def_sha256']
             assert len(reports['function']['initial_runs']) == 3
             assert all(v['result']['passed'] for v in reports['function']['initial_runs'].values())
+            inputs=reports['function']['full_final_netlist']['input_sha256']
+            assert len(inputs)==2 and set(inputs.values())=={source['final_files'][n]['sha256'] for n in ('6_final.odb','6_final.v')}
             if kind == 's':
                 assert accepted_m is not None, 'S final simulation must bind to the independently accepted M'
                 assert reports['function']['peer_source_receipt_sha256'] == accepted_m['source_receipt_sha256']
