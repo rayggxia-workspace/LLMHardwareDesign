@@ -921,7 +921,8 @@ def render(root,out):
                       ('WIRE_native_RECT_decoder_r03','wire_shape_coverage_API/r03'),
                       ('UPPER_local_bypass_search_r01','upper_local_bypass_search/r01'),
                       ('LLSYSTEM_actual_10261_wire_restore_r01','owned_cap_wire_restore/r01'),
-                      *[('WIRE_RECT_probe_r0'+str(i),'wire_shape_coverage_API/r0'+str(i)) for i in range(4,9)]]:
+                      *[('WIRE_RECT_probe_r0'+str(i),'wire_shape_coverage_API/r0'+str(i)) for i in range(4,9)],
+                      *[('NATIVE_patch_audit_'+case,'native_patch_audit/r01/'+case) for case in ['act','mxu','opentpu_aux','gemm','vector','llaccel_stable','llaccel_10261_restored','mxu_parent','upper770','upper514']]]:
         p=snapshot/rel/'execution.json.gz'
         terminal_names={'LLSYSTEM_current_actual_tip_views':'llsys-tip-views-r01',
                         'MXU_clock_bound_parent_recheck_r03':'mxu-clock-bound-parent-r03-terminal',
@@ -962,6 +963,7 @@ def render(root,out):
                         'UPPER_local_bypass_search_r01':'upper-local-bypass-search-r01',
                         'LLSYSTEM_actual_10261_wire_restore_r01':'owned-cap-wire-restore-r01',
                         **{'WIRE_RECT_probe_r0'+str(i):name for i,name in [(4,'native-rect-payload-r04'),(5,'native-rect-getshape-r05'),(6,'native-rect-getshape-r06'),(7,'native-rect-coord-r07'),(8,'native-patch-export-r08')]},
+                        **{'NATIVE_patch_audit_'+case:'native-patch-audit-r01-'+case for case in ['act','mxu','opentpu_aux','gemm','vector','llaccel_stable','llaccel_10261_restored','mxu_parent','upper770','upper514']},
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
         update=root/'gate_terminal_updates'/terminal_names.get(label,'NO_TERMINAL_UPDATE')
         terminal_evidence=None
@@ -1247,6 +1249,20 @@ def render(root,out):
     if patchproof.get('completed_utc'):
         assert patchproof['native_returncode']==0 and patchproof['known_probe_exact_patch_verified'] and patchproof['all_closed_sources_unchanged']
         upper_text+='<h3 id="r53-patch-export">RECT补充导出方法：原生小样交叉核对已通过，真实块尚待审计</h3><p>93399实际raw payload为7项，RECT原始opcode14及后续三个OPERAND11、delta(-140,-140,140,140)均已读回。93400的getShape参数数量错误、93401返回空层后失败均保留；未把空层解释为没有金属。93402原生getCoord在POINT及RECT索引均返回3976000/2411360 DBU，decoder在RECT返回metal5。93411的新export_patch_rects.tcl将raw RECT顺序/数量与原生decoder逐网独立对照、用原生坐标与delta还原矩形，得到[3975860,2411220,3976140,2411500] DBU，与原DEF精确一致，原POINT_PAIR不重复报为patch。</p><p>新方法为独立补充导出，不修改原导出器/数据库/活动驱动；遇到不支持的opcode、operand或decoder不一致即报错，不静默漏项。小样未证明真实六块覆盖。已准备10个闭合源的只读审计：六叶含LL旧/新两epoch、MXU父层、770支路及514组合适配层；每例核对源/脚本/二进制SHA，存在patch时补入原导出图并重查多端信号连通，零patch时复用未改变的原图，PG/special wire/完整规则与DRC/RC/STA仍分开。另准备匹配93375新ODB/SPEF的完整13507位LEF/OBS/研究模型导出，未称已经执行或通过。</p>'
+    patch_cases=['act','mxu','opentpu_aux','gemm','vector','llaccel_stable','llaccel_10261_restored','mxu_parent','upper770','upper514']
+    patch_audits={case:result.get('NATIVE_patch_audit_'+case,{}) for case in patch_cases}
+    if all(q.get('completed_utc') for q in patch_audits.values()):
+        assert all(q['native_returncode']==0 and q['all_closed_sources_unchanged'] and q['native_counts']['native_decoder_RECT']==q['native_counts']['exported_patch_rectangles']==0 and q['signal_special_wire_coverage_complete'] and q['additive_geometry_pass'] for q in patch_audits.values())
+        result['all_ten_closed_sources_RECT_audit']={'completed':True,'full_qualification':False,'source_specific_no_RECT_events':True,'cases':patch_cases,'total_native_wire_objects_across_snapshots_not_unique_nets':sum(q['native_counts']['native_wires'] for q in patch_audits.values()),'native_DRC_RC_STA_and_GDS_not_reexecuted_or_promoted':True}
+        for row in rows:
+            case='llaccel_10261_restored' if row['case']=='llaccel_aux' else row['case']
+            row['current_source_RECT_inventory']=patch_audits[case]['evidence']
+        upper_text+='<h3 id="r54-source-patch-audit">R54：六叶及相关父/适配层十个闭合源的RECT漏项影响已排除</h3><p>93414数组的全部10例均已终态COMPLETED0，合计检查2758947个原生dbWire对象（跨多个epoch/父层重复计数，不是独立原始网络或pin数）。逐网native decoder RECT事件及补充patch均为0，信号special wire未审计计数也均为0；原源码/工具/方法脚本与每份ODB/原导出图SHA前后保持。原图没有RECT可补，故复用同源已验证的连通图、未重复构造几何或重跑P&amp;R。</p><p>这项实际审计证明：已确认的通用RECT导出器漏项没有影响这十份指定SHA源；不把未来新增RECT、PG special wire、其他完整规则或GDS LVS视为已通过，不改变任何原负STA/DRC失败或系统资格。六块主矩阵各自链接其当前epoch审计，LL旧3tip源与10261修复源分别核实。93415新源完整LEF/OBS/模型导出仍运行，未宣称模型或父AP完成。</p>'
+        audit_rows=[]
+        for case in patch_cases:
+            q=patch_audits[case];n=q['native_counts'];odb_sha=next(v for k,v in q['source_SHA'].items() if k.endswith('.odb'))
+            audit_rows.append('<tr><td>'+case+'</td><td>'+str(n['examined_nets'])+'</td><td>'+str(n['native_wires'])+'</td><td>0</td><td>'+odb_sha[:12]+'</td><td><a href="'+q['evidence']+'">原生回执/全SHA</a></td></tr>')
+        upper_text+='<table><thead><tr><th>独立源/epoch</th><th>检查net对象</th><th>有dbWire对象</th><th>原生RECT</th><th>ODB SHA前12位</th><th>证据</th></tr></thead><tbody>'+''.join(audit_rows)+'</tbody></table>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',

@@ -847,6 +847,20 @@ def check(out):
         coverage=j['native_RECT_export_coverage'];assert coverage['current_exporter_omits_RECT'] and not coverage['existing_history_rewritten'] and not coverage['full_qualification']
         assert 'RECT ( -140 -140 140 140 )' in coverage['native_DEF_net_records']['HPY_PATCH_RECT_OPCODE']
         assert 'RECT_OPCODE\t0\t' in coverage['native_status_text']
+    audit=j.get('all_ten_closed_sources_RECT_audit')
+    if audit:
+        assert audit['completed'] and not audit['full_qualification'] and audit['source_specific_no_RECT_events'] and audit['native_DRC_RC_STA_and_GDS_not_reexecuted_or_promoted']
+        assert audit['total_native_wire_objects_across_snapshots_not_unique_nets']==2758947 and len(audit['cases'])==10
+        expected={'act':4819,'mxu':191438,'opentpu_aux':466332,'gemm':268637,'vector':375675,'llaccel_stable':725253,'llaccel_10261_restored':725253,'mxu_parent':256,'upper770':770,'upper514':514}
+        for case,count in expected.items():
+            q=j['NATIVE_patch_audit_'+case];assert q['completed_utc'] and not q['full_qualification'] and q['all_closed_sources_unchanged'] and q['native_returncode']==0 and q['additive_geometry_pass']
+            assert q['native_counts']['native_wires']==count and q['native_counts']['native_decoder_RECT']==q['native_counts']['exported_patch_rectangles']==q['native_counts']['signal_special_wire_nets_not_audited']==0
+            assert q['signal_special_wire_coverage_complete'] and q['native_route_edit_DRC_RC_STA']=='NOT_EXECUTED_READ_ONLY_AUDIT'
+            assert q['baseline_geometry_reused']=='No native RECT events found; original exported graph unchanged, not rerun'
+            counts=gzip.decompress(((out/q['evidence']).parent/'patch_counts.tsv.gz').read_bytes()).decode()
+            assert 'native_decoder_RECT\t0' in counts and 'exported_patch_rectangles\t0' in counts
+        current=j['NATIVE_patch_audit_llaccel_10261_restored'];assert next(v for p,v in current['source_SHA'].items() if p.endswith('/routed.odb'))==j['LLSYSTEM_actual_10261_wire_restore_r01']['files']['routed.odb']['sha256']
+        assert next(v for p,v in j['NATIVE_patch_audit_mxu']['source_SHA'].items() if p.endswith('/routed.odb'))==j['MXU_actual_tip_ECO_r01']['files']['routed.odb']['sha256']
     q=j.get('LLSYSTEM_actual_10261_wire_restore_r01',{})
     if q.get('completed_utc'):
         assert not q['full_qualification'] and q['all_closed_sources_unchanged'] and q['fresh_DRC_count']==0
