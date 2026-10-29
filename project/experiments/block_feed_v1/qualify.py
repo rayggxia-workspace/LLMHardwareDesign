@@ -114,7 +114,7 @@ def seal(raw,out):
     assert all(sha(before/n)==h for n,h in bound.items())
 
 
-def final_function(folder,out,run,pair=None):
+def final_function(folder,out,run,pair=None,reuse=None):
     from native_signal_view import export
     source_dir,receipt,flow,results=source(folder);top=flow['top']
     netlist,proof=export(ROOT,out,run,source_dir,receipt,results,top,LIB)
@@ -168,7 +168,11 @@ def final_function(folder,out,run,pair=None):
             memory_transaction_assertions_retained=True,physical_netlist_modified=False)
         (out/'memory-observer.json').write_text(json.dumps(observation,indent=2)+'\n')
     compiler='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
-    run([compiler,'--cc','--exe','--build','-j','16','-Wno-fatal','--top-module',top,'--prefix','V'+top,
+    reused=None
+    if reuse is not None:
+        from reuse_build import receive
+        reused=receive(out,reuse,compiler,top,paths+[bench])
+    else:run([compiler,'--cc','--exe','--build','-j','16','-Wno-fatal','--top-module',top,'--prefix','V'+top,
          '-Mdir',out/'obj','--output-split','12000','--output-split-cfuncs','150','--output-groups','0','--threads','4',
          '--x-initial','unique','--x-assign','unique','-CFLAGS','-std=c++17 -O1',*paths,bench],'build.log')
     def one(case):
@@ -189,6 +193,9 @@ def final_function(folder,out,run,pair=None):
                 cell_models_sha256=sha(out/'cells.v'),initial_runs=runs,qualified_hard_macro=False,
                 compiler_organization=dict(build_jobs=16,output_groups=0,output_split=12000,output_split_cfuncs=150,simulation_threads=4,concurrent_initial_states=3))
     if extra is not None:result.update(peer_source_receipt_sha256=sha(pair/'receipt.json'),peer_full_final_netlist=mproof,memory_observer=observation)
+    if reused is not None:
+        result['build_reuse']=reused
+        result['compiler_organization']=dict(reused_build=True,simulation_threads=4,concurrent_initial_states=3)
     (out/'final-function.json').write_text(json.dumps(result,indent=2)+'\n')
 
 
@@ -234,11 +241,12 @@ def final_formal(folder,out,run,function_folder):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('operation',choices=['controls','seal','physical','drc','function','formal','formal-join','deliver','geometry','escape'])
+    p=argparse.ArgumentParser();p.add_argument('operation',choices=['controls','seal','physical','drc','drc-compute','drc-join','function','formal','formal-join','deliver','geometry','escape'])
     p.add_argument('--source',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--peer',type=Path);p.add_argument('--function',type=Path)
     p.add_argument('--gates',type=Path)
     p.add_argument('--computation',type=Path)
+    p.add_argument('--reuse-build',type=Path)
     p.add_argument('--geometry',type=Path);p.add_argument('--native-source',type=Path)
     a=p.parse_args();a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,operation=a.operation,source=str(a.source),commands=[],inputs={})
@@ -260,7 +268,11 @@ def main():
             import receive
             selected=lambda target,kind:source(a.source)
             getattr(receive,a.operation)(ROOT,a.out,16,run,'m' if source(a.source)[2]['top']=='block_feed_m' else 's',selected=selected)
-        elif a.operation=='function':final_function(a.source,a.out,run,a.peer)
+        elif a.operation in ('drc-compute','drc-join'):
+            from drc_computation import compute,join
+            if a.operation=='drc-compute':compute(ROOT,a.source,a.out,run)
+            else:join(ROOT,a.source,a.out,run,a.computation)
+        elif a.operation=='function':final_function(a.source,a.out,run,a.peer,a.reuse_build)
         elif a.operation=='formal-join':
             from formal_join import join
             join(ROOT,a.source,a.out,run,a.function,a.computation)

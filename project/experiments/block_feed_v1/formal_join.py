@@ -19,7 +19,10 @@ def join(root, folder, out, run, function, computation):
     folder, source_receipt, flow, results = source(folder)
     top = flow['top']
     producer = json.loads((computation/'receipt.json').read_text())
-    assert producer['operation'] == 'formal' and Path(producer['source']) == folder
+    assert producer['operation'] == 'formal'
+    original,original_receipt,original_flow,original_results=source(Path(producer['source']))
+    assert original_flow['top']==top and original_flow['rtl_sha256']==flow['rtl_sha256']
+    assert sha(original_results/'1_synth_lec.v')==sha(results/'1_synth_lec.v')
     assert len(producer['commands']) >= 5 and all(c['returncode'] == 0 for c in producer['commands'])
     assert 'formal.json' not in producer['outputs'] or producer['passed']
 
@@ -97,6 +100,8 @@ def join(root, folder, out, run, function, computation):
         source_receipt_sha256=sha(folder/'receipt.json'),function_receipt_sha256=sha(function/'receipt.json'),
         log_sha256=sha(out/'kepler.log'),binary_sha256=sha(binary),qualified_hard_macro=False,
         computation=dict(receipt=str(computation/'receipt.json'),receipt_sha256=sha(computation/'receipt.json'),
+            original_source=str(original),received_source=str(folder),original_rtl_sha256=original_flow['rtl_sha256'],
+            exact_synth_lec_sha256=sha(results/'1_synth_lec.v'),
             source_commit=manifest['source_commit'],producer_passed=producer['passed'],
             all_native_commands_successful=True,all_original_outputs_rehashed=True,
             exact_functional_view_sha256=sha(actual),fresh_real_controls_passed=True),

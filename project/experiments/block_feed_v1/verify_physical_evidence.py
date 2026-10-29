@@ -63,6 +63,23 @@ def verify(root):
             assert reports['drc']['full_deck']['total_items'] == 0
             assert not z.read('evidence/drc/native-whole-drc.rpt')
             assert not ET.fromstring(z.read('evidence/drc/full-deck.lyrdb')).findall('.//items/item')
+            if 'computation' in reports['drc']:
+                c=reports['drc']['computation']
+                raw=z.read('evidence/drc/drc-computation-receipt.json')
+                assert sha(raw)==c['receipt_sha256']
+                producer=json.loads(raw)
+                assert producer['passed'] and producer['operation']=='drc-compute'
+                assert len(producer['commands'])==3 and all(x['returncode']==0 for x in producer['commands'])
+                raw=z.read('evidence/drc/drc-computation.json')
+                assert sha(raw)==producer['outputs']['drc-computation.json']
+                computed=json.loads(raw)
+                assert computed['passed'] and not computed['native_leaf_accepted']
+                assert computed['full_deck']==reports['drc']['full_deck']
+                assert computed['deck_sha256']==reports['drc']['deck_sha256']
+                assert computed['gds']==reports['drc']['gds']
+                assert sha(z.read('evidence/drc/full-deck.lyrdb'))==producer['outputs']['full-deck.lyrdb']
+                assert c['all_original_outputs_rehashed'] and c['fresh_final_whole_drc_zero']
+                assert c['exact_final_def_sha256']==delivery['final_files']['6_final.def']['sha256']
             assert len(reports['function']['initial_runs']) == 3
             assert all(v['result']['passed'] for v in reports['function']['initial_runs'].values())
             if kind == 's':
@@ -86,6 +103,23 @@ def verify(root):
                     assert reset or not valid or take
                     assert ready == int(not reset and (not valid or take) and not fire)
                     assert seen == fire == int(not reset and (not valid or take) and not ready)
+                if 'build_reuse' in reports['function']:
+                    reuse=reports['function']['build_reuse']
+                    raw=z.read('evidence/function/build-reuse-receipt.json')
+                    assert reuse['passed'] and reuse['all_inputs_byte_identical'] and sha(raw)==reuse['receipt_sha256']
+                    prior=json.loads(raw);assert prior['passed']
+                    raw=z.read('evidence/function/build-reuse-function.json')
+                    assert sha(raw)==reuse['function_sha256']==prior['outputs']['final-function.json']
+                    prior_fn=json.loads(raw)
+                    assert prior_fn['passed'] and len(prior_fn['initial_runs'])==3
+                    assert all(v['result']['passed'] for v in prior_fn['initial_runs'].values())
+                    assert prior_fn['full_final_netlist']['full_view_sha256']==reports['function']['full_final_netlist']['full_view_sha256']
+                    assert prior_fn['peer_full_final_netlist']['full_view_sha256']==reports['function']['peer_full_final_netlist']['full_view_sha256']
+                    assert prior_fn['cell_models_sha256']==reports['function']['cell_models_sha256']
+                    assert prior_fn['compiled_bench_sha256']==reports['function']['compiled_bench_sha256']
+                    assert reuse['binary_sha256']==prior['outputs']['obj/Vblock_feed_pair']
+                    assert reuse['original_compile_command'] in prior['commands']
+                    assert all(len(x['sha256'])==64 for x in reuse['inputs'])
             assert reports['formal']['strict_native_lec']['passed']
             assert all(reports['formal']['strict_native_lec']['checks'].values())
             assert reports['formal']['function_receipt_sha256'] == delivery['gate_receipts']['function']['sha256']
@@ -96,7 +130,12 @@ def verify(root):
                 producer = json.loads(raw)
                 assert producer['operation'] == 'formal' and all(c['returncode'] == 0 for c in producer['commands'])
                 assert producer['commands'][-1]['log'] == 'formal.log'
-                assert Path(producer['source']) == Path(source['final_files']['6_final.v']['path']).parents[5]
+                current=Path(source['final_files']['6_final.v']['path']).parents[5]
+                if Path(producer['source']) != current:
+                    assert computation['original_source']==producer['source']
+                    assert Path(computation['received_source'])==current
+                    assert computation['original_rtl_sha256']==source['rtl_sha256']
+                    assert computation['exact_synth_lec_sha256']==formal['before']['full_netlist_sha256']
                 assert computation['all_native_commands_successful'] and computation['all_original_outputs_rehashed']
                 assert computation['fresh_real_controls_passed']
                 log = z.read('evidence/formal/kepler.log')

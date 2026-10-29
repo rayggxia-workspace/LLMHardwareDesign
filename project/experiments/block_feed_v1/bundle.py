@@ -50,10 +50,18 @@ def bundle(delivery, out):
             for name in ('memory-observer.json', 'physical-pair.sv', 'physical-test-pair.cpp'):
                 assert sha(receipt.parent / name) == json.loads(receipt.read_text())['outputs'][name]
                 add(receipt.parent / name, 'evidence/function/' + name)
+            if (receipt.parent/'build-reuse-receipt.json').exists():
+                for name in ('build-reuse-receipt.json','build-reuse-function.json'):
+                    assert sha(receipt.parent/name) == json.loads(receipt.read_text())['outputs'][name]
+                    add(receipt.parent/name,'evidence/function/'+name)
         if operation == 'formal' and (receipt.parent/'computation-receipt.json').exists():
             for name in ('computation-receipt.json','kepler.log','before-logic-proof.json','after-logic-proof.json'):
                 assert sha(receipt.parent/name) == json.loads(receipt.read_text())['outputs'][name]
                 add(receipt.parent/name,'evidence/formal/'+name)
+        if operation == 'drc' and (receipt.parent/'drc-computation-receipt.json').exists():
+            for name in ('drc-computation-receipt.json','drc-computation.json'):
+                assert sha(receipt.parent/name) == json.loads(receipt.read_text())['outputs'][name]
+                add(receipt.parent/name,'evidence/drc/'+name)
 
     archive = out / ('block-feed-' + index['macro'].lower() + '-native.tar.gz')
     with tarfile.open(archive, 'w:gz', compresslevel=3) as stream:
