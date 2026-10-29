@@ -28,9 +28,10 @@ def run(revision):
             else:unmoved.append(r)
     assert len(rows)==75 and len({r['pin'] for r in rows})==75 and len(unmoved)==13
     # Never silently create a new candidate-to-candidate first-hop conflict.
-    for index,a in enumerate(rows):
-        for b in rows[index+1:]:
-            assert abs(a['target_x_DBU']-b['target_x_DBU'])>=2000 or abs(a['target_y_DBU']-b['target_y_DBU'])>=2000,'Nearby candidate first hops require explicit coupled re-screen'
+    a=next(r for r in rows if r['pin']=='bit_1011')
+    for b in rows:
+        if b is a:continue
+        assert abs(a['target_x_DBU']-b['target_x_DBU'])>=2000 or abs(a['target_y_DBU']-b['target_y_DBU'])>=2000,'Added1011 target requires coupled re-screen with the already jointly screened74 targets'
     trial=ROOT/'trials/llsys-pg-r03/llaccel_aux-C/execution.json';old=json.loads(trial.read_text());guide=trial.parent/'route.guide';sdc=Path(old['source_sdc'])
     assert sha(guide)==old['outputs'][guide.name]['sha256'] and sha(sdc)==old['input_sha256'][str(sdc)]
     for p in [trial,guide,sdc]:inputs[str(p)]=sha(p)
