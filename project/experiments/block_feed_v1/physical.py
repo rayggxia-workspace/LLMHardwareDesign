@@ -104,14 +104,17 @@ def implement(args, run):
     if args.input_receivers:
         hook=(ROOT/'project/experiments/block_feed_v1/input_receivers.tcl').read_text()+'\n'+hook
     (out/'input-diodes.tcl').write_text(hook)
-    config+=config_suffix(40,.005,out/'input-diodes.tcl','metal10')+'\nexport HOLD_SLACK_MARGIN = 0.020\n'
+    # Optimization target, not a timing exception: final native min slack must
+    # remain nonnegative under the unchanged full SDC/uncertainty contract.
+    hold_target='%.3f'%args.hold_repair_margin
+    config+=config_suffix(40,.005,out/'input-diodes.tcl','metal10')+'\nexport HOLD_SLACK_MARGIN = '+hold_target+'\n'
     (out/'config.mk').write_text(config)
     results=out/'flow/results/nangate45'/nickname/'base';results.mkdir(parents=True)
     for suffix in ('v','sdc'):
         p=results/('1_2_yosys.'+suffix);shutil.copyfile(out/('input.'+suffix),p);p.chmod(0o444)
     command=['make','-C',str(flow),'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
     wanted=dict(MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',KEEP_VARS='1',LEC_CHECK='1',SEC_CHECK='0',
-                TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN='0.020')
+                TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN=hold_target)
     if args.remove_abc_buffers:wanted['REMOVE_ABC_BUFFERS']='1'
     if args.placement_mode=='geometric':
         wanted.update(GPL_TIMING_DRIVEN='0',ENABLE_PLACE_REPAIR_TIMING='1')
@@ -130,6 +133,7 @@ def implement(args, run):
     result['remove_abc_buffers']=args.remove_abc_buffers
     result['placement_mode']=args.placement_mode
     result['fanout_mode']=args.fanout_mode
+    result['hold_repair_margin_ns']=args.hold_repair_margin
     def save():(out/'native-flow.json').write_text(json.dumps(result,indent=2)+'\n')
     save()
     for number,stage in enumerate(('do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish')):
@@ -148,6 +152,7 @@ def main():
     p.add_argument('--input-receivers',action='store_true')
     p.add_argument('--placement-mode',choices=['timing','geometric'],default='timing')
     p.add_argument('--fanout-mode',choices=['original','partition'],default='original')
+    p.add_argument('--hold-repair-margin',type=float,choices=[0.0,0.02],default=0.02)
     args=p.parse_args();args.out=args.out.resolve();args.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,top=args.top,start_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),
                  affinity=sorted(__import__('os').sched_getaffinity(0)),commands=[],inputs={})

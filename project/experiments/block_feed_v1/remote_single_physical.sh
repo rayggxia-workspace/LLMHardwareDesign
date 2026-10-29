@@ -11,6 +11,8 @@ placement_mode=${4:-timing}
 case "$placement_mode" in timing|geometric) ;; *) exit 2 ;; esac
 fanout_mode=${5:-original}
 case "$fanout_mode" in original|partition) ;; *) exit 2 ;; esac
+hold_repair_margin=${6:-0.02}
+case "$hold_repair_margin" in 0|0.0|0.02) ;; *) exit 2 ;; esac
 test -n "${SLURM_JOB_ID:-}"
 test "$SLURM_CPUS_PER_TASK" -eq 16
 mkdir -p "$(dirname "$out")"
@@ -22,5 +24,5 @@ export PATH="/public/software/singularity-ce-4.3.4/bin:$PATH"
 srun --ntasks=1 --cpus-per-task=16 --cpu-bind=cores \
  singularity exec --cleanenv --bind /public/home/yuzelu --pwd "$source_root" \
  --env OMP_NUM_THREADS=16 --env OPENBLAS_NUM_THREADS=1 "$image" \
- bash -c 'set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; python3 "$1/project/experiments/block_feed_v1/physical.py" --top block_feed_s_macro --out "$2" --mapping "$3" --remove-abc-buffers --input-receivers --placement-mode "$4" --fanout-mode "$5"' \
- bash "$source_root" "$out" "$mapping" "$placement_mode" "$fanout_mode"
+ bash -c 'set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; python3 "$1/project/experiments/block_feed_v1/physical.py" --top block_feed_s_macro --out "$2" --mapping "$3" --remove-abc-buffers --input-receivers --placement-mode "$4" --fanout-mode "$5" --hold-repair-margin "$6"' \
+ bash "$source_root" "$out" "$mapping" "$placement_mode" "$fanout_mode" "$hold_repair_margin"
