@@ -149,7 +149,7 @@ def repair_grt(a,run,journal):
 def main():
     p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--from-grt',action='store_true')
-    p.add_argument('--closure-hook',choices=['electrical_closure.tcl','measured_m_buffer.tcl','measured_m_hold.tcl','measured_s_hold.tcl'],default='electrical_closure.tcl')
+    p.add_argument('--closure-hook',choices=['electrical_closure.tcl','measured_m_buffer.tcl','measured_m_hold.tcl','measured_s_hold.tcl','inspect_s_grt.tcl'],default='electrical_closure.tcl')
     a=p.parse_args();a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,source=str(a.source),affinity=sorted(os.sched_getaffinity(0)),commands=[],inputs={})
     for d in ['project/experiments/block_feed_v1','project/experiments/block_v1','project/rtl/block_feed_v1']:
