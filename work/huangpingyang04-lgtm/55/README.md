@@ -14,20 +14,20 @@
 
 <!-- current-buffer-PG-status -->
 
-更新时间：2026-10-29T09:59:07.652522+00:00（UTC），Refs #55 / PR58。候选1/3 UNFROZEN；阶段一pass_with_inherited_issues，二/三未验收，四NOTRUN。完整openTPU otpu_asic_top保留33内部SRAM；LL为EPILOGUE_FUSION=0、DMA_MAX_OUTSTANDING=16，外16SRAM/DRAM/host在功能环境。冻结后M1–M8固定，M9/M10与真实via8_0/via9_0允许定制；M11/M12未启用。
+更新时间：2026-10-29T11:50:29.191790+00:00（UTC），Refs #55 / PR58。候选1/3 **UNFROZEN**；阶段一pass_with_inherited_issues，二/三未验收，四NOTRUN。openTPU仍为完整otpu_asic_top及33内部SRAM；LL仍为EPILOGUE_FUSION=0、DMA_MAX_OUTSTANDING=16，外16SRAM/DRAM/host在功能测试环境。冻结后M1–M8固定，M9/M10及真实via8_0/via9_0定制；M11/M12未启用。
 
-已实际完成：获批26个具名CORE_SPACER在新副本替换为26个BUF_X4及53个填充单元，3处6个旧PG矩形显式保留；733520受保护原实例及全部原导体/阻挡保持。完整733599实例的放置和VDD/VSS拓扑检查通过（非IR/EM），全源native PA工具完成；独立读回52个preferred AP，并核实其实际坐标帧和UP标志。79个新单元的实际PIN/OBS对全部固定源几何筛查未发现冲突。仍非完整信号布线、全芯片DRC、时序或功能通过。
+**实际通过的有限检查：** 获批26具名CORE_SPACER已在派生副本替换为26BUF_X4+53填充；3处6个原PG矩形保留，733520受保护原实例及原导体/阻挡保持。完整733599实例的放置/PG拓扑通过（非IR/EM）。93344实际写入52个首通孔与M1短引出：26区域native DRC均0，独立52序列化路径读回、真实短接负例和全源非目标保持检查闭合。最长M1引出660DBU=0.33μm，未移动26个获批位置。仅接入资格，不是完整信号已连通。
 
-新增接入证据：52个首选点各评估9种真实via，34个有几何候选、18个在首选点受阻，不等于18个PIN不可布。制造网格Y搜索仍6输入失败；短水平M1引出后4输入失败；保持同一26个获批位置、使用最多一拐弯M1引出后26/26找到候选，最长660DBU=0.33μm。93342独立扫描全部733599实例和8896902源形状，52个所选via/短线候选对全部保留导体/cut、真实邻近PIN/OBS及彼此检查均无冲突。**只是几何预筛；93344已4核启动实际数据库写入、26区域native DRC、独立52路径读回、真实短接负例及完整非目标保持性核查，尚未有闭合验收。** 旧失败均保留，没有改成通过；这是同一底座候选的接入诊断，不是增加主要底座轮次。
+**新失败与实际修复证据：** 93364的完整临时端口投影/还原在全部8类native资源表、所有网导体/通孔多重集合比较和真实错网/删shadow负例上闭合；但同一还原进程write_verilog残留52临时端口，整体正确记FAIL。93368、93370依赖guard拒绝，child_launched=false，没有运行信号布线。没有删文本、忽略差异或把旧失败改成通过。93376新进程只读重载同一保存ODB，再导出的完整45,635,764字节网表与原placement逐字节相同，SHA-256 **6884f81cc974d0c7d8aa48d5c64a545e2bb76d0d0e8f10c7ea0fd83a310c5702**。93379新资格记录严格绑定旧物理闭合证明、真实负例和新进程导出，状态PASS_COMPLETE_BUFFER_TERMINAL_PROJECTION_WITH_FRESH_EXPORT_ONLY；它是可追溯的布线输入检查点，不是完整物理/功能验收。原大数据库只读复用，没有重跑25分钟投影。
 
-AUX仍FAIL：93191的124目标网连通、61公共物理岛/579原引出保持及目标异网接触0只属已完成子检查；fresh整片45项M3间距未解决。93315独立全原生资源/引脚/导线/通孔及virtual图比较证明验证clone与源几何一致（文本差异失败仍保留）。以该独立证据运行93336完整源路径状态对照，仍报45项M3，原始45条报错记录集合完全一致；因此仅改变FIXED/ROUTED状态未解决问题。不是假报或继承豁免。五个后继guard未放行，当前新源RC与完整LL回归未执行。
+**正在执行/等待：** 新93383（4核）在完整源副本中仅把原普通路径ROUTED状态改为FIXED，并要求全部733599实例/端点/所有导体几何严格一致；尚无闭合结果。新93385（4核）依赖93383，只有真实COMPLETED 0:0/4核且源资格通过才允许启动完整52信号网native PA/GRT、独立AP/guide/全源保持读回，再进行实际DRT。仍不是布线通过；DRT输出明确标UNACCEPTED，原BUF端点/首通孔还原、全网连通/短路/完整DRC/PG、RC/3ns时序及完整功能仍须逐项执行。新版本23bee7b5115ffe4d943e182946e338556bebf870；每次source/config变化使用新快照/新目录，不改失败或封存运行。
 
-93130完整191父层/14059网的固定预连线DRT仍运行，没有最终结果。预连线清单和guide不能写成完成的导线。当前统一PG/clock、每案例841闲置sink、新增或恶化问题、当前版本完整回归、冻结与最终两完整案例定制均未全部完成。外clock rise/fall与open37常量输出load用户未定，保持null。
+**其他主线仍未闭合：** AUX93191仍FAIL45项M3间距；93336只改FIXED/ROUTED状态后45原记录完全相同。93351完整546459实例/全几何的覆盖整片coarse-GCell诊断仍运行，且其结果不能覆盖原45或直接放行RC/LL后继。93130完整191父层/14059固定网DRT仍运行；最新日志为第0轮40%、中间报告3053444违例，**非最终违例数或不可行结论**。清单/guide不是完成的预连线。没有停止或重复这些作业。
 
-下一步先核查93344实际原生结果并修复接入/真实信号路线，再做RC/质量及完整功能；AUX继续完整检查上下文/几何定位，不选择有利网格或删除保持检查。之后汇入同一版底座并重验两完整案例，满足条件后才冻结。
+下一步：先闭合93383→93385真实结果；成功后仅在新副本移除精确临时端口/保护shadow并接回52真实BUF端点，保留全部原有及新布线几何，再执行独立全源/连通/DRC/PG和RC质量、当前版完整功能。失败先保存证据并定位，不放宽时钟、不缩规模、不删PIN/OBS。AUX继续解释并解决45项，不挑有利上下文。共同PG/clock、各841闲置sink、当前完整回归/冻结/最终两案例尚未全部完成。用户未定的clock rise/fall和open37常量输出load保持null。
 
 服务器根：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z
-工程源码：9033dbdc5bf460c17393997bc3c67b86511b269f
-最新证据索引：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-VECTOR-selected-access-and-AUX-type-control-20261029T095906Z/milestone.json
-SHA-256：42616339af787d87227ffbfbe45c5121c5823e4d94baa9f8c613437174291b9f
-4CPU/native≤4/BLAS1/实际cpuset；Python规划和对比主要单线程。93341 wall183s/CPU182.173s≈1核；93336 wall353s/CPU1261.403s≈3.57核。未停止/重复活跃作业，没有原始/封存/其他成员文件改动或安装。大型数据库/工艺/完整日志仅服务器；后阶段完整源码尚未全部上传。登记PR5 pending、Projects unverified/sync pending、审查人待指定；Issue55 in_progress，原PR草稿不合并、不另开。
+工程源码：23bee7b5115ffe4d943e182946e338556bebf870
+最新证据索引：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-projection-fresh-export-checkpoint-20261029T115028Z/milestone.json
+SHA-256：3286dec9ef205564de71366a37b0def62890eba7feade95c1e45f2a3ba7c122c
+资源：新作业统一4CPU/native≤4/BLAS1/实际cpuset；Python比较主要1核。93344 wall948s/CPU964.273s，平均1.017核（4核容量利用率25.4%）；93364 wall1549s/CPU1548.686s，平均1核；93379 wall7s/CPU5.419s。申请4核不等于四倍提速。大DB/工艺/全日志仅服务器，后阶段完整源码尚未全部上传。登记PR5 pending，Projects unverified/sync pending，审查人待指定；Issue55 in_progress、PR58草稿未合并。
