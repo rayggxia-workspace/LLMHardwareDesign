@@ -13,6 +13,24 @@ def sha(data):
 
 def verify(root):
     base = root / 'work/YUZE-LU/130/validation/physical'
+    rejected=base/'rejected-s35-final-drc.json'
+    if rejected.exists():
+        rejection=json.loads(rejected.read_text());assert rejection['rejected']
+        archive=base/rejection['archive'];assert sha(archive.read_bytes())==rejection['archive_sha256']
+        with zipfile.ZipFile(archive) as z:
+            assert set(z.namelist())==set(rejection['members'])
+            for n,h in rejection['members'].items():assert sha(z.read(n))==h
+            r=json.loads(z.read('receipt.json'));d=json.loads(z.read('five-macro-drc.json'))
+            assert not r['passed'] and not d['passed']
+            assert sha(z.read('five-macro-drc.json'))==r['outputs']['five-macro-drc.json']
+            assert sha(z.read('source/receipt.json'))==d['source_receipt_sha256']
+            sr=json.loads(z.read('source/receipt.json'))
+            assert sha(z.read('source/final-source.json'))==sr['outputs']['final-source.json']
+            assert d['native_report']==z.read('native-whole-drc.rpt').decode()
+            assert d['native_report'].count('violation type:')==rejection['native_violations']==4
+            assert d['full_deck']['total_items']==rejection['full_deck_violations']==1
+            assert d['full_deck']['categories']=={'METAL10.2':1}
+            assert len(ET.fromstring(z.read('full-deck.lyrdb')).findall('.//items/item'))==1
     verified = []
     accepted_m = None
     for kind in ('m', 's'):
