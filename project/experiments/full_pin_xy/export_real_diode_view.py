@@ -10,10 +10,11 @@ DRIVER=Path(__file__).resolve().parent
 
 
 def run(revision,kind='gemm658'):
-    assert kind in ['gemm658','mxu_pin_escape','system_stacked_vias'];mxu=kind=='mxu_pin_escape';system=kind=='system_stacked_vias'
+    assert kind in ['gemm658','mxu_pin_escape','system_stacked_vias','llsys_via_tips'];mxu=kind=='mxu_pin_escape';system=kind=='system_stacked_vias';llsys=kind=='llsys_via_tips'
     case,count,relative,family={'gemm658':('gemm',3753,'antenna_incremental_eco/r01/gemm-C','diode_views'),
       'mxu_pin_escape':('mxu',2172,'pin_escape_route/r02/mxu-C','pin_escape_views'),
-      'system_stacked_vias':('opentpu_aux',2229,'system_stacked_via_route/r01/opentpu_aux-C','system_stacked_via_views')}[kind]
+      'system_stacked_vias':('opentpu_aux',2229,'system_stacked_via_route/r01/opentpu_aux-C','system_stacked_via_views'),
+      'llsys_via_tips':('llaccel_aux',13507,'llsys_actual_via_tips/r02','llsys_actual_tip_views')}[kind]
     source=ROOT/relative;receipt=source/'execution.json';j=json.loads(receipt.read_text())
     out=ROOT/family/revision/(case+'-C');out.mkdir(parents=True,exist_ok=False)
     rec={'scope':'ACTUAL_SOURCE_BOUND_PHYSICAL_AND_EXTRACTED_RESEARCH_VIEW_NOT_FULL_QUALIFICATION',
@@ -22,7 +23,8 @@ def run(revision,kind='gemm658'):
       'original_M5_M6_pins_not_raised':True,'complete_rules_and_RTL_formal':'NOT_QUALIFIED',
       'scheduler_job':os.environ['SLURM_JOB_ID'],'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip()}
     try:
-        assert j.get('completed_utc') and j['native_returncodes']['detailed_edit_and_analysis' if system else 'implementation']==j['native_returncodes']['fresh_DRC']==0
+        stage_key='actual_edit_and_analysis' if llsys else ('detailed_edit_and_analysis' if system else 'implementation')
+        assert j.get('completed_utc') and j['native_returncodes'][stage_key]==j['native_returncodes']['fresh_DRC']==0
         assert j['fresh_DRC_count']==0 and j['whole_signal_geometry']['pass']
         if mxu:
             assert j['all_closed_sources_unchanged'] and j['container_libraries_unchanged']
@@ -30,23 +32,39 @@ def run(revision,kind='gemm658'):
         elif system:
             assert j['all_closed_sources_unchanged'] and all(j['original_cells_poses_signal_connections_pins_PG_die_unchanged'].values())
             assert j['all_other_exported_multiterminal_route_box_multisets_identical'] and j['actual_changed_multiterminal_net_wire_via_box_multisets']==['_215139_']
+        elif llsys:
+            assert j['all_closed_sources_unchanged'] and j['container_library_unchanged']
+            assert all(j['all_cells_signal_connections_PG_die_unchanged'].values())
+            assert j['all_other_725250_multiterminal_route_box_multisets_identical']
+            assert j['all_actual_target_via_rectangle_multisets_preserved'] and j['exactly_eight_actual_WIRE_rectangles_removed_no_added_wire_or_via_material']
+            assert j['complete_pin_contract']['all_signal_pins']==count
+            assert j['complete_pin_contract']['all_functions_directions_networks_layers_sizes_and_PG_preserved']
         else:
             assert j['actual_total_real_diodes']==658 and j['all_original_instances_and_signal_graph_preserved_with_only_22_real_diode_loads']
             assert j['all_prior_functional_and_636_diode_poses_and_terminals_unchanged'] and all(j['pin_PG_die_unchanged'].values()) and j['all_sources_unchanged']
-        required=['native_one_net_detailed_routing' if system else 'detailed_route','VDD','VSS','whole_signal_geometry','rcx','sta']+([] if mxu or system else ['preserve_original_views'])
+        required=[('actual_three_net_pin_and_route_edit' if llsys else ('native_one_net_detailed_routing' if system else 'detailed_route')),'VDD','VSS','whole_signal_geometry','rcx','sta']+([] if mxu or system or llsys else ['preserve_original_views'])
         assert all(j['native_stage_status'].get(s)=='EXECUTED' for s in required)
-        original=ROOT/('eco_views/'+('r03' if system else 'r02')+'/'+case+'-C');old=json.loads((original/'execution.json').read_text())
-        assert sha(original/'abstract.lef')==old['files']['abstract.lef']['sha256']
-        assert sha(original/'pins.tsv')==old['files']['pins.tsv']['sha256']
-        trial=ROOT/('trials/access-r03/'+case+'-C/execution.json');baseline=json.loads(trial.read_text());sdc=Path(baseline['source_sdc'])
+        original=ROOT/('eco_views/'+('r03' if system else 'r02')+'/'+case+'-C')
+        if not llsys:
+            old=json.loads((original/'execution.json').read_text())
+            assert sha(original/'abstract.lef')==old['files']['abstract.lef']['sha256']
+            assert sha(original/'pins.tsv')==old['files']['pins.tsv']['sha256']
+        trial=ROOT/(('trials/llsys-pg-r03/' if llsys else 'trials/access-r03/')+case+'-C/execution.json');baseline=json.loads(trial.read_text());sdc=Path(baseline['source_sdc'])
         assert sha(sdc)==baseline['input_sha256'][str(sdc)]
         odb=source/'routed.odb';spef=source/'extracted.spef'
         for p in [odb,spef,source/'independent.drc']:assert sha(p)==j['files'][p.name]['sha256']
-        inputs={str(p):sha(p) for p in [receipt,odb,spef,original/'execution.json',original/'abstract.lef',original/'pins.tsv',trial,sdc]}
+        originals=[source/'after.pins.tsv',source/'all_13507_actual_pin_correspondence.csv'] if llsys else [original/'execution.json',original/'abstract.lef',original/'pins.tsv']
+        for p in originals:
+            if llsys:assert sha(p)==j['files'][p.name]['sha256']
+        inputs={str(p):sha(p) for p in [receipt,odb,spef,trial,sdc]+originals}
         rec.update({'source_SHA':inputs,'source_geometry_sha256':sha(odb),'source_SPEF_sha256':sha(spef),
           'source_native_DRC':0,'source_setup_ns':j['setup_ns'],'source_hold_ns':j['hold_ns'],
           'source_literal_violated_markers':j.get('literal_VIOLATED_markers_not_complete_failure_count')})
-        if not (mxu or system):rec['separate_additional_diode_cost']=j['separate_additional_diode_cost']
+        if llsys:
+            rec['this_route_variant_new_cells_or_sizing']=0
+            rec['inherited_costed_source']='Complete original internal PG-only C; three actual via-tip XY edits, no added cells or resizing; negative original-source STA retained.'
+            rec['source_complete_pin_contract']=j['complete_pin_contract']
+        elif not (mxu or system):rec['separate_additional_diode_cost']=j['separate_additional_diode_cost']
         else:
             rec['this_route_variant_new_cells_or_sizing']=0
             rec['inherited_costed_source']='All prior SYSTEM sizing/buffering/placement costs inherited; this route variant adds none; not zero total ECO cost or pure XY benefit.' if system else 'Original MXU costed/r04 one sizing is retained; not zero total ECO cost or pure XY benefit.'
@@ -88,8 +106,16 @@ def run(revision,kind='gemm658'):
             rec['before_target_actual_export_returncode']=execute(common,script,out/'before_target.log',threads=1)
             assert rec['before_target_actual_export_returncode']==0
         rec['detailed_OBS_view_contract']=verify(out/'abstract.lef',out/'detailed.lef')
-        assert parse(original/'abstract.lef')[:2]==parse(out/'abstract.lef')[:2]
-        assert (original/'pins.tsv').read_bytes()==(out/'pins.tsv').read_bytes()
+        if llsys:
+            from collections import Counter
+            actual=[tuple(s.split()) for s in (out/'pins.tsv').read_text().splitlines()[1:]]
+            expected=[tuple(s.split()) for s in (source/'after.pins.tsv').read_text().splitlines()]
+            assert Counter(actual)==Counter(expected),'Every source signal/clock/PG pin must match the real edited ODB'
+            rec['all_13507_current_pins_and_PG_match_actual_after_edit']=True
+            rec['historical_parent_target_layers']='PARTIAL_OR_UNKNOWN_UNCHANGED; new controlled parent still requires actual access validation'
+        else:
+            assert parse(original/'abstract.lef')[:2]==parse(out/'abstract.lef')[:2]
+            assert (original/'pins.tsv').read_bytes()==(out/'pins.tsv').read_bytes()
         rec['all_original_signal_and_PG_pins_and_size_exactly_preserved']=True
         rec['SPEF_replay_matches_source']=all((source/(k+'.txt')).read_text()==(out/(k+'.txt')).read_text() for k in ['setup','hold'])
         assert rec['SPEF_replay_matches_source']
