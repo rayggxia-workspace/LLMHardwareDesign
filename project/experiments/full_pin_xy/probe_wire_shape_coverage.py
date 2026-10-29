@@ -69,7 +69,7 @@ if {!$status && [string is integer -strict $count] && $count>0 && $count<=64} {
             body=r'''set b [ord::get_db_block];set n [$b findNet HPY_PATCH_RECT_OPCODE];set w [$n getWire]
 if {[$w length]!=7 || [$w getOpcode 3]!=14} {error "Known closed native RECT payload differs"}
 set s [odb::dbShape];set f [open OUTPUT w];puts $f "stage\tstatus\tvalue"
-set status [catch {$w getShape 3 $s} value];puts $f [join [list native_getShape $status $value] "\t"]
+set status [catch {set s [$w getShape 3]} value];puts $f [join [list native_getShape $status $value] "\t"]
 if {!$status} {
  set layer [$s getTechLayer]
  puts $f [join [list actual_shape 0 [list [$layer getName] [$s xMin] [$s yMin] [$s xMax] [$s yMax] [$s isVia]]] "\t"]
