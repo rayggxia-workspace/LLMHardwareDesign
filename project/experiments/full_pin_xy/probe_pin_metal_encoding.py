@@ -18,7 +18,7 @@ def run(revision):
          'requested_square_DBU':[3975860,2411220,3976140,2411500],'native_returncodes':{}}
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
     try:
-        body='''set b [ord::get_db_block];set layer [[ord::get_db_tech] findLayer metal5]
+        body=r'''set b [ord::get_db_block];set layer [[ord::get_db_tech] findLayer metal5]
 if {[$b getDbUnitsPerMicron]!=2000 || [$layer getWidth]!=280} {error "Original native M5 dimensions differ"}
 set f [open STATUS w];puts $f "method\tstatus\tmessage"
 puts "ACTUAL_RECT_ENCODING_API [info commands ::odb::*WireEncoder*Rect*]"
@@ -27,8 +27,8 @@ foreach method {POINT_PAIR RECT_OPCODE} {
  $enc newPath $layer ROUTED;$enc addPoint 3976000 2411360
  set failed [catch {
   if {$method eq "POINT_PAIR"} {$enc addPoint 3976000 2411360} else {$enc addRect -140 -140 140 140}
-  $enc end
  } message]
+ catch {$enc end} finalize_message
  puts $f [join [list $method $failed [string map [list \n { | } \t { }] $message]] "\t"]
 };close $f
 set ::env(PINXY_ACCESS_NET_NAMES) {HPY_PATCH_POINT_PAIR HPY_PATCH_RECT_OPCODE}
