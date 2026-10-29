@@ -29,6 +29,13 @@ def run(revision):
     oldview=ROOT/'eco_views/r02/mxu-C/abstract.lef';assert parse(oldview)[:2]==parse(view/'abstract.lef')[:2]
     out=ROOT/'escape_view_recheck'/revision/'mxu-C';out.mkdir(parents=True,exist_ok=False)
     inputs={str(p):sha(p) for p in [rp,odb,vp,oldview,view/'abstract.lef',view/'detailed.lef',view/'timing.lib',view/'pins.tsv',view/'clean.odb']}
+    probe=ROOT/'clock_view_binding_probe/r01';proof=json.loads((probe/'execution.json').read_text())
+    assert proof['native_probe_returncode']==0 and proof['all_closed_sources_unchanged']
+    assert proof['actual_native_stage_rows'][1:3]==['after_LEF\tSIGNAL\tNULL\tNULL','after_Liberty\tCLOCK\tNULL\tNULL']
+    assert proof['source_SHA'][str(view/'timing.lib')]==sha(view/'timing.lib')
+    for p in [probe/'execution.json',probe/'native_clock_types.tsv']:
+        if p.name!='execution.json':assert sha(p)==proof['files'][p.name]['sha256']
+        inputs[str(p)]=sha(p)
     rec={'scope':'ALL2172_REAL_PARENT_ACCESS_RECHECK_NEW_ACTUAL_CHILD_OBS_NOT_OLD_FIXTURE_OR_COMMON_BASE_QUALIFICATION',
       'source_SHA':inputs,'old_parent_native_DRC_count':1,'actual_new_leaf_ODB_SHA256':v['source_geometry_sha256'],
       'new_source_research_model_SHA256':sha(view/'timing.lib'),'all_original_leaf_signal_pins':2172,
@@ -36,6 +43,7 @@ def run(revision):
       'parent_RC_STA':'NOT_EXECUTED_ACCESS_RECHECK_ONLY','full_qualification':False,'native_returncodes':{},
       'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID'],
       'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()}
+    rec['clock_binding_fix']='Read the same source-bound aliased Liberty after actual LEF, before native swapMaster; native Liberty clock:true classification is retained. No manual USE edit or clock constraint change.'
     def save():(out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     save()
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
@@ -57,7 +65,7 @@ def run(revision):
 }'''
         lines=[helper,code,'read_db '+tcl(odb),'fingerprint '+tcl(out/'before'),'parent_terms '+tcl(out/'before.child_terms.tsv'),
           'set b [ord::get_db_block];set inst [$b findInst u_macro];set old_xy [$inst getLocation];set old_ori [$inst getOrient]',
-          'read_lef '+tcl(out/'actual_child.lef'),
+          'read_lef '+tcl(out/'actual_child.lef'),'read_liberty '+tcl(out/'actual_child_timing.lib'),
           'if {![stage upgrade_to_actual_source_view {set replacement [[ord::get_db] findMaster '+tcl(alias)+'];if {$replacement eq "NULL"} {error "New actual child master missing"};if {![$inst swapMaster $replacement]} {error "Native macro view swap rejected"};if {[$inst getLocation] ne $old_xy || [$inst getOrient] ne $old_ori} {error "Original macro pose changed"};write_db '+tcl(out/'upgraded_parent_NOT_SYSTEM.odb')+'}]} {close $stages;exit 1}',
           'fingerprint '+tcl(out/'after'),'parent_terms '+tcl(out/'after.child_terms.tsv'),
           'stage VDD {check_power_grid -net VDD -error_file '+tcl(out/'VDD.rpt')+'}',
