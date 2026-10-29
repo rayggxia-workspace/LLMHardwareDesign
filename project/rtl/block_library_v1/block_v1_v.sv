@@ -10,7 +10,7 @@ module block_v1_v(
  G_START=6,G_WAIT=7,G_ROOT=8,G_ROOT_WAIT=9,N_LOW=10,N_HIGH=11,N_WRITE=12,
  C_MUL=13,C_ADD=14,C_END=15,T_SCAN=16,T_SAVE=17,
  ROT_LOW=18,ROT_HIGH=19,ROT_ROUND=20,ROT_COMBINE=21,S_REDUCE=22,C_REDUCE=23,
- M_EXEC=24,P_TOTAL=25,P_ROUND=26;
+ M_EXEC=24,P_TOTAL=25,P_ROUND=26,G_MUL=27,G_ADD=28;
  reg [4:0] phase;
  reg [4:0] mul_return;
  reg signed [31:0] a[0:7],b[0:7],input_mem[0:255],output_mem[0:255];
@@ -43,6 +43,9 @@ module block_v1_v(
  reg [1:0] compose_kind;reg [63:0] epsilon;
  reg [63:0] factor;
  reg [2:0] group_kind;reg [127:0] group_n,group_d,division_remainder;
+ // Norm denominator: registered epsilon/count -> U80 product -> U128 sum.
+ // 65535 is the full statistics count bound; no high product bits are lost.
+ reg [15:0] norm_count;reg [79:0] norm_product;reg [127:0] norm_square;
  wire group_ready,group_valid,group_error;
  wire [127:0] group_q,group_r;
  wire group_in=phase==G_START||phase==G_ROOT;
@@ -213,7 +216,7 @@ module block_v1_v(
        else if(stats_sumsq[0]==0&&cmd_data[72:9]==0)begin rsp_error<=1;rsp_valid<=1;end
        else begin
         group_kind<=3;group_n<=cmd_index==4?({112'b0,stats_count[0]}<<96):(128'd1<<96);
-        group_d<=stats_sumsq[0]+(cmd_index==4?{64'b0,cmd_data[72:9]}*{112'b0,stats_count[0]}:{64'b0,cmd_data[72:9]});phase<=G_START;
+        norm_square<={48'b0,stats_sumsq[0]};norm_count<=cmd_index==4?stats_count[0]:16'd1;phase<=G_MUL;
        end
       end
      end
@@ -307,7 +310,7 @@ module block_v1_v(
      if(compose_kind==2)begin composing<=1;function_source_replay<=1;function_subtract_max<=1;function_kind<=0;function_sent<=0;function_received<=0;function_length<=length;sum<=0;phase<=F_RUN;end
      else if(sumsq==0&&epsilon==0)begin rsp_error<=1;rsp_valid<=1;phase<=IDLE;end
      else begin group_kind<=3;group_n<=compose_kind==0?({119'b0,length}<<96):(128'd1<<96);
-      group_d<=sumsq+(compose_kind==0?epsilon*{55'b0,length}:epsilon);phase<=G_START;end
+      norm_square<={48'b0,sumsq};norm_count<=compose_kind==0?{7'b0,length}:16'd1;phase<=G_MUL;end
     end
     F_RUN:begin
      if(function_in)function_sent<=function_sent+2;
@@ -322,6 +325,8 @@ module block_v1_v(
       end
      end
     end
+    G_MUL:begin norm_product<=epsilon*norm_count;phase<=G_ADD;end
+    G_ADD:begin group_d<=add128_grouped(norm_square,{48'b0,norm_product},1'b0);phase<=G_START;end
     G_START,G_ROOT:if(group_ready)phase<=phase==G_START?G_WAIT:G_ROOT_WAIT;
     G_WAIT:if(group_valid)begin
      if(group_error)begin rsp_error<=1;rsp_valid<=1;phase<=IDLE;end

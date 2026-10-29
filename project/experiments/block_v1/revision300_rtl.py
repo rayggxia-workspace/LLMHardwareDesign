@@ -49,6 +49,7 @@ def vector_boundary(root,out,cpus,run,variant):
         if variant=='composition':
             assert result['rope_cases']==320 and result['statistics_elements']==65535
             assert result['rejected_boundary_cases']==3
+            assert result['norm_boundary_cases']==8
         runs[name]=result
     assert all(v==runs['all-ones']for v in runs.values())
     bound=rtl+[rtl[0].parent/'block_v1_v_tables.svh']
