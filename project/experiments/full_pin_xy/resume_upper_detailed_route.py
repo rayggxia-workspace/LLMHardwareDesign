@@ -16,7 +16,7 @@ DRIVER=Path(__file__).resolve().parent
 
 
 def one(mode,revision,profile='retained-guides'):
-    assert profile in ['retained-guides','grt200']
+    assert profile in ['retained-guides','grt200','grid-phase-half']
     source=ROOT/'upper_adaptation_trial/r02'/mode;rp=source/'execution.json';prior=json.loads(rp.read_text())
     assert prior.get('completed_utc') and prior['native_route_returncode']==1
     assert 'GRT-0116' in (source/'global_route.error.txt').read_text()
@@ -26,19 +26,22 @@ def one(mode,revision,profile='retained-guides'):
     base=Path(plan['source_lower_checkpoint']);assert ROOT in base.parents and sha(base)==plan['source_lower_checkpoint_SHA256']
     assert prior['source_lower_checkpoint_SHA256']==plan['source_lower_checkpoint_SHA256']
     rc=ROOT/'upper_layer_probe/r01/model/research12.setRC.tcl'
-    family='upper_detailed_resume' if profile=='retained-guides' else 'upper_search_budget'
+    family={'retained-guides':'upper_detailed_resume','grt200':'upper_search_budget','grid-phase-half':'upper_grid_phase'}[profile]
     out=ROOT/family/revision/mode;out.mkdir(parents=True,exist_ok=False)
     inputs={str(p):sha(p) for p in [rp,odb,planfile,base,rc,source/'global_route.error.txt',source/'congestion.rpt']}
     rec={'scope':'ALL770_ACTUAL_GUIDE_DETAIL_CONTINUATION_NOT_TWO_COMPLETE_SYSTEMS_OR_QUALIFIED_BASE',
       'mode':mode,'source_SHA':inputs,'source_lower_checkpoint_SHA256':sha(base),
-      'original_GRT_state':'FAILED_GRT_0116_RETAINED_NOT_WAIVED','global_route_reexecuted':profile=='grt200',
-      'search_profile':profile,'search_only_change':('NONE' if profile=='retained-guides' else 'FastRoute congestion iterations 50 to 200, plus verbose logging; identical source DB, hooks, tracks, geometry, constraints and physical rules'),
+      'original_GRT_state':'FAILED_GRT_0116_RETAINED_NOT_WAIVED','global_route_reexecuted':profile!='retained-guides',
+      'search_profile':profile,'search_only_change':{'retained-guides':'NONE','grt200':'FastRoute congestion iterations 50 to 200, plus verbose logging; identical source DB, hooks, tracks, geometry, constraints and physical rules','grid-phase-half':'Global guide grid origin 0/0 to 2850/2850 DBU (1.425/1.425um at 2000 DBU/um), default 50 iterations retained. Physical tracks, hook XY, PG/OBS, technology and spacing rules unchanged. Test local GCell capacity discretization, not a diagnosed congestion root cause.'}[profile],
       'allow_congestion_or_infinite_capacity_used':False,'all_physical_layers_tracks_and_rules_unchanged':True,
       'base_and_leaf_views':'ORIGINAL_R02_UNQUALIFIED_INPUTS_NOT_REPLACED_BY_NEW_658_VIEWS',
       'base_frozen':False,'full_qualification':False,'RC_STA_electrical':'NOT_EXECUTED_ADAPTER_ONLY',
       'native_returncodes':{},'scheduler_job':os.environ['SLURM_JOB_ID'],
       'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()}
     def save():(out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
+    if profile=='grid-phase-half':
+        rec['guide_grid_origin_DBU']=[2850,2850]
+        rec['origin_unit_source']='https://openroad.readthedocs.io/en/latest/main/src/grt/README.html ; installed captured global_route body directly passes both values to grt::set_grid_origin. Current installed DB/DEF still checked independently.'
     save()
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
     try:
@@ -57,6 +60,10 @@ def one(mode,revision,profile='retained-guides'):
         if profile=='grt200':
             index=next(i for i,line in enumerate(lines) if line.startswith('if {![stage detailed_route '))
             lines.insert(index,'if {![stage global_route_budget200 {global_route -congestion_iterations 200 -verbose -guide_file '+tcl(out/'search200.guide')+' -congestion_report_file '+tcl(out/'congestion.rpt')+';write_db '+tcl(out/'global_search200.odb')+'}]} {catch {write_db '+tcl(out/'failed_search200.odb')+'};close $stages;exit 1}')
+        if profile=='grid-phase-half':
+            index=next(i for i,line in enumerate(lines) if line.startswith('if {![stage detailed_route '))
+            lines.insert(index,'if {[$b getDbUnitsPerMicron]!=2000} {error "Unexpected actual DBU: do not apply assumed grid phase"}')
+            lines.insert(index+1,'if {![stage global_route_grid_phase_half {global_route -grid_origin {2850 2850} -congestion_iterations 50 -verbose -guide_file '+tcl(out/'grid_phase_half.guide')+' -congestion_report_file '+tcl(out/'congestion.rpt')+';write_db '+tcl(out/'global_grid_phase_half.odb')+';write_def '+tcl(out/'actual_guide_grid_NOT_ROUTED.def')+'}]} {catch {write_db '+tcl(out/'failed_grid_phase_half.odb')+';write_def '+tcl(out/'failed_guide_grid_NOT_ROUTED.def')+'};close $stages;exit 1}')
         script=out/'resume.tcl';script.write_text('\n'.join(lines)+'\n')
         env='PINXY_OUTPUT='+str(out)+',PINXY_ACCESS_ALL=1,PINXY_ACCESS_OUT='+str(out/'whole_access.tsv.gz')
         rec['native_returncodes']['detailed_continuation']=execute(common,script,out/'native.log',env,threads=4);save()
@@ -81,14 +88,14 @@ def one(mode,revision,profile='retained-guides'):
 
 def run(revision,profile='retained-guides'):
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=8
-    assert profile in ['retained-guides','grt200']
-    family='upper_detailed_resume' if profile=='retained-guides' else 'upper_search_budget'
+    assert profile in ['retained-guides','grt200','grid-phase-half']
+    family={'retained-guides':'upper_detailed_resume','grt200':'upper_search_budget','grid-phase-half':'upper_grid_phase'}[profile]
     out=ROOT/family/revision;out.mkdir(parents=True,exist_ok=False)
     with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(lambda mode:one(mode,revision,profile),['opentpu','llaccel']))
     assert results[0]['source_lower_checkpoint_SHA256']==results[1]['source_lower_checkpoint_SHA256']
     result={'scope':'TWO_ALL770_DETAIL_CONTINUATIONS_ORIGINAL_GLOBAL_FAILURES_RETAINED_NOT_COMPLETE_SYSTEMS',
       'same_partial_base_input_for_both_modes':True,'source_lower_checkpoint_SHA256':results[0]['source_lower_checkpoint_SHA256'],
-      'original_GRT_failed_in_both_modes':True,'global_route_reexecuted':profile=='grt200','search_profile':profile,
+      'original_GRT_failed_in_both_modes':True,'global_route_reexecuted':profile!='retained-guides','search_profile':profile,
       'full_qualification':False,'qualified_common_base':False,'two_complete_M11_M12_systems':False,
       'modes':[{k:r.get(k) for k in ['mode','native_returncodes','independent_DRC_count','all_edge_signal_clock_geometry','actual_770_native_edge_terminal_bijection','all_actual_overlay_M10_material_contained_in_existing_base_hook_rectangles','actual_failure']} for r in results]}
     (out/'summary.json').write_text(json.dumps(result,indent=2)+'\n')

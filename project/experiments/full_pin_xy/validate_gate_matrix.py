@@ -422,6 +422,15 @@ def check(out):
         assert q['native_returncode']==0 and q['all_sources_unchanged'] and all(q['source_worst_slacks_exactly_replayed'].values())
         assert q['original_constraints_and_SPEF_unchanged']
         assert 'extended_checks_all_not_only_violators.txt' in q['files']
+    if j.get('planned_default_via10_pair_geometric_screen'):
+        q=j['planned_default_via10_pair_geometric_screen'];assert not q['full_qualification'] and q['cut_spacing_um_explicit_assumption']==.88
+        table=out/'data/upper_planned_via10_pair_screen_r01/planned_via10_nearest.csv'
+        assert hashlib.sha256(table.read_bytes()).hexdigest()==q['table_sha256']
+        for mode in q['modes']:
+            assert mode['planned_hook_count']==1540 and mode['all_pairs_tested']==1540*1539//2
+            assert not mode['conflicts'] and abs(mode['minimum_cut_rectangle_gap_um']-2.4)<1e-9
+            p=(out/j['source_snapshot']).parent/'upper_adaptation_trial/r02'/(mode['mode']+'_actual_hook_plan.json.gz')
+            assert hashlib.sha256(gzip.decompress(p.read_bytes())).hexdigest()==mode['source_plan_raw_sha256']
     for q in j.get('latest_actual_parent_landing_repairs',[]):
         if not q.get('completed_utc'):continue
         assert q['native_route_returncode']==q['fresh_DRC_returncode']==0 and q['whole_signal_geometry']['pass']

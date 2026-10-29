@@ -504,6 +504,14 @@ def render(root,out):
               'evidence':q['evidence'],'full_qualification':False}
             upper_text+='<tr><td>'+html.escape(q['case'])+'</td><td>'+('return '+str(q.get('native_returncode')) if complete else '运行中')+'</td><td>'+str(q.get('source_worst_slacks_exactly_replayed','未取得'))+'</td><td>'+str(q.get('extended_literal_VIOLATED_rows_not_complete_rule_coverage','未知'))+'</td><td><a href="'+q['evidence']+'">原生回执/文件SHA</a></td></tr>'
         upper_text+='</tbody></table><p>表中0只表示新增报表没有文字VIOLATED；不表示全部规则已定义或系统时序通过。原有setup/hold、电气、未标注寄生和minimum_period覆盖缺项仍独立保留。</p>'
+    p=snapshot/'vector_clone_probe/r03/execution.json.gz'
+    if p.exists():
+        q=read(p);result['VECTOR_placement_only_context_probe_r03']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
+        upper_text+='<p><strong>VECTOR93083受控placement上下文试验：</strong>从实际安装repair_timing Tcl body取得证据：design_is_routed为真时会切换detailed_routing寄生来源，不能仅凭此前estimate_parasitics -placement宣称优化过程保持placement模式。新试验只在内存副本移除旧SIGNAL/CLOCK dbWire，原文件/单元/端点/pin/PG/层集合/原SDC不改；原生谓词由1变0、375675条旧wire被移除，进入placement优化。新检查点尚不代表合法化、详细接线、RC/STA、数字等价或修复成功，旧两个失败保留。</p>'
+    screen=data/'upper_planned_via10_pair_screen_r01/summary.json'
+    if screen.exists():
+        q=read(screen);result['planned_default_via10_pair_geometric_screen']=q
+        upper_text+='<p>两模式各1540个原生M10 hook上<strong>计划</strong>的默认via10单cut接入，逐一检查1185030对矩形，最小cut矩形间距2.4μm；相对明确假设0.88μm未发现成对冲突。坐标与0.8μm cut模板来自真实hook plan，原叶M5/M6不改。这不是已放置via、实际DRC、OBS/PG/PRL/包围检查或完整布通，也不证明已找到GRT失败根因。<a href="data/upper_planned_via10_pair_screen_r01/summary.json">全部来源/假设</a> · <a href="data/upper_planned_via10_pair_screen_r01/planned_via10_nearest.csv">每个计划接点最近邻CSV</a>。</p>'
     p=snapshot/'vector_clone_crash/r01/execution.json.gz'
     if p.exists():
         q=read(p);result['VECTOR_exact_native_crash_symbolization_r01']=dict(q,evidence=(dest/p.relative_to(snapshot)).relative_to(out).as_posix())
