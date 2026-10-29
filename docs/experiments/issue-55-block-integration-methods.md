@@ -121,14 +121,24 @@ clock 使用共同输入、真实状态负载、CTS资源和最终线路，分�
 
 <!-- current-method-checkpoint -->
 
-检查点2026-10-29T01:03:14.503334+00:00，源码481d2af73c43c06f756ece9740d2eb552051c93b；最新证据/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-native-access-partial-improvement-and-actual-congestion-20261029T010314Z/milestone.json SHAb8962b17db48829974621da22f9ba70c1fb5c6b8f7ba0ecfcc4ae3f02a448f02。候选1/3未冻结、阶段二/三未验收、四NOTRUN。
+更新时间：2026-10-29T02:12:20.108872+00:00。以下覆盖历史状态，以封存索引及实际Slurm为准。
 
-1. 区分guide、真实wire和全物理验收。92548全14059网实际GRT0116拥堵、无DRT；93104从失败ODB完整读回7×5040025网格，862354层格超容量；93107完整核实14059有guides但wire=0。不以保存ODB或有guides报告布通。
-2. 复用自然终态同源检查点，优先恢复观察而非重跑。93086实际PA/GRT闭合但readback缺need失败，93093独立读回完整13507口/27014盒/47262AP行一致；原FAILED保留，无完整PA重算。93103信号网数不含2PG造成身份失败，93104改为来源绑定191实例/15568全网，保留身份守卫。
-3. 全部862354溢出行按实际宏矩形归属，633205中心在宏外；热点为M7底边/M6左边。此启发式只定位公共IO/通道压力，非逐PIN/OBS碰撞、网级因果或不可行证明；不据此删几何/漏验/缩设计，不自动新增主要候选。
-4. 原生PA需相邻层轨道，即使布线上限M8。93095/93100工具实测后，93101完整546459实例/124网/62split/全部保护仅扩真实M9tracks，缺M8点5066→1642；所有原始轨道模式及物理几何不变，独立ODB读回一致。明确是部分机制改善，不是完整修复；不增M9线、不软件造AP或静默切后备层。
-5. 余1642左侧口仍缺真实M8AP，仅1在选中网；应检查真实M8竖向/相邻M9横向轨道与PA成本级，不能用单M8夹具成功泛化全设计。93109因旧适配器只接受M6/M8、实际剩余口是M5/M8而在native PA前拒绝，三项min参数原生测试NOTRUN。应参数化低层来源后再测，不能把此脚本输入错误当native算法或工艺结论。
-6. PA会挑同端口不同形状入口，恢复M8时原M6可能不再被选。旧全盒守卫保持不变；93105另以真实native方向禁用/AP删除负例资格化所需M8接口检查器，但尚未接入成功完整源。全量资格程序仅代码完成、未运行，不代替原导体连通、完整native DRC/PG/RC/质量/功能。
-7. GRT失败后的DRC-count查询会掩盖首个异常，首要错误与记录器次生错误分别保留。回执actual-stage字段须在实际日志闭合后设置，源码错误不能写成设计不可行。源码/配置变动固定新commit及新目录，封存快照不改。
-8. 不拼不同版本局部PASS；原3ns、全部状态/存储/接口、原PIN/OBS/导体/位置、全规模和新问题不豁免。62BUF放置/状态锥与源PG只是限定通过；旧完整回归不继承新网表。完整固定/闲置/PGclock/源质量未闭合不冻结，外部clock/37负载null保留。
-9. 大型正式Block/LLM算法阶段不得替代本轮两完整硬件目标。参数化边界保持；4核申请与实际单/多线程分别记录，源码/日志/配置/输入SHA闭合，大产物服务器存储、精选记录同Issue55/PR58交付。
+本轮可复用方法及实际边界：
+1. **区分原生接入与软件候选。** 输入真实PIN多边形、轨道、制造网格及保存AP；保留原43862点，只对1642缺口生成M7/M8交点，检查M8完整线宽落在自有pad、NS方向、原生同相位cost来源。输出逐点来源合同及保存ODB；新进程逐点读回、禁方向/删点负例。93115只通过输入准备；实际native PA缺口仍存在，候选可用性须由真实布线/DRC决定，不能改称native PA通过。
+2. **复用闭合失败快照，避免无效重跑。** 93119全量原生13表逐字节一致（含全部PIN/OBS/导体/端点），同时读取全部目标wire与guides；失败来源、工具/输入/源码SHA绑定。输出仅为“几何未变、未布通输入”，不能把guides当wire或把失败GRT改成PASS。737455矩形/14059网wire0是完整实测。
+3. **把逻辑端口和物理岛分开。** 93123证实“同一个BTerm名有多个图形”不等于图形已电连；DRT退出0/DRC0也不能证明导线存在。旧检查器允许每端口命中某个共同分量，额外孤立BPin图形可能漏查。新增 physical_BPin_island_review.py 在保留旧连接/异网接触检查的同时，要求所有公共端口物理形状仅属于一个且与网络共用的电连分量，不假设不可见内部金属。ITerm内部连接不由该补充门槛新增推断。93124真实native正例及删线负例、两旧误接受夹具资格化；全设计结果必须另跑该门槛，历史有限PASS不自动继承。
+4. **完整路由与阶段门槛。** 93116保留全规模/全部保护、原3ns和124实际targets，只更换明确标记的接入输入；实际运行详细布线，最终全导体/实例/OBS/PGclock/端点/层范围/几何/fresh DRC/PG保持性必须闭合，严格物理岛检查补充后才推进RC及新整机功能。不以日志中全设计线长或“程序退出0”替代目标网络证明。
+5. **失败反馈**分接入候选缺失、guide未覆盖、真实断线、短路/间距、拥堵、工具API和质量。93121全部61目标M8盒无guide只是输入缺口；93123是方法与检查器失败，不证明工艺不可行。临时重复端口未产生导线、未采用。下一次改变针对实际物理断点，固定几何保持，不隐藏形状或缩水硬件。
+6. 当前候选1/3、未冻结；不把工程修复编号算成主要架构新轮次。正式Block/LLM阶段仍待当前完整案例验证/归档。未来输入替换尺寸/端口/轨道/原语/资源/工作负载适配，保留同版本证据失效与失败门槛；不宣称任意Block通用成功。
+
+服务器复跑及检查器入口均为实际已提交的固定快照：
+```bash
+python3 -B -I -S /public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/worktree/project/experiments/block_full_integration/submit.py --spec /public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/public-BPin-physical-island-checker-controls-r01-4c-01-spec.json
+```
+该命令用于解释实际提交来源；原driver/输出已存在，禁止原样重复提交。新运行须在同根目录采用新spec/driver/output、固定新commit并申请4核。新检查器源码585a6a4e2c8afd8b4cc1a482d1497518fb92e330，实际93124；当前GitHub此次仅交付六份进展记录，服务器后阶段源码不冒称已整体入库。
+
+服务器唯一根：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z
+
+最新完整索引：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-explicit-M8-input-and-physical-island-correction-20261029T021220Z/milestone.json
+SHA-256：1b15b26cc1e7c8860063ad7b2f05da504212c907d88bdbe0d3f9bc6f91f370ff
+复核源码：585a6a4e2c8afd8b4cc1a482d1497518fb92e330；各作业源码/spec/submission/输入与工具SHA见索引和封存execution。OpenROAD版本unknown，binary SHA0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53。
