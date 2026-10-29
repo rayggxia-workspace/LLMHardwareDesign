@@ -3,6 +3,7 @@
 # rectangles except eight explicitly identified terminal stubs. No invented via.
 set b [ord::get_db_block];set tech [ord::get_db_tech]
 if {[$b getDbUnitsPerMicron]!=2000} {error "Unexpected source DBU"}
+if {![info exists specs]} {
 set specs {
  {bit_1382013 metal5 {3628660 1367380 3628940 1367660} {3647330 1367520 3647610 1367800} wire32356 Z 33}
  {bit_6907 metal6 {2956660 1367380 2956940 1367660} {2954610 1366400 2954890 1366680} wire246835 A 293}
@@ -12,6 +13,7 @@ set removed [dict create \
  bit_1382013 {{metal5 3628710 1367380 3629690 1367660} {metal5 3629410 1367380 3629690 1367800} {metal5 3629410 1367520 3647610 1367800}} \
  bit_6907 {{metal6 2956570 1367520 2956850 1368280} {metal6 2954610 1368000 2956850 1368280} {metal6 2954610 1366400 2954890 1368280}} \
  bit_1389626 {{metal6 3713830 1161300 3714250 1161580} {metal6 3713970 1161300 3714250 1161880}}]
+}
 set all_records {};set vf [open $out/original_actual_vias.tsv w]
 puts $vf "net\tvia\tkind\tx_dbu\ty_dbu\tlayer\tx0_relative\ty0_relative\tx1_relative\ty1_relative"
 foreach spec $specs {
@@ -55,7 +57,7 @@ foreach spec $specs {
  dict set all_records $pin $records
 }
 close $vf
-# No edit occurs until all three actual original nets pass preflight.
+# No edit occurs until all explicitly listed original nets pass preflight.
 foreach spec $specs {
  lassign $spec pin layer oldbox newbox instance port nwire
  set n [$b findNet $pin];odb::dbWire_destroy [$n getWire]
@@ -72,4 +74,4 @@ foreach spec $specs {
  set boxes {};foreach bp [[$b findBTerm $pin] getBPins] {foreach box [$bp getBoxes] {lappend boxes $box}}
  if {[llength $boxes]!=1 || [list [[lindex $boxes 0] xMin] [[lindex $boxes 0] yMin] [[lindex $boxes 0] xMax] [[lindex $boxes 0] yMax]] ne $newbox} {error "Actual new pin snapped/clamped"}
 }
-puts "ACTUAL_3_PIN_VIA_TIP_ECO_8_TERMINAL_WIRES_REMOVED_REQUIRES_INDEPENDENT_DRC_CONNECTIVITY_RCX_STA"
+puts "ACTUAL_NATIVE_PIN_VIA_TIP_ECO_REQUIRES_INDEPENDENT_DRC_CONNECTIVITY_RCX_STA"
