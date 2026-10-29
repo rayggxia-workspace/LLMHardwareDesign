@@ -31,9 +31,10 @@ def inspect(top, args):
     script += f"hierarchy -check -top {top}\nproc\nflatten\nopt\nmemory_collect\ncheck -assert\nstat\nwrite_json structure.json\n"
     if args.liberty:
         script += "synth -top " + top + " -noabc\n"
+        script += "read_liberty -lib " + str(args.liberty) + "\n"
         script += "dfflibmap -liberty " + str(args.liberty) + "\n"
         script += "abc -exe " + str(args.abc) + " -liberty " + str(args.liberty) + "\n"
-        script += "clean\ncheck -assert\nstat -liberty " + str(args.liberty) + "\nwrite_verilog -noattr mapped.v\nwrite_json mapped.json\n"
+        script += "clean\nwrite_rtlil post-map.il\ncheck -assert\nstat -liberty " + str(args.liberty) + "\nwrite_verilog -noattr mapped.v\nwrite_json mapped.json\n"
     (out / "inspect.ys").write_text(script)
     with (out / "yosys.log").open("w") as stream:
         proc = subprocess.run([args.yosys, "-s", "inspect.ys"], cwd=out, stdout=stream, stderr=subprocess.STDOUT)
@@ -49,6 +50,10 @@ def inspect(top, args):
             muls[f"{number(p['A_WIDTH'])}x{number(p['B_WIDTH'])}"] += 1
     if top == "block_feed_m" and muls["8x8"] != 64:
         raise RuntimeError(f"unexpected S8 multiplier count: {muls}")
+    if top == "block_feed_s_macro":
+        banks = [v for n, v in memories.items() if n.startswith("storage.bank")]
+        if len(banks) != 4 or any(v != dict(WIDTH=128, SIZE=256, RD_PORTS=1, WR_PORTS=1) for v in banks):
+            raise RuntimeError(f"S must have exactly four256x128 single1RW banks: {banks}")
     result = dict(passed=True, top=top, source_sha256={str(p.relative_to(ROOT)): sha(p) for p in sources},
                   ports={n: dict(direction=p["direction"], bits=len(p["bits"])) for n, p in mod["ports"].items()},
                   signal_pin_bits=sum(len(p["bits"]) for p in mod["ports"].values()),
