@@ -11,7 +11,7 @@ out=$4
 shift 4
 test -f "$root/source-manifest.json"
 test -f "$root/project/experiments/block_feed_v1/qualify.py"
-case "$operation" in physical|function|formal|deliver|geometry|escape) ;; *) exit 2 ;; esac
+case "$operation" in seal|physical|drc|function|formal|deliver|geometry|escape) ;; *) exit 2 ;; esac
 test -n "${SLURM_JOB_ID:-}"
 test "$SLURM_CPUS_PER_TASK" -eq 16
 mkdir -p "$(dirname "$out")"
