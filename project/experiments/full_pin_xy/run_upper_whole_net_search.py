@@ -14,7 +14,10 @@ def run(revision):
         assert re.search(r'PARALLELRUNLENGTH\s+0\.0000\s+2\.7000\s+4\.0000',block)
         for width,spaces in [('0.0000','0.8000 0.8000 0.8000'),('0.9000','0.8000 0.9000 0.9000'),('1.5000','0.8000 0.9000 1.5000')]:
             assert ('WIDTH '+width+' '+spaces) in ' '.join(block.split())
-    inputs={str(p):sha(p) for p in [rp,tech]+paths};out=ROOT/'upper_whole_net_search'/revision;out.mkdir(parents=True,exist_ok=False)
+    proof=ROOT/'upper_cut_corner_probe/r03/execution.json';pq=json.loads(proof.read_text())
+    assert pq.get('completed_utc') and pq['native_controls_prove_corner_square_test_was_overconservative'] and pq['all_sources_unchanged']
+    assert pq['source_SHA'][str(tech)]==sha(tech)
+    inputs={str(p):sha(p) for p in [rp,tech,proof]+paths};out=ROOT/'upper_whole_net_search'/revision;out.mkdir(parents=True,exist_ok=False)
     rec={'scope':'SOURCE_BOUND_WHOLE_UPPER_NET_REPAIR_SEARCH_NOT_IMPLEMENTATION','source_SHA':inputs,'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID'],'full_qualification':False,'native_edit_DRC_RC_STA':'NOT_EXECUTED'}
     try:rec['geometric_result']=plan(*paths,out/'whole_net_result_NOT_IMPLEMENTED.json')
     except Exception:rec['actual_failure']=traceback.format_exc()

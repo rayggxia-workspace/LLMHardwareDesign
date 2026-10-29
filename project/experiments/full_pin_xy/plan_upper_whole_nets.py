@@ -18,8 +18,8 @@ def actual_table_spacing(a,b):
     return 1600
 
 class Index:
-    def __init__(self,records,metal_table=False):
-        self.bins=defaultdict(list);self.size=64000;self.metal_table=metal_table
+    def __init__(self,records,metal_table=False,euclidean_cut=False):
+        self.bins=defaultdict(list);self.size=64000;self.metal_table=metal_table;self.euclidean_cut=euclidean_cut
         for i,(z,space) in enumerate(records):
             pad=space+HALF
             for x in range((z[0]-pad)//self.size,(z[2]+pad)//self.size+1):
@@ -31,7 +31,11 @@ class Index:
                 for i,p,s in self.bins.get((x,y),[]):
                     if i not in seen:
                         seen.add(i)
-                        if gap(z,p)<(actual_table_spacing(z,p) if self.metal_table else s):return False
+                        required=actual_table_spacing(z,p) if self.metal_table else s
+                        if self.euclidean_cut:
+                            dx=max(z[0]-p[2],p[0]-z[2],0);dy=max(z[1]-p[3],p[1]-z[3],0)
+                            if dx*dx+dy*dy<required*required:return False
+                        elif gap(z,p)<required:return False
         return True
 
 def is_retained_via10(r,via_layers):
@@ -46,7 +50,7 @@ def astar(rows,obs,net,a,b,die,max_nodes=80000):
         if r['layer'] in ['metal11','metal12'] and r['kind'] in ['WIRE','VIA','OBS']:
             metals[r['layer']].append((z,3000))
         if r['layer']=='via11' and r['kind']=='VIA':cuts.append((z,CUT_SPACE))
-    indices={k:Index(metals[k],metal_table=True) for k in ['metal11','metal12']};cutindex=Index(cuts)
+    indices={k:Index(metals[k],metal_table=True) for k in ['metal11','metal12']};cutindex=Index(cuts,euclidean_cut=True)
     start=(*a,11);target=(*b,11)
     endpoint_clear={name:indices['metal11'].clear(box_wire(p,p)) for name,p in [('a',a),('b',b)]}
     if not all(endpoint_clear.values()):return {'path_dbu':None,'reason':'ACTUAL_RETAINED_M11_VIA10_LANDING_BLOCKED','endpoint_clear':endpoint_clear,'expanded_nodes':0}
