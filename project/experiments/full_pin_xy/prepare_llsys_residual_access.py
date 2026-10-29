@@ -29,6 +29,12 @@ def run(revision,native_reuse=None,target_set='residual87'):
         p=line.split()
         if len(p)==9 and p[2] not in ['POWER','GROUND']:actual[p[0].strip('{}')]=p
     assert len(actual)==13507
+    if target_set=='parent_failed1011':
+        # Inventory precedes the10261 own-via edit. The current parent already
+        # uses that moved pin; diagnose its ACTUAL current rectangle, not the
+        # historical candidate-source rectangle. Preserve both versions.
+        selected=[dict(r,historical_inventory_rectangle_DBU=[int(r[k]) for k in ['x0','y0','x1','y1']],
+                       **dict(zip(['x0','y0','x1','y1'],actual[r['pin']][5:]))) for r in selected]
     for r in selected:
         p=actual[r['pin']];assert p[3].strip('{}')==r['net'] and p[4]==r['layer'] and p[5:]==[r[k] for k in ['x0','y0','x1','y1']]
     tech=ROOT/'upper_layer_probe/r01/model/research12.tech.lef';model=json.loads((tech.parent/'model.json').read_text());assert model['original_M1_M10_and_via1_via9_layer_blocks_identical'] and sha(tech)==model['files'][tech.name]['sha256']
