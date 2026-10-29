@@ -32,3 +32,7 @@ AUX仍FAIL：93191的124目标网连通、61公共物理岛/579原引出保持�
 最新证据索引：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-VECTOR-selected-access-and-AUX-type-control-20261029T095906Z/milestone.json
 SHA-256：42616339af787d87227ffbfbe45c5121c5823e4d94baa9f8c613437174291b9f
 4CPU/native≤4/BLAS1/实际cpuset；Python规划和对比主要单线程。93341 wall183s/CPU182.173s≈1核；93336 wall353s/CPU1261.403s≈3.57核。未停止/重复活跃作业，没有原始/封存/其他成员文件改动或安装。大型数据库/工艺/完整日志仅服务器；后阶段完整源码尚未全部上传。登记PR5 pending、Projects unverified/sync pending、审查人待指定；Issue55 in_progress，原PR草稿不合并、不另开。
+
+<!-- block-layout-routing-lessons-20261029 -->
+
+经验积累（2026-10-29，UTC+8）：补充[Block 划分后的布局布线问题与处理经验](../../docs/experiments/issue-55-block-layout-routing-lessons.md)，Refs #55 / PR58。区分受保护原单元与新增缓冲器位置、具名填充替换和 PG 金属保持；记录 AP/via/短引线预筛、实际布线、完整 DRC、RC/时序与功能的不同门槛，以及 AUX45 仍未解决的反例。文档依据18:00的只读快照，后续实验状态以主任务最新回执为准；本次仅文档/轻量索引，不启动或改动主线实验，不改变底座冻结及任务验收状态。服务器独立交付包：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/deliverables/block-layout-routing-lessons-20261029T100718184702Z；证据索引 SHA-256：96da8e3ee0c638a3ba9fddfad8399fd61334d7431dcd3255afd4a64d79955b97。
