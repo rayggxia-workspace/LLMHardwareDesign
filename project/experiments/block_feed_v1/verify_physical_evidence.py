@@ -2,6 +2,7 @@
 import hashlib
 import json
 from pathlib import Path
+import sys
 import xml.etree.ElementTree as ET
 import zipfile
 
@@ -88,6 +89,26 @@ def verify(root):
             assert reports['formal']['strict_native_lec']['passed']
             assert all(reports['formal']['strict_native_lec']['checks'].values())
             assert reports['formal']['function_receipt_sha256'] == delivery['gate_receipts']['function']['sha256']
+            if 'computation' in reports['formal']:
+                formal = reports['formal']; computation = formal['computation']
+                raw = z.read('evidence/formal/computation-receipt.json')
+                assert sha(raw) == computation['receipt_sha256']
+                producer = json.loads(raw)
+                assert producer['operation'] == 'formal' and all(c['returncode'] == 0 for c in producer['commands'])
+                assert producer['commands'][-1]['log'] == 'formal.log'
+                assert Path(producer['source']) == Path(source['final_files']['6_final.v']['path']).parents[5]
+                assert computation['all_native_commands_successful'] and computation['all_original_outputs_rehashed']
+                assert computation['fresh_real_controls_passed']
+                log = z.read('evidence/formal/kepler.log')
+                assert sha(log) == formal['log_sha256'] == producer['outputs']['kepler.log']
+                sys.path.insert(0, str(root/'project/experiments/block_v1'))
+                from native_formal import inspect
+                assert inspect(log.decode()) == formal['strict_native_lec']
+                for name in ('before','after'):
+                    raw = z.read('evidence/formal/'+name+'-logic-proof.json')
+                    assert sha(raw) == producer['outputs'][name+'-logic-proof.json']
+                    assert json.loads(raw) == formal[name]
+                assert computation['exact_functional_view_sha256'] == reports['function']['full_final_netlist']['full_view_sha256'] == formal['after']['full_netlist_sha256']
             # Bind physical inputs to the exact already-archived tested RTL;
             # Git's checkout newline normalization is not an evidence rewrite.
             binding = json.loads((base.parent / 'source-binding.json').read_text())

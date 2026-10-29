@@ -60,6 +60,7 @@ def join(root, folder, out, run, function, computation):
         assert proof['liberty_sha256'] == sha(LIB)
         assert proof['logic_netlist_sha256'] == sha(computation/(name+'-logic.v'))
         assert proof['projected_graph_sha256'] == proof['constant_functions']['original_graph_sha256']
+        assert proof['constant_functions']['passed'] and proof['constant_functions']['exact_inverse_reconstruction']
         proofs[name] = proof
     assert proofs['before']['removed_count'] == 0 and proofs['after']['removed_count'] > 0
     assert proofs['before']['full_netlist_sha256'] == sha(results/'1_synth_lec.v')
@@ -69,7 +70,10 @@ def join(root, folder, out, run, function, computation):
     fn = json.loads(f.read_text()); assert fn['passed'] and len(fn['initial_runs']) == 3
     assert all(v['result']['passed'] for v in fn['initial_runs'].values())
     assert fn['top'] == top and fn['source_receipt_sha256'] == sha(folder/'receipt.json')
+    assert fn['library_sha256'] == sha(LIB)
     view = fn['full_final_netlist']; actual = Path(view['full_view'])
+    view_file = function/'physical-functional-proof.json'
+    assert sha(view_file) == fr['outputs'][view_file.name] and json.loads(view_file.read_text()) == view
     assert actual == function/'physical-functional.v'
     assert sha(actual) == view['full_view_sha256'] == fr['outputs'][str(actual.relative_to(function))]
     assert proofs['after']['full_netlist_sha256'] == sha(actual)
