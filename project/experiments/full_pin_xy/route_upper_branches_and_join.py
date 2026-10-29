@@ -110,7 +110,7 @@ def one(mode,root,resume_revision=None,profile='original'):
               'separate_profile_cost_not_pure_XY_gain':True,'qualification':'Same research technology; no rule relaxation or manufacturing claim'}
         selected=[];resume=None
         if resume_revision:
-            resume=(ROOT/'upper_branch_repair/r01' if resume_revision=='repair-r01' else ROOT/'upper_branch_composition'/resume_revision)/mode
+            resume=(ROOT/'upper_branch_repair'/resume_revision.split('-')[1] if resume_revision.startswith('repair-') else ROOT/'upper_branch_composition'/resume_revision)/mode
             rp=resume/'execution.json';previous=json.loads(rp.read_text())
             assert previous.get('completed_utc') and previous['all_closed_sources_unchanged']
             assert previous['native_returncodes']['all770_branch_route']==0 and previous['native_returncodes']['exact_native_composition']==0
@@ -118,7 +118,7 @@ def one(mode,root,resume_revision=None,profile='original'):
             guide=resume/'route.guide'
             if not guide.exists():
                 guides=[Path(p) for p in previous['source_SHA'] if p.endswith('/route.guide')]
-                assert resume_revision=='repair-r01' and len(guides)==1
+                assert resume_revision in ['repair-r01','repair-r02'] and len(guides)==1
                 guide=guides[0];assert sha(guide)==previous['source_SHA'][str(guide)]
                 rec['guide_reuse']='Same source-bound original guide; predecessor detailed repair changed physical wires but did not regenerate a global guide'
             else:assert sha(guide)==previous['files'][guide.name]['sha256']
@@ -129,6 +129,19 @@ def one(mode,root,resume_revision=None,profile='original'):
             bad=set(re.findall(r'net:(\S+)',(resume/'independent.drc').read_text()))
             byname={g['net']:g for g in physical};assert bad and bad<=set(byname)
             selected=sorted({i for n in bad for i in byname[n]['edge_ids']})
+            if profile=='access_neighbors':
+                assert mode=='llaccel' and resume_revision=='repair-r02' and previous['fresh_DRC_count']==2
+                from expand_upper_local_guides import endpoint_blockers,expand
+                neighbors,evidence=endpoint_blockers(resume/'branch_access.tsv.gz')
+                rec['original_remaining_DRC_branch_ids']=selected[:]
+                selected=sorted(set(selected)|set(neighbors))
+                native_log=resume/'branch_native.log';die=list(map(int,(resume/'before_route.die.tsv').read_text().split()))
+                for p in [native_log,resume/'before_route.die.tsv']:
+                    assert sha(p)==previous['files'][p.name]['sha256'];rec['source_SHA'][str(p)]=sha(p)
+                rec['actual_endpoint_M12_blockers']=evidence
+                expanded=out/'expanded_actual_neighbor.guide'
+                rec['guide_only_access_expansion']=expand(guide,expanded,selected,native_log,die)
+                guide=expanded
             source=resume/'routed_770_BRANCHES_NOT_SYSTEM.odb'
             rec['resume_closed_branch_source']=str(source);rec['global_route_reexecuted']=False
             rec['selected_original_edge_ids_for_detail_repair']=selected
@@ -228,10 +241,11 @@ def one(mode,root,resume_revision=None,profile='original'):
 def run(revision,resume_revision=None,modes_csv='opentpu,llaccel',profile='original'):
     modes=modes_csv.split(',');assert modes and len(set(modes))==len(modes) and set(modes)<={'opentpu','llaccel'}
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=4*len(modes)
-    if resume_revision:assert resume_revision in ['r01','repair-r01']
-    assert profile in ['original','guard15']
+    if resume_revision:assert resume_revision in ['r01','repair-r01','repair-r02']
+    assert profile in ['original','guard15','access_neighbors']
     if profile=='guard15':assert not resume_revision
-    family='upper_branch_guard' if profile=='guard15' else ('upper_branch_repair' if resume_revision else 'upper_branch_composition')
+    if profile=='access_neighbors':assert resume_revision=='repair-r02'
+    family='upper_branch_neighbors' if profile=='access_neighbors' else 'upper_branch_guard' if profile=='guard15' else ('upper_branch_repair' if resume_revision else 'upper_branch_composition')
     out=ROOT/family/revision;out.mkdir(parents=True,exist_ok=False)
     with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(lambda mode:one(mode,out,resume_revision,profile),modes))
     summary={'scope':'TWO_ALL770_ADAPTER_COMPOSITIONS_NOT_TWO_COMPLETE_SYSTEMS','full_qualification':False,
