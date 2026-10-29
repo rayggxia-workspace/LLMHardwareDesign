@@ -14,7 +14,9 @@ import sys
 import time
 
 p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
-p.add_argument('--native',type=Path,required=True);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
+p.add_argument('--native',type=Path,required=True);p.add_argument('--m-native',type=Path);p.add_argument('--s-native',type=Path)
+a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
+native={'m':a.m_native or a.native/'block_feed_m','s':a.s_native or a.native/'block_feed_s_macro'}
 cpus=sorted(os.sched_getaffinity(0));assert len(cpus)>=32
 m=dict(s.split(':',1) for s in Path('/proc/meminfo').read_text().splitlines());available=int(m['MemAvailable'].split()[0])*1024
 # Actual old C8 run080 MaxRSS180451804KiB, inherited only as scheduling evidence.
@@ -30,7 +32,7 @@ tasks={}
 for macro in ['m','s']:
     top='block_feed_m' if macro=='m' else 'block_feed_s_macro'
     seal=a.out/('source-'+macro)
-    tasks['seal-'+macro]=dict(args=['seal','--source',str(a.native/top),'--out',str(seal)],deps=[])
+    tasks['seal-'+macro]=dict(args=['seal','--source',str(native[macro]),'--out',str(seal)],deps=[])
     for op in ['physical','drc','function','formal']:
         args=[op,'--source',str(seal),'--out',str(a.out/(op+'-'+macro))]
         deps=['seal-'+macro]
@@ -50,8 +52,7 @@ with ThreadPoolExecutor(max_workers=n) as pool:
     while pending or running:
         for name in sorted(pending):
             if name.startswith('seal-'):
-                top='block_feed_m' if name=='seal-m' else 'block_feed_s_macro'
-                candidate=a.native/top
+                candidate=native['m' if name=='seal-m' else 's']
                 if not (candidate/'receipt.json').exists():
                     if not (a.native/'queue-result.json').exists():continue
                     pending.remove(name);done[name]=dict(passed=False,missing_completed_native_receipt=True);save();continue

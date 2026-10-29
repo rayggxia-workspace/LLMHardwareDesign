@@ -32,6 +32,8 @@ def source(folder):
         assert sha(folder/path)==receipt['outputs'][path]
     for name in ['1_synth_lec.v','bv1-input-diodes.tsv']:
         assert sha(results/name)==receipt['outputs'][str((results/name).relative_to(folder))]
+    if flow.get('repair'):
+        f=results/'feed-input-receivers.tsv';assert sha(f)==receipt['outputs'][str(f.relative_to(folder))]
     return folder,receipt,flow,results
 
 
@@ -42,6 +44,23 @@ def seal(raw,out):
     f=raw/'native-flow.json';assert sha(f)==receipt['outputs'][f.name]
     flow=json.loads(f.read_text());assert flow['passed'] and flow['pipeline_completed']
     assert flow['stages']==['do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish']
+    if flow.get('inherited_physical_stages'):
+        # A deliberately failed route can still supply its earlier completed
+        # CTS, but never transfer any route/final success or acceptance.
+        original=Path(flow['source_native_folder'])
+        producer=json.loads((original/'receipt.json').read_text())
+        binding={}
+        for i,stage in enumerate(flow['inherited_physical_stages']):
+            name='%02d-%s.log'%(i,stage)
+            assert sha(original/name)==flow['source_cts_stage_log_sha256'][name]==producer['outputs'][name]
+            commands=[c for c in producer['commands'] if c['log']==name]
+            assert len(commands)==1 and commands[0]['returncode']==0
+            binding[name]=producer['outputs'][name]
+        for name,row in flow['source_cts_files'].items():
+            assert sha(row['path'])==row['sha256']==producer['outputs'][str(Path(row['path']).relative_to(original))]
+        flow['completed_cts_provenance']=dict(producer_receipt_sha256=sha(original/'receipt.json'),
+            producer_passed=producer['passed'],successful_stage_logs=binding,
+            scope='Only explicit successful first-four-stage checkpoints; failed original route is not accepted')
     relative='flow/results/nangate45/bv1_'+flow['top']+'/base'
     before=raw/relative;after=out/relative;after.mkdir(parents=True)
     for name in ['config.mk','pins.json','pins.tcl','input.sdc']:
@@ -52,7 +71,9 @@ def seal(raw,out):
     original=(before/'6_final.sdc').read_text()
     flow['original_flow_boundary']=audit(original,json.loads((out/'pins.json').read_text())['pins'],dict(budget,clock_ns=3.3333))
     bound={}
-    for name in ['6_final.v','6_final.sdc','6_final.odb','6_final.def','6_final.spef','1_synth_lec.v','bv1-input-diodes.tsv']:
+    names=['6_final.v','6_final.sdc','6_final.odb','6_final.def','6_final.spef','1_synth_lec.v','bv1-input-diodes.tsv']
+    if flow.get('repair'):names.append('feed-input-receivers.tsv')
+    for name in names:
         p=before/name;assert sha(p)==receipt['outputs'][str(p.relative_to(raw))]
         if name in flow['final_files']:assert sha(p)==flow['final_files'][name]['sha256']
         bound[name]=sha(p);shutil.copyfile(p,after/name)

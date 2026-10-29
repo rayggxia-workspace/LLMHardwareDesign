@@ -7,6 +7,43 @@ import json
 from pathlib import Path
 import shutil
 
+def receiver_audit(folder,out,results,run,plan):
+    from io_slots import file_sha
+    expected={}
+    for line in (results/'feed-input-receivers.tsv').read_text().splitlines():
+        name,port,root,internal,old_loads,x,y=line.split('\t');assert port not in expected
+        expected[port]=dict(name=name,root=root,internal=internal,old_loads=int(old_loads))
+    wanted={p['pin'] for p in plan if p['direction']=='input' and p['pin']!='clk'}
+    assert set(expected)==wanted
+    script='read_db {'+str(results/'6_final.odb')+'}\n'
+    script+='''set block [ord::get_db_block]
+set f [open input-receivers-actual.tsv w]
+foreach port [$block getBTerms] {
+ if {[$port getSigType] in {POWER GROUND} || [$port getIoType] ne "INPUT" || [$port getName] eq "clk"} {continue}
+ set net [$port getNet];set receiver {};set diodes 0
+ foreach term [$net getITerms] {
+  set inst [$term getInst];set master [[$inst getMaster] getName]
+  if {$master eq "ANTENNA_X1" && [[$term getMTerm] getName] eq "A"} {incr diodes;continue}
+  if {$master ne "BUF_X8" || [[$term getMTerm] getName] ne "A" || $receiver ne ""} {error "Unexpected input-root load"}
+  set receiver $inst
+ }
+ if {$receiver eq "" || $diodes!=1} {error "Incomplete actual input receiver/protection"}
+ set internal [[$receiver findITerm Z] getNet]
+ if {$internal eq "NULL" || [llength [$internal getITerms]]<2} {error "Disconnected receiver output"}
+ puts $f "[$port getName]\\t[$receiver getName]\\t[$net getName]\\t[$internal getName]\\t[$receiver getLocation]"
+}
+close $f
+'''
+    (out/'receivers.tcl').write_text(script);run(['openroad','-no_init','-exit',out/'receivers.tcl'],'receivers.log')
+    actual={}
+    for line in (out/'input-receivers-actual.tsv').read_text().splitlines():
+        port,name,root,internal,location=line.split('\t');assert port not in actual
+        assert (name,root,internal)==tuple(expected[port][k] for k in ['name','root','internal'])
+        actual[port]=dict(name=name,location_dbu=list(map(int,location.split())))
+    assert set(actual)==wanted
+    return dict(passed=True,count=len(actual),master='BUF_X8',every_root_exactly_receiver_and_diode=True,
+        declared_sha256=file_sha(results/'feed-input-receivers.tsv'),actual_sha256=file_sha(out/'input-receivers-actual.tsv'))
+
 def fresh_controls(root,out,run):
     """Fresh actual native controls, not inherited pass flags."""
     from native_sta import fixture as sta_fixture
@@ -70,6 +107,7 @@ def physical(root,out,cpus,run,kind,selected=None):
         serialization=controls_report['serialization']
         constraints=lambda text,pins,approved: precise_constraints(text,pins,approved,serialization)
     boundary=constraints((out/'constraints-readback.sdc').read_text(),plan,budget)
+    receivers=receiver_audit(folder,out,results,run,plan) if flow.get('repair') else None
     masters=[];active=0;physical_area=0
     for line in (out/'physical-masters.tsv').read_text().splitlines():
         name,typ,signal,w,h,count=line.split('\t');area=int(w)*int(h)*int(count)/dbu**2
@@ -78,7 +116,7 @@ def physical(root,out,cpus,run,kind,selected=None):
         else:physical_area+=area
     expected=dict(line.split('\t')[:3][::2] for line in (results/'bv1-input-diodes.tsv').read_text().splitlines())
     observed=dict(line.split('\t') for line in (out/'physical-input-diodes.tsv').read_text().splitlines())
-    checks=dict(all_real_timed_endpoints=timing['passed'],rc_coverage=annotation['passed'],
+    checks=dict(fixed_input_receivers=(receivers is None or receivers['passed']),all_real_timed_endpoints=timing['passed'],rc_coverage=annotation['passed'],
                 used_signal_drivers=drivers['passed'],exact_m10_pin_geometry=exact,
                 exact_input_diode_roots=bool(expected) and expected==observed,
                 all_pg_iterms_correct=summary['incorrect_pg_iterms']==['0'] and int(summary['pg_iterm_count'][0])>0,
@@ -88,7 +126,7 @@ def physical(root,out,cpus,run,kind,selected=None):
                 exact_die=list(map(int,summary['die']))==[0,0,round(flow['die_um'][0]*dbu),round(flow['die_um'][1]*dbu)])
     receive(out,kind)
     result=dict(passed=all(checks.values()),top=flow['top'],checks=checks,timing=timing,rc_coverage=annotation,
-                used_drivers=drivers,boundary=boundary,pin_contract=pin_contract,masters=masters,active_area_um2=active,
+                used_drivers=drivers,boundary=boundary,pin_contract=pin_contract,fixed_input_receivers=receivers,masters=masters,active_area_um2=active,
                 physical_only_area_um2=physical_area,die_um=flow['die_um'],source=str(folder),
                 source_receipt_sha256=file_sha(folder/'receipt.json'),exact_final_function_qualified=False,
                 independent_full_deck_drc_qualified=False,qualified_hard_macro=False,
