@@ -46,8 +46,7 @@ foreach {name previous next_master} {
   puts $f "resize\t$name\t$previous\t$next_master"
 }
 
-proc feed_s_delay {prefix pins count final_master} {
-  global block getter f
+proc feed_s_delay {block getter f prefix pins count final_master} {
   if {![llength $pins] || $count<1} {error "Empty measured delay"}
   set original [[lindex $pins 0] getNet]
   if {$original eq "NULL"} {error "Open measured delay source"}
@@ -112,7 +111,7 @@ foreach term [$reset_net getITerms] {
   if {[lsearch -exact $reset_pins $term]<0} {lappend untouched "[[$term getInst] getName]/[[$term getMTerm] getName]"}
 }
 if {[lsort $untouched] ne [lsort {input175/Z max_cap36103/A fanout36092/A}]} {error "Unmeasured reset fanout changed"}
-feed_s_delay feed_measured_s_reset_delay $reset_pins 80 BUF_X8
+feed_s_delay $block $getter $f feed_measured_s_reset_delay $reset_pins 80 BUF_X8
 # Preserve the two branches used by the long reset->ready path.
 foreach name {max_cap36103 fanout36092} {
   if {[[$block findInst $name] findITerm A] eq "NULL" || [[[$block findInst $name] findITerm A] getNet] ne $reset_net} {error "Long reset branch changed"}
@@ -121,7 +120,7 @@ foreach suffix {639369 639497} {
   set name [format {$auto$ff.cc:337:slice$%s} $suffix]
   set inst [$block findInst $name]
   if {$inst eq "NULL" || [[$inst getMaster] getName] ne "DFF_X1"} {error "Measured din short endpoint changed"}
-  feed_s_delay feed_measured_s_din_${suffix} [list [$inst findITerm D]] 2 BUF_X1
+  feed_s_delay $block $getter $f feed_measured_s_din_${suffix} [list [$inst findITerm D]] 2 BUF_X1
 }
 close $f
 global_connect
