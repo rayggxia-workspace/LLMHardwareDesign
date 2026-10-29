@@ -11,6 +11,7 @@ module block_v1_v(
  C_MUL=13,C_ADD=14,C_END=15,T_SCAN=16,T_SAVE=17,
  ROT_LOW=18,ROT_HIGH=19,ROT_ROUND=20,ROT_COMBINE=21,S_REDUCE=22,C_REDUCE=23,
  M_EXEC=24,P_TOTAL=25,P_ROUND=26,G_MUL=27,G_ADD=28;
+ localparam F_DRAIN=29,F_DENOM=30;
  reg [4:0] phase;
  reg [4:0] mul_return;
  reg signed [31:0] a[0:7],b[0:7],input_mem[0:255],output_mem[0:255];
@@ -39,6 +40,8 @@ module block_v1_v(
  reg [15:0] argmax_tree[0:14],argmin_tree[0:14],stat_block_argmax,stat_block_argmin;
  reg leaf_enabled;reg signed [31:0] leaf_value;
  reg [2:0] function_kind;reg [8:0] function_sent,function_received,function_length;
+ // Register the exact two-U32 sum before the full-width accumulator.
+ reg [32:0] function_pair_sum;reg function_pair_valid;
  reg composing,function_source_replay,function_subtract_max;reg signed [31:0] rot_low[0:7],rot_high[0:7];
  reg [1:0] compose_kind;reg [63:0] epsilon;
  reg [63:0] factor;
@@ -165,7 +168,7 @@ module block_v1_v(
   if(reset)begin
    phase<=IDLE;mul_return<=IDLE;rsp_valid<=0;rsp_data<=0;rsp_error<=0;rsp_saturated<=0;
    a_valid<=0;b_valid<=0;replay_valid<=0;output_count<=0;stats_valid<=0;stats_final<=0;
-   id_valid<=0;top_valid<=0;function_sent<=0;function_received<=0;function_length<=0;composing<=0;
+   id_valid<=0;top_valid<=0;function_sent<=0;function_received<=0;function_length<=0;composing<=0;function_pair_valid<=0;
    broadcast_b<=0;swap_b<=0;point_op<=0;point_shift<=0;point_width<=0;point_count<=0;
    length<=0;offset<=0;factor<=0;group_n<=0;group_d<=0;group_kind<=0;stats_context<=0;function_source_replay<=0;function_subtract_max<=0;
   end else begin
@@ -307,24 +310,33 @@ module block_v1_v(
      if(offset+8>=length)phase<=C_END;else begin offset<=offset+8;phase<=C_MUL;end
     end
     C_END:begin
-     if(compose_kind==2)begin composing<=1;function_source_replay<=1;function_subtract_max<=1;function_kind<=0;function_sent<=0;function_received<=0;function_length<=length;sum<=0;phase<=F_RUN;end
+     if(compose_kind==2)begin composing<=1;function_source_replay<=1;function_subtract_max<=1;function_kind<=0;function_sent<=0;function_received<=0;function_length<=length;sum<=0;function_pair_valid<=0;phase<=F_RUN;end
      else if(sumsq==0&&epsilon==0)begin rsp_error<=1;rsp_valid<=1;phase<=IDLE;end
      else begin group_kind<=3;group_n<=compose_kind==0?({119'b0,length}<<96):(128'd1<<96);
       norm_square<={48'b0,sumsq};norm_count<=compose_kind==0?{7'b0,length}:16'd1;phase<=G_MUL;end
     end
     F_RUN:begin
      if(function_in)function_sent<=function_sent+2;
+     if(composing)begin
+      if(function_pair_valid)sum<=add128_grouped(sum,{95'b0,function_pair_sum},1'b0);
+      function_pair_valid<=function_valid;
+     end
      if(function_valid)begin
       output_mem[function_received]<=fy0;if(function_received+1<function_length)output_mem[function_received+1]<=fy1;
       if(function_error)rsp_error<=1;
-      if(composing)sum<=sum+$unsigned(fy0)+(function_received+1<function_length?$unsigned(fy1):32'd0);
+      if(composing)function_pair_sum<={1'b0,fy0}+{1'b0,(function_received+1<function_length?fy1:32'd0)};
       function_received<=function_received+2;
       if(function_received+2>=function_length)begin
-       if(composing)begin group_kind<=4;group_n<=128'd1<<48;group_d<=sum+$unsigned(fy0)+(function_received+1<function_length?$unsigned(fy1):32'd0);phase<=G_START;end
+       if(composing)phase<=F_DRAIN;
        else begin output_count<=function_error||rsp_error?0:function_length;rsp_valid<=1;phase<=IDLE;end
       end
      end
     end
+    F_DRAIN:begin
+     if(function_pair_valid)sum<=add128_grouped(sum,{95'b0,function_pair_sum},1'b0);
+     function_pair_valid<=0;phase<=F_DENOM;
+    end
+    F_DENOM:begin group_kind<=4;group_n<=128'd1<<48;group_d<=sum;phase<=G_START;end
     G_MUL:begin norm_product<=epsilon*norm_count;phase<=G_ADD;end
     G_ADD:begin group_d<=add128_grouped(norm_square,{48'b0,norm_product},1'b0);phase<=G_START;end
     G_START,G_ROOT:if(group_ready)phase<=phase==G_START?G_WAIT:G_ROOT_WAIT;

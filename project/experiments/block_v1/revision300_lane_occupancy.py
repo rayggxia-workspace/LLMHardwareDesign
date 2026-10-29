@@ -58,7 +58,7 @@ def measure(root,out,cpus,run,kind,variant):
     vector_norm_pipeline=vector_prefetched and 'G_MUL=27,G_ADD=28;' in rtls[0].read_text()
     if vector_prefetched:
         policy=json.loads((tools/'revision300-v-fresh.json').read_text())
-        generation='321' if vector_norm_pipeline else '315'
+        generation='329' if 'F_DRAIN=29,F_DENOM=30;' in rtls[0].read_text() else ('321' if vector_norm_pipeline else '315')
         assert policy['function']=='block-v1-20261029-'+generation+'/tasks/revision300-test-v'
         prior=out.parents[2]/('block-v1-20261029-'+generation+'/tasks/revision300-bench-v-'+variant)
     if prefetched:
