@@ -4,8 +4,8 @@ Leave the long original FastRoute job intact. No new placement, PDN, hook,
 topology, budget, leaf model or physical rule; still an unqualified lower trial.
 """
 from pathlib import Path
-import csv,datetime,json,os,re,sys,traceback
-from run_exports import ROOT,sha
+import csv,datetime,json,os,re,subprocess,sys,traceback
+from run_exports import ROOT,IMAGE,BIN,sha
 from run_escape_fixture import execute
 from run_parent_trial import tcl
 from run_common_integration import SHARED_SNAPSHOT,verify_graph
@@ -40,6 +40,7 @@ def run(revision):
     save()
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
     try:
+        rec['actual_OpenROAD_binary_SHA256']=subprocess.check_output(common+[IMAGE,'sha256sum',BIN]).decode().split()[0]
         helper=(DRIVER/'parent_trial.tcl').read_text().split('if {![stage load {',1)[0]
         lines=[helper,SHARED_SNAPSHOT,'set common_shared_pads {'+' '.join(w['construction_pad'] for w in shared)+'}']+libs
         lines+=['read_db '+tcl(odb),'common_shared_snapshot '+tcl(out/'before.shared.tsv'),
@@ -77,6 +78,7 @@ def run(revision):
             rec['complete_original_endpoint_graph_check_executed']=True
         if (out/'stages.tsv').exists():
             with (out/'stages.tsv').open() as f:rec['native_stage_status']={r['stage']:r['status'] for r in csv.DictReader(f,delimiter='\t')}
+        rec['actual_native_binary_unchanged']=subprocess.check_output(common+[IMAGE,'sha256sum',BIN]).decode().split()[0]==rec['actual_OpenROAD_binary_SHA256']
     except Exception:rec['actual_failure']=traceback.format_exc()
     rec['all_closed_sources_unchanged']=all(sha(Path(p))==s for p,s in inputs.items())
     rec['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
