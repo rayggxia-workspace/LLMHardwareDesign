@@ -34,6 +34,9 @@ def source(folder):
         assert sha(results/name)==receipt['outputs'][str((results/name).relative_to(folder))]
     if flow.get('repair'):
         f=results/'feed-input-receivers.tsv';assert sha(f)==receipt['outputs'][str(f.relative_to(folder))]
+    if flow.get('fanout_mode')=='partition':
+        for f in (folder/'partition-fanout.tcl',results/'feed-partition-fanout.tsv'):
+            assert sha(f)==receipt['outputs'][str(f.relative_to(folder))]
     return folder,receipt,flow,results
 
 
@@ -70,7 +73,9 @@ def seal(raw,out):
         assert sha(journal)==flow['source_native_journal_sha256']==r['outputs'][journal.name]
     relative='flow/results/nangate45/bv1_'+flow['top']+'/base'
     before=raw/relative;after=out/relative;after.mkdir(parents=True)
-    for name in ['config.mk','pins.json','pins.tcl','input.sdc']:
+    config_files=['config.mk','pins.json','pins.tcl','input.sdc']
+    if flow.get('fanout_mode')=='partition':config_files.append('partition-fanout.tcl')
+    for name in config_files:
         assert sha(raw/name)==receipt['outputs'][name];shutil.copyfile(raw/name,out/name)
     budget=flow['budget'];approved=re.sub(r'create_clock -name core -period [^ ]+',
         'create_clock -name core -period %.12g'%budget['clock_ns'],generate(budget))
@@ -80,6 +85,7 @@ def seal(raw,out):
     bound={}
     names=['6_final.v','6_final.sdc','6_final.odb','6_final.def','6_final.spef','1_synth_lec.v','bv1-input-diodes.tsv']
     if flow.get('repair'):names.append('feed-input-receivers.tsv')
+    if flow.get('fanout_mode')=='partition':names.append('feed-partition-fanout.tsv')
     for name in names:
         p=before/name;assert sha(p)==receipt['outputs'][str(p.relative_to(raw))]
         if name in flow['final_files']:assert sha(p)==flow['final_files'][name]['sha256']
