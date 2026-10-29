@@ -127,7 +127,7 @@ set filler_masters [lsort -unique $filler_masters];remove_fillers
 foreach i [$b getInsts] {set name [$i getName];if {[dict exists $selected $name]} {set m [[ord::get_db] findMaster [dict get $selected $name]];if {$m eq "NULL" || ![$i swapMaster $m]} {error "Size swap failed"};$i setPlacementStatus PLACED} else {$i setPlacementStatus LOCKED}}
 if {![stage isolated_legalization {detailed_placement -use_diamond_legalizer;check_placement -verbose}]} {close $stages;exit 1}
 dict for {name status} $statuses {[$b findInst $name] setPlacementStatus $status}
-set f [open @@POSES@@ w];puts $f [list set filler_masters $filler_masters];dict for {name master} $selected {set i [$b findInst $name];lassign [$i getLocation] x y;puts $f [list lappend size_replay [list $name $master $x $y [$i getPlacementStatus]]]};close $f
+set f [open @@POSES@@ w];puts $f [list set filler_masters $filler_masters];dict for {name master} $selected {set i [$b findInst $name];lassign [$i getLocation] x y;puts $f [list lappend size_replay [list $name $master $x $y [$i getPlacementStatus] [$i getOrient]]]};close $f
 fingerprint @@PLACED@@
 write_db @@CHECKPOINT@@
 close $stages
@@ -155,7 +155,7 @@ close $stages
         lines+=[routing,'read_guides '+tcl(guide),
           'if {![stage begin_incremental {global_route -start_incremental}]} {close $stages;exit 1}',
           'remove_fillers;set size_replay {};source '+tcl(out/'actual_size_poses.tcl'),
-          'if {![stage exact_verified_size_pose_replay {foreach r $size_replay {lassign $r name master x y status;set i [$b findInst $name];if {![$i swapMaster [[ord::get_db] findMaster $master]]} {error "Replay swap failed"};$i setLocation $x $y;$i setPlacementStatus $status};if {[llength $filler_masters]} {filler_placement -prefix PINXY_CURRENT_SIZE_FILL_ $filler_masters};global_connect;check_placement -verbose}]} {close $stages;exit 1}',
+          'if {![stage exact_verified_size_pose_replay {foreach r $size_replay {lassign $r name master x y status orient;if {$orient eq ""} {error "Replay lacks native verified orientation; old five-field replay is invalid"};set i [$b findInst $name];if {![$i swapMaster [[ord::get_db] findMaster $master]]} {error "Replay swap failed"};$i setOrient $orient;$i setLocation $x $y;$i setPlacementStatus $status};if {[llength $filler_masters]} {filler_placement -prefix PINXY_CURRENT_SIZE_FILL_ $filler_masters};global_connect;check_placement -verbose}]} {close $stages;exit 1}',
           'if {![stage incremental_global_route {global_route -end_incremental -guide_file '+tcl(out/'route.guide')+' -congestion_report_file '+tcl(out/'congestion.rpt')+'}]} {close $stages;exit 1}',
           'if {![stage detailed_route {detailed_route -output_drc '+tcl(out/'route.drc')+' -verbose 1}]} {close $stages;exit 1}',
           'foreach ob $temporary_obs {odb::dbObstruction_destroy $ob};if {[lsort [$b getObstructions]] ne $original_obs} {error "Original OBS changed"}',
@@ -169,7 +169,7 @@ close $stages
         native('fresh_DRC','read_db '+tcl(out/'routed.odb')+'\n'+routing+'\ndrt::check_drc -output_file '+tcl(out/'independent.drc')+'\nclose $stages',threads=1)
         rec['fresh_DRC_count']=len(re.findall(r'^violation type:',(out/'independent.drc').read_text(),re.M));rec['whole_signal_geometry']=check(out/'whole_access.tsv.gz',True)
         cells,ct=read_cells(out/'after.cells.tsv');assert {k:v for k,v in ct.items() if k[0] in nonfill}==terms
-        assert all(cells[n][0]==selected[n][1] if n in selected else cells[n]==before[n] for n in nonfill)
+        assert all(cells[n]==after[n] if n in selected else cells[n]==before[n] for n in nonfill),'Actual replay differs from native verified master/location/orientation/status'
         rec['exact_original_graph_with_only_proven_size_and_pose_changes']=True
         rec['pin_PG_die_preserved']={k:sha(out/('before.'+k+'.tsv'))==sha(out/('after.'+k+'.tsv')) for k in ['pins','pdn','die']};assert all(rec['pin_PG_die_preserved'].values())
         cost=lambda name:{r['instance']:r for r in csv.DictReader((out/(name+'.cell_cost.tsv')).open(),delimiter='\t') if r['type']!='CORE_SPACER'}
@@ -180,5 +180,6 @@ close $stages
     except Exception:rec['actual_failure']=traceback.format_exc();traceback.print_exc()
     rec['native_stages']={p.name:{r['stage']:r['status'] for r in csv.DictReader(p.open(),delimiter='\t')} for p in out.glob('*.stages.tsv')}
     rec['all_closed_sources_unchanged']=all(sha(Path(p))==s for p,s in inputs.items());rec['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat();rec['files']={p.name:{'bytes':p.stat().st_size,'sha256':sha(p)} for p in out.iterdir() if p.is_file() and p.name!='execution.json'};save()
-    return int(bool(rec.get('actual_failure')) or rec.get('fresh_DRC_count')!=0 or rec.get('setup_ns',-1)<0 or rec.get('hold_ns',-1)<0 or rec.get('literal_VIOLATED_markers_not_full_failure_count',1)>0 or not rec['all_closed_sources_unchanged'])
+    stages=rec['native_stages'].get('real_route_RC_STA.stages.tsv',{})
+    return int(bool(rec.get('actual_failure')) or rec.get('fresh_DRC_count')!=0 or rec.get('setup_ns',-1)<0 or rec.get('hold_ns',-1)<0 or rec.get('literal_VIOLATED_markers_not_full_failure_count',1)>0 or not all(stages.get(k)=='EXECUTED' for k in ['detailed_route','VDD','VSS','rcx','sta']) or not rec['all_closed_sources_unchanged'])
 if __name__=='__main__':sys.exit(run(*sys.argv[1:]))
