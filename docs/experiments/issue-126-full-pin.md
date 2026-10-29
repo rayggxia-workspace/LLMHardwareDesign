@@ -1,5 +1,21 @@
 # 全功能分块、全块二维 pin 与实际接入（Issue126）
 
+2026-10-29 09:57 CST（gate-r34接续R33）93117已实际FAILED，不能继续标运行中或布通：openTPU原生命令0、fresh native 8项、514物理网只有258网/1540端点整体中的部分连通，256个共享固定网各分成3个端点分量。闭合实际guide只有258网、全部256共享网均没有guide；按原770边逐一核验是258边连通、512边断开。全部256原FIXED M10属性/矩形并集覆盖、原hook/OBS/外框保持，证明保留固定金属本身不足以证明实际功能连接。llaccel在GRT-0116失败，无DRT/fresh/全网连通/RC/STA；整个93117 FAILED 1:0。所报403412.44μm的M11/M12等仅这次不完整试验的路由，不能拿来计算完整系统收益。
+
+已实际提交93120/driver f63ad792c145db656a1b50cbb5e8f586953713af在新upper_preconnected/r02接续：保持同一514物理网/770原边/1540 hook/256固定导体及原规则，只在helper的guide搜索内存副本临时移除256条FIXED片段，GRT返回后无论成功/失败均精确恢复原M10 FIXED定义并保存实际ODB/DEF；若GRT成功，必须全部514网都有native guide才允许DRT。原底座文件、PG/OBS、pin层及最终材料不改，原r01失败保留。当前两模式均已实际执行guide-only detach并进入GRT，尚非新的物理通过，后续真实连接/材料/FIXED/DRC和RC/STA门槛不降低。
+
+93122/driver e7ae24d37ac26ce460a509d5a8026e64b19b5437收集不可覆盖gate-r34，UTC01:54:49.531042；tar SHA256 bf52787d56a77fc1438016b96473485892469bb0325ecb62459d9a073036c10b。R33与R34来源/终态分开保留；全部514网/770边guide与端点分量CSV加入报告，34图及既有候选原始数据保持。完整六块资格、共同冻结、两完整功能及公平系统对照未完成，任务active/in_progress/Draft。登记pending、看板unverified同步pending、审查待指定。
+
+
+2026-10-29 09:43 CST（gate-r33）VECTOR93112已从93106同一严格关系通过的实际五输入恢复源继续P&R，不重复启发式setup/hold修复。原生独立合法化、placement检查及411243个原filler恢复已执行，保存回执legalization=0；全局/详细布线已实际运行，尚无fresh DRC/全块连通/RC/STA终态，主矩阵仍保留旧r01负setup源。新增49 BUF/365换型及+354.046μm²等此前成本独立记录，不当纯XY或外框面积收益。
+
+新增93117是两模式全量预连上下文试验：复用同一R02未合格底座与全部770边/1540原hook/256实际FIXED M10导体，原本已被固定导体连接的两支路合为同一物理网交给原生路由。两个模式的实际预路由DEF均已生成；核对514个物理网（256四端+258两端）、1540原辅助端点、全部770原边成员及256条FIXED metal10属性。导体及hook不改、未删边/减预算/改协议，未断言旧分解就是拥塞根因。GRT已启动，未取得完整布通或两功能物理资格；helper中的被动接点输入标签不代表额外真实驱动，不能用于完整STA。最终还须全部实际连通/材料精确并集/FIXED/OBS/fresh DRC等验证。
+
+93090两模式网格相位试验均已GRT-0116失败（openTPU UTC01:02:06.953141、LL UTC00:49:40.194098），DRT/fresh/全边连通/RC/STA未执行；物理轨道/规则/PG/OBS/hook保持，原50/200次及DRT失败不删。没有重提相同相位或搜索预算试验。MXU93074 fresh native继续运行且CPU活动；LL92690/92691及下层92855保持不改。
+
+93118复用不可覆盖driver59abaccee318945168cb375fce48bb988e29bb0a收集gate-r33，UTC01:42:24.431369；tar SHA256 ac7b2b2b80fc4adee70737234e6b1141ad33c9879fafa6c7775967db7fac9756。新上层物理驱动ca1236fb869a38ab017e4dc80dc1c09664d59f85；VECTOR驱动e68df58baf804b19b9334a31a92a3dcd02f17d6c。34幅已发布PNG/SVG保留，不重做原ABC。全部目标仍active/in_progress/Draft：六块完整物理资格、共同冻结、两完整功能、公平完整系统对照均未完成；登记pending、看板unverified/同步pending、管理员和审查人待指定。
+
+
 R31/R32发布前复核：管理结构、24767原pin/74301 ABC、27259文件SHA/164链接/18747 raw业务验证、Python编译、未修改的5项buffer合同测试、diff检查通过；Edge加载34幅图、常量位查询通过。最新矩阵/扩展表、SYS实际前后PNG与HTML截图已打开目视核验，图例与说明无重叠。当前head在线CI与新PNG/SVG上传以发布后GitHub实际读回为准；上述本地通过不提升物理资格。
 
 
