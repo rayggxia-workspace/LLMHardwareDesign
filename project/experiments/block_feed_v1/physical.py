@@ -96,6 +96,10 @@ def implement(args, run):
         # Avoid repeated resizer calls inside GPL on the large mux-based store.
         # The subsequent placed repair_design/repair_timing and final gates stay.
         config+='export GPL_TIMING_DRIVEN = 0\nexport ENABLE_PLACE_REPAIR_TIMING = 1\n'
+    if args.fanout_mode=='partition':
+        assert top=='block_feed_s_macro' and args.placement_mode=='geometric'
+        shutil.copyfile(ROOT/'project/experiments/block_feed_v1/partition_fanout.tcl',out/'partition-fanout.tcl')
+        config+='export PRE_RESIZE_TCL = '+str(out/'partition-fanout.tcl')+'\n'
     hook=(folder/'native_input_diodes.tcl').read_text().replace('  if {[$port getName] eq "clk"} {continue}\n','')
     if args.input_receivers:
         hook=(ROOT/'project/experiments/block_feed_v1/input_receivers.tcl').read_text()+'\n'+hook
@@ -111,6 +115,7 @@ def implement(args, run):
     if args.remove_abc_buffers:wanted['REMOVE_ABC_BUFFERS']='1'
     if args.placement_mode=='geometric':
         wanted.update(GPL_TIMING_DRIVEN='0',ENABLE_PLACE_REPAIR_TIMING='1')
+    if args.fanout_mode=='partition':wanted['PRE_RESIZE_TCL']=str(out/'partition-fanout.tcl')
     actual={}
     for key,value in wanted.items():
         log='variable-'+key+'.log';run(command+['print-'+key],log)
@@ -124,6 +129,7 @@ def implement(args, run):
     if args.input_receivers:result['repair']='Fixed BUF_X8 data input receivers in native macro; all limits unchanged'
     result['remove_abc_buffers']=args.remove_abc_buffers
     result['placement_mode']=args.placement_mode
+    result['fanout_mode']=args.fanout_mode
     def save():(out/'native-flow.json').write_text(json.dumps(result,indent=2)+'\n')
     save()
     for number,stage in enumerate(('do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish')):
@@ -141,6 +147,7 @@ def main():
     p.add_argument('--remove-abc-buffers',action='store_true')
     p.add_argument('--input-receivers',action='store_true')
     p.add_argument('--placement-mode',choices=['timing','geometric'],default='timing')
+    p.add_argument('--fanout-mode',choices=['original','partition'],default='original')
     args=p.parse_args();args.out=args.out.resolve();args.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,top=args.top,start_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),
                  affinity=sorted(__import__('os').sched_getaffinity(0)),commands=[],inputs={})
