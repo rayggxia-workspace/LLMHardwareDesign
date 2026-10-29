@@ -1,4 +1,44 @@
-2026-10-29 23:57 CST：Issue121互联侧线/PR133全宽修复实验闭合。M/T/S实验副本完整原生验收通过；M→T275、T→S281根及三种RC共6项全通过。S两处M2同网精确修补、fresh RCX、独立最终门及完整信号网表同一性证据齐全；原18生产文件未变、本侧线allocation全部结束，实测峰值6×16。入口：`docs/reports/2026-10-29-block-v1-full-bus-driver-repair.md`及`work/YUZE-LU/121/interconnect-fix-20261029/repair-results.json`。下一步主线/独立审查人审查候选及角色端口边界；本侧线不判定V/R或改变主线Issue整体状态。登记pending、看板unverified/同步pending、独立审查待指定。
+2026-10-29 23:48 CST：V380/93441/node17已自然FAILED/1：finish的PSM检测metal3上VSS-clk短接，坐标(525.910,340.150)–(526.035,340.270)um；PSM-0043/0069，最终RCX时序报告未生成，不能以route计数0/内置最终LEC通过放行。15原始文件/failed回执输入与归档核验，原ODB保留。新只读诊断384在现有R344/93237/node21空闲16–31核实际启动（srun PID3519346、step153），无新增allocation，检查真实金属/通孔与原生DRC，尚待结果。381/382被真实失败前置拦截，不重投380、不关闭PG检查；R344原任务继续、M/S/T保持接收。目标active/Issue121=in_progress/PR122=draft，登记pending/看板unverified与同步pending，独立审查待指定。
+
+2026-10-29 23:31 CST：V380/93441/node17已完成route、原finish内置最终LEC求解中；新13原始CTS/GRT文件与308源Git blobs/远端实际源核验。CTS setup−0.07/TNS−0.16/hold−0.25ns，最大cmd_index2→stats_sumsq1bit40；GRT setup报告−0.00（仍负）/TNS−0.01/hold+0.02ns，最大low_product0bit0→output_mem93bit7，不能作为最终通过。旧375完整原生/未修改GDS DRC0、严格LEC UNSAT/IDENTICAL51206/51195、diff全0通过；11原始文件与同一final-source及最终功能回执绑定核验。旧374最终−0.1232ns仍不接收，不向380转移。R344/93237/node21已GRT extra26/30，原任务CPU持续增长；345/346及381/382待真实前置。M/S/T保持，目标active、Issue121=in_progress/PR122=draft；登记pending/看板unverified与同步pending，独立审查待指定。
+
+2026-10-29 21:54 CST：旧375对V374实际最终网表的三初态功能已通过，各566999检查/414906拍、结果一致；11原始文件与308源Git blobs/回执核验，另2原始final-source文件证明374最终V/ODB绑定。V374仍因最终时序−0.1232ns不接收，375严格LEC/完整DRC继续；不向当前380转移资格。V380/93441/node17继续place、R344/93237/node21继续GRT，实际OpenROAD CPU均增长，无取消。381/382及345/346仍待真实前置，M/S/T保持接收，目标active/Issue121=in_progress/PR122=draft。
+
+2026-10-29 21:40 CST：383准入已实际部署，代码5a6e0be8/配置cdcfc85f，PID3315105；24远端文件/归档、正反控制、实际UID/cmdline及两轮读回通过。仅替换377轻量控制/退休未分配376，无EDA取消。V380已实际提交93441/node17并RUNNING，2026-10-29 13:38:26 UTC，源5a6e0be8/归档b6854770；378七项全通过（映射413216单元、25531DFF），379七测量全通过。381最终验收/382接口等待真实前置；原375仍正常收尾，物理门因374最终−0.12ns失败。R344/93237/node21全局布线extra20/30，原任务继续；M/S/T接收保持。实际本Issue提交前6个、提交380后7个allocation，最大8，默认6×16依赖/RAM约束动态补位。所有当前V/R最终资格仍未齐，Issue121=in_progress/PR122=draft，登记pending、看板unverified/同步pending、独立审查待指定。
+
+2026-10-29 21:35 CST：378新源七项检查（含综合映射）全部通过；379在R311/93125/node18现有allocation内七测量通过，135有限场景+78公共端口测量同373，53原始/39稳定/308源核验。实际预算重绑379，八模型80候选全部model字段不变。380/381/382全新物理/最终门/接口已冻结准备但尚未分配；383控制器尚待部署。旧375物理门因374最终负时序失败，DRC和最终网表功能检查继续正常运行。R344原任务继续；M/S/T保留。Issue121=in_progress，PR122=draft，登记pending、看板unverified/同步pending、审查待指定。
+
+2026-10-29 21:24:34 CST：378已在R344/93237/node21已有allocation内启动，父0–15、五个16CPU子槽16–95动态补位，无新增allocation。六功能/算术项通过、映射运行：三初态各566999检查/414906拍、公共42/扩展36及组合/延迟全部测量同367，实际264bit证明和单bit负例通过；47原始/35稳定/308源核验。379采样将绑定378新公共回执，380→381→382全新物理/最终门/接口及383准入尚待准备；本地选择器已改，远端377仍保持原配置。V374最终−0.12 ns不接收，R344继续原任务，M/S/T保持。目标active、Issue121=in_progress/PR122=draft，登记pending、看板unverified/同步pending、审查待指定。
+
+2026-10-29 21:13:54 CST：V374六原生阶段完成，最终RCX setup−0.12 ns/TNS−37.33 ns，product[3][4]→stat_block_sq[66]，300MHz未接收；流程内最终LEC UNSAT/IDENTICAL与路由违规0不替代独立验收。14原始文件及源/input.v/receipt输入绑定核验。选定同一基础V的U80平方和三层树改用既有完整128位分组进位，保留U80节点、周期、尾块mask与全部数值/接口；新378验证尚待提交。已启动旧后继正常收尾，R344继续全局布线。M/S/T接收保持、V/R最终未齐；目标active、Issue121=in_progress/PR122=draft，登记pending、看板unverified/同步pending、审查待指定。
+
+2026-10-29 20:08:54 CST：V374 GRT setup/TNS −0.01/−0.02 ns、hold +0.02 ns，最大product[2][8]→output_mem[82][17]、最小point_total[7][116]自环，9原始SHA/字节及同一input.v/已核验308源绑定。300MHz尚未通过，原93372继续route/finish；375/376待真实最终产物。另补存3份完整CTS证据，76500字节报告为旧74358字节快照原样追加2142字节，CTS时序不变，旧快照保持。R344仍全局布线、原任务保留。M/S/T接收保持、V/R最终未齐；目标active，Issue121=in_progress/PR122=draft，登记pending、看板unverified/同步pending、审查待指定。
+
+2026-10-29 19:53:30 CST：V374 已完成 CTS 并进入 route 阶段；最新日志为全局布线修复。CTS setup/TNS −0.01/−0.02 ns、hold −0.04 ns，尚未通过；最大 norm_square[1]→group_unit.denominator[127]，最小 cmd_data[22]→input_mem[220][22]。修复内置 LEC 实际 UNSAT/IDENTICAL（51206 输入/51195 输出，差异均0），11原始文件及308源/Git/远端SHA核验；此为阶段诊断，最终RCX和375/376独立验收仍待实际结果。R344 全局布线额外迭代13/30，继续原任务，不增加版本或中断EDA。M/S/T接收保持，V/R最终未齐，目标active、Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending、审查待指定。
+
+2026-10-29 19:15:50 CST：377代码f318db6e/配置f61222a5、PID3065817，24原文件/归档SHA与两轮进程读回通过；仅替换372轻量控制并退休未分配369/370/371，全部EDA不取消。367/373各七项通过，80预算实际重绑373；374于19:12:31提交93372/node17，当前结构/综合检查运行，375/376按真实前置；7原始启动文件/308源核验。R344继续route。相关allocation含排队当前8个，保留上限；M/S/T接收、V/R最终未齐，目标active，Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending、审查待指定。
+
+2026-10-29 19:11:46 CST：367七项全部通过、415764映射单元（较361少29668，非物理面积），10原始/308源绑定；373七测量通过、53原始/39稳定/308源核验，135有限+78公共测量全同362，80预算已按373实际重绑且成本不变。368错误父类型在claim前FAILED/1，5原始保留，373新运行修正。374→375→376全新物理/最终门/接口已准备，377准入待部署；旧369/370/371不作新源资格。R344继续route。M/S/T接收，V/R最终未齐，目标active/Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending、审查待指定。
+
+2026-10-29 19:04:26 CST：372轻量准入PID3047721已部署，代码1376465/配置2d51a8b，24个远端文件SHA与原归档核验、正反控制和两轮实际读回通过。仅替换366轻量控制并退休未分配365；364已有运行记录，保留正常收尾，不取消任何EDA。369等待367六行为/算术/映射与368七测量实际回执，370/371待后继；R344/345/346保留。V363/93294已自然COMPLETED/0但最终setup−0.13ns，不能接收。367六项通过、映射运行；M/S/T接收保持、V/R最终未齐，目标active、Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending、审查待指定。
+
+2026-10-29 19:00:49 CST：V363六原生阶段自然完成但最终RCX setup−0.13ns，cmd_valid→stats_sumsq[1][79]，未达300MHz。新源367命令/状态使能分离，93237现有allocation节点内五×16并发、六行为/算术项通过，映射运行；三初态各566999检查/414906拍、公共42/扩展36全部测量与361一致，47原始/308源核验。368已准备测量，369→370→371已准备全新物理及完整验收，等待真实依赖；372准入待部署，不声称已运行。R344继续route，原有EDA不取消。M/S/T接收保持、V/R最终未齐，目标active，Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending、独立审查待指定。
+
+2026-10-29 18:56 CST：V363流程内最终LEC通过，最终RCX setup−0.13ns/TNS−12.04ns，cmd_valid→stats_sumsq[1][79]，hold仅舍入0，300MHz未接收。9原始文件与input.v/既有CTS源绑定核验。选定同一V的命令/运行状态使能分离，不加周期/资源、不放宽数值或时钟，待新源367全验证及重新物理。原363/R344正常收尾，R344继续route。M/S/T接收保持，目标active、Issue121=in_progress/PR122=draft；登记pending/看板unverified与同步pending、独立审查待指定。
+
+2026-10-29 17:48:49 CST：V363 CTS内置LEC实际UNSAT/IDENTICAL（51142公共输入/51131公共输出、diff均0）；CTS setup/hold约−0.12/−0.08ns，rsp_ready→stats_sumsq[0][79]/rsp_valid；GRT setup−0.10/hold+0.02ns，rsp_ready→stats_sumsq[1][79]及cmd_data[117]→a[3][21]，仍详细布线。旧357六原生阶段自然COMPLETED/0，最终RCX setup−0.15ns、offset[2]→stat_block_max[16]，hold仅舍入0，不接收也不转移资格。三诊断目录共29原始文件SHA/字节与各308源绑定核验。R344仍全局布线拥塞修复；364/365及345/346按真实前置。M/S/T接收保持、V/R最终未齐，Issue121=in_progress/PR122=draft、目标active；登记pending、看板unverified/同步pending、独立审查待指定。
+
+2026-10-29 16:28:31 CST：V361七项全部通过、445432映射单元（较355多2656，非物理面积），映射10原始/308源核验；362七项/135有限+78公共测量通过、80预算重绑且成本字段保持，原预算字节封存。366源423c006/配置4034242、PID2777187及两轮核验通过；只替换360轻量控制、未分配358/359退休，全部EDA正常收尾。366于16:23:02自动提交V363/93294/node17，全新原生继续，364/365待真实前置。R344 CTS内置LEC通过，setup仅舍入0/hold−0.24ns，9原始/307源绑定，已route；345/346待前置。M/S/T接收、V/R最终未齐，Issue121=in_progress/PR122=draft、目标active；登记pending/看板unverified与同步pending。
+
+2026-10-29 16:19 CST：V361六项新源行为/264bit算术通过，三初态各566999检查/414906拍、公共42/扩展36全部测量与355一致，47原始/35稳定/308源绑定；映射继续。362在现有V357/93250空闲80CPU七项通过，53原始/39稳定/308源核验，135有限+78公共场景全部测量与356一致，无新allocation。363原生→364最终四门/六文件/完整几何→365接口已stage/validate，源423c006/archive61a504d6，均待真实前置，360控制尚未替换。R344 CTS继续；M/S/T接收、V/R最终未齐，Issue121=in_progress/PR122=draft、目标active，登记pending/看板unverified及同步pending。
+
+2026-10-29 16:09 CST：旧350六原生阶段自然COMPLETED/0，最终RCX setup−0.11ns/TNS−11.47ns，offset[0]→stat_block_min[6]；13原始快照及308源绑定。当前357 CTS内置LEC实际UNSAT/IDENTICAL，CTS setup−0.05ns/TNS−0.63ns、hold−0.17ns，offset[0]→stat_block_sq[65]，11原始/308源绑定；原357继续route。选定同一基础V归约叶值复用operand_a、捕获8bit尾块mask，不增操作周期，361新源验证/362测量及后续363/364/365资格全部待实际结果。R344已CTS，345/346待前置；M/S/T接收保持，V/R最终未齐，Issue121=in_progress/PR122=draft、目标active，登记pending/看板unverified与同步pending。
+
+2026-10-29 15:28 CST：V355七项全部通过、442776工艺单元，映射补充10原始文件/308源核验；356七项全部通过、135场景与349测量一致、53原始/39稳定/308源绑定，80预算按356重算且成本字段保持。V357/93250于15:19:01实际提交并在node16 fresh place；358最终门/六文件/完整几何及359接口待真实前置。360轻量准入已部署，源6f4/配置ac3d，替换354、仅未分配351/352退休，所有EDA正常收尾；R344/93237 node21 place继续。M/S/T接收、V/R最终未齐，Issue121=in_progress/PR122=draft、目标active；登记pending/看板unverified与同步pending。
+
+2026-10-29 15:11 CST：V355六数值/264bit算术项已过，47原始/35稳定/308源绑定核验，三初态各566999检查/414906拍，公共42/扩展36全部测量与348一致；映射继续。355复用R344/93237空闲80CPU，356复用R311/93125空闲80CPU执行七项新源占用/有限工作空间，均五个16CPU槽即时补位、无新allocation。选定未来357全新原生→358最终门/六文件/完整几何→359接口，仍待staging与真实前置；控制源RUNS已改，原354进程尚未替换。R344物理继续，M/S/T已接收、V/R最终未齐；Issue121=in_progress/PR122=draft、目标active，登记pending/看板unverified与同步pending。
+
+2026-10-29 14:49 CST：350实际global-route setup−0.08ns/hold+0.02ns，最差product[4][4]→output_mem[89][5]，9原始文件/308源与路径映射封存。选定同一基础V的N_WRITE完整S128高低乘积加法改用既有add128_grouped，RNE/饱和/周期保持，当前新源数值、映射、物理和最终资格均待355后续验证。原350继续正常收尾；R344/93237已placement，345/346待前置。M/S/T接收保持、V/R最终未齐，Issue121=in_progress、PR122=draft、目标active，登记pending/看板unverified与同步pending。
 
 2026-10-29 14:29 CST：R342映射实际通过，709124工艺单元/8个32×33乘法器，9原始小文件与307源核验；93189因保留两项旧引用采样失败自然FAILED/1:0，映射自身通过，修正后的343采样通过。354按逐项前置自动提交R344/93237/node21（14:24:55），已进入fresh floorplan，7启动原始文件/307源及R RTL绑定核验；345/346仍待真实前置。V350 CTS内置LEC已UNSAT/IDENTICAL，CTS setup−0.04/hold−0.23ns，11原始/308源绑定，继续原生route；351/352待真实前置。M/S/T已接收、V/R最终未齐，Issue121=in_progress/PR122=draft、目标active，登记pending、看板unverified/同步pending，管理员/独立审查待指定。
 
@@ -548,3 +588,5 @@ R首版真实RTL测试195通过240组GDN/SSM和100组四抽头卷积，397971检
 
 
 2026-10-29（互联侧线补齐交付）：三种实际预制接口完整原生P&R/全DRC/严格LEC通过，两槽桥真实M/T/S门级15例×三初态通过；MT17/TS15根新层实走线/独立研究几何通过，41项电气测量（17项条件通过）及31条端口C预算收尾。guarded当前组合仍失败：MT9 cap；TS8 cap+1 slew；全宽275/281根未收敛，不能认定组合通过。原生产18文件末次SHA保持，16轮源/资源已审计、全部终止；峰值6×16即时补位。主线Issue121仍in_progress，不改PR122/主工作树；现有PR133更新有限负面结论、报告与确定性证据包。独立审查待指定，登记pending，看板unverified/同步pending。
+
+2026-10-29 23:57 CST：Issue121互联侧线/PR133全宽修复实验闭合。M/T/S实验副本完整原生验收通过；M→T275、T→S281根及三种RC共6项全通过。S两处M2同网精确修补、fresh RCX、独立最终门及完整信号网表同一性证据齐全；原18生产文件未变、本侧线allocation全部结束，实测峰值6×16。入口：`docs/reports/2026-10-29-block-v1-full-bus-driver-repair.md`及`work/YUZE-LU/121/interconnect-fix-20261029/repair-results.json`。下一步主线/独立审查人审查候选及角色端口边界；本侧线不判定V/R或改变主线Issue整体状态。登记pending、看板unverified/同步pending、独立审查待指定。

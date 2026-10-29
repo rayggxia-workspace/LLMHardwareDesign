@@ -23,6 +23,8 @@ module block_v1_v(
  reg signed [31:0] mul_a[0:7];reg signed [32:0] mul_b[0:7],point_b[0:7];
  // Break operand selection from the eight shared multipliers.
  reg signed [31:0] operand_a[0:7];reg signed [32:0] operand_b[0:7];
+ // Align reduction validity with the existing registered multiplier operands.
+ reg [7:0] operand_reduce_mask;
  reg signed [64:0] product[0:7],low_product[0:7];
  reg signed [127:0] point_total[0:7],point_rounded[0:7];
  reg signed [127:0] rounded,total[0:7],sum;
@@ -120,8 +122,8 @@ module block_v1_v(
    end
   end
   for(integer l=0;l<8;l=l+1)begin
-   leaf_enabled=phase==S_REDUCE?l<stats_n:offset+l<length;
-   leaf_value=phase==S_REDUCE?a[l]:input_mem[offset+l];
+   leaf_enabled=operand_reduce_mask[l];
+   leaf_value=operand_a[l];
    sum_tree[7+l]=leaf_enabled?$signed(leaf_value):64'sd0;
    square_tree[7+l]=leaf_enabled?$unsigned(product[l]):80'd0;
    max_tree[7+l]=leaf_enabled?leaf_value:32'sh80000000;
@@ -130,7 +132,11 @@ module block_v1_v(
    argmin_tree[7+l]=leaf_enabled?stats_base+l:16'hffff;
   end
   for(integer t=6;t>=0;t=t-1)begin
-   sum_tree[t]=sum_tree[2*t+1]+sum_tree[2*t+2];square_tree[t]=square_tree[2*t+1]+square_tree[2*t+2];
+   sum_tree[t]=sum_tree[2*t+1]+sum_tree[2*t+2];
+   // Preserve each full U80 sum; use the proven grouped carry primitive
+   // at all three square-reduction levels instead of serial ripple sums.
+   square_tree[t]=add128_grouped({48'b0,square_tree[2*t+1]},
+                               {48'b0,square_tree[2*t+2]},1'b0);
    if(max_tree[2*t+1]>max_tree[2*t+2]||(max_tree[2*t+1]==max_tree[2*t+2]&&argmax_tree[2*t+1]<argmax_tree[2*t+2]))begin
     max_tree[t]=max_tree[2*t+1];argmax_tree[t]=argmax_tree[2*t+1];end
    else begin max_tree[t]=max_tree[2*t+2];argmax_tree[t]=argmax_tree[2*t+2];end
@@ -179,7 +185,7 @@ module block_v1_v(
  integer i;reg signed [127:0] lower,upper;
  always @(posedge clk)begin
   if(reset)begin
-   phase<=IDLE;mul_return<=IDLE;rsp_valid<=0;rsp_data<=0;rsp_error<=0;rsp_saturated<=0;
+   phase<=IDLE;mul_return<=IDLE;operand_reduce_mask<=0;rsp_valid<=0;rsp_data<=0;rsp_error<=0;rsp_saturated<=0;
    a_valid<=0;b_valid<=0;replay_valid<=0;output_count<=0;stats_valid<=0;stats_final<=0;
    id_valid<=0;top_valid<=0;function_sent<=0;function_received<=0;function_length<=0;composing<=0;function_pair_valid<=0;
    broadcast_b<=0;swap_b<=0;point_op<=0;point_shift<=0;point_width<=0;point_count<=0;
@@ -278,9 +284,16 @@ module block_v1_v(
      end
      default:rsp_error<=1;
     endcase
-   end else case(phase)
+   end
+   // Commands are accepted only in IDLE; active phases cannot accept one.
+   // Keep their datapath enables independent of cmd_valid/rsp_ready.
+   case(phase)
     P_MUL,S_MUL,C_MUL:begin
-     for(i=0;i<8;i=i+1)begin operand_a[i]<=mul_a[i];operand_b[i]<=mul_b[i];end
+     for(i=0;i<8;i=i+1)begin
+      operand_a[i]<=mul_a[i];operand_b[i]<=mul_b[i];
+      if(phase==S_MUL)operand_reduce_mask[i]<=i<stats_n;
+      else if(phase==C_MUL)operand_reduce_mask[i]<=offset+i<length;
+     end
      mul_return<=phase==P_MUL?P_TOTAL:phase==S_MUL?S_REDUCE:C_REDUCE;
      phase<=M_EXEC;
     end
@@ -379,7 +392,8 @@ module block_v1_v(
     end
     N_WRITE:begin
      for(i=0;i<8;i=i+1)if(offset+i<length)begin
-      rounded=rne(($signed({{63{product[i][64]}},product[i]})<<<32)+$signed({{63{low_product[i][64]}},low_product[i]}),32);
+      // Preserve full S128 merge and RNE; avoid a separate ripple carry before RNE.
+      rounded=rne(add128_grouped($signed({{63{product[i][64]}},product[i]})<<<32,$signed({{63{low_product[i][64]}},low_product[i]}),1'b0),32);
       if(rounded< -128'sd2147483648)begin rounded=-128'sd2147483648;rsp_saturated<=1;end
       if(rounded>128'sd2147483647)begin rounded=128'sd2147483647;rsp_saturated<=1;end
       output_mem[offset+i]<=rounded[31:0];

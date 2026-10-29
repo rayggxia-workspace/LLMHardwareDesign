@@ -1,0 +1,95 @@
+make: Entering directory '/OpenROAD-flow-scripts/flow'
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 6_1_fill density_fill
+Running density_fill.tcl, stage 6_1_fill
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-380/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/5_route.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-380/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/5_route.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+exec cp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-380/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/5_route.odb /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-380/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/6_1_fill.odb
+Elapsed time: 0:02.52[h:]min:sec. CPU time: user 1.69 sys 0.77 (97%). Peak memory: 1516720KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+6_1_fill               .odb          2        2     0.98     1481 7422b697f1
+cp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-380/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/5_route.sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-380/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/6_1_fill.sdc
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 6_report final_report
+Running final_report.tcl, stage 6_report
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-380/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/6_1_fill.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-380/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/6_1_fill.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-380/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/6_final.odb
+write_sdc -no_timestamp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-380/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/6_final.sdc
+Deleted 0 routing obstructions
+Elapsed time: 17:44.78[h:]min:sec. CPU time: user 1114.09 sys 8.31 (105%). Peak memory: 11792396KB.
+Global output passed lec test
+[INFO RCX-0431] Defined process_corner X with ext_model_index 0
+[INFO RCX-0029] Defined extraction corner X
+[INFO RCX-0435] Reading extraction model file /OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules ...
+[INFO RCX-0436] RC segment generation block_v1_v (max_merge_res 50.0) ...
+[INFO RCX-0040] Final 2570810 rc segments
+[INFO RCX-0439] Coupling Cap extraction block_v1_v ...
+[INFO RCX-0440] Coupling threshhold is 0.1000 fF, coupling capacitance less than 0.1000 fF will be grounded.
+[INFO RCX-0442] 4% of 4630093 wires extracted
+[INFO RCX-0442] 10% of 4630093 wires extracted
+[INFO RCX-0442] 15% of 4630093 wires extracted
+[INFO RCX-0442] 20% of 4630093 wires extracted
+[INFO RCX-0442] 25% of 4630093 wires extracted
+[INFO RCX-0442] 31% of 4630093 wires extracted
+[INFO RCX-0442] 36% of 4630093 wires extracted
+[INFO RCX-0442] 47% of 4630093 wires extracted
+[INFO RCX-0442] 53% of 4630093 wires extracted
+[INFO RCX-0442] 59% of 4630093 wires extracted
+[INFO RCX-0442] 65% of 4630093 wires extracted
+[INFO RCX-0442] 71% of 4630093 wires extracted
+[INFO RCX-0442] 76% of 4630093 wires extracted
+[INFO RCX-0442] 82% of 4630093 wires extracted
+[INFO RCX-0442] 88% of 4630093 wires extracted
+[INFO RCX-0442] 100% of 4630093 wires extracted
+[INFO RCX-0045] Extract 508833 nets, 3055351 rsegs, 3055351 caps, 7747894 ccs
+[INFO RCX-0042] 100000 nets finished
+[INFO RCX-0042] 200000 nets finished
+[INFO RCX-0042] 300000 nets finished
+[INFO RCX-0042] 400000 nets finished
+[INFO RCX-0042] 500000 nets finished
+[INFO RCX-0443] 508833 nets finished
+[INFO PSM-0040] All shapes on net VDD are connected.
+########## IR report #################
+Net              : VDD
+Corner           : default
+Total power      : 1.61e+00 W
+Supply voltage   : 1.10e+00 V
+Worstcase voltage: 9.31e-01 V
+Average voltage  : 1.09e+00 V
+Average IR drop  : 6.87e-03 V
+Worstcase IR drop: 1.69e-01 V
+Percentage drop  : 15.35 %
+######################################
+[WARNING PSM-0043] Shorted shape on net VSS to net clk at (525.910um, 340.150um) - (526.035um, 340.270um), layer: metal3.
+[ERROR PSM-0069] Check connectivity failed on VSS.
+PSM-0069
+    while executing
+"psm::analyze_power_grid_cmd  [psm::find_net $keys(-net)]  [sta::parse_scene_or_default keys]  $source_type  $error_file  [info exists flags(-allow_reu..."
+    (procedure "analyze_power_grid" line 36)
+    invoked from within
+"analyze_power_grid -net ${gndNetName}  -error_file $::env(REPORTS_DIR)/${gndNetName}.rpt"
+    ("dict for" body line 3)
+    invoked from within
+"dict for {gndNetName gndNetVoltage} $::env(GND_NETS_VOLTAGES) {
+      set_pdnsim_net_voltage -net ${gndNetName} -voltage ${gndNetVoltage}
+      analyz..."
+    invoked from within
+"if {
+  [env_var_exists_and_non_empty RCX_RULES]
+  && !$::env(SKIP_DETAILED_ROUTE)
+} {
+  # RCX section
+  define_process_corner -ext_model_index 0 X
+  s..."
+    (file "/OpenROAD-flow-scripts/flow/scripts/final_outputs.tcl" line 23)
+    invoked from within
+"source $::env(SCRIPTS_DIR)/final_outputs.tcl"
+    (file "/OpenROAD-flow-scripts/flow/scripts/final_report.tcl" line 8)
+Elapsed time: 24:11.30[h:]min:sec. CPU time: user 1524.63 sys 28.37 (107%). Peak memory: 11792396KB.
+make[1]: *** [Makefile:685: do-6_report] Error 1
+make: *** [Makefile:707: do-finish] Error 2
+make: Leaving directory '/OpenROAD-flow-scripts/flow'
