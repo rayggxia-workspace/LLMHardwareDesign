@@ -121,13 +121,14 @@ clock 使用共同输入、真实状态负载、CTS资源和最终线路，分�
 
 <!-- current-method-checkpoint -->
 
-## 当前方法增量：2026-10-29T04:13:47.859996+00:00
+## 当前方法增量：2026-10-29T05:11:28.795622+00:00
 
-1. **接入感知的有界放置已实现并验证限定范围。** 从当前完整native源、实际行/site/轨道、master PIN/OBS、实际via1及所有非目标固定导体生成候选；先保守扫过孔landing/cut包围及间距，逐个选择62个既有buffer姿态（本次移动58、保留4），不移动原546397实例。搜索限制±20rows/±80sites，是研究启发式，不证明全局最优；BUF_X2专用适配尚不能直接推广任意Block。规划→真实新ODB→native合法放置/离site负例→完整设计背景下全部62首via区域DRC/真实异网短接负例，分层给结论。代码plan_access_aware_buffer_sites.py、materialize_auxiliary_driver_stages.py、qualify_access_aware_buffer_first_vias.py/.tcl。
-2. **原固定几何保留→补布剩余连接的方法已在小夹具native验证。** 同一目标原固定wire/via精确复制为临时障碍以保持空间占用，暂从待布网剥离原线，仅对缺失部分实际详细布线；将原几何精确合并回actual wire，清除且只清除本次影子障碍，独立读回、严格公共物理岛/接触检查及fresh DRC。实际11个原形状保持、DRC0，实际删线负例检出。代码qualify_partial_fixed_access.py/.tcl与partial_fixed_access_fresh_drc.tcl。**全61引出/完整124网适配尚未完成；不能把夹具成功扩张为完整案例。**
-3. **失败反馈必须细于逻辑端口。** 93116最终fresh89违规、55异网形状对，93131实际61个M8物理岛断开；旧逻辑BTerm连通门槛不足。后续所有结果加严格physical_BPin_island_review门槛，不改写或复用历史弱PASS作为完整证据。合法site不代表第一过孔可接入；GRT guides不代表已有wire；配置/软件AP候选不代表native PA或最终DRC。
-4. **原几何/版本与资源约束。** 对每个源保留完整输入/代码/配置/工具SHA、全量保持性、声明可变集合、真实修改与负例。原始输入/封存结果只读；4CPU总预算、native≤4且实际单线程如实记录。新58位置版不是最终冻结底座，旧AUX RC/功能及当前191父版不能跨版本自动继承。
-5. **下一实现模块。** 以真实原access plan.steps选出且仅选出61个端口引出，验证当前PIN/原源身份，产生固定几何投影、完整124网补布与精确回装；接上全量保持性、所有物理岛、异网接触、fresh全片DRC/PG，再RC/质量/完整功能。不能引入虚构-incremental ECO命令、缩规模、删固定导体或放宽3ns。
+- **完整源到完整源的逻辑绑定已验证限定范围。** 93182对新58位置源重新解析完整网表，65545同名状态/168074锥差异0、真实状态输入破坏检出。沿用certify_driver_stage_logic.py及既有Lib/model约束；不把位移相同、旧回归或缓冲器恒等行为代替新源证书。最终route导出网表仍须精确匹配，再实际完整回归。
+- **程序调用上下文属于版本化输入。** 93176在完整准备通过后，原过程内[file dirname [info script]]指向生成脚本所在结果目录，读不到ensure_native_tracks.tcl。新增fixed_escape_native_track_setup.tcl使相对依赖在固定源文件作用域执行；93191在完整DB中重现旧调用失败、实际新调用成功。轨道元数据成功不是布线成功。
+- **精确检查点复用已在实际恢复路径执行。** closed_driver_preparation.py新增严格fresh_fixed_escape_preparation_v1配置；仍只读复用完整已闭合prepared.odb/13表/精确八表比较与15489424保护，绑定原源/目标/拆分/工具/Lib/SDC/RC/helper及每项SHA；严格匹配实际五步骤闭合和失败位置。旧legacy配置规则保持；拒绝未知profile/未成功prepared阶段/源frame破坏。失败global和未做PA/布线不能作为成功继承。新目录/固定快照继续，不覆盖历史。
+- **新布线后续资格模块已实现，完整正例待验证。** fixed_escape_route_review.py联接driver_stage_route_context.py，去掉按文件名前缀判断源码的脆弱约定，仍要求唯一实际输入配置及严格schema/哈希。新profile独立核对61原配方、实际最终导体/via子集、全部13表/公共PIN盒/物理岛、原生AP行保持及额外候选标签/方向、保护矩形数量/OBS清理、实际源入口负例、fresh进程消费。源码/真实失败源拒绝与frame控制不等于当前新完整物理正例或制造证明。
+- **调度依赖是唤醒，不是验收。** 实际93183/85/86/87/88对FAILED93176均child_launched=false。修正后新93195/96/98/99/93200排队，宿主actualaccounting与容器同job/source/config/receipt/时效校验继续；仅前驱COMPLETED0/4且typed阶段成功才启动下一项。新RC/编译/完整LL尚未执行，不用排队记录替代结果。
+- **原物理门槛不减。** 新61固定线投影/真实补布/精确回装仍须原资源保持、全部公共物理岛连通、异网接触0、fresh全片DRC/PG，之后才RC/质量/完整功能。软件AP候选不是native全上下文PA；外部未知clock波形/open37负载仍null。旧完整AUX89DRC/61断开、原VECTOR新增问题和所有失败保留。候选1/3 UNFROZEN、二/三未验收、四NOTRUN。
 
-最新服务器方法与证据索引：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-closed-failure-and-qualified-first-via-20261029T041347Z/milestone.json
-SHA-256：938cb2b23fca5489ad697ba85205a1273c198e2136bc2631fef3a27e7050d7f3；源码aafb7a5593c6bb74d2dba12dfda72ea6b4abda7d。完整目标仍候选1/3 UNFROZEN、阶段二/三未验收、四NOTRUN。
+最新证据索引：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/full-case-source-logic-and-checkpoint-entry-20261029T051128Z/milestone.json
+SHA-256：2f88cf5ff8e3688581e2ab62943dc8cbe4df289c33a3ee572a00ad95c80dc3e0；当前记录源码4c2646bb5f7520091a2d0cf73d86bdde29203094。完整输入/输出/停止条件/验收边界见前文；任意Block/LLM通用适配仍未证明。
