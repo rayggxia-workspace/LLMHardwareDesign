@@ -1,5 +1,7 @@
 # 全功能分块、全块二维 pin 与实际接入（Issue126）
 
+R45最新：93245在当前bit_1073 NoAP失败；93302邻网/guide重接仍两处Short（第一处marker移位）；93197旧MXU父层fresh1失败。93330只读诊断已完成，真实网络577行/局部1847行，14条宏变换未知保留。93317真实RAM生成流程仍在DRT，已发现实际异步读与原同步read-hold不一致，不能直接替换fake宏；原源未改。最新原文、SHA和分阶段状态见[中文HTML](issue-126-full-pin/report.html)及[矩阵](issue-126-full-pin/data/qualification_matrix.json)。37组既有图保持上传；六块完整资格/共同冻结/两完整功能/公平系统对照仍未完成。
+
 2026-10-29T17:01:16.672869+08:00 R44增量：已从r02闭合原生几何定位M11冲突段两端的M12阻挡导线，分别为128/129/201三支路。单线段1.6μm格点搜索至96μm，以及释放端点阻挡线的有限耦合搜索未找到候选；保守筛查且其他几何固定，不是不可布通证明，也未写入任何原生新金属。原/候选guide和实际阻挡坐标分别保存data/upper_local_guide_expansion_r01，含完整源/存储SHA。93302/driverafb182f539d1b45e2ae2a27f040a92e4db951177已实际启动邻网重接：残余4支路+3实际邻网=7条，121个M11/M12 guide每边扩4个实际GCell=11.4μm；M10 guide和其他支路guide逐项不变，技术/间距/原pin与固定拓扑不改。仍在运行，全部后验M10/via10/770/514/256桥和fresh待终态，不继承旧源通过。guard15和原各作业不覆盖/取消。
 
 93305能力探针终态原生0：同一现有OpenROAD二进制及Nangate45库实际包含generate_ram，help/完整Tcl body/命令清单5个原文按SHA无损归档。本次没有生成存储器或替换fake宏。实际上游fakeram.py SHA93a1e1f2d80dd2dc97d675c0e5037107a1bc89212a45781c2f94081c578653b7，其write函数只输出LEF/Liberty/Verilog/blackbox，没有GDS；64×64例的1r1w/逐bit mask/posedge read-hold/同址写读X及68.21×75.6μm抽象尺寸已记录。原ACT/MXU真实SRAM GDS缺口保留，不补画虚构几何。官方实验性RAM文档仅提供后续真实试件路径，当前安装API与当前在线文档扩展选项不等同，以原生help/body为准。已准备独立64×64、1r1w、mask1的原生physical trial脚本，R44发布读回后再提交；当前未执行，不是原fake宏匹配实现，功能/延迟/尺寸/pin层/成本/DRC/RC-STA兼容仍需实际验证。

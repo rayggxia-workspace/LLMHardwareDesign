@@ -1,0 +1,29 @@
+{
+  "observed_utc": "2026-10-29T09:25:30.777577+00:00",
+  "full_qualification": false,
+  "scope": "BOUNDED_REAL_SCHEDULER_OBSERVATION_NOT_CONTINUOUS_MONITOR_OR_PHYSICAL_PASS",
+  "command": "sacct -n -X -j 92855,93197,93218,93217,93239,93243,93245,93269,93302,93317,93330 --format=JobID,State,ExitCode,Elapsed",
+  "actual_scheduler_text": "92855           RUNNING      0:0   18:22:26 \n93197            FAILED      1:0   04:08:07 \n93217           RUNNING      0:0   03:45:18 \n93218           RUNNING      0:0   03:45:11 \n93239           RUNNING      0:0   02:48:24 \n93243           RUNNING      0:0   02:24:57 \n93245            FAILED      1:0   01:45:19 \n93269           RUNNING      0:0   01:49:14 \n93302            FAILED      1:0   00:21:37 \n93317           RUNNING      0:0   00:19:39 \n93330           RUNNING      0:0   00:02:10 \n",
+  "new_read_only_context_job": {
+    "job": "93330",
+    "driver_commit": "9eea287d8fbb22e0c8b6d2d28560b45e1c124f53",
+    "output": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/current_parent_noap_context/r01",
+    "source": "current bit1025 actual native0 leaf, failed actual parent93245",
+    "changes_existing_source": false,
+    "terminal": "COMPLETED0: read-only native0, complete error net577rows, local1847rows, sourceunchanged, UNKNOWN macrotransform14retained; no repair/AP pass"
+  },
+  "actual_RAM_feasibility": {
+    "job": "93317",
+    "driver_commit": "97b8fc10b610f3f4a8395f9994386bd8efbce8a1",
+    "output": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/native_ram_physical_trial/r01/64x64-1r1w-mask1",
+    "compatibility_GDS_RC_STA": "NOT_VERIFIED",
+    "original_fake_macro_replaced": false
+  },
+  "closed_terminal_jobs": {
+    "93197": "FAILED fresh1 oldsource; persisted clock USE not proven",
+    "93245": "FAILED DRT-0073 bit_1073; no final routed ODB",
+    "93302": "FAILED fresh2Short; selected7 actual23 changed; first Short moved3.2um left"
+  },
+  "entire_goal": "ACTIVE_UNFINISHED: six leaf complete qualification, common qualified frozen base, two full modes, fair system comparison",
+  "updated_utc": "2026-10-29T09:29:42.151120+00:00"
+}

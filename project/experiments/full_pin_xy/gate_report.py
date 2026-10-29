@@ -893,11 +893,14 @@ def render(root,out):
                       ('LLSYSTEM_full_window_terminal_92690','trials/access-r03/llaccel_aux-C'),
                       ('UPPER_remaining_repair_r02','upper_branch_repair/r02/llaccel'),
                       ('NATIVE_RAM_capability_r01','native_ram_capability/r01'),
+                      ('UPPER_access_neighbors_terminal','upper_branch_neighbors/r01/llaccel'),
+                      ('COMMON_latest_actual_access_terminal','common_integration/actual-access-tips-r01/C'),
+                      ('CURRENT_parent_actual_NoAP_context','current_parent_noap_context/r01'),
                       ('MXU_clock_bound_parent_recheck_r02','escape_view_recheck/r02/mxu-C'),
                       ('MXU_clock_bound_parent_recheck_r03','escape_view_recheck/r03/mxu-C')]:
         p=snapshot/rel/'execution.json.gz'
         terminal_names={'LLSYSTEM_current_actual_tip_views':'llsys-tip-views-r01',
-                        'MXU_clock_bound_parent_recheck_r03':'mxu-clock-bound-parent-r03',
+                        'MXU_clock_bound_parent_recheck_r03':'mxu-clock-bound-parent-r03-terminal',
                         'MXU_actual_tip_ECO_r01':'mxu-actual-via-tip-r01',
                         'MXU_actual_tip_original_range_fresh_r01':'mxu-actual-tip-fresh-r01',
                         'MXU_actual_tip_views_r01':'mxu-actual-tip-views-r01',
@@ -908,6 +911,9 @@ def render(root,out):
                         'LLSYSTEM_full_window_terminal_92690':'llsys-full-window-92690',
                         'UPPER_remaining_repair_r02':'upper-remaining-repair-r02-complete-geometry',
                         'NATIVE_RAM_capability_r01':'native-ram-capability-r01',
+                        'UPPER_access_neighbors_terminal':'upper-neighbors-r01',
+                        'COMMON_latest_actual_access_terminal':'common-actual-access-tips-r01',
+                        'CURRENT_parent_actual_NoAP_context':'current-parent-noap-r01',
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
         update=root/'gate_terminal_updates'/terminal_names.get(label,'NO_TERMINAL_UPDATE')
         terminal_evidence=None
@@ -921,6 +927,18 @@ def render(root,out):
         if not p.exists():continue
         q=read(p);e=terminal_evidence or (dest/p.relative_to(snapshot)).relative_to(out).as_posix();result[label]=dict(q,evidence=e)
         upper_text+='<p><strong>'+label+'</strong>：'+('已收齐终态' if q.get('completed_utc') or q.get('finished_utc') else '快照时仍执行中，不能当完成')+'。<a href="'+e+'">源SHA、原生返回及完整原文回执</a>；完整资格仍未完成。</p>'
+        if label=='UPPER_access_neighbors_terminal':
+            assert q['fresh_DRC_count']==2 and q['selected_branch_count']==7
+            assert len(q['actual_all770_branch_route_box_changed_native_net_names'])==23
+            upper_text+='<p><strong>93302邻网/guide试验已失败：</strong>原生DRT、重组、独立fresh进程均0，但fresh仍两处M11 Short。请求7支路，实际23条wire-box网络改变；770支路/514重组网所检连通、256原生FIXED及逐网固定桥必要性保持。第一处marker从x=2438.095–2438.895μm移至2434.895–2435.695μm，第二处仍x=2465.295–2466.095μm；不是坐标完全相同的重复结果。扩大搜索提示并带入真实邻网仍未解决异网隔离，没有RC/STA或完整系统功能通过。原历史Short图保留其r01来源，不冒充本轮新几何。</p>'
+        if label=='COMMON_latest_actual_access_terminal':
+            log=gzip.decompress((p.parent/'lower_route.log.gz').read_bytes()).decode()
+            assert 'DRT-0073' in log and 'u_llaccel_aux/bit_1073' in log
+            upper_text+='<p><strong>93245最新实际pin父层终态失败：</strong>GRT通过，详细布线在u_llaccel_aux/bit_1073报DRT-0073（NoAP）。本轮选入真实MXU单tip及LL四tip视图，原bit_1025不再是首次报错，但不能据此证明其余pin均可访问。没有最终布线ODB、独立fresh、父层RC/STA或合格冻结；旧运行观察仅作历史。继续对当前源实际端点/金属/PG/OBS与整类接入条件诊断，不删除OBS或改变原pin层制造通过。</p>'
+        if label=='CURRENT_parent_actual_NoAP_context':
+            assert q['native_read_only_returncode']==0 and q['all_closed_sources_unchanged']
+            assert q['actual_native_error_pin']=='bit_1073' and q['all_13507_signal_pin_count']==13507
+            upper_text+='<p><strong>93330当前真实NoAP上下文已完成，只读原生0：</strong>当前bit_1073为M5 INPUT，原0.14μm正方形逐项保留；取得完整实际网577行及局部1847行，其中所选网8、PG321、其他/未归属1518。存在14条UNKNOWN宏变换占位，不能说所有OBS均已精确检查；候选own-via/轨道及父层AP修复尚未执行。所检源SHA均不变；导出成功不等于接入或DRC通过。</p>'
         if label=='LLSYSTEM_full_window_terminal_92690' and q.get('finished_utc'):
             assert q['returncode']==1 and q['source_unchanged'] and q['selected_pin_count']==13184
             assert 'GRT-0116' in gzip.decompress((p.parent/'global_route.error.txt.gz').read_bytes()).decode()
@@ -983,6 +1001,8 @@ def render(root,out):
             upper_text+='<p><strong>实际检查类型分列（采集范围内）：</strong>'+ '；'.join(t+' '+str(r['slack_ns'])+'ns' for t,r in types['worst_observed_by_check_type'].items())+'。全局max/min字段历史名称保留；min可能包含removal，不能统一称普通hold。<a href="'+types_file.relative_to(out).as_posix()+'">逐条真实路径/类型/来源SHA</a>。</p>'
         if label.startswith('MXU_clock_bound_parent_recheck_') and q.get('completed_utc'):
             upper_text+='<p>实际整父层返回'+str(q.get('native_returncodes'))+'；fresh='+str(q.get('fresh_DRC_count'))+'，完整2245条宏pin/网络/方向/层/USE合同='+str(q.get('all_original_macro_pin_rectangles_net_directions_layers_in_parent_exactly_unchanged'))+'。r02在native swapMaster发生Signal11，失败保留；r03改为先swap后绑定同一真实库，结果以该回执为准，不能以小探针代替。</p>'
+            if label.endswith('_r03'):
+                upper_text+='<p><strong>93197已终态失败：</strong>2172网/4344端点所检几何连通及双PG命令通过，fresh仍1项；1916网为真实零长度直接接触，非已提取RC证明。此轮保存ODB在Liberty绑定之前，持久视图的时钟USE合同未证明；93218独立r04及93239新实际M6源父层继续，其结果不得继承。r03未重新运行router，父层RC/STA未执行，不能称当前新tip父层完成。</p>'
     mxu_tip=result.get('MXU_actual_tip_ECO_r01',{});mxu_fresh=result.get('MXU_actual_tip_original_range_fresh_r01',{});mxu_view=result.get('MXU_actual_tip_views_r01',{})
     if all(q.get('completed_utc') for q in [mxu_tip,mxu_fresh,mxu_view]):
         assert mxu_tip['native_returncodes']=={'actual_edit_and_analysis':0,'fresh_DRC':1}
@@ -1034,6 +1054,18 @@ def render(root,out):
     if runtime.exists():
         result['latest_runtime_observation']=runtime.relative_to(out).as_posix()
         upper_text+='<p><a href="data/r44_runtime_observation.json">R44带时间的实际提交、运行/终态观察</a>。93217/93239/93243/93245/93269等原作业保持，93302新邻网试验与93305能力探针分列；提交/探针成功均不等于完整物理实现。</p>'
+    runtime=data/'r45_runtime_observation.json'
+    if runtime.exists():
+        observed=read(runtime);assert not observed['full_qualification']
+        result['latest_runtime_observation']=runtime.relative_to(out).as_posix()
+        upper_text+='<p><strong>R45更新优先于旧运行观察：</strong>93245已NoAP bit_1073失败，93302仍两Short失败，93197旧MXU源父层fresh1失败，原生回执均已无损归档。新93330读取当前真实源完整错误网络及局部金属/PG/OBS，不修改物理源。93317已实际生成64×64/1r1w/mask1物理试件并进入原生DRT，但仍在运行，未获得完成的RAM/GDS/兼容或时序证明；原fake宏不替换。<a href="data/r45_runtime_observation.json">带时间的真实调度、冻结驱动和未验证范围</a>。六块完整资格、共同合格冻结、两完整功能和公平系统对照继续未完成。</p>'
+        upper_text=upper_text.replace('当前尚在运行，不继承旧源结果。','R44观察时仍运行；最新93302终态已失败，不继承旧源通过。')
+        upper_text=upper_text.replace('它重新构造/布线共同父层以验证旧NoAP是否消除，尚未取得物理完成证据','它重新构造/布线共同父层以验证旧NoAP是否消除，最新93245已在bit_1073失败，未取得物理完成证据')
+    ram_live=data/'native_ram_live_semantics_r01.json'
+    if ram_live.exists():
+        q=read(ram_live);assert not q['full_qualification'] and not q['drop_in_functionally_compatible']
+        result['RAM_live_function_contract_mismatch']=q
+        upper_text+='<p><strong>真实RAM试件已发现功能合同差异：</strong>93317运行中写出的实际behavioral.v是异步、无读使能的Q=mem[addr]，原fake模型为posedge读使能/保持及同址写读X，不能直接替换。需要显式登记读保持/使能包装、完整功能/物理及成本检查，尚未实施或证明。原生日志还保留无tapcell、垂直PG pitch及4097时钟扇出警告；原生DRT仍无终态，不能把生成命令运行当完成。544.16/91μm仅日志pin范围，不是最终die实测尺寸或资源兼容证明。<a href="data/native_ram_live_semantics_r01.json">运行中实际行为文件原文、SHA、语义差异与警告</a>。原ACT/MXU缺失GDS和完整规则缺口继续保留，不补画或替换原源。</p>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',

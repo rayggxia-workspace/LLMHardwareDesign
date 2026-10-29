@@ -612,6 +612,47 @@ def check(out):
         bridge=q['actual_material_and_fixed_bridge_cut_checks'];assert bridge['all_256_fixed_bridges_indispensable_for_real_source_sink_geometry'] and bridge['all_actual_branch_WIRE_VIA_multisets_preserved_under_net_rebinding'] and q['all_256_native_FIXED_paths_preserved']
         cuts=list(csv.DictReader(io.StringIO(gzip.decompress((closed_dir/'all256_actual_fixed_bridge_cut_checks.csv.gz').read_bytes()).decode())))
         assert len(cuts)==256 and all(r['real_source_to_sink_connected_without_fixed_rectangle']=='False' and r['terminal_components_without_fixed_rectangle']=='2' for r in cuts)
+    q=j.get('UPPER_access_neighbors_terminal',{})
+    if q.get('completed_utc'):
+        assert q['fresh_DRC_count']==2 and q['selected_branch_count']==7
+        assert len(q['actual_all770_branch_route_box_changed_native_net_names'])==23
+        assert q['all_closed_sources_unchanged'] and q['native_binary_unchanged'] and not q['full_qualification']
+        closed_dir=(out/q['evidence']).parent
+        drc=gzip.decompress((closed_dir/'independent.drc.gz').read_bytes()).decode()
+        assert re.findall(r'^violation type: (.*)$',drc,re.M)==['Short','Short']
+        assert '2434.895' in drc and '2435.695' in drc and '2465.295' in drc
+        for name,count in [('branch_access',770),('whole_access',514)]:
+            table=list(csv.DictReader(io.StringIO(gzip.decompress(gzip.decompress((closed_dir/(name+'.tsv.gz.gz')).read_bytes())).decode()),delimiter='\t'))
+            from check_access import check_rows
+            actual=check_rows(table,True)
+            assert actual==q['all_770_branch_geometry' if count==770 else 'all_514_composed_geometry']
+            assert actual['pass'] and actual['checked_nets']==count and actual['checked_terminals']==1540
+        assert q['all_256_native_FIXED_paths_preserved'] and q['actual_material_and_fixed_bridge_cut_checks']['all_256_fixed_bridges_indispensable_for_real_source_sink_geometry']
+    q=j.get('COMMON_latest_actual_access_terminal',{})
+    if q.get('completed_utc'):
+        assert not q['full_qualification'] and not q['frozen'] and q['all_sources_unchanged']
+        assert q['lower_route_returncode']==1 and q['native_final_stage_status']['lower_global_route']=='EXECUTED' and q['native_final_stage_status']['lower_detailed_route']=='FAIL'
+        assert q['actual_source_signal_pin_coverage']['all_signal_pins']==24767
+        assert q['actual_shared_fixed_M10_conductors']==256
+        log=gzip.decompress(((out/q['evidence']).parent/'lower_route.log.gz').read_bytes()).decode()
+        assert 'DRT-0073' in log and 'u_llaccel_aux/bit_1073' in log
+        assert 'routed.odb' not in q['files']
+    q=j.get('CURRENT_parent_actual_NoAP_context',{})
+    if q.get('completed_utc'):
+        assert q['native_read_only_returncode']==0 and q['all_closed_sources_unchanged'] and not q['full_qualification']
+        assert q['actual_native_error_pin']=='bit_1073' and q['all_13507_signal_pin_count']==13507
+        assert q['actual_current_pin']['layer']=='metal5' and q['local_actual_row_count']==1847
+        closed_dir=(out/q['evidence']).parent
+        table=list(csv.DictReader(io.StringIO(gzip.decompress((closed_dir/'actual_error_complete_net.tsv.gz').read_bytes()).decode()),delimiter='\t'))
+        assert len(table)==577 and {r['net'] for r in table}=={'bit_1073'}
+        local=list(csv.DictReader(io.StringIO(gzip.decompress((closed_dir/'all_actual_local_metal_PG_OBS.tsv.gz').read_bytes()).decode()),delimiter='\t'))
+        assert len(local)==1847 and sum(r['role']=='PG' for r in local)==321
+        assert sum(r['layer']=='UNKNOWN' for r in local)==14
+    q=j.get('MXU_clock_bound_parent_recheck_r03',{})
+    if q.get('completed_utc'):
+        assert q['fresh_DRC_count']==1 and q['all_closed_sources_unchanged'] and not q['global_or_detailed_router_engine_reexecuted']
+        assert q['whole_parent_signal_geometry']['pass'] and q['whole_parent_signal_geometry']['checked_nets']==2172
+        assert q['all_original_macro_pin_rectangles_net_directions_layers_in_parent_exactly_unchanged']
     ram=j.get('NATIVE_RAM_capability_r01',{})
     if ram.get('completed_utc'):
         assert ram['native_probe_returncode']==0 and ram['generate_ram_present'] and not ram['generated_memory'] and not ram['existing_leaf_or_fake_memory_modified'] and not ram['full_qualification']
@@ -619,6 +660,13 @@ def check(out):
         assert 'generate_ram' in log and '-mask_size' in log and '-r_ports' in log and '-w_ports' in log
         provenance=read(data/'synthetic_memory_provenance_r01.json')
         assert not provenance['GDS_emitted_by_this_generator'] and not provenance['full_qualification'] and provenance['current_real_memory_replacement']=='NOT_IMPLEMENTED'
+    ram_live=j.get('RAM_live_function_contract_mismatch')
+    if ram_live:
+        assert not ram_live['full_qualification'] and not ram_live['drop_in_functionally_compatible']
+        raw=ram_live['actual_behavioral_text'].encode()
+        assert len(raw)==ram_live['actual_behavioral_bytes'] and hashlib.sha256(raw).hexdigest()==ram_live['actual_behavioral_SHA256']
+        assert 'always @(*)' in ram_live['actual_behavioral_text'] and 'Q = mem[addr_r0];' in ram_live['actual_behavioral_text']
+        assert ram_live['native_route_terminal']=='NOT_OBSERVED'
     neighbor=j.get('UPPER_actual_endpoint_neighbors_and_guide_experiment')
     if neighbor:
         assert not neighbor['full_qualification'] and neighbor['source_actual_neighbor_ids']==[128,129,201]
