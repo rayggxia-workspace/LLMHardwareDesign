@@ -876,6 +876,22 @@ def render(root,out):
           'current_complete_pin_contract':q['complete_pin_contract']})
         r['evidence'].append(q['evidence'])
         upper_text+='<p><strong>LL SYSTEM三pin真实修复已闭合：</strong>native编辑/RCX/STA与fresh进程均0，fresh native由4降0；725253网/2325528端点/28517815形状所检连通、双PG、完整13507-pin层/尺寸/网络/方向与PG合同通过。恰好只删除八个WIRE矩形、所有via原样；其余725250条多端网矩形多重集相同，单端未用网/真实GDS仍不在该比较范围。0新单元/换型，原功能实例/位置/连接/PG/外框不变。setup/hold仍−3.909029/−0.587515ns、8876文字VIOLATED，整体FAILED。主矩阵选此native0新源，旧native4/旧窗口作业失败保留；新匹配抽象/RC模型及父层接入仍待完成，不能继承旧父层或称六块完整物理资格通过。<a href="data/llsys_actual_via_tips_r02_all_13507_pins.csv">完整13507个实际pin逐项前后对应CSV</a>。</p>'
+    for label,rel in [('ALL24767_actual_parent_track_geometry','parent_noap_grid_audit/r01'),
+                      ('LLSYSTEM_actual_NoAP_local_metals_PG_OBS','llsys_noap_context/r01'),
+                      ('MXU_native_clock_Liberty_binding_probe','clock_view_binding_probe/r01'),
+                      ('LLSYSTEM_current_actual_tip_views','llsys_actual_tip_views/r01/llaccel_aux-C'),
+                      ('MXU_clock_bound_parent_recheck_r02','escape_view_recheck/r02/mxu-C'),
+                      ('MXU_clock_bound_parent_recheck_r03','escape_view_recheck/r03/mxu-C')]:
+        p=snapshot/rel/'execution.json.gz'
+        if not p.exists():continue
+        q=read(p);e=(dest/p.relative_to(snapshot)).relative_to(out).as_posix();result[label]=dict(q,evidence=e)
+        upper_text+='<p><strong>'+label+'</strong>：'+('已收齐终态' if q.get('completed_utc') else '快照时仍执行中，不能当完成')+'。<a href="'+e+'">源SHA、原生返回及完整原文回执</a>；完整资格仍未完成。</p>'
+        if label=='ALL24767_actual_parent_track_geometry' and q.get('completed_utc'):
+            upper_text+='<p>真实原R02六块父层24767pin逐项轨道审计：其余五块preferred中心未对齐数0，LL SYSTEM为13184；宏原点均已对齐实际pitch。bit_1025的M5 preferred中心偏移0.07μm；原网535条实际矩形/端点已取得，未编造端点。仅为几何风险，未对齐不等于无AP，仍须真实局部PG/OBS/via及父层接入检查。</p><p><a href="'+(dest/rel/'all24767_actual_parent_pin_track_geometry.csv.gz').relative_to(out).as_posix()+'">全部24767父层信号pin逐项轨道CSV</a></p>'
+        if label=='MXU_native_clock_Liberty_binding_probe' and q.get('native_probe_returncode')==0:
+            upper_text+='<p>原生小探针真实记录：read_LEF后MTerm为SIGNAL，加载同源Liberty后变CLOCK，link及原2.5ns create_clock后保持CLOCK；旧/新源LEF均USE SIGNAL、Liberty均clock:true。这里只证明工具绑定阶段行为，不证明整父层修复；未手改USE或更改时钟。</p>'
+        if label.startswith('MXU_clock_bound_parent_recheck_') and q.get('completed_utc'):
+            upper_text+='<p>实际整父层返回'+str(q.get('native_returncodes'))+'；fresh='+str(q.get('fresh_DRC_count'))+'，完整2245条宏pin/网络/方向/层/USE合同='+str(q.get('all_original_macro_pin_rectangles_net_directions_layers_in_parent_exactly_unchanged'))+'。r02在native swapMaster发生Signal11，失败保留；r03改为先swap后绑定同一真实库，结果以该回执为准，不能以小探针代替。</p>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',

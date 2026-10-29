@@ -22,7 +22,7 @@ JOBS+=['93120']
 JOBS+=['93126','93127','93128','93129','93132']
 JOBS+=['93140','93148','93149','93150']
 JOBS+=['93166']
-JOBS+=['93184','93190','93192','93193','93194']
+JOBS+=['93184','93190','93192','93193','93194','93197']
 
 
 def sha(path):
@@ -102,8 +102,8 @@ def collect(name):
     patterns+=['upper_branch_repair/r01/*','upper_branch_repair/r01/*/*','logs/upper-branch-repair-r01-*.log']
     patterns+=['parent_noap_grid_audit/r01/*','llsys_noap_context/r01/*',
       'clock_view_binding_probe/r01/*','llsys_actual_tip_views/r01/llaccel_aux-C/*',
-      'escape_view_recheck/r02/mxu-C/*','logs/llsys-tip-view-r01-*.log',
-      'logs/llsys-noap-context-r01-*.log','logs/clock-view-binding-r01-*.log','logs/mxu-clock-bound-parent-r02-*.log']
+      'escape_view_recheck/r0[23]/mxu-C/*','logs/llsys-tip-view-r01-*.log',
+      'logs/llsys-noap-context-r01-*.log','logs/clock-view-binding-r01-*.log','logs/mxu-clock-bound-parent-r0[23]-*.log']
     stable_intermediates={}
     incremental=ROOT/'antenna_incremental_eco/r01/gemm-C/execution.json'
     if incremental.exists() and json.loads(incremental.read_text()).get('native_returncodes',{}).get('implementation')==0:
