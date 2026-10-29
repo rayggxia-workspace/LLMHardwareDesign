@@ -12,6 +12,7 @@
 4. [不同 LLM 架构下的 Block 研究](docs/面向不同%20LLM%20架构的预制计算底座.md)、[Gemmini 学习笔记](docs/Gemmini学习笔记.md)、[工艺互连资料](docs/常见开源工艺金属互连线.md)：研究背景与候选方向。
 5. [布线总报告](ref-project/llm-routing/总报告.html)、[线长报告](ref-project/llm-routing/线长报告.html)、[模块与接口报告](ref-project/llm-routing/docs/模块与接口报告.html)、[Block 布局与接口分布报告](ref-project/llm-routing/docs/Block布局与接口分布报告.html)与[结果包阅读说明](ref-project/llm-routing/阅读说明.txt)：参考项目的布线分析、模块接口及其证据边界。
 6. [openTPU ACT/MXU 同资源物理对照](docs/experiments/issue-15-opentpu-results.html)、[实验过程与失败证据](docs/experiments/issue-15-opentpu-comparison.md)：本项目实际完成的块内和顶层布局布线，含面积、完整时序及布线成本。H1允许有源修复，尚未实现H2冻结底座／限定制层；单small参数及synthetic SRAM的限制见报告。
+7. [五个开源加速器的模型规模与硬件资源](docs/OPEN_ACCELERATOR_CAPACITY_SURVEY.md)：按精度和验证范围对照模型、计算单元、存储与带宽，给出 Block 库存下界、布局及预连线输入；属于资料调研，未新增整模型测试。
 
 `sources/` 保存手写笔记和讨论资料；`ref-project/llm-routing/` 保存参考项目结果包，**不纳入 Agent 的主动或例行维护范围**；用户更新后可按要求提交，无需逐项审查或做哈希检查。该包不包含源代码、完整物理数据库、工具环境或运行日志，不能单靠仓库内容重新运行物理实现。详情见[来源与复现边界](docs/DATA_PROVENANCE.md)。
 
