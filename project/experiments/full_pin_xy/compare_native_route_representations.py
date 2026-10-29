@@ -12,7 +12,7 @@ from run_exports import ROOT,sha
 DRIVER=Path(__file__).resolve().parent
 
 
-def routing_box_hashes(p,expected_nets):
+def routing_box_hashes(p,expected_nets,extra_boxes_by_net=None):
     hashes={};total=0
     with gzip.open(str(p),'rt') as f:
         for name,group in itertools.groupby(csv.DictReader(f,delimiter='\t'),key=lambda q:q['net']):
@@ -21,6 +21,7 @@ def routing_box_hashes(p,expected_nets):
             for q in group:
                 if q['kind'] not in ['WIRE','VIA']:continue
                 boxes.append((q['kind'],q['layer'])+tuple(int(q[k]) for k in ['x0','y0','x1','y1']))
+            if extra_boxes_by_net:boxes.extend(extra_boxes_by_net.get(name,[]))
             digest=hashlib.sha256(json.dumps(sorted(boxes),separators=(',',':')).encode()).hexdigest()
             hashes[name]=(digest,len(boxes));total+=len(boxes)
     assert len(hashes)==expected_nets
