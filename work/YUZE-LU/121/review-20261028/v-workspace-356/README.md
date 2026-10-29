@@ -4,4 +4,4 @@ Refs #121 / PR #122。源c654fc8412e16d49827917c8605b8901a915641a/archiveac530a3
 
 七项实际通过：两占用、有限S16KiB/V及四组模型形状。53原始文件、39稳定输出绑定、308源Git blobs/receipt输入已核验，见[index.json](index.json)、[verification.json](verification.json)。[135场景比较](schedule-comparison-to-349.json)确认所有测量字段与349相同；3072连续RMS/L2与Softmax周期保持10503/16719。
 
-stageE当前旧预算原字节封存在historical-pre356-RESOURCE-BUDGET.*；生成器已选当前356来源，新预算将在提交生成器后重算。数值/占用/有限端口证据不授予新源物理、最终等价或整系统10tps资格。
+stageE当前旧预算原字节封存在historical-pre356-RESOURCE-BUDGET.*；当前356/R342预算已按Git6f4b3da生成器重算，80候选成本字段与封存旧JSON完全相同，全部来源SHA/逐阶段/容量/尾块/流量不变量通过；另修正文稿三处旧数值为JSON实际101.197/99.036/94.945ms。见[budget-verification.json](budget-verification.json)。数值/占用/有限端口证据不授予新源物理、最终等价或整系统10tps资格。
