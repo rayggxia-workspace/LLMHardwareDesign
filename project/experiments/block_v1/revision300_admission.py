@@ -13,7 +13,7 @@ import subprocess
 import time
 
 
-RUNS = ('311', '312', '313', '330', '331', '332')
+RUNS = ('311', '312', '313', '337', '338', '339')
 SLURM_TERMINAL = {'COMPLETED', 'FAILED', 'CANCELLED', 'TIMEOUT', 'OUT_OF_MEMORY',
                   'NODE_FAIL', 'PREEMPTED', 'BOOT_FAIL', 'DEADLINE', 'REVOKED'}
 
