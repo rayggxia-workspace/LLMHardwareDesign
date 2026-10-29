@@ -7,7 +7,7 @@ from run_escape_fixture import execute
 DRIVER=Path(__file__).resolve().parent
 
 def run(revision,profile='shape_iterator'):
-    assert profile in ['shape_iterator','inventory','decoder_rect','decoder_payload','rect_native_shape']
+    assert profile in ['shape_iterator','inventory','decoder_rect','decoder_payload','rect_native_shape','rect_native_coord']
     source=ROOT/'pin_metal_encoding_API/r02';rp=source/'execution.json';q=json.loads(rp.read_text())
     odb=source/'encoding_probe_NOT_LEAF.odb'
     assert q.get('completed_utc') and q['native_returncodes']['encode_and_export']==0 and sha(odb)==q['files'][odb.name]['sha256']
@@ -75,10 +75,22 @@ if {!$status} {
  puts $f [join [list actual_shape 0 [list [$layer getName] [$s xMin] [$s yMin] [$s xMax] [$s yMax] [$s isVia]]] "\t"]
 };close $f
 '''
+        if profile=='rect_native_coord':
+            body=r'''set b [ord::get_db_block];set n [$b findNet HPY_PATCH_RECT_OPCODE];set w [$n getWire]
+if {[$w length]!=7 || [$w getOpcode 3]!=14} {error "Known source differs"}
+set f [open OUTPUT w];puts $f "stage\tstatus\tvalue"
+foreach i {2 3} {
+ set status [catch {$w getCoord $i} value];puts $f [join [list native_getCoord_$i $status $value] "\t"]
+}
+set d [odb::dbWireDecoder];$d begin $w
+for {set i 0} {$i<3} {incr i} {set op [$d next]}
+set l [$d getLayer];puts $f [join [list native_RECT_layer 0 [$l getName]] "\t"]
+close $f
+'''
         script=out/'probe.tcl';script.write_text('read_db '+tcl(odb)+'\n'+body.replace('OUTPUT',tcl(out/'native_all_shapes.tsv')))
         rec['actual_OpenROAD_binary_SHA256']=subprocess.check_output(common+[IMAGE,'sha256sum',BIN]).decode().split()[0]
         rec['native_returncode']=execute(common,script,out/'native.log',threads=1)
-        if rec['native_returncode']==0 and profile in ['shape_iterator','decoder_rect','decoder_payload','rect_native_shape']:rec['actual_shape_export_text']=(out/'native_all_shapes.tsv').read_text()
+        if rec['native_returncode']==0 and profile in ['shape_iterator','decoder_rect','decoder_payload','rect_native_shape','rect_native_coord']:rec['actual_shape_export_text']=(out/'native_all_shapes.tsv').read_text()
     except Exception:rec['actual_failure']=traceback.format_exc()
     rec['all_closed_sources_unchanged']=all(sha(Path(p))==v for p,v in inputs.items())
     rec['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
