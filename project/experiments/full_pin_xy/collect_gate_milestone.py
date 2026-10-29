@@ -15,6 +15,7 @@ JOBS+=['93051']
 JOBS+=['93060','93061']
 JOBS+=['93072','93073','93074','93075','93076']
 JOBS+=['93083']
+JOBS+=['93089','93090','93092','93094']
 
 
 def sha(path):
@@ -78,6 +79,10 @@ def collect(name):
       'sta_coverage_api/r01/*','logs/sta-coverage-api-r01-*.log',
       'extended_sta/r01/*','extended_sta/r01/*/*','logs/extended-sta-r01-*.log']
     patterns+=['vector_clone_probe/r03/*','logs/vector-clone-probe-r03-*.log']
+    patterns+=['system_stacked_via_views/r01/*/*','logs/system-stacked-views-r01-*.log',
+      'upper_grid_phase/r01/*','upper_grid_phase/r01/*/*','logs/upper-grid-phase-r01-*.log',
+      'llsys_DRC_diagnosis/r01/*','logs/llsys-drc-diagnosis-r01-*.log',
+      'vector_probe_equivalence/r01/*','logs/vector-probe-proof-r01-*.log']
     stable_intermediates={}
     incremental=ROOT/'antenna_incremental_eco/r01/gemm-C/execution.json'
     if incremental.exists() and json.loads(incremental.read_text()).get('native_returncodes',{}).get('implementation')==0:
@@ -104,6 +109,7 @@ def collect(name):
         if 'actual_path_audit/' in str(p) and p.name=='fresh_DRC_target_net.tsv.gz' and a.st_size<=8*1024*1024:keep=True
         if 'pin_escape_views/' in str(p) and p.name=='target_pin_access.tsv.gz' and a.st_size<=8*1024*1024:keep=True
         if 'extended_sta/r01/' in str(p) and p.name=='extended_checks_all_not_only_violators.txt' and a.st_size<=64*1024*1024:keep=True
+        if 'system_stacked_via_views/' in str(p) and p.name in ['before_actual_target.tsv.gz','after_actual_target.tsv.gz','current_source_extended_checks_all.txt'] and a.st_size<=64*1024*1024:keep=True
         omit_paths='paths.json' in p.name and 'actual_path_audit/' not in str(p)
         keep=keep and not omit_paths and not any(s in p.name for s in ['.cells.','.pdn.','whole_access.tsv','selected_access.tsv'])
         if not keep:
