@@ -46,7 +46,7 @@ def check(out):
             end=read(fixed/'execution.json.gz')
             assert gds_source.get('historical_costed_GDS_findings_before_diode',gds_source['available_deck_findings'])==end.get('available_deck_findings')
             assert not end['full_qualification']
-    ll=rows['llaccel_aux'];oldll=ll.get('historical_source_before_actual_via_tips',ll)
+    ll=rows['llaccel_aux'].get('historical_source_before_10261_restore',rows['llaccel_aux']);oldll=ll.get('historical_source_before_actual_via_tips',ll)
     assert oldll['native_DRC_count']==4 and oldll['newer_attempt']['three_pin_job'].endswith('FAILED_DRT_1231')
     if ll.get('historical_source_before_actual_via_tips'):
         q=next(q for q in j['LLSYSTEM_actual_three_pin_via_tip_attempts'] if q['revision']=='r02')
@@ -478,7 +478,7 @@ def check(out):
         assert Counter(tuple(s.split()) for s in new_pins)==Counter(tuple(s.split()) for s in source_pins)
         for k in ['setup','hold']:
             assert gzip.decompress((view_folder/(k+'.txt.gz')).read_bytes())==gzip.decompress((folder/('llsys_actual_via_tips/r02/'+k+'.txt.gz')).read_bytes())
-        assert rows['llaccel_aux']['current_source_research_model']=='SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING'
+        assert rows['llaccel_aux'].get('historical_source_before_10261_restore',rows['llaccel_aux'])['current_source_research_model']=='SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING'
     if j.get('UPPER_guard_API_r03'):
         import csv,io
         for revision,code in [('r01',1),('r02',0),('r03',0)]:
@@ -543,7 +543,7 @@ def check(out):
         assert all(q['all_cells_signal_connections_PG_die_unchanged'].values()) and q['whole_signal_geometry']['checked_nets']==725253 and q['whole_signal_geometry']['pass']
         assert q['setup_ns']==-3.909029 and q['hold_ns']==-.587515 and q['literal_VIOLATED_markers_not_complete_failure_count']==8876
         expected='SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING' if j.get('LLSYSTEM_bit1025_actual_tip_views_r01',{}).get('completed_utc') else 'NOT_YET_EXPORTED'
-        assert rows['llaccel_aux']['newer_actual_bit1025_ECO']['matching_new_views']==expected and not rows['llaccel_aux']['newer_actual_bit1025_ECO']['full_qualification']
+        assert rows['llaccel_aux'].get('historical_source_before_10261_restore',rows['llaccel_aux'])['newer_actual_bit1025_ECO']['matching_new_views']==expected and not rows['llaccel_aux'].get('historical_source_before_10261_restore',rows['llaccel_aux'])['newer_actual_bit1025_ECO']['full_qualification']
     view=j.get('LLSYSTEM_bit1025_actual_tip_views_r01',{})
     if view.get('completed_utc'):
         source=j['LLSYSTEM_bit1025_actual_tip_ECO_r01']
@@ -583,7 +583,7 @@ def check(out):
         assert 'GRT-0116' in gzip.decompress((closed_dir/'global_route.error.txt.gz').read_bytes()).decode()
         assert 'routed.odb' not in q['outputs'] and 'STAGE_FAIL global_route GRT-0116' in gzip.decompress((closed_dir/'openroad.log.gz').read_bytes()).decode()
         for kind in ['cells','pdn','die']:assert q['outputs']['before.'+kind+'.tsv']['sha256']==q['outputs']['moved.'+kind+'.tsv']['sha256']
-        assert rows['llaccel_aux']['newer_attempt']['full_window_jobs']=={'92690':'FAILED','92691':'FAILED'}
+        assert rows['llaccel_aux'].get('historical_source_before_10261_restore',rows['llaccel_aux'])['newer_attempt']['full_window_jobs']=={'92690':'FAILED','92691':'FAILED'}
         dep=read(data/'llsys_full_window_92691_dependency.json')
         assert not dep['full_qualification'] and dep['scheduler_job']=='92691' and 'NO_COMPLETED_ROUTE' in dep['actual_original_log_text']
         assert hashlib.sha256(dep['actual_original_log_text'].encode()).hexdigest()==dep['source_log_sha256']
@@ -847,6 +847,23 @@ def check(out):
         coverage=j['native_RECT_export_coverage'];assert coverage['current_exporter_omits_RECT'] and not coverage['existing_history_rewritten'] and not coverage['full_qualification']
         assert 'RECT ( -140 -140 140 140 )' in coverage['native_DEF_net_records']['HPY_PATCH_RECT_OPCODE']
         assert 'RECT_OPCODE\t0\t' in coverage['native_status_text']
+    q=j.get('LLSYSTEM_actual_10261_wire_restore_r01',{})
+    if q.get('completed_utc'):
+        assert not q['full_qualification'] and q['all_closed_sources_unchanged'] and q['fresh_DRC_count']==0
+        assert q['native_returncodes']=={'actual_edit_and_analysis':0,'fresh_DRC':0}
+        assert q['all_10261_current_internal_points_retained'] and q['exactly_one_M5_WIRE_extended_all_vias_exact'] and q['all_other_725252_multiterminal_WIRE_VIA_multisets_exact']
+        assert q['complete_pin_contract']['all_signal_pins']==13507 and q['complete_pin_contract']['only_changed_XY_pins']==[] and all(q['all_cells_signal_connections_PG_die_unchanged'].values())
+        assert q['whole_signal_geometry']['pass'] and q['whole_signal_geometry']['checked_nets']==725253 and q['whole_signal_geometry']['checked_terminals']==2325528
+        assert q['setup_ns']==-3.909029 and q['hold_ns']==-.587515 and q['literal_VIOLATED_markers_not_complete_failure_count']==8875
+        assert all(q['native_stage_status'][k]=='EXECUTED' for k in ['one_actual_wire_restore','VDD','VSS','whole_signal_geometry','rcx','sta'])
+        assert rows['llaccel_aux']['completed_source']=='owned_cap_wire_restore/r01' and rows['llaccel_aux']['current_source_research_model']=='NOT_EXPORTED' and rows['llaccel_aux']['native_DRC_count']==0
+    q=j.get('WIRE_RECT_probe_r08',{})
+    if q.get('completed_utc'):
+        assert not q['full_qualification'] and q['native_returncode']==0 and q['all_closed_sources_unchanged'] and q['known_probe_exact_patch_verified']
+        rows_patch=list(csv.DictReader(io.StringIO(q['actual_shape_export_text']),delimiter='\t'));assert len(rows_patch)==1
+        r=rows_patch[0];assert r['net']=='HPY_PATCH_RECT_OPCODE' and r['layer']=='metal5' and r['kind']=='PATCH' and [int(r[k]) for k in ['x0','y0','x1','y1']]==[3975860,2411220,3976140,2411500]
+        assert 'native_getCoord_3\t0\t3976000 2411360' in j['WIRE_RECT_probe_r07']['actual_shape_export_text']
+        assert j['WIRE_RECT_probe_r06']['native_returncode']==1 and 'native_getShape\t1\tWrong # args.' in j['WIRE_RECT_probe_r05']['actual_shape_export_text']
     q=j.get('LLSYSTEM_actual_10261_access_ECO_r01',{})
     if q.get('completed_utc'):
         assert not q['full_qualification'] and q['all_closed_sources_unchanged'] and q['fresh_DRC_count']==2
@@ -863,7 +880,7 @@ def check(out):
         assert re.findall(r'^violation type: (.*)$',drc,re.M)==['Metal Spacing','Metal Spacing'] and set(re.findall(r'net:(\S+)',drc))=={'bit_433'}
         table=list(csv.DictReader(io.StringIO(gzip.decompress((closed_dir/'all_13507_actual_pin_correspondence.csv.gz').read_bytes()).decode())))
         assert len(table)==13507 and len({r['pin'] for r in table})==13507 and sum(r['changed_from_complete_PG_C']=='True' for r in table)==10261
-        assert rows['llaccel_aux']['newer_attempt']['actual_10261_access_ECO']['status']=='FAILED_NATIVE2_AND_NEGATIVE_STA'
+        assert rows['llaccel_aux'].get('historical_source_before_10261_restore',rows['llaccel_aux'])['newer_attempt']['actual_10261_access_ECO']['status']=='FAILED_NATIVE2_AND_NEGATIVE_STA'
     q=j.get('LLSYSTEM_old_pin_metal_spacing_diagnosis_r01',{})
     if q.get('completed_utc'):
         assert not q['full_qualification'] and q['all_closed_sources_unchanged'] and q['actual_target_rows_before_after']==[71,71]

@@ -919,7 +919,9 @@ def render(root,out):
                       ('WIRE_shape_coverage_API_r01','wire_shape_coverage_API/r01'),
                       ('WIRE_native_binding_inventory_r02','wire_shape_coverage_API/r02'),
                       ('WIRE_native_RECT_decoder_r03','wire_shape_coverage_API/r03'),
-                      ('UPPER_local_bypass_search_r01','upper_local_bypass_search/r01')]:
+                      ('UPPER_local_bypass_search_r01','upper_local_bypass_search/r01'),
+                      ('LLSYSTEM_actual_10261_wire_restore_r01','owned_cap_wire_restore/r01'),
+                      *[('WIRE_RECT_probe_r0'+str(i),'wire_shape_coverage_API/r0'+str(i)) for i in range(4,9)]]:
         p=snapshot/rel/'execution.json.gz'
         terminal_names={'LLSYSTEM_current_actual_tip_views':'llsys-tip-views-r01',
                         'MXU_clock_bound_parent_recheck_r03':'mxu-clock-bound-parent-r03-terminal',
@@ -958,6 +960,8 @@ def render(root,out):
                         'WIRE_native_binding_inventory_r02':'wire-binding-inventory-r02',
                         'WIRE_native_RECT_decoder_r03':'native-rect-decoder-r03',
                         'UPPER_local_bypass_search_r01':'upper-local-bypass-search-r01',
+                        'LLSYSTEM_actual_10261_wire_restore_r01':'owned-cap-wire-restore-r01',
+                        **{'WIRE_RECT_probe_r0'+str(i):name for i,name in [(4,'native-rect-payload-r04'),(5,'native-rect-getshape-r05'),(6,'native-rect-getshape-r06'),(7,'native-rect-coord-r07'),(8,'native-patch-export-r08')]},
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
         update=root/'gate_terminal_updates'/terminal_names.get(label,'NO_TERMINAL_UPDATE')
         terminal_evidence=None
@@ -1228,6 +1232,21 @@ def render(root,out):
         audit=read(endpoint_audit);assert not audit['full_qualification'] and audit['native_implementation']=='NOT_EXECUTED'
         result['UPPER_actual_bypass_endpoint_metal_audit']=audit
         upper_text+='<p><strong>真实端点阻挡补查：</strong>src[248]所选M11线起点中心(2435.295,2643.270)μm是原via10落脚；同XY的M12被src[201]真实WIRE占据，另一端M12被src[129]占据。src[206]另一端也有src[128]的M12 WIRE。完整逐端点/邻步/实际矩形和原源SHA见<a href="data/upper_bypass_endpoint_audit_r01.json">端点金属阻挡审计</a>，由可复用audit_upper_bypass_endpoints.py生成。该审计只查导出的金属间距，不检查cut11或完整规则，不能推断全部绕行不可行。原搜索还固定了已有via11，后续可研究相关上层段及via11联动，固定via10和M1–M10仍须保持；当前尚未实际重接。</p>'
+    restored=result.get('LLSYSTEM_actual_10261_wire_restore_r01',{})
+    if restored.get('completed_utc'):
+        assert restored['fresh_DRC_count']==0 and restored['all_closed_sources_unchanged'] and restored['whole_signal_geometry']['pass']
+        assert restored['all_10261_current_internal_points_retained'] and restored['exactly_one_M5_WIRE_extended_all_vias_exact']
+        r=next(r for r in rows if r['case']=='llaccel_aux');r['historical_source_before_10261_restore']=json.loads(json.dumps(r))
+        r.update({'completed_source':'owned_cap_wire_restore/r01','actual_internal_route':'ACTUAL10261_INTERNAL_POINTS_ONE_M5_RESTORE_NATIVE0_STA_FAILED','native_DRC_count':0,
+          'all_multiterminal_signal_clock_geometry':True,'power_grid':'NATIVE_VDD_VSS_COMMANDS_EXECUTED','setup_ns':restored['setup_ns'],'hold_ns':restored['hold_ns'],
+          'violation_marker_rows':restored['literal_VIOLATED_markers_not_complete_failure_count'],'current_source_research_model':'NOT_EXPORTED',
+          'parent_access':'CURRENT10261_SOURCE_NOT_VALIDATED_IN_PARENT','complete_rules':'CURRENT10261_NATIVE0_FULL_RULES_GDS_RTL_NOT_QUALIFIED',
+          'newer_attempt':None,'current_complete_pin_contract':restored['complete_pin_contract'],'retained_actual_10261_cap_changes':True,'current_restored_source':restored})
+        upper_text+='<h3 id="r53-actual-restore">R53：保留10261个内部接点，实际M5修复独立native2→0</h3><p>93375已闭合：仅将bit_433的一条原M5线尾延长0.115μm，补回原BPin移走时失去的0.0049μm²导体并集；全部10261新内部接点及13507个pin的XY/原层/尺寸/方向/网络/PG合同保持，未新增单元/换型/移动via。其余725252多端网的当前WIRE/VIA多重集一致，全部via一致。独立原范围M2–M8信号/M4–M8时钟native由2项间距变0，双PG与725253网/2325528端点/28517812导出形状所检连通通过；RECT覆盖另审，不把当前导出范围称为全部导体或GDS LVS。</p><p>RCX/原SDC STA实际执行，max/min仍−3.909029/−0.587515ns、8875文字VIOLATED；全局min包含removal，不能全称普通hold。Slurm FAILED1保留负时序，native0不替代完整资格。新源未导出匹配LEF/时序模型、未验父层AP/完整规则/系统功能，主矩阵明确升级实际源但保留旧native2及旧native0源和全部回执；共同底座尚未用此新源冻结。</p>'
+    patchproof=result.get('WIRE_RECT_probe_r08',{})
+    if patchproof.get('completed_utc'):
+        assert patchproof['native_returncode']==0 and patchproof['known_probe_exact_patch_verified'] and patchproof['all_closed_sources_unchanged']
+        upper_text+='<h3 id="r53-patch-export">RECT补充导出方法：原生小样交叉核对已通过，真实块尚待审计</h3><p>93399实际raw payload为7项，RECT原始opcode14及后续三个OPERAND11、delta(-140,-140,140,140)均已读回。93400的getShape参数数量错误、93401返回空层后失败均保留；未把空层解释为没有金属。93402原生getCoord在POINT及RECT索引均返回3976000/2411360 DBU，decoder在RECT返回metal5。93411的新export_patch_rects.tcl将raw RECT顺序/数量与原生decoder逐网独立对照、用原生坐标与delta还原矩形，得到[3975860,2411220,3976140,2411500] DBU，与原DEF精确一致，原POINT_PAIR不重复报为patch。</p><p>新方法为独立补充导出，不修改原导出器/数据库/活动驱动；遇到不支持的opcode、operand或decoder不一致即报错，不静默漏项。小样未证明真实六块覆盖。已准备10个闭合源的只读审计：六叶含LL旧/新两epoch、MXU父层、770支路及514组合适配层；每例核对源/脚本/二进制SHA，存在patch时补入原导出图并重查多端信号连通，零patch时复用未改变的原图，PG/special wire/完整规则与DRC/RC/STA仍分开。另准备匹配93375新ODB/SPEF的完整13507位LEF/OBS/研究模型导出，未称已经执行或通过。</p>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',

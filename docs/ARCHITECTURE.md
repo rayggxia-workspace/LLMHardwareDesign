@@ -209,3 +209,6 @@ R49当前MXU父层RC/STA：冻结driver后由`mxu_actual_parent_rc_sta_job.sh r0
 
 
 R51原生覆盖交叉验证：`wire_shape_coverage_job.sh r03 decoder_rect`仅对闭合PATH/POINT/RECT小样读取当前真实dbWireDecoder，未修改叶块。`upper_local_bypass_job.sh r01`对闭合upper_branch_repair/r02真实全部支路/OBS搜索两处Short的M11/M12局部替换，固定M10/hook不改；搜索结果不是实际接线，必须另做原生重编码、独立DRC/全770及514图/真实256桥和下层冻结检查，RC/STA与功能另验。
+
+
+R53：`native_patch_audit_job.sh r01`以0–9数组/最多3并发、每例1核执行run_native_patch_audit.py；源只读，native decoder与raw RECT逐网对照，补充PATCH用实际getCoord+delta，完整规则及PG另验。`real_diode_view_job.sh r01 llsys_owned_restored`复用真实视图导出器绑定93375新源及原SDC/SPEF，导出完整13507位LEF/详细OBS/非零时序模型；不会把负时序或缺规则写成通过。

@@ -417,3 +417,16 @@ VECTOR92861冷隔离无GRT/增量/SPEF仍EST-0104。实际411821个filler；仅�
 93394有限几何搜索FAILED1：src[248]在12/24/48/96μm窗口均11节点无路；实际M12 src[129]/[201]端点阻挡线联动，两顺序/三窗口最多23节点仍失败。无实际编辑，不改M10/via10/hook、不放宽研究规则；不是不可行证明，src[206]尚未搜索。下步查可达区域边界阻挡与完整相关段，不重复扩窗口。原guard15及93375活动作业不动。
 
 上一headc3137303519561f8860d360e100d7f381eb9839c已读回GitHub矩阵/PNG/SVG与本机一致，两CI40870022296/40870022373 success。新增两真实终态和6项原始文件/SHA纳入中文HTML/矩阵，38图保留。六块完整资格、共同合格冻结、两完整功能、公平系统对照未完成，目标active。规则rayggxia-project-collab1.0.0；Refs #126/PR129 Draft；登记PR5 pending，看板unverified/同步pending，管理员/审查人待指定。
+
+
+## R53：10261内部接点实际native修复2→0，RECT补充导出小样验证
+
+93375终态FAILED1，独立native0/完整所检信号连通/双PG通过；仅一M5线尾延长0.115μm补回旧pin损失0.0049μm²，13507当前pin及10261内部点/所有via/其余725252网保持，0新单元或换型。max/min仍−3.909029/−0.587515ns、8875文字违规，未完整时序通过。主矩阵更新真实新源，旧失败/旧源保留；新LEF/OBS/模型和父AP尚待实际导出/验证。
+
+93399已读真实RECT raw delta；93400 getShape参数数量错误及93401空层失败保留。93402原生getCoord/decoder层语义验证，93411独立补充导出与原DEF精确一致：RECT[3975860,2411220,3976140,2411500]DBU/M5。仅小样能力通过，不是全六块覆盖。新export_patch_rects.tcl逐网核对native decoder RECT数量/顺序，未知编码失败，不改旧导出器和活动驱动。
+
+已准备run_native_patch_audit.py/native_patch_audit_job.sh：10个闭合源含六叶/LL旧新epoch/MXU父/770及514适配层，只读核对源/脚本/工具SHA，补充真实patch并核查旧信号图；零patch不重复原图，PG/special wire/DRC/RC/STA单列。export_real_diode_view.py新增llsys_owned_restored，导出准确93375 ODB/SPEF的13507位模型/LEF/OBS并重放负时序；两项发布读回后执行，不重复已有视图。
+
+上一heade1c52f9cfe441d371c870b1c816ae49508565ded已GitHub读回矩阵/PNG/SVG与本机一致，38图在线；当前该head CI以最新读取为准。六块完整资格/共同冻结/两完整功能/公平系统比较未完成，目标active。规则rayggxia-project-collab1.0.0；Refs #126/PR129 Draft；登记PR5 pending，看板unverified/同步pending，管理员/审查人待指定。
+
+本阶段记录时间：2026-10-29T20:28:55.378769+08:00（Asia/Shanghai）。完整技术目标继续 active / in_progress。
