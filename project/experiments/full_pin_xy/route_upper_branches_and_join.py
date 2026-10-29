@@ -227,9 +227,9 @@ def run(revision,resume_revision=None,modes_csv='opentpu,llaccel',profile='origi
     out=ROOT/family/revision;out.mkdir(parents=True,exist_ok=False)
     with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(lambda mode:one(mode,out,resume_revision,profile),modes))
     summary={'scope':'TWO_ALL770_ADAPTER_COMPOSITIONS_NOT_TWO_COMPLETE_SYSTEMS','full_qualification':False,
-      'modes':[{k:r.get(k) for k in ['mode','native_returncodes','fresh_DRC_count','actual_failure']} for r in results]}
+      'modes':[{k:r.get(k) for k in ['mode','native_returncodes','fresh_DRC_count','fresh_original_technology_DRC_count','actual_failure']} for r in results]}
     (out/'trial_summary.json').write_text(json.dumps(summary,indent=2)+'\n')
-    return 0 if all('actual_failure' not in r and r.get('fresh_DRC_count')==0 and r.get('all_514_composed_geometry',{}).get('pass') and r.get('all_256_native_FIXED_paths_preserved') and r.get('actual_material_and_fixed_bridge_cut_checks',{}).get('all_256_fixed_bridges_indispensable_for_real_source_sink_geometry') and r.get('native_binary_unchanged') and r['all_closed_sources_unchanged'] for r in results) else 1
+    return 0 if all('actual_failure' not in r and r.get('fresh_DRC_count')==0 and (profile!='guard15' or r.get('fresh_original_technology_DRC_count')==0) and r.get('all_514_composed_geometry',{}).get('pass') and r.get('all_256_native_FIXED_paths_preserved') and r.get('actual_material_and_fixed_bridge_cut_checks',{}).get('all_256_fixed_bridges_indispensable_for_real_source_sink_geometry') and r.get('native_binary_unchanged') and r['all_closed_sources_unchanged'] for r in results) else 1
 
 
 if __name__=='__main__':sys.exit(run(*sys.argv[1:5]))

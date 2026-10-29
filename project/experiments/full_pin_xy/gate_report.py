@@ -880,11 +880,15 @@ def render(root,out):
                       ('LLSYSTEM_actual_NoAP_local_metals_PG_OBS','llsys_noap_context/r01'),
                       ('MXU_native_clock_Liberty_binding_probe','clock_view_binding_probe/r01'),
                       ('LLSYSTEM_current_actual_tip_views','llsys_actual_tip_views/r01/llaccel_aux-C'),
+                      ('UPPER_guard_API_r01','upper_guard_api/r01'),
+                      ('UPPER_guard_API_r02','upper_guard_api/r02'),
+                      ('UPPER_guard_API_r03','upper_guard_api/r03'),
                       ('MXU_clock_bound_parent_recheck_r02','escape_view_recheck/r02/mxu-C'),
                       ('MXU_clock_bound_parent_recheck_r03','escape_view_recheck/r03/mxu-C')]:
         p=snapshot/rel/'execution.json.gz'
         terminal_names={'LLSYSTEM_current_actual_tip_views':'llsys-tip-views-r01',
-                        'MXU_clock_bound_parent_recheck_r03':'mxu-clock-bound-parent-r03'}
+                        'MXU_clock_bound_parent_recheck_r03':'mxu-clock-bound-parent-r03',
+                        **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
         update=root/'gate_terminal_updates'/terminal_names.get(label,'NO_TERMINAL_UPDATE')
         terminal_evidence=None
         if update.exists():
@@ -901,6 +905,8 @@ def render(root,out):
             upper_text+='<p>真实原R02六块父层24767pin逐项轨道审计：其余五块preferred中心未对齐数0，LL SYSTEM为13184；宏原点均已对齐实际pitch。bit_1025的M5 preferred中心偏移0.07μm；原网535条实际矩形/端点已取得，未编造端点。仅为几何风险，未对齐不等于无AP，仍须真实局部PG/OBS/via及父层接入检查。</p><p><a href="'+(dest/rel/'all24767_actual_parent_pin_track_geometry.csv.gz').relative_to(out).as_posix()+'">全部24767父层信号pin逐项轨道CSV</a></p>'
         if label=='MXU_native_clock_Liberty_binding_probe' and q.get('native_probe_returncode')==0:
             upper_text+='<p>原生小探针真实记录：read_LEF后MTerm为SIGNAL，加载同源Liberty后变CLOCK，link及原2.5ns create_clock后保持CLOCK；旧/新源LEF均USE SIGNAL、Liberty均clock:true。这里只证明工具绑定阶段行为，不证明整父层修复；未手改USE或更改时钟。</p>'
+        if label.startswith('UPPER_guard_API_') and q.get('completed_utc'):
+            upper_text+='<p>适配器原生NDR接口探针：返回'+str(q.get('native_probe_returncode'))+'，不是实际路由或DRC通过。r01的getLayerRules输出参数调用错误保留；r02正确读回M11/M12的0.8μm线宽/1.5μm间距并给全部770原网赋规则，但未指定的M1–M10 NDR spacing实际为0，未采用。r03显式给适配网全部12层NDR设置1.5μm hard spacing，实际仍只允许M11/M12路由、原下层材料不动；12层读回及全部770赋值通过。该额外保守约束及其成本与原profile分列，不是技术规则放宽、原pin升层、完整功能或制造签核。后续布线会同时执行带NDR和去除NDR元数据副本上的原技术规则独立fresh检查。</p><p><a href="https://openroad.readthedocs.io/en/latest/main/src/odb/README.html#create-ndr">OpenROAD官方NDR文档</a>；实际安装版本行为及Tcl body见原生log。</p>'
         if label=='LLSYSTEM_current_actual_tip_views' and q.get('completed_utc'):
             assert q['native_export_returncode']==q['fresh_model_read_returncode']==0 and q['matching_all_signal_model_pins']==13507
             assert q['SPEF_replay_matches_source'] and q['all_sources_and_pre_RCX_geometry_unchanged'] and q['all_13507_current_pins_and_PG_match_actual_after_edit']

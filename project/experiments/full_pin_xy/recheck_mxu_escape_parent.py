@@ -43,7 +43,7 @@ def run(revision):
       'parent_RC_STA':'NOT_EXECUTED_ACCESS_RECHECK_ONLY','full_qualification':False,'native_returncodes':{},
       'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID'],
       'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()}
-    rec['clock_binding_fix']='Read the same source-bound aliased Liberty after native macro swap and before the post-swap contract snapshot; native Liberty clock:true classification is retained. No manual USE edit or clock constraint change. Prior r02 loading before swap crashed at native swapMaster and is preserved.'
+    rec['clock_binding_fix']='Read source-bound aliased Liberty after native swap, then write the physical ODB and independently read back all macro interfaces. No manual USE edit or clock constraint change. Prior r02 pre-swap model loading crashed; r03 saved ODB before model binding and lacks persisted-type proof; both histories retained.'
     def save():(out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     save()
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
@@ -66,8 +66,9 @@ def run(revision):
         lines=[helper,code,'read_db '+tcl(odb),'fingerprint '+tcl(out/'before'),'parent_terms '+tcl(out/'before.child_terms.tsv'),
           'set b [ord::get_db_block];set inst [$b findInst u_macro];set old_xy [$inst getLocation];set old_ori [$inst getOrient]',
           'read_lef '+tcl(out/'actual_child.lef'),
-          'if {![stage upgrade_to_actual_source_view {set replacement [[ord::get_db] findMaster '+tcl(alias)+'];if {$replacement eq "NULL"} {error "New actual child master missing"};if {![$inst swapMaster $replacement]} {error "Native macro view swap rejected"};if {[$inst getLocation] ne $old_xy || [$inst getOrient] ne $old_ori} {error "Original macro pose changed"};write_db '+tcl(out/'upgraded_parent_NOT_SYSTEM.odb')+'}]} {close $stages;exit 1}',
+          'if {![stage upgrade_to_actual_source_view {set replacement [[ord::get_db] findMaster '+tcl(alias)+'];if {$replacement eq "NULL"} {error "New actual child master missing"};if {![$inst swapMaster $replacement]} {error "Native macro view swap rejected"};if {[$inst getLocation] ne $old_xy || [$inst getOrient] ne $old_ori} {error "Original macro pose changed"}}]} {close $stages;exit 1}',
           'if {![stage bind_current_source_timing_model {read_liberty '+tcl(out/'actual_child_timing.lib')+'}]} {close $stages;exit 1}',
+          'write_db '+tcl(out/'upgraded_parent_NOT_SYSTEM.odb'),
           'fingerprint '+tcl(out/'after'),'parent_terms '+tcl(out/'after.child_terms.tsv'),
           'stage VDD {check_power_grid -net VDD -error_file '+tcl(out/'VDD.rpt')+'}',
           'stage VSS {check_power_grid -net VSS -error_file '+tcl(out/'VSS.rpt')+'}',
@@ -75,7 +76,7 @@ def run(revision):
         script=out/'upgrade.tcl';script.write_text('\n'.join(lines)+'\n')
         rec['native_returncodes']['actual_view_swap_and_access_export']=execute(common,script,out/'native.log','PINXY_OUTPUT='+str(out)+',PINXY_ACCESS_ALL=1,PINXY_ACCESS_OUT='+str(out/'whole_access.tsv.gz'),threads=4);save()
         if (out/'upgraded_parent_NOT_SYSTEM.odb').exists():
-            script=out/'fresh.tcl';script.write_text('read_db '+tcl(out/'upgraded_parent_NOT_SYSTEM.odb')+'\nset_routing_layers -signal metal2-metal10 -clock metal4-metal10\ndrt::check_drc -output_file '+tcl(out/'independent.drc')+'\n')
+            script=out/'fresh.tcl';script.write_text('read_db '+tcl(out/'upgraded_parent_NOT_SYSTEM.odb')+'\n'+code+'\nparent_terms '+tcl(out/'persisted.child_terms.tsv')+'\nset_routing_layers -signal metal2-metal10 -clock metal4-metal10\ndrt::check_drc -output_file '+tcl(out/'independent.drc')+'\n')
             rec['native_returncodes']['fresh_DRC']=execute(common,script,out/'independent.log',threads=1)
             if rec['native_returncodes']['fresh_DRC']==0:rec['fresh_DRC_count']=len(re.findall(r'^violation type:',(out/'independent.drc').read_text(),re.M))
         rec['all_original_parent_BTerm_PG_die_geometry_unchanged']={k:(out/('after.'+k+'.tsv')).exists() and sha(out/('before.'+k+'.tsv'))==sha(out/('after.'+k+'.tsv')) for k in ['pins','pdn','die']}
@@ -83,6 +84,7 @@ def run(revision):
             def terms(p):
                 with p.open() as f:return sorted(tuple(r.items()) for r in csv.DictReader(f,delimiter='\t'))
             rec['all_original_macro_pin_rectangles_net_directions_layers_in_parent_exactly_unchanged']=terms(out/'before.child_terms.tsv')==terms(out/'after.child_terms.tsv')
+            if (out/'persisted.child_terms.tsv').exists():rec['all_original_macro_pin_contracts_persisted_and_independently_read_back']=terms(out/'before.child_terms.tsv')==terms(out/'after.child_terms.tsv')==terms(out/'persisted.child_terms.tsv')
         if (out/'whole_access.tsv.gz').exists():rec['whole_parent_signal_geometry']=check(out/'whole_access.tsv.gz',True)
         if (out/'stages.tsv').exists():
             with (out/'stages.tsv').open() as f:rec['native_stage_status']={r['stage']:r['status'] for r in csv.DictReader(f,delimiter='\t')}
@@ -90,7 +92,7 @@ def run(revision):
     rec['all_closed_sources_unchanged']=all(sha(Path(p))==v for p,v in inputs.items())
     rec['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
     rec['files']={p.name:{'bytes':p.stat().st_size,'sha256':sha(p)} for p in out.iterdir() if p.is_file() and p.name!='execution.json'};save()
-    return 0 if 'actual_failure' not in rec and rec.get('fresh_DRC_count')==0 and rec.get('whole_parent_signal_geometry',{}).get('pass') and all(rec.get('all_original_parent_BTerm_PG_die_geometry_unchanged',{}).values()) and rec.get('all_original_macro_pin_rectangles_net_directions_layers_in_parent_exactly_unchanged') and rec['all_closed_sources_unchanged'] and all(rec.get('native_stage_status',{}).get(k)=='EXECUTED' for k in ['VDD','VSS']) else 1
+    return 0 if 'actual_failure' not in rec and rec.get('fresh_DRC_count')==0 and rec.get('whole_parent_signal_geometry',{}).get('pass') and all(rec.get('all_original_parent_BTerm_PG_die_geometry_unchanged',{}).values()) and rec.get('all_original_macro_pin_rectangles_net_directions_layers_in_parent_exactly_unchanged') and rec.get('all_original_macro_pin_contracts_persisted_and_independently_read_back') and rec['all_closed_sources_unchanged'] and all(rec.get('native_stage_status',{}).get(k)=='EXECUTED' for k in ['VDD','VSS']) else 1
 
 
 if __name__=='__main__':sys.exit(run(sys.argv[1]))

@@ -477,6 +477,20 @@ def check(out):
         for k in ['setup','hold']:
             assert gzip.decompress((view_folder/(k+'.txt.gz')).read_bytes())==gzip.decompress((folder/('llsys_actual_via_tips/r02/'+k+'.txt.gz')).read_bytes())
         assert rows['llaccel_aux']['current_source_research_model']=='SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING'
+    if j.get('UPPER_guard_API_r03'):
+        import csv,io
+        for revision,code in [('r01',1),('r02',0),('r03',0)]:
+            q=j['UPPER_guard_API_'+revision];assert q['native_probe_returncode']==code and q['all_closed_sources_unchanged'] and not q['full_qualification']
+            if revision=='r01':
+                text=gzip.decompress((out/q['evidence']).parent.joinpath('native.log.gz').read_bytes()).decode()
+                assert 'Wrong number of arguments :odb::dbTechNonDefaultRule_getLayerRules' in text
+                continue
+            rules_path=(out/q['evidence']).parent/'actual_NDR_layer_rules.tsv.gz'
+            rr=list(csv.DictReader(io.StringIO(gzip.decompress(rules_path.read_bytes()).decode()),delimiter='\t'))
+            rules={r['layer']:r for r in rr};assert len(rules)==len(rr)==12
+            assert all(int(rules[n]['width_DBU'])==1600 and int(rules[n]['spacing_DBU'])==3000 for n in ['metal11','metal12'])
+            assert all(int(rules['metal'+str(i)]['spacing_DBU'])==(0 if revision=='r02' else 3000) for i in range(1,11))
+            assert q['actual_rule_readback_and_all770_assignment_verified']
     for q in j.get('source_bound_extended_STA_r01',[]):
         assert not q['full_qualification']
         if not q.get('completed_utc'):continue

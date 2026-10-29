@@ -14,14 +14,19 @@ TARGETS={'bit_1382013':('metal5',[3647330,1367520,3647610,1367800]),
          'bit_1389626':('metal6',[3713970,1161600,3714250,1161880])}
 
 
-def pin_contract(out,targets=TARGETS):
+def pin_contract(out,targets=TARGETS,expected_count=13507):
     def load(path):
         result={}
         for line in path.read_text().splitlines():
             r=line.split();assert len(r)==9
+            # Native fingerprint emits a Tcl list: bus names are braced tokens.
+            # Only strip the outer quoting of these two single-word fields;
+            # never evaluate source names as Tcl or silently accept spaces.
+            for index in [0,3]:
+                if r[index].startswith('{') and r[index].endswith('}'):r[index]=r[index][1:-1]
             if r[2] in ['POWER','GROUND']:continue
             assert r[0] not in result;result[r[0]]=r
-        assert len(result)==13507
+        assert len(result)==expected_count
         return result
     a=load(out/'before.pins.tsv');b=load(out/'after.pins.tsv');assert set(a)==set(b)
     changes=[];data=[]
@@ -36,14 +41,14 @@ def pin_contract(out,targets=TARGETS):
             for key,value in zip(['x0_um','y0_um','x1_um','y1_um'],box):row[prefix+'_'+key]=value/2000.
         row['changed_from_complete_PG_C']=old!=new;data.append(row)
     assert set(changes)==set(targets)
-    with (out/'all_13507_actual_pin_correspondence.csv').open('w',newline='') as f:
+    with (out/('all_'+str(expected_count)+'_actual_pin_correspondence.csv')).open('w',newline='') as f:
         w=csv.DictWriter(f,fieldnames=list(data[0]));w.writeheader();w.writerows(data)
     # PG terminal shapes are checked separately, never treated as signal pins.
     pg=lambda p:[s for s in p.read_text().splitlines() if s.split()[2] in ['POWER','GROUND']]
     assert pg(out/'before.pins.tsv')==pg(out/'after.pins.tsv')
-    return {'all_signal_pins':13507,'only_changed_XY_pins':sorted(changes),
+    return {'all_signal_pins':expected_count,'only_changed_XY_pins':sorted(changes),
             'all_functions_directions_networks_layers_sizes_and_PG_preserved':True,
-            'full_internal_C_retained':'Complete 13184-move internal C retained; only explicitly listed existing internal points corrected',
+            'full_internal_C_retained':'Complete source internal C retained; only explicitly listed existing internal points corrected',
             'source_or_target_parent_layers':'Historical mapping still partial/unknown; no new target layer assigned'}
 
 
