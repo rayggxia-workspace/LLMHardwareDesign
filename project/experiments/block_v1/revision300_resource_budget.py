@@ -24,7 +24,7 @@ def calculate(root):
     recurrent=load(base/'recurrent-resource-budget.json')
     rmodels={r['model']:r for r in recurrent['models']}
     sv={}
-    svroot=base/'v-workspace-422/block-v1-20261030-422/tasks'
+    svroot=base/'v-workspace-461-partial/block-v1-20261030-461/tasks'
     svreports=sorted(svroot.glob('*/revision300-sv-workspace.json'))
     assert len(svreports)==5
     for p in svreports:

@@ -59,6 +59,7 @@ def measure(root,out,cpus,run,kind,variant):
     vector_softmax_pipeline=vector_prefetched and 'F_DRAIN=29,F_DENOM=30' in rtls[0].read_text()
     vector_merge_pipeline=vector_prefetched and 'N_MERGE=31;' in rtls[0].read_text()
     vector_function_input=vector_prefetched and 'reg function_input_valid;' in rtls[0].read_text()
+    vector_function_fetch=vector_prefetched and 'reg function_fetch_valid,function_fetch_subtract;' in rtls[0].read_text()
     vector_group_subtract=kind=='v' and 'function automatic [130:0] subtract130_grouped;' in (rtls[0].parent/'block_v1_v_group.sv').read_text()
     vector_norm_merge=vector_prefetched and 'rounded=rne(add128_grouped($signed({{63{product[i][64]}},product[i]})<<<32' in rtls[0].read_text()
     vector_reduce_prefetched=vector_prefetched and 'reg [7:0] operand_reduce_mask;' in rtls[0].read_text() and 'leaf_value=operand_a[l];' in rtls[0].read_text()
@@ -66,8 +67,8 @@ def measure(root,out,cpus,run,kind,variant):
         policy=json.loads((tools/'revision300-v-fresh.json').read_text())
         command_state_isolated='Keep their datapath enables independent of cmd_valid/rsp_ready.' in rtls[0].read_text()
         if 'function automatic signed [127:0] norm_merge_rne;' in rtls[0].read_text():
-            assert policy['function']=='block-v1-20261030-421/tasks/revision300-test-v'
-            prior=out.parents[2]/'block-v1-20261030-421/tasks'/('revision300-bench-v-'+variant)
+            assert policy['function']=='block-v1-20261030-459/tasks/revision300-test-v'
+            prior=out.parents[2]/'block-v1-20261030-459/tasks'/('revision300-bench-v-'+variant)
         else:
             generation='378' if 'square_tree[t]=add128_grouped(' in rtls[0].read_text() else '367' if command_state_isolated else '361' if vector_reduce_prefetched else ('355' if vector_norm_merge else ('348' if vector_group_subtract else ('336' if vector_function_input else ('329' if vector_softmax_pipeline else ('321' if vector_norm_pipeline else '315')))))
             assert policy['function']=='block-v1-20261029-'+generation+'/tasks/revision300-test-v'
@@ -98,6 +99,15 @@ def measure(root,out,cpus,run,kind,variant):
         anchor='if(r->block_v1_v__DOT__function_unit__DOT__valid1)'
         assert monitor.count(anchor)==1
         monitor=monitor.replace(anchor,'if(r->block_v1_v__DOT__function_input_valid)p.internal["function_input_registered_valid_slots"]+=2;\n '+anchor)
+    if vector_function_fetch:
+        anchor='if(r->block_v1_v__DOT__function_unit__DOT__valid1)'
+        assert monitor.count(anchor)==1
+        monitor=monitor.replace(anchor,'''if(r->block_v1_v__DOT__function_fetch_valid) {
+  p.internal["function_fetch_registered_valid_slots"]+=2;
+  unsigned mask=r->block_v1_v__DOT__function_fetch_mask;
+  p.internal["function_fetch_registered_valid_elements"]+=(mask&1)+((mask>>1)&1);
+ }
+ '''+anchor)
     if vector_prefetched:
         old='if(state==1||state==3||state==13||state==10||state==11||state==18||state==19)'
         assert monitor.count(old)==1
