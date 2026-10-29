@@ -43,5 +43,5 @@ write_abstract_lef -bloat_factor 0 LEFFILE
         rec['original_source_unchanged']=sha(source)==rec['source_SHA'][str(source)]
     except Exception:rec['actual_failure']=traceback.format_exc()
     rec['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat();rec['files']={p.name:{'bytes':p.stat().st_size,'sha256':sha(p)} for p in out.iterdir() if p.is_file()}
-    (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n');return int(bool(rec.get('actual_failure')))
+    (out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n');return int(bool(rec.get('actual_failure')) or rec['native_returncodes'].get('KLayout_actual_DEF_read_GDS_roundtrip')!=0)
 if __name__=='__main__':sys.exit(run(sys.argv[1]))
