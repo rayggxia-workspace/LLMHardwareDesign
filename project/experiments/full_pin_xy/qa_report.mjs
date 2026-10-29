@@ -40,11 +40,15 @@ try {
   await evaluate(`document.querySelector('img[src="assets/llsys_owned_cap_spacing.png"]').scrollIntoView()`);
   await fs.writeFile(path.join(out,'report-owned-cap-spacing.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
  }
- for(const id of ['r49-actual-parent','r49-export-coverage','r50-parent-sta','r51-wire-api','r52-decoder','r53-actual-restore','r53-patch-export','r54-source-patch-audit','r55-current-gemm-audit']){
+ for(const id of ['r49-actual-parent','r49-export-coverage','r50-parent-sta','r51-wire-api','r52-decoder','r53-actual-restore','r53-patch-export','r54-source-patch-audit','r55-current-gemm-audit','r56-current-views']){
   if(await evaluate(`!!document.getElementById(${JSON.stringify(id)})`)){
    await evaluate(`document.getElementById(${JSON.stringify(id)}).scrollIntoView()`);
    await fs.writeFile(path.join(out,`report-${id}.png`),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
   }
+ }
+ if(await evaluate(`!!document.querySelector('img[src="assets/llsys_actual_wire_restore.png"]')`)){
+  await evaluate(`document.querySelector('img[src="assets/llsys_actual_wire_restore.png"]').scrollIntoView()`);
+  await fs.writeFile(path.join(out,'report-actual-wire-restore.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
  }
  if(await evaluate('!!document.querySelector("#latest-physical-gates")')){
   await evaluate('document.querySelector("#latest-physical-gates").scrollIntoView()');

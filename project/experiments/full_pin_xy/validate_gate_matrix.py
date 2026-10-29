@@ -871,6 +871,14 @@ def check(out):
         q=j['NATIVE_patch_audit_gemm_658_current'];current=next(v for p,v in q['source_SHA'].items() if p.endswith('/routed.odb'))
         old=next(v for p,v in j['NATIVE_patch_audit_gemm']['source_SHA'].items() if p.endswith('/routed.odb'))
         assert current==j['GEMM_additional22_diode_actual_attempt']['files']['routed.odb']['sha256']==current_audit['current_GEMM_ODB_SHA256'] and old==j['GEMM_post_diode_size_ECO']['files']['routed.odb']['sha256'] and current!=old
+    view=j.get('LLSYSTEM_current_owned_restored_views',{})
+    if view.get('completed_utc'):
+        source=j['LLSYSTEM_actual_10261_wire_restore_r01'];assert view['source_geometry_sha256']==source['files']['routed.odb']['sha256'] and view['source_SPEF_sha256']==source['files']['extracted.spef']['sha256']
+        assert not view['full_qualification'] and view['matching_all_signal_model_pins']==13507 and view['all_13507_current_pins_and_PG_match_actual_after_edit'] and view['all_sources_and_pre_RCX_geometry_unchanged'] and view['SPEF_replay_matches_source']
+        assert view['native_export_returncode']==view['fresh_model_read_returncode']==0 and view['minimum_period_present'] is False
+        figure=j['LLSYSTEM_actual_wire_restore_figure'];assert figure['actual_rows_before_after']==[71,71] and figure['actual_vias_and_internal_endpoints_and_pin_exact'] and figure['native_DRC_before_after']==[2,0]
+        assert figure['actual_added_metal_DBU2']==19600 and figure['actual_removed_metal_DBU2']==0 and figure['original_negative_STA_preserved'] and not figure['full_qualification']
+        assert figure['source_view_receipt_SHA256']==hashlib.sha256(gzip.decompress((out/view['evidence']).read_bytes())).hexdigest()
     q=j.get('LLSYSTEM_actual_10261_wire_restore_r01',{})
     if q.get('completed_utc'):
         assert not q['full_qualification'] and q['all_closed_sources_unchanged'] and q['fresh_DRC_count']==0
@@ -880,7 +888,8 @@ def check(out):
         assert q['whole_signal_geometry']['pass'] and q['whole_signal_geometry']['checked_nets']==725253 and q['whole_signal_geometry']['checked_terminals']==2325528
         assert q['setup_ns']==-3.909029 and q['hold_ns']==-.587515 and q['literal_VIOLATED_markers_not_complete_failure_count']==8875
         assert all(q['native_stage_status'][k]=='EXECUTED' for k in ['one_actual_wire_restore','VDD','VSS','whole_signal_geometry','rcx','sta'])
-        assert rows['llaccel_aux']['completed_source']=='owned_cap_wire_restore/r01' and rows['llaccel_aux']['current_source_research_model']=='NOT_EXPORTED' and rows['llaccel_aux']['native_DRC_count']==0
+        expected_model='SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING' if j.get('LLSYSTEM_current_owned_restored_views',{}).get('completed_utc') else 'NOT_EXPORTED'
+        assert rows['llaccel_aux']['completed_source']=='owned_cap_wire_restore/r01' and rows['llaccel_aux']['current_source_research_model']==expected_model and rows['llaccel_aux']['native_DRC_count']==0
     q=j.get('WIRE_RECT_probe_r08',{})
     if q.get('completed_utc'):
         assert not q['full_qualification'] and q['native_returncode']==0 and q['all_closed_sources_unchanged'] and q['known_probe_exact_patch_verified']

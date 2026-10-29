@@ -32,7 +32,7 @@ def fetch(relative,name,out):
     save('execution.json',receipt)
     for filename,meta in sorted(q[index_field].items()):
         if filename=='execution.json':continue
-        selected_native_gzip=filename in ['target_pin_access.tsv.gz','before_actual_target.tsv.gz','after_actual_target.tsv.gz','branch_access.tsv.gz','whole_access.tsv.gz','before_access.tsv.gz','after_access.tsv.gz']
+        selected_native_gzip=filename in ['target_pin_access.tsv.gz','before_actual_target.tsv.gz','after_actual_target.tsv.gz','branch_access.tsv.gz','whole_access.tsv.gz','before_access.tsv.gz','after_access.tsv.gz','actual_restored_bit433.tsv.gz']
         if (Path(filename).suffix not in ['.json','.tcl','.log','.txt','.tsv','.csv','.drc','.guide','.v','.ys'] and not selected_native_gzip) or meta['bytes']>8*1024*1024:continue
         if any(s in filename for s in ['.cells.','.pdn.']):continue
         data=raw(filename)

@@ -292,6 +292,11 @@ def main():
         assert 'assets/llsys_owned_cap_spacing.png' in text and 'assets/llsys_owned_cap_spacing.svg' in text
         assert 'LLSYSTEM_actual_owned_cap_spacing_figure' in json.loads((OUT/'data/qualification_matrix.json').read_text(encoding='utf-8'))
         expected_figures+=1
+    if (OUT/'assets/llsys_actual_wire_restore.png').exists():
+        assert (OUT/'assets/llsys_actual_wire_restore.svg').exists()
+        assert 'assets/llsys_actual_wire_restore.png' in text and 'assets/llsys_actual_wire_restore.svg' in text
+        assert 'LLSYSTEM_actual_wire_restore_figure' in json.loads((OUT/'data/qualification_matrix.json').read_text(encoding='utf-8'))
+        expected_figures+=1
     assert len(list((OUT/'assets').glob('*.png')))==expected_figures
     assert len(list((OUT/'assets').glob('*.svg')))==expected_figures
     assert all(x not in text for x in ['__PINS__','__PHYSICAL__','__TOTAL__'])

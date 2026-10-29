@@ -923,7 +923,8 @@ def render(root,out):
                       ('LLSYSTEM_actual_10261_wire_restore_r01','owned_cap_wire_restore/r01'),
                       *[('WIRE_RECT_probe_r0'+str(i),'wire_shape_coverage_API/r0'+str(i)) for i in range(4,9)],
                       *[('NATIVE_patch_audit_'+case,'native_patch_audit/r01/'+case) for case in ['act','mxu','opentpu_aux','gemm','vector','llaccel_stable','llaccel_10261_restored','mxu_parent','upper770','upper514']],
-                      ('NATIVE_patch_audit_gemm_658_current','native_patch_audit/r02/gemm_658_current')]:
+                      ('NATIVE_patch_audit_gemm_658_current','native_patch_audit/r02/gemm_658_current'),
+                      ('LLSYSTEM_current_owned_restored_views','llsys_owned_restored_views/r01/llaccel_aux-C')]:
         p=snapshot/rel/'execution.json.gz'
         terminal_names={'LLSYSTEM_current_actual_tip_views':'llsys-tip-views-r01',
                         'MXU_clock_bound_parent_recheck_r03':'mxu-clock-bound-parent-r03-terminal',
@@ -964,6 +965,7 @@ def render(root,out):
                         'UPPER_local_bypass_search_r01':'upper-local-bypass-search-r01',
                         'LLSYSTEM_actual_10261_wire_restore_r01':'owned-cap-wire-restore-r01',
                         'NATIVE_patch_audit_gemm_658_current':'native-patch-audit-r02-gemm_658_current',
+                        'LLSYSTEM_current_owned_restored_views':'llsys-owned-restored-views-r01',
                         **{'WIRE_RECT_probe_r0'+str(i):name for i,name in [(4,'native-rect-payload-r04'),(5,'native-rect-getshape-r05'),(6,'native-rect-getshape-r06'),(7,'native-rect-coord-r07'),(8,'native-patch-export-r08')]},
                         **{'NATIVE_patch_audit_'+case:'native-patch-audit-r01-'+case for case in ['act','mxu','opentpu_aux','gemm','vector','llaccel_stable','llaccel_10261_restored','mxu_parent','upper770','upper514']},
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
@@ -1275,6 +1277,17 @@ def render(root,out):
         for row in rows:row['current_source_RECT_inventory']=result[selected[row['case']]]['evidence']
         result['all_current_six_leaf_RECT_audit']={'completed':True,'full_qualification':False,'case_evidence_labels':selected,'current_GEMM_ODB_SHA256':actual_gemm_sha,'historical_GEMM636_plus_sizes_kept_separate':True,'native_wires_across_all11_snapshots_not_unique_nets':3027584}
         upper_text+='<h3 id="r55-current-gemm-audit">R55：纠正GEMM审计epoch，当前658源已独立补审</h3><p>源SHA复核发现前十例的GEMM为旧636 diode＋换型版a062582046fa，R54最初“当前六叶覆盖”表述不成立；原回执及提交保留，表格现明确标旧源。93428只新增数组索引10，在独立r02/gemm_658_current目录核查当前658源ac4702d5b6ff，未重跑或覆盖前十例。已终态COMPLETED0：290151个net对象/268637个dbWire、native RECT0、补充patch0、未审计信号special wire0，所有源SHA保持；精确绑定主矩阵实际658 diode回执而非仅看pin/网数量。</p><p>现在当前ACT/MXU/openTPU SYSTEM/GEMM/VECTOR/LL SYSTEM六份实际主源均有各自匹配的只读RECT审计；加上旧源及相关父/适配层共有11份指定snapshot、3027584个dbWire对象（含重复epoch/父层，不是独立网络或pin数）。此补查只排除RECT漏项，不改变任何时序、完整规则、SRAM、父层AP或系统资格失败。93415真实新视图仍待终态，不能将旧源视图继承给新源。</p>'
+    restored_view=result.get('LLSYSTEM_current_owned_restored_views',{})
+    if restored_view.get('completed_utc'):
+        assert restored_view['source_geometry_sha256']==restored['files']['routed.odb']['sha256'] and restored_view['source_SPEF_sha256']==restored['files']['extracted.spef']['sha256']
+        assert restored_view['matching_all_signal_model_pins']==13507 and restored_view['all_sources_and_pre_RCX_geometry_unchanged'] and restored_view['SPEF_replay_matches_source']
+        row=next(r for r in rows if r['case']=='llaccel_aux');row['current_source_research_model']='SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING'
+        row['current_source_complete_views']=restored_view;row['parent_access']='CURRENT10261_SOURCE_VIEWS_EXPORTED_PARENT_AP_NOT_VALIDATED'
+        from plot_actual_wire_restore import plot as plot_actual_restore
+        result['LLSYSTEM_actual_wire_restore_figure']=plot_actual_restore(out/'data/gate_terminal_updates',out)
+        upper_text+='<h3 id="r56-current-views">R56：10261点修复源的完整视图已导出，实际前后图已核验</h3><p>93415已终态COMPLETED0，准确绑定93375新ODB f0b2ff2a13ca与SPEF 0cfd83f27e9d；默认LEF、详细OBS、DEF、实际网表及非零研究时序模型全部导出。13507位及PG的XY/原层/尺寸/方向/网络与真实修复源匹配，默认/详细视图的外框和pin合同一致，独立模型读回及原SPEF负余量逐字重放通过。minimum_period仍不存在，完整时序/电气/规则/父AP与系统资格未通过；不得将模型导出成功写成时序闭合。</p><p>新原生导出bit_433前后均71行，全部via/内部端点和当前pin相同；仅一M5 WIRE由实际[3975490,2411220,3975910,2411500]变为[3975490,2411220,3976140,2411500]DBU。逐整数矩形并集核对新增19600DBU²=0.0049μm²、无删去的金属；实际延长0.115μm，不是block面积节省。第39组图使用真实修复后原生导出，不从候选坐标或请求参数代画。</p><img src="assets/llsys_actual_wire_restore.png" alt="实际M5线尾修复前后native2变0但负时序保留"><p><a href="assets/llsys_actual_wire_restore.svg">实际前后SVG</a> · <a href="data/llsys_actual_wire_restore_figure.json">原生几何/SHA/并集验证</a>。四面板同列对照共用4.8μm与1.4μm坐标窗，pin按原生0.14μm实际矩形绘制；仅画该网导出金属，未绘异网/PG/OBS不能视为空闲。原第38组图为先前金属损失/待修复阶段的历史图，未覆盖。</p>'
+        upper_text=upper_text.replace('93415新源完整LEF/OBS/模型导出仍运行，未宣称模型或父AP完成。','93415后续已终态，见R56新源完整视图和实际修复图；父AP仍未验证。')
+        upper_text=upper_text.replace('93415真实新视图仍待终态，不能将旧源视图继承给新源。','93415后续终态见R56，使用准确新源视图，不继承旧源。')
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',
