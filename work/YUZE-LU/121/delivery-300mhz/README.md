@@ -1,3 +1,5 @@
+2026-10-29 21:24:34 CST：378已在R344/93237/node21已有allocation内启动，父0–15、五个16CPU子槽16–95动态补位，无新增allocation。六功能/算术项通过、映射运行：三初态各566999检查/414906拍、公共42/扩展36及组合/延迟全部测量同367，实际264bit证明和单bit负例通过；47原始/35稳定/308源核验。379采样将绑定378新公共回执，380→381→382全新物理/最终门/接口及383准入尚待准备；本地选择器已改，远端377仍保持原配置。V374最终−0.12 ns不接收，R344继续原任务，M/S/T保持。目标active、Issue121=in_progress/PR122=draft，登记pending、看板unverified/同步pending、审查待指定。
+
 2026-10-29 21:13:54 CST：V374六原生阶段完成，最终RCX setup−0.12 ns/TNS−37.33 ns，product[3][4]→stat_block_sq[66]，300MHz未接收；流程内最终LEC UNSAT/IDENTICAL与路由违规0不替代独立验收。14原始文件及源/input.v/receipt输入绑定核验。选定同一基础V的U80平方和三层树改用既有完整128位分组进位，保留U80节点、周期、尾块mask与全部数值/接口；新378验证尚待提交。已启动旧后继正常收尾，R344继续全局布线。M/S/T接收保持、V/R最终未齐；目标active、Issue121=in_progress/PR122=draft，登记pending、看板unverified/同步pending、审查待指定。
 
 2026-10-29 20:08:54 CST：V374 GRT setup/TNS −0.01/−0.02 ns、hold +0.02 ns，最大product[2][8]→output_mem[82][17]、最小point_total[7][116]自环，9原始SHA/字节及同一input.v/已核验308源绑定。300MHz尚未通过，原93372继续route/finish；375/376待真实最终产物。另补存3份完整CTS证据，76500字节报告为旧74358字节快照原样追加2142字节，CTS时序不变，旧快照保持。R344仍全局布线、原任务保留。M/S/T接收保持、V/R最终未齐；目标active，Issue121=in_progress/PR122=draft，登记pending、看板unverified/同步pending、审查待指定。
