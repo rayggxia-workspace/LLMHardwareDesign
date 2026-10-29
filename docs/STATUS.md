@@ -1,5 +1,15 @@
 # 当前状态
 
+2026-10-29T15:28:34.026345+08:00 R42发布前：管理检查、24767原pin/74301 ABC、35077文件SHA/196链接/26380历史raw、两个新审计原文SHA/源ODB-SPEF绑定/全局余量逐字重放与逐类型路径分类均通过；Python编译/diff通过，既有buffer合同未改。Edge QA-r55全部36图/精确查询/无溢出通过，新max/min表及检查类型说明已打开目视核验。此head在线CI和图片blob待推送后读回；不能挪用R41通过或称物理资格。
+
+恢复第一步：读回PR129最新head和本地差异，按r42_runtime_observation.json核实93239/93243/93245/93217等终态；已完成93240/93247/93248不重提。93239若终态需采集新源2172接口/2245宏矩形合同、持久时钟USE、全网/双PG及fresh，不能仅以DRT0当通过。93245冻结驱动2ef7cc0、93243冻结9368223、当前路径审计冻结7014b0c；不能覆盖活动驱动。下一定向LL ECO可根据实际bit2941末端BUF/原网端点研究已有身份buffer迁移或成本换型，完整原网络/时钟/复位/层/尺寸与原约束不改，不能把移图/启发式当最终RC收益。六块完整资格/底座冻结/两功能/公平端到端对照仍未完成，继续active/in_progress，非暂停或结束。
+
+
+2026-10-29T07:25:52.355190+00:00 R42实际终态：93247/93248分别对openTPU SYSTEM真实stacked-via源、LL bit1025实际源执行原SDC/ODB/SPEF关键路径审计；原生0、源SHA不变、max/min逐字重放。每组每延迟类型12条，非全路径枚举；两份各12个原文终态按raw/gzip SHA追加。openSYS max/min仍−0.056396/−0.119919ns。LL全局min −0.587515ns实际来自异步复位removal，采集clk组最差普通hold为−0.340467ns；max为寄存器u_attn.D_r[6]到bit_2941输出−3.909029ns。真实输出末段net报告1.668370ns/到达slew2.069668ns，属实际STA段值，非独立RC常数/可消除收益；不得将全部负min称普通hold。JSON历史setup_ns/hold_ns兼容保留，HTML表改为max/min slack，并新增逐类型/逐路径来源JSON。原时序失败仍在，没有通过诊断修复。
+
+93245已在独立common_integration/actual-access-tips-r01/C实际启动，driver2ef7cc0da8558f961f172457f5810e44c34b471d。仅选择已闭合且逐SHA绑定的新MXU/LL实际视图，完整逐pin核对旧接口功能/方向/层/尺寸/PG，差异XY全部索引；原topology/6资源/外框/256固定预算不改。其余叶源epoch和658diode/openSYS新源未选明确保留，仍早期未合格接入试验，不能当公平PPA或两完整功能。93243真实Aopt、93239实际MXU父层独立检查与原长作业仍执行，见带时间runtime回执，不重复/取消。R41 c3703265d9cc56401041e9636f7fd8dec419ee08已推送，在线CI40833728772/40833728831 success，矩阵/PNG/SVG blob读回一致；登记pending/看板unverified同步pending/待指定审查人，完整目标仍active/in_progress/Draft。
+
+
 2026-10-29T15:10:00.665613+08:00 R41发布前验证：管理检查、24767原pin/74301 ABC、35048文件SHA/191链接/26380历史raw、新LL13507-pin真实源/视图逐行Counter与SPEF逐字重放、全部终态raw/gzip双SHA一致性通过；未改5项buffer合同测试、编译及diff通过。Edge QA-r54加载36幅图、精确常量查询与无溢出通过，原图保留。本次head/在线CI/图片blob以推送后读回为准，非完整物理资格。
 
 2026-10-29T15:08:17.562325+08:00 R41接续实际终态：93240已完成LL bit_1025最新实际源匹配物理/RC视图，13507信号pin及PG/层/尺寸/当前XY精确一致，clean ODB SHA 5e7e3b7c6b7a5bccb7f4c71aacccecf65b08c5e3be3c063a4d65ac162ebe781b，原SPEF逐字重放、独立模型重读0；setup/hold仍−3.909029/−0.587515ns、8876文字VIOLATED，minimum_period/父层/完整规则/功能未闭合。不继承旧三点源模型，不把导出成功当物理资格。11个原生小文件逐SHA追加data/gate_terminal_updates/llsys-parent-tip-views-r01，原R38不覆盖。

@@ -888,6 +888,8 @@ def render(root,out):
                       ('MXU_actual_tip_views_r01','mxu_actual_tip_views/r01/mxu-C'),
                       ('LLSYSTEM_bit1025_actual_tip_ECO_r01','llsys_parent_access_tip/r01'),
                       ('LLSYSTEM_bit1025_actual_tip_views_r01','llsys_parent_tip_views/r01/llaccel_aux-C'),
+                      ('SYSTEM_current_actual_paths_r03','actual_path_audit/r03/opentpu_aux'),
+                      ('LLSYSTEM_current_actual_paths_r03','actual_path_audit/r03/llaccel_aux'),
                       ('MXU_clock_bound_parent_recheck_r02','escape_view_recheck/r02/mxu-C'),
                       ('MXU_clock_bound_parent_recheck_r03','escape_view_recheck/r03/mxu-C')]:
         p=snapshot/rel/'execution.json.gz'
@@ -898,6 +900,8 @@ def render(root,out):
                         'MXU_actual_tip_views_r01':'mxu-actual-tip-views-r01',
                         'LLSYSTEM_bit1025_actual_tip_ECO_r01':'llsys-parent-access-tip-r01',
                         'LLSYSTEM_bit1025_actual_tip_views_r01':'llsys-parent-tip-views-r01',
+                        'SYSTEM_current_actual_paths_r03':'system-current-paths-r03',
+                        'LLSYSTEM_current_actual_paths_r03':'llsys-current-paths-r03',
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
         update=root/'gate_terminal_updates'/terminal_names.get(label,'NO_TERMINAL_UPDATE')
         terminal_evidence=None
@@ -941,6 +945,18 @@ def render(root,out):
             r['newer_actual_bit1025_ECO'].update({'matching_new_views':'SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING','model_evidence':e})
             upper_text=upper_text.replace('新匹配视图和真实父层待完成，不继承前三点源模型；主矩阵仍明确列此前匹配视图源，此新实际变体单独记录。','新匹配视图已由93240完成，真实父层仍待完成；不继承前三点源模型，主矩阵保留此前三点源作历史比较，新变体独立记录。')
             upper_text+='<p><strong>93240 bit_1025最新实际源视图已完成：</strong>全部13507信号位和PG/原M5-M6/尺寸/当前实际XY精确匹配，clean ODB与真实新源SHA一致；默认及详细OBS、DEF、真实网表与非零提取Lib导出，模型独立重读0。SPEF余量逐字重放，setup/hold仍−3.909029/−0.587515ns，8876文字VIOLATED未消失；minimum_period覆盖仍缺，真实父层无AP、完整规则及功能未闭合。不把导出成功当时序或系统通过。</p>'
+        if label in ['SYSTEM_current_actual_paths_r03','LLSYSTEM_current_actual_paths_r03'] and q.get('completed_utc'):
+            source=result['SYSTEM_actual_stacked_via_r01' if q['case']=='opentpu_aux' else 'LLSYSTEM_bit1025_actual_tip_ECO_r01']
+            assert q['native_returncode']==0 and all(q['source_worst_slacks_exactly_replayed'].values()) and q['all_sources_unchanged']
+            for name in ['routed.odb','extracted.spef']:
+                assert q['source_SHA'][q['actual_source_directory']+'/'+name]==source['files'][name]['sha256']
+            r=next(r for r in rows if r['case']==q['case']);r['latest_actual_path_diagnosis']={'evidence':e,'source_kind':q['source_kind'],'source_setup_ns':q['source_setup_ns'],'source_hold_ns':q['source_hold_ns'],'timing_repair':False}
+            from summarize_native_path_types import summarize as summarize_types
+            types=summarize_types(p.parent);types_file=data/(q['case']+'_current_actual_path_types.json')
+            types_file.write_text(json.dumps(types,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
+            r['latest_actual_path_diagnosis']['classified_paths']=types_file.relative_to(out).as_posix()
+            upper_text+='<p><strong>'+q['case']+' 当前真实源关键路径审计：</strong>原生0，原SDC/真实ODB/SPEF逐SHA绑定、setup及hold报表逐字重放；余量仍'+str(q['source_setup_ns'])+'/'+str(q['source_hold_ns'])+'ns。每组每延迟类型12条路径用于定位，非全路径枚举；完整原check-type报项另存。这里只读诊断，没有更改约束或消除原失败，不当ECO成功。</p>'
+            upper_text+='<p><strong>实际检查类型分列（采集范围内）：</strong>'+ '；'.join(t+' '+str(r['slack_ns'])+'ns' for t,r in types['worst_observed_by_check_type'].items())+'。全局max/min字段历史名称保留；min可能包含removal，不能统一称普通hold。<a href="'+types_file.relative_to(out).as_posix()+'">逐条真实路径/类型/来源SHA</a>。</p>'
         if label.startswith('MXU_clock_bound_parent_recheck_') and q.get('completed_utc'):
             upper_text+='<p>实际整父层返回'+str(q.get('native_returncodes'))+'；fresh='+str(q.get('fresh_DRC_count'))+'，完整2245条宏pin/网络/方向/层/USE合同='+str(q.get('all_original_macro_pin_rectangles_net_directions_layers_in_parent_exactly_unchanged'))+'。r02在native swapMaster发生Signal11，失败保留；r03改为先swap后绑定同一真实库，结果以该回执为准，不能以小探针代替。</p>'
     mxu_tip=result.get('MXU_actual_tip_ECO_r01',{});mxu_fresh=result.get('MXU_actual_tip_original_range_fresh_r01',{});mxu_view=result.get('MXU_actual_tip_views_r01',{})
@@ -969,6 +985,11 @@ def render(root,out):
         q=read(baseline_submission);assert not q['full_qualification']
         result['optimized_perimeter_common_base_trial_submission']=q
         upper_text+='<p><strong>优化周边方案的真实共同底座试验已启动：</strong>93243采用独立boundary-r01/Aopt目录，同六块资源、3651.2×5913.6μm外框及256×32μm真实固定M10预连拓扑/预算；全部24767个源pin逐项检查边界坐标，实际执行布局、PDN、CuGR/DRT与独立检查。提交/运行不等于布线完成；Aopt与当前C的源epoch及既有ECO成本不同，现阶段只作集成问题对照，不能计算最终纯XY收益。两侧合格冻结/完整功能/RC-STA仍未完成。<a href="data/common_boundary_r01_submission.json">提交SHA、作业与公平性限制</a>。</p>'
+    runtime=data/'r42_runtime_observation.json'
+    if runtime.exists():
+        observed=read(runtime);assert not observed['full_qualification']
+        result['latest_runtime_observation']=runtime.relative_to(out).as_posix()
+        upper_text+='<p><strong>新增实际接入93245及终态审计93247/93248：</strong>93245在独立actual-access-tips-r01/C使用最新MXU/LL真实视图，逐pin保留原层/尺寸/功能/PG并索引实际XY差异；其他源epoch差异单列。它重新构造/布线共同父层以验证旧NoAP是否消除，尚未取得物理完成证据，不继承旧源结果。<a href="data/r42_runtime_observation.json">带时间的真实提交/活动/依赖与已结束作业回执</a>；该观察不是持续实时状态，不能把RUNNING当通过。六块完整资格/共同合格冻结/两完整功能/公平系统收益仍未完成。</p>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',
@@ -1014,7 +1035,8 @@ def render(root,out):
     return '''<section class="card" id="latest-physical-gates"><h2>最新六块验证矩阵与GDS导入修复（优先于历史快照）</h2>
 <div class="warn">本节按已收齐的具体版本区分已完成、失败、运行中、未执行和未知；native0、Slurm0或候选完整均不提升为全部物理完成。全部6块完整设计形式等价/系统RTL等价均尚未执行，历史逐pin目标金属层仍部分未知。</div>
 <p><a href="data/qualification_matrix.json">机器可核查矩阵JSON（含来源/父层/功能/新尝试）</a> · <a href="data/qualification_matrix.csv">CSV</a> · <a href="'''+dest.relative_to(out).as_posix()+'''/snapshot.json">原文/SHA/物理产物索引</a>；快照 '''+html.escape(meta['created_utc'])+'''。空值不是0。</p>
-<div class="scroll"><table><thead><tr><th>block</th><th>原始pin</th><th>已完成源版本</th><th>实际引出</th><th>native DRC</th><th>全块信号/时钟几何</th><th>双PG</th><th>setup / hold ns</th><th>完整规则/缺口</th></tr></thead><tbody>'''+table+'''</tbody></table></div>
+<div class="scroll"><table><thead><tr><th>block</th><th>原始pin</th><th>已完成源版本</th><th>实际引出</th><th>native DRC</th><th>全块信号/时钟几何</th><th>双PG</th><th>max / min slack ns</th><th>完整规则/缺口</th></tr></thead><tbody>'''+table+'''</tbody></table></div>
+<p>表中max/min来自原生report_worst_slack。JSON历史字段setup_ns/hold_ns为兼容索引保留，不能据字段名把min全称普通hold；min可能包括removal。已取得的逐类型诊断、完整原报项及未检查条件分别列于下文。</p>
 <p>六块划分/全部接口及24767原始pin、74301行A/B/C覆盖保持。GEMM/MXU新成本ECO不混入纯XY；ACT父夹具仍有hold失败，VECTOR原3ns下setup失败。openSYS原窗口版与新92781成本ECO均已布线，均setup/hold失败，二者分别记录。LL PG-only的4项native失败与完整窗口92690/92691分别保留。</p>
 <h3>92783：重复顶层LEF导致提前失败，完整deck未执行</h3>
 <p>两块旧costed-r01都merge_returncode=1，分别Duplicate MACRO name: gemm_engine / llhd_opentpu_mxu。错误发生在DEF读取时自动载入同目录abstract.lef/detailed.lef；尚未返回严格合并检查，missing_GDS_cells=[]不能证明GDS齐全。Slurm COMPLETED 0:0是旧包装器未传递失败，不是合并通过。</p>

@@ -558,6 +558,24 @@ def check(out):
         assert Counter(tuple(line.split()) for line in a)==Counter(tuple(line.split()) for line in b)
         for kind in ['setup','hold']:
             assert gzip.decompress((source_dir/(kind+'.txt.gz')).read_bytes())==gzip.decompress((view_dir/(kind+'.txt.gz')).read_bytes())
+    for label,case,source_label in [('SYSTEM_current_actual_paths_r03','opentpu_aux','SYSTEM_actual_stacked_via_r01'),('LLSYSTEM_current_actual_paths_r03','llaccel_aux','LLSYSTEM_bit1025_actual_tip_ECO_r01')]:
+        audit=j.get(label,{})
+        if not audit.get('completed_utc'):continue
+        source=j[source_label]
+        assert audit['native_returncode']==0 and all(audit['source_worst_slacks_exactly_replayed'].values()) and audit['all_sources_unchanged'] and not audit['full_qualification']
+        assert audit['original_SDC_and_extracted_SPEF_preserved']
+        for name in ['routed.odb','extracted.spef']:
+            assert audit['source_SHA'][audit['actual_source_directory']+'/'+name]==source['files'][name]['sha256']
+        for kind in ['setup','hold']:
+            assert audit['source_'+kind+'_ns']==source[kind+'_ns']
+            assert gzip.decompress(((out/audit['evidence']).parent/(kind+'.txt.gz')).read_bytes())==gzip.decompress(((out/source['evidence']).parent/(kind+'.txt.gz')).read_bytes())
+        assert rows[case]['latest_actual_path_diagnosis']['timing_repair'] is False
+        from summarize_native_path_types import summarize as summarize_types
+        types=summarize_types((out/audit['evidence']).parent)
+        assert types==read(out/rows[case]['latest_actual_path_diagnosis']['classified_paths'])
+        if case=='llaccel_aux':
+            assert types['worst_observed_by_check_type']['REMOVAL']['slack_ns']==-.587515
+            assert types['worst_observed_by_check_type']['HOLD']['slack_ns']==-.340467
     for terminal in (out/'data/gate_terminal_updates').glob('*'):
         if not terminal.is_dir():continue
         capture=read(terminal/'capture.json');receipt=read(terminal/'execution.json.gz')

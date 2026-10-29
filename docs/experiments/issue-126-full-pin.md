@@ -1,5 +1,10 @@
 # 全功能分块、全块二维 pin 与实际接入（Issue126）
 
+2026-10-29T07:25:52.355190+00:00 R42实际终态：93247/93248分别对openTPU SYSTEM真实stacked-via源、LL bit1025实际源执行原SDC/ODB/SPEF关键路径审计；原生0、源SHA不变、max/min逐字重放。每组每延迟类型12条，非全路径枚举；两份各12个原文终态按raw/gzip SHA追加。openSYS max/min仍−0.056396/−0.119919ns。LL全局min −0.587515ns实际来自异步复位removal，采集clk组最差普通hold为−0.340467ns；max为寄存器u_attn.D_r[6]到bit_2941输出−3.909029ns。真实输出末段net报告1.668370ns/到达slew2.069668ns，属实际STA段值，非独立RC常数/可消除收益；不得将全部负min称普通hold。JSON历史setup_ns/hold_ns兼容保留，HTML表改为max/min slack，并新增逐类型/逐路径来源JSON。原时序失败仍在，没有通过诊断修复。
+
+93245已在独立common_integration/actual-access-tips-r01/C实际启动，driver2ef7cc0da8558f961f172457f5810e44c34b471d。仅选择已闭合且逐SHA绑定的新MXU/LL实际视图，完整逐pin核对旧接口功能/方向/层/尺寸/PG，差异XY全部索引；原topology/6资源/外框/256固定预算不改。其余叶源epoch和658diode/openSYS新源未选明确保留，仍早期未合格接入试验，不能当公平PPA或两完整功能。93243真实Aopt、93239实际MXU父层独立检查与原长作业仍执行，见带时间runtime回执，不重复/取消。R41 c3703265d9cc56401041e9636f7fd8dec419ee08已推送，在线CI40833728772/40833728831 success，矩阵/PNG/SVG blob读回一致；登记pending/看板unverified同步pending/待指定审查人，完整目标仍active/in_progress/Draft。
+
+
 2026-10-29T15:08:17.562325+08:00 R41接续实际终态：93240已完成LL bit_1025最新实际源匹配物理/RC视图，13507信号pin及PG/层/尺寸/当前XY精确一致，clean ODB SHA 5e7e3b7c6b7a5bccb7f4c71aacccecf65b08c5e3be3c063a4d65ac162ebe781b，原SPEF逐字重放、独立模型重读0；setup/hold仍−3.909029/−0.587515ns、8876文字VIOLATED，minimum_period/父层/完整规则/功能未闭合。不继承旧三点源模型，不把导出成功当物理资格。11个原生小文件逐SHA追加data/gate_terminal_updates/llsys-parent-tip-views-r01，原R38不覆盖。
 
 已实际提交93243：driver936822309dcdcd8e928549898abeed850b70b14f、独立common_integration/boundary-r01/Aopt。对全部24767个真实Aopt信号pin逐项检查确在边界，使用同六块资源/布局外框/256×32μm真实FIXED拓扑预算，实际执行placement/PDN/CuGR/DRT及独立规则/连通检查。最新只为RUNNING，尚无终态。源epoch与两侧既有ECO差异单列，非最终纯XY收益对照；原C及活动驱动不变。93239最新MXU实际M6接点父层重接仍RUNNING，未宣布NoAP解决。92690/92691、92855、93197/93218及93217两770-edge guard15均保留，不按耗时取消。共同合格冻结/两完整功能/公平系统对照仍未完成，整体in_progress/Draft。
