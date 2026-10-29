@@ -6,7 +6,7 @@ and unrepairable families remain explicit, never a pure-XY benefit claim.
 """
 from pathlib import Path
 from collections import defaultdict
-import csv,datetime,hashlib,json,math,os,re,subprocess,sys,traceback
+import csv,datetime,hashlib,json,math,os,re,shutil,subprocess,sys,traceback
 from run_exports import ROOT,IMAGE,sha
 from run_parent_trial import tcl
 from run_escape_fixture import execute
@@ -73,15 +73,29 @@ def run(case,revision):
                 if z:caps[name,pin]=float(z[1])
             try:logic[name]=contract('cell ('+name+') {'+body+'}',name)
             except AssertionError:logic[name]=None
-        native('original_native_inventory','read_db '+tcl(odb)+'\nfingerprint '+tcl(out/'before')+'\n'+COST_PROC+'\ncell_cost '+tcl(out/'before.cell_cost.tsv')+'\nclose $stages',threads=1)
+        previous=ROOT/'current_driver_sizing/r03'/case
+        if revision!='r03' and (previous/'execution.json').exists():
+            prior=json.loads((previous/'execution.json').read_text())
+            assert prior.get('completed_utc') and prior['native_returncodes']['original_native_inventory']==0 and prior['all_closed_sources_unchanged'] and prior['source_SHA'][str(odb)]==sha(odb)
+            inputs[str(previous/'execution.json')]=sha(previous/'execution.json')
+            for name in ['before.cells.tsv','before.pins.tsv','before.pdn.tsv','before.die.tsv','before.cell_cost.tsv']:
+                p=previous/name;assert sha(p)==prior['files'][name]['sha256'];inputs[str(p)]=sha(p);shutil.copyfile(str(p),str(out/name))
+            rec['native_returncodes']['original_native_inventory']=0;rec['reused_closed_readonly_inventory']=str(previous)
+        else:native('original_native_inventory','read_db '+tcl(odb)+'\nfingerprint '+tcl(out/'before')+'\n'+COST_PROC+'\ncell_cost '+tcl(out/'before.cell_cost.tsv')+'\nclose $stages',threads=1)
         before,terms=read_cells(out/'before.cells.tsv')
         nonfill={r['instance'] for r in csv.DictReader((out/'before.cell_cost.tsv').open(),delimiter='\t') if r['type']!='CORE_SPACER'}
         terms={k:v for k,v in terms.items() if k[0] in nonfill};viol=defaultdict(dict);section=None
+        # OpenSTA prints bus brackets without the literal backslashes stored
+        # in OpenDB names. Resolve only after proving the map is bijective.
+        display_to_native={re.sub(r'\\([\[\]])',r'\1',n):n for n in before}
+        assert len(display_to_native)==len(before),'Ambiguous report-to-native name mapping'
         for line in report.read_text().splitlines():
             if line.strip() in ['max slew','max capacitance','max fanout']:section=line.strip()
             if section not in ['max slew','max capacitance'] or '(VIOLATED)' not in line:continue
             p=line.split();assert len(p)>=5
-            inst,pin=p[0].rsplit('/',1);assert inst in before and (inst,pin) in terms,('Actual report driver not resolved',p[0],inst in before,(inst,pin) in terms)
+            inst,pin=p[0].rsplit('/',1)
+            if inst not in before:inst=display_to_native.get(inst,inst)
+            assert inst in before and (inst,pin) in terms,('Actual report driver not resolved',p[0],inst in before,(inst,pin) in terms)
             viol[inst][section]={'pin':pin,'limit':float(p[1]),'actual':float(p[2]),'native_line':line}
         selected={};inventory=[]
         for inst,checks in sorted(viol.items()):
