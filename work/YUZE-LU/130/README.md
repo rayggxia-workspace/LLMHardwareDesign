@@ -1,3 +1,5 @@
+2026-10-29 22:02 CST，Issue130当前：M已接受并下载；S35/93398原生六阶段完成、内建全边界LEC为UNSAT/IDENTICAL、最终RCX完成，93403封存成功。93404独立最终物理门通过：setup +0.028545ns、hold +0.0072ns，cap/slew/setup/hold违规均0，实际M10接点/PG/连通/RC/全端点均通过。93407完整未改FreePDK45 deck DRC仍运行。93405尚未仿真即因夹具引用综合后消失的store.mem_req/mem_ready名字编译失败；原失败证据保留。e98a5ac2源码的新qualify36只修测试观测：通过实际ready仲裁口反推宽读，每拍运行前置检查并保留原事务次数断言；最终S/M网表、RTL、SDC均不改。93451最终S→已接受M→T三初态功能运行，93452严格独立LEC→93454交付→93455几何/93456包已排依赖。旧93406/08/09/10经PENDING、本人目录和命令核验后退役。S尚未接受，PR132仍draft，Issue130=in_progress；父任务不变。登记pending、看板unverified/同步pending、审查人待指定。
+
 # Issue130 当前交付状态
 
 2026-10-29，Asia/Shanghai。任务 [Issue130](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/130)，草稿 [PR132](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/132)。M 已完成原生布局布线及全部同源独立验收，六文件/几何/压缩包已实收核验；见 [M 最终结果](validation/physical/ACCEPTED_M.md)。S35/93398 已通过完整GRT后的cap/slew/setup/hold四项0，现详细布线；仍待最终提取和独立四门，不能称整个任务完成。S34/93392 为相同RTL的20ps物理优化对照，不增加第二种宏实现。

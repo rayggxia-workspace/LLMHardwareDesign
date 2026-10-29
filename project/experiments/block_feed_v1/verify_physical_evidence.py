@@ -61,6 +61,19 @@ def verify(root):
             assert not ET.fromstring(z.read('evidence/drc/full-deck.lyrdb')).findall('.//items/item')
             assert len(reports['function']['initial_runs']) == 3
             assert all(v['result']['passed'] for v in reports['function']['initial_runs'].values())
+            if kind == 's':
+                observer = json.loads(z.read('evidence/function/memory-observer.json'))
+                assert observer == reports['function']['memory_observer']
+                assert observer['passed'] and observer['memory_transaction_assertions_retained']
+                assert not observer['physical_netlist_modified']
+                assert sha(z.read('evidence/function/physical-pair.sv')) == observer['generated_fixture_sha256']
+                assert sha(z.read('evidence/function/physical-test-pair.cpp')) == observer['generated_bench_sha256']
+                assert reports['function']['compiled_bench_sha256'] == observer['generated_bench_sha256']
+                assert reports['function']['bench_sha256'] == observer['original_bench_sha256']
+                for reset, valid, take, fire, ready, seen in observer['exhaustive_legal_boolean_rows']:
+                    assert reset or not valid or take
+                    assert ready == int(not reset and (not valid or take) and not fire)
+                    assert seen == fire == int(not reset and (not valid or take) and not ready)
             assert reports['formal']['strict_native_lec']['passed']
             assert all(reports['formal']['strict_native_lec']['checks'].values())
             assert reports['formal']['function_receipt_sha256'] == delivery['gate_receipts']['function']['sha256']
