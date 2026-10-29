@@ -525,7 +525,7 @@ def render(root,out):
     actual_llsys_tips=plot_llsys_tips(snapshot,out)
     if actual_llsys_tips:
         result['LL_SYSTEM_actual_via_tip_figure']=actual_llsys_tips
-        upper_text+='<h3>LL SYSTEM：三处实际 pin / 末端接线修复</h3><p>真实原网的M4–M6与via4–via6矩形局部放大，左右同尺度。保留完整内部C；fresh native4→0，但负setup/hold、父层接入和完整规则缺项均保留。白底不代表无异网/PG/OBS，图不替代验证。</p><img src="assets/llsys_actual_via_tip_repair.png" alt="LL SYSTEM三处真实pin前后矩形"><p><a href="assets/llsys_actual_via_tip_repair.svg">SVG</a> · <a href="data/llsys_actual_via_tip_repair.json">原文SHA及验证范围</a></p>'
+        upper_text+='<h3>LL SYSTEM：三处实际 pin / 末端接线修复</h3><p>真实原网的M4–M7与via4–via6矩形局部放大，左右同尺度。保留完整内部C；fresh native4→0，但负setup/hold、父层接入和完整规则缺项均保留。白底不代表无异网/PG/OBS，图不替代验证。</p><img src="assets/llsys_actual_via_tip_repair.png" alt="LL SYSTEM三处真实pin前后矩形"><p><a href="assets/llsys_actual_via_tip_repair.svg">SVG</a> · <a href="data/llsys_actual_via_tip_repair.json">原文SHA及验证范围</a></p>'
     if actual_stacked:
         result['SYSTEM_actual_stacked_via_figure']=actual_stacked
         upper_text+='<img loading="lazy" src="assets/system_stacked_via_actual.png" alt="SYSTEM实际接线前后原生矩形，native2变0但时序失败"><p><a href="assets/system_stacked_via_actual.svg">真实接入修复SVG</a> · <a href="data/system_stacked_via_actual_rectangles.csv">两份完整目标网实际矩形CSV</a> · <a href="data/system_stacked_via_actual.json">源SHA及未验证项</a>。坐标同尺度、矩形为实际尺寸；周边异网/PG/OBS未绘，白底不是空闲。</p>'
@@ -883,13 +883,32 @@ def render(root,out):
                       ('MXU_clock_bound_parent_recheck_r02','escape_view_recheck/r02/mxu-C'),
                       ('MXU_clock_bound_parent_recheck_r03','escape_view_recheck/r03/mxu-C')]:
         p=snapshot/rel/'execution.json.gz'
+        terminal_names={'LLSYSTEM_current_actual_tip_views':'llsys-tip-views-r01',
+                        'MXU_clock_bound_parent_recheck_r03':'mxu-clock-bound-parent-r03'}
+        update=root/'gate_terminal_updates'/terminal_names.get(label,'NO_TERMINAL_UPDATE')
+        terminal_evidence=None
+        if update.exists():
+            capture=read(update/'capture.json');assert not capture['full_qualification']
+            for record in capture['records']:
+                stored=(update/(record['name']+'.gz')).read_bytes();raw=gzip.decompress(stored)
+                assert hashlib.sha256(stored).hexdigest()==record['stored_sha256'] and hashlib.sha256(raw).hexdigest()==record['sha256'] and len(raw)==record['bytes']
+            terminal_dest=out/'data/gate_terminal_updates'/update.name;shutil.copytree(update,terminal_dest,dirs_exist_ok=True)
+            p=terminal_dest/'execution.json.gz';terminal_evidence=p.relative_to(out).as_posix()
         if not p.exists():continue
-        q=read(p);e=(dest/p.relative_to(snapshot)).relative_to(out).as_posix();result[label]=dict(q,evidence=e)
+        q=read(p);e=terminal_evidence or (dest/p.relative_to(snapshot)).relative_to(out).as_posix();result[label]=dict(q,evidence=e)
         upper_text+='<p><strong>'+label+'</strong>：'+('已收齐终态' if q.get('completed_utc') else '快照时仍执行中，不能当完成')+'。<a href="'+e+'">源SHA、原生返回及完整原文回执</a>；完整资格仍未完成。</p>'
         if label=='ALL24767_actual_parent_track_geometry' and q.get('completed_utc'):
             upper_text+='<p>真实原R02六块父层24767pin逐项轨道审计：其余五块preferred中心未对齐数0，LL SYSTEM为13184；宏原点均已对齐实际pitch。bit_1025的M5 preferred中心偏移0.07μm；原网535条实际矩形/端点已取得，未编造端点。仅为几何风险，未对齐不等于无AP，仍须真实局部PG/OBS/via及父层接入检查。</p><p><a href="'+(dest/rel/'all24767_actual_parent_pin_track_geometry.csv.gz').relative_to(out).as_posix()+'">全部24767父层信号pin逐项轨道CSV</a></p>'
         if label=='MXU_native_clock_Liberty_binding_probe' and q.get('native_probe_returncode')==0:
             upper_text+='<p>原生小探针真实记录：read_LEF后MTerm为SIGNAL，加载同源Liberty后变CLOCK，link及原2.5ns create_clock后保持CLOCK；旧/新源LEF均USE SIGNAL、Liberty均clock:true。这里只证明工具绑定阶段行为，不证明整父层修复；未手改USE或更改时钟。</p>'
+        if label=='LLSYSTEM_current_actual_tip_views' and q.get('completed_utc'):
+            assert q['native_export_returncode']==q['fresh_model_read_returncode']==0 and q['matching_all_signal_model_pins']==13507
+            assert q['SPEF_replay_matches_source'] and q['all_sources_and_pre_RCX_geometry_unchanged'] and q['all_13507_current_pins_and_PG_match_actual_after_edit']
+            source=read(snapshot/'llsys_actual_via_tips/r02/execution.json.gz')
+            assert q['source_geometry_sha256']==source['files']['routed.odb']['sha256']
+            r=next(r for r in rows if r['case']=='llaccel_aux');r['current_source_research_model']='SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING'
+            upper_text=upper_text.replace('新匹配抽象/RC模型及父层接入仍待完成','新匹配抽象/RC模型已由93190闭合，父层接入仍待完成')
+            upper_text+='<p><strong>93190当前LL源匹配视图已完成：</strong>原生默认/详细OBS抽象、DEF/网表及非零真实RC时序模型导出，独立模型重读0；13507信号位及全部原PG/层/尺寸/当前实际XY精确匹配，clean ODB与真实源SHA相同。原SPEF余量逐字重放−3.909029/−0.587515ns，仍失败；minimum_period规则缺项、父层/完整规则/功能资格未通过。此闭合回执独立追加，未改写R38快照时仍运行的记录。</p>'
         if label.startswith('MXU_clock_bound_parent_recheck_') and q.get('completed_utc'):
             upper_text+='<p>实际整父层返回'+str(q.get('native_returncodes'))+'；fresh='+str(q.get('fresh_DRC_count'))+'，完整2245条宏pin/网络/方向/层/USE合同='+str(q.get('all_original_macro_pin_rectangles_net_directions_layers_in_parent_exactly_unchanged'))+'。r02在native swapMaster发生Signal11，失败保留；r03改为先swap后绑定同一真实库，结果以该回执为准，不能以小探针代替。</p>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')

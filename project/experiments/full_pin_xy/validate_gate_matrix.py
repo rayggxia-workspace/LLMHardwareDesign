@@ -58,7 +58,8 @@ def check(out):
         assert q['all_other_725250_multiterminal_route_box_multisets_identical'] and q['exactly_eight_actual_WIRE_rectangles_removed_no_added_wire_or_via_material'] and q['all_actual_target_via_rectangle_multisets_preserved']
         assert all(q['all_cells_signal_connections_PG_die_unchanged'].values()) and q['all_closed_sources_unchanged'] and q['container_library_unchanged']
         assert ll['setup_ns']==q['setup_ns']==-3.909029 and ll['hold_ns']==q['hold_ns']==-0.587515 and ll['violation_marker_rows']==q['literal_VIOLATED_markers_not_complete_failure_count']==8876
-        assert ll['current_source_research_model']=='NOT_EXPORTED' and 'NOT_VALIDATED' in ll['parent_access'] and not ll['full_qualification']
+        expected_model='SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING' if j.get('LLSYSTEM_current_actual_tip_views',{}).get('completed_utc') else 'NOT_EXPORTED'
+        assert ll['current_source_research_model']==expected_model and 'NOT_VALIDATED' in ll['parent_access'] and not ll['full_qualification']
     system=folder/'checkpoint_route/r01/execution.json.gz'
     if system.exists() and read(system).get('completed_utc'):
         q=read(system);assert not q['full_qualification'] and q['native_returncode']==0 and q['fresh_DRC_count']==0
@@ -444,6 +445,38 @@ def check(out):
             assert q['whole_signal_geometry']['pass'] and q['whole_signal_geometry']['checked_nets']==466332
             assert all(q['original_cells_poses_signal_connections_pins_PG_die_unchanged'].values())
             assert q['actual_changed_multiterminal_net_wire_via_box_multisets']==['_215139_']
+    if j.get('ALL24767_actual_parent_track_geometry'):
+        q=j['ALL24767_actual_parent_track_geometry'];assert q['all_closed_sources_unchanged'] and not q['full_qualification']
+        assert sum(v['signal_pins'] for v in q['per_block_track_geometry'].values())==24767
+        assert {k:v['preferred_axis_center_not_aligned'] for k,v in q['per_block_track_geometry'].items()}=={'act':0,'mxu':0,'opentpu_aux':0,'gemm':0,'vector':0,'llaccel_aux':13184}
+        assert q['actual_complete_selected_net_row_counts']['bit_1025']==535
+        figure=j['LL_SYSTEM_actual_via_tip_figure'];assert not figure['full_qualification']
+        assert figure['actual_rows_before_after']==[862,854] and figure['removed_WIRE_rectangles']==8 and figure['all_actual_vias_preserved']
+        assert figure['source_native_DRC_before_after']==[4,0] and figure['setup_hold_ns']==[-3.909029,-.587515]
+    if j.get('MXU_native_clock_Liberty_binding_probe'):
+        q=j['MXU_native_clock_Liberty_binding_probe'];assert q['native_probe_returncode']==0 and q['all_closed_sources_unchanged'] and not q['full_qualification']
+        assert q['actual_native_stage_rows'][1:]==['after_LEF\tSIGNAL\tNULL\tNULL','after_Liberty\tCLOCK\tNULL\tNULL','after_link_design\tCLOCK\tCLOCK\tSIGNAL','after_original_create_clock\tCLOCK\tCLOCK\tSIGNAL']
+    q=j.get('MXU_clock_bound_parent_recheck_r02',{})
+    if q.get('completed_utc'):
+        assert q['native_returncodes']['actual_view_swap_and_access_export']==-11 and q['all_closed_sources_unchanged']
+        assert 'fresh_DRC_count' not in q and not q['full_qualification']
+    q=j.get('LLSYSTEM_current_actual_tip_views',{})
+    if q.get('completed_utc'):
+        import csv,io
+        from collections import Counter
+        assert q['native_export_returncode']==q['fresh_model_read_returncode']==0 and q['matching_all_signal_model_pins']==13507
+        assert q['all_sources_and_pre_RCX_geometry_unchanged'] and q['SPEF_replay_matches_source'] and q['all_13507_current_pins_and_PG_match_actual_after_edit']
+        assert not q['full_qualification'] and q['minimum_period_present'] is False
+        current_source=read(folder/'llsys_actual_via_tips/r02/execution.json.gz')
+        assert q['source_geometry_sha256']==current_source['files']['routed.odb']['sha256']
+        assert q['source_SPEF_sha256']==current_source['files']['extracted.spef']['sha256']
+        view_folder=(out/q['evidence']).parent
+        new_pins=gzip.decompress((view_folder/'pins.tsv.gz').read_bytes()).decode().splitlines()[1:]
+        source_pins=gzip.decompress((folder/'llsys_actual_via_tips/r02/after.pins.tsv.gz').read_bytes()).decode().splitlines()
+        assert Counter(tuple(s.split()) for s in new_pins)==Counter(tuple(s.split()) for s in source_pins)
+        for k in ['setup','hold']:
+            assert gzip.decompress((view_folder/(k+'.txt.gz')).read_bytes())==gzip.decompress((folder/('llsys_actual_via_tips/r02/'+k+'.txt.gz')).read_bytes())
+        assert rows['llaccel_aux']['current_source_research_model']=='SOURCE_BOUND_ACTUAL_RCX_REPLAY_VERIFIED_MINIMUM_PERIOD_MISSING'
     for q in j.get('source_bound_extended_STA_r01',[]):
         assert not q['full_qualification']
         if not q.get('completed_utc'):continue

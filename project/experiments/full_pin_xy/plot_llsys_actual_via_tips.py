@@ -35,7 +35,7 @@ def plot(snapshot,out):
     fig,axes=plt.subplots(3,2,figsize=(13.5,11.8));fig.subplots_adjust(left=.09,right=.97,top=.84,bottom=.16,hspace=.52,wspace=.24)
     fig.text(.045,.955,'llaccel SYSTEM | 三处真实 pin / 末端接线修复',fontsize=21,weight='bold',color='#17283c')
     fig.text(.045,.91,'完整内部 C 保留；13507 信号 pin 中仅三点作增量修复，原 M5/M6 / 尺寸 / 网络 / 方向保持。',fontsize=10.5,color='#56677d')
-    colors={'metal4':'#68a28d','metal5':'#328aaa','metal6':'#8a6eb0','via4':'#a3bd89','via5':'#bc9a5c','via6':'#c07aa1'}
+    colors={'metal4':'#68a28d','metal5':'#328aaa','metal6':'#8a6eb0','metal7':'#a3b7cc','via4':'#a3bd89','via5':'#bc9a5c','via6':'#c07aa1'}
     for i,pin in enumerate(targets):
         pair=[[r for r in rs if r['net']==pin] for rs in [rows0,rows1]]
         pp=[box(next(r for r in rs if r['kind']=='BTERM')) for rs in pair]
@@ -59,7 +59,7 @@ def plot(snapshot,out):
             ax.ticklabel_format(useOffset=False,style='plain');ax.tick_params(labelsize=8);ax.set_xlabel('x (μm)',fontsize=9);ax.set_ylabel('y (μm)',fontsize=9)
     handles=[Rectangle((0,0),1,1,facecolor=c,alpha=.6) for c in colors.values()]
     handles += [Rectangle((0,0),1,1,facecolor='#f5cc67',edgecolor='#17283c'),Rectangle((0,0),1,1,fill=False,edgecolor='#d75852',linestyle='--')]
-    fig.legend(handles,list(colors)+['真实 0.14μm pin','实际删除的末端 WIRE'],loc='lower left',bbox_to_anchor=(.055,.09),ncol=4,frameon=False,fontsize=9)
+    fig.legend(handles,list(colors)+['真实 0.14μm pin','实际删除的末端 WIRE'],loc='lower left',bbox_to_anchor=(.055,.065),ncol=5,frameon=False,fontsize=9)
     fig.text(.045,.025,'全部为真实原生矩形，左右各对使用同一坐标尺度；只画所选原网，白底不代表无异网 / PG / OBS。\n完整块 fresh native 4 → 0；setup / hold −3.909029 / −0.587515 ns 仍失败。父层接入 / 完整规则 / 功能未通过或待验证。',fontsize=9.5,color='#56677d',linespacing=1.6)
     assets=out/'assets';fig.savefig(assets/'llsys_actual_via_tip_repair.png',dpi=180)
     p=assets/'llsys_actual_via_tip_repair.svg'
