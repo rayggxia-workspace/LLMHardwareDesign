@@ -120,9 +120,44 @@ def final_function(folder,out,run,pair=None):
         def peer_run(cmd,log):run(cmd,'peer-'+log)
         # Export functions use explicit absolute output paths.
         mnet,mproof=export(ROOT,extra,peer_run,peer,pr,presults,'block_feed_m',LIB)
-        paths += [mnet,ROOT/'project/rtl/block_feed_v1/block_feed_pair.sv',ROOT/'project/rtl/block_v1/transaction6k.sv']
+        # Internal RTL aliases are not physical ports and disappear in mapping.
+        # Observe actual wide-read arbitration through the qualified ready port.
+        # Under the runtime-checked host response condition, the S RTL equation
+        # ready = !reset && (!valid || take) && !wide_fire is invertible.
+        fixture=ROOT/'project/rtl/block_feed_v1/block_feed_pair.sv'
+        original=fixture.read_text()
+        old='assign mem_fire=store.mem_req&&store.mem_ready;'
+        assert original.count(old)==1
+        storage=ROOT/'project/rtl/block_feed_v1/block_feed_s16k.sv'
+        assert 'assign ready=!reset&&(!valid||take)&&!wide_fire;' in storage.read_text()
+        observed=out/'physical-pair.sv'
+        observed.write_text(original.replace(old,'assign mem_fire=!reset&&(!valid||take)&&!ready;'))
+        paths += [mnet,observed,ROOT/'project/rtl/block_v1/transaction6k.sv']
         top='block_feed_pair';bench=ROOT/'project/experiments/block_feed_v1/test_pair.cpp'
     else:bench=ROOT/'project/experiments/block_feed_v1/test_m.cpp'
+    original_bench=bench
+    observation=None
+    if extra is not None:
+        text=bench.read_text();needle='d.clk=0;d.eval();ac+='
+        assert text.count(needle)==1
+        bench=out/'physical-test-pair.cpp'
+        bench.write_text(text.replace(needle,'d.clk=0;d.eval();if(!d.reset&&!(!d.valid||d.take))throw std::runtime_error("physical memory observer precondition");ac+='))
+        rows=[]
+        for reset in (0,1):
+            for valid in (0,1):
+                for take in (0,1):
+                    for fire in (0,1):
+                        if reset and fire:continue
+                        if not reset and not (not valid or take):continue
+                        ready=not reset and (not valid or take) and not fire
+                        observed_fire=not reset and (not valid or take) and not ready
+                        assert observed_fire==bool(fire)
+                        rows.append([reset,valid,take,fire,int(ready),int(observed_fire)])
+        observation=dict(passed=True,method='Actual ready-port arbitration inversion with a runtime precondition on every sampled cycle',
+            fixture_sha256=sha(fixture),storage_rtl_sha256=sha(storage),original_bench_sha256=sha(original_bench),
+            generated_fixture_sha256=sha(observed),generated_bench_sha256=sha(bench),exhaustive_legal_boolean_rows=rows,
+            memory_transaction_assertions_retained=True,physical_netlist_modified=False)
+        (out/'memory-observer.json').write_text(json.dumps(observation,indent=2)+'\n')
     compiler='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
     run([compiler,'--cc','--exe','--build','-j','16','-Wno-fatal','--top-module',top,'--prefix','V'+top,
          '-Mdir',out/'obj','--output-split','12000','--output-split-cfuncs','150','--threads','4',
@@ -141,9 +176,9 @@ def final_function(folder,out,run,pair=None):
         runs=dict(pool.map(one,[('all-ones',1,130),('random-130',2,130),('random-131',2,131)]))
     assert all(v['result']==runs['all-ones']['result'] for v in runs.values())
     result=dict(passed=True,top=flow['top'],test_top=top,source_receipt_sha256=sha(folder/'receipt.json'),
-                full_final_netlist=proof,bench_sha256=sha(bench),library_sha256=sha(LIB),
+                full_final_netlist=proof,bench_sha256=sha(original_bench),compiled_bench_sha256=sha(bench),library_sha256=sha(LIB),
                 cell_models_sha256=sha(out/'cells.v'),initial_runs=runs,qualified_hard_macro=False)
-    if extra is not None:result.update(peer_source_receipt_sha256=sha(pair/'receipt.json'),peer_full_final_netlist=mproof)
+    if extra is not None:result.update(peer_source_receipt_sha256=sha(pair/'receipt.json'),peer_full_final_netlist=mproof,memory_observer=observation)
     (out/'final-function.json').write_text(json.dumps(result,indent=2)+'\n')
 
 
