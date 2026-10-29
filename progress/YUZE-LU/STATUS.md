@@ -582,3 +582,11 @@ R首版真实RTL测试195通过240组GDN/SSM和100组四抽头卷积，397971检
 2026-10-29 06:57 CST：304/93055的264bit全域add/sub/RNE SAT及真实single-bit负例通过，但完整三项在误改select cast语法处编译失败；原22文件/11稳定绑定和3条postfinally traceback差异保存v-carry-304-0657。305/93057已实际提交src3a3e1d6/archiveeb0a9d88，纠正唯一cast，已证明两源函数SHA相同，仅复用数学证明；完整数值/映射/bench新跑、未有新物理资格。原291/236/281保持正常运行，295/298未分配尚绑291，不可混用305结果。
 
 2026-10-29 07:08 CST：305完整三初态数值和42实际端口情形/所有profile已逐值复现289，ABC完成top正在function/group，进程采样CPU100ticks/s且仅44MiB ABC，未取消。选择未来V306 fresh-native/307新最终门/308接口，仍是待实际回执的计划路径；295/298从未分配且已显式退役，291继续基线，不冒称291最终被拒。306fresh入口将实际核验304 SAT输出/回执和与当前RTL函数逐字节一致，仅复用数学证明；完整新源数值/映射/benchmark与全部新物理/门不可省略。M/S/T与R236/281/292/297选择不变。最新线上head0efaee8、PR/Issue精确读回，OPEN/draft/in_progress。
+
+
+2026-10-29 14:45 CST（独立互联侧线，不改主线阶段）：Issue121的48项真实MT/TS接口有限实验已完成，MT0/24、TS19/24在声明条件通过；T→S最长1688µm的8→8→2候选section setup+0.308616ns，MT电气清零后ready仍负。93222/93236自然COMPLETED/0:0，6×16动态队列及Issue共享8allocation保持；原输入末次SHA不变。报告docs/reports/2026-10-29-block-v1-interconnect-study.md，恢复docs/handoffs/2026-10-29-issue-121-interconnect-study.md；基准e3b129e，原运行源7383a79/b591fd8，独立分支task/121-interconnect-study。线上使用同Git树快照，原历史Git bundle已校验备份；侧线PR以提交回执为准，不关闭121/不改PR122。独立审查/驱动真实P&R尚未完成；登记pending，看板unverified/同步pending。
+
+
+2026-10-29（互联侧线补齐交付）：三种实际预制接口完整原生P&R/全DRC/严格LEC通过，两槽桥真实M/T/S门级15例×三初态通过；MT17/TS15根新层实走线/独立研究几何通过，41项电气测量（17项条件通过）及31条端口C预算收尾。guarded当前组合仍失败：MT9 cap；TS8 cap+1 slew；全宽275/281根未收敛，不能认定组合通过。原生产18文件末次SHA保持，16轮源/资源已审计、全部终止；峰值6×16即时补位。主线Issue121仍in_progress，不改PR122/主工作树；现有PR133更新有限负面结论、报告与确定性证据包。独立审查待指定，登记pending，看板unverified/同步pending。
+
+2026-10-29 23:57 CST：Issue121互联侧线/PR133全宽修复实验闭合。M/T/S实验副本完整原生验收通过；M→T275、T→S281根及三种RC共6项全通过。S两处M2同网精确修补、fresh RCX、独立最终门及完整信号网表同一性证据齐全；原18生产文件未变、本侧线allocation全部结束，实测峰值6×16。入口：`docs/reports/2026-10-29-block-v1-full-bus-driver-repair.md`及`work/YUZE-LU/121/interconnect-fix-20261029/repair-results.json`。下一步主线/独立审查人审查候选及角色端口边界；本侧线不判定V/R或改变主线Issue整体状态。登记pending、看板unverified/同步pending、独立审查待指定。

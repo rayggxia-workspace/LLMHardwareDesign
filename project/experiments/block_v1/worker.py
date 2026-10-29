@@ -60,7 +60,102 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('revision300-vector-boundary-'):
+    if MODE=='linkfix-s-patch':
+        from linkfix_s_patch import probe
+        probe(ROOT, OUT, CPUS, run)
+    elif MODE=='linkfix-s-finish':
+        from linkfix_s_patch import finish
+        finish(ROOT, OUT, CPUS, run)
+    elif MODE.startswith('linkfix-s-qa-'):
+        from linkfix_s_qa import check
+        check(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE=='linkfix-s-combine':
+        from linkfix_s_qa import combine
+        combine(ROOT, OUT, CPUS, run)
+    elif MODE.startswith('linkfix-probe-'):
+        from linkfix import probe
+        probe(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkfix-native-'):
+        from linkfix import implement
+        implement(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkfix-io-view-'):
+        from linkfix import io_view
+        io_view(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkfix-accept-'):
+        from linkfix import accept
+        accept(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE=='linkfix-function-group':
+        from linkfix import function_group
+        function_group(ROOT, OUT, CPUS)
+    elif MODE.startswith('linkfix-function-'):
+        from linkfix import function
+        function(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkfix-geometry-'):
+        from linkfix_channel import geometry
+        geometry(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkclose-route-') and MODE.rsplit('-',1)[1] in ('mf3','tf3','tf5','tf6','tf7','tf8','tf9'):
+        from linkfix_channel import route
+        route(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkclose-route-') and MODE.rsplit('-',1)[1] in ('mq1','tq1','tq2','tq3'):
+        from linkfix import rebind
+        rebind(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkclose-route-') and MODE.rsplit('-',1)[1] in ('mf1','mf2','mf4','tf1','tf2'):
+        from linkfix import route
+        route(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkclose-fanout-'):
+        from linkclose_fanout import route
+        route(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkclose-prepare-'):
+        from linkclose_measure import prepare_pair
+        prepare_pair(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkclose-case-'):
+        from linkclose_measure import measure
+        pair,variant=MODE[len('linkclose-case-'):].split('-')
+        measure(ROOT, OUT, CPUS, run, pair, variant)
+    elif MODE.startswith('linkclose-route-'):
+        pair=MODE.rsplit('-',1)[1]
+        if pair in ('mtr','tsr'):
+            from linkclose_route import route
+            route(ROOT, OUT, CPUS, run, pair[:2],representative=True)
+        elif pair in ('mt','ts'):
+            from linkclose_route import route
+            route(ROOT, OUT, CPUS, run, pair)
+        else:
+            from linkclose_fanout import route
+            route(ROOT, OUT, CPUS, run, pair)
+    elif MODE.startswith('linkclose-pgfix-'):
+        from linkclose_physical import repair_pg
+        repair_pg(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkclose-accept-'):
+        from linkclose_accept import verify
+        verify(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkclose-field-'):
+        from linkclose_field import measure
+        measure(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkclose-physical-'):
+        from linkclose_physical import implement
+        implement(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE == 'linkclose-protocol':
+        from linkclose_protocol import verify
+        verify(ROOT, OUT, CPUS, run)
+    elif MODE == 'linkclose-probe':
+        from linkclose_probe import probe
+        probe(ROOT, OUT, CPUS, run)
+    elif MODE == 'interconnect-probe':
+        from interconnect_experiment import probe
+        probe(ROOT, OUT, CPUS, run)
+    elif MODE.startswith('interconnect-prepare-'):
+        from interconnect_experiment import prepare_macro
+        prepare_macro(ROOT, OUT, CPUS, run, MODE.rsplit('-', 1)[1])
+    elif MODE.startswith('interconnect-case-'):
+        from interconnect_experiment import measure
+        pair, topology, length, variant = MODE[len('interconnect-case-'):].split('-')
+        measure(ROOT, OUT, CPUS, run, pair, topology, float(length), variant)
+    elif MODE.startswith('interconnect-profile-'):
+        from interconnect_experiment import measure_profile
+        pair, topology, variant = MODE[len('interconnect-profile-'):].split('-')
+        measure_profile(ROOT, OUT, CPUS, run, pair, topology, variant)
+    elif MODE.startswith('revision300-vector-boundary-'):
         from revision300_rtl import vector_boundary
         vector_boundary(ROOT,OUT,CPUS,run,MODE.rsplit('-',1)[1])
     elif MODE=='revision300-v-group-proof':

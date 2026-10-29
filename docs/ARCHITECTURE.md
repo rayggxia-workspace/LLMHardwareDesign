@@ -4,6 +4,8 @@
 
 # 架构与运行
 
+完整275/281线互联与273个真实输出驱动修复的入口为[实验报告](reports/2026-10-29-block-v1-full-bus-driver-repair.md)和[证据/重现说明](../work/YUZE-LU/121/interconnect-fix-20261029/README.md)。`linkfix.py`修复独立原生副本、`linkfix_channel.py`生成全宽轨道、`linkfix_s_patch.py`严格限制S同网M2修补并在新进程检查已保存数据库、`linkfix_s_qa.py`关联独立原生验收门；`linkfix_report.py`只接受已关闭且SHA关联一致的完整原生/几何/电气证据，不替换主线交付。控制命令为`python -m unittest discover -s project/experiments/block_v1 -p test_linkfix_channel.py`（另有test_interconnect_spef.py、test_linkclose.py、test_linkfix_s_patch.py，共18项）。实际EDA仍必须经获授权Slurm队列和16CPU硬分区；诊断I/O导出不授予完整原生资格。
+
 2026-10-29修订主线：[五宏实现合同](BLOCK_V1_REVIEW_CONTRACT.md)、[300MHz验收计划](plans/block-v1-review-300mhz.md)及[新版交付入口](../work/YUZE-LU/121/delivery-300mhz/README.md)。当前最终接收M/S/T；V315全部六项验证通过，316原生P&R进行，后继317最终门/文件/完整几何及318接口等待真实前置。R309数值/端口及310占用通过、映射进行，后继311原生/312最终门/313接口等待真实前置。原306/291/236正常收尾，旧源物理资格不转移；307/308只退役未分配未来选择。
 
 当前V复现使用worker.py模式`revision300-test-v`、`revision300-map-v`、`revision300-bench-v-{revised,extended}`、`revision300-vector-boundary-{composition,latency}`，各16CPU，真实源/工具/命令/输入SHA见run315逐项receipt。主RTL的8共享乘法器前增加操作数寄存，逐元素total/RNE分级；实测逐元素5拍、统计4拍。用`revision300-sv-workspace`及`revision300-model-sv-bench-{0,1,2,3}`复现319有限S/V调度，五项各27场景×两初态，初始S写入、实际S响应、全组屏障、回放及消费均计价。3072元素RMS/L2各10479拍、Softmax16707拍；不授予集成物理或系统吞吐资格。
@@ -292,6 +294,8 @@ RAW_LIB_FOLDER需提供已按164收据封存的candidate164-a.lib/c.lib。只读
 
 182真实导体来源与184直接实际位置门均已原生通过，183固定实例保护失败也保留。完整结果见work/YUZE-LU/121/results/run182-*、run183-*、run184-*。固定PR128 fbbd5ec显式输出RC十二个pair的记录输出逐项复算见macro-qa128-explicit-output-rc-fbbd5ec.json；只作为待审查的层次timing/RC方向，不替换物理M10pin或签发真实宏资格。
 # 当前 Block v1 五宏执行入口（2026-10-27）
+
+M/S/T代表性互联有限实验（2026-10-29）使用独立`interconnect_{spef,experiment,stage,collect,pin_profiles,cross_section,report}.py`入口，未修改基础宏RTL或生产P&R。两组130线完整原生图、36+12项测量及控制/复现命令见[报告](reports/2026-10-29-block-v1-interconnect-study.md)与[交接](handoffs/2026-10-29-issue-121-interconnect-study.md)。本地控制：`python -m unittest discover -s project/experiments/block_v1 -p test_interconnect_spef.py -v`；实际EDA仍经原Issue共享dispatcher/6×16队列。报告生成器只接受完整已关闭捕获，不把实验执行PASSED当作电路或制造资格。
 
 用户选定 M/V/R/S/T，每种一个实现，必须逐块交最终M1–M10布局布线。规格见 `docs/BLOCK_LIBRARY_V1.md`，计划见 `docs/plans/block-v1-library-implementation.md`。旧裸M8/混合VS为历史工程来源，非最终边界。
 

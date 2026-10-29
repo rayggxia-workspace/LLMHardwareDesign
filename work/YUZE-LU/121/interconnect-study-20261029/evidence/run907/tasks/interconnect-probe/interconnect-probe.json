@@ -1,0 +1,911 @@
+{
+  "passed": true,
+  "actual_hierarchical_native_join_consumed": true,
+  "positive_topologies": [
+    "direct",
+    "endpoints",
+    "relay"
+  ],
+  "actual_huge_r_and_c_negative_controls_rejected": true,
+  "cases": {
+    "direct": {
+      "schema": "finite-real-producer-link/1",
+      "passed": true,
+      "experiment_completed": true,
+      "topology": "direct",
+      "length_um": 568.0,
+      "variant": "base",
+      "native_preservation": {
+        "passed": true,
+        "native_connections_ground_and_coupling_caps_resistors_preserved": true,
+        "records": {
+          "counts": {
+            "conn": 14,
+            "cap": 24,
+            "res": 14
+          },
+          "sum256": "2d824d11a7625f6a76b01c2409136473272008349347f3092259bdd761c5f816",
+          "xor256": "f1577da55dd14967a7b709bc076743b580bef460d985a1051d58e22a5b0bef8a"
+        }
+      },
+      "native_common_sha256": "c451aa42944399d0ca24378c4bbf6821564cc6785ec1f251028cbec3a83aa6ad",
+      "links_spef_sha256": "f87f16ed7a197841153a9bf396c85c52570ca1da5da3f6bcd04879ce7a8ae35d",
+      "wrapper_sha256": "c3c5cbf7437f30d82bf3dbd9934d4fc96ef498434b66ed42e8a3973cedf3023f",
+      "observations": {
+        "links": [
+          {
+            "id": "f000",
+            "source": [
+              "left",
+              "q[0]"
+            ],
+            "sink": [
+              "right",
+              "d[0]"
+            ],
+            "role": "data",
+            "bit": 0,
+            "source_driver": "u_left/ff0/Q",
+            "first_native_loads": [
+              "u_right/ff0/D",
+              "u_right/protect/A"
+            ],
+            "costs": [
+              {
+                "net": "f000",
+                "length_um": 568.0,
+                "wire_cap_ff": 88.26208579311552,
+                "series_r_ohm": 8.76
+              }
+            ]
+          },
+          {
+            "id": "f001",
+            "source": [
+              "left",
+              "q[1]"
+            ],
+            "sink": [
+              "right",
+              "d[1]"
+            ],
+            "role": "data",
+            "bit": 1,
+            "source_driver": "u_left/ff1/Q",
+            "first_native_loads": [
+              "u_right/ff1/D"
+            ],
+            "costs": [
+              {
+                "net": "f001",
+                "length_um": 568.0,
+                "wire_cap_ff": 88.26208579311552,
+                "series_r_ohm": 8.76
+              }
+            ]
+          }
+        ],
+        "buffer_cell": "BUF_X4",
+        "added_buffer_count": 0,
+        "main_length_um": 568.0,
+        "rc_factor": 1.0,
+        "local_segment_um": 8,
+        "new_layer_coupling_qualified": false,
+        "physical_implementation_completed": false
+      },
+      "summary": {
+        "setup_count": [
+          "0"
+        ],
+        "hold_count": [
+          "0"
+        ],
+        "time_unit_seconds": [
+          "9.999999717180685e-10"
+        ],
+        "cap_unit_farads": [
+          "1.0000000036274937e-15"
+        ],
+        "capacitance": [
+          "2",
+          "-49.695587158203125",
+          "60.72999954223633"
+        ],
+        "slew": [
+          "2",
+          "-0.04770331457257271",
+          "0.1985349953174591"
+        ],
+        "fanout": [
+          "0",
+          "1.0000000150474662e+30",
+          "1.0000000150474662e+30"
+        ]
+      },
+      "counts": {
+        "setup_count": 0,
+        "hold_count": 0,
+        "capacitance": 2,
+        "slew": 2,
+        "fanout": 0
+      },
+      "electrical_passed": false,
+      "min_link_setup_ns": 2.829822,
+      "min_link_hold_ns": 0.047126,
+      "link_paths": {
+        "f000": {
+          "max": {
+            "slack_ns": 2.829822,
+            "startpoint": "u_left/ff0/Q",
+            "endpoint": "u_right/ff0/D"
+          },
+          "min": {
+            "slack_ns": 0.047429,
+            "startpoint": "u_left/ff0/Q",
+            "endpoint": "u_right/ff0/D"
+          }
+        },
+        "f001": {
+          "max": {
+            "slack_ns": 2.832489,
+            "startpoint": "u_left/ff1/Q",
+            "endpoint": "u_right/ff1/D"
+          },
+          "min": {
+            "slack_ns": 0.047126,
+            "startpoint": "u_left/ff1/Q",
+            "endpoint": "u_right/ff1/D"
+          }
+        }
+      },
+      "zero_fanout_unannotated_drivers": {
+        "u_left/ff0/QN": 0,
+        "u_left/ff1/QN": 0,
+        "u_right/ff0/QN": 0,
+        "u_right/ff1/QN": 0
+      },
+      "connected_parasitics_annotated": true,
+      "declared_model_passed": false,
+      "production_macros_modified": false,
+      "geometry_qualified": false,
+      "calibrated_12layer_rc_qualified": false,
+      "scope": "Both complete native gate-level macros and their native RC/coupling records, shared ideal clock root plus original CTS,130 live data/valid/ready wires. Candidate BUF_X4 cells and8um local stubs are electrical what-if resources, not placed or fabricated hardware. Single fanout, declared RC length scan only; no complete controller/protocol/system/manufacturing qualification."
+    },
+    "endpoints": {
+      "schema": "finite-real-producer-link/1",
+      "passed": true,
+      "experiment_completed": true,
+      "topology": "endpoints",
+      "length_um": 568.0,
+      "variant": "base",
+      "native_preservation": {
+        "passed": true,
+        "native_connections_ground_and_coupling_caps_resistors_preserved": true,
+        "records": {
+          "counts": {
+            "conn": 14,
+            "cap": 24,
+            "res": 14
+          },
+          "sum256": "2d824d11a7625f6a76b01c2409136473272008349347f3092259bdd761c5f816",
+          "xor256": "f1577da55dd14967a7b709bc076743b580bef460d985a1051d58e22a5b0bef8a"
+        }
+      },
+      "native_common_sha256": "86a49b5a2e9d818fa74fc12a1f92469e05cb73f679cca0a589918f183243090d",
+      "links_spef_sha256": "70f092fe6205f22a76575061ec55400eecc359c72a95e635582755deb245a1fc",
+      "wrapper_sha256": "eda11e90b6458c65a117d2484693f3b23bc7829cab7d1945acee780f1745074f",
+      "observations": {
+        "links": [
+          {
+            "id": "f000",
+            "source": [
+              "left",
+              "q[0]"
+            ],
+            "sink": [
+              "right",
+              "d[0]"
+            ],
+            "role": "data",
+            "bit": 0,
+            "source_driver": "u_left/ff0/Q",
+            "first_native_loads": [
+              "u_right/ff0/D",
+              "u_right/protect/A"
+            ],
+            "costs": [
+              {
+                "net": "f000_src",
+                "length_um": 8.0,
+                "wire_cap_ff": 1.24312796891712,
+                "series_r_ohm": 0.36
+              },
+              {
+                "net": "f000_dst",
+                "length_um": 8.0,
+                "wire_cap_ff": 1.24312796891712,
+                "series_r_ohm": 0.36
+              },
+              {
+                "net": "f000_seg0",
+                "length_um": 568.0,
+                "wire_cap_ff": 88.26208579311552,
+                "series_r_ohm": 8.76
+              }
+            ]
+          },
+          {
+            "id": "f001",
+            "source": [
+              "left",
+              "q[1]"
+            ],
+            "sink": [
+              "right",
+              "d[1]"
+            ],
+            "role": "data",
+            "bit": 1,
+            "source_driver": "u_left/ff1/Q",
+            "first_native_loads": [
+              "u_right/ff1/D"
+            ],
+            "costs": [
+              {
+                "net": "f001_src",
+                "length_um": 8.0,
+                "wire_cap_ff": 1.24312796891712,
+                "series_r_ohm": 0.36
+              },
+              {
+                "net": "f001_dst",
+                "length_um": 8.0,
+                "wire_cap_ff": 1.24312796891712,
+                "series_r_ohm": 0.36
+              },
+              {
+                "net": "f001_seg0",
+                "length_um": 568.0,
+                "wire_cap_ff": 88.26208579311552,
+                "series_r_ohm": 8.76
+              }
+            ]
+          }
+        ],
+        "buffer_cell": "BUF_X4",
+        "added_buffer_count": 4,
+        "main_length_um": 568.0,
+        "rc_factor": 1.0,
+        "local_segment_um": 8,
+        "new_layer_coupling_qualified": false,
+        "physical_implementation_completed": false
+      },
+      "summary": {
+        "setup_count": [
+          "0"
+        ],
+        "hold_count": [
+          "0"
+        ],
+        "time_unit_seconds": [
+          "9.999999717180685e-10"
+        ],
+        "cap_unit_farads": [
+          "1.0000000036274937e-15"
+        ],
+        "capacitance": [
+          "0",
+          "0.7300000786781311",
+          "60.72999954223633"
+        ],
+        "slew": [
+          "0",
+          "0.06351104378700256",
+          "0.1985349953174591"
+        ],
+        "fanout": [
+          "0",
+          "1.0000000150474662e+30",
+          "1.0000000150474662e+30"
+        ]
+      },
+      "counts": {
+        "setup_count": 0,
+        "hold_count": 0,
+        "capacitance": 0,
+        "slew": 0,
+        "fanout": 0
+      },
+      "electrical_passed": true,
+      "min_link_setup_ns": 2.975599,
+      "min_link_hold_ns": 0.088317,
+      "link_paths": {
+        "f000": {
+          "max": {
+            "slack_ns": 2.975599,
+            "startpoint": "u_left/ff0/Q",
+            "endpoint": "u_right/ff0/D"
+          },
+          "min": {
+            "slack_ns": 0.088747,
+            "startpoint": "u_left/ff0/Q",
+            "endpoint": "u_right/ff0/D"
+          }
+        },
+        "f001": {
+          "max": {
+            "slack_ns": 2.97637,
+            "startpoint": "u_left/ff1/Q",
+            "endpoint": "u_right/ff1/D"
+          },
+          "min": {
+            "slack_ns": 0.088317,
+            "startpoint": "u_left/ff1/Q",
+            "endpoint": "u_right/ff1/D"
+          }
+        }
+      },
+      "zero_fanout_unannotated_drivers": {
+        "u_left/ff0/QN": 0,
+        "u_left/ff1/QN": 0,
+        "u_right/ff0/QN": 0,
+        "u_right/ff1/QN": 0
+      },
+      "connected_parasitics_annotated": true,
+      "declared_model_passed": true,
+      "production_macros_modified": false,
+      "geometry_qualified": false,
+      "calibrated_12layer_rc_qualified": false,
+      "scope": "Both complete native gate-level macros and their native RC/coupling records, shared ideal clock root plus original CTS,130 live data/valid/ready wires. Candidate BUF_X4 cells and8um local stubs are electrical what-if resources, not placed or fabricated hardware. Single fanout, declared RC length scan only; no complete controller/protocol/system/manufacturing qualification."
+    },
+    "relay": {
+      "schema": "finite-real-producer-link/1",
+      "passed": true,
+      "experiment_completed": true,
+      "topology": "relay",
+      "length_um": 568.0,
+      "variant": "base",
+      "native_preservation": {
+        "passed": true,
+        "native_connections_ground_and_coupling_caps_resistors_preserved": true,
+        "records": {
+          "counts": {
+            "conn": 14,
+            "cap": 24,
+            "res": 14
+          },
+          "sum256": "2d824d11a7625f6a76b01c2409136473272008349347f3092259bdd761c5f816",
+          "xor256": "f1577da55dd14967a7b709bc076743b580bef460d985a1051d58e22a5b0bef8a"
+        }
+      },
+      "native_common_sha256": "86a49b5a2e9d818fa74fc12a1f92469e05cb73f679cca0a589918f183243090d",
+      "links_spef_sha256": "9bcf59af41385200d7ce86260c2a8f9defb960f6f9a12498da50c6156c905f0d",
+      "wrapper_sha256": "6f6c7a8b050b451dddcbc80051375180daec174b89bea7145360c907231668a7",
+      "observations": {
+        "links": [
+          {
+            "id": "f000",
+            "source": [
+              "left",
+              "q[0]"
+            ],
+            "sink": [
+              "right",
+              "d[0]"
+            ],
+            "role": "data",
+            "bit": 0,
+            "source_driver": "u_left/ff0/Q",
+            "first_native_loads": [
+              "u_right/ff0/D",
+              "u_right/protect/A"
+            ],
+            "costs": [
+              {
+                "net": "f000_src",
+                "length_um": 8.0,
+                "wire_cap_ff": 1.24312796891712,
+                "series_r_ohm": 0.36
+              },
+              {
+                "net": "f000_dst",
+                "length_um": 8.0,
+                "wire_cap_ff": 1.24312796891712,
+                "series_r_ohm": 0.36
+              },
+              {
+                "net": "f000_seg0",
+                "length_um": 284.0,
+                "wire_cap_ff": 44.13104289655776,
+                "series_r_ohm": 4.5
+              },
+              {
+                "net": "f000_seg1",
+                "length_um": 284.0,
+                "wire_cap_ff": 44.13104289655776,
+                "series_r_ohm": 4.5
+              }
+            ]
+          },
+          {
+            "id": "f001",
+            "source": [
+              "left",
+              "q[1]"
+            ],
+            "sink": [
+              "right",
+              "d[1]"
+            ],
+            "role": "data",
+            "bit": 1,
+            "source_driver": "u_left/ff1/Q",
+            "first_native_loads": [
+              "u_right/ff1/D"
+            ],
+            "costs": [
+              {
+                "net": "f001_src",
+                "length_um": 8.0,
+                "wire_cap_ff": 1.24312796891712,
+                "series_r_ohm": 0.36
+              },
+              {
+                "net": "f001_dst",
+                "length_um": 8.0,
+                "wire_cap_ff": 1.24312796891712,
+                "series_r_ohm": 0.36
+              },
+              {
+                "net": "f001_seg0",
+                "length_um": 284.0,
+                "wire_cap_ff": 44.13104289655776,
+                "series_r_ohm": 4.5
+              },
+              {
+                "net": "f001_seg1",
+                "length_um": 284.0,
+                "wire_cap_ff": 44.13104289655776,
+                "series_r_ohm": 4.5
+              }
+            ]
+          }
+        ],
+        "buffer_cell": "BUF_X4",
+        "added_buffer_count": 6,
+        "main_length_um": 568.0,
+        "rc_factor": 1.0,
+        "local_segment_um": 8,
+        "new_layer_coupling_qualified": false,
+        "physical_implementation_completed": false
+      },
+      "summary": {
+        "setup_count": [
+          "0"
+        ],
+        "hold_count": [
+          "0"
+        ],
+        "time_unit_seconds": [
+          "9.999999717180685e-10"
+        ],
+        "cap_unit_farads": [
+          "1.0000000036274937e-15"
+        ],
+        "capacitance": [
+          "0",
+          "0.7300000786781311",
+          "60.72999954223633"
+        ],
+        "slew": [
+          "0",
+          "0.06351104378700256",
+          "0.1985349953174591"
+        ],
+        "fanout": [
+          "0",
+          "1.0000000150474662e+30",
+          "1.0000000150474662e+30"
+        ]
+      },
+      "counts": {
+        "setup_count": 0,
+        "hold_count": 0,
+        "capacitance": 0,
+        "slew": 0,
+        "fanout": 0
+      },
+      "electrical_passed": true,
+      "min_link_setup_ns": 2.954749,
+      "min_link_hold_ns": 0.111992,
+      "link_paths": {
+        "f000": {
+          "max": {
+            "slack_ns": 2.954749,
+            "startpoint": "u_left/ff0/Q",
+            "endpoint": "u_right/ff0/D"
+          },
+          "min": {
+            "slack_ns": 0.112409,
+            "startpoint": "u_left/ff0/Q",
+            "endpoint": "u_right/ff0/D"
+          }
+        },
+        "f001": {
+          "max": {
+            "slack_ns": 2.955524,
+            "startpoint": "u_left/ff1/Q",
+            "endpoint": "u_right/ff1/D"
+          },
+          "min": {
+            "slack_ns": 0.111992,
+            "startpoint": "u_left/ff1/Q",
+            "endpoint": "u_right/ff1/D"
+          }
+        }
+      },
+      "zero_fanout_unannotated_drivers": {
+        "u_left/ff0/QN": 0,
+        "u_left/ff1/QN": 0,
+        "u_right/ff0/QN": 0,
+        "u_right/ff1/QN": 0
+      },
+      "connected_parasitics_annotated": true,
+      "declared_model_passed": true,
+      "production_macros_modified": false,
+      "geometry_qualified": false,
+      "calibrated_12layer_rc_qualified": false,
+      "scope": "Both complete native gate-level macros and their native RC/coupling records, shared ideal clock root plus original CTS,130 live data/valid/ready wires. Candidate BUF_X4 cells and8um local stubs are electrical what-if resources, not placed or fabricated hardware. Single fanout, declared RC length scan only; no complete controller/protocol/system/manufacturing qualification."
+    },
+    "huge-r": {
+      "schema": "finite-real-producer-link/1",
+      "passed": true,
+      "experiment_completed": true,
+      "topology": "direct",
+      "length_um": 568.0,
+      "variant": "base",
+      "native_preservation": {
+        "passed": true,
+        "native_connections_ground_and_coupling_caps_resistors_preserved": true,
+        "records": {
+          "counts": {
+            "conn": 14,
+            "cap": 24,
+            "res": 14
+          },
+          "sum256": "2d824d11a7625f6a76b01c2409136473272008349347f3092259bdd761c5f816",
+          "xor256": "f1577da55dd14967a7b709bc076743b580bef460d985a1051d58e22a5b0bef8a"
+        }
+      },
+      "native_common_sha256": "c451aa42944399d0ca24378c4bbf6821564cc6785ec1f251028cbec3a83aa6ad",
+      "links_spef_sha256": "2e9236b657febd663075f7e14b27a66f27961a376d2892f40afafbffdd9280fb",
+      "wrapper_sha256": "c3c5cbf7437f30d82bf3dbd9934d4fc96ef498434b66ed42e8a3973cedf3023f",
+      "observations": {
+        "links": [
+          {
+            "id": "f000",
+            "source": [
+              "left",
+              "q[0]"
+            ],
+            "sink": [
+              "right",
+              "d[0]"
+            ],
+            "role": "data",
+            "bit": 0,
+            "source_driver": "u_left/ff0/Q",
+            "first_native_loads": [
+              "u_right/ff0/D",
+              "u_right/protect/A"
+            ],
+            "costs": [
+              {
+                "net": "f000",
+                "length_um": 568.0,
+                "wire_cap_ff": 88.26208579311552,
+                "series_r_ohm": 876000.0
+              }
+            ]
+          },
+          {
+            "id": "f001",
+            "source": [
+              "left",
+              "q[1]"
+            ],
+            "sink": [
+              "right",
+              "d[1]"
+            ],
+            "role": "data",
+            "bit": 1,
+            "source_driver": "u_left/ff1/Q",
+            "first_native_loads": [
+              "u_right/ff1/D"
+            ],
+            "costs": [
+              {
+                "net": "f001",
+                "length_um": 568.0,
+                "wire_cap_ff": 88.26208579311552,
+                "series_r_ohm": 876000.0
+              }
+            ]
+          }
+        ],
+        "buffer_cell": "BUF_X4",
+        "added_buffer_count": 0,
+        "main_length_um": 568.0,
+        "rc_factor": 1.0,
+        "local_segment_um": 8,
+        "new_layer_coupling_qualified": false,
+        "physical_implementation_completed": false
+      },
+      "summary": {
+        "setup_count": [
+          "2"
+        ],
+        "hold_count": [
+          "2"
+        ],
+        "time_unit_seconds": [
+          "9.999999717180685e-10"
+        ],
+        "cap_unit_farads": [
+          "1.0000000036274937e-15"
+        ],
+        "capacitance": [
+          "2",
+          "-49.695587158203125",
+          "60.72999954223633"
+        ],
+        "slew": [
+          "0",
+          "0.06351104378700256",
+          "0.1985349953174591"
+        ],
+        "fanout": [
+          "0",
+          "1.0000000150474662e+30",
+          "1.0000000150474662e+30"
+        ]
+      },
+      "counts": {
+        "setup_count": 2,
+        "hold_count": 2,
+        "capacitance": 2,
+        "slew": 0,
+        "fanout": 0
+      },
+      "electrical_passed": false,
+      "min_link_setup_ns": -43.615597,
+      "min_link_hold_ns": -3.539345,
+      "link_paths": {
+        "f000": {
+          "max": {
+            "slack_ns": -43.615597,
+            "startpoint": "u_left/ff0/Q",
+            "endpoint": "u_right/ff0/D"
+          },
+          "min": {
+            "slack_ns": -3.539345,
+            "startpoint": "u_left/ff0/Q",
+            "endpoint": "u_right/ff0/D"
+          }
+        },
+        "f001": {
+          "max": {
+            "slack_ns": -42.766167,
+            "startpoint": "u_left/ff1/Q",
+            "endpoint": "u_right/ff1/D"
+          },
+          "min": {
+            "slack_ns": -3.473325,
+            "startpoint": "u_left/ff1/Q",
+            "endpoint": "u_right/ff1/D"
+          }
+        }
+      },
+      "zero_fanout_unannotated_drivers": {
+        "u_left/ff0/QN": 0,
+        "u_left/ff1/QN": 0,
+        "u_right/ff0/QN": 0,
+        "u_right/ff1/QN": 0
+      },
+      "connected_parasitics_annotated": true,
+      "declared_model_passed": false,
+      "production_macros_modified": false,
+      "geometry_qualified": false,
+      "calibrated_12layer_rc_qualified": false,
+      "scope": "Both complete native gate-level macros and their native RC/coupling records, shared ideal clock root plus original CTS,130 live data/valid/ready wires. Candidate BUF_X4 cells and8um local stubs are electrical what-if resources, not placed or fabricated hardware. Single fanout, declared RC length scan only; no complete controller/protocol/system/manufacturing qualification."
+    },
+    "huge-c": {
+      "schema": "finite-real-producer-link/1",
+      "passed": true,
+      "experiment_completed": true,
+      "topology": "direct",
+      "length_um": 568.0,
+      "variant": "base",
+      "native_preservation": {
+        "passed": true,
+        "native_connections_ground_and_coupling_caps_resistors_preserved": true,
+        "records": {
+          "counts": {
+            "conn": 14,
+            "cap": 24,
+            "res": 14
+          },
+          "sum256": "2d824d11a7625f6a76b01c2409136473272008349347f3092259bdd761c5f816",
+          "xor256": "f1577da55dd14967a7b709bc076743b580bef460d985a1051d58e22a5b0bef8a"
+        }
+      },
+      "native_common_sha256": "c451aa42944399d0ca24378c4bbf6821564cc6785ec1f251028cbec3a83aa6ad",
+      "links_spef_sha256": "804037a554868a87c45828e72ffc3d5d203640c91b2af00c5b6de8a453b85a98",
+      "wrapper_sha256": "c3c5cbf7437f30d82bf3dbd9934d4fc96ef498434b66ed42e8a3973cedf3023f",
+      "observations": {
+        "links": [
+          {
+            "id": "f000",
+            "source": [
+              "left",
+              "q[0]"
+            ],
+            "sink": [
+              "right",
+              "d[0]"
+            ],
+            "role": "data",
+            "bit": 0,
+            "source_driver": "u_left/ff0/Q",
+            "first_native_loads": [
+              "u_right/ff0/D",
+              "u_right/protect/A"
+            ],
+            "costs": [
+              {
+                "net": "f000",
+                "length_um": 568.0,
+                "wire_cap_ff": 8826.208579311551,
+                "series_r_ohm": 8.76
+              }
+            ]
+          },
+          {
+            "id": "f001",
+            "source": [
+              "left",
+              "q[1]"
+            ],
+            "sink": [
+              "right",
+              "d[1]"
+            ],
+            "role": "data",
+            "bit": 1,
+            "source_driver": "u_left/ff1/Q",
+            "first_native_loads": [
+              "u_right/ff1/D"
+            ],
+            "costs": [
+              {
+                "net": "f001",
+                "length_um": 568.0,
+                "wire_cap_ff": 8826.208579311551,
+                "series_r_ohm": 8.76
+              }
+            ]
+          }
+        ],
+        "buffer_cell": "BUF_X4",
+        "added_buffer_count": 0,
+        "main_length_um": 568.0,
+        "rc_factor": 1.0,
+        "local_segment_um": 8,
+        "new_layer_coupling_qualified": false,
+        "physical_implementation_completed": false
+      },
+      "summary": {
+        "setup_count": [
+          "2"
+        ],
+        "hold_count": [
+          "0"
+        ],
+        "time_unit_seconds": [
+          "9.999999717180685e-10"
+        ],
+        "cap_unit_farads": [
+          "1.0000000036274937e-15"
+        ],
+        "capacitance": [
+          "2",
+          "-8787.640625",
+          "60.72999954223633"
+        ],
+        "slew": [
+          "2",
+          "-19.327627182006836",
+          "0.1985349953174591"
+        ],
+        "fanout": [
+          "0",
+          "1.0000000150474662e+30",
+          "1.0000000150474662e+30"
+        ]
+      },
+      "counts": {
+        "setup_count": 2,
+        "hold_count": 0,
+        "capacitance": 2,
+        "slew": 2,
+        "fanout": 0
+      },
+      "electrical_passed": false,
+      "min_link_setup_ns": -19.942373,
+      "min_link_hold_ns": 2.621349,
+      "link_paths": {
+        "f000": {
+          "max": {
+            "slack_ns": -19.942373,
+            "startpoint": "u_left/ff0/Q",
+            "endpoint": "u_right/ff0/D"
+          },
+          "min": {
+            "slack_ns": 2.621652,
+            "startpoint": "u_left/ff0/Q",
+            "endpoint": "u_right/ff0/D"
+          }
+        },
+        "f001": {
+          "max": {
+            "slack_ns": -19.939705,
+            "startpoint": "u_left/ff1/Q",
+            "endpoint": "u_right/ff1/D"
+          },
+          "min": {
+            "slack_ns": 2.621349,
+            "startpoint": "u_left/ff1/Q",
+            "endpoint": "u_right/ff1/D"
+          }
+        }
+      },
+      "zero_fanout_unannotated_drivers": {
+        "u_left/ff0/QN": 0,
+        "u_left/ff1/QN": 0,
+        "u_right/ff0/QN": 0,
+        "u_right/ff1/QN": 0
+      },
+      "connected_parasitics_annotated": true,
+      "declared_model_passed": false,
+      "production_macros_modified": false,
+      "geometry_qualified": false,
+      "calibrated_12layer_rc_qualified": false,
+      "scope": "Both complete native gate-level macros and their native RC/coupling records, shared ideal clock root plus original CTS,130 live data/valid/ready wires. Candidate BUF_X4 cells and8um local stubs are electrical what-if resources, not placed or fabricated hardware. Single fanout, declared RC length scan only; no complete controller/protocol/system/manufacturing qualification."
+    }
+  },
+  "cells": {
+    "BUF_X1": {
+      "area_um2": 0.798,
+      "input_cap_ff": 0.974659,
+      "output_max_cap_ff": 60.6537
+    },
+    "BUF_X2": {
+      "area_um2": 1.064,
+      "input_cap_ff": 1.779209,
+      "output_max_cap_ff": 121.155
+    },
+    "BUF_X4": {
+      "area_um2": 1.862,
+      "input_cap_ff": 3.401892,
+      "output_max_cap_ff": 242.31
+    },
+    "BUF_X8": {
+      "area_um2": 3.458,
+      "input_cap_ff": 6.585178,
+      "output_max_cap_ff": 484.009
+    }
+  },
+  "library_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+  "scope": "Two real Liberty DFFs, split native SPEFs and merged links. Tool/graph controls only; no real macro qualification."
+}
