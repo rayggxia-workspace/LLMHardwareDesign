@@ -924,7 +924,8 @@ def render(root,out):
                       *[('WIRE_RECT_probe_r0'+str(i),'wire_shape_coverage_API/r0'+str(i)) for i in range(4,9)],
                       *[('NATIVE_patch_audit_'+case,'native_patch_audit/r01/'+case) for case in ['act','mxu','opentpu_aux','gemm','vector','llaccel_stable','llaccel_10261_restored','mxu_parent','upper770','upper514']],
                       ('NATIVE_patch_audit_gemm_658_current','native_patch_audit/r02/gemm_658_current'),
-                      ('LLSYSTEM_current_owned_restored_views','llsys_owned_restored_views/r01/llaccel_aux-C')]:
+                      ('LLSYSTEM_current_owned_restored_views','llsys_owned_restored_views/r01/llaccel_aux-C'),
+                      ('VECTOR_current_resume_views','vector_current_views/r01/vector-C')]:
         p=snapshot/rel/'execution.json.gz'
         terminal_names={'LLSYSTEM_current_actual_tip_views':'llsys-tip-views-r01',
                         'MXU_clock_bound_parent_recheck_r03':'mxu-clock-bound-parent-r03-terminal',
@@ -966,6 +967,7 @@ def render(root,out):
                         'LLSYSTEM_actual_10261_wire_restore_r01':'owned-cap-wire-restore-r01',
                         'NATIVE_patch_audit_gemm_658_current':'native-patch-audit-r02-gemm_658_current',
                         'LLSYSTEM_current_owned_restored_views':'llsys-owned-restored-views-r01',
+                        'VECTOR_current_resume_views':'vector-current-views-r01',
                         **{'WIRE_RECT_probe_r0'+str(i):name for i,name in [(4,'native-rect-payload-r04'),(5,'native-rect-getshape-r05'),(6,'native-rect-getshape-r06'),(7,'native-rect-coord-r07'),(8,'native-patch-export-r08')]},
                         **{'NATIVE_patch_audit_'+case:'native-patch-audit-r01-'+case for case in ['act','mxu','opentpu_aux','gemm','vector','llaccel_stable','llaccel_10261_restored','mxu_parent','upper770','upper514']},
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}

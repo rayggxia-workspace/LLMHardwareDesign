@@ -87,6 +87,13 @@ try {
   await evaluate(`(()=>{const e=[...document.querySelectorAll('h3')].find(e=>e.textContent.includes(${JSON.stringify(heading)}));if(!e)throw Error('Missing result section');e.scrollIntoView()})()`);
   await fs.writeFile(path.join(out,`report-${name}.png`),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
  }
+ if(await evaluate('!!document.querySelector("#deadline-status-link")')){
+  const statusURL=await evaluate('document.querySelector("#deadline-status-link").href');await call('Page.navigate',{url:statusURL});
+  for(let i=0;i<50;i++){if(await evaluate('document.readyState==="complete" && document.querySelectorAll("tbody tr").length===11'))break;await new Promise(r=>setTimeout(r,100));}
+  const state=await evaluate('({rows:document.querySelectorAll("tbody tr").length,overflow:document.documentElement.scrollWidth>innerWidth,text:document.body.innerText})');
+  if(state.rows!==11||state.overflow||!state.text.includes('09:19'))throw Error('Deadline status table failed');
+  await fs.writeFile(path.join(out,'report-deadline-status.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ }
  if(errors.length)throw Error(JSON.stringify(errors));
  const result={status:'PASS_BROWSER_RENDER_FILTER_AND_IMAGES',...all,query,exceptions:errors};
  await fs.writeFile(path.join(out,'browser_qa.json'),JSON.stringify(result,null,2)+'\n');
