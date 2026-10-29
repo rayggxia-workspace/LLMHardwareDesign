@@ -25,6 +25,10 @@ def repair(a,run):
     snapshot=(raw/'native-flow.json').read_bytes()
     journal=json.loads(snapshot);assert journal['stages'][:4]==['do-1_synth','do-floorplan','do-place','do-cts']
     top=journal['top'];assert top in ['block_feed_m','block_feed_s_macro']
+    if a.from_final:
+        assert not a.from_grt
+        from routed_repair import repair as routed
+        return routed(ROOT,a,run,journal)
     if a.from_grt:
         (out/'source-grt-journal.json').write_bytes(snapshot)
         return repair_grt(a,run,journal)
@@ -149,6 +153,7 @@ def repair_grt(a,run,journal):
 def main():
     p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--from-grt',action='store_true')
+    p.add_argument('--from-final',action='store_true')
     p.add_argument('--closure-hook',choices=['electrical_closure.tcl','measured_m_buffer.tcl','measured_m_hold.tcl','measured_s_hold.tcl','inspect_s_grt.tcl'],default='electrical_closure.tcl')
     a=p.parse_args();a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,source=str(a.source),affinity=sorted(os.sched_getaffinity(0)),commands=[],inputs={})

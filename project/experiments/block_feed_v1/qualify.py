@@ -77,6 +77,15 @@ def seal(raw,out):
         if name=='native-flow.json':
             producer=json.loads(journal.read_text())
             assert producer['top']==flow['top'] and producer['rtl_sha256']==flow['rtl_sha256']
+    if flow.get('postroute_repair'):
+        proof=raw/'route-repair-proof.json'
+        assert sha(proof)==flow['postroute_repair']['proof_sha256']==receipt['outputs'][proof.name]
+        repaired=json.loads(proof.read_text())
+        assert repaired['passed'] and repaired['native_whole_drc_zero']
+        assert repaired['identical_non_target_geometry'] and repaired['identical_target_terminal_connections']
+        assert sha(Path(repaired['source'])/'receipt.json')==repaired['source_receipt_sha256']
+        for row in repaired['source_files'].values():assert sha(row['path'])==row['sha256']
+        shutil.copyfile(proof,out/proof.name)
     relative='flow/results/nangate45/bv1_'+flow['top']+'/base'
     before=raw/relative;after=out/relative;after.mkdir(parents=True)
     config_files=['config.mk','pins.json','pins.tcl','input.sdc']

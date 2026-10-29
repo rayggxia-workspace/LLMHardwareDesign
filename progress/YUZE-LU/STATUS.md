@@ -1,3 +1,5 @@
+2026-10-29 23:54 CST更正：独立最终native-whole-drc.rpt实际为476字节，包含dout[58]附近4项M10 Metal Spacing；不能把详细布线阶段DRC0转写成最终全片DRC0。93407完整原deck仍运行，原候选S35不得接受。正在独立inspect40内检查局部路由几何修复；所有旧网表/物理/失败回执保留，新几何必须重新全片DRC、RCX和物理验收，逻辑证明只能按精确同视图字节绑定。qualify39未提交，禁止旧S35进入交付。M接受资格不变。
+
 2026-10-29 23:45 CST，Issue130：M已接受并实收。S35物理门通过；93407完整未修改GDS DRC及93451/93479同源最终功能仍运行。93463严格LEC全21命令成功，23:22:21返回UNSAT/IDENTICAL；随后因读取尚未完成功能回执整体FAILED，原失败记录保留。两条功能路径与LEC使用完全相同dc48941b网表。新qualify39源f7177d30已部署，formal-join将逐SHA接收成功计算子阶段、重跑真实控制，并无条件绑定成功功能；尚未提交新作业，旧PENDING93464–66已精确退役。恢复入口为专属handoff和.local/issue130/launch-ready-s39.py，不能启动旧依赖。S未接受，Issue130=in_progress、PR132=draft；父任务不变。登记pending，看板unverified/同步pending，审查人待指定。
 
 以下为父任务原进度，保留其原始事实，不由侧任务更新：

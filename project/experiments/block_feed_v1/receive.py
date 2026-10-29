@@ -145,6 +145,9 @@ def drc(root,out,cpus,run,kind,selected=None):
     script+='drt::check_drc_cmd native-whole-drc.rpt 0 0 0 0 native_whole_drc\nwrite_def after.def\n'
     (out/'native-drc.tcl').write_text(script);run(['openroad','-no_init','-exit',str(out/'native-drc.tcl')],'native-drc.log')
     assert file_sha(out/'before.def')==file_sha(out/'after.def')
+    # A route-stage zero is insufficient: reject actual final whole-chip
+    # geometry violations before spending hours on the independent GDS deck.
+    assert not (out/'native-whole-drc.rpt').read_text().strip(), 'Final whole-chip native DRC violations'
     target=out/'gds-flow/results/nangate45'/nickname/'base';target.mkdir(parents=True)
     for category in ('logs','reports','objects'):(out/'gds-flow'/category/'nangate45'/nickname/'base').mkdir(parents=True)
     # Both queued and independent gate layouts keep their immediate parent in
