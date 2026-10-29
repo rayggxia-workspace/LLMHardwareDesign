@@ -19,7 +19,7 @@ DRIVER=Path(__file__).resolve().parent
 
 
 def run(revision):
-    assert revision in ['r01','r02']
+    assert revision in ['r01','r02','r03']
     source=ROOT/'vector_resume/r01';rp=source/'execution.json';prior=json.loads(rp.read_text())
     assert prior.get('completed_utc') and prior['native_returncodes']['route']==0 and prior['fresh_DRC_count']==0
     assert prior['whole_signal_geometry']['pass'] and prior['all_sources_unchanged'] and all(prior['source_pin_PG_die_unchanged'].values())
@@ -46,6 +46,13 @@ def run(revision):
     if revision=='r02':
         rec['repair_model']='Placement heuristic after remove_fillers with original native guide/GRT incremental context; no extracted SPEF loaded. Guide reconstruction may be incomplete and is not new real extracted STA.'
         rec['new_single_context_change']='Initialize original native guide/GRT incremental context before the same placement heuristic and setup sequence. Candidate address mapping suggested GlobalRouter/SizeUp calls but entrypoint alignment remains unresolved; this is a controlled context capability trial, not a diagnosed root-cause fix.'
+    if revision=='r03':
+        api=ROOT/'vector_clone_crash/r02';ap=api/'execution.json';a=json.loads(ap.read_text())
+        body=api/'repair_timing.body.tcl';assert sha(body)==a['files'][body.name]['sha256']
+        assert 'if { [design_is_routed] }' in body.read_text() and 'est::set_parasitics_src "detailed_routing"' in body.read_text()
+        inputs.update({str(p):sha(p) for p in [ap,body]})
+        rec['repair_model']='Placement heuristic only after removing original signal/clock dbWire objects from the in-memory copy and remove_fillers; no SPEF or original guides loaded. All original file inputs immutable. Full detailed reroute/RC/STA required separately.'
+        rec['new_single_context_change']='Installed repair_timing forces detailed_routing parasitics when design_is_routed is true. Remove only SIGNAL/CLOCK dbWire geometry in memory, assert the same native routed predicate is false, then run the same placement repair. This tests an observed script mechanism, not a proven crash root cause or timing fix.'
     def save():(out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     save()
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp',
@@ -73,6 +80,26 @@ def run(revision):
         if revision=='r02':
             index=next(i for i,line in enumerate(lines) if line.startswith('if {![stage placement_estimator '))
             lines[index:index]=['if {![stage initialize_original_GRT_context {read_guides '+tcl(guide)+';global_route -start_incremental;set f [open '+tcl(out/'actual_GRT_context.txt')+' w];puts $f [list HAVE_ROUTES [grt::have_routes]];close $f;if {![grt::have_routes]} {error "Original guides did not establish a native GRT route context; stop before repeating setup crash"}}]} {close $stages;exit 1}']
+        if revision=='r03':
+            index=next(i for i,line in enumerate(lines) if line.startswith('if {![stage remove_only_fillers_before_estimation '))
+            code='''set current [info body repair_timing];set f [open '''+tcl(out/'actual_repair_timing.body.tcl')+''' w];puts -nonewline $f $current;close $f
+set f [open '''+tcl(out/'actual_context_transition.txt')+''' w]
+puts $f [exec sha256sum [info nameofexecutable]]
+set original [open '''+tcl(body)+''' r];set recorded [read $original];close $original
+if {$current ne $recorded} {error "Installed repair_timing differs from source-bound capability body"}
+set predicate [namespace qualifiers [namespace origin repair_timing]]::design_is_routed
+if {![llength [info commands $predicate]]} {set predicate design_is_routed}
+if {![llength [info commands $predicate]]} {error "Cannot resolve native routed predicate; stop before repair"}
+puts $f [list NATIVE_PREDICATE $predicate BEFORE [$predicate]]
+set removed 0;set b [ord::get_db_block]
+foreach n [$b getNets] {
+ if {[$n getSigType] ni {SIGNAL CLOCK}} {continue}
+ set w [$n getWire];if {$w ne "NULL"} {odb::dbWire_destroy $w;incr removed}
+}
+puts $f [list REMOVED_ONLY_SIGNAL_CLOCK_DBWIRES $removed AFTER [$predicate]];close $f
+if {$removed<=0 || [$predicate]} {error "Native design still routed; refuse the same unintended detailed estimator path"}
+'''
+            lines[index:index]=['if {![stage strip_only_signal_clock_routes_in_memory_before_placement {'+code+'}]} {close $stages;exit 1}']
         script=out/'probe.tcl';script.write_text('\n'.join(lines)+'\n')
         rec['native_returncodes']['clone_heuristic_probe']=execute(common,script,out/'native.log','PINXY_OUTPUT='+str(out),threads=4);save()
         rec['pin_PG_die_unchanged']={k:(out/('after.'+k+'.tsv')).exists() and sha(out/('before.'+k+'.tsv'))==sha(out/('after.'+k+'.tsv')) for k in ['pins','pdn','die']}
