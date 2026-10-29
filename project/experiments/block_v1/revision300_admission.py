@@ -14,7 +14,7 @@ import time
 
 
 RUNS = ('block-v1-20261030-404', 'block-v1-20261030-405', 'block-v1-20261030-406',
-        'block-v1-20261030-400', 'block-v1-20261030-401', 'block-v1-20261030-402')
+        'block-v1-20261030-410', 'block-v1-20261030-411', 'block-v1-20261030-412')
 SLURM_TERMINAL = {'COMPLETED', 'FAILED', 'CANCELLED', 'TIMEOUT', 'OUT_OF_MEMORY',
                   'NODE_FAIL', 'PREEMPTED', 'BOOT_FAIL', 'DEADLINE', 'REVOKED'}
 
