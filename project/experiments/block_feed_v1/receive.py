@@ -147,7 +147,9 @@ def drc(root,out,cpus,run,kind,selected=None):
     assert file_sha(out/'before.def')==file_sha(out/'after.def')
     target=out/'gds-flow/results/nangate45'/nickname/'base';target.mkdir(parents=True)
     for category in ('logs','reports','objects'):(out/'gds-flow'/category/'nangate45'/nickname/'base').mkdir(parents=True)
-    with slot(out.parents[2]):shutil.copyfile(results/'6_final.def',target/'6_final.def')
+    # Both queued and independent gate layouts keep their immediate parent in
+    # the owned issue130 runtime. Never derive the common worktrees directory.
+    with slot(out.parent):shutil.copyfile(results/'6_final.def',target/'6_final.def')
     run(['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(folder/'config.mk'),
          'WORK_HOME='+str(out/'gds-flow'),'NUM_CORES=16','do-gds'],'gds.log')
     gds=target/'6_final.gds';deck=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc')
