@@ -169,8 +169,10 @@ for {set attempt 0} {$attempt<4} {incr attempt} {
   global_route -end_incremental
   estimate_parasitics -global_routing
   sta::find_timing
-  global_route -start_incremental
+  # Match this image's global_route.tcl: resizer owns its parasitic
+  # update session; bracket the subsequent DPL, not repair_timing itself.
   repair_timing -setup_margin 0 -hold_margin 0.020 -repair_tns 100 -verbose
+  global_route -start_incremental
   global_connect
   detailed_placement_helper
   check_placement -verbose
