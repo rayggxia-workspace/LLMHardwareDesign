@@ -29,6 +29,13 @@ try {
  const all=await evaluate('({title:document.title,count:document.querySelector("#count").textContent,images:[...document.images].map(i=>({src:i.getAttribute("src"),loaded:i.complete&&i.naturalWidth>0})),overflow:document.documentElement.scrollWidth>innerWidth})');
  if(!all.count.includes('24767')||all.images.some(i=>!i.loaded)||all.overflow)throw Error(JSON.stringify(all));
  await fs.writeFile(path.join(out,'report-top.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ for(const [prefix,name] of [['93333全部13507','report-current-access-caps.png'],['93338显式同步读','report-ram-sync-proof.png']]){
+  const selector=JSON.stringify(prefix);
+  if(await evaluate(`[...document.querySelectorAll('p')].some(e=>e.textContent.startsWith(${selector}))`)){
+   await evaluate(`[...document.querySelectorAll('p')].find(e=>e.textContent.startsWith(${selector})).scrollIntoView()`);
+   await fs.writeFile(path.join(out,name),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+  }
+ }
  if(await evaluate('!!document.querySelector("#latest-physical-gates")')){
   await evaluate('document.querySelector("#latest-physical-gates").scrollIntoView()');
   await fs.writeFile(path.join(out,'report-latest-gates.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));

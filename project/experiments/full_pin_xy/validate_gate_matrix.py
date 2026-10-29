@@ -653,6 +653,46 @@ def check(out):
         assert q['fresh_DRC_count']==1 and q['all_closed_sources_unchanged'] and not q['global_or_detailed_router_engine_reexecuted']
         assert q['whole_parent_signal_geometry']['pass'] and q['whole_parent_signal_geometry']['checked_nets']==2172
         assert q['all_original_macro_pin_rectangles_net_directions_layers_in_parent_exactly_unchanged']
+    q=j.get('ALL13507_actual_own_via_caps_r01',{})
+    if q.get('completed_utc'):
+        assert q['native_read_only_returncode']==0 and q['all_13507_original_pin_rectangles_nets_layers_exact'] and q['all_closed_sources_unchanged']
+        assert not q['full_qualification'] and q['duplicate_candidate_pins']==0 and q['duplicate_candidate_point_groups']==0
+        assert q['status_counts']=={'KEEP_ALREADY_TRACK_CENTERED':327,'ACTUAL_OWN_VIA_GEOMETRIC_CANDIDATE_NOT_AP_VALIDATED':10261,'KEEP_NO_BOUNDED_OWN_VIA_FOUND':2919}
+        raw=gzip.decompress(((out/q['evidence']).parent/'all13507_actual_own_via_candidates.tsv.gz').read_bytes()).decode()
+        table=list(csv.DictReader(io.StringIO(raw),delimiter='\t'))
+        assert len(table)==13507 and len({r['pin'] for r in table})==13507
+        points=[]
+        for r in table:
+            assert r['layer'] in ['metal5','metal6'] and int(r['x1'])-int(r['x0'])==int(r['y1'])-int(r['y0'])==280
+            if not r['candidate_x']:continue
+            x,y=int(r['candidate_x']),int(r['candidate_y']);points.append((r['layer'],x,y))
+            assert 0<int(r['distance_DBU'])<=10000
+            assert abs(2*x-int(r['x0'])-int(r['x1']))+abs(2*y-int(r['y0'])-int(r['y1']))==2*int(r['distance_DBU'])
+            assert int(r['cap_x0'])<=x-140 and int(r['cap_x1'])>=x+140 and int(r['cap_y0'])<=y-140 and int(r['cap_y1'])>=y+140
+        assert len(points)==len(set(points))==10261
+    for label in ['RAM_sync_wrapper_failed_r01','RAM_sync_wrapper_failed_r02']:
+        q=j.get(label,{})
+        if q.get('completed_utc'):
+            assert not q['behavioral_wrapper_equivalence_proven_in_stated_scope'] and q['native_behavioral_equivalence_returncode']==1 and not q['full_qualification']
+            assert q['all_sources_unchanged'] and not q['original_leaf_or_fake_macro_replaced']
+    q=j.get('RAM_sync_wrapper_behavioral_r03',{})
+    if q.get('completed_utc'):
+        assert q['native_elaboration_returncode']==q['native_behavioral_equivalence_returncode']==0 and q['behavioral_wrapper_equivalence_proven_in_stated_scope']
+        assert q['all_sources_unchanged'] and not q['full_qualification'] and not q['original_leaf_or_fake_macro_replaced']
+        assert q['physical_core_equivalence']=='NOT_EXECUTED'
+        pairs=q['actual_bijective_memory_word_correspondence'];assert len(pairs)==64 and sum(r['bits'] for r in pairs)==4096
+        assert {r['original_word'] for r in pairs}=={'mem['+str(i)+']' for i in range(64)}
+        assert all(r['wrapped_actual_word']=='core.'+r['original_word'] for r in pairs)
+        closed_dir=(out/q['evidence']).parent
+        log=gzip.decompress((closed_dir/'equivalence.log.gz').read_bytes()).decode()
+        assert '4160 are proven and 0 are unproven' in log and 'Equivalence successfully proven!' in log
+        original=gzip.decompress((closed_dir/'gold.v.gz').read_bytes()).replace(b'module gold (',b'module fakeram45_1r1w_64x64 (')
+        assert hashlib.sha256(original).hexdigest()==next(v for p,v in q['source_SHA'].items() if p.endswith('/fakeram45_1r1w_64x64.v'))
+        actual=gzip.decompress((closed_dir/'actual_generated_behavioral.v.gz').read_bytes())
+        assert hashlib.sha256(actual).hexdigest()==j['RAM_live_function_contract_mismatch']['actual_behavioral_SHA256']
+    q=j.get('MXU_clock_bound_parent_recheck_r04',{})
+    if q.get('completed_utc'):
+        assert q['all_original_macro_pin_contracts_persisted_and_independently_read_back'] and q['fresh_DRC_count']==1 and q['all_closed_sources_unchanged'] and not q['full_qualification']
     ram=j.get('NATIVE_RAM_capability_r01',{})
     if ram.get('completed_utc'):
         assert ram['native_probe_returncode']==0 and ram['generate_ram_present'] and not ram['generated_memory'] and not ram['existing_leaf_or_fake_memory_modified'] and not ram['full_qualification']

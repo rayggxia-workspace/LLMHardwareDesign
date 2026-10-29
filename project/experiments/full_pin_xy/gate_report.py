@@ -896,6 +896,11 @@ def render(root,out):
                       ('UPPER_access_neighbors_terminal','upper_branch_neighbors/r01/llaccel'),
                       ('COMMON_latest_actual_access_terminal','common_integration/actual-access-tips-r01/C'),
                       ('CURRENT_parent_actual_NoAP_context','current_parent_noap_context/r01'),
+                      ('ALL13507_actual_own_via_caps_r01','all_llsys_actual_access_caps/r01'),
+                      ('RAM_sync_wrapper_failed_r01','native_ram_sync_wrapper/r01'),
+                      ('RAM_sync_wrapper_failed_r02','native_ram_sync_wrapper/r02'),
+                      ('RAM_sync_wrapper_behavioral_r03','native_ram_sync_wrapper/r03'),
+                      ('MXU_clock_bound_parent_recheck_r04','escape_view_recheck/r04/mxu-C'),
                       ('MXU_clock_bound_parent_recheck_r02','escape_view_recheck/r02/mxu-C'),
                       ('MXU_clock_bound_parent_recheck_r03','escape_view_recheck/r03/mxu-C')]:
         p=snapshot/rel/'execution.json.gz'
@@ -914,6 +919,11 @@ def render(root,out):
                         'UPPER_access_neighbors_terminal':'upper-neighbors-r01',
                         'COMMON_latest_actual_access_terminal':'common-actual-access-tips-r01',
                         'CURRENT_parent_actual_NoAP_context':'current-parent-noap-r01',
+                        'ALL13507_actual_own_via_caps_r01':'all-llsys-access-caps-r01',
+                        'RAM_sync_wrapper_failed_r01':'native-ram-sync-wrapper-r01-complete-inputs',
+                        'RAM_sync_wrapper_failed_r02':'native-ram-sync-wrapper-r02-complete-inputs',
+                        'RAM_sync_wrapper_behavioral_r03':'native-ram-sync-wrapper-r03',
+                        'MXU_clock_bound_parent_recheck_r04':'mxu-clock-bound-parent-r04-terminal',
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
         update=root/'gate_terminal_updates'/terminal_names.get(label,'NO_TERMINAL_UPDATE')
         terminal_evidence=None
@@ -939,6 +949,16 @@ def render(root,out):
             assert q['native_read_only_returncode']==0 and q['all_closed_sources_unchanged']
             assert q['actual_native_error_pin']=='bit_1073' and q['all_13507_signal_pin_count']==13507
             upper_text+='<p><strong>93330当前真实NoAP上下文已完成，只读原生0：</strong>当前bit_1073为M5 INPUT，原0.14μm正方形逐项保留；取得完整实际网577行及局部1847行，其中所选网8、PG321、其他/未归属1518。存在14条UNKNOWN宏变换占位，不能说所有OBS均已精确检查；候选own-via/轨道及父层AP修复尚未执行。所检源SHA均不变；导出成功不等于接入或DRC通过。</p>'
+        if label=='ALL13507_actual_own_via_caps_r01':
+            assert q['native_read_only_returncode']==0 and q['all_13507_original_pin_rectangles_nets_layers_exact']
+            assert q['status_counts']=={'KEEP_ALREADY_TRACK_CENTERED':327,'ACTUAL_OWN_VIA_GEOMETRIC_CANDIDATE_NOT_AP_VALIDATED':10261,'KEEP_NO_BOUNDED_OWN_VIA_FOUND':2919}
+            upper_text+='<p><strong>93333全部13507 pin的真实同网落脚审计完成：</strong>327位已在优选轨道中心，10261位在5μm L1范围内找到原同网via金属帽且M5/M6双轨道中心匹配，候选点重复0；2919位未找到这种有界候选。原源pin/net/layer/矩形与源SHA全部逐项保持，本次没有实施任何迁移。每个候选帽真实存在，不是画出的端点；但异网/PG/OBS、实际经过层的via/间距和父层AP仍需核查，不能据此宣布10261位可接入或合法。<a href="'+(p.parent/'all13507_actual_own_via_candidates.tsv.gz').relative_to(out).as_posix()+'">完整13507位原坐标/同网via/候选及保留原因（DBU=2000/μm）</a>。</p>'
+        if label.startswith('RAM_sync_wrapper_failed_'):
+            assert not q['behavioral_wrapper_equivalence_proven_in_stated_scope']
+            upper_text+='<p>RAM行为包装原试验提前失败，实际等价证明未完成：r01标识符转义、r02缺少wire重命名的模块上下文。原脚本/输入/日志均保留；属于驱动错误，不能误写为功能反例，也不删除后续证明断言。</p>'
+        if label=='RAM_sync_wrapper_behavioral_r03':
+            assert q['behavioral_wrapper_equivalence_proven_in_stated_scope'] and q['native_behavioral_equivalence_returncode']==0
+            upper_text+='<p><strong>93338显式同步读包装的行为模块等价已证明：</strong>以原真实fake模型及93317实际写出的异步RAM行为文件为输入，包装保留posedge读使能/保持、逐bit mask及同址写读X；原生Yosys证明4160个equiv均通过。64个实际elaboration内存字/4096位双射逐项核实后做状态命名匹配，未删除失败点或修改函数。范围限Yosys RTL语义及所述未定义初态/X条件，不是四态全仿真、物理RAM门级等价或完整设计证明。额外64位读输出寄存/使能与写mask成本尚未物理映射，原宏未替换；真实RAM路由/GDS/尺寸/pin层/完整规则及RC-STA仍待验证。</p>'
         if label=='LLSYSTEM_full_window_terminal_92690' and q.get('finished_utc'):
             assert q['returncode']==1 and q['source_unchanged'] and q['selected_pin_count']==13184
             assert 'GRT-0116' in gzip.decompress((p.parent/'global_route.error.txt.gz').read_bytes()).decode()
@@ -1003,6 +1023,9 @@ def render(root,out):
             upper_text+='<p>实际整父层返回'+str(q.get('native_returncodes'))+'；fresh='+str(q.get('fresh_DRC_count'))+'，完整2245条宏pin/网络/方向/层/USE合同='+str(q.get('all_original_macro_pin_rectangles_net_directions_layers_in_parent_exactly_unchanged'))+'。r02在native swapMaster发生Signal11，失败保留；r03改为先swap后绑定同一真实库，结果以该回执为准，不能以小探针代替。</p>'
             if label.endswith('_r03'):
                 upper_text+='<p><strong>93197已终态失败：</strong>2172网/4344端点所检几何连通及双PG命令通过，fresh仍1项；1916网为真实零长度直接接触，非已提取RC证明。此轮保存ODB在Liberty绑定之前，持久视图的时钟USE合同未证明；93218独立r04及93239新实际M6源父层继续，其结果不得继承。r03未重新运行router，父层RC/STA未执行，不能称当前新tip父层完成。</p>'
+            if label.endswith('_r04'):
+                assert q['all_original_macro_pin_contracts_persisted_and_independently_read_back'] and q['fresh_DRC_count']==1
+                upper_text+='<p><strong>93218持久时钟合同复查已闭合、整体仍失败：</strong>同源Liberty绑定后保存ODB，独立读回全部2245宏pin合同通过，修复了r03持久时钟USE证据缺项；fresh仍同一处M6 Short。所用仍为旧M6源，未重跑router/父层RC-STA，不代表最新真实via-tip源的父层通过；93239新源独立作业继续。</p>'
     mxu_tip=result.get('MXU_actual_tip_ECO_r01',{});mxu_fresh=result.get('MXU_actual_tip_original_range_fresh_r01',{});mxu_view=result.get('MXU_actual_tip_views_r01',{})
     if all(q.get('completed_utc') for q in [mxu_tip,mxu_fresh,mxu_view]):
         assert mxu_tip['native_returncodes']=={'actual_edit_and_analysis':0,'fresh_DRC':1}
@@ -1066,6 +1089,12 @@ def render(root,out):
         q=read(ram_live);assert not q['full_qualification'] and not q['drop_in_functionally_compatible']
         result['RAM_live_function_contract_mismatch']=q
         upper_text+='<p><strong>真实RAM试件已发现功能合同差异：</strong>93317运行中写出的实际behavioral.v是异步、无读使能的Q=mem[addr]，原fake模型为posedge读使能/保持及同址写读X，不能直接替换。需要显式登记读保持/使能包装、完整功能/物理及成本检查，尚未实施或证明。原生日志还保留无tapcell、垂直PG pitch及4097时钟扇出警告；原生DRT仍无终态，不能把生成命令运行当完成。544.16/91μm仅日志pin范围，不是最终die实测尺寸或资源兼容证明。<a href="data/native_ram_live_semantics_r01.json">运行中实际行为文件原文、SHA、语义差异与警告</a>。原ACT/MXU缺失GDS和完整规则缺口继续保留，不补画或替换原源。</p>'
+    runtime=data/'r46_runtime_observation.json'
+    if runtime.exists():
+        observed=read(runtime);assert not observed['full_qualification']
+        result['latest_runtime_observation']=runtime.relative_to(out).as_posix()
+        upper_text+='<p><strong>R46最新状态：</strong>93333全13507位落脚审计、93338显式包装的4160点RTL行为等价及93218持久2245 pin合同已闭合，后者fresh仍1项Short失败。93317实际RAM详细布线及93239/93243/93269/93217等保持原作业；没有任何新共同底座冻结或两完整功能验收。下一步以原生数据库实施有真实同网金属依据的接点ECO，并独立验证完整pin/连通/PG/native/RC/STA及父层AP，不能把10261个几何候选当物理通过。<a href="data/r46_runtime_observation.json">带时间的实际终态和运行观察</a>。</p>'
+        upper_text=upper_text.replace('需要显式登记读保持/使能包装、完整功能/物理及成本检查，尚未实施或证明。','显式读保持/使能包装的RTL行为证明现已完成（见93338）；物理映射、核心门级等价及成本仍未验证。')
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',
