@@ -2,6 +2,7 @@
 # sub-picosecond shorts, and two overloaded BUF_X4 data drivers. Delay only
 # the six sequential reset branches; reset->ready is a separate tight path.
 # No clock/state/SDC or timing exception is changed.
+# Five ps is an optimization target only; independent extracted hold must >=0.
 set block [ord::get_db_block]
 if {[$block getName] ne "block_feed_s_macro"} {error "Measured S top changed"}
 if {[llength [info commands odb::dbInst_isDoNotTouch]]==1} {
@@ -178,7 +179,7 @@ for {set attempt 0} {$attempt<4} {incr attempt} {
   sta::find_timing
   # Match this image's global_route.tcl: resizer owns its parasitic
   # update session; bracket the subsequent DPL, not repair_timing itself.
-  repair_timing -setup_margin 0 -hold_margin 0.020 -repair_tns 100 -verbose
+  repair_timing -setup_margin 0 -hold_margin 0.005 -repair_tns 100 -verbose
   global_route -start_incremental
   global_connect
   detailed_placement_helper
