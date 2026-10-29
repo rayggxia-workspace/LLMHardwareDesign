@@ -60,7 +60,10 @@ def main():
             assert receipt["mapped"] and receipt["passed"] and not receipt["physical_qualified"]
             for path, digest in receipt["source_sha256"].items():
                 assert sha(z.read("current/" + path)) == digest
-    print(f"PASS: {checked} exact tested-source bindings, 18 RTL results, raw remote receipts; no physical claim")
+    print(f"PASS: {checked} exact tested-source bindings, 18 RTL results, raw remote receipts")
+    from verify_physical_evidence import verify
+    physical = verify(ROOT)
+    print('PASS: stored native acceptance receipts: ' + (', '.join(physical) or 'none') + '; EDA not rerun')
 
 
 if __name__ == "__main__":

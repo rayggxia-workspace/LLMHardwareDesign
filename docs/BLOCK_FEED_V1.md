@@ -2,7 +2,7 @@
 
 更新：2026-10-29，Asia/Shanghai。任务：[Issue 130](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/130)。
 
-本候选已完成 RTL、真实 S→M→T 仿真及 Nangate45 标准单元映射检查。**尚未完成新候选的布局布线、300MHz 时序、电容／转换时间、完整 DRC、最终网表功能及严格等价验收，不能作为最终物理宏交付。** 旧版五宏的物理结果保留，不能转移给新接口。
+本候选已完成 RTL、真实 S→M→T 仿真及 Nangate45 标准单元映射检查。**新 M 已完成布局布线及同源完整独立验收，原生合法候选已实际封存；S 的新布局布线仍在运行，尚未接收。** M 的实际六文件、完整DRC／最终网表功能／严格等价及下载校验见 [已接收 M](../work/YUZE-LU/130/validation/physical/ACCEPTED_M.md)。旧版五宏的物理结果保留，不能转移给新接口。
 
 本轮草稿为 [PR132](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/132)。当前候选分支同步父提交 `4a0b04ed8eb4b5cd818f04f3c1fb4c2b4d4f76bd`，只在本分支合并进度／属性文件冲突，重新测试随父支更新的 V group；M/S硬件源SHA不变。
 
