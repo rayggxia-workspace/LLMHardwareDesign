@@ -28,6 +28,10 @@ def source(folder):
         assert sha(results/path)==row['sha256']==receipt['outputs'][str((results/path).relative_to(folder))]
     for path,key in [('config.mk','config_sha256'),('pins.json','pins_sha256')]:
         assert sha(folder/path)==flow[key]==receipt['outputs'][path]
+    for path in ['pins.tcl','input.sdc']:
+        assert sha(folder/path)==receipt['outputs'][path]
+    for name in ['1_synth_lec.v','bv1-input-diodes.tsv']:
+        assert sha(results/name)==receipt['outputs'][str((results/name).relative_to(folder))]
     return folder,receipt,flow,results
 
 
@@ -117,7 +121,7 @@ def final_formal(folder,out,run,function_folder):
     fr=json.loads((function_folder/'receipt.json').read_text());assert fr['passed']
     f=function_folder/'final-function.json';assert sha(f)==fr['outputs'][f.name]
     fn=json.loads(f.read_text());assert fn['passed'] and fn['source_receipt_sha256']==sha(folder/'receipt.json')
-    actual=Path(fn['full_final_netlist']['full_view']);assert sha(actual)==fn['full_final_netlist']['full_view_sha256']
+    actual=Path(fn['full_final_netlist']['full_view']);assert sha(actual)==fn['full_final_netlist']['full_view_sha256']==fr['outputs'][str(actual.relative_to(function_folder))]
     before,bproof=export(ROOT,out,run,results/'1_synth_lec.v',LIB,top,'before',constant_functions=True)
     after,aproof=export(ROOT,out,run,actual,LIB,top,'after',constant_functions=True)
     assert bproof['removed_count']==0 and aproof['removed_count']>0
@@ -133,9 +137,10 @@ def final_formal(folder,out,run,function_folder):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('operation',choices=['controls','seal','physical','drc','function','formal'])
+    p=argparse.ArgumentParser();p.add_argument('operation',choices=['controls','seal','physical','drc','function','formal','deliver','geometry'])
     p.add_argument('--source',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--peer',type=Path);p.add_argument('--function',type=Path)
+    p.add_argument('--gates',type=Path)
     a=p.parse_args();a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,operation=a.operation,source=str(a.source),commands=[],inputs={})
     for d in ['project/experiments/block_feed_v1','project/experiments/block_v1','project/rtl/block_feed_v1']:
@@ -157,6 +162,12 @@ def main():
             selected=lambda target,kind:source(a.source)
             getattr(receive,a.operation)(ROOT,a.out,16,run,'m' if source(a.source)[2]['top']=='block_feed_m' else 's',selected=selected)
         elif a.operation=='function':final_function(a.source,a.out,run,a.peer)
+        elif a.operation=='deliver':
+            from deliver import deliver
+            deliver(a.source,a.out,run,a.gates)
+        elif a.operation=='geometry':
+            from deliver import geometry
+            geometry(a.source,a.out,run)
         else:final_formal(a.source,a.out,run,a.function)
         receipt['passed']=True
     finally:

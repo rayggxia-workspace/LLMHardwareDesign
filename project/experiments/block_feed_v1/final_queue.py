@@ -49,6 +49,12 @@ def save():(a.out/'queue-result.json').write_text(json.dumps(dict(passed=len(don
 with ThreadPoolExecutor(max_workers=n) as pool:
     while pending or running:
         for name in sorted(pending):
+            if name.startswith('seal-'):
+                top='block_feed_m' if name=='seal-m' else 'block_feed_s_macro'
+                candidate=a.native/top
+                if not (candidate/'receipt.json').exists():
+                    if not (a.native/'queue-result.json').exists():continue
+                    pending.remove(name);done[name]=dict(passed=False,missing_completed_native_receipt=True);save();continue
             if not all(d in done for d in tasks[name]['deps']):continue
             pending.remove(name)
             if not all(done[d]['passed'] for d in tasks[name]['deps']):done[name]=dict(passed=False,blocked_by_failed_dependencies=True);save();continue
@@ -57,5 +63,7 @@ with ThreadPoolExecutor(max_workers=n) as pool:
             finished,_=wait(running,return_when=FIRST_COMPLETED)
             for f in finished:
                 name=running.pop(f);done[name]=f.result();print(name,json.dumps(done[name]),flush=True);save()
-        elif pending:raise RuntimeError('Unresolvable dependency DAG')
+        elif pending:
+            assert any(name.startswith('seal-') for name in pending),'Unresolvable dependency DAG'
+            time.sleep(30)
 save();sys.exit(not all(x['passed'] for x in done.values()))
