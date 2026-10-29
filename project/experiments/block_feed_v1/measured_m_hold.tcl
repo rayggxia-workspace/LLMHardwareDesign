@@ -52,6 +52,40 @@ try {
 if {[$inst $getter]!=$protection} {error "Measured driver protection was not restored"}
 if {[$pin getNet] eq $original || [llength [$current getITerms]]!=2} {error "Measured delay chain disconnected"}
 close $f
+# The one-session native reroute additionally measured a -5.94ps short
+# internal path ending at this exact DFF. Delay only its D input, not CK/Q.
+set endpoint [$block findInst {$auto$ff.cc:337:slice$562242}]
+if {$endpoint eq "NULL" || [[$endpoint getMaster] getName] ne "DFF_X1"} {error "Measured short endpoint changed"}
+set epin [$endpoint findITerm D]
+set current [$epin getNet]
+if {$current eq "NULL"} {error "Measured short endpoint is open"}
+lassign [$endpoint getLocation] ex ey
+set f [open $::env(RESULTS_DIR)/feed-measured-hold-delay.tsv a]
+for {set i 0} {$i<2} {incr i} {
+  set name feed_measured_endpoint_delay_$i
+  if {[$block findInst $name] ne "NULL" || [$block findNet ${name}_net] ne "NULL"} {error "Duplicate endpoint delay"}
+  set next [odb::dbNet_create $block ${name}_net]
+  set buffer [odb::dbInst_create $block $master $name]
+  $buffer setLocation [expr {$ex+($i+1)*2000}] $ey
+  $buffer setOrient R0;$buffer setPlacementStatus PLACED
+  [$buffer findITerm A] connect $current
+  [$buffer findITerm Z] connect $next
+  foreach term [$buffer getITerms] {
+    set kind [[$term getMTerm] getSigType]
+    if {$kind in {POWER GROUND}} {
+      set supply [expr {$kind eq "POWER" ? "VDD" : "VSS"}]
+      $term connect [$block findNet $supply]
+    }
+  }
+  set_dont_touch [get_cells $name]
+  puts $f "$name\tBUF_X1\t[$current getName]\t[$next getName]"
+  set current $next
+}
+set endpoint_protection [$endpoint $getter]
+$endpoint setDoNotTouch false
+try {$epin disconnect;$epin connect $current} finally {$endpoint setDoNotTouch $endpoint_protection}
+if {[$endpoint $getter]!=$endpoint_protection || [llength [$current getITerms]]!=2} {error "Endpoint delay/protection mismatch"}
+close $f
 global_connect
 detailed_placement_helper
 check_placement -verbose
