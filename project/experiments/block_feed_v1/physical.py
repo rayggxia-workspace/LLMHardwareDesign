@@ -89,7 +89,12 @@ def implement(args, run):
     config+='export DIE_AREA = 0 0 %g %g\nexport CORE_AREA = 20 20 %g %g\n'%(side,side,side-20,side-20)
     config+='export PLACE_DENSITY = 0.45\nexport FOOTPRINT_TCL = '+str(out/'pins.tcl')+'\nexport KEEP_VARS = 1\n'
     config+='override export MIN_ROUTING_LAYER = metal1\noverride export MAX_ROUTING_LAYER = metal10\n'
+    if args.remove_abc_buffers:
+        assert not any(name.startswith(('BUF_','CLKBUF_')) for name in mapping['cell_counts'])
+        config+='export REMOVE_ABC_BUFFERS = 1\n'
     hook=(folder/'native_input_diodes.tcl').read_text().replace('  if {[$port getName] eq "clk"} {continue}\n','')
+    if args.input_receivers:
+        hook=(ROOT/'project/experiments/block_feed_v1/input_receivers.tcl').read_text()+'\n'+hook
     (out/'input-diodes.tcl').write_text(hook)
     config+=config_suffix(40,.005,out/'input-diodes.tcl','metal10')+'\nexport HOLD_SLACK_MARGIN = 0.020\n'
     (out/'config.mk').write_text(config)
@@ -99,6 +104,7 @@ def implement(args, run):
     command=['make','-C',str(flow),'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
     wanted=dict(MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',KEEP_VARS='1',LEC_CHECK='1',SEC_CHECK='0',
                 TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN='0.020')
+    if args.remove_abc_buffers:wanted['REMOVE_ABC_BUFFERS']='1'
     actual={}
     for key,value in wanted.items():
         log='variable-'+key+'.log';run(command+['print-'+key],log)
@@ -109,6 +115,8 @@ def implement(args, run):
                 mapped_area_um2=active,die_um=[side,side],config_sha256=sha(out/'config.mk'),pins_sha256=sha(out/'pins.json'),
                 budget=budget,actual_variables=actual,planned_complete_escape=geometry,planned_independent_gds=coarse,
                 stages=[],final_files={},qualified_hard_macro=False,inherited_physical_stages=[])
+    if args.input_receivers:result['repair']='Fixed BUF_X8 data input receivers in native macro; all limits unchanged'
+    result['remove_abc_buffers']=args.remove_abc_buffers
     def save():(out/'native-flow.json').write_text(json.dumps(result,indent=2)+'\n')
     save()
     for number,stage in enumerate(('do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish')):
@@ -123,6 +131,8 @@ def implement(args, run):
 def main():
     p=argparse.ArgumentParser();p.add_argument('--top',choices=['block_feed_m','block_feed_s_macro'],required=True)
     p.add_argument('--mapping',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
+    p.add_argument('--remove-abc-buffers',action='store_true')
+    p.add_argument('--input-receivers',action='store_true')
     args=p.parse_args();args.out=args.out.resolve();args.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,top=args.top,start_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),
                  affinity=sorted(__import__('os').sched_getaffinity(0)),commands=[],inputs={})
