@@ -41,7 +41,7 @@ class Index:
 def is_retained_via10(r,via_layers):
     return r['kind']=='VIA' and 'via10' in via_layers[r['net'],r['link']]
 
-def astar(rows,obs,net,a,b,die,max_nodes=80000):
+def astar(rows,obs,net,a,b,die,max_nodes=80000,start_layer=11,target_layer=11,region_override=None):
     assert all((p[0]-190)%STEP==0 and (p[1]-140)%STEP==0 for p in [a,b]),(net,a,b)
     metals=defaultdict(list);cuts=[]
     for r in rows+obs:
@@ -51,11 +51,12 @@ def astar(rows,obs,net,a,b,die,max_nodes=80000):
             metals[r['layer']].append((z,3000))
         if r['layer']=='via11' and r['kind']=='VIA':cuts.append((z,CUT_SPACE))
     indices={k:Index(metals[k],metal_table=True) for k in ['metal11','metal12']};cutindex=Index(cuts,euclidean_cut=True)
-    start=(*a,11);target=(*b,11)
-    endpoint_clear={name:indices['metal11'].clear(box_wire(p,p)) for name,p in [('a',a),('b',b)]}
+    start=(*a,start_layer);target=(*b,target_layer)
+    endpoint_clear={name:indices['metal'+str(layer)].clear(box_wire(p,p)) for name,p,layer in [('a',a,start_layer),('b',b,target_layer)]}
     if not all(endpoint_clear.values()):return {'path_dbu':None,'reason':'ACTUAL_RETAINED_M11_VIA10_LANDING_BLOCKED','endpoint_clear':endpoint_clear,'expanded_nodes':0}
     margin=192000
     region=(max(die[0]+HALF,min(a[0],b[0])-margin),max(die[1]+HALF,min(a[1],b[1])-margin),min(die[2]-HALF,max(a[0],b[0])+margin),min(die[3]-HALF,max(a[1],b[1])+margin))
+    if region_override is not None:region=region_override
     cache={}
     def clear(layer,x,y,xx,yy):
         key=(layer,x,y,xx,yy)

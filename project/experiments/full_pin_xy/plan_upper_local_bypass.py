@@ -80,11 +80,12 @@ def search(rows,obs,net,old,margin_um,start_layer=11):
 
 
 def add_proposal(rows,net,path):
+    serial=len(rows)
     for i,(a,b) in enumerate(zip(path,path[1:])):
         z=box_wire(a,b)
         if a[2]==b[2]:layers=['metal'+str(a[2])];kind='WIRE'
         else:layers=['metal11','metal12','via11'];kind='VIA'
-        for layer in layers:rows.append(dict(zip(['x0','y0','x1','y1'],map(str,z)),net=net,kind=kind,layer=layer,link='proposed_'+str(i)))
+        for layer in layers:rows.append(dict(zip(['x0','y0','x1','y1'],map(str,z)),net=net,kind=kind,layer=layer,link='proposed_'+str(serial)+'_'+str(i)))
 
 
 def negotiate(rows,obs,primary):
