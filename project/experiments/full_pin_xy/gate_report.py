@@ -521,6 +521,11 @@ def render(root,out):
             upper_text+='<p><strong>93089 SYSTEM当前源实际视图：</strong>native export='+str(q.get('native_export_returncode'))+'、独立模型重读='+str(q.get('fresh_model_read_returncode'))+'，匹配全部'+str(q.get('matching_all_signal_model_pins'))+'个信号位及原PG/层/尺寸，真实SPEF余量重放='+str(q.get('SPEF_replay_matches_source'))+'。新源扩展检查独立执行、原负setup/hold不删；minimum_period覆盖仍缺失，不是父层、完整GDS/RTL或系统资格。两份当前真实ODB各自导出完整_215139_矩形，非根据脚本猜测路线。</p>'
     from plot_system_stacked_via_actual import plot as plot_stacked
     actual_stacked=plot_stacked(snapshot,out)
+    from plot_llsys_actual_via_tips import plot as plot_llsys_tips
+    actual_llsys_tips=plot_llsys_tips(snapshot,out)
+    if actual_llsys_tips:
+        result['LL_SYSTEM_actual_via_tip_figure']=actual_llsys_tips
+        upper_text+='<h3>LL SYSTEM：三处实际 pin / 末端接线修复</h3><p>真实原网的M4–M6与via4–via6矩形局部放大，左右同尺度。保留完整内部C；fresh native4→0，但负setup/hold、父层接入和完整规则缺项均保留。白底不代表无异网/PG/OBS，图不替代验证。</p><img src="assets/llsys_actual_via_tip_repair.png" alt="LL SYSTEM三处真实pin前后矩形"><p><a href="assets/llsys_actual_via_tip_repair.svg">SVG</a> · <a href="data/llsys_actual_via_tip_repair.json">原文SHA及验证范围</a></p>'
     if actual_stacked:
         result['SYSTEM_actual_stacked_via_figure']=actual_stacked
         upper_text+='<img loading="lazy" src="assets/system_stacked_via_actual.png" alt="SYSTEM实际接线前后原生矩形，native2变0但时序失败"><p><a href="assets/system_stacked_via_actual.svg">真实接入修复SVG</a> · <a href="data/system_stacked_via_actual_rectangles.csv">两份完整目标网实际矩形CSV</a> · <a href="data/system_stacked_via_actual.json">源SHA及未验证项</a>。坐标同尺度、矩形为实际尺寸；周边异网/PG/OBS未绘，白底不是空闲。</p>'

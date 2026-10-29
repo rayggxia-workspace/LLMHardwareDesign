@@ -43,7 +43,7 @@ def run(revision):
       'parent_RC_STA':'NOT_EXECUTED_ACCESS_RECHECK_ONLY','full_qualification':False,'native_returncodes':{},
       'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID'],
       'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()}
-    rec['clock_binding_fix']='Read the same source-bound aliased Liberty after actual LEF, before native swapMaster; native Liberty clock:true classification is retained. No manual USE edit or clock constraint change.'
+    rec['clock_binding_fix']='Read the same source-bound aliased Liberty after native macro swap and before the post-swap contract snapshot; native Liberty clock:true classification is retained. No manual USE edit or clock constraint change. Prior r02 loading before swap crashed at native swapMaster and is preserved.'
     def save():(out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     save()
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
@@ -65,8 +65,9 @@ def run(revision):
 }'''
         lines=[helper,code,'read_db '+tcl(odb),'fingerprint '+tcl(out/'before'),'parent_terms '+tcl(out/'before.child_terms.tsv'),
           'set b [ord::get_db_block];set inst [$b findInst u_macro];set old_xy [$inst getLocation];set old_ori [$inst getOrient]',
-          'read_lef '+tcl(out/'actual_child.lef'),'read_liberty '+tcl(out/'actual_child_timing.lib'),
+          'read_lef '+tcl(out/'actual_child.lef'),
           'if {![stage upgrade_to_actual_source_view {set replacement [[ord::get_db] findMaster '+tcl(alias)+'];if {$replacement eq "NULL"} {error "New actual child master missing"};if {![$inst swapMaster $replacement]} {error "Native macro view swap rejected"};if {[$inst getLocation] ne $old_xy || [$inst getOrient] ne $old_ori} {error "Original macro pose changed"};write_db '+tcl(out/'upgraded_parent_NOT_SYSTEM.odb')+'}]} {close $stages;exit 1}',
+          'if {![stage bind_current_source_timing_model {read_liberty '+tcl(out/'actual_child_timing.lib')+'}]} {close $stages;exit 1}',
           'fingerprint '+tcl(out/'after'),'parent_terms '+tcl(out/'after.child_terms.tsv'),
           'stage VDD {check_power_grid -net VDD -error_file '+tcl(out/'VDD.rpt')+'}',
           'stage VSS {check_power_grid -net VSS -error_file '+tcl(out/'VSS.rpt')+'}',
