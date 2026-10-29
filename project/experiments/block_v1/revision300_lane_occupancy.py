@@ -57,9 +57,10 @@ def measure(root,out,cpus,run,kind,variant):
     vector_prefetched=kind=='v' and 'M_EXEC=24,P_TOTAL=25,P_ROUND=26' in rtls[0].read_text()
     vector_norm_pipeline=vector_prefetched and 'G_MUL=27,G_ADD=28;' in rtls[0].read_text()
     vector_softmax_pipeline=vector_prefetched and 'F_DRAIN=29,F_DENOM=30;' in rtls[0].read_text()
+    vector_function_input=vector_prefetched and 'reg function_input_valid;' in rtls[0].read_text()
     if vector_prefetched:
         policy=json.loads((tools/'revision300-v-fresh.json').read_text())
-        generation='329' if vector_softmax_pipeline else ('321' if vector_norm_pipeline else '315')
+        generation='336' if vector_function_input else ('329' if vector_softmax_pipeline else ('321' if vector_norm_pipeline else '315'))
         assert policy['function']=='block-v1-20261029-'+generation+'/tasks/revision300-test-v'
         prior=out.parents[2]/('block-v1-20261029-'+generation+'/tasks/revision300-bench-v-'+variant)
     if prefetched:
@@ -83,6 +84,10 @@ def measure(root,out,cpus,run,kind,variant):
     code=code.replace('std::map<std::string,uint64_t> reasons;',
         'std::map<std::string,uint64_t> reasons,internal;')
     monitor=MONITOR
+    if vector_function_input:
+        anchor='if(r->block_v1_v__DOT__function_unit__DOT__valid1)'
+        assert monitor.count(anchor)==1
+        monitor=monitor.replace(anchor,'if(r->block_v1_v__DOT__function_input_valid)p.internal["function_input_registered_valid_slots"]+=2;\n '+anchor)
     if vector_prefetched:
         old='if(state==1||state==3||state==13||state==10||state==11||state==18||state==19)'
         assert monitor.count(old)==1
