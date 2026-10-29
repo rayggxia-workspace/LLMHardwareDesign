@@ -59,19 +59,33 @@ module block_v1_v(
  wire group_take=phase==G_WAIT||phase==G_ROOT_WAIT;
  block_v1_v_group group_unit(clk,reset,group_in,group_ready,phase==G_ROOT,
   group_n,group_d,group_valid,group_take,group_q,group_r,group_error);
- reg signed [31:0] fx0,fx1;reg signed [32:0] difference;
+ reg signed [31:0] fx0,fx1;reg [1:0] function_select_mask;
  wire function_in=phase==F_RUN&&function_sent<function_length;
  wire function_valid,function_error;wire signed [31:0] fy0,fy1;
- // Keep replay selection/subtract-max separate from LUT decode/interpolation.
- // Two lanes still accept one pair per cycle; add one macro-boundary cycle.
+ // Register replay selection before the exact subtract-max/clamp stage.
+ // Two lanes keep II=1; both lane masks and command metadata travel with data.
+ reg function_fetch_valid,function_fetch_subtract;
+ reg [1:0] function_fetch_mask;reg [2:0] function_fetch_kind;
+ reg signed [31:0] function_fetch_x0,function_fetch_x1,function_fetch_max;
+ wire signed [32:0] function_difference0=
+  $signed({function_fetch_x0[31],function_fetch_x0})-$signed({function_fetch_max[31],function_fetch_max});
+ wire signed [32:0] function_difference1=
+  $signed({function_fetch_x1[31],function_fetch_x1})-$signed({function_fetch_max[31],function_fetch_max});
  reg function_input_valid;reg [2:0] function_input_kind;
  reg signed [31:0] function_input_x0,function_input_x1;
  always @(posedge clk)begin
-  if(reset)function_input_valid<=0;
+  if(reset)begin function_fetch_valid<=0;function_input_valid<=0;end
   else begin
-   function_input_valid<=function_in;
-   function_input_kind<=function_kind;
-   function_input_x0<=fx0;function_input_x1<=fx1;
+   function_fetch_valid<=function_in;function_fetch_kind<=function_kind;
+   function_fetch_x0<=fx0;function_fetch_x1<=fx1;function_fetch_mask<=function_select_mask;
+   function_fetch_subtract<=function_subtract_max;function_fetch_max<=maximum;
+   function_input_valid<=function_fetch_valid;function_input_kind<=function_fetch_kind;
+   function_input_x0<=!function_fetch_mask[0]?32'sd0:
+    !function_fetch_subtract?function_fetch_x0:
+    function_difference0< -33'sd1048576?-32'sd1048576:function_difference0[31:0];
+   function_input_x1<=!function_fetch_mask[1]?32'sd0:
+    !function_fetch_subtract?function_fetch_x1:
+    function_difference1< -33'sd1048576?-32'sd1048576:function_difference1[31:0];
   end
  end
  block_v1_v_function function_unit(clk,reset,function_input_valid,function_input_kind,
@@ -125,15 +139,13 @@ module block_v1_v(
  always @* begin
   replay_loaded=1;
   for(integer chunk=0;chunk<64;chunk=chunk+1)if(chunk*4<cmd_data[8:0]&&!replay_valid[chunk])replay_loaded=0;
-  fx0=0;fx1=0;difference=0;
+  fx0=0;fx1=0;function_select_mask=0;
   for(integer j=0;j<2;j=j+1)begin
    if(function_sent+j<function_length)begin
-    if(function_subtract_max)begin
-     difference=$signed({input_mem[function_sent+j][31],input_mem[function_sent+j]})-$signed({maximum[31],maximum});
-     if(j==0)fx0=difference< -33'sd1048576 ? -32'sd1048576:difference[31:0];
-     else fx1=difference< -33'sd1048576 ? -32'sd1048576:difference[31:0];
-    end else if(function_source_replay)begin if(j==0)fx0=input_mem[function_sent+j];else fx1=input_mem[function_sent+j];end
-    else if(j==0)fx0=a[function_sent+j];else fx1=a[function_sent+j];
+    function_select_mask[j]=1;
+    if(function_source_replay||function_subtract_max)begin
+     if(j==0)fx0=input_mem[function_sent+j];else fx1=input_mem[function_sent+j];
+    end else if(j==0)fx0=a[function_sent+j];else fx1=a[function_sent+j];
    end
   end
   for(integer l=0;l<8;l=l+1)begin

@@ -1,3 +1,5 @@
+2026-10-30 06:55 CST：唯一基础V新增回放选择→完整S33减max寄存级，2lane mask/函数码/标志/maximum随数据对齐。新命令合同预期：八元素函数9；Softmax138+10B+P、N256586；RMS/L2仍199+10B、N256519。458实测与全新最终P&R/电气/资格尚待，423负时序及max_cap2拒收保持。见[决策](decisions/2026-10-30-block-v1-v-function-fetch-pipeline.md)。
+
 2026-10-30 05:02 CST：421实际三初态逐项通过新归一化延迟合同，N256 RMS/L2=519、Softmax585；逐元素5、统计4、8元素函数8、TopK40选8=328。21个N/操作组合与独立期望一致；[原始回执](../work/YUZE-LU/121/review-20261028/v-pipeline-421/README.md)。全组S回放/占用422及新最终物理门尚待，不挪用409预算。
 
 2026-10-30 04:57 CST：唯一基础V新增N_MERGE完整S128寄存，归一化每8元素多1拍。新合同与独立期望、未执行资格和验证链见[流水决策](decisions/2026-10-30-block-v1-v-normalization-pipeline.md)。RMS/L2=199+10B；Softmax=137+10B+P（B=ceil(N/8)、P=ceil(N/2)，装载/消费/读回额外）。全组S回放也经此级，必须新测；当前新源尚未通过物理验收。
