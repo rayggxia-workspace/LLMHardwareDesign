@@ -44,14 +44,28 @@ def run(revision):
 endmodule
 '''
         (out/'proposed_explicit_sync_wrapper.v').write_text(wrapper)
-        script=['read_verilog gold.v','hierarchy -check -top gold','proc','memory','opt','design -stash gold',
+        preparation=['read_verilog gold.v','hierarchy -check -top gold','proc','memory','opt','write_json actual_gold_elaboration.json','design -reset',
                 'read_verilog actual_generated_behavioral.v proposed_explicit_sync_wrapper.v',
-                'hierarchy -check -top gate','proc','flatten','memory','opt']
+                'hierarchy -check -top gate','proc','flatten','memory','opt','write_json actual_gate_elaboration.json']
+        (out/'prepare_actual_elaborations.ys').write_text('\n'.join(preparation)+'\n')
+        common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out),IMAGE]
+        with (out/'actual_elaboration.log').open('x') as f:
+            rec['native_elaboration_returncode']=subprocess.run(common+[YOSYS,'-s','prepare_actual_elaborations.ys'],stdout=f,stderr=subprocess.STDOUT).returncode
+        assert rec['native_elaboration_returncode']==0
+        gold=json.loads((out/'actual_gold_elaboration.json').read_text())['modules']['gold']['netnames']
+        gate=json.loads((out/'actual_gate_elaboration.json').read_text())['modules']['gate']['netnames']
+        (out/'actual_memory_word_names.json').write_text(json.dumps({'gold':[n for n in gold if 'mem' in n],'gate':[n for n in gate if 'mem' in n]},indent=2)+'\n')
+        mapping=[]
+        for i in range(64):
+            a='mem['+str(i)+']';b='core.'+a
+            assert a in gold and b in gate and len(gold[a]['bits'])==len(gate[b]['bits'])==64
+            mapping.append({'original_word':a,'wrapped_actual_word':b,'bits':64})
+        rec['actual_bijective_memory_word_correspondence']=mapping
+        script=['read_json actual_gold_elaboration.json','design -stash gold','read_json actual_gate_elaboration.json','cd gate']
         script+=[r'rename \core.mem['+str(i)+r'] \mem['+str(i)+']' for i in range(64)]
-        script+=['design -stash gate','design -copy-from gold -as gold gold','design -copy-from gate -as gate gate',
+        script+=['cd','design -stash gate','design -copy-from gold -as gold gold','design -copy-from gate -as gate gate',
                  'equiv_make gold gate equiv','hierarchy -check -top equiv','equiv_simple -seq 4','equiv_induct -seq 4','equiv_status -assert']
         (out/'equivalence.ys').write_text('\n'.join(script)+'\n')
-        common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out),IMAGE]
         rec['actual_Yosys_version']=subprocess.check_output(common+[YOSYS,'-V']).decode().strip()
         rec['actual_Yosys_binary_SHA256']=subprocess.check_output(common+['sha256sum',YOSYS]).decode().split()[0]
         with (out/'equivalence.log').open('x') as f:
