@@ -1,3 +1,7 @@
+2026-10-30 00:26 CST：Issue130全部后续门已动态排队。S41修复/finish93509、完整原deck计算93510运行；93511封存→93512独立物理与93524最终三初态功能，93513同几何最终DRC接收。原S38/93479已完整三初态通过128972检查/63250周期；93524仍对新封存源重跑。93525严格同视图证明汇总→93526交付→93527几何/93528包。原S35/93407已FAILED，native4项和完整deck1项均为同一M10折返，六原始文件ZIP已存证，不接受。M已接受/实收，S尚未接受，Issue=in_progress、PR=draft；父任务不变，恢复见专属handoff及实际receipt。
+
+以下为历史记录。
+
 2026-10-30：原S35最终DRC作业93407已FAILED，完整未修改FreePDK45仅1项METAL10.2，位置与native全片4项相同。原始六文件保存在[rejected-s35-final-drc.zip](rejected-s35-final-drc.zip)和[索引](rejected-s35-final-drc.json)，本地检查强制确认失败状态，未转移接受资格。修复S41/93509与完整deck93510继续。
 
 2026-10-30 00:05 CST：Issue130的S35最终全片4项M10间距违规，不接受；正式S41/93509只修dout[58]路由，非目标完整DEF及目标连接完全一致，新native全片DRC0，原生finish/RCX运行。qualify42源4c548795：93510完整原deck计算与finish并行，93511封存→93512物理；93513仅在最终DEF与受检几何字节相同且最终ODB全片DRC0时接收。93451/93479完整功能继续；未来新功能须对最终源重跑三初态、严格证明按确切同视图接收。S未接受，M已接受/实收不变。Issue=in_progress、PR=draft；详见专属handoff，旧依赖不能启动，父任务不动。登记pending、看板unverified/同步pending、审查人待指定。
