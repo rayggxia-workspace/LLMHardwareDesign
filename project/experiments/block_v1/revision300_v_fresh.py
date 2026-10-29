@@ -8,9 +8,9 @@ def implement(root,out,cpus,run):
     import hashlib
     policy=json.loads((root/'project/experiments/block_v1/revision300-v-fresh.json').read_text())
     assert policy==dict(schema='revision300-v-fresh/1',
-        mapping='block-v1-20261030-458/tasks/revision300-map-v',
-        function='block-v1-20261030-458/tasks/revision300-test-v',
-        normalization_arithmetic_proof='block-v1-20261030-458/tasks/revision300-v-norm-proof',
+        mapping='block-v1-20261030-459/tasks/revision300-map-v',
+        function='block-v1-20261030-459/tasks/revision300-test-v',
+        normalization_arithmetic_proof='block-v1-20261030-459/tasks/revision300-v-norm-proof',
         group_arithmetic_proof='block-v1-20261029-348/tasks/revision300-v-group-proof',
         upper_layer_adjustment=.20,congestion_iterations=100,clock_ndr='none',
         hold_slack_margin_ns=.080,inherited_physical_stages=[],requires_fresh_final_acceptance=True)

@@ -82,10 +82,10 @@ module block_v1_v(
    function_input_valid<=function_fetch_valid;function_input_kind<=function_fetch_kind;
    function_input_x0<=!function_fetch_mask[0]?32'sd0:
     !function_fetch_subtract?function_fetch_x0:
-    function_difference0< -33'sd1048576?-32'sd1048576:function_difference0[31:0];
+    function_difference0< -33'sd1048576 ? -32'sd1048576:function_difference0[31:0];
    function_input_x1<=!function_fetch_mask[1]?32'sd0:
     !function_fetch_subtract?function_fetch_x1:
-    function_difference1< -33'sd1048576?-32'sd1048576:function_difference1[31:0];
+    function_difference1< -33'sd1048576 ? -32'sd1048576:function_difference1[31:0];
   end
  end
  block_v1_v_function function_unit(clk,reset,function_input_valid,function_input_kind,
