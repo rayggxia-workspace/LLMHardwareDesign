@@ -33,6 +33,16 @@ def build():
         ident,obj,version,done,failed,unknown,nxt=item
         rows.append({'id':ident,'object':obj,'selected_version':version,'actually_completed':done,'checks_passed':[],'actual_failures':failed,'unverified':unknown,'next_minimum_action':nxt,'evidence':['report.html#latest-physical-gates'],'full_qualification':False})
     state={'schema':1,'authority':'唯一当前选用版本/阶段状态表；qualification_matrix为版本化技术证据库，不与本表竞争当前状态','as_of_utc':now.isoformat(),'as_of_Asia_Shanghai':now.astimezone(datetime.timezone(datetime.timedelta(hours=8))).isoformat(),'hard_deadline_utc':deadline['hard_deadline_utc'],'hard_deadline_Asia_Shanghai':deadline['hard_deadline_Asia_Shanghai'],'evidence_commit':'ede7c445150c2281156a76d99c496ff0cd7a9f0d','source_matrix_SHA256':hashlib.sha256((DATA/'qualification_matrix.json').read_bytes()).hexdigest(),'original_objective_complete':False,'delivery_forecast':'按期交付实际结果；原目标全部成功目前风险高，不能承诺。共同底层尚未布完，部分块时序失败，上层还有短路。','critical_path':['当前VECTOR匹配视图完成；推进LL父层接入','仅用六块当前真实源推进共同底层实际路由和固定连接','合法后冻结M1–M10几何/连接manifest，双模式只改允许上层','同源资源约束的优化周边基线和完整系统验证'],'active_job_ids_at_recovery':['92855','93217','93243','93269','93317','93460','93462'],'native_driver_outputs_are_evidence_not_completion':True,'not_new_experiments':['不重复候选覆盖','不为报告扩写或图美化阻塞工程','不按耗时取消原活动作业'],'rows':rows}
+    phase=DATA/'deadline_engineering_receipts.json'
+    if phase.exists():
+        facts=json.loads(phase.read_text(encoding='utf-8'))
+        from deadline_state_overlay import apply
+        apply(rows,facts)
+        state['legacy_evidence_commit']=state.pop('evidence_commit')
+        state['current_LL_physical_driver_commit']='459e32a2c48280474c39b8262dcdbaeff0f30357'
+        state['source_deadline_stage_facts_SHA256']=hashlib.sha256(phase.read_bytes()).hexdigest()
+        state['current_engineering_evidence']='data/deadline_engineering_receipts.json'
+        state['current_hourly_report_observations']=['第1小时14:21UTC已报告','第2小时15:19UTC已报告','第3小时16:19UTC已报告；此前误看日志尾部导致漏收LL终态，现已纠正，以闭合回执为准']
     (DATA/'execution_state.json').write_text(json.dumps(state,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     esc=html.escape
     def listing(items):return '<br>'.join(esc(x) for x in items) if items else '无新增实际失败；不等于全部通过'
@@ -41,6 +51,8 @@ def build():
         src=esc(r['selected_version'])+('<details><summary>真实源/SHA</summary>'+esc(r['source_ODB'])+'<br>'+esc(r['source_ODB_SHA256'])+'</details>' if r.get('source_ODB') else '')
         table.append('<tr><td>'+esc(r['object'])+'</td><td>'+src+'</td><td>'+listing(r['actually_completed']+r['checks_passed'])+'</td><td>'+listing(r['actual_failures'])+'</td><td>'+listing(r['unverified'])+'</td><td>'+esc(r['next_minimum_action'])+'</td></tr>')
     text='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>12小时工程交付：唯一当前状态</title><style>body{font:15px/1.6 "Microsoft YaHei",sans-serif;color:#17283c;background:#f3f6fa;margin:0}main{max-width:1400px;margin:24px auto;background:white;padding:28px}h1{font-size:27px}table{width:100%;border-collapse:collapse;table-layout:fixed}td,th{border:1px solid #d8e1eb;padding:9px;vertical-align:top;overflow-wrap:anywhere;font-size:12px}th{background:#eaf1f7}details{font-size:11px}a{color:#176c9c}.warn{border-left:4px solid #b57723;padding:12px;background:#fff7e8}</style><main><h1>任务尚未全部完成；12小时硬交付正在执行</h1><p>硬截止：<b>北京时间2026年10月30日09:19</b>；采用更早的21:19作为保守起点，不自行延期。</p><p>已经做成：六块已有真实内部引出版本；LL的一万多个点保留，已发现的两处块内间距违规修成零，匹配的新物理视图也已导出。还没做成：共同走廊的线路未全部完成，两套系统尚未在同一合格冻结底座上通过验证，部分数据赶不上原定时钟节拍。</p><p class="warn">'+esc(state['delivery_forecast'])+'</p><p>以下是唯一当前状态表。已完成是产物确实生成；检查通过仅指列出的范围。未验证和未执行都不是已经证明失败。状态截至 '+esc(state['as_of_Asia_Shanghai'])+'。</p><table><thead><tr><th>对象</th><th>当前版本/来源</th><th>实际完成/已检查通过</th><th>实际检查失败</th><th>尚未验证/未执行</th><th>下一步最小必要动作</th></tr></thead><tbody>'+''.join(table)+'</tbody></table><p><a href="report.html">详细中文报告和真实对照图</a> · <a href="data/execution_state.json">唯一状态JSON</a> · <a href="data/deadline_run.json">期限与每小时报告时点</a></p></main></html>'
+    if phase.exists():
+        text=text.replace('<table>', '<p class="warn">最新实物来源：LL c4947012b239，累计修正13093个接入点（非从A边界移动数），13507位接口视图匹配、native0、725253网所检连通及双PG/RCX已执行；原负时序和8875电气违规保留。<a href="data/deadline_receipts/llsys-wire-pin-retention-r01/all_13507_actual_pin_correspondence.csv.gz">完整实际逐pin坐标</a> · <a href="data/deadline_engineering_receipts.json">阶段证据/SHA</a>。共同父层正在接续，尚非整套功能通过。</p><table>',1)
     (OUT/'status.html').write_text(text,encoding='utf-8',newline='\n')
     p=OUT/'report.html';text=p.read_text(encoding='utf-8')
     if 'id="deadline-status-link"' not in text:

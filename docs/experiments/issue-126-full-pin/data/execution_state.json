@@ -1,11 +1,10 @@
 {
   "schema": 1,
   "authority": "唯一当前选用版本/阶段状态表；qualification_matrix为版本化技术证据库，不与本表竞争当前状态",
-  "as_of_utc": "2026-10-29T14:28:26.192308+00:00",
-  "as_of_Asia_Shanghai": "2026-10-29T22:28:26.192308+08:00",
+  "as_of_utc": "2026-10-29T16:59:42.269564+00:00",
+  "as_of_Asia_Shanghai": "2026-10-30T00:59:42.269564+08:00",
   "hard_deadline_utc": "2026-10-30T01:19:00+00:00",
   "hard_deadline_Asia_Shanghai": "2026-10-30T09:19:00+08:00",
-  "evidence_commit": "ede7c445150c2281156a76d99c496ff0cd7a9f0d",
   "source_matrix_SHA256": "4aeb2758a19550155e7819fe45f6f7db43621951010d2679fc13b958c477598a",
   "original_objective_complete": false,
   "delivery_forecast": "按期交付实际结果；原目标全部成功目前风险高，不能承诺。共同底层尚未布完，部分块时序失败，上层还有短路。",
@@ -57,13 +56,14 @@
         "真实共同系统父层及适配连接",
         "时钟/电气规则的完整覆盖"
       ],
-      "electrical_classification": "原检查原文已保存；尚需将电容/转换时间与混合时序报项分别归类，不能只用总违规数判断",
+      "electrical_classification": "当前匹配源原检查输出：未列出max slew/max capacitance违规行；完整适用规则覆盖仍单列",
       "next_minimum_action": "保留当前实际源；完成同源父层/完整规则核查，补真实存储宏GDS。",
       "evidence": [
         "report.html#latest-physical-gates",
         "data/gate_terminal_updates/native-patch-audit-r01-act/execution.json.gz"
       ],
-      "full_qualification": false
+      "full_qualification": false,
+      "electrical_evidence": "data/deadline_receipts/current-electrical-r02/execution.json.gz"
     },
     {
       "id": "mxu",
@@ -91,13 +91,14 @@
         "真实共同系统父层及适配连接",
         "时钟/电气规则的完整覆盖"
       ],
-      "electrical_classification": "原检查原文已保存；尚需将电容/转换时间与混合时序报项分别归类，不能只用总违规数判断",
+      "electrical_classification": "当前匹配源原检查输出：未列出max slew/max capacitance违规行；完整适用规则覆盖仍单列",
       "next_minimum_action": "保留当前实际源；研究夹具保持失败，继续真实系统父层连接并补存储宏GDS。",
       "evidence": [
         "report.html#latest-physical-gates",
         "data/gate_terminal_updates/native-patch-audit-r01-mxu/execution.json.gz"
       ],
-      "full_qualification": false
+      "full_qualification": false,
+      "electrical_evidence": "data/deadline_receipts/current-electrical-r02/execution.json.gz"
     },
     {
       "id": "opentpu_aux",
@@ -118,7 +119,9 @@
       ],
       "actual_failures": [
         "数据最慢路径未赶上原时钟：setup余量-0.056396ns",
-        "最小延迟检查失败：min余量-0.119919ns（需分清hold/removal）"
+        "最小延迟检查失败：min余量-0.119919ns（需分清hold/removal）",
+        "max slew检查实际失败：12行，见匹配源原文",
+        "max capacitance检查实际失败：1221行，见匹配源原文"
       ],
       "unverified": [
         "完整适用规则/GDS LVS",
@@ -126,13 +129,14 @@
         "真实共同系统父层及适配连接",
         "时钟/电气规则的完整覆盖"
       ],
-      "electrical_classification": "原检查原文已保存；尚需将电容/转换时间与混合时序报项分别归类，不能只用总违规数判断",
+      "electrical_classification": "当前匹配源原检查输出：max slew实际违规12行；max capacitance实际违规1221行",
       "next_minimum_action": "当前源可集成；核对具体迟到/过早路径并保留时序失败。",
       "evidence": [
         "report.html#latest-physical-gates",
         "data/gate_terminal_updates/native-patch-audit-r01-opentpu_aux/execution.json.gz"
       ],
-      "full_qualification": false
+      "full_qualification": false,
+      "electrical_evidence": "data/deadline_receipts/current-electrical-r02/execution.json.gz"
     },
     {
       "id": "gemm",
@@ -160,13 +164,14 @@
         "真实共同系统父层及适配连接",
         "时钟/电气规则的完整覆盖"
       ],
-      "electrical_classification": "原检查原文已保存；尚需将电容/转换时间与混合时序报项分别归类，不能只用总违规数判断",
+      "electrical_classification": "当前匹配源原检查输出：未列出max slew/max capacitance违规行；完整适用规则覆盖仍单列",
       "next_minimum_action": "只用658 diode当前源；父连接此前在全局布线拥堵失败，按新公共父层重查。",
       "evidence": [
         "report.html#latest-physical-gates",
         "data/gate_terminal_updates/native-patch-audit-r02-gemm_658_current/execution.json.gz"
       ],
-      "full_qualification": false
+      "full_qualification": false,
+      "electrical_evidence": "data/deadline_receipts/current-electrical-r02/execution.json.gz"
     },
     {
       "id": "vector",
@@ -186,7 +191,8 @@
         "当前源原生RECT审计0，无此漏项影响"
       ],
       "actual_failures": [
-        "数据最慢路径未赶上原时钟：setup余量-4.14022ns"
+        "数据最慢路径未赶上原时钟：setup余量-4.14022ns",
+        "max capacitance检查实际失败：83行，见匹配源原文"
       ],
       "unverified": [
         "完整适用规则/GDS LVS",
@@ -194,34 +200,37 @@
         "真实共同系统父层及适配连接",
         "时钟/电气规则的完整覆盖"
       ],
-      "electrical_classification": "原检查原文已保存；尚需将电容/转换时间与混合时序报项分别归类，不能只用总违规数判断",
+      "electrical_classification": "当前匹配源原检查输出：max capacitance实际违规83行",
       "next_minimum_action": "当前2246位匹配视图93448已完成且SPEF重放匹配；仅用当前源集成，保留−4.140220ns时序失败。",
       "evidence": [
         "report.html#latest-physical-gates",
         "data/gate_terminal_updates/native-patch-audit-r01-vector/execution.json.gz"
       ],
-      "full_qualification": false
+      "full_qualification": false,
+      "electrical_evidence": "data/deadline_receipts/current-electrical-r02/execution.json.gz"
     },
     {
       "id": "llaccel_aux",
       "object": "llaccel SYSTEM 控制/搬运块",
-      "selected_version": "owned_cap_wire_restore/r01",
-      "source_ODB": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/owned_cap_wire_restore/r01/routed.odb",
-      "source_ODB_SHA256": "f0b2ff2a13ca522d09748f26d295c3a7fe6c15cf6ddc2cf3c6e4b035ba14ca37",
+      "selected_version": "llsys_wire_pin_retention/r01",
+      "source_ODB": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/llsys_wire_pin_retention/r01/routed.odb",
+      "source_ODB_SHA256": "c4947012b2396735c69f395446dede19472fbc9ba1329eb4b68407dd66c5c1ad",
       "signal_pins": 13507,
       "actually_completed": [
-        "完整分块/逐bit接口清单",
-        "现有C版真实接入及详细布线源",
-        "该当前源的RC提取/STA已执行"
+        "完整分块/13507位接口与既有A/B/C清单",
+        "当前源真实接点编辑：保留10261，再修正2832；不等于从A边界移动数",
+        "2827处旧pin金属以真实WIRE保留；全部原WIRE/VIA＋指定方块逐网核对",
+        "当前源RC提取/STA与匹配13507位物理/模型视图完成；未重跑GRT/DRT搜索"
       ],
       "checks_passed": [
-        "源native DRC报项0（只限原生检查覆盖）",
-        "导出多端信号几何连通检查",
-        "当前源原生RECT审计0，无此漏项影响"
+        "当前源独立native DRC0（原生覆盖范围）",
+        "725253网/2325528端点所检真实几何连通",
+        "双PG原生命令执行，原pin功能/层/尺寸/网络/外框/单元保持",
+        "当前c494源RECT审计0；原SPEF负时序逐字重放"
       ],
       "actual_failures": [
-        "数据最慢路径未赶上原时钟：setup余量-3.909029ns",
-        "最小延迟检查失败：min余量-0.587515ns（需分清hold/removal）"
+        "setup余量−3.909000ns；min余量−0.587515ns（含removal，不能统称hold）",
+        "max slew1091行、max capacitance7784行实际失败；不是全部时序失败数量"
       ],
       "unverified": [
         "完整适用规则/GDS LVS",
@@ -229,30 +238,38 @@
         "真实共同系统父层及适配连接",
         "时钟/电气规则的完整覆盖"
       ],
-      "electrical_classification": "原检查原文已保存；尚需将电容/转换时间与混合时序报项分别归类，不能只用总违规数判断",
-      "next_minimum_action": "复用新13507位视图；先查剩余2832贴线候选和87点的原金属保留/父层接入条件，再做最小真实修改。",
+      "electrical_classification": "当前匹配源原检查输出：max slew实际违规1091行；max capacitance实际违规7784行",
+      "next_minimum_action": "使用当前13507位匹配视图接续共同父层；针对剩余87位做真实first-hop预检/重接；电气修复成本独立记录。",
       "evidence": [
-        "report.html#latest-physical-gates",
-        "data/gate_terminal_updates/native-patch-audit-r01-llaccel_10261_restored/execution.json.gz"
+        "data/deadline_receipts/llsys-wire-pin-retention-r01/execution.json.gz",
+        "data/deadline_receipts/llsys-wire-pin-retention-r01/all_13507_actual_pin_correspondence.csv.gz",
+        "data/deadline_receipts/llsys13093-views-r01/execution.json.gz",
+        "data/deadline_receipts/current-electrical-r02/execution.json.gz"
       ],
-      "full_qualification": false
+      "full_qualification": false,
+      "electrical_evidence": "data/deadline_receipts/current-electrical-r02/execution.json.gz"
     },
     {
       "id": "common_base",
       "object": "共同M1–M10底座",
-      "selected_version": "common_integration/deadline-current-r01/C（当前六源，93460实际运行中）",
+      "selected_version": "common_integration/deadline-current-r01/C；93460采用f0b2 LL＋其余5当前源，新c494接续待实际导入",
       "actually_completed": [
-        "六块布局与256条原生FIXED M10共享导体已实际生成"
+        "六块实际布局、供电生成及双PG连通检查完成",
+        "256原生FIXED M10共享导体与全局布线检查点已生成"
       ],
       "checks_passed": [],
-      "actual_failures": [],
-      "unverified": [
-        "当前源底层路由尚未终态",
-        "六源SHA已锁定；未通过真实接入/规则，不能冻结"
+      "actual_failures": [
+        "详细布线实际失败：DRT-0073，u_llaccel_aux/bit_1011（M5、dram_rsp_rdata[329]）没有合法接入点；这个口负责外部存储返回数据。当前c494版此pin未移动，不能假设换版本即修复。"
       ],
-      "next_minimum_action": "已选齐六块当前源；93460按原资源/256固定导体构建，先收真实AP/布线回执；旧92855保留。",
+      "unverified": [
+        "未生成完成布线的共同底座，不能冻结",
+        "最新c494 LL源尚待父层接续，不将f0b2源资格继承给新源",
+        "完整系统功能/规则/GDS/RC/STA尚未闭合"
+      ],
+      "next_minimum_action": "复用已完成PG/固定预连检查点，接续当前LL及保守低层视图，保持M10连接对象/层级与几何不变，取得真实父层回执。",
       "evidence": [
-        "report.html#latest-physical-gates"
+        "data/deadline_receipts/current-common-deadline-r01/execution.json.gz",
+        "data/deadline_receipts/current-common-deadline-r01/lower_route.log.gz"
       ],
       "full_qualification": false
     },
@@ -322,19 +339,32 @@
       "selected_version": "原fakeram模型；93317真实RAM物理试验运行中",
       "actually_completed": [
         "原逻辑模型和缺失GDS来源已核实",
-        "64×64显式包装的4160状态点行为等价已证明"
+        "64×64显式包装的4160状态点行为等价已证明",
+        "原64×64同步读/位掩码RTL实际映射：17043单元、37608.676μm²"
       ],
       "checks_passed": [],
-      "actual_failures": [],
+      "actual_failures": [
+        "这个具体标准单元映射面积超过原5156.676μm²外框，不能直接替换；不是已证明所有SRAM实现不可行"
+      ],
       "unverified": [
         "匹配原宏的真实GDS仍缺失",
         "新RAM物理试验未终态，不能替代原宏"
       ],
       "next_minimum_action": "先测原RTL同容量实现的真实单元面积/端口合同；保留原宏，不拿空几何替代。",
       "evidence": [
-        "report.html#latest-physical-gates"
+        "report.html#latest-physical-gates",
+        "data/deadline_receipts/original-ram-mapping-r01/execution.json.gz"
       ],
       "full_qualification": false
     }
+  ],
+  "legacy_evidence_commit": "ede7c445150c2281156a76d99c496ff0cd7a9f0d",
+  "current_LL_physical_driver_commit": "459e32a2c48280474c39b8262dcdbaeff0f30357",
+  "source_deadline_stage_facts_SHA256": "d07624faa2f480f22493b163086233417b76dc47945dde7a1565273744a0133e",
+  "current_engineering_evidence": "data/deadline_engineering_receipts.json",
+  "current_hourly_report_observations": [
+    "第1小时14:21UTC已报告",
+    "第2小时15:19UTC已报告",
+    "第3小时16:19UTC已报告；此前误看日志尾部导致漏收LL终态，现已纠正，以闭合回执为准"
   ]
 }
