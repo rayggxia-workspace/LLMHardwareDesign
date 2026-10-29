@@ -160,7 +160,7 @@ def final_function(folder,out,run,pair=None):
         (out/'memory-observer.json').write_text(json.dumps(observation,indent=2)+'\n')
     compiler='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
     run([compiler,'--cc','--exe','--build','-j','16','-Wno-fatal','--top-module',top,'--prefix','V'+top,
-         '-Mdir',out/'obj','--output-split','12000','--output-split-cfuncs','150','--threads','4',
+         '-Mdir',out/'obj','--output-split','12000','--output-split-cfuncs','150','--output-groups','0','--threads','4',
          '--x-initial','unique','--x-assign','unique','-CFLAGS','-std=c++17 -O1',*paths,bench],'build.log')
     def one(case):
         name,initial,seed=case;log=name+'.log'
@@ -177,7 +177,8 @@ def final_function(folder,out,run,pair=None):
     assert all(v['result']==runs['all-ones']['result'] for v in runs.values())
     result=dict(passed=True,top=flow['top'],test_top=top,source_receipt_sha256=sha(folder/'receipt.json'),
                 full_final_netlist=proof,bench_sha256=sha(original_bench),compiled_bench_sha256=sha(bench),library_sha256=sha(LIB),
-                cell_models_sha256=sha(out/'cells.v'),initial_runs=runs,qualified_hard_macro=False)
+                cell_models_sha256=sha(out/'cells.v'),initial_runs=runs,qualified_hard_macro=False,
+                compiler_organization=dict(build_jobs=16,output_groups=0,output_split=12000,output_split_cfuncs=150,simulation_threads=4,concurrent_initial_states=3))
     if extra is not None:result.update(peer_source_receipt_sha256=sha(pair/'receipt.json'),peer_full_final_netlist=mproof,memory_observer=observation)
     (out/'final-function.json').write_text(json.dumps(result,indent=2)+'\n')
 
