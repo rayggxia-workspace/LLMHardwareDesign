@@ -2,7 +2,7 @@
 
 任务：https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/130 。负责人：YUZE-LU。2026-10-29，Asia/Shanghai。
 
-正式合同见 [BLOCK_FEED_V1.md](../../../docs/BLOCK_FEED_V1.md)；测试源为 `project/experiments/block_feed_v1/`，硬件为 `project/rtl/block_feed_v1/`。当前为RTL／映射阶段交付，**不是最终布局布线结果**。PR及后续状态以Issue和分支为准。
+正式合同见 [BLOCK_FEED_V1.md](../../../docs/BLOCK_FEED_V1.md)；测试源为 `project/experiments/block_feed_v1/`，硬件为 `project/rtl/block_feed_v1/`。当前为RTL／映射阶段交付，**不是最终布局布线结果**。草稿 [PR132](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/132) 待审查。
 
 ## 已实际运行的证据
 
@@ -11,13 +11,15 @@
 | 新M | run07/m | 191485／160639 | 128数值案例，四profile、8行、4块、尾块、完整K、S128失败保留、RNE、背压、双bank |
 | 新S | run10/s | 844896／29378 | 全容量独立scoreboard、24000次随机调度、读写冲突、保持、复位；256次宽读256拍 |
 | 真实S→M→T | run10/pair | 128972／63250 | 32随机案例；649次A/B同拍、360个结果字交T；有限队列、重用B、双bank和复位 |
-| 旧V | run11/v | 566999／414906 | 原RTL不变；真实三初态测试夹具适配 |
+| 随父支同步的V | run12/v | 566999／414906 | 接口未改；父支V group同步后重新执行三初态 |
 | 旧R | run11/r | 379979／178456 | 原RTL不变；240递推＋100卷积；真实三初态测试夹具适配 |
 | 旧T | run07/t | 2839953／224032 | 242租约，384字连续消费384拍 |
 
 每项各运行三次：`rand+reset=1, seed=130`、`rand+reset=2, seed=130`、`rand+reset=2, seed=131`，18次均通过。这里只改变硬件初态，测试用例自身随机数种子固定，不能把它描述成三倍不同数值输入覆盖。M/S/pair严格lint通过；pair只允许旧transaction6k原有WIDTH警告，原日志保留。V/R/T基线警告在原构建中保留。
 
-原始证据在 `validation/rtl/{m,s,pair,v,r,t}/`。每目录含receipt、原结果文件及其SHA；V/R额外保存生成夹具及适配记录。`*-original-summary.json`保留完整原运行摘要，其中的其他旧结果被上表选择取代，不当作当前S/pair最终结果。
+原始证据在 `validation/rtl/{m,s,pair,v,r,t}/`。每目录含receipt、原结果文件及其SHA；V/R额外保存生成夹具及适配记录。父支4a0b04e只更改了被测V group；run12替代run11/v，结果计数和周期相同。旧V收据与旧源档案完整保存在 `validation/history/pre-parent-4a0b04e/`，不改写旧结果。
+
+`*-original-summary.json`保留完整原运行摘要，其中的其他旧结果被上表选择取代，不当作当前S/pair最终结果。
 
 `validation/source-binding.json`把各次真正测试的文件SHA绑定到当前硬件和固定源提交。原收据的 `source_commit` 是当时输入参数，测试中工作文件以收据逐文件SHA为准，未倒填成后来提交。`tested-source-bytes.zip`保存21个源快照的精确字节，含旧版runner和V/R生成夹具；只允许Git文本换行的显式比较，不覆盖旧runner或修改原结果。
 
