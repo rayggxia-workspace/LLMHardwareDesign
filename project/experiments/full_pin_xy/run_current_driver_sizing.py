@@ -34,12 +34,16 @@ def run(case,revision):
     assert q.get('completed_utc') and q['fresh_DRC_count']==0 and q['whole_signal_geometry']['pass']
     odb=source/'routed.odb';report=source/'checks.txt'
     for p in [odb,report]:assert sha(p)==q['files'][p.name]['sha256']
+    top=10 if case=='vector' else 8
+    routing='set_routing_layers -signal metal2-metal'+str(top)+' -clock metal4-metal'+str(top)
+    fresh_source=source/'fresh.tcl'
+    assert sha(fresh_source)==q['files'][fresh_source.name]['sha256'] and routing in fresh_source.read_text(),'Original source range must be recovered before repair'
     ep=ROOT/'current_electrical_classification/r02/execution.json';e=json.loads(ep.read_text())
     assert e.get('completed_utc') and not e.get('actual_failure') and e['cases'][case]['ODB_SHA256']==sha(odb)
     trial=ROOT/'trials'/TRIALS[case]/(case+'-C')/'execution.json';old=json.loads(trial.read_text());sdc=Path(old['source_sdc'])
     assert sha(sdc)==old['input_sha256'][str(sdc)]
     out=ROOT/'current_driver_sizing'/revision/case;out.mkdir(parents=True,exist_ok=False)
-    inputs={str(p):sha(p) for p in [rp,odb,report,ep,trial,sdc]}
+    inputs={str(p):sha(p) for p in [rp,odb,report,ep,trial,sdc,fresh_source]}
     rec={'scope':'ACTUAL_CURRENT_ALL_REPORTED_ELECTRICAL_DRIVER_INVENTORY_AND_COMPATIBLE_SIZING_NOT_PURE_XY',
       'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID'],
       'source_SHA':inputs,'full_qualification':False,'source_setup_ns':q.get('setup_ns'),'source_min_ns':q.get('hold_ns'),
@@ -129,7 +133,15 @@ write_db @@CHECKPOINT@@
 close $stages
 '''
         for a,b in [('@@POSES@@',tcl(out/'actual_size_poses.tcl')),('@@PLACED@@',tcl(out/'placed')),('@@CHECKPOINT@@',tcl(out/'placed_NOT_ROUTED.odb'))]:placement=placement.replace(a,b)
-        native('isolated_geometry_size_and_legalization',placement)
+        previous_legal=ROOT/'current_driver_sizing/r04'/case
+        if revision=='r05' and case=='vector':
+            pr=json.loads((previous_legal/'execution.json').read_text())
+            assert pr.get('completed_utc') and pr['native_returncodes']['isolated_geometry_size_and_legalization']==0 and pr['all_closed_sources_unchanged'] and pr['source_SHA'][str(odb)]==sha(odb)
+            inputs[str(previous_legal/'execution.json')]=sha(previous_legal/'execution.json')
+            for name in ['placed.cells.tsv','placed_NOT_ROUTED.odb','actual_size_poses.tcl']:
+                p=previous_legal/name;assert sha(p)==pr['files'][p.name]['sha256'];inputs[str(p)]=sha(p);shutil.copyfile(str(p),str(out/name))
+            rec['native_returncodes']['isolated_geometry_size_and_legalization']=0;rec['reused_closed_actual_legalization']=str(previous_legal)
+        else:native('isolated_geometry_size_and_legalization',placement)
         after,at=read_cells(out/'placed.cells.tsv');assert terms=={k:v for k,v in at.items() if k[0] in nonfill}
         assert all(n in after and (after[n][0]==selected[n][1] if n in selected else after[n]==before[n]) for n in nonfill)
         rec['isolated_all_signal_connections_and_nonselected_functional_poses_preserved']=True;save()
@@ -140,7 +152,7 @@ close $stages
         lines=['read_liberty '+tcl(p) for p in old['libs']]+['read_db '+tcl(odb),'read_sdc '+tcl(sdc),'source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl',COST_PROC,
           'set b [ord::get_db_block];set temporary_obs {};set original_obs [lsort [$b getObstructions]];set u [$b getDbUnitsPerMicron]']
         for p in reservations:lines+=['set access_reservations {};source '+tcl(p),'foreach r $access_reservations {lassign $r ly a c d e;set z {};foreach v [list $a $c $d $e] {lappend z [expr {round($v*$u)}]};lappend temporary_obs [odb::dbObstruction_create $b [[ord::get_db_tech] findLayer $ly] {*}$z]}']
-        lines+=['set_routing_layers -signal metal2-metal8 -clock metal4-metal8','read_guides '+tcl(guide),
+        lines+=[routing,'read_guides '+tcl(guide),
           'if {![stage begin_incremental {global_route -start_incremental}]} {close $stages;exit 1}',
           'remove_fillers;set size_replay {};source '+tcl(out/'actual_size_poses.tcl'),
           'if {![stage exact_verified_size_pose_replay {foreach r $size_replay {lassign $r name master x y status;set i [$b findInst $name];if {![$i swapMaster [[ord::get_db] findMaster $master]]} {error "Replay swap failed"};$i setLocation $x $y;$i setPlacementStatus $status};if {[llength $filler_masters]} {filler_placement -prefix PINXY_CURRENT_SIZE_FILL_ $filler_masters};global_connect;check_placement -verbose}]} {close $stages;exit 1}',
@@ -154,7 +166,7 @@ close $stages
           'stage rcx {define_process_corner -ext_model_index 0 X;set_extraction_rules_file /OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules;extract_parasitics;write_spef '+tcl(out/'extracted.spef')+';read_spef '+tcl(out/'extracted.spef')+'}',
           'stage sta {report_worst_slack -max -digits 6 > '+tcl(out/'setup.txt')+';report_worst_slack -min -digits 6 > '+tcl(out/'hold.txt')+';report_check_types -violators -max_delay -min_delay -max_slew -max_capacitance -max_fanout -recovery -removal -max_count 1000000 -digits 6 > '+tcl(out/'checks.txt')+';check_setup -verbose > '+tcl(out/'constraint_coverage.txt')+';report_parasitic_annotation -report_unannotated > '+tcl(out/'parasitic_coverage.txt')+'}','close $stages']
         native('real_route_RC_STA','\n'.join(lines))
-        native('fresh_DRC','read_db '+tcl(out/'routed.odb')+'\nset_routing_layers -signal metal2-metal8 -clock metal4-metal8\ndrt::check_drc -output_file '+tcl(out/'independent.drc')+'\nclose $stages',threads=1)
+        native('fresh_DRC','read_db '+tcl(out/'routed.odb')+'\n'+routing+'\ndrt::check_drc -output_file '+tcl(out/'independent.drc')+'\nclose $stages',threads=1)
         rec['fresh_DRC_count']=len(re.findall(r'^violation type:',(out/'independent.drc').read_text(),re.M));rec['whole_signal_geometry']=check(out/'whole_access.tsv.gz',True)
         cells,ct=read_cells(out/'after.cells.tsv');assert {k:v for k,v in ct.items() if k[0] in nonfill}==terms
         assert all(cells[n][0]==selected[n][1] if n in selected else cells[n]==before[n] for n in nonfill)
