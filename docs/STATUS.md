@@ -1,3 +1,7 @@
+2026-10-29 23:45 CST，Issue130：M已接受并实收。S35物理门通过；93407完整未修改GDS DRC及93451/93479同源最终功能仍运行。93463严格LEC全21命令成功，23:22:21返回UNSAT/IDENTICAL；随后因读取尚未完成功能回执整体FAILED，原失败记录保留。两条功能路径与LEC使用完全相同dc48941b网表。新qualify39源f7177d30已部署，formal-join将逐SHA接收成功计算子阶段、重跑真实控制，并无条件绑定成功功能；尚未提交新作业，旧PENDING93464–66已精确退役。恢复入口为专属handoff和.local/issue130/launch-ready-s39.py，不能启动旧依赖。S未接受，Issue130=in_progress、PR132=draft；父任务不变。登记pending，看板unverified/同步pending，审查人待指定。
+
+以下为历史记录，当前以本条及专属handoff为准。
+
 2026-10-29 22:31 CST，Issue130当前：M最终接受/本地文件保持通过。S35原生六阶段、内建全边界LEC及RCX完成；93404独立物理通过，300MHz setup+28.545ps、hold+7.2ps，cap/slew/setup/hold违规0。93407完整未修改deck DRC仍运行；qualify36/93451以最终S和已接受M进行S→M→T三初态功能，完整模型16个C++编译进程活跃且内存充足。qualify37/93463源494a56da将严格LEC计算与功能并行：完整物理视图已导出/源哈希固定，最终仍无条件要求功能通过并核对同一视图；93464交付←功能/LEC/DRC，93465几何/93466包←交付。物理/DRC引用repair35同源门，function引用qualify36，没有重跑已通过门。旧93452/54/55/56均仅PENDING，经本人命令/目录核验后退役。S尚未接受，PR132仍draft、Issue130=in_progress。S34/93392原20ps参数对照继续。父任务保留，登记pending/看板unverified及同步pending，审查人待指定。
 
 2026-10-29 22:02 CST，Issue130当前：M已接受并下载；S35/93398原生六阶段完成、内建全边界LEC为UNSAT/IDENTICAL、最终RCX完成，93403封存成功。93404独立最终物理门通过：setup +0.028545ns、hold +0.0072ns，cap/slew/setup/hold违规均0，实际M10接点/PG/连通/RC/全端点均通过。93407完整未改FreePDK45 deck DRC仍运行。93405尚未仿真即因夹具引用综合后消失的store.mem_req/mem_ready名字编译失败；原失败证据保留。e98a5ac2源码的新qualify36只修测试观测：通过实际ready仲裁口反推宽读，每拍运行前置检查并保留原事务次数断言；最终S/M网表、RTL、SDC均不改。93451最终S→已接受M→T三初态功能运行，93452严格独立LEC→93454交付→93455几何/93456包已排依赖。旧93406/08/09/10经PENDING、本人目录和命令核验后退役。S尚未接受，PR132仍draft，Issue130=in_progress；父任务不变。登记pending、看板unverified/同步pending、审查人待指定。

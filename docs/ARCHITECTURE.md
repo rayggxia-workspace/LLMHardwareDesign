@@ -359,13 +359,15 @@ python3 project/experiments/block_feed_v1/qualify.py seal --source SOURCE_FOLDER
 python3 project/experiments/block_feed_v1/qualify.py physical --source SEALED_FOLDER --out GATES/physical-s
 python3 project/experiments/block_feed_v1/qualify.py function --source SEALED_FOLDER --out GATES/function-s --peer EXACT_ACCEPTED_M_SOURCE
 python3 project/experiments/block_feed_v1/qualify.py formal --source SEALED_FOLDER --out GATES/formal-s --function GATES/function-s
+# 若已有完整成功LEC计算、但原producer仅因等待功能回执失败：
+python3 project/experiments/block_feed_v1/qualify.py formal-join --source SEALED_FOLDER --out GATES/formal-s --function SUCCESSFUL_FUNCTION --computation COMPLETED_NATIVE_COMPUTATION
 python3 project/experiments/block_feed_v1/qualify.py drc --source SEALED_FOLDER --out GATES/drc-s
 python3 project/experiments/block_feed_v1/qualify.py deliver --source SEALED_FOLDER --out ROOT/results/delivery-s/native --gates GATES
 python3 project/experiments/block_feed_v1/qualify.py geometry --source ROOT/results/delivery-s/native --out ROOT/results/delivery-s/geometry
 python3 project/experiments/block_feed_v1/bundle.py --delivery ROOT/results/delivery-s/native --out ROOT/results/bundle-s
 ```
 
-`remote_repair.sh ROOT GRT_SOURCE OUT --from-grt measured_s_hold.tcl` 与 `remote_gate.sh ROOT OP SOURCE OUT [--peer PEER|--function FUNCTION|--gates GATES]` 负责固定image SHA、16CPU及内存接纳。首个seal/全部门通过之前不能称最终候选；delivery要求四门同source receipt SHA。实际GDS DRC为完整未修改FreePDK45规则，禁止跳过FEOL/天线/offgrid。几何输出提供候选LEF和原生矩形/接点覆盖，不授予层级Liberty/abstract coverage或M11/M12系统资格。
+`remote_repair.sh ROOT GRT_SOURCE OUT --from-grt measured_s_hold.tcl` 与 `remote_gate.sh ROOT OP SOURCE OUT [--peer PEER|--function FUNCTION|--computation COMPLETED_NATIVE_COMPUTATION|--gates GATES]` 负责固定image SHA、16CPU及内存接纳。首个seal/全部门通过之前不能称最终候选；delivery要求四门同source receipt SHA。实际GDS DRC为完整未修改FreePDK45规则，禁止跳过FEOL/天线/offgrid。几何输出提供候选LEF和原生矩形/接点覆盖，不授予层级Liberty/abstract coverage或M11/M12系统资格。
 
 S最终网表不保留`store.mem_req`等RTL内部别名。`qualify.py function --peer`生成仅用于仿真的pair夹具，通过真实外部`ready`口观测宽读：原S的`ready=!reset&&(!valid||take)&&!wide_fire`，在每个采样周期检查`reset||!valid||take`后，反推`wide_fire=!reset&&(!valid||take)&&!ready`。生成前核对原RTL等式及夹具唯一替换位置，穷举合法布尔输入；实际内存事务次数断言、数值参考与背压检查全部保留。`memory-observer.json`及生成夹具/bench随S压缩包保存逐SHA证据，最终S/M网表及接口不改。原内部别名导致的编译失败记录仍保留，不能充作已运行的功能测试。
 
@@ -377,3 +379,5 @@ python -X utf8 project/experiments/block_feed_v1/verify_bundle.py D:/Data/LLMHar
 python -X utf8 project/experiments/block_feed_v1/verify_evidence.py
 ```
 第二条仅核验保存的原始证据及源字节，不重跑EDA。M已实收并核验；S必须等完整通过后才能同样登记。
+
+显式formal-join不接收原失败producer的整体资格：要求原所有命令0及严格全边界UNSAT/IDENTICAL，重新哈希全部原始输入/输出/代码，重新运行实际原生正反例，并检查成功三初态功能的网表/库/封存源与证明完全相同。原失败receipt及Kepler日志/投影证明随新包保留；原生证明或成功功能缺失均拒绝。
