@@ -14,6 +14,7 @@ from run_parent_trial import tcl
 from run_escape_fixture import execute
 from run_preconnected_upper import groups,audit_geometry
 from check_access import check,check_rows
+from compare_native_route_representations import routing_box_hashes
 
 DRIVER=Path(__file__).resolve().parent
 
@@ -71,7 +72,7 @@ def material_and_indispensability(out,plan,physical):
             'scope':'Actual native rectangles/via links and analysis-only bridge cuts; not GDS LVS, full base freeze, RTL or STA'}
 
 
-def one(mode,root):
+def one(mode,root,resume_revision=None):
     out=root/mode;out.mkdir(exist_ok=False)
     rec={'scope':'ALL770_ROUTED_BRANCHES_EXACT_NATIVE_FIXED_COMPOSITION_NOT_COMPLETE_SYSTEM',
          'mode':mode,'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),
@@ -98,6 +99,25 @@ def one(mode,root):
         assert all(sha(Path(p))==s for p,s in fa['source_SHA'].items())
         physical=groups(plan,wires);rc=ROOT/'upper_layer_probe/r01/model/research12.setRC.tcl'
         rec['source_SHA']={str(p):sha(p) for p in [source,planfile,old/mode/'execution.json',base,api,wf,fixed_audit,rc]}
+        selected=[];resume=None
+        if resume_revision:
+            resume=ROOT/'upper_branch_composition'/resume_revision/mode
+            rp=resume/'execution.json';previous=json.loads(rp.read_text())
+            assert previous.get('completed_utc') and previous['all_closed_sources_unchanged']
+            assert previous['native_returncodes']['all770_branch_route']==0 and previous['native_returncodes']['exact_native_composition']==0
+            assert previous['all_514_composed_geometry']['pass'] and previous['fresh_DRC_count']>0
+            for p in [resume/'routed_770_BRANCHES_NOT_SYSTEM.odb',resume/'route.guide',resume/'independent.drc',resume/'branch_access.tsv.gz']:
+                assert sha(p)==previous['files'][p.name]['sha256'];rec['source_SHA'][str(p)]=sha(p)
+            rec['source_SHA'][str(rp)]=sha(rp)
+            bad=set(re.findall(r'net:(\S+)',(resume/'independent.drc').read_text()))
+            byname={g['net']:g for g in physical};assert bad and bad<=set(byname)
+            selected=sorted({i for n in bad for i in byname[n]['edge_ids']})
+            source=resume/'routed_770_BRANCHES_NOT_SYSTEM.odb'
+            rec['resume_closed_branch_source']=str(source);rec['global_route_reexecuted']=False
+            rec['selected_original_edge_ids_for_detail_repair']=selected
+            rec['selected_branch_count']=len(selected);rec['source_fresh_native_DRC_count']=previous['fresh_DRC_count']
+            rec['source_DRC_type_counts']=dict(Counter(re.findall(r'^violation type: (.*)$',(resume/'independent.drc').read_text(),re.M)))
+            rec['routing_rules_and_all_original_hooks_unchanged']=True
         rec['source_lower_checkpoint_SHA256']=sha(base)
         rec['actual_OpenROAD_binary_SHA256']=subprocess.check_output(common+[IMAGE,'sha256sum',BIN]).decode().split()[0]
         rec['actual_edges']=770;rec['actual_hooks']=1540;rec['actual_shared_fixed_resources']=256
@@ -108,7 +128,7 @@ def one(mode,root):
           'read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib',
           'read_db '+tcl(source),'source '+tcl(rc),obs,
           'set b [ord::get_db_block];if {[llength [$b getNets]]!=770 || [llength [$b getBTerms]]!=1540 || [llength [$b getInsts]]} {error "Original full helper count mismatch"}',
-          'foreach n [$b getNets] {if {[$n getWire] ne "NULL"} {error "Unexpected original helper wire"}}',
+          ('foreach n [$b getNets] {if {[$n getWire] eq "NULL"} {error "Missing closed original branch wire"}}' if resume else 'foreach n [$b getNets] {if {[$n getWire] ne "NULL"} {error "Unexpected original helper wire"}}'),
           'fingerprint '+tcl(out/'before_route'),'save_obs '+tcl(out/'before.OBS.tsv'),
           'set_routing_layers -signal metal11-metal12 -clock metal11-metal12',
           'if {![stage global_route_CuGR_all770 {global_route -use_cugr -verbose -guide_file '+tcl(out/'route.guide')+' -congestion_report_file '+tcl(out/'congestion.rpt')+'}]} {catch {write_db '+tcl(out/'failed_global.odb')+'};close $stages;exit 1}',
@@ -116,6 +136,13 @@ def one(mode,root):
           'if {![stage detailed_route_all770 {detailed_route -output_drc '+tcl(out/'branch_route.drc')+' -verbose 1;write_db '+tcl(out/'routed_770_BRANCHES_NOT_SYSTEM.odb')+'}]} {close $stages;exit 1}',
           'fingerprint '+tcl(out/'after_branch_route'),'save_obs '+tcl(out/'after_branch.OBS.tsv'),
           'source '+tcl(DRIVER/'export_access.tcl'),'close $stages']
+        if resume:
+            start=next(i for i,s in enumerate(lines) if s.startswith('if {![stage global_route_CuGR_all770'))
+            end=next(i for i,s in enumerate(lines) if s.startswith('if {![stage detailed_route_all770'))
+            select=['read_guides '+tcl(resume/'route.guide'),'set selected_nets {}']
+            for i in selected:select.append('lappend selected_nets [[$b findBTerm '+tcl('src['+str(i)+']')+'] getNet]')
+            select+=['set selected_names {};foreach n [lsort -unique $selected_nets] {lappend selected_names [$n getName]};if {[llength $selected_names]!='+str(len(selected))+'} {error "Selected branch identity mismatch"};set_nets_to_route $selected_names']
+            lines[start:end]=select
         script=out/'route_branches.tcl';script.write_text('\n'.join(lines)+'\n')
         env='PINXY_OUTPUT='+str(out)+',PINXY_ACCESS_ALL=1,PINXY_ACCESS_OUT='+str(out/'branch_access.tsv.gz')
         rec['native_returncodes']['all770_branch_route']=execute(common,script,out/'branch_native.log',env,threads=4);save()
@@ -124,6 +151,11 @@ def one(mode,root):
         assert rec['all_770_branch_geometry']['pass'] and rec['all_770_branch_geometry']['checked_nets']==770 and rec['all_770_branch_geometry']['checked_terminals']==1540
         assert all(sha(out/('before_route.'+k+'.tsv'))==sha(out/('after_branch_route.'+k+'.tsv')) for k in ['pins','cells','pdn','die'])
         assert sha(out/'before.OBS.tsv')==sha(out/'after_branch.OBS.tsv')
+        if resume:
+            a,_=routing_box_hashes(resume/'branch_access.tsv.gz',770);b,_=routing_box_hashes(out/'branch_access.tsv.gz',770)
+            assert set(a)==set(b)
+            rec['actual_all770_branch_route_box_changed_native_net_names']=sorted(n for n in a if a[n]!=b[n])
+            rec['actual_changed_count_may_differ_from_selected_count']=True
         lines=[helper.replace('$out/stages.tsv','$out/composition_stages.tsv'),'read_db '+tcl(out/'routed_770_BRANCHES_NOT_SYSTEM.odb'),obs,
           'set b [ord::get_db_block];set m10 [[ord::get_db_tech] findLayer metal10];if {[$m10 getWidth]!=1600} {error "Actual FIXED width differs"}']
         body=[]
@@ -165,14 +197,16 @@ def one(mode,root):
     return rec
 
 
-def run(revision):
-    assert int(os.environ['SLURM_CPUS_PER_TASK'])>=8
-    out=ROOT/'upper_branch_composition'/revision;out.mkdir(parents=True,exist_ok=False)
-    with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(lambda mode:one(mode,out),['opentpu','llaccel']))
+def run(revision,resume_revision=None,modes_csv='opentpu,llaccel'):
+    modes=modes_csv.split(',');assert modes and len(set(modes))==len(modes) and set(modes)<={'opentpu','llaccel'}
+    assert int(os.environ['SLURM_CPUS_PER_TASK'])>=4*len(modes)
+    if resume_revision:assert resume_revision=='r01'
+    out=ROOT/('upper_branch_repair' if resume_revision else 'upper_branch_composition')/revision;out.mkdir(parents=True,exist_ok=False)
+    with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(lambda mode:one(mode,out,resume_revision),modes))
     summary={'scope':'TWO_ALL770_ADAPTER_COMPOSITIONS_NOT_TWO_COMPLETE_SYSTEMS','full_qualification':False,
       'modes':[{k:r.get(k) for k in ['mode','native_returncodes','fresh_DRC_count','actual_failure']} for r in results]}
     (out/'trial_summary.json').write_text(json.dumps(summary,indent=2)+'\n')
     return 0 if all('actual_failure' not in r and r.get('fresh_DRC_count')==0 and r.get('all_514_composed_geometry',{}).get('pass') and r.get('all_256_native_FIXED_paths_preserved') and r.get('actual_material_and_fixed_bridge_cut_checks',{}).get('all_256_fixed_bridges_indispensable_for_real_source_sink_geometry') and r.get('native_binary_unchanged') and r['all_closed_sources_unchanged'] for r in results) else 1
 
 
-if __name__=='__main__':sys.exit(run(sys.argv[1]))
+if __name__=='__main__':sys.exit(run(*sys.argv[1:4]))
