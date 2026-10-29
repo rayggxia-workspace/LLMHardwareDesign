@@ -34,7 +34,37 @@ SHARED_SNAPSHOT='''proc common_shared_snapshot {file} {
 }'''
 
 
-def source_view(case,scheme):
+def source_view(case,scheme,source_profile='original'):
+    assert source_profile in ['original','latest_access_tips']
+    if source_profile=='latest_access_tips' and case in ['mxu','llaccel_aux']:
+        assert scheme=='C'
+        relative={'mxu':'mxu_actual_tip_views/r01/mxu-C','llaccel_aux':'llsys_parent_tip_views/r01/llaccel_aux-C'}[case]
+        folder=ROOT/relative;p=folder/'execution.json';q=json.loads(p.read_text())
+        assert q.get('completed_utc') and q['native_export_returncode']==q['fresh_model_read_returncode']==0
+        assert q['source_native_DRC']==0 and q['matching_all_signal_model_pins']==COUNTS[case]
+        assert q['all_original_signal_and_PG_pins_and_size_exactly_preserved'] and q['SPEF_replay_matches_source'] and q['all_sources_and_pre_RCX_geometry_unchanged']
+        for name in ['clean.odb','abstract.lef','detailed.lef','timing.lib','pins.tsv']:
+            assert sha(folder/name)==q['files'][name]['sha256']
+        assert sha(folder/'clean.odb')==q['source_geometry_sha256']
+        old=source_view(case,scheme,'original');a,b=parse_lef(old['directory']/'abstract.lef'),parse_lef(folder/'abstract.lef')
+        assert a[0]==b[0] and set(a[1])==set(b[1])
+        changed=[]
+        for name in a[1]:
+            x,y=a[1][name],b[1][name]
+            assert [s for s in x if not s.startswith('RECT ')]==[s for s in y if not s.startswith('RECT ')],(case,name,'Pin function/direction/use/layer changed')
+            if x==y:continue
+            assert not any(s in x for s in ['USE POWER ;','USE GROUND ;']),(case,name,'Original PG changed')
+            r=[list(map(float,s.split()[1:5])) for s in x if s.startswith('RECT ')]
+            t=[list(map(float,s.split()[1:5])) for s in y if s.startswith('RECT ')]
+            assert len(r)==len(t)==1
+            assert all(abs(v-.14)<1e-7 for z in [r[0],t[0]] for v in [z[2]-z[0],z[3]-z[1]])
+            changed.append(name.replace('\\',''))
+        assert changed,(case,'No actual pin correction against previous common source')
+        return {'directory':folder,'receipt':p,'ODB':folder/'clean.odb','model':folder/'timing.lib','model_receipt':p,
+          'native_DRC':0,'complete_rules':'NOT_QUALIFIED','RTL_equivalence':'NOT_EXECUTED',
+          'source_profile':source_profile,'old_common_source_receipt':old['receipt'],
+          'old_common_source_ODB':old['ODB'],'actual_pin_XY_changes_against_original_common_source':changed,
+          'all_original_pin_function_direction_use_layer_size_and_PG_preserved':True}
     eco=case in ['gemm','mxu'] or (case=='opentpu_aux' and scheme=='C')
     if eco:
         rev='r04' if scheme=='Aopt' else 'r03' if case=='opentpu_aux' else 'r02'
@@ -176,10 +206,12 @@ def screen_pads(out,preparation,inputs):
     return commands
 
 
-def run(scheme,revision,route_engine='FastRoute'):
+def run(scheme,revision,route_engine='FastRoute',source_profile='original'):
     assert route_engine in ['FastRoute','CuGR'];native_threads=8 if route_engine=='CuGR' else 16
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=native_threads
-    assert scheme in ['Aopt','C'];out=ROOT/'common_integration'/revision/scheme;out.mkdir(parents=True,exist_ok=False)
+    assert scheme in ['Aopt','C'] and source_profile in ['original','latest_access_tips']
+    assert source_profile=='original' or scheme=='C'
+    out=ROOT/'common_integration'/revision/scheme;out.mkdir(parents=True,exist_ok=False)
     inputs=ROOT/'inputs/common-topology-r02';prep=ROOT/'inputs/common-base-preparation-r04'
     assert prep.exists(),str(prep)
     plan=json.loads((prep/'preparation_contract.json').read_text());assert not plan['frozen']
@@ -187,7 +219,7 @@ def run(scheme,revision,route_engine='FastRoute'):
     assert json.loads((inputs/'topology_proof.json').read_text())['source_preparation_SHA']==sha(prep/'preparation_contract.json')
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
     rec={'scope':'UNQUALIFIED_SIX_RESOURCE_ACTUAL_COMMON_INTEGRATION_TRIAL_NOT_FROZEN_BASE',
-      'scheme':scheme,'unqualified_integration_trial':True,'full_qualification':False,'frozen':False,
+      'scheme':scheme,'source_profile':source_profile,'unqualified_integration_trial':True,'full_qualification':False,'frozen':False,
       'two_complete_M11_M12_functions':'NOT_IMPLEMENTED','construction_port_lowering':'NOT_YET_EXECUTED',
       'historical_targets':'PARTIAL_OR_UNKNOWN; new controlled policy separately indexed',
       'views':{},'source_SHA':{},'scheduler_job':os.environ['SLURM_JOB_ID'],
@@ -203,7 +235,7 @@ def run(scheme,revision,route_engine='FastRoute'):
         lines=['read_lef '+tcl(tech),'read_lef /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.mod.lef',
                'read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib'];liblines=lines[-1:]
         for case in CASES:
-            v=source_view(case,scheme);folder=v['directory'];detail=folder/'detailed.lef'
+            v=source_view(case,scheme,source_profile);folder=v['directory'];detail=folder/'detailed.lef'
             if not detail.exists():
                 detail=out/(case+'.actual_detail.lef');script=out/(case+'.export.tcl')
                 script.write_text('read_db '+tcl(v['ODB'])+'\nwrite_abstract_lef -bloat_factor 0 '+tcl(detail)+'\n')
@@ -223,8 +255,13 @@ def run(scheme,revision,route_engine='FastRoute'):
               'model_SHA':sha(v['model']),'model_receipt_SHA':sha(v['model_receipt']),'inherited_native_DRC':v['native_DRC'],
               'alias_LEF_SHA':sha(dest),'alias_model_SHA':sha(lib),'OBS_contract':contract,'full_qualification':False,
               'inherited_separate_cell_ECO_cost':leaf_receipt.get('separate_cell_ECO_cost'),
-              'current_658_M6_tip_SYSTEM_bit1025_sources_not_selected_here':True}
+              'current_658_M6_tip_SYSTEM_bit1025_sources_not_selected_here':source_profile=='original',
+              'actual_tip_source_selected':v.get('source_profile')=='latest_access_tips',
+              'actual_pin_XY_changes_against_original_common_source':v.get('actual_pin_XY_changes_against_original_common_source',[]),
+              'unselected_newer_sources':'GEMM658 and openTPU stacked-via source not selected in this access-only integration'}
             for p in [v['receipt'],v['ODB'],v['model'],v['model_receipt'],folder/'abstract.lef',detail]:rec['source_SHA'][str(p)]=sha(p)
+            for key in ['old_common_source_receipt','old_common_source_ODB']:
+                if key in v:rec['source_SHA'][str(v[key])]=sha(v[key])
         assert len(source_pin_rows)==24767
         with (out/'all24767_actual_source_pins.csv').open('w',newline='') as f:
             writer=csv.DictWriter(f,fieldnames=list(source_pin_rows[0]),lineterminator='\n');writer.writeheader();writer.writerows(source_pin_rows)
@@ -317,4 +354,4 @@ def run(scheme,revision,route_engine='FastRoute'):
     return 0 if rec.get('lower_route_returncode')==0 and rec.get('fresh_DRC_count')==0 and rec['all_sources_unchanged'] and rec.get('whole_signal_geometry',{}).get('pass') and rec.get('shared_conductors_geometry_and_networks_exactly_preserved_through_DRT') and rec.get('all_256_native_FIXED_status_paths_retained') and all(rec.get('parent_invariants',{}).get(k) for k in ['pins','pdn','instances']) and all(rec.get('native_final_stage_status',{}).get(k)=='EXECUTED' for k in ['final_VDD','final_VSS']) else 1
 
 
-if __name__=='__main__':sys.exit(run(*sys.argv[1:4]))
+if __name__=='__main__':sys.exit(run(*sys.argv[1:5]))
