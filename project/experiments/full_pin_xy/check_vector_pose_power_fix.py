@@ -37,7 +37,8 @@ set fixes {};set f [open FIXES w];puts $f "instance\tmaster\tx\ty\told_orientati
 foreach r $expected_poses {
  lassign $r name master x y orient status;set i [$b findInst $name]
  if {$i eq "NULL" || [[$i getMaster] getName] ne $master || [$i getLocation] ne [list $x $y] || [$i getPlacementStatus] ne $status} {error "Measured legal pose source differs in more than orientation"}
- if {[$i getOrient] ne $orient} {puts $f [join [list $name $master $x $y [$i getOrient] $orient] "\t"];lappend fixes [list $name $orient];$i setOrient $orient}
+ if {[$i getOrient] ne $orient} {puts $f [join [list $name $master $x $y [$i getOrient] $orient] "\t"];lappend fixes [list $name $orient];$i setOrient $orient;$i setLocation $x $y}
+ if {[$i getLocation] ne [list $x $y] || [$i getOrient] ne $orient} {error "Orientation API shifted the verified lower-left pose"}
 };close $f
 if {[llength $fixes]!=9} {error "Not the measured nine-orientation replay defect"}
 stage legal_pose_check {check_placement -verbose}
