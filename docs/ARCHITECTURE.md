@@ -15,6 +15,7 @@
 | `docs/model-analysis/` | 八模型实验分析、精简字符算子图、完整图册及轻量导出证据；不保存权重 ONNX |
 | `sources/` | 手写笔记、讨论澄清和原始研究资料 |
 | `project/experiments/block_hierarchy/` | Issue #7 的隔离实验运行器、配置生成与运行说明；不放大体积物理输出 |
+| `project/analysis/llm_resources/` | Issue #48 的≤4B INT8输入校验、配置驱动资源记账、候选库存扫描与单元/CLI测试；仅本机解析估算 |
 | `docs/experiments/` | 实验设计、结果摘要与证据边界 |
 | `ref-project/llm-routing/` | 参考布线结果；Agent 不主动或例行维护，用户更新可按要求提交 |
 | `progress/<github-handle>/`、`work/<github-handle>/<issue-number>/` | 个人进度和任务辅助资料，不作为正式研究成果的默认目录 |
@@ -115,3 +116,14 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
+
+## 本机≤4B INT8资源记账
+
+[输入规范](LLM_RESOURCE_INPUT.md)及机器schema明确总参数上限、场景/精度、候选库存和未知量；仅使用Python 3.10+标准库，不运行模型/EDA，不访问服务器。仓库根目录执行：
+
+```powershell
+python -B project/analysis/llm_resources/estimate.py project/analysis/llm_resources/examples/dense_4b.json
+python -B -m unittest discover -s project/analysis/llm_resources -v
+```
+
+`--output <新文件.json>`可保存报告，拒绝覆盖。非法配置返回2；合法配置即使有预算缺口也返回0，并在报告列出缺口和未确定项。CI的“LLM resource accounting”仅测试解析记账/CLI；不证明完整图映射、数值质量或物理可行性。

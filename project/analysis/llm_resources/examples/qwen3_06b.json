@@ -1,0 +1,164 @@
+{
+  "schema_version": "llm-resource-input/1",
+  "model": {
+    "name": "Qwen/Qwen3-0.6B-config-example",
+    "kind": "dense",
+    "total_parameters": 596049920,
+    "int8_parameters": 595984384,
+    "auxiliary_parameters": [
+      {
+        "name": "norm-gains",
+        "parameters": 65536,
+        "storage_bits": 32
+      }
+    ],
+    "linear_ops": [
+      {
+        "name": "q",
+        "instances": 28,
+        "active_instances": 28,
+        "input_features": 1024,
+        "output_features": 2048,
+        "prefill_rows": "all"
+      },
+      {
+        "name": "k-v",
+        "instances": 56,
+        "active_instances": 56,
+        "input_features": 1024,
+        "output_features": 1024,
+        "prefill_rows": "all"
+      },
+      {
+        "name": "o",
+        "instances": 28,
+        "active_instances": 28,
+        "input_features": 2048,
+        "output_features": 1024,
+        "prefill_rows": "all"
+      },
+      {
+        "name": "gate-up",
+        "instances": 56,
+        "active_instances": 56,
+        "input_features": 1024,
+        "output_features": 3072,
+        "prefill_rows": "all"
+      },
+      {
+        "name": "down",
+        "instances": 28,
+        "active_instances": 28,
+        "input_features": 3072,
+        "output_features": 1024,
+        "prefill_rows": "all"
+      },
+      {
+        "name": "tied-lm-head",
+        "instances": 1,
+        "active_instances": 1,
+        "input_features": 1024,
+        "output_features": 151936,
+        "prefill_rows": "last"
+      }
+    ],
+    "linear_macs_per_token": null,
+    "linear_outputs_per_token": null,
+    "attention": [
+      {
+        "name": "global-gqa",
+        "layers": 28,
+        "query_heads": 16,
+        "kv_heads": 8,
+        "head_dim": 128,
+        "window_tokens": null
+      }
+    ],
+    "recurrent_states": [],
+    "max_context_tokens": 40960,
+    "source": {
+      "kind": "config_derived",
+      "uri": "https://huggingface.co/Qwen/Qwen3-0.6B/blob/c1899de289a04d12100db370d81485cdf75e47ca/config.json",
+      "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+      "note": "Dimensions and parameter formulas reused from PR26@2cd9ca1; norm32, scales and hardware are storage/budget assumptions, not a quantized checkpoint or execution. Tied embedding counted once; all vocab logits on last prefill row."
+    }
+  },
+  "precision": {
+    "weight_bits": 8,
+    "activation_bits": 8,
+    "accumulator_bits": 32,
+    "kv_bits": 8,
+    "quantization_contract": null
+  },
+  "scenario": {
+    "phase": "decode",
+    "batch": 1,
+    "input_tokens": 128,
+    "output_tokens": 32,
+    "cached_tokens": 0,
+    "target_tokens_per_second": null
+  },
+  "hardware": {
+    "candidate_file": "../profiles/block_candidate_v1.json",
+    "matrix_counts": [
+      1,
+      2,
+      4
+    ],
+    "clock_hz": null,
+    "matrix_utilization": null,
+    "rq_initiation_interval_cycles": null,
+    "external_capacity_bytes": null,
+    "external_effective_bytes_per_second": null,
+    "link_effective_fraction": null,
+    "shared_reserve_bytes": 0
+  },
+  "placement": {
+    "weights": "external",
+    "kv": "external",
+    "recurrent": "external"
+  },
+  "accounting": {
+    "weight_scale": {
+      "group_elements": 128,
+      "bytes_per_group": 4
+    },
+    "kv_scale": {
+      "group_elements": 128,
+      "bytes_per_group": 4
+    },
+    "weight_padding_bytes": null,
+    "shared_workspace_bytes": null,
+    "external_workspace_bytes": null,
+    "weight_read_passes": 1,
+    "kv_read_multiplier": null,
+    "recurrent_read_write_passes": null
+  },
+  "mapping": {
+    "matrix_tile": {
+      "rows": 16,
+      "columns": 16,
+      "reduction": 128,
+      "operand_copies": 2,
+      "accumulator_copies": 2,
+      "reserved_bytes": 6144
+    }
+  },
+  "transfers": [
+    {
+      "name": "example-score-tile-only",
+      "path": [
+        "M",
+        "A"
+      ],
+      "shape": [
+        4,
+        16
+      ],
+      "logical_bits": 32,
+      "storage_bits": 32,
+      "metadata_bytes": 0,
+      "messages_per_step": null
+    }
+  ]
+}

@@ -32,3 +32,5 @@ python scripts/check_project.py
 ```
 
 上面的命令只验证项目管理文件结构，不验证芯片架构或布线分析结论。
+
+[≤4B INT8输入规范与轻量资源估算器](docs/LLM_RESOURCE_INPUT.md)提供可配置模型/场景输入、候选Block库存扫描及容量/计算/带宽下界；无需模型权重或EDA，未定参数保留为空，不据此宣称完整模型可行。
