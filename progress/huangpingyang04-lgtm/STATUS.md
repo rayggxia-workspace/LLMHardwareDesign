@@ -299,3 +299,13 @@ VECTOR92861冷隔离无GRT/增量/SPEF仍EST-0104。实际411821个filler；仅�
 新脚本run_vector_resume.py/vector_resume_job.sh已冻结为d03db1d79f14b6f75f92fd4b6a85098d3469f3bb，92872实际RUNNING，ROOT/vector_resume/r01，drivers/vector-resume-r01/code。直接读estimator_diagnosis/r02成功检查点，不重复14换型/17缓冲的repair_design；接续原约束setup/hold修复、独立进程合法化及原filler类型恢复，再按原M2–M10/clock M4–M10和准确原窗口全量GRT/DRT，RCX/完整现有STA/电气、双PG与fresh native/全块几何及原pin/PG/die核对。初始运行回执与SHA在data/runtime_submissions；作业启动不表示任何后续门槛通过。当前heuristic setup仍约−4.2ns，只是优化估算，不是最终提取余量。
 
 最近核实92690 RUNNING约7h30、92691依赖等待、92841 GEMM landing RUNNING约49min、92855六资源共同PDN RUNNING约28min、92872 RUNNING；不按耗时取消。共同原生放置已完成但PG生成尚未收齐终态，共享导体尚未写线；恢复第一步重新查五作业与execution/stages，先收齐再增量修复，保留所有源/失败/活动驱动。目标继续active，不标完整共同底座、两完整M11/M12模式或系统对照完成。
+
+
+## 2026-10-29T14:22:50.024764+08:00：内部二维 pin 块内实现经验整理（独立文档 PR）
+
+Refs #126；复用主 PR #129 已发布 3c28051e990c1a05dd1b4366001e3fc137bed392，独立分支 task/126-pin-physical-lessons，只增加经验文档、固定证据摘要和本进度。问题覆盖实际金属/PG冲突、父层NoAP、via接入、既有单元重排和成本ECO、天线覆盖、时钟USE、数字关系及同源视图；复用两组实际PNG/SVG。
+
+成果：[经验总结](../../docs/experiments/issue-126-pin-physical-lessons.md)、[源绑定摘要](../../docs/experiments/issue-126-pin-physical-lessons-evidence.json)。此次不运行物理作业，不覆盖主工作树/主报告/矩阵/历史结果，不将native0或候选覆盖当作完整资格。独立文档PR链接及发布回执见Issue126；主任务保持in_progress、主PR129 Draft。
+
+验证：独立快照运行管理结构、逐项匹配六块摘要/来源SHA、Markdown链接与引用图片检查；实际结果以文档PR回执为准。下一步：审查经验文档，主线按原回执接续物理验证；本支线不接管活动作业。登记pending，看板unverified/同步pending，审查人和管理员待指定。
+
