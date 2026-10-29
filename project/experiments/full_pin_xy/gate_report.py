@@ -892,6 +892,7 @@ def render(root,out):
                       ('LLSYSTEM_current_actual_paths_r03','actual_path_audit/r03/llaccel_aux'),
                       ('LLSYSTEM_full_window_terminal_92690','trials/access-r03/llaccel_aux-C'),
                       ('UPPER_remaining_repair_r02','upper_branch_repair/r02/llaccel'),
+                      ('NATIVE_RAM_capability_r01','native_ram_capability/r01'),
                       ('MXU_clock_bound_parent_recheck_r02','escape_view_recheck/r02/mxu-C'),
                       ('MXU_clock_bound_parent_recheck_r03','escape_view_recheck/r03/mxu-C')]:
         p=snapshot/rel/'execution.json.gz'
@@ -906,6 +907,7 @@ def render(root,out):
                         'LLSYSTEM_current_actual_paths_r03':'llsys-current-paths-r03',
                         'LLSYSTEM_full_window_terminal_92690':'llsys-full-window-92690',
                         'UPPER_remaining_repair_r02':'upper-remaining-repair-r02-complete-geometry',
+                        'NATIVE_RAM_capability_r01':'native-ram-capability-r01',
                         **{'UPPER_guard_API_r0'+str(i):'upper-guard-api-r0'+str(i) for i in [1,2,3]}}
         update=root/'gate_terminal_updates'/terminal_names.get(label,'NO_TERMINAL_UPDATE')
         terminal_evidence=None
@@ -934,6 +936,9 @@ def render(root,out):
             assert q['all_770_branch_geometry']['pass'] and q['all_514_composed_geometry']['pass']
             assert q['all_256_native_FIXED_paths_preserved'] and q['actual_material_and_fixed_bridge_cut_checks']['all_256_fixed_bridges_indispensable_for_real_source_sink_geometry']
             upper_text+='<p><strong>93276残余涉网实际修复终态：独立native 10→2，仍失败。</strong>从闭合r01实际源请求剩余11个原支路，实际20条支路wire-box多重集改变，完整清单保留；复用逐SHA绑定的原guide。原生DRT、精确opcode重组和独立fresh进程均0。全部770支路/1540端点及514个重组网所检连通、原hook/M10材料/OBS、256条native FIXED及逐网固定桥必要性保持。8个间距报项本轮不再出现，仍有原两处M11 Short，异网隔离未通过；不把每网连通当系统连通或功能通过。原14→10→2历史完整保留，尚无完整下层冻结/两完整功能/RC/STA或收益结论；guard15独立作业不覆盖或取消。</p>'
+        if label=='NATIVE_RAM_capability_r01' and q.get('completed_utc'):
+            assert q['native_probe_returncode']==0 and q['generate_ram_present'] and not q['generated_memory'] and not q['existing_leaf_or_fake_memory_modified']
+            upper_text+='<p><strong>93305当前原生RAM能力核验完成：</strong>同一OpenROAD二进制与Nangate45库确实包含generate_ram，实际help/Tcl body/命令清单已按SHA归档；此处未生成存储器或GDS，未替换任何fake宏。原fakeram实际write函数只写LEF/Liberty/Verilog/blackbox四类文件，其源SHA与64×64逐bit mask/同步read-hold/同址写读X语义另存；不能补画假GDS当原源。现有工具可用于后续独立真实RAM物理试件，须先核对功能/延迟/掩码、实际尺寸、原pin目标层/尺寸和完整物理/RC/STA及ECO成本，才可考虑两侧一致的新实现变体。<a href="data/synthetic_memory_provenance_r01.json">真实模型来源与待验合同</a>；<a href="https://openroad.readthedocs.io/en/latest/main/src/ram/README.html">OpenROAD官方实验性RAM文档</a>。文档支持范围不等于当前生成物已经通过。</p>'
         if label=='ALL24767_actual_parent_track_geometry' and q.get('completed_utc'):
             upper_text+='<p>真实原R02六块父层24767pin逐项轨道审计：其余五块preferred中心未对齐数0，LL SYSTEM为13184；宏原点均已对齐实际pitch。bit_1025的M5 preferred中心偏移0.07μm；原网535条实际矩形/端点已取得，未编造端点。仅为几何风险，未对齐不等于无AP，仍须真实局部PG/OBS/via及父层接入检查。</p><p><a href="'+(dest/rel/'all24767_actual_parent_pin_track_geometry.csv.gz').relative_to(out).as_posix()+'">全部24767父层信号pin逐项轨道CSV</a></p>'
         if label=='MXU_native_clock_Liberty_binding_probe' and q.get('native_probe_returncode')==0:
@@ -1020,6 +1025,15 @@ def render(root,out):
     if runtime.exists():
         observed=read(runtime);assert not observed['full_qualification'];result['latest_runtime_observation']=runtime.relative_to(out).as_posix()
         upper_text+='<p><strong>LL当前源的定向真实buffer迁移93269：</strong>根据原SDC/SPEF审计的12个负余量输出，已选择38个原有私有恒等buffer、执行几何隔离进程的迁移和diamond合法化；原功能cell/master/连接与未选单元位置合同通过，0新功能单元/换型的请求独立记录。完整13507 pin/PG/外框、全网与原层集合仍须在后续实际DRT/fresh/RC/STA核验；当前路由在运行，不能当时序修复成功，也不改原内部pin XY或把min removal称普通hold。<a href="data/r43_runtime_observation.json">新试验冻结驱动、真实阶段和调度观察</a>。原未合格共同底座及两完整功能目标仍继续。</p>'
+    neighbor_manifest=data/'upper_local_guide_expansion_r01/manifest.json'
+    if neighbor_manifest.exists():
+        q=read(neighbor_manifest);assert not q['full_qualification']
+        result['UPPER_actual_endpoint_neighbors_and_guide_experiment']=q
+        upper_text+='<p><strong>实际局部搜索与邻网/guide试验93302：</strong>在r02闭合真实金属/OBS上，单线段及有限邻段保守网格搜索未找到绕行，不是不可布通证明；未把候选路径写成真实接线。M11冲突段出口处的M12阻挡导线已逐矩形定位到128/129/201三条支路。本轮将残余涉网及这三条邻网合计7支路纳入原生重接，121个M11/M12 guide矩形各向外扩4个真实GCell（每边11.4μm）；M10 guide及其他支路guide逐项保持，技术/间距/原pin/固定导体拓扑不改。guide是搜索提示，实际后验M10材料、770/514连通、256固定桥与fresh仍须通过；当前尚在运行，不继承旧源结果。<a href="data/upper_local_guide_expansion_r01/manifest.json">来源/范围/原guide与候选guide</a> · <a href="data/upper_local_guide_expansion_r01/actual_endpoint_blockers.json">三条实际阻挡导线坐标</a>。</p>'
+    runtime=data/'r44_runtime_observation.json'
+    if runtime.exists():
+        result['latest_runtime_observation']=runtime.relative_to(out).as_posix()
+        upper_text+='<p><a href="data/r44_runtime_observation.json">R44带时间的实际提交、运行/终态观察</a>。93217/93239/93243/93245/93269等原作业保持，93302新邻网试验与93305能力探针分列；提交/探针成功均不等于完整物理实现。</p>'
     target=data/'qualification_matrix.json';target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     columns=['case','block','original_signal_pins','partition_and_all_interfaces','candidate_ABC','completed_source','actual_internal_route',
              'native_DRC_count','all_multiterminal_signal_clock_geometry','power_grid','setup_ns','hold_ns','violation_marker_rows',

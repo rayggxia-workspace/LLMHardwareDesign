@@ -612,6 +612,43 @@ def check(out):
         bridge=q['actual_material_and_fixed_bridge_cut_checks'];assert bridge['all_256_fixed_bridges_indispensable_for_real_source_sink_geometry'] and bridge['all_actual_branch_WIRE_VIA_multisets_preserved_under_net_rebinding'] and q['all_256_native_FIXED_paths_preserved']
         cuts=list(csv.DictReader(io.StringIO(gzip.decompress((closed_dir/'all256_actual_fixed_bridge_cut_checks.csv.gz').read_bytes()).decode())))
         assert len(cuts)==256 and all(r['real_source_to_sink_connected_without_fixed_rectangle']=='False' and r['terminal_components_without_fixed_rectangle']=='2' for r in cuts)
+    ram=j.get('NATIVE_RAM_capability_r01',{})
+    if ram.get('completed_utc'):
+        assert ram['native_probe_returncode']==0 and ram['generate_ram_present'] and not ram['generated_memory'] and not ram['existing_leaf_or_fake_memory_modified'] and not ram['full_qualification']
+        log=gzip.decompress(((out/ram['evidence']).parent/'native.log.gz').read_bytes()).decode()
+        assert 'generate_ram' in log and '-mask_size' in log and '-r_ports' in log and '-w_ports' in log
+        provenance=read(data/'synthetic_memory_provenance_r01.json')
+        assert not provenance['GDS_emitted_by_this_generator'] and not provenance['full_qualification'] and provenance['current_real_memory_replacement']=='NOT_IMPLEMENTED'
+    neighbor=j.get('UPPER_actual_endpoint_neighbors_and_guide_experiment')
+    if neighbor:
+        assert not neighbor['full_qualification'] and neighbor['source_actual_neighbor_ids']==[128,129,201]
+        source=j['UPPER_remaining_repair_r02'];closed_dir=(out/source['evidence']).parent
+        assert neighbor['source_closed_receipt_SHA256']==hashlib.sha256(gzip.decompress((closed_dir/'execution.json.gz').read_bytes())).hexdigest()
+        guide_dir=data/'upper_local_guide_expansion_r01'
+        original=gzip.decompress((guide_dir/'original.guide.gz').read_bytes());proposed=gzip.decompress((guide_dir/'proposed.guide.gz').read_bytes())
+        info=neighbor['expansion']
+        assert hashlib.sha256(original).hexdigest()==info['source_guide_SHA256'] and hashlib.sha256(proposed).hexdigest()==info['expanded_guide_SHA256']
+        assert info['source_guide_SHA256'] in [v for p,v in source['source_SHA'].items() if p.endswith('/route.guide')]
+        def guide_rows(raw):
+            groups={};current=None
+            for line in raw.decode().splitlines():
+                if line.startswith('src['):current=line;groups[current]=[]
+                p=line.split()
+                if len(p)==5:groups[current].append(tuple(map(int,p[:4]))+(p[4],))
+            return groups
+        a,b=guide_rows(original),guide_rows(proposed);assert set(a)==set(b) and len(a)==770
+        die=list(map(int,gzip.decompress((closed_dir/'before_route.die.tsv.gz').read_bytes()).decode().split()))
+        selected={'src['+str(i)+']' for i in neighbor['selected_branch_ids']};changed=0
+        for name,old in a.items():
+            assert len(old)==len(b[name])
+            for x,y in zip(old,b[name]):
+                if name not in selected or x[4]=='metal10':assert x==y
+                else:
+                    assert x[4] in ['metal11','metal12']
+                    expected=(max(die[0],x[0]-22800),max(die[1],x[1]-22800),min(die[2],x[2]+22800),min(die[3],x[3]+22800),x[4])
+                    assert y==expected;changed+=1
+        assert changed==info['expanded_M11_M12_guide_rectangles']==121
+        failed=read(guide_dir/'bounded_search_failure.json');assert failed['status']=='NO_LOCAL_GEOMETRIC_BYPASS_FOUND' and not failed['full_qualification']
     short_figure=j.get('UPPER_actual_short_figure')
     if short_figure:
         assert not short_figure['full_qualification'] and short_figure['actual_short_count']==2 and short_figure['native_total_findings']==10

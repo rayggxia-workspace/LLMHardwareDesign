@@ -1,0 +1,37 @@
+{
+  "scope": "ACTUAL_UPSTREAM_SYNTHETIC_MEMORY_PROVENANCE_NOT_REAL_GDS",
+  "observed_utc": "2026-10-29T08:55:09.217868+00:00",
+  "source_generator": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/mxu-cap20/source/tools/asic/fakeram.py",
+  "source_generator_SHA256": "93a1e1f2d80dd2dc97d675c0e5037107a1bc89212a45781c2f94081c578653b7",
+  "actual_write_function_output_types": [
+    "lef",
+    "lib",
+    "v",
+    "bb.v"
+  ],
+  "GDS_emitted_by_this_generator": false,
+  "example_master": "fakeram45_1r1w_64x64",
+  "example_LEF_size_um": [
+    68.21,
+    75.6
+  ],
+  "example_function": {
+    "words": 64,
+    "word_bits": 64,
+    "ports": "one read plus one write",
+    "write_mask": "per bit",
+    "read": "posedge clock, hold output when re_in=0",
+    "read_during_same_row_write": "undefined X in reference model"
+  },
+  "current_real_memory_replacement": "NOT_IMPLEMENTED",
+  "full_qualification": false,
+  "official_generator_reference": "https://openroad.readthedocs.io/en/latest/main/src/ram/README.html",
+  "compatibility_to_verify": [
+    "Exact one-read/one-write semantics and word count/width",
+    "Per-bit masks",
+    "Read enable/hold/latency and collision contract",
+    "Actual cell/PG/geometry, original target layers/pin dimensions",
+    "Actual routed GDS/DRC/connectivity/RC/STA and area/placement costs for paired baselines"
+  ],
+  "existing_reference_and_experiments": "UNCHANGED"
+}

@@ -1,5 +1,12 @@
 # 全功能分块、全块二维 pin 与实际接入（Issue126）
 
+2026-10-29T17:01:16.672869+08:00 R44增量：已从r02闭合原生几何定位M11冲突段两端的M12阻挡导线，分别为128/129/201三支路。单线段1.6μm格点搜索至96μm，以及释放端点阻挡线的有限耦合搜索未找到候选；保守筛查且其他几何固定，不是不可布通证明，也未写入任何原生新金属。原/候选guide和实际阻挡坐标分别保存data/upper_local_guide_expansion_r01，含完整源/存储SHA。93302/driverafb182f539d1b45e2ae2a27f040a92e4db951177已实际启动邻网重接：残余4支路+3实际邻网=7条，121个M11/M12 guide每边扩4个实际GCell=11.4μm；M10 guide和其他支路guide逐项不变，技术/间距/原pin与固定拓扑不改。仍在运行，全部后验M10/via10/770/514/256桥和fresh待终态，不继承旧源通过。guard15和原各作业不覆盖/取消。
+
+93305能力探针终态原生0：同一现有OpenROAD二进制及Nangate45库实际包含generate_ram，help/完整Tcl body/命令清单5个原文按SHA无损归档。本次没有生成存储器或替换fake宏。实际上游fakeram.py SHA93a1e1f2d80dd2dc97d675c0e5037107a1bc89212a45781c2f94081c578653b7，其write函数只输出LEF/Liberty/Verilog/blackbox，没有GDS；64×64例的1r1w/逐bit mask/posedge read-hold/同址写读X及68.21×75.6μm抽象尺寸已记录。原ACT/MXU真实SRAM GDS缺口保留，不补画虚构几何。官方实验性RAM文档仅提供后续真实试件路径，当前安装API与当前在线文档扩展选项不等同，以原生help/body为准。已准备独立64×64、1r1w、mask1的原生physical trial脚本，R44发布读回后再提交；当前未执行，不是原fake宏匹配实现，功能/延迟/尺寸/pin层/成本/DRC/RC-STA兼容仍需实际验证。
+
+已发布R43 a754f7f82cbd8bb0fa1577f132fadfb397662975两在线CI40840862879/40840862989 success，矩阵与新PNG/SVG blob实际读回匹配；本阶段新head/CI待推送后核实。93302及93217/93239/93243/93245/93269等活跃，终态92690/92691/93276/93305不重提。六块完整资格/真实SRAM/完整规则/历史目标层/RTL、共同合格冻结、两完整功能与公平系统对照未完成，整体active/in_progress/Draft。登记PR5 pending，缺Projects/board配置，看板unverified/同步pending，管理员/审查人待指定。
+
+
 2026-10-29T16:07:45.640559+08:00 R43实际阶段：93276已终态，upper_branch_repair/r02/llaccel从闭合r01十项源进行原生修复，fresh native 10→2，8项间距本轮不再出现，仍两处M11 Short，整体FAILED。请求11个原支路，实际20条wire-box网络改变（含相邻支路，完整清单保留）；native DRT/精确opcode重组/fresh进程均0，不把进程0当DRC通过。全部770支路/1540端点及514网所检连通、原hook/M10材料/OBS、256条native FIXED和逐网固定桥必要性保持；新原生几何双gzip和256桥CSV已无损采集，独立重算整组连通、原M10/via10材料及失败marker。guard15原93217继续，不取消或覆盖。
 
 新第37组PNG/SVG给出原r01两处真实Short与16μm/3.2μm同倍率放大。逐矩形和原生marker核对后确认：243/248处涉及via10的M11帽；199/206处是两条M11导线相交，不能将两处都称via帽冲突。两处交叠各0.8×0.8μm，0.64μm²。图保留r01历史几何；r02留下同坐标的两处Short，仍无异网隔离、RC/STA、共同合格冻结或完整系统通过。图中的M10/M11施工落脚不同于叶块原M5/M6 pin，没有升原pin层。

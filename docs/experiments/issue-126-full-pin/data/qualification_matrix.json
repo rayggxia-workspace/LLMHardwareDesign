@@ -33243,6 +33243,40 @@
     },
     "evidence": "data/gate_terminal_updates/upper-remaining-repair-r02-complete-geometry/execution.json.gz"
   },
+  "NATIVE_RAM_capability_r01": {
+    "scope": "INSTALLED_NATIVE_RAM_API_PROBE_NOT_MEMORY_IMPLEMENTATION_OR_REPLACEMENT",
+    "full_qualification": false,
+    "generated_memory": false,
+    "existing_leaf_or_fake_memory_modified": false,
+    "reference": "https://openroad.readthedocs.io/en/latest/main/src/ram/README.html",
+    "driver_commit": "55f8911defc5307e6a40e48fa56a4f31eed2294c",
+    "scheduler_job": "93305",
+    "actual_OpenROAD_binary_SHA256": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+    "actual_Liberty_SHA256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+    "native_probe_returncode": 0,
+    "generate_ram_present": true,
+    "interpretation": "Capability only. A real generator must preserve 1r1w/per-bit mask/read latency/collision semantics, capacity, actual dimensions and pin/layer contracts before any new costed variant can replace a synthetic fakeram.",
+    "completed_utc": "2026-10-29T08:43:46.200728+00:00",
+    "files": {
+      "capability.tsv": {
+        "bytes": 429,
+        "sha256": "4ba01b87993291cbfa37f6da17785ce36876380ae0accb2c31d9885e454f82c5"
+      },
+      "generate_ram.body.tcl": {
+        "bytes": 4389,
+        "sha256": "3de40fdd976756412b629ae19167f180834c28a9d5ee23aadcc0d9be2363bab1"
+      },
+      "native.log": {
+        "bytes": 764,
+        "sha256": "22c5f747d454041cdbaf896f2d8f936907654f2ce8ed34b132fff431a6332605"
+      },
+      "probe.tcl": {
+        "bytes": 718,
+        "sha256": "03293ce90e2660312d47244a8001711ca80a168e4f4e8fdc5e22eee80f486588"
+      }
+    },
+    "evidence": "data/gate_terminal_updates/native-ram-capability-r01/execution.json.gz"
+  },
   "MXU_clock_bound_parent_recheck_r02": {
     "scope": "ALL2172_REAL_PARENT_ACCESS_RECHECK_NEW_ACTUAL_CHILD_OBS_NOT_OLD_FIXTURE_OR_COMMON_BASE_QUALIFICATION",
     "source_SHA": {
@@ -33557,5 +33591,60 @@
     ],
     "full_qualification": false
   },
-  "latest_runtime_observation": "data/r43_runtime_observation.json"
+  "latest_runtime_observation": "data/r44_runtime_observation.json",
+  "UPPER_actual_endpoint_neighbors_and_guide_experiment": {
+    "scope": "ACTUAL_SEGMENT_ENDPOINT_BLOCKERS_AND_GUIDE_HINTS_NOT_PHYSICAL_PASS",
+    "full_qualification": false,
+    "source_closed_receipt_SHA256": "412af974b24f1c70a2d491f9852028fe6142b15e5d3dc864a25fb0a1af5a44e8",
+    "source_native_branch_geometry_SHA256": "889b2aec39ce629c795b341ab63374268f8d83d6986afbb945d77af2cc294deb",
+    "original_remaining_DRC": 2,
+    "selected_branch_ids": [
+      128,
+      129,
+      199,
+      201,
+      206,
+      243,
+      248
+    ],
+    "source_actual_neighbor_ids": [
+      128,
+      129,
+      201
+    ],
+    "expansion": {
+      "source_guide_SHA256": "70dc344b8a33e3370067b5924e212489de70d5dcddb9dc7dac2573e0600368d0",
+      "expanded_guide_SHA256": "e04faa18ec25de9790dabc3ec4cfabd8523379d3014614b62538bf1fc1f383a1",
+      "actual_GCell_step_dbu": 5700,
+      "expanded_GCell_steps_each_side": 4,
+      "expansion_um": 11.4,
+      "expanded_M11_M12_guide_rectangles": 121,
+      "all_original_M10_guide_rectangles_exact": true,
+      "other_branches_guides_exact": true,
+      "guide_hints_only_not_new_metal_or_rule_change": true,
+      "full_qualification": false
+    },
+    "native_followup_job": "93302",
+    "native_followup_driver": "afb182f539d1b45e2ae2a27f040a92e4db951177",
+    "bounded_search_interpretation": "Single-segment 1.6um grid search up to96um and coupled endpoint-blocker search did not find candidates; conservative screen, other geometry held, not a proof of physical unroutability. No native geometry was edited by this search.",
+    "official_research_layer_rules": "Existing source-bound research12 tech LEF, M11/M12 width0.8um and original spacing table; guide widening does not change technology or original M10 guide rectangles.",
+    "files": {
+      "actual_endpoint_blockers.json": {
+        "bytes": 1217,
+        "sha256": "e788a2b926218a916a3c81cf1fed5b03110c71d1d0fc78d3b50dfeace5cd210a"
+      },
+      "bounded_search_failure.json": {
+        "bytes": 2338,
+        "sha256": "a23d5e47edd5a691b78107fa39b2b8ac71ec4be83e1083eb98062a616ba3b2e4"
+      },
+      "original.guide.gz": {
+        "bytes": 56756,
+        "sha256": "fdcaffa6f5897996c742669b9ba40065b15d489b22e0283b138cb5715dc1ea0e"
+      },
+      "proposed.guide.gz": {
+        "bytes": 57012,
+        "sha256": "9a714a82c437577432b20a2febce7d74d64095a497e535be3288542a36717271"
+      }
+    }
+  }
 }
