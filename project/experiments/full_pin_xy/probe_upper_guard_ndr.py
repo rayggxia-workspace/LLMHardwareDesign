@@ -15,9 +15,11 @@ create_ndr -name HPY_UPPER_GUARD_15 -width {metal11 0.8 metal12 0.8} -spacing {m
 set guard NULL
 foreach rule [[ord::get_db_block] getNonDefaultRules] {if {[$rule getName] eq "HPY_UPPER_GUARD_15"} {set guard $rule}}
 if {$guard eq "NULL"} {error "Actual native NDR creation not found"}
+$guard setHardSpacing 1
+if {![$guard getHardSpacing]} {error "Conservative NDR hard spacing not retained"}
 set f [open '''+tcl(Path(out)/'actual_NDR_layer_rules.tsv')+''' w]
 puts $f "layer\twidth_DBU\tspacing_DBU"
-foreach rule [$guard getLayerRules] {puts $f [join [list [[$rule getLayer] getName] [$rule getWidth] [$rule getSpacing]] "\t"]}
+foreach layer [[ord::get_db_tech] getLayers] {set rule [$guard getLayerRule $layer];if {$rule ne "NULL"} {puts $f [join [list [$layer getName] [$rule getWidth] [$rule getSpacing]] "\t"]}}
 close $f
 set count 0
 foreach net [[ord::get_db_block] getNets] {$net setNonDefaultRule $guard;if {[$net getNonDefaultRule] ne $guard} {error "Native NDR assignment mismatch"};incr count}

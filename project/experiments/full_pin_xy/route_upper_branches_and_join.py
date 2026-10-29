@@ -72,7 +72,7 @@ def material_and_indispensability(out,plan,physical):
             'scope':'Per-net actual native rectangles/via links and analysis-only bridge cuts. Cross-net isolation still requires independent DRC/LVS; not full base freeze, RTL or STA'}
 
 
-def one(mode,root,resume_revision=None):
+def one(mode,root,resume_revision=None,profile='original'):
     out=root/mode;out.mkdir(exist_ok=False)
     rec={'scope':'ALL770_ROUTED_BRANCHES_EXACT_NATIVE_FIXED_COMPOSITION_NOT_COMPLETE_SYSTEM',
          'mode':mode,'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),
@@ -82,6 +82,7 @@ def one(mode,root,resume_revision=None):
          'helper_passive_port_directions':'Routing helper labels are not additional functional drivers; actual driver/sink graph is source-bound by original compiled plan',
          'leaf_selection':'Original R02 unqualified source; not upgraded to newer leaf views',
          'source_SHA':{}}
+    rec['routing_profile']=profile
     save=lambda:(out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     save()
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
@@ -99,6 +100,13 @@ def one(mode,root,resume_revision=None):
         assert all(sha(Path(p))==s for p,s in fa['source_SHA'].items())
         physical=groups(plan,wires);rc=ROOT/'upper_layer_probe/r01/model/research12.setRC.tcl'
         rec['source_SHA']={str(p):sha(p) for p in [source,planfile,old/mode/'execution.json',base,api,wf,fixed_audit,rc]}
+        if profile=='guard15':
+            probe=ROOT/'upper_guard_api/r02/execution.json';guard_proof=json.loads(probe.read_text())
+            assert guard_proof['native_probe_returncode']==0 and guard_proof['actual_rule_readback_and_all770_assignment_verified'] and guard_proof['all_closed_sources_unchanged']
+            rec['source_SHA'][str(probe)]=sha(probe)
+            rec['additional_conservative_routing_constraint']={'M11_M12_width_um':.8,'M11_M12_spacing_um':1.5,
+              'technology_rules_unchanged':True,'original_hook_positions_layers_rectangles_unchanged':True,
+              'separate_profile_cost_not_pure_XY_gain':True,'qualification':'Same research technology; no rule relaxation or manufacturing claim'}
         selected=[];resume=None
         if resume_revision:
             resume=ROOT/'upper_branch_composition'/resume_revision/mode
@@ -143,6 +151,10 @@ def one(mode,root,resume_revision=None):
             for i in selected:select.append('lappend selected_nets [[$b findBTerm '+tcl('src['+str(i)+']')+'] getNet]')
             select+=['set selected_names {};foreach n [lsort -unique $selected_nets] {lappend selected_names [$n getName]};if {[llength $selected_names]!='+str(len(selected))+'} {error "Selected branch identity mismatch"};set_nets_to_route $selected_names']
             lines[start:end]=select
+        if profile=='guard15':
+            from probe_upper_guard_ndr import guard_tcl
+            start=next(i for i,s in enumerate(lines) if s.startswith('if {![stage global_route_CuGR_all770'))
+            lines[start:start]=[guard_tcl(out)]
         script=out/'route_branches.tcl';script.write_text('\n'.join(lines)+'\n')
         env='PINXY_OUTPUT='+str(out)+',PINXY_ACCESS_ALL=1,PINXY_ACCESS_OUT='+str(out/'branch_access.tsv.gz')
         rec['native_returncodes']['all770_branch_route']=execute(common,script,out/'branch_native.log',env,threads=4);save()
@@ -158,10 +170,12 @@ def one(mode,root,resume_revision=None):
             rec['actual_changed_count_may_differ_from_selected_count']=True
         lines=[helper.replace('$out/stages.tsv','$out/composition_stages.tsv'),'read_db '+tcl(out/'routed_770_BRANCHES_NOT_SYSTEM.odb'),obs,
           'set b [ord::get_db_block];set m10 [[ord::get_db_tech] findLayer metal10];if {[$m10 getWidth]!=1600} {error "Actual FIXED width differs"}']
+        if profile=='guard15':lines+=['set guard NULL;foreach nr [$b getNonDefaultRules] {if {[$nr getName] eq "HPY_UPPER_GUARD_15"} {set guard $nr}};if {$guard eq "NULL"} {error "Actual source NDR disappeared"}']
         body=[]
         for g in physical:
             body+=['if {[$b findNet '+tcl(g['net'])+'] ne "NULL"} {error "Canonical net name collision"}',
                    'set n [odb::dbNet_create $b '+tcl(g['net'])+'];set olds {}']
+            if profile=='guard15':body+=['$n setNonDefaultRule $guard;if {[$n getNonDefaultRule] ne $guard} {error "NDR lost during canonical-net composition"}']
             for h in g['endpoints']:
                 body+=['set bt [$b findBTerm '+tcl(h['helper_pin'])+'];set old [$bt getNet];if {[llength [$old getBTerms]]>2 || [llength [$old getITerms]] || [$old getWire] eq "NULL"} {error "Unexpected routed old branch"};lappend olds $old;$bt disconnect;$bt connect $n']
             body+=['set nw [odb::dbWire_create $n];foreach old [lsort -unique $olds] {if {[llength [$old getBTerms]] || [llength [$old getITerms]]} {error "Original branch terms not fully rebound"};$nw append [$old getWire];if {[llength [$old getBTerms]]} {error "Append changed original ownership"};odb::dbNet_destroy $old}']
@@ -189,6 +203,11 @@ def one(mode,root,resume_revision=None):
         script=out/'fresh.tcl';script.write_text('read_db '+tcl(out/'routed_adapter_NOT_SYSTEM.odb')+'\nset_routing_layers -signal metal11-metal12 -clock metal11-metal12\ndrt::check_drc -output_file '+tcl(out/'independent.drc')+'\n')
         rec['native_returncodes']['fresh_DRC']=execute(common,script,out/'independent.log',threads=1)
         if rec['native_returncodes']['fresh_DRC']==0:rec['fresh_DRC_count']=len(re.findall(r'^violation type:',(out/'independent.drc').read_text(),re.M))
+        if profile=='guard15':
+            script=out/'fresh_original_rules.tcl'
+            script.write_text('read_db '+tcl(out/'routed_adapter_NOT_SYSTEM.odb')+'\nforeach n [[ord::get_db_block] getNets] {$n setNonDefaultRule NULL}\nset_routing_layers -signal metal11-metal12 -clock metal11-metal12\ndrt::check_drc -output_file '+tcl(out/'independent_original_rules.drc')+'\n')
+            rec['native_returncodes']['fresh_original_technology_DRC']=execute(common,script,out/'independent_original_rules.log',threads=1)
+            if rec['native_returncodes']['fresh_original_technology_DRC']==0:rec['fresh_original_technology_DRC_count']=len(re.findall(r'^violation type:',(out/'independent_original_rules.drc').read_text(),re.M))
         rec['native_binary_unchanged']=subprocess.check_output(common+[IMAGE,'sha256sum',BIN]).decode().split()[0]==rec['actual_OpenROAD_binary_SHA256']
     except Exception:rec['actual_failure']=traceback.format_exc()
     rec['all_closed_sources_unchanged']=all(sha(Path(p))==s for p,s in rec['source_SHA'].items())
@@ -197,16 +216,19 @@ def one(mode,root,resume_revision=None):
     return rec
 
 
-def run(revision,resume_revision=None,modes_csv='opentpu,llaccel'):
+def run(revision,resume_revision=None,modes_csv='opentpu,llaccel',profile='original'):
     modes=modes_csv.split(',');assert modes and len(set(modes))==len(modes) and set(modes)<={'opentpu','llaccel'}
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=4*len(modes)
     if resume_revision:assert resume_revision=='r01'
-    out=ROOT/('upper_branch_repair' if resume_revision else 'upper_branch_composition')/revision;out.mkdir(parents=True,exist_ok=False)
-    with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(lambda mode:one(mode,out,resume_revision),modes))
+    assert profile in ['original','guard15']
+    if profile=='guard15':assert not resume_revision
+    family='upper_branch_guard' if profile=='guard15' else ('upper_branch_repair' if resume_revision else 'upper_branch_composition')
+    out=ROOT/family/revision;out.mkdir(parents=True,exist_ok=False)
+    with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(lambda mode:one(mode,out,resume_revision,profile),modes))
     summary={'scope':'TWO_ALL770_ADAPTER_COMPOSITIONS_NOT_TWO_COMPLETE_SYSTEMS','full_qualification':False,
       'modes':[{k:r.get(k) for k in ['mode','native_returncodes','fresh_DRC_count','actual_failure']} for r in results]}
     (out/'trial_summary.json').write_text(json.dumps(summary,indent=2)+'\n')
     return 0 if all('actual_failure' not in r and r.get('fresh_DRC_count')==0 and r.get('all_514_composed_geometry',{}).get('pass') and r.get('all_256_native_FIXED_paths_preserved') and r.get('actual_material_and_fixed_bridge_cut_checks',{}).get('all_256_fixed_bridges_indispensable_for_real_source_sink_geometry') and r.get('native_binary_unchanged') and r['all_closed_sources_unchanged'] for r in results) else 1
 
 
-if __name__=='__main__':sys.exit(run(*sys.argv[1:4]))
+if __name__=='__main__':sys.exit(run(*sys.argv[1:5]))
