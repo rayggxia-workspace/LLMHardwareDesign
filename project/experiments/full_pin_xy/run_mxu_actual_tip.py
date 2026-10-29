@@ -50,7 +50,7 @@ def run(revision):
         contracts=(DRIVER/'output_chain_placement.tcl').read_text().split('read_db $::env(PINXY_CHAIN_SOURCE)',1)[0]
         lines=[helper,contracts]+['read_liberty '+tcl(p) for p in old['libs']]
         lines+=['read_db '+tcl(odb),'read_sdc '+tcl(sdc),'source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl',
-          'set_routing_layers -signal metal2-metal8 -clock metal4-metal8','fingerprint '+tcl(out/'before'),
+          'set_routing_layers -signal metal2-metal10 -clock metal4-metal10','fingerprint '+tcl(out/'before'),
           'set original_obs [obs_snapshot]',
           'if {![stage actual_one_net_pin_and_route_edit {source '+tcl(DRIVER/'mxu_move_to_actual_via_tip.tcl')+'}]} {catch {write_db '+tcl(out/'failed_edit.odb')+'};close $stages;exit 1}',
           'if {[obs_snapshot] ne $original_obs} {error "Original OBS changed"}',
@@ -64,7 +64,7 @@ def run(revision):
         env='PINXY_OUTPUT='+str(out)+',PINXY_ACCESS_ALL=1,PINXY_ACCESS_OUT='+str(out/'whole_access.tsv.gz')
         rec['native_returncodes']['actual_edit_and_analysis']=execute(common,script,out/'native.log',env,threads=4);save()
         if (out/'routed.odb').exists():
-            script=out/'fresh.tcl';script.write_text('read_db '+tcl(out/'routed.odb')+'\nset_routing_layers -signal metal2-metal8 -clock metal4-metal8\ndrt::check_drc -output_file '+tcl(out/'independent.drc')+'\n')
+            script=out/'fresh.tcl';script.write_text('read_db '+tcl(out/'routed.odb')+'\nset_routing_layers -signal metal2-metal10 -clock metal4-metal10\ndrt::check_drc -output_file '+tcl(out/'independent.drc')+'\n')
             rec['native_returncodes']['fresh_DRC']=execute(common,script,out/'independent.log',threads=1)
             if rec['native_returncodes']['fresh_DRC']==0:rec['fresh_DRC_count']=len(re.findall(r'^violation type:',(out/'independent.drc').read_text(),re.M))
         if (out/'whole_access.tsv.gz').exists():
