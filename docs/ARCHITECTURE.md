@@ -321,7 +321,7 @@ Linux轻量调度排空控制：`python3 project/experiments/block_v1/node_queue
 
 ## Issue130：独立供数 M 与 bank 化 S 候选
 
-固定基线 `8b6b8d483085dd20a01e3a88a035fcc6b5db9f73` 的独立后继，合同见 [BLOCK_FEED_V1.md](BLOCK_FEED_V1.md)，实际结果与适用边界见 [Issue130证据](../work/YUZE-LU/130/README.md)。新RTL位于 `project/rtl/block_feed_v1/`，保留父任务源及运行任务。仅M/S变更，供数器固定在S中；pair为测试夹具。新候选尚未取得物理资格。
+固定基线 `8b6b8d483085dd20a01e3a88a035fcc6b5db9f73` 的独立后继，合同见 [BLOCK_FEED_V1.md](BLOCK_FEED_V1.md)，实际结果与适用边界见 [Issue130证据](../work/YUZE-LU/130/README.md)。新RTL位于 `project/rtl/block_feed_v1/`，保留父任务源及运行任务。仅M/S变更，供数器固定在S中；pair为测试夹具。M已通过完整同源独立物理验收并下载，S仍待全部最终门。
 
 Linux/WSL，Verilator5.042、g++可用时，输出目录必须不存在：
 ```bash
@@ -366,6 +366,8 @@ python3 project/experiments/block_feed_v1/bundle.py --delivery ROOT/results/deli
 ```
 
 `remote_repair.sh ROOT GRT_SOURCE OUT --from-grt measured_s_hold.tcl` 与 `remote_gate.sh ROOT OP SOURCE OUT [--peer PEER|--function FUNCTION|--gates GATES]` 负责固定image SHA、16CPU及内存接纳。首个seal/全部门通过之前不能称最终候选；delivery要求四门同source receipt SHA。实际GDS DRC为完整未修改FreePDK45规则，禁止跳过FEOL/天线/offgrid。几何输出提供候选LEF和原生矩形/接点覆盖，不授予层级Liberty/abstract coverage或M11/M12系统资格。
+
+S最终网表不保留`store.mem_req`等RTL内部别名。`qualify.py function --peer`生成仅用于仿真的pair夹具，通过真实外部`ready`口观测宽读：原S的`ready=!reset&&(!valid||take)&&!wide_fire`，在每个采样周期检查`reset||!valid||take`后，反推`wide_fire=!reset&&(!valid||take)&&!ready`。生成前核对原RTL等式及夹具唯一替换位置，穷举合法布尔输入；实际内存事务次数断言、数值参考与背压检查全部保留。`memory-observer.json`及生成夹具/bench随S压缩包保存逐SHA证据，最终S/M网表及接口不改。原内部别名导致的编译失败记录仍保留，不能充作已运行的功能测试。
 
 本地收到原始bundle.json及tar.gz后执行（已有unpacked时只逐字节核验，不覆盖原文件）：
 ```powershell
