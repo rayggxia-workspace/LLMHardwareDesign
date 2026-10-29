@@ -68,7 +68,9 @@ def run(revision):
          'new_parent_access_GDS_RTL':'NOT_EXECUTED'}
     save=lambda:(out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     save()
-    common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
+    common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp',
+            '--bind','/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro',
+            '--home',str(ROOT/'home'),'--pwd',str(out)]
     try:
         lib='/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib'
         rec['original_container_library_SHA256']=subprocess.check_output(common+[IMAGE,'sha256sum',lib]).decode().split()[0]
