@@ -64,7 +64,7 @@ def run(profile,revision):
           'check_setup -verbose > '+tcl(out/'constraint_coverage.txt'),'write_timing_model '+tcl(out/'timing.lib')]
         script=out/'export.tcl';script.write_text('\n'.join(lines)+'\n');rec['native_export_returncode']=execute(common,script,out/'export.log',threads=4);assert rec['native_export_returncode']==0
         rec['detailed_OBS_view_contract']=verify(out/'abstract.lef',out/'detailed.lef')
-        rec['conservative_parent_low_OBS_preparation']=coarsen(out/'detailed.lef',out/'parent_conservative_low.lef')
+        rec['conservative_parent_low_OBS_preparation']=coarsen(out/'detailed.lef',out/'parent_conservative_low.lef',requested=('metal1','metal2','metal3'))
         norm=lambda line:tuple(x[1:-1] if x.startswith('{') and x.endswith('}') else x for x in line.split())
         assert Counter(norm(s) for s in (out/'pins.tsv').read_text().splitlines()[1:])==Counter(norm(s) for s in pins.read_text().splitlines())
         rec['all_current_signal_and_PG_pin_rows_exact']=True

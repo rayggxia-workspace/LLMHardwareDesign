@@ -124,5 +124,8 @@ def run(revision,profile='import_only'):
     except Exception:rec['actual_failure']=traceback.format_exc();traceback.print_exc()
     rec['native_stages']={p.name:{r['stage']:r['status'] for r in csv.DictReader(p.open(),delimiter='\t')} for p in out.glob('*stages.tsv')}
     rec['all_closed_sources_unchanged']=all(sha(Path(p))==s for p,s in inputs.items());rec['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat();rec['files']={p.name:{'bytes':p.stat().st_size,'sha256':sha(p)} for p in out.iterdir() if p.is_file() and p.name!='execution.json'};save()
-    return int(bool(rec.get('actual_failure')) or not rec['all_closed_sources_unchanged'] or any(rec['native_stages'].get('fresh_import.stages.tsv',{}).get(k)!='EXECUTED' for k in ['VDD','VSS']))
+    failed=bool(rec.get('actual_failure')) or not rec['all_closed_sources_unchanged'] or any(rec['native_stages'].get('fresh_import.stages.tsv',{}).get(k)!='EXECUTED' for k in ['VDD','VSS'])
+    if profile=='healed_LL_actual_route':
+        failed=failed or rec['native_returncodes'].get('lower_route')!=0 or rec.get('fresh_DRC_count')!=0 or not rec.get('whole_signal_geometry',{}).get('pass') or any(rec['native_stages'].get('lower_route.stages.tsv',{}).get(k)!='EXECUTED' for k in ['routed_VDD','routed_VSS'])
+    return int(failed)
 if __name__=='__main__':sys.exit(run(*sys.argv[1:]))
