@@ -12,7 +12,7 @@ HOST='yuzelu@10.129.166.172'
 BASE='/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121'
 
 
-def collect(run_id,destination):
+def collect(run_id,destination,closure=False):
     assert re.fullmatch(r'block-v1-\d{8}-\d{3}',run_id)
     assert not destination.exists(),'Use a new snapshot destination'
     remote=r'''
@@ -23,9 +23,13 @@ def add(path,expected=None):
  data=path.read_bytes();digest=hashlib.sha256(data).hexdigest()
  if expected is not None:assert expected==digest,(str(path),'receipt hash mismatch')
  name=str(path.relative_to(r))
- if len(data)>2*1024*1024:
-  excluded.append(dict(path=name,sha256=digest,bytes=len(data),reason='bounded evidence size limit'))
-  if path.name=='interconnect-result.json':
+ if CLOSURE and path.name in ('annotation.rpt','annotation-connectivity.tsv'):
+  if path.name=='annotation-connectivity.tsv':assert all(line.rsplit('\t',1)[-1]=='0'for line in data.decode().splitlines())
+  excluded.append(dict(path=name,sha256=digest,bytes=len(data),reason='Detailed zero-fanout native annotation list retained on server; verified summary binds it'))
+  return
+ if len(data)>2*1024*1024 or (CLOSURE and path.name=='linkclose-result.json'):
+  excluded.append(dict(path=name,sha256=digest,bytes=len(data),reason='verified all-zero fanout dictionary compacted' if path.name=='linkclose-result.json' else 'bounded evidence size limit'))
+  if path.name in ('interconnect-result.json','linkclose-result.json'):
    d=json.loads(data);zeros=d.pop('zero_fanout_unannotated_drivers')
    assert not any(zeros.values())
    d['zero_fanout_unannotated_driver_summary']=dict(count=len(zeros),connected_count=0,
@@ -41,6 +45,12 @@ for name in ['manifest.json','node-queue.json','dispatch-state.json','node-queue
 allowed={'interconnect-probe.json','interconnect-prepare.json','interconnect-result.json',
  'sta.log','summary.tsv','links.tsv','annotation.rpt','annotation-connectivity.tsv',
  'timing.rpt','electrical.rpt','check-setup.rpt','constraints-readback.sdc','sta.tcl','wrapper.v'}
+if CLOSURE:
+ allowed.update({'linkclose-probe.json','linkclose-physical.json','linkclose-accept.json','linkclose-field.json',
+  'linkclose-route.json','linkclose-prepare.json','linkclose-result.json','five-macro-physical.json','five-macro-drc.json',
+  'geometry.json','geometry.tsv','route-inputs.json','interconnect-upper.gds','routed.def','pins.json','fixed-drivers.tsv',
+  'ones.json','random121.json','random122.json','linkclose-protocol.json','pg-repair.tsv','allocation.txt','started.txt','finished.txt','exit-code.txt'})
+ allowed.update({'input.sdc','config.mk','scene.txt','field.jsonl','kepler.log','formal.log','passive-inventory.tsv','route.log','pg-repair.log','physical-probe.log','geometry.log'})
 for receipt in sorted(r.glob('tasks/*/receipt.json')):
  add(receipt);d=json.loads(receipt.read_text())
  for name,digest in d['outputs'].items():
@@ -54,7 +64,7 @@ if (q/'exit-code.txt').exists():
   p=q/name
   if p.exists():add(p)
 print(json.dumps(dict(run_id=RUN,remote_directory=str(r),captured_utc=datetime.datetime.utcnow().isoformat()+'Z',files=files,excluded=excluded)))
-'''.replace('BASE',repr(BASE)).replace('RUN',repr(run_id))
+'''.replace('BASE',repr(BASE)).replace('RUN',repr(run_id)).replace('CLOSURE',repr(closure))
     result=subprocess.run(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=10',HOST,'python3 -'],
                           input=remote,text=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     assert result.returncode==0,result.stderr
@@ -88,4 +98,5 @@ print(json.dumps(dict(run_id=RUN,remote_directory=str(r),captured_utc=datetime.d
 
 if __name__=='__main__':
     p=argparse.ArgumentParser(__doc__);p.add_argument('run_id');p.add_argument('destination',type=Path)
-    a=p.parse_args();collect(a.run_id,a.destination)
+    p.add_argument('--closure',action='store_true')
+    a=p.parse_args();collect(a.run_id,a.destination,a.closure)

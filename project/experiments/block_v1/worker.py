@@ -60,7 +60,46 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE == 'interconnect-probe':
+    if MODE.startswith('linkclose-fanout-'):
+        from linkclose_fanout import route
+        route(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkclose-prepare-'):
+        from linkclose_measure import prepare_pair
+        prepare_pair(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkclose-case-'):
+        from linkclose_measure import measure
+        pair,variant=MODE[len('linkclose-case-'):].split('-')
+        measure(ROOT, OUT, CPUS, run, pair, variant)
+    elif MODE.startswith('linkclose-route-'):
+        pair=MODE.rsplit('-',1)[1]
+        if pair in ('mtr','tsr'):
+            from linkclose_route import route
+            route(ROOT, OUT, CPUS, run, pair[:2],representative=True)
+        elif pair in ('mt','ts'):
+            from linkclose_route import route
+            route(ROOT, OUT, CPUS, run, pair)
+        else:
+            from linkclose_fanout import route
+            route(ROOT, OUT, CPUS, run, pair)
+    elif MODE.startswith('linkclose-pgfix-'):
+        from linkclose_physical import repair_pg
+        repair_pg(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkclose-accept-'):
+        from linkclose_accept import verify
+        verify(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkclose-field-'):
+        from linkclose_field import measure
+        measure(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE.startswith('linkclose-physical-'):
+        from linkclose_physical import implement
+        implement(ROOT, OUT, CPUS, run, MODE.rsplit('-',1)[1])
+    elif MODE == 'linkclose-protocol':
+        from linkclose_protocol import verify
+        verify(ROOT, OUT, CPUS, run)
+    elif MODE == 'linkclose-probe':
+        from linkclose_probe import probe
+        probe(ROOT, OUT, CPUS, run)
+    elif MODE == 'interconnect-probe':
         from interconnect_experiment import probe
         probe(ROOT, OUT, CPUS, run)
     elif MODE.startswith('interconnect-prepare-'):

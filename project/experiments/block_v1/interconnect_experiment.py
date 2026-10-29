@@ -134,7 +134,12 @@ def sta_script(native, common, case_dir, observations):
     text = f'set_thread_count 16\nread_liberty {{{LIBRARY}}}\n'
     for name in ('NangateOpenCellLibrary.tech.lef', 'NangateOpenCellLibrary.macro.mod.lef'):
         text += 'read_lef {' + str(PLATFORM / 'lef' / name) + '}\n'
+    seen={}
     for row in native.values():
+        if row['top'] in seen:
+            assert sha(row['verilog'])==seen[row['top']], 'Repeated master changed'
+            continue
+        seen[row['top']]=sha(row['verilog'])
         text += 'read_verilog {' + row['verilog'] + '}\n'
     text += 'read_verilog {' + str(case_dir / 'wrapper.v') + '}\nlink_design interconnect_fixture\n'
     text += '''set_cmd_units -time ns -capacitance fF -resistance kOhm -distance um

@@ -543,3 +543,6 @@ R首版真实RTL测试195通过240组GDN/SSM和100组四抽头卷积，397971检
 
 
 2026-10-29 14:45 CST（独立互联侧线，不改主线阶段）：Issue121的48项真实MT/TS接口有限实验已完成，MT0/24、TS19/24在声明条件通过；T→S最长1688µm的8→8→2候选section setup+0.308616ns，MT电气清零后ready仍负。93222/93236自然COMPLETED/0:0，6×16动态队列及Issue共享8allocation保持；原输入末次SHA不变。报告docs/reports/2026-10-29-block-v1-interconnect-study.md，恢复docs/handoffs/2026-10-29-issue-121-interconnect-study.md；基准e3b129e，原运行源7383a79/b591fd8，独立分支task/121-interconnect-study。线上使用同Git树快照，原历史Git bundle已校验备份；侧线PR以提交回执为准，不关闭121/不改PR122。独立审查/驱动真实P&R尚未完成；登记pending，看板unverified/同步pending。
+
+
+2026-10-29（互联侧线补齐交付）：三种实际预制接口完整原生P&R/全DRC/严格LEC通过，两槽桥真实M/T/S门级15例×三初态通过；MT17/TS15根新层实走线/独立研究几何通过，41项电气测量（17项条件通过）及31条端口C预算收尾。guarded当前组合仍失败：MT9 cap；TS8 cap+1 slew；全宽275/281根未收敛，不能认定组合通过。原生产18文件末次SHA保持，16轮源/资源已审计、全部终止；峰值6×16即时补位。主线Issue121仍in_progress，不改PR122/主工作树；现有PR133更新有限负面结论、报告与确定性证据包。独立审查待指定，登记pending，看板unverified/同步pending。

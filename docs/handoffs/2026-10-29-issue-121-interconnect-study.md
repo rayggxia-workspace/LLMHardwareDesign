@@ -1,5 +1,15 @@
 # Issue121侧线互联实验交接
 
+## 补齐交接（2026-10-29）
+
+当前结论以[补齐报告](../reports/2026-10-29-block-v1-representative-link-closure.md)为准，下文14:45记录是历史阶段。bridge/bank/booster三种预制接口实际M1–M10 P&R/全DRC/严格LEC通过，MT17/TS15根详细走线/独立研究几何通过。两槽桥真实门级15例×三初态通过；41项电气测量及31条端口C预算已闭合；当前guarded组合仍失败（MT9 cap；TS8 cap+1 slew）。全宽275/281根未收敛，不能用子集覆盖。
+
+主线无需重跑这41项或旧48项。下一版决策应处理弱端口到第一中继的实际水平距离，靠近混合pad配置固定第一驱动/多侧中继；强中继在本次分支形态下可从≤1mm/≤4起步。若集成桥/缓冲到M/T/S，重验受影响原生宏，不能只在新金属上补有源器件。完整CTS/顶层PG/控制器及全宽布线仍未验收。
+
+原生产18文件末次SHA保持，16轮job均终止，末轮93298/93301自然COMPLETED。捕获、失败回执、源归档与资源审计见工作目录closure-*.json及closure-evidence.tar.gz；源commit与API发布快照不同，按归档SHA恢复运行源。只在本侧线发布现有PR133，不修改主线工作树/PR122/Issue121状态，不向主线聊天发消息。登记pending、看板unverified/同步pending、审查待指定保持。
+
+## 历史阶段交接（14:45 CST）
+
 仓库：rayggxia-workspace/LLMHardwareDesign；Issue：[121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)；主线PR：[122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)。账号YUZE-LU；2026-10-29 14:45 CST。
 
 独立工作树`D:\Data\电路实验\LLMHardwareDesign-worktrees\issue-121-interconnect-study`，分支`task/121-interconnect-study`，起点b451039b3d6083a9dcc8e4db7b46fa4440ed87ac。闭合实验代码/证据基准e3b129e2b8a55c70b5be9e5843ad9c5b172b0cb5；其后补交接/进度与发布回执，并在本侧线同步主线94d5579入口，自动三方合并通过。主线工作树未修改。原运行源分别为7383a79/run907及b591fd8/run908，不转移新源码的物理资格。

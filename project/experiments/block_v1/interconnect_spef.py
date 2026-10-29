@@ -136,13 +136,19 @@ def paired_links(left, right):
 
 def selection(inventories, links):
     chosen = {(side, port) for link in links
-              for side, port in (link['source'], link['sink'])}
-    assert len(chosen) == 2 * len(links)
+              for side, port in (link['source'], link['sink'],*link.get('extra_sinks',[]))}
+    assert len(chosen) == 2 * len(links)+sum(len(l.get('extra_sinks',[]))for l in links)
     for link in links:
         for field, direction in [('source', 'O'), ('sink', 'I')]:
             side, port = link[field]
             assert inventories[side]['ports'][port]['direction'] == direction
+        for side,port in link.get('extra_sinks',[]):
+            assert inventories[side]['ports'][port]['direction']=='I'
     return chosen | {(side, 'clk') for side in inventories}
+
+
+def external_literal(inv,port):
+    return inv.get('external_names',{}).get(port,inv['prefix']+'_'+inv['ports'][port]['literal'])
 
 
 def node(token, inv, selected):
@@ -151,7 +157,7 @@ def node(token, inv, selected):
         port = port_by_literal[token]
         if (inv['prefix'], port) in selected:
             return f"*{inv['offset'] + inv['ports'][port]['net']}:{inv['offset'] * 10 + INTERNAL_NODE}"
-        return inv['prefix'] + '_' + token
+        return external_literal(inv,port)
     if re.match(r'^\*\d+', token):
         # OpenROAD flattens hierarchical boundary nets. Both halves of a
         # joined net therefore use the same logical name; their native node
@@ -185,7 +191,7 @@ def transform(block, inv, selected, records):
             if t[0] == '*P':
                 if (inv['prefix'], plain(t[1])) in selected:
                     continue
-                row = ['*P', inv['prefix'] + '_' + t[1], *t[2:]]
+                row = ['*P', external_literal(inv,plain(t[1])), *t[2:]]
             else:
                 row = ['*I', node(t[1], inv, selected), *t[2:]]
                 records.add('conn', row[1:])
@@ -249,15 +255,34 @@ def write_net(stream, name, pieces, connections=(), capacitors=(), resistors=())
 def prepare(native, destination, links):
     destination = Path(destination)
     destination.mkdir(exist_ok=True)
-    inventories = {side: inventory(row['spef'], side, i * 10_000_000)
+    stride=min(10_000_000,(EXTRA_MAP-1)//(len(native)+1))
+    inventories = {side: inventory(row['spef'], side, i * stride)
                    for i, (side, row) in enumerate(native.items(), 1)}
+    assert all(max(inv['names'])<stride for inv in inventories.values()),'Native namespace exceeds reserved stride'
     chosen = selection(inventories, links)
+    for side,inv in inventories.items():
+        groups=defaultdict(list)
+        for port in inv['ports']:
+            m=re.fullmatch(r'(.+)\[(\d+)\]',port)
+            if m and (side,port)not in chosen:groups[m[1]].append(int(m[2]))
+        aliases={}
+        for name,bits in groups.items():
+            bits=sorted(bits)
+            if bits==list(range(min(bits),max(bits)+1)):continue
+            runs=[]
+            for bit in bits:
+                if not runs or bit!=runs[-1][-1]+1:runs.append([])
+                runs[-1].append(bit)
+            for group in runs:
+                for bit in group:
+                    aliases[name+'[%d]'%bit]=side+'_'+name+'_g%d_%d[%d]'%(group[0],group[-1],bit)
+        inv['external_names']=aliases
     names = {inv['offset'] + k: 'u_' + inv['prefix'] + '/' + v
              for inv in inventories.values() for k, v in inv['names'].items()}
     names[EXTRA_MAP] = 'clk'
     ports = [('clk', 'I')]
     for side, inv in inventories.items():
-        ports += [(side + '_' + p['literal'], p['direction'])
+        ports += [(external_literal(inv,name), p['direction'])
                   for name, p in inv['ports'].items() if (side, name) not in chosen]
     record = Records()
     selected_blocks = {}
@@ -289,7 +314,7 @@ def prepare(native, destination, links):
     # Three immutable headers resolve boundary aliases to actual flattened
     # top nets. Bodies contain exactly the same native records. Files are
     # shared by all length/RC conditions of their topology.
-    for topology in ('direct', 'endpoints', 'relay'):
+    for topology in (('direct',) if any(l.get('extra_sinks')for l in links) else ('direct','endpoints','relay')):
         target = destination / ('common-' + topology + '.spef')
         with target.open('w') as stream, common.open() as body:
             stream.write(header(canonical_maps(metadata, topology), ports))
@@ -305,12 +330,15 @@ def canonical_maps(meta, topology):
     for link in meta['links']:
         endpoints[tuple(link['source'])] = link['id'] + ('_src' if topology != 'direct' else '')
         endpoints[tuple(link['sink'])] = link['id'] + ('_dst' if topology != 'direct' else '')
+        for sink in link.get('extra_sinks',[]):
+            assert topology=='direct','Fanout requires an explicit branch graph'
+            endpoints[tuple(sink)]=link['id']
     for side, inv in meta['inventories'].items():
         for port, row in inv['ports'].items():
             if port == 'clk':
                 name = 'clk'
             else:
-                name = endpoints.get((side, port), side + '_' + row['literal'])
+                name = endpoints.get((side, port), external_literal(inv,port))
             names[inv['offset'] + row['net']] = name
     return names
 
@@ -338,6 +366,7 @@ def wrapper(meta, native, topology, cell='BUF_X4'):
         key = link['id']
         if topology == 'direct':
             endpoint[tuple(link['source'])] = endpoint[tuple(link['sink'])] = key
+            for sink in link.get('extra_sinks',[]):endpoint[tuple(sink)]=key
             wires.add(key)
         else:
             endpoint[tuple(link['source'])] = key + '_src'
@@ -360,7 +389,7 @@ def wrapper(meta, native, topology, cell='BUF_X4'):
             elif (side, port) in endpoint:
                 value = endpoint[side, port]
             else:
-                name = side + '_' + port
+                name = plain(external_literal(inv,port))
                 assert re.fullmatch(r'[A-Za-z_]\w*(?:\[\d+\])?', name)
                 value = name
                 ports.append((name, 'input' if detail['direction'] == 'I' else 'output'))
@@ -395,8 +424,8 @@ def wrapper(meta, native, topology, cell='BUF_X4'):
         if bits == {None}:
             dimensions = ''
         else:
-            assert None not in bits and bits == set(range(max(bits)+1))
-            dimensions = '[' + str(max(bits)) + ':0] '
+            assert None not in bits and bits == set(range(min(bits),max(bits)+1))
+            dimensions = '[' + str(max(bits)) + ':' + str(min(bits)) + '] '
         result += row['direction'] + ' ' + dimensions + name + ';\n'
     result += ''.join('wire ' + n + ';\n' for n in sorted(wires))
     return result + '\n'.join(calls + instances) + '\nendmodule\n'
@@ -405,6 +434,7 @@ def wrapper(meta, native, topology, cell='BUF_X4'):
 def link_spef(meta, destination, topology, length_um, factor=1., cell='BUF_X4',
               c_per_um_ff=0.15539099611464, r_per_um_ohm=0.015,
               resistance_multiplier=1., capacitance_multiplier=1.):
+    assert not any(l.get('extra_sinks')for l in meta['links']),'Fanout requires explicit routed branch RC'
     lengths = length_um if isinstance(length_um,dict) else {r['id']:length_um for r in meta['links']}
     assert set(lengths)=={r['id']for r in meta['links']}
     assert all(v>0 for v in lengths.values()) and factor > 0 and topology in ('direct', 'endpoints', 'relay')

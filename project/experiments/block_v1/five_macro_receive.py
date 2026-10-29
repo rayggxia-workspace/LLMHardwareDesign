@@ -27,7 +27,7 @@ def source(out,kind,original=False,repaired=False):
     return folder,receipt,flow,results
 
 
-def physical(root,out,cpus,run,kind,selected=None):
+def physical(root,out,cpus,run,kind,selected=None,sdc_override=None):
     from io_slots import file_sha
     from native_sta import inspect as sta_audit
     from native_annotation import inspect as annotation_audit
@@ -51,7 +51,12 @@ def physical(root,out,cpus,run,kind,selected=None):
     assert sq['annotation']['positive']['passed'] and not sq['annotation']['missing_input_rc']['passed']
     for name in ('native_sta.py','native_annotation.py'):
         relative='project/experiments/block_v1/'+name;assert sc['inputs'][relative]==file_sha(root/relative)
-    prefix=''.join('set ::env('+k+') {'+str(results/name)+'}\n' for k,name in [('BV1_ODB','6_final.odb'),('BV1_SDC','6_final.sdc'),('BV1_SPEF','6_final.spef')])
+    selected_sdc=results/'6_final.sdc'
+    if sdc_override is not None:
+        selected_sdc=Path(sdc_override)
+        assert selected_sdc.parent==folder
+        assert file_sha(selected_sdc)==r['outputs'][selected_sdc.name]
+    prefix=''.join('set ::env('+k+') {'+str(selected_sdc if k=='BV1_SDC' else results/name)+'}\n' for k,name in [('BV1_ODB','6_final.odb'),('BV1_SDC','6_final.sdc'),('BV1_SPEF','6_final.spef')])
     if selected is not None:
         prefix+='rename write_sdc bv1_original_write_sdc\nproc write_sdc {args} {uplevel 1 [list bv1_original_write_sdc -digits 12 {*}$args]}\n'
     for name,body in [('sta','source {'+str(root/'project/experiments/block_v1/native_sta.tcl')+'}\n'),
@@ -106,7 +111,7 @@ def physical(root,out,cpus,run,kind,selected=None):
     result=dict(passed=all(checks.values()),top=flow['top'],checks=checks,timing=timing,rc_coverage=annotation,
                 used_drivers=drivers,boundary=boundary,pin_contract=pin_contract,masters=masters,active_area_um2=active,
                 physical_only_area_um2=physical_area,die_um=flow['die_um'],source=str(folder),
-                source_receipt_sha256=file_sha(folder/'receipt.json'),exact_final_function_qualified=False,
+                source_receipt_sha256=file_sha(folder/'receipt.json'),sta_sdc_sha256=file_sha(selected_sdc),sta_sdc_path=str(selected_sdc),exact_final_function_qualified=False,
                 independent_full_deck_drc_qualified=False,qualified_hard_macro=False,
                 scope='Actual final ODB/SDC/SPEF independent full endpoint/electrical/PG/connectivity/pin/RC reception; function/full-deck/strict LEC separate')
     (out/'five-macro-physical.json').write_text(json.dumps(result,indent=2)+'\n');assert result['passed']

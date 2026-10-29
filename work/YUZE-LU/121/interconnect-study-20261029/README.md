@@ -1,5 +1,15 @@
 # M/S/T真实生产者—消费者互联有限实验
 
+## 补齐交付（2026-10-29）
+
+[代表性互联补齐报告](../../../../docs/reports/2026-10-29-block-v1-representative-link-closure.md)为当前结论，以下48项说明属于历史阶段。三种实际预制接口通过原生完整P&R/DRC/LEC；MT17/TS15根完成新层实际详细布线与独立几何检查；41项新测量全部收尾，17项仅在各自声明条件通过。相向切换加20%裕量的当前组合仍失败，MT/TS分别9/8项电容违规，TS另1项slew违规；全宽275/281根尝试未收敛，不授予组合资格。
+
+入口：[41项及31条端口预算](closure-results.json)、[生产18文件不变/16轮源与资源审计](closure-source-and-resource-audit.json)、[有界证据包](closure-evidence.tar.gz)、[每成员SHA清单](closure-evidence-manifest.json)、[执行源归档映射](closure-source-history.json)。将证据包解开到本目录evidence/，可运行linkclose_summarize.py重新核验；展开目录只在本地保留，Git交付确定性压缩包。大数据库及完整报告仍在授权服务器，index明确列出被排除原件的SHA。
+
+强BUF_X16中继可从首段≤1mm/扇出≤4起步；弱端口至第一级中继需逐信号预算，不能套强中继距离。全部本侧线作业已终止，原生产结果未动；Issue121整体保持in_progress，独立审查待指定。当前不能把原M/S/T标为可任意组合。
+
+## 历史阶段交付（14:45 CST）
+
 关联[Issue #121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121)，主线[PR #122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)。本侧线使用独立工作树/分支`task/121-interconnect-study`，起点`b451039b3d6083a9dcc8e4db7b46fa4440ed87ac`；不覆盖主线工作树和生产宏、不操作其他运行任务。
 
 ## 范围与状态
