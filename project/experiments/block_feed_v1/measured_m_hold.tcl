@@ -36,7 +36,20 @@ for {set i 0} {$i<3} {incr i} {
   puts $f "$name\tBUF_X1\t[$current getName]\t[$next getName]"
   set current $next
 }
-$pin disconnect;$pin connect $current
+if {[llength [info commands odb::dbInst_isDoNotTouch]]==1} {
+  set getter isDoNotTouch
+} elseif {[llength [info commands odb::dbInst_getDoNotTouch]]==1} {
+  set getter getDoNotTouch
+} else {error "Missing native scoped protection readback"}
+set protection [$inst $getter]
+if {!$protection} {error "Measured sized driver unexpectedly unprotected"}
+$inst setDoNotTouch false
+try {
+  $pin disconnect;$pin connect $current
+} finally {
+  $inst setDoNotTouch $protection
+}
+if {[$inst $getter]!=$protection} {error "Measured driver protection was not restored"}
 if {[$pin getNet] eq $original || [llength [$current getITerms]]!=2} {error "Measured delay chain disconnected"}
 close $f
 global_connect
