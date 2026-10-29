@@ -10,11 +10,12 @@ DRIVER=Path(__file__).resolve().parent
 
 
 def run(revision,kind='gemm658'):
-    assert kind in ['gemm658','mxu_pin_escape','system_stacked_vias','llsys_via_tips'];mxu=kind=='mxu_pin_escape';system=kind=='system_stacked_vias';llsys=kind=='llsys_via_tips'
+    assert kind in ['gemm658','mxu_pin_escape','system_stacked_vias','llsys_via_tips','mxu_via_tip'];mxu=kind=='mxu_pin_escape';system=kind=='system_stacked_vias';llsys=kind=='llsys_via_tips';mxutip=kind=='mxu_via_tip';tip=llsys or mxutip
     case,count,relative,family={'gemm658':('gemm',3753,'antenna_incremental_eco/r01/gemm-C','diode_views'),
       'mxu_pin_escape':('mxu',2172,'pin_escape_route/r02/mxu-C','pin_escape_views'),
       'system_stacked_vias':('opentpu_aux',2229,'system_stacked_via_route/r01/opentpu_aux-C','system_stacked_via_views'),
-      'llsys_via_tips':('llaccel_aux',13507,'llsys_actual_via_tips/r02','llsys_actual_tip_views')}[kind]
+      'llsys_via_tips':('llaccel_aux',13507,'llsys_actual_via_tips/r02','llsys_actual_tip_views'),
+      'mxu_via_tip':('mxu',2172,'mxu_actual_via_tip/r01','mxu_actual_tip_views')}[kind]
     source=ROOT/relative;receipt=source/'execution.json';j=json.loads(receipt.read_text())
     out=ROOT/family/revision/(case+'-C');out.mkdir(parents=True,exist_ok=False)
     rec={'scope':'ACTUAL_SOURCE_BOUND_PHYSICAL_AND_EXTRACTED_RESEARCH_VIEW_NOT_FULL_QUALIFICATION',
@@ -23,9 +24,18 @@ def run(revision,kind='gemm658'):
       'original_M5_M6_pins_not_raised':True,'complete_rules_and_RTL_formal':'NOT_QUALIFIED',
       'scheduler_job':os.environ['SLURM_JOB_ID'],'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip()}
     try:
-        stage_key='actual_edit_and_analysis' if llsys else ('detailed_edit_and_analysis' if system else 'implementation')
-        assert j.get('completed_utc') and j['native_returncodes'][stage_key]==j['native_returncodes']['fresh_DRC']==0
-        assert j['fresh_DRC_count']==0 and j['whole_signal_geometry']['pass']
+        stage_key='actual_edit_and_analysis' if tip else ('detailed_edit_and_analysis' if system else 'implementation')
+        assert j.get('completed_utc') and j['native_returncodes'][stage_key]==0
+        if mxutip:
+            recovered=ROOT/'mxu_actual_tip_fresh/r01';recovery_path=recovered/'execution.json';recovery=json.loads(recovery_path.read_text())
+            assert recovery.get('completed_utc') and recovery['native_fresh_returncode']==0 and recovery['fresh_DRC_count']==0 and recovery['all_closed_sources_unchanged']
+            assert recovery['source_actual_ECO_ODB_SHA256']==j['files']['routed.odb']['sha256'] and recovery['source_actual_ECO_SPEF_SHA256']==j['files']['extracted.spef']['sha256']
+            assert recovery['original_allowed_signal_clock_ranges']==['metal2-metal10','metal4-metal10']
+            rec['separate_original_range_fresh_receipt']=str(recovery_path);rec['separate_original_range_fresh_receipt_SHA256']=sha(recovery_path)
+            rec['original_r01_DRT_0155_failure_preserved']=True
+        else:
+            assert j['native_returncodes']['fresh_DRC']==0 and j['fresh_DRC_count']==0
+        assert j['whole_signal_geometry']['pass']
         if mxu:
             assert j['all_closed_sources_unchanged'] and j['container_libraries_unchanged']
             assert all(j['all_cells_poses_original_connections_pins_PG_die_unchanged'].values()) and j['all_original_pins_and_size_in_actual_new_LEF_identical']
@@ -39,30 +49,39 @@ def run(revision,kind='gemm658'):
             assert j['all_actual_target_via_rectangle_multisets_preserved'] and j['exactly_eight_actual_WIRE_rectangles_removed_no_added_wire_or_via_material']
             assert j['complete_pin_contract']['all_signal_pins']==count
             assert j['complete_pin_contract']['all_functions_directions_networks_layers_sizes_and_PG_preserved']
+        elif mxutip:
+            assert j['all_closed_sources_unchanged'] and j['container_library_unchanged']
+            assert all(j['all_cells_signal_connections_PG_die_unchanged'].values())
+            assert j['all_other_191437_multiterminal_route_box_multisets_identical'] and j['exactly_four_actual_M6_WIRE_rectangles_removed_all_vias_unchanged']
+            assert j['complete_pin_contract']['all_signal_pins']==count and j['complete_pin_contract']['only_changed_XY_pins']==['act_data[12]']
         else:
             assert j['actual_total_real_diodes']==658 and j['all_original_instances_and_signal_graph_preserved_with_only_22_real_diode_loads']
             assert j['all_prior_functional_and_636_diode_poses_and_terminals_unchanged'] and all(j['pin_PG_die_unchanged'].values()) and j['all_sources_unchanged']
-        required=[('actual_three_net_pin_and_route_edit' if llsys else ('native_one_net_detailed_routing' if system else 'detailed_route')),'VDD','VSS','whole_signal_geometry','rcx','sta']+([] if mxu or system or llsys else ['preserve_original_views'])
+        required=[('actual_one_net_pin_and_route_edit' if mxutip else ('actual_three_net_pin_and_route_edit' if llsys else ('native_one_net_detailed_routing' if system else 'detailed_route'))),'VDD','VSS','whole_signal_geometry','rcx','sta']+([] if mxu or system or tip else ['preserve_original_views'])
         assert all(j['native_stage_status'].get(s)=='EXECUTED' for s in required)
         original=ROOT/('eco_views/'+('r03' if system else 'r02')+'/'+case+'-C')
-        if not llsys:
+        if not tip:
             old=json.loads((original/'execution.json').read_text())
             assert sha(original/'abstract.lef')==old['files']['abstract.lef']['sha256']
             assert sha(original/'pins.tsv')==old['files']['pins.tsv']['sha256']
         trial=ROOT/(('trials/llsys-pg-r03/' if llsys else 'trials/access-r03/')+case+'-C/execution.json');baseline=json.loads(trial.read_text());sdc=Path(baseline['source_sdc'])
         assert sha(sdc)==baseline['input_sha256'][str(sdc)]
         odb=source/'routed.odb';spef=source/'extracted.spef'
-        for p in [odb,spef,source/'independent.drc']:assert sha(p)==j['files'][p.name]['sha256']
-        originals=[source/'after.pins.tsv',source/'all_13507_actual_pin_correspondence.csv'] if llsys else [original/'execution.json',original/'abstract.lef',original/'pins.tsv']
+        for p in [odb,spef]+([] if mxutip else [source/'independent.drc']):assert sha(p)==j['files'][p.name]['sha256']
+        originals=[source/'after.pins.tsv',source/('all_'+str(count)+'_actual_pin_correspondence.csv')] if tip else [original/'execution.json',original/'abstract.lef',original/'pins.tsv']
         for p in originals:
-            if llsys:assert sha(p)==j['files'][p.name]['sha256']
+            if tip:assert sha(p)==j['files'][p.name]['sha256']
         inputs={str(p):sha(p) for p in [receipt,odb,spef,trial,sdc]+originals}
+        if mxutip:
+            fresh=recovered/'independent.drc';assert sha(fresh)==recovery['files'][fresh.name]['sha256']
+            inputs.update({str(p):sha(p) for p in [recovery_path,fresh]})
         rec.update({'source_SHA':inputs,'source_geometry_sha256':sha(odb),'source_SPEF_sha256':sha(spef),
           'source_native_DRC':0,'source_setup_ns':j['setup_ns'],'source_hold_ns':j['hold_ns'],
           'source_literal_violated_markers':j.get('literal_VIOLATED_markers_not_complete_failure_count')})
-        if llsys:
+        if tip:
             rec['this_route_variant_new_cells_or_sizing']=0
-            rec['inherited_costed_source']='Complete original internal PG-only C; three actual via-tip XY edits, no added cells or resizing; negative original-source STA retained.'
+            rec['pin_preservation_reference']='Current actual routed source after its explicitly recorded XY ECO; not the older A/B/C candidate or pre-ECO coordinates.'
+            rec['inherited_costed_source']='Original MXU one sizing retained; one actual M6 via-tip XY edit adds no cells or sizing.' if mxutip else 'Complete original internal PG-only C; three actual via-tip XY edits, no added cells or resizing; negative original-source STA retained.'
             rec['source_complete_pin_contract']=j['complete_pin_contract']
         elif not (mxu or system):rec['separate_additional_diode_cost']=j['separate_additional_diode_cost']
         else:
@@ -83,7 +102,7 @@ def run(revision,kind='gemm658'):
           'report_worst_slack -max -digits 6 > '+tcl(out/'setup.txt'),'report_worst_slack -min -digits 6 > '+tcl(out/'hold.txt'),
           'report_parasitic_annotation -report_unannotated > '+tcl(out/'parasitic_coverage.txt'),
           'check_setup -verbose > '+tcl(out/'constraint_coverage.txt'),'write_timing_model '+tcl(out/'timing.lib')]
-        if mxu:
+        if mxu or mxutip:
             lines+=['set ::env(PINXY_ACCESS_ALL) 0','set ::env(PINXY_ACCESS_NET_NAMES) {act_data[12]}',
               'set ::env(PINXY_ACCESS_OUT) '+tcl(out/'target_pin_access.tsv.gz'),'source '+tcl(DRIVER/'export_access.tcl')]
         if system:
@@ -106,12 +125,17 @@ def run(revision,kind='gemm658'):
             rec['before_target_actual_export_returncode']=execute(common,script,out/'before_target.log',threads=1)
             assert rec['before_target_actual_export_returncode']==0
         rec['detailed_OBS_view_contract']=verify(out/'abstract.lef',out/'detailed.lef')
-        if llsys:
+        if tip:
             from collections import Counter
-            actual=[tuple(s.split()) for s in (out/'pins.tsv').read_text().splitlines()[1:]]
-            expected=[tuple(s.split()) for s in (source/'after.pins.tsv').read_text().splitlines()]
+            def pin_tokens(s):
+                r=s.split();assert len(r)==9
+                for i in [0,3]:
+                    if r[i].startswith('{') and r[i].endswith('}'):r[i]=r[i][1:-1]
+                return tuple(r)
+            actual=[pin_tokens(s) for s in (out/'pins.tsv').read_text().splitlines()[1:]]
+            expected=[pin_tokens(s) for s in (source/'after.pins.tsv').read_text().splitlines()]
             assert Counter(actual)==Counter(expected),'Every source signal/clock/PG pin must match the real edited ODB'
-            rec['all_13507_current_pins_and_PG_match_actual_after_edit']=True
+            rec['all_'+str(count)+'_current_pins_and_PG_match_actual_after_edit']=True
             rec['historical_parent_target_layers']='PARTIAL_OR_UNKNOWN_UNCHANGED; new controlled parent still requires actual access validation'
         else:
             assert parse(original/'abstract.lef')[:2]==parse(out/'abstract.lef')[:2]
@@ -135,7 +159,7 @@ def run(revision,kind='gemm658'):
         rec['minimum_period_present']='minimum_period' in (out/'timing.lib').read_text()
         rec['all_sources_and_pre_RCX_geometry_unchanged']=all(sha(Path(p))==v for p,v in inputs.items()) and sha(out/'clean.odb')==sha(odb)
         assert rec['all_sources_and_pre_RCX_geometry_unchanged']
-        if mxu:
+        if mxu or mxutip:
             target=[p for p in physical if p['pin'].replace('\\','')=='act_data[12]'];assert len(target)==1 and target[0]['layer']=='metal6'
             box=[int(target[0][k])/2000 for k in ['x0','y0','x1','y1']];window=[box[0]-1.5,box[1]-1.5,box[2]+1.5,box[3]+1.5]
             local=[];polygons=[];inside=False;layer=None
