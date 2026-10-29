@@ -41,11 +41,13 @@ class Index:
 def is_retained_via10(r,via_layers):
     return r['kind']=='VIA' and 'via10' in via_layers[r['net'],r['link']]
 
-def astar(rows,obs,net,a,b,die,max_nodes=80000,start_layer=11,target_layer=11,region_override=None):
+def astar(rows,obs,net,a,b,die,max_nodes=80000,start_layer=11,target_layer=11,region_override=None,include_own_cuts=False):
     assert all((p[0]-190)%STEP==0 and (p[1]-140)%STEP==0 for p in [a,b]),(net,a,b)
-    metals=defaultdict(list);cuts=[]
+    metals=defaultdict(list);cuts=[];own_cuts=[]
     for r in rows+obs:
-        if r['net']==net:continue
+        if r['net']==net:
+            if include_own_cuts and r['layer']=='via11' and r['kind']=='VIA':own_cuts.append(rect(r))
+            continue
         z=rect(r)
         if r['layer'] in ['metal11','metal12'] and r['kind'] in ['WIRE','VIA','OBS']:
             metals[r['layer']].append((z,3000))
@@ -76,7 +78,9 @@ def astar(rows,obs,net,a,b,die,max_nodes=80000,start_layer=11,target_layer=11,re
             xx,yy=x+dx,y+dy
             if region[0]<=xx<=region[2] and region[1]<=yy<=region[3] and clear(layer,x,y,xx,yy):
                 wrong=(layer==11 and dy!=0) or (layer==12 and dx!=0);nexts.append(((xx,yy,layer),STEP*(4 if wrong else 1)))
-        if clear(11,x,y,x,y) and clear(12,x,y,x,y) and cutindex.clear(box_wire((x,y),(x,y))):nexts.append(((x,y,23-layer),STEP*3))
+        cut=box_wire((x,y),(x,y))
+        own_clear=all(p==cut or max(cut[0]-p[2],p[0]-cut[2],0)**2+max(cut[1]-p[3],p[1]-cut[3],0)**2>=CUT_SPACE**2 for p in own_cuts)
+        if clear(11,x,y,x,y) and clear(12,x,y,x,y) and cutindex.clear(cut) and own_clear:nexts.append(((x,y,23-layer),STEP*3))
         for nxt,cost in nexts:
             ng=g+cost
             if ng>=scores.get(nxt,10**30):continue
