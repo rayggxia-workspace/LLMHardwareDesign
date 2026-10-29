@@ -110,6 +110,10 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 
 运行器保存源 commit、工具版本与哈希、配置、Slurm 作业和实际退出码。大体积 ODB/GDS/网表/日志保留在获授权的远程实验目录；仓库只提交轻量索引、必要摘要与脚本。
 
+## Issue #121：宽线负载与矩阵供数讨论
+
+[M11/M12宽线负载与M数据位宽](experiments/issue-121-load-and-width-review.md)整理冻结后不能新增缓冲的约束、既有电容失败、openTPU small/llaccel接口、128bit供数推导与独立256/512bit权重口候选。本文是待审讨论，不改变现有RTL或实验资格；检查为 `python -B scripts/check_project.py` 与文档/来源/算术核对，未执行候选EDA。输入与实际检查入口见 [Issue121文档任务记录](../work/huangpingyang04-lgtm/121/README.md)。
+
 ## 数据与外部依赖
 
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
