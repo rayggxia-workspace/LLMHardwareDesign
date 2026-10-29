@@ -1,3 +1,5 @@
+2026-10-30 05:02 CST：421实际三初态逐项通过新归一化延迟合同，N256 RMS/L2=519、Softmax585；逐元素5、统计4、8元素函数8、TopK40选8=328。21个N/操作组合与独立期望一致；[原始回执](../work/YUZE-LU/121/review-20261028/v-pipeline-421/README.md)。全组S回放/占用422及新最终物理门尚待，不挪用409预算。
+
 2026-10-30 04:57 CST：唯一基础V新增N_MERGE完整S128寄存，归一化每8元素多1拍。新合同与独立期望、未执行资格和验证链见[流水决策](decisions/2026-10-30-block-v1-v-normalization-pipeline.md)。RMS/L2=199+10B；Softmax=137+10B+P（B=ceil(N/8)、P=ceil(N/2)，装载/消费/读回额外）。全组S回放也经此级，必须新测；当前新源尚未通过物理验收。
 
 2026-10-29 14:49 CST：350实际global-route setup−0.08ns/hold+0.02ns，最差product[4][4]→output_mem[89][5]，9原始文件/308源与路径映射封存。选定同一基础V的N_WRITE完整S128高低乘积加法改用既有add128_grouped，RNE/饱和/周期保持，当前新源数值、映射、物理和最终资格均待355后续验证。原350继续正常收尾；R344/93237已placement，345/346待前置。M/S/T接收保持、V/R最终未齐，Issue121=in_progress、PR122=draft、目标active，登记pending/看板unverified与同步pending。

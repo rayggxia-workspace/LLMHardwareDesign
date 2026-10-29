@@ -1,4 +1,4 @@
-"""Admit only six pinned revision300 queues; no EDA or job cancellation here.
+"""Admit only seven pinned revision300 queues; no EDA or job cancellation here.
 
 Run on the login host. The existing dispatcher remains the sole submission
 authority and retains its issue-wide lock, reservation and eight-allocation cap.
@@ -14,7 +14,8 @@ import time
 
 
 RUNS = ('block-v1-20261030-404', 'block-v1-20261030-405', 'block-v1-20261030-406',
-        'block-v1-20261030-423', 'block-v1-20261030-424', 'block-v1-20261030-425')
+        'block-v1-20261030-422', 'block-v1-20261030-423',
+        'block-v1-20261030-424', 'block-v1-20261030-425')
 SLURM_TERMINAL = {'COMPLETED', 'FAILED', 'CANCELLED', 'TIMEOUT', 'OUT_OF_MEMORY',
                   'NODE_FAIL', 'PREEMPTED', 'BOOT_FAIL', 'DEADLINE', 'REVOKED'}
 
