@@ -137,10 +137,51 @@ global_route -congestion_report_file $::env(REPORTS_DIR)/feed-s-full-global-rout
 estimate_parasitics -global_routing
 set_propagated_clock [all_clocks]
 sta::find_timing
+# Work only on measured data-net buffer DRVs. These are real native cells;
+# preserve signal connectivity and PG, then reroute the changed nets. Starting
+# from this full live global route keeps unchanged-net/clock RC available.
+set closure [open $::env(RESULTS_DIR)/feed-s-live-closure.tsv w]
+for {set attempt 0} {$attempt<4} {incr attempt} {
+  sta::find_timing
+  set current [list [sta::max_capacitance_violation_count] [sta::max_slew_violation_count] [sta::endpoint_violation_count max] [sta::endpoint_violation_count min]]
+  puts $closure "$attempt\t[join $current \t]";flush $closure
+  if {$current eq {0 0 0 0}} {break}
+  report_check_types -max_capacitance -violators -digits 12 > $::env(RESULTS_DIR)/feed-s-live-caps-$attempt.rpt
+  set capfile [open $::env(RESULTS_DIR)/feed-s-live-caps-$attempt.rpt r]
+  set captext [read $capfile];close $capfile
+  global_route -start_incremental
+  foreach line [split $captext \n] {
+    if {![regexp {^([^[:space:]]+)/Z[[:space:]]+.*\(VIOLATED\)} $line -> name]} {continue}
+    set inst [$block findInst $name]
+    if {$inst eq "NULL"} {error "Measured capacitance driver missing"}
+    set previous [[$inst getMaster] getName]
+    if {$previous ni {BUF_X1 BUF_X2 BUF_X4 BUF_X8 CLKBUF_X1 CLKBUF_X2 CLKBUF_X3}} {error "Unqualified cap repair master: $name $previous"}
+    set net [[$inst findITerm Z] getNet]
+    if {[$net getSigType] in {CLOCK POWER GROUND}} {error "Cap repair must be a data-net buffer"}
+    set before [feed_s_signal_pins $inst]
+    if {![$inst swapMaster [[ord::get_db] findMaster BUF_X16]]} {error "Native cap sizing failed"}
+    if {[feed_s_signal_pins $inst] ne $before} {error "Cap sizing changed function/connectivity"}
+    puts $closure "resize\t$name\t$previous\tBUF_X16"
+  }
+  global_connect
+  detailed_placement_helper
+  check_placement -verbose
+  global_route -end_incremental
+  estimate_parasitics -global_routing
+  sta::find_timing
+  global_route -start_incremental
+  repair_timing -setup_margin 0 -hold_margin 0.020 -repair_tns 100 -verbose
+  global_connect
+  detailed_placement_helper
+  check_placement -verbose
+  global_route -end_incremental
+  estimate_parasitics -global_routing
+}
+close $closure
 set counts [list [sta::max_capacitance_violation_count] [sta::max_slew_violation_count] [sta::endpoint_violation_count max] [sta::endpoint_violation_count min]]
 set f [open $::env(RESULTS_DIR)/feed-measured-s-checks.tsv w]
 puts $f [join $counts "\t"];close $f
-report_checks -path_delay min_max -group_path_count 6 -digits 12 > $::env(RESULTS_DIR)/feed-measured-s-timing.rpt
+report_checks -path_delay min_max -group_path_count 256 -digits 12 > $::env(RESULTS_DIR)/feed-measured-s-timing.rpt
 report_check_types -max_capacitance -max_slew -violators -digits 12 > $::env(RESULTS_DIR)/feed-measured-s-electrical.rpt
 if {$counts ne {0 0 0 0}} {error "Measured S branch repair did not close all native checks"}
 write_guides $::env(RESULTS_DIR)/route.guide
