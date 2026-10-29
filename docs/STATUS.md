@@ -1,3 +1,5 @@
+2026-10-29 21:12 CST，Issue130最新：S35/93398（源59e747216a57fee2fbe28236cd2e88065d5e80c1）DRT实际全片295251→26766→19237→383→7→4→0，5_route_drc.rpt为0字节；当前在native final-report内建Kepler LEC，已匹配全部切分边界，尚未返回最终证明。随后才执行RCX。93403–93410的同源封存/独立四门/交付/几何/包保持afterok依赖，未接受S。M接受及本地交付保持通过。S34/93392仅为同一RTL的20ps内部优化目标对照，继续；两种物理优化目标均不改变SDC/最终hold>=0。Issue130=in_progress，PR132仍draft；登记pending、看板unverified/同步pending，未操作父任务。
+
 2026-10-29 20:06 CST，Issue130：M已交付合法原生候选，完整DRC/提取STA/最终功能/严格LEC与本地32成员SHA通过（见work/YUZE-LU/130/validation/physical/ACCEPTED_M.md）。S尚未接收，当前repair34/93392完整GRT及原生时序修复中；先前31实测14 cap/5 slew/1 setup/54 hold，32/33寄生缓存一致性失败均保留。旧S22未运行依赖门已取消，不继承旧资格。Issue130=in_progress、PR132=draft。下列更早Issue130运行状态为历史，以本条及专属handoff为准；父Issue121原进度不变。
 
 2026-10-29 18:31 CST，后继Issue130/PR132：独立A128/B512的新M已经完成原生布局布线和同源完整最终门，setup+47.354788ps/hold+9.898194ps、cap/slew0、完整GDS DRC0；六文件/完整几何/候选LEF及下载校验已保存，证据见work/YUZE-LU/130/validation/physical/ACCEPTED_M.md。新四bank S仍在93323 GRT修复，后续93353–93360按依赖排队，整个Issue130尚未完成，in_progress/PR132=draft；父Issue121状态和运行任务不因本条改变。登记pending、看板unverified/同步pending、审查及管理员待指定。
