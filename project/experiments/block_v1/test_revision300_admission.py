@@ -1,5 +1,8 @@
 """Admission safety checks; pure control-plane data, no Slurm or EDA calls."""
-from revision300_admission import classify, own_allocations, recorded_job_ids
+from revision300_admission import classify, own_allocations, recorded_job_ids, RUNS, validate
+from pathlib import Path
+import hashlib
+import tempfile
 
 
 def check():
@@ -40,6 +43,30 @@ def check():
         pass
     else:
         raise AssertionError('Malformed observation must not become an empty allocation list')
+    # Test the exact production queue allowlist before a controller is launched.
+    assert RUNS == tuple('block-v1-20261030-'+n for n in
+                         ('404','405','406','485','492','493','494','495'))
+    with tempfile.TemporaryDirectory() as directory:
+        base=Path(directory).resolve()/'issue-121';base.mkdir()
+        config=dict(schema='revision300-admission/1',max_allocations=8,
+                    interval_seconds=60,runs=[])
+        for run_id in RUNS:
+            files={}
+            for name in ('manifest.json','node-queue.json',
+                         'src/project/experiments/block_v1/dispatch.py',
+                         'src/project/experiments/block_v1/native_node_queue.py'):
+                path=base/run_id/name;path.parent.mkdir(parents=True,exist_ok=True)
+                data=(run_id+name).encode();path.write_bytes(data)
+                files[name]=hashlib.sha256(data).hexdigest()
+            config['runs'].append(dict(run_id=run_id,files=files))
+        validate(config,base)
+        config['runs'][-1]['run_id']='block-v1-20261030-478'
+        try:
+            validate(config,base)
+        except AssertionError:
+            pass
+        else:
+            raise AssertionError('Old queue must be rejected before launch')
     print('PASS: reservation/terminal attempts never resubmit; dependency, failure and complete checks')
 
 

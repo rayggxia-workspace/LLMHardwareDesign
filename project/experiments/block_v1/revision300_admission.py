@@ -13,10 +13,9 @@ import subprocess
 import time
 
 
-RUNS = ('block-v1-20261030-404', 'block-v1-20261030-405', 'block-v1-20261030-406',
-        'block-v1-20261030-474', 'block-v1-20261030-475',
-        'block-v1-20261030-476', 'block-v1-20261030-477',
-        'block-v1-20261030-478')
+RUNS = tuple('block-v1-20261030-'+n for n in
+             ('404','405','406','485','492','493','494','495'))
+
 SLURM_TERMINAL = {'COMPLETED', 'FAILED', 'CANCELLED', 'TIMEOUT', 'OUT_OF_MEMORY',
                   'NODE_FAIL', 'PREEMPTED', 'BOOT_FAIL', 'DEADLINE', 'REVOKED'}
 
