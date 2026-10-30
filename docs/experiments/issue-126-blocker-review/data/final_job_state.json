@@ -1,0 +1,189 @@
+{
+  "captured_utc": "2026-10-30T05:44:15.449641+00:00",
+  "hard_deadline_utc": "2026-10-30T01:19:00+00:00",
+  "deadline_missed": true,
+  "no_new_engineering_trials_after_observed_deadline": true,
+  "jobs": {
+    "92855": {
+      "scontrol_stderr": "slurm_load_jobs error: Invalid job id specified\n",
+      "sacct": "92855|FAILED|1-05:35:44|1:0\n92855.batch|FAILED|1-05:35:44|1:0\n92855.extern|COMPLETED|1-05:35:44|0:0\n"
+    },
+    "93217": {
+      "JobId": "93217",
+      "JobName": "hpy-p126-guard770",
+      "JobState": "RUNNING",
+      "RunTime": "1-00:04:02",
+      "NumCPUs": "8",
+      "NodeList": "node22",
+      "StdOut": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/logs/upper-branch-guard-r01-93217.log",
+      "WorkDir": "/public/home/yuzelu",
+      "Command": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/upper-branch-guard-r01/upper_branch_composition_job.sh",
+      "output_bytes": 0,
+      "actual_tail_lines": []
+    },
+    "93243": {
+      "JobId": "93243",
+      "JobName": "hpy-p126-AoptBase",
+      "JobState": "RUNNING",
+      "RunTime": "22:43:41",
+      "NumCPUs": "8",
+      "NodeList": "node26",
+      "StdOut": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/logs/common-boundary-r01-93243.log",
+      "WorkDir": "/public/home/yuzelu",
+      "Command": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/common-boundary-r01/common_integration_job.sh",
+      "output_bytes": 0,
+      "actual_tail_lines": []
+    },
+    "93269": {
+      "JobId": "93269",
+      "JobName": "hpy-p126-LLchain",
+      "JobState": "RUNNING",
+      "RunTime": "22:07:58",
+      "NumCPUs": "4",
+      "NodeList": "node26",
+      "StdOut": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/logs/llsys-output-chain-r01-93269.log",
+      "WorkDir": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027",
+      "Command": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/llsys-output-chain-r01/llsys_output_chain_job.sh",
+      "output_bytes": 0,
+      "actual_tail_lines": []
+    },
+    "93317": {
+      "JobId": "93317",
+      "JobName": "hpy-p126-RAMtrial",
+      "JobState": "RUNNING",
+      "RunTime": "20:38:23",
+      "NumCPUs": "4",
+      "NodeList": "node26",
+      "StdOut": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/logs/native-ram-physical-r01-93317.log",
+      "WorkDir": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027",
+      "Command": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/native-ram-physical-r01/native_ram_trial_job.sh",
+      "output_bytes": 0,
+      "actual_tail_lines": []
+    }
+  },
+  "LL6_marker_endpoints": {
+    "bit_1383573": [
+      {
+        "native_instance": "output7154",
+        "pin": "Z"
+      }
+    ],
+    "bit_1382043": [
+      {
+        "native_instance": "output5623",
+        "pin": "Z"
+      }
+    ],
+    "bit_7059": [
+      {
+        "native_instance": "wire48966",
+        "pin": "A"
+      }
+    ]
+  },
+  "common_integration/r01/C": {
+    "completed_utc": "2026-10-29T20:38:38.347372+00:00",
+    "status": "ACTUAL_LOWER_INTEGRATION_EXECUTED_READ_FAILURE_LEDGER_NOT_QUALIFIED",
+    "lower_route_returncode": 1,
+    "full_qualification": false,
+    "receipt_SHA256": "85f41c9e0dc5609af1f21b759f77caaef26e7875f61e74acee1954d4cf7f797b"
+  },
+  "endpoint_file_SHA256": "eca52507c46551ed32096d4adf574772ea894d67b4b0d0ae2c487b8ed9895ef1",
+  "native_running_stage_evidence": {
+    "93269": {
+      "execution_receipt": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/llsys_output_chain/r01/execution.json",
+      "completed_utc": null,
+      "native_returncodes": {
+        "selection_and_moves": 0,
+        "legalization": 0
+      },
+      "stage_files": {
+        "route_RC_STA.stages.tsv": [],
+        "legalization.stages.tsv": [
+          "stage\tstatus\tdetail",
+          "isolated_legalization_no_STA\tEXECUTED\t",
+          "check_and_restore_fillers\tEXECUTED\t"
+        ],
+        "selection_and_moves.stages.tsv": [
+          "stage\tstatus\tdetail",
+          "existing_buffer_relocation\tEXECUTED\t"
+        ]
+      },
+      "native_log_tails": {
+        "legalization.log": [
+          "max displacement            4.1 u",
+          "original HPWL        44593436.4 u",
+          "legalized HPWL       44593448.7 u",
+          "delta HPWL                    0 %",
+          "",
+          "STAGE_EXECUTED isolated_legalization_no_STA",
+          "STAGE_START check_and_restore_fillers",
+          "STAGE_EXECUTED check_and_restore_fillers"
+        ],
+        "selection_and_moves.log": [
+          "OpenROAD unknown ",
+          "Features included (+) or not (-): -GPU +GUI -Python",
+          "This program is licensed under the BSD-3 license. See the LICENSE file for details.",
+          "Components of this program may be licensed under more restrictive licenses which must be honored.",
+          "[INFO ORD-0030] Using 4 thread(s).",
+          "STAGE_START existing_buffer_relocation",
+          "STAGE_EXECUTED existing_buffer_relocation"
+        ],
+        "route_RC_STA.log": [
+          "[WARNING GRT-0273] Disabled NDR (to reduce congestion) for net: clknet_2_3_1_bit_2",
+          "[WARNING GRT-0273] Disabled NDR (to reduce congestion) for net: clknet_3_7_0_bit_2",
+          "[WARNING GRT-0273] Disabled NDR (to reduce congestion) for net: clknet_1_1_0_bit_2",
+          "[WARNING GRT-0273] Disabled NDR (to reduce congestion) for net: clknet_1_1_1_bit_2",
+          "[WARNING GRT-0273] Disabled NDR (to reduce congestion) for net: clknet_2_0_0_bit_2",
+          "[WARNING GRT-0273] Disabled NDR (to reduce congestion) for net: clknet_1_0_0_bit_2",
+          "[WARNING GRT-0273] Disabled NDR (to reduce congestion) for net: clknet_2_1_1_bit_2",
+          "[WARNING GRT-0273] Disabled NDR (to reduce congestion) for net: clknet_2_2_0_bit_2"
+        ]
+      }
+    },
+    "93217": {
+      "execution_receipt": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/upper_branch_guard/r01/opentpu/execution.json",
+      "completed_utc": null,
+      "native_returncodes": {},
+      "stage_files": {
+        "branch_route_stages.tsv": [
+          "stage\tstatus\tdetail",
+          "global_route_CuGR_all770\tEXECUTED\t",
+          "require_all770_native_guides\tEXECUTED\t"
+        ]
+      },
+      "native_log_tails": {
+        "branch_native.log": [
+          " metal11    5886",
+          "----------------",
+          "        7426",
+          "",
+          "",
+          "[INFO DRT-0195] Start 58th optimization iteration.",
+          "    Completing 10% with 16315 violations.",
+          "    elapsed time = 00:00:00, memory = 2883.28 (MB)."
+        ]
+      }
+    },
+    "93317": {
+      "execution_receipt": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/native_ram_physical_trial/r01/64x64-1r1w-mask1/execution.json",
+      "completed_utc": null,
+      "native_returncodes": {},
+      "stage_files": {
+        "stages.tsv": []
+      },
+      "native_log_tails": {
+        "native.log": [
+          "[INFO DRT-0036] metal7 guide region query size = 0.",
+          "[INFO DRT-0036] via7 guide region query size = 0.",
+          "[INFO DRT-0036] metal8 guide region query size = 0.",
+          "[INFO DRT-0036] via8 guide region query size = 0.",
+          "[INFO DRT-0036] metal9 guide region query size = 0.",
+          "[INFO DRT-0036] via9 guide region query size = 0.",
+          "[INFO DRT-0036] metal10 guide region query size = 0.",
+          "[INFO DRT-0179] Init gr pin query."
+        ]
+      }
+    }
+  }
+}

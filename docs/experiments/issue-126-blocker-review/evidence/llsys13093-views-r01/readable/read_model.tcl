@@ -1,0 +1,2 @@
+read_liberty {/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/llsys_wire_retention_views/r01/llaccel_aux-C/timing.lib}
+set f [open {/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/llsys_wire_retention_views/r01/llaccel_aux-C/model_pins.tsv} w];puts $f "pin\tdirection";foreach p [get_lib_pins -of_objects [get_lib_cells *]] {puts $f "[get_full_name $p]\t[get_property $p direction]"};close $f
