@@ -7,7 +7,8 @@
 - 同步：[项目说明](../../预制计算底座项目说明_v1.0.md)和 README/导读/简介/架构/状态；[决策 0005](../../docs/decisions/0005-compute-block-v-split-r.md)记录 V 三宏、R 保留、每种一个实现、逐宏最终布局布线。M/V 缩位宽和部分和精简仍为候选，未转移原 V 的物理资格。
 - 验证：[本次交付记录](../../work/YUZE-LU/139/README.md)及 validation.json；仅文档/管理检查，未重跑模型、RTL、EDA 或服务器作业，未修改现有实现工作树。
 - PR/最终提交与 CI 以 Issue #139 回执为准；待独立审查，不自合并或标 done。登记沿用 PR5 pending；缺 board.json 与 Projects 条目工具，看板 unverified/同步 pending，管理员待指定。
-- 下一步：完成文档审查/合并；主线另行落实各宏规格并逐宏物理验收，本次不接管其运行任务。
+- 续补：已有 M/V/R/S/T 的电路图、存储、控制与固定源码来源已直接加入总项目说明第 5.6 节；规划中的新 V 三宏不画图，本次不新建 Block 说明文件。
+- 交付：[PR #142](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/142)。用户本轮明确要求同步 main，将在检查后正常合并并读回；不代替他人审查或绕过保护。具体最终合并回执以 Issue #139 为准；主线另行落实逐宏物理验收，本次不接管运行任务。
 
 ## 2026-10-26 模型分析与计算图归档
 
