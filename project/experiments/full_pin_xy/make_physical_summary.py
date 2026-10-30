@@ -1,0 +1,145 @@
+"""Summarize actual separate gates without treating process status as qualification."""
+from pathlib import Path
+from collections import Counter
+import argparse,csv,gzip,json,re,tkinter
+EXPECTED={'act':860,'mxu':2172,'opentpu_aux':2229,'gemm':3753,'vector':2246,'llaccel_aux':13507}
+TCL=tkinter.Tcl()
+def read(p):
+    if not p.exists():return ''
+    return gzip.decompress(p.read_bytes()).decode('utf-8',errors='replace') if p.suffix=='.gz' else p.read_text(encoding='utf-8',errors='replace')
+def slack(d,kind):
+    m=re.search(r'worst slack (?:max|min)\s+([-\d.]+)',read(d/f'timing.{kind}.txt'));return float(m[1]) if m else None
+def summarize(root):
+    root=Path(root);base=root/'trial_receipts';summary={c:{'trials':{},'full_C_migration_routed':False,'whole_block_OpenDB_multi_terminal_geometry':'PENDING','complete_GDS_LVS_connectivity':'NOT_VERIFIED','parent_access':'UNKNOWN original handoff/target layers and version-matched parent paths',
+        'full_DRC_GDS_LVS':'NOT_QUALIFIED','full_system_RC_STA_electrical':'NOT_QUALIFIED'} for c in EXPECTED}
+    for d in sorted(base.glob('*/trials/*/*')):
+        if not d.is_dir():continue
+        case=next((c for c in sorted(EXPECTED,key=len,reverse=True) if d.name.startswith(c+'-')),None)
+        if not case:continue
+        plan=d.name[len(case)+1:];rev=d.parent.name;key=rev+'/'+plan
+        p=d/'execution.json'
+        if not p.exists():
+            summary[case]['trials'].setdefault(key,{'state':'DRIVER_FAILED_OR_NOT_STARTED; consult batch log','snapshot':str(d.relative_to(base))});continue
+        j=json.loads(p.read_text());completed=bool(j.get('finished_utc'));log=read(d/'openroad.log.gz')
+        stages=list(csv.DictReader(read(d/'stages.tsv').splitlines(),delimiter='\t'))
+        bystage={r['stage']:r['status'] for r in stages}
+        c={'state':j.get('status','RUNNING_OR_RECEIPT_INCOMPLETE'),'completed':completed,'finished_utc':j.get('finished_utc',''),'plan':plan,'candidate_revision':'r02' if rev in ['grid-r05','full-other-r01'] and case not in ['act','gemm'] else 'r01_or_PR120','selected_pin_count':j.get('selected_pin_count',8),'scheduler_job':j['scheduler_job'],'source_sha256':j['source_sha256'],
+           'driver_commit':j['driver_commit'],'source_unchanged':j.get('source_unchanged',False),'failed_stages':[r for r in stages if r['status']=='FAIL'],
+           'routed':bystage.get('detailed_route')=='EXECUTED','RCX_executed':bystage.get('extract_rc',bystage.get('baseline_rc'))=='EXECUTED',
+           'setup_worst_slack_ns':slack(d,'setup'),'hold_worst_slack_ns':slack(d,'hold'),'raw_receipt':str(p.relative_to(base)),
+           'original_external_driver_slew_load_models':'INCOMPLETE inherited boundary constraints; no silent added models',
+           'whole_cell_master_XY_orient_connections_unchanged':j.get('fingerprint_checks',{}).get('cells',{}).get('exact_equal',False),
+           'pdn_geometry_fingerprint_unchanged':j.get('fingerprint_checks',{}).get('pdn',{}).get('exact_equal',False),
+           'die_unchanged':j.get('fingerprint_checks',{}).get('die',{}).get('exact_equal',False)}
+        if rev=='electrical-r03':c['candidate_revision']='C_electrical_r03'
+        if rev=='mxu-repair-r03':c['candidate_revision']='C_mxu_repair_r03'
+        drc=d/'fresh_route.drc';c['fresh_native_DRC_count']=len(re.findall(r'^violation type:',read(drc),re.M)) if drc.exists() and bystage.get('fresh_native_drc')=='EXECUTED' else None
+        if drc.exists() and drc.stat().st_size>0 and c['fresh_native_DRC_count']==0:c['fresh_native_DRC_count']='NONEMPTY_REPORT_REQUIRES_PARSE'
+        check=read(d/'timing.checks.txt');c['reported_timing_electrical_violator_rows']=sum('(VIOLATED)' in line for line in check.splitlines()) if bystage.get('sta')=='EXECUTED' else None
+        c['PSM_VDD_connected']='All shapes on net VDD are connected.' in log;c['PSM_VSS_connected']='All shapes on net VSS are connected.' in log
+        for name in ['access.json','independent-access.json']:
+            if (d/name).exists():
+                access=json.loads((d/name).read_text());c['selected_access_all_terminals_pass']=access['pass'];c['selected_access_nets']=len(access['nets'])
+        layers={}
+        for layer,length in re.findall(r'^(metal\d+)\s+([\d.]+)um\s+\d+%',log,re.M):layers[layer]=float(length)
+        c['analysis_state_wire_length_by_layer_um_DO_NOT_USE_AS_PHYSICAL']=layers;c['analysis_state_wire_length_sum_um_DO_NOT_USE_AS_PHYSICAL']=sum(layers.values()) if layers else None
+        before=read(d/'before.pins.tsv.gz');after=read(d/'after.pins.tsv.gz')
+        if before and after:
+            aa=[TCL.splitlist(line) for line in before.splitlines()];bb=[TCL.splitlist(line) for line in after.splitlines()]
+            a=Counter(aa);b=Counter(bb);ar={row[0]:row for row in aa if row[2] not in ['POWER','GROUND']};br={row[0]:row for row in bb if row[2] not in ['POWER','GROUND']}
+            assert len(ar)==len(br)==EXPECTED[case] and set(ar)==set(br),(case,key,'actual signal pins changed')
+            moved=[]
+            for pin,row in ar.items():
+                q=br[pin];assert row[:5]==q[:5],(case,key,pin,'function/dir/use/net/layer changed')
+                rr=list(map(int,row[5:9]));ss=list(map(int,q[5:9]));assert rr[2]-rr[0]==ss[2]-ss[0] and rr[3]-rr[1]==ss[3]-ss[1],(case,key,pin,'size changed')
+                if rr!=ss:moved.append(pin)
+            assert len(moved)<=j.get('selected_pin_count',8),(case,key,'unexpected changed pins')
+            # All PG rectangles also identical, independently of the SWire fingerprint.
+            assert Counter(r for r in aa if r[2] in ['POWER','GROUND'])==Counter(r for r in bb if r[2] in ['POWER','GROUND'])
+            c['actual_all_pin_contract_check']={'original_signals':len(ar),'moved_count':len(moved),'moved_pins':moved,'lost_extra_layer_direction_net_use_size_changes':0,'all_PG_pin_rectangles_unchanged':True}
+        summary[case]['trials'][key]=c
+    for p in sorted(base.glob('*/connectivity/*/*/execution.json')):
+        rec=json.loads(p.read_text());src=Path(rec['source_odb']);case=next(c for c in sorted(EXPECTED,key=len,reverse=True) if src.parent.name.startswith(c+'-'))
+        key=src.parent.parent.name+'/'+src.parent.name[len(case)+1:];t=summary[case]['trials'].get(key)
+        if t and rec.get('result'):
+            raw=base/t['raw_receipt'];j=json.loads(raw.read_text());assert j['outputs']['checked.odb']['sha256']==rec['source_sha256'],'Whole connectivity/source mismatch'
+            t['whole_multi_terminal_signal_clock_geometry']=rec['result'];t['whole_geometry_receipt']=str(p.relative_to(base))
+    for p in sorted(base.glob('*/finalized/*/*/execution.json')):
+        rec=json.loads(p.read_text());case=rec['case'];key=rec['revision']+'/'+rec['plan'];t=summary[case]['trials'].get(key)
+        if not t:continue
+        t['clean_finalization']=rec;t['clean_receipt']=str(p.relative_to(base));t['authoritative_physical_odb']=str(Path(rec['legacy_RC_STA_receipt']).parents[3]/'finalized'/rec['revision']/(case+'-'+rec['plan'])/'clean.odb')
+        t['independent_clean_DRC_count']=rec.get('independent_DRC_count');t['post_RCX_ODB_rejected_as_physical_master']=True
+        if rec.get('whole_access'):
+            t['post_RCX_whole_geometry_diagnostic']=t.get('whole_multi_terminal_signal_clock_geometry')
+            t['whole_multi_terminal_signal_clock_geometry']=rec['whole_access']
+        if rec.get('selected_access'):t['selected_access_all_terminals_pass']=rec['selected_access']['pass']
+        log=read(p.parent/'export.log.gz');lengths={}
+        for layer,length in re.findall(r'^(metal\d+)\s+([\d.]+)um\s+\d+%',log,re.M):lengths[layer]=float(length)
+        if lengths:t['clean_actual_wire_length_by_layer_um']=lengths;t['clean_actual_wire_length_sum_um']=sum(lengths.values())
+    # Router statistics printed BEFORE RCX remain a separate, explicit source.
+    for s in summary.values():
+        for t in s['trials'].values():
+            if not t.get('raw_receipt'):continue
+            log=read((base/t['raw_receipt']).parent/'openroad.log.gz')
+            lengths={k:float(v) for k,v in re.findall(r'Total wire length on LAYER (metal\d+) = ([\d.]+) um\.',log)}
+            if lengths:t['DRT_pre_RCX_wire_length_by_layer_um']=lengths;t['DRT_pre_RCX_wire_length_sum_um']=sum(lengths.values())
+            via=re.findall(r'Total number of vias = (\d+)\.',log)
+            if via:t['DRT_pre_RCX_vias']=int(via[-1])
+    for case,s in summary.items():
+        done=[t for t in s['trials'].values() if t.get('completed')];candidates=[t for t in done if t.get('plan')=='C']
+        if candidates:
+            t=max(candidates,key=lambda t:(t['selected_pin_count'],{'C_electrical_r03':3,'C_mxu_repair_r03':3,'r02':2}.get(t['candidate_revision'],1),t['finished_utc']));n=t['selected_pin_count']
+            moved=t.get('actual_all_pin_contract_check',{}).get('moved_count')
+            s['route_status']=(f'选定{n}pin、实际移动{moved}pin，C实际重接完成；'+('完整C尚未实施' if n==8 else '增量C_electrical_r03，保留18pin边界' if t['candidate_revision']=='C_electrical_r03' else '增量C_mxu_repair_r03，保留真实lane0且修复2个PG相交点' if t['candidate_revision']=='C_mxu_repair_r03' else '原C全组已实施；完整父层/规则未资格化')) if t['routed'] else 'C实际试验失败/未完成，见回执'
+            with (root/(case+'_pin_coordinates.csv')).open(encoding='utf-8') as f:
+                expected_moved=sum(r['plan']=='C' and r['moved'].lower() in ['true','1'] for r in csv.DictReader(f))
+            s['original_full_C_trial_routed']=any(q.get('routed') and q.get('actual_all_pin_contract_check',{}).get('moved_count')==expected_moved for q in candidates)
+            s['full_C_migration_routed']=s['original_full_C_trial_routed']
+            s['current_variant']={'candidate_revision':t['candidate_revision'],'selected_cohort':n,'actual_moved_signal_pins':moved,'raw_receipt':t['raw_receipt']}
+            full=t.get('whole_multi_terminal_signal_clock_geometry',{}).get('pass','待验证')
+            s['whole_block_OpenDB_multi_terminal_geometry']=full
+            s['drc_status']='独立clean进程DRC {}; selected-net连通 {}; 全块几何连通 {}；父层未验证'.format(t.get('independent_clean_DRC_count','待复核'),t.get('selected_access_all_terminals_pass','待补查'),full)
+            s['sta_status']='RCX {}; setup {}ns / hold {}ns；时序/电气违例行{}；系统边界不完整'.format(t['RCX_executed'],t['setup_worst_slack_ns'],t['hold_worst_slack_ns'],t['reported_timing_electrical_violator_rows'])
+        else:s['route_status']='试验运行/驱动失败；未报告C通过';s['drc_status']='尚未完成';s['sta_status']='尚未完成'
+    for case,s in summary.items():
+        source=s['trials'];wanted=['full-controls-r04/A_replay','full-controls-r04/Aopt','full-controls-r04/B','full-other-r01/C','electrical-r03/C','mxu-repair-r03/C']
+        if case=='act':wanted=['fullC-r01/A_replay','full-controls-r04/Aopt','fullBcohort-r01/B','fullC-r02/C']
+        records={}
+        for key in wanted:
+            t=source.get(key,{})
+            if not t.get('completed') or not t.get('DRT_pre_RCX_wire_length_sum_um'):continue
+            records[key]={k:t.get(k) for k in ['selected_pin_count','DRT_pre_RCX_wire_length_sum_um','DRT_pre_RCX_vias','setup_worst_slack_ns','hold_worst_slack_ns','independent_clean_DRC_count','reported_timing_electrical_violator_rows']}
+            records[key]['actual_moved_pin_count']=t.get('actual_all_pin_contract_check',{}).get('moved_count')
+            records[key]['whole_geometry_pass']=t.get('whole_multi_terminal_signal_clock_geometry',{}).get('pass')
+        ref=records.get(wanted[0])
+        for q in records.values():
+            q['wire_change_vs_same_cohort_A_replay_percent']=100*(q['DRT_pre_RCX_wire_length_sum_um']/ref['DRT_pre_RCX_wire_length_sum_um']-1) if ref else None
+            q['via_change_vs_same_cohort_A_replay_percent']=100*(q['DRT_pre_RCX_vias']/ref['DRT_pre_RCX_vias']-1) if ref else None
+        s['matched_full_cohort_comparison']={'scope':'Same original full-C cohort rerouted from identical source; revised C keeps whole byte/lane groups at A as explicitly listed. B is only this cohort, not full B. Aopt is a slot assignment using C-center L1 proxy, not a globally optimal boundary. Native stats only; no system PPA qualification. Missing gate values mean pending, never pass.','plans':records}
+    rejection=root/'fixed_pg_rejections/llaccel_aux_full_C/proof.json'
+    if rejection.exists():
+        r=json.loads(rejection.read_text(encoding='utf-8'));s=summary['llaccel_aux']
+        assert r['all_actual_moved_pins_match_complete_original_C'] and r['actual_PG_before_and_after_move_byte_identical'] and r['direct_contact_pin_count']>0
+        s['full_C_actual_fixed_PG_rejection']={'scope':r['scope'],'checked_actual_signal_pins':r['signal_pins_checked'],'same_layer_fixed_PG_contact_pins':r['direct_contact_pin_count'],'rectangle_pairs':r['direct_contact_rectangle_pairs'],'raw_proof':'fixed_pg_rejections/llaccel_aux_full_C/proof.json','full_route_complete':False,'complete_DRC_pass':False}
+        t=s['trials'].get('full-other-r01/C')
+        if t:t.update({'state':'STOPPED_KNOWN_INVALID_FIXED_PG_CONTACT','stopped_after_exact_actual_pin_and_immutable_PG_proof':True,'full_detailed_route_completed':False,'original_incomplete_driver_receipt_preserved':True})
+        s['route_status']='完整C的13184pin已实际place_pin并完成GRT；26pin/44矩形对与固定PG直接相交，确认无效后停止该新DRT，未完成全C布线。另保留8pin局部C结果。'
+        s['drc_status']='完整C实际固定PG短路失败；8pin局部独立native DRC0/所检全块连通通过，不能混作全C通过'
+        s['sta_status']='完整C未提取/STA；历史8pin局部存在setup/hold及电气失败，非资格化'
+    source=summary['act']['trials'];keys=['fullC-r01/A_replay','fullBcohort-r01/B','fullC-r02/C']
+    if source.get('full-controls-r04/Aopt',{}).get('DRT_pre_RCX_wire_length_sum_um'):keys.insert(1,'full-controls-r04/Aopt')
+    if all(k in source and source[k].get('DRT_pre_RCX_wire_length_sum_um') for k in keys):
+        control=source[keys[0]];summary['act']['matched_740pin_comparison']={'scope':'Same 740 C-movable cohort, same source/resources/frame/layer set; B is subset of full859-pin B. DRT pre-RCX native statistics, one trial; not extracted RC or system PPA.',
+            'plans':{k:{'selected_pins':source[k]['selected_pin_count'],'wire_length_um':source[k]['DRT_pre_RCX_wire_length_sum_um'],'via_count':source[k]['DRT_pre_RCX_vias'],
+            'wire_change_percent':100*(source[k]['DRT_pre_RCX_wire_length_sum_um']/control['DRT_pre_RCX_wire_length_sum_um']-1),'via_change_percent':100*(source[k]['DRT_pre_RCX_vias']/control['DRT_pre_RCX_vias']-1),
+            'setup_worst_slack_ns':source[k]['setup_worst_slack_ns'],'hold_worst_slack_ns':source[k]['hold_worst_slack_ns']} for k in keys}}
+    # Per-net geometry details stay byte-exact in the linked raw receipts.
+    # Avoid duplicating multi-megabyte terminal/shape arrays in each summary.
+    def compact(value):
+        if isinstance(value,dict):return {k:(('See exact linked raw receipt; '+str(len(v))+' records') if k in ['nets','moved_pins'] and isinstance(v,(list,dict)) else compact(v)) for k,v in value.items()}
+        if isinstance(value,list):return [compact(v) for v in value]
+        return value
+    (root/'physical_summary.json').write_text(json.dumps(compact(summary),ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    print('PHYSICAL_SUMMARY_UPDATED',sum(len(s['trials']) for s in summary.values()),'trial receipts; full qualification NOT inferred')
+if __name__=='__main__':
+    p=argparse.ArgumentParser();p.add_argument('--root',required=True);a=p.parse_args();summarize(a.root)

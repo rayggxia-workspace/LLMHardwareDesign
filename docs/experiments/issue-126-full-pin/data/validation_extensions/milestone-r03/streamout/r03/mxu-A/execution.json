@@ -1,0 +1,91 @@
+{
+  "plan": "A",
+  "case": "mxu",
+  "source_clean_execution": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/finalized/r03/mxu-A/execution.json",
+  "driver_commit": "6c5d3e1d9acce45fc4a0fba87a755fbc6fe74a59",
+  "scheduler_job": "92430",
+  "started_utc": "2026-10-27T13:09:42.798927+00:00",
+  "merge_command": [
+    "singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro",
+    "--bind",
+    "/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro",
+    "--home",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/home",
+    "--pwd",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/streamout/r03/mxu-A",
+    "--env",
+    "PINXY_STREAM_OUT=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/streamout/r03/mxu-A",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "klayout",
+    "-b",
+    "-r",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/stream-pack-r03/code/streamout_probe.py"
+  ],
+  "source_clean_execution_sha256": "3d85770ee8d4351f11265b97d4a918dcd988ca06cd3bcad876f557e26ac22e61",
+  "merge_returncode": 4,
+  "missing_GDS_cells": [
+    "fakeram45_1r1w_64x72",
+    "fakeram45_1r1w_64x40",
+    "fakeram45_1r1w_64x96",
+    "fakeram45_1r1w_64x64"
+  ],
+  "DRC_command": [
+    "singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro",
+    "--bind",
+    "/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro",
+    "--home",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/home",
+    "--pwd",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/streamout/r03/mxu-A",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "klayout",
+    "-b",
+    "-rd",
+    "in_gds=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/streamout/r03/mxu-A/diagnostic.gds",
+    "-rd",
+    "report_file=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/streamout/r03/mxu-A/diagnostic.lyrdb",
+    "-r",
+    "/OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc"
+  ],
+  "DRC_returncode": 0,
+  "status": "DIAGNOSTIC_ONLY; missing views or full-rule/parent/system qualification still separate",
+  "finished_utc": "2026-10-27T13:51:10.249829+00:00",
+  "files": {
+    "merge.log": {
+      "bytes": 696,
+      "sha256": "399cb41a0d504552b4744c20d1d3822c4df2e89f96b287e0704b05a53444294b"
+    },
+    "technology.lyt": {
+      "bytes": 10750,
+      "sha256": "efb1a677ba8172eeb064e7a156bc38bb6bd24f38a3207a0c874536ea94038bff"
+    },
+    "drc.log": {
+      "bytes": 55966,
+      "sha256": "19466569646f62f06c178318aa235feee3fa103383ba0799151466e2bae129cc"
+    },
+    "merge.json": {
+      "bytes": 1842,
+      "sha256": "299572886f725004ca08fb5fc9440c8c402c1385fee68575cf45f9589e4d8411"
+    },
+    "diagnostic.gds": {
+      "bytes": 153100110,
+      "sha256": "b992d627bf9bffc1569c3281ec5d14862b31a15519920b2a64a82fd614ed7f7d"
+    },
+    "diagnostic.lyrdb": {
+      "bytes": 502772,
+      "sha256": "6ebe373d683fb08e212c1666589f1d9a853ef31e9262c4f4f5c2633dc70c2946"
+    },
+    "input.json": {
+      "bytes": 1063,
+      "sha256": "a4d06a3776d64d4908aea921934d92857652f5f665aa7376fb356c2abc65ef36"
+    }
+  }
+}

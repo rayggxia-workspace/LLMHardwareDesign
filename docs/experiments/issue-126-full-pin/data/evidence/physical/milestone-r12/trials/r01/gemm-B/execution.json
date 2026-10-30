@@ -1,0 +1,222 @@
+{
+  "case": "gemm",
+  "plan": "B",
+  "stage_scope": "8 selected pins; all remaining pins stay original; pure XY, no buffering/resizing",
+  "source_odb": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/6_final.odb",
+  "source_sha256": "57dc48d9e5e5e4e332601cee4489c8619215cd93126c8449caedaa50c1a45571",
+  "source_config": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/config.mk",
+  "source_sdc": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/6_final.sdc",
+  "libs": [
+    "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib"
+  ],
+  "input_sha256": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/6_final.odb": "57dc48d9e5e5e4e332601cee4489c8619215cd93126c8449caedaa50c1a45571",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/6_final.sdc": "7e7228dce3ef76286673e76330ca124074495fb28caf8a685afc9b0d2ff51ac4",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/config.mk": "c1f7f39b030393872298067f0956f1d484159ae546414545520668906cccf5cf",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/inputs/trial-inputs-r03/gemm-B.tcl": "d9cdc8d6d1fefe4751c9ca595f19be8a6311593fef69ee6e814afad1d42ecb48",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/code/physical_trial.tcl": "5bf23c163facb8cc7c03aecf26445a0e37a27ef3aee1b21cb38e02b8151bf1ab"
+  },
+  "scheduler_job": "92278",
+  "allocated_cpus": "8",
+  "openroad_threads": 4,
+  "started_utc": "2026-10-27T08:23:33.088785+00:00",
+  "driver_commit": "2b8a9d246bca9cd9ed1e13b53d007d3ca9b56d48",
+  "parent_handoff_target_layer": "UNKNOWN; this experiment cannot qualify parent access",
+  "command": [
+    "singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro",
+    "--bind",
+    "/public/home/yuzelu/PingyangHuang/issue-55:/public/home/yuzelu/PingyangHuang/issue-55:ro",
+    "--home",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/home",
+    "--pwd",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/r01/gemm-B",
+    "--env",
+    "PINXY_OUTPUT=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/r01/gemm-B,PINXY_ODB=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/6_final.odb,PINXY_SDC=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/gemm-cap20/flow/results/nangate45/parallel_llaccel_gemm/base/6_final.sdc,PINXY_LIBS_TCL=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/trials/r01/gemm-B/libs.tcl,PINXY_RELOCATIONS=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/inputs/trial-inputs-r03/gemm-B.tcl,PINXY_PLAN=B,PINXY_TOP_LAYER=10,OMP_NUM_THREADS=4",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad",
+    "-threads",
+    "4",
+    "-no_init",
+    "-exit",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/code/physical_trial.tcl"
+  ],
+  "returncode": 0,
+  "finished_utc": "2026-10-27T08:48:35.996665+00:00",
+  "source_unchanged": true,
+  "fingerprint_checks": {
+    "cells": {
+      "before_sha256": "1b35cb45822189a76be60d1aad870b04eb93c91eb97997f21a30e387daff5171",
+      "after_sha256": "1b35cb45822189a76be60d1aad870b04eb93c91eb97997f21a30e387daff5171",
+      "exact_equal": true
+    },
+    "pdn": {
+      "before_sha256": "f6ac6d9efc25e1e24e378c1bba14169f0f4d5d65f584cfa497dbc9a7489d675c",
+      "after_sha256": "f6ac6d9efc25e1e24e378c1bba14169f0f4d5d65f584cfa497dbc9a7489d675c",
+      "exact_equal": true
+    },
+    "die": {
+      "before_sha256": "6e57c1e99b562930db4af3b920da2fc1d2257aca6971d80c92e59c020a5be464",
+      "after_sha256": "6e57c1e99b562930db4af3b920da2fc1d2257aca6971d80c92e59c020a5be464",
+      "exact_equal": true
+    }
+  },
+  "outputs": {
+    "route.guide": {
+      "bytes": 75572039,
+      "sha256": "7d4f3e42b862c802137958e9589da6f8b90cff060e0585fa045acc4abd864b22"
+    },
+    "checked.odb": {
+      "bytes": 473347300,
+      "sha256": "ad2146e2afbaeed6b1393c771e297acf4daf2f726de65ad2eb74e1c81a2d8bd0"
+    },
+    "global.odb": {
+      "bytes": 377184302,
+      "sha256": "a3bd8d8cd0d556a5dab9dcfa331d5312907065581533b41e989ce5e0682d9c00"
+    },
+    "odb_route_connectivity.error.txt": {
+      "bytes": 202,
+      "sha256": "2741ddd6f2abdcde269eb87a4974de25568d488c15912c16292a3877d89b4db1"
+    },
+    "checked.def": {
+      "bytes": 123258031,
+      "sha256": "273406d6fe3fb3602be2ed1d4a796981e1a96910dea664f736ca412997c09bf3"
+    },
+    "timing.hold_tns.txt": {
+      "bytes": 17,
+      "sha256": "d2cd5ac33c7e5ae94363b6f4cee3f294aa0852daa624c390b572ee0b5ed6f5db"
+    },
+    "after.die.tsv": {
+      "bytes": 20,
+      "sha256": "6e57c1e99b562930db4af3b920da2fc1d2257aca6971d80c92e59c020a5be464"
+    },
+    "routed.odb": {
+      "bytes": 383186218,
+      "sha256": "8eeac7a4ecf2041e1b80ffd22b400b3a1541823810c1bbc0878c5bff57f40ac5"
+    },
+    "after.cells.tsv": {
+      "bytes": 75036299,
+      "sha256": "1b35cb45822189a76be60d1aad870b04eb93c91eb97997f21a30e387daff5171"
+    },
+    "libs.tcl": {
+      "bytes": 102,
+      "sha256": "a547de45fee1d9160cbd4558639ff396a9b83515b4b3f6fb57fda5c25389d68d"
+    },
+    "moved.pdn.tsv": {
+      "bytes": 2080002,
+      "sha256": "f6ac6d9efc25e1e24e378c1bba14169f0f4d5d65f584cfa497dbc9a7489d675c"
+    },
+    "timing.hold.txt": {
+      "bytes": 25,
+      "sha256": "14291cab151fe69d3bff9bb7fbdf8215f1538e9b58398f364d9a2e8b4c07a1f9"
+    },
+    "moved.pins.tsv": {
+      "bytes": 316385,
+      "sha256": "928b1d59b4f62dab5033dfac72f2043d724eed3c16761548035af4e24beba607"
+    },
+    "timing.setup_tns.txt": {
+      "bytes": 17,
+      "sha256": "44f23fe41be6907ffbb46685b3ddca75e2346eb1009578f7dcf1a0c5a4bdc1d5"
+    },
+    "after.pins.tsv": {
+      "bytes": 316385,
+      "sha256": "928b1d59b4f62dab5033dfac72f2043d724eed3c16761548035af4e24beba607"
+    },
+    "openroad.log": {
+      "bytes": 23384,
+      "sha256": "79953c9c139336e5cff7fe45edff40280598348c2d0c9e589c4ceaea9f723598"
+    },
+    "before.die.tsv": {
+      "bytes": 20,
+      "sha256": "6e57c1e99b562930db4af3b920da2fc1d2257aca6971d80c92e59c020a5be464"
+    },
+    "timing.paths.json": {
+      "bytes": 710089074,
+      "sha256": "66f4fd5c6718920061643e376dea2942a6106f936f2a2007526b715b3aea7a5c"
+    },
+    "ripped.odb": {
+      "bytes": 377184518,
+      "sha256": "55a95df5049ba0d16d373eb223506baaeb53bb43dbbbb296d630a03e756512bf"
+    },
+    "extracted.spef": {
+      "bytes": 272999217,
+      "sha256": "3cf7da0174ade2614b5165ed2cdd32554d6b718e6ecc159d0a0a9bea95e63462"
+    },
+    "stages.tsv": {
+      "bytes": 374,
+      "sha256": "e8cee7c7ca94e8c01bcb48a11ed3c89c6f5ed8ea5a474cdfe2ab799e784b7b7a"
+    },
+    "checked.sdc": {
+      "bytes": 343905,
+      "sha256": "41cb78a26a0a57df3e3a7018fb369e6a79d2e0656b26d40293ad5d4f78f24d17"
+    },
+    "before.pdn.tsv": {
+      "bytes": 2080002,
+      "sha256": "f6ac6d9efc25e1e24e378c1bba14169f0f4d5d65f584cfa497dbc9a7489d675c"
+    },
+    "timing.parasitic_coverage.txt": {
+      "bytes": 729527,
+      "sha256": "4cb947ff31fa7c0df86b22668eaf41f1a16b41c63e5b0e10d0b82c4e58654878"
+    },
+    "moved.odb": {
+      "bytes": 377186247,
+      "sha256": "e3dc6710f72fef787a1fd1c1775e783f1cfc6d8afc7a2d333b1e13dd892f1f20"
+    },
+    "before.pins.tsv": {
+      "bytes": 316357,
+      "sha256": "378349c4c1978414835bbfc0266824c678af7ef54d9a4ac02a3bcdce2e18cd57"
+    },
+    "route.drc": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "checked.v": {
+      "bytes": 36441131,
+      "sha256": "936ab10c4c3032a9de2c183685497a0c1bb7c72b47e029e52ecc8c6e88573e49"
+    },
+    "fresh_route.drc": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timing.checks.txt": {
+      "bytes": 115,
+      "sha256": "6c335d259728dcb345b7e1e2717292b60a51184dbd499a3b4763be9fd2de1381"
+    },
+    "abstract.lef": {
+      "bytes": 1896672,
+      "sha256": "ea4185f4685b6f999a349edaab8e0ef145891b0f1723abeea6c1b3d48b226fba"
+    },
+    "before.cells.tsv": {
+      "bytes": 75036299,
+      "sha256": "1b35cb45822189a76be60d1aad870b04eb93c91eb97997f21a30e387daff5171"
+    },
+    "timing.constraint_coverage.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "moved.die.tsv": {
+      "bytes": 20,
+      "sha256": "6e57c1e99b562930db4af3b920da2fc1d2257aca6971d80c92e59c020a5be464"
+    },
+    "wire_length.csv": {
+      "bytes": 25,
+      "sha256": "5faad33e59663a14f8e6bc570fbb9f6a62386445fb4f420d578adbc7f172551a"
+    },
+    "moved.cells.tsv": {
+      "bytes": 75036299,
+      "sha256": "1b35cb45822189a76be60d1aad870b04eb93c91eb97997f21a30e387daff5171"
+    },
+    "timing.setup.txt": {
+      "bytes": 25,
+      "sha256": "8a28a6dbe70f0b0e179bf8f6b52bc8249753107b4dda0ba3fec2644e898d9267"
+    },
+    "after.pdn.tsv": {
+      "bytes": 2080002,
+      "sha256": "f6ac6d9efc25e1e24e378c1bba14169f0f4d5d65f584cfa497dbc9a7489d675c"
+    }
+  },
+  "status": "STAGES_EXECUTED_NOT_QUALIFIED"
+}

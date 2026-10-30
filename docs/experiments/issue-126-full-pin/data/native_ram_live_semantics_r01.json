@@ -1,0 +1,22 @@
+{
+  "scope": "PARTIAL_LIVE_SOURCE_OBSERVATION_NOT_TERMINAL_MEMORY_IMPLEMENTATION",
+  "observed_utc": "2026-10-29T09:31:51.141431+00:00",
+  "scheduler_job": "93317",
+  "full_qualification": false,
+  "actual_source": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/native_ram_physical_trial/r01/64x64-1r1w-mask1/generated_behavioral.v",
+  "actual_behavioral_SHA256": "b9803c8c0ffb60a47ff1a0e2623bf7273a99ffd68dceabf5cf1ddce757026176",
+  "actual_behavioral_bytes": 506,
+  "actual_behavioral_text": "module RAM64x64 (\n  clk,\n  D,\n  Q,\n  addr_w,\n  addr_r0,\n  we\n);\n  input clk;\n  input [63:0] D;\n  output reg [63:0] Q;\n  input [5:0] addr_w;\n  input [5:0] addr_r0;\n  input [63:0] we;\n\n  // memory array declaration\n  reg [63:0] mem[0:63];\n\n  // write logic\n  integer i;\n  always @(posedge clk) begin\n    for (i = 0; i < 64; i = i + 1) begin\n      if (we[i]) begin\n        mem[addr_w][i*1 +:1] <= D[i*1 +:1];\n      end\n    end\n  end\n\n  // read logic\n  always @(*) begin\n    Q = mem[addr_r0];\n  end\n\nendmodule\n",
+  "read_contract": "ASYNCHRONOUS_UNGATED_Q_MEM_ADDR",
+  "original_fakeram_read_contract": "POSEDGE_RE_ENABLE_REGISTERED_HOLD_WITH_SAME_ADDR_WRITE_X",
+  "drop_in_functionally_compatible": false,
+  "additional_work_required": "Explicit source-bound registered-read/enable/mask wrapper and real function/physical/cost verification before any replacement. No source macro changed.",
+  "native_log_observations": [
+    "RAM-0022 no tapcell warning",
+    "RAM-0035 vertical pitch4.20um less than4bitcolumns",
+    "PPL top pin range0–544.16um and right range0–91um; provisional observed ranges, NOT final measured die",
+    "clk fanout4097; native DRT-0120 large-net warning"
+  ],
+  "native_route_terminal": "NOT_OBSERVED",
+  "GDS_RC_STA_and_original_outline_and_pin_layer_compatibility": "NOT_VERIFIED"
+}

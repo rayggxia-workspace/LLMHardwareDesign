@@ -1,0 +1,9 @@
+{
+  "created_utc": "2026-10-28T23:42:30.441524+00:00",
+  "driver_commit": "e85a4eb93ac3f8eb762a6a029c696b26f51c7571",
+  "driver": "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/physical-continuation-r27",
+  "returncode": 0,
+  "stdout": "93072\n93073\n93074\n",
+  "stderr": "",
+  "submitted_commands": "set -euo pipefail\nROOT=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027\nD=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/physical-continuation-r27\ncd \"$D\"\ntar -xf source.tar --strip-components=3 -C code\nprintf '%s\\n' e85a4eb93ac3f8eb762a6a029c696b26f51c7571 > code/driver_commit.txt\nexport PINXY_DRIVER_DIR=\"$D/code\"\ncd \"$ROOT\"\ntest ! -e system_stacked_via_route/r01\ntest ! -e vector_clone_probe/r02\ntest ! -e escape_view_recheck/r01\nsbatch --parsable --output=\"$ROOT/logs/system-stacked-via-r01-%j.log\" \"$D/code/system_stacked_via_job.sh\" r01\nsbatch --parsable --output=\"$ROOT/logs/vector-clone-probe-r02-%j.log\" \"$D/code/vector_clone_probe_job.sh\" r02\nsbatch --parsable --output=\"$ROOT/logs/mxu-escape-view-recheck-r01-%j.log\" \"$D/code/mxu_escape_parent_recheck_job.sh\" r01\n"
+}

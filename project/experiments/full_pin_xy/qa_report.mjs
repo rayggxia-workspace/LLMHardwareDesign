@@ -1,0 +1,105 @@
+// Headless Edge QA in a new isolated profile; never touches a user's browser.
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {pathToFileURL} from 'node:url';
+import {spawn} from 'node:child_process';
+const [report,out]=process.argv.slice(2);
+await fs.mkdir(out,{recursive:true});
+const edge=process.env.EDGE_BINARY||'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
+const port=9346+Math.floor(Math.random()*1000);
+const child=spawn(edge,['--headless=new','--disable-gpu','--no-first-run','--disable-extensions',`--remote-debugging-port=${port}`,`--user-data-dir=${path.resolve(out,'edge-profile')}`,'about:blank'],{windowsHide:true,stdio:'ignore'});
+let socket,command;
+try {
+ let targets;
+ for(let i=0;i<100;i++){try{targets=await(await fetch(`http://127.0.0.1:${port}/json/list`)).json();break;}catch{await new Promise(r=>setTimeout(r,100));}}
+ if(!targets)throw Error('New Edge debugger unavailable');
+ socket=new WebSocket(targets.find(t=>t.type==='page').webSocketDebuggerUrl);
+ await new Promise((r,j)=>{socket.onopen=r;socket.onerror=j;});
+ let id=0;const pending=new Map(),errors=[];
+ socket.onmessage=e=>{const m=JSON.parse(e.data);if(m.id){const p=pending.get(m.id);pending.delete(m.id);m.error?p.reject(m.error):p.resolve(m.result);}if(m.method==='Runtime.exceptionThrown')errors.push(m.params);};
+ const call=(method,params={})=>new Promise((resolve,reject)=>{const n=++id;pending.set(n,{resolve,reject});socket.send(JSON.stringify({id:n,method,params}));});
+ command=call;
+ const evaluate=async expression=>{const r=await call('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
+ await call('Page.enable');await call('Runtime.enable');
+ await call('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
+ await call('Page.navigate',{url:pathToFileURL(path.resolve(report)).href});
+ for(let i=0;i<300;i++){if(await evaluate('document.readyState==="complete" && !!document.querySelector("#count") && document.querySelector("#count").textContent.includes("24767")'))break;await new Promise(r=>setTimeout(r,100));}
+ await evaluate('document.querySelectorAll("img").forEach(i=>i.loading="eager")');
+ for(let i=0;i<200;i++){if(await evaluate('[...document.images].every(i=>i.complete && i.naturalWidth>0)'))break;await new Promise(r=>setTimeout(r,100));}
+ const all=await evaluate('({title:document.title,count:document.querySelector("#count").textContent,images:[...document.images].map(i=>({src:i.getAttribute("src"),loaded:i.complete&&i.naturalWidth>0})),overflow:document.documentElement.scrollWidth>innerWidth})');
+ if(!all.count.includes('24767')||all.images.some(i=>!i.loaded)||all.overflow)throw Error(JSON.stringify(all));
+ await fs.writeFile(path.join(out,'report-top.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ for(const [prefix,name] of [['93333全部13507','report-current-access-caps.png'],['93338显式同步读','report-ram-sync-proof.png'],['93352全量真实WIRE','report-wire-candidates.png'],['93349真实OBS几何','report-obs-exact-import.png'],['93343已收齐终态','report-owned-cap-terminal.png']]){
+  const selector=JSON.stringify(prefix);
+  if(await evaluate(`[...document.querySelectorAll('p')].some(e=>e.textContent.startsWith(${selector}))`)){
+   await evaluate(`[...document.querySelectorAll('p')].find(e=>e.textContent.startsWith(${selector})).scrollIntoView()`);
+   await fs.writeFile(path.join(out,name),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+  }
+ }
+ if(await evaluate(`!!document.querySelector('img[src="assets/llsys_owned_cap_spacing.png"]')`)){
+  await evaluate(`document.querySelector('img[src="assets/llsys_owned_cap_spacing.png"]').scrollIntoView()`);
+  await fs.writeFile(path.join(out,'report-owned-cap-spacing.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ }
+ for(const id of ['r49-actual-parent','r49-export-coverage','r50-parent-sta','r51-wire-api','r52-decoder','r53-actual-restore','r53-patch-export','r54-source-patch-audit','r55-current-gemm-audit','r56-current-views']){
+  if(await evaluate(`!!document.getElementById(${JSON.stringify(id)})`)){
+   await evaluate(`document.getElementById(${JSON.stringify(id)}).scrollIntoView()`);
+   await fs.writeFile(path.join(out,`report-${id}.png`),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+  }
+ }
+ if(await evaluate(`!!document.querySelector('img[src="assets/llsys_actual_wire_restore.png"]')`)){
+  await evaluate(`document.querySelector('img[src="assets/llsys_actual_wire_restore.png"]').scrollIntoView()`);
+  await fs.writeFile(path.join(out,'report-actual-wire-restore.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ }
+ if(await evaluate('!!document.querySelector("#latest-physical-gates")')){
+  await evaluate('document.querySelector("#latest-physical-gates").scrollIntoView()');
+  await fs.writeFile(path.join(out,'report-latest-gates.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ }
+ if(await evaluate('[...document.querySelectorAll("p")].some(e=>e.textContent.startsWith("93076新的六块扩展STA"))')){
+  await evaluate('[...document.querySelectorAll("p")].find(e=>e.textContent.startsWith("93076新的六块扩展STA")).scrollIntoView()');
+  await fs.writeFile(path.join(out,'report-extended-STA.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ }
+ if(await evaluate('[...document.querySelectorAll("p")].some(e=>e.textContent.startsWith("93025全770原生guide接续已FAILED"))')){
+  await evaluate('[...document.querySelectorAll("p")].find(e=>e.textContent.startsWith("93025全770原生guide接续已FAILED")).scrollIntoView()');
+  await fs.writeFile(path.join(out,'report-full770-detail-failure.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ }
+ if(await evaluate(`!!document.querySelector('img[src="assets/mxu_actual_M6_escape_context.png"]')`)){
+  await evaluate(`document.querySelector('img[src="assets/mxu_actual_M6_escape_context.png"]').scrollIntoView()`);
+  await fs.writeFile(path.join(out,'report-mxu-actual-M6-context.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ }
+ if(await evaluate(`!!document.querySelector('img[src="assets/system_stacked_via_actual.png"]')`)){
+  await evaluate(`document.querySelector('img[src="assets/system_stacked_via_actual.png"]').scrollIntoView()`);
+  await fs.writeFile(path.join(out,'report-system-actual-stacked-via.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ }
+ if(await evaluate('[...document.querySelectorAll("p")].some(e=>e.textContent.startsWith("93117两模式真实固定预连上下文试验"))')){
+  await evaluate('[...document.querySelectorAll("p")].find(e=>e.textContent.startsWith("93117两模式真实固定预连上下文试验")).scrollIntoView()');
+  await fs.writeFile(path.join(out,'report-actual-preconnected-context.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ }
+ if(await evaluate(`!!document.querySelector('img[src="assets/upper_actual_via10_shorts.png"]')`)){
+  await evaluate(`document.querySelector('img[src="assets/upper_actual_via10_shorts.png"]').scrollIntoView()`);
+  await fs.writeFile(path.join(out,'report-upper-actual-shorts.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ }
+ await evaluate('document.querySelector("#case").value="vector";document.querySelector("#search").value="vec_wr_wdata[300]";render()');
+ const query=await evaluate('({count:document.querySelector("#count").textContent,rows:document.querySelectorAll("#rows tr").length,text:document.querySelector("#rows").textContent})');
+ if(query.rows!==1||!query.text.includes('vec_wr_wdata[300]'))throw Error(JSON.stringify(query));
+ await evaluate('document.querySelector("#search").value="";document.querySelector("#case").value="";render();document.querySelector("#physical").scrollIntoView()');
+ await fs.writeFile(path.join(out,'report-physical.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ for(const [name,heading] of [['cohort','完整C同组实际'],['gds','独立GDS合并'],['revision','真实失败驱动'],['parent','补建受控父层'],['models','基于实际SPEF导出'],['rules','原deck规则实现适用性']]){
+  await evaluate(`(()=>{const e=[...document.querySelectorAll('h3')].find(e=>e.textContent.includes(${JSON.stringify(heading)}));if(!e)throw Error('Missing result section');e.scrollIntoView()})()`);
+  await fs.writeFile(path.join(out,`report-${name}.png`),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ }
+ if(await evaluate('!!document.querySelector("#deadline-status-link")')){
+  const statusURL=await evaluate('document.querySelector("#deadline-status-link").href');await call('Page.navigate',{url:statusURL});
+  for(let i=0;i<50;i++){if(await evaluate('document.readyState==="complete" && document.querySelectorAll("tbody tr").length===11'))break;await new Promise(r=>setTimeout(r,100));}
+  const state=await evaluate('({rows:document.querySelectorAll("tbody tr").length,overflow:document.documentElement.scrollWidth>innerWidth,text:document.body.innerText})');
+  if(state.rows!==11||state.overflow||!state.text.includes('09:19'))throw Error('Deadline status table failed');
+  await fs.writeFile(path.join(out,'report-deadline-status.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+ }
+ if(errors.length)throw Error(JSON.stringify(errors));
+ const result={status:'PASS_BROWSER_RENDER_FILTER_AND_IMAGES',...all,query,exceptions:errors};
+ await fs.writeFile(path.join(out,'browser_qa.json'),JSON.stringify(result,null,2)+'\n');
+ console.log(result.status,all.images.length,'loaded images; exact constant-bit query passed');
+} finally {
+ if(command&&socket?.readyState===1){try{await Promise.race([command('Browser.close'),new Promise(r=>setTimeout(r,1000))]);}catch{}}
+ if(socket&&socket.readyState===1){socket.close();}
+ child.kill();
+}

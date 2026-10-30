@@ -1,5 +1,13 @@
 # 架构与运行
 
+Issue126工具规模诊断：`probe_upper_fullframe_subset.py`/`upper_fullframe_probe_job.sh`只读原770边实际模式的闭合placed_adapter检查点，保留全frame/全部原M10 PG与OBS、实际4个hook，只在独立scratch保留2条真实边并启用GRT verbose；原770边及共同下层作业不附加/暂停/改动。此诊断不代表全块/完整系统或允许层可行性，所有成功仅限子集。实际执行以runtime_submissions/原生回执为准。
+
+Issue126新终态复现：`incremental_diode_eco_job.sh r01`的真实658diode源已完成native/全网几何/原数字及位置合同/RCX/原SDC检查，完整GDS仍独立。`route_representation_job.sh r01`按三份真实SHA比较全部268637网的WIRE/VIA矩形多重集，15/77网不同表示不等于物理并集/线长/RC；完整逐网digest留授权存储。`export_real_diode_view.py`/`real_diode_view_job.sh`为该确定源导出真实clean ODB/LEF/OBS/DEF/网表、SPEF研究模型并逐bit/方向/层/尺寸核查，独立重读模型和余量；未提交/未执行状态由runtime_submissions及新回执明确，不因代码存在称视图已完成。`audit_path_liberty_tables.py`只读诊断真实141段cell arc的原库表，不把独立grid最小值当STA或可行/不可行证明。`plot_actual_diode_access.py`分别绘制原GDS bbox及新真实cell放置框，定位符号和真实尺寸区分，发布PNG/SVG需目视核验。
+
+Issue126剩余天线：`post_diode_netmap_job.sh cap-r01 cap`/`run_post_diode_netmap.py`只接受匹配DEF/GDS/RDB/原生几何SHA，将真实多边形精确关联实际网，逐项核查已有diode集合。`run_incremental_diode_eco.py`/`incremental_diode_eco_job.sh`据37项/22网证据复用636diode+两换型真实源，旧单元/diode全部FIRM后放置22新ANTENNA_X1，恢复原状态；原guide的start/end incremental GRT及普通DRT不等于只改22条网。全量图、原pose/端点、pin/PG/外框/OBS、fresh DRC、RCX及原SDC检查独立保留，新GDS原deck须再执行，不能以插入数量或native0替代规则资格。
+
+Issue126增量复现：`diode_cap_eco_job.sh r01`/`run_diode_cap_eco.py`只在636真实diode后的确定源上按原Liberty逻辑/状态合同换型INV/XNOR两实例，保存增量接线、fresh DRC、全网几何、RCX及完整原SDC报告，成本独立。`antenna_diode_stream_job.sh cap-r01 r01 cap`按源SHA执行严格GDS及未修改的原deck，与旧diode源37项天线分开。`run_full_upper_adapter.py`/`full_upper_adapter_job.sh`实现两个770-edge适配层独立试验，输入为同一个真实但未合格的下层检查点；每条实际overlay M10矩形须包含在原hook内，M1–M9/cut1–cut9不得新增，不以适配层试验替代下层冻结/完整系统RC/STA。源码/命令/工具/作业由gate-r14及后续不可覆盖回执绑定。
+
 本仓库含研究资料、参考结果和实验性分层物理实现代码。`project/experiments/` 下保留 `block_hierarchy/`、`parallel_blocks/` 和 `opentpu_compare/` 的实验及证据；正式预制底座和制造工具链尚未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md) 中标注的候选架构不能当作已实现硬件。
 
 ## 研究系统边界
@@ -126,3 +134,81 @@ python project/experiments/pin_xy_candidates/validate_repository.py
 ```
 
 完整重画先按该目录 README 恢复独立工作目录和只读 physical/ 快照，再运行 analyze_layout.py；不能在参考报告或已有实验目录原地运行。最近端点 L1 与矩形风险不是提取线长/RC，也不是 DRC、时序或实际面积收益。本次没有启动新的 P&R。
+
+## Issue126：完整功能分块、六块候选覆盖与真实接入
+
+[中文入口](experiments/issue-126-full-pin.md)与[交互报告](experiments/issue-126-full-pin/report.html)在PR120之上增量扩展，代码位于 `project/experiments/full_pin_xy/`。
+openTPU为ACT/MXU/SYSTEM，llaccel_core为GEMM/VECTOR/SYSTEM，SYSTEM复用Issue55真实包装和完整功能归属。
+六块24,767原始信号pin，A/B/C共74,301行；未重算ACT/GEMM原有候选。命令与输入恢复见该目录README。
+
+```sh
+python scripts/check_project.py
+python project/experiments/full_pin_xy/validate_repository.py
+```
+
+`prepare_trials.py`冻结同一8pin的原始、重布线控制、边界槽位重排、B/C；`physical_trial.tcl`实际改ODB并GRT/DRT/RCX，分别保留规则、连通、PDN、STA和电气回执。
+`export_access.tcl`/`check_access.py`从真实各层路由、via定义和ITerm访问矩形独立检查连通；全块模式只排除不需互连的单端网络，不等于GDS/LVS。
+候选检查、局部试验、完整C实现与父层资格均单列；原父层handoff/目标层仍未知，不能自行指定M8或提升至M11/M12。
+远程只写 `/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027`，采用先提交、全新commit驱动目录和全新尝试名；不覆盖历史数据库或活动作业。当前物理结果以报告中的实际阶段回执为准，不将DRT0等同完整通过。
+
+完整cohort比较、实际失败驱动的GEMM整字节/MXU整lane增量修订，见`prepare_electrical_revision.py`、`prepare_mxu_repair.py`；原ABC和当前物理补充表分别保存。`stage_incremental_evidence.py`复用真实执行输入并核对Tcl SHA。`make_physical_summary.py`按实际cohort比较DRT提取前线长/via、独立native DRC、所检全块多端连通与setup/hold/电气，原始逐net细节保留在链接回执，HTML只展示摘要。
+
+按用户明确授权补建的受控父层由`prepare_controlled_parent.py`/`parent_job.sh`实施；`verify_parent_graph.py`在PG/布线前核对全部端点/bit/方向/原层，后续各变体冻结A的PG/外框/TOP_IO及单元位置。新TOP_IO策略与tie成本明确单列，历史handoff仍未知。父层Liberty仅物理链接、未表征，禁止用其得出父层STA/负载资格。真实GDS/LVS/宏器件模型缺项继续保留。
+
+后续`run_timing_models.py`/`timing_model_job.sh`已实际从匹配clean ODB与原SPEF导出20份研究叶模型，逐信号bit/方向及SPEF重读余量校验通过；原占位Lib仍只用于已冻结路由阶段。`run_parent_rc_sta.py`在独立进程中读取真实导出模型，精确匹配物理ODB及来源回执SHA，并以父层native/连通/PG门槛为前提；新2.5ns基准仍缺外部I/O延时、驱动、slew、load及minimum_period覆盖，始终不输出完整系统签核。已排队92476/92477，原失败/未执行条件保留。
+
+`run_well_semantics.py`用独立小GDS验证原WELL.4表达式与其宽度描述不符；`run_actual_well_reference.py`在严格完整llSYS A GDS上新增并集及逐N/P mask宽度/间距专项检查，原全量deck不替换。实际参考均0，原表达式仍大量报告且与原全量计数未完全复现；不把它解释为所有原项消除。原deck中WELL.2未实现及部分via enclosure实现疑问仍属规则覆盖缺项。`run_parent_preflight.py`将固定父层几何与未完成信号路由分开；旧placed输入缺GCELLGRID导致原生检查未成功，不能记为DRC0。
+
+2026-10-28接续：`prepare_act_access_revision.py --case CASE`将真实内部候选对齐相邻层轨道，冻结输入后在`physical_trial.tcl`保留临时接入窗口、完整信号重布线，移除的只有本轮新约束。实际层/端点/PG/OBS/原允许层不变；不与旧局部rip成本混比。`compile_shared_topology.py --root R --preparation P --out NEW`检查两功能共享256有限导体的完整逐bit图，生成构造网表；`common_link_job.sh INPUT NEW_REV`读取匹配Aopt真实LEF/Lib，`verify_common_native.py`检查34954端点/17686分量双射。此阶段不布局/布线/冻结，施工端口还须降为保留金属。
+
+`run_escape_landing.py`仅修订新父层M10中间接点，不改原ACT M5/M6；只有fresh native/860网连通/双PG/原PG及其他父pin保持全部满足才标记几何门槛通过。`escape_rc_sta_job.sh NEW_REV`对已接受Aopt/C夹具实际提取与同研究I/O约束、2/10/50fF敏感性分析，不保存RCX后ODB；所有hold/电气/604零长度网未标注提示保留。`run_leaf_eco.py`的重定尺寸/缓冲/布局成本与纯XY分开，等价仍需独立验证。
+
+可复现发布检查：`python scripts/check_project.py`；`python -m compileall -q project/experiments/full_pin_xy`；`python project/experiments/full_pin_xy/test_zero_wire_access.py`；`python project/experiments/full_pin_xy/validate_repository.py`。完整报告用`build_deliverables.py --root R --out docs/experiments/issue-126-full-pin --keep-figures`；仅刷新新增阶段用`refresh_continuation.py`同参数；浏览器用`node project/experiments/full_pin_xy/qa_report.mjs REPORT NEW_QA_DIR`。原CSV/历史快照和PR120原图保持，新增原生文本无损gzip、大型物理文件只读留远程SHA索引。9031个新实际pin逐项与增量表比较，不能把全部24767候选的检查当全部物理完成。
+
+
+2026-10-28晚接续新增：`prepare_local_pin_patch.py`/`local_pin_patch_job.sh`实施LL完整表的三点增量重接线；实际DRT无AP失败与坐标正确分开。`constraint_audit_job.sh NEW_REV`取得只读NDR规则/关联/实际wire宽度及驱动查询，源SHA不变，不当完整规则通过。`cell_semantics.py`和`run_leaf_eco.py`的TARGETED分支做实际X2驱动增强并恢复填充，成本与纯XY分开。FRESH_GRT分支先实际重建GRT，再显式用GRT估算做修复，原SPEF重放与最后RCX/STA分别记录；SYSTEM原允许层不变，合法化工具崩溃不删检查。实际冻结驱动与作业号见10月28日接续交接。
+
+新增快照命令：在获分配的本人Slurm作业内从远程ROOT执行`python3 -B DRIVER/collect_resume_progress.py NEW_NAME [JOB...]`；只写新的resume_snapshots目录。下载到分析目录的resume_evidence后，运行原`refresh_continuation.py`和`validate_repository.py`，25幅报告图含新增真实PG/原生marker/proposed局部图。`qa_report.mjs`检验所有图片和逐bit筛选；生成图必须打开目视核验。候选/快照校验通过不代表native/完整DRC、连通、RC、STA或冻结资格。
+
+
+本轮GDS导入/规则阶段：`streamout_probe.py`显式设read_lef_with_def=false，仅保留原配置依赖的LEF清单，避免KLayout自动把导出的abstract/detailed两份顶层LEF当成子宏重复读入；实际安装API证据由`audit_streamout_reader.py`生成。allow-empty仍禁用，原FreePDK45 deck不改。`collect_gate_milestone.py NEW_NAME`在本人分配资源内收集不可覆盖的原始阶段快照；下载到analysis/gate_evidence后执行`refresh_continuation.py --root R --out REPORT --gates-only`，生成逐块qualification_matrix.json/CSV与最新门槛HTML。`validate_gate_matrix.py`由主验证器调用，独立核对旧提前失败、显式LEF配置、真实严格合并结果及实际时序数字。已知GDS缺失/规则覆盖缺口与native结果分别报告，不以Slurm/CI/空缺失列表宣布通过。
+
+
+新增实际验证：`antenna_rules_job.sh NEW_REV`只读核实安装LEF/GDS deck原文、原生逐层规则存在性及源SHA；原生天线0不代表已加载有效规则。`mapped_eco_job.sh CASE NEW_REV`对原始与成本ECO ODB导出全量映射端点，比较全部实例、信号/时钟/复位/常量/顶层网络及实际Liberty换型合同；相同存储黑盒合同的相对数字保持证明不替代RTL形式验证。`eco_view_job.sh opentpu_aux r01 NEW_VIEW_REV`导出实际检查点布线的SYS2229位视图，原始成本表与最终原生实例表分别核算；G/M可追加Aopt参数导出等成本周边视图。
+
+`plot_equal_cost_controls.py`只读取实际Aopt/C余量及独立成本，由gate_report刷新PNG/SVG；原A/B/C图不覆盖。`prepare_actual_landing_repair.py NEW_REV`以新版GEMM父夹具1项实际M10错误为触发，筛查原生异网金属/PG/OBS并移动新父层接点，原叶层/尺寸和PG不改；真实重布线、独立规则及全块连通仍必须执行。新集成模型只在显式`PINXY_UNQUALIFIED_MODEL_EXPORT=1`且LL完整PG-only原生错误数确为4时允许诊断导出，状态保留FAILED_DRC_SOURCE；不是放宽物理通过条件，不用于合格冻结。
+
+
+实际共同集成（明确未合格）：`common_integration_job.sh C NEW_REV`读取冻结来源的六块真实详细OBS与匹配提取Lib，复用common-topology-r02全图及既定256×32μm导体拓扑/预算；先实例放置/PDN，再筛查真实M10金属、PG与OBS后写FIXED dbWire并执行底层GRT/DRT。原叶pin不改；新父层M10施工接点与原层定义分开。原生API由`fixed_wire_probe_job.sh NEW_REV`先验证，BPin的实际枚举为FIRM，DEF信号wire实际为FIXED；原错误版本保留。施工端口未降为合法模式几何前不冻结，不把LL失败DRC源或负STA来源提升为合格底座。
+
+`estimator_diagnosis_job.sh NEW_REV`复现VECTOR EST-0104；用`PINXY_EST_FILLERS_BEFORE_ESTIMATE=1`进行单变量对照，将remove_fillers移到估算之前。r01冷隔离仍失败，r02同命令/源/约束下修复执行成功，检查点仍NOT_LEGALIZED_OR_ROUTED。`plot_actual_common_placement.py`只绘制原生44实例放置来源；`gate_report.py`复用已完成DRT最后原生报告统计同ECO两侧逐层线长/via，不重复路由，也不把此表称系统收益。
+
+
+`vector_resume_job.sh NEW_REV`从estimator_diagnosis/r02实际成功检查点继续，不重跑repair_design；各原生进程隔离timing_repair、legalization、route，分别保存阶段账本。恢复原filler类型集合、原pin/PG/die、原OBS及准确临时窗口，最后RCX/STA和独立DRC/信号时钟/双PG均保留。返回0也只表示已执行的研究门槛，不代表完整规则/形式/系统资格。
+
+## Issue126：实际有向合同、局部金属归属与天线网追踪（2026-10-29）
+
+本地复核：`python project/experiments/full_pin_xy/test_buffer_graph_contract.py`，包含反向buffer/循环/改变原网/NULL端点的失败反例；`python project/experiments/full_pin_xy/validate_repository.py`。完整报告刷新：`python project/experiments/full_pin_xy/refresh_continuation.py --root work/huangpingyang04-lgtm/126/analysis --out docs/experiments/issue-126-full-pin --gates-only`；独立浏览器QA：`node project/experiments/full_pin_xy/qa_report.mjs docs/experiments/issue-126-full-pin/report.html work/huangpingyang04-lgtm/126/analysis/gate-report-qa-r10`。
+
+远程冻结驱动分别运行buffered_eco_job.sh / parent_region_job.sh / antenna_netmap_job.sh；实际参数、源码SHA、输入SHA、native命令及失败在gate-r08原文中。前者证明同硬存储合同下原映射端点有向关系，不是RTL形式等价；区域图使用真实矩形，不删除OBS；天线按原RDB实际金属多边形正面积相交追踪，不用bbox或几何关联冒充LVS。真实ANTENNA_X1仅完成库存核实，尚未插入/路由或通过原1460项天线规则。[KLayout原生antenna_check语义](https://www.klayout.de/doc/about/drc_ref_netter.html#h2-antenna_check)仅用于解释原规则行为，不能作为制造签核资格。
+
+实际成本diode驱动run_antenna_diode_eco.py/antenna_diode_access.tcl保留原单元/所有端点/原pin/PG/OBS/外框/SDC/路由层，以原生636网实际receiver为定位依据；只新增真实库diode及真实负载，源SHA和逐diode坐标入回执。独立run_antenna_diode_stream.py在源结束后严格合并并执行不修改原deck，未完成路由明确不执行，不能由Slurm/native0代签。audit_actual_leaf_paths.py使用相同SPEF重读完整关键路径；plot_actual_critical_paths.py按真实相邻arrival统计cell/net arc，非线长或无线下界；全量VECTOR有向合同复用verify_buffered_eco.py并传入vector。具体driver commit/作业号/原命令见2026-10-29交接与gate-r10快照，禁止复写活动输出。
+
+SYSTEM同网表buffer重排使用output_chain_placement.tcl/run_output_chain_placement.py，所有输出纳入选择，仅移动真实私有identity链，不新增/换型/改网；原失败92921及检查点保留。resume_output_chain.py在无Lib/SDC的新原生进程合法化同一检查点，恢复真实原状态并核查连接/非选中位置；再新进程按原Lib/SDC重布线/提取/STA。成功的中间合法化不替代最终物理门槛。gate-r12对已关闭native阶段的ODB/合同文件索引SHA，检查点及原命令由交接和原回执绑定。
+
+Issue126原生共享导体：audit_actual_shared_conductors.py从真实fixed_prewires_NOT_FROZEN.odb导出DEF，逐项核对256个FIXED metal10属性、net/port绑定和实际bbox；r02按SHA复用已完成r01导出，保留真实缩进解析失败。plot_actual_shared_conductors.py绘制真实PG/OBS/施工port，不画未知via或把总览ROI冒充金属占地。verify_passive_load_eco.py全量核对原映射端点和新增真实非驱动负载，原生图导出来源、观察中的receipt与稳定ODB分别记SHA，不能因metadata继续记录DRC就重算/伪称几何变更。原生接线/RC通过与新增cap2失败分开报告；完整规则/RTL形式/两个系统资格仍未闭合。重现命令及driver commit在2026-10-29固定导体与diode交接及gate-r13原文。
+
+
+Issue126 R47：`all_llsys_access_caps_job.sh NEW_REV via_then_wire`只读审计真实同网via及WIRE双轨道点，`llsys_residual_pin_job.sh NEW_REV`逐位读取剩余87位真实端点；不能将候选/未使用声明与实际接入混写。`llsys_owned_cap_access_job.sh NEW_REV`在新目录执行原生pin-only接入ECO，保留原WIRE/VIA/stub成本，独立完整pin/单元/PG/全网/fresh/RC-STA，父层AP另验。`obs_union_api_job.sh NEW_REV`核实已安装KLayout含孔整数并集分解；`obs_union_compaction_job.sh NEW_REV`对闭合四tip源实际M1-M3 OBS做整数XOR/非目标字节/pin/尺寸及OpenDB逐矩形导入核对。几何分解等价仍不替代router/DRC、PG、父层接入或系统资格。所有脚本使用获授权ROOT、已提交独立driver及hpy-Slurm资源，不覆盖活动输出。最新运行/终态与raw SHA见qualification_matrix.json及R47交接。
+
+
+Issue126 R48：`guide_free_drc_probe_job.sh NEW_REV`对真实770支路失败只移除dbGuide副本元数据，独立核对物理导出及两份同命令DRC；r01计数被导出器覆盖的原文保留，r02实际11115→0且两Short不变，未证明性能收益。`sbatch --cpus-per-task=2 .../guide_free_drc_probe_job.sh NEW_REV owned_cap_stage`进一步对当前10261-pin实际源做同物理全叶控制，绑定已完成的原编辑/DRC阶段、BPin及全网输出，保留原M2-M8信号/M4-M8时钟范围。只有完整物理导出与原生失败marker相同，`owned_cap_wire_restore_job.sh NEW_REV`才会尝试一个M5线尾恢复；预备驱动保持10261新接点及原层/尺寸/语义/全部via。原93343的native2与负时序不会被小样、脚本准备或Slurm状态掩盖。`owned_cap_spacing_diagnosis_job.sh NEW_REV`及`plot_owned_cap_spacing.py TERMINAL_DIR REPORT`复用真实前后71行，量化旧BPin移走的0.0049μm²金属，不把图中候选线尾当已执行。
+
+
+R49当前MXU父层RC/STA：冻结driver后由`mxu_actual_parent_rc_sta_job.sh r01`执行`run_mxu_actual_parent_rc_sta.py`，只读93239终态、真实模型与原SDC；每负余量/电气违规单列，不将研究I/O夹具当系统约束。`wire_shape_coverage_job.sh r01`执行`probe_wire_shape_coverage.py`，先独立核实RECT/patch导出覆盖，再审计原叶与父层；不直接替换活动导出器。终态均用`fetch_closed_terminal.py`归档双SHA，然后refresh_continuation/validate_repository及qa_report.mjs复验。
+
+
+R51原生覆盖交叉验证：`wire_shape_coverage_job.sh r03 decoder_rect`仅对闭合PATH/POINT/RECT小样读取当前真实dbWireDecoder，未修改叶块。`upper_local_bypass_job.sh r01`对闭合upper_branch_repair/r02真实全部支路/OBS搜索两处Short的M11/M12局部替换，固定M10/hook不改；搜索结果不是实际接线，必须另做原生重编码、独立DRC/全770及514图/真实256桥和下层冻结检查，RC/STA与功能另验。
+
+
+R53：`native_patch_audit_job.sh r01`以0–9数组/最多3并发、每例1核执行run_native_patch_audit.py；源只读，native decoder与raw RECT逐网对照，补充PATCH用实际getCoord+delta，完整规则及PG另验。`real_diode_view_job.sh r01 llsys_owned_restored`复用真实视图导出器绑定93375新源及原SDC/SPEF，导出完整13507位LEF/详细OBS/非零时序模型；不会把负时序或缺规则写成通过。

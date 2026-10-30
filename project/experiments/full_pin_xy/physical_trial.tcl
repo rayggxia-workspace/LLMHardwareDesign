@@ -1,0 +1,150 @@
+# Small matched pure-XY experiment. No resize, placement, CTS, filler removal,
+# obstruction deletion, architecture change, or rule relaxation.
+set out $::env(PINXY_OUTPUT)
+set stages [open $out/stages.tsv w]
+puts $stages "stage\tstatus\tdetail"
+proc stage {name body} {
+  global stages
+  puts "STAGE_START $name"
+  if {[catch {uplevel 1 $body} result options]} {
+    puts $stages "$name\tFAIL\t[string map [list \n { | } \t { }] $result]";flush $stages
+    puts "STAGE_FAIL $name $result"
+    set f [open "$::env(PINXY_OUTPUT)/$name.error.txt" w];puts $f [dict get $options -errorinfo];close $f
+    return 0
+  }
+  puts $stages "$name\tEXECUTED\t";flush $stages
+  puts "STAGE_EXECUTED $name"
+  return 1
+}
+proc fingerprint {prefix} {
+  set b [ord::get_db_block]
+  set f [open "$prefix.cells.tsv" w]
+  foreach i [$b getInsts] {
+    puts $f [list [$i getName] [[$i getMaster] getName] [$i getLocation] [$i getOrient] [$i getPlacementStatus]]
+    foreach t [$i getITerms] {set n [$t getNet];set nn NULL;if {$n ne "NULL"} {set nn [$n getName]};puts $f [list [$i getName] [[$t getMTerm] getName] $nn]}
+  };close $f
+  set f [open "$prefix.pins.tsv" w]
+  foreach t [$b getBTerms] {
+    set n [$t getNet];set nn NULL;if {$n ne "NULL"} {set nn [$n getName]}
+    foreach p [$t getBPins] {foreach r [$p getBoxes] {puts $f [list [$t getName] [$t getIoType] [$t getSigType] $nn [[$r getTechLayer] getName] [$r xMin] [$r yMin] [$r xMax] [$r yMax]]}}
+  };close $f
+  set f [open "$prefix.pdn.tsv" w]
+  foreach n [$b getNets] {foreach sw [$n getSWires] {foreach r [$sw getWires] {puts $f [list [$n getName] [$r xMin] [$r yMin] [$r xMax] [$r yMax] [$r isVia]]}}};close $f
+  set f [open "$prefix.die.tsv" w];set d [$b getDieArea];puts $f [list [$d xMin] [$d yMin] [$d xMax] [$d yMax]];close $f
+}
+proc timing {prefix} {
+  report_worst_slack -max -digits 6 > $prefix.setup.txt
+  report_worst_slack -min -digits 6 > $prefix.hold.txt
+  report_tns -max -digits 6 > $prefix.setup_tns.txt
+  report_tns -min -digits 6 > $prefix.hold_tns.txt
+  report_check_types -violators -max_delay -min_delay -max_slew -max_capacitance -max_fanout -recovery -removal -max_count 1000000 -digits 6 > $prefix.checks.txt
+  report_checks -path_delay min_max -group_path_count 1000000 -endpoint_path_count 1 -format json > $prefix.paths.json
+  check_setup -verbose > $prefix.constraint_coverage.txt
+  report_parasitic_annotation -report_unannotated > $prefix.parasitic_coverage.txt
+  set relocations {};source $::env(PINXY_RELOCATIONS)
+  set count 0
+  foreach row $relocations {
+    incr count;set pin [lindex $row 0]
+    report_checks -through [get_ports $pin] -path_delay min_max -fields {capacitance slew fanout} -format full_clock_expanded -group_path_count 20 -digits 6 > $prefix.selected_$count.txt
+  }
+}
+if {![stage load {
+  source $::env(PINXY_LIBS_TCL)
+  read_db $::env(PINXY_ODB)
+  read_sdc $::env(PINXY_SDC)
+  source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+  fingerprint $out/before
+}]} {close $stages;exit 1}
+if {$::env(PINXY_PLAN) eq "A"} {
+  stage baseline_rc {
+    define_process_corner -ext_model_index 0 X
+    set_extraction_rules_file /OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules
+    extract_parasitics
+    write_spef $out/extracted.spef
+    read_spef $out/extracted.spef
+  }
+} else {
+  if {![stage move {
+    set relocations {};source $::env(PINXY_RELOCATIONS)
+    set block [ord::get_db_block];set units [$block getDbUnitsPerMicron];set changednets {}
+    foreach r $relocations {
+      lassign $r name layer x y width height
+      set term [$block findBTerm $name];if {$term eq "NULL"} {error "Missing pin $name"}
+      set oldboxes {};foreach p [$term getBPins] {foreach box [$p getBoxes] {lappend oldboxes $box}}
+      if {[llength $oldboxes]!=1} {error "Expected one pin box $name"}
+      set box [lindex $oldboxes 0]
+      if {[[$box getTechLayer] getName] ne $layer} {error "Layer mismatch $name"}
+      if {abs(([$box xMax]-[$box xMin])/double($units)-$width)>1e-8 || abs(([$box yMax]-[$box yMin])/double($units)-$height)>1e-8} {error "Size mismatch $name"}
+      place_pin -pin_name $name -layer $layer -location [list $x $y] -pin_size [list $width $height]
+      set boxes {};foreach p [$term getBPins] {foreach box [$p getBoxes] {lappend boxes $box}}
+      if {[llength $boxes]!=1} {error "Unexpected new box count $name"}
+      set box [lindex $boxes 0]
+      if {[[$box getTechLayer] getName] ne $layer || abs(([$box xMin]+[$box xMax])/(2.0*$units)-$x)>0.000001 || abs(([$box yMin]+[$box yMax])/(2.0*$units)-$y)>0.000001} {error "place_pin clamped or snapped $name"}
+      lappend changednets [$term getNet]
+    }
+    fingerprint $out/moved
+    set temporary_access_obs {}
+    set original_block_obs [lsort [$block getObstructions]]
+    if {[info exists ::env(PINXY_ACCESS_RESERVATIONS)]} {
+      set access_reservations {};source $::env(PINXY_ACCESS_RESERVATIONS)
+      set rf [open $out/temporary_access_windows.tsv w]
+      puts $rf "layer\tx0\ty0\tx1\ty1\tnew_object"
+      foreach row $access_reservations {
+        lassign $row layer x0 y0 x1 y1
+        set ly [[ord::get_db_tech] findLayer $layer]
+        if {$ly eq "NULL"} {error "Missing actual reservation layer $layer"}
+        set coords {};foreach v [list $x0 $y0 $x1 $y1] {lappend coords [expr {round($v*$units)}]}
+        set ob [odb::dbObstruction_create $block $ly {*}$coords]
+        lappend temporary_access_obs $ob
+        puts $rf [join [list $layer {*}$coords $ob] "\t"]
+      }
+      close $rf
+    }
+    write_db $out/moved.odb
+    # Rip up only nets incident on selected pins; preserve all other existing routes as input.
+    if {[llength $temporary_access_obs]} {
+      set changednets {}
+      foreach n [$block getNets] {if {[$n getSigType] ni {POWER GROUND}} {lappend changednets $n}}
+    }
+    set rf [open $out/actually_ripped_nets.tsv w]
+    foreach n [lsort -unique $changednets] {set w [$n getWire];if {$w ne "NULL"} {puts $rf [$n getName];odb::dbWire_destroy $w}}
+    close $rf
+    write_db $out/ripped.odb
+  }]} {close $stages;exit 1}
+  set routed [stage global_route {
+    set_routing_layers -signal metal2-metal$::env(PINXY_TOP_LAYER) -clock metal4-metal$::env(PINXY_TOP_LAYER)
+    global_route -guide_file $out/route.guide -congestion_report_file $out/congestion.rpt
+    write_db $out/global.odb
+  }]
+  if {$routed} {set routed [stage detailed_route {
+    detailed_route -output_drc $out/route.drc -output_maze $out/maze.log -verbose 1
+    if {[llength $temporary_access_obs]} {
+      foreach ob $temporary_access_obs {odb::dbObstruction_destroy $ob}
+      if {[lsort [[ord::get_db_block] getObstructions]] ne $original_block_obs} {error "Original block OBS set changed"}
+      set rf [open $out/access_windows_removed_original_OBS_preserved.txt w]
+      puts $rf "Only [llength $temporary_access_obs] newly created routing constraints removed; original block OBS handles identical; source master OBS never changed. Verify actual signal clearance separately."
+      close $rf
+    }
+    write_db $out/routed.odb
+  }]}
+  if {!$routed} {stage failed_route_checkpoint {write_db $out/failed-route.odb};close $stages;exit 1}
+  stage extract_rc {
+    define_process_corner -ext_model_index 0 X
+    set_extraction_rules_file /OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules
+    extract_parasitics
+    write_spef $out/extracted.spef
+    read_spef $out/extracted.spef
+  }
+}
+# Retain this diagnostic; an independent clean-process check is mandatory.
+# Current RCX changes serialized route state, so this process is analysis-only.
+stage in_analysis_drc_diagnostic {drt::check_drc -output_file $out/analysis_in_memory.drc}
+stage selected_access_export {source $::env(PINXY_DRIVER)/export_access.tcl}
+stage placement {check_placement -verbose}
+foreach net {VDD VSS} {stage pdn_$net {check_power_grid -net $net -error_file $out/$net.pdn.rpt}}
+stage wire_statistics {report_wire_length -detailed_route -summary -file $out/wire_length.csv}
+stage sta {timing $out/timing}
+stage analysis_abstract_diagnostic {write_abstract_lef $out/analysis.abstract.lef}
+stage final {fingerprint $out/after;write_db $out/analysis_after_RCX.odb;write_sdc $out/analysis.sdc}
+close $stages
+puts "TRIAL_STAGES_FINISHED_SEE_SEPARATE_GATES"

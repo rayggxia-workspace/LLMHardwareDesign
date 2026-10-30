@@ -1,0 +1,134 @@
+{
+  "scope": "RULE_IMPLEMENTATION_SEMANTICS_ONLY; synthetic rectangles, not circuit qualification",
+  "scheduler_job": "92481",
+  "driver_commit": "7dac446fa29f7c4dde3692d3f2038d3d88c1b5df",
+  "created_utc": "2026-10-27T16:29:16.222782+00:00",
+  "installed_original_deck": "/OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc",
+  "installed_original_deck_sha256": "4e35cad6786f21c6e233fb606bea59bb44e1a12713008cf7367d65a1a3de2147",
+  "original_deck_unmodified": true,
+  "original_WELL4_expression": "well.separation(well, 200.nm, euclidian)",
+  "original_WELL4_description": "Minimum width of nwell/pwell : 200nm",
+  "official_method_reference": "https://www.klayout.de/doc/about/drc_ref_layer.html",
+  "probe_runset_sha256": "fa5ab6e23ecc40ffc0ce5ed998f32cb54e60ee5946a934589985c25e17289a88",
+  "fixtures": [
+    {
+      "fixture": "wide_isolated",
+      "rectangles_nm": [
+        [
+          0,
+          0,
+          1000,
+          1000
+        ]
+      ],
+      "counts": {},
+      "GDS_sha256": "fa615e502a490e7a476edcb023918e01d987d99f4e9932c1d2876d63941166fd",
+      "native_report_sha256": "bb0a3240d4bda17c8755b00143e6e6759342bd2be93fcd4e2b95240631380275"
+    },
+    {
+      "fixture": "thin_isolated",
+      "rectangles_nm": [
+        [
+          0,
+          0,
+          150,
+          1000
+        ]
+      ],
+      "counts": {
+        "WIDTH200_REFERENCE": 1
+      },
+      "GDS_sha256": "b5fa1c899e9084521334373b02d660688399f84d39cebec1079f1ed1a4052800",
+      "native_report_sha256": "076ddac937b91be6be6430d3cf937b49f71a7a4e12c6979ba5a3247cc63aac40"
+    },
+    {
+      "fixture": "wide_gap150",
+      "rectangles_nm": [
+        [
+          0,
+          0,
+          1000,
+          1000
+        ],
+        [
+          1150,
+          0,
+          2150,
+          1000
+        ]
+      ],
+      "counts": {
+        "ORIGINAL_WELL4": 1
+      },
+      "GDS_sha256": "2cfbd66b43410e2e0e7a29056d012270ff2fb777cfeb433d322490d5a0fa4506",
+      "native_report_sha256": "9d1f393345bd126afb7d2a8f4670e102c07c8dbc487d459a350a9f0bf9d40278"
+    },
+    {
+      "fixture": "wide_gap100",
+      "rectangles_nm": [
+        [
+          0,
+          0,
+          1000,
+          1000
+        ],
+        [
+          1100,
+          0,
+          2100,
+          1000
+        ]
+      ],
+      "counts": {
+        "ORIGINAL_WELL4": 1,
+        "SPACE135_REFERENCE": 1
+      },
+      "GDS_sha256": "6d68316d8a0f11388612bf04e6117d8a84b2ae5afe2aec8caa2420e22f5d82c9",
+      "native_report_sha256": "ff483c362a00a6812b53dda2ce60bd105ba733d8cb5afb198b4eefdc15933e9d"
+    },
+    {
+      "fixture": "wide_gap250",
+      "rectangles_nm": [
+        [
+          0,
+          0,
+          1000,
+          1000
+        ],
+        [
+          1250,
+          0,
+          2250,
+          1000
+        ]
+      ],
+      "counts": {},
+      "GDS_sha256": "d74b606e487adcdecd4ae51477f42f3130e2d583e480a33d0642d4c33c2916c5",
+      "native_report_sha256": "bb0a3240d4bda17c8755b00143e6e6759342bd2be93fcd4e2b95240631380275"
+    },
+    {
+      "fixture": "wide_touching",
+      "rectangles_nm": [
+        [
+          0,
+          0,
+          1000,
+          1000
+        ],
+        [
+          1000,
+          0,
+          2000,
+          1000
+        ]
+      ],
+      "counts": {},
+      "GDS_sha256": "0d626665415aa37a7de8ae3b7c71c481572a5eba8ee3714215453087f41b81e5",
+      "native_report_sha256": "bb0a3240d4bda17c8755b00143e6e6759342bd2be93fcd4e2b95240631380275"
+    }
+  ],
+  "original_expression_differs_from_width_reference_on_fixtures": true,
+  "conclusion": "SEMANTIC_MISMATCH_CONFIRMED; original raw counts retained, do not label all WELL.4 markers true width violations",
+  "qualified_design_or_rule_deck": false,
+  "full_original_design_reports_changed": false
+}

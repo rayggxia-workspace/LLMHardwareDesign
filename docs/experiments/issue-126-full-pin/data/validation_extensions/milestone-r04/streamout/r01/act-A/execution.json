@@ -1,0 +1,84 @@
+{
+  "plan": "A",
+  "case": "act",
+  "driver_commit": "9391df8cb1d5b05b0ea0b71d35ff02fea53f772a",
+  "scheduler_job": "92375",
+  "started_utc": "2026-10-27T11:31:40.641919+00:00",
+  "merge_command": [
+    "singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro",
+    "--home",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/home",
+    "--pwd",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/streamout/r01/act-A",
+    "--env",
+    "PINXY_STREAM_OUT=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/streamout/r01/act-A",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "klayout",
+    "-b",
+    "-r",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/drivers/stream-probe-r01/code/streamout_probe.py"
+  ],
+  "source_clean_execution_sha256": "f5da645916adc50b30a40fa68179c0a44482b988a4b9e3590a9cadb1ca1967ae",
+  "merge_returncode": 2,
+  "missing_GDS_cells": [
+    "fakeram45_1r1w_32x128",
+    "fakeram45_1r1w_32x64"
+  ],
+  "DRC_command": [
+    "singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro",
+    "--home",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/home",
+    "--pwd",
+    "/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/streamout/r01/act-A",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "klayout",
+    "-b",
+    "-rd",
+    "in_gds=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/streamout/r01/act-A/diagnostic.gds",
+    "-rd",
+    "report_file=/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/streamout/r01/act-A/diagnostic.lyrdb",
+    "-r",
+    "/OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc"
+  ],
+  "DRC_returncode": 0,
+  "status": "DIAGNOSTIC_ONLY; missing views or full-rule/parent/system qualification still separate",
+  "finished_utc": "2026-10-27T11:32:50.369029+00:00",
+  "files": {
+    "merge.log": {
+      "bytes": 517,
+      "sha256": "2f663573e526f4cc71e915886a968105a24117962e03d6aad0e39f1d1c350e62"
+    },
+    "technology.lyt": {
+      "bytes": 10415,
+      "sha256": "17d50ac3e3290de606e7963581a64913b1a76f7dd32674cbd2d4601c57488407"
+    },
+    "drc.log": {
+      "bytes": 55368,
+      "sha256": "69d81ab748fd553017ae61f856bdb198479c7eca8685e0fd5deacd79cb2d5afc"
+    },
+    "merge.json": {
+      "bytes": 1409,
+      "sha256": "efd1af1e22fcd4300e2214c6f0f9f4c5ce1af3adea40283e1bfc6d60e667be3b"
+    },
+    "diagnostic.gds": {
+      "bytes": 5983972,
+      "sha256": "4b2cc94ab135a5cc811bf33225b0d1d13bb37f144fc152f97523352957394247"
+    },
+    "diagnostic.lyrdb": {
+      "bytes": 418588,
+      "sha256": "6d30551668e34a0254c6546e142c165f21a3eab15d6d179e8f88cc53a2c25640"
+    },
+    "input.json": {
+      "bytes": 766,
+      "sha256": "5a4a3035d473f84f08efb4b88e0a6e4e349e32ab93e0cb8091a19f26ed960db0"
+    }
+  }
+}
