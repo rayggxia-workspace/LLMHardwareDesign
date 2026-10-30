@@ -30,15 +30,15 @@ def read_cells(path):
 
 def run(case,revision,source_profile='original_current'):
     assert case in SOURCES
-    assert source_profile in ['original_current','LL_corners']
-    assert source_profile!='LL_corners' or case=='llaccel_aux'
-    source=ROOT/('llsys_corner_fill/r01' if source_profile=='LL_corners' else SOURCES[case]);rp=source/'execution.json';q=json.loads(rp.read_text())
+    assert source_profile in ['original_current','LL_corners','LL_corners_incident']
+    assert source_profile=='original_current' or case=='llaccel_aux'
+    source=ROOT/('llsys_corner_fill/r01' if source_profile.startswith('LL_corners') else SOURCES[case]);rp=source/'execution.json';q=json.loads(rp.read_text())
     assert q.get('completed_utc') and q['fresh_DRC_count']==0 and q['whole_signal_geometry']['pass']
     odb=source/'routed.odb';report=source/'checks.txt'
     for p in [odb,report]:assert sha(p)==q['files'][p.name]['sha256']
     top=10 if case=='vector' else 8
     routing='set_routing_layers -signal metal2-metal'+str(top)+' -clock metal4-metal'+str(top)
-    fresh_source=source/('fresh_DRC.tcl' if source_profile=='LL_corners' else 'fresh.tcl')
+    fresh_source=source/('fresh_DRC.tcl' if source_profile.startswith('LL_corners') else 'fresh.tcl')
     assert sha(fresh_source)==q['files'][fresh_source.name]['sha256'] and routing in fresh_source.read_text(),'Original source range must be recovered before repair'
     ep=None
     if source_profile=='original_current':
@@ -59,7 +59,8 @@ def run(case,revision,source_profile='original_current'):
       'original_clock_and_external_load_constraints':'UNCHANGED','additional_buffers_requested':0,'functional_architecture_change':False,
       'native_returncodes':{},'RC_STA_full_rules_function':'NOT_YET_EXECUTED','costs':'SEPARATE_DRIVE_SIZE_AND_MOVEMENT_NOT_PIN_XY_SAVING'}
     rec['source_profile']=source_profile
-    if source_profile=='LL_corners':rec['new_evidence_justifying_trial']='Source changed from c494 to actual 9517-access-edit +109-metal-fill native0/all-leaf-AP0 variant 1bd4aa52. Prior r04 failed on unchanged old-source bit3598; no identical old-source rerun and no claim parent AP now passes.'
+    if source_profile.startswith('LL_corners'):rec['new_evidence_justifying_trial']='Source changed from c494 to actual 9517-access-edit +109-metal-fill native0 leaf-command-AP0 variant 1bd4aa52; parent AP remains separately failed.'
+    if source_profile=='LL_corners_incident':rec['minimal_route_change']='Prior r06 full DRT failed PIN/bit7059, whose sole wire48966/A endpoint was not sized or moved. Reuse exact verified7440-size legalization and route only incident nets; full-block DRC/connectivity/RCSTA retained.'
     save=lambda:(out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     save();common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp',
       '--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
@@ -87,7 +88,7 @@ def run(case,revision,source_profile='original_current'):
                 if z:caps[name,pin]=float(z[1])
             try:logic[name]=contract('cell ('+name+') {'+body+'}',name)
             except AssertionError:logic[name]=None
-        previous=ROOT/'current_driver_sizing/r03'/case
+        previous=ROOT/('current_driver_sizing/r06' if source_profile=='LL_corners_incident' else 'current_driver_sizing/r03')/case
         reusable_previous=(previous/'execution.json').exists() and json.loads((previous/'execution.json').read_text()).get('source_SHA',{}).get(str(odb))==sha(odb)
         if revision!='r03' and reusable_previous:
             prior=json.loads((previous/'execution.json').read_text())
@@ -144,8 +145,8 @@ write_db @@CHECKPOINT@@
 close $stages
 '''
         for a,b in [('@@POSES@@',tcl(out/'actual_size_poses.tcl')),('@@PLACED@@',tcl(out/'placed')),('@@CHECKPOINT@@',tcl(out/'placed_NOT_ROUTED.odb'))]:placement=placement.replace(a,b)
-        previous_legal=ROOT/'current_driver_sizing/r04'/case
-        if revision=='r05' and case=='vector':
+        previous_legal=ROOT/('current_driver_sizing/r06' if source_profile=='LL_corners_incident' else 'current_driver_sizing/r04')/case
+        if (revision=='r05' and case=='vector') or source_profile=='LL_corners_incident':
             pr=json.loads((previous_legal/'execution.json').read_text())
             assert pr.get('completed_utc') and pr['native_returncodes']['isolated_geometry_size_and_legalization']==0 and pr['all_closed_sources_unchanged'] and pr['source_SHA'][str(odb)]==sha(odb)
             inputs[str(previous_legal/'execution.json')]=sha(previous_legal/'execution.json')
@@ -176,6 +177,16 @@ close $stages
           'source '+tcl(DRIVER/'export_access.tcl'),
           'stage rcx {define_process_corner -ext_model_index 0 X;set_extraction_rules_file /OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules;extract_parasitics;write_spef '+tcl(out/'extracted.spef')+';read_spef '+tcl(out/'extracted.spef')+'}',
           'stage sta {report_worst_slack -max -digits 6 > '+tcl(out/'setup.txt')+';report_worst_slack -min -digits 6 > '+tcl(out/'hold.txt')+';report_check_types -violators -max_delay -min_delay -max_slew -max_capacitance -max_fanout -recovery -removal -max_count 1000000 -digits 6 > '+tcl(out/'checks.txt')+';check_setup -verbose > '+tcl(out/'constraint_coverage.txt')+';report_parasitic_annotation -report_unannotated > '+tcl(out/'parasitic_coverage.txt')+'}','close $stages']
+        if source_profile=='LL_corners_incident':
+            assert 'wire48966' not in selected,'Measured supposedly unchanged7059 endpoint actually selected'
+            affected={net for (inst,pin),(direction,net) in terms.items() if inst in selected and net not in ['VDD','VSS','NULL']}
+            assert affected and 'bit_7059' not in affected,'No permission to omit an actually modified7059 net'
+            rec['all_actual_incident_nets']=len(affected)
+            (out/'all_incident_networks.json').write_text(json.dumps(sorted(affected),indent=2)+'\n')
+            index=next(i for i,line in enumerate(lines) if line.startswith('if {![stage detailed_route '))
+            lines.insert(index,'set selected_names {'+' '.join(tcl(n) for n in sorted(affected))+'};foreach nn $selected_names {if {[$b findNet $nn] eq "NULL"} {error "Actual incident net missing"}};set_nets_to_route $selected_names')
+            lines[index+1]=lines[index+1].replace('}]} {close $stages;exit 1}','}]} {catch {write_db '+tcl(out/'failed_route.odb')+'};close $stages;exit 1}')
+            save()
         native('real_route_RC_STA','\n'.join(lines))
         native('fresh_DRC','read_db '+tcl(out/'routed.odb')+'\n'+routing+'\ndrt::check_drc -output_file '+tcl(out/'independent.drc')+'\nclose $stages',threads=1)
         rec['fresh_DRC_count']=len(re.findall(r'^violation type:',(out/'independent.drc').read_text(),re.M));rec['whole_signal_geometry']=check(out/'whole_access.tsv.gz',True)
