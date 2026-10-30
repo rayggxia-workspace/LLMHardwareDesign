@@ -30,6 +30,19 @@ def probe(root,out,cpus,run,case):
     assert file_sha(source/'receipt.json')==report['source_receipt_sha256']
     for name in ('composed-candidate.odb','composed-candidate.def','composed-native-drc.rpt'):
         assert file_sha(source/name)==sr['outputs'][name]
+    failure_reference=None
+    if case.startswith('alt-five-'):
+        previous_case=case.replace('alt-five-','alt-')
+        previous=base/'block-v1-20261031-615/tasks'/('revision300-v-transition-'+previous_case)
+        failed=json.loads((previous/'receipt.json').read_text());assert not failed['passed']
+        for name in ('revision300-v-transition.json','transition-native-drc.rpt','expected-edit.json'):
+            assert file_sha(previous/name)==failed['outputs'][name]
+        failure=json.loads((previous/'revision300-v-transition.json').read_text())
+        assert not failure['passed']and failure['native_original_count']==172 and failure['native_candidate_count']==172
+        assert failure['added_markers']==failure['removed_markers']==1 and failure['source_receipt_sha256']==file_sha(source/'receipt.json')
+        additions=violations((previous/'transition-native-drc.rpt').read_text())-violations((source/'composed-native-drc.rpt').read_text())
+        assert sum(additions.values())==1 and all('violation type: Short'in v and'on Layer metal4'in v for v in additions)
+        failure_reference=file_sha(previous/'receipt.json')
     index,target=CASES[case]if case in CASES else((25,'net80238')if case=='mixed'else(27,'input_mem[237][25]'))
     row=report['markers'][index];marker=row['marker']
     assert marker['layer']==('metal2'if case.startswith('alt-corner-')else'metal3')
@@ -101,6 +114,7 @@ def probe(root,out,cpus,run,case):
     result=dict(passed=exact and unchanged and not(new-old)and sum(new.values())<sum(old.values()),
                 diagnostic_only=True,physical_qualified=False,case=case,source_marker=marker,
                 localization_receipt_sha256=file_sha(prior/'receipt.json'),source_receipt_sha256=file_sha(source/'receipt.json'),
+                prior_failed_m4_control_receipt_sha256=failure_reference,
                 input_odb_sha256=sr['outputs']['composed-candidate.odb'],original_inputs_unchanged=unchanged,
                 all_normal_nets_and_target_paths_rectangles_exact=exact,normal_net_counts=[n0,n1],
                 native_original_count=sum(old.values()),native_candidate_count=sum(new.values()),added_markers=sum((new-old).values()),

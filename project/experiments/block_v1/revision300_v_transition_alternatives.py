@@ -7,6 +7,8 @@ CASES={
     'alt-corner-upper':(0,'net71774'),
     'alt-corner-lower':(1,'$abc$1437224$new_n105265'),
 }
+CASES.update({'alt-five-'+k.removeprefix('alt-'):v for k,v in list(CASES.items())
+              if not k.startswith('alt-corner-')})
 
 
 def build(paths,row,case):
@@ -18,6 +20,7 @@ def build(paths,row,case):
         assert len(found)<=1
         if required:assert found
         return found[0]if found else None
+    shape_case=case.replace('alt-five-','alt-')
     if case.startswith('alt-corner-'):
         upper=case=='alt-corner-upper'
         a,b=((357010,2376780),(357010,2377060))if upper else((361190,1337700),(361190,1337980))
@@ -38,8 +41,8 @@ def build(paths,row,case):
         assert remove['via'].startswith('via3_')and keep['via'].startswith('via2_')
         assert via(b,'metal3',False)is None and via(a,'metal2',False)is None
         upper=via(a,'metal4',False);lower=via(b,'metal1',False)
-        assert bool(upper)==(case in('alt-upper-stack','alt-both-stack'))
-        assert bool(lower)==(case in('alt-lower-stack','alt-both-stack'))
+        assert bool(upper)==(shape_case in('alt-upper-stack','alt-both-stack'))
+        assert bool(lower)==(shape_case in('alt-lower-stack','alt-both-stack'))
         if upper:assert upper['via'].startswith('via4_')and any(contains(p,'metal5',a,a)for p in paths)
         else:assert any(contains(p,'metal4',a,a)for p in paths)
         if lower:assert lower['via'].startswith('via1_')
@@ -52,4 +55,12 @@ def build(paths,row,case):
     assert(a[0]==b[0]or a[1]==b[1])and 0<abs(a[0]-b[0])+abs(a[1]-b[1])<=2000
     moved=dict(layer=layer,points=[(*b,None)],via=remove['via'])
     bridge=dict(layer=bridge_layer,points=[(*a,None),(*b,None)],via=None)
-    return dict(removed=remove,added=[bridge,moved],retained=keep,wire=wires[0],guards=guards)
+    additions=[bridge,moved]
+    if case.startswith('alt-five-'):
+        assert via(b,'metal4',False)is None
+        upper_name=upper['via']if upper else'via4_0'
+        guards.append((upper_name,'metal4','metal5'))
+        additions=[dict(layer='metal5',points=[(*a,None),(*b,None)],via=None),moved,
+                   dict(layer='metal4',points=[(*b,None)],via=upper_name)]
+        if upper is None:additions.append(dict(layer='metal4',points=[(*a,None)],via=upper_name))
+    return dict(removed=remove,added=additions,retained=keep,wire=wires[0],guards=guards)
