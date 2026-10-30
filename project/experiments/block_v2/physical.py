@@ -111,6 +111,9 @@ def implement(args, run):
     if args.fanout_mode=='partition':
         assert top in ('block_feed_s_macro','block_v1_r') and args.placement_mode=='geometric'
         shutil.copyfile(ROOT/'project/experiments/block_feed_v1/partition_fanout.tcl',out/'partition-fanout.tcl')
+        if args.refine_partition_placement:
+            with (out/'partition-fanout.tcl').open('a') as stream:
+                stream.write('\n'+(ROOT/'project/experiments/block_v2/refine_partition_placement.tcl').read_text())
         config+='export PRE_RESIZE_TCL = '+str(out/'partition-fanout.tcl')+'\n'
     hook=(folder/'native_input_diodes.tcl').read_text().replace('  if {[$port getName] eq "clk"} {continue}\n','')
     if args.input_receivers:
@@ -148,6 +151,7 @@ def implement(args, run):
     result['remove_abc_buffers']=args.remove_abc_buffers
     result['placement_mode']=args.placement_mode
     result['fanout_mode']=args.fanout_mode
+    result['refine_partition_placement']=args.refine_partition_placement
     result['hold_repair_margin_ns']=args.hold_repair_margin
     def save():(out/'native-flow.json').write_text(json.dumps(result,indent=2)+'\n')
     save()
@@ -167,8 +171,12 @@ def main():
     p.add_argument('--input-receivers',action='store_true')
     p.add_argument('--placement-mode',choices=['timing','geometric'],default='timing')
     p.add_argument('--fanout-mode',choices=['original','partition'],default='original')
+    p.add_argument('--refine-partition-placement',action='store_true')
     p.add_argument('--hold-repair-margin',type=float,choices=[0.0,0.02],default=0.02)
-    args=p.parse_args();args.out=args.out.resolve();args.out.mkdir(parents=True,exist_ok=False)
+    args=p.parse_args()
+    if args.refine_partition_placement:
+        assert args.top=='block_v1_r' and args.placement_mode=='geometric' and args.fanout_mode=='partition'
+    args.out=args.out.resolve();args.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,top=args.top,start_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),
                  affinity=sorted(__import__('os').sched_getaffinity(0)),commands=[],inputs={})
     for folder in ('project/experiments/block_v2','project/experiments/block_feed_v1','project/experiments/block_v1','project/rtl/block_v2'):
