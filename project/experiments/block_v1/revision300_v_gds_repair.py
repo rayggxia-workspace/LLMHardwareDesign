@@ -60,8 +60,10 @@ def probe(root, out, cpus, run, case):
     replacement = (*OLD[:3], CUTS[case], OLD[4])
     expected[replacement] += 1
     assert OLD[1] < replacement[3] < OLD[3]
+    assert all(v % 10 == 0 for v in replacement[1:])
     script = 'set_thread_count 16\nread_db {'+str(odb)+'}\nset block [ord::get_db_block]\nset tech [ord::get_db_tech]\n'
-    script += 'if {[$tech getManufacturingGrid] != 5} {error {Grid mismatch}}\nset net [$block findNet net96230]\nif {$net eq "NULL"} {error {Missing exact net}}\n'
+    script += 'set f [open actual-grid.tsv w];puts $f "[$tech getDbUnitsPerMicron]\\t[$tech getManufacturingGrid]";close $f\n'
+    script += 'if {[$tech getManufacturingGrid] != 10} {error {Grid mismatch}}\nset net [$block findNet net96230]\nif {$net eq "NULL"} {error {Missing exact net}}\n'
     script += 'set enc [odb::new_dbWireEncoder]\nodb::dbWireEncoder_begin $enc [$net getWire]\n'
     for path in paths:
         script += 'odb::dbWireEncoder_newPath $enc [$tech findLayer '+path['layer']+'] ROUTED\n'
