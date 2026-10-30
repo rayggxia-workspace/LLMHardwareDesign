@@ -5,6 +5,8 @@ No inferred emptiness, no abstract-only repair, no unverified target layer.
 from pathlib import Path
 import csv,datetime,gzip,json,os,re,sys,traceback
 from run_exports import ROOT,sha
+from run_parent_trial import tcl
+from run_escape_fixture import execute
 DRIVER=Path(__file__).resolve().parent
 
 
@@ -31,6 +33,18 @@ def run(revision):
          'physical_edit_RC_STA':'NOT_EXECUTED_READONLY','historical_parent_target_layer':'UNKNOWN_RETAINED; no new original target invented'}
     save=lambda:(out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n');save()
     try:
+        # r01 stopped because OpenROAD omitted the optional zero ORIGIN LEF
+        # statement. Obtain the actual native master origin and pin transform;
+        # do not silently assume zero from the absent text or floorplan image.
+        script=out/'native_origin.tcl'
+        script.write_text('read_db '+tcl(odb)+'\nset i [[ord::get_db_block] findInst u_llaccel_aux];set m [$i getMaster]\nset f [open '+tcl(out/'native_origin.tsv')+' w]\nputs $f [join [concat origin [$m getOrigin]] "\\t"]\nputs $f [join [concat instance [$i getLocation] [$i getOrient]] "\\t"]\nset mt [$m findMTerm bit_1016];foreach p [$mt getMPins] {foreach z [$p getGeometry] {puts $f [join [list pin [[$z getTechLayer] getName] [$z xMin] [$z yMin] [$z xMax] [$z yMax]] "\\t"]}};close $f\n')
+        common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
+        rec['native_origin_read_returncode']=execute(common,script,out/'native_origin.log',threads=1);assert rec['native_origin_read_returncode']==0
+        metadata=[line.split() for line in (out/'native_origin.tsv').read_text().splitlines()]
+        native_origin=list(map(int,metadata[0][1:]));assert native_origin==[0,0]
+        assert metadata[1][1:]==[pose['x'],pose['y'],'R0']
+        assert len(metadata)==3 and metadata[2][1]=='metal5' and tuple(map(int,metadata[2][2:]))==box
+        rec['actual_native_master_origin_DBU']=native_origin;rec['actual_native_pin_and_R0_transform_match_exported_view']=True
         inside=False;layer=None;origin=None;obs=[];radius=100000
         for line in alias.open():
             p=line.split()
@@ -42,7 +56,8 @@ def run(revision):
                 b=tuple(round(float(x)*2000) for x in p[1:5])
                 if b[0]<=cx+radius and b[2]>=cx-radius and b[1]<=cy+radius and b[3]>=cy-radius:obs.append({'net':'UNOWNED_PARENT_ABSTRACT_OBS','layer':layer,'box_DBU':b,'kind':'ACTUAL_EXPORTED_MACRO_OBS'})
             elif inside and p==['END']:inside=False
-        assert origin==[0.,0.]
+        assert origin is None or origin==[0.,0.]
+        rec['LEF_ORIGIN_text']='Omitted optional zero statement; native origin independently measured 0,0' if origin is None else origin
         overlap=lambda a,b:a[0]<b[2] and b[0]<a[2] and a[1]<b[3] and b[1]<a[3]
         rec['actual_adjacent_M6_OBS_intersections_at_same_size_first_cap']=[r for r in obs if r['layer']=='metal6' and overlap(box,r['box_DBU'])]
         rec['actual_parent_OBS_rows_in_100um_window']=len(obs);save()
