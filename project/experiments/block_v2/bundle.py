@@ -27,6 +27,19 @@ def bundle(delivery, out):
         assert path.is_file() and name not in members
         members[name] = dict(path=str(path), sha256=sha(path), bytes=path.stat().st_size)
 
+    # A local recipient needs the exact source binding, not only server paths.
+    from qualify import ROOT, source
+    physical_receipt = Path(index['gate_receipts']['physical']['path'])
+    sealed = Path(json.loads(physical_receipt.read_text())['source'])
+    _, _, flow, _ = source(sealed)
+    assert sha(sealed / 'receipt.json') == index['source_receipt_sha256']
+    for name in ('receipt.json', 'final-source.json', 'config.mk', 'pins.json',
+                 'pins.tcl', 'input.sdc'):
+        add(sealed / name, 'meta/source/' + name)
+    for relative, digest in flow['rtl_sha256'].items():
+        assert sha(ROOT / relative) == digest
+        add(ROOT / relative, 'meta/rtl/' + relative)
+
     for name, row in index['final_files'].items():
         add(row['path'], 'native/' + name)
     for name in ('receipt.json', 'delivery.json', 'pins.json', 'layout.png'):
