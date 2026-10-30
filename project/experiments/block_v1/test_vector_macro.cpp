@@ -97,12 +97,22 @@ static void revised_cases(){
  }
 }
 int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);dut.cmd_valid=0;dut.reset=1;tick();tick();dut.reset=0;tick();
+ // Interrupt every point stage, including the new quotient/decision boundary.
+ // Reset must discard the transaction and require fresh operand validity.
+ for(unsigned cut=0;cut<6;++cut){
+  Row a,b;for(unsigned j=0;j<8;++j){a[j]=int32_t(j)-4;b[j]=3;}
+  load(0,a);load(1,b);need(dut.cmd_ready,"point reset input unavailable");
+  dut.cmd_valid=1;dut.cmd_op=2;dut.cmd_index=0;put(U(2)|(U(1)<<4)|(U(8)<<11)|(U(2)<<16));tick();dut.cmd_valid=0;
+  for(unsigned j=0;j<cut;++j)tick();need(!dut.rsp_valid,"point responded before reset boundary");
+  dut.reset=1;tick();need(!dut.rsp_valid,"reset retained point response");dut.reset=0;tick();
+  need(dut.cmd_ready,"point reset did not return idle");cmd(9,0,0,true);cmd(2,0,U(8)<<11,true);
+ }
  cmd(9,0,0,true);cmd(6,0,0,true);cmd(8,0,1,true);cmd(11,0,40|(8<<6),true);
  unsigned point_cases=0,function_cases=0,compose_cases=0;double max_function_abs[5]={};
  for(unsigned op=0;op<10;++op)for(unsigned t=0;t<80;++t){Row a,b;for(int j=0;j<8;++j){a[j]=int32_t(rng());b[j]=int32_t(rng());}load(0,a);load(1,b);
   bool broadcast=t&1,swap=t&2;int32_t sb=int32_t(rng()),sc=int32_t(rng());unsigned shift=op==7?rng()%97:rng()%128,width=t%3,n=1+rng()%8;int bits=width==0?8:width==1?16:32;
   U data=U(op)|(U(shift)<<4)|(U(n)<<11)|(U(broadcast)<<15)|(U(width)<<16)|(U(swap)<<18)|(U(uint32_t(sb))<<32)|(U(uint32_t(sc))<<64);
-  auto response=cmd(2,0,data);need(response.latency==5,"point cycle count");auto actual=read(n);bool saturated=false;
+  auto response=cmd(2,0,data);need(response.latency==6,"point cycle count");auto actual=read(n);bool saturated=false;
   for(unsigned j=0;j<n;++j){I bv=broadcast?sb:b[j^unsigned(swap)];I y=0;switch(op){case 0:y=I(a[j])+bv;break;case 1:y=I(a[j])-bv;break;case 2:y=I(a[j])*bv;break;case 3:y=I(a[j])*bv+sc;break;case 4:y=std::max(I(a[j]),bv);break;case 5:y=std::min(I(a[j]),bv);break;case 6:y=I(a[j])>=bv?-1:0;break;case 7:y=I(a[j])*(I(1)<<shift);break;case 8:y=a[j];break;case 9:y=a[j]<0?bv:sc;break;}if(op!=7)y=rne(y,shift);int32_t expected=sat(y,bits);saturated|=I(expected)!=y;need(actual[j]==expected,"point arithmetic mismatch");}
   need(response.saturated==saturated,"point saturation flag");++point_cases;
  }

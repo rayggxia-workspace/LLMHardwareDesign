@@ -11,9 +11,9 @@ module block_v1_v(
  C_MUL=13,C_ADD=14,C_END=15,T_SCAN=16,T_SAVE=17,
  ROT_LOW=18,ROT_HIGH=19,ROT_ROUND=20,ROT_COMBINE=21,S_REDUCE=22,C_REDUCE=23,
  M_EXEC=24,P_TOTAL=25,P_ROUND=26,G_MUL=27,G_ADD=28;
- localparam F_DRAIN=29,F_DENOM=30,N_MERGE=31;
- reg [4:0] phase;
- reg [4:0] mul_return;
+ localparam F_DRAIN=29,F_DENOM=30,N_MERGE=31,P_ROUND_ADD=32;
+ reg [5:0] phase;
+ reg [5:0] mul_return;
  reg signed [31:0] a[0:7],b[0:7],input_mem[0:255],output_mem[0:255];
  reg [1:0] a_valid,b_valid;reg [63:0] replay_valid;
  reg [8:0] output_count,length,offset;
@@ -27,6 +27,7 @@ module block_v1_v(
  reg [7:0] operand_reduce_mask;
  reg signed [64:0] product[0:7],low_product[0:7];
  reg signed [127:0] point_total[0:7],point_rounded[0:7];
+ reg [7:0] point_increment;
  // Register the exact normalization merge before saturation/replay writes.
  reg signed [127:0] norm_rounded[0:7];
  reg signed [127:0] rounded,total[0:7],sum;
@@ -120,6 +121,16 @@ module block_v1_v(
   input signed [127:0] v;input [6:0] shift;
   reg signed [127:0] q;reg [127:0] remn,half;
   begin if(shift==0)rne=v;else begin q=v>>>shift;remn=$unsigned(v)&({128{1'b1}}>>(128-shift));half=128'd1<<(shift-1);rne=add128_grouped(q,{127'b0,((remn>half)||((remn==half)&&q[0]))},1'b0);end end
+ endfunction
+ // The point path registers the full quotient and the tie-to-even decision
+ // before its128-bit increment. No discarded high bits or early saturation.
+ function automatic point_rne_increment;
+  input signed [127:0] v;input [6:0] shift;
+  reg signed [127:0] q;reg [127:0] remn,half;
+  begin
+   q=v>>>shift;remn=$unsigned(v)&({128{1'b1}}>>(128-shift));half=128'd1<<(shift-1);
+   point_rne_increment=shift!=0&&((remn>half)||((remn==half)&&q[0]));
+  end
  endfunction
  // Exact RNE of (high*2^32+low)/2^32 for all two-S65 operands.
  // The discarded bits come only from low. Fold the rounding increment
@@ -333,7 +344,14 @@ module block_v1_v(
      phase<=P_ROUND;
     end
     P_ROUND:begin
-     for(i=0;i<8;i=i+1)point_rounded[i]<=rne(point_total[i],point_op==7?7'd0:point_shift);
+     for(i=0;i<8;i=i+1)begin
+      point_total[i]<=point_total[i]>>>(point_op==7 ? 7'd0:point_shift);
+      point_increment[i]<=point_rne_increment(point_total[i],point_op==7 ? 7'd0:point_shift);
+     end
+     phase<=P_ROUND_ADD;
+    end
+    P_ROUND_ADD:begin
+     for(i=0;i<8;i=i+1)point_rounded[i]<=add128_grouped(point_total[i],{127'b0,point_increment[i]},1'b0);
      phase<=P_WRITE;
     end
     P_WRITE:begin
