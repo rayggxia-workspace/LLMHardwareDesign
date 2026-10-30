@@ -72,6 +72,8 @@ def measure(root,out,cpus,run,kind,variant):
         command_state_isolated='Keep their datapath enables independent of cmd_valid/rsp_ready.' in rtls[0].read_text()
         if 'function automatic signed [127:0] norm_merge_rne;' in rtls[0].read_text():
             generation='550' if 'P_ROUND_FINISH=35;' in rtls[0].read_text() else ('535' if 'reg [79:0] square_pair[0:3];' in rtls[0].read_text() else ('520' if 'point_rounded[i]<=norm_denominator_add(' in rtls[0].read_text() else ('505' if 'square_tree[t]=norm_denominator_add(' in rtls[0].read_text() else ('485' if 'function automatic signed [127:0] norm_denominator_add;' in rtls[0].read_text() else ('474' if vector_point_round_pipeline else '459')))))
+            if "norm_denominator_add({64'b0,stats_sum[i]},{64'b0,stat_block_sum});" in rtls[0].read_text():
+                generation='576'
             assert policy['function']=='block-v1-20261030-'+generation+'/tasks/revision300-test-v'
             prior=out.parents[2]/('block-v1-20261030-'+generation+'/tasks')/('revision300-bench-v-'+variant)
         else:
