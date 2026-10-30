@@ -68,7 +68,7 @@ def measure(root,out,cpus,run,kind,variant):
         policy=json.loads((tools/'revision300-v-fresh.json').read_text())
         command_state_isolated='Keep their datapath enables independent of cmd_valid/rsp_ready.' in rtls[0].read_text()
         if 'function automatic signed [127:0] norm_merge_rne;' in rtls[0].read_text():
-            generation='485' if 'function automatic signed [127:0] norm_denominator_add;' in rtls[0].read_text() else ('474' if vector_point_round_pipeline else '459')
+            generation='505' if 'square_tree[t]=norm_denominator_add(' in rtls[0].read_text() else ('485' if 'function automatic signed [127:0] norm_denominator_add;' in rtls[0].read_text() else ('474' if vector_point_round_pipeline else '459'))
             assert policy['function']=='block-v1-20261030-'+generation+'/tasks/revision300-test-v'
             prior=out.parents[2]/('block-v1-20261030-'+generation+'/tasks')/('revision300-bench-v-'+variant)
         else:

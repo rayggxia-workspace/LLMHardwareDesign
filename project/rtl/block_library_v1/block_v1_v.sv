@@ -117,8 +117,9 @@ module block_v1_v(
    add128_grouped=result;
   end
  endfunction
- // Dedicated normalization denominator adder:16 byte groups, four prefix
- // levels. Keep the full U128 result and existing command latency.
+ // Zero-carry prefix adder:16 byte groups, four prefix levels. Used by the
+ // normalization denominator and all three U80 square-reduction levels.
+ // Keep the full U128 result and existing command latency.
  function automatic signed [127:0] norm_denominator_add;
   input [127:0] left,right;
   reg [8:0] subtotal[0:15];
@@ -204,10 +205,9 @@ module block_v1_v(
   end
   for(integer t=6;t>=0;t=t-1)begin
    sum_tree[t]=sum_tree[2*t+1]+sum_tree[2*t+2];
-   // Preserve each full U80 sum; use the proven grouped carry primitive
-   // at all three square-reduction levels instead of serial ripple sums.
-   square_tree[t]=add128_grouped({48'b0,square_tree[2*t+1]},
-                               {48'b0,square_tree[2*t+2]},1'b0);
+   // Preserve each full U80 sum with four-level prefix group carries.
+   square_tree[t]=norm_denominator_add({48'b0,square_tree[2*t+1]},
+                                      {48'b0,square_tree[2*t+2]});
    if(max_tree[2*t+1]>max_tree[2*t+2]||(max_tree[2*t+1]==max_tree[2*t+2]&&argmax_tree[2*t+1]<argmax_tree[2*t+2]))begin
     max_tree[t]=max_tree[2*t+1];argmax_tree[t]=argmax_tree[2*t+1];end
    else begin max_tree[t]=max_tree[2*t+2];argmax_tree[t]=argmax_tree[2*t+2];end
