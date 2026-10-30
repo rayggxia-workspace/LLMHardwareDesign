@@ -1,3 +1,5 @@
+2026-10-30 22:24 CST：568/569过滤后的232处补线实际诊断PASS，原生445→211、移除234/新增0，557412普通网非RECT/端点与预期RECT保持；14原始/6稳定/314归档Git及receipt绑定，物理仍未接收。570单CPU16只读拓扑实际核对源DEF/receipt及3条网。571/572单过孔替代短桥独立对照PASS：原523 445→444、移除1/新增0，目标仅删1via/加1M2线、其余557411网保持；14原始/6稳定/315归档Git及receipt绑定，未与569合并、不转移552资格。552原详细布线与R404原GRT继续，M/S/T保持，五宏最终未齐；Issuein_progress/PRdraft、登记pending/看板unverified同步pending/审查待指定。
+
 2026-10-30 22:04 CST：566有界同网补线实际FAILED，原生445→213，移除254但新增22，原/候选557412普通网非RECT/端点及预期252RECT一致、原库SHA不变；567封存14原始/5稳定/314归档Git与receipt绑定。新增标记定位20处补线，已从原始失败源剔除并以568/93756提交232处保留补线的全片对照，结果待实际完成；不接收旧候选，不转移552资格。552原详细布线及R404原GRT继续，M/S/T保持，五宏最终未齐。Issuein_progress/PRdraft，登记pending/看板unverified同步pending/审查待指定。
 
 2026-10-30 21:50 CST：566/93754/node18已启动有界同网凹角补线诊断，源b1f99e5a/archive229e92e3，314归档Git及7启动原始核验。旧523只作失败副本，252候选/193无匹配保留，单RECT边长≤1µm、估算新增2.01275µm²；必须核对全部NETS非RECT/端点与预期RECT，完整原生不许新增marker，部分改进不等于接收。c96六16CPU槽、仅一真实ready诊断，Issue总6 allocations；552原详细布线与R404原GRT继续，M/S/T保持，五宏最终未齐。Issuein_progress/PRdraft，登记pending/看板unverified同步pending/审查待指定。
