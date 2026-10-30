@@ -1,7 +1,7 @@
 """Actual31-source bounded via repairs; fresh geometry required."""
 from pathlib import Path
 from collections import Counter
-import json,hashlib
+import json,hashlib,re
 
 def probe(root,out,cpus,run,shard,combined=False,plan_name='fresh31-via-plan-713.json',shard_run='714',mode_prefix='revision300-v-fresh31-vias-',compose_mode='revision300-v-fresh31-via-compose',joint=False):
     from io_slots import file_sha
@@ -150,6 +150,6 @@ def probe(root,out,cpus,run,shard,combined=False,plan_name='fresh31-via-plan-713
                 exact_normal_nets_headers_paths_rectangles=exact,original_inputs_unchanged=unchanged,normal_net_counts=[n0,n1],
                 selected_markers=[p['original_index']for p in selected],selected_nets=len(selected),original_native_count=31,candidate_native_count=sum(new.values()),
                 added_markers=sum((new-old).values()),removed_markers=sum((old-new).values()),
-                scope='Actual683103-marker source. ReverseM4 and via-to-existing-bend alternatives preserve source wires and adjacent metal pad; actual173 whole geometry plus70 additions. Exact allNET/header/path/RECT and native0new required; no terminal qualification transfer.')
+                scope='Actual70531-marker source with fresh710 all-layer geometry and topology. Existing wires and adjacent pads preserved; exact allNET/header/path/RECT and native0new required; no final qualification.')
     (out/'revision300-v-local-vias.json').write_text(json.dumps(result,indent=2)+'\n')
     assert result['passed'],'Preserve failed shard; independent queue tasks continue'
