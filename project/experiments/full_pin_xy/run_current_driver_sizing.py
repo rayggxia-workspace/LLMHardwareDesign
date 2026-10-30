@@ -28,28 +28,38 @@ def read_cells(path):
         elif len(p)>=5:cells[p[0]]=(p[1],tuple(p[2:]))
     return cells,terms
 
-def run(case,revision):
+def run(case,revision,source_profile='original_current'):
     assert case in SOURCES
-    source=ROOT/SOURCES[case];rp=source/'execution.json';q=json.loads(rp.read_text())
+    assert source_profile in ['original_current','LL_corners']
+    assert source_profile!='LL_corners' or case=='llaccel_aux'
+    source=ROOT/('llsys_corner_fill/r01' if source_profile=='LL_corners' else SOURCES[case]);rp=source/'execution.json';q=json.loads(rp.read_text())
     assert q.get('completed_utc') and q['fresh_DRC_count']==0 and q['whole_signal_geometry']['pass']
     odb=source/'routed.odb';report=source/'checks.txt'
     for p in [odb,report]:assert sha(p)==q['files'][p.name]['sha256']
     top=10 if case=='vector' else 8
     routing='set_routing_layers -signal metal2-metal'+str(top)+' -clock metal4-metal'+str(top)
-    fresh_source=source/'fresh.tcl'
+    fresh_source=source/('fresh_DRC.tcl' if source_profile=='LL_corners' else 'fresh.tcl')
     assert sha(fresh_source)==q['files'][fresh_source.name]['sha256'] and routing in fresh_source.read_text(),'Original source range must be recovered before repair'
-    ep=ROOT/'current_electrical_classification/r02/execution.json';e=json.loads(ep.read_text())
-    assert e.get('completed_utc') and not e.get('actual_failure') and e['cases'][case]['ODB_SHA256']==sha(odb)
+    ep=None
+    if source_profile=='original_current':
+        ep=ROOT/'current_electrical_classification/r02/execution.json';e=json.loads(ep.read_text())
+        assert e.get('completed_utc') and not e.get('actual_failure') and e['cases'][case]['ODB_SHA256']==sha(odb)
+    else:
+        assert not q.get('actual_failure') and q['all_closed_sources_unchanged'] and q['native_returncodes']['RC_STA']==0
+        assert q['native_stages']['all_geometry_and_AP.stages.tsv']['native_all_pin_access']=='EXECUTED'
+        assert all(q['native_stages']['actual_fill_edit.stages.tsv'][k]=='EXECUTED' for k in ['VDD','VSS'])
     trial=ROOT/'trials'/TRIALS[case]/(case+'-C')/'execution.json';old=json.loads(trial.read_text());sdc=Path(old['source_sdc'])
     assert sha(sdc)==old['input_sha256'][str(sdc)]
     out=ROOT/'current_driver_sizing'/revision/case;out.mkdir(parents=True,exist_ok=False)
-    inputs={str(p):sha(p) for p in [rp,odb,report,ep,trial,sdc,fresh_source]}
+    inputs={str(p):sha(p) for p in [rp,odb,report,trial,sdc,fresh_source]+([ep] if ep else [])}
     rec={'scope':'ACTUAL_CURRENT_ALL_REPORTED_ELECTRICAL_DRIVER_INVENTORY_AND_COMPATIBLE_SIZING_NOT_PURE_XY',
       'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID'],
       'source_SHA':inputs,'full_qualification':False,'source_setup_ns':q.get('setup_ns'),'source_min_ns':q.get('hold_ns'),
       'interface_function_bits_constants_pin_XY_layer_size_connections_targets_and_allowed_layers':'MUST_REMAIN_UNCHANGED',
       'original_clock_and_external_load_constraints':'UNCHANGED','additional_buffers_requested':0,'functional_architecture_change':False,
       'native_returncodes':{},'RC_STA_full_rules_function':'NOT_YET_EXECUTED','costs':'SEPARATE_DRIVE_SIZE_AND_MOVEMENT_NOT_PIN_XY_SAVING'}
+    rec['source_profile']=source_profile
+    if source_profile=='LL_corners':rec['new_evidence_justifying_trial']='Source changed from c494 to actual 9517-access-edit +109-metal-fill native0/all-leaf-AP0 variant 1bd4aa52. Prior r04 failed on unchanged old-source bit3598; no identical old-source rerun and no claim parent AP now passes.'
     save=lambda:(out/'execution.json').write_text(json.dumps(rec,indent=2)+'\n')
     save();common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp',
       '--bind','/public/home/yuzelu/project-circuit:/public/home/yuzelu/project-circuit:ro',
@@ -78,7 +88,8 @@ def run(case,revision):
             try:logic[name]=contract('cell ('+name+') {'+body+'}',name)
             except AssertionError:logic[name]=None
         previous=ROOT/'current_driver_sizing/r03'/case
-        if revision!='r03' and (previous/'execution.json').exists():
+        reusable_previous=(previous/'execution.json').exists() and json.loads((previous/'execution.json').read_text()).get('source_SHA',{}).get(str(odb))==sha(odb)
+        if revision!='r03' and reusable_previous:
             prior=json.loads((previous/'execution.json').read_text())
             assert prior.get('completed_utc') and prior['native_returncodes']['original_native_inventory']==0 and prior['all_closed_sources_unchanged'] and prior['source_SHA'][str(odb)]==sha(odb)
             inputs[str(previous/'execution.json')]=sha(previous/'execution.json')
