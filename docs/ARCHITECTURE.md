@@ -306,14 +306,16 @@ Linux轻量调度排空控制：`python3 project/experiments/block_v1/node_queue
 2026-10-28节点内CPU硬限制：`native_node_queue.py`从真实CPU affinity划分六个互斥16CPU集合，以taskset启动worker并立即补位；环境变量仍保留，但不再当硬限制证据。Linux无EDA控制命令：`python3 project/experiments/block_v1/node_queue_affinity_controls.py /absolute/new-control-directory`（控制节点须实际允许96CPU），以及`python3 project/experiments/block_v1/node_queue_controls.py`。真实32线程/后代继承、六并发/即完补位已通过；已有业务任务只原位绑定，详见[决策](decisions/2026-10-28-block-v1-cpu-affinity.md)。控制不是EDA或宏资格。
 
 
-## 本轮后继队列自动准入（2026-10-29）
+## 本轮后继队列自动准入（2026-10-30）
 
-`project/experiments/block_v1/revision300_admission.py`只检查六个已经stage的队列：R311/312/313、V330/331/332。运行配置及启动证据在`work/YUZE-LU/121/review-20261028/admission-335/`。它每60秒检查真实叶任务前置和本成员allocation数量，复用每份不可变归档中的dispatch.py；原提交器的Issue共享锁、先写SUBMITTING reservation及包含pending/unknown的8allocation限制仍是唯一提交权威。已有任何提交记录均不重投；观察超时或会计信息缺失不视为作业结束。不会取消、修改或重启EDA。
+`revision300_admission.py`当前固定七个已封存队列：R404/405/406、V462/463/464/465。实际部署及两轮读回证据见`work/YUZE-LU/121/review-20261028/admission-466/`，远端为`/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/admission-20261030-466`，PID4181231。426轻量控制器及未曾分配的425已退休，原EDA均继续；早期335等历史配置和原始证据保留在各自目录，不作为当前恢复入口。
 
-该进程只在登录节点处理JSON、Slurm查询和sbatch，所有综合/仿真/P&R仍由Slurm内原96CPU队列执行。节点内原6×16、1.2预留/16GiB guard与即完补位机制不变。六份manifest、node-queue、dispatch.py和native_node_queue.py的SHA固定；文件变化时闭锁并记录observation_error。不是新增产品调度系统，也不改变宏或验收边界。
+该进程每60秒只在登录机处理JSON、Slurm查询和sbatch；全部EDA在Slurm allocation内执行。实际manifest、queue、dispatcher与dependency代码SHA固定，异常观察闭锁。现有dispatcher的Issue共享锁、先写SUBMITTING reservation和最多8 allocations（含旧、pending及unknown）仍是唯一提交权威；同账号其他任务不计入本Issue。已有任何提交记录不重投，观察超时不视为终止。节点内6×16硬CPU affinity、即完补位、1.2内存预留和16GiB guard保持。纯控制验证：`python -X utf8 project/experiments/block_v1/test_revision300_admission.py`。
 
-实际部署目录为`/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/admission-20261029-335`；`status.json`是最新观察，`events.jsonl`记录状态变化，`launch.json`记录进程与源SHA。09:45捕获证实PID2121001存活且至少两轮检查。恢复先核对该目录真实进程、命令行和状态，不能仅凭旧PID或锁文件认定存活，也不能在已有控制进程时重复启动。未知sbatch结果须核对原reservation与Slurm comment，不重投。控制进程finished只表示六队列均进入可检查终态，不能代替最终五宏审计。
+恢复先读真实`status.json`、`launch.json`、进程cmdline/UID/start ticks及原Slurm句柄；不能仅凭旧PID/锁重复启动，也不能取消或重启EDA。控制器finished只表示所监控队列均进入可检查终态，不代表五宏通过验收。
 
-纯控制验证命令：`python -X utf8 project/experiments/block_v1/test_revision300_admission.py`。覆盖未知/失败/完成尝试禁止重投、前置与失败分类、8项含PENDING、其他成员及同账号无关作业不计入本任务、异常观察闭锁；本地和部署端均已通过。原EDA及最终门不能由此替代。
+## 过孔实现的有限规划与完整几何对照
 
-准入预检查只匹配本Issue目录dispatch-state记录的作业ID，不以整个账号或名字前缀单独设限。原334控制版本及暴露过度计数的同账号无关任务负例、仅终止控制进程的退役回执保留；当前335的两轮真实检查与八个原EDA作业读回见其capture-start和allocation-scope-readback.json。
+`revision300_via_realization.plan(report, records, tech_lef)`仅生成计划，不改数据库。它从实际技术LEF读取线宽，按原同网导线/过孔矩形的精确并集检查包围框扩展；不移动导线、中心、切孔或固定连接。仅支持2000DBU/µm及已审计的简单DEF路径；未知标记、跨网、切孔层、缺失记录及非整数坐标拒绝。控制命令：`python -X utf8 project/experiments/block_v1/test_revision300_via_realization.py`。
+
+有限回放见`work/YUZE-LU/121/review-20261028/v-via-realization-planner-467/`，对实际453生成相同194候选/191网/2拒绝。`v-410-bulk-gds-xor-467/`记录实际批量显式via修改后的完整GDS28层递归非文本mask XOR0，复用的原GDS与源DEF逐字节绑定。它只闭合掩膜一致性证据；实际ODB/完整DEF/连通/identity clone、原生与未删改完整GDS DRC、RC/STA/PG、数值/事务与严格LEC仍逐项必需。旧410、单点451或批量453证据不转移为新V463/R404资格。
