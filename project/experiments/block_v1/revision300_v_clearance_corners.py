@@ -89,8 +89,7 @@ def probe(root,out,cpus,run,shard,repaired=False):
     from io_slots import file_sha
     from revision300_v_corner_probe import def_content,violations
     assert cpus==16 and shard in range(7)
-    assert not(repaired and shard==6),'Repaired-source compose requires its own actual shard receipts'
-    assert shard!=6 or out.name=='revision300-v-clearance-compose'
+    assert shard!=6 or out.name==('revision300-v-repaired-compose' if repaired else 'revision300-v-clearance-compose')
     base=out.parents[2]
     prior=base/('block-v1-20261031-655/tasks/revision300-v-repaired-neighborhood' if repaired else
                 'block-v1-20261031-638/tasks/revision300-v-current-neighborhood')
@@ -113,8 +112,10 @@ def probe(root,out,cpus,run,shard,repaired=False):
         old=violations((prior/'native-whole-drc.rpt').read_text())
         modified={p['net'].replace('\\','')for p in plan['selected']};affected=set();evidence=[]
         for n in range(6):
-            folder=base/('block-v1-20261031-641/tasks/revision300-v-clearance-corners-'+str(n))
+            folder=base/(('block-v1-20261031-660/tasks/revision300-v-repaired-corners-' if repaired else
+                          'block-v1-20261031-641/tasks/revision300-v-clearance-corners-')+str(n))
             r=json.loads((folder/'receipt.json').read_text())
+            assert r['mode']==folder.name
             for filename in ('revision300-v-clearance-corners.json','corner-native-drc.rpt','clearance-plan.json'):
                 assert file_sha(folder/filename)==r['outputs'][filename]
             previous=json.loads((folder/'revision300-v-clearance-corners.json').read_text())
@@ -131,10 +132,10 @@ def probe(root,out,cpus,run,shard,repaired=False):
             affected.update(changed)
             evidence.append(dict(shard=n,receipt_sha256=file_sha(folder/'receipt.json'),added=list(added.elements()),modified_participant_nets=sorted(changed)))
         selected=[p for p in plan['selected']if p['net'].replace('\\','')not in affected]
-        assert len(affected)==5 and len(selected)==253
+        assert len(affected)==5 and len(selected)==(250 if repaired else 253)
         failure_filter=dict(affected_modified_nets=sorted(affected),actual_independent_differences=evidence,
                             filtered_indices=[p['index']for p in plan['selected']if p not in selected],
-                            scope='Remove all modified nets in actual641 added markers; fresh combined check, not sum of independent removals.')
+                            scope=f'Remove all modified nets in actual{660 if repaired else 641} added markers; fresh combined check, not sum of independent removals.')
         (out/'failure-filter.json').write_text(json.dumps(failure_filter,indent=2)+'\n')
     assert selected,'Empty shard is not an executable EDA task'
     (out/'clearance-plan.json').write_text(json.dumps(plan,indent=2)+'\n')

@@ -189,6 +189,9 @@ try:
     elif MODE=='revision300-v-clearance-compose':
         from revision300_v_clearance_corners import probe
         probe(ROOT,OUT,CPUS,run,6)
+    elif MODE=='revision300-v-repaired-compose':
+        from revision300_v_clearance_corners import probe
+        probe(ROOT,OUT,CPUS,run,6,repaired=True)
     elif MODE.startswith('revision300-v-clearance-corners-'):
         from revision300_v_clearance_corners import probe
         probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]))
