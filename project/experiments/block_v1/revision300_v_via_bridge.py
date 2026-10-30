@@ -20,7 +20,7 @@ def path_key(path):
     return path['layer'],tuple(tuple(p)for p in path['points']),path['via']
 
 
-def probe(root,out,cpus,run):
+def probe(root,out,cpus,run,case='m1'):
     from io_slots import file_sha
     from native_escape import parse
     from revision300_v_corner_probe import violations
@@ -28,26 +28,35 @@ def probe(root,out,cpus,run):
     base=out.parents[2];prior=base/'block-v1-20261030-557/tasks/revision300-v-spacing-localize'
     receipt=json.loads((prior/'receipt.json').read_text());assert receipt['passed']
     report=prior/'revision300-v-physical-localization.json';assert file_sha(report)==receipt['outputs'][report.name]
-    d=json.loads(report.read_text());marker=d['markers'][0]['marker']
-    assert marker['layer']=='metal1'and marker['bbox_dbu']==[2325550,1598030,2325650,1598170]
+    cases=dict(m1=dict(index=0,layer='metal1',via_layer='metal1',via='via1_7',
+                       box=[2325550,1598030,2325650,1598170],a=(2325410,1598100),b=(2325790,1598100)),
+               m3=dict(index=249,layer='metal3',via_layer='metal2',via='via2_5',
+                       box=[60750,640430,60850,640570],a=(60610,640500),b=(60990,640500)))
+    c=cases[case];d=json.loads(report.read_text());marker=d['markers'][c['index']]['marker']
+    assert marker['layer']==c['layer']and marker['bbox_dbu']==c['box']
     name=marker['net'].replace('\\','');odb=Path(d['input_odb'])
     assert file_sha(odb)==d['input_odb_sha256']
     previous=base/'block-v1-20261030-562/tasks/revision300-v-marker-readback'
     pr=json.loads((previous/'receipt.json').read_text());assert pr['passed']
     original_def=previous/'original.def';assert file_sha(original_def)==pr['outputs'][original_def.name]
     record,others0,n0=net_records(original_def,name);header,paths=parse(record)
-    a=(2325410,1598100);b=(2325790,1598100)
+    a=c['a'];b=c['b']
     assert all(point[2]is None for p in paths for point in p['points'])
-    bridge=[p for p in paths if p['layer']=='metal1'and not p['via']and {tuple(t[:2])for t in p['points']}=={a,b}]
+    def contains(p):
+        if p['layer']!=c['layer']or p['via']:return False
+        u,v=[tuple(t[:2])for t in p['points']]
+        return ((u[1]==v[1]==a[1]==b[1]and min(u[0],v[0])<=min(a[0],b[0])and max(u[0],v[0])>=max(a[0],b[0]))or
+                (u[0]==v[0]==a[0]==b[0]and min(u[1],v[1])<=min(a[1],b[1])and max(u[1],v[1])>=max(a[1],b[1])))
+    bridge=[p for p in paths if contains(p)]
     assert len(bridge)==1
     def via_at(point):
-        found=[p for p in paths if p['layer']=='metal1'and p['via']=='via1_7'and tuple(p['points'][0][:2])==point]
+        found=[p for p in paths if p['layer']==c['via_layer']and p['via']==c['via']and tuple(p['points'][0][:2])==point]
         assert len(found)==1;return found[0]
     remove=via_at(a);keep=via_at(b)
     for point in (a,b):
         assert any(p['layer']=='metal2'and not p['via']and point in [tuple(t[:2])for t in p['points']]for p in paths)
-    # Preserve the old M1 bridge and the second via. Every former A via
-    # connection is replaced by A(M2)->B(M2)->B(M1)->A(M1). Nothing is detached.
+    # Preserve the entire old source-layer wire and the second via. The new
+    # M2 bridge plus B's retained via and the old wire replace A's connection.
     addition=dict(layer='metal2',points=[(*a,None),(*b,None)],via=None)
     updated=[p for p in paths if p is not remove]+[addition]
     expected=Counter(map(path_key,paths));expected.subtract([path_key(remove)]);expected+=Counter([path_key(addition)])
@@ -70,6 +79,7 @@ def probe(root,out,cpus,run):
     old=violations(native.read_text());new=violations((out/'bridge-native-drc.rpt').read_text())
     result=dict(passed=exact and not(new-old)and sum(new.values())<sum(old.values()),
                 diagnostic_only=True,physical_qualified=False,original_unchanged=True,
+                source_marker_index=c['index'],preserved_source_layer=c['layer'],
                 input_odb_sha256=file_sha(odb),original_def_sha256=file_sha(original_def),
                 localization_receipt_sha256=file_sha(prior/'receipt.json'),
                 original_def_receipt_sha256=file_sha(previous/'receipt.json'),
