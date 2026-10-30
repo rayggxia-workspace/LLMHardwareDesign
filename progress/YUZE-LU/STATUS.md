@@ -1,3 +1,5 @@
+2026-10-30 21:50 CST：566/93754/node18已启动有界同网凹角补线诊断，源b1f99e5a/archive229e92e3，314归档Git及7启动原始核验。旧523只作失败副本，252候选/193无匹配保留，单RECT边长≤1µm、估算新增2.01275µm²；必须核对全部NETS非RECT/端点与预期RECT，完整原生不许新增marker，部分改进不等于接收。c96六16CPU槽、仅一真实ready诊断，Issue总6 allocations；552原详细布线与R404原GRT继续，M/S/T保持，五宏最终未齐。Issuein_progress/PRdraft，登记pending/看板unverified同步pending/审查待指定。
+
 2026-10-30 21:40 CST：V552原流程已完成GRT进入详细布线，565封存5原始/1完整GRT JSON服务器SHA/311归档Git与真实mapping/function receipt及CTS源绑定。阶段setup WS+.000789591ns/0项、hold+.0786797ns/0项，cap15/slew2仍拒收；不据阶段正裕量接收或推定final。R404原GRT extra39继续，M/S/T保持，V/R最终未齐。560失败和562 DEF核对已封存，不改原库不转移资格；Issuein_progress/PRdraft、登记pending/看板unverified同步pending/审查待指定。
 
 2026-10-30 21:35 CST：560/563副本RECT对照实际FAILED：原生445→440；564封存562原生DEF只读核对PASS，557412普通网络非RECT路径/端点一致、预期新增445RECT且原ODB未变，313归档Git及receipt绑定。消失恰为71/72/167/168/169五个多矩形覆盖标记，其余440未解决，候选不接收，不转移当前552。路径迭代器遗漏RECT由DEF核对补证，不能忽略完整几何。552原GRT与R404原GRT继续，M/S/T保持，V/R最终未齐；Issuein_progress/PRdraft，登记pending/看板unverified同步pending/审查待指定。
