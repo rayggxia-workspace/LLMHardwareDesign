@@ -201,6 +201,9 @@ try:
     elif MODE=='revision300-v-repaired-topology':
         from revision300_v_repaired_topology import inspect
         inspect(ROOT,OUT,CPUS,run)
+    elif MODE=='revision300-v-latest-neighborhood':
+        from revision300_v_latest_neighborhood import inspect
+        inspect(ROOT,OUT,CPUS,run)
     elif MODE=='revision300-v-joint-via-compose':
         from revision300_v_local_vias import probe
         probe(ROOT,OUT,CPUS,run,6,combined=True,plan_name='shift-via-plan-700.json',shard_run='701',mode_prefix='revision300-v-shift-vias-',compose_mode='revision300-v-joint-via-compose',joint=True)
