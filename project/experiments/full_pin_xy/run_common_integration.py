@@ -35,7 +35,10 @@ SHARED_SNAPSHOT='''proc common_shared_snapshot {file} {
 
 
 def source_view(case,scheme,source_profile='original'):
-    assert source_profile in ['original','latest_access_tips','deadline_current']
+    assert source_profile in ['original','latest_access_tips','deadline_current','matched_perimeter']
+    if source_profile=='matched_perimeter':
+        from matched_perimeter_source import select
+        return select(case,scheme,source_view)
     if source_profile=='deadline_current':
         assert scheme=='C'
         expected=json.loads((DRIVER/'deadline_current_sources.json').read_text())[case]
@@ -233,8 +236,8 @@ def screen_pads(out,preparation,inputs):
 def run(scheme,revision,route_engine='FastRoute',source_profile='original'):
     assert route_engine in ['FastRoute','CuGR'];native_threads=8 if route_engine=='CuGR' else 16
     assert int(os.environ['SLURM_CPUS_PER_TASK'])>=native_threads
-    assert scheme in ['Aopt','C'] and source_profile in ['original','latest_access_tips','deadline_current']
-    assert source_profile=='original' or scheme=='C'
+    assert scheme in ['Aopt','C'] and source_profile in ['original','latest_access_tips','deadline_current','matched_perimeter']
+    assert source_profile=='original' or scheme==('Aopt' if source_profile=='matched_perimeter' else 'C')
     out=ROOT/'common_integration'/revision/scheme;out.mkdir(parents=True,exist_ok=False)
     inputs=ROOT/'inputs/common-topology-r02';prep=ROOT/'inputs/common-base-preparation-r04'
     assert prep.exists(),str(prep)
@@ -253,7 +256,7 @@ def run(scheme,revision,route_engine='FastRoute',source_profile='original'):
       'same_compiled_topology_resource_instances_frame_and_preconnect_budget':True,
       'fairness_limit':'Early integration trial. Original selected Aopt/C leaf epochs and all differing ECO/STA/rule costs remain separately indexed; not final pure-XY PPA or system comparison.'})
     try:
-        source_pin_rows=[]
+        source_pin_rows=[];low_envelopes=[]
         tech=ROOT/'upper_layer_probe/r01/model/research12.tech.lef';model=json.loads((tech.parent/'model.json').read_text())
         assert model['original_M1_M10_and_via1_via9_layer_blocks_identical'] and sha(tech)==model['files'][tech.name]['sha256']
         lines=['read_lef '+tcl(tech),'read_lef /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.mod.lef',
@@ -271,7 +274,17 @@ def run(scheme,revision,route_engine='FastRoute',source_profile='original'):
                 for line in f:
                     m=re.match(r'^MACRO\s+(\S+)',line)
                     if m:master=m[1];break
-            assert master;alias='p126_'+case;dest=out/(alias+'.lef');alias_stream(detail,dest,master,alias)
+            assert master;alias='p126_'+case;dest=out/(alias+'.lef')
+            parent_detail=detail
+            if source_profile=='matched_perimeter':
+                from coarsen_parent_low_obs import coarsen
+                parent_detail=out/(case+'.parent_low.lef')
+                abstraction=coarsen(detail,parent_detail,requested=('metal1','metal2','metal3'))
+                for ly,box in abstraction['original_OBS_envelope_DBU'].items():
+                    low_envelopes.append(('u_'+case,ly)+tuple(box))
+                rec.setdefault('parent_low_OBS',{})[case]=abstraction
+                for p in [v['resource_match_inventory']]:rec['source_SHA'][str(p)]=sha(p)
+            alias_stream(parent_detail,dest,master,alias)
             text=v['model'].read_text();text,n=re.subn(r'cell\s*\(\s*"?'+re.escape(master)+r'"?\s*\)','cell ("'+alias+'")',text);assert n==1
             lib=out/(alias+'.lib');lib.write_text(text);lines+=['read_lef '+tcl(dest),'read_liberty '+tcl(lib)];liblines+=['read_liberty '+tcl(lib)]
             leaf_receipt=json.loads(v['receipt'].read_text())
@@ -292,6 +305,9 @@ def run(scheme,revision,route_engine='FastRoute',source_profile='original'):
         rec['actual_source_signal_pin_coverage']={'all_signal_pins':len(source_pin_rows),
           'all_on_block_edges':all(r['touches_block_edge_within_5nm'] for r in source_pin_rows),
           'per_block':dict(Counter(r['case'] for r in source_pin_rows)),'geometry_source':'Actual source LEFs, not names or report colors'}
+        if source_profile=='matched_perimeter':
+            assert rec['actual_source_signal_pin_coverage']['all_on_block_edges']
+            rec['fairness_limit']='All six Aopt sources match selected C cells/connections/poses/PG/die/SDC; unchanged topology/placement/frame/256-conductor budget. Actual common routing still a trial; not two complete functions or qualified PPA.'
         rec['source_SHA'].update({str(p):sha(p) for p in [tech,prep/'preparation_contract.json',prep/'shared_prewire_geometry.csv']+list(p for p in inputs.iterdir() if p.is_file())})
         helpers=(DRIVER/'parent_trial.tcl').read_text().split('if {![stage load {',1)[0]
         place_helpers=helpers.replace('$out/stages.tsv','$out/placement_PG_stages.tsv')
@@ -321,6 +337,12 @@ def run(scheme,revision,route_engine='FastRoute',source_profile='original'):
         env='PINXY_PARENT_OUT='+str(out)
         rec['placement_PG_returncode']=execute(common,script,out/'place_PG.log',env,threads=native_threads)
         if rec['placement_PG_returncode']!=0:raise RuntimeError('Actual placement/PDN failed; checkpoint and original rules retained')
+        if source_profile=='matched_perimeter':
+            audit=DRIVER/'check_parent_low_obs_pg.tcl';rec['source_SHA'][str(audit)]=sha(audit)
+            body='read_db '+tcl(out/'placed_PG_NOT_FROZEN.odb')+'\nset conservative_low_obstruction_envelopes {'+' '.join('{'+tcl(e[0])+' '+tcl(e[1])+' '+' '.join(map(str,e[2:]))+'}' for e in low_envelopes)+'}\nsource '+tcl(audit)+'\nclose $stages\n'
+            script=out/'PG_OBS.tcl';script.write_text(place_helpers.replace('placement_PG_stages.tsv','PG_OBS_stages.tsv')+'\n'+body)
+            rec['actual_parent_PG_conservative_OBS_returncode']=execute(common,script,out/'PG_OBS.log',env,threads=1)
+            assert rec['actual_parent_PG_conservative_OBS_returncode']==0
         verify_graph(inputs,out/'placed.endpoints.tsv',out/'placed_graph_check.json')
         padcommands=screen_pads(out,prep,inputs)
         shared=json.loads((out/'actual_shared_conductors.json').read_text())
