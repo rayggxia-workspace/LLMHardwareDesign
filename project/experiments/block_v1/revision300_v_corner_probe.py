@@ -67,7 +67,7 @@ def violations(text):
     return result
 
 
-def probe(root,out,cpus,run):
+def probe(root,out,cpus,run,filter_added=False):
     from io_slots import file_sha
     assert cpus==16
     base=out.parents[2];previous=base/'block-v1-20261030-557/tasks/revision300-v-spacing-localize'
@@ -84,7 +84,25 @@ def probe(root,out,cpus,run):
     rd=prior/'revision300-v-marker-readback.json';assert file_sha(rd)==pr['outputs'][rd.name]
     assert json.loads(rd.read_text())['original_odb_sha256']==file_sha(original)
     chosen,skipped=candidates(d['markers']);assert chosen
-    (out/'candidate-rectangles.json').write_text(json.dumps(dict(chosen=chosen,skipped=skipped),indent=2)+'\n')
+    filtered=[];filter_provenance=None
+    if filter_added:
+        failed=base/'block-v1-20261030-566/tasks/revision300-v-corner-probe'
+        fr=json.loads((failed/'receipt.json').read_text())
+        assert not fr['passed'] and fr['mode']=='revision300-v-corner-probe'
+        failure=failed/'revision300-v-corner-probe.json';actual=failed/'corner-native-drc.rpt'
+        assert file_sha(failure)==fr['outputs'][failure.name]
+        assert file_sha(actual)==fr['outputs'][actual.name]
+        fd=json.loads(failure.read_text());assert not fd['passed']and fd['source_odb_sha256']==file_sha(original)
+        added=violations(actual.read_text())-violations(native.read_text())
+        assert sum(added.values())==fd['added_marker_count']==22
+        affected={name.replace('\\','')for block in added for name in re.findall(r'net:(\S+)',block)}
+        filtered=[r['index']for r in chosen if r['net'].replace('\\','')in affected]
+        chosen=[r for r in chosen if r['net'].replace('\\','')not in affected]
+        assert len(filtered)==20 and len(chosen)==232
+        filter_provenance=dict(failed_receipt_sha256=file_sha(failed/'receipt.json'),
+                               actual_failed_native_drc_sha256=file_sha(actual),
+                               actual_new_marker_count=sum(added.values()),affected_net_names=sorted(affected))
+    (out/'candidate-rectangles.json').write_text(json.dumps(dict(chosen=chosen,skipped=skipped,filtered=filtered,filter_provenance=filter_provenance),indent=2)+'\n')
     groups=defaultdict(list)
     for row in chosen:groups[row['net'].replace('\\','')].append(row)
     helper=previous/'selected-geometry.tcl';assert file_sha(helper)==receipt['outputs'][helper.name]
@@ -114,6 +132,7 @@ def probe(root,out,cpus,run):
                 localization_receipt_sha256=file_sha(previous/'receipt.json'),
                 original_def_receipt_sha256=file_sha(prior/'receipt.json'),
                 selected_corners=len(chosen),skipped_marker_indices=skipped,
+                filtered_marker_indices=filtered,filter_provenance=filter_provenance,
                 normal_net_counts=[n0,n1],exact_expected_rectangles_and_nonrect_net_routes=exact,
                 original_drc_count=sum(old.values()),candidate_drc_count=sum(new.values()),
                 added_marker_count=sum(added.values()),removed_marker_count=sum(removed.values()),
