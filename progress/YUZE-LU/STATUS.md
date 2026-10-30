@@ -1,3 +1,5 @@
+2026-10-30 14:20 CST：514保存494独立严格LEC，53478输入/53467输出全部匹配、diff0/1全0、UNSAT/IDENTICAL；16原始/8大文件SHA/311源Git与receipt输入输出绑定，与513最终功能同一最终源。setup/原生DRC失败保持，不转移到505/507。原507 CTS修复内部LEC完成，R404原GRT extra31继续；无EDA取消或重启。Refs #121 / PR #122；当前V/R最终未齐，in_progress/draft；登记pending，看板unverified/同步pending，审查待指定。
+
 2026-10-30 14:18 CST：513封存493最终网表在494独立执行的三初态功能，均567808检查/418843周期通过；27原始/8大文件SHA/311源Git与receipt输入输出绑定。实际setup28项负裕量/原生DRC496失败保持，不转移当前505/507。合同置顶五宏当前选择/验收表，历史阶段日志移至末尾保留，修正初始合同与当前源混淆。507已放置完成、CTS内部LEC实际CPU增长，R404原GRT extra31继续；不取消/重启EDA，不重复M/S/T。结构检查通过。Refs #121 / PR #122保持in_progress/draft，五宏当前最终未齐，登记pending、看板unverified/同步pending、审查待指定。
 
 2026-10-30 14:06 CST：精确HEAD278d5e8d已发布PR122，Project structure1131/run41011898893 success，PR OPEN/DRAFT与Issue OPEN/status:in_progress、正文逐字读回核验。512仅保存494原生DRC496项（Spacing494/NS2；M2=314/M3=182）4原始及511同一final-source SHA；完整GDS deck仍运行，未写成完整DRC终态。508/509新源封存8原始/311源Git远端SHA/28RTL仿真与507相同，尚无allocation。新507放置和R404原GRT extra31均真实CPU增长；两旧92045/92046、R93555、49493619、50793623共5 allocations。505八项/506七测量已完成，其余最终检查依赖尚不存在的最终数据库；依据真实依赖暂未填满6至8节点，不提交重复M/S/T或无用任务。原EDA无取消/重启，目标active、五宏最终未齐，登记PR5仍open未合并、看板unverified/同步pending、审查待指定。
