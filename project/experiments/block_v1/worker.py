@@ -177,6 +177,9 @@ try:
     elif MODE == 'revision300-v-via-batch':
         from revision300_v_via_batch import probe
         probe(ROOT,OUT,CPUS,run)
+    elif MODE == 'revision300-v-geometry-compose':
+        from revision300_v_geometry_compose import probe
+        probe(ROOT,OUT,CPUS,run)
     elif MODE == 'revision300-v-via-bridge-m3':
         from revision300_v_via_bridge import probe
         probe(ROOT,OUT,CPUS,run,case='m3')
