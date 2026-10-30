@@ -8,6 +8,7 @@ import subprocess
 import time
 
 ROOT=Path(__file__).resolve().parents[3]
+COMPILER='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
 
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
@@ -27,10 +28,10 @@ def main():
     def call(command,log):
         with (a.out/log).open('w') as f:r=subprocess.run(list(map(str,command)),cwd=ROOT,stdout=f,stderr=subprocess.STDOUT)
         assert r.returncode==0,(command,log,r.returncode)
-    receipt['verilator_version']=subprocess.check_output(['verilator','--version'],text=True).strip()
     try:
-        call(['verilator','--lint-only','-Wall','--top-module',name,'-I'+str(rtl),*sources],'lint.log')
-        call(['verilator','--cc','--exe','--build','-j',str(min(8,len(receipt['cpu_affinity']))),
+        receipt['verilator_version']=subprocess.check_output([COMPILER,'--version'],text=True).strip()
+        call([COMPILER,'--lint-only','-Wall','--top-module',name,'-I'+str(rtl),*sources],'lint.log')
+        call([COMPILER,'--cc','--exe','--build','-j',str(min(8,len(receipt['cpu_affinity']))),
               '--top-module',name,'--Mdir',a.out/'obj','--x-initial','unique','--x-assign','unique',
               '-CFLAGS','-std=c++17 -O1','-I'+str(rtl),*sources,cpp],'build.log')
         for mode,seed in [(1,143),(2,143),(2,144)]:
