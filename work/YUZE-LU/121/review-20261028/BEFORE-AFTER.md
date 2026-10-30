@@ -30,7 +30,7 @@
 
 以下为**早期修订源**的同语义端口测量，保留作历史对照；V/R已继续改流水，不能把这些周期当作当前源的最终性能：M K1024×N8 S8为3103→806拍；V256函数544→263、局部RMS615→521、Softmax680→586；R256 GDN4510→2150、SSM5020→2403拍（309实际操作数流水）。S连续读取与T已提交批结果分别实现无背压每拍一字；容量仍是16KiB单1RW与一份6KiB租约。M/V/R均保留128bit有限端口，未宣称能由该口连续喂满64个S8乘法器。详细长形状、背压和完整字节计价见[模型M测量](model-m-0405/README.md)、[S/V实际工作空间](model-sv-0408/README.md)、[V/R对照](vr-bench-0225/README.md)。
 
-当前V520独立逐拍验证确认延迟合同：逐元素6拍、统计4拍、8元素函数9拍、TopK40选8为328拍；N256内部RMS/L2为519拍、Softmax586拍。它们不包含完整装载/消费/跨宏成本，不与上一段历史端到端计数直接相减。当前有限端到端统计/归一化工作空间以[521七项测量](v-workspace-521/README.md)为准；[按521重算的预算](resource-budget-after-point-prefix-521.json)为8模型80候选，[逐字段比较](resource-budget-point-prefix-521-comparison.json)与506保持一致，仅覆盖已测子集，不授予整模型10token/s或整数质量资格。
+当前选定V的576源逐拍测量（[583原始报告](v-statistic-prefix-583/block-v1-20261030-576/tasks/revision300-vector-boundary-latency/revision300-vector-boundary.json)）确认：逐元素7拍、统计5拍、8元素函数9拍、倒数130拍、倒平方根196拍；TopK40选8为328拍；N256内部RMSNorm/L2Norm为551拍、Softmax618拍。三种初态均通过，报告所列四份RTL的SHA与当前Git字节一致。周期从接受操作到首次保持响应，不包含输入装载、输出读回、消费和背压成本；不能与历史520/521或跨宏端到端周期直接相减。当前有限工作空间依据[577五项S/V测量及保留的识别失败](v-workspace-577-584/README.md)与[587修复识别后的两项占用测量](v-occupancy-587-592/README.md)；当前有限预算见[595](resource-budget-after-statistic-prefix-595.json)及[规范输入说明](RESOURCE-BUDGET.md)，8模型80候选仅为已计价子集，不授予整模型10token/s或整数质量资格。
 
 预连取舍：M/T副本各16条真实M9路径的局部试验通过原生DRC和缺via负例；生产宏不采用下层固定预连，不整体限制内部到M8，未来适配仍靠M11/M12。见[实际局部试验](preconnect-0400/README.md)。只交付五种各一个基础物理实现，T high失败不触发裕量版本。
 
