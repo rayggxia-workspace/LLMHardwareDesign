@@ -30,6 +30,10 @@ module block_v2_n(
  reg [31:0] square[0:1];reg [15:0] ex[0:1];
  reg signed [47:0] norm_product[0:1];
  reg signed [63:0] gate_product[0:1];
+ wire signed [63:0] normalized_gate[0:1];
+ for(genvar k=0;k<2;k=k+1)begin: gamma_multiplier
+  assign normalized_gate[k]=norm_product[k]*gamma[k];
+ end
  reg saturated;
  reg [63:0] group_n,group_d;
  wire group_valid,group_ready,group_error;
@@ -200,7 +204,7 @@ module block_v2_n(
      phase<=NORM_GATE;
     end
     NORM_GATE:begin
-     for(integer l=0;l<2;l=l+1)gate_product[l]<=operation==6?{{16{norm_product[l][47]}},norm_product[l]}:norm_product[l]*gamma[l];
+     for(integer l=0;l<2;l=l+1)gate_product[l]<=operation==6?$signed({{16{norm_product[l][47]}},norm_product[l]}):normalized_gate[l];
      phase<=EMIT;
     end
     EMIT:begin
