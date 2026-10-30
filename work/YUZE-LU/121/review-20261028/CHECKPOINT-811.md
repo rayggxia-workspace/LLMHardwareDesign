@@ -1,5 +1,9 @@
 # Issue121 继续入口（2026-10-31 07:47 CST）
 
+2026-10-31 07:53 CST：805/94063新最终源的物理检查与fresh完整信号几何均PASS；812封存38原始/9实际服务器大文件SHA、364源Git及receipt输入/稳定输出，绑定实际最终源receipt 9ef42c0f…。全部562492非PG网/22107288形状/1875509端子/400 DEF RECT连通、失败与缺失0；27066实际timed endpoints的setup/hold最小+0.012849/+0.029884ns，电容/slew违规0、PG/RC覆盖通过。完整未改GDS与三初态功能继续，严格LEC按功能前置补位；六文件/完整查看/806接口仍待，V accepted=false。804自然完成与809证据保持；R原404继续，M/S/T保持，五宏未齐。
+
+812 collector已自然完成。38原始文件本地SHA/大小已核验，下一次核对其提交Git字节。采集入口collect812.py不可对已有目录盲目重跑；read805.py只读实际终态，sample805.py只在94063有效时取进程证据。
+
 Refs #121 / PR122；负责人YUZE-LU。
 
 2026-10-31 07:47 CST：804/94056自然COMPLETED/0:0，所选801case1的fresh RCX/finalreport、完整DEF几何精确不变及最终native0复查全部PASS。809封存41原始/10实际服务器大文件SHA、43实际receipt输出、364归档Git源及receipt输入核验。绑定原801case1 receipt，原767失败/旧资格不转移。807已按真实前置自动提交805/94063，实际进程正创建新最终源，之后并行物理/完整未改GDS/三初态功能/完整信号几何，formal与交付/完整查看按前置；806仍等待。当前V总accepted=false，R原404继续，M/S/T保持，五宏最终未齐。
