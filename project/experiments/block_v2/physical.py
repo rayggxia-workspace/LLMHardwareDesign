@@ -109,7 +109,7 @@ def implement(args, run):
         # The subsequent placed repair_design/repair_timing and final gates stay.
         config+='export GPL_TIMING_DRIVEN = 0\nexport ENABLE_PLACE_REPAIR_TIMING = 1\n'
     if args.fanout_mode=='partition':
-        assert top=='block_feed_s_macro' and args.placement_mode=='geometric'
+        assert top in ('block_feed_s_macro','block_v1_r') and args.placement_mode=='geometric'
         shutil.copyfile(ROOT/'project/experiments/block_feed_v1/partition_fanout.tcl',out/'partition-fanout.tcl')
         config+='export PRE_RESIZE_TCL = '+str(out/'partition-fanout.tcl')+'\n'
     hook=(folder/'native_input_diodes.tcl').read_text().replace('  if {[$port getName] eq "clk"} {continue}\n','')

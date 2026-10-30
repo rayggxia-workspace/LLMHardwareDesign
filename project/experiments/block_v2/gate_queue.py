@@ -10,7 +10,12 @@ import time
 def main():
     p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True)
     p.add_argument('--raw',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
-    p.add_argument('--models',nargs='+',choices=['e','g','n','m','r'],default=['e','g']);a=p.parse_args()
+    p.add_argument('--models',nargs='+',choices=['e','g','n','m','r'],default=['e','g'])
+    p.add_argument('--memory-gib-per-worker',type=int)
+    p.add_argument('--memory-basis')
+    a=p.parse_args()
+    if a.memory_gib_per_worker is not None:
+        assert 32<=a.memory_gib_per_worker<=192 and a.memory_basis
     cpus=int(os.environ['SLURM_CPUS_PER_TASK'])
     assert os.environ.get('SLURM_JOB_ID') and 16<=cpus<=96 and cpus%16==0
     cpu_slots=cpus//16
@@ -19,12 +24,14 @@ def main():
         assert 'issue143-seven-block-v2-20261030' in path.parts
     a.out.mkdir(parents=True,exist_ok=False)
     available=int(next(x.split()[1] for x in Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:')))*1024
-    # Small leaves only; this budget is not valid for R/S/T or a large M.
-    per_worker=(192 if 'r' in a.models else 64)*1024**3;guard=16*1024**3
+    # Defaults remain conservative; a measured estimate needs an explicit basis.
+    forecast=a.memory_gib_per_worker or (192 if 'r' in a.models else 64)
+    per_worker=forecast*1024**3;guard=16*1024**3
     slots=min(cpu_slots,int((available-guard)/(per_worker*1.2)))
     assert slots>0
     report=dict(passed=False,job=os.environ['SLURM_JOB_ID'],slots=slots,cpu_slots=cpu_slots,cpus_per_worker=16,
-        memory=dict(available_bytes=available,per_worker_initial_forecast_bytes=per_worker,headroom=1.2,guard_bytes=guard),
+        memory=dict(available_bytes=available,per_worker_initial_forecast_bytes=per_worker,headroom=1.2,guard_bytes=guard,
+                    forecast_basis=a.memory_basis or 'Initial conservative size-class estimate; not measured demand'),
         started_unix=time.time(),tasks={})
     tasks={}
     for model in a.models:
