@@ -1,3 +1,5 @@
+2026-10-30 11:43 CST：485八项全部PASS、93615自然COMPLETED/0:0；映射10原始/2大文件SHA/311源绑定。486五项S-V回放PASS，两occupancy在仿真前因监测器旧474来源断言失败；只将实际参考修正为485，492将仅重测两项，RTL/数值driver不改。新后继493原生→494最终/几何→495接口；旧487/488/489无allocation，490只生成配置未部署，496控制将使用正确链。477原DRC/功能/LEC及R404原任务继续，无EDA取消。M/S/T保持、V/R最终未齐，目标active。
+
 2026-10-30 11:37 CST：485/93615/node25七项新源行为/证明PASS，三初态各567808检查/418843拍、完整U128前缀SAT及真实负例通过，55原始/42稳定/311源Git绑定，映射仍运行。486/93616已在全部实际前置PASS后提交，七占用/S-V测量；487新六阶段原生已stage/validate且无allocation，488最终门/489接口将按真实新源封存。491保存477独立物理33原始/7大文件索引：26800有效端点、setup−.068208ns/34项、hold+.015411ns、maxcap2，其他RC/M10/PG/连通门通过，仍拒收；原生35项另保留。477原DRC/功能/LEC继续，R404原任务继续。M/S/T保持、V/R最终未齐，目标active；登记pending/看板unverified与同步pending，审查待指定。
 
 2026-10-30 11:29 CST：V476原生六阶段自然结束，484绑定24原始/311源Git与远端SHA及最终内部LEC。实际setup−0.0682414ns/TNS−0.959171ns、35违例，hold+.0154107ns、maxcap2/slew0，拒收；最差norm_product[1]→group_unit.denominator[127]。针对该路径仅G_ADD新增完整U128四级前缀进位，不改位宽/数值/周期，485新八项检查待执行，后续全新物理仍必需。477/93614实际RUNNING/node23、311源绑定，独立最终门继续自然收尾；R404原GRT extra27继续。M/S/T保持、V/R未最终齐全，目标active/Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending、审查待指定。
