@@ -1,0 +1,48 @@
+{
+  "source_commit": "9e5a99bb6d06d8df2bc8ea2a5c80b1f4b99eea5f",
+  "source_odb": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-380/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/6_final.odb",
+  "source_odb_sha256": "62b75b30a91b64b652e5668af83bf768ea21d15a2ca9e944930f0f5445f69773",
+  "script_sha256": "acdfed91f1fd327f20a6d5cd6734ccee83016195bb5510b41c340f15a67588ee",
+  "tool_inputs": {
+    "odb_geometry.tcl": "c63203ef734d90a549ac3b81311c4678edf35c76b340b96c3ac174007d70f67b",
+    "native_drc_locate.tcl": "6079cdf68dd4ecf919e5d8779b0be7f3663da6d6e1a8f1c99e9410facb880032"
+  },
+  "new_allocation": false,
+  "parent_job": "93237",
+  "cpu_mask": [
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31
+  ],
+  "started_utc": "2026-10-29T16:13:48.423538+00:00",
+  "argv": [
+    "srun",
+    "--jobid=93237",
+    "--overlap",
+    "--ntasks=1",
+    "--cpus-per-task=96",
+    "--cpu-bind=none",
+    "--time=00:30:00",
+    "bash",
+    "-c",
+    "cd /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/diagnostics/v380-getshape-20261030-395 && export PATH=/public/software/singularity-ce-4.3.4/bin:$PATH && exec taskset --cpu-list 16-31 singularity exec --cleanenv --bind /public/home/yuzelu --pwd /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/diagnostics/v380-getshape-20261030-395 --env OMP_NUM_THREADS=16 --env OPENBLAS_NUM_THREADS=1 /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif bash -c 'source /OpenROAD-flow-scripts/env.sh; exec openroad -no_init -exit diagnostic.tcl'"
+  ],
+  "srun_login_pid": 3567273,
+  "state": "FAILED",
+  "returncode": 1,
+  "finished_utc": "2026-10-29T16:13:52.125741+00:00",
+  "source_odb_unchanged": true
+}

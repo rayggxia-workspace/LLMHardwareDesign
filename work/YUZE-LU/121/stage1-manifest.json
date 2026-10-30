@@ -1,0 +1,94 @@
+{
+  "run_id": "block-v1-20261027-003",
+  "base_nodes": 6,
+  "max_nodes": 8,
+  "elastic": false,
+  "source_commit": "0d0e89f0d9424c9c844d3a39aa8b7c537b316544",
+  "source_archive_sha256": "c448fb421872e0e76ad554eddb74d7b0860570dff4f6637b108077bae61f4c7d",
+  "tasks": [
+    {
+      "id": "transaction",
+      "partition": "c96",
+      "cpus": 8,
+      "memory": "0",
+      "minutes": 20,
+      "after": [],
+      "argv": [
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-003/src/project/experiments/block_v1/worker.sh",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-003/src",
+        "transaction"
+      ]
+    },
+    {
+      "id": "map-stores",
+      "partition": "c96",
+      "cpus": 2,
+      "memory": "0",
+      "minutes": 60,
+      "after": [],
+      "argv": [
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-003/src/project/experiments/block_v1/worker.sh",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-003/src",
+        "map-stores"
+      ]
+    },
+    {
+      "id": "map-c8-full",
+      "partition": "c96",
+      "cpus": 1,
+      "memory": "0",
+      "minutes": 180,
+      "after": [],
+      "argv": [
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-003/src/project/experiments/block_v1/worker.sh",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-003/src",
+        "map-c8-full"
+      ]
+    },
+    {
+      "id": "core-build",
+      "partition": "c96",
+      "cpus": 12,
+      "memory": "0",
+      "minutes": 45,
+      "after": [],
+      "argv": [
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-003/src/project/experiments/block_v1/worker.sh",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-003/src",
+        "core-build"
+      ]
+    },
+    {
+      "id": "overlay",
+      "partition": "c96",
+      "cpus": 2,
+      "memory": "0",
+      "minutes": 20,
+      "after": [],
+      "argv": [
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-003/src/project/experiments/block_v1/worker.sh",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-003/src",
+        "overlay"
+      ]
+    },
+    {
+      "id": "fixtures",
+      "partition": "c96",
+      "cpus": 1,
+      "memory": "0",
+      "minutes": 20,
+      "after": [],
+      "argv": [
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-003/src/project/experiments/block_v1/worker.sh",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-003/src",
+        "fixtures"
+      ]
+    }
+  ]
+}

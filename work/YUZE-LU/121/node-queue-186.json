@@ -1,0 +1,111 @@
+{
+  "schema": "block-v1-node-queue/1",
+  "node_cpus": 96,
+  "default_task_cpus": 16,
+  "memory_guard_gib": 16,
+  "state_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/node-queue-state.json",
+  "tasks": [
+    {
+      "id": "m-test",
+      "mode": "five-macro-matrix-test",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/tasks/five-macro-matrix-test",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/src",
+      "cpus": 16,
+      "memory_gib": 8,
+      "memory_basis": "Provisional per-task admission estimate from distinct prior stages, not a measured peak. Six ready independent tasks total232GiB plus20percent and16GiB guard. Route M64/S200GiB pending dependency; measured tree RSS and available RAM govern refill.",
+      "report": "five-macro-matrix-test.json",
+      "after": [],
+      "receipts": []
+    },
+    {
+      "id": "m-map",
+      "mode": "five-macro-matrix-map",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/tasks/five-macro-matrix-map",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/src",
+      "cpus": 16,
+      "memory_gib": 32,
+      "memory_basis": "Provisional per-task admission estimate from distinct prior stages, not a measured peak. Six ready independent tasks total232GiB plus20percent and16GiB guard. Route M64/S200GiB pending dependency; measured tree RSS and available RAM govern refill.",
+      "report": "five-macro-matrix-map.json",
+      "after": [],
+      "receipts": []
+    },
+    {
+      "id": "s-test",
+      "mode": "five-macro-store-test",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/tasks/five-macro-store-test",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/src",
+      "cpus": 16,
+      "memory_gib": 8,
+      "memory_basis": "Provisional per-task admission estimate from distinct prior stages, not a measured peak. Six ready independent tasks total232GiB plus20percent and16GiB guard. Route M64/S200GiB pending dependency; measured tree RSS and available RAM govern refill.",
+      "report": "five-macro-store-test.json",
+      "after": [],
+      "receipts": []
+    },
+    {
+      "id": "s-map",
+      "mode": "five-macro-store-map",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/tasks/five-macro-store-map",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/src",
+      "cpus": 16,
+      "memory_gib": 160,
+      "memory_basis": "Provisional per-task admission estimate from distinct prior stages, not a measured peak. Six ready independent tasks total232GiB plus20percent and16GiB guard. Route M64/S200GiB pending dependency; measured tree RSS and available RAM govern refill.",
+      "report": "five-macro-store-map.json",
+      "after": [],
+      "receipts": []
+    },
+    {
+      "id": "t-pins",
+      "mode": "five-macro-t-pins",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/tasks/five-macro-t-pins",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/src",
+      "cpus": 16,
+      "memory_gib": 8,
+      "memory_basis": "Provisional per-task admission estimate from distinct prior stages, not a measured peak. Six ready independent tasks total232GiB plus20percent and16GiB guard. Route M64/S200GiB pending dependency; measured tree RSS and available RAM govern refill.",
+      "report": "five-macro-t-pins.json",
+      "after": [],
+      "receipts": []
+    },
+    {
+      "id": "t-layout",
+      "mode": "five-macro-t-layout",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/tasks/five-macro-t-layout",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/src",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Provisional per-task admission estimate from distinct prior stages, not a measured peak. Six ready independent tasks total232GiB plus20percent and16GiB guard. Route M64/S200GiB pending dependency; measured tree RSS and available RAM govern refill.",
+      "report": "five-macro-t-layout.json",
+      "after": [],
+      "receipts": []
+    },
+    {
+      "id": "m-route",
+      "mode": "five-macro-route-m",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/tasks/five-macro-route-m",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "Provisional per-task admission estimate from distinct prior stages, not a measured peak. Six ready independent tasks total232GiB plus20percent and16GiB guard. Route M64/S200GiB pending dependency; measured tree RSS and available RAM govern refill.",
+      "report": "five-macro-native-flow.json",
+      "after": [
+        "m-test",
+        "m-map"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "s-route",
+      "mode": "five-macro-route-s",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/tasks/five-macro-route-s",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/src",
+      "cpus": 16,
+      "memory_gib": 200,
+      "memory_basis": "Provisional per-task admission estimate from distinct prior stages, not a measured peak. Six ready independent tasks total232GiB plus20percent and16GiB guard. Route M64/S200GiB pending dependency; measured tree RSS and available RAM govern refill.",
+      "report": "five-macro-native-flow.json",
+      "after": [
+        "s-test",
+        "s-map"
+      ],
+      "receipts": []
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+329 fresh Softmax pair/denominator pipeline validation
+
+Early immutable capture: five behavior tasks passed, mapping continues. Source ddf2ed5a58b2b8b62916cbe7ec02a1c77711aba0 / archive2a7711401acdf487534a5313397ab04cc2b9f7657845f292e009438c46a74e33;39 raw files,28 stable output bindings,305 exact Git blobs/receipt inputs verified. Existing93097 cohost, no new allocation. Three initial states each565599checks/413506cycles; public42 and extended36 cases each two initial states, full composition and latency checks passed. No new physical qualification. Current327 finite budget belongs to previous norm-only RTL and must be refreshed after new measurements.

@@ -1,0 +1,932 @@
+{
+  "passed": true,
+  "kind": "s",
+  "variant": "revised",
+  "rtl_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-252/src/project/rtl/block_library_v1/block_v1_s16k.sv",
+  "rtl_sha256": "b4f00d858947bb5ac8189bf921f9ef4ad66a61b8f173c90f56932afd9123f588",
+  "bench_sha256": "49974ee45c53896f4314feafef7a97e3379391c923d49fbc32677145e4c466a7",
+  "compiler_sha256": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+  "initial_runs": 2,
+  "measurements": {
+    "passed": true,
+    "cases": [
+      {
+        "words_per_batch": 1,
+        "batches": 1,
+        "scenario": "continuous",
+        "total_cycles": 4,
+        "effective_payload_bytes_each_direction": 16,
+        "write": {
+          "cycles": 2,
+          "accepted_writes": 1,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 1,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 1,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 2,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "read": {
+          "cycles": 2,
+          "accepted_writes": 0,
+          "accepted_reads": 1,
+          "retired_data_or_ack_beats": 1,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 1,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 2,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "control": {
+          "cycles": 0,
+          "accepted_writes": 0,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 0,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 0,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 0,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "modeled_end_to_end_payload_gbytes_per_second_at_300mhz": 1.2,
+        "modeled_read_phase_gbytes_per_second_at_300mhz": 2.4
+      },
+      {
+        "words_per_batch": 1,
+        "batches": 4,
+        "scenario": "repeated_batches",
+        "total_cycles": 10,
+        "effective_payload_bytes_each_direction": 64,
+        "write": {
+          "cycles": 5,
+          "accepted_writes": 4,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 4,
+          "control_transfers": 0,
+          "overlap_edges": 3,
+          "storage_access_cycles": 4,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 5,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "read": {
+          "cycles": 5,
+          "accepted_writes": 0,
+          "accepted_reads": 4,
+          "retired_data_or_ack_beats": 4,
+          "control_transfers": 0,
+          "overlap_edges": 3,
+          "storage_access_cycles": 4,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 5,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "control": {
+          "cycles": 0,
+          "accepted_writes": 0,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 0,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 0,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 0,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "modeled_end_to_end_payload_gbytes_per_second_at_300mhz": 1.92,
+        "modeled_read_phase_gbytes_per_second_at_300mhz": 3.84
+      },
+      {
+        "words_per_batch": 1,
+        "batches": 1,
+        "scenario": "producer_gap",
+        "total_cycles": 4,
+        "effective_payload_bytes_each_direction": 16,
+        "write": {
+          "cycles": 2,
+          "accepted_writes": 1,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 1,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 1,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 2,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "read": {
+          "cycles": 2,
+          "accepted_writes": 0,
+          "accepted_reads": 1,
+          "retired_data_or_ack_beats": 1,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 1,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 2,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "control": {
+          "cycles": 0,
+          "accepted_writes": 0,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 0,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 0,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 0,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "modeled_end_to_end_payload_gbytes_per_second_at_300mhz": 1.2,
+        "modeled_read_phase_gbytes_per_second_at_300mhz": 2.4
+      },
+      {
+        "words_per_batch": 1,
+        "batches": 1,
+        "scenario": "output_backpressure",
+        "total_cycles": 4,
+        "effective_payload_bytes_each_direction": 16,
+        "write": {
+          "cycles": 2,
+          "accepted_writes": 1,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 1,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 1,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 2,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "read": {
+          "cycles": 2,
+          "accepted_writes": 0,
+          "accepted_reads": 1,
+          "retired_data_or_ack_beats": 1,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 1,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 2,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "control": {
+          "cycles": 0,
+          "accepted_writes": 0,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 0,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 0,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 0,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "modeled_end_to_end_payload_gbytes_per_second_at_300mhz": 1.2,
+        "modeled_read_phase_gbytes_per_second_at_300mhz": 2.4
+      },
+      {
+        "words_per_batch": 17,
+        "batches": 1,
+        "scenario": "continuous",
+        "total_cycles": 36,
+        "effective_payload_bytes_each_direction": 272,
+        "write": {
+          "cycles": 18,
+          "accepted_writes": 17,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 17,
+          "control_transfers": 0,
+          "overlap_edges": 16,
+          "storage_access_cycles": 17,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 18,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "read": {
+          "cycles": 18,
+          "accepted_writes": 0,
+          "accepted_reads": 17,
+          "retired_data_or_ack_beats": 17,
+          "control_transfers": 0,
+          "overlap_edges": 16,
+          "storage_access_cycles": 17,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 18,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "control": {
+          "cycles": 0,
+          "accepted_writes": 0,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 0,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 0,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 0,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "modeled_end_to_end_payload_gbytes_per_second_at_300mhz": 2.2666666666666666,
+        "modeled_read_phase_gbytes_per_second_at_300mhz": 4.533333333333333
+      },
+      {
+        "words_per_batch": 17,
+        "batches": 4,
+        "scenario": "repeated_batches",
+        "total_cycles": 138,
+        "effective_payload_bytes_each_direction": 1088,
+        "write": {
+          "cycles": 69,
+          "accepted_writes": 68,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 68,
+          "control_transfers": 0,
+          "overlap_edges": 67,
+          "storage_access_cycles": 68,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 69,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "read": {
+          "cycles": 69,
+          "accepted_writes": 0,
+          "accepted_reads": 68,
+          "retired_data_or_ack_beats": 68,
+          "control_transfers": 0,
+          "overlap_edges": 67,
+          "storage_access_cycles": 68,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 69,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "control": {
+          "cycles": 0,
+          "accepted_writes": 0,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 0,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 0,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 0,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "modeled_end_to_end_payload_gbytes_per_second_at_300mhz": 2.3652173913043475,
+        "modeled_read_phase_gbytes_per_second_at_300mhz": 4.730434782608695
+      },
+      {
+        "words_per_batch": 17,
+        "batches": 1,
+        "scenario": "producer_gap",
+        "total_cycles": 60,
+        "effective_payload_bytes_each_direction": 272,
+        "write": {
+          "cycles": 30,
+          "accepted_writes": 17,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 17,
+          "control_transfers": 0,
+          "overlap_edges": 12,
+          "storage_access_cycles": 17,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 12,
+            "transfer": 18,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "read": {
+          "cycles": 30,
+          "accepted_writes": 0,
+          "accepted_reads": 17,
+          "retired_data_or_ack_beats": 17,
+          "control_transfers": 0,
+          "overlap_edges": 12,
+          "storage_access_cycles": 17,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 12,
+            "transfer": 18,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "control": {
+          "cycles": 0,
+          "accepted_writes": 0,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 0,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 0,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 0,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "modeled_end_to_end_payload_gbytes_per_second_at_300mhz": 1.3599999999999999,
+        "modeled_read_phase_gbytes_per_second_at_300mhz": 2.7199999999999998
+      },
+      {
+        "words_per_batch": 17,
+        "batches": 1,
+        "scenario": "output_backpressure",
+        "total_cycles": 44,
+        "effective_payload_bytes_each_direction": 272,
+        "write": {
+          "cycles": 22,
+          "accepted_writes": 17,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 17,
+          "control_transfers": 0,
+          "overlap_edges": 16,
+          "storage_access_cycles": 17,
+          "cycle_attribution": {
+            "output_backpressure": 4,
+            "producer_gap": 0,
+            "transfer": 18,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "read": {
+          "cycles": 22,
+          "accepted_writes": 0,
+          "accepted_reads": 17,
+          "retired_data_or_ack_beats": 17,
+          "control_transfers": 0,
+          "overlap_edges": 16,
+          "storage_access_cycles": 17,
+          "cycle_attribution": {
+            "output_backpressure": 4,
+            "producer_gap": 0,
+            "transfer": 18,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "control": {
+          "cycles": 0,
+          "accepted_writes": 0,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 0,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 0,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 0,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "modeled_end_to_end_payload_gbytes_per_second_at_300mhz": 1.8545454545454545,
+        "modeled_read_phase_gbytes_per_second_at_300mhz": 3.709090909090909
+      },
+      {
+        "words_per_batch": 384,
+        "batches": 1,
+        "scenario": "continuous",
+        "total_cycles": 770,
+        "effective_payload_bytes_each_direction": 6144,
+        "write": {
+          "cycles": 385,
+          "accepted_writes": 384,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 384,
+          "control_transfers": 0,
+          "overlap_edges": 383,
+          "storage_access_cycles": 384,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 385,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "read": {
+          "cycles": 385,
+          "accepted_writes": 0,
+          "accepted_reads": 384,
+          "retired_data_or_ack_beats": 384,
+          "control_transfers": 0,
+          "overlap_edges": 383,
+          "storage_access_cycles": 384,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 385,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "control": {
+          "cycles": 0,
+          "accepted_writes": 0,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 0,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 0,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 0,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "modeled_end_to_end_payload_gbytes_per_second_at_300mhz": 2.3937662337662333,
+        "modeled_read_phase_gbytes_per_second_at_300mhz": 4.787532467532467
+      },
+      {
+        "words_per_batch": 384,
+        "batches": 4,
+        "scenario": "repeated_batches",
+        "total_cycles": 3074,
+        "effective_payload_bytes_each_direction": 24576,
+        "write": {
+          "cycles": 1537,
+          "accepted_writes": 1536,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 1536,
+          "control_transfers": 0,
+          "overlap_edges": 1535,
+          "storage_access_cycles": 1536,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 1537,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "read": {
+          "cycles": 1537,
+          "accepted_writes": 0,
+          "accepted_reads": 1536,
+          "retired_data_or_ack_beats": 1536,
+          "control_transfers": 0,
+          "overlap_edges": 1535,
+          "storage_access_cycles": 1536,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 1537,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "control": {
+          "cycles": 0,
+          "accepted_writes": 0,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 0,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 0,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 0,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "modeled_end_to_end_payload_gbytes_per_second_at_300mhz": 2.398438516590761,
+        "modeled_read_phase_gbytes_per_second_at_300mhz": 4.796877033181522
+      },
+      {
+        "words_per_batch": 384,
+        "batches": 1,
+        "scenario": "producer_gap",
+        "total_cycles": 1342,
+        "effective_payload_bytes_each_direction": 6144,
+        "write": {
+          "cycles": 670,
+          "accepted_writes": 384,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 384,
+          "control_transfers": 0,
+          "overlap_edges": 288,
+          "storage_access_cycles": 384,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 285,
+            "transfer": 385,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "read": {
+          "cycles": 672,
+          "accepted_writes": 0,
+          "accepted_reads": 384,
+          "retired_data_or_ack_beats": 384,
+          "control_transfers": 0,
+          "overlap_edges": 288,
+          "storage_access_cycles": 384,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 287,
+            "transfer": 385,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "control": {
+          "cycles": 0,
+          "accepted_writes": 0,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 0,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 0,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 0,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "modeled_end_to_end_payload_gbytes_per_second_at_300mhz": 1.373472429210134,
+        "modeled_read_phase_gbytes_per_second_at_300mhz": 2.7428571428571424
+      },
+      {
+        "words_per_batch": 384,
+        "batches": 1,
+        "scenario": "output_backpressure",
+        "total_cycles": 962,
+        "effective_payload_bytes_each_direction": 6144,
+        "write": {
+          "cycles": 481,
+          "accepted_writes": 384,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 384,
+          "control_transfers": 0,
+          "overlap_edges": 383,
+          "storage_access_cycles": 384,
+          "cycle_attribution": {
+            "output_backpressure": 96,
+            "producer_gap": 0,
+            "transfer": 385,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "read": {
+          "cycles": 481,
+          "accepted_writes": 0,
+          "accepted_reads": 384,
+          "retired_data_or_ack_beats": 384,
+          "control_transfers": 0,
+          "overlap_edges": 383,
+          "storage_access_cycles": 384,
+          "cycle_attribution": {
+            "output_backpressure": 96,
+            "producer_gap": 0,
+            "transfer": 385,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "control": {
+          "cycles": 0,
+          "accepted_writes": 0,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 0,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 0,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 0,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "modeled_end_to_end_payload_gbytes_per_second_at_300mhz": 1.916008316008316,
+        "modeled_read_phase_gbytes_per_second_at_300mhz": 3.832016632016632
+      },
+      {
+        "words_per_batch": 1024,
+        "batches": 1,
+        "scenario": "continuous",
+        "total_cycles": 2050,
+        "effective_payload_bytes_each_direction": 16384,
+        "write": {
+          "cycles": 1025,
+          "accepted_writes": 1024,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 1024,
+          "control_transfers": 0,
+          "overlap_edges": 1023,
+          "storage_access_cycles": 1024,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 1025,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "read": {
+          "cycles": 1025,
+          "accepted_writes": 0,
+          "accepted_reads": 1024,
+          "retired_data_or_ack_beats": 1024,
+          "control_transfers": 0,
+          "overlap_edges": 1023,
+          "storage_access_cycles": 1024,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 1025,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "control": {
+          "cycles": 0,
+          "accepted_writes": 0,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 0,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 0,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 0,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "modeled_end_to_end_payload_gbytes_per_second_at_300mhz": 2.3976585365853658,
+        "modeled_read_phase_gbytes_per_second_at_300mhz": 4.7953170731707315
+      },
+      {
+        "words_per_batch": 1024,
+        "batches": 4,
+        "scenario": "repeated_batches",
+        "total_cycles": 8194,
+        "effective_payload_bytes_each_direction": 65536,
+        "write": {
+          "cycles": 4097,
+          "accepted_writes": 4096,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 4096,
+          "control_transfers": 0,
+          "overlap_edges": 4095,
+          "storage_access_cycles": 4096,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 4097,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "read": {
+          "cycles": 4097,
+          "accepted_writes": 0,
+          "accepted_reads": 4096,
+          "retired_data_or_ack_beats": 4096,
+          "control_transfers": 0,
+          "overlap_edges": 4095,
+          "storage_access_cycles": 4096,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 4097,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "control": {
+          "cycles": 0,
+          "accepted_writes": 0,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 0,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 0,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 0,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "modeled_end_to_end_payload_gbytes_per_second_at_300mhz": 2.3994142055162313,
+        "modeled_read_phase_gbytes_per_second_at_300mhz": 4.798828411032463
+      },
+      {
+        "words_per_batch": 1024,
+        "batches": 1,
+        "scenario": "producer_gap",
+        "total_cycles": 3582,
+        "effective_payload_bytes_each_direction": 16384,
+        "write": {
+          "cycles": 1790,
+          "accepted_writes": 1024,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 1024,
+          "control_transfers": 0,
+          "overlap_edges": 768,
+          "storage_access_cycles": 1024,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 765,
+            "transfer": 1025,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "read": {
+          "cycles": 1792,
+          "accepted_writes": 0,
+          "accepted_reads": 1024,
+          "retired_data_or_ack_beats": 1024,
+          "control_transfers": 0,
+          "overlap_edges": 768,
+          "storage_access_cycles": 1024,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 767,
+            "transfer": 1025,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "control": {
+          "cycles": 0,
+          "accepted_writes": 0,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 0,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 0,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 0,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "modeled_end_to_end_payload_gbytes_per_second_at_300mhz": 1.3721943048576213,
+        "modeled_read_phase_gbytes_per_second_at_300mhz": 2.742857142857143
+      },
+      {
+        "words_per_batch": 1024,
+        "batches": 1,
+        "scenario": "output_backpressure",
+        "total_cycles": 2562,
+        "effective_payload_bytes_each_direction": 16384,
+        "write": {
+          "cycles": 1281,
+          "accepted_writes": 1024,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 1024,
+          "control_transfers": 0,
+          "overlap_edges": 1023,
+          "storage_access_cycles": 1024,
+          "cycle_attribution": {
+            "output_backpressure": 256,
+            "producer_gap": 0,
+            "transfer": 1025,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "read": {
+          "cycles": 1281,
+          "accepted_writes": 0,
+          "accepted_reads": 1024,
+          "retired_data_or_ack_beats": 1024,
+          "control_transfers": 0,
+          "overlap_edges": 1023,
+          "storage_access_cycles": 1024,
+          "cycle_attribution": {
+            "output_backpressure": 256,
+            "producer_gap": 0,
+            "transfer": 1025,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "control": {
+          "cycles": 0,
+          "accepted_writes": 0,
+          "accepted_reads": 0,
+          "retired_data_or_ack_beats": 0,
+          "control_transfers": 0,
+          "overlap_edges": 0,
+          "storage_access_cycles": 0,
+          "cycle_attribution": {
+            "output_backpressure": 0,
+            "producer_gap": 0,
+            "transfer": 0,
+            "dependency_wait": 0,
+            "drain": 0
+          }
+        },
+        "modeled_end_to_end_payload_gbytes_per_second_at_300mhz": 1.9185011709601874,
+        "modeled_read_phase_gbytes_per_second_at_300mhz": 3.8370023419203747
+      }
+    ],
+    "checks": 87136
+  },
+  "baseline_git_commit": null,
+  "physical_implementation_completed": false,
+  "final_netlist_verified": false,
+  "scope": "Actual public-port cycles, payload and handshakes; storage access counters may overlap transfers. S includes write acknowledgements, T includes begin/commit/release. Reset excluded. Modeled300MHz bandwidth is not physical or system qualification; old baseline100MHz only."
+}

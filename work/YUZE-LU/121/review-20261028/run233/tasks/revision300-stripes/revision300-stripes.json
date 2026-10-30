@@ -1,0 +1,133 @@
+{
+  "passed": true,
+  "stage": "P1",
+  "technology_rule_id": "nangate45-custom12-demo-2um-v1",
+  "technology_sha256": "3649589fc8ba84fb04ca8c50ed2e2ac704a3b0a73a6a750926a641778f28d050",
+  "fixtures": [
+    {
+      "name": "horizontal16",
+      "json_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-233/tasks/revision300-stripes/horizontal16.json",
+      "gds_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-233/tasks/revision300-stripes/horizontal16.gds",
+      "proof": {
+        "passed": true,
+        "total_signal_bits": 16,
+        "connected_bits": 16,
+        "shorts": 0,
+        "opens": 0,
+        "geometry_violations": 0,
+        "via10_count": 16,
+        "via11_count": 0
+      }
+    },
+    {
+      "name": "vertical16",
+      "json_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-233/tasks/revision300-stripes/vertical16.json",
+      "gds_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-233/tasks/revision300-stripes/vertical16.gds",
+      "proof": {
+        "passed": true,
+        "total_signal_bits": 16,
+        "connected_bits": 16,
+        "shorts": 0,
+        "opens": 0,
+        "geometry_violations": 0,
+        "via10_count": 16,
+        "via11_count": 16
+      }
+    },
+    {
+      "name": "turn-reverse16",
+      "json_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-233/tasks/revision300-stripes/turn-reverse16.json",
+      "gds_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-233/tasks/revision300-stripes/turn-reverse16.gds",
+      "proof": {
+        "passed": true,
+        "total_signal_bits": 16,
+        "connected_bits": 16,
+        "shorts": 0,
+        "opens": 0,
+        "geometry_violations": 0,
+        "via10_count": 16,
+        "via11_count": 16
+      }
+    }
+  ],
+  "independent_gds_checks": {
+    "passed": true,
+    "fixtures": [
+      {
+        "name": "horizontal16",
+        "passed": true,
+        "gds_readback_exact": true,
+        "checks": {
+          "metal10_width": true,
+          "metal10_spacing": true,
+          "metal11_width": true,
+          "metal11_spacing": true,
+          "metal12_width": true,
+          "metal12_spacing": true,
+          "via10_spacing": true,
+          "via10_lower_enclosure": true,
+          "via10_upper_enclosure": true,
+          "via11_spacing": true,
+          "via11_lower_enclosure": true,
+          "via11_upper_enclosure": true
+        },
+        "gds_bytes": 4050
+      },
+      {
+        "name": "vertical16",
+        "passed": true,
+        "gds_readback_exact": true,
+        "checks": {
+          "metal10_width": true,
+          "metal10_spacing": true,
+          "metal11_width": true,
+          "metal11_spacing": true,
+          "metal12_width": true,
+          "metal12_spacing": true,
+          "via10_spacing": true,
+          "via10_lower_enclosure": true,
+          "via10_upper_enclosure": true,
+          "via11_spacing": true,
+          "via11_lower_enclosure": true,
+          "via11_upper_enclosure": true
+        },
+        "gds_bytes": 6672
+      },
+      {
+        "name": "turn-reverse16",
+        "passed": true,
+        "gds_readback_exact": true,
+        "checks": {
+          "metal10_width": true,
+          "metal10_spacing": true,
+          "metal11_width": true,
+          "metal11_spacing": true,
+          "metal12_width": true,
+          "metal12_spacing": true,
+          "via10_spacing": true,
+          "via10_lower_enclosure": true,
+          "via10_upper_enclosure": true,
+          "via11_spacing": true,
+          "via11_lower_enclosure": true,
+          "via11_upper_enclosure": true
+        },
+        "gds_bytes": 6676
+      }
+    ],
+    "scope": "Independent actual GDS rectangle identity, nativeM10 limited width/space and new-layer width/space/cut-enclosure; not complete native-macro DRC."
+  },
+  "negative_controls": {
+    "old_08_landing": true,
+    "missing_via": true,
+    "wrong_layer": true,
+    "endpoint_inside_macro": true,
+    "fractional_dbu": true,
+    "different_net_short": true,
+    "four_um_via_pitch": true,
+    "old_track_phase": true,
+    "wrong_rule_version": true
+  },
+  "full_macro_escape_qualified": false,
+  "revised_300mhz_leaf_qualified": false,
+  "scope": "Three simultaneous16-net finite strip/turn fixtures, real GDS readback and independent KLayout geometry. No old/new complete macro, P&R or arbitrary connection qualification."
+}

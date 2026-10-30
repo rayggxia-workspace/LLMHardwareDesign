@@ -1,0 +1,76 @@
+{
+  "remote_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-116",
+  "manifest": {
+    "run_id": "block-v1-20261027-116",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": true,
+    "source_commit": "1554198a3750fc2be1453fd74a4203e195423182",
+    "source_archive_sha256": "1ad452aae218b3d2049c129df002f83677501f3a844bf5e3be36e26406c338f4",
+    "tasks": [
+      {
+        "id": "native-boundary-diagnostic",
+        "partition": "c96",
+        "cpus": 8,
+        "memory": "0",
+        "minutes": 0,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-116/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-116/src",
+          "native-boundary-diagnostic"
+        ],
+        "node": "node23"
+      }
+    ]
+  },
+  "manifest_sha256": "86f75c69bb1982c2667de7182c3faecf9a54639852a600ef7d902f730d367533",
+  "state": {
+    "created_utc": "2026-10-27T02:03:39.580939+00:00",
+    "manifest_sha256": "86f75c69bb1982c2667de7182c3faecf9a54639852a600ef7d902f730d367533",
+    "run_id": "block-v1-20261027-116",
+    "tasks": {
+      "native-boundary-diagnostic": {
+        "dispatcher_source_sha256": "7bf3da954f66308b13cd202df42d1cd1ad100b3d848b07b2cebcd35ac4531ad7",
+        "id": "native-boundary-diagnostic",
+        "job_id": "92177",
+        "reserved_utc": "2026-10-27T02:03:45.275668+00:00",
+        "state": "PENDING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodelist=node23",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=8",
+          "--partition=c96",
+          "--time=0",
+          "--mem=0",
+          "--job-name=yzl-bv1-native-boundary-diagnostic",
+          "--comment=yzl-bv1:block-v1-20261027-116:native-boundary-diagnostic",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-116/tasks/native-boundary-diagnostic",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-116/tasks/native-boundary-diagnostic/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-116/tasks/native-boundary-diagnostic/job.sh"
+        ],
+        "submitted_utc": "2026-10-27T02:03:45.366613+00:00",
+        "token": "yzl-bv1:block-v1-20261027-116:native-boundary-diagnostic"
+      }
+    }
+  },
+  "tasks": {
+    "native-boundary-diagnostic": {
+      "job_id": "92177",
+      "artifacts": {},
+      "job_log": {
+        "bytes": 5560,
+        "sha256": "27e7c5d004057c59aa9130fad9d96e01518c57cd0d5b8f00a5b19f4cf59ffc94",
+        "tail": "low-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib uses unsupported Liberty statetable/state_function behavioral modeling; leaving its truth table uninitialized while preserving independently supported timing/modeling.\n2026-10-27 10:04:10,790 [naja] [warning] In SNLLibertyConstructor, cell CLKGATETST_X1 from /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib uses unsupported Liberty statetable/state_function behavioral modeling; leaving its truth table uninitialized while preserving independently supported timing/modeling.\n2026-10-27 10:04:10,790 [naja] [warning] In SNLLibertyConstructor, cell CLKGATETST_X2 from /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib uses unsupported Liberty statetable/state_function behavioral modeling; leaving its truth table uninitialized while preserving independently supported timing/modeling.\n2026-10-27 10:04:10,790 [naja] [warning] In SNLLibertyConstructor, cell CLKGATETST_X4 from /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib uses unsupported Liberty statetable/state_function behavioral modeling; leaving its truth table uninitialized while preserving independently supported timing/modeling.\n2026-10-27 10:04:10,790 [naja] [warning] In SNLLibertyConstructor, cell CLKGATETST_X8 from /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib uses unsupported Liberty statetable/state_function behavioral modeling; leaving its truth table uninitialized while preserving independently supported timing/modeling.\n2026-10-27 10:04:10,790 [naja] [warning] In SNLLibertyConstructor, cell CLKGATE_X1 from /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib uses unsupported Liberty statetable/state_function behavioral modeling; leaving its truth table uninitialized while preserving independently supported timing/modeling.\n2026-10-27 10:04:10,790 [naja] [warning] In SNLLibertyConstructor, cell CLKGATE_X2 from /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib uses unsupported Liberty statetable/state_function behavioral modeling; leaving its truth table uninitialized while preserving independently supported timing/modeling.\n2026-10-27 10:04:10,790 [naja] [warning] In SNLLibertyConstructor, cell CLKGATE_X4 from /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib uses unsupported Liberty statetable/state_function behavioral modeling; leaving its truth table uninitialized while preserving independently supported timing/modeling.\n2026-10-27 10:04:10,790 [naja] [warning] In SNLLibertyConstructor, cell CLKGATE_X8 from /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib uses unsupported Liberty statetable/state_function behavioral modeling; leaving its truth table uninitialized while preserving independently supported timing/modeling.\n"
+      }
+    }
+  },
+  "source_archive_sha256": "1ad452aae218b3d2049c129df002f83677501f3a844bf5e3be36e26406c338f4",
+  "sacct": "92177|RUNNING|0:0|00:00:31|00:00:00||8|node23\n92177.batch|RUNNING|0:0|00:00:31|00:00:00||8|node23\n92177.extern|RUNNING|0:0|00:00:31|00:00:00||8|node23\n",
+  "collected_utc": "2026-10-27T02:04:15.438167+00:00",
+  "selected_task_only": "native-boundary-diagnostic"
+}

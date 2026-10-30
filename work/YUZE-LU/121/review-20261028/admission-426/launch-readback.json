@@ -1,0 +1,87 @@
+{
+  "launch": {
+    "pid": 3990865,
+    "argv": [
+      "python3",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/admission-20261030-426/revision300_admission.py",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/admission-20261030-426/config.json",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/admission-20261030-426"
+    ],
+    "started_utc": "2026-10-29T21:02:02.124196+00:00",
+    "source_commit": "ea9a6a5648035e552cef145e3e2b54e6794056fc",
+    "config_commit": "ea9a6a5648035e552cef145e3e2b54e6794056fc",
+    "files": {
+      "revision300_admission.py": "9ecb2dd694557e50c0796bbce633627797d1c87cec552d8b3fbc6e777369d8f7",
+      "test_revision300_admission.py": "9367d99a716cafdc4dcce517a4263b082476e5ce5ed10c5a3560f2ea4ea9b1c2",
+      "config.json": "2dfd36fd4f02ad6cc3326757d0a8eb7c1cebad209a7e3d5d28dee1c796499492"
+    },
+    "new_allocation": false,
+    "role": "login-control-plane-only; no EDA"
+  },
+  "status": {
+    "allocations": {
+      "block-v1-20261030-404": {
+        "native-node-queue": "RUNNING"
+      }
+    },
+    "config_sha256": "2dfd36fd4f02ad6cc3326757d0a8eb7c1cebad209a7e3d5d28dee1c796499492",
+    "controller_source_sha256": "9ecb2dd694557e50c0796bbce633627797d1c87cec552d8b3fbc6e777369d8f7",
+    "new_allocations": [
+      {
+        "run_id": "block-v1-20261030-422",
+        "state": {
+          "created_utc": "2026-10-29T20:59:18.308996+00:00",
+          "manifest_sha256": "53480cdb51ae527467911554affb3d687912fe45831842367b067a1839737c20",
+          "run_id": "block-v1-20261030-422",
+          "tasks": {
+            "native-node-queue": {
+              "dispatcher_source_sha256": "7bf3da954f66308b13cd202df42d1cd1ad100b3d848b07b2cebcd35ac4531ad7",
+              "id": "native-node-queue",
+              "job_id": "93601",
+              "reserved_utc": "2026-10-29T21:02:19.925927+00:00",
+              "state": "PENDING",
+              "submission_argv": [
+                "sbatch",
+                "--parsable",
+                "--nodes=1",
+                "--ntasks=1",
+                "--cpus-per-task=96",
+                "--partition=c96",
+                "--time=0",
+                "--mem=0",
+                "--job-name=yzl-bv1-native-node-queue",
+                "--comment=yzl-bv1:block-v1-20261030-422:native-node-queue",
+                "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-422/tasks/native-node-queue",
+                "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-422/tasks/native-node-queue/job.log",
+                "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-422/tasks/native-node-queue/job.sh"
+              ],
+              "submitted_utc": "2026-10-29T21:02:20.024631+00:00",
+              "token": "yzl-bv1:block-v1-20261030-422:native-node-queue"
+            }
+          }
+        }
+      }
+    ],
+    "observed_utc": "2026-10-29T21:02:02.174597+00:00",
+    "own_live_allocations": [
+      "92045|yzl-bv1-native-run-shared109-a|RUNNING",
+      "92046|yzl-bv1-native-run-shared109-c|RUNNING",
+      "93555|yzl-bv1-native-node-queue|RUNNING",
+      "93599|yzl-bv1-native-node-queue|RUNNING",
+      "93600|yzl-bv1-native-node-queue|RUNNING"
+    ],
+    "runs": {
+      "block-v1-20261030-404": "already_dispatched",
+      "block-v1-20261030-405": "waiting_dependency",
+      "block-v1-20261030-406": "waiting_dependency",
+      "block-v1-20261030-422": "dispatched",
+      "block-v1-20261030-423": "waiting_dependency",
+      "block-v1-20261030-424": "waiting_dependency",
+      "block-v1-20261030-425": "waiting_dependency"
+    },
+    "scope": "Admission only; existing dispatcher enforces global reservations. No retry, cancellation, EDA or qualification.",
+    "state": "watching"
+  },
+  "controls": "PASS: reservation/terminal attempts never resubmit; dependency, failure and complete checks\n",
+  "proc_live": true
+}

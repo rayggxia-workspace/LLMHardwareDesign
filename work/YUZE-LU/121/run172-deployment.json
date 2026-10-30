@@ -1,0 +1,138 @@
+{
+  "runs": {
+    "167": {
+      "root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-167",
+      "manifest": {
+        "run_id": "block-v1-20261027-167",
+        "base_nodes": 6,
+        "max_nodes": 8,
+        "elastic": true,
+        "source_commit": "43744608c36bf8d6f3ecdac3ac0a6aa8a03cd295",
+        "source_archive_sha256": "b4f86e681705a4dec8b46a03498ec83975218205bc8b71512953e0110176035b",
+        "tasks": [
+          {
+            "id": "native-c8-finish-group",
+            "partition": "c96",
+            "cpus": 16,
+            "memory": "0",
+            "minutes": 0,
+            "after": [],
+            "argv": [
+              "bash",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-167/src/project/experiments/block_v1/worker.sh",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-167/src",
+              "native-c8-finish-group"
+            ],
+            "node": "node20",
+            "after_runs": [
+              "block-v1-20261027-165:native-c8-probe-group"
+            ]
+          }
+        ]
+      },
+      "manifest_sha256": "91a395aa641fc063f41e075e934a39906e63fe439f33ecf487eeeecb8c275593",
+      "state": {
+        "created_utc": "2026-10-27T09:30:45.572433+00:00",
+        "manifest_sha256": "91a395aa641fc063f41e075e934a39906e63fe439f33ecf487eeeecb8c275593",
+        "run_id": "block-v1-20261027-167",
+        "tasks": {
+          "native-c8-finish-group": {
+            "dispatcher_source_sha256": "7bf3da954f66308b13cd202df42d1cd1ad100b3d848b07b2cebcd35ac4531ad7",
+            "id": "native-c8-finish-group",
+            "job_id": "92333",
+            "observed_utc": "2026-10-27T09:58:40.504490+00:00",
+            "reserved_utc": "2026-10-27T09:30:52.810619+00:00",
+            "state": "RUNNING",
+            "submission_argv": [
+              "sbatch",
+              "--parsable",
+              "--nodelist=node20",
+              "--nodes=1",
+              "--ntasks=1",
+              "--cpus-per-task=16",
+              "--partition=c96",
+              "--time=0",
+              "--mem=0",
+              "--job-name=yzl-bv1-native-c8-finish-group",
+              "--comment=yzl-bv1:block-v1-20261027-167:native-c8-finish-group",
+              "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-167/tasks/native-c8-finish-group",
+              "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-167/tasks/native-c8-finish-group/job.log",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-167/tasks/native-c8-finish-group/job.sh"
+            ],
+            "submitted_utc": "2026-10-27T09:30:52.917165+00:00",
+            "token": "yzl-bv1:block-v1-20261027-167:native-c8-finish-group"
+          }
+        }
+      },
+      "source_archive_sha256": "b4f86e681705a4dec8b46a03498ec83975218205bc8b71512953e0110176035b"
+    },
+    "172": {
+      "root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-172",
+      "manifest": {
+        "run_id": "block-v1-20261027-172",
+        "base_nodes": 6,
+        "max_nodes": 8,
+        "elastic": true,
+        "source_commit": "5614eff28472bf2bf54329c4f40b59c200ae7dfe",
+        "source_archive_sha256": "f30afc3c13d446ca5b9972b1fd777c4ef9d9c8be937ef744970a8554d88f33cb",
+        "tasks": [
+          {
+            "id": "native-c8-tie-lec-group",
+            "partition": "c96",
+            "cpus": 4,
+            "memory": "0",
+            "minutes": 0,
+            "after": [],
+            "argv": [
+              "bash",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-172/src/project/experiments/block_v1/worker.sh",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-172/src",
+              "native-c8-tie-lec-group"
+            ],
+            "node": "node21",
+            "after_runs": [
+              "block-v1-20261027-171:native-tie-formal-control-group"
+            ]
+          }
+        ]
+      },
+      "manifest_sha256": "4a127d89b6c8750879bf8c38e9b9cb16bfce05388e2ec28158290e512ca0b918",
+      "state": {
+        "created_utc": "2026-10-27T09:58:35.694423+00:00",
+        "manifest_sha256": "4a127d89b6c8750879bf8c38e9b9cb16bfce05388e2ec28158290e512ca0b918",
+        "run_id": "block-v1-20261027-172",
+        "tasks": {
+          "native-c8-tie-lec-group": {
+            "dispatcher_source_sha256": "7bf3da954f66308b13cd202df42d1cd1ad100b3d848b07b2cebcd35ac4531ad7",
+            "id": "native-c8-tie-lec-group",
+            "job_id": "92341",
+            "reserved_utc": "2026-10-27T09:58:43.651290+00:00",
+            "state": "PENDING",
+            "submission_argv": [
+              "sbatch",
+              "--parsable",
+              "--nodelist=node21",
+              "--nodes=1",
+              "--ntasks=1",
+              "--cpus-per-task=4",
+              "--partition=c96",
+              "--time=0",
+              "--mem=0",
+              "--job-name=yzl-bv1-native-c8-tie-lec-group",
+              "--comment=yzl-bv1:block-v1-20261027-172:native-c8-tie-lec-group",
+              "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-172/tasks/native-c8-tie-lec-group",
+              "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-172/tasks/native-c8-tie-lec-group/job.log",
+              "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-172/tasks/native-c8-tie-lec-group/job.sh"
+            ],
+            "submitted_utc": "2026-10-27T09:58:43.753955+00:00",
+            "token": "yzl-bv1:block-v1-20261027-172:native-c8-tie-lec-group"
+          }
+        }
+      },
+      "source_archive_sha256": "f30afc3c13d446ca5b9972b1fd777c4ef9d9c8be937ef744970a8554d88f33cb"
+    }
+  },
+  "squeue": "JOBID|NAME|STATE|TIME|CPUS|NODELIST|NODELIST(REASON)\n92045|yzl-bv1-native-run-shared109-a|RUNNING|13:42:27|32|node14|node14\n92046|yzl-bv1-native-run-shared109-c|RUNNING|13:42:27|32|node15|node15\n92047|yzl-bv1-native-run-transaction6k-a|RUNNING|13:42:27|32|node16|node16\n92062|yzl-bv1-mapped-parallel-suite|RUNNING|13:08:41|32|node18|node18\n92333|yzl-bv1-native-c8-finish-group|RUNNING|28:59|16|node20|node20\n92341|yzl-bv1-native-c8-tie-lec-group|RUNNING|1:08|4|node21|node21\n",
+  "scope": "Read-only explicit Issue121 allocation snapshot; no other account jobs included or changed",
+  "collected_utc": "2026-10-27T09:59:50.064751+00:00"
+}

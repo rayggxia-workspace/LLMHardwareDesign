@@ -1,0 +1,76 @@
+{
+  "remote_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-132",
+  "manifest": {
+    "run_id": "block-v1-20261027-132",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": true,
+    "source_commit": "cb895117479ff327923048783b037b148dbc717b",
+    "source_archive_sha256": "2b8c2b5351bc3aeb5342bfdbc66d6a0d6164551289d292ef22973f21b3c3e62f",
+    "tasks": [
+      {
+        "id": "native-pin-access-probe",
+        "partition": "c96",
+        "cpus": 16,
+        "memory": "0",
+        "minutes": 0,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-132/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-132/src",
+          "native-pin-access-probe"
+        ],
+        "node": "node22"
+      }
+    ]
+  },
+  "manifest_sha256": "bdfcc0ad4f644e269d2a3ae47b6b6759c82d2340cfe744aeadbb79b23054a832",
+  "state": {
+    "created_utc": "2026-10-27T03:31:53.937924+00:00",
+    "manifest_sha256": "bdfcc0ad4f644e269d2a3ae47b6b6759c82d2340cfe744aeadbb79b23054a832",
+    "run_id": "block-v1-20261027-132",
+    "tasks": {
+      "native-pin-access-probe": {
+        "dispatcher_source_sha256": "7bf3da954f66308b13cd202df42d1cd1ad100b3d848b07b2cebcd35ac4531ad7",
+        "id": "native-pin-access-probe",
+        "job_id": "92204",
+        "reserved_utc": "2026-10-27T03:32:00.240997+00:00",
+        "state": "PENDING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodelist=node22",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=16",
+          "--partition=c96",
+          "--time=0",
+          "--mem=0",
+          "--job-name=yzl-bv1-native-pin-access-probe",
+          "--comment=yzl-bv1:block-v1-20261027-132:native-pin-access-probe",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-132/tasks/native-pin-access-probe",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-132/tasks/native-pin-access-probe/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-132/tasks/native-pin-access-probe/job.sh"
+        ],
+        "submitted_utc": "2026-10-27T03:32:00.343414+00:00",
+        "token": "yzl-bv1:block-v1-20261027-132:native-pin-access-probe"
+      }
+    }
+  },
+  "tasks": {
+    "native-pin-access-probe": {
+      "job_id": "92204",
+      "artifacts": {},
+      "job_log": {
+        "bytes": 48,
+        "sha256": "76a333f96e9d42017d377819cd2fc7f91d9cd517dc6453f081e170fd58342070",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\n"
+      }
+    }
+  },
+  "source_archive_sha256": "2b8c2b5351bc3aeb5342bfdbc66d6a0d6164551289d292ef22973f21b3c3e62f",
+  "sacct": "92204|RUNNING|0:0|00:01:00|00:00:00||16|node22\n92204.batch|RUNNING|0:0|00:01:00|00:00:00||16|node22\n92204.extern|RUNNING|0:0|00:01:00|00:00:00||16|node22\n",
+  "collected_utc": "2026-10-27T03:33:00.779518+00:00",
+  "selected_task_only": "native-pin-access-probe"
+}

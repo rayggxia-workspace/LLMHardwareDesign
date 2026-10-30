@@ -1,0 +1,111 @@
+{
+  "manifest_sha256": "8497ce8fb255f204469903f5ef5c0020b28d370deb12bd2710a809d0f276c8db",
+  "tasks": {
+    "revision300-boundary-rc-control": {
+      "status": "FAILED",
+      "owner": {
+        "job_id": "93010",
+        "node": "node18",
+        "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-286/tasks/native-node-queue",
+        "pid": 2035392
+      },
+      "started": 1793220119.858334,
+      "cpus": 16,
+      "reserved_memory_bytes": 5153960755,
+      "passed": false,
+      "returncode": 1,
+      "finished": 1793220123.468932,
+      "argv": [
+        "/usr/bin/taskset",
+        "--cpu-list",
+        "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15",
+        "python3",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-286/src/project/experiments/block_v1/worker.py",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-286/src",
+        "revision300-boundary-rc-control",
+        "16"
+      ],
+      "receipt_sha256": "673dc7eb1a13d9f948b4e33acdbabd0189d481e7e6771d3a3d2016c4ba5f12b4",
+      "report_sha256": null,
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "affinity_launcher": "/usr/bin/taskset",
+      "sampled_peak_tree_rss_bytes": 116232192,
+      "sampled_process_vm_hwm_bytes": {
+        "2035420": 170127360,
+        "2035423": 94236672
+      },
+      "memory_samples": 7,
+      "memory_measurement_scope": "500ms process-tree RSS sum and per-process VmHWM; samples may miss short peaks and shared pages may be counted more than once"
+    },
+    "revision300-boundary-rc-m-base": {
+      "status": "BLOCKED",
+      "reasons": [
+        "revision300-boundary-rc-control"
+      ],
+      "finished": 1793220123.6401415
+    },
+    "revision300-boundary-rc-m-high": {
+      "status": "BLOCKED",
+      "reasons": [
+        "revision300-boundary-rc-control"
+      ],
+      "finished": 1793220123.6401439
+    },
+    "revision300-boundary-rc-t-base": {
+      "status": "BLOCKED",
+      "reasons": [
+        "revision300-boundary-rc-control"
+      ],
+      "finished": 1793220123.6401448
+    },
+    "revision300-boundary-rc-t-high": {
+      "status": "BLOCKED",
+      "reasons": [
+        "revision300-boundary-rc-control"
+      ],
+      "finished": 1793220123.640146
+    }
+  },
+  "events": [
+    {
+      "event": "claim",
+      "id": "revision300-boundary-rc-control",
+      "owner": {
+        "job_id": "93010",
+        "node": "node18",
+        "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-286/tasks/native-node-queue",
+        "pid": 2035392
+      },
+      "time": 1793220119.8095107
+    },
+    {
+      "event": "finish",
+      "id": "revision300-boundary-rc-control",
+      "owner": {
+        "job_id": "93010",
+        "node": "node18",
+        "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-286/tasks/native-node-queue",
+        "pid": 2035392
+      },
+      "time": 1793220123.4689353,
+      "passed": false
+    }
+  ]
+}

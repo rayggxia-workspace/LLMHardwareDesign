@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "source_mapping_receipt_sha256": "a68ea5ddba1f12687d22006279c088547e09c29038d7a1ba20572e378d05cb5d",
+  "mapped_sha256": "70546db7a0c261a70ad57b4f4be369a1b8a1c7f122dfd375ea16439d71d75b8a",
+  "rtl_sha256": {
+    "project/rtl/block_library_v1/block_v1_v.sv": "8f14498af0702d76a1684b46349f43410f2e7b90ab6870a681c3e7c65186a122",
+    "project/rtl/block_library_v1/block_v1_v_function.sv": "2c33da6291cb4d2e7992d4c13ded51ea594b12a392c0e4bb84aab1735d5f054d",
+    "project/rtl/block_library_v1/block_v1_v_group.sv": "8d7636a2aa277d9b1901196505632b9bfccd9d7a8f5178526b2965a3418c20f5",
+    "project/rtl/block_library_v1/block_v1_v_tables.svh": "95c91b28cc5f71f1bbaba1c0dd3fb872d23ab2e215e157436505be95b2e26edc"
+  },
+  "budget": {
+    "schema": "block-v1-300mhz-contract/1",
+    "clock_ns": 3.3333333333333335,
+    "uncertainty_ns": 0.1,
+    "clock_transition_ns": 0.05,
+    "input_delay_max_ns": 0.8,
+    "input_delay_min_ns": 0.2,
+    "output_delay_max_ns": 0.8,
+    "output_delay_min_ns": 0.2,
+    "input_driver": {
+      "cell": "BUF_X2",
+      "pin": "Z"
+    },
+    "output_load_pf": 0.05,
+    "corner": "NangateOpenCellLibrary_typical",
+    "status": "Selected revised-leaf design contract; actual300MHz closure not yet measured",
+    "rationale": [
+      "3.333333333ns clock; symmetric0.8ns I/O windows leave1.633333333ns total for declared external interconnect after0.1ns uncertainty, rather than copying old2ns delays.",
+      "50fF receiver load is explicit macro-boundary test budget, including2fF receiver and48fF local wire allowance; eventual complete escape load must be reported separately and must not silently inherit end-to-end300MHz qualification.",
+      "No false or multicycle exceptions added. Pipeline stages, clock/drivers/FIFOs and all physical resources priced in native frozen macro."
+    ]
+  },
+  "diagnostic_log_sha256": "11fd2556e8a1e2dcf93fdfb73dd783af2e6ad96a1ef23bc55533e3340e4e3dd8",
+  "physical_implementation_completed": false,
+  "qualified_hard_macro": false,
+  "scope": "Diagnostic only: mapped combinational cell delay with ideal clock and zero wire RC. Negative slack is retained, not waived; positive slack grants no physical timing qualification."
+}

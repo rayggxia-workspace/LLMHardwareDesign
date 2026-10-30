@@ -1,0 +1,395 @@
+{
+  "schema": "block-v1-routed-view-parser-controls/1",
+  "passed": true,
+  "controls": {
+    "actual": {
+      "passed": true,
+      "checks": {
+        "exact_nodes": true,
+        "exact_edges": true,
+        "every_node_charge": true,
+        "every_edge_resistance": true,
+        "resistance_total": true,
+        "capacitance_total": true,
+        "zero_coupling": true
+      },
+      "nodes": {
+        "I:U0/p": 0.1,
+        "I:U1/p": 0.2,
+        "N:3": 0.8999999999999999,
+        "N:4": 1.2,
+        "N:5": 1.5,
+        "N:6": 1.7999999999999998,
+        "N:7": 2.1,
+        "N:8": 2.4
+      },
+      "edges": [
+        {
+          "a": "I:U0/p",
+          "b": "I:U1/p",
+          "ohm": 0.1
+        },
+        {
+          "a": "I:U1/p",
+          "b": "N:3",
+          "ohm": 0.2
+        },
+        {
+          "a": "N:3",
+          "b": "N:4",
+          "ohm": 0.30000000000000004
+        },
+        {
+          "a": "N:4",
+          "b": "N:5",
+          "ohm": 0.4
+        },
+        {
+          "a": "N:5",
+          "b": "N:6",
+          "ohm": 0.5
+        },
+        {
+          "a": "N:6",
+          "b": "N:7",
+          "ohm": 0.6000000000000001
+        },
+        {
+          "a": "N:7",
+          "b": "N:8",
+          "ohm": 0.7000000000000001
+        }
+      ],
+      "totals": [
+        2.8,
+        10.2,
+        0.0
+      ]
+    },
+    "permuted-node-charge": {
+      "passed": false,
+      "checks": {
+        "exact_nodes": true,
+        "exact_edges": true,
+        "every_node_charge": false,
+        "every_edge_resistance": true,
+        "resistance_total": true,
+        "capacitance_total": true,
+        "zero_coupling": true
+      },
+      "nodes": {
+        "I:U0/p": 2.4,
+        "I:U1/p": 0.2,
+        "N:3": 0.8999999999999999,
+        "N:4": 1.2,
+        "N:5": 1.5,
+        "N:6": 1.7999999999999998,
+        "N:7": 2.1,
+        "N:8": 0.1
+      },
+      "edges": [
+        {
+          "a": "I:U0/p",
+          "b": "I:U1/p",
+          "ohm": 0.1
+        },
+        {
+          "a": "I:U1/p",
+          "b": "N:3",
+          "ohm": 0.2
+        },
+        {
+          "a": "N:3",
+          "b": "N:4",
+          "ohm": 0.30000000000000004
+        },
+        {
+          "a": "N:4",
+          "b": "N:5",
+          "ohm": 0.4
+        },
+        {
+          "a": "N:5",
+          "b": "N:6",
+          "ohm": 0.5
+        },
+        {
+          "a": "N:6",
+          "b": "N:7",
+          "ohm": 0.6000000000000001
+        },
+        {
+          "a": "N:7",
+          "b": "N:8",
+          "ohm": 0.7000000000000001
+        }
+      ],
+      "totals": [
+        2.8,
+        10.2,
+        0.0
+      ]
+    },
+    "permuted-edge-resistance": {
+      "passed": false,
+      "checks": {
+        "exact_nodes": true,
+        "exact_edges": true,
+        "every_node_charge": true,
+        "every_edge_resistance": false,
+        "resistance_total": true,
+        "capacitance_total": true,
+        "zero_coupling": true
+      },
+      "nodes": {
+        "I:U0/p": 0.1,
+        "I:U1/p": 0.2,
+        "N:3": 0.8999999999999999,
+        "N:4": 1.2,
+        "N:5": 1.5,
+        "N:6": 1.7999999999999998,
+        "N:7": 2.1,
+        "N:8": 2.4
+      },
+      "edges": [
+        {
+          "a": "I:U0/p",
+          "b": "I:U1/p",
+          "ohm": 0.7000000000000001
+        },
+        {
+          "a": "I:U1/p",
+          "b": "N:3",
+          "ohm": 0.2
+        },
+        {
+          "a": "N:3",
+          "b": "N:4",
+          "ohm": 0.30000000000000004
+        },
+        {
+          "a": "N:4",
+          "b": "N:5",
+          "ohm": 0.4
+        },
+        {
+          "a": "N:5",
+          "b": "N:6",
+          "ohm": 0.5
+        },
+        {
+          "a": "N:6",
+          "b": "N:7",
+          "ohm": 0.6000000000000001
+        },
+        {
+          "a": "N:7",
+          "b": "N:8",
+          "ohm": 0.1
+        }
+      ],
+      "totals": [
+        2.8,
+        10.2,
+        0.0
+      ]
+    },
+    "wrong-cap-unit": {
+      "passed": false,
+      "checks": {
+        "exact_nodes": true,
+        "exact_edges": true,
+        "every_node_charge": false,
+        "every_edge_resistance": true,
+        "resistance_total": true,
+        "capacitance_total": true,
+        "zero_coupling": true
+      },
+      "nodes": {
+        "I:U0/p": 100.0,
+        "I:U1/p": 200.0,
+        "N:3": 899.9999999999999,
+        "N:4": 1200.0,
+        "N:5": 1500.0,
+        "N:6": 1799.9999999999998,
+        "N:7": 2100.0,
+        "N:8": 2400.0
+      },
+      "edges": [
+        {
+          "a": "I:U0/p",
+          "b": "I:U1/p",
+          "ohm": 0.1
+        },
+        {
+          "a": "I:U1/p",
+          "b": "N:3",
+          "ohm": 0.2
+        },
+        {
+          "a": "N:3",
+          "b": "N:4",
+          "ohm": 0.30000000000000004
+        },
+        {
+          "a": "N:4",
+          "b": "N:5",
+          "ohm": 0.4
+        },
+        {
+          "a": "N:5",
+          "b": "N:6",
+          "ohm": 0.5
+        },
+        {
+          "a": "N:6",
+          "b": "N:7",
+          "ohm": 0.6000000000000001
+        },
+        {
+          "a": "N:7",
+          "b": "N:8",
+          "ohm": 0.7000000000000001
+        }
+      ],
+      "totals": [
+        2.8,
+        10.2,
+        0.0
+      ]
+    },
+    "missing-node": {
+      "passed": false,
+      "checks": {
+        "exact_nodes": false,
+        "exact_edges": true,
+        "every_node_charge": false,
+        "every_edge_resistance": true,
+        "resistance_total": true,
+        "capacitance_total": true,
+        "zero_coupling": true
+      },
+      "nodes": {
+        "I:U1/p": 0.2,
+        "N:3": 0.8999999999999999,
+        "N:4": 1.2,
+        "N:5": 1.5,
+        "N:6": 1.7999999999999998,
+        "N:7": 2.1,
+        "N:8": 2.4
+      },
+      "edges": [
+        {
+          "a": "I:U0/p",
+          "b": "I:U1/p",
+          "ohm": 0.1
+        },
+        {
+          "a": "I:U1/p",
+          "b": "N:3",
+          "ohm": 0.2
+        },
+        {
+          "a": "N:3",
+          "b": "N:4",
+          "ohm": 0.30000000000000004
+        },
+        {
+          "a": "N:4",
+          "b": "N:5",
+          "ohm": 0.4
+        },
+        {
+          "a": "N:5",
+          "b": "N:6",
+          "ohm": 0.5
+        },
+        {
+          "a": "N:6",
+          "b": "N:7",
+          "ohm": 0.6000000000000001
+        },
+        {
+          "a": "N:7",
+          "b": "N:8",
+          "ohm": 0.7000000000000001
+        }
+      ],
+      "totals": [
+        2.8,
+        10.2,
+        0.0
+      ]
+    },
+    "duplicate-edge": {
+      "passed": false,
+      "malformed_readback_rejected": true
+    },
+    "nonfinite-node": {
+      "passed": false,
+      "checks": {
+        "exact_nodes": true,
+        "exact_edges": true,
+        "every_node_charge": false,
+        "every_edge_resistance": true,
+        "resistance_total": true,
+        "capacitance_total": true,
+        "zero_coupling": true
+      },
+      "nodes": {
+        "I:U0/p": "nonfinite:inf",
+        "I:U1/p": 0.2,
+        "N:3": 0.8999999999999999,
+        "N:4": 1.2,
+        "N:5": 1.5,
+        "N:6": 1.7999999999999998,
+        "N:7": 2.1,
+        "N:8": 2.4
+      },
+      "edges": [
+        {
+          "a": "I:U0/p",
+          "b": "I:U1/p",
+          "ohm": 0.1
+        },
+        {
+          "a": "I:U1/p",
+          "b": "N:3",
+          "ohm": 0.2
+        },
+        {
+          "a": "N:3",
+          "b": "N:4",
+          "ohm": 0.30000000000000004
+        },
+        {
+          "a": "N:4",
+          "b": "N:5",
+          "ohm": 0.4
+        },
+        {
+          "a": "N:5",
+          "b": "N:6",
+          "ohm": 0.5
+        },
+        {
+          "a": "N:6",
+          "b": "N:7",
+          "ohm": 0.6000000000000001
+        },
+        {
+          "a": "N:7",
+          "b": "N:8",
+          "ohm": 0.7000000000000001
+        }
+      ],
+      "totals": [
+        2.8,
+        10.2,
+        0.0
+      ]
+    }
+  },
+  "implementation_sha256": "617f0379fc710c02631fe8c29091600fd9b192ea8e185bc5994a1122c434f281",
+  "scope": "Synthetic readback parser controls only; installed OpenDB API and actual measured-route SPEF still unexecuted"
+}

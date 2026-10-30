@@ -1,0 +1,40 @@
+{
+  "run_id": "block-v1-20261027-063",
+  "base_nodes": 6,
+  "max_nodes": 8,
+  "elastic": true,
+  "source_commit": "8f6adc83815184b04267dcba06f7af4b9ce27dc3",
+  "source_archive_sha256": "f4fc16ae615b527026776f7e1762050f56b7c5e5405a16b95924d1584dc4fc5e",
+  "tasks": [
+    {
+      "id": "native-sta-control",
+      "partition": "c96",
+      "node": "node18",
+      "cpus": 4,
+      "memory": "0",
+      "minutes": 0,
+      "after": [],
+      "argv": [
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-063/src/project/experiments/block_v1/worker.sh",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-063/src",
+        "native-sta-control"
+      ]
+    },
+    {
+      "id": "fsv-build",
+      "partition": "c96",
+      "node": "node19",
+      "cpus": 16,
+      "memory": "0",
+      "minutes": 0,
+      "after": [],
+      "argv": [
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-063/src/project/experiments/block_v1/worker.sh",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-063/src",
+        "fsv-build"
+      ]
+    }
+  ]
+}

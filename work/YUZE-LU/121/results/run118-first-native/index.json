@@ -1,0 +1,77 @@
+{
+  "remote_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-118",
+  "manifest": {
+    "run_id": "block-v1-20261027-118",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": true,
+    "source_commit": "0db222d50ed228366f28ae36312257fbd773a77f",
+    "source_archive_sha256": "9923591a0f656b319a1a7d40c021d81983530edd2347088f622bdc951a6dd319",
+    "tasks": [
+      {
+        "id": "native-constant-control",
+        "partition": "c96",
+        "cpus": 16,
+        "memory": "0",
+        "minutes": 0,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-118/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-118/src",
+          "native-constant-control"
+        ],
+        "node": "node23"
+      }
+    ]
+  },
+  "manifest_sha256": "0a63a61c22a1c47bfaddc368685ee796a65483392ffcc5ddf917adddf4d513c4",
+  "state": {
+    "created_utc": "2026-10-27T02:15:38.741978+00:00",
+    "manifest_sha256": "0a63a61c22a1c47bfaddc368685ee796a65483392ffcc5ddf917adddf4d513c4",
+    "run_id": "block-v1-20261027-118",
+    "tasks": {
+      "native-constant-control": {
+        "dispatcher_source_sha256": "7bf3da954f66308b13cd202df42d1cd1ad100b3d848b07b2cebcd35ac4531ad7",
+        "id": "native-constant-control",
+        "job_id": "92179",
+        "observed_utc": "2026-10-27T02:18:48.256265+00:00",
+        "reserved_utc": "2026-10-27T02:15:44.215491+00:00",
+        "state": "RUNNING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodelist=node23",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=16",
+          "--partition=c96",
+          "--time=0",
+          "--mem=0",
+          "--job-name=yzl-bv1-native-constant-control",
+          "--comment=yzl-bv1:block-v1-20261027-118:native-constant-control",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-118/tasks/native-constant-control",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-118/tasks/native-constant-control/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-118/tasks/native-constant-control/job.sh"
+        ],
+        "submitted_utc": "2026-10-27T02:15:44.296441+00:00",
+        "token": "yzl-bv1:block-v1-20261027-118:native-constant-control"
+      }
+    }
+  },
+  "tasks": {
+    "native-constant-control": {
+      "job_id": "92179",
+      "artifacts": {},
+      "job_log": {
+        "bytes": 48,
+        "sha256": "76a333f96e9d42017d377819cd2fc7f91d9cd517dc6453f081e170fd58342070",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\n"
+      }
+    }
+  },
+  "source_archive_sha256": "9923591a0f656b319a1a7d40c021d81983530edd2347088f622bdc951a6dd319",
+  "sacct": "92179|RUNNING|0:0|00:04:30|00:00:00||16|node23\n92179.batch|RUNNING|0:0|00:04:30|00:00:00||16|node23\n92179.extern|RUNNING|0:0|00:04:30|00:00:00||16|node23\n",
+  "collected_utc": "2026-10-27T02:20:13.472065+00:00",
+  "selected_task_only": "native-constant-control"
+}

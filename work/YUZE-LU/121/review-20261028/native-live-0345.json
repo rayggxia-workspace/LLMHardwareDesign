@@ -1,0 +1,68 @@
+{
+  "captured_utc": "2026-10-28T19:41:53.678137+00:00",
+  "evidence": {
+    "s_exact_diff": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-280/tasks/revision300-route-s/patch-diff.json",
+      "sha256": "7c88d007bd864fd0654045a6d564e6f578d682ce05dafc077abc3cf4292f43c3",
+      "report": {
+        "passed": true,
+        "outside_target_def_sha256": "0751ae00758f58db71648189748f8f34164e8183b9441716b0523ff5d1261c5c",
+        "added_tokens": [
+          "NEW",
+          "metal2",
+          "(",
+          "362260",
+          "1806770",
+          ")",
+          "RECT",
+          "(",
+          "0",
+          "0",
+          "200",
+          "60",
+          ")"
+        ],
+        "original_target_sha256": "42c9b53aff28795e432024e6c3202b16b104c6440b4690a4b0fe639624199ec4",
+        "patched_target_sha256": "4c6a15fbbfa8361e11921d06b3962c33a974444e18150d463036c6bbf9d70ea6"
+      },
+      "final_native_receipt_pending": true
+    },
+    "v_live": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-270/tasks/revision300-route-v/flow/logs/nangate45/bv1_block_v1_v/base/5_1_grt.tmp.log",
+      "snapshot_sha256": "689807be187d3e19fab9cd5dc9ac858ac353d163217e5557eb53a5f509d92822",
+      "bytes": 268999,
+      "selected_lines": [
+        "global_route -congestion_report_file /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-270/tasks/revision300-route-v/flow/reports/nangate45/bv1_block_v1_v/base/congestion.rpt -congestion_iterations 30 -congestion_iterations 100 -congestion_report_iter_step 5 -verbose",
+        "Total          9504319       6384198           67.17%             0 /  0 /  0",
+        "Took 2299 seconds: global_route -congestion_report_file /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-270/tasks/revision300-route-v/flow/reports/nangate45/bv1_block_v1_v/base/congestion.rpt -congestion_iterations 30 -congestion_iterations 100 -congestion_report_iter_step 5 -verbose"
+      ],
+      "tail": [
+        "global_route -end_incremental -congestion_report_file /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-270/tasks/revision300-route-v/flow/reports/nangate45/bv1_block_v1_v/base/congestion_post_recover_power.rpt",
+        "Repair antennas...",
+        "[WARNING GRT-0246] No diode with LEF class CORE ANTENNACELL found.",
+        "[INFO ANT-0002] Found 0 net violations.",
+        "[INFO ANT-0001] Found 0 pin violations.",
+        "Estimate parasitics...",
+        "estimate_parasitics -global_routing",
+        "Report metrics stage 5, global route..."
+      ],
+      "not_final_qualification": true
+    },
+    "r_live": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-236/tasks/revision300-route-r/flow/logs/nangate45/bv1_block_v1_r/base/4_1_cts.tmp.log",
+      "snapshot_sha256": "dc60e9fe1c87ad89f64264e440044172bb240302210d74d3cc9098b0701937c7",
+      "bytes": 1383362,
+      "tail": [
+        "   121120 |     265 |   15323 |            0 |    +0.6% |  -0.190 |  -1.514 | $auto$ff.cc:337:slice$2817761/D",
+        "    final |     265 |   15327 |            0 |    +0.6% |  -0.190 |  -1.514 | $auto$ff.cc:337:slice$2817761/D",
+        "--------------------------------------------------------------------------------------",
+        "[WARNING RSZ-0064] Unable to repair all hold checks within margin.",
+        "[INFO RSZ-0132] Resized 265 instances.",
+        "[INFO RSZ-0032] Inserted 15327 hold buffers.",
+        "[INFO RSZ-0506] Runtime: 641.54s",
+        "Took 995 seconds: repair_timing -setup_margin 0 -hold_margin 0.02 -repair_tns 100 -verbose"
+      ],
+      "not_final_qualification": true
+    }
+  }
+}

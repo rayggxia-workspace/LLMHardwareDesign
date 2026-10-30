@@ -1,0 +1,1329 @@
+{
+  "remote_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-014",
+  "manifest": {
+    "run_id": "block-v1-20261027-014",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": false,
+    "source_commit": "488919cfeb7fcd939bfa364b40d1290186ea2f14",
+    "source_archive_sha256": "ade5aa1a7a4d2f5c47a13fdd460593b81e3e251c907dfcc079024b2217cbd83e",
+    "tasks": [
+      {
+        "id": "reference-pilot",
+        "partition": "c96",
+        "cpus": 32,
+        "memory": "0",
+        "minutes": 180,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-014/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-014/src",
+          "reference-pilot"
+        ]
+      }
+    ]
+  },
+  "manifest_sha256": "4bd5ad9a27d74815324594f7ecddcabd1b51f5f1ce3d722d34aa6d31db627e80",
+  "state": {
+    "created_utc": "2026-10-26T17:51:13.459366+00:00",
+    "manifest_sha256": "4bd5ad9a27d74815324594f7ecddcabd1b51f5f1ce3d722d34aa6d31db627e80",
+    "run_id": "block-v1-20261027-014",
+    "tasks": {
+      "reference-pilot": {
+        "id": "reference-pilot",
+        "job_id": "91924",
+        "reserved_utc": "2026-10-26T17:51:14.433345+00:00",
+        "state": "PENDING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=32",
+          "--partition=c96",
+          "--time=180",
+          "--mem=0",
+          "--job-name=yzl-bv1-reference-pilot",
+          "--comment=yzl-bv1:block-v1-20261027-014:reference-pilot",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-014/tasks/reference-pilot",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-014/tasks/reference-pilot/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-014/tasks/reference-pilot/job.sh"
+        ],
+        "submitted_utc": "2026-10-26T17:51:14.530839+00:00",
+        "token": "yzl-bv1:block-v1-20261027-014:reference-pilot"
+      }
+    }
+  },
+  "tasks": {
+    "reference-pilot": {
+      "job_id": "91924",
+      "artifacts": {
+        "receipt.json": {
+          "bytes": 12153,
+          "sha256": "315fdffd9f3e452e7ee836aaeb9497b4e8d8a161a0058b6d84d9075777cafe12",
+          "content": {
+            "mode": "reference-pilot",
+            "cpus": 32,
+            "started": 1793037080.4677942,
+            "commands": [],
+            "source_commit": "488919cfeb7fcd939bfa364b40d1290186ea2f14",
+            "inputs": {
+              "bundle-manifest.json": "20cf9ef38c4274f37f5e6e8e799e296e27831eae7d5d6723ad9c97a6bb508feb",
+              "project/experiments/attention_rtl/receive.py": "ad04114b0b5c3b9d6bfbbd59b9a7db5721eac312879ae51887fa0ebaaa60d9ec",
+              "project/experiments/block_v1/README.md": "33b8d336593d0552759975f928ec0a35dfad67c6255550d6398b3c20e494fdcf",
+              "project/experiments/block_v1/adapt_committed.py": "0b24bf13c6ff9ed8acf4788907a1f516249895556448ecd2dbb6bff11dcf37d2",
+              "project/experiments/block_v1/bundle.py": "cdcb7869da894d6665a773376e3391d5f55cf4f30d5826f09e1ca6946fe554d1",
+              "project/experiments/block_v1/collect.py": "e1898f0b56e9bb9b88c0089aa5a27601a037770da4d0282f6594c6946a034a69",
+              "project/experiments/block_v1/committed_qualification.cpp": "e67cf27daa0c5d4764f6086d8a927a799668bf2f305757a342c8b13c50bf8870",
+              "project/experiments/block_v1/committed_sim.cpp": "ababe0b37ce8fc93075ef6d863903c9b788852c2f4016ee64d465c59a6491f13",
+              "project/experiments/block_v1/dispatch.py": "4081659bdbf0221b008824f8a8308526f76aa4c8d1b8102d28817b63d0c296a3",
+              "project/experiments/block_v1/fetch_fsv.py": "c24c51a160f49c8cf5d77e48637bd05ae824192694ab1f45d2be04348f0ee75b",
+              "project/experiments/block_v1/fsv_build.py": "93154f4014d1da5d3ea09f3435da58fe5d2b157f9dac943b9861117f393cb1bc",
+              "project/experiments/block_v1/fsv_client.cpp": "c11dbc87a42f2f6e4cd22ad9328df183f358e449b0c27c3f5b233520c592e555",
+              "project/experiments/block_v1/gverify121.py": "77f22a3d9f699e411ab33ce2512cd7a041ab8fb9832294a2d2c51ba8c06fb15d",
+              "project/experiments/block_v1/import_sources.py": "48f634fead3cb583bbd6017e4206169582b901469d84fcc104af69cfd7f5bb57",
+              "project/experiments/block_v1/inspect_native_gds.rb": "306dbfe313e167bcf9e3c4b5f5a3149c8dc3f38a61414e9ef3a67bc4b491943b",
+              "project/experiments/block_v1/inspect_overlay.tcl": "0684947b17abe0f8e2d5ccda44b522a0bd883b30a502f5367252b2f4670e116f",
+              "project/experiments/block_v1/inventory121.py": "f2c5fa7aa18a86104f7b0ac50a857664b711748f1818621d08a5c0b395099900",
+              "project/experiments/block_v1/klayout_overlay.py": "17f0e57e9138ffeeaa04226e71281a78209dab27b406192a62415642ca4e598d",
+              "project/experiments/block_v1/make_wrapper.py": "a23dd9e51675d5b829f432f039ae7b70e9602b998aca663c09e84d9a2f8e8070",
+              "project/experiments/block_v1/overlay.py": "4d63c0d1fd1d8c398221c24030b68f782106352f1f8702cd4f16c67a474d0865",
+              "project/experiments/block_v1/pattern_prepare.py": "6fb19a4a25a7a361aceec2d62d305ae9f7bb7cf249eb858d01f6d0b6db8e3eea",
+              "project/experiments/block_v1/physical-budget.json": "bbe8df5f8c62df5f88597c35378f26be25da2bd73d1b835e558a6180af6f9ddb",
+              "project/experiments/block_v1/physical_inputs.py": "280362ab486c4f2bba982993fcad708f4eab259cfa43821a71e864db2dd1afcd",
+              "project/experiments/block_v1/probe.sh": "743d53a5b4c39d4918d0528b9a84df35c2807b47067bac3dbffcc361fd352548",
+              "project/experiments/block_v1/probe_geometry.rb": "ad81441ad234094e07ffb1ad92293cfc7dc56f7876bfcb59bd2f171641fd72a6",
+              "project/experiments/block_v1/receive121.py": "13dfa60435b10fefcbbdfc1d00b1f7c3c28e707f04c0b6c2b01008b6feb375d6",
+              "project/experiments/block_v1/reference_run.py": "0abdffe82330042b7a9aa70776f83d66922e7169f9c608984b35095ed9ceea85",
+              "project/experiments/block_v1/route_probe.py": "8fbba7b328c9d052c7506fbd646f45286c0694e654a7b3d33985867195f777b6",
+              "project/experiments/block_v1/semantic_negative.py": "a080f7365354a414a1647cea5c8234c7aedbfb9fa9a0b46fe5262b938f88b39f",
+              "project/experiments/block_v1/technology.json": "5b1fac19e4120b44684371adbc45438e9ac7653fc5efd6026a5126b5b5b86c39",
+              "project/experiments/block_v1/test_transaction.cpp": "bbfbe18907783eae87aae3dcaede35f1ada28a6e6f2a4f1cf0348ccf6392458a",
+              "project/experiments/block_v1/worker.py": "508c8f509d679dc8ca44f221fe3cda5faabad232d8e8d5b9053795eda4f69515",
+              "project/experiments/block_v1/worker.sh": "ae4cf1820fd00a3f0ffa3a42bdf235bf3f4a17518bcb0c75cfd8bbcede06be05",
+              "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+              "project/experiments/gdn_state/reference.py": "e8add3d9ba6941aa5dc7484f190406854e0a870ae8b2029a8d0eba20b595daa5",
+              "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+              "project/experiments/shared_gdn/PROTOCOL.md": "3002060a69744fc46121aeba8c15d1c42fb9ce952b67e47a281548dfe9bdb221",
+              "project/experiments/shared_gdn/analyze.py": "6f63248270a1419d0157c2657d069605d77639b427a98503812c77901e253290",
+              "project/experiments/shared_gdn/collect.py": "6ca5c15718e41998bc05137e4f53385bbeb03c7b4fde7b610a8a82a9fa3d4d01",
+              "project/experiments/shared_gdn/cost.py": "d920e359bb1d65b5847d31089d8210394e5675eda586789a2e8938e44bd5e8a1",
+              "project/experiments/shared_gdn/gate.py": "c0f8d4c38b36736459947bf4efb50a7a68cdfb3a7509638a01175dfbe2931f9c",
+              "project/experiments/shared_gdn/gverify.py": "c698ba20d0d037a1d4396dfc82e69f432bc1b942a38b9eb5aa3ad42d03e8907f",
+              "project/experiments/shared_gdn/inputs.py": "431109179969566b4cb97fe3615ed1bb82356a07edebdd259c2bc77cbbd3949c",
+              "project/experiments/shared_gdn/inventory_negative.py": "7fb03bd0af0077922d1ca9d0c579f915c9cda877bbd563678755a989a8f852f2",
+              "project/experiments/shared_gdn/negative.py": "a2e0ea6a09eda99740f8fe527e2321b741fcbcf6ad84626bf727b95117e6d2f1",
+              "project/experiments/shared_gdn/qualification.cpp": "f7ae0706b98258e9adc156b388f002f03e60bb8b59f3a0f1a98e834a138038b8",
+              "project/experiments/shared_gdn/receive.py": "8d851d68649108e69c2233dbb89d568a5a04e14bc91f1e42e8e25c01102ef1ec",
+              "project/experiments/shared_gdn/run.py": "d0cb68e98d3ca85bb15d56239f3aeeb7865b9697841e7e6ace0f8fb2b31f4016",
+              "project/experiments/shared_gdn/sim.cpp": "ace54074760bbcca1a491f04d0a1faab8075330a175cf7ff51954b0c16ce7cb3",
+              "project/experiments/v_consumer/reference.py": "b3133796572b25d7241affb9fad44b0765603d267e83c18946a821703fd95f09",
+              "project/rtl/block_v1/shared121.sv": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+              "project/rtl/block_v1/transaction6k.sv": "0491dc05357b61855a3fadd9598ac738bdf305a8c8306499ac8b6c184fa4b0b5",
+              "project/rtl/gdn_state/wide104.sv": "c623eb27ec992af1ae4411261ed75fccf886100fc294cf280f6a00c15905c890",
+              "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+              "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+              "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+              "project/rtl/shared_gdn/gdn109.sv": "b329550d0a85e1357627cf6ec03391b08f43765c8f8737a8524f94376ea3f424",
+              "project/rtl/shared_gdn/shared109.sv": "b890b351c2cd2c3cec5a988c7f28d345f8319f85a50fbcb2d72917cfd537d555",
+              "project/rtl/shared_services/a106.sv": "c692d5405e8afa9ca0a13ff7919d6092213335445ed15057f3b8345c51139011",
+              "project/rtl/shared_services/attention106.sv": "a3adef94747a334849a2053e42a23d3dc0ce864273bba16367c1d4d0623259fa",
+              "project/rtl/shared_services/m106.sv": "c901ee8f01a45c3a1b9a917279bdcd3e305d899475abb5754a3c2ddbd0a97ed3",
+              "project/rtl/shared_services/mfront106.sv": "bb918aad183e4da39aeace350ae654ee2280e85a03275c954c0cb0d926cec84e",
+              "project/rtl/shared_services/norm106.sv": "be7ba8053341ae1e8eb3f17e4666116ca56c45e54db7c415f2e6e9ed1fc9ff1d",
+              "project/rtl/shared_services/r106.sv": "84e5f85042f2fa4c9091ea7e508a77f01b90843146cb36ac0b635d04a4d2eb7f",
+              "project/rtl/shared_services/shared106.sv": "1756a68d178305b6603ad6a6b0f95bd8df7fe38ed6c40bfd8d16790ebd8fca86",
+              "project/rtl/v_consumer/vprep97.sv": "755621fd19cbfd38c3c52df889a045867c64a56bb6e024a6f75c65d83dd32ee7",
+              "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+              "work/YUZE-LU/121/source-manifest.json": "7958c8f0c2d7ca3c886dcb16fb841d81ff315162d1fc041fb9485430b08cc6cb"
+            },
+            "tool_hashes": {
+              "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys": "c2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b",
+              "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+              "/usr/bin/klayout": "fee1214ef5c63033057626a9dab0deb0664fecb69184d1c3fd43dc9c0dc1eba5",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator_bin": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd"
+            },
+            "passed": true,
+            "finished": 1793037090.3111203,
+            "outputs": {
+              "rows-04.jsonl": "bf5885715855bd2189427a37c55f26ed3fb67475acc15799e869ccef9dbaf065",
+              "rows-05.jsonl": "0bab229f21b8fc96b163efee3aac46d744130cf21249dac1d5a530d95922e308",
+              "solver-06.log": "457ecf3155391ec9d491ce5f220126e04229d45e0b6814d355382cbf2aa95384",
+              "reference-pilot.json": "5b86100461ee4dd00bd75ccd16c57e521f58dd048db8094d32e4fcf9a5edfd90",
+              "rows-01.jsonl": "3e800e2e592f76bfdf1a8b50ea7ec3a85aee3f249a5d338ecaedade30cd7eee7",
+              "scenes-04.txt": "e0732582eff6348221e5c71bf1b2dff23f3d352718c616406e1e1873ef15cd69",
+              "command-05.json": "1e04a75b863adc5f7b8ea122335505d90e93018bc9e8d693fab4d67c1c50fec2",
+              "command-03.json": "5ee43fd2c3de1c2929449acfcd752a1ae76d44d2cf21952f91a35a3914286bb8",
+              "started.txt": "db4ec1c4de99284d578ac576f6e3b6608913e47d894c453e43aeff285f2f42c4",
+              "scenes-05.txt": "2bbce21e34022d07598bf7b20573779c2035bde6df660d4fc57a388c0411eb6a",
+              "solver-00.log": "b5f482437a5fe2558fe0022e7c1ab3f85a8294e314cd46609dcd8efa3a760401",
+              "command-00.json": "6fe0d556ecb5b5a8f0c55206576e67ecee286eb25d5152e8255d6d85e0a9fa8c",
+              "solver-01.log": "5190e16feac7e3d241152993b4abbfc432390b2fc082f3f13e508d94c0248667",
+              "rows-06.jsonl": "92fa1b7e05d3a17bc1e16ebc89926e5f568071f0a5e26dcf5957ff756e3b4ca1",
+              "rows-02.jsonl": "104a3b28f4df2a609eba0418701672be4a4ef7c1ca209005c006fd837c034534",
+              "rows-00.jsonl": "6728b94833ebd04c4dc81aa4ced6bd1f6c2137000a9457782946a099b8ed1d7e",
+              "solver-02.log": "101a35ad4bbb350ce17928534a6187050082d33455b1ecea83fa164b18aa7f61",
+              "job.sh": "8b55c986f3a31c5b6ccc0dbcc5a8646f52a0e964ca6bd603deee5fbd0f99f06e",
+              "scenes-06.txt": "e26c52452a483651f70c79cca5d7723e5b5092cddfcb5d5b4c9f5f5c296d873d",
+              "command-02.json": "8146c805e424d64e492901dd71aeadd60ad455adccc68280e5f5fa9500af3725",
+              "solver-07.log": "9f6646d4e592739dab7f9b443bd5df16c86b364bd642fb0545d11e2527666bc4",
+              "solver-03.log": "35134b0576e2abd6657055dd4bdd2affea976af387a4aed02ce3e7e1b5011716",
+              "scenes-03.txt": "8ccbbabe22ed95b64bd00872bd7e777d79ee6a7edce78d3ab4a5db24fee06c60",
+              "solver-05.log": "7291245fb4baaf9e8d066d12ab4c7243441d7b9cbb41c5f8cbd59edcf6f587cb",
+              "command-07.json": "72fb7240b76a330804e1c12c2f92cf4b40b7142658b722b73439ec36de8f0c2e",
+              "scenes-00.txt": "33917b7cf108ba2ab1867ed3bb0f33786884eb552c7600d4452d727a0d1ebf31",
+              "rows-03.jsonl": "1cce31d70c8ac75fff77a28a10a853fa8b2b2bb8bc9657bf29ff3b87e128927e",
+              "scenes-02.txt": "3f856f9ce1978c1dbabaeb42f55a6aa9993609b975fd185767e91bf4dff28701",
+              "command-04.json": "4656934554f623c061839aa2c43ee04c69d6112ab7c3fbd6e85005d6eb85865e",
+              "solver-04.log": "0900c5b673c453cf111f2a0424624f3e2c513dbd9d9e51888b5330e30f55fbdb",
+              "scenes-01.txt": "dc380387099cc4f405d9acd785097c98dd52e1a1ebbb4bcca022e840e4ef9aee",
+              "command-06.json": "d30b317f28c32fff007edd4992aae889bcdf706aae1877f11dc4ad8f677cdba3",
+              "image.sha256": "563ca95c74250c02398332ac6ea8dcffa20e7257021e043a80655a42bb50edee",
+              "scenes-07.txt": "83a206473fe6404b3f9d5b0c550cccb31372db63cce3ca150a41720c6a5d1002",
+              "allocation.txt": "950aa506f24376c3c516878e13c796d0247be317a15fe00c7f544172a0157dfa",
+              "rows-07.jsonl": "a52cf5a4af62fe02400c8ecb3b9f036753aaea146ff66f53ff61fced3d0850ff",
+              "command-01.json": "8d023711ac57426898235cc0c79f15b5b682b97221ec85902363841a64d39f42"
+            }
+          }
+        },
+        "reference-pilot.json": {
+          "bytes": 25220,
+          "sha256": "5b86100461ee4dd00bd75ccd16c57e521f58dd048db8094d32e4fcf9a5edfd90",
+          "content": {
+            "schema": "block-v1-reference-pilot/1",
+            "manifest": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-013/tasks/pattern-prepare/reference-patterns/manifest.json",
+            "manifest_sha256": "49f008d1820300a64f829a2db8641f61e4043c7daa39f0c6efd7bf7e7d31f4c5",
+            "qualified_solver": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-013/tasks/fsv-build/fsv-qualified.json",
+            "qualified_solver_sha256": "70ab3ba7da4ba0a6e1dc3c10285b5ae562f39150e5823f65a30ff70cb46ebe94",
+            "binary_sha256": "6275ad4615818484b37393ee01e8310054782b65dc57aeeecb15194951807b01",
+            "cases": [
+              {
+                "id": 0,
+                "name": "DU6_M10uuM11_W1600W1600_S00000S00000",
+                "conductors": 2,
+                "masters": [
+                  "DU6_M10uuM11_W1600W1600_S00000S00000_2",
+                  "DU6_M10uuM11_W1600W1600_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 20,
+                "name": "DU6_M11uuM12_W1600W1600_S00000S00000",
+                "conductors": 2,
+                "masters": [
+                  "DU6_M11uuM12_W1600W1600_S00000S00000_2",
+                  "DU6_M11uuM12_W1600W1600_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 30,
+                "name": "DU6_M1uuM2_W140W140_S00000S00000",
+                "conductors": 2,
+                "masters": [
+                  "DU6_M1uuM2_W140W140_S00000S00000_2",
+                  "DU6_M1uuM2_W140W140_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 60,
+                "name": "DU6_M2uuM3_W140W140_S00000S00000",
+                "conductors": 2,
+                "masters": [
+                  "DU6_M2uuM3_W140W140_S00000S00000_2",
+                  "DU6_M2uuM3_W140W140_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 90,
+                "name": "DU6_M3uuM4_W140W140_S00000S00000",
+                "conductors": 2,
+                "masters": [
+                  "DU6_M3uuM4_W140W140_S00000S00000_2",
+                  "DU6_M3uuM4_W140W140_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 120,
+                "name": "DU6_M4uuM5_W140W140_S00000S00000",
+                "conductors": 2,
+                "masters": [
+                  "DU6_M4uuM5_W140W140_S00000S00000_2",
+                  "DU6_M4uuM5_W140W140_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 150,
+                "name": "DU6_M5uuM6_W140W140_S00000S00000",
+                "conductors": 2,
+                "masters": [
+                  "DU6_M5uuM6_W140W140_S00000S00000_2",
+                  "DU6_M5uuM6_W140W140_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 180,
+                "name": "DU6_M6uuM7_W140W140_S00000S00000",
+                "conductors": 2,
+                "masters": [
+                  "DU6_M6uuM7_W140W140_S00000S00000_2",
+                  "DU6_M6uuM7_W140W140_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 210,
+                "name": "DU6_M7uuM10_W400W400_S00000S00000",
+                "conductors": 2,
+                "masters": [
+                  "DU6_M7uuM10_W400W400_S00000S00000_2",
+                  "DU6_M7uuM10_W400W400_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 240,
+                "name": "DU6_M8uuM10_W400W400_S00000S00000",
+                "conductors": 2,
+                "masters": [
+                  "DU6_M8uuM10_W400W400_S00000S00000_2",
+                  "DU6_M8uuM10_W400W400_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 270,
+                "name": "DU6_M9uuM10_W1600W1600_S00000S00000",
+                "conductors": 2,
+                "masters": [
+                  "DU6_M9uuM10_W1600W1600_S00000S00000_2",
+                  "DU6_M9uuM10_W1600W1600_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 300,
+                "name": "O6_M10oM7_W1600W1600_S00800S00800",
+                "conductors": 110,
+                "masters": [
+                  "O6_M10oM7_W1600W1600_S00800S00800_1",
+                  "O6_M10oM7_W1600W1600_S00800S00800_2",
+                  "O6_M10oM7_W1600W1600_S00800S00800_3"
+                ]
+              },
+              {
+                "id": 324,
+                "name": "O6_M11oM10_W1600W1600_S00800S00800",
+                "conductors": 58,
+                "masters": [
+                  "O6_M11oM10_W1600W1600_S00800S00800_1",
+                  "O6_M11oM10_W1600W1600_S00800S00800_2",
+                  "O6_M11oM10_W1600W1600_S00800S00800_3"
+                ]
+              },
+              {
+                "id": 332,
+                "name": "O6_M11oM8_W1600W1600_S00800S00800",
+                "conductors": 110,
+                "masters": [
+                  "O6_M11oM8_W1600W1600_S00800S00800_1",
+                  "O6_M11oM8_W1600W1600_S00800S00800_2",
+                  "O6_M11oM8_W1600W1600_S00800S00800_3"
+                ]
+              },
+              {
+                "id": 348,
+                "name": "O6_M12oM10_W1600W1600_S00800S00800",
+                "conductors": 58,
+                "masters": [
+                  "O6_M12oM10_W1600W1600_S00800S00800_1",
+                  "O6_M12oM10_W1600W1600_S00800S00800_2",
+                  "O6_M12oM10_W1600W1600_S00800S00800_3"
+                ]
+              },
+              {
+                "id": 372,
+                "name": "O6_M1oM0_W140W140_S00065S00065",
+                "conductors": 5,
+                "masters": [
+                  "O6_M1oM0_W140W140_S00065S00065_1",
+                  "O6_M1oM0_W140W140_S00065S00065_2",
+                  "O6_M1oM0_W140W140_S00065S00065_3"
+                ]
+              },
+              {
+                "id": 380,
+                "name": "O6_M2oM0_W140W140_S00070S00070",
+                "conductors": 5,
+                "masters": [
+                  "O6_M2oM0_W140W140_S00070S00070_1",
+                  "O6_M2oM0_W140W140_S00070S00070_2",
+                  "O6_M2oM0_W140W140_S00070S00070_3"
+                ]
+              },
+              {
+                "id": 388,
+                "name": "O6_M2oM1_W140W140_S00070S00070",
+                "conductors": 60,
+                "masters": [
+                  "O6_M2oM1_W140W140_S00070S00070_1",
+                  "O6_M2oM1_W140W140_S00070S00070_2",
+                  "O6_M2oM1_W140W140_S00070S00070_3"
+                ]
+              },
+              {
+                "id": 396,
+                "name": "O6_M3oM0_W140W140_S00070S00070",
+                "conductors": 5,
+                "masters": [
+                  "O6_M3oM0_W140W140_S00070S00070_1",
+                  "O6_M3oM0_W140W140_S00070S00070_2",
+                  "O6_M3oM0_W140W140_S00070S00070_3"
+                ]
+              },
+              {
+                "id": 404,
+                "name": "O6_M3oM1_W140W140_S00070S00070",
+                "conductors": 59,
+                "masters": [
+                  "O6_M3oM1_W140W140_S00070S00070_1",
+                  "O6_M3oM1_W140W140_S00070S00070_2",
+                  "O6_M3oM1_W140W140_S00070S00070_3"
+                ]
+              },
+              {
+                "id": 420,
+                "name": "O6_M4oM1_W140W140_S00140S00140",
+                "conductors": 113,
+                "masters": [
+                  "O6_M4oM1_W140W140_S00140S00140_1",
+                  "O6_M4oM1_W140W140_S00140S00140_2",
+                  "O6_M4oM1_W140W140_S00140S00140_3"
+                ]
+              },
+              {
+                "id": 444,
+                "name": "O6_M5oM2_W140W140_S00140S00140",
+                "conductors": 110,
+                "masters": [
+                  "O6_M5oM2_W140W140_S00140S00140_1",
+                  "O6_M5oM2_W140W140_S00140S00140_2",
+                  "O6_M5oM2_W140W140_S00140S00140_3"
+                ]
+              },
+              {
+                "id": 468,
+                "name": "O6_M6oM3_W140W140_S00140S00140",
+                "conductors": 110,
+                "masters": [
+                  "O6_M6oM3_W140W140_S00140S00140_1",
+                  "O6_M6oM3_W140W140_S00140S00140_2",
+                  "O6_M6oM3_W140W140_S00140S00140_3"
+                ]
+              },
+              {
+                "id": 492,
+                "name": "O6_M7oM4_W400W400_S00400S00400",
+                "conductors": 154,
+                "masters": [
+                  "O6_M7oM4_W400W400_S00400S00400_1",
+                  "O6_M7oM4_W400W400_S00400S00400_2",
+                  "O6_M7oM4_W400W400_S00400S00400_3"
+                ]
+              },
+              {
+                "id": 516,
+                "name": "O6_M8oM5_W400W400_S00400S00400",
+                "conductors": 154,
+                "masters": [
+                  "O6_M8oM5_W400W400_S00400S00400_1",
+                  "O6_M8oM5_W400W400_S00400S00400_2",
+                  "O6_M8oM5_W400W400_S00400S00400_3"
+                ]
+              },
+              {
+                "id": 540,
+                "name": "O6_M9oM6_W1600W1600_S00800S00800",
+                "conductors": 303,
+                "masters": [
+                  "O6_M9oM6_W1600W1600_S00800S00800_1",
+                  "O6_M9oM6_W1600W1600_S00800S00800_2",
+                  "O6_M9oM6_W1600W1600_S00800S00800_3"
+                ]
+              },
+              {
+                "id": 564,
+                "name": "OU6_M10oM7uM11_W1600W1600_S00800S00800",
+                "conductors": 163,
+                "masters": [
+                  "OU6_M10oM7uM11_W1600W1600_S00800S00800_1",
+                  "OU6_M10oM7uM11_W1600W1600_S00800S00800_2",
+                  "OU6_M10oM7uM11_W1600W1600_S00800S00800_3"
+                ]
+              },
+              {
+                "id": 612,
+                "name": "OU6_M11oM10uM12_W1600W1600_S00800S00800",
+                "conductors": 111,
+                "masters": [
+                  "OU6_M11oM10uM12_W1600W1600_S00800S00800_1",
+                  "OU6_M11oM10uM12_W1600W1600_S00800S00800_2",
+                  "OU6_M11oM10uM12_W1600W1600_S00800S00800_3"
+                ]
+              },
+              {
+                "id": 620,
+                "name": "OU6_M11oM8uM12_W1600W1600_S00800S00800",
+                "conductors": 163,
+                "masters": [
+                  "OU6_M11oM8uM12_W1600W1600_S00800S00800_1",
+                  "OU6_M11oM8uM12_W1600W1600_S00800S00800_2",
+                  "OU6_M11oM8uM12_W1600W1600_S00800S00800_3"
+                ]
+              },
+              {
+                "id": 636,
+                "name": "OU6_M2oM1uM3_W140W140_S00070S00070",
+                "conductors": 113,
+                "masters": [
+                  "OU6_M2oM1uM3_W140W140_S00070S00070_1",
+                  "OU6_M2oM1uM3_W140W140_S00070S00070_2",
+                  "OU6_M2oM1uM3_W140W140_S00070S00070_3"
+                ]
+              },
+              {
+                "id": 660,
+                "name": "OU6_M3oM1uM4_W140W140_S00070S00070",
+                "conductors": 86,
+                "masters": [
+                  "OU6_M3oM1uM4_W140W140_S00070S00070_1",
+                  "OU6_M3oM1uM4_W140W140_S00070S00070_2",
+                  "OU6_M3oM1uM4_W140W140_S00070S00070_3"
+                ]
+              },
+              {
+                "id": 708,
+                "name": "OU6_M4oM1uM5_W140W140_S00140S00140",
+                "conductors": 166,
+                "masters": [
+                  "OU6_M4oM1uM5_W140W140_S00140S00140_1",
+                  "OU6_M4oM1uM5_W140W140_S00140S00140_2",
+                  "OU6_M4oM1uM5_W140W140_S00140S00140_3"
+                ]
+              },
+              {
+                "id": 780,
+                "name": "OU6_M5oM2uM6_W140W140_S00140S00140",
+                "conductors": 163,
+                "masters": [
+                  "OU6_M5oM2uM6_W140W140_S00140S00140_1",
+                  "OU6_M5oM2uM6_W140W140_S00140S00140_2",
+                  "OU6_M5oM2uM6_W140W140_S00140S00140_3"
+                ]
+              },
+              {
+                "id": 852,
+                "name": "OU6_M6oM3uM7_W140W140_S00140S00140",
+                "conductors": 129,
+                "masters": [
+                  "OU6_M6oM3uM7_W140W140_S00140S00140_1",
+                  "OU6_M6oM3uM7_W140W140_S00140S00140_2",
+                  "OU6_M6oM3uM7_W140W140_S00140S00140_3"
+                ]
+              },
+              {
+                "id": 924,
+                "name": "OU6_M7oM4uM10_W400W400_S00400S00400",
+                "conductors": 181,
+                "masters": [
+                  "OU6_M7oM4uM10_W400W400_S00400S00400_1",
+                  "OU6_M7oM4uM10_W400W400_S00400S00400_2",
+                  "OU6_M7oM4uM10_W400W400_S00400S00400_3"
+                ]
+              },
+              {
+                "id": 932,
+                "name": "OU6_M7oM4uM8_W400W400_S00400S00400",
+                "conductors": 207,
+                "masters": [
+                  "OU6_M7oM4uM8_W400W400_S00400S00400_1",
+                  "OU6_M7oM4uM8_W400W400_S00400S00400_2",
+                  "OU6_M7oM4uM8_W400W400_S00400S00400_3"
+                ]
+              },
+              {
+                "id": 996,
+                "name": "OU6_M8oM5uM10_W400W400_S00400S00400",
+                "conductors": 181,
+                "masters": [
+                  "OU6_M8oM5uM10_W400W400_S00400S00400_1",
+                  "OU6_M8oM5uM10_W400W400_S00400S00400_2",
+                  "OU6_M8oM5uM10_W400W400_S00400S00400_3"
+                ]
+              },
+              {
+                "id": 1068,
+                "name": "OU6_M9oM6uM10_W1600W1600_S00800S00800",
+                "conductors": 356,
+                "masters": [
+                  "OU6_M9oM6uM10_W1600W1600_S00800S00800_1",
+                  "OU6_M9oM6uM10_W1600W1600_S00800S00800_2",
+                  "OU6_M9oM6uM10_W1600W1600_S00800S00800_3"
+                ]
+              },
+              {
+                "id": 1140,
+                "name": "R6_M10oM7_W1600W1600_S00000S00000",
+                "conductors": 1,
+                "masters": [
+                  "R6_M10oM7_W1600W1600_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 1150,
+                "name": "R6_M10oM7_W1600W1600_S00800S00800",
+                "conductors": 5,
+                "masters": [
+                  "R6_M10oM7_W1600W1600_S00800S00800_1",
+                  "R6_M10oM7_W1600W1600_S00800S00800_2",
+                  "R6_M10oM7_W1600W1600_S00800S00800_3"
+                ]
+              },
+              {
+                "id": 1470,
+                "name": "R6_M11oM10_W1600W1600_S00000S00000",
+                "conductors": 1,
+                "masters": [
+                  "R6_M11oM10_W1600W1600_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 1480,
+                "name": "R6_M11oM10_W1600W1600_S00800S00800",
+                "conductors": 5,
+                "masters": [
+                  "R6_M11oM10_W1600W1600_S00800S00800_1",
+                  "R6_M11oM10_W1600W1600_S00800S00800_2",
+                  "R6_M11oM10_W1600W1600_S00800S00800_3"
+                ]
+              },
+              {
+                "id": 1800,
+                "name": "R6_M12oM10_W1600W1600_S00000S00000",
+                "conductors": 1,
+                "masters": [
+                  "R6_M12oM10_W1600W1600_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 1810,
+                "name": "R6_M12oM10_W1600W1600_S00800S00800",
+                "conductors": 5,
+                "masters": [
+                  "R6_M12oM10_W1600W1600_S00800S00800_1",
+                  "R6_M12oM10_W1600W1600_S00800S00800_2",
+                  "R6_M12oM10_W1600W1600_S00800S00800_3"
+                ]
+              },
+              {
+                "id": 2130,
+                "name": "R6_M1oM0_W140W140_S00000S00000",
+                "conductors": 1,
+                "masters": [
+                  "R6_M1oM0_W140W140_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 2141,
+                "name": "R6_M1oM0_W140W140_S00065S00065",
+                "conductors": 5,
+                "masters": [
+                  "R6_M1oM0_W140W140_S00065S00065_1",
+                  "R6_M1oM0_W140W140_S00065S00065_2",
+                  "R6_M1oM0_W140W140_S00065S00065_3"
+                ]
+              },
+              {
+                "id": 2262,
+                "name": "R6_M2oM0_W140W140_S00000S00000",
+                "conductors": 1,
+                "masters": [
+                  "R6_M2oM0_W140W140_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 2273,
+                "name": "R6_M2oM0_W140W140_S00070S00070",
+                "conductors": 5,
+                "masters": [
+                  "R6_M2oM0_W140W140_S00070S00070_1",
+                  "R6_M2oM0_W140W140_S00070S00070_2",
+                  "R6_M2oM0_W140W140_S00070S00070_3"
+                ]
+              },
+              {
+                "id": 2394,
+                "name": "R6_M3oM0_W140W140_S00000S00000",
+                "conductors": 1,
+                "masters": [
+                  "R6_M3oM0_W140W140_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 2404,
+                "name": "R6_M3oM0_W140W140_S00070S00070",
+                "conductors": 5,
+                "masters": [
+                  "R6_M3oM0_W140W140_S00070S00070_1",
+                  "R6_M3oM0_W140W140_S00070S00070_2",
+                  "R6_M3oM0_W140W140_S00070S00070_3"
+                ]
+              },
+              {
+                "id": 2504,
+                "name": "R6_M4oM1_W140W140_S00000S00000",
+                "conductors": 1,
+                "masters": [
+                  "R6_M4oM1_W140W140_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 2514,
+                "name": "R6_M4oM1_W140W140_S00140S00140",
+                "conductors": 5,
+                "masters": [
+                  "R6_M4oM1_W140W140_S00140S00140_1",
+                  "R6_M4oM1_W140W140_S00140S00140_2",
+                  "R6_M4oM1_W140W140_S00140S00140_3"
+                ]
+              },
+              {
+                "id": 2834,
+                "name": "R6_M5oM2_W140W140_S00000S00000",
+                "conductors": 1,
+                "masters": [
+                  "R6_M5oM2_W140W140_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 2844,
+                "name": "R6_M5oM2_W140W140_S00140S00140",
+                "conductors": 5,
+                "masters": [
+                  "R6_M5oM2_W140W140_S00140S00140_1",
+                  "R6_M5oM2_W140W140_S00140S00140_2",
+                  "R6_M5oM2_W140W140_S00140S00140_3"
+                ]
+              },
+              {
+                "id": 3164,
+                "name": "R6_M6oM3_W140W140_S00000S00000",
+                "conductors": 1,
+                "masters": [
+                  "R6_M6oM3_W140W140_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 3174,
+                "name": "R6_M6oM3_W140W140_S00140S00140",
+                "conductors": 5,
+                "masters": [
+                  "R6_M6oM3_W140W140_S00140S00140_1",
+                  "R6_M6oM3_W140W140_S00140S00140_2",
+                  "R6_M6oM3_W140W140_S00140S00140_3"
+                ]
+              },
+              {
+                "id": 3494,
+                "name": "R6_M7oM4_W400W400_S00000S00000",
+                "conductors": 1,
+                "masters": [
+                  "R6_M7oM4_W400W400_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 3504,
+                "name": "R6_M7oM4_W400W400_S00400S00400",
+                "conductors": 5,
+                "masters": [
+                  "R6_M7oM4_W400W400_S00400S00400_1",
+                  "R6_M7oM4_W400W400_S00400S00400_2",
+                  "R6_M7oM4_W400W400_S00400S00400_3"
+                ]
+              },
+              {
+                "id": 3824,
+                "name": "R6_M8oM5_W400W400_S00000S00000",
+                "conductors": 1,
+                "masters": [
+                  "R6_M8oM5_W400W400_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 3834,
+                "name": "R6_M8oM5_W400W400_S00400S00400",
+                "conductors": 5,
+                "masters": [
+                  "R6_M8oM5_W400W400_S00400S00400_1",
+                  "R6_M8oM5_W400W400_S00400S00400_2",
+                  "R6_M8oM5_W400W400_S00400S00400_3"
+                ]
+              },
+              {
+                "id": 4154,
+                "name": "R6_M9oM6_W1600W1600_S00000S00000",
+                "conductors": 1,
+                "masters": [
+                  "R6_M9oM6_W1600W1600_S00000S00000_3"
+                ]
+              },
+              {
+                "id": 4164,
+                "name": "R6_M9oM6_W1600W1600_S00800S00800",
+                "conductors": 5,
+                "masters": [
+                  "R6_M9oM6_W1600W1600_S00800S00800_1",
+                  "R6_M9oM6_W1600W1600_S00800S00800_2",
+                  "R6_M9oM6_W1600W1600_S00800S00800_3"
+                ]
+              },
+              {
+                "id": 4484,
+                "name": "U6_M10uM11_W1600W1600_S00800S00800",
+                "conductors": 58,
+                "masters": [
+                  "U6_M10uM11_W1600W1600_S00800S00800_1",
+                  "U6_M10uM11_W1600W1600_S00800S00800_2",
+                  "U6_M10uM11_W1600W1600_S00800S00800_3"
+                ]
+              },
+              {
+                "id": 4500,
+                "name": "U6_M11uM12_W1600W1600_S00800S00800",
+                "conductors": 58,
+                "masters": [
+                  "U6_M11uM12_W1600W1600_S00800S00800_1",
+                  "U6_M11uM12_W1600W1600_S00800S00800_2",
+                  "U6_M11uM12_W1600W1600_S00800S00800_3"
+                ]
+              },
+              {
+                "id": 4508,
+                "name": "U6_M1uM2_W140W140_S00065S00065",
+                "conductors": 58,
+                "masters": [
+                  "U6_M1uM2_W140W140_S00065S00065_1",
+                  "U6_M1uM2_W140W140_S00065S00065_2",
+                  "U6_M1uM2_W140W140_S00065S00065_3"
+                ]
+              },
+              {
+                "id": 4532,
+                "name": "U6_M2uM3_W140W140_S00070S00070",
+                "conductors": 58,
+                "masters": [
+                  "U6_M2uM3_W140W140_S00070S00070_1",
+                  "U6_M2uM3_W140W140_S00070S00070_2",
+                  "U6_M2uM3_W140W140_S00070S00070_3"
+                ]
+              },
+              {
+                "id": 4556,
+                "name": "U6_M3uM4_W140W140_S00070S00070",
+                "conductors": 32,
+                "masters": [
+                  "U6_M3uM4_W140W140_S00070S00070_1",
+                  "U6_M3uM4_W140W140_S00070S00070_2",
+                  "U6_M3uM4_W140W140_S00070S00070_3"
+                ]
+              },
+              {
+                "id": 4580,
+                "name": "U6_M4uM5_W140W140_S00140S00140",
+                "conductors": 58,
+                "masters": [
+                  "U6_M4uM5_W140W140_S00140S00140_1",
+                  "U6_M4uM5_W140W140_S00140S00140_2",
+                  "U6_M4uM5_W140W140_S00140S00140_3"
+                ]
+              },
+              {
+                "id": 4604,
+                "name": "U6_M5uM6_W140W140_S00140S00140",
+                "conductors": 58,
+                "masters": [
+                  "U6_M5uM6_W140W140_S00140S00140_1",
+                  "U6_M5uM6_W140W140_S00140S00140_2",
+                  "U6_M5uM6_W140W140_S00140S00140_3"
+                ]
+              },
+              {
+                "id": 4628,
+                "name": "U6_M6uM7_W140W140_S00140S00140",
+                "conductors": 24,
+                "masters": [
+                  "U6_M6uM7_W140W140_S00140S00140_1",
+                  "U6_M6uM7_W140W140_S00140S00140_2",
+                  "U6_M6uM7_W140W140_S00140S00140_3"
+                ]
+              },
+              {
+                "id": 4652,
+                "name": "U6_M7uM10_W400W400_S00400S00400",
+                "conductors": 32,
+                "masters": [
+                  "U6_M7uM10_W400W400_S00400S00400_1",
+                  "U6_M7uM10_W400W400_S00400S00400_2",
+                  "U6_M7uM10_W400W400_S00400S00400_3"
+                ]
+              },
+              {
+                "id": 4660,
+                "name": "U6_M7uM8_W400W400_S00400S00400",
+                "conductors": 58,
+                "masters": [
+                  "U6_M7uM8_W400W400_S00400S00400_1",
+                  "U6_M7uM8_W400W400_S00400S00400_2",
+                  "U6_M7uM8_W400W400_S00400S00400_3"
+                ]
+              },
+              {
+                "id": 4676,
+                "name": "U6_M8uM10_W400W400_S00400S00400",
+                "conductors": 32,
+                "masters": [
+                  "U6_M8uM10_W400W400_S00400S00400_1",
+                  "U6_M8uM10_W400W400_S00400S00400_2",
+                  "U6_M8uM10_W400W400_S00400S00400_3"
+                ]
+              },
+              {
+                "id": 4700,
+                "name": "U6_M9uM10_W1600W1600_S00800S00800",
+                "conductors": 58,
+                "masters": [
+                  "U6_M9uM10_W1600W1600_S00800S00800_1",
+                  "U6_M9uM10_W1600W1600_S00800S00800_2",
+                  "U6_M9uM10_W1600W1600_S00800S00800_3"
+                ]
+              }
+            ],
+            "family_target_layers": [
+              [
+                "DU6",
+                1
+              ],
+              [
+                "DU6",
+                2
+              ],
+              [
+                "DU6",
+                3
+              ],
+              [
+                "DU6",
+                4
+              ],
+              [
+                "DU6",
+                5
+              ],
+              [
+                "DU6",
+                6
+              ],
+              [
+                "DU6",
+                7
+              ],
+              [
+                "DU6",
+                8
+              ],
+              [
+                "DU6",
+                9
+              ],
+              [
+                "DU6",
+                10
+              ],
+              [
+                "DU6",
+                11
+              ],
+              [
+                "O6",
+                1
+              ],
+              [
+                "O6",
+                2
+              ],
+              [
+                "O6",
+                3
+              ],
+              [
+                "O6",
+                4
+              ],
+              [
+                "O6",
+                5
+              ],
+              [
+                "O6",
+                6
+              ],
+              [
+                "O6",
+                7
+              ],
+              [
+                "O6",
+                8
+              ],
+              [
+                "O6",
+                9
+              ],
+              [
+                "O6",
+                10
+              ],
+              [
+                "O6",
+                11
+              ],
+              [
+                "O6",
+                12
+              ],
+              [
+                "OU6",
+                2
+              ],
+              [
+                "OU6",
+                3
+              ],
+              [
+                "OU6",
+                4
+              ],
+              [
+                "OU6",
+                5
+              ],
+              [
+                "OU6",
+                6
+              ],
+              [
+                "OU6",
+                7
+              ],
+              [
+                "OU6",
+                8
+              ],
+              [
+                "OU6",
+                9
+              ],
+              [
+                "OU6",
+                10
+              ],
+              [
+                "OU6",
+                11
+              ],
+              [
+                "R6",
+                1
+              ],
+              [
+                "R6",
+                2
+              ],
+              [
+                "R6",
+                3
+              ],
+              [
+                "R6",
+                4
+              ],
+              [
+                "R6",
+                5
+              ],
+              [
+                "R6",
+                6
+              ],
+              [
+                "R6",
+                7
+              ],
+              [
+                "R6",
+                8
+              ],
+              [
+                "R6",
+                9
+              ],
+              [
+                "R6",
+                10
+              ],
+              [
+                "R6",
+                11
+              ],
+              [
+                "R6",
+                12
+              ],
+              [
+                "U6",
+                1
+              ],
+              [
+                "U6",
+                2
+              ],
+              [
+                "U6",
+                3
+              ],
+              [
+                "U6",
+                4
+              ],
+              [
+                "U6",
+                5
+              ],
+              [
+                "U6",
+                6
+              ],
+              [
+                "U6",
+                7
+              ],
+              [
+                "U6",
+                8
+              ],
+              [
+                "U6",
+                9
+              ],
+              [
+                "U6",
+                10
+              ],
+              [
+                "U6",
+                11
+              ]
+            ],
+            "workers": 8,
+            "threads_each": 4,
+            "commands": [
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-013/llhd-fsv",
+                  "scenelist3d",
+                  "4",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-014/tasks/reference-pilot/scenes-00.txt"
+                ],
+                "seconds": 7.191679239273071,
+                "returncode": 0,
+                "case_ids": [
+                  0,
+                  210,
+                  380,
+                  516,
+                  780,
+                  1470,
+                  2394,
+                  3494,
+                  4508,
+                  4676
+                ]
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-013/llhd-fsv",
+                  "scenelist3d",
+                  "4",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-014/tasks/reference-pilot/scenes-01.txt"
+                ],
+                "seconds": 6.685928821563721,
+                "returncode": 0,
+                "case_ids": [
+                  20,
+                  240,
+                  388,
+                  540,
+                  852,
+                  1480,
+                  2404,
+                  3504,
+                  4532,
+                  4700
+                ]
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-013/llhd-fsv",
+                  "scenelist3d",
+                  "4",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-014/tasks/reference-pilot/scenes-02.txt"
+                ],
+                "seconds": 6.421424865722656,
+                "returncode": 0,
+                "case_ids": [
+                  30,
+                  270,
+                  396,
+                  564,
+                  924,
+                  1800,
+                  2504,
+                  3824,
+                  4556
+                ]
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-013/llhd-fsv",
+                  "scenelist3d",
+                  "4",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-014/tasks/reference-pilot/scenes-03.txt"
+                ],
+                "seconds": 4.559508800506592,
+                "returncode": 0,
+                "case_ids": [
+                  60,
+                  300,
+                  404,
+                  612,
+                  932,
+                  1810,
+                  2514,
+                  3834,
+                  4580
+                ]
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-013/llhd-fsv",
+                  "scenelist3d",
+                  "4",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-014/tasks/reference-pilot/scenes-04.txt"
+                ],
+                "seconds": 5.08175253868103,
+                "returncode": 0,
+                "case_ids": [
+                  90,
+                  324,
+                  420,
+                  620,
+                  996,
+                  2130,
+                  2834,
+                  4154,
+                  4604
+                ]
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-013/llhd-fsv",
+                  "scenelist3d",
+                  "4",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-014/tasks/reference-pilot/scenes-05.txt"
+                ],
+                "seconds": 5.1021788120269775,
+                "returncode": 0,
+                "case_ids": [
+                  120,
+                  332,
+                  444,
+                  636,
+                  1068,
+                  2141,
+                  2844,
+                  4164,
+                  4628
+                ]
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-013/llhd-fsv",
+                  "scenelist3d",
+                  "4",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-014/tasks/reference-pilot/scenes-06.txt"
+                ],
+                "seconds": 5.781655550003052,
+                "returncode": 0,
+                "case_ids": [
+                  150,
+                  348,
+                  468,
+                  660,
+                  1140,
+                  2262,
+                  3164,
+                  4484,
+                  4652
+                ]
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-013/llhd-fsv",
+                  "scenelist3d",
+                  "4",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-014/tasks/reference-pilot/scenes-07.txt"
+                ],
+                "seconds": 5.669152498245239,
+                "returncode": 0,
+                "case_ids": [
+                  180,
+                  372,
+                  492,
+                  708,
+                  1150,
+                  2273,
+                  3174,
+                  4500,
+                  4660
+                ]
+              }
+            ],
+            "checks": [
+              "all scene conductors retained",
+              "finite Maxwell rows and sign",
+              "row charge conservation",
+              "total statistical uncertainty <=0.3%",
+              "independent-row reciprocity within 5 sigma +1% total"
+            ],
+            "qualification": "Pilot reference rows only; full calibration, model fit and held-out validation pending"
+          }
+        }
+      },
+      "job_log": {
+        "bytes": 48,
+        "sha256": "76a333f96e9d42017d377819cd2fc7f91d9cd517dc6453f081e170fd58342070",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\n"
+      }
+    }
+  },
+  "source_archive_sha256": "ade5aa1a7a4d2f5c47a13fdd460593b81e3e251c907dfcc079024b2217cbd83e",
+  "sacct": "91924|COMPLETED|0:0|00:00:15|03:02.419||32|node13\n91924.batch|COMPLETED|0:0|00:00:15|03:02.418|0|32|node13\n91924.extern|COMPLETED|0:0|00:00:15|00:00:00|0|32|node13\n",
+  "collected_utc": "2026-10-26T17:52:17.495002+00:00"
+}

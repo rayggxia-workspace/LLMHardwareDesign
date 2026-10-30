@@ -1,0 +1,7 @@
+# V362 当前归约预取源的占用与有限工作空间
+
+Refs #121 / PR #122。源5ccd9d71a149f1d3ae7e7e1f4430b32644c2a992/归档61538893333d7b15e1f40efea4fa19a2c896eadcb7e9a8609baf896eb56fc628。实际361六项通过后，在现有V357/93250/node16空闲80CPU运行七项，08:14:07→08:14:57 UTC自然COMPLETED/0，父16CPU保留、五个16CPU独立槽即完补位，无新allocation。
+
+53份原始文件/39稳定绑定/308源Git blobs及receipt输入核验。七项全部通过：有限S16KiB/V工作空间27场景与四组模型形状各27场景共135，再加公共/扩展占用78场景，213份场景measurement字段全部与356一致，见schedule-comparison-to-356.json。原生寄存器槽采样不等于有效MAC或功耗。
+
+当前80候选预算已按362重新生成，全部来源SHA/有限调度不变量通过、全部model/candidate字段与前预算一致；前预算原字节封存，见budget-verification.json，不宣称整模型10tps、整数质量或系统功耗。新源最终物理与全部接口仍待通过。

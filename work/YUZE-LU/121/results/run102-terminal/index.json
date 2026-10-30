@@ -1,0 +1,665 @@
+{
+  "remote_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-102",
+  "manifest": {
+    "run_id": "block-v1-20261027-102",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": true,
+    "source_commit": "5f43b4e3124a8c93e9a7200b33c983efa6b38101",
+    "source_archive_sha256": "7d4cd3c6f3055312eba84680ab35a77168fddb88e0b44bef7fa84c7879063356",
+    "tasks": [
+      {
+        "id": "routed-graph-view",
+        "partition": "c96",
+        "cpus": 8,
+        "memory": "0",
+        "minutes": 0,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-102/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-102/src",
+          "routed-graph-view"
+        ],
+        "node": "node24",
+        "after_runs": [
+          "block-v1-20261027-096:routed-graph-field"
+        ]
+      }
+    ]
+  },
+  "manifest_sha256": "1c5798f25fef9ce41ff250c813c17ec46a1ee3a16de93768aced3032f0bc3ab9",
+  "state": {
+    "created_utc": "2026-10-27T00:22:28.192257+00:00",
+    "manifest_sha256": "1c5798f25fef9ce41ff250c813c17ec46a1ee3a16de93768aced3032f0bc3ab9",
+    "run_id": "block-v1-20261027-102",
+    "tasks": {
+      "routed-graph-view": {
+        "dispatcher_source_sha256": "7bf3da954f66308b13cd202df42d1cd1ad100b3d848b07b2cebcd35ac4531ad7",
+        "id": "routed-graph-view",
+        "job_id": "92148",
+        "reserved_utc": "2026-10-27T00:27:23.878669+00:00",
+        "state": "PENDING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodelist=node24",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=8",
+          "--partition=c96",
+          "--time=0",
+          "--mem=0",
+          "--job-name=yzl-bv1-routed-graph-view",
+          "--comment=yzl-bv1:block-v1-20261027-102:routed-graph-view",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-102/tasks/routed-graph-view",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-102/tasks/routed-graph-view/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-102/tasks/routed-graph-view/job.sh"
+        ],
+        "submitted_utc": "2026-10-27T00:27:23.964331+00:00",
+        "token": "yzl-bv1:block-v1-20261027-102:routed-graph-view"
+      }
+    }
+  },
+  "tasks": {
+    "routed-graph-view": {
+      "job_id": "92148",
+      "artifacts": {
+        "receipt.json": {
+          "bytes": 19834,
+          "sha256": "685faa8c0e220edd92f741410e4232384c1ca0bf93912d172d1e001fc7abea4a",
+          "content": {
+            "mode": "routed-graph-view",
+            "cpus": 8,
+            "started": 1793060883.5716937,
+            "commands": [
+              {
+                "argv": [
+                  "/usr/bin/python3",
+                  "-c",
+                  "import os,sys;os.chdir(sys.argv[1]);os.execvp(\"openroad\",[\"openroad\",\"-no_init\",\"-exit\",\"receive.tcl\"])",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-102/tasks/routed-graph-view/actual"
+                ],
+                "log": "actual.log",
+                "started": 1793060885.7643702,
+                "returncode": 0,
+                "finished": 1793060885.9587028
+              },
+              {
+                "argv": [
+                  "/usr/bin/python3",
+                  "-c",
+                  "import os,sys;os.chdir(sys.argv[1]);os.execvp(\"openroad\",[\"openroad\",\"-no_init\",\"-exit\",\"receive.tcl\"])",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-102/tasks/routed-graph-view/wrong-cap-unit"
+                ],
+                "log": "wrong-cap-unit.log",
+                "started": 1793060886.0208666,
+                "returncode": 0,
+                "finished": 1793060886.1730404
+              },
+              {
+                "argv": [
+                  "/usr/bin/python3",
+                  "-c",
+                  "import os,sys;os.chdir(sys.argv[1]);os.execvp(\"openroad\",[\"openroad\",\"-no_init\",\"-exit\",\"receive.tcl\"])",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-102/tasks/routed-graph-view/permuted-node-charge"
+                ],
+                "log": "permuted-node-charge.log",
+                "started": 1793060886.2438896,
+                "returncode": 0,
+                "finished": 1793060886.4079177
+              },
+              {
+                "argv": [
+                  "/usr/bin/python3",
+                  "-c",
+                  "import os,sys;os.chdir(sys.argv[1]);os.execvp(\"openroad\",[\"openroad\",\"-no_init\",\"-exit\",\"receive.tcl\"])",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-102/tasks/routed-graph-view/permuted-edge-resistance"
+                ],
+                "log": "permuted-edge-resistance.log",
+                "started": 1793060886.4708962,
+                "returncode": 0,
+                "finished": 1793060886.6217093
+              }
+            ],
+            "source_commit": "5f43b4e3124a8c93e9a7200b33c983efa6b38101",
+            "inputs": {
+              "bundle-manifest.json": "15c845b0b19c83a92a049595e6120970da1f6429fdc1af98e75b18d3791a9f0c",
+              "project/experiments/attention_rtl/receive.py": "ad04114b0b5c3b9d6bfbbd59b9a7db5721eac312879ae51887fa0ebaaa60d9ec",
+              "project/experiments/block_v1/README.md": "20b84747d8bb79643431107dfe669d7861bf53ab8937ca4008c619e6efb896ae",
+              "project/experiments/block_v1/adapt_committed.py": "0b24bf13c6ff9ed8acf4788907a1f516249895556448ecd2dbb6bff11dcf37d2",
+              "project/experiments/block_v1/bundle.py": "cdcb7869da894d6665a773376e3391d5f55cf4f30d5826f09e1ca6946fe554d1",
+              "project/experiments/block_v1/capture_field_client.cpp": "e118e7f767d85848e8a70cab22858cf173fa3e4a10c75df12f74eb7a10d50487",
+              "project/experiments/block_v1/capture_field_patch.py": "ecc77ced239e25354bf5997c57bbf0450940ccca7a3077d0c98dce09370eaf69",
+              "project/experiments/block_v1/capture_field_verify.py": "c9a437022e3275fd225671a1ea953865afbf1ceabb2b5b4c6d9285f0392cdc7f",
+              "project/experiments/block_v1/collect.py": "0a49585e6d5b882dae981b4604908fa973737163c0654a3fe78ae5162bfeecdf",
+              "project/experiments/block_v1/committed_qualification.cpp": "e67cf27daa0c5d4764f6086d8a927a799668bf2f305757a342c8b13c50bf8870",
+              "project/experiments/block_v1/committed_sim.cpp": "ababe0b37ce8fc93075ef6d863903c9b788852c2f4016ee64d465c59a6491f13",
+              "project/experiments/block_v1/constraint_readback.py": "8c0c2bab0757dbd764fc5e5bd7267aa0a6ffc2a46be08c7ae4a950bebd0d95be",
+              "project/experiments/block_v1/constraints.py": "9fb38f12380f179d7e79e842a8b7ec516cf6a2de5a0a2095354c007693352460",
+              "project/experiments/block_v1/direct_field_view.py": "e995f6dee326e6f907cf01abb831365f667169c931cefb49e023f29d7d0de0bb",
+              "project/experiments/block_v1/dispatch.py": "7bf3da954f66308b13cd202df42d1cd1ad100b3d848b07b2cebcd35ac4531ad7",
+              "project/experiments/block_v1/fetch_fsv.py": "c24c51a160f49c8cf5d77e48637bd05ae824192694ab1f45d2be04348f0ee75b",
+              "project/experiments/block_v1/fsv_build.py": "baf737b438fd3e91ed143174818083b1871d44bea84ce68c5841f7a04eb44e50",
+              "project/experiments/block_v1/fsv_client.cpp": "948929e56cf4272c72248353aa93625a496c81914f84b94d2a41fac2384194ba",
+              "project/experiments/block_v1/fv_reference.py": "7310d7560f610d1bf42677b1d1b8573d89069072d3974cd349f781ef3ce51059",
+              "project/experiments/block_v1/graph_field_client.cpp": "9a1b961b3a0a85e85bcff5256685dcb82bff0d722fdb26805db3449c934ec643",
+              "project/experiments/block_v1/graph_field_patch.py": "6e8d89acd2abf1ba743ce5a6e1fc23ffe97609da6d5328497b1801138e01d3dc",
+              "project/experiments/block_v1/graph_field_verify.py": "ac61252523b90fca9cc15ce3e1fa92e19f56475db76982617ce4320b4f6da5d7",
+              "project/experiments/block_v1/gverify121.py": "77f22a3d9f699e411ab33ce2512cd7a041ab8fb9832294a2d2c51ba8c06fb15d",
+              "project/experiments/block_v1/heldout_rc.py": "cd614546b37b6537c77c9ab78cc4514a1362833a2493791e15e4c32806fdf137",
+              "project/experiments/block_v1/import_sources.py": "48f634fead3cb583bbd6017e4206169582b901469d84fcc104af69cfd7f5bb57",
+              "project/experiments/block_v1/inspect_native_gds.rb": "306dbfe313e167bcf9e3c4b5f5a3149c8dc3f38a61414e9ef3a67bc4b491943b",
+              "project/experiments/block_v1/inspect_overlay.tcl": "0684947b17abe0f8e2d5ccda44b522a0bd883b30a502f5367252b2f4670e116f",
+              "project/experiments/block_v1/inventory121.py": "f2c5fa7aa18a86104f7b0ac50a857664b711748f1818621d08a5c0b395099900",
+              "project/experiments/block_v1/io_slots.py": "e4c7ab88f5f45e9eeaf87f11f76286c067382da43023bec08cfbf695f30b933d",
+              "project/experiments/block_v1/klayout_overlay.py": "17f0e57e9138ffeeaa04226e71281a78209dab27b406192a62415642ca4e598d",
+              "project/experiments/block_v1/make_wrapper.py": "a23dd9e51675d5b829f432f039ae7b70e9602b998aca663c09e84d9a2f8e8070",
+              "project/experiments/block_v1/model_coverage.py": "c9aeabce1939efecd7235c3c2cf4b73682abe48c155fcec2f0bb67b0961784fd",
+              "project/experiments/block_v1/native_acceptance_info.tcl": "0ada675d449c2ee18cce36b3cd508e1055eccc0962c517f02149d6ac56f80f61",
+              "project/experiments/block_v1/native_annotation.py": "19c1da7d508db105ea5d6117de099989a8fa2e6295f87bfe51f6763b641b361c",
+              "project/experiments/block_v1/native_annotation.tcl": "07c090608e024986b49b4a9124071d4e8220e5d1f378df3c83c49bdbd3fb527a",
+              "project/experiments/block_v1/native_boundary.py": "991965779c9b6ddcdb30151443164e4e9fd39e4a98a105192d82d6073a95d23b",
+              "project/experiments/block_v1/native_drc.py": "2fc6a9b0c92d9a6cb759780d95c2af908375d30f9bfaa24a4d1672932194f8a7",
+              "project/experiments/block_v1/native_final_function.py": "1d4db6e20fd4179bc2bbe8d8a7736ec97edc93f3a887a9417f5753845b238111",
+              "project/experiments/block_v1/native_floorplan.py": "211099063143f2720a1813aeaf3fa2782a5c3360f26865bddd1dc5cde37a9042",
+              "project/experiments/block_v1/native_formal.py": "c447fd9b18d57ae41b1b3e7f5a406e3f1a07e8af65da8bba35091f52fd68a828",
+              "project/experiments/block_v1/native_physical.tcl": "6e7887715c11372344e99b1e5949ca670b32ea9ad1e547db4a12f496abc71177",
+              "project/experiments/block_v1/native_pipeline.json": "ca1657650f5d800038b0dcc28ff8f5fd0d1a82f4f154701a4877066044e7380e",
+              "project/experiments/block_v1/native_pipeline_057.json": "980c1a59a7e5b82f2a0e13d039db51079c034a4d14971b2540571ddc5711f51c",
+              "project/experiments/block_v1/native_pipeline_cap20.json": "04740dd67cecff74066b9d5e8c5966a81bd10fde1e1583fb5b174e675af67d92",
+              "project/experiments/block_v1/native_pipeline_cap40.json": "65c4bb2e94be76292150304e46471d6c884b806831eaeb7a19afe3f0fb1f0d5e",
+              "project/experiments/block_v1/native_prepare.py": "147011ab3ff112d1c4552a6f200315d4b4975840d4617cb92ed57b1f06799b6a",
+              "project/experiments/block_v1/native_receive.py": "f5f2f36a9d10c3aa34bf9ee4c17173fc827b583d9e25c8ac2ea1a6914afb7bf7",
+              "project/experiments/block_v1/native_reroute.py": "8cdebd3c064d7fd926316e85ef7b80bc8cd398458be20311d983c89c3047f0c0",
+              "project/experiments/block_v1/native_run.py": "4ae6e452c8b9a2e718466364cf93fa161299646462dd26f5bab706c130924c07",
+              "project/experiments/block_v1/native_sta.py": "c15b58d24194d31cad7e6d2fc1f7c7efbe81fc861b49ba85f05d9658a9c6ac5c",
+              "project/experiments/block_v1/native_sta.tcl": "1fe95cac7c2fd9e253e434806c33eb059740ef2cb4c36da10cd75b9bb26cea8e",
+              "project/experiments/block_v1/native_views.py": "3b089b0ce8d729efe02d0c16760dc2977ec26c1c24fcd7970322247fa2747ab4",
+              "project/experiments/block_v1/native_views.tcl": "2987abd1a1f858ff365ddd53ddc210fd3cb1ce899d568667439aa5dd9691ad9c",
+              "project/experiments/block_v1/odb_geometry.tcl": "c63203ef734d90a549ac3b81311c4678edf35c76b340b96c3ac174007d70f67b",
+              "project/experiments/block_v1/odb_geometry_check.rb": "b89e917d9b75d081ab384485f72632ce928617913606067115fac56d42c929bb",
+              "project/experiments/block_v1/overlay.py": "4d63c0d1fd1d8c398221c24030b68f782106352f1f8702cd4f16c67a474d0865",
+              "project/experiments/block_v1/partial_field_client.cpp": "a33ce421a81ff3090a307d22b04c7ebb03bd89c693bd4b9734ffb70c5a595f63",
+              "project/experiments/block_v1/partial_field_patch.py": "8e0b24bb32453cf79283bfc0d4359639eaf24c7b2cc76fb3c0594b2b797c59ae",
+              "project/experiments/block_v1/partial_field_verify.py": "01aaebad577960068cda3d901efaccd2e3a78f9ddc7705da78bb3fc3f26d7220",
+              "project/experiments/block_v1/partial_group.py": "35876d8ea60dda6cd3c78a624ccc9a40b16c2ef9ff7c1f061ab4c0bc13221de9",
+              "project/experiments/block_v1/pattern_prepare.py": "6fb19a4a25a7a361aceec2d62d305ae9f7bb7cf249eb858d01f6d0b6db8e3eea",
+              "project/experiments/block_v1/physical-budget.json": "b7e9108ad18f40b88f6fd897a838bf04b48764390766955520eeac4a87d91a19",
+              "project/experiments/block_v1/physical_inputs.py": "2b5135425526748c1b0358d24074187c440264b321b202b659a7714a698d10f7",
+              "project/experiments/block_v1/pin_plan.py": "b2de8b111e4d0136f4c2f85ba203ed340208b51f2c0b0c381a049ea46f60ae61",
+              "project/experiments/block_v1/primitive_geometry.rb": "fafc4e50e9c72c6562675a88f64be8611a6e1081d2b7cbec883483dba00000f0",
+              "project/experiments/block_v1/probe.sh": "743d53a5b4c39d4918d0528b9a84df35c2807b47067bac3dbffcc361fd352548",
+              "project/experiments/block_v1/probe_geometry.rb": "ad81441ad234094e07ffb1ad92293cfc7dc56f7876bfcb59bd2f171641fd72a6",
+              "project/experiments/block_v1/rc_calibration.json": "a4db2b58b556fceef70a3f7ba1263ee14b2f780575c9550881aadaaa772432fc",
+              "project/experiments/block_v1/rc_pipeline.py": "ca635760217cb540031540ec626ca0f7fd5cb978b2284b2fb91ca8904b6752f2",
+              "project/experiments/block_v1/receive121.py": "13dfa60435b10fefcbbdfc1d00b1f7c3c28e707f04c0b6c2b01008b6feb375d6",
+              "project/experiments/block_v1/reference_fit.py": "394ee3543aa14ed436179a073d29763787ed65095a3258df1e5319e9a2fa9d29",
+              "project/experiments/block_v1/reference_run.py": "3fc5dc9ca55b95cdecb291214256a8f8034862a3b734649baf9ee5feac04a2b5",
+              "project/experiments/block_v1/route_probe.py": "8fbba7b328c9d052c7506fbd646f45286c0694e654a7b3d33985867195f777b6",
+              "project/experiments/block_v1/routed_field.py": "cae152e2c5812e29b8633a95e769626792775cb527012771348a47db49e7493c",
+              "project/experiments/block_v1/routed_graph_field.py": "14bb42fe2db1b9549730b26806b87243409d2655ac58f67704d85710b8470f9f",
+              "project/experiments/block_v1/routed_graph_view.py": "6d1d18256dae98688ad7c7f8fa4ef52fe33c8dae8e61740f29a4fe1984de3291",
+              "project/experiments/block_v1/semantic_negative.py": "a080f7365354a414a1647cea5c8234c7aedbfb9fa9a0b46fe5262b938f88b39f",
+              "project/experiments/block_v1/structural_view.py": "6c506af6b9ed5c6878afc2842799f738b88556f7d32c976753b55b7aebbd4f2e",
+              "project/experiments/block_v1/technology.json": "5b1fac19e4120b44684371adbc45438e9ac7653fc5efd6026a5126b5b5b86c39",
+              "project/experiments/block_v1/test_transaction.cpp": "bbfbe18907783eae87aae3dcaede35f1ada28a6e6f2a4f1cf0348ccf6392458a",
+              "project/experiments/block_v1/window_field.py": "13ba8283e3c3f6ab188d8be09e4278a9993aea06ed418cca49021b8ea884d0ab",
+              "project/experiments/block_v1/worker.py": "894a6e6c9280d0e014cbb950af98186c8ddea005cce30cfed6f07c937bd02de0",
+              "project/experiments/block_v1/worker.sh": "ae4cf1820fd00a3f0ffa3a42bdf235bf3f4a17518bcb0c75cfd8bbcede06be05",
+              "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+              "project/experiments/gdn_state/reference.py": "e8add3d9ba6941aa5dc7484f190406854e0a870ae8b2029a8d0eba20b595daa5",
+              "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+              "project/experiments/shared_gdn/PROTOCOL.md": "3002060a69744fc46121aeba8c15d1c42fb9ce952b67e47a281548dfe9bdb221",
+              "project/experiments/shared_gdn/analyze.py": "6f63248270a1419d0157c2657d069605d77639b427a98503812c77901e253290",
+              "project/experiments/shared_gdn/collect.py": "6ca5c15718e41998bc05137e4f53385bbeb03c7b4fde7b610a8a82a9fa3d4d01",
+              "project/experiments/shared_gdn/cost.py": "d920e359bb1d65b5847d31089d8210394e5675eda586789a2e8938e44bd5e8a1",
+              "project/experiments/shared_gdn/gate.py": "c0f8d4c38b36736459947bf4efb50a7a68cdfb3a7509638a01175dfbe2931f9c",
+              "project/experiments/shared_gdn/gverify.py": "c698ba20d0d037a1d4396dfc82e69f432bc1b942a38b9eb5aa3ad42d03e8907f",
+              "project/experiments/shared_gdn/inputs.py": "431109179969566b4cb97fe3615ed1bb82356a07edebdd259c2bc77cbbd3949c",
+              "project/experiments/shared_gdn/inventory_negative.py": "7fb03bd0af0077922d1ca9d0c579f915c9cda877bbd563678755a989a8f852f2",
+              "project/experiments/shared_gdn/negative.py": "a2e0ea6a09eda99740f8fe527e2321b741fcbcf6ad84626bf727b95117e6d2f1",
+              "project/experiments/shared_gdn/qualification.cpp": "f7ae0706b98258e9adc156b388f002f03e60bb8b59f3a0f1a98e834a138038b8",
+              "project/experiments/shared_gdn/receive.py": "8d851d68649108e69c2233dbb89d568a5a04e14bc91f1e42e8e25c01102ef1ec",
+              "project/experiments/shared_gdn/run.py": "d0cb68e98d3ca85bb15d56239f3aeeb7865b9697841e7e6ace0f8fb2b31f4016",
+              "project/experiments/shared_gdn/sim.cpp": "ace54074760bbcca1a491f04d0a1faab8075330a175cf7ff51954b0c16ce7cb3",
+              "project/experiments/v_consumer/reference.py": "b3133796572b25d7241affb9fad44b0765603d267e83c18946a821703fd95f09",
+              "project/rtl/block_v1/shared121.sv": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+              "project/rtl/block_v1/transaction6k.sv": "0491dc05357b61855a3fadd9598ac738bdf305a8c8306499ac8b6c184fa4b0b5",
+              "project/rtl/gdn_state/wide104.sv": "c623eb27ec992af1ae4411261ed75fccf886100fc294cf280f6a00c15905c890",
+              "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+              "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+              "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+              "project/rtl/shared_gdn/gdn109.sv": "b329550d0a85e1357627cf6ec03391b08f43765c8f8737a8524f94376ea3f424",
+              "project/rtl/shared_gdn/shared109.sv": "b890b351c2cd2c3cec5a988c7f28d345f8319f85a50fbcb2d72917cfd537d555",
+              "project/rtl/shared_services/a106.sv": "c692d5405e8afa9ca0a13ff7919d6092213335445ed15057f3b8345c51139011",
+              "project/rtl/shared_services/attention106.sv": "a3adef94747a334849a2053e42a23d3dc0ce864273bba16367c1d4d0623259fa",
+              "project/rtl/shared_services/m106.sv": "c901ee8f01a45c3a1b9a917279bdcd3e305d899475abb5754a3c2ddbd0a97ed3",
+              "project/rtl/shared_services/mfront106.sv": "bb918aad183e4da39aeace350ae654ee2280e85a03275c954c0cb0d926cec84e",
+              "project/rtl/shared_services/norm106.sv": "be7ba8053341ae1e8eb3f17e4666116ca56c45e54db7c415f2e6e9ed1fc9ff1d",
+              "project/rtl/shared_services/r106.sv": "84e5f85042f2fa4c9091ea7e508a77f01b90843146cb36ac0b635d04a4d2eb7f",
+              "project/rtl/shared_services/shared106.sv": "1756a68d178305b6603ad6a6b0f95bd8df7fe38ed6c40bfd8d16790ebd8fca86",
+              "project/rtl/v_consumer/vprep97.sv": "755621fd19cbfd38c3c52df889a045867c64a56bb6e024a6f75c65d83dd32ee7",
+              "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+              "work/YUZE-LU/121/source-manifest.json": "7958c8f0c2d7ca3c886dcb16fb841d81ff315162d1fc041fb9485430b08cc6cb"
+            },
+            "tool_hashes": {
+              "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys": "c2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b",
+              "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+              "/usr/bin/klayout": "fee1214ef5c63033057626a9dab0deb0664fecb69184d1c3fd43dc9c0dc1eba5",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator_bin": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd"
+            },
+            "passed": true,
+            "finished": 1793060886.6687827,
+            "outputs": {
+              "wrong-cap-unit.log": "fa60ea76f88e7d8db3bc92866f9ca962210043e5afedbc88809a9320e3259764",
+              "started.txt": "e73d8b7e496fa2144df704bf4341e6805175d4b866bb357c5eb5eeba0ed08d4e",
+              "actual.log": "fa60ea76f88e7d8db3bc92866f9ca962210043e5afedbc88809a9320e3259764",
+              "permuted-edge-resistance.log": "fa60ea76f88e7d8db3bc92866f9ca962210043e5afedbc88809a9320e3259764",
+              "routed-graph-view.json": "a8a81b3db9acbd12cdce56251d6eb9ea543fa0bc829269264bbe3f9300fd6ae6",
+              "permuted-node-charge.log": "fa60ea76f88e7d8db3bc92866f9ca962210043e5afedbc88809a9320e3259764",
+              "job.sh": "f395682ee9e6fd17e260f707516021aead0eff8e7f381d92b16880779335fde7",
+              "image.sha256": "563ca95c74250c02398332ac6ea8dcffa20e7257021e043a80655a42bb50edee",
+              "allocation.txt": "bb2bfb2172a67f350b02804fa0ae16069aadd5a0cbf8dcc5aa62f6865cee19f4",
+              "actual/candidate.spef": "83958ab6d0cac42f6bcd72526947a051fe4e2d37605a8147bce093f718324ae0",
+              "actual/nodes.tsv": "fc2c59963ac9e9206ed055b3dd126b8e4265592d00cdda225b1351b6e7085a09",
+              "actual/totals.tsv": "4a73f08efedf3e39ac0533cdf403a37faf8d8d6c29e7d9cbc4b7b8df57d657be",
+              "actual/edges.tsv": "46335d89e8be9a9448b82a443e4eb6168d0e3fb772b44a85c4df827d6eae94fd",
+              "actual/receive.tcl": "b384b08c03094c28fca31c0275f30dde48b758a7bb829298c7b19bb0dac01465",
+              "wrong-cap-unit/candidate.spef": "1bfa6658803a61f5fbe28467f51fcaa7476d3fb0aaf76e90a42a7ac0f0e4b953",
+              "wrong-cap-unit/nodes.tsv": "3fbc87c4008441c920e5a4c3641482de43cac65b6be8c329101d382de60acd43",
+              "wrong-cap-unit/totals.tsv": "1d944400a67f98911954387931b31d81205201161aa0d77a012774205b87e490",
+              "wrong-cap-unit/edges.tsv": "46335d89e8be9a9448b82a443e4eb6168d0e3fb772b44a85c4df827d6eae94fd",
+              "wrong-cap-unit/receive.tcl": "b384b08c03094c28fca31c0275f30dde48b758a7bb829298c7b19bb0dac01465",
+              "permuted-node-charge/candidate.spef": "966ff55847fde6face67a33c59a4ab0124162cd87c21a129e45bf05da8bd9bbb",
+              "permuted-node-charge/nodes.tsv": "316f4355f91fbcea95e933cf042c0689c388e96820882e401b6040938bbbad63",
+              "permuted-node-charge/totals.tsv": "4a73f08efedf3e39ac0533cdf403a37faf8d8d6c29e7d9cbc4b7b8df57d657be",
+              "permuted-node-charge/edges.tsv": "46335d89e8be9a9448b82a443e4eb6168d0e3fb772b44a85c4df827d6eae94fd",
+              "permuted-node-charge/receive.tcl": "b384b08c03094c28fca31c0275f30dde48b758a7bb829298c7b19bb0dac01465",
+              "permuted-edge-resistance/candidate.spef": "c9ec5623a72caff41d72262f398d6b81eb6831bf406d35b6ebf1351ccd6b1146",
+              "permuted-edge-resistance/nodes.tsv": "fc2c59963ac9e9206ed055b3dd126b8e4265592d00cdda225b1351b6e7085a09",
+              "permuted-edge-resistance/totals.tsv": "4a73f08efedf3e39ac0533cdf403a37faf8d8d6c29e7d9cbc4b7b8df57d657be",
+              "permuted-edge-resistance/edges.tsv": "67a0fa99e7e3a2f8c9ec55f0482ef47d79dc17e4ec069665048baae34a6812ce",
+              "permuted-edge-resistance/receive.tcl": "b384b08c03094c28fca31c0275f30dde48b758a7bb829298c7b19bb0dac01465"
+            }
+          }
+        },
+        "routed-graph-view.json": {
+          "bytes": 8699,
+          "sha256": "a8a81b3db9acbd12cdce56251d6eb9ea543fa0bc829269264bbe3f9300fd6ae6",
+          "content": {
+            "schema": "block-v1-routed-graph-view/1",
+            "passed": true,
+            "node_identity": [
+              {
+                "physical": [
+                  "metal10",
+                  68800,
+                  68800
+                ],
+                "spef_label": "*2:p",
+                "native_key": "I:U0/p"
+              },
+              {
+                "physical": [
+                  "metal10",
+                  273600,
+                  273600
+                ],
+                "spef_label": "*3:p",
+                "native_key": "I:U1/p"
+              },
+              {
+                "physical": [
+                  "metal11",
+                  68800,
+                  65600
+                ],
+                "spef_label": "*1:4",
+                "native_key": "N:4"
+              },
+              {
+                "physical": [
+                  "metal11",
+                  68800,
+                  68800
+                ],
+                "spef_label": "*1:5",
+                "native_key": "N:5"
+              },
+              {
+                "physical": [
+                  "metal11",
+                  273600,
+                  65600
+                ],
+                "spef_label": "*1:6",
+                "native_key": "N:6"
+              },
+              {
+                "physical": [
+                  "metal11",
+                  273600,
+                  273600
+                ],
+                "spef_label": "*1:7",
+                "native_key": "N:7"
+              },
+              {
+                "physical": [
+                  "metal12",
+                  273600,
+                  65600
+                ],
+                "spef_label": "*1:8",
+                "native_key": "N:8"
+              },
+              {
+                "physical": [
+                  "metal12",
+                  273600,
+                  273600
+                ],
+                "spef_label": "*1:9",
+                "native_key": "N:9"
+              }
+            ],
+            "native_internal_numbering": "collapseInternalCapNum: CAP creation rank plus one; terminals retain real instance/pin identity",
+            "measured_source_sha256": "66ee0002b65bde6f861e7812016b9a2aac5e7f6446a1eccca32cc6d13df6ad7c",
+            "source_receipt_sha256": "64db42042a3c7b54bff99c1116c6974b44cd68dbe7755e2c6ed370f20a50f0a0",
+            "source_odb_sha256": "fc3c197af8cbaf153aa68c069e1e3707f28320ad86cd4afc5db99d2b5be12c8f",
+            "variants": {
+              "actual": {
+                "spef_sha256": "83958ab6d0cac42f6bcd72526947a051fe4e2d37605a8147bce093f718324ae0",
+                "script_sha256": "b384b08c03094c28fca31c0275f30dde48b758a7bb829298c7b19bb0dac01465"
+              },
+              "wrong-cap-unit": {
+                "spef_sha256": "1bfa6658803a61f5fbe28467f51fcaa7476d3fb0aaf76e90a42a7ac0f0e4b953",
+                "script_sha256": "b384b08c03094c28fca31c0275f30dde48b758a7bb829298c7b19bb0dac01465"
+              },
+              "permuted-node-charge": {
+                "spef_sha256": "966ff55847fde6face67a33c59a4ab0124162cd87c21a129e45bf05da8bd9bbb",
+                "script_sha256": "b384b08c03094c28fca31c0275f30dde48b758a7bb829298c7b19bb0dac01465"
+              },
+              "permuted-edge-resistance": {
+                "spef_sha256": "c9ec5623a72caff41d72262f398d6b81eb6831bf406d35b6ebf1351ccd6b1146",
+                "script_sha256": "b384b08c03094c28fca31c0275f30dde48b758a7bb829298c7b19bb0dac01465"
+              }
+            },
+            "readback_and_negatives": {
+              "actual": {
+                "passed": true,
+                "checks": {
+                  "exact_nodes": true,
+                  "exact_edges": true,
+                  "every_node_charge": true,
+                  "every_edge_resistance": true,
+                  "resistance_total": true,
+                  "capacitance_total": true,
+                  "zero_coupling": true
+                },
+                "nodes": {
+                  "I:U0/p": 0.18513895571231842,
+                  "I:U1/p": 0.21233339607715607,
+                  "N:4": 3.290820598602295,
+                  "N:5": 0.13075345754623413,
+                  "N:6": 3.104820728302002,
+                  "N:7": 0.14493341743946075,
+                  "N:8": 3.000638961791992,
+                  "N:9": 3.2118330001831055
+                },
+                "edges": [
+                  {
+                    "a": "I:U0/p",
+                    "b": "N:5",
+                    "ohm": 0.8888888955116272
+                  },
+                  {
+                    "a": "N:4",
+                    "b": "N:5",
+                    "ohm": 0.05999999865889549
+                  },
+                  {
+                    "a": "N:4",
+                    "b": "N:6",
+                    "ohm": 3.8399999141693115
+                  },
+                  {
+                    "a": "N:6",
+                    "b": "N:8",
+                    "ohm": 0.8888888955116272
+                  },
+                  {
+                    "a": "N:8",
+                    "b": "N:9",
+                    "ohm": 3.9000000953674316
+                  },
+                  {
+                    "a": "N:7",
+                    "b": "N:9",
+                    "ohm": 0.8888888955116272
+                  },
+                  {
+                    "a": "I:U1/p",
+                    "b": "N:7",
+                    "ohm": 0.8888888955116272
+                  }
+                ],
+                "totals": [
+                  11.355555590242147,
+                  13.281272515654564,
+                  0.0
+                ]
+              },
+              "wrong-cap-unit": {
+                "passed": false,
+                "checks": {
+                  "exact_nodes": true,
+                  "exact_edges": true,
+                  "every_node_charge": false,
+                  "every_edge_resistance": true,
+                  "resistance_total": true,
+                  "capacitance_total": false,
+                  "zero_coupling": true
+                },
+                "nodes": {
+                  "I:U0/p": 185.1389617919922,
+                  "I:U1/p": 212.33338928222656,
+                  "N:4": 3290.820556640625,
+                  "N:5": 130.75344848632812,
+                  "N:6": 3104.820556640625,
+                  "N:7": 144.9334259033203,
+                  "N:8": 3000.638916015625,
+                  "N:9": 3211.8330078125
+                },
+                "edges": [
+                  {
+                    "a": "I:U0/p",
+                    "b": "N:5",
+                    "ohm": 0.8888888955116272
+                  },
+                  {
+                    "a": "N:4",
+                    "b": "N:5",
+                    "ohm": 0.05999999865889549
+                  },
+                  {
+                    "a": "N:4",
+                    "b": "N:6",
+                    "ohm": 3.8399999141693115
+                  },
+                  {
+                    "a": "N:6",
+                    "b": "N:8",
+                    "ohm": 0.8888888955116272
+                  },
+                  {
+                    "a": "N:8",
+                    "b": "N:9",
+                    "ohm": 3.9000000953674316
+                  },
+                  {
+                    "a": "N:7",
+                    "b": "N:9",
+                    "ohm": 0.8888888955116272
+                  },
+                  {
+                    "a": "I:U1/p",
+                    "b": "N:7",
+                    "ohm": 0.8888888955116272
+                  }
+                ],
+                "totals": [
+                  11.355555590242147,
+                  13281.272262573242,
+                  0.0
+                ]
+              },
+              "permuted-node-charge": {
+                "passed": false,
+                "checks": {
+                  "exact_nodes": true,
+                  "exact_edges": true,
+                  "every_node_charge": false,
+                  "every_edge_resistance": true,
+                  "resistance_total": true,
+                  "capacitance_total": true,
+                  "zero_coupling": true
+                },
+                "nodes": {
+                  "I:U0/p": 0.18513895571231842,
+                  "I:U1/p": 0.21233339607715607,
+                  "N:4": 0.13075345754623413,
+                  "N:5": 3.290820598602295,
+                  "N:6": 3.104820728302002,
+                  "N:7": 0.14493341743946075,
+                  "N:8": 3.000638961791992,
+                  "N:9": 3.2118330001831055
+                },
+                "edges": [
+                  {
+                    "a": "I:U0/p",
+                    "b": "N:5",
+                    "ohm": 0.8888888955116272
+                  },
+                  {
+                    "a": "N:4",
+                    "b": "N:5",
+                    "ohm": 0.05999999865889549
+                  },
+                  {
+                    "a": "N:4",
+                    "b": "N:6",
+                    "ohm": 3.8399999141693115
+                  },
+                  {
+                    "a": "N:6",
+                    "b": "N:8",
+                    "ohm": 0.8888888955116272
+                  },
+                  {
+                    "a": "N:8",
+                    "b": "N:9",
+                    "ohm": 3.9000000953674316
+                  },
+                  {
+                    "a": "N:7",
+                    "b": "N:9",
+                    "ohm": 0.8888888955116272
+                  },
+                  {
+                    "a": "I:U1/p",
+                    "b": "N:7",
+                    "ohm": 0.8888888955116272
+                  }
+                ],
+                "totals": [
+                  11.355555590242147,
+                  13.281272515654564,
+                  0.0
+                ]
+              },
+              "permuted-edge-resistance": {
+                "passed": false,
+                "checks": {
+                  "exact_nodes": true,
+                  "exact_edges": true,
+                  "every_node_charge": true,
+                  "every_edge_resistance": false,
+                  "resistance_total": true,
+                  "capacitance_total": true,
+                  "zero_coupling": true
+                },
+                "nodes": {
+                  "I:U0/p": 0.18513895571231842,
+                  "I:U1/p": 0.21233339607715607,
+                  "N:4": 3.290820598602295,
+                  "N:5": 0.13075345754623413,
+                  "N:6": 3.104820728302002,
+                  "N:7": 0.14493341743946075,
+                  "N:8": 3.000638961791992,
+                  "N:9": 3.2118330001831055
+                },
+                "edges": [
+                  {
+                    "a": "I:U0/p",
+                    "b": "N:5",
+                    "ohm": 0.8888888955116272
+                  },
+                  {
+                    "a": "N:4",
+                    "b": "N:5",
+                    "ohm": 3.9000000953674316
+                  },
+                  {
+                    "a": "N:4",
+                    "b": "N:6",
+                    "ohm": 3.8399999141693115
+                  },
+                  {
+                    "a": "N:6",
+                    "b": "N:8",
+                    "ohm": 0.8888888955116272
+                  },
+                  {
+                    "a": "N:8",
+                    "b": "N:9",
+                    "ohm": 0.05999999865889549
+                  },
+                  {
+                    "a": "N:7",
+                    "b": "N:9",
+                    "ohm": 0.8888888955116272
+                  },
+                  {
+                    "a": "I:U1/p",
+                    "b": "N:7",
+                    "ohm": 0.8888888955116272
+                  }
+                ],
+                "totals": [
+                  11.355555590242147,
+                  13.281272515654564,
+                  0.0
+                ]
+              }
+            },
+            "independent_local_fv_on_this_route": false,
+            "qualified_node_pair_coupling": false,
+            "qualified_full_block": false,
+            "scope": "Single real-route measured node-C and DC-edge SPEF identity/units readback only; local accuracy, multi-net coupling and full distributed extraction remain separate"
+          }
+        }
+      },
+      "job_log": {
+        "bytes": 48,
+        "sha256": "76a333f96e9d42017d377819cd2fc7f91d9cd517dc6453f081e170fd58342070",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\n"
+      }
+    }
+  },
+  "source_archive_sha256": "7d4cd3c6f3055312eba84680ab35a77168fddb88e0b44bef7fa84c7879063356",
+  "sacct": "92148|COMPLETED|0:0|00:00:43|00:03.219||8|node24\n92148.batch|COMPLETED|0:0|00:00:43|00:03.218|12820K|8|node24\n92148.extern|COMPLETED|0:0|00:00:43|00:00:00|0|8|node24\n",
+  "collected_utc": "2026-10-27T00:28:23.712992+00:00"
+}

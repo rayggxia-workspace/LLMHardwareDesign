@@ -1,0 +1,83 @@
+{
+  "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-203",
+  "time": 1793116863.949481,
+  "tasks": {
+    "v-route": {},
+    "m-physical": {},
+    "m-drc": {},
+    "m-final-function": {},
+    "m-formal": {},
+    "s-physical": {},
+    "s-drc": {},
+    "s-final-function": {},
+    "s-formal": {},
+    "r-physical": {},
+    "r-drc": {},
+    "r-final-function": {},
+    "r-formal": {},
+    "v-physical": {},
+    "v-drc": {},
+    "v-final-function": {},
+    "v-formal": {},
+    "m-delivery": {},
+    "s-delivery": {},
+    "r-delivery": {},
+    "v-delivery": {}
+  },
+  "manifest.json": {
+    "run_id": "block-v1-20261027-203",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": true,
+    "source_commit": "73b50a85395c6195d84fdb31c5faed4a51e77d20",
+    "source_archive_sha256": "15ac4bd9b3356d0f30fdef996054360d115437968185690fdf2f3a32f2b3684f",
+    "tasks": [
+      {
+        "id": "native-node-queue",
+        "partition": "c96",
+        "cpus": 96,
+        "memory": "0",
+        "minutes": 0,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-203/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-203/src",
+          "native-node-queue"
+        ]
+      }
+    ]
+  },
+  "dispatch-state.json": {
+    "created_utc": "2026-10-27T16:00:20.021923+00:00",
+    "manifest_sha256": "175465ca281119004642129aa55e15a0c8db9da127c5991d2e6c6c77ca62e477",
+    "run_id": "block-v1-20261027-203",
+    "tasks": {
+      "native-node-queue": {
+        "dispatcher_source_sha256": "7bf3da954f66308b13cd202df42d1cd1ad100b3d848b07b2cebcd35ac4531ad7",
+        "id": "native-node-queue",
+        "job_id": "92475",
+        "reserved_utc": "2026-10-27T16:00:28.591019+00:00",
+        "state": "PENDING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=96",
+          "--partition=c96",
+          "--time=0",
+          "--mem=0",
+          "--job-name=yzl-bv1-native-node-queue",
+          "--comment=yzl-bv1:block-v1-20261027-203:native-node-queue",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-203/tasks/native-node-queue",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-203/tasks/native-node-queue/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-203/tasks/native-node-queue/job.sh"
+        ],
+        "submitted_utc": "2026-10-27T16:00:28.676438+00:00",
+        "token": "yzl-bv1:block-v1-20261027-203:native-node-queue"
+      }
+    }
+  },
+  "sacct": "92475|RUNNING|0:0|00:00:36|00:00:00||96|node23\n92475.batch|RUNNING|0:0|00:00:36|00:00:00||96|node23\n92475.extern|RUNNING|0:0|00:00:36|00:00:00||96|node23\n"
+}

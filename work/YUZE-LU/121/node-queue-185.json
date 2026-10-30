@@ -1,0 +1,81 @@
+{
+  "schema": "block-v1-node-queue/1",
+  "node_cpus": 96,
+  "default_task_cpus": 16,
+  "memory_guard_gib": 16,
+  "state_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-185/node-queue-state.json",
+  "tasks": [
+    {
+      "id": "source",
+      "mode": "library-v1-source",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-185/tasks/library-v1-source",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-185/src",
+      "cpus": 16,
+      "memory_gib": 32,
+      "memory_basis": "Provisional admission estimate for new standalone workload, not a measured per-task peak. Source32/byte4/M8map8/VSmap100/S16Kmap160/T6Kmap80GiB; total384GiB plus20% and16GiB node guard fits last observed503.5GiB node. Actual per-process/tree samples required; no default concurrency reduction.",
+      "report": "library-source-probe.json",
+      "after": [],
+      "receipts": []
+    },
+    {
+      "id": "byte",
+      "mode": "library-v1-byte",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-185/tasks/library-v1-byte",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-185/src",
+      "cpus": 16,
+      "memory_gib": 4,
+      "memory_basis": "Provisional admission estimate for new standalone workload, not a measured per-task peak. Source32/byte4/M8map8/VSmap100/S16Kmap160/T6Kmap80GiB; total384GiB plus20% and16GiB node guard fits last observed503.5GiB node. Actual per-process/tree samples required; no default concurrency reduction.",
+      "report": "library-byte-probe.json",
+      "after": [],
+      "receipts": []
+    },
+    {
+      "id": "block_v1_m8",
+      "mode": "library-v1-map-block_v1_m8",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-185/tasks/library-v1-map-block_v1_m8",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-185/src",
+      "cpus": 16,
+      "memory_gib": 8,
+      "memory_basis": "Provisional admission estimate for new standalone workload, not a measured per-task peak. Source32/byte4/M8map8/VSmap100/S16Kmap160/T6Kmap80GiB; total384GiB plus20% and16GiB node guard fits last observed503.5GiB node. Actual per-process/tree samples required; no default concurrency reduction.",
+      "report": "library-mapped.json",
+      "after": [],
+      "receipts": []
+    },
+    {
+      "id": "block_v1_vs",
+      "mode": "library-v1-map-block_v1_vs",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-185/tasks/library-v1-map-block_v1_vs",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-185/src",
+      "cpus": 16,
+      "memory_gib": 100,
+      "memory_basis": "Provisional admission estimate for new standalone workload, not a measured per-task peak. Source32/byte4/M8map8/VSmap100/S16Kmap160/T6Kmap80GiB; total384GiB plus20% and16GiB node guard fits last observed503.5GiB node. Actual per-process/tree samples required; no default concurrency reduction.",
+      "report": "library-mapped.json",
+      "after": [],
+      "receipts": []
+    },
+    {
+      "id": "block_v1_s16k",
+      "mode": "library-v1-map-block_v1_s16k",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-185/tasks/library-v1-map-block_v1_s16k",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-185/src",
+      "cpus": 16,
+      "memory_gib": 160,
+      "memory_basis": "Provisional admission estimate for new standalone workload, not a measured per-task peak. Source32/byte4/M8map8/VSmap100/S16Kmap160/T6Kmap80GiB; total384GiB plus20% and16GiB node guard fits last observed503.5GiB node. Actual per-process/tree samples required; no default concurrency reduction.",
+      "report": "library-mapped.json",
+      "after": [],
+      "receipts": []
+    },
+    {
+      "id": "transaction6k",
+      "mode": "library-v1-map-transaction6k",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-185/tasks/library-v1-map-transaction6k",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-185/src",
+      "cpus": 16,
+      "memory_gib": 80,
+      "memory_basis": "Provisional admission estimate for new standalone workload, not a measured per-task peak. Source32/byte4/M8map8/VSmap100/S16Kmap160/T6Kmap80GiB; total384GiB plus20% and16GiB node guard fits last observed503.5GiB node. Actual per-process/tree samples required; no default concurrency reduction.",
+      "report": "library-mapped.json",
+      "after": [],
+      "receipts": []
+    }
+  ]
+}

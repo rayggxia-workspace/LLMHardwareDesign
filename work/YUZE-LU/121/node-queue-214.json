@@ -1,0 +1,226 @@
+{
+  "schema": "block-v1-node-queue/1",
+  "node_cpus": 96,
+  "default_task_cpus": 16,
+  "memory_guard_gib": 16,
+  "state_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-214/node-queue-state.json",
+  "tasks": [
+    {
+      "id": "v-drive-probe",
+      "mode": "five-macro-probe-v-drive",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-214/tasks/five-macro-probe-v-drive",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-214/src",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "V original native batch MaxRSS22012388K, independent physical3765288K; measured7 BUF output limits. Probe16GiB, route64GiB provisional, V physical32/fullDRC64/function96/formal64GiB. Keep1.2margin/16GiBguard/live MemAvailable; default six disjoint16CPU workers with immediate refill. S140.3GiB original final-LEC group estimate remains in separate207. All bounds are per-stage, not speedup claims.",
+      "report": "five-macro-probe-v-drive.json",
+      "after": [],
+      "receipts": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-203/tasks/five-macro-route-v/receipt.json",
+          "mode": "five-macro-route-v",
+          "reports": [
+            "five-macro-native-flow.json"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v-repair",
+      "mode": "five-macro-repair-v-drive",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-214/tasks/five-macro-repair-v-drive",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-214/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "V original native batch MaxRSS22012388K, independent physical3765288K; measured7 BUF output limits. Probe16GiB, route64GiB provisional, V physical32/fullDRC64/function96/formal64GiB. Keep1.2margin/16GiBguard/live MemAvailable; default six disjoint16CPU workers with immediate refill. S140.3GiB original final-LEC group estimate remains in separate207. All bounds are per-stage, not speedup claims.",
+      "report": "five-macro-native-flow.json",
+      "after": [
+        "v-drive-probe"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "v-physical",
+      "mode": "five-macro-physical-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-214/tasks/five-macro-physical-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-214/src",
+      "cpus": 16,
+      "memory_gib": 32,
+      "memory_basis": "V original native batch MaxRSS22012388K, independent physical3765288K; measured7 BUF output limits. Probe16GiB, route64GiB provisional, V physical32/fullDRC64/function96/formal64GiB. Keep1.2margin/16GiBguard/live MemAvailable; default six disjoint16CPU workers with immediate refill. S140.3GiB original final-LEC group estimate remains in separate207. All bounds are per-stage, not speedup claims.",
+      "report": "five-macro-physical.json",
+      "after": [
+        "v-repair"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "v-drc",
+      "mode": "five-macro-drc-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-214/tasks/five-macro-drc-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-214/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "V original native batch MaxRSS22012388K, independent physical3765288K; measured7 BUF output limits. Probe16GiB, route64GiB provisional, V physical32/fullDRC64/function96/formal64GiB. Keep1.2margin/16GiBguard/live MemAvailable; default six disjoint16CPU workers with immediate refill. S140.3GiB original final-LEC group estimate remains in separate207. All bounds are per-stage, not speedup claims.",
+      "report": "five-macro-drc.json",
+      "after": [
+        "v-repair"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "v-final-function",
+      "mode": "five-macro-final-function-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-214/tasks/five-macro-final-function-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-214/src",
+      "cpus": 16,
+      "memory_gib": 96,
+      "memory_basis": "V original native batch MaxRSS22012388K, independent physical3765288K; measured7 BUF output limits. Probe16GiB, route64GiB provisional, V physical32/fullDRC64/function96/formal64GiB. Keep1.2margin/16GiBguard/live MemAvailable; default six disjoint16CPU workers with immediate refill. S140.3GiB original final-LEC group estimate remains in separate207. All bounds are per-stage, not speedup claims.",
+      "report": "five-macro-final-function.json",
+      "after": [
+        "v-repair"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "v-formal",
+      "mode": "five-macro-formal-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-214/tasks/five-macro-formal-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-214/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "V original native batch MaxRSS22012388K, independent physical3765288K; measured7 BUF output limits. Probe16GiB, route64GiB provisional, V physical32/fullDRC64/function96/formal64GiB. Keep1.2margin/16GiBguard/live MemAvailable; default six disjoint16CPU workers with immediate refill. S140.3GiB original final-LEC group estimate remains in separate207. All bounds are per-stage, not speedup claims.",
+      "report": "five-macro-formal.json",
+      "after": [
+        "v-repair",
+        "v-final-function"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "v-delivery",
+      "mode": "five-macro-delivery-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-214/tasks/five-macro-delivery-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-214/src",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "V original native batch MaxRSS22012388K, independent physical3765288K; measured7 BUF output limits. Probe16GiB, route64GiB provisional, V physical32/fullDRC64/function96/formal64GiB. Keep1.2margin/16GiBguard/live MemAvailable; default six disjoint16CPU workers with immediate refill. S140.3GiB original final-LEC group estimate remains in separate207. All bounds are per-stage, not speedup claims.",
+      "report": "five-macro-delivery.json",
+      "after": [
+        "v-physical",
+        "v-drc",
+        "v-final-function",
+        "v-formal"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "s-delivery",
+      "mode": "five-macro-delivery-received-s",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/five-macro-delivery-received-s",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Read-only index/pin/render after all same-source gates. No RTL/geometry changes; exact source receipt equality and formal-to-function receipt binding required.",
+      "report": "five-macro-delivery.json",
+      "after": [],
+      "receipts": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-drc-s/receipt.json",
+          "mode": "five-macro-drc-s",
+          "reports": [
+            "five-macro-drc.json"
+          ],
+          "producer_state": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/dispatch-state.json",
+          "producer_task": "native-node-queue"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-final-function-s/receipt.json",
+          "mode": "five-macro-final-function-s",
+          "reports": [
+            "five-macro-final-function.json"
+          ],
+          "producer_state": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/dispatch-state.json",
+          "producer_task": "native-node-queue"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-formal-s/receipt.json",
+          "mode": "five-macro-formal-s",
+          "reports": [
+            "five-macro-formal.json"
+          ],
+          "producer_state": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/dispatch-state.json",
+          "producer_task": "native-node-queue"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/five-macro-physical-s/receipt.json",
+          "mode": "five-macro-physical-s",
+          "reports": [
+            "five-macro-physical.json"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "r-physical",
+      "mode": "five-macro-physical-r",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/five-macro-physical-r",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "2026-10-28 actual S190 final-LEC-containing batch Slurm MaxRSS147104644K (~140.3GiB), not an isolated per-process peak; original uniform64GiB estimate is superseded. Old C8 physical receiver sampled process-tree peaks188295200768/187329990656 bytes (~175/174GiB, shared-page double count possible), old full-GDS DRC26002366464/25010118656 bytes (~24.2/23.3GiB). S131201/R145877/V21816 mapped DFF counts guide stage forecasts, not measured new gate peaks. Old combined physical receivers include LEC; their aggregate peak cannot be attributed to the new standalone physical gate. Admission GiB: S/R/V standalone physical64/64/32 provisional, formal192/224/64, function128/192/96 provisional, full-DRC64 each, delivery16. Keep1.2margin+16GiBguard and live MemAvailable; six16CPU independent workers whenever actual dependencies and these explicit RAM budgets fit. Use another task allocation for ready RAM-blocked work only within total cap8, with one shared claim lock.",
+      "report": "five-macro-physical.json",
+      "after": [],
+      "receipts": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-196/tasks/five-macro-route-r/receipt.json",
+          "mode": "five-macro-route-r",
+          "reports": [
+            "five-macro-native-flow.json"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "r-delivery",
+      "mode": "five-macro-delivery-received-r",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/src",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/five-macro-delivery-received-r",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Read-only index/pin/render after all same-source gates. No RTL/geometry changes; exact source receipt equality and formal-to-function receipt binding required.",
+      "report": "five-macro-delivery.json",
+      "after": [
+        "r-physical"
+      ],
+      "receipts": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-drc-r/receipt.json",
+          "mode": "five-macro-drc-r",
+          "reports": [
+            "five-macro-drc.json"
+          ],
+          "producer_state": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/dispatch-state.json",
+          "producer_task": "native-node-queue"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-final-function-r/receipt.json",
+          "mode": "five-macro-final-function-r",
+          "reports": [
+            "five-macro-final-function.json"
+          ],
+          "producer_state": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/dispatch-state.json",
+          "producer_task": "native-node-queue"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-formal-r/receipt.json",
+          "mode": "five-macro-formal-r",
+          "reports": [
+            "five-macro-formal.json"
+          ],
+          "producer_state": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/dispatch-state.json",
+          "producer_task": "native-node-queue"
+        }
+      ]
+    }
+  ]
+}

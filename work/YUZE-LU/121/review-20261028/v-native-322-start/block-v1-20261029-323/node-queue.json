@@ -1,0 +1,119 @@
+{
+  "schema": "block-v1-node-queue/1",
+  "node_cpus": 96,
+  "default_task_cpus": 16,
+  "memory_guard_gib": 16,
+  "state_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-323/node-queue-state.json",
+  "tasks": [
+    {
+      "id": "revision300-final-source-v",
+      "mode": "revision300-final-source-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-323/tasks/revision300-final-source-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-323/src",
+      "cpus": 16,
+      "memory_gib": 8,
+      "memory_basis": "Six16CPU dynamic slots. Changed V forecasts use prior large-S nativeLEC 140.3GiB envelope, not a claimed new V measured peak: physical64GiB/fullDRC64GiB/function128GiB/strictformal192GiB/export64GiB. Revise only from actual measurements if needed. Admission requires1.2 margin plus16GiB guard/liveRSS. V independently follows its actual successful new322 native receipt and live RAM. Immediate refill, no batch barrier. M/T not repeated. Staged only: submit once new322 native dependency really passes.",
+      "report": "revision300-final-source.json",
+      "after": [],
+      "receipts": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-322/tasks/revision300-route-v/receipt.json",
+          "mode": "revision300-route-v",
+          "reports": [
+            "revision300-native-flow.json"
+          ],
+          "producer_state": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-322/node-queue-state.json",
+          "producer_task": "revision300-route-v"
+        }
+      ]
+    },
+    {
+      "id": "revision300-physical-v",
+      "mode": "revision300-physical-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-323/tasks/revision300-physical-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-323/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "Six16CPU dynamic slots. Changed V forecasts use prior large-S nativeLEC 140.3GiB envelope, not a claimed new V measured peak: physical64GiB/fullDRC64GiB/function128GiB/strictformal192GiB/export64GiB. Revise only from actual measurements if needed. Admission requires1.2 margin plus16GiB guard/liveRSS. V independently follows its actual successful new322 native receipt and live RAM. Immediate refill, no batch barrier. M/T not repeated. Staged only: submit once new322 native dependency really passes.",
+      "report": "five-macro-physical.json",
+      "after": [
+        "revision300-final-source-v"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "revision300-drc-v",
+      "mode": "revision300-drc-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-323/tasks/revision300-drc-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-323/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "Six16CPU dynamic slots. Changed V forecasts use prior large-S nativeLEC 140.3GiB envelope, not a claimed new V measured peak: physical64GiB/fullDRC64GiB/function128GiB/strictformal192GiB/export64GiB. Revise only from actual measurements if needed. Admission requires1.2 margin plus16GiB guard/liveRSS. V independently follows its actual successful new322 native receipt and live RAM. Immediate refill, no batch barrier. M/T not repeated. Staged only: submit once new322 native dependency really passes.",
+      "report": "five-macro-drc.json",
+      "after": [
+        "revision300-final-source-v"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "revision300-final-function-v",
+      "mode": "revision300-final-function-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-323/tasks/revision300-final-function-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-323/src",
+      "cpus": 16,
+      "memory_gib": 128,
+      "memory_basis": "Six16CPU dynamic slots. Changed V forecasts use prior large-S nativeLEC 140.3GiB envelope, not a claimed new V measured peak: physical64GiB/fullDRC64GiB/function128GiB/strictformal192GiB/export64GiB. Revise only from actual measurements if needed. Admission requires1.2 margin plus16GiB guard/liveRSS. V independently follows its actual successful new322 native receipt and live RAM. Immediate refill, no batch barrier. M/T not repeated. Staged only: submit once new322 native dependency really passes.",
+      "report": "five-macro-final-function.json",
+      "after": [
+        "revision300-final-source-v"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "revision300-formal-v",
+      "mode": "revision300-formal-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-323/tasks/revision300-formal-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-323/src",
+      "cpus": 16,
+      "memory_gib": 192,
+      "memory_basis": "Six16CPU dynamic slots. Changed V forecasts use prior large-S nativeLEC 140.3GiB envelope, not a claimed new V measured peak: physical64GiB/fullDRC64GiB/function128GiB/strictformal192GiB/export64GiB. Revise only from actual measurements if needed. Admission requires1.2 margin plus16GiB guard/liveRSS. V independently follows its actual successful new322 native receipt and live RAM. Immediate refill, no batch barrier. M/T not repeated. Staged only: submit once new322 native dependency really passes.",
+      "report": "five-macro-formal.json",
+      "after": [
+        "revision300-final-source-v",
+        "revision300-final-function-v"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "revision300-delivery-v",
+      "mode": "revision300-delivery-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-323/tasks/revision300-delivery-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-323/src",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Six16CPU dynamic slots. Changed V forecasts use prior large-S nativeLEC 140.3GiB envelope, not a claimed new V measured peak: physical64GiB/fullDRC64GiB/function128GiB/strictformal192GiB/export64GiB. Revise only from actual measurements if needed. Admission requires1.2 margin plus16GiB guard/liveRSS. V independently follows its actual successful new322 native receipt and live RAM. Immediate refill, no batch barrier. M/T not repeated. Staged only: submit once new322 native dependency really passes.",
+      "report": "five-macro-delivery.json",
+      "after": [
+        "revision300-physical-v",
+        "revision300-drc-v",
+        "revision300-final-function-v",
+        "revision300-formal-v"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "revision300-geometry-v",
+      "mode": "revision300-geometry-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-323/tasks/revision300-geometry-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-323/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "Six16CPU dynamic slots. Changed V forecasts use prior large-S nativeLEC 140.3GiB envelope, not a claimed new V measured peak: physical64GiB/fullDRC64GiB/function128GiB/strictformal192GiB/export64GiB. Revise only from actual measurements if needed. Admission requires1.2 margin plus16GiB guard/liveRSS. V independently follows its actual successful new322 native receipt and live RAM. Immediate refill, no batch barrier. M/T not repeated. Staged only: submit once new322 native dependency really passes.",
+      "report": "five-macro-geometry.json",
+      "after": [
+        "revision300-delivery-v"
+      ],
+      "receipts": []
+    }
+  ]
+}
