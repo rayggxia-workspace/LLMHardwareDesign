@@ -74,3 +74,5 @@ S revised RTL now permits retiring/refilling its one response register on the sa
 The candidate coarse layout distributes every actual port (including clock/control/observations) into <=16-bit directional strips, with2x2 realM10 pins. Horizontal routes avoid vertical-source M11 landing rows. Native footprint may grow only if complete mapped port track capacity cannot fit; outer32um receiver endpoints and40um test halo are charged separately. This is a planned geometry until actual native reconnect/readback and fullDRC pass.
 
 - [新493 CTS实际阶段证据](v-493-cts-501/README.md)：内部等价通过，CTS时序仍负；最终布线和全部验收继续。
+
+- [新493全局布线实际阶段证据](v-493-grt-503/README.md)：setup负余量和电气违例保留，原任务继续详细布线。
