@@ -13,16 +13,17 @@ COMPILER='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--model',choices=['e','g'],required=True)
+    p=argparse.ArgumentParser();p.add_argument('--model',choices=['e','g','n'],required=True)
     p.add_argument('--out',type=Path,required=True);a=p.parse_args()
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     name='block_v2_'+a.model
     rtl=ROOT/'project/rtl/block_v2'
     sources=[rtl/(name+'.sv')]
+    if a.model=='n':sources.append(rtl/'block_v2_n_group.sv')
     cpp=ROOT/'project/experiments/block_v2'/('test_'+a.model+'.cpp')
     receipt=dict(passed=False,model=a.model,started_unix=time.time(),source_sha256={},runs=[],physical_qualified=False)
     inputs=sources+[cpp,Path(__file__).resolve()]
-    if a.model=='g':inputs.append(rtl/'block_v2_g_tables.svh')
+    if a.model in ('g','n'):inputs.append(rtl/('block_v2_'+a.model+('_tables.svh' if a.model=='g' else '_exp.svh')))
     for x in inputs:receipt['source_sha256'][str(x.relative_to(ROOT))]=sha(x)
     receipt['cpu_affinity']=sorted(os.sched_getaffinity(0));assert len(receipt['cpu_affinity'])<=16
     def call(command,log):

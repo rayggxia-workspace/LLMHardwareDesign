@@ -7,7 +7,9 @@ set -euo pipefail
 root=$1
 out=$2
 test -n "${SLURM_JOB_ID:-}"
-test "$SLURM_CPUS_PER_TASK" -eq 32
+models=${3:-e g}
+read -ra model_list <<< "$models"
+test "$((${#model_list[@]}*16))" -le "$SLURM_CPUS_PER_TASK"
 test -f "$root/source-manifest.json"
 mkdir -p "$out"
 python3 -c 'from pathlib import Path; import json; m=dict(s.split(":",1) for s in Path("/proc/meminfo").read_text().splitlines()); a=int(m["MemAvailable"].split()[0])*1024; print(json.dumps(dict(available_bytes=a,forecast_gib=16,guard_gib=16))); assert a>(16*1.2+16)*1024**3' > "$out/memory-admission.json"
@@ -18,7 +20,7 @@ test "$actual" = "$expected"
 export PATH="/public/software/singularity-ce-4.3.4/bin:$PATH"
 status=0
 pids=()
-for model in e g; do
+for model in "${model_list[@]}"; do
  srun --exclusive --ntasks=1 --cpus-per-task=16 --cpu-bind=cores \
   singularity exec --cleanenv --bind /public/home/yuzelu --pwd "$root" \
   --env OMP_NUM_THREADS=1 --env OPENBLAS_NUM_THREADS=1 "$image" \

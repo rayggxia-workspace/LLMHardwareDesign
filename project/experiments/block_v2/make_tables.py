@@ -36,6 +36,13 @@ def main():
     target.write_text('\n'.join(rows), encoding='utf-8')
     print(json.dumps(dict(path=str(target),entries=count,coefficient_bits=16,
                          sha256=hashlib.sha256(target.read_bytes()).hexdigest())))
+    target=target.with_name('block_v2_n_exp.svh')
+    rows=['// EXP(x), x Q5.10 in [-16,0]; UQ1.15 samples at 1/64, RNE interpolation.',
+          'function automatic [15:0] exp_lut;', ' input [10:0] index;', ' begin case(index)']
+    for i in range(1025):
+        rows.append(f"  11'd{i}:exp_lut=16'd{round(math.exp(-16+i/64)*32768)};")
+    rows+=['  default:exp_lut=0;', ' endcase end', 'endfunction', '']
+    target.write_text('\n'.join(rows),encoding='utf-8')
 
 
 if __name__ == '__main__':
