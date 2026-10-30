@@ -8,6 +8,8 @@ root=$1
 base=$2
 out=$3
 models=${4:-e g}
+gates_override=${5:-}
+test -z "$gates_override" || [[ "$gates_override" =~ ^[0-9]{3}$ ]]
 test "$SLURM_CPUS_PER_TASK" -eq 16
 test -f "$root/source-manifest.json"
 mkdir -p "$out"
@@ -20,10 +22,11 @@ srun --ntasks=1 --cpus-per-task=16 --cpu-bind=cores \
  for model in $4; do
   case "$model" in
    e|g) gates=010;;
-   n) gates=022;;
+   n) gates=028;;
    m) gates=018;;
    r) gates=019;;
    *) echo "Unsupported leaf: $model" >&2; exit 1;;
   esac
+  if [ -n "$5" ]; then gates=$5; fi
   python3 "$1/project/experiments/block_v2/bundle.py" --delivery "$2/outputs/$gates/deliver-$model" --out "$3/bundle-$model"
- done' bash "$root" "$base" "$out" "$models"
+ done' bash "$root" "$base" "$out" "$models" "$gates_override"

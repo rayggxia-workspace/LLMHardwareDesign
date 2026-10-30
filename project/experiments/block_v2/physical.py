@@ -94,6 +94,10 @@ def implement(args, run):
     config+='export VERILOG_FILES = '+str(out/'input.v')+'\nexport SDC_FILE = '+str(out/'input.sdc')+'\n'
     config+='export DIE_AREA = 0 0 %g %g\nexport CORE_AREA = 20 20 %g %g\n'%(side,side,side-20,side-20)
     config+='export PLACE_DENSITY = 0.45\nexport FOOTPRINT_TCL = '+str(out/'pins.tcl')+'\nexport KEEP_VARS = 1\n'
+    if top=='block_v2_n':
+        # The first Q1.14 route has two final native M2 markers on one net.
+        # Preserve it as a failure; use a fresh, less dense placement and route.
+        config+='export PLACE_DENSITY = 0.42\n'
     config+='override export MIN_ROUTING_LAYER = metal1\noverride export MAX_ROUTING_LAYER = metal10\n'
     if top=='block_v1_r':
         config+='export PLACE_DENSITY = 0.25\nexport CTS_ARGS = -sink_clustering_enable -repair_clock_nets -apply_ndr none\n'
@@ -125,6 +129,7 @@ def implement(args, run):
     wanted=dict(MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',KEEP_VARS='1',LEC_CHECK='1',SEC_CHECK='0',
                 TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN=hold_target)
     if args.remove_abc_buffers:wanted['REMOVE_ABC_BUFFERS']='1'
+    if top=='block_v2_n':wanted['PLACE_DENSITY']='0.42'
     if top=='block_v1_r':wanted.update(PLACE_DENSITY='0.25',CTS_ARGS='-sink_clustering_enable -repair_clock_nets -apply_ndr none')
     if args.placement_mode=='geometric':
         wanted.update(GPL_TIMING_DRIVEN='0',ENABLE_PLACE_REPAIR_TIMING='1')
