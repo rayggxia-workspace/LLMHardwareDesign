@@ -3,14 +3,14 @@ from collections import Counter
 import hashlib,json,re
 
 
-def probe(root,out,cpus,run,shard):
+def probe(root,out,cpus,run,shard,combined=False):
     from io_slots import file_sha
     from native_escape import records
     from revision300_v_transition import decode
     from revision300_v_via_batch import name_of,token_hash
     from revision300_v_via_bridge import path_key
     from revision300_v_corner_probe import violations
-    assert cpus==16 and shard in range(6)
+    assert cpus==16 and shard in range(7)and combined==(shard==6)
     base=out.parents[2]
     source=base/'block-v1-20261031-672/tasks/revision300-v-repaired-via-compose'
     receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed']
@@ -30,7 +30,24 @@ def probe(root,out,cpus,run,shard):
     tr=json.loads((topology/'receipt.json').read_text());assert tr['passed']and file_sha(topology/'receipt.json')==prior['topology_receipt_sha256']
     assert file_sha(topology/'observed-routes.json')==tr['outputs']['observed-routes.json']
     observed=json.loads((topology/'observed-routes.json').read_text())
-    selected=[p for p in plan['selected']if int.from_bytes(hashlib.sha256(p['net'].encode()).digest()[:4],'big')%6==shard]
+    independent=[]
+    if combined:
+        assert out.name=='revision300-v-remaining-via-compose'
+        covered=[]
+        for s in range(6):
+            folder=base/('block-v1-20261031-681/tasks/revision300-v-remaining-vias-'+str(s))
+            r=json.loads((folder/'receipt.json').read_text());assert r['passed']and r['mode']==folder.name
+            for n in('revision300-v-remaining-vias.json','selected-via-edits.json','remaining-native-drc.rpt'):
+                assert file_sha(folder/n)==r['outputs'][n]
+            d=json.loads((folder/'revision300-v-remaining-vias.json').read_text())
+            assert d['passed']and d['shard']==s and d['original_native_count']==173 and d['added_markers']==0
+            assert d['source_receipt_sha256']==file_sha(source/'receipt.json')
+            own=[p for p in plan['selected']if int.from_bytes(hashlib.sha256(p['net'].encode()).digest()[:4],'big')%6==s]
+            assert json.loads((folder/'selected-via-edits.json').read_text())==own
+            assert d['selected_markers']==[p['index']for p in own]
+            covered.extend(d['selected_markers']);independent.append(dict(shard=s,receipt_sha256=file_sha(folder/'receipt.json')))
+        assert sorted(covered)==sorted(p['index']for p in plan['selected'])and len(covered)==70
+    selected=plan['selected']if combined else[p for p in plan['selected']if int.from_bytes(hashlib.sha256(p['net'].encode()).digest()[:4],'big')%6==shard]
     wanted={p['net']:p for p in selected};assert len(wanted)==len(selected)>0
     n0=0;originals={};others=Counter()
     for record in records(source/'via-candidate.def'):
@@ -88,7 +105,7 @@ def probe(root,out,cpus,run,shard):
     exact=exact and actual==others and found==set(expected)and n0==n1
     old=violations((source/'via-native-drc.rpt').read_text());new=violations((out/'remaining-native-drc.rpt').read_text());assert sum(old.values())==173
     unchanged=all(file_sha(source/n)==receipt['outputs'][n]for n in('via-candidate.odb','via-candidate.def','via-native-drc.rpt'))
-    result=dict(passed=exact and unchanged and not(new-old)and bool(old-new),physical_qualified=False,shard=shard,
+    result=dict(passed=exact and unchanged and not(new-old)and bool(old-new),physical_qualified=False,shard=shard,combined=combined,independent_shard_receipts=independent,
                 source_receipt_sha256=file_sha(source/'receipt.json'),source_inputs_sha256={n:receipt['outputs'][n]for n in('via-candidate.odb','via-candidate.def','via-native-drc.rpt')},
                 exact_normal_nets_headers_paths_rectangles=exact,original_inputs_unchanged=unchanged,normal_net_counts=[n0,n1],
                 selected_markers=[p['index']for p in selected],selected_nets=len(selected),original_native_count=173,candidate_native_count=sum(new.values()),

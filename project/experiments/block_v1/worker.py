@@ -201,6 +201,9 @@ try:
     elif MODE=='revision300-v-repaired-topology':
         from revision300_v_repaired_topology import inspect
         inspect(ROOT,OUT,CPUS,run)
+    elif MODE=='revision300-v-remaining-via-compose':
+        from revision300_v_remaining_vias import probe
+        probe(ROOT,OUT,CPUS,run,6,combined=True)
     elif MODE=='revision300-v-composed-neighborhood':
         from revision300_v_composed_neighborhood import inspect
         inspect(ROOT,OUT,CPUS,run)
