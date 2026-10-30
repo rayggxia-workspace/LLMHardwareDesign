@@ -114,6 +114,12 @@ def implement(args, run):
         if args.refine_partition_placement:
             with (out/'partition-fanout.tcl').open('a') as stream:
                 stream.write('\n'+(ROOT/'project/experiments/block_v2/refine_partition_placement.tcl').read_text())
+        if args.placement_hold_margin is not None:
+            # Only this pre-CTS process changes its optimization target. CTS
+            # starts a fresh process and reloads the normal 0.02ns target.
+            with (out/'partition-fanout.tcl').open('a') as stream:
+                stream.write('\nset ::env(HOLD_SLACK_MARGIN) 0\n'
+                    'puts "ISSUE143_R_PLACEMENT_HOLD target=0ns; CTS reloads configured margin; final checks unchanged"\n')
         config+='export PRE_RESIZE_TCL = '+str(out/'partition-fanout.tcl')+'\n'
     hook=(folder/'native_input_diodes.tcl').read_text().replace('  if {[$port getName] eq "clk"} {continue}\n','')
     if args.input_receivers:
@@ -152,6 +158,7 @@ def implement(args, run):
     result['placement_mode']=args.placement_mode
     result['fanout_mode']=args.fanout_mode
     result['refine_partition_placement']=args.refine_partition_placement
+    result['placement_hold_margin_ns']=args.placement_hold_margin if args.placement_hold_margin is not None else args.hold_repair_margin
     result['hold_repair_margin_ns']=args.hold_repair_margin
     def save():(out/'native-flow.json').write_text(json.dumps(result,indent=2)+'\n')
     save()
@@ -172,9 +179,12 @@ def main():
     p.add_argument('--placement-mode',choices=['timing','geometric'],default='timing')
     p.add_argument('--fanout-mode',choices=['original','partition'],default='original')
     p.add_argument('--refine-partition-placement',action='store_true')
+    p.add_argument('--placement-hold-margin',type=float,choices=[0.0])
     p.add_argument('--hold-repair-margin',type=float,choices=[0.0,0.02],default=0.02)
     args=p.parse_args()
     if args.refine_partition_placement:
+        assert args.top=='block_v1_r' and args.placement_mode=='geometric' and args.fanout_mode=='partition'
+    if args.placement_hold_margin is not None:
         assert args.top=='block_v1_r' and args.placement_mode=='geometric' and args.fanout_mode=='partition'
     args.out=args.out.resolve();args.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,top=args.top,start_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),

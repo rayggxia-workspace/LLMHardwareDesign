@@ -8,7 +8,7 @@ root=$1
 out=$2
 mapping=$3
 fanout=${4:-original}
-test "$fanout" = original || test "$fanout" = partition || test "$fanout" = partition-refine
+test "$fanout" = original || test "$fanout" = partition || test "$fanout" = partition-refine || test "$fanout" = partition-refine-holdzero
 test "$SLURM_CPUS_PER_TASK" -eq 16
 test -f "$root/source-manifest.json"
 test -f "$mapping/block_v1_r/receipt.json"
@@ -23,6 +23,7 @@ srun --ntasks=1 --cpus-per-task=16 --cpu-bind=cores \
  --env OMP_NUM_THREADS=16 --env OPENBLAS_NUM_THREADS=1 "$image" \
  /usr/bin/time -v bash -c 'set -euo pipefail; source /OpenROAD-flow-scripts/env.sh
  mode=$4; extra=()
- if test "$mode" = partition-refine; then mode=partition; extra=(--refine-partition-placement); fi
+ if test "$mode" = partition-refine-holdzero; then mode=partition-refine; extra=(--placement-hold-margin 0.0); fi
+ if test "$mode" = partition-refine; then mode=partition; extra+=(--refine-partition-placement); fi
  python3 "$1/project/experiments/block_v2/physical.py" --top block_v1_r --mapping "$3" --out "$2/pnr/r" --input-receivers --placement-mode geometric --fanout-mode "$mode" "${extra[@]}"' \
  bash "$root" "$out" "$mapping" "$fanout" > "$out/r-worker.log" 2>&1
