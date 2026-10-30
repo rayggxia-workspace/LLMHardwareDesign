@@ -179,7 +179,7 @@ def probe(root,out,cpus,run,shard,combined=False,plan_name='local-via-plan-693.j
     old=violations((source/'remaining-native-drc.rpt').read_text());new=violations((out/'local-native-drc.rpt').read_text());assert sum(old.values())==103
     unchanged=all(file_sha(source/n)==receipt['outputs'][n]for n in('remaining-candidate.odb','remaining-candidate.def','remaining-native-drc.rpt'))
     added_vs_prior=sum((new-joint_native).values())if joint else 0
-    result=dict(passed=exact and unchanged and not(new-old)and bool(old-new)and added_vs_prior==0,physical_qualified=False,shard=shard,combined=combined,joint_prior_binding=joint_prior,added_vs_prior_current=added_vs_prior,independent_shard_receipts=independent,excluded_modified_nets=sorted(excluded),
+    result=dict(passed=exact and unchanged and not(new-old)and bool(old-new)and added_vs_prior==0 and(not joint or bool(joint_native-new)),physical_qualified=False,shard=shard,combined=combined,joint_prior_binding=joint_prior,added_vs_prior_current=added_vs_prior,independent_shard_receipts=independent,excluded_modified_nets=sorted(excluded),
                 plan_sha256=file_sha(plan_path),source_receipt_sha256=file_sha(source/'receipt.json'),source_inputs_sha256={n:receipt['outputs'][n]for n in('remaining-candidate.odb','remaining-candidate.def','remaining-native-drc.rpt')},
                 exact_normal_nets_headers_paths_rectangles=exact,original_inputs_unchanged=unchanged,normal_net_counts=[n0,n1],
                 selected_markers=[p['original_index']for p in selected],selected_nets=len(selected),original_native_count=103,candidate_native_count=sum(new.values()),
