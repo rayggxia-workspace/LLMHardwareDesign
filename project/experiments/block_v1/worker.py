@@ -192,9 +192,9 @@ try:
     elif MODE.startswith('revision300-v-clearance-corners-'):
         from revision300_v_clearance_corners import probe
         probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]))
-    elif MODE == 'revision300-v-current-neighborhood':
+    elif MODE in ('revision300-v-current-neighborhood','revision300-v-repaired-neighborhood'):
         from revision300_v_current_neighborhood import inspect
-        inspect(ROOT,OUT,CPUS,run)
+        inspect(ROOT,OUT,CPUS,run,repaired=MODE=='revision300-v-repaired-neighborhood')
     elif MODE == 'revision300-v-drive-probe':
         from revision300_v_drive_probe import probe
         probe(ROOT,OUT,CPUS,run)

@@ -1,4 +1,4 @@
-"""Read-only all-marker neighborhoods of the actual current589 V source.
+"""Read-only all-marker neighborhoods of pinned actual589 or repaired630 V.
 
 The full GDS gate may still be running. Snapshot its already completed native
 subcheck without inventing a terminal receipt or transferring qualification.
@@ -10,13 +10,17 @@ from pathlib import Path
 import re
 
 
-def inspect(root, out, cpus, run):
+def inspect(root, out, cpus, run, repaired=False):
     from io_slots import file_sha
     from native_escape import records
     from native_rect_completion import rectangles
     assert cpus == 16
     base = out.parents[2]
-    source = base/'block-v1-20261030-589/tasks/revision300-final-source-v'
+    source = base/('block-v1-20261031-630/tasks/revision300-final-source-v' if repaired else
+                   'block-v1-20261030-589/tasks/revision300-final-source-v')
+    expected_count = 471 if repaired else 467
+    expected_report_sha = ('63114c95577bad44744b7c115273657786592313a612ccaed9574b713e22f388' if repaired else
+                           'a0d5272a5cd602d001d0896e263d5a54b2b2da9b3389d47cccc60824735467c5')
     gate = source.parent/'revision300-drc-v'
     sr = json.loads((source/'receipt.json').read_text())
     assert sr['passed'] and sr['mode'] == source.name
@@ -37,7 +41,7 @@ def inspect(root, out, cpus, run):
     assert file_sha(gate/'before.def')==file_sha(gate/'after.def')
     report = gate/'native-whole-drc.rpt'
     report_sha = file_sha(report)
-    assert report_sha=='a0d5272a5cd602d001d0896e263d5a54b2b2da9b3389d47cccc60824735467c5'
+    assert report_sha==expected_report_sha
     text = report.read_text();(out/report.name).write_bytes(report.read_bytes())
     pattern = (r'violation type: Metal Spacing\n\s*srcs: net:([^\n]+)\n'
                r'\s*bbox = \(([-\d.]+), ([-\d.]+)\) - \(([-\d.]+), ([-\d.]+)\) on Layer (metal\d+)')
@@ -47,8 +51,8 @@ def inspect(root, out, cpus, run):
         assert all(v==int(v)for v in box)
         assert 'net:'not in name and not re.search(r'\s',name)
         markers.append(dict(net=name.replace('\\',''),layer=layer,bbox_dbu=list(map(int,box))))
-    assert len(markers)==text.count('violation type:')==467
-    assert Counter(m['layer']for m in markers)=={'metal2':272,'metal3':194,'metal8':1}
+    assert len(markers)==text.count('violation type:')==expected_count
+    if not repaired:assert Counter(m['layer']for m in markers)=={'metal2':272,'metal3':194,'metal8':1}
     windows=[dict(index=i,net=m['net'],layer=m['layer'],bbox_dbu=[m['bbox_dbu'][0]-4000,m['bbox_dbu'][1]-4000,m['bbox_dbu'][2]+4000,m['bbox_dbu'][3]+4000])for i,m in enumerate(markers)]
     helper=root/'project/experiments/block_v1/odb_geometry.tcl'
     code=helper.read_text()
@@ -142,6 +146,6 @@ close $f
                 explicit_rectangles_global_count=len(explicit),window_rect_complement=complement,
                 same_net_shape_counts=dict(same),foreign_shape_counts=dict(foreign),shape_counts=dict(kinds),
                 original_inputs_unchanged=unchanged,geometry_helper_sha256=file_sha(helper),grid_helper_sha256=file_sha(grid),
-                scope='Readonly current589 actual467 native-marker neighborhoods, all layers/all nets with transformed pins, PG/ports/OBS, native DEF RECT complement and exact via footprints. Spatial bins only prune candidates, full boxes retained. Full GDS gate may still be live; this snapshot is not a completed gate, repair, or current629 qualification.')
+                scope=f'Readonly pinned actual{source.parent.parent.name} {expected_count} native-marker neighborhoods, all layers/all nets with transformed pins, PG/ports/OBS, native DEF RECT complement and exact via footprints. Spatial bins only prune candidates, full boxes retained. Full GDS gate may still be live; this snapshot is not a completed gate, repair or physical qualification.')
     (out/'revision300-v-current-neighborhood.json').write_text(json.dumps(result,indent=2)+'\n')
     assert result['passed']
