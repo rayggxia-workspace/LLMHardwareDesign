@@ -25,8 +25,32 @@ def prove(root, out, cpus, run, kind):
     script += 'source {'+str(helper/'signal_connectivity.tcl')+'}\n'
     script += 'signal_connectivity_export {signal-geometry.tsv}\n'
     (out/'signal-connectivity.tcl').write_text(script)
-    run(['openroad', '-no_init', '-exit', out/'signal-connectivity.tcl'], 'signal-export.log')
     geometry = out/'signal-geometry.tsv'
+    if out.name == 'revision300-signal-connectivity-audit-v':
+        previous = out.parents[2]/'block-v1-20261031-776/tasks/revision300-signal-connectivity-v'
+        failed = json.loads((previous/'receipt.json').read_text())
+        assert failed['passed'] is False and failed['mode'] == previous.name
+        assert failed['error'] == "AssertionError('Incomplete DEF net coverage')"
+        prior_report = previous/'revision300-signal-connectivity.json'
+        assert file_sha(prior_report) == failed['outputs'][prior_report.name]
+        old = json.loads(prior_report.read_text())
+        assert old['source_receipt_sha256'] == proof['source_receipt_sha256']
+        assert old['actual_input_sha256'] == inputs
+        commands = failed['commands']
+        assert len(commands) == 1 and commands[0]['argv'][0] == 'openroad' and commands[0]['returncode'] == 0
+        for name in ('signal_connectivity.tcl', 'odb_geometry.tcl'):
+            relative = 'project/experiments/block_v1/'+name
+            assert failed['inputs'][relative] == file_sha(helper/name)
+        geometry = previous/'signal-geometry.tsv'
+        assert file_sha(geometry) == old['geometry_sha256'] == failed['outputs'][geometry.name]
+        proof['read_only_audit'] = dict(original_failed_task=str(previous),
+            original_failed_receipt_sha256=file_sha(previous/'receipt.json'),
+            original_actual_openroad_command=commands[0], eda_rerun=False,
+            original_geometry_sha256=file_sha(geometry))
+        save()
+    else:
+        assert out.name == 'revision300-signal-connectivity-v'
+        run(['openroad', '-no_init', '-exit', out/'signal-connectivity.tcl'], 'signal-export.log')
     # Validate actual exported tech layer semantics before interpreting contacts.
     layers = {}
     with geometry.open() as stream:

@@ -30,6 +30,17 @@ def compatible(a, b):
     return False
 
 
+def resolve_name(token, actual_names):
+    # OpenROAD's writer retains escape characters in many internal identifiers.
+    # Use exact native identity first, as native_rect_completion does. Only an
+    # absent exact token may use one DEF escape decode, and require membership.
+    if token in actual_names:
+        return token
+    decoded = re.sub(r'\\(.)', r'\1', token)
+    assert decoded in actual_names, 'Unresolved DEF/ODB net identity: '+token
+    return decoded
+
+
 def components(shapes, terminals, brute=False):
     parent = list(range(len(shapes)))
 
@@ -129,8 +140,18 @@ def controls():
             rows.append(m(x, y, x+rng.randrange(1, 15), y+rng.randrange(1, 15),
                           l=rng.choice(['metal1', 'via1', 'metal2', 'via2', 'metal3'])))
         assert components(rows, []) == components(rows, [], brute=True)
+    names = {r'foo\[0\]', 'foo[0]', r'$flatten\\unit'}
+    assert resolve_name(r'foo\[0\]', names) == r'foo\[0\]'
+    assert resolve_name(r'$flatten\\unit', names) == r'$flatten\\unit'
+    assert resolve_name(r'bar\[0\]', {'bar[0]'}) == 'bar[0]'
+    refused = False
+    try:
+        resolve_name('absent', names)
+    except AssertionError:
+        refused = True
+    assert refused
     return dict(passed=True, deterministic_cases=9, random_exact_bruteforce_comparisons=100,
-                seed=121776)
+                exact_first_name_controls=4, seed=121776)
 
 
 def batch_check(batch):
@@ -179,17 +200,6 @@ def nets(path, patches):
 def audit(geometry, source_def, destination, cpus=16):
     from native_escape import records
     from native_rect_completion import rectangles
-    patches = defaultdict(list)
-    expected_names = set()
-    rectangle_count = 0
-    for record in records(Path(source_def)):
-        name = re.sub(r'\\(.)', r'\1', record.lstrip().split()[1])
-        assert name not in expected_names
-        expected_names.add(name)
-        for name, layer, *box in rectangles(record):
-            name = re.sub(r'\\(.)', r'\1', name)
-            patches[name].append((int(layer[5:]), box))
-            rectangle_count += 1
     exported_names, skipped, metadata = set(), set(), None
     with Path(geometry).open() as stream:
         for line in stream:
@@ -205,6 +215,21 @@ def audit(geometry, source_def, destination, cpus=16):
                 assert metadata is None
                 metadata = tuple(map(int, line.split()[2:]))
     assert exported_names.isdisjoint(skipped)
+    actual_names = exported_names | skipped
+    patches = defaultdict(list)
+    expected_names = set()
+    rectangle_count = 0
+    decoded_names = 0
+    for record in records(Path(source_def)):
+        token = record.lstrip().split()[1]
+        name = resolve_name(token, actual_names)
+        decoded_names += name != token
+        assert name not in expected_names, 'Non-bijective DEF to ODB name mapping'
+        expected_names.add(name)
+        for token, layer, *box in rectangles(record):
+            name = resolve_name(token, actual_names)
+            patches[name].append((int(layer[5:]), box))
+            rectangle_count += 1
     assert exported_names | (skipped & expected_names) == expected_names, 'Incomplete DEF net coverage'
     assert metadata and metadata[0] == len(exported_names)
     total = Counter()
@@ -239,4 +264,5 @@ def audit(geometry, source_def, destination, cpus=16):
     return dict(passed=total['failed'] == 0 and total['nets'] > 0,
                 totals=dict(total), native_def_rectangles=rectangle_count, failures=failures,
                 exact_all_normal_def_net_coverage=True, exporter_net_terminal_totals=list(metadata),
+                exact_first_def_odb_name_mapping=True, decoded_fallback_names=decoded_names,
                 scope='All actual non-PG ODB wire/via/special/pin boxes plus independently parsed complete native DEF RECTs. Same-terminal LEF electrode union; exact positive area/edge geometry, no point contacts or inter-metal shortcut. Every conductor component included.')
