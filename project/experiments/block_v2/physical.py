@@ -77,7 +77,12 @@ def implement(args, run):
         areas[m.group(1)]=float(re.search(r'\barea\s*:\s*([\d.eE+-]+)\s*;',chunk).group(1))
     active=sum(areas[name]*count for name,count in mapping['cell_counts'].items())
     side=max(400,math.ceil((math.sqrt(active/.4)+40)/10)*10)
-    if top=='block_v1_r':side=max(3000,side)
+    if top=='block_v1_r':
+        if args.r_compact_floorplan:
+            side=2400
+            # Capacity forecast only; real placement/routing and all gates stay.
+            assert active*1.55<=.45*(side-40)**2,('R compact area headroom',active)
+        else:side=max(3000,side)
     while True:
         try:
             plan,fixture,geometry=generate(mapping['ports'],side,technology);break
@@ -100,7 +105,7 @@ def implement(args, run):
         config+='export PLACE_DENSITY = 0.42\n'
     config+='override export MIN_ROUTING_LAYER = metal1\noverride export MAX_ROUTING_LAYER = metal10\n'
     if top=='block_v1_r':
-        config+='export PLACE_DENSITY = 0.25\nexport CTS_ARGS = -sink_clustering_enable -repair_clock_nets -apply_ndr none\n'
+        config+='export PLACE_DENSITY = '+('0.45' if args.r_compact_floorplan else '0.25')+'\nexport CTS_ARGS = -sink_clustering_enable -repair_clock_nets -apply_ndr none\n'
     if args.remove_abc_buffers:
         assert not any(name.startswith(('BUF_','CLKBUF_')) for name in mapping['cell_counts'])
         config+='export REMOVE_ABC_BUFFERS = 1\n'
@@ -139,7 +144,7 @@ def implement(args, run):
                 TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN=hold_target)
     if args.remove_abc_buffers:wanted['REMOVE_ABC_BUFFERS']='1'
     if top=='block_v2_n':wanted['PLACE_DENSITY']='0.42'
-    if top=='block_v1_r':wanted.update(PLACE_DENSITY='0.25',CTS_ARGS='-sink_clustering_enable -repair_clock_nets -apply_ndr none')
+    if top=='block_v1_r':wanted.update(PLACE_DENSITY='0.45' if args.r_compact_floorplan else '0.25',CTS_ARGS='-sink_clustering_enable -repair_clock_nets -apply_ndr none')
     if args.placement_mode=='geometric':
         wanted.update(GPL_TIMING_DRIVEN='0',ENABLE_PLACE_REPAIR_TIMING='1')
     if args.fanout_mode=='partition':wanted['PRE_RESIZE_TCL']=str(out/'partition-fanout.tcl')
@@ -156,6 +161,7 @@ def implement(args, run):
     if args.input_receivers:result['repair']='Fixed BUF_X8 data input receivers in native macro; all limits unchanged'
     result['remove_abc_buffers']=args.remove_abc_buffers
     result['placement_mode']=args.placement_mode
+    result['r_compact_floorplan']=args.r_compact_floorplan
     result['fanout_mode']=args.fanout_mode
     result['refine_partition_placement']=args.refine_partition_placement
     result['placement_hold_margin_ns']=args.placement_hold_margin if args.placement_hold_margin is not None else args.hold_repair_margin
@@ -180,8 +186,10 @@ def main():
     p.add_argument('--fanout-mode',choices=['original','partition'],default='original')
     p.add_argument('--refine-partition-placement',action='store_true')
     p.add_argument('--placement-hold-margin',type=float,choices=[0.0])
+    p.add_argument('--r-compact-floorplan',action='store_true')
     p.add_argument('--hold-repair-margin',type=float,choices=[0.0,0.02],default=0.02)
     args=p.parse_args()
+    if args.r_compact_floorplan:assert args.top=='block_v1_r'
     if args.refine_partition_placement:
         assert args.top=='block_v1_r' and args.placement_mode=='geometric' and args.fanout_mode=='partition'
     if args.placement_hold_margin is not None:
