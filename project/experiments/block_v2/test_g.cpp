@@ -18,7 +18,7 @@ static void tick(){d.clk=0;d.eval();d.clk=1;d.eval();++cycles;d.clk=0;d.eval();}
 static int64_t rne(int64_t x,unsigned s){if(!s)return x;int64_t q=x>>s;uint64_t r=uint64_t(x)&((uint64_t(1)<<s)-1),h=uint64_t(1)<<(s-1);return q+int64_t(r>h||(r==h&&(q&1)));}
 static double fn(unsigned n,double x){switch(n){case 0:return x/(1+std::exp(-x));case 1:return 1/(1+std::exp(-x));case 2:return .5*x*(1+std::tanh(std::sqrt(2/std::acos(-1.))*(x+.044715*x*x*x)));default:return std::log1p(std::exp(x));}}
 static int64_t activation(unsigned n,int16_t raw){int lim=n==3?16384:8192;
- if(raw< -lim)p.reset();return 0;if(raw>lim)return n==1?16384:raw;
+ if(raw< -lim)return 0;if(raw>lim)return n==1?16384:raw;
  unsigned offset=int(raw)+lim,index=offset/32,f=offset%32;
  double x=-double(lim)/1024+double(index)/32;
  double scale=n==1?16384:1024;
