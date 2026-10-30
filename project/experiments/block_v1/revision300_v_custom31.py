@@ -3,10 +3,28 @@ from pathlib import Path
 from collections import Counter
 import json,hashlib,re
 
-def probe(root,out,cpus,run,shard,combined=False,plan_name='custom31-plan-755.json',shard_run='756',mode_prefix='revision300-v-custom31-',compose_mode='revision300-v-custom31-compose',joint=False):
+def decode_custom(record,definitions):
+    """Accept only explicitly bound custom names; keep strict native grammar."""
+    from revision300_v_transition import decode
+    start=re.search(r'\+ ROUTED\s+',record);assert start
+    header=record[:start.start()];body=record[start.start():];restore={}
+    for i,(name,definition)in enumerate(sorted(definitions.items())):
+        assert re.fullmatch(r'BV1_M3_\d+_[012]_\d+',name)
+        source=definition['source'];level=re.fullmatch(r'via([1-9])_\d+',source)[1]
+        placeholder='via'+level+'_'+str(900000000+i)
+        assert not re.search(r'(?<!\S)'+re.escape(placeholder)+r'(?!\S)',body)
+        body=re.sub(r'(?<!\S)'+re.escape(name)+r'(?!\S)',placeholder,body)
+        restore[placeholder]=name
+    h,paths,rects=decode(header+body)
+    for path in paths:
+        if path['via']in restore:path['via']=restore[path['via']]
+    return h,paths,rects
+
+
+def probe(root,out,cpus,run,shard,combined=False,plan_name='custom31-plan-755.json',shard_run='756',mode_prefix='revision300-v-custom31-',compose_mode='revision300-v-custom31-compose',joint=False,audit_run=None):
     from io_slots import file_sha
     from native_escape import records
-    from revision300_v_transition import decode
+    def decode(record):return decode_custom(record,plan['custom_vias'])
     from revision300_v_via_batch import name_of,token_hash
     from revision300_v_via_bridge import path_key
     from revision300_v_corner_probe import violations
@@ -149,19 +167,32 @@ def probe(root,out,cpus,run,shard,combined=False,plan_name='custom31-plan-755.js
     script+='write_db local-candidate.odb\nwrite_def local-candidate.def\ndrt::check_drc_cmd local-native-drc.rpt 0 0 0 0 native_whole_drc\n'
     (out/'remaining-vias.tcl').write_text(script);(out/'selected-via-edits.json').write_text(json.dumps(selected,indent=2)+'\n')
     (out/'failure-filter.json').write_text(json.dumps(dict(actual_shards=failure_filter,excluded_nets=sorted(excluded),retained=len(selected)),indent=2)+'\n')
-    run(['openroad','-no_init','-exit',out/'remaining-vias.tcl'],'remaining-vias.log')
+    candidate_folder=out;audit_binding=None
+    if audit_run is None:
+        run(['openroad','-no_init','-exit',out/'remaining-vias.tcl'],'remaining-vias.log')
+    else:
+        assert str(audit_run)=='756'and out.name=='revision300-v-custom31-audit-'+str(shard)
+        candidate_folder=base/('block-v1-20261031-'+str(audit_run))/'tasks'/('revision300-v-custom31-'+str(shard))
+        failed=json.loads((candidate_folder/'receipt.json').read_text());assert not failed['passed']and failed['mode']==candidate_folder.name
+        commands=[c for c in failed['commands']if c['argv'][0]=='openroad'];assert len(commands)==1 and commands[0]['returncode']==0
+        bindings={}
+        for filename in('local-candidate.odb','local-candidate.def','local-native-drc.rpt','remaining-vias.tcl','selected-via-edits.json'):
+            actual=file_sha(candidate_folder/filename);assert failed['outputs'][filename]==actual;bindings[filename]=actual
+        assert file_sha(out/'remaining-vias.tcl')==bindings['remaining-vias.tcl']
+        assert file_sha(out/'selected-via-edits.json')==bindings['selected-via-edits.json']
+        audit_binding=dict(original_failed_receipt_sha256=file_sha(candidate_folder/'receipt.json'),original_failed_task=str(candidate_folder),actual_output_sha256=bindings,actual_openroad_command=commands[0],eda_rerun=False)
     actual=Counter();found=set();exact=True;n1=0
-    for record in records(out/'local-candidate.def'):
+    for record in records(candidate_folder/'local-candidate.def'):
         n1+=1;name=name_of(record)
         if name not in expected:actual[token_hash(record)]+=1;continue
         assert name not in found;found.add(name)
         header,paths,rects=decode(record);h,required,rr=expected[name]
         exact=exact and re.sub(r'\s+',' ',header)==re.sub(r'\s+',' ',h)and Counter(map(path_key,paths))==required and rects==rr
     exact=exact and actual==others and found==set(expected)and n0==n1
-    old=violations((source/'local-native-drc.rpt').read_text());new=violations((out/'local-native-drc.rpt').read_text());assert sum(old.values())==31
+    old=violations((source/'local-native-drc.rpt').read_text());new=violations((candidate_folder/'local-native-drc.rpt').read_text());assert sum(old.values())==31
     unchanged=all(file_sha(source/n)==receipt['outputs'][n]for n in('local-candidate.odb','local-candidate.def','local-native-drc.rpt'))
     added_vs_prior=sum((new-joint_native).values())if joint else 0
-    result=dict(passed=exact and unchanged and not(new-old)and bool(old-new)and added_vs_prior==0 and(not joint or bool(joint_native-new)),physical_qualified=False,shard=shard,combined=combined,joint_prior_binding=joint_prior,added_vs_prior_current=added_vs_prior,independent_shard_receipts=independent,excluded_modified_nets=sorted(excluded),
+    result=dict(read_only_audit=audit_binding,candidate_folder=str(candidate_folder),passed=exact and unchanged and not(new-old)and bool(old-new)and added_vs_prior==0 and(not joint or bool(joint_native-new)),physical_qualified=False,shard=shard,combined=combined,joint_prior_binding=joint_prior,added_vs_prior_current=added_vs_prior,independent_shard_receipts=independent,excluded_modified_nets=sorted(excluded),
                 plan_sha256=file_sha(plan_path),source_receipt_sha256=file_sha(source/'receipt.json'),source_inputs_sha256={n:receipt['outputs'][n]for n in('local-candidate.odb','local-candidate.def','local-native-drc.rpt')},
                 exact_normal_nets_headers_paths_rectangles=exact,original_inputs_unchanged=unchanged,normal_net_counts=[n0,n1],
                 selected_markers=[p['original_index']for p in selected],selected_nets=len(selected),original_native_count=31,candidate_native_count=sum(new.values()),

@@ -204,6 +204,9 @@ try:
     elif MODE=='revision300-v-latest-neighborhood':
         from revision300_v_latest_neighborhood import inspect
         inspect(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('revision300-v-custom31-audit-'):
+        from revision300_v_custom31 import probe
+        probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]),audit_run='756')
     elif MODE.startswith('revision300-v-custom31-'):
         from revision300_v_custom31 import probe
         probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]))
