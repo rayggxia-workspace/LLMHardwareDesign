@@ -179,7 +179,7 @@ close $stages
           'stage sta {report_worst_slack -max -digits 6 > '+tcl(out/'setup.txt')+';report_worst_slack -min -digits 6 > '+tcl(out/'hold.txt')+';report_check_types -violators -max_delay -min_delay -max_slew -max_capacitance -max_fanout -recovery -removal -max_count 1000000 -digits 6 > '+tcl(out/'checks.txt')+';check_setup -verbose > '+tcl(out/'constraint_coverage.txt')+';report_parasitic_annotation -report_unannotated > '+tcl(out/'parasitic_coverage.txt')+'}','close $stages']
         if source_profile=='LL_corners_incident':
             assert 'wire48966' not in selected,'Measured supposedly unchanged7059 endpoint actually selected'
-            affected={net for (inst,pin),(direction,net) in terms.items() if inst in selected and net not in ['VDD','VSS','NULL']}
+            affected={net for (inst,pin),net in terms.items() if inst in selected and net not in ['VDD','VSS','NULL']}
             assert affected and 'bit_7059' not in affected,'No permission to omit an actually modified7059 net'
             rec['all_actual_incident_nets']=len(affected)
             (out/'all_incident_networks.json').write_text(json.dumps(sorted(affected),indent=2)+'\n')
