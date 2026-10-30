@@ -1,3 +1,5 @@
+2026-10-30 14:26 CST：515封存当前507实际CTS完成证据，15原始/311源Git及远端SHA，源3e5a4c25/归档bfc785a2与505/506一致。CTS setup WS+.00258504ns/TNS0/0项，hold WS−.255989ns/TNS−4.46644ns/42项，maxcap/maxslew0；5218时钟网none，内部LEC53478输入/53467输出、diff0/1全0、UNSAT/IDENTICAL。CTS标准单元707193µm²，尚非最终面积或资格。507实际GRT、R404原GRT extra31均真实CPU增长；无EDA取消/重启。Refs #121 / PR #122，M/S/T保持，V/R最终未齐；登记pending/看板unverified/同步pending/审查待指定。
+
 2026-10-30 14:20 CST：514保存494独立严格LEC，53478输入/53467输出全部匹配、diff0/1全0、UNSAT/IDENTICAL；16原始/8大文件SHA/311源Git与receipt输入输出绑定，与513最终功能同一最终源。setup/原生DRC失败保持，不转移到505/507。原507 CTS修复内部LEC完成，R404原GRT extra31继续；无EDA取消或重启。Refs #121 / PR #122；当前V/R最终未齐，in_progress/draft；登记pending，看板unverified/同步pending，审查待指定。
 
 2026-10-30 14:18 CST：513封存493最终网表在494独立执行的三初态功能，均567808检查/418843周期通过；27原始/8大文件SHA/311源Git与receipt输入输出绑定。实际setup28项负裕量/原生DRC496失败保持，不转移当前505/507。合同置顶五宏当前选择/验收表，历史阶段日志移至末尾保留，修正初始合同与当前源混淆。507已放置完成、CTS内部LEC实际CPU增长，R404原GRT extra31继续；不取消/重启EDA，不重复M/S/T。结构检查通过。Refs #121 / PR #122保持in_progress/draft，五宏当前最终未齐，登记pending、看板unverified/同步pending、审查待指定。
