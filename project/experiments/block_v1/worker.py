@@ -189,6 +189,9 @@ try:
     elif MODE == 'revision300-v-transition-batch':
         from revision300_v_transition_batch import probe
         probe(ROOT,OUT,CPUS,run)
+    elif MODE == 'revision300-v-transition-filter':
+        from revision300_v_transition_batch import probe
+        probe(ROOT,OUT,CPUS,run,filtered=True)
     elif MODE == 'revision300-v-via-bridge-m3':
         from revision300_v_via_bridge import probe
         probe(ROOT,OUT,CPUS,run,case='m3')

@@ -24,7 +24,7 @@ def choose(paths,a,b):
     return None
 
 
-def probe(root,out,cpus,run):
+def probe(root,out,cpus,run,filtered=False):
     from io_slots import file_sha
     from native_escape import records
     from revision300_v_transition import decode
@@ -48,9 +48,29 @@ def probe(root,out,cpus,run):
         c=json.loads(f.read_text());assert c['passed']and c['case']==case and c['native_original_count']==172 and c['native_candidate_count']==171 and c['added_markers']==0
         assert c['input_odb_sha256']==sr['outputs']['composed-candidate.odb']and c['localization_receipt_sha256']==file_sha(prior/'receipt.json')
         controls.append(dict(case=case,receipt_sha256=file_sha(p/'receipt.json')))
+    excluded=set();filter_receipt=None
+    if filtered:
+        failed=base/'block-v1-20261030-610/tasks/revision300-v-transition-batch'
+        fr=json.loads((failed/'receipt.json').read_text())
+        assert not fr['passed'] and file_sha(failed/'receipt.json')=='a4678ab3659badbc8b71823f94cb162309335ce0300b09ccacc9e26b84713e90'
+        for name in ('transition-batch-drc.rpt','expected-edits.json','revision300-v-transition-batch.json'):
+            assert file_sha(failed/name)==fr['outputs'][name]
+        evidence=json.loads((failed/'revision300-v-transition-batch.json').read_text())
+        assert not evidence['passed'] and evidence['native_candidate_count']==188 and evidence['added_markers']==98
+        prior_markers=violations((source/'composed-native-drc.rpt').read_text())
+        added=violations((failed/'transition-batch-drc.rpt').read_text())-prior_markers
+        edited={p['net']for p in json.loads((failed/'expected-edits.json').read_text())['patches']}
+        for marker in added:
+            names=re.search(r'srcs: (.*?) bbox =',marker).group(1).split(' net:')
+            hit=edited.intersection(n.removeprefix('net:').replace('\\','')for n in names)
+            assert hit,'New marker has no edited participant; filtering cannot explain it'
+            excluded.update(hit)
+        assert len(excluded)==46 and sum(added.values())==98
+        filter_receipt=file_sha(failed/'receipt.json')
     wanted=defaultdict(list)
     for row in d['markers']:
-        if row['marker']['layer']=='metal3'and row['route_options']:wanted[row['marker']['net'].replace('\\','')].append(row)
+        name=row['marker']['net'].replace('\\','')
+        if row['marker']['layer']=='metal3'and row['route_options']and name not in excluded:wanted[name].append(row)
     originals={};others=Counter();n0=0
     for record in records(source/'composed-candidate.def'):
         n0+=1;name=name_of(record)
@@ -77,6 +97,7 @@ def probe(root,out,cpus,run):
             edits[name]=(paths,rects);expected[name]=(header,Counter(map(path_key,paths)),rects)
         else:others[token_hash(record)]+=1
     assert len(patches)>2 and {25,27}.issubset({p['index']for p in patches})
+    if filtered:assert len(patches)==36 and len(edits)==36 and not(set(edits)&excluded)
     script='set_thread_count 16\nread_db {'+str(source/'composed-candidate.odb')+'}\nset block [ord::get_db_block]\nset tech [ord::get_db_tech]\n'
     for name,bottom,top in sorted(guards):
         script+='set v [$tech findVia '+name+'];set seen {}\nforeach part [$v getBoxes] {set layer [[$part getTechLayer] getName];if {[string match metal* $layer]} {lappend seen $layer}}\n'
@@ -111,6 +132,7 @@ def probe(root,out,cpus,run):
                 source_receipt_sha256=file_sha(source/'receipt.json'),localization_receipt_sha256=file_sha(prior/'receipt.json'),controls=controls,
                 original_inputs_unchanged=unchanged,normal_net_counts=[n0,n1],exact_paths_rectangles_headers_and_other_net_tokens=exact,
                 patch_count=len(patches),changed_nets=len(edits),patch_cases=dict(Counter(p['case']for p in patches)),skipped_marker_indices=skipped,
+                filtered_from_failure_receipt_sha256=filter_receipt,excluded_patch_nets=sorted(excluded),
                 native_original_count=sum(old.values()),native_candidate_count=sum(new.values()),added_markers=sum((new-old).values()),removed_markers=sum((old-new).values()),
                 scope='Actual composition of two controlled transition forms on old523 derived source, bounded1um and preserving old wires/RECTs. Whole native checker required; independent counts are not added. No current588 or connectivity/RCX/STA/full GDS/function/LEC/delivery qualification.')
     (out/'revision300-v-transition-batch.json').write_text(json.dumps(result,indent=2)+'\n')
