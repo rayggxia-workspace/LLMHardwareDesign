@@ -162,8 +162,8 @@ def run(revision,profile='original'):
         for number,r in enumerate(order):
             cx,cy=r['center_DBU'];ly=r['original_layer'];yp=560 if ly=='metal5' else 1600
             if profile=='parent_owned_only':
-                occupied.remove((ly,cx,cy));old=r['box_DBU']
-                covered=any(b[0]<=old[0] and b[1]<=old[1] and b[2]>=old[2] and b[3]>=old[3] for b,kind in own_metal[r['net'],ly])
+                occupied.remove((ly,cx,cy));source_pin_box=r['box_DBU']
+                covered=any(b[0]<=source_pin_box[0] and b[1]<=source_pin_box[1] and b[2]>=source_pin_box[2] and b[3]>=source_pin_box[3] for b,kind in own_metal[r['net'],ly])
                 if not covered or r['pin']=='bit_2' or r.get('actual_use')=='CLOCK':
                     r.update(target_center_DBU=[cx,cy],stub_path_DBU=[],stub_L1_um=0,status='KEEP_DECLARED_CLOCK_OR_NO_EXISTING_METAL_SUPPORT',retention_reason='Original clock point retained for clock-specific validation' if covered else 'No actual own WIRE/VIA covers old pin; no invented endpoint or metal deletion')
                     occupied.add((ly,cx,cy));counts[r['status']]+=1
