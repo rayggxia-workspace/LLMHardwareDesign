@@ -19,7 +19,10 @@ module block_v2_g(
  reg signed [16:0] offset;
  reg [10:0] index;reg [4:0] frac;
  reg signed [22:0] interpolation;
- reg signed [31:0] value,rounded;
+ reg signed [31:0] rounded;
+ reg signed [15:0] base_next[0:1],f_next[0:1];
+ reg signed [16:0] delta_next[0:1];reg [4:0] frac_next[0:1];
+ reg [31:0] packed_next;
  reg clip;
  integer l;
  function automatic signed [31:0] rne;
@@ -33,15 +36,8 @@ module block_v2_g(
    end
   end
  endfunction
- always @(posedge clk)begin
-  if(reset)begin v1<=0;v2<=0;v3<=0;out_valid<=0;out_data<=0;out_error<=0;out_saturated<=0;
-   e1<=0;e2<=0;e3<=0;g1<=0;g2<=0;g3<=0;sig1<=0;sig2<=0;sig3<=0;end
-  else if(advance)begin
-   v1<=in_valid;v2<=v1;v3<=v2;out_valid<=v3;
-   e1<=in_fn>3;e2<=e1;e3<=e2;out_error<=e3;
-   g1<=in_gated;g2<=g1;g3<=g2;
-   sig1<=in_fn==1;sig2<=sig1;sig3<=sig2;
-   clip=0;value=0;rounded=0;
+ always @* begin
+   clip=0;rounded=0;packed_next=0;
    for(l=0;l<2;l=l+1)begin
     x=in_x[16*l+:16];lo=0;hi=0;offset=0;index=0;frac=0;
     if(in_fn<=2)begin
@@ -61,17 +57,29 @@ module block_v2_g(
       hi=activation_lut(2'd3,index==1024?index:index+1'b1);
      end
     end
-    base1[l]<=lo;delta1[l]<=$signed({hi[15],hi})-$signed({lo[15],lo});frac1[l]<=frac;
-    u1[l]<=in_gate[16*l+:16];u2[l]<=u1[l];
+    base_next[l]=lo;delta_next[l]=$signed({hi[15],hi})-$signed({lo[15],lo});frac_next[l]=frac;
     interpolation=delta1[l]*$signed({1'b0,frac1[l]});
-    value=$signed({{16{base1[l][15]}},base1[l]})+rne({{9{interpolation[22]}},interpolation},5'd5);
-    f2[l]<=value[15:0];
-    product3[l]<=f2[l]*u2[l];f3[l]<=f2[l];
+    f_next[l]=16'($signed({{16{base1[l][15]}},base1[l]})+rne({{9{interpolation[22]}},interpolation},5'd5));
     rounded=g3?rne(product3[l],sig3?5'd14:5'd10):$signed({{16{f3[l][15]}},f3[l]});
     if(rounded>32767)begin rounded=32767;clip=1;end
     else if(rounded< -32768)begin rounded=-32768;clip=1;end
-    out_data[16*l+:16]<=e3?16'd0:rounded[15:0];
+    packed_next[16*l+:16]=e3?16'd0:rounded[15:0];
    end
+ end
+ always @(posedge clk)begin
+  if(reset)begin v1<=0;v2<=0;v3<=0;out_valid<=0;out_data<=0;out_error<=0;out_saturated<=0;
+   e1<=0;e2<=0;e3<=0;g1<=0;g2<=0;g3<=0;sig1<=0;sig2<=0;sig3<=0;end
+  else if(advance)begin
+   v1<=in_valid;v2<=v1;v3<=v2;out_valid<=v3;
+   e1<=in_fn>3;e2<=e1;e3<=e2;out_error<=e3;
+   g1<=in_gated;g2<=g1;g3<=g2;
+   sig1<=in_fn==1;sig2<=sig1;sig3<=sig2;
+   for(integer k=0;k<2;k=k+1)begin
+    base1[k]<=base_next[k];delta1[k]<=delta_next[k];frac1[k]<=frac_next[k];
+    u1[k]<=in_gate[16*k+:16];u2[k]<=u1[k];f2[k]<=f_next[k];
+    product3[k]<=f2[k]*u2[k];f3[k]<=f2[k];
+   end
+   out_data<=packed_next;
    out_saturated<=!e3&&clip;
   end
  end

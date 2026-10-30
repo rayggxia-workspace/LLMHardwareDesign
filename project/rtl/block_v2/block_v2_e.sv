@@ -13,6 +13,10 @@ module block_v2_e(
  reg signed [15:0] a[0:7],b[0:7],c[0:7];
  reg signed [31:0] product[0:7],rot_product[0:7];
  reg signed [47:0] total[0:7];
+ wire signed [15:0] multiplier_b[0:7];
+ for(genvar k=0;k<8;k=k+1)begin: operand_select
+  assign multiplier_b[k]=op==9?b[k&6]:b[k];
+ end
  reg signed [47:0] value,rounded;reg [47:0] mask,remainder,half;
  reg [127:0] packed_result;reg clipped;
  integer i;
@@ -23,7 +27,7 @@ module block_v2_e(
    value=total[j];rounded=value;
    if((op==2||op==3||op==9||op==10)&&shift!=0)begin
     mask=(48'd1<<shift)-1;remainder=$unsigned(value)&mask;half=48'd1<<(shift-1);
-    rounded=(value>>>shift)+$signed({47'b0,(remainder>half)||((remainder==half)&&value[shift])});
+    rounded=(value>>>shift)+$signed({47'b0,(remainder>half)||((remainder==half)&&value[{1'b0,shift}])});
    end
    if(op==12)begin
     if(rounded>127)begin rounded=127;clipped=1;end
@@ -50,7 +54,7 @@ module block_v2_e(
      end
     end
     MUL:begin
-     for(i=0;i<8;i=i+1)product[i]<=a[i]*(op==9?b[i&6]:b[i]);
+     for(i=0;i<8;i=i+1)product[i]<=a[i]*multiplier_b[i];
      phase<=op==9?ROT_MUL:TOTAL;
     end
     ROT_MUL:begin
