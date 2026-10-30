@@ -46,6 +46,7 @@ def bundle(delivery, out):
                          'constraints-readback.sdc', 'annotation.rpt'),
             'drc': ('native-whole-drc.rpt', 'full-deck.lyrdb', 'full-deck.log'),
             'function': ('all-ones.log', 'random-143.log', 'random-144.log'),
+            'formal': ('kepler.log','formal.log'),
         }.get(operation, ())
         for name in names:
             add(receipt.parent / name, 'evidence/' + operation + '/' + name)
