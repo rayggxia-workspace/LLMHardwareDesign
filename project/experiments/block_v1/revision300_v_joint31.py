@@ -3,15 +3,15 @@ from pathlib import Path
 from collections import Counter
 import json,hashlib,re
 
-def probe(root,out,cpus,run):
-    shard=6;combined=True;joint=False;plan_name='joint31-plan-737.json'
+def probe(root,out,cpus,run,plan_name="joint31-plan-737.json",mode="revision300-v-joint31-compose"):
+    shard=6;combined=True;joint=False
     from io_slots import file_sha
     from native_escape import records
     from revision300_v_transition import decode
     from revision300_v_via_batch import name_of,token_hash
     from revision300_v_via_bridge import path_key
     from revision300_v_corner_probe import violations
-    assert cpus==16 and out.name=='revision300-v-joint31-compose'
+    assert cpus==16 and out.name==mode
     base=out.parents[2]
     source=base/'block-v1-20261031-705/tasks/revision300-v-joint-via-compose'
     receipt=json.loads((source/'receipt.json').read_text());assert receipt['passed']
@@ -44,7 +44,7 @@ def probe(root,out,cpus,run):
         config=root/'project/experiments/block_v1'/group['plan'];assert file_sha(config)==group['plan_sha256']
         source_plan=json.loads(config.read_text());group_excluded=set()
         for binding in group['bindings']:
-            i=binding['shard'];p=base/('block-v1-20261031-'+str(group['stage']))/'tasks'/(group['prefix']+str(i))
+            i=binding['shard'];p=base/('block-v1-20261031-'+str(group['stage']))/'tasks'/(group.get('mode_exact')or group['prefix']+str(i))
             assert file_sha(p/'receipt.json')==binding['receipt_sha256']
             r=json.loads((p/'receipt.json').read_text());assert r['mode']==p.name
             for name in ('revision300-v-local-vias.json','selected-via-edits.json','local-native-drc.rpt'):assert file_sha(p/name)==r['outputs'][name]
@@ -158,6 +158,6 @@ def probe(root,out,cpus,run):
                 exact_normal_nets_headers_paths_rectangles=exact,original_inputs_unchanged=unchanged,normal_net_counts=[n0,n1],
                 selected_markers=[p['original_index']for p in selected],selected_nets=len(selected),original_native_count=31,candidate_native_count=sum(new.values()),
                 added_markers=sum((new-old).values()),removed_markers=sum((old-new).values()),
-                scope='Actual combined21 M2 pad variants plus filtered5 M3 detours on70531-source. Twelve real independent receipts bound, escaped net IDs normalized, zero-effect edits excluded. AllNET/header/expected paths/RECT and full native0new required. Every final qualification gate separate.')
+                scope='Actual combined edits on70531-source. All configured real independent receipts bound, escaped net IDs normalized, zero-effect edits excluded. AllNET/header/expected paths/RECT and full native0new required. Every final qualification gate separate.')
     (out/'revision300-v-local-vias.json').write_text(json.dumps(result,indent=2)+'\n')
     assert result['passed'],'Preserve failed shard; independent queue tasks continue'
