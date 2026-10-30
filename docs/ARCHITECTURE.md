@@ -314,7 +314,7 @@ Linux轻量调度排空控制：`python3 project/experiments/block_v1/node_queue
 
 ## 本轮后继队列自动准入（2026-10-30）
 
-`revision300_admission.py`当前固定七个已封存队列：R404/405/406、V462/463/464/465。实际部署及两轮读回证据见`work/YUZE-LU/121/review-20261028/admission-473/`，远端为`/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/admission-20261030-473`，PID115767。473修复封存460自报422导致的历史资源统计断言：保留并报告不一致、计入其全部jobID；当前选中队列仍严格绑定，资源reservation仍由原dispatcher负责。466轻量控制器已退休；更早426控制及未曾分配425也已退休，原EDA均继续；早期335等历史配置和原始证据保留在各自目录，不作为当前恢复入口。
+`revision300_admission.py`当前固定八个封存队列：R404/405/406、V485/492/493/494/495。实际准入497部署与两轮读回见`work/YUZE-LU/121/review-20261028/admission-497/`，远端`/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/admission-20261030-497`，PID289354。配置白名单在启动前由实际源validate，并有精确八队列正例和旧队列负例；保留496旧常量白名单启动失败，原EDA不受影响。479已正常退役，未分配的478/487/488/489仅标历史；490从未部署。历史460自报422不一致保持且全部jobID计入8槽，reservation/未知提交仍禁止重投。
 
 该进程每60秒只在登录机处理JSON、Slurm查询和sbatch；全部EDA在Slurm allocation内执行。实际manifest、queue、dispatcher与dependency代码SHA固定，异常观察闭锁。现有dispatcher的Issue共享锁、先写SUBMITTING reservation和最多8 allocations（含旧、pending及unknown）仍是唯一提交权威；同账号其他任务不计入本Issue。已有任何提交记录不重投，观察超时不视为终止。节点内6×16硬CPU affinity、即完补位、1.2内存预留和16GiB guard保持。纯控制验证：`python -X utf8 project/experiments/block_v1/test_revision300_admission.py`。
 
