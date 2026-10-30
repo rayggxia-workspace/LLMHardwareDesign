@@ -47,10 +47,20 @@ def run(revision):
         q['actual_Yosys_version']=subprocess.check_output(common+[YOSYS,'-V']).decode().strip()
         abc=YOSYS.rsplit('/',1)[0]+'/yosys-abc'
         q['actual_tool_SHA256']=subprocess.check_output(common+['sha256sum',YOSYS,abc]).decode().splitlines()
-        cells,terms,ports=load(graph);models=dict(groups(lib,'cell'));contracts={}
+        cells,terms,ports=load(graph);models=dict(groups(lib,'cell'));contracts={};physical_only=set()
+        signal_terminal_masters={cells[n][0] for n,pin in terms}
         for master in {c[0] for c in cells.values()}:
             assert master in models,('Missing real cell Liberty',master)
-            contracts[master]=contract('cell ("'+master+'") {'+models[master]+'}',master)
+            if not list(groups(models[master],'pin')):
+                # Observed r01 input: 5326 actual TAPCELL_X1, no native signal
+                # terminals and no Liberty signal pins. Never remove or move
+                # these substrate ties; they are outside Boolean cone mapping.
+                assert master not in signal_terminal_masters,('Signal terminals missing from Liberty',master)
+                physical_only.add(master);contracts[master]={'pins':[],'state':[]}
+            else:
+                try:contracts[master]=contract('cell ("'+master+'") {'+models[master]+'}',master)
+                except AssertionError:raise AssertionError(('Unsupported actual Liberty signal contract',master))
+        q['physical_only_no_signal_masters_preserved_outside_cone']={m:sum(v[0]==m for v in cells.values()) for m in physical_only}
         bycell=defaultdict(dict);drivers={};users=defaultdict(set)
         for (inst,pin),(direction,net) in terms.items():
             bycell[inst][pin]=(direction,net)
@@ -62,7 +72,7 @@ def run(revision):
             else:raise AssertionError(('Unsupported inout cone model',inst,pin,direction))
         protected={n for n,(m,kind) in cells.items() if contracts[m]['state']}
         assert len(protected)==4117,('Source state inventory changed',len(protected))
-        state=set(protected);clock_roots=set()
+        state=set(protected);protected.update(n for n,(m,kind) in cells.items() if m in physical_only);clock_roots=set()
         for inst in state:
             m=cells[inst][0]
             for kind,args,fields in contracts[m]['state']:
