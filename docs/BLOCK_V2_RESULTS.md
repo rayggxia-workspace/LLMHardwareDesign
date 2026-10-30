@@ -1,17 +1,17 @@
 # 七类基础宏：实际结果入口
 
-任务[#143](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/143)，草稿[PR #144](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/144)。本页记录实际接收结果；功能/数值/接口合同见[BLOCK_V2](BLOCK_V2.md)。**当前M/N/G/S/T五宏合格；旧E合格结果保留为基线，新E增加S32→S16接口模式后重新验收；R仍在实施，七宏尚未齐。**
+任务[#143](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/143)，草稿[PR #144](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/144)。本页记录实际接收结果；功能/数值/接口合同见[BLOCK_V2](BLOCK_V2.md)。**当前M/N/E/G/S/T六宏合格；新E包含S32→S16模式，全部最终门及本地实收完成；R仍在实施，七宏尚未齐。**
 
 ## 最终叶子物理结果
 
-下表M/N/G/S/T及历史E均通过同一适用300MHz/0.1ns不确定度合同的最终物理检查、原生全片和完整未修改FreePDK45 GDS DRC、三组实际初态最终网表功能、严格全边界LEC及真实几何证明，并已本地核验六文件。历史E数据不能转记给新op13实现。时序值为真实时序端点的最小裕量；输入保护器件的被动端点分类及负例证据保留于各物理报告。
+下表M/N/G/S/T及历史E均通过同一适用300MHz/0.1ns不确定度合同的最终物理检查、原生全片和完整未修改FreePDK45 GDS DRC、三组实际初态最终网表功能、严格全边界LEC及真实几何证明，并已本地核验六文件。新op13实现已独立重跑全部最终门，未借用历史E资格。时序值为真实时序端点的最小裕量；输入保护器件的被动端点分类及负例证据保留于各物理报告。
 
 | 宏 | 边长µm | active单元面积µm² | setup最小裕量ns | hold最小裕量ns | 来源/最终门 |
 |---|---:|---:|---:|---:|---|
 | M | 930 | 304530.898 | 0.039857 | 0.018500 | 新源013→018，包024 |
 | N | 510 | 68015.668 | 0.140712 | 0.017753 | 新Q1.14源027→028，包029 |
 | E历史基线 | 600 | 63601.132 | 0.307090 | 0.021340 | 006→010，含源包023；不包含S32输入模式 |
-| E当前 | 待验收 | 待验收 | 待验收 | 待验收 | 新源065/94007→066/94008→067/94009 |
+| E当前 | 600 | 63751.688 | 0.412125 | 0.019608 | 新源065/94007→066/94008→067/94009，48成员本地实收 |
 | G | 400 | 22831.046 | 0.512034 | 0.017721 | 新源006→010，含源包023 |
 | S | 1680 | 1181315.842 | 0.028545 | 0.007200 | #130精确同源300MHz成果，017重新核验 |
 | T | 1040 | 431244.786 | 0.429092 | 0.007988 | #121精确同源300MHz成果，017重新核验 |
@@ -27,7 +27,7 @@ active单元面积不等于die面积。S/T均为标准单元存储，不能称�
 |---|---|
 | M | `D:/Data/LLMHardwareDesign-issue143-runtime/deliverables/M` |
 | N | `D:/Data/LLMHardwareDesign-issue143-runtime/deliverables/N-q14` |
-| E | `D:/Data/LLMHardwareDesign-issue143-runtime/deliverables/E-v2` |
+| E | `D:/Data/LLMHardwareDesign-issue143-runtime/deliverables/E-wide`；旧`E-v2`仅作历史基线 |
 | G | `D:/Data/LLMHardwareDesign-issue143-runtime/deliverables/G-v2` |
 | S | 索引/回执在`issue143-runtime/deliverables/S`；六文件复用`D:/Data/LLMHardwareDesign-issue130-runtime/deliverables/S/unpacked/native`，已重新SHA核验 |
 | T | `D:/Data/LLMHardwareDesign-issue143-runtime/deliverables/T` |
@@ -57,3 +57,7 @@ active单元面积不等于die面积。S/T均为标准单元存储，不能称�
 三条新源物理链使用完全相同的RTL和映射：053为3000µm/.25；059为2400µm/.45；062只在059策略上显式允许原生CTS使用BUF_X4/X8/X16/X32。已读回实际make变量，300MHz、0.1ns不确定度、HOLD_SLACK_MARGIN=.020及全部最终门未变。059/93977→060/93980→061/93981；062/93978→063/93982→064/93983。gate/pack复用同次封存的059/062源码快照，不创建新的实现变体。
 
 当前8个真实物理作业，其余成功依赖后继不占allocation；单个R最终门最多三项同时就绪，所以采用3×16核动态补位。所有R仍未取得最终资格，最终只选择一个实现。[新映射及中间回读索引](../work/YUZE-LU/143/r-physical-trials.json)明确标注prefix而非完成回执，不替代最终物理证据。
+
+## E格式接口闭合：2026-10-31 06:01 CST
+
+新op13复用现有A银行与S48舍入通路，提供四S32→四S16；三个实际初态各107062检查/38030拍/1296个S32包通过。065独立综合与六阶段、066全部最终门与几何、067包均通过；本地48成员及六文件/源绑定逐SHA验证通过。相对旧E，active面积增加150.556µm²，约0.237%，不是孤立门数比较。源、实际作业、回执和SHA见[e-wide-trial.json](../work/YUZE-LU/143/e-wide-trial.json)及[e-wide-proof](../work/YUZE-LU/143/e-wide-proof/received.json)。R仍未合格，七宏尚未齐。
