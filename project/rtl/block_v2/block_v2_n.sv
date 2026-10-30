@@ -22,6 +22,10 @@ module block_v2_n(
  reg [47:0] sumsq;
  reg signed [15:0] maximum,minimum;
  reg signed [15:0] raw[0:1],gamma[0:1];
+ wire signed [16:0] norm_operand[0:1];
+ for(genvar l=0;l<2;l=l+1)begin: norm_sign
+  assign norm_operand[l]=operation==6?$signed({1'b0,raw[l]}):$signed({raw[l][15],raw[l]});
+ end
  reg [1:0] enabled;
  reg [31:0] square[0:1];reg [15:0] ex[0:1];
  reg signed [47:0] norm_product[0:1];
@@ -158,7 +162,7 @@ module block_v2_n(
      for(integer l=0;l<2;l=l+1)begin
       enabled[l]<=position+4'(l)<n;
       raw[l]<=fetch[l];gamma[l]<=16'(aux>>(16*(position+4'(l))));
-      square[l]<=$unsigned($signed(fetch[l])*$signed(fetch[l]));
+      square[l]<=fetch[l]*fetch[l];
       ex[l]<=exponential($signed({fetch[l][15],fetch[l]})-$signed({maximum[15],maximum}));
      end
      phase<=operation==5||operation==6?NORM_MUL:ACCUM;
@@ -192,7 +196,7 @@ module block_v2_n(
     end
     NORM_MUL:begin
      for(integer l=0;l<2;l=l+1)
-      norm_product[l]<=(operation==6?$signed({1'b0,raw[l]}):$signed({raw[l][15],raw[l]}))*$signed({1'b0,factor});
+      norm_product[l]<=norm_operand[l]*$signed({1'b0,factor});
      phase<=NORM_GATE;
     end
     NORM_GATE:begin
