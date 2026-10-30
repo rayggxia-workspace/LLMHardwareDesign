@@ -201,6 +201,12 @@ try:
     elif MODE=='revision300-v-repaired-topology':
         from revision300_v_repaired_topology import inspect
         inspect(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('revision300-v-shift-vias-'):
+        from revision300_v_local_vias import probe
+        probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]),plan_name='shift-via-plan-700.json',shard_run='701',mode_prefix='revision300-v-shift-vias-',compose_mode='revision300-v-shift-via-compose')
+    elif MODE=='revision300-v-shift-via-compose':
+        from revision300_v_local_vias import probe
+        probe(ROOT,OUT,CPUS,run,6,combined=True,plan_name='shift-via-plan-700.json',shard_run='701',mode_prefix='revision300-v-shift-vias-',compose_mode='revision300-v-shift-via-compose')
     elif MODE=='revision300-v-local-topology':
         from revision300_v_local_vias import inspect
         inspect(ROOT,OUT,CPUS,run)
