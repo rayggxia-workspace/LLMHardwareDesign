@@ -8,11 +8,12 @@ import time
 from run_rtl import ROOT,sha
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--model',choices=['e','g'],required=True)
+    p=argparse.ArgumentParser();p.add_argument('--model',choices=['e','g','n'],required=True)
     p.add_argument('--rtl-receipt',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args()
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     top='block_v2_'+a.model;rtl=ROOT/'project/rtl/block_v2';sources=[rtl/(top+'.sv')]
-    bound=sources+([rtl/'block_v2_g_tables.svh'] if a.model=='g' else [])
+    if a.model=='n':sources.append(rtl/'block_v2_n_group.sv')
+    bound=sources+([rtl/'block_v2_g_tables.svh'] if a.model=='g' else [rtl/'block_v2_n_exp.svh'] if a.model=='n' else [])
     verified=json.loads(a.rtl_receipt.read_text());assert verified['passed'] and verified['model']==a.model
     assert len(verified['runs'])==3
     for path,digest in verified['source_sha256'].items():assert sha(ROOT/path)==digest,path

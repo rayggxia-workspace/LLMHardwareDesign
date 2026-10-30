@@ -7,20 +7,22 @@ set -euo pipefail
 root=$1
 out=$2
 verified=$3
+models=${4:-e g}
+read -ra model_list <<< "$models"
 test -n "${SLURM_JOB_ID:-}"
-test "$SLURM_CPUS_PER_TASK" -eq 32
+test "$((${#model_list[@]}*16))" -le "$SLURM_CPUS_PER_TASK"
 test -f "$root/source-manifest.json"
 mkdir -p "$out"
 # Initial conservative budget for the two small E/G candidates; measured RSS
 # is retained per worker. Do not copy the 192GiB storage-macro forecast here.
-python3 -c 'from pathlib import Path; import json; m=dict(s.split(":",1) for s in Path("/proc/meminfo").read_text().splitlines()); a=int(m["MemAvailable"].split()[0])*1024; print(json.dumps(dict(available_bytes=a,initial_forecast_gib_per_worker=48,workers=2,headroom=1.2,guard_gib=16))); assert a>(2*48*1.2+16)*1024**3' > "$out/memory-admission.json"
+python3 -c 'from pathlib import Path; import json,sys; n=int(sys.argv[1]); m=dict(s.split(":",1) for s in Path("/proc/meminfo").read_text().splitlines()); a=int(m["MemAvailable"].split()[0])*1024; print(json.dumps(dict(available_bytes=a,initial_forecast_gib_per_worker=48,workers=n,headroom=1.2,guard_gib=16))); assert a>(n*48*1.2+16)*1024**3' "${#model_list[@]}" > "$out/memory-admission.json"
 image=/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif
 read -r actual _ < <(sha256sum "$image")
 test "$actual" = 49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a
 export PATH="/public/software/singularity-ce-4.3.4/bin:$PATH"
 status=0
 pids=()
-for model in e g; do
+for model in "${model_list[@]}"; do
  srun --exclusive --ntasks=1 --cpus-per-task=16 --cpu-bind=cores \
   singularity exec --cleanenv --bind /public/home/yuzelu --pwd "$root" \
   --env OMP_NUM_THREADS=16 --env OPENBLAS_NUM_THREADS=1 "$image" \

@@ -151,7 +151,7 @@ def implement(args, run):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--top',choices=['block_v2_e','block_v2_g'],required=True)
+    p=argparse.ArgumentParser();p.add_argument('--top',choices=['block_v2_e','block_v2_g','block_v2_n'],required=True)
     p.add_argument('--mapping',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--remove-abc-buffers',action='store_true')
     p.add_argument('--input-receivers',action='store_true')
