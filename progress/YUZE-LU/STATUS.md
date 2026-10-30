@@ -1,3 +1,5 @@
+2026-10-30 12:25 CST：前后对照页修正旧V363/R344及接口308/313指向，当前V493→494→495、R404→405→406；当前表置顶，早期周期与全部历史文字保留但明确不代表当前源。来源清单保留52旧SHA、新增18份当前规范Git字节绑定，V/R accepted均false；V485内部周期与486/492有限端到端分开，80候选只属已测子集。V493初始GRT报告总overflow0，仍修复；R404原extra29继续，旧477完整DRC继续。没有提交或取消EDA，当前M/S/T接收保持、V/R最终未齐；目标active/Issue121=in_progress/PR122=draft，登记pending、看板unverified/同步pending，审查待指定。
+
 2026-10-30 12:18 CST：新493/93618/node25已CTS完成进入GRT，501封存15原始/311源Git与远端SHA；内部LEC53478输入/53467输出、diff全0、UNSAT/IDENTICAL，5187时钟网none。CTS setup WS−0.0383897ns/TNS−0.111982ns（5项）、hold WS−0.23009ns/TNS−2.83478ns（40项），maxcap/maxslew0，仍非最终接收；实际外框1250²µm/CTS标准单元706956µm²，与旧476的1260²分别记录。R404原GRT extra28、旧477完整DRC持续实际CPU增长，497控制健康，494/495与405/406等待真实前置，无EDA取消/重启。M/S/T接收保持、V/R最终未齐，目标active/Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending，审查待指定。
 
 2026-10-30 12:10 CST：旧477严格LEC实际PASS：53478输入/53467输出、diff0/1均0、UNSAT/IDENTICAL。499保存16原始/8大文件索引/311源Git及全部回执输入输出，并与498功能和final-source精确绑定。仅该旧源功能/等价通过，旧setup/maxcap2物理拒收保持，完整DRC仍在原进程运行，不转移新493；493已进入CTS，R404原GRT extra28继续。上一条功能增量的12:12误标更正为实际12:09，未改原始回执时间。M/S/T保持，V/R最终未齐，目标active/Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending，审查待指定。
