@@ -204,6 +204,9 @@ try:
     elif MODE=='revision300-v-latest-neighborhood':
         from revision300_v_latest_neighborhood import inspect
         inspect(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('revision300-v-m3retry-vias-'):
+        from revision300_v_m3local_vias import probe
+        probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]),plan_name='m3-retry-plan-740.json',shard_run='741',mode_prefix='revision300-v-m3retry-vias-')
     elif MODE=='revision300-v-joint31-compose':
         from revision300_v_joint31 import probe
         probe(ROOT,OUT,CPUS,run)
