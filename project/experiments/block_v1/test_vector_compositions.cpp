@@ -12,7 +12,7 @@ int main(int argc,char**argv){try{
  auto point=[&](const Row&a,const Row&b,unsigned n,unsigned op,unsigned shift,bool paired){
   load(0,a);load(1,b);
   auto r=cmd(2,0,U(op)|(U(shift)<<4)|(U(n)<<11)|(U(2)<<16)|(U(paired)<<18));
-  need(r.latency==6,"composed point quotient/increment latency");auto values=read(n);Row result{};
+  need(r.latency==7,"composed point low/high increment latency");auto values=read(n);Row result{};
   std::copy(values.begin(),values.end(),result.begin());return result;
  };
  for(unsigned test=0;test<320;++test){

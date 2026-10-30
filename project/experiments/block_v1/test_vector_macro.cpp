@@ -97,9 +97,9 @@ static void revised_cases(){
  }
 }
 int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);dut.cmd_valid=0;dut.reset=1;tick();tick();dut.reset=0;tick();
- // Interrupt every point stage, including the new quotient/decision boundary.
+ // Interrupt every point stage, including the low/high increment boundary.
  // Reset must discard the transaction and require fresh operand validity.
- for(unsigned cut=0;cut<6;++cut){
+ for(unsigned cut=0;cut<7;++cut){
   Row a,b;for(unsigned j=0;j<8;++j){a[j]=int32_t(j)-4;b[j]=3;}
   load(0,a);load(1,b);need(dut.cmd_ready,"point reset input unavailable");
   dut.cmd_valid=1;dut.cmd_op=2;dut.cmd_index=0;put(U(2)|(U(1)<<4)|(U(8)<<11)|(U(2)<<16));tick();dut.cmd_valid=0;
@@ -109,10 +109,21 @@ int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);dut.cmd_vali
  }
  cmd(9,0,0,true);cmd(6,0,0,true);cmd(8,0,1,true);cmd(11,0,40|(8<<6),true);
  unsigned point_cases=0,function_cases=0,compose_cases=0;double max_function_abs[5]={};
+ // Negative quotients such as -1 carry across all low64 bits on RNE to zero.
+ // Keep this independent of the randomized oracle and exercise sign/shift
+ // boundaries through the actual seven-cycle command protocol.
+ unsigned half_carry_cases=0;
+ Row half_edge{{-1,-3,-5,INT32_MIN,INT32_MAX,1,3,5}};load(0,half_edge);load(1,half_edge);
+ for(unsigned shift:{1U,2U,31U,32U,63U,64U,127U}){
+  auto response=cmd(2,0,U(8)|(U(shift)<<4)|(U(8)<<11)|(U(2)<<16));
+  need(response.latency==7&&!response.saturated,"half carry command protocol");auto actual=read(8);
+  for(unsigned j=0;j<8;++j)need(actual[j]==sat(rne(I(half_edge[j]),shift)),"negative half carry RNE");
+  ++half_carry_cases;
+ }
  for(unsigned op=0;op<10;++op)for(unsigned t=0;t<80;++t){Row a,b;for(int j=0;j<8;++j){a[j]=int32_t(rng());b[j]=int32_t(rng());}load(0,a);load(1,b);
   bool broadcast=t&1,swap=t&2;int32_t sb=int32_t(rng()),sc=int32_t(rng());unsigned shift=op==7?rng()%97:rng()%128,width=t%3,n=1+rng()%8;int bits=width==0?8:width==1?16:32;
   U data=U(op)|(U(shift)<<4)|(U(n)<<11)|(U(broadcast)<<15)|(U(width)<<16)|(U(swap)<<18)|(U(uint32_t(sb))<<32)|(U(uint32_t(sc))<<64);
-  auto response=cmd(2,0,data);need(response.latency==6,"point cycle count");auto actual=read(n);bool saturated=false;
+  auto response=cmd(2,0,data);need(response.latency==7,"point cycle count");auto actual=read(n);bool saturated=false;
   for(unsigned j=0;j<n;++j){I bv=broadcast?sb:b[j^unsigned(swap)];I y=0;switch(op){case 0:y=I(a[j])+bv;break;case 1:y=I(a[j])-bv;break;case 2:y=I(a[j])*bv;break;case 3:y=I(a[j])*bv+sc;break;case 4:y=std::max(I(a[j]),bv);break;case 5:y=std::min(I(a[j]),bv);break;case 6:y=I(a[j])>=bv?-1:0;break;case 7:y=I(a[j])*(I(1)<<shift);break;case 8:y=a[j];break;case 9:y=a[j]<0?bv:sc;break;}if(op!=7)y=rne(y,shift);int32_t expected=sat(y,bits);saturated|=I(expected)!=y;need(actual[j]==expected,"point arithmetic mismatch");}
   need(response.saturated==saturated,"point saturation flag");++point_cases;
  }
@@ -147,5 +158,5 @@ int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);dut.cmd_vali
   for(unsigned j=0;j<k;++j){U v=cmd(12,j,0).data;need(int32_t(v)==a[order[j]]&&uint16_t(v>>32)==ids[order[j]],"TopK dynamic ID/tie mismatch");}
  }
  revised_cases();
- std::cout<<"{\"long_function_cases\":40,\"internal_rope_cases\":80,\"global_groups\":3,\"continuous_words\":64,\"continuous_cycles\":64,\"declared_global_external_effective_bytes\":"<<global_external_bytes<<",\"passed\":true,\"point_cases\":"<<point_cases<<",\"function_cases\":"<<function_cases<<",\"compose_cases\":"<<compose_cases<<",\"topk_cases\":100,\"checks\":"<<checks<<",\"cycles\":"<<cycles<<",\"sampled_function_max_abs\":[";for(int f=0;f<5;++f)std::cout<<(f?",":"")<<max_function_abs[f];std::cout<<"]}\n";return 0;
+ std::cout<<"{\"long_function_cases\":40,\"internal_rope_cases\":80,\"global_groups\":3,\"continuous_words\":64,\"continuous_cycles\":64,\"declared_global_external_effective_bytes\":"<<global_external_bytes<<",\"passed\":true,\"point_cases\":"<<point_cases<<",\"half_carry_cases\":"<<half_carry_cases<<",\"function_cases\":"<<function_cases<<",\"compose_cases\":"<<compose_cases<<",\"topk_cases\":100,\"checks\":"<<checks<<",\"cycles\":"<<cycles<<",\"sampled_function_max_abs\":[";for(int f=0;f<5;++f)std::cout<<(f?",":"")<<max_function_abs[f];std::cout<<"]}\n";return 0;
 }catch(const std::exception&e){std::cerr<<e.what()<<"\n";return 1;}}

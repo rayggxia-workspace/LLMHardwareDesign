@@ -13,6 +13,7 @@ module block_v1_v(
  M_EXEC=24,P_TOTAL=25,P_ROUND=26,G_MUL=27,G_ADD=28;
  localparam F_DRAIN=29,F_DENOM=30,N_MERGE=31,P_ROUND_ADD=32;
  localparam S_SQUARE_FINISH=33,C_SQUARE_FINISH=34;
+ localparam P_ROUND_FINISH=35;
  reg [5:0] phase;
  reg [5:0] mul_return;
  reg signed [31:0] a[0:7],b[0:7],input_mem[0:255],output_mem[0:255];
@@ -28,6 +29,7 @@ module block_v1_v(
  reg [7:0] operand_reduce_mask;
  reg signed [64:0] product[0:7],low_product[0:7];
  reg signed [127:0] point_total[0:7],point_rounded[0:7];
+ // RNE decision first; then the registered carry from the low64 increment.
  reg [7:0] point_increment;
  // Register the exact normalization merge before saturation/replay writes.
  reg signed [127:0] norm_rounded[0:7];
@@ -155,13 +157,19 @@ module block_v1_v(
    norm_denominator_add=result;
   end
  endfunction
+ // Each half is a modulo64 increment. The low-half carry is registered
+ // separately before the high half, retaining the complete128-bit result.
+ function automatic [63:0] point_half_increment;
+  input [63:0] value;input increment;
+  begin point_half_increment=value+increment;end
+ endfunction
  function automatic signed [127:0] rne;
   input signed [127:0] v;input [6:0] shift;
   reg signed [127:0] q;reg [127:0] remn,half;
   begin if(shift==0)rne=v;else begin q=v>>>shift;remn=$unsigned(v)&({128{1'b1}}>>(128-shift));half=128'd1<<(shift-1);rne=add128_grouped(q,{127'b0,((remn>half)||((remn==half)&&q[0]))},1'b0);end end
  endfunction
  // The point path registers the full quotient and the tie-to-even decision
- // before its128-bit increment. No discarded high bits or early saturation.
+ // before its two-half128-bit increment. No early narrowing or saturation.
  function automatic point_rne_increment;
   input signed [127:0] v;input [6:0] shift;
   reg signed [127:0] q;reg [127:0] remn,half;
@@ -392,7 +400,14 @@ module block_v1_v(
      phase<=P_ROUND_ADD;
     end
     P_ROUND_ADD:begin
-     for(i=0;i<8;i=i+1)point_rounded[i]<=norm_denominator_add(point_total[i],{127'b0,point_increment[i]});
+     for(i=0;i<8;i=i+1)begin
+      point_rounded[i][63:0]<=point_half_increment(point_total[i][63:0],point_increment[i]);
+      point_increment[i]<=point_increment[i]&&(&point_total[i][63:0]);
+     end
+     phase<=P_ROUND_FINISH;
+    end
+    P_ROUND_FINISH:begin
+     for(i=0;i<8;i=i+1)point_rounded[i][127:64]<=point_half_increment(point_total[i][127:64],point_increment[i]);
      phase<=P_WRITE;
     end
     P_WRITE:begin

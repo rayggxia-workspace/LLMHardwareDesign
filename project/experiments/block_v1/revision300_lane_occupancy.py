@@ -61,6 +61,7 @@ def measure(root,out,cpus,run,kind,variant):
     vector_softmax_pipeline=vector_prefetched and 'F_DRAIN=29,F_DENOM=30' in rtls[0].read_text()
     vector_merge_pipeline=vector_prefetched and 'N_MERGE=31' in rtls[0].read_text()
     vector_point_round_pipeline=vector_prefetched and 'P_ROUND_ADD=32;' in rtls[0].read_text()
+    vector_half_round_pipeline=vector_prefetched and 'P_ROUND_FINISH=35;' in rtls[0].read_text()
     vector_function_input=vector_prefetched and 'reg function_input_valid;' in rtls[0].read_text()
     vector_function_fetch=vector_prefetched and 'reg function_fetch_valid,function_fetch_subtract;' in rtls[0].read_text()
     vector_group_subtract=kind=='v' and 'function automatic [130:0] subtract130_grouped;' in (rtls[0].parent/'block_v1_v_group.sv').read_text()
@@ -70,7 +71,7 @@ def measure(root,out,cpus,run,kind,variant):
         policy=json.loads((tools/'revision300-v-fresh.json').read_text())
         command_state_isolated='Keep their datapath enables independent of cmd_valid/rsp_ready.' in rtls[0].read_text()
         if 'function automatic signed [127:0] norm_merge_rne;' in rtls[0].read_text():
-            generation='535' if 'reg [79:0] square_pair[0:3];' in rtls[0].read_text() else ('520' if 'point_rounded[i]<=norm_denominator_add(' in rtls[0].read_text() else ('505' if 'square_tree[t]=norm_denominator_add(' in rtls[0].read_text() else ('485' if 'function automatic signed [127:0] norm_denominator_add;' in rtls[0].read_text() else ('474' if vector_point_round_pipeline else '459'))))
+            generation='550' if 'P_ROUND_FINISH=35;' in rtls[0].read_text() else ('535' if 'reg [79:0] square_pair[0:3];' in rtls[0].read_text() else ('520' if 'point_rounded[i]<=norm_denominator_add(' in rtls[0].read_text() else ('505' if 'square_tree[t]=norm_denominator_add(' in rtls[0].read_text() else ('485' if 'function automatic signed [127:0] norm_denominator_add;' in rtls[0].read_text() else ('474' if vector_point_round_pipeline else '459')))))
             assert policy['function']=='block-v1-20261030-'+generation+'/tasks/revision300-test-v'
             prior=out.parents[2]/('block-v1-20261030-'+generation+'/tasks')/('revision300-bench-v-'+variant)
         else:
@@ -169,6 +170,14 @@ def measure(root,out,cpus,run,kind,variant):
   p.internal["point_increment_register_write_bits"]+=8;
  }
  if(state==32)p.internal["point_rounded_register_write_slots"]+=8;''')
+    if vector_half_round_pipeline:
+        old='if(state==32)p.internal["point_rounded_register_write_slots"]+=8;'
+        assert monitor.count(old)==1
+        monitor=monitor.replace(old,'''if(state==32) {
+  p.internal["point_rounded_low64_register_write_slots"]+=8;
+  p.internal["point_increment_carry_register_write_bits"]+=8;
+ }
+ if(state==35)p.internal["point_rounded_high64_register_write_slots"]+=8;''')
     code=code.replace('static std::map<std::string,Phase> phases;',monitor+'\nstatic std::map<std::string,Phase> phases;')
     assert code.count('++result.reasons[reason];++result.cycles;')==1
     code=code.replace('++result.reasons[reason];++result.cycles;',
@@ -211,6 +220,7 @@ def measure(root,out,cpus,run,kind,variant):
         instrument_generator_sha256=file_sha(Path(__file__)),rtl_sha256=reference['rtl_sha256'],
         prefetched_operand_pipeline=prefetched,
         vector_operand_point_pipeline=vector_prefetched,
+        vector_point_half_increment_pipeline=vector_half_round_pipeline,
         vector_norm_denominator_pipeline=vector_norm_pipeline,
         vector_softmax_denominator_pipeline=vector_softmax_pipeline,
         scope='Preedge actual phase/valid/row_valid and, for prefetched R, operand_valid/fetch_done samples during identical source-bound public schedules. Product slots require their actual write enable; V product writes occur only in M_EXEC, operand/total/rounded slots use their separate phases; R operand slots include pipeline fill and single-fetch phases. Function valid tokens counted for each2lane stage, allocated slots include odd tail padding. Ratios may use stated total/phase cycle denominators. These are logical enable/token occupancy, not transistor switching, power, gate-netlist occupancy, or model/system performance.'),indent=2)+'\n')
