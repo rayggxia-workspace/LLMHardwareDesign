@@ -13,7 +13,7 @@ COMPILER='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--model',choices=['e','g','n'],required=True)
+    p=argparse.ArgumentParser();p.add_argument('--model',choices=['e','g','n','m'],required=True)
     p.add_argument('--out',type=Path,required=True);a=p.parse_args()
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     name='block_v2_'+a.model
