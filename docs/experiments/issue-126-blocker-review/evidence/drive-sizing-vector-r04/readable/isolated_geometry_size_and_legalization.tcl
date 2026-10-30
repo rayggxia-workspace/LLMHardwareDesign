@@ -137,4 +137,3 @@ set f [open {/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/curre
 fingerprint {/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/current_driver_sizing/r04/vector/placed}
 write_db {/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/current_driver_sizing/r04/vector/placed_NOT_ROUTED.odb}
 close $stages
-

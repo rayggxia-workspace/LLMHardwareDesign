@@ -22,4 +22,3 @@ foreach n [$b getNets] {
 set f [open {/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/parent_pg_llsys_local/r01/actual_transform.tsv} w];puts $f [list R0 $ix $iy [$bb xMin] [$bb yMin] [$bb xMax] [$bb yMax] [$b getDbUnitsPerMicron]];close $f
 help pin_access
 if {[llength [info commands pin_access]]} {set f [open {/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/parent_pg_llsys_local/r01/native_pin_access_body.txt} w];puts $f [info body pin_access];close $f}
-

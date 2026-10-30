@@ -41,4 +41,3 @@ set f [open {/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/paren
 foreach mt [$m getMTerms] {foreach p [$mt getMPins] {foreach z [$p getGeometry] {puts $f [join [list [$mt getName] [$mt getIoType] [$mt getSigType] [[$z getTechLayer] getName] [$z xMin] [$z yMin] [$z xMax] [$z yMax]] "\t"]}}};close $f
 set f [open {/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/parent_conservative_native_check/r01/llaccel_aux.OBS_counts.tsv} w];set counts [dict create];foreach z [$m getObstructions] {dict incr counts [[$z getTechLayer] getName]};dict for {layer n} $counts {puts $f "$layer\t$n"};close $f
 set f [open {/public/home/yuzelu/PingyangHuang/issue-126/full-pin-20261027/parent_conservative_native_check/r01/llaccel_aux.size.tsv} w];puts $f [list [$m getWidth] [$m getHeight]];close $f
-
