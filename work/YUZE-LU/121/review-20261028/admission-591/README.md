@@ -5,3 +5,5 @@ Refs #121 / PR #122。十六个固定队列与远端manifest/queue、归档Git d
 576八项PASS；577五项有限SV PASS、两项occupancy严格版本识别失败，保留终态。587仅修helper、51 RTL/C++不变，两项occupancy已PASS。588使用f26714b4归档，全部16前置为576八项/既有348组算术证明/577五项/587两项；逐项真实回执约束。588重新全六阶段后589最终所有门/交付/完整几何、590逐端口/有限RC。589/590 helper84045638/归档088cfe26，仍为相同51份RTL/C++。原578/579/580从未提交Slurm，不重试任何终态EDA。589 staging末尾dry-run曾遇Issue级非阻塞锁，identity guard和全部文件已写好，未调用sbatch；591按原锁与reservation处理。
 
 8 allocations上限包含旧/PENDING/UNKNOWN，c96六个16CPU独立槽动态补位，资源减少依据真实依赖/RAM；无空任务占位或其他成员作业操作。最终物理资格仍未齐。
+
+实际部署完成：PID1087781、config SHA9462704b，capture-start封存启动和后续观测；仅退役581登录控制器、未取消Slurm或EDA。实际自动接续588/93781/node16，后续589/590等待。账户核对全部本Issue账目并包含460错误历史runID/93606，原记录SHA保持。
