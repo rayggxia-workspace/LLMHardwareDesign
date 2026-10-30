@@ -28,3 +28,6 @@ Refs #121 / PR #122。目标仍是M/V/R/S/T各一个基础宏的300MHz最终M1�
 - 当前规格`docs/BLOCK_V1_REVIEW_CONTRACT.md`已修复过时535/537入口、周期与预算，执行选择588/589/590保持。旧100MHz正文只作历史。
 
 PR122保持OPEN/DRAFT，Issue121 OPEN/in_progress；不自审/合并/关闭。管理中心PR5登记pending，看板因无config/board.json而unverified/同步pending，管理员/审查人待指定。线上Issue/PR各自ad3c2b3历史后缀不同，更新必须分别保留。当前HEAD的CI只按实际读回，不能用旧39f32da4成功代替。
+
+
+603追加：V588 CTS已完成，15原始/315源核验、内部LEC54010/53999零差异；CTS setup WS−.000479172ns/1项、hold WS−.0108806ns/4项。仅中间证据，布线及最终门继续。record603已执行，不重复；审计应为463近期raw Git-byte/200证据SHA。
