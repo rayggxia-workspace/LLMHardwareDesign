@@ -159,6 +159,9 @@ try:
     elif MODE=='revision300-cts-probe-s':
         from revision300_cts_probe import probe
         probe(ROOT,OUT,CPUS,run,'s')
+    elif MODE in ('revision300-v-spacing-localize', 'revision300-v-cap-localize'):
+        from revision300_v_physical_localize import diagnose
+        diagnose(ROOT,OUT,CPUS,run,'spacing' if 'spacing' in MODE else 'cap')
     elif MODE.startswith('revision300-final-source-'):
         from revision300_receive import finalize
         finalize(ROOT,OUT,CPUS,run,MODE[-1])
