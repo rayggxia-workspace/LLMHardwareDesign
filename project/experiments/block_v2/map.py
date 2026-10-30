@@ -8,7 +8,7 @@ import time
 from run_rtl import ROOT,sha
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--model',choices=['e','g','n'],required=True)
+    p=argparse.ArgumentParser();p.add_argument('--model',choices=['e','g','n','m'],required=True)
     p.add_argument('--rtl-receipt',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args()
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     top='block_v2_'+a.model;rtl=ROOT/'project/rtl/block_v2';sources=[rtl/(top+'.sv')]
