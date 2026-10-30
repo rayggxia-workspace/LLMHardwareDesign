@@ -10,8 +10,8 @@ DRIVER=Path(__file__).resolve().parent
 
 def run(revision,case,source_kind='original'):
     assert case in ['vector','opentpu_aux','llaccel_aux']
-    assert source_kind in ['original','system_existing_buffers_r02','system_stacked_vias_r01','llsys_actual_parent_tip_r01']
-    assert case!='llaccel_aux' or source_kind=='llsys_actual_parent_tip_r01'
+    assert source_kind in ['original','system_existing_buffers_r02','system_stacked_vias_r01','llsys_actual_parent_tip_r01','llsys_corners_r01']
+    assert case!='llaccel_aux' or source_kind in ['llsys_actual_parent_tip_r01','llsys_corners_r01']
     source=ROOT/('vector_resume/r01' if case=='vector' else 'checkpoint_route/r01')
     if source_kind=='system_existing_buffers_r02':
         assert case=='opentpu_aux'
@@ -20,7 +20,12 @@ def run(revision,case,source_kind='original'):
         assert case=='opentpu_aux';source=ROOT/'system_stacked_via_route/r01/opentpu_aux-C'
     if source_kind=='llsys_actual_parent_tip_r01':
         assert case=='llaccel_aux';source=ROOT/'llsys_parent_access_tip/r01'
+    if source_kind=='llsys_corners_r01':
+        assert case=='llaccel_aux';source=ROOT/'llsys_corner_fill/r01'
     p=source/'execution.json';j=json.loads(p.read_text());assert j.get('completed_utc')
+    if source_kind=='llsys_corners_r01':
+        assert not j.get('actual_failure') and j['fresh_DRC_count']==0 and j['all_closed_sources_unchanged']
+        assert j['whole_signal_geometry']['pass'] and j['native_returncodes']['RC_STA']==0
     trial=ROOT/('trials/llsys-pg-r03' if case=='llaccel_aux' else 'trials/access-r03')/(case+'-C')/'execution.json'
     old=json.loads(trial.read_text())
     odb=source/'routed.odb';spef=source/'extracted.spef';sdc=Path(old['source_sdc'])
