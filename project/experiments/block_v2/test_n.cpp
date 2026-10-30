@@ -53,9 +53,9 @@ static void softmax(const std::vector<int16_t>& x){
  int ma=*std::max_element(x.begin(),x.end());uint64_t sum=0;std::vector<uint16_t> ex(x.size());double ref_sum=0;
  for(auto v:x)ref_sum+=std::exp((double(v)-ma)/1024.);
  for(unsigned i=0;i<x.size();i+=8){auto r=transaction(3,std::min<unsigned>(8,x.size()-i),0,chunk(x,i));for(unsigned j=0;j<8&&i+j<x.size();++j){ex[i+j]=expraw(int(x[i+j])-ma);ck(r[j]==ex[i+j],"EXP interpolation");sum+=ex[i+j];}}
- transaction(4);uint64_t factor=(uint64_t(1)<<46)/sum;
+ transaction(4);uint64_t factor=(uint64_t(1)<<44)/sum;
  for(unsigned i=0;i<x.size();i+=8){Vec a{};for(unsigned j=0;j<8&&i+j<x.size();++j)a[j]=ex[i+j];auto y=transaction(6,std::min<unsigned>(8,x.size()-i),0,a);
-  for(unsigned j=0;j<8&&i+j<x.size();++j){uint64_t z=rne(int64_t(ex[i+j])*factor,30);z=std::min<uint64_t>(65535,z);ck(y[j]==z,"probability normalization");soft_error=std::max(soft_error,std::abs(y[j]/65536.-std::exp((double(x[i+j])-ma)/1024.)/ref_sum));}}
+  for(unsigned j=0;j<8&&i+j<x.size();++j){uint64_t z=rne(int64_t(ex[i+j])*factor,30);z=std::min<uint64_t>(16384,z);ck(y[j]==z&&int16_t(y[j])>=0,"probability normalization / signed M compatibility");soft_error=std::max(soft_error,std::abs(y[j]/16384.-std::exp((double(x[i+j])-ma)/1024.)/ref_sum));}}
  transaction(6,1,0,{}, {},true);
 }
 static void topk(){for(unsigned trial=0;trial<80;++trial){unsigned k=1+trial%8;transaction(8,0,k);std::vector<std::pair<int,int>> entries;
