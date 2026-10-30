@@ -13,7 +13,7 @@ def raw(path):
 
 
 def summarize(folder):
-    folder=Path(folder);receipt_raw=raw(folder/'execution.json.gz');q=json.loads(receipt_raw)
+    folder=Path(folder);receipt_raw=raw(folder/('execution.json' if (folder/'execution.json').exists() else 'execution.json.gz'));q=json.loads(receipt_raw)
     assert q['native_returncode']==0 and q['all_sources_unchanged']
     assert all(q['source_worst_slacks_exactly_replayed'].values())
     result={'scope':'BOUNDED_ACTUAL_PATH_TYPE_DIAGNOSIS_NOT_ALL_PATH_ENUMERATION_OR_REPAIR',
