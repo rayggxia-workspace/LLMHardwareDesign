@@ -42,5 +42,5 @@ int main(int argc,char** argv){try{Verilated::commandArgs(argc,argv);p=std::make
  for(unsigned op=0;op<16;++op)for(unsigned s=0;s<32;++s){for(unsigned i=0;i<8;++i){a[i]=v[i];b[i]=v[(i+s)%8];c[i]=v[(i+op)%8];}run(op,s,a,b,c,true);}
  for(unsigned n=0;n<4000;++n){for(unsigned i=0;i<8;++i){a[i]=int16_t(rng());b[i]=int16_t(rng());c[i]=int16_t(rng());}run(rng()%13,rng()%32,a,b,c,n%7==0);}
  d.in_valid=1;d.in_op=9;tick();reset();
- std::cout<<"{\"passed\":true,\"checks\":"<<checks<<",\"cycles\":"<<cycles<<"}\n";return 0;
- }catch(const std::exception& e){std::cerr<<"FAIL "<<cycles<<" "<<e.what()<<"\n";return 1;}}
+ std::cout<<"{\"passed\":true,\"checks\":"<<checks<<",\"cycles\":"<<cycles<<"}\n";p.reset();return 0;
+ }catch(const std::exception& e){std::cerr<<"FAIL "<<cycles<<" "<<e.what()<<"\n";p.reset();return 1;}}
