@@ -12,6 +12,7 @@ python project/experiments/blocker_review/validate.py docs/experiments/issue-126
 
 文档/原文SHA/60条八项检查通过不代表完整物理或系统验收通过。本总结从main创建独立PR，不改写原工程PR129。
 
+
 本仓库含研究资料、参考结果和实验性分层物理实现代码。`project/experiments/` 下保留 `block_hierarchy/`、`parallel_blocks/` 和 `opentpu_compare/` 的实验及证据；正式预制底座和制造工具链尚未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md) 中标注的候选架构不能当作已实现硬件。
 
 ## 研究系统边界
