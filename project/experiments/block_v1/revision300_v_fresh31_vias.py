@@ -96,6 +96,10 @@ def probe(root,out,cpus,run,shard,combined=False,plan_name='fresh31-via-plan-713
         originals[name]=(header,paths,rects)
     assert set(originals)==set(wanted)and n0==562494
     script='set_thread_count 16\nread_db {'+str(source/'local-candidate.odb')+'}\nset block [ord::get_db_block]\nset tech [ord::get_db_tech]\nset wanted [dict create]\n'
+    if 'required_manufacturing_grid_dbu'in plan:
+        script+='if {[$tech getManufacturingGrid] != %d} {error {Manufacturing grid mismatch}}\n'%plan['required_manufacturing_grid_dbu']
+        assert all(v%plan['required_manufacturing_grid_dbu']==0 for edit in selected for layer,box in edit['new_shapes']for v in box)
+
     for name in wanted:script+='dict set wanted [encoding convertfrom utf-8 [binary decode hex {'+name.encode().hex()+'}]] 1\n'
     script+='set selected [dict create]\nforeach net [$block getNets] {set name [string map [list [format %c 92] {}] [$net getName]];if {[dict exists $wanted $name]} {if {[dict exists $selected $name]} {error "Ambiguous target"};dict set selected $name $net}}\n'
     script+='if {[dict size $selected] != %d} {error "Missing target"}\n'%len(wanted)
