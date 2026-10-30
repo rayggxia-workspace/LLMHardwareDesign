@@ -112,7 +112,7 @@ module block_v2_n(
   for(integer l=0;l<2;l=l+1)begin
    if(!enabled[l])formatted[16*l+:16]=0;
    else if(operation==6)begin
-    if(rounded[l]>65535)begin formatted[16*l+:16]=65535;pair_saturated=1;end
+    if(rounded[l]>16384)begin formatted[16*l+:16]=16384;pair_saturated=1;end
     else if(rounded[l]<0)begin formatted[16*l+:16]=0;pair_saturated=1;end
     else formatted[16*l+:16]=rounded[l][15:0];
    end else begin
@@ -148,7 +148,9 @@ module block_v2_n(
        else if(mode==1)begin group_n<={sumsq,16'd0};group_d<={48'd0,count};phase<=MEAN_START;end
        else begin group_n<={sumsq,16'd0}+{16'd0,epsilon,16'd0};phase<=ROOT_START;end
       end
-      4:begin group_n<=64'd1<<46;group_d<={32'd0,exp_sum};phase<=FACTOR_START;end
+      // Q1.14 probabilities are nonnegative S16 operands accepted directly by
+      // M; Q0.16 would reinterpret probabilities above0.5 as negative S16.
+      4:begin group_n<=64'd1<<44;group_d<={32'd0,exp_sum};phase<=FACTOR_START;end
       7:begin rsp_data<={sumsq,sum,minimum,maximum,count};rsp_valid<=1;end
       8:begin top_count<=0;top_k<=cmd_param[3:0];top_loading<=1;rsp_valid<=1;end
       9:begin
