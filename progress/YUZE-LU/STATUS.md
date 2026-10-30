@@ -1,3 +1,5 @@
+2026-10-30 20:07 CST：549封存旧523/93679/node13自然FAILED1:0完整DRC，12原始/1服务器大GDS SHA/311归档Git与543最终源receipt绑定。完整未修改GDS deck129类别0项，原生445项Metal Spacing（M1=1/M2=248/M3=196），整体拒收；旧522setup18/cap3拒收保持，不转移当前535/537资格。当前V537原详细布线与R404原GRT继续，无EDA取消或重启。M/S/T保持、V/R最终未齐；Issue in_progress/PR draft，登记pending/看板unverified同步pending/审查待指定。
+
 2026-10-30 19:28 CST：V537完成全局布线并进入详细布线，547封存5份原始小文件、完整GRT JSON服务器SHA及311源Git绑定。阶段setup WS−.00347455ns/TNS−.00564171ns/2项，hold WS+.0786859ns/0项，cap17/slew3；尚未通过，等待真实final与538/539，不放宽约束。R404原GRT第37次迭代及旧523完整GDS DRC继续。M/S/T保持，V/R最终未齐；Issue in_progress/PR draft、登记pending、看板unverified同步pending、审查待指定。
 
 2026-10-30 19:10 CST：新V537完成CTS并进入global route，545封存15原始/311源Git与远端SHA、5234实际clock net无NDR及内部LEC54010/53999全部差异0。CTS setup−.00726574ns/4项、hold−.250592ns/20项、cap/slew0，首个min/max均reset→stats_sumsq[1][0/79]，5实际单元映射绑定；仍不合格，等待真实route/final及538/539，不放宽时钟或检查。旧523最终功能/严格LEC已封存543/544，完整GDS DRC及R404原GRT继续。M/S/T保持，V/R最终未齐；Issuein_progress/PRdraft、登记pending、看板unverified同步pending、审查待指定。
