@@ -38,7 +38,7 @@ def inspect(root,out,cpus,run):
     assert unchanged
 
 
-def probe(root,out,cpus,run,shard,combined=False):
+def probe(root,out,cpus,run,shard,combined=False,plan_name='local-via-plan-693.json',shard_run='694',mode_prefix='revision300-v-local-vias-',compose_mode='revision300-v-local-via-compose'):
     from io_slots import file_sha
     from native_escape import records
     from revision300_v_transition import decode
@@ -53,16 +53,18 @@ def probe(root,out,cpus,run,shard,combined=False):
     for n in source_names:assert file_sha(source/n)==receipt['outputs'][n]
     prior=json.loads((source/source_names[0]).read_text())
     assert prior['passed']and prior['combined']and prior['candidate_native_count']==103 and prior['added_markers']==0
-    plan_path=root/'project/experiments/block_v1/local-via-plan-693.json'
-    plan=json.loads(plan_path.read_text());assert plan['source_native_count']==103 and len(plan['selected'])==28
+    plan_path=root/'project/experiments/block_v1'/plan_name
+    plan=json.loads(plan_path.read_text());assert plan['source_native_count']==103 and plan['selected']
     neighborhood=base/'block-v1-20261031-684/tasks/revision300-v-composed-neighborhood'
     nr=json.loads((neighborhood/'receipt.json').read_text());assert nr['passed']
     for n in('revision300-v-composed-neighborhood.json','via-footprints.tsv','net-aliases.tsv','layer-dimensions.tsv','neighborhood.tsv'):
         assert file_sha(neighborhood/n)==nr['outputs'][n]
     assert file_sha(neighborhood/'neighborhood.tsv')==plan['geometry_sha256']
-    topology=base/'block-v1-20261031-664/tasks/revision300-v-repaired-topology'
+    topology=base/plan.get('observed_task','block-v1-20261031-664/tasks/revision300-v-repaired-topology')
     tr=json.loads((topology/'receipt.json').read_text());assert tr['passed']
-    assert file_sha(topology/'observed-routes.json')==tr['outputs']['observed-routes.json']==plan['inputs_sha256']['server664-observed-routes.json']
+    observed_hash=plan['inputs_sha256'].get('server694-observed-routes.json',plan['inputs_sha256'].get('server664-observed-routes.json'))
+    assert file_sha(topology/'observed-routes.json')==tr['outputs']['observed-routes.json']==observed_hash
+    if 'observed_receipt_sha256'in plan:assert file_sha(topology/'receipt.json')==plan['observed_receipt_sha256']
     for name,h in plan['inputs_sha256'].items():
         if name.split('/')[-1]in('revision300-v-composed-neighborhood.json','via-footprints.tsv','net-aliases.tsv','layer-dimensions.tsv'):
             assert file_sha(neighborhood/name.split('/')[-1])==h
@@ -70,24 +72,34 @@ def probe(root,out,cpus,run,shard,combined=False):
             assert file_sha(root/name)==h
         if name.endswith('/receipt.json'):assert file_sha(source/'receipt.json')==h
     observed=json.loads((topology/'observed-routes.json').read_text())
-    independent=[]
+    independent=[];excluded=set();failure_filter=[]
     if combined:
-        assert out.name=='revision300-v-local-via-compose'
+        assert out.name==compose_mode
         covered=[]
         for s in range(6):
-            folder=base/('block-v1-20261031-694/tasks/revision300-v-local-vias-'+str(s))
-            r=json.loads((folder/'receipt.json').read_text());assert r['passed']and r['mode']==folder.name
+            folder=base/('block-v1-20261031-'+shard_run+'/tasks/'+mode_prefix+str(s))
+            r=json.loads((folder/'receipt.json').read_text());assert r['mode']==folder.name
             for n in('revision300-v-local-vias.json','selected-via-edits.json','local-native-drc.rpt'):
                 assert file_sha(folder/n)==r['outputs'][n]
             d=json.loads((folder/'revision300-v-local-vias.json').read_text())
-            assert d['passed']and d['shard']==s and d['original_native_count']==103 and d['added_markers']==0
+            assert d['passed']==r['passed']and d['shard']==s and d['original_native_count']==103
+            assert d['exact_normal_nets_headers_paths_rectangles']and d['original_inputs_unchanged']
             assert d['source_receipt_sha256']==file_sha(source/'receipt.json')and d['plan_sha256']==file_sha(plan_path)
             own=[p for p in plan['selected']if p['shard']==s]
             assert json.loads((folder/'selected-via-edits.json').read_text())==own
             assert d['selected_markers']==[p['original_index']for p in own]
-            covered.extend(d['selected_markers']);independent.append(dict(shard=s,receipt_sha256=file_sha(folder/'receipt.json')))
-        assert sorted(covered)==sorted(p['original_index']for p in plan['selected'])and len(covered)==28
-    selected=plan['selected']if combined else[p for p in plan['selected']if p['shard']==shard]
+            added=violations((folder/'local-native-drc.rpt').read_text())-violations((source/'remaining-native-drc.rpt').read_text())
+            assert sum(added.values())==d['added_markers']and r['passed']==(not bool(added))
+            modified={p['net']for p in own};participants=set()
+            for marker in added:
+                implicated=set(re.findall(r'net:([^ ]+)',marker))&modified
+                assert implicated,'New marker has no attributed edited participant; do not blindly compose'
+                participants.update(implicated)
+            excluded.update(participants)
+            failure_filter.append(dict(shard=s,passed=r['passed'],new_markers=list(added.elements()),excluded_modified_nets=sorted(participants)))
+            covered.extend(d['selected_markers']);independent.append(dict(shard=s,passed=r['passed'],receipt_sha256=file_sha(folder/'receipt.json')))
+        assert sorted(covered)==sorted(p['original_index']for p in plan['selected'])
+    selected=[p for p in plan['selected']if p['net']not in excluded]if combined else[p for p in plan['selected']if p['shard']==shard]
     wanted={p['net']:p for p in selected};assert len(wanted)==len(selected)>0
     n0=0;originals={};others=Counter()
     for record in records(source/'remaining-candidate.def'):
@@ -137,6 +149,7 @@ def probe(root,out,cpus,run,shard,combined=False):
         script+='odb::dbWireEncoder_end $enc\nodb::delete_dbWireEncoder $enc\n'
     script+='write_db local-candidate.odb\nwrite_def local-candidate.def\ndrt::check_drc_cmd local-native-drc.rpt 0 0 0 0 native_whole_drc\n'
     (out/'remaining-vias.tcl').write_text(script);(out/'selected-via-edits.json').write_text(json.dumps(selected,indent=2)+'\n')
+    (out/'failure-filter.json').write_text(json.dumps(dict(actual_shards=failure_filter,excluded_nets=sorted(excluded),retained=len(selected)),indent=2)+'\n')
     run(['openroad','-no_init','-exit',out/'remaining-vias.tcl'],'remaining-vias.log')
     actual=Counter();found=set();exact=True;n1=0
     for record in records(out/'local-candidate.def'):
@@ -148,7 +161,7 @@ def probe(root,out,cpus,run,shard,combined=False):
     exact=exact and actual==others and found==set(expected)and n0==n1
     old=violations((source/'remaining-native-drc.rpt').read_text());new=violations((out/'local-native-drc.rpt').read_text());assert sum(old.values())==103
     unchanged=all(file_sha(source/n)==receipt['outputs'][n]for n in('remaining-candidate.odb','remaining-candidate.def','remaining-native-drc.rpt'))
-    result=dict(passed=exact and unchanged and not(new-old)and bool(old-new),physical_qualified=False,shard=shard,combined=combined,independent_shard_receipts=independent,
+    result=dict(passed=exact and unchanged and not(new-old)and bool(old-new),physical_qualified=False,shard=shard,combined=combined,independent_shard_receipts=independent,excluded_modified_nets=sorted(excluded),
                 plan_sha256=file_sha(plan_path),source_receipt_sha256=file_sha(source/'receipt.json'),source_inputs_sha256={n:receipt['outputs'][n]for n in('remaining-candidate.odb','remaining-candidate.def','remaining-native-drc.rpt')},
                 exact_normal_nets_headers_paths_rectangles=exact,original_inputs_unchanged=unchanged,normal_net_counts=[n0,n1],
                 selected_markers=[p['original_index']for p in selected],selected_nets=len(selected),original_native_count=103,candidate_native_count=sum(new.values()),
