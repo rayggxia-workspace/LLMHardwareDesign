@@ -16,7 +16,8 @@ DRIVER=Path(__file__).resolve().parent
 LIB='/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib'
 
 
-def run(revision):
+def run(revision,selection='full_cone'):
+    assert selection in ['full_cone','measured_path_slice']
     source=ROOT/'vector_resume/r01';rp=source/'execution.json';s=json.loads(rp.read_text())
     prior=ROOT/'vector_clone_probe/r03';gp=prior/'execution.json';g=json.loads(gp.read_text())
     odb=source/'routed.odb';graph=prior/'source.tsv.gz'
@@ -33,13 +34,15 @@ def run(revision):
        'driver_commit':(DRIVER/'driver_commit.txt').read_text().strip(),'scheduler_job':os.environ['SLURM_JOB_ID'],
        'original_functional_architecture_pipeline_state_ports_clocks_loads_and_layer_sets':'UNCHANGED_SOURCE; replacement pending independent physical verification',
        'cost_scope':'ADDITIONAL_GATE_MAPPING_NOT_PURE_XY; source and all previous failures retained',
-       'native_returncodes':{},'full_qualification':False,'actual_source_ODB_edited':False,
+       'native_returncodes':{},'selection_profile':selection,'full_qualification':False,'actual_source_ODB_edited':False,
        'physical_route_RC_STA_GDS_full_rules':'NOT_EXECUTED','relative_combinational_equivalence':'NOT_EXECUTED'}
     save=lambda:(out/'execution.json').write_text(json.dumps(q,indent=2)+'\n');save()
     common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out),IMAGE]
     def command(label,args,timeout=1800):
         with (out/(label+'.log')).open('x') as f:
-            q['native_returncodes'][label]=subprocess.call(common+args,stdout=f,stderr=subprocess.STDOUT,timeout=timeout)
+            try:q['native_returncodes'][label]=subprocess.call(common+args,stdout=f,stderr=subprocess.STDOUT,timeout=timeout)
+            except subprocess.TimeoutExpired:
+                q['native_returncodes'][label]='TIMEOUT_'+str(timeout)+'s';save();raise
         save();assert q['native_returncodes'][label]==0,label+' native command failed'
     try:
         raw=subprocess.check_output(common+['cat',LIB]);lib=raw.decode();q['actual_Liberty_SHA256']=hashlib.sha256(raw).hexdigest()
@@ -96,6 +99,25 @@ def run(revision):
             if inst is None or inst in protected or inst in selected:continue
             selected.add(inst);pending.extend(n for d,n in bycell[inst].values() if d=='INPUT' and n!='NULL')
         assert selected and not selected&protected
+        if selection=='measured_path_slice':
+            audit=ROOT/'actual_path_audit/r01/vector';ap=audit/'execution.json';a=json.loads(ap.read_text());jp=audit/'setup_paths.json'
+            assert a['native_returncode']==0 and a['all_sources_unchanged'] and all(a['source_worst_slacks_exactly_replayed'].values())
+            assert a['source_SHA'][str(odb)]==sha(odb) and sha(jp)==a['files'][jp.name]['sha256']
+            assert sha(jp)=='d4a2682f34e4dc4088090baf9adf2b7d69657512b83e62c739d1370d3dc7a923'
+            inputs.update({str(p):sha(p) for p in [ap,jp]})
+            path=min(json.loads(jp.read_text())['checks'],key=lambda x:x['slack']);nodes=path['source_path']
+            arcs=[display[re.sub(r'\\([\[\]])',r'\1',b['instance'])] for a,b in zip(nodes,nodes[1:]) if a.get('instance') and a['instance']==b.get('instance')]
+            assert len(arcs)==141 and set(arcs)<=selected
+            full_count=len(selected);selected=set(arcs)-protected
+            # One actual fan-in step gives local Boolean restructuring room;
+            # all resulting crossing fanouts still become CEC observations.
+            for inst in list(selected):
+                for d,n in bycell[inst].values():
+                    driver=drivers.get(n)
+                    if d=='INPUT' and driver is not None and driver not in protected:selected.add(driver)
+            q['prior_full_cone_cells']=full_count;q['measured_path_cell_arcs']=141
+            q['prior_attempt']='r02 full cone timed out after1800s before mapped netlist/CEC; preserved, no repeated whole-cone run'
+            q['scope']='MEASURED_141_ARC_PATH_AND_ONE_HOP_GATE_REMAP_NOT_ALL_VECTOR_TIMING_OR_PHYSICAL_REPAIR'
         topoutputs={n for d,n in ports.values() if d=='OUTPUT'}
         inputnets=set();outputnets=set();wires=set();pin_net={}
         for inst in sorted(selected):
@@ -129,12 +151,17 @@ def run(revision):
                  ABC_delay_target_is_not_extracted_STA_or_original_clock_change=True);save()
         script=['read_liberty -ignore_miss_func '+LIB,'read_verilog cut.v','hierarchy -check -top hpy_vector_cut','flatten','proc','opt','techmap','opt','clean',
                 'write_blif reference.blif','abc -liberty '+LIB+' -D 3000','clean','tee -o mapped_stat.json stat -json -liberty '+LIB,
-                'write_verilog -noattr remapped.v','write_json remapped.json','flatten','techmap','opt','clean','write_blif implementation.blif']
-        (out/'map.ys').write_text('\n'.join(script)+'\n');command('mapping',[YOSYS,'-s','map.ys'])
+                'write_verilog -noattr remapped.v','write_json remapped.json']
+        budget=300 if selection=='measured_path_slice' else 1800
+        (out/'map.ys').write_text('\n'.join(script)+'\n');command('mapping',[YOSYS,'-s','map.ys'],budget)
         mapped=json.loads((out/'remapped.json').read_text())['modules']['hpy_vector_cut']
         q['new_cut_cell_types']=dict(Counter(c['type'] for c in mapped['cells'].values()))
         assert all(c['type'] in models and not contracts.get(c['type'],{}).get('state') and not list(groups(models[c['type']],'ff')) and not list(groups(models[c['type']],'latch')) for c in mapped['cells'].values())
-        command('independent_combinational_CEC',[abc,'-c','cec reference.blif implementation.blif'])
+        # A fresh process loads functional models for every newly mapped cell;
+        # no dependence on modules pruned by the first hierarchy pass.
+        (out/'candidate_to_blif.ys').write_text('\n'.join(['read_liberty -ignore_miss_func '+LIB,'read_verilog remapped.v','hierarchy -check -top hpy_vector_cut','flatten','proc','opt','techmap','opt','clean','write_blif implementation.blif'])+'\n')
+        command('fresh_candidate_boolean_model',[YOSYS,'-s','candidate_to_blif.ys'],budget)
+        command('independent_combinational_CEC',[abc,'-c','cec reference.blif implementation.blif'],budget)
         log=(out/'independent_combinational_CEC.log').read_text()
         assert re.search(r'Networks are equivalent',log) and not re.search(r'NOT EQUIVALENT|not equivalent|Error:',log,re.I)
         q['relative_combinational_equivalence']='PASS_ALL_EXPOSED_CONE_OUTPUTS_FOR_ARBITRARY_STATE_INPUTS; not original RTL proof or installed physical ECO'
@@ -143,4 +170,4 @@ def run(revision):
     q['all_closed_sources_unchanged']=all(sha(Path(p))==v for p,v in inputs.items());q['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
     q['files']={p.name:{'bytes':p.stat().st_size,'sha256':sha(p)} for p in out.iterdir() if p.is_file() and p.name!='execution.json'};save()
     return int(bool(q.get('actual_failure')) or not q['all_closed_sources_unchanged'] or not q['relative_combinational_equivalence'].startswith('PASS'))
-if __name__=='__main__':sys.exit(run(sys.argv[1]))
+if __name__=='__main__':sys.exit(run(*sys.argv[1:3]))
