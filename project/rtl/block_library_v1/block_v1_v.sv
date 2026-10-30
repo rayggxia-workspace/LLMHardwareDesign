@@ -12,6 +12,7 @@ module block_v1_v(
  ROT_LOW=18,ROT_HIGH=19,ROT_ROUND=20,ROT_COMBINE=21,S_REDUCE=22,C_REDUCE=23,
  M_EXEC=24,P_TOTAL=25,P_ROUND=26,G_MUL=27,G_ADD=28;
  localparam F_DRAIN=29,F_DENOM=30,N_MERGE=31,P_ROUND_ADD=32;
+ localparam S_SQUARE_FINISH=33,C_SQUARE_FINISH=34;
  reg [5:0] phase;
  reg [5:0] mul_return;
  reg signed [31:0] a[0:7],b[0:7],input_mem[0:255],output_mem[0:255];
@@ -41,6 +42,9 @@ module block_v1_v(
  reg signed [31:0] block_max,block_min;reg [15:0] block_argmax,block_argmin;
  reg signed [63:0] sum_tree[0:14],stat_block_sum;
  reg [79:0] square_tree[0:14],stat_block_sq;
+ // Cut the masked three-level U80 square tree after its four pair sums.
+ // Sum/extrema metadata is held across this extra statistics/replay cycle.
+ reg [79:0] square_pair[0:3];
  reg signed [31:0] max_tree[0:14],min_tree[0:14],stat_block_max,stat_block_min;
  reg [15:0] argmax_tree[0:14],argmin_tree[0:14],stat_block_argmax,stat_block_argmin;
  reg leaf_enabled;reg signed [31:0] leaf_value;
@@ -206,8 +210,8 @@ module block_v1_v(
   for(integer t=6;t>=0;t=t-1)begin
    sum_tree[t]=sum_tree[2*t+1]+sum_tree[2*t+2];
    // Preserve each full U80 sum with four-level prefix group carries.
-   square_tree[t]=norm_denominator_add({48'b0,square_tree[2*t+1]},
-                                      {48'b0,square_tree[2*t+2]});
+   square_tree[t]=t>=3 ? norm_denominator_add({48'b0,square_tree[2*t+1]},
+                                      {48'b0,square_tree[2*t+2]}) : 80'd0;
    if(max_tree[2*t+1]>max_tree[2*t+2]||(max_tree[2*t+1]==max_tree[2*t+2]&&argmax_tree[2*t+1]<argmax_tree[2*t+2]))begin
     max_tree[t]=max_tree[2*t+1];argmax_tree[t]=argmax_tree[2*t+1];end
    else begin max_tree[t]=max_tree[2*t+2];argmax_tree[t]=argmax_tree[2*t+2];end
@@ -215,7 +219,11 @@ module block_v1_v(
     min_tree[t]=min_tree[2*t+1];argmin_tree[t]=argmin_tree[2*t+1];end
    else begin min_tree[t]=min_tree[2*t+2];argmin_tree[t]=argmin_tree[2*t+2];end
   end
-  block_sum=sum_tree[0];block_sq=square_tree[0];block_max=max_tree[0];block_min=min_tree[0];block_argmax=argmax_tree[0];block_argmin=argmin_tree[0];
+  block_sum=sum_tree[0];
+  block_sq=norm_denominator_add(
+   norm_denominator_add({48'b0,square_pair[0]},{48'b0,square_pair[1]}),
+   norm_denominator_add({48'b0,square_pair[2]},{48'b0,square_pair[3]}));
+  block_max=max_tree[0];block_min=min_tree[0];block_argmax=argmax_tree[0];block_argmin=argmin_tree[0];
   for(integer l=0;l<8;l=l+1)begin
    // Point results must not see replay/normalization address muxes through
    // the phase-selected shared multiplier operand. Same P_WRITE arithmetic,
@@ -399,8 +407,14 @@ module block_v1_v(
      output_count<=point_count;rsp_valid<=1;phase<=IDLE;
     end
     S_REDUCE,C_REDUCE:begin
-     stat_block_sum<=block_sum[63:0];stat_block_sq<=block_sq[79:0];stat_block_max<=block_max;stat_block_min<=block_min;
-     stat_block_argmax<=block_argmax;stat_block_argmin<=block_argmin;phase<=phase==S_REDUCE?S_WRITE:C_ADD;
+     for(i=0;i<4;i=i+1)square_pair[i]<=square_tree[3+i];
+     stat_block_sum<=block_sum[63:0];stat_block_max<=block_max;stat_block_min<=block_min;
+     stat_block_argmax<=block_argmax;stat_block_argmin<=block_argmin;
+     phase<=phase==S_REDUCE?S_SQUARE_FINISH:C_SQUARE_FINISH;
+    end
+    S_SQUARE_FINISH,C_SQUARE_FINISH:begin
+     stat_block_sq<=block_sq[79:0];
+     phase<=phase==S_SQUARE_FINISH?S_WRITE:C_ADD;
     end
     S_WRITE:begin
      stats_sum[stats_context]<=stats_start?$signed(stat_block_sum):stats_sum[stats_context]+$signed(stat_block_sum);

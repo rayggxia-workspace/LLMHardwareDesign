@@ -31,6 +31,8 @@ static void sample_internal(Phase& p) {
  if(state==1||state==3||state==13||state==10||state==11||state==18||state==19)
   p.internal["product_register_write_slots"]+=8;
  if(state==22||state==23)p.internal["reduction_tree_capture_cycles"]++;
+ if(state==22||state==23)p.internal["square_pair_register_write_slots"]+=4;
+ if(state==33||state==34)p.internal["square_final_register_write_slots"]++;
  if(r->block_v1_v__DOT__function_in) {
   p.internal["function_issue_allocated_slots"]+=2;
   auto sent=r->block_v1_v__DOT__function_sent;
@@ -68,7 +70,7 @@ def measure(root,out,cpus,run,kind,variant):
         policy=json.loads((tools/'revision300-v-fresh.json').read_text())
         command_state_isolated='Keep their datapath enables independent of cmd_valid/rsp_ready.' in rtls[0].read_text()
         if 'function automatic signed [127:0] norm_merge_rne;' in rtls[0].read_text():
-            generation='520' if 'point_rounded[i]<=norm_denominator_add(' in rtls[0].read_text() else ('505' if 'square_tree[t]=norm_denominator_add(' in rtls[0].read_text() else ('485' if 'function automatic signed [127:0] norm_denominator_add;' in rtls[0].read_text() else ('474' if vector_point_round_pipeline else '459')))
+            generation='535' if 'reg [79:0] square_pair[0:3];' in rtls[0].read_text() else ('520' if 'point_rounded[i]<=norm_denominator_add(' in rtls[0].read_text() else ('505' if 'square_tree[t]=norm_denominator_add(' in rtls[0].read_text() else ('485' if 'function automatic signed [127:0] norm_denominator_add;' in rtls[0].read_text() else ('474' if vector_point_round_pipeline else '459'))))
             assert policy['function']=='block-v1-20261030-'+generation+'/tasks/revision300-test-v'
             prior=out.parents[2]/('block-v1-20261030-'+generation+'/tasks')/('revision300-bench-v-'+variant)
         else:

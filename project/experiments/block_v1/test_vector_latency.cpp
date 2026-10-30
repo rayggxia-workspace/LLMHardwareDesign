@@ -13,7 +13,7 @@ int main(int argc,char**argv){try{
  Row a{},b{};for(unsigned j=0;j<8;++j){a[j]=-int32_t((j+1)*65536);b[j]=32768;}
  measure("load_a_half",0,0,pack(a,0),4);measure("load_a_half",0,1,pack(a,1),4);load(1,b);
  for(unsigned op=0;op<10;++op){auto t=measure("element",2,0,U(op)|(U(op==7?3:0)<<4)|(U(8)<<11)|(U(2)<<16),8);need(t==6,"element quotient/increment pipeline latency changed");}
- auto stat=measure("statistics_start_final",3,0,1|2|(8<<2),8);need(stat==4,"statistics latency changed");
+ auto stat=measure("statistics_start_final",3,0,1|2|(8<<2),8);need(stat==5,"statistics square-pair pipeline latency changed");
  measure("read_statistics",4,0,0);
  for(unsigned fn=0;fn<5;++fn){auto t=measure("function_8_elements",5,0,fn,8);need(t==9,"function macro input pipeline latency changed");}
  measure("reciprocal",6,0,65536);measure("rsqrt",6,1,65536);
@@ -22,7 +22,7 @@ int main(int argc,char**argv){try{
   for(unsigned kind=0;kind<3;++kind){
    auto t=measure(kind==0?"RMSNorm":kind==1?"L2Norm":"Softmax",8,kind,U(n)|(U(kind==2?0:4295)<<9),n);
    unsigned groups=(n+7)/8;
-   unsigned expected=kind==2?138+10*groups+(n+1)/2:199+10*groups;
+   unsigned expected=kind==2?138+11*groups+(n+1)/2:199+11*groups;
    need(t==expected,"normalization command latency contract changed");read(n);
   }
  }

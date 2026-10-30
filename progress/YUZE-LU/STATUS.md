@@ -1,3 +1,5 @@
+2026-10-30 18:24 CST：唯一V在四个完整U80平方成对和后新增320bit寄存与一拍归约；统计5拍、N256 RMS/L2=551/Softmax618是新合同预期，尚待535八检查和536七测量，不复用520/521周期。新源最终P&R与全部独立验收仍必须重做；523旧门与R404继续，电容/供电另定位。M/S/T保持，目标active/Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending、审查待指定。
+
 2026-10-30 18:19 CST：533封存522实际最终24原始/311归档Git与远端源SHA及receipt绑定。setup WS−.0430109ns/TNS−.222745ns/18项、maxcap3拒收，hold+.0262388ns/0项、slew0；最差operand_reduce_mask[2]→stat_block_sq[67]。内部LEC UNSAT/IDENTICAL/diff全0，标准单元713730µm²。default/1.66W下VDD最坏压降.265787V、VSS抬升.343119V，连通通过不等于电源质量合格，输入条件待核对。523独立门已自动提交；R404原GRT继续，M/S/T保持。后续修复需新流水合同及全新测量/全部物理门，不降低300MHz。目标active/Issue121=in_progress/PR122=draft，登记pending、看板unverified/同步pending、审查待指定。
 
 2026-10-30 17:38 CST：534封存旧508/93624/node13自然FAILED1:0完整DRC终态，12原始/1远端大GDS SHA/311归档Git与527最终源receipt绑定。未删改完整GDS deck129类别/0项，原生451项（Metal Spacing449/NS Metal2），仍拒收；旧setup12/cap6失败保持，527功能/528LEC通过不能抵消。不转移当前522资格；当前V522实际详细布线、R404原GRT继续，无EDA取消/重启。M/S/T保持，V/R最终未齐，目标active/Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending、审查待指定。
