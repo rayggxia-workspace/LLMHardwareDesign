@@ -7,6 +7,8 @@ set -euo pipefail
 root=$1
 out=$2
 mapping=$3
+clock_profile=${4:-standard}
+test "$clock_profile" = standard || test "$clock_profile" = strong
 test "$SLURM_CPUS_PER_TASK" -eq 16
 test -f "$root/source-manifest.json"
 test -f "$mapping/block_v1_r/receipt.json"
@@ -20,5 +22,6 @@ srun --ntasks=1 --cpus-per-task=16 --cpu-bind=cores \
  /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv --bind /public/home/yuzelu --pwd "$root" \
  --env OMP_NUM_THREADS=16 --env OPENBLAS_NUM_THREADS=1 "$image" \
  /usr/bin/time -v bash -c 'set -euo pipefail; source /OpenROAD-flow-scripts/env.sh
- exec python3 "$1/project/experiments/block_v2/physical.py" --top block_v1_r --mapping "$3" --out "$2/pnr/r" --input-receivers --placement-mode geometric --fanout-mode partition --refine-partition-placement --placement-hold-margin 0.0 --r-compact-floorplan' \
- bash "$root" "$out" "$mapping" > "$out/r-worker.log" 2>&1
+ extra=(); if [[ "$4" == strong ]]; then extra=(--r-strong-clock); fi
+ exec python3 "$1/project/experiments/block_v2/physical.py" --top block_v1_r --mapping "$3" --out "$2/pnr/r" --input-receivers --placement-mode geometric --fanout-mode partition --refine-partition-placement --placement-hold-margin 0.0 --r-compact-floorplan "${extra[@]}"' \
+ bash "$root" "$out" "$mapping" "$clock_profile" > "$out/r-worker.log" 2>&1

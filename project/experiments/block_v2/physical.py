@@ -104,8 +104,14 @@ def implement(args, run):
         # Preserve it as a failure; use a fresh, less dense placement and route.
         config+='export PLACE_DENSITY = 0.42\n'
     config+='override export MIN_ROUTING_LAYER = metal1\noverride export MAX_ROUTING_LAYER = metal10\n'
+    cts_args='-sink_clustering_enable -repair_clock_nets -apply_ndr none'
+    if args.r_strong_clock:
+        # Native CTS_ARGS replaces the default argument list; encode the cell
+        # list here, not in an ignored CTS_BUF_LIST environment variable.
+        assert all(name in areas for name in ('BUF_X4','BUF_X8','BUF_X16','BUF_X32'))
+        cts_args+=' -buf_list {BUF_X4 BUF_X8 BUF_X16 BUF_X32}'
     if top=='block_v1_r':
-        config+='export PLACE_DENSITY = '+('0.45' if args.r_compact_floorplan else '0.25')+'\nexport CTS_ARGS = -sink_clustering_enable -repair_clock_nets -apply_ndr none\n'
+        config+='export PLACE_DENSITY = '+('0.45' if args.r_compact_floorplan else '0.25')+'\nexport CTS_ARGS = '+cts_args+'\n'
     if args.remove_abc_buffers:
         assert not any(name.startswith(('BUF_','CLKBUF_')) for name in mapping['cell_counts'])
         config+='export REMOVE_ABC_BUFFERS = 1\n'
@@ -144,7 +150,7 @@ def implement(args, run):
                 TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN=hold_target)
     if args.remove_abc_buffers:wanted['REMOVE_ABC_BUFFERS']='1'
     if top=='block_v2_n':wanted['PLACE_DENSITY']='0.42'
-    if top=='block_v1_r':wanted.update(PLACE_DENSITY='0.45' if args.r_compact_floorplan else '0.25',CTS_ARGS='-sink_clustering_enable -repair_clock_nets -apply_ndr none')
+    if top=='block_v1_r':wanted.update(PLACE_DENSITY='0.45' if args.r_compact_floorplan else '0.25',CTS_ARGS=cts_args)
     if args.placement_mode=='geometric':
         wanted.update(GPL_TIMING_DRIVEN='0',ENABLE_PLACE_REPAIR_TIMING='1')
     if args.fanout_mode=='partition':wanted['PRE_RESIZE_TCL']=str(out/'partition-fanout.tcl')
@@ -162,6 +168,7 @@ def implement(args, run):
     result['remove_abc_buffers']=args.remove_abc_buffers
     result['placement_mode']=args.placement_mode
     result['r_compact_floorplan']=args.r_compact_floorplan
+    result['r_strong_clock']=args.r_strong_clock
     result['fanout_mode']=args.fanout_mode
     result['refine_partition_placement']=args.refine_partition_placement
     result['placement_hold_margin_ns']=args.placement_hold_margin if args.placement_hold_margin is not None else args.hold_repair_margin
@@ -187,9 +194,11 @@ def main():
     p.add_argument('--refine-partition-placement',action='store_true')
     p.add_argument('--placement-hold-margin',type=float,choices=[0.0])
     p.add_argument('--r-compact-floorplan',action='store_true')
+    p.add_argument('--r-strong-clock',action='store_true')
     p.add_argument('--hold-repair-margin',type=float,choices=[0.0,0.02],default=0.02)
     args=p.parse_args()
     if args.r_compact_floorplan:assert args.top=='block_v1_r'
+    if args.r_strong_clock:assert args.top=='block_v1_r'
     if args.refine_partition_placement:
         assert args.top=='block_v1_r' and args.placement_mode=='geometric' and args.fanout_mode=='partition'
     if args.placement_hold_margin is not None:
