@@ -58,12 +58,12 @@ def inspect(root,out,cpus,run):
     # The existing exporter includes instance-pin transforms. Window filtering
     # must apply the same transform before clipping, unlike the old locator.
     script='set_thread_count 16\nread_db {'+str(source/'transition-batch.odb')+'}\nsource {'+str(out/'region-base.tcl')+'}\n'
-    script+='namespace eval region {variable windows {};variable aliases {};variable scanned 0;variable hits 0}\n'
-    for i,w in enumerate(windows):script+='lappend region::windows [list %d %s]\n'%(i,' '.join(map(str,w['bbox_dbu'])))
+    script+='namespace eval ::region {variable windows {};variable aliases {};variable scanned 0;variable hits 0}\n'
+    for i,w in enumerate(windows):script+='lappend ::region::windows [list %d %s]\n'%(i,' '.join(map(str,w['bbox_dbu'])))
     script+=r'''
 rename bvgeom::rectangle bvgeom::original_rectangle
 proc bvgeom::rectangle {stream net layer kind object {dx 0} {dy 0} {transform ""}} {
-  incr region::scanned
+  incr ::region::scanned
   set name [$layer getName]
   if {$name ni {metal1 metal2 metal3 metal4 metal5 metal6 via1 via2 via3 via4 via5}} {return}
   set x0 [expr {[$object xMin]+$dx}];set y0 [expr {[$object yMin]+$dy}]
@@ -78,11 +78,11 @@ proc bvgeom::rectangle {stream net layer kind object {dx 0} {dy 0} {transform ""
     set y0 [tcl::mathfunc::min {*}$ys];set y1 [tcl::mathfunc::max {*}$ys]
   }
   if {$x0 >= $x1 || $y0 >= $y1} {error "Degenerate region shape"}
-  foreach w $region::windows {
+  foreach w $::region::windows {
     lassign $w index a b c d
     if {$x0 < $c && $a < $x1 && $y0 < $d && $b < $y1} {
       puts $stream "$index\t$net\t$name\t$kind\t$x0\t$y0\t$x1\t$y1"
-      dict set region::aliases $net 1;incr region::hits
+      dict set ::region::aliases $net 1;incr ::region::hits
     }
   }
 }
@@ -91,7 +91,7 @@ set block [ord::get_db_block]
 set f [open neighborhood.tsv a]
 foreach inst [$block getInsts] {
   set box [$inst getBBox];set overlaps 0
-  foreach w $region::windows {lassign $w index a b c d
+  foreach w $::region::windows {lassign $w index a b c d
     if {[$box xMin] < $c && $a < [$box xMax] && [$box yMin] < $d && $b < [$box yMax]} {set overlaps 1;break}
   }
   if {!$overlaps} {continue}
@@ -102,13 +102,13 @@ foreach obstruction [$block getObstructions] {bvgeom::db_box $f block-obstructio
 close $f
 set f [open net-aliases.tsv w]
 foreach net [$block getNets] {set alias n[$net getId]
-  if {[dict exists $region::aliases $alias]} {puts $f "$alias\t[binary encode hex [encoding convertto utf-8 [$net getName]]]"}
+  if {[dict exists $::region::aliases $alias]} {puts $f "$alias\t[binary encode hex [encoding convertto utf-8 [$net getName]]]"}
 }
 close $f
-set f [open scan-counts.tsv w];puts $f "$region::scanned\t$region::hits";close $f
+set f [open scan-counts.tsv w];puts $f "$::region::scanned\t$::region::hits";close $f
 set tech [ord::get_db_tech]
 set f [open layer-dimensions.tsv w]
-foreach name {metal1 metal2 metal3 metal4 metal5 metal6} {set layer [$tech findLayer $name];puts $f "$name\t[$layer getWidth]\t[$layer getSpacing]"}
+foreach name {metal1 metal2 metal3 metal4 metal5 metal6 via1 via2 via3 via4 via5} {set layer [$tech findLayer $name];puts $f "$name\t[$layer getWidth]\t[$layer getSpacing]"}
 close $f
 set f [open via-footprints.tsv w]
 '''
