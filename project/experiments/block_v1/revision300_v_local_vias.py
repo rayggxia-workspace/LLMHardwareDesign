@@ -38,7 +38,7 @@ def inspect(root,out,cpus,run):
     assert unchanged
 
 
-def probe(root,out,cpus,run,shard,combined=False,plan_name='local-via-plan-693.json',shard_run='694',mode_prefix='revision300-v-local-vias-',compose_mode='revision300-v-local-via-compose'):
+def probe(root,out,cpus,run,shard,combined=False,plan_name='local-via-plan-693.json',shard_run='694',mode_prefix='revision300-v-local-vias-',compose_mode='revision300-v-local-via-compose',joint=False):
     from io_slots import file_sha
     from native_escape import records
     from revision300_v_transition import decode
@@ -100,6 +100,23 @@ def probe(root,out,cpus,run,shard,combined=False,plan_name='local-via-plan-693.j
             covered.extend(d['selected_markers']);independent.append(dict(shard=s,passed=r['passed'],receipt_sha256=file_sha(folder/'receipt.json')))
         assert sorted(covered)==sorted(p['original_index']for p in plan['selected'])
     selected=[p for p in plan['selected']if p['net']not in excluded]if combined else[p for p in plan['selected']if p['shard']==shard]
+    joint_prior=None;joint_native=None
+    if joint:
+        assert combined and out.name=='revision300-v-joint-via-compose'and shard_run=='701'
+        jp=base/'block-v1-20261031-697/tasks/revision300-v-local-via-compose'
+        jr=json.loads((jp/'receipt.json').read_text());assert jr['passed']and jr['mode']==jp.name
+        for n in('revision300-v-local-vias.json','selected-via-edits.json','local-native-drc.rpt','failure-filter.json'):
+            assert file_sha(jp/n)==jr['outputs'][n]
+        jd=json.loads((jp/'revision300-v-local-vias.json').read_text())
+        assert jd['passed']and jd['combined']and jd['original_native_count']==103 and jd['candidate_native_count']==76 and jd['added_markers']==0
+        assert jd['excluded_modified_nets']==['net83348']and jd['source_receipt_sha256']==file_sha(source/'receipt.json')
+        base_plan_path=root/'project/experiments/block_v1/local-via-plan-693.json'
+        assert file_sha(base_plan_path)==jd['plan_sha256']
+        base_plan=json.loads(base_plan_path.read_text());earlier=json.loads((jp/'selected-via-edits.json').read_text())
+        assert earlier==[p for p in base_plan['selected']if p['net']!='net83348']and len(earlier)==27
+        assert not({p['net']for p in earlier}&{p['net']for p in selected})
+        selected=earlier+selected;joint_native=violations((jp/'local-native-drc.rpt').read_text());assert sum(joint_native.values())==76
+        joint_prior=dict(receipt_sha256=file_sha(jp/'receipt.json'),plan_sha256=file_sha(base_plan_path),selected27_sha256=file_sha(jp/'selected-via-edits.json'),native_sha256=file_sha(jp/'local-native-drc.rpt'),native_count=76)
     wanted={p['net']:p for p in selected};assert len(wanted)==len(selected)>0
     n0=0;originals={};others=Counter()
     for record in records(source/'remaining-candidate.def'):
@@ -161,7 +178,8 @@ def probe(root,out,cpus,run,shard,combined=False,plan_name='local-via-plan-693.j
     exact=exact and actual==others and found==set(expected)and n0==n1
     old=violations((source/'remaining-native-drc.rpt').read_text());new=violations((out/'local-native-drc.rpt').read_text());assert sum(old.values())==103
     unchanged=all(file_sha(source/n)==receipt['outputs'][n]for n in('remaining-candidate.odb','remaining-candidate.def','remaining-native-drc.rpt'))
-    result=dict(passed=exact and unchanged and not(new-old)and bool(old-new),physical_qualified=False,shard=shard,combined=combined,independent_shard_receipts=independent,excluded_modified_nets=sorted(excluded),
+    added_vs_prior=sum((new-joint_native).values())if joint else 0
+    result=dict(passed=exact and unchanged and not(new-old)and bool(old-new)and added_vs_prior==0,physical_qualified=False,shard=shard,combined=combined,joint_prior_binding=joint_prior,added_vs_prior_current=added_vs_prior,independent_shard_receipts=independent,excluded_modified_nets=sorted(excluded),
                 plan_sha256=file_sha(plan_path),source_receipt_sha256=file_sha(source/'receipt.json'),source_inputs_sha256={n:receipt['outputs'][n]for n in('remaining-candidate.odb','remaining-candidate.def','remaining-native-drc.rpt')},
                 exact_normal_nets_headers_paths_rectangles=exact,original_inputs_unchanged=unchanged,normal_net_counts=[n0,n1],
                 selected_markers=[p['original_index']for p in selected],selected_nets=len(selected),original_native_count=103,candidate_native_count=sum(new.values()),
