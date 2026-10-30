@@ -1,5 +1,19 @@
 # huangpingyang04-lgtm 的进度
 
+<!-- resume-current-20261030 -->
+
+**最新快照：2026-10-30 17:42 CST。** 下方旧current-buffer-PG及日期条目作为历史记录保留，实时结论优先看本条。
+
+当前共同底座仍未冻结，主边界保持 M1–M8 固定、M9/M10及 via8_0/via9_0 定制；M11/M12未启用。完整规模及原功能、检查标准均保留。此前完整六资源数字模型的 openTPU 305组、llaccel 180任务通过结果可复用，但不是最终物理底座验证。
+
+本次新增：93650 对 VECTOR 一段新增数据线完成真实 M5/M6/M7 接线修复，733599实例、完整逻辑、其他网络/PG/clock/引脚/位置均保持；连通/短路/供电及原27条DRC记录完全不变通过。93666来源资格闭合；93667正在执行同原3ns实际RC/STA，尚无新电气结论。原生成进程的Signal11失败保留，新独立验证不抹去该失败。
+
+AUX研究候选仅增加32个冗余索引状态位，保留原二进制索引、256项累加存储、8条requant通路与外部周期安排；93654局部选择/索引不变量数学证明通过，93664原完整ATTN/KV_WRITE 724例/0失败、75行已报告周期/工作量/停顿摘要与原版一致。尚未综合/物理实现、未替换当前AUX、未选定新底座。当前AUX原3ns setup/hold质量仍失败。
+
+93632完整13表读回确认旧CUGR规划输入与原物理资源一致，但14059目标仍0条实际导线。93640和93651各20分钟诊断都未完成第一轮；实际记录INIT准备阶段耗时占主导。93668正在做完整固定OBS精确重复统计，不删除/缩小任何几何，也不宣称提速。不能把规划、诊断完成或工具退出0写成布线通过。
+
+服务器：`/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/resume-20261030T075803Z`，工程 `dc86d73d43dd08bcee1fec4a90f098bbdbdd1ebb`。详见[按七字段整理的阻塞记录及证据](../../docs/handoffs/2026-10-30-issue-55-resume.md)与[小索引](../../work/huangpingyang04-lgtm/55/resume-20261030T094226Z.json)。93650 wall25:29/CPU37:01.883≈1.45核；93664 wall5:01/CPU5:09.536≈1.03核。新作业4CPU、未停止旧任务，未改变原输入/封存成果。下一步读93667/93668实际结果，完成受影响整体验收；外部clock/load仍null。登记PR5 pending，Projects unverified/sync pending，审查人待指定。
+
 历史检查点：2026-10-27 11:13 CST；当前结果及唯一最新索引见文末 current-buffer-PG-status。
 
 [Issue55](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/55)，[草稿PR58](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/58)。阶段一已交付；二/三未验收、四未执行；主要候选1/3，无冻结。
