@@ -171,6 +171,9 @@ try:
     elif MODE == 'revision300-v-corner-filter':
         from revision300_v_corner_probe import probe
         probe(ROOT,OUT,CPUS,run,filter_added=True)
+    elif MODE == 'revision300-v-via-bridge':
+        from revision300_v_via_bridge import probe
+        probe(ROOT,OUT,CPUS,run)
     elif MODE in ('revision300-v-spacing-localize', 'revision300-v-cap-localize'):
         from revision300_v_physical_localize import diagnose
         diagnose(ROOT,OUT,CPUS,run,'spacing' if 'spacing' in MODE else 'cap')
