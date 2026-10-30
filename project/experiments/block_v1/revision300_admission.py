@@ -69,6 +69,23 @@ def own_allocations(lines, issue_job_ids):
     return result
 
 
+def recorded_job_ids(records):
+    """Count historical jobs even when an archived launch has a wrong run ID.
+
+    This is accounting, not permission to execute that historical manifest.
+    Selected queues still pass validate() and the dispatcher's identity guard.
+    Missing job IDs remain reservations in the dispatcher's issue-wide ledger.
+    """
+    jobs, mismatches = set(), {}
+    for directory, recorded in records:
+        assert directory.startswith('block-v1-')
+        assert recorded['run_id'].startswith('block-v1-')
+        if recorded['run_id'] != directory:
+            mismatches[directory] = recorded['run_id']
+        jobs.update(str(x['job_id']) for x in recorded['tasks'].values() if x.get('job_id'))
+    return jobs, mismatches
+
+
 def allocation_observation(items):
     observations = {}
     for key, item in items.items():
@@ -142,12 +159,12 @@ def main():
                 # Requery before every possible mutation. Other members' jobs
                 # are untouched; pending own jobs count equally with running.
                 lines = output(['squeue', '-h', '-u', 'yuzelu', '-o', '%i|%j|%T']).splitlines()
-                issue_job_ids = set()
+                records = []
                 for path in base.glob('block-v1-*/dispatch-state.json'):
                     assert path.resolve().parent.parent == base.resolve()
-                    recorded = read(path)
-                    assert recorded['run_id'] == path.parent.name
-                    issue_job_ids.update(str(x['job_id']) for x in recorded['tasks'].values() if x.get('job_id'))
+                    records.append((path.parent.name, read(path)))
+                issue_job_ids, mismatches = recorded_job_ids(records)
+                status['historical_run_id_mismatches'] = mismatches
                 # This is an issue budget, not a whole-account budget. Unknown
                 # reservations remain fail-closed in the original dispatcher.
                 own = own_allocations(lines, issue_job_ids)
