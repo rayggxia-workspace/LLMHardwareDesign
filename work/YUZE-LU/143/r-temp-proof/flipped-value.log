@@ -1,0 +1,456 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)
+
+-- Executing script file `/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.ys' --
+
+1. Executing Verilog-2005 frontend: /public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv
+Parsing SystemVerilog input from `/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv' to AST representation.
+Generating RTLIL representation for module `\r_temp_proof'.
+Successfully finished Verilog frontend.
+
+2. Executing PREP pass.
+
+2.1. Executing HIERARCHY pass (managing design hierarchy).
+
+2.1.1. Analyzing design hierarchy..
+Top module:  \r_temp_proof
+
+2.1.2. Analyzing design hierarchy..
+Top module:  \r_temp_proof
+Removed 0 unused modules.
+
+2.2. Executing PROC pass (convert processes to netlists).
+
+2.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 4 empty switches in `\r_temp_proof.$proc$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:45$101'.
+Found and cleaned up 4 empty switches in `\r_temp_proof.$proc$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:24$13'.
+Cleaned up 8 empty switches.
+
+2.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:45$101 in module r_temp_proof.
+Marked 1 switch rules as full_case in process $proc$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:24$13 in module r_temp_proof.
+Removed a total of 0 dead cases.
+
+2.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 48 assignments to connections.
+
+2.2.4. Executing PROC_INIT pass (extract init attributes).
+
+2.2.5. Executing PROC_ARST pass (detect async resets in processes).
+
+2.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~2 debug messages>
+
+2.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\r_temp_proof.$proc$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:55$198'.
+Creating decoders for process `\r_temp_proof.$proc$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:55$193'.
+Creating decoders for process `\r_temp_proof.$proc$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:45$101'.
+     1/37: $2\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:50$8.$result[51:0]$177
+     2/37: $2\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:50$8.half[64:0]$180
+     3/37: $2\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:50$8.remn[64:0]$179
+     4/37: $2\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:50$8.q[64:0]$178
+     5/37: $2\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:49$7.$result[51:0]$165
+     6/37: $2\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:49$7.half[64:0]$168
+     7/37: $2\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:49$7.remn[64:0]$167
+     8/37: $2\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:49$7.q[64:0]$166
+     9/37: $2\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:47$6.$result[51:0]$153
+    10/37: $2\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:47$6.half[64:0]$156
+    11/37: $2\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:47$6.remn[64:0]$155
+    12/37: $2\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:47$6.q[64:0]$154
+    13/37: $2\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:46$5.$result[51:0]$142
+    14/37: $2\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:46$5.half[64:0]$145
+    15/37: $2\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:46$5.remn[64:0]$144
+    16/37: $2\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:46$5.q[64:0]$143
+    17/37: $1\value_new[51:0]
+    18/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:46$5.half[64:0]$126
+    19/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:46$5.remn[64:0]$125
+    20/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:46$5.q[64:0]$124
+    21/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:46$5.$result[51:0]$122
+    22/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:46$5.v[64:0]$123
+    23/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:50$8.half[64:0]$141
+    24/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:50$8.remn[64:0]$140
+    25/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:50$8.q[64:0]$139
+    26/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:50$8.v[64:0]$138
+    27/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:50$8.$result[51:0]$137
+    28/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:49$7.half[64:0]$136
+    29/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:49$7.remn[64:0]$135
+    30/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:49$7.q[64:0]$134
+    31/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:49$7.v[64:0]$133
+    32/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:49$7.$result[51:0]$132
+    33/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:47$6.half[64:0]$131
+    34/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:47$6.remn[64:0]$130
+    35/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:47$6.q[64:0]$129
+    36/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:47$6.v[64:0]$128
+    37/37: $1\rne_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:47$6.$result[51:0]$127
+Creating decoders for process `\r_temp_proof.$proc$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:24$13'.
+     1/37: $2\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:29$4.$result[127:0]$89
+     2/37: $2\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:29$4.half[127:0]$92
+     3/37: $2\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:29$4.remn[127:0]$91
+     4/37: $2\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:29$4.q[127:0]$90
+     5/37: $2\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:28$3.$result[127:0]$77
+     6/37: $2\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:28$3.half[127:0]$80
+     7/37: $2\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:28$3.remn[127:0]$79
+     8/37: $2\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:28$3.q[127:0]$78
+     9/37: $2\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:26$2.$result[127:0]$65
+    10/37: $2\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:26$2.half[127:0]$68
+    11/37: $2\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:26$2.remn[127:0]$67
+    12/37: $2\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:26$2.q[127:0]$66
+    13/37: $2\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:25$1.$result[127:0]$54
+    14/37: $2\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:25$1.half[127:0]$57
+    15/37: $2\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:25$1.remn[127:0]$56
+    16/37: $2\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:25$1.q[127:0]$55
+    17/37: $1\value_old[127:0]
+    18/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:25$1.half[127:0]$38
+    19/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:25$1.remn[127:0]$37
+    20/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:25$1.q[127:0]$36
+    21/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:25$1.$result[127:0]$34
+    22/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:25$1.v[127:0]$35
+    23/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:29$4.half[127:0]$53
+    24/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:29$4.remn[127:0]$52
+    25/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:29$4.q[127:0]$51
+    26/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:29$4.v[127:0]$50
+    27/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:29$4.$result[127:0]$49
+    28/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:28$3.half[127:0]$48
+    29/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:28$3.remn[127:0]$47
+    30/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:28$3.q[127:0]$46
+    31/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:28$3.v[127:0]$45
+    32/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:28$3.$result[127:0]$44
+    33/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:26$2.half[127:0]$43
+    34/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:26$2.remn[127:0]$42
+    35/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:26$2.q[127:0]$41
+    36/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:26$2.v[127:0]$40
+    37/37: $1\rne_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:26$2.$result[127:0]$39
+
+2.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\r_temp_proof.\fits32_new$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:55$10.$result' from process `\r_temp_proof.$proc$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:55$198'.
+No latch inferred for signal `\r_temp_proof.\fits32_old$func$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:55$9.$result' from process `\r_temp_proof.$proc$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:55$193'.
+No latch inferred for signal `\r_temp_proof.\value_new' from process `\r_temp_proof.$proc$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:45$101'.
+No latch inferred for signal `\r_temp_proof.\value_old' from process `\r_temp_proof.$proc$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:24$13'.
+
+2.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+
+2.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+2.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `r_temp_proof.$proc$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:55$198'.
+Removing empty process `r_temp_proof.$proc$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:55$193'.
+Found and cleaned up 1 empty switch in `\r_temp_proof.$proc$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:45$101'.
+Removing empty process `r_temp_proof.$proc$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:45$101'.
+Found and cleaned up 1 empty switch in `\r_temp_proof.$proc$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:24$13'.
+Removing empty process `r_temp_proof.$proc$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:24$13'.
+Cleaned up 2 empty switches.
+
+2.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module r_temp_proof.
+<suppressed ~17 debug messages>
+
+2.3. Executing FUTURE pass.
+
+2.4. Executing OPT_EXPR pass (perform const folding).
+Optimizing module r_temp_proof.
+
+2.5. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \r_temp_proof..
+Removed 256 unused cells and 330 unused wires.
+<suppressed ~257 debug messages>
+
+2.6. Executing CHECK pass (checking for obvious problems).
+Checking module r_temp_proof...
+Found and reported 0 problems.
+
+2.7. Executing OPT pass (performing simple optimizations).
+
+2.7.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module r_temp_proof.
+
+2.7.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\r_temp_proof'.
+Computing hashes of 112 cells of `\r_temp_proof'.
+Finding duplicate cells in `\r_temp_proof'.
+Computing hashes of 80 cells of `\r_temp_proof'.
+Finding duplicate cells in `\r_temp_proof'.
+Computing hashes of 67 cells of `\r_temp_proof'.
+Finding duplicate cells in `\r_temp_proof'.
+<suppressed ~135 debug messages>
+Removed a total of 45 cells.
+
+2.7.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \r_temp_proof..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 2/2 on $mux $procmux$422.
+    dead port 2/2 on $mux $procmux$447.
+    dead port 2/2 on $mux $procmux$260.
+    dead port 2/2 on $mux $procmux$235.
+Removed 4 multiplexer ports.
+<suppressed ~16 debug messages>
+
+2.7.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \r_temp_proof.
+Performed a total of 0 changes.
+
+2.7.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\r_temp_proof'.
+Computing hashes of 63 cells of `\r_temp_proof'.
+Finding duplicate cells in `\r_temp_proof'.
+Removed a total of 0 cells.
+
+2.7.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \r_temp_proof..
+Removed 0 unused cells and 34 unused wires.
+<suppressed ~1 debug messages>
+
+2.7.7. Executing OPT_EXPR pass (perform const folding).
+Optimizing module r_temp_proof.
+
+2.7.8. Rerunning OPT passes. (Maybe there is more to do..)
+
+2.7.9. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \r_temp_proof..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~12 debug messages>
+
+2.7.10. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \r_temp_proof.
+Performed a total of 0 changes.
+
+2.7.11. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\r_temp_proof'.
+Computing hashes of 63 cells of `\r_temp_proof'.
+Finding duplicate cells in `\r_temp_proof'.
+Removed a total of 0 cells.
+
+2.7.12. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \r_temp_proof..
+
+2.7.13. Executing OPT_EXPR pass (perform const folding).
+Optimizing module r_temp_proof.
+
+2.7.14. Finished fast OPT passes. (There is nothing left to do.)
+
+2.8. Executing WREDUCE pass (reducing word size of cells).
+Removed top 97 bits (of 128) from port A of cell r_temp_proof.$gt$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$60 ($gt).
+Removed top 97 bits (of 128) from port B of cell r_temp_proof.$gt$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$60 ($gt).
+Converting cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$64 ($add) from unsigned to signed.
+Removed top 94 bits (of 128) from port A of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$64 ($add).
+Removed top 126 bits (of 128) from port B of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$64 ($add).
+Removed top 93 bits (of 128) from port Y of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$64 ($add).
+Removed top 114 bits (of 128) from port A of cell r_temp_proof.$gt$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$71 ($gt).
+Removed top 114 bits (of 128) from port B of cell r_temp_proof.$gt$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$71 ($gt).
+Converting cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$75 ($add) from unsigned to signed.
+Removed top 78 bits (of 128) from port A of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$75 ($add).
+Removed top 126 bits (of 128) from port B of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$75 ($add).
+Removed top 77 bits (of 128) from port Y of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$75 ($add).
+Converting cell r_temp_proof.$sub$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:27$76 ($sub) from unsigned to signed.
+Removed top 96 bits (of 128) from port A of cell r_temp_proof.$sub$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:27$76 ($sub).
+Removed top 96 bits (of 128) from port B of cell r_temp_proof.$sub$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:27$76 ($sub).
+Removed top 95 bits (of 128) from port Y of cell r_temp_proof.$sub$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:27$76 ($sub).
+Removed top 114 bits (of 128) from port A of cell r_temp_proof.$gt$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$83 ($gt).
+Removed top 114 bits (of 128) from port B of cell r_temp_proof.$gt$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$83 ($gt).
+Converting cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$87 ($add) from unsigned to signed.
+Removed top 77 bits (of 128) from port A of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$87 ($add).
+Removed top 126 bits (of 128) from port B of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$87 ($add).
+Removed top 76 bits (of 128) from port Y of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$87 ($add).
+Removed top 96 bits (of 128) from port A of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:28$88 ($add).
+Removed top 112 bits (of 128) from port A of cell r_temp_proof.$gt$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$95 ($gt).
+Removed top 112 bits (of 128) from port B of cell r_temp_proof.$gt$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$95 ($gt).
+Converting cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$99 ($add) from unsigned to signed.
+Removed top 79 bits (of 128) from port A of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$99 ($add).
+Removed top 126 bits (of 128) from port B of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$99 ($add).
+Removed top 78 bits (of 128) from port Y of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$99 ($add).
+Removed top 96 bits (of 128) from port A of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:29$100 ($add).
+Removed top 34 bits (of 65) from port A of cell r_temp_proof.$gt$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$148 ($gt).
+Removed top 34 bits (of 65) from port B of cell r_temp_proof.$gt$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$148 ($gt).
+Converting cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$152 ($add) from unsigned to signed.
+Removed top 18 bits (of 52) from port A of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$152 ($add).
+Removed top 50 bits (of 52) from port B of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$152 ($add).
+Removed top 17 bits (of 52) from port Y of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$152 ($add).
+Removed top 51 bits (of 65) from port A of cell r_temp_proof.$gt$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$159 ($gt).
+Removed top 51 bits (of 65) from port B of cell r_temp_proof.$gt$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$159 ($gt).
+Converting cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$163 ($add) from unsigned to signed.
+Removed top 2 bits (of 52) from port A of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$163 ($add).
+Removed top 50 bits (of 52) from port B of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$163 ($add).
+Removed top 1 bits (of 52) from port Y of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$163 ($add).
+Converting cell r_temp_proof.$sub$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:48$164 ($sub) from unsigned to signed.
+Removed top 20 bits (of 52) from port A of cell r_temp_proof.$sub$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:48$164 ($sub).
+Removed top 20 bits (of 52) from port B of cell r_temp_proof.$sub$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:48$164 ($sub).
+Removed top 19 bits (of 52) from port Y of cell r_temp_proof.$sub$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:48$164 ($sub).
+Removed top 51 bits (of 65) from port A of cell r_temp_proof.$gt$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$171 ($gt).
+Removed top 51 bits (of 65) from port B of cell r_temp_proof.$gt$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$171 ($gt).
+Converting cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$175 ($add) from unsigned to signed.
+Removed top 1 bits (of 52) from port A of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$175 ($add).
+Removed top 50 bits (of 52) from port B of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$175 ($add).
+Removed top 20 bits (of 52) from port A of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:49$176 ($add).
+Removed top 49 bits (of 65) from port A of cell r_temp_proof.$gt$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$183 ($gt).
+Removed top 49 bits (of 65) from port B of cell r_temp_proof.$gt$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$183 ($gt).
+Converting cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$187 ($add) from unsigned to signed.
+Removed top 3 bits (of 52) from port A of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$187 ($add).
+Removed top 50 bits (of 52) from port B of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$187 ($add).
+Removed top 2 bits (of 52) from port Y of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:38$187 ($add).
+Removed top 20 bits (of 52) from port A of cell r_temp_proof.$add$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:50$188 ($add).
+Removed top 2 bits (of 5) from port B of cell r_temp_proof.$procmux$287_CMP0 ($eq).
+Removed top 1 bits (of 5) from port B of cell r_temp_proof.$procmux$392_CMP0 ($eq).
+Removed top 1 bits (of 5) from port B of cell r_temp_proof.$procmux$405_CMP0 ($eq).
+Removed top 1 bits (of 5) from port B of cell r_temp_proof.$procmux$405_CMP1 ($eq).
+Removed top 2 bits (of 5) from port B of cell r_temp_proof.$procmux$423_CMP0 ($eq).
+Removed top 1 bits (of 5) from port B of cell r_temp_proof.$procmux$423_CMP1 ($eq).
+Removed top 4 bits (of 5) from port B of cell r_temp_proof.$procmux$448_CMP0 ($eq).
+Removed top 3 bits (of 5) from port B of cell r_temp_proof.$procmux$448_CMP1 ($eq).
+Removed top 1 bits (of 5) from port B of cell r_temp_proof.$procmux$448_CMP2 ($eq).
+Removed top 127 bits (of 128) from wire r_temp_proof.$logic_or$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$63_Y.
+Removed top 127 bits (of 128) from wire r_temp_proof.$logic_or$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$74_Y.
+Removed top 127 bits (of 128) from wire r_temp_proof.$logic_or$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$98_Y.
+Removed top 127 bits (of 128) from wire r_temp_proof.$logic_or$/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/053/rtl/r/flipped-value.sv:17$86_Y.
+
+2.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \r_temp_proof..
+Removed 0 unused cells and 4 unused wires.
+<suppressed ~1 debug messages>
+
+2.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+2.11. Executing OPT pass (performing simple optimizations).
+
+2.11.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module r_temp_proof.
+
+2.11.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\r_temp_proof'.
+Computing hashes of 63 cells of `\r_temp_proof'.
+Finding duplicate cells in `\r_temp_proof'.
+Computing hashes of 58 cells of `\r_temp_proof'.
+Finding duplicate cells in `\r_temp_proof'.
+Computing hashes of 54 cells of `\r_temp_proof'.
+Finding duplicate cells in `\r_temp_proof'.
+Computing hashes of 50 cells of `\r_temp_proof'.
+Finding duplicate cells in `\r_temp_proof'.
+<suppressed ~39 debug messages>
+Removed a total of 13 cells.
+
+2.11.3. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \r_temp_proof..
+Removed 0 unused cells and 13 unused wires.
+<suppressed ~1 debug messages>
+
+2.11.4. Finished fast OPT passes.
+
+2.12. Executing SORT pass.
+
+2.13. Printing statistics.
+
+=== r_temp_proof ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       86 wires
+     5461 wire bits
+       46 public wires
+     3713 public wire bits
+        8 ports
+      263 port bits
+       50 cells
+        8   $add
+       18   $eq
+        4   $gt
+        5   $logic_and
+        4   $logic_or
+        4   $mux
+        1   $not
+        2   $pmux
+        3   $reduce_or
+        1   $sub
+
+2.14. Executing CHECK pass (checking for obvious problems).
+Checking module r_temp_proof...
+Found and reported 0 problems.
+
+3. Executing FLATTEN pass (flatten design).
+
+4. Executing OPT pass (performing simple optimizations).
+
+4.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module r_temp_proof.
+
+4.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\r_temp_proof'.
+Computing hashes of 50 cells of `\r_temp_proof'.
+Finding duplicate cells in `\r_temp_proof'.
+Removed a total of 0 cells.
+
+4.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \r_temp_proof..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~12 debug messages>
+
+4.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \r_temp_proof.
+Performed a total of 0 changes.
+
+4.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\r_temp_proof'.
+Computing hashes of 50 cells of `\r_temp_proof'.
+Finding duplicate cells in `\r_temp_proof'.
+Removed a total of 0 cells.
+
+4.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \r_temp_proof..
+
+4.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module r_temp_proof.
+
+4.9. Finished fast OPT passes. (There is nothing left to do.)
+
+5. Executing SAT pass (solving SAT problems in the circuit).
+Using SAT solver `minisat`.
+
+Setting up SAT problem:
+Final constraint equation: { } = { }
+Imported 50 cells to SAT database.
+Import proof-constraint: \ok = 1'1
+Final proof equation: \ok = 1'1
+Import show expression: \dot
+Import show expression: \error_value
+Import show expression: \output_value
+Import show expression: \phase
+Import show expression: \product
+Import show expression: \product_state_base
+Import show expression: \x
+
+Solving problem with 12871 variables and 35850 clauses..
+SAT proof finished - model found: FAIL!
+
+   ______                   ___       ___       _ _            _ _ 
+  (_____ \                 / __)     / __)     (_) |          | | |
+   _____) )___ ___   ___ _| |__    _| |__ _____ _| | _____  __| | |
+  |  ____/ ___) _ \ / _ (_   __)  (_   __|____ | | || ___ |/ _  |_|
+  | |   | |  | |_| | |_| || |       | |  / ___ | | || ____( (_| |_ 
+  |_|   |_|   \___/ \___/ |_|       |_|  \_____|_|\_)_____)\____|_|
+
+
+  Signal Name                      Dec       Hex                                                                  Bin
+  ------------------------ ----------- --------- --------------------------------------------------------------------
+  \dot                              --        --     0000000000000000000000000000000000000000000000000000000000000000
+  \error_value              2147483647  7fffffff                                     01111111111111111111111111111111
+  \output_value                      0         0                                     00000000000000000000000000000000
+  \phase                            22        16                                                                10110
+  \product                          --        --    00000000000000000000000000000000000111111111111100000000000000000
+  \product_state_base                0         0                                     00000000000000000000000000000000
+  \x                       -2147483648  80000000                                     10000000000000000000000000000000
+
+ERROR: Called with -verify and proof did fail!
