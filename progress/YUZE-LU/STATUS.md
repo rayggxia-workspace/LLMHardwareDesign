@@ -1,3 +1,5 @@
+2026-10-30 21:27 CST：561封存552实际CTS 15原始/311归档Git、远端SHA及clock/LEC绑定；5235实际clock net无NDR，内部LEC54010/53999、all diff0。阶段setup WS−.000914824ns/1项、hold−.303931ns/20项、cap/slew0，尚未合格，原GRT继续。560/93748/node20已实际启动失败源副本的RECT编码诊断，源5b6359bf/archive3c9ee22f/313归档Git，原ODB不改，不转移资格。R404原GRT继续，M/S/T保持，V/R最终未齐；Issuein_progress/PRdraft，登记pending/看板unverified同步pending/审查待指定。
+
 2026-10-30 21:16 CST：558/559封存538最终网表三初态功能及严格同源LEC实际PASS，每初态574127检查/425162拍，UNSAT/IDENTICAL且all diff0/1输入输出0。27/16原始、各8大文件SHA/311源Git及receipt绑定；537 setup23/cap1仍拒收，完整DRC自然继续，不转移新550/552资格。552已place完成继续CTS，R404原GRT继续；557只读几何定位已完成，下一步实际检查器正反例。M/S/T保持，V/R最终未齐；Issuein_progress/PRdraft、登记pending/看板unverified同步pending/审查待指定。
 
 2026-10-30 21:10 CST：557/93744/node18两项只读物理定位同时PASS，24原始/15稳定/312归档Git及4.16MB服务器几何SHA绑定，原ODB未改。523的445marker全部位于同网wire/via并集内（440单wire包含），不据此判误报或豁免；下一步实际镜像隔离正反例核对导入/检查语义。538 cap网为BUF_X4驱动11BUF输入及NOR2_X1/A2，255.46>242.31fF仍拒收。552原生及R404原GRT继续，555按真实前置接续；M/S/T保持、V/R最终未齐。Issuein_progress/PRdraft，登记pending/看板unverified同步pending/审查待指定。
