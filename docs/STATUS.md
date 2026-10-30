@@ -1,3 +1,5 @@
+2026-10-30 16:10 CST：517封存507实际最终24原始/311源Git和远端绑定，setup−.0211138ns/12项、maxcap6拒收，hold+.0136555ns/0项、slew0；最差point_total[7][2]→point_rounded[7][127]。唯一V八路舍入加一改用完整U128前缀，周期/域保持；520新源八检查、521七测量及全新522/523/524待执行，电容另查。519封存旧494自然终态：未改完整GDS deck0项/原生496项，仍拒收。508独立门与R404原GRT继续，M/S/T接收保持；V/R最终未齐，目标active/Issue121=in_progress/PR122=draft。登记pending、看板unverified/同步pending、审查待指定。
+
 2026-10-30 15:03 CST：516封存当前507 GRT，5原始/1完整JSON大文件SHA/311源Git，四RTL/505映射功能/515 CTS同源绑定。GRT setup WS−.00631628ns/TNS−.0102154ns/5项，hold WS+.0784364ns/TNS0/0项，maxcap28/maxslew1，均非最终资格；当前实际详细布线进行中。首次就绪检查缺日志/JSON在写目录前停止，待文件齐后采集，无EDA重跑。R404原GRT extra32继续；原494完整GDS DRC已核验KLayout实际CPU增长，原生/时序拒收保持。M/S/T保持，V/R最终未齐；Refs #121 / PR #122，in_progress/draft，登记pending、看板unverified/同步pending、审查待指定。
 
 2026-10-30 14:26 CST：515封存当前507实际CTS完成证据，15原始/311源Git及远端SHA，源3e5a4c25/归档bfc785a2与505/506一致。CTS setup WS+.00258504ns/TNS0/0项，hold WS−.255989ns/TNS−4.46644ns/42项，maxcap/maxslew0；5218时钟网none，内部LEC53478输入/53467输出、diff0/1全0、UNSAT/IDENTICAL。CTS标准单元707193µm²，尚非最终面积或资格。507实际GRT、R404原GRT extra31均真实CPU增长；无EDA取消/重启。Refs #121 / PR #122，M/S/T保持，V/R最终未齐；登记pending/看板unverified/同步pending/审查待指定。

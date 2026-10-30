@@ -1,3 +1,5 @@
+2026-10-30 16:10 CST：517封存507实际最终24原始/311源Git和远端绑定，setup−.0211138ns/12项、maxcap6拒收，hold+.0136555ns/0项、slew0；最差point_total[7][2]→point_rounded[7][127]。唯一V八路舍入加一改用完整U128前缀，周期/域保持；520新源八检查、521七测量及全新522/523/524待执行，电容另查。519封存旧494自然终态：未改完整GDS deck0项/原生496项，仍拒收。508独立门与R404原GRT继续，M/S/T接收保持；V/R最终未齐，目标active/Issue121=in_progress/PR122=draft。登记pending、看板unverified/同步pending、审查待指定。
+
 2026-10-30 15:14 CST：518只读规划旧493/494的496原生标记，完整674158983字节DEF SHA/同一70af最终源/512报告/429技术参考绑定，479候选（M2=297/M3=182）涉及476网，17项拒绝保留；仅同网并集内过孔金属扩展候选，不改数据库、不启动EDA或新allocation、不转移507资格。10.7MB原计划与全部输入已存授权服务器，Git精确压缩副本402719B，重算比较命令随包；两个初始元数据读取失败及进程缺失后恢复另记storage，原作业不动。507实际详细布线，R404原extra32及494完整DRC继续。Refs #121 / PR #122，五宏最终未齐，登记pending/看板unverified/同步pending/审查待指定。
 
 2026-10-30 15:03 CST：516封存当前507 GRT，5原始/1完整JSON大文件SHA/311源Git，四RTL/505映射功能/515 CTS同源绑定。GRT setup WS−.00631628ns/TNS−.0102154ns/5项，hold WS+.0784364ns/TNS0/0项，maxcap28/maxslew1，均非最终资格；当前实际详细布线进行中。首次就绪检查缺日志/JSON在写目录前停止，待文件齐后采集，无EDA重跑。R404原GRT extra32继续；原494完整GDS DRC已核验KLayout实际CPU增长，原生/时序拒收保持。M/S/T保持，V/R最终未齐；Refs #121 / PR #122，in_progress/draft，登记pending、看板unverified/同步pending、审查待指定。

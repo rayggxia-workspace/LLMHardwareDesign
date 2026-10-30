@@ -7,6 +7,7 @@ def prove(root,out,cpus,run):
     assert cpus==16
     rtl=root/'project/rtl/block_library_v1/block_v1_v.sv'
     text=rtl.read_text();functions=[]
+    assert "point_rounded[i]<=norm_denominator_add(point_total[i],{127'b0,point_increment[i]});" in text
     for name in ('add128_grouped','rne','norm_denominator_add'):
         start=text.index(' function automatic signed [127:0] '+name+';')
         end=text.index(' endfunction',start)+len(' endfunction')
@@ -21,7 +22,7 @@ wire [127:0] remn=a&({128{1'b1}}>>(128-sh));
 wire [127:0] half=128'd1<<(sh-1);
 wire signed [127:0] reference=sh==0?$signed(a):q+((remn>half)||((remn==half)&&q[0]));
 wire [127:0] actual=add128_grouped(a,b,carry_in);
-wire signed [127:0] point_result=add128_grouped(q,{127'b0,point_rne_increment(a,sh)},1'b0);
+wire signed [127:0] point_result=norm_denominator_add(q,{127'b0,point_rne_increment(a,sh)});
 assign ok=(actual==(a+b+carry_in))&&(add128_grouped(a,~b,1'b1)==(a-b))&&(rne(a,sh)==reference)&&(point_result==reference)&&(norm_denominator_add(a,b)==(a+b));
 assign bad_ok=((norm_denominator_add(a,b)^128'h40000)==(a+b));
 endmodule

@@ -118,7 +118,7 @@ module block_v1_v(
   end
  endfunction
  // Zero-carry prefix adder:16 byte groups, four prefix levels. Used by the
- // normalization denominator and all three U80 square-reduction levels.
+ // normalization denominator, U80 square reduction and point RNE increment.
  // Keep the full U128 result and existing command latency.
  function automatic signed [127:0] norm_denominator_add;
   input [127:0] left,right;
@@ -384,7 +384,7 @@ module block_v1_v(
      phase<=P_ROUND_ADD;
     end
     P_ROUND_ADD:begin
-     for(i=0;i<8;i=i+1)point_rounded[i]<=add128_grouped(point_total[i],{127'b0,point_increment[i]},1'b0);
+     for(i=0;i<8;i=i+1)point_rounded[i]<=norm_denominator_add(point_total[i],{127'b0,point_increment[i]});
      phase<=P_WRITE;
     end
     P_WRITE:begin
