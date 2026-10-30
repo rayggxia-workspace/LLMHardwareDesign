@@ -85,10 +85,11 @@ def generate(report, geometry, names, dimensions):
 def probe(root,out,cpus,run,shard):
     from pathlib import Path
     from collections import Counter
-    import json
+    import json,re
     from io_slots import file_sha
     from revision300_v_corner_probe import def_content,violations
-    assert cpus==16 and shard in range(6)
+    assert cpus==16 and shard in range(7)
+    assert shard!=6 or out.name=='revision300-v-clearance-compose'
     base=out.parents[2]
     prior=base/'block-v1-20261031-638/tasks/revision300-v-current-neighborhood'
     receipt=json.loads((prior/'receipt.json').read_text())
@@ -104,6 +105,34 @@ def probe(root,out,cpus,run,shard):
     for name,h in report['source_inputs_sha256'].items():assert file_sha(results/name)==h
     plan=generate(report,prior/'neighborhood.tsv',prior/'net-aliases.tsv',prior/'layer-dimensions.tsv')
     selected=[p for p in plan['selected']if p['shard']==shard]
+    failure_filter=None
+    if shard==6:
+        old=violations((prior/'native-whole-drc.rpt').read_text())
+        modified={p['net'].replace('\\','')for p in plan['selected']};affected=set();evidence=[]
+        for n in range(6):
+            folder=base/('block-v1-20261031-641/tasks/revision300-v-clearance-corners-'+str(n))
+            r=json.loads((folder/'receipt.json').read_text())
+            for filename in ('revision300-v-clearance-corners.json','corner-native-drc.rpt','clearance-plan.json'):
+                assert file_sha(folder/filename)==r['outputs'][filename]
+            previous=json.loads((folder/'revision300-v-clearance-corners.json').read_text())
+            assert previous['source_receipt_sha256']==report['source_receipt_sha256']
+            assert previous['neighborhood_receipt_sha256']==file_sha(prior/'receipt.json')
+            assert json.loads((folder/'clearance-plan.json').read_text())==plan
+            assert previous['passed']==r['passed'] and previous['shard']==n
+            new=violations((folder/'corner-native-drc.rpt').read_text());added=new-old
+            assert sum(added.values())==previous['added_markers']
+            assert bool(added)==(not r['passed'])
+            participants={v.replace('\\','')for block in added for v in re.findall(r'net:(\S+)',block)}
+            changed=participants&modified
+            if added:assert changed
+            affected.update(changed)
+            evidence.append(dict(shard=n,receipt_sha256=file_sha(folder/'receipt.json'),added=list(added.elements()),modified_participant_nets=sorted(changed)))
+        selected=[p for p in plan['selected']if p['net'].replace('\\','')not in affected]
+        assert len(affected)==5 and len(selected)==253
+        failure_filter=dict(affected_modified_nets=sorted(affected),actual_independent_differences=evidence,
+                            filtered_indices=[p['index']for p in plan['selected']if p not in selected],
+                            scope='Remove all modified nets in actual641 added markers; fresh combined check, not sum of independent removals.')
+        (out/'failure-filter.json').write_text(json.dumps(failure_filter,indent=2)+'\n')
     assert selected,'Empty shard is not an executable EDA task'
     (out/'clearance-plan.json').write_text(json.dumps(plan,indent=2)+'\n')
     (out/'selected-corners.json').write_text(json.dumps(selected,indent=2)+'\n')
@@ -133,7 +162,7 @@ def probe(root,out,cpus,run,shard):
     new=violations((out/'corner-native-drc.rpt').read_text())
     unchanged=all(file_sha(results/name)==h for name,h in report['source_inputs_sha256'].items())
     result=dict(passed=exact and unchanged and not(new-old)and bool(old-new),
-                diagnostic_only=True,physical_qualified=False,shard=shard,
+                diagnostic_only=True,physical_qualified=False,shard=shard,combined=shard==6,failure_filter=failure_filter,
                 source_receipt_sha256=report['source_receipt_sha256'],source_inputs_sha256=report['source_inputs_sha256'],
                 neighborhood_receipt_sha256=file_sha(prior/'receipt.json'),
                 complete_plan_sha256=file_sha(out/'clearance-plan.json'),original_inputs_unchanged=unchanged,
@@ -141,6 +170,6 @@ def probe(root,out,cpus,run,shard):
                 exact_expected_rectangles_and_nonrect_net_routes=exact,
                 original_native_count=sum(old.values()),candidate_native_count=sum(new.values()),
                 added_markers=sum((new-old).values()),removed_markers=sum((old-new).values()),
-                scope='One nonempty disjoint-net shard of current589 full-neighborhood-pruned fills; same467 source. Full native0new and exact DEF delta required; independent shard counts cannot be summed. Combined whole check and full final gates on exact accepted source remain mandatory. No qualification transfer to629.')
+                scope='Current589 full-neighborhood-pruned fills on same467 source. Shard6 is actual-failure-filtered253 combined fill, not an independent-count sum. Full native0new and exact DEF delta required; remaining native items and all final gates still mandatory. No qualification transfer to629.')
     (out/'revision300-v-clearance-corners.json').write_text(json.dumps(result,indent=2)+'\n')
     assert result['passed'],'Preserve failed shard; other independent tasks continue'
