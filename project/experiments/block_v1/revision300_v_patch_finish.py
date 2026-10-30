@@ -1,6 +1,7 @@
 """Fresh RCX/final outputs from the real zero-DRC V repair, no old gate transfer."""
 import json
 import shutil
+import re
 from pathlib import Path
 
 
@@ -10,7 +11,14 @@ def implement(root,out,cpus,run):
     from native_escape_audit import def_inventory
     assert cpus==16 and out.name=='revision300-route-v'
     policy=json.loads((root/'project/experiments/block_v1/revision300-v-patch-finish.json').read_text())
-    assert policy==dict(schema='revision300-v-patch-finish/1',native='block-v1-20261031-629/tasks/revision300-route-v',patch='block-v1-20261031-763/tasks/revision300-v-zero31-compose',requires_fresh_final_acceptance=True)
+    single_rect = policy['schema'] == 'revision300-v-patch-finish/2'
+    if single_rect:
+        assert set(policy) == {'schema','native','patch','requires_fresh_final_acceptance'}
+        assert policy['native'] == 'block-v1-20261031-629/tasks/revision300-route-v'
+        assert re.fullmatch(r'block-v1-20261031-801/tasks/revision300-v-gds-repair-[0-5]', policy['patch'])
+        assert policy['requires_fresh_final_acceptance'] is True
+    else:
+        assert policy==dict(schema='revision300-v-patch-finish/1',native='block-v1-20261031-629/tasks/revision300-route-v',patch='block-v1-20261031-763/tasks/revision300-v-zero31-compose',requires_fresh_final_acceptance=True)
     base=out.parents[2]
     native=base/'block-v1-20261031-629/tasks/revision300-route-v'
     nr=json.loads((native/'receipt.json').read_text());assert nr['passed']
@@ -18,21 +26,37 @@ def implement(root,out,cpus,run):
     old=json.loads((native/'revision300-native-flow.json').read_text())
     assert old['passed']and old['pipeline_completed']and old['stages']==['do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish']
     for name,h in old['rtl_sha256'].items():assert file_sha(root/name)==h
-    patch=base/'block-v1-20261031-763/tasks/revision300-v-zero31-compose'
+    patch=base/policy['patch']
     pr=json.loads((patch/'receipt.json').read_text());assert pr['passed']and pr['mode']==patch.name
-    proof=patch/'revision300-v-local-vias.json';assert file_sha(proof)==pr['outputs'][proof.name]
+    proof=patch/('revision300-v-gds-repair.json' if single_rect else 'revision300-v-local-vias.json');assert file_sha(proof)==pr['outputs'][proof.name]
     p=json.loads(proof.read_text())
-    assert p['passed']and not p['physical_qualified']and p['candidate_native_count']==p['added_markers']==0
-    assert p['exact_normal_nets_headers_paths_rectangles']and p['original_inputs_unchanged']and p['normal_net_counts']==[562494,562494]
+    assert p['passed']and not p['physical_qualified']and p['candidate_native_count']==0
+    assert p['original_inputs_unchanged']and p['normal_net_counts']==[562494,562494]
+    if single_rect:
+        from revision300_v_gds_repair import OLD, CUTS
+        assert p['diagnostic_only'] and p['exact_one_rect_and_all_other_def_geometry']
+        assert p['case'] == int(patch.name.rsplit('-',1)[1])
+        assert p['old_rectangle'] == list(OLD)
+        assert p['replacement_rectangle'] == [*OLD[:3],CUTS[p['case']],OLD[4]]
+        assert p['source_receipt_sha256'] == 'f06b8e147dfb8bde4e5cdd662bfbbad97b873e661b3b47c9667a6386a6d06005'
+    else:
+        assert p['added_markers']==0 and p['exact_normal_nets_headers_paths_rectangles']
     for name in('local-candidate.odb','local-candidate.def','local-native-drc.rpt'):assert file_sha(patch/name)==pr['outputs'][name]
     assert not(patch/'local-native-drc.rpt').read_text().strip()
     # The repaired copy descends from this 630 package, which descends from629.
     # Its old physical/function/LEC qualifications are explicitly not inherited.
-    previous=base/'block-v1-20261031-630/tasks/revision300-final-source-v'
+    previous=base/('block-v1-20261031-767/tasks/revision300-final-source-v' if single_rect else 'block-v1-20261031-630/tasks/revision300-final-source-v')
     previous_receipt=json.loads((previous/'receipt.json').read_text());assert previous_receipt['passed']
     assert file_sha(previous/'revision300-final-source.json')==previous_receipt['outputs']['revision300-final-source.json']
     previous_flow=json.loads((previous/'revision300-final-source.json').read_text())
-    assert previous_flow['source_native_receipt_sha256']==file_sha(native/'receipt.json')and previous_flow['rtl_sha256']==old['rtl_sha256']
+    assert previous_flow['rtl_sha256']==old['rtl_sha256']
+    if single_rect:
+        assert file_sha(previous/'receipt.json') == p['source_receipt_sha256']
+        assert previous_flow['source_native_task'] == str(native)
+        assert previous_flow['source_final_package_receipt_sha256'] == file_sha(base/'block-v1-20261031-630/tasks/revision300-final-source-v/receipt.json')
+        assert {name:previous_flow['final_files'][name]['sha256'] for name in ('6_final.odb','6_final.def')} == p['source_inputs_sha256']
+    else:
+        assert previous_flow['source_native_receipt_sha256']==file_sha(native/'receipt.json')
     relative=Path('flow/results/nangate45/bv1_block_v1_v/base');results=out/relative;results.mkdir(parents=True)
     for category in('logs','reports','objects'):(out/'flow'/category/'nangate45/bv1_block_v1_v/base').mkdir(parents=True)
     copied={}
@@ -56,7 +80,7 @@ def implement(root,out,cpus,run):
                 source_final_package_receipt_sha256=file_sha(previous/'receipt.json'),
                 accepted_edit_odb_sha256=pr['outputs']['local-candidate.odb'],actual_flow_scripts=FLOW_HASHES,
                 exact_geometry_readback_required=True,requires_fresh_final_acceptance=True,
-                scope='One current V, unchanged576 RTL and629 cells/placement/CTS, bounded pre-freeze metal/via repairs. Fresh ordinary final-report/RCX only; no reroute/fill/optimization. Original630 gates do not transfer. Every final independent gate and all-port evidence must rerun.')
+                scope='One current V, unchanged576 RTL and629 cells/placement/CTS; bounded copied repair, including one shortened RECT when policy2. Fresh ordinary final-report/RCX only; no reroute/fill/optimization. Original630/767 gates do not transfer. Every final independent gate, whole signal geometry and all-port evidence must rerun.')
     def save():(out/'revision300-native-flow.json').write_text(json.dumps(record,indent=2)+'\n')
     save()
     command=['make','-C',str(flow),'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']

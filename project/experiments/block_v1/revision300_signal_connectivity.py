@@ -9,7 +9,8 @@ def prove(root, out, cpus, run, kind):
     assert cpus == 16 and kind == 'v'
     folder, receipt, flow, results = source(root, out, kind)
     assert folder.name == 'revision300-final-source-v'
-    assert folder.parent.parent.name == 'block-v1-20261031-767'
+    selection = json.loads((root/'project/experiments/block_v1/revision300-selected-sources.json').read_text())
+    assert folder == out.parents[2]/selection['macros']['v']
     inputs = {name: file_sha(results/name) for name in ('6_final.odb', '6_final.def')}
     for name, digest in inputs.items():
         assert digest == flow['final_files'][name]['sha256']
@@ -27,6 +28,7 @@ def prove(root, out, cpus, run, kind):
     (out/'signal-connectivity.tcl').write_text(script)
     geometry = out/'signal-geometry.tsv'
     if out.name == 'revision300-signal-connectivity-audit-v':
+        assert folder.parent.parent.name == 'block-v1-20261031-767'
         previous = out.parents[2]/'block-v1-20261031-776/tasks/revision300-signal-connectivity-v'
         failed = json.loads((previous/'receipt.json').read_text())
         assert failed['passed'] is False and failed['mode'] == previous.name
