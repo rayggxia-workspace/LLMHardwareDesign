@@ -87,6 +87,9 @@ try:
     elif MODE.startswith('revision300-preconnect-trial-'):
         from revision300_preconnect_trial import trial
         trial(ROOT,OUT,CPUS,run,MODE[-1])
+    elif MODE=='revision300-route-v' and (ROOT/'project/experiments/block_v1/revision300-v-patch-finish.json').exists():
+        from revision300_v_patch_finish import implement
+        implement(ROOT,OUT,CPUS,run)
     elif MODE=='revision300-route-s' and (ROOT/'project/experiments/block_v1/revision300-s-patch-resume.json').exists():
         from revision300_s_patch_finish import implement
         implement(ROOT,OUT,CPUS,run)
