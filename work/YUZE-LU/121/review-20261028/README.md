@@ -72,3 +72,5 @@ Initial remote run233 job92802/node13 completed six independently claimed measur
 S revised RTL now permits retiring/refilling its one response register on the same edge, still exactly16KiB standard-cell1RW payload. T revised RTL refills the held committed word on each take edge, still one6KiB complete-batch lease, no producer/consumer double-buffer overlap. Fresh independent burst/backpressure/reset tests and fresh mapping/native300MHz flow are prepared but not yet run at this checkpoint. Shared store82 used by historical experiments is unchanged.
 
 The candidate coarse layout distributes every actual port (including clock/control/observations) into <=16-bit directional strips, with2x2 realM10 pins. Horizontal routes avoid vertical-source M11 landing rows. Native footprint may grow only if complete mapped port track capacity cannot fit; outer32um receiver endpoints and40um test halo are charged separately. This is a planned geometry until actual native reconnect/readback and fullDRC pass.
+
+- [新493 CTS实际阶段证据](v-493-cts-501/README.md)：内部等价通过，CTS时序仍负；最终布线和全部验收继续。
