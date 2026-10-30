@@ -82,24 +82,27 @@ def generate(report, geometry, names, dimensions):
                 scope='Complete-neighborhood, bounded scalar-spacing/new-area pruning only. Six disjoint net-hash shards permit independent16CPU native checks; combined whole-native check and all final gates remain mandatory. No blanket layer upgrade or source qualification transfer.')
 
 
-def probe(root,out,cpus,run,shard):
+def probe(root,out,cpus,run,shard,repaired=False):
     from pathlib import Path
     from collections import Counter
     import json,re
     from io_slots import file_sha
     from revision300_v_corner_probe import def_content,violations
     assert cpus==16 and shard in range(7)
+    assert not(repaired and shard==6),'Repaired-source compose requires its own actual shard receipts'
     assert shard!=6 or out.name=='revision300-v-clearance-compose'
     base=out.parents[2]
-    prior=base/'block-v1-20261031-638/tasks/revision300-v-current-neighborhood'
+    prior=base/('block-v1-20261031-655/tasks/revision300-v-repaired-neighborhood' if repaired else
+                'block-v1-20261031-638/tasks/revision300-v-current-neighborhood')
     receipt=json.loads((prior/'receipt.json').read_text())
     assert receipt['passed'] and receipt['mode']==prior.name
     names=('revision300-v-current-neighborhood.json','neighborhood.tsv','net-aliases.tsv','layer-dimensions.tsv','native-whole-drc.rpt')
     for name in names:assert file_sha(prior/name)==receipt['outputs'][name]
     report=json.loads((prior/names[0]).read_text())
-    assert report['source_native_count']==467 and report['original_inputs_unchanged']
+    assert report['source_native_count']==(471 if repaired else 467) and report['original_inputs_unchanged']
     source=Path(report['source_final_task'])
-    assert source==base/'block-v1-20261030-589/tasks/revision300-final-source-v'
+    assert source==base/('block-v1-20261031-630/tasks/revision300-final-source-v' if repaired else
+                         'block-v1-20261030-589/tasks/revision300-final-source-v')
     assert file_sha(source/'receipt.json')==report['source_receipt_sha256']
     results=source/'flow/results/nangate45/bv1_block_v1_v/base'
     for name,h in report['source_inputs_sha256'].items():assert file_sha(results/name)==h
@@ -170,6 +173,6 @@ def probe(root,out,cpus,run,shard):
                 exact_expected_rectangles_and_nonrect_net_routes=exact,
                 original_native_count=sum(old.values()),candidate_native_count=sum(new.values()),
                 added_markers=sum((new-old).values()),removed_markers=sum((old-new).values()),
-                scope='Current589 full-neighborhood-pruned fills on same467 source. Shard6 is actual-failure-filtered253 combined fill, not an independent-count sum. Full native0new and exact DEF delta required; remaining native items and all final gates still mandatory. No qualification transfer to629.')
+                scope=f'Pinned {source.parent.parent.name} full-neighborhood-pruned fills on actual{report["source_native_count"]} source. Shard6, when enabled, binds its own actual failures before combined checking, not an independent-count sum. Full native0new and exact DEF delta required; remaining native items and all final gates still mandatory. No final qualification transfer.')
     (out/'revision300-v-clearance-corners.json').write_text(json.dumps(result,indent=2)+'\n')
     assert result['passed'],'Preserve failed shard; other independent tasks continue'
