@@ -1,6 +1,6 @@
 {
   "captured_utc": "2026-10-29T01:22:37.953790+00:00",
-  "scope": "M/S/T accepted unchanged; current588 completed six-stage but589 cap2 physical failed.628 native probe PASS;629 measured drive repair reroute RUNNING,630/631 all fresh final gates/interfaces mandatory. R404 original continues. No old-source qualification transfer.",
+  "scope": "M/S/T accepted unchanged.629 PnR and630 physical/function/strictLEC PASS, native471 rejects and fullGDS continues.683 actual combined repair103/0new is diagnostic only. R404 original continues. Five macros not complete; no source qualification transfer.",
   "sources": {
     "work/YUZE-LU/121/delivery/M/five-macro-delivery.json": "52a1bdc4fae5b4b40c750faffbfc4a7e4eef3dafd644330f20295d3a6c32d0c6",
     "work/YUZE-LU/121/delivery/V/five-macro-delivery.json": "fadad24d5e8c3e84f201aa9a6d9f93992e3e62f5e199280bf2ab31f67baa6973",
@@ -169,7 +169,7 @@
       "interface_run": 631,
       "accepted": false,
       "final_helper_source_commit": "83b86f9e0b276b84a1b15029430722caa1ef06ed",
-      "final_helper_status": "629 PnR completed649;630 independent physical656/final-function675/strictLEC676 PASS, native471 rejects and full GDS continues.672 actual combined250fills+45via alternatives173/0new sealed673; patched copy not final-qualified;631 awaits actual final prerequisites.",
+      "final_helper_status": "630 physical656/function675/strictLEC676 PASS but native471/fullGDS separate;683 real250fills+45via+70alternatives173\u2192103/0new sealed685, still unqualified.681 six actual6x16 PASS682.684 actual173-source whole geometry PASS687; current683 net90491 needs fresh paths.631 awaits real final prerequisites.",
       "native_helper_source_commit": "186ac5eb50197e18ef236cb51ef6b96a51b4cbc7",
       "previous_native_run": 588,
       "previous_final_run": 589,
@@ -183,7 +183,10 @@
         "via_shards": 669,
         "physical_qualified": false,
         "via_compose": 672,
-        "remaining_native_count": 173
+        "remaining_native_count": 103,
+        "remaining_via_shards": 681,
+        "remaining_via_compose": 683,
+        "composed_neighborhood": 684
       }
     },
     "R": {
@@ -510,7 +513,27 @@
       "work/YUZE-LU/121/review-20261028/v-composed-neighborhood-687/index.json": "93c86aca4c56ade8267d8814544782da9c2ac20ffec51ba1fbd6b319df65e3ed",
       "work/YUZE-LU/121/review-20261028/v-composed-neighborhood-687/verification.json": "3277ea05a72fc638cda1082c2b88617f9b80c6fbbc45a1f7d781de0e6acefef9",
       "work/YUZE-LU/121/review-20261028/v-composed-neighborhood-687/block-v1-20261031-684/tasks/revision300-v-composed-neighborhood/receipt.json": "6eda9bbc029429367e1fe89f3ec4f5a8cbedcbcfd6f85f202293a2a5e4116118",
-      "work/YUZE-LU/121/review-20261028/v-composed-neighborhood-687/block-v1-20261031-684/tasks/revision300-v-composed-neighborhood/revision300-v-composed-neighborhood.json": "20a4d1c668cc02afcbdb098b4c6889ef1d8551655a6bb508fd3990a063c9889e"
+      "work/YUZE-LU/121/review-20261028/v-composed-neighborhood-687/block-v1-20261031-684/tasks/revision300-v-composed-neighborhood/revision300-v-composed-neighborhood.json": "20a4d1c668cc02afcbdb098b4c6889ef1d8551655a6bb508fd3990a063c9889e",
+      "work/YUZE-LU/121/review-20261028/v-remaining-vias-682/index.json": "d738767ee18a75f6df1315db179c240f15c6ca7fa02ade4ca8dba1c2e74c2b69",
+      "work/YUZE-LU/121/review-20261028/v-remaining-vias-682/block-v1-20261031-681/tasks/revision300-v-remaining-vias-0/receipt.json": "04cdf06fde2c8463e136a5b1c3404f69d9ffe7c406d62e31cdd16c040cb1db9d",
+      "work/YUZE-LU/121/review-20261028/v-remaining-vias-682/block-v1-20261031-681/tasks/revision300-v-remaining-vias-0/revision300-v-remaining-vias.json": "2d94ebe13d32b96d9862118d4968efd66dd4789335b37fb490e9c9bb70075a4f",
+      "work/YUZE-LU/121/review-20261028/v-remaining-vias-682/block-v1-20261031-681/tasks/revision300-v-remaining-vias-1/receipt.json": "ad718bd04992bad4224689637a52f4a71b88e9f49bfae6abad8cd7184d20f025",
+      "work/YUZE-LU/121/review-20261028/v-remaining-vias-682/block-v1-20261031-681/tasks/revision300-v-remaining-vias-1/revision300-v-remaining-vias.json": "4613e0551479e38230d61a2649dd5e29f6d9af3532ef3973c84894c4469a35d1",
+      "work/YUZE-LU/121/review-20261028/v-remaining-vias-682/block-v1-20261031-681/tasks/revision300-v-remaining-vias-2/receipt.json": "1b9c6f3788ea6bdcf4a10113e4c54bf6b60a694d6cb315e50b23184270d55f9b",
+      "work/YUZE-LU/121/review-20261028/v-remaining-vias-682/block-v1-20261031-681/tasks/revision300-v-remaining-vias-2/revision300-v-remaining-vias.json": "d65ad6cb9f90922d38b8022d8fec9c56ff12faf214bf17d07ab4f8da236922af",
+      "work/YUZE-LU/121/review-20261028/v-remaining-vias-682/block-v1-20261031-681/tasks/revision300-v-remaining-vias-3/receipt.json": "8ed5d990cea84cde5c7747fa29d9bd0d1f5028b6c0fbd52cbf3bf08e112b80db",
+      "work/YUZE-LU/121/review-20261028/v-remaining-vias-682/block-v1-20261031-681/tasks/revision300-v-remaining-vias-3/revision300-v-remaining-vias.json": "54aa7a870f3552480f59037e5660db1d3863e76836516419f7adf9dd4d07123b",
+      "work/YUZE-LU/121/review-20261028/v-remaining-vias-682/block-v1-20261031-681/tasks/revision300-v-remaining-vias-4/receipt.json": "fefa352c05612a7bf8d3aaa2cc2da3d218ea653cf846eaa836fdc7445879aa4f",
+      "work/YUZE-LU/121/review-20261028/v-remaining-vias-682/block-v1-20261031-681/tasks/revision300-v-remaining-vias-4/revision300-v-remaining-vias.json": "6f724f6e82a129d1b40743dc24e83abd1a5599fcc0de2bb5d9ff6dab56bdcdf3",
+      "work/YUZE-LU/121/review-20261028/v-remaining-vias-682/block-v1-20261031-681/tasks/revision300-v-remaining-vias-5/receipt.json": "e3bb9cf6d21d8905a83f440e46c68401f300bb13cc4b98fb0989a29b44f0cd53",
+      "work/YUZE-LU/121/review-20261028/v-remaining-vias-682/block-v1-20261031-681/tasks/revision300-v-remaining-vias-5/revision300-v-remaining-vias.json": "c3f94bfab9306c54cf479a6bc35788dd886b889dfa85c06d2bc4ea6dffe1e3c0",
+      "work/YUZE-LU/121/review-20261028/v-remaining-via-combined-685/index.json": "2eb3739410f1109f116a503b95a80ea8b053f76a0ed772eab792576a8eeec43b",
+      "work/YUZE-LU/121/review-20261028/v-remaining-via-combined-685/verification.json": "4c332396edfb8f9dfd8ad035124ed88b5db7c9a339025094f8e42ecb1adf2edd",
+      "work/YUZE-LU/121/review-20261028/v-remaining-via-combined-685/block-v1-20261031-683/tasks/revision300-v-remaining-via-compose/receipt.json": "6a425b55d4433f719022abb683873685c719387ce0ae58c97673f1ef72ebfb27",
+      "work/YUZE-LU/121/review-20261028/v-remaining-via-combined-685/block-v1-20261031-683/tasks/revision300-v-remaining-via-compose/revision300-v-remaining-vias.json": "8dc8eb3610f42f6e4a24253dfc05c95c59a0373aa8349b496cddeb23cb75b996",
+      "work/YUZE-LU/121/review-20261028/remaining-topology-688.json": "9a349d1b610aff720d388069f6938b00ee0da507075758ef92007460ad8c90d0",
+      "work/YUZE-LU/121/review-20261028/live-686/six-native.json": "3e9c2f5a6135ae03f141a77c66f1de50453ca730565637cad0e678c67d619bec",
+      "project/experiments/block_v1/remaining-via-plan-680.json": "4202d9aebfc032a6cce273e7b3fadfc4c092714e8a8b1296c02e26224f2df1cd"
     }
   }
 }
