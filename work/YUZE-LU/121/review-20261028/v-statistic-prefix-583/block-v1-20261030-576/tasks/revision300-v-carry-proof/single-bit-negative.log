@@ -1,0 +1,632 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)
+
+-- Executing script file `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-576/tasks/revision300-v-carry-proof/single-bit-negative.ys' --
+
+1. Executing Verilog-2005 frontend: proof.sv
+Parsing SystemVerilog input from `proof.sv' to AST representation.
+Generating RTLIL representation for module `\proof'.
+Warning: Replacing memory \norm_denominator_add$func$proof.sv:79$34.subtotal with list of registers. See proof.sv:32, proof.sv:31
+Warning: Replacing memory \norm_denominator_add$func$proof.sv:78$33.subtotal with list of registers. See proof.sv:32, proof.sv:31
+Warning: Replacing memory \add128_grouped$func$proof.sv:22$32.subtotal with list of registers. See proof.sv:13, proof.sv:8
+Warning: Replacing memory \add128_grouped$func$proof.sv:78$30.subtotal with list of registers. See proof.sv:13, proof.sv:8
+Warning: Replacing memory \norm_denominator_add$func$proof.sv:77$29.subtotal with list of registers. See proof.sv:32, proof.sv:31
+Warning: Replacing memory \norm_denominator_add$func$proof.sv:76$28.subtotal with list of registers. See proof.sv:32, proof.sv:31
+Warning: Replacing memory \add128_grouped$func$proof.sv:71$22.subtotal with list of registers. See proof.sv:13, proof.sv:8
+Successfully finished Verilog frontend.
+
+2. Executing PREP pass.
+
+2.1. Executing HIERARCHY pass (managing design hierarchy).
+
+2.1.1. Analyzing design hierarchy..
+Top module:  \proof
+
+2.1.2. Analyzing design hierarchy..
+Top module:  \proof
+Removed 0 unused modules.
+
+2.2. Executing PROC pass (convert processes to netlists).
+
+2.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 80 empty switches in `\proof.$proc$proof.sv:79$1619'.
+Found and cleaned up 80 empty switches in `\proof.$proc$proof.sv:78$1257'.
+Found and cleaned up 80 empty switches in `\proof.$proc$proof.sv:77$608'.
+Found and cleaned up 80 empty switches in `\proof.$proc$proof.sv:76$246'.
+Cleaned up 320 empty switches.
+
+2.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$proof.sv:78$1092 in module proof.
+Removed a total of 0 dead cases.
+
+2.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 1438 assignments to connections.
+
+2.2.4. Executing PROC_INIT pass (extract init attributes).
+
+2.2.5. Executing PROC_ARST pass (detect async resets in processes).
+
+2.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~1 debug messages>
+
+2.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\proof.$proc$proof.sv:80$1987'.
+Creating decoders for process `\proof.$proc$proof.sv:80$1981'.
+Creating decoders for process `\proof.$proc$proof.sv:79$1619'.
+Creating decoders for process `\proof.$proc$proof.sv:78$1257'.
+Creating decoders for process `\proof.$proc$proof.sv:78$1092'.
+     1/73: $1\add128_grouped$func$proof.sv:22$32.result[127:0]$1133 [127:120]
+     2/73: $1\add128_grouped$func$proof.sv:22$32.result[127:0]$1133 [119:112]
+     3/73: $1\add128_grouped$func$proof.sv:22$32.carry[16:0]$1132 [15]
+     4/73: $1\add128_grouped$func$proof.sv:22$32.result[127:0]$1133 [111:104]
+     5/73: $1\add128_grouped$func$proof.sv:22$32.carry[16:0]$1132 [14]
+     6/73: $1\add128_grouped$func$proof.sv:22$32.result[127:0]$1133 [103:96]
+     7/73: $1\add128_grouped$func$proof.sv:22$32.carry[16:0]$1132 [13]
+     8/73: $1\add128_grouped$func$proof.sv:22$32.result[127:0]$1133 [95:88]
+     9/73: $1\add128_grouped$func$proof.sv:22$32.carry[16:0]$1132 [12]
+    10/73: $1\add128_grouped$func$proof.sv:22$32.result[127:0]$1133 [87:80]
+    11/73: $1\add128_grouped$func$proof.sv:22$32.carry[16:0]$1132 [11]
+    12/73: $1\add128_grouped$func$proof.sv:22$32.result[127:0]$1133 [79:72]
+    13/73: $1\add128_grouped$func$proof.sv:22$32.carry[16:0]$1132 [10]
+    14/73: $1\add128_grouped$func$proof.sv:22$32.result[127:0]$1133 [71:64]
+    15/73: $1\add128_grouped$func$proof.sv:22$32.carry[16:0]$1132 [9]
+    16/73: $1\add128_grouped$func$proof.sv:22$32.result[127:0]$1133 [63:56]
+    17/73: $1\add128_grouped$func$proof.sv:22$32.carry[16:0]$1132 [8]
+    18/73: $1\add128_grouped$func$proof.sv:22$32.result[127:0]$1133 [55:48]
+    19/73: $1\add128_grouped$func$proof.sv:22$32.carry[16:0]$1132 [7]
+    20/73: $1\add128_grouped$func$proof.sv:22$32.result[127:0]$1133 [47:40]
+    21/73: $1\add128_grouped$func$proof.sv:22$32.carry[16:0]$1132 [6]
+    22/73: $1\add128_grouped$func$proof.sv:22$32.result[127:0]$1133 [39:32]
+    23/73: $1\add128_grouped$func$proof.sv:22$32.carry[16:0]$1132 [5]
+    24/73: $1\add128_grouped$func$proof.sv:22$32.result[127:0]$1133 [31:24]
+    25/73: $1\add128_grouped$func$proof.sv:22$32.carry[16:0]$1132 [4]
+    26/73: $1\add128_grouped$func$proof.sv:22$32.result[127:0]$1133 [23:16]
+    27/73: $1\add128_grouped$func$proof.sv:22$32.carry[16:0]$1132 [3]
+    28/73: $1\add128_grouped$func$proof.sv:22$32.result[127:0]$1133 [15:8]
+    29/73: $1\add128_grouped$func$proof.sv:22$32.carry[16:0]$1132 [2]
+    30/73: $1\add128_grouped$func$proof.sv:22$32.result[127:0]$1133 [7:0]
+    31/73: $1\add128_grouped$func$proof.sv:22$32.carry[16:0]$1132 [1]
+    32/73: $1\add128_grouped$func$proof.sv:22$32.carry[16:0]$1132 [0]
+    33/73: $1\add128_grouped$func$proof.sv:22$32.propagate[15:0]$1131 [14]
+    34/73: $1\add128_grouped$func$proof.sv:22$32.propagate[15:0]$1131 [13]
+    35/73: $1\add128_grouped$func$proof.sv:22$32.propagate[15:0]$1131 [12]
+    36/73: $1\add128_grouped$func$proof.sv:22$32.propagate[15:0]$1131 [11]
+    37/73: $1\add128_grouped$func$proof.sv:22$32.propagate[15:0]$1131 [10]
+    38/73: $1\add128_grouped$func$proof.sv:22$32.propagate[15:0]$1131 [9]
+    39/73: $1\add128_grouped$func$proof.sv:22$32.propagate[15:0]$1131 [8]
+    40/73: $1\add128_grouped$func$proof.sv:22$32.propagate[15:0]$1131 [7]
+    41/73: $1\add128_grouped$func$proof.sv:22$32.propagate[15:0]$1131 [6]
+    42/73: $1\add128_grouped$func$proof.sv:22$32.propagate[15:0]$1131 [5]
+    43/73: $1\add128_grouped$func$proof.sv:22$32.propagate[15:0]$1131 [4]
+    44/73: $1\add128_grouped$func$proof.sv:22$32.propagate[15:0]$1131 [3]
+    45/73: $1\add128_grouped$func$proof.sv:22$32.propagate[15:0]$1131 [2]
+    46/73: $1\add128_grouped$func$proof.sv:22$32.propagate[15:0]$1131 [1]
+    47/73: $1\add128_grouped$func$proof.sv:22$32.propagate[15:0]$1131 [0]
+    48/73: $1\add128_grouped$func$proof.sv:22$32.subtotal[15][8:0]$1150
+    49/73: $1\add128_grouped$func$proof.sv:22$32.subtotal[14][8:0]$1149
+    50/73: $1\add128_grouped$func$proof.sv:22$32.subtotal[13][8:0]$1148
+    51/73: $1\add128_grouped$func$proof.sv:22$32.subtotal[12][8:0]$1147
+    52/73: $1\add128_grouped$func$proof.sv:22$32.subtotal[11][8:0]$1146
+    53/73: $1\add128_grouped$func$proof.sv:22$32.subtotal[10][8:0]$1145
+    54/73: $1\add128_grouped$func$proof.sv:22$32.subtotal[9][8:0]$1144
+    55/73: $1\add128_grouped$func$proof.sv:22$32.subtotal[8][8:0]$1143
+    56/73: $1\add128_grouped$func$proof.sv:22$32.subtotal[7][8:0]$1142
+    57/73: $1\add128_grouped$func$proof.sv:22$32.subtotal[6][8:0]$1141
+    58/73: $1\add128_grouped$func$proof.sv:22$32.subtotal[5][8:0]$1140
+    59/73: $1\add128_grouped$func$proof.sv:22$32.subtotal[4][8:0]$1139
+    60/73: $1\add128_grouped$func$proof.sv:22$32.subtotal[3][8:0]$1138
+    61/73: $1\add128_grouped$func$proof.sv:22$32.subtotal[2][8:0]$1137
+    62/73: $1\add128_grouped$func$proof.sv:22$32.subtotal[1][8:0]$1136
+    63/73: $1\add128_grouped$func$proof.sv:22$32.subtotal[0][8:0]$1135
+    64/73: $1\add128_grouped$func$proof.sv:22$32.g[31:0]$1134
+    65/73: $1\add128_grouped$func$proof.sv:22$32.carry[16:0]$1132 [16]
+    66/73: $1\add128_grouped$func$proof.sv:22$32.propagate[15:0]$1131 [15]
+    67/73: $1\rne$func$proof.sv:78$31.$result[127:0]$1124
+    68/73: $1\add128_grouped$func$proof.sv:22$32.right[127:0]$1130
+    69/73: $1\add128_grouped$func$proof.sv:22$32.left[127:0]$1129
+    70/73: $1\add128_grouped$func$proof.sv:22$32.$result[127:0]$1128
+    71/73: $1\rne$func$proof.sv:78$31.half[127:0]$1127
+    72/73: $1\rne$func$proof.sv:78$31.remn[127:0]$1126
+    73/73: $1\rne$func$proof.sv:78$31.q[127:0]$1125
+Creating decoders for process `\proof.$proc$proof.sv:78$970'.
+Creating decoders for process `\proof.$proc$proof.sv:77$608'.
+Creating decoders for process `\proof.$proc$proof.sv:76$246'.
+Creating decoders for process `\proof.$proc$proof.sv:75$238'.
+Creating decoders for process `\proof.$proc$proof.sv:75$232'.
+Creating decoders for process `\proof.$proc$proof.sv:74$226'.
+Creating decoders for process `\proof.$proc$proof.sv:74$220'.
+Creating decoders for process `\proof.$proc$proof.sv:72$200'.
+Creating decoders for process `\proof.$proc$proof.sv:71$78'.
+
+2.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\proof.\point_half_increment$func$proof.sv:80$21.$result' from process `\proof.$proc$proof.sv:80$1987'.
+No latch inferred for signal `\proof.\point_half_increment$func$proof.sv:80$20.$result' from process `\proof.$proc$proof.sv:80$1981'.
+No latch inferred for signal `\proof.\norm_denominator_add$func$proof.sv:79$19.$result' from process `\proof.$proc$proof.sv:79$1619'.
+No latch inferred for signal `\proof.\norm_denominator_add$func$proof.sv:78$18.$result' from process `\proof.$proc$proof.sv:78$1257'.
+No latch inferred for signal `\proof.\rne$func$proof.sv:78$17.$result' from process `\proof.$proc$proof.sv:78$1092'.
+No latch inferred for signal `\proof.\add128_grouped$func$proof.sv:78$16.$result' from process `\proof.$proc$proof.sv:78$970'.
+No latch inferred for signal `\proof.\norm_denominator_add$func$proof.sv:77$15.$result' from process `\proof.$proc$proof.sv:77$608'.
+No latch inferred for signal `\proof.\norm_denominator_add$func$proof.sv:76$14.$result' from process `\proof.$proc$proof.sv:76$246'.
+No latch inferred for signal `\proof.\point_half_increment$func$proof.sv:75$13.$result' from process `\proof.$proc$proof.sv:75$238'.
+No latch inferred for signal `\proof.\point_half_increment$func$proof.sv:75$12.$result' from process `\proof.$proc$proof.sv:75$232'.
+No latch inferred for signal `\proof.\point_half_increment$func$proof.sv:74$11.$result' from process `\proof.$proc$proof.sv:74$226'.
+No latch inferred for signal `\proof.\point_half_increment$func$proof.sv:74$10.$result' from process `\proof.$proc$proof.sv:74$220'.
+No latch inferred for signal `\proof.\point_rne_increment$func$proof.sv:72$9.$result' from process `\proof.$proc$proof.sv:72$200'.
+No latch inferred for signal `\proof.\add128_grouped$func$proof.sv:71$8.$result' from process `\proof.$proc$proof.sv:71$78'.
+
+2.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+
+2.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+2.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `proof.$proc$proof.sv:80$1987'.
+Removing empty process `proof.$proc$proof.sv:80$1981'.
+Removing empty process `proof.$proc$proof.sv:79$1619'.
+Removing empty process `proof.$proc$proof.sv:78$1257'.
+Found and cleaned up 1 empty switch in `\proof.$proc$proof.sv:78$1092'.
+Removing empty process `proof.$proc$proof.sv:78$1092'.
+Removing empty process `proof.$proc$proof.sv:78$970'.
+Removing empty process `proof.$proc$proof.sv:77$608'.
+Removing empty process `proof.$proc$proof.sv:76$246'.
+Removing empty process `proof.$proc$proof.sv:75$238'.
+Removing empty process `proof.$proc$proof.sv:75$232'.
+Removing empty process `proof.$proc$proof.sv:74$226'.
+Removing empty process `proof.$proc$proof.sv:74$220'.
+Removing empty process `proof.$proc$proof.sv:72$200'.
+Removing empty process `proof.$proc$proof.sv:71$78'.
+Cleaned up 1 empty switch.
+
+2.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module proof.
+<suppressed ~230 debug messages>
+
+2.3. Executing FUTURE pass.
+
+2.4. Executing OPT_EXPR pass (perform const folding).
+Optimizing module proof.
+
+2.5. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \proof..
+Removed 172 unused cells and 1634 unused wires.
+<suppressed ~173 debug messages>
+
+2.6. Executing CHECK pass (checking for obvious problems).
+Checking module proof...
+Found and reported 0 problems.
+
+2.7. Executing OPT pass (performing simple optimizations).
+
+2.7.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module proof.
+
+2.7.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\proof'.
+Computing hashes of 845 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+Computing hashes of 743 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+Computing hashes of 694 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+Computing hashes of 639 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+Computing hashes of 585 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+Computing hashes of 541 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+Computing hashes of 508 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+Computing hashes of 485 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+Computing hashes of 463 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+Computing hashes of 453 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+Computing hashes of 445 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+<suppressed ~1200 debug messages>
+Removed a total of 400 cells.
+
+2.7.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \proof..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~4 debug messages>
+
+2.7.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \proof.
+Performed a total of 0 changes.
+
+2.7.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\proof'.
+Computing hashes of 445 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+Removed a total of 0 cells.
+
+2.7.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \proof..
+Removed 0 unused cells and 207 unused wires.
+<suppressed ~1 debug messages>
+
+2.7.7. Executing OPT_EXPR pass (perform const folding).
+Optimizing module proof.
+
+2.7.8. Rerunning OPT passes. (Maybe there is more to do..)
+
+2.7.9. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \proof..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~4 debug messages>
+
+2.7.10. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \proof.
+Performed a total of 0 changes.
+
+2.7.11. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\proof'.
+Computing hashes of 445 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+Removed a total of 0 cells.
+
+2.7.12. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \proof..
+
+2.7.13. Executing OPT_EXPR pass (perform const folding).
+Optimizing module proof.
+
+2.7.14. Finished fast OPT passes. (There is nothing left to do.)
+
+2.8. Executing WREDUCE pass (reducing word size of cells).
+Removed top 127 bits (of 128) from port B of cell proof.$add$proof.sv:70$48 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$996 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:8$996 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$999 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:8$999 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1002 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:8$1002 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1005 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:8$1005 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1008 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:8$1008 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1011 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:8$1011 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1014 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:8$1014 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1017 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:8$1017 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1020 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:8$1020 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1023 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:8$1023 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1026 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:8$1026 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1029 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:8$1029 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1032 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:8$1032 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1035 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:8$1035 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1038 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:8$1038 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1041 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:8$1041 ($add).
+Removed top 1 bits (of 9) from port Y of cell proof.$add$proof.sv:8$1041 ($add).
+Removed top 24 bits (of 32) from port A of cell proof.$sub$proof.sv:22$1152 ($sub).
+Removed top 23 bits (of 32) from port Y of cell proof.$sub$proof.sv:22$1152 ($sub).
+Removed top 31 bits (of 32) from port B of cell proof.$sub$proof.sv:22$1155 ($sub).
+Removed top 24 bits (of 32) from port Y of cell proof.$sub$proof.sv:22$1155 ($sub).
+Removed top 127 bits (of 128) from port A of cell proof.$shl$proof.sv:22$1156 ($shl).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1161 ($add).
+Removed top 8 bits (of 9) from port B of cell proof.$add$proof.sv:8$1161 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1164 ($add).
+Removed top 8 bits (of 9) from port B of cell proof.$add$proof.sv:8$1164 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1167 ($add).
+Removed top 8 bits (of 9) from port B of cell proof.$add$proof.sv:8$1167 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1170 ($add).
+Removed top 8 bits (of 9) from port B of cell proof.$add$proof.sv:8$1170 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1173 ($add).
+Removed top 8 bits (of 9) from port B of cell proof.$add$proof.sv:8$1173 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1176 ($add).
+Removed top 8 bits (of 9) from port B of cell proof.$add$proof.sv:8$1176 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1179 ($add).
+Removed top 8 bits (of 9) from port B of cell proof.$add$proof.sv:8$1179 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1182 ($add).
+Removed top 8 bits (of 9) from port B of cell proof.$add$proof.sv:8$1182 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1185 ($add).
+Removed top 8 bits (of 9) from port B of cell proof.$add$proof.sv:8$1185 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1188 ($add).
+Removed top 8 bits (of 9) from port B of cell proof.$add$proof.sv:8$1188 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1191 ($add).
+Removed top 8 bits (of 9) from port B of cell proof.$add$proof.sv:8$1191 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1194 ($add).
+Removed top 8 bits (of 9) from port B of cell proof.$add$proof.sv:8$1194 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1197 ($add).
+Removed top 8 bits (of 9) from port B of cell proof.$add$proof.sv:8$1197 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1200 ($add).
+Removed top 8 bits (of 9) from port B of cell proof.$add$proof.sv:8$1200 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1203 ($add).
+Removed top 8 bits (of 9) from port B of cell proof.$add$proof.sv:8$1203 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:8$1206 ($add).
+Removed top 8 bits (of 9) from port B of cell proof.$add$proof.sv:8$1206 ($add).
+Removed top 1 bits (of 9) from port Y of cell proof.$add$proof.sv:8$1206 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:31$1289 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:31$1289 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:31$1292 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:31$1292 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:31$1295 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:31$1295 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:31$1298 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:31$1298 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:31$1301 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:31$1301 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:31$1304 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:31$1304 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:31$1307 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:31$1307 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:31$1310 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:31$1310 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:31$1313 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:31$1313 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:31$1316 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:31$1316 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:31$1319 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:31$1319 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:31$1322 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:31$1322 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:31$1325 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:31$1325 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:31$1328 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:31$1328 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:31$1331 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:31$1331 ($add).
+Removed top 1 bits (of 9) from port A of cell proof.$add$proof.sv:31$1334 ($add).
+Removed top 1 bits (of 9) from port B of cell proof.$add$proof.sv:31$1334 ($add).
+Removed top 1 bits (of 9) from port Y of cell proof.$add$proof.sv:31$1334 ($add).
+Removed top 1 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:78$33.gen8[15:0]$1270.
+Removed top 1 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:78$33.gen4[15:0]$1268.
+Removed top 1 bits (of 16) from wire proof.$0\add128_grouped$func$proof.sv:78$30.propagate[15:0]$975.
+Removed top 1 bits (of 17) from wire proof.$0\add128_grouped$func$proof.sv:78$30.carry[16:0]$976.
+Removed top 9 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:76$28.gen4[15:0]$257.
+Removed top 9 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:76$28.prop2[15:0]$256.
+Removed top 9 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:76$28.gen2[15:0]$255.
+Removed top 9 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:76$28.prop1[15:0]$254.
+Removed top 9 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:76$28.gen1[15:0]$253.
+Removed top 1 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:78$33.prop1[15:0]$1265.
+Removed top 7 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:77$29.gen8[15:0]$621.
+Removed top 7 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:77$29.prop4[15:0]$620.
+Removed top 7 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:77$29.gen4[15:0]$619.
+Removed top 7 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:77$29.prop2[15:0]$618.
+Removed top 7 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:77$29.gen2[15:0]$617.
+Removed top 7 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:77$29.prop1[15:0]$616.
+Removed top 7 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:77$29.gen1[15:0]$615.
+Removed top 1 bits (of 9) from wire proof.$add$proof.sv:8$1206_Y.
+Removed top 1 bits (of 9) from wire proof.$0\add128_grouped$func$proof.sv:78$30.subtotal[15][8:0]$994.
+Removed top 1 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:78$33.prop2[15:0]$1267.
+Removed top 1 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:78$33.gen1[15:0]$1264.
+Removed top 1 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:78$33.prop4[15:0]$1269.
+Removed top 1 bits (of 16) from wire proof.$0\norm_denominator_add$func$proof.sv:78$33.gen2[15:0]$1266.
+Removed top 1 bits (of 9) from wire proof.$0\add128_grouped$func$proof.sv:71$22.subtotal[15][8:0]$103.
+Removed top 1 bits (of 17) from wire proof.$0\add128_grouped$func$proof.sv:71$22.carry[16:0]$85.
+Removed top 1 bits (of 16) from wire proof.$0\add128_grouped$func$proof.sv:71$22.propagate[15:0]$84.
+Removed top 127 bits (of 128) from wire proof.$logic_or$proof.sv:70$47_Y.
+
+2.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \proof..
+Removed 0 unused cells and 27 unused wires.
+<suppressed ~1 debug messages>
+
+2.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+2.11. Executing OPT pass (performing simple optimizations).
+
+2.11.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module proof.
+
+2.11.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\proof'.
+Computing hashes of 445 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+Computing hashes of 444 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+<suppressed ~3 debug messages>
+Removed a total of 1 cells.
+
+2.11.3. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \proof..
+Removed 0 unused cells and 1 unused wires.
+<suppressed ~1 debug messages>
+
+2.11.4. Finished fast OPT passes.
+
+2.12. Executing SORT pass.
+
+2.13. Printing statistics.
+
+=== proof ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      500 wires
+    10471 wire bits
+      231 public wires
+     8037 public wire bits
+        7 ports
+      267 port bits
+      444 cells
+      122   $add
+      120   $and
+       11   $eq
+        1   $gt
+       11   $logic_and
+        1   $logic_not
+        1   $logic_or
+        2   $mux
+        3   $not
+       89   $or
+       46   $reduce_and
+        1   $reduce_bool
+        1   $shl
+        1   $shr
+        1   $sshr
+        3   $sub
+       30   $xor
+
+2.14. Executing CHECK pass (checking for obvious problems).
+Checking module proof...
+Found and reported 0 problems.
+
+3. Executing FLATTEN pass (flatten design).
+
+4. Executing OPT pass (performing simple optimizations).
+
+4.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module proof.
+<suppressed ~16 debug messages>
+
+4.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\proof'.
+Computing hashes of 444 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+Removed a total of 0 cells.
+
+4.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \proof..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~4 debug messages>
+
+4.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \proof.
+Performed a total of 0 changes.
+
+4.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\proof'.
+Computing hashes of 444 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+Removed a total of 0 cells.
+
+4.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \proof..
+Removed 0 unused cells and 15 unused wires.
+<suppressed ~17 debug messages>
+
+4.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module proof.
+<suppressed ~14 debug messages>
+
+4.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \proof..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~4 debug messages>
+
+4.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \proof.
+Performed a total of 0 changes.
+
+4.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\proof'.
+Computing hashes of 414 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+Removed a total of 0 cells.
+
+4.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \proof..
+Removed 0 unused cells and 14 unused wires.
+<suppressed ~1 debug messages>
+
+4.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module proof.
+
+4.16. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \proof..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~4 debug messages>
+
+4.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \proof.
+Performed a total of 0 changes.
+
+4.19. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\proof'.
+Computing hashes of 414 cells of `\proof'.
+Finding duplicate cells in `\proof'.
+Removed a total of 0 cells.
+
+4.20. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \proof..
+
+4.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module proof.
+
+4.23. Finished fast OPT passes. (There is nothing left to do.)
+
+5. Executing SAT pass (solving SAT problems in the circuit).
+Using SAT solver `minisat`.
+
+Setting up SAT problem:
+Final constraint equation: { } = { }
+Imported 414 cells to SAT database.
+Import proof-constraint: \bad_ok = 1'1
+Final proof equation: \bad_ok = 1'1
+Import show expression: \a
+Import show expression: \b
+Import show expression: \carry_in
+Import show expression: \sh
+Import show expression: \bad_carry_ok
+Import show expression: \bad_ok
+Import show expression: \ok
+
+Solving problem with 32717 variables and 92392 clauses..
+SAT proof finished - model found: FAIL!
+
+   ______                   ___       ___       _ _            _ _ 
+  (_____ \                 / __)     / __)     (_) |          | | |
+   _____) )___ ___   ___ _| |__    _| |__ _____ _| | _____  __| | |
+  |  ____/ ___) _ \ / _ (_   __)  (_   __|____ | | || ___ |/ _  |_|
+  | |   | |  | |_| | |_| || |       | |  / ___ | | || ____( (_| |_ 
+  |_|   |_|   \___/ \___/ |_|       |_|  \_____|_|\_)_____)\____|_|
+
+
+  Signal Name                Dec       Hex                                                                                                                                 Bin
+  ------------------ ----------- --------- -----------------------------------------------------------------------------------------------------------------------------------
+  \a                          --        --    00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  \b                          --        --    01111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
+  \bad_carry_ok                0         0                                                                                                                                   0
+  \bad_ok                      0         0                                                                                                                                   0
+  \carry_in                    0         0                                                                                                                                   0
+  \ok                          1         1                                                                                                                                   1
+  \sh                          0         0                                                                                                                             0000000
+
+Warnings: 7 unique messages, 7 total
+End of script. Logfile hash: 0d0feff668, time: 0.40s, user: 0.36s, system: 0.02s, MEM: 162.27 MB peak
+Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)
+Time spent: 30% 2x read_verilog (0 sec), 27% 1x sat (0 sec), ...
