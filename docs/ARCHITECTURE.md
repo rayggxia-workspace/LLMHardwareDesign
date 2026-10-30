@@ -327,3 +327,16 @@ Linux轻量调度排空控制：`python3 project/experiments/block_v1/node_queue
 `revision300_via_realization.plan(report, records, tech_lef)`仅生成计划，不改数据库。它从实际技术LEF读取线宽，按原同网导线/过孔矩形的精确并集检查包围框扩展；不移动导线、中心、切孔或固定连接。仅支持2000DBU/µm及已审计的简单DEF路径；未知标记、跨网、切孔层、缺失记录及非整数坐标拒绝。控制命令：`python -X utf8 project/experiments/block_v1/test_revision300_via_realization.py`。
 
 有限回放见`work/YUZE-LU/121/review-20261028/v-via-realization-planner-467/`，对实际453生成相同194候选/191网/2拒绝。`v-410-bulk-gds-xor-467/`记录实际批量显式via修改后的完整GDS28层递归非文本mask XOR0，复用的原GDS与源DEF逐字节绑定。它只闭合掩膜一致性证据；实际ODB/完整DEF/连通/identity clone、原生与未删改完整GDS DRC、RC/STA/PG、数值/事务与严格LEC仍逐项必需。旧410、单点451或批量453证据不转移为新V463/R404资格。
+
+
+## 七类宏的SystemC功能模型（Issue145）
+
+`project/systemc/` 提供M/N/E/G/R/S/T的无时钟事务级模型，独立于正在布局布线的RTL。规格、抽象差异、固定源版本和完整命令见[模型说明](../project/systemc/README.md)。这不是RTL等价或物理资格证据。
+
+```bash
+bash project/systemc/tools/build_systemc.sh
+cmake -S project/systemc -B project/systemc/build -DCMAKE_PREFIX_PATH="$PWD/.systemc-deps/install" -DCMAKE_BUILD_TYPE=Debug -DBLOCK_SANITIZE=ON
+cmake --build project/systemc/build -j 4
+ctest --test-dir project/systemc/build --output-on-failure
+project/systemc/build/softmax_trace
+```
