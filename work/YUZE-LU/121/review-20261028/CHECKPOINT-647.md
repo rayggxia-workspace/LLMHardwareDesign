@@ -1,0 +1,11 @@
+# 五宏最终布线推进记录
+
+2026-10-31 01:51 CST：当前589最终网表三初态各574942检查/425971拍PASS封存639；严格LEC UNSAT/IDENTICAL、全部diff0封存643，但cap2/native467仍拒收。638当前467项完整邻域原生只读PASS封存642；641实际六任务6×16并发，四PASS/两FAILED，新增各3项完整保留644。645据真实新增剔除5修改网，253处由646/93881/node18实际组合全片检查中，不相加独立分数、不转移629资格。629已完成详细布线进入最终报告/RCX；630/631按真实前置；R404原GRT extra42继续，634原控制器保持。M/S/T保持，五宏最终未齐；登记pending/看板unverified同步pending/审查待指定。
+
+边界：M/V/R/S/T各一基础实现，300MHz、M1–M10固定、实际M10供未来M11/M12。M完整计算引擎，V三通路，R GDN/SSM和conv4，S16KiB/T6KiB标准单元存储。裕量版/阵列/产品留下一轮。
+
+恢复先看629→630→631与R404→405→406，保持634登录控制器PID1258432。646是当前589副本253处填角的组合native检查，独立分数不能相加。639/642/643/644已封存，不重复收取；失败保留。全部最终门仍需实际通过，不能以功能/LEC抵消cap/native失败。
+
+本任务上限8分配，旧/PENDING/UNKNOWN计入；c96六16CPU即时补位。641实际六并发见644状态和live-647采样。646仅一实际依赖就绪，未复制任务占位，不因耗时取消EDA。
+
+规则rayggxia-project-collab1.0.0；账号YUZE-LU；Issue121 OPEN/in_progress、PR122 OPEN/draft。登记PR5 pending；无config/board.json，看板unverified/同步pending，管理员和审查待指定。五宏最终未齐，goal active。
