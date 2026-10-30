@@ -1,3 +1,5 @@
+2026-10-30 19:10 CST：新V537完成CTS并进入global route，545封存15原始/311源Git与远端SHA、5234实际clock net无NDR及内部LEC54010/53999全部差异0。CTS setup−.00726574ns/4项、hold−.250592ns/20项、cap/slew0，首个min/max均reset→stats_sumsq[1][0/79]，5实际单元映射绑定；仍不合格，等待真实route/final及538/539，不放宽时钟或检查。旧523最终功能/严格LEC已封存543/544，完整GDS DRC及R404原GRT继续。M/S/T保持，V/R最终未齐；Issuein_progress/PRdraft、登记pending、看板unverified同步pending、审查待指定。
+
 2026-10-30 19:06 CST：新V537完成do-place，546封存15原始/311归档Git与远端源SHA及最大/最小路径映射；放置合法性0，setup估算−1.07198ns/121项、hold−.00726111ns/1项、cap/slew0，不能当最终RCX结论。CTS继续实际修复并已到最终metrics输出。旧523三初态功能与严格LEC通过已封存543/544，完整GDS DRC仍继续，旧522setup18/cap3仍拒收。R404原GRT继续，540按真实前置接续。M/S/T保持、五宏最终未齐；Issuein_progress/PRdraft，登记pending/看板unverified同步pending/审查待指定。
 
 2026-10-30 19:01 CST：旧523严格LEC实际PASS，544封存16原始/8服务器大文件SHA/311归档Git及receipt绑定；UNSAT/IDENTICAL，common53478/53467，diff0/1输入输出均0，与543三初态最终功能为同一final-source。旧522setup18/cap3仍拒收，完整GDS DRC继续，不转移新V资格。新537已完成place并实际CTS修复中；R404原GRT extra36继续。540按真实前置接续538/539，M/S/T保持，五宏最终未齐；Issuein_progress/PRdraft、登记pending、看板unverified同步pending、审查待指定。
