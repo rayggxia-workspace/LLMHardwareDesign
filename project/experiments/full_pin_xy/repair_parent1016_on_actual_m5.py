@@ -70,14 +70,18 @@ def run(revision):
         # Bind reusable actual leaf/parent PG to byte-identical current PDN.
         oldleaf=ROOT/'llsys_wire_pin_retention/r01';assert sha(source/'after.pdn.tsv')==sha(oldleaf/'after.pdn.tsv')
         oldparent=ROOT/'common_checkpoint_def_import/r01';assert sha(parent/'after.pdn.tsv')==sha(oldparent/'after.pdn.tsv')
+        assert sha(parent/'after.instances.tsv')==sha(oldparent/'after.instances.tsv')
         for folder,name in [('llsys_residual_access_preflight/r01','actual_high_PG_OBS.tsv'),('parent_pg_llsys_local/r01','actual_parent_PG_local.tsv')]:
             folder=ROOT/folder;qp=folder/'execution.json';qq=json.loads(qp.read_text());data=folder/name
             assert qq.get('completed_utc') and qq['all_closed_sources_unchanged'] and sha(data)==qq['files'][name]['sha256']
+            original_odb=(oldparent/'imported_current_NOT_ROUTED_NOT_FROZEN.odb') if name=='actual_parent_PG_local.tsv' else oldleaf/'routed.odb'
+            original_receipt=json.loads((original_odb.parent/'execution.json').read_text())
+            assert qq['source_SHA'][str(original_odb)]==original_receipt['files'][original_odb.name]['sha256']
             inputs.update({str(f):sha(f) for f in [qp,data]})
             for x in csv.DictReader(data.open(),delimiter='\t'):
                 b=tuple(int(x[k]) for k in ['x0','y0','x1','y1'])
                 if b[0]<=cx+100000 and b[2]>=cx-100000 and b[1]<=cy+100000 and b[3]>=cy-100000:local.append({'net':x['net'],'layer':x['layer'],'kind':x['kind'],'box_DBU':b})
-        viaq=ROOT/'all_llsys_first_hop_audit/r01/execution.json';v=json.loads(viaq.read_text());vias=v['actual_via_templates'];inputs[str(viaq)]=sha(viaq)
+        viaq=ROOT/'all_llsys_first_hop_audit/r01/execution.json';v=json.loads(viaq.read_text());assert v.get('completed_utc') and v['all_closed_sources_unchanged'];vias=v['actual_via_templates'];inputs[str(viaq)]=sha(viaq)
         tech=ROOT/'upper_layer_probe/r01/model/research12.tech.lef';inputs[str(tech)]=sha(tech);text=tech.read_text();rules={}
         for ly in ['metal5','metal6','via5']:
             block=re.search(r'^LAYER '+ly+r'\s.*?^END '+ly,text,re.M|re.S)[0]
@@ -128,7 +132,7 @@ def run(revision):
         body+='if {![stage actual_M5_pin_relocation {place_pin -pin_name bit_1016 -layer metal5 -location {'+str(x/2000.)+' '+str(y/2000.)+'} -pin_size {.14 .14}}]} {close $stages;exit 1}\n'
         body+='fingerprint '+tcl(out/'after')+'\nwrite_db '+tcl(out/'routed.odb')+'\nwrite_def '+tcl(out/'routed.def')+'\nset ::env(PINXY_ACCESS_OUT) '+tcl(out/'after_target.tsv.gz')+'\nsource '+tcl(DRIVER/'export_access.tcl')+'\nclose $stages'
         native('actual_edit',body)
-        r['complete_pin_contract']=pin_contract(out,{'bit_1016':('metal5',newbox)},13507)
+        r['complete_pin_contract']=pin_contract(out,{'bit_1016':('metal5',list(newbox))},13507)
         r['all_cells_connections_PG_die_exact']={k:sha(source/('after.'+k+'.tsv'))==sha(out/('after.'+k+'.tsv')) for k in ['cells','pdn','die']};assert all(r['all_cells_connections_PG_die_exact'].values())
         r['native_DEF_NETS_byte_identical']=def_nets_digest(source/'routed.def')==def_nets_digest(out/'routed.def');assert r['native_DEF_NETS_byte_identical']
         def conductors(path):
@@ -146,7 +150,8 @@ def run(revision):
             'stage full_parent_AP {pin_access}','close $stages'])
         # Native stage wrapper catches and preserves the actual first failure.
         native('fresh_parent_AP',body)
-        text=(out/'fresh_parent_AP.log').read_text();r['parent_AP_stage_executed']='STAGE_EXECUTED full_parent_AP' in text
+        text=(out/'fresh_parent_AP.log').read_text();r['parent_AP_no_access_counters']={k:int(v) for k,v in re.findall(r'^#(\w*NoAp)\s*=\s*(\d+)',text,re.M)}
+        r['parent_AP_stage_executed']='STAGE_EXECUTED full_parent_AP' in text and bool(r['parent_AP_no_access_counters']) and not any(r['parent_AP_no_access_counters'].values())
         r['parent_AP_errors']=[line for line in text.splitlines() if '[ERROR ' in line or 'STAGE_FAIL full_parent_AP' in line]
     except Exception:r['actual_failure']=traceback.format_exc();traceback.print_exc()
     r['all_closed_sources_unchanged']=all(sha(Path(f))==v for f,v in inputs.items());r['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
