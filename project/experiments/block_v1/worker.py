@@ -204,6 +204,9 @@ try:
     elif MODE=='revision300-v-latest-neighborhood':
         from revision300_v_latest_neighborhood import inspect
         inspect(ROOT,OUT,CPUS,run)
+    elif MODE=='revision300-v-joint31-compose':
+        from revision300_v_joint31 import probe
+        probe(ROOT,OUT,CPUS,run)
     elif MODE=='revision300-v-m3dense-via':
         from revision300_v_m3local_vias import probe
         probe(ROOT,OUT,CPUS,run,0,plan_name='m3-dense-plan-736.json')
