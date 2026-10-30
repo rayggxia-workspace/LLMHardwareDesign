@@ -1,3 +1,5 @@
+2026-10-30 17:38 CST：534封存旧508/93624/node13自然FAILED1:0完整DRC终态，12原始/1远端大GDS SHA/311归档Git与527最终源receipt绑定。未删改完整GDS deck129类别/0项，原生451项（Metal Spacing449/NS Metal2），仍拒收；旧setup12/cap6失败保持，527功能/528LEC通过不能抵消。不转移当前522资格；当前V522实际详细布线、R404原GRT继续，无EDA取消/重启。M/S/T保持，V/R最终未齐，目标active/Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending、审查待指定。
+
 2026-10-30 17:25 CST：532封存当前522实际GRT，5原始/1完整大JSON远端SHA/311归档Git源及四RTL、520映射功能/531 CTS同源绑定。GRT setup WS+.0012732ns/TNS0/0项，hold WS+.078766ns/TNS0/0项，maxcap16/maxslew0，均非最终资格；当前实际详细布线继续。R404原GRT extra35及旧508完整DRC持续真实CPU增长，无EDA取消/重启。M/S/T保持，V/R最终未齐，目标active/Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending、审查待指定。
 
 2026-10-30 17:03 CST：531封存当前522 CTS的15原始/311源Git和远端SHA，源3333d155/归档d477eae4与520/521一致。CTS setup WS+.00183542ns/TNS0/0项，hold WS−.253185ns/TNS−.725331ns/8项，maxcap/maxslew0；5188时钟网none，内部LEC53478输入/53467输出、diff0/1全0、UNSAT/IDENTICAL。CTS标准单元706414µm²，非最终面积/资格。522实际GRT、R404原GRT、旧508完整DRC继续；M/S/T保持，V/R最终未齐，目标active/Issue121=in_progress/PR122=draft。登记pending、看板unverified/同步pending、审查待指定。
