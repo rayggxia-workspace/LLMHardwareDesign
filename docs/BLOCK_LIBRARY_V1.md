@@ -1,3 +1,5 @@
+当前300MHz修订以[审阅合同](BLOCK_V1_REVIEW_CONTRACT.md)与[平方归约流水决策](decisions/2026-10-30-block-v1-v-square-pair-pipeline.md)为准：535/536已通过行为与测量，V统计5拍、N256 RMS/L2=551/Softmax618；537布局布线及最终验收仍待完成。以下100MHz冻结正文保留历史版本含义。
+
 # Block v1 五宏定义与首版基础规格
 
 本页数值和物理接收对应ad3c2b3的100MHz历史基线；当前300MHz修订的实现、连续接口与
