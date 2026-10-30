@@ -1,3 +1,5 @@
+2026-10-30 17:25 CST：532封存当前522实际GRT，5原始/1完整大JSON远端SHA/311归档Git源及四RTL、520映射功能/531 CTS同源绑定。GRT setup WS+.0012732ns/TNS0/0项，hold WS+.078766ns/TNS0/0项，maxcap16/maxslew0，均非最终资格；当前实际详细布线继续。R404原GRT extra35及旧508完整DRC持续真实CPU增长，无EDA取消/重启。M/S/T保持，V/R最终未齐，目标active/Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending、审查待指定。
+
 2026-10-30 17:03 CST：531封存当前522 CTS的15原始/311源Git和远端SHA，源3333d155/归档d477eae4与520/521一致。CTS setup WS+.00183542ns/TNS0/0项，hold WS−.253185ns/TNS−.725331ns/8项，maxcap/maxslew0；5188时钟网none，内部LEC53478输入/53467输出、diff0/1全0、UNSAT/IDENTICAL。CTS标准单元706414µm²，非最终面积/资格。522实际GRT、R404原GRT、旧508完整DRC继续；M/S/T保持，V/R最终未齐，目标active/Issue121=in_progress/PR122=draft。登记pending、看板unverified/同步pending、审查待指定。
 
 2026-10-30 16:34 CST：520八项与521七测量实际全PASS，93635/93636自然结束；415398cells/26667DFF，10映射/49测量原始、35稳定、311源绑定。522/93639/node23已自动实际RUNNING，7启动原始/311源Git与远端SHA，源3333d155/归档d477eae4；523/524按真实前置。527/528封存旧507/508最终三初态功能及严格LEC通过，529独立物理setup12项/maxcap6拒收，均不转移新源资格。R404与旧508完整DRC继续，M/S/T保持，V/R最终未齐；目标active/Issue121=in_progress/PR122=draft，登记pending、看板unverified/同步pending、审查待指定。
