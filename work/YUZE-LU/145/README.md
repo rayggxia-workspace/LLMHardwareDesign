@@ -1,7 +1,7 @@
 # Issue145：七宏SystemC事务模型交付
 
 - 任务：https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/145
-- 分支：`task/145-systemc-seven-blocks`；PR待创建后补回执。
+- 分支：`task/145-systemc-seven-blocks`；[PR146](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/146)，待审查。
 - 当前执行账号：YUZE-LU。独立任务；未操作Issue143/121/130的服务器、作业或实现分支。
 - 模型：[project/systemc](../../../project/systemc/README.md)。M/N/E/G/R/S/T七个有限状态功能引擎及真实SystemC模块。
 - 设计合同来源：本地 `9cc23ff32cf7a57c5eadbfccc8bfb37438f3643d`；公开PR144起始 `d739fc46992ecb95cfab1a0f58ba1467f172cbb0`。Softmax采用本地最新Q1.14，而非公开旧头的UQ0.16。来源规范化SHA见 `project/systemc/source_manifest.json`。
@@ -36,6 +36,8 @@ git diff --check
 ## 协作回执
 
 规则：rayggxia-project-collab1.0.0；project_id=`llm-hardware-design`。
-登记：management-hub PR5此前pending，提交时读回记录在PR回执；不另建登记。
+登记：management-hub PR5本次读回open、未合并，仍pending；不另建登记。
 看板：仓库无config/board.json，当前工具无Projects字段查询/同步能力；在线状态unverified，同步pending，处理人待指定。
 审查：待指定审查人；成果提交后保持in_review，未合并、未验收。
+
+发布同步：创建PR期间143上游发布341d6f93，本分支已保留其全部变更（对应本地8eb09a67，树9258bfce），且逐源核验RTL与冻结9cc23ff3没有差异。只解决本任务个人进度头部冲突，不覆盖其他进度。使用连接器上传Git树并验证一致；最终commit与树证据见PR146描述。

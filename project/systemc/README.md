@@ -20,7 +20,7 @@
 | `examples/softmax_trace.cpp` | 257元素 `S → N → T` 演示，逐批打印状态 |
 | `tests/block_tests.cpp` | 数值、边界、存储/状态协议和SystemC组合测试 |
 
-数值及操作合同冻结于本地设计提交 `9cc23ff32cf7a57c5eadbfccc8bfb37438f3643d`，其中 `82d34d0f` 已将 Softmax 更新为**非负 S16 Q1.14**。开始任务时 PR #144 的公开头仍为 `d739fc46992ecb95cfab1a0f58ba1467f172cbb0`，其旧 UQ0.16 Softmax 不是本模型合同。`source_manifest.json` 记录实际读取来源及规范化SHA-256。系数整数直接从这些设计的SV表导入，包含来源关系；它们不是独立数值真值。设计继续变化时需显式审查模型合同，不能仅更新版本号。
+数值及操作合同冻结于本地设计提交 `9cc23ff32cf7a57c5eadbfccc8bfb37438f3643d`，其中 `82d34d0f` 已将 Softmax 更新为**非负 S16 Q1.14**。开始任务时 PR #144 的公开头仍为 `d739fc46992ecb95cfab1a0f58ba1467f172cbb0`，其旧 UQ0.16 Softmax 不是本模型合同。`source_manifest.json` 记录实际读取来源及规范化SHA-256。系数整数直接从这些设计的SV表导入，包含来源关系；它们不是独立数值真值。提交期间上游已发布 `341d6f938564af54268ab87fc41c05a002297d80`，已纳入本分支；全部RTL与冻结9cc23ff3一致，新Q1.14合同现已发布。设计继续变化时需显式审查模型合同，不能仅更新版本号。
 
 ## 编译运行
 
