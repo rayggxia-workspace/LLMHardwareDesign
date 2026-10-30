@@ -10,7 +10,7 @@ import time
 def main():
     p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True)
     p.add_argument('--raw',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
-    p.add_argument('--models',nargs='+',choices=['e','g','n','m'],default=['e','g']);a=p.parse_args()
+    p.add_argument('--models',nargs='+',choices=['e','g','n','m','r'],default=['e','g']);a=p.parse_args()
     cpus=int(os.environ['SLURM_CPUS_PER_TASK'])
     assert os.environ.get('SLURM_JOB_ID') and 16<=cpus<=96 and cpus%16==0
     cpu_slots=cpus//16
@@ -20,7 +20,7 @@ def main():
     a.out.mkdir(parents=True,exist_ok=False)
     available=int(next(x.split()[1] for x in Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:')))*1024
     # Small leaves only; this budget is not valid for R/S/T or a large M.
-    per_worker=64*1024**3;guard=16*1024**3
+    per_worker=(192 if 'r' in a.models else 64)*1024**3;guard=16*1024**3
     slots=min(cpu_slots,int((available-guard)/(per_worker*1.2)))
     assert slots>0
     report=dict(passed=False,job=os.environ['SLURM_JOB_ID'],slots=slots,cpu_slots=cpu_slots,cpus_per_worker=16,

@@ -119,11 +119,15 @@ def final_function(folder,out,run,pair=None,reuse=None):
     from native_signal_view import export
     assert pair is None and reuse is None
     source_dir,receipt,flow,results=source(folder);top=flow['top']
-    assert top in ('block_v2_e','block_v2_g','block_v2_n','block_v2_m')
+    assert top in ('block_v2_e','block_v2_g','block_v2_n','block_v2_m','block_v1_r')
     netlist,proof=export(ROOT,out,run,source_dir,receipt,results,top,LIB)
     (out/'cells.ys').write_text('read_liberty -ignore_miss_func -ignore_miss_dir '+str(LIB)+'\nwrite_verilog -noattr cells.v\n')
     run(['yosys','-s',out/'cells.ys'],'cells.log')
     bench=ROOT/'project/experiments/block_v2'/('test_'+top[-1]+'.cpp')
+    if top=='block_v1_r':
+        from retain_r import adapt
+        original=ROOT/'project/experiments/block_v1/test_recurrent_macro.cpp'
+        bench=out/'test-r.cpp';bench.write_text(adapt(original.read_text()))
     compiler='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
     # Cell-model warnings are logged; the source RTL has its separate strict lint.
     run([compiler,'--cc','--exe','--build','-j','16','-Wno-fatal','--top-module',top,

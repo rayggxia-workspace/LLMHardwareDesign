@@ -17,7 +17,7 @@ def accepted(folder):
 
 
 def deliver(folder,out,run,gates):
-    folder,r,flow,results=source(folder);macro=flow['top'].removeprefix('block_v2_');assert macro in ('m','n','e','g')
+    folder,r,flow,results=source(folder);macro='r' if flow['top']=='block_v1_r' else flow['top'].removeprefix('block_v2_');assert macro in ('m','n','e','g','r')
     proofs={};receipts={}
     reports={'physical':'five-macro-physical.json','drc':'five-macro-drc.json','function':'final-function.json','formal':'formal.json'}
     for op,name in reports.items():

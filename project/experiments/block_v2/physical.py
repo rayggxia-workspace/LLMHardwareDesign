@@ -77,6 +77,7 @@ def implement(args, run):
         areas[m.group(1)]=float(re.search(r'\barea\s*:\s*([\d.eE+-]+)\s*;',chunk).group(1))
     active=sum(areas[name]*count for name,count in mapping['cell_counts'].items())
     side=max(400,math.ceil((math.sqrt(active/.4)+40)/10)*10)
+    if top=='block_v1_r':side=max(3000,side)
     while True:
         try:
             plan,fixture,geometry=generate(mapping['ports'],side,technology);break
@@ -94,6 +95,8 @@ def implement(args, run):
     config+='export DIE_AREA = 0 0 %g %g\nexport CORE_AREA = 20 20 %g %g\n'%(side,side,side-20,side-20)
     config+='export PLACE_DENSITY = 0.45\nexport FOOTPRINT_TCL = '+str(out/'pins.tcl')+'\nexport KEEP_VARS = 1\n'
     config+='override export MIN_ROUTING_LAYER = metal1\noverride export MAX_ROUTING_LAYER = metal10\n'
+    if top=='block_v1_r':
+        config+='export PLACE_DENSITY = 0.25\nexport CTS_ARGS = -sink_clustering_enable -repair_clock_nets -apply_ndr none\n'
     if args.remove_abc_buffers:
         assert not any(name.startswith(('BUF_','CLKBUF_')) for name in mapping['cell_counts'])
         config+='export REMOVE_ABC_BUFFERS = 1\n'
@@ -108,6 +111,7 @@ def implement(args, run):
     hook=(folder/'native_input_diodes.tcl').read_text().replace('  if {[$port getName] eq "clk"} {continue}\n','')
     if args.input_receivers:
         hook=(ROOT/'project/experiments/block_feed_v1/input_receivers.tcl').read_text()+'\n'+hook
+    if top=='block_v1_r':hook+='\nset_global_routing_layer_adjustment metal4-metal10 .20\n'
     (out/'input-diodes.tcl').write_text(hook)
     # Optimization target, not a timing exception: final native min slack must
     # remain nonnegative under the unchanged full SDC/uncertainty contract.
@@ -121,6 +125,7 @@ def implement(args, run):
     wanted=dict(MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',KEEP_VARS='1',LEC_CHECK='1',SEC_CHECK='0',
                 TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN=hold_target)
     if args.remove_abc_buffers:wanted['REMOVE_ABC_BUFFERS']='1'
+    if top=='block_v1_r':wanted.update(PLACE_DENSITY='0.25',CTS_ARGS='-sink_clustering_enable -repair_clock_nets -apply_ndr none')
     if args.placement_mode=='geometric':
         wanted.update(GPL_TIMING_DRIVEN='0',ENABLE_PLACE_REPAIR_TIMING='1')
     if args.fanout_mode=='partition':wanted['PRE_RESIZE_TCL']=str(out/'partition-fanout.tcl')
@@ -151,7 +156,7 @@ def implement(args, run):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--top',choices=['block_v2_e','block_v2_g','block_v2_n','block_v2_m'],required=True)
+    p=argparse.ArgumentParser();p.add_argument('--top',choices=['block_v2_e','block_v2_g','block_v2_n','block_v2_m','block_v1_r'],required=True)
     p.add_argument('--mapping',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--remove-abc-buffers',action='store_true')
     p.add_argument('--input-receivers',action='store_true')
