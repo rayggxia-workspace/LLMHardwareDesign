@@ -9,12 +9,46 @@ def config(root):
     return d
 
 
+def signal_geometry(root, out, kind, source_receipt_sha256, flow):
+    """The repaired V additionally needs actual whole routed connectivity."""
+    from io_slots import file_sha
+    d = config(root)
+    relative = d.get('signal_geometry', {}).get(kind)
+    if kind == 'v':
+        assert relative, 'Current repaired V requires whole routed signal proof'
+    if relative is None:
+        return None
+    folder = out.parents[2]/relative
+    assert out.parents[2] in folder.resolve().parents
+    receipt = json.loads((folder/'receipt.json').read_text())
+    assert receipt['passed'] and receipt['mode'] == folder.name
+    path = folder/'revision300-signal-connectivity.json'
+    assert file_sha(path) == receipt['outputs'][path.name]
+    proof = json.loads(path.read_text())
+    assert proof['passed'] and proof['original_inputs_unchanged']
+    assert proof['source_receipt_sha256'] == source_receipt_sha256
+    assert proof['actual_input_sha256'] == {
+        name: flow['final_files'][name]['sha256'] for name in ('6_final.odb', '6_final.def')}
+    connected = proof['connectivity']
+    assert connected['passed'] and connected['exact_all_normal_def_net_coverage']
+    assert connected['exact_first_def_odb_name_mapping'] and not connected['failures']
+    totals = connected['totals']
+    assert totals['nets'] > 0 and totals['passed'] == totals['nets'] and not totals.get('failed', 0)
+    assert totals['terminals'] > 0 and totals['shapes'] > 0 and not totals['empty_no_terminals']
+    return dict(receipt_path=str(folder/'receipt.json'), receipt_sha256=file_sha(folder/'receipt.json'),
+                report_path=str(path), report_sha256=file_sha(path), source_receipt_sha256=source_receipt_sha256)
+
+
 def deliver(root,out,cpus,run,kind):
     from five_macro_delivery import final_leaf
     from revision300_receive import source
     d=config(root);base=out.parents[2]
     gates=base/d['gates'][kind]
     assert gates.name=='tasks' and base in gates.resolve().parents
+    if kind == 'v':
+        from io_slots import file_sha
+        native, _, flow, _ = source(root, out, kind)
+        signal_geometry(root, out, kind, file_sha(native/'receipt.json'), flow)
     final_leaf(root,out,cpus,run,kind,
                gate_roots={stage:gates for stage in ('physical','drc','final-function','formal')},
                selected=lambda target,macro:source(root,target,macro),gate_prefix='revision300-',pin_size_um=2.)
@@ -41,8 +75,12 @@ def accepted(root,out,kind):
     for key,row in index['final_files'].items():
         f=Path(row['path']);assert base in f.resolve().parents and f.stat().st_size==row['bytes'] and file_sha(f)==row['sha256']
     assert flow['die_um']==index['die_um']
-    return index,Path(index['final_files']['6_final.odb']['path']),dict(delivery_receipt_path=str(folder/'receipt.json'),
-        delivery_receipt_sha256=file_sha(folder/'receipt.json'),delivery_report_sha256=file_sha(p)),index['pins']['signal_bits'],index['die_um']
+    provenance = dict(delivery_receipt_path=str(folder/'receipt.json'),
+        delivery_receipt_sha256=file_sha(folder/'receipt.json'),delivery_report_sha256=file_sha(p))
+    connected = signal_geometry(root, out, kind, index['source_receipt_sha256'], flow)
+    if connected is not None:
+        provenance['whole_signal_geometry'] = connected
+    return index,Path(index['final_files']['6_final.odb']['path']),provenance,index['pins']['signal_bits'],index['die_um']
 
 
 def geometry(root,out,cpus,run,kind):
