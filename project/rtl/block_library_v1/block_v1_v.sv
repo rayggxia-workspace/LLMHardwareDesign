@@ -117,6 +117,39 @@ module block_v1_v(
    add128_grouped=result;
   end
  endfunction
+ // Dedicated normalization denominator adder:16 byte groups, four prefix
+ // levels. Keep the full U128 result and existing command latency.
+ function automatic signed [127:0] norm_denominator_add;
+  input [127:0] left,right;
+  reg [8:0] subtotal[0:15];
+  reg [15:0] gen0,prop0,gen1,prop1,gen2,prop2,gen4,prop4,gen8;
+  reg [127:0] result;integer g;
+  begin
+   for(g=0;g<16;g=g+1)begin
+    subtotal[g]={1'b0,left[8*g+:8]}+{1'b0,right[8*g+:8]};
+    gen0[g]=subtotal[g][8];prop0[g]=&(left[8*g+:8]^right[8*g+:8]);
+   end
+   for(g=0;g<16;g=g+1)begin
+    if(g<1)begin gen1[g]=gen0[g];prop1[g]=prop0[g];end
+    else begin gen1[g]=gen0[g]|(prop0[g]&gen0[g-1]);prop1[g]=prop0[g]&prop0[g-1];end
+   end
+   for(g=0;g<16;g=g+1)begin
+    if(g<2)begin gen2[g]=gen1[g];prop2[g]=prop1[g];end
+    else begin gen2[g]=gen1[g]|(prop1[g]&gen1[g-2]);prop2[g]=prop1[g]&prop1[g-2];end
+   end
+   for(g=0;g<16;g=g+1)begin
+    if(g<4)begin gen4[g]=gen2[g];prop4[g]=prop2[g];end
+    else begin gen4[g]=gen2[g]|(prop2[g]&gen2[g-4]);prop4[g]=prop2[g]&prop2[g-4];end
+   end
+   for(g=0;g<16;g=g+1)begin
+    if(g<8)gen8[g]=gen4[g];
+    else gen8[g]=gen4[g]|(prop4[g]&gen4[g-8]);
+    if(g==0)result[8*g+:8]=subtotal[g][7:0];
+    else result[8*g+:8]=subtotal[g][7:0]+gen8[g-1];
+   end
+   norm_denominator_add=result;
+  end
+ endfunction
  function automatic signed [127:0] rne;
   input signed [127:0] v;input [6:0] shift;
   reg signed [127:0] q;reg [127:0] remn,half;
@@ -409,7 +442,7 @@ module block_v1_v(
     end
     F_DENOM:begin group_kind<=4;group_n<=128'd1<<48;group_d<=sum;phase<=G_START;end
     G_MUL:begin norm_product<=epsilon*norm_count;phase<=G_ADD;end
-    G_ADD:begin group_d<=add128_grouped(norm_square,{48'b0,norm_product},1'b0);phase<=G_START;end
+    G_ADD:begin group_d<=norm_denominator_add(norm_square,{48'b0,norm_product});phase<=G_START;end
     G_START,G_ROOT:if(group_ready)phase<=phase==G_START?G_WAIT:G_ROOT_WAIT;
     G_WAIT:if(group_valid)begin
      if(group_error)begin rsp_error<=1;rsp_valid<=1;phase<=IDLE;end

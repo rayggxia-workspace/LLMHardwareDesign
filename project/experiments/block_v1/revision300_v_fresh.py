@@ -8,9 +8,9 @@ def implement(root,out,cpus,run):
     import hashlib
     policy=json.loads((root/'project/experiments/block_v1/revision300-v-fresh.json').read_text())
     assert policy==dict(schema='revision300-v-fresh/1',
-        mapping='block-v1-20261030-474/tasks/revision300-map-v',
-        function='block-v1-20261030-474/tasks/revision300-test-v',
-        normalization_arithmetic_proof='block-v1-20261030-474/tasks/revision300-v-norm-proof',
+        mapping='block-v1-20261030-485/tasks/revision300-map-v',
+        function='block-v1-20261030-485/tasks/revision300-test-v',
+        normalization_arithmetic_proof='block-v1-20261030-485/tasks/revision300-v-norm-proof',
         group_arithmetic_proof='block-v1-20261029-348/tasks/revision300-v-group-proof',
         upper_layer_adjustment=.20,congestion_iterations=100,clock_ndr='none',
         hold_slack_margin_ns=.080,inherited_physical_stages=[],requires_fresh_final_acceptance=True)
@@ -29,7 +29,7 @@ def implement(root,out,cpus,run):
         original_proof_receipt_sha256=file_sha(norm_proof/'receipt.json'),
         current_rtl_sha256=file_sha(root/norm_relative),
         scope='All-input exact normalization identity only; fresh final physical gates remain required.'),indent=2)+'\n')
-    point_proof=base/'block-v1-20261030-474/tasks/revision300-v-carry-proof'
+    point_proof=base/'block-v1-20261030-485/tasks/revision300-v-carry-proof'
     point_receipt=json.loads((point_proof/'receipt.json').read_text())
     assert point_receipt['passed'] and point_receipt['mode']=='revision300-v-carry-proof'
     for name in ('revision300-v-carry-proof.json','proof.sv','positive.log','single-bit-negative.log'):
@@ -37,6 +37,7 @@ def implement(root,out,cpus,run):
     point_record=json.loads((point_proof/'revision300-v-carry-proof.json').read_text())
     assert point_record['passed'] and point_record['unconstrained_input_bits']==264
     assert point_record['point_registered_quotient_and_increment_full128bit_equivalent']
+    assert point_record['normalization_denominator_prefix_full128bit_equivalent']
     assert point_record['actual_single_bit_negative_rejected']
     assert file_sha(root/norm_relative)==point_record['rtl_sha256']==point_receipt['inputs'][norm_relative]
     (out/'point-round-proof-reuse.json').write_text(json.dumps(dict(passed=True,
