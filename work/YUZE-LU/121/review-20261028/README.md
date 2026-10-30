@@ -1,3 +1,5 @@
+2026-10-30 18:29 CST：535/93684/node23七项新流水行为/边界/逐拍/证明实际PASS，三初态各574127检查/425162拍，统计5拍、N256 RMS/L2=551/Softmax618。55原始/42稳定/311归档源绑定与7启动原始/311远端SHA已封存；映射仍运行。536七项新占用/有限S-V测量已stage并核验真实前置后提交93687；提交前本Issue5 allocations且保留460→422历史账本，含新PENDING后6，未改账号总限额。523旧独立门和R404原GRT继续；电容/供电仍待定位，新最终物理门全部必需。M/S/T保持，目标active/Issue121=in_progress/PR122=draft，登记pending、看板unverified/同步pending、审查待指定。
+
 2026-10-30 18:24 CST：唯一V在四个完整U80平方成对和后新增320bit寄存与一拍归约；统计5拍、N256 RMS/L2=551/Softmax618是新合同预期，尚待535八检查和536七测量，不复用520/521周期。新源最终P&R与全部独立验收仍必须重做；523旧门与R404继续，电容/供电另定位。M/S/T保持，目标active/Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending、审查待指定。
 
 2026-10-30 18:19 CST：533封存522实际最终24原始/311归档Git与远端源SHA及receipt绑定。setup WS−.0430109ns/TNS−.222745ns/18项、maxcap3拒收，hold+.0262388ns/0项、slew0；最差operand_reduce_mask[2]→stat_block_sq[67]。内部LEC UNSAT/IDENTICAL/diff全0，标准单元713730µm²。default/1.66W下VDD最坏压降.265787V、VSS抬升.343119V，连通通过不等于电源质量合格，输入条件待核对。523独立门已自动提交；R404原GRT继续，M/S/T保持。后续修复需新流水合同及全新测量/全部物理门，不降低300MHz。目标active/Issue121=in_progress/PR122=draft，登记pending、看板unverified/同步pending、审查待指定。
