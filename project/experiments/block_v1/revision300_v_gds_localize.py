@@ -109,7 +109,7 @@ set f [open scan-counts.tsv w];puts $f "$::region::scanned\t$::region::emitted";
         deck = Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc')
         assert file_sha(deck) == DECK_SHA
         text = deck.read_text(); (out/'unmodified-deck.txt').write_bytes(deck.read_bytes())
-        mappings = re.findall(r'(?m)^\s*metal2\s*=\s*input\(\s*(\d+)\s*,\s*(\d+)\s*\)', text)
+        mappings = re.findall(r'(?m)^\s*metal2\s*=\s*polygons\(\s*(\d+)\s*,\s*(\d+)\s*\)', text)
         assert len(mappings) == 1, 'Actual deck metal2 mapping not recognized'
         layer, datatype = mappings[0]
         lines = [line for line in text.splitlines() if 'METAL2.' in line]
