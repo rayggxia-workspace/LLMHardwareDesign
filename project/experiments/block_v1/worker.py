@@ -186,6 +186,9 @@ try:
     elif MODE == 'revision300-v-remaining':
         from revision300_v_remaining import inspect
         inspect(ROOT,OUT,CPUS,run)
+    elif MODE == 'revision300-v-current-neighborhood':
+        from revision300_v_current_neighborhood import inspect
+        inspect(ROOT,OUT,CPUS,run)
     elif MODE == 'revision300-v-drive-probe':
         from revision300_v_drive_probe import probe
         probe(ROOT,OUT,CPUS,run)
