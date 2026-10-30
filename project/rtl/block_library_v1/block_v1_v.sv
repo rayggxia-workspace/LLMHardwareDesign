@@ -432,8 +432,15 @@ module block_v1_v(
      phase<=phase==S_SQUARE_FINISH?S_WRITE:C_ADD;
     end
     S_WRITE:begin
-     stats_sum[stats_context]<=stats_start?$signed(stat_block_sum):stats_sum[stats_context]+$signed(stat_block_sum);
-     stats_sumsq[stats_context]<=stats_start?stat_block_sq:stats_sumsq[stats_context]+stat_block_sq;
+     // Keep each context's feedback local: command read selection must not
+     // precede a shared ripple accumulator. The prefix function is exact
+     // modulo 2^64 / 2^80 here; the established domain bounds avoid overflow.
+     for(i=0;i<2;i=i+1)if(stats_context==i)begin
+      stats_sum[i]<=stats_start?stat_block_sum:
+       norm_denominator_add({64'b0,stats_sum[i]},{64'b0,stat_block_sum});
+      stats_sumsq[i]<=stats_start?stat_block_sq:
+       norm_denominator_add({48'b0,stats_sumsq[i]},{48'b0,stat_block_sq});
+     end
      if(stats_start||stat_block_max>stats_max[stats_context]||(stat_block_max==stats_max[stats_context]&&stat_block_argmax<stats_argmax[stats_context]))begin stats_max[stats_context]<=stat_block_max;stats_argmax[stats_context]<=stat_block_argmax;end
      if(stats_start||stat_block_min<stats_min[stats_context]||(stat_block_min==stats_min[stats_context]&&stat_block_argmin<stats_argmin[stats_context]))begin stats_min[stats_context]<=stat_block_min;stats_argmin[stats_context]<=stat_block_argmin;end
      stats_count[stats_context]<=stats_start?{12'b0,stats_n}:stats_count[stats_context]+stats_n;stats_final[stats_context]<=stats_finish;stats_valid[stats_context]<=1;phase<=IDLE;rsp_valid<=1;

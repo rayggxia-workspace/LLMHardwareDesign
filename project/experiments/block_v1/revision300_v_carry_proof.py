@@ -13,6 +13,11 @@ def prove(root,out,cpus,run):
         'point_rounded[i][127:64]<=point_half_increment(point_total[i][127:64],point_increment[i]);',
         'phase<=P_ROUND_FINISH;'):
         assert statement in text
+    for statement in (
+        'for(i=0;i<2;i=i+1)if(stats_context==i)begin',
+        "norm_denominator_add({64'b0,stats_sum[i]},{64'b0,stat_block_sum});",
+        "norm_denominator_add({48'b0,stats_sumsq[i]},{48'b0,stat_block_sq});"):
+        assert statement in text
     for name in ('add128_grouped','rne','norm_denominator_add'):
         start=text.index(' function automatic signed [127:0] '+name+';')
         end=text.index(' endfunction',start)+len(' endfunction')
@@ -34,7 +39,9 @@ wire point_increment=point_rne_increment(a,sh);
 wire carry64=point_increment&&(&q[63:0]);
 wire signed [127:0] point_result={point_half_increment(q[127:64],carry64),point_half_increment(q[63:0],point_increment)};
 wire [127:0] arbitrary_half_increment={point_half_increment(a[127:64],carry_in&&(&a[63:0])),point_half_increment(a[63:0],carry_in)};
-assign ok=(actual==(a+b+carry_in))&&(add128_grouped(a,~b,1'b1)==(a-b))&&(rne(a,sh)==reference)&&(point_result==reference)&&(arbitrary_half_increment==(a+carry_in))&&(norm_denominator_add(a,b)==(a+b));
+wire [63:0] stats_sum_actual=norm_denominator_add({64'b0,a[63:0]},{64'b0,b[63:0]});
+wire [79:0] stats_square_actual=norm_denominator_add({48'b0,a[79:0]},{48'b0,b[79:0]});
+assign ok=(actual==(a+b+carry_in))&&(add128_grouped(a,~b,1'b1)==(a-b))&&(rne(a,sh)==reference)&&(point_result==reference)&&(arbitrary_half_increment==(a+carry_in))&&(norm_denominator_add(a,b)==(a+b))&&(stats_sum_actual==(a[63:0]+b[63:0]))&&(stats_square_actual==(a[79:0]+b[79:0]));
 assign bad_ok=((norm_denominator_add(a,b)^128'h40000)==(a+b));
 assign bad_carry_ok=({point_half_increment(q[127:64],~carry64),point_half_increment(q[63:0],point_increment)}==reference);
 endmodule
@@ -57,6 +64,8 @@ endmodule
         point_two_half_increment_and_registered_carry_full128bit_equivalent=True,
         corrupted_half_carry_negative_rejected=True,
         normalization_denominator_prefix_full128bit_equivalent=True,
+        statistics_modular64_and80_prefix_all_values_equivalent=True,
+        actual_constant_context_feedback_statements_present=True,
         qualified_final_timing=False,
         scope='Combinational all-bit equivalence only. New RTL still requires numerical/port regression, mapping and fresh physical/final acceptance; no old physical qualification transfers.')
     (out/'revision300-v-carry-proof.json').write_text(json.dumps(report,indent=2)+'\n')
