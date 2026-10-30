@@ -6,7 +6,7 @@ extra combinational gates are a separately costed ECO, never a pure XY gain.
 """
 from pathlib import Path
 from collections import defaultdict,Counter
-import csv,datetime,gzip,json,os,subprocess,sys,traceback
+import csv,datetime,gzip,json,os,re,subprocess,sys,traceback
 from run_exports import ROOT,IMAGE,sha
 from run_parent_trial import tcl
 from run_escape_fixture import execute
@@ -81,7 +81,10 @@ def run(revision):
             if net.startswith('HPY_VEC_MAP_NET_'):assert net not in all_net_names
         for k,c in enumerate(sorted(hardware.values(),key=lambda c:(c['type'],str(c['connections'])))):
             name='HPY_VEC_MAP_GATE_%04d'%k;assert name not in masters
-            cells[name]={'master':c['type'],'ports':{p:bits[v[0]] for p,v in c['connections'].items()},'directions':c['port_directions']}
+            libpins=dict(groups(models[c['type']],'pin'))
+            directions={p:re.search(r'\bdirection\s*:\s*(input|output)\s*;',libpins[p])[1] for p in c['connections']}
+            if c.get('port_directions'):assert c['port_directions']==directions
+            cells[name]={'master':c['type'],'ports':{p:bits[v[0]] for p,v in c['connections'].items()},'directions':directions}
         # Alias outputs retain separate original boundary net objects via real
         # identity gates. This avoids accidentally merging other cone fanouts.
         netdriver={}
