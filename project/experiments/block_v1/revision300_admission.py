@@ -14,7 +14,7 @@ import time
 
 
 RUNS = tuple('block-v1-20261030-'+n for n in
-             ('404','405','406','523','524','535','536','537','538','539'))
+             ('404','405','406','538','539','550','551','552','553','554'))
 
 SLURM_TERMINAL = {'COMPLETED', 'FAILED', 'CANCELLED', 'TIMEOUT', 'OUT_OF_MEMORY',
                   'NODE_FAIL', 'PREEMPTED', 'BOOT_FAIL', 'DEADLINE', 'REVOKED'}
