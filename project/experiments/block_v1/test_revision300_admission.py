@@ -45,7 +45,7 @@ def check():
         raise AssertionError('Malformed observation must not become an empty allocation list')
     # Test the exact production queue allowlist before a controller is launched.
     assert RUNS == tuple('block-v1-20261030-'+n for n in
-                         ('404','405','406','508','509','520','521','522','523','524'))
+                         ('404','405','406','523','524','535','536','537','538','539'))
     with tempfile.TemporaryDirectory() as directory:
         base=Path(directory).resolve()/'issue-121';base.mkdir()
         config=dict(schema='revision300-admission/1',max_allocations=8,
