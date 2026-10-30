@@ -183,6 +183,9 @@ try:
     elif MODE == 'revision300-v-remaining':
         from revision300_v_remaining import inspect
         inspect(ROOT,OUT,CPUS,run)
+    elif MODE == 'revision300-v-neighborhood':
+        from revision300_v_neighborhood import inspect
+        inspect(ROOT,OUT,CPUS,run)
     elif MODE in ('revision300-v-transition-mixed','revision300-v-transition-stack'):
         from revision300_v_transition import probe
         probe(ROOT,OUT,CPUS,run,MODE.rsplit('-',1)[1])
