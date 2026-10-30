@@ -186,6 +186,9 @@ try:
     elif MODE in ('revision300-v-transition-mixed','revision300-v-transition-stack'):
         from revision300_v_transition import probe
         probe(ROOT,OUT,CPUS,run,MODE.rsplit('-',1)[1])
+    elif MODE.startswith('revision300-v-transition-alt-'):
+        from revision300_v_transition import probe
+        probe(ROOT,OUT,CPUS,run,MODE.removeprefix('revision300-v-transition-'))
     elif MODE == 'revision300-v-transition-batch':
         from revision300_v_transition_batch import probe
         probe(ROOT,OUT,CPUS,run)

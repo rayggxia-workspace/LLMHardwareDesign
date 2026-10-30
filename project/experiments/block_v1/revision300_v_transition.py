@@ -19,7 +19,8 @@ def probe(root,out,cpus,run,case):
     from revision300_v_via_batch import contains,name_of,token_hash
     from revision300_v_via_bridge import path_key
     from revision300_v_corner_probe import violations
-    assert cpus==16 and case in ('mixed','stack')
+    from revision300_v_transition_alternatives import CASES,build
+    assert cpus==16 and(case in ('mixed','stack')or case in CASES)
     base=out.parents[2];prior=base/'block-v1-20261030-605/tasks/revision300-v-remaining'
     pr=json.loads((prior/'receipt.json').read_text());assert pr['passed']
     f=prior/'revision300-v-remaining.json';assert file_sha(f)==pr['outputs'][f.name]
@@ -29,12 +30,14 @@ def probe(root,out,cpus,run,case):
     assert file_sha(source/'receipt.json')==report['source_receipt_sha256']
     for name in ('composed-candidate.odb','composed-candidate.def','composed-native-drc.rpt'):
         assert file_sha(source/name)==sr['outputs'][name]
-    row=report['markers'][25 if case=='mixed'else 27];marker=row['marker']
-    assert marker['layer']=='metal3'
-    assert marker['net'].replace('\\','')==('net80238'if case=='mixed'else'input_mem[237][25]')
-    assert len(row['route_options'])==1
-    a,b=[tuple(row['route_options'][0][k])for k in ('a','b')]
-    assert (a[0]==b[0]or a[1]==b[1])and 0<abs(a[0]-b[0])+abs(a[1]-b[1])<=2000
+    index,target=CASES[case]if case in CASES else((25,'net80238')if case=='mixed'else(27,'input_mem[237][25]'))
+    row=report['markers'][index];marker=row['marker']
+    assert marker['layer']==('metal2'if case.startswith('alt-corner-')else'metal3')
+    assert marker['net'].replace('\\','')==target
+    if case not in CASES:
+        assert len(row['route_options'])==1
+        a,b=[tuple(row['route_options'][0][k])for k in ('a','b')]
+        assert (a[0]==b[0]or a[1]==b[1])and 0<abs(a[0]-b[0])+abs(a[1]-b[1])<=2000
     target=marker['net'].replace('\\','');others=Counter();record0=None;n0=0
     for record in records(source/'composed-candidate.def'):
         n0+=1
@@ -44,12 +47,16 @@ def probe(root,out,cpus,run,case):
     header,paths,rects=decode(record0)
     assert all(p[2]is None for path in paths for p in path['points'])
     assert Counter(map(path_key,paths))==Counter(map(path_key,row['nonrect_def_paths']))
-    wires=[p for p in paths if contains(p,'metal3',a,b)];assert len(wires)==1
+    if case not in CASES:
+        wires=[p for p in paths if contains(p,'metal3',a,b)];assert len(wires)==1
     def via(point,layer):
         found=[p for p in paths if p['layer']==layer and p['via']and len(p['points'])==1 and tuple(p['points'][0][:2])==point]
         assert len(found)==1;return found[0]
-    bridge=dict(layer='metal2',points=[(*a,None),(*b,None)],via=None)
-    if case=='mixed':
+    if case in CASES:
+        alternative=build(paths,row,case);remove=alternative['removed'];additions=alternative['added']
+        keep=alternative['retained'];wires=[alternative['wire']];guard_vias=alternative['guards']
+    elif case=='mixed':
+        bridge=dict(layer='metal2',points=[(*a,None),(*b,None)],via=None)
         keep=via(a,'metal3');remove=via(b,'metal2')
         assert keep['via'].startswith('via3_')and remove['via'].startswith('via2_')
         assert not any(p['via']and p['layer']=='metal2'and tuple(p['points'][0][:2])==a for p in paths)
@@ -57,6 +64,7 @@ def probe(root,out,cpus,run,case):
         moved=dict(layer='metal2',points=[(*a,None)],via=remove['via']);additions=[bridge,moved]
         guard_vias=[(keep['via'],'metal3','metal4'),(remove['via'],'metal2','metal3')]
     else:
+        bridge=dict(layer='metal2',points=[(*a,None),(*b,None)],via=None)
         remove=via(a,'metal2');keep=via(b,'metal2');lower=via(a,'metal1')
         assert remove['via'].startswith('via2_')and keep['via'].startswith('via2_')and lower['via'].startswith('via1_')
         assert any(contains(p,'metal2',b,b)for p in paths)
@@ -78,7 +86,7 @@ def probe(root,out,cpus,run,case):
             script+='odb::dbWireEncoder_newPath $enc [$tech findLayer '+layer+'] ROUTED\nodb::dbWireEncoder_addPoint $enc %d %d\nodb::dbWireEncoder_addRect $enc 0 0 %d %d\n'%(x0,y0,x1-x0,y1-y0)
     script+='odb::dbWireEncoder_end $enc\nodb::delete_dbWireEncoder $enc\nwrite_db transition-candidate.odb\nwrite_def transition-candidate.def\ndrt::check_drc_cmd transition-native-drc.rpt 0 0 0 0 native_whole_drc\n'
     (out/'transition.tcl').write_text(script)
-    (out/'expected-edit.json').write_text(json.dumps(dict(case=case,marker=marker,removed=remove,added=additions,retained_via=keep,preserved_m3_wire=wires[0],original_rectangles=list(rects.elements())),indent=2)+'\n')
+    (out/'expected-edit.json').write_text(json.dumps(dict(case=case,marker=marker,removed=remove,added=additions,**{('retained_path'if case in CASES else'retained_via'):keep,('preserved_wire'if case in CASES else'preserved_m3_wire'):wires[0]},original_rectangles=list(rects.elements())),indent=2)+'\n')
     run(['openroad','-no_init','-exit',out/'transition.tcl'],'transition.log')
     actual=Counter();n1=0;found=False;exact=False
     for record in records(out/'transition-candidate.def'):
