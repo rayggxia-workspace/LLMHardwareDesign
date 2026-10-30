@@ -14,7 +14,7 @@ from check_access import check
 DRIVER=Path(__file__).resolve().parent
 
 def run(revision,profile='import_only'):
-    assert profile in ['import_only','healed_LL_actual_route']
+    assert profile in ['import_only','healed_LL_actual_route','corner_LL_actual_route']
     prep=ROOT/'common_current_resume/r01';pq=json.loads((prep/'execution.json').read_text())
     assert pq.get('completed_utc') and pq['native_route_returncode']==-11 and pq['all_closed_sources_unchanged']
     assert pq['native_stage_status']['conservative_OBS_existing_PG_clear']=='EXECUTED'
@@ -53,8 +53,8 @@ def run(revision,profile='import_only'):
           'read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib']
         for case in CASES:
             leaf=None;model=None
-            if case=='llaccel_aux' and profile=='healed_LL_actual_route':
-                folder=ROOT/'llsys_gap_healed_views/r01/llaccel_aux-C';vp=folder/'execution.json';v=json.loads(vp.read_text())
+            if case=='llaccel_aux' and profile in ['healed_LL_actual_route','corner_LL_actual_route']:
+                folder=ROOT/('llsys_corner_fill_views/r01/llaccel_aux-C' if profile=='corner_LL_actual_route' else 'llsys_gap_healed_views/r01/llaccel_aux-C');vp=folder/'execution.json';v=json.loads(vp.read_text())
                 assert v.get('completed_utc') and not v.get('actual_failure') and v['all_closed_sources_unchanged']
                 assert v['native_export_returncode']==v['fresh_model_read_returncode']==0 and v['matching_all_signal_model_pins']==13507 and v['SPEF_replay_matches_source']
                 inputs[str(vp)]=sha(vp)
@@ -92,7 +92,8 @@ def run(revision,profile='import_only'):
         assert sorted(a,key=lambda r:r['instance'])==sorted(b,key=lambda r:r['instance']);rec['all_original_instance_poses_and_resources_preserved']=True
         assert len(re.findall(r'\+\s+FIXED\s+metal10\b',(out/'imported_current.def').read_text()))==256;rec['all256_native_FIXED_status_preserved']=True
         verify_graph(ROOT/'inputs/common-topology-r02',out/'after.endpoints.tsv',out/'all_original_graph_check.json');rec['full_compiled_endpoint_graph_verified']=True
-        if profile=='healed_LL_actual_route':
+        if profile in ['healed_LL_actual_route','corner_LL_actual_route']:
+            rec['routing_RC_STA_functions']='Actual lower routing attempted; RC/STA and two complete functions NOT_EXECUTED'
             # Actual continuation from the successfully imported checkpoint;
             # original parent placement/PDN/topology/M10 targets/pool unchanged.
             libraries=[line for line in lines if line.startswith('read_liberty ')]
@@ -125,7 +126,7 @@ def run(revision,profile='import_only'):
     rec['native_stages']={p.name:{r['stage']:r['status'] for r in csv.DictReader(p.open(),delimiter='\t')} for p in out.glob('*stages.tsv')}
     rec['all_closed_sources_unchanged']=all(sha(Path(p))==s for p,s in inputs.items());rec['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat();rec['files']={p.name:{'bytes':p.stat().st_size,'sha256':sha(p)} for p in out.iterdir() if p.is_file() and p.name!='execution.json'};save()
     failed=bool(rec.get('actual_failure')) or not rec['all_closed_sources_unchanged'] or any(rec['native_stages'].get('fresh_import.stages.tsv',{}).get(k)!='EXECUTED' for k in ['VDD','VSS'])
-    if profile=='healed_LL_actual_route':
+    if profile in ['healed_LL_actual_route','corner_LL_actual_route']:
         failed=failed or rec['native_returncodes'].get('lower_route')!=0 or rec.get('fresh_DRC_count')!=0 or not rec.get('whole_signal_geometry',{}).get('pass') or any(rec['native_stages'].get('lower_route.stages.tsv',{}).get(k)!='EXECUTED' for k in ['routed_VDD','routed_VSS'])
     return int(failed)
 if __name__=='__main__':sys.exit(run(*sys.argv[1:]))

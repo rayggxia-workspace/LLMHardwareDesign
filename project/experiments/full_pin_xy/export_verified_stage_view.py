@@ -6,7 +6,7 @@ Refuse a source with native DRC or PG failure; verify model/pins and SPEF replay
 from pathlib import Path
 from collections import Counter
 import csv,datetime,json,os,re,shutil,sys,traceback
-from run_exports import ROOT,sha
+from run_exports import ROOT,IMAGE,sha
 from run_parent_trial import tcl
 from run_escape_fixture import execute
 from lef_view_contract import verify
@@ -16,6 +16,7 @@ DRIVER=Path(__file__).resolve().parent
 def run(profile,revision):
     choices={
       'llsys_healed':('llaccel_aux',13507,'llsys_same_net_gap_heal/r02','llsys_gap_healed_views'),
+      'llsys_corners':('llaccel_aux',13507,'llsys_corner_fill/r01','llsys_corner_fill_views'),
       'vector_pose_fixed':('vector',2246,'vector_pose_route_fix/r01','vector_pose_fixed_views'),
       'perimeter_gemm':('gemm',3753,'same_source_perimeter/r01/gemm','same_source_perimeter_views'),
       'perimeter_vector':('vector',2246,'same_source_perimeter/r01/vector','same_source_perimeter_views'),
@@ -29,9 +30,12 @@ def run(profile,revision):
         if isinstance(v,dict):flat.update(v)
         else:flat[k]=v
     assert all(flat.get(k)=='EXECUTED' for k in ['VDD','VSS','rcx','sta'])
-    if profile=='llsys_healed':
+    if profile in ['llsys_healed','llsys_corners']:
         assert all(q['all_original_cells_ports_connections_pin_XY_layers_sizes_PG_and_die_exact'].values())
         assert q['all_original_WIRE_VIA_exact_plus_requested_patch_rectangles'] and q['all_closed_sources_unchanged']
+        if profile=='llsys_corners':
+            assert q['three_changed_nets_actual_geometry']['pass'] and q['three_changed_nets_actual_geometry']['checked_nets']==3
+            assert q['whole_signal_geometry']['source_checked_nets']==725253 and q['whole_signal_geometry']['exact_other_nets']==725250
     elif profile.startswith('perimeter_'):
         assert all(q['exact_C_resource_cells_connections_poses_PG_and_die_preserved'].values()) and q['all_closed_sources_unchanged']
     else:
@@ -48,13 +52,15 @@ def run(profile,revision):
       'historical_parent_target_layers':'PARTIAL_OR_UNKNOWN_RETAINED; new controlled M10 landing is not a recovered historical target',
       'original_pin_layers_sizes_function_networks':'UNCHANGED; current physical source after recorded engineering edits is the reference',
       'full_rules_RTL_GDS_and_system':'NOT_QUALIFIED; negative source timing/electrical not waived'}
+    rec['source_connectivity_proof_scope']=q['whole_signal_geometry']
+    rec['container_image_path']=IMAGE
     try:
         shutil.copyfile(str(odb),str(out/'clean.odb'));assert sha(out/'clean.odb')==sha(odb)
         common=['singularity','exec','--cleanenv','--bind',str(ROOT/'tmp')+':/tmp','--home',str(ROOT/'home'),'--pwd',str(out)]
         for prefix in ['/public/home/yuzelu/project-circuit','/public/home/yuzelu/PingyangHuang/issue-55']:common+=['--bind',prefix+':'+prefix+':ro']
         for lib in original['libs']:
             if Path(lib).is_file():common+=['--bind',lib+':'+lib+':ro']
-        lines=['read_liberty '+tcl(lib) for lib in original['libs']]+['read_db '+tcl(out/'clean.odb'),
+        lines=['set identity [open '+tcl(out/'actual_tool_identity.txt')+' w];puts $identity [exec sha256sum /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib];close $identity']+['read_liberty '+tcl(lib) for lib in original['libs']]+['read_db '+tcl(out/'clean.odb'),
           'write_abstract_lef '+tcl(out/'abstract.lef'),'write_abstract_lef -bloat_factor 0 '+tcl(out/'detailed.lef'),
           'write_def '+tcl(out/'clean.def'),'write_verilog '+tcl(out/'clean.v'),
           'set b [ord::get_db_block];set f [open '+tcl(out/'pins.tsv')+' w];puts $f "pin\\tdirection\\tuse\\tnet\\tlayer\\tx0\\ty0\\tx1\\ty1";foreach p [$b getBTerms] {foreach bp [$p getBPins] {foreach r [$bp getBoxes] {puts $f [join [list [$p getName] [$p getIoType] [$p getSigType] [[$p getNet] getName] [[$r getTechLayer] getName] [$r xMin] [$r yMin] [$r xMax] [$r yMax]] "\\t"]}}};close $f',
@@ -63,6 +69,10 @@ def run(profile,revision):
           'report_parasitic_annotation -report_unannotated > '+tcl(out/'parasitic_coverage.txt'),
           'check_setup -verbose > '+tcl(out/'constraint_coverage.txt'),'write_timing_model '+tcl(out/'timing.lib')]
         script=out/'export.tcl';script.write_text('\n'.join(lines)+'\n');rec['native_export_returncode']=execute(common,script,out/'export.log',threads=4);assert rec['native_export_returncode']==0
+        identity={line.split()[-1]:line.split()[0] for line in (out/'actual_tool_identity.txt').read_text().splitlines()}
+        assert identity['/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad']=='0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53'
+        assert identity['/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib']=='8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1'
+        rec['actual_tool_and_Liberty_SHA256']=identity
         rec['detailed_OBS_view_contract']=verify(out/'abstract.lef',out/'detailed.lef')
         rec['conservative_parent_low_OBS_preparation']=coarsen(out/'detailed.lef',out/'parent_conservative_low.lef',requested=('metal1','metal2','metal3'))
         norm=lambda line:tuple(x[1:-1] if x.startswith('{') and x.endswith('}') else x for x in line.split())
