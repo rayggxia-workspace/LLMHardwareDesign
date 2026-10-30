@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('revision300-v-gds-localize-'):
+    if MODE.startswith('revision300-v-gds-repair-'):
+        from revision300_v_gds_repair import probe
+        probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]))
+    elif MODE.startswith('revision300-v-gds-localize-'):
         from revision300_v_gds_localize import inspect
         inspect(ROOT,OUT,CPUS,run,MODE.rsplit('-',1)[1])
     elif MODE.startswith('revision300-vector-boundary-'):

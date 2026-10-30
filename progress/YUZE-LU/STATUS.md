@@ -1,3 +1,5 @@
+2026-10-31 07:25 CST：793 ODB与795 GDS只读定位均实际PASS，798/797封存11/9份原始，各362归档Git源及receipt输入/稳定输出；扫描29334753形状、1054邻域形状，全部562494 DEF网络/400 RECT独立核对。唯一错误来自net96230的M2拐角RECT与VDD过孔包围之间70nm间距：补片使局部宽度105nm，触发完整deck的90nm宽线间距。793 GDS层声明解析前置失败另封存796（4原始/362源）；795修为实际polygons(13,0)，原ODB/DEF/GDS SHA均保持。准备799六种单RECT缩短位置在副本上做6×16独立全片native检查，仅选择一个最终实现。767完整GDS FAILED仍保留、V accepted=false；R原404继续，M/S/T保持。
+
 2026-10-31 07:06 CST：767/94002完整DRC自然FAILED：原生全片0项，完整未改FreePDK45 GDS deck129类/1项METAL2.5，约(498,73)µm。788封存23原始/10实际服务器大文件SHA、358归档Git源及receipt输入/稳定输出，精确同源f06b8e14…；物理777/信号几何784/最终功能786/严格LEC787通过仍保留，但不抵消完整GDS失败。delivery/geometry已按真实前置BLOCKED，768未提交；当前V accepted=false。新增两项只读定位：实际GDS窗口/规则与全层全网ODB/PG/pin/OBS/DEF RECT，尚待调度实测，不重跑整套P&R。R404原进程继续、GRT extra47，M/S/T保持，五宏最终未齐。
 
 2026-10-31 06:18 CST：核对两份审阅建议后，将有限资源预算总入口明确指向当前576数值/周期源的595实际测量预算，旧422正文/JSON保留。791用当前Git43个规范输入重算，与595完整JSON对象一致；14报告SHA、8模型/80有限候选及周期换算通过，不新增EDA或系统范围。V完整GDS和R原任务实际进程仍在运行；五宏当前最终交付未齐。继续入口work/YUZE-LU/121/review-20261028/CHECKPOINT-792.md；Refs Issue121/PR122，in_progress/draft。
