@@ -102,7 +102,7 @@ def probe(root,out,cpus,run,shard,combined=False,plan_name='pad31-via-plan-723.j
             old_fixed=Counter((l,tuple(box))for l,box in foot[old['via']]if l!=changed)
             new_fixed=Counter((l,tuple(box))for l,box in foot[new['via']]if l!=changed)
             assert old_fixed==new_fixed,'Cut and opposite-layer metal must remain identical'
-            after[after.index(old)]=new
+            after[next(j for j,path in enumerate(after)if path_key(path)==path_key(old))]=new
         for proof in p['contact_proof']:
             from revision300_v_clearance_corners import intersect
             assert intersect(proof['old_pad'],proof['old_neighbor'])and intersect(proof['new_pad'],proof['new_neighbor'])
