@@ -4,9 +4,11 @@
 
 **当前阶段提示：叶块冻结不等于共同底座冻结。** 首轮先形成可用 Block 与接口；同类实例数量、不同裕量物理版本的组合、排布和固定预连线由共同底座阶段确定。共同底座冻结后，不同产品只改变声明允许的定制图形。详见[当前实施边界与分阶段冻结](docs/decisions/0004-block-library-base-freeze.md)；具体实现范围和验收状态以 [Issue #121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121) / [PR #122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122) 为准。
 
+**2026-10-30 计算积木规划：** M＋归约与归一化＋基础向量算术＋激活与门控＋R＋S＋T；原 V 拆成三种宏，首版保留独立 R。每种先一个实现，主线须逐宏交付最终布局布线；阵列、多实例、裕量版本及预连拓扑后移。三种新 V 宏及 M/V 缩位宽尚不是已验收实现，现有实验保留。详见[边界与位宽分析](docs/COMPUTE_BLOCK_BOUNDARIES_2026-10-30.md)、[当前规划决策](docs/decisions/0005-compute-block-v-split-r.md)。
+
 ## 从哪里开始
 
-1. [项目说明 v1.0](预制计算底座项目说明_v1.0.md)：研究问题、已确认边界、候选方案和待决策清单。
+1. [项目说明 v1.0](预制计算底座项目说明_v1.0.md)：研究问题、已确认边界、2026-10-30 架构规划补记与待验证清单。
 2. [研究资料导读](研究资料导读.md)：依据原 README 完整要点整理的阅读顺序、架构问题和 EDA 研究路线。
 3. [项目简介](docs/PROJECT_BRIEF.md)、[架构与目录](docs/ARCHITECTURE.md)、[当前状态](docs/STATUS.md)：持续更新的项目入口。
 4. [不同 LLM 架构下的 Block 研究](docs/面向不同%20LLM%20架构的预制计算底座.md)、[Gemmini 学习笔记](docs/Gemmini学习笔记.md)、[工艺互连资料](docs/常见开源工艺金属互连线.md)：研究背景与候选方向。
