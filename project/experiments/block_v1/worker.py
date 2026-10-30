@@ -204,6 +204,12 @@ try:
     elif MODE=='revision300-v-latest-neighborhood':
         from revision300_v_latest_neighborhood import inspect
         inspect(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('revision300-v-m3local-vias-'):
+        from revision300_v_m3local_vias import probe
+        probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]))
+    elif MODE=='revision300-v-m3local-via-compose':
+        from revision300_v_m3local_vias import probe
+        probe(ROOT,OUT,CPUS,run,6,combined=True)
     elif MODE.startswith('revision300-v-pad31-vias-'):
         from revision300_v_pad31_vias import probe
         probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]))
