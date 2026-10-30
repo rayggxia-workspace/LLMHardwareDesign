@@ -204,6 +204,12 @@ try:
     elif MODE=='revision300-v-latest-neighborhood':
         from revision300_v_latest_neighborhood import inspect
         inspect(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('revision300-v-fresh31-vias-'):
+        from revision300_v_fresh31_vias import probe
+        probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]))
+    elif MODE=='revision300-v-fresh31-via-compose':
+        from revision300_v_fresh31_vias import probe
+        probe(ROOT,OUT,CPUS,run,6,combined=True)
     elif MODE=='revision300-v-joint-via-compose':
         from revision300_v_local_vias import probe
         probe(ROOT,OUT,CPUS,run,6,combined=True,plan_name='shift-via-plan-700.json',shard_run='701',mode_prefix='revision300-v-shift-vias-',compose_mode='revision300-v-joint-via-compose',joint=True)
