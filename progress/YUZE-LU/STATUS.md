@@ -1,4 +1,4 @@
-2026-10-31 18:45 CST：Issue153在独立task/153-systemc-llm-inference工作树增加真实七宏FIFO的Qwen3/Qwen2.5/Granite完整自回归控制器；Qwen3与Granite短输入3新token吻合，Qwen2.5仍有量化分叉，未宣称精度通过。真实Qwen3.5首层R边界四步/32头/完整状态轮转通过，5项CTest及本地UBSan通过。逐步问题/解决/失败/剩余项见docs/SYSTEMC_LLM_INFERENCE_JOURNAL.md，代码和回执见project/systemc/llm。其余五模型未完成，Issue153保持开放；PR尚待本轮创建，未合并；登记沿用上次pending证据、看板unverified/同步pending。未改RTL或其他会话作业。
+2026-10-31 18:45 CST：Issue153在独立task/153-systemc-llm-inference工作树增加真实七宏FIFO的Qwen3/Qwen2.5/Granite完整自回归控制器；Qwen3与Granite短输入3新token吻合，Qwen2.5仍有量化分叉，未宣称精度通过。真实Qwen3.5首层R边界四步/32头/完整状态轮转通过，5项CTest及本地UBSan通过。逐步问题/解决/失败/剩余项见docs/SYSTEMC_LLM_INFERENCE_JOURNAL.md，代码和回执见project/systemc/llm。其余五模型未完成，Issue153保持开放；草稿PR154（https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/154）已提交待审查，未合并；登记沿用上次pending证据、看板unverified/同步pending。未改RTL或其他会话作业。
 
 2026-10-31 11:56 CST：Issue145/PR146补全七宏SystemC及公共数值/线程/系数表/示例/测试/构建工具中文注释；12个C++文件去注释词法记号与a91f3640一致、Softmax轨迹逐字一致，524425断言/UBSan/3项CTest重跑通过。代码入口project/systemc/README.md，核对work/YUZE-LU/145/comment-token-check.json；无RTL/远端作业改动，待审查，登记pending、看板unverified/同步pending。
 
