@@ -22,6 +22,7 @@ def main():
     p.add_argument('--guard-reset',action='store_true',help='Also guard reset after measured final reset hold failures')
     p.add_argument('--measured-hold',action='store_true',help='Apply source-bound30-endpoint native post-GRT data-delay ECO')
     p.add_argument('--measured-hold-buffers',type=int,choices=(4,8),default=4)
+    p.add_argument('--setup-margin',type=float,choices=(.200,.250),default=.200,help='Optimization target only; actual300MHz SDC unchanged')
     a=p.parse_args();a.source=a.source.resolve();a.out=a.out.resolve()
     assert a.source!=a.out and 'issue143-seven-block-v2-20261030' in a.out.parts
     r=json.loads((a.source/'receipt.json').read_text());assert r['passed'] is False
@@ -86,7 +87,8 @@ def main():
         assert str(a.source) not in config
         config+='\n# Measured final RC deficits: setup164ps / hold109ps. Optimization only; no SDC exception.\n'
         hold_margin='0.020' if a.input_hold_guard else '0.150'
-        config+='export SETUP_SLACK_MARGIN = 0.200\nexport HOLD_SLACK_MARGIN = '+hold_margin+'\n'
+        setup_margin='%.3f'%a.setup_margin
+        config+='export SETUP_SLACK_MARGIN = '+setup_margin+'\nexport HOLD_SLACK_MARGIN = '+hold_margin+'\n'
         # Receivers and diodes already exist in the inherited GRT. Never add twice.
         pre_global=''
         if a.input_hold_guard:
@@ -122,7 +124,7 @@ def main():
         checked_copy(before/'5_1_grt.odb',after/'4_cts.odb')
         checked_copy(before/'5_1_grt.sdc',after/'4_cts.sdc')
         flow.update(config_sha256=sha(a.out/'config.mk'),pins_sha256=sha(a.out/'pins.json'),
-            hold_repair_margin_ns=float(hold_margin),setup_repair_margin_ns=.200,
+            hold_repair_margin_ns=float(hold_margin),setup_repair_margin_ns=a.setup_margin,
             resume_scope='Original completed GRT used as native route input, with existing CTS/receivers/diodes; repeat full native GRT repair and detailed route/final. No final success inherited.')
         command=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(a.out/'config.mk'),'WORK_HOME='+str(a.out/'flow'),'NUM_CORES=16']
         def run(cmd,log):
@@ -131,7 +133,7 @@ def main():
                 result=subprocess.run(list(map(str,cmd)),cwd=a.out,stdout=stream,stderr=subprocess.STDOUT)
             receipt['commands'].append(dict(command=list(map(str,cmd)),log=log,sha256=sha(a.out/log),returncode=result.returncode,seconds=time.time()-started))
             assert result.returncode==0,(log,result.returncode)
-        wanted=dict(LEC_CHECK='1',SEC_CHECK='0',SETUP_SLACK_MARGIN='0.200',HOLD_SLACK_MARGIN=hold_margin,
+        wanted=dict(LEC_CHECK='1',SEC_CHECK='0',SETUP_SLACK_MARGIN=setup_margin,HOLD_SLACK_MARGIN=hold_margin,
             MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',PRE_GLOBAL_ROUTE_TCL=pre_global,POST_GLOBAL_ROUTE_TCL=post_global)
         for key,value in wanted.items():
             log='variable-'+key+'.log';run(command+['print-'+key],log)
