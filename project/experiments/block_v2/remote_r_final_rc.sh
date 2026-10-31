@@ -17,7 +17,7 @@ sha256sum "$BV1_ODB" "$BV1_SDC" "$script" > before.sha256
 image=/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif
 test "$(sha256sum "$image" | cut -d' ' -f1)" = 49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a
 srun --ntasks=1 --cpus-per-task=16 --cpu-bind=cores \
- /public/software/singularity-ce-4.3.4/bin/singularity exec --bind /public:/public --pwd "$out" "$image" \
- /usr/bin/time -v bash -c 'source /OpenROAD-flow-scripts/env.sh; openroad -no_init -exit "$1"' bash "$script" > probe.log 2>&1
+ /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv --bind /public:/public --env BV1_ODB="$BV1_ODB" --env BV1_SDC="$BV1_SDC" --pwd "$out" "$image" \
+ /usr/bin/time -v bash -c 'set -e; source /OpenROAD-flow-scripts/env.sh; command -v openroad; binary=$(command -v openroad); sha256sum "$binary"; test "$(sha256sum "$binary" | cut -d" " -f1)" = 0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53; openroad -no_init -exit "$1"' bash "$script" > probe.log 2>&1
 sha256sum --check before.sha256 > after-check.log
 sha256sum diagnostic.spef summary.tsv timing.rpt electrical-violations.rpt > outputs.sha256
