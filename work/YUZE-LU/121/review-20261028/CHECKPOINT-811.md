@@ -1,5 +1,9 @@
 # Issue121 继续入口（2026-10-31 07:47 CST）
 
+2026-10-31 08:33 CST：805严格LEC实际UNSAT/IDENTICAL，diff0/1输入输出全0；815封存16原始/8实际服务器大文件SHA、364归档Git源及receipt输入/稳定输出，绑定814三初态最终功能与812物理/fresh全信号几何的同一9ef42c0f…源。actual receipt时间证明formal在function结束1.972308秒后补位，未等完整GDS。当前仅完整未改GDS仍运行（817实际进程/队列）；六文件/完整实际查看/806全端口与有限RC仍待真实前置，V accepted=false。原767失败/资格保留为历史。M/S/T保持，R原404继续，五宏最终未齐。
+
+815 collector已自然完成并验证16原始本地SHA/大小，814也已完成；不要重跑已有目录。接下来只在完整GDS真实终态后执行collect813.py（失败也保留），再按真实前置完成六文件/完整原生几何实际查看/806全部接口。当前首选源804/805/806已修正到BEFORE-AFTER-SOURCES.current_selection.V，原767完整对象在historical_v_selection_767。
+
 2026-10-31 08:25 CST：805/94063最终网表三初态功能全部PASS，all-ones/random121/random122各574942检查/425971拍；814封存27原始/8实际服务器大文件SHA、364归档Git源及receipt输入/稳定输出，绑定与812物理/fresh完整信号几何相同的9ef42c0f…最终源。严格LEC已自动补位并与完整未改GDS并行（816实际队列/进程快照）；尚未宣称LEC或完整GDS通过。804/809与812保持，六文件/完整查看及806全端口/有限RC待真实前置，V accepted=false。R原404继续（08:20 CPU实测+100ticks），M/S/T保持，五宏最终未齐。
 
 814 collector已完成，27原始本地SHA/大小核验；不要对已有目录重跑。下一步只在真实终态后执行collect815.py（严格LEC）及collect813.py（完整GDS；失败也保留），之后交付/完整实际查看/806接口。wait805.py每次最多50秒观察已确认RUNNING的94063，若allocation终态则先读回sacct与receipt，不因观察失败重启EDA。
