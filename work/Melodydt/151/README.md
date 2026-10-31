@@ -49,3 +49,9 @@ python work/Melodydt/151/verify_rtl_baseline.py --root .
 - `rtl-derived-contract.json`保存7个实际ANSI接口签名和源码指纹、11项关键边界；`system-design-contract.json`更新完整两遍SSM preload位置和原生命令例子。`verify_rtl_design.py`仅作源码漂移/声明一致性检查。
 - 当前回执：`rtl-redesign-verification.json`、`system-verification.json`、`integration-verification.json`及`rtl-redesign-checks.json`；旧verification/integration-checks保留各自历史身份，不描述为当前RTL运行结果。
 - 实际静态检查通过后供独立审查；完整产品编译、RTL/SystemC/EDA/整数oracle未执行，无服务器作业。审查/合并待完成，登记PR5 pending，看板条目unverified/同步pending，处理人待指定。
+
+## 2026-10-31T21:15:42+08:00：全合法连接与有限家族范围
+
+用户明确“全部允许组合”，并确认仅M11/M12永久绑定、有限模型类型。[全合法连接规格](../../../docs/ALL_LEGAL_CONNECTION_SPEC.md)与总方案v0.3把六模板降为回归集。all-legal-connection-contract.json列49宏对索引、数据角色、转换/服务与7种自回访；合法性、recipe、实现/验证/物理分开，当前新系统路线全部未完成。
+
+独立目录all-legal-36f9c9d/integrated复制自已交付36f9包，非完整Git clone，无本地HEAD/暂存区；原包和根参考副本不覆盖。新增verify_all_legal_connections.py仅静态覆盖/声明检查，实际命令与报告见all-legal-checks.json、all-legal-verification.json。叶宏RTL、服务器、ref-project未改；完整家族目录/程序、RTL组合/数值/物理验收未完成。

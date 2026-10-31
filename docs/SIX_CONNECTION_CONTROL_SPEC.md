@@ -1,6 +1,6 @@
-# 从现有七宏RTL展开的固定产品控制规格 v0.2
+# 从现有七宏RTL展开的固定产品控制规格 v0.3
 
-配合[总方案](SIX_CONNECTION_SYSTEM_DESIGN.md)和[原生审计](RTL_NATIVE_CONNECTION_AUDIT.md)。基线为研究分支faabeda、导入PR144固定643c6012。外部控制均待实现，不改变叶宏接口，不宣称已有统一控制总线。
+覆盖目标为有限家族范围内所有合法连接，六模板仅作回归。配合[全合法连接规格](ALL_LEGAL_CONNECTION_SPEC.md)与[总方案](SIX_CONNECTION_SYSTEM_DESIGN.md)和[原生审计](RTL_NATIVE_CONNECTION_AUDIT.md)。基线为研究分支faabeda、导入PR144固定643c6012。外部控制均待实现，不改变叶宏接口，不宣称已有统一控制总线。
 
 ## 1. 两级控制与端口独占
 
@@ -52,6 +52,8 @@ Attention/FFN/GDN/SSM/MoE是固定程序段。多个物理簇若复制宏可以�
 - reuse_b须bank、宽度、tile数、权重身份/版本全部相同。首轮例子禁用，避免残留B。
 
 S_CTRL首版普通口一项在途：`ISSUE(req&&ready) → WAIT(valid) → TAKE → RESPOND`；读写都走应答，不在req握手后报告写完成。loader与普通访问串行，未来重叠需证明内部争用、地址及银行安全。外存搬运也经唯一服务。
+
+全合法目录新增的LOADER_EXPORT不能在上述串行锁内靠小槽边读边写同S：预先保留整描述符spool，A最多512B＋S16 B最多512B，1024B独立payload另计元数据；接完两路/排空未用路、消费done后再写S。export_mode的valid/ready选路预制且不误记M bank已加载。普通读/写ACK-forward也先捕获到已预留响应槽再take，避免占着S响应等另一个S操作数。详见[全合法规格](ALL_LEGAL_CONNECTION_SPEC.md)。
 
 ### 3.2 N_CTRL
 
@@ -108,8 +110,20 @@ fork用引用数，消费者领取同版本只读handle、最后完成才释放�
 
 程序原语包含有界CALL、循环、指定事件等待、错误跳转、缓冲申请/释放和版本发布。译码、ROM容量、计数宽度及错误分支在预制前实现。产品选择冷复位锁定；运行参数只改变合法长度/地址/专家ID。
 
-编译器拒绝不存在路径/算术、超S/T/R/ROM容量、未定义数值尺度、长度不符、端口重复驱动和未定义故障恢复。完整产品程序未编译，不虚构ROM字数；可写控制存储备选单列装载/锁定成本。
+编译器拒绝不存在路径/算术、超S/T/R/ROM容量、未定义数值尺度、长度不符、端口重复驱动和未定义故障恢复。完整家族程序未编译，不虚构ROM字数；启动装载存储不符合当前用户选择，M11/M12永久编码扩展须另行评审并预制读出/选择电路。
 
 局部控靠宏，S仲裁靠S、T_CTRL靠T，母控只传任务/事件；长ready链用预制寄存隔离，CTS/复位一起预算。区域层依据线长、扇出、拥塞证据增加且保持资源独占，不凭层数估PPA。
 
 运行验证待做：随机反压/长停顿、G在途tag、S写应答、N早FINALIZE外部拦截、M scale跨任务、R pending/commit窗口、T非法begin/tail/首读与连续refill、异常后无资源泄漏、版本失败恢复和非法产品选择。当前仅静态核验，未由系统RTL测试证明。
+
+## 6. 全合法连接需要阶段可回访的局部服务
+
+局部控必须既提供便捷整任务模板，也允许母控调用有界阶段原语，保持context lease跨调用存活：`ACQUIRE/OPEN → STEP原生命令或数据段 → WAIT阶段事件 → 其他宏处理 → RESUME → CLOSE/RELEASE`。这些是新增外侧控制语义，原生opcode不变，所有原生口仍只有一个_CTRL所有者。
+
+例如N可在同一lease执行BEGIN/STATS，母控调用其他宏或搬运器准备回放后继续FINALIZE/REPLAY；R卷积输出可先送E/G/N，再在原生允许的pending_history阶段回访同一R context补参数/执行状态更新。不能让一个“整Norm/整GDN task”不返回阶段事件，或长期占有共享S服务，从而封死合法跨宏往返。R pending_state期间依然不能装新参数，N回放阶段依然受原生阶段许可；可回访不绕过guard。
+
+固定家族程序由EXPORT、IMPORT、COPY、PACK/CAST、LAYOUT、FORK/JOIN、N阶段、R阶段、T批次、状态版本和NUM原语组合。主控根据data_ready等真实事件依赖推进；程序段不是仅有六个超级opcode。fork保存引用数，join绑定task/epoch/range/version；有界反馈必须有初始数据/状态和存储延迟，零延迟组合环拒绝。多实例图显式指定instance_id、端口所有者和路线。
+
+同一T不能边读当前租约边BEGIN新租约，T→计算→T需先暂存当前批次到S/外存、读完release，再以新generation回装；S→S重叠复制指定方向/临时区。资源不足是mapping gap，未实现原语是implementation gap，均不自动改变语义合法性。
+
+控制存储采用有限已定义家族程序＋M11/M12永久参数/入口绑定，不依赖启动装载。全家族目录/有界变体、程序与表容量、非法码、参数来源和固定路由须在冻结前实际编译验证；详细判定见[全合法连接规格](ALL_LEGAL_CONNECTION_SPEC.md)。

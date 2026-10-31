@@ -49,3 +49,7 @@
 ## 基于该RTL的新版系统方案
 
 本次依赖导入后的实质重写见[总方案v0.2](SIX_CONNECTION_SYSTEM_DESIGN.md)、[控制规格](SIX_CONNECTION_CONTROL_SPEC.md)、[六模板](SIX_CONNECTION_TEMPLATE_SPEC.md)和[七宏原生审计](RTL_NATIVE_CONNECTION_AUDIT.md)。基线保持faabeda/643c6012，未追随PR144之后的提交。新稿修正M v2缩放/读出、N整组长度、E/G容器与尺度、R两遍/局部提交及T首读/连续refill；外部控制器、NUM、外存和版本服务仍待实现。
+
+## 全合法连接目标v0.3
+
+用户进一步确认有限模型类型、仅M11/M12永久绑定、全部允许组合。当前入口为[全合法连接规格](ALL_LEGAL_CONNECTION_SPEC.md)、[角色/profile目录](LEGAL_CONNECTION_PROFILES.md)及总方案v0.3；六算法只作回归。49宏对和原语目录是设计索引，新系统路线均未实现/验证，家族目录与完整程序仍待冻结。原生RTL/资格边界不变。

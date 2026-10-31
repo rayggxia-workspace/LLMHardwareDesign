@@ -1,0 +1,2107 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "status": "proposed",
+  "design_parent": "36f9c9dbb3cab8247008403ccb08ce26c0fdc99f",
+  "RTL_source": "643c6012a11cbf461146ac40fbf61485223fe946",
+  "macros": [
+    "M",
+    "N",
+    "E",
+    "G",
+    "R",
+    "S",
+    "T"
+  ],
+  "scope": {
+    "finite_families": true,
+    "catalog_frozen": false,
+    "all_legal_role_combinations_target": true,
+    "six_templates_are_whitelist": false,
+    "pair_index_is_full_coverage_proof": false,
+    "missing_implementation_changes_semantic_legality": false,
+    "all_new_system_paths_implemented": false
+  },
+  "binding": {
+    "only_M11_M12_permanent": true,
+    "boot_program_load": false,
+    "primary": "prefab_finite_family_ROM_plus_permanent_parameters",
+    "full_family_programs_compiled": false
+  },
+  "source_roles": {
+    "M": {
+      "result64": "S64_DECLARED",
+      "read32": "S32_DECLARED",
+      "partial_diag": "DIAGNOSTIC"
+    },
+    "N": {
+      "norm": "S16_DECLARED",
+      "exp": "U16_Q15_EXP",
+      "probability": "S16_Q14_PROB",
+      "topk_ids": "U16_ID",
+      "stats": "STRUCT_STATS",
+      "factor": "U32_FACTOR"
+    },
+    "E": {
+      "vector": "S16_DECLARED",
+      "pack8": "S8_DECLARED",
+      "cast32_to16": "S16_DECLARED"
+    },
+    "G": {
+      "activation": "S16_MODE_DEPENDENT",
+      "gated": "S16_Q10"
+    },
+    "R": {
+      "output": "S32_DECLARED",
+      "active_state": "S32_DECLARED",
+      "active_history": "S32_DECLARED",
+      "meta": "STRUCT_META"
+    },
+    "S": {
+      "stored_word": "TYPED_WORD",
+      "write_echo": "TYPED_WORD",
+      "loader_A": "S8_OR_S16",
+      "loader_B": "S8_OR_S16"
+    },
+    "T": {
+      "committed_word": "TYPED_WORD"
+    }
+  },
+  "destination_roles": {
+    "M": {
+      "A": "S8_OR_S16",
+      "B_nmajor": "S8_OR_S16"
+    },
+    "N": {
+      "stats_data": "S16_DECLARED",
+      "exp_score": "S16_Q10",
+      "norm_replay": "S16_DECLARED",
+      "norm_gamma": "S16_Q10",
+      "soft_replay": "U16_Q15_EXP",
+      "topk_records": "SCORE_ID_RECORD"
+    },
+    "E": {
+      "A_vec": "S16_DECLARED",
+      "B_vec": "S16_DECLARED",
+      "C_vec": "S16_DECLARED",
+      "A_cast13": "S32_DECLARED"
+    },
+    "G": {
+      "x": "S16_Q10",
+      "gate": "S16_Q10"
+    },
+    "R": {
+      "state": "S32_DECLARED",
+      "x": "S32_DECLARED",
+      "inject": "S32_DECLARED",
+      "history": "S32_DECLARED",
+      "key": "S16_Q14",
+      "query": "S16_Q14",
+      "taps": "S16_Q14",
+      "decay": "U32_Q31",
+      "beta": "U32_Q31",
+      "element_decay": "U32_Q31",
+      "skip": "S32_Q16"
+    },
+    "S": {
+      "payload": "TYPED_WORD"
+    },
+    "T": {
+      "payload": "TYPED_WORD"
+    }
+  },
+  "control_events": {
+    "M": "native_status_to_owner_controller; never_implicit_numeric_payload",
+    "N": "native_status_to_owner_controller; never_implicit_numeric_payload",
+    "E": "native_status_to_owner_controller; never_implicit_numeric_payload",
+    "G": "native_status_to_owner_controller; never_implicit_numeric_payload",
+    "R": "native_status_to_owner_controller; never_implicit_numeric_payload",
+    "S": "native_status_to_owner_controller; never_implicit_numeric_payload",
+    "T": "native_status_to_owner_controller; never_implicit_numeric_payload"
+  },
+  "services": {
+    "EXPORT": "candidate_system_not_implemented",
+    "IMPORT": "candidate_system_not_implemented",
+    "STORE_TRANSFER": "candidate_system_not_implemented",
+    "PACK": "candidate_system_not_implemented",
+    "CAST": "candidate_system_not_implemented",
+    "LAYOUT": "candidate_system_not_implemented",
+    "FORK": "candidate_system_not_implemented",
+    "JOIN": "candidate_system_not_implemented",
+    "REPLAY": "candidate_system_not_implemented",
+    "GATHER": "candidate_system_not_implemented",
+    "FIELD_EXTRACT": "candidate_system_not_implemented",
+    "NUM_CONVERT": "candidate_system_not_implemented",
+    "NUM_COEFF": "candidate_system_not_implemented",
+    "NUM_WACC": "candidate_system_not_implemented",
+    "STATE_VERSION": "candidate_system_not_implemented",
+    "TXN_BATCH": "candidate_system_not_implemented"
+  },
+  "pairs": [
+    {
+      "id": "M->M",
+      "source": "M",
+      "destination": "M",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_M",
+        "TYPED_STORE",
+        "IMPORT_M"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "LAYOUT",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "result64",
+        "read32",
+        "partial_diag"
+      ],
+      "destination_roles": [
+        "A",
+        "B_nmajor"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": true,
+      "native_S_loader_available": true
+    },
+    {
+      "id": "M->N",
+      "source": "M",
+      "destination": "N",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_M",
+        "TYPED_STORE",
+        "IMPORT_N"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "PACK",
+        "REPLAY",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "result64",
+        "read32",
+        "partial_diag"
+      ],
+      "destination_roles": [
+        "stats_data",
+        "exp_score",
+        "norm_replay",
+        "norm_gamma",
+        "soft_replay",
+        "topk_records"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "M->E",
+      "source": "M",
+      "destination": "E",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_M",
+        "TYPED_STORE",
+        "IMPORT_E"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "PACK",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "result64",
+        "read32",
+        "partial_diag"
+      ],
+      "destination_roles": [
+        "A_vec",
+        "B_vec",
+        "C_vec",
+        "A_cast13"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "M->G",
+      "source": "M",
+      "destination": "G",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_M",
+        "TYPED_STORE",
+        "IMPORT_G"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "PACK",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "result64",
+        "read32",
+        "partial_diag"
+      ],
+      "destination_roles": [
+        "x",
+        "gate"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "M->R",
+      "source": "M",
+      "destination": "R",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_M",
+        "TYPED_STORE",
+        "IMPORT_R"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "STATE_VERSION",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "result64",
+        "read32",
+        "partial_diag"
+      ],
+      "destination_roles": [
+        "state",
+        "x",
+        "inject",
+        "history",
+        "key",
+        "query",
+        "taps",
+        "decay",
+        "beta",
+        "element_decay",
+        "skip"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "M->S",
+      "source": "M",
+      "destination": "S",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_M",
+        "TYPED_STORE",
+        "IMPORT_S"
+      ],
+      "required_services": [
+        "EXPORT",
+        "IMPORT",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "result64",
+        "read32",
+        "partial_diag"
+      ],
+      "destination_roles": [
+        "payload"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "M->T",
+      "source": "M",
+      "destination": "T",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_M",
+        "TYPED_STORE",
+        "IMPORT_T"
+      ],
+      "required_services": [
+        "EXPORT",
+        "IMPORT",
+        "STORE_TRANSFER",
+        "TXN_BATCH"
+      ],
+      "source_roles": [
+        "result64",
+        "read32",
+        "partial_diag"
+      ],
+      "destination_roles": [
+        "payload"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "N->M",
+      "source": "N",
+      "destination": "M",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_N",
+        "TYPED_STORE",
+        "IMPORT_M"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "LAYOUT",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "norm",
+        "exp",
+        "probability",
+        "topk_ids",
+        "stats",
+        "factor"
+      ],
+      "destination_roles": [
+        "A",
+        "B_nmajor"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": true
+    },
+    {
+      "id": "N->N",
+      "source": "N",
+      "destination": "N",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_N",
+        "TYPED_STORE",
+        "IMPORT_N"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "LAYOUT",
+        "PACK",
+        "REPLAY",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "norm",
+        "exp",
+        "probability",
+        "topk_ids",
+        "stats",
+        "factor"
+      ],
+      "destination_roles": [
+        "stats_data",
+        "exp_score",
+        "norm_replay",
+        "norm_gamma",
+        "soft_replay",
+        "topk_records"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": true,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "N->E",
+      "source": "N",
+      "destination": "E",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_N",
+        "TYPED_STORE",
+        "IMPORT_E"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "PACK",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "norm",
+        "exp",
+        "probability",
+        "topk_ids",
+        "stats",
+        "factor"
+      ],
+      "destination_roles": [
+        "A_vec",
+        "B_vec",
+        "C_vec",
+        "A_cast13"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "N->G",
+      "source": "N",
+      "destination": "G",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_N",
+        "TYPED_STORE",
+        "IMPORT_G"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "PACK",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "norm",
+        "exp",
+        "probability",
+        "topk_ids",
+        "stats",
+        "factor"
+      ],
+      "destination_roles": [
+        "x",
+        "gate"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "N->R",
+      "source": "N",
+      "destination": "R",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_N",
+        "TYPED_STORE",
+        "IMPORT_R"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "STATE_VERSION",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "norm",
+        "exp",
+        "probability",
+        "topk_ids",
+        "stats",
+        "factor"
+      ],
+      "destination_roles": [
+        "state",
+        "x",
+        "inject",
+        "history",
+        "key",
+        "query",
+        "taps",
+        "decay",
+        "beta",
+        "element_decay",
+        "skip"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "N->S",
+      "source": "N",
+      "destination": "S",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_N",
+        "TYPED_STORE",
+        "IMPORT_S"
+      ],
+      "required_services": [
+        "EXPORT",
+        "IMPORT",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "norm",
+        "exp",
+        "probability",
+        "topk_ids",
+        "stats",
+        "factor"
+      ],
+      "destination_roles": [
+        "payload"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "N->T",
+      "source": "N",
+      "destination": "T",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_N",
+        "TYPED_STORE",
+        "IMPORT_T"
+      ],
+      "required_services": [
+        "EXPORT",
+        "IMPORT",
+        "STORE_TRANSFER",
+        "TXN_BATCH"
+      ],
+      "source_roles": [
+        "norm",
+        "exp",
+        "probability",
+        "topk_ids",
+        "stats",
+        "factor"
+      ],
+      "destination_roles": [
+        "payload"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "E->M",
+      "source": "E",
+      "destination": "M",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_E",
+        "TYPED_STORE",
+        "IMPORT_M"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "LAYOUT",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "vector",
+        "pack8",
+        "cast32_to16"
+      ],
+      "destination_roles": [
+        "A",
+        "B_nmajor"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": true
+    },
+    {
+      "id": "E->N",
+      "source": "E",
+      "destination": "N",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_E",
+        "TYPED_STORE",
+        "IMPORT_N"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "PACK",
+        "REPLAY",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "vector",
+        "pack8",
+        "cast32_to16"
+      ],
+      "destination_roles": [
+        "stats_data",
+        "exp_score",
+        "norm_replay",
+        "norm_gamma",
+        "soft_replay",
+        "topk_records"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "E->E",
+      "source": "E",
+      "destination": "E",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_E",
+        "TYPED_STORE",
+        "IMPORT_E"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "LAYOUT",
+        "PACK",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "vector",
+        "pack8",
+        "cast32_to16"
+      ],
+      "destination_roles": [
+        "A_vec",
+        "B_vec",
+        "C_vec",
+        "A_cast13"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": true,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "E->G",
+      "source": "E",
+      "destination": "G",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_E",
+        "TYPED_STORE",
+        "IMPORT_G"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "PACK",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "vector",
+        "pack8",
+        "cast32_to16"
+      ],
+      "destination_roles": [
+        "x",
+        "gate"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "E->R",
+      "source": "E",
+      "destination": "R",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_E",
+        "TYPED_STORE",
+        "IMPORT_R"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "STATE_VERSION",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "vector",
+        "pack8",
+        "cast32_to16"
+      ],
+      "destination_roles": [
+        "state",
+        "x",
+        "inject",
+        "history",
+        "key",
+        "query",
+        "taps",
+        "decay",
+        "beta",
+        "element_decay",
+        "skip"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "E->S",
+      "source": "E",
+      "destination": "S",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_E",
+        "TYPED_STORE",
+        "IMPORT_S"
+      ],
+      "required_services": [
+        "EXPORT",
+        "IMPORT",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "vector",
+        "pack8",
+        "cast32_to16"
+      ],
+      "destination_roles": [
+        "payload"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "E->T",
+      "source": "E",
+      "destination": "T",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_E",
+        "TYPED_STORE",
+        "IMPORT_T"
+      ],
+      "required_services": [
+        "EXPORT",
+        "IMPORT",
+        "STORE_TRANSFER",
+        "TXN_BATCH"
+      ],
+      "source_roles": [
+        "vector",
+        "pack8",
+        "cast32_to16"
+      ],
+      "destination_roles": [
+        "payload"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "G->M",
+      "source": "G",
+      "destination": "M",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_G",
+        "TYPED_STORE",
+        "IMPORT_M"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "LAYOUT",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "activation",
+        "gated"
+      ],
+      "destination_roles": [
+        "A",
+        "B_nmajor"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": true
+    },
+    {
+      "id": "G->N",
+      "source": "G",
+      "destination": "N",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_G",
+        "TYPED_STORE",
+        "IMPORT_N"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "PACK",
+        "REPLAY",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "activation",
+        "gated"
+      ],
+      "destination_roles": [
+        "stats_data",
+        "exp_score",
+        "norm_replay",
+        "norm_gamma",
+        "soft_replay",
+        "topk_records"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "G->E",
+      "source": "G",
+      "destination": "E",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_G",
+        "TYPED_STORE",
+        "IMPORT_E"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "PACK",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "activation",
+        "gated"
+      ],
+      "destination_roles": [
+        "A_vec",
+        "B_vec",
+        "C_vec",
+        "A_cast13"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "G->G",
+      "source": "G",
+      "destination": "G",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_G",
+        "TYPED_STORE",
+        "IMPORT_G"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "LAYOUT",
+        "PACK",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "activation",
+        "gated"
+      ],
+      "destination_roles": [
+        "x",
+        "gate"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": true,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "G->R",
+      "source": "G",
+      "destination": "R",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_G",
+        "TYPED_STORE",
+        "IMPORT_R"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "STATE_VERSION",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "activation",
+        "gated"
+      ],
+      "destination_roles": [
+        "state",
+        "x",
+        "inject",
+        "history",
+        "key",
+        "query",
+        "taps",
+        "decay",
+        "beta",
+        "element_decay",
+        "skip"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "G->S",
+      "source": "G",
+      "destination": "S",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_G",
+        "TYPED_STORE",
+        "IMPORT_S"
+      ],
+      "required_services": [
+        "EXPORT",
+        "IMPORT",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "activation",
+        "gated"
+      ],
+      "destination_roles": [
+        "payload"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "G->T",
+      "source": "G",
+      "destination": "T",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_G",
+        "TYPED_STORE",
+        "IMPORT_T"
+      ],
+      "required_services": [
+        "EXPORT",
+        "IMPORT",
+        "STORE_TRANSFER",
+        "TXN_BATCH"
+      ],
+      "source_roles": [
+        "activation",
+        "gated"
+      ],
+      "destination_roles": [
+        "payload"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "R->M",
+      "source": "R",
+      "destination": "M",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_R",
+        "TYPED_STORE",
+        "IMPORT_M"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "LAYOUT",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "output",
+        "active_state",
+        "active_history",
+        "meta"
+      ],
+      "destination_roles": [
+        "A",
+        "B_nmajor"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": true
+    },
+    {
+      "id": "R->N",
+      "source": "R",
+      "destination": "N",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_R",
+        "TYPED_STORE",
+        "IMPORT_N"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "PACK",
+        "REPLAY",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "output",
+        "active_state",
+        "active_history",
+        "meta"
+      ],
+      "destination_roles": [
+        "stats_data",
+        "exp_score",
+        "norm_replay",
+        "norm_gamma",
+        "soft_replay",
+        "topk_records"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "R->E",
+      "source": "R",
+      "destination": "E",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_R",
+        "TYPED_STORE",
+        "IMPORT_E"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "PACK",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "output",
+        "active_state",
+        "active_history",
+        "meta"
+      ],
+      "destination_roles": [
+        "A_vec",
+        "B_vec",
+        "C_vec",
+        "A_cast13"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "R->G",
+      "source": "R",
+      "destination": "G",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_R",
+        "TYPED_STORE",
+        "IMPORT_G"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "PACK",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "output",
+        "active_state",
+        "active_history",
+        "meta"
+      ],
+      "destination_roles": [
+        "x",
+        "gate"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "R->R",
+      "source": "R",
+      "destination": "R",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_R",
+        "TYPED_STORE",
+        "IMPORT_R"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "LAYOUT",
+        "STATE_VERSION",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "output",
+        "active_state",
+        "active_history",
+        "meta"
+      ],
+      "destination_roles": [
+        "state",
+        "x",
+        "inject",
+        "history",
+        "key",
+        "query",
+        "taps",
+        "decay",
+        "beta",
+        "element_decay",
+        "skip"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": true,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "R->S",
+      "source": "R",
+      "destination": "S",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_R",
+        "TYPED_STORE",
+        "IMPORT_S"
+      ],
+      "required_services": [
+        "EXPORT",
+        "IMPORT",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "output",
+        "active_state",
+        "active_history",
+        "meta"
+      ],
+      "destination_roles": [
+        "payload"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "R->T",
+      "source": "R",
+      "destination": "T",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_R",
+        "TYPED_STORE",
+        "IMPORT_T"
+      ],
+      "required_services": [
+        "EXPORT",
+        "IMPORT",
+        "STORE_TRANSFER",
+        "TXN_BATCH"
+      ],
+      "source_roles": [
+        "output",
+        "active_state",
+        "active_history",
+        "meta"
+      ],
+      "destination_roles": [
+        "payload"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "S->M",
+      "source": "S",
+      "destination": "M",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_S",
+        "TYPED_STORE",
+        "IMPORT_M"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "LAYOUT",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "stored_word",
+        "write_echo",
+        "loader_A",
+        "loader_B"
+      ],
+      "destination_roles": [
+        "A",
+        "B_nmajor"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": true
+    },
+    {
+      "id": "S->N",
+      "source": "S",
+      "destination": "N",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_S",
+        "TYPED_STORE",
+        "IMPORT_N"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "PACK",
+        "REPLAY",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "stored_word",
+        "write_echo",
+        "loader_A",
+        "loader_B"
+      ],
+      "destination_roles": [
+        "stats_data",
+        "exp_score",
+        "norm_replay",
+        "norm_gamma",
+        "soft_replay",
+        "topk_records"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "S->E",
+      "source": "S",
+      "destination": "E",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_S",
+        "TYPED_STORE",
+        "IMPORT_E"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "PACK",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "stored_word",
+        "write_echo",
+        "loader_A",
+        "loader_B"
+      ],
+      "destination_roles": [
+        "A_vec",
+        "B_vec",
+        "C_vec",
+        "A_cast13"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "S->G",
+      "source": "S",
+      "destination": "G",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_S",
+        "TYPED_STORE",
+        "IMPORT_G"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "PACK",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "stored_word",
+        "write_echo",
+        "loader_A",
+        "loader_B"
+      ],
+      "destination_roles": [
+        "x",
+        "gate"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "S->R",
+      "source": "S",
+      "destination": "R",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_S",
+        "TYPED_STORE",
+        "IMPORT_R"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "STATE_VERSION",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "stored_word",
+        "write_echo",
+        "loader_A",
+        "loader_B"
+      ],
+      "destination_roles": [
+        "state",
+        "x",
+        "inject",
+        "history",
+        "key",
+        "query",
+        "taps",
+        "decay",
+        "beta",
+        "element_decay",
+        "skip"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "S->S",
+      "source": "S",
+      "destination": "S",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_S",
+        "TYPED_STORE",
+        "IMPORT_S"
+      ],
+      "required_services": [
+        "EXPORT",
+        "IMPORT",
+        "LAYOUT",
+        "STORE_TRANSFER"
+      ],
+      "source_roles": [
+        "stored_word",
+        "write_echo",
+        "loader_A",
+        "loader_B"
+      ],
+      "destination_roles": [
+        "payload"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": true,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "S->T",
+      "source": "S",
+      "destination": "T",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_S",
+        "TYPED_STORE",
+        "IMPORT_T"
+      ],
+      "required_services": [
+        "EXPORT",
+        "IMPORT",
+        "STORE_TRANSFER",
+        "TXN_BATCH"
+      ],
+      "source_roles": [
+        "stored_word",
+        "write_echo",
+        "loader_A",
+        "loader_B"
+      ],
+      "destination_roles": [
+        "payload"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "T->M",
+      "source": "T",
+      "destination": "M",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_T",
+        "TYPED_STORE",
+        "IMPORT_M"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "LAYOUT",
+        "STORE_TRANSFER",
+        "TXN_BATCH"
+      ],
+      "source_roles": [
+        "committed_word"
+      ],
+      "destination_roles": [
+        "A",
+        "B_nmajor"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": true
+    },
+    {
+      "id": "T->N",
+      "source": "T",
+      "destination": "N",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_T",
+        "TYPED_STORE",
+        "IMPORT_N"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "PACK",
+        "REPLAY",
+        "STORE_TRANSFER",
+        "TXN_BATCH"
+      ],
+      "source_roles": [
+        "committed_word"
+      ],
+      "destination_roles": [
+        "stats_data",
+        "exp_score",
+        "norm_replay",
+        "norm_gamma",
+        "soft_replay",
+        "topk_records"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "T->E",
+      "source": "T",
+      "destination": "E",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_T",
+        "TYPED_STORE",
+        "IMPORT_E"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "PACK",
+        "STORE_TRANSFER",
+        "TXN_BATCH"
+      ],
+      "source_roles": [
+        "committed_word"
+      ],
+      "destination_roles": [
+        "A_vec",
+        "B_vec",
+        "C_vec",
+        "A_cast13"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "T->G",
+      "source": "T",
+      "destination": "G",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_T",
+        "TYPED_STORE",
+        "IMPORT_G"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "PACK",
+        "STORE_TRANSFER",
+        "TXN_BATCH"
+      ],
+      "source_roles": [
+        "committed_word"
+      ],
+      "destination_roles": [
+        "x",
+        "gate"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "T->R",
+      "source": "T",
+      "destination": "R",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_T",
+        "TYPED_STORE",
+        "IMPORT_R"
+      ],
+      "required_services": [
+        "CAST",
+        "EXPORT",
+        "IMPORT",
+        "STATE_VERSION",
+        "STORE_TRANSFER",
+        "TXN_BATCH"
+      ],
+      "source_roles": [
+        "committed_word"
+      ],
+      "destination_roles": [
+        "state",
+        "x",
+        "inject",
+        "history",
+        "key",
+        "query",
+        "taps",
+        "decay",
+        "beta",
+        "element_decay",
+        "skip"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "T->S",
+      "source": "T",
+      "destination": "S",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_T",
+        "TYPED_STORE",
+        "IMPORT_S"
+      ],
+      "required_services": [
+        "EXPORT",
+        "IMPORT",
+        "STORE_TRANSFER",
+        "TXN_BATCH"
+      ],
+      "source_roles": [
+        "committed_word"
+      ],
+      "destination_roles": [
+        "payload"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": false,
+      "native_S_loader_available": false
+    },
+    {
+      "id": "T->T",
+      "source": "T",
+      "destination": "T",
+      "semantic_status": "conditional_by_roles_and_profile",
+      "recipe_status": "proposed",
+      "route": [
+        "EXPORT_T",
+        "TYPED_STORE",
+        "IMPORT_T"
+      ],
+      "required_services": [
+        "EXPORT",
+        "IMPORT",
+        "LAYOUT",
+        "STORE_TRANSFER",
+        "TXN_BATCH"
+      ],
+      "source_roles": [
+        "committed_word"
+      ],
+      "destination_roles": [
+        "payload"
+      ],
+      "source_destination_role_cartesian_is_all_legal": false,
+      "rtl_implemented": false,
+      "verified": false,
+      "physical_qualified": false,
+      "self_lifecycle_required": true,
+      "native_S_loader_available": false
+    }
+  ],
+  "self_lifecycle": {
+    "M": "RESUME_same_result_chain_by_guard; save_before_overwrite",
+    "N": "RESUME_group_by_native_guard; finish_before_new_BEGIN",
+    "E": "preserve_or_drain_outputs",
+    "G": "preserve_ordered_tags_or_drain_pipeline",
+    "R": "RESUME_same_lease_by_native_guard; save_and_commit_or_revoke_before_new_OPEN",
+    "S": "memmove_direction_or_temporary_storage",
+    "T": "spool_entire_batch_then_release_then_BEGIN_new_generation"
+  },
+  "required_topologies": [
+    "serial",
+    "fork",
+    "join",
+    "bounded_feedback",
+    "same_instance",
+    "multiple_instances"
+  ],
+  "special_profiles": {
+    "S64_to_S16": {
+      "semantic": "conditional_range_scale",
+      "needs": "NUM_CONVERT",
+      "implemented": false
+    },
+    "EXP_to_probability": {
+      "needs": "N_normalization_not_bitcast",
+      "implemented_system_path": false
+    },
+    "ID_to_score": {
+      "needs": "GATHER_not_reinterpret",
+      "implemented_system_path": false
+    },
+    "G_output": {
+      "format_depends_on_fn_and_gated": true,
+      "gated_sigmoid_frac": 10
+    },
+    "R_S32": {
+      "frac": "product_declared",
+      "not_all_Q16_16": true
+    },
+    "tail_word": {
+      "whole_128bit_write": true,
+      "preserve_valid_elements": true
+    },
+    "T_self": {
+      "max_spool_bytes": 6144,
+      "two_slot_fifo_sufficient": false
+    },
+    "S_loader_export": {
+      "ordinary_S_access_serialized": true,
+      "whole_descriptor_spool_required": true,
+      "max_A_bytes": 512,
+      "max_B_bytes": 512,
+      "payload_spool_bytes": 1024,
+      "metadata_extra": true,
+      "drain_unused_branch": true,
+      "implemented": false
+    }
+  },
+  "control": {
+    "unique_native_owner": true,
+    "stage_revisitable_context_leases": true,
+    "bounded_loops_with_initial_state": true,
+    "runtime_arbitrary_graph_switch": false
+  },
+  "coverage_axes": [
+    "semantic",
+    "recipe",
+    "resource_mapping",
+    "rtl_implemented",
+    "verified",
+    "physical_qualified"
+  ],
+  "unknowns": [
+    "family_catalog_and_parameter_domains",
+    "complete_role_profile_instantiations",
+    "ROM_and_table_budget",
+    "resource_mapping_and_routes",
+    "new_adapters_NUM_external_storage",
+    "runtime_liveness_and_numeric_acceptance",
+    "system_physical_qualification"
+  ],
+  "limits": "49 type pairs and role lists are a static design index, not exhaustive semantic enumeration or hardware coverage.",
+  "controlled_parameter_roles": {
+    "M": [
+      "scale",
+      "exec_descriptor"
+    ],
+    "N": [
+      "epsilon",
+      "mode",
+      "count",
+      "topk_k"
+    ],
+    "E": [
+      "op",
+      "shift"
+    ],
+    "G": [
+      "fn",
+      "gated"
+    ],
+    "R": [
+      "owner",
+      "epoch",
+      "position",
+      "length",
+      "mode"
+    ],
+    "S": [
+      "address",
+      "load_descriptor"
+    ],
+    "T": [
+      "owner",
+      "generation",
+      "word_count"
+    ]
+  },
+  "profiles": [
+    {
+      "id": "P01",
+      "name": "EXPORT_SELECT",
+      "status": "candidate_not_implemented"
+    },
+    {
+      "id": "P02",
+      "name": "NUM_CAST",
+      "status": "candidate_not_implemented"
+    },
+    {
+      "id": "P03",
+      "name": "BITPACK",
+      "status": "candidate_not_implemented"
+    },
+    {
+      "id": "P04",
+      "name": "LAYOUT_MAP",
+      "status": "candidate_not_implemented"
+    },
+    {
+      "id": "P05",
+      "name": "RECORD_FIELDS",
+      "status": "candidate_not_implemented"
+    },
+    {
+      "id": "P06",
+      "name": "ID_RESOLVE",
+      "status": "candidate_not_implemented"
+    },
+    {
+      "id": "P07",
+      "name": "STORE_FORWARD",
+      "status": "candidate_not_implemented"
+    },
+    {
+      "id": "P08",
+      "name": "TX_TRANSFER",
+      "status": "candidate_not_implemented"
+    },
+    {
+      "id": "P09",
+      "name": "FORK",
+      "status": "candidate_not_implemented"
+    },
+    {
+      "id": "P10",
+      "name": "JOIN",
+      "status": "candidate_not_implemented"
+    },
+    {
+      "id": "P11",
+      "name": "REENTER",
+      "status": "candidate_not_implemented"
+    },
+    {
+      "id": "P12",
+      "name": "PARAM_BIND",
+      "status": "candidate_not_implemented"
+    },
+    {
+      "id": "P13",
+      "name": "FORMAT_SEMANTICS",
+      "status": "candidate_not_implemented"
+    },
+    {
+      "id": "P14",
+      "name": "ERROR_DRAIN",
+      "status": "candidate_not_implemented"
+    },
+    {
+      "id": "P15",
+      "name": "RESOURCE_CREDIT",
+      "status": "candidate_not_implemented"
+    }
+  ],
+  "pair_required_services_are_exhaustive_role_recipes": false
+}

@@ -7,9 +7,13 @@
   "binding": {
     "model_selected_at": "M11_M12_customization",
     "runtime_arbitrary_graph_change": false,
-    "primary": "prefab_fixed_rom_metal_product_select",
-    "fallback": "prefab_writable_store_cold_boot_load_lock",
-    "full_programs_required_before_base_freeze": true
+    "primary": "prefab_finite_family_program_ROM_metal_selection_and_parameters",
+    "fallback": "no_boot_load; any_extension_requires_prefab_hardware_and_review",
+    "full_programs_required_before_base_freeze": true,
+    "boot_program_load_allowed": false,
+    "finite_model_families": true,
+    "family_catalog_frozen": false,
+    "parameter_ranges_proven": false
   },
   "controllers": [
     "MODEL_CTRL",
@@ -46,7 +50,8 @@
     "NUM_WACC": "proposed_numeric_gap",
     "GATHER_SCORE": "proposed_active_logic",
     "EXTERNAL_MEMORY": "required_platform_not_implemented_here",
-    "STATE_VERSIONING": "proposed_required_for_multi_R_tile"
+    "STATE_VERSIONING": "proposed_required_for_multi_R_tile",
+    "NUM_CONVERT": "proposed_wide_numeric_conversion_gap"
   },
   "capacities": {
     "S_bytes": 16384,
@@ -876,9 +881,9 @@
     }
   },
   "implementation_baseline": "643c6012a11cbf461146ac40fbf61485223fe946",
-  "research_parent_commit": "faabeda68b3b098ba562d68517319e02725f5bc3",
+  "research_parent_commit": "36f9c9dbb3cab8247008403ccb08ce26c0fdc99f",
   "implementation_record": "work/Melodydt/151/rtl-baseline.json",
-  "design_revision": "v0.2_rtl_derived",
+  "design_revision": "v0.3_all_legal_finite_families",
   "rtl_research_baseline": "faabeda68b3b098ba562d68517319e02725f5bc3",
   "rtl_corrections": {
     "M_scale_survives_clear_all": true,
@@ -892,5 +897,7 @@
     "T_startup_read_wait": true,
     "T_steady_read_II": 1,
     "T_has_commit_error": false
-  }
+  },
+  "coverage_scope": "all_semantically_legal_role_edges_within_declared_finite_family_capabilities",
+  "six_templates_role": "regression_examples_not_legal_whitelist"
 }

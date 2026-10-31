@@ -45,3 +45,11 @@
 - 独立目录rtl-redesign-faabeda/integrated为部分API资料包，不是Git clone；原包和根参考副本未覆盖。没有修改叶宏、服务器或ref-project。
 - 实际验证：管理、研究来源36+7、6模板/64阶段/15owner/17拒绝用例、7接口与示例编码静态检查已通过；最终重跑命令与产物SHA以rtl-redesign-checks/verification为准。未执行RTL/SystemC/EDA、完整产品程序、整数oracle或模型质量，没有新作业。
 - 下一步：独立评审v0.2，再明确最小FFN8/Softmax257 wrapper实现任务和NUM/外存/版本服务边界；R资格仍单列。审查人待指定，PR未合并、Issue回in_review，不提前done。登记pending、看板unverified/同步pending，在线状态以读回为准。
+
+## 2026-10-31T21:15:42+08:00：Issue151全合法连接与有限家族设计
+
+- 用户确认全部允许组合、有限模型类型、M11/M12永久绑定且无启动装载。继续[Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151)/[PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，负责人Melodydt，task/151-six-connection-study，输入36f9c9db；本轮输出commit/CI见PR回执。
+- 新增[全合法连接规格](../../docs/ALL_LEGAL_CONNECTION_SPEC.md)、49对/角色/profile目录与静态正负检查；总方案/控制/模板/候选决策同步。主方案有限家族ROM＋永久选择/参数，六算法仅回归；局部服务可阶段回访，缺实现与非法分轴。
+- 本地all-legal-36f9c9d/integrated为隔离API资料包，无Git暂存区；仅本轮白名单文档/合同/核验和自身进度上传，不改叶宏/他人目录/ref-project，无服务器作业。
+- 实际验证以all-legal-checks.json、all-legal-verification.json为准；只作管理/字节/静态一致性，不声称49对硬件已通。完整家族目录和程序、RTL/整数oracle/活性/EDA未执行。
+- 下一步独立评审合法域/原语与家族目录，再落实分阶段RTL实现任务。PR未合并，Issue交付后回in_review、不done；审查人待指定。登记PR5 pending，看板unverified/同步pending，所需管理员待指定。

@@ -363,3 +363,13 @@ python -X utf8 work/Melodydt/151/verify_rtl_baseline.py --root . --output work/M
 ```
 
 首次生成报告前可先不带`--output`核验已提交报告，或生成后再核验链接。原36/7来源字节检查需另加`--source-dir`与`--prior-source-dir`，无来源目录时如实标未执行。新脚本检查七原生接口指纹/签名、FFN示例位域、合同/文档链接与格式，14核心文件由baseline脚本检查。实际命令/exit与工具版本见`work/Melodydt/151/rtl-redesign-checks.json`。这些命令不执行RTL，不替代数值oracle、完整程序编译、活性或物理验收。
+
+## Issue151：全合法连接的静态覆盖目录
+
+当前目标见`docs/ALL_LEGAL_CONNECTION_SPEC.md`：有限模型家族内所有合法角色连接，M11/M12永久绑定，无控制程序启动装载。六算法仅回归，49宏对仅索引。
+
+```text
+python -X utf8 work/Melodydt/151/verify_all_legal_connections.py --root . --output work/Melodydt/151/all-legal-verification.json
+```
+
+检查数据端点目录、49格、7自回访、转换与控制边界、正负静态用例和文档链接；不执行RTL、不证明数值/无死锁/物理覆盖。管理、原来源/系统合同、7接口与14核心字节继续用原命令；本轮实际执行回执为`work/Melodydt/151/all-legal-checks.json`。

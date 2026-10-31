@@ -1,6 +1,6 @@
 # 七宏六类连接方案与协调机制研究
 
-> 当前系统设计以[RTL推导总方案v0.2](SIX_CONNECTION_SYSTEM_DESIGN.md)及[原生接口审计](RTL_NATIVE_CONNECTION_AUDIT.md)为准；本文保留第一阶段固定来源，不能将其通用描述用于覆盖当前原生命令合同。
+> 当前系统设计以[全合法连接总方案v0.3](SIX_CONNECTION_SYSTEM_DESIGN.md)及[原生接口审计](RTL_NATIVE_CONNECTION_AUDIT.md)为准；本文保留第一阶段固定来源，不能将其通用描述用于覆盖当前原生命令合同。
 
 任务：[Issue #151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151)，负责人 Melodydt。第一阶段研究交付，待独立审查；下文保留“已有实现 / 结构核验 / 候选方案 / 待验证”的区别。
 

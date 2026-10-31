@@ -1,6 +1,6 @@
 # 七宏连接的候选协调与适配架构审查
 
-> 当前系统设计以[RTL推导总方案v0.2](SIX_CONNECTION_SYSTEM_DESIGN.md)及[原生接口审计](RTL_NATIVE_CONNECTION_AUDIT.md)为准；本文保留第一阶段固定来源，不能将其通用描述用于覆盖当前原生命令合同。
+> 当前系统设计以[全合法连接总方案v0.3](SIX_CONNECTION_SYSTEM_DESIGN.md)及[原生接口审计](RTL_NATIVE_CONNECTION_AUDIT.md)为准；本文保留第一阶段固定来源，不能将其通用描述用于覆盖当前原生命令合同。
 
 > 集成更新：本研究分支已实际合入PR144固定643c6012的七宏RTL，见[当前实现基线](SEVEN_BLOCK_RESEARCH_BASELINE.md)。下文旧5e/aac来源仍是历史合同/资格引用，不是当前分支缺少RTL；接口相同，新增系统硬件仍未实现。
 

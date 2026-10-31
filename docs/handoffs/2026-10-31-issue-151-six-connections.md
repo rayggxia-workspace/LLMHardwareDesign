@@ -42,3 +42,12 @@
 - 未完成：独立评审/PR合并（审查人待指定）、最小组合wrapper、NUM/外存/状态版本实现、R资格与全模型编译/数值/物理验收。处理人Melodydt负责接续研究，实际实施任务/审查人待确定，不接管其他成员作业。
 - 看板：本仓库无board.json，status-mapping存在；当前连接无Projects条目工具，组织候选看板1的条目/字段本轮仍无法读回，状态unverified、同步pending，管理员待指定。不能认定Melodydt权限不足或已同步；已有portfolio来源和浏览器超时记录保留。登记沿用management-hub PR5 pending，不跨仓库重复登记。
 - 恢复第一步：用Melodydt连接读回Issue151、PR152最新head/base/评论/CI，比较本轮白名单与其他会话占用，再从v0.2及原生审计讨论实现子任务。先确认GDN/SSM全组和两遍、M单结果、T批界、ROM预编译及外存能力，不能从框图推断已存在硬件。
+
+## 2026-10-31T21:15:42+08:00：全合法连接目标接续
+
+- 仓库rayggxia-workspace/LLMHardwareDesign，Issue151/PR152，Melodydt；task/151-six-connection-study，PR base task/143-seven-block-v2；输入commit36f9c9dbb3cab8247008403ccb08ce26c0fdc99f。输出head/线上CI见PR最新回执，未合main/未改PR144源分支。
+- 用户最新边界：有限大模型类型，全部允许连接，M11/M12永久绑定，无boot load。当前入口docs/ALL_LEGAL_CONNECTION_SPEC.md及总方案v0.3，六模板仅回归；保留合法但缺实现/资源/程序/路线gap，不能把49格目录当实际已通。
+- 独立目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/151/all-legal-36f9c9d/integrated，部分API资料包，非Git clone，无本地HEAD/暂存；原交付/根参考副本不覆盖，草稿在overall-drafts/all-legal不上传。新增白名单文档/机器目录/检查及自身进度；不改RTL、服务器或ref-project。
+- 实际检查见all-legal-checks.json与all-legal-verification.json；完整家族语法/参数范围和编译/ROM预算待落实，连接原语/宽转换/NUM/外存/状态服务与组合功能、活性及物理验证未完成。R最终资格仍单列，不接管他人作业。
+- 看板无board.json、有status-mapping，当前GitHub工具无Projects条目读写；条目/字段unverified、同步pending，管理员待指定。登记沿用management-hub PR5 pending，不重复登记，不把本地目录当在线卡片。
+- 恢复第一步用Melodydt读回Issue151/PR152 head/base/评论/CI与白名单，再审查家族目录/合法profile/阶段回访控制；分配实际RTL子任务前区分原语实现与整模型验收。负责人Melodydt，独立审查人待指定。

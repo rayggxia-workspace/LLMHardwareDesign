@@ -1,4 +1,6 @@
-# 六类连接的原生命令与存储模板 v0.2
+# 六类连接的原生命令与存储模板 v0.3
+
+> 六类模板是回归样例，不限定允许的连接/控制图；覆盖目标为[有限模型家族内全部合法连接](ALL_LEGAL_CONNECTION_SPEC.md)。
 
 本规格基于研究分支faabeda、七宏来源643c6012，配合[总方案](SIX_CONNECTION_SYSTEM_DESIGN.md)、[控制规格](SIX_CONNECTION_CONTROL_SPEC.md)和[逐操作码审计](RTL_NATIVE_CONNECTION_AUDIT.md)。**全部组合流程是待实现候选**；叶宏现有功能、wrapper新逻辑、NUM缺失算术和外存平台分别计价，不把模板描述当作RTL验收。
 
