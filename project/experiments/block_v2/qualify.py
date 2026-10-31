@@ -96,8 +96,11 @@ def seal(raw,out):
         assert sha(raw/'r-input-hold-guard.tcl')==flow['input_hold_guard']['script_sha256']
         guard=before/'issue143-input-hold-guard.tsv'
         assert sha(guard)==receipt['outputs'][str(guard.relative_to(raw))]
+        ports=flow['input_hold_guard']['ports']
+        assert ports in ('cmd_data[127:0]','cmd_data[127:0],reset')
+        scope='cmd_data+reset\t129' if ports.endswith(',reset') else 'cmd_data\t128'
         assert guard.read_text().splitlines()==[
-            'scope\tcmd_data\t128\toptimized_min_ns\t0.000\tsignoff_min_ns\t0.200\tglobal_hold_ns\t0.020',
+            'scope\t'+scope+'\toptimized_min_ns\t0.000\tsignoff_min_ns\t0.200\tglobal_hold_ns\t0.020',
             'entered\t0.000','restored\t0.200']
         shutil.copyfile(guard,out/guard.name)
     for name in config_files:

@@ -20,4 +20,4 @@ image=/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif
 test "$(sha256sum "$image" | cut -d' ' -f1)" = 49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a
 srun --ntasks=1 --cpus-per-task=16 --cpu-bind=cores \
  /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv --bind /public/home/yuzelu --pwd "$source_dir" "$image" \
- /usr/bin/time -v bash -c 'source /OpenROAD-flow-scripts/env.sh; python3 "$1/project/experiments/block_v2/resume_r_grt.py" --source "$3" --out "$2/pnr/r" --input-hold-guard' bash "$source_dir" "$out" "$native_source" > "$out/r-worker.log" 2>&1
+ /usr/bin/time -v bash -c 'source /OpenROAD-flow-scripts/env.sh; python3 "$1/project/experiments/block_v2/resume_r_grt.py" --source "$3" --out "$2/pnr/r" --input-hold-guard "${@:4}"' bash "$source_dir" "$out" "$native_source" "${@:4}" > "$out/r-worker.log" 2>&1
