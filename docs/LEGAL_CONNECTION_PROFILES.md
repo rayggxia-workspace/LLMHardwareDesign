@@ -1,4 +1,6 @@
-# 合法连接的原生角色与适配profile目录 v0.3
+# 合法连接的原生角色与适配profile目录 v0.4
+
+> 当前执行前三步的范围已收敛为仓库八样本、保守规模估计与**无外存片上合同**。当前准入见[工作报告](STEPS_1_3_WORK_REPORT.md)、[样本域](SAMPLE_MODEL_FAMILY_SPEC.md)、[角色账本](SAMPLE_LEGAL_CONNECTION_LEDGER.md)及[片上合同](SAMPLE_ONCHIP_SYSTEM_CONTRACT.md)。下文保留总体/历史方案，涉及外存的候选不属于当前阶段，不允许自动spill，也不意味着新增片上容量已经存在。
 
 任务Issue151，待评审候选。范围为[全合法连接规格](ALL_LEGAL_CONNECTION_SPEC.md)定义的有限家族域；六算法只作回归。本附录沿用36f9c9db/643c6012原生RTL，新增profile全部待实现/验证；当前事实见[原生审计](RTL_NATIVE_CONNECTION_AUDIT.md)。角色清单与适配公式不构成已完成系统硬件。
 

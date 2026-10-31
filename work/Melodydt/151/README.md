@@ -55,3 +55,12 @@ python work/Melodydt/151/verify_rtl_baseline.py --root .
 用户明确“全部允许组合”，并确认仅M11/M12永久绑定、有限模型类型。[全合法连接规格](../../../docs/ALL_LEGAL_CONNECTION_SPEC.md)与总方案v0.3把六模板降为回归集。all-legal-connection-contract.json列49宏对索引、数据角色、转换/服务与7种自回访；合法性、recipe、实现/验证/物理分开，当前新系统路线全部未完成。
 
 独立目录all-legal-36f9c9d/integrated复制自已交付36f9包，非完整Git clone，无本地HEAD/暂存区；原包和根参考副本不覆盖。新增verify_all_legal_connections.py仅静态覆盖/声明检查，实际命令与报告见all-legal-checks.json、all-legal-verification.json。叶宏RTL、服务器、ref-project未改；完整家族目录/程序、RTL组合/数值/物理验收未完成。
+
+## 2026-10-31T22:10:32+08:00：前三步正式候选交付
+
+- 用户范围：仓库八样本/十层型，规模不明作有据保守估计，暂不考虑外存，M11/M12永久绑定无bootload。入口[工作报告](../../../docs/STEPS_1_3_WORK_REPORT.md)、[FamilySpec](../../../docs/SAMPLE_MODEL_FAMILY_SPEC.md)、[角色账本](../../../docs/SAMPLE_LEGAL_CONNECTION_LEDGER.md)、[片上合同](../../../docs/SAMPLE_ONCHIP_SYSTEM_CONTRACT.md)。
+- family-spec/edge-ledger/onchip-contract为当前候选；旧system-design-contract.json标为历史全系统候选，EXTERNAL_MEMORY不参与本阶段准入。全局原语目录保留，但当前无EXT/DMA/spill。
+- 19原始源快照只存本地overall-drafts/steps123/family-sources，上传family-source-index记录固定ref/path/Git blob/SHA/字节；不上传原graph或ref-project。sample-memory-demand按真实config推导，sample-connection-obligations绑定96项样本义务到具体槽，均不冒充定点/硬件接受。
+- 本地D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/151/steps123-39bd7bf/integrated为隔离API资料包，非完整Git clone，无HEAD/暂存区；其他包/根参考副本未覆盖。当前分支task/151-six-connection-study，输入39bd7bf，输出commit/CI见PR152回执。
+- 实际核验见steps123-checks.json、steps123-verification.json。原生字节/旧合同报告保留各自范围，不能拿旧15owner含EXT的统计当当前片上接口。无RTL/SystemC/推理/服务器/EDA，无新增硬件资格。
+- 下一步独立审查前三步规格，决定片上资源规模和实际RTL任务。PR未合并，Issue交付后in_review；审查人待指定。登记PR5 pending，看板unverified/同步pending，管理员待指定。

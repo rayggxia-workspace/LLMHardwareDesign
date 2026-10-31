@@ -53,3 +53,11 @@
 - 本地all-legal-36f9c9d/integrated为隔离API资料包，无Git暂存区；仅本轮白名单文档/合同/核验和自身进度上传，不改叶宏/他人目录/ref-project，无服务器作业。
 - 实际验证以all-legal-checks.json、all-legal-verification.json为准；只作管理/字节/静态一致性，不声称49对硬件已通。完整家族目录和程序、RTL/整数oracle/活性/EDA未执行。
 - 下一步独立评审合法域/原语与家族目录，再落实分阶段RTL实现任务。PR未合并，Issue交付后回in_review、不done；审查人待指定。登记PR5 pending，看板unverified/同步pending，所需管理员待指定。
+
+## 2026-10-31T22:10:32+08:00：Issue151前三步样本/角色/片上合同
+
+- [Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151)/[PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，Melodydt；task/151-six-connection-study，输入39bd7bf，输出commit与CI以PR回执为准。
+- 完成可评审材料：[工作报告](../../docs/STEPS_1_3_WORK_REPORT.md)、八模型/十层型FamilySpec、621数据＋460参数槽/153配方、96样本连接义务、无外存接口/信用/容量合同和可复算需求/检查工具。只完成规格/静态核验，不声明RTL实现。
+- 保留源配置上下文32768..262144与真实H/I/R尺寸，小图B1/S2单列；S计算区9KiB和原生容量不足明确报gap。新增1KiB capture、32KiB控制、2MiB ROM均候选，不假设已存在。无EXT/DMA/spill、无bootload。
+- 独立steps123-39bd7bf/integrated API包，不覆盖根/旧包，无本地HEAD或暂存；源19份指纹与实际检查以steps123-checks/verification为准。未运行推理、RTL/SystemC/服务器/EDA，不动叶宏/ref-project。
+- 下一步审查原理/估计/缺口和资源选择，再推进适配/存储RTL。PR待审查不合并，Issue回in_review，不done。审查人待指定；登记pending，看板unverified/同步pending，管理员待指定。

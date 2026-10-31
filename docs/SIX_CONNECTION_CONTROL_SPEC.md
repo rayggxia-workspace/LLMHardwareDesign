@@ -1,4 +1,6 @@
-# 从现有七宏RTL展开的固定产品控制规格 v0.3
+# 从现有七宏RTL展开的固定产品控制规格 v0.4
+
+> 当前执行前三步的范围已收敛为仓库八样本、保守规模估计与**无外存片上合同**。当前准入见[工作报告](STEPS_1_3_WORK_REPORT.md)、[样本域](SAMPLE_MODEL_FAMILY_SPEC.md)、[角色账本](SAMPLE_LEGAL_CONNECTION_LEDGER.md)及[片上合同](SAMPLE_ONCHIP_SYSTEM_CONTRACT.md)。下文保留总体/历史方案，涉及外存的候选不属于当前阶段，不允许自动spill，也不意味着新增片上容量已经存在。
 
 覆盖目标为有限家族范围内所有合法连接，六模板仅作回归。配合[全合法连接规格](ALL_LEGAL_CONNECTION_SPEC.md)与[总方案](SIX_CONNECTION_SYSTEM_DESIGN.md)和[原生审计](RTL_NATIVE_CONNECTION_AUDIT.md)。基线为研究分支faabeda、导入PR144固定643c6012。外部控制均待实现，不改变叶宏接口，不宣称已有统一控制总线。
 

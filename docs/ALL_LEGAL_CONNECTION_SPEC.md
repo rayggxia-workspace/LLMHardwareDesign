@@ -1,4 +1,6 @@
-# 有限模型家族内的七宏全合法连接规格 v0.3
+# 有限模型家族内的七宏全合法连接规格 v0.4
+
+> 当前执行前三步的范围已收敛为仓库八样本、保守规模估计与**无外存片上合同**。当前准入见[工作报告](STEPS_1_3_WORK_REPORT.md)、[样本域](SAMPLE_MODEL_FAMILY_SPEC.md)、[角色账本](SAMPLE_LEGAL_CONNECTION_LEDGER.md)及[片上合同](SAMPLE_ONCHIP_SYSTEM_CONTRACT.md)。下文保留总体/历史方案，涉及外存的候选不属于当前阶段，不允许自动spill，也不意味着新增片上容量已经存在。
 
 任务[Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151)，交付[PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)。本文是待评审设计，新增连接层、控制与数值服务尚未实现。设计父版本36f9c9db，七宏RTL继续使用已导入PR144的643c6012固定字节；当前能力见[原生接口审计](RTL_NATIVE_CONNECTION_AUDIT.md)。
 

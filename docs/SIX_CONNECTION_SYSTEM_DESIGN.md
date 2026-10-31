@@ -1,4 +1,6 @@
-# 有限模型家族的七宏全合法连接与固定产品控制总方案 v0.3
+# 有限模型家族的七宏全合法连接与固定产品控制总方案 v0.4
+
+> 当前执行前三步的范围已收敛为仓库八样本、保守规模估计与**无外存片上合同**。当前准入见[工作报告](STEPS_1_3_WORK_REPORT.md)、[样本域](SAMPLE_MODEL_FAMILY_SPEC.md)、[角色账本](SAMPLE_LEGAL_CONNECTION_LEDGER.md)及[片上合同](SAMPLE_ONCHIP_SYSTEM_CONTRACT.md)。下文保留总体/历史方案，涉及外存的候选不属于当前阶段，不允许自动spill，也不意味着新增片上容量已经存在。
 
 任务 [Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151)，交付 [PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，负责人 Melodydt。状态：**待评审设计，系统 RTL 尚未实现**。本稿取代 v0.2 作为当前总方案；历史研究保留来源和资格边界。
 
@@ -100,7 +102,7 @@ N有cmd_count（1..8），E/G没有count，尾部独占一个S字、无效lane�
 | 普通Attention | Norm→QKV投影→可选RoPE→QK→完整一行Softmax→PV→输出投影→残差 | K/V外存和转置布局、RoPE sin/cos来源及E合同、QK缩放/因果mask、N多轮回放 |
 | 额外Norm | 整组STATS→FINALIZE→原值/gamma回放→下游 | 外部总长度计数和保留；RMS/L2 epsilon及输出单位；不能把所有Norm都映成同一模式 |
 | 门控FFN | gate投影保存＋up投影保存→G激活(gate)×up→完整mid物化→down所有K块→残差 | G拆拼、E13、M单结果上下文管理；大mid外存 |
-| Qwen GDN | 投影→R卷积/history pass→保存→E转换/G SiLU/QKV切分→Q/K L2/头复用与仅Q缩放→系数→R各state tile→保存全head输出→全head Norm→z门控→输出投影 | 非线性系数NUM、R输出/状态F合同、跨tile状态版本及head回放 |
+| Qwen GDN | 投影→R卷积/history pass→保存→E转换/G SiLU/QKV切分→Q/K头复用→L2与仅Q缩放→系数→R各state tile→保存全head输出→全head Norm→z门控→输出投影 | 非线性系数NUM、R输出/状态F合同、跨tile状态版本及head回放 |
 | Falcon SSM | 投影→各conv tile保存/历史提交→状态tile载入decay和输入→R状态更新→z门控→全channel Norm→输出投影 | 逐元素衰减NUM、conv与状态两遍计划、外部history/state版本；SSM与GDN的Norm次序不同 |
 | Granite MoE | 路由logits→TopK ID→gather所选logit→小Softmax→专家FFN→S64宽归并→共享分支/残差 | score gather、专家地址动态选择、NUM_WACC及共用尺度、0.22缩放合同 |
 

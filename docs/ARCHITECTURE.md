@@ -373,3 +373,21 @@ python -X utf8 work/Melodydt/151/verify_all_legal_connections.py --root . --outp
 ```
 
 检查数据端点目录、49格、7自回访、转换与控制边界、正负静态用例和文档链接；不执行RTL、不证明数值/无死锁/物理覆盖。管理、原来源/系统合同、7接口与14核心字节继续用原命令；本轮实际执行回执为`work/Melodydt/151/all-legal-checks.json`。
+
+## Issue151：前三步样本/角色/片上合同验证
+
+当前交付入口`docs/STEPS_1_3_WORK_REPORT.md`；仅仓库八样本，不使用外存/DMA/spill。执行Python3.7+标准库检查：
+
+```text
+python -X utf8 scripts/check_project.py
+python -X utf8 work/Melodydt/151/verify_steps123.py --root . --output work/Melodydt/151/steps123-verification.json
+```
+
+如需重新逐字节核验19份固定来源并重算配置需求，按`work/Melodydt/151/family-source-index.json`用本人身份读取固定ref的UTF8文本，以local_file保存到独立source目录，增加`--source-dir <该目录>`。如另取固定39bd7bf资料根，可增加`--baseline-dir <该目录>`核对账本6份历史输入；不提供时报告这些检查未执行，不把已提交摘要当重新运行。
+
+```text
+python -X utf8 work/Melodydt/151/derive_sample_memory.py --source-dir <来源目录> --output <独立结果JSON>
+python -X utf8 work/Melodydt/151/generate_edge_ledger.py --base <固定39bd7bf资料根> --output-dir <独立输出目录>
+```
+
+generator按冻结原生角色目录重生成1081槽和规则案例，不生成RTL。规范字段/地址/容量、候选ROM预算和规则用例不证明模型精度、时序、无死锁或物理实现；实际命令、SHA和未执行项见steps123-checks/verification。新增脚本运行时未提交，以内容SHA追溯，最终交付commit在PR回执绑定。

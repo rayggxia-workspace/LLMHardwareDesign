@@ -1,0 +1,1127 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "baseline": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+  "source_RTL_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+  "status": "steps_1_to_3_specification_candidate_only",
+  "implemented_by_this_delivery": false,
+  "binding": {
+    "finite_scope": "existing_eight_samples_only",
+    "permanent_M11_M12": true,
+    "family_ROM_prebuilt": true,
+    "boot_program_load": false
+  },
+  "memory_policy": {
+    "external_memory_enabled": false,
+    "DMA_enabled": false,
+    "automatic_spill_enabled": false,
+    "EXT_request_credit": 0,
+    "EXT_request_valid_must_be_zero": true,
+    "unmapped_legal_requirement": "GAP_ONCHIP_CAPACITY; preserve semantic_legal=true",
+    "additional_onchip_storage_is_implemented": false
+  },
+  "native_capacity_bytes": {
+    "S_payload": 16384,
+    "T_payload": 6144,
+    "R_active_max": 8192,
+    "R_shadow_max": 8192,
+    "R_history": 96,
+    "R_history_next": 96,
+    "R_output": 32
+  },
+  "native_limits": {
+    "S_word_bits": 128,
+    "S_words": 1024,
+    "S_byte_mask": false,
+    "T_words_max": 384,
+    "T_concurrent_leases": 1,
+    "R_lanes": 8,
+    "R_length_max": 256,
+    "R_contexts": 1,
+    "R_shadow_export": false,
+    "M_result_contexts": 1,
+    "M_result_restore": false,
+    "N_contexts": 1,
+    "N_statistics_elements_max": 65535
+  },
+  "S_reservation": {
+    "allocation_unit_bytes": 16,
+    "default_regions": [
+      {
+        "name": "LOADER_SNAPSHOT",
+        "word_first": 0,
+        "word_last": 63,
+        "words": 64,
+        "bytes": 1024
+      },
+      {
+        "name": "T_BATCH_SPOOL",
+        "word_first": 64,
+        "word_last": 447,
+        "words": 384,
+        "bytes": 6144
+      },
+      {
+        "name": "COMPUTE",
+        "word_first": 448,
+        "word_last": 1023,
+        "words": 576,
+        "bytes": 9216
+      }
+    ],
+    "reuse_requires": "offline lifetime proof, compatible whole-word ownership, no outstanding response/ref/lease; no implicit reclamation",
+    "admission": [
+      "sum live reserved words including alignment and tail padding <=1024",
+      "default compute allocation contained in words448..1023",
+      "all source/destination ranges in bounds and no forbidden overlap",
+      "writes become VALID only after actual S response taken",
+      "no byte-write or hidden second S",
+      "loader window excludes ordinary S traffic in the initial serial policy"
+    ]
+  },
+  "new_loader_capture_candidate": {
+    "payload_bytes": 1024,
+    "formula": "max A=8rows*4tiles*16B=512B; max B16=4tiles*2halves*64B=512B",
+    "purpose": "capture all accepted A/B obligations before loader done, then serially write S.LOADER_SNAPSHOT",
+    "metadata_extra": true,
+    "already_in_S_macro": false,
+    "implemented": false,
+    "counted_in_S_reservation": false,
+    "reason": "S-only spool cannot be assumed to progress while ordinary S access is forbidden during loader busy"
+  },
+  "wire_formats": {
+    "packing": "little_endian_fields; fields listed from least significant to most significant",
+    "handle_ref": {
+      "bits": 48,
+      "fields": [
+        [
+          "handle_id",
+          8
+        ],
+        [
+          "view_id",
+          8
+        ],
+        [
+          "generation",
+          32
+        ]
+      ]
+    },
+    "typed_handle": {
+      "bits": 256,
+      "fields": [
+        [
+          "handle_id",
+          8
+        ],
+        [
+          "generation",
+          32
+        ],
+        [
+          "region_id",
+          4
+        ],
+        [
+          "instance_id",
+          4
+        ],
+        [
+          "role_id",
+          8
+        ],
+        [
+          "element_type_id",
+          4
+        ],
+        [
+          "flags",
+          4
+        ],
+        [
+          "base_word",
+          32
+        ],
+        [
+          "allocated_words",
+          32
+        ],
+        [
+          "valid_elements",
+          32
+        ],
+        [
+          "version",
+          32
+        ],
+        [
+          "scale_id",
+          8
+        ],
+        [
+          "layout_id",
+          8
+        ],
+        [
+          "tail_valid_elements",
+          8
+        ],
+        [
+          "declared_consumer_count",
+          8
+        ],
+        [
+          "owner_id",
+          8
+        ],
+        [
+          "reserved_zero",
+          24
+        ]
+      ],
+      "authoritative": "handle table; consumers cannot change ownership/refcount/validity by changing a copied descriptor"
+    },
+    "task": {
+      "bits": 512,
+      "fields": [
+        [
+          "task_id",
+          16
+        ],
+        [
+          "graph_epoch",
+          32
+        ],
+        [
+          "primitive_id",
+          8
+        ],
+        [
+          "resource_id",
+          8
+        ],
+        [
+          "phase",
+          8
+        ],
+        [
+          "flags",
+          8
+        ],
+        [
+          "lease_id",
+          8
+        ],
+        [
+          "lease_generation",
+          16
+        ],
+        [
+          "param_record",
+          16
+        ],
+        [
+          "src_count",
+          3
+        ],
+        [
+          "dst_count",
+          2
+        ],
+        [
+          "reserved_header_zero",
+          3
+        ],
+        [
+          "src_refs_4x48",
+          192
+        ],
+        [
+          "dst_ref",
+          48
+        ],
+        [
+          "valid_elements",
+          32
+        ],
+        [
+          "element_offset",
+          32
+        ],
+        [
+          "program_pc",
+          16
+        ],
+        [
+          "reserved_zero",
+          64
+        ]
+      ],
+      "src_max": 4,
+      "dst_max": 1,
+      "compound_jobs": "expand into phase jobs and bounded parameter-list records; no second dst hidden in progress"
+    },
+    "event": {
+      "bits": 256,
+      "fields": [
+        [
+          "task_id",
+          16
+        ],
+        [
+          "graph_epoch",
+          32
+        ],
+        [
+          "resource_id",
+          8
+        ],
+        [
+          "event_kind",
+          8
+        ],
+        [
+          "status",
+          8
+        ],
+        [
+          "error_class",
+          8
+        ],
+        [
+          "flags",
+          8
+        ],
+        [
+          "lease_id",
+          8
+        ],
+        [
+          "lease_generation",
+          16
+        ],
+        [
+          "handle_id",
+          8
+        ],
+        [
+          "handle_generation",
+          32
+        ],
+        [
+          "valid_elements",
+          32
+        ],
+        [
+          "progress",
+          32
+        ],
+        [
+          "failed_rows",
+          8
+        ],
+        [
+          "program_pc",
+          16
+        ],
+        [
+          "reserved_zero",
+          16
+        ]
+      ],
+      "flags_meanings": [
+        "context_held",
+        "partial_commit",
+        "handle_present",
+        "saturated",
+        "drained"
+      ],
+      "event_kinds": [
+        "TASK_ACCEPTED",
+        "NATIVE_ACCEPTED",
+        "COMPUTE_DONE",
+        "DATA_READY",
+        "PHASE_READY",
+        "R_LOCAL_COMMIT_DONE",
+        "STATE_TILE_SAVED",
+        "STATE_ROOT_PUBLISHED",
+        "T_BATCH_PUBLISHED",
+        "OUTPUT_PUBLISHED",
+        "RELEASE_DONE",
+        "CANCEL_DRAINED",
+        "FAILED"
+      ]
+    },
+    "phase_lease": {
+      "bits": 256,
+      "fields": [
+        [
+          "lease_id",
+          8
+        ],
+        [
+          "lease_generation",
+          16
+        ],
+        [
+          "resource_id",
+          8
+        ],
+        [
+          "owner_task_or_region",
+          16
+        ],
+        [
+          "graph_epoch",
+          32
+        ],
+        [
+          "context_key",
+          32
+        ],
+        [
+          "native_owner",
+          32
+        ],
+        [
+          "native_epoch_or_generation",
+          32
+        ],
+        [
+          "native_position",
+          32
+        ],
+        [
+          "phase",
+          8
+        ],
+        [
+          "flags",
+          8
+        ],
+        [
+          "child_inflight",
+          8
+        ],
+        [
+          "outstanding_responses",
+          8
+        ],
+        [
+          "reference_count",
+          8
+        ],
+        [
+          "reserved_zero",
+          8
+        ]
+      ],
+      "resume": "same lease and context; preserve native phase guards",
+      "reenter": "new context only after old close/commit/revoke and drain as applicable",
+      "R_T_identity": "explicit mapping; R owner32 is not T owner2; T commit has no native R identity check"
+    },
+    "param_bind": {
+      "bits": 256,
+      "fields": [
+        [
+          "schema_id",
+          16
+        ],
+        [
+          "param_id",
+          16
+        ],
+        [
+          "source_kind",
+          8
+        ],
+        [
+          "source_ref",
+          48
+        ],
+        [
+          "field_lsb",
+          8
+        ],
+        [
+          "field_width",
+          8
+        ],
+        [
+          "src_scale_id",
+          8
+        ],
+        [
+          "dst_scale_id",
+          8
+        ],
+        [
+          "policy",
+          8
+        ],
+        [
+          "range_rule_id",
+          16
+        ],
+        [
+          "target_role",
+          8
+        ],
+        [
+          "target_index",
+          16
+        ],
+        [
+          "constant_raw",
+          64
+        ],
+        [
+          "reserved_zero",
+          24
+        ]
+      ],
+      "source_kinds": [
+        "PERMANENT_PARAM_ROM",
+        "CHECKED_HANDLE_FIELD",
+        "BOUNDED_LOOP_REGISTER",
+        "PREFAB_CONSTANT"
+      ],
+      "rules": [
+        "construct op/index/count/reserved/identity fields under unique local owner",
+        "control indices and identity out-of-range always REJECT, not silent SAT",
+        "R op0/op6/op7 have different identity field maps",
+        "native address narrowing only after actual region range checks",
+        "NUM arithmetic not created by PARAM_BIND"
+      ]
+    },
+    "microinstruction": {
+      "bits": 128,
+      "fields": [
+        [
+          "opcode",
+          8
+        ],
+        [
+          "condition",
+          4
+        ],
+        [
+          "flags",
+          4
+        ],
+        [
+          "dst_reg",
+          8
+        ],
+        [
+          "src_reg_a",
+          8
+        ],
+        [
+          "src_reg_b",
+          8
+        ],
+        [
+          "resource_id",
+          8
+        ],
+        [
+          "phase",
+          8
+        ],
+        [
+          "lease_id",
+          8
+        ],
+        [
+          "param_record",
+          16
+        ],
+        [
+          "target_pc",
+          16
+        ],
+        [
+          "immediate",
+          32
+        ]
+      ],
+      "task_expansion": "prebuilt decoder generates 512-bit task; family ROM is not a stored array of full task payloads"
+    }
+  },
+  "id_enumerations": {
+    "regions": {
+      "0": "S_NATIVE",
+      "1": "T_COMMITTED_BATCH",
+      "2": "M_RESULT_EXPORT_ONLY",
+      "3": "R_ACTIVE_EXPORT_ONLY",
+      "4": "R_HISTORY_EXPORT_ONLY",
+      "5": "R_OUTPUT_EXPORT_ONLY",
+      "6": "LOCAL_CAPTURE_OR_FIFO",
+      "7": "ADDED_ONCHIP_CANDIDATE_UNIMPLEMENTED",
+      "8": "PERMANENT_PARAM_ROM_CANDIDATE",
+      "9": "PREFAB_CONSTANT",
+      "10_to_15": "RESERVED_REJECT"
+    },
+    "element_types": {
+      "0": "S8",
+      "1": "S16",
+      "2": "S32",
+      "3": "S64",
+      "4": "U16",
+      "5": "U32",
+      "6": "U64",
+      "7": "MIXED_RECORD",
+      "8": "OPAQUE_TYPED_BYTES",
+      "9_to_15": "RESERVED_REJECT"
+    },
+    "EXT_region_exists": false,
+    "R_shadow_generic_region_exists": false,
+    "scale_id_entries": 256,
+    "scale_entry": "16B record including signed F32 and format/range references; registered finite scales only",
+    "layout_id_entries": 256,
+    "layout_entry": "128B bounded descriptor, rank<=8 and bounded address-program reference; unsupported layouts remain gap",
+    "primitive_id_entries": 256,
+    "live_handles_limit": 64,
+    "live_leases_limit": 16,
+    "fanout_max": 8,
+    "join_inputs_max": 4,
+    "generations": "no wrap while old references/events exist; exhaustion enters coordinated drain/reset or terminal error"
+  },
+  "credit_contract": {
+    "graph_instances": 1,
+    "candidate_services": 10,
+    "service_ids": {
+      "0": "M",
+      "1": "N",
+      "2": "E",
+      "3": "G",
+      "4": "R",
+      "5": "S",
+      "6": "T",
+      "7": "LAYOUT_COPY",
+      "8": "NUM_SERVICE",
+      "9": "NUM_WACC"
+    },
+    "service_7_to_9_implemented": false,
+    "task_slots_per_service": 2,
+    "execution_jobs_per_service": 1,
+    "completion_slots_per_service": 2,
+    "global_outstanding_tasks": 16,
+    "mother_event_FIFO_entries": 16,
+    "generic_data_FIFO_entries_per_service": 2,
+    "generic_data_FIFO_word_bits": 128,
+    "native_commands_outstanding_M_N_R": 1,
+    "S_narrow_requests_outstanding": 1,
+    "S_loader_jobs_outstanding": 1,
+    "T_leases": 1,
+    "R_contexts": 1,
+    "N_groups": 1,
+    "M_results": 1,
+    "G_same_job_tag_slots": 8,
+    "task_accept_requires": [
+      "free global task entry and child task slot",
+      "reserved local completion slot",
+      "all handle generations/types/ranges checked",
+      "compatible phase lease or atomically available required leases",
+      "destination and mandatory spool/holding capacities reserved",
+      "no EXT/DMA/spill action in the plan"
+    ],
+    "response_progress": "already accepted native responses always have reserved capture/response space; do not gate draining on full mother event FIFO",
+    "stage_completion": "return task credit after event acceptance; context lease credit remains held when context_held is true",
+    "scope_limit_behavior": "GAP_CONTROL_CAPACITY or GAP_BUFFER; do not change semantic legality"
+  },
+  "new_control_storage_estimate": {
+    "status": "logical_byte_budget_only_not_synthesized_not_existing",
+    "items": [
+      {
+        "name": "handle_table",
+        "count": 64,
+        "entry_bytes": 32,
+        "bytes": 2048
+      },
+      {
+        "name": "lease_table",
+        "count": 16,
+        "entry_bytes": 32,
+        "bytes": 512
+      },
+      {
+        "name": "task_slots",
+        "count": 20,
+        "entry_bytes": 64,
+        "bytes": 1280
+      },
+      {
+        "name": "completion_hold",
+        "count": 20,
+        "entry_bytes": 32,
+        "bytes": 640
+      },
+      {
+        "name": "mother_event_FIFO",
+        "count": 16,
+        "entry_bytes": 32,
+        "bytes": 512
+      },
+      {
+        "name": "outstanding_task_table",
+        "count": 16,
+        "entry_bytes": 64,
+        "bytes": 1024
+      },
+      {
+        "name": "join_contexts",
+        "count": 16,
+        "entry_bytes": 128,
+        "bytes": 2048
+      },
+      {
+        "name": "fork_contexts",
+        "count": 16,
+        "entry_bytes": 64,
+        "bytes": 1024
+      },
+      {
+        "name": "state_history_root_metadata",
+        "count": 256,
+        "entry_bytes": 64,
+        "bytes": 16384
+      },
+      {
+        "name": "current_region_tile_mask",
+        "count": 1,
+        "entry_bytes": 128,
+        "bytes": 128
+      },
+      {
+        "name": "scalar_parameter_registers",
+        "count": 256,
+        "entry_bytes": 8,
+        "bytes": 2048
+      },
+      {
+        "name": "credit_status_allowance",
+        "count": 1,
+        "entry_bytes": 1024,
+        "bytes": 1024
+      },
+      {
+        "name": "generic_data_FIFO",
+        "count": 20,
+        "entry_bytes": 16,
+        "bytes": 320
+      },
+      {
+        "name": "endpoint_collect_and_tag_allowance",
+        "count": 1,
+        "entry_bytes": 288,
+        "bytes": 288
+      },
+      {
+        "name": "NUM_WACC_payload_and_one_rank",
+        "count": 1,
+        "entry_bytes": 96,
+        "bytes": 96
+      },
+      {
+        "name": "NUM_SERVICE_operand_result_scratch",
+        "count": 1,
+        "entry_bytes": 128,
+        "bytes": 128
+      }
+    ],
+    "sum_bytes": 29504,
+    "reserved_bytes": 32768,
+    "margin_bytes": 3264,
+    "excludes": [
+      "1024B loader capture payload",
+      "all native macro arrays",
+      "all model state/history/KV/weights/activation payload",
+      "program and parameter ROM",
+      "NUM arithmetic gates",
+      "MUX/arbitration/clock/reset/physical routing cost"
+    ],
+    "state_root_metadata_is_not_state_payload": true,
+    "current_tile_mask_tiles": 1024,
+    "larger_region": "use proven sequential completion counters or extend mask; otherwise GAP_CONTROL_CAPACITY"
+  },
+  "control_ROM_estimate": {
+    "status": "conservative_candidate_budget_not_actual_compilation_or_synthesis",
+    "sample_slots": 8,
+    "program_instructions_per_sample_slot": 4096,
+    "shared_microinstructions": 4096,
+    "instruction_bytes": 16,
+    "program_bytes": 589824,
+    "parameter_records_per_sample_slot": 4096,
+    "parameter_record_bytes": 32,
+    "parameter_bytes": 1048576,
+    "scale_layout_profile_dictionary_bytes": 65536,
+    "subtotal_bytes": 1703936,
+    "reserved_bytes": 2097152,
+    "margin_bytes": 393216,
+    "address_fit": {
+      "program_instructions": 36864,
+      "PC_bits": 16,
+      "parameter_records": 32768,
+      "parameter_index_bits": 16
+    },
+    "not_proven": [
+      "all complete sample programs fit 4096 instructions",
+      "parameter records fit the estimate",
+      "model quality/shape paths and error branches completely compiled",
+      "ROM implementation area/pins/timing/power",
+      "M11/M12 permanent bindings can route"
+    ],
+    "not_model_weights": true,
+    "not_dynamic_scratch": true,
+    "bootload": false
+  },
+  "microtest_capacity_cases": [
+    {
+      "id": "FFN8_candidate",
+      "H": 8,
+      "I": 8,
+      "S_reserved_bytes": 400,
+      "S_relocated_words": [
+        448,
+        472
+      ],
+      "total_S_reserved_with_default_spools_bytes": 7568,
+      "T_bytes": 16,
+      "capacity_fits": true,
+      "system_RTL_passed": false
+    },
+    {
+      "id": "Softmax257_candidate",
+      "score_words": [
+        448,
+        480
+      ],
+      "EXP_words": [
+        512,
+        544
+      ],
+      "S_live_bytes": 1056,
+      "S_compute_span_bytes": 1552,
+      "total_S_reserved_span_with_spools_bytes": 8720,
+      "T_bytes": 528,
+      "capacity_fits": true,
+      "system_RTL_passed": false
+    },
+    {
+      "id": "Softmax_full_materialization_bound",
+      "formula": "2*16*ceil(L/8)<=9216 and 16*ceil(L/8)<=6144",
+      "L_max": 2304,
+      "assumes": "only raw and EXP in compute area, output in T; no other live tensors",
+      "not_context_domain_limit": true
+    },
+    {
+      "id": "R_resident_tile",
+      "state_length_max": 256,
+      "state_bytes_max": 8192,
+      "R_output_bytes": 32,
+      "native_capacity_fits": true,
+      "full_model_state_fits": false,
+      "R_physical_qualified": false
+    }
+  ],
+  "sample_tensor_assumptions": {
+    "batch_for_examples": 1,
+    "source_export_sequence": 2,
+    "activation_and_KV_bits_for_estimate": 16,
+    "recurrent_state_bits": 32,
+    "example_weight_bits_for_lower_bound": 8,
+    "quantization_quality_accepted": false,
+    "source_context_limits_not_replaced_by_microtest_L": true
+  },
+  "sample_resource_rows": [
+    {
+      "id": "qwen25",
+      "H": 2048,
+      "I": 11008,
+      "D": 128,
+      "source_context": 32768,
+      "x_S16_bytes": 4096,
+      "mid_S16_bytes": 22016,
+      "gate_up_bytes": 44032,
+      "ffn_materialize_peak_bytes": 70144,
+      "one_FFN_matrix_S8_bytes": 22544384,
+      "KV_S16_bytes_per_token_layer": 1024,
+      "KV_at_source_context_bytes_per_attention_layer": 33554432,
+      "KV_only_compute_tokens_upper_bound": 9
+    },
+    {
+      "id": "qwen3",
+      "H": 1024,
+      "I": 3072,
+      "D": 128,
+      "source_context": 40960,
+      "x_S16_bytes": 2048,
+      "mid_S16_bytes": 6144,
+      "gate_up_bytes": 12288,
+      "ffn_materialize_peak_bytes": 20480,
+      "one_FFN_matrix_S8_bytes": 3145728,
+      "KV_S16_bytes_per_token_layer": 4096,
+      "KV_at_source_context_bytes_per_attention_layer": 167772160,
+      "KV_only_compute_tokens_upper_bound": 2
+    },
+    {
+      "id": "llama",
+      "H": 2048,
+      "I": 8192,
+      "D": 64,
+      "source_context": 131072,
+      "x_S16_bytes": 4096,
+      "mid_S16_bytes": 16384,
+      "gate_up_bytes": 32768,
+      "ffn_materialize_peak_bytes": 53248,
+      "one_FFN_matrix_S8_bytes": 16777216,
+      "KV_S16_bytes_per_token_layer": 2048,
+      "KV_at_source_context_bytes_per_attention_layer": 268435456,
+      "KV_only_compute_tokens_upper_bound": 4
+    },
+    {
+      "id": "gemma",
+      "H": 2560,
+      "I": 10240,
+      "D": 256,
+      "source_context": 131072,
+      "x_S16_bytes": 5120,
+      "mid_S16_bytes": 20480,
+      "gate_up_bytes": 40960,
+      "ffn_materialize_peak_bytes": 66560,
+      "one_FFN_matrix_S8_bytes": 26214400,
+      "KV_S16_bytes_per_token_layer": 4096,
+      "KV_at_source_context_bytes_per_global_attention_layer": 536870912,
+      "KV_local_window1024_bytes_per_local_layer": 4194304,
+      "KV_only_compute_tokens_upper_bound": 2
+    },
+    {
+      "id": "phi",
+      "H": 3072,
+      "I": 8192,
+      "D": 128,
+      "source_context": 131072,
+      "x_S16_bytes": 6144,
+      "mid_S16_bytes": 16384,
+      "gate_up_bytes": 32768,
+      "ffn_materialize_peak_bytes": 55296,
+      "one_FFN_matrix_S8_bytes": 25165824,
+      "KV_S16_bytes_per_token_layer": 4096,
+      "KV_at_source_context_bytes_per_attention_layer": 536870912,
+      "KV_only_compute_tokens_upper_bound": 2
+    },
+    {
+      "id": "qwen35",
+      "H": 2560,
+      "I": 9216,
+      "D_global": 256,
+      "source_context": 262144,
+      "x_S16_bytes": 5120,
+      "mid_S16_bytes": 18432,
+      "gate_up_bytes": 36864,
+      "ffn_materialize_peak_bytes": 60416,
+      "one_FFN_matrix_S8_bytes": 23592960,
+      "KV_S16_bytes_per_token_global_layer": 4096,
+      "KV_at_source_context_bytes_per_global_layer": 1073741824,
+      "KV_only_compute_tokens_upper_bound": 2,
+      "GDN_state_bytes_per_layer_version": 2097152,
+      "GDN_old_next_bytes_per_layer": 4194304
+    },
+    {
+      "id": "granite",
+      "H": 1536,
+      "I_per_expert": 512,
+      "D": 64,
+      "source_context": 131072,
+      "x_S16_bytes": 3072,
+      "mid_S16_bytes_per_expert": 1024,
+      "gate_up_bytes_per_expert": 2048,
+      "expert_ffn_materialize_peak_bytes": 6144,
+      "one_expert_FFN_matrix_S8_bytes": 786432,
+      "KV_S16_bytes_per_token_layer": 2048,
+      "KV_at_source_context_bytes_per_attention_layer": 268435456,
+      "KV_only_compute_tokens_upper_bound": 4,
+      "all_8_expert_outputs_S32_bytes": 49152,
+      "full_H_S64_accumulator_bytes": 12288
+    },
+    {
+      "id": "falcon",
+      "H": 2560,
+      "I": 6144,
+      "D_attention": 128,
+      "source_context": 131072,
+      "x_S16_bytes": 5120,
+      "mid_S16_bytes": 12288,
+      "gate_up_bytes": 24576,
+      "ffn_materialize_peak_bytes": 41984,
+      "one_FFN_matrix_S8_bytes": 15728640,
+      "KV_S16_bytes_per_token_attention_layer": 1024,
+      "KV_at_source_context_bytes_per_attention_layer": 134217728,
+      "KV_only_compute_tokens_upper_bound": 9,
+      "SSM_state_bytes_per_layer_version": 4194304,
+      "SSM_old_next_bytes_per_layer": 8388608
+    }
+  ],
+  "resource_formulas": {
+    "x": "2*H",
+    "mid": "2*I",
+    "gate_up": "4*I",
+    "conservative_FFN_peak": "2*H+6*I before releasing full gate/up; not a universal lower bound",
+    "one_FFN_matrix_S8": "H*I; excludes other matrices, scales, biases, packing and all other layers",
+    "KV_S16_per_cached_token_attention_layer": "4*KV_heads*D",
+    "KV_at_context": "4*KV_heads*D*context; local Gemma uses its explicit legal window",
+    "softmax_raw_EXP_bytes_per_row": "4*context before alignment",
+    "GDN_state_layer_version": "32*128*128*4",
+    "SSM_state_layer_version": "32*128*256*4",
+    "generic_state_version": "4*L*C_state",
+    "generic_history_version": "12*C_conv"
+  },
+  "gaps": [
+    "GAP_SYSTEM_RTL",
+    "GAP_ONCHIP_WEIGHTS",
+    "GAP_ONCHIP_ACTIVATIONS",
+    "GAP_ONCHIP_KV",
+    "GAP_ONCHIP_STATE_VERSIONS",
+    "GAP_N_STATS_COUNT_ABOVE_65535",
+    "GAP_NUMERIC_SERVICES",
+    "GAP_FULL_SAMPLE_PROGRAM_COMPILATION",
+    "GAP_CONTROL_ROM_PHYSICAL",
+    "GAP_R_FINAL_QUALIFICATION",
+    "GAP_CONV_BIAS_NUMERIC_PATH"
+  ],
+  "verification_scope": {
+    "management_check": "PASS",
+    "source_config_arithmetic": "computed from existing eight sample configs/graphs",
+    "RTL_simulation": "NOT_EXECUTED",
+    "server_jobs": "NONE",
+    "synthesis_physical": "NOT_EXECUTED",
+    "remote_changes": "NONE",
+    "packed_width_check": "PASS: handle48/256, task512, event256, lease256, param256, microinstruction128",
+    "budget_arithmetic": "PASS: S partition, control sum/margin, ROM words/bytes/PC16 and param16"
+  },
+  "missing_capabilities": [
+    "conv_bias_numeric_path"
+  ],
+  "conv_bias_requirement": {
+    "sample": "falcon",
+    "source_fact": "mamba_conv_bias=true; third Conv input bias in source graph",
+    "native_R_supports_bias": false,
+    "required_path": "explicit S32 common-unit bias add before downstream quantization/SiLU, with overflow policy; or separately oracle-accepted early quantization and E16 add",
+    "new_service_candidate": "NUM_ADD32",
+    "E16_is_not_S32_add": true,
+    "implemented": false,
+    "execution_owner": "resource8 NUM_SERVICE, explicit ADD32 subprofile; shared serially with conversion and coefficients"
+  },
+  "source_provenance": {
+    "scope": "existing sample configs and graph only; calculations not a new model/RTL experiment",
+    "source_index": "family-sources/source-index.json maintained by model study",
+    "files": [
+      {
+        "local_path": "work/Melodydt/151/overall-drafts/steps123/family-sources/qwen25.config.json",
+        "sha256": "24e159d90f658aa85d981dda552cf636c6b8a57ac76ffe8f91e209f2a508e505",
+        "git_blob_sha": "cfce677d25ff8b7ed0d6935821064b7d49bcc0ec",
+        "bytes": 1971
+      },
+      {
+        "local_path": "work/Melodydt/151/overall-drafts/steps123/family-sources/qwen3.config.json",
+        "sha256": "353aeca51adde7c98da07e79f279c85a50f16d5adc383b87e34289929830f4a6",
+        "git_blob_sha": "c2147fe76ad249e1b1d169703ce68dbb57e77126",
+        "bytes": 1792
+      },
+      {
+        "local_path": "work/Melodydt/151/overall-drafts/steps123/family-sources/llama.config.json",
+        "sha256": "585f2d68e3c562609cbac3da7c5c30ab6103f39b98dd6ff8a1d568a10d2a6306",
+        "git_blob_sha": "d823ef4a9b2a52fb976fd1245b165eb724d67adf",
+        "bytes": 1132
+      },
+      {
+        "local_path": "work/Melodydt/151/overall-drafts/steps123/family-sources/gemma_global.config.json",
+        "sha256": "91c828cb8dca1e3bca1c134284164a6af0b122b28e1e11ab2638e56eb4b2bbf0",
+        "git_blob_sha": "8890aa871e6fa596d26dc4e8becb6ddad28ff4a4",
+        "bytes": 2194
+      },
+      {
+        "local_path": "work/Melodydt/151/overall-drafts/steps123/family-sources/phi.config.json",
+        "sha256": "02ac454db3c179797f4fc1f02f5db18c452ab198d81e403561515f64176befbb",
+        "git_blob_sha": "c49ef7756487c4432d1a07bf8514b54631bf1fe5",
+        "bytes": 2969
+      },
+      {
+        "local_path": "work/Melodydt/151/overall-drafts/steps123/family-sources/qwen35_global.config.json",
+        "sha256": "1daf5de67b2900ad20e1e84e084e4e70ec505a7ec885cf406c524bc448339185",
+        "git_blob_sha": "fbc27a6265a02258c3c7f47d2dc56f5db9a36c2a",
+        "bytes": 2231
+      },
+      {
+        "local_path": "work/Melodydt/151/overall-drafts/steps123/family-sources/granite.config.json",
+        "sha256": "36fe87f1ba8220f2cd02fe5853e134976973ce734c744fc438d7caae12329ff4",
+        "git_blob_sha": "636a00ebebf011a703dca35c0fde9f883e5e2485",
+        "bytes": 1308
+      },
+      {
+        "local_path": "work/Melodydt/151/overall-drafts/steps123/family-sources/falcon.config.json",
+        "sha256": "637de670361e52af584b4245e40d52e81364990510027d0ef2ad3908618282cc",
+        "git_blob_sha": "66800f16e305b57e0e8ee462c2c36053229a6df5",
+        "bytes": 2045
+      },
+      {
+        "local_path": "work/Melodydt/151/overall-drafts/steps123/family-sources/COMPUTATION_GRAPHS_SIMPLIFIED.md",
+        "sha256": "e4a3f35cf314e592dc6123bc9d26d4e1c3954659eee3e6b4c713a75ffd26bd70",
+        "git_blob_sha": "b2822ee854c12ef2fa94722f32fceb51afcb2573",
+        "bytes": 35807
+      }
+    ]
+  },
+  "numeric_service_ownership": {
+    "NUM_CONVERT": {
+      "resource_id": 8,
+      "subprofile": "P02 finite width/scale RNE SAT-or-REJECT",
+      "implemented": false
+    },
+    "NUM_COEFF": {
+      "resource_id": 8,
+      "subprofile": "explicit bounded coefficient arithmetic, tables and error contract required",
+      "implemented": false
+    },
+    "CONV_BIAS32": {
+      "resource_id": 8,
+      "subprofile": "NUM_ADD32 common-unit wide bias add with S32 overflow policy",
+      "implemented": false
+    },
+    "NUM_WACC": {
+      "resource_id": 9,
+      "subprofile": "bounded S32*Q14 to S64 accumulation and declared gain/rounding",
+      "implemented": false
+    },
+    "sharing": "resource8 is one preplanned owner/one execution job; CONVERT/COEFF/ADD32 are mutually exclusive, not three existing engines",
+    "opcode_field_does_not_supply_hardware": true,
+    "not_in_control_ROM_budget": "NUM lookup tables and arithmetic gates require independent cost and RTL acceptance"
+  },
+  "control_transport": {
+    "logical_records_not_native_macro_pins": true,
+    "control_flit_bits": 64,
+    "task_beats": 8,
+    "event_beats": 4,
+    "handle_beats": 4,
+    "lease_beats": 4,
+    "param_bind_beats": 4,
+    "direction": "one shared mother-to-child task channel and one independent arbitrated child-to-mother event channel, valid/ready, single clock",
+    "route_resource_id_bits": 8,
+    "rules": [
+      "reserve complete task slot or completion slot before first beat",
+      "hold beat payload and valid stable until ready handshake",
+      "packet beats ordered and not interleaved",
+      "snapshot record before transmission; no field replacement midpacket",
+      "event arbitration fair at packet granularity",
+      "accepted native responses continue into already reserved slots independent of mother backpressure",
+      "data payload does not pass through mother"
+    ],
+    "assembly_storage": "assemble tasks directly in allocated child task slot; events directly in allocated local completion slot and mother event FIFO entry; no second hidden record buffer",
+    "included_control_registers": "credit_status_allowance reserves serialization counters, selected route and one 64-bit holding register per direction; extra pipeline stages must be counted before physical freeze",
+    "implemented": false,
+    "physical_pins_and_STA": "flit mux/arbitration/registers/ready wiring are new active logic, not implied by record widths"
+  }
+}

@@ -51,3 +51,13 @@
 - 实际检查见all-legal-checks.json与all-legal-verification.json；完整家族语法/参数范围和编译/ROM预算待落实，连接原语/宽转换/NUM/外存/状态服务与组合功能、活性及物理验证未完成。R最终资格仍单列，不接管他人作业。
 - 看板无board.json、有status-mapping，当前GitHub工具无Projects条目读写；条目/字段unverified、同步pending，管理员待指定。登记沿用management-hub PR5 pending，不重复登记，不把本地目录当在线卡片。
 - 恢复第一步用Melodydt读回Issue151/PR152 head/base/评论/CI与白名单，再审查家族目录/合法profile/阶段回访控制；分配实际RTL子任务前区分原语实现与整模型验收。负责人Melodydt，独立审查人待指定。
+
+## 2026-10-31T22:10:32+08:00：前三步片上阶段接续
+
+- 仓库rayggxia-workspace/LLMHardwareDesign，Issue151/PR152，Melodydt；task/151-six-connection-study，PR base task/143-seven-block-v2；输入commit39bd7bf66c47e17c18aa39483c1d974a1e079aa2，输出head/当前CI见PR回执，未合main/未改PR144分支。
+- 当前用户范围覆盖旧摘要：仅仓库八样本、未知规模有据保守估计、暂不考虑外存；M11/M12永久绑定无bootload。当前准入onchip-contract.json，无EXT/DMA/spill；旧system-design-contract.json的外存候选仅历史参考。
+- 工作目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/151/steps123-39bd7bf/integrated，部分API资料包，非完整clone，无HEAD/暂存；所有候选文件在本次白名单，旧包/根副本不覆盖。源原文overall-drafts/steps123/family-sources只本地，源索引及脚本/输出SHA上传。未运行服务器，无作业交接。
+- 成果入口docs/STEPS_1_3_WORK_REPORT.md和三个步骤规格；family/edge/onchip合同、sample-memory-demand、96 obligations及验证在work/Melodydt/151。实际执行见steps123-checks/verification；未做RTL/SystemC/推理、完整程序/定点接受、活性或EDA。
+- 未完成：独立审查、完整字段/尺度/图实例接受、资源扩容取舍、实际适配/NUM/局部控/存储与ROM实现、R资格和物理接收；容量不足不是语义非法，不得缩模型或隐含外存。负责人Melodydt，实施子任务/审查人待指定。
+- 看板本仓库无board.json、有status-mapping；无Projects条目工具，条目/字段unverified，在线同步pending，管理员待指定。登记沿用management-hub PR5 pending/以本轮读回为准，不跨库重复登记。
+- 恢复第一步：用Melodydt连接读Issue151/PR152最新head/base/评论/CI，确认用户最新内存范围及白名单，检查来源索引，再从工作报告和片上合同继续；不要接管其他#143/#153工作树或作业。区分本地候选、远端分支、未合并PR和服务器真实状态。

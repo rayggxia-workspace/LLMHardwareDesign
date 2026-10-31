@@ -1,4 +1,6 @@
-# 六类连接的原生命令与存储模板 v0.3
+# 六类连接的原生命令与存储模板 v0.4
+
+> 当前执行前三步的范围已收敛为仓库八样本、保守规模估计与**无外存片上合同**。当前准入见[工作报告](STEPS_1_3_WORK_REPORT.md)、[样本域](SAMPLE_MODEL_FAMILY_SPEC.md)、[角色账本](SAMPLE_LEGAL_CONNECTION_LEDGER.md)及[片上合同](SAMPLE_ONCHIP_SYSTEM_CONTRACT.md)。下文保留总体/历史方案，涉及外存的候选不属于当前阶段，不允许自动spill，也不意味着新增片上容量已经存在。
 
 > 六类模板是回归样例，不限定允许的连接/控制图；覆盖目标为[有限模型家族内全部合法连接](ALL_LEGAL_CONNECTION_SPEC.md)。
 
@@ -95,7 +97,7 @@ mode0：`D=RNE31(H*decay)`，`pred=RNE14(ΣD*k)`，`e=x-pred`，`eb=RNE31(e*beta
 | D5 全head后处理 | R输出转N输入单位→跨128通道RMS→G SiLU(z)*normalized_y→输出投影/残差 | **先Norm后门乘**；z在G.x，归一化y在G.gate |
 | D6 发布 | 确认所有tile/输出、发布state+history新根和结果 | 根/输出分别确认及失败恢复，非R/T原子 |
 
-本样本Q/K均由16个key头复用至32个value头，只有Q在L2之后额外乘1/sqrt(128)。候选先用gamma_raw=16384形成L2的Q14，再以E op2、常量c_raw=1448（RNE(2^14/sqrt128)）、shift14给Q做一次Q14乘法；K不乘此系数。系数量化和额外RNE误差须独立oracle与模型质量验收。连续分组布局选择key_head=floor(value_head/2)，Q/K共享同映射；这是待编译合同，精简图只证明RepeatHeads而未展开原始轴序，须在正式图编译时核对或显式重排。不能把未缩放L2的Q直接送R声称匹配样本。
+本样本Q/K均由16个key头复用至32个value头，只有Q在L2之后额外乘1/sqrt(128)。源ONNX顺序为RepeatHeads后L2；先L2再复用只能作为另证等价的优化，且L2 epsilon尚未从省略payload的图JSON确认。候选用gamma_raw=16384形成L2的Q14，再以E op2、常量c_raw=1448（RNE(2^14/sqrt128)）、shift14给Q做一次Q14乘法；K不乘此系数。系数量化和额外RNE误差须独立oracle与模型质量验收。连续分组布局选择key_head=floor(value_head/2)，Q/K共享同映射；这是待编译合同，精简图只证明RepeatHeads而未展开原始轴序，须在正式图编译时核对或显式重排。不能把未缩放L2的Q直接送R声称匹配样本。
 
 R没有通用exp(-exp(...))、dt/模型系数转换或高精度通用乘除端口。N内部group和EXP不是外部通用数值服务。Sigmoid Q14可明确非负左移17形成UQ1.31编码，但精度仍14bit；衰减与模型常数的复合表达式需独立NUM定义、范围与质量门，不把“32bit重打包”当完成系数算法。
 
@@ -151,3 +153,5 @@ N只返回ID，不返回score或原记录位置。首版约束唯一ID0..39，�
 随后覆盖：跨K/多row M混合成功失败、scale跨任务、E FMA单位/CAST、G gated Sigmoid与流水停顿、N早FINALIZE/错回放/全mask拒绝、R pending合法矩阵/局部提交前后可见性/多tile旧根恢复、SSM param_valid和decay消耗、MoE ID/score/rank及宽范围、T非法begin/错写index/未读完释放。独立整数oracle和系统RTL仿真均待执行；静态合同检查只检查声明一致性，不能证明时序、精度、活性或PPA。
 
 R局部commit成功且old_root/输出尚未发布时，可停止并从旧根恢复；一旦新根或输出已部分可见，只能报告partial_completion并进入另定恢复协议。T不提供R联合回滚，外存根原子切换和掉电恢复也不是七宏已有能力。
+
+本轮样本核对还确认Falcon conv包含bias而R卷积无bias端口，必须补偏置数值路径；当前NUM_SERVICE.CONV_BIAS32只是候选，不能无证据换成E16加法或删bias。详见前三步工作报告。
