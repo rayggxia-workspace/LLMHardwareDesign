@@ -1,6 +1,6 @@
 # Issue149：E RTL 流程验证交接
 
-- 仓库 rayggxia-workspace/LLMHardwareDesign；负责人 Melodydt；Issue149；任务分支 task/149-rtl-smoke。
+- 仓库 rayggxia-workspace/LLMHardwareDesign；负责人 Melodydt；Issue149；[PR150](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/150)；任务分支 task/149-rtl-smoke。
 - 已运行源码基线 `5e787714362d957b79c2997141cf05eeebb85afc`，服务器 `/public/home/yuzelu/Melodydt/LLMHardwareDesign-issue149`，原生Git状态clean。实验源HEAD固定；远端文档交付commit需另查任务PR，不能混为同一版本。
 - 运行结果 `/public/home/yuzelu/Melodydt/runs/issue-149/e-smoke-20261031-01`；Slurm94188已自然COMPLETED/0:0，45秒，node1/16核，UNLIMITED，无活动仿真需要续跑。
 - E严格lint/编译/三初态通过，每组107062检查。包SHA `d447a183f6108b7bdbf62a1de7ca1287489b925927318fc2dcd2203fdc77d06b`；17产物和3实际输入绑定已核验。

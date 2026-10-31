@@ -66,6 +66,6 @@ python3 -m json.tool "$RUN/result-summary.json"
 
 现有D盘管理参考副本执行 `python -X utf8 scripts/check_project.py` PASS，不把它写成完整服务器稀疏副本上的管理检查，也不替代RTL验证。git-status.json 为服务器原生Git状态检查，返回0且输出为空。
 
-本次仅验证E叶块功能仿真流程；没有运行R/M/N/G/S/T、综合、物理实现、宏间调度或整模型验证。physical_qualified=false。交付待独立审查/合并，不标done。
+本次仅验证E叶块功能仿真流程；没有运行R/M/N/G/S/T、综合、物理实现、宏间调度或整模型验证。physical_qualified=false。[PR150](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/150) 已上传，待独立审查/合并，不标done。
 
 规则 rayggxia-project-collab1.0.0。登记沿用management-hub PR#5 pending；当前config无board.json且无Projects条目工具，看板unverified、同步pending；处理人待指定。服务器源HEAD仍固定在实验基线，远端任务分支后续的文档提交与该源HEAD分别记录。

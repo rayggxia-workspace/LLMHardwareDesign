@@ -6,7 +6,7 @@
 - 验证：严格lint、编译和三组初态均通过；每组107062检查/38030周期，合计321186检查。回收轻量包，17个产物SHA、3个实际输入上游绑定核验通过；原生Git状态clean。管理参考副本check_project PASS；未跑其他宏/物理/系统。
 - 代码：`/public/home/yuzelu/Melodydt/LLMHardwareDesign-issue149`；源HEAD固定在上述实验提交，与任务分支后续文档提交分开记录。
 - 结果：`/public/home/yuzelu/Melodydt/runs/issue-149/e-smoke-20261031-01`；实际命令、SHA与追踪说明见 [本任务入口](../../work/Melodydt/149/README.md)。
-- 交付：结果准备提交独立PR（创建后回写链接），待指定独立审查人；未合并、未done。
+- 交付：[PR #150](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/150) 已上传，待指定独立审查人；未合并、未done，Issue保持in_review。
 - 下一步：审查结果与追踪说明；下一次实验用全新attempt和独立Issue/明确分工，不修改其他成员作业。
 - 接入待办：服务器GitHub CLI认证未配置，读写继续使用本人GitHub连接；登记management-hub PR5 pending；缺board.json及Projects工具，看板unverified、同步pending，处理人待指定。
 - 既有任务：#147 / PR#148 仍待审查；本分支保留下面原进度，不接管其他成员任务。两PR若先后合并，需要合并本人的STATUS内容，不能互相覆盖。
