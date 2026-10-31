@@ -39,7 +39,7 @@ def source(folder):
         for f in (folder/'partition-fanout.tcl',results/'feed-partition-fanout.tsv'):
             assert sha(f)==receipt['outputs'][str(f.relative_to(folder))]
     if flow.get('measured_hold_repair'):
-        for name in ('r-measured-hold.tcl','r-hold-targets.json','issue143-measured-hold.tsv','issue143-measured-hold-checks.tsv'):
+        for name in ('r-measured-hold.tcl','r-hold-targets.json','r-electrical-stage.py','issue143-measured-hold.tsv','issue143-measured-hold-checks.tsv','issue143-measured-before-checks.tsv','issue143-measured-before-electrical.rpt','issue143-measured-after-electrical.rpt','issue143-measured-electrical-stage.json'):
             assert sha(folder/name)==receipt['outputs'][name]
     return folder,receipt,flow,results
 
@@ -119,9 +119,14 @@ def seal(raw,out):
         assert all(row[3] in ('DFF_X1','DFF_X2') and float(row[5])>=.150 for row in endpoints)
         assert [(row[1],row[2],row[3],row[4]) for row in buffers]==[(str(i),str(j),'issue143_r_hold_%d_%d'%(i,j),'BUF_X1') for i in range(30) for j in range(count)]
         assert verified==[['verified',str(i),'CK_Q_PG_preserved','other_fanout_preserved','protection_restored'] for i in range(30)]
-        assert checks.read_text().strip()=='0\t0\t0\t0'
-        for file in (audit,checks):shutil.copyfile(file,out/file.name)
-        config_files+=['r-measured-hold.tcl','r-hold-targets.json']
+        from measured_electrical_stage import check_files
+        stage_files=[before/name for name in ('issue143-measured-before-checks.tsv','issue143-measured-before-electrical.rpt','issue143-measured-after-electrical.rpt','issue143-measured-electrical-stage.json')]
+        for file in stage_files:assert sha(file)==receipt['outputs'][str(file.relative_to(raw))]
+        fresh=check_files(stage_files[1],stage_files[2],stage_files[0],checks)
+        assert fresh==json.loads(stage_files[3].read_text()) and fresh['native_leaf_accepted'] is False
+        assert sha(raw/'r-electrical-stage.py')==measured['electrical_stage_helper_sha256']==sha(ROOT/'project/experiments/block_v2/measured_electrical_stage.py')
+        for file in [audit,checks]+stage_files:shutil.copyfile(file,out/file.name)
+        config_files+=['r-measured-hold.tcl','r-hold-targets.json','r-electrical-stage.py']
     if flow.get('fanout_mode')=='partition':config_files.append('partition-fanout.tcl')
     if flow.get('input_hold_guard'):
         config_files.append('r-input-hold-guard.tcl')

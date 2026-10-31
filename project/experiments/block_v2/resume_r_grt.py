@@ -101,6 +101,8 @@ def main():
         if a.measured_hold:
             src=ROOT/'project/experiments/block_v2/r_measured_hold.tcl'
             target=a.out/'r-measured-hold.tcl';target.write_bytes(derive(src.read_bytes(),a.measured_hold_buffers))
+            helper=ROOT/'project/experiments/block_v2/measured_electrical_stage.py'
+            shutil.copyfile(helper,a.out/'r-electrical-stage.py')
             evidence=ROOT/'work/YUZE-LU/143/r-input-hold/trace-089/index.json'
             copied=a.out/'r-hold-targets.json';shutil.copyfile(evidence,copied);assert sha(evidence)==sha(copied)
             data=json.loads(copied.read_text());assert data['diagnostic_completed'] and not data['native_leaf_accepted']
@@ -108,6 +110,7 @@ def main():
             assert min(row['setup_slack_ns'] for row in rows)>.218
             flow['measured_hold_repair']=dict(script_sha256=sha(target),script_prototype_sha256=sha(src),target_evidence_sha256=sha(copied),
                 endpoints=[row['endpoint'] for row in rows],buffers_per_endpoint=a.measured_hold_buffers,total_buffers=30*a.measured_hold_buffers,
+                electrical_stage_helper_sha256=sha(helper),intermediate_policy='No new violating electrical pins or worse worst slack; GRT setup/hold0. Final actualRC all0 unchanged.',
                 source_actual_rc='081 ODB/SDC plus084 SPEF; full30 endpoints and setup headroom from089',
                 scope='Native post-GRT one-session incremental reroute of physical data buffers; clock/state/SDC unchanged. Complete native final proof and all independent final gates mandatory.')
             receipt['inputs'][str(evidence.relative_to(ROOT))]=sha(evidence)
