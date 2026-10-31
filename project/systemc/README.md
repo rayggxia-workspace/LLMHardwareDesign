@@ -39,6 +39,12 @@ project/systemc/build/softmax_trace
 
 依赖使用[Accellera官方SystemC 3.0.1](https://github.com/accellera-official/systemc/tree/3.0.1)，按[官方CMake安装方法](https://github.com/accellera-official/systemc/blob/3.0.1/INSTALL.md)构建。脚本校验下载归档SHA-256，不安装全局软件。实际检查记录见 `work/YUZE-LU/145/README.md`。
 
+## 中文源码注释的阅读顺序
+
+每个模型头文件顶部说明数据流与抽象边界；Command旁写字段用途、合法范围和原始Q编码；成员旁写存储容量、地址计算和有效位；execute分支旁写操作前提、状态更新及错误后保留什么。M/N/R的重要运算还说明移位常数、舍入点和提交边界。
+
+公共数值函数、SystemC线程/背压、系数表、测试、Softmax示例和构建工具均有中文注释。系数表注释由生成器维护，重新生成不会丢失。JSON清单保持合法机器格式：source_manifest记录设计源与发布版本，model-file-sha256记录当前模型文本哈希，不把说明塞进JSON造成解析失败。
+
 ## 通信和通用约定
 
 每块有输入 `sc_fifo_in<该块Command>` 和输出 `sc_fifo_out<Reply>`。调用方明确创建队列容量；例子和测试全用深度1。可单独调用 `Engine::execute()` 验证算法，也可实例化 `blocks::M` 等模块进行并发仿真：
