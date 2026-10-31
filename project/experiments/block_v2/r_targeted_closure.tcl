@@ -58,6 +58,23 @@ report_check_types -max_capacitance -max_slew -violators -digits 12 -no_line_spl
 global_route -start_incremental
 set audit [open $::env(RESULTS_DIR)/issue143-targeted-hold.tsv w]
 puts $audit "scope\ttargets\t[llength $targets]\tbuffers_per_endpoint\t4\tevidence_sha256\t$evidence_sha"
+#116 introduced one capacitance/slew violation on this exact MUX output.
+#119 read its original two-load signal net and master from immutable pre-ECO DB.
+#Strengthen only this equivalent combinational cell; all pins/placement and
+#protection must survive. Current-session hold guard and final gates still apply.
+set electrical_name {$abc$4429625$auto$blifparse.cc:397:parse_blif$4540226}
+set electrical_inst [$block findInst $electrical_name]
+if {$electrical_inst eq "NULL" || [[$electrical_inst getMaster] getName] ne "MUX2_X1" || [$electrical_inst $getter]} {error "Measured electrical MUX identity/protection changed"}
+set electrical_pins [issue143_preserved_pins $electrical_inst]
+set electrical_location [$electrical_inst getLocation]
+set electrical_net [[$electrical_inst findITerm Z] getNet]
+if {[$electrical_net getSigType] ne "SIGNAL" || [llength [$electrical_net getBTerms]]!=0 || [llength [$electrical_net getITerms]]!=3} {error "Measured electrical MUX fanout changed"}
+report_checks -path_delay min -through [get_pins [list $electrical_name/Z]] -group_path_count 1 -digits 9 > $::env(RESULTS_DIR)/issue143-targeted-electrical-mux-min.rpt
+set stream [open $::env(RESULTS_DIR)/issue143-targeted-electrical-mux-min.rpt r];set text [read $stream];close $stream
+if {![regexp {([-+0-9.]+)\s+slack \(MET\)} $text -> electrical_slack] || $electrical_slack<0.100} {error "Measured electrical MUX has insufficient hold headroom"}
+if {[replace_cell [get_cells [list $electrical_name]] MUX2_X2]!=1} {error "Pinned native replace_cell rejected equivalent MUX2_X2"}
+if {[[$electrical_inst getMaster] getName] ne "MUX2_X2" || [$electrical_inst $getter] || [$electrical_inst getLocation] ne $electrical_location || [issue143_preserved_pins $electrical_inst] ne $electrical_pins} {error "Electrical MUX resize changed other properties"}
+puts $audit "electrical_resize\t$electrical_name\tMUX2_X1\tMUX2_X2\t$electrical_slack\tconnections_location_protection_preserved"
 # Resize only signal repeaters verified in the actual final-RC topology.
 # Preserve their input/output/PG connectivity, position and protection state.
 foreach row $resize_targets {

@@ -25,6 +25,7 @@ def main():
     p.add_argument('--setup-margin',type=float,choices=(.200,.250),default=.200,help='Optimization target only; actual300MHz SDC unchanged')
     p.add_argument('--targeted-closure',action='store_true',help='Additional measured RC100/104/106 reset/repeater ECO; retain completed100 optimization')
     p.add_argument('--targeted-full-optimization',action='store_true',help='Repeat native GRT design/timing optimization before targeted ECO after107 changed estimated timing')
+    p.add_argument('--optimized-recovery',type=Path,help='Hash-bound116 pre-ECO optimized checkpoint only; no failed route success inherited')
     a=p.parse_args();a.source=a.source.resolve();a.out=a.out.resolve()
     assert a.source!=a.out and 'issue143-seven-block-v2-20261030' in a.out.parts
     r=json.loads((a.source/'receipt.json').read_text());assert r['passed'] is False
@@ -36,6 +37,19 @@ def main():
     assert not a.measured_hold or (a.input_hold_guard and not a.guard_reset)
     assert a.measured_hold or a.measured_hold_buffers==4
     assert not a.targeted_full_optimization or a.targeted_closure
+    recovery=None
+    if a.optimized_recovery:
+        assert a.targeted_closure and not a.targeted_full_optimization
+        recovery=a.optimized_recovery.resolve()
+        assert recovery.parts[-3:]==('116','pnr','r')
+        recovery_receipt=json.loads((recovery/'receipt.json').read_text());assert recovery_receipt['passed'] is False
+        assert sha(recovery/'receipt.json')==sha(ROOT/'work/YUZE-LU/143/r-input-hold/failed-116/receipt.json')
+        assert sha(recovery/'native-flow.json')==recovery_receipt['outputs']['native-flow.json']
+        recovery_flow=json.loads((recovery/'native-flow.json').read_text())
+        assert recovery_flow['targeted_r_closure']['full_native_optimization'] is True
+        assert recovery_flow['actual_variables']['SKIP_INCREMENTAL_REPAIR']=='0'
+        assert recovery_flow['actual_variables']['OPT_POST_GRT_WNS']=='0'
+        assert recovery_flow['rtl_sha256']==old['rtl_sha256']
     if a.targeted_closure:
         assert not a.input_hold_guard and not a.measured_hold and a.source.parts[-3:]==('100','pnr','r')
         assert old.get('measured_hold_repair',{}).get('total_buffers')==240
@@ -64,6 +78,7 @@ def main():
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,top=old['top'],commands=[],inputs={str(a.source/'receipt.json'):sha(a.source/'receipt.json')})
     receipt['inputs'][str(origin/'receipt.json')]=sha(origin/'receipt.json')
+    if recovery:receipt['inputs'][str(recovery/'receipt.json')]=sha(recovery/'receipt.json')
     for directory in ('project/experiments/block_v2','project/experiments/block_v1','project/experiments/block_feed_v1'):
         for file in (ROOT/directory).rglob('*'):
             if file.is_file() and '__pycache__' not in file.parts:receipt['inputs'][str(file.relative_to(ROOT))]=sha(file)
@@ -138,6 +153,17 @@ def main():
             checked_copy(before/name,after/name)
         checked_copy(before/'5_1_grt.odb',after/'4_cts.odb')
         checked_copy(before/'5_1_grt.sdc',after/'4_cts.sdc')
+        if recovery:
+            files={}
+            for suffix in ('odb','sdc','guide'):
+                relative=Path('flow/results/nangate45/bv1_block_v1_r/base')/('issue143-targeted-pre.'+suffix)
+                src=recovery/relative;digest=sha(src);assert digest==recovery_receipt['outputs'][str(relative)]
+                files[suffix]=dict(path=str(src),sha256=digest)
+                if suffix in ('odb','sdc'):
+                    shutil.copyfile(src,after/('4_cts.'+suffix));assert sha(after/('4_cts.'+suffix))==digest
+            flow['optimized_recovery_source']=dict(folder=str(recovery),receipt_sha256=sha(recovery/'receipt.json'),
+                journal_sha256=sha(recovery/'native-flow.json'),files=files,
+                scope='Failed116 pre-ECO optimized checkpoint only. Original015 successful first four stages and100 completed GRT remain separately bound. Repeat native GRT, ECO, detailed route, finish and all final gates; no failed stage/proof acceptance transferred.')
         flow.update(config_sha256=sha(a.out/'config.mk'),pins_sha256=sha(a.out/'pins.json'),
             hold_repair_margin_ns=float(hold_margin),setup_repair_margin_ns=a.setup_margin,
             resume_scope='Original completed GRT used as native route input, with existing CTS/receivers/diodes; repeat full native GRT repair and detailed route/final. No final success inherited.')
@@ -154,6 +180,7 @@ def main():
             flag='0' if a.targeted_full_optimization else '1'
             wanted.update(SKIP_INCREMENTAL_REPAIR=flag,OPT_POST_GRT_WNS=flag)
             flow['resume_scope']='Completed100 digest-bound GRT used as native route input. Preserve original015 first-four-stage and prior240-buffer/guard audits; native GRT, targeted reset/repeater ECO, detailed route/final and all final gates repeated. Full native GRT design/timing optimization repeated.' if a.targeted_full_optimization else 'Completed100 digest-bound GRT, optional optimization not repeated; all route/final stages and final gates mandatory. No final success inherited.'
+            if recovery:flow['resume_scope']='Use exact failed116 pre-ECO optimized checkpoint as native route input;100 GRT and015 first-four-stage provenance retained separately. Native reroute, complete ECO, detailed route/finish/full proof/all independent final gates repeated. No failed stage success inherited.'
         for key,value in wanted.items():
             log='variable-'+key+'.log';run(command+['print-'+key],log)
             matches=re.findall(r'(?m)^'+key+r':(.*)$',(a.out/log).read_text());assert len(matches)==1

@@ -87,6 +87,16 @@ def seal(raw,out):
         if name=='native-flow.json':
             producer=json.loads(journal.read_text())
             assert producer['top']==flow['top'] and producer['rtl_sha256']==flow['rtl_sha256']
+    if flow.get('optimized_recovery_source'):
+        recovery=flow['optimized_recovery_source'];prior=Path(recovery['folder'])
+        old=json.loads((prior/'receipt.json').read_text());assert old['passed'] is False
+        assert sha(prior/'receipt.json')==recovery['receipt_sha256']==receipt['inputs'][str(prior/'receipt.json')]
+        assert sha(prior/'native-flow.json')==recovery['journal_sha256']==old['outputs']['native-flow.json']
+        for suffix,row in recovery['files'].items():
+            path=Path(row['path']);assert path.name=='issue143-targeted-pre.'+suffix
+            assert sha(path)==row['sha256']==old['outputs'][str(path.relative_to(prior))]
+        assert sha(raw/'flow/results/nangate45/bv1_block_v1_r/base/4_cts.odb')==recovery['files']['odb']['sha256']
+        assert sha(raw/'flow/results/nangate45/bv1_block_v1_r/base/4_cts.sdc')==recovery['files']['sdc']['sha256']
     if flow.get('postroute_repair'):
         proof=raw/'route-repair-proof.json'
         assert sha(proof)==flow['postroute_repair']['proof_sha256']==receipt['outputs'][proof.name]

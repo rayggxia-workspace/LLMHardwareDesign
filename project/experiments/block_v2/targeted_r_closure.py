@@ -59,6 +59,16 @@ def prepare(raw,flow,source,sha,full_optimization=False):
     (raw/'r-targeted-config.tcl').write_bytes(config)
     script=root/'project/experiments/block_v2/r_targeted_closure.tcl'
     shutil.copyfile(script,raw/'r-targeted-closure.tcl')
+    electrical={}
+    for label in ('failed-116','trace-119'):
+        folder=root/'work/YUZE-LU/143/r-input-hold'/label
+        index=json.loads((folder/'index.json').read_text())
+        assert index['qualified'] is False
+        for name,digest in index['files'].items():assert sha(folder/name)==digest
+        electrical[label]=dict(index_sha256=sha(folder/'index.json'),index=index)
+    assert electrical['failed-116']['index']['actual_target_buffers']==332
+    assert electrical['trace-119']['index']['newly_violating_driver']['master']=='MUX2_X1'
+    (raw/'r-targeted-electrical-evidence.json').write_bytes((json.dumps(electrical,indent=2)+'\n').encode())
     prior=json.loads((source/'receipt.json').read_text())
     rel=Path('flow/results/nangate45/bv1_block_v1_r/base')
     files=['r-measured-hold.tcl','r-hold-targets.json','r-electrical-stage.py','r-input-hold-guard.tcl']
@@ -70,6 +80,8 @@ def prepare(raw,flow,source,sha,full_optimization=False):
         shutil.copyfile(source/relative,raw/relative)
     flow['targeted_r_closure']=dict(script_sha256=sha(script),evidence_sha256=sha(evidence),
         generator_auditor_sha256=sha(Path(__file__)),
+        electrical_evidence_sha256=sha(raw/'r-targeted-electrical-evidence.json'),
+        electrical_resize=dict(instance='$abc$4429625$auto$blifparse.cc:397:parse_blif$4540226',old_master='MUX2_X1',new_master='MUX2_X2',minimum_hold_headroom_ns=.100),
         config_sha256=sha(raw/'r-targeted-config.tcl'),hold_targets=[r['endpoint'] for r in data['hold_targets']],
         buffers_per_endpoint=4,resize_targets=data['resize_targets'],
         pre_eco_recovery_checkpoints=['issue143-targeted-pre.odb','issue143-targeted-pre.sdc','issue143-targeted-pre.guide'],
@@ -77,7 +89,7 @@ def prepare(raw,flow,source,sha,full_optimization=False):
             files={str(f):sha(source/f) for f in [Path(x) for x in files]+[rel/x for x in names]}),
         full_native_optimization=full_optimization,
         native_optional_optimization='SKIP_INCREMENTAL_REPAIR=0,OPT_POST_GRT_WNS=0: repeat native design/timing repair before measured ECO;107 proved rerouting changes estimated timing' if full_optimization else 'SKIP_INCREMENTAL_REPAIR=1,OPT_POST_GRT_WNS=1: retain completed100 optimization; no final checks skipped',
-        scope='Ten measured long-wire repeaters resized to BUF_X4; four local BUF_X1 per actual failed or near-reset hold endpoint. No RTL/FF/clock/SDC change. Complete native final proof and all final gates required.')
+        scope='Ten measured long-wire repeaters to BUF_X4; four local BUF_X1 per measured hold endpoint; exact116 newly-violating MUX2_X1 to equivalent MUX2_X2 with current hold guard. No RTL/FF/clock/SDC change. Strict intermediate electrical/timing and complete final proof/all gates required.')
     return raw/'r-targeted-closure.tcl'
 
 
@@ -96,6 +108,14 @@ def audit(raw,flow,receipt,sha):
         assert sha(raw/name)==metadata[key]==receipt['outputs'][name]
     assert sha(root/'project/experiments/block_v2/r_targeted_closure.tcl')==metadata['script_sha256']
     assert sha(root/'work/YUZE-LU/143/r-input-hold/trace-106/index.json')==metadata['evidence_sha256']
+    names.append('r-targeted-electrical-evidence.json')
+    assert sha(raw/names[-1])==metadata['electrical_evidence_sha256']==receipt['outputs'][names[-1]]
+    electrical=json.loads((raw/names[-1]).read_text())
+    for label,entry in electrical.items():
+        folder=root/'work/YUZE-LU/143/r-input-hold'/label
+        assert sha(folder/'index.json')==entry['index_sha256']
+        assert json.loads((folder/'index.json').read_text())==entry['index']
+        for name,digest in entry['index']['files'].items():assert sha(folder/name)==digest
     inherited=metadata['inherited_repair_evidence'];prior=Path(inherited['source'])
     assert sha(prior/'receipt.json')==inherited['receipt_sha256']
     old=json.loads((prior/'receipt.json').read_text())
@@ -113,13 +133,17 @@ def audit(raw,flow,receipt,sha):
     targets=metadata['hold_targets'];count=len(targets)
     assert metadata['buffers_per_endpoint']==4
     assert rows[0]==['scope','targets',str(count),'buffers_per_endpoint','4','evidence_sha256',metadata['evidence_sha256']]
+    electrical_rows=[r for r in rows if r[0]=='electrical_resize'];assert len(electrical_rows)==1
+    want=metadata['electrical_resize'];row=electrical_rows[0]
+    assert row[:4]==['electrical_resize',want['instance'],want['old_master'],want['new_master']]
+    assert float(row[4])>=want['minimum_hold_headroom_ns'] and row[5]=='connections_location_protection_preserved'
     resize=[r for r in rows if r[0]=='resize']
     expected=metadata['resize_targets'];assert len(resize)==len(expected)==10
     for row,want in zip(resize,expected):
         assert row[:4]==['resize',want['instance'],want['master'],'BUF_X4']
         assert float(row[4])>=.300 and row[5]=='connections_location_protection_preserved'
     endpoints=[r for r in rows if r[0]=='endpoint'];buffers=[r for r in rows if r[0]=='buffer'];verified=[r for r in rows if r[0]=='verified']
-    assert len(rows)==1+10+6*count and len(endpoints)==len(verified)==count and len(buffers)==4*count
+    assert len(rows)==2+10+6*count and len(endpoints)==len(verified)==count and len(buffers)==4*count
     assert [r[2] for r in endpoints]==targets and [r[1] for r in endpoints]==[str(i) for i in range(count)]
     assert all(r[3] in ('DFF_X1','DFF_X2') and float(r[5])>=.100 for r in endpoints)
     assert [(r[1],r[2],r[3],r[4]) for r in buffers]==[(str(i),str(j),'issue143_r_closure_%d_%d'%(i,j),'BUF_X1') for i in range(count) for j in range(4)]
@@ -129,5 +153,6 @@ def audit(raw,flow,receipt,sha):
     assert fresh==json.loads((raw/prefix/files[5]).read_text()) and fresh['native_leaf_accepted'] is False
     for i in range(count):files.append('issue143-targeted-setup-%d.rpt'%i)
     for row in expected:files.append('issue143-targeted-repeater-'+row['instance']+'.rpt')
+    files.append('issue143-targeted-electrical-mux-min.rpt')
     for name in files:assert sha(raw/prefix/name)==receipt['outputs'][prefix+name]
     return names,files

@@ -64,6 +64,8 @@ def main():
             assert '/' not in name and '\\' not in name
             assert sha(src/name)==digest==d['members']['meta/source/'+name]['sha256']
         metadata=flow['targeted_r_closure']
+        if metadata.get('electrical_resize'):
+            assert sha(src/'r-targeted-electrical-evidence.json')==metadata['electrical_evidence_sha256']
         for name,key in [('r-targeted-evidence.json','evidence_sha256'),('r-targeted-config.tcl','config_sha256'),('r-targeted-closure.tcl','script_sha256')]:
             assert sha(src/name)==metadata[key]
         assert (src/'r-targeted-config.tcl').read_bytes()==config_bytes((src/'r-targeted-evidence.json').read_bytes())
