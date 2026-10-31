@@ -1,0 +1,300 @@
+{
+  "schema_version": 1,
+  "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151",
+  "branch": "task/151-six-connection-study",
+  "baseline": {
+    "main": "a103da352b7e431cedc69f54b9f71c05371be1b3",
+    "v2": "5e787714362d957b79c2997141cf05eeebb85afc",
+    "feed": "4dd994bf256c1a3a16163756a3a486139984ecff",
+    "link": "b1864046b1adfa5101cff3235742b4068aa78ee3",
+    "sc": "4ad1ad4643d08cabf2fcc35e9465424556b1f325"
+  },
+  "meaning": "Functional dependencies and candidate change ownership; not a routed netlist or a frozen connectivity matrix.",
+  "ownership_categories": [
+    "existing_leaf_internal",
+    "existing_external_hard_macro",
+    "test_glue",
+    "proposed_external_prefab_wrapper",
+    "proposed_numeric_service_or_leaf_revision",
+    "coordinator_task_table",
+    "custom_metal_only"
+  ],
+  "existing_mechanisms": [
+    {
+      "id": "s_loader",
+      "location": "existing_leaf_internal",
+      "source_ids": [
+        "loader",
+        "s_macro",
+        "feed_store",
+        "feed_contract"
+      ],
+      "purpose": "四bank S内专用A128/B512供数；done为装载完成"
+    },
+    {
+      "id": "pair_mux",
+      "location": "test_glue",
+      "source_ids": [
+        "pair"
+      ],
+      "purpose": "M op5响应到T的实验路由/索引"
+    },
+    {
+      "id": "bridge",
+      "location": "existing_external_hard_macro",
+      "source_ids": [
+        "bridge",
+        "bridge_physical",
+        "bridge_route",
+        "bridge_accept"
+      ],
+      "purpose": "2×131bit弹性包和capture/T写索引；非通用调度器"
+    },
+    {
+      "id": "buffer_bank",
+      "location": "existing_external_hard_macro",
+      "source_ids": [
+        "bridge_physical",
+        "bridge_route"
+      ],
+      "purpose": "140路组合BUF_X16；无payload存储/地址生成"
+    },
+    {
+      "id": "booster_return",
+      "location": "existing_external_hard_macro",
+      "source_ids": [
+        "bridge_physical",
+        "bridge_route"
+      ],
+      "purpose": "同一单路buffer master两实例；无协议寄存"
+    },
+    {
+      "id": "driver_fix",
+      "location": "existing_leaf_internal",
+      "source_ids": [
+        "linkfix",
+        "link_report",
+        "linkfix_sources"
+      ],
+      "purpose": "旧M/T/S独立物理副本132/140/1选定驱动增强；不替换生产"
+    },
+    {
+      "id": "e_op13",
+      "location": "existing_leaf_internal",
+      "source_ids": [
+        "e",
+        "spec"
+      ],
+      "purpose": "四S32→四S16；SystemC尚未同步"
+    }
+  ],
+  "schemes": [
+    {
+      "id": "attention",
+      "name": "普通注意力",
+      "end_to_end_status": "candidate_not_implemented_in_this_issue",
+      "source_ids": [
+        "m",
+        "n",
+        "e",
+        "loader",
+        "sc_trace",
+        "attention106"
+      ],
+      "functional_paths": [
+        "N→M(QKV)",
+        "M→E(RoPE)→M(QK)",
+        "M→E(mask/scale)→N→M(PV)",
+        "M(PV)→M(O)→E(residual)"
+      ],
+      "proposed_changes": [
+        "宽结果读出与有效S16重打包",
+        "QKV/头/Transpose/部分RoPE布局",
+        "N全行统计/EXP/回放屏障",
+        "KV版本和外存访问"
+      ],
+      "required_validation": [
+        "S32→S16数值损失",
+        "有限mask与极值",
+        "257键尾包和GQA",
+        "背压/复位及缓存身份"
+      ],
+      "change_locations": [
+        "proposed_external_prefab_wrapper",
+        "coordinator_task_table",
+        "custom_metal_only"
+      ]
+    },
+    {
+      "id": "extra_norm",
+      "name": "额外Norm与布局",
+      "end_to_end_status": "candidate_not_implemented_in_this_issue",
+      "source_ids": [
+        "graphs",
+        "n",
+        "e",
+        "norm106"
+      ],
+      "functional_paths": [
+        "M→N(head RMS/L2)→E(RoPE)",
+        "M→N(post RMS0)→E(residual)"
+      ],
+      "proposed_changes": [
+        "N上下文锁与范围",
+        "gamma/epsilon及RMS0参数供给",
+        "残差保留和头布局"
+      ],
+      "required_validation": [
+        "头内与全H范围",
+        "gamma尾块",
+        "上下文交错拒绝",
+        "容量和S端口冲突"
+      ],
+      "change_locations": [
+        "proposed_external_prefab_wrapper",
+        "coordinator_task_table",
+        "custom_metal_only"
+      ]
+    },
+    {
+      "id": "gated_ffn",
+      "name": "门控FFN",
+      "end_to_end_status": "candidate_not_implemented_in_this_issue",
+      "source_ids": [
+        "graphs",
+        "m",
+        "e",
+        "g",
+        "m106"
+      ],
+      "functional_paths": [
+        "N→M(gate/up)",
+        "G(SiLU/GELU(gate)×up)→M(down)→E(residual)"
+      ],
+      "proposed_changes": [
+        "双分支有限保留/join",
+        "128↔32分包和顺序标签",
+        "固定S16或整K动态量化决策"
+      ],
+      "required_validation": [
+        "G两个输入角色",
+        "融合投影Slice",
+        "长K/饱和",
+        "scale发布和背压"
+      ],
+      "change_locations": [
+        "proposed_external_prefab_wrapper",
+        "coordinator_task_table",
+        "custom_metal_only"
+      ]
+    },
+    {
+      "id": "gdn",
+      "name": "Qwen3.5 GDN",
+      "end_to_end_status": "candidate_not_implemented_in_this_issue",
+      "source_ids": [
+        "graphs",
+        "r",
+        "e",
+        "n",
+        "g",
+        "gdn109"
+      ],
+      "functional_paths": [
+        "M→R(conv)→G→N/E→R(GDN)",
+        "R→E→N→G(SiLU(Z)×Norm(R))→M"
+      ],
+      "proposed_changes": [
+        "R输出持久保存与S32/S16尺度",
+        "Q/K/V分发及head重复",
+        "beta/decay系数服务决策",
+        "状态/history与输出发布策略"
+      ],
+      "required_validation": [
+        "候选输出在commit前读完",
+        "pending_history错误撤销",
+        "系数/数值范围",
+        "token/epoch错配"
+      ],
+      "change_locations": [
+        "proposed_external_prefab_wrapper",
+        "coordinator_task_table",
+        "custom_metal_only",
+        "proposed_numeric_service_or_leaf_revision"
+      ]
+    },
+    {
+      "id": "ssm",
+      "name": "Falcon SSM与混合层",
+      "end_to_end_status": "candidate_not_implemented_in_this_issue",
+      "source_ids": [
+        "graphs",
+        "r",
+        "g",
+        "n",
+        "e",
+        "r106"
+      ],
+      "functional_paths": [
+        "M→R(conv)→G/E→R(SSM)",
+        "R→E→G(SiLU(Z)×R)→N(4096)→M",
+        "attention+SSM→E→residual"
+      ],
+      "proposed_changes": [
+        "decay须在pending_history前装载的候选顺序",
+        "注入/逐元素decay/skip服务决策",
+        "4096通道Norm及分支join",
+        "本轮decay有效性和提交"
+      ],
+      "required_validation": [
+        "错误装载顺序拒绝",
+        "conv→SSM共同commit",
+        "两分支乱序完成",
+        "全组Norm屏障"
+      ],
+      "change_locations": [
+        "proposed_external_prefab_wrapper",
+        "coordinator_task_table",
+        "custom_metal_only",
+        "proposed_numeric_service_or_leaf_revision"
+      ]
+    },
+    {
+      "id": "moe",
+      "name": "Granite MoE",
+      "end_to_end_status": "candidate_not_implemented_in_this_issue",
+      "source_ids": [
+        "graphs",
+        "n",
+        "m",
+        "g",
+        "e",
+        "m106"
+      ],
+      "functional_paths": [
+        "M(router)→N(TopK IDs)",
+        "ID→score gather→N(Softmax)",
+        "ID→weight accessor→M→G→M→wide merge"
+      ],
+      "proposed_changes": [
+        "唯一0..39 ID及80B score表",
+        "专家地址/权重访问与有限返回槽",
+        "宽加权归并数值服务或M缩放追加决策",
+        "token/rank/expert与scale配对"
+      ],
+      "required_validation": [
+        "tie/ID合法性",
+        "有限槽与专家乱序",
+        "完整top8后发布",
+        "宽累加/量化和跨token隔离"
+      ],
+      "change_locations": [
+        "proposed_external_prefab_wrapper",
+        "coordinator_task_table",
+        "custom_metal_only",
+        "proposed_numeric_service_or_leaf_revision"
+      ]
+    }
+  ],
+  "verification_scope": "源文/源码/静态清单及文档核验；本Issue未执行RTL/SystemC/综合/布局布线。"
+}
