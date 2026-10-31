@@ -1,7 +1,14 @@
 {
-  "updated_cst": "2026-10-31 08:15",
+  "updated_cst": "2026-10-31 08:36",
   "qualified": false,
-  "accepted_macros": ["M", "N", "E-wide", "G", "S", "T"],
+  "accepted_macros": [
+    "M",
+    "N",
+    "E-wide",
+    "G",
+    "S",
+    "T"
+  ],
   "r_candidate_015": {
     "job": 93808,
     "detailed_route_native_report_lines": 0,
@@ -10,7 +17,13 @@
     "last_observed_phase": "Collecting POs for design 0",
     "max_rss_kib_at_081452": 126650988,
     "node14_free_memory_mb_at_081518": 279820,
-    "resource_policy": "Measured free memory remains ample; retain concurrency. Watch growing proof memory; only isolate own work if actual node pressure requires it. Producer forecast192GiB and future gate-worker forecast64GiB are distinct estimates, not hard limits."
+    "resource_policy": "Measured free memory remains ample; retain concurrency. Watch growing proof memory; only isolate own work if actual node pressure requires it. Producer forecast192GiB and future gate-worker forecast64GiB are distinct estimates, not hard limits.",
+    "status": "Stopped final proof after conclusive routed RC failure; failed producer receipt preserved",
+    "final_rc_failure": "r-final-rc/index.json",
+    "obsolete_gate_and_pack_retired": [
+      93863,
+      93864
+    ]
   },
   "full_state_diagnostic": {
     "job": 94081,
@@ -36,7 +49,20 @@
   "node_budget": {
     "eligible": "node13-20",
     "excluded": "node21-26",
-    "observed_own_r_nodes": ["node13", "node14", "node15", "node17"],
+    "observed_own_r_nodes": [
+      "node13",
+      "node14",
+      "node15",
+      "node17"
+    ],
     "main_jobs_untouched": true
+  },
+  "routed_timing_diagnostic": {
+    "job": 94090,
+    "output": "075",
+    "source_commit": "2d0f2c43e57a70211f55bdbf3d85edd24a5ded68",
+    "archive_sha256": "a14c9a378b54fa5766c4cc8ca407565705e6929f54c97e0ff661cbb026e75bc8",
+    "qualified": false,
+    "scope": "Isolated native optimization from actual RC: targeted BUF_X4->X8 cap driver, setup/hold repair; changed layout must be freshly rerouted/extracted and pass every final gate"
   }
 }
