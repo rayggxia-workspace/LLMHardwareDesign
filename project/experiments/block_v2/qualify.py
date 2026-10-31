@@ -91,6 +91,15 @@ def seal(raw,out):
     before=raw/relative;after=out/relative;after.mkdir(parents=True)
     config_files=['config.mk','pins.json','pins.tcl','input.sdc']
     if flow.get('fanout_mode')=='partition':config_files.append('partition-fanout.tcl')
+    if flow.get('input_hold_guard'):
+        config_files.append('r-input-hold-guard.tcl')
+        assert sha(raw/'r-input-hold-guard.tcl')==flow['input_hold_guard']['script_sha256']
+        guard=before/'issue143-input-hold-guard.tsv'
+        assert sha(guard)==receipt['outputs'][str(guard.relative_to(raw))]
+        assert guard.read_text().splitlines()==[
+            'scope\tcmd_data\t128\toptimized_min_ns\t0.000\tsignoff_min_ns\t0.200\tglobal_hold_ns\t0.020',
+            'entered\t0.000','restored\t0.200']
+        shutil.copyfile(guard,out/guard.name)
     for name in config_files:
         assert sha(raw/name)==receipt['outputs'][name];shutil.copyfile(raw/name,out/name)
     budget=flow['budget'];approved=re.sub(r'create_clock -name core -period [^ ]+',

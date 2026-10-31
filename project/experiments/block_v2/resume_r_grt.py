@@ -17,6 +17,7 @@ from physical import sha,ROOT
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
+    p.add_argument('--input-hold-guard',action='store_true',help='Use conservative input-only arrival guard during optimization; restore real SDC')
     a=p.parse_args();a.source=a.source.resolve();a.out=a.out.resolve()
     assert a.source!=a.out and 'issue143-seven-block-v2-20261030' in a.out.parts
     r=json.loads((a.source/'receipt.json').read_text());assert r['passed'] is False
@@ -61,16 +62,25 @@ def main():
         config=(a.out/'original-config.mk').read_text().replace(str(a.source),str(a.out))
         assert str(a.source) not in config
         config+='\n# Measured final RC deficits: setup164ps / hold109ps. Optimization only; no SDC exception.\n'
-        config+='export SETUP_SLACK_MARGIN = 0.200\nexport HOLD_SLACK_MARGIN = 0.150\n'
+        hold_margin='0.020' if a.input_hold_guard else '0.150'
+        config+='export SETUP_SLACK_MARGIN = 0.200\nexport HOLD_SLACK_MARGIN = '+hold_margin+'\n'
         # Receivers and diodes already exist in the inherited GRT. Never add twice.
-        config+='export PRE_GLOBAL_ROUTE_TCL =\n'
+        pre_global=''
+        if a.input_hold_guard:
+            src=ROOT/'project/experiments/block_v2/r_input_hold_guard.tcl'
+            target=a.out/'r-input-hold-guard.tcl';shutil.copyfile(src,target);assert sha(src)==sha(target)
+            pre_global=str(target)
+            flow['input_hold_guard']=dict(script_sha256=sha(target),ports='cmd_data[127:0]',
+                optimization_input_min_ns=0.0,actual_input_min_ns=.2,global_hold_margin_ns=.020,
+                basis='076 globalhold.15 targets146338 endpoints; original real routed hold failures are input paths. Use200ps earlier input during optimization only, and restore actual contract before final SDC.')
+        config+='export PRE_GLOBAL_ROUTE_TCL = '+pre_global+'\n'
         (a.out/'config.mk').write_text(config)
         for name in ('1_synth_lec.v','1_2_yosys.v','1_2_yosys.sdc','bv1-input-diodes.tsv','feed-input-receivers.tsv'):
             checked_copy(before/name,after/name)
         checked_copy(before/'5_1_grt.odb',after/'4_cts.odb')
         checked_copy(before/'5_1_grt.sdc',after/'4_cts.sdc')
         flow.update(config_sha256=sha(a.out/'config.mk'),pins_sha256=sha(a.out/'pins.json'),
-            hold_repair_margin_ns=.150,setup_repair_margin_ns=.200,
+            hold_repair_margin_ns=float(hold_margin),setup_repair_margin_ns=.200,
             resume_scope='Original completed GRT used as native route input, with existing CTS/receivers/diodes; repeat full native GRT repair and detailed route/final. No final success inherited.')
         command=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(a.out/'config.mk'),'WORK_HOME='+str(a.out/'flow'),'NUM_CORES=16']
         def run(cmd,log):
@@ -79,8 +89,8 @@ def main():
                 result=subprocess.run(list(map(str,cmd)),cwd=a.out,stdout=stream,stderr=subprocess.STDOUT)
             receipt['commands'].append(dict(command=list(map(str,cmd)),log=log,sha256=sha(a.out/log),returncode=result.returncode,seconds=time.time()-started))
             assert result.returncode==0,(log,result.returncode)
-        wanted=dict(LEC_CHECK='1',SEC_CHECK='0',SETUP_SLACK_MARGIN='0.200',HOLD_SLACK_MARGIN='0.150',
-            MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',PRE_GLOBAL_ROUTE_TCL='')
+        wanted=dict(LEC_CHECK='1',SEC_CHECK='0',SETUP_SLACK_MARGIN='0.200',HOLD_SLACK_MARGIN=hold_margin,
+            MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',PRE_GLOBAL_ROUTE_TCL=pre_global)
         for key,value in wanted.items():
             log='variable-'+key+'.log';run(command+['print-'+key],log)
             matches=re.findall(r'(?m)^'+key+r':(.*)$',(a.out/log).read_text());assert len(matches)==1
