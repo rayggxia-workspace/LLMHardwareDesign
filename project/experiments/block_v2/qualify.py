@@ -38,6 +38,9 @@ def source(folder):
     if flow.get('fanout_mode')=='partition':
         for f in (folder/'partition-fanout.tcl',results/'feed-partition-fanout.tsv'):
             assert sha(f)==receipt['outputs'][str(f.relative_to(folder))]
+    if flow.get('measured_hold_repair'):
+        for name in ('r-measured-hold.tcl','r-hold-targets.json','issue143-measured-hold.tsv','issue143-measured-hold-checks.tsv'):
+            assert sha(folder/name)==receipt['outputs'][name]
     return folder,receipt,flow,results
 
 
@@ -90,6 +93,30 @@ def seal(raw,out):
     relative='flow/results/nangate45/bv1_'+flow['top']+'/base'
     before=raw/relative;after=out/relative;after.mkdir(parents=True)
     config_files=['config.mk','pins.json','pins.tcl','input.sdc']
+    if flow.get('measured_hold_repair'):
+        measured=flow['measured_hold_repair']
+        assert sha(raw/'r-measured-hold.tcl')==measured['script_sha256']
+        assert sha(raw/'r-hold-targets.json')==measured['target_evidence_sha256']
+        targets=json.loads((raw/'r-hold-targets.json').read_text())['endpoints']
+        assert [row['endpoint'] for row in targets]==measured['endpoints'] and len(targets)==30
+        assert measured['buffers_per_endpoint']==4 and measured['total_buffers']==120
+        audit=before/'issue143-measured-hold.tsv'
+        checks=before/'issue143-measured-hold-checks.tsv'
+        for file in (audit,checks):assert sha(file)==receipt['outputs'][str(file.relative_to(raw))]
+        rows=[line.split('\t') for line in audit.read_text().splitlines()]
+        assert rows[0]==['scope','targets','30','buffers_per_endpoint','4','evidence_sha256',measured['target_evidence_sha256']]
+        endpoints=[row for row in rows[1:] if row[0]=='endpoint']
+        buffers=[row for row in rows[1:] if row[0]=='buffer']
+        verified=[row for row in rows[1:] if row[0]=='verified']
+        assert len(rows)==181 and len(endpoints)==len(verified)==30 and len(buffers)==120
+        assert [row[1] for row in endpoints]==[str(i) for i in range(30)]
+        assert [row[2] for row in endpoints]==measured['endpoints']
+        assert all(row[3] in ('DFF_X1','DFF_X2') and float(row[5])>=.150 for row in endpoints)
+        assert [(row[1],row[2],row[3],row[4]) for row in buffers]==[(str(i),str(j),'issue143_r_hold_%d_%d'%(i,j),'BUF_X1') for i in range(30) for j in range(4)]
+        assert verified==[['verified',str(i),'CK_Q_PG_preserved','other_fanout_preserved','protection_restored'] for i in range(30)]
+        assert checks.read_text().strip()=='0\t0\t0\t0'
+        for file in (audit,checks):shutil.copyfile(file,out/file.name)
+        config_files+=['r-measured-hold.tcl','r-hold-targets.json']
     if flow.get('fanout_mode')=='partition':config_files.append('partition-fanout.tcl')
     if flow.get('input_hold_guard'):
         config_files.append('r-input-hold-guard.tcl')

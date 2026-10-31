@@ -19,6 +19,7 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--input-hold-guard',action='store_true',help='Use conservative input-only arrival guard during optimization; restore real SDC')
     p.add_argument('--guard-reset',action='store_true',help='Also guard reset after measured final reset hold failures')
+    p.add_argument('--measured-hold',action='store_true',help='Apply source-bound30-endpoint native post-GRT data-delay ECO')
     a=p.parse_args();a.source=a.source.resolve();a.out=a.out.resolve()
     assert a.source!=a.out and 'issue143-seven-block-v2-20261030' in a.out.parts
     r=json.loads((a.source/'receipt.json').read_text());assert r['passed'] is False
@@ -27,6 +28,7 @@ def main():
     stages=['do-1_synth','do-floorplan','do-place','do-cts','do-route']
     assert old['stages']==stages
     assert not a.guard_reset or a.input_hold_guard
+    assert not a.measured_hold or (a.input_hold_guard and not a.guard_reset)
     # A resumed producer retains the original successful first four stages.
     # Its own successful route supplies the newer GRT, with a separate binding.
     origin=a.source
@@ -92,6 +94,22 @@ def main():
                 optimization_input_min_ns=0.0,actual_input_min_ns=.2,global_hold_margin_ns=.020,
                 basis='084 exact final RC: setup+7.728485ps, cap/slew0, hold30 worst-46.371240ps on reset. Include reset in200ps earlier optimization-only arrival guard; restore actual SDC.' if a.guard_reset else '076 globalhold.15 targets146338 endpoints; original real routed hold failures are input paths. Use200ps earlier input during optimization only, and restore actual contract before final SDC.')
         config+='export PRE_GLOBAL_ROUTE_TCL = '+pre_global+'\n'
+        post_global=''
+        if a.measured_hold:
+            src=ROOT/'project/experiments/block_v2/r_measured_hold.tcl'
+            target=a.out/'r-measured-hold.tcl';shutil.copyfile(src,target);assert sha(src)==sha(target)
+            evidence=ROOT/'work/YUZE-LU/143/r-input-hold/trace-089/index.json'
+            copied=a.out/'r-hold-targets.json';shutil.copyfile(evidence,copied);assert sha(evidence)==sha(copied)
+            data=json.loads(copied.read_text());assert data['diagnostic_completed'] and not data['native_leaf_accepted']
+            rows=data['endpoints'];assert len(rows)==len({row['endpoint'] for row in rows})==30
+            assert min(row['setup_slack_ns'] for row in rows)>.218
+            flow['measured_hold_repair']=dict(script_sha256=sha(target),target_evidence_sha256=sha(copied),
+                endpoints=[row['endpoint'] for row in rows],buffers_per_endpoint=4,total_buffers=120,
+                source_actual_rc='081 ODB/SDC plus084 SPEF; full30 endpoints and setup headroom from089',
+                scope='Native post-GRT one-session incremental reroute of physical data buffers; clock/state/SDC unchanged. Complete native final proof and all independent final gates mandatory.')
+            receipt['inputs'][str(evidence.relative_to(ROOT))]=sha(evidence)
+            post_global=str(target)
+        config+='export POST_GLOBAL_ROUTE_TCL = '+post_global+'\n'
         (a.out/'config.mk').write_text(config)
         for name in ('1_synth_lec.v','1_2_yosys.v','1_2_yosys.sdc','bv1-input-diodes.tsv','feed-input-receivers.tsv'):
             checked_copy(before/name,after/name)
@@ -108,7 +126,7 @@ def main():
             receipt['commands'].append(dict(command=list(map(str,cmd)),log=log,sha256=sha(a.out/log),returncode=result.returncode,seconds=time.time()-started))
             assert result.returncode==0,(log,result.returncode)
         wanted=dict(LEC_CHECK='1',SEC_CHECK='0',SETUP_SLACK_MARGIN='0.200',HOLD_SLACK_MARGIN=hold_margin,
-            MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',PRE_GLOBAL_ROUTE_TCL=pre_global)
+            MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',PRE_GLOBAL_ROUTE_TCL=pre_global,POST_GLOBAL_ROUTE_TCL=post_global)
         for key,value in wanted.items():
             log='variable-'+key+'.log';run(command+['print-'+key],log)
             matches=re.findall(r'(?m)^'+key+r':(.*)$',(a.out/log).read_text());assert len(matches)==1
