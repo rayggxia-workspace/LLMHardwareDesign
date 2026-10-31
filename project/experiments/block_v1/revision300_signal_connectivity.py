@@ -6,11 +6,11 @@ def prove(root, out, cpus, run, kind):
     from io_slots import file_sha
     from revision300_receive import source
     from signal_connectivity import audit, controls
-    assert cpus == 16 and kind == 'v'
+    assert cpus == 16 and kind in ('v','r')
     folder, receipt, flow, results = source(root, out, kind)
-    assert folder.name == 'revision300-final-source-v'
+    assert folder.name == 'revision300-final-source-'+kind
     selection = json.loads((root/'project/experiments/block_v1/revision300-selected-sources.json').read_text())
-    assert folder == out.parents[2]/selection['macros']['v']
+    assert folder == out.parents[2]/selection['macros'][kind]
     inputs = {name: file_sha(results/name) for name in ('6_final.odb', '6_final.def')}
     for name, digest in inputs.items():
         assert digest == flow['final_files'][name]['sha256']
@@ -51,7 +51,7 @@ def prove(root, out, cpus, run, kind):
             original_geometry_sha256=file_sha(geometry))
         save()
     else:
-        assert out.name == 'revision300-signal-connectivity-v'
+        assert out.name == 'revision300-signal-connectivity-'+kind
         run(['openroad', '-no_init', '-exit', out/'signal-connectivity.tcl'], 'signal-export.log')
     # Validate actual exported tech layer semantics before interpreting contacts.
     layers = {}

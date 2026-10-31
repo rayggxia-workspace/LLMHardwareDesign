@@ -1,0 +1,85 @@
+{
+  "schema": "block-v1-node-queue/1",
+  "node_cpus": 96,
+  "default_task_cpus": 16,
+  "memory_guard_gib": 16,
+  "state_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-826/node-queue-state.json",
+  "tasks": [
+    {
+      "id": "revision300-test-r",
+      "mode": "revision300-test-r",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-826/tasks/revision300-test-r",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-826/src",
+      "cpus": 16,
+      "memory_gib": 16,
+      "report": "revision300-rtl-test.json",
+      "after": [],
+      "receipts": [],
+      "memory_basis": "One revised shared-bank-read R only: fresh three-init numerical checks, mapping, two public schedules and two internal occupancy checks. Six16CPU slots; occupancy has a genuine per-variant fresh public report dependency, other four start independently and refill immediately. Test16GiB/map64GiB forecasts with1.2 margin plus16GiB guard/liveRSS. Original404 terminal GRT failure preserved; no old physical qualification inherited. No changes to other members or M/S/T/V."
+    },
+    {
+      "id": "revision300-map-r",
+      "mode": "revision300-map-r",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-826/tasks/revision300-map-r",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-826/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "report": "revision300-rtl-map.json",
+      "after": [],
+      "receipts": [],
+      "memory_basis": "One revised shared-bank-read R only: fresh three-init numerical checks, mapping, two public schedules and two internal occupancy checks. Six16CPU slots; occupancy has a genuine per-variant fresh public report dependency, other four start independently and refill immediately. Test16GiB/map64GiB forecasts with1.2 margin plus16GiB guard/liveRSS. Original404 terminal GRT failure preserved; no old physical qualification inherited. No changes to other members or M/S/T/V."
+    },
+    {
+      "id": "revision300-bench-r-revised",
+      "mode": "revision300-bench-r-revised",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-826/tasks/revision300-bench-r-revised",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-826/src",
+      "cpus": 16,
+      "memory_gib": 16,
+      "report": "revision300-vr-benchmark.json",
+      "after": [],
+      "receipts": [],
+      "memory_basis": "One revised shared-bank-read R only: fresh three-init numerical checks, mapping, two public schedules and two internal occupancy checks. Six16CPU slots; occupancy has a genuine per-variant fresh public report dependency, other four start independently and refill immediately. Test16GiB/map64GiB forecasts with1.2 margin plus16GiB guard/liveRSS. Original404 terminal GRT failure preserved; no old physical qualification inherited. No changes to other members or M/S/T/V."
+    },
+    {
+      "id": "revision300-bench-r-extended",
+      "mode": "revision300-bench-r-extended",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-826/tasks/revision300-bench-r-extended",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-826/src",
+      "cpus": 16,
+      "memory_gib": 16,
+      "report": "revision300-vr-benchmark.json",
+      "after": [],
+      "receipts": [],
+      "memory_basis": "One revised shared-bank-read R only: fresh three-init numerical checks, mapping, two public schedules and two internal occupancy checks. Six16CPU slots; occupancy has a genuine per-variant fresh public report dependency, other four start independently and refill immediately. Test16GiB/map64GiB forecasts with1.2 margin plus16GiB guard/liveRSS. Original404 terminal GRT failure preserved; no old physical qualification inherited. No changes to other members or M/S/T/V."
+    },
+    {
+      "id": "revision300-occupancy-r-revised",
+      "mode": "revision300-occupancy-r-revised",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-826/tasks/revision300-occupancy-r-revised",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-826/src",
+      "cpus": 16,
+      "memory_gib": 16,
+      "report": "revision300-lane-occupancy.json",
+      "after": [
+        "revision300-bench-r-revised"
+      ],
+      "receipts": [],
+      "memory_basis": "One revised shared-bank-read R only: fresh three-init numerical checks, mapping, two public schedules and two internal occupancy checks. Six16CPU slots; occupancy has a genuine per-variant fresh public report dependency, other four start independently and refill immediately. Test16GiB/map64GiB forecasts with1.2 margin plus16GiB guard/liveRSS. Original404 terminal GRT failure preserved; no old physical qualification inherited. No changes to other members or M/S/T/V."
+    },
+    {
+      "id": "revision300-occupancy-r-extended",
+      "mode": "revision300-occupancy-r-extended",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-826/tasks/revision300-occupancy-r-extended",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-826/src",
+      "cpus": 16,
+      "memory_gib": 16,
+      "report": "revision300-lane-occupancy.json",
+      "after": [
+        "revision300-bench-r-extended"
+      ],
+      "receipts": [],
+      "memory_basis": "One revised shared-bank-read R only: fresh three-init numerical checks, mapping, two public schedules and two internal occupancy checks. Six16CPU slots; occupancy has a genuine per-variant fresh public report dependency, other four start independently and refill immediately. Test16GiB/map64GiB forecasts with1.2 margin plus16GiB guard/liveRSS. Original404 terminal GRT failure preserved; no old physical qualification inherited. No changes to other members or M/S/T/V."
+    }
+  ]
+}

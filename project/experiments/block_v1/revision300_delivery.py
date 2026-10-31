@@ -10,12 +10,12 @@ def config(root):
 
 
 def signal_geometry(root, out, kind, source_receipt_sha256, flow):
-    """The repaired V additionally needs actual whole routed connectivity."""
+    """The revised V/R need actual whole routed connectivity."""
     from io_slots import file_sha
     d = config(root)
     relative = d.get('signal_geometry', {}).get(kind)
-    if kind == 'v':
-        assert relative, 'Current repaired V requires whole routed signal proof'
+    if kind in ('v','r'):
+        assert relative, 'Current revised V/R require whole routed signal proof'
     if relative is None:
         return None
     folder = out.parents[2]/relative
@@ -45,7 +45,7 @@ def deliver(root,out,cpus,run,kind):
     d=config(root);base=out.parents[2]
     gates=base/d['gates'][kind]
     assert gates.name=='tasks' and base in gates.resolve().parents
-    if kind == 'v':
+    if kind in ('v','r'):
         from io_slots import file_sha
         native, _, flow, _ = source(root, out, kind)
         signal_geometry(root, out, kind, file_sha(native/'receipt.json'), flow)
