@@ -340,3 +340,16 @@ cmake --build project/systemc/build -j 4
 ctest --test-dir project/systemc/build --output-on-failure
 project/systemc/build/softmax_trace
 ```
+
+## SystemC积木连接到完整LLM（Issue153）
+
+`project/systemc/llm/`增加控制器和显式外存模拟，真实FIFO调用七宏；Qwen2/Qwen3/Granite运行完整网络和greedy解码，Qwen3.5另有完整R状态边界测试。输入/参考与二进制格式、源码/程序/数据哈希和八模型未完成项见[运行说明](../project/systemc/llm/README.md)及[逐步记录](SYSTEMC_LLM_INFERENCE_JOURNAL.md)。未修改RTL/物理流程；主机尺度选择和寻址并未映射成硬件。
+
+```bash
+cmake -S project/systemc -B project/systemc/build-llm -DCMAKE_PREFIX_PATH="$PWD/.systemc-deps/install" -DCMAKE_BUILD_TYPE=Release -DBLOCK_SANITIZE=ON
+cmake --build project/systemc/build-llm -j4
+ctest --test-dir project/systemc/build-llm --output-on-failure
+mkdir -p "$RUN"
+project/systemc/build-llm/llm_bench "$CHECKPOINT" "$RUN"
+python project/systemc/llm/tools/validate_inference.py "$CHECKPOINT" "$RUN"
+```

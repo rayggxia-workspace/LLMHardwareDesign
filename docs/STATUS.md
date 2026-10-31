@@ -1,3 +1,5 @@
+2026-10-31 18:45 CST：Issue153在独立task/153-systemc-llm-inference工作树增加真实七宏FIFO的Qwen3/Qwen2.5/Granite完整自回归控制器；Qwen3与Granite短输入3新token吻合，Qwen2.5仍有量化分叉，未宣称精度通过。真实Qwen3.5首层R边界四步/32头/完整状态轮转通过，5项CTest及本地UBSan通过。逐步问题/解决/失败/剩余项见docs/SYSTEMC_LLM_INFERENCE_JOURNAL.md，代码和回执见project/systemc/llm。其余五模型未完成，Issue153保持开放；PR尚待本轮创建，未合并；登记沿用上次pending证据、看板unverified/同步pending。未改RTL或其他会话作业。
+
 2026-10-31 00:15 CST：独立Issue143七宏改造在隔离工作树执行，草稿PR144基于Issue121分支；不接管主任务。E/G通过300MHz全部最终门、六文件/几何及含源绑定包，本地实收复核通过；S/T精确同源和本地最终文件复核通过。M完成原生六阶段、最终物理和三初态功能，DRC/LEC继续；N因UQ0.16不兼容有符号S16 M改为Q1.14，RTL通过，重新物理/最终门93829/93831；R93808独立物理、93825依赖验收。七宏尚未齐；规格docs/BLOCK_V2.md、记录work/YUZE-LU/143/README.md。登记pending、看板unverified/同步pending、审查待指定。
 
 2026-10-30 23:29 CST：当前V588 CTS已完成，603封存15原始/315源Git与远端SHA；内部LEC54010/53999、差异全0、UNSAT/IDENTICAL，5295时钟网none。CTS setup WS−.000479172ns/1项，hold WS−.0108806ns/4项，标准单元712309µm²，仅中间证据，原生布线和全部最终门继续。修订合同顶部改为当前规格，历史速记保留末尾；R404原GRT继续，M/S/T保持、五宏最终未齐。登记pending/看板unverified同步pending/审查待指定。
