@@ -1,5 +1,7 @@
 # 既有bridge辅助宏与块内供数器的实现归属
 
+> 当前系统设计以[RTL推导总方案v0.2](SIX_CONNECTION_SYSTEM_DESIGN.md)及[原生接口审计](RTL_NATIVE_CONNECTION_AUDIT.md)为准；本文保留第一阶段固定来源，不能将其通用描述用于覆盖当前原生命令合同。
+
 本研究属于 [Issue #151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151)，配套[六类方案](SIX_CONNECTION_SCHEMES_STUDY.md)。只读核对既有源码、生成器和证据索引；没有修改 PR #132/#133/#144 的分支、RTL、配置或服务器作业，没有重跑仿真或物理验收。
 
 - 核验身份：Melodydt（GitHub ID 172562968）。

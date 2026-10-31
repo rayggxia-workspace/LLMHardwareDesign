@@ -108,7 +108,9 @@ def validate(c):
         if t['id']=='gdn':
             need(precedes('head_norm_full','z_gate'),'GDN_norm_gate_order')
         if t['id']=='ssm':
-            need(precedes('state_decay_preload','conv_tiles_saved'),'SSM_preload_order')
+            need(precedes('conv_tiles_saved','coeff_injection') and
+                 precedes('coeff_injection','state_context_preload') and
+                 precedes('state_context_preload','update_tiles_saved'),'SSM_two_pass_preload_order')
             need(precedes('z_gate','channel_norm_full'),'SSM_gate_norm_order')
         if t['id']=='gated_ffn':
             need(precedes('gate_pack','gated_mid') and precedes('up_pack','gated_mid'),

@@ -40,3 +40,12 @@ python work/Melodydt/151/verify_system_design.py --root .
 ```text
 python work/Melodydt/151/verify_rtl_baseline.py --root .
 ```
+
+## 2026-10-31T20:30:44+08:00：当前RTL推导重写v0.2
+
+- 入口：[总方案](../../../docs/SIX_CONNECTION_SYSTEM_DESIGN.md)、[原生审计](../../../docs/RTL_NATIVE_CONNECTION_AUDIT.md)；原生附录分M/S/T、N/E/G、R。七宏原生接口未统一，本轮统一的是待实现的外侧控制合同。
+- 固定faabeda/643c6012；复用Issue151/PR152，PR基分支仍task/143-seven-block-v2。当前真实上传head/CI以PR回执为准，不把输入基线写成输出commit。
+- 本地独立目录`D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/151/rtl-redesign-faabeda/integrated`；与原merge/system包和根管理参考副本隔离，为部分API检查包、非Git clone，无本地暂存区。仅白名单文档/合同/校验/进度上传，不上传RTL、草稿/源码副本、其他会话或ref-project。
+- `rtl-derived-contract.json`保存7个实际ANSI接口签名和源码指纹、11项关键边界；`system-design-contract.json`更新完整两遍SSM preload位置和原生命令例子。`verify_rtl_design.py`仅作源码漂移/声明一致性检查。
+- 当前回执：`rtl-redesign-verification.json`、`system-verification.json`、`integration-verification.json`及`rtl-redesign-checks.json`；旧verification/integration-checks保留各自历史身份，不描述为当前RTL运行结果。
+- 实际静态检查通过后供独立审查；完整产品编译、RTL/SystemC/EDA/整数oracle未执行，无服务器作业。审查/合并待完成，登记PR5 pending，看板条目unverified/同步pending，处理人待指定。

@@ -1,228 +1,115 @@
-# 固定产品的预制控制器与母子协调设计
+# 从现有七宏RTL展开的固定产品控制规格 v0.2
 
-> 集成更新：本研究分支已实际合入PR144固定643c6012的七宏RTL，见[当前实现基线](SEVEN_BLOCK_RESEARCH_BASELINE.md)。下文旧5e/aac来源仍是历史合同/资格引用，不是当前分支缺少RTL；接口相同，新增系统硬件仍未实现。
+配合[总方案](SIX_CONNECTION_SYSTEM_DESIGN.md)和[原生审计](RTL_NATIVE_CONNECTION_AUDIT.md)。基线为研究分支faabeda、导入PR144固定643c6012。外部控制均待实现，不改变叶宏接口，不宣称已有统一控制总线。
 
-本稿属于 [Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151) 第二阶段研究，配套[总方案](SIX_CONNECTION_SYSTEM_DESIGN.md)与[六模板规格](SIX_CONNECTION_TEMPLATE_SPEC.md)，由PR152交付待独立审查。方案状态为 **proposed**：没有新建或修改叶宏RTL，没有运行RTL/SystemC、综合或布局布线，也没有测得本稿控制器的面积、频率和功耗。第一阶段来源为 [六项研究](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/49a34e75657025244fd33af56111029868008db8/docs/SIX_CONNECTION_SCHEMES_STUDY.md)、[bridge归属审计](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/49a34e75657025244fd33af56111029868008db8/docs/SIX_CONNECTION_BRIDGE_AUDIT.md)及[协调候选审查](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/49a34e75657025244fd33af56111029868008db8/docs/SIX_CONNECTION_COORDINATION_CANDIDATE.md)。
+## 1. 两级控制与端口独占
 
-## 1. 固定产品的控制边界
+母控MODEL_CTRL保存固定程序PC、有限循环、token/layer/head/tile索引和等待事件，发完整局部任务，不发送每拍payload。局部控翻译为原生握手、地址和命令，叶宏FSM继续内部计算。首版只新增这两层，单时钟域。
 
-同一批预制底座保持相同晶体管、M1–M10、叶宏/支持逻辑实例、公共PG/CTS和预制连线；M11/M12定制时确定目标模型和获准的产品连接。每个成品运行期间无需切换任意计算图，也不要求FPGA式通用路由。不同产品需要不同的控制顺序，但不能在定制阶段重新综合和替换预制FSM。
+| 原生端口/资源 | 唯一驱动/接受者 | 协调原则 |
+| --- | --- | --- |
+| M.cmd及M.rsp_ready | M_CTRL | bank、唯一结果上下文、scale版本 |
+| M.A/B payload和metadata | 现有S_LOADER | M_CTRL通过S_CTRL请求，不另接输入驱动 |
+| N.cmd/rsp | N_CTRL | 全组锁定，轮次和目标长度在外部记账 |
+| E.in/out | E_CTRL | 收齐A/B/C后提交，保存输出和tail |
+| G.in/out | G_CTRL | x/gate配对、两lane流水在途标签 |
+| R.cmd/rsp | R_CTRL | 装载有效位、候选与局部commit/revoke |
+| S.req/wr/addr/din/take及loader描述符/done_take | S_CTRL | 读写均排空响应，首版与loader串行 |
+| T控制、write、read_take | T_CTRL | 单租约、顺序写、发布、读完释放 |
+| 外存请求/响应 | MEM_CTRL（新增） | 地址/故障/写确认，平台接口待定义 |
+| 系数/宽归并 | NUM_CTRL（新增） | 缺失算术独立计成本与误差 |
+| 外部state/history根 | STATE_VERSION_CTRL（新增） | 初始化、导出、失败恢复与切根 |
 
-因此，首选候选是 **预制简单顺序器、固定程序ROM和局部FSM；M11/M12接通预留的model_select端，永久选定一个产品包入口**。这不等于运行时支持任意改图，也不等于已具备八模型程序。当前六类算子模板只是软件/规格层的覆盖清单，完整产品程序、参数记录和静态映射还需要实际编译、核验与接收。
+Attention/FFN/GDN/SSM/MoE是固定程序段。多个物理簇若复制宏可以分别拥有局部控；共享M/S仍不能被两个阶段并驱。
 
-固定模型仍有动态控制：decode的token位置和KV长度、输入有效长度、MoE专家ID、存储响应时延、背压、数值失败及状态提交。控制顺序可以固定，步骤的完成时刻不能全部写成固定等待若干拍。
+## 2. 外侧任务与完成合同
 
-## 2. 首选固定ROM与一次装载备选
+以下为逻辑字段，位宽待完整产品编译和资源规模决定，不是已综合端口宽度。
 
-| 工程项 | 首选：预制固定ROM＋永久产品选择 | 备选：预制可写控制存储＋冷启动一次装载并锁定 |
-|---|---|---|
-| 预制内容 | 顺序器、所有获接收产品程序/参数/入口记录、公共局部模板、选择译码 | 顺序器、容量有上限的控制存储、装载/长度检查/锁定及启动接口、公共局部模板 |
-| M11/M12作用 | 连接model_select及产品数据路径；不能写入此前不存在的程序 | 固定产品数据路径与产品身份；程序从明确的启动源装载 |
-| 运行时 | 从固定入口执行，只接受受限运行参数 | 每次冷启动装载对应产品程序，检查兼容后锁定，推理期间禁止改写 |
-| 优点 | 无程序装载依赖；固定产品边界直接；可去掉通用运行时改图功能 | 不必把所有产品程序同时放入只读逻辑；支持预制容量和原语范围内的程序修订 |
-| 代价 | 未使用程序也占底座资源；新模型/新数值原语可能要求新底座；常量ROM的综合/布局成本必须实测 | 需要真实可写存储、装载协议、启动时间和错误恢复；不能把这些容量免费借自S16KiB |
-| 能力限制 | 选一个ID只能选择已有并通过编译检查的程序，不能自动支持未知模型 | 程序只能使用已预制原语、容量及实际定制线路，不能补出缺失的计算或路由资源 |
+任务：`valid/ready, task_id, epoch, template_id, op, src_handles[], dst_handle, valid_elems, type_id, frac_bits, layout, parameters, expected_version`。handle绑定S/外存、base/word数、有效元素、lane顺序、owner、版本及引用数；有效范围不得超预留空间，使用中禁止覆盖。
 
-“一次装载”指每次冷启动进入RUN前的一次受控过程，不是承诺普通ROM可以改写，也不等于掉电后程序永久保留。若使用标准单元寄存存储而非独立存储宏，位数、译码、复位/写控制及取指能耗都要计入。若从S划出程序区域，必须相应扣减工作存储并重新检查端口争用，不能继续报告完整16KiB工作区。
+完成：`valid/ready, task_id, epoch, event_kind, status, saturated, produced_handle, progress`。valid保持至握手且payload稳定；响应排空前不复用ID。旧epoch事件只能排空，不能完成新任务。母控复位/取消不能凭空清掉仍在叶宏中的操作。
 
-model_select只能连接已经预留的常量信号源或合法输入端点。不得在定制层新增tie cell；常量接点、电气/PG边界和采样时序需要按实际平台验证。建议只在协调复位/启动时采样一次，运行期间不接受选择变化；非法/保留ID进入不发任务的错误态，不静默选一个默认模型。
+| 事件 | 成立条件 | 不能据此推出 |
+| --- | --- | --- |
+| compute_done | 计算应答接受、错误已锁存 | 输出已读出/写入S |
+| data_ready | 全部结果保存到保持槽/目的存储，写应答已接受 | T或外部版本根已发布 |
+| publish_done | 指定T批commit握手无协议错误，或外部根发布完成 | 下游已取完或外存已耐久 |
+| release_done | 最后消费者取完、资源释放完成 | 其他资源也回滚 |
 
-初版可研究4位产品编号：0为无效，1..8留给八个样本候选，余码保留。**这只是编码预算点**，不是八个完整程序已实现或4位已冻结；如果同一模型的量化/形状/版本形成不同产品包，应独立编号或由不可变入口记录明确区分。
+首版每叶宏一个局部任务、一个保持型完成槽；N一个整组，R一个局部context，T一个租约。G可多项在途，按接收顺序维护标签/tail队列，队列满反压。最终深度由仿真和物理预算决定，不能默认无限队列。
 
-## 3. 产品包必须包含完整程序，而不只是六个模板名
+## 3. 最小局部状态机
 
-一个可冻结产品包至少包括：
+### 3.1 M_CTRL与S_CTRL
 
-1. **整产品控制程序**：从输入/权重准备、层序列、prefill/decode入口、投影、注意力/递推、FFN/MoE、缓存/状态更新直至输出发布的完整阶段顺序。循环和共享子程序可以压缩程序，但不能省略数据搬运与等待。
-2. **局部模板绑定**：指定哪个预制子控模板实现M分块、N多遍Norm/Softmax、E格式/RoPE、G激活门乘、R状态及T事务；逐个绑定已存在的opcode和端口合同。
-3. **常量参数记录**：层类型、H/I/head尺寸、布局、权重/参数偏移、Norm范围、epsilon、量化尺度/舍入点、最大长度、允许路径和存储区间。需要数值实验才能决定的常数不能由控制稿编造。
-4. **动态参数来源表**：哪些值来自请求（B/S/有效长度）、当前token/已提交KV元数据、TopK结果、外存响应或数值服务；逐项限定范围和版本。不能仅写一个未定义的“参数输入”。
-5. **资源与存储计划**：同一M结果上下文、N向量上下文、R状态/影子、T单批、S真实bank/端口以及外存区域的占用、读写顺序和复用条件。
-6. **连接/基线身份**：不可变底座版本、叶宏版本、产品程序与参数表版本、实际M11/M12连接清单和接口编号。程序引用路径不存在、格式不符或版本不符时拒绝启动。
+`RESERVE → ENSURE_SCALE → REQUEST_LOAD → WAIT_LOAD → EXEC → WAIT_EXEC_RSP → READ_RESULT → PACK/STORE → COMPLETE`。
 
-建议将程序、参数、连接和测试来源的SHA-256绑定在离线产品manifest；这不意味着需要新增片上SHA引擎。片上至少检查合法产品入口、模式/版本码、长度和地址边界，具体校验成本另行决定。
+- factor/left是M全局状态，reset默认1/0，op6不恢复。显式op4或证明scale版本匹配，不能跨任务混用。
+- loader描述符带bank、rows、tiles、A/B格式、reuse_b、两个对齐基址。银行可装载才提交，保持字段至load_ready；取走done并查done_error。
+- EXEC应答只表示计算结束，仍按行/half发op3/op5读取。独立投影首K块clear=1，后续块clear=0且保持结果映射；切换投影先物化。
+- op5选S8/S16/S32，但返回四个S32容器；送S16要E13或已验证packer。S64后续运算另列宽算术。
+- reuse_b须bank、宽度、tile数、权重身份/版本全部相同。首轮例子禁用，避免残留B。
 
-固定ROM可以复用公共微程序和局部FSM，但产品完整性应逐个证明。例如Qwen3.5的GDN/全局层序列、Gemma局部/全局窗口与额外Norm、Falcon双支汇合都必须进入产品记录。不能因为Attention、Norm、FFN、GDN、SSM、MoE六个模板存在，就勾选八个整模型已支持。若实验只覆盖decoder层或已给系数的R切片，产品包必须明确该边界；整模型还需说明embedding、最终Norm/LM head、输入输出及token推进等未包含部分由谁承担。图册主要验证FP32、B=1/S=2、无历史缓存导出；本稿仍未取得整模型定点或decode接收证据。
+S_CTRL首版普通口一项在途：`ISSUE(req&&ready) → WAIT(valid) → TAKE → RESPOND`；读写都走应答，不在req握手后报告写完成。loader与普通访问串行，未来重叠需证明内部争用、地址及银行安全。外存搬运也经唯一服务。
 
-### 3.1 受限控制原语
+### 3.2 N_CTRL
 
-首版顺序器只需支持受限原语：发起局部模板、等待指定完成类型、取得/释放上下文租约、受限循环、条件错误转移、标量参数读取和最终发布。无需任意前驱表、通用ROB或可编程跨宏路由。
+`LOCK_GROUP → BEGIN → STATS_LOOP → FINALIZE → [EXP_LOOP → FINISH_EXP] → REPLAY_LOOP → STORE → UNLOCK`。TopK另走begin/load/select，仍独占N。
 
-可用如下伪代码表达一个长K投影，而不是中央逐beat控制：
+N无expected_total寄存器。外部记录目标N、各轮已接受count、已返回响应与写入数，只有精确达标且排空才FINALIZE/FINISH_EXP/完成。BEGIN不能插入尚在回放的组，raw/EXP/gamma绑定同一版本。
 
-```text
-ACQUIRE M_RESULT(ctx)
-RUN M_CTRL.PROJECT(desc, source, weights, output)
-  # 子控内部循环K段：S供数→装载完成→M执行→错误检查
-  # 所有K段完成后读出、重打包、写入已预留目标并等待响应
-WAIT DATA_READY(output, version)
-RELEASE M_RESULT(ctx)
-```
+STATS/EXP/REPLAY每次count1..8，TopK LOAD每次1..4对。padding不计数。Softmax至少一个有效key并校验mask；RMS/L2的epsilon、gamma、输出单位由产品指定。错误停止新命令、排空后清理，不能依赖N拒绝所有外部长度错误。
 
-需要动态循环边界时，只能从上述来源表取得并检查。例如decode使用已提交KV长度；MoE在唯一0..39专家ID合同下按固定布局从地址表选权重，执行最多top8次专家计算。动态专家ID改变的是访问参数，不是产品程序或金属连接。
+### 3.3 E_CTRL与G_CTRL
 
-## 4. 两级新增控制与唯一所有者
+E：`FETCH_A/B/C → ALIGN_ROLES → ISSUE → HOLD_OUTPUT → STORE`。收齐同task/range/version操作数；叶宏锁存输入不等于外部已有join。无count，尾字独占、无效lane补零后整128bit写S并记录有效数；共享尾字须新增RMW/仲裁。op13四S32→低64bit四S16，两响应拼8S16；不能用高64bit零覆盖另一half。
 
-```text
-                  固定产品ROM/参数表
-                           |
-                       MODEL_CTRL
-          阶段/循环/事件等待/租约/错误/发布
-         /        /       |       \       \
-     M_CTRL   N_CTRL    E_CTRL   G_CTRL   R_CTRL  T_CTRL
-       |         |        |        |       |       |
-     按端口唯一接管原生接口，维护局部在途状态
-         \        \       |       /       /
-                 S访问仲裁与实际外存访问器
+G：每8S16字拆四个2lane包，`in_x=激活分支`、`in_gate=线性分支`。fn0 SiLU、1 Sigmoid、2 GELU_tanh、3 Softplus。ungated且fn1输出Q1.14；gated fn1乘gate后右移14、其余右移10，按gate Q10合同输出Q10。整个流水随out_ready停顿，tag推进以真实握手为准，不能固定逐拍计数。
 
-S内已有loader→M的A128/B512保持专用快路径，不另造免费loader。
-```
+### 3.4 R_CTRL与外部版本服务
 
-端口所有权细分：M_CTRL拥有M命令发射与响应接受；M的A/B payload由S内已有loader驱动，S_CTRL管理其描述符、租约和装载完成，M_CTRL仅请求供数服务。不能把图中的M_CTRL理解为另一份A/B驱动者。其余共享S访问也由S_CTRL唯一仲裁。
+`RESERVE_OUTPUT_AND_EXPORT → OPEN → RESTORE_OLD → LOAD_PARAMS → CALCULATE → READ_CANDIDATE → LOCAL_COMMIT → EXPORT_NEW → CLOSE_TILE`。commit前错误可REVOKE；commit握手后进入不可盲撤销窗口。
 
-母控负责模型阶段和资源生命周期；子控负责宏级操作的原生命令展开、地址/逐包计数、背压和结果写回；叶宏内部原有FSM继续负责本地算术。对于一套共享七宏，不增加多个Attention/FFN/GDN控制器分别直接驱动同一M/N/S。算法层次首先以母控的子程序/ROM入口表达；真正的共享资源始终有唯一的命令所有者。
+op12两次读8S32候选输出，COMMIT清output_valid，所以先保存输出；COMMIT成功后按实际装载/更新范围导出：纯state pass只op11新state，纯conv pass只op14新history，融合切片两者都已有效才读两者。pending期间这两个读口仍是旧active，没有通用shadow/history_next导出口。
 
-### 4.1 候选母子接口
+多tile外部保留old_root：装旧tile→计算→保存输出→局部commit→导出新tile到next_root；所有tile及所需输出完成才发布next_root。失败丢弃未发布next_root，按old_root恢复。cold start必须显式给零状态或校验过的初始版本，不能默认未初始化内容为零。
 
-| 通道 | 候选字段与握手 | 行为 |
-|---|---|---|
-| job | `job_valid/job_ready`，`job_id、template_id、arg_record、graph_epoch、context、source/dest slot/version` | 成功握手后子控持有任务，参数不得被后续任务覆盖 |
-| event | `event_valid/event_ready`，`job_id、event_kind、status、valid_range、failed_rows、context_held` | 事件和内容保持至母控接收，不能依赖单拍done被及时轮询 |
-| lease | 母控保存resource→owner/version；子控报告哪些候选仍保留 | 操作完成与租约释放分离，未释放上下文不得换owner |
-| S/外存访问 | 固定连接的请求/响应，来源标识、地址、读写、长度和数据 | 只有真实目标确认，才能形成对应data_ready；不创造额外存储端口 |
-| stop/drain | `stop_new、drained、partial_commit/status` | 停止新输入与已接受操作排空分离；排空前不能复用标签/缓冲 |
+SSM须预置element decay(op15)，general op5 index0仍须发以置param_valid；所有x/inject、skip半包和使用范围decay均须有效。COMMIT交换bank后下一步重载inactive decay。conv跨多个8lane tile时先遍历卷积：保存输出、局部history commit并导出，再OPEN下tile；状态遍历重装旧state与输入/decay。全head/channel Norm前输出先S/外存物化，不能一直占一个R pending。
 
-接口字段宽度尚未综合选择。arg_record可以引用固定参数ROM，避免每条job重复发送整份描述符；动态地址/长度通过有限参数寄存器传递。上述字段保存在外层支持逻辑，不表示现有叶宏已经新增同名引脚。
+### 3.5 T_CTRL
 
-五类事件保持第一阶段语义：原生命令接受、运算完成、数据就绪、发布完成和消费释放。它们不必都各发一条总线消息。job握手只表示子控接管任务（job_accept），不能据此推断原生命令已接受；native/cmd_accept仍由对应原生valid/ready得知并在子控内计数。子控聚合compute/写响应，一次宏级任务通常仅保留一条有类型的最终事件。R的提交、T的发布/释放用显式任务返回独立事件。这样既保留语义，也避免每个G数据包都占中央事件带宽。
+`WAIT_EMPTY → BEGIN(1..384) → FILL_IN_ORDER → WAIT_SEALED → COMMIT → DRAIN → RELEASE`。write_index从0顺增，写满才sealed。非法begin大小使begin_ready=0且置protocol_error，不能无限等一个不存在的错误response。
 
-### 4.2 首版资源约束
+T单租约同步读，commit后经READ_REQ产生首读启动等待，READ_HOLD在take边沿直接refill，连续take可每拍一字；反压时read_data保持。吞吐需计首读/填充/提交/释放开销。最后take后到RELEASE，release握手才EMPTY。read_last无元素tail。protocol_error粘性，首版停止发布、记录上下文并走平台安全复位恢复，不假设REVOKE清错误。
 
-- 同时一个graph instance/epoch，但分别维护M结果、N向量、R状态及T批次身份，不能用“单context”混淆这些不同资源。
-- 每个子控最多一个宏级job在途。M结果租约从第一段累加开始，持续至结果读出并写入承诺位置后；中途不可让gate/up或其他投影覆盖它。
-- N在整向量统计/因子/回放完成前保持向量上下文；ready不等于空闲可换向量。
-- R操作端口空闲时仍可能保持待提交history/state；子控事件需置`context_held`，母控可执行E/G/N，再返回同一R上下文。
-- T保持单批租约，1..384个128位字。写满、提交、读末字、释放分成明确步骤。
-- G在一个任务内可以流水处理数据包。首版同一任务固定函数和门乘模式，packet序号/尾包可以由顺序计数推导；不同任务不混流。四级在途及外围FIFO占用仍须计数，不能接完输入就清上下文。
+T只保护本批。大于6KiB分批时需定义部分可见还是外存根一次发布；分批commit不是全tensor原子。R/T没有联合原子提交。
 
-## 5. 固定数据路径与共享S的实现纪律
+## 4. 资源、取消和故障
 
-模型固定不消除同一资源在不同阶段接收不同输入的需求。多个输出不能用金属并接到同一输入；需要预制的有源选择器、固定共享存储访问线或明确的分时中转。必要输入选择/存储仲裁与FPGA式任意路由是不同边界，前者仍需完整计价。
+母控首版串行取得整组上下文，S在微命令间仲裁。接受任务前预留目的槽、输出保持槽与必要外存；禁止持有不能释放的输出再等待已被自身占满的输入槽。仲裁须无饥饿或有界轮询；运行无死锁是仿真/形式验收项，静态DAG不构成证明。
 
-首版所有普通S请求经过唯一S_PORT_ARB。S内loader使用宽读时占用真实四bank，窄口访问不能被各子控当作独立端口。保守策略是先安排一个可完成的loader窗口，再安排普通窄口读写；只有已证明不会饥饿且有容量时，才放开重叠。每次写回都等待所需响应，不能在req尚未被接受或旧响应仍占用时发布数据。
+fork用引用数，消费者领取同版本只读handle、最后完成才释放。join校验task、epoch、范围、类型和版本；不能简单valid相与丢失不同延迟分支。
 
-S内loader只负责把描述符的A/B数据交给M，不负责M执行或整模型依赖。`load_done`与M `compute_done`分开；`reuse_b`还需要母控/子控保存权重身份和版本，不能只因bank有效就推断驻留的是正确专家或层权重。
+| 取消点 | 动作 | 恢复限制 |
+| --- | --- | --- |
+| 尚未向原生口呈现valid | 撤销本地待发、释放预留 | 不影响其他owner |
+| valid已呈现但未握手 | 保持valid与payload至握手，之后按已接受操作排空 | 除非另有允许撤回的明确原生合同，不中途撤valid |
+| S loader已接受、M未EXEC | 继续允许A/B接收，等done排空；必要时M op11清输入bank，再释放 | loader无abort，不能停A/B造成WAIT_LOAD卡死 |
+| M/N/E/G已接受 | 停新输入、排空响应后丢未发布槽 | 无整命令rollback；M清结果，N清理后重BEGIN |
+| R pending、未commit | 排空读应答、op8 REVOKE并取回应答 | 旧active保留，先前已提交conv不被此次revoke回滚 |
+| R commit已握手 | 保护输出staging/T、等R应答 | 成功后下游失败为partial_completion；仅旧根仍保留且新根/输出尚未可见时从旧根恢复，已有可见部分则走另定恢复协议 |
+| T未commit | 在原生允许状态revoke | 只撤销T，不能撤销R/S/外存修改 |
+| T已commit/在read | 按原生状态完成排空/释放或平台定义丢弃 | 消费者可能已看见，不宣称整步回滚 |
 
-全阶段物化基线先保存gate/up，再生成完整Mid，然后执行down；down累加期间不复用单M做其他投影。长Mid超过S16KiB时使用明确且实际存在的外存通路。外存保存中间张量不等于可恢复M内部S64结果上下文；M没有通用result-restore命令。若要生产Mid和down交错，需要新增M实例、显式多上下文或可证明的外部部分和方案。
+保留原始macro/op/index和错误状态。M/N/E/G饱和由产品策略决定允许、计数或失败；R无saturated口，T无commit_error口。平台外存故障恢复待实现，不能凭新增逻辑字段宣称已有能力。
 
-## 6. R候选保持、发布与取消排空
+## 5. 固定程序与物理约束
 
-R_CTRL不应封闭成“自主完成整个GDN，内部等待N/G”，而母控又只在R_CTRL整任务结束后才发N/G。首版把跨宏往返放在母控程序中：
+程序原语包含有界CALL、循环、指定事件等待、错误跳转、缓冲申请/释放和版本发布。译码、ROM容量、计数宽度及错误分支在预制前实现。产品选择冷复位锁定；运行参数只改变合法长度/地址/专家ID。
 
-```text
-装载R state/history/taps及本轮所需系数
-RUN R_CONV → WAIT CANDIDATE_DATA_READY，R租约继续保留
-RUN E格式 → RUN G激活 → RUN N归一化/布局步骤
-RUN R_UPDATE → WAIT CANDIDATE_DATA_READY
-保存候选输出 → 明确的R_COMMIT与后续输出发布
-```
+编译器拒绝不存在路径/算术、超S/T/R/ROM容量、未定义数值尺度、长度不符、端口重复驱动和未定义故障恢复。完整产品程序未编译，不虚构ROM字数；可写控制存储备选单列装载/锁定成本。
 
-Falcon同一R做卷积和SSM且共同提交history/state时，op1/state和op15/decay必须在产生pending_history前装好；不能卷积后再假定可装入这些数据。R提交会清候选输出有效性，必须先保留输出。SSM每轮需重装逐元素decay，shadow不能同时被计为另一份免费完整状态/因素缓冲。
+局部控靠宏，S仲裁靠S、T_CTRL靠T，母控只传任务/事件；长ready链用预制寄存隔离，CTS/复位一起预算。区域层依据线长、扇出、拥塞证据增加且保持资源独占，不凭层数估PPA。
 
-对一个能够完全驻留R的局部context，首版默认顺序可定为：候选输出先完整保留并完成约定的下游处理，T写满到SEALED（或写入外存私有staging），然后R_COMMIT成功，最后T_COMMIT发布。R提交失败时撤销未提交T并处理R未提交候选。R op7的命令接受不等于提交结束，必须等待COPY阶段后的成功响应；T原生commit没有独立error响应，SEALED状态的有效commit握手即进入READ_REQ，异常应具体记录为复位、协议违规、未接受或外部发布失败。
-
-一旦R_COMMIT已经被接受，软停止不能先撤销T或丢弃staging，须先收齐R的真实提交结果。R成功后进入“状态已生效、输出待发布”的不可取消区；T或外部发布异常记部分完成并停止该context，保留恢复资料。R最大epoch会拒绝提交，不得靠回绕生成新身份。
-
-R_COMMIT与T_COMMIT不构成跨宏原子事务。若状态先提交、之后输出发布失败，不能回滚已提交状态；若输出先提交、R失败，也不能撤销已提交T。要求掉电恢复、全层原子性或恰好一次输出时，需要额外持久描述符/日志与恢复协议；当前不授予这些能力。超过T6KiB的输出必须先有明确外存staging或分批发布合同，不能假定T同时保留完整结果与多个批次。
-
-### 6.1 多个R tile不等于一个可驻留R context
-
-R的活动/影子状态各为256×8个S32，value/channel方向仅8lane。GDN每value-head 128通道的Norm需要收集多个8lane tile；Falcon更要收集4096通道后才完成全组Norm。单R不能把所有tile的pending_state一直保留到全组Norm及输出投影结束：OPEN和重装受到pending限制，且没有第三份完整候选银行。因此上述局部context的R/T顺序不能直接宣称为整个token的提交方案。
-
-面向完整模型，需要明确选择一种额外边界：
-
-- **受限切片原型**：只接收一个R局部tile的事务/返回路径，验证局部提交；不声称完整GDN/SSM token或全组Norm已经闭合。
-- **外部版本化状态服务候选**：每个tile局部R_COMMIT后读回新active到私有外存版本，保留旧的已发布外存根；允许R释放局部上下文处理下一个tile。收齐所有tile和下游结果后再按规定发布新根/输出。卷积history同样需要跨tile的版本管理。当前R只有活动状态读出，不能假设在pending时可直接导出整份shadow。
-- **增加驻留/导出能力**：更多R实例、额外候选容量或shadow导出接口，形成新硬件版本并重新验证。
-
-外部版本方案必须实际实现候选区容量、状态/历史读写、根描述符/写确认、故障恢复及带宽核算；它不是现有T或R自动提供的全局原子性。控制程序应分别使用`R_LOCAL_COMMIT_DONE`和`STATE_ROOT_PUBLISHED`等有区别的事件，不能只用一个COMMIT完成位。
-
-建议首版使用fail-stop恢复边界：
-
-1. 错误发生后停止新job，不把epoch加一当成已取消。
-2. 已接受的读写/算术输出由各子控继续接收或排空，保留其真实状态；不能丢弃响应使原生接口永久堵住。
-3. 仅在尚未进入R_COMMIT已接受的受保护窗口时，才可失效可撤销目标槽；R未提交候选可REVOKE，T在FILL/SEALED且不受该窗口保护时可REVOKE。窗口内先收R结果；成功则保留T/staging完成发布或报告partial，不能因软停止提前丢弃它们。
-4. 等待子控、事件和外存访问器确认排空，再释放可释放的租约和标签。已确认外部写入或已提交状态不能假定撤销。
-5. M部分行失败时禁止盲重发整条追加命令；首版将受影响结果上下文标无效并走明确重算路径。必要时通过协调复位/重装恢复，不能仅局部reset一个宏后继续使用旧数据。
-
-硬复位与软停止分别定义。复位通常清控制/有效位而非payload；系统复位前后需要保证迟到响应不会被下一个job认领。更细粒度取消是后续能力，不在本稿首版保证中。
-
-## 7. 有限容量与候选预算点
-
-| 项目 | 首版候选 | 选择理由与待验证 |
-|---|---|---|
-| 产品选择 | 4位ID，0无效，至少8候选入口 | 产品包数量/版本增长、选择接点与复位采样未验证 |
-| graph并发 | 1个graph instance | 降低上下文/仲裁复杂度；不是每层仅一个向量或仅一次tile |
-| 宏级并发 | 每子控最多1 job | 保留唯一所有者；可在不同资源独立时逐项放开并行 |
-| job/event槽 | 每子控各1个保持槽；可比较深度2 job队列 | 开始前预留event槽，避免“完成却无处报告”；总线吞吐需实测 |
-| 数据弹性槽 | 对可背压ready/valid边比较2×128bit | 只缓冲有限停顿；不是完整tensor存储；32/512bit端按真实比例计价 |
-| G流水 | 同任务包按两lane连续，最多实际四级在途＋外层槽 | 固定任务模式下可用计数减少tag开销；需乱停顿/尾包守恒验证 |
-| 控制存储 | 先以128bit指令、2048/4096项作为32/64KiB预算点 | **未选定容量**；应先编译完整产品程序，再比较压缩、局部FSM和面积，参数ROM/入口记录另计 |
-| 循环与返回 | 优先固定嵌套计数器/有限子程序深度 | 具体深度从产品程序导出，不能假设任意递归或无限循环 |
-| 数据与地址 | 128bit搬运容器；地址/步长按实际外存边界选宽 | 不能把容器位宽当数值精度；地址加法越界必须检查 |
-
-控制存储预算公式应至少分别列出产品代码、共享代码、参数表、入口/版本记录、可写控制及取指/译码逻辑。常量ROM可以综合成标准单元选择网络，不能直接按SRAM bit面积估算；固定ROM与可写寄存阵列都需要实际映射。32/64KiB只是可审查的预算候选，不能当已完成容量分析或面积结果。
-
-无ready的旧宏必须独立建兼容模板：启动前提供覆盖最坏不可暂停输出burst的本地槽，或证明整个输出窗口的目标带宽已经保留。只在S里划一段空地址不能保证S端口及时接收。done脉冲需本地锁存，结果数据的有效时刻、数量和保持条件先有合同；未知时拒绝映射。当前七宏有ready/valid，本条不是其接口现状。
-
-## 8. 小型固定Transformer FFN控制例子
-
-采用一个固定模型的小切片：输入归一化、gate/up双投影、SiLU门乘、down和残差；单M/E/G。量化参数、gamma、权重和数据布局已在产品包声明。下述是事件顺序，不能据此给出未经测量的实际周期。
-
-| 母控阶段 | 子控内部工作 | 推进条件与租约 |
-|---|---|---|
-| NORM | N_CTRL读x统计、求因子、读x/gamma回放并写x_norm | `DATA_READY(x_norm,v)`；原x仍保留给残差 |
-| GATE | M_CTRL供数/执行所有K段、读出gate并写临时区 | gate写响应齐全才释放M结果租约 |
-| FORMAT_GATE | E_CTRL按声明尺度转换、保存有效gate元素 | 四S32→四S16时不能把高64位填零计作真实元素 |
-| UP与FORMAT_UP | 同一M/E顺序处理up | gate区保持；准备相同token/tile的另一输入 |
-| MID | G_CTRL成对读gate/up，局部流水激活/门乘，打包写回 | 全部Mid已物化并确认；按refcount释放gate/up |
-| DOWN | M_CTRL锁住结果上下文，循环所有K段，最后读出 | 不在该租约期间复用M做gate/up；Mid超S时真实读外存 |
-| RESIDUAL | E_CTRL匹配down结果与保留原x，计算输出 | 数据范围/版本匹配且输出写响应齐全 |
-| PUBLISH | T_CTRL按有限批次写满、commit、消费、release | 发布与释放不同；长结果显式分批，不假定6KiB装完整层 |
-
-固定程序可以写成 `NORM→GATE→FORMAT_GATE→UP→FORMAT_UP→MID→DOWN→RESIDUAL→PUBLISH`。每个阶段等待真实完成事件，母控不每拍发送G的两lane数据。后续若允许M/E/G重叠，仍需重新核对S仲裁、输出槽和M结果占用；不能只删除WAIT就认定安全。
-
-## 9. 布局布线与层次划分
-
-集中“决定阶段”不等于中央连线逐拍控制全片所有lane。建议把MODEL_CTRL和程序/参数存储作为独立支持区域；局部wrapper靠近对应宏，S_PORT_ARB靠近S，S→M的512bit路径优先紧邻安排。母控只传有限命令和事件，大payload不经母控中转。
-
-RTL的BRIDGE集合不必硬化成一块横跨全片的巨大宏。应比较分布式端口适配＋局部buffer、集中S仲裁、必要固定控制中继的放置。控制长线如需寄存、FIFO或中继，必须预制并计价；PR #133的bank/booster为组合缓冲，不能当寄存器或ready环路切断。
-
-首版维持同一时钟域；母/子控制层次不自动产生独立时钟域。当前叶宏300MHz资格不能授予新控制器/ROM和系统链路同频资格。对控制发令/返回与数据路径分别检查STA/电气，必要的额外握手往返由事件协议吸收，不用固定拍数假设掩盖长线。
-
-## 10. 关键取舍及接收计划
-
-### 取舍A：固定ROM首选还是一次装载
-
-首选固定ROM最符合产品运行不换模型的要求，但需要预制所有接收产品程序并承担其资源。一次装载降低同时驻留代码的压力，却增加可写存储、启动依赖与锁定控制。接收条件是：完整程序与参数实际编译、ROM/可写阵列同库综合、取指与启动时间、非法产品/超容量/不匹配程序的拒绝测试均有结果，才能冻结选择。
-
-### 取舍B：母控与资源子控，而非按算法复制控制
-
-首版使用母控ROM子程序表达Attention/FFN/GDN等算法阶段，物理资源接口只有一位所有者。代价是单资源阶段可能串行，但能避免重复FSM、争用和上下文覆盖。接收时比较固定FSM、简单顺序器和必要局部FSM的面积/控制流量/实际周期；不能仅凭层级更多认定布线更容易。
-
-### 取舍C：全阶段物化与单M上下文
-
-先物化、后消费使生命周期清楚，代价是S/外存流量和峰值容量。尤其长FFN与MoE必须有真实外存或宽归并资源；保存普通张量不能代替M内部结果恢复。接收时逐产品计算live range/字节数、访问带宽、最长M租约和输出峰值，再决定是否增加上下文或实例。
-
-### 取舍D：部分完成报告与更强事务保证
-
-首版保留R状态与T输出各自合同，遇跨提交故障报告部分完成并停止，不额外宣称掉电回滚或全层原子性。若需求要求更强保证，另设计持久日志/版本描述符/恢复并计入成本。接收需要在提交前后逐点注入故障，验证没有把已生效状态谎报为已撤销。
-
-### 后续实际验证
-
-1. 静态产品包检查：程序完整、局部模板/路径存在、ID/模式合法、容量和地址无越界、数值能力未缺项、数据版本与refcount、M/N/R/T租约闭合。
-2. 子控RTL：握手守恒、事件保持、G四级排空、M部分行失败、N全组屏障、R pending_history装载次序、T批次及外存迟到响应。
-3. 母子组合：固定FFN例子、Attention多遍、GDN/SSM不同顺序与返回、MoE动态ID；随机背压、错误、停止/复位，检查可终止性和未发布数据不被消费。
-4. 物理：实际综合/布局ROM和支持宏，完整固定控制网络与数据链路、PG/CTS、RC/STA、电气/几何及同源证据。只有通过后才能把本稿“候选”改为“实现通过”。
-
-本稿只形成设计与审查依据。项目管理结构检查不能代替上述业务验证；当前不存在本稿新增硬件的仿真或物理通过结果。
+运行验证待做：随机反压/长停顿、G在途tag、S写应答、N早FINALIZE外部拦截、M scale跨任务、R pending/commit窗口、T非法begin/tail/首读与连续refill、异常后无资源泄漏、版本失败恢复和非法产品选择。当前仅静态核验，未由系统RTL测试证明。

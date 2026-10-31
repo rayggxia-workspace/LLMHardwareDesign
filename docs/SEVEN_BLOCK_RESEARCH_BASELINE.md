@@ -45,3 +45,7 @@
 本地集成包：work/Melodydt/151/merge-pr144-643c6012/integrated；父目录保存三方输入与冲突记录，原system-delivery和根管理副本不覆盖。三方共同文档保留main规划及上游实施历史；progress/YUZE-LU只做合并冲突保留，不改写其业务结论。
 
 实际命令：check_project.py、verify_study.py、verify_system_design.py、verify_rtl_baseline.py，以及上游test_input_hold_guard.py轻量Tcl夹具。准确结果以本轮integration-verification.json和当前system-verification.json为准；Tcl夹具不是RTL或物理仿真。PR创建/分支上传、CI、审查、登记和看板分别记录，未合入main或验收前不标done。
+
+## 基于该RTL的新版系统方案
+
+本次依赖导入后的实质重写见[总方案v0.2](SIX_CONNECTION_SYSTEM_DESIGN.md)、[控制规格](SIX_CONNECTION_CONTROL_SPEC.md)、[六模板](SIX_CONNECTION_TEMPLATE_SPEC.md)和[七宏原生审计](RTL_NATIVE_CONNECTION_AUDIT.md)。基线保持faabeda/643c6012，未追随PR144之后的提交。新稿修正M v2缩放/读出、N整组长度、E/G容器与尺度、R两遍/局部提交及T首读/连续refill；外部控制器、NUM、外存和版本服务仍待实现。

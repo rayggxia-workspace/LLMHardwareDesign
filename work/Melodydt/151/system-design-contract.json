@@ -524,6 +524,18 @@
       "iteration_dependency": {
         "kind": "next_token_after_root_publish",
         "initial_version_required": true
+      },
+      "qk_post_l2": {
+        "input_frac": 14,
+        "output_frac": 14,
+        "q_E_op": 2,
+        "q_coefficient_raw": 1448,
+        "q_shift": 14,
+        "k_additional_scale": false,
+        "source_heads": 16,
+        "value_heads": 32,
+        "mapping_candidate": "key_head=floor(value_head/2); compiler must verify axes",
+        "numeric_quality_accepted": false
       }
     },
     {
@@ -551,18 +563,10 @@
           "completion": "data_ready"
         },
         {
-          "id": "state_decay_preload",
-          "controller": "STATE_VERSION_CTRL",
-          "after": [
-            "project"
-          ],
-          "completion": "data_ready"
-        },
-        {
           "id": "conv_tiles_saved",
           "controller": "STATE_VERSION_CTRL",
           "after": [
-            "state_decay_preload"
+            "project"
           ],
           "completion": "data_ready"
         },
@@ -583,10 +587,18 @@
           "completion": "data_ready"
         },
         {
-          "id": "update_tiles_saved",
+          "id": "state_context_preload",
           "controller": "STATE_VERSION_CTRL",
           "after": [
             "coeff_injection"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "update_tiles_saved",
+          "controller": "STATE_VERSION_CTRL",
+          "after": [
+            "state_context_preload"
           ],
           "completion": "data_ready"
         },
@@ -634,7 +646,13 @@
       "iteration_dependency": {
         "kind": "next_token_after_root_publish",
         "initial_version_required": true
-      }
+      },
+      "full_model_passes": [
+        "conv_history_export",
+        "activation_coefficients",
+        "state_restore_decay_preload_update_export"
+      ],
+      "single_tile_fusion_requires_preload_before_conv": true
     },
     {
       "id": "moe",
@@ -727,7 +745,10 @@
       "score_words": 33,
       "exp_words": 33,
       "T_words": 33,
-      "T_elements_last_word": 1
+      "T_elements_last_word": 1,
+      "expected_total_enforced_by": "N_CTRL",
+      "native_has_expected_total": false,
+      "S_reserved_span_bytes": 1552
     },
     "ffn8_s8": {
       "S_regions": [
@@ -784,7 +805,31 @@
       ],
       "S_reserved_bytes": 400,
       "T_words": 1,
-      "includes_input_norm": false
+      "includes_input_norm": false,
+      "native_commands": {
+        "scale": {
+          "op": 4,
+          "index": 0,
+          "data": 1
+        },
+        "exec": {
+          "op": 10,
+          "index": 0,
+          "data": 39045
+        },
+        "read_s16": {
+          "op": 5,
+          "indices": [
+            0,
+            1
+          ],
+          "data": 256
+        },
+        "pack": {
+          "E_op": 13,
+          "shift": 0
+        }
+      }
     },
     "ffn11008": {
       "intermediate_elements": 11008,
@@ -831,6 +876,21 @@
     }
   },
   "implementation_baseline": "643c6012a11cbf461146ac40fbf61485223fe946",
-  "research_parent_commit": "46b29c7664fefedf2de767ddcfb94a766cf341fb",
-  "implementation_record": "work/Melodydt/151/rtl-baseline.json"
+  "research_parent_commit": "faabeda68b3b098ba562d68517319e02725f5bc3",
+  "implementation_record": "work/Melodydt/151/rtl-baseline.json",
+  "design_revision": "v0.2_rtl_derived",
+  "rtl_research_baseline": "faabeda68b3b098ba562d68517319e02725f5bc3",
+  "rtl_corrections": {
+    "M_scale_survives_clear_all": true,
+    "M_op3_can_feed_E13": false,
+    "S_write_response_must_be_taken": true,
+    "N_has_mask": false,
+    "E_G_have_count": false,
+    "G_gated_sigmoid_output_frac": 10,
+    "R_s32_frac": "product_declared",
+    "R_ssm_requires_param_valid": true,
+    "T_startup_read_wait": true,
+    "T_steady_read_II": 1,
+    "T_has_commit_error": false
+  }
 }

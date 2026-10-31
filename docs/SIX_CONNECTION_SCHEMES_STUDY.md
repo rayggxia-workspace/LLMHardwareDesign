@@ -1,5 +1,7 @@
 # 七宏六类连接方案与协调机制研究
 
+> 当前系统设计以[RTL推导总方案v0.2](SIX_CONNECTION_SYSTEM_DESIGN.md)及[原生接口审计](RTL_NATIVE_CONNECTION_AUDIT.md)为准；本文保留第一阶段固定来源，不能将其通用描述用于覆盖当前原生命令合同。
+
 任务：[Issue #151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151)，负责人 Melodydt。第一阶段研究交付，待独立审查；下文保留“已有实现 / 结构核验 / 候选方案 / 待验证”的区别。
 
 当前七宏不能用一套已经存在的通用bridge串起来。已有协调资源分为三类：S内部的专用供数器、旧互联实验中单独硬化的辅助宏、实验顶层/软件模型中的外部控制。六类样本还需要显式的格式、布局、存储生命周期与阶段调度；GDN/SSM系数和MoE宽归并另有数值能力决策，不能隐藏在普通协议bridge里。

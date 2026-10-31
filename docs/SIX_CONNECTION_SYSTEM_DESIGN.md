@@ -1,222 +1,162 @@
-# 六类连接与固定产品分层控制总方案 v0.1
+# 七宏六类连接与固定产品控制总方案 v0.2
 
-> 集成更新：本研究分支已实际合入PR144固定643c6012的七宏RTL，见[当前实现基线](SEVEN_BLOCK_RESEARCH_BASELINE.md)。下文旧5e/aac来源仍是历史合同/资格引用，不是当前分支缺少RTL；接口相同，新增系统硬件仍未实现。
+任务 [Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151)，交付 [PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，负责人 Melodydt。状态：**待评审设计，系统 RTL 尚未实现**。本稿取代 v0.1 作为当前总方案；历史研究保留来源和资格边界。
 
-任务：[Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151)，交付：[PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，负责人 Melodydt。本文是第二阶段详细研究与待评审设计，不是已实现 RTL、冻结底座、整模型定点验收或系统物理资格。
+## 1. 本稿建立在什么实现之上
 
-## 1. 已确认需求、来源与本稿结论
+本轮逐项读取研究分支 `task/151-six-connection-study` 的 `faabeda68b3b098ba562d68517319e02725f5bc3`：它已经合入 PR144 的固定版本 `643c6012a11cbf461146ac40fbf61485223fe946`。14 份核心 RTL/include 的 Git blob 与 SHA-256 见 [RTL 基线](../work/Melodydt/151/rtl-baseline.json)。PR144 后续提交不自动算入本方案；PR133 的专项互联和 PR146 的 SystemC 也没有随之纳入。
 
-用户已确认：**同一套 M1–M10 预制底座，在 M11/M12 定制时才确定模型；每颗成品只执行该产品固定的模型流程，不要求运行期间切换任意执行图。** 本方案据此收缩原通用任务表候选，采用有限固定程序、事件等待和局部执行，不增加通用 DAG 扫描/乱序调度硬件。
+当前真实实现是 **M/N/E/G/S/R/T 七种叶宏，加上 S 内置供数器**，没有已经连接六类算法的统一系统顶层，也没有本稿的母控、局部服务、完整产品程序或通用 bridge。端口与操作码的逐项审计见 [原生接口审计](RTL_NATIVE_CONNECTION_AUDIT.md)，控制协议见 [控制规格](SIX_CONNECTION_CONTROL_SPEC.md)，六类原生命令流程见 [六模板规格](SIX_CONNECTION_TEMPLATE_SPEC.md)。
 
-| 层次 | 本稿主候选 | 当前事实边界 |
+| 叶宏 | 当前实际能力 | 对系统设计的约束 |
 | --- | --- | --- |
-| 产品绑定 | 相同预制顺序器＋有限产品控制 ROM，M11/M12 连接预留选择端，冷启动采样后固定产品 | 新控制硬件/产品 ROM 均未实现；不是金属新增 FSM |
-| 控制组织 | 母控管阶段/跨资源依赖，局部子控管命令展开/握手；暂不增加区域层 | 局部模块未必分别硬化成 hard macro |
-| 数据连接 | S 中转基线＋已有 S→M A128/B512 专用通路；宏旁分散适配 | S 访问器、通用搬运、拆拼包、统一事件均需新增 |
-| 数值补全 | 另列 NUM 系数服务及 MoE 宽归并候选 | 缺失算术不能藏进普通 bridge 或金属 |
-| 资源与错误 | 有限槽、唯一端口所有者、显式状态租约、先保留输出再提交、错误停止/排空 | 不承诺 M 整命令回滚或 R/T 跨宏原子事务 |
+| [M](../project/rtl/block_v2/block_v2_m.sv) | 双输入银行，S8/S16 tile 计算，S64 结果，op3/op5 读出 | v2 只有 op3/4/5/6/10/11/12；op4 是全局缩放配置，不能当旧版 merge；只有一个结果上下文 |
+| [N](../project/rtl/block_v2/block_v2_n.sv) | 分组统计、RMS/L2 因子、Softmax 分轮回放、至多40项 TopK | 不保存整向量，不接收目标总长度，不提供 mask 或 score gather；一次只能占用一个归约上下文 |
+| [E](../project/rtl/block_v2/block_v2_e.sv) | 8×S16 向量运算，op13 将4×S32量化成4×S16 | 无有效数端口；op13 仅低64bit有结果，必须两次拼成一个128bit字 |
+| [G](../project/rtl/block_v2/block_v2_g.sv) | 2 lane 的 SiLU/Sigmoid/GELU/Softplus，可乘 gate | x 与 gate 有角色；2 lane 与8 lane必须拆拼，整个流水受输出反压停顿 |
+| [S](../project/rtl/block_feed_v1/block_feed_s_macro.sv) | 16KiB，普通128bit访问；内部 loader 已驱动 M 的 A128/B512 | 普通读写都要取回应答；loader 与普通访问需统一管理，不能旁边再接第二个驱动者 |
+| [R](../project/rtl/block_library_v1/block_v1_r.sv) | GDN/SSM状态与4-tap卷积，局部 active/shadow、候选与提交 | 8值lane、状态长度至多256；S32单位由产品声明；一次局部提交不等于全层/全token提交 |
+| [T](../project/rtl/block_v1/transaction6k.sv) | 单租约384×128bit事务缓存，写满、提交、读出、释放 | 非普通流FIFO；超长结果需分批；错误为 sticky protocol_error，不是 commit_error 应答 |
 
-第一阶段[六连接研究](SIX_CONNECTION_SCHEMES_STUDY.md)、[bridge归属审计](SIX_CONNECTION_BRIDGE_AUDIT.md)保留。新[控制规格](SIX_CONNECTION_CONTROL_SPEC.md)及[六模板规格](SIX_CONNECTION_TEMPLATE_SPEC.md)给出实施细节；[候选决策](decisions/0006-fixed-product-hierarchical-control-candidate.md)记录本次取舍，状态 proposed。
+M/N/E/G/S/T 的上游叶宏资格不能转成整链资格；**R 仍未取得最终资格**。跟踪中的 R 是缩窄候选，不能把另存原 R4032 源码的物理数据库挂到它名下。来源和集成边界见 [当前实现基线](SEVEN_BLOCK_RESEARCH_BASELINE.md)。本轮没有改动叶宏或重新运行物理流程。
 
-固定来源：主干 `a103da352b7e431cedc69f54b9f71c05371be1b3`；已发表研究 `49a34e75657025244fd33af56111029868008db8`；本轮 PR144 读回 `aacac9238f2eb3d8f0e251bda5affab0423b1a5e`；PR146 为 `4ad1ad4643d08cabf2fcc35e9465424556b1f325`。PR144 相对研究所用 `5e787714` 的 3 个提交未修改叶宏 RTL/接口合同，旧接口分析继续适用；R 的物理修复进度按新版本说明。[当前七宏合同](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/aacac9238f2eb3d8f0e251bda5affab0423b1a5e/docs/BLOCK_V2.md)
+## 2. 总体选择与bridge归属
 
-**M/N/E/G/S/T 的来源叶宏证据不构成整链资格；R 仍未取得完整最终资格。** 发布的 R 最终 RC 曾有 30 条 hold 违例，后续候选未获全部最终门。本稿不重跑、不接管该实施任务。[当前结果边界](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/aacac9238f2eb3d8f0e251bda5affab0423b1a5e/docs/BLOCK_V2_RESULTS.md)
+采用 **固定产品母顺序器＋按物理资源划分的局部控制器＋宏旁格式/协议适配＋S/外存物化交接**。统一的是局部控制器外侧的任务、缓冲描述符和完成事件；宏内原生接口仍各不相同。
 
-## 2. 制造、产品和运行三个时刻
-
-| 时刻 | 必须确定的内容 | 禁止混淆的内容 |
-| --- | --- | --- |
-| M1–M10 底座冻结前 | 计算/控制有源电路、ROM/寄存器容量、宏位置、PG/CTS、适配器、仲裁器、缓冲/流水、M10 landing、合法常量源 | 新增控制状态或驱动均有实际面积和时钟成本 |
-| M11/M12 产品定制 | 声明允许的连接/通孔；连接已有产品选择端；选择已有合法数据/控制路径 | 不能增加寄存器、FIFO、MUX、译码器或重做 CTS |
-| 成品运行 | 在固定程序内处理数据、token/长度、地址、动态专家 ID、握手及错误 | 动态参数不是任意更换执行图；路径仍由实际产品线路决定 |
-
-上述边界来自[已接受的底座冻结决策](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/a103da352b7e431cedc69f54b9f71c05371be1b3/docs/decisions/0004-block-library-base-freeze.md)。不同产品若重新综合不同门级母控，就成为不同有源底座，不能用于同底座比较。
-
-### 2.1 产品程序如何固化
-
-主候选为**预置有限产品程序＋永久产品选择连接**：
-
-1. 冻结前将受支持产品的算子图、数值策略、资源映射、布局和存储计划编译成完整程序/参数表；相同局部模板可以共享。
-2. ROM、顺序器、地址/循环计数、选择译码、非法产品检测和全部选择接点在 M1–M10 中真实实现。
-3. 产品定制用 M11/M12 将预制常量源接到选择接点；合法选择连接必须唯一、无浮空、无输出短接且满足电气预算。
-4. 冷复位后采样选择值，查出固定入口/参数区；进入运行后不接受改图命令。非法选择或不兼容产品包拒绝启动。
-5. 运行时提供输入/权重存储地址等受限参数，不改变本产品的程序入口及控制顺序。
-
-**六种算子模板不是八个整模型控制程序。** 当前样本主要为小形状 FP32 图，尚无完整可执行硬件 IR、整模型量化合同和所有存储计划。因此本轮只制定产品包格式和六模板，`complete_model_programs_compiled=false`。底座冻结前必须实际编译支持集合、计算程序/参数大小，超容量或缺能力的产品拒绝纳入；不能把一个 model_id 当作已覆盖任意模型的证明。
-
-产品包至少包括：`product_id / base_revision / leaf_revision / ROM入口与长度 / 固定层序列 / 模板版本 / 路径清单 / 参数表 / 数值策略 / 外存布局 / 状态初始化与恢复规则 / 验收用例`。离线可用 SHA-256 绑定这些资料；本稿没有默认增加片上 SHA 引擎。硬件兼容检查的字段/比较器同样需要实现和计价。
-
-备选是预制可装载控制存储，每次冷启动加载该产品程序并在运行时锁定。它有真实的存储、装载、校验和锁定成本，不能占用未计价的 S 空间。该备选适合冻结后支持新程序；仍受已预制原语、容量和实际线路限制。金属编码整份程序 ROM 也可另作研究，但不能把普通固定 ROM 当作可写 ROM，或假定少量 M11 连线即可表达任意程序。
-
-## 3. 两级控制与分散 bridge
-
-```text
-固定产品选择 → 母阶段顺序器 MODEL_CTRL
-                    │ 少量宏级命令 / 保持型完成事件
-   ┌─────────┬───────┼────────┬────────┬──────────┐
- M_CTRL    N_CTRL  E_CTRL   G_CTRL   R_CTRL   S/T/外存服务
-   │          │      │        │        │          │
- 各宏旁原生协议适配、有限队列、打包、局部计数/错误保持
-   │          │      │        │        │          │
-   M          N      E        G        R         S/T
-   ↑                                           │
-   └────────── 已有 S loader A128/B512 ─────────┘
+```mermaid
+flowchart TB
+  P[预制产品ROM与选择端] --> C[MODEL_CTRL 固定阶段顺序器]
+  C --> MC[M_CTRL]
+  C --> NC[N_CTRL]
+  C --> EC[E_CTRL]
+  C --> GC[G_CTRL]
+  C --> RC[R_CTRL]
+  C --> SC[S_CTRL / T_CTRL / MEM_CTRL]
+  C --> UC[NUM / 状态版本服务 候选]
+  MC --> M[M]
+  NC --> N[N]
+  EC --> E[E]
+  GC --> G[G]
+  RC --> R[R]
+  SC --> S[S及内置loader]
+  SC --> T[T]
+  SC --> X[外存平台 待实现]
+  S -->|已有A128/B512| M
+  N -.经宏旁适配与S访问服务.-> S
+  E -.经宏旁适配与S访问服务.-> S
+  G -.经宏旁适配与S访问服务.-> S
+  R -.经宏旁适配与S访问服务.-> S
 ```
 
-母控只发“完成一个投影 tile / 完整 Softmax / 一次 R 步骤 / 搬运一段”等有界任务，不逐拍驱动 payload。局部子控展开原生命令并在数据可见后报告；宏内部已有 FSM 继续负责内部算术和银行。首版建议单时钟域，分层不等于增加时钟域。
+控制器、虚线交接、NUM与外存服务均为新增候选。S→M只表示现有loader的原生供数接口，不表示已经有完整v2系统组合证明。所有普通S请求汇聚到S_CTRL，数据通路不穿过母控。
 
-唯一原生命令所有者：M命令/响应接受→M_CTRL，N→N_CTRL，E→E_CTRL，G→G_CTRL，R→R_CTRL，S普通口及loader描述符→S_CTRL，T→T_CTRL；外存接口由MEM_CTRL唯一接入。M的A/B payload仍由S内已有loader驱动，M_CTRL向S_CTRL请求供数，不能成为第二个A/B或S端口驱动者。N/E/G/R/T的S读写也通过S_CTRL交接。
-
-Attention、FFN、GDN、SSM、MoE 是母控中的固定阶段/子程序，不各自独占共享 M/S。若以后按计算簇增加区域层，簇应拥有明确的物理资源或租约；共享资源仍有唯一服务所有者。当前不因六类算法而复制六套完整控制器。
-
-局部子控/bridge 首先是 RTL 职责：可以作为宏旁标准单元簇，也可合并为少量辅助硬宏。优先保留现有计算叶宏边界，避免改写其内部。独立辅助硬宏和与叶宏共同硬化都必须重新验证对应物理边界，不能由 module 名字推断资格。S 内 loader 不重复新增；旧 PR133 的 bank/booster 不是新局部控制器。
-
-## 4. 数据路径与连接合法性
-
-运输基线为 128bit 数据字；其内容由描述符声明，不能从总线宽度推断数值。S→M B512 保持专用宽路径。首版其余链以 S/外存物化交接，按实际带宽和容量计价；高频直接旁路在功能闭合后选择，且必须预制必要的队列/选择/驱动。
-
-| 族 | 路径/作用 | 必需支持 |
+| 内容 | 位置与改动 | 是否已有 |
 | --- | --- | --- |
-| F1 | S loader→M.A128/B512 | 银行、行/tile、S16 half、驻留权重身份；新 M 合同组合验证 |
-| F2 | M op3/op5→保持槽→S/外存 | EXEC 应答不当结果；S64/S32 容器、读出索引、写确认 |
-| F3 | S↔E A/B/C128 | 操作数收集、op13 半包拼接、尺度与有效数 |
-| F4 | S→G.x/G.gate32→S | 双输入按角色配对、四批拆拼、G 在途标签 |
-| F5 | S↔N data/aux | 全组统计、原值/EXP/gamma 回放、单上下文锁 |
-| F6 | S/系数服务↔R 命令与读出 | 参数装载顺序、S32/Q 格式、候选保持、commit/revoke |
-| F7 | 保留槽→多个消费者 / 多分支→E/G | 引用计数、版本与范围匹配；禁止随意并联 read_take |
-| F8 | 生产者→T→S/外存 | 完整批次、顺序索引、提交与释放、S 目标基址 |
-| F9 | TopK ID→gather/专家地址 | 唯一合法 ID、score 表、rank 与权重绑定 |
-| F10 | 显式 NUM↔R/MoE | 系数/宽归并数值能力；不属于纯搬运桥 |
+| M A/B供数与bank/row/tile拆分 | 保留S内部loader；系统补描述符和完成管理 | loader已有，新v2组合待验证 |
+| E三操作数收集，M四S32结果打包，G两lane拆拼 | 叶宏旁预制寄存器、MUX和局部FSM | 新增 |
+| N统计/原值/EXP/gamma回放 | N_CTRL＋S/外存缓冲；默认不在N内加整向量RAM | 新增 |
+| R参数/状态装载、候选读出与局部提交 | R_CTRL；跨tile版本管理在外部状态服务 | 宏内局部FSM已有，外部服务新增 |
+| S仲裁、T租约、跨消费者引用计数 | S/T附近的服务控制器和元数据 | 新增 |
+| GDN/SSM系数、MoE宽累加 | 显式NUM算术服务，单独算面积/数值误差 | 新增算术，不能称普通搬运bridge |
 
-每条逻辑边检查 `src/dst实例+端口+操作阶段、格式/尺度/范围、布局/步长、有效数、slot/version、消费者寿命、实际path`。宏类别之间不设永久黑名单，默认只允许清单中已支持的具体连接/适配路径。以下应拒绝：
+首版优先用宏旁标准单元实现外部逻辑。是否硬化为独立辅助宏，要在面积、pin和布线评估后决定；本稿没有现成“统一bridge宏”。塞进原硬宏会改变其pin、面积、时序边界，需要重新做对应资格；外置也需要组合时序与物理验证。
 
-- 将 M 四 S32 容器直接解释成八 S16，或将 E op13 高 64bit 的零当作额外四个有效元素。
-- 将 N 的 UQ1.15 EXP 当有符号 S16 送 M；最终 Q1.14 概率才是声明的 M 兼容编码。
-- 将 R S32 直接截低位给 G，或假定 E 普通算术能生成任意 S32 inject。
-- 未完成整组 QK 归约就对每个分块独立 Softmax；混合 GDN 与 SSM 的 Norm/门乘顺序。
-- 读取已释放/未初始化数据、混合 token/version、调用不存在的路径、超出实际 S/T/ROM/队列容量。
+## 3. 哪些连接允许，哪些需要禁止
 
-重排由可实现的地址/布局模板完成：连续、有限 stride、已声明 head/channel 切分、局部 RoPE 配对等。任意 Transpose/gather 不因写了 stride 字段就免费存在；超出访问器能力的布局应新增真实实现或拒绝编译。
+编译器检查真实生产者/消费者角色、类型、尺度、长度、布局、生命周期和物理路径，再决定能否经已有路径或显式适配连接。相同128bit不代表相同数据。
 
-## 5. 缓冲、端口与资源寿命
-
-首版一个图实例，每子控一个宏级任务在途；M/N/E/R 原生执行命令先限制一条在途；G 任务内部可保留流水但必须覆盖真实在途标签。局部弹性队列可从深度2开始评估，容量不是任意 burst 的保证。ROM 字宽/深度、主循环层数、地址/版本位宽在实际程序编译后确定，本稿不给虚假的冻结面积。
-
-slot 状态为 `FREE→RESERVED→WRITING→VALID→READING→FREE`；数据错误可进 `INVALID/QUARANTINED`。只有全部有效范围完成写确认才变 VALID。保留多个消费者时引用计数归零才释放；不可原地覆盖仍被引用的数据。局部短包先合成128bit再写S，或按整字填充计价，因为当前S无byte mask。
-
-S_CTRL 是普通访问与装载窗口的唯一协调入口，但外置仲裁不能改掉 S 内部宽读优先的事实。首版按阶段安排有限 loader 窗口和窄访问服务窗口，避免连续供数使 N/其他读写饥饿；每笔响应保留归属，S 写入按原生响应确认而不只看 req/ready。外存接口同样要明确接受、数据传输、写确认、排空和失败，不能以预留地址代替端口吞吐。
-
-三个必须进入容量检查的算例：
-
-| 场景 | 最少可核算的空间/约束 |
-| --- | --- |
-| 257元素 Softmax | 分数33×16=528B，EXP再528B；S双回放区1056B；概率输出另528B（放S或T）；输入/参数/队列另算 |
-| 4096元素 S16输出 | 8192B，超T单租约6144B；改用S/外存结果区或分批发布，不宣称整向量原子发布 |
-| FFN中间维11008 | 单个S16 Mid为22016B；gate/up合计44032B，均超S16KiB，需外存物化或不同资源方案 |
-
-单M完整结果上下文必须独占。首版先物化 gate/up/Mid，再让M执行down的全部K分段；down累加期间不能复用同一结果槽去算下一gate/up片。外存保存张量不等于支持恢复M内部S64结果，当前无通用restore接口。MoE也不能一边让同一M计算新专家，一边假定它还保留上一专家的宽合并结果。
-
-外存权重/中间量是整模型规模的必要平台依赖。本轮没有新增外存控制器或得到带宽实测；未接入前只验收容量内子流，不报告整模型吞吐。
-
-## 6. 事件、租约、错误及发布
-
-母子命令和事件使用保持型 valid/ready；需要中继时使用预制寄存级及有限容量。事件通路独立于可能已满的数据队列，子控至少有一个完成保持槽。标签包含本次调用、token/位置、tile、版本与阶段；可由局部寄存保存，不要求叶宏新增引脚。
-
-| 事件 | 定义 | 不自动释放的内容 |
+| 源→目的 | 当前可利用的能力 | 必须加入的条件/适配 |
 | --- | --- | --- |
-| native/cmd_accept | 原生命令/输入在其valid/ready上真正被接受 | 输出/上下文 |
-| compute_done | 运算响应捕获并检查 | 尚未搬出的结果 |
-| data_ready | 指定数据范围已在承诺位置可消费 | R候选事务、其他消费者的引用 |
-| publish_done | 指定状态或结果的提交已确认 | 尚未消费的批次 |
-| release_done | 对应资源/槽允许复用 | 同地址其他版本 |
+| S→M A/B | S内loader与M接口字段可对应 | A/B宽度、bank、rows/tiles与保留地址组一致；M就绪，load完成无错；S16 B两half均到齐 |
+| M→E/G/N | M op3 S64 或 op5 四个S32容器 | 先读结果；仅op5四S32可经E13两次拼包；op3两S64须已定义宽转换或改用op5量化读出；EXEC应答不是结果 |
+| N→M | Softmax回放得到非负S16 Q1.14，可作M S16输入 | 不能把EXP UQ1.15当概率；PV按Q14×V的实际小数位配置M读出 |
+| N→R | Q/K归一化结果可作为Q1.14候选 | N gamma/epsilon与目标L2定义必须显式匹配；无自动Q10→Q14 |
+| E→G | E普通S16与G输入可以采用Q5.10合同 | x放激活输入，gate放线性分支；8 lane拆4次，每次2 lane |
+| G→E/N/M | 按实际输出格式物化 | ungated Sigmoid是Q1.14，其他ungated及全部gated输出按Q5.10；不能只按fn推格式 |
+| G/E→R | q/k、x/inject、skip、decay/beta等不同角色 | q/k/taps Q1.14；x/inject S32单位F；skip Q16.16；decay/beta UQ1.31，分别转换 |
+| R→E/G/N/M | R op12读8lane候选输出 | 四S32一包，E13 shift取决于F；到Q10时仅F−10∈0..31可直接用E13，其他转换另设计 |
+| N TopK→专家 | N只给ID | 独立score表gather原分数，校验ID并关联专家/概率/rank；ID不能送Softmax当score |
+| 任意生产者→T | T保护一批至多384字 | 先保留整批空间，顺序填满，再commit；tail有效数由外部描述符保存 |
 
-R_CONV_DATA_READY、R_UPDATE_DATA_READY 与 R_CONTEXT_RELEASED 必须区分。母控在R候选保持期间启动E/G/N，再回到R继续更新；不能等R整个上下文结束后才发其所需的向量任务。
+必须拒绝：多个源并驱同一输入、多个消费者共享一个take而无fork管理、未量化S32直接解释成S16、N EXP当M概率、未完成整组就FINALIZE、覆盖仍在使用的S槽、R pending时OPEN或重装状态、跨资源提交后仍声称可整步撤销、单批T超过384字、产品需要的算术/ROM/外存不存在。
 
-首版 R/T 顺序候选：**先读出并保留候选结果，完成下游并把T写到SEALED，再R_COMMIT，确认后T_COMMIT。** 此顺序仅适用于一个可完全驻留的R局部context。R op7被接受后必须先收齐真实提交响应，软停止不能提前撤销T/staging；R成功后进入状态已生效、输出待发布的不可取消区。T没有原生commit_error响应，SEALED时commit握手即进入可读状态；复位/协议违规/未接受或外部发布失败须具体报告为异常或部分完成，不能回滚已提交R。大结果用外存私有staging时，其发布描述符/确认也须实际实现，不假定与R原子。
+N有cmd_count（1..8），E/G没有count，尾部独占一个S字、无效lane填零后整128bit写并保存有效数；共享尾字须另做RMW/仲裁。mask不是padding：N没有注意力mask端口，有限负哨兵不等于负无穷，全mask行会给出错误语义。首版要求至少一个有效key，且能证明masked score与有效max之差不大于−16384（Q5.10的−16），否则增加专用mask处理或拒绝该数值策略。
 
-完整GDN/SSM还需要**STATE_VERSION_CTRL与外存双版本服务**。R只有8个value/channel lane，无法把跨128/4096通道的全部tile候选驻留到整组Norm结束。该职责放在母控/存储服务的元数据管理中，原生命令仍只由R_CTRL驱动，不额外引入区域控制层。
+## 4. 六类算法的闭合路径
 
-候选执行顺序如下：
+六类是系统模板，尚非六个完成的RTL系统。“可承担”只指叶宏可做相应子算子；缺失项须先预制，才允许纳入产品。
 
-1. 保留不可变old_root，预留privateNext状态/历史及输出staging。每个虚拟tile的owner、epoch、position和数据映射均由产品包定义。
-2. 无pending时OPEN。state用op1每次四S32装入；history用op9共六拍，taps按需装入。若同一局部context执行卷积后SSM，本轮op15 decay必须在产生pending_history前装完。
-3. EXEC成功后，op12两拍读完八S32候选输出并写入staging，等待真实写确认；op12不是整个候选状态的导出。
-4. 发op7 local commit，等待COPY后的成功响应；然后op11用2×length拍读新active state，op14按需六拍读新history，分别写privateNext并等全部确认。没有更新/装载history的tile不得无条件读op14。
-5. 完成状态/历史及输出保存后才允许OPEN下一tile。若Q/K L2等必须先收集多个卷积tile，则拆成“卷积/history私有版本pass→全组外围处理→state-update私有版本pass”，不能保留一个pending_history阻塞后续卷积tile。纯卷积pass不必有state，不能假定其op11有效；history和state子context及最终token版本的绑定必须显式定义，避免重复推进位置。
-6. 全部tile和下游结果收齐、写确认与产品发布条件满足后，再发布新根/输出。R_LOCAL_COMMIT_DONE、STATE_TILE_SAVED、STATE_ROOT_PUBLISHED与OUTPUT_PUBLISHED是不同事件。
-
-当前R无通用shadow或history_next导出接口，pending时op11/op14仍读旧active。该服务的容量/带宽、地址映射/history去重、根描述符与消费者发布门、故障恢复都需要新增实现。local commit后privateNext写失败时，保持old_root未发布，停止并排空，再显式从旧根重装；不能声称R活动状态自动回滚。未实现前，R路径只验收单tile切片，不宣称整GDN/SSM token闭合、联合原子发布或掉电恢复。
-
-错误策略为fail-stop：停止新发射，按原生合同排空已接受操作，丢弃/隔离失效输出，撤销允许撤销的候选，记录首错和部分完成。M追加命令部分失败不整条盲重试；T提交后不可revoke；软取消不清R活动状态。标签复用需排空确认，版本耗尽进入终止/协调复位，不用回绕规避迟到响应。外部已确认写入不能靠本地reset撤销。
-
-死锁检查分三类：任务依赖、资源占用、ready组合路径。启动前预约输出和事件槽；不持有部分必须资源再无限等待另一部分；R/KV/history的跨token边提供初始版本；分支join匹配同一身份。终止性验证需要宏最终响应、外存公平服务、消费者最终继续等假设，不声称对永久停顿或任意拓扑保证完成。
-
-## 7. 六类模板如何共享框架
-
-| 模板 | 固定阶段骨架 | 独有控制/能力门槛 |
+| 模板 | 固定数据/控制顺序 | 本版仍需补的主要能力 |
 | --- | --- | --- |
-| 常规Attention | Norm→QKV→布局/RoPE→QK完整归约→scale/mask→Softmax→PV→输出投影→残差 | KV访问、GQA/融合QKV布局、全行回放与有限mask |
-| 额外Norm | 在规定位置插入Q/K每头Norm或后置Norm，再继续原路径 | Norm范围不可混淆；gamma与epsilon合同 |
-| 门控FFN | gate/up物化→同token配对→SiLU/GELU门乘→Mid物化→down→残差 | 单M上下文独占，大Mid外存；动态量化另列完整范围屏障 |
-| GDN | 预装状态/历史→卷积→转换/激活→QK L2→递推→保存读出→Norm→与Z门乘→投影/残差→提交 | Q/K、V、beta/decay宽单位；候选历史与状态共同处理；系数服务 |
-| Falcon SSM | 无pending时装state/history/decay→卷积→激活/注入准备→SSM→读出门乘→4096通道Norm→投影→与Attention汇合 | op1/op15装载顺序；每轮重装decay；跨支join |
-| Granite MoE | router→TopK ID→selected logits gather→路由Softmax→8次专家→宽归并→0.22缩放/残差 | ID/地址/rank绑定，显式NUM累加，TopK不返回分数 |
+| 普通Attention | Norm→QKV投影→可选RoPE→QK→完整一行Softmax→PV→输出投影→残差 | K/V外存和转置布局、RoPE sin/cos来源及E合同、QK缩放/因果mask、N多轮回放 |
+| 额外Norm | 整组STATS→FINALIZE→原值/gamma回放→下游 | 外部总长度计数和保留；RMS/L2 epsilon及输出单位；不能把所有Norm都映成同一模式 |
+| 门控FFN | gate投影保存＋up投影保存→G激活(gate)×up→完整mid物化→down所有K块→残差 | G拆拼、E13、M单结果上下文管理；大mid外存 |
+| Qwen GDN | 投影→R卷积/history pass→保存→E转换/G SiLU/QKV切分→Q/K L2/头复用与仅Q缩放→系数→R各state tile→保存全head输出→全head Norm→z门控→输出投影 | 非线性系数NUM、R输出/状态F合同、跨tile状态版本及head回放 |
+| Falcon SSM | 投影→各conv tile保存/历史提交→状态tile载入decay和输入→R状态更新→z门控→全channel Norm→输出投影 | 逐元素衰减NUM、conv与状态两遍计划、外部history/state版本；SSM与GDN的Norm次序不同 |
+| Granite MoE | 路由logits→TopK ID→gather所选logit→小Softmax→专家FFN→S64宽归并→共享分支/残差 | score gather、专家地址动态选择、NUM_WACC及共用尺度、0.22缩放合同 |
 
-这些是可调用的有限子程序，详细入口/出口、控制归属、数据存储和负例见[六模板规格](SIX_CONNECTION_TEMPLATE_SPEC.md)。算子模板之外，完整产品程序还需编码实际层排列、维度、位置/长度、权重与KV/状态布局、数值参数和外存访问。
+M结果行不能同时保存两个独立投影，也没有通用结果恢复命令。K分块可在一个投影中累加，但投影切换前要读出/物化；不能交错gate/up覆盖down的未完成结果。N长归约必须整组占用一个context；跨头可串行复用，不能交错BEGIN。
 
-## 8. 数值服务的具体候选与待决项
+R active和shadow各8KiB，至多256×8个S32，只是单tile容量。多个value tile/head/layer、conv history、KV和输出都需要S/外存计划。局部COMMIT后才能由op11/op14读出新active state/history；pending期间读它们仍是旧版本。全层成功后切换外部根版本，不能假定R的一个COMMIT会完成外部事务。
 
-### 8.1 GDN/SSM系数
+## 5. 如何适配不同产品的固定控制链
 
-完整链需要负指数、宽系数乘/Clip/注入准备等。首个控制切片可明确采用外部版本化系数；它只能证明给定系数下的连接与事务控制。完整片上链另建议预制NUM_COEFF服务，输入为声明尺度的S32参数，输出为R所需UQ1.31 beta/decay与S32注入等。
+### 5.1 制造与运行边界
 
-NUM_COEFF的输入范围、Softplus/指数逼近、A与dt组合、下溢/饱和、L2输出到Q1.14以及状态单位必须先绑定独立整数参考和样本范围。本轮没有足够证据冻结这些函数的全范围误差。G的Q1.14 Sigmoid左移17位只改变编码容器，不恢复精度；N的Softmax EXP不能当独立UQ1.31通用指数。
+用户已确认：模型在M11/M12定制时才确定，成品运行时流程固定。不能在知道模型后重新综合有源FSM，再称为同一预制底座。
 
-### 8.2 MoE宽归并的可实现起点
+主候选：冻结前编译**有限受支持产品的完整程序/参数ROM**，预制相同母顺序器、局部FSM、循环计数器、等待/错误逻辑、缓冲和常量驱动；M11/M12只连接预留产品选择端和合法数据/控制线；冷复位锁定入口。非法或缺能力的产品拒绝启动。金属不能添加MUX、寄存器、FIFO、译码或重做CTS。
 
-建议NUM_WACC先支持：每个token/tile最多8专家，专家输出为**共同尺度的S32**，路由概率为N输出非负S16 Q1.14；逐元素精确计算 `acc=Σ(expert_raw×prob_raw)`，S64保持，所有rank收齐后才舍入/发布。八元素输出tile需64B累加状态，另计rank有效位/标签/响应槽。
+若要求冻结后支持未编译模型，备选是预制可写控制存储，冷启动一次装载并锁定，其RAM、装载口和校验成本计入。**六模板不等于样本八个模型的完整程序**，当前 `complete_model_programs_compiled=false`；ROM容量、完整形状/量化和外存布局待实际编译，不能现在冻结。
 
-保守上界 `|acc|≤8×2^31×2^14=2^48`，S64足够。Granite的0.22可研究用 `7209/32768`（约0.220001220703125）编码，`acc×7209`范围小于2^61。若专家和目标小数尺度分别为Fin/Fout，则候选输出为`RNE(acc×7209 / 2^(29+Fin−Fout))`后目标饱和；同尺度时右移29。首版只接收已证明范围的非负右移，若需要左移须另证溢出和扩展硬件。“一次RNE”仅指NUM归并内部，M op5在此前仍可能按自身合同舍入/饱和。近似增益和整模型质量尚未接受；不能将此写成已验证算法等价。
+固定控制链仍需运行时token/长度循环、KV地址、TopK专家ID分支、ready等待和错误处理。这些是固定程序的动态参数，不需要通用DAG扫描器。
 
-M op5若先将专家结果读为S32，必须检查其饱和并声明尺度；若要求S64专家结果或更宽系数，需另行扩大乘积/累加合同，不沿用上述界。NUM_WACC是新增计算/状态资源，不是普通MUX或免费bridge。直接用M合法缩放追加也是备选，但必须解决与专家计算共享结果上下文的问题并单独证明整数舍入/范围。
+### 5.2 两级组织与布局布线
 
-## 9. 一个完整小FFN和一个长回放例子
+母控MODEL_CTRL只发有界阶段任务及依赖，子控靠近资源逐拍驱动。M_CTRL独占M cmd/rsp；S_CTRL独占S普通口和loader描述符；M A/B仍由S内loader独占。N/E/G/R/T同理。Attention/FFN是阶段程序，不各自建立能直接争用M/S的控制器。
 
-小FFN取一个token、H=I=8，按六模板规格的最小实例采用三个8×8 S8整数权重，净数据192B；S16输入与Q5.10残差相同尺度。该400B实例不含输入Norm，输入已准备；若加NORM，gamma及额外缓冲另行分配。保留原x16B；M顺序计算gate和up，每次先读出到独立槽再复用M；按需要用E op13合并半包；G四批两元素做SiLU(gate)×up并拼成一个16B Mid；M做down，E残差，T写满一个字后提交/消费/释放。中间S32容器、gamma、对齐和队列都进分配表，不能只按净S16载荷计总容量。
+母控↔子控采用保持型任务/完成握手、task_id和epoch；完成分compute_done、data_ready、publish_done、release_done。S写回应答被取走后才标本次数据可见；T commit只代表本批对T读口发布，不代表最终外存写成功。
 
-包含输入Norm时，母控固定顺序为 `NORM→GATE→CAST_GATE→UP→CAST_UP→GATED_MID→DOWN_ALL_K→CAST_DOWN→RESIDUAL→T_PUBLISH`。每箭头等真实data_ready；M的供数done/运算done不直接触发下一消费者；G子控负责四包握手；T提交与释放分别确认。
+两级能够缩短高扇出逐拍控制线，但母控仍有少量长线，S访问也可能成为热点。首版单时钟域，局部ready路径以预制寄存/缓冲隔离，不能形成跨宏组合ready环。是否再加区域层取决于宏位置、扇出、最差线长、拥塞与延迟，不先按算法复制控制器。冻结前以相同计算叶宏、约束及布局预算比较单中央/两级/必要区域层三种有源底座候选，选定后再冻结共同底座做产品A/B，不能凭分层框图宣称已解决布线。
 
-257元素Softmax示例：在S预留33字score和33字EXP，另预留33字概率结果（可转T，仍占其单租约）；N子控执行BEGIN、33批STATS、FINALIZE、33批EXP并写EXP区、FINISH_EXP、33批SOFT_REPLAY。最后一批仅1个有效元素，其余padding不计入N计数。母控只看完整向量任务的完成，不能在第32批结束时提前发布。三遍输入类型、全组屏障和写确认各有独立负例。
+## 6. 两个首轮实现例子
 
-## 10. 物理组织与公平对照计划
+### 6.1 1 token、H=I=8的门控FFN
 
-本节为待实施计划。本轮没有启动RTL/SystemC、综合、P&R或服务器作业。新增控制、bridge、长线寄存中继、clock/reset与常量驱动全部在共同底座冻结前计价；保留叶宏RTL也要验证新负载下的系统STA/电气/PG。
+输入/残差S16 Q5.10，三个权重S8整数；本例不含输入Norm。S按字地址分配：0..3 A_X组（word0有效），4..7 Wgate，8..11 Wup，12..15 Wdown，16 Gate，17 Up，18 Mid，19间隙，20..23 Down_A组，24 Y。**保留跨度400B**，另有wrapper寄存器和T一字16B；不是所有产品的存储成本。
 
-| 候选 | 新控制状态位置 | 目的 |
-| --- | --- | --- |
-| C 中央 | 除必要端口保持外，循环/依赖/租约集中 | 建立简单中央控制基线 |
-| L 母＋局部（主候选） | 母端阶段、本地原生命令/索引/握手 | 衡量长控制线减少与局部状态开销 |
-| Rg 母＋区域＋局部 | 在L上增加明确区域汇聚层 | 仅在更大实例数或实际长路径下判断是否值得 |
+1. S普通写逐字取回应答。M_CTRL发op4：index0、data1，显式设置factor=1、left=0；CLEAR_ALL不会恢复缩放配置。
+2. S_CTRL发load：bank0、rows1、tiles1、A16/B8、reuse_b=0，A_base0，B_base4；等loader done被取走且无错。
+3. M op10 index0、data=`0x9885`：A16/B8、clear、K8/N8/tile1/row1。等EXEC应答无错，再用op5 data=`0x100`、index0/1读两组四S32容器。
+4. 各经E op13 shift0取低64bit，拼一个128bit Gate字写S16；同样B_base8得到Up写S17。两个投影都完成物化。
+5. G fn0(SiLU)、gated1，in_x取Gate、in_gate取Up，每次2lane共4次，拼Mid写S18，再复制到S20。
+6. A_base20、B_base12、reuse_b=0做down投影，同样读出/拼包。E ADD将down与保留在S0的输入相加，保存Y到S24。
+7. T begin(words1)→write(index0,Y)→SEALED→commit→消费者read_take→release，完成本批输出。
 
-三者属于不同的**冻结前底座候选**。先固定同版计算宏、宏摆放、数据通路/缓冲/带宽、功能和目标并发、die预算、PG/时钟约束、工具与修复政策，比较控制组织；允许必要控制寄存/队列差异但全部计价。再另表比较同预算下联合布局，不能悄悄给某组增大面积或改周期。已有宏内部FSM不能从中央组删去。
+这是拟实现的命令级组合例，不是现有测试已通过的FFN。权重改S16、加Norm、K分块或换尺度会改变字数、循环和量化，不能复用400B结论。
 
-观测最终控制/数据线长、通孔、M11/M12占用、拥塞/未布通、全部setup/hold与cap/slew/fanout、控制/队列/中继面积、clock负载，以及相同任务完成周期、吞吐和等待分类。新层级的延迟不能用更高频率掩盖。短FFN、257回放、分支乱序和跨区域命令/返回路径先验证；R系统结论须等待其叶子最终资格。
+### 6.2 257项Softmax
 
-选择一种组织后才冻结共同底座；随后产品A/B必须保留同一有源几何、M1–M10、PG/CTS、landing和中继，只改变白名单定制图形/允许配置。不能为A/B各自重新插buffer修时序后称同底座。
+S0..32保存257个score（33字528B），S64..96保存EXP（33字528B）；T一批33字528B。N BEGIN(mode0)→33次STATS（32次count8、末次1）→FINALIZE→33次EXP并保存→FINISH_EXP→33次SOFT_REPLAY并填T→commit→逐字读出→release。score与EXP活动数据1056B，S保留跨度因空洞更大。
 
-工具依据仅用于解释机制：[OpenROAD Resizer](https://openroad.readthedocs.io/en/latest/main/src/rsz/README.html#repair-design)可插缓冲/调整门处理长线及电气问题；[层级宏布局](https://openroad.readthedocs.io/en/latest/main/src/mpl/README.html#rtl-macro-placer)利用层次/数据流进行规划；[CTS](https://openroad.readthedocs.io/en/latest/main/src/cts/README.html#clock-tree-synthesis)引入真实时钟资源。这些latest说明不是本项目容器版本证明，实施时须冻结实际工具/参数。
+N_CTRL自己累计期望257、记录每轮读写进度、验证tail1并排空应答；N没有目标长度寄存器，提前FINALIZE可能被原生RTL接受。T read_last表示最后一个字，不携带该字只有1个有效元素的信息；tail留在wrapper描述符。这个例子优先验证整组/回放/尾部/T生命周期。
 
-## 11. 实施拆分、验收与未完成项
+## 7. 错误、取消和可见性
 
-| 阶段 | 可交付结果 | 验收入口 |
-| --- | --- | --- |
-| D0 本轮详细研究 | 总方案、控制/模板规格、候选决策、机器合同、静态正负例/来源核验 | 设计评审；不授予硬件资格 |
-| D1 接口与局部执行 | 真实子控/搬运/母控RTL，小FFN、257Softmax | 独立整数参考、真实握手/错误/reset回归 |
-| D2 容量/状态 | 外存通路、长FFN、外部版本化状态、给定系数GDN/SSM、MoE路由与专家访问 | 真实容量高水位、状态版本/撤销、迟到响应 |
-| D3 数值闭合 | NUM_COEFF/NUM_WACC或明确叶宏修订；完整六链 | 位精确参考、误差预算、数值质量及完整依赖 |
-| D4 冻结前接收 | 完整支持集合产品程序实际编译、ROM容量/内容及A/B映射可行；C/L/Rg物理比较 | 同源最终RC/STA/电气/PG/几何/面积、端到端周期 |
-| D5 同底座产品 | 选择已接收的程序入口，同一有源底座A/B定制 | 固定资源差分、限定制层改动、各产品合法性及功能 |
+局部控先保留输入、目的槽和应答保持空间，再接受任务；无资源就反压。多输入join按同task/epoch/范围/格式绑定，fork按消费者引用释放。S_CTRL对loader和普通请求首版串行服务，取得合法握手后才撤销valid。
 
-本轮静态校验只检查文档/合同一致性、事件依赖引用与无环、资源所有者、显式数值门槛、边类型拒绝、容量算例和负例。它没有模拟真正控制器，不能证明任意图无死锁、RTL功能或系统PPA。命令与实际回执见[任务README](../work/Melodydt/151/README.md)和`system-verification.json`。
+错误分原生命令错误、饱和策略、格式/长度非法、存储失败和协议错误。M/E/G/N有saturated，R没有饱和标志而会报计算/协议错误，T为粘性protocol_error。不能伪造统一原生错误口；由外部局部控归一为保持型完成状态。
 
-仍待评审：ROM容量与产品集合、冻结前产品程序完整编译、外部状态版本/发布协议、NUM_COEFF数值规格、外存协议/带宽、局部硬化边界、R最终资格、跨提交故障恢复、系统时序预算。所有未执行验证保留，登记/看板/审查状态分别记录于PR与交接，不把文档上传写成底座实现完成。
+取消在安全点进行：停止新命令、排空已接受应答、丢弃未发布输出、按资源语义清理。R pending可revoke，但COMMIT已握手后必须等应答；成功后不能撤销原active。R/T无跨宏两阶段提交，R已提交而输出落地失败属部分完成，需要外部旧版本/恢复策略，T revoke不能回滚R。详见控制规格。
+
+## 8. 实施顺序与验收门
+
+1. 冻结原生接口合同及数值命名，实现M/S/T、N回放、E/G拆拼最小wrapper；优先不改叶宏。
+2. 组合验证FFN8和Softmax257，覆盖任意反压、tail、S写应答、非法命令和取消边界，独立整数oracle核算每个量化步骤。
+3. Attention/额外Norm验证跨tile统计、KV、转置/RoPE与mask；大形状证明S/外存容量和带宽。
+4. 独立实现/验证NUM_COEFF、NUM_WACC、gather和版本服务，再做GDN/SSM/MoE；R自身资格未完成单列阻塞。
+5. 完整样本图编译、量化校准、输出质量和存储计划通过后，计算ROM与局部资源上限，冻结支持产品集合。
+6. 控制器、适配器和实际M11/M12线路共同做STA/CTS/布线及同底座对照；结果绑定源码、约束、工具和数据库，不能沿用叶宏数字。
+
+本轮执行管理检查、来源字节核对、设计合同/示例编码与文档链接静态检查，见[本轮验证](../work/Melodydt/151/rtl-redesign-verification.json)。RTL/SystemC、整模型质量、综合和P&R均未执行；新系统硬件、完整产品程序和系统资格未完成。独立审查人待指定，PR未合并，Issue待审查而非done。

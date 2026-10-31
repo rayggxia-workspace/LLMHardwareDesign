@@ -32,3 +32,13 @@
 - 本地D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/151/merge-pr144-643c6012/integrated为独立API检查资料包，包含所需源码/管理文件而非完整clone；父目录保存base/ours/theirs、三方计划、冲突记录及新源payload，不上传临时草稿。
 - 实现入口docs/SEVEN_BLOCK_RESEARCH_BASELINE.md；核心RTL不修改。旧验证保留历史身份，本轮静态源/合并结果见integration-verification.json。R未合格，PR133/146未自动引入。没有新服务器、RTL仿真或EDA。
 - 恢复先读Issue151/PR152最新head与base，核两个父提交、src project tree和本轮回执；再从最小wrapper设计继续。主干合并、独立审查、登记和看板仍分别pending；处理人/审查人未定处保持待指定。
+
+## 2026-10-31T20:30:44+08:00：RTL推导重写接续
+
+- 仓库rayggxia-workspace/LLMHardwareDesign；Issue151/PR152；负责人Melodydt。分支task/151-six-connection-study，PR base task/143-seven-block-v2；输入commit faabeda68b3b098ba562d68517319e02725f5bc3（来源643c6012）。本轮输出commit/远端head见PR线上回执；未合main，不修改PR144分支。
+- 工作目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/151/rtl-redesign-faabeda/integrated，为部分API检查包，非完整checkout；无Git HEAD/暂存区，本地候选改动为本轮白名单文档/合同/静态检查与自身进度，草稿留overall-drafts/rtl-replan不上传。旧包/根副本保持。
+- 入口docs/SIX_CONNECTION_SYSTEM_DESIGN.md v0.2，原生审计docs/RTL_NATIVE_CONNECTION_AUDIT.md及rtl-contracts三附录；14份RTL字节保持原基线，7签名和命令示例在rtl-derived-contract.json。
+- 实际检查/日志：rtl-redesign-checks.json与rtl-redesign-verification.json、system-verification.json、integration-verification.json；管理和静态源码/合同检查，不代表硬件或精度。RTL/SystemC/整数oracle/EDA/完整产品程序未执行，没有服务器作业。
+- 未完成：独立评审/PR合并（审查人待指定）、最小组合wrapper、NUM/外存/状态版本实现、R资格与全模型编译/数值/物理验收。处理人Melodydt负责接续研究，实际实施任务/审查人待确定，不接管其他成员作业。
+- 看板：本仓库无board.json，status-mapping存在；当前连接无Projects条目工具，组织候选看板1的条目/字段本轮仍无法读回，状态unverified、同步pending，管理员待指定。不能认定Melodydt权限不足或已同步；已有portfolio来源和浏览器超时记录保留。登记沿用management-hub PR5 pending，不跨仓库重复登记。
+- 恢复第一步：用Melodydt连接读回Issue151、PR152最新head/base/评论/CI，比较本轮白名单与其他会话占用，再从v0.2及原生审计讨论实现子任务。先确认GDN/SSM全组和两遍、M单结果、T批界、ROM预编译及外存能力，不能从框图推断已存在硬件。

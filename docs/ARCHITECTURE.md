@@ -349,3 +349,17 @@ python work/Melodydt/151/verify_system_design.py --root .
 ```
 
 两脚本使用Python3.7+标准库，只核验研究来源/链接与候选合同（可附来源快照目录）；不是RTL/SystemC、布局布线、制造或整模型质量验收。来源、实际执行结果、未执行项分别见本任务两份verification记录。完整模型程序与ROM内容必须在共同底座冻结前编译接收，当前尚未完成。
+
+## Issue151：按实际RTL重建总方案的核验
+
+入口：`docs/SIX_CONNECTION_SYSTEM_DESIGN.md` v0.2；原生操作码附录：`docs/RTL_NATIVE_CONNECTION_AUDIT.md`。固定研究基线faabeda、七宏来源643c6012。新增下面的Python3.7+标准库静态核验：
+
+```text
+python -X utf8 scripts/check_project.py
+python -X utf8 work/Melodydt/151/verify_study.py --root .
+python -X utf8 work/Melodydt/151/verify_system_design.py --root . --output work/Melodydt/151/system-verification.json
+python -X utf8 work/Melodydt/151/verify_rtl_design.py --root . --output work/Melodydt/151/rtl-redesign-verification.json
+python -X utf8 work/Melodydt/151/verify_rtl_baseline.py --root . --output work/Melodydt/151/integration-verification.json
+```
+
+首次生成报告前可先不带`--output`核验已提交报告，或生成后再核验链接。原36/7来源字节检查需另加`--source-dir`与`--prior-source-dir`，无来源目录时如实标未执行。新脚本检查七原生接口指纹/签名、FFN示例位域、合同/文档链接与格式，14核心文件由baseline脚本检查。实际命令/exit与工具版本见`work/Melodydt/151/rtl-redesign-checks.json`。这些命令不执行RTL，不替代数值oracle、完整程序编译、活性或物理验收。

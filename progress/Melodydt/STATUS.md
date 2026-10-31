@@ -37,3 +37,11 @@
 - 本地隔离集成目录merge-pr144-643c6012/integrated是检查资料包，不是完整Git clone；原system-delivery和管理根副本保留。
 - 合并后管理/研究静态/源文件检查和Tcl夹具结果以integration-verification.json为准；没有服务器作业、RTL或P&R。
 - 下一步在当前真实端口上拆最小FFN/257Softmax系统wrapper任务；NUM、外部状态版本及ROM完整编译仍待接收。登记pending，看板unverified/同步pending，独立审查人待指定。
+
+## 2026-10-31T20:30:44+08:00：Issue151按当前RTL重新生成总方案
+
+- [Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151) / [PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，负责人Melodydt；分支task/151-six-connection-study，输入head faabeda68b3b098ba562d68517319e02725f5bc3，七宏来源643c6012；本轮输出commit/线上CI见PR读回回执。
+- 已完成：实质重写[总方案v0.2](../../docs/SIX_CONNECTION_SYSTEM_DESIGN.md)、控制规格/六模板，补七宏逐操作码审计、原生接口合同与编码核验，修正M scale/读出、N长度/mask、E/G尾字/尺度、R两遍/局部提交、T连续refill及loader取消。
+- 独立目录rtl-redesign-faabeda/integrated为部分API资料包，不是Git clone；原包和根参考副本未覆盖。没有修改叶宏、服务器或ref-project。
+- 实际验证：管理、研究来源36+7、6模板/64阶段/15owner/17拒绝用例、7接口与示例编码静态检查已通过；最终重跑命令与产物SHA以rtl-redesign-checks/verification为准。未执行RTL/SystemC/EDA、完整产品程序、整数oracle或模型质量，没有新作业。
+- 下一步：独立评审v0.2，再明确最小FFN8/Softmax257 wrapper实现任务和NUM/外存/版本服务边界；R资格仍单列。审查人待指定，PR未合并、Issue回in_review，不提前done。登记pending、看板unverified/同步pending，在线状态以读回为准。

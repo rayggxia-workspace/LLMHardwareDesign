@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "status": "proposed",
+  "research_baseline": "faabeda68b3b098ba562d68517319e02725f5bc3",
+  "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+  "interfaces": {
+    "M": {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "module": "block_v2_m",
+      "ansi_header_normalized": "input wire clk,reset, input wire a_valid,output wire a_ready,input wire a_bank, input wire [2:0] a_row,input wire [1:0] a_tile,input wire a_wide,input wire [127:0] a_data, input wire b_valid,output wire b_ready,input wire b_bank,input wire [1:0] b_tile, input wire b_wide,b_half,input wire [511:0] b_data, input wire cmd_valid,output wire cmd_ready,input wire [3:0] cmd_op, input wire [5:0] cmd_index,input wire [63:0] cmd_data, output reg rsp_valid,input wire rsp_ready,output reg [127:0] rsp_data, output reg rsp_error,rsp_saturated,output wire busy",
+      "git_blob_sha": "d91ffdf904bc77c19d5d0ecfd4cd11560b44a417",
+      "sha256": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e"
+    },
+    "N": {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "module": "block_v2_n",
+      "ansi_header_normalized": "input wire clk,reset,cmd_valid,output wire cmd_ready, input wire [3:0] cmd_op,cmd_count,input wire [31:0] cmd_param, input wire [127:0] cmd_data,cmd_aux, output reg rsp_valid,input wire rsp_ready,output reg [127:0] rsp_data, output reg rsp_error,rsp_saturated,output wire busy",
+      "git_blob_sha": "f9281bb329ea4af8fa314fa15249f7aed985980b",
+      "sha256": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861"
+    },
+    "E": {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "module": "block_v2_e",
+      "ansi_header_normalized": "input wire clk,reset,in_valid,output wire in_ready, input wire [3:0] in_op,input wire [4:0] in_shift, input wire [127:0] in_a,in_b,in_c, output reg out_valid,input wire out_ready, output reg [127:0] out_data,output reg out_error,out_saturated",
+      "git_blob_sha": "25a2d48d084d82303da3ee39b44d7ccad9a10360",
+      "sha256": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b"
+    },
+    "G": {
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "module": "block_v2_g",
+      "ansi_header_normalized": "input wire clk,reset,in_valid,output wire in_ready, input wire [2:0] in_fn,input wire in_gated, input wire [31:0] in_x,in_gate, output reg out_valid,input wire out_ready, output reg [31:0] out_data,output reg out_error,out_saturated",
+      "git_blob_sha": "5ed727f707a9ee2a7ccec8525b720c1c5294ae98",
+      "sha256": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7"
+    },
+    "S": {
+      "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+      "module": "block_feed_s_macro",
+      "ansi_header_normalized": "input wire clk,reset, input wire req,wr,input wire [9:0] addr,input wire [127:0] din, output wire ready,valid,input wire take,output wire [127:0] dout, input wire load_valid,output wire load_ready, input wire load_bank,input wire [3:0] load_rows,input wire [2:0] load_tiles, input wire load_a_wide,load_b_wide,load_reuse_b, input wire [9:0] load_a_base,load_b_base, output wire done_valid,input wire done_take,output wire done_error,busy, output wire a_valid,input wire a_ready,output wire a_bank, output wire [2:0] a_row,output wire [1:0] a_tile, output wire a_wide,output wire [127:0] a_data, output wire b_valid,input wire b_ready,output wire b_bank, output wire [1:0] b_tile,output wire b_wide,b_half,output wire [511:0] b_data",
+      "git_blob_sha": "a02cb64d9aa99f884503e6cc6e02955f8175de01",
+      "sha256": "3d105bf4605076e5f806b45c545cb5fdd5658a23d82f0ea4b58c0cd8d2ce18c8"
+    },
+    "R": {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "module": "block_v1_r",
+      "ansi_header_normalized": "input wire clk,reset,cmd_valid,output wire cmd_ready, input wire [3:0] cmd_op,input wire [9:0] cmd_index,input wire [127:0] cmd_data, output reg rsp_valid,input wire rsp_ready,output reg [127:0] rsp_data, output reg rsp_error,output wire busy",
+      "git_blob_sha": "a09828d702ca1c6f9883d0a532c0588a142676a7",
+      "sha256": "458359b93c07a74056f77d1616610688eec13f7231acc791257aaf83f1a8c246"
+    },
+    "T": {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "module": "transaction6k",
+      "ansi_header_normalized": "input wire clk, reset, input wire begin_valid, output wire begin_ready, input wire [1:0] begin_owner, input wire [31:0] begin_generation, input wire [9:0] begin_words, input wire write_valid, output wire write_ready, input wire [9:0] write_index, input wire [127:0] write_data, input wire commit_valid, output wire commit_ready, input wire revoke_valid, output wire revoke_ready, output wire read_valid, input wire read_take, output wire [9:0] read_index, output wire [127:0] read_data, output wire read_last, output reg [1:0] owner, output reg [31:0] generation, output reg [9:0] word_count, input wire release_valid, output wire release_ready, output wire busy, sealed, committed, output reg protocol_error, output wire [2:0] debug_state",
+      "git_blob_sha": "d8b05d8a3da5415cf401a3055922bdc97315e660",
+      "sha256": "0b07833dffc28169ba70beafabad3d7503a31989f46fcbdcf03b15ba9026b3ef"
+    }
+  },
+  "observed_native": {
+    "M_scale_survives_clear_all": true,
+    "M_op3_can_feed_E13": false,
+    "S_write_response_must_be_taken": true,
+    "N_has_mask": false,
+    "E_G_have_count": false,
+    "G_gated_sigmoid_output_frac": 10,
+    "R_s32_frac": "product_declared",
+    "R_ssm_requires_param_valid": true,
+    "T_startup_read_wait": true,
+    "T_steady_read_II": 1,
+    "T_has_commit_error": false
+  },
+  "proposed_system_hardware_implemented": false,
+  "numeric_quality_accepted": false,
+  "verification_scope": "source drift and static document/contract consistency, not RTL simulation"
+}

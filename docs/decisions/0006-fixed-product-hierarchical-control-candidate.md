@@ -18,3 +18,9 @@
 冻结前比较中央、母＋局部、母＋区域＋局部三个不同底座候选；选定后再固定有源几何/PG/CTS，仅改变允许定制层验证至少两个产品。不得为不同产品各自插新buffer修时序。程序完整性、容量、类型、资源租约、事件/取消、数值和物理检查通过后，才可把候选改为接收方案。
 
 详见[总方案](../SIX_CONNECTION_SYSTEM_DESIGN.md)、[控制规格](../SIX_CONNECTION_CONTROL_SPEC.md)、[模板规格](../SIX_CONNECTION_TEMPLATE_SPEC.md)。本记录不修改既有叶宏任务、服务器或ref-project。
+
+## v0.2：依实际RTL收紧接口和控制边界
+
+研究基线faabeda/643c6012，仍为proposed。复用七宏原生口及S内loader；外置局部服务统一任务/事件，不改成统一叶宏接口。M v2缩放须显式配置，S写ACK须取走，N总长度在wrapper强制，E/G尾字独占补零整字写，R两遍按实际有效范围导出，T首读后连续refill。loader无abort，取消时先排空；R提交已接受后保护输出，根/结果已部分可见时进入部分完成恢复。
+
+完整多tile SSM采用conv/history pass后新OPEN的state pass，在后者装state/逐元素decay/param_valid；单tile融合才要求卷积前预载。两级与中央/区域控制是冻结前不同有源底座候选，选定后再固定共同底座做产品A/B。完整程序、NUM和物理证据未完成，不升级accepted。
