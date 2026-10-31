@@ -1,0 +1,42 @@
+OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD
+/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad
+0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53  /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 16 thread(s).
+ISSUE143_RESIZE wire681011 BUF_X4 -> BUF_X8
+[ERROR EST-0104] inconsistent parasitics state
+EST-0104
+    while executing
+"rsz::repair_setup $setup_margin $repair_tns_end_percent $max_passes  $max_iterations $max_repairs_per_pass $match_cell_footprint $verbose  $sequence $..."
+    (procedure "repair_timing" line 134)
+    invoked from within
+"repair_timing -setup -setup_margin 0.05 -repair_tns 100 -max_passes 20 -max_repairs_per_pass 4 -skip_size_down -verbose"
+    (file "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/snapshots/080/project/experiments/block_v2/probe_r..." line 40)
+Command exited with non-zero status 1
+	Command being timed: "bash -c source /OpenROAD-flow-scripts/env.sh; command -v openroad; sha256sum "$(command -v openroad)"; openroad -no_init -exit "$1" bash /public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/snapshots/080/project/experiments/block_v2/probe_r_spef_repair.tcl"
+	User time (seconds): 619.59
+	System time (seconds): 89.48
+	Percent of CPU this job got: 150%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 7:51.03
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 14957588
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 58
+	Minor (reclaiming a frame) page faults: 186305
+	Voluntary context switches: 7497484
+	Involuntary context switches: 63113
+	Swaps: 0
+	File system inputs: 124494
+	File system outputs: 32
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1
+srun: error: node20: task 0: Exited with exit code 1

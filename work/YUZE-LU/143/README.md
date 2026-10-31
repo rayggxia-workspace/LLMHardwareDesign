@@ -8,7 +8,11 @@
 - 规划来源：用户指定本地MVR总结，#139/PR142；仅文档，非实现验收。
 - Block来源：#121 `84045638ae0621dbaa8fcc14119a9e07489a632f`；#130 M/S `4dd994bf256c1a3a16163756a3a486139984ecff`。原始目录保持，新增实现放project/rtl/block_v2。
 
-## 当前更新：2026-10-31 09:53 CST
+## 当前更新：2026-10-31 10:46 CST
+
+080/94131补全修复估算器初始化后重读同一SPEF，原015的setup4/hold325/cap1两次精确复现；执行修复时报EST-0104寄生状态不一致，没有修复结果。已验证五份源输入SHA保持，拒绝该SPEF修复路径，不再扩展快捷修复；主线九候选继续完整原生路由/最终门。S的27个规范包成员均已在本任务目录逐SHA收到，含候选LEF和全部验收证据，压缩服务器归档未重复下载。见r-routed-followup/index.json及delivery-index.json。
+
+## 历史更新：2026-10-31 09:53 CST
 
 八个旧待启验收组按R原生证明实测146771828KiB峰值，上调为96CPU整节点预留；任务CPU48与三个16CPU独立就绪门不变，不改依赖/源/最终门。c96分区OverSubscribe=NO已读回。Shared=0原地修改被Slurm拒绝，改用获准NumCPUs=96；检查到节点RealMemory配置仅1MiB，曾设置的400GiB调度内存请求在依赖未就绪时已全部纠正为0，实际约503.5GiB RAM按运行时/proc核对，不能将该Slurm占位配置误当真实容量。改动只涉及八个本任务PENDING gate，不取消/重提/改其他任务；完整读回见r-pending-gate-memory/record.json。
 
