@@ -1,0 +1,42 @@
+{
+  "updated_cst": "2026-10-31 08:15",
+  "qualified": false,
+  "accepted_macros": ["M", "N", "E-wide", "G", "S", "T"],
+  "r_candidate_015": {
+    "job": 93808,
+    "detailed_route_native_report_lines": 0,
+    "final_producer_completed": false,
+    "final_native_lec_started_cst": "2026-10-31 07:50:07",
+    "last_observed_phase": "Collecting POs for design 0",
+    "max_rss_kib_at_081452": 126650988,
+    "node14_free_memory_mb_at_081518": 279820,
+    "resource_policy": "Measured free memory remains ample; retain concurrency. Watch growing proof memory; only isolate own work if actual node pressure requires it. Producer forecast192GiB and future gate-worker forecast64GiB are distinct estimates, not hard limits."
+  },
+  "full_state_diagnostic": {
+    "job": 94081,
+    "output": "outputs/072",
+    "source_commit": "8b8624e312bd845707fa07e6368f5b209d68446c",
+    "archive_sha256": "0bb17c9f259b627b0c2760ced6cb98e2df8d78456c13ddffc1bc5190b96dfed9",
+    "cpu": 48,
+    "independent_workers": 3,
+    "expected_parts": 72,
+    "expected_unique_state_outputs": 292804,
+    "expected_primary_outputs": 132,
+    "expected_common_inputs_each_part": 292950,
+    "scope": "All independently free Q/QN state inputs; partition every D/CK and retain every primary output, exact reversible edits and same-function sequential models. First three parts passed; all72 required. Diagnostic only; producer and final qualification unchanged."
+  },
+  "final_rc_diagnostic": {
+    "job": 94082,
+    "output": "outputs/073",
+    "source_commit": "b1a49be077ea283873a47a9292318c1d348740cd",
+    "archive_sha256": "6c385c5336a6e18c7265e1c83c84d44e83ec116c8ba2938107b7449eebd0cb08",
+    "cpu": 16,
+    "scope": "Read original completed6_final.odb/SDC, independently extract actual routed RC and diagnose native timing/electrical violations. Check original hashes before/after. Writes only own outputs/073, never source015 or a qualification receipt."
+  },
+  "node_budget": {
+    "eligible": "node13-20",
+    "excluded": "node21-26",
+    "observed_own_r_nodes": ["node13", "node14", "node15", "node17"],
+    "main_jobs_untouched": true
+  }
+}
