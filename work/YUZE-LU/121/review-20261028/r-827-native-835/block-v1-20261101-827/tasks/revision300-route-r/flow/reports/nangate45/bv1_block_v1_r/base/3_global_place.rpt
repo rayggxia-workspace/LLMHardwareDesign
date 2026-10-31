@@ -1,0 +1,288 @@
+
+==========================================================================
+global place report_tns
+--------------------------------------------------------------------------
+tns max -0.65
+
+==========================================================================
+global place report_wns
+--------------------------------------------------------------------------
+wns max -0.34
+
+==========================================================================
+global place report_worst_slack
+--------------------------------------------------------------------------
+worst slack max -0.34
+
+==========================================================================
+global place report_clock_min_period
+--------------------------------------------------------------------------
+core period_min = 3.67 fmax = 272.55
+
+==========================================================================
+global place report_checks -path_delay min
+--------------------------------------------------------------------------
+Startpoint: $auto$ff.cc:337:slice$2798897
+            (rising edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$2798897
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: min
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                  0.05    0.00    0.00   clock core (rise edge)
+                          0.00    0.00   clock network delay (ideal)
+                  0.05    0.00    0.00 ^ $auto$ff.cc:337:slice$2798897/CK (DFF_X1)
+     2    2.33    0.01    0.10    0.10 ^ $auto$ff.cc:337:slice$2798897/Q (DFF_X1)
+                                         history[31][28] (net)
+                  0.01    0.00    0.10 ^ $auto$ff.cc:337:slice$2798897/D (DFF_X1)
+                                  0.10   data arrival time
+
+                  0.05    0.00    0.00   clock core (rise edge)
+                          0.00    0.00   clock network delay (ideal)
+                          0.10    0.10   clock uncertainty
+                          0.00    0.10   clock reconvergence pessimism
+                                  0.10 ^ $auto$ff.cc:337:slice$2798897/CK (DFF_X1)
+                          0.02    0.12   library hold time
+                                  0.12   data required time
+-----------------------------------------------------------------------------
+                                  0.12   data required time
+                                 -0.10   data arrival time
+-----------------------------------------------------------------------------
+                                 -0.02   slack (VIOLATED)
+
+
+
+==========================================================================
+global place report_checks -path_delay max
+--------------------------------------------------------------------------
+Startpoint: cmd_index[1] (input port clocked by core)
+Endpoint: $auto$ff.cc:337:slice$3320663
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                  0.05    0.00    0.00   clock core (rise edge)
+                          0.00    0.00   clock network delay (ideal)
+                          0.80    0.80 ^ input external delay
+     1    2.08    0.01    0.00    0.80 ^ cmd_index[1] (in)
+                                         cmd_index[1] (net)
+                  0.01    0.00    0.80 ^ input130/A (BUF_X2)
+     6   94.47    0.08    0.09    0.89 ^ input130/Z (BUF_X2)
+                                         net130 (net)
+                  0.14    0.09    0.98 ^ place157555/A (BUF_X2)
+     3    6.27    0.01    0.04    1.02 ^ place157555/Z (BUF_X2)
+                                         net157555 (net)
+                  0.01    0.00    1.02 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3767548/A (INV_X1)
+     2    3.90    0.01    0.01    1.03 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3767548/ZN (INV_X1)
+                                         $abc$3766830$new_n295721 (net)
+                  0.01    0.00    1.03 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3771138/B (MUX2_X2)
+     5  161.73    0.04    0.10    1.13 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3771138/Z (MUX2_X2)
+                                         $abc$3766830$new_n299311 (net)
+                  0.28    0.23    1.35 v place151705/A (BUF_X8)
+    17  149.74    0.02    0.11    1.47 v place151705/Z (BUF_X8)
+                                         net151705 (net)
+                  0.08    0.07    1.53 v place151445/A (BUF_X8)
+    10  137.68    0.01    0.06    1.59 v place151445/Z (BUF_X8)
+                                         net151445 (net)
+                  0.08    0.07    1.66 v place151188/A (BUF_X8)
+     7   98.45    0.01    0.06    1.72 v place151188/Z (BUF_X8)
+                                         net151188 (net)
+                  0.04    0.03    1.74 v place151187/A (BUF_X8)
+     3   39.50    0.01    0.04    1.78 v place151187/Z (BUF_X8)
+                                         net151187 (net)
+                  0.02    0.02    1.80 v place151186/A (BUF_X8)
+     4   38.99    0.01    0.03    1.83 v place151186/Z (BUF_X8)
+                                         net151186 (net)
+                  0.02    0.02    1.85 v place151185/A (BUF_X8)
+    17   92.94    0.01    0.03    1.89 v place151185/Z (BUF_X8)
+                                         net151185 (net)
+                  0.07    0.06    1.94 v place151183/A (BUF_X4)
+    33   91.80    0.02    0.06    2.00 v place151183/Z (BUF_X4)
+                                         net151183 (net)
+                  0.04    0.03    2.03 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793539/A (OAI21_X1)
+     1    1.91    0.02    0.04    2.06 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3793539/ZN (OAI21_X1)
+                                         $abc$3766830$new_n321712 (net)
+                  0.02    0.00    2.06 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3793542/A2 (OAI22_X1)
+     1    2.02    0.01    0.02    2.09 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793542/ZN (OAI22_X1)
+                                         $abc$3766830$new_n321715 (net)
+                  0.01    0.00    2.09 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793564/C1 (OAI211_X1)
+     1    3.61    0.03    0.04    2.13 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3793564/ZN (OAI211_X1)
+                                         $abc$3766830$new_n321737 (net)
+                  0.03    0.00    2.13 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3793615/A3 (NAND3_X1)
+     1    4.44    0.03    0.03    2.16 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793615/ZN (NAND3_X1)
+                                         $abc$3766830$new_n321788 (net)
+                  0.03    0.00    2.16 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793616/A3 (NAND3_X1)
+     1    1.92    0.02    0.03    2.19 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3793616/ZN (NAND3_X1)
+                                         $abc$3766830$new_n321789 (net)
+                  0.02    0.00    2.19 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3793617/A3 (NAND3_X1)
+     1   36.34    0.09    0.12    2.31 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793617/ZN (NAND3_X1)
+                                         $abc$3766830$new_n321790 (net)
+                  0.10    0.02    2.33 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793713/A1 (NAND2_X1)
+     1   49.77    0.11    0.16    2.49 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3793713/ZN (NAND2_X1)
+                                         $abc$3766830$new_n321886 (net)
+                  0.12    0.04    2.53 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3793715/B1 (OAI21_X4)
+     1   49.51    0.04    0.06    2.58 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793715/ZN (OAI21_X4)
+                                         $abc$3766830$new_n321888 (net)
+                  0.06    0.04    2.62 v place134915/A (BUF_X1)
+     2   46.25    0.04    0.09    2.71 v place134915/Z (BUF_X1)
+                                         net134915 (net)
+                  0.06    0.03    2.75 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793716/B (MUX2_X1)
+     2    6.84    0.02    0.09    2.84 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793716/Z (MUX2_X1)
+                                         $abc$3766830$new_n321889 (net)
+                  0.02    0.00    2.84 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3966065/A1 (NAND2_X1)
+     1    3.07    0.02    0.02    2.86 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3966065/ZN (NAND2_X1)
+                                         $abc$3766830$new_n494238 (net)
+                  0.02    0.00    2.86 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3966071/A2 (NAND4_X1)
+     1   99.16    0.30    0.33    3.19 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3966071/ZN (NAND4_X1)
+                                         $abc$3766830$new_n494244 (net)
+                  0.36    0.16    3.35 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3966072/B2 (OAI22_X1)
+     1    3.33    0.08    0.16    3.51 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3966072/ZN (OAI22_X1)
+                                         $abc$3766830$new_n494245 (net)
+                  0.08    0.00    3.51 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3966073/A (INV_X1)
+     1    8.01    0.02    0.03    3.53 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3966073/ZN (INV_X1)
+                                         $abc$3766830$auto$rtlil.cc:3513:MuxGate$3323767 (net)
+                  0.02    0.00    3.54 v $auto$ff.cc:337:slice$3320663/D (DFF_X2)
+                                  3.54   data arrival time
+
+                  0.05    3.33    3.33   clock core (rise edge)
+                          0.00    3.33   clock network delay (ideal)
+                         -0.10    3.23   clock uncertainty
+                          0.00    3.23   clock reconvergence pessimism
+                                  3.23 ^ $auto$ff.cc:337:slice$3320663/CK (DFF_X2)
+                         -0.03    3.20   library setup time
+                                  3.20   data required time
+-----------------------------------------------------------------------------
+                                  3.20   data required time
+                                 -3.54   data arrival time
+-----------------------------------------------------------------------------
+                                 -0.34   slack (VIOLATED)
+
+
+
+==========================================================================
+global place report_checks -unconstrained
+--------------------------------------------------------------------------
+Startpoint: cmd_index[1] (input port clocked by core)
+Endpoint: $auto$ff.cc:337:slice$3320663
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                  0.05    0.00    0.00   clock core (rise edge)
+                          0.00    0.00   clock network delay (ideal)
+                          0.80    0.80 ^ input external delay
+     1    2.08    0.01    0.00    0.80 ^ cmd_index[1] (in)
+                                         cmd_index[1] (net)
+                  0.01    0.00    0.80 ^ input130/A (BUF_X2)
+     6   94.47    0.08    0.09    0.89 ^ input130/Z (BUF_X2)
+                                         net130 (net)
+                  0.14    0.09    0.98 ^ place157555/A (BUF_X2)
+     3    6.27    0.01    0.04    1.02 ^ place157555/Z (BUF_X2)
+                                         net157555 (net)
+                  0.01    0.00    1.02 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3767548/A (INV_X1)
+     2    3.90    0.01    0.01    1.03 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3767548/ZN (INV_X1)
+                                         $abc$3766830$new_n295721 (net)
+                  0.01    0.00    1.03 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3771138/B (MUX2_X2)
+     5  161.73    0.04    0.10    1.13 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3771138/Z (MUX2_X2)
+                                         $abc$3766830$new_n299311 (net)
+                  0.28    0.23    1.35 v place151705/A (BUF_X8)
+    17  149.74    0.02    0.11    1.47 v place151705/Z (BUF_X8)
+                                         net151705 (net)
+                  0.08    0.07    1.53 v place151445/A (BUF_X8)
+    10  137.68    0.01    0.06    1.59 v place151445/Z (BUF_X8)
+                                         net151445 (net)
+                  0.08    0.07    1.66 v place151188/A (BUF_X8)
+     7   98.45    0.01    0.06    1.72 v place151188/Z (BUF_X8)
+                                         net151188 (net)
+                  0.04    0.03    1.74 v place151187/A (BUF_X8)
+     3   39.50    0.01    0.04    1.78 v place151187/Z (BUF_X8)
+                                         net151187 (net)
+                  0.02    0.02    1.80 v place151186/A (BUF_X8)
+     4   38.99    0.01    0.03    1.83 v place151186/Z (BUF_X8)
+                                         net151186 (net)
+                  0.02    0.02    1.85 v place151185/A (BUF_X8)
+    17   92.94    0.01    0.03    1.89 v place151185/Z (BUF_X8)
+                                         net151185 (net)
+                  0.07    0.06    1.94 v place151183/A (BUF_X4)
+    33   91.80    0.02    0.06    2.00 v place151183/Z (BUF_X4)
+                                         net151183 (net)
+                  0.04    0.03    2.03 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793539/A (OAI21_X1)
+     1    1.91    0.02    0.04    2.06 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3793539/ZN (OAI21_X1)
+                                         $abc$3766830$new_n321712 (net)
+                  0.02    0.00    2.06 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3793542/A2 (OAI22_X1)
+     1    2.02    0.01    0.02    2.09 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793542/ZN (OAI22_X1)
+                                         $abc$3766830$new_n321715 (net)
+                  0.01    0.00    2.09 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793564/C1 (OAI211_X1)
+     1    3.61    0.03    0.04    2.13 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3793564/ZN (OAI211_X1)
+                                         $abc$3766830$new_n321737 (net)
+                  0.03    0.00    2.13 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3793615/A3 (NAND3_X1)
+     1    4.44    0.03    0.03    2.16 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793615/ZN (NAND3_X1)
+                                         $abc$3766830$new_n321788 (net)
+                  0.03    0.00    2.16 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793616/A3 (NAND3_X1)
+     1    1.92    0.02    0.03    2.19 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3793616/ZN (NAND3_X1)
+                                         $abc$3766830$new_n321789 (net)
+                  0.02    0.00    2.19 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3793617/A3 (NAND3_X1)
+     1   36.34    0.09    0.12    2.31 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793617/ZN (NAND3_X1)
+                                         $abc$3766830$new_n321790 (net)
+                  0.10    0.02    2.33 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793713/A1 (NAND2_X1)
+     1   49.77    0.11    0.16    2.49 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3793713/ZN (NAND2_X1)
+                                         $abc$3766830$new_n321886 (net)
+                  0.12    0.04    2.53 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3793715/B1 (OAI21_X4)
+     1   49.51    0.04    0.06    2.58 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793715/ZN (OAI21_X4)
+                                         $abc$3766830$new_n321888 (net)
+                  0.06    0.04    2.62 v place134915/A (BUF_X1)
+     2   46.25    0.04    0.09    2.71 v place134915/Z (BUF_X1)
+                                         net134915 (net)
+                  0.06    0.03    2.75 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793716/B (MUX2_X1)
+     2    6.84    0.02    0.09    2.84 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3793716/Z (MUX2_X1)
+                                         $abc$3766830$new_n321889 (net)
+                  0.02    0.00    2.84 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3966065/A1 (NAND2_X1)
+     1    3.07    0.02    0.02    2.86 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3966065/ZN (NAND2_X1)
+                                         $abc$3766830$new_n494238 (net)
+                  0.02    0.00    2.86 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3966071/A2 (NAND4_X1)
+     1   99.16    0.30    0.33    3.19 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3966071/ZN (NAND4_X1)
+                                         $abc$3766830$new_n494244 (net)
+                  0.36    0.16    3.35 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3966072/B2 (OAI22_X1)
+     1    3.33    0.08    0.16    3.51 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3966072/ZN (OAI22_X1)
+                                         $abc$3766830$new_n494245 (net)
+                  0.08    0.00    3.51 ^ $abc$3766830$auto$blifparse.cc:397:parse_blif$3966073/A (INV_X1)
+     1    8.01    0.02    0.03    3.53 v $abc$3766830$auto$blifparse.cc:397:parse_blif$3966073/ZN (INV_X1)
+                                         $abc$3766830$auto$rtlil.cc:3513:MuxGate$3323767 (net)
+                  0.02    0.00    3.54 v $auto$ff.cc:337:slice$3320663/D (DFF_X2)
+                                  3.54   data arrival time
+
+                  0.05    3.33    3.33   clock core (rise edge)
+                          0.00    3.33   clock network delay (ideal)
+                         -0.10    3.23   clock uncertainty
+                          0.00    3.23   clock reconvergence pessimism
+                                  3.23 ^ $auto$ff.cc:337:slice$3320663/CK (DFF_X2)
+                         -0.03    3.20   library setup time
+                                  3.20   data required time
+-----------------------------------------------------------------------------
+                                  3.20   data required time
+                                 -3.54   data arrival time
+-----------------------------------------------------------------------------
+                                 -0.34   slack (VIOLATED)
+
+
+
+==========================================================================
+global place report_power
+--------------------------------------------------------------------------
+Group                  Internal  Switching    Leakage      Total
+                          Power      Power      Power      Power (Watts)
+----------------------------------------------------------------
+Sequential             3.31e-01   8.20e-03   1.12e-02   3.51e-01  17.5%
+Combinational          6.76e-01   9.57e-01   1.68e-02   1.65e+00  82.5%
+Clock                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+Macro                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+Pad                    0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+----------------------------------------------------------------
+Total                  1.01e+00   9.65e-01   2.80e-02   2.00e+00 100.0%
+                          50.3%      48.3%       1.4%

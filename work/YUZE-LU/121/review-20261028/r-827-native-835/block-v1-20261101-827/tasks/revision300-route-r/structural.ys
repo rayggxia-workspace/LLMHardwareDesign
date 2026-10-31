@@ -1,0 +1,9 @@
+read_json /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-827/tasks/revision300-route-r/unsigned.json
+hierarchy -check -top block_v1_r
+write_verilog -noattr -noexpr -norename structural.v
+write_json structural.json
+design -reset
+read_liberty -lib /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_verilog structural.v
+hierarchy -check -top block_v1_r
+write_json reparsed.json
