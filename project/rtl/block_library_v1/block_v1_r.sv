@@ -45,24 +45,21 @@ module block_v1_r(
  reg [8:0] length,row;reg [1:0] mode,tap;
  assign cmd_ready=!reset&&phase==IDLE&&(!rsp_valid||rsp_ready);
  assign busy=!cmd_ready;
- // Local temporaries only: state, products, dot accumulators and cycles stay.
- // Calls shift by 14/16/31. Any S65 rounded by >=14 fits S52, as does
- // adding an S32 base. The all-input proof also checks overflow decisions.
- function automatic signed [51:0] rne;
-  input signed [64:0] v;input [6:0] sh;
-  reg signed [64:0] q;reg [64:0] remn,half;
+ function automatic signed [127:0] rne;
+  input signed [127:0] v;input [6:0] sh;
+  reg signed [127:0] q;reg [127:0] remn,half;
   begin
-   if(sh==0)rne=v[51:0];
-   else begin q=v>>>sh;remn=$unsigned(v)&({65{1'b1}}>>(65-sh));
-    half=65'd1<<(sh-1);rne=q[51:0]+{{51{1'b0}},((remn>half)||((remn==half)&&q[0]))};end
+   if(sh==0)rne=v;
+   else begin q=v>>>sh;remn=$unsigned(v)&({128{1'b1}}>>(128-sh));
+    half=128'd1<<(sh-1);rne=q+((remn>half)||((remn==half)&&q[0]));end
   end
  endfunction
  function automatic fits32;
-  input signed [51:0] v;
-  begin fits32=v[51:31]=={21{v[31]}};end
+  input signed [127:0] v;
+  begin fits32=v[127:31]=={97{v[31]}};end
  endfunction
  reg loaded,coefficient_loaded,factor_loaded;
- reg signed [51:0] value[0:7];reg value_error;
+ reg signed [127:0] value[0:7];reg value_error;
  always @* begin
   loaded=1;coefficient_loaded=1;factor_loaded=1;
   for(integer n=0;n<256;n=n+1)if(n<length)begin
@@ -84,11 +81,11 @@ module block_v1_r(
     default:begin end
    endcase
    case(phase)
-    DEC_MUL,DEC_WRITE,ERR_WRITE:value[l]=rne(product[l],31);
-    PRED_END,READ_END,CONV_END:value[l]=rne({dot[l][63],dot[l]},14);
-    ERR_PREP:value[l]=$signed({{20{x[l][31]}},x[l]})-$signed({{20{error_value[l][31]}},error_value[l]});
-    UP_MUL,UP_WRITE:value[l]=$signed({{20{product_state_base[l][31]}},product_state_base[l]})+rne(product[l],14);
-    SKIP_WRITE:value[l]=$signed({{20{output_value[l][31]}},output_value[l]})+rne(product[l],16);
+    DEC_MUL,DEC_WRITE,ERR_WRITE:value[l]=rne({{63{product[l][64]}},product[l]},31);
+    PRED_END,READ_END,CONV_END:value[l]=rne(dot[l],14);
+    ERR_PREP:value[l]=$signed({{96{x[l][31]}},x[l]})-$signed({{96{error_value[l][31]}},error_value[l]});
+    UP_MUL,UP_WRITE:value[l]=$signed({{96{product_state_base[l][31]}},product_state_base[l]})+rne({{63{product[l][64]}},product[l]},14);
+    SKIP_WRITE:value[l]=$signed({{96{output_value[l][31]}},output_value[l]})+rne({{63{product[l][64]}},product[l]},16);
     default:value[l]=0;
    endcase
    if(!fits32(value[l]))value_error=1;

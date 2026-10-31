@@ -1,3 +1,11 @@
+## 当前更新：2026-11-01T00:37:45 CST
+
+030/93844在24小时Slurm时限到达时仍在原生GRT（最后观察24/30），终态TIMEOUT、Elapsed1-00:00:16；ExitCode0:0不当成功。该作业没有终态producer receipt，原部分native-flow、路由日志、job stdout/stderr及源manifest按远端SHA实收，不伪造完成回执。033/93853与034/93854核验各自真实快照脚本、owner、PENDING和依赖后取消，最终CANCELLED读回通过。证据见r-input-hold/failed-030。R097最终RC失败证据也已完整实收；035与100继续，104实际RC及105完整路径/缓冲连接只读诊断运行，R仍未合格。
+
+## 当前更新：2026-11-01T00:36:05 CST
+
+R097实际完成240个局部缓冲与中间检查、原生详细布线及空DRC报告，但103/94310最终真实RC为setup2/hold26/cap0/slew0/fanout0，最差setup−0.118844934ns、hold−0.021331159ns，最差hold是reset至未列入原30端点的FF2873667；最大setup来自FF2873666至FF3983479。源ODB/SDC前后SHA一致。仅停止核验过UID、argv、Slurm cgroup的本候选未完成最终LEC，94257真实FAILED；098/94258与099/94259核验精确脚本/归属/PENDING/依赖后取消，最终CANCELLED已读回。不声明完整证明通过或反例；中间通过不当最终资格。证据见r-input-hold/final-103。R100完整证明及104真实RC继续；新增105仅只读枚举097全部hold/setup及关键缓冲连接，未新增宏或放宽最终门。030自然超时待归档，035继续；R未合格，七宏任务继续。
+
 ## 当前更新：2026-10-31T23:07:52 CST
 
 R100/94260也已实际完成30端点各8个BUF_X1，共240个；301行审计核验CK/Q/PG、其他扇出和保护保持，插入前目标端点最小setup余量0.344630986ns。40份实际报告/脚本/审计按远端SHA实收；脚本、检查器及目标JSON与声明源逐字节一致，本地复算与原生中间JSON完全一致：前后cap96/slew7/setup0/hold0，无新增电气违规端点、最差电气slack未恶化。097与100均已进入原生详细布线；这些仅为中间证据，两者native_leaf_accepted均false，不能把端点前置余量当成最终全端点时序。最终真实RC四类全0、完整LEC、全DRC及其余原门保持。030/035全局布线继续，R未合格、七宏任务继续。100证据见r-input-hold/measured-100/intermediate。

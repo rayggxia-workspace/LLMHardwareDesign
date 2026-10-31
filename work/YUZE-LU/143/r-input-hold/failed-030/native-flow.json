@@ -1,0 +1,108 @@
+{
+  "schema": "issue143-native-flow/1",
+  "passed": false,
+  "top": "block_v1_r",
+  "implementation_count": 1,
+  "mapping_receipt_sha256": "fbcadab674226b38c4e4927975412bfb3ea39a6dc62034ff2676ffbb0aac2029",
+  "rtl_sha256": {
+    "project/rtl/block_library_v1/block_v1_r.sv": "4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d"
+  },
+  "mapped_artifacts": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-342/tasks/revision300-map-r/mapped.json": "4df8e33ce3a23efc2c3f1e08f1cae2c474e73391522349cf7fde5b3b8fcfd865",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-342/tasks/revision300-map-r/mapped.v": "f36d8d530c0c63ce1f807dc40bab0b45039bf509f5307a6886e4e3dc78ca0b56"
+  },
+  "mapped_area_um2": 1458349.256,
+  "die_um": [
+    3000,
+    3000
+  ],
+  "config_sha256": "115f55857fdc1750074a03f6320856f9621c0342b72df3d19506c72a28175121",
+  "pins_sha256": "a41e3e8abc1fea1b96332541dec7695e90aa1cd5bb475cf02ecd51a79b8db71a",
+  "budget": {
+    "schema": "block-v1-300mhz-contract/1",
+    "clock_ns": 3.3333333333333335,
+    "uncertainty_ns": 0.1,
+    "clock_transition_ns": 0.05,
+    "input_delay_max_ns": 0.8,
+    "input_delay_min_ns": 0.2,
+    "output_delay_max_ns": 0.8,
+    "output_delay_min_ns": 0.2,
+    "input_driver": {
+      "cell": "BUF_X2",
+      "pin": "Z"
+    },
+    "output_load_pf": 0.05,
+    "corner": "NangateOpenCellLibrary_typical",
+    "status": "Selected revised-leaf design contract; actual300MHz closure not yet measured",
+    "rationale": [
+      "3.333333333ns clock; symmetric0.8ns I/O windows leave1.633333333ns total for declared external interconnect after0.1ns uncertainty, rather than copying old2ns delays.",
+      "50fF receiver load is explicit macro-boundary test budget, including2fF receiver and48fF local wire allowance; eventual complete escape load must be reported separately and must not silently inherit end-to-end300MHz qualification.",
+      "No false or multicycle exceptions added. Pipeline stages, clock/drivers/FIFOs and all physical resources priced in native frozen macro."
+    ]
+  },
+  "actual_variables": {
+    "MIN_ROUTING_LAYER": "metal1",
+    "MAX_ROUTING_LAYER": "metal10",
+    "KEEP_VARS": "1",
+    "LEC_CHECK": "1",
+    "SEC_CHECK": "0",
+    "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+    "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+    "CAP_MARGIN": "40",
+    "HOLD_SLACK_MARGIN": "0.020",
+    "PLACE_DENSITY": "0.25",
+    "CTS_ARGS": "-sink_clustering_enable -repair_clock_nets -apply_ndr none",
+    "GPL_TIMING_DRIVEN": "0",
+    "ENABLE_PLACE_REPAIR_TIMING": "1"
+  },
+  "planned_complete_escape": {
+    "passed": true,
+    "total_signal_bits": 278,
+    "connected_bits": 278,
+    "shorts": 0,
+    "opens": 0,
+    "geometry_violations": 0,
+    "via10_count": 278,
+    "via11_count": 142
+  },
+  "planned_independent_gds": {
+    "passed": true,
+    "fixtures": [
+      {
+        "name": "all-ports",
+        "passed": true,
+        "gds_readback_exact": true,
+        "checks": {
+          "metal10_width": true,
+          "metal10_spacing": true,
+          "metal11_width": true,
+          "metal11_spacing": true,
+          "metal12_width": true,
+          "metal12_spacing": true,
+          "via10_spacing": true,
+          "via10_lower_enclosure": true,
+          "via10_upper_enclosure": true,
+          "via11_spacing": true,
+          "via11_lower_enclosure": true,
+          "via11_upper_enclosure": true
+        },
+        "gds_bytes": 96572
+      }
+    ],
+    "scope": "Independent actual GDS rectangle identity, nativeM10 limited width/space and new-layer width/space/cut-enclosure; not complete native-macro DRC."
+  },
+  "stages": [
+    "do-1_synth",
+    "do-floorplan",
+    "do-place",
+    "do-cts"
+  ],
+  "final_files": {},
+  "qualified_hard_macro": false,
+  "inherited_physical_stages": [],
+  "repair": "Fixed BUF_X8 data input receivers in native macro; all limits unchanged",
+  "remove_abc_buffers": false,
+  "placement_mode": "geometric",
+  "fanout_mode": "original",
+  "hold_repair_margin_ns": 0.02
+}
