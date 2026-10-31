@@ -1,0 +1,430 @@
+{
+  "schema": "issue143-native-flow/1",
+  "passed": false,
+  "top": "block_v1_r",
+  "implementation_count": 1,
+  "mapping_receipt_sha256": "fbcadab674226b38c4e4927975412bfb3ea39a6dc62034ff2676ffbb0aac2029",
+  "rtl_sha256": {
+    "project/rtl/block_library_v1/block_v1_r.sv": "4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d"
+  },
+  "mapped_artifacts": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-342/tasks/revision300-map-r/mapped.json": "4df8e33ce3a23efc2c3f1e08f1cae2c474e73391522349cf7fde5b3b8fcfd865",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-342/tasks/revision300-map-r/mapped.v": "f36d8d530c0c63ce1f807dc40bab0b45039bf509f5307a6886e4e3dc78ca0b56"
+  },
+  "mapped_area_um2": 1458349.256,
+  "die_um": [
+    3000,
+    3000
+  ],
+  "config_sha256": "8a0941c8276cfb9c16555e4dc25240941f8596c4f96eeb74e53a787dc4c9accc",
+  "pins_sha256": "a41e3e8abc1fea1b96332541dec7695e90aa1cd5bb475cf02ecd51a79b8db71a",
+  "budget": {
+    "schema": "block-v1-300mhz-contract/1",
+    "clock_ns": 3.3333333333333335,
+    "uncertainty_ns": 0.1,
+    "clock_transition_ns": 0.05,
+    "input_delay_max_ns": 0.8,
+    "input_delay_min_ns": 0.2,
+    "output_delay_max_ns": 0.8,
+    "output_delay_min_ns": 0.2,
+    "input_driver": {
+      "cell": "BUF_X2",
+      "pin": "Z"
+    },
+    "output_load_pf": 0.05,
+    "corner": "NangateOpenCellLibrary_typical",
+    "status": "Selected revised-leaf design contract; actual300MHz closure not yet measured",
+    "rationale": [
+      "3.333333333ns clock; symmetric0.8ns I/O windows leave1.633333333ns total for declared external interconnect after0.1ns uncertainty, rather than copying old2ns delays.",
+      "50fF receiver load is explicit macro-boundary test budget, including2fF receiver and48fF local wire allowance; eventual complete escape load must be reported separately and must not silently inherit end-to-end300MHz qualification.",
+      "No false or multicycle exceptions added. Pipeline stages, clock/drivers/FIFOs and all physical resources priced in native frozen macro."
+    ]
+  },
+  "actual_variables": {
+    "MIN_ROUTING_LAYER": "metal1",
+    "MAX_ROUTING_LAYER": "metal10",
+    "KEEP_VARS": "1",
+    "LEC_CHECK": "1",
+    "SEC_CHECK": "0",
+    "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+    "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+    "CAP_MARGIN": "40",
+    "HOLD_SLACK_MARGIN": "0.020",
+    "PLACE_DENSITY": "0.25",
+    "CTS_ARGS": "-sink_clustering_enable -repair_clock_nets -apply_ndr none",
+    "SETUP_SLACK_MARGIN": "0.250",
+    "PRE_GLOBAL_ROUTE_TCL": "",
+    "POST_GLOBAL_ROUTE_TCL": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/120/pnr/r/r-targeted-closure.tcl",
+    "SKIP_INCREMENTAL_REPAIR": "1",
+    "OPT_POST_GRT_WNS": "1"
+  },
+  "planned_complete_escape": {
+    "passed": true,
+    "total_signal_bits": 278,
+    "connected_bits": 278,
+    "shorts": 0,
+    "opens": 0,
+    "geometry_violations": 0,
+    "via10_count": 278,
+    "via11_count": 142
+  },
+  "planned_independent_gds": {
+    "passed": true,
+    "fixtures": [
+      {
+        "name": "all-ports",
+        "passed": true,
+        "gds_readback_exact": true,
+        "checks": {
+          "metal10_width": true,
+          "metal10_spacing": true,
+          "metal11_width": true,
+          "metal11_spacing": true,
+          "metal12_width": true,
+          "metal12_spacing": true,
+          "via10_spacing": true,
+          "via10_lower_enclosure": true,
+          "via10_upper_enclosure": true,
+          "via11_spacing": true,
+          "via11_lower_enclosure": true,
+          "via11_upper_enclosure": true
+        },
+        "gds_bytes": 96572
+      }
+    ],
+    "scope": "Independent actual GDS rectangle identity, nativeM10 limited width/space and new-layer width/space/cut-enclosure; not complete native-macro DRC."
+  },
+  "stages": [
+    "do-1_synth",
+    "do-floorplan",
+    "do-place",
+    "do-cts"
+  ],
+  "final_files": {},
+  "qualified_hard_macro": false,
+  "inherited_physical_stages": [
+    "do-1_synth",
+    "do-floorplan",
+    "do-place",
+    "do-cts"
+  ],
+  "repair": "Fixed BUF_X8 data input receivers in native macro; all limits unchanged",
+  "remove_abc_buffers": false,
+  "placement_mode": "timing",
+  "fanout_mode": "original",
+  "hold_repair_margin_ns": 0.02,
+  "pipeline_completed": false,
+  "source_native_folder": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/015/pnr/r",
+  "source_native_journal_sha256": "1dd34405d09930931cea22c60ea2b9f0454b735470192007334aa0798fa0969d",
+  "source_cts_stage_log_sha256": {
+    "00-do-1_synth.log": "0c426fa0562e9a85b4dadb4c6e63669951d8c95a40a63c4a948cbf160001a80c",
+    "01-do-floorplan.log": "0cce8388410173129493e658ad9c7983107f178557f8908ed3755eda0e51118d",
+    "02-do-place.log": "98d7be359575a72a966aa27e7147f80a07409bc4ca021cd7498dec5d656e432c",
+    "03-do-cts.log": "3132af822c3894d78346b33fd55fa85c2058d7611cdc6f7f0bdb13f979cc8fde"
+  },
+  "source_cts_files": {
+    "4_cts.odb": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/015/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/4_cts.odb",
+      "sha256": "4fad050af99ffc901c324cdbaba974c48a81cf0887a010d8f53da9844870dafc"
+    },
+    "4_cts.sdc": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/015/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/4_cts.sdc",
+      "sha256": "0f25c9b306e07c780306d39a871d01f69de9382d30fc63cfa376f9ca854ee2fc"
+    }
+  },
+  "source_grt_checkpoint": {
+    "folder": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/100/pnr/r",
+    "receipt_sha256": "7046ee3ea1145bb7603acc847adcaa77d29af5a650b8581ef1d232a3b8cbd1d2",
+    "files": {
+      "5_1_grt.odb": {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/100/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/5_1_grt.odb",
+        "sha256": "bc35c2827c640a09f3d007f1bd2a090157290b20c7d23a3290511a1fa0355d61"
+      },
+      "5_1_grt.sdc": {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/100/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/5_1_grt.sdc",
+        "sha256": "0f25c9b306e07c780306d39a871d01f69de9382d30fc63cfa376f9ca854ee2fc"
+      }
+    },
+    "journal_name": "native-flow.json",
+    "journal_sha256": "2bfafcd84289c8e912d52600638c18cf1d533e36b13f73082a3e52113ad7d0fe"
+  },
+  "input_hold_guard": {
+    "script_sha256": "1adafbf5c3fbaf2dd02f68ab50737b4ee331b5c42b0c8c4be6235b516466d36c",
+    "ports": "cmd_data[127:0]",
+    "optimization_input_min_ns": 0.0,
+    "actual_input_min_ns": 0.2,
+    "global_hold_margin_ns": 0.02,
+    "basis": "076 globalhold.15 targets146338 endpoints; original real routed hold failures are input paths. Use200ps earlier input during optimization only, and restore actual contract before final SDC."
+  },
+  "setup_repair_margin_ns": 0.25,
+  "resume_scope": "Use exact failed116 pre-ECO optimized checkpoint as native route input;100 GRT and015 first-four-stage provenance retained separately. Native reroute, complete ECO, detailed route/finish/full proof/all independent final gates repeated. No failed stage success inherited.",
+  "measured_hold_repair": {
+    "script_sha256": "d33993d50c7953e74f809e5c8c2adff21ef5396f6a2eab894605b441dcce7c59",
+    "script_prototype_sha256": "a3ffaa3741e37e902d278cde899ebc4f9d590e6b5e20d1e84c1f841e9e93311c",
+    "target_evidence_sha256": "296decd2c48f6892dcd399a4888f0091ca54149d7d563e55692f54b26e52fc5b",
+    "endpoints": [
+      "$auto$ff.cc:337:slice$2874097",
+      "$auto$ff.cc:337:slice$2873663",
+      "$auto$ff.cc:337:slice$2874223",
+      "$auto$ff.cc:337:slice$3749396",
+      "$auto$ff.cc:337:slice$2874191",
+      "$auto$ff.cc:337:slice$3749652",
+      "$auto$ff.cc:337:slice$2871178",
+      "$auto$ff.cc:337:slice$2873668",
+      "$auto$ff.cc:337:slice$2873669",
+      "$auto$ff.cc:337:slice$2794931",
+      "$auto$ff.cc:337:slice$2874052",
+      "$auto$ff.cc:337:slice$2873851",
+      "$auto$ff.cc:337:slice$2794927",
+      "$auto$ff.cc:337:slice$2873664",
+      "$auto$ff.cc:337:slice$2873506",
+      "$auto$ff.cc:337:slice$2873666",
+      "$auto$ff.cc:337:slice$2874050",
+      "$auto$ff.cc:337:slice$2873665",
+      "$auto$ff.cc:337:slice$2874047",
+      "$auto$ff.cc:337:slice$2874051",
+      "$auto$ff.cc:337:slice$2873538",
+      "$auto$ff.cc:337:slice$2874048",
+      "$auto$ff.cc:337:slice$2874049",
+      "$auto$ff.cc:337:slice$2873535",
+      "$auto$ff.cc:337:slice$3749646",
+      "$auto$ff.cc:337:slice$2874053",
+      "$auto$ff.cc:337:slice$2874214",
+      "$auto$ff.cc:337:slice$2809116",
+      "$auto$ff.cc:337:slice$2874264",
+      "$auto$ff.cc:337:slice$2873524"
+    ],
+    "buffers_per_endpoint": 8,
+    "total_buffers": 240,
+    "electrical_stage_helper_sha256": "ad89e7a6300c1bc350523e84d9ae17a504c17cb0a7102648975b5ade712d46e4",
+    "intermediate_policy": "No new violating electrical pins or worse worst slack; GRT setup/hold0. Final actualRC all0 unchanged.",
+    "source_actual_rc": "081 ODB/SDC plus084 SPEF; full30 endpoints and setup headroom from089",
+    "scope": "Native post-GRT one-session incremental reroute of physical data buffers; clock/state/SDC unchanged. Complete native final proof and all independent final gates mandatory."
+  },
+  "targeted_r_closure": {
+    "script_sha256": "5768d41b93a6a7c4b423136df69b5431c154768207a90b65b886c894e4e0eff4",
+    "evidence_sha256": "593690d452cf648af66ba8e1bb89546f64a9db4293b2f3032d977a296dea2a2c",
+    "generator_auditor_sha256": "7eff2b9ccec3cf043025db41859dae4a04b22ac5c9373632d16f920838e08c76",
+    "electrical_evidence_sha256": "fd16b4478a96cc1cfead929b2147ee11dc6cbf0f7ab236e75b5ee6d31c512833",
+    "electrical_resize": {
+      "instance": "$abc$4429625$auto$blifparse.cc:397:parse_blif$4540226",
+      "old_master": "MUX2_X1",
+      "new_master": "MUX2_X2",
+      "minimum_hold_headroom_ns": 0.1
+    },
+    "config_sha256": "f855e41bd0382abef83799910960363ba212f61086020237f1f71d4bdd181baf",
+    "hold_targets": [
+      "$auto$ff.cc:337:slice$2873667",
+      "$auto$ff.cc:337:slice$2873677",
+      "$auto$ff.cc:337:slice$2874162",
+      "$auto$ff.cc:337:slice$2874161",
+      "$auto$ff.cc:337:slice$2871122",
+      "$auto$ff.cc:337:slice$2873625",
+      "$auto$ff.cc:337:slice$2871123",
+      "$auto$ff.cc:337:slice$2874160",
+      "$auto$ff.cc:337:slice$2874163",
+      "$auto$ff.cc:337:slice$2873672",
+      "$auto$ff.cc:337:slice$2871179",
+      "$auto$ff.cc:337:slice$2874159",
+      "$auto$ff.cc:337:slice$2870971",
+      "$auto$ff.cc:337:slice$2873678",
+      "$auto$ff.cc:337:slice$2873626",
+      "$auto$ff.cc:337:slice$2870970",
+      "$auto$ff.cc:337:slice$2870934",
+      "$auto$ff.cc:337:slice$2873671",
+      "$auto$ff.cc:337:slice$2874055",
+      "$auto$ff.cc:337:slice$2874194",
+      "$auto$ff.cc:337:slice$2874054",
+      "$auto$ff.cc:337:slice$2874229",
+      "$auto$ff.cc:337:slice$2874221",
+      "$auto$ff.cc:337:slice$2874220",
+      "$auto$ff.cc:337:slice$2873673",
+      "$auto$ff.cc:337:slice$2874067",
+      "$auto$ff.cc:337:slice$2874230",
+      "$auto$ff.cc:337:slice$2874228",
+      "$auto$ff.cc:337:slice$2870166",
+      "$auto$ff.cc:337:slice$2870165",
+      "$auto$ff.cc:337:slice$2874168",
+      "$auto$ff.cc:337:slice$2874222",
+      "$auto$ff.cc:337:slice$2874199",
+      "$auto$ff.cc:337:slice$2864400",
+      "$auto$ff.cc:337:slice$2874231",
+      "$auto$ff.cc:337:slice$2864402",
+      "$auto$ff.cc:337:slice$2873849",
+      "$auto$ff.cc:337:slice$2873679",
+      "$auto$ff.cc:337:slice$2874068",
+      "$auto$ff.cc:337:slice$2874291",
+      "$auto$ff.cc:337:slice$2870935",
+      "$auto$ff.cc:337:slice$2871081",
+      "$auto$ff.cc:337:slice$2873850",
+      "$auto$ff.cc:337:slice$2874192",
+      "$auto$ff.cc:337:slice$2874187",
+      "$auto$ff.cc:337:slice$2874197",
+      "$auto$ff.cc:337:slice$2874185",
+      "$auto$ff.cc:337:slice$2874198",
+      "$auto$ff.cc:337:slice$2874295",
+      "$auto$ff.cc:337:slice$2874283",
+      "$auto$ff.cc:337:slice$2874193",
+      "$auto$ff.cc:337:slice$2874196",
+      "$auto$ff.cc:337:slice$2874189",
+      "$auto$ff.cc:337:slice$2874284",
+      "$auto$ff.cc:337:slice$2864407",
+      "$auto$ff.cc:337:slice$2874200",
+      "$auto$ff.cc:337:slice$2873844",
+      "$auto$ff.cc:337:slice$2874188",
+      "$auto$ff.cc:337:slice$2873847",
+      "$auto$ff.cc:337:slice$2874186",
+      "$auto$ff.cc:337:slice$2873848",
+      "$auto$ff.cc:337:slice$2874294",
+      "$auto$ff.cc:337:slice$2873846",
+      "$auto$ff.cc:337:slice$2873675",
+      "$auto$ff.cc:337:slice$2872106",
+      "$auto$ff.cc:337:slice$2871175",
+      "$auto$ff.cc:337:slice$2874195",
+      "$auto$ff.cc:337:slice$2874232",
+      "$auto$ff.cc:337:slice$2870844",
+      "$auto$ff.cc:337:slice$2874190",
+      "$auto$ff.cc:337:slice$2864406",
+      "$auto$ff.cc:337:slice$2871407",
+      "$auto$ff.cc:337:slice$2873676",
+      "$auto$ff.cc:337:slice$2873894",
+      "$auto$ff.cc:337:slice$2873921",
+      "$auto$ff.cc:337:slice$2873895",
+      "$auto$ff.cc:337:slice$2873891",
+      "$auto$ff.cc:337:slice$2873897",
+      "$auto$ff.cc:337:slice$2874256",
+      "$auto$ff.cc:337:slice$2874056",
+      "$auto$ff.cc:337:slice$2873674",
+      "$auto$ff.cc:337:slice$2874303",
+      "$auto$ff.cc:337:slice$3983370"
+    ],
+    "buffers_per_endpoint": 4,
+    "resize_targets": [
+      {
+        "instance": "wire592286",
+        "master": "BUF_X1",
+        "protected": 0,
+        "signal_only": true,
+        "single_fanout": true,
+        "min_slack_ns": 1.326229215
+      },
+      {
+        "instance": "wire592285",
+        "master": "BUF_X2",
+        "protected": 0,
+        "signal_only": true,
+        "single_fanout": true,
+        "min_slack_ns": 1.326229215
+      },
+      {
+        "instance": "wire592284",
+        "master": "BUF_X1",
+        "protected": 0,
+        "signal_only": true,
+        "single_fanout": true,
+        "min_slack_ns": 1.326229215
+      },
+      {
+        "instance": "wire592283",
+        "master": "BUF_X1",
+        "protected": 0,
+        "signal_only": true,
+        "single_fanout": true,
+        "min_slack_ns": 1.326229215
+      },
+      {
+        "instance": "wire592282",
+        "master": "BUF_X1",
+        "protected": 0,
+        "signal_only": true,
+        "single_fanout": true,
+        "min_slack_ns": 1.326229215
+      },
+      {
+        "instance": "wire592281",
+        "master": "BUF_X1",
+        "protected": 0,
+        "signal_only": true,
+        "single_fanout": true,
+        "min_slack_ns": 1.326229215
+      },
+      {
+        "instance": "wire592280",
+        "master": "BUF_X1",
+        "protected": 0,
+        "signal_only": true,
+        "single_fanout": true,
+        "min_slack_ns": 1.326229215
+      },
+      {
+        "instance": "wire592279",
+        "master": "BUF_X1",
+        "protected": 0,
+        "signal_only": true,
+        "single_fanout": true,
+        "min_slack_ns": 1.326229215
+      },
+      {
+        "instance": "wire592278",
+        "master": "BUF_X1",
+        "protected": 0,
+        "signal_only": true,
+        "single_fanout": true,
+        "min_slack_ns": 1.326229215
+      },
+      {
+        "instance": "wire592277",
+        "master": "BUF_X1",
+        "protected": 0,
+        "signal_only": true,
+        "single_fanout": true,
+        "min_slack_ns": 1.326229215
+      }
+    ],
+    "pre_eco_recovery_checkpoints": [
+      "issue143-targeted-pre.odb",
+      "issue143-targeted-pre.sdc",
+      "issue143-targeted-pre.guide"
+    ],
+    "inherited_repair_evidence": {
+      "source": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/100/pnr/r",
+      "receipt_sha256": "7046ee3ea1145bb7603acc847adcaa77d29af5a650b8581ef1d232a3b8cbd1d2",
+      "files": {
+        "r-measured-hold.tcl": "d33993d50c7953e74f809e5c8c2adff21ef5396f6a2eab894605b441dcce7c59",
+        "r-hold-targets.json": "296decd2c48f6892dcd399a4888f0091ca54149d7d563e55692f54b26e52fc5b",
+        "r-electrical-stage.py": "ad89e7a6300c1bc350523e84d9ae17a504c17cb0a7102648975b5ade712d46e4",
+        "r-input-hold-guard.tcl": "1adafbf5c3fbaf2dd02f68ab50737b4ee331b5c42b0c8c4be6235b516466d36c",
+        "flow/results/nangate45/bv1_block_v1_r/base/issue143-measured-hold.tsv": "251ed96678e3120bcc14d34330600a8b578a9e39b4409988e1c1d57c51aa2028",
+        "flow/results/nangate45/bv1_block_v1_r/base/issue143-measured-hold-checks.tsv": "afe2a35289da69ca6914b5097843b3a6dd300485599bebb4531919ce90514a50",
+        "flow/results/nangate45/bv1_block_v1_r/base/issue143-measured-before-checks.tsv": "afe2a35289da69ca6914b5097843b3a6dd300485599bebb4531919ce90514a50",
+        "flow/results/nangate45/bv1_block_v1_r/base/issue143-measured-before-electrical.rpt": "4e1a31bb042fcd7509796aeb6e5770cbf53a2f654ad57a59c7488f84000d7ccf",
+        "flow/results/nangate45/bv1_block_v1_r/base/issue143-measured-after-electrical.rpt": "4e1a31bb042fcd7509796aeb6e5770cbf53a2f654ad57a59c7488f84000d7ccf",
+        "flow/results/nangate45/bv1_block_v1_r/base/issue143-measured-electrical-stage.json": "19f6b85dfbaa260bc3e29c8cf9458e4bc9d1b99555d61830fd5bf6f19b8acb9a",
+        "flow/results/nangate45/bv1_block_v1_r/base/issue143-input-hold-guard.tsv": "58f4ef52a66b10e4dd585d1083dd76cfa5ff18aaa8e153bce24239d1b658bf9c"
+      }
+    },
+    "full_native_optimization": false,
+    "native_optional_optimization": "SKIP_INCREMENTAL_REPAIR=1,OPT_POST_GRT_WNS=1: retain completed100 optimization; no final checks skipped",
+    "scope": "Ten measured long-wire repeaters to BUF_X4; four local BUF_X1 per measured hold endpoint; exact116 newly-violating MUX2_X1 to equivalent MUX2_X2 with current hold guard. No RTL/FF/clock/SDC change. Strict intermediate electrical/timing and complete final proof/all gates required."
+  },
+  "optimized_recovery_source": {
+    "folder": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/116/pnr/r",
+    "receipt_sha256": "4188d031eca70013147801487105081eb3be6d29a0811cfe444e4c0fff74b69a",
+    "journal_sha256": "d298b591d25629ba9823104bf2b39fa89d0dd7b957d36caa25d346ffcdce4faa",
+    "files": {
+      "odb": {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/116/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/issue143-targeted-pre.odb",
+        "sha256": "70a2e97d98944bd97500bdaabe78940233763ac2d100089ed521cff3be380efa"
+      },
+      "sdc": {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/116/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/issue143-targeted-pre.sdc",
+        "sha256": "0f25c9b306e07c780306d39a871d01f69de9382d30fc63cfa376f9ca854ee2fc"
+      },
+      "guide": {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/116/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/issue143-targeted-pre.guide",
+        "sha256": "fb7ed16c055a33a392cbe403e3853a6a483c9dda5e22acd20cfe634bd60760b7"
+      }
+    },
+    "scope": "Failed116 pre-ECO optimized checkpoint only. Original015 successful first four stages and100 completed GRT remain separately bound. Repeat native GRT, ECO, detailed route, finish and all final gates; no failed stage/proof acceptance transferred."
+  }
+}
