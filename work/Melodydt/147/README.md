@@ -1,7 +1,7 @@
 # Melodydt 项目协作规则落地
 
 - 任务：[Issue #147](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/147)；负责人 Melodydt；优先级待指定。
-- 正式成果：根目录 AGENTS.md；PR 待创建。
+- 正式成果：根目录 AGENTS.md；[PR #148](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/148) 已上传、未合并。
 - 分支：`task/147-melodydt-collaboration`；基线 `a103da352b7e431cedc69f54b9f71c05371be1b3`。
 - 本目录保存任务核验及验证回执；正式规则不另复制到个人目录。
 - 本地应用项目路径：`D:\Study_material\Study_material\LLMHardwareDesign`。初始为空，无 Git 元数据；当前会话的 C 盘空仓库与此不是同一目录。
@@ -9,3 +9,5 @@
 - 已读 #5/PR #6 和其任务分支交接，#121/#143/#145 及 PR #144/#146，主干项目状态、统一 Skill 和看板交接。规则重叠交由审查协调；不修改其他成员分支或进度。
 - 仅允许本任务的 AGENTS.md、本人进度、本 README、验证回执和专属交接进入 PR；下载的原有参考文件不作为新增成果重复上传。
 - [后续交接](../../../docs/handoffs/2026-10-31-issue-147-melodydt-collaboration.md)；未执行任何服务器、模型或 EDA 作业。
+
+- 实际检查：`python -X utf8 scripts/check_project.py` PASS；28 个参考文件 Git blob SHA 一致；`git diff --no-index --check` 无空白错误输出，预期文档差异退出码 1。逐成果 SHA-256 及环境边界见 [verification.json](verification.json)。
