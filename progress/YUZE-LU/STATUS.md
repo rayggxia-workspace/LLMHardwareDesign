@@ -1,3 +1,5 @@
+2026-10-31 11:56 CST：Issue145/PR146补全七宏SystemC及公共数值/线程/系数表/示例/测试/构建工具中文注释；12个C++文件去注释词法记号与a91f3640一致、Softmax轨迹逐字一致，524425断言/UBSan/3项CTest重跑通过。代码入口project/systemc/README.md，核对work/YUZE-LU/145/comment-token-check.json；无RTL/远端作业改动，待审查，登记pending、看板unverified/同步pending。
+
 2026-10-31 00:35 CST：Issue145七宏SystemC模型已提交PR146（https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/146），独立分支task/145-systemc-seven-blocks。M/N/E/G/R/S/T真实SC_MODULE、固定容量状态及Q1.14 Softmax，524425断言/UBSan/3项CTest/管理检查通过。已保留最新143公开341d6f93的全部变更并核验RTL与冻结9cc23ff3同源；模型说明project/systemc/README.md，257元素轨迹及证据work/YUZE-LU/145/。未修改其他工作树/远程作业，无逐拍/物理资格声明。待指定审查人，Issuein_review；登记PR5仍pending，看板unverified/同步pending。
 
 2026-10-31 00:15 CST：独立Issue143七宏改造在隔离工作树执行，草稿PR144基于Issue121分支；不接管主任务。E/G通过300MHz全部最终门、六文件/几何及含源绑定包，本地实收复核通过；S/T精确同源和本地最终文件复核通过。M完成原生六阶段、最终物理和三初态功能，DRC/LEC继续；N因UQ0.16不兼容有符号S16 M改为Q1.14，RTL通过，重新物理/最终门93829/93831；R93808独立物理、93825依赖验收。七宏尚未齐；规格docs/BLOCK_V2.md、记录work/YUZE-LU/143/README.md。登记pending、看板unverified/同步pending、审查待指定。

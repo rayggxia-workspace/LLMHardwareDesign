@@ -1,3 +1,11 @@
+/**
+ * 七类宏的数值、有限状态、边界及真实SystemC通信测试。
+ * 先直接调用各Engine验证数学和状态，再实例化七个SC_MODULE检查FIFO连接与背压。
+ * 固定随机种子保证可复现；G系数与RTL共享，因此另用解析函数检验全域误差。
+ * reference_round使用符号/绝对值独立实现RNE，不能把被测rne函数当作唯一正确答案。
+ * 测试中的主机大向量属于外部调用方，不意味着N有整向量缓冲或S超过16KiB。
+ * 所有断言为功能证据，不宣称逐拍RTL等价、布局布线通过或完整LLM精度达标。
+ */
 #include "blocks/modules.hpp"
 #include <cmath>
 #include <iostream>
@@ -5,21 +13,27 @@
 #include <stdexcept>
 #include <vector>
 using namespace blocks;
+// 累计断言及部分通信tag计数，只供测试报告；不是模型中的硬件计数器。
 static uint64_t checks = 0;
+// 统一断言：先计数，失败抛异常，sc_main输出发生位置并返回非零。
 static void require(bool ok, const char *message) {
     ++checks;
     if (!ok)
         throw std::runtime_error(message);
 }
+// 缩写断言，要求事务被成功接受；预期拒绝的用例直接检查error。
 static void ok(const Reply &r) { require(!r.error, "unexpected transaction rejection"); }
+// 把S16原始二补码写入512位测试包的第i个16位槽，不改变其他槽。
 static void put16(Line &a, unsigned i, int value) {
     unsigned s = (i % 4) * 16;
     a[i / 4] = (a[i / 4] & ~(uint64_t(65535) << s)) | (uint64_t(uint16_t(value)) << s);
 }
+// 把S8原始二补码写入第i个字节槽；低编号位于低位。
 static void put8(Line &a, unsigned i, int value) {
     unsigned s = (i % 8) * 8;
     a[i / 8] = (a[i / 8] & ~(uint64_t(255) << s)) | (uint64_t(uint8_t(value)) << s);
 }
+// 独立参考：先对绝对值做最近偶数舍入，再恢复符号；仅在测试约定的安全S64范围使用。
 static int64_t reference_round(int64_t x, unsigned shift) {
     // Independent magnitude-based implementation, used over safe S64 ranges.
     if (!shift)
@@ -30,6 +44,7 @@ static int64_t reference_round(int64_t x, unsigned shift) {
         ++q;
     return x < 0 ? -int64_t(q) : int64_t(q);
 }
+// 验证正负数/半值RNE和随机U64平方根不等式，覆盖共同数值原语。
 static void test_arithmetic() {
     for (int x = -2000; x <= 2000; ++x)
         for (unsigned s = 0; s < 11; ++s)
@@ -41,6 +56,7 @@ static void test_arithmetic() {
                 "integer square root floor");
     }
 }
+// 先检查RoPE布局/FMA单位/打包边界，再用固定种子逐一验证13种操作和饱和标志。
 static void test_e() {
     EEngine e;
     ECommand c;
@@ -136,6 +152,7 @@ static void test_e() {
     c.op = ECommand::Op(99);
     require(e.execute(c).error, "E invalid operation");
 }
+// 穷举每种函数全部S16输入并比较解析函数误差界，另检验门乘输出尺度和非法函数拒绝。
 static void test_g() {
     GEngine g;
     GCommand c;
@@ -177,6 +194,7 @@ static void test_g() {
     c.function = GCommand::Function(99);
     require(g.execute(c).error, "G invalid function");
 }
+// 测试装载辅助：矩阵b按[列][K]存放，转为M的column-major K8包；S16 B必须先half0后half1。
 static void load_m(MEngine &m, const std::array<std::array<int16_t, 32>, 8> &a,
                    const std::array<std::array<int16_t, 32>, 8> &b, bool aw, bool bw,
                    unsigned rows = 8, unsigned tiles = 4) {
@@ -211,6 +229,7 @@ static void load_m(MEngine &m, const std::array<std::array<int16_t, 32>, 8> &a,
         }
     }
 }
+// 覆盖四种A/B格式、随机行列和尾K、跨段追加、部分和驻留及行级溢出保留。
 static void test_m() {
     MEngine m;
     std::mt19937 rng(43);
@@ -312,6 +331,8 @@ static void test_m() {
     c.op = MCommand::Op::Execute;
     require(m.execute(c).error, "M rejects invalid operand banks");
 }
+// 指定长度的一整条Softmax；调用方vector保存x/EXP，模拟S或外部存储回放。
+// 257/65535长度用例令最后一个元素成为新最大值，检查N没有提前看见未加载数据。
 static void softmax_case(unsigned length) {
     NEngine n;
     NCommand c;
@@ -382,6 +403,7 @@ static void softmax_case(unsigned length) {
     require(end.lane[5] == length && end.lane[6] == int64_t(sum) && end.lane[7] == length,
             "N final counters");
 }
+// 八次K32拼接K256，独立累计完整参考点积；验证精确缩放的分配律和S64跨命令追加。
 static void test_m_segments() {
     MEngine m;
     std::array<std::array<int16_t, 32>, 8> a{}, b{};
@@ -422,6 +444,7 @@ static void test_m_segments() {
                     "M K256 eight segments distributes exact scaling");
         }
 }
+// 覆盖1/8/257/65535项Softmax，RMS/L2精确根与因子、回放计数及40选8同分ID次序。
 static void test_n() {
     softmax_case(1);
     softmax_case(8);
@@ -503,6 +526,7 @@ static void test_n() {
         require(top.lane[i] == i, "TopK equal scores prefer smaller IDs");
     require(n.execute(c).error, "TopK closes loading");
 }
+// 构造两行八lane可手算R初态：状态10/20，K=[1,0]，Q=[0.5,0.5]，衰减0.5。
 static void setup_r(REngine &r, RCommand &c) {
     c.op = RCommand::Op::Open;
     c.length = 2;
@@ -530,6 +554,7 @@ static void setup_r(REngine &r, RCommand &c) {
     c.values.fill(9);
     ok(r.execute(c));
 }
+// 分别手算GDN/SSM/四抽头卷积；验证标签、影子不可见、提交/撤销及失败不撤销已有卷积历史。
 static void test_r() {
     REngine r;
     RCommand c;
@@ -634,6 +659,7 @@ static void test_r() {
     a.op = RCommand::Op::ReadState;
     require(q.execute(a).lane[0] == 10, "failed state preserved original bank");
 }
+// S测试容量、bank布局、复位保留和供数顺序；T完整写/读384字并测试Peek稳定、释放和sticky错误。
 static void test_s_t() {
     SEngine s;
     SCommand c;
@@ -726,6 +752,7 @@ static void test_s_t() {
     d.op = TCommand::Op::Peek;
     require(t.execute(d).error, "T reset prevents stale payload exposure");
 }
+// 测试最大256行R、epoch回绕拒绝、65535极值统计、非法EXP回放不推进计数及M最终输出夹取。
 static void test_limits() {
     REngine r;
     RCommand c;
@@ -809,7 +836,9 @@ static void test_limits() {
     require(m.execute(z).lane[0] == -64, "M final negative RNE");
 }
 // All seven modules run on the real SystemC kernel. Every channel depth is one.
+// 真实内核集成环境：七个模块并存，输入/响应队列各只有一个位置，不能用普通函数代替通信。
 struct Harness : sc_core::sc_module {
+    // 七类模块的独立实例；其内部状态互不共享，所有组合数据由run显式搬运。
     M m{"M"};
     N n{"N"};
     E e{"E"};
@@ -817,6 +846,7 @@ struct Harness : sc_core::sc_module {
     R r{"R"};
     S s{"S"};
     T t{"T"};
+    // mi/ni/ei/gi/ri/si/ti是各块命令通道，mo等为对应Reply通道，所有队列容量固定为1。
     sc_core::sc_fifo<MCommand> mi{"mi", 1};
     sc_core::sc_fifo<NCommand> ni{"ni", 1};
     sc_core::sc_fifo<ECommand> ei{"ei", 1};
@@ -826,10 +856,12 @@ struct Harness : sc_core::sc_module {
     sc_core::sc_fifo<TCommand> ti{"ti", 1};
     sc_core::sc_fifo<Reply> mo{"mo", 1}, no{"no", 1}, eo{"eo", 1}, go{"go", 1}, ro{"ro", 1},
         so{"so", 1}, to{"to", 1};
+    // start_pressure触发另一个生产者；sent记录成功入队次数，pressure表示生产者全部发送完成。
     sc_core::sc_event start_pressure;
     unsigned sent = 0;
     bool pressure = false, done = false;
     SC_HAS_PROCESS(Harness);
+    // 绑定七块全部端口，注册组合控制线程、独立生产者和超时监视器。
     Harness(sc_core::sc_module_name name) : sc_core::sc_module(name) {
         m.commands(mi);
         m.responses(mo);
@@ -849,6 +881,7 @@ struct Harness : sc_core::sc_module {
         SC_THREAD(producer);
         SC_THREAD(watchdog);
     }
+    // 在SC_THREAD中发命令并等待匹配响应；每笔检查tag和error，便于定位组合协议错误。
     template <class C> Reply call(sc_core::sc_fifo<C> &in, sc_core::sc_fifo<Reply> &out, C c) {
         c.tag = ++checks;
         in.write(c);
@@ -857,6 +890,7 @@ struct Harness : sc_core::sc_module {
         ok(v);
         return v;
     }
+    // 等待事件后连续发送12条E命令；消费者故意暂停时，有限FIFO必须阻止所有包立即入队。
     void producer() {
         wait(start_pressure);
         for (unsigned i = 0; i < 12; ++i) {
@@ -869,11 +903,14 @@ struct Harness : sc_core::sc_module {
         }
         pressure = true;
     }
+    // 仿真时间达到1微秒仍未结束则失败，避免功能错误造成CTest无限挂起；不是硬件超时规格。
     void watchdog() {
         wait(1, sc_core::SC_US);
         require(done, "SystemC deadlock watchdog");
         sc_core::sc_stop();
     }
+    // 先做S->M->E->G->N->T功能组合并查询R，再停读E输出10ns检查背压和按序恢复。
+    // 这些wait只服务于测试调度，不给任何宏引入测定后的物理延迟。
     void run() {
         // S -> M uses a real descriptor and typed port beats, not direct memory access.
         SCommand sc;
@@ -975,6 +1012,7 @@ struct Harness : sc_core::sc_module {
         sc_core::sc_stop();
     }
 };
+// 先运行无内核的Engine测试，再启动七模块集成仿真；只在所有阶段完成后打印PASS。
 int sc_main(int, char **) {
     try {
         test_arithmetic();
