@@ -36,6 +36,12 @@ def bundle(delivery, out):
     for name in ('receipt.json', 'final-source.json', 'config.mk', 'pins.json',
                  'pins.tcl', 'input.sdc'):
         add(sealed / name, 'meta/source/' + name)
+    if flow.get('targeted_r_closure'):
+        sealed_receipt=json.loads((sealed/'receipt.json').read_text())
+        for name,digest in sealed_receipt['outputs'].items():
+            if name.startswith(('r-targeted-','issue143-targeted-','r-measured-','r-hold-','r-electrical-','r-input-','issue143-measured-','issue143-input-')):
+                assert '/' not in name and sha(sealed/name)==digest
+                add(sealed/name,'meta/source/'+name)
     for relative, digest in flow['rtl_sha256'].items():
         assert sha(ROOT / relative) == digest
         add(ROOT / relative, 'meta/rtl/' + relative)

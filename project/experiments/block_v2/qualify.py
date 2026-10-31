@@ -41,6 +41,12 @@ def source(folder):
     if flow.get('measured_hold_repair'):
         for name in ('r-measured-hold.tcl','r-hold-targets.json','r-electrical-stage.py','issue143-measured-hold.tsv','issue143-measured-hold-checks.tsv','issue143-measured-before-checks.tsv','issue143-measured-before-electrical.rpt','issue143-measured-after-electrical.rpt','issue143-measured-electrical-stage.json'):
             assert sha(folder/name)==receipt['outputs'][name]
+    if flow.get('targeted_r_closure'):
+        for name in receipt['outputs']:
+            if name.startswith(('r-targeted-','issue143-targeted-')):
+                assert sha(folder/name)==receipt['outputs'][name]
+        for name,key in [('r-targeted-closure.tcl','script_sha256'),('r-targeted-config.tcl','config_sha256'),('r-targeted-evidence.json','evidence_sha256')]:
+            assert sha(folder/name)==flow['targeted_r_closure'][key]==receipt['outputs'][name]
     return folder,receipt,flow,results
 
 
@@ -127,6 +133,11 @@ def seal(raw,out):
         assert sha(raw/'r-electrical-stage.py')==measured['electrical_stage_helper_sha256']==sha(ROOT/'project/experiments/block_v2/measured_electrical_stage.py')
         for file in [audit,checks]+stage_files:shutil.copyfile(file,out/file.name)
         config_files+=['r-measured-hold.tcl','r-hold-targets.json','r-electrical-stage.py']
+    if flow.get('targeted_r_closure'):
+        from targeted_r_closure import audit as audit_targeted
+        config_names,report_names=audit_targeted(raw,flow,receipt,sha)
+        config_files+=config_names
+        for name in report_names:shutil.copyfile(before/name,out/name)
     if flow.get('fanout_mode')=='partition':config_files.append('partition-fanout.tcl')
     if flow.get('input_hold_guard'):
         config_files.append('r-input-hold-guard.tcl')

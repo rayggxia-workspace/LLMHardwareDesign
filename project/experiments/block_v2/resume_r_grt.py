@@ -23,6 +23,7 @@ def main():
     p.add_argument('--measured-hold',action='store_true',help='Apply source-bound30-endpoint native post-GRT data-delay ECO')
     p.add_argument('--measured-hold-buffers',type=int,choices=(4,8),default=4)
     p.add_argument('--setup-margin',type=float,choices=(.200,.250),default=.200,help='Optimization target only; actual300MHz SDC unchanged')
+    p.add_argument('--targeted-closure',action='store_true',help='Additional measured RC100/104/106 reset/repeater ECO; retain completed100 optimization')
     a=p.parse_args();a.source=a.source.resolve();a.out=a.out.resolve()
     assert a.source!=a.out and 'issue143-seven-block-v2-20261030' in a.out.parts
     r=json.loads((a.source/'receipt.json').read_text());assert r['passed'] is False
@@ -33,6 +34,11 @@ def main():
     assert not a.guard_reset or a.input_hold_guard
     assert not a.measured_hold or (a.input_hold_guard and not a.guard_reset)
     assert a.measured_hold or a.measured_hold_buffers==4
+    if a.targeted_closure:
+        assert not a.input_hold_guard and not a.measured_hold and a.source.parts[-3:]==('100','pnr','r')
+        assert old.get('measured_hold_repair',{}).get('total_buffers')==240
+        assert old['measured_hold_repair']['buffers_per_endpoint']==8
+        assert old['input_hold_guard']['actual_input_min_ns']==.2
     # A resumed producer retains the original successful first four stages.
     # Its own successful route supplies the newer GRT, with a separate binding.
     origin=a.source
@@ -86,7 +92,7 @@ def main():
         config=(a.out/'original-config.mk').read_text().replace(str(a.source),str(a.out))
         assert str(a.source) not in config
         config+='\n# Measured final RC deficits: setup164ps / hold109ps. Optimization only; no SDC exception.\n'
-        hold_margin='0.020' if a.input_hold_guard else '0.150'
+        hold_margin='0.020' if (a.input_hold_guard or a.targeted_closure) else '0.150'
         setup_margin='%.3f'%a.setup_margin
         config+='export SETUP_SLACK_MARGIN = '+setup_margin+'\nexport HOLD_SLACK_MARGIN = '+hold_margin+'\n'
         # Receivers and diodes already exist in the inherited GRT. Never add twice.
@@ -117,6 +123,12 @@ def main():
                 scope='Native post-GRT one-session incremental reroute of physical data buffers; clock/state/SDC unchanged. Complete native final proof and all independent final gates mandatory.')
             receipt['inputs'][str(evidence.relative_to(ROOT))]=sha(evidence)
             post_global=str(target)
+        if a.targeted_closure:
+            from targeted_r_closure import prepare
+            post_global=str(prepare(a.out,flow,a.source,sha))
+            # Actual pinned global_route.tcl exposes these optional optimization
+            # controls.100 already completed them. Native routing/final remains.
+            config+='export SKIP_INCREMENTAL_REPAIR = 1\nexport OPT_POST_GRT_WNS = 1\n'
         config+='export POST_GLOBAL_ROUTE_TCL = '+post_global+'\n'
         (a.out/'config.mk').write_text(config)
         for name in ('1_synth_lec.v','1_2_yosys.v','1_2_yosys.sdc','bv1-input-diodes.tsv','feed-input-receivers.tsv'):
@@ -135,6 +147,9 @@ def main():
             assert result.returncode==0,(log,result.returncode)
         wanted=dict(LEC_CHECK='1',SEC_CHECK='0',SETUP_SLACK_MARGIN=setup_margin,HOLD_SLACK_MARGIN=hold_margin,
             MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',PRE_GLOBAL_ROUTE_TCL=pre_global,POST_GLOBAL_ROUTE_TCL=post_global)
+        if a.targeted_closure:
+            wanted.update(SKIP_INCREMENTAL_REPAIR='1',OPT_POST_GRT_WNS='1')
+            flow['resume_scope']='Completed100 digest-bound optimized GRT used as native route input. Preserve original015 first-four-stage and prior240-buffer/guard audits; native GRT, targeted reset/repeater ECO, detailed route/final and all final gates repeated. Optional optimization only is not repeated; no final success inherited.'
         for key,value in wanted.items():
             log='variable-'+key+'.log';run(command+['print-'+key],log)
             matches=re.findall(r'(?m)^'+key+r':(.*)$',(a.out/log).read_text());assert len(matches)==1

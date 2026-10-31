@@ -38,6 +38,17 @@ foreach line [split $setup_content \n] {
  }
 }
 close $f
+# Include small-positive reset paths so a local delay ECO is based on measured
+# headroom, rather than repeatedly exposing the next almost-failing endpoint.
+report_checks -path_delay min -from [get_ports reset] -slack_max 0.050 -group_path_count 10000 -endpoint_path_count 1 -digits 9 -format full_clock_expanded > reset-near.rpt
+set f [open reset-near.rpt r];set reset_content [read $f];close $f
+# These are actual long-wire repeaters identified by105, not redundant delay.
+# Read both max and min through each before considering stronger drive.
+foreach number {592286 592285 592284 592283 592282 592281 592280 592279 592278 592277} {
+ set pin [get_pins [list wire${number}/A]]
+ if {[llength $pin]!=1} {error "Measured setup repeater not found"}
+ report_checks -path_delay min_max -through $pin -group_path_count 1 -digits 9 -format full_clock_expanded > repeater-$number.rpt
+}
 report_checks -path_delay min -slack_max 0 -group_path_count 10000 -endpoint_path_count 1 -digits 9 -format full_clock_expanded > all-hold.rpt
 set stream [open all-hold.rpt r]
 set content [read $stream]
@@ -48,6 +59,7 @@ foreach {line endpoint} [regexp -all -inline -line {^Endpoint: (\S+)} $content] 
  dict set endpoints $endpoint 1
 }
 if {[dict size $endpoints] != [sta::endpoint_violation_count min]} {error "Hold report omitted failing endpoints"}
+foreach {line endpoint} [regexp -all -inline -line {^Endpoint: (\S+)} $reset_content] {dict set endpoints $endpoint 1}
 set block [ord::get_db_block]
 set stream [open endpoint-index.tsv w]
 puts $stream "index\tendpoint\tmaster\tdata_net"
