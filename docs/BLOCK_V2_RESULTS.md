@@ -15,7 +15,7 @@
 | G | 400 | 22831.046 | 0.512034 | 0.017721 | 新源006→010，含源包023 |
 | S | 1680 | 1181315.842 | 0.028545 | 0.007200 | #130精确同源300MHz成果，017重新核验 |
 | T | 1040 | 431244.786 | 0.429092 | 0.007988 | #121精确同源300MHz成果，017重新核验 |
-| R | 待验收 | 待验收 | 待验收 | 待验收 | 原源015/030/035/041/045；新源053→054、059→060、062→063、068→069，尚未接收 |
+| R | 待验收 | 待验收 | 待验收 | 待验收 | 015已拒收；原源030/035/041/045及076续跑；新源053/059/062/068，尚未接收 |
 
 active单元面积不等于die面积。S/T均为标准单元存储，不能称为SRAM宏。M与旧#130的数值/命令合同不同，不能将面积差全归因于位宽，也不能当等吞吐比较。N/E/G的独立吞吐配比和长向量回放在规格中明示。
 
@@ -29,7 +29,7 @@ active单元面积不等于die面积。S/T均为标准单元存储，不能称�
 | N | `D:/Data/LLMHardwareDesign-issue143-runtime/deliverables/N-q14` |
 | E | `D:/Data/LLMHardwareDesign-issue143-runtime/deliverables/E-wide`；旧`E-v2`仅作历史基线 |
 | G | `D:/Data/LLMHardwareDesign-issue143-runtime/deliverables/G-v2` |
-| S | 索引/回执在`issue143-runtime/deliverables/S`；六文件复用`D:/Data/LLMHardwareDesign-issue130-runtime/deliverables/S/unpacked/native`，已重新SHA核验 |
+| S | `D:/Data/LLMHardwareDesign-issue143-runtime/deliverables/S`；27成员含六最终文件、几何和证据已在本任务目录逐SHA实收 |
 | T | `D:/Data/LLMHardwareDesign-issue143-runtime/deliverables/T` |
 
 新包的`unpacked/native`含`6_final.v/.sdc/.def/.odb/.spef/.gds`、真实`layout.png`和`pins.json`；`geometry`含候选LEF与实际接入证明；`evidence`含全部最终门，`meta`含绑定的最终源回执、合同及源码。S/T沿用原包结构，原始交付/源回执位于`evidence`。
@@ -43,6 +43,12 @@ active单元面积不等于die面积。S/T均为标准单元存储，不能称�
 - 053是R的局部临时算术候选：原S32状态、S65乘积、S64点积、全部顺序控制不变，仅将RNE输入收至S65、结果/合并临时值收至S52。直接抽取新旧RTL数值case的全输入SAT证明、翻转结果/溢出负例以及三组实际初态回归均通过，每初态仍为379979检查/178456拍。它必须重新综合、执行全部六阶段及最终门；不能把前五条同原源物理链的结果转给它，也不预先宣称面积或时序改善。原始小证据见[r-temp-proof](../work/YUZE-LU/143/r-temp-proof/receipt.json)。
 - 本轮为M1–M10固定、宏内M10接口的原生叶子结果；候选LEF不等于层级Liberty、M11/M12系统或制造签核。八模型完整整数质量与系统调度/吞吐未验证。
 - 登记pending、看板unverified/同步pending、独立审查人待指定，PR未合并；不提前关闭Issue。
+
+## R当前失败与续跑：2026-10-31 10:19 CST
+
+015真实最终RC为setup4/hold325/cap1，最差setup−.164138481ns、hold−.109416589ns，因此拒收。其详细布线DRC0不等于最终资格；未完成的原生最终证明已停止，真实失败生产者及原始文件保持。075直接详细布线修复因工具SIGSEGV失败，没有修复结果。076改从015已成功完成的GRT检查点继续完整原生路由与最终流程，内部优化目标setup.20ns/hold.15ns来自实测损失，最终SDC和门槛不变。源快照明确覆盖原R4032，不将临时458源套到旧数据库。其余八条物理链继续，最终只接收一个合格R。
+
+072诊断为71/72段通过、最后一段1800秒超时，不能当完整证明。079只读数据库/导引重载不能恢复完整寄生，拒绝快捷续跑；原生全量最终LEC和全部独立验收门保持。见[r-final-rc](../work/YUZE-LU/143/r-final-rc/index.json)、[续跑](../work/YUZE-LU/143/r-routed-followup/index.json)、[072部分证明](../work/YUZE-LU/143/r-solver-diagnostics/state072-summary.json)、[079诊断](../work/YUZE-LU/143/r-grt-reload-probe/index.json)。八个旧待启验收组按全量证明实测约140GiB峰值预留整节点96CPU，内部48任务CPU和三项16核门并行不变；[资源读回](../work/YUZE-LU/143/r-pending-gate-memory/record.json)记录实际约503.5GiB RAM与Slurm占位配置的区别。
 
 ## R中间证据：2026-10-31 03:45 CST
 
