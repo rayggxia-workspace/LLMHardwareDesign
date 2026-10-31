@@ -44,7 +44,7 @@ def config_bytes(evidence_bytes):
     return '\n'.join(lines).encode()
 
 
-def prepare(raw,flow,source,sha):
+def prepare(raw,flow,source,sha,full_optimization=False):
     """Retain prior physical repair audits, while applying one additional ECO."""
     import shutil
     from pathlib import Path
@@ -74,7 +74,8 @@ def prepare(raw,flow,source,sha):
         buffers_per_endpoint=4,resize_targets=data['resize_targets'],
         inherited_repair_evidence=dict(source=str(source),receipt_sha256=sha(source/'receipt.json'),
             files={str(f):sha(source/f) for f in [Path(x) for x in files]+[rel/x for x in names]}),
-        native_optional_optimization='SKIP_INCREMENTAL_REPAIR=1,OPT_POST_GRT_WNS=1: completed100 GRT already optimized; retain repair audits, reroute modified connectivity, no final checks skipped',
+        full_native_optimization=full_optimization,
+        native_optional_optimization='SKIP_INCREMENTAL_REPAIR=0,OPT_POST_GRT_WNS=0: repeat native design/timing repair before measured ECO;107 proved rerouting changes estimated timing' if full_optimization else 'SKIP_INCREMENTAL_REPAIR=1,OPT_POST_GRT_WNS=1: retain completed100 optimization; no final checks skipped',
         scope='Ten measured long-wire repeaters resized to BUF_X4; four local BUF_X1 per actual failed or near-reset hold endpoint. No RTL/FF/clock/SDC change. Complete native final proof and all final gates required.')
     return raw/'r-targeted-closure.tcl'
 
@@ -85,7 +86,8 @@ def audit(raw,flow,receipt,sha):
     root=Path(__file__).resolve().parents[3]
     metadata=flow['targeted_r_closure']
     assert sha(Path(__file__))==metadata['generator_auditor_sha256']
-    assert flow['actual_variables']['SKIP_INCREMENTAL_REPAIR']=='1' and flow['actual_variables']['OPT_POST_GRT_WNS']=='1'
+    flag='0' if metadata.get('full_native_optimization') else '1'
+    assert flow['actual_variables']['SKIP_INCREMENTAL_REPAIR']==flag and flow['actual_variables']['OPT_POST_GRT_WNS']==flag
     payload=(raw/'r-targeted-evidence.json').read_bytes()
     assert (raw/'r-targeted-config.tcl').read_bytes()==config_bytes(payload)
     names=['r-targeted-evidence.json','r-targeted-config.tcl','r-targeted-closure.tcl']

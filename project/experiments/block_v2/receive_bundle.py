@@ -52,6 +52,26 @@ def main():
         path = PurePosixPath(relative)
         assert not path.is_absolute() and '..' not in path.parts
         assert sha(root / 'meta/rtl' / relative) == digest
+    if flow.get('targeted_r_closure'):
+        # These optional physical ECO reports are in the accepted archive,
+        # rather than merely remote paths in a source journal.
+        from targeted_r_closure import config_bytes
+        from measured_electrical_stage import check_files
+        extra={name:digest for name,digest in receipt['outputs'].items()
+               if name.startswith(('r-targeted-','issue143-targeted-'))}
+        assert len(extra)>=20
+        for name,digest in extra.items():
+            assert '/' not in name and '\\' not in name
+            assert sha(src/name)==digest==d['members']['meta/source/'+name]['sha256']
+        metadata=flow['targeted_r_closure']
+        for name,key in [('r-targeted-evidence.json','evidence_sha256'),('r-targeted-config.tcl','config_sha256'),('r-targeted-closure.tcl','script_sha256')]:
+            assert sha(src/name)==metadata[key]
+        assert (src/'r-targeted-config.tcl').read_bytes()==config_bytes((src/'r-targeted-evidence.json').read_bytes())
+        names=['issue143-targeted-before-electrical.rpt','issue143-targeted-after-electrical.rpt',
+               'issue143-targeted-before-checks.tsv','issue143-targeted-hold-checks.tsv']
+        fresh=check_files(*(src/name for name in names))
+        assert fresh==json.loads((src/'issue143-targeted-electrical-stage.json').read_text())
+        assert fresh['native_leaf_accepted'] is False
     received = a.out / 'received.json'
     r = json.loads(received.read_text())
     r.update(sealed_source_verified=True, rtl_sha256=flow['rtl_sha256'],

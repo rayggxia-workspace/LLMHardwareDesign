@@ -24,6 +24,7 @@ def main():
     p.add_argument('--measured-hold-buffers',type=int,choices=(4,8),default=4)
     p.add_argument('--setup-margin',type=float,choices=(.200,.250),default=.200,help='Optimization target only; actual300MHz SDC unchanged')
     p.add_argument('--targeted-closure',action='store_true',help='Additional measured RC100/104/106 reset/repeater ECO; retain completed100 optimization')
+    p.add_argument('--targeted-full-optimization',action='store_true',help='Repeat native GRT design/timing optimization before targeted ECO after107 changed estimated timing')
     a=p.parse_args();a.source=a.source.resolve();a.out=a.out.resolve()
     assert a.source!=a.out and 'issue143-seven-block-v2-20261030' in a.out.parts
     r=json.loads((a.source/'receipt.json').read_text());assert r['passed'] is False
@@ -34,6 +35,7 @@ def main():
     assert not a.guard_reset or a.input_hold_guard
     assert not a.measured_hold or (a.input_hold_guard and not a.guard_reset)
     assert a.measured_hold or a.measured_hold_buffers==4
+    assert not a.targeted_full_optimization or a.targeted_closure
     if a.targeted_closure:
         assert not a.input_hold_guard and not a.measured_hold and a.source.parts[-3:]==('100','pnr','r')
         assert old.get('measured_hold_repair',{}).get('total_buffers')==240
@@ -125,10 +127,11 @@ def main():
             post_global=str(target)
         if a.targeted_closure:
             from targeted_r_closure import prepare
-            post_global=str(prepare(a.out,flow,a.source,sha))
+            post_global=str(prepare(a.out,flow,a.source,sha,a.targeted_full_optimization))
             # Actual pinned global_route.tcl exposes these optional optimization
             # controls.100 already completed them. Native routing/final remains.
-            config+='export SKIP_INCREMENTAL_REPAIR = 1\nexport OPT_POST_GRT_WNS = 1\n'
+            flag='0' if a.targeted_full_optimization else '1'
+            config+='export SKIP_INCREMENTAL_REPAIR = '+flag+'\nexport OPT_POST_GRT_WNS = '+flag+'\n'
         config+='export POST_GLOBAL_ROUTE_TCL = '+post_global+'\n'
         (a.out/'config.mk').write_text(config)
         for name in ('1_synth_lec.v','1_2_yosys.v','1_2_yosys.sdc','bv1-input-diodes.tsv','feed-input-receivers.tsv'):
@@ -148,8 +151,9 @@ def main():
         wanted=dict(LEC_CHECK='1',SEC_CHECK='0',SETUP_SLACK_MARGIN=setup_margin,HOLD_SLACK_MARGIN=hold_margin,
             MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',PRE_GLOBAL_ROUTE_TCL=pre_global,POST_GLOBAL_ROUTE_TCL=post_global)
         if a.targeted_closure:
-            wanted.update(SKIP_INCREMENTAL_REPAIR='1',OPT_POST_GRT_WNS='1')
-            flow['resume_scope']='Completed100 digest-bound optimized GRT used as native route input. Preserve original015 first-four-stage and prior240-buffer/guard audits; native GRT, targeted reset/repeater ECO, detailed route/final and all final gates repeated. Optional optimization only is not repeated; no final success inherited.'
+            flag='0' if a.targeted_full_optimization else '1'
+            wanted.update(SKIP_INCREMENTAL_REPAIR=flag,OPT_POST_GRT_WNS=flag)
+            flow['resume_scope']='Completed100 digest-bound GRT used as native route input. Preserve original015 first-four-stage and prior240-buffer/guard audits; native GRT, targeted reset/repeater ECO, detailed route/final and all final gates repeated. Full native GRT design/timing optimization repeated.' if a.targeted_full_optimization else 'Completed100 digest-bound GRT, optional optimization not repeated; all route/final stages and final gates mandatory. No final success inherited.'
         for key,value in wanted.items():
             log='variable-'+key+'.log';run(command+['print-'+key],log)
             matches=re.findall(r'(?m)^'+key+r':(.*)$',(a.out/log).read_text());assert len(matches)==1
