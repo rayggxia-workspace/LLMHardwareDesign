@@ -23,3 +23,10 @@
 3. 登记 pending：管理中心默认分支尚无本项目记录，[既有 PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) OPEN/未合并。复用此登记，不重复建 PR；由获授权审查者处理，具体人待指定。
 4. 看板 unverified / 同步 pending：主干 config/ 无 board.json，当前工具无 Projects 条目读写能力；并非已经证实 Melodydt 账号没有看板权限。有工具和权限的项目管理员（待指定）先核验候选组织看板 #1 的受众、实际字段和本 Issue 既有条目，复用/加卡，按 status-mapping 填 Project ID、实际 Status 及已确定的 Priority，再读回条目 ID、链接和时间。
 5. 本地验证及任务分支/PR 上传已完成。接手先读回 PR #148、文件清单、CI 和 Issue 标签，复用本 PR；完成独立审查及其后续同步。独立审查人待指定，未满足审查、合并与验收前不自合并、不关闭 Issue 或标 done。
+
+## 2026-10-31 补充：仿真追踪与长任务交接
+
+- 按用户要求，AGENTS 新增 Melodydt 会话的仿真启动回执：每次提交即给作业号、源码版本、服务器/工作/日志/结果位置及可复制追踪命令；RUNNING 与排队区分。
+- 长作业可在真实提交并核验持久日志后先结束本轮回复，保留未完成状态及可执行交接；自动检查只有实际配置并核验后才能承诺。本次没有创建自动监测。
+- 另一个任务 [Issue149 / PR150](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/150) 已实际完成 E 宏仿真：Slurm94188，COMPLETED/0:0，45秒，三组初态通过。服务器独立 Git 源目录 /public/home/yuzelu/Melodydt/LLMHardwareDesign-issue149；结果 /public/home/yuzelu/Melodydt/runs/issue-149/e-smoke-20261031-01。其实际证据由该任务维护，不将其归入本规则任务的硬件验证。
+- 本任务仍通过 PR148 待审查；本地 D 盘仍为管理参考副本。PR148/PR150 的本人 STATUS 变更在合并时须保留两边内容；看板 unverified/同步pending、登记pending不变。

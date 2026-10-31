@@ -11,3 +11,6 @@
 - [后续交接](../../../docs/handoffs/2026-10-31-issue-147-melodydt-collaboration.md)；未执行任何服务器、模型或 EDA 作业。
 
 - 实际检查：`python -X utf8 scripts/check_project.py` PASS；28 个参考文件 Git blob SHA 一致；`git diff --no-index --check` 无空白错误输出，预期文档差异退出码 1。逐成果 SHA-256 及环境边界见 [verification.json](verification.json)。
+
+## 仿真启动回执与长任务
+用户于2026-10-31补充：每次仿真开始应提供追踪方法、服务器运行/工作目录和结果位置。已作为本地 AGENTS 的 Melodydt 会话规则追加，保留此前规则；每次读回真实 Job ID、排队/运行状态，提供日志和结果判据。长任务可以完成批处理提交与交接后先回复；没有真实配置并核验的自动检查不能承诺聊天结束后继续监控。本次不新建自动监测。更新本任务现有 PR148，不另开重复规则 Issue。实际 E RTL 流程由 Issue149/PR150 交付。
